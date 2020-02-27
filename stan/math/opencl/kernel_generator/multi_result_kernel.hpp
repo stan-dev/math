@@ -7,7 +7,6 @@
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/calc_if.hpp>
 #include <stan/math/opencl/kernel_generator/load.hpp>
-#include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <string>
 #include <tuple>
@@ -59,7 +58,7 @@ struct multi_result_kernel_internal {
       check_size_match(function, "Columns of ", "expression",
                        expression.thread_cols(), "columns of ",
                        "first expression", n_cols);
-      if(!is_no_output<T_current_expression>::value){
+      if (!is_no_output<T_current_expression>::value) {
         result.check_assign_dimensions(expression.rows(), expression.cols());
         result.set_view(expression.bottom_diagonal(), expression.top_diagonal(),
                         1 - expression.rows(), expression.cols() - 1);
@@ -190,6 +189,8 @@ expressions__<T_expressions...> expressions(T_expressions&&... expressions) {
  */
 template <typename... T_results>
 class results_cl {
+  std::tuple<T_results*...> results_;
+
  public:
   /**
    * Constructor.
@@ -212,8 +213,102 @@ class results_cl {
                std::make_index_sequence<sizeof...(T_expressions)>{});
   }
 
+  /**
+   * Generates kernel source for evaluating given expressions into results held by \c this.
+   * @tparam T_expressions types of expressions
+   * @param expressions expressions to generate kernel source for
+   * @return kernel source
+   */
+  template <typename... T_expressions,
+            typename = std::enable_if_t<sizeof...(T_results)
+                                        == sizeof...(T_expressions)>>
+  std::string get_kernel_source_for_evaluating(
+      expressions__<T_expressions...> expressions) {
+    return get_kernel_source_for_evaluating_impl(
+        expressions, std::make_index_sequence<sizeof...(T_expressions)>{});
+  }
+
  private:
-  std::tuple<T_results*...> results_;
+  /**
+   * Implementation of kernel soource generation.
+   * @tparam T_expressions types of expressions
+   * @tparam Is indices
+   * @param exprs expressions
+   */
+  template <typename... T_expressions, size_t... Is>
+  std::string get_kernel_source_for_evaluating_impl(
+      expressions__<T_expressions...> exprs, std::index_sequence<Is...>) {
+    auto expressions = std::make_tuple(
+        internal::make_wrapper(std::forward<decltype(as_operation_cl(
+                                   std::get<Is>(exprs.expressions_).x))>(
+            as_operation_cl(std::get<Is>(exprs.expressions_).x)))...);
+    auto results = std::make_tuple(internal::make_wrapper(
+        std::forward<decltype(as_operation_cl(*std::get<Is>(results_)))>(
+            as_operation_cl(*std::get<Is>(results_))))...);
+    return get_kernel_source_impl(results, expressions);
+  }
+
+
+  /**
+   * Implementation of kernel soource generation.
+   * @tparam T_res types of results
+   * @tparam T_expressions types of expressions
+   * @param results results
+   * @param expressions expressions
+   */
+  template <typename... T_res, typename... T_expressions>
+  static std::string get_kernel_source_impl(
+      std::tuple<internal::wrapper<T_res>...>& results,
+      std::tuple<internal::wrapper<T_expressions>...>& expressions) {
+    using impl = typename internal::multi_result_kernel_internal<
+        std::tuple_size<std::tuple<T_expressions...>>::value - 1,
+        T_res...>::template inner<T_expressions...>;
+    static const bool require_specific_local_size = std::max(
+        {std::decay_t<T_expressions>::Deriv::require_specific_local_size...});
+
+    name_generator ng;
+    std::set<const operation_cl_base*> generated;
+    kernel_parts parts
+        = impl::generate(generated, ng, "i", "j", results, expressions);
+    std::string src;
+    if (require_specific_local_size) {
+      src =
+          "kernel void calculate(" + parts.args +
+          "const int rows, const int cols){\n"
+          "const int gid_i = get_global_id(0);\n"
+          "const int lid_i = get_local_id(0);\n"
+          "const int lsize_i = get_local_size(0);\n"
+          "const int wg_id_i = get_group_id(0);\n"
+          "const int wg_id_j = get_group_id(1);\n"
+          "const int n_groups_i = get_num_groups(0);\n"
+          "const int blocks_rows = (rows + lsize_i - 1) / lsize_i;\n"
+          "const int blocks_cols = (cols + lsize_i - 1) / lsize_i;\n"
+          "const int i0 = lsize_i * wg_id_i;\n"
+          "const int i = i0 + lid_i;\n"
+          "const int j0 = lsize_i * wg_id_j;\n"
+          "for(int lid_j = 0; lid_j < min(cols - j0, lsize_i); lid_j++){\n"
+          "const int j = j0 + lid_j;\n"
+          + parts.initialization +
+          "if(i < rows){\n"
+          + parts.body +
+          "}\n"
+          + parts.reduction +
+          "}\n"
+          "}\n";
+    } else {
+      src =
+          "kernel void calculate(" + parts.args.substr(0, parts.args.size() - 2) +
+          "){\n"
+          "int i = get_global_id(0);\n"
+          "int j = get_global_id(1);\n"
+          + parts.initialization
+          + parts.body
+          + parts.reduction +
+          "}\n";
+    }
+    return src;
+  }
+
   /**
    * Assignment of expressions to results.
    * @tparam T_expressions types of expressions
@@ -259,58 +354,17 @@ class results_cl {
     check_positive(function, "number of columns", n_cols);
     impl::check_assign_dimensions(n_rows, n_cols, results, expressions);
 
-    name_generator ng;
-    std::set<const operation_cl_base*> generated;
-
     try {
       if (impl::kernel_() == NULL) {
-        kernel_parts parts
-            = impl::generate(generated, ng, "i", "j", results, expressions);
-
-        std::string src;
-        if (require_specific_local_size) {
-          src =
-              "kernel void calculate(" + parts.args +
-              "const int rows, const int cols){\n"
-              "const int gid_i = get_global_id(0);\n"
-              "const int lid_i = get_local_id(0);\n"
-              "const int lsize_i = get_local_size(0);\n"
-              "const int wg_id_i = get_group_id(0);\n"
-              "const int wg_id_j = get_group_id(1);\n"
-              "const int n_groups_i = get_num_groups(0);\n"
-              "const int blocks_rows = (rows + lsize_i - 1) / lsize_i;\n"
-              "const int blocks_cols = (cols + lsize_i - 1) / lsize_i;\n"
-              "const int i0 = lsize_i * wg_id_i;\n"
-              "const int i = i0 + lid_i;\n"
-              "const int j0 = lsize_i * wg_id_j;\n"
-              "for(int lid_j = 0; lid_j < min(cols - j0, lsize_i); lid_j++){\n"
-              "const int j = j0 + lid_j;\n"
-              + parts.initialization +
-              "if(i < rows){\n"
-              + parts.body +
-              "}\n"
-              + parts.reduction +
-              "}\n"
-              "}\n";
-        } else {
-          src =
-              "kernel void calculate(" + parts.args.substr(0, parts.args.size() - 2) +
-              "){\n"
-              "int i = get_global_id(0);\n"
-              "int j = get_global_id(1);\n"
-              + parts.initialization
-              + parts.body
-              + parts.reduction +
-              "}\n";
-        }
+        std::string src = get_kernel_source_impl(results, expressions);
         auto opts = opencl_context.base_opts();
         impl::kernel_ = opencl_kernels::compile_kernel(
             "calculate", {view_kernel_helpers, src}, opts);
       }
       cl::Kernel& kernel = impl::kernel_;
       int arg_num = 0;
-      generated.clear();
 
+      std::set<const operation_cl_base*> generated;
       impl::set_args(generated, kernel, arg_num, results, expressions);
 
       cl::Event e;
