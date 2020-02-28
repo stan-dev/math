@@ -12,7 +12,7 @@ namespace math {
 template <typename T_y, typename T_lower, typename T_upper>
 double discrete_range_cdf_log(const T_y& y, const T_lower& lower,
                               const T_upper& upper) {
-  return discrete_range_lcdf<T_y, T_lower, T_upper>(y, lower, upper);
+  return discrete_range_lcdf(y, lower, upper);
 }
 
 }  // namespace math
