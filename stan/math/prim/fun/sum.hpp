@@ -42,7 +42,7 @@ inline T sum(const std::vector<T>& xs) {
  * @param v argument
  * @return Sum of coefficients of argument.
  */
-template <typename T, require_eigen_vt<std::is_arithmetic,T>* = nullptr>
+template <typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
 inline value_type_t<T> sum(const T& v) {
   return v.sum();
 }

@@ -74,7 +74,7 @@ class sum_eigen_v_vari : public sum_v_vari {
   }
 
  public:
-  template <typename T, require_eigen_vt<is_var,T>* = nullptr>
+  template <typename T, require_eigen_vt<is_var, T>* = nullptr>
   explicit sum_eigen_v_vari(const T& v1)
       : sum_v_vari(
             sum_of_val(v1),
@@ -94,7 +94,7 @@ class sum_eigen_v_vari : public sum_v_vari {
  * @param m Specified matrix or vector.
  * @return Sum of coefficients of matrix.
  */
-template <typename T, require_eigen_vt<is_var,T>* = nullptr>
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
 inline var sum(const T& m) {
   if (m.size() == 0) {
     return 0.0;

@@ -18,7 +18,7 @@ namespace math {
  * @return Sum of vector entries.
  */
 template <typename T>
-inline fvar<T> sum(const std::vector<fvar<T> >& m) {
+inline fvar<T> sum(const std::vector<fvar<T>>& m) {
   if (m.size() == 0) {
     return 0.0;
   }
@@ -39,7 +39,7 @@ inline fvar<T> sum(const std::vector<fvar<T> >& m) {
  * @param m Matrix.
  * @return Sum of matrix entries.
  */
-template <typename T, require_eigen_vt<is_fvar,T>* = nullptr>
+template <typename T, require_eigen_vt<is_fvar, T>* = nullptr>
 inline value_type_t<T> sum(const T& m) {
   if (m.size() == 0) {
     return 0.0;
