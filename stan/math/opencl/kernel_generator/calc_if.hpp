@@ -27,24 +27,23 @@ namespace math {
 template <bool Do_Calculate, typename T>
 class calc_if_
     : public operation_cl<calc_if_<Do_Calculate, T>,
-                       typename std::remove_reference_t<T>::Scalar, T> {
+                          typename std::remove_reference_t<T>::Scalar, T> {
  public:
   using Scalar = typename std::remove_reference_t<T>::Scalar;
   using base = operation_cl<calc_if_<Do_Calculate, T>, Scalar, T>;
   using base::var_name;
 
-protected:
+ protected:
   using base::arguments_;
 
-public:
+ public:
   /**
    * Constructor
    * @param a expression to calc_if
    */
   explicit calc_if_(T&& a) : base(std::forward<T>(a)) {}
 
-  inline kernel_parts generate(const std::string& i,
-                               const std::string& j,
+  inline kernel_parts generate(const std::string& i, const std::string& j,
                                const std::string& var_name_arg) const {
     if (Do_Calculate) {
       var_name = var_name_arg;
@@ -68,10 +67,10 @@ public:
       std::set<const operation_cl_base*>& generated, name_generator& ng,
       const std::string& i, const std::string& j,
       const T_result& result) const {
-    if(Do_Calculate){
-      return std::get<0>(arguments_).get_whole_kernel_parts(generated, ng, i, j, result);
-    }
-    else{
+    if (Do_Calculate) {
+      return std::get<0>(arguments_)
+          .get_whole_kernel_parts(generated, ng, i, j, result);
+    } else {
       return {};
     }
   }
@@ -86,7 +85,7 @@ public:
    */
   inline void set_args(std::set<const operation_cl_base*>& generated,
                        cl::Kernel& kernel, int& arg_num) const {
-    if(Do_Calculate){
+    if (Do_Calculate) {
       std::get<0>(arguments_).set_args(generated, kernel, arg_num);
     }
   }
@@ -95,26 +94,23 @@ public:
    * View of a matrix that would be the result of evaluating this expression.
    * @return view
    */
-  inline matrix_cl_view view() const {
-    return std::get<0>(arguments_).view();
-  }
+  inline matrix_cl_view view() const { return std::get<0>(arguments_).view(); }
 };
 
 template <bool Do_Calculate, typename T,
           typename = require_all_valid_expressions_and_none_scalar_t<T>>
-inline calc_if_<Do_Calculate, as_operation_cl_t<T>> calc_if(
-    T&& a) {
+inline calc_if_<Do_Calculate, as_operation_cl_t<T>> calc_if(T&& a) {
   return calc_if_<Do_Calculate, as_operation_cl_t<T>>(
       as_operation_cl(std::forward<T>(a)));
 }
 
-namespace internal{
+namespace internal {
 template <typename T>
 struct is_no_output_impl : std::false_type {};
 
 template <typename T>
 struct is_no_output_impl<calc_if_<false, T>> : std::true_type {};
-}
+}  // namespace internal
 
 template <typename T>
 using is_no_output = internal::is_no_output_impl<std::decay_t<T>>;

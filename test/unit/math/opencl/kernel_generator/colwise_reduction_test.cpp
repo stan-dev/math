@@ -148,7 +148,8 @@ TEST(MathMatrixCL, colwise_sum_and_id_test) {
   matrix_cl<double> m_cl(m);
 
   matrix_cl<double> res1_cl, res2_cl;
-  stan::math::results(res1_cl, res2_cl) = stan::math::expressions(m_cl, stan::math::colwise_sum(m_cl));
+  stan::math::results(res1_cl, res2_cl)
+      = stan::math::expressions(m_cl, stan::math::colwise_sum(m_cl));
   MatrixXd res1 = stan::math::from_matrix_cl(res1_cl);
   EXPECT_MATRIX_NEAR(m, res1, 1e-9);
   MatrixXd raw_res2 = stan::math::from_matrix_cl(res2_cl);

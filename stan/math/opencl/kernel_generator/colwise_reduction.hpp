@@ -34,7 +34,8 @@ namespace math {
  */
 template <typename Derived, typename T, typename Operation>
 class colwise_reduction
-    : public operation_cl<Derived, typename std::remove_reference_t<T>::Scalar, T> {
+    : public operation_cl<Derived, typename std::remove_reference_t<T>::Scalar,
+                          T> {
  public:
   using Scalar = typename std::remove_reference_t<T>::Scalar;
   using base = operation_cl<Derived, Scalar, T>;

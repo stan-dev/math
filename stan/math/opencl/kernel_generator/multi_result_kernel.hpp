@@ -166,7 +166,7 @@ class expressions_cl {
    */
   explicit expressions_cl(T_expressions&&... expressions)
       : expressions_(internal::wrapper<T_expressions>(
-          std::forward<T_expressions>(expressions))...) {}
+            std::forward<T_expressions>(expressions))...) {}
 
  private:
   std::tuple<internal::wrapper<T_expressions>...> expressions_;
@@ -199,8 +199,9 @@ class results_cl {
    * @param results results that will be calculated in same kernel
    */
   explicit results_cl(T_results&&... results)
-      : results_(internal::wrapper<T_results>(
-          std::forward<T_results>(results))...) {}
+      : results_(
+            internal::wrapper<T_results>(std::forward<T_results>(results))...) {
+  }
 
   /**
    * Assigning \c expressions_cl object to \c results_ object generates and

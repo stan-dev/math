@@ -197,7 +197,7 @@ class load_
    * @param cols desired number of columns
    */
   inline void check_assign_dimensions(int rows, int cols) const {
-    if(a_.rows() != rows || a_.cols() != cols){
+    if (a_.rows() != rows || a_.cols() != cols) {
       a_ = matrix_cl<Scalar>(rows, cols);
     }
   }
