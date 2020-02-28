@@ -16,31 +16,31 @@ template <typename T>
 class complex<stan::math::fvar<T>>
     : public stan::math::complex_base<stan::math::fvar<T>> {
  public:
-   using base_t = stan::math::complex_base<stan::math::fvar<T>>;
-   using value_type = stan::math::fvar<T>;
-   using complex_type = complex<value_type>;
+  using base_t = stan::math::complex_base<stan::math::fvar<T>>;
+  using value_type = stan::math::fvar<T>;
+  using complex_type = complex<value_type>;
 
-   constexpr complex() = default;
-   /**
-    * Construct complex number from real and imaginary parts.
-    *
-    * @tparam T type of real part
-    * @tparam U type of imaginary part
-    * @param[in] re real part
-    * @param[in] im imaginary part
-    */
-   template <typename U, typename V>
-   constexpr complex(const U& re, const V& im) : base_t(re, im) {}
+  constexpr complex() = default;
+  /**
+   * Construct complex number from real and imaginary parts.
+   *
+   * @tparam T type of real part
+   * @tparam U type of imaginary part
+   * @param[in] re real part
+   * @param[in] im imaginary part
+   */
+  template <typename U, typename V>
+  constexpr complex(const U& re, const V& im) : base_t(re, im) {}
 
-   /**
-    * Construct a complex base with the specified real part and a zero
-    * imaginary part.
-    *
-    * @tparam T real type (must be assignable to `V`)
-    * @param[in] re real part
-    */
-   template <typename Scalar, typename = stan::require_stan_scalar_t<T>>
-   constexpr complex(Scalar&& re) : base_t(re) {} // NOLINT(runtime/explicit)
+  /**
+   * Construct a complex base with the specified real part and a zero
+   * imaginary part.
+   *
+   * @tparam T real type (must be assignable to `V`)
+   * @param[in] re real part
+   */
+  template <typename Scalar, typename = stan::require_stan_scalar_t<T>>
+  constexpr complex(Scalar&& re) : base_t(re) {}  // NOLINT(runtime/explicit)
 };
 
 }  // namespace std

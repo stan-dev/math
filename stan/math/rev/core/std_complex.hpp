@@ -40,8 +40,6 @@ class complex<stan::math::var>
    */
   template <typename Scalar, typename = stan::require_stan_scalar_t<Scalar>>
   constexpr complex(Scalar&& re) : base_t(re) {}
-
-
 };
 
 }  // namespace std
