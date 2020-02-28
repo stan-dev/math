@@ -64,6 +64,9 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_scale_succ> alpha_vec(alpha);
   scalar_seq_view<T_scale_fail> beta_vec(beta);
+  size_t size_y = stan::math::size(y);
+  size_t size_alpha = stan::math::size(alpha);
+  size_t size_beta = stan::math::size(beta);
   size_t N = max_size(y, alpha, beta);
 
   for (size_t n = 0; n < N; n++) {
@@ -78,12 +81,12 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
 
   VectorBuilder<include_summand<propto, T_y, T_scale_succ>::value,
                 T_partials_return, T_y>
-      log_y(size(y));
+      log_y(size_y);
   VectorBuilder<include_summand<propto, T_y, T_scale_fail>::value,
                 T_partials_return, T_y>
-      log1m_y(size(y));
+      log1m_y(size_y);
 
-  for (size_t n = 0; n < stan::math::size(y); n++) {
+  for (size_t n = 0; n < size_y; n++) {
     if (include_summand<propto, T_y, T_scale_succ>::value) {
       log_y[n] = log(value_of(y_vec[n]));
     }
@@ -94,51 +97,52 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
 
   VectorBuilder<include_summand<propto, T_scale_succ>::value, T_partials_return,
                 T_scale_succ>
-      lgamma_alpha(size(alpha));
+      lgamma_alpha(size_alpha);
   VectorBuilder<!is_constant_all<T_scale_succ>::value, T_partials_return,
                 T_scale_succ>
-      digamma_alpha(size(alpha));
-  for (size_t n = 0; n < stan::math::size(alpha); n++) {
-    if (include_summand<propto, T_scale_succ>::value) {
-      lgamma_alpha[n] = lgamma(value_of(alpha_vec[n]));
-    }
-    if (!is_constant_all<T_scale_succ>::value) {
-      digamma_alpha[n] = digamma(value_of(alpha_vec[n]));
+      digamma_alpha(size_alpha);
+  if (include_summand<propto, T_scale_succ>::value) {
+    for (size_t n = 0; n < size_alpha; n++) {
+      const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
+      lgamma_alpha[n] = lgamma(alpha_dbl);
+      if (!is_constant_all<T_scale_succ>::value) {
+        digamma_alpha[n] = digamma(alpha_dbl);
+      }
     }
   }
 
   VectorBuilder<include_summand<propto, T_scale_fail>::value, T_partials_return,
                 T_scale_fail>
-      lgamma_beta(size(beta));
+      lgamma_beta(size_beta);
   VectorBuilder<!is_constant_all<T_scale_fail>::value, T_partials_return,
                 T_scale_fail>
-      digamma_beta(size(beta));
+      digamma_beta(size_beta);
 
-  for (size_t n = 0; n < stan::math::size(beta); n++) {
-    if (include_summand<propto, T_scale_fail>::value) {
-      lgamma_beta[n] = lgamma(value_of(beta_vec[n]));
-    }
-    if (!is_constant_all<T_scale_fail>::value) {
-      digamma_beta[n] = digamma(value_of(beta_vec[n]));
+  if (include_summand<propto, T_scale_fail>::value) {
+    for (size_t n = 0; n < size_beta; n++) {
+      const T_partials_return beta_dbl = value_of(beta_vec[n]);
+      lgamma_beta[n] = lgamma(beta_dbl);
+      if (!is_constant_all<T_scale_fail>::value) {
+        digamma_beta[n] = digamma(beta_dbl);
+      }
     }
   }
 
   VectorBuilder<include_summand<propto, T_scale_succ, T_scale_fail>::value,
                 T_partials_return, T_scale_succ, T_scale_fail>
       lgamma_alpha_beta(max_size(alpha, beta));
-
   VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
                 T_partials_return, T_scale_succ, T_scale_fail>
       digamma_alpha_beta(max_size(alpha, beta));
 
-  for (size_t n = 0; n < max_size(alpha, beta); n++) {
-    const T_partials_return alpha_beta
-        = value_of(alpha_vec[n]) + value_of(beta_vec[n]);
-    if (include_summand<propto, T_scale_succ, T_scale_fail>::value) {
+  if (include_summand<propto, T_scale_succ, T_scale_fail>::value) {
+    for (size_t n = 0; n < max_size(alpha, beta); n++) {
+      const T_partials_return alpha_beta
+          = value_of(alpha_vec[n]) + value_of(beta_vec[n]);
       lgamma_alpha_beta[n] = lgamma(alpha_beta);
-    }
-    if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
-      digamma_alpha_beta[n] = digamma(alpha_beta);
+      if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
+        digamma_alpha_beta[n] = digamma(alpha_beta);
+      }
     }
   }
 

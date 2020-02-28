@@ -23,6 +23,29 @@ TEST(MathMatrixPrim, mdivide_right_tri_val) {
   expect_matrix_eq(I, mdivide_right_tri<Eigen::Upper>(Ad, Ad));
 }
 
+TEST(MathMatrixPrim, mdivide_right_tri_size_zero) {
+  using stan::math::mdivide_right_tri;
+  stan::math::matrix_d Ad(0, 0);
+  stan::math::matrix_d b0(2, 0);
+  stan::math::matrix_d I;
+
+  I = mdivide_right_tri<Eigen::Lower>(Ad, Ad);
+  EXPECT_EQ(0, I.rows());
+  EXPECT_EQ(0, I.cols());
+
+  I = mdivide_right_tri<Eigen::Upper>(Ad, Ad);
+  EXPECT_EQ(0, I.rows());
+  EXPECT_EQ(0, I.cols());
+
+  I = mdivide_right_tri<Eigen::Lower>(b0, Ad);
+  EXPECT_EQ(b0.rows(), I.rows());
+  EXPECT_EQ(0, I.cols());
+
+  I = mdivide_right_tri<Eigen::Upper>(b0, Ad);
+  EXPECT_EQ(b0.rows(), I.rows());
+  EXPECT_EQ(0, I.cols());
+}
+
 #ifdef STAN_OPENCL
 
 void mdivide_right_tri_cl_test(int size) {

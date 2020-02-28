@@ -1,7 +1,7 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrixPrimMat, trace_gen_quad_form_mat) {
+TEST(MathMatrixPrim, trace_gen_quad_form) {
   using stan::math::matrix_d;
   using stan::math::trace_gen_quad_form;
 
@@ -15,7 +15,27 @@ TEST(MathMatrixPrimMat, trace_gen_quad_form_mat) {
       1.0, 112.0;
   cd.setIdentity(2, 2);
 
-  // double-double-double
   res = trace_gen_quad_form(cd, ad, bd);
   EXPECT_FLOAT_EQ(26758, res);
+
+  EXPECT_THROW(trace_gen_quad_form(ad, ad, bd), std::invalid_argument);
+  EXPECT_THROW(trace_gen_quad_form(bd, ad, bd), std::invalid_argument);
+  EXPECT_THROW(trace_gen_quad_form(ad, bd, bd), std::invalid_argument);
+}
+
+TEST(MathMatrixPrim, trace_gen_quad_form_size_zero) {
+  using stan::math::matrix_d;
+  using stan::math::trace_gen_quad_form;
+
+  matrix_d a00, b00, d00;
+  matrix_d b02(0, 2);
+  matrix_d d22(2, 2);
+  d22 << 1, 2, 3, 4;
+  double res;
+
+  res = trace_gen_quad_form(d00, a00, b00);
+  EXPECT_FLOAT_EQ(0, res);
+
+  res = trace_gen_quad_form(d22, a00, b02);
+  EXPECT_FLOAT_EQ(0, res);
 }

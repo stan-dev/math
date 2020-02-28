@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -53,7 +54,7 @@ return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::math::size(n); i++) {
     if (value_of(n_vec[i]) < 0) {
-      return ops_partials.build(negative_infinity());
+      return ops_partials.build(NEGATIVE_INFTY);
     }
   }
 
@@ -69,7 +70,7 @@ return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
     P += log(Pi);
 
     if (!is_constant_all<T_prob>::value) {
-      ops_partials.edge1_.partials_[i] -= 1 / Pi;
+      ops_partials.edge1_.partials_[i] -= inv(Pi);
     }
   }
 
