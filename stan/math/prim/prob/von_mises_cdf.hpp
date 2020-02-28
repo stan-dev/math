@@ -15,11 +15,10 @@ namespace math {
 namespace internal {
 
 template <typename T_x, typename T_k, typename T_p>
-return_type_t<T_x, T_k, T_p> von_mises_cdf_series(const T_x& x, 
-						  const T_k& k, 
-						  const T_p& p) {
-  using std::sin;
+return_type_t<T_x, T_k, T_p> von_mises_cdf_series(const T_x& x, const T_k& k,
+                                                  const T_p& p) {
   using std::cos;
+  using std::sin;
 
   double pi = stan::math::pi();
   auto s = sin(x);
@@ -31,20 +30,20 @@ return_type_t<T_x, T_k, T_p> von_mises_cdf_series(const T_x& x,
   return_type_t<T_x, T_k, T_p> V = 0;
 
   int n;
-  for(n = p - 1; n>0; n--) {
-     auto sn_tmp = sn * c - cn * s;
-     cn = cn * c + sn * s;
-     sn = sn_tmp;
-     R = 1 / (2.0 * n / k + R);
-     V = R * (sn / n + V);
+  for (n = p - 1; n > 0; n--) {
+    auto sn_tmp = sn * c - cn * s;
+    cn = cn * c + sn * s;
+    sn = sn_tmp;
+    R = 1 / (2.0 * n / k + R);
+    V = R * (sn / n + V);
   }
   return 0.5 + x / (2 * pi) + V / pi;
 }
 
 template <typename T_x, typename T_k>
 return_type_t<T_x, T_k> von_mises_cdf_normalapprox(const T_x& x, const T_k& k) {
-  using std::sqrt;
   using std::exp;
+  using std::sqrt;
   double pi = stan::math::pi();
 
   auto b = sqrt(2 / pi) * exp(k) / modified_bessel_first_kind(0, k);
@@ -62,30 +61,34 @@ return_type_t<T_x, T_k> von_mises_cdf_centered(const T_x& x, const T_k& k) {
   double ck = 50;
   double a[4] = {28, 0.5, 100, 5};
   return_type_t<T_x, T_k> f;
-  if(k < ck) {
-    int p = a[0] + a[1]*k - a[2]/(k + a[3]) + 1;
+  if (k < ck) {
+    int p = a[0] + a[1] * k - a[2] / (k + a[3]) + 1;
     f = von_mises_cdf_series(x, k, p);
-    if(f < 0) f = 0;
-    if(f > 1) f = 1;
+    if (f < 0)
+      f = 0;
+    if (f > 1)
+      f = 1;
   } else {
     f = von_mises_cdf_normalapprox(x, k);
   }
   return f;
 }
 
-} //internal
+}  // namespace internal
 using namespace internal;
 
 /** \ingroup prob_dists
- * Calculates the cumulative distribution function of the von Mises 
+ * Calculates the cumulative distribution function of the von Mises
  * distribution:
  *
- * \f$VonMisesCDF(x, mu, \kappa) = \frac{1}{2\pi I_0(\kappa)} \int_{-\mu-\pi}^x e^{\kappa cos(t - \mu)} dt\f$
+ * \f$VonMisesCDF(x, mu, \kappa) = \frac{1}{2\pi I_0(\kappa)} \int_{-\mu-\pi}^x
+ * e^{\kappa cos(t - \mu)} dt\f$
  *
- * where 
+ * where
  *
- * \f$\mu \in \mathbb{R}\f$, \f$x \in (\mu - \pi, \mu + \pi)\f$, and \f$\kappa \in \mathbb{R}^+\f$.
- * 
+ * \f$\mu \in \mathbb{R}\f$, \f$x \in (\mu - \pi, \mu + \pi)\f$, and \f$\kappa
+ * \in \mathbb{R}^+\f$.
+ *
  * @param x A scalar variate
  * @param mu The mean of the distribution
  * @param k The inverse scale of the distriubtion
@@ -95,9 +98,8 @@ using namespace internal;
  * @tparam T_k Type of inverse scale parameter
  */
 template <typename T_x, typename T_mu, typename T_k>
-inline return_type_t<T_x, T_mu, T_k> von_mises_cdf(const T_x& x, 
-						   const T_mu& mu, 
-						   const T_k& k) {
+inline return_type_t<T_x, T_mu, T_k> von_mises_cdf(const T_x& x, const T_mu& mu,
+                                                   const T_k& k) {
   static char const* const function = "von_mises_cdf";
   using T_partials_return = partials_return_t<T_x, T_mu, T_k>;
 
@@ -105,7 +107,6 @@ inline return_type_t<T_x, T_mu, T_k> von_mises_cdf(const T_x& x,
   check_not_nan(function, "Scale parameter", k);
   check_not_nan(function, "Location parameter", mu);
   check_positive(function, "Scale parameter", k);
-
 
   // shift x so that mean is 0
   auto x2 = x - mu;
