@@ -24,8 +24,8 @@ class complex<stan::math::var>
   /**
    * Construct complex number from real and imaginary parts.
    *
-   * @tparam T type of real part
-   * @tparam U type of imaginary part
+   * @tparam U type of real part
+   * @tparam V type of imaginary part
    * @param[in] re real part
    * @param[in] im imaginary part
    */
@@ -35,12 +35,18 @@ class complex<stan::math::var>
   /**
    * Construct complex number from real.
    *
-   * @tparam T type of real part
+   * @tparam Scalar type of real part
    * @param[in] re real part
    */
   template <typename Scalar, typename = stan::require_stan_scalar_t<Scalar>>
   constexpr complex(Scalar&& re) : base_t(re) {}
 
+  template <typename Scalar, typename = stan::require_arithmetic_t<Scalar>>
+  constexpr auto& operator=(const std::complex<Scalar>& x) {
+    this->re_ = x.real();
+    this->im_ = x.imag();
+    return *this;
+  }
 
 };
 

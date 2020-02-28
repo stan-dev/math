@@ -34,19 +34,19 @@ class complex_base {
    * Construct a complex base with the specified real and imaginary
    * parts.
    *
-   * @tparam T real type (must be assignable to `V`)
-   * @tparam U imaginary type (must be assignable to `V`)
+   * @tparam U real type (must be assignable to `V`)
+   * @tparam V imaginary type (must be assignable to `V`)
    * @param[in] re real part
    * @param[in] im imaginary part (default 0)
    */
-  template <typename T, typename U>
-  constexpr complex_base(const T& re, const U& im) : re_(re), im_(im) {}
+  template <typename U, typename V>
+  constexpr complex_base(const U& re, const V& im) : re_(re), im_(im) {}
 
   /**
    * Construct a complex base with the specified real part and a zero
    * imaginary part.
    *
-   * @tparam T real type (must be assignable to `V`)
+   * @tparam Scalar real type (must be assignable to `V`)
    * @param[in] re real part
    */
   template <typename T, typename = require_stan_scalar_t<T>>
@@ -156,8 +156,8 @@ class complex_base {
    */
   template <typename X>
   constexpr complex_type& operator-=(const std::complex<X>& other) {
-    re_ -= other.real();
-    im_ -= other.imag();
+    this->re_ -= other.real();
+    this->im_ -= other.imag();
     return derived();
   }
 
