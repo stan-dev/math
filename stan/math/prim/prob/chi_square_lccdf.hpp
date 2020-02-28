@@ -51,6 +51,7 @@ return_type_t<T_y, T_dof> chi_square_lccdf(const T_y& y, const T_dof& nu) {
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_dof> nu_vec(nu);
+  size_t size_nu = stan::math::size(nu);
   size_t N = max_size(y, nu);
 
   operands_and_partials<T_y, T_dof> ops_partials(y, nu);
@@ -58,8 +59,12 @@ return_type_t<T_y, T_dof> chi_square_lccdf(const T_y& y, const T_dof& nu) {
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::math::size(y); i++) {
-    if (value_of(y_vec[i]) == 0) {
+    const T_partials_return y_dbl = value_of(y_vec[i]);
+    if (y_dbl == 0) {
       return ops_partials.build(0.0);
+    }
+    if (y_dbl == INFTY) {
+      return ops_partials.build(NEGATIVE_INFTY);
     }
   }
 
@@ -67,43 +72,37 @@ return_type_t<T_y, T_dof> chi_square_lccdf(const T_y& y, const T_dof& nu) {
   using std::log;
   using std::pow;
 
+  VectorBuilder<true, T_partials_return, T_dof> half_nu(size_nu);
+  VectorBuilder<!is_constant_all<T_y, T_dof>::value, T_partials_return, T_dof>
+      tgamma_vec(size_nu);
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      gamma_vec(size(nu));
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digamma_vec(size(nu));
-
-  if (!is_constant_all<T_dof>::value) {
-    for (size_t i = 0; i < stan::math::size(nu); i++) {
-      const T_partials_return alpha_dbl = value_of(nu_vec[i]) * 0.5;
-      gamma_vec[i] = tgamma(alpha_dbl);
-      digamma_vec[i] = digamma(alpha_dbl);
+      digamma_vec(size_nu);
+  for (size_t i = 0; i < size_nu; i++) {
+    const T_partials_return half_nu_dbl = 0.5 * value_of(nu_vec[i]);
+    half_nu[i] = half_nu_dbl;
+    if (!is_constant_all<T_y, T_dof>::value) {
+      tgamma_vec[i] = tgamma(half_nu[i]);
+    }
+    if (!is_constant_all<T_dof>::value) {
+      digamma_vec[i] = digamma(half_nu_dbl);
     }
   }
 
   for (size_t n = 0; n < N; n++) {
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as zero
-    if (value_of(y_vec[n]) == INFTY) {
-      return ops_partials.build(negative_infinity());
-    }
-
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return alpha_dbl = value_of(nu_vec[n]) * 0.5;
-    const T_partials_return beta_dbl = 0.5;
-
-    const T_partials_return Pn = gamma_q(alpha_dbl, beta_dbl * y_dbl);
+    const T_partials_return half_y_dbl = 0.5 * value_of(y_vec[n]);
+    const T_partials_return Pn = gamma_q(half_nu[n], half_y_dbl);
 
     ccdf_log += log(Pn);
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] -= beta_dbl * exp(-beta_dbl * y_dbl)
-                                          * pow(beta_dbl * y_dbl, alpha_dbl - 1)
-                                          / tgamma(alpha_dbl) / Pn;
+      ops_partials.edge1_.partials_[n] -= 0.5 * exp(-half_y_dbl)
+                                          * pow(half_y_dbl, half_nu[n] - 1)
+                                          / (tgamma_vec[n] * Pn);
     }
     if (!is_constant_all<T_dof>::value) {
       ops_partials.edge2_.partials_[n]
           += 0.5
-             * grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
+             * grad_reg_inc_gamma(half_nu[n], half_y_dbl, tgamma_vec[n],
                                   digamma_vec[n])
              / Pn;
     }
