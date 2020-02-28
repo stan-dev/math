@@ -274,8 +274,8 @@ std::vector<U> serialize(const Ts... xs) {
  * @return serialized argument
  */
 template <typename T>
-std::vector<scalar_type_t<T>> serialize_return(const T& x) {
-  return serialize<scalar_type_t<T>>(x);
+std::vector<real_return_t<T>> serialize_return(const T& x) {
+  return serialize<real_return_t<T>>(x);
 }
 
 /**
