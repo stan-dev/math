@@ -317,6 +317,7 @@
 #include <stan/math/prim/prob/von_mises_log.hpp>
 #include <stan/math/prim/prob/von_mises_lpdf.hpp>
 #include <stan/math/prim/prob/von_mises_rng.hpp>
+#include <stan/math/prim/prob/von_mises_cdf.hpp>
 #include <stan/math/prim/prob/weibull_ccdf_log.hpp>
 #include <stan/math/prim/prob/weibull_cdf.hpp>
 #include <stan/math/prim/prob/weibull_cdf_log.hpp>
