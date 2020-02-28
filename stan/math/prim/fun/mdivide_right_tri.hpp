@@ -43,6 +43,9 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_tri(
                        "triangular view must be Eigen::Lower or Eigen::Upper",
                        "", "");
   }
+  if (A.rows() == 0) {
+    return {b.rows(), 0};
+  }
 
   return Eigen::Matrix<return_type_t<T1, T2>, R2, C2>(A)
       .template triangularView<TriView>()
@@ -77,6 +80,10 @@ inline Eigen::Matrix<double, R1, C2> mdivide_right_tri(
     const Eigen::Matrix<double, R2, C2> &A) {
   check_square("mdivide_right_tri", "A", A);
   check_multiplicable("mdivide_right_tri", "b", b, "A", A);
+  if (A.rows() == 0) {
+    return {b.rows(), 0};
+  }
+
 #ifdef STAN_OPENCL
   if (A.rows()
       >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {

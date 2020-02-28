@@ -6,8 +6,6 @@
 #include <stan/math/opencl/kernel_generator/operation_cl_lhs.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
-#include <stan/math/opencl/kernel_generator/get_kernel_source_for_evaluating_into.hpp>
-#include <stan/math/opencl/kernel_generator/evaluate_into.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 
@@ -18,6 +16,10 @@
 #include <stan/math/opencl/kernel_generator/block.hpp>
 #include <stan/math/opencl/kernel_generator/select.hpp>
 #include <stan/math/opencl/kernel_generator/rowwise_reduction.hpp>
+#include <stan/math/opencl/kernel_generator/colwise_reduction.hpp>
+
+#include <stan/math/opencl/kernel_generator/get_kernel_source_for_evaluating_into.hpp>
+#include <stan/math/opencl/kernel_generator/evaluate_into.hpp>
 
 #endif
 #endif

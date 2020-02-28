@@ -175,10 +175,11 @@ class mdivide_left_vd_vari : public vari {
 template <int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left(
     const Eigen::Matrix<var, R1, C1> &A, const Eigen::Matrix<var, R2, C2> &b) {
-  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
-
   check_square("mdivide_left", "A", A);
   check_multiplicable("mdivide_left", "A", A, "b", b);
+  if (A.size() == 0) {
+    return {0, b.cols()};
+  }
 
   // NOTE: this is not a memory leak, this vari is used in the
   // expression graph to evaluate the adjoint, but is not needed
@@ -187,6 +188,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left(
   internal::mdivide_left_vv_vari<R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_vv_vari<R1, C1, R2, C2>(A, b);
 
+  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
   res.vi() = Eigen::Map<matrix_vi>(baseVari->variRefC_, res.rows(), res.cols());
 
   return res;
@@ -196,10 +198,11 @@ template <int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left(
     const Eigen::Matrix<var, R1, C1> &A,
     const Eigen::Matrix<double, R2, C2> &b) {
-  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
-
   check_square("mdivide_left", "A", A);
   check_multiplicable("mdivide_left", "A", A, "b", b);
+  if (A.size() == 0) {
+    return {0, b.cols()};
+  }
 
   // NOTE: this is not a memory leak, this vari is used in the
   // expression graph to evaluate the adjoint, but is not needed
@@ -208,6 +211,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left(
   internal::mdivide_left_vd_vari<R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_vd_vari<R1, C1, R2, C2>(A, b);
 
+  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
   res.vi() = Eigen::Map<matrix_vi>(baseVari->variRefC_, res.rows(), res.cols());
 
   return res;
@@ -217,10 +221,11 @@ template <int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left(
     const Eigen::Matrix<double, R1, C1> &A,
     const Eigen::Matrix<var, R2, C2> &b) {
-  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
-
   check_square("mdivide_left", "A", A);
   check_multiplicable("mdivide_left", "A", A, "b", b);
+  if (A.size() == 0) {
+    return {0, b.cols()};
+  }
 
   // NOTE: this is not a memory leak, this vari is used in the
   // expression graph to evaluate the adjoint, but is not needed
@@ -229,6 +234,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left(
   internal::mdivide_left_dv_vari<R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_dv_vari<R1, C1, R2, C2>(A, b);
 
+  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
   res.vi() = Eigen::Map<matrix_vi>(baseVari->variRefC_, res.rows(), res.cols());
 
   return res;

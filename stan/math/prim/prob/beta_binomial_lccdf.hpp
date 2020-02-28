@@ -9,7 +9,7 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/F32.hpp>
 #include <stan/math/prim/fun/grad_F32.hpp>
-#include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -89,47 +89,36 @@ return_type_t<T_size1, T_size2> beta_binomial_lccdf(const T_n& n, const T_N& N,
     const T_partials_return N_dbl = value_of(N_vec[i]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
     const T_partials_return beta_dbl = value_of(beta_vec[i]);
-
     const T_partials_return mu = alpha_dbl + n_dbl + 1;
     const T_partials_return nu = beta_dbl + N_dbl - n_dbl - 1;
+    const T_partials_return one = 1;
 
     const T_partials_return F
-        = F32((T_partials_return)1, mu, -N_dbl + n_dbl + 1, n_dbl + 2, 1 - nu,
-              (T_partials_return)1);
-
-    T_partials_return C = lgamma(nu) - lgamma(N_dbl - n_dbl);
-    C += lgamma(mu) - lgamma(n_dbl + 2);
-    C += lgamma(N_dbl + 2) - lgamma(N_dbl + alpha_dbl + beta_dbl);
-    C = exp(C);
-
-    C *= F / stan::math::beta(alpha_dbl, beta_dbl);
-    C /= N_dbl + 1;
+        = F32(one, mu, -N_dbl + n_dbl + 1, n_dbl + 2, 1 - nu, one);
+    T_partials_return C = lbeta(nu, mu) - lbeta(alpha_dbl, beta_dbl)
+                          - lbeta(N_dbl - n_dbl, n_dbl + 2);
+    C = F * exp(C) / (N_dbl + 1);
 
     const T_partials_return Pi = C;
 
     P += log(Pi);
 
-    T_partials_return dF[6];
-    T_partials_return digammaOne = 0;
-    T_partials_return digammaTwo = 0;
+    T_partials_return digammaDiff
+        = is_constant_all<T_size1, T_size2>::value
+              ? 0
+              : digamma(alpha_dbl + beta_dbl) - digamma(mu + nu);
 
+    T_partials_return dF[6];
     if (!is_constant_all<T_size1, T_size2>::value) {
-      digammaOne = digamma(mu + nu);
-      digammaTwo = digamma(alpha_dbl + beta_dbl);
-      grad_F32(dF, (T_partials_return)1, mu, -N_dbl + n_dbl + 1, n_dbl + 2,
-               1 - nu, (T_partials_return)1);
+      grad_F32(dF, one, mu, -N_dbl + n_dbl + 1, n_dbl + 2, 1 - nu, one);
     }
     if (!is_constant_all<T_size1>::value) {
-      const T_partials_return g = -C
-                                  * (digamma(mu) - digammaOne + dF[1] / F
-                                     - digamma(alpha_dbl) + digammaTwo);
-      ops_partials.edge1_.partials_[i] -= g / Pi;
+      ops_partials.edge1_.partials_[i]
+          += digamma(mu) - digamma(alpha_dbl) + digammaDiff + dF[1] / F;
     }
     if (!is_constant_all<T_size2>::value) {
-      const T_partials_return g = -C
-                                  * (digamma(nu) - digammaOne - dF[4] / F
-                                     - digamma(beta_dbl) + digammaTwo);
-      ops_partials.edge2_.partials_[i] -= g / Pi;
+      ops_partials.edge2_.partials_[i]
+          += digamma(nu) - digamma(beta_dbl) + digammaDiff - dF[4] / F;
     }
   }
 
