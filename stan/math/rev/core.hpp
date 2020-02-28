@@ -14,6 +14,7 @@
 #include <stan/math/rev/core/empty_nested.hpp>
 #include <stan/math/rev/core/gevv_vvv_vari.hpp>
 #include <stan/math/rev/core/grad.hpp>
+#include <stan/math/rev/core/nested_rev_autodiff.hpp>
 #include <stan/math/rev/core/matrix_vari.hpp>
 #include <stan/math/rev/core/nested_size.hpp>
 #include <stan/math/rev/core/operator_addition.hpp>

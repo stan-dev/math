@@ -12,8 +12,9 @@
 namespace stan {
 
 /**
- * Metaprogram structure to determine the base base type
- * of a template argument.
+ * Metaprogram structure to determine the base base type of a template
+ * argument.  Qualifiers `const` and `volatile` are removed from all
+ * types as are references.
  *
  * <p>This base class should be specialized for structured types.</p>
  *
@@ -22,14 +23,11 @@ namespace stan {
  */
 template <typename T, typename = void>
 struct base_type {
-  using type = std::remove_cv_t<T>;
+  using type = std::decay_t<T>;
 };
 
 template <typename T>
 using base_type_t = typename base_type<T>::type;
-
-template <typename T>
-using base_type_decay_t = typename base_type<std::decay_t<T>>::type;
 
 /**
  * Specialization of base_type for vector to recursively return the inner

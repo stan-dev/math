@@ -12,18 +12,6 @@
 namespace stan {
 
 /** \ingroup type_trait
- * End of recursion to determine base scalar type of a type
- * The underlying base scalar type. If T is not a container then this
- * has a static member named type with the type T.
- *
- * @tparam T type of object whose scalar is extracted
- */
-template <typename T, typename = void>
-struct scalar_type_base {
-  using type = T;
-};
-
-/** \ingroup type_trait
  * Metaprogram structure to determine the base scalar type
  * of a template argument.
  *
@@ -33,14 +21,11 @@ struct scalar_type_base {
  */
 template <typename T, typename = void>
 struct scalar_type {
-  using type = typename scalar_type_base<std::remove_cv_t<T>>::type;
+  using type = std::decay_t<T>;
 };
 
 template <typename T>
 using scalar_type_t = typename scalar_type<T>::type;
-
-template <typename T>
-using scalar_type_decay_t = typename scalar_type<std::decay_t<T>>::type;
 
 /** \ingroup type_trait
  * Specialization of scalar_type for vector to recursively return the inner

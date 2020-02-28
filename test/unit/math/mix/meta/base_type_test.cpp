@@ -13,14 +13,17 @@ using fd_t = fvar<double>;
 using ffd_t = fvar<fd_t>;
 using fv_t = fvar<var>;
 using ffv_t = fvar<fv_t>;
-using md_t = Eigen::MatrixXd;
-using vd_t = Eigen::VectorXd;
-using rvd_t = Eigen::RowVectorXd;
 
 template <typename R, typename T>
 void expect_base() {
   test::expect_same_type<R, typename stan::base_type<T>::type>();
   test::expect_same_type<R, stan::base_type_t<T>>();
+  test::expect_same_type<R, typename stan::base_type<T&>::type>();
+  test::expect_same_type<R, stan::base_type_t<T&>>();
+  test::expect_same_type<R, typename stan::base_type<const T&>::type>();
+  test::expect_same_type<R, stan::base_type_t<const T&>>();
+  test::expect_same_type<R, typename stan::base_type<const T>::type>();
+  test::expect_same_type<R, stan::base_type_t<const T>>();
 }
 
 template <typename T>

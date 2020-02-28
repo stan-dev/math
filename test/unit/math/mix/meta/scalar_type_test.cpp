@@ -1,80 +1,78 @@
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
-#include <complex>
 #include <vector>
 
-template <typename E, typename T>
-void expect_scalar_type() {
-  using stan::scalar_type;
+template <typename R, typename T>
+void expect_base() {
   using stan::scalar_type_t;
-  using test::expect_same_type;
-  expect_same_type<E, typename scalar_type<T>::type>();
-  expect_same_type<E, scalar_type_t<T>>();
+  static_assert(std::is_same<R, scalar_type_t<T>>::value, "NOT SAME");
+  static_assert(std::is_same<R, scalar_type_t<T&>>::value, "NOT SAME");
+  test::expect_same_type<R, scalar_type_t<T>>();
+  test::expect_same_type<R, scalar_type_t<T>>();
+  test::expect_same_type<R, scalar_type_t<T&>>();
+  test::expect_same_type<R, scalar_type_t<T&>>();
+  test::expect_same_type<R, scalar_type_t<const T&>>();
+  test::expect_same_type<R, scalar_type_t<const T&>>();
+  test::expect_same_type<R, scalar_type_t<const T>>();
+  test::expect_same_type<R, scalar_type_t<const T>>();
 }
 
 template <typename T>
-void test_scalar_type() {
+void test_base() {
   using Eigen::Matrix;
   using std::complex;
   using std::vector;
-  using c_t = complex<T>;
+  expect_base<T, T>();
+  expect_base<T, vector<T>>();
+  expect_base<T, vector<vector<T>>>();
 
-  expect_scalar_type<T, T>();
-  expect_scalar_type<T, Matrix<T, -1, -1>>();
-  expect_scalar_type<T, Matrix<T, -1, 1>>();
-  expect_scalar_type<T, Matrix<T, 1, -1>>();
-  expect_scalar_type<T, vector<T>>();
+  expect_base<T, Matrix<T, -1, -1>>();
+  expect_base<T, vector<Matrix<T, -1, -1>>>();
 
-  expect_scalar_type<T&, T&>();
-  expect_scalar_type<T, Matrix<T, -1, -1>&>();
-  expect_scalar_type<T, Matrix<T, -1, 1>&>();
-  expect_scalar_type<T, Matrix<T, 1, -1>&>();
-  expect_scalar_type<T, vector<T>&>();
+  expect_base<T, Matrix<T, 1, -1>>();
+  expect_base<T, vector<Matrix<T, 1, -1>>>();
 
-  expect_scalar_type<T, const T>();
-  expect_scalar_type<T, const Matrix<T, -1, -1>>();
-  expect_scalar_type<T, const Matrix<T, -1, 1>>();
-  expect_scalar_type<T, const Matrix<T, 1, -1>>();
-  expect_scalar_type<T, const vector<T>>();
+  expect_base<T, Matrix<T, -1, 1>>();
+  expect_base<T, vector<Matrix<T, -1, 1>>>();
 
-  expect_scalar_type<c_t, c_t>();
-  expect_scalar_type<c_t, Matrix<c_t, -1, -1>>();
-  expect_scalar_type<c_t, Matrix<c_t, -1, 1>>();
-  expect_scalar_type<c_t, Matrix<c_t, 1, -1>>();
-  expect_scalar_type<c_t, vector<c_t>>();
+  expect_base<complex<T>, complex<T>>();
+  expect_base<complex<T>, vector<complex<T>>>();
 
-  expect_scalar_type<c_t, const c_t>();
-  expect_scalar_type<c_t, const Matrix<c_t, -1, -1>>();
-  expect_scalar_type<c_t, const Matrix<c_t, -1, 1>>();
-  expect_scalar_type<c_t, const Matrix<c_t, 1, -1>>();
-  expect_scalar_type<c_t, const vector<c_t>>();
-
-  expect_scalar_type<T const*, T const*>();
-  expect_scalar_type<T const*, const vector<T const*>>();
-  expect_scalar_type<T const*, const vector<vector<T const*>>>();
-
-  expect_scalar_type<c_t, c_t&>();
-  expect_scalar_type<c_t, Matrix<c_t, -1, -1>&>();
-  expect_scalar_type<c_t, Matrix<c_t, -1, 1>&>();
-  expect_scalar_type<c_t, Matrix<c_t, 1, -1>&>();
-  expect_scalar_type<c_t, vector<c_t>&>();
+  expect_base<complex<T>, Matrix<complex<T>, -1, -1>>();
 }
 
-TEST(MathMetaMix, ScalarTypeInt) {
-  using std::vector;
-  expect_scalar_type<int, int>();
-  expect_scalar_type<int&, int&>();
-  expect_scalar_type<int, vector<int>>();
-}
-
-TEST(mathMetaMix, scalarType) {
+TEST(MathMetaPrim, scalarType) {
+  using stan::base_type;
   using stan::math::fvar;
   using stan::math::var;
-  test_scalar_type<double>();
-  test_scalar_type<var>();
-  test_scalar_type<fvar<double>>();
-  test_scalar_type<fvar<var>>();
-  test_scalar_type<fvar<fvar<double>>>();
-  test_scalar_type<fvar<fvar<var>>>();
+  using d_t = double;
+  using v_t = var;
+  using fd_t = fvar<double>;
+  using ffd_t = fvar<fd_t>;
+  using fv_t = fvar<var>;
+  using ffv_t = fvar<fv_t>;
+  test::expect_same_type<int, stan::scalar_type<int>::type>();
+  test::expect_same_type<int, stan::scalar_type<std::vector<int>>::type>();
+
+  test_base<d_t>();
+  test_base<d_t const*>();
+  test_base<v_t>();
+  test_base<v_t const*>();
+  test_base<fd_t>();
+  test_base<ffd_t>();
+  test_base<fv_t>();
+  test_base<ffv_t>();
+}
+
+TEST(MathMetaPrim, ScalarTypeArrayConstConst) {
+  using stan::scalar_type;
+  using std::vector;
+  // These ones work because pointers are always copied
+  test::expect_same_type<double const*,
+                         scalar_type<const vector<double const*>>::type>();
+  test::expect_same_type<int const*,
+                         scalar_type<const vector<int const*>>::type>();
+  test::expect_same_type<
+      double const*, scalar_type<const vector<vector<double const*>>>::type>();
 }

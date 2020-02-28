@@ -1,24 +1,27 @@
 #ifndef STAN_MATH_PRIM_META_RETURN_TYPE_HPP
 #define STAN_MATH_PRIM_META_RETURN_TYPE_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/promote_args.hpp>
 #include <stan/math/prim/meta/base_type.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
-#include <Eigen/Dense>
 #include <complex>
 #include <vector>
 
 namespace stan {
 
 /**
- * The least upper bound type of `double` and the base types of the
- * specified template parameter types after decay (removing qualifiers
- * and references).  This traits metaprogram can be used to calculate
- * the return type of a density or mass function given its argument
- * types.
+ * Provides a member type alias named `type`, the value of which is
+ * the least type under Stan's assignability relation that can be
+ * assigned a `double` and all of the base types of the specified
+ * arguments after removing qualfifiers (`const` and `volatile`) and
+ * decaying (lvalue to rvalue by removing references) and array to
+ * pointer).   This type trait is used to calculate the return type
+ * of real-valued functions involving heterogeneous arguments.
  *
  * @tparam Ts sequence of template parameter types
  * @see return_type for a definition of the type ordering
+ * @see base_type for definition of base type extraction
  * @ingroup type_trait
  */
 template <typename... Ts>
@@ -29,7 +32,7 @@ struct real_return {
 template <typename T, typename... Ts>
 struct real_return<T, Ts...> {
   using type
-      = promote_args_t<base_type_decay_t<T>, typename real_return<Ts...>::type>;
+      = promote_args_t<base_type_t<T>, typename real_return<Ts...>::type>;
 };
 
 /**
