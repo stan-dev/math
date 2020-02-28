@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/fun/square.hpp>
 #include <complex>
-#include <type_traits>
 
 namespace stan {
 namespace math {

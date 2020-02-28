@@ -4,7 +4,6 @@
 #include <stan/math/prim/core/complex_base.hpp>
 #include <stan/math/fwd/core/fvar.hpp>
 #include <complex>
-#include <type_traits>
 
 namespace std {
 
