@@ -30,13 +30,12 @@ inline T identity_constrain(const T& x) {
  * <p>This method is effectively a no-op and mainly useful as a
  * placeholder in auto-generated code.
  *
- * @tparam T type of scalar
- * @tparam S type of log probability
+ * @tparam T type of scalar.
  * @param[in] x scalar
  * @return transformed input
  */
-template <typename T, typename S>
-inline T identity_constrain(const T& x, S& lp) {
+template <typename T>
+inline T identity_constrain(const T& x, T& /*lp*/) {
   return x;
 }
 

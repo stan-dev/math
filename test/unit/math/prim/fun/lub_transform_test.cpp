@@ -90,8 +90,3 @@ TEST(prob_transform, lub_rt) {
   double xcfc = stan::math::lub_constrain(xcf, 2.0, 4.0);
   EXPECT_FLOAT_EQ(xc, xcfc);
 }
-TEST(prob_transform, underflow) {
-  EXPECT_EQ(0, stan::math::lub_constrain(-1000, 0, 1));
-  double lp = 0;
-  EXPECT_EQ(0, stan::math::lub_constrain(-1000, 0, 1, lp));
-}
