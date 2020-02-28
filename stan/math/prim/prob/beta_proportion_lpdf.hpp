@@ -30,13 +30,14 @@ namespace math {
  * Prior location, mu, must be contained in (0, 1).  Prior precision
  * must be positive.
  *
+ * @tparam T_y type of scalar outcome
+ * @tparam T_loc type of prior location
+ * @tparam T_prec type of prior precision
+ *
  * @param y (Sequence of) scalar(s) between zero and one
  * @param mu (Sequence of) location parameter(s)
  * @param kappa (Sequence of) precision parameter(s)
  * @return The log of the product of densities.
- * @tparam T_y Type of scalar outcome.
- * @tparam T_loc Type of prior location.
- * @tparam T_prec Type of prior precision.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_prec>
 return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
@@ -65,8 +66,10 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);
   scalar_seq_view<T_prec> kappa_vec(kappa);
+  size_t size_y = stan::math::size(y);
+  size_t size_kappa = stan::math::size(kappa);
+  size_t size_mu_kappa = max_size(mu, kappa);
   size_t N = max_size(y, mu, kappa);
-  size_t N_mukappa = max_size(mu, kappa);
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -79,33 +82,33 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_y, T_loc, T_prec>::value,
                 T_partials_return, T_y>
-      log_y(size(y));
+      log_y(size_y);
   VectorBuilder<include_summand<propto, T_y, T_loc, T_prec>::value,
                 T_partials_return, T_y>
-      log1m_y(size(y));
-  for (size_t n = 0; n < stan::math::size(y); n++) {
-    log_y[n] = log(value_of(y_vec[n]));
-    log1m_y[n] = log1m(value_of(y_vec[n]));
+      log1m_y(size_y);
+  for (size_t n = 0; n < size_y; n++) {
+    const T_partials_return y_dbl = value_of(y_vec[n]);
+    log_y[n] = log(y_dbl);
+    log1m_y[n] = log1m(y_dbl);
   }
 
   VectorBuilder<include_summand<propto, T_loc, T_prec>::value,
                 T_partials_return, T_loc, T_prec>
-      lgamma_mukappa(N_mukappa);
+      lgamma_mukappa(size_mu_kappa);
   VectorBuilder<include_summand<propto, T_loc, T_prec>::value,
                 T_partials_return, T_loc, T_prec>
-      lgamma_kappa_mukappa(N_mukappa);
+      lgamma_kappa_mukappa(size_mu_kappa);
   VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials_return,
                 T_loc, T_prec>
-      digamma_mukappa(N_mukappa);
+      digamma_mukappa(size_mu_kappa);
   VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials_return,
                 T_loc, T_prec>
-      digamma_kappa_mukappa(N_mukappa);
+      digamma_kappa_mukappa(size_mu_kappa);
 
-  for (size_t n = 0; n < N_mukappa; n++) {
-    const T_partials_return mukappa_dbl
-        = value_of(mu_vec[n]) * value_of(kappa_vec[n]);
-    const T_partials_return kappa_mukappa_dbl
-        = value_of(kappa_vec[n]) - mukappa_dbl;
+  for (size_t n = 0; n < size_mu_kappa; n++) {
+    const T_partials_return kappa_dbl = value_of(kappa_vec[n]);
+    const T_partials_return mukappa_dbl = value_of(mu_vec[n]) * kappa_dbl;
+    const T_partials_return kappa_mukappa_dbl = kappa_dbl - mukappa_dbl;
 
     if (include_summand<propto, T_loc, T_prec>::value) {
       lgamma_mukappa[n] = lgamma(mukappa_dbl);
@@ -120,17 +123,17 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_prec>::value, T_partials_return,
                 T_prec>
-      lgamma_kappa(size(kappa));
+      lgamma_kappa(size_kappa);
   VectorBuilder<!is_constant_all<T_prec>::value, T_partials_return, T_prec>
-      digamma_kappa(size(kappa));
+      digamma_kappa(size_kappa);
 
-  for (size_t n = 0; n < stan::math::size(kappa); n++) {
+  for (size_t n = 0; n < size_kappa; n++) {
+    const T_partials_return kappa_dbl = value_of(kappa_vec[n]);
     if (include_summand<propto, T_prec>::value) {
-      lgamma_kappa[n] = lgamma(value_of(kappa_vec[n]));
+      lgamma_kappa[n] = lgamma(kappa_dbl);
     }
-
     if (!is_constant_all<T_prec>::value) {
-      digamma_kappa[n] = digamma(value_of(kappa_vec[n]));
+      digamma_kappa[n] = digamma(kappa_dbl);
     }
   }
 

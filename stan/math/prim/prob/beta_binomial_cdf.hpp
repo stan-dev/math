@@ -103,21 +103,23 @@ return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n, const T_N& N,
 
     P *= Pi;
 
-    T_partials_return dF[6];
-    T_partials_return digammaDiff = 0;
+    T_partials_return digammaDiff
+        = is_constant_all<T_size1, T_size2>::value
+              ? 0
+              : digamma(alpha_dbl + beta_dbl) - digamma(mu + nu);
 
+    T_partials_return dF[6];
     if (!is_constant_all<T_size1, T_size2>::value) {
-      digammaDiff = digamma(mu + nu) - digamma(alpha_dbl + beta_dbl);
       grad_F32(dF, one, mu, 1 - N_minus_n, n_dbl + 2, 1 - nu, one);
     }
     if (!is_constant_all<T_size1>::value) {
       const T_partials_return g
-          = -C * (digamma(mu) - digamma(alpha_dbl) - digammaDiff + dF[1] / F);
+          = -C * (digamma(mu) - digamma(alpha_dbl) + digammaDiff + dF[1] / F);
       ops_partials.edge1_.partials_[i] += g / Pi;
     }
     if (!is_constant_all<T_size2>::value) {
       const T_partials_return g
-          = -C * (digamma(nu) - digamma(beta_dbl) - digammaDiff - dF[4] / F);
+          = -C * (digamma(nu) - digamma(beta_dbl) + digammaDiff - dF[4] / F);
       ops_partials.edge2_.partials_[i] += g / Pi;
     }
   }
