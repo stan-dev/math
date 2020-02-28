@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -56,55 +57,57 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(const T_y& y,
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   scalar_seq_view<T_scale> beta_vec(beta);
+  size_t size_y = stan::math::size(y);
+  size_t size_alpha = stan::math::size(alpha);
+  size_t size_beta = stan::math::size(beta);
+  size_t N = max_size(y, alpha, beta);
 
-  for (size_t n = 0; n < stan::math::size(y); n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    if (y_dbl <= 0) {
+  for (size_t n = 0; n < size_y; n++) {
+    if (value_of(y_vec[n]) <= 0) {
       return LOG_ZERO;
     }
   }
 
-  size_t N = max_size(y, alpha, beta);
   operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, beta);
 
   using std::log;
 
   VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,
                 T_y>
-      log_y(size(y));
+      log_y(size_y);
   VectorBuilder<include_summand<propto, T_y, T_scale>::value, T_partials_return,
                 T_y>
-      inv_y(size(y));
-  for (size_t n = 0; n < stan::math::size(y); n++) {
+      inv_y(size_y);
+  for (size_t n = 0; n < size_y; n++) {
+    const T_partials_return y_dbl = value_of(y_vec[n]);
     if (include_summand<propto, T_y, T_shape>::value) {
-      if (value_of(y_vec[n]) > 0) {
-        log_y[n] = log(value_of(y_vec[n]));
-      }
+      log_y[n] = log(y_dbl);
     }
     if (include_summand<propto, T_y, T_scale>::value) {
-      inv_y[n] = 1.0 / value_of(y_vec[n]);
+      inv_y[n] = inv(y_dbl);
     }
   }
 
   VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
                 T_shape>
-      lgamma_alpha(size(alpha));
+      lgamma_alpha(size_alpha);
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digamma_alpha(size(alpha));
-  for (size_t n = 0; n < stan::math::size(alpha); n++) {
+      digamma_alpha(size_alpha);
+  for (size_t n = 0; n < size_alpha; n++) {
+    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
     if (include_summand<propto, T_shape>::value) {
-      lgamma_alpha[n] = lgamma(value_of(alpha_vec[n]));
+      lgamma_alpha[n] = lgamma(alpha_dbl);
     }
     if (!is_constant_all<T_shape>::value) {
-      digamma_alpha[n] = digamma(value_of(alpha_vec[n]));
+      digamma_alpha[n] = digamma(alpha_dbl);
     }
   }
 
   VectorBuilder<include_summand<propto, T_shape, T_scale>::value,
                 T_partials_return, T_scale>
-      log_beta(size(beta));
+      log_beta(size_beta);
   if (include_summand<propto, T_shape, T_scale>::value) {
-    for (size_t n = 0; n < stan::math::size(beta); n++) {
+    for (size_t n = 0; n < size_beta; n++) {
       log_beta[n] = log(value_of(beta_vec[n]));
     }
   }
@@ -128,7 +131,7 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(const T_y& y,
 
     if (!is_constant_all<scalar_type_t<T_y>>::value) {
       ops_partials.edge1_.partials_[n]
-          += -(alpha_dbl + 1) * inv_y[n] + beta_dbl * inv_y[n] * inv_y[n];
+          -= (alpha_dbl + 1 - beta_dbl * inv_y[n]) * inv_y[n];
     }
     if (!is_constant_all<scalar_type_t<T_shape>>::value) {
       ops_partials.edge2_.partials_[n]

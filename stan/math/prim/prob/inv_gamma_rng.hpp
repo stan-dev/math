@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -33,7 +34,6 @@ inline typename VectorBuilder<true, double, T_shape, T_scale>::type
 inv_gamma_rng(const T_shape& alpha, const T_scale& beta, RNG& rng) {
   using boost::random::gamma_distribution;
   using boost::variate_generator;
-
   static const char* function = "inv_gamma_rng";
 
   check_positive_finite(function, "Shape parameter", alpha);
@@ -47,10 +47,9 @@ inv_gamma_rng(const T_shape& alpha, const T_scale& beta, RNG& rng) {
   VectorBuilder<true, double, T_shape, T_scale> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    variate_generator<RNG&, gamma_distribution<> > gamma_rng(
-        rng, gamma_distribution<>(alpha_vec[n],
-                                  1 / static_cast<double>(beta_vec[n])));
-    output[n] = 1 / gamma_rng();
+    variate_generator<RNG&, gamma_distribution<>> gamma_rng(
+        rng, gamma_distribution<>(alpha_vec[n], inv(beta_vec[n])));
+    output[n] = inv(gamma_rng());
   }
 
   return output.data();

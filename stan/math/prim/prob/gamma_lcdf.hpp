@@ -27,7 +27,6 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(const T_y& y,
     return 0.0;
   }
   using T_partials_return = partials_return_t<T_y, T_shape, T_inv_scale>;
-
   static const char* function = "gamma_lcdf";
 
   T_partials_return P(0.0);
@@ -42,6 +41,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(const T_y& y,
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   scalar_seq_view<T_inv_scale> beta_vec(beta);
+  size_t size_alpha = stan::math::size(alpha);
   size_t N = max_size(y, alpha, beta);
 
   operands_and_partials<T_y, T_shape, T_inv_scale> ops_partials(y, alpha, beta);
@@ -58,16 +58,18 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(const T_y& y,
   using std::log;
   using std::pow;
 
+  VectorBuilder<!is_constant_all<T_y, T_shape, T_inv_scale>::value,
+                T_partials_return, T_shape>
+      tgamma_vec(size_alpha);
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      gamma_vec(size(alpha));
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digamma_vec(size(alpha));
-
-  if (!is_constant_all<T_shape>::value) {
-    for (size_t i = 0; i < stan::math::size(alpha); i++) {
+      digamma_vec(size_alpha);
+  if (!is_constant_all<T_y, T_shape, T_inv_scale>::value) {
+    for (size_t i = 0; i < size_alpha; i++) {
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
-      gamma_vec[i] = tgamma(alpha_dbl);
-      digamma_vec[i] = digamma(alpha_dbl);
+      tgamma_vec[i] = tgamma(alpha_dbl);
+      if (!is_constant_all<T_shape>::value) {
+        digamma_vec[i] = digamma(alpha_dbl);
+      }
     }
   }
 
@@ -81,26 +83,28 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(const T_y& y,
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
     const T_partials_return beta_dbl = value_of(beta_vec[n]);
+    const T_partials_return beta_y = beta_dbl * y_dbl;
 
-    const T_partials_return Pn = gamma_p(alpha_dbl, beta_dbl * y_dbl);
+    const T_partials_return Pn = gamma_p(alpha_dbl, beta_y);
+    const T_partials_return rep_deriv = is_constant_all<T_y, T_inv_scale>::value
+                                            ? 0
+                                            : exp(-beta_y)
+                                                  * pow(beta_y, alpha_dbl - 1)
+                                                  / (tgamma_vec[n] * Pn);
 
     P += log(Pn);
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl)
-                                          * pow(beta_dbl * y_dbl, alpha_dbl - 1)
-                                          / tgamma(alpha_dbl) / Pn;
+      ops_partials.edge1_.partials_[n] += beta_dbl * rep_deriv;
     }
     if (!is_constant_all<T_shape>::value) {
       ops_partials.edge2_.partials_[n]
-          -= grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
+          -= grad_reg_inc_gamma(alpha_dbl, beta_y, tgamma_vec[n],
                                 digamma_vec[n])
              / Pn;
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge3_.partials_[n] += y_dbl * exp(-beta_dbl * y_dbl)
-                                          * pow(beta_dbl * y_dbl, alpha_dbl - 1)
-                                          / tgamma(alpha_dbl) / Pn;
+      ops_partials.edge3_.partials_[n] += y_dbl * rep_deriv;
     }
   }
   return ops_partials.build(P);
