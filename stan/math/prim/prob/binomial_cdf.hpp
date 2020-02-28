@@ -68,25 +68,26 @@ return_type_t<T_prob> binomial_cdf(const T_n& n, const T_N& N,
   }
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
+    const T_partials_return n_dbl = value_of(n_vec[i]);
+    const T_partials_return N_dbl = value_of(N_vec[i]);
+
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
-    if (value_of(n_vec[i]) >= value_of(N_vec[i])) {
+    if (n_dbl >= N_dbl) {
       continue;
     }
 
-    const T_partials_return n_dbl = value_of(n_vec[i]);
-    const T_partials_return N_dbl = value_of(N_vec[i]);
     const T_partials_return theta_dbl = value_of(theta_vec[i]);
-    const T_partials_return betafunc = beta(N_dbl - n_dbl, n_dbl + 1);
     const T_partials_return Pi
         = inc_beta(N_dbl - n_dbl, n_dbl + 1, 1 - theta_dbl);
 
     P *= Pi;
 
     if (!is_constant_all<T_prob>::value) {
+      const T_partials_return denom = beta(N_dbl - n_dbl, n_dbl + 1) * Pi;
       ops_partials.edge1_.partials_[i]
           -= pow(theta_dbl, n_dbl) * pow(1 - theta_dbl, N_dbl - n_dbl - 1)
-             / betafunc / Pi;
+             / denom;
     }
   }
 
