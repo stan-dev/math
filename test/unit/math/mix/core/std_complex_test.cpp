@@ -102,81 +102,81 @@ TEST(mathMixCore, stdComplexOperatorEqual) {
 }
 
 TEST(mathMixCore, stdComplexOperatorPlusEqual) {
- using stan::test::expect_ad;
+  using stan::test::expect_ad;
 
- // operator+=(std::complex)
- auto f = [](const auto& a) {
-   auto b = a;
-   b += a;
-   return b;
- };
- expect_ad(f, std::complex<double>(2.3, 1.9));
+  // operator+=(std::complex)
+  auto f = [](const auto& a) {
+    auto b = a;
+    b += a;
+    return b;
+  };
+  expect_ad(f, std::complex<double>(2.3, 1.9));
 
- // operator+=(Arith)
- auto g = [](const auto& a) {
-   auto b = to_std_complex(a);
-   b += a;
-   return b;
- };
- expect_ad(g, 2.3);
+  // operator+=(Arith)
+  auto g = [](const auto& a) {
+    auto b = to_std_complex(a);
+    b += a;
+    return b;
+  };
+  expect_ad(g, 2.3);
 }
 
 TEST(mathMixCore, stdComplexOperatorMinusEqual) {
- using stan::test::expect_ad;
+  using stan::test::expect_ad;
 
- // operator-=(std::complex)
- auto f = [](const auto& a) {
-   auto b = a;
-   b -= a;
-   return b;
- };
- expect_ad(f, std::complex<double>(2.3, 1.9));
+  // operator-=(std::complex)
+  auto f = [](const auto& a) {
+    auto b = a;
+    b -= a;
+    return b;
+  };
+  expect_ad(f, std::complex<double>(2.3, 1.9));
 
- // operator-=(Arith)
- auto g = [](const auto& a) {
-   auto b = to_std_complex(a);
-   b -= a;
-   return b;
- };
- expect_ad(g, 2.3);
+  // operator-=(Arith)
+  auto g = [](const auto& a) {
+    auto b = to_std_complex(a);
+    b -= a;
+    return b;
+  };
+  expect_ad(g, 2.3);
 }
 
 TEST(mathMixCore, stdComplexOperatorTimesEqual) {
- using stan::test::expect_ad;
+  using stan::test::expect_ad;
 
- // operator-=(std::complex)
- auto f = [](const auto& a) {
-   auto b = a;
-   b *= a;
-   return b;
- };
- expect_ad(f, std::complex<double>(2.3, 1.9));
+  // operator-=(std::complex)
+  auto f = [](const auto& a) {
+    auto b = a;
+    b *= a;
+    return b;
+  };
+  expect_ad(f, std::complex<double>(2.3, 1.9));
 
- // operator-=(Arith)
- auto g = [](const auto& a) {
-   auto b = to_std_complex(a);
-   b *= a;
-   return b;
- };
- expect_ad(g, 2.3);
+  // operator-=(Arith)
+  auto g = [](const auto& a) {
+    auto b = to_std_complex(a);
+    b *= a;
+    return b;
+  };
+  expect_ad(g, 2.3);
 }
 
 TEST(mathMixCore, stdComplexOperatorDivideEqual) {
- using stan::test::expect_ad;
+  using stan::test::expect_ad;
 
- // operator-=(std::complex)
- auto f = [](const auto& a) {
-   auto b = a;
-   b /= a;
-   return b;
- };
- expect_ad(f, std::complex<double>(2.3, 1.9));
+  // operator-=(std::complex)
+  auto f = [](const auto& a) {
+    auto b = a;
+    b /= a;
+    return b;
+  };
+  expect_ad(f, std::complex<double>(2.3, 1.9));
 
- // operator-=(Arith)
- auto g = [](const auto& a) {
-   auto b = to_std_complex(a);
-   b /= a;
-   return b;
- };
- expect_ad(g, 2.3);
+  // operator-=(Arith)
+  auto g = [](const auto& a) {
+    auto b = to_std_complex(a);
+    b /= a;
+    return b;
+  };
+  expect_ad(g, 2.3);
 }

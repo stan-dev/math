@@ -47,7 +47,6 @@ class complex<stan::math::var>
     this->im_ = x.imag();
     return *this;
   }
-
 };
 
 }  // namespace std
