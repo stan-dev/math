@@ -3,9 +3,10 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
-#include <Eigen/Dense>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <test/unit/math/opencl/kernel_generator/reference_kernel.hpp>
 #include <gtest/gtest.h>
-#include <tuple>
+#include <string>
 
 using Eigen::MatrixXd;
 using Eigen::MatrixXi;
@@ -23,7 +24,7 @@ TEST(MathMatrixCL, multi_result_kernel_errors) {
 
   matrix_cl<double> res1_cl;
   matrix_cl<double> res2_cl;
-  // mismatch in size between different expression, result pairs
+  // mismatch in size between different (expression, result) pairs
   EXPECT_THROW(stan::math::results(res1_cl, res2_cl)
                = stan::math::expressions(m1_cl - m2_cl, m3_cl - m4_cl),
                std::invalid_argument);
@@ -35,6 +36,7 @@ TEST(MathMatrixCL, multi_result_kernel_errors) {
 }
 
 TEST(MathMatrixCL, multi_result_kernel) {
+  std::string kernel_filename = "sum_dif.cl";
   MatrixXd m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   MatrixXd m2(3, 3);
@@ -47,8 +49,16 @@ TEST(MathMatrixCL, multi_result_kernel) {
   matrix_cl<double> diff_cl(3, 3);
 
   auto sum = m1_cl + m2_cl;
-  stan::math::results(sum_cl, diff_cl)
-      = stan::math::expressions(sum, m1_cl - m2_cl);
+  auto res = stan::math::results(sum_cl, diff_cl);
+  auto exprs = stan::math::expressions(sum, m1_cl - m2_cl);
+
+  std::string kernel_src = res.get_kernel_source_for_evaluating(exprs);
+  stan::test::store_reference_kernel_if_needed(kernel_filename, kernel_src);
+  std::string expected_kernel_src
+      = stan::test::load_reference_kernel(kernel_filename);
+  EXPECT_EQ(expected_kernel_src, kernel_src);
+
+  res = exprs;
 
   MatrixXd res_sum = stan::math::from_matrix_cl(sum_cl);
   MatrixXd res_diff = stan::math::from_matrix_cl(diff_cl);
