@@ -74,8 +74,8 @@ class sum_eigen_v_vari : public sum_v_vari {
   }
 
  public:
-  template <int R1, int C1>
-  explicit sum_eigen_v_vari(const Eigen::Matrix<var, R1, C1>& v1)
+  template <typename T, require_eigen_vt<is_var,T>* = nullptr>
+  explicit sum_eigen_v_vari(const T& v1)
       : sum_v_vari(
             sum_of_val(v1),
             reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
@@ -94,8 +94,8 @@ class sum_eigen_v_vari : public sum_v_vari {
  * @param m Specified matrix or vector.
  * @return Sum of coefficients of matrix.
  */
-template <int R, int C>
-inline var sum(const Eigen::Matrix<var, R, C>& m) {
+template <typename T, require_eigen_vt<is_var,T>* = nullptr>
+inline var sum(const T& m) {
   if (m.size() == 0) {
     return 0.0;
   }
