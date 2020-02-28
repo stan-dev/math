@@ -24,6 +24,7 @@ TEST(MathMatrixCL, multi_result_kernel_errors) {
 
   matrix_cl<double> res1_cl;
   matrix_cl<double> res2_cl;
+  EXPECT_NO_THROW(stan::math::results() = stan::math::expressions());
   // mismatch in size between different (expression, result) pairs
   EXPECT_THROW(stan::math::results(res1_cl, res2_cl)
                = stan::math::expressions(m1_cl - m2_cl, m3_cl - m4_cl),

@@ -351,6 +351,11 @@ class results_cl {
         std::tuple_size<std::tuple<T_expressions...>>::value - 1,
         T_res...>::template inner<T_expressions...>;
 
+    static const bool any_output = std::max({false, !is_no_output<std::decay_t<T_expressions>>::value...});
+    if (!any_output){
+      return;
+    }
+
     static const bool require_specific_local_size = std::max(
         {std::decay_t<T_expressions>::Deriv::require_specific_local_size...});
 
@@ -395,6 +400,13 @@ class results_cl {
       check_opencl_error(function, e);
     }
   }
+  /**
+   * Implementation of assignments of no expressions to no results
+   */
+  template <>
+  static void assignment_impl<>(
+      const std::tuple<>& /*results*/,
+      const std::tuple<>& /*expressions*/) {}
 };
 
 /**
