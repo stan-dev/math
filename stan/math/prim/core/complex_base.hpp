@@ -19,7 +19,7 @@ namespace math {
 template <typename Scalar>
 class complex_base {
  public:
-   constexpr complex_base() = default;
+  constexpr complex_base() = default;
   /**
    * Type of real and imaginary parts.
    */
@@ -50,8 +50,7 @@ class complex_base {
    * @param[in] re real part
    */
   template <typename T, typename = require_stan_scalar_t<T>>
-  constexpr complex_base(const T& re) : re_(re) {} // NOLINT(runtime/explicit)
-
+  constexpr complex_base(const T& re) : re_(re) {}  // NOLINT(runtime/explicit)
 
   /**
    * Return a reference to thi class cast to the derived complex

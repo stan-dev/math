@@ -16,9 +16,9 @@ template <typename T>
 class complex<stan::math::fvar<T>>
     : public stan::math::complex_base<stan::math::fvar<T>> {
  public:
-   using base_t = stan::math::complex_base<stan::math::fvar<T>>;
-   using value_type = stan::math::fvar<T>;
-   using complex_type = complex<value_type>;
+  using base_t = stan::math::complex_base<stan::math::fvar<T>>;
+  using value_type = stan::math::fvar<T>;
+  using complex_type = complex<value_type>;
 
    constexpr complex() = default;
    /**
