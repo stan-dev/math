@@ -31,28 +31,31 @@ inline std::vector<T> cumulative_sum(const std::vector<T>& x) {
 }
 
 /**
- * Return the cumulative sum of the specified matrix.
+ * Return the cumulative sum of the specified vector.
  *
  * The cumulative sum is of the same type as the input and
  * has values defined by
  *
  * \code x(0), x(1) + x(2), ..., x(1) + , ..., + x(x.size()-1) @endcode
  *
- * @tparam T type of elements in the matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam T type of elements in the vector
  *
- * @param m Matrix of values.
+ * @param m Vector of values.
  * @return Cumulative sum of values.
  */
-template <typename T, int R, int C>
-inline Eigen::Matrix<T, R, C> cumulative_sum(const Eigen::Matrix<T, R, C>& m) {
-  Eigen::Matrix<T, R, C> result(m.rows(), m.cols());
+template <typename T, require_eigen_vector_t<T>* = nullptr>
+inline Eigen::Matrix<value_type_t<T>, T::RowsAtCompileTime,
+                     T::ColsAtCompileTime>
+cumulative_sum(const T& m) {
+  using T_scalar = value_type_t<T>;
+  Eigen::Matrix<T_scalar, T::RowsAtCompileTime, T::ColsAtCompileTime>
+      result(m.rows(), m.cols());
   if (m.size() == 0) {
     return result;
   }
-  std::partial_sum(m.data(), m.data() + m.size(), result.data(),
-                   std::plus<T>());
+  const Eigen::Ref<const plain_type_t<T>>& m_ref = m;
+  std::partial_sum(m_ref.data(), m_ref.data() + m_ref.size(), result.data(),
+                   std::plus<T_scalar>());
   return result;
 }
 

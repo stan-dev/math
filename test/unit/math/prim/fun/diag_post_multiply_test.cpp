@@ -18,6 +18,7 @@ TEST(MathMatrixPrimMat, diagPostMultiply) {
 
   expect_matrix_eq(m * v_m, diag_post_multiply(m, v));
 }
+
 TEST(MathMatrixPrimMat, diagPostMultiply2) {
   Matrix<double, Dynamic, Dynamic> m(2, 2);
   m << 2, 3, 4, 5;
@@ -38,8 +39,6 @@ TEST(MathMatrixPrimMat, diagPostMultiply2) {
 TEST(MathMatrixPrimMat, diagPostMultiplyException) {
   Matrix<double, Dynamic, Dynamic> m(2, 2);
   m << 2, 3, 4, 5;
-  EXPECT_THROW(diag_post_multiply(m, m), std::invalid_argument);
-
   Matrix<double, Dynamic, 1> v(3);
   v << 1, 2, 3;
   EXPECT_THROW(diag_post_multiply(m, v), std::invalid_argument);

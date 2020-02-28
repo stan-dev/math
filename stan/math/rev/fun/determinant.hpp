@@ -44,14 +44,14 @@ class determinant_vari : public vari {
 };
 }  // namespace internal
 
-template <int R, int C>
-inline var determinant(const Eigen::Matrix<var, R, C>& m) {
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+inline var determinant(const T& m) {
   check_square("determinant", "m", m);
   if (m.size() == 0) {
     return 1;
   }
 
-  return var(new internal::determinant_vari<R, C>(m));
+  return var(new internal::determinant_vari<T::RowsAtCompileTime, T::ColsAtCompileTime>(m));
 }
 
 }  // namespace math

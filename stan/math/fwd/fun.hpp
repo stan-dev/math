@@ -19,7 +19,6 @@
 #include <stan/math/fwd/fun/columns_dot_self.hpp>
 #include <stan/math/fwd/fun/cos.hpp>
 #include <stan/math/fwd/fun/cosh.hpp>
-#include <stan/math/fwd/fun/crossprod.hpp>
 #include <stan/math/fwd/fun/determinant.hpp>
 #include <stan/math/fwd/fun/digamma.hpp>
 #include <stan/math/fwd/fun/divide.hpp>
@@ -102,7 +101,6 @@
 #include <stan/math/fwd/fun/softmax.hpp>
 #include <stan/math/fwd/fun/sqrt.hpp>
 #include <stan/math/fwd/fun/square.hpp>
-#include <stan/math/fwd/fun/squared_distance.hpp>
 #include <stan/math/fwd/fun/sum.hpp>
 #include <stan/math/fwd/fun/tan.hpp>
 #include <stan/math/fwd/fun/tanh.hpp>

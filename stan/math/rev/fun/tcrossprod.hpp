@@ -7,6 +7,7 @@
 #include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/rev/fun/dot_product.hpp>
 #include <stan/math/rev/fun/dot_self.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 
 namespace stan {
@@ -21,9 +22,9 @@ namespace math {
  * @param M Matrix to multiply.
  * @return M times its transpose.
  */
-template <int R, int C>
-inline Eigen::Matrix<var, -1, -1> tcrossprod(
-    const Eigen::Matrix<var, R, C>& M) {
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+inline Eigen::Matrix<var, T::RowsAtCompileTime, T::RowsAtCompileTime>
+tcrossprod(const T& M) {
   if (M.rows() == 0) {
     return {};
   }
@@ -34,7 +35,8 @@ inline Eigen::Matrix<var, -1, -1> tcrossprod(
   // matrix_v result(M.rows(), M.rows());
   // return result.setZero().selfadjointView<Eigen::Upper>().rankUpdate(M);
 
-  matrix_v MMt(M.rows(), M.rows());
+  Eigen::Matrix<var, T::RowsAtCompileTime, T::RowsAtCompileTime> MMt(M.rows(),
+                                                                     M.rows());
 
   vari** vs
       = reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
