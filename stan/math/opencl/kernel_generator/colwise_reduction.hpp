@@ -64,8 +64,6 @@ class colwise_reduction
    * @param j column index variable name
    * @param result expression into which result is to be assigned
    * @return part of kernel with code for this and nested expressions
-   * @throws std::invalid_argument dimensions of expression and result can not
-   * be resized.
    */
   template <typename T_result>
   kernel_parts get_whole_kernel_parts(
