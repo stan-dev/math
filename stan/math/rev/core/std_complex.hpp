@@ -42,8 +42,6 @@ class complex<stan::math::var>
    */
   template <typename T>
   complex(const T& re) : base_t(re) {}
-
-
 };
 
 }  // namespace std

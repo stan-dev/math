@@ -18,9 +18,8 @@ namespace math {
  */
 template <typename Scalar>
 class complex_base {
-
  public:
-   complex_base() {};
+  complex_base(){};
   /**
    * Type of real and imaginary parts.
    */
@@ -51,8 +50,7 @@ class complex_base {
    * @param[in] re real part
    */
   template <typename T, typename = require_stan_scalar_t<T>>
-  complex_base(const T& re) : re_(re) {} // NOLINT(runtime/explicit)
-
+  complex_base(const T& re) : re_(re) {}  // NOLINT(runtime/explicit)
 
   /**
    * Return a reference to thi class cast to the derived complex
@@ -60,9 +58,7 @@ class complex_base {
    *
    * @return reference to this class cast to the complex return type
    */
-  complex_type& derived() {
-    return static_cast<complex_type&>(*this);
-  }
+  complex_type& derived() { return static_cast<complex_type&>(*this); }
 
   /**
    * Assign the specified value to the real part of this complex number
@@ -79,7 +75,6 @@ class complex_base {
     im_ = 0;
     return derived();
   }
-
 
   /**
    * Return the real part.
@@ -222,17 +217,17 @@ class complex_base {
     re_ = re_temp;
     return derived();
   }
-protected:
- /**
-  * Real part.
-  */
- Scalar re_{0};
 
- /**
-  * Imaginary part.
-  */
- Scalar im_{0};
+ protected:
+  /**
+   * Real part.
+   */
+  Scalar re_{0};
 
+  /**
+   * Imaginary part.
+   */
+  Scalar im_{0};
 };
 
 }  // namespace math
