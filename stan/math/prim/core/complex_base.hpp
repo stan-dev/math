@@ -18,7 +18,6 @@ namespace math {
  */
 template <typename Scalar>
 class complex_base {
-
  public:
    constexpr complex_base() = default;
   /**
@@ -79,7 +78,6 @@ class complex_base {
     im_ = 0;
     return derived();
   }
-
 
   /**
    * Return the real part.
@@ -222,17 +220,17 @@ class complex_base {
     re_ = re_temp;
     return derived();
   }
-protected:
- /**
-  * Real part.
-  */
- Scalar re_{0};
 
- /**
-  * Imaginary part.
-  */
- Scalar im_{0};
+ protected:
+  /**
+   * Real part.
+   */
+  Scalar re_{0};
 
+  /**
+   * Imaginary part.
+   */
+  Scalar im_{0};
 };
 
 }  // namespace math

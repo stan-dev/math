@@ -29,8 +29,8 @@ class complex<stan::math::fvar<T>>
     * @param[in] re real part
     * @param[in] im imaginary part
     */
-   template <typename T1, typename U>
-   constexpr complex(const T1& re, const U& im) : base_t(re, im) {}
+   template <typename U, typename V>
+   constexpr complex(const U& re, const V& im) : base_t(re, im) {}
 
    /**
     * Construct a complex base with the specified real part and a zero
