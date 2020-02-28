@@ -8,11 +8,19 @@
 
 namespace stan {
 
-/**
- * Check if a type derives from eigen DenseBase
- */
-template <typename T>
-struct is_eigen_dense : bool_constant<std::is_base_of<Eigen::DenseBase<std::decay_t<T>>, std::decay_t<T>>::value> {};
+  /**
+   * Check if type derives from DenseBase
+   **/
+  template <typename T, typename Enable = void>
+  struct is_eigen_dense : std::false_type {};
+
+  template <typename T>
+  struct is_eigen_dense<T,
+   std::enable_if_t<std::is_base_of<Eigen::DenseBase<typename std::decay_t<std::decay_t<T>>::PlainObject>, typename std::decay_t<std::decay_t<T>>::PlainObject>::value>> : std::true_type {};
+
+  template <typename T>
+  struct is_eigen_dense<T,
+  std::enable_if_t<std::is_base_of<Eigen::DenseBase<typename std::decay_t<std::decay_t<T>>::MatrixType>, typename std::decay_t<std::decay_t<T>>::MatrixType>::value>> : std::true_type {};
 
 }  // namespace stan
 

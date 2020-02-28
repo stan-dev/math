@@ -4,6 +4,9 @@
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/is_container.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_eigen_array.hpp>
+#include <stan/math/prim/meta/is_eigen_matrix.hpp>
+#include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_fvar.hpp>
 #include <stan/math/prim/meta/is_string_convertible.hpp>
 #include <stan/math/prim/meta/is_var.hpp>

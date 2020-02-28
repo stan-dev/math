@@ -26,7 +26,7 @@ struct is_eigen_contiguous_map
 
 template <typename T>
 struct is_eigen_contiguous_map<T,
- std::enable_if_t<internal::is_eigen_contiguous_map_impl<std::decay_t<T>::value> :
+ std::enable_if_t<internal::is_eigen_contiguous_map_impl<std::decay_t<T>>::value>> :
    bool_constant<T::OuterStrideAtCompileTime == 0 && T::InnerStrideAtCompileTime == 0> {};
 
 
