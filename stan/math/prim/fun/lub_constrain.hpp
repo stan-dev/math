@@ -109,14 +109,12 @@ inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
   if (ub == INFTY) {
     return lb_constrain(x, lb, lp);
   }
-  T inv_logit_x;
+  T inv_logit_x = inv_logit(x);
   if (x > 0) {
     T exp_minus_x = exp(-x);
-    inv_logit_x = inv_logit(x);
     lp += log(ub - lb) - x - 2 * log1p(exp_minus_x);
   } else {
     T exp_x = exp(x);
-    inv_logit_x = inv_logit(x);
     lp += log(ub - lb) + x - 2 * log1p(exp_x);
   }
   return fma(ub - lb, inv_logit_x, lb);
