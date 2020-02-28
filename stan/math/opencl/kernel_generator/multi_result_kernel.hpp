@@ -303,7 +303,8 @@ class results_cl {
           "}\n";
     } else {
       src =
-          "kernel void calculate(" + parts.args.substr(0, parts.args.size() - 2) +
+          "kernel void calculate(" +
+          parts.args.substr(0, parts.args.size() - 2) +
           "){\n"
           "int i = get_global_id(0);\n"
           "int j = get_global_id(1);\n"
