@@ -20,7 +20,7 @@ class complex<stan::math::var>
   using base_t = stan::math::complex_base<stan::math::var>;
   using value_type = stan::math::var;
   using complex_type = complex<value_type>;
-  complex() = default;
+  constexpr complex() = default;
   /**
    * Construct complex number from real and imaginary parts.
    *
@@ -30,18 +30,16 @@ class complex<stan::math::var>
    * @param[in] im imaginary part
    */
   template <typename T, typename U>
-  complex(const T& re, const U& im) : base_t(re, im) {}
+  constexpr complex(const T& re, const U& im) : base_t(re, im) {}
 
   /**
-   * Construct complex number from real and imaginary parts.
+   * Construct complex number from real.
    *
    * @tparam T type of real part
-   * @tparam U type of imaginary part
    * @param[in] re real part
-   * @param[in] im imaginary part
    */
-  template <typename T>
-  complex(const T& re) : base_t(re) {}
+  template <typename Scalar, typename = stan::require_stan_scalar_t<Scalar>>
+  constexpr complex(Scalar&& re) : base_t(re) {}
 
 
 };
