@@ -26,11 +26,10 @@ template <typename Ta, typename Tb, int Cb>
 inline Eigen::Matrix<return_type_t<Ta, Tb>, -1, Cb> matrix_exp_multiply(
     const Eigen::Matrix<Ta, -1, -1>& A, const Eigen::Matrix<Tb, -1, Cb>& B) {
   check_square("matrix_exp_multiply", "input matrix", A);
-  if (A.size() == 0 && B.rows() == 0) {
-    return Eigen::Matrix<return_type_t<Ta, Tb>, -1, Cb>(0, B.cols());
-  }
-
   check_multiplicable("matrix_exp_multiply", "A", A, "B", B);
+  if (A.size() == 0) {
+    return {0, B.cols()};
+  }
 
   return multiply(matrix_exp(A), B);
 }

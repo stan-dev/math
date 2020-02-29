@@ -33,8 +33,8 @@ template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb,
           require_any_var_t<Ta, Tb>...>
 inline Eigen::Matrix<var, Cb, Cb> quad_form_sym(
     const Eigen::Matrix<Ta, Ra, Ca>& A, const Eigen::Matrix<Tb, Rb, Cb>& B) {
-  check_symmetric("quad_form_sym", "A", A);
   check_multiplicable("quad_form_sym", "A", A, "B", B);
+  check_symmetric("quad_form_sym", "A", A);
 
   internal::quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>* baseVari
       = new internal::quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>(A, B, true);
@@ -61,8 +61,8 @@ template <typename Ta, int Ra, int Ca, typename Tb, int Rb,
           require_any_var_t<Ta, Tb>...>
 inline var quad_form_sym(const Eigen::Matrix<Ta, Ra, Ca>& A,
                          const Eigen::Matrix<Tb, Rb, 1>& B) {
-  check_symmetric("quad_form_sym", "A", A);
   check_multiplicable("quad_form_sym", "A", A, "B", B);
+  check_symmetric("quad_form_sym", "A", A);
 
   internal::quad_form_vari<Ta, Ra, Ca, Tb, Rb, 1>* baseVari
       = new internal::quad_form_vari<Ta, Ra, Ca, Tb, Rb, 1>(A, B, true);

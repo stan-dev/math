@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_ROWS_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
@@ -10,15 +11,12 @@ namespace math {
  * Return the number of rows in the specified
  * matrix, vector, or row vector.
  *
- * @tparam T type of elements in the matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
- *
+ * @tparam T type of the matrix
  * @param[in] m Input matrix, vector, or row vector.
  * @return Number of rows.
  */
-template <typename T, int R, int C>
-inline int rows(const Eigen::Matrix<T, R, C>& m) {
+template <typename T, typename = require_eigen_t<T>>
+inline int rows(const T& m) {
   return m.rows();
 }
 

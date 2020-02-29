@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
+#include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
@@ -59,6 +60,9 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_scale_succ> alpha_vec(alpha);
   scalar_seq_view<T_scale_fail> beta_vec(beta);
+  size_t size_alpha = stan::math::size(alpha);
+  size_t size_beta = stan::math::size(beta);
+  size_t size_alpha_beta = max_size(alpha, beta);
   size_t N = max_size(y, alpha, beta);
 
   operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(y, alpha,
@@ -69,23 +73,24 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
   using std::pow;
 
   VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
-                T_partials_return, T_scale_succ, T_scale_fail>
-      digamma_alpha_vec(max_size(alpha, beta));
+                T_partials_return, T_scale_succ>
+      digamma_alpha(size_alpha);
+  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
+                T_partials_return, T_scale_fail>
+      digamma_beta(size_beta);
   VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
                 T_partials_return, T_scale_succ, T_scale_fail>
-      digamma_beta_vec(max_size(alpha, beta));
-  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
-                T_partials_return, T_scale_succ, T_scale_fail>
-      digamma_sum_vec(max_size(alpha, beta));
+      digamma_sum(size_alpha_beta);
 
   if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
-    for (size_t i = 0; i < max_size(alpha, beta); i++) {
-      const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
-      const T_partials_return beta_dbl = value_of(beta_vec[i]);
-
-      digamma_alpha_vec[i] = digamma(alpha_dbl);
-      digamma_beta_vec[i] = digamma(beta_dbl);
-      digamma_sum_vec[i] = digamma(alpha_dbl + beta_dbl);
+    for (size_t i = 0; i < size_alpha; i++) {
+      digamma_alpha[i] = digamma(value_of(alpha_vec[i]));
+    }
+    for (size_t i = 0; i < size_beta; i++) {
+      digamma_beta[i] = digamma(value_of(beta_vec[i]));
+    }
+    for (size_t i = 0; i < size_alpha_beta; i++) {
+      digamma_sum[i] = digamma(value_of(alpha_vec[i]) + value_of(beta_vec[i]));
     }
   }
 
@@ -95,30 +100,30 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
     const T_partials_return beta_dbl = value_of(beta_vec[n]);
     const T_partials_return betafunc_dbl
         = stan::math::beta(alpha_dbl, beta_dbl);
-
     const T_partials_return Pn = 1.0 - inc_beta(alpha_dbl, beta_dbl, y_dbl);
+    const T_partials_return inv_Pn
+        = is_constant_all<T_y, T_scale_succ, T_scale_fail>::value ? 0 : inv(Pn);
 
     ccdf_log += log(Pn);
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= pow(1 - y_dbl, beta_dbl - 1)
-                                          * pow(y_dbl, alpha_dbl - 1)
-                                          / betafunc_dbl / Pn;
+                                          * pow(y_dbl, alpha_dbl - 1) * inv_Pn
+                                          / betafunc_dbl;
     }
 
     T_partials_return g1 = 0;
     T_partials_return g2 = 0;
 
     if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
-      grad_reg_inc_beta(g1, g2, alpha_dbl, beta_dbl, y_dbl,
-                        digamma_alpha_vec[n], digamma_beta_vec[n],
-                        digamma_sum_vec[n], betafunc_dbl);
+      grad_reg_inc_beta(g1, g2, alpha_dbl, beta_dbl, y_dbl, digamma_alpha[n],
+                        digamma_beta[n], digamma_sum[n], betafunc_dbl);
     }
     if (!is_constant_all<T_scale_succ>::value) {
-      ops_partials.edge2_.partials_[n] -= g1 / Pn;
+      ops_partials.edge2_.partials_[n] -= g1 * inv_Pn;
     }
     if (!is_constant_all<T_scale_fail>::value) {
-      ops_partials.edge3_.partials_[n] -= g2 / Pn;
+      ops_partials.edge3_.partials_[n] -= g2 * inv_Pn;
     }
   }
   return ops_partials.build(ccdf_log);

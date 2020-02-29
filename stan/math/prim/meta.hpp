@@ -7,7 +7,7 @@
 #include <stan/math/prim/meta/apply_vector_unary.hpp>
 #include <stan/math/prim/meta/as_array_or_scalar.hpp>
 #include <stan/math/prim/meta/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/meta/bool_constant.hpp>
+#include <stan/math/prim/meta/base_type.hpp>
 #include <stan/math/prim/meta/child_type.hpp>
 #include <stan/math/prim/meta/contains_fvar.hpp>
 #include <stan/math/prim/meta/contains_std_vector.hpp>
@@ -17,6 +17,7 @@
 #include <stan/math/prim/meta/include_summand.hpp>
 #include <stan/math/prim/meta/index_type.hpp>
 #include <stan/math/prim/meta/index_apply.hpp>
+#include <stan/math/prim/meta/is_complex.hpp>
 #include <stan/math/prim/meta/is_constant.hpp>
 #include <stan/math/prim/meta/is_container.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
