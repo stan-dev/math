@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/row.hpp>
 #include <stan/math/prim/fun/col.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
@@ -18,7 +19,7 @@ namespace math {
    * pi(y | theta). In this setting, the hidden states are discrete
    * and take values over the finite space {1, ..., K}.
    * The marginal lpdf is obtained via a forward pass.
-   * The [in, out] argument are saved so that we can use then when
+   * The [in, out] argument are saved so that we can use them when
    * calculating the derivatives.
    *
    * @param[in] log_omega log matrix of observational densities.
@@ -26,8 +27,8 @@ namespace math {
    *              density of the ith observation, y_i,
    *              given x_i = j.
    * @param[in] Gamma transition density between hidden states.
-   *              The (i, j)th entry is the probability that x_n = i,
-   *              given x_{n - 1} = j.
+   *              The (i, j)th entry is the probability that x_n = j,
+   *              given x_{n - 1} = i. The rows of Gamma are simplexes.
    * @param[in] rho initial state
    * @param[in, out] alphas unnormalized partial marginal density.
    *                   The jth column is the joint density over all
@@ -55,7 +56,8 @@ namespace math {
 
     for (int n = 0; n < n_transitions; ++n) {
       alphas.col(n + 1)
-        = omegas.col(n + 1).cwiseProduct(Gamma * alphas.col(n));
+        = omegas.col(n + 1).cwiseProduct(Gamma.transpose()
+                                                      * alphas.col(n));
 
       double norm = alphas.col(n + 1).maxCoeff();
       alphas.col(n + 1) /= norm;
@@ -80,10 +82,18 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   int n_transitions = log_omegas.cols() - 1;
 
   check_square("hmm_marginal_lpdf", "Gamma", Gamma);
-  check_consistent_size("hmm_marginal_lpdf", "Gamma", col(Gamma, 1),
+  check_consistent_size("hmm_marginal_lpdf", "Gamma", row(Gamma, 1),
                         n_states);
-  for (int i = 0; i < Gamma.rows(); i++) {
-    check_simplex("hmm_marginal_lpdf", "Gamma[, i]", col(Gamma, i + 1));
+  {
+    // Temporary vector to use check_simplex, which only works once
+    // column vectors.
+    Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>
+      Gamma_transpose = Gamma.transpose();
+    for (int i = 0; i < Gamma.cols(); i++) {
+      // CHECK -- does check_simplex not work on row-vectors?
+      check_simplex("hmm_marginal_lpdf", "Gamma[i, ]",
+                    col(Gamma_transpose, i + 1));
+    }
   }
   check_consistent_size("hmm_marginal_lpdf", "rho", rho, n_states);
   check_simplex("hmm_marginal_lpdf", "rho", rho);
@@ -119,7 +129,7 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
     = std::exp(alpha_log_norms(n_transitions - 1) - norm_norm);
 
   for (int n = n_transitions - 2; n >= 0; --n) {
-    kappa[n] = Gamma_dbl.transpose()
+    kappa[n] = Gamma_dbl  // .transpose()
       * (omegas.col(n + 2).cwiseProduct(kappa[n + 1]));
 
     double norm = kappa[n].maxCoeff();
@@ -134,9 +144,12 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
     Gamma_jacad.setZero();
 
     for (int n = n_transitions - 1; n >= 0; --n) {
-      Gamma_jacad += grad_corr[n]
+      // Gamma_jacad += grad_corr[n]
+      //             * (kappa[n].cwiseProduct(omegas.col(n + 1))).transpose()
+      //             * alphas.col(n);
+      Gamma_jacad += (grad_corr[n]
                       * kappa[n].cwiseProduct(omegas.col(n + 1))
-                      * alphas.col(n).transpose();
+                      * alphas.col(n).transpose()).transpose();
     }
 
     Gamma_jacad /= unnormed_marginal;
@@ -155,12 +168,12 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
     if (!is_constant_all<T_omega>::value) {
       for (int n = n_transitions - 1; n >= 0; --n)
         log_omega_jacad.col(n + 1) = grad_corr[n]
-          * kappa[n].cwiseProduct(Gamma_dbl * alphas.col(n));
+          * kappa[n].cwiseProduct(Gamma_dbl.transpose() * alphas.col(n));
     }
 
     // Boundary terms
     double grad_corr_boundary = std::exp(kappa_log_norms(0) - norm_norm);
-    Eigen::VectorXd c = Gamma_dbl.transpose()
+    Eigen::VectorXd c = Gamma_dbl  // .transpose()
                          * omegas.col(1).cwiseProduct(kappa[0]);
 
     if (!is_constant_all<T_omega>::value) {

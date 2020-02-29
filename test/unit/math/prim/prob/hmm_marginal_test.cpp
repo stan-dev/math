@@ -24,6 +24,7 @@ double state_simu(double normal_variate, double abs_mu, double sigma,
   return x * abs_mu + sigma * normal_variate;
 }
 
+/*
 TEST(hmm_marginal_lpdf, two_state_preliminary) {
   // NOTE: This first test is exploratory, and will eventually be deleted.
   using stan::math::hmm_marginal_lpdf;
@@ -130,6 +131,7 @@ TEST(hmm_marginal_lpdf, two_state_preliminary) {
 
   // std::cout << "omegas_diff: " << omegas_diff << std::endl;
 }
+*/
 
 /**
  * Wrapper around hmm_marginal_density which passes rho and
@@ -146,17 +148,22 @@ hmm_marginal_test_wrapper (
     Gamma_unconstrained,
   const std::vector<T_rho>& rho_unconstrained) {
   using stan::math::sum;
-  using stan::math::col;
+  // using stan::math::col;
+  using stan::math::row;
   int n_states = log_omegas.rows();
 
   Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>
     Gamma(n_states, n_states);
-  for (int j = 0; j < n_states; j++) {
-    Gamma(n_states - 1, j) = 1 - sum(col(Gamma_unconstrained, j + 1));
-    for (int i = 0; i < n_states - 1; i++) {
+  for (int i = 0; i < n_states; i++) {
+    Gamma(i, n_states - 1) = 1 - sum(row(Gamma_unconstrained, i + 1));
+    // Gamma(n_states - 1, j) = 1 - sum(col(Gamma_unconstrained, j + 1));
+    for (int j = 0; j < n_states - 1; j++) {
       Gamma(i, j) = Gamma_unconstrained(i, j);
     }
   }
+
+  // std::cout << "Gamma: " << Gamma << std::endl;
+
   Eigen::Matrix<T_rho, Eigen::Dynamic, 1> rho(n_states);
   rho(1) = 1 - sum(rho_unconstrained);
   for (int i = 0; i < n_states - 1; i++) rho(i) = rho_unconstrained[i];
@@ -181,7 +188,8 @@ TEST(hmm_marginal_lpdf, two_state) {
   rho << p1_init, 1 - p1_init;
 
   Eigen::MatrixXd Gamma(n_states, n_states);
-  Gamma << gamma1, gamma2, 1 - gamma1, 1 - gamma2;
+  // Gamma << gamma1, gamma2, 1 - gamma1, 1 - gamma2;
+  Gamma << gamma1, 1 - gamma1, gamma2, 1 - gamma2;
 
   Eigen::VectorXd obs_data(n_transitions + 1);
   obs_data << -0.3315914, -0.1655340, -0.7984021, 0.2364608, -0.4489722,
@@ -229,8 +237,10 @@ TEST(hmm_marginal_lpdf, two_state) {
     rho_unconstrained[i] = rho(i);
 
   Eigen::MatrixXd
-    Gamma_unconstrained = Gamma.block(0, 0, n_states - 1, n_states);
+    Gamma_unconstrained = Gamma.block(0, 0, n_states, n_states - 1);
 
+  // std::cout << "Gamma unconstrained: " << Gamma_unconstrained
+  //           << std::endl;
 
   // Differentiation tests
   auto hmm_functor = [](const auto& log_omegas,
@@ -239,6 +249,9 @@ TEST(hmm_marginal_lpdf, two_state) {
     return hmm_marginal_test_wrapper(log_omegas, Gamma_unconstrained,
                                      rho_unconstrained);
   };
+
+  double density = hmm_marginal_test_wrapper(log_omegas,
+    Gamma_unconstrained, rho_unconstrained);
 
   stan::test::ad_tolerances tols;
 
@@ -258,6 +271,7 @@ TEST(hmm_marginal_lpdf, two_state) {
                         Gamma_unconstrained, rho_unconstrained);
 }
 
+/*
 TEST(hmm_marginal_lpdf, exceptions) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
@@ -329,4 +343,4 @@ TEST(hmm_marginal_lpdf, exceptions) {
     "  all arguments must be scalars or multidimensional values of"
     " the same shape."
   )
-}
+}  */
