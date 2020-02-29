@@ -75,6 +75,11 @@
 #include <stan/math/prim/prob/dirichlet_lpdf.hpp>
 #include <stan/math/prim/prob/dirichlet_lpmf.hpp>
 #include <stan/math/prim/prob/dirichlet_rng.hpp>
+#include <stan/math/prim/prob/discrete_range_ccdf_log.hpp>
+#include <stan/math/prim/prob/discrete_range_cdf.hpp>
+#include <stan/math/prim/prob/discrete_range_cdf_log.hpp>
+#include <stan/math/prim/prob/discrete_range_lccdf.hpp>
+#include <stan/math/prim/prob/discrete_range_lcdf.hpp>
 #include <stan/math/prim/prob/discrete_range_log.hpp>
 #include <stan/math/prim/prob/discrete_range_lpmf.hpp>
 #include <stan/math/prim/prob/discrete_range_rng.hpp>
