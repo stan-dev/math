@@ -9,180 +9,171 @@ namespace stan {
 namespace math {
 
 /**
- * Base class for complex numbers.  The template parameter `V` is the
- * value type.  This class is used like the curiously recursive
- * template pattern (CRTP) with derived type `complex<V>`.  Thus any
- * extending class must be of the form `complex<V>`.
+ * Base class for complex numbers.  Extending classes must be of
+ * of the form `complex<ValueType>`.
  *
- * @tparam V value type for extending complex class
+ * @tparam ValueType type of real and imaginary parts
  */
-template <typename Scalar>
+template <typename ValueType>
 class complex_base {
  public:
+  /**
+   * Type of real and imaginary parts
+   */
+  using value_type = ValueType;
+
+  /**
+   * Derived complex type used for function return types
+   */
+  using complex_type = std::complex<value_type>;
+
+  /**
+   * Construct a complex base with zero real and imaginary parts.
+   */
   constexpr complex_base() = default;
-  /**
-   * Type of real and imaginary parts.
-   */
-  using value_type = Scalar;
-
-  /**
-   * Derived complex type used for function return types.
-   */
-  using complex_type = std::complex<Scalar>;
-
-  /**
-   * Construct a complex base with the specified real and imaginary
-   * parts.
-   *
-   * @tparam U real type (must be assignable to `V`)
-   * @tparam V imaginary type (must be assignable to `V`)
-   * @param[in] re real part
-   * @param[in] im imaginary part (default 0)
-   */
-  template <typename U, typename V>
-  constexpr complex_base(const U& re, const V& im) : re_(re), im_(im) {}
 
   /**
    * Construct a complex base with the specified real part and a zero
    * imaginary part.
    *
-   * @tparam Scalar real type (must be assignable to `V`)
+   * @tparam U real type (assignable to `value_type`)
    * @param[in] re real part
    */
-  template <typename T, typename = require_stan_scalar_t<T>>
-  constexpr complex_base(const T& re) : re_(re) {}  // NOLINT(runtime/explicit)
+  template <typename U, typename = require_stan_scalar_t<U>>
+  constexpr complex_base(const U& re) : re_(re) {}  // NOLINT(runtime/explicit)
 
   /**
-   * Return a reference to thi class cast to the derived complex
-   * type.
+   * Construct a complex base with the specified real and imaginary
+   * parts.
    *
-   * @return reference to this class cast to the complex return type
+   * @tparam U real type (assignable to `value_type`)
+   * @tparam V imaginary type (assignable to `value_type`)
+   * @param[in] re real part
+   * @param[in] im imaginary part
    */
-  constexpr complex_type& derived() {
-    return static_cast<complex_type&>(*this);
-  }
-
-  /**
-   * Assign the specified value to the real part of this complex number
-   * and set imaginary part to zero.
-   *
-   * @tparam T type of value, which must be assignable to the complex
-   * value type
-   * @param[in] x value to assign
-   * @return this complex number
-   */
-  template <typename T, typename = require_stan_scalar_t<T>>
-  constexpr complex_type& operator=(T&& x) {
-    re_ = x;
-    im_ = 0;
-    return derived();
-  }
+  template <typename U, typename V>
+  constexpr complex_base(const U& re, const V& im) : re_(re), im_(im) {}
 
   /**
    * Return the real part.
    *
-   * @return the real part
+   * @return real part
    */
   constexpr value_type real() const { return re_; }
 
   /**
    * Set the real part to the specified value.
    *
-   * @param[in] x the value to set the real part to
+   * @param[in] re real part
    */
-  constexpr void real(const value_type& x) { re_ = x; }
+  constexpr void real(const value_type& re) { re_ = re; }
 
   /**
    * Return the imaginary part.
    *
-   * @return the imaginary part
+   * @return imaginary part
    */
   constexpr value_type imag() const { return im_; }
 
   /**
    * Set the imaginary part to the specified value.
    *
-   * @param[in] x the value to set the imaginary part to
+   * @param[in] im imaginary part
    */
-  constexpr void imag(const value_type& x) { im_ = x; }
+  constexpr void imag(const value_type& im) { im_ = im; }
 
   /**
-   * Adds other to this.
+   * Assign the specified value to the real part of this complex number
+   * and set imaginary part to zero.
    *
-   * @tparam X type of scalar argument (assignable to value type)
-   * @param[in] other a scalar value of matching type
-   * @return this complex number
+   * @tparam U argument type (assignable to `value_type`)
+   * @param[in] re real part
+   * @return this
    */
-  template <typename X>
-  constexpr complex_type& operator+=(const X& other) {
-    re_ += other;
+  template <typename U, typename = require_stan_scalar_t<U>>
+  constexpr complex_type& operator=(U&& re) {
+    re_ = re;
+    im_ = 0;
     return derived();
   }
 
   /**
-   * Adds other to this.
+   * Add specified real value to real part.
    *
-   * @tparam value type of complex argument (assignable to value type)
-   * @param[in] other a complex value of compatible type
-   * @return this complex number
+   * @tparam U argument type (assignable to `value_type`)
+   * @param[in] x real number to add
+   * @return this
    */
-  template <typename X>
-  constexpr complex_type& operator+=(const std::complex<X>& other) {
+  template <typename U>
+  constexpr complex_type& operator+=(const U& x) {
+    re_ += x;
+    return derived();
+  }
+
+  /**
+   * Adds specified complex number to this.
+   *
+   * @tparam U value type of argument (assignable to `value_type`)
+   * @param[in] other complex number to add
+   * @return this
+   */
+  template <typename U>
+  constexpr complex_type& operator+=(const std::complex<U>& other) {
     re_ += other.real();
     im_ += other.imag();
     return derived();
   }
 
   /**
-   * Subtracts other from this.
+   * Subtracts specified real number from real part.
    *
-   * @tparam X type of scalar argument (assignable to vlaue type)
-   * @param[in] other a scalar value of matching type
-   * @return this complex number
+   * @tparam U argument type (assignable to `value_type`)
+   * @param[in] x real number to subtract
+   * @return this
    */
-  template <typename X>
-  constexpr complex_type& operator-=(const X& other) {
-    re_ -= other;
+  template <typename U>
+  constexpr complex_type& operator-=(const U& x) {
+    re_ -= x;
     return derived();
   }
 
   /**
-   * Subtracts other from this.
+   * Subtracts specified complex number from this.
    *
-   * @tparam X value type of complex argument (assignable to value type)
-   * @param[in] other a complex value of compatible type
-   * @return this complex number
+   * @tparam U value type of argument (assignable to `value_type`)
+   * @param[in] other complex number to subtract
+   * @return this
    */
-  template <typename X>
-  constexpr complex_type& operator-=(const std::complex<X>& other) {
-    this->re_ -= other.real();
-    this->im_ -= other.imag();
+  template <typename U>
+  constexpr complex_type& operator-=(const std::complex<U>& other) {
+    re_ -= other.real();
+    im_ -= other.imag();
     return derived();
   }
 
   /**
-   * Multiplies this by other.
+   * Multiplies this by the specified real number.
    *
-   * @tparam X type of scalar argument (assignable to value type)
-   * @param[in] other a scalar value of matching type
-   * @return this complex number
+   * @tparam U type of argument (assignable to `value_type`)
+   * @param[in] x real number to multiply
+   * @return this
    */
-  template <typename X>
-  constexpr complex_type& operator*=(const X& other) {
-    re_ *= other;
-    im_ *= other;
+  template <typename U>
+  constexpr complex_type& operator*=(const U& x) {
+    re_ *= x;
+    im_ *= x;
     return derived();
   }
 
   /**
-   * Multiplies this by other.
+   * Multiplies this by specified complex number.
    *
-   * @tparam X value type of complex argument (assignable to value type)
-   * @param[in] other a complex value of compatible type
-   * @return this complex number
+   * @tparam U value type of argument (assignable to `value_type`)
+   * @param[in] other complex number to multiply
+   * @return this
    */
-  template <typename X>
-  constexpr complex_type& operator*=(const std::complex<X>& other) {
+  template <typename U>
+  constexpr complex_type& operator*=(const std::complex<U>& other) {
     value_type re_temp = re_ * other.real() - im_ * other.imag();
     im_ = re_ * other.imag() + other.real() * im_;
     re_ = re_temp;
@@ -190,28 +181,28 @@ class complex_base {
   }
 
   /**
-   * Divides this by other.
+   * Divides this by the specified real number.
    *
-   * @tparam X type of scalar argument (assignable to value type)
-   * @param[in] other a scalar value of matching type
-   * @return this complex number
+   * @tparam U type of argument (assignable to `value_type`)
+   * @param[in] x real number to divide by
+   * @return this
    */
-  template <typename X>
-  constexpr complex_type& operator/=(const X& other) {
-    re_ /= other;
-    im_ /= other;
+  template <typename U>
+  constexpr complex_type& operator/=(const U& x) {
+    re_ /= x;
+    im_ /= x;
     return derived();
   }
 
   /**
-   * Divides this by other.
+   * Divides this by the specified complex number.
    *
-   * @tparam X value type of complex argument (assignable to value type)
-   * @param[in] other a complex value of compatible type
-   * @return this complex number
+   * @tparam U value type of argument (assignable to `value_type`)
+   * @param[in] other number to divide by
+   * @return this
    */
-  template <typename X>
-  constexpr complex_type& operator/=(const std::complex<X>& other) {
+  template <typename U>
+  constexpr complex_type& operator/=(const std::complex<U>& other) {
     using stan::math::square;
     value_type sum_sq_im = square(other.real()) + square(other.imag());
     value_type re_temp = (re_ * other.real() + im_ * other.imag()) / sum_sq_im;
@@ -222,14 +213,23 @@ class complex_base {
 
  protected:
   /**
-   * Real part.
+   * Real part
    */
-  Scalar re_{0};
+  value_type re_{0};
 
   /**
-   * Imaginary part.
+   * Imaginary part
    */
-  Scalar im_{0};
+  value_type im_{0};
+
+  /**
+   * Return this complex base cast to the complex type.
+   *
+   * @return this complex base cast to the complex type
+   */
+  constexpr complex_type& derived() {
+    return static_cast<complex_type&>(*this);
+  }
 };
 
 }  // namespace math

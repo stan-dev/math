@@ -11,18 +11,33 @@ namespace std {
 /**
  * Specialization of the standard libary complex number type for
  * reverse-mode autodiff type `stan::math::fvar<T>`.
+ *
+ * @tparam T forward-mode autodiff value type
  */
 template <typename T>
 class complex<stan::math::fvar<T>>
     : public stan::math::complex_base<stan::math::fvar<T>> {
  public:
   using base_t = stan::math::complex_base<stan::math::fvar<T>>;
-  using value_type = stan::math::fvar<T>;
-  using complex_type = complex<value_type>;
 
-  constexpr complex() = default;
   /**
-   * Construct complex number from real and imaginary parts.
+   * Construct a complex number with zero real and imaginary parts.
+   */
+  constexpr complex() = default;
+
+  /**
+   * Construct a complex number with the specified real part and a zero
+   * imaginary part.
+   *
+   * @tparam Scalar real type (must be assignable to `value_type`)
+   * @param[in] re real part
+   */
+  template <typename U, typename = stan::require_stan_scalar_t<U>>
+  constexpr complex(U&& re) : base_t(re) {}  // NOLINT(runtime/explicit)
+
+  /**
+   * Construct a complex number from the specified real and imaginary
+   * parts.
    *
    * @tparam U type of real part
    * @tparam V type of imaginary part
@@ -33,17 +48,15 @@ class complex<stan::math::fvar<T>>
   constexpr complex(const U& re, const V& im) : base_t(re, im) {}
 
   /**
-   * Construct a complex base with the specified real part and a zero
-   * imaginary part.
+   * Set the real and imaginary parts to those of the specified
+   * complex number.
    *
-   * @tparam Scalar real type (must be assignable to `V`)
-   * @param[in] re real part
+   * @tparam U value type of argument
+   * @param[in] x complex number to set
+   * @return this
    */
-  template <typename Scalar, typename = stan::require_stan_scalar_t<T>>
-  constexpr complex(Scalar&& re) : base_t(re) {}  // NOLINT(runtime/explicit)
-
-  template <typename Scalar, typename = stan::require_arithmetic_t<Scalar>>
-  constexpr auto& operator=(const std::complex<Scalar>& x) {
+  template <typename U, typename = stan::require_arithmetic_t<U>>
+  constexpr auto& operator=(const std::complex<U>& x) {
     this->re_ = x.real();
     this->im_ = x.imag();
     return *this;
