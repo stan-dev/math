@@ -30,7 +30,7 @@ class complex_base {
   /**
    * Construct a complex base with zero real and imaginary parts.
    */
-  constexpr complex_base() = default;
+  complex_base() = default;
 
   /**
    * Construct a complex base with the specified real part and a zero
@@ -40,7 +40,7 @@ class complex_base {
    * @param[in] re real part
    */
   template <typename U, typename = require_stan_scalar_t<U>>
-  constexpr complex_base(const U& re) : re_(re) {}  // NOLINT(runtime/explicit)
+  complex_base(const U& re) : re_(re) {}  // NOLINT(runtime/explicit)
 
   /**
    * Construct a complex base with the specified real and imaginary
@@ -52,35 +52,35 @@ class complex_base {
    * @param[in] im imaginary part
    */
   template <typename U, typename V>
-  constexpr complex_base(const U& re, const V& im) : re_(re), im_(im) {}
+  complex_base(const U& re, const V& im) : re_(re), im_(im) {}
 
   /**
    * Return the real part.
    *
    * @return real part
    */
-  constexpr value_type real() const { return re_; }
+  value_type real() const { return re_; }
 
   /**
    * Set the real part to the specified value.
    *
    * @param[in] re real part
    */
-  constexpr void real(const value_type& re) { re_ = re; }
+  void real(const value_type& re) { re_ = re; }
 
   /**
    * Return the imaginary part.
    *
    * @return imaginary part
    */
-  constexpr value_type imag() const { return im_; }
+  value_type imag() const { return im_; }
 
   /**
    * Set the imaginary part to the specified value.
    *
    * @param[in] im imaginary part
    */
-  constexpr void imag(const value_type& im) { im_ = im; }
+  void imag(const value_type& im) { im_ = im; }
 
   /**
    * Assign the specified value to the real part of this complex number
@@ -91,7 +91,7 @@ class complex_base {
    * @return this
    */
   template <typename U, typename = require_stan_scalar_t<U>>
-  constexpr complex_type& operator=(U&& re) {
+  complex_type& operator=(U&& re) {
     re_ = re;
     im_ = 0;
     return derived();
@@ -105,7 +105,7 @@ class complex_base {
    * @return this
    */
   template <typename U>
-  constexpr complex_type& operator+=(const U& x) {
+  complex_type& operator+=(const U& x) {
     re_ += x;
     return derived();
   }
@@ -118,7 +118,7 @@ class complex_base {
    * @return this
    */
   template <typename U>
-  constexpr complex_type& operator+=(const std::complex<U>& other) {
+  complex_type& operator+=(const std::complex<U>& other) {
     re_ += other.real();
     im_ += other.imag();
     return derived();
@@ -132,7 +132,7 @@ class complex_base {
    * @return this
    */
   template <typename U>
-  constexpr complex_type& operator-=(const U& x) {
+  complex_type& operator-=(const U& x) {
     re_ -= x;
     return derived();
   }
@@ -145,7 +145,7 @@ class complex_base {
    * @return this
    */
   template <typename U>
-  constexpr complex_type& operator-=(const std::complex<U>& other) {
+  complex_type& operator-=(const std::complex<U>& other) {
     re_ -= other.real();
     im_ -= other.imag();
     return derived();
@@ -159,7 +159,7 @@ class complex_base {
    * @return this
    */
   template <typename U>
-  constexpr complex_type& operator*=(const U& x) {
+  complex_type& operator*=(const U& x) {
     re_ *= x;
     im_ *= x;
     return derived();
@@ -173,7 +173,7 @@ class complex_base {
    * @return this
    */
   template <typename U>
-  constexpr complex_type& operator*=(const std::complex<U>& other) {
+  complex_type& operator*=(const std::complex<U>& other) {
     value_type re_temp = re_ * other.real() - im_ * other.imag();
     im_ = re_ * other.imag() + other.real() * im_;
     re_ = re_temp;
@@ -188,7 +188,7 @@ class complex_base {
    * @return this
    */
   template <typename U>
-  constexpr complex_type& operator/=(const U& x) {
+  complex_type& operator/=(const U& x) {
     re_ /= x;
     im_ /= x;
     return derived();
@@ -202,7 +202,7 @@ class complex_base {
    * @return this
    */
   template <typename U>
-  constexpr complex_type& operator/=(const std::complex<U>& other) {
+  complex_type& operator/=(const std::complex<U>& other) {
     using stan::math::square;
     value_type sum_sq_im = square(other.real()) + square(other.imag());
     value_type re_temp = (re_ * other.real() + im_ * other.imag()) / sum_sq_im;
@@ -227,9 +227,7 @@ class complex_base {
    *
    * @return this complex base cast to the complex type
    */
-  constexpr complex_type& derived() {
-    return static_cast<complex_type&>(*this);
-  }
+  complex_type& derived() { return static_cast<complex_type&>(*this); }
 };
 
 }  // namespace math

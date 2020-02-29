@@ -22,7 +22,7 @@ class complex<stan::math::var>
   /**
    * Construct a complex number with zero real and imaginary parts.
    */
-  constexpr complex() = default;
+  complex() = default;
 
   /**
    * Construct a complex number from real and imaginary parts.
@@ -33,7 +33,7 @@ class complex<stan::math::var>
    * @param[in] im imaginary part
    */
   template <typename U, typename V>
-  constexpr complex(const U& re, const V& im) : base_t(re, im) {}
+  complex(const U& re, const V& im) : base_t(re, im) {}
 
   /**
    * Construct a complex number with specified real part and zero
@@ -43,7 +43,7 @@ class complex<stan::math::var>
    * @param[in] re real part
    */
   template <typename U, typename = stan::require_stan_scalar_t<U>>
-  constexpr complex(U&& re) : base_t(re) {}
+  complex(U&& re) : base_t(re) {}
 
   /**
    * Set the real and imaginary components of this complex number to
@@ -54,7 +54,7 @@ class complex<stan::math::var>
    * @return this
    */
   template <typename U, typename = stan::require_arithmetic_t<U>>
-  constexpr auto& operator=(const std::complex<U>& x) {
+  auto& operator=(const std::complex<U>& x) {
     re_ = x.real();
     im_ = x.imag();
     return *this;
