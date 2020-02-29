@@ -11,9 +11,9 @@
 //  (ii) normal(-mu, sigma)
 double state_lpdf(double y, double abs_mu, double sigma, int state) {
   int x  = (-2 * state + 1);
-  double chi =  (y + x * abs_mu) / sigma;
+  double chi =  (y - x * abs_mu) / sigma;
   return - 0.5 * chi * chi
-         - 0.5 * std::log(283185307179586)
+         - 0.5 * std::log(6.283185307179586)
          - std::log(sigma);
 }
 
@@ -164,7 +164,6 @@ hmm_marginal_test_wrapper (
   return stan::math::hmm_marginal_lpdf(log_omegas, Gamma, rho);
  }
 
-
 TEST(hmm_marginal_lpdf, two_state) {
   using stan::math::hmm_marginal_lpdf;
   using stan::math::var;
@@ -185,25 +184,27 @@ TEST(hmm_marginal_lpdf, two_state) {
   Gamma << gamma1, gamma2, 1 - gamma1, 1 - gamma2;
 
   Eigen::VectorXd obs_data(n_transitions + 1);
+  obs_data << -0.3315914, -0.1655340, -0.7984021, 0.2364608, -0.4489722,
+    2.1831438, -1.4778675, 0.8717423, -1.0370874, 0.1370296, 1.9786208;
 
-  boost::random::mt19937 prng(1954);
-  boost::random::discrete_distribution<> cat_init{rho[0], rho[1]};
-  boost::random::discrete_distribution<>
-    cat_zero{Gamma.col(0)[0], Gamma.col(0)[1]};
-  boost::random::discrete_distribution<>
-    cat_one{Gamma.col(1)[0], Gamma.col(1)[1]};
-
-  boost::random::normal_distribution<> unit_normal(0, 1);
-
-  int state = cat_init(prng);
-  obs_data[0] = state_simu(unit_normal(prng), abs_mu, sigma, state);
-
-  for (int n = 0; n < n_transitions; n++) {
-    if (state == 0) state = cat_zero(prng);
-    else state = cat_one(prng);
-
-    obs_data[n + 1] = state_simu(unit_normal(prng), abs_mu, sigma, state);
-  }
+  // boost::random::mt19937 prng(1954);
+  // boost::random::discrete_distribution<> cat_init{rho[0], rho[1]};
+  // boost::random::discrete_distribution<>
+  //   cat_zero{Gamma.col(0)[0], Gamma.col(0)[1]};
+  // boost::random::discrete_distribution<>
+  //   cat_one{Gamma.col(1)[0], Gamma.col(1)[1]};
+  //
+  // boost::random::normal_distribution<> unit_normal(0, 1);
+  //
+  // int state = cat_init(prng);
+  // obs_data[0] = state_simu(unit_normal(prng), abs_mu, sigma, state);
+  //
+  // for (int n = 0; n < n_transitions; n++) {
+  //   if (state == 0) state = cat_zero(prng);
+  //   else state = cat_one(prng);
+  //
+  //   obs_data[n + 1] = state_simu(unit_normal(prng), abs_mu, sigma, state);
+  // }
 
   // Compute observational densities
   Eigen::MatrixXd log_omegas(n_states, n_transitions + 1);
@@ -211,6 +212,13 @@ TEST(hmm_marginal_lpdf, two_state) {
     log_omegas.col(n)[0] = state_lpdf(obs_data[n], abs_mu, sigma, 0);
     log_omegas.col(n)[1] = state_lpdf(obs_data[n], abs_mu, sigma, 1);
   }
+
+  // CHECK -- EXPECT_EQ returns an error -- not sure why.
+  EXPECT_FLOAT_EQ(-18.37417, hmm_marginal_lpdf(log_omegas, Gamma, rho));
+
+  // std::cout << "density: "
+  //           << hmm_marginal_lpdf(log_omegas, Gamma, rho)
+  //           << std::endl;
 
   // Construct "uncontrained" versions of rho and Gamma, without
   // the final element which can be determnied using the fact
@@ -223,6 +231,8 @@ TEST(hmm_marginal_lpdf, two_state) {
   Eigen::MatrixXd
     Gamma_unconstrained = Gamma.block(0, 0, n_states - 1, n_states);
 
+
+  // Differentiation tests
   auto hmm_functor = [](const auto& log_omegas,
                         const auto& Gamma_unconstrained,
                         const auto& rho_unconstrained) {
