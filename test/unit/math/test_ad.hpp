@@ -1701,6 +1701,7 @@ auto ldlt_factor(const Eigen::Matrix<T, -1, -1>& x) {
   return ldlt_x;
 }
 
+
 }  // namespace test
 }  // namespace stan
 #endif

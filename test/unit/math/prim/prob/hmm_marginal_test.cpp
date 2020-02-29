@@ -271,7 +271,6 @@ TEST(hmm_marginal_lpdf, two_state) {
                         Gamma_unconstrained, rho_unconstrained);
 }
 
-/*
 TEST(hmm_marginal_lpdf, exceptions) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
@@ -289,7 +288,7 @@ TEST(hmm_marginal_lpdf, exceptions) {
 
   rho(0) = 0.65;
   rho(1) = 0.35;
-  Gamma << 0.8, 0.6, 0.2, 0.4;
+  Gamma << 0.8, 0.2, 0.6, 0.4;
 
   // Gamma is not square.
   MatrixXd Gamma_rec(n_states, n_states + 1);
@@ -305,8 +304,8 @@ TEST(hmm_marginal_lpdf, exceptions) {
   EXPECT_THROW_MSG(
     hmm_marginal_lpdf(log_omegas, Gamma_bad, rho),
     std::domain_error,
-    "hmm_marginal_lpdf: Gamma[, i] is not a valid simplex. "
-    "sum(Gamma[, i]) = 2, but should be 1"
+    "hmm_marginal_lpdf: Gamma[i, ] is not a valid simplex. "
+    "sum(Gamma[i, ]) = 2, but should be 1"
   )
 
   // The size of Gamma is inconsistent with that of log_omega
@@ -343,4 +342,4 @@ TEST(hmm_marginal_lpdf, exceptions) {
     "  all arguments must be scalars or multidimensional values of"
     " the same shape."
   )
-}  */
+}
