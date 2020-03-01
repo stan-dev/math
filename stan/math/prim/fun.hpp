@@ -115,6 +115,7 @@
 #include <stan/math/prim/fun/identity_constrain.hpp>
 #include <stan/math/prim/fun/identity_free.hpp>
 #include <stan/math/prim/fun/identity_matrix.hpp>
+#include <stan/math/prim/fun/i_times.hpp>
 #include <stan/math/prim/fun/if_else.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
 #include <stan/math/prim/fun/initialize.hpp>

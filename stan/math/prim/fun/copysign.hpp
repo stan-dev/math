@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_COPYSIGN_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <complex>
 
 namespace stan {
 namespace math {
