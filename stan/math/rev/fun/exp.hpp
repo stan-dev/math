@@ -4,6 +4,7 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -39,6 +40,10 @@ class exp_vari : public op_v_vari {
  * @return Exponentiated variable.
  */
 inline var exp(const var& a) { return var(new internal::exp_vari(a.vi_)); }
+
+// inline std::complex<var> exp(const std::complex<var>& z) {
+//   return complex_exp(z);
+// }
 
 }  // namespace math
 }  // namespace stan

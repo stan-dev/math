@@ -1721,6 +1721,67 @@ auto ldlt_factor(const Eigen::Matrix<T, -1, -1>& x) {
   return ldlt_x;
 }
 
+/**
+ * Return the
+ */
+std::vector<double> common_complex_parts() {
+  double inf = std::numeric_limits<double>::infinity();
+  double nan = std::numeric_limits<double>::quiet_NaN();
+  return {-4, -2.5, -1.5, -0.3, -0.0, 0.0, 1.3, 2.1, 3.9};
+}
+
+std::vector<std::complex<double>> common_complex() {
+  std::vector<std::complex<double>> zs;
+  for (double re : common_complex_parts())
+    for (double im : common_complex_parts())
+      zs.emplace_back(re, im);
+  return zs;
+}
+
+template <typename F>
+void expect_complex_common(const F& f) {
+  auto zs = common_complex();
+  for (auto z : zs) {
+    expect_ad(f, z);
+  }
+}
+
+template <typename F>
+void expect_complex_common_binary(const F& f) {
+  auto zs = common_complex();
+  for (auto z1 : zs) {
+    for (auto z2 : zs) {
+      test_ad(f, z1, z2);
+    }
+  }
+}
+
+// template <typename F>
+// void expect_reduction(const F& f) {
+//   cvar_t x(1, 2);
+//   var_t y = f(x);
+
+//   cdouble_t xd(1, 2);
+//   double yd = f(xd);
+//   EXPECT_FLOAT_EQ(yd, y.val());
+// }
+
+// std::vector<double> common_complex_non_neg_parts() {
+//   double inf = std::numeric_limits<double>::infinity();
+//   double nan = std::numeric_limits<double>::quiet_NaN();
+//   double pos_zero = 0.0;
+//   return {0.0, 1.3, 2.1};
+// }
+
+// template <typename T>
+// std::vector<T> to_array(const std::complex<T>& a) {
+//   return {a.real(), a.imag()};
+// }
+// template <typename T>
+// std::complex<T> from_array(const std::vector<T>& a) {
+//   return {a[0], a[1]};
+// }
+
 }  // namespace test
 }  // namespace stan
 #endif
