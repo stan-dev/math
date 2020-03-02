@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/prim/fun/dot_self.hpp>
 #include <stan/math/fwd/fun/typedefs.hpp>
-#include <stan/math/fwd/fun/dot_self.hpp>
 
 namespace stan {
 namespace math {

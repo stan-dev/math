@@ -21,14 +21,11 @@ inline double dot_self(const std::vector<double>& x) {
 /**
  * Returns the dot product of the specified vector with itself.
  *
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam T type of the vector.
  * @param v Vector.
- * @throw std::domain_error If v is not vector dimensioned.
  */
-template <int R, int C>
-inline double dot_self(const Eigen::Matrix<double, R, C>& v) {
-  check_vector("dot_self", "v", v);
+template <typename T, require_eigen_vector_t<T>* = nullptr, require_not_eigen_vt<is_var,T>* = nullptr>
+inline value_type_t<T> dot_self(const T& v) {
   return v.squaredNorm();
 }
 

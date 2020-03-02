@@ -21,8 +21,6 @@
 #include <stan/math/fwd/fun/cosh.hpp>
 #include <stan/math/fwd/fun/determinant.hpp>
 #include <stan/math/fwd/fun/digamma.hpp>
-#include <stan/math/fwd/fun/divide.hpp>
-#include <stan/math/fwd/fun/dot_self.hpp>
 #include <stan/math/fwd/fun/Eigen_NumTraits.hpp>
 #include <stan/math/fwd/fun/erf.hpp>
 #include <stan/math/fwd/fun/erfc.hpp>
