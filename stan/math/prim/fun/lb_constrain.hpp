@@ -47,15 +47,16 @@ inline return_type_t<T, L> lb_constrain(const T& x, const L& lb) {
  * If the lower bound is negative infinity, this function
  * reduces to <code>identity_constraint(x, lp)</code>.
  *
- * @tparam T type of scalar.
- * @tparam L type of lower bound.
+ * @tparam T type of scalar
+ * @tparam L type of lower bound
+ * @tparam S type of log probability
  * @param[in] x unconstrained scalar input
  * @param[in] lb lower bound on output
- * @param[in,out] lp Reference to log probability to increment.
+ * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L>
-inline return_type_t<T, L> lb_constrain(const T& x, const L& lb, T& lp) {
+template <typename T, typename L, typename S>
+inline return_type_t<T, L> lb_constrain(const T& x, const L& lb, S& lp) {
   using std::exp;
   if (lb == NEGATIVE_INFTY) {
     return identity_constrain(x, lp);

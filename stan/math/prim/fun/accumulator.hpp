@@ -73,15 +73,14 @@ class accumulator {
    * Add each entry in the specified matrix, vector, or row vector
    * of values to the buffer.
    *
-   * @tparam S type of values in matrix
-   * @tparam R number of rows, can be Eigen::Dynamic
-   * @tparam C number of columns, can be Eigen::Dynamic
+   * @tparam S type of the matrix
    * @param m Matrix of values to add
    */
-  template <typename S, int R, int C>
-  void add(const Eigen::Matrix<S, R, C>& m) {
+  template <typename S, require_eigen_t<S>* = nullptr>
+  void add(const S& m) {
+    const auto& m_eval = m.eval();
     for (int i = 0; i < m.size(); ++i) {
-      this->add(m(i));
+      this->add(m_eval.coeff(i));
     }
   }
 
