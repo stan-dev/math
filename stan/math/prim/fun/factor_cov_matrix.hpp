@@ -25,7 +25,7 @@ template <typename T_Sigma, typename T_CPCs, typename T_sds,
           require_eigen_t<T_Sigma>* = nullptr,
           require_all_eigen_vector_t<T_CPCs, T_sds>* = nullptr,
           require_all_same_vt<T_Sigma, T_CPCs, T_sds>* = nullptr>
-bool factor_cov_matrix(const T_Sigma& Sigma, T_CPCs& CPCs, T_sds& sds) {
+bool factor_cov_matrix(const T_Sigma& Sigma, T_CPCs&& CPCs, T_sds&& sds) {
   using T_scalar = value_type_t<T_Sigma>;
   size_t K = sds.rows();
   const Eigen::Ref<const plain_type_t<T_Sigma>>& Sigma_ref = Sigma;

@@ -22,7 +22,7 @@ namespace math {
 template <typename T_U, typename T_CPCs, require_eigen_t<T_U>* = nullptr,
           require_eigen_vector_t<T_CPCs>* = nullptr,
           require_same_vt<T_U, T_CPCs>* = nullptr>
-void factor_U(const T_U& U, T_CPCs& CPCs) {
+void factor_U(const T_U& U, T_CPCs&& CPCs) {
   size_t K = U.rows();
   size_t position = 0;
   size_t pull = K - 1;
