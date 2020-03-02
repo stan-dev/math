@@ -38,14 +38,8 @@ template <typename T_y, typename T_shape, typename T_inv_scale>
 return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(const T_y& y,
                                                    const T_shape& alpha,
                                                    const T_inv_scale& beta) {
-  if (size_zero(y, alpha, beta)) {
-    return 1.0;
-  }
   using T_partials_return = partials_return_t<T_y, T_shape, T_inv_scale>;
   static const char* function = "gamma_cdf";
-
-  T_partials_return P(1.0);
-
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Inverse scale parameter", beta);
   check_not_nan(function, "Random variable", y);
@@ -53,14 +47,21 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(const T_y& y,
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Inverse scale parameter", beta);
 
+  if (size_zero(y, alpha, beta)) {
+    return 1.0;
+  }
+
+  using std::exp;
+  using std::pow;
+  T_partials_return P(1.0);
+  operands_and_partials<T_y, T_shape, T_inv_scale> ops_partials(y, alpha, beta);
+
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   scalar_seq_view<T_inv_scale> beta_vec(beta);
   size_t size_y = stan::math::size(y);
   size_t size_alpha = stan::math::size(alpha);
   size_t N = max_size(y, alpha, beta);
-
-  operands_and_partials<T_y, T_shape, T_inv_scale> ops_partials(y, alpha, beta);
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
@@ -70,15 +71,11 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(const T_y& y,
     }
   }
 
-  using std::exp;
-  using std::pow;
-
   VectorBuilder<!is_constant_all<T_y, T_shape, T_inv_scale>::value,
                 T_partials_return, T_shape>
       tgamma_vec(size_alpha);
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       digamma_vec(size_alpha);
-
   if (!is_constant_all<T_y, T_shape, T_inv_scale>::value) {
     for (size_t i = 0; i < size_alpha; i++) {
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
@@ -100,14 +97,12 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(const T_y& y,
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
     const T_partials_return beta_dbl = value_of(beta_vec[n]);
     const T_partials_return beta_y = beta_dbl * y_dbl;
-
     const T_partials_return Pn = gamma_p(alpha_dbl, beta_y);
     const T_partials_return rep_deriv = is_constant_all<T_y, T_inv_scale>::value
                                             ? 0
                                             : exp(-beta_y)
                                                   * pow(beta_y, alpha_dbl - 1)
                                                   / (tgamma_vec[n] * Pn);
-
     P *= Pn;
 
     if (!is_constant_all<T_y>::value) {

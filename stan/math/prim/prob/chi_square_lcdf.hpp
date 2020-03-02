@@ -34,27 +34,28 @@ namespace math {
  */
 template <typename T_y, typename T_dof>
 return_type_t<T_y, T_dof> chi_square_lcdf(const T_y& y, const T_dof& nu) {
-  static const char* function = "chi_square_lcdf";
   using T_partials_return = partials_return_t<T_y, T_dof>;
-
-  T_partials_return cdf_log(0.0);
-
-  if (size_zero(y, nu)) {
-    return cdf_log;
-  }
-
+  static const char* function = "chi_square_lcdf";
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu);
 
+  if (size_zero(y, nu)) {
+    return 0.0;
+  }
+
+  using std::exp;
+  using std::log;
+  using std::pow;
+  T_partials_return cdf_log(0.0);
+  operands_and_partials<T_y, T_dof> ops_partials(y, nu);
+
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_dof> nu_vec(nu);
   size_t size_nu = stan::math::size(nu);
   size_t N = max_size(y, nu);
-
-  operands_and_partials<T_y, T_dof> ops_partials(y, nu);
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
@@ -67,10 +68,6 @@ return_type_t<T_y, T_dof> chi_square_lcdf(const T_y& y, const T_dof& nu) {
       return ops_partials.build(0.0);
     }
   }
-
-  using std::exp;
-  using std::log;
-  using std::pow;
 
   VectorBuilder<true, T_partials_return, T_dof> half_nu(size_nu);
   VectorBuilder<!is_constant_all<T_y, T_dof>::value, T_partials_return, T_dof>

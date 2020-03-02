@@ -18,8 +18,8 @@ namespace math {
  * alpha and beta can each be a scalar or a one-dimensional container. Any
  * non-scalar inputs must be the same size.
  *
- * @tparam T_shape Type of shape parameter
- * @tparam T_scale Type of scale parameter
+ * @tparam T_shape type of shape parameter
+ * @tparam T_scale type of scale parameter
  * @tparam RNG type of random number generator
  * @param alpha (Sequence of) positive shape parameter(s)
  * @param beta (Sequence of) positive scale parameter(s)
@@ -35,7 +35,6 @@ inv_gamma_rng(const T_shape& alpha, const T_scale& beta, RNG& rng) {
   using boost::random::gamma_distribution;
   using boost::variate_generator;
   static const char* function = "inv_gamma_rng";
-
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Scale parameter", beta);
   check_consistent_sizes(function, "Shape parameter", alpha, "Scale Parameter",
