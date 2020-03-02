@@ -1,8 +1,6 @@
 #ifndef STAN_MATH_PRIM_CORE_OPERATOR_SUBTRACTION_HPP
 #define STAN_MATH_PRIM_CORE_OPERATOR_SUBTRACTION_HPP
 
-#include <stan/math/mix.hpp>
-#include <stan/math/prim/meta.hpp>
 #include <complex>
 
 namespace stan {
