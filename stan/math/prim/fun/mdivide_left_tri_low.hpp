@@ -15,12 +15,8 @@ namespace math {
  * <code>b</code> is more arithmetically stable than calling
  * <code>inv(A) * b</code>.
  *
- * @tparam T1 type of elements in the divisor matrix
- * @tparam T2 type of elements in the dividend matrix
- * @tparam R1 number rows in the divisor matrix, can be Eigen::Dynamic
- * @tparam C1 number columns in the divisor matrix, can be Eigen::Dynamic
- * @tparam R2 number rows in the dividend matrix, can be Eigen::Dynamic
- * @tparam C2 number columns in the dividend matrix, can be Eigen::Dynamic
+ * @tparam T1 type of the divisor matrix
+ * @tparam T2 type of the dividend matrix
  *
  * @param A divisor, an invertible square matrix
  * @param b dividend, a matrix or vector with the same number of
@@ -30,9 +26,11 @@ namespace math {
  *   the dividend does not have the same number of rows as the
  *   divisor has columns.
  */
-template <typename T1, typename T2, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_left_tri_low(
-    const Eigen::Matrix<T1, R1, C1> &A, const Eigen::Matrix<T2, R2, C2> &b) {
+template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
+          require_all_not_eigen_vt<is_fvar, T1, T2>* = nullptr>
+inline Eigen::Matrix<return_type_t<T1, T2>, T1::RowsAtCompileTime,
+                     T2::ColsAtCompileTime>
+mdivide_left_tri_low(const T1& A, const T2& b) {
   check_square("mdivide_left_tri_low", "A", A);
   check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);
   if (A.rows() == 0) {
@@ -42,9 +40,9 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_left_tri_low(
   return mdivide_left_tri<Eigen::Lower>(A, b);
 }
 
-template <typename T, int R1, int C1>
-inline Eigen::Matrix<T, R1, C1> mdivide_left_tri_low(
-    const Eigen::Matrix<T, R1, C1> &A) {
+template <typename T, require_eigen_t<T>* = nullptr,
+          require_not_eigen_vt<is_fvar, T>* = nullptr>
+inline plain_type_t<T> mdivide_left_tri_low(const T& A) {
   check_square("mdivide_left_tri_low", "A", A);
   if (A.rows() == 0) {
     return {};

@@ -16,14 +16,8 @@ namespace math {
  *
  * @tparam TriView Specifies whether A is upper (Eigen::Upper)
  * or lower triangular (Eigen::Lower).
- * @tparam T1 type of elements in the triangular matrix
- * @tparam T2 type of elements in the right-hand side matrix or vector
- * @tparam R1 number of rows in the triangular matrix, can be Eigen::Dynamic
- * @tparam C1 number of columns in the triangular matrix, can be Eigen::Dynamic
- * @tparam R2 number of rows in the right-hand side matrix, can be
- *         Eigen::Dynamic
- * @tparam C2 number of columns in the right-hand side matrix, can be
- *         Eigen::Dynamic
+ * @tparam T1 type of the triangular matrix
+ * @tparam T2 type of the right-hand side matrix or vector
  *
  * @param A Triangular matrix.
  * @param b Right hand side matrix or vector.
@@ -31,42 +25,45 @@ namespace math {
  * @throws std::domain_error if A is not square or the rows of b don't
  * match the size of A.
  */
-template <int TriView, typename T1, typename T2, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_left_tri(
-    const Eigen::Matrix<T1, R1, C1> &A, const Eigen::Matrix<T2, R2, C2> &b) {
+template <Eigen::UpLoType TriView, typename T1, typename T2,
+          require_all_eigen_t<T1, T2> * = nullptr,
+          require_any_not_same_vt<double, T1, T2> * = nullptr,
+          require_all_not_eigen_vt<is_var, T1, T2> * = nullptr>
+inline Eigen::Matrix<return_type_t<T1, T2>, T1::RowsAtCompileTime,
+                     T2::ColsAtCompileTime>
+mdivide_left_tri(const T1 &A, const T2 &b) {
+  using T_return = return_type_t<T1, T2>;
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "b", b);
   if (A.rows() == 0) {
     return {0, b.cols()};
   }
 
-  return Eigen::Matrix<return_type_t<T1, T2>, R1, C1>(A)
+  return A.template cast<T_return>()
+      .eval()
       .template triangularView<TriView>()
-      .solve(Eigen::Matrix<return_type_t<T1, T2>, R2, C2>(b));
+      .solve(b.template cast<T_return>().eval());
 }
 
 /**
  * Returns the solution of the system Ax=b when A is triangular and b=I.
  *
- * @tparam T type of elements in the matrix
- * @tparam R1 number of rows, can be Eigen::Dynamic
- * @tparam C1 number of columns, can be Eigen::Dynamic
+ * @tparam T type of the matrix
  *
  * @param A Triangular matrix.
  * @return x = A^-1 .
  * @throws std::domain_error if A is not square
  */
-template <int TriView, typename T, int R1, int C1>
-inline Eigen::Matrix<T, R1, C1> mdivide_left_tri(
-    const Eigen::Matrix<T, R1, C1> &A) {
+template <Eigen::UpLoType TriView, typename T, require_eigen_t<T> * = nullptr,
+          require_not_same_vt<double, T> * = nullptr>
+inline plain_type_t<T> mdivide_left_tri(const T &A) {
   check_square("mdivide_left_tri", "A", A);
   if (A.rows() == 0) {
     return {};
   }
 
   int n = A.rows();
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> b;
-  b.setIdentity(n, n);
+  plain_type_t<T> b = plain_type_t<T>::Identity(n, n);
   A.template triangularView<TriView>().solveInPlace(b);
   return b;
 }
@@ -77,12 +74,8 @@ inline Eigen::Matrix<T, R1, C1> mdivide_left_tri(
  *
  * @tparam TriView Specifies whether A is upper (Eigen::Upper)
  * or lower triangular (Eigen::Lower).
- * @tparam T1 type of elements in the triangular matrix
- * @tparam T2 type of elements in the right-hand side matrix or vector
- * @tparam R1 number of rows in the triangular matrix, can be Eigen::Dynamic
- * @tparam C1 number of columns in the triangular matrix, can be Eigen::Dynamic
- * @tparam R2 number of rows in the right-hand side matrix, can be
- *         Eigen::Dynamic
+ * @tparam T1 type of the triangular matrix
+ * @tparam T2 type of the right-hand side matrix or vector
  *
  * @param A Triangular matrix.
  * @param b Right hand side matrix or vector.
@@ -90,10 +83,11 @@ inline Eigen::Matrix<T, R1, C1> mdivide_left_tri(
  * @throws std::domain_error if A is not square or the rows of b don't
  * match the size of A.
  */
-template <Eigen::UpLoType TriView, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<double, R1, C2> mdivide_left_tri(
-    const Eigen::Matrix<double, R1, C1> &A,
-    const Eigen::Matrix<double, R2, C2> &b) {
+template <Eigen::UpLoType TriView, typename T1, typename T2,
+          require_all_eigen_t<T1, T2> * = nullptr,
+          require_all_same_vt<double, T1, T2> * = nullptr>
+inline Eigen::Matrix<double, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
+mdivide_left_tri(const T1 &A, const T2 &b) {
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "b", b);
   if (A.rows() == 0) {
@@ -122,16 +116,15 @@ inline Eigen::Matrix<double, R1, C2> mdivide_left_tri(
  *
  * @tparam TriView Specifies whether A is upper (Eigen::Upper)
  * or lower triangular (Eigen::Lower).
- * @tparam R1 number of rows, can be Eigen::Dynamic
- * @tparam C1 number of columns, can be Eigen::Dynamic
+ * @tparam T type of the matrix
  *
  * @param A Triangular matrix.
  * @return x = A^-1 .
  * @throws std::domain_error if A is not square
  */
-template <Eigen::UpLoType TriView, int R1, int C1>
-inline Eigen::Matrix<double, R1, C1> mdivide_left_tri(
-    const Eigen::Matrix<double, R1, C1> &A) {
+template <Eigen::UpLoType TriView, typename T, require_eigen_t<T> * = nullptr,
+          require_same_vt<double, T> * = nullptr>
+inline plain_type_t<T> mdivide_left_tri(const T &A) {
   check_square("mdivide_left_tri", "A", A);
   if (A.rows() == 0) {
     return {};
@@ -146,8 +139,7 @@ inline Eigen::Matrix<double, R1, C1> mdivide_left_tri(
     return from_matrix_cl(A_cl);
   } else {
 #endif
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> b;
-    b.setIdentity(n, n);
+    plain_type_t<T> b = plain_type_t<T>::Identity(n, n);
     A.template triangularView<TriView>().solveInPlace(b);
     return b;
 #ifdef STAN_OPENCL
