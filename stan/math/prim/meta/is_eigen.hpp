@@ -18,11 +18,11 @@ namespace internal {
  * Underlying implimenation to check if a type is derived from EigenBase
  */
 template <typename T>
-struct is_eigen_base{
+struct is_eigen_base {
   static std::false_type f(...);
-  template<typename Derived>
+  template <typename Derived>
   static std::true_type f(const Eigen::EigenBase<Derived>&);
-  enum{ value = decltype(f(std::declval<T>()))::value};
+  enum { value = decltype(f(std::declval<T>()))::value };
 };
 
 }  // namespace internal

@@ -27,7 +27,7 @@ TEST(MathMetaPrim, primitive) {
 
   EXPECT_TRUE((is_eigen<decltype(a * b)>::value));
   EXPECT_TRUE((is_eigen<decltype(a * b + a.transpose())>::value));
-  EXPECT_TRUE((is_eigen<decltype(c.segment(0,1))>::value));
+  EXPECT_TRUE((is_eigen<decltype(c.segment(0, 1))>::value));
 }
 
 TEST(MathMetaPrim, expression) {
