@@ -404,8 +404,7 @@ class results_cl {
   /**
    * Implementation of assignments of no expressions to no results
    */
-  template <>
-  static void assignment_impl<>(const std::tuple<>& /*results*/,
+  static void assignment_impl(const std::tuple<>& /*results*/,
                                 const std::tuple<>& /*expressions*/) {}
 };
 
