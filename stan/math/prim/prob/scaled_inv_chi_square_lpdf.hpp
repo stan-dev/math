@@ -104,8 +104,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
     }
   }
 
-  VectorBuilder<true, T_partials_return, T_y, T_scale>
-      s2_over_y(size_y_s);
+  VectorBuilder<true, T_partials_return, T_y, T_scale> s2_over_y(size_y_s);
   for (size_t i = 0; i < size_y_s; i++) {
     s2_over_y[i] = square(value_of(s_vec[i])) * inv_y[i];
   }
