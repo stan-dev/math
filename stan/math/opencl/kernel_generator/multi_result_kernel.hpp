@@ -405,7 +405,7 @@ class results_cl {
    * Implementation of assignments of no expressions to no results
    */
   static void assignment_impl(const std::tuple<>& /*results*/,
-                                const std::tuple<>& /*expressions*/) {}
+                              const std::tuple<>& /*expressions*/) {}
 };
 
 /**
