@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
+#include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -64,6 +65,8 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lcdf(const T_y& y,
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);
   scalar_seq_view<T_prec> kappa_vec(kappa);
+  size_t size_kappa = stan::math::size(kappa);
+  size_t size_mu_kappa = max_size(mu, kappa);
   size_t N = max_size(y, mu, kappa);
 
   operands_and_partials<T_y, T_loc, T_prec> ops_partials(y, mu, kappa);
@@ -74,26 +77,22 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lcdf(const T_y& y,
 
   VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials_return,
                 T_loc, T_prec>
-      digamma_mukappa(max_size(mu, kappa));
+      digamma_mukappa(size_mu_kappa);
   VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials_return,
                 T_loc, T_prec>
-      digamma_kappa_mukappa(max_size(mu, kappa));
+      digamma_kappa_mukappa(size_mu_kappa);
   VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials_return,
                 T_prec>
-      digamma_kappa(size(kappa));
+      digamma_kappa(size_kappa);
 
   if (!is_constant_all<T_loc, T_prec>::value) {
-    for (size_t i = 0; i < max_size(mu, kappa); i++) {
-      const T_partials_return mukappa_dbl
-          = value_of(mu_vec[i]) * value_of(kappa_vec[i]);
-      const T_partials_return kappa_mukappa_dbl
-          = value_of(kappa_vec[i]) - mukappa_dbl;
-
+    for (size_t i = 0; i < size_mu_kappa; i++) {
+      const T_partials_return kappa_dbl = value_of(kappa_vec[i]);
+      const T_partials_return mukappa_dbl = value_of(mu_vec[i]) * kappa_dbl;
       digamma_mukappa[i] = digamma(mukappa_dbl);
-      digamma_kappa_mukappa[i] = digamma(kappa_mukappa_dbl);
+      digamma_kappa_mukappa[i] = digamma(kappa_dbl - mukappa_dbl);
     }
-
-    for (size_t i = 0; i < stan::math::size(kappa); i++) {
+    for (size_t i = 0; i < size_kappa; i++) {
       digamma_kappa[i] = digamma(value_of(kappa_vec[i]));
     }
   }
@@ -110,10 +109,13 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lcdf(const T_y& y,
 
     cdf_log += log(Pn);
 
+    const T_partials_return inv_Pn
+        = is_constant_all<T_y, T_loc, T_prec>::value ? 0 : inv(Pn);
+
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += pow(1 - y_dbl, kappa_mukappa_dbl - 1)
-                                          * pow(y_dbl, mukappa_dbl - 1)
-                                          / betafunc_dbl / Pn;
+                                          * pow(y_dbl, mukappa_dbl - 1) * inv_Pn
+                                          / betafunc_dbl;
     }
 
     T_partials_return g1 = 0;
@@ -125,11 +127,11 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lcdf(const T_y& y,
                         digamma_kappa[n], betafunc_dbl);
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n] += kappa_dbl * (g1 - g2) / Pn;
+      ops_partials.edge2_.partials_[n] += kappa_dbl * (g1 - g2) * inv_Pn;
     }
     if (!is_constant_all<T_prec>::value) {
       ops_partials.edge3_.partials_[n]
-          += (g1 * mu_dbl + g2 * (1 - mu_dbl)) / Pn;
+          += (g1 * mu_dbl + g2 * (1 - mu_dbl)) * inv_Pn;
     }
   }
 
