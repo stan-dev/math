@@ -28,7 +28,8 @@ tcrossprod(const T& M) {
   }
   Eigen::Matrix<value_type_t<T>, T::RowsAtCompileTime, T::RowsAtCompileTime>
       result(M.rows(), M.rows());
-  return result.setZero().template selfadjointView<Eigen::Upper>().rankUpdate(M);
+  return result.setZero().template selfadjointView<Eigen::Upper>().rankUpdate(
+      M);
 }
 
 }  // namespace math

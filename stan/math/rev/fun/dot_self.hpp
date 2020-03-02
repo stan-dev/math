@@ -19,7 +19,9 @@ class dot_self_vari : public vari {
 
  public:
   dot_self_vari(vari** v, size_t size)
-      : vari(Eigen::Map<vector_vi>(v, size).val().squaredNorm()), v_(v), size_(size) {}
+      : vari(Eigen::Map<vector_vi>(v, size).val().squaredNorm()),
+        v_(v),
+        size_(size) {}
   template <typename T, require_eigen_t<T>* = nullptr>
   explicit dot_self_vari(const T& v)
       : vari(v.val().squaredNorm()), size_(v.size()) {
@@ -37,11 +39,12 @@ class dot_self_vari : public vari {
 /**
  * Returns the dot product of a vector of var with itself.
  *
- * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and have one compile time dimension equal to 1)
+ * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
+ * have one compile time dimension equal to 1)
  * @param[in] v Vector.
  * @return Dot product of the vector with itself.
  */
-template <typename T, require_eigen_vector_vt<is_var,T>* = nullptr>
+template <typename T, require_eigen_vector_vt<is_var, T>* = nullptr>
 inline var dot_self(const T& v) {
   const Eigen::Ref<const plain_type_t<T>>& v_ref = v;
   return var(new internal::dot_self_vari(v_ref));

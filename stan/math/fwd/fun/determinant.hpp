@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-template <typename T, require_eigen_vt<is_fvar,T>* = nullptr>
+template <typename T, require_eigen_vt<is_fvar, T>* = nullptr>
 inline value_type_t<T> determinant(const T& m) {
   check_square("determinant", "m", m);
 
