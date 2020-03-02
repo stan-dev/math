@@ -1721,9 +1721,6 @@ auto ldlt_factor(const Eigen::Matrix<T, -1, -1>& x) {
   return ldlt_x;
 }
 
-/**
- * Return the
- */
 std::vector<double> common_complex_parts() {
   double inf = std::numeric_limits<double>::infinity();
   double nan = std::numeric_limits<double>::quiet_NaN();
@@ -1752,6 +1749,46 @@ void expect_complex_common_binary(const F& f) {
   for (auto z1 : zs) {
     for (auto z2 : zs) {
       expect_ad(f, z1, z2);
+    }
+  }
+}
+
+template <typename T, typename F>
+void expect_complex_compare(const F& f, const std::complex<double>& z1,
+                            const std::complex<double>& z2) {
+  using c_t = std::complex<T>;
+  EXPECT_EQ(f(z1, z2), f(c_t(z1), z2));
+  EXPECT_EQ(f(z1, z2), f(z1, c_t(z2)));
+  EXPECT_EQ(f(z1, z2), f(c_t(z1), c_t(z2)));
+
+  EXPECT_EQ(f(z1.real(), z2), f(T(z1.real()), z2));
+  EXPECT_EQ(f(z1.real(), z2), f(z1.real(), c_t(z2)));
+  EXPECT_EQ(f(z1.real(), z2), f(T(z1.real()), c_t(z2)));
+
+  EXPECT_EQ(f(z1, z2.real()), f(c_t(z1), z2.real()));
+  EXPECT_EQ(f(z1, z2.real()), f(z1, T(z2.real())));
+  EXPECT_EQ(f(z1, z2.real()), f(c_t(z1), T(z2.real())));
+}
+
+template <typename F>
+void expect_complex_comparison(const F& f, const std::complex<double>& z1,
+                               const std::complex<double>& z2) {
+  using stan::math::fvar;
+  using stan::math::var;
+  using std::complex;
+  expect_complex_compare<double>(f, z1, z2);
+  expect_complex_compare<var>(f, z1, z2);
+  // expect_complex_compare<complex<fvar<double>>>(f, z1, z2);
+  // expect_complex_compare<complex<fvar<fvar<double>>>>(f, z1, z2);
+  // expect_complex_compare<complex<fvar<var>>>(f, z1, z2);
+  // expect_complex_compare<complex<fvar<fvar<var>>>>(f, z1, z2);
+}
+
+template <typename F>
+void expect_complex_common_comparison(const F& f) {
+  for (auto z1 : common_complex()) {
+    for (auto z2 : common_complex()) {
+      expect_complex_comparison(f, z1, z2);
     }
   }
 }
