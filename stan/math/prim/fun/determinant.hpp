@@ -11,7 +11,7 @@ namespace math {
 /**
  * Returns the determinant of the specified square matrix.
  *
- * @tparam T type of the matrix
+ * @tparam T type of the matrix (must be derived from \c Eigen::MatrixBase)
  *
  * @param m Specified matrix.
  * @return Determinant of the matrix.

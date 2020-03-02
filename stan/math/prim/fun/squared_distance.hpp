@@ -30,8 +30,8 @@ inline return_type_t<T1, T2> squared_distance(const T1& x1, const T2& x2) {
  * Returns the squared distance between the specified vectors
  * of the same dimensions.
  *
- * @tparam T1 type of the first vector
- * @tparam T2 type of the second vector
+ * @tparam T1 type of the first vector (must be derived from \c Eigen::MatrixBase and have one compile time dimension equal to 1)
+ * @tparam T2 type of the second vector (must be derived from \c Eigen::MatrixBase and have one compile time dimension equal to 1)
  * @param v1 First vector.
  * @param v2 Second vector.
  * @return Squared distance between vectors.

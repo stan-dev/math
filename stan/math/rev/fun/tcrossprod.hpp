@@ -17,8 +17,7 @@ namespace math {
  * Returns the result of post-multiplying a matrix by its
  * own transpose.
  *
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam T Type of the matrix (must be derived from \c Eigen::MatrixBase)
  * @param M Matrix to multiply.
  * @return M times its transpose.
  */

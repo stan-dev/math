@@ -38,7 +38,8 @@ inline std::vector<T> cumulative_sum(const std::vector<T>& x) {
  *
  * \code x(0), x(1) + x(2), ..., x(1) + , ..., + x(x.size()-1) @endcode
  *
- * @tparam T type of elements in the vector
+ * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
+ * have one compile time dimension equal to 1)
  *
  * @param m Vector of values.
  * @return Cumulative sum of values.
@@ -48,8 +49,8 @@ inline Eigen::Matrix<value_type_t<T>, T::RowsAtCompileTime,
                      T::ColsAtCompileTime>
 cumulative_sum(const T& m) {
   using T_scalar = value_type_t<T>;
-  Eigen::Matrix<T_scalar, T::RowsAtCompileTime, T::ColsAtCompileTime>
-      result(m.rows(), m.cols());
+  Eigen::Matrix<T_scalar, T::RowsAtCompileTime, T::ColsAtCompileTime> result(
+      m.rows(), m.cols());
   if (m.size() == 0) {
     return result;
   }
