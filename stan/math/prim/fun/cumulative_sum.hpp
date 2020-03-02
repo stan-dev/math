@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_CUMULATIVE_SUM_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <vector>
 #include <numeric>
 #include <functional>
