@@ -1751,7 +1751,7 @@ void expect_complex_common_binary(const F& f) {
   auto zs = common_complex();
   for (auto z1 : zs) {
     for (auto z2 : zs) {
-      test_ad(f, z1, z2);
+      expect_ad(f, z1, z2);
     }
   }
 }
