@@ -1,6 +1,7 @@
 #include <test/unit/math/util.hpp>
 #include <test/unit/math/serializer.hpp>
 #include <gtest/gtest.h>
+#include <complex>
 #include <vector>
 
 TEST(testUnitMathSerializer, serializer_deserializer) {
@@ -8,6 +9,9 @@ TEST(testUnitMathSerializer, serializer_deserializer) {
 
   s.write(3.2);
   s.write(-1);
+
+  s.write(std::complex<double>(-1.5, 15.75));
+
   s.write(std::vector<double>{10, 20, 30});
 
   Eigen::VectorXd a(2);
@@ -22,8 +26,8 @@ TEST(testUnitMathSerializer, serializer_deserializer) {
   c << 1, 2, 3, 4, 5, 6;  // << is row major; index order is col major
   s.write(c);
 
-  std::vector<double> expected{3.2, -1,  10, 20, 30, -10, -20, 101,
-                               102, 103, 1,  3,  5,  2,   4,   6};
+  std::vector<double> expected{3.2, -1,  -1.5, 15.75, 10, 20, 30, -10, -20,
+                               101, 102, 103,  1,     3,  5,  2,  4,   6};
   for (size_t i = 0; i < expected.size(); ++i)
     EXPECT_EQ(expected[i], s.vals_[i]);
 
@@ -31,6 +35,9 @@ TEST(testUnitMathSerializer, serializer_deserializer) {
 
   EXPECT_EQ(3.2, d.read(0.0));
   EXPECT_EQ(-1, d.read(0.0));
+  std::complex<double> w = d.read(std::complex<double>(1, 1));
+  EXPECT_EQ(-1.5, w.real());
+  EXPECT_EQ(15.75, w.imag());
   std::vector<double> x = d.read(std::vector<double>{0, 0, 0});
   EXPECT_EQ(10, x[0]);
   EXPECT_EQ(20, x[1]);
@@ -56,12 +63,13 @@ TEST(testUnitMathSerializer, serialize) {
   EXPECT_EQ(0, xs.size());
 
   double a = 2;
-  std::vector<double> b{3, 4, 5};
-  Eigen::MatrixXd c(2, 3);
-  c << -1, -2, -3, -4, -5, -6;
-  std::vector<double> ys = stan::test::serialize<double>(a, b, c);
+  std::complex<double> b(1, 2);
+  std::vector<double> c{3, 4, 5};
+  Eigen::MatrixXd d(2, 3);
+  d << -1, -2, -3, -4, -5, -6;
+  std::vector<double> ys = stan::test::serialize<double>(a, b, c, d);
 
-  std::vector<double> expected{2, 3, 4, 5, -1, -4, -2, -5, -3, -6};
+  std::vector<double> expected{2, 1, 2, 3, 4, 5, -1, -4, -2, -5, -3, -6};
   for (size_t i = 0; i < expected.size(); ++i)
     EXPECT_EQ(expected[i], ys[i]);
 }
