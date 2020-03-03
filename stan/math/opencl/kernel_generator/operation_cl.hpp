@@ -126,7 +126,7 @@ class operation_cl : public operation_cl_base {
     static std::string source;  // kernel source - not used anywhere. Only
                                 // intended for debugging.
     static cl::Kernel kernel;   // cached kernel - different for every
-                                // combination of template instantination of \c
+                                // combination of template instantiation of \c
                                 // operation and every \c T_lhs
   };
 

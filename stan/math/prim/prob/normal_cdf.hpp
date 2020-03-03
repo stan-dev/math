@@ -28,7 +28,7 @@ namespace math {
  * @return The unit normal cdf evaluated at the specified arguments.
  * @tparam T_y Type of y.
  * @tparam T_loc Type of mean parameter.
- * @tparam T_scale Type of standard deviation paramater.
+ * @tparam T_scale Type of standard deviation parameter.
  */
 template <typename T_y, typename T_loc, typename T_scale>
 inline return_type_t<T_y, T_loc, T_scale> normal_cdf(const T_y& y,

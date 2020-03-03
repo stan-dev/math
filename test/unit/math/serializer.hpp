@@ -12,7 +12,7 @@ namespace test {
 /**
  * A class to store a sequence of values which can be deserialized
  * back into structured objects such as scalars, vectors, and
- * matrixes.
+ * matrices.
  *
  * @tparam T type of scalars
  */
@@ -106,7 +106,7 @@ struct deserializer {
 };
 
 /**
- * A structure to serialize structures to an internall stored sequence
+ * A structure to serialize structures to an internal stored sequence
  * of scalars.
  *
  * @tparam T underlying scalar type

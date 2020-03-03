@@ -26,7 +26,7 @@ namespace math {
  * gamma function.
  *
  * The lower incomplete gamma function
- * derivative w.r.t it's first parameter (a) seems to have no
+ * derivative w.r.t its first parameter (a) seems to have no
  * standard source.  It also appears to have no widely known
  * approximate implementation.  Gautschi (1979) has a thorough
  * discussion of the calculation of the lower regularized

@@ -46,7 +46,7 @@ inline var variance(const std::vector<var>& v) {
   return internal::calc_variance(v.size(), &v[0]);
 }
 
-/*
+/**
  * Return the sample variance of the specified vector, row vector,
  * or matrix.  Raise domain error if size is not greater than
  * zero.

@@ -14,7 +14,7 @@ template <typename T, typename = void>
 struct is_eigen : std::false_type {};
 
 namespace internal {
-/*
+/**
  * Underlying implementation to check if a type is derived from EigenBase
  */
 template <typename T>
@@ -33,7 +33,7 @@ struct is_eigen_base<Eigen::EigenBase<T>> : std::true_type {};
 
 }  // namespace internal
 
-/*
+/**
  * Checks whether type T is derived from EigenBase. If true this will have a
  * static member function named value with a type of true, else value is false.
  */

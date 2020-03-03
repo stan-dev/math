@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-/*
+/**
  * The implementation of the work by Awad H. Al-Mohy and Nicholas J. Higham
  * "Computing the Action of the Matrix Exponential,
  * with an Application to Exponential Integrators"
@@ -35,7 +35,8 @@ class matrix_exp_action_handler {
   }
 
  public:
-  /* Perform the matrix exponential action exp(A*t)*B
+  /**
+   * Perform the matrix exponential action exp(A*t)*B
    * @param [in] mat matrix A
    * @param [in] b matrix B
    * @param [in] t double t, e.g. time.
@@ -85,7 +86,8 @@ class matrix_exp_action_handler {
     return res;
   }
 
-  /* Approximation is based on parameter "m" and "s",
+  /**
+   * Approximation is based on parameter "m" and "s",
    * proposed in CODE FRAGMENT 3.1 of the reference. The
    * parameters depend on matrix A, as well as limits
    * "m_max" & "p_max", defined in table 3.1 and eq. 3.11,

@@ -58,7 +58,7 @@ struct KinsolFixedPointEnv {
   /** NVECTOR for scaling f */
   N_Vector nv_f_scal_;
 
-  /* Constructor when @y is data */
+  /** Constructor when y is data */
   template <typename T, typename T_u, typename T_f>
   KinsolFixedPointEnv(const F& f, const Eigen::Matrix<T, -1, 1>& x,
                       const Eigen::VectorXd& y, const std::vector<double>& x_r,
@@ -84,7 +84,7 @@ struct KinsolFixedPointEnv {
     }
   }
 
-  /* Constructor when @y is param */
+  /** Constructor when y is param */
   template <typename T, typename T_u, typename T_f>
   KinsolFixedPointEnv(const F& f, const Eigen::Matrix<T, -1, 1>& x,
                       const Eigen::Matrix<stan::math::var, -1, 1>& y,
@@ -118,7 +118,7 @@ struct KinsolFixedPointEnv {
     KINFree(&mem_);
   }
 
-  /* Implements the user-defined function passed to KINSOL. */
+  /** Implements the user-defined function passed to KINSOL. */
   static int kinsol_f_system(N_Vector x, N_Vector f, void* user_data) {
     auto g = static_cast<const KinsolFixedPointEnv<F>*>(user_data);
     Eigen::VectorXd x_eigen(Eigen::Map<Eigen::VectorXd>(NV_DATA_S(x), g->N_));
@@ -128,7 +128,7 @@ struct KinsolFixedPointEnv {
   }
 };
 
-/*
+/**
  * Calculate Jacobian Jxy(Jacobian of unknown x w.r.t. the * param y)
  * given the solution. Specifically, for
  *
@@ -146,7 +146,7 @@ struct KinsolFixedPointEnv {
  * w.r.t combined vector [x, y].
  */
 struct FixedPointADJac {
-  /*
+  /**
    * Calculate Jacobian Jxy.
    *
    * @tparam F RHS functor type
@@ -193,7 +193,7 @@ struct FixedPointADJac {
   }
 };
 
-/*
+/**
  * Fixed point solver for problem of form
  *
  * x = F(x; theta)
@@ -215,7 +215,7 @@ struct FixedPointADJac {
 template <typename fp_env_type, typename fp_jac_type>
 struct FixedPointSolver;
 
-/*
+/**
  * Specialization for fixed point solver when using KINSOL.
  *
  * @tparam F RHS functor for fixed point iteration.
@@ -223,7 +223,7 @@ struct FixedPointSolver;
  */
 template <typename F, typename fp_jac_type>
 struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
-  /*
+  /**
    * Solve FP using KINSOL
    *
    * @param x initial point and final solution.
@@ -257,7 +257,7 @@ struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
     }
   }
 
-  /*
+  /**
    * Solve data-only FP problem so no need to calculate jacobian.
    *
    * @tparam T1 type of init point of iterations
@@ -278,7 +278,7 @@ struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
     return xd;
   }
 
-  /*
+  /**
    * Solve FP problem and calculate jacobian.
    *
    * @tparam T1 type of init point of iterations

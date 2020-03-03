@@ -17,7 +17,7 @@ namespace math {
  * mu can be either an Eigen::VectorXd, an Eigen::RowVectorXd, or a
  * std::vector of either of those types.
  *
- * @tparam T_loc Type of location paramater
+ * @tparam T_loc Type of location parameter
  * @tparam RNG Type of pseudo-random number generator
  * @param mu (Sequence of) location parameter(s)
  * @param S Precision matrix
