@@ -13,7 +13,7 @@ namespace stan {
 
 
 /**
- * Check if a type satisfied either of @c is_eigen_matrix or @c is_eigen_array
+ * Check if a type satisfies either of @c is_eigen_matrix or @c is_eigen_array
  */
 template <typename T>
 using is_eigen_matrix_or_array

@@ -3,10 +3,10 @@
 #include <Eigen/Sparse>
 #include <gtest/gtest.h>
 
-TEST(MathMetaPrim, eigen_dense_tests) {
+TEST(MathMetaPrim, eigen_matrix_or_array_tests) {
   using stan::math::var;
   using stan::math::fvar;
-  using stan::is_eigen_dense;
+  using stan::is_eigen_matrix_or_array;
   using stan::test::internal::eigen_mat;
   using stan::test::internal::eigen_arr;
   /**
@@ -18,8 +18,8 @@ TEST(MathMetaPrim, eigen_dense_tests) {
    * eigen_base_v, eigen_sparse_compressed_v, eigen_sparse_matrix_v,
    * eigen_sparse_map_v
    */
-   test_all_eigen_dense_matrix<false, true, true, true, true, is_eigen_dense>();
-   test_all_eigen_dense_array<false, true, true, true, true, is_eigen_dense>();
-   test_all_eigen_dense_decomp<true, is_eigen_dense>();
-   test_all_eigen_sparse<false, false, false, false, is_eigen_dense>();
+   test_all_eigen_dense_matrix<false, true, true, true, true, is_eigen_matrix_or_array>();
+   test_all_eigen_dense_array<false, true, true, true, true, is_eigen_matrix_or_array>();
+   test_all_eigen_dense_decomp<true, is_eigen_matrix_or_array>();
+   test_all_eigen_sparse<false, false, false, false, is_eigen_matrix_or_array>();
 }

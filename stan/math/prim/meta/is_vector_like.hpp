@@ -31,7 +31,7 @@ using operator_bracket_t = decltype(std::declval<T>()[int{}]);
  */
 template <typename T>
 struct is_vector_like
-    : bool_constant<is_detected<T, internal::operator_bracket_t>::value> {};
+    : bool_constant<is_detected<std::decay_t<T>, internal::operator_bracket_t>::value> {};
 
 }  // namespace stan
 #endif

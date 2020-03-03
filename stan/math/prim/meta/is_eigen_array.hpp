@@ -16,14 +16,11 @@ namespace stan {
 
   template <typename T>
   struct is_eigen_array<T,
-   std::enable_if_t<std::is_base_of<Eigen::ArrayBase<typename std::decay_t<std::decay_t<T>>::PlainObject>, typename std::decay_t<std::decay_t<T>>::PlainObject>::value>> : std::true_type {};
+   std::enable_if_t<std::is_base_of<Eigen::ArrayBase<typename std::decay_t<T>::PlainObject>, typename std::decay_t<T>::PlainObject>::value>> : std::true_type {};
 
   template <typename T>
   struct is_eigen_array<T,
-  std::enable_if_t<std::is_base_of<Eigen::ArrayBase<typename std::decay_t<std::decay_t<T>>::MatrixType>, typename std::decay_t<std::decay_t<T>>::MatrixType>::value>> : std::true_type {};
-
-  template <typename T>
-  struct is_eigen_array<Eigen::ArrayBase<T>, void>: std::true_type {};
+  std::enable_if_t<std::is_base_of<Eigen::ArrayBase<typename std::decay_t<T>::MatrixType>, typename std::decay_t<T>::MatrixType>::value>> : std::true_type {};
 
 }  // namespace stan
 
