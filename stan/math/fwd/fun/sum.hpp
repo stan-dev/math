@@ -45,7 +45,7 @@ inline value_type_t<T> sum(const T& m) {
     return 0.0;
   }
   const Eigen::Ref<const plain_type_t<T>>& m_ref = m;
-  return value_type_t<T>(sum(m_ref.matrix().val()), sum(m_ref.matrix().d()));
+  return value_type_t<T>(sum(m_ref.val()), sum(m_ref.d()));
 }
 
 }  // namespace math
