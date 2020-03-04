@@ -48,6 +48,7 @@
 #include <stan/math/rev/core/set_zero_all_adjoints.hpp>
 #include <stan/math/rev/core/set_zero_all_adjoints_nested.hpp>
 #include <stan/math/rev/core/start_nested.hpp>
+#include <stan/math/rev/core/std_complex.hpp>
 #include <stan/math/rev/core/std_isinf.hpp>
 #include <stan/math/rev/core/std_isnan.hpp>
 #include <stan/math/rev/core/std_numeric_limits.hpp>
