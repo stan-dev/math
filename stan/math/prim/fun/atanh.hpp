@@ -49,7 +49,7 @@ inline double atanh(int x) {
  */
 struct atanh_fun {
   /**
-   * Return the inverse hypberbolic tangent of the specified argument.
+   * Return the inverse hyperbolic tangent of the specified argument.
    *
    * @tparam T type of argument
    * @param x argument

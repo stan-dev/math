@@ -125,10 +125,9 @@ inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
   if (ub == INFTY) {
     return lb_constrain(x, lb, lp);
   }
-  T inv_logit_x;
+  T inv_logit_x = inv_logit(x);
   if (x > 0) {
     T exp_minus_x = exp(-x);
-    inv_logit_x = inv_logit(x);
     lp += log(ub - lb) - x - 2 * log1p(exp_minus_x);
     // Prevent x from reaching one unless it really really should.
     if (x < INFTY && inv_logit_x == 1) {
@@ -136,7 +135,6 @@ inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
     }
   } else {
     T exp_x = exp(x);
-    inv_logit_x = inv_logit(x);
     lp += log(ub - lb) + x - 2 * log1p(exp_x);
     // Prevent x from reaching zero unless it really really should.
     if (x > NEGATIVE_INFTY && inv_logit_x == 0) {

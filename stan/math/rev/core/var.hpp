@@ -438,7 +438,7 @@ class var {
    * that the result is an assignable lvalue.
    *
    * @param b The scalar to multiply this variable by.
-   * @return The result of multplying this variable by the specified
+   * @return The result of multiplying this variable by the specified
    * variable.
    */
   template <typename Arith, require_arithmetic_t<Arith>...>

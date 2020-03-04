@@ -20,7 +20,7 @@ inline double inv_sqrt(double x) {
  *
  * @tparam T type of variable
  * @param x variable
- * @return 1 / sqrt of x.
+ * @return inverse square root of x.
  */
 struct inv_sqrt_fun {
   template <typename T>
@@ -34,7 +34,7 @@ struct inv_sqrt_fun {
  *
  * @tparam T type of container
  * @param x container
- * @return 1 / sqrt of each value in x.
+ * @return inverse square root of each value in x.
  */
 template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
 inline auto inv_sqrt(const T& x) {
@@ -46,7 +46,7 @@ inline auto inv_sqrt(const T& x) {
  *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
- * @return Arc cosine of each variable in the container, in radians.
+ * @return inverse square root of each value in x.
  */
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
@@ -59,7 +59,7 @@ inline auto inv_sqrt(const Eigen::MatrixBase<Derived>& x) {
  *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
- * @return Arc cosine of each variable in the container, in radians.
+ * @return inverse square root of each value in x.
  */
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>

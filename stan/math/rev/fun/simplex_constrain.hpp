@@ -53,7 +53,7 @@ class simplex_constrain_op {
     return x;
   }
 
-  /*
+  /**
    * Compute the result of multiply the transpose of the adjoint vector times
    * the Jacobian of the simplex_constrain operator.
    *

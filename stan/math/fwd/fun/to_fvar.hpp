@@ -10,31 +10,21 @@
 namespace stan {
 namespace math {
 
-template <typename T>
+template <typename T, require_stan_scalar_t<T>* = nullptr,
+          require_not_fvar_t<T>* = nullptr>
 inline fvar<T> to_fvar(const T& x) {
   return fvar<T>(x);
 }
 
 /**
- * Specialization of to_fvar for const fvars
+ * Specialization of to_fvar for [containers of] fvars
  *
  * @param[in,out] x A forward automatic differentation variables.
  * @return The input forward automatic differentiation variables.
  */
-template <typename T>
-inline const fvar<T>& to_fvar(const fvar<T>& x) {
-  return x;
-}
-
-/**
- * Specialization of to_fvar for non-const fvars
- *
- * @param[in,out] x A forward automatic differentation variables.
- * @return The input forward automatic differentiation variables.
- */
-template <typename T>
-inline fvar<T>& to_fvar(fvar<T>& x) {
-  return x;
+template <typename T, require_fvar_t<scalar_type_t<T>>* = nullptr>
+inline T&& to_fvar(T&& x) {
+  return std::forward<T>(x);
 }
 
 template <typename T>
@@ -56,81 +46,23 @@ inline std::vector<fvar<T>> to_fvar(const std::vector<T>& v,
   return x;
 }
 
-/**
- * Specialization of to_fvar for const fvar input
- *
- * @tparam T inner type of the fvar
- * @param[in,out] v A vector of forward automatic differentiation variable.
- * @return The input vector of forward automatic differentiation variable.
- */
-template <typename T>
-inline const std::vector<fvar<T>>& to_fvar(const std::vector<fvar<T>>& v) {
-  return v;
-}
-
-/**
- * Specialization of to_fvar for non-const fvar input
- *
- * @tparam T inner type of the fvar
- * @param[in,out] v A vector of forward automatic differentiation variable.
- * @return The input vector of forward automatic differentiation variable.
- */
-template <typename T>
-inline std::vector<fvar<T>>& to_fvar(std::vector<fvar<T>>& v) {
-  return v;
-}
-
-/**
- * Specialization of to_fvar for const matrices of fvars
- *
- * @tparam T type of elements in the matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
- *
- * @param[in,out] m A matrix of forward automatic differentation variables.
- * @return The input matrix of forward automatic differentiation variables.
- */
-template <typename T, int R, int C>
-inline const Eigen::Matrix<T, R, C>& to_fvar(const Eigen::Matrix<T, R, C>& m) {
-  return m;
-}
-
-/**
- * Specialization of to_fvar for non-const matrices of fvars
- *
- * @tparam T type of elements in the matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
- *
- * @param[in,out] m A matrix of forward automatic differentation variables.
- * @return The input matrix of forward automatic differentiation variables.
- */
-template <typename T, int R, int C>
-inline Eigen::Matrix<T, R, C>& to_fvar(Eigen::Matrix<T, R, C>& m) {
-  return m;
-}
-
-template <int R, int C>
-inline Eigen::Matrix<fvar<double>, R, C> to_fvar(
-    const Eigen::Matrix<double, R, C>& m) {
-  Eigen::Matrix<fvar<double>, R, C> m_fd(m.rows(), m.cols());
-  for (int i = 0; i < m.size(); ++i) {
-    m_fd(i) = m(i);
-  }
+template <typename T, require_eigen_t<T>* = nullptr,
+          require_not_eigen_vt<is_fvar, T>* = nullptr>
+inline promote_scalar_t<fvar<value_type_t<T>>, T> to_fvar(const T& m) {
+  promote_scalar_t<fvar<value_type_t<T>>, T> m_fd(m.rows(), m.cols());
+  m_fd.val() = m;
+  m_fd.d() = plain_type_t<T>::Constant(m.rows(), m.cols(), 0);
   return m_fd;
 }
 
-template <typename T, int R, int C>
-inline Eigen::Matrix<fvar<T>, R, C> to_fvar(
-    const Eigen::Matrix<T, R, C>& val, const Eigen::Matrix<T, R, C>& deriv) {
+template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
+          require_same_vt<T1, T2>* = nullptr>
+inline promote_scalar_t<fvar<value_type_t<T1>>, T1> to_fvar(const T1& val,
+                                                            const T2& deriv) {
   check_matching_dims("to_fvar", "value", val, "deriv", deriv);
-  Eigen::Matrix<fvar<T>, R, C> ret(val.rows(), val.cols());
-  for (int j = 0; j < val.cols(); j++) {
-    for (int i = 0; i < val.rows(); i++) {
-      ret(i, j).val_ = val(i, j);
-      ret(i, j).d_ = deriv(i, j);
-    }
-  }
+  promote_scalar_t<fvar<value_type_t<T1>>, T1> ret(val.rows(), val.cols());
+  ret.val() = val;
+  ret.d() = deriv;
   return ret;
 }
 

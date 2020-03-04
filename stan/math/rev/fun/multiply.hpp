@@ -545,11 +545,8 @@ class multiply_mat_vari<Ta, 1, Ca, double, 1> : public vari {
 /**
  * Return the product of two matrices.
  *
- * @tparam Ta type of elements in matrix A
- * @tparam Ra number of rows in matrix A, can be Eigen::Dynamic
- * @tparam Ca number of columns in matrix A and rows in matrix B
- * @tparam Tb type of elements in matrix B
- * @tparam Cb number of columns in matrix B, can be Eigen::Dynamic
+ * @tparam Mat1 type of first matrix
+ * @tparam Mat2 type of second matrix
  *
  * @param[in] A Matrix
  * @param[in] B Matrix

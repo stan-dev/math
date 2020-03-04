@@ -40,7 +40,7 @@ inline auto log10(const T& x) {
  *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
- * @return Arc cosine of each variable in the container, in radians.
+ * @return Log base-10 applied to each value in x.
  */
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>

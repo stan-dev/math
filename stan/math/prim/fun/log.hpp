@@ -54,7 +54,7 @@ inline auto log(const T& x) {
  *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
- * @return Arc cosine of each variable in the container, in radians.
+ * @return Elementwise application of natural log to the argument.
  */
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
