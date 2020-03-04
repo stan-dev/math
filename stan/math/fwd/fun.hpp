@@ -5,6 +5,7 @@
 #include <stan/math/fwd/fun/acos.hpp>
 #include <stan/math/fwd/fun/acosh.hpp>
 #include <stan/math/fwd/fun/asin.hpp>
+#include <stan/math/fwd/fun/arg.hpp>
 #include <stan/math/fwd/fun/asinh.hpp>
 #include <stan/math/fwd/fun/atan.hpp>
 #include <stan/math/fwd/fun/atan2.hpp>

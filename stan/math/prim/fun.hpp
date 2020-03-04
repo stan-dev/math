@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/append_array.hpp>
 #include <stan/math/prim/fun/append_col.hpp>
 #include <stan/math/prim/fun/append_row.hpp>
+#include <stan/math/prim/fun/arg.hpp>
 #include <stan/math/prim/fun/array_builder.hpp>
 #include <stan/math/prim/fun/as_bool.hpp>
 #include <stan/math/prim/fun/asin.hpp>

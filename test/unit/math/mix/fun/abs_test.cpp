@@ -1,5 +1,6 @@
-#include <iostream>
 #include <test/unit/math/test_ad.hpp>
+#include <complex>
+#include <vector>
 
 TEST(mixScalFun, abs) {
   auto f = [](const auto& x) { return abs(x); };
