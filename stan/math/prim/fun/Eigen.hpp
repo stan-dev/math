@@ -13,7 +13,7 @@
 #ifdef EIGEN_ARRAYBASE_PLUGIN
 #ifndef EIGEN_STAN_ARRAYBASE_PLUGIN
 #error "Stan uses Eigen's EIGEN_ARRAYBASE_PLUGIN macro. To use your own "
-"plugin add the eigen_plugin.h file to your plugin."
+    "plugin add the eigen_plugin.h file to your plugin."
 #endif
 #else
 #define EIGEN_ARRAYBASE_PLUGIN "stan/math/prim/eigen_plugins.h"
