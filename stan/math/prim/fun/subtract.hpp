@@ -28,13 +28,13 @@ inline auto subtract(const Mat1& m1, const Mat2& m2) {
 
 /**
  * Return the result of subtracting the specified matrix from the specified
- * matrix.
+ * scalar.
  *
  * @tparam Scal type of the scalar
  * @tparam Mat type of the matrix or expression
  * @param c Scalar.
  * @param m Matrix or expression.
- * @return The matrix minus the scalar.
+ * @return The scalar minus the matrix.
  */
 template <typename Scal, typename Mat, typename = require_stan_scalar_t<Scal>,
           typename = require_eigen_t<Mat>>

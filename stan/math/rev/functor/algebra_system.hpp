@@ -140,7 +140,7 @@ struct hybrj_functor_solver : nlo_functor<double> {
    * Performs the same task as the operator(), but returns the
    * Jacobian, instead of saving it inside an argument
    * passed by reference.
-   * @param [in] iv indepdent variable.
+   * @param [in] iv independent variable.
    */
   Eigen::MatrixXd get_jacobian(const Eigen::VectorXd& iv) {
     Eigen::VectorXd fvec;

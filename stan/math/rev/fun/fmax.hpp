@@ -77,7 +77,7 @@ inline var fmax(const var& a, const var& b) {
  * scalar to a variable if it is larger (C99).
  *
  * For <code>fmax(a, b)</code>, if a's value is greater than b,
- * then a is returned, otherwise a fesh variable implementation
+ * then a is returned, otherwise a fresh variable implementation
  * wrapping the value b is returned.
  *
  * @param a First variable.

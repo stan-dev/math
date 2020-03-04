@@ -59,7 +59,7 @@ class colwise_reduction
   /**
    * Generates kernel code for assigning this expression into result expression.
    * @param[in,out] generated set of (pointer to) already generated operations
-   * @param name_gen name generator for this kernel
+   * @param ng name generator for this kernel
    * @param i row index variable name
    * @param j column index variable name
    * @param result expression into which result is to be assigned
@@ -83,10 +83,10 @@ class colwise_reduction
 
   /**
    * generates kernel code for this and nested expressions.
-   * @param[in,out] generated set of already generated operations
-   * @param ng name generator for this kernel
    * @param i row index variable name
    * @param j column index variable name
+   * @param var_name_arg name of the variable in kernel that holds argument to
+   * this expression
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,

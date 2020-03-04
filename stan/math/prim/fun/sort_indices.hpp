@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-/*
+/**
  * A comparator that works for any container type that has the
  * brackets operator.
  *
@@ -52,7 +52,7 @@ class index_comparator {
 /**
  * Return an integer array of indices of the specified container
  * sorting the values in ascending or descending order based on
- * the value of the first template prameter.
+ * the value of the first template parameter.
  *
  * @tparam ascending true if sort is in ascending order
  * @tparam C type of container

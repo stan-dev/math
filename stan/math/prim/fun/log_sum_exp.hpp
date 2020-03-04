@@ -12,7 +12,7 @@ namespace stan {
 namespace math {
 
 /**
- * Calculates the log sum of exponetials without overflow.
+ * Calculates the log sum of exponentials without overflow.
  *
  * \f$\log (\exp(a) + \exp(b)) = m + \log(\exp(a-m) + \exp(b-m))\f$,
  *

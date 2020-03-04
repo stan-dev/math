@@ -8,14 +8,14 @@
 namespace stan {
 
 /** \ingroup type_trait
- * Base implimentation to check whether a type is derived from EigenBase
+ * Base implementation to check whether a type is derived from EigenBase
  */
 template <typename T, typename = void>
 struct is_eigen : std::false_type {};
 
 namespace internal {
-/*
- * Underlying implimenation to check if a type is derived from EigenBase
+/**
+ * Underlying implementation to check if a type is derived from EigenBase
  */
 template <typename T>
 struct is_eigen_base {
@@ -27,7 +27,7 @@ struct is_eigen_base {
 
 }  // namespace internal
 
-/*
+/**
  * Checks whether type T is derived from EigenBase. If true this will have a
  * static member function named value with a type of true, else value is false.
  */

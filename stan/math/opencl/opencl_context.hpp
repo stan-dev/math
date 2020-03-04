@@ -47,9 +47,9 @@ namespace math {
  *
  * Some design decisions that may need to be addressed later:
  * - we are assuming a single OpenCL platform. We may want to run on multiple
- * platforms simulatenously
+ * platforms simultaneously
  * - we are assuming a single OpenCL device. We may want to run on multiple
- * devices simulatenously
+ * devices simultaneously
  */
 class opencl_context_base {
   friend class opencl_context;
@@ -200,8 +200,8 @@ class opencl_context {
 
   /** \ingroup opencl
    * Returns the description of the OpenCL platform and device that is used.
-   * Devices will be an OpenCL and Platforms are a specific OpenCL implimenation
-   * such as AMD SDK's or Nvidia's OpenCL implimentation.
+   * Devices will be an OpenCL and Platforms are a specific OpenCL
+   * implementation such as AMD SDK's or Nvidia's OpenCL implementation.
    */
   inline std::string description() const {
     std::ostringstream msg;
@@ -257,7 +257,7 @@ class opencl_context {
   /** \ingroup opencl
    * Returns the description of the OpenCL platforms and devices that
    * are available. Devices will be an OpenCL and Platforms are a specific
-   * OpenCL implimenation such as AMD SDK's or Nvidia's OpenCL implimentation.
+   * OpenCL implementation such as AMD SDK's or Nvidia's OpenCL implementation.
    */
   inline std::string capabilities() const {
     std::vector<cl::Platform> all_platforms;
@@ -345,7 +345,7 @@ class opencl_context {
    * Returns the maximum thread block size defined by
    * CL_DEVICE_MAX_WORK_GROUP_SIZE for the device in the context. This is the
    * maximum product of thread block dimensions for a particular device. IE a
-   * max workgoup of 256 would allow thread blocks of sizes (16,16), (128,2),
+   * max workgroup of 256 would allow thread blocks of sizes (16,16), (128,2),
    * (8, 32), etc.
    */
   inline int max_thread_block_size() {

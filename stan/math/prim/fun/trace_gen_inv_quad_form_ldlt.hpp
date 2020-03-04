@@ -13,7 +13,7 @@
 namespace stan {
 namespace math {
 
-/*
+/**
  * Compute the trace of an inverse quadratic form.  I.E., this computes
  *       trace(D B^T A^-1 B)
  * where D is a square matrix and the LDLT_factor of A is provided.

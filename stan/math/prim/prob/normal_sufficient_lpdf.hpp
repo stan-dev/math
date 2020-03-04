@@ -18,7 +18,7 @@ namespace math {
 /** \ingroup prob_dists
  * The log of the normal density for the specified scalar(s) given
  * the specified mean(s) and deviation(s).
- * y, s_quared, mu, or sigma can each be either
+ * y, s_squared, mu, or sigma can each be either
  * a scalar, a std vector or Eigen vector.
  * n can be either a single int or an std vector of ints.
  * Any vector inputs must be the same length.
