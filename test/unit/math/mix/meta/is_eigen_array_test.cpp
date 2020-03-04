@@ -5,6 +5,11 @@
 
 TEST(MathMetaPrim, eigen_array_tests) {
   using stan::is_eigen_array;
+  using stan::math::test::all_eigen_dense_decomp;
+  using stan::math::test::all_eigen_sparse;
+  using stan::math::test::all_eigen_dense_matrix;
+  using stan::math::test::all_eigen_dense_array;
+
   /**
    * Dense Flags:
    * eigen_base_v, eigen_dense_v, eigen_matrix_v, eigen_map_v, eigen_mat_exp_v,
@@ -14,8 +19,9 @@ TEST(MathMetaPrim, eigen_array_tests) {
    * eigen_base_v, eigen_sparse_compressed_v, eigen_sparse_matrix_v,
    * eigen_sparse_map_v
    */
-   test_all_eigen_dense_matrix<false, false, false, false, false, is_eigen_array>();
-   test_all_eigen_dense_array<false, true, true, true, true, is_eigen_array>();
-   test_all_eigen_dense_decomp<false, is_eigen_array>();
-   test_all_eigen_sparse<false, false, false, false, is_eigen_array>();
+  all_eigen_dense_matrix<false, false, false, false, false,
+                              is_eigen_array, -1, -1>();
+  all_eigen_dense_array<false, true, true, true, true, is_eigen_array, -1, -1>();
+  all_eigen_dense_decomp<false, is_eigen_array>();
+  all_eigen_sparse<false, false, false, false, is_eigen_array>();
 }

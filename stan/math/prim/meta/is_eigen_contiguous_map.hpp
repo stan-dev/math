@@ -9,25 +9,18 @@
 namespace stan {
 
 
-namespace internal {
-template <typename T>
-struct is_eigen_contiguous_map_impl
-    : bool_constant<std::is_base_of<Eigen::MapBase<std::decay_t<T>>, std::decay_t<T>>::value> {};
+  namespace internal {
+  template <typename T>
+  struct is_eigen_contiguous_map_impl : std::false_type {};
+  template <typename T, int Opts>
+  struct is_eigen_contiguous_map_impl<Eigen::Map<T, Opts, Eigen::Stride<0, 0>>>
+      : std::true_type {};
 
-}  // namespace internal
+  }  // namespace internal
 
-/**
- * Check if a type inherits from eigen @c MapBase and has inner and outer
- *   strides equal to zero.
- */
-template <typename T, typename Enable = void>
-struct is_eigen_contiguous_map
-    : std::false_type {};
-
-template <typename T>
-struct is_eigen_contiguous_map<T,
- std::enable_if_t<internal::is_eigen_contiguous_map_impl<std::decay_t<T>>::value>> :
-   bool_constant<T::OuterStrideAtCompileTime == 0 && T::InnerStrideAtCompileTime == 0> {};
+  template <typename T>
+  struct is_eigen_contiguous_map
+      : internal::is_eigen_contiguous_map_impl<std::decay_t<T>> {};
 
 
 }  // namespace stan

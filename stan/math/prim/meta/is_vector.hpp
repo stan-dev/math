@@ -9,16 +9,14 @@
 
 namespace stan {
 
-
 /** \ingroup type_trait
  * If the input type T is either an eigen matrix with 1 column or 1 row at
  * compile time or a standard vector, this has a static member with a value
  * of true. Else this has a static member with a value of false.
  */
 template <typename T>
-struct is_vector
-    : bool_constant<is_eigen_vector<std::decay_t<T>>::value || is_std_vector<std::decay_t<T>>::value> {};
-
+struct is_vector : bool_constant<is_eigen_vector<std::decay_t<T>>::value
+                                 || is_std_vector<std::decay_t<T>>::value> {};
 
 }  // namespace stan
 #endif

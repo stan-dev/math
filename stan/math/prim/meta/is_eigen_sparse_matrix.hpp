@@ -8,24 +8,25 @@
 
 namespace stan {
 
-
-
 /*
  * Checks whether type T is derived from Eigen::SparseMatrixBase .If true this
- * will have a static member function named value with a type of true, else value is false.
+ * will have a static member function named value with a type of true, else
+ * value is false.
  */
 template <typename T, typename Enable = void>
 struct is_eigen_sparse_matrix : std::false_type {};
 
 template <typename T>
-struct is_eigen_sparse_matrix<T,
- std::enable_if_t<std::is_base_of<Eigen::SparseMatrixBase<typename std::decay_t<T>::PlainObject>, typename std::decay_t<T>::PlainObject>::value>> :
-   std::true_type {};
+struct is_eigen_sparse_matrix<
+    T, std::enable_if_t<std::is_base_of<
+           Eigen::SparseMatrixBase<typename std::decay_t<T>::PlainObject>,
+           typename std::decay_t<T>::PlainObject>::value>> : std::true_type {};
 
 template <typename T>
-struct is_eigen_sparse_matrix<T,
-std::enable_if_t<std::is_base_of<Eigen::SparseMatrixBase<typename std::decay_t<T>::MatrixType>, typename std::decay_t<T>::MatrixType>::value>> :
- std::true_type {};
+struct is_eigen_sparse_matrix<
+    T, std::enable_if_t<std::is_base_of<
+           Eigen::SparseMatrixBase<typename std::decay_t<T>::MatrixType>,
+           typename std::decay_t<T>::MatrixType>::value>> : std::true_type {};
 
-}
+}  // namespace stan
 #endif

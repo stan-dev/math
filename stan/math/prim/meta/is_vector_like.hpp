@@ -3,8 +3,6 @@
 
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/is_detected.hpp>
-#include <stan/math/prim/meta/is_eigen.hpp>
-#include <stan/math/prim/meta/is_vector.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -31,7 +29,8 @@ using operator_bracket_t = decltype(std::declval<T>()[int{}]);
  */
 template <typename T>
 struct is_vector_like
-    : bool_constant<is_detected<std::decay_t<T>, internal::operator_bracket_t>::value> {};
+    : bool_constant<
+          is_detected<std::decay_t<T>, internal::operator_bracket_t>::value> {};
 
 }  // namespace stan
 #endif

@@ -15,7 +15,8 @@ namespace internal {
  */
 template <typename T>
 struct is_eigen_matrix_impl
-    : bool_constant<T::RowsAtCompileTime != 1 && T::ColsAtCompileTime != 1> {};
+    : bool_constant<!(T::RowsAtCompileTime == 1 || T::ColsAtCompileTime == 1)> {
+};
 
 }  // namespace internal
 
@@ -28,16 +29,18 @@ template <typename T, typename Enable = void>
 struct is_eigen_matrix : std::false_type {};
 
 template <typename T>
-struct is_eigen_matrix<T,
- std::enable_if_t<std::is_base_of<Eigen::MatrixBase<typename std::decay_t<T>::PlainObject>, typename std::decay_t<T>::PlainObject>::value>> :
-   bool_constant<internal::is_eigen_matrix_impl<std::decay_t<T>>::value> {};
+struct is_eigen_matrix<
+    T, std::enable_if_t<std::is_base_of<
+           Eigen::MatrixBase<typename std::decay_t<T>::PlainObject>,
+           typename std::decay_t<T>::PlainObject>::value>>
+    : bool_constant<internal::is_eigen_matrix_impl<std::decay_t<T>>::value> {};
 
 template <typename T>
-struct is_eigen_matrix<T,
-std::enable_if_t<std::is_base_of<Eigen::MatrixBase<typename std::decay_t<T>::MatrixType>, typename std::decay_t<T>::MatrixType>::value>> :
-bool_constant<internal::is_eigen_matrix_impl<std::decay_t<T>>::value> {};
-
-
+struct is_eigen_matrix<
+    T, std::enable_if_t<std::is_base_of<
+           Eigen::MatrixBase<typename std::decay_t<T>::MatrixType>,
+           typename std::decay_t<T>::MatrixType>::value>>
+    : bool_constant<internal::is_eigen_matrix_impl<std::decay_t<T>>::value> {};
 
 }  // namespace stan
 
