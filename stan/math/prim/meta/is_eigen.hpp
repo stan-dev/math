@@ -19,10 +19,10 @@ namespace internal {
  */
 template <typename T>
 struct is_eigen_base {
-  static std::false_type f(...);
+  static std::false_type f(const void *);
   template <typename Derived>
-  static std::true_type f(const Eigen::EigenBase<Derived>&);
-  enum { value = decltype(f(std::declval<T>()))::value };
+  static std::true_type f(const Eigen::EigenBase<Derived>*);
+  enum { value = decltype(f(std::declval<T*>()))::value };
 };
 
 }  // namespace internal

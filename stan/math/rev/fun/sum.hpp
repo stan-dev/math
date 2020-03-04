@@ -67,20 +67,14 @@ inline var sum(const std::vector<var>& m) {
  * managed by the superclass <code>sum_v_vari</code>.
  */
 class sum_eigen_v_vari : public sum_v_vari {
- protected:
-  template <typename Derived>
-  inline static double sum_of_val(const Eigen::DenseBase<Derived>& v) {
-    return Eigen::Ref<const matrix_v>(v).val().sum();
-  }
-
  public:
-  template <typename T, require_eigen_vt<is_var, T>* = nullptr>
-  explicit sum_eigen_v_vari(const T& v1)
+  template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
+  explicit sum_eigen_v_vari(const EigMat& v1)
       : sum_v_vari(
-            sum_of_val(v1),
-            reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
-                v1.size() * sizeof(vari*))),
-            v1.size()) {
+          v1.val().sum(),
+          reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
+              v1.size() * sizeof(vari*))),
+          v1.size()) {
     Eigen::Map<matrix_vi>(v_, v1.rows(), v1.cols()) = v1.vi();
   }
 };
@@ -89,17 +83,18 @@ class sum_eigen_v_vari : public sum_v_vari {
  * Returns the sum of the coefficients of the specified
  * matrix, column vector or row vector.
  *
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam T type of the matrix of vector (Must be derived from \c
+ * Eigen::MatrixBase and contain \c var scalars)
  * @param m Specified matrix or vector.
  * @return Sum of coefficients of matrix.
  */
-template <typename T, require_eigen_vt<is_var, T>* = nullptr>
-inline var sum(const T& m) {
+template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
+inline var sum(const EigMat& m) {
   if (m.size() == 0) {
     return 0.0;
   }
-  return var(new sum_eigen_v_vari(m));
+  const Eigen::Ref<const plain_type_t<EigMat>>& m_ref = m;
+  return var(new sum_eigen_v_vari(m_ref));
 }
 
 }  // namespace math

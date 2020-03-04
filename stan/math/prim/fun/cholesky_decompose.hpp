@@ -18,9 +18,9 @@ namespace math {
  * square root) of the specified square, symmetric matrix.  The return
  * value \f$L\f$ will be a lower-triangular matrix such that the
  * original matrix \f$A\f$ is given by
- * <p>\f$A = L \times L^T\f$.
+ * <p>\f$A = L \times L^EigMat\f$.
  *
- * @tparam T type of the matrix (must be derived from \c Eigen::MatrixBase)
+ * @tparam EigMat type of the matrix (must be derived from \c Eigen::MatrixBase)
  * @param m Symmetric matrix.
  * @return Square root of matrix.
  * @note Because OpenCL only works on doubles there are two
@@ -29,17 +29,17 @@ namespace math {
  * @throw std::domain_error if m is not a symmetric matrix or
  *   if m is not positive definite (if m has more than 0 elements)
  */
-template <typename T, require_eigen_t<T>* = nullptr,
-          require_not_same_vt<double, T>* = nullptr,
-          require_not_eigen_vt<is_var, T>* = nullptr>
-inline Eigen::Matrix<value_type_t<T>, T::RowsAtCompileTime,
-                     T::ColsAtCompileTime>
-cholesky_decompose(const T& m) {
-  eval_return_type_t<T>& m_eval = m.eval();
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
+          require_not_same_vt<double, EigMat>* = nullptr,
+          require_not_eigen_vt<is_var, EigMat>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
+                     EigMat::ColsAtCompileTime>
+cholesky_decompose(const EigMat& m) {
+  eval_return_type_t<EigMat>& m_eval = m.eval();
   check_symmetric("cholesky_decompose", "m", m_eval);
   check_not_nan("cholesky_decompose", "m", m_eval);
-  Eigen::LLT<Eigen::Matrix<value_type_t<T>, T::RowsAtCompileTime,
-                           T::ColsAtCompileTime>>
+  Eigen::LLT<Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
+                           EigMat::ColsAtCompileTime>>
       llt = m_eval.llt();
   check_pos_definite("cholesky_decompose", "m", llt);
   return llt.matrixL();
@@ -50,8 +50,9 @@ cholesky_decompose(const T& m) {
  * square root) of the specified square, symmetric matrix.  The return
  * value \f$L\f$ will be a lower-triangular matrix such that the
  * original matrix \f$A\f$ is given by
- * <p>\f$A = L \times L^T\f$.
+ * <p>\f$A = L \times L^EigMat\f$.
  *
+ * @tparam EigMat type of the matrix (must be derived from \c Eigen::MatrixBase)
  * @param m Symmetric matrix.
  * @return Square root of matrix.
  * @note Because OpenCL only works on doubles there are two
@@ -60,11 +61,11 @@ cholesky_decompose(const T& m) {
  * @throw std::domain_error if m is not a symmetric matrix or
  *   if m is not positive definite (if m has more than 0 elements)
  */
-template <typename T, require_eigen_t<T>* = nullptr,
-          require_same_vt<double, T>* = nullptr>
-inline Eigen::Matrix<double, T::RowsAtCompileTime, T::ColsAtCompileTime>
-cholesky_decompose(const T& m) {
-  eval_return_type_t<T>& m_eval = m.eval();
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
+          require_same_vt<double, EigMat>* = nullptr>
+inline Eigen::Matrix<double, EigMat::RowsAtCompileTime, EigMat::ColsAtCompileTime>
+cholesky_decompose(const EigMat& m) {
+  eval_return_type_t<EigMat>& m_eval = m.eval();
   check_not_nan("cholesky_decompose", "m", m_eval);
 #ifdef STAN_OPENCL
   if (m.rows() >= opencl_context.tuning_opts().cholesky_size_worth_transfer) {
@@ -73,14 +74,14 @@ cholesky_decompose(const T& m) {
   } else {
     check_symmetric("cholesky_decompose", "m", m_eval);
     Eigen::LLT<
-        Eigen::Matrix<double, T::RowsAtCompileTime, T::ColsAtCompileTime>>
+        Eigen::Matrix<double, EigMat::RowsAtCompileTime, EigMat::ColsAtCompileTime>>
         llt = m_eval.llt();
     check_pos_definite("cholesky_decompose", "m", llt);
     return llt.matrixL();
   }
 #else
   check_symmetric("cholesky_decompose", "m", m_eval);
-  Eigen::LLT<Eigen::Matrix<double, T::RowsAtCompileTime, T::ColsAtCompileTime>>
+  Eigen::LLT<Eigen::Matrix<double, EigMat::RowsAtCompileTime, EigMat::ColsAtCompileTime>>
       llt = m_eval.llt();
   check_pos_definite("cholesky_decompose", "m", llt);
   return llt.matrixL();
