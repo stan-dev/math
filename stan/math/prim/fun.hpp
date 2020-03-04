@@ -117,6 +117,7 @@
 #include <stan/math/prim/fun/identity_matrix.hpp>
 #include <stan/math/prim/fun/i_times.hpp>
 #include <stan/math/prim/fun/if_else.hpp>
+#include <stan/math/prim/fun/imag.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
 #include <stan/math/prim/fun/initialize.hpp>
 #include <stan/math/prim/fun/int_step.hpp>
@@ -243,6 +244,7 @@
 #include <stan/math/prim/fun/read_corr_matrix.hpp>
 #include <stan/math/prim/fun/read_cov_L.hpp>
 #include <stan/math/prim/fun/read_cov_matrix.hpp>
+#include <stan/math/prim/fun/real.hpp>
 #include <stan/math/prim/fun/rep_array.hpp>
 #include <stan/math/prim/fun/rep_matrix.hpp>
 #include <stan/math/prim/fun/rep_row_vector.hpp>

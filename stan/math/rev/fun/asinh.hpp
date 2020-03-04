@@ -5,6 +5,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/fun/asinh.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -54,6 +55,10 @@ class asinh_vari : public op_v_vari {
  */
 inline var asinh(const var& a) {
   return var(new internal::asinh_vari(asinh(a.val()), a.vi_));
+}
+
+inline std::complex<var> asinh(const std::complex<var>& z) {
+  return internal::complex_asinh(z);
 }
 
 }  // namespace math
