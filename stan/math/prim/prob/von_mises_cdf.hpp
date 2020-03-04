@@ -1,13 +1,11 @@
 #ifndef STAN_MATH_PRIM_PROB_VON_MISES_CDF_HPP
 #define STAN_MATH_PRIM_PROB_VON_MISES_CDF_HPP
 
-#include <stdlib.h>
-#include <iostream>
-#include <fstream>
-#include <cmath>
+#include <stan/math/prim/fun.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/prob/normal_cdf.hpp>
 #include <stan/math/prim/fun/modified_bessel_first_kind.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -17,8 +15,8 @@ namespace internal {
 template <typename T_x, typename T_k, typename T_p>
 return_type_t<T_x, T_k, T_p> von_mises_cdf_series(const T_x& x, const T_k& k,
                                                   const T_p& p) {
-  using std::cos;
-  using std::sin;
+  using stan::math::cos;
+  using stan::math::sin;
 
   double pi = stan::math::pi();
   auto s = sin(x);
@@ -26,7 +24,7 @@ return_type_t<T_x, T_k, T_p> von_mises_cdf_series(const T_x& x, const T_k& k,
   auto sn = sin(p * x);
   auto cn = cos(p * x);
 
-  double R = 0;
+  return_type_t<T_x, T_k, T_p> R = 0;
   return_type_t<T_x, T_k, T_p> V = 0;
 
   int n;
@@ -62,7 +60,7 @@ return_type_t<T_x, T_k> von_mises_cdf_centered(const T_x& x, const T_k& k) {
   double a[4] = {28, 0.5, 100, 5};
   return_type_t<T_x, T_k> f;
   if (k < ck) {
-    int p = a[0] + a[1] * k - a[2] / (k + a[3]) + 1;
+    int p = value_of(a[0] + a[1] * k - a[2] / (k + a[3]) + 1);
     f = von_mises_cdf_series(x, k, p);
     if (f < 0)
       f = 0;
@@ -75,7 +73,6 @@ return_type_t<T_x, T_k> von_mises_cdf_centered(const T_x& x, const T_k& k) {
 }
 
 }  // namespace internal
-using namespace internal;
 
 /** \ingroup prob_dists
  * Calculates the cumulative distribution function of the von Mises
@@ -102,6 +99,7 @@ inline return_type_t<T_x, T_mu, T_k> von_mises_cdf(const T_x& x, const T_mu& mu,
                                                    const T_k& k) {
   static char const* const function = "von_mises_cdf";
   using T_partials_return = partials_return_t<T_x, T_mu, T_k>;
+  using internal::von_mises_cdf_centered;
 
   check_not_nan(function, "Random variable", x);
   check_not_nan(function, "Scale parameter", k);
