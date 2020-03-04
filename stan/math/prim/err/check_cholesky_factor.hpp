@@ -16,7 +16,8 @@ namespace math {
  * elements are all positive.  Note that Cholesky factors need not
  * be square, but require at least as many rows M as columns N
  * (i.e., M &gt;= N).
- * @tparam EigMat Type of the Cholesky factor (must be derived from \c Eigen::MatrixBase)
+ * @tparam EigMat Type of the Cholesky factor (must be derived from \c
+ * Eigen::MatrixBase)
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Matrix to test
