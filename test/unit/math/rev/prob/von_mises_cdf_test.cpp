@@ -32,8 +32,8 @@ TEST(VonMises, von_mises_gradients) {
   double xd = value_of(x);
   double mud = value_of(mu);
   double kd = value_of(k);
-  double fn = von_mises_cdf(xd, mud, kd+h);
-  double fp = von_mises_cdf(xd, mud, kd-h);
+  double fn = von_mises_cdf(xd, mud, kd + h);
+  double fp = von_mises_cdf(xd, mud, kd - h);
   double dder = (fn - fp) / (2 * h);
   ASSERT_NEAR(k.adj(), dder, 1e-8);
 
@@ -42,8 +42,8 @@ TEST(VonMises, von_mises_gradients) {
   f = von_mises_cdf(x, mu, k);
   f.grad();
   kd = value_of(k);
-  fn = von_mises_cdf(xd, mud, kd+h);
-  fp = von_mises_cdf(xd, mud, kd-h);
+  fn = von_mises_cdf(xd, mud, kd + h);
+  fp = von_mises_cdf(xd, mud, kd - h);
   dder = (fn - fp) / (2 * h);
   ASSERT_NEAR(k.adj(), dder, 1e-8);
 }
