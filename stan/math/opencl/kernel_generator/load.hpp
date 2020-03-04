@@ -73,7 +73,7 @@ class load_
 
   /**
    * generates kernel code for this expression if it appears on the left hand
-   * side of an assigment.
+   * side of an assignment.
    * @param i row index variable name
    * @param j column index variable name
    * @return part of kernel with code for this expressions

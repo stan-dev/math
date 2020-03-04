@@ -56,7 +56,7 @@ inline double acosh(int x) {
  */
 struct acosh_fun {
   /**
-   * Return the inverse hypberbolic cosine of the specified argument.
+   * Return the inverse hyperbolic cosine of the specified argument.
    *
    * @tparam T type of argument
    * @param x argument

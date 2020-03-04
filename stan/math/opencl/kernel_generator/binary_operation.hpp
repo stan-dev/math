@@ -43,7 +43,7 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
   /**
    * Constructor
    * @param a first argument of the binary operation
-   * @param b sedond argument of the binary operation
+   * @param b second argument of the binary operation
    * @param op operator used in the binary operation
    */
   binary_operation(T_a&& a, T_b&& b, const std::string& op)  // NOLINT
