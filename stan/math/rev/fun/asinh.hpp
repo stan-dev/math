@@ -57,9 +57,9 @@ inline var asinh(const var& a) {
   return var(new internal::asinh_vari(asinh(a.val()), a.vi_));
 }
 
-inline std::complex<var> asinh(const std::complex<var>& z) {
-  return internal::complex_asinh(z);
-}
+// inline std::complex<var> asinh(const std::complex<var>& z) {
+//   return internal::complex_asinh(z);
+// }
 
 }  // namespace math
 }  // namespace stan

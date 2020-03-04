@@ -1722,8 +1722,6 @@ auto ldlt_factor(const Eigen::Matrix<T, -1, -1>& x) {
 }
 
 std::vector<double> common_complex_parts() {
-  double inf = std::numeric_limits<double>::infinity();
-  double nan = std::numeric_limits<double>::quiet_NaN();
   return {-4, -2.5, -1.5, -0.3, -0.0, 0.0, 1.3, 2.1, 3.9};
 }
 
@@ -1778,10 +1776,10 @@ void expect_complex_comparison(const F& f, const std::complex<double>& z1,
   using std::complex;
   expect_complex_compare<double>(f, z1, z2);
   expect_complex_compare<var>(f, z1, z2);
-  // expect_complex_compare<complex<fvar<double>>>(f, z1, z2);
-  // expect_complex_compare<complex<fvar<fvar<double>>>>(f, z1, z2);
-  // expect_complex_compare<complex<fvar<var>>>(f, z1, z2);
-  // expect_complex_compare<complex<fvar<fvar<var>>>>(f, z1, z2);
+  expect_complex_compare<complex<fvar<double>>>(f, z1, z2);
+  expect_complex_compare<complex<fvar<fvar<double>>>>(f, z1, z2);
+  expect_complex_compare<complex<fvar<var>>>(f, z1, z2);
+  expect_complex_compare<complex<fvar<fvar<var>>>>(f, z1, z2);
 }
 
 template <typename F>
