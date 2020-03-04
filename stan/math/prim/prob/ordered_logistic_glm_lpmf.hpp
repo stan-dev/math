@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log1m_exp.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
@@ -59,9 +60,9 @@ ordered_logistic_glm_lpmf(
 
   static const char* function = "ordered_logistic_glm_lpmf";
 
-  const size_t N_instances = T_x_rows == 1 ? size(y) : x.rows();
+  const size_t N_instances = T_x_rows == 1 ? stan::math::size(y) : x.rows();
   const size_t N_attributes = x.cols();
-  const size_t N_classes = size(cuts) + 1;
+  const size_t N_classes = stan::math::size(cuts) + 1;
 
   check_consistent_size(function, "Vector of dependent variables", y,
                         N_instances);

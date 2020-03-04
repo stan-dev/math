@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <cmath>
 #include <stdexcept>
 
@@ -10,7 +11,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the unconstrained vector of parameters correspdonding to
+ * Return the unconstrained vector of parameters corresponding to
  * the specified Cholesky factor.  A Cholesky factor must be lower
  * triangular and have positive diagonal elements.
  *

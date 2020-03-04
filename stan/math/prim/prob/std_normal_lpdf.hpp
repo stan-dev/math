@@ -42,7 +42,7 @@ return_type_t<T_y> std_normal_lpdf(const T_y& y) {
 
   T_partials_return logp(0.0);
   scalar_seq_view<T_y> y_vec(y);
-  size_t N = size(y);
+  size_t N = stan::math::size(y);
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_val = value_of(y_vec[n]);

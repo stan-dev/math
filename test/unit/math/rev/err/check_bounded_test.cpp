@@ -15,13 +15,16 @@ TEST(AgradRevErrorHandlingScalar, CheckBoundedVarCheckVectorized) {
   for (int i = 0; i < N; ++i)
     a.push_back(var(i));
 
-  size_t stack_size = stan::math::ChainableStack::instance_->var_stack_.size();
+  size_t stack_size
+      = stan::math::ChainableStack::instance_->var_stack_.size()
+        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
 
   EXPECT_EQ(5U, stack_size);
   EXPECT_NO_THROW(check_bounded(function, "a", a, -1.0, 6.0));
 
   size_t stack_size_after_call
-      = stan::math::ChainableStack::instance_->var_stack_.size();
+      = stan::math::ChainableStack::instance_->var_stack_.size()
+        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
   EXPECT_EQ(5U, stack_size_after_call);
   stan::math::recover_memory();
 }
@@ -145,13 +148,16 @@ TEST(AgradRevErrorHandlingScalar, CheckBoundedVarCheckUnivariate) {
   const char* function = "check_bounded";
   var a(5.0);
 
-  size_t stack_size = stan::math::ChainableStack::instance_->var_stack_.size();
+  size_t stack_size
+      = stan::math::ChainableStack::instance_->var_stack_.size()
+        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
 
   EXPECT_EQ(1U, stack_size);
   EXPECT_NO_THROW(check_bounded(function, "a", a, 4.0, 6.0));
 
   size_t stack_size_after_call
-      = stan::math::ChainableStack::instance_->var_stack_.size();
+      = stan::math::ChainableStack::instance_->var_stack_.size()
+        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
   EXPECT_EQ(1U, stack_size_after_call);
 
   stan::math::recover_memory();

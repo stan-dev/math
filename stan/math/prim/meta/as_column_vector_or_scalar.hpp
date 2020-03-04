@@ -53,7 +53,7 @@ inline auto as_column_vector_or_scalar(const T& a) {
  *
  * @tparam T Type of scalar element.
  * @param a Specified vector.
- * @return intut converted to a column vector.
+ * @return input converted to a column vector.
  */
 template <typename T>
 inline Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>>

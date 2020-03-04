@@ -3,9 +3,17 @@
 
 TEST(MathMixMatFun, mdivideLeftTriLow) {
   auto f = [](const auto& x, const auto& y) {
-    // no need to symmetrize becuase only uses view
+    // no need to symmetrize because only uses view
     return stan::math::mdivide_left_tri_low(x, y);
   };
+
+  // size zero inputs
+  Eigen::MatrixXd m00(0, 0);
+  Eigen::MatrixXd m02(0, 2);
+  Eigen::VectorXd v0(0);
+  stan::test::expect_ad(f, m00, m00);
+  stan::test::expect_ad(f, m00, m02);
+  stan::test::expect_ad(f, m00, v0);
 
   // signature 1 of 2: matrix-matrix
   Eigen::MatrixXd aa(1, 1);
@@ -18,11 +26,6 @@ TEST(MathMixMatFun, mdivideLeftTriLow) {
   Eigen::VectorXd cc(1);
   cc << 3;
   stan::test::expect_ad(f, aa, cc);
-
-  Eigen::MatrixXd m00(0, 0);
-  Eigen::VectorXd v0(0);
-  stan::test::expect_ad(f, m00, v0);
-  stan::test::expect_ad(f, m00, m00);
 
   Eigen::MatrixXd a(2, 2);
   a << 1, std::numeric_limits<double>::quiet_NaN(), -3, 5;

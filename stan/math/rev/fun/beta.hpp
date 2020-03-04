@@ -41,7 +41,8 @@ class beta_dv_vari : public op_dv_vari {
   }
 };
 }  // namespace internal
-/*
+
+/**
  * Returns the beta function and gradients for two var inputs.
  *
    \f[
@@ -70,7 +71,7 @@ inline var beta(const var& a, const var& b) {
   return var(new internal::beta_vv_vari(a.vi_, b.vi_));
 }
 
-/*
+/**
  * Returns the beta function and gradient for first var input.
  *
    \f[
@@ -92,7 +93,7 @@ inline var beta(const var& a, double b) {
   return var(new internal::beta_vd_vari(a.vi_, b));
 }
 
-/*
+/**
  * Returns the beta function and gradient for second var input.
  *
    \f[

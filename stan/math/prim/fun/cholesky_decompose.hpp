@@ -20,7 +20,7 @@ namespace math {
  * <p>\f$A = L \times L^T\f$.
  *
  * @tparam T type of elements in the matrix
- * @param m Symmetrix matrix.
+ * @param m Symmetric matrix.
  * @return Square root of matrix.
  * @note Because OpenCL only works on doubles there are two
  * <code>cholesky_decompose</code> functions. One that works on doubles
@@ -32,6 +32,7 @@ template <typename T>
 inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
     const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
   check_symmetric("cholesky_decompose", "m", m);
+  check_not_nan("cholesky_decompose", "m", m);
   Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > llt(m.rows());
   llt.compute(m);
   check_pos_definite("cholesky_decompose", "m", llt);
@@ -45,7 +46,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
  * original matrix \f$A\f$ is given by
  * <p>\f$A = L \times L^T\f$.
  *
- * @param m Symmetrix matrix.
+ * @param m Symmetric matrix.
  * @return Square root of matrix.
  * @note Because OpenCL only works on doubles there are two
  * <code>cholesky_decompose</code> functions. One that works on doubles
@@ -56,7 +57,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
 template <>
 inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
     const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& m) {
-  check_square("cholesky_decompose", "m", m);
+  check_not_nan("cholesky_decompose", "m", m);
 #ifdef STAN_OPENCL
   if (m.rows() >= opencl_context.tuning_opts().cholesky_size_worth_transfer) {
     matrix_cl<double> m_chol(m);

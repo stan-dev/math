@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -35,13 +37,16 @@ return_type_t<T_y, T_inv_scale> exponential_lcdf(const T_y& y,
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_inv_scale> beta_vec(beta);
   size_t N = max_size(y, beta);
+
   for (size_t n = 0; n < N; n++) {
     const T_partials_return beta_dbl = value_of(beta_vec[n]);
     const T_partials_return y_dbl = value_of(y_vec[n]);
-    T_partials_return one_m_exp = 1.0 - exp(-beta_dbl * y_dbl);
+    T_partials_return exp_val = exp(-beta_dbl * y_dbl);
+    T_partials_return one_m_exp = 1.0 - exp_val;
     cdf_log += log(one_m_exp);
 
-    T_partials_return rep_deriv = -exp(-beta_dbl * y_dbl) / one_m_exp;
+    T_partials_return rep_deriv
+        = is_constant_all<T_y, T_inv_scale>::value ? 0 : -exp_val / one_m_exp;
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= rep_deriv * beta_dbl;
     }

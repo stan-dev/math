@@ -6,6 +6,8 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/erf.hpp>
 #include <stan/math/prim/fun/erfc.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
@@ -37,7 +39,7 @@ inline return_type_t<T_y> std_normal_lcdf(const T_y& y) {
   operands_and_partials<T_y> ops_partials(y);
 
   scalar_seq_view<T_y> y_vec(y);
-  size_t N = size(y);
+  size_t N = stan::math::size(y);
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);

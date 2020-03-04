@@ -23,7 +23,7 @@ namespace math {
  * This is equivalent to and faster than ordered_logistic_lpmf(y, x * beta,
  * cuts).
  * This is an overload of the GLM in
- * prim/mar/prob/ordered_logistic_glm_lpmf.hpp that is implemented in OpenCL.
+ * prim/prob/ordered_logistic_glm_lpmf.hpp that is implemented in OpenCL.
  *
  * @tparam T_beta_scalar type of a scalar in the vector of weights
  * @tparam T_cuts_scalar type of a scalar in the vector of cutpoints
@@ -56,7 +56,7 @@ return_type_t<T_beta_scalar, T_cuts_scalar> ordered_logistic_glm_lpmf(
 
   const size_t N_instances = x_cl.rows();
   const size_t N_attributes = x_cl.cols();
-  const size_t N_classes = size(cuts) + 1;
+  const size_t N_classes = stan::math::size(cuts) + 1;
 
   if (y_cl.size() != 1) {
     check_size_match(function, "Rows of ", "x_cl", N_instances, "rows of ",

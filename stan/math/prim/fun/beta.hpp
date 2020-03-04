@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_BETA_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <cmath>
 

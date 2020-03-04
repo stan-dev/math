@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 
-/*
+/**
  * Defines helper macros for common matrix indexing operations
  */
 static const std::string indexing_helpers =
@@ -42,7 +42,7 @@ static const std::string indexing_helpers =
   #endif
   )";
 
-/*
+/**
  * Defines a helper macro for kernels with 2D local size
  */
 static const std::string thread_block_helpers =

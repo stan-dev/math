@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
@@ -20,7 +21,7 @@ namespace math {
  *
  * @tparam T_y type of real parameter
  * @tparam T_shape type of shape parameter
- * @tparam T_scale type of scale paramater
+ * @tparam T_scale type of scale parameter
  * @param y real parameter
  * @param alpha shape parameter
  * @param sigma scale parameter
@@ -65,7 +66,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
   VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
                 T_shape>
       log_alpha(size(alpha));
-  for (size_t i = 0; i < size(alpha); i++) {
+  for (size_t i = 0; i < stan::math::size(alpha); i++) {
     if (include_summand<propto, T_shape>::value) {
       log_alpha[i] = log(value_of(alpha_vec[i]));
     }
@@ -74,7 +75,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
   VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,
                 T_y>
       log_y(size(y));
-  for (size_t i = 0; i < size(y); i++) {
+  for (size_t i = 0; i < stan::math::size(y); i++) {
     if (include_summand<propto, T_y, T_shape>::value) {
       log_y[i] = log(value_of(y_vec[i]));
     }
@@ -83,7 +84,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
   VectorBuilder<include_summand<propto, T_shape, T_scale>::value,
                 T_partials_return, T_scale>
       log_sigma(size(sigma));
-  for (size_t i = 0; i < size(sigma); i++) {
+  for (size_t i = 0; i < stan::math::size(sigma); i++) {
     if (include_summand<propto, T_shape, T_scale>::value) {
       log_sigma[i] = log(value_of(sigma_vec[i]));
     }
@@ -92,7 +93,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
   VectorBuilder<include_summand<propto, T_y, T_shape, T_scale>::value,
                 T_partials_return, T_scale>
       inv_sigma(size(sigma));
-  for (size_t i = 0; i < size(sigma); i++) {
+  for (size_t i = 0; i < stan::math::size(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
   }
 

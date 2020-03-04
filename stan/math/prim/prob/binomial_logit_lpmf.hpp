@@ -7,7 +7,7 @@
 #include <stan/math/prim/fun/inc_beta.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/prim/fun/lbeta.hpp>
-#include <stan/math/prim/fun/log_inv_logit.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
@@ -25,9 +25,7 @@ namespace math {
  * @param n successes variable
  * @param N population size parameter
  * @param alpha logit transformed probability parameter
- *
  * @return log probability or log sum of probabilities
- *
  * @throw std::domain_error if N is negative or probability parameter is invalid
  * @throw std::invalid_argument if vector sizes do not match
  */
@@ -54,9 +52,12 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
     return 0.0;
   }
 
+  using std::log;
+
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_N> N_vec(N);
   scalar_seq_view<T_prob> alpha_vec(alpha);
+  size_t size_alpha = stan::math::size(alpha);
   size_t max_size_seq_view = max_size(n, N, alpha);
 
   operands_and_partials<T_prob> ops_partials(alpha);
@@ -67,16 +68,20 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
     }
   }
 
+  VectorBuilder<true, T_partials_return, T_prob> inv_logit_alpha(size_alpha);
+  VectorBuilder<true, T_partials_return, T_prob> inv_logit_neg_alpha(
+      size_alpha);
   VectorBuilder<true, T_partials_return, T_prob> log_inv_logit_alpha(
-      size(alpha));
-  for (size_t i = 0; i < size(alpha); ++i) {
-    log_inv_logit_alpha[i] = log_inv_logit(value_of(alpha_vec[i]));
-  }
-
+      size_alpha);
   VectorBuilder<true, T_partials_return, T_prob> log_inv_logit_neg_alpha(
-      size(alpha));
-  for (size_t i = 0; i < size(alpha); ++i) {
-    log_inv_logit_neg_alpha[i] = log_inv_logit(-value_of(alpha_vec[i]));
+      size_alpha);
+
+  for (size_t i = 0; i < size_alpha; ++i) {
+    const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
+    inv_logit_alpha[i] = inv_logit(alpha_dbl);
+    inv_logit_neg_alpha[i] = inv_logit(-alpha_dbl);
+    log_inv_logit_alpha[i] = log(inv_logit_alpha[i]);
+    log_inv_logit_neg_alpha[i] = log(inv_logit_neg_alpha[i]);
   }
 
   for (size_t i = 0; i < max_size_seq_view; ++i) {
@@ -84,24 +89,22 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
             + (N_vec[i] - n_vec[i]) * log_inv_logit_neg_alpha[i];
   }
 
-  if (size(alpha) == 1) {
-    T_partials_return temp1 = 0;
-    T_partials_return temp2 = 0;
-    for (size_t i = 0; i < max_size_seq_view; ++i) {
-      temp1 += n_vec[i];
-      temp2 += N_vec[i] - n_vec[i];
-    }
-    if (!is_constant_all<T_prob>::value) {
+  if (!is_constant_all<T_prob>::value) {
+    if (size_alpha == 1) {
+      T_partials_return sum_n = 0;
+      T_partials_return sum_N = 0;
+      for (size_t i = 0; i < max_size_seq_view; ++i) {
+        sum_n += n_vec[i];
+        sum_N += N_vec[i];
+      }
       ops_partials.edge1_.partials_[0]
-          += temp1 * inv_logit(-value_of(alpha_vec[0]))
-             - temp2 * inv_logit(value_of(alpha_vec[0]));
-    }
-  } else {
-    if (!is_constant_all<T_prob>::value) {
+          += sum_n * inv_logit_neg_alpha[0]
+             - (sum_N - sum_n) * inv_logit_alpha[0];
+    } else {
       for (size_t i = 0; i < max_size_seq_view; ++i) {
         ops_partials.edge1_.partials_[i]
-            += n_vec[i] * inv_logit(-value_of(alpha_vec[i]))
-               - (N_vec[i] - n_vec[i]) * inv_logit(value_of(alpha_vec[i]));
+            += n_vec[i] * inv_logit_neg_alpha[i]
+               - (N_vec[i] - n_vec[i]) * inv_logit_alpha[i];
       }
     }
   }

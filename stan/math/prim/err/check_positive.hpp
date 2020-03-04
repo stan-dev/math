@@ -29,7 +29,7 @@ struct positive {
 template <typename T_y>
 struct positive<T_y, true> {
   static void check(const char* function, const char* name, const T_y& y) {
-    for (size_t n = 0; n < size(y); n++) {
+    for (size_t n = 0; n < stan::math::size(y); n++) {
       if (!std::is_unsigned<typename value_type<T_y>::type>::value
           && !(stan::get(y, n) > 0)) {
         throw_domain_error_vec(function, name, y, n, "is ",

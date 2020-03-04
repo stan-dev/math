@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -18,7 +19,7 @@ namespace math {
  *
  * @tparam T_y type of real parameter
  * @tparam T_shape type of shape parameter
- * @tparam T_scale type of scale paramater
+ * @tparam T_scale type of scale parameter
  * @param y real parameter
  * @param alpha shape parameter
  * @param sigma scale parameter

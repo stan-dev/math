@@ -250,7 +250,7 @@ using require_not_same_t
     = require_not_t<std::is_same<std::decay_t<T>, std::decay_t<S>>>;
 
 /**
- * Require both types to not be the same
+ * Require all types to be the same
  */
 template <typename T, typename... Types>
 using require_all_same_t
@@ -279,7 +279,7 @@ using require_not_same_st
                                  scalar_type_t<std::decay_t<S>>>>;
 
 /**
- * Require both types to not be the same
+ * Require all types to be the same
  */
 template <typename T, typename... Types>
 using require_all_same_st
@@ -309,7 +309,7 @@ using require_not_same_vt = require_not_t<
     std::is_same<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>;
 
 /**
- * Require both types to not be the same
+ * Require all types to be the same
  */
 template <typename T, typename... Types>
 using require_all_same_vt
@@ -731,7 +731,7 @@ using require_any_not_container_t
     = require_any_not_t<is_container<std::decay_t<Types>>...>;
 
 /**
- * Check a templated type to see if it and it's inner type pass a condiational
+ * Check a templated type to see if it and its inner type pass a conditional
  * test.
  * @tparam ContainerCheck Templated struct or alias that wraps a static constant
  * value called type. Used to check the container satisfies a particular type
@@ -1044,6 +1044,14 @@ using require_all_eigen_vector_st
 template <template <class...> class TypeCheck, class... Check>
 using require_all_not_eigen_vector_st
     = require_all_not_t<is_eigen_vector_scalar_check<TypeCheck, Check>...>;
+
+template <typename Row, typename Col>
+using require_eigen_row_and_col_t = require_t<
+    math::conjunction<is_eigen_row_vector<Row>, is_eigen_col_vector<Col>>>;
+
+template <typename Row, typename Col>
+using require_not_eigen_row_and_col_t = require_not_t<
+    math::conjunction<is_eigen_row_vector<Row>, is_eigen_col_vector<Col>>>;
 
 /** @}*/
 }  // namespace stan

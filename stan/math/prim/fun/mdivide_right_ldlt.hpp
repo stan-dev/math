@@ -27,15 +27,13 @@ namespace math {
  * @return x = b A^-1, solution of the linear system.
  * @throws std::domain_error if rows of b don't match the size of A.
  */
-
 template <typename T1, typename T2, int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_ldlt(
     const Eigen::Matrix<T1, R1, C1> &b, const LDLT_factor<T2, R2, C2> &A) {
-  if (b.cols() == 0 && A.rows() == 0) {
-    return Eigen::Matrix<return_type_t<T1, T2>, R1, C2>(b.rows(), 0);
-  }
-
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A);
+  if (A.rows() == 0) {
+    return {b.rows(), 0};
+  }
 
   return transpose(mdivide_left_ldlt(A, transpose(b)));
 }
@@ -44,11 +42,10 @@ template <int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<double, R1, C2> mdivide_right_ldlt(
     const Eigen::Matrix<double, R1, C1> &b,
     const LDLT_factor<double, R2, C2> &A) {
-  if (b.cols() == 0 && A.rows() == 0) {
-    return Eigen::Matrix<double, R1, C2>(b.rows(), 0);
-  }
-
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A);
+  if (A.rows() == 0) {
+    return {b.rows(), 0};
+  }
 
   return A.solveRight(b);
 }

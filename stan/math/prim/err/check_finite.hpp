@@ -28,7 +28,7 @@ struct finite {
 template <typename T_y>
 struct finite<T_y, true> {
   static void check(const char* function, const char* name, const T_y& y) {
-    for (size_t n = 0; n < size(y); n++) {
+    for (size_t n = 0; n < stan::math::size(y); n++) {
       if (!is_scal_finite(stan::get(y, n))) {
         throw_domain_error_vec(function, name, y, n, "is ",
                                ", but must be finite!");
@@ -53,7 +53,7 @@ inline void check_finite(const char* function, const char* name, const T_y& y) {
   internal::finite<T_y, is_vector_like<T_y>::value>::check(function, name, y);
 }
 
-/*
+/**
  * Return <code>true</code> is the specified matrix is finite.
  *
  * @tparam T type of elements in the matrix

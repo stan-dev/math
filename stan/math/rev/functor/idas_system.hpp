@@ -73,7 +73,7 @@ namespace stan {
 namespace math {
 
 /**
- * IDAS DAE system that contains informtion on residual
+ * IDAS DAE system that contains information on residual
  * equation functor, sensitivity residual equation functor,
  * as well as initial conditions. This is a base type that
  * is intended to contain common values used by forward

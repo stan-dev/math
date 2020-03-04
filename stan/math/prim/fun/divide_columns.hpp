@@ -4,7 +4,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/divide.hpp>
 #include <vector>
 
 namespace stan {

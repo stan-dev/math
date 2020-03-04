@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <cmath>
 
 namespace stan {
