@@ -10,14 +10,19 @@
 
 namespace stan {
 
+/** \addtogroup type_trait
+ *  @{
+ */
+
 /**
  * Check if a type satisfies either of @c is_eigen_matrix or @c is_eigen_array
+ * @tparam T Type to check if it is derived from `EigenBase`
  */
 template <typename T>
 using is_eigen_matrix_or_array
     = math::disjunction<is_eigen_matrix<std::decay_t<T>>,
                         is_eigen_array<std::decay_t<T>>>;
-
+/** @}*/
 }  // namespace stan
 
 #endif

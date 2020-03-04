@@ -8,8 +8,14 @@
 
 namespace stan {
 
+/** \addtogroup type_trait
+ *  @{
+ */
+
 /**
- * Check if type derives from EigenBase
+ * Check if type derives from `EigenBase`
+ * @tparam T Type to check if it is derived from `EigenBase`
+ * @tparam Enable used for SFINAE deduction.
  **/
 template <typename T, typename Enable = void>
 struct is_eigen : std::false_type {};
@@ -28,6 +34,8 @@ struct is_eigen<T, std::enable_if_t<std::is_base_of<
 
 template <typename T>
 struct is_eigen<Eigen::EigenBase<T>, void> : std::true_type {};
+
+/** @}*/
 
 }  // namespace stan
 #endif

@@ -10,7 +10,11 @@ namespace stan {
 
 namespace internal {
 
-/*
+/** \addtogroup type_trait
+ *  @{
+ */
+
+/**
  * Underlying implimenation to check if a type is derived from MatrixBase
  */
 template <typename T>
@@ -20,10 +24,12 @@ struct is_eigen_matrix_impl
 
 }  // namespace internal
 
-/*
+/**
  * Checks whether type T is derived from Eigen::MatrixBase and has columns and
  * rows not equal to 1. If true this will have a
  * static member function named value with a type of true, else value is false.
+ * @tparam T Type to check if it is derived from `EigenBase`
+ * @tparam Enable used for SFINAE deduction.
  */
 template <typename T, typename Enable = void>
 struct is_eigen_matrix : std::false_type {};
@@ -41,6 +47,8 @@ struct is_eigen_matrix<
            Eigen::MatrixBase<typename std::decay_t<T>::MatrixType>,
            typename std::decay_t<T>::MatrixType>::value>>
     : bool_constant<internal::is_eigen_matrix_impl<std::decay_t<T>>::value> {};
+
+/** @}*/
 
 }  // namespace stan
 

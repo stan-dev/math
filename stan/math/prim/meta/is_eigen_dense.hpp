@@ -8,8 +8,14 @@
 
 namespace stan {
 
+/** \addtogroup type_trait
+ *  @{
+ */
+
 /**
  * Check if type derives from DenseBase
+ * @tparam T Type to check if it is derived from `EigenBase`
+ * @tparam Enable used for SFINAE deduction.
  **/
 template <typename T, typename Enable = void>
 struct is_eigen_dense : std::false_type {};
@@ -25,7 +31,7 @@ struct is_eigen_dense<
     T, std::enable_if_t<std::is_base_of<
            Eigen::DenseBase<typename std::decay_t<T>::MatrixType>,
            typename std::decay_t<T>::MatrixType>::value>> : std::true_type {};
-
+/** @}*/
 }  // namespace stan
 
 #endif

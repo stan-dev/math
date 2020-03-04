@@ -8,21 +8,27 @@
 
 namespace stan {
 
+/** \addtogroup type_trait
+ *  @{
+ */
+namespace internal {
+template <typename T>
+struct is_eigen_contiguous_map_impl : std::false_type {};
+template <typename T, int Opts>
+struct is_eigen_contiguous_map_impl<Eigen::Map<T, Opts, Eigen::Stride<0, 0>>>
+    : std::true_type {};
 
-  namespace internal {
-  template <typename T>
-  struct is_eigen_contiguous_map_impl : std::false_type {};
-  template <typename T, int Opts>
-  struct is_eigen_contiguous_map_impl<Eigen::Map<T, Opts, Eigen::Stride<0, 0>>>
-      : std::true_type {};
+}  // namespace internal
 
-  }  // namespace internal
+/**
+ * Check if type is a map with an inner and outer stride of zero.
+ * @tparam T Type to check if it is derived from `EigenBase`
+ */
+template <typename T>
+struct is_eigen_contiguous_map
+    : internal::is_eigen_contiguous_map_impl<std::decay_t<T>> {};
 
-  template <typename T>
-  struct is_eigen_contiguous_map
-      : internal::is_eigen_contiguous_map_impl<std::decay_t<T>> {};
-
-
+/** @}*/
 }  // namespace stan
 
 #endif

@@ -9,8 +9,10 @@
 
 namespace stan {
 namespace internal {
-
-/** \ingroup type_trait
+/** \addtogroup type_trait
+ *  @{
+ */
+/**
  * Underlying implimentation for detecting if an Eigen Matrix is a column
  * vector.
  */
@@ -18,7 +20,7 @@ template <typename T, bool = stan::is_eigen_dense<T>::value>
 struct is_eigen_col_vector_impl
     : bool_constant<std::decay_t<T>::ColsAtCompileTime == 1> {};
 
-/** \ingroup type_trait
+/**
  * Specialization for when type is not an eigen vector.
  */
 template <typename T>
@@ -26,14 +28,15 @@ struct is_eigen_col_vector_impl<T, false> : std::false_type {};
 
 }  // namespace internal
 
-/** \ingroup type_trait
+/**
  * If the input type T is an eigen matrix with 1 row at compile time this
  * has a static member with a value of true. Else this has a static
  * member with a value of false.
+ * @tparam T Type to check if it is derived from `EigenBase`
  */
 template <typename T>
 struct is_eigen_col_vector : internal::is_eigen_col_vector_impl<T> {};
-
+/** @}*/
 }  // namespace stan
 
 #endif
