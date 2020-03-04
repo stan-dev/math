@@ -11,6 +11,7 @@
 
 namespace stan {
 namespace math {
+
 /** \ingroup multivar_dists
  * Return a draw from a Categorical distribution given a
  * a vector of unnormalized log probabilities and a psuedo-random
@@ -28,9 +29,7 @@ template <class RNG>
 inline int categorical_logit_rng(const Eigen::VectorXd& beta, RNG& rng) {
   using boost::uniform_01;
   using boost::variate_generator;
-
   static const char* function = "categorical_logit_rng";
-
   check_finite(function, "Log odds parameter", beta);
 
   variate_generator<RNG&, uniform_01<> > uniform01_rng(rng, uniform_01<>());

@@ -35,14 +35,7 @@ template <bool propto, typename T_n, typename T_N, typename T_prob>
 return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
                                     const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_N, T_prob>;
-
   static const char* function = "binomial_lpmf";
-
-  if (size_zero(n, N, theta)) {
-    return 0.0;
-  }
-
-  T_partials_return logp = 0;
   check_bounded(function, "Successes variable", n, 0, N);
   check_nonnegative(function, "Population size parameter", N);
   check_finite(function, "Probability parameter", theta);
@@ -51,17 +44,21 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
                          "Population size parameter", N,
                          "Probability parameter", theta);
 
+  if (size_zero(n, N, theta)) {
+    return 0.0;
+  }
   if (!include_summand<propto, T_prob>::value) {
     return 0.0;
   }
+
+  T_partials_return logp = 0;
+  operands_and_partials<T_prob> ops_partials(theta);
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_N> N_vec(N);
   scalar_seq_view<T_prob> theta_vec(theta);
   size_t size_theta = stan::math::size(theta);
   size_t max_size_seq_view = max_size(n, N, theta);
-
-  operands_and_partials<T_prob> ops_partials(theta);
 
   if (include_summand<propto>::value) {
     for (size_t i = 0; i < max_size_seq_view; ++i) {

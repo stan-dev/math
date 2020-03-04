@@ -35,15 +35,8 @@ namespace math {
 template <typename T_n, typename T_N, typename T_prob>
 return_type_t<T_prob> binomial_lcdf(const T_n& n, const T_N& N,
                                     const T_prob& theta) {
-  static const char* function = "binomial_lcdf";
   using T_partials_return = partials_return_t<T_n, T_N, T_prob>;
-
-  if (size_zero(n, N, theta)) {
-    return 0.0;
-  }
-
-  T_partials_return P(0.0);
-
+  static const char* function = "binomial_lcdf";
   check_nonnegative(function, "Population size parameter", N);
   check_finite(function, "Probability parameter", theta);
   check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
@@ -51,16 +44,20 @@ return_type_t<T_prob> binomial_lcdf(const T_n& n, const T_N& N,
                          "Population size parameter", N,
                          "Probability parameter", theta);
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_N> N_vec(N);
-  scalar_seq_view<T_prob> theta_vec(theta);
-  size_t max_size_seq_view = max_size(n, N, theta);
+  if (size_zero(n, N, theta)) {
+    return 0;
+  }
 
   using std::exp;
   using std::log;
   using std::pow;
-
+  T_partials_return P(0.0);
   operands_and_partials<T_prob> ops_partials(theta);
+
+  scalar_seq_view<T_n> n_vec(n);
+  scalar_seq_view<T_N> N_vec(N);
+  scalar_seq_view<T_prob> theta_vec(theta);
+  size_t max_size_seq_view = max_size(n, N, theta);
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined,
