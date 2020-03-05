@@ -21,17 +21,16 @@ inline return_type_t<T_y> std_normal_lccdf(const T_y& y) {
   using T_partials_return = partials_return_t<T_y>;
   using std::exp;
   using std::log;
-
   static const char* function = "std_normal_lccdf";
-
-  T_partials_return lccdf(0.0);
-  if (size_zero(y)) {
-    return lccdf;
-  }
-
   check_not_nan(function, "Random variable", y);
 
+  if (size_zero(y)) {
+    return 0;
+  }
+
+  T_partials_return lccdf(0.0);
   operands_and_partials<T_y> ops_partials(y);
+
   scalar_seq_view<T_y> y_vec(y);
   size_t N = stan::math::size(y);
 

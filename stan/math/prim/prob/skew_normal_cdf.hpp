@@ -20,15 +20,9 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
 return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_cdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
-  static const char* function = "skew_normal_cdf";
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
-
-  T_partials_return cdf(1.0);
-
-  if (size_zero(y, mu, sigma, alpha)) {
-    return cdf;
-  }
-
+  using std::exp;
+  static const char* function = "skew_normal_cdf";
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_not_nan(function, "Scale parameter", sigma);
@@ -38,11 +32,13 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_cdf(
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma, "Shape paramter", alpha);
 
+  if (size_zero(y, mu, sigma, alpha)) {
+    return 1.0;
+  }
+
+  T_partials_return cdf(1.0);
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(y, mu, sigma,
                                                                    alpha);
-
-  using std::exp;
-
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);
   scalar_seq_view<T_scale> sigma_vec(sigma);

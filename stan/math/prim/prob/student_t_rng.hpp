@@ -17,10 +17,11 @@ namespace math {
  * nu, mu, and sigma can each be a scalar or a one-dimensional container. Any
  * non-scalar inputs must be the same size.
  *
- * @tparam T_deg Type of degrees of freedom parameter
- * @tparam T_loc Type of location parameter
- * @tparam T_scale Type of scale parameter
+ * @tparam T_deg type of degrees of freedom parameter
+ * @tparam T_loc type of location parameter
+ * @tparam T_scale type of scale parameter
  * @tparam RNG type of random number generator
+ *
  * @param nu (Sequence of) degrees of freedom parameter(s)
  * @param mu (Sequence of) location parameter(s)
  * @param sigma (Sequence of) scale parameter(s)
@@ -38,7 +39,6 @@ student_t_rng(const T_deg& nu, const T_loc& mu, const T_scale& sigma,
   using boost::random::student_t_distribution;
   using boost::variate_generator;
   static const char* function = "student_t_rng";
-
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", sigma);

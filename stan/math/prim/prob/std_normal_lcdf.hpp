@@ -26,16 +26,14 @@ inline return_type_t<T_y> std_normal_lcdf(const T_y& y) {
   using std::fabs;
   using std::log;
   using std::pow;
-
   static const char* function = "std_normal_lcdf";
-
-  T_partials_return lcdf(0.0);
-  if (size_zero(y)) {
-    return lcdf;
-  }
-
   check_not_nan(function, "Random variable", y);
 
+  if (size_zero(y)) {
+    return 0;
+  }
+
+  T_partials_return lcdf(0.0);
   operands_and_partials<T_y> ops_partials(y);
 
   scalar_seq_view<T_y> y_vec(y);
