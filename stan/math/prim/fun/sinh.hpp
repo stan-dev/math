@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -60,6 +61,20 @@ template <typename Derived,
 inline auto sinh(const Eigen::ArrayBase<Derived>& x) {
   return x.derived().sinh().eval();
 }
+
+namespace internal {
+/**
+ * Return the hyperbolic sine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return hyperbolic sine of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_sinh(const std::complex<V>& z) {
+  return 0.5 * (exp(z) - exp(-z));
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan
