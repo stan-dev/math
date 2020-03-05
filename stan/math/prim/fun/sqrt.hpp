@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -56,6 +57,22 @@ template <typename Derived,
 inline auto sqrt(const Eigen::MatrixBase<Derived>& x) {
   return x.derived().array().sqrt().matrix().eval();
 }
+
+namespace internal {
+/**
+ * Return the square root of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return square root of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_sqrt(const std::complex<V>& z) {
+  auto m = sqrt(hypot(z.real(), z.imag()));
+  auto at = 0.5 * atan2(z.imag(), z.real());
+  return {m * cos(at), m * sin(at)};
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan
