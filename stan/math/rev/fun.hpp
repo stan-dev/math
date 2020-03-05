@@ -112,6 +112,7 @@
 #include <stan/math/rev/fun/positive_ordered_constrain.hpp>
 #include <stan/math/rev/fun/pow.hpp>
 #include <stan/math/rev/fun/primitive_value.hpp>
+#include <stan/math/rev/fun/proj.hpp>
 #include <stan/math/rev/fun/quad_form.hpp>
 #include <stan/math/rev/fun/quad_form_sym.hpp>
 #include <stan/math/rev/fun/rising_factorial.hpp>
