@@ -33,6 +33,7 @@ inline T identity_constrain(const T& x) {
  * @tparam T type of scalar
  * @tparam S type of log probability
  * @param[in] x scalar
+ * @param[in] lp log density reference
  * @return transformed input
  */
 template <typename T, typename S>

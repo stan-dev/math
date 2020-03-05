@@ -19,7 +19,7 @@ static const std::string is_symmetric_kernel_code = STRINGIFY(
      * @param rows The number of rows in matrix A.
      * @param cols The number of columns in matrix A.
      * @param[out] flag the flag to be written to if any diagonal is zero.
-     * @param tolerance The numerical tolerance to check wheter
+     * @param tolerance The numerical tolerance to check whether
      *   two values are equal
      * @note Code is a <code>const char*</code> held in
      * <code>is_symmetric_kernel_code.</code>

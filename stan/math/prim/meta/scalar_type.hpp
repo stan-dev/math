@@ -50,6 +50,7 @@ struct scalar_type<T, std::enable_if_t<is_eigen<T>::value>> {
 };
 
 /** \ingroup type_trait
+ *
  * Template metaprogram defining the scalar type for values
  * stored in a complex number.
  *

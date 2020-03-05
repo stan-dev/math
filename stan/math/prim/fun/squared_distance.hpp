@@ -38,7 +38,9 @@ inline return_type_t<Scal1, Scal2> squared_distance(const Scal1& x1, const Scal2
  * Eigen::MatrixBase and have one compile time dimension equal to 1)
  * @param v1 First vector.
  * @param v2 Second vector.
- * @return Squared distance between vectors.
+ * @return Square of distance between vectors.
+ * @throw std::domain_error If the vectors are not the same
+ * size.
  */
 template <typename EigVec1, typename EigVec2,
           require_all_eigen_vector_t<EigVec1, EigVec2>* = nullptr,

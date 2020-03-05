@@ -31,7 +31,7 @@ namespace math {
  * @param[in] x Unconstrained scalar input
  * @param[in] mu offset of constrained output
  * @param[in] sigma multiplier of constrained output
- * @return linear transformed value correspdonding to inputs
+ * @return linear transformed value corresponding to inputs
  * @throw std::domain_error if sigma <= 0
  * @throw std::domain_error if mu is not finite
  */

@@ -14,7 +14,7 @@ namespace stan {
  * Provides a member type alias named `type`, the value of which is
  * the least type under Stan's assignability relation that can be
  * assigned a `double` and all of the base types of the specified
- * arguments after removing qualfifiers (`const` and `volatile`) and
+ * arguments after removing qualifiers (`const` and `volatile`) and
  * decaying (lvalue to rvalue by removing references) and array to
  * pointer).   This type trait is used to calculate the return type
  * of real-valued functions involving heterogeneous arguments.
@@ -106,7 +106,7 @@ using row_vector_return_t = Eigen::Matrix<real_return_t<Ts...>, 1, -1>;
 /**
  * Defines a member type named `type` that is the least scalar type to
  * which both template parameter scalar types are assignable in Stan.
- * The ordering of types for which this is the leasst-upper-bound
+ * The ordering of types for which this is the least-upper-bound
  * operation is defined in the class documentation for `return_type`.
  *
  * @tparam T1 first scalar type

@@ -25,7 +25,7 @@ namespace math {
  * function to work), the symmetric view of its lower-triangular
  * view must be positive definite.
  *
- * @tparam T type of elements in the matrix
+ * @tparam T type of the matrix (must be derived from \c Eigen::MatrixBase)
  * @param y Matrix of dimensions K by K such that he symmetric
  * view of the lower-triangular view is positive definite.
  * @return Vector of size K plus (K choose 2) in (-inf, inf)
@@ -33,27 +33,26 @@ namespace math {
  * @throw std::domain_error if <code>y</code> is not square,
  * has zero dimensionality, or has a non-positive diagonal element.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> cov_matrix_free(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& y) {
+template <typename T, require_eigen_t<T>* = nullptr>
+Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cov_matrix_free(const T& y) {
   check_square("cov_matrix_free", "y", y);
   check_nonzero_size("cov_matrix_free", "y", y);
 
   using std::log;
   int K = y.rows();
-  check_positive("cov_matrix_free", "y", y.diagonal());
-  Eigen::Matrix<T, Eigen::Dynamic, 1> x((K * (K + 1)) / 2);
+  const Eigen::Ref<const plain_type_t<T>>& y_ref = y;
+  check_positive("cov_matrix_free", "y", y_ref.diagonal());
+  Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> x((K * (K + 1)) / 2);
   // FIXME: see Eigen LDLT for rank-revealing version -- use that
   // even if less efficient?
-  Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > llt(y.rows());
-  llt.compute(y);
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> L = llt.matrixL();
+  Eigen::LLT<plain_type_t<T>> llt(y.rows());
+  llt.compute(y_ref);
+  plain_type_t<T> L = llt.matrixL();
   int i = 0;
   for (int m = 0; m < K; ++m) {
-    for (int n = 0; n < m; ++n) {
-      x(i++) = L(m, n);
-    }
-    x(i++) = log(L(m, m));
+    x.segment(i, m) = L.row(m).head(m);
+    i += m;
+    x.coeffRef(i++) = log(L.coeff(m, m));
   }
   return x;
 }

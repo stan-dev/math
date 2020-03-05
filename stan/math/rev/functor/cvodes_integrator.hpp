@@ -45,7 +45,7 @@ class cvodes_integrator {
    *
    * The solver used is based on the backward differentiation
    * formula which is an implicit numerical integration scheme
-   * appropiate for stiff ODE systems.
+   * appropriate for stiff ODE systems.
    *
    * @tparam F type of ODE system function.
    * @tparam T_initial type of scalars for initial values.

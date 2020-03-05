@@ -9,14 +9,14 @@
 namespace stan {
 
 /** \ingroup type_trait
- * Base implimentation for checking if type is std vector
+ * Base implementation for checking if type is std vector
  */
 template <typename T, typename = void>
 struct is_std_vector : std::false_type {};
 
 namespace internal {
 /** \ingroup type_trait
- * Underlying implimentation for detecting if an Eigen Matrix is a column
+ * Underlying implementation for detecting if an Eigen Matrix is a column
  * vector.
  */
 template <typename T, bool = is_eigen<T>::value>
@@ -30,7 +30,7 @@ template <typename T>
 struct is_eigen_col_vector_impl<T, false> : std::false_type {};
 
 /** \ingroup type_trait
- * Underlying implimentation for detecting if an Eigen Matrix is a row vector.
+ * Underlying implementation for detecting if an Eigen Matrix is a row vector.
  */
 template <typename T, bool = is_eigen<T>::value>
 struct is_eigen_row_vector_impl
@@ -80,13 +80,13 @@ struct is_vector
 namespace internal {
 
 /** \ingroup type_trait
- * This underlying implimentation is used when the type is not an std vector.
+ * This underlying implementation is used when the type is not an std vector.
  */
 template <typename T>
 struct is_std_vector_impl : std::false_type {};
 
 /** \ingroup type_trait
- * This specialization implimentation has a static member named value when the
+ * This specialization implementation has a static member named value when the
  * template type is an std vector.
  */
 template <typename... Args>
