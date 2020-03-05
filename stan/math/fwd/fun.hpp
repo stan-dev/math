@@ -16,6 +16,7 @@
 #include <stan/math/fwd/fun/binary_log_loss.hpp>
 #include <stan/math/fwd/fun/cbrt.hpp>
 #include <stan/math/fwd/fun/ceil.hpp>
+#include <stan/math/fwd/fun/conj.hpp>
 #include <stan/math/fwd/fun/cos.hpp>
 #include <stan/math/fwd/fun/cosh.hpp>
 #include <stan/math/fwd/fun/crossprod.hpp>

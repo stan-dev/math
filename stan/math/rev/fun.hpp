@@ -29,6 +29,7 @@
 #include <stan/math/rev/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/fun/columns_dot_product.hpp>
 #include <stan/math/rev/fun/columns_dot_self.hpp>
+#include <stan/math/rev/fun/conj.hpp>
 #include <stan/math/rev/fun/cos.hpp>
 #include <stan/math/rev/fun/cosh.hpp>
 #include <stan/math/rev/fun/cov_exp_quad.hpp>

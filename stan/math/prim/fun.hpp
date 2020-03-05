@@ -40,6 +40,7 @@
 #include <stan/math/prim/fun/cols.hpp>
 #include <stan/math/prim/fun/columns_dot_product.hpp>
 #include <stan/math/prim/fun/columns_dot_self.hpp>
+#include <stan/math/prim/fun/conj.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/copysign.hpp>
 #include <stan/math/prim/fun/corr_constrain.hpp>

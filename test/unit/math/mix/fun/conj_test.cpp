@@ -2,7 +2,7 @@
 #include <complex>
 #include <vector>
 
-TEST(mixScalFun, norm) {
-  auto f = [](const auto& x) { return norm(x); };
+TEST(mixScalFun, conj) {
+  auto f = [](const auto& x) { return conj(x); };
   stan::test::expect_complex_common(f);
 }
