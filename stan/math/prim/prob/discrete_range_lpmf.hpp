@@ -45,7 +45,6 @@ template <bool propto, typename T_y, typename T_lower, typename T_upper>
 double discrete_range_lpmf(const T_y& y, const T_lower& lower,
                            const T_upper& upper) {
   static const char* function = "discrete_range_lpmf";
-  using std::log;
   check_not_nan(function, "Random variable", y);
   check_consistent_sizes(function, "Lower bound parameter", lower,
                          "Upper bound parameter", upper);
@@ -57,6 +56,8 @@ double discrete_range_lpmf(const T_y& y, const T_lower& lower,
   if (!include_summand<propto>::value) {
     return 0.0;
   }
+
+  using std::log;
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_lower> lower_vec(lower);
