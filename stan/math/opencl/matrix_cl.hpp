@@ -20,7 +20,7 @@
 /** \ingroup opencl
  *  @file stan/math/opencl/matrix_cl.hpp
  *  @brief The matrix_cl class - allocates memory space on the OpenCL device,
- *    functions for transfering matrices to and from OpenCL devices
+ *    functions for transferring matrices to and from OpenCL devices
  */
 namespace stan {
 namespace math {
@@ -491,7 +491,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
 
  private:
   /** \ingroup opencl
-   * Initializes the OpencL buffer of this matrix by copying the data from given
+   * Initializes the OpenCL buffer of this matrix by copying the data from given
    * buffer. Assumes that size of \c this is already set and matches the
    * buffer size. If \c in_order is false the caller must make sure that data
    * is not deleted before copying is complete.
@@ -526,7 +526,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   }
 
   /** \ingroup opencl
-   * Initializes the OpencL buffer of this matrix by copying the data from given
+   * Initializes the OpenCL buffer of this matrix by copying the data from given
    * object. Assumes that size of \c this is already set and matches the
    * buffer size. If the object is rvalue (temporary) it is first moved to heap
    * and callback is set to delete it after copying to OpenCL device is
@@ -563,7 +563,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   }
 
   /** \ingroup opencl
-   * Initializes the OpencL buffer of this matrix by copying the data from given
+   * Initializes the OpenCL buffer of this matrix by copying the data from given
    * matrix_cl. Assumes that size of \c this is already set and matches the
    * size of given matrix.
    * @param A matrix_cl

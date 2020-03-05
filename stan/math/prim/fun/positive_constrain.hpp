@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 #include <cmath>
 
 namespace stan {
@@ -15,12 +16,11 @@ namespace math {
  *
  * <p>\f$f(x) = \exp(x)\f$.
  *
- * @param x Arbitrary input scalar.
+ * @param x Arbitrary input scalar or container.
  * @return Input transformed to be positive.
  */
 template <typename T>
-inline T positive_constrain(const T& x) {
-  using std::exp;
+inline auto positive_constrain(const T& x) {
   return exp(x);
 }
 
@@ -36,14 +36,13 @@ inline T positive_constrain(const T& x) {
  *    = \log | \mbox{exp}(x) | =  x\f$.
  *
  * @tparam T type of unconstrained value
- * @param x unconstrained value
+ * @param x unconstrained value or container
  * @param lp log density reference.
- * @return positive constrained version of unconstrained value
+ * @return positive constrained version of unconstrained value(s)
  */
 template <typename T>
-inline T positive_constrain(const T& x, T& lp) {
-  using std::exp;
-  lp += x;
+inline auto positive_constrain(const T& x, value_type_t<T>& lp) {
+  lp += sum(x);
   return exp(x);
 }
 

@@ -12,7 +12,7 @@ class AgradCdfBeta : public AgradCdfTest {
 
     param[0] = 0.5;  // y
     param[1] = 2.0;  // alpha (Success Scale)
-    param[2] = 5.0;  // beta  (Faiulre Scale)
+    param[2] = 5.0;  // beta  (Failure Scale)
     parameters.push_back(param);
     cdf.push_back(0.890625);  // expected CDF
   }

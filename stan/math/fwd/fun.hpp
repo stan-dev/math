@@ -16,8 +16,6 @@
 #include <stan/math/fwd/fun/binary_log_loss.hpp>
 #include <stan/math/fwd/fun/cbrt.hpp>
 #include <stan/math/fwd/fun/ceil.hpp>
-#include <stan/math/fwd/fun/columns_dot_product.hpp>
-#include <stan/math/fwd/fun/columns_dot_self.hpp>
 #include <stan/math/fwd/fun/cos.hpp>
 #include <stan/math/fwd/fun/cosh.hpp>
 #include <stan/math/fwd/fun/crossprod.hpp>
@@ -96,8 +94,6 @@
 #include <stan/math/fwd/fun/quad_form_sym.hpp>
 #include <stan/math/fwd/fun/rising_factorial.hpp>
 #include <stan/math/fwd/fun/round.hpp>
-#include <stan/math/fwd/fun/rows_dot_product.hpp>
-#include <stan/math/fwd/fun/rows_dot_self.hpp>
 #include <stan/math/fwd/fun/sin.hpp>
 #include <stan/math/fwd/fun/sinh.hpp>
 #include <stan/math/fwd/fun/softmax.hpp>

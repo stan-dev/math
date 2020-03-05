@@ -19,8 +19,8 @@ T inc_beta_dda(T a, T b, T z, T digamma_a, T digamma_ab);
 /**
  * Returns the partial derivative of the regularized
  * incomplete beta function, I_{z}(a, b) with respect to b.
- * The power series used to compute the deriative tends to
- * converge slowly when a and b are large, especailly if z
+ * The power series used to compute the derivative tends to
+ * converge slowly when a and b are large, especially if z
  * approaches 1.  The implementation will throw an exception
  * if the series have not converged within 100,000 iterations.
  * The current implementation has been tested for values
@@ -61,7 +61,7 @@ T inc_beta_ddb(T a, T b, T z, T digamma_b, T digamma_ab) {
   const T a_plus_b = a + b;
   const T a_plus_1 = a + 1;
 
-  // Common prefactor to regularize numerator and denomentator
+  // Common prefactor to regularize numerator and denominator
   T prefactor = pow(a_plus_1 / a_plus_b, 3);
 
   T sum_numer = digamma_ab * prefactor;

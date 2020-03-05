@@ -409,7 +409,7 @@ void expect_all_throw(const F& f, double x1, double x2) {
 
 /**
  * Succeeds if the specified function applied to the specified
- * argument thorws an exception at every level of autodiff.
+ * argument throws an exception at every level of autodiff.
  *
  * @tparam F type of function
  * @param f function to evaluate

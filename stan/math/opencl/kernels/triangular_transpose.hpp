@@ -13,7 +13,7 @@ namespace opencl_kernels {
 static const std::string triangular_transpose_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
-     * Copies a lower/upper triangular of a matrix to it's upper/lower.
+     * Copies the lower/upper triangle of a matrix to its upper/lower triangle.
      *
      * @param[in,out] A The matrix.
      * @param rows The number of rows in A.
