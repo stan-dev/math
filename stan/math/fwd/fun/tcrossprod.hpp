@@ -9,10 +9,10 @@
 namespace stan {
 namespace math {
 
-template <typename T, require_eigen_vt<is_fvar, T>* = nullptr>
-inline Eigen::Matrix<value_type_t<T>, T::RowsAtCompileTime,
-                     T::RowsAtCompileTime>
-tcrossprod(const T& m) {
+template <typename EigMat, require_eigen_vt<is_fvar, EigMat>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
+                     EigMat::RowsAtCompileTime>
+tcrossprod(const EigMat& m) {
   if (m.rows() == 0) {
     return {};
   }

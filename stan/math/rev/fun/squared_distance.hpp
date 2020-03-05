@@ -35,12 +35,14 @@ class scal_squared_distance_vd_vari : public op_vd_vari {
 inline var squared_distance(const var& a, const var& b) {
   return var(new scal_squared_distance_vv_vari(a.vi_, b.vi_));
 }
+
 /**
  * Returns the squared distance.
  */
 inline var squared_distance(const var& a, double b) {
   return var(new scal_squared_distance_vd_vari(a.vi_, b));
 }
+
 /**
  * Returns the squared distance.
  */
@@ -56,22 +58,15 @@ class squared_distance_vv_vari : public vari {
   vari** v2_;
   size_t length_;
 
-  template <int R1, int C1, int R2, int C2>
-  inline static double var_squared_distance(
-      const Eigen::Matrix<var, R1, C1>& v1,
-      const Eigen::Matrix<var, R2, C2>& v2) {
-    using idx_t = index_type_t<matrix_v>;
-
-    return (Eigen::Ref<const vector_v>(v1).val()
-            - Eigen::Ref<const vector_v>(v2).val())
-        .squaredNorm();
-  }
-
  public:
-  template <int R1, int C1, int R2, int C2>
-  squared_distance_vv_vari(const Eigen::Matrix<var, R1, C1>& v1,
-                           const Eigen::Matrix<var, R2, C2>& v2)
-      : vari(var_squared_distance(v1, v2)), length_(v1.size()) {
+  template <
+      typename EigVecVar1, typename EigVecVar2,
+      require_all_eigen_vector_vt<is_var, EigVecVar1, EigVecVar2>* = nullptr>
+  squared_distance_vv_vari(const EigVecVar1& v1, const EigVecVar2& v2)
+      : vari((as_column_vector_or_scalar(v1).val()
+              - as_column_vector_or_scalar(v2).val())
+                 .squaredNorm()),
+        length_(v1.size()) {
     v1_ = reinterpret_cast<vari**>(
         ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
     v2_ = reinterpret_cast<vari**>(
@@ -79,6 +74,7 @@ class squared_distance_vv_vari : public vari {
     Eigen::Map<vector_vi>(v1_, length_) = v1.vi();
     Eigen::Map<vector_vi>(v2_, length_) = v2.vi();
   }
+
   virtual void chain() {
     Eigen::Map<vector_vi> v1_map(v1_, length_);
     Eigen::Map<vector_vi> v2_map(v2_, length_);
@@ -87,28 +83,22 @@ class squared_distance_vv_vari : public vari {
     v2_map.adj() -= di;
   }
 };
+
 class squared_distance_vd_vari : public vari {
  protected:
   vari** v1_;
   double* v2_;
   size_t length_;
 
-  template <int R1, int C1, int R2, int C2>
-  inline static double var_squared_distance(
-      const Eigen::Matrix<var, R1, C1>& v1,
-      const Eigen::Matrix<double, R2, C2>& v2) {
-    using idx_t = index_type_t<matrix_d>;
-
-    return (Eigen::Ref<const vector_v>(v1).val()
-            - Eigen::Ref<const vector_d>(v2))
-        .squaredNorm();
-  }
-
  public:
-  template <int R1, int C1, int R2, int C2>
-  squared_distance_vd_vari(const Eigen::Matrix<var, R1, C1>& v1,
-                           const Eigen::Matrix<double, R2, C2>& v2)
-      : vari(var_squared_distance(v1, v2)), length_(v1.size()) {
+  template <typename EigVecVar, typename EigVecArith,
+            require_eigen_vector_vt<is_var, EigVecVar>* = nullptr,
+            require_eigen_vector_vt<std::is_arithmetic, EigVecArith>* = nullptr>
+  squared_distance_vd_vari(const EigVecVar& v1,
+                           const EigVecArith& v2)
+      : vari((as_column_vector_or_scalar(v1).val()
+              - as_column_vector_or_scalar(v2))
+                 .squaredNorm()), length_(v1.size()) {
     v1_ = reinterpret_cast<vari**>(
         ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
     v2_ = reinterpret_cast<double*>(
@@ -116,6 +106,7 @@ class squared_distance_vd_vari : public vari {
     Eigen::Map<vector_vi>(v1_, length_) = v1.vi();
     Eigen::Map<vector_d>(v2_, length_) = v2;
   }
+
   virtual void chain() {
     Eigen::Map<vector_vi> v1_map(v1_, length_);
     v1_map.adj()
@@ -124,23 +115,26 @@ class squared_distance_vd_vari : public vari {
 };
 }  // namespace internal
 
-template <typename T1, typename T2,
-          require_all_eigen_vector_vt<is_var, T1, T2>* = nullptr>
-inline var squared_distance(const T1& v1, const T2& v2) {
+template <
+    typename EigVecVar1, typename EigVecVar2,
+    require_all_eigen_vector_vt<is_var, EigVecVar1, EigVecVar2>* = nullptr>
+inline var squared_distance(const EigVecVar1& v1, const EigVecVar2& v2) {
   check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
   return var(new internal::squared_distance_vv_vari(v1, v2));
 }
-template <typename T1, typename T2,
-          require_eigen_vector_vt<is_var, T1>* = nullptr,
-          require_eigen_vector_vt<std::is_arithmetic, T2>* = nullptr>
-inline var squared_distance(const T1& v1, const T2& v2) {
+
+template <typename EigVecVar, typename EigVecArith,
+          require_eigen_vector_vt<is_var, EigVecVar>* = nullptr,
+          require_eigen_vector_vt<std::is_arithmetic, EigVecArith>* = nullptr>
+inline var squared_distance(const EigVecVar& v1, const EigVecArith& v2) {
   check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
   return var(new internal::squared_distance_vd_vari(v1, v2));
 }
-template <typename T1, typename T2,
-          require_eigen_vector_vt<std::is_arithmetic, T1>* = nullptr,
-          require_eigen_vector_vt<is_var, T2>* = nullptr>
-inline var squared_distance(const T1& v1, const T2& v2) {
+
+template <typename EigVecArith, typename EigVecVar,
+          require_eigen_vector_vt<std::is_arithmetic, EigVecArith>* = nullptr,
+          require_eigen_vector_vt<is_var, EigVecVar>* = nullptr>
+inline var squared_distance(const EigVecArith& v1, const EigVecVar& v2) {
   check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
   return var(new internal::squared_distance_vd_vari(v2, v1));
 }

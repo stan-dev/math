@@ -9,12 +9,12 @@
 namespace stan {
 namespace math {
 
-template <typename T, require_eigen_vt<is_fvar, T>* = nullptr>
-inline value_type_t<T> determinant(const T& m) {
+template <typename EigMat, require_eigen_vt<is_fvar, EigMat>* = nullptr>
+inline value_type_t<EigMat> determinant(const EigMat& m) {
   check_square("determinant", "m", m);
 
-  const typename value_type_t<T>::Scalar vals = m.val().determinant();
-  return value_type_t<T>(vals, vals * (m.val().inverse() * m.d()).trace());
+  const typename value_type_t<EigMat>::Scalar vals = m.val().determinant();
+  return value_type_t<EigMat>(vals, vals * (m.val().inverse() * m.d()).trace());
 }
 
 }  // namespace math
