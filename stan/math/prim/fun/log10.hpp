@@ -3,7 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -47,6 +49,21 @@ template <typename Derived,
 inline auto log10(const Eigen::MatrixBase<Derived>& x) {
   return x.derived().array().log10().matrix().eval();
 }
+
+namespace internal {
+/**
+ * Return the base 10 logarithm of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return base 10 logarithm of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_log10(const std::complex<V>& z) {
+  static const double inv_log_10 = 1 / std::log(10);
+  return log(z) * inv_log_10;
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan
