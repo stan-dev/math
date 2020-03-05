@@ -20,7 +20,7 @@ inline double inv_sqrt(double x) {
  *
  * @tparam T type of variable
  * @param x variable
- * @return 1 / sqrt of x.
+ * @return inverse square root of x.
  */
 struct inv_sqrt_fun {
   template <typename T>
@@ -34,7 +34,7 @@ struct inv_sqrt_fun {
  *
  * @tparam T type of container
  * @param x container
- * @return 1 / sqrt of each value in x.
+ * @return inverse square root of each value in x.
  */
 template <typename T,
           require_not_container_st<is_container, std::is_arithmetic, T>...>
@@ -47,7 +47,7 @@ inline auto inv_sqrt(const T& x) {
  *
  * @tparam T Type of x
  * @param x Eigen Matrix/Array or expression
- * @return Arc cosine of each variable in the container, in radians.
+ * @return inverse square root each variable in the container.
  */
 template <typename T,
           require_container_st<is_container, std::is_arithmetic, T>...>

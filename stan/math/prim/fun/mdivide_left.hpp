@@ -11,14 +11,8 @@ namespace math {
 /**
  * Returns the solution of the system Ax=b.
  *
- * @tparam T1 type of elements in first matrix
- * @tparam T2 type of elements in right-hand side matrix or vector
- * @tparam R1 number of rows in the first matrix, can be Eigen::Dynamic
- * @tparam C1 number of columns in the first matrix, can be Eigen::Dynamic
- * @tparam R2 number of rows in the right-hand side matrix, can be
- *         Eigen::Dynamic
- * @tparam C2 number of columns in the right-hand side matrix, can be
- *         Eigen::Dynamic
+ * @tparam T1 type of the first matrix
+ * @tparam T2 type of the right-hand side matrix or vector
  *
  * @param A Matrix.
  * @param b Right hand side matrix or vector.
@@ -26,17 +20,22 @@ namespace math {
  * @throws std::domain_error if A is not square or the rows of b don't
  * match the size of A.
  */
-template <typename T1, typename T2, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_left(
-    const Eigen::Matrix<T1, R1, C1> &A, const Eigen::Matrix<T2, R2, C2> &b) {
+template <typename T1, typename T2,
+          require_all_eigen_vt<std::is_arithmetic, T1, T2>* = nullptr>
+inline Eigen::Matrix<return_type_t<T1, T2>, T1::RowsAtCompileTime,
+                     T2::ColsAtCompileTime>
+mdivide_left(const T1& A, const T2& b) {
   check_square("mdivide_left", "A", A);
   check_multiplicable("mdivide_left", "A", A, "b", b);
   if (A.size() == 0) {
     return {0, b.cols()};
   }
 
-  return Eigen::Matrix<return_type_t<T1, T2>, R1, C1>(A).lu().solve(
-      Eigen::Matrix<return_type_t<T1, T2>, R2, C2>(b));
+  return Eigen::Matrix<return_type_t<T1, T2>, T1::RowsAtCompileTime,
+                       T1::ColsAtCompileTime>(A)
+      .lu()
+      .solve(Eigen::Matrix<return_type_t<T1, T2>, T2::RowsAtCompileTime,
+                           T2::ColsAtCompileTime>(b));
 }
 
 }  // namespace math

@@ -21,7 +21,7 @@ TEST(MathMatrixAssign, print_mat_size) {
   test_print_mat_size<10>("10");
 }
 
-TEST(MathMatrixAssign, realToDouble) {
+TEST(MathMatrixAssign, intToDouble) {
   double a = 2.7;
   int b = 0;
   EXPECT_NO_THROW(stan::math::assign(b, a));
@@ -60,12 +60,12 @@ TEST(MathMatrixAssign, matSizeMismatch) {
   Matrix<double, -1, -1> m3(10, 10);
   Matrix<double, -1, -1> m4(2, 3);
   EXPECT_THROW_MSG(assign(m3.block(1, 1, 7, 3), m4), std::exception,
-                   "left-hand side rows (7) and right-hand"
-                   " side rows (2) must match in size");
+                   "Rows of left-hand-side (7) and rows of"
+                   " right-hand-side (2) must match in size");
 
   EXPECT_THROW_MSG(assign(m3.block(1, 1, 2, 5), m4), std::exception,
-                   "assign: left-hand side cols (5) and"
-                   " right-hand side cols (3) must match in size");
+                   "Columns of left-hand-side (5) and columns"
+                   " of right-hand-side (3) must match in size");
 }
 
 TEST(MathMatrixAssign, test_int) {
@@ -185,9 +185,6 @@ TEST(MathMatrixAssign, eigenRowVectorShapeMismatch) {
   Matrix<double, Dynamic, Dynamic> zzz(3, 1);
   zzz << 1, 2, 3;
   EXPECT_THROW(assign(x, zzz), std::invalid_argument);
-
-  Matrix<double, Dynamic, Dynamic> zzzz(1, 3);
-  EXPECT_THROW(assign(x, zzzz), std::invalid_argument);
 }
 
 TEST(MathMatrixAssign, eigenMatrixDoubleToDouble) {

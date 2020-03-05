@@ -30,7 +30,7 @@ namespace math {
  * @param y (Sequence of) scalar(s) between zero and one
  * @param alpha (Sequence of) success parameter(s)
  * @param beta (Sequence of) failure parameter(s)
- * @return log probability or sum of log of proabilities
+ * @return log probability or sum of log of probabilities
  * @throw std::domain_error if alpha or beta is negative
  * @throw std::domain_error if y is not a valid probability
  * @throw std::invalid_argument if container sizes mismatch

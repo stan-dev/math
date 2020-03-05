@@ -13,7 +13,7 @@ namespace math {
  * version is required to disambiguate <code>sqrt(int)</code>.
  *
  * @param[in] x Argument.
- * @return Natural exponential of argument.
+ * @return Square root of x.
  */
 inline double sqrt(int x) { return std::sqrt(x); }
 

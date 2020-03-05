@@ -232,7 +232,7 @@ using require_not_same_t
     = require_not_t<std::is_same<std::decay_t<T>, std::decay_t<S>>>;
 
 /**
- * Require both types to not be the same
+ * Require all types to be the same
  */
 template <typename T, typename... Types>
 using require_all_same_t
@@ -261,7 +261,7 @@ using require_not_same_st
                                  scalar_type_t<std::decay_t<S>>>>;
 
 /**
- * Require both types to not be the same
+ * Require all types to be the same
  */
 template <typename T, typename... Types>
 using require_all_same_st
@@ -291,7 +291,7 @@ using require_not_same_vt = require_not_t<
     std::is_same<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>;
 
 /**
- * Require both types to not be the same
+ * Require all types to be the same
  */
 template <typename T, typename... Types>
 using require_all_same_vt
@@ -693,7 +693,7 @@ using require_any_not_container_t
     = require_any_not_t<is_container<std::decay_t<Types>>...>;
 
 /**
- * Check a templated type to see if it and it's inner type pass a condiational
+ * Check a templated type to see if it and its inner type pass a conditional
  * test.
  * @tparam ContainerCheck Templated struct or alias that wraps a static constant
  * value called type. Used to check the container satisfies a particular type

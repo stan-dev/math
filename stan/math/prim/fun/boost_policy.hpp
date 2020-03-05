@@ -15,6 +15,7 @@ namespace math {
  * The non-default behavior from Boost's built-ins are
  * (1) overflow errors return error numbers on error.
  * (2) pole errors return error numbers on error.
+ * (3) doubles passed to Boost are not promoted to long double.
  */
 using boost_policy_t = boost::math::policies::policy<
     boost::math::policies::overflow_error<
