@@ -22,7 +22,8 @@ namespace math {
 template <typename Scal1, typename Scal2,
           require_all_stan_scalar_t<Scal1, Scal2>* = nullptr,
           require_all_not_var_t<Scal1, Scal2>* = nullptr>
-inline return_type_t<Scal1, Scal2> squared_distance(const Scal1& x1, const Scal2& x2) {
+inline return_type_t<Scal1, Scal2> squared_distance(const Scal1& x1,
+                                                    const Scal2& x2) {
   check_finite("squared_distance", "x1", x1);
   check_finite("squared_distance", "x2", x2);
   return square(x1 - x2);
@@ -45,7 +46,8 @@ inline return_type_t<Scal1, Scal2> squared_distance(const Scal1& x1, const Scal2
 template <typename EigVec1, typename EigVec2,
           require_all_eigen_vector_t<EigVec1, EigVec2>* = nullptr,
           require_all_not_eigen_vt<is_var, EigVec1, EigVec2>* = nullptr>
-inline return_type_t<EigVec1, EigVec2> squared_distance(const EigVec1& v1, const EigVec2& v2) {
+inline return_type_t<EigVec1, EigVec2> squared_distance(const EigVec1& v1,
+                                                        const EigVec2& v2) {
   check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
   return (as_column_vector_or_scalar(v1) - as_column_vector_or_scalar(v2))
       .squaredNorm();
