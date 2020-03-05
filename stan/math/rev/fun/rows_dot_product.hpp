@@ -12,14 +12,17 @@
 namespace stan {
 namespace math {
 
-template <typename T1, int R1, int C1, typename T2, int R2, int C2,
-          require_any_var_t<T1, T2>...>
-inline Eigen::Matrix<var, R1, 1> rows_dot_product(
-    const Eigen::Matrix<T1, R1, C1>& v1, const Eigen::Matrix<T2, R2, C2>& v2) {
+template <typename Mat1, typename Mat2,
+          require_all_eigen_t<Mat1, Mat2>* = nullptr,
+          require_any_eigen_vt<is_var, Mat1, Mat2>* = nullptr>
+inline Eigen::Matrix<var, Mat1::RowsAtCompileTime, 1> rows_dot_product(
+    const Mat1& v1, const Mat2& v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
-  Eigen::Matrix<var, R1, 1> ret(v1.rows(), 1);
+  Eigen::Matrix<var, Mat1::RowsAtCompileTime, 1> ret(v1.rows(), 1);
   for (size_type j = 0; j < v1.rows(); ++j) {
-    ret(j) = var(new internal::dot_product_vari<T1, T2>(v1.row(j), v2.row(j)));
+    ret(j) = var(
+        new internal::dot_product_vari<value_type_t<Mat1>, value_type_t<Mat2>>(
+            v1.row(j), v2.row(j)));
   }
   return ret;
 }
