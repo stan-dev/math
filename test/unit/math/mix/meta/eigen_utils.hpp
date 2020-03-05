@@ -12,8 +12,8 @@ namespace test {
  * Test type checking for sparse matrices
  * @tparam eigen_base_v logical for whether `Checker` should pass for
  *   `EigenBase` types.
- * @tparam eigen_sparse_compressed_v logical for whether `Checker` should pass for
- *   `SparseCompressedBase` types.
+ * @tparam eigen_sparse_compressed_v logical for whether `Checker` should pass
+ * for `SparseCompressedBase` types.
  * @tparam eigen_sparse_matrix_v logical for whether `Checker` should pass for
  *   `SparseMatrixBase` types.
  * @tparam eigen_sparse_map_v logical for whether `Checker` should pass for
@@ -69,17 +69,16 @@ void test_eigen_sparse_matrix() {
  * @tparam EigenDims template parameter pack of `int` defining matrix
  *  compile time dimensions.
  */
-template <bool eigen_base_v, bool eigen_dense_v, bool eigen_matrix_v,
-          bool eigen_array_v, bool eigen_map_v,
-          template <class...> class Checker,
-          template <class, int...> class EigenType,
-          typename Scalar, int... EigenDims>
+template <
+    bool eigen_base_v, bool eigen_dense_v, bool eigen_matrix_v,
+    bool eigen_array_v, bool eigen_map_v, template <class...> class Checker,
+    template <class, int...> class EigenType, typename Scalar, int... EigenDims>
 void test_eigen_dense() {
+  using Eigen::ArrayBase;
   using Eigen::DenseBase;
   using Eigen::EigenBase;
   using Eigen::Map;
   using Eigen::MatrixBase;
-  using Eigen::ArrayBase;
   using test_mat = EigenType<Scalar, EigenDims...>;
   test_mat A;
   test_mat B;
@@ -167,20 +166,20 @@ void all_eigen_dense_matrix() {
   using stan::math::var;
 
   test_eigen_dense<eigen_base_v, eigen_dense_v, eigen_matrix_v,
-                          eigen_matrix_expr_v, eigen_map_v, Checker, Eigen::Matrix, double,
-                          EigenDims...>();
+                   eigen_matrix_expr_v, eigen_map_v, Checker, Eigen::Matrix,
+                   double, EigenDims...>();
   test_eigen_dense<eigen_base_v, eigen_dense_v, eigen_matrix_v,
-                          eigen_matrix_expr_v, eigen_map_v, Checker, Eigen::Matrix, var,
-                          EigenDims...>();
+                   eigen_matrix_expr_v, eigen_map_v, Checker, Eigen::Matrix,
+                   var, EigenDims...>();
   test_eigen_dense<eigen_base_v, eigen_dense_v, eigen_matrix_v,
-                          eigen_matrix_expr_v, eigen_map_v, Checker, Eigen::Matrix,
-                          fvar<double>, EigenDims...>();
+                   eigen_matrix_expr_v, eigen_map_v, Checker, Eigen::Matrix,
+                   fvar<double>, EigenDims...>();
   test_eigen_dense<eigen_base_v, eigen_dense_v, eigen_matrix_v,
-                          eigen_matrix_expr_v, eigen_map_v, Checker, Eigen::Matrix, fvar<var>,
-                          EigenDims...>();
+                   eigen_matrix_expr_v, eigen_map_v, Checker, Eigen::Matrix,
+                   fvar<var>, EigenDims...>();
   test_eigen_dense<eigen_base_v, eigen_dense_v, eigen_matrix_v,
-                          eigen_matrix_expr_v, eigen_map_v, Checker, Eigen::Matrix,
-                          fvar<fvar<double>>, EigenDims...>();
+                   eigen_matrix_expr_v, eigen_map_v, Checker, Eigen::Matrix,
+                   fvar<fvar<double>>, EigenDims...>();
 }
 
 /**
@@ -208,24 +207,24 @@ void all_eigen_dense_array() {
   using stan::math::var;
 
   test_eigen_dense<eigen_base_v, eigen_dense_v, eigen_array_v,
-                         eigen_array_expr_v, eigen_map_v, Checker, Eigen::Array, double,
-                         EigenDims...>();
+                   eigen_array_expr_v, eigen_map_v, Checker, Eigen::Array,
+                   double, EigenDims...>();
 
   test_eigen_dense<eigen_base_v, eigen_dense_v, eigen_array_v,
-                         eigen_array_expr_v, eigen_map_v, Checker, Eigen::Array, var,
-                         EigenDims...>();
+                   eigen_array_expr_v, eigen_map_v, Checker, Eigen::Array, var,
+                   EigenDims...>();
 
   test_eigen_dense<eigen_base_v, eigen_dense_v, eigen_array_v,
-                         eigen_array_expr_v, eigen_map_v, Checker, Eigen::Array, fvar<double>,
-                         EigenDims...>();
+                   eigen_array_expr_v, eigen_map_v, Checker, Eigen::Array,
+                   fvar<double>, EigenDims...>();
 
   test_eigen_dense<eigen_base_v, eigen_dense_v, eigen_array_v,
-                         eigen_array_expr_v, eigen_map_v, Checker, Eigen::Array, fvar<var>,
-                         EigenDims...>();
+                   eigen_array_expr_v, eigen_map_v, Checker, Eigen::Array,
+                   fvar<var>, EigenDims...>();
 
   test_eigen_dense<eigen_base_v, eigen_dense_v, eigen_array_v,
-                         eigen_array_expr_v, eigen_map_v, Checker, Eigen::Array,
-                         fvar<fvar<double>>, EigenDims...>();
+                   eigen_array_expr_v, eigen_map_v, Checker, Eigen::Array,
+                   fvar<fvar<double>>, EigenDims...>();
 }
 
 /*
@@ -259,8 +258,8 @@ void all_eigen_dense_decomp() {
  * Test type checking for sparse matrices with all stan scalar types.
  * @tparam eigen_base_v logical for whether `Checker` should pass for
  *   `EigenBase` types.
- * @tparam eigen_sparse_compressed_v logical for whether `Checker` should pass for
- *   `SparseCompressedBase` types.
+ * @tparam eigen_sparse_compressed_v logical for whether `Checker` should pass
+ * for `SparseCompressedBase` types.
  * @tparam eigen_sparse_matrix_v logical for whether `Checker` should pass for
  *   `SparseMatrixBase` types.
  * @tparam eigen_sparse_map_v logical for whether `Checker` should pass for
