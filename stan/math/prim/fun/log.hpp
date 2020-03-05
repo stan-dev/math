@@ -3,7 +3,11 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/is_inf.hpp>
+#include <stan/math/prim/fun/is_nan.hpp>
 #include <cmath>
+#include <complex>
+#include <limits>
 
 namespace stan {
 namespace math {
@@ -61,6 +65,28 @@ template <typename Derived,
 inline auto log(const Eigen::MatrixBase<Derived>& x) {
   return x.derived().array().log().matrix().eval();
 }
+
+namespace internal {
+/**
+ * Return the natural logarithm of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return natural logarithm of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_log(const std::complex<V>& z) {
+  static const double inf = std::numeric_limits<double>::infinity();
+  static const double nan = std::numeric_limits<double>::quiet_NaN();
+  if ((is_nan(z.real()) && is_inf(z.imag()))
+      || (is_inf(z.real()) && is_nan(z.imag()))) {
+    return {inf, nan};
+  }
+  V r = sqrt(norm(z));
+  V theta = arg(z);
+  return {log(r), theta};
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

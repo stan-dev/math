@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_FUN_LOG_HPP
 #define STAN_MATH_REV_FUN_LOG_HPP
 
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <cmath>
@@ -45,6 +46,17 @@ class log_vari : public op_v_vari {
  * @return Natural log of variable.
  */
 inline var log(const var& a) { return var(new internal::log_vari(a.vi_)); }
+
+/**
+ * Return the natural logarithm (base e) of the specified complex argument.
+ *
+ * @param z complex argument
+ * @return natural logarithm of argument
+ */
+inline std::complex<var> log(const std::complex<var>& z) {
+  return internal::complex_log(z);
+}
+
 
 }  // namespace math
 }  // namespace stan
