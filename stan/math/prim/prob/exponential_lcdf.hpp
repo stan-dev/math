@@ -17,6 +17,8 @@ template <typename T_y, typename T_inv_scale>
 return_type_t<T_y, T_inv_scale> exponential_lcdf(const T_y& y,
                                                  const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_inv_scale>;
+  using std::exp;
+  using std::log;
   static const char* function = "exponential_lcdf";
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -26,8 +28,6 @@ return_type_t<T_y, T_inv_scale> exponential_lcdf(const T_y& y,
     return 0;
   }
 
-  using std::exp;
-  using std::log;
   T_partials_return cdf_log(0.0);
   operands_and_partials<T_y, T_inv_scale> ops_partials(y, beta);
 

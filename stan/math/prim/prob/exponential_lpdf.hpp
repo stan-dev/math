@@ -45,6 +45,7 @@ template <bool propto, typename T_y, typename T_inv_scale>
 return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
                                                  const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_inv_scale>;
+  using std::log;
   static const char* function = "exponential_lpdf";
   check_nonnegative(function, "Random variable", y);
   check_positive_finite(function, "Inverse scale parameter", beta);
@@ -55,7 +56,6 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
     return 0.0;
   }
 
-  using std::log;
   T_partials_return logp(0.0);
   operands_and_partials<T_y, T_inv_scale> ops_partials(y, beta);
 

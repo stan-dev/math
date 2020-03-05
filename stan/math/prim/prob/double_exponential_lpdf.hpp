@@ -35,6 +35,8 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale>
 return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
+  using std::fabs;
+  using std::log;
   static const char* function = "double_exponential_lpdf";
   check_finite(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -49,8 +51,6 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
     return 0.0;
   }
 
-  using std::fabs;
-  using std::log;
   T_partials_return logp(0.0);
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 

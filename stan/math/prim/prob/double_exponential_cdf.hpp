@@ -31,6 +31,7 @@ template <typename T_y, typename T_loc, typename T_scale>
 return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
+  using std::exp;
   static const char* function = "double_exponential_cdf";
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -40,7 +41,6 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
     return 1.0;
   }
 
-  using std::exp;
   T_partials_return cdf(1.0);
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 

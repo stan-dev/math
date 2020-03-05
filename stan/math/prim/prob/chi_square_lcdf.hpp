@@ -35,6 +35,9 @@ namespace math {
 template <typename T_y, typename T_dof>
 return_type_t<T_y, T_dof> chi_square_lcdf(const T_y& y, const T_dof& nu) {
   using T_partials_return = partials_return_t<T_y, T_dof>;
+  using std::exp;
+  using std::log;
+  using std::pow;
   static const char* function = "chi_square_lcdf";
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -46,9 +49,6 @@ return_type_t<T_y, T_dof> chi_square_lcdf(const T_y& y, const T_dof& nu) {
     return 0;
   }
 
-  using std::exp;
-  using std::log;
-  using std::pow;
   T_partials_return cdf_log(0.0);
   operands_and_partials<T_y, T_dof> ops_partials(y, nu);
 

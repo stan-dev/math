@@ -29,6 +29,7 @@ namespace math {
 template <bool propto, typename T_n, typename T_prob>
 return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_prob>;
+  using std::log;
   static const char* function = "bernoulli_lpmf";
   check_bounded(function, "n", n, 0, 1);
   check_finite(function, "Probability parameter", theta);
@@ -43,7 +44,6 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
     return 0.0;
   }
 
-  using std::log;
   T_partials_return logp(0.0);
   operands_and_partials<T_prob> ops_partials(theta);
 
