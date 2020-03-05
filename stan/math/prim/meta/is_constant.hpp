@@ -30,7 +30,7 @@ struct is_constant : bool_constant<std::is_convertible<T, double>::value> {};
 /** \ingroup type_trait
  * Metaprogram defining an enum <code>value</code> which
  * is <code>true</code> if all of the type parameters
- * are constant (i.e., primtive types) and
+ * are constant (i.e., primitive types) and
  * <code>false</code> otherwise.
  */
 template <typename... T>

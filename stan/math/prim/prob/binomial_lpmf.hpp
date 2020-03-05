@@ -35,14 +35,7 @@ template <bool propto, typename T_n, typename T_N, typename T_prob>
 return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
                                     const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_N, T_prob>;
-
   static const char* function = "binomial_lpmf";
-
-  if (size_zero(n, N, theta)) {
-    return 0.0;
-  }
-
-  T_partials_return logp = 0;
   check_bounded(function, "Successes variable", n, 0, N);
   check_nonnegative(function, "Population size parameter", N);
   check_finite(function, "Probability parameter", theta);
@@ -51,16 +44,21 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
                          "Population size parameter", N,
                          "Probability parameter", theta);
 
+  if (size_zero(n, N, theta)) {
+    return 0.0;
+  }
   if (!include_summand<propto, T_prob>::value) {
     return 0.0;
   }
 
+  T_partials_return logp = 0;
+  operands_and_partials<T_prob> ops_partials(theta);
+
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_N> N_vec(N);
   scalar_seq_view<T_prob> theta_vec(theta);
+  size_t size_theta = stan::math::size(theta);
   size_t max_size_seq_view = max_size(n, N, theta);
-
-  operands_and_partials<T_prob> ops_partials(theta);
 
   if (include_summand<propto>::value) {
     for (size_t i = 0; i < max_size_seq_view; ++i) {
@@ -68,8 +66,8 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
     }
   }
 
-  VectorBuilder<true, T_partials_return, T_prob> log1m_theta(size(theta));
-  for (size_t i = 0; i < stan::math::size(theta); ++i) {
+  VectorBuilder<true, T_partials_return, T_prob> log1m_theta(size_theta);
+  for (size_t i = 0; i < size_theta; ++i) {
     log1m_theta[i] = log1m(value_of(theta_vec[i]));
   }
 
@@ -78,24 +76,22 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
             + (N_vec[i] - n_vec[i]) * log1m_theta[i];
   }
 
-  if (size(theta) == 1) {
-    T_partials_return temp1 = 0;
-    T_partials_return temp2 = 0;
-    for (size_t i = 0; i < max_size_seq_view; ++i) {
-      temp1 += n_vec[i];
-      temp2 += N_vec[i] - n_vec[i];
-    }
-    if (!is_constant_all<T_prob>::value) {
-      ops_partials.edge1_.partials_[0]
-          += temp1 / value_of(theta_vec[0])
-             - temp2 / (1.0 - value_of(theta_vec[0]));
-    }
-  } else {
-    if (!is_constant_all<T_prob>::value) {
+  if (!is_constant_all<T_prob>::value) {
+    if (size_theta == 1) {
+      T_partials_return sum_n = 0;
+      T_partials_return sum_N = 0;
       for (size_t i = 0; i < max_size_seq_view; ++i) {
+        sum_n += n_vec[i];
+        sum_N += N_vec[i];
+      }
+      const T_partials_return theta_dbl = value_of(theta_vec[0]);
+      ops_partials.edge1_.partials_[0]
+          += sum_n / theta_dbl - (sum_N - sum_n) / (1.0 - theta_dbl);
+    } else {
+      for (size_t i = 0; i < max_size_seq_view; ++i) {
+        const T_partials_return theta_dbl = value_of(theta_vec[i]);
         ops_partials.edge1_.partials_[i]
-            += n_vec[i] / value_of(theta_vec[i])
-               - (N_vec[i] - n_vec[i]) / (1.0 - value_of(theta_vec[i]));
+            += n_vec[i] / theta_dbl - (N_vec[i] - n_vec[i]) / (1.0 - theta_dbl);
       }
     }
   }

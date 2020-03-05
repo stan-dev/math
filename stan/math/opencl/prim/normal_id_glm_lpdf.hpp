@@ -23,7 +23,7 @@ namespace math {
  * Returns the log PDF of the Generalized Linear Model (GLM)
  * with Normal distribution and id link function.
  * If containers are supplied, returns the log sum of the probabilities.
- * This is an overload of the GLM in prim/mar/prob/normal_id_glm_lpdf.hpp
+ * This is an overload of the GLM in prim/prob/normal_id_glm_lpdf.hpp
  * that is implemented in OpenCL.
  * @tparam T_alpha type of the intercept(s);
  * this can be a vector (of the same length as y) of intercepts or a single

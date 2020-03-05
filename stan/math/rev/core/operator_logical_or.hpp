@@ -13,7 +13,7 @@ namespace math {
  *
  * @param[in] x first argument
  * @param[in] y second argument
- * @return disjuntion of the argument's values
+ * @return disjunction of the arguments' values
  */
 inline bool operator||(var x, var y) { return x.val() || y.val(); }
 

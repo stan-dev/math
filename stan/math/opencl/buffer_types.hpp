@@ -26,7 +26,7 @@ namespace internal {
  * meta template struct for changing read/write buffer argument types to
  * cl::Buffer types.
  * @tparam T A template typename that for cases of non-read/write buffers
- * will return a typedef holding only it's original type. For read and write
+ * will return a typedef holding only its original type. For read and write
  * buffers this will return a cl::Buffer type.
  */
 template <typename T = cl::Buffer>

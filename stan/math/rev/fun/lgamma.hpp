@@ -20,7 +20,7 @@ class lgamma_vari : public op_v_vari {
 /**
  * The log gamma function for variables (C99).
  *
- * The derivatie is the digamma function,
+ * The derivative is the digamma function,
  *
  * \f$\frac{d}{dx} \Gamma(x) = \psi^{(0)}(x)\f$.
  *

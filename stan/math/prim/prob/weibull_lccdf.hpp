@@ -19,7 +19,7 @@ namespace math {
  *
  * @tparam T_y type of real parameter
  * @tparam T_shape type of shape parameter
- * @tparam T_scale type of scale paramater
+ * @tparam T_scale type of scale parameter
  * @param y real parameter
  * @param alpha shape parameter
  * @param sigma scale parameter

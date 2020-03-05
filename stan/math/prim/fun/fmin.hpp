@@ -9,7 +9,7 @@ namespace math {
 
 /**
  * Return the lesser of the two specified arguments.  If one is
- * greater than the other, return not-a-number.
+ * not-a-number, return the other.
  *
  * @param x First argument.
  * @param y Second argument.

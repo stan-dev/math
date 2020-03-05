@@ -1,6 +1,3 @@
-#ifndef STAN_MATH_PRIM_EIGEN_PLUGINS_H
-#define STAN_MATH_PRIM_EIGEN_PLUGINS_H
-
 /**
  * Reimplements is_fvar without requiring external math headers
  *
@@ -199,5 +196,4 @@ vi() { return CwiseUnaryView<vi_Op, Derived>(derived());
 }
 
 #define EIGEN_STAN_MATRIXBASE_PLUGIN
-
-#endif
+#define EIGEN_STAN_ARRAYBASE_PLUGIN

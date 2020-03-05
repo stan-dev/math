@@ -19,29 +19,33 @@ namespace math {
  * @param U Sigma matrix
  * @param CPCs fill this unbounded
  */
-template <typename T>
-void factor_U(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& U,
-              Eigen::Array<T, Eigen::Dynamic, 1>& CPCs) {
+template <typename T_U, typename T_CPCs, require_eigen_t<T_U>* = nullptr,
+          require_eigen_vector_t<T_CPCs>* = nullptr,
+          require_same_vt<T_U, T_CPCs>* = nullptr>
+void factor_U(const T_U& U, T_CPCs&& CPCs) {
   size_t K = U.rows();
   size_t position = 0;
   size_t pull = K - 1;
 
+  const Eigen::Ref<const plain_type_t<T_U>>& U_ref = U;
+
   if (K == 2) {
-    CPCs(0) = atanh(U(0, 1));
+    CPCs(0) = atanh(U_ref(0, 1));
     return;
   }
 
-  Eigen::Array<T, 1, Eigen::Dynamic> temp = U.row(0).tail(pull);
+  Eigen::Array<value_type_t<T_U>, 1, Eigen::Dynamic> temp
+      = U_ref.row(0).tail(pull);
 
   CPCs.head(pull) = temp;
 
-  Eigen::Array<T, Eigen::Dynamic, 1> acc(K);
+  Eigen::Array<value_type_t<T_U>, Eigen::Dynamic, 1> acc(K);
   acc(0) = -0.0;
   acc.tail(pull) = 1.0 - temp.square();
   for (size_t i = 1; i < (K - 1); i++) {
     position += pull;
     pull--;
-    temp = U.row(i).tail(pull);
+    temp = U_ref.row(i).tail(pull);
     temp /= sqrt(acc.tail(pull) / acc(i));
     CPCs.segment(position, pull) = temp;
     acc.tail(pull) *= 1.0 - temp.square();

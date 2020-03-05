@@ -53,7 +53,7 @@ inline void check_finite(const char* function, const char* name, const T_y& y) {
   internal::finite<T_y, is_vector_like<T_y>::value>::check(function, name, y);
 }
 
-/*
+/**
  * Return <code>true</code> is the specified matrix is finite.
  *
  * @tparam T type of elements in the matrix
