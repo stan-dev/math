@@ -83,6 +83,7 @@
 #include <stan/math/fwd/fun/multiply.hpp>
 #include <stan/math/fwd/fun/multiply_log.hpp>
 #include <stan/math/fwd/fun/multiply_lower_tri_self_transpose.hpp>
+#include <stan/math/fwd/fun/norm.hpp>
 #include <stan/math/fwd/fun/owens_t.hpp>
 #include <stan/math/fwd/fun/Phi.hpp>
 #include <stan/math/fwd/fun/Phi_approx.hpp>

@@ -207,6 +207,7 @@
 #include <stan/math/prim/fun/multiply.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/multiply_lower_tri_self_transpose.hpp>
+#include <stan/math/prim/fun/norm.hpp>
 #include <stan/math/prim/fun/num_elements.hpp>
 #include <stan/math/prim/fun/offset_multiplier_constrain.hpp>
 #include <stan/math/prim/fun/offset_multiplier_free.hpp>

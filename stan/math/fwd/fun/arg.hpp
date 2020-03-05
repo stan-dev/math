@@ -3,7 +3,6 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/fun/arg.hpp>
-#include <cmath>
 #include <complex>
 
 namespace stan {
