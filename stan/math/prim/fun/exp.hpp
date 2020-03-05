@@ -5,6 +5,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <cmath>
 #include <complex>
+#include <limits>
 
 namespace stan {
 namespace math {

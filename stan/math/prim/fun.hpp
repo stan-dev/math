@@ -230,6 +230,7 @@
 #include <stan/math/prim/fun/positive_free.hpp>
 #include <stan/math/prim/fun/positive_ordered_constrain.hpp>
 #include <stan/math/prim/fun/positive_ordered_free.hpp>
+#include <stan/math/prim/fun/pow.hpp>
 #include <stan/math/prim/fun/primitive_value.hpp>
 #include <stan/math/prim/fun/prob_constrain.hpp>
 #include <stan/math/prim/fun/prob_free.hpp>
