@@ -14,10 +14,17 @@ inline fvar<T> exp(const fvar<T>& x) {
   return fvar<T>(exp(x.val_), x.d_ * exp(x.val_));
 }
 
-// template <typename T>
-// inline std::complex<fvar<T>> exp(const std::complex<fvar<T>>& z) {
-//  return complex_exp(z);
-// }
+/**
+ * Return the natural exponentiation (base e) of the specified complex number.
+ *
+ * @tparam T value type of autodiff variable
+ * @param z complex argument
+ * @return exponentiation of argument
+ */
+template <typename T>
+inline std::complex<fvar<T>> exp(const std::complex<fvar<T>>& z) {
+  return internal::complex_exp(z);
+}
 
 }  // namespace math
 }  // namespace stan

@@ -88,6 +88,7 @@
 #include <stan/math/fwd/fun/owens_t.hpp>
 #include <stan/math/fwd/fun/Phi.hpp>
 #include <stan/math/fwd/fun/Phi_approx.hpp>
+#include <stan/math/fwd/fun/polar.hpp>
 #include <stan/math/fwd/fun/pow.hpp>
 #include <stan/math/fwd/fun/primitive_value.hpp>
 #include <stan/math/fwd/fun/proj.hpp>

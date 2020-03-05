@@ -109,6 +109,7 @@
 #include <stan/math/rev/fun/norm.hpp>
 #include <stan/math/rev/fun/ordered_constrain.hpp>
 #include <stan/math/rev/fun/owens_t.hpp>
+#include <stan/math/rev/fun/polar.hpp>
 #include <stan/math/rev/fun/positive_ordered_constrain.hpp>
 #include <stan/math/rev/fun/pow.hpp>
 #include <stan/math/rev/fun/primitive_value.hpp>

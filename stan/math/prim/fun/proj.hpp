@@ -1,7 +1,9 @@
 #ifndef STAN_MATH_PRIM_FUN_PROJ_HPP
 #define STAN_MATH_PRIM_FUN_PROJ_HPP
 
+#include <stan/math/prim/fun/is_inf.hpp>
 #include <complex>
+#include <limits>
 
 namespace stan {
 namespace math {

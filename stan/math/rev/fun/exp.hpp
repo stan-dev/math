@@ -41,9 +41,14 @@ class exp_vari : public op_v_vari {
  */
 inline var exp(const var& a) { return var(new internal::exp_vari(a.vi_)); }
 
-// inline std::complex<var> exp(const std::complex<var>& z) {
-//   return complex_exp(z);
-// }
+/**
+ * Return the exponentiation (base e) of the specified complex number.
+ * @param z argument
+ * @return exponentiation of argument
+ */
+inline std::complex<var> exp(const std::complex<var>& z) {
+  return internal::complex_exp(z);
+}
 
 }  // namespace math
 }  // namespace stan

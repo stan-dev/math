@@ -225,6 +225,7 @@
 #include <stan/math/prim/fun/owens_t.hpp>
 #include <stan/math/prim/fun/Phi.hpp>
 #include <stan/math/prim/fun/Phi_approx.hpp>
+#include <stan/math/prim/fun/polar.hpp>
 #include <stan/math/prim/fun/positive_constrain.hpp>
 #include <stan/math/prim/fun/positive_free.hpp>
 #include <stan/math/prim/fun/positive_ordered_constrain.hpp>
