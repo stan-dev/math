@@ -20,17 +20,9 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale,
 return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& lambda,
     const T_shape& alpha) {
-  static const char* function = "pareto_type_2_lpdf";
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
-
   using std::log;
-
-  if (size_zero(y, mu, lambda, alpha)) {
-    return 0.0;
-  }
-
-  T_partials_return logp(0.0);
-
+  static const char* function = "pareto_type_2_lpdf";
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Scale parameter", lambda);
   check_positive_finite(function, "Shape parameter", alpha);
@@ -39,18 +31,22 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
                          alpha);
   check_greater_or_equal(function, "Random variable", y, mu);
 
+  if (size_zero(y, mu, lambda, alpha)) {
+    return 0.0;
+  }
   if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
     return 0.0;
   }
+
+  T_partials_return logp(0.0);
+  operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(
+      y, mu, lambda, alpha);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);
   scalar_seq_view<T_scale> lambda_vec(lambda);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   size_t N = max_size(y, mu, lambda, alpha);
-
-  operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(
-      y, mu, lambda, alpha);
 
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>

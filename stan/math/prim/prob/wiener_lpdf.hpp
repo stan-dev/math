@@ -57,6 +57,12 @@ namespace math {
  * reaction times in seconds (strictly positive) with
  * upper-boundary responses.
  *
+ * @tparam T_y type of scalar
+ * @tparam T_alpha type of alpha parameter
+ * @tparam T_tau type of tau parameter
+ * @tparam T_beta type of beta parameter
+ * @tparam T_delta type of delta parameter
+ *
  * @param y A scalar variate.
  * @param alpha The boundary separation.
  * @param tau The nondecision time.
@@ -70,32 +76,14 @@ template <bool propto, typename T_y, typename T_alpha, typename T_tau,
 return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
     const T_y& y, const T_alpha& alpha, const T_tau& tau, const T_beta& beta,
     const T_delta& delta) {
-  static const char* function = "wiener_lpdf";
-
+  using T_return_type = return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta>;
   using std::ceil;
   using std::exp;
   using std::floor;
   using std::log;
   using std::sin;
   using std::sqrt;
-
-  static const double WIENER_ERR = 0.000001;
-  static const double PI_TIMES_WIENER_ERR = pi() * WIENER_ERR;
-  static const double LOG_PI_LOG_WIENER_ERR = LOG_PI + log(WIENER_ERR);
-  static const double TWO_TIMES_SQRT_TWO_PI_TIMES_WIENER_ERR
-      = 2.0 * SQRT_TWO_PI * WIENER_ERR;
-  static const double LOG_TWO_OVER_TWO_PLUS_LOG_SQRT_PI
-      = LOG_TWO / 2 + LOG_SQRT_PI;
-  static const double SQUARE_PI_OVER_TWO = square(pi()) * 0.5;
-  static const double TWO_TIMES_LOG_SQRT_PI = 2.0 * LOG_SQRT_PI;
-
-  if (size_zero(y, alpha, beta, tau, delta)) {
-    return 0.0;
-  }
-
-  using T_return_type = return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta>;
-  T_return_type lp(0.0);
-
+  static const char* function = "wiener_lpdf";
   check_not_nan(function, "Random variable", y);
   check_not_nan(function, "Boundary separation", alpha);
   check_not_nan(function, "A-priori bias", beta);
@@ -113,6 +101,12 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
                          alpha, "A-priori bias", beta, "Nondecision time", tau,
                          "Drift rate", delta);
 
+  if (size_zero(y, alpha, beta, tau, delta)) {
+    return 0;
+  }
+
+  T_return_type lp(0.0);
+
   size_t N = std::max(max_size(y, alpha, beta), max_size(tau, delta));
   if (!N) {
     return 0.0;
@@ -123,8 +117,8 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
   scalar_seq_view<T_beta> beta_vec(beta);
   scalar_seq_view<T_tau> tau_vec(tau);
   scalar_seq_view<T_delta> delta_vec(delta);
-
   size_t N_y_tau = max_size(y, tau);
+
   for (size_t i = 0; i < N_y_tau; ++i) {
     if (y_vec[i] <= tau_vec[i]) {
       std::stringstream msg;
@@ -138,6 +132,16 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
   if (!include_summand<propto, T_y, T_alpha, T_tau, T_beta, T_delta>::value) {
     return 0;
   }
+
+  static const double WIENER_ERR = 0.000001;
+  static const double PI_TIMES_WIENER_ERR = pi() * WIENER_ERR;
+  static const double LOG_PI_LOG_WIENER_ERR = LOG_PI + log(WIENER_ERR);
+  static const double TWO_TIMES_SQRT_TWO_PI_TIMES_WIENER_ERR
+      = 2.0 * SQRT_TWO_PI * WIENER_ERR;
+  static const double LOG_TWO_OVER_TWO_PLUS_LOG_SQRT_PI
+      = LOG_TWO / 2 + LOG_SQRT_PI;
+  static const double SQUARE_PI_OVER_TWO = square(pi()) * 0.5;
+  static const double TWO_TIMES_LOG_SQRT_PI = 2.0 * LOG_SQRT_PI;
 
   for (size_t i = 0; i < N; i++) {
     typename scalar_type<T_beta>::type one_minus_beta = 1.0 - beta_vec[i];

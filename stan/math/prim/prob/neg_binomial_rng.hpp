@@ -19,8 +19,8 @@ namespace math {
  * alpha and beta can each be a scalar or a one-dimensional container. Any
  * non-scalar inputs must be the same size.
  *
- * @tparam T_shape Type of shape parameter
- * @tparam T_inv Type of inverse scale parameter
+ * @tparam T_shape type of shape parameter
+ * @tparam T_inv type of inverse scale parameter
  * @tparam RNG type of random number generator
  * @param alpha (Sequence of) positive shape parameter(s)
  * @param beta (Sequence of) positive inverse scale parameter(s)
@@ -36,10 +36,7 @@ inline typename VectorBuilder<true, int, T_shape, T_inv>::type neg_binomial_rng(
   using boost::gamma_distribution;
   using boost::random::poisson_distribution;
   using boost::variate_generator;
-
   static const char* function = "neg_binomial_rng";
-
-  // gamma_rng params must be positive and finite
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Inverse scale parameter", beta);
   check_consistent_sizes(function, "Shape parameter", alpha,

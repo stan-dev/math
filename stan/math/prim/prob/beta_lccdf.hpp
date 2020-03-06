@@ -39,6 +39,9 @@ template <typename T_y, typename T_scale_succ, typename T_scale_fail>
 return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
   using T_partials_return = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
+  using std::exp;
+  using std::log;
+  using std::pow;
   static const char* function = "beta_lccdf";
   check_positive_finite(function, "First shape parameter", alpha);
   check_positive_finite(function, "Second shape parameter", beta);
@@ -53,9 +56,6 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
     return 0;
   }
 
-  using std::exp;
-  using std::log;
-  using std::pow;
   T_partials_return ccdf_log(0.0);
   operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(y, alpha,
                                                                       beta);

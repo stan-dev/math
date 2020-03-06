@@ -17,8 +17,8 @@ namespace math {
  * mu and sigma can each be a scalar or a one-dimensional container. Any
  * non-scalar inputs must be the same size.
  *
- * @tparam T_loc Type of location parameter
- * @tparam T_scale Type of scale parameter
+ * @tparam T_loc type of location parameter
+ * @tparam T_scale type of scale parameter
  * @tparam RNG type of random number generator
  * @param mu (Sequence of) location parameter(s)
  * @param sigma (Sequence of) positive scale parameter(s)
@@ -33,9 +33,7 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type lognormal_rng(
     const T_loc& mu, const T_scale& sigma, RNG& rng) {
   using boost::random::lognormal_distribution;
   using boost::variate_generator;
-
   static const char* function = "lognormal_rng";
-
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",
