@@ -19,10 +19,8 @@ namespace math {
 
 /**
  * Represents a calc_if in kernel generator expressions.
- * @tparam Derived derived type
+ * @tparam T type of the argument
  * @tparam Do_Calculate whether to calculate this expression in a kernel
- * @tparam T_a type of first argument
- * @tparam T_b type of second argument
  */
 template <bool Do_Calculate, typename T>
 class calc_if_
@@ -106,14 +104,14 @@ inline calc_if_<Do_Calculate, as_operation_cl_t<T>> calc_if(T&& a) {
 
 namespace internal {
 template <typename T>
-struct is_no_output_impl : std::false_type {};
+struct is_without_output_impl : std::false_type {};
 
 template <typename T>
-struct is_no_output_impl<calc_if_<false, T>> : std::true_type {};
+struct is_without_output_impl<calc_if_<false, T>> : std::true_type {};
 }  // namespace internal
 
 template <typename T>
-using is_no_output = internal::is_no_output_impl<std::decay_t<T>>;
+using is_without_output = internal::is_without_output_impl<std::decay_t<T>>;
 
 }  // namespace math
 }  // namespace stan

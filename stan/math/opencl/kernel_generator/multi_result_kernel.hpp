@@ -19,7 +19,7 @@ namespace math {
 namespace internal {
 
 /**
- * A wrapper for references. Used to wrap references when putting them in
+ * A wrapper for references. This is used to wrap references when putting them in
  * tuples.
  */
 template <typename T>
@@ -33,7 +33,8 @@ wrapper<T> make_wrapper(T&& x) {
   return wrapper<T>(std::forward<T>(x));
 }
 
-// Pack can only be at the end of the list. We need 2 packs, so we nest structs.
+// Template parameter pack can only be at the end of the template list in
+// structs. We need 2 packs for expressions and results, so we nest structs.
 template <int n, typename... T_results>
 struct multi_result_kernel_internal {
   template <typename... T_expressions>
@@ -45,6 +46,14 @@ struct multi_result_kernel_internal {
         std::tuple_element_t<n, std::tuple<T_results...>>>;
     using T_current_expression = std::remove_reference_t<
         std::tuple_element_t<n, std::tuple<T_expressions...>>>;
+    /**
+     * Assigns the dimmensions of expressions to matching results if possible. Otherwise checks that dimmensions match.
+     * Also checks that all expressions require same nnumber of threads.
+     * @param n_rows number of threads in rows dimmension of the first expression
+     * @param n_cols number of threads in rows dimmension of the first expression
+     * @param results results
+     * @param expressions expressions
+     */
     static void check_assign_dimensions(
         int n_rows, int n_cols,
         const std::tuple<wrapper<T_results>...>& results,
@@ -59,13 +68,23 @@ struct multi_result_kernel_internal {
       check_size_match(function, "Columns of ", "expression",
                        expression.thread_cols(), "columns of ",
                        "first expression", n_cols);
-      if (!is_no_output<T_current_expression>::value) {
+      if (!is_without_output<T_current_expression>::value) {
         result.check_assign_dimensions(expression.rows(), expression.cols());
         result.set_view(expression.bottom_diagonal(), expression.top_diagonal(),
                         1 - expression.rows(), expression.cols() - 1);
       }
     }
 
+    /**
+     * Generates kernel source for assignment of expressions to results.
+     * @param generated set of already generated expressions
+     * @param ng name generator
+     * @param i variable name of the index i
+     * @param j variable name of the index j
+     * @param results results
+     * @param expressions expressions
+     * @return kernel parts for the kernel
+     */
     static kernel_parts generate(
         std::set<const operation_cl_base*>& generated, name_generator& ng,
         const std::string& i, const std::string& j,
@@ -73,7 +92,7 @@ struct multi_result_kernel_internal {
         const std::tuple<wrapper<T_expressions>...>& expressions) {
       kernel_parts parts
           = next::generate(generated, ng, i, j, results, expressions);
-      if (is_no_output<T_current_expression>::value) {
+      if (is_without_output<T_current_expression>::value) {
         return parts;
       }
       kernel_parts parts0
@@ -87,13 +106,21 @@ struct multi_result_kernel_internal {
       return parts;
     }
 
+    /**
+     * Sets kernel arguments.
+     * @param generated Set of operations that already set their arguments
+     * @param kernel kernel to set arguments to
+     * @param arg_num number of the next arguemnt to set
+     * @param results results
+     * @param expressions expressions
+     */
     static void set_args(
         std::set<const operation_cl_base*>& generated, cl::Kernel& kernel,
         int& arg_num, const std::tuple<wrapper<T_results>...>& results,
         const std::tuple<wrapper<T_expressions>...>& expressions) {
       next::set_args(generated, kernel, arg_num, results, expressions);
 
-      if (is_no_output<T_current_expression>::value) {
+      if (is_without_output<T_current_expression>::value) {
         return;
       }
 
@@ -101,6 +128,12 @@ struct multi_result_kernel_internal {
       std::get<n>(results).x.set_args(generated, kernel, arg_num);
     }
 
+    /**
+     * Adds event to materices used in kernel.
+     * @param e event to add
+     * @param results results
+     * @param expressions expressions
+     */
     static void add_event(
         cl::Event e, const std::tuple<wrapper<T_results>...>& results,
         const std::tuple<wrapper<T_expressions>...>& expressions) {
@@ -112,6 +145,7 @@ struct multi_result_kernel_internal {
   };
 };
 
+//Specialization for n == -1 ends the recursion.
 template <typename... T_results>
 struct multi_result_kernel_internal<-1, T_results...> {
   template <typename... T_expressions>
@@ -166,7 +200,7 @@ class expressions_cl {
    */
   explicit expressions_cl(T_expressions&&... expressions)
       : expressions_(internal::wrapper<T_expressions>(
-            std::forward<T_expressions>(expressions))...) {}
+          std::forward<T_expressions>(expressions))...) {}
 
  private:
   std::tuple<internal::wrapper<T_expressions>...> expressions_;
@@ -200,8 +234,7 @@ class results_cl {
    */
   explicit results_cl(T_results&&... results)
       : results_(
-            internal::wrapper<T_results>(std::forward<T_results>(results))...) {
-  }
+          internal::wrapper<T_results>(std::forward<T_results>(results))...) {}
 
   /**
    * Assigning \c expressions_cl object to \c results_ object generates and
@@ -352,7 +385,7 @@ class results_cl {
         T_res...>::template inner<T_expressions...>;
 
     static const bool any_output = std::max(
-        {false, !is_no_output<std::decay_t<T_expressions>>::value...});
+        {false, !is_without_output<std::decay_t<T_expressions>>::value...});
     if (!any_output) {
       return;
     }

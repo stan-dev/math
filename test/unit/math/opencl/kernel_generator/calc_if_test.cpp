@@ -17,14 +17,15 @@ using stan::math::matrix_cl;
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-TEST(MathMatrixCL, is_no_output_test) {
-  EXPECT_TRUE((stan::math::is_no_output<
+TEST(MathMatrixCL, is_without_output_test) {
+  EXPECT_TRUE((stan::math::is_without_output<
                stan::math::calc_if_<false, stan::math::scalar_<int>>>::value));
-  EXPECT_TRUE((stan::math::is_no_output<const stan::math::calc_if_<
+  EXPECT_TRUE((stan::math::is_without_output<const stan::math::calc_if_<
                    false, stan::math::scalar_<int>>&>::value));
-  EXPECT_FALSE((stan::math::is_no_output<
+  EXPECT_FALSE((stan::math::is_without_output<
                 stan::math::calc_if_<true, stan::math::scalar_<int>>>::value));
-  EXPECT_FALSE((stan::math::is_no_output<stan::math::scalar_<int>>::value));
+  EXPECT_FALSE(
+      (stan::math::is_without_output<stan::math::scalar_<int>>::value));
 }
 
 TEST(MathMatrixCL, calc_if_pass_test) {
