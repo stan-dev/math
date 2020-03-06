@@ -133,7 +133,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     inline double* accumulate_adjoints(double* x) { return x; }
 
 
-    void operator()(const tbb::blocked_range<size_t>& r) try {
+    inline void operator()(const tbb::blocked_range<size_t>& r) try {
       if (r.empty())
         return;
 
@@ -187,7 +187,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
   };
 
   template <typename... Pargs>
-  size_t count_var_impl(size_t count, const std::vector<var>& x,
+  inline size_t count_var_impl(size_t count, const std::vector<var>& x,
                         Pargs&&... args) const {
     return count_var_impl(count + x.size(), std::forward<Pargs>(args)...);
   }
@@ -195,7 +195,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
   template <typename T, require_std_vector_st<is_var, T>* = nullptr,
             require_std_vector_vt<is_container, T>* = nullptr,
             typename... Pargs>
-  size_t count_var_impl(size_t count, T&& x, Pargs&&... args) const {
+  inline size_t count_var_impl(size_t count, T&& x, Pargs&&... args) const {
     for (size_t i = 0; i < x.size(); i++) {
       count = count_var_impl(count, x[i]);
     }
@@ -204,23 +204,23 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
   template <typename Mat, require_eigen_vt<is_var, Mat>* = nullptr,
             typename... Pargs>
-  size_t count_var_impl(size_t count, Mat&& x, Pargs&&... args) const {
+  inline size_t count_var_impl(size_t count, Mat&& x, Pargs&&... args) const {
     return count_var_impl(count + x.size(), std::forward<Pargs>(args)...);
   }
 
   template <typename... Pargs>
-  size_t count_var_impl(size_t count, const var& x, Pargs&&... args) const {
+  inline size_t count_var_impl(size_t count, const var& x, Pargs&&... args) const {
     return count_var_impl(count + 1, std::forward<Pargs>(args)...);
   }
 
   template <typename Arith,
             require_arithmetic_t<scalar_type_t<Arith>>* = nullptr,
             typename... Pargs>
-  size_t count_var_impl(size_t count, Arith& x, Pargs&&... args) const {
+  inline size_t count_var_impl(size_t count, Arith& x, Pargs&&... args) const {
     return count_var_impl(count, std::forward<Pargs>(args)...);
   }
 
-  size_t count_var_impl(size_t count) const { return count; }
+  inline size_t count_var_impl(size_t count) const { return count; }
 
   /**
    * Count the number of scalars of type T in the input argument list
@@ -229,19 +229,19 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    * @return Number of scalars of type T in input
    */
   template <typename... Pargs>
-  size_t count_var(Pargs&&... args) const {
+  inline size_t count_var(Pargs&&... args) const {
     return count_var_impl(0, std::forward<Pargs>(args)...);
   }
 
   template <typename... Pargs>
-  vari** save_varis(vari** dest, const var& x, Pargs&&... args) const {
+  inline vari** save_varis(vari** dest, const var& x, Pargs&&... args) const {
     *dest = x.vi_;
     return save_varis(dest + 1, std::forward<Pargs>(args)...);
   }
 
   template <typename VarVec, require_std_vector_vt<is_var, VarVec>* = nullptr,
             typename... Pargs>
-  vari** save_varis(vari** dest, VarVec&& x, Pargs&&... args) const {
+  inline vari** save_varis(vari** dest, VarVec&& x, Pargs&&... args) const {
     using write_map = Eigen::Map<Eigen::Matrix<vari*, -1, 1>>;
     using read_map = Eigen::Map<const Eigen::Matrix<var, -1, 1>>;
     write_map(dest, x.size(), 1) = read_map(x.data(), x.size(), 1).vi();
@@ -252,7 +252,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
             require_std_vector_st<is_var, VecContainer>* = nullptr,
             require_std_vector_vt<is_container, VecContainer>* = nullptr,
             typename... Pargs>
-  vari** save_varis(vari** dest, VecContainer&& x, Pargs&&... args) const {
+  inline vari** save_varis(vari** dest, VecContainer&& x, Pargs&&... args) const {
     for (size_t i = 0; i < x.size(); ++i) {
       dest = save_varis(dest, x[i]);
     }
@@ -261,7 +261,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
   template <typename Mat, require_eigen_vt<is_var, Mat>* = nullptr,
             typename... Pargs>
-  vari** save_varis(vari** dest, Mat&& x, Pargs&&... args) const {
+  inline vari** save_varis(vari** dest, Mat&& x, Pargs&&... args) const {
     using write_map = Eigen::Map<Eigen::Matrix<vari*,
      std::decay_t<Mat>::RowsAtCompileTime,
      std::decay_t<Mat>::ColsAtCompileTime>>;
@@ -271,14 +271,14 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
   template <typename R, require_arithmetic_t<scalar_type_t<R>>* = nullptr,
             typename... Pargs>
-  vari** save_varis(vari** dest, R&& x, Pargs&&... args) const {
+  inline vari** save_varis(vari** dest, R&& x, Pargs&&... args) const {
     return save_varis(dest, std::forward<Pargs>(args)...);
   }
 
-  vari** save_varis(vari** dest) const { return dest; }
+  inline vari** save_varis(vari** dest) const { return dest; }
 
   template <typename VecT, typename... ArgsT>
-  var operator()(VecT&& vmapped, std::size_t grainsize, std::ostream* msgs,
+  inline var operator()(VecT&& vmapped, std::size_t grainsize, std::ostream* msgs,
                  ArgsT&&... args) const {
     const std::size_t num_jobs = vmapped.size();
 
