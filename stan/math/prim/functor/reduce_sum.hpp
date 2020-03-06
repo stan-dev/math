@@ -41,21 +41,19 @@ template <typename ReduceFunction, typename ReturnType, typename Vec,
 struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
                        ReturnType, Vec, Args...> {
   struct recursive_reducer {
-    using vmapped_t = Vec;
-    const vmapped_t& vmapped_;
+    Vec vmapped_;
     std::ostream* msgs_;
-    std::tuple<const Args&...> args_tuple_;
-    return_type_t<Vec, Args...> sum_;
-
-    recursive_reducer(const vmapped_t& vmapped, std::ostream* msgs,
-                      const Args&... args)
-        : vmapped_(vmapped), msgs_(msgs), args_tuple_(args...), sum_(0.0) {}
+    std::tuple<Args...> args_tuple_;
+    return_type_t<Vec, Args...> sum_{0.0};
+    template <typename VecT, typename... ArgsT>
+    recursive_reducer(VecT&& vmapped, std::ostream* msgs, ArgsT&&... args)
+        : vmapped_(std::forward<VecT>(vmapped)), msgs_(msgs),
+          args_tuple_(std::forward<ArgsT>(args)...) {}
 
     recursive_reducer(recursive_reducer& other, tbb::split)
         : vmapped_(other.vmapped_),
           msgs_(other.msgs_),
-          args_tuple_(other.args_tuple_),
-          sum_(0.0) {}
+          args_tuple_(other.args_tuple_) {}
 
     void operator()(const tbb::blocked_range<size_t>& r) {
       if (r.empty()) {
@@ -67,7 +65,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
       auto end = vmapped_.begin();
       std::advance(end, r.end());
 
-      const vmapped_t sub_slice(start, end);
+      const std::decay_t<Vec> sub_slice(start, end);
 
       sum_ += apply(
           [&](auto&&... args) {
@@ -79,17 +77,19 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
 
     void join(const recursive_reducer& child) { sum_ += child.sum_; }
   };
-
-  return_type_t<Vec, Args...> operator()(const Vec& vmapped,
+  template <typename VecT, typename... ArgsT>
+  return_type_t<Vec, Args...> operator()(VecT&& vmapped,
                                          std::size_t grainsize,
                                          std::ostream* msgs,
-                                         const Args&... args) const {
+                                         ArgsT&&... args) const {
     const std::size_t num_jobs = vmapped.size();
 
-    if (num_jobs == 0)
+    if (num_jobs == 0) {
       return 0.0;
+    }
 
-    recursive_reducer worker(vmapped, msgs, args...);
+    recursive_reducer worker(std::forward<VecT>(vmapped), msgs,
+     std::forward<ArgsT>(args)...);
 
 #ifdef STAN_DETERMINISTIC
     tbb::static_partitioner partitioner;
@@ -114,12 +114,13 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
  */
 template <typename ReduceFunction, typename Vec, require_vector_like_t<Vec>...,
           typename... Args>
-auto reduce_sum(const Vec& vmapped, std::size_t grainsize, std::ostream* msgs,
-                const Args&... args) {
+auto reduce_sum(Vec&& vmapped, std::size_t grainsize, std::ostream* msgs,
+                Args&&... args) {
   using return_type = return_type_t<Vec, Args...>;
   return internal::reduce_sum_impl<ReduceFunction, void, return_type, Vec,
-                                   Args...>()(vmapped, grainsize, msgs,
-                                              args...);
+                                   Args...>()(std::forward<Vec>(vmapped),
+                                              grainsize, msgs,
+                                              std::forward<Args>(args)...);
 }
 
 }  // namespace math

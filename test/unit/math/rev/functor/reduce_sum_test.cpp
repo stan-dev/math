@@ -23,7 +23,7 @@ struct count_lpdf {
   }
 };
 
-TEST(v3_reduce_sum, value) {
+TEST(StanMathRev_reduce_sum, value) {
   stan::math::init_threadpool_tbb();
 
   double lambda_d = 10.0;
@@ -51,7 +51,7 @@ TEST(v3_reduce_sum, value) {
   std::cout << "value of poisson lpdf : " << poisson_lpdf << std::endl;
 }
 
-TEST(v3_reduce_sum, gradient) {
+TEST(StanMathRev_reduce_sum, gradient) {
   stan::math::init_threadpool_tbb();
 
   double lambda_d = 10.0;
@@ -116,7 +116,7 @@ struct nesting_count_lpdf {
   }
 };
 
-TEST(v3_reduce_sum, nesting_gradient) {
+TEST(StanMathRev_reduce_sum, nesting_gradient) {
   stan::math::init_threadpool_tbb();
 
   double lambda_d = 10.0;
@@ -175,12 +175,12 @@ struct grouped_count_lpdf {
   // does the reduction in the sub-slice start to end
   template <typename VecInt1, typename VecT, typename VecInt2>
   inline T operator()(std::size_t start, std::size_t end,
-                      const VecInt1& sub_slice, std::ostream* msgs,
-                      const VecT& lambda, const VecInt2& gidx) const {
+                      VecInt1&& sub_slice, std::ostream* msgs,
+                      VecT&& lambda, VecInt2&& gidx) const {
     const std::size_t num_terms = end - start + 1;
     // std::cout << "sub-slice " << start << " - " << end << "; num_terms = " <<
     // num_terms << "; size = " << sub_slice.size() << std::endl;
-    VecT lambda_slice(num_terms);
+    std::decay_t<VecT> lambda_slice(num_terms);
     for (std::size_t i = 0; i != num_terms; ++i)
       lambda_slice[i] = lambda[gidx[start + i]];
 
@@ -188,7 +188,7 @@ struct grouped_count_lpdf {
   }
 };
 
-TEST(v3_reduce_sum, grouped_gradient) {
+TEST(StanMathRev_reduce_sum, grouped_gradient) {
   stan::math::init_threadpool_tbb();
 
   double lambda_d = 10.0;
@@ -247,7 +247,7 @@ TEST(v3_reduce_sum, grouped_gradient) {
   stan::math::recover_memory();
 }
 
-TEST(v3_reduce_sum, grouped_gradient_eigen) {
+TEST(StanMathRev_reduce_sum, grouped_gradient_eigen) {
   stan::math::init_threadpool_tbb();
 
   double lambda_d = 10.0;
@@ -329,7 +329,7 @@ struct slice_group_count_lpdf {
   }
 };
 
-TEST(v3_reduce_sum, slice_group_gradient) {
+TEST(StanMathRev_reduce_sum, slice_group_gradient) {
   stan::math::init_threadpool_tbb();
 
   double lambda_d = 10.0;

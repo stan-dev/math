@@ -22,172 +22,158 @@ template <typename ReduceFunction, typename ReturnType, typename Vec,
           typename... Args>
 struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                        Vec, Args...> {
-  template <typename T, require_arithmetic_t<scalar_type_t<T>>...>
-  static inline const T& deep_copy(const T& arg) {
-    return arg;
-  }
 
-  static inline var deep_copy(const var& arg) {
-    return var(new vari(arg.val(), false));
-  }
-
-  static inline std::vector<var> deep_copy(const std::vector<var>& arg) {
-    std::vector<var> copy(arg.size());
-    for (size_t i = 0; i < arg.size(); ++i) {
-      copy[i] = new vari(arg[i].val(), false);
-    }
-    return copy;
-  }
-
-  template <typename T, require_t<is_var<scalar_type_t<T>>>...>
-  static inline std::vector<T> deep_copy(const std::vector<T>& arg) {
-    std::vector<T> copy(arg.size());
-    for (size_t i = 0; i < arg.size(); ++i) {
-      copy[i] = deep_copy(arg[i]);
-    }
-    return copy;
-  }
-
-  template <int RowType, int ColType>
-  static inline Eigen::Matrix<var, RowType, ColType> deep_copy(
-      const Eigen::Matrix<var, RowType, ColType>& arg) {
-    Eigen::Matrix<var, RowType, ColType> copy(arg.rows(), arg.cols());
-    for (size_t i = 0; i < arg.size(); ++i) {
-      copy(i) = new vari(arg(i).val(), false);
-    }
-    return copy;
-  }
-
-  // TODO(Steve): Move this somewhere smarter
-  // Fails to compile if type T does not have member operator(Integral)
-  template <typename T>
-  using operator_paren_access_t = decltype(std::declval<T>()(int{}));
-
-  template <typename... Pargs>
-  static double* accumulate_adjoints(double* dest, const var& x,
-                                     const Pargs&... args) {
-    *dest += x.adj();
-    return accumulate_adjoints(dest + 1, args...);
-  }
-
-  template <typename... Pargs>
-  static double* accumulate_adjoints(double* dest, const std::vector<var>& x,
-                                     const Pargs&... args) {
-    for (size_t i = 0; i < x.size(); ++i) {
-      dest[i] += x[i].adj();
-    }
-    return accumulate_adjoints(dest + x.size(), args...);
-  }
-
-  template <typename T, require_t<is_var<scalar_type_t<T>>>...,
-            require_not_t<is_var<T>>..., typename... Pargs>
-  static double* accumulate_adjoints(double* dest, const std::vector<T>& x,
-                                     const Pargs&... args) {
-    for (size_t i = 0; i < x.size(); ++i) {
-      dest = accumulate_adjoints(dest, x[i]);
-    }
-    return accumulate_adjoints(dest, args...);
-  }
-
-  // Works on anything with a operator()
-  template <typename... Pargs, typename Mat, require_eigen_vt<is_var, Mat>...>
-  static double* accumulate_adjoints(double* dest, const Mat& x,
-                                     const Pargs&... args) {
-    for (size_t i = 0; i < x.size(); ++i) {
-      dest[i] += x(i).adj();
-    }
-    return accumulate_adjoints(dest + x.size(), args...);
-  }
-
-  // Anything with a scalar type of Arithmetic gets tossed
-  template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>...,
-            typename... Pargs>
-  static double* accumulate_adjoints(double* dest, Arith&& x,
-                                     const Pargs&... args) {
-    return accumulate_adjoints(dest, args...);
-  }
-
-  static double* accumulate_adjoints(double* x) { return x; }
 
   struct recursive_reducer {
     size_t num_shared_terms_;
     double* sliced_partials_;
-    const Vec& vmapped_;
+    Vec vmapped_;
     std::ostream* msgs_;
-    std::tuple<const Args&...> args_tuple_;
+    std::tuple<Args...> args_tuple_;
 
-    double sum_;
-    Eigen::VectorXd args_adjoints_;
-
+    double sum_{0.0};
+    Eigen::VectorXd args_adjoints_{0};
+    template <typename VecT, typename... ArgsT>
     recursive_reducer(size_t num_shared_terms, double* sliced_partials,
-                      const Vec& vmapped, std::ostream* msgs,
-                      const Args&... args)
+                      VecT&& vmapped, std::ostream* msgs,
+                      ArgsT&&... args)
         : num_shared_terms_(num_shared_terms),
           sliced_partials_(sliced_partials),
-          vmapped_(vmapped),
+          vmapped_(std::forward<VecT>(vmapped)),
           msgs_(msgs),
-          args_tuple_(args...),
-          sum_(0.0),
-          args_adjoints_(0) {}
+          args_tuple_(std::forward<ArgsT>(args)...) {}
 
     recursive_reducer(recursive_reducer& other, tbb::split)
         : num_shared_terms_(other.num_shared_terms_),
           sliced_partials_(other.sliced_partials_),
           vmapped_(other.vmapped_),
           msgs_(other.msgs_),
-          args_tuple_(other.args_tuple_),
-          sum_(0.0),
-          args_adjoints_(0) {}
+          args_tuple_(other.args_tuple_) {}
 
-    void operator()(const tbb::blocked_range<size_t>& r) {
+    template <typename T, typename = require_arithmetic_t<scalar_type_t<T>>>
+    inline auto deep_copy(T arg) {
+      return arg;
+    }
+
+    inline auto deep_copy(const var& arg) {
+      return var(new vari(arg.val(), false));
+    }
+
+    template <typename VarVec, require_std_vector_vt<is_var, VarVec>* = nullptr>
+    inline auto deep_copy(VarVec&& arg) {
+      std::vector<var> copy_vec(arg.size());
+      for (size_t i = 0; i < arg.size(); ++i) {
+        copy_vec[i] = new vari(arg[i].val(), false);
+      }
+      return copy_vec;
+    }
+
+    template <typename VarVec, require_std_vector_st<is_var, VarVec>* = nullptr,
+              require_std_vector_vt<is_container, VarVec>* = nullptr>
+    inline auto deep_copy(VarVec&& arg) {
+      std::vector<value_type_t<VarVec>> copy_vec(arg.size());
+      for (size_t i = 0; i < arg.size(); ++i) {
+        copy_vec[i] = deep_copy(arg[i]);
+      }
+      return copy_vec;
+    }
+
+    template <typename Mat, require_eigen_vt<is_var, Mat>* = nullptr>
+    inline auto deep_copy(Mat&& arg) {
+      return arg.unaryExpr([](auto&& x) {
+         return var(new vari(x.val(), false));
+       }).eval();;
+    }
+
+    template <typename... Pargs>
+    inline double* accumulate_adjoints(double* dest, const var& x,
+                                       Pargs&&... args) {
+      *dest += x.adj();
+      return accumulate_adjoints(dest + 1, std::forward<Pargs>(args)...);
+    }
+
+    template <typename VarVec, require_std_vector_vt<is_var, VarVec>* = nullptr, typename... Pargs>
+    inline double* accumulate_adjoints(double* dest, VarVec&& x,
+                                       Pargs&&... args) {
+      for (auto&& x_iter : x) {
+        *dest += x_iter.adj();
+        ++dest;
+      }
+      return accumulate_adjoints(dest, std::forward<Pargs>(args)...);
+    }
+
+    template <typename VecContainer,
+        require_std_vector_st<is_var, VecContainer>* = nullptr,
+        require_std_vector_vt<is_container, VecContainer>* = nullptr,
+              typename... Pargs>
+    inline double* accumulate_adjoints(double* dest, VecContainer&& x,
+                                       Pargs&&... args) {
+      for (auto&& x_iter : x) {
+        dest = accumulate_adjoints(dest, x_iter);
+      }
+      return accumulate_adjoints(dest, std::forward<Pargs>(args)...);
+    }
+
+    template <typename Mat, require_eigen_vt<is_var, Mat>* = nullptr,
+              typename... Pargs>
+    inline double* accumulate_adjoints(double* dest, const Mat& x,
+                                       Pargs&&... args) {
+      Eigen::Map<Eigen::MatrixXd>(dest, x.rows(), x.cols()) += x.adj();
+      return accumulate_adjoints(dest + x.size(), std::forward<Pargs>(args)...);
+    }
+
+    template <typename Arith,
+              require_arithmetic_t<scalar_type_t<Arith>>* = nullptr,
+              typename... Pargs>
+    inline double* accumulate_adjoints(double* dest, Arith&& x,
+                                       Pargs&&... args) {
+      return accumulate_adjoints(dest, std::forward<Pargs>(args)...);
+    }
+
+    inline double* accumulate_adjoints(double* x) { return x; }
+
+
+    void operator()(const tbb::blocked_range<size_t>& r) try {
       if (r.empty())
         return;
 
       if (args_adjoints_.size() == 0) {
-        args_adjoints_ = Eigen::VectorXd::Zero(num_shared_terms_);
+        args_adjoints_ = Eigen::VectorXd::Zero(this->num_shared_terms_);
       }
 
-      try {
-        start_nested();
-
-        // create a deep copy of all var's so that these are not
-        // linked to any outer AD tree
-        Vec local_sub_slice;
-        local_sub_slice.reserve(r.size());
-        for (int i = r.begin(); i < r.end(); ++i) {
-          local_sub_slice.emplace_back(deep_copy(vmapped_[i]));
-        }
-
-        auto args_tuple_local_copy = apply(
-            [&](auto&&... args) {
-              return std::tuple<decltype(deep_copy(args))...>(
-                  deep_copy(args)...);
-            },
-            args_tuple_);
-
-        var sub_sum_v = apply(
-            [&](auto&&... args) {
-              return ReduceFunction()(r.begin(), r.end() - 1, local_sub_slice,
-                                      msgs_, args...);
-            },
-            args_tuple_local_copy);
-
-        sub_sum_v.grad();
-
-        sum_ += sub_sum_v.val();
-
-        accumulate_adjoints(sliced_partials_ + r.begin(), local_sub_slice);
-
-        apply(
-            [&](auto&&... args) {
-              return accumulate_adjoints(args_adjoints_.data(), args...);
-            },
-            args_tuple_local_copy);
-      } catch (const std::exception& e) {
-        recover_memory_nested();
-        throw;
+      start_nested();
+      // create a deep copy of all var's so that these are not
+      // linked to any outer AD tree
+      std::decay_t<Vec> local_sub_slice;
+      local_sub_slice.reserve(r.size());
+      for (int i = r.begin(); i < r.end(); ++i) {
+        local_sub_slice.emplace_back(deep_copy(vmapped_[i]));
       }
+      auto args_tuple_local_copy = apply(
+          [&](auto&&... args) {
+            return std::tuple<decltype(deep_copy(args))...>(
+                deep_copy(args)...);
+          },
+          this->args_tuple_);
+      var sub_sum_v = apply(
+          [&](auto&&... args) {
+            return ReduceFunction()(r.begin(), r.end() - 1, local_sub_slice,
+                                    this->msgs_, args...);
+          },
+          args_tuple_local_copy);
+      sub_sum_v.grad();
+      sum_ += sub_sum_v.val();
+      accumulate_adjoints(this->sliced_partials_ + r.begin(), local_sub_slice);
+      apply(
+          [&](auto&&... args) {
+            return accumulate_adjoints(args_adjoints_.data(),
+             std::forward<decltype(args)>(args)...);
+          },
+          std::move(args_tuple_local_copy));
       recover_memory_nested();
+    } catch (const std::exception& e) {
+      recover_memory_nested();
+      throw;
     }
 
     void join(const recursive_reducer& rhs) {
@@ -200,42 +186,38 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     }
   };
 
-  // Fails to compile if type T does not have callable member size()
-  template <typename T>
-  using member_size_t = decltype(std::declval<T>().size());
-
   template <typename... Pargs>
   size_t count_var_impl(size_t count, const std::vector<var>& x,
-                        const Pargs&... args) const {
-    return count_var_impl(count + x.size(), args...);
+                        Pargs&&... args) const {
+    return count_var_impl(count + x.size(), std::forward<Pargs>(args)...);
   }
 
-  template <typename T, require_t<is_var<scalar_type_t<T>>>...,
-            require_not_t<is_var<T>>..., typename... Pargs>
-  size_t count_var_impl(size_t count, const std::vector<T>& x,
-                        const Pargs&... args) const {
+  template <typename T, require_std_vector_st<is_var, T>* = nullptr,
+            require_std_vector_vt<is_container, T>* = nullptr,
+            typename... Pargs>
+  size_t count_var_impl(size_t count, T&& x, Pargs&&... args) const {
     for (size_t i = 0; i < x.size(); i++) {
       count = count_var_impl(count, x[i]);
     }
-    return count_var_impl(count, args...);
+    return count_var_impl(count, std::forward<Pargs>(args)...);
   }
 
-  template <typename Mat, require_eigen_vt<is_var, Mat>..., typename... Pargs>
-  size_t count_var_impl(size_t count, const Mat& x,
-                        const Pargs&... args) const {
-    return count_var_impl(count + x.size(), args...);
+  template <typename Mat, require_eigen_vt<is_var, Mat>* = nullptr,
+            typename... Pargs>
+  size_t count_var_impl(size_t count, Mat&& x, Pargs&&... args) const {
+    return count_var_impl(count + x.size(), std::forward<Pargs>(args)...);
   }
 
   template <typename... Pargs>
-  size_t count_var_impl(size_t count, const var& x,
-                        const Pargs&... args) const {
-    return count_var_impl(count + 1, args...);
+  size_t count_var_impl(size_t count, const var& x, Pargs&&... args) const {
+    return count_var_impl(count + 1, std::forward<Pargs>(args)...);
   }
 
-  template <typename... Pargs, typename Arith,
-            require_arithmetic_t<scalar_type_t<Arith>>...>
-  size_t count_var_impl(size_t count, Arith& x, const Pargs&... args) const {
-    return count_var_impl(count, args...);
+  template <typename Arith,
+            require_arithmetic_t<scalar_type_t<Arith>>* = nullptr,
+            typename... Pargs>
+  size_t count_var_impl(size_t count, Arith& x, Pargs&&... args) const {
+    return count_var_impl(count, std::forward<Pargs>(args)...);
   }
 
   size_t count_var_impl(size_t count) const { return count; }
@@ -247,53 +229,57 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    * @return Number of scalars of type T in input
    */
   template <typename... Pargs>
-  size_t count_var(const Pargs&... args) const {
-    return count_var_impl(0, args...);
+  size_t count_var(Pargs&&... args) const {
+    return count_var_impl(0, std::forward<Pargs>(args)...);
   }
 
   template <typename... Pargs>
-  vari** save_varis(vari** dest, const var& x, const Pargs&... args) const {
+  vari** save_varis(vari** dest, const var& x, Pargs&&... args) const {
     *dest = x.vi_;
-    return save_varis(dest + 1, args...);
+    return save_varis(dest + 1, std::forward<Pargs>(args)...);
   }
 
-  template <typename... Pargs>
-  vari** save_varis(vari** dest, const std::vector<var>& x,
-                    const Pargs&... args) const {
-    for (size_t i = 0; i < x.size(); ++i) {
-      dest[i] = x[i].vi_;
-    }
-    return save_varis(dest + x.size(), args...);
+  template <typename VarVec, require_std_vector_vt<is_var, VarVec>* = nullptr,
+            typename... Pargs>
+  vari** save_varis(vari** dest, VarVec&& x, Pargs&&... args) const {
+    using write_map = Eigen::Map<Eigen::Matrix<vari*, -1, 1>>;
+    using read_map = Eigen::Map<const Eigen::Matrix<var, -1, 1>>;
+    write_map(dest, x.size(), 1) = read_map(x.data(), x.size(), 1).vi();
+    return save_varis(dest + x.size(), std::forward<Pargs>(args)...);
   }
 
-  template <typename T, require_t<is_var<scalar_type_t<T>>>...,
-            require_not_t<is_var<T>>..., typename... Pargs>
-  vari** save_varis(vari** dest, const std::vector<T>& x,
-                    const Pargs&... args) const {
+  template <typename VecContainer,
+            require_std_vector_st<is_var, VecContainer>* = nullptr,
+            require_std_vector_vt<is_container, VecContainer>* = nullptr,
+            typename... Pargs>
+  vari** save_varis(vari** dest, VecContainer&& x, Pargs&&... args) const {
     for (size_t i = 0; i < x.size(); ++i) {
       dest = save_varis(dest, x[i]);
     }
-    return save_varis(dest, args...);
+    return save_varis(dest, std::forward<Pargs>(args)...);
   }
 
-  template <typename... Pargs, typename Mat, require_eigen_vt<is_var, Mat>...>
-  vari** save_varis(vari** dest, const Mat& x, const Pargs&... args) const {
-    for (size_t i = 0; i < x.size(); ++i) {
-      dest[i] = x(i).vi_;
-    }
-    return save_varis(dest + x.size(), args...);
-  }
-
-  template <typename R, require_arithmetic_t<scalar_type_t<R>>...,
+  template <typename Mat, require_eigen_vt<is_var, Mat>* = nullptr,
             typename... Pargs>
-  vari** save_varis(vari** dest, const R& x, const Pargs&... args) const {
-    return save_varis(dest, args...);
+  vari** save_varis(vari** dest, Mat&& x, Pargs&&... args) const {
+    using write_map = Eigen::Map<Eigen::Matrix<vari*,
+     std::decay_t<Mat>::RowsAtCompileTime,
+     std::decay_t<Mat>::ColsAtCompileTime>>;
+    write_map(dest, x.rows(), x.cols()) = x.vi();
+    return save_varis(dest + x.size(), std::forward<Pargs>(args)...);
+  }
+
+  template <typename R, require_arithmetic_t<scalar_type_t<R>>* = nullptr,
+            typename... Pargs>
+  vari** save_varis(vari** dest, R&& x, Pargs&&... args) const {
+    return save_varis(dest, std::forward<Pargs>(args)...);
   }
 
   vari** save_varis(vari** dest) const { return dest; }
 
-  var operator()(const Vec& vmapped, std::size_t grainsize, std::ostream* msgs,
-                 const Args&... args) const {
+  template <typename VecT, typename... ArgsT>
+  var operator()(VecT&& vmapped, std::size_t grainsize, std::ostream* msgs,
+                 ArgsT&&... args) const {
     const std::size_t num_jobs = vmapped.size();
 
     if (num_jobs == 0)
@@ -309,14 +295,11 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
     for (size_t i = 0; i < num_sliced_terms; ++i)
       partials[i] = 0.0;
-
-    double sum = 0;
-
     recursive_reducer worker(num_shared_terms, partials, vmapped, msgs,
                              args...);
 
 #ifdef STAN_DETERMINISTIC
-    tbb::static_partitioner partitioner;
+    tbb::inline_partitioner partitioner;
     tbb::parallel_deterministic_reduce(
         tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker,
         partitioner);
@@ -325,17 +308,15 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker);
 #endif
 
-    save_varis(varis, vmapped);
-    save_varis(varis + num_sliced_terms, args...);
+    save_varis(varis, std::forward<VecT>(vmapped));
+    save_varis(varis + num_sliced_terms, std::forward<ArgsT>(args)...);
 
     for (size_t i = 0; i < num_shared_terms; ++i) {
       partials[num_sliced_terms + i] = worker.args_adjoints_(i);
     }
 
-    sum = worker.sum_;
-
     return var(new precomputed_gradients_vari(
-        sum, num_sliced_terms + num_shared_terms, varis, partials));
+        worker.sum_, num_sliced_terms + num_shared_terms, varis, partials));
   }
 };
 }  // namespace internal
