@@ -141,4 +141,24 @@ TEST(MathMatrixCL, colwise_sum_test_large) {
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
+TEST(MathMatrixCL, colwise_sum_and_id_test) {
+  MatrixXd m(3, 2);
+  m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
+
+  matrix_cl<double> m_cl(m);
+
+  matrix_cl<double> res1_cl, res2_cl;
+  stan::math::results(res1_cl, res2_cl)
+      = stan::math::expressions(m_cl, stan::math::colwise_sum(m_cl));
+  MatrixXd res1 = stan::math::from_matrix_cl(res1_cl);
+  EXPECT_MATRIX_NEAR(m, res1, 1e-9);
+  MatrixXd raw_res2 = stan::math::from_matrix_cl(res2_cl);
+  EXPECT_GE(m.rows(), raw_res2.rows());
+  MatrixXd res2 = raw_res2.colwise().sum();
+  MatrixXd correct2 = m.colwise().sum();
+  EXPECT_EQ(correct2.rows(), res2.rows());
+  EXPECT_EQ(correct2.cols(), res2.cols());
+  EXPECT_MATRIX_NEAR(correct2, res2, 1e-9);
+}
+
 #endif
