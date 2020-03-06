@@ -54,8 +54,6 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(const T_y& y,
     return 1.0;
   }
 
-  using std::exp;
-  using std::pow;
   T_partials_return P(1.0);
   operands_and_partials<T_y, T_dof, T_scale> ops_partials(y, nu, s);
 

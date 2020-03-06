@@ -55,7 +55,6 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
     return 0;
   }
 
-  using std::log;
   T_partials_return logp(0);
   operands_and_partials<T_y, T_dof> ops_partials(y, nu);
 
