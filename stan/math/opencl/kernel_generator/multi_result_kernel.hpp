@@ -19,8 +19,8 @@ namespace math {
 namespace internal {
 
 /**
- * A wrapper for references. This is used to wrap references when putting them in
- * tuples.
+ * A wrapper for references. This is used to wrap references when putting them
+ * in tuples.
  */
 template <typename T>
 struct wrapper {
@@ -47,10 +47,13 @@ struct multi_result_kernel_internal {
     using T_current_expression = std::remove_reference_t<
         std::tuple_element_t<n, std::tuple<T_expressions...>>>;
     /**
-     * Assigns the dimmensions of expressions to matching results if possible. Otherwise checks that dimmensions match.
-     * Also checks that all expressions require same nnumber of threads.
-     * @param n_rows number of threads in rows dimmension of the first expression
-     * @param n_cols number of threads in rows dimmension of the first expression
+     * Assigns the dimmensions of expressions to matching results if possible.
+     * Otherwise checks that dimmensions match. Also checks that all expressions
+     * require same nnumber of threads.
+     * @param n_rows number of threads in rows dimmension of the first
+     * expression
+     * @param n_cols number of threads in rows dimmension of the first
+     * expression
      * @param results results
      * @param expressions expressions
      */
@@ -145,7 +148,7 @@ struct multi_result_kernel_internal {
   };
 };
 
-//Specialization for n == -1 ends the recursion.
+// Specialization for n == -1 ends the recursion.
 template <typename... T_results>
 struct multi_result_kernel_internal<-1, T_results...> {
   template <typename... T_expressions>
@@ -200,7 +203,7 @@ class expressions_cl {
    */
   explicit expressions_cl(T_expressions&&... expressions)
       : expressions_(internal::wrapper<T_expressions>(
-          std::forward<T_expressions>(expressions))...) {}
+            std::forward<T_expressions>(expressions))...) {}
 
  private:
   std::tuple<internal::wrapper<T_expressions>...> expressions_;
@@ -234,7 +237,8 @@ class results_cl {
    */
   explicit results_cl(T_results&&... results)
       : results_(
-          internal::wrapper<T_results>(std::forward<T_results>(results))...) {}
+            internal::wrapper<T_results>(std::forward<T_results>(results))...) {
+  }
 
   /**
    * Assigning \c expressions_cl object to \c results_ object generates and
