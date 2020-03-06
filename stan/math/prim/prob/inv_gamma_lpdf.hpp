@@ -37,6 +37,7 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(const T_y& y,
                                                     const T_shape& alpha,
                                                     const T_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
+  using std::log;
   static const char* function = "inv_gamma_lpdf";
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Shape parameter", alpha);
@@ -51,7 +52,6 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(const T_y& y,
     return 0;
   }
 
-  using std::log;
   T_partials_return logp(0);
   operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, beta);
 

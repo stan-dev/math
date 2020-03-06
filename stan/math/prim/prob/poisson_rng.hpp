@@ -29,9 +29,7 @@ inline typename VectorBuilder<true, int, T_rate>::type poisson_rng(
     const T_rate& lambda, RNG& rng) {
   using boost::random::poisson_distribution;
   using boost::variate_generator;
-
   static const char* function = "poisson_rng";
-
   check_not_nan(function, "Rate parameter", lambda);
   check_positive(function, "Rate parameter", lambda);
   check_less(function, "Rate parameter", lambda, POISSON_MAX_RATE);

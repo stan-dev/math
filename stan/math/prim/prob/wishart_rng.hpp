@@ -14,11 +14,9 @@ namespace math {
 template <class RNG>
 inline Eigen::MatrixXd wishart_rng(double nu, const Eigen::MatrixXd& S,
                                    RNG& rng) {
-  static const char* function = "wishart_rng";
-
   using Eigen::MatrixXd;
+  static const char* function = "wishart_rng";
   index_type_t<MatrixXd> k = S.rows();
-
   check_square(function, "scale parameter", S);
   check_greater(function, "degrees of freedom > dims - 1", nu, k - 1);
 

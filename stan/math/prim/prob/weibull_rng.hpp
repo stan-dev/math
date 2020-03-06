@@ -17,8 +17,8 @@ namespace math {
  * alpha and sigma can each be a scalar or a one-dimensional container. Any
  * non-scalar inputs must be the same size.
  *
- * @tparam T_shape Type of shape parameter
- * @tparam T_scale Type of scale parameter
+ * @tparam T_shape type of shape parameter
+ * @tparam T_scale type of scale parameter
  * @tparam RNG type of random number generator
  * @param alpha (Sequence of) positive shape parameter(s)
  * @param sigma (Sequence of) positive scale parameter(s)
@@ -33,9 +33,7 @@ inline typename VectorBuilder<true, double, T_shape, T_scale>::type weibull_rng(
     const T_shape& alpha, const T_scale& sigma, RNG& rng) {
   using boost::random::weibull_distribution;
   using boost::variate_generator;
-
   static const char* function = "weibull_rng";
-
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Shape parameter", alpha, "Scale Parameter",

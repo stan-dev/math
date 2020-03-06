@@ -26,28 +26,21 @@ namespace math {
  & & \mathrm{ where } \; y \in [\alpha, \beta], \log(0) \; \mathrm{otherwise}
  \f}
  *
+ * @tparam T_y type of scalar
+ * @tparam T_low type of lower bound
+ * @tparam T_high type of upper bound
  * @param y A scalar variable.
  * @param alpha Lower bound.
  * @param beta Upper bound.
  * @throw std::invalid_argument if the lower bound is greater than
  *    or equal to the lower bound
- * @tparam T_y Type of scalar.
- * @tparam T_low Type of lower bound.
- * @tparam T_high Type of upper bound.
  */
 template <bool propto, typename T_y, typename T_low, typename T_high>
 return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
                                                const T_high& beta) {
-  static const char* function = "uniform_lpdf";
   using T_partials_return = partials_return_t<T_y, T_low, T_high>;
-
   using std::log;
-
-  if (size_zero(y, alpha, beta)) {
-    return 0.0;
-  }
-
-  T_partials_return logp(0.0);
+  static const char* function = "uniform_lpdf";
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Lower bound parameter", alpha);
   check_finite(function, "Upper bound parameter", beta);
@@ -56,9 +49,15 @@ return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
                          "Upper bound parameter", beta);
   check_greater(function, "Upper bound parameter", beta, alpha);
 
+  if (size_zero(y, alpha, beta)) {
+    return 0.0;
+  }
   if (!include_summand<propto, T_y, T_low, T_high>::value) {
     return 0.0;
   }
+
+  T_partials_return logp(0.0);
+  operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_low> alpha_vec(alpha);
@@ -92,7 +91,6 @@ return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
     }
   }
 
-  operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);
   for (size_t n = 0; n < N; n++) {
     if (include_summand<propto, T_low, T_high>::value) {
       logp -= log_beta_minus_alpha[n];

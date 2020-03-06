@@ -43,6 +43,8 @@ return_type_t<T_size1, T_size2> beta_binomial_lcdf(const T_n& n, const T_N& N,
                                                    const T_size1& alpha,
                                                    const T_size2& beta) {
   using T_partials_return = partials_return_t<T_n, T_N, T_size1, T_size2>;
+  using std::exp;
+  using std::log;
   static const char* function = "beta_binomial_lcdf";
   check_nonnegative(function, "Population size parameter", N);
   check_positive_finite(function, "First prior sample size parameter", alpha);
@@ -56,8 +58,6 @@ return_type_t<T_size1, T_size2> beta_binomial_lcdf(const T_n& n, const T_N& N,
     return 0;
   }
 
-  using std::exp;
-  using std::log;
   T_partials_return P(0.0);
   operands_and_partials<T_size1, T_size2> ops_partials(alpha, beta);
 

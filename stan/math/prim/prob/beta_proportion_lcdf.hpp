@@ -44,6 +44,9 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lcdf(const T_y& y,
                                                        const T_loc& mu,
                                                        const T_prec& kappa) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_prec>;
+  using std::exp;
+  using std::log;
+  using std::pow;
   static const char* function = "beta_proportion_lcdf";
   check_positive(function, "Location parameter", mu);
   check_less(function, "Location parameter", mu, 1.0);
@@ -58,9 +61,6 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lcdf(const T_y& y,
     return 0;
   }
 
-  using std::exp;
-  using std::log;
-  using std::pow;
   T_partials_return cdf_log(0.0);
   operands_and_partials<T_y, T_loc, T_prec> ops_partials(y, mu, kappa);
 
