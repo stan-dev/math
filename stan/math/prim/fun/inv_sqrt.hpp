@@ -11,7 +11,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap 1 / sqrt(x) so that it can be vectorized.
+ * Structure to wrap \code{1 / sqrt(x)} so that it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -26,7 +26,7 @@ struct inv_sqrt_fun {
 };
 
 /**
- * Return the elementwise 1 / sqrt(x) of the specified argument,
+ * Return the elementwise \code{1 / sqrt(x)} of the specified argument,
  * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam T type of container
@@ -39,7 +39,7 @@ inline auto inv_sqrt(const T& x) {
 }
 
 /**
- * Version of inv_sqrt() that accepts Eigen Matrix or matrix expressions.
+ * Version of \c inv_sqrt() that accepts Eigen Matrix or matrix expressions.
  *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
@@ -52,7 +52,7 @@ inline auto inv_sqrt(const Eigen::MatrixBase<Derived>& x) {
 }
 
 /**
- * Version of inv_sqrt() that accepts Eigen Array or array expressions.
+ * Version of \c inv_sqrt() that accepts Eigen Array or array expressions.
  *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression

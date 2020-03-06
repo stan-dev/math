@@ -16,7 +16,7 @@ namespace math {
 inline double log2() { return LOG_TWO; }
 
 /**
- * Structure to wrap log2() so it can be vectorized.
+ * Structure to wrap \c log2() so it can be vectorized.
  */
 struct log2_fun {
   /**
@@ -34,7 +34,7 @@ struct log2_fun {
 };
 
 /**
- * Return the elementwise application of <code>log2()</code> to
+ * Return the elementwise application of \c log2() to
  * specified argument container.  The return type promotes the
  * underlying scalar argument type to double if it is an integer,
  * and otherwise is the argument type.

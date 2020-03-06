@@ -35,7 +35,7 @@ inline auto inv(const T& x) {
 }
 
 /**
- * Version of inv() that accepts Eigen Matrix or matrix expressions.
+ * Version of \c inv() that accepts Eigen Matrix or matrix expressions.
  *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
@@ -48,7 +48,7 @@ inline auto inv(const Eigen::MatrixBase<Derived>& x) {
 }
 
 /**
- * Version of inv() that accepts Eigen Array or array expressions.
+ * Version of \c inv() that accepts Eigen Array or array expressions.
  *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression

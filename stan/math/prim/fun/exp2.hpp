@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap <code>exp2()</code> so it can be vectorized.
+ * Structure to wrap \c exp2() so it can be vectorized.
  */
 struct exp2_fun {
   /**
@@ -26,7 +26,7 @@ struct exp2_fun {
 };
 
 /**
- * Return the elementwise <code>exp2()</code> of the specified argument,
+ * Return the elementwise \c exp2() of the specified argument,
  * which may be a scalar or any Stan container of numeric scalars.
  * The return type is the same as the argument type.
  *

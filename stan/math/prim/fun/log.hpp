@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap <code>log()</code> so that it can be vectorized.
+ * Structure to wrap \c log() so that it can be vectorized.
  */
 struct log_fun {
   /**
@@ -41,7 +41,7 @@ inline auto log(const T& x) {
 }
 
 /**
- * Version of log() that accepts Eigen Matrix or matrix expressions.
+ * Version of \c log() that accepts Eigen Matrix or matrix expressions.
  *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
