@@ -25,7 +25,7 @@ struct asinh_fun {
 /**
  * Returns the elementwise <code>asinh()</code> of the input,
  * which may be a scalar or any Stan container of numeric scalars.
- * 
+ *
  * @tparam T type of container
  * @param x container
  * @return Inverse hyperbolic sine of each value in the container.
