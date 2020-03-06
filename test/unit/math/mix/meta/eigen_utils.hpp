@@ -49,7 +49,7 @@ void test_eigen_sparse_matrix() {
   EXPECT_TRUE((eigen_sparse_matrix_v == Checker<decltype(C * D)>::value));
   EXPECT_TRUE(
       (eigen_sparse_map_v == Checker<SparseMapBase<decltype(C * D)>>::value));
-};
+}
 
 /**
  * Test type checking for dense matrices
@@ -94,7 +94,7 @@ void test_eigen_dense() {
   EXPECT_TRUE((eigen_matrix_v == Checker<MatrixBase<decltype(A * B)>>::value));
   EXPECT_TRUE((eigen_array_v == Checker<decltype(A * B)>::value));
   EXPECT_TRUE((eigen_map_v == Checker<Map<test_mat>>::value));
-};
+}
 
 /*
  * Test type checking for Eigen dense solvers with matrics
@@ -115,7 +115,7 @@ void test_eigen_dense_decomp_matrix() {
   // Dense Solver
   EXPECT_TRUE((eigen_dense_solver_v == Checker<Eigen::LDLT<test_mat>>::value));
   EXPECT_TRUE((eigen_dense_solver_v == Checker<Eigen::LLT<test_mat>>::value));
-};
+}
 
 /*
  * Test type checking for Eigen dense solvers with matrics
@@ -139,7 +139,7 @@ void test_eigen_dense_decomp_array() {
                == Checker<Eigen::LDLT<decltype(A.matrix())>>::value));
   EXPECT_TRUE((eigen_dense_solver_v
                == Checker<Eigen::LLT<decltype(A.matrix())>>::value));
-};
+}
 
 /**
  * Test type checking for dense matrices with all stan scalar types.
