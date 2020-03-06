@@ -17,7 +17,7 @@ namespace math {
  * mu can be either an Eigen::VectorXd, an Eigen::RowVectorXd, or a
  * std::vector of either of those types.
  *
- * @tparam T_loc Type of location paramater
+ * @tparam T_loc Type of location parameter
  * @tparam RNG Type of pseudo-random number generator
  * @param mu (Sequence of) location parameter(s)
  * @param S Precision matrix
@@ -31,9 +31,7 @@ inline typename StdVectorBuilder<true, Eigen::VectorXd, T_loc>::type
 multi_normal_prec_rng(const T_loc &mu, const Eigen::MatrixXd &S, RNG &rng) {
   using boost::normal_distribution;
   using boost::variate_generator;
-
   static const char *function = "multi_normal_prec_rng";
-
   check_positive(function, "Precision matrix rows", S.rows());
   check_finite(function, "Precision matrix", S);
   check_symmetric(function, "Precision matrix", S);

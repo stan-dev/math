@@ -32,9 +32,7 @@ inline typename VectorBuilder<true, int, T_N, T_theta>::type binomial_rng(
     const T_N& N, const T_theta& theta, RNG& rng) {
   using boost::binomial_distribution;
   using boost::variate_generator;
-
   static const char* function = "binomial_rng";
-
   check_nonnegative(function, "Population size parameter", N);
   check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
   check_consistent_sizes(function, "Population size parameter", N,

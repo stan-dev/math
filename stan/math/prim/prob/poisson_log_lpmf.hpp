@@ -20,25 +20,22 @@ template <bool propto, typename T_n, typename T_log_rate>
 return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
                                            const T_log_rate& alpha) {
   using T_partials_return = partials_return_t<T_n, T_log_rate>;
-
-  static const char* function = "poisson_log_lpmf";
-
   using std::exp;
-
-  if (size_zero(n, alpha)) {
-    return 0.0;
-  }
-
-  T_partials_return logp(0.0);
-
+  static const char* function = "poisson_log_lpmf";
   check_nonnegative(function, "Random variable", n);
   check_not_nan(function, "Log rate parameter", alpha);
   check_consistent_sizes(function, "Random variable", n, "Log rate parameter",
                          alpha);
 
+  if (size_zero(n, alpha)) {
+    return 0.0;
+  }
   if (!include_summand<propto, T_log_rate>::value) {
     return 0.0;
   }
+
+  T_partials_return logp(0.0);
+  operands_and_partials<T_log_rate> ops_partials(alpha);
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_log_rate> alpha_vec(alpha);
@@ -55,8 +52,6 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
       return LOG_ZERO;
     }
   }
-
-  operands_and_partials<T_log_rate> ops_partials(alpha);
 
   VectorBuilder<include_summand<propto>::value, T_partials_return, T_n>
       lgamma_n_plus_one(size(n));

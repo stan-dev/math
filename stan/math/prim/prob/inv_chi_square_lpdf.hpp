@@ -21,7 +21,7 @@ namespace math {
 /** \ingroup prob_dists
  * The log of an inverse chi-squared density for y with the specified
  * degrees of freedom parameter.
- * The degrees of freedom prarameter must be greater than 0.
+ * The degrees of freedom parameter must be greater than 0.
  * y must be greater than 0.
  *
  \f{eqnarray*}{
@@ -41,6 +41,7 @@ namespace math {
 template <bool propto, typename T_y, typename T_dof>
 return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
   using T_partials_return = partials_return_t<T_y, T_dof>;
+  using std::log;
   static const char* function = "inv_chi_square_lpdf";
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_not_nan(function, "Random variable", y);

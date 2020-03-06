@@ -17,7 +17,7 @@ namespace math {
  * variables.
  *
  * A typical use case would be to take the Jacobian of a function
- * from independent variables to dependentant variables.  For instance,
+ * from independent variables to dependent variables.  For instance,
  *
  * <pre>
  * std::vector<var> f(std::vector<var>& x) { ... }
@@ -34,7 +34,7 @@ namespace math {
  * <code><i>d</i>y[m]/<i>d</i>x[n]</code>.
  *
  * @param[in] dependents Dependent (output) variables.
- * @param[in] independents Indepent (input) variables.
+ * @param[in] independents Independent (input) variables.
  * @param[out] jacobian Jacobian of the transform.
  */
 inline void jacobian(std::vector<var>& dependents,

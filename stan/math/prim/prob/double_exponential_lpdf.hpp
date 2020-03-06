@@ -34,33 +34,31 @@ namespace math {
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
 return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma) {
-  static const char* function = "double_exponential_lpdf";
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
-
   using std::fabs;
   using std::log;
-
-  if (size_zero(y, mu, sigma)) {
-    return 0.0;
-  }
-
-  T_partials_return logp(0.0);
+  static const char* function = "double_exponential_lpdf";
   check_finite(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Shape parameter", sigma);
 
+  if (size_zero(y, mu, sigma)) {
+    return 0.0;
+  }
   if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
     return 0.0;
   }
+
+  T_partials_return logp(0.0);
+  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);
   scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t size_sigma = stan::math::size(sigma);
   size_t N = max_size(y, mu, sigma);
-  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
   VectorBuilder<true, T_partials_return, T_scale> inv_sigma(size_sigma);
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,

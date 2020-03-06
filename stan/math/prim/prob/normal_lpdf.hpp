@@ -22,14 +22,14 @@ namespace math {
  *
  * <p>The result log probability is defined to be the sum of the
  * log probabilities for each observation/mean/deviation triple.
- * @tparam T_y Underlying type of scalar in sequence.
- * @tparam T_loc Type of location parameter.
- * @tparam T_scale Type of scale parameter.
+ *
+ * @tparam T_y type of scalar
+ * @tparam T_loc type of location parameter
+ * @tparam T_scale type of scale parameter
  * @param y (Sequence of) scalar(s).
  * @param mu (Sequence of) location parameter(s)
  * for the normal distribution.
- * @param sigma (Sequence of) scale parameters for the normal
- * distribution.
+ * @param sigma (Sequence of) scale parameters for the normal distribution.
  * @return The log of the product of the densities.
  * @throw std::domain_error if the scale is not positive.
  */
@@ -37,26 +37,23 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale>
 inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
                                                       const T_loc& mu,
                                                       const T_scale& sigma) {
-  static const char* function = "normal_lpdf";
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
-
   using std::log;
-
-  if (size_zero(y, mu, sigma)) {
-    return 0.0;
-  }
-
-  T_partials_return logp(0.0);
-
+  static const char* function = "normal_lpdf";
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_positive(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
+
+  if (size_zero(y, mu, sigma)) {
+    return 0.0;
+  }
   if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
     return 0.0;
   }
 
+  T_partials_return logp(0.0);
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
   scalar_seq_view<T_y> y_vec(y);

@@ -24,37 +24,35 @@ namespace math {
  * <p> The result log probability is defined to be the sum of
  * the log probabilities for each observation/mu/sigma triple.
  *
+ * @tparam T_y type of scalar outcome
+ * @tparam T_loc type of location
+ * @tparam T_scale type of scale
  * @param y (Sequence of) scalar(s).
  * @param mu (Sequence of) location(s).
  * @param sigma (Sequence of) scale(s).
  * @return The log of the product of densities.
- * @tparam T_y Type of scalar outcome.
- * @tparam T_loc Type of location.
- * @tparam T_scale Type of scale.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
 return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
                                                const T_scale& sigma) {
-  static const char* function = "cauchy_lpdf";
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
-
-  if (size_zero(y, mu, sigma)) {
-    return 0.0;
-  }
-
-  T_partials_return logp(0.0);
-
+  using std::log;
+  static const char* function = "cauchy_lpdf";
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
 
+  if (size_zero(y, mu, sigma)) {
+    return 0.0;
+  }
   if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
     return 0.0;
   }
 
-  using std::log;
+  T_partials_return logp(0.0);
+  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);
@@ -74,8 +72,6 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
       log_sigma[i] = log(sigma_dbl);
     }
   }
-
-  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);

@@ -40,6 +40,7 @@ namespace math {
 template <bool propto, typename T_y, typename T_dof>
 return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
   using T_partials_return = partials_return_t<T_y, T_dof>;
+  using std::log;
   static const char* function = "chi_square_lpdf";
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -51,7 +52,7 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
     return 0;
   }
   if (!include_summand<propto, T_y, T_dof>::value) {
-    return 0.0;
+    return 0;
   }
 
   using std::log;

@@ -34,30 +34,30 @@ namespace math {
  \mathrm{where} \; y > 0
  \f}
  *
+ * @tparam T_y type of scalar
+ * @tparam T_inv_scale type of inverse scale
  * @param y A scalar variable.
  * @param beta Inverse scale parameter.
  * @throw std::domain_error if beta is not greater than 0.
  * @throw std::domain_error if y is not greater than or equal to 0.
- * @tparam T_y Type of scalar.
- * @tparam T_inv_scale Type of inverse scale.
  */
 template <bool propto, typename T_y, typename T_inv_scale>
 return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
                                                  const T_inv_scale& beta) {
-  static const char* function = "exponential_lpdf";
   using T_partials_return = partials_return_t<T_y, T_inv_scale>;
+  using std::log;
+  static const char* function = "exponential_lpdf";
+  check_nonnegative(function, "Random variable", y);
+  check_positive_finite(function, "Inverse scale parameter", beta);
+  check_consistent_sizes(function, "Random variable", y,
+                         "Inverse scale parameter", beta);
 
   if (size_zero(y, beta)) {
     return 0.0;
   }
 
-  using std::log;
-
   T_partials_return logp(0.0);
-  check_nonnegative(function, "Random variable", y);
-  check_positive_finite(function, "Inverse scale parameter", beta);
-  check_consistent_sizes(function, "Random variable", y,
-                         "Inverse scale parameter", beta);
+  operands_and_partials<T_y, T_inv_scale> ops_partials(y, beta);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_inv_scale> beta_vec(beta);
@@ -72,8 +72,6 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
       log_beta[i] = log(value_of(beta_vec[i]));
     }
   }
-
-  operands_and_partials<T_y, T_inv_scale> ops_partials(y, beta);
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return beta_dbl = value_of(beta_vec[n]);

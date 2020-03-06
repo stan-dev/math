@@ -151,7 +151,7 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
  *
  * where \f$d(x, x')\f$ is the Euclidean distance.
  *
- * This function is for the cross covariance matrix neededed
+ * This function is for the cross covariance matrix needed
  * to compute the posterior predictive density.
  *
  * @tparam T_x1 first type of scalars contained in vector x1
@@ -226,7 +226,7 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  *
  * where \f$d(x, x')\f$ is the Euclidean distance
  *
- * This function is for the cross covariance matrix neededed
+ * This function is for the cross covariance matrix needed
  * to compute the posterior predictive density.
  *
  * @tparam T_x1 first type of std::vector of scalars

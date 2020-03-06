@@ -24,9 +24,10 @@ template <bool propto, typename T_y, typename T_shape, typename T_scale>
 return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
                                                   const T_shape& alpha,
                                                   const T_scale& sigma) {
-  static const char* function = "frechet_lpdf";
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
   using std::log;
+  using std::pow;
+  static const char* function = "frechet_lpdf";
   check_positive(function, "Random variable", y);
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Scale parameter", sigma);
@@ -40,9 +41,8 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
     return 0;
   }
 
-  using std::pow;
-
   T_partials_return logp(0);
+  operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_shape> alpha_vec(alpha);
@@ -92,7 +92,6 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
         = pow(inv_y[i] * value_of(sigma_vec[i]), alpha_dbl);
   }
 
-  operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
   for (size_t n = 0; n < N; n++) {
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
     if (include_summand<propto, T_shape>::value) {

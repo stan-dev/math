@@ -31,17 +31,10 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale>
 return_type_t<T_y, T_loc, T_scale> gumbel_lccdf(const T_y& y, const T_loc& mu,
                                                 const T_scale& beta) {
-  static const char* function = "gumbel_lccdf";
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
-
   using std::exp;
   using std::log;
-
-  T_partials_return ccdf_log(0.0);
-  if (size_zero(y, mu, beta)) {
-    return ccdf_log;
-  }
-
+  static const char* function = "gumbel_lccdf";
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_not_nan(function, "Scale parameter", beta);
@@ -49,6 +42,11 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lccdf(const T_y& y, const T_loc& mu,
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", beta);
 
+  if (size_zero(y, mu, beta)) {
+    return 0;
+  }
+
+  T_partials_return ccdf_log(0.0);
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, beta);
 
   scalar_seq_view<T_y> y_vec(y);

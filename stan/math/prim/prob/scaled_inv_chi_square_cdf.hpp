@@ -39,6 +39,8 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(const T_y& y,
                                                              const T_dof& nu,
                                                              const T_scale& s) {
   using T_partials_return = partials_return_t<T_y, T_dof, T_scale>;
+  using std::exp;
+  using std::pow;
   static const char* function = "scaled_inv_chi_square_cdf";
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);

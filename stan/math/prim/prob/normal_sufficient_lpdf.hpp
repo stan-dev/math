@@ -18,7 +18,7 @@ namespace math {
 /** \ingroup prob_dists
  * The log of the normal density for the specified scalar(s) given
  * the specified mean(s) and deviation(s).
- * y, s_quared, mu, or sigma can each be either
+ * y, s_squared, mu, or sigma can each be either
  * a scalar, a std vector or Eigen vector.
  * n can be either a single int or an std vector of ints.
  * Any vector inputs must be the same length.
@@ -26,11 +26,12 @@ namespace math {
  * <p>The result log probability is defined to be the sum of the
  * log probabilities for each observation/mean/deviation triple.
  *
- * @tparam T_y Type of sample average parameter.
- * @tparam T_s Type of sample squared errors parameter.
- * @tparam T_n Type of sample size parameter.
- * @tparam T_loc Type of location parameter.
- * @tparam T_scale Type of scale parameter.
+ * @tparam T_y type of sample average parameter
+ * @tparam T_s type of sample squared errors parameter
+ * @tparam T_n type of sample size parameter
+ * @tparam T_loc type of location parameter
+ * @tparam T_scale type of scale parameter
+ *
  * @param y_bar (Sequence of) scalar(s) (sample average(s)).
  * @param s_squared (Sequence of) sum(s) of sample squared errors
  * @param n_obs (Sequence of) sample size(s)
@@ -47,21 +48,10 @@ template <bool propto, typename T_y, typename T_s, typename T_n, typename T_loc,
 return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
     const T_y& y_bar, const T_s& s_squared, const T_n& n_obs, const T_loc& mu,
     const T_scale& sigma) {
-  static const char* function = "normal_sufficient_lpdf";
   using T_partials_return = partials_return_t<T_y, T_s, T_n, T_loc, T_scale>;
-
   using std::log;
   using std::pow;
-
-  // check if any vectors are zero length
-  if (size_zero(y_bar, s_squared, n_obs, mu, sigma)) {
-    return 0.0;
-  }
-
-  // set up return value accumulator
-  T_partials_return logp(0.0);
-
-  // validate args (here done over var, which should be OK)
+  static const char* function = "normal_sufficient_lpdf";
   check_finite(function, "Location parameter sufficient statistic", y_bar);
   check_finite(function, "Scale parameter sufficient statistic", s_squared);
   check_nonnegative(function, "Scale parameter sufficient statistic",
@@ -75,15 +65,17 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
                          y_bar, "Scale parameter sufficient statistic",
                          s_squared, "Number of observations", n_obs,
                          "Location parameter", mu, "Scale parameter", sigma);
-  // check if no variables are involved and prop-to
+
+  if (size_zero(y_bar, s_squared, n_obs, mu, sigma)) {
+    return 0.0;
+  }
   if (!include_summand<propto, T_y, T_s, T_loc, T_scale>::value) {
     return 0.0;
   }
 
-  // set up template expressions wrapping scalars into vector views
+  T_partials_return logp(0.0);
   operands_and_partials<T_y, T_s, T_loc, T_scale> ops_partials(y_bar, s_squared,
                                                                mu, sigma);
-
   scalar_seq_view<const T_y> y_bar_vec(y_bar);
   scalar_seq_view<const T_s> s_squared_vec(s_squared);
   scalar_seq_view<const T_n> n_obs_vec(n_obs);

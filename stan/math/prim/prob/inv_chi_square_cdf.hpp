@@ -36,6 +36,8 @@ namespace math {
 template <typename T_y, typename T_dof>
 return_type_t<T_y, T_dof> inv_chi_square_cdf(const T_y& y, const T_dof& nu) {
   using T_partials_return = partials_return_t<T_y, T_dof>;
+  using std::exp;
+  using std::pow;
   static const char* function = "inv_chi_square_cdf";
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_not_nan(function, "Random variable", y);
@@ -47,8 +49,6 @@ return_type_t<T_y, T_dof> inv_chi_square_cdf(const T_y& y, const T_dof& nu) {
     return 1.0;
   }
 
-  using std::exp;
-  using std::pow;
   T_partials_return P(1.0);
   operands_and_partials<T_y, T_dof> ops_partials(y, nu);
 

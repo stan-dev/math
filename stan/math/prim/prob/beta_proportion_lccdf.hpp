@@ -43,15 +43,10 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(const T_y& y,
                                                         const T_loc& mu,
                                                         const T_prec& kappa) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_prec>;
-
+  using std::exp;
+  using std::log;
+  using std::pow;
   static const char* function = "beta_proportion_lccdf";
-
-  if (size_zero(y, mu, kappa)) {
-    return 0.0;
-  }
-
-  T_partials_return ccdf_log(0.0);
-
   check_positive(function, "Location parameter", mu);
   check_less(function, "Location parameter", mu, 1.0);
   check_positive_finite(function, "Precision parameter", kappa);
@@ -61,18 +56,19 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(const T_y& y,
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Precision parameter", kappa);
 
+  if (size_zero(y, mu, kappa)) {
+    return 0;
+  }
+
+  T_partials_return ccdf_log(0.0);
+  operands_and_partials<T_y, T_loc, T_prec> ops_partials(y, mu, kappa);
+
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);
   scalar_seq_view<T_prec> kappa_vec(kappa);
   size_t size_kappa = stan::math::size(kappa);
   size_t size_mu_kappa = max_size(mu, kappa);
   size_t N = max_size(y, mu, kappa);
-
-  operands_and_partials<T_y, T_loc, T_prec> ops_partials(y, mu, kappa);
-
-  using std::exp;
-  using std::log;
-  using std::pow;
 
   VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials_return,
                 T_loc, T_prec>

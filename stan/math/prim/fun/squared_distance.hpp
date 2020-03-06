@@ -14,7 +14,7 @@ namespace math {
  *
  * @param x1 First vector.
  * @param x2 Second vector.
- * @return Dot product of the vectors.
+ * @return Square of distance between vectors.
  * @throw std::domain_error If the vectors are not the same
  * size or if they are both not vector dimensioned.
  */
@@ -33,7 +33,7 @@ inline return_type_t<T1, T2> squared_distance(const T1& x1, const T2& x2) {
  * @tparam C number of columns, can be Eigen::Dynamic
  * @param v1 First vector.
  * @param v2 Second vector.
- * @return Dot product of the vectors.
+ * @return Square of distance between vectors.
  * @throw std::domain_error If the vectors are not the same
  * size or if they are both not vector dimensioned.
  */
@@ -57,7 +57,7 @@ inline double squared_distance(const Eigen::Matrix<double, R, C>& v1,
  *
  * @param v1 First vector.
  * @param v2 Second vector.
- * @return Dot product of the vectors.
+ * @return Square of distance between vectors.
  * @throw std::domain_error If the vectors are not the same
  * size or if they are both not vector dimensioned.
  */

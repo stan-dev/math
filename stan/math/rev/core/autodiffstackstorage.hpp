@@ -51,7 +51,7 @@ namespace math {
  * TLS. Thus, only the __thread keyword guarantees that constant
  * initialization and its implied speedup, is used.
  *
- * The initialzation of the AD instance at run-time is handled by the
+ * The initialization of the AD instance at run-time is handled by the
  * lifetime of a AutodiffStackSingleton object. More specifically, the
  * first instance of the AutodiffStackSingleton object will initialize
  * the AD instance and take ownership (it is the only one instance

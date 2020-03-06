@@ -21,7 +21,7 @@ namespace math {
  *
  * @tparam T_y type of real parameter
  * @tparam T_shape type of shape parameter
- * @tparam T_scale type of scale paramater
+ * @tparam T_scale type of scale parameter
  * @param y real parameter
  * @param alpha shape parameter
  * @param sigma scale parameter
@@ -32,17 +32,16 @@ template <bool propto, typename T_y, typename T_shape, typename T_scale>
 return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
                                                   const T_shape& alpha,
                                                   const T_scale& sigma) {
-  static const char* function = "weibull_lpdf";
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
-
   using std::log;
   using std::pow;
-
+  static const char* function = "weibull_lpdf";
   check_finite(function, "Random variable", y);
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Scale parameter", sigma);
+
   if (size_zero(y, alpha, sigma)) {
     return 0;
   }
@@ -51,6 +50,8 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
   }
 
   T_partials_return logp(0);
+  operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
+
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   scalar_seq_view<T_scale> sigma_vec(sigma);
@@ -106,7 +107,6 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
     y_div_sigma_pow_alpha[i] = pow(y_dbl * inv_sigma[i], alpha_dbl);
   }
 
-  operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
   for (size_t n = 0; n < N; n++) {
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
     if (include_summand<propto, T_shape>::value) {

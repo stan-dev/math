@@ -19,7 +19,7 @@ namespace math {
  *
  * @tparam T_y type of real parameter
  * @tparam T_shape type of shape parameter
- * @tparam T_scale type of scale paramater
+ * @tparam T_scale type of scale parameter
  * @param y real parameter
  * @param alpha shape parameter
  * @param sigma scale parameter
@@ -31,21 +31,18 @@ return_type_t<T_y, T_shape, T_scale> weibull_lccdf(const T_y& y,
                                                    const T_shape& alpha,
                                                    const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
-
-  static const char* function = "weibull_lccdf";
-
   using std::log;
   using std::pow;
+  static const char* function = "weibull_lccdf";
+  check_nonnegative(function, "Random variable", y);
+  check_positive_finite(function, "Shape parameter", alpha);
+  check_positive_finite(function, "Scale parameter", sigma);
 
   if (size_zero(y, alpha, sigma)) {
     return 0.0;
   }
 
   T_partials_return ccdf_log(0.0);
-  check_nonnegative(function, "Random variable", y);
-  check_positive_finite(function, "Shape parameter", alpha);
-  check_positive_finite(function, "Scale parameter", sigma);
-
   operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
 
   scalar_seq_view<T_y> y_vec(y);

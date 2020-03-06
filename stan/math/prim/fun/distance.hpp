@@ -31,10 +31,14 @@ inline return_type_t<T1, T2> distance(const T1& x1, const T2& x2) {
  * Returns the distance between the specified vectors.
  *
  * @tparam T1 type of elements in first vector
+ * @tparam R1 number of rows in the first vector, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the first vector, can be Eigen::Dynamic
  * @tparam T2 type of elements in second vector
+ * @tparam R2 number of rows in the second vector, can be Eigen::Dynamic
+ * @tparam C2 number of columns in the second vector, can be Eigen::Dynamic
  * @param v1 First vector.
  * @param v2 Second vector.
- * @return Dot product of the vectors.
+ * @return Distance between vectors.
  * @throw std::domain_error If the vectors are not the same
  * size or if they are both not vector dimensioned.
  */

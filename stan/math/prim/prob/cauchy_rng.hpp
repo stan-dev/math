@@ -17,8 +17,8 @@ namespace math {
  * mu and sigma can each be a scalar or a vector. Any non-scalar
  * inputs must be the same length.
  *
- * @tparam T_loc Type of location parameter
- * @tparam T_scale Type of scale parameter
+ * @tparam T_loc type of location parameter
+ * @tparam T_scale type of scale parameter
  * @tparam RNG type of random number generator
  * @param mu (Sequence of) location parameter(s)
  * @param sigma (Sequence of) scale parameter(s)
@@ -34,7 +34,6 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type cauchy_rng(
   using boost::random::cauchy_distribution;
   using boost::variate_generator;
   static const char* function = "cauchy_rng";
-
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",

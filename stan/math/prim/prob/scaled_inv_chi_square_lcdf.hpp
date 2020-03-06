@@ -24,6 +24,9 @@ template <typename T_y, typename T_dof, typename T_scale>
 return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lcdf(
     const T_y& y, const T_dof& nu, const T_scale& s) {
   using T_partials_return = partials_return_t<T_y, T_dof, T_scale>;
+  using std::exp;
+  using std::log;
+  using std::pow;
   static const char* function = "scaled_inv_chi_square_lcdf";
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -34,12 +37,9 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lcdf(
                          s);
 
   if (size_zero(y, nu, s)) {
-    return 0.0;
+    return 0;
   }
 
-  using std::exp;
-  using std::log;
-  using std::pow;
   T_partials_return P(0.0);
   operands_and_partials<T_y, T_dof, T_scale> ops_partials(y, nu, s);
 
