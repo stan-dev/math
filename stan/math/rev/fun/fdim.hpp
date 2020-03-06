@@ -54,7 +54,7 @@ class fdim_dv_vari : public op_dv_vari {
  * Return the positive difference between the first variable's the value
  * and the second's (C99, C++11).
  *
- * The function values and deriatives are defined by
+ * The function values and derivatives are defined by
  *
    \f[
    \mbox{fdim}(x, y) =

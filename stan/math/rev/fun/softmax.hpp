@@ -20,14 +20,14 @@ class softmax_op {
  public:
   softmax_op() : N_(0), y_(nullptr) {}
 
-  /*
+  /**
    * Compute the softmax of the unconstrained input vector
    *
    * @param alpha Unconstrained input vector.
    * @return Softmax of the input.
    */
   template <std::size_t size>
-  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
+  Eigen::VectorXd operator()(const std::array<bool, size>& /* needs_adj */,
                              const Eigen::VectorXd& alpha) {
     N_ = alpha.size();
     y_ = ChainableStack::instance_->memalloc_.alloc_array<double>(N_);
@@ -39,7 +39,7 @@ class softmax_op {
     return y;
   }
 
-  /*
+  /**
    * Compute the result of multiply the transpose of the adjoint vector times
    * the Jacobian of the softmax operator. It is more efficient to do this
    * without actually computing the Jacobian and doing the vector-matrix
@@ -50,7 +50,7 @@ class softmax_op {
    */
   template <std::size_t size>
   std::tuple<Eigen::VectorXd> multiply_adjoint_jacobian(
-      const std::array<bool, size>& needs_adj,
+      const std::array<bool, size>& /* needs_adj */,
       const Eigen::VectorXd& adj) const {
     vector_d adj_times_jac(N_);
     Eigen::Map<vector_d> y(y_, N_);

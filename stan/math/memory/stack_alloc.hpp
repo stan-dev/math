@@ -161,7 +161,7 @@ class stack_alloc {
    * The allocated pointer will be 8-byte aligned.
    *
    * This function may call C++'s <code>malloc()</code> function,
-   * with any exceptions percolated throught this function.
+   * with any exceptions percolated through this function.
    *
    * @param len Number of bytes to allocate.
    * @return A pointer to the allocated memory.

@@ -54,7 +54,7 @@ class cvodes_ode_data {
    * RHS (<code>cv_rhs_sens</code>) and for the ODE Jacobian wrt
    * to the states (<code>cv_jacobian_states</code>).
    *
-   * The callbacks required by CVODES are detailled in
+   * The callbacks required by CVODES are detailed in
    * https://computation.llnl.gov/sites/default/files/public/cvs_guide.pdf
    *
    * Note: The supplied callbacks do always return 0 which flags to

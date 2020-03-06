@@ -17,7 +17,6 @@ template <bool propto, typename T_prob>
 return_type_t<T_prob> categorical_logit_lpmf(
     int n, const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
   static const char* function = "categorical_logit_lpmf";
-
   check_bounded(function, "categorical outcome out of support", n, 1,
                 beta.size());
   check_finite(function, "log odds parameter", beta);

@@ -63,8 +63,8 @@ class multiply_log_dv_vari : public op_dv_vari {
  * Return the value of a*log(b).
  *
  * When both a and b are 0, the value returned is 0.
- * The partial deriviative with respect to a is log(b).
- * The partial deriviative with respect to b is a/b. When
+ * The partial derivative with respect to a is log(b).
+ * The partial derivative with respect to b is a/b. When
  * a and b are both 0, this is set to Inf.
  *
  * @param a First variable.
@@ -78,7 +78,7 @@ inline var multiply_log(const var& a, const var& b) {
  * Return the value of a*log(b).
  *
  * When both a and b are 0, the value returned is 0.
- * The partial deriviative with respect to a is log(b).
+ * The partial derivative with respect to a is log(b).
  *
  * @param a First variable.
  * @param b Second scalar.
@@ -91,7 +91,7 @@ inline var multiply_log(const var& a, double b) {
  * Return the value of a*log(b).
  *
  * When both a and b are 0, the value returned is 0.
- * The partial deriviative with respect to b is a/b. When
+ * The partial derivative with respect to b is a/b. When
  * a and b are both 0, this is set to Inf.
  *
  * @param a First scalar.

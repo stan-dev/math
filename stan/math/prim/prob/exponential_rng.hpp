@@ -28,9 +28,7 @@ inline typename VectorBuilder<true, double, T_inv>::type exponential_rng(
     const T_inv& beta, RNG& rng) {
   using boost::exponential_distribution;
   using boost::variate_generator;
-
   static const char* function = "exponential_rng";
-
   check_positive_finite(function, "Inverse scale parameter", beta);
 
   scalar_seq_view<T_inv> beta_vec(beta);

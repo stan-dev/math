@@ -16,9 +16,9 @@ namespace math {
  * A valid unit vector is one where the square elements
  * summed is equal to 1. This function tests that the sum
  * is within the tolerance specified by <code>CONSTRAINT_TOLERANCE</code>.
- * This function only accpets <code>Eigen::Matrix</code> vectors, statically
+ * This function only accepts <code>Eigen::Matrix</code> vectors, statically
  * typed vectors, not general matrices with 1 column.
- * @tparam T_prob Scalar type of the vector, reqires class method
+ * @tparam T_prob Scalar type of the vector, requires class method
  *   <code>.squaredNorm()</code>
  * @param theta Eigen vector to test
  * @return <code>true</code> if the vector is not a unit

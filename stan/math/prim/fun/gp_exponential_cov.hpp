@@ -207,7 +207,7 @@ gp_exponential_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  *
  * where \f$d(x, x')\f$ is the Euclidean distance
  *
- * This function is for the cross covariance matrix neededed
+ * This function is for the cross covariance matrix needed
  * to compute the posterior predictive density.
  *
  * @tparam T_x1 first type of std::vector of scalars

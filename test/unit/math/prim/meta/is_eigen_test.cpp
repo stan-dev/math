@@ -23,9 +23,11 @@ TEST(MathMetaPrim, primitive) {
 
   Eigen::Matrix<double, -1, -1> a;
   Eigen::Matrix<double, -1, -1> b;
+  Eigen::VectorXd c;
 
   EXPECT_TRUE((is_eigen<decltype(a * b)>::value));
   EXPECT_TRUE((is_eigen<decltype(a * b + a.transpose())>::value));
+  EXPECT_TRUE((is_eigen<decltype(c.segment(0, 1))>::value));
 }
 
 TEST(MathMetaPrim, expression) {

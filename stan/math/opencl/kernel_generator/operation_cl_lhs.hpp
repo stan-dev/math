@@ -32,7 +32,7 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
 
   /**
    * generates kernel code for this expression if it appears on the left hand
-   * side of an assigment.
+   * side of an assignment.
    * @param[in,out] generated set of (pointer to) already generated operations
    * @param name_gen name generator for this kernel
    * @param i row index variable name
