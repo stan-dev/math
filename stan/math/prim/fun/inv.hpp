@@ -18,7 +18,6 @@ struct inv_fun {
   template <typename T>
   static inline T fun(const T& x) {
     return 1.0 / x;
-    ;
   }
 };
 
