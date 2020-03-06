@@ -151,6 +151,7 @@
 #include <stan/math/prim/fun/linspaced_vector.hpp>
 #include <stan/math/prim/fun/lmgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/logb.hpp>
 #include <stan/math/prim/fun/log10.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/log1m_exp.hpp>
@@ -263,6 +264,7 @@
 #include <stan/math/prim/fun/rows.hpp>
 #include <stan/math/prim/fun/rows_dot_product.hpp>
 #include <stan/math/prim/fun/rows_dot_self.hpp>
+#include <stan/math/prim/fun/scalbn.hpp>
 #include <stan/math/prim/fun/scale_matrix_exp_multiply.hpp>
 #include <stan/math/prim/fun/scaled_add.hpp>
 #include <stan/math/prim/fun/sd.hpp>

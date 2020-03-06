@@ -3,7 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/core/operator_division.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -47,6 +50,24 @@ template <typename Derived,
 inline auto tanh(const Eigen::MatrixBase<Derived>& x) {
   return x.derived().array().tanh().matrix().eval();
 }
+
+namespace internal {
+/**
+ * Return the hyperbolic tangent of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return hyperbolic tangent of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_tanh(const std::complex<V>& z) {
+  using std::exp;
+  using stan::math::operator/;
+  auto exp_z = exp(z);
+  auto exp_neg_z = exp(-z);
+  return stan::math::internal::complex_divide(exp_z - exp_neg_z, exp_z + exp_neg_z);
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan
