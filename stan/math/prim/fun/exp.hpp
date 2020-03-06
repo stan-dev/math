@@ -9,15 +9,6 @@ namespace stan {
 namespace math {
 
 /**
- * Return the natural exponential of the specified argument.  This
- * version is required to disambiguate <code>exp(int)</code>.
- *
- * @param[in] x Argument.
- * @return Natural exponential of argument.
- */
-inline double exp(int x) { return std::exp(x); }
-
-/**
  * Structure to wrap <code>exp()</code> so that it can be
  * vectorized.
  */
@@ -37,7 +28,7 @@ struct exp_fun {
 };
 
 /**
- * Return the elementwise exponentiation of the specified argument,
+ * Return the elementwise <code>exp()</code> of the specified argument,
  * which may be a scalar or any Stan container of numeric scalars.
  * The return type is the same as the argument type.
  *

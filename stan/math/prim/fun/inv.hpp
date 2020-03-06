@@ -7,10 +7,8 @@
 namespace stan {
 namespace math {
 
-inline double inv(double x) { return 1.0 / x; }
-
 /**
- * Structure to wrap inv() so that it can be vectorized.
+ * Structure to wrap 1.0 / x so that it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -19,12 +17,13 @@ inline double inv(double x) { return 1.0 / x; }
 struct inv_fun {
   template <typename T>
   static inline T fun(const T& x) {
-    return inv(x);
+    return 1.0 / x;;
   }
 };
 
 /**
- * Vectorized version of inv().
+ * Return the elementwise 1.0 / x of the specified argument,
+ * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam T type of container
  * @param x container

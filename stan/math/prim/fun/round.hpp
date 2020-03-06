@@ -9,24 +9,6 @@ namespace stan {
 namespace math {
 
 /**
- * Return the closest integer to the specified argument, with
- * halfway cases rounded away from zero.
- *
- * @param x Argument.
- * @return The rounded value of the argument.
- */
-inline double round(double x) { return std::round(x); }
-
-/**
- * Return the closest integer to the specified argument, with
- * halfway cases rounded away from zero.
- *
- * @param x Argument.
- * @return The rounded value of the argument.
- */
-inline double round(int x) { return std::round(x); }
-
-/**
  * Structure to wrap round() so it can be vectorized.
  *
  * @tparam T type of argument
@@ -36,6 +18,7 @@ inline double round(int x) { return std::round(x); }
 struct round_fun {
   template <typename T>
   static inline T fun(const T& x) {
+    using std::round;
     return round(x);
   }
 };

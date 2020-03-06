@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap fabs() so that it can be vectorized.
+ * Structure to wrap <code>fabs()</code> so that it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -24,7 +24,8 @@ struct fabs_fun {
 };
 
 /**
- * Vectorized version of fabs().
+ * Returns the elementwise <code>fabs()</code> of the input,
+ * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam T type of container
  * @param x container

@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap atan() so it can be vectorized.
+ * Structure to wrap <code>atan()</code> so it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -24,7 +24,8 @@ struct atan_fun {
 };
 
 /**
- * Vectorized version of atan().
+ * Returns the elementwise <code>atan()</code>of the input,
+ * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam T type of container
  * @param x container

@@ -9,14 +9,12 @@
 namespace stan {
 namespace math {
 
-inline double inv_square(double x) { return inv(square(x)); }
-
 /**
- * Vectorized version of inv_square().
+ * Returns 1 / square(x).
  *
  * @tparam T type of container
  * @param x container
- * @return 1 / the square of each value in x.
+ * @return 1 / square(x) of each value in x.
  */
 template <typename T>
 inline auto inv_square(const T& x) {

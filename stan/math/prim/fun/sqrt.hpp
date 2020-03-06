@@ -9,15 +9,6 @@ namespace stan {
 namespace math {
 
 /**
- * Return the square root of the specified argument.  This
- * version is required to disambiguate <code>sqrt(int)</code>.
- *
- * @param[in] x Argument.
- * @return Square root of x.
- */
-inline double sqrt(int x) { return std::sqrt(x); }
-
-/**
  * Structure to wrap sqrt() so that it can be vectorized.
  *
  * @tparam T type of variable

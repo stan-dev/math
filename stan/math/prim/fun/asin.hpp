@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap asin() so it can be vectorized.
+ * Structure to wrap <code>asin()</code> so it can be vectorized.
  *
  * @tparam T type of argument
  * @param x argument
@@ -24,7 +24,8 @@ struct asin_fun {
 };
 
 /**
- * Vectorized version of asin().
+ * Returns the elementwise <code>asin()</code> of the input,
+ * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam T type of container
  * @param x container
