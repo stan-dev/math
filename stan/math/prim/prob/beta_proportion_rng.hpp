@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/max_size.hpp>
 #include <boost/random/variate_generator.hpp>
 
 namespace stan {
@@ -32,7 +33,6 @@ template <typename T_loc, typename T_prec, class RNG>
 inline typename VectorBuilder<true, double, T_loc, T_prec>::type
 beta_proportion_rng(const T_loc &mu, const T_prec &kappa, RNG &rng) {
   static const char *function = "beta_proportion_rng";
-
   check_positive(function, "Location parameter", mu);
   check_less(function, "Location parameter", mu, 1.0);
   check_positive_finite(function, "Precision parameter", kappa);

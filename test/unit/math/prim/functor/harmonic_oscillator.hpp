@@ -7,7 +7,7 @@
 
 struct harm_osc_ode_fun {
   template <typename T0, typename T1, typename T2>
-  inline std::vector<typename stan::return_type<T1, T2>::type>
+  inline std::vector<stan::return_type_t<T1, T2>>
   // initial time
   // initial positions
   // parameters
@@ -20,7 +20,7 @@ struct harm_osc_ode_fun {
       throw std::domain_error(
           "this function was called with inconsistent state");
 
-    std::vector<typename stan::return_type<T1, T2>::type> res;
+    std::vector<stan::return_type_t<T1, T2>> res;
     res.push_back(y_in.at(1));
     res.push_back(-y_in.at(0) - theta.at(0) * y_in.at(1));
 
@@ -30,7 +30,7 @@ struct harm_osc_ode_fun {
 
 struct harm_osc_ode_data_fun {
   template <typename T0, typename T1, typename T2>
-  inline std::vector<typename stan::return_type<T1, T2>::type>
+  inline std::vector<stan::return_type_t<T1, T2>>
   // initial time
   // initial positions
   // parameters
@@ -43,7 +43,7 @@ struct harm_osc_ode_data_fun {
       throw std::domain_error(
           "this function was called with inconsistent state");
 
-    std::vector<typename stan::return_type<T1, T2>::type> res;
+    std::vector<stan::return_type_t<T1, T2>> res;
     res.push_back(x.at(0) * y_in.at(1) + x_int.at(0));
     res.push_back(-x.at(1) * y_in.at(0) - x.at(2) * theta.at(0) * y_in.at(1)
                   + x_int.at(1));
@@ -54,7 +54,7 @@ struct harm_osc_ode_data_fun {
 
 struct harm_osc_ode_wrong_size_1_fun {
   template <typename T0, typename T1, typename T2>
-  inline std::vector<typename stan::return_type<T1, T2>::type>
+  inline std::vector<stan::return_type_t<T1, T2>>
   // initial time
   // initial positions
   // parameters
@@ -67,7 +67,7 @@ struct harm_osc_ode_wrong_size_1_fun {
       throw std::domain_error(
           "this function was called with inconsistent state");
 
-    std::vector<typename stan::return_type<T1, T2>::type> res;
+    std::vector<stan::return_type_t<T1, T2>> res;
     res.push_back(y_in.at(1));
     res.push_back(-y_in.at(0) - theta.at(0) * y_in.at(1));
     res.push_back(0);
@@ -78,7 +78,7 @@ struct harm_osc_ode_wrong_size_1_fun {
 
 struct harm_osc_ode_wrong_size_2_fun {
   template <typename T0, typename T1, typename T2>
-  inline std::vector<typename stan::return_type<T1, T2>::type>
+  inline std::vector<stan::return_type_t<T1, T2>>
   // initial time
   // initial positions
   // parameters
@@ -91,7 +91,7 @@ struct harm_osc_ode_wrong_size_2_fun {
       throw std::domain_error(
           "this function was called with inconsistent state");
 
-    std::vector<typename stan::return_type<T1, T2>::type> res;
+    std::vector<stan::return_type_t<T1, T2>> res;
     res.push_back(0);
 
     return res;

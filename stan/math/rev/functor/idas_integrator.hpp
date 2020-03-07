@@ -31,7 +31,7 @@ class idas_integrator {
   void init_sensitivity(Dae& dae);
 
   /**
-   * Placeholder for data-only idas_forward_system, no sensitivty
+   * Placeholder for data-only idas_forward_system, no sensitivity
    *
    * @tparam F DAE functor type.
    * @param[in] dae DAE system
@@ -199,7 +199,7 @@ void idas_integrator::init_sensitivity(Dae& dae) {
 
 /**
  *
- * Solve DAE system, no sensitivty
+ * Solve DAE system, no sensitivity
  *
  * @tparam F DAE functor type
  * @param[out] dae DAE system
@@ -226,7 +226,7 @@ void idas_integrator::solve(idas_forward_system<F, double, double, double>& dae,
 
 /**
  *
- * Solve Dae system with forward sensitivty, return a
+ * Solve Dae system with forward sensitivity, return a
  * vector of var with precomputed gradient as sensitivity value
  *
  * @tparam Dae DAE system type

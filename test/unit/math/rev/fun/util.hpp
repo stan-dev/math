@@ -88,20 +88,7 @@ VEC cgradvec(AVAR f, AVEC x) {
   return g;
 }
 
-double relative_diff(double u, double v) {
-  return 2 * (u - v) / (fabs(u) + fabs(v));
-}
-
-void expect_near_relative(double u, double v) {
-  if (u == v)
-    SUCCEED();
-  else if (u == 0 || v == 0)
-    EXPECT_NEAR(0, (u - v), 1e-7);
-  else
-    EXPECT_NEAR(0, relative_diff(u, v), 1e-7);
-}
-
-typedef stan::math::index_type<Eigen::Matrix<double, -1, -1> >::type size_type;
+using size_type = stan::math::index_type_t<Eigen::Matrix<double, -1, -1>>;
 
 // Returns a matrix with the contents of a
 // vector; Fills the matrix column-wise
@@ -165,12 +152,12 @@ Eigen::Matrix<double, 3, 3> norm_hess(
   return hess;
 }
 
-std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> >
+std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>
 third_order_mixed_grad_hess(
     const Eigen::Matrix<double, Eigen::Dynamic, 1>& inp_vec) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  std::vector<Matrix<double, Dynamic, Dynamic> > grad_hess_ret;
+  std::vector<Matrix<double, Dynamic, Dynamic>> grad_hess_ret;
   for (int i = 0; i < inp_vec.size(); ++i)
     grad_hess_ret.push_back(Matrix<double, Dynamic, Dynamic>(3, 3));
 
@@ -194,12 +181,12 @@ third_order_mixed_grad_hess(
   return grad_hess_ret;
 }
 
-std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> >
+std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>
 norm_grad_hess(const Eigen::Matrix<double, Eigen::Dynamic, 1>& inp_vec) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
-  std::vector<Matrix<double, Dynamic, Dynamic> > grad_hess;
+  std::vector<Matrix<double, Dynamic, Dynamic>> grad_hess;
 
   for (int i = 0; i < 3; ++i)
     grad_hess.push_back(Matrix<double, Dynamic, Dynamic>(3, 3));

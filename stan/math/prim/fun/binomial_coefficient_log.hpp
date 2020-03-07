@@ -62,6 +62,8 @@ namespace math {
    \end{cases}
    \f]
  *
+ * @tparam T_N type of the first argument
+ * @tparam T_n type of the second argument
  *  This function is numerically more stable than naive evaluation via lgamma.
  *
  * @tparam T_N type of N.

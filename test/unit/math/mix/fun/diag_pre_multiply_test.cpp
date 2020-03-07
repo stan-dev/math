@@ -16,6 +16,7 @@ void expect_diag_pre_multiply(const Eigen::VectorXd& v,
   expect_diag_pre_multiply(v, a, tols);
 }
 TEST(MathMixMatFun, diagPreMultiply) {
+  using stan::test::relative_tolerance;
   // 0 x 0
   Eigen::MatrixXd a00(0, 0);
   Eigen::VectorXd u0(0);
@@ -49,8 +50,8 @@ TEST(MathMixMatFun, diagPreMultiply) {
   expect_diag_pre_multiply(u3c, a33c);
 
   stan::test::ad_tolerances tols;
-  tols.hessian_hessian_ = 2e-2;       // default 1e-3
-  tols.hessian_fvar_hessian_ = 2e-2;  // default 1e-3
+  tols.hessian_hessian_ = relative_tolerance(1e-4, 2e-2);
+  tols.hessian_fvar_hessian_ = relative_tolerance(1e-4, 2e-2);
 
   Eigen::MatrixXd a33(3, 3);
   a33 << 1, 10, 100, 1000, 2, -4, 8, -16, 32;

@@ -14,17 +14,16 @@ namespace math {
  * This is equivalent to calling <code>m.col(i - 1)</code> and
  * assigning the resulting template expression to a column vector.
  *
- * @tparam T type of elements in the matrix
+ * @tparam T type of the matrix
  * @param m Matrix.
  * @param j Column index (count from 1).
  * @return Specified column of the matrix.
  * @throw std::out_of_range if j is out of range.
  */
-template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, 1> col(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m, size_t j) {
+template <typename T, typename = require_eigen_t<T>>
+inline auto col(const T& m, size_t j) {
   check_column_index("col", "j", m, j);
-  return m.col(j - 1);
+  return m.col(j - 1).eval();
 }
 
 }  // namespace math

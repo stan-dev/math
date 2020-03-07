@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/throw_domain_error.hpp>
+#include <stan/math/prim/fun/get.hpp>
 #include <sstream>
 #include <string>
 

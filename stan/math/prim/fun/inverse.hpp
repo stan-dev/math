@@ -14,13 +14,18 @@ namespace math {
  * @tparam R number of rows, can be Eigen::Dynamic
  * @tparam C number of columns, can be Eigen::Dynamic
  *
- * @param m Specified matrix.
- * @return Inverse of the matrix.
+ * @param m specified matrix
+ * @return Inverse of the matrix (an empty matrix if the specified matrix has
+ * size zero).
+ * @throw std::invalid_argument if the matrix is not square.
  */
 template <typename T, int R, int C>
 inline Eigen::Matrix<T, R, C> inverse(const Eigen::Matrix<T, R, C>& m) {
-  check_nonempty("inverse", "m", m);
   check_square("inverse", "m", m);
+  if (m.size() == 0) {
+    return {};
+  }
+
   return m.inverse();
 }
 

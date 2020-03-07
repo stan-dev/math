@@ -1,11 +1,15 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrixPrimMat, inverse_exception) {
-  using stan::math::inverse;
-
+TEST(MathMatrixPrim, inverse) {
   stan::math::matrix_d m0(0, 0);
-  EXPECT_THROW(inverse(m0), std::invalid_argument);
+  stan::math::matrix_d inv = stan::math::inverse(m0);
+  EXPECT_EQ(0, inv.rows());
+  EXPECT_EQ(0, inv.cols());
+}
+
+TEST(MathMatrixPrim, inverse_exception) {
+  using stan::math::inverse;
 
   stan::math::matrix_d m1(2, 3);
   m1 << 1, 2, 3, 4, 5, 6;

@@ -22,9 +22,9 @@ namespace math {
  * @param mu (Sequence of) location(s).
  * @param sigma (Sequence of) scale(s).
  * @return The log of the product of densities.
+ * @tparam T_scale Type of scale.
  * @tparam T_y Type of scalar outcome.
  * @tparam T_loc Type of location.
- * @tparam T_scale Type of scale.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
 return_type_t<T_y, T_loc, T_scale> cauchy_log(const T_y& y, const T_loc& mu,

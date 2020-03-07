@@ -3,11 +3,12 @@
 #include <vector>
 
 TEST(MathMixMatFun, determinant) {
+  using stan::test::relative_tolerance;
   auto f = [](const auto& y) { return stan::math::determinant(y); };
 
   stan::test::ad_tolerances tols;
-  tols.hessian_hessian_ = 1e-2;       // default 1e-3
-  tols.hessian_fvar_hessian_ = 1e-2;  // default 1e-3
+  tols.hessian_hessian_ = relative_tolerance(1e-4, 1e-2);
+  tols.hessian_fvar_hessian_ = relative_tolerance(1e-4, 1e-2);
 
   Eigen::MatrixXd z(0, 0);
 

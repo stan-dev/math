@@ -16,6 +16,8 @@ namespace math {
  *
  * <p><code>if_else(c, y1, y0) = c ? y1 : y0</code>.
  *
+ * @tparam T_true type of the true argument
+ * @tparam T_false type of the false argument
  * @param c Boolean condition value.
  * @param y_true Value to return if condition is true.
  * @param y_false Value to return if condition is false.

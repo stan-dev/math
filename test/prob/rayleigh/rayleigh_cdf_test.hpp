@@ -55,18 +55,18 @@ class AgradCdfRayleigh : public AgradCdfTest {
 
   template <typename T_y, typename T_scale, typename T2, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_scale>::type cdf(const T_y& y,
-                                                     const T_scale& sigma,
-                                                     const T2&, const T3&,
-                                                     const T4&, const T5&) {
+  stan::return_type_t<T_y, T_scale> cdf(const T_y& y, const T_scale& sigma,
+                                        const T2&, const T3&, const T4&,
+                                        const T5&) {
     return stan::math::rayleigh_cdf(y, sigma);
   }
 
   template <typename T_y, typename T_scale, typename T2, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_scale>::type cdf_function(
-      const T_y& y, const T_scale& sigma, const T2&, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_y, T_scale> cdf_function(const T_y& y,
+                                                 const T_scale& sigma,
+                                                 const T2&, const T3&,
+                                                 const T4&, const T5&) {
     return (1.0 - exp(-0.5 * y * y / (sigma * sigma)));
   }
 };

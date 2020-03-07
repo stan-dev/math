@@ -7,7 +7,6 @@
 #include <stan/math/prim/fun/erf.hpp>
 #include <stan/math/prim/fun/erfc.hpp>
 #include <stan/math/prim/fun/Phi.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
 namespace stan {
 namespace math {

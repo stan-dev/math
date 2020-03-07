@@ -2,8 +2,9 @@
 #define STAN_MATH_PRIM_FUN_LOG1P_EXP_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -22,7 +23,6 @@ namespace math {
  * <code> = log(1 + exp(x))</code>
  *
  * <code> = log_sum_exp(0, x)</code>.
- *
  *
    \f[
    \mbox{log1p\_exp}(x) =
@@ -51,7 +51,7 @@ inline double log1p_exp(double a) {
 }
 
 /**
- * Structure to wrap log1m_exp() so that it can be vectorized.
+ * Structure to wrap log1p_exp() so that it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -65,7 +65,7 @@ struct log1p_exp_fun {
 };
 
 /**
- * Vectorized version of log1m_exp().
+ * Vectorized version of log1p_exp().
  *
  * @tparam T type of container
  * @param x container

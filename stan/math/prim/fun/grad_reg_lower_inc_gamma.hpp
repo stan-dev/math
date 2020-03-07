@@ -3,13 +3,15 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/lgamma.hpp>
-#include <stan/math/prim/fun/gamma_p.hpp>
-#include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/gamma_p.hpp>
+#include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
-#include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
+#include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/tgamma.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
@@ -23,8 +25,8 @@ namespace math {
  * Computes the gradient of the lower regularized incomplete
  * gamma function.
  *
- * The lower incomlete gamma function
- * derivative w.r.t it's first parameter (a) seems to have no
+ * The lower incomplete gamma function
+ * derivative w.r.t its first parameter (a) seems to have no
  * standard source.  It also appears to have no widely known
  * approximate implementation.  Gautschi (1979) has a thorough
  * discussion of the calculation of the lower regularized
@@ -60,7 +62,7 @@ namespace math {
  *     \sum_n=0^\infty \frac{z^{a+n}}{\Gamma(a+n+1)}\psi^0(a+n+1)
  * \f]
  *
- * This caclulation is sufficiently accurate for small $a$ and
+ * This calculation is sufficiently accurate for small $a$ and
  * small $z$.  For larger values and $a$ and $z$ we use it in its
  * log form:
  *

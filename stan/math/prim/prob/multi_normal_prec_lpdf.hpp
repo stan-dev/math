@@ -3,10 +3,12 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log_determinant_ldlt.hpp>
+#include <stan/math/prim/fun/max_size_mvt.hpp>
+#include <stan/math/prim/fun/size_mvt.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/trace_quad_form.hpp>
-#include <stan/math/prim/fun/constants.hpp>
 
 namespace stan {
 namespace math {
@@ -14,18 +16,16 @@ namespace math {
 template <bool propto, typename T_y, typename T_loc, typename T_covar>
 return_type_t<T_y, T_loc, T_covar> multi_normal_prec_lpdf(
     const T_y& y, const T_loc& mu, const T_covar& Sigma) {
-  static const char* function = "multi_normal_prec_lpdf";
   using T_covar_elem = typename scalar_type<T_covar>::type;
   using lp_type = return_type_t<T_y, T_loc, T_covar>;
-
+  using Eigen::Matrix;
+  using std::vector;
+  static const char* function = "multi_normal_prec_lpdf";
   check_positive(function, "Precision matrix rows", Sigma.rows());
   check_symmetric(function, "Precision matrix", Sigma);
 
   LDLT_factor<T_covar_elem, Eigen::Dynamic, Eigen::Dynamic> ldlt_Sigma(Sigma);
   check_ldlt_factor(function, "LDLT_Factor of precision parameter", ldlt_Sigma);
-
-  using Eigen::Matrix;
-  using std::vector;
 
   size_t number_of_y = size_mvt(y);
   size_t number_of_mu = size_mvt(mu);

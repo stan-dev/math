@@ -1,6 +1,17 @@
 Stan Math Library Release Notes
 
 ======================================================================
+v3.2.0 (pending)
+======================================================================
+
+## Developer-aimed features
+[bob-carpenter](https://github.com/bob-carpenter) extended the scalar_return
+metaprograms to deal with complex numbers and added a real_return program
+and helper metaprograms for intermediate and return types.
+
+Miscellaneous doxygen documentation cleanup.
+
+======================================================================
 v3.1.0 (24 January 2020)
 ======================================================================
 
@@ -209,7 +220,7 @@ v2.19.0 (20 Mar 2019)
 ======================================================================
 Slow to arrive, but fast to compute: Stan has GPU support!
 
-Stan 2.19 brings GPU-optimized computation to Stan users. The first supported 
+Stan 2.19 brings GPU-optimized computation to Stan users. The first supported
 function is Cholesky decomposition, the main bottleneck of many common
 statistical models. Activating GPU support is easy - only a few lines are added
 to the configuration and no changes have to be made to the Stan model. Cholesky
@@ -434,7 +445,7 @@ Bug Fixes
 --------------------------------------------------
 * beta_rng no longer returns NaN
 * fixed memory issue with cholesky_decompose in reverse-mode (#415)
-* no more mulitple definitions when including Stan headers in
+* no more multiple definitions when including Stan headers in
   multiple source files (#394)
 * fixed broken _MSC_VER conditionals and remove math.h includes (#370)
 

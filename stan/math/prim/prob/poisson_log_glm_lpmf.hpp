@@ -4,7 +4,9 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <cmath>
@@ -19,6 +21,7 @@ namespace math {
  * compute a more efficient version of poisson_log_lpmf(y, alpha + x * beta)
  * by using analytically simplified gradients.
  * If containers are supplied, returns the log sum of the probabilities.
+ *
  * @tparam T_y type of vector of variates (labels), integers >=0;
  * this can also be a single positive integer;
  * @tparam T_x_scalar type of a scalar in the matrix of independent variables
@@ -46,8 +49,6 @@ template <bool propto, typename T_y, typename T_x_scalar, int T_x_rows,
 return_type_t<T_x_scalar, T_alpha, T_beta> poisson_log_glm_lpmf(
     const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
     const T_alpha& alpha, const T_beta& beta) {
-  static const char* function = "poisson_log_glm_lpmf";
-
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -61,9 +62,10 @@ return_type_t<T_x_scalar, T_alpha, T_beta> poisson_log_glm_lpmf(
       typename std::conditional_t<T_x_rows == 1, T_partials_return,
                                   Array<T_partials_return, Dynamic, 1>>;
 
-  const size_t N_instances = T_x_rows == 1 ? size(y) : x.rows();
+  const size_t N_instances = T_x_rows == 1 ? stan::math::size(y) : x.rows();
   const size_t N_attributes = x.cols();
 
+  static const char* function = "poisson_log_glm_lpmf";
   check_consistent_size(function, "Vector of dependent variables", y,
                         N_instances);
   check_consistent_size(function, "Weight vector", beta, N_attributes);

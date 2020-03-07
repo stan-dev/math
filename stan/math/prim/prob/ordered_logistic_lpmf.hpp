@@ -3,11 +3,14 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
+#include <stan/math/prim/fun/is_integer.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>
 #include <stan/math/prim/fun/log_inv_logit_diff.hpp>
-#include <stan/math/prim/fun/is_integer.hpp>
+#include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/size_mvt.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <vector>
 
 namespace stan {
@@ -75,7 +78,7 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
   vector_seq_view<T_cut> c_vec(c);
 
   int K = c_vec[0].size() + 1;
-  int N = size(lambda);
+  int N = stan::math::size(lambda);
   int C_l = size_mvt(c);
 
   check_consistent_sizes(function, "Integers", y, "Locations", lambda);

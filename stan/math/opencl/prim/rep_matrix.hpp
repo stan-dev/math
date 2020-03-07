@@ -54,7 +54,7 @@ inline matrix_cl<T> rep_matrix(const matrix_cl<T>& x, int n, int m) {
  *
  * @tparam T type of elements in the input matrix
  * @param x the input matrix_cl (vector or row_vector)
- * @param m number of rows (if x is a row_vecotr) or columns
+ * @param m number of rows (if x is a row_vector) or columns
  *  (if x is a vector) in the results matrix
  *
  * @return result matrix with replicated rows or columns

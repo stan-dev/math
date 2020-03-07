@@ -5,8 +5,12 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/erf.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -19,15 +23,10 @@ template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale>
 return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T_inv_scale& lambda) {
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
-
   static const char* function = "exp_mod_normal_lcdf";
-
-  T_partials_return cdf_log(0.0);
-  if (size_zero(y, mu, sigma, lambda)) {
-    return cdf_log;
-  }
-
+  using std::exp;
+  using std::log;
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_not_nan(function, "Scale parameter", sigma);
@@ -38,11 +37,13 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
                          mu, "Scale parameter", sigma, "Inv_scale paramter",
                          lambda);
 
+  if (size_zero(y, mu, sigma, lambda)) {
+    return 0;
+  }
+
+  T_partials_return cdf_log(0.0);
   operands_and_partials<T_y, T_loc, T_scale, T_inv_scale> ops_partials(
       y, mu, sigma, lambda);
-
-  using std::exp;
-  using std::log;
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);
@@ -50,7 +51,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
   scalar_seq_view<T_inv_scale> lambda_vec(lambda);
   size_t N = max_size(y, mu, sigma, lambda);
 
-  for (size_t n = 0, size_y = size(y); n < size_y; n++) {
+  for (size_t n = 0, size_y = stan::math::size(y); n < size_y; n++) {
     if (is_inf(y_vec[n])) {
       return ops_partials.build(y_vec[n] < 0 ? negative_infinity() : 0);
     }
@@ -65,21 +66,20 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
     const T_partials_return diff = y_dbl - mu_dbl;
     const T_partials_return u = lambda_dbl * diff;
     const T_partials_return v = lambda_dbl * sigma_dbl;
-    const T_partials_return v_over_sqrt_two = v * INV_SQRT_TWO;
     const T_partials_return scaled_diff = diff * INV_SQRT_TWO * inv_sigma;
-    const T_partials_return erf_calc
-        = 0.5 * (1 + erf(u / (v * SQRT_TWO) - v_over_sqrt_two));
+    const T_partials_return scaled_diff_diff = scaled_diff - v * INV_SQRT_TWO;
+    const T_partials_return erf_calc = 0.5 * (1 + erf(scaled_diff_diff));
     const T_partials_return exp_term = exp(0.5 * square(v) - u);
+    const T_partials_return exp_term_2 = exp(-square(scaled_diff_diff));
 
     const T_partials_return deriv_1 = lambda_dbl * exp_term * erf_calc;
     const T_partials_return deriv_2
-        = INV_SQRT_TWO_PI * exp_term
-          * exp(-square(scaled_diff - v_over_sqrt_two)) * inv_sigma;
+        = INV_SQRT_TWO_PI * exp_term * exp_term_2 * inv_sigma;
     const T_partials_return deriv_3
         = INV_SQRT_TWO_PI * exp(-square(scaled_diff)) * inv_sigma;
 
     const T_partials_return cdf_n
-        = 0.5 + 0.5 * erf(u / (v * SQRT_TWO)) - exp_term * erf_calc;
+        = 0.5 + 0.5 * erf(scaled_diff) - exp_term * erf_calc;
 
     cdf_log += log(cdf_n);
 
@@ -91,15 +91,14 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
     }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
-          -= (deriv_1 * v + deriv_3 * scaled_diff * SQRT_TWO
-              - deriv_2 * (v + SQRT_TWO * scaled_diff))
+          -= ((deriv_1 - deriv_2) * v
+              + (deriv_3 - deriv_2) * scaled_diff * SQRT_TWO)
              / cdf_n;
     }
     if (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge4_.partials_[n]
           += exp_term
-             * (INV_SQRT_TWO_PI * sigma_dbl
-                    * exp(-square(v_over_sqrt_two - scaled_diff))
+             * (INV_SQRT_TWO_PI * sigma_dbl * exp_term_2
                 - (v * sigma_dbl - diff) * erf_calc)
              / cdf_n;
     }

@@ -6,6 +6,7 @@
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/init_chainablestack.hpp>
+#include <stan/math/rev/core/std_iterator_traits.hpp>
 #include <stan/math/rev/core/ddv_vari.hpp>
 #include <stan/math/rev/core/dv_vari.hpp>
 #include <stan/math/rev/core/dvd_vari.hpp>
@@ -13,6 +14,7 @@
 #include <stan/math/rev/core/empty_nested.hpp>
 #include <stan/math/rev/core/gevv_vvv_vari.hpp>
 #include <stan/math/rev/core/grad.hpp>
+#include <stan/math/rev/core/nested_rev_autodiff.hpp>
 #include <stan/math/rev/core/matrix_vari.hpp>
 #include <stan/math/rev/core/nested_size.hpp>
 #include <stan/math/rev/core/operator_addition.hpp>
@@ -46,6 +48,7 @@
 #include <stan/math/rev/core/set_zero_all_adjoints.hpp>
 #include <stan/math/rev/core/set_zero_all_adjoints_nested.hpp>
 #include <stan/math/rev/core/start_nested.hpp>
+#include <stan/math/rev/core/std_complex.hpp>
 #include <stan/math/rev/core/std_isinf.hpp>
 #include <stan/math/rev/core/std_isnan.hpp>
 #include <stan/math/rev/core/std_numeric_limits.hpp>

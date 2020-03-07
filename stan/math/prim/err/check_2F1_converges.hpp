@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/check_not_nan.hpp>
+#include <stan/math/prim/fun/fabs.hpp>
+#include <stan/math/prim/fun/floor.hpp>
 #include <stan/math/prim/fun/is_nonpositive_integer.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <cmath>

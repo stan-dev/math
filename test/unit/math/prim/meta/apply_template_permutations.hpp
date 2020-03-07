@@ -33,7 +33,7 @@ struct apply_template_permutations_helper {
 };
 
 /*
- * This edge case catches when the paramht-most argument has completed one
+ * This edge case catches when the right-most argument has completed one
  * iteration through all types. It computes func<types1[I], types2[J],
  * types3[0]>, carries from the second argument, and continues the recursion.
  *

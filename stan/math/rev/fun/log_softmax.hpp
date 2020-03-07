@@ -3,12 +3,12 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/typedefs.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log_softmax.hpp>
 #include <stan/math/prim/fun/softmax.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
-#include <stan/math/prim/vectorize/apply_vector_unary.hpp>
 #include <cmath>
 #include <vector>
 
