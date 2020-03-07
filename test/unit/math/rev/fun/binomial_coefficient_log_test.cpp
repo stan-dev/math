@@ -1,7 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <stan/math/rev.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
-#include <test/unit/math/test_ad.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <algorithm>
@@ -86,19 +85,6 @@ TEST(MathFunctions, binomial_coefficient_log_identities) {
       expect_near_rel(std::string("dk") + msg.str(), gradients_left[1], gradients_right[1]);
     }
   }
-}
-
-TEST(MathFunctions, binomial_coefficient_log_ad) {
-  using stan::test::expect_ad;
-
-  auto f = [](const auto& n, const auto& k) {
-    return stan::math::binomial_coefficient_log(n, k);
-  };
-
-  expect_ad(f, 5, 3);
-  expect_ad(f, 1, 0);
-  expect_ad(f, 0, 1);
-  expect_ad(f, -0.3, 0.5);
 }
 
 namespace binomial_coefficient_log_test_internal {
