@@ -21,8 +21,7 @@ TEST(MathFunctions, binomial_coefficient_log_identities) {
       = {-0.1, 0, 1e-100, 1e-8, 1e-1, 1, 1 + 1e-6, 15, 10, 1e3, 1e30, 1e100};
 
   std::vector<double> k_ratios_to_test
-      = { -0.1, 1e-10, 1e-5, 1e-3, 1e-1, 0.5, 0.9, 1 - 1e-5, 1 - 1e-10
-      };
+      = {-0.1, 1e-10, 1e-5, 1e-3, 1e-1, 0.5, 0.9, 1 - 1e-5, 1 - 1e-10};
 
   // Recurrence relation
   for (double n_dbl : n_to_test) {
@@ -41,12 +40,13 @@ TEST(MathFunctions, binomial_coefficient_log_identities) {
       var n(n_dbl);
       var k(k_dbl);
 
-      // TODO(martinmodrak) Use the framework for testing identities, once it is ready
+      // TODO(martinmodrak) Use the framework for testing identities, once it is
+      // ready
       var val_left = binomial_coefficient_log(n, k);
       var val_right_partial;
       var val_right;
       // Choose the more stable identity
-      if(n_dbl > 1 && k_dbl > 1 && (n_dbl - 1) + 1 - k_dbl > 0 ) {
+      if (n_dbl > 1 && k_dbl > 1 && (n_dbl - 1) + 1 - k_dbl > 0) {
         val_right_partial = binomial_coefficient_log(n - 1, k - 1);
         val_right = val_right_partial + log(n) - log(k);
       } else {
@@ -72,17 +72,18 @@ TEST(MathFunctions, binomial_coefficient_log_identities) {
       }
 
       std::stringstream msg;
-      msg << std::setprecision(22) << " successor: n = " << n
-          << ", k = " << k << std::endl
-          << "val = " << val_left 
-          << ", val2 = " << val_right_partial << std::endl 
-          << ", logn = " << log(n) 
-          << ", logk = " << log(k);
+      msg << std::setprecision(22) << " successor: n = " << n << ", k = " << k
+          << std::endl
+          << "val = " << val_left << ", val2 = " << val_right_partial
+          << std::endl
+          << ", logn = " << log(n) << ", logk = " << log(k);
 
-
-      expect_near_rel(std::string("val") + msg.str(), value_of(val_left), value_of(val_right));
-      expect_near_rel(std::string("dn") + msg.str(), gradients_left[0], gradients_right[0]);
-      expect_near_rel(std::string("dk") + msg.str(), gradients_left[1], gradients_right[1]);
+      expect_near_rel(std::string("val") + msg.str(), value_of(val_left),
+                      value_of(val_right));
+      expect_near_rel(std::string("dn") + msg.str(), gradients_left[0],
+                      gradients_right[0]);
+      expect_near_rel(std::string("dk") + msg.str(), gradients_left[1],
+                      gradients_right[1]);
     }
   }
 }
@@ -307,7 +308,8 @@ TEST(MathFunctions, binomial_coefficient_log_precomputed) {
       EXPECT_FALSE(is_nan(gradients[i]));
     }
 
-    expect_near_rel(msg.str(), value_of(val), t.val, relative_tolerance(1e-14, 1e-14));
+    expect_near_rel(msg.str(), value_of(val), t.val,
+                    relative_tolerance(1e-14, 1e-14));
 
     relative_tolerance tol_grad;
     if (n < 1 || k < 1) {
@@ -316,10 +318,12 @@ TEST(MathFunctions, binomial_coefficient_log_precomputed) {
       tol_grad = relative_tolerance(1e-10, 1e-8);
     }
     if (!is_nan(t.dn)) {
-      expect_near_rel(std::string("dn: ") + msg.str(), gradients[0], t.dn, tol_grad);
+      expect_near_rel(std::string("dn: ") + msg.str(), gradients[0], t.dn,
+                      tol_grad);
     }
     if (!is_nan(t.dk)) {
-      expect_near_rel(std::string("dk: ") + msg.str(), gradients[1], t.dk, tol_grad);
+      expect_near_rel(std::string("dk: ") + msg.str(), gradients[1], t.dk,
+                      tol_grad);
     }
   }
 }
