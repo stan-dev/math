@@ -1,5 +1,7 @@
 #include <stan/math/prim.hpp>
 #include <stan/math/rev.hpp>
+#include <test/unit/math/expect_near_rel.hpp>
+#include <test/unit/math/test_ad.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <algorithm>
@@ -14,15 +16,14 @@ TEST(MathFunctions, binomial_coefficient_log_identities) {
   using stan::math::log_sum_exp;
   using stan::math::value_of;
   using stan::math::var;
+  using stan::test::expect_near_rel;
 
   std::vector<double> n_to_test
-      //      = {-0.1, 0, 1e-100, 1e-8, 1e-1, 1, 1 + 1e-6, 1e3, 1e30, 1e100};
-      = {15, 1e3, 1e30, 1e100};
+      = {-0.1, 0, 1e-100, 1e-8, 1e-1, 1, 1 + 1e-6, 15, 10, 1e3, 1e30, 1e100};
 
   std::vector<double> k_ratios_to_test
-      //      = { -0.1, 1e-10, 1e-5, 1e-3, 1e-1, 0.5, 0.9, 1 - 1e-5, 1 - 1e-10
-      //      };
-      = {1e-3, 1e-1, 0.5, 0.9, 1 - 1e-5};
+      = { -0.1, 1e-10, 1e-5, 1e-3, 1e-1, 0.5, 0.9, 1 - 1e-5, 1 - 1e-10
+      };
 
   // Recurrence relation
   for (double n_dbl : n_to_test) {
@@ -37,34 +38,67 @@ TEST(MathFunctions, binomial_coefficient_log_identities) {
         continue;
       }
 
+      stan::math::nested_rev_autodiff nested;
       var n(n_dbl);
       var k(k_dbl);
-      var val;
 
-      val = binomial_coefficient_log(n, k)
-            / (binomial_coefficient_log(n - 1, k - 1) + log(n) - log(k));
+      // TODO(martinmodrak) Use the framework for testing identities, once it is ready
+      var val_left = binomial_coefficient_log(n, k);
+      var val_right_partial;
+      var val_right;
+      // Choose the more stable identity
+      if(n_dbl > 1 && k_dbl > 1 && (n_dbl - 1) + 1 - k_dbl > 0 ) {
+        val_right_partial = binomial_coefficient_log(n - 1, k - 1);
+        val_right = val_right_partial + log(n) - log(k);
+      } else {
+        val_right_partial = binomial_coefficient_log(n + 1, k + 1);
+        val_right = val_right_partial - log(n + 1) + log(k + 1);
+      }
 
       std::vector<var> vars;
       vars.push_back(n);
       vars.push_back(k);
 
-      std::vector<double> gradients;
-      val.grad(vars, gradients);
+      std::vector<double> gradients_left;
+      val_left.grad(vars, gradients_left);
+
+      nested.set_zero_all_adjoints();
+
+      std::vector<double> gradients_right;
+      val_right.grad(vars, gradients_right);
 
       for (int i = 0; i < 2; ++i) {
-        EXPECT_FALSE(is_nan(gradients[i]));
+        EXPECT_FALSE(is_nan(gradients_left[i]));
+        EXPECT_FALSE(is_nan(gradients_right[i]));
       }
 
       std::stringstream msg;
-      msg << std::setprecision(22) << " (n - 1) choose (k - 1): n = " << n
+      msg << std::setprecision(22) << " successor: n = " << n
           << ", k = " << k << std::endl
-          << "val = " << binomial_coefficient_log(n_dbl, k_dbl);
+          << "val = " << val_left 
+          << ", val2 = " << val_right_partial << std::endl 
+          << ", logn = " << log(n) 
+          << ", logk = " << log(k);
 
-      EXPECT_NEAR(value_of(val), 1, 1e-8) << "val" << msg.str();
-      EXPECT_NEAR(gradients[0], 0, 1e-8) << "dn" << msg.str();
-      EXPECT_NEAR(gradients[1], 0, 1e-8) << "dx" << msg.str();
+
+      expect_near_rel(std::string("val") + msg.str(), value_of(val_left), value_of(val_right));
+      expect_near_rel(std::string("dn") + msg.str(), gradients_left[0], gradients_right[0]);
+      expect_near_rel(std::string("dk") + msg.str(), gradients_left[1], gradients_right[1]);
     }
   }
+}
+
+TEST(MathFunctions, binomial_coefficient_log_ad) {
+  using stan::test::expect_ad;
+
+  auto f = [](const auto& n, const auto& k) {
+    return stan::math::binomial_coefficient_log(n, k);
+  };
+
+  expect_ad(f, 5, 3);
+  expect_ad(f, 1, 0);
+  expect_ad(f, 0, 1);
+  expect_ad(f, -0.3, 0.5);
 }
 
 namespace binomial_coefficient_log_test_internal {
@@ -265,6 +299,8 @@ TEST(MathFunctions, binomial_coefficient_log_precomputed) {
   using stan::math::is_nan;
   using stan::math::value_of;
   using stan::math::var;
+  using stan::test::expect_near_rel;
+  using stan::test::relative_tolerance;
 
   for (TestValue t : testValues) {
     std::stringstream msg;
@@ -285,20 +321,19 @@ TEST(MathFunctions, binomial_coefficient_log_precomputed) {
       EXPECT_FALSE(is_nan(gradients[i]));
     }
 
-    double tol_val = std::max(1e-14 * fabs(t.val), 1e-14);
-    EXPECT_NEAR(value_of(val), t.val, tol_val) << msg.str();
+    expect_near_rel(msg.str(), value_of(val), t.val, relative_tolerance(1e-14, 1e-14));
 
-    std::function<double(double)> tol_grad;
+    relative_tolerance tol_grad;
     if (n < 1 || k < 1) {
-      tol_grad = [](double x) { return std::max(fabs(x) * 1e-8, 1e-7); };
+      tol_grad = relative_tolerance(1e-8, 1e-7);
     } else {
-      tol_grad = [](double x) { return std::max(fabs(x) * 1e-10, 1e-8); };
+      tol_grad = relative_tolerance(1e-10, 1e-8);
     }
     if (!is_nan(t.dn)) {
-      EXPECT_NEAR(gradients[0], t.dn, tol_grad(t.dn)) << "dn: " << msg.str();
+      expect_near_rel(std::string("dn: ") + msg.str(), gradients[0], t.dn, tol_grad);
     }
     if (!is_nan(t.dk)) {
-      EXPECT_NEAR(gradients[1], t.dk, tol_grad(t.dk)) << "dk: " << msg.str();
+      expect_near_rel(std::string("dk: ") + msg.str(), gradients[1], t.dk, tol_grad);
     }
   }
 }

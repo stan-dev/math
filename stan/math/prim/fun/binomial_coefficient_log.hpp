@@ -62,12 +62,11 @@ namespace math {
    \end{cases}
    \f]
  *
- * @tparam T_N type of the first argument
- * @tparam T_n type of the second argument
  *  This function is numerically more stable than naive evaluation via lgamma.
  *
- * @tparam T_N type of N.
- * @tparam T_n type of n.
+ * @tparam T_N type of the first argument
+ * @tparam T_n type of the second argument
+ * 
  * @param N total number of objects.
  * @param n number of objects chosen.
  * @return log (N choose n).
