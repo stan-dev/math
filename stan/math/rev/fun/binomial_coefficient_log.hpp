@@ -27,7 +27,8 @@ class binomial_coefficient_log_vd_vari : public op_vd_vari {
   binomial_coefficient_log_vd_vari(vari* avi, double b)
       : op_vd_vari(binomial_coefficient_log(avi->val_, b), avi, b) {}
   void chain() {
-    avi_->adj_ += adj_ * (digamma(avi_->val_ + 1) - digamma(avi_->val_ - bd_ + 1));
+    avi_->adj_
+        += adj_ * (digamma(avi_->val_ + 1) - digamma(avi_->val_ - bd_ + 1));
   }
 };
 
@@ -36,7 +37,8 @@ class binomial_coefficient_log_dv_vari : public op_dv_vari {
   binomial_coefficient_log_dv_vari(double a, vari* bvi)
       : op_dv_vari(binomial_coefficient_log(a, bvi->val_), a, bvi) {}
   void chain() {
-    bvi_->adj_ += adj_ * (digamma(ad_ - bvi_->val_ + 1) - digamma(bvi_->val_ + 1));
+    bvi_->adj_
+        += adj_ * (digamma(ad_ - bvi_->val_ + 1) - digamma(bvi_->val_ + 1));
   }
 };
 }  // namespace internal
@@ -44,7 +46,7 @@ class binomial_coefficient_log_dv_vari : public op_dv_vari {
 /**
  * Return the log of the binomial coefficient for the specified
  * arguments and its gradients.
- * 
+ *
  * See the docs for the prim version for all relevant formulae.
  * @param a var Argument
  * @param b var Argument
@@ -57,7 +59,7 @@ inline var binomial_coefficient_log(const var& a, const var& b) {
 /**
  * Return the log of the binomial coefficient for the specified
  * arguments and its gradients.
- * 
+ *
  * See the docs for the prim version for all relevant formulae.
  * @param a var Argument
  * @param b double Argument
@@ -70,7 +72,7 @@ inline var binomial_coefficient_log(const var& a, double b) {
 /**
  * Return the log of the binomial coefficient for the specified
  * arguments and its gradients.
- * 
+ *
  * See the docs for the prim version for all relevant formulae.
  * @param a double Argument
  * @param b var Argument

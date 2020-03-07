@@ -11,51 +11,53 @@
 #include <functional>
 
 namespace lbeta_test_internal {
-  // TODO(martinmodrak) the function here should be replaced by helpers for testing identities once those are available
+// TODO(martinmodrak) the function here should be replaced by helpers for
+// testing identities once those are available
 
-  struct identity_tolerances {
-    stan::test::relative_tolerance value;
-    stan::test::relative_tolerance gradient;
-  };
+struct identity_tolerances {
+  stan::test::relative_tolerance value;
+  stan::test::relative_tolerance gradient;
+};
 
-  template <class F1, class F2>
-  void expect_identity(const std::string& msg,
-                      const identity_tolerances& tolerances, const F1 lh,
-                      const F2 rh, double x_dbl, double y_dbl) {
-    using stan::math::var;
-    using stan::test::expect_near_rel;
+template <class F1, class F2>
+void expect_identity(const std::string& msg,
+                     const identity_tolerances& tolerances, const F1 lh,
+                     const F2 rh, double x_dbl, double y_dbl) {
+  using stan::math::var;
+  using stan::test::expect_near_rel;
 
-    stan::math::nested_rev_autodiff nested;
+  stan::math::nested_rev_autodiff nested;
 
-    var x(x_dbl);
-    var y(y_dbl);
+  var x(x_dbl);
+  var y(y_dbl);
 
-    std::vector<var> vars = {x, y};
+  std::vector<var> vars = {x, y};
 
-    var left = lh(x, y);
-    double left_dbl = value_of(left);
-    std::vector<double> gradients_left;
-    left.grad(vars, gradients_left);
+  var left = lh(x, y);
+  double left_dbl = value_of(left);
+  std::vector<double> gradients_left;
+  left.grad(vars, gradients_left);
 
-    nested.set_zero_all_adjoints();
+  nested.set_zero_all_adjoints();
 
-    var right = rh(x, y);
-    double right_dbl = value_of(right);
-    std::vector<double> gradients_right;
-    right.grad(vars, gradients_right);
+  var right = rh(x, y);
+  double right_dbl = value_of(right);
+  std::vector<double> gradients_right;
+  right.grad(vars, gradients_right);
 
-    std::stringstream args;
-    args << std::setprecision(22) << "args = [" << x << "," << y << "]";
-    expect_near_rel(std::string() + args.str() + std::string(": ") + msg, left_dbl, right_dbl, tolerances.value);
+  std::stringstream args;
+  args << std::setprecision(22) << "args = [" << x << "," << y << "]";
+  expect_near_rel(std::string() + args.str() + std::string(": ") + msg,
+                  left_dbl, right_dbl, tolerances.value);
 
-    for (size_t i = 0; i < gradients_left.size(); ++i) {
-      std::stringstream grad_msg;
-      grad_msg << "grad_" << i << ", " << args.str() << ": " << msg;
-      expect_near_rel(grad_msg.str(), gradients_left[i], gradients_right[i], tolerances.gradient);          
-    }
-
+  for (size_t i = 0; i < gradients_left.size(); ++i) {
+    std::stringstream grad_msg;
+    grad_msg << "grad_" << i << ", " << args.str() << ": " << msg;
+    expect_near_rel(grad_msg.str(), gradients_left[i], gradients_right[i],
+                    tolerances.gradient);
   }
 }
+}  // namespace lbeta_test_internal
 
 TEST(MathFunctions, lbeta_identities_gradient) {
   using stan::math::lbeta;
@@ -70,16 +72,17 @@ TEST(MathFunctions, lbeta_identities_gradient) {
 
   for (double x : to_test) {
     for (double y : to_test) {
-      // TODO(martinmodrak) this restriction on testing should be lifted once the log_sum_exp bug (#1679) is resolved    
-      if(x > 1e10 || y > 1e10) {
+      // TODO(martinmodrak) this restriction on testing should be lifted once
+      // the log_sum_exp bug (#1679) is resolved
+      if (x > 1e10 || y > 1e10) {
         continue;
       }
       auto rh = [](const var& a, const var& b) {
         return stan::math::log_sum_exp(lbeta(a + 1, b), lbeta(a, b + 1));
       };
-      lbeta_test_internal::expect_identity("succesors", tol,
-                      static_cast<var (*)(const var&, const var&)>(lbeta), rh,
-                      x, y);
+      lbeta_test_internal::expect_identity(
+          "succesors", tol, static_cast<var (*)(const var&, const var&)>(lbeta),
+          rh, x, y);
     }
   }
 

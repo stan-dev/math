@@ -66,7 +66,7 @@ namespace math {
  *
  * @tparam T_N type of the first argument
  * @tparam T_n type of the second argument
- * 
+ *
  * @param N total number of objects.
  * @param n number of objects chosen.
  * @return log (N choose n).
