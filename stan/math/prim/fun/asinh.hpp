@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap \c asinh() so it can be vectorized.
+ * Structure to wrap `asinh()` so it can be vectorized.
  *
  * @tparam T argument scalar type
  * @param x argument
@@ -23,7 +23,7 @@ struct asinh_fun {
 };
 
 /**
- * Returns the elementwise \c asinh() of the input,
+ * Returns the elementwise `asinh()` of the input,
  * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam T type of container

@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap \c trunc() so it can be vectorized.
+ * Structure to wrap `trunc()` so it can be vectorized.
  */
 struct trunc_fun {
   /**
@@ -27,7 +27,7 @@ struct trunc_fun {
 };
 
 /**
- * Return the elementwise application of \c trunc() to
+ * Return the elementwise application of `trunc()` to
  * specified argument container.  The return type promotes the
  * underlying scalar argument type to double if it is an integer,
  * and otherwise is the argument type.

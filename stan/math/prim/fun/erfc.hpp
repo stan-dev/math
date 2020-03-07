@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap the \c erfc()
+ * Structure to wrap the `erfc()`
  * so that it can be vectorized.
  *
  * @tparam T type of variable
@@ -24,7 +24,7 @@ struct erfc_fun {
 };
 
 /**
- * Returns the elementwise \c erfc() of the input,
+ * Returns the elementwise `erfc()` of the input,
  * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam T type of container

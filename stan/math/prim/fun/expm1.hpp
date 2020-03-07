@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap \c expm1() so that it can be vectorized.
+ * Structure to wrap `expm1()` so that it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -23,7 +23,7 @@ struct expm1_fun {
 };
 
 /**
- * Return the elementwise \c expm1() of the specified argument,
+ * Return the elementwise `expm1()` of the specified argument,
  * which may be a scalar or any Stan container of numeric scalars.
  * The return type is the same as the argument type.
  *

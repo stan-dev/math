@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap \c sqrt() so that it can be vectorized.
+ * Structure to wrap `sqrt()` so that it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -24,7 +24,7 @@ struct sqrt_fun {
 };
 
 /**
- * Vectorized version of \c sqrt().
+ * Vectorized version of `sqrt()`.
  *
  * @tparam T type of container
  * @param x container
@@ -36,7 +36,7 @@ inline auto sqrt(const T& x) {
 }
 
 /**
- * Version of \c sqrt() that accepts Eigen Matrix or matrix expressions.
+ * Version of `sqrt()` that accepts Eigen Matrix or matrix expressions.
  *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression

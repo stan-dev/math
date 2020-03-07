@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap \c erf() so it can be vectorized.
+ * Structure to wrap `erf()` so it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -23,7 +23,7 @@ struct erf_fun {
 };
 
 /**
- * Returns the elementwise \c erf() of the input,
+ * Returns the elementwise `erf()` of the input,
  * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam T type of container

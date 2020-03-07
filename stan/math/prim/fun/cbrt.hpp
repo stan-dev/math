@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap \c cbrt() so it can be vectorized.
+ * Structure to wrap `cbrt()` so it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -23,7 +23,7 @@ struct cbrt_fun {
 };
 
 /**
- * Returns the elementwise \c cbrt() of the input,
+ * Returns the elementwise `cbrt()` of the input,
  * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam T type of container

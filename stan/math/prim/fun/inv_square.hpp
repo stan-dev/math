@@ -10,11 +10,11 @@ namespace stan {
 namespace math {
 
 /**
- * Returns \code{1 / square(x)}.
+ * Returns `1 / square(x)`.
  *
  * @tparam T type of container
  * @param x container
- * @return \code{1 / square(x)} of each value in x.
+ * @return `1 / square(x)` of each value in x.
  */
 template <typename T>
 inline auto inv_square(const T& x) {

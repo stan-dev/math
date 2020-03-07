@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap \c round() so it can be vectorized.
+ * Structure to wrap `round()` so it can be vectorized.
  *
  * @tparam T type of argument
  * @param x argument variable
@@ -24,7 +24,7 @@ struct round_fun {
 };
 
 /**
- * Vectorized version of \c round().
+ * Vectorized version of `round()`.
  *
  * @tparam T type of container
  * @param x container
@@ -36,7 +36,7 @@ inline auto round(const T& x) {
 }
 
 /**
- * Version of \c round() that accepts Eigen Matrix or matrix expressions.
+ * Version of `round()` that accepts Eigen Matrix or matrix expressions.
  *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
