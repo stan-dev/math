@@ -73,7 +73,7 @@ struct mpi_stop_worker : public mpi_command {
  *
  * The remainder jobs num_jobs % num_workers are assigned to rank
  * >=1 workers such that the root (rank = 0) has a little less
- * assigned chunks unless num_jobs < num_workes in which case the
+ * assigned chunks unless num_jobs < num_workers in which case the
  * first num_jobs nodes receive a job (including the root).
  *
  * @param num_jobs Total number of jobs to dispatch
@@ -116,7 +116,7 @@ std::unique_lock<std::mutex> mpi_broadcast_command();
  * The mpirun program automatically starts the number of
  * pre-specified processes. The boost mpi library is used to
  * interface with MPI. In boost mpi terminology we refer to the
- * overall MPI ressources as world. Each process has an assigned
+ * overall MPI resources as world. Each process has an assigned
  * rank which is a numeric index running from 0 to the number of
  * processes-1 (also called the world size). We refer to the rank
  * = 0 process as the root process and all others (rank > 0) are

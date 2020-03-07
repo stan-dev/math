@@ -33,7 +33,7 @@ static const std::string multiply_transpose_kernel_code = STRINGIFY(
       const int j = THREAD_BLOCK_SIZE * get_group_id(1) + thread_block_col;
 
       // indexes that determine the last indexes that need to compute
-      // in order to remove the unnecesary multiplications in the special
+      // in order to remove the unnecessary multiplications in the special
       // multiplication of A*A^T
       const int j_min = THREAD_BLOCK_SIZE * get_group_id(1);
       const int i_max = THREAD_BLOCK_SIZE * get_group_id(0) + get_local_size(0);
