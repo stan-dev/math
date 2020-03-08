@@ -170,9 +170,13 @@ public:
   inline void jacobian_states(double t, const double y[], SUNMatrix J) const {
     start_nested();
     const std::vector<var> y_vec_var(y, y + N_);
-    auto ode_jacobian = apply([&](auto&&... args) {
-	return coupled_ode_system<var, double, double, F, decltype(value_of(args))...>(f_, y_vec_var, value_of(args)..., msgs_);
+    // TODO: This should only be done once on construction
+    auto double_args_tuple = apply([&](auto&&... args) {
+	return std::make_tuple(value_of(args)...);
       }, args_tuple_);
+    auto ode_jacobian = apply([&](auto&&... args) {
+	return coupled_ode_system<var, double, double, F, decltype(args)...>(f_, y_vec_var, args..., msgs_);
+      }, double_args_tuple);
     std::vector<double>&& jacobian_y = std::vector<double>(ode_jacobian.size());
     ode_jacobian(ode_jacobian.initial_state(), jacobian_y, t);
     std::move(jacobian_y.begin() + N_, jacobian_y.end(), SM_DATA_D(J));

@@ -119,14 +119,14 @@ struct coupled_ode_system_impl<false, T_initial, T_t0, T_ts, F, Args...> {
 
       const vector<var> y_vars(z.begin(), z.begin() + N_);
       auto local_args_tuple = apply(
-          [&](const Args&... args) {
+          [&](auto&&... args) {
             return std::tuple<decltype(internal::deep_copy(args))...>(
                 internal::deep_copy(args)...);
           },
           args_tuple_);
 
       vector<var> dy_dt_vars = apply(
-          [&](const Args&... args) { return f_(t, y_vars, args..., msgs_); },
+          [&](auto&&... args) { return f_(t, y_vars, args..., msgs_); },
           local_args_tuple);
 
       check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
@@ -151,7 +151,7 @@ struct coupled_ode_system_impl<false, T_initial, T_t0, T_ts, F, Args...> {
 
         Eigen::VectorXd args_adjoints = Eigen::VectorXd::Zero(args_vars_);
         apply(
-            [&](const Args&... args) {
+            [&](auto&&... args) {
               internal::accumulate_adjoints(args_adjoints.data(), args...);
             },
             local_args_tuple);
