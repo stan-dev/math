@@ -94,11 +94,6 @@ class operation_cl : public operation_cl_base {
     return res;
   }
 
-  /**
-   * Converting to \c matrix_cl evaluates the expression. Used when assigning to
-   * a \c matrix_cl.
-   */
-  operator matrix_cl<Scalar>() const { return derived().eval(); }
 
   /**
    * Evaluates \c this expression into given left-hand-side expression.

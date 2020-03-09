@@ -2,7 +2,7 @@
 #define STAN_MATH_OPENCL_IS_USABLE_AS_OPERATION
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/is_matrix_cl.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <type_traits>
 
