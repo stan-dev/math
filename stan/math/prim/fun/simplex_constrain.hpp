@@ -20,11 +20,12 @@ namespace math {
  *
  * The transform is based on a centered stick-breaking process.
  *
- * @tparam Vec type with a defined `operator[]`
+ * @tparam Vec type deriving from `Eigen::MatgrixBase` with rows or columns
+ * equal to 1.
  * @param y Free vector input of dimensionality K - 1.
  * @return Simplex of dimensionality K.
  */
-template <typename Vec, require_vector_like_t<Vec>* = nullptr>
+template <typename Vec, require_eigen_vector_t<Vec>* = nullptr>
 auto simplex_constrain(Vec&& y) {
   // cut & paste simplex_constrain(Eigen::Matrix, T) w/o Jacobian
   using std::log;
@@ -48,12 +49,13 @@ auto simplex_constrain(Vec&& y) {
  * The simplex transform is defined through a centered
  * stick-breaking process.
  *
- * @tparam Vec type with a defined `operator[]`
+ * @tparam Vec type deriving from `Eigen::MatgrixBase` with rows or columns
+ * equal to 1.
  * @param y Free vector input of dimensionality K - 1.
  * @param lp Log probability reference to increment.
  * @return Simplex of dimensionality K.
  */
-template <typename Vec, typename T, require_vector_like_t<Vec>* = nullptr>
+template <typename Vec, typename T, require_eigen_vector_t<Vec>* = nullptr>
 auto simplex_constrain(Vec&& y, T& lp) {
   using std::log;
 

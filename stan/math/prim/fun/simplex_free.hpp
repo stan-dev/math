@@ -19,22 +19,27 @@ namespace math {
  * <p>The simplex transform is defined through a centered
  * stick-breaking process.
  *
- * @tparam Vec type with a defined `operator[]`
+ * @tparam Vec type deriving from `Eigen::MatgrixBase` with rows or columns
+ * equal to 1.
  * @param x Simplex of dimensionality K.
  * @return Free vector of dimensionality (K-1) that transforms to
  * the simplex.
  * @throw std::domain_error if x is not a valid simplex
  */
-template <typename Vec, require_vector_like_t<Vec>* = nullptr>
+template <typename Vec, require_eigen_vector_t<Vec>* = nullptr>
 auto simplex_free(Vec&& x) {
   using std::log;
   check_simplex("stan::math::simplex_free", "Simplex variable", x);
-  const auto Km1 = x.size() - 1;
-  plain_type_t<Vec> y(Km1);
-  scalar_type_t<Vec> stick_len(x[Km1]);
-  for (auto k = Km1; --k >= 0;) {
-    stick_len += x(k);
-    const auto z_k = x(k) / stick_len;
+  auto Km1 = x.size() - 1;
+  auto ret_size = Km1 >= 0 ? Km1 : 0;
+  plain_type_t<Vec> y(ret_size);
+  if (y.size() == 0) {
+    return y;
+  }
+  auto stick_len = x[Km1];
+  for (auto k = Km1 - 1; k > -1; k--) {
+    stick_len += x[k];
+    auto z_k = x[k] / stick_len;
     y[k] = logit(z_k) + log(Km1 - k);
     // note: log(Km1 - k) = logit(1.0 / (Km1 + 1 - k));
   }

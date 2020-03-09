@@ -10,9 +10,17 @@
 namespace stan {
 namespace math {
 
-inline double dot_self(const std::vector<double>& x) {
-  double sum = 0.0;
-  for (double i : x) {
+/**
+ * Returns the dot product of the specified vector with itself.
+ *
+ * @tparam StdVec a standard vector.
+ * @param v Vector.
+ * @throw std::domain_error If v is not vector dimensioned.
+ */
+template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
+inline auto dot_self(StdVec&& x) {
+  value_type_t<StdVec> sum = 0.0;
+  for (auto&& i : x) {
     sum += i * i;
   }
   return sum;
@@ -21,14 +29,13 @@ inline double dot_self(const std::vector<double>& x) {
 /**
  * Returns the dot product of the specified vector with itself.
  *
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam EigVec A type deriving from `Eigen::MatrixBase` with compile time
+ *  rows or columns equal to 1.
  * @param v Vector.
  * @throw std::domain_error If v is not vector dimensioned.
  */
-template <int R, int C>
-inline double dot_self(const Eigen::Matrix<double, R, C>& v) {
-  check_vector("dot_self", "v", v);
+template <typename EigVec, require_eigen_vector_vt<std::is_arithmetic, EigVec>* = nullptr>
+inline double dot_self(EigVec&& v) {
   return v.squaredNorm();
 }
 
