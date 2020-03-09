@@ -15,10 +15,23 @@ class binomial_coefficient_log_vv_vari : public op_vv_vari {
   binomial_coefficient_log_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(binomial_coefficient_log(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
-    double digamma_ambp1 = digamma(avi_->val_ - bvi_->val_ + 1);
+    if(bvi_->val_ == 0) {
+      // Ignoring avi, the derivative is zero
+      if(avi_->val_ == -1) {
+        bvi_->adj_ += adj_ * stan::math::NEGATIVE_INFTY;
+      } else {
+        bvi_->adj_ += adj_ * (boost::math::constants::euler<double>() + digamma(avi_->val_ + 1));
+      }
+    } else {
+      double digamma_ambp1 = digamma(avi_->val_ - bvi_->val_ + 1);
 
-    avi_->adj_ += adj_ * (digamma(avi_->val_ + 1) - digamma_ambp1);
-    bvi_->adj_ += adj_ * (digamma_ambp1 - digamma(bvi_->val_ + 1));
+      avi_->adj_ += adj_ * (digamma(avi_->val_ + 1) - digamma_ambp1);
+      if(bvi_->val_ == -1) {
+        bvi_->adj_ += adj_ * stan::math::INFTY;
+      } else {
+        bvi_->adj_ += adj_ * (digamma_ambp1 - digamma(bvi_->val_ + 1));
+      }
+    }
   }
 };
 

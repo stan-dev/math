@@ -97,6 +97,14 @@ struct TestValue {
   double dk;
 };
 
+// Hand-checked edge cases
+std::vector<TestValue> testValuesEdge = {
+  {-1, 0, 0, 0, stan::math::NEGATIVE_INFTY},
+  {-1, 0, 0, 0, stan::math::NEGATIVE_INFTY},
+  {1, 0 , 0 , 0, 1},
+  {3, - 1, stan::math::NEGATIVE_INFTY, -0.25, stan::math::INFTY}
+};
+
 const double NaN = stan::math::NOT_A_NUMBER;
 // Test values generated in Mathematica, reproducible notebook at
 // https://www.wolframcloud.com/obj/martin.modrak/Published/binomial_coefficient_log.nb
@@ -283,13 +291,16 @@ std::vector<TestValue> testValues = {
 TEST(MathFunctions, binomial_coefficient_log_precomputed) {
   using binomial_coefficient_log_test_internal::TestValue;
   using binomial_coefficient_log_test_internal::testValues;
+  using binomial_coefficient_log_test_internal::testValuesEdge;
   using stan::math::is_nan;
   using stan::math::value_of;
   using stan::math::var;
   using stan::test::expect_near_rel;
   using stan::test::relative_tolerance;
 
-  for (TestValue t : testValues) {
+  std::vector<TestValue> allTestValues = testValues;
+  allTestValues.insert(allTestValues.end(), testValuesEdge.begin(), testValuesEdge.end());
+  for (TestValue t : allTestValues) {
     std::stringstream msg;
     msg << std::setprecision(22) << "n = " << t.n << ", k = " << t.k;
 
