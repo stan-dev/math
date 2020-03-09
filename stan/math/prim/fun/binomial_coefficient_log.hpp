@@ -1,13 +1,16 @@
 #ifndef STAN_MATH_PRIM_FUN_BINOMIAL_COEFFICIENT_LOG_HPP
 #define STAN_MATH_PRIM_FUN_BINOMIAL_COEFFICIENT_LOG_HPP
 
+#include <boost/math/constants/constants.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 
 namespace stan {
 namespace math {
@@ -16,16 +19,16 @@ namespace math {
  * Return the log of the binomial coefficient for the specified
  * arguments.
  *
- * The binomial coefficient, \f${N \choose n}\f$, read "N choose n", is
- * defined for \f$0 \leq n \leq N\f$ by
+ * The binomial coefficient, \f${n \choose k}\f$, read "n choose k", is
+ * defined for \f$0 \leq k \leq n\f$ by
  *
- * \f${N \choose n} = \frac{N!}{n! (N-n)!}\f$.
+ * \f${n \choose k} = \frac{n!}{k! (n-k)!}\f$.
  *
  * This function uses Gamma functions to define the log
- * and generalize the arguments to continuous N and n.
+ * and generalize the arguments to continuous n and k.
  *
- * \f$ \log {N \choose n}
- * = \log \ \Gamma(N+1) - \log \Gamma(n+1) - \log \Gamma(N-n+1)\f$.
+ * \f$ \log {n \choose k}
+ * = \log \ \Gamma(n+1) - \log \Gamma(k+1) - \log \Gamma(n-k+1)\f$.
  *
  *
    \f[
@@ -64,39 +67,79 @@ namespace math {
  *
  *  This function is numerically more stable than naive evaluation via lgamma.
  *
- * @tparam T_N type of the first argument
- * @tparam T_n type of the second argument
+ * @tparam T_n type of the first argument
+ * @tparam T_k type of the second argument
  *
- * @param N total number of objects.
- * @param n number of objects chosen.
- * @return log (N choose n).
+ * @param n total number of objects.
+ * @param k number of objects chosen.
+ * @return log (n choose k).
  */
 
-template <typename T_N, typename T_n>
-inline return_type_t<T_N, T_n> binomial_coefficient_log(const T_N N,
-                                                        const T_n n) {
-  if (is_any_nan(N, n)) {
+template <typename T_n, typename T_k>
+inline return_type_t<T_n, T_k> binomial_coefficient_log(const T_n n,
+                                                        const T_k k) {
+  if (is_any_nan(n, k)) {
     return stan::math::NOT_A_NUMBER;
   }
 
-  const T_N N_plus_1 = N + 1;
+  // Choosing the more stable of the symmetric branches
+  if( n > 0 && k > value_of_rec(n) / 2.0 + 1e-8) {
+    return binomial_coefficient_log(n, n - k);
+  } 
+
+  using T_partials_return = partials_return_t<T_n, T_k>;
+
+  const T_partials_return n_ = value_of(n);
+  const T_partials_return k_ = value_of(k);
+  const T_partials_return n_plus_1 = n_ + 1;
+  const T_partials_return n_plus_1_mk = n_plus_1 - k_;
 
   static const char* function = "binomial_coefficient_log";
-  check_greater_or_equal(function, "first argument", N, -1);
-  check_greater_or_equal(function, "second argument", n, -1);
+  check_greater_or_equal(function, "first argument", n, -1);
+  check_greater_or_equal(function, "second argument", k, -1);
   check_greater_or_equal(function, "(first argument - second argument + 1)",
-                         N_plus_1 - n, 0.0);
+                         n_plus_1_mk, 0.0);
 
-  if (n == 0) {
-    return 0;
+  operands_and_partials<T_n, T_k> ops_partials(n, k);
+
+  T_partials_return value;
+  if (k_ == 0) {
+    value = 0;
+  } else if (n_plus_1 < lgamma_stirling_diff_useful) {
+    value = lgamma(n_plus_1) - lgamma(k_ + 1) - lgamma(n_plus_1_mk);
+  } else {
+    value = -lbeta(n_plus_1_mk, k_ + 1) - log1p(n_);
   }
-  if (N > 0 && N / 2 + 1 < n) {
-    return binomial_coefficient_log(N, N - n);
+
+  if (!is_constant_all<T_n, T_k>::value) {
+    // Branching on all the edge cases.
+    // In direct computation many of those would be NaN
+    // But one-sided limits from within the domain exist.
+    T_partials_return digamma_n_plus_1_mk = digamma(n_plus_1_mk);
+
+    if (!is_constant_all<T_n>::value) {
+      if(n_ == -1.0) {
+        if(k_ == 0) {
+          ops_partials.edge1_.partials_[0] = 0;
+        } else {
+          ops_partials.edge1_.partials_[0] = stan::math::NEGATIVE_INFTY;;
+        }
+      } else {
+        ops_partials.edge1_.partials_[0] = (digamma(n_plus_1) - digamma_n_plus_1_mk);
+      }
+    }
+    if (!is_constant_all<T_k>::value) {
+      if(k_ == 0 && n_ == -1.0) {
+        ops_partials.edge2_.partials_[0] = stan::math::NEGATIVE_INFTY;
+      } else if(k_ == -1) {
+        ops_partials.edge2_.partials_[0] = stan::math::INFTY;
+      } else {
+        ops_partials.edge2_.partials_[0] = (digamma_n_plus_1_mk - digamma(k_ + 1));
+      }
+    }
   }
-  if (N_plus_1 < lgamma_stirling_diff_useful) {
-    return lgamma(N_plus_1) - lgamma(n + 1) - lgamma(N_plus_1 - n);
-  }
-  return -lbeta(N - n + 1, n + 1) - log1p(N);
+
+  return ops_partials.build(value);
 }
 
 }  // namespace math

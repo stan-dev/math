@@ -22,7 +22,6 @@
 #include <stan/math/rev/fun/bessel_second_kind.hpp>
 #include <stan/math/rev/fun/beta.hpp>
 #include <stan/math/rev/fun/binary_log_loss.hpp>
-#include <stan/math/rev/fun/binomial_coefficient_log.hpp>
 #include <stan/math/rev/fun/calculate_chain.hpp>
 #include <stan/math/rev/fun/cbrt.hpp>
 #include <stan/math/rev/fun/ceil.hpp>
