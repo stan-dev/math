@@ -153,7 +153,7 @@ public:
   inline void rhs(double t, const double y[], double dy_dt[]) const {
     const std::vector<double> y_vec(y, y + N_);
     std::vector<double> dy_dt_vec = apply([&](auto&&... args) {
-	return f_(t, y_vec, value_of(args)..., msgs_);
+	return f_.template operator()<double, double, decltype(value_of(args))...>(t, y_vec, value_of(args)..., msgs_);
       }, args_tuple_);
     check_size_match("cvodes_ode_data", "dz_dt", dy_dt_vec.size(), "states",
                      N_);

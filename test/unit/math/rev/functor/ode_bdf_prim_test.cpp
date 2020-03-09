@@ -27,13 +27,13 @@ auto sum_(const std::vector<T>& arg) {
   return sum;
 }
 
-struct Cos1Arg {
-  template <typename T0, typename T1, typename T2>
-  inline std::vector<typename stan::return_type<T1, T2>::type>
+struct CosArg1 {
+  template <typename T0, typename T1, typename... T_Args>
+  inline std::vector<typename stan::return_type<T1, T_Args...>::type>
   operator()(const T0& t, const std::vector<T1>& y,
-	     const T2& a, std::ostream* msgs) const {
+	     const T_Args&... a, std::ostream* msgs) const {
 
-    return { stan::math::cos(sum_(a) * t) };
+    return { stan::math::cos(sum_(std::get<0>(std::make_tuple(a...))) * t) };
   }
 };
 
@@ -56,7 +56,7 @@ TEST(StanMathOde_ode_bdf, scalar_arg) {
 
   var a = 1.5;
   
-  var output = stan::math::ode_bdf(Cos1Arg(), y0, t0, ts, 1e-8, 1e-10, 1e6, nullptr, a)[0][0];
+  var output = stan::math::ode_bdf(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6, nullptr, a)[0][0];
 
   output.grad();
 
@@ -73,7 +73,7 @@ TEST(StanMathOde_ode_bdf, std_vector_arg) {
 
   std::vector<var> a = { 1.5 };
   
-  var output = stan::math::ode_bdf(Cos1Arg(), y0, t0, ts, 1e-8, 1e-10, 1e6, nullptr, a)[0][0];
+  var output = stan::math::ode_bdf(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6, nullptr, a)[0][0];
 
   output.grad();
 
@@ -91,7 +91,7 @@ TEST(StanMathOde_ode_bdf, vector_arg) {
   Eigen::Matrix<var, Eigen::Dynamic, 1> a(1);
   a << 1.5;
   
-  var output = stan::math::ode_bdf(Cos1Arg(), y0, t0, ts, 1e-8, 1e-10, 1e6, nullptr, a)[0][0];
+  var output = stan::math::ode_bdf(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6, nullptr, a)[0][0];
 
   output.grad();
 
@@ -109,7 +109,7 @@ TEST(StanMathOde_ode_bdf, row_vector_arg) {
   Eigen::Matrix<var, 1, Eigen::Dynamic> a(1);
   a << 1.5;
   
-  var output = stan::math::ode_bdf(Cos1Arg(), y0, t0, ts, 1e-8, 1e-10, 1e6, nullptr, a)[0][0];
+  var output = stan::math::ode_bdf(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6, nullptr, a)[0][0];
 
   output.grad();
 
@@ -127,7 +127,7 @@ TEST(StanMathOde_ode_bdf, matrix_arg) {
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> a(1, 1);
   a << 1.5;
   
-  var output = stan::math::ode_bdf(Cos1Arg(), y0, t0, ts, 1e-8, 1e-10, 1e6, nullptr, a)[0][0];
+  var output = stan::math::ode_bdf(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6, nullptr, a)[0][0];
 
   output.grad();
 
@@ -153,3 +153,4 @@ TEST(StanMathOde_ode_bdf, scalar_std_vector_args) {
   EXPECT_FLOAT_EQ(output.val(), 0.66457668563);
   EXPECT_FLOAT_EQ(a1[0].adj(), -0.50107310888);
 }
+
