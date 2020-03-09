@@ -62,8 +62,8 @@ class dot_self_vari : public vari {
  * @param[in] v Vector.
  * @return Dot product of the vector with itself.
  */
-template <int R, int C>
-inline var dot_self(const Eigen::Matrix<var, R, C>& v) {
+template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
+inline var dot_self(EigMat&& v) {
   check_vector("dot_self", "v", v);
   return var(new internal::dot_self_vari(v));
 }
