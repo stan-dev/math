@@ -143,7 +143,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * Waits for the write events and clears the read event stack.
    */
   inline void wait_for_write_events() const {
-    for(cl::Event e : write_events_){
+    for (cl::Event e : write_events_) {
       e.wait();
     }
     write_events_.clear();
@@ -153,7 +153,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * Waits for the read events and clears the read event stack.
    */
   inline void wait_for_read_events() const {
-    for(cl::Event e : read_events_){
+    for (cl::Event e : read_events_) {
       e.wait();
     }
     read_events_.clear();
@@ -452,11 +452,13 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   }
 
   /**
-   * Construct from a kernel generator expression. It evaluates the ixpression into \c this.
+   * Construct from a kernel generator expression. It evaluates the ixpression
+   * into \c this.
    * @tparam Expr type of the expression
    * @param expression expression
    */
-  template<typename Expr, require_all_valid_expressions_and_none_scalar_t<Expr>* = nullptr>
+  template <typename Expr,
+            require_all_valid_expressions_and_none_scalar_t<Expr>* = nullptr>
   matrix_cl(const Expr& expresion);
 
   /** \ingroup opencl
@@ -489,11 +491,13 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   }
 
   /**
-   * Assignment of a kernel generator expression evaluates the ixpression into \c this.
+   * Assignment of a kernel generator expression evaluates the ixpression into
+   * \c this.
    * @tparam Expr type of the expression
    * @param expression expression
    */
-  template<typename Expr, require_all_valid_expressions_and_none_scalar_t<Expr>* = nullptr>
+  template <typename Expr,
+            require_all_valid_expressions_and_none_scalar_t<Expr>* = nullptr>
   matrix_cl<T>& operator=(const Expr& expresion);
 
  private:

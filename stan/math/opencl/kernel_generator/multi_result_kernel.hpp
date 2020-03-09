@@ -401,7 +401,7 @@ class results_cl {
     int n_cols = std::get<0>(expressions).x.thread_cols();
     const char* function = "results_cl.assignment";
     impl::check_assign_dimensions(n_rows, n_cols, results, expressions);
-    if(n_rows * n_cols == 0){
+    if (n_rows * n_cols == 0) {
       return;
     }
     check_positive(function, "number of rows", n_rows);

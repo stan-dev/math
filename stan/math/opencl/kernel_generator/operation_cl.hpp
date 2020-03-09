@@ -94,7 +94,6 @@ class operation_cl : public operation_cl_base {
     return res;
   }
 
-
   /**
    * Evaluates \c this expression into given left-hand-side expression.
    * If the kernel for this expression is not cached it is generated and then
