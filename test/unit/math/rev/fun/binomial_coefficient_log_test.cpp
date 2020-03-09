@@ -100,12 +100,14 @@ struct TestValue {
 // Hand-checked edge cases. Using one-sided limits from
 // within the function domain where the value doesn't exist
 std::vector<TestValue> testValuesEdge = {
-  {-1, 0, 0, 0, stan::math::NEGATIVE_INFTY},
-  {0, -1, stan::math::NEGATIVE_INFTY, -1.0, stan::math::INFTY},
-  {3, - 1, stan::math::NEGATIVE_INFTY, -0.25, stan::math::INFTY},
-  {-1, -0.2, stan::math::INFTY, stan::math::NEGATIVE_INFTY, -4.324031329886049836 },
-  {4.0, 5.0, stan::math::NEGATIVE_INFTY, stan::math::INFTY, stan::math::NEGATIVE_INFTY},
-  {1, 0 , 0 , 0, 1},
+    {-1, 0, 0, 0, stan::math::NEGATIVE_INFTY},
+    {0, -1, stan::math::NEGATIVE_INFTY, -1.0, stan::math::INFTY},
+    {3, -1, stan::math::NEGATIVE_INFTY, -0.25, stan::math::INFTY},
+    {-1, -0.2, stan::math::INFTY, stan::math::NEGATIVE_INFTY,
+     -4.324031329886049836},
+    {4.0, 5.0, stan::math::NEGATIVE_INFTY, stan::math::INFTY,
+     stan::math::NEGATIVE_INFTY},
+    {1, 0, 0, 0, 1},
 };
 
 const double NaN = stan::math::NOT_A_NUMBER;
@@ -302,7 +304,8 @@ TEST(MathFunctions, binomial_coefficient_log_precomputed) {
   using stan::test::relative_tolerance;
 
   std::vector<TestValue> allTestValues = testValues;
-  allTestValues.insert(allTestValues.end(), testValuesEdge.begin(), testValuesEdge.end());
+  allTestValues.insert(allTestValues.end(), testValuesEdge.begin(),
+                       testValuesEdge.end());
   for (TestValue t : allTestValues) {
     std::stringstream msg;
     msg << std::setprecision(22) << "n = " << t.n << ", k = " << t.k;

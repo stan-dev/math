@@ -83,9 +83,9 @@ inline return_type_t<T_n, T_k> binomial_coefficient_log(const T_n n,
   }
 
   // Choosing the more stable of the symmetric branches
-  if( n > 0 && k > value_of_rec(n) / 2.0 + 1e-8) {
+  if (n > 0 && k > value_of_rec(n) / 2.0 + 1e-8) {
     return binomial_coefficient_log(n, n - k);
-  } 
+  }
 
   using T_partials_return = partials_return_t<T_n, T_k>;
 
@@ -118,23 +118,26 @@ inline return_type_t<T_n, T_k> binomial_coefficient_log(const T_n n,
     T_partials_return digamma_n_plus_1_mk = digamma(n_plus_1_mk);
 
     if (!is_constant_all<T_n>::value) {
-      if(n_ == -1.0) {
-        if(k_ == 0) {
+      if (n_ == -1.0) {
+        if (k_ == 0) {
           ops_partials.edge1_.partials_[0] = 0;
         } else {
-          ops_partials.edge1_.partials_[0] = stan::math::NEGATIVE_INFTY;;
+          ops_partials.edge1_.partials_[0] = stan::math::NEGATIVE_INFTY;
+          ;
         }
       } else {
-        ops_partials.edge1_.partials_[0] = (digamma(n_plus_1) - digamma_n_plus_1_mk);
+        ops_partials.edge1_.partials_[0]
+            = (digamma(n_plus_1) - digamma_n_plus_1_mk);
       }
     }
     if (!is_constant_all<T_k>::value) {
-      if(k_ == 0 && n_ == -1.0) {
+      if (k_ == 0 && n_ == -1.0) {
         ops_partials.edge2_.partials_[0] = stan::math::NEGATIVE_INFTY;
-      } else if(k_ == -1) {
+      } else if (k_ == -1) {
         ops_partials.edge2_.partials_[0] = stan::math::INFTY;
       } else {
-        ops_partials.edge2_.partials_[0] = (digamma_n_plus_1_mk - digamma(k_ + 1));
+        ops_partials.edge2_.partials_[0]
+            = (digamma_n_plus_1_mk - digamma(k_ + 1));
       }
     }
   }
