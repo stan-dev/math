@@ -24,6 +24,9 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
                                                      const T_shape& alpha,
                                                      const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_inv_scale>;
+  using std::exp;
+  using std::log;
+  using std::pow;
   static const char* function = "gamma_lccdf";
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Inverse scale parameter", beta);
@@ -36,9 +39,6 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
     return 0;
   }
 
-  using std::exp;
-  using std::log;
-  using std::pow;
   T_partials_return P(0.0);
   operands_and_partials<T_y, T_shape, T_inv_scale> ops_partials(y, alpha, beta);
 

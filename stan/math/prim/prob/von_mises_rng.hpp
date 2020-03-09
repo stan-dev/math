@@ -47,7 +47,6 @@ inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
   using boost::random::uniform_real_distribution;
   using boost::variate_generator;
   static const char* function = "von_mises_rng";
-
   check_finite(function, "Location parameter", mu);
   check_nonnegative(function, "Scale parameter", kappa);
   check_finite(function, "Scale parameter", kappa);

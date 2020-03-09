@@ -41,6 +41,7 @@ template <bool propto, typename T_y, typename T_scale_succ,
 return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
   using T_partials_return = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
+  using std::log;
   static const char* function = "beta_lpdf";
   check_positive_finite(function, "First shape parameter", alpha);
   check_positive_finite(function, "Second shape parameter", beta);
@@ -58,7 +59,6 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
     return 0;
   }
 
-  using std::log;
   T_partials_return logp(0);
   operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(y, alpha,
                                                                       beta);

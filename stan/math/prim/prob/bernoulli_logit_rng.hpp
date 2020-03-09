@@ -30,7 +30,6 @@ inline typename VectorBuilder<true, int, T_t>::type bernoulli_logit_rng(
     const T_t& t, RNG& rng) {
   using boost::bernoulli_distribution;
   using boost::variate_generator;
-
   check_finite("bernoulli_logit_rng", "Logit transformed probability parameter",
                t);
 

@@ -71,14 +71,14 @@ gaussian_dlm_obs_lpdf(
     const Eigen::Matrix<T_W, Eigen::Dynamic, Eigen::Dynamic>& W,
     const Eigen::Matrix<T_m0, Eigen::Dynamic, 1>& m0,
     const Eigen::Matrix<T_C0, Eigen::Dynamic, Eigen::Dynamic>& C0) {
-  static const char* function = "gaussian_dlm_obs_lpdf";
   using T_lp
       = return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>;
+  using std::pow;
   int r = y.rows();  // number of variables
   int T = y.cols();  // number of observations
   int n = G.rows();  // number of states
-  using std::pow;
 
+  static const char* function = "gaussian_dlm_obs_lpdf";
   check_finite(function, "y", y);
   check_not_nan(function, "y", y);
   check_size_match(function, "columns of F", F.cols(), "rows of y", y.rows());
