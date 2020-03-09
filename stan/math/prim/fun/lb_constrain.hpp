@@ -5,7 +5,9 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/identity_constrain.hpp>
+#include <algorithm>
 #include <cmath>
+#include <vector>
 
 namespace stan {
 namespace math {

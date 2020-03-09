@@ -4,6 +4,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <algorithm>
+#include <vector>
 #include <cstddef>
 #include <cstdlib>
 #include <type_traits>

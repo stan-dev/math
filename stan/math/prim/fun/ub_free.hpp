@@ -6,7 +6,9 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/identity_free.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <algorithm>
 #include <cmath>
+#include <vector>
 
 namespace stan {
 namespace math {
