@@ -123,7 +123,6 @@ inline return_type_t<T_n, T_k> binomial_coefficient_log(const T_n n,
           ops_partials.edge1_.partials_[0] = 0;
         } else {
           ops_partials.edge1_.partials_[0] = stan::math::NEGATIVE_INFTY;
-          ;
         }
       } else {
         ops_partials.edge1_.partials_[0]
