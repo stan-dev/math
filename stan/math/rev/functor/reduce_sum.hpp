@@ -119,7 +119,6 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       return arg
           .unaryExpr([](auto&& x) { return var(new vari(x.val(), false)); })
           .eval();
-      ;
     }
 
     /**

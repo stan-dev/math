@@ -164,7 +164,7 @@ pipeline {
         stage('Verify changes') {
             agent { label 'linux' }
             steps {
-                script {         
+                script {
 
                     retry(3) { checkout scm }
                     sh 'git clean -xffd'
@@ -259,7 +259,7 @@ pipeline {
                         deleteDir()
                         unstash 'MathSetup'
                         sh "echo CXX=${MPICXX} >> make/local"
-                        sh "echo CXX_TYPE=gcc >> make/local"                        
+                        sh "echo CXX_TYPE=gcc >> make/local"
                         sh "echo STAN_MPI=true >> make/local"
                         runTests("test/unit")
                     }
@@ -319,6 +319,7 @@ pipeline {
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
+                        sh "export STAN_NUM_THREADS=2"
                         sh "echo CXX=${env.CXX} -Werror > make/local"
                         sh "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
                         runTests("test/unit -f thread")
@@ -342,6 +343,7 @@ pipeline {
                     steps {
                         deleteDirWin()
                         unstash 'MathSetup'
+                        bat "setx STAN_NUM_THREADS 2"
                         bat "echo CXX=${env.CXX} -Werror > make/local"
                         bat "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
                         runTestsWin("test/unit -f thread")
@@ -351,7 +353,7 @@ pipeline {
             }
         }
         stage('Additional merge tests') {
-            when { 
+            when {
                 allOf {
                     anyOf {
                         branch 'develop'
@@ -388,12 +390,12 @@ pipeline {
             }
         }
         stage('Upstream tests') {
-            when { 
+            when {
                 allOf {
-                    expression { 
-                        env.BRANCH_NAME ==~ /PR-\d+/ 
+                    expression {
+                        env.BRANCH_NAME ==~ /PR-\d+/
                     }
-                    expression { 
+                    expression {
                         !skipRemainingStages
                     }
                 }
