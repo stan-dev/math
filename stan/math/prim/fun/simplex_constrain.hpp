@@ -51,6 +51,7 @@ auto simplex_constrain(Vec&& y) {
  *
  * @tparam Vec type deriving from `Eigen::MatgrixBase` with rows or columns
  * equal to 1.
+ * @tparam T type of log probability.
  * @param y Free vector input of dimensionality K - 1.
  * @param lp Log probability reference to increment.
  * @return Simplex of dimensionality K.

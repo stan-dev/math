@@ -31,8 +31,9 @@ inline decltype(auto) identity_free(Scalar&& x) {
  *
  *
  * @tparam Scalar type of value
+ * @tparam Types The N-ary op argument types to deduce the return type from.
  * @param[in] x value
- * @return value
+ * @return value promoted to the least upper bound of all input types.
  */
 template <typename Scalar, typename... Types,
  require_all_stan_scalar_t<Scalar, Types...>* = nullptr>

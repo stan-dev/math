@@ -24,7 +24,7 @@ namespace math {
  *   ordered scalars.
  */
 template <typename Vec, require_vector_like_t<Vec>* = nullptr>
-auto positive_ordered_free(Vec&& y) {
+inline auto positive_ordered_free(Vec&& y) {
   using std::log;
   check_positive_ordered("stan::math::positive_ordered_free",
                          "Positive ordered variable", y);

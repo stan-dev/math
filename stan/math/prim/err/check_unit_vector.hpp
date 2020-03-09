@@ -31,7 +31,7 @@ namespace math {
  * @throw <code>std::domain_error</code> if the vector is not a unit
  *   vector or if any element is <code>NaN</code>
  */
- template <typename Vec, require_vector_like_t<Vec>* = nullptr>
+template <typename Vec, require_vector_like_t<Vec>* = nullptr>
 void check_unit_vector(const char* function, const char* name, Vec&& theta) {
   check_nonzero_size(function, name, theta);
   using std::fabs;

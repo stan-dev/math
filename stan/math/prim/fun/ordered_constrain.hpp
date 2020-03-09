@@ -53,7 +53,7 @@ inline auto ordered_constrain(Vec&& x, T& lp) {
   for (auto i = 1; i < x.size(); ++i) {
     lp += x[i];
   }
-  return ordered_constrain(x);
+  return ordered_constrain(std::forward<Vec>(x));
 }
 
 }  // namespace math

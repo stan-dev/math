@@ -19,7 +19,7 @@ namespace math {
  * <p>The simplex transform is defined through a centered
  * stick-breaking process.
  *
- * @tparam Vec type deriving from `Eigen::MatgrixBase` with rows or columns
+ * @tparam Vec type deriving from `Eigen::MatrixBase` with rows or columns
  * equal to 1.
  * @param x Simplex of dimensionality K.
  * @return Free vector of dimensionality (K-1) that transforms to

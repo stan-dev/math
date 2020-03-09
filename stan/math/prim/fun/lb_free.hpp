@@ -19,7 +19,7 @@ namespace math {
  * the function reduces to <code>identity_free(x)</code>.
  *
  * @tparam T type of scalar
- * @tparam L type of lower bound
+ * @tparam U type of lower bound
  * @param[in] x input scalar
  * @param[in] lb lower bound
  * @return unconstrained value that produces the input when
@@ -44,7 +44,7 @@ inline auto lb_free(T&& x, U&& lb) {
  * the function reduces to <code>identity_free(x)</code>.
  *
  * @tparam EigT type derived from `EigenBase`
- * @tparam L type of lower bound
+ * @tparam U type of lower bound
  * @param[in] x input scalar
  * @param[in] lb lower bound
  * @return unconstrained value that produces the input when
@@ -66,7 +66,7 @@ inline auto lb_free(EigT&& x, U&& lb) {
  * the function reduces to <code>identity_free(x)</code>.
  *
  * @tparam Vec type of standard vector
- * @tparam L type of lower bound
+ * @tparam U type of lower bound
  * @param[in] x input scalar
  * @param[in] lb lower bound
  * @return unconstrained value that produces the input when

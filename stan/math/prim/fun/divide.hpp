@@ -50,7 +50,7 @@ inline auto divide(const Mat& m, Scal c) {
 /**
  * Return standard vector divided by scalar.
  *
- * @tparam Mat type of the matrix or expression
+ * @tparam Vec type of the matrix or expression
  * @tparam Scal type of the scalar
  * @param[in] m specified matrix or expression
  * @param[in] c specified scalar

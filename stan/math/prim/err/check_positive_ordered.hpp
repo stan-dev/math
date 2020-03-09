@@ -14,6 +14,7 @@ namespace math {
 /**
  * Check if the specified vector contains non-negative values and is sorted into
  * strictly increasing order.
+ * @tparam Vec a type with a defined `operator[]`
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Vector to test
@@ -22,7 +23,7 @@ namespace math {
  *   values, or if any element is <code>NaN</code>.
  */
  template <typename Vec, require_vector_like_t<Vec>* = nullptr>
-void check_positive_ordered(const char* function, const char* name, Vec&& y) {
+inline void check_positive_ordered(const char* function, const char* name, Vec&& y) {
   if (y.size() == 0) {
     return;
   }

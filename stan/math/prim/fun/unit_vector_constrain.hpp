@@ -37,6 +37,7 @@ auto unit_vector_constrain(Vec&& x) {
  *
  *
  * @tparam Vec type with a defined `operator[]`
+ * @tparam T type of log probability.
  * @param x vector of K unrestricted variables
  * @param lp Log probability reference to increment.
  * @return Unit length vector of dimension K
