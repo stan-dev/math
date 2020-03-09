@@ -29,13 +29,67 @@ namespace math {
  * @param[in] lb lower bound on constrained output
  * @return lower bound constrained value corresponding to inputs
  */
-template <typename T, typename L>
-inline return_type_t<T, L> lb_constrain(const T& x, const L& lb) {
+template <typename T, typename L, require_stan_scalar_t<T>* = nullptr>
+inline auto lb_constrain(T&& x, L&& lb) {
   using std::exp;
   if (lb == NEGATIVE_INFTY) {
-    return identity_constrain(x);
+    return identity_constrain(x, lb);
   }
   return exp(x) + lb;
+}
+
+/**
+ * Return the lower-bounded value for the specified unconstrained input
+ * and specified lower bound.
+ *
+ * <p>The transform applied is
+ *
+ * <p>\f$f(x) = \exp(x) + L\f$
+ *
+ * <p>where \f$L\f$ is the constant lower bound.
+ *
+ * <p>If the lower bound is negative infinity, this function
+ * reduces to <code>identity_constrain(x)</code>.
+ *
+ * @tparam EigT type derived from EigenBase
+ * @tparam L type of lower bound
+ * @param[in] x Unconstrained scalar input
+ * @param[in] lb lower bound on constrained output
+ * @return lower bound constrained value corresponding to inputs
+ */
+template <typename EigT, typename U, require_eigen_t<EigT>* = nullptr>
+inline auto lb_constrain(EigT&& x, U&& lb) {
+  return x.unaryExpr([&lb](auto&& x_iter){
+    return lb_constrain(x_iter, lb);
+  }).eval();
+}
+
+/**
+ * Return the lower-bounded value for the specified unconstrained input
+ * and specified lower bound.
+ *
+ * <p>The transform applied is
+ *
+ * <p>\f$f(x) = \exp(x) + L\f$
+ *
+ * <p>where \f$L\f$ is the constant lower bound.
+ *
+ * <p>If the lower bound is negative infinity, this function
+ * reduces to <code>identity_constrain(x)</code>.
+ *
+ * @tparam Vec type of standard vector
+ * @tparam L type of lower bound
+ * @param[in] x Unconstrained scalar input
+ * @param[in] lb lower bound on constrained output
+ * @return lower bound constrained value corresponding to inputs
+ */
+template <typename Vec, typename U, require_std_vector_t<Vec>* = nullptr>
+inline auto lb_constrain(Vec&& x, U&& lb) {
+  std::vector<return_type_t<Vec, U>> ret_x(x.size());
+  std::transform(x.begin(), x.end(), ret_x.begin(), [&lb](auto&& x_iter){
+    return lb_constrain(x_iter, lb);
+  });
+  return ret_x;
 }
 
 /**
@@ -55,15 +109,66 @@ inline return_type_t<T, L> lb_constrain(const T& x, const L& lb) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, typename S>
-inline return_type_t<T, L> lb_constrain(const T& x, const L& lb, S& lp) {
+template <typename T, typename L, typename S, require_stan_scalar_t<T>* = nullptr>
+inline auto lb_constrain(T&& x, L&& lb, S& lp) {
   using std::exp;
   if (lb == NEGATIVE_INFTY) {
-    return identity_constrain(x, lp);
+    return identity_constrain(x, lb);
   }
   lp += x;
   return exp(x) + lb;
 }
+
+/**
+ * Return the lower-bounded value for the specified unconstrained
+ * input and specified lower bound, incrementing the specified
+ * reference with the log absolute Jacobian determinant of the
+ * transform.
+ *
+ * If the lower bound is negative infinity, this function
+ * reduces to <code>identity_constraint(x, lp)</code>.
+ *
+ * @tparam EigT type derived from EigenBase
+ * @tparam L type of lower bound
+ * @tparam S type of log probability
+ * @param[in] x unconstrained scalar input
+ * @param[in] lb lower bound on output
+ * @param[in,out] lp reference to log probability to increment
+ * @return lower-bound constrained value corresponding to inputs
+ */
+template <typename EigT, typename U, typename S, require_eigen_t<EigT>* = nullptr>
+inline auto lb_constrain(EigT&& x, U&& lb, S& lp) {
+  return x.unaryExpr([&lb, &lp](auto&& x_iter){
+    return lb_constrain(x_iter, lb, lp);
+  }).eval();
+}
+
+/**
+ * Return the lower-bounded value for the specified unconstrained
+ * input and specified lower bound, incrementing the specified
+ * reference with the log absolute Jacobian determinant of the
+ * transform.
+ *
+ * If the lower bound is negative infinity, this function
+ * reduces to <code>identity_constraint(x, lp)</code>.
+ *
+ * @tparam Vec standard vector type
+ * @tparam L type of lower bound
+ * @tparam S type of log probability
+ * @param[in] x unconstrained scalar input
+ * @param[in] lb lower bound on output
+ * @param[in,out] lp reference to log probability to increment
+ * @return lower-bound constrained value corresponding to inputs
+ */
+template <typename Vec, typename U, typename S, require_std_vector_t<Vec>* = nullptr>
+inline auto lb_constrain(Vec&& x, U&& lb, S& lp) {
+  std::vector<return_type_t<Vec, U>> ret_x(x.size());
+  std::transform(x.begin(), x.end(), ret_x.begin(), [&lb, &lp](auto&& x_iter){
+    return lb_constrain(x_iter, lb, lp);
+  });
+  return ret_x;
+}
+
 
 }  // namespace math
 

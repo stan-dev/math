@@ -13,13 +13,13 @@ namespace math {
  * <p>This method is effectively a no-op and is mainly useful as a
  * placeholder in auto-generated code.
  *
- * @tparam T Type of scalar.
+ * @tparam Scalar Type of scalar.
  * @param[in] x free scalar
  * @return transformed input
  */
-template <typename T>
-inline T identity_constrain(const T& x) {
-  return x;
+ template <typename Scalar, require_all_stan_scalar_t<Scalar>* = nullptr>
+inline decltype(auto) identity_constrain(Scalar&& x) {
+  return std::forward<Scalar>(x);
 }
 
 /**
@@ -27,18 +27,19 @@ inline T identity_constrain(const T& x) {
  * transform to the input and increments the log probability
  * reference with the log absolute Jacobian determinant.
  *
- * <p>This method is effectively a no-op and mainly useful as a
- * placeholder in auto-generated code.
+ * This method is used for constrained types where x and the constrain differ
+ *  in type.
  *
- * @tparam T type of scalar
- * @tparam S type of log probability
+ * @tparam Scalar type of scalar
+ * @tparam Types Types to check for promotion rules
  * @param[in] x scalar
- * @param[in] lp log density reference
+ * @param[in] args values to check for promotion rules.
  * @return transformed input
  */
-template <typename T, typename S>
-inline T identity_constrain(const T& x, S& lp) {
-  return x;
+ template <typename Scalar, typename... Types,
+  require_all_stan_scalar_t<Scalar, Types...>* = nullptr>
+inline auto identity_constrain(Scalar&& x, Types&&... args) {
+  return return_type_t<Scalar, Types...>(x);
 }
 
 }  // namespace math

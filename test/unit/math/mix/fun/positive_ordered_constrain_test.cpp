@@ -1,18 +1,23 @@
 #include <test/unit/math/test_ad.hpp>
 
 template <typename T>
-T g1(const T& x) {
-  return stan::math::positive_ordered_constrain(x);
+auto g1(const T& x) {
+  auto x_cons = stan::math::positive_ordered_constrain(x);
+  auto x_free = stan::math::positive_ordered_free(x_cons);
+  return x_free;
 }
 template <typename T>
-T g2(const T& x) {
-  typename stan::scalar_type<T>::type lp = 0;
-  return stan::math::positive_ordered_constrain(x, lp);
+auto g2(const T& x) {
+  stan::scalar_type_t<T> lp = 0;
+  auto x_cons = stan::math::positive_ordered_constrain(x, lp);
+  auto x_free = stan::math::positive_ordered_free(x_cons);
+  return x_free;
 }
 template <typename T>
-typename stan::scalar_type<T>::type g3(const T& x) {
-  typename stan::scalar_type<T>::type lp = 0;
-  stan::math::positive_ordered_constrain(x, lp);
+auto g3(const T& x) {
+  stan::scalar_type_t<T> lp = 0;
+  auto x_cons = stan::math::positive_ordered_constrain(x, lp);
+  auto x_free = stan::math::positive_ordered_free(x_cons);
   return lp;
 }
 
@@ -26,7 +31,7 @@ void expect_positive_ordered_transform(const T& x) {
   stan::test::expect_ad(f3, x);
 }
 
-TEST(MathMixMatFun, positiveOrderedTransform) {
+TEST(MathMixMatFun, positiveOrderedTransformMat) {
   Eigen::VectorXd v0(0);
   expect_positive_ordered_transform(v0);
 
@@ -48,5 +53,25 @@ TEST(MathMixMatFun, positiveOrderedTransform) {
 
   Eigen::VectorXd v5(5);
   v5 << 1, -3, 2, 0, -1;
+  expect_positive_ordered_transform(v5);
+}
+
+TEST(MathMixMatFun, positiveOrderedTransformVec) {
+  std::vector<double> v0(0);
+  expect_positive_ordered_transform(v0);
+
+  std::vector<double> v1({1});
+  expect_positive_ordered_transform(v1);
+
+  std::vector<double> v2({3, -1});
+  expect_positive_ordered_transform(v2);
+
+  std::vector<double> v3({-12, 3, -1.9});
+  expect_positive_ordered_transform(v3);
+
+  std::vector<double> v4({-1, 0, -1.1, 0.5});
+  expect_positive_ordered_transform(v4);
+
+  std::vector<double> v5({1, -3, 2, 0, -1});
   expect_positive_ordered_transform(v5);
 }

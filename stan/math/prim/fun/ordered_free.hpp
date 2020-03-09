@@ -17,23 +17,19 @@ namespace math {
  * <p>This function inverts the constraining operation defined in
  * <code>ordered_constrain(Matrix)</code>,
  *
- * @tparam T type of elements in the vector
+ * @tparam Vec type with a defined `operator[]`
  * @param y Vector of positive, ordered scalars.
  * @return Free vector that transforms into the input vector.
  * @throw std::domain_error if y is not a vector of positive,
  *   ordered scalars.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_free(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& y) {
+template <typename Vec, require_vector_like_t<Vec>* = nullptr>
+auto ordered_free(Vec&& y) {
   check_ordered("stan::math::ordered_free", "Ordered variable", y);
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
   using std::log;
-  using size_type = index_type_t<Matrix<T, Dynamic, 1>>;
 
-  size_type k = y.size();
-  Matrix<T, Dynamic, 1> x(k);
+  auto k = y.size();
+  plain_type_t<Vec> x(k);
   if (k == 0) {
     return x;
   }

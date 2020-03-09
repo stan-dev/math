@@ -30,22 +30,20 @@ namespace math {
  * @throw <code>std::domain_error</code> if the vector is not a
  *   simplex or if any element is <code>NaN</code>.
  */
-template <typename T_prob>
-void check_simplex(const char* function, const char* name,
-                   const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
-  using size_type = index_type_t<Eigen::Matrix<T_prob, Eigen::Dynamic, 1>>;
+template <typename Vec, require_vector_like_t<Vec>* = nullptr>
+void check_simplex(const char* function, const char* name, Vec&& theta) {
   using std::fabs;
   check_nonzero_size(function, name, theta);
-  if (!(fabs(1.0 - theta.sum()) <= CONSTRAINT_TOLERANCE)) {
+  const value_type_t<Vec> sum_theta = sum(theta);
+  if (!(fabs(1.0 - sum_theta) <= CONSTRAINT_TOLERANCE)) {
     std::stringstream msg;
-    T_prob sum = theta.sum();
     msg << "is not a valid simplex.";
     msg.precision(10);
-    msg << " sum(" << name << ") = " << sum << ", but should be ";
+    msg << " sum(" << name << ") = " << sum_theta << ", but should be ";
     std::string msg_str(msg.str());
     throw_domain_error(function, name, 1.0, msg_str.c_str());
   }
-  for (size_type n = 0; n < theta.size(); n++) {
+  for (auto n = 0; n < theta.size(); n++) {
     if (!(theta[n] >= 0)) {
       std::ostringstream msg;
       msg << "is not a valid simplex. " << name << "["

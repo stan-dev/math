@@ -1,21 +1,23 @@
 #include <test/unit/math/test_ad.hpp>
 
 template <typename T>
-typename Eigen::Matrix<typename stan::scalar_type<T>::type, -1, -1> g1(
-    const T& x) {
-  return stan::math::unit_vector_constrain(x);
+auto g1(const T& x) {
+  auto x_cons = stan::math::unit_vector_constrain(x);
+  auto x_free = stan::math::unit_vector_free(x_cons);
+  return x_free;
 }
 template <typename T>
-typename Eigen::Matrix<typename stan::scalar_type<T>::type, -1, -1> g2(
-    const T& x) {
-  typename stan::scalar_type<T>::type lp = 0;
-  auto a = stan::math::unit_vector_constrain(x, lp);
-  return a;
+auto g2(const T& x) {
+  stan::scalar_type_t<T> lp = 0;
+  auto x_cons = stan::math::unit_vector_constrain(x, lp);
+  auto x_free = stan::math::unit_vector_free(x_cons);
+  return x_free;
 }
 template <typename T>
-typename stan::scalar_type<T>::type g3(const T& x) {
-  typename stan::scalar_type<T>::type lp = 0;
-  stan::math::unit_vector_constrain(x, lp);
+auto g3(const T& x) {
+  stan::scalar_type_t<T> lp = 0;
+  auto x_cons = stan::math::unit_vector_constrain(x, lp);
+  auto x_free = stan::math::unit_vector_free(x_cons);
   return lp;
 }
 
@@ -38,7 +40,7 @@ void expect_unit_vector_constrain(const T& x) {
   stan::test::expect_ad(tols, f3, x);
 }
 
-TEST(MathMixMatFun, unitVectorConstrain) {
+TEST(MathMixMatFun, unitVectorConstrainEig) {
   Eigen::VectorXd v0;
   expect_unit_vector_constrain(v0);
 
@@ -57,4 +59,24 @@ TEST(MathMixMatFun, unitVectorConstrain) {
   Eigen::VectorXd v6(6);
   v6 << 1, 2, -3, 1.5, 0.2, 2;
   expect_unit_vector_constrain(v6);
+}
+
+TEST(MathMixMatFun, unitVectorConstrainVec) {
+  std::vector<double> v0(0);
+  expect_unit_vector_constrain(v0);
+
+  std::vector<double> v1({1});
+  expect_unit_vector_constrain(v1);
+
+  std::vector<double> v2({3, -1});
+  expect_unit_vector_constrain(v2);
+
+  std::vector<double> v3({-12, 3, -1.9});
+  expect_unit_vector_constrain(v3);
+
+  std::vector<double> v4({-1, 0, -1.1, 0.5});
+  expect_unit_vector_constrain(v4);
+
+  std::vector<double> v5({1, -3, 2, 0, -1});
+  expect_unit_vector_constrain(v5);
 }

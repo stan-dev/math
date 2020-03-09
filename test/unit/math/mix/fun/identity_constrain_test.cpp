@@ -2,22 +2,27 @@
 #include <limits>
 
 template <typename T>
-T g1(const T& x) {
-  return stan::math::identity_constrain(x);
+auto g1(const T& x) {
+  auto x_cons = stan::math::identity_constrain(x);
+  auto x_free = stan::math::identity_free(x_cons);
+  return x_free;
 }
 template <typename T>
-T g2(const T& x) {
-  T lp = 0;
-  return stan::math::identity_constrain(x, lp);
+auto g2(const T& x) {
+  stan::value_type_t<T> lp = 0;
+  auto x_cons = stan::math::identity_constrain(x, lp);
+  auto x_free = stan::math::identity_free(x_cons);
+  return x_free;
 }
 template <typename T>
-T g3(const T& x) {
-  T lp = 0;
-  stan::math::identity_constrain(x, lp);
+auto g3(const T& x) {
+  stan::value_type_t<T> lp = 0;
+  auto x_cons = stan::math::identity_constrain(x, lp);
+  auto x_free = stan::math::identity_free(x_cons);
   return lp;
 }
-
-void expect_identity_constrain(double x) {
+template <typename T>
+void expect_identity_constrain(const T& x) {
   auto f1 = [](const auto& x) { return g1(x); };
   auto f2 = [](const auto& x) { return g2(x); };
   auto f3 = [](const auto& x) { return g3(x); };

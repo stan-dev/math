@@ -14,15 +14,14 @@ namespace math {
  * However, we are just fixing the unidentified radius to 1.
  * Thus, the transformation is just the identity
  *
- * @tparam T type of elements in the vector
+ * @tparam Vec type with a defined `operator[]`
  * @param x unit vector of dimension K
  * @return Unit vector of dimension K considered "free"
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> unit_vector_free(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x) {
+template <typename Vec, require_vector_like_t<Vec>* = nullptr>
+decltype(auto) unit_vector_free(Vec&& x) {
   check_unit_vector("stan::math::unit_vector_free", "Unit vector variable", x);
-  return x;
+  return std::forward<Vec>(x);
 }
 
 }  // namespace math

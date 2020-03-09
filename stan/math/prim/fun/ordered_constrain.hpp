@@ -14,26 +14,22 @@ namespace math {
  * free vector.  The returned constrained vector will have the
  * same dimensionality as the specified free vector.
  *
- * @tparam T type of elements in the vector
+ * @tparam Vec type with a `operator[]` defined.
  * @param x Free vector of scalars.
  * @return Positive, increasing ordered vector.
  * @tparam T Type of scalar.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x) {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
+template <typename Vec, require_vector_like_t<Vec>* = nullptr>
+inline auto ordered_constrain(Vec&& x) {
   using std::exp;
-  using size_type = index_type_t<Matrix<T, Dynamic, 1>>;
 
-  size_type k = x.size();
-  Matrix<T, Dynamic, 1> y(k);
+  auto k = x.size();
+  plain_type_t<Vec> y(k);
   if (k == 0) {
     return y;
   }
   y[0] = x[0];
-  for (size_type i = 1; i < k; ++i) {
+  for (auto i = 1; i < k; ++i) {
     y[i] = y[i - 1] + exp(x[i]);
   }
   return y;
@@ -46,18 +42,16 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_constrain(
  * of the transform.  The returned constrained vector
  * will have the same dimensionality as the specified free vector.
  *
- * @tparam T type of elements in the vector
+ * @tparam Vec type with a `operator[]` defined.
+ * @tparam T type of log probability
  * @param x Free vector of scalars.
  * @param lp Log probability reference.
  * @return Positive, increasing ordered vector.
  */
-template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, T& lp) {
-  using size_type = index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>>;
-
-  for (size_type i = 1; i < x.size(); ++i) {
-    lp += x(i);
+template <typename Vec, typename T, require_vector_like_t<Vec>* = nullptr>
+inline auto ordered_constrain(Vec&& x, T& lp) {
+  for (auto i = 1; i < x.size(); ++i) {
+    lp += x[i];
   }
   return ordered_constrain(x);
 }

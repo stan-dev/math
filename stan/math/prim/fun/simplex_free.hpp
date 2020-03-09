@@ -19,26 +19,23 @@ namespace math {
  * <p>The simplex transform is defined through a centered
  * stick-breaking process.
  *
- * @tparam T type of elements in the simplex
+ * @tparam Vec type with a defined `operator[]`
  * @param x Simplex of dimensionality K.
  * @return Free vector of dimensionality (K-1) that transforms to
  * the simplex.
  * @throw std::domain_error if x is not a valid simplex
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_free(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x) {
+template <typename Vec, require_vector_like_t<Vec>* = nullptr>
+auto simplex_free(Vec&& x) {
   using std::log;
-  using size_type = index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>>;
-
   check_simplex("stan::math::simplex_free", "Simplex variable", x);
-  int Km1 = x.size() - 1;
-  Eigen::Matrix<T, Eigen::Dynamic, 1> y(Km1);
-  T stick_len(x(Km1));
-  for (size_type k = Km1; --k >= 0;) {
+  const auto Km1 = x.size() - 1;
+  plain_type_t<Vec> y(Km1);
+  scalar_type_t<Vec> stick_len(x[Km1]);
+  for (auto k = Km1; --k >= 0;) {
     stick_len += x(k);
-    T z_k(x(k) / stick_len);
-    y(k) = logit(z_k) + log(Km1 - k);
+    const auto z_k = x(k) / stick_len;
+    y[k] = logit(z_k) + log(Km1 - k);
     // note: log(Km1 - k) = logit(1.0 / (Km1 + 1 - k));
   }
   return y;

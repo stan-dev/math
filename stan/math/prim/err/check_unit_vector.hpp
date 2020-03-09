@@ -1,12 +1,13 @@
 #ifndef STAN_MATH_PRIM_ERR_CHECK_UNIT_VECTOR_HPP
 #define STAN_MATH_PRIM_ERR_CHECK_UNIT_VECTOR_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/check_nonzero_size.hpp>
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/err/constraint_tolerance.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/abs.hpp>
+#include <stan/math/prim/fun/dot_self.hpp>
 #include <sstream>
 #include <string>
 #include <cmath>
@@ -21,7 +22,7 @@ namespace math {
  * tolerance specified by <code>CONSTRAINT_TOLERANCE</code>. This
  * function only accepts Eigen vectors, statically typed vectors,
  * not general matrices with 1 column.
- * @tparam T_prob Scalar type of the vector
+ * @tparam Vec type with a defined `operator[]`
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param theta Vector to test
@@ -30,12 +31,11 @@ namespace math {
  * @throw <code>std::domain_error</code> if the vector is not a unit
  *   vector or if any element is <code>NaN</code>
  */
-template <typename T_prob>
-void check_unit_vector(const char* function, const char* name,
-                       const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
+ template <typename Vec, require_vector_like_t<Vec>* = nullptr>
+void check_unit_vector(const char* function, const char* name, Vec&& theta) {
   check_nonzero_size(function, name, theta);
   using std::fabs;
-  T_prob ssq = theta.squaredNorm();
+  value_type_t<Vec> ssq = dot_self(theta);
   if (!(fabs(1.0 - ssq) <= CONSTRAINT_TOLERANCE)) {
     std::stringstream msg;
     msg << "is not a valid unit vector."

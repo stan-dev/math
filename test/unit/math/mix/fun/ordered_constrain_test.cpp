@@ -26,7 +26,7 @@ void expect_ordered_transform(const T& x) {
   stan::test::expect_ad(f3, x);
 }
 
-TEST(MathMixMatFun, orderedTransform) {
+TEST(MathMixMatFun, orderedTransformMat) {
   Eigen::VectorXd v0(0);
   expect_ordered_transform(v0);
 
@@ -48,5 +48,25 @@ TEST(MathMixMatFun, orderedTransform) {
 
   Eigen::VectorXd v5(5);
   v5 << 1, -3, 2, 0, -1;
+  expect_ordered_transform(v5);
+}
+
+TEST(MathMixMatFun, orderedTransformVec) {
+  std::vector<double> v0(0);
+  expect_ordered_transform(v0);
+
+  std::vector<double> v1({1});
+  expect_ordered_transform(v1);
+
+  std::vector<double> v2({3, -1});
+  expect_ordered_transform(v2);
+
+  std::vector<double> v3({-12, 3, -1.9});
+  expect_ordered_transform(v3);
+
+  std::vector<double> v4({-1, 0, -1.1, 0.5});
+  expect_ordered_transform(v4);
+
+  std::vector<double> v5({1, -3, 2, 0, -1});
   expect_ordered_transform(v5);
 }

@@ -20,28 +20,23 @@ namespace math {
  *
  * The transform is based on a centered stick-breaking process.
  *
- * @tparam T type of elements in the vector
+ * @tparam Vec type with a defined `operator[]`
  * @param y Free vector input of dimensionality K - 1.
  * @return Simplex of dimensionality K.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& y) {
+template <typename Vec, require_vector_like_t<Vec>* = nullptr>
+auto simplex_constrain(Vec&& y) {
   // cut & paste simplex_constrain(Eigen::Matrix, T) w/o Jacobian
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
   using std::log;
-  using size_type = index_type_t<Matrix<T, Dynamic, 1>>;
-
-  int Km1 = y.size();
-  Matrix<T, Dynamic, 1> x(Km1 + 1);
-  T stick_len(1.0);
-  for (size_type k = 0; k < Km1; ++k) {
-    T z_k(inv_logit(y(k) - log(Km1 - k)));
-    x(k) = stick_len * z_k;
-    stick_len -= x(k);
+  const auto Km1 = y.size();
+  plain_type_t<Vec> x(Km1 + 1);
+  value_type_t<Vec> stick_len(1.0);
+  for (auto k = 0; k < Km1; ++k) {
+    const auto z_k = inv_logit(y[k] - log(Km1 - k));
+    x[k] = stick_len * z_k;
+    stick_len -= x[k];
   }
-  x(Km1) = stick_len;
+  x[Km1] = stick_len;
   return x;
 }
 
@@ -53,34 +48,29 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_constrain(
  * The simplex transform is defined through a centered
  * stick-breaking process.
  *
- * @tparam T type of elements in the vector
+ * @tparam Vec type with a defined `operator[]`
  * @param y Free vector input of dimensionality K - 1.
  * @param lp Log probability reference to increment.
  * @return Simplex of dimensionality K.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& y, T& lp) {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
+template <typename Vec, typename T, require_vector_like_t<Vec>* = nullptr>
+auto simplex_constrain(Vec&& y, T& lp) {
   using std::log;
 
-  using size_type = index_type_t<Matrix<T, Dynamic, 1>>;
-
-  int Km1 = y.size();  // K = Km1 + 1
-  Matrix<T, Dynamic, 1> x(Km1 + 1);
-  T stick_len(1.0);
-  for (size_type k = 0; k < Km1; ++k) {
-    double eq_share = -log(Km1 - k);  // = logit(1.0/(Km1 + 1 - k));
-    T adj_y_k(y(k) + eq_share);
-    T z_k(inv_logit(adj_y_k));
-    x(k) = stick_len * z_k;
+  const auto Km1 = y.size();  // K = Km1 + 1
+  plain_type_t<Vec> x(Km1 + 1);
+  value_type_t<Vec> stick_len(1.0);
+  for (auto k = 0; k < Km1; ++k) {
+    const auto eq_share = -log(Km1 - k);  // = logit(1.0/(Km1 + 1 - k));
+    const auto adj_y_k = y[k] + eq_share;
+    const auto z_k = inv_logit(adj_y_k);
+    x[k] = stick_len * z_k;
     lp += log(stick_len);
     lp -= log1p_exp(-adj_y_k);
     lp -= log1p_exp(adj_y_k);
-    stick_len -= x(k);  // equivalently *= (1 - z_k);
+    stick_len -= x[k];  // equivalently *= (1 - z_k);
   }
-  x(Km1) = stick_len;  // no Jacobian contrib for last dim
+  x[Km1] = stick_len;  // no Jacobian contrib for last dim
   return x;
 }
 
