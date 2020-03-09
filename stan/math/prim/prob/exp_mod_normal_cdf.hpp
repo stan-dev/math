@@ -23,6 +23,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T_inv_scale& lambda) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
+  using std::exp;
   static const char* function = "exp_mod_normal_cdf";
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -38,7 +39,6 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
     return 1.0;
   }
 
-  using std::exp;
   T_partials_return cdf(1.0);
   operands_and_partials<T_y, T_loc, T_scale, T_inv_scale> ops_partials(
       y, mu, sigma, lambda);

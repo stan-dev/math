@@ -18,24 +18,20 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale>
 return_type_t<T_y, T_loc, T_scale> lognormal_cdf(const T_y& y, const T_loc& mu,
                                                  const T_scale& sigma) {
-  static const char* function = "lognormal_cdf";
-
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
-
-  T_partials_return cdf = 1.0;
-
   using std::exp;
   using std::log;
-
-  if (size_zero(y, mu, sigma)) {
-    return cdf;
-  }
-
+  static const char* function = "lognormal_cdf";
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", sigma);
 
+  if (size_zero(y, mu, sigma)) {
+    return 1.0;
+  }
+
+  T_partials_return cdf = 1.0;
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
   scalar_seq_view<T_y> y_vec(y);

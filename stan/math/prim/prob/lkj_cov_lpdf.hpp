@@ -19,8 +19,6 @@ return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(
     const Eigen::Matrix<T_scale, Eigen::Dynamic, 1>& sigma,
     const T_shape& eta) {
   static const char* function = "lkj_cov_lpdf";
-
-  return_type_t<T_y, T_loc, T_scale, T_shape> lp(0.0);
   check_size_match(function, "Rows of location parameter", mu.rows(),
                    "columns of scale parameter", sigma.rows());
   check_square(function, "random variable", y);
@@ -30,6 +28,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(
   check_finite(function, "Location parameter", mu);
   check_finite(function, "Scale parameter", sigma);
   check_finite(function, "Covariance matrix", y);
+
+  return_type_t<T_y, T_loc, T_scale, T_shape> lp(0.0);
 
   const unsigned int K = y.rows();
   const Eigen::Array<T_y, Eigen::Dynamic, 1> sds = y.diagonal().array().sqrt();
@@ -65,12 +65,12 @@ return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const T_loc& mu, const T_scale& sigma, const T_shape& eta) {
   static const char* function = "lkj_cov_lpdf";
-
-  return_type_t<T_y, T_loc, T_scale, T_shape> lp(0.0);
   check_positive(function, "Shape parameter", eta);
   check_finite(function, "Location parameter", mu);
   check_finite(function, "Scale parameter", sigma);
   check_finite(function, "Covariance matrix", y);
+
+  return_type_t<T_y, T_loc, T_scale, T_shape> lp(0.0);
 
   const unsigned int K = y.rows();
   const Eigen::Array<T_y, Eigen::Dynamic, 1> sds = y.diagonal().array().sqrt();

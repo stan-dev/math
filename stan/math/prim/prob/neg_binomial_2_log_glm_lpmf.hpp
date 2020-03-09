@@ -26,6 +26,7 @@ namespace math {
  * neg_binomial_2_log_lpmf(y, alpha + x * beta, phi) by using analytically
  * simplified gradients.
  * If containers are supplied, returns the log sum of the probabilities.
+ *
  * @tparam T_y type of positive int vector of variates (labels);
  * this can also be a single positive integer value;
  * @tparam T_x_scalar type of a scalar in the matrix of independent variables
@@ -40,6 +41,7 @@ namespace math {
  * @tparam T_precision type of the (positive) precision(s);
  * this can be a vector (of the same length as y, for heteroskedasticity)
  * or a scalar.
+ *
  * @param y failures count scalar or vector parameter. If it is a scalar it will
  * be broadcast - used for all instances.
  * @param x design matrix or row vector. If it is a row vector it will be
@@ -59,14 +61,11 @@ return_type_t<T_x_scalar, T_alpha, T_beta, T_precision>
 neg_binomial_2_log_glm_lpmf(
     const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
     const T_alpha& alpha, const T_beta& beta, const T_precision& phi) {
-  static const char* function = "neg_binomial_2_log_glm_lpmf";
-
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::exp;
   using Eigen::log1p;
-
   using T_partials_return
       = partials_return_t<T_y, T_x_scalar, T_alpha, T_beta, T_precision>;
   using T_precision_val = typename std::conditional_t<
@@ -84,6 +83,7 @@ neg_binomial_2_log_glm_lpmf(
   const size_t N_instances = T_x_rows == 1 ? stan::math::size(y) : x.rows();
   const size_t N_attributes = x.cols();
 
+  static const char* function = "neg_binomial_2_log_glm_lpmf";
   check_consistent_size(function, "Vector of dependent variables", y,
                         N_instances);
   check_consistent_size(function, "Weight vector", beta, N_attributes);

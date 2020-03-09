@@ -108,7 +108,7 @@ class operation_cl : public operation_cl_base {
    * @param lhs Left-hand-side expression
    */
   template <typename T_lhs>
-  inline void evaluate_into(const T_lhs& lhs) const;
+  inline void evaluate_into(T_lhs& lhs) const;
 
   /**
    * Generates kernel source for evaluating \c this expression into given
