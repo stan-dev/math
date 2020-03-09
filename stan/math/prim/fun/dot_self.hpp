@@ -34,7 +34,8 @@ inline auto dot_self(StdVec&& x) {
  * @param v Vector.
  * @throw std::domain_error If v is not vector dimensioned.
  */
-template <typename EigVec, require_eigen_vector_vt<std::is_arithmetic, EigVec>* = nullptr>
+template <typename EigVec,
+          require_eigen_vector_vt<std::is_arithmetic, EigVec>* = nullptr>
 inline double dot_self(EigVec&& v) {
   return v.squaredNorm();
 }

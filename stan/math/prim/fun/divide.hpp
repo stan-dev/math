@@ -60,9 +60,8 @@ template <typename Vec, typename Scal, require_std_vector_t<Vec>* = nullptr,
           require_stan_scalar_t<Scal>* = nullptr>
 inline auto divide(const Vec& x, Scal c) {
   std::vector<value_type_t<Vec>> ret_x(x.size());
-  std::transform(x.begin(), x.end(), ret_x.begin(), [&c](auto&& x_iter) {
-    return x_iter / c;
-  });
+  std::transform(x.begin(), x.end(), ret_x.begin(),
+                 [&c](auto&& x_iter) { return x_iter / c; });
   return ret_x;
 }
 

@@ -59,9 +59,8 @@ inline auto ub_constrain(T&& x, U&& ub) {
  */
 template <typename EigT, typename U, require_eigen_t<EigT>* = nullptr>
 inline auto ub_constrain(EigT&& x, U&& ub) {
-  return x.unaryExpr([&ub](auto&& x_iter){
-    return ub_constrain(x_iter, ub);
-  }).eval();
+  return x.unaryExpr([&ub](auto&& x_iter) { return ub_constrain(x_iter, ub); })
+      .eval();
 }
 
 /**
@@ -86,12 +85,10 @@ inline auto ub_constrain(EigT&& x, U&& ub) {
 template <typename Vec, typename U, require_std_vector_t<Vec>* = nullptr>
 inline auto ub_constrain(Vec&& x, U&& ub) {
   std::vector<return_type_t<Vec, U>> ret_x(x.size());
-  std::transform(x.begin(), x.end(), ret_x.begin(), [&ub](auto&& x_iter){
-    return ub_constrain(x_iter, ub);
-  });
+  std::transform(x.begin(), x.end(), ret_x.begin(),
+                 [&ub](auto&& x_iter) { return ub_constrain(x_iter, ub); });
   return ret_x;
 }
-
 
 /**
  * Return the upper-bounded value for the specified unconstrained
@@ -117,7 +114,8 @@ inline auto ub_constrain(Vec&& x, U&& ub) {
  * @param[in,out] lp log density
  * @return scalar constrained to have upper bound
  */
-template <typename T, typename U, typename S, require_stan_scalar_t<T>* = nullptr>
+template <typename T, typename U, typename S,
+          require_stan_scalar_t<T>* = nullptr>
 inline auto ub_constrain(T&& x, U&& ub, S& lp) {
   using std::exp;
   if (ub == INFTY) {
@@ -151,11 +149,13 @@ inline auto ub_constrain(T&& x, U&& ub, S& lp) {
  * @param[in,out] lp log density
  * @return scalar constrained to have upper bound
  */
-template <typename EigT, typename U, typename S, require_eigen_t<EigT>* = nullptr>
+template <typename EigT, typename U, typename S,
+          require_eigen_t<EigT>* = nullptr>
 inline auto ub_constrain(EigT&& x, U& ub, S& lp) {
-  return x.unaryExpr([&ub, &lp](auto&& x_iter){
-    return ub_constrain(x_iter, ub, lp);
-  }).eval();
+  return x
+      .unaryExpr(
+          [&ub, &lp](auto&& x_iter) { return ub_constrain(x_iter, ub, lp); })
+      .eval();
 }
 
 /**
@@ -182,10 +182,11 @@ inline auto ub_constrain(EigT&& x, U& ub, S& lp) {
  * @param[in,out] lp log density
  * @return scalar constrained to have upper bound
  */
-template <typename Vec, typename U, typename S, require_std_vector_t<Vec>* = nullptr>
+template <typename Vec, typename U, typename S,
+          require_std_vector_t<Vec>* = nullptr>
 inline auto ub_constrain(Vec&& x, U&& ub, S& lp) {
   std::vector<return_type_t<Vec, U>> ret_x(x.size());
-  std::transform(x.begin(), x.end(), ret_x.begin(), [&ub, &lp](auto&& x_iter){
+  std::transform(x.begin(), x.end(), ret_x.begin(), [&ub, &lp](auto&& x_iter) {
     return ub_constrain(x_iter, ub, lp);
   });
   return ret_x;

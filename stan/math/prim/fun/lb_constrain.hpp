@@ -59,9 +59,8 @@ inline auto lb_constrain(T&& x, U&& lb) {
  */
 template <typename EigT, typename U, require_eigen_t<EigT>* = nullptr>
 inline auto lb_constrain(EigT&& x, U&& lb) {
-  return x.unaryExpr([&lb](auto&& x_iter){
-    return lb_constrain(x_iter, lb);
-  }).eval();
+  return x.unaryExpr([&lb](auto&& x_iter) { return lb_constrain(x_iter, lb); })
+      .eval();
 }
 
 /**
@@ -86,9 +85,8 @@ inline auto lb_constrain(EigT&& x, U&& lb) {
 template <typename Vec, typename U, require_std_vector_t<Vec>* = nullptr>
 inline auto lb_constrain(Vec&& x, U&& lb) {
   std::vector<return_type_t<Vec, U>> ret_x(x.size());
-  std::transform(x.begin(), x.end(), ret_x.begin(), [&lb](auto&& x_iter){
-    return lb_constrain(x_iter, lb);
-  });
+  std::transform(x.begin(), x.end(), ret_x.begin(),
+                 [&lb](auto&& x_iter) { return lb_constrain(x_iter, lb); });
   return ret_x;
 }
 
@@ -109,7 +107,8 @@ inline auto lb_constrain(Vec&& x, U&& lb) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename U, typename S, require_stan_scalar_t<T>* = nullptr>
+template <typename T, typename U, typename S,
+          require_stan_scalar_t<T>* = nullptr>
 inline auto lb_constrain(T&& x, U&& lb, S& lp) {
   using std::exp;
   if (lb == NEGATIVE_INFTY) {
@@ -136,11 +135,13 @@ inline auto lb_constrain(T&& x, U&& lb, S& lp) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename EigT, typename U, typename S, require_eigen_t<EigT>* = nullptr>
+template <typename EigT, typename U, typename S,
+          require_eigen_t<EigT>* = nullptr>
 inline auto lb_constrain(EigT&& x, U&& lb, S& lp) {
-  return x.unaryExpr([&lb, &lp](auto&& x_iter){
-    return lb_constrain(x_iter, lb, lp);
-  }).eval();
+  return x
+      .unaryExpr(
+          [&lb, &lp](auto&& x_iter) { return lb_constrain(x_iter, lb, lp); })
+      .eval();
 }
 
 /**
@@ -160,15 +161,15 @@ inline auto lb_constrain(EigT&& x, U&& lb, S& lp) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename Vec, typename U, typename S, require_std_vector_t<Vec>* = nullptr>
+template <typename Vec, typename U, typename S,
+          require_std_vector_t<Vec>* = nullptr>
 inline auto lb_constrain(Vec&& x, U&& lb, S& lp) {
   std::vector<return_type_t<Vec, U>> ret_x(x.size());
-  std::transform(x.begin(), x.end(), ret_x.begin(), [&lb, &lp](auto&& x_iter){
+  std::transform(x.begin(), x.end(), ret_x.begin(), [&lb, &lp](auto&& x_iter) {
     return lb_constrain(x_iter, lb, lp);
   });
   return ret_x;
 }
-
 
 }  // namespace math
 

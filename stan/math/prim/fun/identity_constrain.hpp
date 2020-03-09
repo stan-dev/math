@@ -17,7 +17,7 @@ namespace math {
  * @param[in] x free scalar
  * @return transformed input
  */
- template <typename Scalar, require_all_stan_scalar_t<Scalar>* = nullptr>
+template <typename Scalar, require_all_stan_scalar_t<Scalar>* = nullptr>
 inline decltype(auto) identity_constrain(Scalar&& x) {
   return std::forward<Scalar>(x);
 }
@@ -36,8 +36,8 @@ inline decltype(auto) identity_constrain(Scalar&& x) {
  * @param[in] args values to check for promotion rules.
  * @return transformed input
  */
- template <typename Scalar, typename... Types,
-  require_all_stan_scalar_t<Scalar, Types...>* = nullptr>
+template <typename Scalar, typename... Types,
+          require_all_stan_scalar_t<Scalar, Types...>* = nullptr>
 inline auto identity_constrain(Scalar&& x, Types&&... args) {
   return return_type_t<Scalar, Types...>(x);
 }

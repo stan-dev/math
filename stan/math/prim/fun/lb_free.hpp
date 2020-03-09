@@ -53,9 +53,8 @@ inline auto lb_free(T&& x, U&& lb) {
  */
 template <typename EigT, typename U, require_eigen_t<EigT>* = nullptr>
 inline auto lb_free(EigT&& x, U&& lb) {
-  return x.unaryExpr([&lb](auto&& y_iter){
-    return lb_free(y_iter, lb);
-  }).eval();
+  return x.unaryExpr([&lb](auto&& y_iter) { return lb_free(y_iter, lb); })
+      .eval();
 }
 
 /**
@@ -76,9 +75,8 @@ inline auto lb_free(EigT&& x, U&& lb) {
 template <typename Vec, typename U, require_std_vector_t<Vec>* = nullptr>
 inline auto lb_free(Vec&& x, U&& lb) {
   std::vector<return_type_t<Vec, U>> ret_x(x.size());
-  std::transform(x.begin(), x.end(), ret_x.begin(), [&lb](auto&& x_iter) {
-    return lb_free(x_iter, lb);
-  });
+  std::transform(x.begin(), x.end(), ret_x.begin(),
+                 [&lb](auto&& x_iter) { return lb_free(x_iter, lb); });
   return ret_x;
 }
 

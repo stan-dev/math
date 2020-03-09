@@ -9,7 +9,7 @@ auto g1(const T& x, const U& lb) {
 }
 template <typename T, typename U>
 auto g2(const T& x, const U& lb) {
-  stan::return_type_t<T, U>  lp = 0;
+  stan::return_type_t<T, U> lp = 0;
   auto x_cons = stan::math::lb_constrain(x, lb, lp);
   auto x_free = stan::math::lb_free(x_cons, lb);
   return x_free;
@@ -17,7 +17,7 @@ auto g2(const T& x, const U& lb) {
 
 template <typename T, typename U>
 auto g3(const T& x, const U& lb) {
-  stan::return_type_t<T, U>  lp = 0;
+  stan::return_type_t<T, U> lp = 0;
   auto x_cons = stan::math::lb_constrain(x, lb, lp);
   auto x_free = stan::math::lb_free(x_cons, lb);
   return lp;

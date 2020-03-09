@@ -27,9 +27,11 @@ inline decltype(auto) vec_concat(Vec&& v1) {
  * @param args variadic arguments passed down to the next recursion
  * @return Vector of OpenCL events
  */
-template <typename Vec, typename... VecArgs, require_all_std_vector_t<Vec, VecArgs...>* = nullptr>
+template <typename Vec, typename... VecArgs,
+          require_all_std_vector_t<Vec, VecArgs...>* = nullptr>
 inline auto vec_concat(Vec&& v1, VecArgs&&... args) {
-  std::vector<value_type_t<Vec>> vec = vec_concat(std::forward<VecArgs>(args)...);
+  std::vector<value_type_t<Vec>> vec
+      = vec_concat(std::forward<VecArgs>(args)...);
   vec.insert(vec.end(), v1.begin(), v1.end());
   return vec;
 }

@@ -36,7 +36,7 @@ inline decltype(auto) identity_free(Scalar&& x) {
  * @return value promoted to the least upper bound of all input types.
  */
 template <typename Scalar, typename... Types,
- require_all_stan_scalar_t<Scalar, Types...>* = nullptr>
+          require_all_stan_scalar_t<Scalar, Types...>* = nullptr>
 inline auto identity_free(Scalar&& x, Types&&... args) {
   return return_type_t<Scalar, Types...>(x);
 }
