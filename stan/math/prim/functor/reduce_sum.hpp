@@ -33,18 +33,20 @@ template <typename ReduceFunction, typename Enable, typename ReturnType,
           typename Vec, typename... Args>
 struct reduce_sum_impl {
   template <typename OpVec, typename... OpArgs,
-  typename = require_same_t<Vec, OpVec>,
-  typename = require_all_t<std::is_same<Args, OpArgs>...>>
-  return_type_t<OpVec, OpArgs...> operator()(OpVec&& vmapped, std::size_t grainsize, std::ostream* msgs,
-    OpArgs&&... args) const {
+            typename = require_same_t<Vec, OpVec>,
+            typename = require_all_t<std::is_same<Args, OpArgs>...>>
+  return_type_t<OpVec, OpArgs...> operator()(OpVec&& vmapped,
+                                             std::size_t grainsize,
+                                             std::ostream* msgs,
+                                             OpArgs&&... args) const {
     const std::size_t num_jobs = vmapped.size();
 
     if (num_jobs == 0) {
-      return 0.0;      
+      return 0.0;
     }
 
     return ReduceFunction()(0, vmapped.size() - 1, std::forward<OpVec>(vmapped),
-      msgs, std::forward<OpArgs>(args)...);
+                            msgs, std::forward<OpArgs>(args)...);
   }
 };
 
@@ -72,10 +74,11 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
     return_type_t<Vec, Args...> sum_{0.0};
 
     template <typename OpVec, typename... OpArgs,
-    typename = require_same_t<Vec, OpVec>,
-    typename = require_all_t<std::is_same<Args, OpArgs>...>>
+              typename = require_same_t<Vec, OpVec>,
+              typename = require_all_t<std::is_same<Args, OpArgs>...>>
     recursive_reducer(OpVec&& vmapped, std::ostream* msgs, OpArgs&&... args)
-        : vmapped_(std::forward<OpVec>(vmapped)), msgs_(msgs),
+        : vmapped_(std::forward<OpVec>(vmapped)),
+          msgs_(msgs),
           args_tuple_(std::forward<OpArgs>(args)...) {}
 
     recursive_reducer(recursive_reducer& other, tbb::split)
@@ -112,18 +115,18 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
   };
 
   template <typename OpVec, typename... OpArgs,
-  typename = require_same_t<Vec, OpVec>,
-  typename = require_all_t<std::is_same<Args, OpArgs>...>>
+            typename = require_same_t<Vec, OpVec>,
+            typename = require_all_t<std::is_same<Args, OpArgs>...>>
   return_type_t<OpVec, OpArgs...> operator()(OpVec&& vmapped,
-                                         std::size_t grainsize,
-                                         std::ostream* msgs,
-                                         OpArgs&&... args) const {
+                                             std::size_t grainsize,
+                                             std::ostream* msgs,
+                                             OpArgs&&... args) const {
     const std::size_t num_jobs = vmapped.size();
     if (num_jobs == 0) {
       return 0.0;
     }
     recursive_reducer worker(std::forward<OpVec>(vmapped), msgs,
-     std::forward<OpArgs>(args)...);
+                             std::forward<OpArgs>(args)...);
 
 #ifdef STAN_DETERMINISTIC
     tbb::static_partitioner partitioner;
@@ -150,15 +153,14 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
  * that any internal state of the functor is causing trouble. Thus,
  * the functor must be default constructible without any arguments.
  */
-template <typename ReduceFunction, typename Vec, typename = require_vector_like_t<Vec>,
-          typename... Args>
+template <typename ReduceFunction, typename Vec,
+          typename = require_vector_like_t<Vec>, typename... Args>
 auto reduce_sum(Vec&& vmapped, std::size_t grainsize, std::ostream* msgs,
                 Args&&... args) {
   using return_type = return_type_t<Vec, Args...>;
   return internal::reduce_sum_impl<ReduceFunction, void, return_type, Vec,
-                                   Args...>()(std::forward<Vec>(vmapped),
-                                              grainsize, msgs,
-                                              std::forward<Args>(args)...);
+                                   Args...>()(
+      std::forward<Vec>(vmapped), grainsize, msgs, std::forward<Args>(args)...);
 }
 
 }  // namespace math

@@ -174,9 +174,8 @@ struct grouped_count_lpdf {
 
   // does the reduction in the sub-slice start to end
   template <typename VecInt1, typename VecT, typename VecInt2>
-  inline T operator()(std::size_t start, std::size_t end,
-                      VecInt1&& sub_slice, std::ostream* msgs,
-                      VecT&& lambda, VecInt2&& gidx) const {
+  inline T operator()(std::size_t start, std::size_t end, VecInt1&& sub_slice,
+                      std::ostream* msgs, VecT&& lambda, VecInt2&& gidx) const {
     const std::size_t num_terms = end - start + 1;
     // std::cout << "sub-slice " << start << " - " << end << "; num_terms = " <<
     // num_terms << "; size = " << sub_slice.size() << std::endl;

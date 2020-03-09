@@ -27,15 +27,14 @@ auto sum_(Vec&& arg) {
 
 struct sum_lpdf {
   template <typename T, typename... Args>
-  inline auto operator()(std::size_t start, std::size_t end,
-                         T&& sub_slice, std::ostream* msgs,
-                         Args&&... args) const {
+  inline auto operator()(std::size_t start, std::size_t end, T&& sub_slice,
+                         std::ostream* msgs, Args&&... args) const {
     using return_type = stan::return_type_t<T, Args...>;
 
     return stan::math::sum(sub_slice)
            + sub_slice.size()
-                 * stan::math::sum(
-                       std::vector<return_type>{return_type(sum_(std::forward<Args>(args)))...});
+                 * stan::math::sum(std::vector<return_type>{
+                       return_type(sum_(std::forward<Args>(args)))...});
   }
 };
 
@@ -51,9 +50,8 @@ TEST(MathMix_reduce_sum, double_slice) {
 
 struct start_end_lpdf {
   template <typename T1, typename T2>
-  inline auto operator()(std::size_t start, std::size_t end,
-                         T1&&, std::ostream* msgs,
-                         T2&& data) const {
+  inline auto operator()(std::size_t start, std::size_t end, T1&&,
+                         std::ostream* msgs, T2&& data) const {
     stan::return_type_t<T1, T2> sum = 0;
     EXPECT_GE(start, 0);
     EXPECT_LE(end, data.size() - 1);
@@ -195,7 +193,7 @@ TEST(MathMix_reduce_sum, eigen_three_args_with_ints2) {
   Eigen::MatrixXd arg3 = Eigen::MatrixXd::Ones(2, 2);
 
   stan::test::expect_ad(
-    [&](auto&& arg1, auto&& arg2, auto&& arg3) {
+      [&](auto&& arg1, auto&& arg2, auto&& arg3) {
         return fi(1, arg1, std::vector<int>{1, 2, 3}, arg2, 3, arg3);
       },
       arg1, arg2, arg3);

@@ -31,13 +31,13 @@ template <typename ReduceFunction, typename ReturnType, typename Vec,
           typename... Args>
 struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                        Vec, Args...> {
- /**
-  * Internal object used in `tbb::parallel_reduce`
-  * @note see link [here](https://tinyurl.com/vp7xw2t) for requirements.
-  */
+  /**
+   * Internal object used in `tbb::parallel_reduce`
+   * @note see link [here](https://tinyurl.com/vp7xw2t) for requirements.
+   */
   struct recursive_reducer {
-    size_t num_shared_terms_; // Number of terms shared across threads
-    double* sliced_partials_; // Points to adjoints of the partial calculations
+    size_t num_shared_terms_;  // Number of terms shared across threads
+    double* sliced_partials_;  // Points to adjoints of the partial calculations
     Vec vmapped_;
     std::ostream* msgs_;
     std::tuple<Args...> args_tuple_;
@@ -46,8 +46,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
     template <typename VecT, typename... ArgsT>
     recursive_reducer(size_t num_shared_terms, double* sliced_partials,
-                      VecT&& vmapped, std::ostream* msgs,
-                      ArgsT&&... args)
+                      VecT&& vmapped, std::ostream* msgs, ArgsT&&... args)
         : num_shared_terms_(num_shared_terms),
           sliced_partials_(sliced_partials),
           vmapped_(std::forward<VecT>(vmapped)),
@@ -67,7 +66,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
      * @param arg For lvalue references this will be passed by reference.
      *  Otherwise it will be moved.
      */
-    template <typename Arith, typename = require_arithmetic_t<scalar_type_t<Arith>>>
+    template <typename Arith,
+              typename = require_arithmetic_t<scalar_type_t<Arith>>>
     inline decltype(auto) deep_copy(Arith&& arg) {
       return std::forward<Arith>(arg);
     }
@@ -116,9 +116,10 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
      */
     template <typename EigT, require_eigen_vt<is_var, EigT>* = nullptr>
     inline auto deep_copy(EigT&& arg) {
-      return arg.unaryExpr([](auto&& x) {
-         return var(new vari(x.val(), false));
-       }).eval();;
+      return arg
+          .unaryExpr([](auto&& x) { return var(new vari(x.val(), false)); })
+          .eval();
+      ;
     }
 
     /**
@@ -143,7 +144,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
      * @param x A vector of vars to accumulate the adjoint of.
      * @param args Further args to accumulate over.
      */
-    template <typename VarVec, require_std_vector_vt<is_var, VarVec>* = nullptr, typename... Pargs>
+    template <typename VarVec, require_std_vector_vt<is_var, VarVec>* = nullptr,
+              typename... Pargs>
     inline double* accumulate_adjoints(double* dest, VarVec&& x,
                                        Pargs&&... args) {
       for (auto&& x_iter : x) {
@@ -154,16 +156,18 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     }
 
     /**
-     * Accumulates adjoints for a standard vector of containers within the reduce.
-     * @tparam VecContainer the type of a standard container holding var containers.
+     * Accumulates adjoints for a standard vector of containers within the
+     * reduce.
+     * @tparam VecContainer the type of a standard container holding var
+     * containers.
      * @tparam Pargs types of further arguments to accumulate over.
      * @param dest points to values holding adjoint accumulate.
      * @param x A vector of var containers to accumulate the adjoint of.
      * @param args Further args to accumulate over.
      */
     template <typename VecContainer,
-        require_std_vector_st<is_var, VecContainer>* = nullptr,
-        require_std_vector_vt<is_container, VecContainer>* = nullptr,
+              require_std_vector_st<is_var, VecContainer>* = nullptr,
+              require_std_vector_vt<is_container, VecContainer>* = nullptr,
               typename... Pargs>
     inline double* accumulate_adjoints(double* dest, VecContainer&& x,
                                        Pargs&&... args) {
@@ -230,8 +234,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       }
       auto args_tuple_local_copy = apply(
           [&](auto&&... args) {
-            return std::tuple<decltype(deep_copy(args))...>(
-                deep_copy(args)...);
+            return std::tuple<decltype(deep_copy(args))...>(deep_copy(args)...);
           },
           this->args_tuple_);
       var sub_sum_v = apply(
@@ -246,7 +249,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       apply(
           [&](auto&&... args) {
             return accumulate_adjoints(args_adjoints_.data(),
-             std::forward<decltype(args)>(args)...);
+                                       std::forward<decltype(args)>(args)...);
           },
           std::move(args_tuple_local_copy));
     }
@@ -262,7 +265,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       this->sum_ += rhs.sum_;
       if (this->args_adjoints_.size() != 0 && rhs.args_adjoints_.size() != 0) {
         this->args_adjoints_ += rhs.args_adjoints_;
-      } else if (this->args_adjoints_.size() == 0 && rhs.args_adjoints_.size() != 0) {
+      } else if (this->args_adjoints_.size() == 0
+                 && rhs.args_adjoints_.size() != 0) {
         this->args_adjoints_ = rhs.args_adjoints_;
       }
     }
@@ -274,11 +278,13 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    * @tparam Pargs Types to be forwarded to recursive call of `count_var_impl`.
    * @param[in] count The current count of the number of vars.
    * @param[in] x A vector holding vars.
-   * @param[in] args objects to be forwarded to recursive call of `count_var_impl`
+   * @param[in] args objects to be forwarded to recursive call of
+   * `count_var_impl`
    */
-  template <typename VecVar, require_std_vector_vt<is_var, VecVar>* = nullptr, typename... Pargs>
+  template <typename VecVar, require_std_vector_vt<is_var, VecVar>* = nullptr,
+            typename... Pargs>
   inline size_t count_var_impl(size_t count, VecVar&& x,
-                        Pargs&&... args) const {
+                               Pargs&&... args) const {
     return count_var_impl(count + x.size(), std::forward<Pargs>(args)...);
   }
 
@@ -288,12 +294,15 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    * @tparam Pargs Types to be forwarded to recursive call of `count_var_impl`.
    * @param[in] count The current count of the number of vars.
    * @param[in] x A vector holding containers of vars.
-   * @param[in] args objects to be forwarded to recursive call of `count_var_impl`
+   * @param[in] args objects to be forwarded to recursive call of
+   * `count_var_impl`
    */
-  template <typename VecContainer, require_std_vector_st<is_var, VecContainer>* = nullptr,
+  template <typename VecContainer,
+            require_std_vector_st<is_var, VecContainer>* = nullptr,
             require_std_vector_vt<is_container, VecContainer>* = nullptr,
             typename... Pargs>
-  inline size_t count_var_impl(size_t count, VecContainer&& x, Pargs&&... args) const {
+  inline size_t count_var_impl(size_t count, VecContainer&& x,
+                               Pargs&&... args) const {
     for (auto&& x_iter : x) {
       count = count_var_impl(count, x_iter);
     }
@@ -305,7 +314,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    * @tparam Pargs Types to be forwarded to recursive call of `count_var_impl`.
    * @param[in] count The current count of the number of vars.
    * @param[in] x An Eigen container holding vars.
-   * @param[in] args objects to be forwarded to recursive call of `count_var_impl`
+   * @param[in] args objects to be forwarded to recursive call of
+   * `count_var_impl`
    */
   template <typename EigT, require_eigen_vt<is_var, EigT>* = nullptr,
             typename... Pargs>
@@ -318,20 +328,25 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    * @tparam Pargs Types to be forwarded to recursive call of `count_var_impl`.
    * @param[in] count The current count of the number of vars.
    * @param[in] x A var.
-   * @param[in] args objects to be forwarded to recursive call of `count_var_impl`
+   * @param[in] args objects to be forwarded to recursive call of
+   * `count_var_impl`
    */
   template <typename... Pargs>
-  inline size_t count_var_impl(size_t count, const var& x, Pargs&&... args) const {
+  inline size_t count_var_impl(size_t count, const var& x,
+                               Pargs&&... args) const {
     return count_var_impl(count + 1, std::forward<Pargs>(args)...);
   }
 
   /**
-   * Specialization that performs skips count for arithmetic types and containers.
-   * @tparam Arith An object that is either arithmetic or holds arithmetic types.
+   * Specialization that performs skips count for arithmetic types and
+   * containers.
+   * @tparam Arith An object that is either arithmetic or holds arithmetic
+   * types.
    * @tparam Pargs Types to be forwarded to recursive call of `count_var_impl`.
    * @param[in] count The current count of the number of vars.
    * @param[in] x An arithmetic value or container.
-   * @param[in] args objects to be forwarded to recursive call of `count_var_impl`
+   * @param[in] args objects to be forwarded to recursive call of
+   * `count_var_impl`
    */
   template <typename Arith,
             require_arithmetic_t<scalar_type_t<Arith>>* = nullptr,
@@ -387,7 +402,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
   }
 
   /**
-   * Store a reference to an std vector of containers's `vari` used in `reduce_sum`.
+   * Store a reference to an std vector of containers's `vari` used in
+   * `reduce_sum`.
    * @tparam VecContainer Type of standard vector holding containers of vars.
    * @tparam Pargs Types to be forwarded to recursive call of `save_varis`.
    * @param[in, out] dest Pointer to set of varis.
@@ -398,7 +414,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
             require_std_vector_st<is_var, VecContainer>* = nullptr,
             require_std_vector_vt<is_container, VecContainer>* = nullptr,
             typename... Pargs>
-  inline vari** save_varis(vari** dest, VecContainer&& x, Pargs&&... args) const {
+  inline vari** save_varis(vari** dest, VecContainer&& x,
+                           Pargs&&... args) const {
     for (size_t i = 0; i < x.size(); ++i) {
       dest = save_varis(dest, x[i]);
     }
@@ -418,20 +435,23 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
   inline vari** save_varis(vari** dest, EigT&& x, Pargs&&... args) const {
     using mat_t = std::decay_t<EigT>;
     using write_map = Eigen::Map<Eigen::Matrix<vari*, mat_t::RowsAtCompileTime,
-     mat_t::ColsAtCompileTime>>;
+                                               mat_t::ColsAtCompileTime>>;
     write_map(dest, x.rows(), x.cols()) = x.vi();
     return save_varis(dest + x.size(), std::forward<Pargs>(args)...);
   }
 
   /**
-   * Specialization to skip over arithmetic types and containers of arithmetic types.
-   * @tparam Arith either an arithmetic type or container holding arithmetic types.
+   * Specialization to skip over arithmetic types and containers of arithmetic
+   * types.
+   * @tparam Arith either an arithmetic type or container holding arithmetic
+   * types.
    * @tparam Pargs Types to be forwarded to recursive call of `save_varis`.
    * @param[in, out] dest Pointer to set of varis.
    * @param[in] x arithmetic or container of arithmetics.
    * @param[in] args Further arguments forwarded to recursive call.
    */
-  template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>* = nullptr,
+  template <typename Arith,
+            require_arithmetic_t<scalar_type_t<Arith>>* = nullptr,
             typename... Pargs>
   inline vari** save_varis(vari** dest, Arith&& x, Pargs&&... args) const {
     return save_varis(dest, std::forward<Pargs>(args)...);
@@ -444,14 +464,14 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
   inline vari** save_varis(vari** dest) const { return dest; }
 
   template <typename OpVec, typename... OpArgs,
-  typename = require_same_t<Vec, OpVec>,
-  typename = require_all_t<std::is_same<Args, OpArgs>...>>
-  inline var operator()(OpVec&& vmapped, std::size_t grainsize, std::ostream* msgs,
-                 OpArgs&&... args) const {
+            typename = require_same_t<Vec, OpVec>,
+            typename = require_all_t<std::is_same<Args, OpArgs>...>>
+  inline var operator()(OpVec&& vmapped, std::size_t grainsize,
+                        std::ostream* msgs, OpArgs&&... args) const {
     const std::size_t num_jobs = vmapped.size();
 
     if (num_jobs == 0) {
-      return var(0.0);      
+      return var(0.0);
     }
 
     const std::size_t num_sliced_terms = count_var(vmapped);
