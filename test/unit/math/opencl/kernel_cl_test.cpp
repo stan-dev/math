@@ -13,9 +13,9 @@ TEST(MathGpu, make_kernel) {
   stan::math::matrix_d m(3, 3);
 
   stan::math::matrix_cl<double> m_cl(m.cols(), m.rows());
-  stan::math::opencl_kernels::fill(cl::NDRange(m_cl.rows(), m_cl.cols()),
-                                        m_cl, 0, m_cl.rows(), m_cl.cols(),
-                                        stan::math::matrix_cl_view::Entire);
+  stan::math::opencl_kernels::fill(cl::NDRange(m_cl.rows(), m_cl.cols()), m_cl,
+                                   0, m_cl.rows(), m_cl.cols(),
+                                   stan::math::matrix_cl_view::Entire);
   m = stan::math::from_matrix_cl(m_cl);
 }
 
