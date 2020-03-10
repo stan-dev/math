@@ -40,7 +40,8 @@ class broadcast_array {
 
 template <typename T, typename S, typename Enable = void>
 class empty_broadcast_array {
- using T_decay = std::decay_t<T>;
+  using T_decay = std::decay_t<T>;
+
  public:
   empty_broadcast_array() {}
   /** \ingroup type_trait
