@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/i_times.hpp>
 #include <stan/math/prim/fun/sinh.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {

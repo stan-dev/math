@@ -2,8 +2,8 @@
 #define STAN_MATH_REV_FUN_SIN_HPP
 
 #include <stan/math/prim/fun/sin.hpp>
-#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <cmath>
 #include <complex>
 

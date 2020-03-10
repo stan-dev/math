@@ -1,9 +1,11 @@
 #ifndef STAN_MATH_REV_FUN_COS_HPP
 #define STAN_MATH_REV_FUN_COS_HPP
 
-#include <stan/math/rev/meta.hpp>
+#include <stan/math/prim/fun/cos.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -44,6 +46,17 @@ class cos_vari : public op_v_vari {
  * @return Cosine of variable.
  */
 inline var cos(const var& a) { return var(new internal::cos_vari(a.vi_)); }
+
+/**
+ * Return the cosine of the complex argument.
+ *
+ * @param[in] z argument
+ * @return cosine of the argument
+ */
+inline std::complex<var> cos(const std::complex<var>& z) {
+  return stan::math::internal::complex_cos(z);
+}
+
 
 }  // namespace math
 }  // namespace stan
