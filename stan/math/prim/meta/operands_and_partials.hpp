@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_META_OPERANDS_AND_PARTIALS_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/broadcast_array.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
 #include <vector>
@@ -40,7 +39,6 @@ template <typename ViewElt, typename Op, typename Enable = void>
 class ops_partials_edge {
  public:
   empty_broadcast_array<ViewElt, Op> partials_;
-  empty_broadcast_array<ViewElt, Op> partials_vec_;
 
   ops_partials_edge() {}
   explicit ops_partials_edge(const Op& /* op */) {}
