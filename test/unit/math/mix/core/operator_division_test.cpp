@@ -17,4 +17,18 @@ TEST(mathMixCore, operatorDivision) {
       }
     }
   }
+  for (auto re1 : common_finite) {
+      for (auto re2 : common_finite) {
+        for (auto im2 : common_finite_nz) {
+          stan::test::expect_ad(f, re1, std::complex<double>(re2, im2));
+        }
+      }
+  }
+  for (auto re1 : common_finite) {
+    for (auto im1 : common_finite_nz) {
+      for (auto re2 : common_finite) {
+  	stan::test::expect_ad(f, std::complex<double>(re1, im1), re2);
+      }
+    }
+  }
 }

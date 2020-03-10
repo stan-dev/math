@@ -1743,10 +1743,24 @@ void expect_complex_common(const F& f) {
 
 template <typename F>
 void expect_complex_common_binary(const F& f) {
+  auto xs = common_complex_parts();
   auto zs = common_complex();
+  // complex, complex
   for (auto z1 : zs) {
     for (auto z2 : zs) {
       expect_ad(f, z1, z2);
+    }
+  }
+  // complex, real
+  for (auto z1 : zs) {
+    for (auto x2 : xs) {
+      expect_ad(f, z1, x2);
+    }
+  }
+  // real, complex
+  for (auto x1 : xs) {
+    for (auto z2 : zs) {
+      expect_ad(f, x1, z2);
     }
   }
 }
