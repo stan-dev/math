@@ -24,6 +24,9 @@ return_type_t<T_y, T_shape, T_scale> frechet_cdf(const T_y& y,
                                                  const T_shape& alpha,
                                                  const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
+  using std::exp;
+  using std::log;
+  using std::pow;
   static const char* function = "frechet_cdf";
   check_positive(function, "Random variable", y);
   check_positive_finite(function, "Shape parameter", alpha);
@@ -33,9 +36,6 @@ return_type_t<T_y, T_shape, T_scale> frechet_cdf(const T_y& y,
     return 1.0;
   }
 
-  using std::exp;
-  using std::log;
-  using std::pow;
   T_partials_return cdf(1.0);
   operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
 

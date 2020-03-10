@@ -45,8 +45,6 @@ categorical_logit_glm_lpmf(
     const Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, Eigen::Dynamic>& beta) {
   using T_partials_return
       = partials_return_t<T_x_scalar, T_alpha_scalar, T_beta_scalar>;
-  static const char* function = "categorical_logit_glm_lpmf";
-
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -57,6 +55,7 @@ categorical_logit_glm_lpmf(
   const size_t N_attributes = x.cols();
   const size_t N_classes = beta.cols();
 
+  static const char* function = "categorical_logit_glm_lpmf";
   check_consistent_size(function, "Vector of dependent variables", y,
                         N_instances);
   check_consistent_size(function, "Intercept vector", alpha, N_classes);

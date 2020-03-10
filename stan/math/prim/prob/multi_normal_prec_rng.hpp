@@ -31,9 +31,7 @@ inline typename StdVectorBuilder<true, Eigen::VectorXd, T_loc>::type
 multi_normal_prec_rng(const T_loc &mu, const Eigen::MatrixXd &S, RNG &rng) {
   using boost::normal_distribution;
   using boost::variate_generator;
-
   static const char *function = "multi_normal_prec_rng";
-
   check_positive(function, "Precision matrix rows", S.rows());
   check_finite(function, "Precision matrix", S);
   check_symmetric(function, "Precision matrix", S);

@@ -21,6 +21,7 @@ namespace math {
  * The idea is that normal_id_glm_lpdf(y, x, alpha, beta, sigma) should
  * compute a more efficient version of normal_lpdf(y, alpha + x * beta, sigma)
  * by using analytically simplified gradients.
+ *
  * @tparam T_y type of vector of dependent variables (labels);
  * @tparam T_x_scalar type of a scalar in the matrix of independent variables
  * (features)
@@ -34,6 +35,7 @@ namespace math {
  * @tparam T_scale type of the (positive) scale(s);
  * this can be a vector (of the same length as y, for heteroskedasticity)
  * or a scalar.
+ *
  * @param y scalar or vector of dependent variables. If it is a scalar it will
  * be broadcast - used for all instances.
  * @param x design matrix or row vector. If it is a row vector it will be
@@ -56,7 +58,6 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
-
   using T_partials_return
       = partials_return_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale>;
   using T_scale_val = typename std::conditional_t<
@@ -67,11 +68,10 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
       typename std::conditional_t<T_x_rows == 1, T_partials_return,
                                   Array<T_partials_return, Dynamic, 1>>;
 
-  static const char *function = "normal_id_glm_lpdf";
-
   const size_t N_instances = T_x_rows == 1 ? stan::math::size(y) : x.rows();
   const size_t N_attributes = x.cols();
 
+  static const char *function = "normal_id_glm_lpdf";
   check_consistent_size(function, "Vector of dependent variables", y,
                         N_instances);
   check_consistent_size(function, "Weight vector", beta, N_attributes);
@@ -83,7 +83,6 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   if (size_zero(y, sigma)) {
     return 0;
   }
-
   if (!include_summand<propto, T_y, T_x_scalar, T_alpha, T_beta,
                        T_scale>::value) {
     return 0;

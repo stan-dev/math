@@ -34,6 +34,8 @@ template <typename T_n, typename T_N, typename T_prob>
 return_type_t<T_prob> binomial_cdf(const T_n& n, const T_N& N,
                                    const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_N, T_prob>;
+  using std::exp;
+  using std::pow;
   static const char* function = "binomial_cdf";
   check_nonnegative(function, "Population size parameter", N);
   check_finite(function, "Probability parameter", theta);
@@ -46,8 +48,6 @@ return_type_t<T_prob> binomial_cdf(const T_n& n, const T_N& N,
     return 1.0;
   }
 
-  using std::exp;
-  using std::pow;
   T_partials_return P(1.0);
   operands_and_partials<T_prob> ops_partials(theta);
 

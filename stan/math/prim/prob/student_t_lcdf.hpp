@@ -24,28 +24,27 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
                                                          const T_loc& mu,
                                                          const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_dof, T_loc, T_scale>;
-
-  if (size_zero(y, nu, mu, sigma)) {
-    return 0.0;
-  }
-
+  using std::exp;
+  using std::log;
+  using std::pow;
   static const char* function = "student_t_lcdf";
-
-  T_partials_return P(0.0);
-
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", sigma);
 
+  if (size_zero(y, nu, mu, sigma)) {
+    return 0;
+  }
+
+  T_partials_return P(0.0);
+  operands_and_partials<T_y, T_dof, T_loc, T_scale> ops_partials(y, nu, mu,
+                                                                 sigma);
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_dof> nu_vec(nu);
   scalar_seq_view<T_loc> mu_vec(mu);
   scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, nu, mu, sigma);
-
-  operands_and_partials<T_y, T_dof, T_loc, T_scale> ops_partials(y, nu, mu,
-                                                                 sigma);
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
@@ -54,10 +53,6 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
       return ops_partials.build(negative_infinity());
     }
   }
-
-  using std::exp;
-  using std::log;
-  using std::pow;
 
   T_partials_return digammaHalf = 0;
 
