@@ -1,9 +1,11 @@
 #ifndef STAN_MATH_REV_FUN_SIN_HPP
 #define STAN_MATH_REV_FUN_SIN_HPP
 
+#include <stan/math/prim/fun/sin.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -44,6 +46,16 @@ class sin_vari : public op_v_vari {
  * @return Sine of variable.
  */
 inline var sin(const var& a) { return var(new internal::sin_vari(a.vi_)); }
+
+/**
+ * Return the sine of the complex argument.
+ *
+ * @param[in] z argument
+ * @return sine of the argument
+ */
+inline std::complex<var> sin(const std::complex<var>& z) {
+  return stan::math::internal::complex_sin(z);
+}
 
 }  // namespace math
 }  // namespace stan

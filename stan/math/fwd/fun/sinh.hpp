@@ -26,7 +26,7 @@ inline fvar<T> sinh(const fvar<T>& x) {
  */
 template <typename T>
 inline std::complex<fvar<T>> sinh(const std::complex<fvar<T>>& z) {
-  return stan::math::internal::complex_sinh(z);
+  return internal::complex_sinh(z);
 }
 
 }  // namespace math
