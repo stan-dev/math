@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <complex>
 
 TEST(mathMixFun, asinh) {
   auto f = [](const auto& x1) {

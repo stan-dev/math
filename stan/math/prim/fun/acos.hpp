@@ -1,9 +1,13 @@
 #ifndef STAN_MATH_PRIM_FUN_ACOS_HPP
 #define STAN_MATH_PRIM_FUN_ACOS_HPP
 
+#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/asin.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -46,6 +50,22 @@ template <typename Derived,
 inline auto acos(const Eigen::MatrixBase<Derived>& x) {
   return x.derived().array().acos().matrix().eval();
 }
+
+namespace internal {
+/**
+ * Return the arc cosine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return arc cosine of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_acos(const std::complex<V>& z) {
+  return V(0.5 * pi()) - asin(z);
+}
+}
+
+
 
 }  // namespace math
 }  // namespace stan
