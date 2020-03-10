@@ -1,8 +1,11 @@
 #ifndef STAN_MATH_FWD_FUN_TAN_HPP
 #define STAN_MATH_FWD_FUN_TAN_HPP
 
-#include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/meta.hpp>
+#include <stan/math/prim/fun/tan.hpp>
+#include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
