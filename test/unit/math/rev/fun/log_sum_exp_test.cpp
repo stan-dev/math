@@ -25,5 +25,4 @@ TEST(log_sum_exp_tests, large_values) {
  output3.grad();
  EXPECT_FLOAT_EQ(a3.adj(), 0.0);
  EXPECT_FLOAT_EQ(a4.adj(), 1.0);
-
 }
