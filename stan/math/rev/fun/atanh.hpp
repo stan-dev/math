@@ -1,9 +1,11 @@
 #ifndef STAN_MATH_REV_FUN_ATANH_HPP
 #define STAN_MATH_REV_FUN_ATANH_HPP
 
+#include <stan/math/prim/fun/atanh.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/fun/atanh.hpp>
+#include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -57,6 +59,16 @@ class atanh_vari : public op_v_vari {
    */
 inline var atanh(const var& a) {
   return var(new internal::atanh_vari(atanh(a.val()), a.vi_));
+}
+
+/**
+ * Return the hyperbolic arc tangent of the complex argument.
+ *
+ * @param[in] z argument
+ * @return hyperbolic arc tangent of the argument
+ */
+inline std::complex<var> atanh(const std::complex<var>& z) {
+  return stan::math::internal::complex_atanh(z);
 }
 
 }  // namespace math
