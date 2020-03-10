@@ -12,7 +12,7 @@
 #include <stan/math/opencl/identity.hpp>
 #include <stan/math/opencl/sub_block.hpp>
 #include <stan/math/opencl/zeros.hpp>
-#include <stan/math/opencl/prim/transpose.hpp>
+#include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <cmath>
 #include <string>
