@@ -6,6 +6,7 @@
 #include <test/unit/math/opencl/kernel_generator/reference_kernel.hpp>
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
+#include <string>
 
 using Eigen::MatrixXd;
 using stan::math::matrix_cl;
