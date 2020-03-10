@@ -17,10 +17,17 @@ inline fvar<T> asinh(const fvar<T>& x) {
   return fvar<T>(asinh(x.val_), x.d_ / sqrt(square(x.val_) + 1));
 }
 
-// template <typename T>
-// inline std::complex<fvar<T>> asinh(const std::complex<fvar<T>>& z) {
-//   return internal::complex_asinh(z);
-// }
+/**
+ * Return the hyperbolic arcsine of the complex argument.
+ *
+ * @tparam T autodiff value type
+ * @param[in] z argument
+ * @return hyperbolic arcsine of the argument
+ */
+template <typename T>
+inline std::complex<fvar<T>> asinh(const std::complex<fvar<T>>& z) {
+  return internal::complex_asinh(z);
+}
 
 }  // namespace math
 }  // namespace stan

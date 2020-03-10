@@ -1,10 +1,11 @@
 #ifndef STAN_MATH_REV_FUN_ACOSH_HPP
 #define STAN_MATH_REV_FUN_ACOSH_HPP
 
-#include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/core.hpp>
 #include <stan/math/prim/fun/acosh.hpp>
+#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -61,6 +62,17 @@ class acosh_vari : public op_v_vari {
 inline var acosh(const var& a) {
   return var(new internal::acosh_vari(acosh(a.val()), a.vi_));
 }
+
+/**
+ * Return the hyperbolic arc cosine of the complex argument.
+ *
+ * @param[in] z argument
+ * @return hyperbolic arc cosine of the argument
+ */
+inline std::complex<var> acosh(const std::complex<var>& z) {
+  return stan::math::internal::complex_acosh(z);
+}
+
 
 }  // namespace math
 }  // namespace stan
