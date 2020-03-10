@@ -1,9 +1,11 @@
 #ifndef STAN_MATH_REV_FUN_ATAN_HPP
 #define STAN_MATH_REV_FUN_ATAN_HPP
 
-#include <stan/math/rev/meta.hpp>
+#include <stan/math/prim/fun/atan.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -47,6 +49,16 @@ class atan_vari : public op_v_vari {
  * @return Arc tangent of variable, in radians.
  */
 inline var atan(const var& a) { return var(new internal::atan_vari(a.vi_)); }
+
+/**
+ * Return the arc tangent of the complex argument.
+ *
+ * @param[in] z argument
+ * @return arc tangent of the argument
+ */
+inline std::complex<var> atan(const std::complex<var>& z) {
+  return stan::math::internal::complex_atan(z);
+}
 
 }  // namespace math
 }  // namespace stan
