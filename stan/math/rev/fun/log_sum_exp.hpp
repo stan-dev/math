@@ -22,8 +22,8 @@ class log_sum_exp_vv_vari : public op_vv_vari {
   log_sum_exp_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(log_sum_exp(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
-    avi_->adj_ += adj_ * calculate_chain(avi_->val_, val_);
-    bvi_->adj_ += adj_ * calculate_chain(bvi_->val_, val_);
+    avi_->adj_ += adj_ / (1 + exp(bvi_->val_ - avi_->val_));
+    bvi_->adj_ += adj_ / (1 + exp(avi_->val_ - bvi_->val_));
   }
 };
 class log_sum_exp_vd_vari : public op_vd_vari {
@@ -69,7 +69,9 @@ class log_sum_exp_matrix_vari : public op_matrix_vari {
       : op_matrix_vari(log_sum_exp(x.val()), x) {}
   void chain() {
     Eigen::Map<vector_vi> vis_map(vis_, size_);
+
     vis_map.adj().array() += adj_ * (vis_map.val().array() - val_).exp();
+
   }
 };
 }  // namespace internal
