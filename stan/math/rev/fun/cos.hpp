@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/isfinite.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/fun/abs.hpp>
 #include <stan/math/rev/fun/sinh.hpp>
 #include <cmath>
 #include <complex>

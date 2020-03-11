@@ -3,8 +3,14 @@
 
 #include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/abs.hpp>
+#include <stan/math/prim/fun/arg.hpp>
 #include <stan/math/prim/fun/copysign.hpp>
+#include <stan/math/prim/fun/isfinite.hpp>
+#include <stan/math/prim/fun/isinf.hpp>
+#include <stan/math/prim/fun/isnan.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/polar.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <cmath>
