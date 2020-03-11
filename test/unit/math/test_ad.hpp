@@ -1214,12 +1214,12 @@ void expect_ad(const F& f, const T1& x1, const T2& x2, const T3& x3) {
 }
 
 /**
- * Test that the specified vectorized polymoprhic unary function
+ * Test that the specified vectorized polymorphic unary function
  * produces autodiff results consistent with values determined by
  * double and integer inputs and 1st-, 2nd-, and 3rd-order derivatives
  * consistent with finite differences of double inputs.
  *
- * @tparam F type of poymorphic, vectorized functor to test
+ * @tparam F type of polymorphic, vectorized functor to test
  * @tparam T1 type of first argument (integer or double)
  * @param tols tolerances for test
  * @param f functor to test
@@ -1323,7 +1323,7 @@ void expect_common_nonzero_unary(const F& f) {
  * primitive version of the function, when applied to all pairs of
  * common integer and double argument combinations excluding zero.
  *
- * If the `disable_lhs_int` flag is set to `true` (it defauls to
+ * If the `disable_lhs_int` flag is set to `true` (it defaults to
  * `false`), then integers will not be considered as first arguments.
  * This is useful for testing assignment operators like `+=` and
  * division operators like `/` where integer and real arguments
@@ -1367,7 +1367,7 @@ void expect_common_nonzero_binary(const F& f, bool disable_lhs_int = false) {
  * primitive version of the function, when applied to all pairs of
  * common integer and double argument combinations.
  *
- * If the `disable_lhs_int` flag is set to `true` (it defauls to
+ * If the `disable_lhs_int` flag is set to `true` (it defaults to
  * `false`), then integers will not be considered as first arguments.
  * This is useful for testing assignment operators like `+=` and
  * division operators like `/` where integer and real arguments
