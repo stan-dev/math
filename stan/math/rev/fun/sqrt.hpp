@@ -4,6 +4,9 @@
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/atan2.hpp>
+#include <stan/math/rev/fun/cos.hpp>
+#include <stan/math/rev/fun/hypot.hpp>
 #include <cmath>
 #include <complex>
 

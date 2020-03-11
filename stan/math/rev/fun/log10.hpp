@@ -1,10 +1,13 @@
 #ifndef STAN_MATH_REV_FUN_LOG10_HPP
 #define STAN_MATH_REV_FUN_LOG10_HPP
 
-#include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/core.hpp>
+#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log10.hpp>
+#include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/atan2.hpp>
+#include <stan/math/rev/fun/hypot.hpp>
 #include <cmath>
 #include <complex>
 
@@ -61,7 +64,6 @@ inline var log10(const var& a) { return var(new internal::log10_vari(a.vi_)); }
 inline std::complex<var> log10(const std::complex<var>& z) {
   return internal::complex_log10(z);
 }
-
 
 }  // namespace math
 }  // namespace stan

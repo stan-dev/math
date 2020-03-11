@@ -1,9 +1,18 @@
 #ifndef STAN_MATH_REV_FUN_LOG_HPP
 #define STAN_MATH_REV_FUN_LOG_HPP
 
+#include <stan/math/prim/fun/isinf.hpp>
+#include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/abs.hpp>
+#include <stan/math/rev/fun/arg.hpp>
+#include <stan/math/rev/fun/atan2.hpp>
+#include <stan/math/rev/fun/cos.hpp>
+#include <stan/math/rev/fun/is_inf.hpp>
+#include <stan/math/rev/fun/is_nan.hpp>
+#include <stan/math/rev/fun/sqrt.hpp>
 #include <cmath>
 
 namespace stan {
@@ -56,7 +65,6 @@ inline var log(const var& a) { return var(new internal::log_vari(a.vi_)); }
 inline std::complex<var> log(const std::complex<var>& z) {
   return internal::complex_log(z);
 }
-
 
 }  // namespace math
 }  // namespace stan
