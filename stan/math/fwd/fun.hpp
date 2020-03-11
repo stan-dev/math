@@ -92,8 +92,6 @@
 #include <stan/math/fwd/fun/pow.hpp>
 #include <stan/math/fwd/fun/primitive_value.hpp>
 #include <stan/math/fwd/fun/proj.hpp>
-#include <stan/math/fwd/fun/qr_Q.hpp>
-#include <stan/math/fwd/fun/qr_R.hpp>
 #include <stan/math/fwd/fun/quad_form.hpp>
 #include <stan/math/fwd/fun/quad_form_sym.hpp>
 #include <stan/math/fwd/fun/rising_factorial.hpp>
