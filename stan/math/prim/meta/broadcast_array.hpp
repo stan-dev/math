@@ -13,13 +13,14 @@ namespace internal {
 template <typename T>
 class broadcast_array {
  private:
-  T& prim_;
+  using T_decay = std::decay_t<T>;
+  T_decay& prim_;
 
  public:
   explicit broadcast_array(T& prim) : prim_(prim) {}
 
-  T& operator[](int /*i*/) { return prim_; }
-  T& operator[](int /*i*/) const { return prim_; }
+  auto& operator[](int /*i*/) { return prim_; }
+  auto& operator[](int /*i*/) const { return prim_; }
 
   /** \ingroup type_trait
    * We can assign any right hand side which allows for indexing to a
@@ -31,7 +32,7 @@ class broadcast_array {
   void operator=(const Y& m) {
     prim_ = m[0];
   }
-  broadcast_array& operator=(broadcast_array other) {
+  broadcast_array& operator=(broadcast_array& other) {
     prim_ = other.prim_;
     return *this;
   }
@@ -39,20 +40,25 @@ class broadcast_array {
 
 template <typename T, typename S, typename Enable = void>
 class empty_broadcast_array {
+  using T_decay = std::decay_t<T>;
+
  public:
   empty_broadcast_array() {}
   /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
-  T& operator[](int /*i*/);
-  T& operator[](int /*i*/) const;
+  T_decay& operator[](int /*i*/);
+  T_decay& operator[](int /*i*/) const;
 
-  /** \ingroup type_trait
+  /**
    * Not implemented so cannot be called.
    */
   template <typename Y>
   void operator=(const Y& /*A*/);
 
+  /**
+   * Not implemented so cannot be called.
+   */
   template <typename R>
   void operator+=(R);
 };
@@ -64,31 +70,31 @@ class empty_broadcast_array<ViewElt, T, require_eigen_t<T>> {
 
  public:
   empty_broadcast_array() {}
-  /** \ingroup type_trait
+  /**
    * Not implemented so cannot be called.
    */
   ViewElt& operator[](int /*i*/);
-  /** \ingroup type_trait
+  /**
    * Not implemented so cannot be called.
    */
   ViewElt& operator()(int /*i*/);
-  /** \ingroup type_trait
+  /**
    * Not implemented so cannot be called.
    */
   void operator=(const T_arg& /*A*/);
-  /** \ingroup type_trait
+  /**
    * Not implemented so cannot be called.
    */
   void operator+=(T_arg /*A*/);
-  /** \ingroup type_trait
+  /**
    * Not implemented so cannot be called.
    */
   void operator-=(T_arg /*A*/);
-  /** \ingroup type_trait
+  /**
    * Not implemented so cannot be called.
    */
   T& row(int /*i*/);
-  /** \ingroup type_trait
+  /**
    * Not implemented so cannot be called.
    */
   T& col(int /*i*/);

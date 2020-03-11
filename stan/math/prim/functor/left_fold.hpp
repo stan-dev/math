@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUNCTOR_LEFT_FOLD_HPP
 #define STAN_MATH_PRIM_SCAL_FUNCTOR_LEFT_FOLD_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <functional>
 #include <tuple>
 #include <utility>

@@ -23,7 +23,7 @@ struct count_lpdf {
   }
 };
 
-TEST(StanMath_reduce_sum, value) {
+TEST(StanMathPrim_reduce_sum, value) {
   stan::math::init_threadpool_tbb();
 
   double lambda_d = 10.0;
@@ -65,7 +65,7 @@ struct nesting_count_lpdf {
   }
 };
 
-TEST(StanMath_reduce_sum, nesting_value) {
+TEST(StanMathPrim_reduce_sum, nesting_value) {
   stan::math::init_threadpool_tbb();
 
   double lambda_d = 10.0;
@@ -105,7 +105,7 @@ struct double_slice_lpdf {
   }
 };
 
-TEST(StanMath_reduce_sum, int_slice) {
+TEST(StanMathPrim_reduce_sum, int_slice) {
   stan::math::init_threadpool_tbb();
 
   std::vector<int> data(5, 10);
@@ -113,7 +113,7 @@ TEST(StanMath_reduce_sum, int_slice) {
   EXPECT_EQ(50, stan::math::reduce_sum<int_slice_lpdf>(data, 0, msgs));
 }
 
-TEST(StanMath_reduce_sum, double_slice) {
+TEST(StanMathPrim_reduce_sum, double_slice) {
   stan::math::init_threadpool_tbb();
 
   std::vector<double> data(5, 10.0);
@@ -136,7 +136,7 @@ struct start_end_lpdf {
   }
 };
 
-TEST(StanMath_reduce_sum, start_end_slice) {
+TEST(StanMathPrim_reduce_sum, start_end_slice) {
   stan::math::init_threadpool_tbb();
 
   std::vector<int> data(5, 10);
@@ -203,7 +203,7 @@ struct eigen_matrix_arg_lpdf {
   }
 };
 
-TEST(StanMath_reduce_sum, int_arg) {
+TEST(StanMathPrim_reduce_sum, int_arg) {
   stan::math::init_threadpool_tbb();
 
   std::vector<double> data(5, 10.0);
@@ -213,7 +213,7 @@ TEST(StanMath_reduce_sum, int_arg) {
                    stan::math::reduce_sum<int_arg_lpdf>(data, 0, msgs, arg));
 }
 
-TEST(StanMath_reduce_sum, double_arg) {
+TEST(StanMathPrim_reduce_sum, double_arg) {
   stan::math::init_threadpool_tbb();
 
   std::vector<double> data(5, 10.0);
@@ -223,7 +223,7 @@ TEST(StanMath_reduce_sum, double_arg) {
                    stan::math::reduce_sum<double_arg_lpdf>(data, 0, msgs, arg));
 }
 
-TEST(StanMath_reduce_sum, std_vector_int_arg) {
+TEST(StanMathPrim_reduce_sum, std_vector_int_arg) {
   stan::math::init_threadpool_tbb();
 
   std::vector<double> data(5, 10.0);
@@ -234,7 +234,7 @@ TEST(StanMath_reduce_sum, std_vector_int_arg) {
       stan::math::reduce_sum<std_vector_int_arg_lpdf>(data, 0, msgs, arg));
 }
 
-TEST(StanMath_reduce_sum, std_vector_double_arg) {
+TEST(StanMathPrim_reduce_sum, std_vector_double_arg) {
   stan::math::init_threadpool_tbb();
 
   std::vector<double> data(5, 10.0);
@@ -245,7 +245,7 @@ TEST(StanMath_reduce_sum, std_vector_double_arg) {
       stan::math::reduce_sum<std_vector_double_arg_lpdf>(data, 0, msgs, arg));
 }
 
-TEST(StanMath_reduce_sum, eigen_vector_arg) {
+TEST(StanMathPrim_reduce_sum, eigen_vector_arg) {
   stan::math::init_threadpool_tbb();
 
   std::vector<double> data(5, 10.0);
@@ -255,7 +255,7 @@ TEST(StanMath_reduce_sum, eigen_vector_arg) {
                                      data, 0, msgs, arg));
 }
 
-TEST(StanMath_reduce_sum, eigen_row_vector_arg) {
+TEST(StanMathPrim_reduce_sum, eigen_row_vector_arg) {
   stan::math::init_threadpool_tbb();
 
   std::vector<double> data(5, 10.0);
@@ -266,7 +266,7 @@ TEST(StanMath_reduce_sum, eigen_row_vector_arg) {
       stan::math::reduce_sum<eigen_row_vector_arg_lpdf>(data, 0, msgs, arg));
 }
 
-TEST(StanMath_reduce_sum, eigen_matrix_arg) {
+TEST(StanMathPrim_reduce_sum, eigen_matrix_arg) {
   stan::math::init_threadpool_tbb();
 
   std::vector<double> data(5, 10.0);
@@ -301,7 +301,7 @@ struct std_vector_eigen_vector_arg_lpdf {
   }
 };
 
-TEST(StanMath_reduce_sum, std_vector_std_vector_double_arg) {
+TEST(StanMathPrim_reduce_sum, std_vector_std_vector_double_arg) {
   stan::math::init_threadpool_tbb();
 
   std::vector<double> data(5, 10.0);
@@ -313,7 +313,7 @@ TEST(StanMath_reduce_sum, std_vector_std_vector_double_arg) {
                                                                     msgs, arg));
 }
 
-TEST(StanMath_reduce_sum, std_vector_eigen_vector_arg) {
+TEST(StanMathPrim_reduce_sum, std_vector_eigen_vector_arg) {
   stan::math::init_threadpool_tbb();
 
   std::vector<double> data(5, 10.0);
@@ -346,7 +346,7 @@ struct sum_lpdf {
   }
 };
 
-TEST(StanMath_reduce_sum, sum) {
+TEST(StanMathPrim_reduce_sum, sum) {
   stan::math::init_threadpool_tbb();
 
   std::vector<double> data(5, 1.0);
