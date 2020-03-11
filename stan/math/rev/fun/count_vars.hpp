@@ -10,7 +10,7 @@ namespace math {
 
 namespace internal {
 
-size_t count_vars_impl(size_t count) { return count; }
+inline size_t count_vars_impl(size_t count) { return count; }
 
 template <typename... Pargs>
 size_t count_vars_impl(size_t count, const std::vector<var>& x,

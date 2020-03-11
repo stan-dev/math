@@ -10,7 +10,7 @@ namespace math {
 
 namespace internal {
 
-double* accumulate_adjoints(double* x) { return x; }
+inline double* accumulate_adjoints(double* x) { return x; }
 
 template <typename... Pargs>
 double* accumulate_adjoints(double* dest, const var& x, const Pargs&... args);

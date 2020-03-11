@@ -10,7 +10,7 @@ namespace math {
 
 namespace internal {
 
-vari** save_varis(vari** dest) { return dest; }
+inline vari** save_varis(vari** dest) { return dest; }
 
 template <typename... Pargs>
 vari** save_varis(vari** dest, const var& x, const Pargs&... args);
