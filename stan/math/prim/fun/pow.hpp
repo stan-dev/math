@@ -16,8 +16,8 @@ namespace internal {
  *
  * @tparam U type of first argument
  * @tparam V type of second argument
- * @param[in] lhs first argument
- * @param[in] rhs second argument
+ * @param[in] x first argument
+ * @param[in] y second argument
  * @return first argument raised to the power of the second argument
  */
 template <typename U, typename V>
