@@ -90,3 +90,17 @@ TEST(MathMixMatFun, logSumExp) {
       std::vector<double>(x2c.data(), x2c.data() + x2c.size())};
   stan::test::expect_ad(tols, f, ststx);
 }
+
+TEST(mathMixVarDouble, logSumExp) {
+  using stan::math::var;
+
+  var a = 12;
+  double b = 8;
+  var out1 = stan::math::log_sum_exp(a, b);
+
+  double a1 = 12;
+  double b1 = 8;
+  var out2 = stan::math::log_sum_exp(a1, b1);
+
+  EXPECT_FLOAT_EQ(value_of(out1), value_of(out2));
+}

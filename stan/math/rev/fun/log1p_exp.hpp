@@ -3,7 +3,6 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/calculate_chain.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>
 
 namespace stan {
@@ -13,7 +12,7 @@ namespace internal {
 class log1p_exp_v_vari : public op_v_vari {
  public:
   explicit log1p_exp_v_vari(vari* avi) : op_v_vari(log1p_exp(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ * calculate_chain(avi_->val_, val_); }
+  void chain() { avi_->adj_ += adj_ / (1 + std::exp(-avi_->val_)); }
 };
 }  // namespace internal
 

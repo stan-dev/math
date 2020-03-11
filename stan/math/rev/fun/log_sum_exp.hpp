@@ -3,7 +3,6 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/calculate_chain.hpp>
 #include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
@@ -34,7 +33,7 @@ class log_sum_exp_vd_vari : public op_vd_vari {
     if (val_ == NEGATIVE_INFTY) {
       avi_->adj_ += adj_;
     } else {
-      avi_->adj_ += adj_ * calculate_chain(avi_->val_, val_);
+      avi_->adj_ += adj_ / (1 + exp(bd_ - avi_->val_));
     }
   }
 };
