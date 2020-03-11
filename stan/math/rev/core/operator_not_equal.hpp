@@ -1,8 +1,11 @@
 #ifndef STAN_MATH_REV_CORE_OPERATOR_NOT_EQUAL_HPP
 #define STAN_MATH_REV_CORE_OPERATOR_NOT_EQUAL_HPP
 
+#include <stan/math/rev/core/std_complex.hpp>
+#include <stan/math/rev/core/operator_equal.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <complex>
 
 namespace stan {
 namespace math {
