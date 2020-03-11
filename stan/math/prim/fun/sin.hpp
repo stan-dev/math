@@ -65,7 +65,6 @@ inline std::complex<V> complex_sin(const std::complex<V>& z) {
 }
 }  // namespace internal
 
-
 }  // namespace math
 }  // namespace stan
 

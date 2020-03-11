@@ -6,7 +6,6 @@
 #include <stan/math/fwd/core.hpp>
 #include <complex>
 
-
 namespace stan {
 namespace math {
 

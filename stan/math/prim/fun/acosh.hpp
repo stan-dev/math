@@ -105,7 +105,6 @@ inline std::complex<V> complex_acosh(const std::complex<V>& z) {
 
 }  // namespace internal
 
-
 }  // namespace math
 }  // namespace stan
 

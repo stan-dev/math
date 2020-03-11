@@ -19,7 +19,6 @@ namespace math {
  */
 inline double exp(int x) { return std::exp(x); }
 
-
 /**
  * Structure to wrap <code>exp()</code> so that it can be
  * vectorized.

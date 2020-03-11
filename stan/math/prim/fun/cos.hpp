@@ -63,7 +63,7 @@ template <typename T>
 inline std::complex<T> complex_cos(const std::complex<T>& z) {
   return cosh(i_times(z));
 }
-}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan
