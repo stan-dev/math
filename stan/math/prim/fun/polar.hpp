@@ -28,7 +28,6 @@ inline complex_return_t<U, V> complex_polar(const U& r, const V& theta) {
 }
 }  // namespace internal
 
-
 /**
  * Returns the complex number with specified magnitude and phase angle.
  *
@@ -46,7 +45,8 @@ std::complex<double> polar(int r, double theta) {
   return internal::complex_polar(static_cast<double>(r), theta);
 }
 std::complex<double> polar(int r, int theta) {
-  return internal::complex_polar(static_cast<double>(r), static_cast<double>(theta));
+  return internal::complex_polar(static_cast<double>(r),
+                                 static_cast<double>(theta));
 }
 
 }  // namespace math

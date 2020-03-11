@@ -1,18 +1,52 @@
 #include <test/unit/math/test_ad.hpp>
 #include <complex>
 #include <iostream>
+#include <vector>
 
 TEST(mathMixMatFun, polar) {
+  // test framework can't handle (real x real) -> complex, so factor tests
   auto f = [](const auto& r, const auto& theta) {
     using stan::math::polar;
-    return polar(r, theta);
+    auto y = polar(r, theta);
+    return y;
   };
-  stan::test::expect_ad(f, 0.5, 0.5);
-  // TODO(carpente): these need to work
+
+  stan::test::expect_ad(f, 0.2, 0.5);
+  // TODO(carpenter): fix this so it succeeds in test framework
   // stan::test::expect_ad(f, 1, 0.5);
-  // stan::test::expect_ad(f, 0.5, 1);
-  // stan::test::expect_ad(f, 1, 1);
-  // stan::test::expect_common_binary(f);
+
+  auto f1 = [](const auto& r, const auto& theta) {
+    using stan::math::polar;
+    auto y = polar(r, theta);
+    return y.real();
+  };
+
+  auto f2 = [](const auto& r, const auto& theta) {
+    using stan::math::polar;
+    auto y = polar(r, theta);
+    return y.imag();
+  };
+  stan::test::expect_ad(f1, 1, 1);
+  stan::test::expect_ad(f2, 1, 1);
+
+  std::vector<double> rs{-2.3, -0.3, 0.4, 1.2};
+  std::vector<double> thetas{-0.2, 0, 0.1};
+
+  for (double r : rs) {
+    for (double theta : thetas) {
+      stan::test::expect_ad(f1, r, theta);
+      stan::test::expect_ad(f2, r, theta);
+    }
+  }
+
+  for (double r : rs) {
+    stan::test::expect_ad(f1, r, 1);
+    stan::test::expect_ad(f2, r, 1);
+  }
+  for (double theta : thetas) {
+    stan::test::expect_ad(f1, 1, theta);
+    stan::test::expect_ad(f2, 1, theta);
+  }
 
   // need to fix this, too, because it's failing
   // EXPECT_TRUE(stan::is_stan_scalar<std::complex<double>>::value);
