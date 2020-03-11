@@ -21,7 +21,7 @@ namespace math {
  * <p>See <code>cov_matrix_free()</code> for the inverse transform.
  *
  * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile-time dimmension equal to 1)
+ * have one compile-time dimension equal to 1)
  * @param x The vector to convert to a covariance matrix.
  * @param K The number of rows and columns of the resulting
  * covariance matrix.
@@ -56,7 +56,7 @@ cov_matrix_constrain(const T& x, Eigen::Index K) {
  * <p>See <code>cov_matrix_free()</code> for the inverse transform.
  *
  * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile-time dimmension equal to 1)
+ * have one compile-time dimension equal to 1)
  * @param x The vector to convert to a covariance matrix.
  * @param K The dimensions of the resulting covariance matrix.
  * @param lp Reference

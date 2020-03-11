@@ -70,7 +70,7 @@ TEST(test_ad, mismatch) {
 
 // OVERLOAD THAT FAILS DUE TO MISMATCHED EXCEPTION CONDITIONS
 
-// double overload does not match template behavior for exceptionsalue
+// double overload does not match template behavior for exceptions
 template <typename T>
 T f_misthrow(const T& x) {
   return -2 * x;

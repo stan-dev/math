@@ -256,7 +256,7 @@ struct coupled_ode_system<F, var, double> {
    *
    * This method uses nested autodiff and is not thread safe.
    *
-   * @param[in] z state of the coupled ode syste; this must be
+   * @param[in] z state of the coupled ode system; this must be
    *   size <code>size()</code>
    * @param[out] dz_dt a vector of length size() with the
    *   derivatives of the coupled system with respect to time

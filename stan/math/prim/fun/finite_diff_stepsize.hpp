@@ -12,7 +12,7 @@ namespace math {
  * Return the stepsize for finite difference evaluations at the
  * specified scalar.
  *
- * <p>The forumula used is `stepsize(u) = cbrt(epsilon) * max(1,
+ * <p>The formula used is `stepsize(u) = cbrt(epsilon) * max(1,
  * abs(u)).`
  *
  * @param u initial value to increment
