@@ -30,7 +30,7 @@ struct is_valid_expression_and_not_scalar<T, require_matrix_cl_t<T>>
 
 /**
  * Determines whether a type is is a valid kernel generator expression. Valid
- * expressions are kernel generator operations, scalars and \c matric_cl and
+ * expressions are kernel generator operations, scalars and \c matrix_cl and
  * references of these types.
  */
 template <typename T>

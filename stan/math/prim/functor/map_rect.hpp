@@ -145,21 +145,21 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
                      "the job specific parameters",
                      job_params[i].size(),
                      "size of another vector of the "
-                     "job specifc parameters",
+                     "job specific parameters",
                      size_job_params);
     check_size_match(function,
                      "Size of one of the arrays of "
                      "the job specific real data",
                      x_r[i].size(),
                      "size of another array of the "
-                     "job specifc real data",
+                     "job specific real data",
                      size_x_r);
     check_size_match(function,
                      "Size of one of the arrays of "
                      "the job specific int data",
                      x_i[i].size(),
                      "size of another array of the "
-                     "job specifc int data",
+                     "job specific int data",
                      size_x_i);
   }
 
