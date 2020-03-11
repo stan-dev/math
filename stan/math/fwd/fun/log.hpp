@@ -4,7 +4,9 @@
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {

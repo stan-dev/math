@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_CORE_OPERATOR_MULTIPLICATION_HPP
 #define STAN_MATH_PRIM_CORE_OPERATOR_MULTIPLICATION_HPP
 
+#include <stan/math/prim/meta/return_type.hpp>
 #include <complex>
 
 namespace stan {

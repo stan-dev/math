@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/atan.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/hypot.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <cmath>
 #include <complex>

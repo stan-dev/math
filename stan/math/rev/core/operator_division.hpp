@@ -5,8 +5,15 @@
 #include <stan/math/prim/core/operator_division.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
-#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/std_complex.hpp>
+#include <stan/math/rev/core/vv_vari.hpp>
+#include <stan/math/rev/core/vd_vari.hpp>
+#include <stan/math/rev/core/dv_vari.hpp>
+#include <stan/math/rev/core/operator_addition.hpp>
+#include <stan/math/rev/core/operator_multiplication.hpp>
+#include <stan/math/rev/core/operator_subtraction.hpp>
+#include <stan/math/rev/meta/apply_scalar_unary.hpp>
 #include <complex>
 #include <type_traits>
 
@@ -138,41 +145,45 @@ inline std::complex<var> operator/(const std::complex<var>& x1,
   return internal::complex_divide(x1, x2);
 }
 
-template <typename T, require_arithmetic_t<T>...>
-inline std::complex<var> operator/(const std::complex<var>& x1,
-                                   const std::complex<T>& x2) {
-  return internal::complex_divide(x1, x2);
-}
-inline std::complex<var> operator/(const std::complex<var>& x1, const var& x2) {
-  return internal::complex_divide(x1, x2);
-}
-template <typename T, require_arithmetic_t<T>...>
-inline std::complex<var> operator/(const std::complex<var>& x1, T x2) {
-  return internal::complex_divide(x1, x2);
-}
+// template <typename T, require_arithmetic_t<T>...>
+// inline std::complex<var> operator/(const std::complex<var>& x1,
+//                                    const std::complex<T>& x2) {
+//   return internal::complex_divide(x1, x2);
+// }
+// inline std::complex<var> operator/(const std::complex<var>& x1, const var&
+// x2) {
+//   return internal::complex_divide(x1, x2);
+// }
+// template <typename T, require_arithmetic_t<T>...>
+// inline std::complex<var> operator/(const std::complex<var>& x1, T x2) {
+//   return internal::complex_divide(x1, x2);
+// }
 
-template <typename T, require_arithmetic_t<T>...>
-inline std::complex<var> operator/(const std::complex<T>& x1,
-                                   const std::complex<var>& x2) {
-  return internal::complex_divide(x1, x2);
-}
-template <typename T, require_arithmetic_t<T>...>
-inline std::complex<var> operator/(const std::complex<T>& x1, const var& x2) {
-  return internal::complex_divide(x1, x2);
-}
+// template <typename T, require_arithmetic_t<T>...>
+// inline std::complex<var> operator/(const std::complex<T>& x1,
+//                                    const std::complex<var>& x2) {
+//   return internal::complex_divide(x1, x2);
+// }
+// template <typename T, require_arithmetic_t<T>...>
+// inline std::complex<var> operator/(const std::complex<T>& x1, const var& x2)
+// {
+//   return internal::complex_divide(x1, x2);
+// }
 
-inline std::complex<var> operator/(const var& x1, const std::complex<var>& x2) {
-  return internal::complex_divide(x1, x2);
-}
-template <typename T, require_arithmetic_t<T>...>
-inline std::complex<var> operator/(const var& x1, const std::complex<T>& x2) {
-  return internal::complex_divide(x1, x2);
-}
+// inline std::complex<var> operator/(const var& x1, const std::complex<var>&
+// x2) {
+//   return internal::complex_divide(x1, x2);
+// }
+// template <typename T, require_arithmetic_t<T>...>
+// inline std::complex<var> operator/(const var& x1, const std::complex<T>& x2)
+// {
+//   return internal::complex_divide(x1, x2);
+// }
 
-template <typename T, require_arithmetic_t<T>...>
-inline std::complex<var> operator/(T x1, const std::complex<var>& x2) {
-  return internal::complex_divide(x1, x2);
-}
+// template <typename T, require_arithmetic_t<T>...>
+// inline std::complex<var> operator/(T x1, const std::complex<var>& x2) {
+//   return internal::complex_divide(x1, x2);
+// }
 
 }  // namespace math
 }  // namespace stan

@@ -3,7 +3,13 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/polar.hpp>
+#include <stan/math/prim/fun/isinf.hpp>
+#include <stan/math/prim/fun/isfinite.hpp>
+#include <stan/math/prim/fun/is_inf.hpp>
+#include <stan/math/prim/fun/sin.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/is_inf.hpp>
+#include <stan/math/rev/fun/sin.hpp>
 #include <complex>
 #include <type_traits>
 

@@ -7,6 +7,7 @@
 #include <stan/math/fwd/fun/inv.hpp>
 #include <stan/math/fwd/fun/inv_sqrt.hpp>
 #include <stan/math/fwd/fun/inv_square.hpp>
+#include <stan/math/prim/fun/pow.hpp>
 #include <cmath>
 #include <complex>
 #include <type_traits>

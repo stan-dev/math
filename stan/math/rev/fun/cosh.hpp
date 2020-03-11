@@ -4,7 +4,9 @@
 #include <stan/math/prim/fun/cosh.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/core/operator_multiplication.hpp>
 #include <stan/math/rev/fun/exp.hpp>
+#include <stan/math/rev/fun/sin.hpp>
 #include <cmath>
 #include <complex>
 
@@ -57,7 +59,6 @@ inline var cosh(const var& a) { return var(new internal::cosh_vari(a.vi_)); }
 inline std::complex<var> cosh(const std::complex<var>& z) {
   return stan::math::internal::complex_cosh(z);
 }
-
 
 }  // namespace math
 }  // namespace stan

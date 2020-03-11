@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_COSH_HPP
 #define STAN_MATH_PRIM_FUN_COSH_HPP
 
+#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/exp.hpp>

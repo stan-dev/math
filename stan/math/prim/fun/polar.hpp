@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_POLAR_HPP
 #define STAN_MATH_PRIM_FUN_POLAR_HPP
 
+#include <stan/math/prim/fun/cos.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <cmath>
