@@ -9,7 +9,6 @@
 #include <cmath>
 #include <complex>
 
-
 namespace stan {
 namespace math {
 

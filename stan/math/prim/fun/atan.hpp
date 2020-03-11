@@ -64,7 +64,7 @@ template <typename V>
 inline std::complex<V> complex_atan(const std::complex<V>& z) {
   return neg_i_times(atanh(i_times(z)));
 }
-}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan
