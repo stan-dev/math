@@ -7,9 +7,12 @@
 namespace stan {
 namespace math {
 
+// For RStan the AD tape instance is *always* TLS, regardless of
+// STAN_THREADS being set or not
+
 // Internal macro used to modify global pointer definition to the
 // global AD instance.
-#ifdef STAN_THREADS
+// #ifdef STAN_THREADS
 // Whenever STAN_THREADS is set a TLS keyword is used. For reasons
 // explained below we use the GNU compiler extension __thread if
 // supported by the compiler while the generic thread_local C++11
@@ -19,10 +22,11 @@ namespace math {
 #else
 #define STAN_THREADS_DEF thread_local
 #endif
-#else
+
+//#else
 // In case STAN_THREADS is not set, then no modifier is needed.
-#define STAN_THREADS_DEF
-#endif
+//#define STAN_THREADS_DEF
+//#endif
 
 /**
  * This struct always provides access to the autodiff stack using
