@@ -16,6 +16,18 @@ inline fvar<T> tan(const fvar<T>& x) {
   using std::tan;
   return fvar<T>(tan(x.val_), x.d_ / (cos(x.val_) * cos(x.val_)));
 }
+
+/**
+ * Return the tangent of the complex argument.
+ *
+ * @param[in] z argument
+ * @return tangent of the argument
+ */
+template <typename T>
+inline std::complex<fvar<T>> tan(const std::complex<fvar<T>>& z) {
+  return stan::math::internal::complex_tan(z);
+}
+
 }  // namespace math
 }  // namespace stan
 #endif
