@@ -51,7 +51,6 @@
 #include <stan/math/rev/core/std_complex.hpp>
 #include <stan/math/rev/core/std_isinf.hpp>
 #include <stan/math/rev/core/std_isnan.hpp>
-#include <stan/math/rev/core/std_complex.hpp>
 #include <stan/math/rev/core/std_numeric_limits.hpp>
 #include <stan/math/rev/core/stored_gradient_vari.hpp>
 #include <stan/math/rev/core/v_vari.hpp>

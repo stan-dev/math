@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <vector>
 
 TEST(mathMixMatFun, log) {
   auto f = [](const auto& x1) {
@@ -7,11 +8,11 @@ TEST(mathMixMatFun, log) {
   };
   stan::test::expect_common_unary_vectorized(f);
   stan::test::expect_unary_vectorized(f, -0.2, 1e-3, 1, 1.3, 3, 3.7, 10, 10.2,
-				      1e6);
+                                      1e6);
 
   // non-zero real and imaginary components
-  for (auto re : std::vector<double>{ -2.7, 1, 2.3 }) {
-    for (auto im : std::vector<double>{ -1.5, 1.2 }) {
+  for (auto re : std::vector<double>{-2.7, 1, 2.3}) {
+    for (auto im : std::vector<double>{-1.5, 1.2}) {
       stan::test::expect_ad(f, std::complex<double>{re, im});
     }
   }

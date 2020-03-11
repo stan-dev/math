@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <cmath>
 #include <limits>
+#include <vector>
 
 template <typename T>
 void expect_logb(double x) {
@@ -10,8 +11,8 @@ void expect_logb(double x) {
 }
 
 void expect_all_logb(double x) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::var;
   expect_logb<double>(x);
   expect_logb<var>(x);
   expect_logb<fvar<double>>(x);

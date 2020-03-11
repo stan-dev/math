@@ -43,24 +43,24 @@ inline fvar<T> operator/(const fvar<T>& x1, U x2) {
  * @param x2 second argument
  * @return first argument divided by second argument
  */
-template <typename T,  typename U, require_arithmetic_t<U>...>
+template <typename T, typename U, require_arithmetic_t<U>...>
 inline fvar<T> operator/(U x1, const fvar<T>& x2) {
   return fvar<T>(x1 / x2.val_, -x1 * x2.d_ / (x2.val_ * x2.val_));
 }
 
 template <typename T>
 inline std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& x1,
-				       const std::complex<fvar<T>>& x2) {
+                                       const std::complex<fvar<T>>& x2) {
   return internal::complex_divide(x1, x2);
 }
-  template <typename T, typename U, require_arithmetic_t<U>...>
+template <typename T, typename U, require_arithmetic_t<U>...>
 inline std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& x1,
-				       const std::complex<U>& x2) {
+                                       const std::complex<U>& x2) {
   return internal::complex_divide(x1, x2);
 }
 template <typename T>
 inline std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& x1,
-				       const fvar<T>& x2) {
+                                       const fvar<T>& x2) {
   return internal::complex_divide(x1, x2);
 }
 template <typename T, typename U, require_arithmetic_t<U>...>
@@ -70,28 +70,28 @@ inline std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& x1, U x2) {
 
 template <typename T, typename U, require_arithmetic_t<U>...>
 inline std::complex<fvar<T>> operator/(const std::complex<U>& x1,
-				       const std::complex<fvar<T>>& x2) {
+                                       const std::complex<fvar<T>>& x2) {
   return internal::complex_divide(x1, x2);
 }
 template <typename T, typename U, require_arithmetic_t<U>...>
 inline std::complex<fvar<T>> operator/(const std::complex<U>& x1,
-				       const fvar<T>& x2) {
+                                       const fvar<T>& x2) {
   return internal::complex_divide(x1, x2);
 }
 
 template <typename T>
 inline std::complex<fvar<T>> operator/(const fvar<T>& x1,
-				       const std::complex<fvar<T>>& x2) {
+                                       const std::complex<fvar<T>>& x2) {
   return internal::complex_divide(x1, x2);
 }
 template <typename T, typename U,
-	  typename = std::enable_if_t<std::is_arithmetic<U>::value>>
+          typename = std::enable_if_t<std::is_arithmetic<U>::value>>
 inline std::complex<fvar<T>> operator/(const fvar<T>& x1,
-				       const std::complex<U>& x2) {
+                                       const std::complex<U>& x2) {
   return internal::complex_divide(x1, x2);
 }
 
-template <typename T, typename U,  require_arithmetic_t<U>...>
+template <typename T, typename U, require_arithmetic_t<U>...>
 inline std::complex<fvar<T>> operator/(U x1, const std::complex<fvar<T>>& x2) {
   return internal::complex_divide(x1, x2);
 }

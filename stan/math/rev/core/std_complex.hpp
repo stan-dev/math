@@ -46,7 +46,8 @@ class complex<stan::math::var>
   complex(const U& re) : base_t(re) {}  // NOLINT(runtime/explicit)
 
   template <typename U>
-  complex(const std::complex<U>& z) : base_t(z.real(), z.imag()) {}
+  complex(const std::complex<U>& z)  // NOLINT(runtime/explicit)
+      : base_t(z.real(), z.imag()) {}
 
   /**
    * Set the real and imaginary components of this complex number to

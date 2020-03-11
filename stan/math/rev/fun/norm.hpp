@@ -14,7 +14,9 @@ namespace math {
  * @param[in] z argument
  * @return squared magnitude of the argument
  */
-inline var norm(const std::complex<var>& z) { return internal::complex_norm(z); }
+inline var norm(const std::complex<var>& z) {
+  return internal::complex_norm(z);
+}
 
 }  // namespace math
 }  // namespace stan

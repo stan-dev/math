@@ -78,7 +78,7 @@ inline fvar<T> pow(const fvar<T>& x1, U x2) {
  */
 template <typename V>
 inline std::complex<fvar<V>> pow(const std::complex<fvar<V>>& x,
-				 const std::complex<fvar<V>>& y) {
+                                 const std::complex<fvar<V>>& y) {
   return internal::complex_pow(x, y);
 }
 
@@ -93,7 +93,7 @@ inline std::complex<fvar<V>> pow(const std::complex<fvar<V>>& x,
  */
 template <typename V, typename T, typename = require_arithmetic_t<T>>
 inline std::complex<fvar<V>> pow(const std::complex<fvar<V>>& x,
-				 const std::complex<T>& y) {
+                                 const std::complex<T>& y) {
   return internal::complex_pow(x, y);
 }
 
@@ -107,7 +107,7 @@ inline std::complex<fvar<V>> pow(const std::complex<fvar<V>>& x,
  */
 template <typename V>
 inline std::complex<fvar<V>> pow(const std::complex<fvar<V>>& x,
-				 const fvar<V>& y) {
+                                 const fvar<V>& y) {
   return internal::complex_pow(x, y);
 }
 
@@ -121,8 +121,7 @@ inline std::complex<fvar<V>> pow(const std::complex<fvar<V>>& x,
  * @return first argument to the power of the second argument
  */
 template <typename V, typename T, typename = require_arithmetic_t<T>>
-inline std::complex<fvar<V>> pow(const std::complex<fvar<V>>& x,
-				 const T& y) {
+inline std::complex<fvar<V>> pow(const std::complex<fvar<V>>& x, const T& y) {
   return internal::complex_pow(x, y);
 }
 
@@ -137,7 +136,7 @@ inline std::complex<fvar<V>> pow(const std::complex<fvar<V>>& x,
  */
 template <typename V, typename T, typename = require_arithmetic_t<T>>
 inline std::complex<fvar<V>> pow(const std::complex<T>& x,
-				 const std::complex<fvar<V>>& y) {
+                                 const std::complex<fvar<V>>& y) {
   return internal::complex_pow(x, y);
 }
 
@@ -165,7 +164,7 @@ inline std::complex<fvar<V>> pow(const std::complex<T>& x, const fvar<V>& y) {
  */
 template <typename V>
 inline std::complex<fvar<V>> pow(const fvar<V>& x,
-				 const std::complex<fvar<V>>& y) {
+                                 const std::complex<fvar<V>>& y) {
   return internal::complex_pow(x, y);
 }
 

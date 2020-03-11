@@ -193,7 +193,7 @@ inline var pow(T base, const var& exponent) {
  * @return first argument to the power of the second argument
  */
 inline std::complex<var> pow(const std::complex<var>& x,
-			     const std::complex<var>& y) {
+                             const std::complex<var>& y) {
   return internal::complex_pow(x, y);
 }
 
@@ -207,7 +207,7 @@ inline std::complex<var> pow(const std::complex<var>& x,
  */
 template <typename T, typename = require_arithmetic_t<T>>
 inline std::complex<var> pow(const std::complex<var>& x,
-			     const std::complex<T> y) {
+                             const std::complex<T> y) {
   return internal::complex_pow(x, y);
 }
 
@@ -293,11 +293,10 @@ inline std::complex<var> pow(const var& x, std::complex<T> y) {
  * @param y second argument
  * @return first argument to the power of the second argument
  */
-  template <typename T, typename = require_arithmetic_t<T>>
+template <typename T, typename = require_arithmetic_t<T>>
 inline std::complex<var> pow(T x, const std::complex<var>& y) {
   return internal::complex_pow(x, y);
 }
-
 
 }  // namespace math
 }  // namespace stan

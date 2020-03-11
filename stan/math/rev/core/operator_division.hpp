@@ -134,49 +134,43 @@ inline var operator/(Arith dividend, var divisor) {
 }
 
 inline std::complex<var> operator/(const std::complex<var>& x1,
-				   const std::complex<var>& x2) {
+                                   const std::complex<var>& x2) {
   return internal::complex_divide(x1, x2);
 }
 
 template <typename T, require_arithmetic_t<T>...>
 inline std::complex<var> operator/(const std::complex<var>& x1,
-				   const std::complex<T>& x2) {
+                                   const std::complex<T>& x2) {
   return internal::complex_divide(x1, x2);
 }
-inline std::complex<var> operator/(const std::complex<var>& x1,
-				   const var& x2) {
+inline std::complex<var> operator/(const std::complex<var>& x1, const var& x2) {
   return internal::complex_divide(x1, x2);
 }
 template <typename T, require_arithmetic_t<T>...>
-inline std::complex<var> operator/(const std::complex<var>& x1,
-				   T x2) {
+inline std::complex<var> operator/(const std::complex<var>& x1, T x2) {
   return internal::complex_divide(x1, x2);
 }
 
 template <typename T, require_arithmetic_t<T>...>
 inline std::complex<var> operator/(const std::complex<T>& x1,
-				   const std::complex<var>& x2) {
+                                   const std::complex<var>& x2) {
   return internal::complex_divide(x1, x2);
 }
 template <typename T, require_arithmetic_t<T>...>
-inline std::complex<var> operator/(const std::complex<T>& x1,
-				   const var& x2) {
+inline std::complex<var> operator/(const std::complex<T>& x1, const var& x2) {
   return internal::complex_divide(x1, x2);
 }
 
-inline std::complex<var> operator/(const var& x1,
-				   const std::complex<var>& x2) {
+inline std::complex<var> operator/(const var& x1, const std::complex<var>& x2) {
   return internal::complex_divide(x1, x2);
 }
 template <typename T, require_arithmetic_t<T>...>
-inline std::complex<var> operator/(const var& x1,
-				   const std::complex<T>& x2) {
+inline std::complex<var> operator/(const var& x1, const std::complex<T>& x2) {
   return internal::complex_divide(x1, x2);
 }
 
 template <typename T, require_arithmetic_t<T>...>
-inline std::complex<var> operator/(T x1,
-				   const std::complex<var>& x2) {
+inline std::complex<var> operator/(T x1, const std::complex<var>& x2) {
   return internal::complex_divide(x1, x2);
 }
 

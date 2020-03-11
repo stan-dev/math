@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <cmath>
 #include <limits>
+#include <vector>
 
 template <typename T>
 void expect_scalbn(double x) {
@@ -12,8 +13,8 @@ void expect_scalbn(double x) {
 }
 
 void expect_all_scalbn(double x) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::var;
   expect_scalbn<double>(x);
   expect_scalbn<var>(x);
   expect_scalbn<fvar<double>>(x);
@@ -25,7 +26,7 @@ void expect_all_scalbn(double x) {
 TEST(mathMixMatFun, scalbn) {
   double inf = std::numeric_limits<double>::infinity();
   double nan = std::numeric_limits<double>::quiet_NaN();
-  for (double x : std::vector<double>{ 2.3 }) { // {-inf, -2.3, 0, 1, 2, 3.9, inf, nan}) {
+  for (double x : std::vector<double>{2.3}) {
     expect_all_scalbn(x);
   }
 }

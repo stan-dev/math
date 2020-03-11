@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <vector>
 
 TEST(mathMixMatFun, log10) {
   auto f = [](const auto& x1) {
@@ -10,8 +11,8 @@ TEST(mathMixMatFun, log10) {
                                       1e6);
 
   // non-zero real and imaginary components
-  for (auto re : std::vector<double>{ -2.7, 1, 2.3 }) {
-    for (auto im : std::vector<double>{ -1.5, 1.2 }) {
+  for (auto re : std::vector<double>{-2.7, 1, 2.3}) {
+    for (auto im : std::vector<double>{-1.5, 1.2}) {
       stan::test::expect_ad(f, std::complex<double>{re, im});
     }
   }

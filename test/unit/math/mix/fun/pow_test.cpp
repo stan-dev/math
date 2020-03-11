@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <cmath>
 #include <limits>
+#include <vector>
 
 template <typename T>
 void expect_arith_instantiate() {
@@ -56,28 +57,28 @@ TEST(mathMixFun, complexPow) {
   tols.hessian_hessian_ = 5e-3;
   tols.hessian_fvar_hessian_ = 5e-3;
   // complex, complex
-  for (auto re1 : std::vector<double>{ -1.8, 3.4 }) {
-    for (auto im1 : std::vector<double>{ -1.8, 3.4 }) {
-      for (auto re2 : std::vector<double>{ -2.7, 1, 2.3 }) {
-	for (auto im2 : std::vector<double>{ -1.5, 1.2 }) {
-	  stan::test::expect_ad(tols, f, std::complex<double>{re1, im1},
-				std::complex<double>{re2, im2});
-	}
+  for (auto re1 : std::vector<double>{-1.8, 3.4}) {
+    for (auto im1 : std::vector<double>{-1.8, 3.4}) {
+      for (auto re2 : std::vector<double>{-2.7, 1, 2.3}) {
+        for (auto im2 : std::vector<double>{-1.5, 1.2}) {
+          stan::test::expect_ad(tols, f, std::complex<double>{re1, im1},
+                                std::complex<double>{re2, im2});
+        }
       }
     }
   }
   // if real, first arg must be positive
-  for (auto re1 : std::vector<double>{ 3.4 }) {
-    for (auto re2 : std::vector<double>{ -2.7, 1, 2.3 }) {
-      for (auto im2 : std::vector<double>{ -1.5, 1.2 }) {
-	stan::test::expect_ad(tols, f, re1, std::complex<double>{re2, im2});
+  for (auto re1 : std::vector<double>{3.4}) {
+    for (auto re2 : std::vector<double>{-2.7, 1, 2.3}) {
+      for (auto im2 : std::vector<double>{-1.5, 1.2}) {
+        stan::test::expect_ad(tols, f, re1, std::complex<double>{re2, im2});
       }
     }
   }
-  for (auto re1 : std::vector<double>{ -1.8, 3.4 }) {
-    for (auto im1 : std::vector<double>{ -1.8, 3.4 }) {
-      for (auto re2 : std::vector<double>{ -2.7, 1, 2.3 }) {
-  	stan::test::expect_ad(tols, f, std::complex<double>{re1, im1}, re2);
+  for (auto re1 : std::vector<double>{-1.8, 3.4}) {
+    for (auto im1 : std::vector<double>{-1.8, 3.4}) {
+      for (auto re2 : std::vector<double>{-2.7, 1, 2.3}) {
+        stan::test::expect_ad(tols, f, std::complex<double>{re1, im1}, re2);
       }
     }
   }
