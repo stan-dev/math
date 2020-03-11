@@ -10,12 +10,6 @@
 #include <stan/math/prim/fun/isfinite.hpp>
 #include <stan/math/prim/fun/isnan.hpp>
 #include <stan/math/prim/fun/polar.hpp>
-#include <stan/math/rev/fun/abs.hpp>
-#include <stan/math/rev/fun/arg.hpp>
-#include <stan/math/rev/fun/asin.hpp>
-#include <stan/math/rev/fun/is_inf.hpp>
-#include <stan/math/rev/fun/is_nan.hpp>
-#include <stan/math/rev/fun/polar.hpp>
 #include <cmath>
 #include <complex>
 
