@@ -88,7 +88,6 @@ inline return_type_t<T_n, T_k> binomial_coefficient_log(const T_n n,
     return binomial_coefficient_log(n, n - k);
   }
 
-
   const T_partials_return n_dbl = value_of(n);
   const T_partials_return k_dbl = value_of(k);
   const T_partials_return n_plus_1 = n_dbl + 1;
