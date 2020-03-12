@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/row.hpp>
 #include <stan/math/prim/fun/col.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/rev/core.hpp>
 #include <Eigen/Core>
@@ -121,15 +122,18 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   double unnormed_marginal = alphas.col(n_transitions).sum();
 
   std::vector<Eigen::VectorXd> kappa(n_transitions);
-  kappa[n_transitions - 1] = Eigen::VectorXd::Ones(n_states);
   Eigen::VectorXd kappa_log_norms(n_transitions);
-  kappa_log_norms(n_transitions - 1) = 0;
   std::vector<double> grad_corr(n_transitions);
-  grad_corr[n_transitions - 1]
-    = std::exp(alpha_log_norms(n_transitions - 1) - norm_norm);
+
+  if (n_transitions > 0) {
+    kappa[n_transitions - 1] = Eigen::VectorXd::Ones(n_states);
+    kappa_log_norms(n_transitions - 1) = 0;
+    grad_corr[n_transitions - 1]
+      = std::exp(alpha_log_norms(n_transitions - 1) - norm_norm);
+  }
 
   for (int n = n_transitions - 2; n >= 0; --n) {
-    kappa[n] = Gamma_dbl  // .transpose()
+    kappa[n] = Gamma_dbl
       * (omegas.col(n + 2).cwiseProduct(kappa[n + 1]));
 
     double norm = kappa[n].maxCoeff();
@@ -143,13 +147,12 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
     Eigen::MatrixXd Gamma_jacad(n_states, n_states);
     Gamma_jacad.setZero();
 
-    for (int n = n_transitions - 1; n >= 0; --n) {
-      // Gamma_jacad += grad_corr[n]
-      //             * (kappa[n].cwiseProduct(omegas.col(n + 1))).transpose()
-      //             * alphas.col(n);
-      Gamma_jacad += (grad_corr[n]
-                      * kappa[n].cwiseProduct(omegas.col(n + 1))
-                      * alphas.col(n).transpose()).transpose();
+    if (n_transitions != 0) {
+      for (int n = n_transitions - 1; n >= 0; --n) {
+        Gamma_jacad += (grad_corr[n]
+                        * kappa[n].cwiseProduct(omegas.col(n + 1))
+                        * alphas.col(n).transpose()).transpose();
+      }
     }
 
     Gamma_jacad /= unnormed_marginal;
@@ -172,22 +175,38 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
     }
 
     // Boundary terms
-    double grad_corr_boundary = std::exp(kappa_log_norms(0) - norm_norm);
-    Eigen::VectorXd c = Gamma_dbl  // .transpose()
-                         * omegas.col(1).cwiseProduct(kappa[0]);
+    // TO DO (charlesm93): find a better solution that the if loop
+    // for 0 transitions.
+    double grad_corr_boundary;
+    Eigen::VectorXd c;
+    if (n_transitions != 0) {
+      grad_corr_boundary = std::exp(kappa_log_norms(0) - norm_norm);
+      c = Gamma_dbl * omegas.col(1).cwiseProduct(kappa[0]);
+    }
 
     if (!is_constant_all<T_omega>::value) {
-      log_omega_jacad.col(0) = grad_corr_boundary
-                                 * c.cwiseProduct(value_of_rec(rho));
-      log_omega_jacad
-        = log_omega_jacad.cwiseProduct(omegas / unnormed_marginal);
+      if (n_transitions != 0) {
+        log_omega_jacad.col(0) = grad_corr_boundary
+                                   * c.cwiseProduct(value_of_rec(rho));
+        log_omega_jacad
+          = log_omega_jacad.cwiseProduct(omegas / unnormed_marginal);
+      } else {
+        log_omega_jacad.col(0)
+          = omegas.col(0).cwiseProduct(value_of_rec(rho)) /
+            exp(value_of_rec(log_marginal_density));
+      }
       ops_partials.edge1_.partials_ = log_omega_jacad;
     }
 
     if (!is_constant_all<T_rho>::value) {
-      ops_partials.edge3_.partials_
-        = grad_corr_boundary * c.cwiseProduct(omegas.col(0))
-            / unnormed_marginal;
+      if (n_transitions != 0) {
+        ops_partials.edge3_.partials_
+          = grad_corr_boundary * c.cwiseProduct(omegas.col(0))
+              / unnormed_marginal;
+      } else {
+        ops_partials.edge3_.partials_ = omegas.col(0)
+          / exp(value_of_rec(log_marginal_density));
+      }
     }
   }
 

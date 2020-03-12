@@ -83,6 +83,19 @@ TEST(hmm_marginal_lpdf, two_state) {
     log_omegas.col(n)[1] = state_lpdf(obs_data[n], abs_mu, sigma, 1);
   }
 
+  // Test the zero transition case
+  Eigen::MatrixXd log_omegas_zero = log_omegas.block(0, 0, n_states, 1);
+
+  EXPECT_FLOAT_EQ(-1.520827,
+      hmm_marginal_lpdf(log_omegas_zero, Gamma, rho));
+
+  // std::cout << "log_omegas_zero: " << log_omegas_zero << std::endl;
+  // std::cout << "Marker A" << std::endl;
+  // std::cout << hmm_marginal_lpdf(log_omegas_zero, Gamma, rho)
+  //           << std::endl;
+  // std::cout << "Marker B" << std::endl;
+  // EXPECT_FLOAT_EQ(0, hmm_marginal_lpdf(log_omegas_zero, Gamma, rho));
+
   // CHECK -- EXPECT_EQ returns an error.
   EXPECT_FLOAT_EQ(-18.37417, hmm_marginal_lpdf(log_omegas, Gamma, rho));
 
@@ -122,7 +135,10 @@ TEST(hmm_marginal_lpdf, two_state) {
   tols.grad_hessian_hessian_ = infinity;
   tols.grad_hessian_grad_hessian_ = infinity;
 
-  stan::test::expect_ad(tols, hmm_functor, log_omegas,
+  // stan::test::expect_ad(tols, hmm_functor, log_omegas,
+  //                       Gamma_unconstrained, rho_unconstrained);
+
+  stan::test::expect_ad(tols, hmm_functor, log_omegas_zero,
                         Gamma_unconstrained, rho_unconstrained);
 }
 
