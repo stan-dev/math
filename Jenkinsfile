@@ -156,7 +156,7 @@ pipeline {
                     sh 'git clean -xffd'
 
                     def paths = ['stan', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format'].join(" ")
-                    utils.verifyChanges(paths)
+                    skipRemainingStages = utils.verifyChanges(paths)
                 }
             }
         }
