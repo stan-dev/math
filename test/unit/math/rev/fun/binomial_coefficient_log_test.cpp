@@ -106,6 +106,8 @@ std::vector<TestValue> testValuesEdge = {
     {3, -1, stan::math::NEGATIVE_INFTY, -0.25, stan::math::INFTY},
     {-1, -0.2, stan::math::INFTY, stan::math::NEGATIVE_INFTY,
      -4.324031329886049836},
+    {-0.5, 0.5, stan::math::NEGATIVE_INFTY, stan::math::INFTY,
+     stan::math::NEGATIVE_INFTY},
     {4.0, 5.0, stan::math::NEGATIVE_INFTY, stan::math::INFTY,
      stan::math::NEGATIVE_INFTY},
     {1, 0, 0, 0, 1},

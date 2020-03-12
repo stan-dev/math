@@ -84,7 +84,7 @@ inline return_type_t<T_n, T_k> binomial_coefficient_log(const T_n n,
   }
 
   // Choosing the more stable of the symmetric branches
-  if (n > 0 && k > value_of_rec(n) / 2.0 + 1e-8) {
+  if (n > -1 && k > value_of_rec(n) / 2.0 + 1e-8) {
     return binomial_coefficient_log(n, n - k);
   }
 
