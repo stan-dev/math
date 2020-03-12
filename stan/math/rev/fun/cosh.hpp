@@ -7,6 +7,7 @@
 #include <stan/math/rev/core/operator_multiplication.hpp>
 #include <stan/math/rev/fun/exp.hpp>
 #include <stan/math/rev/fun/sin.hpp>
+#include <stan/math/rev/fun/sinh.hpp>
 #include <cmath>
 #include <complex>
 

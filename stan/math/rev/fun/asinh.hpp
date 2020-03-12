@@ -9,6 +9,7 @@
 #include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/rev/fun/abs.hpp>
 #include <stan/math/rev/fun/arg.hpp>
+#include <stan/math/rev/fun/cosh.hpp>
 #include <stan/math/rev/fun/is_nan.hpp>
 #include <stan/math/rev/fun/log.hpp>
 #include <stan/math/rev/fun/polar.hpp>

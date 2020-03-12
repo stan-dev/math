@@ -8,6 +8,8 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/fun/is_inf.hpp>
+#include <stan/math/rev/fun/cosh.hpp>
+#include <stan/math/rev/fun/sinh.hpp>
 #include <cmath>
 #include <complex>
 

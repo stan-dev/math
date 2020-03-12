@@ -8,6 +8,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/atan2.hpp>
 #include <stan/math/rev/fun/hypot.hpp>
+#include <stan/math/rev/fun/log.hpp>
 #include <cmath>
 #include <complex>
 
