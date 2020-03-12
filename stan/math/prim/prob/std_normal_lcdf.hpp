@@ -94,7 +94,7 @@ inline return_type_t<T_y> std_normal_lcdf(const T_y& y) {
       T_partials_return t2 = 0.0;
       T_partials_return t4 = 0.0;
 
-      // calculate using piecewise funciton
+      // calculate using piecewise function
       // (due to instability / inaccuracy in the various approximations)
       if (scaled_y > 2.9) {
         // approximation derived from Abramowitz and Stegun (1964) 7.1.26
