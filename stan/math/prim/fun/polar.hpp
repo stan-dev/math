@@ -36,16 +36,16 @@ inline complex_return_t<U, V> complex_polar(const U& r, const V& theta) {
  * @param[in] theta phase angle
  * @return complex number with magnitude and phase angle
  */
-std::complex<double> polar(double r, double theta) {
+inline std::complex<double> polar(double r, double theta) {
   return internal::complex_polar(r, theta);
 }
-std::complex<double> polar(double r, int theta) {
+inline std::complex<double> polar(double r, int theta) {
   return internal::complex_polar(r, static_cast<double>(theta));
 }
-std::complex<double> polar(int r, double theta) {
+inline std::complex<double> polar(int r, double theta) {
   return internal::complex_polar(static_cast<double>(r), theta);
 }
-std::complex<double> polar(int r, int theta) {
+inline std::complex<double> polar(int r, int theta) {
   return internal::complex_polar(static_cast<double>(r),
                                  static_cast<double>(theta));
 }
