@@ -23,7 +23,8 @@ TEST(MathFunctions, binomial_coefficient_log_identities) {
   std::vector<double> k_ratios_to_test
       = {-0.1, 1e-10, 1e-5, 1e-3, 1e-1, 0.5, 0.9, 1 - 1e-5, 1 - 1e-10};
 
-  // Recurrence relation
+  // Recurrence relation:  binomial_coefficient_log(n, k) == 
+  //    binomial_coefficient_log(n - 1, k - 1) + log(n) - log(k)
   for (double n_dbl : n_to_test) {
     for (double k_ratio : k_ratios_to_test) {
       double k_dbl = n_dbl * k_ratio;

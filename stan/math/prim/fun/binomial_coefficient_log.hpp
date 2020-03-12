@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_FUN_BINOMIAL_COEFFICIENT_LOG_HPP
 #define STAN_MATH_PRIM_FUN_BINOMIAL_COEFFICIENT_LOG_HPP
 
-#include <boost/math/constants/constants.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
@@ -78,8 +77,10 @@ namespace math {
 template <typename T_n, typename T_k>
 inline return_type_t<T_n, T_k> binomial_coefficient_log(const T_n n,
                                                         const T_k k) {
+  using T_partials_return = partials_return_t<T_n, T_k>;
+
   if (is_any_nan(n, k)) {
-    return stan::math::NOT_A_NUMBER;
+    return NOT_A_NUMBER;
   }
 
   // Choosing the more stable of the symmetric branches
@@ -87,12 +88,11 @@ inline return_type_t<T_n, T_k> binomial_coefficient_log(const T_n n,
     return binomial_coefficient_log(n, n - k);
   }
 
-  using T_partials_return = partials_return_t<T_n, T_k>;
 
-  const T_partials_return n_ = value_of(n);
-  const T_partials_return k_ = value_of(k);
-  const T_partials_return n_plus_1 = n_ + 1;
-  const T_partials_return n_plus_1_mk = n_plus_1 - k_;
+  const T_partials_return n_dbl = value_of(n);
+  const T_partials_return k_dbl = value_of(k);
+  const T_partials_return n_plus_1 = n_dbl + 1;
+  const T_partials_return n_plus_1_mk = n_plus_1 - k_dbl;
 
   static const char* function = "binomial_coefficient_log";
   check_greater_or_equal(function, "first argument", n, -1);
@@ -103,26 +103,30 @@ inline return_type_t<T_n, T_k> binomial_coefficient_log(const T_n n,
   operands_and_partials<T_n, T_k> ops_partials(n, k);
 
   T_partials_return value;
-  if (k_ == 0) {
+  if (k_dbl == 0) {
     value = 0;
   } else if (n_plus_1 < lgamma_stirling_diff_useful) {
-    value = lgamma(n_plus_1) - lgamma(k_ + 1) - lgamma(n_plus_1_mk);
+    value = lgamma(n_plus_1) - lgamma(k_dbl + 1) - lgamma(n_plus_1_mk);
   } else {
-    value = -lbeta(n_plus_1_mk, k_ + 1) - log1p(n_);
+    value = -lbeta(n_plus_1_mk, k_dbl + 1) - log1p(n_dbl);
   }
 
   if (!is_constant_all<T_n, T_k>::value) {
     // Branching on all the edge cases.
     // In direct computation many of those would be NaN
-    // But one-sided limits from within the domain exist.
+    // But one-sided limits from within the domain exist, all of the below
+    // follows from lim x->0 from above digamma(x) == -Inf
+    //
+    // Note that we have k < n / 2 (see the first branch in this function)
+    // se we can ignore the n == k - 1 edge case.
     T_partials_return digamma_n_plus_1_mk = digamma(n_plus_1_mk);
 
     if (!is_constant_all<T_n>::value) {
-      if (n_ == -1.0) {
-        if (k_ == 0) {
+      if (n_dbl == -1.0) {
+        if (k_dbl == 0) {
           ops_partials.edge1_.partials_[0] = 0;
         } else {
-          ops_partials.edge1_.partials_[0] = stan::math::NEGATIVE_INFTY;
+          ops_partials.edge1_.partials_[0] = NEGATIVE_INFTY;
         }
       } else {
         ops_partials.edge1_.partials_[0]
@@ -130,13 +134,13 @@ inline return_type_t<T_n, T_k> binomial_coefficient_log(const T_n n,
       }
     }
     if (!is_constant_all<T_k>::value) {
-      if (k_ == 0 && n_ == -1.0) {
-        ops_partials.edge2_.partials_[0] = stan::math::NEGATIVE_INFTY;
-      } else if (k_ == -1) {
-        ops_partials.edge2_.partials_[0] = stan::math::INFTY;
+      if (k_dbl == 0 && n_dbl == -1.0) {
+        ops_partials.edge2_.partials_[0] = NEGATIVE_INFTY;
+      } else if (k_dbl == -1) {
+        ops_partials.edge2_.partials_[0] = INFTY;
       } else {
         ops_partials.edge2_.partials_[0]
-            = (digamma_n_plus_1_mk - digamma(k_ + 1));
+            = (digamma_n_plus_1_mk - digamma(k_dbl + 1));
       }
     }
   }

@@ -70,6 +70,8 @@ TEST(MathFunctions, lbeta_identities_gradient) {
 
   lbeta_test_internal::identity_tolerances tol{{1e-15, 1e-15}, {1e-10, 1e-10}};
 
+  // All identities from https://en.wikipedia.org/wiki/Beta_function#Properties
+  // Successors: beta(a,b) = beta(a + 1, b) + beta(a, b + 1)
   for (double x : to_test) {
     for (double y : to_test) {
       // TODO(martinmodrak) this restriction on testing should be lifted once
@@ -86,6 +88,7 @@ TEST(MathFunctions, lbeta_identities_gradient) {
     }
   }
 
+  // Sin: beta(x, 1 - x) == pi / sin(pi * x)
   for (double x : to_test) {
     if (x < 1) {
       std::stringstream msg;
@@ -96,6 +99,7 @@ TEST(MathFunctions, lbeta_identities_gradient) {
     }
   }
 
+  // Inv: beta(1, x) == 1 / x
   for (double x : to_test) {
     std::stringstream msg;
     msg << std::setprecision(22) << "inv: x = " << x;
