@@ -1,21 +1,22 @@
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 #include <complex>
 #include <limits>
 #include <vector>
 
 template <typename U, typename V>
 void expect_eq_signbit(const U& u, const V& v) {
+  using stan::math::signbit;
+  using std::signbit;
   EXPECT_EQ(signbit(u), signbit(v));
 }
 
 template <typename T>
 void expect_copysign() {
   using stan::math::copysign;
-  using stan::math::signbit;
   using std::copysign;
   using std::numeric_limits;
-  using std::signbit;
 
   double inf = numeric_limits<double>::infinity();
   std::vector<double> ys{inf, -inf, -1, 0, 1};
