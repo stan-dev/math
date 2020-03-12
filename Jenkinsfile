@@ -25,7 +25,7 @@ def deleteDirWin() {
     deleteDir()
 }
 
-def skipRemainingStages = true
+def skipRemainingStages = false
 
 def utils = new org.stan.Utils()
 
