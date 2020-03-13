@@ -20,7 +20,7 @@ static const char* ordered_logistic_glm_kernel_code = STRINGIFY(
      * LOCAL_SIZE_.
      * @param[out] location_sum partially summed location (1 value per work
      * group)
-     * @param[out] logp_global partially summed log probabiltiy (1 value per
+     * @param[out] logp_global partially summed log probability (1 value per
      * work group)
      * @param[out] location_derivative derivative wrt location
      * @param[out] cuts_derivative partially summed derivative wrt cuts (1

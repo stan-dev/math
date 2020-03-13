@@ -47,12 +47,12 @@ struct multi_result_kernel_internal {
     using T_current_expression = std::remove_reference_t<
         std::tuple_element_t<n, std::tuple<T_expressions...>>>;
     /**
-     * Assigns the dimmensions of expressions to matching results if possible.
-     * Otherwise checks that dimmensions match. Also checks that all expressions
-     * require same nnumber of threads.
-     * @param n_rows number of threads in rows dimmension of the first
+     * Assigns the dimensions of expressions to matching results if possible.
+     * Otherwise checks that dimensions match. Also checks that all expressions
+     * require same number of threads.
+     * @param n_rows number of threads in rows dimension of the first
      * expression
-     * @param n_cols number of threads in rows dimmension of the first
+     * @param n_cols number of threads in rows dimension of the first
      * expression
      * @param results results
      * @param expressions expressions
@@ -113,7 +113,7 @@ struct multi_result_kernel_internal {
      * Sets kernel arguments.
      * @param generated Set of operations that already set their arguments
      * @param kernel kernel to set arguments to
-     * @param arg_num number of the next arguemnt to set
+     * @param arg_num number of the next argument to set
      * @param results results
      * @param expressions expressions
      */
@@ -132,7 +132,7 @@ struct multi_result_kernel_internal {
     }
 
     /**
-     * Adds event to materices used in kernel.
+     * Adds event to matrices used in kernel.
      * @param e event to add
      * @param results results
      * @param expressions expressions
@@ -273,7 +273,7 @@ class results_cl {
 
  private:
   /**
-   * Implementation of kernel soource generation.
+   * Implementation of kernel source generation.
    * @tparam T_expressions types of expressions
    * @tparam Is indices
    * @param exprs expressions
@@ -293,7 +293,7 @@ class results_cl {
   }
 
   /**
-   * Implementation of kernel soource generation.
+   * Implementation of kernel source generation.
    * @tparam T_res types of results
    * @tparam T_expressions types of expressions
    * @param results results
@@ -400,9 +400,12 @@ class results_cl {
     int n_rows = std::get<0>(expressions).x.thread_rows();
     int n_cols = std::get<0>(expressions).x.thread_cols();
     const char* function = "results_cl.assignment";
+    impl::check_assign_dimensions(n_rows, n_cols, results, expressions);
+    if (n_rows * n_cols == 0) {
+      return;
+    }
     check_positive(function, "number of rows", n_rows);
     check_positive(function, "number of columns", n_cols);
-    impl::check_assign_dimensions(n_rows, n_cols, results, expressions);
 
     try {
       if (impl::kernel_() == NULL) {

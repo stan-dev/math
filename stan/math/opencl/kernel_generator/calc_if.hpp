@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_calc_if_HPP
-#define STAN_MATH_OPENCL_KERNEL_GENERATOR_calc_if_HPP
+#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_CALC_IF_HPP
+#define STAN_MATH_OPENCL_KERNEL_GENERATOR_CALC_IF_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/matrix_cl_view.hpp>
@@ -52,7 +52,7 @@ class calc_if_
   /**
    * Generates kernel code for assigning this expression into result expression.
    * @param[in,out] generated set of (pointer to) already generated operations
-   * @param name_gen name generator for this kernel
+   * @param ng name generator for this kernel
    * @param i row index variable name
    * @param j column index variable name
    * @param result expression into which result is to be assigned

@@ -26,7 +26,7 @@ namespace math {
  * for more information.
  *
  * @tparam T type of the array (must be derived from \c Eigen::ArrayBase and
- * have one compile-time dimmension equal to 1)
+ * have one compile-time dimension equal to 1)
  * @param CPCs The (K choose 2) canonical partial correlations in
  * (-1, 1).
  * @param K Dimensionality of correlation matrix.
@@ -88,7 +88,7 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
  * (2009) 1989–2001 </li></ul>
  *
  * @tparam T type of the array (must be derived from \c Eigen::ArrayBase and
- * have one compile-time dimmension equal to 1)
+ * have one compile-time dimension equal to 1)
  * @param CPCs The (K choose 2) canonical partial correlations in
  * (-1, 1).
  * @param K Dimensionality of correlation matrix.

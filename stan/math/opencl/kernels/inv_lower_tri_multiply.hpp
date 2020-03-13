@@ -26,7 +26,7 @@ static const std::string inv_lower_tri_multiply_kernel_code = STRINGIFY(
      * upper left lower and A3 is the original lower triangulars lower left
      * rectangular. This kernel takes the output from
      * <code>neg_rect_lower_tri_multiply</code> and applies
-     * the submatrix multiplcation to get the final output for C3.
+     * the submatrix multiplication to get the final output for C3.
      * ![Inverse Calculation](https://goo.gl/6jBjEG)
      *
      * Graphically, this kernel calculates the C2 * A3.
