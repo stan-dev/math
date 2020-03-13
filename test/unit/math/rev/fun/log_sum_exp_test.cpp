@@ -6,7 +6,7 @@
 TEST(log_sum_exp_tests, large_values) {
   using stan::math::var;
 
-  // check combinations of vars and doubles with large argument values
+  // check autodiffing works with var types with large values
   var a = 1e50;
   var output = stan::math::log_sum_exp(a, a);
   output.grad();
@@ -27,25 +27,37 @@ TEST(log_sum_exp_tests, large_values) {
   EXPECT_FLOAT_EQ(a4.adj(), 1.0);
   EXPECT_FLOAT_EQ(a5.adj(), 0.0);
 
-
-  // check combinations of vars and doubles with large argument values
+  // check autodiffing works with var types with large values
   var b = 1e20;
-  var output4 = stan::math::log_sum_exp(b, b);
-  output4.grad();
-  EXPECT_FLOAT_EQ(output4.val(), log(2.0) + value_of(b));
+  var output6 = stan::math::log_sum_exp(b, b);
+  output6.grad();
+  EXPECT_FLOAT_EQ(output6.val(), log(2.0) + value_of(b));
   EXPECT_FLOAT_EQ(b.adj(), 1.0);
 
   var b2 = -2;
   var b3 = 1e20;
-  var output5 = stan::math::log_sum_exp(b2, b3);
-  output5.grad();
+  var output7 = stan::math::log_sum_exp(b2, b3);
+  output7.grad();
   EXPECT_FLOAT_EQ(b2.adj(), 0.0);
   EXPECT_FLOAT_EQ(b3.adj(), 1.0);
 
   var b4 = 1e20;
   var b5 = -2;
-  var output6 = stan::math::log_sum_exp(b4, b5);
-  output6.grad();
+  var output8 = stan::math::log_sum_exp(b4, b5);
+  output8.grad();
   EXPECT_FLOAT_EQ(b4.adj(), 1.0);
   EXPECT_FLOAT_EQ(b5.adj(), 0.0);
+
+  // check arguement combinations of vars and doubles
+  var a6 = 1e50;
+  double a7 = 1;
+  var output4 = stan::math::log_sum_exp(a6, a7);
+  output4.grad();
+  EXPECT_FLOAT_EQ(a6.adj(), 1.0);
+
+  var a8 = 1;
+  double a9 = 1e50;
+  var output5 = stan::math::log_sum_exp(a8, a9);
+  output5.grad();
+  EXPECT_FLOAT_EQ(a8.adj(), 0.0);
 }
