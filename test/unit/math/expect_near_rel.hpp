@@ -6,8 +6,6 @@
 #include <test/unit/math/relative_tolerance.hpp>
 #include <string>
 #include <vector>
-#include <limits>
-#include <algorithm>
 
 namespace stan {
 namespace test {
@@ -84,7 +82,7 @@ void expect_near_rel(const std::string& msg, const T1& x1, const T2& x2,
                       << std::endl
                       << msg << std::endl;
   else
-    internal::expect_near_rel_finite(msg, x1, x2, tol_rel, tol_min);
+    internal::expect_near_rel_finite(msg, x1, x2, tol);
 }
 
 /**
