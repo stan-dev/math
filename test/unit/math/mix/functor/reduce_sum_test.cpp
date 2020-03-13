@@ -289,4 +289,3 @@ TEST(MathMix_reduce_sum, eigen_three_args_with_doubles3) {
       },
       arg1, arg2, arg3);
 }
-

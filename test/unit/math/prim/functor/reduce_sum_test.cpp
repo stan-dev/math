@@ -134,8 +134,7 @@ TEST(StanMathPrim_reduce_sum, double_slice) {
 
   std::vector<double> data(5, 10.0);
 
-  EXPECT_DOUBLE_EQ(50.0,
-                   stan::math::reduce_sum<sum_lpdf>(data, 0, msgs));
+  EXPECT_DOUBLE_EQ(50.0, stan::math::reduce_sum<sum_lpdf>(data, 0, msgs));
 }
 
 TEST(StanMathPrim_reduce_sum, std_vector_double_slice) {
@@ -143,8 +142,7 @@ TEST(StanMathPrim_reduce_sum, std_vector_double_slice) {
 
   std::vector<std::vector<double>> data(5, std::vector<double>(2, 10.0));
 
-  EXPECT_DOUBLE_EQ(100.0,
-                   stan::math::reduce_sum<sum_lpdf>(data, 0, msgs));
+  EXPECT_DOUBLE_EQ(100.0, stan::math::reduce_sum<sum_lpdf>(data, 0, msgs));
 }
 
 struct start_end_lpdf {
@@ -195,9 +193,8 @@ TEST(StanMathPrim_reduce_sum, std_vector_int_arg) {
   std::vector<double> data(5, 10.0);
   std::vector<int> arg(5, 10);
 
-  EXPECT_DOUBLE_EQ(
-      5 * (10 + 5 * 10),
-      stan::math::reduce_sum<sum_lpdf>(data, 0, msgs, arg));
+  EXPECT_DOUBLE_EQ(5 * (10 + 5 * 10),
+                   stan::math::reduce_sum<sum_lpdf>(data, 0, msgs, arg));
 }
 
 TEST(StanMathPrim_reduce_sum, std_vector_double_arg) {
@@ -206,9 +203,8 @@ TEST(StanMathPrim_reduce_sum, std_vector_double_arg) {
   std::vector<double> data(5, 10.0);
   std::vector<double> arg(5, 10.0);
 
-  EXPECT_DOUBLE_EQ(
-      5 * (10 + 5 * 10),
-      stan::math::reduce_sum<sum_lpdf>(data, 0, msgs, arg));
+  EXPECT_DOUBLE_EQ(5 * (10 + 5 * 10),
+                   stan::math::reduce_sum<sum_lpdf>(data, 0, msgs, arg));
 }
 
 TEST(StanMathPrim_reduce_sum, eigen_vector_arg) {
@@ -217,8 +213,8 @@ TEST(StanMathPrim_reduce_sum, eigen_vector_arg) {
   std::vector<double> data(5, 10.0);
   Eigen::VectorXd arg = Eigen::VectorXd::Ones(5);
 
-  EXPECT_DOUBLE_EQ(5 * (10 + 5), stan::math::reduce_sum<sum_lpdf>(
-                                     data, 0, msgs, arg));
+  EXPECT_DOUBLE_EQ(5 * (10 + 5),
+                   stan::math::reduce_sum<sum_lpdf>(data, 0, msgs, arg));
 }
 
 TEST(StanMathPrim_reduce_sum, eigen_row_vector_arg) {
@@ -227,9 +223,8 @@ TEST(StanMathPrim_reduce_sum, eigen_row_vector_arg) {
   std::vector<double> data(5, 10.0);
   Eigen::RowVectorXd arg = Eigen::RowVectorXd::Ones(5);
 
-  EXPECT_DOUBLE_EQ(
-      5 * (10 + 5),
-      stan::math::reduce_sum<sum_lpdf>(data, 0, msgs, arg));
+  EXPECT_DOUBLE_EQ(5 * (10 + 5),
+                   stan::math::reduce_sum<sum_lpdf>(data, 0, msgs, arg));
 }
 
 TEST(StanMathPrim_reduce_sum, eigen_matrix_arg) {
@@ -238,9 +233,8 @@ TEST(StanMathPrim_reduce_sum, eigen_matrix_arg) {
   std::vector<double> data(5, 10.0);
   Eigen::MatrixXd arg = Eigen::MatrixXd::Ones(5, 5);
 
-  EXPECT_DOUBLE_EQ(
-      5 * (10 + 5 * 5),
-      stan::math::reduce_sum<sum_lpdf>(data, 0, msgs, arg));
+  EXPECT_DOUBLE_EQ(5 * (10 + 5 * 5),
+                   stan::math::reduce_sum<sum_lpdf>(data, 0, msgs, arg));
 }
 
 TEST(StanMathPrim_reduce_sum, std_vector_std_vector_double_arg) {
@@ -249,9 +243,8 @@ TEST(StanMathPrim_reduce_sum, std_vector_std_vector_double_arg) {
   std::vector<double> data(5, 10.0);
   std::vector<std::vector<double>> arg(5, std::vector<double>(5, 10.0));
 
-  EXPECT_DOUBLE_EQ(
-      5 * (10 + 250),
-      stan::math::reduce_sum<sum_lpdf>(data, 0, msgs, arg));
+  EXPECT_DOUBLE_EQ(5 * (10 + 250),
+                   stan::math::reduce_sum<sum_lpdf>(data, 0, msgs, arg));
 }
 
 TEST(StanMathPrim_reduce_sum, std_vector_eigen_vector_arg) {
@@ -261,8 +254,7 @@ TEST(StanMathPrim_reduce_sum, std_vector_eigen_vector_arg) {
   std::vector<Eigen::VectorXd> arg(2, Eigen::VectorXd::Ones(5));
 
   EXPECT_DOUBLE_EQ(5 * (10 + 10),
-                   stan::math::reduce_sum<sum_lpdf>(
-                       data, 0, msgs, arg));
+                   stan::math::reduce_sum<sum_lpdf>(data, 0, msgs, arg));
 }
 
 TEST(StanMathPrim_reduce_sum, sum) {
@@ -282,5 +274,5 @@ TEST(StanMathPrim_reduce_sum, sum) {
   EXPECT_DOUBLE_EQ(
       5 + 5 * (1 + 1 + 5 + 5 + 5 + 5 + 25 + 10 + 10),
       stan::math::reduce_sum<sum_lpdf>(data, 0, msgs, arg1, arg2, arg3, arg4,
-					arg5, arg6, arg7, arg8, arg9));
+                                       arg5, arg6, arg7, arg8, arg9));
 }

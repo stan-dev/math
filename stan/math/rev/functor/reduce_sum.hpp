@@ -46,22 +46,23 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     Eigen::VectorXd args_adjoints_{0};
 
     template <typename VecT, typename... ArgsT>
-    recursive_reducer(size_t per_job_sliced_terms, size_t num_shared_terms, double* sliced_partials,
-                      VecT&& vmapped, std::ostream* msgs, ArgsT&&... args)
-      : per_job_sliced_terms_(per_job_sliced_terms),
-	num_shared_terms_(num_shared_terms),
-	sliced_partials_(sliced_partials),
-	vmapped_(std::forward<VecT>(vmapped)),
-	msgs_(msgs),
-	args_tuple_(std::forward<ArgsT>(args)...) {}
+    recursive_reducer(size_t per_job_sliced_terms, size_t num_shared_terms,
+                      double* sliced_partials, VecT&& vmapped,
+                      std::ostream* msgs, ArgsT&&... args)
+        : per_job_sliced_terms_(per_job_sliced_terms),
+          num_shared_terms_(num_shared_terms),
+          sliced_partials_(sliced_partials),
+          vmapped_(std::forward<VecT>(vmapped)),
+          msgs_(msgs),
+          args_tuple_(std::forward<ArgsT>(args)...) {}
 
     recursive_reducer(recursive_reducer& other, tbb::split)
-      : per_job_sliced_terms_(other.per_job_sliced_terms_),
-	num_shared_terms_(other.num_shared_terms_),
-	sliced_partials_(other.sliced_partials_),
-	vmapped_(other.vmapped_),
-	msgs_(other.msgs_),
-	args_tuple_(other.args_tuple_) {}
+        : per_job_sliced_terms_(other.per_job_sliced_terms_),
+          num_shared_terms_(other.num_shared_terms_),
+          sliced_partials_(other.sliced_partials_),
+          vmapped_(other.vmapped_),
+          msgs_(other.msgs_),
+          args_tuple_(other.args_tuple_) {}
 
     /**
      * Specialization of deep copy that returns references for arithmetic types.
@@ -247,7 +248,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           args_tuple_local_copy);
       sub_sum_v.grad();
       sum_ += sub_sum_v.val();
-      accumulate_adjoints(this->sliced_partials_ + r.begin() * per_job_sliced_terms_, local_sub_slice);
+      accumulate_adjoints(
+          this->sliced_partials_ + r.begin() * per_job_sliced_terms_,
+          local_sub_slice);
       apply(
           [&](auto&&... args) {
             return accumulate_adjoints(args_adjoints_.data(),
@@ -489,7 +492,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       partials[i] = 0.0;
     }
     recursive_reducer worker(per_job_sliced_terms, num_shared_terms, partials,
-			     vmapped, msgs, args...);
+                             vmapped, msgs, args...);
 
 #ifdef STAN_DETERMINISTIC
     tbb::inline_partitioner partitioner;
