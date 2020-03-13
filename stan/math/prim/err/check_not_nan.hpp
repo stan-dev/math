@@ -1,39 +1,10 @@
 #ifndef STAN_MATH_PRIM_ERR_CHECK_NOT_NAN_HPP
 #define STAN_MATH_PRIM_ERR_CHECK_NOT_NAN_HPP
 
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err/throw_domain_error.hpp>
-#include <stan/math/prim/err/throw_domain_error_vec.hpp>
-#include <stan/math/prim/fun/get.hpp>
-#include <stan/math/prim/fun/is_nan.hpp>
-#include <stan/math/prim/fun/size.hpp>
-#include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/err/elementwise_check.hpp>
 
 namespace stan {
 namespace math {
-
-namespace internal {
-template <typename T_y, bool is_vec>
-struct not_nan {
-  static void check(const char* function, const char* name, const T_y& y) {
-    if (is_nan(value_of_rec(y))) {
-      throw_domain_error(function, name, y, "is ", ", but must not be nan!");
-    }
-  }
-};
-
-template <typename T_y>
-struct not_nan<T_y, true> {
-  static void check(const char* function, const char* name, const T_y& y) {
-    for (size_t n = 0; n < stan::math::size(y); n++) {
-      if (is_nan(value_of_rec(stan::get(y, n)))) {
-        throw_domain_error_vec(function, name, y, n, "is ",
-                               ", but must not be nan!");
-      }
-    }
-  }
-};
-}  // namespace internal
 
 /**
  * Check if <code>y</code> is not <code>NaN</code>.
@@ -49,7 +20,8 @@ struct not_nan<T_y, true> {
 template <typename T_y>
 inline void check_not_nan(const char* function, const char* name,
                           const T_y& y) {
-  internal::not_nan<T_y, is_vector_like<T_y>::value>::check(function, name, y);
+  auto is_good = [](const auto& y) { return !std::isnan(y); };
+  elementwise_check(is_good, function, name, y, ", but must not be nan!");
 }
 
 }  // namespace math

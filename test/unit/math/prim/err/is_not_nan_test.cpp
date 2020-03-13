@@ -1,20 +1,29 @@
-#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <limits>
+#include <stan/math/prim/err/is_not_nan.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <vector>
 
 using stan::math::is_not_nan;
 
 TEST(ErrorHandlingScalar, isNotNan) {
-  double x = 0;
+  EXPECT_TRUE(is_not_nan(stan::math::NEGATIVE_INFTY));
+  EXPECT_TRUE(is_not_nan(-3.0));
+  EXPECT_TRUE(is_not_nan(-3));
+  EXPECT_TRUE(is_not_nan(-0.0));
+  EXPECT_TRUE(is_not_nan(0.0));
+  EXPECT_TRUE(is_not_nan(0u));
+  EXPECT_TRUE(is_not_nan((size_t)0));
+  EXPECT_TRUE(is_not_nan(0));
+  EXPECT_TRUE(is_not_nan(3.0));
+  EXPECT_TRUE(is_not_nan(3));
+  EXPECT_TRUE(is_not_nan(stan::math::INFTY));
+  EXPECT_FALSE(is_not_nan(stan::math::NOT_A_NUMBER));
+}
 
-  EXPECT_TRUE(is_not_nan(x));
-
-  x = std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(is_not_nan(x));
-
-  x = -std::numeric_limits<double>::infinity();
-  EXPECT_TRUE(is_not_nan(x));
-
-  x = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_FALSE(is_not_nan(x));
+TEST(ErrorHandlingScalar, isNotNanVectorization) {
+  Eigen::MatrixXd m = Eigen::MatrixXd::Constant(3, 2, 1);
+  EXPECT_TRUE(is_not_nan(std::vector<Eigen::MatrixXd>{m, m, m}));
+  Eigen::MatrixXd m2 = m;
+  m2(1, 1) = stan::math::NOT_A_NUMBER;
+  EXPECT_FALSE(is_not_nan(std::vector<Eigen::MatrixXd>{m, m2, m}));
 }

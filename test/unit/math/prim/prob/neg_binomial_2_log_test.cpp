@@ -42,7 +42,7 @@ TEST(ProbDistributionsNegBinomial2Log, error_check) {
   error_msg
       = "neg_binomial_2_log_rng: Exponential "
         "of the log-location parameter divided by the precision "
-        "parameter is inf, but must be finite!";
+        "parameter is inf, but must be positive and finite!";
   try {
     stan::math::neg_binomial_2_log_rng(log(1e300), 1e-300, rng);
     FAIL() << "neg_binomial_2_log_rng should have thrown" << std::endl;

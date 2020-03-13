@@ -181,3 +181,19 @@ TEST(ErrorHandlingScalar, CheckPositiveFinite_nan) {
 
   EXPECT_THROW(check_positive_finite(function, "x", nan), std::domain_error);
 }
+
+TEST(ErrorHandlingScalar, CheckPositiveFiniteVectorization) {
+  const char* function = "check_positive_finite";
+  Eigen::MatrixXd m = Eigen::MatrixXd::Constant(3, 2, 1);
+  EXPECT_NO_THROW(check_positive_finite(function, "m",
+                                        std::vector<Eigen::MatrixXd>{m, m, m}));
+  Eigen::MatrixXd m2 = m;
+  m2(1, 1) = -1;
+  EXPECT_THROW(check_positive_finite(function, "m",
+                                     std::vector<Eigen::MatrixXd>{m, m2, m}),
+               std::domain_error);
+  m2(1, 1) = stan::math::NOT_A_NUMBER;
+  EXPECT_THROW(check_positive_finite(function, "m",
+                                     std::vector<Eigen::MatrixXd>{m, m2, m}),
+               std::domain_error);
+}

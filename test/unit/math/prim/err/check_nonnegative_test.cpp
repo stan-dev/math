@@ -5,10 +5,10 @@
 #include <string>
 
 using stan::math::check_nonnegative;
+const char* function = "check_nonnegative";
 
 TEST(ErrorHandlingArr, CheckNonnegativeVectorized) {
   int N = 5;
-  const char* function = "check_nonnegative";
   std::vector<double> x(N);
 
   x.assign(N, 0);
@@ -35,7 +35,6 @@ TEST(ErrorHandlingArr, CheckNonnegativeVectorized) {
 
 TEST(ErrorHandlingArr, CheckNonnegativeVectorized_one_indexed_message) {
   int N = 5;
-  const char* function = "check_nonnegative";
   std::vector<double> x(N);
   std::string message;
 
@@ -54,7 +53,6 @@ TEST(ErrorHandlingArr, CheckNonnegativeVectorized_one_indexed_message) {
 }
 
 TEST(ErrorHandlingArr, CheckNonnegative_nan) {
-  const char* function = "check_nonnegative";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   std::vector<double> x = {1, 2, 3};
@@ -67,7 +65,6 @@ TEST(ErrorHandlingArr, CheckNonnegative_nan) {
 }
 
 TEST(ErrorHandlingScalar, CheckNonnegative) {
-  const char* function = "check_nonnegative";
   double x = 0;
 
   EXPECT_NO_THROW(check_nonnegative(function, "x", x))
@@ -91,8 +88,26 @@ TEST(ErrorHandlingScalar, CheckNonnegative) {
 }
 
 TEST(ErrorHandlingScalar, CheckNonnegative_nan) {
-  const char* function = "check_nonnegative";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   EXPECT_THROW(check_nonnegative(function, "x", nan), std::domain_error);
+}
+
+TEST(ErrorHandlingScalar, CheckNonnegative_0) {
+  EXPECT_NO_THROW(check_nonnegative(function, "x", 0U));
+  EXPECT_NO_THROW(check_nonnegative(function, "x", (size_t)0));
+  EXPECT_NO_THROW(check_nonnegative(function, "x", 0.0));
+  EXPECT_NO_THROW(check_nonnegative(function, "x", -0.0));
+  EXPECT_NO_THROW(check_nonnegative(function, "x", 0));
+}
+
+TEST(ErrorHandlingScalar, CheckNonNegativeVectorization) {
+  Eigen::MatrixXd m = Eigen::MatrixXd::Constant(3, 2, 0);
+  EXPECT_NO_THROW(
+      check_nonnegative(function, "m", std::vector<Eigen::MatrixXd>{m, m, m}));
+  Eigen::MatrixXd m2 = m;
+  m2(1, 1) = -1;
+  EXPECT_THROW(
+      check_nonnegative(function, "m", std::vector<Eigen::MatrixXd>{m, m2, m}),
+      std::domain_error);
 }
