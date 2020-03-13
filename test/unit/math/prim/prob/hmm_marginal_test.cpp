@@ -4,7 +4,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-#include <numeric_limits>
 #include <limits>
 #include <vector>
 

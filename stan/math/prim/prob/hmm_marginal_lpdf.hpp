@@ -7,8 +7,8 @@
 #include <stan/math/prim/fun/col.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
 #include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/rev/fun/value_of_rec.hpp>
-#include <stan/math/rev/core.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/core.hpp>
 #include <Eigen/Core>
 #include <vector>
 #include <iostream>
