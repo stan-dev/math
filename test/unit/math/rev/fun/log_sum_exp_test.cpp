@@ -27,7 +27,6 @@ TEST(log_sum_exp_tests, large_values) {
   EXPECT_FLOAT_EQ(a4.adj(), 1.0);
   EXPECT_FLOAT_EQ(a5.adj(), 0.0);
 
-
   // check combinations of vars and doubles with large argument values
   var b = 1e20;
   var output4 = stan::math::log_sum_exp(b, b);
