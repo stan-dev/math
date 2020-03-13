@@ -73,9 +73,6 @@ TEST(AgradFwdMatrixAssign, eigen_row_vector_fvar_double_shape_mismatch) {
   Matrix<fvar<double>, Dynamic, Dynamic> zzz(3, 1);
   zzz << 1, 2, 3;
   EXPECT_THROW(assign(x, zzz), std::invalid_argument);
-
-  Matrix<fvar<double>, Dynamic, Dynamic> zzzz(1, 3);
-  EXPECT_THROW(assign(x, zzzz), std::invalid_argument);
 }
 
 TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_double_to_fvar_double) {
@@ -332,9 +329,6 @@ TEST(AgradFwdMatrixAssign, eigen_row_vector_fvar_fvar_double_shape_mismatch) {
   Matrix<fvar<fvar<double> >, Dynamic, Dynamic> zzz(3, 1);
   zzz << 1, 2, 3;
   EXPECT_THROW(assign(x, zzz), std::invalid_argument);
-
-  Matrix<fvar<fvar<double> >, Dynamic, Dynamic> zzzz(1, 3);
-  EXPECT_THROW(assign(x, zzzz), std::invalid_argument);
 }
 
 TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_fvar_double_to_fvar_fvar_double) {

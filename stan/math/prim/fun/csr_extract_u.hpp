@@ -18,7 +18,7 @@ namespace math {
  *
  * @tparam T type of elements in the matrix
  * @param A Sparse matrix.
- * @return Vector of indexes into non-zero entries of A.
+ * @return Array of indexes into non-zero entries of A.
  */
 template <typename T>
 const std::vector<int> csr_extract_u(
@@ -37,7 +37,7 @@ const std::vector<int> csr_extract_u(
  * @tparam R number of rows, can be Eigen::Dynamic
  * @tparam C number of columns, can be Eigen::Dynamic
  * @param A Dense matrix.
- * @return Vector of indexes into non-zero entries of A.
+ * @return Array of indexes into non-zero entries of A.
  */
 template <typename T, int R, int C>
 const std::vector<int> csr_extract_u(const Eigen::Matrix<T, R, C>& A) {

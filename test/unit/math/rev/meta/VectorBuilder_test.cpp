@@ -63,7 +63,7 @@ TEST(MetaTraitsRevMat, VectorBuilder_false_true) {
   EXPECT_THROW(dvv3.data(), std::logic_error);
 
   VectorBuilder<false, double, Matrix<var, 1, Dynamic> > dvv4(
-      size(a_row_vector));
+      stan::math::size(a_row_vector));
   EXPECT_THROW(dvv4[0], std::logic_error);
   EXPECT_THROW(dvv4.data(), std::logic_error);
 }
@@ -90,7 +90,7 @@ TEST(MetaTraitsRevMat, VectorBuilder_true_true) {
   EXPECT_EQ(size(a_vector), data3.size());
 
   VectorBuilder<true, double, Matrix<var, 1, Dynamic> > dvv4(
-      size(a_row_vector));
+      stan::math::size(a_row_vector));
   dvv4[0] = 0.0;
   dvv4[1] = 1.0;
   dvv4[2] = 2.0;

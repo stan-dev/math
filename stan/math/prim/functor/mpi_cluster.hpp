@@ -73,8 +73,8 @@ struct mpi_stop_worker : public mpi_command {
  *
  * The remainder jobs num_jobs % num_workers are assigned to rank
  * >=1 workers such that the root (rank = 0) has a little less
- * assigned chunks unless num_jobs < num_workes in which case the
- * first num_jobs nodes recieve a job (including the root).
+ * assigned chunks unless num_jobs < num_workers in which case the
+ * first num_jobs nodes receive a job (including the root).
  *
  * @param num_jobs Total number of jobs to dispatch
  * @param chunk_size Chunk size per job
@@ -116,7 +116,7 @@ std::unique_lock<std::mutex> mpi_broadcast_command();
  * The mpirun program automatically starts the number of
  * pre-specified processes. The boost mpi library is used to
  * interface with MPI. In boost mpi terminology we refer to the
- * overall MPI ressources as world. Each process has an assigned
+ * overall MPI resources as world. Each process has an assigned
  * rank which is a numeric index running from 0 to the number of
  * processes-1 (also called the world size). We refer to the rank
  * = 0 process as the root process and all others (rank > 0) are
@@ -139,11 +139,11 @@ struct mpi_cluster {
   /**
    * Switches cluster into listening mode. That is, for the root
    * process we only flag that the workers are now listening and
-   * as such can recieve commands while for the non-root processes
+   * as such can receive commands while for the non-root processes
    * we enter into a listening state. In the listening state on
    * the non-root processes we wait for broadcasts of mpi_command
    * objects which are initiated on the root using the
-   * mpi_broadcast_command function below. Each recieved
+   * mpi_broadcast_command function below. Each received
    * mpi_command is executed using the virtual run method.
    */
   void listen() {

@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -55,6 +54,7 @@ inline auto round(const T& x) {
 
 /**
  * Version of round() that accepts Eigen Matrix or matrix expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Rounded value of each value in x.
@@ -62,7 +62,7 @@ inline auto round(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto round(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().round().matrix();
+  return x.derived().array().round().matrix().eval();
 }
 
 }  // namespace math

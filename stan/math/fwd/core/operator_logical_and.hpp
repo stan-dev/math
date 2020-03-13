@@ -13,7 +13,7 @@ namespace math {
  * @tparam value and tangent type for variables
  * @param[in] x first argument
  * @param[in] y second argument
- * @return disjuntion of the argument's values
+ * @return conjunction of the arguments' values
  */
 template <typename T>
 inline bool operator&&(const fvar<T>& x, const fvar<T>& y) {

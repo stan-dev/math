@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
+#include <stan/math/prim/fun/max_size.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
@@ -35,7 +36,6 @@ double_exponential_rng(const T_loc& mu, const T_scale& sigma, RNG& rng) {
   using boost::random::uniform_real_distribution;
   using boost::variate_generator;
   static const char* function = "double_exponential_rng";
-
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",

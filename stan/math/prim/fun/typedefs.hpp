@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 /**
- * Type for sizes and indexes in an Eigen matrix with double e
+ * Type for sizes and indexes in an Eigen matrix with double elements.
  */
 using size_type
     = index_type_t<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>;

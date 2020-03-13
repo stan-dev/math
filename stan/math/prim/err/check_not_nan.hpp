@@ -4,8 +4,10 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/err/throw_domain_error_vec.hpp>
-#include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
+#include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 
 namespace stan {
 namespace math {
@@ -23,7 +25,7 @@ struct not_nan {
 template <typename T_y>
 struct not_nan<T_y, true> {
   static void check(const char* function, const char* name, const T_y& y) {
-    for (size_t n = 0; n < size(y); n++) {
+    for (size_t n = 0; n < stan::math::size(y); n++) {
       if (is_nan(value_of_rec(stan::get(y, n)))) {
         throw_domain_error_vec(function, name, y, n, "is ",
                                ", but must not be nan!");

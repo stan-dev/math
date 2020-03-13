@@ -10,9 +10,15 @@
 
 namespace stan {
 namespace math {
+
 /** \ingroup multivar_dists
  * The log of the matrix normal density for the given y, mu, Sigma and D
  * where Sigma and D are given as precision matrices, not covariance matrices.
+ *
+ * @tparam T_y type of scalar
+ * @tparam T_Mu type of location
+ * @tparam T_Sigma type of Sigma
+ * @tparam T_D type of D
  *
  * @param y An mxn matrix.
  * @param Mu The mean matrix.
@@ -23,10 +29,6 @@ namespace math {
  * @return The log of the matrix normal density.
  * @throw std::domain_error if Sigma or D are not square, not symmetric,
  * or not semi-positive definite.
- * @tparam T_y Type of scalar.
- * @tparam T_Mu Type of location.
- * @tparam T_Sigma Type of Sigma.
- * @tparam T_D Type of D.
  */
 template <bool propto, typename T_y, typename T_Mu, typename T_Sigma,
           typename T_D>
@@ -36,8 +38,6 @@ return_type_t<T_y, T_Mu, T_Sigma, T_D> matrix_normal_prec_lpdf(
     const Eigen::Matrix<T_Sigma, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
     const Eigen::Matrix<T_D, Eigen::Dynamic, Eigen::Dynamic>& D) {
   static const char* function = "matrix_normal_prec_lpdf";
-  return_type_t<T_y, T_Mu, T_Sigma, T_D> lp(0.0);
-
   check_positive(function, "Sigma rows", Sigma.rows());
   check_finite(function, "Sigma", Sigma);
   check_symmetric(function, "Sigma", Sigma);
@@ -60,6 +60,8 @@ return_type_t<T_y, T_Mu, T_Sigma, T_D> matrix_normal_prec_lpdf(
                    "Rows of D", D.rows());
   check_finite(function, "Location parameter", Mu);
   check_finite(function, "Random variable", y);
+
+  return_type_t<T_y, T_Mu, T_Sigma, T_D> lp(0.0);
 
   if (include_summand<propto>::value) {
     lp += NEG_LOG_SQRT_TWO_PI * y.cols() * y.rows();

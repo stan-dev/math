@@ -5,8 +5,12 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/tgamma.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -19,15 +23,10 @@ template <typename T_y, typename T_dof, typename T_scale>
 return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lcdf(
     const T_y& y, const T_dof& nu, const T_scale& s) {
   using T_partials_return = partials_return_t<T_y, T_dof, T_scale>;
-
-  if (size_zero(y, nu, s)) {
-    return 0.0;
-  }
-
+  using std::exp;
+  using std::log;
+  using std::pow;
   static const char* function = "scaled_inv_chi_square_lcdf";
-
-  T_partials_return P(0.0);
-
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_positive_finite(function, "Degrees of freedom parameter", nu);
@@ -36,24 +35,25 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lcdf(
                          "Degrees of freedom parameter", nu, "Scale parameter",
                          s);
 
+  if (size_zero(y, nu, s)) {
+    return 0;
+  }
+
+  T_partials_return P(0.0);
+  operands_and_partials<T_y, T_dof, T_scale> ops_partials(y, nu, s);
+
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_dof> nu_vec(nu);
   scalar_seq_view<T_scale> s_vec(s);
   size_t N = max_size(y, nu, s);
 
-  operands_and_partials<T_y, T_dof, T_scale> ops_partials(y, nu, s);
-
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < size(y); i++) {
+  for (size_t i = 0; i < stan::math::size(y); i++) {
     if (value_of(y_vec[i]) == 0) {
       return ops_partials.build(negative_infinity());
     }
   }
-
-  using std::exp;
-  using std::log;
-  using std::pow;
 
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       gamma_vec(size(nu));
@@ -61,7 +61,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lcdf(
       digamma_vec(size(nu));
 
   if (!is_constant_all<T_dof>::value) {
-    for (size_t i = 0; i < size(nu); i++) {
+    for (size_t i = 0; i < stan::math::size(nu); i++) {
       const T_partials_return half_nu_dbl = 0.5 * value_of(nu_vec[i]);
       gamma_vec[i] = tgamma(half_nu_dbl);
       digamma_vec[i] = digamma(half_nu_dbl);

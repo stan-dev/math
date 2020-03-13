@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -38,6 +37,7 @@ inline typename apply_scalar_unary<atan_fun, T>::return_t atan(const T& x) {
 
 /**
  * Version of atan() that accepts Eigen Matrix or matrix expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Elementwise atan of members of container.
@@ -45,7 +45,7 @@ inline typename apply_scalar_unary<atan_fun, T>::return_t atan(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto atan(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().atan().matrix();
+  return x.derived().array().atan().matrix().eval();
 }
 
 }  // namespace math

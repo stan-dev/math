@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_LGAMMA_HPP
 #define STAN_MATH_PRIM_FUN_LGAMMA_HPP
 
-/*
+/**
  * The lgamma implementation in stan-math is based on either the
  * reentrant safe lgamma_r implementation from C or the
  * boost::math::lgamma implementation. The reentrant safe lgamma_r
@@ -29,7 +29,6 @@
 #include <limits>
 #endif
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
 namespace stan {
 namespace math {

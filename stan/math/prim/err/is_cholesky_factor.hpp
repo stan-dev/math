@@ -11,17 +11,17 @@ namespace stan {
 namespace math {
 
 /**
- * Return <code>true</code> if y is a valid Choleksy factor, if
+ * Return <code>true</code> if y is a valid Cholesky factor, if
  * number of rows is not less than the number of columns, if there
  * are no 0 columns, and no element in matrix is <code>NaN</code>.
  * A Cholesky factor is a lower triangular matrix whose diagonal
  * elements are all positive.  Note that Cholesky factors need not
- * be square, but requires at least as many rows M as columns N
+ * be square, but require at least as many rows M as columns N
  * (i.e., M &gt;= N).
  * @tparam T_y Type of elements of Cholesky factor, requires class method
  *   <code>.rows()</code>, <code>.cols()</code>, and <code>.diagonal()</code>
  * @param y Matrix to test
- * @return <code>true</code> if y is a valid Choleksy factor, if
+ * @return <code>true</code> if y is a valid Cholesky factor, if
  *   number of rows is not less than the number of columns,
  *   if there are no 0 columns, and no element in matrix is <code>NaN</code>
  */

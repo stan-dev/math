@@ -8,32 +8,26 @@
 namespace stan {
 
 /** \ingroup type_trait
- * Base implimentation to check whether a type is derived from EigenBase
+ * Base implementation to check whether a type is derived from EigenBase
  */
 template <typename T, typename = void>
 struct is_eigen : std::false_type {};
 
 namespace internal {
-/*
- * Underlying implimenation to check if a type is derived from EigenBase
+/**
+ * Underlying implementation to check if a type is derived from EigenBase
  */
 template <typename T>
-struct is_eigen_base
-    : std::integral_constant<bool,
-                             std::is_base_of<Eigen::EigenBase<T>, T>::value> {};
-
-template <typename T>
-struct is_eigen_base<Eigen::DenseBase<T>> : std::true_type {};
-
-template <typename T>
-struct is_eigen_base<Eigen::MatrixBase<T>> : std::true_type {};
-
-template <typename T>
-struct is_eigen_base<Eigen::EigenBase<T>> : std::true_type {};
+struct is_eigen_base {
+  static std::false_type f(const void *);
+  template <typename Derived>
+  static std::true_type f(const Eigen::EigenBase<Derived> *);
+  enum { value = decltype(f(std::declval<T *>()))::value };
+};
 
 }  // namespace internal
 
-/*
+/**
  * Checks whether type T is derived from EigenBase. If true this will have a
  * static member function named value with a type of true, else value is false.
  */

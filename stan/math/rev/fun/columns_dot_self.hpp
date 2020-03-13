@@ -13,14 +13,13 @@ namespace math {
 /**
  * Returns the dot product of each column of a matrix with itself.
  *
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam Mat Type of the matrix.
  * @param x Matrix.
  */
-template <int R, int C>
-inline Eigen::Matrix<var, 1, C> columns_dot_self(
-    const Eigen::Matrix<var, R, C>& x) {
-  Eigen::Matrix<var, 1, C> ret(1, x.cols());
+template <typename Mat, require_eigen_vt<is_var, Mat>* = nullptr>
+inline Eigen::Matrix<var, 1, Mat::ColsAtCompileTime> columns_dot_self(
+    const Mat& x) {
+  Eigen::Matrix<var, 1, Mat::ColsAtCompileTime> ret(1, x.cols());
   for (size_type i = 0; i < x.cols(); i++) {
     ret(i) = var(new internal::dot_self_vari(x.col(i)));
   }

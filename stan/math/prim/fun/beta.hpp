@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_BETA_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <cmath>
 
@@ -41,8 +42,8 @@ namespace math {
    \end{cases}
    \f]
  *
- * @tparam T1 Type of first value.
- * @tparam T2 Type of second value.
+ * @tparam T1 type of first value
+ * @tparam T2 type of second value
  * @param a First value
  * @param b Second value
  * @return Beta function applied to the two values.

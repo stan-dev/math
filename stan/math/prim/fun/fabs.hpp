@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -38,6 +37,7 @@ inline typename apply_scalar_unary<fabs_fun, T>::return_t fabs(const T& x) {
 
 /**
  * Version of fabs() that accepts Eigen Matrix or matrix expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Absolute value of each value in x.
@@ -45,11 +45,12 @@ inline typename apply_scalar_unary<fabs_fun, T>::return_t fabs(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto fabs(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().abs().matrix();
+  return x.derived().array().abs().matrix().eval();
 }
 
 /**
  * Version of fabs() that accepts Eigen Array or array expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Absolute value of each value in x.
@@ -57,7 +58,7 @@ inline auto fabs(const Eigen::MatrixBase<Derived>& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto fabs(const Eigen::ArrayBase<Derived>& x) {
-  return x.derived().abs();
+  return x.derived().abs().eval();
 }
 
 }  // namespace math

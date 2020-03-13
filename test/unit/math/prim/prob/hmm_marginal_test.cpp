@@ -15,18 +15,17 @@
  * without breaking the simplex constraint.
  */
 template <typename T_omega, typename T_Gamma, typename T_rho>
-inline stan::return_type_t<T_omega, T_Gamma, T_rho>
-hmm_marginal_test_wrapper(
-  const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
-  const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>&
-    Gamma_unconstrained,
-  const std::vector<T_rho>& rho_unconstrained) {
-  using stan::math::sum;
+inline stan::return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_test_wrapper(
+    const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
+    const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>&
+        Gamma_unconstrained,
+    const std::vector<T_rho>& rho_unconstrained) {
   using stan::math::row;
+  using stan::math::sum;
   int n_states = log_omegas.rows();
 
-  Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>
-    Gamma(n_states, n_states);
+  Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic> Gamma(n_states,
+                                                               n_states);
   for (int i = 0; i < n_states; i++) {
     Gamma(i, n_states - 1) = 1 - sum(row(Gamma_unconstrained, i + 1));
     for (int j = 0; j < n_states - 1; j++) {
@@ -36,10 +35,11 @@ hmm_marginal_test_wrapper(
 
   Eigen::Matrix<T_rho, Eigen::Dynamic, 1> rho(n_states);
   rho(1) = 1 - sum(rho_unconstrained);
-  for (int i = 0; i < n_states - 1; i++) rho(i) = rho_unconstrained[i];
+  for (int i = 0; i < n_states - 1; i++)
+    rho(i) = rho_unconstrained[i];
 
   return stan::math::hmm_marginal_lpdf(log_omegas, Gamma, rho);
- }
+}
 
 /**
  * In the proposed example, the latent sate x determines
@@ -48,15 +48,13 @@ hmm_marginal_test_wrapper(
  *  (ii) normal(-mu, sigma)
  */
 double state_lpdf(double y, double abs_mu, double sigma, int state) {
-  int x  = (-2 * state + 1);
-  double chi =  (y - x * abs_mu) / sigma;
-  return - 0.5 * chi * chi
-         - 0.5 * std::log(6.283185307179586)
-         - std::log(sigma);
+  int x = (-2 * state + 1);
+  double chi = (y - x * abs_mu) / sigma;
+  return -0.5 * chi * chi - 0.5 * std::log(6.283185307179586) - std::log(sigma);
 }
 
 class hmm_marginal_lpdf_test : public ::testing::Test {
-protected:
+ protected:
   void SetUp() override {
     n_states = 2;
     p1_init = 0.65;
@@ -76,7 +74,7 @@ protected:
 
     Eigen::VectorXd obs_data_(n_transitions + 1);
     obs_data_ << -0.3315914, -0.1655340, -0.7984021, 0.2364608, -0.4489722,
-      2.1831438, -1.4778675, 0.8717423, -1.0370874, 0.1370296, 1.9786208;
+        2.1831438, -1.4778675, 0.8717423, -1.0370874, 0.1370296, 1.9786208;
     obs_data = obs_data_;
 
     Eigen::MatrixXd log_omegas_(n_states, n_transitions + 1);
@@ -107,11 +105,7 @@ protected:
   }
 
   int n_states, n_transitions;
-  double abs_mu,
-         sigma,
-         p1_init,
-         gamma1,
-         gamma2;
+  double abs_mu, sigma, p1_init, gamma1, gamma2;
 
   Eigen::VectorXd rho;
   Eigen::MatrixXd Gamma;
@@ -135,48 +129,44 @@ TEST_F(hmm_marginal_lpdf_test, ten_transitions) {
   // CHECK -- EXPECT_EQ returns an error.
   EXPECT_FLOAT_EQ(-18.37417, hmm_marginal_lpdf(log_omegas, Gamma, rho));
 
-    // Differentiation tests
-    auto hmm_functor = [](const auto& log_omegas,
-                          const auto& Gamma_unconstrained,
-                          const auto& rho_unconstrained) {
-      return hmm_marginal_test_wrapper(log_omegas, Gamma_unconstrained,
-                                        rho_unconstrained);
-    };
+  // Differentiation tests
+  auto hmm_functor = [](const auto& log_omegas, const auto& Gamma_unconstrained,
+                        const auto& rho_unconstrained) {
+    return hmm_marginal_test_wrapper(log_omegas, Gamma_unconstrained,
+                                     rho_unconstrained);
+  };
 
-  stan::test::expect_ad(tols, hmm_functor, log_omegas,
-                        Gamma_unconstrained, rho_unconstrained);
+  stan::test::expect_ad(tols, hmm_functor, log_omegas, Gamma_unconstrained,
+                        rho_unconstrained);
 }
 
 TEST_F(hmm_marginal_lpdf_test, zero_transitions) {
   using stan::math::hmm_marginal_lpdf;
 
-  EXPECT_FLOAT_EQ(-1.520827,
-      hmm_marginal_lpdf(log_omegas_zero, Gamma, rho));
+  EXPECT_FLOAT_EQ(-1.520827, hmm_marginal_lpdf(log_omegas_zero, Gamma, rho));
 
   // Differentiation tests
-  auto hmm_functor = [](const auto& log_omegas,
-                        const auto& Gamma_unconstrained,
+  auto hmm_functor = [](const auto& log_omegas, const auto& Gamma_unconstrained,
                         const auto& rho_unconstrained) {
     return hmm_marginal_test_wrapper(log_omegas, Gamma_unconstrained,
-                                      rho_unconstrained);
+                                     rho_unconstrained);
   };
 
-  stan::test::expect_ad(tols, hmm_functor, log_omegas_zero,
-                        Gamma_unconstrained, rho_unconstrained);
+  stan::test::expect_ad(tols, hmm_functor, log_omegas_zero, Gamma_unconstrained,
+                        rho_unconstrained);
 }
 
 TEST(hmm_marginal_lpdf, one_state) {
   using stan::math::hmm_marginal_lpdf;
-  int n_states = 1, p1_init = 1, gamma1 = 1, n_transitions = 10,
-     abs_mu = 1, sigma = 1;
+  int n_states = 1, p1_init = 1, gamma1 = 1, n_transitions = 10, abs_mu = 1,
+      sigma = 1;
   Eigen::VectorXd rho(n_states);
   rho << p1_init;
   Eigen::MatrixXd Gamma(n_states, n_states);
   Gamma << gamma1;
   Eigen::VectorXd obs_data(n_transitions + 1);
-  obs_data << -0.9692032, 1.6367754, 1.0339449, 0.9798393, 0.4829358,
-              2.7508704, 0.3122448, 1.8316583, 1.6327319, 1.2097332,
-              0.4087620;
+  obs_data << -0.9692032, 1.6367754, 1.0339449, 0.9798393, 0.4829358, 2.7508704,
+      0.3122448, 1.8316583, 1.6327319, 1.2097332, 0.4087620;
   Eigen::MatrixXd log_omegas(n_states, n_transitions + 1);
   for (int n = 0; n < n_transitions + 1; n++)
     log_omegas.col(n)[0] = state_lpdf(obs_data[n], abs_mu, sigma, 0);
@@ -188,10 +178,9 @@ TEST(hmm_marginal_lpdf, one_state) {
   for (int i = 0; i < rho.size(); i++)
     rho_unconstrained[i] = rho(i);
   Eigen::MatrixXd Gamma_unconstrained
-    = Gamma.block(0, 0, n_states, n_states - 1);
+      = Gamma.block(0, 0, n_states, n_states - 1);
 
-  auto hmm_functor = [](const auto& log_omegas,
-                        const auto& Gamma_unconstrained,
+  auto hmm_functor = [](const auto& log_omegas, const auto& Gamma_unconstrained,
                         const auto& rho_unconstrained) {
     return hmm_marginal_test_wrapper(log_omegas, Gamma_unconstrained,
                                      rho_unconstrained);
@@ -209,8 +198,8 @@ TEST(hmm_marginal_lpdf, one_state) {
   tols.grad_hessian_hessian_ = infinity;
   tols.grad_hessian_grad_hessian_ = infinity;
 
-  stan::test::expect_ad(tols, hmm_functor, log_omegas,
-                        Gamma_unconstrained, rho_unconstrained);
+  stan::test::expect_ad(tols, hmm_functor, log_omegas, Gamma_unconstrained,
+                        rho_unconstrained);
 }
 
 TEST(hmm_marginal_lpdf, exceptions) {
@@ -235,53 +224,46 @@ TEST(hmm_marginal_lpdf, exceptions) {
   // Gamma is not square.
   MatrixXd Gamma_rec(n_states, n_states + 1);
   EXPECT_THROW_MSG(
-    hmm_marginal_lpdf(log_omegas, Gamma_rec, rho),
-    std::invalid_argument,
-    "hmm_marginal_lpdf: Expecting a square matrix; rows of Gamma (2) "
-    "and columns of Gamma (3) must match in size");
+      hmm_marginal_lpdf(log_omegas, Gamma_rec, rho), std::invalid_argument,
+      "hmm_marginal_lpdf: Expecting a square matrix; rows of Gamma (2) "
+      "and columns of Gamma (3) must match in size");
 
   // Gamma has a column that is not a simplex.
   MatrixXd Gamma_bad = Gamma;
   Gamma_bad(0, 0) = Gamma(0, 0) + 1;
-  EXPECT_THROW_MSG(
-    hmm_marginal_lpdf(log_omegas, Gamma_bad, rho),
-    std::domain_error,
-    "hmm_marginal_lpdf: Gamma[i, ] is not a valid simplex. "
-    "sum(Gamma[i, ]) = 2, but should be 1"
-  )
+  EXPECT_THROW_MSG(hmm_marginal_lpdf(log_omegas, Gamma_bad, rho),
+                   std::domain_error,
+                   "hmm_marginal_lpdf: Gamma[i, ] is not a valid simplex. "
+                   "sum(Gamma[i, ]) = 2, but should be 1")
 
   // The size of Gamma is inconsistent with that of log_omega
   MatrixXd Gamma_wrong_size(n_states + 1, n_states + 1);
 
   EXPECT_THROW_MSG(
-    hmm_marginal_lpdf(log_omegas, Gamma_wrong_size, rho),
-    std::invalid_argument,
-    "hmm_marginal_lpdf: Gamma has dimension = 3, expecting dimension = 2;"
-    " a function was called with arguments of different scalar,"
-    " array, vector, or matrix types, and they were not consistently sized;"
-    "  all arguments must be scalars or multidimensional values of"
-    " the same shape."
-  )
+      hmm_marginal_lpdf(log_omegas, Gamma_wrong_size, rho),
+      std::invalid_argument,
+      "hmm_marginal_lpdf: Gamma has dimension = 3, expecting dimension = 2;"
+      " a function was called with arguments of different scalar,"
+      " array, vector, or matrix types, and they were not consistently sized;"
+      "  all arguments must be scalars or multidimensional values of"
+      " the same shape.")
 
   // rho is not a simplex.
   VectorXd rho_bad = rho;
   rho_bad(0) = rho(0) + 1;
-  EXPECT_THROW_MSG(
-    hmm_marginal_lpdf(log_omegas, Gamma, rho_bad),
-    std::domain_error,
-    "hmm_marginal_lpdf: rho is not a valid simplex. "
-    "sum(rho) = 2, but should be 1"
-  )
+  EXPECT_THROW_MSG(hmm_marginal_lpdf(log_omegas, Gamma, rho_bad),
+                   std::domain_error,
+                   "hmm_marginal_lpdf: rho is not a valid simplex. "
+                   "sum(rho) = 2, but should be 1")
 
   // The size of rho is inconsistent with that of log_omega
   VectorXd rho_wrong_size(n_states + 1);
   EXPECT_THROW_MSG(
-    hmm_marginal_lpdf(log_omegas, Gamma, rho_wrong_size),
-    std::invalid_argument,
-    "hmm_marginal_lpdf: rho has dimension = 3, expecting dimension = 2;"
-    " a function was called with arguments of different scalar,"
-    " array, vector, or matrix types, and they were not consistently sized;"
-    "  all arguments must be scalars or multidimensional values of"
-    " the same shape."
-  )
+      hmm_marginal_lpdf(log_omegas, Gamma, rho_wrong_size),
+      std::invalid_argument,
+      "hmm_marginal_lpdf: rho has dimension = 3, expecting dimension = 2;"
+      " a function was called with arguments of different scalar,"
+      " array, vector, or matrix types, and they were not consistently sized;"
+      "  all arguments must be scalars or multidimensional values of"
+      " the same shape.")
 }

@@ -19,16 +19,15 @@
 
 struct chemical_kinetics {
   template <typename T0, typename TYY, typename TYP, typename TPAR>
-  inline std::vector<typename stan::return_type<TYY, TYP, TPAR>::type>
-  operator()(const T0& t_in, const std::vector<TYY>& yy,
-             const std::vector<TYP>& yp, const std::vector<TPAR>& theta,
-             const std::vector<double>& x_r, const std::vector<int>& x_i,
-             std::ostream* msgs) const {
+  inline std::vector<stan::return_type_t<TYY, TYP, TPAR>> operator()(
+      const T0& t_in, const std::vector<TYY>& yy, const std::vector<TYP>& yp,
+      const std::vector<TPAR>& theta, const std::vector<double>& x_r,
+      const std::vector<int>& x_i, std::ostream* msgs) const {
     if (yy.size() != 3 || yp.size() != 3)
       throw std::domain_error(
           "this function was called with inconsistent state");
 
-    std::vector<typename stan::return_type<TYY, TYP, TPAR>::type> res(3);
+    std::vector<stan::return_type_t<TYY, TYP, TPAR>> res(3);
 
     auto yy1 = yy.at(0);
     auto yy2 = yy.at(1);
@@ -51,16 +50,15 @@ struct chemical_kinetics {
 
 struct prey_predator_harvest {
   template <typename T0, typename TYY, typename TYP, typename TPAR>
-  inline std::vector<typename stan::return_type<TYY, TYP, TPAR>::type>
-  operator()(const T0& t_in, const std::vector<TYY>& yy,
-             const std::vector<TYP>& yp, const std::vector<TPAR>& theta,
-             const std::vector<double>& x_r, const std::vector<int>& x_i,
-             std::ostream* msgs) const {
+  inline std::vector<stan::return_type_t<TYY, TYP, TPAR>> operator()(
+      const T0& t_in, const std::vector<TYY>& yy, const std::vector<TYP>& yp,
+      const std::vector<TPAR>& theta, const std::vector<double>& x_r,
+      const std::vector<int>& x_i, std::ostream* msgs) const {
     if (yy.size() != 3 || yp.size() != 3)
       throw std::domain_error(
           "this function was called with inconsistent state");
 
-    std::vector<typename stan::return_type<TYY, TYP, TPAR>::type> res(3);
+    std::vector<stan::return_type_t<TYY, TYP, TPAR>> res(3);
 
     auto yy1 = yy.at(0);
     auto yy2 = yy.at(1);
@@ -118,7 +116,7 @@ TEST_F(IDASIntegratorTest, idas_ivp_system_yy0) {
       f, eq_id, yy0, yp0, theta, x_r, x_i, msgs};
   idas_integrator solver(1e-4, 1e-8, 1e6);
 
-  std::vector<std::vector<double> > yy = solver.integrate(dae, t0, ts);
+  std::vector<std::vector<double>> yy = solver.integrate(dae, t0, ts);
   EXPECT_NEAR(0.985172, yy[0][0], 1e-6);
   EXPECT_NEAR(0.0147939, yy[0][2], 1e-6);
   EXPECT_NEAR(0.905521, yy[1][0], 1e-6);
@@ -136,7 +134,7 @@ TEST_F(IDASIntegratorTest, forward_sensitivity_theta_chemical) {
 
   idas_forward_system<chemical_kinetics, double, double, var> dae(
       f, eq_id, yy0, yp0, theta_var, x_r, x_i, msgs);
-  std::vector<std::vector<var> > yy = solver.integrate(dae, t0, ts);
+  std::vector<std::vector<var>> yy = solver.integrate(dae, t0, ts);
   EXPECT_NEAR(0.985172, value_of(yy[0][0]), 1e-6);
   EXPECT_NEAR(0.0147939, value_of(yy[0][2]), 1e-6);
   EXPECT_NEAR(0.905519, value_of(yy[1][0]), 1e-6);
@@ -150,8 +148,8 @@ TEST_F(IDASIntegratorTest, forward_sensitivity_theta_chemical) {
   idas_forward_system<chemical_kinetics, double, double, double> dae1(
       f, eq_id, yy0, yp0, theta1, x_r, x_i, msgs),
       dae2(f, eq_id, yy0, yp0, theta2, x_r, x_i, msgs);
-  std::vector<std::vector<double> > yy1 = solver.integrate(dae1, t0, ts);
-  std::vector<std::vector<double> > yy2 = solver.integrate(dae2, t0, ts);
+  std::vector<std::vector<double>> yy1 = solver.integrate(dae1, t0, ts);
+  std::vector<std::vector<double>> yy2 = solver.integrate(dae2, t0, ts);
 
   double yys_finite_diff;
   for (size_t i = 0; i < yy.size(); ++i) {
@@ -183,7 +181,7 @@ TEST_F(IDASIntegratorTest, forward_sensitivity_theta_prey) {
 
   idas_forward_system<prey_predator_harvest, double, double, var> dae(
       f2, eq_id, yy0, yp0, theta_var, x_r, x_i, msgs);
-  std::vector<std::vector<var> > yy = solver.integrate(dae, t0, ts);
+  std::vector<std::vector<var>> yy = solver.integrate(dae, t0, ts);
 
   // test derivatives against central difference results
   std::vector<double> g;
@@ -193,8 +191,8 @@ TEST_F(IDASIntegratorTest, forward_sensitivity_theta_prey) {
   idas_forward_system<prey_predator_harvest, double, double, double> dae1(
       f2, eq_id, yy0, yp0, theta1, x_r, x_i, msgs),
       dae2(f2, eq_id, yy0, yp0, theta2, x_r, x_i, msgs);
-  std::vector<std::vector<double> > yy1 = solver.integrate(dae1, t0, ts);
-  std::vector<std::vector<double> > yy2 = solver.integrate(dae2, t0, ts);
+  std::vector<std::vector<double>> yy1 = solver.integrate(dae1, t0, ts);
+  std::vector<std::vector<double>> yy2 = solver.integrate(dae2, t0, ts);
 
   double yys_finite_diff;
   for (size_t i = 0; i < yy.size(); ++i) {

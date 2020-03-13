@@ -14,12 +14,13 @@ namespace math {
 /**
  * Return the division of the first scalar by
  * the second scalar.
- * @param[in] x Specified vector.
+ * @param[in] x Specified scalar.
  * @param[in] y Specified scalar.
- * @return Vector divided by the scalar.
+ * @return Scalar divided by the scalar.
  */
-template <typename T1, typename T2>
-inline return_type_t<T1, T2> divide(const T1& x, const T2& y) {
+template <typename Scal1, typename Scal2,
+          typename = require_all_stan_scalar_t<Scal1, Scal2>>
+inline return_type_t<Scal1, Scal2> divide(const Scal1& x, const Scal2& y) {
   return x / y;
 }
 
@@ -33,19 +34,17 @@ inline int divide(int x, int y) {
 /**
  * Return matrix divided by scalar.
  *
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
- * @tparam T1 type of elements in the matrix
- * @tparam T2 type of scalar
- * @param[in] m specified matrix
+ * @tparam Mat type of the matrix or expression
+ * @tparam Scal type of the scalar
+ * @param[in] m specified matrix or expression
  * @param[in] c specified scalar
  * @return matrix divided by the scalar
  */
-template <int R, int C, typename T1, typename T2,
-          typename = require_all_arithmetic_t<T1, T2>>
-inline Eigen::Matrix<return_type_t<T1, T2>, R, C> divide(
-    const Eigen::Matrix<T1, R, C>& m, T2 c) {
-  return m / c;
+template <typename Mat, typename Scal, typename = require_eigen_t<Mat>,
+          typename = require_stan_scalar_t<Scal>,
+          typename = require_all_not_var_t<scalar_type_t<Mat>, Scal>>
+inline auto divide(const Mat& m, Scal c) {
+  return (m / c).eval();
 }
 
 }  // namespace math

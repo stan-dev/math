@@ -37,6 +37,8 @@ TEST(mathMixMatFun, multiply) {
   stan::test::expect_ad(f, a, m00);
   stan::test::expect_ad(f, m00, a);
   stan::test::expect_ad(f, m00, v0);
+  stan::test::expect_ad(f, rv0, v0);
+  stan::test::expect_ad(f, v0, rv0);
   stan::test::expect_ad(f, rv0, m00);
   stan::test::expect_ad(f, m00, m00);
 
@@ -76,24 +78,6 @@ TEST(mathMixMatFun, multiply) {
   stan::test::expect_ad(tols, f, u_tr, u);
   stan::test::expect_ad(tols, f, u, vv);
   stan::test::expect_ad(tols, f, rvv, u);
-
-  // TODO(carpenter):  multiplying by size zero should return size zero
-  // the functions need to be fixed then the following will pass
-
-  // Eigen::VectorXd v0(0);
-  // Eigen::RowVectorXd rv0(0);
-  // Eigen::MatrixXd m00(0, 0);
-  // stan::test::expect_ad(tols, f, a, v0);
-  // stan::test::expect_ad(tols, f, v0, a);
-  // stan::test::expect_ad(tols, f, a, rv0);
-  // stan::test::expect_ad(tols, f, rv0, a);
-  // stan::test::expect_ad(tols, f, rv0, v0);
-  // stan::test::expect_ad(tols, f, v0, rv0);
-  // stan::test::expect_ad(tols, f, a, m00);
-  // stan::test::expect_ad(tols, f, m00, a);
-  // stan::test::expect_ad(tols, f, m00, v0);
-  // stan::test::expect_ad(tols, f, rv0, m00);
-  // stan::test::expect_ad(tols, f, m00, m00);
 
   // exception cases
   // can't compile mismatched dimensions, so no tests

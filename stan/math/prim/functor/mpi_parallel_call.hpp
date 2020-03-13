@@ -103,7 +103,7 @@ bool mpi_parallel_call_cache<call_id, member, T>::is_valid_ = false;
  *
  * 1. The constructor of this class must be called on the root node where
  *    all parameters and static data is passed to the class.
- * 2. The constructor then tries to allocate the MPI cluster ressource
+ * 2. The constructor then tries to allocate the MPI cluster resource
  *    to obtain control over all workers in the cluster. If the
  *    cluster is locked already, then an exception is fired.
  * 3. The worker nodes are instructed to run the static
@@ -126,7 +126,7 @@ bool mpi_parallel_call_cache<call_id, member, T>::is_valid_ = false;
  *    and given on the root node to the combine functor along
  *    with the ragged array data structure.
  *
- * The MPI cluster resource is aquired with construction of
+ * The MPI cluster resource is acquired with construction of
  * mpi_parallel_call and is freed once the mpi_parallel_call goes out
  * of scope (that is, deconstructed).
  *
@@ -189,16 +189,16 @@ class mpi_parallel_call {
  public:
   /**
    * Initiates a parallel MPI call on the root. The constructor
-   * allocates the MPI ressource and initiates on all workers the MPI
+   * allocates the MPI resource and initiates on all workers the MPI
    * parallel call which mirror the communication and execute a chunk
    * of the overall work.
    *
    * @tparam T_shared_param type of shared parameters
    * @tparam T_job_param type of job-specific parameters
    * @param shared_params shared parameter vector
-   * @param job_params array of job-specifc parameter vectors
-   * @param x_r array of job-specifc real arrays (data only argument)
-   * @param x_i array of job-specifc int arrays (data only argument)
+   * @param job_params array of job-specific parameter vectors
+   * @param x_r array of job-specific real arrays (data only argument)
+   * @param x_i array of job-specific int arrays (data only argument)
    */
   template <typename T_shared_param, typename T_job_param>
   mpi_parallel_call(
@@ -407,10 +407,10 @@ class mpi_parallel_call {
   /**
    * Performs a cached scatter of a 2D array (nested std::vector). On the
    * first call the data on the root is scattered to all workers and
-   * is stored in the cache locally. Each worker only recieves its
+   * is stored in the cache locally. Each worker only receives its
    * respective chunk and marks the cache as valid such that
-   * any subsequent calls will immediatley return the cached
-   * chunk. Thus, after calling this function it is guranteed that
+   * any subsequent calls will immediately return the cached
+   * chunk. Thus, after calling this function it is guaranteed that
    * on all workers a call to T_cache::data() will return the same
    * chunk within each process of the cluster.
    *
@@ -469,8 +469,8 @@ class mpi_parallel_call {
    * Performs a cached broadcast of a 1D array (std::vector). On the
    * first call the data on the root is broadcasted to all workers and
    * is stored in the cache locally. This marks the cache as valid and
-   * any subsequent calls will immediatley return the cached
-   * results. Thus, after calling this function it is guranteed that
+   * any subsequent calls will immediately return the cached
+   * results. Thus, after calling this function it is guaranteed that
    * on all workers a call to T_cache::data() will return the same
    * vector within each process of the cluster.
    *

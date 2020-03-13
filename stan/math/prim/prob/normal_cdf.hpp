@@ -6,6 +6,9 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/erf.hpp>
 #include <stan/math/prim/fun/erfc.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
@@ -19,29 +22,21 @@ namespace math {
  *
  * \f$\Phi(x) = \frac{1}{\sqrt{2 \pi}} \int_{-\inf}^x e^{-t^2/2} dt\f$.
  *
+ * @tparam T_y type of y
+ * @tparam T_loc type of mean parameter
+ * @tparam T_scale type of standard deviation parameter
  * @param y A scalar variate.
  * @param mu The location of the normal distribution.
- * @param sigma The scale of the normal distriubtion
+ * @param sigma The scale of the normal distribution
  * @return The unit normal cdf evaluated at the specified arguments.
- * @tparam T_y Type of y.
- * @tparam T_loc Type of mean parameter.
- * @tparam T_scale Type of standard deviation paramater.
  */
 template <typename T_y, typename T_loc, typename T_scale>
 inline return_type_t<T_y, T_loc, T_scale> normal_cdf(const T_y& y,
                                                      const T_loc& mu,
                                                      const T_scale& sigma) {
-  static const char* function = "normal_cdf";
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
-
   using std::exp;
-
-  T_partials_return cdf(1.0);
-
-  if (size_zero(y, mu, sigma)) {
-    return cdf;
-  }
-
+  static const char* function = "normal_cdf";
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_not_nan(function, "Scale parameter", sigma);
@@ -49,6 +44,11 @@ inline return_type_t<T_y, T_loc, T_scale> normal_cdf(const T_y& y,
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
 
+  if (size_zero(y, mu, sigma)) {
+    return 1.0;
+  }
+
+  T_partials_return cdf(1.0);
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
   scalar_seq_view<T_y> y_vec(y);
@@ -94,17 +94,17 @@ inline return_type_t<T_y, T_loc, T_scale> normal_cdf(const T_y& y,
   }
 
   if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < size(y); ++n) {
+    for (size_t n = 0; n < stan::math::size(y); ++n) {
       ops_partials.edge1_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_loc>::value) {
-    for (size_t n = 0; n < size(mu); ++n) {
+    for (size_t n = 0; n < stan::math::size(mu); ++n) {
       ops_partials.edge2_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    for (size_t n = 0; n < size(sigma); ++n) {
+    for (size_t n = 0; n < stan::math::size(sigma); ++n) {
       ops_partials.edge3_.partials_[n] *= cdf;
     }
   }

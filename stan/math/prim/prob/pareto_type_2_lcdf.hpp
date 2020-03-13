@@ -3,9 +3,11 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
+#include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/fun/log1m.hpp>
 #include <cmath>
 
 namespace stan {
@@ -16,33 +18,31 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lcdf(
     const T_y& y, const T_loc& mu, const T_scale& lambda,
     const T_shape& alpha) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
-  static const char* function = "pareto_type_2_lcdf";
-
-  if (size_zero(y, mu, lambda, alpha)) {
-    return 0.0;
-  }
-
   using std::log;
   using std::pow;
-
-  T_partials_return P(0.0);
-
-  check_greater_or_equal(function, "Random variable", y, mu);
+  static const char* function = "pareto_type_2_lcdf";
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_positive_finite(function, "Scale parameter", lambda);
   check_positive_finite(function, "Shape parameter", alpha);
-  check_consistent_sizes(function, "Random variable", y, "Scale parameter",
-                         lambda, "Shape parameter", alpha);
+  check_consistent_sizes(function, "Random variable", y, "Location parameter",
+                         mu, "Scale parameter", lambda, "Shape parameter",
+                         alpha);
+  check_greater_or_equal(function, "Random variable", y, mu);
+
+  if (size_zero(y, mu, lambda, alpha)) {
+    return 0;
+  }
+
+  T_partials_return P(0.0);
+  operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(
+      y, mu, lambda, alpha);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);
   scalar_seq_view<T_scale> lambda_vec(lambda);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   size_t N = max_size(y, mu, lambda, alpha);
-
-  operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(
-      y, mu, lambda, alpha);
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);

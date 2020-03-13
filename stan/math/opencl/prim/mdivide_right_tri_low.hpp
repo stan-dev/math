@@ -6,12 +6,14 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/multiply.hpp>
 #include <stan/math/opencl/tri_inverse.hpp>
+
 namespace stan {
 namespace math {
 
 /**
  * Returns the solution of the system Ax=b where A is a
  * lower triangular matrix.
+ *
  * @param A Matrix.
  * @param b Right hand side matrix or vector.
  * @return x = b * tri(A)^-1, solution of the linear system.

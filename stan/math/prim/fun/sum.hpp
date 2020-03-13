@@ -17,16 +17,10 @@ namespace math {
  * @param v Specified value.
  * @return Same value (the sum of one value).
  */
-inline double sum(double v) { return v; }
-
-/**
- * Returns specified input value.
- *
- * @tparam T Type of element.
- * @param v Specified value.
- * @return Same value (the sum of one value).
- */
-inline int sum(int v) { return v; }
+template <typename T, require_stan_scalar_t<T>* = nullptr>
+inline T sum(T v) {
+  return v;
+}
 
 /**
  * Return the sum of the values in the specified standard vector.
@@ -44,13 +38,12 @@ inline T sum(const std::vector<T>& xs) {
  * Returns the sum of the coefficients of the specified
  * Eigen Matrix, Array or expression.
  *
- * @tparam Derived type of argument
+ * @tparam T Type of argument
  * @param v argument
  * @return Sum of coefficients of argument.
  */
-template <typename Derived>
-inline typename Eigen::DenseBase<Derived>::Scalar sum(
-    const Eigen::DenseBase<Derived>& v) {
+template <typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
+inline value_type_t<T> sum(const T& v) {
   return v.sum();
 }
 

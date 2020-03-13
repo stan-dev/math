@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -14,7 +13,7 @@ namespace math {
  * version is required to disambiguate <code>sqrt(int)</code>.
  *
  * @param[in] x Argument.
- * @return Natural exponential of argument.
+ * @return Square root of x.
  */
 inline double sqrt(int x) { return std::sqrt(x); }
 
@@ -47,6 +46,7 @@ inline auto sqrt(const T& x) {
 
 /**
  * Version of sqrt() that accepts Eigen Matrix or matrix expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Square root of each value in x.
@@ -54,7 +54,7 @@ inline auto sqrt(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto sqrt(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().sqrt().matrix();
+  return x.derived().array().sqrt().matrix().eval();
 }
 
 }  // namespace math

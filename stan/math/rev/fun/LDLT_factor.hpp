@@ -131,7 +131,7 @@ class LDLT_factor<var, R, C> {
   /**
    * The LDLT_alloc object actually contains the factorization but is
    * derived from the chainable_alloc class so that it is allocated on the
-   * vari stack.  This ensures that it's lifespan is longer than the
+   * vari stack.  This ensures that its lifespan is longer than the
    * LDLT_factor object which created it.  This is needed because the
    * factorization is required during the chain() calls which happen
    * after an LDLT_factor object will most likely have been destroyed.

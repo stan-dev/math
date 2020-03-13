@@ -4,7 +4,6 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/csr_u_to_z.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/dot_product.hpp>
 #include <vector>
 
 namespace stan {
