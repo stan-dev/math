@@ -31,7 +31,7 @@ struct sum_lpdf {
                          std::ostream* msgs, Args&&... args) const {
     using return_type = stan::return_type_t<T, Args...>;
 
-    return stan::math::sum(sub_slice)
+    return sum_(sub_slice)
            + sub_slice.size()
                  * stan::math::sum(std::vector<return_type>{
                        return_type(sum_(std::forward<Args>(args)))...});
@@ -44,6 +44,46 @@ TEST(MathMix_reduce_sum, double_slice) {
   };
 
   std::vector<double> data(5, 10.0);
+
+  stan::test::expect_ad(f, data);
+}
+
+TEST(MathMix_reduce_sum, std_vector_double_slice) {
+  auto f = [](auto&& data) {
+    return stan::math::reduce_sum<sum_lpdf>(data, 0, msgs);
+  };
+
+  std::vector<std::vector<double>> data(3, std::vector<double>(2, 10.0));
+
+  stan::test::expect_ad(f, data);
+}
+
+TEST(MathMix_reduce_sum, vector_double_slice) {
+  auto f = [](auto&& data) {
+    return stan::math::reduce_sum<sum_lpdf>(data, 0, msgs);
+  };
+
+  std::vector<Eigen::VectorXd> data(3, Eigen::VectorXd::Ones(2));
+
+  stan::test::expect_ad(f, data);
+}
+
+TEST(MathMix_reduce_sum, row_vector_double_slice) {
+  auto f = [](auto&& data) {
+    return stan::math::reduce_sum<sum_lpdf>(data, 0, msgs);
+  };
+
+  std::vector<Eigen::RowVectorXd> data(3, Eigen::RowVectorXd::Ones(2));
+
+  stan::test::expect_ad(f, data);
+}
+
+TEST(MathMix_reduce_sum, matrix_double_slice) {
+  auto f = [](auto&& data) {
+    return stan::math::reduce_sum<sum_lpdf>(data, 0, msgs);
+  };
+
+  std::vector<Eigen::MatrixXd> data(3, Eigen::MatrixXd::Ones(2, 4));
 
   stan::test::expect_ad(f, data);
 }
@@ -249,3 +289,4 @@ TEST(MathMix_reduce_sum, eigen_three_args_with_doubles3) {
       },
       arg1, arg2, arg3);
 }
+
