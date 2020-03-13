@@ -3,11 +3,14 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
+#include <stan/math/prim/fun/is_integer.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>
 #include <stan/math/prim/fun/log_inv_logit_diff.hpp>
-#include <stan/math/prim/fun/is_integer.hpp>
+#include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/size_mvt.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <vector>
 
 namespace stan {
@@ -18,7 +21,7 @@ namespace math {
  * of integers given the vector of continuous locations and
  * specified cutpoints in an ordered logistic model.
  *
- * <p>Typically the continous location
+ * <p>Typically the continuous location
  * will be the dot product of a vector of regression coefficients
  * and a vector of predictors for the outcome
  *
@@ -75,7 +78,7 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
   vector_seq_view<T_cut> c_vec(c);
 
   int K = c_vec[0].size() + 1;
-  int N = size(lambda);
+  int N = stan::math::size(lambda);
   int C_l = size_mvt(c);
 
   check_consistent_sizes(function, "Integers", y, "Locations", lambda);
@@ -93,10 +96,8 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
                      size_c_old);
   }
 
-  for (int n = 0; n < N; n++) {
-    check_bounded(function, "Random variable", y_vec[n], 1, K);
-    check_finite(function, "Location parameter", lam_vec[n]);
-  }
+  check_bounded(function, "Random variable", y, 1, K);
+  check_finite(function, "Location parameter", lambda);
 
   for (int i = 0; i < C_l; i++) {
     check_ordered(function, "Cut-points", c_vec[i]);

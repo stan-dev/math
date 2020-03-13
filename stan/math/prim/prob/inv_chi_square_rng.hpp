@@ -3,11 +3,13 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <boost/random/chi_squared_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
+
 /** \ingroup prob_dists
  * Return a pseudorandom inverse chi squared variate with the nu
  * degrees of freedom using the specified random number generator.
@@ -26,13 +28,11 @@ inline typename VectorBuilder<true, double, T_deg>::type inv_chi_square_rng(
     const T_deg& nu, RNG& rng) {
   using boost::random::chi_squared_distribution;
   using boost::variate_generator;
-
   static const char* function = "inv_chi_square_rng";
-
   check_positive_finite(function, "Degrees of freedom parameter", nu);
 
   scalar_seq_view<T_deg> nu_vec(nu);
-  size_t N = size(nu);
+  size_t N = stan::math::size(nu);
   VectorBuilder<true, double, T_deg> output(N);
 
   for (size_t n = 0; n < N; ++n) {

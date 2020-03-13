@@ -21,7 +21,7 @@ namespace math {
  * Returns the log PMF of the Generalized Linear Model (GLM)
  * with categorical distribution and logit (softmax) link function.
  * This is an overload of the GLM in
- * prim/mar/prob/categorical_logit_glm_lpmf.hpp that is implemented in OpenCL.
+ * prim/prob/categorical_logit_glm_lpmf.hpp that is implemented in OpenCL.
  *
  * @tparam T_alpha_scalar type of scalar in the intercept vector
  * @tparam T_beta_scalar type of a scalar in the matrix of weights

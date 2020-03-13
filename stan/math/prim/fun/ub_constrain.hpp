@@ -2,8 +2,9 @@
 #define STAN_MATH_PRIM_FUN_UB_CONSTRAIN_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/identity_constrain.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/identity_constrain.hpp>
 #include <cmath>
 
 namespace stan {
@@ -55,13 +56,14 @@ inline return_type_t<T, U> ub_constrain(const T& x, const U& ub) {
  *
  * @tparam T type of scalar
  * @tparam U type of upper bound
- * @param[in] x free scalar.
+ * @tparam S type of log probability
+ * @param[in] x free scalar
  * @param[in] ub upper bound
  * @param[in,out] lp log density
  * @return scalar constrained to have upper bound
  */
-template <typename T, typename U>
-inline return_type_t<T, U> ub_constrain(const T& x, const U& ub, T& lp) {
+template <typename T, typename U, typename S>
+inline return_type_t<T, U> ub_constrain(const T& x, const U& ub, S& lp) {
   using std::exp;
   if (ub == INFTY) {
     return identity_constrain(x, lp);

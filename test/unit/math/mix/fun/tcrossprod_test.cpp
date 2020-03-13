@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 
 TEST(MathMixMatFun, tcrossprod) {
+  using stan::test::relative_tolerance;
   auto f = [](const auto& y) { return stan::math::tcrossprod(y); };
 
   Eigen::MatrixXd a00(0, 0);
@@ -33,8 +34,8 @@ TEST(MathMixMatFun, tcrossprod) {
   stan::test::expect_ad(f, a32);
 
   stan::test::ad_tolerances tols;
-  tols.hessian_hessian_ = 1e-2;
-  tols.hessian_fvar_hessian_ = 1e-2;
+  tols.hessian_hessian_ = relative_tolerance(2e-3, 2e-4);
+  tols.hessian_fvar_hessian_ = relative_tolerance(2e-3, 2e-4);
 
   Eigen::MatrixXd a33(3, 3);
   a33 << 1, 0, 0, 2, 3, 0, 4, 5, 6;

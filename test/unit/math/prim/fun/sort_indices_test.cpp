@@ -5,7 +5,7 @@
 template <typename T>
 void test_sort_indices_asc() {
   using stan::math::sort_indices_asc;
-  typedef typename stan::math::index_type<T>::type idx_t;
+  using idx_t = stan::math::index_type_t<T>;
 
   T c(1);
   c[0] = 1.7;
@@ -49,7 +49,7 @@ TEST(MathMatrixPrimMat, sort_indices_asc) {
 template <typename T>
 void test_sort_indices_desc() {
   using stan::math::sort_indices_desc;
-  typedef typename stan::math::index_type<T>::type idx_t;
+  using idx_t = stan::math::index_type_t<T>;
 
   T c(1);
   c[0] = 1.7;

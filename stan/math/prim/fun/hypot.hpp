@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the length of the hypoteneuse of a right triangle with
+ * Return the length of the hypotenuse of a right triangle with
  * opposite and adjacent side lengths given by the specified
  * arguments (C++11).  In symbols, if the arguments are
  * <code>x</code> and <code>y</code>, the result is <code>sqrt(x *
@@ -16,7 +16,7 @@ namespace math {
  *
  * @param x First argument.
  * @param y Second argument.
- * @return Length of hypoteneuse of right triangle with opposite
+ * @return Length of hypotenuse of right triangle with opposite
  * and adjacent side lengths x and y.
  */
 template <typename T1, typename T2, typename = require_all_arithmetic_t<T1, T2>>

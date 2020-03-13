@@ -20,3 +20,11 @@ TEST(MathFunctions, erfNan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   EXPECT_TRUE(std::isnan(stan::math::erf(nan)));
 }
+
+TEST(MathFunctions, erf_works_with_other_functions) {
+  Eigen::VectorXd a(5);
+  a << 1.1, 1.2, 1.3, 1.4, 1.5;
+  Eigen::RowVectorXd b(5);
+  b << 1.1, 1.2, 1.3, 1.4, 1.5;
+  stan::math::multiply(a, stan::math::erf(b));
+}

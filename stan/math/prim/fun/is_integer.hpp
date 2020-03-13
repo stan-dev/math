@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_IS_INTEGER_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/floor.hpp>
 #include <cmath>
 
 namespace stan {
@@ -15,6 +16,7 @@ namespace math {
  */
 template <typename T>
 inline bool is_integer(T x) {
+  using std::floor;
   return floor(x) == x;
 }
 

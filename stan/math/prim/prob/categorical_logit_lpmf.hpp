@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/beta.hpp>
 #include <stan/math/prim/fun/log_softmax.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/sum.hpp>
@@ -16,7 +17,6 @@ template <bool propto, typename T_prob>
 return_type_t<T_prob> categorical_logit_lpmf(
     int n, const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
   static const char* function = "categorical_logit_lpmf";
-
   check_bounded(function, "categorical outcome out of support", n, 1,
                 beta.size());
   check_finite(function, "log odds parameter", beta);
@@ -41,10 +41,8 @@ return_type_t<T_prob> categorical_logit_lpmf(
     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
   static const char* function = "categorical_logit_lpmf";
 
-  for (const auto& x : ns) {
-    check_bounded(function, "categorical outcome out of support", x, 1,
-                  beta.size());
-  }
+  check_bounded(function, "categorical outcome out of support", ns, 1,
+                beta.size());
   check_finite(function, "log odds parameter", beta);
 
   if (!include_summand<propto, T_prob>::value) {

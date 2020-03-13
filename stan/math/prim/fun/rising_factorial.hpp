@@ -12,11 +12,10 @@ namespace math {
 /**
  * Return the rising factorial function evaluated
  * at the inputs.
- * Will throw for NaN x and for negative n
  *
- * @tparam T Type of x argument.
- * @param x Argument.
- * @param n Argument
+ * @tparam T type of the first argument
+ * @param x first argument
+ * @param n second argument
  * @return Result of rising factorial function.
  * @throw std::domain_error if x is NaN
  * @throw std::domain_error if n is negative

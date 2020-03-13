@@ -33,7 +33,7 @@ primitive_value(T x) {
  * Return the primitive value of the specified argument.
  *
  * <p>This implementation only applies to non-arithmetic types as
- * defined by std libray's <code>is_arithmetic</code> trait metaprogram.
+ * defined by std library's <code>is_arithmetic</code> trait metaprogram.
  *
  * @tparam T type of non-arithmetic input.
  * @param x input.

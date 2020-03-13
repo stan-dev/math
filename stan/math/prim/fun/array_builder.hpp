@@ -10,7 +10,7 @@ namespace math {
 
 /**
  * Structure for building up arrays in an expression (rather than
- * in statements) using an argumentchaining add() method and
+ * in statements) using an argument-chaining add() method and
  * a getter method array() to return the result.
  * Array elements are held in std::vector of type T.
  *

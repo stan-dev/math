@@ -2,6 +2,7 @@
 #include <vector>
 
 TEST(MathMixMatFun, mdivideRightLdlt) {
+  using stan::test::relative_tolerance;
   auto f = [](const auto& x, const auto& y) {
     return stan::math::mdivide_right_ldlt(x, stan::test::ldlt_factor(y));
   };
@@ -50,8 +51,8 @@ TEST(MathMixMatFun, mdivideRightLdlt) {
   rv3 << 1, 2, 3;
 
   stan::test::ad_tolerances tols;
-  tols.hessian_hessian_ = 1e-2;
-  tols.hessian_fvar_hessian_ = 1e-2;
+  tols.hessian_hessian_ = relative_tolerance(2e-3, 2e-4);
+  tols.hessian_fvar_hessian_ = relative_tolerance(2e-3, 2e-4);
   Eigen::RowVectorXd u(5);
   u << 62, 84, 84, 76, 108;
   Eigen::MatrixXd v(5, 5);

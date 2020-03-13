@@ -21,7 +21,7 @@ namespace math {
  *
  * @param y A dxN matrix
  * @param L The Cholesky decomposition of a kernel matrix
- * @param w A d-dimensional vector of positve inverse scale parameters for each
+ * @param w A d-dimensional vector of positive inverse scale parameters for each
  * output.
  * @return The log of the multivariate GP density.
  * @throw std::domain_error if Sigma is not square, not symmetric,

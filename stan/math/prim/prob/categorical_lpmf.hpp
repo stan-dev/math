@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <cmath>
 #include <vector>
@@ -15,11 +16,9 @@ template <bool propto, typename T_prob>
 return_type_t<T_prob> categorical_lpmf(
     int n, const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
   static const char* function = "categorical_lpmf";
-
   using std::log;
 
   int lb = 1;
-
   check_bounded(function, "Number of categories", n, lb, theta.size());
   check_simplex(function, "Probabilities parameter", theta);
 
@@ -47,11 +46,7 @@ return_type_t<T_prob> categorical_lpmf(
 
   int lb = 1;
 
-  for (size_t i = 0; i < ns.size(); ++i) {
-    check_bounded(function, "element of outcome array", ns[i], lb,
-                  theta.size());
-  }
-
+  check_bounded(function, "element of outcome array", ns, lb, theta.size());
   check_simplex(function, "Probabilities parameter", theta);
 
   if (!include_summand<propto, T_prob>::value) {

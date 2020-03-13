@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_OPERATION_LHS_HPP
-#define STAN_MATH_OPENCL_KERNEL_GENERATOR_OPERATION_LHS_HPP
+#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_OPERATION_CL_LHS_HPP
+#define STAN_MATH_OPENCL_KERNEL_GENERATOR_OPERATION_CL_LHS_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
@@ -32,7 +32,7 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
 
   /**
    * generates kernel code for this expression if it appears on the left hand
-   * side of an assigment.
+   * side of an assignment.
    * @param[in,out] generated set of (pointer to) already generated operations
    * @param name_gen name generator for this kernel
    * @param i row index variable name
@@ -94,6 +94,22 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
           (std::get<Is>(this->arguments_)
                .set_view(bottom_diagonal, top_diagonal, bottom_zero_diagonal,
                          top_zero_diagonal),
+           0)...};
+    });
+  }
+
+  /**
+   * Sets the dimensions of the underlying expressions if possible. If not
+   * checks whether they have correct dimensions.
+   * @param rows desired number of rows
+   * @param cols desired number of columns
+   * @throws std::invalid_argument desired dimensions do not match with
+   * dimensions of underlying expression that can not be resized.
+   */
+  inline void check_assign_dimensions(int rows, int cols) const {
+    index_apply<N>([&](auto... Is) {
+      (void)std::initializer_list<int>{
+          (std::get<Is>(this->arguments_).check_assign_dimensions(rows, cols),
            0)...};
     });
   }

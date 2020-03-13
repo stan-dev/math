@@ -2,7 +2,9 @@
 #define STAN_MATH_PRIM_FUN_INC_BETA_DDZ_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <boost/math/special_functions/beta.hpp>
 #include <cmath>
 
@@ -14,8 +16,8 @@ namespace math {
  * incomplete beta function, I_{z}(a, b) with respect to z.
  *
  * @tparam T scalar types of arguments
- * @param a a
- * @param b b
+ * @param a first argument
+ * @param b second argument
  * @param z upper bound of the integral
  * @return partial derivative of the incomplete beta with respect to z
  *

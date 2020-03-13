@@ -10,6 +10,7 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/is_matrix_cl.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
+#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
 #include <CL/cl2.hpp>
 #include <algorithm>
 #include <iostream>
@@ -20,7 +21,7 @@
 /** \ingroup opencl
  *  @file stan/math/opencl/matrix_cl.hpp
  *  @brief The matrix_cl class - allocates memory space on the OpenCL device,
- *    functions for transfering matrices to and from OpenCL devices
+ *    functions for transferring matrices to and from OpenCL devices
  */
 namespace stan {
 namespace math {
@@ -142,24 +143,20 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * Waits for the write events and clears the read event stack.
    */
   inline void wait_for_write_events() const {
-    cl::CommandQueue queue = opencl_context.queue();
-    cl::Event copy_event;
-    queue.enqueueBarrierWithWaitList(&this->write_events(), &copy_event);
-    copy_event.wait();
+    for (cl::Event e : write_events_) {
+      e.wait();
+    }
     write_events_.clear();
-    return;
   }
 
   /** \ingroup opencl
    * Waits for the read events and clears the read event stack.
    */
   inline void wait_for_read_events() const {
-    cl::CommandQueue queue = opencl_context.queue();
-    cl::Event copy_event;
-    queue.enqueueBarrierWithWaitList(&this->read_events(), &copy_event);
-    copy_event.wait();
+    for (cl::Event e : read_events_) {
+      e.wait();
+    }
     read_events_.clear();
-    return;
   }
 
   /** \ingroup opencl
@@ -167,14 +164,8 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * read/write event stacks.
    */
   inline void wait_for_read_write_events() const {
-    cl::CommandQueue queue = opencl_context.queue();
-    cl::Event copy_event;
-    const std::vector<cl::Event> mat_events = this->read_write_events();
-    queue.enqueueBarrierWithWaitList(&mat_events, &copy_event);
-    copy_event.wait();
-    read_events_.clear();
-    write_events_.clear();
-    return;
+    wait_for_read_events();
+    wait_for_write_events();
   }
 
   const cl::Buffer& buffer() const { return buffer_cl_; }
@@ -460,6 +451,17 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     initialize_buffer(A);
   }
 
+  /**
+   * Construct from a kernel generator expression. It evaluates the ixpression
+   * into \c this.
+   * @tparam Expr type of the expression
+   * @param expression expression
+   */
+  template <typename Expr,
+            require_all_valid_expressions_and_none_scalar_t<Expr>* = nullptr>
+  matrix_cl(const Expr& expresion);  // NOLINT This constructor is intentionally
+                                     // implicit
+
   /** \ingroup opencl
    * Move assignment operator.
    */
@@ -489,9 +491,19 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     return *this;
   }
 
+  /**
+   * Assignment of a kernel generator expression evaluates the ixpression into
+   * \c this.
+   * @tparam Expr type of the expression
+   * @param expression expression
+   */
+  template <typename Expr,
+            require_all_valid_expressions_and_none_scalar_t<Expr>* = nullptr>
+  matrix_cl<T>& operator=(const Expr& expresion);
+
  private:
   /** \ingroup opencl
-   * Initializes the OpencL buffer of this matrix by copying the data from given
+   * Initializes the OpenCL buffer of this matrix by copying the data from given
    * buffer. Assumes that size of \c this is already set and matches the
    * buffer size. If \c in_order is false the caller must make sure that data
    * is not deleted before copying is complete.
@@ -526,7 +538,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   }
 
   /** \ingroup opencl
-   * Initializes the OpencL buffer of this matrix by copying the data from given
+   * Initializes the OpenCL buffer of this matrix by copying the data from given
    * object. Assumes that size of \c this is already set and matches the
    * buffer size. If the object is rvalue (temporary) it is first moved to heap
    * and callback is set to delete it after copying to OpenCL device is
@@ -563,7 +575,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   }
 
   /** \ingroup opencl
-   * Initializes the OpencL buffer of this matrix by copying the data from given
+   * Initializes the OpenCL buffer of this matrix by copying the data from given
    * matrix_cl. Assumes that size of \c this is already set and matches the
    * size of given matrix.
    * @param A matrix_cl

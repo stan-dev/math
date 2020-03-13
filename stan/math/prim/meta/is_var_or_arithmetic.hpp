@@ -11,8 +11,8 @@ namespace stan {
 
 /** \ingroup type_trait
  * Defines a static member value which is defined to be true (1)
- * if the unqualified cv of type T or if a container it's underlying type
-   is either var or an aritmetic type and false (0) otherwise.
+ * if the unqualified cv of type T or its underlying type (if a container)
+ * is either var or an arithmetic type, and false (0) otherwise.
  */
 template <typename T>
 struct is_var_or_arithmetic_type

@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/max_size.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
@@ -46,7 +47,6 @@ inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
   using boost::random::uniform_real_distribution;
   using boost::variate_generator;
   static const char* function = "von_mises_rng";
-
   check_finite(function, "Location parameter", mu);
   check_nonnegative(function, "Scale parameter", kappa);
   check_finite(function, "Scale parameter", kappa);

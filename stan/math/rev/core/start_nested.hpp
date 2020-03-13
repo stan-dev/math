@@ -9,6 +9,9 @@ namespace math {
 /**
  * Record the current position so that <code>recover_memory_nested()</code>
  * can find it.
+ *
+ * It is preferred to use the <code>nested_rev_autodiff</code> class for
+ * nested autodiff as it handles recovery of memory automatically.
  */
 static inline void start_nested() {
   ChainableStack::instance_->nested_var_stack_sizes_.push_back(

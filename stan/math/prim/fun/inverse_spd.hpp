@@ -11,8 +11,11 @@ namespace math {
  * Returns the inverse of the specified symmetric, pos/neg-definite matrix.
  *
  * @tparam T type of elements in the matrix
- * @param m Specified matrix.
- * @return Inverse of the matrix.
+ * @param m specified matrix
+ * @return Inverse of the matrix (an empty matrix if the specified matrix has
+ * size zero).
+ * @throw std::invalid_argument if the matrix is not symmetric.
+ * @throw std::domain_error if the matrix is not positive definite.
  */
 template <typename T>
 inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> inverse_spd(
@@ -20,8 +23,11 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> inverse_spd(
   using Eigen::Dynamic;
   using Eigen::LDLT;
   using Eigen::Matrix;
-  check_nonempty("inverse_spd", "m", m);
   check_symmetric("inverse_spd", "m", m);
+  if (m.size() == 0) {
+    return {};
+  }
+
   Matrix<T, Dynamic, Dynamic> mmt = T(0.5) * (m + m.transpose());
   LDLT<Matrix<T, Dynamic, Dynamic> > ldlt(mmt);
   if (ldlt.info() != Eigen::Success) {

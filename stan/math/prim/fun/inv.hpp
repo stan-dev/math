@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
 namespace stan {
 namespace math {
@@ -38,6 +37,7 @@ inline auto inv(const T& x) {
 
 /**
  * Version of inv() that accepts Eigen Matrix or matrix expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return 1 divided by each value in x.
@@ -45,11 +45,12 @@ inline auto inv(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto inv(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().inverse().matrix();
+  return x.derived().array().inverse().matrix().eval();
 }
 
 /**
  * Version of inv() that accepts Eigen Array or array expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return 1 divided by each value in x.
@@ -57,7 +58,7 @@ inline auto inv(const Eigen::MatrixBase<Derived>& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto inv(const Eigen::ArrayBase<Derived>& x) {
-  return x.derived().inverse();
+  return x.derived().inverse().eval();
 }
 
 }  // namespace math

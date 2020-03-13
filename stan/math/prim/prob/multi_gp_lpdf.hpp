@@ -10,6 +10,7 @@
 
 namespace stan {
 namespace math {
+
 /** \ingroup multivar_dists
  * The log of a multivariate Gaussian Process for the given y, Sigma, and
  * w.  y is a dxN matrix, where each column is a different observation and each
@@ -18,26 +19,24 @@ namespace math {
  * This distribution is equivalent to:
  *    for (i in 1:d) row(y, i) ~ multi_normal(0, (1/w[i])*Sigma).
  *
+ * @tparam T_y type of scalar
+ * @tparam T_covar type of kernel
+ * @tparam T_w type of weight
  * @param y A dxN matrix
  * @param Sigma The NxN kernel matrix
- * @param w A d-dimensional vector of positve inverse scale parameters for each
+ * @param w A d-dimensional vector of positive inverse scale parameters for each
  * output.
  * @return The log of the multivariate GP density.
  * @throw std::domain_error if Sigma is not square, not symmetric,
  * or not semi-positive definite.
- * @tparam T_y Type of scalar.
- * @tparam T_covar Type of kernel.
- * @tparam T_w Type of weight.
  */
 template <bool propto, typename T_y, typename T_covar, typename T_w>
 return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
     const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
-  static const char* function = "multi_gp_lpdf";
   using T_lp = return_type_t<T_y, T_covar, T_w>;
-  T_lp lp(0.0);
-
+  static const char* function = "multi_gp_lpdf";
   check_positive(function, "Kernel rows", Sigma.rows());
   check_finite(function, "Kernel", Sigma);
   check_symmetric(function, "Kernel", Sigma);
@@ -51,6 +50,8 @@ return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(
                    "rows of covariance parameter", Sigma.rows());
   check_positive_finite(function, "Kernel scales", w);
   check_finite(function, "Random variable", y);
+
+  T_lp lp(0.0);
 
   if (y.rows() == 0) {
     return lp;

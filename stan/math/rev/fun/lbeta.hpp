@@ -41,7 +41,7 @@ class lbeta_dv_vari : public op_dv_vari {
 };
 }  // namespace internal
 
-/*
+/**
  * Returns the natural logarithm of the beta function and its gradients.
  *
    \f[
@@ -65,7 +65,7 @@ inline var lbeta(const var& a, const var& b) {
   return var(new internal::lbeta_vv_vari(a.vi_, b.vi_));
 }
 
-/*
+/**
  * Returns the natural logarithm of the beta function and its gradients.
  *
    \f[
@@ -84,7 +84,7 @@ inline var lbeta(const var& a, double b) {
   return var(new internal::lbeta_vd_vari(a.vi_, b));
 }
 
-/*
+/**
  * Returns the natural logarithm of the beta function and its gradients.
  *
    \f[
