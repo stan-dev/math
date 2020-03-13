@@ -50,7 +50,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
 
   size_t len_ep = max_size(mu, phi);
   size_t len_np = max_size(n, phi);
-  
+
   size_t len_mu = size(mu);
   VectorBuilder<true, T_partials_return, T_location> mu_val(len_mu);
   for (size_t i = 0; i < len_mu; ++i) {
