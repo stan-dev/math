@@ -21,18 +21,16 @@ namespace math {
 /**
  * Represents a transpose in kernel generator expressions.
  *
- * Warning: transposing this expression is not supported!
  * @tparam Derived derived type
- * @tparam T_a type of first argument
- * @tparam T_b type of second argument
+ * @tparam Arg type of the argument
  */
-template <typename T>
+template <typename Arg>
 class transpose_
-    : public operation_cl<transpose_<T>,
-                          typename std::remove_reference_t<T>::Scalar, T> {
+    : public operation_cl<transpose_<Arg>,
+                          typename std::remove_reference_t<Arg>::Scalar, Arg> {
  public:
-  using Scalar = typename std::remove_reference_t<T>::Scalar;
-  using base = operation_cl<transpose_<T>, Scalar, T>;
+  using Scalar = typename std::remove_reference_t<Arg>::Scalar;
+  using base = operation_cl<transpose_<Arg>, Scalar, Arg>;
   using base::var_name;
 
  protected:
@@ -43,14 +41,14 @@ class transpose_
    * Constructor
    * @param a expression to transpose
    */
-  explicit transpose_(T&& a) : base(std::forward<T>(a)) {}
+  explicit transpose_(Arg&& a) : base(std::forward<Arg>(a)) {}
 
   /**
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline transpose_<std::remove_reference_t<T>> deep_copy() {
-    return transpose_<std::remove_reference_t<T>>{
+  inline transpose_<std::remove_reference_t<Arg>> deep_copy() {
+    return transpose_<std::remove_reference_t<Arg>>{
         std::get<0>(arguments_).deep_copy()};
   }
 
@@ -63,7 +61,7 @@ class transpose_
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
-                               const std::string var_name_arg) const {
+                               const std::string& var_name_arg) const {
     var_name = var_name_arg;
     return {};
   }
@@ -116,10 +114,10 @@ class transpose_
   }
 };
 
-template <typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
-inline auto transpose(T&& a) {
-  auto&& a_operation = as_operation_cl(std::forward<T>(a)).deep_copy();
+template <typename Arg,
+          typename = require_all_valid_expressions_and_none_scalar_t<Arg>>
+inline auto transpose(Arg&& a) {
+  auto&& a_operation = as_operation_cl(std::forward<Arg>(a)).deep_copy();
   return transpose_<std::remove_reference_t<decltype(a_operation)>>{
       std::move(a_operation)};
 }
