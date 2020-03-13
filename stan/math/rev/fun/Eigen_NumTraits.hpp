@@ -24,7 +24,7 @@ struct NumTraits<stan::math::var> : GenericNumTraits<stan::math::var> {
 
   /**
    * Return the precision for <code>stan::math::var</code> delegates
-   * to precision for <code>douboe</code>.
+   * to precision for <code>double</code>.
    *
    * @return precision
    */
