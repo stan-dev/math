@@ -11,8 +11,7 @@ namespace math {
 
 template <typename F, typename T_initial, typename T_param, typename T_t0,
           typename T_ts>
-std::vector<std::vector<
-    typename stan::return_type<T_initial, T_param, T_t0, T_ts>::type>>
+std::vector<std::vector<return_type_t<T_initial, T_param, T_t0, T_ts>>>
 integrate_ode_adams(const F& f, const std::vector<T_initial>& y0,
                     const T_t0& t0, const std::vector<T_ts>& ts,
                     const std::vector<T_param>& theta,

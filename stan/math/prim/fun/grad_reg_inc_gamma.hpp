@@ -4,11 +4,12 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/gamma_p.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
-#include <stan/math/prim/fun/is_nan.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <cmath>
 #include <limits>
@@ -23,9 +24,11 @@ namespace math {
  * for large z, the series is numerically inaccurate due to cancellation
  * and the asymptotic expansion is used.
  *
- * @param a   shape parameter, a > 0
- * @param z   location z >= 0
- * @param g   stan::math::tgamma(a) (precomputed value)
+ * @tparam T1 type of the shape parameter
+ * @tparam T2 type of the location parameter
+ * @param a shape parameter, a > 0
+ * @param z location z >= 0
+ * @param g stan::math::tgamma(a) (precomputed value)
  * @param dig boost::math::digamma(a) (precomputed value)
  * @param precision required precision; applies to series expansion only
  * @param max_steps number of steps to take.

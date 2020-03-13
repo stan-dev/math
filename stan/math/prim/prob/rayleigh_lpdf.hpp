@@ -3,9 +3,12 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/fun/constants.hpp>
 #include <cmath>
 
 namespace stan {
@@ -13,27 +16,23 @@ namespace math {
 
 template <bool propto, typename T_y, typename T_scale>
 return_type_t<T_y, T_scale> rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
-  static const char* function = "rayleigh_lpdf";
   using T_partials_return = partials_return_t<T_y, T_scale>;
-
   using std::log;
-
-  if (size_zero(y, sigma)) {
-    return 0.0;
-  }
-
-  T_partials_return logp(0.0);
-
+  static const char* function = "rayleigh_lpdf";
   check_not_nan(function, "Random variable", y);
   check_positive(function, "Scale parameter", sigma);
   check_positive(function, "Random variable", y);
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          sigma);
 
+  if (size_zero(y, sigma)) {
+    return 0.0;
+  }
   if (!include_summand<propto, T_y, T_scale>::value) {
     return 0.0;
   }
 
+  T_partials_return logp(0.0);
   operands_and_partials<T_y, T_scale> ops_partials(y, sigma);
 
   scalar_seq_view<T_y> y_vec(y);
@@ -44,7 +43,7 @@ return_type_t<T_y, T_scale> rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
       log_sigma(size(sigma));
-  for (size_t i = 0; i < size(sigma); i++) {
+  for (size_t i = 0; i < stan::math::size(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
     if (include_summand<propto, T_scale>::value) {
       log_sigma[i] = log(value_of(sigma_vec[i]));

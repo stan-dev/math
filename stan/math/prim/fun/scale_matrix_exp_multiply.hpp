@@ -3,7 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/matrix_exp.hpp>
 #include <stan/math/prim/fun/matrix_exp_action_handler.hpp>
+#include <stan/math/prim/fun/multiply.hpp>
 
 namespace stan {
 namespace math {
@@ -14,7 +16,7 @@ namespace math {
  *
  * Specialized for double values for efficiency.
  *
- * @tparam Cb Columns matrix B
+ * @tparam Cb number of columns in matrix B, can be Eigen::Dynamic
  * @param[in] A Matrix
  * @param[in] B Matrix
  * @param[in] t double
@@ -25,11 +27,10 @@ inline Eigen::Matrix<double, -1, Cb> scale_matrix_exp_multiply(
     const double& t, const Eigen::MatrixXd& A,
     const Eigen::Matrix<double, -1, Cb>& B) {
   check_square("scale_matrix_exp_multiply", "input matrix", A);
-  if (A.size() == 0 && B.rows() == 0) {
-    return Eigen::Matrix<double, -1, Cb>(0, B.cols());
-  }
-
   check_multiplicable("scale_matrix_exp_multiply", "A", A, "B", B);
+  if (A.size() == 0) {
+    return {0, B.cols()};
+  }
 
   return matrix_exp_action_handler().action(A, B, t);
 }
@@ -42,22 +43,21 @@ inline Eigen::Matrix<double, -1, Cb> scale_matrix_exp_multiply(
  *
  * @tparam Ta scalar type matrix A
  * @tparam Tb scalar type matrix B
- * @tparam Cb Columns matrix B
+ * @tparam Cb number of columns in matrix B, can be Eigen::Dynamic
  * @param[in] A Matrix
  * @param[in] B Matrix
  * @param[in] t double
  * @return exponential of At multiplies B
  */
 template <typename Tt, typename Ta, typename Tb, int Cb>
-inline Eigen::Matrix<stan::return_type_t<Tt, Ta, Tb>, -1, Cb>
+inline Eigen::Matrix<return_type_t<Tt, Ta, Tb>, -1, Cb>
 scale_matrix_exp_multiply(const Tt& t, const Eigen::Matrix<Ta, -1, -1>& A,
                           const Eigen::Matrix<Tb, -1, Cb>& B) {
   check_square("scale_matrix_exp_multiply", "input matrix", A);
-  if (A.size() == 0 && B.rows() == 0) {
-    return Eigen::Matrix<stan::return_type_t<Tt, Ta, Tb>, -1, Cb>(0, B.cols());
-  }
-
   check_multiplicable("scale_matrix_exp_multiply", "A", A, "B", B);
+  if (A.size() == 0) {
+    return {0, B.cols()};
+  }
 
   return multiply(matrix_exp(multiply(A, t)), B);
 }

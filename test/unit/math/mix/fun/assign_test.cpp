@@ -95,9 +95,6 @@ TEST(AgradMixMatrixAssign, eigen_row_vector_fvar_var_shape_mismatch) {
   Matrix<fvar<var>, Dynamic, Dynamic> zzz(3, 1);
   zzz << 1, 2, 3;
   EXPECT_THROW(assign(x, zzz), std::invalid_argument);
-
-  Matrix<fvar<var>, Dynamic, Dynamic> zzzz(1, 3);
-  EXPECT_THROW(assign(x, zzzz), std::invalid_argument);
 }
 
 TEST(AgradMixMatrixAssign, eigen_matrix_fvar_var_to_fvar_var) {
@@ -422,9 +419,6 @@ TEST(AgradMixMatrixAssign, eigen_row_vector_fvar_fvar_var_shape_mismatch) {
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> zzz(3, 1);
   zzz << 1, 2, 3;
   EXPECT_THROW(assign(x, zzz), std::invalid_argument);
-
-  Matrix<fvar<fvar<var> >, Dynamic, Dynamic> zzzz(1, 3);
-  EXPECT_THROW(assign(x, zzzz), std::invalid_argument);
 }
 
 TEST(AgradMixMatrixAssign, eigen_matrix_fvar_fvar_var_to_fvar_fvar_var) {

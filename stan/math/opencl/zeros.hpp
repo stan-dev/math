@@ -38,7 +38,7 @@ inline void matrix_cl<T, require_arithmetic_t<T>>::zeros() try {
 }
 
 /** \ingroup opencl
- * Stores zeros in the stricts triangular part (excluding the diagonal)
+ * Stores zeros in the strict's triangular part (excluding the diagonal)
  * of a matrix on the OpenCL device.
  * Supports writing zeroes to the lower and upper triangular.
  * Throws if used with the Entire matrix_cl_view.

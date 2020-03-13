@@ -33,7 +33,7 @@ static const std::string multiply_transpose_kernel_code = STRINGIFY(
       const int j = THREAD_BLOCK_SIZE * get_group_id(1) + thread_block_col;
 
       // indexes that determine the last indexes that need to compute
-      // in order to remove the unnecesary multiplications in the special
+      // in order to remove the unnecessary multiplications in the special
       // multiplication of A*A^T
       const int j_min = THREAD_BLOCK_SIZE * get_group_id(1);
       const int i_max = THREAD_BLOCK_SIZE * get_group_id(0) + get_local_size(0);
@@ -57,8 +57,8 @@ static const std::string multiply_transpose_kernel_code = STRINGIFY(
           // each thread copies WORK_PER_THREAD values to the
           // local memory
           for (int w = 0; w < WORK_PER_THREAD; w++) {
-            const A_temp_j = tiled_j + w * THREAD_BLOCK_SIZE_COL;
-            const AT_temp_j = j + w * THREAD_BLOCK_SIZE_COL;
+            const int A_temp_j = tiled_j + w * THREAD_BLOCK_SIZE_COL;
+            const int AT_temp_j = j + w * THREAD_BLOCK_SIZE_COL;
             if (A_temp_j >= N || i >= M) {
               A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                      [thread_block_row]

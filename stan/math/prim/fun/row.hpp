@@ -14,18 +14,17 @@ namespace math {
  * This is equivalent to calling <code>m.row(i - 1)</code> and
  * assigning the resulting template expression to a row vector.
  *
- * @tparam T type of elements in the matrix
+ * @tparam T type of the matrix
  * @param m Matrix.
  * @param i Row index (count from 1).
  * @return Specified row of the matrix.
  * @throw std::out_of_range if i is out of range.
  */
-template <typename T>
-inline Eigen::Matrix<T, 1, Eigen::Dynamic> row(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m, size_t i) {
+template <typename T, typename = require_eigen_t<T>>
+inline auto row(const T& m, size_t i) {
   check_row_index("row", "i", m, i);
 
-  return m.row(i - 1);
+  return m.row(i - 1).eval();
 }
 
 }  // namespace math

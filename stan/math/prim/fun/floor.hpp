@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -38,6 +37,7 @@ inline auto floor(const T& x) {
 
 /**
  * Version of floor() that accepts Eigen Matrix or matrix expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Greatest integer <= each value in x.
@@ -45,7 +45,7 @@ inline auto floor(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto floor(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().floor().matrix();
+  return x.derived().array().floor().matrix().eval();
 }
 
 }  // namespace math

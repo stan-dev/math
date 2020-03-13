@@ -3,6 +3,7 @@
 
 #include <test/unit/math/util.hpp>
 #include <stan/math.hpp>
+#include <complex>
 #include <string>
 #include <vector>
 
@@ -12,7 +13,7 @@ namespace test {
 /**
  * A class to store a sequence of values which can be deserialized
  * back into structured objects such as scalars, vectors, and
- * matrixes.
+ * matrices.
  *
  * @tparam T type of scalars
  */
@@ -65,6 +66,23 @@ struct deserializer {
   }
 
   /**
+   * Read a complex number conforming to the shape of the specified
+   * argument. The specified argument is only used for its
+   * shape---there is no relationship between the value type of the
+   * argument and the type of the result.
+   *
+   * @tparam U type of pattern value type
+   * @param x pattern argument to determine result shape
+   * @return deserialized value with shape and size matching argument
+   */
+  template <typename U>
+  std::complex<T> read(const std::complex<U>& x) {
+    T re = read(x.real());
+    T im = read(x.imag());
+    return {re, im};
+  }
+
+  /**
    * Read a standard vector conforming to the shape of the specified
    * argument, here a standard vector.  The specified argument is only
    * used for its shape---there is no relationship between the type of
@@ -106,7 +124,7 @@ struct deserializer {
 };
 
 /**
- * A structure to serialize structures to an internall stored sequence
+ * A structure to serialize structures to an internal stored sequence
  * of scalars.
  *
  * @tparam T underlying scalar type
@@ -137,6 +155,18 @@ struct serializer {
   template <typename U>
   void write(const U& x) {
     vals_.push_back(x);
+  }
+
+  /**
+   * Serialize the specified complex number.
+   *
+   * @tparam U value type of complex number; must be assignable to T
+   * @param x complex number to serialize
+   */
+  template <typename U>
+  void write(const std::complex<U>& x) {
+    write(x.real());
+    write(x.imag());
   }
 
   /**
@@ -206,6 +236,11 @@ deserializer<T> to_deserializer(const Eigen::Matrix<T, -1, 1>& vals) {
   return deserializer<T>(vals);
 }
 
+template <typename T>
+deserializer<T> to_deserializer(const std::complex<T>& vals) {
+  return to_deserializer(std::vector<T>{vals.real(), vals.imag()});
+}
+
 template <typename U>
 void serialize_helper(serializer<U>& s) {}
 
@@ -239,8 +274,8 @@ std::vector<U> serialize(const Ts... xs) {
  * @return serialized argument
  */
 template <typename T>
-std::vector<typename scalar_type<T>::type> serialize_return(const T& x) {
-  return serialize<typename scalar_type<T>::type>(x);
+std::vector<real_return_t<T>> serialize_return(const T& x) {
+  return serialize<real_return_t<T>>(x);
 }
 
 /**

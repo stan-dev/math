@@ -8,6 +8,9 @@
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
@@ -19,40 +22,35 @@ template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
 return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lccdf(
     const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_dof, T_loc, T_scale>;
-
-  if (size_zero(y, nu, mu, sigma)) {
-    return 0.0;
-  }
-
+  using std::exp;
+  using std::log;
+  using std::pow;
   static const char* function = "student_t_lccdf";
-
-  T_partials_return P(0.0);
-
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", sigma);
 
+  if (size_zero(y, nu, mu, sigma)) {
+    return 0;
+  }
+
+  T_partials_return P(0.0);
+  operands_and_partials<T_y, T_dof, T_loc, T_scale> ops_partials(y, nu, mu,
+                                                                 sigma);
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_dof> nu_vec(nu);
   scalar_seq_view<T_loc> mu_vec(mu);
   scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, nu, mu, sigma);
 
-  operands_and_partials<T_y, T_dof, T_loc, T_scale> ops_partials(y, nu, mu,
-                                                                 sigma);
-
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < size(y); i++) {
+  for (size_t i = 0; i < stan::math::size(y); i++) {
     if (value_of(y_vec[i]) == NEGATIVE_INFTY) {
       return ops_partials.build(0.0);
     }
   }
-
-  using std::exp;
-  using std::log;
-  using std::pow;
 
   T_partials_return digammaHalf = 0;
 
@@ -66,7 +64,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lccdf(
   if (!is_constant_all<T_dof>::value) {
     digammaHalf = digamma(0.5);
 
-    for (size_t i = 0; i < size(nu); i++) {
+    for (size_t i = 0; i < stan::math::size(nu); i++) {
       const T_partials_return nu_dbl = value_of(nu_vec[i]);
 
       digammaNu_vec[i] = digamma(0.5 * nu_dbl);

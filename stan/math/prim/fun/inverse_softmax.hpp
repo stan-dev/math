@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <cmath>
 
 namespace stan {
@@ -26,6 +27,7 @@ namespace math {
  *
  * There is no check that the input vector is a valid simplex vector.
  *
+ * @tparam Vector type of the simplex vector
  * @param simplex Simplex vector input.
  * @param y Vector into which the inverse softmax is written.
  * @throw std::invalid_argument if size of the input and

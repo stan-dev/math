@@ -17,7 +17,7 @@ namespace stan {
  *  will return a T1 as output.
  *
  *  Whichever case is true, StdVectorBuilder presents a consistent
- *  vector-like interface (through size() and operator[](int i))
+ *  vector-like interface (through stan::math::size() and operator[](int i))
  *  for constructing the output
  *
  *  The difference between this and VectorBuilder is that VectorBuilder

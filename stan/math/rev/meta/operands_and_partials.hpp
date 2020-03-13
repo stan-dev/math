@@ -12,7 +12,7 @@
 #include <stan/math/prim/meta/is_vector_like.hpp>
 #include <stan/math/prim/meta/likely.hpp>
 #include <stan/math/prim/meta/promote_scalar_type.hpp>
-#include <stan/math/prim/meta/size.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <vector>
 
 namespace stan {

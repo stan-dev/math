@@ -5,6 +5,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/log1m_exp.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
@@ -22,7 +23,7 @@ namespace math {
  * This is equivalent to and faster than ordered_logistic_lpmf(y, x * beta,
  * cuts).
  * This is an overload of the GLM in
- * prim/mar/prob/ordered_logistic_glm_lpmf.hpp that is implemented in OpenCL.
+ * prim/prob/ordered_logistic_glm_lpmf.hpp that is implemented in OpenCL.
  *
  * @tparam T_beta_scalar type of a scalar in the vector of weights
  * @tparam T_cuts_scalar type of a scalar in the vector of cutpoints
@@ -40,8 +41,7 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 template <bool propto, typename T_beta_scalar, typename T_cuts_scalar>
-typename stan::return_type_t<T_beta_scalar, T_cuts_scalar>
-ordered_logistic_glm_lpmf(
+return_type_t<T_beta_scalar, T_cuts_scalar> ordered_logistic_glm_lpmf(
     const matrix_cl<int>& y_cl, const matrix_cl<double>& x_cl,
     const Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, 1>& beta,
     const Eigen::Matrix<T_cuts_scalar, Eigen::Dynamic, 1>& cuts) {
@@ -50,14 +50,13 @@ ordered_logistic_glm_lpmf(
   using Eigen::Matrix;
   using Eigen::VectorXd;
   using std::isfinite;
-  using T_partials_return =
-      typename partials_return_type<T_beta_scalar, T_cuts_scalar>::type;
+  using T_partials_return = partials_return_t<T_beta_scalar, T_cuts_scalar>;
 
   static const char* function = "ordered_logistic_glm_lpmf";
 
   const size_t N_instances = x_cl.rows();
   const size_t N_attributes = x_cl.cols();
-  const size_t N_classes = size(cuts) + 1;
+  const size_t N_classes = stan::math::size(cuts) + 1;
 
   if (y_cl.size() != 1) {
     check_size_match(function, "Rows of ", "x_cl", N_instances, "rows of ",
@@ -137,8 +136,7 @@ ordered_logistic_glm_lpmf(
 }
 
 template <typename T_beta_scalar, typename T_cuts_scalar>
-typename return_type<T_beta_scalar, T_cuts_scalar>::type
-ordered_logistic_glm_lpmf(
+return_type_t<T_beta_scalar, T_cuts_scalar> ordered_logistic_glm_lpmf(
     const matrix_cl<int>& y, const matrix_cl<double>& x,
     const Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, 1>& beta,
     const Eigen::Matrix<T_cuts_scalar, Eigen::Dynamic, 1>& cuts) {

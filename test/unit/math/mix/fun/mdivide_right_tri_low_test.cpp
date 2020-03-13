@@ -3,13 +3,16 @@
 
 TEST(MathMixMatFun, mdivideRightTriLow) {
   auto f = [](const auto& x, const auto& y) {
-    // no need to symmetrize becuase only uses view
+    // no need to symmetrize because only uses view
     return stan::math::mdivide_right_tri_low(x, y);
   };
 
+  // size zero inputs
   Eigen::MatrixXd m00(0, 0);
+  Eigen::MatrixXd m20(2, 0);
   Eigen::RowVectorXd rv0(0);
   stan::test::expect_ad(f, m00, m00);
+  stan::test::expect_ad(f, m20, m00);
   stan::test::expect_ad(f, rv0, m00);
 
   // signature 1 of 2: matrix / matrix

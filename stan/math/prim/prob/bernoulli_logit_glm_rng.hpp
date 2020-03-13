@@ -42,11 +42,10 @@ inline typename VectorBuilder<true, int, T_alpha>::type bernoulli_logit_glm_rng(
   using boost::bernoulli_distribution;
   using boost::variate_generator;
 
-  static const char *function = "bernoulli_logit_glm_rng";
-
   const size_t N = x.row(0).size();
   const size_t M = x.col(0).size();
 
+  static const char *function = "bernoulli_logit_glm_rng";
   check_finite(function, "Matrix of independent variables", x);
   check_finite(function, "Weight vector", beta);
   check_finite(function, "Intercept", alpha);

@@ -20,13 +20,13 @@ class matrix_cl {
 namespace internal {
 
 /** \ingroup opencl
- * This underlying implimentation is used when the type is not an std vector.
+ * This underlying implementation is used when the type is not an std vector.
  */
 template <typename T>
 struct is_matrix_cl_impl : std::false_type {};
 
 /** \ingroup opencl
- * This specialization implimentation has a static member named value when the
+ * This specialization implementation has a static member named value when the
  * template type is an std vector.
  */
 template <typename... Args>

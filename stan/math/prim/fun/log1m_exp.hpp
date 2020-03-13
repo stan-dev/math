@@ -3,9 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/expm1.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -19,7 +20,6 @@ namespace math {
  *
  * This function is only defined for x < 0
  *
-
    \f[
    \mbox{log1m\_exp}(x) =
    \begin{cases}

@@ -4,7 +4,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -50,7 +49,7 @@ inline double atanh(int x) {
  */
 struct atanh_fun {
   /**
-   * Return the inverse hypberbolic tangent of the specified argument.
+   * Return the inverse hyperbolic tangent of the specified argument.
    *
    * @tparam T type of argument
    * @param x argument

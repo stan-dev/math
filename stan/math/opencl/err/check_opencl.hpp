@@ -14,7 +14,7 @@ namespace math {
 
 /** \ingroup opencl
  * Throws the domain error with specifying the OpenCL error that
- * occured. It outputs the OpenCL errors that are specified
+ * occurred. It outputs the OpenCL errors that are specified
  * in OpenCL 2.0. If no matching error number is found,
  * it throws the error with the number.
  * @param function the name of the function where the error occurred

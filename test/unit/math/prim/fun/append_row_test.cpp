@@ -176,3 +176,10 @@ TEST(MathMatrixPrimMat, append_row) {
   correct_type_vector(append_row(v3, -4.31));
   correct_type_vector(append_row(5.23, v3));
 }
+
+TEST(MathMatrixPrimMat, append_row_different_types) {
+  Eigen::MatrixXd m_d(3, 3);
+  Eigen::MatrixXi m_i(3, 3);
+
+  EXPECT_NO_THROW(stan::math::append_row(m_d, m_i));
+}

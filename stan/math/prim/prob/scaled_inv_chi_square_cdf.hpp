@@ -5,8 +5,11 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
+#include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/tgamma.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -19,29 +22,23 @@ namespace math {
  * The CDF of a scaled inverse chi-squared density for y with the
  * specified degrees of freedom parameter and scale parameter.
  *
+ * @tparam T_y type of scalar
+ * @tparam T_dof type of degrees of freedom
  * @param y A scalar variable.
  * @param nu Degrees of freedom.
  * @param s Scale parameter.
  * @throw std::domain_error if nu is not greater than 0
  * @throw std::domain_error if s is not greater than 0.
  * @throw std::domain_error if y is not greater than 0.
- * @tparam T_y Type of scalar.
- * @tparam T_dof Type of degrees of freedom.
  */
 template <typename T_y, typename T_dof, typename T_scale>
 return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(const T_y& y,
                                                              const T_dof& nu,
                                                              const T_scale& s) {
   using T_partials_return = partials_return_t<T_y, T_dof, T_scale>;
-
-  if (size_zero(y, nu, s)) {
-    return 1.0;
-  }
-
+  using std::exp;
+  using std::pow;
   static const char* function = "scaled_inv_chi_square_cdf";
-
-  T_partials_return P(1.0);
-
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_positive_finite(function, "Degrees of freedom parameter", nu);
@@ -50,23 +47,25 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(const T_y& y,
                          "Degrees of freedom parameter", nu, "Scale parameter",
                          s);
 
+  if (size_zero(y, nu, s)) {
+    return 1.0;
+  }
+
+  T_partials_return P(1.0);
+  operands_and_partials<T_y, T_dof, T_scale> ops_partials(y, nu, s);
+
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_dof> nu_vec(nu);
   scalar_seq_view<T_scale> s_vec(s);
   size_t N = max_size(y, nu, s);
 
-  operands_and_partials<T_y, T_dof, T_scale> ops_partials(y, nu, s);
-
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < size(y); i++) {
+  for (size_t i = 0; i < stan::math::size(y); i++) {
     if (value_of(y_vec[i]) == 0) {
       return ops_partials.build(0.0);
     }
   }
-
-  using std::exp;
-  using std::pow;
 
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       gamma_vec(size(nu));
@@ -74,7 +73,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(const T_y& y,
       digamma_vec(size(nu));
 
   if (!is_constant_all<T_dof>::value) {
-    for (size_t i = 0; i < size(nu); i++) {
+    for (size_t i = 0; i < stan::math::size(nu); i++) {
       const T_partials_return half_nu_dbl = 0.5 * value_of(nu_vec[i]);
       gamma_vec[i] = tgamma(half_nu_dbl);
       digamma_vec[i] = digamma(half_nu_dbl);
@@ -124,17 +123,17 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(const T_y& y,
   }
 
   if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < size(y); ++n) {
+    for (size_t n = 0; n < stan::math::size(y); ++n) {
       ops_partials.edge1_.partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_dof>::value) {
-    for (size_t n = 0; n < size(nu); ++n) {
+    for (size_t n = 0; n < stan::math::size(nu); ++n) {
       ops_partials.edge2_.partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    for (size_t n = 0; n < size(s); ++n) {
+    for (size_t n = 0; n < stan::math::size(s); ++n) {
       ops_partials.edge3_.partials_[n] *= P;
     }
   }

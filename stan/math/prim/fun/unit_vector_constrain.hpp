@@ -4,6 +4,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/dot_self.hpp>
+#include <stan/math/prim/fun/sqrt.hpp>
 #include <cmath>
 
 namespace stan {
@@ -17,6 +18,8 @@ namespace math {
  * Wikipedia page on generating random points on an N-sphere</a>.
  *
  * @tparam T type of elements in the vector
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @param y vector of K unrestricted variables
  * @return Unit length vector of dimension K
  */
