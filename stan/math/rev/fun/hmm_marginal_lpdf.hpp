@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_REV_FUN_HMM_MARGINAL_LPDF_HPP
 #define STAN_MATH_REV_FUN_HMM_MARGINAL_LPDF_HPP
 
-#include  <Eigen/Core>
+#include <Eigen/Core>
 
 namespace stan {
 namespace math {
@@ -32,8 +32,7 @@ namespace math {
  */
 double hmm_marginal_lpdf(const Eigen::MatrixXd& log_omegas,
                          const Eigen::MatrixXd& Gamma,
-                         const Eigen::VectorXd& rho,
-                         int n_states,
+                         const Eigen::VectorXd& rho, int n_states,
                          Eigen::MatrixXd& alphas,
                          Eigen::VectorXd& alpha_log_norms) {
   Eigen::MatrixXd omegas = log_omegas.array().exp();
@@ -65,16 +64,14 @@ double hmm_marginal_lpdf(const Eigen::MatrixXd& log_omegas,
 /**
  * Wrapper for double case.
  */
- double hmm_marginal_lpdf(const Eigen::MatrixXd& log_omegas,
-                          const Eigen::MatrixXd& Gamma,
-                          const Eigen::VectorXd& rho,
-                          int n_states) {
+double hmm_marginal_lpdf(const Eigen::MatrixXd& log_omegas,
+                         const Eigen::MatrixXd& Gamma,
+                         const Eigen::VectorXd& rho, int n_states) {
   double n_transitions = log_omegas.rows();
   Eigen::MatrixXd alpha(n_transitions, n_states);
   Eigen::VectorXd alpha_log_norms;
   double norm_norm;
-  return hmm_marginal_lpdf(log_omegas, Gamma, rho,
-                           alpha, alpha_log_norms);
+  return hmm_marginal_lpdf(log_omegas, Gamma, rho, alpha, alpha_log_norms);
 }
 
 /**
@@ -102,25 +99,23 @@ struct hmm_marginal_lpdf_vari : public vari {
 
   hmm_marginal_lpdf_vari(const Eigen::MatrixXd& log_omegas,
                          const Eigen::MatrixXd& Gamma,
-                         const Eigen::VectorXd& rho,
-                         const Eigen::Matrix& alpha,
+                         const Eigen::VectorXd& rho, const Eigen::Matrix& alpha,
                          const Eigen::VectorXd& alpha_log_norms,
                          double marginal_density_dbl)
-    : vari(marginal_density_dbl),  // CHECK -- do I need this?
-      n_transitions_(log_omegas.cols()),
-      n_states_(log_omegas.rows()),
-      log_omega_(ChainableStack::instance_->memalloc.alloc_array<vari*>(
-                 n_transitions_ * n_states_)),
-      Gamma_(ChainableStack::instance_->memalloc.alloc_array<vari*>(
-             n_transitions_ * n_states_)),
-      rho_(ChainableStack::instance_->memalloc.alloc_array<vari*>(
-           n_states_)),
-      log_omega_jacad_(ChainableStack::instance_->memalloc.alloc_array<vari*>(
-        n_transitions_ * n_states_)),
-      Gamma_jacad_(ChainableStack::instance_->memalloc.alloc_array<vari*>(
-        n_transitions_ * n_state_)),
-      rho_jacad_(ChainableStack::instance_->memalloc.alloc_array<vari*>(
-        n_state_)) {
+      : vari(marginal_density_dbl),  // CHECK -- do I need this?
+        n_transitions_(log_omegas.cols()),
+        n_states_(log_omegas.rows()),
+        log_omega_(ChainableStack::instance_->memalloc.alloc_array<vari*>(
+            n_transitions_ * n_states_)),
+        Gamma_(ChainableStack::instance_->memalloc.alloc_array<vari*>(
+            n_transitions_ * n_states_)),
+        rho_(ChainableStack::instance_->memalloc.alloc_array<vari*>(n_states_)),
+        log_omega_jacad_(ChainableStack::instance_->memalloc.alloc_array<vari*>(
+            n_transitions_ * n_states_)),
+        Gamma_jacad_(ChainableStack::instance_->memalloc.alloc_array<vari*>(
+            n_transitions_ * n_state_)),
+        rho_jacad_(
+            ChainableStack::instance_->memalloc.alloc_array<vari*>(n_state_)) {
     // CHECK -- should we store omega and not recompute it?
     // CHECK -- do we need the .array()?
     Eigen::MatrixXd omegas = log_omegas.array.exp();
@@ -143,10 +138,9 @@ struct hmm_marginal_lpdf_vari : public vari {
 
     double norm_norm = alpha_log_norms_(n_transitions_);
     double grad_corr
-      = std::exp(alpha_log_norms(n_transitions_ - 1) - norm_norm);
-    Gamma_jacad += grad_corr
-                     * kappa.cwiseProduct(omegas.col(n_transitions_))
-                     * alphas.col(n_transitions_ - 1).transpose();
+        = std::exp(alpha_log_norms(n_transitions_ - 1) - norm_norm);
+    Gamma_jacad += grad_corr * kappa.cwiseProduct(omegas.col(n_transitions_))
+                   * alphas.col(n_transitions_ - 1).transpose();
 
     for (int n = n_transitions_ - 2; n >= 0; n--) {
       kappa = Gamma.transpose() * (omegas.col(n + 2).cwiseProduct(kappa));
@@ -157,20 +151,17 @@ struct hmm_marginal_lpdf_vari : public vari {
 
       grad_corr = std::exp(alpha_log_norms(n) + kappa_log_norms(n + 1));
       log_omega_jacad.col(n + 1) = grad_corr
-        * kappa.cwiseProduct(omegas.col(n + 1)) * alphas.col(n).transpose();
+                                   * kappa.cwiseProduct(omegas.col(n + 1))
+                                   * alphas.col(n).transpose();
     }
 
     // Boundary terms
     grad_corr = std::exp(kappa_log_norms(0) - norm_norm);
-    Eigen::VectorXd c = Gamma.transpose()
-      * (omegas.col(1).cwiseProduct(kappa));
+    Eigen::VectorXd c = Gamma.transpose() * (omegas.col(1).cwiseProduct(kappa));
     log_omega_jacad.col(0) = grad_corr * c.cwiseProduct(rho);
     rho_jacad = grad_corr * c.cwiseProduct(omegas.col(0));
   }
-
 }
-
-
 
 }  // namespace math
 }  // namespace stan
