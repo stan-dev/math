@@ -176,7 +176,7 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
 
     // Boundary terms
     // TO DO (charlesm93): find a better solution that the if loop
-    // for 0 transitions.
+    // for the case with 0 transitions.
     double grad_corr_boundary;
     Eigen::VectorXd c;
     if (n_transitions != 0) {
