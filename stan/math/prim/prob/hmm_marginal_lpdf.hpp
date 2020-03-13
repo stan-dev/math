@@ -14,6 +14,7 @@
 
 namespace stan {
 namespace math {
+
   /**
    * For a Hidden Markov Model with observation y, hidden state x,
    * and parameters theta, return the log marginal density, log
@@ -70,10 +71,34 @@ namespace math {
   }
 
 
-/**
- * Overload function for template types. Compute the density
- * and the requisite adjoint products.
- */
+  /**
+   * For a Hidden Markov Model with observation y, hidden state x,
+   * and parameters theta, return the log marginal density, log
+   * pi(y | theta). In this setting, the hidden states are discrete
+   * and take values over the finite space {1, ..., K}.
+   * The marginal lpdf is obtained via a forward pass, and
+   * the derivative is calculated with an adjoint method,
+   * see (Betancourt, Margossian, & Leos-Barajas, 2020).
+   *
+   * @tparam T_omega type of the log likelihood matrix
+   * @tparam T_Gamma type of the transition matrix
+   * @tparam T_rho type of the initial guess vector
+   *
+   * @param[in] log_omega log matrix of observational densities.
+   *              The (i, j)th entry corresponds to the
+   *              density of the ith observation, y_i,
+   *              given x_i = j.
+   * @param[in] Gamma transition density between hidden states.
+   *              The (i, j)th entry is the probability that x_n = j,
+   *              given x_{n - 1} = i. The rows of Gamma are simplexes.
+   * @param[in] rho initial state
+   * @throw <code>std::domain_error</code> if the rows of Gamma are
+   * not a simplex.
+   * @throw <code>std::invalid_argument</code> if the size of rho is not
+   * the number of states.
+   * @throw <code>std::domain_error</code> if rho is not a simplex.
+   * @return log marginal density.
+   */
 template <typename T_omega, typename T_Gamma, typename T_rho>
 inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
