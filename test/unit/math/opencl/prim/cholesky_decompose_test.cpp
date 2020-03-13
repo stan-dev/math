@@ -9,7 +9,7 @@
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-TEST(MathMatrixOpenCLPrim, cholesky_decompose_cl_expections) {
+TEST(MathMatrixOpenCLPrim, cholesky_decompose_cl_exceptions) {
   using stan::math::matrix_cl;
   matrix_cl<double> m0;
   EXPECT_NO_THROW(stan::math::cholesky_decompose(m0));

@@ -10,7 +10,7 @@
 namespace std {
 
 /**
- * Specialization of the standard libary complex number type for
+ * Specialization of the standard library complex number type for
  * reverse-mode autodiff type `stan::math::var`.
  */
 template <>

@@ -15,9 +15,9 @@ namespace math {
  * the density of any elliptical distribution
  *
  * @tparam T_CPCs type of \c T_CPCs vector (must be derived from \c
- * Eigen::ArrayBase and have one compile-time dimmension equal to 1)
+ * Eigen::ArrayBase and have one compile-time dimension equal to 1)
  * @tparam T_sds type of \c sds vector (must be derived from \c Eigen::ArrayBase
- * and have one compile-time dimmension equal to 1)
+ * and have one compile-time dimension equal to 1)
  * @param CPCs on (-1, 1)
  * @param sds on (0, inf)
  * @param log_prob the log probability value to increment with the Jacobian
