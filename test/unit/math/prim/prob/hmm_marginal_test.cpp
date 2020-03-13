@@ -53,7 +53,7 @@ double state_lpdf(double y, double abs_mu, double sigma, int state) {
          - std::log(sigma);
 }
 
-class hmm_two_state_test : public ::testing::Test {
+class hmm_marginal_lpdf_test : public ::testing::Test {
 protected:
   void SetUp() override {
     n_states = 2;
@@ -128,7 +128,7 @@ protected:
 };
 
 // TEST(hmm_marginal_lpdf, two_state) {
-TEST_F(hmm_two_state_test, ten_transitions) {
+TEST_F(hmm_marginal_lpdf_test, ten_transitions) {
   using stan::math::hmm_marginal_lpdf;
 
   // CHECK -- EXPECT_EQ returns an error.
@@ -146,7 +146,7 @@ TEST_F(hmm_two_state_test, ten_transitions) {
                         Gamma_unconstrained, rho_unconstrained);
 }
 
-TEST_F(hmm_two_state_test, zero_transitions) {
+TEST_F(hmm_marginal_lpdf_test, zero_transitions) {
   using stan::math::hmm_marginal_lpdf;
 
   EXPECT_FLOAT_EQ(-1.520827,
@@ -161,6 +161,54 @@ TEST_F(hmm_two_state_test, zero_transitions) {
   };
 
   stan::test::expect_ad(tols, hmm_functor, log_omegas_zero,
+                        Gamma_unconstrained, rho_unconstrained);
+}
+
+TEST(hmm_marginal_lpdf, one_state) {
+  using stan::math::hmm_marginal_lpdf;
+  int n_states = 1, p1_init = 1, gamma1 = 1, n_transitions = 10,
+     abs_mu = 1, sigma = 1;
+  Eigen::VectorXd rho(n_states);
+  rho << p1_init;
+  Eigen::MatrixXd Gamma(n_states, n_states);
+  Gamma << gamma1;
+  Eigen::VectorXd obs_data(n_transitions + 1);
+  obs_data << -0.9692032, 1.6367754, 1.0339449, 0.9798393, 0.4829358,
+              2.7508704, 0.3122448, 1.8316583, 1.6327319, 1.2097332,
+              0.4087620;
+  Eigen::MatrixXd log_omegas(n_states, n_transitions + 1);
+  for (int n = 0; n < n_transitions + 1; n++)
+    log_omegas.col(n)[0] = state_lpdf(obs_data[n], abs_mu, sigma, 0);
+
+  EXPECT_FLOAT_EQ(-14.89646, hmm_marginal_lpdf(log_omegas, Gamma, rho));
+
+  // Differentiation tests
+  std::vector<double> rho_unconstrained(n_states - 1);
+  for (int i = 0; i < rho.size(); i++)
+    rho_unconstrained[i] = rho(i);
+  Eigen::MatrixXd Gamma_unconstrained
+    = Gamma.block(0, 0, n_states, n_states - 1);
+
+  auto hmm_functor = [](const auto& log_omegas,
+                        const auto& Gamma_unconstrained,
+                        const auto& rho_unconstrained) {
+    return hmm_marginal_test_wrapper(log_omegas, Gamma_unconstrained,
+                                     rho_unconstrained);
+  };
+
+  stan::test::ad_tolerances tols;
+  double infinity = std::numeric_limits<double>::infinity();
+  tols.hessian_val_ = infinity;
+  tols.hessian_grad_ = infinity;
+  tols.hessian_hessian_ = infinity;
+  tols.hessian_fvar_val_ = infinity;
+  tols.hessian_fvar_grad_ = infinity;
+  tols.hessian_fvar_hessian_ = infinity;
+  tols.grad_hessian_val_ = infinity;
+  tols.grad_hessian_hessian_ = infinity;
+  tols.grad_hessian_grad_hessian_ = infinity;
+
+  stan::test::expect_ad(tols, hmm_functor, log_omegas,
                         Gamma_unconstrained, rho_unconstrained);
 }
 
