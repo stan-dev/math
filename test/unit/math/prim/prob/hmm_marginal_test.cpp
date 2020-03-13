@@ -4,6 +4,9 @@
 #include <test/unit/math/test_ad.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
+#include <numeric_limits>
+#include <limits>
+#include <vector>
 
 /**
  * Wrapper around hmm_marginal_density which passes rho and
@@ -14,7 +17,7 @@
  */
 template <typename T_omega, typename T_Gamma, typename T_rho>
 inline stan::return_type_t<T_omega, T_Gamma, T_rho>
-hmm_marginal_test_wrapper (
+hmm_marginal_test_wrapper(
   const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
   const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>&
     Gamma_unconstrained,
@@ -124,7 +127,6 @@ protected:
   std::vector<double> rho_unconstrained;
   Eigen::MatrixXd Gamma_unconstrained;
   stan::test::ad_tolerances tols;
-
 };
 
 // TEST(hmm_marginal_lpdf, two_state) {

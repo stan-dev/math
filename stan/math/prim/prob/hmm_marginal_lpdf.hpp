@@ -10,6 +10,7 @@
 #include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/rev/core.hpp>
 #include <Eigen/Core>
+#include <vector>
 #include <iostream>
 
 namespace stan {
