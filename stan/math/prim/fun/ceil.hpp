@@ -26,28 +26,30 @@ struct ceil_fun {
 /**
  * Vectorized version of ceil().
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x container
  * @return Least integer >= each value in x.
  */
-template <typename T,
-          require_not_container_st<is_container, std::is_arithmetic, T>...>
-inline auto ceil(const T& x) {
-  return apply_scalar_unary<ceil_fun, T>::apply(x);
+template <typename Container,
+          require_not_container_st<is_container,
+                                   std::is_arithmetic, Container>...>
+inline auto ceil(const Container& x) {
+  return apply_scalar_unary<ceil_fun, Container>::apply(x);
 }
 
 /**
- * Version of ceil() that accepts Eigen Matrix/Array objects or expressions.
+ * Version of ceil() that accepts std::vectors, Eigen Matrix/Array objects
+ *  or expressions, and containers of these.
  *
- * @tparam T Type of x
- * @param x Eigen Matrix/Array or expression
+ * @tparam Container Type of x
+ * @param x Container
  * @return Least integer >= each value in x.
  */
-template <typename T,
-          require_container_st<is_container, std::is_arithmetic, T>...>
-inline auto ceil(const T& x) {
-  return apply_vector_unary<T>::apply(
-      x, [&](const auto& v) { return v.derived().array().ceil(); });
+template <typename Container,
+          require_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto ceil(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](auto&& v) { return v.array().ceil(); });
 }
 
 }  // namespace math

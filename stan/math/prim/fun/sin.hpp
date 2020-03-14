@@ -26,7 +26,7 @@ struct sin_fun {
 /**
  * Vectorized version of sin().
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x angles in radians
  * @return Sine of each value in x.
  */
@@ -37,17 +37,18 @@ inline auto sin(const T& x) {
 }
 
 /**
- * Version of sin() that accepts Eigen Matrix/Array objects or expressions.
+ * Version of sin() that accepts std::vectors, Eigen Matrix/Array objects
+ *  or expressions, and containers of these.
  *
- * @tparam T Type of x
- * @param x Eigen Matrix/Array or expression
+ * @tparam Container Type of x
+ * @param x Container
  * @return Sine of each value in x.
  */
-template <typename T,
-          require_container_st<is_container, std::is_arithmetic, T>...>
-inline auto sin(const T& x) {
-  return apply_vector_unary<T>::apply(
-      x, [&](const auto& v) { return v.derived().array().sin(); });
+template <typename Container,
+          require_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto sin(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [&](auto&& v) { return v.array().sin(); });
 }
 
 }  // namespace math

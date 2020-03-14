@@ -26,28 +26,30 @@ struct tan_fun {
 /**
  * Vectorized version of tan().
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x angles in radians
  * @return Tangent of each value in x.
  */
-template <typename T,
-          require_not_container_st<is_container, std::is_arithmetic, T>...>
-inline auto tan(const T& x) {
-  return apply_scalar_unary<tan_fun, T>::apply(x);
+template <typename Container,
+          require_not_container_st<is_container,
+                                   std::is_arithmetic, Container>...>
+inline auto tan(const Container& x) {
+  return apply_scalar_unary<tan_fun, Container>::apply(x);
 }
 
 /**
- * Version of tan() that accepts Eigen Matrix/Array objects or expressions.
+ * Version of tan() that accepts std::vectors, Eigen Matrix/Array objects
+ *  or expressions, and containers of these.
  *
- * @tparam T Type of x
- * @param x Eigen Matrix/Array or expression
+ * @tparam Container Type of x
+ * @param x Container
  * @return Tangent of each value in x.
  */
-template <typename T,
-          require_container_st<is_container, std::is_arithmetic, T>...>
-inline auto tan(const T& x) {
-  return apply_vector_unary<T>::apply(
-      x, [&](const auto& v) { return v.derived().array().tan(); });
+template <typename Container,
+          require_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto tan(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](auto&& v) { return v.array().tan(); });
 }
 
 }  // namespace math

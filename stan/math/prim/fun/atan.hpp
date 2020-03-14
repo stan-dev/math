@@ -26,28 +26,30 @@ struct atan_fun {
 /**
  * Vectorized version of atan().
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x container
  * @return Arctan of each value in x, in radians.
  */
-template <typename T,
-          require_not_container_st<is_container, std::is_arithmetic, T>...>
-inline auto atan(const T& x) {
-  return apply_scalar_unary<atan_fun, T>::apply(x);
+template <typename Container,
+          require_not_container_st<is_container,
+                                   std::is_arithmetic, Container>...>
+inline auto atan(const Container& x) {
+  return apply_scalar_unary<atan_fun, Container>::apply(x);
 }
 
 /**
- * Version of atan() that accepts Eigen Matrix/Array objects or expressions.
+ * Version of atan() that accepts std::vectors, Eigen Matrix/Array objects,
+ *  or expressions, and containers of these.
  *
- * @tparam T Type of x
- * @param x Eigen Matrix/Array or expression
+ * @tparam Container Type of x
+ * @param x Container
  * @return Elementwise atan of members of container.
  */
-template <typename T,
-          require_container_st<is_container, std::is_arithmetic, T>...>
-inline auto atan(const T& x) {
-  return apply_vector_unary<T>::apply(
-      x, [&](const auto& v) { return v.derived().array().atan(); });
+template <typename Container,
+          require_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto atan(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](auto&& v) { return v.array().atan(); });
 }
 
 }  // namespace math

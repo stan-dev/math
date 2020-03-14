@@ -14,13 +14,14 @@ inline double inv_square(double x) { return inv(square(x)); }
 /**
  * Vectorized version of inv_square().
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x container
  * @return 1 / the square of each value in x.
  */
-template <typename T,
-          require_not_container_st<is_container, std::is_arithmetic, T>...>
-inline auto inv_square(const T& x) {
+template <typename Container,
+          require_not_container_st<is_container,
+                                   std::is_arithmetic, Container>...>
+inline auto inv_square(const Container& x) {
   return inv(square(x));
 }
 
@@ -32,11 +33,11 @@ inline auto inv_square(const T& x) {
  * @param x Eigen Matrix/Array or expression
  * @return 1 / the square of each value in x.
  */
-template <typename T,
-          require_container_st<is_container, std::is_arithmetic, T>...>
-inline auto inv_square(const T& x) {
-  return apply_vector_unary<T>::apply(
-      x, [&](const auto& v) { return v.derived().array().square().inverse(); });
+template <typename Container,
+          require_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto inv_square(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](auto&& v) { return v.array().square().inverse(); });
 }
 
 }  // namespace math

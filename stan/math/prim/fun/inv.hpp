@@ -26,7 +26,7 @@ struct inv_fun {
 /**
  * Vectorized version of inv().
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x container
  * @return 1 divided by each value in x.
  */
@@ -37,18 +37,18 @@ inline auto inv(const T& x) {
 }
 
 /**
- * Version of inv() that accepts Eigen Matrix/Array objects or expressions.
+ * Version of inv() that accepts std::vectors, Eigen Matrix/Array objects
+ *  or expressions, and containers of these.
  *
- * @tparam T Type of x
- * @param x Eigen Matrix/Array or expression
- * @param x Matrix or matrix expression
+ * @tparam Container Type of x
+ * @param x Container
  * @return 1 divided by each value in x.
  */
-template <typename T,
-          require_container_st<is_container, std::is_arithmetic, T>...>
-inline auto inv(const T& x) {
-  return apply_vector_unary<T>::apply(
-      x, [&](const auto& v) { return v.derived().array().inverse(); });
+template <typename Container,
+          require_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto inv(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](auto&& v) { return v.array().inverse(); });
 }
 
 }  // namespace math
