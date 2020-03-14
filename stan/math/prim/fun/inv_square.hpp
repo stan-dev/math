@@ -18,9 +18,9 @@ inline double inv_square(double x) { return inv(square(x)); }
  * @param x container
  * @return 1 / the square of each value in x.
  */
-template <typename Container,
-          require_not_container_st<is_container,
-                                   std::is_arithmetic, Container>...>
+template <
+    typename Container,
+    require_not_container_st<is_container, std::is_arithmetic, Container>...>
 inline auto inv_square(const Container& x) {
   return inv(square(x));
 }

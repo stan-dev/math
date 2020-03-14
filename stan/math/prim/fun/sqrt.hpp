@@ -39,9 +39,9 @@ struct sqrt_fun {
  * @param x container
  * @return Square root of each value in x.
  */
-template <typename Container,
-          require_not_container_st<is_container,
-                                   std::is_arithmetic, Container>...>
+template <
+    typename Container,
+    require_not_container_st<is_container, std::is_arithmetic, Container>...>
 inline auto sqrt(const Container& x) {
   return apply_scalar_unary<sqrt_fun, Container>::apply(x);
 }

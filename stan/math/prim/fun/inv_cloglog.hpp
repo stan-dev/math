@@ -72,16 +72,16 @@ struct inv_cloglog_fun {
  * @param x container
  * @return 1 - exp(-exp()) applied to each value in x.
  */
-template <typename Container,
-          require_not_container_st<is_container,
-                                   std::is_arithmetic, Container>...>
+template <
+    typename Container,
+    require_not_container_st<is_container, std::is_arithmetic, Container>...>
 inline auto inv_cloglog(const Container& x) {
   return apply_scalar_unary<inv_cloglog_fun, Container>::apply(x);
 }
 
 /**
- * Version of inv_cloglog() that accepts std::vectors, Eigen Matrix/Array objects
- *  or expressions, and containers of these.
+ * Version of inv_cloglog() that accepts std::vectors, Eigen Matrix/Array
+ * objects or expressions, and containers of these.
  *
  * @tparam Container Type of x
  * @param x Container

@@ -44,9 +44,9 @@ struct log_fun {
  * @param[in] x container
  * @return Elementwise application of natural log to the argument.
  */
-template <typename Container,
-          require_not_container_st<is_container,
-                                   std::is_arithmetic, Container>...>
+template <
+    typename Container,
+    require_not_container_st<is_container, std::is_arithmetic, Container>...>
 inline auto log(const Container& x) {
   return apply_scalar_unary<log_fun, Container>::apply(x);
 }

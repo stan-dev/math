@@ -30,9 +30,9 @@ struct floor_fun {
  * @param x container
  * @return Greatest integer <= each value in x.
  */
-template <typename Container,
-          require_not_container_st<is_container,
-                                   std::is_arithmetic, Container>...>
+template <
+    typename Container,
+    require_not_container_st<is_container, std::is_arithmetic, Container>...>
 inline auto floor(const Container& x) {
   return apply_scalar_unary<floor_fun, Container>::apply(x);
 }
