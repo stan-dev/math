@@ -16,11 +16,9 @@ template <bool propto, typename T_prob>
 return_type_t<T_prob> categorical_lpmf(
     int n, const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
   static const char* function = "categorical_lpmf";
-
   using std::log;
 
   int lb = 1;
-
   check_bounded(function, "Number of categories", n, lb, theta.size());
   check_simplex(function, "Probabilities parameter", theta);
 

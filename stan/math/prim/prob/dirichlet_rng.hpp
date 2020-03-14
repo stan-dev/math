@@ -31,7 +31,7 @@ namespace math {
  * 26(3):363--372, 2000.
  * </blockquote>
  *
- * @tparam RNG Type of pseudo-random number generator.
+ * @tparam RNG type of pseudo-random number generator
  * @param alpha Prior count (plus 1) parameter for Dirichlet.
  * @param rng Pseudo-random number generator.
  */

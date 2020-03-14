@@ -37,9 +37,7 @@ neg_binomial_2_log_rng(const T_loc& eta, const T_inv& phi, RNG& rng) {
   using boost::gamma_distribution;
   using boost::random::poisson_distribution;
   using boost::variate_generator;
-
   static const char* function = "neg_binomial_2_log_rng";
-
   check_finite(function, "Log-location parameter", eta);
   check_positive_finite(function, "Inverse dispersion parameter", phi);
   check_consistent_sizes(function, "Log-location parameter", eta,

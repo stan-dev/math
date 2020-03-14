@@ -28,22 +28,21 @@ namespace math {
  *
  * Prior sample sizes, alpha and beta, must be greater than 0.
  *
+ * @tparam T_y type of scalar outcome
+ * @tparam T_scale_succ type of prior scale for successes
+ * @tparam T_scale_fail type of prior scale for failures
  * @param y (Sequence of) scalar(s).
  * @param alpha (Sequence of) prior sample stan::math::size(s).
  * @param beta (Sequence of) prior sample stan::math::size(s).
  * @return The log of the product of densities.
- * @tparam T_y Type of scalar outcome.
- * @tparam T_scale_succ Type of prior scale for successes.
- * @tparam T_scale_fail Type of prior scale for failures.
  */
 template <bool propto, typename T_y, typename T_scale_succ,
           typename T_scale_fail>
 return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
-  static const char* function = "beta_lpdf";
-
   using T_partials_return = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
   using std::log;
+  static const char* function = "beta_lpdf";
   check_positive_finite(function, "First shape parameter", alpha);
   check_positive_finite(function, "Second shape parameter", beta);
   check_not_nan(function, "Random variable", y);
@@ -61,6 +60,8 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
   }
 
   T_partials_return logp(0);
+  operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(y, alpha,
+                                                                      beta);
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_scale_succ> alpha_vec(alpha);
   scalar_seq_view<T_scale_fail> beta_vec(beta);
@@ -75,9 +76,6 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
       return LOG_ZERO;
     }
   }
-
-  operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(y, alpha,
-                                                                      beta);
 
   VectorBuilder<include_summand<propto, T_y, T_scale_succ>::value,
                 T_partials_return, T_y>

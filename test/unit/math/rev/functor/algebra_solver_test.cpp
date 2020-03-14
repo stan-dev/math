@@ -10,7 +10,7 @@
 #include <vector>
 #include <string>
 
-// Every test exists in four verions for the cases
+// Every test exists in four versions for the cases
 // where y (the auxiliary parameters) are passed as
 // data (double type) or parameters (var types),
 // and the cases where the solver is based on Powell's

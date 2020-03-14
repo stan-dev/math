@@ -39,7 +39,6 @@ inline typename VectorBuilder<true, double, T_loc, T_scale, T_inv_scale>::type
 exp_mod_normal_rng(const T_loc& mu, const T_scale& sigma,
                    const T_inv_scale& lambda, RNG& rng) {
   static const char* function = "exp_mod_normal_rng";
-
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", sigma);
   check_positive_finite(function, "Inv_scale parameter", lambda);

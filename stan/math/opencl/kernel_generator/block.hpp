@@ -209,19 +209,26 @@ class block_
             typename
             = require_all_valid_expressions_and_none_scalar_t<T_expression>>
   const block_<T>& operator=(T_expression&& rhs) const {
-    check_size_match("block.operator=", "Rows of ", "rhs", rhs.rows(),
-                     "rows of ", "*this", this->rows());
-    check_size_match("block.operator=", "Cols of ", "rhs", rhs.cols(),
-                     "cols of ", "*this", this->cols());
     auto expression = as_operation_cl(std::forward<T_expression>(rhs));
     if (rows_ * cols_ == 0) {
       return *this;
     }
     expression.evaluate_into(*this);
-
-    this->set_view(expression.bottom_diagonal(), expression.top_diagonal(),
-                   1 - expression.rows(), expression.cols() - 1);
     return *this;
+  }
+
+  /**
+   * Checks if desired dimensions match dimensions of the block.
+   * @param rows desired number of rows
+   * @param cols desired number of columns
+   * @throws std::invalid_argument desired dimensions do not match dimensions
+   * of the block.
+   */
+  inline void check_assign_dimensions(int rows, int cols) const {
+    check_size_match("block_.check_assign_dimensions", "Rows of ", "block",
+                     rows_, "rows of ", "expression", rows);
+    check_size_match("block_.check_assign_dimensions", "Columns of ", "block",
+                     cols_, "columns of ", "expression", cols);
   }
 };
 

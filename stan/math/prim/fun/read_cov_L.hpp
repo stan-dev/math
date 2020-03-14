@@ -14,17 +14,21 @@ namespace math {
  * This is the function that should be called prior to evaluating
  * the density of any elliptical distribution
  *
- * @tparam T type of elements in the arrays
+ * @tparam T_CPCs type of \c T_CPCs vector (must be derived from \c
+ * Eigen::ArrayBase and have one compile-time dimension equal to 1)
+ * @tparam T_sds type of \c sds vector (must be derived from \c Eigen::ArrayBase
+ * and have one compile-time dimension equal to 1)
  * @param CPCs on (-1, 1)
  * @param sds on (0, inf)
  * @param log_prob the log probability value to increment with the Jacobian
  * @return Cholesky factor of covariance matrix for specified
  * partial correlations.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_cov_L(
-    const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs,
-    const Eigen::Array<T, Eigen::Dynamic, 1>& sds, T& log_prob) {
+template <typename T_CPCs, typename T_sds,
+          require_all_eigen_vector_t<T_CPCs, T_sds>* = nullptr,
+          require_same_vt<T_CPCs, T_sds>* = nullptr>
+Eigen::Matrix<value_type<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic> read_cov_L(
+    const T_CPCs& CPCs, const T_sds& sds, value_type_t<T_CPCs>& log_prob) {
   size_t K = sds.rows();
   // adjust due to transformation from correlations to covariances
   log_prob += (sum(log(sds)) + LOG_TWO) * K;

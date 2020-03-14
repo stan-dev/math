@@ -21,18 +21,10 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_shape>
 return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
-  static const char* function = "skew_normal_lpdf";
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
-
   using std::exp;
   using std::log;
-
-  if (size_zero(y, mu, sigma, alpha)) {
-    return 0.0;
-  }
-
-  T_partials_return logp(0.0);
-
+  static const char* function = "skew_normal_lpdf";
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_finite(function, "Shape parameter", alpha);
@@ -40,13 +32,16 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma, "Shape paramter", alpha);
 
+  if (size_zero(y, mu, sigma, alpha)) {
+    return 0.0;
+  }
   if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
     return 0.0;
   }
 
+  T_partials_return logp(0.0);
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(y, mu, sigma,
                                                                    alpha);
-
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);
   scalar_seq_view<T_scale> sigma_vec(sigma);

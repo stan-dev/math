@@ -25,14 +25,9 @@ template <bool propto, typename T_n, typename T_log_location,
 return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
     const T_n& n, const T_log_location& eta, const T_precision& phi) {
   using T_partials_return = partials_return_t<T_n, T_log_location, T_precision>;
-
+  using std::exp;
+  using std::log;
   static const char* function = "neg_binomial_2_log_lpmf";
-
-  if (size_zero(n, eta, phi)) {
-    return 0.0;
-  }
-
-  T_partials_return logp(0.0);
   check_nonnegative(function, "Failures variable", n);
   check_finite(function, "Log location parameter", eta);
   check_positive_finite(function, "Precision parameter", phi);
@@ -40,12 +35,15 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
                          "Log location parameter", eta, "Precision parameter",
                          phi);
 
+  if (size_zero(n, eta, phi)) {
+    return 0.0;
+  }
   if (!include_summand<propto, T_log_location, T_precision>::value) {
     return 0.0;
   }
 
-  using std::exp;
-  using std::log;
+  T_partials_return logp(0.0);
+  operands_and_partials<T_log_location, T_precision> ops_partials(eta, phi);
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_log_location> eta_vec(eta);
@@ -55,8 +53,6 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
   size_t size_eta_phi = max_size(eta, phi);
   size_t size_n_phi = max_size(n, phi);
   size_t max_size_seq_view = max_size(n, eta, phi);
-
-  operands_and_partials<T_log_location, T_precision> ops_partials(eta, phi);
 
   VectorBuilder<true, T_partials_return, T_log_location> eta_val(size_eta);
   for (size_t i = 0; i < size_eta; ++i) {
@@ -96,7 +92,7 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
       // TODO(martinmodrak) This is wrong (doesn't pass propto information),
       // and inaccurate for n = 0, but shouldn't break most models.
       // Also the 1e5 cutoff is way too low.
-      // Will be adressed better once PR #1497 is merged
+      // Will be addressed better once PR #1497 is merged
       logp += poisson_log_lpmf(n_vec[i], eta_val[i]);
     } else {
       if (include_summand<propto>::value) {

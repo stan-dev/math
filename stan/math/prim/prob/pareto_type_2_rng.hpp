@@ -20,10 +20,11 @@ namespace math {
  * mu, lambda, and alpha can each be a scalar or a one-dimensional container.
  * Any non-scalar inputs must be the same size.
  *
- * @tparam T_loc Type of location parameter
- * @tparam T_scale Type of scale parameter
- * @tparam T_shape Type of shape parameter
+ * @tparam T_loc type of location parameter
+ * @tparam T_scale type of scale parameter
+ * @tparam T_shape type of shape parameter
  * @tparam RNG type of random number generator
+ *
  * @param mu (Sequence of) location parameter(s)
  * @param lambda (Sequence of) scale parameter(s)
  * @param alpha (Sequence of) shape parameter(s)
@@ -41,7 +42,6 @@ pareto_type_2_rng(const T_loc& mu, const T_scale& lambda, const T_shape& alpha,
   using boost::random::uniform_real_distribution;
   using boost::variate_generator;
   static const char* function = "pareto_type_2_rng";
-
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", lambda);
   check_positive_finite(function, "Shape parameter", alpha);
