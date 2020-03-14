@@ -60,10 +60,12 @@ namespace math {
  * msgs)</code>
  */
 
-template <bool Enable, typename T_initial, typename T_t0, typename T_ts, typename F, typename... Args>
+template <bool Enable, typename T_initial, typename T_t0, typename T_ts,
+          typename F, typename... Args>
 struct coupled_ode_system_impl;
-  
-template <typename T_initial, typename T_t0, typename T_ts, typename F, typename... Args>
+
+template <typename T_initial, typename T_t0, typename T_ts, typename F,
+          typename... Args>
 struct coupled_ode_system_impl<true, T_initial, T_t0, T_ts, F, Args...> {
   const F& f_;
   const std::vector<double>& y0_;
@@ -84,28 +86,25 @@ struct coupled_ode_system_impl<true, T_initial, T_t0, T_ts, F, Args...> {
    * @param[in, out] msgs stream for messages
    */
   coupled_ode_system_impl(const F& f, const std::vector<double>& y0,
-			  const Args&... args, std::ostream* msgs)
-      : f_(f),
-        y0_(y0),
-	args_tuple_(args...),
-        N_(y0.size()),
-        msgs_(msgs) {
-  }
+                          const Args&... args, std::ostream* msgs)
+      : f_(f), y0_(y0), args_tuple_(args...), N_(y0.size()), msgs_(msgs) {}
 
   void operator()(const std::vector<double>& y, std::vector<double>& dy_dt,
                   double t) const {
-    dy_dt = apply([&](const Args&... args) {
-	return f_.template operator()<double, double, Args...>(t, y, args..., msgs_);
-      }, args_tuple_);
+    dy_dt = apply(
+        [&](const Args&... args) {
+          return f_.template operator()<double, double, Args...>(t, y, args...,
+                                                                 msgs_);
+        },
+        args_tuple_);
 
     check_size_match("coupled_ode_system", "y", y.size(), "dy_dt",
                      dy_dt.size());
   }
 
   std::vector<double> build_output(const std::vector<double>& dy0_dt0,
-				   const std::vector<double>& coupled_state,
-				   const double& t0,
-				   const double& t) const {
+                                   const std::vector<double>& coupled_state,
+                                   const double& t0, const double& t) const {
     return std::vector<double>(coupled_state.data(), coupled_state.data() + N_);
   }
 
@@ -134,19 +133,22 @@ struct coupled_ode_system_impl<true, T_initial, T_t0, T_ts, F, Args...> {
    *   elements are all zero as these are the Jacobian wrt to the
    *   parameters at the initial time-point, which is zero.
    */
-  std::vector<double> initial_state() const {
-    return value_of(y0_);
-  }
+  std::vector<double> initial_state() const { return value_of(y0_); }
 };
 
-template <typename T_initial, typename T_t0, typename T_ts, typename F, typename... Args>
-struct coupled_ode_system :
-    public coupled_ode_system_impl<std::is_arithmetic<return_type_t<T_initial, T_t0, T_ts, Args...>>::value,
-				   T_initial, T_t0, T_ts, F, Args...> {
+template <typename T_initial, typename T_t0, typename T_ts, typename F,
+          typename... Args>
+struct coupled_ode_system
+    : public coupled_ode_system_impl<
+          std::is_arithmetic<
+              return_type_t<T_initial, T_t0, T_ts, Args...>>::value,
+          T_initial, T_t0, T_ts, F, Args...> {
   coupled_ode_system(const F& f, const std::vector<T_initial>& y0,
-		     const Args&... args, std::ostream* msgs)
-    : coupled_ode_system_impl<std::is_arithmetic<return_type_t<T_initial, T_t0, T_ts, Args...>>::value,
-			      T_initial, T_t0, T_ts, F, Args...>(f, y0, args..., msgs) {}
+                     const Args&... args, std::ostream* msgs)
+      : coupled_ode_system_impl<std::is_arithmetic<return_type_t<
+                                    T_initial, T_t0, T_ts, Args...>>::value,
+                                T_initial, T_t0, T_ts, F, Args...>(
+            f, y0, args..., msgs) {}
 };
 
 }  // namespace math

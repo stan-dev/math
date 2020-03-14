@@ -67,15 +67,14 @@ namespace math {
  * same size as the state variable, corresponding to a time in ts.
  */
 
-template <typename... Args, typename F, typename T1, typename T_t0, typename T_ts>
-std::vector<std::vector<return_type_t<T1, T_t0, T_ts, Args...>>> integrate_ode_rk45(
-    const F& f, const std::vector<T1>& y0, const T_t0& t0,
-    const std::vector<T_ts>& ts,
-    const Args&... args,
-    std::ostream* msgs = nullptr,
-    double relative_tolerance = 1e-6,
-    double absolute_tolerance = 1e-6,
-    int max_num_steps = 1e6) {
+template <typename... Args, typename F, typename T1, typename T_t0,
+          typename T_ts>
+std::vector<std::vector<return_type_t<T1, T_t0, T_ts, Args...>>>
+integrate_ode_rk45(const F& f, const std::vector<T1>& y0, const T_t0& t0,
+                   const std::vector<T_ts>& ts, const Args&... args,
+                   std::ostream* msgs = nullptr,
+                   double relative_tolerance = 1e-6,
+                   double absolute_tolerance = 1e-6, int max_num_steps = 1e6) {
   using boost::numeric::odeint::integrate_times;
   using boost::numeric::odeint::make_dense_output;
   using boost::numeric::odeint::max_step_checker;
@@ -114,7 +113,8 @@ std::vector<std::vector<return_type_t<T1, T_t0, T_ts, Args...>>> integrate_ode_r
 
   using return_t = return_type_t<T1, T_t0, T_ts, Args...>;
   // creates basic or coupled system by template specializations
-  coupled_ode_system<T1, T_t0, T_ts, F, Args...> coupled_system(f, y0, args..., msgs);
+  coupled_ode_system<T1, T_t0, T_ts, F, Args...> coupled_system(f, y0, args...,
+                                                                msgs);
 
   // first time in the vector must be time of initial state
   std::vector<double> ts_vec(ts.size() + 1);
@@ -124,7 +124,7 @@ std::vector<std::vector<return_type_t<T1, T_t0, T_ts, Args...>>> integrate_ode_r
   std::vector<std::vector<return_t>> y;
   bool observer_initial_recorded = false;
   size_t time_index = 0;
-  
+
   // avoid recording of the initial state which is included by the
   // conventions of odeint in the output
   auto filtered_observer

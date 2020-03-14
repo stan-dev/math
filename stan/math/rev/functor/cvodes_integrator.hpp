@@ -21,8 +21,8 @@ namespace math {
  *
  * @tparam Lmm ID of ODE solver (1: ADAMS, 2: BDF)
  */
-template <int Lmm, typename F, typename T_initial,
-	  typename T_t0, typename T_ts, typename... T_Args>
+template <int Lmm, typename F, typename T_initial, typename T_t0, typename T_ts,
+          typename... T_Args>
 class cvodes_integrator {
   using T_Return = return_type_t<T_initial, T_t0, T_ts, T_Args...>;
 
@@ -48,26 +48,26 @@ class cvodes_integrator {
   SUNMatrix A_;
   SUNLinearSolver LS_;
 
-public:
-  cvodes_integrator(const F& f, const std::vector<T_initial>& y0, const T_t0& t0,
-		    const std::vector<T_ts>& ts, const T_Args&... args,
-		    std::ostream* msgs, double relative_tolerance,
-		    double absolute_tolerance,
-		    long int max_num_steps)
-    : f_(f),
-      y0_(y0),
-      t0_(t0),
-      ts_(ts),
-      args_tuple_(args...),
-      N_(y0.size()),
-      msgs_(msgs),
-      relative_tolerance_(relative_tolerance),
-      absolute_tolerance_(absolute_tolerance),
-      max_num_steps_(max_num_steps),
-      y0_vars_(internal::count_vars(y0_)),
-      args_vars_(internal::count_vars(args...)),
-      coupled_ode_(f, y0, args..., msgs),
-      coupled_state_(coupled_ode_.initial_state()) {
+ public:
+  cvodes_integrator(const F& f, const std::vector<T_initial>& y0,
+                    const T_t0& t0, const std::vector<T_ts>& ts,
+                    const T_Args&... args, std::ostream* msgs,
+                    double relative_tolerance, double absolute_tolerance,
+                    long int max_num_steps)
+      : f_(f),
+        y0_(y0),
+        t0_(t0),
+        ts_(ts),
+        args_tuple_(args...),
+        N_(y0.size()),
+        msgs_(msgs),
+        relative_tolerance_(relative_tolerance),
+        absolute_tolerance_(absolute_tolerance),
+        max_num_steps_(max_num_steps),
+        y0_vars_(internal::count_vars(y0_)),
+        args_vars_(internal::count_vars(args...)),
+        coupled_ode_(f, y0, args..., msgs),
+        coupled_state_(coupled_ode_.initial_state()) {
     using initial_var = stan::is_var<T_initial>;
 
     const char* fun = "cvodes_integrator::integrate";
@@ -76,10 +76,14 @@ public:
     check_finite(fun, "initial time", t0_);
     check_finite(fun, "times", ts_);
 
-    // Code from: https://stackoverflow.com/a/17340003 . Should probably do something better
-    apply([&](auto&&... args) {
-	std::vector<int> unused_temp{ 0, (check_finite(fun, "ode parameters and data", args), 0)... };
-      }, args_tuple_);
+    // Code from: https://stackoverflow.com/a/17340003 . Should probably do
+    // something better
+    apply(
+        [&](auto&&... args) {
+          std::vector<int> unused_temp{
+              0, (check_finite(fun, "ode parameters and data", args), 0)...};
+        },
+        args_tuple_);
 
     check_nonzero_size(fun, "times", ts_);
     check_nonzero_size(fun, "initial state", y0_);
@@ -95,7 +99,8 @@ public:
     LS_ = SUNDenseLinearSolver(nv_state_, A_);
 
     if (y0_vars_ + args_vars_ > 0) {
-      nv_state_sens_ = N_VCloneVectorArrayEmpty_Serial(y0_vars_ + args_vars_, nv_state_);
+      nv_state_sens_
+          = N_VCloneVectorArrayEmpty_Serial(y0_vars_ + args_vars_, nv_state_);
       for (std::size_t i = 0; i < y0_vars_ + args_vars_; i++) {
         NV_DATA_S(nv_state_sens_[i]) = &coupled_state_[N_] + i * N_;
       }
@@ -116,7 +121,8 @@ public:
    * ODE RHS passed to CVODES.
    */
   static int cv_rhs(realtype t, N_Vector y, N_Vector ydot, void* user_data) {
-    const cvodes_integrator* integrator = static_cast<const cvodes_integrator*>(user_data);
+    const cvodes_integrator* integrator
+        = static_cast<const cvodes_integrator*>(user_data);
     integrator->rhs(t, NV_DATA_S(y), NV_DATA_S(ydot));
     return 0;
   }
@@ -128,7 +134,8 @@ public:
   static int cv_rhs_sens(int Ns, realtype t, N_Vector y, N_Vector ydot,
                          N_Vector* yS, N_Vector* ySdot, void* user_data,
                          N_Vector tmp1, N_Vector tmp2) {
-    const cvodes_integrator* integrator = static_cast<const cvodes_integrator*>(user_data);
+    const cvodes_integrator* integrator
+        = static_cast<const cvodes_integrator*>(user_data);
     integrator->rhs_sens(t, NV_DATA_S(y), yS, ySdot);
     return 0;
   }
@@ -142,7 +149,8 @@ public:
   static int cv_jacobian_states(realtype t, N_Vector y, N_Vector fy,
                                 SUNMatrix J, void* user_data, N_Vector tmp1,
                                 N_Vector tmp2, N_Vector tmp3) {
-    const cvodes_integrator* integrator = static_cast<const cvodes_integrator*>(user_data);
+    const cvodes_integrator* integrator
+        = static_cast<const cvodes_integrator*>(user_data);
     integrator->jacobian_states(t, NV_DATA_S(y), J);
     return 0;
   }
@@ -152,9 +160,13 @@ public:
    */
   inline void rhs(double t, const double y[], double dy_dt[]) const {
     const std::vector<double> y_vec(y, y + N_);
-    std::vector<double> dy_dt_vec = apply([&](auto&&... args) {
-	return f_.template operator()<double, double, decltype(value_of(args))...>(t, y_vec, value_of(args)..., msgs_);
-      }, args_tuple_);
+    std::vector<double> dy_dt_vec = apply(
+        [&](auto&&... args) {
+          return f_
+              .template operator()<double, double, decltype(value_of(args))...>(
+                  t, y_vec, value_of(args)..., msgs_);
+        },
+        args_tuple_);
     check_size_match("cvodes_ode_data", "dz_dt", dy_dt_vec.size(), "states",
                      N_);
     std::move(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
@@ -171,12 +183,15 @@ public:
     start_nested();
     const std::vector<var> y_vec_var(y, y + N_);
     // TODO: This should only be done once on construction
-    auto double_args_tuple = apply([&](auto&&... args) {
-	return std::make_tuple(value_of(args)...);
-      }, args_tuple_);
-    auto ode_jacobian = apply([&](auto&&... args) {
-	return coupled_ode_system<var, double, double, F, decltype(args)...>(f_, y_vec_var, args..., msgs_);
-      }, double_args_tuple);
+    auto double_args_tuple = apply(
+        [&](auto&&... args) { return std::make_tuple(value_of(args)...); },
+        args_tuple_);
+    auto ode_jacobian = apply(
+        [&](auto&&... args) {
+          return coupled_ode_system<var, double, double, F, decltype(args)...>(
+              f_, y_vec_var, args..., msgs_);
+        },
+        double_args_tuple);
     std::vector<double>&& jacobian_y = std::vector<double>(ode_jacobian.size());
     ode_jacobian(ode_jacobian.initial_state(), jacobian_y, t);
     std::move(jacobian_y.begin() + N_, jacobian_y.end(), SM_DATA_D(J));
@@ -254,10 +269,15 @@ public:
     std::vector<double> dy0_dt0;
     if (is_var<T_t0>::value) {
       std::vector<double> y0_dbl = value_of(y0_);
-      dy0_dt0 = apply([&](auto&&... args) {
-	  return f_.template operator()<double, double, decltype(value_of(args))...>(value_of(t0_), y0_dbl, value_of(args)..., msgs_);
-	}, args_tuple_);
-      check_size_match("coupled_ode_observer", "dy_dt", dy0_dt0.size(), "states", N_);
+      dy0_dt0 = apply(
+          [&](auto&&... args) {
+            return f_.template
+            operator()<double, double, decltype(value_of(args))...>(
+                value_of(t0_), y0_dbl, value_of(args)..., msgs_);
+          },
+          args_tuple_);
+      check_size_match("coupled_ode_observer", "dy_dt", dy0_dt0.size(),
+                       "states", N_);
     }
 
     void* cvodes_mem = CVodeCreate(Lmm);
@@ -266,13 +286,14 @@ public:
     }
 
     try {
-      check_flag_sundials(CVodeInit(cvodes_mem, &cvodes_integrator::cv_rhs, t0_dbl,
-                                    nv_state_),
-                          "CVodeInit");
+      check_flag_sundials(
+          CVodeInit(cvodes_mem, &cvodes_integrator::cv_rhs, t0_dbl, nv_state_),
+          "CVodeInit");
 
       // Assign pointer to this as user data
-      check_flag_sundials(CVodeSetUserData(cvodes_mem, reinterpret_cast<void*>(this)),
-			  "CVodeSetUserData");
+      check_flag_sundials(
+          CVodeSetUserData(cvodes_mem, reinterpret_cast<void*>(this)),
+          "CVodeSetUserData");
 
       cvodes_set_options(cvodes_mem, relative_tolerance_, absolute_tolerance_,
                          max_num_steps_);
@@ -282,15 +303,18 @@ public:
       // create matrix object and linear solver object; resource
       // (de-)allocation is handled in the cvodes_ode_data
       check_flag_sundials(CVodeSetLinearSolver(cvodes_mem, LS_, A_),
-			  "CVodeSetLinearSolver");
-      check_flag_sundials(CVodeSetJacFn(cvodes_mem, &cvodes_integrator::cv_jacobian_states),
-			  "CVodeSetJacFn");
+                          "CVodeSetLinearSolver");
+      check_flag_sundials(
+          CVodeSetJacFn(cvodes_mem, &cvodes_integrator::cv_jacobian_states),
+          "CVodeSetJacFn");
 
       // initialize forward sensitivity system of CVODES as needed
       if (y0_vars_ + args_vars_ > 0) {
-        check_flag_sundials(CVodeSensInit(cvodes_mem, static_cast<int>(y0_vars_ + args_vars_), CV_STAGGERED,
-					  &cvodes_integrator::cv_rhs_sens, nv_state_sens_),
-			    "CVodeSensInit");
+        check_flag_sundials(
+            CVodeSensInit(cvodes_mem, static_cast<int>(y0_vars_ + args_vars_),
+                          CV_STAGGERED, &cvodes_integrator::cv_rhs_sens,
+                          nv_state_sens_),
+            "CVodeSensInit");
 
         check_flag_sundials(CVodeSensEEtolerances(cvodes_mem),
                             "CVodeSensEEtolerances");
@@ -299,29 +323,29 @@ public:
       double t_init = t0_dbl;
       for (size_t n = 0; n < ts_.size(); ++n) {
         double t_final = ts_dbl[n];
-	
+
         if (t_final != t_init) {
-          check_flag_sundials(CVode(cvodes_mem, t_final, nv_state_,
-                                    &t_init, CV_NORMAL),
-                              "CVode");
-        }
-	
-        if (y0_vars_ + args_vars_ > 0) {
           check_flag_sundials(
-              CVodeGetSens(cvodes_mem, &t_init, nv_state_sens_),
-              "CVodeGetSens");
+              CVode(cvodes_mem, t_final, nv_state_, &t_init, CV_NORMAL),
+              "CVode");
         }
 
-        //observer(cvodes_data.coupled_state_, t_final);
-	y.emplace_back(coupled_ode_.build_output(dy0_dt0, coupled_state_, t0_, ts_[n]));
+        if (y0_vars_ + args_vars_ > 0) {
+          check_flag_sundials(CVodeGetSens(cvodes_mem, &t_init, nv_state_sens_),
+                              "CVodeGetSens");
+        }
 
-	t_init = t_final;
+        // observer(cvodes_data.coupled_state_, t_final);
+        y.emplace_back(
+            coupled_ode_.build_output(dy0_dt0, coupled_state_, t0_, ts_[n]));
+
+        t_init = t_final;
       }
     } catch (const std::exception& e) {
       CVodeFree(&cvodes_mem);
       throw;
     }
-      
+
     CVodeFree(&cvodes_mem);
 
     return y;
