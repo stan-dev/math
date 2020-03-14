@@ -92,7 +92,7 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
       // TODO(martinmodrak) This is wrong (doesn't pass propto information),
       // and inaccurate for n = 0, but shouldn't break most models.
       // Also the 1e5 cutoff is way too low.
-      // Will be adressed better once PR #1497 is merged
+      // Will be addressed better once PR #1497 is merged
       logp += poisson_log_lpmf(n_vec[i], eta_val[i]);
     } else {
       if (include_summand<propto>::value) {

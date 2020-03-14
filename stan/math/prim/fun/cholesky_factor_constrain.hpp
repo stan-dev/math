@@ -18,8 +18,10 @@ namespace math {
  * elements are required to read an M by N Cholesky factor.
  *
  * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile-time dimmension equal to 1)
+ * have one compile-time dimension equal to 1)
  * @param x Vector of unconstrained values
+ * @param M number of rows
+ * @param N number of columns
  * @return Cholesky factor
  */
 template <typename T, require_eigen_vector_t<T>* = nullptr>
@@ -60,8 +62,10 @@ cholesky_factor_constrain(const T& x, int M, int N) {
  * an M by N Cholesky factor.
  *
  * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile-time dimmension equal to 1)
+ * have one compile-time dimension equal to 1)
  * @param x Vector of unconstrained values
+ * @param M number of rows
+ * @param N number of columns
  * @param lp Log probability that is incremented with the log Jacobian
  * @return Cholesky factor
  */

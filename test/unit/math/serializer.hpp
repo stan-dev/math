@@ -66,7 +66,7 @@ struct deserializer {
   }
 
   /**
-   * Read a complex number comforming to the shape of the specified
+   * Read a complex number conforming to the shape of the specified
    * argument. The specified argument is only used for its
    * shape---there is no relationship between the value type of the
    * argument and the type of the result.
