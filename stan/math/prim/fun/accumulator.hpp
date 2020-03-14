@@ -14,7 +14,7 @@ namespace math {
  * Class to accumulate values and eventually return their sum.  If
  * no values are ever added, the return value is 0.
  *
- * This class is useful for speeding up auto-diff of long sums
+ * This class is useful for speeding up autodiff of long sums
  * because it uses the <code>sum()</code> operation (either from
  * <code>stan::math</code> or one defined by argument-dependent lookup.
  *
@@ -73,22 +73,21 @@ class accumulator {
    * Add each entry in the specified matrix, vector, or row vector
    * of values to the buffer.
    *
-   * @tparam S type of values in matrix
-   * @tparam R number of rows, can be Eigen::Dynamic
-   * @tparam C number of columns, can be Eigen::Dynamic
+   * @tparam S type of the matrix
    * @param m Matrix of values to add
    */
-  template <typename S, int R, int C>
-  void add(const Eigen::Matrix<S, R, C>& m) {
+  template <typename S, require_eigen_t<S>* = nullptr>
+  void add(const S& m) {
+    const auto& m_eval = m.eval();
     for (int i = 0; i < m.size(); ++i) {
-      this->add(m(i));
+      this->add(m_eval.coeff(i));
     }
   }
 
   /**
    * Recursively add each entry in the specified standard vector
    * to the buffer.  This will allow vectors of primitives,
-   * auto-diff variables to be added; if the vector entries
+   * autodiff variables to be added; if the vector entries
    * are collections, their elements are recursively added.
    *
    * @tparam S Type of value to recursively add.

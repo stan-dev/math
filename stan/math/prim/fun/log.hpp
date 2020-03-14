@@ -3,8 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -53,14 +51,15 @@ inline auto log(const T& x) {
 
 /**
  * Version of log() that accepts Eigen Matrix or matrix expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
- * @return Arc cosine of each variable in the container, in radians.
+ * @return Elementwise application of natural log to the argument.
  */
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto log(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().log().matrix();
+  return x.derived().array().log().matrix().eval();
 }
 
 }  // namespace math

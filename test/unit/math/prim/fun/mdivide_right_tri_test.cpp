@@ -1,4 +1,5 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
 #include <gtest/gtest.h>
 
 #ifdef STAN_OPENCL
@@ -10,26 +11,39 @@
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-TEST(MathMatrixPrimMat, mdivide_right_tri_val) {
+TEST(MathMatrixPrim, mdivide_right_tri_val) {
   using stan::math::mdivide_right_tri;
+  stan::math::matrix_d I = Eigen::MatrixXd::Identity(2, 2);
+
   stan::math::matrix_d Ad(2, 2);
-  stan::math::matrix_d I;
-
   Ad << 2.0, 0.0, 5.0, 7.0;
-
-  I = mdivide_right_tri<Eigen::Lower>(Ad, Ad);
-  EXPECT_NEAR(1.0, I(0, 0), 1.0E-12);
-  EXPECT_NEAR(0.0, I(0, 1), 1.0E-12);
-  EXPECT_NEAR(0.0, I(1, 0), 1.0E-12);
-  EXPECT_NEAR(1.0, I(1, 1), 1.0e-12);
+  expect_matrix_eq(I, mdivide_right_tri<Eigen::Lower>(Ad, Ad));
 
   Ad << 2.0, 3.0, 0.0, 7.0;
+  expect_matrix_eq(I, mdivide_right_tri<Eigen::Upper>(Ad, Ad));
+}
+
+TEST(MathMatrixPrim, mdivide_right_tri_size_zero) {
+  using stan::math::mdivide_right_tri;
+  stan::math::matrix_d Ad(0, 0);
+  stan::math::matrix_d b0(2, 0);
+  stan::math::matrix_d I;
+
+  I = mdivide_right_tri<Eigen::Lower>(Ad, Ad);
+  EXPECT_EQ(0, I.rows());
+  EXPECT_EQ(0, I.cols());
 
   I = mdivide_right_tri<Eigen::Upper>(Ad, Ad);
-  EXPECT_NEAR(1.0, I(0, 0), 1.0E-12);
-  EXPECT_NEAR(0.0, I(0, 1), 1.0E-12);
-  EXPECT_NEAR(0.0, I(1, 0), 1.0E-12);
-  EXPECT_NEAR(1.0, I(1, 1), 1.0e-12);
+  EXPECT_EQ(0, I.rows());
+  EXPECT_EQ(0, I.cols());
+
+  I = mdivide_right_tri<Eigen::Lower>(b0, Ad);
+  EXPECT_EQ(b0.rows(), I.rows());
+  EXPECT_EQ(0, I.cols());
+
+  I = mdivide_right_tri<Eigen::Upper>(b0, Ad);
+  EXPECT_EQ(b0.rows(), I.rows());
+  EXPECT_EQ(0, I.cols());
 }
 
 #ifdef STAN_OPENCL

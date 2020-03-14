@@ -6,7 +6,7 @@ namespace stan {
 namespace math {
 
 /**
- * The tolerance for checking arithmetic bounds In rank and in
+ * The tolerance for checking arithmetic bounds in rank and in
  * simplexes.  The default value is <code>1E-8</code>.
  */
 const double CONSTRAINT_TOLERANCE = 1E-8;

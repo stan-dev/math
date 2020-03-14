@@ -45,6 +45,12 @@ class load_
   explicit load_(T&& a) : a_(std::forward<T>(a)) {}
 
   /**
+   * Creates a deep copy of this expression.
+   * @return copy of \c *this
+   */
+  inline load_<T&> deep_copy() { return load_<T&>(a_); }
+
+  /**
    * generates kernel code for this expression.
    * @param i row index variable name
    * @param j column index variable name
@@ -67,7 +73,7 @@ class load_
 
   /**
    * generates kernel code for this expression if it appears on the left hand
-   * side of an assigment.
+   * side of an assignment.
    * @param i row index variable name
    * @param j column index variable name
    * @return part of kernel with code for this expressions
@@ -184,6 +190,17 @@ class load_
    * @return Result of the expression.
    */
   const T& eval() const { return a_; }
+
+  /**
+   * If needed resizes underlying matrix to desired number of rows and cols.
+   * @param rows desired number of rows
+   * @param cols desired number of columns
+   */
+  inline void check_assign_dimensions(int rows, int cols) const {
+    if (a_.rows() != rows || a_.cols() != cols) {
+      a_ = matrix_cl<Scalar>(rows, cols);
+    }
+  }
 };
 
 }  // namespace math

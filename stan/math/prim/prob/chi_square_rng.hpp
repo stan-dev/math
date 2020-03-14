@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <boost/random/chi_squared_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -15,7 +16,7 @@ namespace math {
  *
  * nu can be a scalar or a one-dimensional container.
  *
- * @tparam T_deg Type of degrees of freedom parameter
+ * @tparam T_deg type of degrees of freedom parameter
  * @tparam RNG class of random number generator
  * @param nu (Sequence of) positive degrees of freedom parameter(s)
  * @param rng random number generator
@@ -27,13 +28,11 @@ inline typename VectorBuilder<true, double, T_deg>::type chi_square_rng(
     const T_deg& nu, RNG& rng) {
   using boost::random::chi_squared_distribution;
   using boost::variate_generator;
-
   static const char* function = "chi_square_rng";
-
   check_positive_finite(function, "Degrees of freedom parameter", nu);
 
   scalar_seq_view<T_deg> nu_vec(nu);
-  size_t N = size(nu);
+  size_t N = stan::math::size(nu);
   VectorBuilder<true, double, T_deg> output(N);
 
   for (size_t n = 0; n < N; ++n) {

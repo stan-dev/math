@@ -7,7 +7,7 @@
 
 template <typename T>
 void test_sort_asc() {
-  using stan::math::index_type;
+  using stan::math::index_type_t;
   using stan::math::sort_asc;
 
   T c(1);
@@ -36,7 +36,7 @@ void test_sort_asc() {
 
   T z;
   EXPECT_NO_THROW(sort_asc(z));
-  EXPECT_EQ(typename index_type<T>::type(0), z.size());
+  EXPECT_EQ(index_type_t<T>(0), z.size());
 }
 
 TEST(MathMatrixPrimMat, sortAscStdVecNan) {
@@ -73,7 +73,7 @@ TEST(MathMatrixPrimMat, sort_asc) {
 
 template <typename T>
 void test_sort_desc() {
-  using stan::math::index_type;
+  using stan::math::index_type_t;
   using stan::math::sort_desc;
 
   T c(1);
@@ -102,7 +102,7 @@ void test_sort_desc() {
 
   T z;
   EXPECT_NO_THROW(sort_desc(z));
-  EXPECT_EQ(typename index_type<T>::type(0), z.size());
+  EXPECT_EQ(index_type_t<T>(0), z.size());
 }
 
 TEST(MathMatrixPrimMat, sort_desc) {

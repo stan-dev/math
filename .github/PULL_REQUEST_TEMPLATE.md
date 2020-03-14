@@ -34,6 +34,7 @@ Are there any side effects that we should be aware of?
 
     - unit tests pass (to run, use: `./runTests.py test/unit`)
     - header checks pass, (`make test-headers`)
+    - dependencies checks pass, (`make test-math-dependencies`)
     - docs build, (`make doxygen`)
     - code passes the built in [C++ standards](https://github.com/stan-dev/stan/wiki/Code-Quality) checks (`make cpplint`)
 

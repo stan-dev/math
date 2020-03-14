@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/max_size.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
@@ -17,8 +18,8 @@ namespace math {
  * mu and beta can each be a scalar or a vector. Any non-scalar inputs
  * must be the same length.
  *
- * @tparam T_loc Type of location parameter
- * @tparam T_scale Type of scale parameter
+ * @tparam T_loc type of location parameter
+ * @tparam T_scale type of scale parameter
  * @tparam RNG type of random number generator
  * @param mu (Sequence of) location parameter(s)
  * @param beta (Sequence of) scale parameter(s)
@@ -34,7 +35,6 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type gumbel_rng(
   using boost::uniform_01;
   using boost::variate_generator;
   static const char* function = "gumbel_rng";
-
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", beta);
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",

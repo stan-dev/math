@@ -8,10 +8,12 @@ def runTests(String testPath) {
     finally { junit 'test/**/*.xml' }
 }
 
-def runTestsWin(String testPath) {
+def runTestsWin(String testPath, boolean buildLibs = true) {
     withEnv(['PATH+TBB=./lib/tbb']) {
        bat "echo $PATH"
-       bat "mingw32-make.exe -f make/standalone math-libs"
+       if (buildLibs){
+           bat "mingw32-make.exe -f make/standalone math-libs"
+       }
        bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
        try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
        finally { junit 'test/**/*.xml' }
@@ -22,6 +24,21 @@ def deleteDirWin() {
     bat "attrib -r -s /s /d"
     deleteDir()
 }
+
+def sourceCodePaths(){
+    // These paths will be passed to git diff
+    // If there are changes to them, CI/CD will continue else skip
+    def paths = ['stan', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format']
+    def bashArray = ""
+
+    for(path in paths){
+        bashArray += path + (path != paths[paths.size() - 1] ? " " : "")
+    }
+
+    return bashArray
+}
+
+def skipRemainingStages = true
 
 def utils = new org.stan.Utils()
 
@@ -55,6 +72,7 @@ pipeline {
     }
     environment {
         STAN_NUM_THREADS = '4'
+        scPaths = sourceCodePaths()
     }
     stages {
         stage('Kill previous builds') {
@@ -143,7 +161,65 @@ pipeline {
                 }
             }
         }
+        stage('Verify changes') {
+            agent { label 'linux' }
+            steps {
+                script {
+
+                    retry(3) { checkout scm }
+                    sh 'git clean -xffd'
+
+                    def commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
+                    def changeTarget = ""
+
+                    if (env.CHANGE_TARGET) {
+                        println "This build is a PR, checking out target branch to compare changes."
+                        changeTarget = env.CHANGE_TARGET
+                        sh(script: "git pull && git checkout ${changeTarget}", returnStdout: false)
+                    }
+                    else{
+                        println "This build is not PR, checking out current branch and extract HEAD^1 commit to compare changes or develop when downstream_tests."
+                        if (env.BRANCH_NAME == "downstream_tests"){
+                            sh(script: "git checkout develop && git pull", returnStdout: false)
+                            changeTarget = sh(script: "git rev-parse HEAD^1 | tr '\\n' ' '", returnStdout: true)
+                            sh(script: "git checkout ${commitHash}", returnStdout: false)
+                        }
+                        else{
+                            sh(script: "git pull && git checkout ${env.BRANCH_NAME}", returnStdout: false)
+                            changeTarget = sh(script: "git rev-parse HEAD^1 | tr '\\n' ' '", returnStdout: true)
+                        }
+                    }
+
+                    println "Comparing differences between current ${commitHash} and target ${changeTarget}"
+
+                    def bashScript = """
+                        for i in ${env.scPaths};
+                        do
+                            git diff ${commitHash} ${changeTarget} -- \$i
+                        done
+                    """
+
+                    def differences = sh(script: bashScript, returnStdout: true)
+
+                    println differences
+
+                    if (differences?.trim()) {
+                        println "There are differences in the source code, CI/CD will run."
+                        skipRemainingStages = false
+                    }
+                    else{
+                        println "There aren't any differences in the source code, CI/CD will not run."
+                        skipRemainingStages = true
+                    }
+                }
+            }
+        }
         stage('Headers checks') {
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
             parallel {
               stage('Headers check') {
                 agent any
@@ -171,6 +247,11 @@ pipeline {
            }
         }
         stage('Always-run tests part 1') {
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
             parallel {
                 stage('Linux Unit with MPI') {
                     agent { label 'linux && mpi' }
@@ -178,7 +259,7 @@ pipeline {
                         deleteDir()
                         unstash 'MathSetup'
                         sh "echo CXX=${MPICXX} >> make/local"
-                        sh "echo CXX_TYPE=gcc >> make/local"                        
+                        sh "echo CXX_TYPE=gcc >> make/local"
                         sh "echo STAN_MPI=true >> make/local"
                         runTests("test/unit")
                     }
@@ -200,6 +281,11 @@ pipeline {
             }
         }
         stage('Always-run tests part 2') {
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
             parallel {
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
@@ -233,6 +319,7 @@ pipeline {
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
+                        sh "export STAN_NUM_THREADS=2"
                         sh "echo CXX=${env.CXX} -Werror > make/local"
                         sh "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
                         runTests("test/unit -f thread")
@@ -246,8 +333,9 @@ pipeline {
                     steps {
                         deleteDirWin()
                         unstash 'MathSetup'
+                        bat "mingw32-make.exe -f make/standalone math-libs"
                         bat "mingw32-make -j${env.PARALLEL} test-headers"
-                        runTestsWin("test/unit")
+                        runTestsWin("test/unit", false)
                     }
                 }
                 stage('Windows Threading') {
@@ -255,6 +343,7 @@ pipeline {
                     steps {
                         deleteDirWin()
                         unstash 'MathSetup'
+                        bat "setx STAN_NUM_THREADS 2"
                         bat "echo CXX=${env.CXX} -Werror > make/local"
                         bat "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
                         runTestsWin("test/unit -f thread")
@@ -264,7 +353,17 @@ pipeline {
             }
         }
         stage('Additional merge tests') {
-            when { anyOf { branch 'develop'; branch 'master' } }
+            when {
+                allOf {
+                    anyOf {
+                        branch 'develop'
+                        branch 'master'
+                    }
+                    expression {
+                        !skipRemainingStages
+                    }
+                }
+            }
             parallel {
                 stage('Linux Unit with Threading') {
                     agent { label 'linux' }
@@ -291,7 +390,16 @@ pipeline {
             }
         }
         stage('Upstream tests') {
-            when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
+            when {
+                allOf {
+                    expression {
+                        env.BRANCH_NAME ==~ /PR-\d+/
+                    }
+                    expression {
+                        !skipRemainingStages
+                    }
+                }
+            }
             steps {
                 build(job: "Stan/${stan_pr()}",
                         parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),

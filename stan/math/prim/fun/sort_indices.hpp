@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-/*
+/**
  * A comparator that works for any container type that has the
  * brackets operator.
  *
@@ -52,7 +52,7 @@ class index_comparator {
 /**
  * Return an integer array of indices of the specified container
  * sorting the values in ascending or descending order based on
- * the value of the first template prameter.
+ * the value of the first template parameter.
  *
  * @tparam ascending true if sort is in ascending order
  * @tparam C type of container
@@ -61,7 +61,7 @@ class index_comparator {
  */
 template <bool ascending, typename C>
 std::vector<int> sort_indices(const C& xs) {
-  using idx_t = typename index_type<C>::type;
+  using idx_t = index_type_t<C>;
   idx_t xs_size = xs.size();
   std::vector<int> idxs;
   idxs.resize(xs_size);

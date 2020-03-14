@@ -221,7 +221,7 @@ public:
    *
    * The solver used is based on the backward differentiation
    * formula which is an implicit numerical integration scheme
-   * appropiate for stiff ODE systems.
+   * appropriate for stiff ODE systems.
    *
    * @tparam F type of ODE system function.
    * @tparam T_initial type of scalars for initial values.
@@ -250,6 +250,15 @@ public:
 
     const double t0_dbl = value_of(t0_);
     const std::vector<double> ts_dbl = value_of(ts_);
+
+    std::vector<double> dy0_dt0;
+    if (is_var<T_t0>::value) {
+      std::vector<double> y0_dbl = value_of(y0_);
+      dy0_dt0 = apply([&](auto&&... args) {
+	  return f_.template operator()<double, double, decltype(value_of(args))...>(value_of(t0_), y0_dbl, value_of(args)..., msgs_);
+	}, args_tuple_);
+      check_size_match("coupled_ode_observer", "dy_dt", dy0_dt0.size(), "states", N_);
+    }
 
     void* cvodes_mem = CVodeCreate(Lmm);
     if (cvodes_mem == nullptr) {
@@ -304,7 +313,7 @@ public:
         }
 
         //observer(cvodes_data.coupled_state_, t_final);
-	y.emplace_back(coupled_ode_.build_output(coupled_state_, ts_[n]));
+	y.emplace_back(coupled_ode_.build_output(dy0_dt0, coupled_state_, t0_, ts_[n]));
 
 	t_init = t_final;
       }

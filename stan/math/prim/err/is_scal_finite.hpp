@@ -2,6 +2,8 @@
 #define STAN_MATH_PRIM_ERR_IS_SCAL_FINITE_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/get.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <cmath>
 
@@ -18,7 +20,7 @@ namespace math {
  */
 template <typename T_y>
 inline bool is_scal_finite(const T_y& y) {
-  for (size_t n = 0; n < size(y); ++n) {
+  for (size_t n = 0; n < stan::math::size(y); ++n) {
     if (!std::isfinite(value_of_rec(stan::get(y, n)))) {
       return false;
     }

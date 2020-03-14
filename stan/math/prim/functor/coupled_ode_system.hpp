@@ -4,7 +4,7 @@
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stdexcept>
+#include <stan/math/prim/fun/size.hpp>
 #include <ostream>
 #include <vector>
 
@@ -95,14 +95,17 @@ struct coupled_ode_system_impl<true, T_initial, T_t0, T_ts, F, Args...> {
   void operator()(const std::vector<double>& y, std::vector<double>& dy_dt,
                   double t) const {
     dy_dt = apply([&](const Args&... args) {
-	return f_(t, y, args..., msgs_);
+	return f_.template operator()<double, double, Args...>(t, y, args..., msgs_);
       }, args_tuple_);
 
     check_size_match("coupled_ode_system", "y", y.size(), "dy_dt",
                      dy_dt.size());
   }
 
-  std::vector<double> build_output(const std::vector<double>& coupled_state, const double& t) const {
+  std::vector<double> build_output(const std::vector<double>& dy0_dt0,
+				   const std::vector<double>& coupled_state,
+				   const double& t0,
+				   const double& t) const {
     return std::vector<double>(coupled_state.data(), coupled_state.data() + N_);
   }
 

@@ -3,7 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/inv.hpp>
 #include <cmath>
 
 namespace stan {
@@ -20,7 +21,6 @@ namespace math {
  * for logistic regression.
  *
  * The inverse to this function is <code>logit</code>.
- *
  *
  \f[
  \mbox{inv\_logit}(y) =

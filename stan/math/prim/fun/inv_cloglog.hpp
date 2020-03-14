@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -80,6 +79,7 @@ inline auto inv_cloglog(const T& x) {
 
 /**
  * Version of inv_cloglog() that accepts Eigen Matrix or matrix expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return 1 - exp(-exp()) applied to each value in x.
@@ -87,11 +87,12 @@ inline auto inv_cloglog(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto inv_cloglog(const Eigen::MatrixBase<Derived>& x) {
-  return (1 - exp(-exp(x.derived().array()))).matrix();
+  return (1 - exp(-exp(x.derived().array()))).matrix().eval();
 }
 
 /**
  * Version of inv_cloglog() that accepts Eigen Array or array expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return 1 - exp(-exp()) applied to each value in x.
@@ -99,7 +100,7 @@ inline auto inv_cloglog(const Eigen::MatrixBase<Derived>& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto inv_cloglog(const Eigen::ArrayBase<Derived>& x) {
-  return 1 - exp(-exp(x.derived()));
+  return (1 - exp(-exp(x.derived()))).eval();
 }
 
 }  // namespace math

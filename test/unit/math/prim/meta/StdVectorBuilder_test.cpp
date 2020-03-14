@@ -1,4 +1,5 @@
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 

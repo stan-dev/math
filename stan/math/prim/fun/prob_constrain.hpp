@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 #include <cmath>
 
@@ -55,7 +56,6 @@ inline T prob_constrain(const T& x, T& lp) {
 }
 
 }  // namespace math
-
 }  // namespace stan
 
 #endif

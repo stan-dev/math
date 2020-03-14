@@ -114,67 +114,61 @@ struct coupled_ode_system_impl<false, T_initial, T_t0, T_ts, F, Args...> {
                   double t) const {
     using std::vector;
 
-    try {
-      start_nested();
+    // Run nested autodiff in this scope
+    nested_rev_autodiff nested;
 
-      const vector<var> y_vars(z.begin(), z.begin() + N_);
-      auto local_args_tuple = apply(
-          [&](auto&&... args) {
-            return std::tuple<decltype(internal::deep_copy(args))...>(
-                internal::deep_copy(args)...);
-          },
-          args_tuple_);
+    const vector<var> y_vars(z.begin(), z.begin() + N_);
+    auto local_args_tuple = apply(
+				  [&](auto&&... args) {
+				    return std::tuple<decltype(internal::deep_copy(args))...>(
+											      internal::deep_copy(args)...);
+				  },
+				  args_tuple_);
+    
+    vector<var> dy_dt_vars = apply(
+				   [&](auto&&... args) { return f_.template operator()<double, var, decltype(args)...>(t, y_vars, args..., msgs_); },
+				   local_args_tuple);
 
-      vector<var> dy_dt_vars = apply(
-				     [&](auto&&... args) { return f_.template operator()<double, var, decltype(args)...>(t, y_vars, args..., msgs_); },
-          local_args_tuple);
+    check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(), "states",
+                     N_);
 
-      check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
-                       "states", N_);
-
-      for (size_t i = 0; i < N_; i++) {
-        dz_dt[i] = dy_dt_vars[i].val();
-        dy_dt_vars[i].grad();
-
-        for (size_t j = 0; j < y0_vars_; j++) {
-          // orders derivatives by equation (i.e. if there are 2 eqns
-          // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
-          // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
-          double temp_deriv = 0;
-          const size_t offset = N_ + N_ * j;
-          for (size_t k = 0; k < N_; k++) {
-            temp_deriv += z[N_ + N_ * j + k] * y_vars[k].adj();
-          }
-
-          dz_dt[N_ + N_ * j + i] = temp_deriv;
-        }
-
-        Eigen::VectorXd args_adjoints = Eigen::VectorXd::Zero(args_vars_);
-        apply(
-            [&](auto&&... args) {
-              internal::accumulate_adjoints(args_adjoints.data(), args...);
-            },
-            local_args_tuple);
-        for (size_t j = 0; j < args_vars_; j++) {
-          double temp_deriv = args_adjoints(j);
-          for (size_t k = 0; k < N_; k++) {
-            temp_deriv += z[N_ + N_ * y0_vars_ + N_ * j + k] * y_vars[k].adj();
-          }
-
-          dz_dt[N_ + N_ * y0_vars_ + N_ * j + i] = temp_deriv;
-        }
-
-        set_zero_all_adjoints_nested();
+    for (size_t i = 0; i < N_; i++) {
+      dz_dt[i] = dy_dt_vars[i].val();
+      dy_dt_vars[i].grad();
+      for (size_t j = 0; j < y0_vars_; j++) {
+	// orders derivatives by equation (i.e. if there are 2 eqns
+	// (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
+	// dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
+	double temp_deriv = 0;
+	const size_t offset = N_ + N_ * j;
+	for (size_t k = 0; k < N_; k++) {
+	  temp_deriv += z[N_ + N_ * j + k] * y_vars[k].adj();
+	}
+	
+	dz_dt[N_ + N_ * j + i] = temp_deriv;
       }
-    } catch (const std::exception& e) {
-      recover_memory_nested();
-      throw;
+      
+      Eigen::VectorXd args_adjoints = Eigen::VectorXd::Zero(args_vars_);
+      apply(
+	    [&](auto&&... args) {
+	      internal::accumulate_adjoints(args_adjoints.data(), args...);
+	    },
+	    local_args_tuple);
+      for (size_t j = 0; j < args_vars_; j++) {
+	double temp_deriv = args_adjoints(j);
+	for (size_t k = 0; k < N_; k++) {
+	  temp_deriv += z[N_ + N_ * y0_vars_ + N_ * j + k] * y_vars[k].adj();
+	}
+	
+	dz_dt[N_ + N_ * y0_vars_ + N_ * j + i] = temp_deriv;
+      }
+      
+      nested.set_zero_all_adjoints();
     }
-    recover_memory_nested();
   }
 
   template<typename T_t>
-  std::vector<var> build_output(const std::vector<double>& coupled_state, const T_t& t) const {
+  std::vector<var> build_output(const std::vector<double>& dy0_dt0, const std::vector<double>& coupled_state, const T_t0& t0, const T_t& t) const {
     std::vector<double> y_dbl(coupled_state.data(), coupled_state.data() + N_);
 
     std::vector<var> yt;
@@ -196,7 +190,7 @@ struct coupled_ode_system_impl<false, T_initial, T_t0, T_ts, F, Args...> {
     for (size_t j = 0; j < N_; j++) {
       // When true this is 1 and not ts_.size() because there's
       //   only one time point involved with this output
-      const size_t total_vars = y0_vars_ + args_vars_ + ((is_var<T_t>::value) ? 1 : 0);
+      const size_t total_vars = y0_vars_ + args_vars_ + ((is_var<T_t>::value) ? 1 : 0) + ((is_var<T_t0>::value) ? 1 : 0);
 
       vari** varis = ChainableStack::instance_->memalloc_.alloc_array<vari*>(total_vars);
       double* partials = ChainableStack::instance_->memalloc_.alloc_array<double>(total_vars);
@@ -225,6 +219,13 @@ struct coupled_ode_system_impl<false, T_initial, T_t0, T_ts, F, Args...> {
       if ((stan::is_var<T_t>::value) ? 1 : 0) {
 	varis_ptr = internal::save_varis(varis_ptr, t);
 	*partials_ptr = dy_dt[j];
+	partials_ptr++;
+	// dy[j]_dcurrent_t
+      }
+
+      if ((stan::is_var<T_t0>::value) ? 1 : 0) {
+	varis_ptr = internal::save_varis(varis_ptr, t0);
+	*partials_ptr = -dy0_dt0[j];
 	partials_ptr++;
 	// dy[j]_dcurrent_t
       }

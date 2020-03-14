@@ -11,7 +11,7 @@ namespace math {
  * Returns the product of a (the significand) and
  * 2 to power b (the exponent).
  *
- * @tparam T Scalar type of significand
+ * @tparam T1 scalar type of significand
  * @param[in] a the significand
  * @param[in] b an integer that is the exponent
  * @return product of a times 2 to the power b
@@ -21,6 +21,7 @@ inline double ldexp(T1 a, int b) {
   using std::ldexp;
   return ldexp(a, b);
 }
+
 }  // namespace math
 }  // namespace stan
 

@@ -6,7 +6,9 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 
@@ -17,30 +19,29 @@ namespace math {
 template <bool propto, typename T_n, typename T_rate>
 return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
   using T_partials_return = partials_return_t<T_n, T_rate>;
-
   static const char* function = "poisson_lpmf";
-
-  if (size_zero(n, lambda)) {
-    return 0.0;
-  }
-
-  T_partials_return logp(0.0);
-
   check_nonnegative(function, "Random variable", n);
   check_not_nan(function, "Rate parameter", lambda);
   check_nonnegative(function, "Rate parameter", lambda);
   check_consistent_sizes(function, "Random variable", n, "Rate parameter",
                          lambda);
 
+  if (size_zero(n, lambda)) {
+    return 0.0;
+  }
   if (!include_summand<propto, T_rate>::value) {
     return 0.0;
   }
+
+  T_partials_return logp(0.0);
+  operands_and_partials<T_rate> ops_partials(lambda);
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_rate> lambda_vec(lambda);
   size_t max_size_seq_view = max_size(n, lambda);
 
-  for (size_t i = 0, size_lambda = size(lambda); i < size_lambda; i++) {
+  for (size_t i = 0, size_lambda = stan::math::size(lambda); i < size_lambda;
+       i++) {
     if (is_inf(lambda_vec[i])) {
       return LOG_ZERO;
     }
@@ -51,12 +52,10 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
     }
   }
 
-  operands_and_partials<T_rate> ops_partials(lambda);
-
   VectorBuilder<include_summand<propto>::value, T_partials_return, T_n>
       lgamma_n_plus_one(size(n));
   if (include_summand<propto>::value) {
-    for (size_t i = 0, size_n = size(n); i < size_n; i++) {
+    for (size_t i = 0, size_n = stan::math::size(n); i < size_n; i++) {
       lgamma_n_plus_one[i] = lgamma(n_vec[i] + 1.0);
     }
   }

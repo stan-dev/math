@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/invalid_argument.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <sstream>
 #include <string>
 
@@ -23,7 +24,7 @@ template <typename T>
 inline void check_consistent_size(const char* function, const char* name,
                                   const T& x, size_t expected_size) {
   if (!is_vector<T>::value
-      || (is_vector<T>::value && expected_size == size(x))) {
+      || (is_vector<T>::value && expected_size == stan::math::size(x))) {
     return;
   }
 
@@ -35,7 +36,7 @@ inline void check_consistent_size(const char* function, const char* name,
       << "multidimensional values of the same shape.";
   std::string msg_str(msg.str());
 
-  invalid_argument(function, name, size(x),
+  invalid_argument(function, name, stan::math::size(x),
                    "has dimension = ", msg_str.c_str());
 }
 

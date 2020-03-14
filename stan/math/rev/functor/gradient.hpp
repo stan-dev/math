@@ -41,19 +41,14 @@ namespace math {
 template <typename F>
 void gradient(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
               double& fx, Eigen::Matrix<double, Eigen::Dynamic, 1>& grad_fx) {
-  start_nested();
-  try {
-    Eigen::Matrix<var, Eigen::Dynamic, 1> x_var(x);
-    var fx_var = f(x_var);
-    fx = fx_var.val();
-    grad_fx.resize(x.size());
-    grad(fx_var.vi_);
-    grad_fx = x_var.adj();
-  } catch (const std::exception& /*e*/) {
-    recover_memory_nested();
-    throw;
-  }
-  recover_memory_nested();
+  nested_rev_autodiff nested;
+
+  Eigen::Matrix<var, Eigen::Dynamic, 1> x_var(x);
+  var fx_var = f(x_var);
+  fx = fx_var.val();
+  grad_fx.resize(x.size());
+  grad(fx_var.vi_);
+  grad_fx = x_var.adj();
 }
 
 }  // namespace math

@@ -49,7 +49,7 @@ class ordered_constrain_op {
     return y;
   }
 
-  /*
+  /**
    * Compute the result of multiply the transpose of the adjoint vector times
    * the Jacobian of the ordered_constrain operator.
    *

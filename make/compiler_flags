@@ -1,3 +1,11 @@
+# Find files subroutine for different operating system
+# This is recursive version of the makefiles wildcard function
+findfiles = $(foreach d,$(wildcard $(addsuffix *,$(1))),$(call findfiles,$(d)/,$(2)) $(wildcard $(d)/$(2)))
+
+ifneq ($(OS),Windows_NT)
+GENERATE_DISTRIBUTION_TESTS=true
+endif
+
 # Detect operating system, set default compiler, and detect compiler type
 # The defaults are configured for the compilers we test:
 # https://github.com/stan-dev/stan/wiki/Supported-C---Compilers-and-Language-Features
@@ -263,7 +271,7 @@ print-compiler-flags:
 	@echo '  - SUNDIALS                    ' $(SUNDIALS)
 	@echo '  - TBB                         ' $(TBB)
 	@echo '  - GTEST                       ' $(GTEST)
-	@echo '  - STAN_THREADS                ' $(STAN_THREADS) 
+	@echo '  - STAN_THREADS                ' $(STAN_THREADS)
 	@echo '  - STAN_OPENCL                 ' $(STAN_OPENCL)
 	@echo '  - STAN_MPI                    ' $(STAN_MPI)
 	@echo '  Compiler flags (each can be overriden separately):'

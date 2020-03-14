@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <cmath>
 
 namespace stan {
@@ -28,7 +29,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> positive_ordered_free(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
-  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
+  using size_type = index_type_t<Matrix<T, Dynamic, 1>>;
 
   check_positive_ordered("stan::math::positive_ordered_free",
                          "Positive ordered variable", y);

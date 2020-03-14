@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <boost/random/bernoulli_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -29,12 +30,11 @@ inline typename VectorBuilder<true, int, T_t>::type bernoulli_logit_rng(
     const T_t& t, RNG& rng) {
   using boost::bernoulli_distribution;
   using boost::variate_generator;
-
   check_finite("bernoulli_logit_rng", "Logit transformed probability parameter",
                t);
 
   scalar_seq_view<T_t> t_vec(t);
-  size_t N = size(t);
+  size_t N = stan::math::size(t);
   VectorBuilder<true, int, T_t> output(N);
 
   for (size_t n = 0; n < N; ++n) {
