@@ -9,14 +9,15 @@
 namespace stan {
 namespace math {
 namespace internal {
-inline void check_consistent_sizes_mvt_impl(const char* function, size_t max_size) {
+inline void check_consistent_sizes_mvt_impl(const char* function,
+                                            size_t max_size) {
   return;
 }
 
 template <typename T1, typename... Ts>
-inline void check_consistent_sizes_mvt_impl(const char* function, size_t max_size,
-                                     const char* name1, const T1& x1,
-                                     const Ts&... xs) {
+inline void check_consistent_sizes_mvt_impl(const char* function,
+                                            size_t max_size, const char* name1,
+                                            const T1& x1, const Ts&... xs) {
   check_consistent_size_mvt(function, name1, x1, max_size);
   check_consistent_sizes_mvt_impl(function, max_size, xs...);
 }

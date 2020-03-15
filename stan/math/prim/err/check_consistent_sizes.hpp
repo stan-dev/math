@@ -15,8 +15,8 @@ inline void check_consistent_sizes_impl(const char* function, size_t max_size) {
 
 template <typename T1, typename... Ts>
 inline void check_consistent_sizes_impl(const char* function, size_t max_size,
-                                 const char* name1, const T1& x1,
-                                 const Ts&... xs) {
+                                        const char* name1, const T1& x1,
+                                        const Ts&... xs) {
   check_consistent_size(function, name1, x1, max_size);
   check_consistent_sizes_impl(function, max_size, xs...);
 }
