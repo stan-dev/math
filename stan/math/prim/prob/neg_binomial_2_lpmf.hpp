@@ -11,7 +11,6 @@
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
-#include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/prob/poisson_lpmf.hpp>
 #include <cmath>
@@ -51,9 +50,8 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   size_t size_n_phi = max_size(n, phi);
   size_t size_all = max_size(n, mu, phi);
 
-  size_t len_mu = size(mu);
-  VectorBuilder<true, T_partials_return, T_location> mu_val(len_mu);
-  for (size_t i = 0; i < len_mu; ++i) {
+  VectorBuilder<true, T_partials_return, T_location> mu_val(size_mu);
+  for (size_t i = 0; i < size_mu; ++i) {
     mu_val[i] = value_of(mu_vec[i]);
   }
 
@@ -86,7 +84,6 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     if (include_summand<propto, T_location>::value) {
       logp += multiply_log(n_vec[i], mu_val[i]);
     }
-    // logp += phi_val[i] * (log_phi[i] - log_mu_plus_phi[i])
     logp += -phi_val[i] * (log1p(mu_val[i] / phi_val[i]))
             - n_vec[i] * log_mu_plus_phi[i];
 
