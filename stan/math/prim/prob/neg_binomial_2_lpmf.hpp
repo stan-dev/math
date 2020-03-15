@@ -73,7 +73,8 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     log_mu_plus_phi[i] = log(mu_plus_phi[i]);
   }
 
-  VectorBuilder<true, T_partials_return, T_n, T_precision> n_plus_phi(size_n_phi);
+  VectorBuilder<true, T_partials_return, T_n, T_precision> n_plus_phi(
+      size_n_phi);
   for (size_t i = 0; i < size_n_phi; ++i) {
     n_plus_phi[i] = n_vec[i] + phi_val[i];
   }
