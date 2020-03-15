@@ -34,6 +34,9 @@ TEST(checkConsistentSizesMvt, checkConsistentSizesMvt) {
                                              bad_only_1));
   EXPECT_NO_THROW(check_consistent_sizes_mvt(function, "x1", good_single, "x2",
                                              bad_only_2));
+  EXPECT_NO_THROW(check_consistent_sizes_mvt(function, "x1", good_single, "x2",
+                                             bad_only_2, "x3", good_single,
+                                             "x4", bad_only_2));
   EXPECT_THROW(
       check_consistent_sizes_mvt(function, "x1", good, "x2", bad_only_2),
       std::invalid_argument);
@@ -45,5 +48,9 @@ TEST(checkConsistentSizesMvt, checkConsistentSizesMvt) {
       std::invalid_argument);
   EXPECT_THROW(
       check_consistent_sizes_mvt(function, "x1", bad_only_1, "x2", good),
+      std::invalid_argument);
+  EXPECT_THROW(
+      check_consistent_sizes_mvt(function, "x1", good, "x2", good, "x3", good,
+                                 "x4", good, "x5", bad_only_1, "x6", good),
       std::invalid_argument);
 }
