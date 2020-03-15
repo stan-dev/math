@@ -6,7 +6,10 @@
 #include <stan/math/prim/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -46,10 +49,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   size_t size_phi = stan::math::size(phi);
   size_t size_mu_phi = max_size(mu, phi);
   size_t size_n_phi = max_size(n, phi);
-  size_t max_size_seq_view = max_size(n, mu, phi);
-
-  size_t len_ep = max_size(mu, phi);
-  size_t len_np = max_size(n, phi);
+  size_t size_all = max_size(n, mu, phi);
 
   size_t len_mu = size(mu);
   VectorBuilder<true, T_partials_return, T_location> mu_val(len_mu);
@@ -57,29 +57,28 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     mu_val[i] = value_of(mu_vec[i]);
   }
 
-  size_t len_phi = size(phi);
-  VectorBuilder<true, T_partials_return, T_precision> phi_val(len_phi);
-  VectorBuilder<true, T_partials_return, T_precision> log_phi(len_phi);
-  for (size_t i = 0; i < len_phi; ++i) {
+  VectorBuilder<true, T_partials_return, T_precision> phi_val(size_phi);
+  VectorBuilder<true, T_partials_return, T_precision> log_phi(size_phi);
+  for (size_t i = 0; i < size_phi; ++i) {
     phi_val[i] = value_of(phi_vec[i]);
     log_phi[i] = log(phi_val[i]);
   }
 
   VectorBuilder<true, T_partials_return, T_location, T_precision> mu_plus_phi(
-      len_ep);
+      size_mu_phi);
   VectorBuilder<true, T_partials_return, T_location, T_precision>
-      log_mu_plus_phi(len_ep);
-  for (size_t i = 0; i < len_ep; ++i) {
+      log_mu_plus_phi(size_mu_phi);
+  for (size_t i = 0; i < size_mu_phi; ++i) {
     mu_plus_phi[i] = mu_val[i] + phi_val[i];
     log_mu_plus_phi[i] = log(mu_plus_phi[i]);
   }
 
-  VectorBuilder<true, T_partials_return, T_n, T_precision> n_plus_phi(len_np);
-  for (size_t i = 0; i < len_np; ++i) {
+  VectorBuilder<true, T_partials_return, T_n, T_precision> n_plus_phi(size_n_phi);
+  for (size_t i = 0; i < size_n_phi; ++i) {
     n_plus_phi[i] = n_vec[i] + phi_val[i];
   }
 
-  for (size_t i = 0; i < max_size_seq_view; i++) {
+  for (size_t i = 0; i < size_all; i++) {
     if (include_summand<propto, T_precision>::value) {
       logp += binomial_coefficient_log(n_plus_phi[i] - 1, n_vec[i]);
     }
