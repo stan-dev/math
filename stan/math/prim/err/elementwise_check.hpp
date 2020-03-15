@@ -114,8 +114,8 @@ struct Iser {
  * of any element in x the predicate
  */
 template <typename T_is_good, typename T_x>
-void elementwise_check(const T_is_good& is_good, const char* function,
-                       const char* name, const T_x& x, const char* suffix) {
+inline void elementwise_check(const T_is_good& is_good, const char* function,
+                              const char* name, const T_x& x, const char* suffix) {
   internal::Checker<T_is_good, std::domain_error>{is_good, function, name,
                                                   suffix}
       .check(x);
@@ -126,7 +126,7 @@ void elementwise_check(const T_is_good& is_good, const char* function,
  * by throwing.
  */
 template <typename T_is_good, typename T_x>
-bool elementwise_is(const T_is_good& is_good, const T_x& x) {
+inline bool elementwise_is(const T_is_good& is_good, const T_x& x) {
   return internal::Iser<T_is_good>{is_good}.is(x);
 }
 
