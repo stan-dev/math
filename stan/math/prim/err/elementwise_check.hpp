@@ -115,7 +115,8 @@ struct Iser {
  */
 template <typename T_is_good, typename T_x>
 inline void elementwise_check(const T_is_good& is_good, const char* function,
-                              const char* name, const T_x& x, const char* suffix) {
+                              const char* name, const T_x& x,
+                              const char* suffix) {
   internal::Checker<T_is_good, std::domain_error>{is_good, function, name,
                                                   suffix}
       .check(x);
