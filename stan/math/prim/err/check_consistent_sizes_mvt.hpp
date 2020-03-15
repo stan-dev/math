@@ -9,12 +9,12 @@
 namespace stan {
 namespace math {
 namespace internal {
-void check_consistent_sizes_mvt_impl(const char* function, size_t max_size) {
+inline void check_consistent_sizes_mvt_impl(const char* function, size_t max_size) {
   return;
 }
 
 template <typename T1, typename... Ts>
-void check_consistent_sizes_mvt_impl(const char* function, size_t max_size,
+inline void check_consistent_sizes_mvt_impl(const char* function, size_t max_size,
                                      const char* name1, const T1& x1,
                                      const Ts&... xs) {
   check_consistent_size_mvt(function, name1, x1, max_size);
@@ -22,12 +22,12 @@ void check_consistent_sizes_mvt_impl(const char* function, size_t max_size,
 }
 
 template <typename T, typename = require_vector_t<T>>
-size_t size_mvt_ignore_nonvector(const T& x) {
+inline size_t size_mvt_ignore_nonvector(const T& x) {
   return stan::math::size_mvt(x);
 }
 
 template <typename T, typename = require_not_vector_t<T>, typename = void>
-size_t size_mvt_ignore_nonvector(const T&) {
+inline size_t size_mvt_ignore_nonvector(const T&) {
   return 0;
 }
 }  // namespace internal

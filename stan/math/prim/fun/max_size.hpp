@@ -15,7 +15,7 @@ namespace math {
  * @return the size of the largest input
  */
 template <typename T1, typename... Ts>
-size_t max_size(const T1& x1, const Ts&... xs) {
+inline size_t max_size(const T1& x1, const Ts&... xs) {
   return std::max({stan::math::size(x1), stan::math::size(xs)...});
 }
 
