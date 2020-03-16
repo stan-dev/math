@@ -51,8 +51,8 @@ inline var determinant(const T& m) {
     return 1;
   }
 
-  return var(new internal::determinant_vari<T::RowsAtCompileTime,
-                                            T::ColsAtCompileTime>(m));
+  return {new internal::determinant_vari<T::RowsAtCompileTime,
+                                            T::ColsAtCompileTime>(m)};
 }
 
 }  // namespace math

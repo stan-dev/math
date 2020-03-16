@@ -47,7 +47,7 @@ class dot_self_vari : public vari {
 template <typename T, require_eigen_vector_vt<is_var, T>* = nullptr>
 inline var dot_self(const T& v) {
   const Eigen::Ref<const plain_type_t<T>>& v_ref = v;
-  return var(new internal::dot_self_vari(v_ref));
+  return {new internal::dot_self_vari(v_ref)};
 }
 
 }  // namespace math

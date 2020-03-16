@@ -11,14 +11,14 @@ namespace math {
  * Return a square diagonal matrix with the specified vector of
  * coefficients as the diagonal values.
  *
- * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
+ * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase and
  * have one compile time dimmension equal to 1)
  * @param[in] v Specified vector.
  * @return Diagonal matrix with vector as diagonal values.
  */
-template <typename T, require_eigen_vector_t<T>* = nullptr>
-inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-diag_matrix(const T& v) {
+template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
+diag_matrix(const EigVec& v) {
   return v.asDiagonal();
 }
 

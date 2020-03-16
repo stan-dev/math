@@ -33,21 +33,21 @@ class scal_squared_distance_vd_vari : public op_vd_vari {
  * Returns the squared distance.
  */
 inline var squared_distance(const var& a, const var& b) {
-  return var(new scal_squared_distance_vv_vari(a.vi_, b.vi_));
+  return {new scal_squared_distance_vv_vari(a.vi_, b.vi_)};
 }
 
 /**
  * Returns the squared distance.
  */
 inline var squared_distance(const var& a, double b) {
-  return var(new scal_squared_distance_vd_vari(a.vi_, b));
+  return {new scal_squared_distance_vd_vari(a.vi_, b)};
 }
 
 /**
  * Returns the squared distance.
  */
 inline var squared_distance(double a, const var& b) {
-  return var(new scal_squared_distance_vd_vari(b.vi_, a));
+  return {new scal_squared_distance_vd_vari(b.vi_, a)};
 }
 
 namespace internal {
@@ -120,7 +120,7 @@ template <
     require_all_eigen_vector_vt<is_var, EigVecVar1, EigVecVar2>* = nullptr>
 inline var squared_distance(const EigVecVar1& v1, const EigVecVar2& v2) {
   check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-  return var(new internal::squared_distance_vv_vari(v1, v2));
+  return {new internal::squared_distance_vv_vari(v1, v2)};
 }
 
 template <typename EigVecVar, typename EigVecArith,
@@ -128,7 +128,7 @@ template <typename EigVecVar, typename EigVecArith,
           require_eigen_vector_vt<std::is_arithmetic, EigVecArith>* = nullptr>
 inline var squared_distance(const EigVecVar& v1, const EigVecArith& v2) {
   check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-  return var(new internal::squared_distance_vd_vari(v1, v2));
+  return {new internal::squared_distance_vd_vari(v1, v2)};
 }
 
 template <typename EigVecArith, typename EigVecVar,
@@ -136,7 +136,7 @@ template <typename EigVecArith, typename EigVecVar,
           require_eigen_vector_vt<is_var, EigVecVar>* = nullptr>
 inline var squared_distance(const EigVecArith& v1, const EigVecVar& v2) {
   check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-  return var(new internal::squared_distance_vd_vari(v2, v1));
+  return {new internal::squared_distance_vd_vari(v2, v1)};
 }
 
 }  // namespace math

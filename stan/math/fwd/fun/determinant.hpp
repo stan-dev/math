@@ -14,7 +14,7 @@ inline value_type_t<EigMat> determinant(const EigMat& m) {
   check_square("determinant", "m", m);
 
   const typename value_type_t<EigMat>::Scalar vals = m.val().determinant();
-  return value_type_t<EigMat>(vals, vals * (m.val().inverse() * m.d()).trace());
+  return {vals, vals * (m.val().inverse() * m.d()).trace()};
 }
 
 }  // namespace math

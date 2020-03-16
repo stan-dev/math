@@ -39,23 +39,21 @@ inline std::vector<T> cumulative_sum(const std::vector<T>& x) {
  *
  * \code x(0), x(1) + x(2), ..., x(1) + , ..., + x(x.size()-1) @endcode
  *
- * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
+ * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase and
  * have one compile time dimension equal to 1)
  *
  * @param m Vector of values.
  * @return Cumulative sum of values.
  */
-template <typename T, require_eigen_vector_t<T>* = nullptr>
-inline Eigen::Matrix<value_type_t<T>, T::RowsAtCompileTime,
-                     T::ColsAtCompileTime>
-cumulative_sum(const T& m) {
-  using T_scalar = value_type_t<T>;
-  Eigen::Matrix<T_scalar, T::RowsAtCompileTime, T::ColsAtCompileTime> result(
+template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+inline auto cumulative_sum(const EigVec& m) {
+  using T_scalar = value_type_t<EigVec>;
+  Eigen::Matrix<T_scalar, EigVec::RowsAtCompileTime, EigVec::ColsAtCompileTime> result(
       m.rows(), m.cols());
   if (m.size() == 0) {
     return result;
   }
-  const Eigen::Ref<const plain_type_t<T>>& m_ref = m;
+  const Eigen::Ref<const plain_type_t<EigVec>>& m_ref = m;
   std::partial_sum(m_ref.data(), m_ref.data() + m_ref.size(), result.data(),
                    std::plus<T_scalar>());
   return result;

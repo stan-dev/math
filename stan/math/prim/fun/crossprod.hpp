@@ -12,12 +12,12 @@ namespace math {
  * Returns the result of pre-multiplying a matrix by its
  * own transpose.
  *
- * @tparam T type of the matrix (must be derived from \c Eigen::MatrixBase)
+ * @tparam EigMat type of the matrix (must be derived from \c Eigen::MatrixBase)
  * @param M Matrix to multiply.
  * @return Transpose of M times M
  */
-template <typename T, require_eigen_t<T>* = nullptr>
-inline auto crossprod(const T& M) {
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+inline auto crossprod(const EigMat& M) {
   return tcrossprod(M.transpose());
 }
 
