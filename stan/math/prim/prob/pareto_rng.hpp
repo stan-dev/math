@@ -18,8 +18,8 @@ namespace math {
  * y_min and alpha can each be a scalar or a one-dimensional container. Any
  * non-scalar inputs must be the same size.
  *
- * @tparam T_scale Type of scale parameter
- * @tparam T_shape Type of shape parameter
+ * @tparam T_scale type of scale parameter
+ * @tparam T_shape type of shape parameter
  * @tparam RNG type of random number generator
  * @param y_min (Sequence of) positive scale parameter(s)
  * @param alpha (Sequence of) positive shape parameter(s)
@@ -34,9 +34,7 @@ inline typename VectorBuilder<true, double, T_shape, T_scale>::type pareto_rng(
     const T_scale& y_min, const T_shape& alpha, RNG& rng) {
   using boost::exponential_distribution;
   using boost::variate_generator;
-
   static const char* function = "pareto_rng";
-
   check_positive_finite(function, "Scale parameter", y_min);
   check_positive_finite(function, "Shape parameter", alpha);
   check_consistent_sizes(function, "Scale Parameter", y_min, "Shape parameter",

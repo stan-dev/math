@@ -30,25 +30,23 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
                                                       const T_shape& alpha,
                                                       const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_n, T_shape, T_inv_scale>;
-
+  using std::log;
   static const char* function = "neg_binomial_lpmf";
-
-  if (size_zero(n, alpha, beta)) {
-    return 0.0;
-  }
-
-  T_partials_return logp(0.0);
   check_nonnegative(function, "Failures variable", n);
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Inverse scale parameter", beta);
   check_consistent_sizes(function, "Failures variable", n, "Shape parameter",
                          alpha, "Inverse scale parameter", beta);
 
+  if (size_zero(n, alpha, beta)) {
+    return 0.0;
+  }
   if (!include_summand<propto, T_shape, T_inv_scale>::value) {
     return 0.0;
   }
 
-  using std::log;
+  T_partials_return logp(0.0);
+  operands_and_partials<T_shape, T_inv_scale> ops_partials(alpha, beta);
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_shape> alpha_vec(alpha);
@@ -57,8 +55,6 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
   size_t size_beta = stan::math::size(beta);
   size_t size_alpha_beta = max_size(alpha, beta);
   size_t max_size_seq_view = max_size(n, alpha, beta);
-
-  operands_and_partials<T_shape, T_inv_scale> ops_partials(alpha, beta);
 
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       digamma_alpha(size_alpha);

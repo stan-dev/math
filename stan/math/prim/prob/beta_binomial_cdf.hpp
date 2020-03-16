@@ -41,15 +41,9 @@ template <typename T_n, typename T_N, typename T_size1, typename T_size2>
 return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n, const T_N& N,
                                                   const T_size1& alpha,
                                                   const T_size2& beta) {
-  static const char* function = "beta_binomial_cdf";
   using T_partials_return = partials_return_t<T_n, T_N, T_size1, T_size2>;
-
-  if (size_zero(n, N, alpha, beta)) {
-    return 1.0;
-  }
-
-  T_partials_return P(1.0);
-
+  using std::exp;
+  static const char* function = "beta_binomial_cdf";
   check_nonnegative(function, "Population size parameter", N);
   check_positive_finite(function, "First prior sample size parameter", alpha);
   check_positive_finite(function, "Second prior sample size parameter", beta);
@@ -58,15 +52,18 @@ return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n, const T_N& N,
                          "First prior sample size parameter", alpha,
                          "Second prior sample size parameter", beta);
 
+  if (size_zero(n, N, alpha, beta)) {
+    return 1.0;
+  }
+
+  T_partials_return P(1.0);
+  operands_and_partials<T_size1, T_size2> ops_partials(alpha, beta);
+
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_N> N_vec(N);
   scalar_seq_view<T_size1> alpha_vec(alpha);
   scalar_seq_view<T_size2> beta_vec(beta);
   size_t max_size_seq_view = max_size(n, N, alpha, beta);
-
-  using std::exp;
-
-  operands_and_partials<T_size1, T_size2> ops_partials(alpha, beta);
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero

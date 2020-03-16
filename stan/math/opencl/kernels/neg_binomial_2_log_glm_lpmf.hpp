@@ -18,8 +18,8 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
      * with Negative-Binomial-2 distribution and log link function.
      *
      * Must be run with at least N threads and local size equal to LOCAL_SIZE_.
-     * @param[out] logp_global partially summed log probabilty (1 value per work
-     * group)
+     * @param[out] logp_global partially summed log probability (1 value per
+     * work group)
      * @param[out] theta_derivative_global intermediate variable used in the
      * model
      * @param[out] theta_derivative_sum partially summed theta_derivative_global

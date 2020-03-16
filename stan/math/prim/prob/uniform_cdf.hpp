@@ -14,14 +14,8 @@ namespace math {
 template <typename T_y, typename T_low, typename T_high>
 return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y, const T_low& alpha,
                                               const T_high& beta) {
-  static const char* function = "uniform_cdf";
   using T_partials_return = partials_return_t<T_y, T_low, T_high>;
-
-  if (size_zero(y, alpha, beta)) {
-    return 1.0;
-  }
-
-  T_partials_return cdf(1.0);
+  static const char* function = "uniform_cdf";
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Lower bound parameter", alpha);
   check_finite(function, "Upper bound parameter", beta);
@@ -29,6 +23,13 @@ return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y, const T_low& alpha,
   check_consistent_sizes(function, "Random variable", y,
                          "Lower bound parameter", alpha,
                          "Upper bound parameter", beta);
+
+  if (size_zero(y, alpha, beta)) {
+    return 1.0;
+  }
+
+  T_partials_return cdf(1.0);
+  operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_low> alpha_vec(alpha);
@@ -42,7 +43,6 @@ return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y, const T_low& alpha,
     }
   }
 
-  operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);

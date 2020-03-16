@@ -28,20 +28,17 @@ template <typename T_y, typename T_inv_scale>
 return_type_t<T_y, T_inv_scale> exponential_cdf(const T_y& y,
                                                 const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_inv_scale>;
-
-  static const char* function = "exponential_cdf";
-
   using std::exp;
-
-  T_partials_return cdf(1.0);
-  if (size_zero(y, beta)) {
-    return cdf;
-  }
-
+  static const char* function = "exponential_cdf";
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_positive_finite(function, "Inverse scale parameter", beta);
 
+  if (size_zero(y, beta)) {
+    return 1.0;
+  }
+
+  T_partials_return cdf(1.0);
   operands_and_partials<T_y, T_inv_scale> ops_partials(y, beta);
 
   scalar_seq_view<T_y> y_vec(y);

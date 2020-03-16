@@ -29,42 +29,44 @@ namespace math {
  \frac{\beta^\alpha}{\Gamma(\alpha)} y^{\alpha - 1} \exp^{- \beta y} \right) \\
  &=& \alpha \log(\beta) - \log(\Gamma(\alpha)) + (\alpha - 1) \log(y) - \beta
  y\\ & & \mathrm{where} \; y > 0 \f}
+ *
+ * @tparam T_y type of scalar
+ * @tparam T_shape type of shape
+ * @tparam T_inv_scale type of inverse scale
  * @param y A scalar variable.
  * @param alpha Shape parameter.
  * @param beta Inverse scale parameter.
  * @throw std::domain_error if alpha is not greater than 0.
  * @throw std::domain_error if beta is not greater than 0.
  * @throw std::domain_error if y is not greater than or equal to 0.
- * @tparam T_y Type of scalar.
- * @tparam T_shape Type of shape.
- * @tparam T_inv_scale Type of inverse scale.
  */
 template <bool propto, typename T_y, typename T_shape, typename T_inv_scale>
 return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
                                                     const T_shape& alpha,
                                                     const T_inv_scale& beta) {
-  static const char* function = "gamma_lpdf";
   using T_partials_return = partials_return_t<T_y, T_shape, T_inv_scale>;
-
-  if (size_zero(y, alpha, beta)) {
-    return 0.0;
-  }
-
-  T_partials_return logp(0.0);
-
+  using std::log;
+  static const char* function = "gamma_lpdf";
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Inverse scale parameter", beta);
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Inverse scale parameter", beta);
 
+  if (size_zero(y, alpha, beta)) {
+    return 0.0;
+  }
   if (!include_summand<propto, T_y, T_shape, T_inv_scale>::value) {
     return 0.0;
   }
 
+  T_partials_return logp(0.0);
+  operands_and_partials<T_y, T_shape, T_inv_scale> ops_partials(y, alpha, beta);
+
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   scalar_seq_view<T_inv_scale> beta_vec(beta);
+  size_t N = max_size(y, alpha, beta);
 
   for (size_t n = 0; n < stan::math::size(y); n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -72,11 +74,6 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
       return LOG_ZERO;
     }
   }
-
-  size_t N = max_size(y, alpha, beta);
-  operands_and_partials<T_y, T_shape, T_inv_scale> ops_partials(y, alpha, beta);
-
-  using std::log;
 
   VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,
                 T_y>

@@ -40,6 +40,8 @@ namespace math {
  * =\psi_{(0)}(\sum\alpha)-\psi_{(0)}(\alpha_x)+\log\theta_x
  * \f]
  *
+ * @tparam T_prob type of scalar
+ * @tparam T_prior_size type of prior sample sizes
  * @param theta A scalar vector.
  * @param alpha Prior sample sizes.
  * @return The log of the Dirichlet density.
@@ -47,17 +49,14 @@ namespace math {
  * or equal to 0.
  * @throw std::domain_error if any element of theta is less than 0.
  * @throw std::domain_error if the sum of theta is not 1.
- * @tparam T_prob Type of scalar.
- * @tparam T_prior_size Type of prior sample sizes.
  */
 template <bool propto, typename T_prob, typename T_prior_size>
 return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
                                                    const T_prior_size& alpha) {
-  static const char* function = "dirichlet_lpdf";
-
   using T_partials_return = partials_return_t<T_prob, T_prior_size>;
   using T_partials_vec = typename Eigen::Matrix<T_partials_return, -1, 1>;
   using T_partials_mat = typename Eigen::Matrix<T_partials_return, -1, -1>;
+  static const char* function = "dirichlet_lpdf";
 
   vector_seq_view<T_prob> theta_vec(theta);
   vector_seq_view<T_prior_size> alpha_vec(alpha);

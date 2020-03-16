@@ -20,30 +20,26 @@ template <typename T_y, typename T_loc, typename T_scale>
 return_type_t<T_y, T_loc, T_scale> logistic_lccdf(const T_y& y, const T_loc& mu,
                                                   const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
-
-  if (size_zero(y, mu, sigma)) {
-    return 0.0;
-  }
-
-  static const char* function = "logistic_lccdf";
-
   using std::exp;
   using std::log;
-
-  T_partials_return P(0.0);
-
+  static const char* function = "logistic_lccdf";
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
 
+  if (size_zero(y, mu, sigma)) {
+    return 0;
+  }
+
+  T_partials_return P(0.0);
+  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
+
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);
   scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, mu, sigma);
-
-  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero

@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap floor() so that it can be vectorized.
+ * Structure to wrap `floor()` so that it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -24,7 +24,8 @@ struct floor_fun {
 };
 
 /**
- * Vectorized version of floor().
+ * Returns the elementwise `floor()` of the input,
+ * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam T type of container
  * @param x container
@@ -36,7 +37,7 @@ inline auto floor(const T& x) {
 }
 
 /**
- * Version of floor() that accepts Eigen Matrix or matrix expressions.
+ * Version of `floor()` that accepts Eigen Matrix or matrix expressions.
  *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
