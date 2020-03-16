@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap tan() so that it can be vectorized.
+ * Structure to wrap `tan()` so that it can be vectorized.
  *
  * @tparam T type of argument
  * @param x angle in radians
@@ -24,7 +24,7 @@ struct tan_fun {
 };
 
 /**
- * Vectorized version of tan().
+ * Vectorized version of `tan()`.
  *
  * @tparam Container type of container
  * @param x angles in radians
@@ -38,7 +38,7 @@ inline auto tan(const Container& x) {
 }
 
 /**
- * Version of tan() that accepts std::vectors, Eigen Matrix/Array objects
+ * Version of `tan()` that accepts std::vectors, Eigen Matrix/Array objects
  *  or expressions, and containers of these.
  *
  * @tparam Container Type of x

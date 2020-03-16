@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap fabs() so that it can be vectorized.
+ * Structure to wrap `fabs()` so that it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -24,7 +24,8 @@ struct fabs_fun {
 };
 
 /**
- * Vectorized version of fabs().
+ * Returns the elementwise `fabs()` of the input,
+ * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam Container type of container
  * @param x container
@@ -38,7 +39,7 @@ inline auto fabs(const Container& x) {
 }
 
 /**
- * Version of fabs() that accepts std::vectors, Eigen Matrix/Array objects
+ * Version of `fabs()` that accepts std::vectors, Eigen Matrix/Array objects
  *  or expressions, and containers of these.
  *
  * @tparam Container Type of x

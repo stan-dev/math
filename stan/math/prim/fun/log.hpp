@@ -9,16 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the natural log of the specified argument.  This version
- * is required to disambiguate <code>log(int)</code>.
- *
- * @param[in] x Argument.
- * @return Natural log of argument.
- */
-inline double log(int x) { return std::log(x); }
-
-/**
- * Structure to wrap log() so that it can be vectorized.
+ * Structure to wrap `log()` so that it can be vectorized.
  */
 struct log_fun {
   /**
@@ -52,7 +43,7 @@ inline auto log(const Container& x) {
 }
 
 /**
- * Version of log() that accepts std::vectors, Eigen Matrix/Array objects
+ * Version of `log()` that accepts std::vectors, Eigen Matrix/Array objects
  *  or expressions, and containers of these.
  *
  * @tparam Container Type of x

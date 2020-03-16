@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap asin() so it can be vectorized.
+ * Structure to wrap `asin()` so it can be vectorized.
  *
  * @tparam T type of argument
  * @param x argument
@@ -24,7 +24,8 @@ struct asin_fun {
 };
 
 /**
- * Vectorized version of asin().
+ * Returns the elementwise `asin()` of the input,
+ * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam Container type of container
  * @param x container
@@ -38,7 +39,7 @@ inline auto asin(const Container& x) {
 }
 
 /**
- * Version of asin() that accepts std::vectors, Eigen Matrix/Array objects,
+ * Version of `asin()` that accepts std::vectors, Eigen Matrix/Array objects,
  *  or expressions, and containers of these.
  *
  * @tparam Container Type of x

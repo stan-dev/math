@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap acos() so it can be vectorized.
+ * Structure to wrap `acos()` so it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -24,7 +24,8 @@ struct acos_fun {
 };
 
 /**
- * Vectorized version of acos().
+ * Returns the elementwise `acos()` of the input,
+ * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam Container type of container
  * @param x container
@@ -38,7 +39,7 @@ inline auto acos(const Container& x) {
 }
 
 /**
- * Version of acos() that accepts std::vectors, Eigen Matrix/Array objects
+ * Version of `acos()` that accepts std::vectors, Eigen Matrix/Array objects
  *  or expressions, and containers of these.
  *
  * @tparam Container Type of x
