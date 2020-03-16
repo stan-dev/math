@@ -42,7 +42,8 @@ namespace math {
  *   the upper bound, y is less than the lower bound, or y is
  *   greater than the upper bound
  */
-template <typename T, typename L, typename U, require_stan_scalar_t<T>* = nullptr>
+template <typename T, typename L, typename U,
+          require_stan_scalar_t<T>* = nullptr>
 inline auto lub_free(T&& y, const L& lb, const U& ub) {
   check_bounded<T, L, U>("lub_free", "Bounded variable", y, lb, ub);
   if (lb == NEGATIVE_INFTY) {
@@ -66,7 +67,8 @@ inline auto lub_free(T&& y, const L& lb, const U& ub) {
   return logit((y.array() - lb) / (ub - lb)).matrix().eval();
 }
 
-template <typename T, typename L, typename U, require_std_vector_t<T>* = nullptr>
+template <typename T, typename L, typename U,
+          require_std_vector_t<T>* = nullptr>
 inline auto lub_free(T&& y, const L& lb, const U& ub) {
   check_bounded<T, L, U>("lub_free", "Bounded variable", y, lb, ub);
   if (lb == NEGATIVE_INFTY) {
@@ -82,7 +84,6 @@ inline auto lub_free(T&& y, const L& lb, const U& ub) {
   }
   return y_ret;
 }
-
 
 }  // namespace math
 }  // namespace stan
