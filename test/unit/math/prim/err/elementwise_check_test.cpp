@@ -5,22 +5,18 @@
 #include <limits>
 #include <vector>
 
-template <typename T>
-bool example_predicate(const T& x) {
-  return !stan::math::is_nan(x);
-}
+auto p = [](const auto& x) { return !stan::math::is_nan(x); };
 
 template <typename T>
 void do_check(const T& x) {
-  stan::math::elementwise_check(
-      [](const auto& x) { return example_predicate(x); },
-      "elementwise_check_tests", "x", x, ", but must not be nan!");
+  stan::math::elementwise_check([](const auto& x) { return p(x); },
+                                "elementwise_check_tests", "x", x,
+                                ", but must not be nan!");
 }
 
 template <typename T>
 bool do_is(const T& x) {
-  return stan::math::elementwise_is(
-      [](const auto& x) { return example_predicate(x); }, x);
+  return stan::math::elementwise_is([](const auto& x) { return p(x); }, x);
 }
 
 template <typename T>

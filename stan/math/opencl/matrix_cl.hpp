@@ -459,8 +459,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    */
   template <typename Expr,
             require_all_valid_expressions_and_none_scalar_t<Expr>* = nullptr>
-  matrix_cl(const Expr& expression);  // NOLINT This constructor is
-                                      // intentionally implicit
+  matrix_cl(const Expr& expression);  // NOLINT(runtime/explicit)
 
   /** \ingroup opencl
    * Move assignment operator.
