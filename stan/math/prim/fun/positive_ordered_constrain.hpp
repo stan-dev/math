@@ -27,7 +27,7 @@ inline auto positive_ordered_constrain(Vec&& x) {
     return y;
   }
   y[0] = exp(x[0]);
-  for (auto i = 1; i < k; ++i) {
+  for (int i = 1; i < k; ++i) {
     y[i] = y[i - 1] + exp(x[i]);
   }
   return y;
@@ -47,7 +47,7 @@ inline auto positive_ordered_constrain(Vec&& x) {
  */
 template <typename Vec, typename T, require_vector_like_t<Vec>* = nullptr>
 inline auto positive_ordered_constrain(Vec&& x, T& lp) {
-  for (auto i = 0; i < x.size(); ++i) {
+  for (int i = 0; i < x.size(); ++i) {
     lp += x[i];
   }
   return positive_ordered_constrain(std::forward<Vec>(x));

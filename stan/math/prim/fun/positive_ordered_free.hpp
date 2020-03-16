@@ -34,7 +34,7 @@ inline auto positive_ordered_free(Vec&& y) {
     return x;
   }
   x[0] = log(y[0]);
-  for (auto i = 1; i < k; ++i) {
+  for (int i = 1; i < k; ++i) {
     x[i] = log(y[i] - y[i - 1]);
   }
   return x;

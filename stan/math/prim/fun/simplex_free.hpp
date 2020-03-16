@@ -32,14 +32,15 @@ auto simplex_free(Vec&& x) {
   check_simplex("stan::math::simplex_free", "Simplex variable", x);
   auto Km1 = x.size() - 1;
   auto ret_size = Km1 >= 0 ? Km1 : 0;
+  const Eigen::Ref<const plain_type_t<Vec>>& x_ref = x;
   plain_type_t<Vec> y(ret_size);
   if (y.size() == 0) {
     return y;
   }
   auto stick_len = x[Km1];
-  for (auto k = Km1 - 1; k > -1; k--) {
-    stick_len += x[k];
-    auto z_k = x[k] / stick_len;
+  for (int k = Km1 - 1; k > -1; k--) {
+    stick_len += x_ref[k];
+    auto z_k = x_ref[k] / stick_len;
     y[k] = logit(z_k) + log(Km1 - k);
     // note: log(Km1 - k) = logit(1.0 / (Km1 + 1 - k));
   }

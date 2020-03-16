@@ -30,10 +30,11 @@ auto simplex_constrain(Vec&& y) {
   // cut & paste simplex_constrain(Eigen::Matrix, T) w/o Jacobian
   using std::log;
   const auto Km1 = y.size();
+  const Eigen::Ref<const plain_type_t<Vec>>& y_ref = y;
   plain_type_t<Vec> x(Km1 + 1);
   value_type_t<Vec> stick_len(1.0);
-  for (auto k = 0; k < Km1; ++k) {
-    const auto z_k = inv_logit(y[k] - log(Km1 - k));
+  for (int k = 0; k < Km1; ++k) {
+    const auto z_k = inv_logit(y_ref[k] - log(Km1 - k));
     x[k] = stick_len * z_k;
     stick_len -= x[k];
   }
@@ -49,7 +50,7 @@ auto simplex_constrain(Vec&& y) {
  * The simplex transform is defined through a centered
  * stick-breaking process.
  *
- * @tparam Vec type deriving from `Eigen::MatgrixBase` with rows or columns
+ * @tparam Vec type deriving from `Eigen::MatrixBase` with rows or columns
  * equal to 1.
  * @tparam T type of log probability.
  * @param y Free vector input of dimensionality K - 1.
@@ -59,13 +60,13 @@ auto simplex_constrain(Vec&& y) {
 template <typename Vec, typename T, require_eigen_vector_t<Vec>* = nullptr>
 auto simplex_constrain(Vec&& y, T& lp) {
   using std::log;
-
   const auto Km1 = y.size();  // K = Km1 + 1
+  const Eigen::Ref<const plain_type_t<Vec>>& y_ref = y;
   plain_type_t<Vec> x(Km1 + 1);
   value_type_t<Vec> stick_len(1.0);
-  for (auto k = 0; k < Km1; ++k) {
+  for (int k = 0; k < Km1; ++k) {
     const auto eq_share = -log(Km1 - k);  // = logit(1.0/(Km1 + 1 - k));
-    const auto adj_y_k = y[k] + eq_share;
+    const auto adj_y_k = y_ref[k] + eq_share;
     const auto z_k = inv_logit(adj_y_k);
     x[k] = stick_len * z_k;
     lp += log(stick_len);
