@@ -42,7 +42,7 @@ namespace math {
  *   the upper bound, y is less than the lower bound, or y is
  *   greater than the upper bound
  */
-template <typename T, typename L, typename U>
+template <typename T, typename L, typename U, require_stan_scalar_t<T>* = nullptr>
 inline auto lub_free(T&& y, const L& lb, const U& ub) {
   check_bounded<T, L, U>("lub_free", "Bounded variable", y, lb, ub);
   if (lb == NEGATIVE_INFTY) {
@@ -51,8 +51,38 @@ inline auto lub_free(T&& y, const L& lb, const U& ub) {
   if (ub == INFTY) {
     return identity_constrain(lb_free(std::forward<T>(y), lb), ub);
   }
-  return logit((std::forward<T>(y) - lb) / (ub - lb));
+  return logit((y - lb) / (ub - lb));
 }
+
+template <typename T, typename L, typename U, require_eigen_t<T>* = nullptr>
+inline auto lub_free(T&& y, const L& lb, const U& ub) {
+  check_bounded<T, L, U>("lub_free", "Bounded variable", y, lb, ub);
+  if (lb == NEGATIVE_INFTY) {
+    return identity_constrain(ub_free(std::forward<T>(y), ub), lb);
+  }
+  if (ub == INFTY) {
+    return identity_constrain(lb_free(std::forward<T>(y), lb), ub);
+  }
+  return logit((y.array() - lb) / (ub - lb)).matrix().eval();
+}
+
+template <typename T, typename L, typename U, require_std_vector_t<T>* = nullptr>
+inline auto lub_free(T&& y, const L& lb, const U& ub) {
+  check_bounded<T, L, U>("lub_free", "Bounded variable", y, lb, ub);
+  if (lb == NEGATIVE_INFTY) {
+    return identity_constrain(ub_free(std::forward<T>(y), ub), lb);
+  }
+  if (ub == INFTY) {
+    return identity_constrain(lb_free(std::forward<T>(y), lb), ub);
+  }
+  std::vector<return_type_t<T, L, U>> y_ret(y.size());
+  const auto ub_lb_diff = ub - lb;
+  for (int i = 0; i < y.size(); ++i) {
+    y_ret[i] = logit((y[i] - lb) / ub_lb_diff);
+  }
+  return y_ret;
+}
+
 
 }  // namespace math
 }  // namespace stan
