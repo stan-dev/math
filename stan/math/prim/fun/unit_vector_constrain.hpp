@@ -28,7 +28,7 @@ auto unit_vector_constrain(Vec&& x) {
   check_nonzero_size("unit_vector_constrain", "x", x);
   value_type_t<Vec> SN = dot_self(x);
   check_positive_finite("unit_vector_constrain", "norm", SN);
-  return divide(x, sqrt(SN));
+  return divide(std::forward<Vec>(x), sqrt(SN));
 }
 
 /**
@@ -49,7 +49,7 @@ auto unit_vector_constrain(Vec&& x, T& lp) {
   value_type_t<Vec> SN = dot_self(x);
   check_positive_finite("unit_vector_constrain", "norm", SN);
   lp -= 0.5 * SN;
-  return divide(x, sqrt(SN));
+  return divide(std::forward<Vec>(x), sqrt(SN));
 }
 
 }  // namespace math

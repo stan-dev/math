@@ -43,15 +43,15 @@ namespace math {
  *   greater than the upper bound
  */
 template <typename T, typename L, typename U>
-inline return_type_t<T, L, U> lub_free(const T& y, const L& lb, const U& ub) {
+inline auto lub_free(T&& y, const L& lb, const U& ub) {
   check_bounded<T, L, U>("lub_free", "Bounded variable", y, lb, ub);
   if (lb == NEGATIVE_INFTY) {
-    return ub_free(y, ub);
+    return identity_constrain(ub_free(std::forward<T>(y), ub), lb);
   }
   if (ub == INFTY) {
-    return lb_free(y, lb);
+    return identity_constrain(lb_free(std::forward<T>(y), lb), ub);
   }
-  return logit((y - lb) / (ub - lb));
+  return logit((std::forward<T>(y) - lb) / (ub - lb));
 }
 
 }  // namespace math

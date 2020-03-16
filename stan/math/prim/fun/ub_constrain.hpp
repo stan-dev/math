@@ -61,8 +61,10 @@ inline auto ub_constrain(T&& x, U&& ub) {
  */
 template <typename EigT, typename U, require_eigen_t<EigT>* = nullptr>
 inline auto ub_constrain(EigT&& x, U&& ub) {
-  return x.unaryExpr([&ub](auto&& x_iter) { return ub_constrain(x_iter, ub); })
-      .eval();
+  if (ub == INFTY) {
+    return identity_constrain(std::forward<EigT>(x), ub);
+  }
+  return (ub - x.array().exp()).matrix().eval();
 }
 
 /**
@@ -86,9 +88,12 @@ inline auto ub_constrain(EigT&& x, U&& ub) {
  */
 template <typename Vec, typename U, require_std_vector_t<Vec>* = nullptr>
 inline auto ub_constrain(Vec&& x, U&& ub) {
+  if (ub == INFTY) {
+    return identity_constrain(std::forward<Vec>(x), ub);
+  }
   std::vector<return_type_t<Vec, U>> ret_x(x.size());
   std::transform(x.begin(), x.end(), ret_x.begin(),
-                 [&ub](auto&& x_iter) { return ub_constrain(x_iter, ub); });
+                 [&ub](auto&& x_iter) { return ub - exp(x_iter); });
   return ret_x;
 }
 
@@ -154,10 +159,11 @@ inline auto ub_constrain(T&& x, U&& ub, S& lp) {
 template <typename EigT, typename U, typename S,
           require_eigen_t<EigT>* = nullptr>
 inline auto ub_constrain(EigT&& x, U& ub, S& lp) {
-  return x
-      .unaryExpr(
-          [&ub, &lp](auto&& x_iter) { return ub_constrain(x_iter, ub, lp); })
-      .eval();
+  if (ub == INFTY) {
+    return identity_constrain(std::forward<EigT>(x), ub);
+  }
+  lp += x.sum();
+  return ub_constrain(std::forward<EigT>(x), ub);
 }
 
 /**
@@ -187,11 +193,11 @@ inline auto ub_constrain(EigT&& x, U& ub, S& lp) {
 template <typename Vec, typename U, typename S,
           require_std_vector_t<Vec>* = nullptr>
 inline auto ub_constrain(Vec&& x, U&& ub, S& lp) {
-  std::vector<return_type_t<Vec, U>> ret_x(x.size());
-  std::transform(x.begin(), x.end(), ret_x.begin(), [&ub, &lp](auto&& x_iter) {
-    return ub_constrain(x_iter, ub, lp);
-  });
-  return ret_x;
+  if (ub == INFTY) {
+    return identity_constrain(std::forward<Vec>(x), ub);
+  }
+  lp += sum(x);
+  return ub_constrain(std::forward<Vec>(x), ub);
 }
 
 }  // namespace math

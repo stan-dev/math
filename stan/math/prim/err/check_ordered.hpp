@@ -23,7 +23,7 @@ namespace math {
  */
 template <typename Vec, require_vector_like_t<Vec>* = nullptr>
 inline void check_ordered(const char* function, const char* name, Vec&& y) {
-  for (auto n = 1; n < y.size(); n++) {
+  for (int n = 1; n < y.size(); n++) {
     if (!(y[n] > y[n - 1])) {
       std::ostringstream msg1;
       msg1 << "is not a valid ordered vector."

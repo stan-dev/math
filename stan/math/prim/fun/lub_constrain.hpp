@@ -44,16 +44,16 @@ namespace math {
  * @throw std::domain_error if ub <= lb
  */
 template <typename T, typename L, typename U>
-inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
+inline auto lub_constrain(T&& x, const L& lb,
                                             const U& ub) {
   check_less("lub_constrain", "lb", lb, ub);
   if (lb == NEGATIVE_INFTY) {
-    return ub_constrain(x, ub);
+    return identity_constrain(ub_constrain(std::forward<T>(x), ub), lb);
   }
   if (ub == INFTY) {
-    return lb_constrain(x, lb);
+    return identity_constrain(lb_constrain(std::forward<T>(x), lb), ub);
   }
-  return fma(ub - lb, inv_logit(x), lb);
+  return fma(ub - lb, inv_logit(std::forward<T>(x)), lb);
 }
 
 /**
@@ -97,25 +97,111 @@ inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
  *   the free scalar.
  * @throw std::domain_error if ub <= lb
  */
-template <typename T, typename L, typename U, typename S>
-inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
+template <typename T, typename L, typename U, typename S, require_stan_scalar_t<T>* = nullptr>
+inline auto lub_constrain(const T& x, const L& lb,
                                             const U& ub, S& lp) {
   using std::exp;
   using std::log;
   check_less("lub_constrain", "lb", lb, ub);
   if (lb == NEGATIVE_INFTY) {
-    return ub_constrain(x, ub, lp);
+    return identity_constrain(ub_constrain(x, ub, lp), lb);
   }
   if (ub == INFTY) {
-    return lb_constrain(x, lb, lp);
+    return identity_constrain(lb_constrain(x, lb, lp), ub);
   }
-  T inv_logit_x = inv_logit(x);
+  const T inv_logit_x = inv_logit(x);
   if (x > 0) {
-    T exp_minus_x = exp(-x);
+    const T exp_minus_x = exp(-x);
     lp += log(ub - lb) - x - 2 * log1p(exp_minus_x);
   } else {
-    T exp_x = exp(x);
+    const T exp_x = exp(x);
     lp += log(ub - lb) + x - 2 * log1p(exp_x);
+  }
+  return fma(ub - lb, inv_logit_x, lb);
+}
+
+/**
+ * Return the lower- and upper-bounded Eigen matrix derived by
+ * transforming the specified free matrix given the specified
+ * lower and upper bounds and increment the specified log
+ * density with the log absolute Jacobian determinant.
+ *
+ *  The transform is as defined in
+ * `lub_constrain(T, double, double)`.
+ *
+ * @tparam EigT Type derived from `Eigen::EigenBase`.
+ * @tparam L Type of lower bound.
+ * @tparam U Type of upper bound.
+ * @param[in] x Free Eigen Matrix to transform.
+ * @param[in] lb Lower bound.
+ * @param[in] ub Upper bound.
+ * @param[in,out] lp Log probability scalar reference.
+ * @return Lower- and upper-bounded scalar derived from transforming
+ *   the free scalar.
+ * @throw std::domain_error if ub <= lb
+ */
+template <typename EigT, typename L, typename U, typename S, require_eigen_t<EigT>* = nullptr>
+inline auto lub_constrain(EigT&& x, const L& lb, const U& ub, S& lp) {
+  using std::exp;
+  using std::log;
+  check_less("lub_constrain", "lb", lb, ub);
+  if (lb == NEGATIVE_INFTY) {
+    return identity_constrain(ub_constrain(std::forward<EigT>(x), ub, lp), lb);
+  }
+  if (ub == INFTY) {
+    return identity_constrain(lb_constrain(std::forward<EigT>(x), lb, lp), ub);
+  }
+  const auto inv_logit_x = inv_logit(x);
+  const auto log_lub_diff = log(ub - lb);
+  for (int i = 0; i < x.size(); ++i) {
+    if (x(i) > 0) {
+      lp += log_lub_diff - x(i) - 2 * log1p(exp(-x(i)));
+    } else {
+      lp += log_lub_diff + x(i) - 2 * log1p(exp(x(i)));
+    }
+  }
+  return fma(ub - lb, inv_logit_x, lb);
+}
+
+/**
+ * Return the lower- and upper-bounded Eigen matrix derived by
+ * transforming the specified free matrix given the specified
+ * lower and upper bounds and increment the specified log
+ * density with the log absolute Jacobian determinant.
+ *
+ *  The transform is as defined in
+ * `lub_constrain(T, double, double)`.
+ *
+ * @tparam EigT Type derived from `Eigen::EigenBase`.
+ * @tparam L Type of lower bound.
+ * @tparam U Type of upper bound.
+ * @param[in] x Free Eigen Matrix to transform.
+ * @param[in] lb Lower bound.
+ * @param[in] ub Upper bound.
+ * @param[in,out] lp Log probability scalar reference.
+ * @return Lower- and upper-bounded scalar derived from transforming
+ *   the free scalar.
+ * @throw std::domain_error if ub <= lb
+ */
+template <typename Vec, typename L, typename U, typename S, require_std_vector_t<Vec>* = nullptr>
+inline auto lub_constrain(Vec&& x, const L& lb, const U& ub, S& lp) {
+  using std::exp;
+  using std::log;
+  check_less("lub_constrain", "lb", lb, ub);
+  if (lb == NEGATIVE_INFTY) {
+    return identity_constrain(ub_constrain(std::forward<Vec>(x), ub, lp), lb);
+  }
+  if (ub == INFTY) {
+    return identity_constrain(lb_constrain(std::forward<Vec>(x), lb, lp), ub);
+  }
+  const auto inv_logit_x = inv_logit(x);
+  const auto log_lub_diff = log(ub - lb);
+  for (int i = 0; i < x.size(); ++i) {
+    if (x[i] > 0) {
+      lp += log_lub_diff - x[i] - 2 * log1p(exp(-x[i]));
+    } else {
+      lp += log_lub_diff + x[i] - 2 * log1p(exp(x[i]));
+    }
   }
   return fma(ub - lb, inv_logit_x, lb);
 }
