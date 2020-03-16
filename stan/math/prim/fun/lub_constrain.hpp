@@ -44,7 +44,8 @@ namespace math {
  * @throw std::domain_error if ub <= lb
  */
 template <typename T, typename L, typename U>
-inline auto lub_constrain(T&& x, const L& lb, const U& ub) {
+inline auto lub_constrain(T&& x, const L& lb,
+                                            const U& ub) {
   check_less("lub_constrain", "lb", lb, ub);
   if (lb == NEGATIVE_INFTY) {
     return identity_constrain(ub_constrain(std::forward<T>(x), ub), lb);
@@ -96,9 +97,9 @@ inline auto lub_constrain(T&& x, const L& lb, const U& ub) {
  *   the free scalar.
  * @throw std::domain_error if ub <= lb
  */
-template <typename T, typename L, typename U, typename S,
-          require_stan_scalar_t<T>* = nullptr>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub, S& lp) {
+template <typename T, typename L, typename U, typename S, require_stan_scalar_t<T>* = nullptr>
+inline auto lub_constrain(const T& x, const L& lb,
+                                            const U& ub, S& lp) {
   using std::exp;
   using std::log;
   check_less("lub_constrain", "lb", lb, ub);
@@ -139,8 +140,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub, S& lp) {
  *   the free scalar.
  * @throw std::domain_error if ub <= lb
  */
-template <typename EigT, typename L, typename U, typename S,
-          require_eigen_t<EigT>* = nullptr>
+template <typename EigT, typename L, typename U, typename S, require_eigen_t<EigT>* = nullptr>
 inline auto lub_constrain(EigT&& x, const L& lb, const U& ub, S& lp) {
   using std::exp;
   using std::log;
@@ -164,15 +164,15 @@ inline auto lub_constrain(EigT&& x, const L& lb, const U& ub, S& lp) {
 }
 
 /**
- * Return the lower- and upper-bounded Eigen matrix derived by
- * transforming the specified free matrix given the specified
+ * Return the lower- and upper-bounded standard vector derived by
+ * transforming the specified free vector given the specified
  * lower and upper bounds and increment the specified log
  * density with the log absolute Jacobian determinant.
  *
  *  The transform is as defined in
  * `lub_constrain(T, double, double)`.
  *
- * @tparam EigT Type derived from `Eigen::EigenBase`.
+ * @tparam Vec Type derived from `Eigen::EigenBase`.
  * @tparam L Type of lower bound.
  * @tparam U Type of upper bound.
  * @param[in] x Free Eigen Matrix to transform.
@@ -183,8 +183,7 @@ inline auto lub_constrain(EigT&& x, const L& lb, const U& ub, S& lp) {
  *   the free scalar.
  * @throw std::domain_error if ub <= lb
  */
-template <typename Vec, typename L, typename U, typename S,
-          require_std_vector_t<Vec>* = nullptr>
+template <typename Vec, typename L, typename U, typename S, require_std_vector_t<Vec>* = nullptr>
 inline auto lub_constrain(Vec&& x, const L& lb, const U& ub, S& lp) {
   using std::exp;
   using std::log;
