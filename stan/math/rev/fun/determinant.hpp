@@ -52,7 +52,7 @@ inline var determinant(const T& m) {
   }
 
   return {new internal::determinant_vari<T::RowsAtCompileTime,
-                                            T::ColsAtCompileTime>(m)};
+                                         T::ColsAtCompileTime>(m)};
 }
 
 }  // namespace math

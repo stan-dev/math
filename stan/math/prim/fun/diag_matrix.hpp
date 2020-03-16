@@ -11,8 +11,8 @@ namespace math {
  * Return a square diagonal matrix with the specified vector of
  * coefficients as the diagonal values.
  *
- * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile time dimmension equal to 1)
+ * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase
+ * and have one compile time dimmension equal to 1)
  * @param[in] v Specified vector.
  * @return Diagonal matrix with vector as diagonal values.
  */

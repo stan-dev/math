@@ -39,8 +39,8 @@ inline std::vector<T> cumulative_sum(const std::vector<T>& x) {
  *
  * \code x(0), x(1) + x(2), ..., x(1) + , ..., + x(x.size()-1) @endcode
  *
- * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile time dimension equal to 1)
+ * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase
+ * and have one compile time dimension equal to 1)
  *
  * @param m Vector of values.
  * @return Cumulative sum of values.
@@ -48,8 +48,8 @@ inline std::vector<T> cumulative_sum(const std::vector<T>& x) {
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
 inline auto cumulative_sum(const EigVec& m) {
   using T_scalar = value_type_t<EigVec>;
-  Eigen::Matrix<T_scalar, EigVec::RowsAtCompileTime, EigVec::ColsAtCompileTime> result(
-      m.rows(), m.cols());
+  Eigen::Matrix<T_scalar, EigVec::RowsAtCompileTime, EigVec::ColsAtCompileTime>
+      result(m.rows(), m.cols());
   if (m.size() == 0) {
     return result;
   }
