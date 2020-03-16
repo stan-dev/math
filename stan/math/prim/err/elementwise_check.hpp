@@ -27,17 +27,6 @@ class Checker {
   const char* name;
   const char* suffix;
 
- public:
-  /**
-   * @param is_good predicate to check, must accept doubles and produce bools
-   * @param function function name (for error messages)
-   * @param name variable name (for error messages)
-   * @param suffix message to print at end of error message
-   */
-  Checker(const F& is_good, const char* function, const char* name,
-          const char* suffix)
-      : is_good(is_good), function(function), name(name), suffix(suffix) {}
-
   /**
    * Throw an exception of type `E`.
    * The error message is the string inside the provided stringstream.
@@ -76,6 +65,17 @@ class Checker {
     std::stringstream ss{};
     raise_error_ss(ss, messages...);
   }
+
+ public:
+  /**
+   * @param is_good predicate to check, must accept doubles and produce bools
+   * @param function function name (for error messages)
+   * @param name variable name (for error messages)
+   * @param suffix message to print at end of error message
+   */
+  Checker(const F& is_good, const char* function, const char* name,
+          const char* suffix)
+      : is_good(is_good), function(function), name(name), suffix(suffix) {}
 
   /**
    * Check the scalar.
