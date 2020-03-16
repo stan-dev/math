@@ -23,7 +23,7 @@ namespace math {
  * This is equivalent to and faster than ordered_logistic_lpmf(y, x * beta,
  * cuts).
  * This is an overload of the GLM in
- * prim/mar/prob/ordered_logistic_glm_lpmf.hpp that is implemented in OpenCL.
+ * prim/prob/ordered_logistic_glm_lpmf.hpp that is implemented in OpenCL.
  *
  * @tparam T_beta_scalar type of a scalar in the vector of weights
  * @tparam T_cuts_scalar type of a scalar in the vector of cutpoints

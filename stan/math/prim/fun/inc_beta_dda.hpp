@@ -16,7 +16,7 @@ namespace math {
 /**
  * Returns the partial derivative of the regularized
  * incomplete beta function, I_{z}(a, b) with respect to a.
- * The power series used to compute the deriative tends to
+ * The power series used to compute the derivative tends to
  * converge slowly when a and b are large, especially if z
  * approaches 1.  The implementation will throw an exception
  * if the series have not converged within 100,000 iterations.
@@ -68,7 +68,7 @@ T inc_beta_dda(T a, T b, T z, T digamma_a, T digamma_ab) {
 
   digamma_a += inv(a);  // Need digamma(a + 1), not digamma(a);
 
-  // Common prefactor to regularize numerator and denomentator
+  // Common prefactor to regularize numerator and denominator
   T prefactor = pow(a_plus_1 / a_plus_b, 3);
 
   T sum_numer = (digamma_ab - digamma_a) * prefactor;

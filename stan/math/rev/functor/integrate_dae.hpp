@@ -27,7 +27,7 @@ namespace math {
  * @param[in] theta parameters
  * @param[in] x_r real data
  * @param[in] x_i int data
- * @param[in] rtol relative tolerance passed to IDAS, requred <10^-3
+ * @param[in] rtol relative tolerance passed to IDAS, required <10^-3
  * @param[in] atol absolute tolerance passed to IDAS, problem-dependent
  * @param[in] max_num_steps maximal number of admissable steps
  * between time-points

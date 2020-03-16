@@ -129,7 +129,7 @@ inline var operator-(var a, Arith b) {
  * @tparam Arith An arithmetic type
  * @param a First scalar operand.
  * @param b Second variable operand.
- * @return Result of sutracting a variable from a scalar.
+ * @return Result of subtracting a variable from a scalar.
  */
 template <typename Arith, require_arithmetic_t<Arith>...>
 inline var operator-(Arith a, var b) {

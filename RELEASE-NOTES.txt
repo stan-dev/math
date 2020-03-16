@@ -9,6 +9,8 @@ v3.2.0 (pending)
 metaprograms to deal with complex numbers and added a real_return program
 and helper metaprograms for intermediate and return types.
 
+Miscellaneous doxygen documentation cleanup.
+
 ======================================================================
 v3.1.0 (24 January 2020)
 ======================================================================

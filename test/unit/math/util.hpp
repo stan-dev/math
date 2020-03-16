@@ -10,7 +10,7 @@ namespace test {
 
 /**
  * Return the Eigen vector with the same size and elements as the
- * specified standard vector.  Elements are copied from the specifed
+ * specified standard vector.  Elements are copied from the specified
  * input vector.
  *
  * @tparam T type of scalars in containers

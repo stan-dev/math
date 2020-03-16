@@ -16,9 +16,46 @@ namespace test {
 namespace internal {
 
 /**
- * Evaluates expression. A no-op for scalars.
- * @tparam T nested type of fvar
- * @param x value
+ * Evaluates nested matrix template expressions, which is a no-op for
+ * arithmetic arguments.
+ *
+ * @tparam T arithmetic type
+ * @param[in] x value
+ * @return value
+ */
+template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+auto eval(T x) {
+  return x;
+}
+
+/**
+ * Evaluates nested matrix template expressions, which is a no-op for
+ * complex arguments.
+ *
+ * @tparam T complex value type
+ * @param x[in] value
+ * @return value
+ */
+template <typename T>
+auto eval(const std::complex<T>& x) {
+  return x;
+}
+
+/**
+ * Evaluates all nested matrix expression templates, which is a no-op for
+ * reverse-mode autodiff variables.
+ *
+ * @param[in] x value
+ * @return value
+ */
+auto eval(const stan::math::var& x) { return x; }
+
+/**
+ * Evaluates all matrix expression templates, which is a no-op for
+ * forward-mode autodiff variables.
+ *
+ * @tparam T value type of fvar
+ * @param[in] x value
  * @return value
  */
 template <typename T>
@@ -27,28 +64,9 @@ auto eval(const stan::math::fvar<T>& x) {
 }
 
 /**
- * Evaluates expression. A no-op for scalars.
- * @param x value
- * @return value
- */
-auto eval(const stan::math::var& x) { return x; }
-
-/**
- * Evaluates expression. A no-op for scalars.
- * @param x value
- * @return value
- */
-auto eval(double x) { return x; }
-
-/**
- * Evaluates expression. A no-op for scalars.
- * @param x value
- * @return value
- */
-auto eval(int x) { return x; }
-
-/**
- * Evaluates expression.
+ * Evaluates all nested matrix expression templates, which evaluates
+ * the specified derived matrix.
+ *
  * @tparam Derived derived type of the expression
  * @param x expression
  * @return evaluated expression
@@ -57,11 +75,13 @@ template <typename Derived>
 auto eval(const Eigen::EigenBase<Derived>& x) {
   return x.derived().eval();
 }
+
 /**
- * Evaluates expressions in a \c std::vector.
- * @tparam T type of \c std::vector elements
- * @param x a \c std::vector of expressions
- * @return a \cstd::vector of evaluated expressions
+ * Evaluates all nested matrix expression templates elementwise.
+ *
+ * @tparam T type of elements
+ * @param[in] x vector of expressions
+ * @return vector of evaluated expressions
  */
 template <typename T>
 auto eval(const std::vector<T>& x) {
@@ -389,7 +409,7 @@ void expect_all_throw(const F& f, double x1, double x2) {
 
 /**
  * Succeeds if the specified function applied to the specified
- * argument thorws an exception at every level of autodiff.
+ * argument throws an exception at every level of autodiff.
  *
  * @tparam F type of function
  * @param f function to evaluate
