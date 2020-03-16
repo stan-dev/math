@@ -94,11 +94,11 @@ class squared_distance_vd_vari : public vari {
   template <typename EigVecVar, typename EigVecArith,
             require_eigen_vector_vt<is_var, EigVecVar>* = nullptr,
             require_eigen_vector_vt<std::is_arithmetic, EigVecArith>* = nullptr>
-  squared_distance_vd_vari(const EigVecVar& v1,
-                           const EigVecArith& v2)
+  squared_distance_vd_vari(const EigVecVar& v1, const EigVecArith& v2)
       : vari((as_column_vector_or_scalar(v1).val()
               - as_column_vector_or_scalar(v2))
-                 .squaredNorm()), length_(v1.size()) {
+                 .squaredNorm()),
+        length_(v1.size()) {
     v1_ = reinterpret_cast<vari**>(
         ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
     v2_ = reinterpret_cast<double*>(
