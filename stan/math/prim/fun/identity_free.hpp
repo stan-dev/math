@@ -37,65 +37,70 @@ inline decltype(auto) identity_free(Scalar&& x) {
  * @param[in] x value
  * @return value promoted to the least upper bound of all input types.
  */
- template <typename Scalar, typename... Types,
-           require_all_stan_scalar_t<Scalar, Types...>* = nullptr>
- inline auto identity_free(Scalar&& x, Types&&... args) {
-   return return_type_t<Scalar, Types...>(x);
- }
+template <typename Scalar, typename... Types,
+          require_all_stan_scalar_t<Scalar, Types...>* = nullptr>
+inline auto identity_free(Scalar&& x, Types&&... args) {
+  return return_type_t<Scalar, Types...>(x);
+}
 
- /**
-  * Specialization for when a containers return type is the same as the input.
-  *
-  * This function is for N-ary op functions to make sure type promotion happens
-  * correctly, thus allowing the use of auto.
-  *
-  * @tparam Container type of container
-  * @tparam Types The N-ary op argument types to deduce the return type from.
-  * @param[in] x value
-  * @return value promoted to the least upper bound of all input types.
-  */
- template <typename Container, typename... Types, require_container_t<Container>* = nullptr,
-  require_same_t<return_type_t<Container, Types...>, return_type_t<Container>>* = nullptr>
- inline decltype(auto) identity_free(Container&& x, Types&&... args) {
-   return std::forward<Container>(x);
- }
+/**
+ * Specialization for when a containers return type is the same as the input.
+ *
+ * This function is for N-ary op functions to make sure type promotion happens
+ * correctly, thus allowing the use of auto.
+ *
+ * @tparam Container type of container
+ * @tparam Types The N-ary op argument types to deduce the return type from.
+ * @param[in] x value
+ * @return value promoted to the least upper bound of all input types.
+ */
+template <typename Container, typename... Types,
+          require_container_t<Container>* = nullptr,
+          require_same_t<return_type_t<Container, Types...>,
+                         return_type_t<Container>>* = nullptr>
+inline decltype(auto) identity_free(Container&& x, Types&&... args) {
+  return std::forward<Container>(x);
+}
 
- /**
-  * Returns the result of applying the inverse of the identity
-  * constraint transform to the input.
-  *
-  * This function is for N-ary op functions to make sure type promotion happens
-  * correctly, thus allowing the use of auto.
-  *
-  * @tparam EigT type derived from `Eigen::EigenBase`
-  * @tparam Types The N-ary op argument types to deduce the return type from.
-  * @param[in] x value
-  * @return value promoted to the least upper bound of all input types.
-  */
- template <typename EigT, typename... Types, require_eigen_t<EigT>* = nullptr,
- require_not_same_t<return_type_t<EigT, Types...>, return_type_t<EigT>>* = nullptr>
- inline auto identity_free(EigT&& x, Types&&... args) {
-   return x.template cast<return_type_t<EigT, Types...>>().eval();
- }
+/**
+ * Returns the result of applying the inverse of the identity
+ * constraint transform to the input.
+ *
+ * This function is for N-ary op functions to make sure type promotion happens
+ * correctly, thus allowing the use of auto.
+ *
+ * @tparam EigT type derived from `Eigen::EigenBase`
+ * @tparam Types The N-ary op argument types to deduce the return type from.
+ * @param[in] x value
+ * @return value promoted to the least upper bound of all input types.
+ */
+template <typename EigT, typename... Types, require_eigen_t<EigT>* = nullptr,
+          require_not_same_t<return_type_t<EigT, Types...>,
+                             return_type_t<EigT>>* = nullptr>
+inline auto identity_free(EigT&& x, Types&&... args) {
+  return x.template cast<return_type_t<EigT, Types...>>().eval();
+}
 
- /**
-  * Returns the result of applying the inverse of the identity
-  * constraint transform to the input.
-  *
-  * This function is for N-ary op functions to make sure type promotion happens
-  * correctly, thus allowing the use of auto.
-  *
-  *
-  * @tparam StdVec a stanard vector.
-  * @tparam Types The N-ary op argument types to deduce the return type from.
-  * @param[in] x value
-  * @return value promoted to the least upper bound of all input types.
-  */
- template <typename StdVec, typename... Types, require_std_vector_t<StdVec>* = nullptr,
- require_not_same_t<return_type_t<StdVec, Types...>, return_type_t<StdVec>>* = nullptr>
- inline auto identity_free(StdVec&& x, Types&&... args) {
-   return std::vector<return_type_t<StdVec, Types...>>(x.begin(), x.end());
- }
+/**
+ * Returns the result of applying the inverse of the identity
+ * constraint transform to the input.
+ *
+ * This function is for N-ary op functions to make sure type promotion happens
+ * correctly, thus allowing the use of auto.
+ *
+ *
+ * @tparam StdVec a stanard vector.
+ * @tparam Types The N-ary op argument types to deduce the return type from.
+ * @param[in] x value
+ * @return value promoted to the least upper bound of all input types.
+ */
+template <typename StdVec, typename... Types,
+          require_std_vector_t<StdVec>* = nullptr,
+          require_not_same_t<return_type_t<StdVec, Types...>,
+                             return_type_t<StdVec>>* = nullptr>
+inline auto identity_free(StdVec&& x, Types&&... args) {
+  return std::vector<return_type_t<StdVec, Types...>>(x.begin(), x.end());
+}
 
 }  // namespace math
 }  // namespace stan

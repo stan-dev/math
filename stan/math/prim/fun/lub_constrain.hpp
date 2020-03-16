@@ -44,8 +44,7 @@ namespace math {
  * @throw std::domain_error if ub <= lb
  */
 template <typename T, typename L, typename U>
-inline auto lub_constrain(T&& x, const L& lb,
-                                            const U& ub) {
+inline auto lub_constrain(T&& x, const L& lb, const U& ub) {
   check_less("lub_constrain", "lb", lb, ub);
   if (lb == NEGATIVE_INFTY) {
     return identity_constrain(ub_constrain(std::forward<T>(x), ub), lb);
@@ -97,9 +96,9 @@ inline auto lub_constrain(T&& x, const L& lb,
  *   the free scalar.
  * @throw std::domain_error if ub <= lb
  */
-template <typename T, typename L, typename U, typename S, require_stan_scalar_t<T>* = nullptr>
-inline auto lub_constrain(const T& x, const L& lb,
-                                            const U& ub, S& lp) {
+template <typename T, typename L, typename U, typename S,
+          require_stan_scalar_t<T>* = nullptr>
+inline auto lub_constrain(const T& x, const L& lb, const U& ub, S& lp) {
   using std::exp;
   using std::log;
   check_less("lub_constrain", "lb", lb, ub);
@@ -140,7 +139,8 @@ inline auto lub_constrain(const T& x, const L& lb,
  *   the free scalar.
  * @throw std::domain_error if ub <= lb
  */
-template <typename EigT, typename L, typename U, typename S, require_eigen_t<EigT>* = nullptr>
+template <typename EigT, typename L, typename U, typename S,
+          require_eigen_t<EigT>* = nullptr>
 inline auto lub_constrain(EigT&& x, const L& lb, const U& ub, S& lp) {
   using std::exp;
   using std::log;
@@ -183,7 +183,8 @@ inline auto lub_constrain(EigT&& x, const L& lb, const U& ub, S& lp) {
  *   the free scalar.
  * @throw std::domain_error if ub <= lb
  */
-template <typename Vec, typename L, typename U, typename S, require_std_vector_t<Vec>* = nullptr>
+template <typename Vec, typename L, typename U, typename S,
+          require_std_vector_t<Vec>* = nullptr>
 inline auto lub_constrain(Vec&& x, const L& lb, const U& ub, S& lp) {
   using std::exp;
   using std::log;
