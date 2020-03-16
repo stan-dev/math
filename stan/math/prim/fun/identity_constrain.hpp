@@ -45,16 +45,20 @@ inline auto identity_constrain(Scalar&& x, Types&&... args) {
  * Returns the result of applying the identity constraint
  * transform to the input.
  *
- * This method is used for constrained types where x and the constrain do not differ in type.
+ * This method is used for constrained types where x and the constrain do not
+ * differ in type.
  *
- * @tparam Container Either a type derived from `Eigen::EigenBase` or a standard vector.
+ * @tparam Container Either a type derived from `Eigen::EigenBase` or a standard
+ * vector.
  * @tparam Types Types to check for promotion rules
  * @param[in] x a container
  * @param[in] args values to check for promotion rules.
  * @return returns the input `x`
  */
-template <typename Container, typename... Types, require_container_t<Container>* = nullptr,
- require_same_t<return_type_t<Container, Types...>, return_type_t<Container>>* = nullptr>
+template <typename Container, typename... Types,
+          require_container_t<Container>* = nullptr,
+          require_same_t<return_type_t<Container, Types...>,
+                         return_type_t<Container>>* = nullptr>
 inline decltype(auto) identity_constrain(Container&& x, Types&&... args) {
   return std::forward<Container>(x);
 }
@@ -73,7 +77,8 @@ inline decltype(auto) identity_constrain(Container&& x, Types&&... args) {
  * @return promoted input
  */
 template <typename EigT, typename... Types, require_eigen_t<EigT>* = nullptr,
-require_not_same_t<return_type_t<EigT, Types...>, return_type_t<EigT>>* = nullptr>
+          require_not_same_t<return_type_t<EigT, Types...>,
+                             return_type_t<EigT>>* = nullptr>
 inline auto identity_constrain(EigT&& x, Types&&... args) {
   return x.template cast<return_type_t<EigT, Types...>>().eval();
 }
@@ -91,8 +96,10 @@ inline auto identity_constrain(EigT&& x, Types&&... args) {
  * @param[in] args values to check for promotion rules.
  * @return promoted input
  */
-template <typename StdVec, typename... Types, require_std_vector_t<StdVec>* = nullptr,
-require_not_same_t<return_type_t<StdVec, Types...>, return_type_t<StdVec>>* = nullptr>
+template <typename StdVec, typename... Types,
+          require_std_vector_t<StdVec>* = nullptr,
+          require_not_same_t<return_type_t<StdVec, Types...>,
+                             return_type_t<StdVec>>* = nullptr>
 inline auto identity_constrain(StdVec&& x, Types&&... args) {
   return std::vector<return_type_t<StdVec, Types...>>(x.begin(), x.end());
 }
