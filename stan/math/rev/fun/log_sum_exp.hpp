@@ -7,6 +7,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <cmath>
 #include <vector>
