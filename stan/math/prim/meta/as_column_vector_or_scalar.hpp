@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
+#include <stan/math/prim/meta/is_stan_scalar.hpp>
 #include <vector>
 
 namespace stan {

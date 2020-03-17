@@ -36,6 +36,8 @@ struct is_eigen<
     T, std::enable_if_t<internal::is_eigen_base<std::decay_t<T>>::value>>
     : std::true_type {};
 
+STAN_ADD_REQUIRE_UNARY(eigen, is_eigen);
+
 namespace internal {
 template <typename T>
 struct is_eigen_matrix_impl : std::false_type {};

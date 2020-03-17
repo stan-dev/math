@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_META_IS_STRING_CONVERTIBLE_HPP
 #define STAN_MATH_PRIM_META_IS_STRING_CONVERTIBLE_HPP
 
+#include <stan/math/prim/meta/require_helpers.hpp>
 #include <type_traits>
 #include <string>
 
@@ -12,6 +13,8 @@ namespace stan {
  */
 template <typename T>
 using is_string_convertible = std::is_convertible<T, std::string>;
+
+STAN_ADD_REQUIRE_UNARY(string_convertible, is_string_convertible);
 }  // namespace stan
 
 #endif

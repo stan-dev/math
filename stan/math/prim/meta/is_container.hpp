@@ -5,6 +5,8 @@
 #include <stan/math/prim/meta/disjunction.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
+#include <stan/math/prim/meta/require_helpers.hpp>
+
 #include <type_traits>
 
 namespace stan {
@@ -16,6 +18,8 @@ namespace stan {
 template <typename Container>
 using is_container = bool_constant<
     math::disjunction<is_eigen<Container>, is_std_vector<Container>>::value>;
+
+STAN_ADD_REQUIRE_UNARY(is_container, is_container);
 }  // namespace stan
 
 #endif

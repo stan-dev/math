@@ -17,6 +17,7 @@
 #include <stan/math/prim/meta/include_summand.hpp>
 #include <stan/math/prim/meta/index_type.hpp>
 #include <stan/math/prim/meta/index_apply.hpp>
+#include <stan/math/prim/meta/is_autodiff.hpp>
 #include <stan/math/prim/meta/is_complex.hpp>
 #include <stan/math/prim/meta/is_constant.hpp>
 #include <stan/math/prim/meta/is_container.hpp>
@@ -27,6 +28,7 @@
 #include <stan/math/prim/meta/is_var_or_arithmetic.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
+#include <stan/math/prim/meta/is_stan_scalar.hpp>
 #include <stan/math/prim/meta/likely.hpp>
 #include <stan/math/prim/meta/operands_and_partials.hpp>
 #include <stan/math/prim/meta/partials_return_type.hpp>

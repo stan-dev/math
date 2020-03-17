@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/require_helpers.hpp>
 #include <type_traits>
 #include <vector>
 
@@ -51,6 +52,8 @@ struct is_eigen_row_vector_impl<T, false> : std::false_type {};
 template <typename T>
 struct is_eigen_col_vector : internal::is_eigen_col_vector_impl<T> {};
 
+STAN_ADD_REQUIRE_UNARY(eigen_col_vector, is_eigen_col_vector);
+
 /** \ingroup type_trait
  * If the input type T is an eigen matrix with 1 column at compile time this
  * has a static member with a value of true. Else this has a static
@@ -58,6 +61,8 @@ struct is_eigen_col_vector : internal::is_eigen_col_vector_impl<T> {};
  */
 template <typename T>
 struct is_eigen_row_vector : internal::is_eigen_row_vector_impl<T> {};
+
+STAN_ADD_REQUIRE_UNARY(eigen_row_vector, is_eigen_row_vector);
 
 /** \ingroup type_trait
  * If the input type T is an eigen matrix with 1 column or 1 row at compile time
@@ -68,6 +73,8 @@ template <typename T>
 struct is_eigen_vector : bool_constant<is_eigen_col_vector<T>::value
                                        || is_eigen_row_vector<T>::value> {};
 
+STAN_ADD_REQUIRE_UNARY(eigen_vector, is_eigen_vector);
+
 /** \ingroup type_trait
  * If the input type T is either an eigen matrix with 1 column or 1 row at
  * compile time or a standard vector, this has a static member with a value
@@ -76,6 +83,8 @@ struct is_eigen_vector : bool_constant<is_eigen_col_vector<T>::value
 template <typename T>
 struct is_vector
     : bool_constant<is_eigen_vector<T>::value || is_std_vector<T>::value> {};
+
+STAN_ADD_REQUIRE_UNARY(vector, is_vector);
 
 namespace internal {
 
@@ -101,6 +110,9 @@ template <typename T>
 struct is_std_vector<
     T, std::enable_if_t<internal::is_std_vector_impl<std::decay_t<T>>::value>>
     : std::true_type {};
+
+STAN_ADD_REQUIRE_UNARY(std_vector, is_std_vector);
+
 
 }  // namespace stan
 #endif

@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_META_IS_COMPLEX_HPP
 #define STAN_MATH_PRIM_META_IS_COMPLEX_HPP
 
+#include <stan/math/prim/meta/require_helpers.hpp>
+
 #include <complex>
 #include <type_traits>
 
@@ -38,6 +40,8 @@ template <typename T>
 struct is_complex<
     T, std::enable_if_t<internal::is_complex_impl<std::decay_t<T>>::value>>
     : std::true_type {};
+
+STAN_ADD_REQUIRE_UNARY(complex, is_complex);
 
 }  // namespace stan
 

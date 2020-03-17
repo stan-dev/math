@@ -1,20 +1,17 @@
 #ifndef STAN_MATH_PRIM_META_REQUIRE_GENERICS_HPP
 #define STAN_MATH_PRIM_META_REQUIRE_GENERICS_HPP
 
+#include <stan/math/prim/meta/require_helpers.hpp>
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/is_container.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
-#include <stan/math/prim/meta/is_fvar.hpp>
-#include <stan/math/prim/meta/is_string_convertible.hpp>
-#include <stan/math/prim/meta/is_var.hpp>
-#include <stan/math/prim/meta/is_var_or_arithmetic.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <stan/math/prim/meta/value_type.hpp>
 #include <stan/math/prim/meta/conjunction.hpp>
 #include <stan/math/prim/meta/disjunction.hpp>
-
+#include <stan/math/prim/meta/require_helpers.hpp>
 #include <type_traits>
 #include <string>
 
@@ -24,34 +21,7 @@ namespace stan {
  *  @{
  */
 
-/**
- * Checks if decayed type is a double or integer
- * @tparam The type to check
- */
-template <typename T>
-struct is_double_or_int
-    : bool_constant<
-          math::disjunction<std::is_same<double, std::decay_t<T>>,
-                            std::is_same<int, std::decay_t<T>>>::value> {};
 
-/**
- * Checks if decayed type is a var or fvar
- * @tparam The type to check
- */
-template <typename T>
-struct is_autodiff
-    : bool_constant<math::disjunction<is_var<std::decay_t<T>>,
-                                      is_fvar<std::decay_t<T>>>::value> {};
-
-/**
- * Checks if decayed type is a var, fvar, or arithmetic
- * @tparam The type to check
- */
-template <typename T>
-struct is_stan_scalar
-    : bool_constant<
-          math::disjunction<is_var<std::decay_t<T>>, is_fvar<std::decay_t<T>>,
-                            std::is_arithmetic<std::decay_t<T>>>::value> {};
 
 /**
  * Used as the base for checking whether a type is a container with
@@ -172,399 +142,28 @@ struct is_eigen_vector_scalar_check
 /** \addtogroup require_base_types
  *  @{
  */
-/**
- * If condition is true, template is enabled
- */
-template <class Check>
-using require_t = std::enable_if_t<Check::value>;
 
-/**
- * If condition is false, template is disabled
- */
-template <typename Check>
-using require_not_t = std::enable_if_t<!Check::value>;
+STAN_ADD_REQUIRE_BINARY(same, std::is_same);
+STAN_ADD_REQUIRE_BINARY_SCALAR(same, std::is_same);
+STAN_ADD_REQUIRE_BINARY_VALUE(same, std::is_same);
 
-/**
- * If all conditions are true, template is enabled
- * Returns a type void if all conditions are true and otherwise fails.
- */
-template <class... Checks>
-using require_all_t = std::enable_if_t<math::conjunction<Checks...>::value>;
+STAN_ADD_REQUIRE_BINARY(convertible, std::is_convertible);
+STAN_ADD_REQUIRE_BINARY_SCALAR(convertible, std::is_convertible);
+STAN_ADD_REQUIRE_BINARY_VALUE(convertible, std::is_convertible);
 
-/**
- * If any condition is true, template is enabled.
- *
- * Returns a type void if any of the conditions are true and otherwise fails.
- */
-template <class... Checks>
-using require_any_t = std::enable_if_t<math::disjunction<Checks...>::value>;
+STAN_ADD_REQUIRE_UNARY(arithmetic, std::is_arithmetic);
+STAN_ADD_REQUIRE_UNARY_SCALAR(arithmetic, std::is_arithmetic);
+STAN_ADD_REQUIRE_UNARY_VALUE(arithmetic, std::is_arithmetic);
+STAN_ADD_REQUIRE_UNARY(floating_point, std::is_floating_point);
+STAN_ADD_REQUIRE_UNARY_SCALAR(floating_point, std::is_floating_point);
+STAN_ADD_REQUIRE_UNARY_VALUE(floating_point, std::is_floating_point);
+STAN_ADD_REQUIRE_UNARY(index, std::is_integral);
+STAN_ADD_REQUIRE_UNARY_SCALAR(index, std::is_integral);
+STAN_ADD_REQUIRE_UNARY_VALUE(index, std::is_integral);
 
-/**
- * If all conditions are false, template is enabled.
- *
- * Returns a type void if all of the conditions are false.
- */
-template <class... Checks>
-using require_all_not_t
-    = std::enable_if_t<!math::disjunction<Checks...>::value>;
 
-/**
- * If any condition is false, template is enabled.
- *
- * Returns a type void if any of the conditions are false.
- */
-template <class... Checks>
-using require_any_not_t
-    = std::enable_if_t<!math::conjunction<Checks...>::value>;
 
-/**
- * Require both types to be the same
- */
-template <typename T, typename S>
-using require_same_t
-    = require_t<std::is_same<std::decay_t<T>, std::decay_t<S>>>;
 
-/**
- * Require both types to not be the same
- */
-template <typename T, typename S>
-using require_not_same_t
-    = require_not_t<std::is_same<std::decay_t<T>, std::decay_t<S>>>;
-
-/**
- * Require all types to be the same
- */
-template <typename T, typename... Types>
-using require_all_same_t
-    = require_all_t<std::is_same<std::decay_t<T>, std::decay_t<Types>>...>;
-
-/**
- * Require the first type to differ from at least one of the rest
- */
-template <typename T, typename... Types>
-using require_any_not_same_t
-    = require_any_not_t<std::is_same<std::decay_t<T>, std::decay_t<Types>>...>;
-
-/**
- * Require both types to be the same
- */
-template <typename T, typename S>
-using require_same_st = require_t<std::is_same<scalar_type_t<std::decay_t<T>>,
-                                               scalar_type_t<std::decay_t<S>>>>;
-
-/**
- * Require both types to not be the same
- */
-template <typename T, typename S>
-using require_not_same_st
-    = require_not_t<std::is_same<scalar_type_t<std::decay_t<T>>,
-                                 scalar_type_t<std::decay_t<S>>>>;
-
-/**
- * Require all types to be the same
- */
-template <typename T, typename... Types>
-using require_all_same_st
-    = require_all_t<std::is_same<scalar_type_t<std::decay_t<T>>,
-                                 scalar_type_t<std::decay_t<Types>>>...>;
-
-/**
- * Require any of the types to not be the same.
- */
-template <typename T, typename... Types>
-using require_any_not_same_st
-    = require_any_not_t<std::is_same<scalar_type_t<std::decay_t<T>>,
-                                     scalar_type_t<std::decay_t<Types>>>...>;
-
-/**
- * Require both types to be the same
- */
-template <typename T, typename S>
-using require_same_vt = require_t<
-    std::is_same<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>;
-
-/**
- * Require both types to not be the same
- */
-template <typename T, typename S>
-using require_not_same_vt = require_not_t<
-    std::is_same<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>;
-
-/**
- * Require all types to be the same
- */
-template <typename T, typename... Types>
-using require_all_same_vt
-    = require_all_t<std::is_same<value_type_t<std::decay_t<T>>,
-                                 value_type_t<std::decay_t<Types>>>...>;
-
-template <typename T, typename... Types>
-using require_any_not_same_vt
-    = require_any_not_t<std::is_same<value_type_t<std::decay_t<T>>,
-                                     value_type_t<std::decay_t<Types>>>...>;
-
-/**
- * Require T is convertible to S
- */
-template <typename T, typename S>
-using require_convertible_t
-    = require_t<std::is_convertible<std::decay_t<T>, std::decay_t<S>>>;
-
-/**
- * Require T is not convertible to S
- */
-template <typename T, typename S>
-using require_not_convertible_t
-    = require_not_t<std::is_convertible<std::decay_t<T>, std::decay_t<S>>>;
-
-/**
- * Require T is convertible to all Types
- */
-template <typename T, typename... Types>
-using require_all_convertible_t = require_all_t<
-    std::is_convertible<std::decay_t<T>, std::decay_t<Types>>...>;
-
-/**
- * require T is not convertible to any Types
- */
-template <typename T, typename... Types>
-using require_any_not_convertible_t = require_any_not_t<
-    std::is_convertible<std::decay_t<T>, std::decay_t<Types>>...>;
-
-/**
- * Checks if type is implicitly convertible to std::string
- */
-template <typename T>
-using require_string_convertible_t
-    = require_t<is_string_convertible<std::decay_t<T>>>;
-
-template <typename T>
-using require_not_string_convertible_t
-    = require_not_t<is_string_convertible<std::decay_t<T>>>;
-
-template <typename... Types>
-using require_all_string_convertible_t
-    = require_all_t<is_string_convertible<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_any_string_convertible_t
-    = require_any_t<is_string_convertible<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_all_not_string_convertible_t
-    = require_all_not_t<is_string_convertible<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_any_not_string_convertible_t
-    = require_any_not_t<is_string_convertible<std::decay_t<Types>>...>;
-
-/**
- * Below are enablers for
- * - Double or Int
- * - Arithmetic
- * - Floating Point
- * - Index
- * - Var
- * - Var or Arithmetic
- * - Fvar
- * - Var or Fvar
- * - Arithmetic Var or Fvar
- */
-
-template <typename T>
-using require_double_or_int_t = require_t<is_double_or_int<std::decay_t<T>>>;
-
-template <typename T>
-using require_not_double_or_int_t
-    = require_not_t<is_double_or_int<std::decay_t<T>>>;
-
-template <typename... Types>
-using require_all_double_or_int_t
-    = require_all_t<is_double_or_int<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_any_double_or_int_t
-    = require_any_t<is_double_or_int<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_all_not_double_or_int_t
-    = require_all_not_t<is_double_or_int<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_any_not_double_or_int_t
-    = require_any_not_t<is_double_or_int<std::decay_t<Types>>...>;
-
-// Checks for arithmetic types
-template <typename T>
-using require_arithmetic_t = require_t<std::is_arithmetic<std::decay_t<T>>>;
-
-template <typename T>
-using require_not_arithmetic_t
-    = require_not_t<std::is_arithmetic<std::decay_t<T>>>;
-
-template <typename... Types>
-using require_all_arithmetic_t
-    = require_all_t<std::is_arithmetic<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_any_arithmetic_t
-    = require_any_t<std::is_arithmetic<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_all_not_arithmetic_t
-    = require_all_not_t<std::is_arithmetic<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_any_not_arithmetic_t
-    = require_any_not_t<std::is_arithmetic<std::decay_t<Types>>...>;
-
-// Checks for floating_point types
-template <typename T>
-using require_floating_point_t
-    = require_t<std::is_floating_point<std::decay_t<T>>>;
-
-template <typename T>
-using require_not_floating_point_t
-    = require_not_t<std::is_floating_point<std::decay_t<T>>>;
-
-template <typename... Types>
-using require_all_floating_point_t
-    = require_all_t<std::is_floating_point<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_any_floating_point_t
-    = require_any_t<std::is_floating_point<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_all_not_floating_point_t
-    = require_all_not_t<std::is_floating_point<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_any_not_floating_point_t
-    = require_any_not_t<std::is_floating_point<std::decay_t<Types>>...>;
-
-// Checks if type is something we would use for index
-template <typename T>
-using require_index_t = require_t<std::is_integral<std::decay_t<T>>>;
-
-template <typename T>
-using require_not_index_t = require_not_t<std::is_integral<std::decay_t<T>>>;
-
-template <typename... Types>
-using require_all_index_t
-    = require_all_t<std::is_integral<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_any_index_t
-    = require_any_t<std::is_integral<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_all_not_index_t
-    = require_all_not_t<std::is_integral<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_any_not_index_t
-    = require_any_not_t<std::is_integral<std::decay_t<Types>>...>;
-
-template <typename T>
-using require_var_t = require_t<is_var<std::decay_t<T>>>;
-
-template <typename T>
-using require_not_var_t = require_not_t<is_var<std::decay_t<T>>>;
-
-template <typename... Types>
-using require_all_var_t = require_all_t<is_var<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_any_var_t = require_any_t<is_var<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_all_not_var_t = require_all_not_t<is_var<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_any_not_var_t = require_any_not_t<is_var<std::decay_t<Types>>...>;
-
-template <typename T>
-using require_var_or_arithmetic_t
-    = require_t<is_var_or_arithmetic<std::decay_t<T>>>;
-
-template <typename T>
-using require_not_var_or_arithmetic_t
-    = require_not_t<is_var_or_arithmetic<std::decay_t<T>>>;
-
-template <typename... Types>
-using require_all_var_or_arithmetic_t
-    = require_all_t<is_var_or_arithmetic<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_any_var_or_arithmetic_t
-    = require_any_t<is_var_or_arithmetic<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_all_not_var_or_arithmetic_t
-    = require_all_not_t<is_var_or_arithmetic<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_any_not_var_or_arithmetic_t
-    = require_any_not_t<is_var_or_arithmetic<std::decay_t<Types>>...>;
-
-template <typename T>
-using require_fvar_t = require_t<is_fvar<std::decay_t<T>>>;
-
-template <typename T>
-using require_not_fvar_t = require_not_t<is_fvar<std::decay_t<T>>>;
-
-template <typename... Types>
-using require_all_fvar_t = require_all_t<is_fvar<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_any_fvar_t = require_any_t<is_fvar<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_all_not_fvar_t
-    = require_all_not_t<is_fvar<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_any_not_fvar_t
-    = require_any_not_t<is_fvar<std::decay_t<Types>>...>;
-
-template <typename T>
-using require_autodiff_t = require_t<is_autodiff<T>>;
-
-template <typename T>
-using require_not_autodiff_t = require_not_t<is_autodiff<T>>;
-
-template <typename... Types>
-using require_all_autodiff_t = require_all_t<is_autodiff<Types>...>;
-
-template <typename... Types>
-using require_any_autodiff_t = require_any_t<is_autodiff<Types>...>;
-
-template <typename... Types>
-using require_all_not_autodiff_t = require_all_not_t<is_autodiff<Types>...>;
-
-template <typename... Types>
-using require_any_not_autodiff_t = require_any_not_t<is_autodiff<Types>...>;
-
-template <typename T>
-using require_stan_scalar_t = require_t<is_stan_scalar<T>>;
-
-template <typename T>
-using require_not_stan_scalar_t = require_not_t<is_stan_scalar<T>>;
-
-template <typename... Types>
-using require_all_stan_scalar_t = require_all_t<is_stan_scalar<Types>...>;
-
-template <typename... Types>
-using require_any_stan_scalar_t = require_any_t<is_stan_scalar<Types>...>;
-
-template <typename... Types>
-using require_all_not_stan_scalar_t
-    = require_all_not_t<is_stan_scalar<Types>...>;
-
-template <typename... Types>
-using require_any_not_stan_scalar_t
-    = require_any_not_t<is_stan_scalar<Types>...>;
 /** @}*/
 
 /**
@@ -575,122 +174,7 @@ using require_any_not_stan_scalar_t
  *  @{
  */
 
-template <typename T>
-using require_std_vector_t = require_t<is_std_vector<T>>;
 
-template <typename T>
-using require_not_std_vector_t = require_not_t<is_std_vector<T>>;
-
-template <typename... Types>
-using require_all_std_vector_t = require_all_t<is_std_vector<Types>...>;
-
-template <typename... Types>
-using require_any_std_vector_t = require_any_t<is_std_vector<Types>...>;
-
-template <typename... Types>
-using require_all_not_std_vector_t = require_all_not_t<is_std_vector<Types>...>;
-
-template <typename... Types>
-using require_any_not_std_vector_t = require_any_not_t<is_std_vector<Types>...>;
-
-template <typename T>
-using require_vector_t = require_t<is_vector<T>>;
-
-template <typename T>
-using require_not_vector_t = require_not_t<is_vector<T>>;
-
-template <typename... Types>
-using require_all_vector_t = require_all_t<is_vector<Types>...>;
-
-template <typename... Types>
-using require_any_vector_t = require_any_t<is_vector<Types>...>;
-
-template <typename... Types>
-using require_all_not_vector_t = require_all_not_t<is_vector<Types>...>;
-
-template <typename... Types>
-using require_any_not_vector_t = require_any_not_t<is_vector<Types>...>;
-
-template <typename T>
-using require_eigen_t = require_t<is_eigen<T>>;
-
-template <typename T>
-using require_not_eigen_t = require_not_t<is_eigen<T>>;
-
-template <typename... Types>
-using require_all_eigen_t = require_all_t<is_eigen<Types>...>;
-
-template <typename... Types>
-using require_any_eigen_t = require_any_t<is_eigen<Types>...>;
-
-template <typename... Types>
-using require_all_not_eigen_t = require_all_not_t<is_eigen<Types>...>;
-
-template <typename... Types>
-using require_any_not_eigen_t = require_any_not_t<is_eigen<Types>...>;
-
-template <typename T>
-using require_eigen_vector_t = require_t<is_eigen_vector<T>>;
-
-template <typename T>
-using require_not_eigen_vector_t = require_not_t<is_eigen_vector<T>>;
-
-template <typename... Types>
-using require_all_eigen_vector_t = require_all_t<is_eigen_vector<Types>...>;
-
-template <typename... Types>
-using require_any_eigen_vector_t = require_any_t<is_eigen_vector<Types>...>;
-
-template <typename... Types>
-using require_all_not_eigen_vector_t
-    = require_all_not_t<is_eigen_vector<Types>...>;
-
-template <typename... Types>
-using require_any_not_eigen_vector_t
-    = require_any_not_t<is_eigen_vector<Types>...>;
-
-template <typename T>
-using require_vector_like_t = require_t<is_vector_like<T>>;
-
-template <typename T>
-using require_not_vector_like_t = require_not_t<is_vector_like<T>>;
-
-template <typename... Types>
-using require_all_vector_like_t = require_all_t<is_vector_like<Types>...>;
-
-template <typename... Types>
-using require_any_vector_like_t = require_any_t<is_vector_like<Types>...>;
-
-template <typename... Types>
-using require_all_not_vector_like_t
-    = require_all_not_t<is_vector_like<Types>...>;
-
-template <typename... Types>
-using require_any_not_vector_like_t
-    = require_any_not_t<is_vector_like<Types>...>;
-
-// Checks for container types
-template <typename T>
-using require_container_t = require_t<is_container<std::decay_t<T>>>;
-
-template <typename T>
-using require_not_container_t = require_not_t<is_container<std::decay_t<T>>>;
-
-template <typename... Types>
-using require_all_container_t
-    = require_all_t<is_container<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_any_container_t
-    = require_any_t<is_container<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_all_not_container_t
-    = require_all_not_t<is_container<std::decay_t<Types>>...>;
-
-template <typename... Types>
-using require_any_not_container_t
-    = require_any_not_t<is_container<std::decay_t<Types>>...>;
 
 /**
  * Check a templated type to see if it and its inner type pass a conditional

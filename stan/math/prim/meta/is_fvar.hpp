@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_META_IS_FVAR_HPP
 #define STAN_MATH_PRIM_META_IS_FVAR_HPP
 
+#include <stan/math/prim/meta/require_helpers.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -10,6 +11,8 @@ namespace stan {
  */
 template <typename T, typename = void>
 struct is_fvar : std::false_type {};
+
+STAN_ADD_REQUIRE_UNARY(fvar, is_fvar);
 
 }  // namespace stan
 #endif
