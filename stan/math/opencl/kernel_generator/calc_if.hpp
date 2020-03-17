@@ -62,8 +62,8 @@ class calc_if_
       const std::string& i, const std::string& j,
       const T_result& result) const {
     if (Do_Calculate) {
-      return this->template get_arg<0>()
-          .get_whole_kernel_parts(generated, ng, i, j, result);
+      return this->template get_arg<0>().get_whole_kernel_parts(generated, ng,
+                                                                i, j, result);
     } else {
       return {};
     }
@@ -88,7 +88,9 @@ class calc_if_
    * View of a matrix that would be the result of evaluating this expression.
    * @return view
    */
-  inline matrix_cl_view view() const { return this->template get_arg<0>().view(); }
+  inline matrix_cl_view view() const {
+    return this->template get_arg<0>().view();
+  }
 };
 
 template <bool Do_Calculate, typename T,

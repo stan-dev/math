@@ -49,8 +49,8 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
     derived().modify_argument_indices(i_arg, j_arg);
     std::array<kernel_parts, N> args_parts = index_apply<N>([&](auto... Is) {
       return std::array<kernel_parts, N>{
-          this->template get_arg<Is>()
-              .get_kernel_parts_lhs(generated, name_gen, i_arg, j_arg)...};
+          this->template get_arg<Is>().get_kernel_parts_lhs(generated, name_gen,
+                                                            i_arg, j_arg)...};
     });
     kernel_parts res{};
     res.body = std::accumulate(
@@ -90,9 +90,9 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
                        int bottom_zero_diagonal, int top_zero_diagonal) const {
     index_apply<N>([&](auto... Is) {
       (void)std::initializer_list<int>{
-          (this->template get_arg<Is>()
-               .set_view(bottom_diagonal, top_diagonal, bottom_zero_diagonal,
-                         top_zero_diagonal),
+          (this->template get_arg<Is>().set_view(bottom_diagonal, top_diagonal,
+                                                 bottom_zero_diagonal,
+                                                 top_zero_diagonal),
            0)...};
     });
   }

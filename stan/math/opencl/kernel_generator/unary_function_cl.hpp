@@ -83,7 +83,7 @@ class unary_function_cl
                                                                               \
    public:                                                                    \
     explicit fun##_(T&& a) : base(std::forward<T>(a), #fun) {}                \
-    inline auto deep_copy() const {                                          \
+    inline auto deep_copy() const {                                           \
       auto&& arg_copy = this->template get_arg<0>().deep_copy();              \
       return fun##_<std::remove_reference_t<decltype(arg_copy)>>{             \
           std::move(arg_copy)};                                               \
@@ -111,7 +111,7 @@ class unary_function_cl
                                                                               \
    public:                                                                    \
     explicit fun##_(T&& a) : base(std::forward<T>(a), #fun) {}                \
-    inline auto deep_copy() const {                                                 \
+    inline auto deep_copy() const {                                           \
       auto&& arg_copy = this->template get_arg<0>().deep_copy();              \
       return fun##_<std::remove_reference_t<decltype(arg_copy)>>{             \
           std::move(arg_copy)};                                               \

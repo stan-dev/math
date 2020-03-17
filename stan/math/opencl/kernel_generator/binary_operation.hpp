@@ -116,7 +116,7 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
    public:                                                                    \
     class_name(T_a&& a, T_b&& b) /* NOLINT */                                 \
         : base(std::forward<T_a>(a), std::forward<T_b>(b), operation) {}      \
-    inline auto deep_copy() const {                                          \
+    inline auto deep_copy() const {                                           \
       auto&& a_copy = this->template get_arg<0>().deep_copy();                \
       auto&& b_copy = this->template get_arg<1>().deep_copy();                \
       return class_name<std::remove_reference_t<decltype(a_copy)>,            \
@@ -163,7 +163,7 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
    public:                                                                    \
     class_name(T_a&& a, T_b&& b) /* NOLINT */                                 \
         : base(std::forward<T_a>(a), std::forward<T_b>(b), operation) {}      \
-    inline auto deep_copy() const {                                          \
+    inline auto deep_copy() const {                                           \
       auto&& a_copy = this->template get_arg<0>().deep_copy();                \
       auto&& b_copy = this->template get_arg<1>().deep_copy();                \
       return class_name<std::remove_reference_t<decltype(a_copy)>,            \

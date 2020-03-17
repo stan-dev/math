@@ -79,7 +79,7 @@ class operation_cl : public operation_cl_base {
     Returns an argument to this operation
     @tparam N index of the argument
     */
-  template<size_t N>
+  template <size_t N>
   const auto& get_arg() const {
     return std::get<N>(arguments_).x;
   }
@@ -175,9 +175,8 @@ class operation_cl : public operation_cl_base {
       std::string j_arg = j;
       derived().modify_argument_indices(i_arg, j_arg);
       std::array<kernel_parts, N> args_parts = index_apply<N>([&](auto... Is) {
-        return std::array<kernel_parts, N>{
-            this->get_arg<Is>()
-                .get_kernel_parts(generated, name_gen, i_arg, j_arg)...};
+        return std::array<kernel_parts, N>{this->get_arg<Is>().get_kernel_parts(
+            generated, name_gen, i_arg, j_arg)...};
       });
       res.initialization
           = std::accumulate(args_parts.begin(), args_parts.end(), std::string(),
@@ -200,8 +199,7 @@ class operation_cl : public operation_cl_base {
                               return a + b.args;
                             });
       kernel_parts my_part = index_apply<N>([&](auto... Is) {
-        return this->derived().generate(i, j,
-                                        this->get_arg<Is>().var_name...);
+        return this->derived().generate(i, j, this->get_arg<Is>().var_name...);
       });
       res.initialization += my_part.initialization;
       res.body = my_part.body_prefix + res.body + my_part.body;
@@ -240,8 +238,7 @@ class operation_cl : public operation_cl_base {
       // expression.
       index_apply<N>([&](auto... Is) {
         static_cast<void>(std::initializer_list<int>{
-            (this->get_arg<Is>().set_args(generated, kernel, arg_num),
-             0)...});
+            (this->get_arg<Is>().set_args(generated, kernel, arg_num), 0)...});
       });
     }
   }
@@ -314,8 +311,8 @@ class operation_cl : public operation_cl_base {
    */
   inline int top_diagonal() const {
     return index_apply<N>([&](auto... Is) {
-      return std::max(std::initializer_list<int>(
-          {this->get_arg<Is>().top_diagonal()...}));
+      return std::max(
+          std::initializer_list<int>({this->get_arg<Is>().top_diagonal()...}));
     });
   }
 };

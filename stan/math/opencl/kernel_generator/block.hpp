@@ -174,9 +174,9 @@ class block_
   inline void set_view(int bottom_diagonal, int top_diagonal,
                        int bottom_zero_diagonal, int top_zero_diagonal) const {
     int change = start_col_ - start_row_;
-    this->template get_arg<0>()
-        .set_view(bottom_diagonal + change, top_diagonal + change,
-                  bottom_zero_diagonal + change, top_zero_diagonal + change);
+    this->template get_arg<0>().set_view(
+        bottom_diagonal + change, top_diagonal + change,
+        bottom_zero_diagonal + change, top_zero_diagonal + change);
   }
 
   /**

@@ -20,7 +20,8 @@ wrapper<T> make_wrapper(T&& x) {
   return wrapper<T>(std::forward<T>(x));
 }
 
-}
-}}
+}  // namespace internal
+}  // namespace math
+}  // namespace stan
 
 #endif
