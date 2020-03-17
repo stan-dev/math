@@ -7,6 +7,7 @@
 #include <tbb/task_arena.h>
 #include <tbb/parallel_reduce.h>
 #include <tbb/blocked_range.h>
+#include <tbb/enumerable_thread_specific.h>
 
 #include <iostream>
 #include <iterator>
@@ -31,6 +32,8 @@ template <typename ReduceFunction, typename ReturnType, typename Vec,
           typename... Args>
 struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                        Vec, Args...> {
+
+
   /**
    * Internal object used in `tbb::parallel_reduce`
    * @note see link [here](https://tinyurl.com/vp7xw2t) for requirements.
@@ -45,6 +48,24 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     double sum_{0.0};
     Eigen::VectorXd args_adjoints_{0};
 
+    template <typename... ArgsS>
+    struct local_args {
+      const nested_rev_autodiff nested_context_;
+      // not sure what the type is of the apply below => this gives a
+      // compiler error, but auto type is not allowed
+      std::tuple<decltype(deep_copy(args_tuple_)...)> args_tuple_copy_;
+    
+      local_args(ArgsS&& args_tuple) :
+          nested_context_(),
+          args_tuple_copy_(
+              apply(
+                  [&](auto&&... args) {
+                    return std::tuple<decltype(deep_copy(args))...>(deep_copy(args)...);
+                  },
+                  args_tuple)) {
+      }
+    };
+    
     template <typename VecT, typename... ArgsT>
     recursive_reducer(size_t per_job_sliced_terms, size_t num_shared_terms,
                       double* sliced_partials, VecT&& vmapped,
@@ -72,7 +93,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
      */
     template <typename Arith,
               typename = require_arithmetic_t<scalar_type_t<Arith>>>
-    inline decltype(auto) deep_copy(Arith&& arg) {
+    static inline decltype(auto) deep_copy(Arith&& arg) {
       return std::forward<Arith>(arg);
     }
 
@@ -80,7 +101,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
      * Specialization to copy a single var
      * @param arg a var.
      */
-    inline auto deep_copy(const var& arg) {
+    static inline auto deep_copy(const var& arg) {
       return var(new vari(arg.val(), false));
     }
 
@@ -90,7 +111,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
      * @param arg A standard vector holding vars.
      */
     template <typename VarVec, require_std_vector_vt<is_var, VarVec>* = nullptr>
-    inline auto deep_copy(VarVec&& arg) {
+    static inline auto deep_copy(VarVec&& arg) {
       std::vector<var> copy_vec(arg.size());
       for (size_t i = 0; i < arg.size(); ++i) {
         copy_vec[i] = new vari(arg[i].val(), false);
@@ -105,7 +126,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
      */
     template <typename VarVec, require_std_vector_st<is_var, VarVec>* = nullptr,
               require_std_vector_vt<is_container, VarVec>* = nullptr>
-    inline auto deep_copy(VarVec&& arg) {
+    static inline auto deep_copy(VarVec&& arg) {
       std::vector<value_type_t<VarVec>> copy_vec(arg.size());
       for (size_t i = 0; i < arg.size(); ++i) {
         copy_vec[i] = deep_copy(arg[i]);
@@ -119,7 +140,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
      * @param arg A container hollding var types.
      */
     template <typename EigT, require_eigen_vt<is_var, EigT>* = nullptr>
-    inline auto deep_copy(EigT&& arg) {
+    static inline auto deep_copy(EigT&& arg) {
       return arg
           .unaryExpr([](auto&& x) { return var(new vari(x.val(), false)); })
           .eval();
@@ -227,7 +248,10 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         args_adjoints_ = Eigen::VectorXd::Zero(this->num_shared_terms_);
       }
 
-      const nested_rev_autodiff begin_nest;
+      local_args local(args_tuple_);
+
+      //const nested_rev_autodiff begin_nest;
+      
       // create a deep copy of all var's so that these are not
       // linked to any outer AD tree
       std::decay_t<Vec> local_sub_slice;
@@ -235,17 +259,20 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       for (int i = r.begin(); i < r.end(); ++i) {
         local_sub_slice.emplace_back(deep_copy(vmapped_[i]));
       }
+      /*
       auto args_tuple_local_copy = apply(
           [&](auto&&... args) {
             return std::tuple<decltype(deep_copy(args))...>(deep_copy(args)...);
           },
           this->args_tuple_);
+      */
       var sub_sum_v = apply(
           [&](auto&&... args) {
             return ReduceFunction()(r.begin(), r.end() - 1, local_sub_slice,
                                     this->msgs_, args...);
           },
-          args_tuple_local_copy);
+          local.args_tuple_copy_);
+      
       sub_sum_v.grad();
       sum_ += sub_sum_v.val();
       accumulate_adjoints(
@@ -256,7 +283,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
             return accumulate_adjoints(args_adjoints_.data(),
                                        std::forward<decltype(args)>(args)...);
           },
-          std::move(args_tuple_local_copy));
+          std::move(local.args_tuple_copy_));
+      //std::move(args_tuple_local_copy));
     }
 
     /**
