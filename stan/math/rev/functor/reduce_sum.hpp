@@ -48,24 +48,24 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     double sum_{0.0};
     Eigen::VectorXd args_adjoints_{0};
 
-    template <typename... ArgsS>
+    template <typename TupleT>
     struct local_args {
       const nested_rev_autodiff nested_context_;
       // not sure what the type is of the apply below => this gives a
       // compiler error, but auto type is not allowed
-      std::tuple<decltype(deep_copy(args_tuple_)...)> args_tuple_copy_;
-    
-      local_args(ArgsS&& args_tuple) :
+      std::tuple<std::decay_t<Args>...>  args_tuple_copy_;
+
+      local_args(TupleT args_tuple) :
           nested_context_(),
           args_tuple_copy_(
               apply(
                   [&](auto&&... args) {
                     return std::tuple<decltype(deep_copy(args))...>(deep_copy(args)...);
                   },
-                  args_tuple)) {
+                  std::forward<TupleT>(args_tuple))) {
       }
     };
-    
+
     template <typename VecT, typename... ArgsT>
     recursive_reducer(size_t per_job_sliced_terms, size_t num_shared_terms,
                       double* sliced_partials, VecT&& vmapped,
@@ -248,10 +248,10 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         args_adjoints_ = Eigen::VectorXd::Zero(this->num_shared_terms_);
       }
 
-      local_args local(args_tuple_);
+      local_args<decltype(args_tuple_)> local(args_tuple_);
 
       //const nested_rev_autodiff begin_nest;
-      
+
       // create a deep copy of all var's so that these are not
       // linked to any outer AD tree
       std::decay_t<Vec> local_sub_slice;
@@ -272,7 +272,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                                     this->msgs_, args...);
           },
           local.args_tuple_copy_);
-      
+
       sub_sum_v.grad();
       sum_ += sub_sum_v.val();
       accumulate_adjoints(
