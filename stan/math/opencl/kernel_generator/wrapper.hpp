@@ -1,5 +1,6 @@
 #ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_WRAPPER
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_WRAPPER
+#include <utility>
 
 namespace stan {
 namespace math {
