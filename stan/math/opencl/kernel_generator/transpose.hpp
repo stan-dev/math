@@ -33,10 +33,6 @@ class transpose_
   using base = operation_cl<transpose_<Arg>, Scalar, Arg>;
   using base::var_name;
 
- protected:
-  using base::arguments_;
-
- public:
   /**
    * Constructor
    * @param a expression to transpose
@@ -47,9 +43,9 @@ class transpose_
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline transpose_<std::remove_reference_t<Arg>> deep_copy() {
+  inline transpose_<std::remove_reference_t<Arg>> deep_copy() const {
     return transpose_<std::remove_reference_t<Arg>>{
-        std::get<0>(arguments_).deep_copy()};
+        this->template get_arg<0>().deep_copy()};
   }
 
   /**
@@ -80,21 +76,21 @@ class transpose_
    * expression.
    * @return number of rows
    */
-  inline int rows() const { return std::get<0>(arguments_).cols(); }
+  inline int rows() const { return this->template get_arg<0>().cols(); }
 
   /**
    * Number of columns of a matrix that would be the result of evaluating this
    * expression.
    * @return number of columns
    */
-  inline int cols() const { return std::get<0>(arguments_).rows(); }
+  inline int cols() const { return this->template get_arg<0>().rows(); }
 
   /**
    * View of a matrix that would be the result of evaluating this expression.
    * @return view
    */
   inline matrix_cl_view view() const {
-    return transpose(std::get<0>(arguments_).view());
+    return transpose(this->template get_arg<0>().view());
   }
 
   /**
@@ -102,7 +98,7 @@ class transpose_
    * @return index of bottom diagonal
    */
   inline int bottom_diagonal() const {
-    return std::get<0>(arguments_).top_diagonal();
+    return this->template get_arg<0>().top_diagonal();
   }
 
   /**
@@ -110,7 +106,7 @@ class transpose_
    * @return index of top diagonal
    */
   inline int top_diagonal() const {
-    return std::get<0>(arguments_).bottom_diagonal();
+    return this->template get_arg<0>().bottom_diagonal();
   }
 };
 

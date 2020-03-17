@@ -81,8 +81,8 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
    * @return view
    */
   inline matrix_cl_view view() const {
-    return either(std::get<0>(arguments_).view(),
-                  std::get<1>(arguments_).view());
+    return either(this->template get_arg<0>().view(),
+                  this->template get_arg<1>().view());
   }
 };
 
@@ -116,9 +116,9 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
    public:                                                                    \
     class_name(T_a&& a, T_b&& b) /* NOLINT */                                 \
         : base(std::forward<T_a>(a), std::forward<T_b>(b), operation) {}      \
-    inline auto deep_copy() {                                                 \
-      auto&& a_copy = std::get<0>(arguments_).deep_copy();                    \
-      auto&& b_copy = std::get<1>(arguments_).deep_copy();                    \
+    inline auto deep_copy() const {                                          \
+      auto&& a_copy = this->template get_arg<0>().deep_copy();                \
+      auto&& b_copy = this->template get_arg<1>().deep_copy();                \
       return class_name<std::remove_reference_t<decltype(a_copy)>,            \
                         std::remove_reference_t<decltype(b_copy)>>(           \
           std::move(a_copy), std::move(b_copy));                              \
@@ -163,9 +163,9 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
    public:                                                                    \
     class_name(T_a&& a, T_b&& b) /* NOLINT */                                 \
         : base(std::forward<T_a>(a), std::forward<T_b>(b), operation) {}      \
-    inline auto deep_copy() {                                                 \
-      auto&& a_copy = std::get<0>(arguments_).deep_copy();                    \
-      auto&& b_copy = std::get<1>(arguments_).deep_copy();                    \
+    inline auto deep_copy() const {                                          \
+      auto&& a_copy = this->template get_arg<0>().deep_copy();                \
+      auto&& b_copy = this->template get_arg<1>().deep_copy();                \
       return class_name<std::remove_reference_t<decltype(a_copy)>,            \
                         std::remove_reference_t<decltype(b_copy)>>(           \
           std::move(a_copy), std::move(b_copy));                              \
@@ -189,14 +189,14 @@ ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(
     common_scalar_t<T_a COMMA T_b>, "*",
     using base = binary_operation<elewise_multiplication_<T_a, T_b>,
                                   common_scalar_t<T_a, T_b>, T_a, T_b>;
-    return both(std::get<0>(base::arguments_).view(),
-                std::get<1>(base::arguments_).view()););
+    return both(this->template get_arg<0>().view(),
+                this->template get_arg<1>().view()););
 ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(
     elewise_division_, elewise_division, common_scalar_t<T_a COMMA T_b>, "/",
     using base = binary_operation<elewise_division_<T_a, T_b>,
                                   common_scalar_t<T_a, T_b>, T_a, T_b>;
-    return either(std::get<0>(base::arguments_).view(),
-                  invert(std::get<1>(base::arguments_).view())););
+    return either(this->template get_arg<0>().view(),
+                  invert(this->template get_arg<1>().view())););
 ADD_BINARY_OPERATION(less_than_, operator<, bool, "<");
 ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(less_than_or_equal_, operator<=, bool,
                                       "<=", return matrix_cl_view::Entire);

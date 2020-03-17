@@ -24,7 +24,6 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
  protected:
   using base = operation_cl<Derived, Scalar, Args...>;
   static constexpr int N = sizeof...(Args);
-  using base::arguments_;
   using base::derived;
 
  public:
@@ -47,10 +46,10 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
     }
     std::string i_arg = i;
     std::string j_arg = j;
-    this->derived().modify_argument_indices(i_arg, j_arg);
+    derived().modify_argument_indices(i_arg, j_arg);
     std::array<kernel_parts, N> args_parts = index_apply<N>([&](auto... Is) {
       return std::array<kernel_parts, N>{
-          std::get<Is>(this->arguments_)
+          this->template get_arg<Is>()
               .get_kernel_parts_lhs(generated, name_gen, i_arg, j_arg)...};
     });
     kernel_parts res{};
@@ -66,7 +65,7 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
                             });
       kernel_parts my_part = index_apply<N>([&](auto... Is) {
         return this->derived().generate_lhs(
-            i, j, std::get<Is>(this->arguments_).var_name...);
+            i, j, this->template get_arg<Is>().var_name...);
       });
       res.body += my_part.body;
       res.args += my_part.args;
@@ -91,7 +90,7 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
                        int bottom_zero_diagonal, int top_zero_diagonal) const {
     index_apply<N>([&](auto... Is) {
       (void)std::initializer_list<int>{
-          (std::get<Is>(this->arguments_)
+          (this->template get_arg<Is>()
                .set_view(bottom_diagonal, top_diagonal, bottom_zero_diagonal,
                          top_zero_diagonal),
            0)...};
@@ -109,7 +108,7 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
   inline void check_assign_dimensions(int rows, int cols) const {
     index_apply<N>([&](auto... Is) {
       (void)std::initializer_list<int>{
-          (std::get<Is>(this->arguments_).check_assign_dimensions(rows, cols),
+          (this->template get_arg<Is>().check_assign_dimensions(rows, cols),
            0)...};
     });
   }
@@ -121,7 +120,7 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
   inline void add_write_event(cl::Event& e) const {
     index_apply<N>([&](auto... Is) {
       (void)std::initializer_list<int>{
-          (std::get<Is>(this->arguments_).add_write_event(e), 0)...};
+          (this->template get_arg<Is>().add_write_event(e), 0)...};
     });
   }
 };

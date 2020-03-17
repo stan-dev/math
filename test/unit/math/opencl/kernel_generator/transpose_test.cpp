@@ -15,6 +15,20 @@ using stan::math::matrix_cl;
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
+TEST(MathMatrixCL, transpose_rvalue_test) {
+  MatrixXd m(3, 2);
+  m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
+
+  auto tmp = stan::math::transpose(stan::math::to_matrix_cl(m));
+  matrix_cl<double> res_cl = tmp;
+
+  MatrixXd res = stan::math::from_matrix_cl(res_cl);
+  MatrixXd correct = stan::math::transpose(m);
+  EXPECT_EQ(correct.rows(), res.rows());
+  EXPECT_EQ(correct.cols(), res.cols());
+  EXPECT_MATRIX_NEAR(correct, res, 1e-9);
+}
+
 TEST(MathMatrixCL, transpose_test) {
   MatrixXd m(3, 2);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
