@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/logit.hpp>
 #include <stan/math/prim/fun/lb_free.hpp>
 #include <stan/math/prim/fun/ub_free.hpp>
+#include <vector>
 
 namespace stan {
 namespace math {
