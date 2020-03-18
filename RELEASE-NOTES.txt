@@ -11,6 +11,8 @@ and helper metaprograms for intermediate and return types.
 
 Miscellaneous doxygen documentation cleanup.
 
+max_size, max_size_mvt, check_consistent_sizes, and check_consistent_sizes_mvt have been simplified and now take any number of arguments.
+
 ======================================================================
 v3.1.0 (24 January 2020)
 ======================================================================
