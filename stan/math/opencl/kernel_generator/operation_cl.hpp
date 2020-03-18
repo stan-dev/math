@@ -254,7 +254,7 @@ class operation_cl : public operation_cl_base {
   inline void get_read_events(std::vector<cl::Event>& events) const {
     index_apply<N>([&](auto... Is) {
       (void)std::initializer_list<int>{
-          (this->get_arg<Is>().get_read_events(events), 0)...};
+          (this->template get_arg<Is>().get_read_events(events), 0)...};
     });
   }
 
