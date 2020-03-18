@@ -10,8 +10,8 @@ namespace math {
 /**
  * Calculate the size of the largest multivariate input. A multivariate
  * container is either an Eigen matrix, whose mvt size is 1, or an std::vector
- * of Eigen matrices, whose mvt size is the size of the std::vector. It is an error
- * to supply any other type of input.
+ * of Eigen matrices, whose mvt size is the size of the std::vector. It is an
+ * error to supply any other type of input.
  * @tparam T1 type of the first input
  * @tparam Ts types of the other inputs
  * @param x1 first input
