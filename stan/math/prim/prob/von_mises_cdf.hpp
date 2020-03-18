@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_PROB_VON_MISES_CDF_HPP
 #define STAN_MATH_PRIM_PROB_VON_MISES_CDF_HPP
 
-#include <stan/math/prim/fun.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/prob/normal_cdf.hpp>
 #include <stan/math/prim/fun/modified_bessel_first_kind.hpp>
@@ -60,7 +59,7 @@ return_type_t<T_x, T_k> von_mises_cdf_centered(const T_x& x, const T_k& k) {
   double a[4] = {28, 0.5, 100, 5};
   return_type_t<T_x, T_k> f;
   if (k < ck) {
-    int p = value_of(a[0] + a[1] * k - a[2] / (k + a[3]) + 1);
+    int p = value_of_rec(a[0] + a[1] * k - a[2] / (k + a[3]) + 1);
     f = von_mises_cdf_series(x, k, p);
     if (f < 0)
       f = 0;
@@ -107,7 +106,7 @@ inline return_type_t<T_x, T_mu, T_k> von_mises_cdf(const T_x& x, const T_mu& mu,
   check_positive(function, "Scale parameter", k);
 
   // shift x so that mean is 0
-  auto x2 = x - mu;
+  return_type_t<T_x, T_mu, T_k> x2 = x - mu;
 
   // x is on an interval (2*n*pi, (2*n + 1)*pi), move it to (-pi, pi)
   double pi = stan::math::pi();
