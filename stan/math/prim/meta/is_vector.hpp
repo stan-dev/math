@@ -111,6 +111,28 @@ struct is_std_vector<
     T, std::enable_if_t<internal::is_std_vector_impl<std::decay_t<T>>::value>>
     : std::true_type {};
 
+/** \ingroup type_trait
+ * Specialization of scalar_type for vector to recursively return the inner
+ * scalar type.
+ *
+ * @tparam T type of standard vector
+ */
+template <typename T>
+struct scalar_type<T, std::enable_if_t<is_std_vector<T>::value>> {
+  using type = scalar_type_t<typename std::decay_t<T>::value_type>;
+};
+
+/** \ingroup type_trait
+ * Template metaprogram class to compute the type of values stored
+ * in a standard vector.
+ *
+ * @tparam T type of elements in standard vector.
+ */
+template <typename T>
+struct value_type<T, std::enable_if_t<is_std_vector<T>::value>> {
+  using type = typename std::decay_t<T>::value_type;
+};
+
 STAN_ADD_REQUIRE_UNARY(std_vector, is_std_vector);
 
 

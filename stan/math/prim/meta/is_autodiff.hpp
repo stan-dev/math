@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_META_IS_AUTODIFF_HPP
 #define STAN_MATH_PRIM_META_IS_AUTODIFF_HPP
 
+#include <stan/math/prim/meta/scalar_type.hpp>
+#include <stan/math/prim/meta/value_type.hpp>
 #include <stan/math/prim/meta/require_helpers.hpp>
 #include <complex>
 #include <type_traits>
@@ -17,6 +19,9 @@ namespace stan {
                                         is_fvar<std::decay_t<T>>>::value> {};
 
 STAN_ADD_REQUIRE_UNARY(autodiff, is_autodiff);
+STAN_ADD_REQUIRE_UNARY_SCALAR(autodiff, is_autodiff);
+STAN_ADD_REQUIRE_UNARY_VALUE(autodiff, is_autodiff);
+
 }  // namespace stan
 
 #endif

@@ -6,6 +6,8 @@
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/conjunction.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
+#include <stan/math/prim/meta/scalar_type.hpp>
+#include <stan/math/prim/meta/value_type.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <type_traits>
 #include <vector>
@@ -61,6 +63,8 @@ struct is_constant<T, require_eigen_t<T>>
     : bool_constant<is_constant<typename std::decay_t<T>::Scalar>::value> {};
 
 STAN_ADD_REQUIRE_UNARY(constant, is_constant);
+STAN_ADD_REQUIRE_UNARY_SCALAR(constant, is_constant);
+STAN_ADD_REQUIRE_UNARY_VALUE(constant, is_constant);
 
 }  // namespace stan
 #endif

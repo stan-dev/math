@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/disjunction.hpp>
+#include <stan/math/prim/meta/scalar_type.hpp>
+#include <stan/math/prim/meta/value_type.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -35,6 +37,28 @@ template <typename T>
 struct is_eigen<
     T, std::enable_if_t<internal::is_eigen_base<std::decay_t<T>>::value>>
     : std::true_type {};
+
+/** \ingroup type_trait
+ * Template metaprogram defining the base scalar type of
+ * values stored in an Eigen matrix.
+ *
+ * @tparam T type of matrix
+ */
+template <typename T>
+struct scalar_type<T, std::enable_if_t<is_eigen<T>::value>> {
+  using type = scalar_type_t<typename std::decay_t<T>::Scalar>;
+};
+
+/** \ingroup type_trait
+ * Template metaprogram defining the type of values stored in an
+ * Eigen matrix, vector, or row vector.
+ *
+ * @tparam T type of matrix.
+ */
+template <typename T>
+struct value_type<T, std::enable_if_t<is_eigen<T>::value>> {
+  using type = typename std::decay_t<T>::Scalar;
+};
 
 STAN_ADD_REQUIRE_UNARY(eigen, is_eigen);
 

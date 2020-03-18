@@ -2,6 +2,8 @@
 #define STAN_MATH_PRIM_META_IS_FVAR_HPP
 
 #include <stan/math/prim/meta/require_helpers.hpp>
+#include <stan/math/prim/meta/scalar_type.hpp>
+#include <stan/math/prim/meta/value_type.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -13,6 +15,8 @@ template <typename T, typename = void>
 struct is_fvar : std::false_type {};
 
 STAN_ADD_REQUIRE_UNARY(fvar, is_fvar);
+STAN_ADD_REQUIRE_UNARY_SCALAR(fvar, is_fvar);
+STAN_ADD_REQUIRE_UNARY_VALUE(fvar, is_fvar);
 
 }  // namespace stan
 #endif

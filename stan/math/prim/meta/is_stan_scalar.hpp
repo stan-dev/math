@@ -4,6 +4,8 @@
 #include <stan/math/prim/meta/is_fvar.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
 #include <stan/math/prim/meta/is_var_or_arithmetic.hpp>
+#include <stan/math/prim/meta/scalar_type.hpp>
+#include <stan/math/prim/meta/value_type.hpp>
 #include <stan/math/prim/meta/require_helpers.hpp>
 
 #include <type_traits>
@@ -21,6 +23,8 @@ namespace stan {
                               std::is_arithmetic<std::decay_t<T>>>::value> {};
 
 STAN_ADD_REQUIRE_UNARY(stan_scalar, is_stan_scalar);
+STAN_ADD_REQUIRE_UNARY_SCALAR(stan_scalar, is_stan_scalar);
+STAN_ADD_REQUIRE_UNARY_VALUE(stan_scalar, is_stan_scalar);
 }  // namespace stan
 
 #endif
