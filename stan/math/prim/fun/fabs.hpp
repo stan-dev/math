@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap fabs() so that it can be vectorized.
+ * Structure to wrap `fabs()` so that it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -24,7 +24,8 @@ struct fabs_fun {
 };
 
 /**
- * Vectorized version of fabs().
+ * Returns the elementwise `fabs()` of the input,
+ * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam T type of container
  * @param x container
@@ -36,7 +37,7 @@ inline typename apply_scalar_unary<fabs_fun, T>::return_t fabs(const T& x) {
 }
 
 /**
- * Version of fabs() that accepts Eigen Matrix or matrix expressions.
+ * Version of `fabs()` that accepts Eigen Matrix or matrix expressions.
  *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
@@ -49,7 +50,7 @@ inline auto fabs(const Eigen::MatrixBase<Derived>& x) {
 }
 
 /**
- * Version of fabs() that accepts Eigen Array or array expressions.
+ * Version of \c fabs() that accepts Eigen Array or array expressions.
  *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression

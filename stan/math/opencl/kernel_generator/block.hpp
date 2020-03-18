@@ -34,7 +34,6 @@ class block_
 
  protected:
   int start_row_, start_col_, rows_, cols_;
-  using base::arguments_;
 
  public:
   /**
@@ -61,8 +60,8 @@ class block_
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline auto deep_copy() {
-    auto&& arg_copy = std::get<0>(arguments_).deep_copy();
+  inline auto deep_copy() const {
+    auto&& arg_copy = this->template get_arg<0>().deep_copy();
     return block_<std::remove_reference_t<decltype(arg_copy)>>{
         std::move(arg_copy), start_row_, start_col_, rows_, cols_};
   }
@@ -122,7 +121,7 @@ class block_
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
       generated.insert(this);
-      std::get<0>(arguments_).set_args(generated, kernel, arg_num);
+      this->template get_arg<0>().set_args(generated, kernel, arg_num);
       kernel.setArg(arg_num++, start_row_);
       kernel.setArg(arg_num++, start_col_);
     }
@@ -175,9 +174,9 @@ class block_
   inline void set_view(int bottom_diagonal, int top_diagonal,
                        int bottom_zero_diagonal, int top_zero_diagonal) const {
     int change = start_col_ - start_row_;
-    std::get<0>(arguments_)
-        .set_view(bottom_diagonal + change, top_diagonal + change,
-                  bottom_zero_diagonal + change, top_zero_diagonal + change);
+    this->template get_arg<0>().set_view(
+        bottom_diagonal + change, top_diagonal + change,
+        bottom_zero_diagonal + change, top_zero_diagonal + change);
   }
 
   /**
@@ -186,7 +185,7 @@ class block_
    */
   inline int bottom_diagonal() const {
     return std::max(
-        std::get<0>(arguments_).bottom_diagonal() - start_col_ + start_row_,
+        this->template get_arg<0>().bottom_diagonal() - start_col_ + start_row_,
         1 - rows_);
   }
 
@@ -196,7 +195,7 @@ class block_
    */
   inline int top_diagonal() const {
     return std::min(
-        std::get<0>(arguments_).top_diagonal() - start_col_ + start_row_,
+        this->template get_arg<0>().top_diagonal() - start_col_ + start_row_,
         cols_ - 1);
   }
 

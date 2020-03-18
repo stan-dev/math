@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap cos() so it can be vectorized.
+ * Structure to wrap `cos()` so it can be vectorized.
  *
  * @tparam T type of variable
  * @param x angle in radians
@@ -24,7 +24,8 @@ struct cos_fun {
 };
 
 /**
- * Vectorized version of cos().
+ * Returns the elementwise `cos()` of the input,
+ * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam T type of container
  * @param x angles in radians
@@ -36,7 +37,7 @@ inline auto cos(const T& x) {
 }
 
 /**
- * Version of cos() that accepts Eigen Matrix or matrix expressions.
+ * Version of `cos()` that accepts Eigen Matrix or matrix expressions.
  *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression

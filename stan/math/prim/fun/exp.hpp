@@ -9,16 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the natural exponential of the specified argument.  This
- * version is required to disambiguate <code>exp(int)</code>.
- *
- * @param[in] x Argument.
- * @return Natural exponential of argument.
- */
-inline double exp(int x) { return std::exp(x); }
-
-/**
- * Structure to wrap <code>exp()</code> so that it can be
+ * Structure to wrap `exp()` so that it can be
  * vectorized.
  */
 struct exp_fun {
@@ -37,7 +28,7 @@ struct exp_fun {
 };
 
 /**
- * Return the elementwise exponentiation of the specified argument,
+ * Return the elementwise `exp()` of the specified argument,
  * which may be a scalar or any Stan container of numeric scalars.
  * The return type is the same as the argument type.
  *
@@ -51,7 +42,7 @@ inline auto exp(const T& x) {
 }
 
 /**
- * Version of exp() that accepts Eigen Matrix or matrix expressions.
+ * Version of `exp()` that accepts Eigen Matrix or matrix expressions.
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Elementwise application of exponentiation to the argument.

@@ -9,16 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the square root of the specified argument.  This
- * version is required to disambiguate <code>sqrt(int)</code>.
- *
- * @param[in] x Argument.
- * @return Square root of x.
- */
-inline double sqrt(int x) { return std::sqrt(x); }
-
-/**
- * Structure to wrap sqrt() so that it can be vectorized.
+ * Structure to wrap `sqrt()` so that it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -33,7 +24,7 @@ struct sqrt_fun {
 };
 
 /**
- * Vectorized version of sqrt().
+ * Vectorized version of `sqrt()`.
  *
  * @tparam T type of container
  * @param x container
@@ -45,7 +36,7 @@ inline auto sqrt(const T& x) {
 }
 
 /**
- * Version of sqrt() that accepts Eigen Matrix or matrix expressions.
+ * Version of `sqrt()` that accepts Eigen Matrix or matrix expressions.
  *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression

@@ -10,13 +10,8 @@
 namespace stan {
 namespace math {
 
-inline double inv_sqrt(double x) {
-  using std::sqrt;
-  return inv(sqrt(x));
-}
-
 /**
- * Structure to wrap inv_sqrt() so that it can be vectorized.
+ * Structure to wrap `1 / sqrt(x)}` so that it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -25,12 +20,14 @@ inline double inv_sqrt(double x) {
 struct inv_sqrt_fun {
   template <typename T>
   static inline T fun(const T& x) {
-    return inv_sqrt(x);
+    using std::sqrt;
+    return inv(sqrt(x));
   }
 };
 
 /**
- * Vectorized version of inv_sqrt().
+ * Return the elementwise `1 / sqrt(x)}` of the specified argument,
+ * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam T type of container
  * @param x container
@@ -42,7 +39,7 @@ inline auto inv_sqrt(const T& x) {
 }
 
 /**
- * Version of inv_sqrt() that accepts Eigen Matrix or matrix expressions.
+ * Version of `inv_sqrt()` that accepts Eigen Matrix or matrix expressions.
  *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
@@ -55,7 +52,7 @@ inline auto inv_sqrt(const Eigen::MatrixBase<Derived>& x) {
 }
 
 /**
- * Version of inv_sqrt() that accepts Eigen Array or array expressions.
+ * Version of \c inv_sqrt() that accepts Eigen Array or array expressions.
  *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
