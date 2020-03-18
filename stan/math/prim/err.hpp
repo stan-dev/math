@@ -46,6 +46,7 @@
 #include <stan/math/prim/err/constraint_tolerance.hpp>
 #include <stan/math/prim/err/domain_error.hpp>
 #include <stan/math/prim/err/domain_error_vec.hpp>
+#include <stan/math/prim/err/elementwise_check.hpp>
 #include <stan/math/prim/err/invalid_argument.hpp>
 #include <stan/math/prim/err/invalid_argument_vec.hpp>
 #include <stan/math/prim/err/is_cholesky_factor.hpp>
