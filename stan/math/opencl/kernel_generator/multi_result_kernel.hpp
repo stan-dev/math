@@ -42,8 +42,8 @@ struct multi_result_kernel_internal {
         const std::tuple<wrapper<T_results>...>& results,
         const std::tuple<wrapper<T_expressions>...>& expressions){
       next::get_events(events, results, expressions);
-      std::get<n>(expressions).x.get_read_events(events);
-      std::get<n>(results).x.get_write_events(events);
+      std::get<n>(expressions).x.get_write_events(events);
+      std::get<n>(results).x.get_read_write_events(events);
     }
     /**
      * Assigns the dimensions of expressions to matching results if possible.

@@ -121,12 +121,13 @@ class load_
   inline void add_write_event(cl::Event& e) const { a_.add_write_event(e); }
 
   /**
-   * Adds all read events on the matrix used by this expression to a list.
+   * Adds all read and write events on the matrix used by this expression to a list.
    * @param[out] events List of all events.
    */
-  inline void get_read_events(std::vector<cl::Event>& events) const {
-    events.assign(a_.read_events().begin(), a_.read_events().end());
-    a_.clear_read_events();
+  inline void get_read_write_events(std::vector<cl::Event>& events) const {
+    events.insert(events.end(), a_.read_events().begin(), a_.read_events().end());
+    events.insert(events.end(), a_.write_events().begin(), a_.write_events().end());
+    a_.clear_read_write_events();
   }
 
   /**
@@ -134,7 +135,7 @@ class load_
    * @param[out] events List of all events.
    */
   inline void get_write_events(std::vector<cl::Event>& events) const {
-    events.assign(a_.write_events().begin(), a_.write_events().end());
+    events.insert(events.end(), a_.write_events().begin(), a_.write_events().end());
     a_.clear_write_events();
   }
 
