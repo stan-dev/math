@@ -49,7 +49,7 @@ template <typename Container,
           require_container_st<is_container, std::is_arithmetic, Container>...>
 inline auto log10(const Container& x) {
   return apply_vector_unary<Container>::apply(
-      x, [](auto&& v) { return v.array().log10(); });
+      x, [](const auto& v) { return v.array().log10(); });
 }
 
 }  // namespace math

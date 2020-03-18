@@ -50,7 +50,7 @@ template <typename Container,
           require_container_st<is_container, std::is_arithmetic, Container>...>
 inline auto acos(const Container& x) {
   return apply_vector_unary<Container>::apply(
-      x, [](auto&& v) { return v.array().acos(); });
+      x, [](const auto& v) { return v.array().acos(); });
 }
 
 }  // namespace math

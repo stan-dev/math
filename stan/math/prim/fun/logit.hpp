@@ -101,7 +101,7 @@ inline auto logit(const Container& x) {
 template <typename Container,
           require_container_st<is_container, std::is_arithmetic, Container>...>
 inline auto logit(const Container& x) {
-  return apply_vector_unary<Container>::apply(x, [](auto&& v) {
+  return apply_vector_unary<Container>::apply(x, [](const auto& v) {
     const Eigen::Ref<const plain_type_t<decltype(v)>>& v_ref = v;
     return (v_ref.array() / (1 - v_ref.array())).log().eval();
   });

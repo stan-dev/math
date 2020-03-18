@@ -91,7 +91,7 @@ template <typename Container,
           require_container_st<is_container, std::is_arithmetic, Container>...>
 inline auto inv_cloglog(const Container& x) {
   return apply_vector_unary<Container>::apply(
-      x, [](auto&& v) { return 1 - (-v.array().exp()).exp(); });
+      x, [](const auto& v) { return 1 - (-v.array().exp()).exp(); });
 }
 
 }  // namespace math
