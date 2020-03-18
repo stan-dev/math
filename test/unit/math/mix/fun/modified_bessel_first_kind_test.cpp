@@ -13,4 +13,9 @@ TEST(mathMixScalFun, modifiedBesselFirstKind) {
   stan::test::expect_ad(f(1), std::numeric_limits<double>::quiet_NaN());
   stan::test::expect_ad(f(2), 3.5);
   stan::test::expect_ad(f(2), std::numeric_limits<double>::quiet_NaN());
+
+  // integer argument
+  stan::test::expect_ad(f(0), 5);
+  stan::test::expect_ad(f(1), 12);
+  stan::test::expect_ad(f(8), 3);
 }
