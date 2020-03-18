@@ -26,6 +26,7 @@ TEST(MathMatrixCL, transpose_rvalue_test) {
   MatrixXd correct = stan::math::transpose(m);
   EXPECT_EQ(correct.rows(), res.rows());
   EXPECT_EQ(correct.cols(), res.cols());
+  EXPECT_EQ(stan::math::matrix_cl_view::Entire, res_cl.view());
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
@@ -41,6 +42,23 @@ TEST(MathMatrixCL, transpose_test) {
   MatrixXd correct = stan::math::transpose(m);
   EXPECT_EQ(correct.rows(), res.rows());
   EXPECT_EQ(correct.cols(), res.cols());
+  EXPECT_EQ(stan::math::matrix_cl_view::Entire, res_cl.view());
+  EXPECT_MATRIX_NEAR(correct, res, 1e-9);
+}
+
+TEST(MathMatrixCL, transpose_triangular_test) {
+  MatrixXd m(3, 2);
+  m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
+
+  matrix_cl<double> m_cl(m, stan::math::matrix_cl_view::Upper);
+  auto tmp = stan::math::transpose(m_cl);
+  matrix_cl<double> res_cl = tmp;
+
+  MatrixXd res = stan::math::from_matrix_cl(res_cl);
+  MatrixXd correct = stan::math::transpose(m).triangularView<Eigen::Lower>();
+  EXPECT_EQ(correct.rows(), res.rows());
+  EXPECT_EQ(correct.cols(), res.cols());
+  EXPECT_EQ(stan::math::matrix_cl_view::Lower, res_cl.view());
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
@@ -56,6 +74,23 @@ TEST(MathMatrixCL, double_transpose_test) {
   MatrixXd correct = m;
   EXPECT_EQ(correct.rows(), res.rows());
   EXPECT_EQ(correct.cols(), res.cols());
+  EXPECT_EQ(stan::math::matrix_cl_view::Entire, res_cl.view());
+  EXPECT_MATRIX_NEAR(correct, res, 1e-9);
+}
+
+TEST(MathMatrixCL, double_transpose_triangular_test) {
+  MatrixXd m(3, 2);
+  m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
+
+  matrix_cl<double> m_cl(m, stan::math::matrix_cl_view::Upper);
+  auto tmp = stan::math::transpose(stan::math::transpose(m_cl));
+  matrix_cl<double> res_cl = tmp;
+
+  MatrixXd res = stan::math::from_matrix_cl(res_cl);
+  MatrixXd correct = m.triangularView<Eigen::Upper>();;
+  EXPECT_EQ(correct.rows(), res.rows());
+  EXPECT_EQ(correct.cols(), res.cols());
+  EXPECT_EQ(stan::math::matrix_cl_view::Upper, res_cl.view());
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
@@ -72,6 +107,7 @@ TEST(MathMatrixCL, double_transpose_accepts_lvalue_test) {
   MatrixXd correct = m;
   EXPECT_EQ(correct.rows(), res.rows());
   EXPECT_EQ(correct.cols(), res.cols());
+  EXPECT_EQ(stan::math::matrix_cl_view::Entire, res_cl.view());
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
@@ -89,6 +125,7 @@ TEST(MathMatrixCL, transpose_block_test) {
   MatrixXd correct = m.block(2, 1, 2, 3).transpose();
   EXPECT_EQ(correct.rows(), res.rows());
   EXPECT_EQ(correct.cols(), res.cols());
+  EXPECT_EQ(stan::math::matrix_cl_view::Entire, res_cl.view());
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
@@ -106,6 +143,7 @@ TEST(MathMatrixCL, block_of_transpose_test) {
   MatrixXd correct = m.transpose().block(2, 1, 2, 3);
   EXPECT_EQ(correct.rows(), res.rows());
   EXPECT_EQ(correct.cols(), res.cols());
+  EXPECT_EQ(stan::math::matrix_cl_view::Entire, res_cl.view());
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
@@ -131,6 +169,7 @@ TEST(MathMatrixCL, a_plus_a_transpose_test) {
   MatrixXd correct = m.array() + 2 + m.array().transpose();
   EXPECT_EQ(correct.rows(), res.rows());
   EXPECT_EQ(correct.cols(), res.cols());
+  EXPECT_EQ(stan::math::matrix_cl_view::Entire, res_cl.view());
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 

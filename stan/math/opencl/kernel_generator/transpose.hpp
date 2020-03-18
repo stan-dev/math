@@ -98,7 +98,7 @@ class transpose_
    * @return index of bottom diagonal
    */
   inline int bottom_diagonal() const {
-    return this->template get_arg<0>().top_diagonal();
+    return -this->template get_arg<0>().top_diagonal();
   }
 
   /**
@@ -106,7 +106,7 @@ class transpose_
    * @return index of top diagonal
    */
   inline int top_diagonal() const {
-    return this->template get_arg<0>().bottom_diagonal();
+    return -this->template get_arg<0>().bottom_diagonal();
   }
 };
 
