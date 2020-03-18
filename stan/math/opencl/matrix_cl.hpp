@@ -452,15 +452,14 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   }
 
   /**
-   * Construct from a kernel generator expression. It evaluates the ixpression
+   * Construct from a kernel generator expression. It evaluates the expression
    * into \c this.
    * @tparam Expr type of the expression
    * @param expression expression
    */
   template <typename Expr,
             require_all_valid_expressions_and_none_scalar_t<Expr>* = nullptr>
-  matrix_cl(const Expr& expresion);  // NOLINT This constructor is intentionally
-                                     // implicit
+  matrix_cl(const Expr& expression);  // NOLINT(runtime/explicit)
 
   /** \ingroup opencl
    * Move assignment operator.
@@ -492,14 +491,14 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   }
 
   /**
-   * Assignment of a kernel generator expression evaluates the ixpression into
+   * Assignment of a kernel generator expression evaluates the expression into
    * \c this.
    * @tparam Expr type of the expression
    * @param expression expression
    */
   template <typename Expr,
             require_all_valid_expressions_and_none_scalar_t<Expr>* = nullptr>
-  matrix_cl<T>& operator=(const Expr& expresion);
+  matrix_cl<T>& operator=(const Expr& expression);
 
  private:
   /** \ingroup opencl
