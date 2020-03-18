@@ -20,7 +20,9 @@ namespace stan {
 /** \addtogroup require_stan_scalar
 *  @{
 */
-
+/**
+ * Require that a type is `double` or `int`.
+ */
 STAN_ADD_REQUIRE_UNARY(double_or_int, is_double_or_int);
 STAN_ADD_REQUIRE_UNARY_SCALAR(double_or_int, is_double_or_int);
 STAN_ADD_REQUIRE_UNARY_VALUE(double_or_int, is_double_or_int);

@@ -21,7 +21,9 @@ namespace stan {
 /** \addtogroup require_stan_scalar
 *  @{
 */
-
+/**
+ * Require that a type is `arithmetic`, `var`, or `fvar`.
+ */
 STAN_ADD_REQUIRE_UNARY(autodiff, is_autodiff);
 STAN_ADD_REQUIRE_UNARY_SCALAR(autodiff, is_autodiff);
 STAN_ADD_REQUIRE_UNARY_VALUE(autodiff, is_autodiff);

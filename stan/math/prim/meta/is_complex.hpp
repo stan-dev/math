@@ -58,7 +58,9 @@ struct scalar_type<T, std::enable_if_t<is_complex<T>::value>> {
 /** \addtogroup require_stan_scalar
 *  @{
 */
-
+/**
+ * Require that a type is `complex`
+ */
 STAN_ADD_REQUIRE_UNARY(complex, is_complex);
 STAN_ADD_REQUIRE_UNARY_SCALAR(complex, is_complex);
 STAN_ADD_REQUIRE_UNARY_VALUE(complex, is_complex);
