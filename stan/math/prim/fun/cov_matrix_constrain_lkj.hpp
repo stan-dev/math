@@ -21,7 +21,8 @@ namespace math {
  * in <code>corr_matrix_constrain(Matrix, size_t)</code>
  * with the constrained deviations.
  *
- * @tparam T type of elements in the vector
+ * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
+ * have one compile-time dimension equal to 1)
  * @param x Input vector of unconstrained partial correlations and
  * standard deviations.
  * @param k Dimensionality of returned covariance matrix.
@@ -32,16 +33,8 @@ template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain_lkj(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, size_t k) {
   size_t k_choose_2 = (k * (k - 1)) / 2;
-  Eigen::Array<T, Eigen::Dynamic, 1> cpcs(k_choose_2);
-  int pos = 0;
-  for (size_t i = 0; i < k_choose_2; ++i) {
-    cpcs[i] = corr_constrain(x[pos++]);
-  }
-  Eigen::Array<T, Eigen::Dynamic, 1> sds(k);
-  for (size_t i = 0; i < k; ++i) {
-    sds[i] = positive_constrain(x[pos++]);
-  }
-  return read_cov_matrix(cpcs, sds);
+  return read_cov_matrix(corr_constrain(x.head(k_choose_2)),
+                         positive_constrain(x.tail(k)));
 }
 
 /**
@@ -60,7 +53,8 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain_lkj(
  * the Jacobian of the transform of the correlation matrix
  * into a covariance matrix by scaling by standard deviations.
  *
- * @tparam T type of elements in the vector
+ * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
+ * have one compile-time dimension equal to 1)
  * @param x Input vector of unconstrained partial correlations and
  * standard deviations.
  * @param k Dimensionality of returned covariance matrix.
@@ -68,20 +62,12 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain_lkj(
  * @return Covariance matrix derived from the unconstrained partial
  * correlations and deviations.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain_lkj(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, size_t k, T& lp) {
+template <typename T, require_eigen_vector_t<T>* = nullptr>
+Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
+cov_matrix_constrain_lkj(const T& x, size_t k, value_type_t<T>& lp) {
   size_t k_choose_2 = (k * (k - 1)) / 2;
-  Eigen::Array<T, Eigen::Dynamic, 1> cpcs(k_choose_2);
-  int pos = 0;
-  for (size_t i = 0; i < k_choose_2; ++i) {
-    cpcs[i] = corr_constrain(x[pos++], lp);
-  }
-  Eigen::Array<T, Eigen::Dynamic, 1> sds(k);
-  for (size_t i = 0; i < k; ++i) {
-    sds[i] = positive_constrain(x[pos++], lp);
-  }
-  return read_cov_matrix(cpcs, sds, lp);
+  return read_cov_matrix(corr_constrain(x.head(k_choose_2)),
+                         positive_constrain(x.tail(k)), lp);
 }
 
 }  // namespace math

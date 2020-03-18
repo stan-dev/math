@@ -15,7 +15,7 @@ namespace math {
  * A matrix x is not lower triangular if there is a non-zero entry
  * x[m, n] with m &lt; n. This function only inspects the upper
  * triangular portion of the matrix, not including the diagonal.
- * @tparam T Type of scalar of the matrix
+ * @tparam T Type of the matrix
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Matrix to test

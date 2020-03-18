@@ -20,8 +20,8 @@ namespace math {
  * alpha and beta can each be a scalar or a one-dimensional container. Any
  * non-scalar inputs must be the same size.
  *
- * @tparam T_shape1 Type of success parameter
- * @tparam T_shape2 Type of failure parameter
+ * @tparam T_shape1 type of success parameter
+ * @tparam T_shape2 type of failure parameter
  * @tparam RNG type of random number generator
  * @param alpha (Sequence of) positive finite success parameter(s)
  * @param beta (Sequence of) positive finite failure parameter(s)
@@ -38,7 +38,6 @@ inline typename VectorBuilder<true, double, T_shape1, T_shape2>::type beta_rng(
   using boost::random::uniform_real_distribution;
   using boost::variate_generator;
   static const char *function = "beta_rng";
-
   check_positive_finite(function, "First shape parameter", alpha);
   check_positive_finite(function, "Second shape parameter", beta);
   check_consistent_sizes(function, "First shape parameter", alpha,

@@ -13,7 +13,7 @@ TEST(mathMixScalFun, std_normal_lcdf) {
   stan::test::expect_ad(f, 3.00);
   stan::test::expect_ad(f, 10.00);
 
-  // thid order autodiff tests can fail at borders of piecewise function
+  // third order autodiff tests can fail at borders of piecewise function
   stan::test::ad_tolerances tols;
   tols.grad_hessian_grad_hessian_ = 1e1;
   stan::test::expect_ad(tols, f, 0.1 * stan::math::SQRT_TWO);

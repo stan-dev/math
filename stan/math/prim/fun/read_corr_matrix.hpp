@@ -15,21 +15,21 @@ namespace math {
  * <p>See <code>read_corr_matrix(Array, size_t, T)</code>
  * for more information.
  *
- * @tparam T type of elements in the array
+ * @tparam T_CPCs type of the array (must be derived from \c Eigen::ArrayBase
+ * and have one compile-time dimension equal to 1)
  * @param CPCs The (K choose 2) canonical partial correlations in (-1, 1).
  * @param K Dimensionality of correlation matrix.
  * @return Cholesky factor of correlation matrix for specified
  * canonical partial correlations.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_matrix(
-    const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs, size_t K) {
+template <typename T_CPCs, require_eigen_vector_t<T_CPCs>* = nullptr>
+Eigen::Matrix<value_type_t<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic>
+read_corr_matrix(const T_CPCs& CPCs, size_t K) {
   if (K == 0) {
     return {};
   }
 
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> L = read_corr_L(CPCs, K);
-  return multiply_lower_tri_self_transpose(L);
+  return multiply_lower_tri_self_transpose(read_corr_L(CPCs, K));
 }
 
 /**
@@ -42,7 +42,8 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_matrix(
  * the Cholesky factor of the correlation matrix rather than the
  * correlation matrix itself in statistical calculations.
  *
- * @tparam T type of elements in the array
+ * @tparam T_CPCs type of the array (must be derived from \c Eigen::ArrayBase
+ * and have one compile-time dimension equal to 1)
  * @param CPCs The (K choose 2) canonical partial correlations in
  * (-1, 1).
  * @param K Dimensionality of correlation matrix.
@@ -50,16 +51,14 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_matrix(
  * Jacobian determinant.
  * @return Correlation matrix for specified partial correlations.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_matrix(
-    const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs, size_t K, T& log_prob) {
+template <typename T_CPCs, require_eigen_vector_t<T_CPCs>* = nullptr>
+Eigen::Matrix<value_type_t<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic>
+read_corr_matrix(const T_CPCs& CPCs, size_t K, value_type_t<T_CPCs>& log_prob) {
   if (K == 0) {
     return {};
   }
 
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> L
-      = read_corr_L(CPCs, K, log_prob);
-  return multiply_lower_tri_self_transpose(L);
+  return multiply_lower_tri_self_transpose(read_corr_L(CPCs, K, log_prob));
 }
 
 }  // namespace math

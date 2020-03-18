@@ -22,15 +22,11 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale,
 return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T_inv_scale& lambda) {
-  static const char* function = "exp_mod_normal_lpdf";
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
-
-  if (size_zero(y, mu, sigma, lambda)) {
-    return 0.0;
-  }
-
-  T_partials_return logp(0.0);
-
+  using std::exp;
+  using std::log;
+  using std::sqrt;
+  static const char* function = "exp_mod_normal_lpdf";
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Inv_scale parameter", lambda);
@@ -39,14 +35,14 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
                          mu, "Scale parameter", sigma, "Inv_scale paramter",
                          lambda);
 
+  if (size_zero(y, mu, sigma, lambda)) {
+    return 0.0;
+  }
   if (!include_summand<propto, T_y, T_loc, T_scale, T_inv_scale>::value) {
     return 0.0;
   }
 
-  using std::exp;
-  using std::log;
-  using std::sqrt;
-
+  T_partials_return logp(0.0);
   operands_and_partials<T_y, T_loc, T_scale, T_inv_scale> ops_partials(
       y, mu, sigma, lambda);
 

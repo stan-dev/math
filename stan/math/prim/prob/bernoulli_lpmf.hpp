@@ -28,31 +28,28 @@ namespace math {
  */
 template <bool propto, typename T_n, typename T_prob>
 return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
-  static const char* function = "bernoulli_lpmf";
   using T_partials_return = partials_return_t<T_n, T_prob>;
-
   using std::log;
-
-  if (size_zero(n, theta)) {
-    return 0.0;
-  }
-
-  T_partials_return logp(0.0);
-
+  static const char* function = "bernoulli_lpmf";
   check_bounded(function, "n", n, 0, 1);
   check_finite(function, "Probability parameter", theta);
   check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
 
+  if (size_zero(n, theta)) {
+    return 0.0;
+  }
   if (!include_summand<propto, T_prob>::value) {
     return 0.0;
   }
 
+  T_partials_return logp(0.0);
+  operands_and_partials<T_prob> ops_partials(theta);
+
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_prob> theta_vec(theta);
   size_t N = max_size(n, theta);
-  operands_and_partials<T_prob> ops_partials(theta);
 
   if (size(theta) == 1) {
     size_t sum = 0;

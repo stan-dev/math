@@ -8,25 +8,26 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the dot product of the specified vectors.
+ * Returns the dot product of columns of the specified matrices.
  *
- * @tparam R1 number of rows, can be Eigen::Dynamic
- * @tparam C1 number of columns, can be Eigen::Dynamic
- * @tparam R2 number of rows, can be Eigen::Dynamic
- * @tparam C2 number of columns, can be Eigen::Dynamic
+ * @tparam Mat1 type of the first matrix (must be derived from \c
+ * Eigen::MatrixBase)
+ * @tparam Mat2 type of the second matrix (must be derived from \c
+ * Eigen::MatrixBase)
  *
- * @param v1 First vector.
- * @param v2 Second vector.
+ * @param v1 Matrix of first vectors.
+ * @param v2 Matrix of second vectors.
  * @return Dot product of the vectors.
  * @throw std::domain_error If the vectors are not the same
  * size or if they are both not vector dimensioned.
  */
-template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<double, 1, C1> columns_dot_product(
-    const Eigen::Matrix<double, R1, C1>& v1,
-    const Eigen::Matrix<double, R2, C2>& v2) {
+template <typename Mat1, typename Mat2,
+          require_all_eigen_t<Mat1, Mat2>* = nullptr,
+          require_all_not_eigen_vt<is_var, Mat1, Mat2>* = nullptr>
+inline Eigen::Matrix<return_type_t<Mat1, Mat2>, 1, Mat1::ColsAtCompileTime>
+columns_dot_product(const Mat1& v1, const Mat2& v2) {
   check_matching_sizes("columns_dot_product", "v1", v1, "v2", v2);
-  return (v1.transpose() * v2).diagonal();
+  return v1.cwiseProduct(v2).colwise().sum();
 }
 
 }  // namespace math

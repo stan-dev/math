@@ -23,19 +23,13 @@ template <typename T_y, typename T_loc, typename T_scale>
 inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
                                                       const T_loc& mu,
                                                       const T_scale& sigma) {
-  static const char* function = "normal_lcdf";
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using std::exp;
   using std::fabs;
   using std::log;
   using std::pow;
   using std::sqrt;
-
-  T_partials_return cdf_log(0.0);
-  if (size_zero(y, mu, sigma)) {
-    return cdf_log;
-  }
-
+  static const char* function = "normal_lcdf";
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_not_nan(function, "Scale parameter", sigma);
@@ -43,6 +37,11 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
 
+  if (size_zero(y, mu, sigma)) {
+    return 0;
+  }
+
+  T_partials_return cdf_log(0.0);
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
   scalar_seq_view<T_y> y_vec(y);
@@ -111,7 +110,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
       T_partials_return t2 = 0.0;
       T_partials_return t4 = 0.0;
 
-      // calculate using piecewise funciton
+      // calculate using piecewise function
       // (due to instability / inaccuracy in the various approximations)
       if (scaled_diff > 2.9) {
         // approximation derived from Abramowitz and Stegun (1964) 7.1.26

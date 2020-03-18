@@ -16,17 +16,9 @@ namespace math {
 
 template <typename T_y, typename T_scale>
 return_type_t<T_y, T_scale> rayleigh_cdf(const T_y& y, const T_scale& sigma) {
-  static const char* function = "rayleigh_cdf";
   using T_partials_return = partials_return_t<T_y, T_scale>;
-
   using std::exp;
-
-  T_partials_return cdf(1.0);
-
-  if (size_zero(y, sigma)) {
-    return cdf;
-  }
-
+  static const char* function = "rayleigh_cdf";
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_not_nan(function, "Scale parameter", sigma);
@@ -34,6 +26,11 @@ return_type_t<T_y, T_scale> rayleigh_cdf(const T_y& y, const T_scale& sigma) {
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          sigma);
 
+  if (size_zero(y, sigma)) {
+    return 1.0;
+  }
+
+  T_partials_return cdf(1.0);
   operands_and_partials<T_y, T_scale> ops_partials(y, sigma);
 
   scalar_seq_view<T_y> y_vec(y);

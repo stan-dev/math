@@ -9,16 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the square root of the specified argument.  This
- * version is required to disambiguate <code>sqrt(int)</code>.
- *
- * @param[in] x Argument.
- * @return Square root of x.
- */
-inline double sqrt(int x) { return std::sqrt(x); }
-
-/**
- * Structure to wrap sqrt() so that it can be vectorized.
+ * Structure to wrap `sqrt()` so that it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -33,28 +24,32 @@ struct sqrt_fun {
 };
 
 /**
- * Vectorized version of sqrt().
+ * Vectorized version of `sqrt()`.
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x container
  * @return Square root of each value in x.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
-inline auto sqrt(const T& x) {
-  return apply_scalar_unary<sqrt_fun, T>::apply(x);
+template <
+    typename Container,
+    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto sqrt(const Container& x) {
+  return apply_scalar_unary<sqrt_fun, Container>::apply(x);
 }
 
 /**
- * Version of sqrt() that accepts Eigen Matrix or matrix expressions.
+ * Version of `sqrt()` that accepts std::vectors, Eigen Matrix/Array objects
+ *  or expressions, and containers of these.
  *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
+ * @tparam Container Type of x
+ * @param x Container
  * @return Square root of each value in x.
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto sqrt(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().sqrt().matrix().eval();
+template <typename Container,
+          require_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto sqrt(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](const auto& v) { return v.array().sqrt(); });
 }
 
 }  // namespace math

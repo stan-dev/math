@@ -35,22 +35,17 @@ inline Eigen::MatrixXd matrix_normal_prec_rng(const Eigen::MatrixXd &Mu,
                                               RNG &rng) {
   using boost::normal_distribution;
   using boost::variate_generator;
-
   static const char *function = "matrix_normal_prec_rng";
-
   check_positive(function, "Sigma rows", Sigma.rows());
   check_finite(function, "Sigma", Sigma);
   check_symmetric(function, "Sigma", Sigma);
-
   check_positive(function, "D rows", D.rows());
   check_finite(function, "D", D);
   check_symmetric(function, "D", D);
-
   check_size_match(function, "Rows of location parameter", Mu.rows(),
                    "Rows of Sigma", Sigma.rows());
   check_size_match(function, "Columns of location parameter", Mu.cols(),
                    "Rows of D", D.rows());
-
   check_finite(function, "Location parameter", Mu);
 
   Eigen::LDLT<Eigen::MatrixXd> Sigma_ldlt(Sigma);
