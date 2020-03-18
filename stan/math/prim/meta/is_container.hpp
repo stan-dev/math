@@ -21,9 +21,17 @@ template <typename Container>
 using is_container = bool_constant<
     math::disjunction<is_eigen<Container>, is_std_vector<Container>>::value>;
 
+/** \addtogroup require_container_types
+*  @{
+*/
+/**
+ * Requires a type is an eigen or std vector.
+ */
 STAN_ADD_REQUIRE_UNARY(is_container, is_container);
 STAN_ADD_REQUIRE_UNARY_SCALAR(is_container, is_container);
 STAN_ADD_REQUIRE_UNARY_VALUE(is_container, is_container);
+/** @}*/
+
 }  // namespace stan
 
 #endif

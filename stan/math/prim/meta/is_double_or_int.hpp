@@ -17,8 +17,14 @@ namespace stan {
             math::disjunction<std::is_same<double, std::decay_t<T>>,
                               std::is_same<int, std::decay_t<T>>>::value> {};
 
+/** \addtogroup require_stan_scalar
+*  @{
+*/
+
 STAN_ADD_REQUIRE_UNARY(double_or_int, is_double_or_int);
 STAN_ADD_REQUIRE_UNARY_SCALAR(double_or_int, is_double_or_int);
 STAN_ADD_REQUIRE_UNARY_VALUE(double_or_int, is_double_or_int);
+/** @}*/
+
 }  // namespace stan
 #endif

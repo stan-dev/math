@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/scalar_type.hpp>
+#include <stan/math/prim/meta/value_type.hpp>
 #include <stan/math/prim/meta/require_helpers.hpp>
 #include <type_traits>
 #include <vector>
@@ -52,7 +54,14 @@ struct is_eigen_row_vector_impl<T, false> : std::false_type {};
 template <typename T>
 struct is_eigen_col_vector : internal::is_eigen_col_vector_impl<T> {};
 
+/** \addtogroup require_container_types
+*  @{
+*/
+/**
+ * Require a container is an eigen column vector
+ */
 STAN_ADD_REQUIRE_UNARY(eigen_col_vector, is_eigen_col_vector);
+/** @}*/
 
 /** \ingroup type_trait
  * If the input type T is an eigen matrix with 1 column at compile time this
@@ -62,7 +71,14 @@ STAN_ADD_REQUIRE_UNARY(eigen_col_vector, is_eigen_col_vector);
 template <typename T>
 struct is_eigen_row_vector : internal::is_eigen_row_vector_impl<T> {};
 
+/** \addtogroup require_container_types
+*  @{
+*/
+/**
+ * Require a container is an eigen row vector.
+ */
 STAN_ADD_REQUIRE_UNARY(eigen_row_vector, is_eigen_row_vector);
+/** @}*/
 
 /** \ingroup type_trait
  * If the input type T is an eigen matrix with 1 column or 1 row at compile time
@@ -73,7 +89,14 @@ template <typename T>
 struct is_eigen_vector : bool_constant<is_eigen_col_vector<T>::value
                                        || is_eigen_row_vector<T>::value> {};
 
+/** \addtogroup require_container_types
+*  @{
+*/
+/**
+ * Require a container is either an eigen row or column vector
+ */
 STAN_ADD_REQUIRE_UNARY(eigen_vector, is_eigen_vector);
+/** @}*/
 
 /** \ingroup type_trait
  * If the input type T is either an eigen matrix with 1 column or 1 row at
@@ -84,8 +107,14 @@ template <typename T>
 struct is_vector
     : bool_constant<is_eigen_vector<T>::value || is_std_vector<T>::value> {};
 
+/** \addtogroup require_container_types
+*  @{
+*/
+/**
+ * Require a container is either an eigen vector or standard vector.
+ */
 STAN_ADD_REQUIRE_UNARY(vector, is_vector);
-
+/** @}*/
 namespace internal {
 
 /** \ingroup type_trait
@@ -133,8 +162,14 @@ struct value_type<T, std::enable_if_t<is_std_vector<T>::value>> {
   using type = typename std::decay_t<T>::value_type;
 };
 
+/** \addtogroup require_container_types
+*  @{
+*/
+/**
+ * Require a container is an standard vector
+ */
 STAN_ADD_REQUIRE_UNARY(std_vector, is_std_vector);
-
+/** @}*/
 
 }  // namespace stan
 #endif

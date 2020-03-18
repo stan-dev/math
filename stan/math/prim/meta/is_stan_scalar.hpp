@@ -22,9 +22,13 @@ namespace stan {
             math::disjunction<is_var<std::decay_t<T>>, is_fvar<std::decay_t<T>>,
                               std::is_arithmetic<std::decay_t<T>>>::value> {};
 
+/** \addtogroup require_stan_scalar
+*  @{
+*/
 STAN_ADD_REQUIRE_UNARY(stan_scalar, is_stan_scalar);
 STAN_ADD_REQUIRE_UNARY_SCALAR(stan_scalar, is_stan_scalar);
 STAN_ADD_REQUIRE_UNARY_VALUE(stan_scalar, is_stan_scalar);
+/** @}*/
 }  // namespace stan
 
 #endif

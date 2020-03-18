@@ -14,7 +14,13 @@ namespace stan {
 template <typename T>
 using is_string_convertible = std::is_convertible<T, std::string>;
 
+/** \addtogroup require_base_types
+*  @{
+*/
 STAN_ADD_REQUIRE_UNARY(string_convertible, is_string_convertible);
+STAN_ADD_REQUIRE_UNARY_SCALAR(string_convertible, is_string_convertible);
+STAN_ADD_REQUIRE_UNARY_VALUE(string_convertible, is_string_convertible);
+/** @}*/
 }  // namespace stan
 
 #endif

@@ -14,9 +14,12 @@ namespace stan {
 template <typename T, typename = void>
 struct is_fvar : std::false_type {};
 
+/** \addtogroup require_stan_scalar
+*  @{
+*/
 STAN_ADD_REQUIRE_UNARY(fvar, is_fvar);
 STAN_ADD_REQUIRE_UNARY_SCALAR(fvar, is_fvar);
 STAN_ADD_REQUIRE_UNARY_VALUE(fvar, is_fvar);
-
+/** @}*/
 }  // namespace stan
 #endif

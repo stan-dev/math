@@ -18,9 +18,14 @@ namespace stan {
       : bool_constant<math::disjunction<is_var<std::decay_t<T>>,
                                         is_fvar<std::decay_t<T>>>::value> {};
 
+/** \addtogroup require_stan_scalar
+*  @{
+*/
+
 STAN_ADD_REQUIRE_UNARY(autodiff, is_autodiff);
 STAN_ADD_REQUIRE_UNARY_SCALAR(autodiff, is_autodiff);
 STAN_ADD_REQUIRE_UNARY_VALUE(autodiff, is_autodiff);
+/** @}*/
 
 }  // namespace stan
 

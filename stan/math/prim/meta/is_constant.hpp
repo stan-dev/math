@@ -62,9 +62,16 @@ template <typename T>
 struct is_constant<T, require_eigen_t<T>>
     : bool_constant<is_constant<typename std::decay_t<T>::Scalar>::value> {};
 
+/** \addtogroup require_base_types
+*  @{
+*/
+
+/**
+ * Check is a type satisfies `is_constant`
+ */
 STAN_ADD_REQUIRE_UNARY(constant, is_constant);
 STAN_ADD_REQUIRE_UNARY_SCALAR(constant, is_constant);
 STAN_ADD_REQUIRE_UNARY_VALUE(constant, is_constant);
-
+/** @}*/
 }  // namespace stan
 #endif

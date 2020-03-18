@@ -60,8 +60,14 @@ struct value_type<T, std::enable_if_t<is_eigen<T>::value>> {
   using type = typename std::decay_t<T>::Scalar;
 };
 
+/** \addtogroup require_container_types
+*  @{
+*/
+/**
+ * Require that a type satisfied `is_eigen`
+ */
 STAN_ADD_REQUIRE_UNARY(eigen, is_eigen);
-
+/** @}*/
 namespace internal {
 template <typename T>
 struct is_eigen_matrix_impl : std::false_type {};
