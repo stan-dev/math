@@ -7,7 +7,8 @@
 namespace stan {
 namespace math {
 
-/** Calculate the size of the largest input.
+/**
+ * Calculate the size of the largest input.
  * @tparam T1 type of the first input
  * @tparam Ts types of the other inputs
  * @param x1 first input

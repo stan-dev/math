@@ -5,80 +5,62 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <algorithm>
+#include <sstream>
+#include <string>
 
 namespace stan {
 namespace math {
-namespace internal {
 
-/** Base case of recursion, this function is a no-op. */
-inline void check_consistent_with_size(const char*, size_t) { return; }
+/** Trivial no input case, this function is a no-op. */
+inline void check_consistent_sizes(const char*) { return; }
 
 /**
- * Check that the provided inputs are either non-vectors, or vectors of the
- * specified size.
+ * Base case of recursion, this function is a no-op.
  * @tparam T1 type of first input
- * @tparam Ts type of other inputs
- * @param function function name (for error messages)
- * @param size the size that vector inputs must be
- * @param name1 name of variable corresponding to first input
- * @param x1 first input
- * @param names_and_xs more inputs
- * @throw `invalid_argument` if sizes are inconsistent
- */
-template <typename T1, typename... Ts>
-inline void check_consistent_with_size(const char* function, size_t size,
-                                       const char* name1, const T1& x1,
-                                       const Ts&... names_and_xs) {
-  check_consistent_size(function, name1, x1, size);
-  check_consistent_with_size(function, size, names_and_xs...);
+ **/
+template <typename T1>
+inline void check_consistent_sizes(const char*, const char*, const T1&) {
+  return;
 }
 
 /**
- * Compute the size of a vector, or produce 0 for a nonvector.
- * This overload handles the vector case.
- * @tparam T type of `x`
- * @param x vector
- * @return size of `x`
- */
-template <typename T, typename = require_vector_t<T>>
-inline size_t size_ignore_nonvector(const T& x) {
-  return stan::math::size(x);
-}
-
-/**
- * This overload handles the nonvector case.
- * @tparam T type of non-vector argument
- * @return 0
- */
-template <typename T, typename = require_not_vector_t<T>, typename = void>
-inline size_t size_ignore_nonvector(const T&) {
-  return 0;
-}
-}  // namespace internal
-
-/**
- * Check if the dimensions of the inputs are consistent.
- * Consistent size is defined as having the same size if
- * vector-like or being a scalar.
+ * Check that the inputs are of consistent size. Two inputs are of consistent
+ * size if they are vectors of the same size, or if at least one is not a
+ * vector.
  *
  * E.g.: check_consistent_sizes("some_function", "x1", x1, "x2", x2, etc.).
  *
  * @tparam T1 type of first input
+ * @tparam T2 type of second input
  * @tparam Ts type of other inputs
  * @param function function name (for error messages)
  * @param name1 name of variable corresponding to first input
  * @param x1 first input
+ * @param name2 name of variable corresponding to second input
+ * @param x2 second input
  * @param names_and_xs more inputs
  * @throw `invalid_argument` if sizes are inconsistent
  */
-template <typename T1, typename... Ts>
+
+template <typename T1, typename T2, typename... Ts>
 inline void check_consistent_sizes(const char* function, const char* name1,
-                                   const T1& x1, const Ts&... names_and_xs) {
-  size_t max_size
-      = std::max({internal::size_ignore_nonvector(x1),
-                  internal::size_ignore_nonvector(names_and_xs)...});
-  internal::check_consistent_with_size(function, max_size, name1, x1,
-                                       names_and_xs...);
+                                   const T1& x1, const char* name2,
+                                   const T2& x2, const Ts&... names_and_xs) {
+  if (!is_vector<T1>::value && is_vector<T2>::value) {
+    check_consistent_sizes(function, name2, x2, name1, x1, names_and_xs...);
+  } else if (!is_vector<T2>::value) {
+    check_consistent_sizes(function, name1, x1, names_and_xs...);
+  } else if (stan::math::size(x1) == stan::math::size(x2)) {
+    check_consistent_sizes(function, name1, x1, names_and_xs...);
+  } else {
+    size_t size_x1 = stan::math::size(x1);
+    size_t size_x2 = stan::math::size(x2);
+    std::stringstream msg;
+    msg << ", but " << name2 << " has size " << size_x2
+        << "; and they must be the same size.";
+    std::string msg_str(msg.str());
+    invalid_argument(function, name1, size_x1, "has size = ", msg_str.c_str());
+  }
 }
 
 }  // namespace math

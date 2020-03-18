@@ -8,7 +8,6 @@
 #include <stan/math/prim/err/check_cholesky_factor_corr.hpp>
 #include <stan/math/prim/err/check_column_index.hpp>
 #include <stan/math/prim/err/check_consistent_size.hpp>
-#include <stan/math/prim/err/check_consistent_size_mvt.hpp>
 #include <stan/math/prim/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/err/check_consistent_sizes_mvt.hpp>
 #include <stan/math/prim/err/check_corr_matrix.hpp>

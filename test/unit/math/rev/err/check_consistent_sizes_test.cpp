@@ -52,6 +52,7 @@ TEST(AgradRevErrorHandlingMatrix, checkConsistentSizes) {
   ASSERT_EQ(4U, stan::math::size(v2));
   ASSERT_EQ(4U, stan::math::size(v3));
   ASSERT_EQ(4U, stan::math::size(v4));
+  EXPECT_NO_THROW(check_consistent_sizes(function));
   EXPECT_NO_THROW(check_consistent_sizes(function, name1, v1));
   EXPECT_NO_THROW(check_consistent_sizes(function, name1, v1, name2, v2));
   EXPECT_NO_THROW(

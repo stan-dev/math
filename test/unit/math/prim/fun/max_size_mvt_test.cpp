@@ -32,4 +32,5 @@ TEST(MathPrimFun, max_size_mvt) {
   Eigen::MatrixXd m = Eigen::MatrixXd::Zero(3, 3);
   std::vector<Eigen::MatrixXd> vm{m, m};
   EXPECT_EQ(2, max_size_mvt(vm, vm));
+  EXPECT_EQ(4, max_size_mvt(v3, m, m, v4));
 }

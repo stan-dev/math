@@ -19,10 +19,16 @@ TEST(checkConsistentSizesMvt, checkConsistentSizesMvt) {
   bad_only_2[1] = good_single;
   std::vector<Eigen::VectorXd> bad_only_1(1);
   bad_only_1[0] = good_single;
+  std::vector<Eigen::VectorXd> empty;
 
   static const char* function
       = "TESTcheckConsistentSizesMvtcheckConsistentSizesMvt";
 
+  EXPECT_NO_THROW(check_consistent_sizes_mvt(function));
+  EXPECT_NO_THROW(check_consistent_sizes_mvt(function, "good", good));
+  EXPECT_NO_THROW(
+      check_consistent_sizes_mvt(function, "good_single", good_single));
+  EXPECT_NO_THROW(check_consistent_sizes_mvt(function, "empty", empty));
   EXPECT_NO_THROW(check_consistent_sizes_mvt(function, "x1", good, "x2", good));
   EXPECT_NO_THROW(
       check_consistent_sizes_mvt(function, "x1", good, "x2", good_single));
@@ -53,4 +59,8 @@ TEST(checkConsistentSizesMvt, checkConsistentSizesMvt) {
       check_consistent_sizes_mvt(function, "x1", good, "x2", good, "x3", good,
                                  "x4", good, "x5", bad_only_1, "x6", good),
       std::invalid_argument);
+  EXPECT_THROW(check_consistent_sizes_mvt(function, "x1", good_single, "x2",
+                                          good_single, "x3", good, "x4", good,
+                                          "x5", bad_only_1, "x6", good),
+               std::invalid_argument);
 }
