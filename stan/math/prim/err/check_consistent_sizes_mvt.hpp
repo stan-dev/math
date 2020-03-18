@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_ERR_CHECK_CONSISTENT_SIZES_MVT_HPP
 #define STAN_MATH_PRIM_ERR_CHECK_CONSISTENT_SIZES_MVT_HPP
 
+#include <stan/math/prim/err/invalid_argument.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <algorithm>

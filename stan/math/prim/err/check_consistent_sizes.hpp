@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_ERR_CHECK_CONSISTENT_SIZES_HPP
 #define STAN_MATH_PRIM_ERR_CHECK_CONSISTENT_SIZES_HPP
 
-#include <stan/math/prim/err/check_consistent_size.hpp>
+#include <stan/math/prim/err/invalid_argument.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <algorithm>
