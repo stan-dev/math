@@ -248,6 +248,17 @@ class operation_cl : public operation_cl_base {
   }
 
   /**
+   * Adds all read events on any matrices used by nested expressions to a list.
+   * @param[out] events List of all events.
+   */
+  inline void get_read_events(std::vector<cl::Event>& events) const {
+    index_apply<N>([&](auto... Is) {
+      (void)std::initializer_list<int>{
+          (this->get_arg<Is>().get_read_events(events), 0)...};
+    });
+  }
+
+  /**
    * Number of rows of a matrix that would be the result of evaluating this
    * expression. Some subclasses may need to override this.
    * @return number of rows

@@ -124,6 +124,17 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
           (std::get<Is>(this->arguments_).add_write_event(e), 0)...};
     });
   }
+
+  /**
+   * Adds all write events on any matrices used by nested expressions to a list.
+   * @param[out] events List of all events.
+   */
+  inline void get_write_events(std::vector<cl::Event>& events) const {
+    index_apply<N>([&](auto... Is) {
+      (void)std::initializer_list<int>{
+          (this->template get_arg<Is>().get_write_events(events), 0)...};
+    });
+  }
 };
 
 }  // namespace math
