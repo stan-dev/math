@@ -88,7 +88,6 @@ TEST(MathMatrixCL, double_transpose_triangular_test) {
 
   MatrixXd res = stan::math::from_matrix_cl(res_cl);
   MatrixXd correct = m.triangularView<Eigen::Upper>();
-  ;
   EXPECT_EQ(correct.rows(), res.rows());
   EXPECT_EQ(correct.cols(), res.cols());
   EXPECT_EQ(stan::math::matrix_cl_view::Upper, res_cl.view());
