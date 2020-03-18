@@ -7,40 +7,13 @@
 
 namespace stan {
 namespace math {
-/**
- * Structure to wrap `exp()` so that it can be
- * vectorized.
- */
-struct exp_fun {
-  /**
-   * Return the exponential of the specified scalar argument.
-   *
-   * @tparam T type of argument
-   * @param[in] x argument
-   * @return Exponential of argument.
-   */
-  template <typename T>
-  static inline T fun(const T& x) {
-    using std::exp;
-    return exp(x);
-  }
-};
 
-/**
- * Return the elementwise `exp()` of the specified argument,
- * which may be a scalar or any Stan container of numeric scalars.
- * The return type is the same as the argument type.
- *
- * @tparam Container type of container
- * @param[in] x container
- * @return Elementwise application of exponentiation to the argument.
- */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
-inline auto exp(const Container& x) {
-  return apply_scalar_unary<exp_fun, Container>::apply(x);
+template <typename T, require_arithmetic_t<T>...>
+auto exp(const T& x) {
+  using std::exp;
+  return exp(x);
 }
+
 
 /**
  * Version of `exp()` that accepts std::vectors, Eigen Matrix/Array objects
