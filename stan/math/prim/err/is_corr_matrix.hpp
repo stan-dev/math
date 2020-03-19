@@ -44,7 +44,7 @@ inline bool is_corr_matrix(
   }
   if (is_symmetric(y)) {
     for (size_type k = 0; k < y.rows(); ++k) {
-      if (!(fabs(y(k, k) - 1.0) <= CONSTRAINT_TOLERANCE)) {
+      if (!(fabs(value_of_rec(y(k, k)) - 1.0) <= CONSTRAINT_TOLERANCE)) {
         return false;
       }
     }

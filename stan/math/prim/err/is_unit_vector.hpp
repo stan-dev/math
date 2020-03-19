@@ -18,18 +18,17 @@ namespace math {
  * is within the tolerance specified by <code>CONSTRAINT_TOLERANCE</code>.
  * This function only accepts <code>Eigen::Matrix</code> vectors, statically
  * typed vectors, not general matrices with 1 column.
- * @tparam T_prob Scalar type of the vector, requires class method
+ * @tparam T Scalar type of the vector, requires class method
  *   <code>.squaredNorm()</code>
  * @param theta Eigen vector to test
  * @return <code>true</code> if the vector is not a unit
  *   vector or if any element is <code>NaN</code>
  */
-template <typename T_prob>
-inline bool is_unit_vector(
-    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
+template <typename T>
+inline bool is_unit_vector(const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta) {
   using std::fabs;
   if (is_nonzero_size(theta)) {
-    T_prob seq = theta.squaredNorm();
+    double seq = value_of_rec(theta).squaredNorm();
     return fabs(1.0 - seq) <= CONSTRAINT_TOLERANCE;
   }
   return false;

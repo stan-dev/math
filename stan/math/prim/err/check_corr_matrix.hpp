@@ -43,7 +43,7 @@ inline void check_corr_matrix(
   }
 
   for (size_type k = 0; k < y.rows(); ++k) {
-    if (!(fabs(y(k, k) - 1.0) <= CONSTRAINT_TOLERANCE)) {
+    if (!(fabs(value_of_rec(y(k, k)) - 1.0) <= CONSTRAINT_TOLERANCE)) {
       std::ostringstream msg;
       msg << "is not a valid correlation matrix. " << name << "("
           << stan::error_index::value + k << "," << stan::error_index::value + k

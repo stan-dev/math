@@ -18,7 +18,7 @@ namespace math {
  **/
 template <typename T, int R, int C>
 inline bool is_mat_finite(const Eigen::Matrix<T, R, C>& y) {
-  return y.allFinite();
+  return is_scal_finite(y);
 }
 
 }  // namespace math

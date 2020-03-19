@@ -21,7 +21,7 @@ namespace math {
  * tolerance specified by <code>CONSTRAINT_TOLERANCE</code>. This
  * function only accepts Eigen vectors, statically typed vectors,
  * not general matrices with 1 column.
- * @tparam T_prob Scalar type of the vector
+ * @tparam T Scalar type of the vector
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param theta Vector to test
@@ -30,12 +30,12 @@ namespace math {
  * @throw <code>std::domain_error</code> if the vector is not a unit
  *   vector or if any element is <code>NaN</code>
  */
-template <typename T_prob>
+template <typename T>
 void check_unit_vector(const char* function, const char* name,
-                       const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
+                       const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta) {
   check_nonzero_size(function, name, theta);
   using std::fabs;
-  T_prob ssq = theta.squaredNorm();
+  double ssq = value_of_rec(theta).squaredNorm();
   if (!(fabs(1.0 - ssq) <= CONSTRAINT_TOLERANCE)) {
     std::stringstream msg;
     msg << "is not a valid unit vector."

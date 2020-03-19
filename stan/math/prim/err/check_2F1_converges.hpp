@@ -37,27 +37,36 @@ inline void check_2F1_converges(const char* function, const T_a1& a1,
   using std::fabs;
   using std::floor;
 
-  check_not_nan("check_3F2_converges", "a1", a1);
-  check_not_nan("check_3F2_converges", "a2", a2);
-  check_not_nan("check_3F2_converges", "b1", b1);
-  check_not_nan("check_3F2_converges", "z", z);
+  double a1d = value_of_rec(a1);
+  double a2d = value_of_rec(a2);
+  double b1d = value_of_rec(b1);
+  double zd = value_of_rec(z);
+
+  check_not_nan("check_3F2_converges", "a1", a1d);
+  check_not_nan("check_3F2_converges", "a2", a2d);
+  check_not_nan("check_3F2_converges", "b1", b1d);
+  check_not_nan("check_3F2_converges", "z", zd);
 
   int num_terms = 0;
   bool is_polynomial = false;
 
-  if (is_nonpositive_integer(a1) && fabs(a1) >= num_terms) {
+  double fabs_a1d = fabs(a1d);
+  if (is_nonpositive_integer(a1d) && fabs_a1d >= num_terms) {
     is_polynomial = true;
-    num_terms = floor(fabs(value_of_rec(a1)));
+    num_terms = floor(fabs_a1d);
   }
-  if (is_nonpositive_integer(a2) && fabs(a2) >= num_terms) {
+  double fabs_a2d = fabs(a2d);
+  if (is_nonpositive_integer(a2d) && fabs_a2d >= num_terms) {
     is_polynomial = true;
-    num_terms = floor(fabs(value_of_rec(a2)));
+    num_terms = floor(fabs_a2d);
   }
 
-  bool is_undefined = is_nonpositive_integer(b1) && fabs(b1) <= num_terms;
+  bool is_undefined = is_nonpositive_integer(b1d) && fabs(b1d) <= num_terms;
 
+  double fabs_zd = fabs(zd);
   if (!is_undefined
-      && (is_polynomial || fabs(z) < 1 || (fabs(z) == 1 && b1 > a1 + a2))) {
+      && (is_polynomial || fabs_zd < 1
+          || (fabs_zd == 1 && b1d > a1d + a2d))) {
     return;
   }
 
@@ -65,8 +74,8 @@ inline void check_2F1_converges(const char* function, const T_a1& a1,
   msg << "called from function '" << function << "', "
       << "hypergeometric function 2F1 does not meet convergence "
       << "conditions with given arguments. "
-      << "a1: " << a1 << ", a2: " << a2 << ", "
-      << "b1: " << b1 << ", z: " << z;
+      << "a1: " << a1d << ", a2: " << a2d << ", "
+      << "b1: " << b1d << ", z: " << zd;
   throw std::domain_error(msg.str());
 }
 

@@ -35,7 +35,7 @@ inline bool is_symmetric(
   }
   for (size_type m = 0; m < k; ++m) {
     for (size_type n = m + 1; n < k; ++n) {
-      if (!(fabs(value_of(y(m, n)) - value_of(y(n, m)))
+      if (!(fabs(value_of_rec(y(m, n)) - value_of_rec(y(n, m)))
             <= CONSTRAINT_TOLERANCE)) {
         return false;
       }

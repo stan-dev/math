@@ -43,39 +43,51 @@ inline void check_3F2_converges(const char* function, const T_a1& a1,
   using std::fabs;
   using std::floor;
 
-  check_not_nan("check_3F2_converges", "a1", a1);
-  check_not_nan("check_3F2_converges", "a2", a2);
-  check_not_nan("check_3F2_converges", "a3", a3);
-  check_not_nan("check_3F2_converges", "b1", b1);
-  check_not_nan("check_3F2_converges", "b2", b2);
-  check_not_nan("check_3F2_converges", "z", z);
+  double a1d = value_of_rec(a1);
+  double a2d = value_of_rec(a2);
+  double a3d = value_of_rec(a3);
+  double b1d = value_of_rec(b1);
+  double b2d = value_of_rec(b2);
+  double zd = value_of_rec(z);
+
+  check_not_nan("check_3F2_converges", "a1", a1d);
+  check_not_nan("check_3F2_converges", "a2", a2d);
+  check_not_nan("check_3F2_converges", "a3", a3d);
+  check_not_nan("check_3F2_converges", "b1", b1d);
+  check_not_nan("check_3F2_converges", "b2", b2d);
+  check_not_nan("check_3F2_converges", "z", zd);
 
   int num_terms = 0;
   bool is_polynomial = false;
 
-  if (is_nonpositive_integer(a1) && fabs(a1) >= num_terms) {
+  double fabs_a1d = fabs(a1d);
+  if (is_nonpositive_integer(a1d) && fabs_a1d >= num_terms) {
     is_polynomial = true;
-    num_terms = floor(fabs(value_of_rec(a1)));
+    num_terms = floor(fabs_a1d);
   }
-  if (is_nonpositive_integer(a2) && fabs(a2) >= num_terms) {
+  double fabs_a2d = fabs(a2d);
+  if (is_nonpositive_integer(a2d) && fabs_a2d >= num_terms) {
     is_polynomial = true;
-    num_terms = floor(fabs(value_of_rec(a2)));
+    num_terms = floor(fabs_a2d);
   }
-  if (is_nonpositive_integer(a3) && fabs(a3) >= num_terms) {
+  double fabs_a2d = fabs(a3d);
+  if (is_nonpositive_integer(a3d) && fabs_a3d >= num_terms) {
     is_polynomial = true;
-    num_terms = floor(fabs(value_of_rec(a3)));
+    num_terms = floor(fabs_a3d);
   }
 
-  bool is_undefined = (is_nonpositive_integer(b1) && fabs(b1) <= num_terms)
-                      || (is_nonpositive_integer(b2) && fabs(b2) <= num_terms);
+  bool is_undefined
+      = (is_nonpositive_integer(b1d) && fabs(b1d) <= num_terms)
+        || (is_nonpositive_integer(b2d) && fabs(b2d) <= num_terms);
 
   if (is_polynomial && !is_undefined) {
     return;
   }
-  if (fabs(z) < 1.0 && !is_undefined) {
+  double fabs_zd = fabs(zd);
+  if (fabs_zd < 1.0 && !is_undefined) {
     return;
   }
-  if (fabs(z) == 1.0 && !is_undefined && b1 + b2 > a1 + a2 + a3) {
+  if (fabs_zd == 1.0 && !is_undefined && b1d + b2d > a1d + a2d + a3d) {
     return;
   }
 
@@ -83,8 +95,8 @@ inline void check_3F2_converges(const char* function, const T_a1& a1,
   msg << "called from function '" << function << "', "
       << "hypergeometric function 3F2 does not meet convergence "
       << "conditions with given arguments. "
-      << "a1: " << a1 << ", a2: " << a2 << ", a3: " << a3 << ", b1: " << b1
-      << ", b2: " << b2 << ", z: " << z;
+      << "a1: " << a1d << ", a2: " << a2d << ", a3: " << a3d << ", b1: " << b1d
+      << ", b2: " << b2d << ", z: " << zd;
   throw std::domain_error(msg.str());
 }
 
