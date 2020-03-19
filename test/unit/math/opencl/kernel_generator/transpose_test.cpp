@@ -148,7 +148,7 @@ TEST(MathMatrixCL, block_of_transpose_test) {
 }
 
 TEST(MathMatrixCL, a_plus_a_transpose_test) {
-  std::string kernel_filename = "a+aT_simple.cl";
+  std::string kernel_filename = "a+aT.cl";
   MatrixXd m(3, 3);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9;
 
