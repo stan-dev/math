@@ -15,27 +15,10 @@ namespace math {
  * @param x angle in radians
  * @return Cosine of x.
  */
-struct cos_fun {
-  template <typename T>
-  static inline T fun(const T& x) {
-    using std::cos;
-    return cos(x);
-  }
-};
-
-/**
- * Returns the elementwise `cos()` of the input,
- * which may be a scalar or any Stan container of numeric scalars.
- *
- * @tparam Container type of container
- * @param x angles in radians
- * @return Cosine of each value in x.
- */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
-inline auto cos(const Container& x) {
-  return apply_scalar_unary<cos_fun, Container>::apply(x);
+template <typename T, require_arithmetic_t<T>...>
+auto cos(const T& x) {
+  using std::cos;
+  return cos(x);
 }
 
 /**

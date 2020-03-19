@@ -14,6 +14,58 @@ class atan_vari : public op_v_vari {
   explicit atan_vari(vari* avi) : op_v_vari(std::atan(avi->val_), avi) {}
   void chain() { avi_->adj_ += adj_ / (1.0 + (avi_->val_ * avi_->val_)); }
 };
+
+template <typename T>
+class atan_matrix_vari : public vari {
+ public:
+  int A_rows_;
+  int A_cols_;
+  int A_size_;
+  double* Ad_;
+  vari** variRefA_;
+  vari** variRefAtan_;
+
+  /**
+   * Constructor for exp_matrix_vari.
+   *
+   * All memory allocated in
+   * ChainableStack's stack_alloc arena.
+   *
+   * It is critical for the efficiency of this object
+   * that the constructor create new varis that aren't
+   * popped onto the var_stack_, but rather are
+   * popped onto the var_nochain_stack_. This is
+   * controlled by the second argument to
+   * vari's constructor.
+   *
+   * @param A matrix
+   */
+  explicit atan_matrix_vari(const T& A)
+      : vari(0.0),
+        A_rows_(A.rows()),
+        A_cols_(A.cols()),
+        A_size_(A.size()),
+        Ad_(ChainableStack::instance_->memalloc_.alloc_array<double>(A_size_)),
+        variRefA_(
+            ChainableStack::instance_->memalloc_.alloc_array<vari*>(A_size_)),
+        variRefAtan_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+            A_size_)) {
+    using Eigen::Map;
+    Map<matrix_vi>(variRefA_, A_rows_, A_cols_) = A.vi();
+    Map<matrix_d> Ad(Ad_, A_rows_, A_cols_);
+    Ad = A.val();
+    Map<matrix_vi>(variRefAtan_, A_rows_, A_cols_).array()
+        = Ad.array().atan().unaryExpr([](double x) { return new vari(x, false); });
+  }
+
+  virtual void chain() {
+    using Eigen::Map;
+    Map<matrix_vi> RefAtan(variRefAtan_, A_rows_, A_cols_);
+    Map<matrix_d> Ad(Ad_, A_rows_, A_cols_);
+    Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj().array()
+          += RefAtan.adj().array() / (1 + Ad.val().array().square());
+  }
+};
 }  // namespace internal
 
 /**
@@ -48,6 +100,22 @@ class atan_vari : public op_v_vari {
  */
 inline var atan(const var& a) { return var(new internal::atan_vari(a.vi_)); }
 
+template <typename Container,
+          require_container_st<is_container, is_var, Container>...>
+inline auto atan(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](const auto& v) {
+        using T_plain = plain_type_t<decltype(v)>;
+        using T_ref = Eigen::Ref<const T_plain>;
+
+        const T_ref& v_ref = v;
+        auto* baseVari = new internal::atan_matrix_vari<T_ref>(v_ref);
+        T_plain AB_v(v_ref.rows(), v_ref.cols());
+        AB_v.vi() = Eigen::Map<matrix_vi>(baseVari->variRefAtan_, v_ref.rows(), v_ref.cols());
+
+        return AB_v;
+});
+}
 }  // namespace math
 }  // namespace stan
 #endif

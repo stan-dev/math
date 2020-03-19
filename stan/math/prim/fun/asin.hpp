@@ -8,34 +8,10 @@
 namespace stan {
 namespace math {
 
-/**
- * Structure to wrap `asin()` so it can be vectorized.
- *
- * @tparam T type of argument
- * @param x argument
- * @return Arcsine of x in radians.
- */
-struct asin_fun {
-  template <typename T>
-  static inline T fun(const T& x) {
-    using std::asin;
-    return asin(x);
-  }
-};
-
-/**
- * Returns the elementwise `asin()` of the input,
- * which may be a scalar or any Stan container of numeric scalars.
- *
- * @tparam Container type of container
- * @param x container
- * @return Arcsine of each variable in the container, in radians.
- */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
-inline auto asin(const Container& x) {
-  return apply_scalar_unary<asin_fun, Container>::apply(x);
+template <typename T, require_arithmetic_t<T>...>
+auto asin(const T& x) {
+  using std::asin;
+  return asin(x);
 }
 
 /**

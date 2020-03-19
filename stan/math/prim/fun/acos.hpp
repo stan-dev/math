@@ -8,34 +8,10 @@
 namespace stan {
 namespace math {
 
-/**
- * Structure to wrap `acos()` so it can be vectorized.
- *
- * @tparam T type of variable
- * @param x variable
- * @return Arc cosine of variable in radians.
- */
-struct acos_fun {
-  template <typename T>
-  static inline T fun(const T& x) {
-    using std::acos;
-    return acos(x);
-  }
-};
-
-/**
- * Returns the elementwise `acos()` of the input,
- * which may be a scalar or any Stan container of numeric scalars.
- *
- * @tparam Container type of container
- * @param x container
- * @return Arc cosine of each variable in the container, in radians.
- */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
-inline auto acos(const Container& x) {
-  return apply_scalar_unary<acos_fun, Container>::apply(x);
+template <typename T, require_arithmetic_t<T>...>
+auto acos(const T& x) {
+  using std::acos;
+  return acos(x);
 }
 
 /**

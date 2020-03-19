@@ -27,7 +27,7 @@ class exp_matrix_vari : public vari {
   vari** variRefExp_;
 
   /**
-   * Constructor for multiply_mat_vari.
+   * Constructor for exp_matrix_vari.
    *
    * All memory allocated in
    * ChainableStack's stack_alloc arena.
@@ -40,7 +40,6 @@ class exp_matrix_vari : public vari {
    * vari's constructor.
    *
    * @param A matrix
-   * @param B matrix
    */
   explicit exp_matrix_vari(const T& A)
       : vari(0.0),
@@ -64,40 +63,11 @@ class exp_matrix_vari : public vari {
     using Eigen::Map;
     Map<matrix_vi> RefExp(variRefExp_, A_rows_, A_cols_);
     Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj()
-          += RefExp.val().cwiseProduct(RefExp.adj());
+          += RefExp.adj().cwiseProduct(RefExp.val());
   }
 };
 
 }  // namespace internal
-
-
-
-/*
-template <int R, int C>
-inline Eigen::Matrix<var, R, C> exp(const Eigen::Matrix<var, R, C>& A) {
-
-  // Memory managed with the arena allocator.
-  internal::exp_matrix_vari *baseVari = new internal::exp_matrix_vari(A);
-  Eigen::Matrix<var, R, C> AB_v(A.rows(), A.cols());
-  AB_v.vi() = Eigen::Map<matrix_vi>(baseVari->variRefAB_, A.rows(), A.cols());
-
-  return AB_v;
-}*/
-
-template <typename Container,
-          require_container_st<is_container, is_var, Container>...>
-inline auto exp(const Container& x) {
-  return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) {
-        using T_vec = decltype(v);
-        // Memory managed with the arena allocator.
-        auto* baseVari = new internal::exp_matrix_vari<T_vec>(v);
-        plain_type_t<T_vec> AB_v(v.rows(), v.cols());
-        AB_v.vi() = Eigen::Map<matrix_vi>(baseVari->variRefExp_, v.rows(), v.cols());
-
-        return AB_v;
-});
-}
 
 /**
  * Return the exponentiation of the specified variable (cmath).
@@ -122,6 +92,24 @@ inline auto exp(const Container& x) {
  * @return Exponentiated variable.
  */
 inline var exp(const var& a) { return var(new internal::exp_vari(a.vi_)); }
+
+template <typename Container,
+          require_container_st<is_container, is_var, Container>...>
+inline auto exp(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](const auto& v) {
+        using T_plain = plain_type_t<decltype(v)>;
+        using T_ref = Eigen::Ref<const T_plain>;
+
+        const T_ref& v_ref = v;
+        auto* baseVari = new internal::exp_matrix_vari<T_ref>(v_ref);
+        T_plain AB_v(v_ref.rows(), v_ref.cols());
+        AB_v.vi() = Eigen::Map<matrix_vi>(baseVari->variRefExp_, v_ref.rows(), v_ref.cols());
+
+        return AB_v;
+});
+}
+
 
 }  // namespace math
 }  // namespace stan

@@ -15,27 +15,10 @@ namespace math {
  * @param x variable
  * @return Least integer >= x.
  */
-struct ceil_fun {
-  template <typename T>
-  static inline T fun(const T& x) {
-    using std::ceil;
-    return ceil(x);
-  }
-};
-
-/**
- * Returns the elementwise `ceil()` of the input,
- * which may be a scalar or any Stan container of numeric scalars.
- *
- * @tparam Container type of container
- * @param x container
- * @return Least integer >= each value in x.
- */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
-inline auto ceil(const Container& x) {
-  return apply_scalar_unary<ceil_fun, Container>::apply(x);
+template <typename T, require_arithmetic_t<T>...>
+auto ceil(const T& x) {
+  using std::ceil;
+  return ceil(x);
 }
 
 /**

@@ -8,34 +8,10 @@
 namespace stan {
 namespace math {
 
-/**
- * Structure to wrap \c atan() so it can be vectorized.
- *
- * @tparam T type of variable
- * @param x variable
- * @return Arctan of x in radians.
- */
-struct atan_fun {
-  template <typename T>
-  static inline T fun(const T& x) {
-    using std::atan;
-    return atan(x);
-  }
-};
-
-/**
- * Returns the elementwise \c atan() of the input,
- * which may be a scalar or any Stan container of numeric scalars.
- *
- * @tparam Container type of container
- * @param x container
- * @return Arctan of each value in x, in radians.
- */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
-inline auto atan(const Container& x) {
-  return apply_scalar_unary<atan_fun, Container>::apply(x);
+template <typename T, require_arithmetic_t<T>...>
+auto atan(const T& x) {
+  using std::atan;
+  return atan(x);
 }
 
 /**
