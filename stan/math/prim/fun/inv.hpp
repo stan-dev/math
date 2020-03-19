@@ -14,25 +14,9 @@ namespace math {
  * @param x variable
  * @return 1 / x.
  */
-struct inv_fun {
-  template <typename T>
-  static inline T fun(const T& x) {
-    return 1.0 / x;
-  }
-};
-
-/**
- * Return the elementwise 1.0 / x of the specified argument,
- * which may be a scalar or any Stan container of numeric scalars.
- *
- * @tparam Container type of container
- * @param x container
- * @return 1 divided by each value in x.
- */
-template <typename T,
-          require_not_container_st<is_container, std::is_arithmetic, T>...>
-inline auto inv(const T& x) {
-  return apply_scalar_unary<inv_fun, T>::apply(x);
+template <typename T, require_arithmetic_t<T>...>
+auto inv(const T& x) {
+  return 1 / x;
 }
 
 /**

@@ -12,6 +12,23 @@ template <typename T>
 inline fvar<T> inv(const fvar<T>& x) {
   return fvar<T>(1 / x.val_, -x.d_ / square(x.val_));
 }
+
+template <typename Container,
+          require_container_st<is_container, is_fvar, Container>...>
+inline auto inv(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](const auto& v) {
+        using T_plain = plain_type_t<decltype(v)>;
+        const Eigen::Ref<const T_plain>& v_ref = v;
+        auto vals = v_ref.val().eval();
+        
+        T_plain result(v_ref.rows(), v_ref.cols());
+        result.val() = inv(vals);
+        result.d().array() = v_ref.d().array() * -inv_square(vals).array();
+
+        return result;
+});
+}
 }  // namespace math
 }  // namespace stan
 #endif

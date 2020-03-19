@@ -15,27 +15,10 @@ namespace math {
  * @param x variable
  * @return Greatest integer <= x.
  */
-struct floor_fun {
-  template <typename T>
-  static inline T fun(const T& x) {
-    using std::floor;
-    return floor(x);
-  }
-};
-
-/**
- * Returns the elementwise `floor()` of the input,
- * which may be a scalar or any Stan container of numeric scalars.
- *
- * @tparam Container type of container
- * @param x container
- * @return Greatest integer <= each value in x.
- */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
-inline auto floor(const Container& x) {
-  return apply_scalar_unary<floor_fun, Container>::apply(x);
+template <typename T, require_arithmetic_t<T>...>
+auto floor(const T& x) {
+  using std::floor;
+  return floor(x);
 }
 
 /**

@@ -15,27 +15,10 @@ namespace math {
  * @param x angle in radians
  * @return Hyperbolic cosine of x.
  */
-struct cosh_fun {
-  template <typename T>
-  static inline T fun(const T& x) {
-    using std::cosh;
-    return cosh(x);
-  }
-};
-
-/**
- * Returns the elementwise `cosh()` of the input,
- * which may be a scalar or any Stan container of numeric scalars.
- *
- * @tparam Container type of container
- * @param x angles in radians
- * @return Hyberbolic cosine of x.
- */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
-inline auto cosh(const Container& x) {
-  return apply_scalar_unary<cosh_fun, Container>::apply(x);
+template <typename T, require_arithmetic_t<T>...>
+auto cosh(const T& x) {
+  using std::cosh;
+  return cosh(x);
 }
 
 /**
