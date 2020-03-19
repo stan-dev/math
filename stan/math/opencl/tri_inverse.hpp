@@ -81,7 +81,7 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   zero_mat.template zeros<stan::math::matrix_cl_view::Entire>();
   inv_padded.template zeros<stan::math::matrix_cl_view::Entire>();
   if (tri_view == matrix_cl_view::Upper) {
-    inv_mat = transpose(inv_mat);
+    inv_mat = transpose(inv_mat).eval();
   }
   int work_per_thread
       = opencl_kernels::inv_lower_tri_multiply.make_functor.get_opts().at(
@@ -109,7 +109,7 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   if (parts == 1) {
     inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
     if (tri_view == matrix_cl_view::Upper) {
-      inv_mat = transpose(inv_mat);
+      inv_mat = transpose(inv_mat).eval();
     }
     return inv_mat;
   }
@@ -151,7 +151,7 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   // un-pad and return
   inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
   if (tri_view == matrix_cl_view::Upper) {
-    inv_mat = transpose(inv_mat);
+    inv_mat = transpose(inv_mat).eval();
   }
   inv_mat.view(tri_view);
   return inv_mat;
