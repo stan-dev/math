@@ -7,35 +7,10 @@
 
 namespace stan {
 namespace math {
-
-/**
- * Structure to wrap `fabs()` so that it can be vectorized.
- *
- * @tparam T type of variable
- * @param x variable
- * @return Absolute value of x.
- */
-struct fabs_fun {
-  template <typename T>
-  static inline T fun(const T& x) {
-    using std::fabs;
-    return fabs(x);
-  }
-};
-
-/**
- * Returns the elementwise `fabs()` of the input,
- * which may be a scalar or any Stan container of numeric scalars.
- *
- * @tparam Container type of container
- * @param x container
- * @return Absolute value of each value in x.
- */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
-inline auto fabs(const Container& x) {
-  return apply_scalar_unary<fabs_fun, Container>::apply(x);
+template <typename T, require_arithmetic_t<T>...>
+auto fabs(const T& x) {
+  using std::fabs;
+  return fabs(x);
 }
 
 /**

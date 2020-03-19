@@ -4,6 +4,7 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <cmath>
+#include <iostream>
 
 namespace stan {
 namespace math {
@@ -62,9 +63,10 @@ class exp_matrix_vari : public vari {
     using Eigen::Map;
     Map<matrix_vi> RefExp(variRefExp_, A_rows_, A_cols_);
     Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj()
-          += RefExp.val().cwiseProduct(RefExp.adj());
+          += RefExp.adj().cwiseProduct(RefExp.val());
   }
 };
+
 }  // namespace internal
 
 /**
@@ -96,11 +98,13 @@ template <typename Container,
 inline auto exp(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) {
-        using T_vec = decltype(v);
-        // Memory managed with the arena allocator.
-        auto* baseVari = new internal::exp_matrix_vari<T_vec>(v);
-        plain_type_t<T_vec> AB_v(v.rows(), v.cols());
-        AB_v.vi() = Eigen::Map<matrix_vi>(baseVari->variRefExp_, v.rows(), v.cols());
+        using T_plain = plain_type_t<decltype(v)>;
+        using T_ref = Eigen::Ref<const T_plain>;
+
+        const T_ref& v_ref = v;
+        auto* baseVari = new internal::exp_matrix_vari<T_ref>(v_ref);
+        T_plain AB_v(v_ref.rows(), v_ref.cols());
+        AB_v.vi() = Eigen::Map<matrix_vi>(baseVari->variRefExp_, v_ref.rows(), v_ref.cols());
 
         return AB_v;
 });

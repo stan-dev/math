@@ -10,7 +10,8 @@ namespace math {
 template <typename T>
 inline fvar<T> exp(const fvar<T>& x) {
   using std::exp;
-  return fvar<T>(exp(x.val_), x.d_ * exp(x.val_));
+  T exp_val = exp(x.val_);
+  return fvar<T>(exp_val, x.d_ * exp_val);
 }
 
 template <typename Container,
@@ -18,10 +19,14 @@ template <typename Container,
 inline auto exp(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) {
-        using T_vec = decltype(v);
-        auto exp_val = exp(v.val()).eval();
+        using T_plain = plain_type_t<decltype(v)>;
+        const Eigen::Ref<const T_plain>& v_ref = v;
+        
+        T_plain result(v_ref.rows(), v_ref.cols());
+        result.val() = exp(v_ref.val());
+        result.d() = v_ref.d().cwiseProduct(result.val());
 
-        return to_fvar(exp_val,exp_val.cwiseProduct(v.d()));
+        return result;
 });
 }
 
