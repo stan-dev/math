@@ -26,15 +26,14 @@ class atan_matrix_vari : public vari {
   vari** variRefAtan_;
 
   /**
-   * Constructor for exp_matrix_vari.
+   * Constructor for atan_matrix_vari.
    *
    * All memory allocated in
    * ChainableStack's stack_alloc arena.
    *
-   * It is critical for the efficiency of this object
-   * that the constructor create new varis that aren't
-   * popped onto the var_stack_, but rather are
-   * popped onto the var_nochain_stack_. This is
+   * For the efficiency, new varis aren't
+   * popped onto the var_stack_, but onto
+   * the var_nochain_stack_. This is
    * controlled by the second argument to
    * vari's constructor.
    *
@@ -55,7 +54,8 @@ class atan_matrix_vari : public vari {
     Map<matrix_d> Ad(Ad_, A_rows_, A_cols_);
     Ad = A.val();
     Map<matrix_vi>(variRefAtan_, A_rows_, A_cols_).array()
-        = Ad.array().atan().unaryExpr([](double x) { return new vari(x, false); });
+        = Ad.array().atan()
+                    .unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
@@ -111,7 +111,8 @@ inline auto atan(const Container& x) {
         const T_ref& v_ref = v;
         auto* baseVari = new internal::atan_matrix_vari<T_ref>(v_ref);
         T_plain AB_v(v_ref.rows(), v_ref.cols());
-        AB_v.vi() = Eigen::Map<matrix_vi>(baseVari->variRefAtan_, v_ref.rows(), v_ref.cols());
+        AB_v.vi() = Eigen::Map<matrix_vi>(baseVari->variRefAtan_,
+                                          v_ref.rows(), v_ref.cols());
 
         return AB_v;
 });

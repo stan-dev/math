@@ -21,7 +21,7 @@ inline auto floor(const Container& x) {
       x, [](const auto& v) {
         using T_plain = plain_type_t<decltype(v)>;
         const Eigen::Ref<const T_plain>& v_ref = v;
-        
+
         plain_type_t<decltype(v)> result(v_ref.rows(), v_ref.cols());
         result.val() = floor(v_ref.val());
         result.d().setZero();

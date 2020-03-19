@@ -50,7 +50,8 @@ class fabs_matrix_vari : public vari {
     Map<matrix_d> Ad(Ad_, A_rows_, A_cols_);
     Ad = A.val();
     Map<matrix_vi>(variRefFabs_, A_rows_, A_cols_).array()
-        = Ad.array().abs().unaryExpr([](double x) { return new vari(x, false); });
+        = Ad.array().abs()
+                    .unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
@@ -58,8 +59,11 @@ class fabs_matrix_vari : public vari {
     Map<matrix_d> Ad(Ad_, A_rows_, A_cols_);
     Map<matrix_vi> RefFabs(variRefFabs_, A_rows_, A_cols_);
     Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj()
-          = Ad.array().isNaN().select(Ad.array(),(Ad.array() < 0).select(-RefFabs.adj().array(),RefFabs.adj().array()));
-
+          = Ad.array()
+              .isNaN()
+              .select(Ad.array(),
+                      (Ad.array() < 0).select(-RefFabs.adj().array(),
+                                              RefFabs.adj().array()));
   }
 };
 }  // namespace internal
@@ -124,10 +128,11 @@ inline auto fabs(const Container& x) {
 
         const T_ref& v_ref = v;
         auto* baseVari = new internal::fabs_matrix_vari<T_ref>(v_ref);
-        T_plain AB_v(v_ref.rows(), v_ref.cols());
-        AB_v.vi() = Eigen::Map<matrix_vi>(baseVari->variRefFabs_, v_ref.rows(), v_ref.cols());
+        T_plain result(v_ref.rows(), v_ref.cols());
+        result.vi() = Eigen::Map<matrix_vi>(baseVari->variRefFabs_,
+                                          v_ref.rows(), v_ref.cols());
 
-        return AB_v;
+        return result;
 });
 }
 

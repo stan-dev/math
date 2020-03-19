@@ -24,10 +24,11 @@ inline auto asin(const Container& x) {
         using T_plain = plain_type_t<decltype(v)>;
         const Eigen::Ref<const T_plain>& v_ref = v;
         auto vals = v_ref.val().eval();
-        
+
         T_plain result(v_ref.rows(), v_ref.cols());
         result.val() = asin(vals);
-        result.d().array() = v_ref.d().array() * inv_sqrt(1-square(vals).array());
+        result.d().array() = v_ref.d().array()
+                                * inv_sqrt(1-square(vals).array());
 
         return result;
 });

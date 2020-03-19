@@ -34,11 +34,15 @@ inline auto fabs(const Container& x) {
         using T_plain = plain_type_t<decltype(v)>;
         const Eigen::Ref<const T_plain>& v_ref = v;
         auto vals = v_ref.val().eval();
-        
+
         T_plain result(v_ref.rows(), v_ref.cols());
         result.val() = fabs(vals);
-        result.d().array() = vals.array().isNaN().select(vals.array(),(vals.array() < 0).select(-v_ref.d().array(),v_ref.d().array()));
-
+        result.d().array()
+          = vals.array()
+                .isNaN()
+                .select(vals.array(),
+                        (vals.array() < 0).select(-v_ref.d().array(),
+                                                  v_ref.d().array()));
         return result;
 });
 }

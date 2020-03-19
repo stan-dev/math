@@ -23,7 +23,7 @@ inline auto atan(const Container& x) {
         using T_plain = plain_type_t<decltype(v)>;
         const Eigen::Ref<const T_plain>& v_ref = v;
         auto vals = v_ref.val().eval();
-        
+
         T_plain result(v_ref.rows(), v_ref.cols());
         result.val() = atan(vals);
         result.d().array() = v_ref.d().array() / (1 + square(vals).array());

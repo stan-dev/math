@@ -57,7 +57,8 @@ class acos_matrix_vari : public vari {
     Map<matrix_d> Ad(Ad_, A_rows_, A_cols_);
     Ad = A.val();
     Map<matrix_vi>(variRefAcos_, A_rows_, A_cols_).array()
-        = Ad.array().acos().unaryExpr([](double x) { return new vari(x, false); });
+        = Ad.array().acos()
+                    .unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
@@ -65,7 +66,7 @@ class acos_matrix_vari : public vari {
     Map<matrix_vi> RefAcos(variRefAcos_, A_rows_, A_cols_);
     Map<matrix_d> Ad(Ad_, A_rows_, A_cols_);
     Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj().array()
-          += RefAcos.adj().array() * -(1 - Ad.val().array().square()).rsqrt();
+          -= RefAcos.adj().array() * (1 - Ad.val().array().square()).rsqrt();
   }
 };
 }  // namespace internal
@@ -118,10 +119,11 @@ inline auto acos(const Container& x) {
 
         const T_ref& v_ref = v;
         auto* baseVari = new internal::acos_matrix_vari<T_ref>(v_ref);
-        T_plain AB_v(v_ref.rows(), v_ref.cols());
-        AB_v.vi() = Eigen::Map<matrix_vi>(baseVari->variRefAcos_, v_ref.rows(), v_ref.cols());
+        T_plain result(v_ref.rows(), v_ref.cols());
+        result.vi() = Eigen::Map<matrix_vi>(baseVari->variRefAcos_,
+                                          v_ref.rows(), v_ref.cols());
 
-        return AB_v;
+        return result;
 });
 }
 

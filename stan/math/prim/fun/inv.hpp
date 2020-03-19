@@ -16,7 +16,7 @@ namespace math {
  */
 template <typename T, require_arithmetic_t<T>...>
 auto inv(const T& x) {
-  return 1 / x;
+  return 1.0 / x;
 }
 
 /**

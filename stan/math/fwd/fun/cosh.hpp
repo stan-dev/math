@@ -23,7 +23,7 @@ inline auto cosh(const Container& x) {
         using T_plain = plain_type_t<decltype(v)>;
         const Eigen::Ref<const T_plain>& v_ref = v;
         auto vals = v_ref.val().eval();
-        
+
         T_plain result(v_ref.rows(), v_ref.cols());
         result.val() = cosh(vals);
         result.d().array() = v_ref.d().array() * sinh(vals).array();

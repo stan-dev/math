@@ -57,7 +57,8 @@ class asin_matrix_vari : public vari {
     Map<matrix_d> Ad(Ad_, A_rows_, A_cols_);
     Ad = A.val();
     Map<matrix_vi>(variRefAsin_, A_rows_, A_cols_).array()
-        = Ad.array().asin().unaryExpr([](double x) { return new vari(x, false); });
+        = Ad.array().asin()
+                    .unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
@@ -118,10 +119,11 @@ inline auto asin(const Container& x) {
 
         const T_ref& v_ref = v;
         auto* baseVari = new internal::asin_matrix_vari<T_ref>(v_ref);
-        T_plain AB_v(v_ref.rows(), v_ref.cols());
-        AB_v.vi() = Eigen::Map<matrix_vi>(baseVari->variRefAsin_, v_ref.rows(), v_ref.cols());
+        T_plain result(v_ref.rows(), v_ref.cols());
+        result.vi() = Eigen::Map<matrix_vi>(baseVari->variRefAsin_,
+                                          v_ref.rows(), v_ref.cols());
 
-        return AB_v;
+        return result;
 });
 }
 }  // namespace math
