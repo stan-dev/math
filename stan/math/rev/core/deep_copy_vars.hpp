@@ -20,8 +20,7 @@ namespace math {
  * @param arg For lvalue references this will be passed by reference.
  *  Otherwise it will be moved.
  */
-template <typename Arith,
-	  typename = require_arithmetic_t<scalar_type_t<Arith>>>
+template <typename Arith, typename = require_arithmetic_t<scalar_type_t<Arith>>>
 inline decltype(auto) deep_copy_vars(Arith&& arg) {
   return std::forward<Arith>(arg);
 }
@@ -54,7 +53,7 @@ inline auto deep_copy_vars(VarVec&& arg) {
  * @param arg A standard vector holding containers of vars.
  */
 template <typename VarVec, require_std_vector_st<is_var, VarVec>* = nullptr,
-	  require_std_vector_vt<is_container, VarVec>* = nullptr>
+          require_std_vector_vt<is_container, VarVec>* = nullptr>
 inline auto deep_copy_vars(VarVec&& arg) {
   std::vector<value_type_t<VarVec>> copy_vec(arg.size());
   for (size_t i = 0; i < arg.size(); ++i) {
@@ -70,9 +69,8 @@ inline auto deep_copy_vars(VarVec&& arg) {
  */
 template <typename EigT, require_eigen_vt<is_var, EigT>* = nullptr>
 inline auto deep_copy_vars(EigT&& arg) {
-  return arg
-    .unaryExpr([](auto&& x) { return var(new vari(x.val(), false)); })
-    .eval();
+  return arg.unaryExpr([](auto&& x) { return var(new vari(x.val(), false)); })
+      .eval();
 }
 
 }  // namespace math

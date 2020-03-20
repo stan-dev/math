@@ -31,7 +31,8 @@ template <typename ReduceFunction, typename ReturnType, typename Vec,
 struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                        Vec, Args...> {
   /**
-   * Internal object meeting the Imperative form requirements of `tbb::parallel_reduce`
+   * Internal object meeting the Imperative form requirements of
+   * `tbb::parallel_reduce`
    *
    * @note see link [here](https://tinyurl.com/vp7xw2t) for requirements.
    */
@@ -58,8 +59,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
     /*
      * This is the copy operator as required for tbb::parallel_reduce
-     *   Imperative form. This requires the reduced values (sum_ and arg_adjoints_)
-     *   be reset to zero.
+     *   Imperative form. This requires the reduced values (sum_ and
+     * arg_adjoints_) be reset to zero.
      */
     recursive_reducer(recursive_reducer& other, tbb::split)
         : per_job_sliced_terms_(other.per_job_sliced_terms_),
@@ -70,11 +71,12 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           args_tuple_(other.args_tuple_) {}
 
     /**
-     * Compute, using nested autodiff, the value and Jacobian of `ReduceFunction`
-     *   called over the range defined by r and accumulate those in member
-     *   variable sum_ (for the value) and args_adjoints_ (for the Jacobian).
-     *   This function may be called multiple times per object instantiation
-     *   (so the sum_ and args_adjoints_ must be accumulated, not just assigned).
+     * Compute, using nested autodiff, the value and Jacobian of
+     * `ReduceFunction` called over the range defined by r and accumulate those
+     * in member variable sum_ (for the value) and args_adjoints_ (for the
+     * Jacobian). This function may be called multiple times per object
+     * instantiation (so the sum_ and args_adjoints_ must be accumulated, not
+     * just assigned).
      *
      * @param r Range over which to compute reduce_sum
      */
@@ -102,7 +104,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       //   back to main autodiff stack
       auto args_tuple_local_copy = apply(
           [&](auto&&... args) {
-            return std::tuple<decltype(deep_copy_vars(args))...>(deep_copy_vars(args)...);
+            return std::tuple<decltype(deep_copy_vars(args))...>(
+                deep_copy_vars(args)...);
           },
           this->args_tuple_);
 
@@ -129,7 +132,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       apply(
           [&](auto&&... args) {
             accumulate_adjoints(args_adjoints_.data(),
-				std::forward<decltype(args)>(args)...);
+                                std::forward<decltype(args)>(args)...);
           },
           std::move(args_tuple_local_copy));
     }
@@ -159,7 +162,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    *   mode autodiff.
    *
    * An instance, f, of `ReduceFunction` should have the signature:
-   *   var f(int start, int end, Vec&& vmapped_subset, std::ostream* msgs, Args&&... args)
+   *   var f(int start, int end, Vec&& vmapped_subset, std::ostream* msgs,
+   * Args&&... args)
    *
    * `ReduceFunction` must be default constructible without any arguments
    *
@@ -167,11 +171,12 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    *   start through end - 1 terms of the overall sum. All args are passed
    *   from this function through to the `ReduceFunction` instances.
    *   However, only elements start through end - 1 of the vmapped argument are
-   *   passed to the `ReduceFunction` instances (as the `vmapped_subset` argument).
+   *   passed to the `ReduceFunction` instances (as the `vmapped_subset`
+   * argument).
    *
-   * This function distributes computation of the desired sum and the Jacobian of
-   *   that sum over multiple threads by coordinating calls to `ReduceFunction` instances.
-   *   Results are stored as precomputed varis in the autodiff tree.
+   * This function distributes computation of the desired sum and the Jacobian
+   * of that sum over multiple threads by coordinating calls to `ReduceFunction`
+   * instances. Results are stored as precomputed varis in the autodiff tree.
    *
    * @param vmapped Sliced arguments used only in some sum terms
    * @param grainsize Suggested grainsize for tbb

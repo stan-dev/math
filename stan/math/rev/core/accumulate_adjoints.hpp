@@ -15,31 +15,26 @@ namespace stan {
 namespace math {
 
 template <typename... Pargs>
-inline double* accumulate_adjoints(double* dest, const var& x,
-				   Pargs&&... args);
+inline double* accumulate_adjoints(double* dest, const var& x, Pargs&&... args);
 
 template <typename VarVec, require_std_vector_vt<is_var, VarVec>* = nullptr,
-	  typename... Pargs>
-inline double* accumulate_adjoints(double* dest, VarVec&& x,
-				   Pargs&&... args);
+          typename... Pargs>
+inline double* accumulate_adjoints(double* dest, VarVec&& x, Pargs&&... args);
 
 template <typename VecContainer,
-	  require_std_vector_st<is_var, VecContainer>* = nullptr,
-	  require_std_vector_vt<is_container, VecContainer>* = nullptr,
-	  typename... Pargs>
+          require_std_vector_st<is_var, VecContainer>* = nullptr,
+          require_std_vector_vt<is_container, VecContainer>* = nullptr,
+          typename... Pargs>
 inline double* accumulate_adjoints(double* dest, VecContainer&& x,
-				   Pargs&&... args);
+                                   Pargs&&... args);
 
 template <typename EigT, require_eigen_vt<is_var, EigT>* = nullptr,
-	  typename... Pargs>
-inline double* accumulate_adjoints(double* dest, EigT&& x,
-				   Pargs&&... args);
+          typename... Pargs>
+inline double* accumulate_adjoints(double* dest, EigT&& x, Pargs&&... args);
 
-template <typename Arith,
-	  require_arithmetic_t<scalar_type_t<Arith>>* = nullptr,
-	  typename... Pargs>
-inline double* accumulate_adjoints(double* dest, Arith&& x,
-				   Pargs&&... args);
+template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>* = nullptr,
+          typename... Pargs>
+inline double* accumulate_adjoints(double* dest, Arith&& x, Pargs&&... args);
 
 inline double* accumulate_adjoints(double* dest);
 
@@ -57,7 +52,7 @@ inline double* accumulate_adjoints(double* dest);
  */
 template <typename... Pargs>
 inline double* accumulate_adjoints(double* dest, const var& x,
-				   Pargs&&... args) {
+                                   Pargs&&... args) {
   *dest += x.adj();
   return accumulate_adjoints(dest + 1, std::forward<Pargs>(args)...);
 }
@@ -75,9 +70,8 @@ inline double* accumulate_adjoints(double* dest, const var& x,
  * @return Final position of adjoint storage pointer
  */
 template <typename VarVec, require_std_vector_vt<is_var, VarVec>*,
-	  typename... Pargs>
-inline double* accumulate_adjoints(double* dest, VarVec&& x,
-				   Pargs&&... args) {
+          typename... Pargs>
+inline double* accumulate_adjoints(double* dest, VarVec&& x, Pargs&&... args) {
   for (auto&& x_iter : x) {
     *dest += x_iter.adj();
     ++dest;
@@ -100,12 +94,10 @@ inline double* accumulate_adjoints(double* dest, VarVec&& x,
  * @param args Further args to accumulate over
  * @return Final position of adjoint storage pointer
  */
-template <typename VecContainer,
-	  require_std_vector_st<is_var, VecContainer>*,
-	  require_std_vector_vt<is_container, VecContainer>*,
-	  typename... Pargs>
+template <typename VecContainer, require_std_vector_st<is_var, VecContainer>*,
+          require_std_vector_vt<is_container, VecContainer>*, typename... Pargs>
 inline double* accumulate_adjoints(double* dest, VecContainer&& x,
-				   Pargs&&... args) {
+                                   Pargs&&... args) {
   for (auto&& x_iter : x) {
     dest = accumulate_adjoints(dest, x_iter);
   }
@@ -126,10 +118,8 @@ inline double* accumulate_adjoints(double* dest, VecContainer&& x,
  * @param args Further args to accumulate over
  * @return Final position of adjoint storage pointer
  */
-template <typename EigT, require_eigen_vt<is_var, EigT>*,
-	  typename... Pargs>
-inline double* accumulate_adjoints(double* dest, EigT&& x,
-				   Pargs&&... args) {
+template <typename EigT, require_eigen_vt<is_var, EigT>*, typename... Pargs>
+inline double* accumulate_adjoints(double* dest, EigT&& x, Pargs&&... args) {
   Eigen::Map<Eigen::MatrixXd>(dest, x.rows(), x.cols()) += x.adj();
   return accumulate_adjoints(dest + x.size(), std::forward<Pargs>(args)...);
 }
@@ -148,11 +138,9 @@ inline double* accumulate_adjoints(double* dest, EigT&& x,
  * @param args Further args to accumulate over
  * @return Final position of adjoint storage pointer
  */
-template <typename Arith,
-	  require_arithmetic_t<scalar_type_t<Arith>>*,
-	  typename... Pargs>
-inline double* accumulate_adjoints(double* dest, Arith&& x,
-				   Pargs&&... args) {
+template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>*,
+          typename... Pargs>
+inline double* accumulate_adjoints(double* dest, Arith&& x, Pargs&&... args) {
   return accumulate_adjoints(dest, std::forward<Pargs>(args)...);
 }
 

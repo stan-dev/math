@@ -16,11 +16,11 @@ TEST(AgradRev_count_vars, int_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
@@ -32,11 +32,11 @@ TEST(AgradRev_count_vars, double_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
@@ -48,11 +48,11 @@ TEST(AgradRev_count_vars, std_vector_int_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
@@ -64,11 +64,11 @@ TEST(AgradRev_count_vars, std_vector_double_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
@@ -80,11 +80,11 @@ TEST(AgradRev_count_vars, eigen_vector_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
@@ -96,11 +96,11 @@ TEST(AgradRev_count_vars, eigen_row_vector_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
@@ -112,11 +112,11 @@ TEST(AgradRev_count_vars, eigen_matrix_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
@@ -128,11 +128,11 @@ TEST(AgradRev_count_vars, std_vector_std_vector_double_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
@@ -144,11 +144,11 @@ TEST(AgradRev_count_vars, std_vector_eigen_vector_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
@@ -160,11 +160,11 @@ TEST(AgradRev_count_vars, std_vector_eigen_row_vector_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
@@ -176,11 +176,11 @@ TEST(AgradRev_count_vars, std_vector_eigen_matrix_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
@@ -193,17 +193,17 @@ TEST(AgradRev_count_vars, var_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
 TEST(AgradRev_count_vars, std_vector_var_arg) {
   std::vector<var> arg(5, var(5.0));
-  for(size_t i = 0; i < arg.size(); ++i)
+  for (size_t i = 0; i < arg.size(); ++i)
     arg[i].vi_->adj_ = 1.0;
 
   storage.setZero();
@@ -211,17 +211,17 @@ TEST(AgradRev_count_vars, std_vector_var_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
 TEST(AgradRev_count_vars, eigen_vector_var_arg) {
   Eigen::Matrix<var, Eigen::Dynamic, 1> arg(5);
-  for(size_t i = 0; i < arg.size(); ++i) {
+  for (size_t i = 0; i < arg.size(); ++i) {
     arg(i) = 5.0;
     arg(i).vi_->adj_ = 1.0;
   }
@@ -231,17 +231,17 @@ TEST(AgradRev_count_vars, eigen_vector_var_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
 TEST(AgradRev_count_vars, eigen_row_vector_var_arg) {
   Eigen::Matrix<var, 1, Eigen::Dynamic> arg(5);
-  for(size_t i = 0; i < arg.size(); ++i) {
+  for (size_t i = 0; i < arg.size(); ++i) {
     arg(i) = 5.0;
     arg(i).vi_->adj_ = 1.0;
   }
@@ -251,17 +251,17 @@ TEST(AgradRev_count_vars, eigen_row_vector_var_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
 TEST(AgradRev_count_vars, eigen_matrix_var_arg) {
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> arg(5, 5);
-  for(size_t i = 0; i < arg.size(); ++i) {
+  for (size_t i = 0; i < arg.size(); ++i) {
     arg(i) = 5.0;
     arg(i).vi_->adj_ = 1.0;
   }
@@ -271,17 +271,17 @@ TEST(AgradRev_count_vars, eigen_matrix_var_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
 TEST(AgradRev_count_vars, std_vector_std_vector_var_arg) {
   std::vector<var> arg_(5, var(5.0));
-  for(size_t i = 0; i < arg_.size(); ++i)
+  for (size_t i = 0; i < arg_.size(); ++i)
     arg_[i].vi_->adj_ = 1.0;
   std::vector<std::vector<var>> arg(5, arg_);
 
@@ -290,17 +290,17 @@ TEST(AgradRev_count_vars, std_vector_std_vector_var_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
 TEST(AgradRev_count_vars, std_vector_eigen_vector_var_arg) {
   Eigen::Matrix<var, Eigen::Dynamic, 1> arg_(5);
-  for(size_t i = 0; i < arg_.size(); ++i) {
+  for (size_t i = 0; i < arg_.size(); ++i) {
     arg_(i) = 5.0;
     arg_(i).vi_->adj_ = 1.0;
   }
@@ -311,17 +311,17 @@ TEST(AgradRev_count_vars, std_vector_eigen_vector_var_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
 TEST(AgradRev_count_vars, std_vector_eigen_row_vector_var_arg) {
   Eigen::Matrix<var, 1, Eigen::Dynamic> arg_(5);
-  for(size_t i = 0; i < arg_.size(); ++i) {
+  for (size_t i = 0; i < arg_.size(); ++i) {
     arg_(i) = 5.0;
     arg_(i).vi_->adj_ = 1.0;
   }
@@ -332,17 +332,17 @@ TEST(AgradRev_count_vars, std_vector_eigen_row_vector_var_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
 TEST(AgradRev_count_vars, std_vector_eigen_matrix_var_arg) {
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> arg_(5, 3);
-  for(size_t i = 0; i < arg_.size(); ++i) {
+  for (size_t i = 0; i < arg_.size(); ++i) {
     arg_(i) = 5.0;
     arg_(i).vi_->adj_ = 1.0;
   }
@@ -353,11 +353,11 @@ TEST(AgradRev_count_vars, std_vector_eigen_matrix_var_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
@@ -375,40 +375,42 @@ TEST(AgradRev_count_vars, sum) {
   var arg10(new vari(5.0));
   arg10.vi_->adj_ = 1.0;
   std::vector<var> arg11(5, new vari(5.0, 1.0));
-  for(size_t i = 0; i < arg11.size(); ++i)
+  for (size_t i = 0; i < arg11.size(); ++i)
     arg11[i].vi_->adj_ = 1.0;
   Eigen::Matrix<var, Eigen::Dynamic, 1> arg12(3);
-  for(size_t i = 0; i < arg12.size(); ++i) {
+  for (size_t i = 0; i < arg12.size(); ++i) {
     arg12(i) = 5.0;
     arg12(i).vi_->adj_ = 1.0;
   }
   Eigen::Matrix<var, 1, Eigen::Dynamic> arg13(4);
-  for(size_t i = 0; i < arg13.size(); ++i) {
+  for (size_t i = 0; i < arg13.size(); ++i) {
     arg13(i) = 5.0;
     arg13(i).vi_->adj_ = 1.0;
   }
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> arg14(5, 3);
-  for(size_t i = 0; i < arg14.size(); ++i) {
+  for (size_t i = 0; i < arg14.size(); ++i) {
     arg14(i) = 5.0;
     arg14(i).vi_->adj_ = 1.0;
   }
   std::vector<std::vector<var>> arg15(2, arg11);
   std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> arg16(2, arg12);
   std::vector<Eigen::Matrix<var, 1, Eigen::Dynamic>> arg17(2, arg13);
-  std::vector<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arg18(2, arg14);
+  std::vector<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arg18(2,
+                                                                        arg14);
 
   storage.setZero();
-  double* ptr = stan::math::accumulate_adjoints(storage.data(),
-						arg1, arg18, arg17, arg2, arg16, arg3, arg15, arg4, arg14,
-						arg5, arg13, arg12, arg6, arg11, arg7, arg10, arg8, arg9);
+  double* ptr = stan::math::accumulate_adjoints(
+      storage.data(), arg1, arg18, arg17, arg2, arg16, arg3, arg15, arg4, arg14,
+      arg5, arg13, arg12, arg6, arg11, arg7, arg10, arg8, arg9);
 
-  size_t num_vars = stan::math::count_vars(arg1, arg18, arg17, arg2, arg16, arg3, arg15, arg4, arg14,
-					   arg5, arg13, arg12, arg6, arg11, arg7, arg10, arg8, arg9);
+  size_t num_vars = stan::math::count_vars(
+      arg1, arg18, arg17, arg2, arg16, arg3, arg15, arg4, arg14, arg5, arg13,
+      arg12, arg6, arg11, arg7, arg10, arg8, arg9);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }

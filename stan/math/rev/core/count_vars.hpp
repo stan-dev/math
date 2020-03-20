@@ -18,28 +18,24 @@ namespace stan {
 namespace math {
 
 template <typename VecVar, require_std_vector_vt<is_var, VecVar>* = nullptr,
-	  typename... Pargs>
-inline size_t count_vars_impl(size_t count, VecVar&& x,
-			      Pargs&&... args);
+          typename... Pargs>
+inline size_t count_vars_impl(size_t count, VecVar&& x, Pargs&&... args);
 
 template <typename VecContainer,
-	  require_std_vector_st<is_var, VecContainer>* = nullptr,
-	  require_std_vector_vt<is_container, VecContainer>* = nullptr,
-	  typename... Pargs>
-inline size_t count_vars_impl(size_t count, VecContainer&& x,
-			      Pargs&&... args);
+          require_std_vector_st<is_var, VecContainer>* = nullptr,
+          require_std_vector_vt<is_container, VecContainer>* = nullptr,
+          typename... Pargs>
+inline size_t count_vars_impl(size_t count, VecContainer&& x, Pargs&&... args);
 
 template <typename EigT, require_eigen_vt<is_var, EigT>* = nullptr,
-	  typename... Pargs>
+          typename... Pargs>
 inline size_t count_vars_impl(size_t count, EigT&& x, Pargs&&... args);
 
 template <typename... Pargs>
-inline size_t count_vars_impl(size_t count, const var& x,
-			      Pargs&&... args);
+inline size_t count_vars_impl(size_t count, const var& x, Pargs&&... args);
 
-template <typename Arith,
-	  require_arithmetic_t<scalar_type_t<Arith>>* = nullptr,
-	  typename... Pargs>
+template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>* = nullptr,
+          typename... Pargs>
 inline size_t count_vars_impl(size_t count, Arith& x, Pargs&&... args);
 
 inline size_t count_vars_impl(size_t count);
@@ -58,9 +54,8 @@ inline size_t count_vars_impl(size_t count);
  * `count_vars_impl`
  */
 template <typename VecVar, require_std_vector_vt<is_var, VecVar>*,
-	  typename... Pargs>
-inline size_t count_vars_impl(size_t count, VecVar&& x,
-			     Pargs&&... args) {
+          typename... Pargs>
+inline size_t count_vars_impl(size_t count, VecVar&& x, Pargs&&... args) {
   return count_vars_impl(count + x.size(), std::forward<Pargs>(args)...);
 }
 
@@ -77,12 +72,9 @@ inline size_t count_vars_impl(size_t count, VecVar&& x,
  * @param[in] args objects to be forwarded to recursive call of
  * `count_vars_impl`
  */
-template <typename VecContainer,
-	  require_std_vector_st<is_var, VecContainer>*,
-	  require_std_vector_vt<is_container, VecContainer>*,
-	  typename... Pargs>
-inline size_t count_vars_impl(size_t count, VecContainer&& x,
-			      Pargs&&... args) {
+template <typename VecContainer, require_std_vector_st<is_var, VecContainer>*,
+          require_std_vector_vt<is_container, VecContainer>*, typename... Pargs>
+inline size_t count_vars_impl(size_t count, VecContainer&& x, Pargs&&... args) {
   for (auto&& x_iter : x) {
     count = count_vars_impl(count, x_iter);
   }
@@ -102,8 +94,7 @@ inline size_t count_vars_impl(size_t count, VecContainer&& x,
  * @param[in] args objects to be forwarded to recursive call of
  * `count_vars_impl`
  */
-template <typename EigT, require_eigen_vt<is_var, EigT>*,
-	  typename... Pargs>
+template <typename EigT, require_eigen_vt<is_var, EigT>*, typename... Pargs>
 inline size_t count_vars_impl(size_t count, EigT&& x, Pargs&&... args) {
   return count_vars_impl(count + x.size(), std::forward<Pargs>(args)...);
 }
@@ -120,8 +111,7 @@ inline size_t count_vars_impl(size_t count, EigT&& x, Pargs&&... args) {
  * `count_vars_impl`
  */
 template <typename... Pargs>
-inline size_t count_vars_impl(size_t count, const var& x,
-			     Pargs&&... args) {
+inline size_t count_vars_impl(size_t count, const var& x, Pargs&&... args) {
   return count_vars_impl(count + 1, std::forward<Pargs>(args)...);
 }
 
@@ -139,9 +129,8 @@ inline size_t count_vars_impl(size_t count, const var& x,
  * @param[in] args objects to be forwarded to recursive call of
  * `count_vars_impl`
  */
-template <typename Arith,
-	  require_arithmetic_t<scalar_type_t<Arith>>*,
-	  typename... Pargs>
+template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>*,
+          typename... Pargs>
 inline size_t count_vars_impl(size_t count, Arith& x, Pargs&&... args) {
   return count_vars_impl(count, std::forward<Pargs>(args)...);
 }

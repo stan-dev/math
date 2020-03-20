@@ -33,7 +33,8 @@ struct reduce_sum_impl {
    * This specialization is not parallelized and works for any autodiff types.
    *
    * An instance, f, of `ReduceFunction` should have the signature:
-   *   T f(int start, int end, Vec&& vmapped_subset, std::ostream* msgs, Args&&... args)
+   *   T f(int start, int end, Vec&& vmapped_subset, std::ostream* msgs,
+   * Args&&... args)
    *
    * `ReduceFunction` must be default constructible without any arguments
    *
@@ -41,7 +42,8 @@ struct reduce_sum_impl {
    *   start through end - 1 terms of the overall sum. All args are passed
    *   from this function through to the `ReduceFunction` instances.
    *   However, only elements start through end - 1 of the vmapped argument are
-   *   passed to the `ReduceFunction` instances (as the `vmapped_subset` argument).
+   *   passed to the `ReduceFunction` instances (as the `vmapped_subset`
+   * argument).
    *
    * @param vmapped Sliced arguments used only in some sum terms
    * @param grainsize Suggested grainsize for tbb
@@ -49,10 +51,9 @@ struct reduce_sum_impl {
    * @param args Shared arguments used in every sum term
    * @return Summation of all terms
    */
-  return_type_t<Vec, Args...> operator()(Vec&& vmapped,
-					 std::size_t grainsize,
-					 std::ostream* msgs,
-					 Args&&... args) const {
+  return_type_t<Vec, Args...> operator()(Vec&& vmapped, std::size_t grainsize,
+                                         std::ostream* msgs,
+                                         Args&&... args) const {
     const std::size_t num_jobs = vmapped.size();
 
     if (num_jobs == 0) {
@@ -77,7 +78,8 @@ template <typename ReduceFunction, typename ReturnType, typename Vec,
 struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
                        ReturnType, Vec, Args...> {
   /**
-   * Internal object meeting the Imperative form requirements of `tbb::parallel_reduce`
+   * Internal object meeting the Imperative form requirements of
+   * `tbb::parallel_reduce`
    *
    * @note see link [here](https://tinyurl.com/vp7xw2t) for requirements.
    */
@@ -144,7 +146,8 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
    *   arithmetic types.
    *
    * An instance, f, of `ReduceFunction` should have the signature:
-   *   double f(int start, int end, Vec&& vmapped_subset, std::ostream* msgs, Args&&... args)
+   *   double f(int start, int end, Vec&& vmapped_subset, std::ostream* msgs,
+   * Args&&... args)
    *
    * `ReduceFunction` must be default constructible without any arguments
    *
@@ -152,10 +155,12 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
    *   start through end - 1 terms of the overall sum. All args are passed
    *   from this function through to the `ReduceFunction` instances.
    *   However, only elements start through end - 1 of the vmapped argument are
-   *   passed to the `ReduceFunction` instances (as the `vmapped_subset` argument).
+   *   passed to the `ReduceFunction` instances (as the `vmapped_subset`
+   * argument).
    *
    * This function distributes computation of the desired sum
-   *   over multiple threads by coordinating calls to `ReduceFunction` instances.
+   *   over multiple threads by coordinating calls to `ReduceFunction`
+   * instances.
    *
    * @param vmapped Sliced arguments used only in some sum terms
    * @param grainsize Suggested grainsize for tbb
@@ -163,10 +168,8 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
    * @param args Shared arguments used in every sum term
    * @return Summation of all terms
    */
-  ReturnType operator()(Vec&& vmapped,
-			std::size_t grainsize,
-			std::ostream* msgs,
-			Args&&... args) const {
+  ReturnType operator()(Vec&& vmapped, std::size_t grainsize,
+                        std::ostream* msgs, Args&&... args) const {
     const std::size_t num_jobs = vmapped.size();
     if (num_jobs == 0) {
       return 0.0;
@@ -197,7 +200,8 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
  * This defers to reduce_sum_impl for the appropriate implementation
  *
  * An instance, f, of `ReduceFunction` should have the signature:
- *   T f(int start, int end, Vec&& vmapped_subset, std::ostream* msgs, Args&&... args)
+ *   T f(int start, int end, Vec&& vmapped_subset, std::ostream* msgs, Args&&...
+ * args)
  *
  * `ReduceFunction` must be default constructible without any arguments
  *

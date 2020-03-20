@@ -31,7 +31,7 @@ inline vari** save_varis(vari** dest, const var& x, Pargs&&... args) {
  * @param[in] args Further arguments forwarded to recursive call.
  */
 template <typename VarVec, require_std_vector_vt<is_var, VarVec>* = nullptr,
-	  typename... Pargs>
+          typename... Pargs>
 inline vari** save_varis(vari** dest, VarVec&& x, Pargs&&... args) {
   using write_map = Eigen::Map<Eigen::Matrix<vari*, -1, 1>>;
   using read_map = Eigen::Map<const Eigen::Matrix<var, -1, 1>>;
@@ -50,11 +50,10 @@ inline vari** save_varis(vari** dest, VarVec&& x, Pargs&&... args) {
  * @param[in] args Further arguments forwarded to recursive call.
  */
 template <typename VecContainer,
-	  require_std_vector_st<is_var, VecContainer>* = nullptr,
-	  require_std_vector_vt<is_container, VecContainer>* = nullptr,
-	  typename... Pargs>
-inline vari** save_varis(vari** dest, VecContainer&& x,
-			 Pargs&&... args) {
+          require_std_vector_st<is_var, VecContainer>* = nullptr,
+          require_std_vector_vt<is_container, VecContainer>* = nullptr,
+          typename... Pargs>
+inline vari** save_varis(vari** dest, VecContainer&& x, Pargs&&... args) {
   for (size_t i = 0; i < x.size(); ++i) {
     dest = save_varis(dest, x[i]);
   }
@@ -71,11 +70,11 @@ inline vari** save_varis(vari** dest, VecContainer&& x,
  * @param[in] args Further arguments forwarded to recursive call.
  */
 template <typename EigT, require_eigen_vt<is_var, EigT>* = nullptr,
-	  typename... Pargs>
+          typename... Pargs>
 inline vari** save_varis(vari** dest, EigT&& x, Pargs&&... args) {
   using mat_t = std::decay_t<EigT>;
-  using write_map = Eigen::Map<Eigen::Matrix<vari*, mat_t::RowsAtCompileTime,
-					     mat_t::ColsAtCompileTime>>;
+  using write_map = Eigen::Map<
+      Eigen::Matrix<vari*, mat_t::RowsAtCompileTime, mat_t::ColsAtCompileTime>>;
   write_map(dest, x.rows(), x.cols()) = x.vi();
   return save_varis(dest + x.size(), std::forward<Pargs>(args)...);
 }
@@ -91,9 +90,8 @@ inline vari** save_varis(vari** dest, EigT&& x, Pargs&&... args) {
  * @param[in] x arithmetic or container of arithmetics.
  * @param[in] args Further arguments forwarded to recursive call.
  */
-template <typename Arith,
-	  require_arithmetic_t<scalar_type_t<Arith>>* = nullptr,
-	  typename... Pargs>
+template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>* = nullptr,
+          typename... Pargs>
 inline vari** save_varis(vari** dest, Arith&& x, Pargs&&... args) {
   return save_varis(dest, std::forward<Pargs>(args)...);
 }

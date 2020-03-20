@@ -108,19 +108,22 @@ TEST(AgradRev_count_vars, std_vector_std_vector_var_arg) {
 }
 
 TEST(AgradRev_count_vars, std_vector_eigen_vector_var_arg) {
-  std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> arg(2, Eigen::Matrix<var, Eigen::Dynamic, 1>(5));
+  std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> arg(
+      2, Eigen::Matrix<var, Eigen::Dynamic, 1>(5));
 
   EXPECT_EQ(10, stan::math::count_vars(arg));
 }
 
 TEST(AgradRev_count_vars, std_vector_eigen_row_vector_var_arg) {
-  std::vector<Eigen::Matrix<var, 1, Eigen::Dynamic>> arg(2, Eigen::Matrix<var, 1, Eigen::Dynamic>(5));
+  std::vector<Eigen::Matrix<var, 1, Eigen::Dynamic>> arg(
+      2, Eigen::Matrix<var, 1, Eigen::Dynamic>(5));
 
   EXPECT_EQ(10, stan::math::count_vars(arg));
 }
 
 TEST(AgradRev_count_vars, std_vector_eigen_matrix_var_arg) {
-  std::vector<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arg(2, Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>(5, 3));
+  std::vector<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arg(
+      2, Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>(5, 3));
 
   EXPECT_EQ(30, stan::math::count_vars(arg));
 }
@@ -144,9 +147,11 @@ TEST(AgradRev_count_vars, sum) {
   std::vector<std::vector<var>> arg15(2, arg11);
   std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> arg16(2, arg12);
   std::vector<Eigen::Matrix<var, 1, Eigen::Dynamic>> arg17(2, arg13);
-  std::vector<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arg18(2, arg14);
+  std::vector<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arg18(2,
+                                                                        arg14);
 
-  EXPECT_EQ(1 + 5 + 3 + 4 + 15 + 2 * 5 + 2 * 3 + 2 * 4 + 30,
-	    count_vars(arg1, arg18, arg17, arg2, arg16, arg3, arg15, arg4, arg14,
-		       arg5, arg13, arg12, arg6, arg11, arg7, arg10, arg8, arg9));
+  EXPECT_EQ(
+      1 + 5 + 3 + 4 + 15 + 2 * 5 + 2 * 3 + 2 * 4 + 30,
+      count_vars(arg1, arg18, arg17, arg2, arg16, arg3, arg15, arg4, arg14,
+                 arg5, arg13, arg12, arg6, arg11, arg7, arg10, arg8, arg9));
 }
