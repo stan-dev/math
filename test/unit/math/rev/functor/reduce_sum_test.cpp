@@ -37,18 +37,14 @@ TEST(StanMathRev_reduce_sum, value) {
   std::vector<int> idata;
   std::vector<double> vlambda_d(1, lambda_d);
 
-  typedef boost::counting_iterator<std::size_t> count_iter;
-
   double poisson_lpdf = stan::math::reduce_sum<count_lpdf<double>>(
       data, 5, msgs, vlambda_d, idata);
 
   double poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_d);
 
-  EXPECT_FLOAT_EQ(poisson_lpdf, poisson_lpdf_ref);
-
-  std::cout << "ref value of poisson lpdf : " << poisson_lpdf_ref << std::endl;
-
-  std::cout << "value of poisson lpdf : " << poisson_lpdf << std::endl;
+  EXPECT_FLOAT_EQ(poisson_lpdf, poisson_lpdf_ref) <<
+    "ref value of poisson lpdf : " << poisson_lpdf_ref << std::endl <<
+    "value of poisson lpdf : " << poisson_lpdf << std::endl;
 }
 
 TEST(StanMathRev_reduce_sum, gradient) {
@@ -62,7 +58,6 @@ TEST(StanMathRev_reduce_sum, gradient) {
   for (std::size_t i = 0; i != elems; ++i)
     data[i] = i;
 
-  typedef boost::counting_iterator<std::size_t> count_iter;
   using stan::math::var;
 
   var lambda_v = lambda_d;
@@ -85,16 +80,11 @@ TEST(StanMathRev_reduce_sum, gradient) {
   stan::math::grad(poisson_lpdf.vi_);
   const double lambda_adj = lambda_v.adj();
 
-  EXPECT_FLOAT_EQ(lambda_adj, lambda_ref_adj);
-
-  std::cout << "ref value of poisson lpdf : " << poisson_lpdf_ref.val()
-            << std::endl;
-
-  std::cout << "ref gradient wrt to lambda: " << lambda_ref_adj << std::endl;
-
-  std::cout << "value of poisson lpdf : " << poisson_lpdf.val() << std::endl;
-
-  std::cout << "gradient wrt to lambda: " << lambda_adj << std::endl;
+  EXPECT_FLOAT_EQ(lambda_adj, lambda_ref_adj) <<
+    "ref value of poisson lpdf : " << poisson_lpdf_ref.val() << std::endl <<
+    "ref gradient wrt to lambda: " << lambda_ref_adj << std::endl <<
+    "value of poisson lpdf : " << poisson_lpdf.val() << std::endl <<
+    "gradient wrt to lambda: " << lambda_adj << std::endl;
 
   stan::math::recover_memory();
 }
@@ -127,7 +117,6 @@ TEST(StanMathRev_reduce_sum, nesting_gradient) {
   for (std::size_t i = 0; i != elems; ++i)
     data[i] = i;
 
-  typedef boost::counting_iterator<std::size_t> count_iter;
   using stan::math::var;
 
   var lambda_v = lambda_d;
@@ -150,16 +139,11 @@ TEST(StanMathRev_reduce_sum, nesting_gradient) {
   stan::math::grad(poisson_lpdf.vi_);
   const double lambda_adj = lambda_v.adj();
 
-  EXPECT_FLOAT_EQ(lambda_adj, lambda_ref_adj);
-
-  std::cout << "ref value of poisson lpdf : " << poisson_lpdf_ref.val()
-            << std::endl;
-
-  std::cout << "ref gradient wrt to lambda: " << lambda_ref_adj << std::endl;
-
-  std::cout << "value of poisson lpdf : " << poisson_lpdf.val() << std::endl;
-
-  std::cout << "gradient wrt to lambda: " << lambda_adj << std::endl;
+  EXPECT_FLOAT_EQ(lambda_adj, lambda_ref_adj) <<
+    "ref value of poisson lpdf : " << poisson_lpdf_ref.val() << std::endl <<
+    "ref gradient wrt to lambda: " << lambda_ref_adj << std::endl <<
+    "value of poisson lpdf : " << poisson_lpdf.val() << std::endl <<
+    "gradient wrt to lambda: " << lambda_adj << std::endl;
 
   stan::math::recover_memory();
 }
@@ -232,16 +216,11 @@ TEST(StanMathRev_reduce_sum, grouped_gradient) {
   stan::math::grad(poisson_lpdf.vi_);
   const double lambda_adj = lambda_v.adj();
 
-  EXPECT_FLOAT_EQ(lambda_adj, lambda_ref_adj);
-
-  std::cout << "ref value of poisson lpdf : " << poisson_lpdf_ref.val()
-            << std::endl;
-
-  std::cout << "ref gradient wrt to lambda: " << lambda_ref_adj << std::endl;
-
-  std::cout << "value of poisson lpdf : " << poisson_lpdf.val() << std::endl;
-
-  std::cout << "gradient wrt to lambda: " << lambda_adj << std::endl;
+  EXPECT_FLOAT_EQ(lambda_adj, lambda_ref_adj) <<
+    "ref value of poisson lpdf : " << poisson_lpdf_ref.val() << std::endl <<
+    "ref gradient wrt to lambda: " << lambda_ref_adj << std::endl <<
+    "value of poisson lpdf : " << poisson_lpdf.val() << std::endl <<
+    "gradient wrt to lambda: " << lambda_adj << std::endl;
 
   stan::math::recover_memory();
 }
@@ -290,16 +269,11 @@ TEST(StanMathRev_reduce_sum, grouped_gradient_eigen) {
   stan::math::grad(poisson_lpdf.vi_);
   const double lambda_adj = lambda_v.adj();
 
-  EXPECT_FLOAT_EQ(lambda_adj, lambda_ref_adj);
-
-  std::cout << "ref value of poisson lpdf : " << poisson_lpdf_ref.val()
-            << std::endl;
-
-  std::cout << "ref gradient wrt to lambda: " << lambda_ref_adj << std::endl;
-
-  std::cout << "value of poisson lpdf : " << poisson_lpdf.val() << std::endl;
-
-  std::cout << "gradient wrt to lambda: " << lambda_adj << std::endl;
+  EXPECT_FLOAT_EQ(lambda_adj, lambda_ref_adj) <<
+    "ref value of poisson lpdf : " << poisson_lpdf_ref.val() << std::endl <<
+    "ref gradient wrt to lambda: " << lambda_ref_adj << std::endl <<
+    "value of poisson lpdf : " << poisson_lpdf.val() << std::endl <<
+    "gradient wrt to lambda: " << lambda_adj << std::endl;
 
   stan::math::recover_memory();
 }
@@ -379,15 +353,11 @@ TEST(StanMathRev_reduce_sum, slice_group_gradient) {
   stan::math::grad(poisson_lpdf.vi_);
   const double lambda_adj = lambda_v.adj();
 
-  EXPECT_FLOAT_EQ(lambda_adj, lambda_ref_adj);
+  EXPECT_FLOAT_EQ(lambda_adj, lambda_ref_adj) <<
+    "ref value of poisson lpdf : " << poisson_lpdf_ref.val() << std::endl <<
+    "ref gradient wrt to lambda: " << lambda_ref_adj << std::endl <<
+    "value of poisson lpdf : " << poisson_lpdf.val() << std::endl <<
+    "gradient wrt to lambda: " << lambda_adj << std::endl;
 
-  std::cout << "ref value of poisson lpdf : " << poisson_lpdf_ref.val()
-            << std::endl;
-
-  std::cout << "ref gradient wrt to lambda: " << lambda_ref_adj << std::endl;
-
-  std::cout << "value of poisson lpdf : " << poisson_lpdf.val() << std::endl;
-
-  std::cout << "gradient wrt to lambda: " << lambda_adj << std::endl;
   stan::math::recover_memory();
 }

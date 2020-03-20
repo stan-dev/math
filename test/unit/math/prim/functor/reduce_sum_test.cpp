@@ -37,8 +37,6 @@ TEST(StanMathPrim_reduce_sum, value) {
   std::vector<int> idata;
   std::vector<double> vlambda_d(1, lambda_d);
 
-  typedef boost::counting_iterator<std::size_t> count_iter;
-
   double poisson_lpdf = stan::math::reduce_sum<count_lpdf<double>>(
       data, 5, msgs, vlambda_d, idata);
 
@@ -78,8 +76,6 @@ TEST(StanMathPrim_reduce_sum, nesting_value) {
 
   std::vector<int> idata;
   std::vector<double> vlambda_d(1, lambda_d);
-
-  typedef boost::counting_iterator<std::size_t> count_iter;
 
   double poisson_lpdf = stan::math::reduce_sum<count_lpdf<double>>(
       data, 5, msgs, vlambda_d, idata);

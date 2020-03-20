@@ -63,5 +63,9 @@
 #include <stan/math/rev/core/vv_vari.hpp>
 #include <stan/math/rev/core/vvd_vari.hpp>
 #include <stan/math/rev/core/vvv_vari.hpp>
+#include <stan/math/rev/core/count_vars.hpp>
+#include <stan/math/rev/core/accumulate_adjoints.hpp>
+#include <stan/math/rev/core/save_varis.hpp>
+#include <stan/math/rev/core/deep_copy_vars.hpp>
 
 #endif
