@@ -57,8 +57,8 @@ inline auto deep_copy_vars(VarVec&& arg) {
  * @return A new std::vector of containers containing vars
  */
 template <typename VecContainer,
-	  require_std_vector_st<is_var, VecContainer>* = nullptr,
-	  require_std_vector_vt<is_container, VecContainer>* = nullptr>
+          require_std_vector_st<is_var, VecContainer>* = nullptr,
+          require_std_vector_vt<is_container, VecContainer>* = nullptr>
 inline auto deep_copy_vars(VecContainer&& arg) {
   std::vector<value_type_t<VecContainer>> copy_vec(arg.size());
   for (size_t i = 0; i < arg.size(); ++i) {

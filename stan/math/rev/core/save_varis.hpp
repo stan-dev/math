@@ -15,23 +15,21 @@ template <typename... Pargs>
 inline vari** save_varis(vari** dest, const var& x, Pargs&&... args);
 
 template <typename VarVec, require_std_vector_vt<is_var, VarVec>* = nullptr,
-	  typename... Pargs>
+          typename... Pargs>
 inline vari** save_varis(vari** dest, VarVec&& x, Pargs&&... args);
 
 template <typename VecContainer,
-	  require_std_vector_st<is_var, VecContainer>* = nullptr,
-	  require_std_vector_vt<is_container, VecContainer>* = nullptr,
-	  typename... Pargs>
-inline vari** save_varis(vari** dest, VecContainer&& x,
-			 Pargs&&... args);
+          require_std_vector_st<is_var, VecContainer>* = nullptr,
+          require_std_vector_vt<is_container, VecContainer>* = nullptr,
+          typename... Pargs>
+inline vari** save_varis(vari** dest, VecContainer&& x, Pargs&&... args);
 
 template <typename EigT, require_eigen_vt<is_var, EigT>* = nullptr,
-	  typename... Pargs>
+          typename... Pargs>
 inline vari** save_varis(vari** dest, EigT&& x, Pargs&&... args);
 
-template <typename Arith,
-	  require_arithmetic_t<scalar_type_t<Arith>>* = nullptr,
-	  typename... Pargs>
+template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>* = nullptr,
+          typename... Pargs>
 inline vari** save_varis(vari** dest, Arith&& x, Pargs&&... args);
 
 inline vari** save_varis(vari** dest);
@@ -68,7 +66,7 @@ inline vari** save_varis(vari** dest, const var& x, Pargs&&... args) {
  * @return Final position of dest pointer
  */
 template <typename VarVec, require_std_vector_vt<is_var, VarVec>*,
-	  typename... Pargs>
+          typename... Pargs>
 inline vari** save_varis(vari** dest, VarVec&& x, Pargs&&... args) {
   using write_map = Eigen::Map<Eigen::Matrix<vari*, -1, 1>>;
   using read_map = Eigen::Map<const Eigen::Matrix<var, -1, 1>>;
@@ -89,12 +87,9 @@ inline vari** save_varis(vari** dest, VarVec&& x, Pargs&&... args) {
  * @param[in] args Additional arguments to have their varis saved
  * @return Final position of dest pointer
  */
-template <typename VecContainer,
-	  require_std_vector_st<is_var, VecContainer>*,
-	  require_std_vector_vt<is_container, VecContainer>*,
-	  typename... Pargs>
-inline vari** save_varis(vari** dest, VecContainer&& x,
-			 Pargs&&... args) {
+template <typename VecContainer, require_std_vector_st<is_var, VecContainer>*,
+          require_std_vector_vt<is_container, VecContainer>*, typename... Pargs>
+inline vari** save_varis(vari** dest, VecContainer&& x, Pargs&&... args) {
   for (size_t i = 0; i < x.size(); ++i) {
     dest = save_varis(dest, x[i]);
   }
@@ -114,8 +109,7 @@ inline vari** save_varis(vari** dest, VecContainer&& x,
  * @param[in] args Additional arguments to have their varis saved
  * @return Final position of dest pointer
  */
-template <typename EigT, require_eigen_vt<is_var, EigT>*,
-	  typename... Pargs>
+template <typename EigT, require_eigen_vt<is_var, EigT>*, typename... Pargs>
 inline vari** save_varis(vari** dest, EigT&& x, Pargs&&... args) {
   using mat_t = std::decay_t<EigT>;
   using write_map = Eigen::Map<
@@ -137,9 +131,8 @@ inline vari** save_varis(vari** dest, EigT&& x, Pargs&&... args) {
  * @param[in] args Additional arguments to have their varis saved
  * @return Final position of dest pointer
  */
-template <typename Arith,
-	  require_arithmetic_t<scalar_type_t<Arith>>*,
-	  typename... Pargs>
+template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>*,
+          typename... Pargs>
 inline vari** save_varis(vari** dest, Arith&& x, Pargs&&... args) {
   return save_varis(dest, std::forward<Pargs>(args)...);
 }

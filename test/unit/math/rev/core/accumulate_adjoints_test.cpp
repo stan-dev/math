@@ -14,9 +14,9 @@ TEST(AgradRev_accumulate_adjoints, int_arg) {
   storage.setZero();
   double* ptr = stan::math::accumulate_adjoints(storage.data(), arg);
 
-  for(int i = 0; i < storage.size(); ++i)
+  for (int i = 0; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data());
 }
 
@@ -26,9 +26,9 @@ TEST(AgradRev_accumulate_adjoints, double_arg) {
   storage.setZero();
   double* ptr = stan::math::accumulate_adjoints(storage.data(), arg);
 
-  for(int i = 0; i < storage.size(); ++i)
+  for (int i = 0; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data());
 }
 
@@ -38,9 +38,9 @@ TEST(AgradRev_accumulate_adjoints, std_vector_int_arg) {
   storage.setZero();
   double* ptr = stan::math::accumulate_adjoints(storage.data(), arg);
 
-  for(int i = 0; i < storage.size(); ++i)
+  for (int i = 0; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data());
 }
 
@@ -50,9 +50,9 @@ TEST(AgradRev_accumulate_adjoints, std_vector_double_arg) {
   storage.setZero();
   double* ptr = stan::math::accumulate_adjoints(storage.data(), arg);
 
-  for(int i = 0; i < storage.size(); ++i)
+  for (int i = 0; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data());
 }
 
@@ -62,9 +62,9 @@ TEST(AgradRev_accumulate_adjoints, eigen_vector_arg) {
   storage.setZero();
   double* ptr = stan::math::accumulate_adjoints(storage.data(), arg);
 
-  for(int i = 0; i < storage.size(); ++i)
+  for (int i = 0; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data());
 }
 
@@ -74,9 +74,9 @@ TEST(AgradRev_accumulate_adjoints, eigen_row_vector_arg) {
   storage.setZero();
   double* ptr = stan::math::accumulate_adjoints(storage.data(), arg);
 
-  for(int i = 0; i < storage.size(); ++i)
+  for (int i = 0; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data());
 }
 
@@ -86,9 +86,9 @@ TEST(AgradRev_accumulate_adjoints, eigen_matrix_arg) {
   storage.setZero();
   double* ptr = stan::math::accumulate_adjoints(storage.data(), arg);
 
-  for(int i = 0; i < storage.size(); ++i)
+  for (int i = 0; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data());
 }
 
@@ -98,9 +98,9 @@ TEST(AgradRev_accumulate_adjoints, std_vector_std_vector_double_arg) {
   storage.setZero();
   double* ptr = stan::math::accumulate_adjoints(storage.data(), arg);
 
-  for(int i = 0; i < storage.size(); ++i)
+  for (int i = 0; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data());
 }
 
@@ -110,9 +110,9 @@ TEST(AgradRev_accumulate_adjoints, std_vector_eigen_vector_arg) {
   storage.setZero();
   double* ptr = stan::math::accumulate_adjoints(storage.data(), arg);
 
-  for(int i = 0; i < storage.size(); ++i)
+  for (int i = 0; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data());
 }
 
@@ -122,9 +122,9 @@ TEST(AgradRev_accumulate_adjoints, std_vector_eigen_row_vector_arg) {
   storage.setZero();
   double* ptr = stan::math::accumulate_adjoints(storage.data(), arg);
 
-  for(int i = 0; i < storage.size(); ++i)
+  for (int i = 0; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data());
 }
 
@@ -134,9 +134,9 @@ TEST(AgradRev_accumulate_adjoints, std_vector_eigen_matrix_arg) {
   storage.setZero();
   double* ptr = stan::math::accumulate_adjoints(storage.data(), arg);
 
-  for(int i = 0; i < storage.size(); ++i)
+  for (int i = 0; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
-  
+
   EXPECT_EQ(ptr, storage.data());
 }
 
@@ -149,9 +149,9 @@ TEST(AgradRev_accumulate_adjoints, var_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), i + 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
 
   EXPECT_EQ(ptr, storage.data() + num_vars);
@@ -159,7 +159,7 @@ TEST(AgradRev_accumulate_adjoints, var_arg) {
 
 TEST(AgradRev_accumulate_adjoints, std_vector_var_arg) {
   std::vector<var> arg(5);
-  for(size_t i = 0; i < arg.size(); ++i) {
+  for (size_t i = 0; i < arg.size(); ++i) {
     arg[i] = 5.0;
     arg[i].vi_->adj_ = i + 1.0;
   }
@@ -169,9 +169,9 @@ TEST(AgradRev_accumulate_adjoints, std_vector_var_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), i + 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
 
   EXPECT_EQ(ptr, storage.data() + num_vars);
@@ -189,9 +189,9 @@ TEST(AgradRev_accumulate_adjoints, eigen_vector_var_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), i + 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
 
   EXPECT_EQ(ptr, storage.data() + num_vars);
@@ -209,9 +209,9 @@ TEST(AgradRev_accumulate_adjoints, eigen_row_vector_var_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), i + 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
 
   EXPECT_EQ(ptr, storage.data() + num_vars);
@@ -229,9 +229,9 @@ TEST(AgradRev_accumulate_adjoints, eigen_matrix_var_arg) {
 
   size_t num_vars = stan::math::count_vars(arg);
 
-  for(int i = 0; i < num_vars; ++i)
+  for (int i = 0; i < num_vars; ++i)
     EXPECT_FLOAT_EQ(storage(i), i + 1.0);
-  for(int i = num_vars; i < storage.size(); ++i)
+  for (int i = num_vars; i < storage.size(); ++i)
     EXPECT_FLOAT_EQ(storage(i), 0.0);
 
   EXPECT_EQ(ptr, storage.data() + num_vars);
