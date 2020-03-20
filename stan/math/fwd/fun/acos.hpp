@@ -9,6 +9,18 @@
 namespace stan {
 namespace math {
 
+/**
+ * Return the arc cosine of a variable, in radians (cmath).
+ *
+ * The derivative is defined by:
+   \f[
+   \frac{\partial \, \arccos(x)}{\partial x} = -\frac{1}{\sqrt{1-x^2}}
+   \f]
+ *
+ * @tparam T Inner type of the fvar
+ * @param x fvar<T> variable
+ * @return Arc cosine of variable, in radians.
+ */
 template <typename T>
 inline fvar<T> acos(const fvar<T>& x) {
   using std::acos;
@@ -16,6 +28,13 @@ inline fvar<T> acos(const fvar<T>& x) {
   return fvar<T>(acos(x.val_), x.d_ / -sqrt(1 - square(x.val_)));
 }
 
+/**
+ * Return the arc cosine of a each variable in a container.
+ *
+ * @tparam Container Type of container
+ * @param x Container of fvar
+ * @return Arc cosine of each variable in container.
+ */
 template <typename Container,
           require_container_st<is_container, is_fvar, Container>...>
 inline auto acos(const Container& x) {

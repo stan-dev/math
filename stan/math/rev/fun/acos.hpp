@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/fun/typedefs.hpp>
 #include <cmath>
 
 namespace stan {
@@ -28,19 +29,13 @@ class acos_matrix_vari : public vari {
   vari** variRefAcos_;
 
   /**
-   * Constructor for exp_matrix_vari.
+   * Constructor for acos_matrix_vari.
    *
    * All memory allocated in
    * ChainableStack's stack_alloc arena.
    *
-   * It is critical for the efficiency of this object
-   * that the constructor create new varis that aren't
-   * popped onto the var_stack_, but rather are
-   * popped onto the var_nochain_stack_. This is
-   * controlled by the second argument to
-   * vari's constructor.
-   *
-   * @param A matrix
+   * @tparam T Type of Eigen expression/object
+   * @param A Eigen expression/object
    */
   explicit acos_matrix_vari(const T& A)
       : vari(0.0),
