@@ -45,15 +45,15 @@ class asin_matrix_vari : public vari {
         Ad_(ChainableStack::instance_->memalloc_.alloc_array<double>(A_size_)),
         variRefA_(
             ChainableStack::instance_->memalloc_.alloc_array<vari*>(A_size_)),
-        variRefAsin_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-            A_size_)) {
+        variRefAsin_(
+            ChainableStack::instance_->memalloc_.alloc_array<vari*>(A_size_)) {
     using Eigen::Map;
     Map<matrix_vi>(variRefA_, A_rows_, A_cols_) = A.vi();
     Map<matrix_d> Ad(Ad_, A_rows_, A_cols_);
     Ad = A.val();
     Map<matrix_vi>(variRefAsin_, A_rows_, A_cols_).array()
-        = Ad.array().asin()
-                    .unaryExpr([](double x) { return new vari(x, false); });
+        = Ad.array().asin().unaryExpr(
+            [](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
@@ -61,7 +61,7 @@ class asin_matrix_vari : public vari {
     Map<matrix_vi> RefAsin(variRefAsin_, A_rows_, A_cols_);
     Map<matrix_d> Ad(Ad_, A_rows_, A_cols_);
     Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj().array()
-          += RefAsin.adj().array() * (1 - Ad.array().square()).rsqrt();
+        += RefAsin.adj().array() * (1 - Ad.array().square()).rsqrt();
   }
 };
 }  // namespace internal
@@ -114,19 +114,18 @@ inline var asin(const var& a) { return var(new internal::asin_vari(a.vi_)); }
 template <typename Container,
           require_container_st<is_container, is_var, Container>...>
 inline auto asin(const Container& x) {
-  return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) {
-        using T_plain = plain_type_t<decltype(v)>;
-        using T_ref = Eigen::Ref<const T_plain>;
+  return apply_vector_unary<Container>::apply(x, [](const auto& v) {
+    using T_plain = plain_type_t<decltype(v)>;
+    using T_ref = Eigen::Ref<const T_plain>;
 
-        const T_ref& v_ref = v;
-        auto* baseVari = new internal::asin_matrix_vari<T_ref>(v_ref);
-        T_plain result(v_ref.rows(), v_ref.cols());
-        result.vi() = Eigen::Map<matrix_vi>(baseVari->variRefAsin_,
-                                          v_ref.rows(), v_ref.cols());
+    const T_ref& v_ref = v;
+    auto* baseVari = new internal::asin_matrix_vari<T_ref>(v_ref);
+    T_plain result(v_ref.rows(), v_ref.cols());
+    result.vi() = Eigen::Map<matrix_vi>(baseVari->variRefAsin_, v_ref.rows(),
+                                        v_ref.cols());
 
-        return result;
-});
+    return result;
+  });
 }
 }  // namespace math
 }  // namespace stan

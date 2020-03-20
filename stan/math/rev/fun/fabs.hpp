@@ -38,15 +38,15 @@ class fabs_matrix_vari : public vari {
         Ad_(ChainableStack::instance_->memalloc_.alloc_array<double>(A_size_)),
         variRefA_(
             ChainableStack::instance_->memalloc_.alloc_array<vari*>(A_size_)),
-        variRefFabs_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-            A_size_)) {
+        variRefFabs_(
+            ChainableStack::instance_->memalloc_.alloc_array<vari*>(A_size_)) {
     using Eigen::Map;
     Map<matrix_vi>(variRefA_, A_rows_, A_cols_) = A.vi();
     Map<matrix_d> Ad(Ad_, A_rows_, A_cols_);
     Ad = A.val();
     Map<matrix_vi>(variRefFabs_, A_rows_, A_cols_).array()
-        = Ad.array().abs()
-                    .unaryExpr([](double x) { return new vari(x, false); });
+        = Ad.array().abs().unaryExpr(
+            [](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
@@ -54,11 +54,10 @@ class fabs_matrix_vari : public vari {
     Map<matrix_d> Ad(Ad_, A_rows_, A_cols_);
     Map<matrix_vi> RefFabs(variRefFabs_, A_rows_, A_cols_);
     Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj()
-          = Ad.array()
-              .isNaN()
-              .select(NOT_A_NUMBER,
-                      (Ad.array() < 0).select(-RefFabs.adj().array(),
-                                              RefFabs.adj().array()));
+        = Ad.array().isNaN().select(
+            NOT_A_NUMBER,
+            (Ad.array() < 0)
+                .select(-RefFabs.adj().array(), RefFabs.adj().array()));
   }
 };
 }  // namespace internal
@@ -123,19 +122,18 @@ inline var fabs(const var& a) {
 template <typename Container,
           require_container_st<is_container, is_var, Container>...>
 inline auto fabs(const Container& x) {
-  return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) {
-        using T_plain = plain_type_t<decltype(v)>;
-        using T_ref = Eigen::Ref<const T_plain>;
+  return apply_vector_unary<Container>::apply(x, [](const auto& v) {
+    using T_plain = plain_type_t<decltype(v)>;
+    using T_ref = Eigen::Ref<const T_plain>;
 
-        const T_ref& v_ref = v;
-        auto* baseVari = new internal::fabs_matrix_vari<T_ref>(v_ref);
-        T_plain result(v_ref.rows(), v_ref.cols());
-        result.vi() = Eigen::Map<matrix_vi>(baseVari->variRefFabs_,
-                                          v_ref.rows(), v_ref.cols());
+    const T_ref& v_ref = v;
+    auto* baseVari = new internal::fabs_matrix_vari<T_ref>(v_ref);
+    T_plain result(v_ref.rows(), v_ref.cols());
+    result.vi() = Eigen::Map<matrix_vi>(baseVari->variRefFabs_, v_ref.rows(),
+                                        v_ref.cols());
 
-        return result;
-});
+    return result;
+  });
 }
 
 }  // namespace math

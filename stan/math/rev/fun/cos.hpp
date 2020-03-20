@@ -43,15 +43,15 @@ class cos_matrix_vari : public vari {
         Ad_(ChainableStack::instance_->memalloc_.alloc_array<double>(A_size_)),
         variRefA_(
             ChainableStack::instance_->memalloc_.alloc_array<vari*>(A_size_)),
-        variRefCos_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-            A_size_)) {
+        variRefCos_(
+            ChainableStack::instance_->memalloc_.alloc_array<vari*>(A_size_)) {
     using Eigen::Map;
     Map<matrix_vi>(variRefA_, A_rows_, A_cols_) = A.vi();
     Map<matrix_d> Ad(Ad_, A_rows_, A_cols_);
     Ad = A.val();
     Map<matrix_vi>(variRefCos_, A_rows_, A_cols_).array()
-        = Ad.array().cos()
-                    .unaryExpr([](double x) { return new vari(x, false); });
+        = Ad.array().cos().unaryExpr(
+            [](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
@@ -59,7 +59,7 @@ class cos_matrix_vari : public vari {
     Map<matrix_vi> RefCos(variRefCos_, A_rows_, A_cols_);
     Map<matrix_d> Ad(Ad_, A_rows_, A_cols_);
     Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj().array()
-          -= RefCos.adj().array() * Ad.array().sin();
+        -= RefCos.adj().array() * Ad.array().sin();
   }
 };
 }  // namespace internal
@@ -103,19 +103,18 @@ inline var cos(const var& a) { return var(new internal::cos_vari(a.vi_)); }
 template <typename Container,
           require_container_st<is_container, is_var, Container>...>
 inline auto cos(const Container& x) {
-  return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) {
-        using T_plain = plain_type_t<decltype(v)>;
-        using T_ref = Eigen::Ref<const T_plain>;
+  return apply_vector_unary<Container>::apply(x, [](const auto& v) {
+    using T_plain = plain_type_t<decltype(v)>;
+    using T_ref = Eigen::Ref<const T_plain>;
 
-        const T_ref& v_ref = v;
-        auto* baseVari = new internal::cos_matrix_vari<T_ref>(v_ref);
-        T_plain result(v_ref.rows(), v_ref.cols());
-        result.vi() = Eigen::Map<matrix_vi>(baseVari->variRefCos_,
-                                          v_ref.rows(), v_ref.cols());
+    const T_ref& v_ref = v;
+    auto* baseVari = new internal::cos_matrix_vari<T_ref>(v_ref);
+    T_plain result(v_ref.rows(), v_ref.cols());
+    result.vi() = Eigen::Map<matrix_vi>(baseVari->variRefCos_, v_ref.rows(),
+                                        v_ref.cols());
 
-        return result;
-});
+    return result;
+  });
 }
 
 }  // namespace math
