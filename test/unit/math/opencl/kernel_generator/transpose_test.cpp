@@ -8,14 +8,13 @@
 #include <gtest/gtest.h>
 #include <string>
 
-using Eigen::MatrixXd;
-using stan::math::matrix_cl;
-
 #define EXPECT_MATRIX_NEAR(A, B, DELTA) \
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(MathMatrixCL, transpose_rvalue_test) {
+  using Eigen::MatrixXd;
+  using stan::math::matrix_cl;
   MatrixXd m(3, 2);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
 
@@ -31,6 +30,8 @@ TEST(MathMatrixCL, transpose_rvalue_test) {
 }
 
 TEST(MathMatrixCL, transpose_test) {
+  using Eigen::MatrixXd;
+  using stan::math::matrix_cl;
   MatrixXd m(3, 2);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
 
@@ -47,6 +48,8 @@ TEST(MathMatrixCL, transpose_test) {
 }
 
 TEST(MathMatrixCL, transpose_triangular_test) {
+  using Eigen::MatrixXd;
+  using stan::math::matrix_cl;
   MatrixXd m(3, 2);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
 
@@ -63,6 +66,8 @@ TEST(MathMatrixCL, transpose_triangular_test) {
 }
 
 TEST(MathMatrixCL, double_transpose_test) {
+  using Eigen::MatrixXd;
+  using stan::math::matrix_cl;
   MatrixXd m(3, 2);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
 
@@ -79,6 +84,8 @@ TEST(MathMatrixCL, double_transpose_test) {
 }
 
 TEST(MathMatrixCL, double_transpose_triangular_test) {
+  using Eigen::MatrixXd;
+  using stan::math::matrix_cl;
   MatrixXd m(3, 2);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
 
@@ -95,6 +102,8 @@ TEST(MathMatrixCL, double_transpose_triangular_test) {
 }
 
 TEST(MathMatrixCL, double_transpose_accepts_lvalue_test) {
+  using Eigen::MatrixXd;
+  using stan::math::matrix_cl;
   MatrixXd m(3, 2);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
 
@@ -112,6 +121,8 @@ TEST(MathMatrixCL, double_transpose_accepts_lvalue_test) {
 }
 
 TEST(MathMatrixCL, transpose_block_test) {
+  using Eigen::MatrixXd;
+  using stan::math::matrix_cl;
   MatrixXd m(5, 5);
   m << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
       21, 22, 23, 24, 25;
@@ -130,6 +141,8 @@ TEST(MathMatrixCL, transpose_block_test) {
 }
 
 TEST(MathMatrixCL, block_of_transpose_test) {
+  using Eigen::MatrixXd;
+  using stan::math::matrix_cl;
   MatrixXd m(5, 5);
   m << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
       21, 22, 23, 24, 25;
@@ -148,6 +161,8 @@ TEST(MathMatrixCL, block_of_transpose_test) {
 }
 
 TEST(MathMatrixCL, a_plus_a_transpose_test) {
+  using Eigen::MatrixXd;
+  using stan::math::matrix_cl;
   std::string kernel_filename = "a+aT.cl";
   MatrixXd m(3, 3);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9;
