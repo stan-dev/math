@@ -118,8 +118,8 @@ template <typename EigT, require_eigen_vt<is_var, EigT>*,
 	  typename... Pargs>
 inline vari** save_varis(vari** dest, EigT&& x, Pargs&&... args) {
   using mat_t = std::decay_t<EigT>;
-  using write_map = Eigen::Map<Eigen::Matrix<vari*, mat_t::RowsAtCompileTime,
-					     mat_t::ColsAtCompileTime>>;
+  using write_map = Eigen::Map<
+      Eigen::Matrix<vari*, mat_t::RowsAtCompileTime, mat_t::ColsAtCompileTime>>;
   write_map(dest, x.rows(), x.cols()) = x.vi();
   return save_varis(dest + x.size(), std::forward<Pargs>(args)...);
 }
