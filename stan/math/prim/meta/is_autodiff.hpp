@@ -18,16 +18,10 @@ namespace stan {
       : bool_constant<math::disjunction<is_var<std::decay_t<T>>,
                                         is_fvar<std::decay_t<T>>>::value> {};
 
-/** \addtogroup require_stan_scalar
-*  @{
-*/
-/**
- * Require that a type is `arithmetic`, `var`, or `fvar`.
- */
-STAN_ADD_REQUIRE_UNARY(autodiff, is_autodiff);
-STAN_ADD_REQUIRE_UNARY_SCALAR(autodiff, is_autodiff);
-STAN_ADD_REQUIRE_UNARY_VALUE(autodiff, is_autodiff);
-/** @}*/
+
+STAN_ADD_REQUIRE_UNARY(autodiff, is_autodiff, require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_SCALAR(autodiff, is_autodiff, require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_VALUE(autodiff, is_autodiff, require_stan_scalar_real);
 
 }  // namespace stan
 

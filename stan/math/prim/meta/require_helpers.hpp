@@ -55,26 +55,25 @@ namespace stan {
       = std::enable_if_t<!math::conjunction<Checks...>::value>;
 
 
-#define STAN_ADD_REQUIRE_UNARY(check_type, checker) \
-template <typename T> \
+#define STAN_ADD_REQUIRE_UNARY(check_type, checker, doxygen_group) \
+/*! \ingroup doxygen_group */\
+/*! \defgroup check_type##_types check_type  */\
+template <typename T> /*! \brief Require type satisfies checker \ingroup check_type##_types */\
 using require_##check_type##_t = require_t<checker<std::decay_t<T>>>; \
-template <typename T> \
-using require_not_##check_type##_t = require_not_t<checker<std::decay_t<T>>>;\
-template <typename... Types> \
+template <typename T> /*! \brief Require type does not satisfy checker \ingroup check_type##_types */\
+using require_not_##check_type##_t = require_not_t<checker<std::decay_t<T>>>; \
+template <typename... Types> /*! \brief Require all of the types satisfy checker \ingroup check_type##_types */\
 using require_all_##check_type##_t = \
  require_all_t<checker<std::decay_t<Types>>...>; \
-template <typename... Types> \
+template <typename... Types> /*! \brief Require any of the types satisfy checker \ingroup check_type##_types */\
 using require_any_##check_type##_t = \
  require_any_t<checker<std::decay_t<Types>>...>; \
-template <typename... Types> \
+template <typename... Types> /*! \brief Require none of the types satisfy checker \ingroup check_type##_types */\
 using require_all_not_##check_type##_t \
     = require_all_not_t<checker<std::decay_t<Types>>...>; \
-template <typename... Types> \
+template <typename... Types> /*! \brief Require at least one of the types do not satisfy checker \ingroup check_type##_types */\
 using require_any_not_##check_type##_t \
-= require_any_not_t<checker<std::decay_t<Types>>...>; \
-
-
-
+= require_any_not_t<checker<std::decay_t<Types>>...>;
 
 
 #define STAN_ADD_REQUIRE_BINARY(check_type, checker) \

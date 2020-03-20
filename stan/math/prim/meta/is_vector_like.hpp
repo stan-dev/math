@@ -41,7 +41,7 @@ struct is_vector_like
 /**
  * Require a container has a valid `operator[int]` method.
  */
-STAN_ADD_REQUIRE_UNARY(vector_like, is_vector_like);
+STAN_ADD_REQUIRE_UNARY(vector_like, is_vector_like, require_std);
 /** @}*/
 }  // namespace stan
 #endif

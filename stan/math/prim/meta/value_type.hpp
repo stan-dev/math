@@ -38,7 +38,7 @@ using value_type_t = typename value_type<T>::type;
 
 
 
-#define STAN_ADD_REQUIRE_UNARY_VALUE(check_type, checker) \
+#define STAN_ADD_REQUIRE_UNARY_VALUE(check_type, checker, doxygen_group) \
 template <typename T> \
 using require_##check_type##_vt = require_t<checker<value_type_t<std::decay_t<T>>>>; \
 template <typename T> \

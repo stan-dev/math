@@ -117,17 +117,35 @@
 
 /**
  * \ingroup require_meta
- * \defgroup require_base_types Basic Type Pseudo-Concepts
+ * \defgroup require_base_types Basic Types
  * These type traits check the type properties of simple objects and are denoted
  * with an `_t` at the end to check the type, `_vt` to check the `value_type`
  * or `_st` to check the `scalar_type`
  */
 
- /**
+  /**
   * \ingroup require_base_types
-  * \defgroup require_stan_scalar Pseudo-Concepts for Stan's Scalar types
+  * \defgroup require_stan_scalar Stan's Scalar types
   * `require` type traits for types that are either `arithmetic`, `var`, or `fvar`
   */
+
+  /**
+  * \ingroup require_stan_scalar
+  * \defgroup require_stan_scalar_real Stan's Real types
+  * `require` type traits for types that are either `arithmetic`, `var`, or `fvar`
+  */
+
+  /**
+  * \ingroup require_stan_scalar
+  * \defgroup require_stan_scalar_complex Stan's Complex types
+  * `require` type traits for types that are `Complex<T>`
+  */
+
+  /**
+   * \ingroup require_meta
+   * \defgroup require_std Standard library types and traits
+   * `require` type traits for types that are `Complex<T>`
+   */
 
 /**
  * \ingroup require_meta
@@ -140,6 +158,17 @@
  * recursively goes through containers of containers till it comes to a simple
  * type.
  */
+
+ /**
+  * \ingroup require_meta
+  * \defgroup require_eigens_types Eigen
+  */
+
+  /**
+   * \ingroup require_meta
+   * \defgroup general_types General Types
+   */
+
 
  /** \addtogroup type_trait
   *  @{

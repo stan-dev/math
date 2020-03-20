@@ -29,13 +29,9 @@ struct is_var_or_arithmetic_type
 template <typename... T>
 using is_var_or_arithmetic = math::conjunction<is_var_or_arithmetic_type<T>...>;
 
-/** \addtogroup require_stan_scalar
-*  @{
-*/
+STAN_ADD_REQUIRE_UNARY(var_or_arithmetic, is_var_or_arithmetic, require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_SCALAR(var_or_arithmetic, is_var_or_arithmetic, require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_VALUE(var_or_arithmetic, is_var_or_arithmetic, require_stan_scalar_real);
 
-STAN_ADD_REQUIRE_UNARY(var_or_arithmetic, is_var_or_arithmetic);
-STAN_ADD_REQUIRE_UNARY_SCALAR(var_or_arithmetic, is_var_or_arithmetic);
-STAN_ADD_REQUIRE_UNARY_VALUE(var_or_arithmetic, is_var_or_arithmetic);
-/** @}*/
 }  // namespace stan
 #endif

@@ -55,16 +55,11 @@ struct scalar_type<T, std::enable_if_t<is_complex<T>::value>> {
   using type = std::complex<typename std::decay_t<T>::value_type>;
 };
 
-/** \addtogroup require_stan_scalar
-*  @{
-*/
-/**
- * Require that a type is `complex`
- */
-STAN_ADD_REQUIRE_UNARY(complex, is_complex);
-STAN_ADD_REQUIRE_UNARY_SCALAR(complex, is_complex);
-STAN_ADD_REQUIRE_UNARY_VALUE(complex, is_complex);
-/** @}*/
+
+STAN_ADD_REQUIRE_UNARY(complex, is_complex, require_stan_scalar_complex);
+STAN_ADD_REQUIRE_UNARY_SCALAR(complex, is_complex, require_stan_scalar_complex);
+STAN_ADD_REQUIRE_UNARY_VALUE(complex, is_complex, require_stan_scalar_complex);
+
 }  // namespace stan
 
 #endif

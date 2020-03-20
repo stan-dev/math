@@ -60,7 +60,7 @@ struct is_eigen_col_vector : internal::is_eigen_col_vector_impl<T> {};
 /**
  * Require a container is an eigen column vector
  */
-STAN_ADD_REQUIRE_UNARY(eigen_col_vector, is_eigen_col_vector);
+STAN_ADD_REQUIRE_UNARY(eigen_col_vector, is_eigen_col_vector, require_eigens_types);
 /** @}*/
 
 /** \ingroup type_trait
@@ -77,7 +77,7 @@ struct is_eigen_row_vector : internal::is_eigen_row_vector_impl<T> {};
 /**
  * Require a container is an eigen row vector.
  */
-STAN_ADD_REQUIRE_UNARY(eigen_row_vector, is_eigen_row_vector);
+STAN_ADD_REQUIRE_UNARY(eigen_row_vector, is_eigen_row_vector, require_eigens_types);
 /** @}*/
 
 /** \ingroup type_trait
@@ -95,7 +95,7 @@ struct is_eigen_vector : bool_constant<is_eigen_col_vector<T>::value
 /**
  * Require a container is either an eigen row or column vector
  */
-STAN_ADD_REQUIRE_UNARY(eigen_vector, is_eigen_vector);
+STAN_ADD_REQUIRE_UNARY(eigen_vector, is_eigen_vector, require_eigens_types);
 /** @}*/
 
 /** \ingroup type_trait
@@ -113,7 +113,7 @@ struct is_vector
 /**
  * Require a container is either an eigen vector or standard vector.
  */
-STAN_ADD_REQUIRE_UNARY(vector, is_vector);
+STAN_ADD_REQUIRE_UNARY(vector, is_vector, require_std);
 /** @}*/
 namespace internal {
 
@@ -168,7 +168,7 @@ struct value_type<T, std::enable_if_t<is_std_vector<T>::value>> {
 /**
  * Require a container is an standard vector
  */
-STAN_ADD_REQUIRE_UNARY(std_vector, is_std_vector);
+STAN_ADD_REQUIRE_UNARY(std_vector, is_std_vector, require_std);
 /** @}*/
 
 }  // namespace stan

@@ -23,23 +23,7 @@ namespace stan {
 
 
 
-/**
- * Used as the base for checking whether a type is a container with
- * an underlying type
- *
- * @tparam ContainerCheck Templated struct or alias that wraps a static constant
- * value called type. Used to check the container satisfies a particular type
- * check.
- * @tparam CheckType Templated struct or alias that wraps a static constant
- * value called type. Used to check the container's underlying type satisfies a
- * particular type check.
- *
- */
-template <template <class...> class ContainerCheck,
-          template <class...> class TypeCheck, class... Check>
-using container_value_type_check_base = bool_constant<
-    math::conjunction<ContainerCheck<std::decay_t<Check>>...,
-                      TypeCheck<value_type_t<Check>>...>::value>;
+
 
 /**
  * Meta type trait to check if type is a standard vector and value type passes
@@ -139,9 +123,6 @@ struct is_eigen_vector_scalar_check
     : container_scalar_type_check_base<is_eigen_vector, TypeCheck, Check...> {};
 /** @}*/
 
-/** \addtogroup require_base_types
- *  @{
- */
 
 STAN_ADD_REQUIRE_BINARY(same, std::is_same);
 STAN_ADD_REQUIRE_BINARY_SCALAR(same, std::is_same);
@@ -151,20 +132,17 @@ STAN_ADD_REQUIRE_BINARY(convertible, std::is_convertible);
 STAN_ADD_REQUIRE_BINARY_SCALAR(convertible, std::is_convertible);
 STAN_ADD_REQUIRE_BINARY_VALUE(convertible, std::is_convertible);
 
-STAN_ADD_REQUIRE_UNARY(arithmetic, std::is_arithmetic);
-STAN_ADD_REQUIRE_UNARY_SCALAR(arithmetic, std::is_arithmetic);
-STAN_ADD_REQUIRE_UNARY_VALUE(arithmetic, std::is_arithmetic);
-STAN_ADD_REQUIRE_UNARY(floating_point, std::is_floating_point);
-STAN_ADD_REQUIRE_UNARY_SCALAR(floating_point, std::is_floating_point);
-STAN_ADD_REQUIRE_UNARY_VALUE(floating_point, std::is_floating_point);
-STAN_ADD_REQUIRE_UNARY(index, std::is_integral);
-STAN_ADD_REQUIRE_UNARY_SCALAR(index, std::is_integral);
-STAN_ADD_REQUIRE_UNARY_VALUE(index, std::is_integral);
+STAN_ADD_REQUIRE_UNARY(arithmetic, std::is_arithmetic, require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_SCALAR(arithmetic, std::is_arithmetic, require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_VALUE(arithmetic, std::is_arithmetic, require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY(floating_point, std::is_floating_point, require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_SCALAR(floating_point, std::is_floating_point, require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_VALUE(floating_point, std::is_floating_point, require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY(index, std::is_integral, require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_SCALAR(index, std::is_integral, require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_VALUE(index, std::is_integral, require_stan_scalar_real);
 
 
-
-
-/** @}*/
 
 /**
  * Requires for containers
