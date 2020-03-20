@@ -13,7 +13,7 @@ namespace math {
  *
  * @tparam F Type of functor
  * @tparam Tuple Type of tuple containing arguments
- * @tparam I Index sequence going from 0 to std::tuple_size<T>::value - 1
+ * @tparam I Parameter pack of an index sequence going from 0 to std::tuple_size<T>::value - 1
  * inclusive
  * @param f functor callable
  * @param t tuple of arguments
