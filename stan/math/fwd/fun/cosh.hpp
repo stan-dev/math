@@ -7,7 +7,23 @@
 
 namespace stan {
 namespace math {
-
+/**
+ * Return the hyperbolic cosine of the specified variable (cmath).
+ *
+ * The derivative is defined by
+ *
+   \f[
+   \frac{\partial\, \mbox{cosh}(x)}{\partial x} =
+   \begin{cases}
+     \sinh(x) & \mbox{if } -\infty\leq x\leq \infty \\[6pt]
+     \textrm{NaN} & \mbox{if } x = \textrm{NaN}
+   \end{cases}
+   \f]
+ *
+ * @tparam T Inner type of the fvar
+ * @param x fvar<T> variable
+ * @return Hyperbolic cosine of variable.
+ */
 template <typename T>
 inline fvar<T> cosh(const fvar<T>& x) {
   using std::cosh;
@@ -15,6 +31,13 @@ inline fvar<T> cosh(const fvar<T>& x) {
   return fvar<T>(cosh(x.val_), x.d_ * sinh(x.val_));
 }
 
+/**
+ * Return the hyperbolic cosine of each variable in a container.
+ *
+ * @tparam Container Type of container
+ * @param x Container of fvar
+ * @return hyperbolic cosine of each variable in container.
+ */
 template <typename Container,
           require_container_st<is_container, is_fvar, Container>...>
 inline auto cosh(const Container& x) {

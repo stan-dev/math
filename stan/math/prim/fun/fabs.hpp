@@ -7,6 +7,14 @@
 
 namespace stan {
 namespace math {
+
+/**
+ * Return the absolute value of the arithmetic input.
+ *
+ * @tparam T type of arithmetic variable
+ * @param x variable
+ * @return Absolute value of variable.
+ */
 template <typename T, require_arithmetic_t<T>...>
 auto fabs(const T& x) {
   using std::fabs;

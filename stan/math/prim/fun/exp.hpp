@@ -21,7 +21,6 @@ auto exp(const T& x) {
   return exp(x);
 }
 
-
 /**
  * Version of `exp()` that accepts std::vectors, Eigen Matrix/Array objects
  *  or expressions, and containers of these.

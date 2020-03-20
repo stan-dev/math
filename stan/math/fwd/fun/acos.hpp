@@ -29,7 +29,7 @@ inline fvar<T> acos(const fvar<T>& x) {
 }
 
 /**
- * Return the arc cosine of a each variable in a container.
+ * Return the arc cosine of each variable in a container.
  *
  * @tparam Container Type of container
  * @param x Container of fvar

@@ -8,6 +8,13 @@
 namespace stan {
 namespace math {
 
+/**
+ * Return the arcsine of the arithmetic input.
+ *
+ * @tparam T type of arithmetic variable
+ * @param x variable
+ * @return Arcsine of variable in radians.
+ */
 template <typename T, require_arithmetic_t<T>...>
 auto asin(const T& x) {
   using std::asin;

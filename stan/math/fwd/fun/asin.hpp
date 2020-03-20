@@ -30,7 +30,7 @@ inline fvar<T> asin(const fvar<T>& x) {
 }
 
 /**
- * Return the arcsine of a each variable in a container.
+ * Return the arcsine of each variable in a container.
  *
  * @tparam Container Type of container
  * @param x Container of fvar

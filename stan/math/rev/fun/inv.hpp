@@ -17,7 +17,7 @@ class inv_vari : public op_v_vari {
   void chain() { avi_->adj_ -= adj_ * inv_square(avi_->val_); }
 };
 
-template <typename T>
+template <typename Container>
 class inv_matrix_vari : public vari {
  public:
   int A_rows_;
@@ -28,21 +28,15 @@ class inv_matrix_vari : public vari {
   vari** variRefInv_;
 
   /**
-   * Constructor for exp_matrix_vari.
+   * Constructor for inv_matrix_vari.
    *
    * All memory allocated in
    * ChainableStack's stack_alloc arena.
    *
-   * It is critical for the efficiency of this object
-   * that the constructor create new varis that aren't
-   * popped onto the var_stack_, but rather are
-   * popped onto the var_nochain_stack_. This is
-   * controlled by the second argument to
-   * vari's constructor.
-   *
-   * @param A matrix
+   * @tparam Container Type of Eigen expression/object
+   * @param A Eigen expression/object
    */
-  explicit inv_matrix_vari(const T& A)
+  explicit inv_matrix_vari(const Container& A)
       : vari(0.0),
         A_rows_(A.rows()),
         A_cols_(A.cols()),
@@ -94,6 +88,13 @@ class inv_matrix_vari : public vari {
  */
 inline var inv(const var& a) { return var(new internal::inv_vari(a.vi_)); }
 
+/**
+ * Return the inverse of each variable in a container.
+ *
+ * @tparam Container Type of container
+ * @param x Container of fvar
+ * @return inverse of each variable in container.
+ */
 template <typename Container,
           require_container_st<is_container, is_var, Container>...>
 inline auto inv(const Container& x) {

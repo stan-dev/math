@@ -7,12 +7,35 @@
 
 namespace stan {
 namespace math {
-
+/**
+ * Return the inverse of the specified variable (cmath).
+ *
+ * The derivative is defined by
+ *
+   \f[
+   \frac{\partial\, \mbox{inv}(x)}{\partial x} =
+   \begin{cases}
+     -\frac{1}{x^2} & \mbox{if } -\infty\leq x\leq \infty \\[6pt]
+     \textrm{NaN} & \mbox{if } x = \textrm{NaN}
+   \end{cases}
+   \f]
+ *
+ * @tparam T Inner type of the fvar
+ * @param x fvar<T> variable
+ * @return inverse of variable.
+ */
 template <typename T>
 inline fvar<T> inv(const fvar<T>& x) {
   return fvar<T>(1 / x.val_, -x.d_ / square(x.val_));
 }
 
+/**
+ * Return the inverse of each variable in a container.
+ *
+ * @tparam Container Type of container
+ * @param x Container of fvar
+ * @return Inverse of each variable in container.
+ */
 template <typename Container,
           require_container_st<is_container, is_fvar, Container>...>
 inline auto inv(const Container& x) {

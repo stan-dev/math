@@ -16,7 +16,7 @@ class atan_vari : public op_v_vari {
   void chain() { avi_->adj_ += adj_ / (1.0 + (avi_->val_ * avi_->val_)); }
 };
 
-template <typename T>
+template <typename Container>
 class atan_matrix_vari : public vari {
  public:
   int A_rows_;
@@ -32,15 +32,10 @@ class atan_matrix_vari : public vari {
    * All memory allocated in
    * ChainableStack's stack_alloc arena.
    *
-   * For the efficiency, new varis aren't
-   * popped onto the var_stack_, but onto
-   * the var_nochain_stack_. This is
-   * controlled by the second argument to
-   * vari's constructor.
-   *
-   * @param A matrix
+   * @tparam Container Type of Eigen expression/object
+   * @param A Eigen expression/object
    */
-  explicit atan_matrix_vari(const T& A)
+  explicit atan_matrix_vari(const Container& A)
       : vari(0.0),
         A_rows_(A.rows()),
         A_cols_(A.cols()),
@@ -101,6 +96,13 @@ class atan_matrix_vari : public vari {
  */
 inline var atan(const var& a) { return var(new internal::atan_vari(a.vi_)); }
 
+/**
+ * Return the arc tangent of each variable in a container.
+ *
+ * @tparam Container Type of container
+ * @param x Container of var
+ * @return Arc tangent of each variable in container.
+ */
 template <typename Container,
           require_container_st<is_container, is_var, Container>...>
 inline auto atan(const Container& x) {

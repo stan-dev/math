@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap `ceil()` so it can be vectorized.
+ * Returns the smallest integral value that is not less than the variable.
  *
  * @tparam T type of variable
  * @param x variable

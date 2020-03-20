@@ -10,7 +10,25 @@
 
 namespace stan {
 namespace math {
-
+/**
+ * Return the absolute value of the variable.
+ *
+ * The derivative is defined by
+ *
+   \f[
+   \frac{\partial\, \mbox{fabs}(x)}{\partial x} =
+   \begin{cases}
+     -1 & \mbox{if } x < 0 \\
+     0 & \mbox{if } x = 0 \\
+     1 & \mbox{if } x > 0 \\[6pt]
+     \textrm{NaN} & \mbox{if } x = \textrm{NaN}
+   \end{cases}
+   \f]
+ *
+ * @tparam T Inner type of the fvar
+ * @param x fvar<T> variable
+ * @return Absolute value of variable.
+ */
 template <typename T>
 inline fvar<T> fabs(const fvar<T>& x) {
   using std::fabs;
@@ -26,6 +44,13 @@ inline fvar<T> fabs(const fvar<T>& x) {
   }
 }
 
+/**
+ * Return the absolute value of each variable in a container.
+ *
+ * @tparam Container Type of container
+ * @param x Container of fvar
+ * @return Absolute value of each variable in container.
+ */
 template <typename Container,
           require_container_st<is_container, is_fvar, Container>...>
 inline auto fabs(const Container& x) {
@@ -40,7 +65,7 @@ inline auto fabs(const Container& x) {
         result.d().array()
           = vals.array()
                 .isNaN()
-                .select(vals.array(),
+                .select(NOT_A_NUMBER,
                         (vals.array() < 0).select(-v_ref.d().array(),
                                                   v_ref.d().array()));
         return result;

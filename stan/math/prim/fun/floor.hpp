@@ -9,11 +9,11 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap `floor()` so that it can be vectorized.
+ * Returns the largest integral value that is not greater than x.
  *
  * @tparam T type of variable
  * @param x variable
- * @return Greatest integer <= x.
+ * @return Greatest integer <= each value in x.
  */
 template <typename T, require_arithmetic_t<T>...>
 auto floor(const T& x) {

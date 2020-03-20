@@ -9,11 +9,11 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap `cos()` so it can be vectorized.
+ * Return the cosine of the arithmetic input.
  *
- * @tparam T type of variable
- * @param x angle in radians
- * @return Cosine of x.
+ * @tparam T type of arithmetic variable
+ * @param x variable
+ * @return Cosine of variable in radians.
  */
 template <typename T, require_arithmetic_t<T>...>
 auto cos(const T& x) {

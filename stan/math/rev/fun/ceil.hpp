@@ -22,7 +22,7 @@ class ceil_vari : public op_v_vari {
   }
 };
 
-template <typename T>
+template <typename Container>
 class ceil_matrix_vari : public vari {
  public:
   int A_rows_;
@@ -33,21 +33,15 @@ class ceil_matrix_vari : public vari {
   vari** variRefCeil_;
 
   /**
-   * Constructor for exp_matrix_vari.
+   * Constructor for ceil_matrix_vari.
    *
    * All memory allocated in
    * ChainableStack's stack_alloc arena.
    *
-   * It is critical for the efficiency of this object
-   * that the constructor create new varis that aren't
-   * popped onto the var_stack_, but rather are
-   * popped onto the var_nochain_stack_. This is
-   * controlled by the second argument to
-   * vari's constructor.
-   *
-   * @param A matrix
+   * @tparam Container Type of Eigen expression/object
+   * @param A Eigen expression/object
    */
-  explicit ceil_matrix_vari(const T& A)
+  explicit ceil_matrix_vari(const Container& A)
       : vari(0.0),
         A_rows_(A.rows()),
         A_cols_(A.cols()),

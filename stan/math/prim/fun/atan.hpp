@@ -8,6 +8,13 @@
 namespace stan {
 namespace math {
 
+/**
+ * Return the arc tangent of the arithmetic input.
+ *
+ * @tparam T type of arithmetic variable
+ * @param x variable
+ * @return Arc tangent of variable.
+ */
 template <typename T, require_arithmetic_t<T>...>
 auto atan(const T& x) {
   using std::atan;

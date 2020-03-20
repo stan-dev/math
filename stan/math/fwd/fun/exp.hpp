@@ -7,6 +7,23 @@
 
 namespace stan {
 namespace math {
+/**
+ * Return the exponentiation of the specified variable (cmath).
+ *
+ * The derivative is defined by
+ *
+   \f[
+   \frac{\partial\, \mbox{exp}(x)}{\partial x} =
+   \begin{cases}
+     e^x & \mbox{if } -\infty\leq x\leq \infty \\[6pt]
+     \textrm{NaN} & \mbox{if } x = \textrm{NaN}
+   \end{cases}
+   \f]
+ *
+ * @tparam T Inner type of the fvar
+ * @param x fvar<T> variable
+ * @return Exponentiated variable.
+ */
 template <typename T>
 inline fvar<T> exp(const fvar<T>& x) {
   using std::exp;
@@ -14,6 +31,13 @@ inline fvar<T> exp(const fvar<T>& x) {
   return fvar<T>(exp_val, x.d_ * exp_val);
 }
 
+/**
+ * Return the exponential of each variable in a container.
+ *
+ * @tparam Container Type of container
+ * @param x Container of fvar
+ * @return Exponential of each variable in container.
+ */
 template <typename Container,
           require_container_st<is_container, is_fvar, Container>...>
 inline auto exp(const Container& x) {

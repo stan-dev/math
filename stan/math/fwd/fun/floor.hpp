@@ -8,12 +8,30 @@
 namespace stan {
 namespace math {
 
+/**
+ * Return the floor of the specified variable.
+ *
+ * The derivative of the flor function is defined and
+ * zero everywhere but at integers, and we set them to zero for
+ * convenience.
+ *
+ * @tparam T Inner type of the fvar
+ * @param x fvar<T> variable
+ * @return Floor of the variable.
+ */
 template <typename T>
 inline fvar<T> floor(const fvar<T>& x) {
   using std::floor;
   return fvar<T>(floor(x.val_), 0);
 }
 
+/**
+ * Return the floor of each variable in a container.
+ *
+ * @tparam Container Type of container
+ * @param x Container of fvar
+ * @return Floor of each variable in container.
+ */
 template <typename Container,
           require_container_st<is_container, is_fvar, Container>...>
 inline auto floor(const Container& x) {

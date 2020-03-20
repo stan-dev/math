@@ -8,13 +8,31 @@
 
 namespace stan {
 namespace math {
-
+/**
+ * Return the arc tangent of the input.
+ * The derivative is defined by
+ *
+   \f[
+   \frac{\partial \, \arctan(x)}{\partial x} = \frac{1}{x^2+1}
+   \f]
+ *
+ * @tparam T Inner type of the fvar
+ * @param x fvar<T> variable
+ * @return Arc tangent of variable.
+ */
 template <typename T>
 inline fvar<T> atan(const fvar<T>& x) {
   using std::atan;
   return fvar<T>(atan(x.val_), x.d_ / (1 + square(x.val_)));
 }
 
+/**
+ * Return the arc tangent of each variable in a container.
+ *
+ * @tparam Container Type of container
+ * @param x Container of fvar
+ * @return Arc tangent of each variable in container.
+ */
 template <typename Container,
           require_container_st<is_container, is_fvar, Container>...>
 inline auto atan(const Container& x) {

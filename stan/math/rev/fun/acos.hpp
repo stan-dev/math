@@ -18,7 +18,7 @@ class acos_vari : public op_v_vari {
   }
 };
 
-template <typename T>
+template <typename Container>
 class acos_matrix_vari : public vari {
  public:
   int A_rows_;
@@ -34,10 +34,10 @@ class acos_matrix_vari : public vari {
    * All memory allocated in
    * ChainableStack's stack_alloc arena.
    *
-   * @tparam T Type of Eigen expression/object
+   * @tparam Container Type of Eigen expression/object
    * @param A Eigen expression/object
    */
-  explicit acos_matrix_vari(const T& A)
+  explicit acos_matrix_vari(const Container& A)
       : vari(0.0),
         A_rows_(A.rows()),
         A_cols_(A.cols()),
@@ -104,6 +104,13 @@ class acos_matrix_vari : public vari {
  */
 inline var acos(const var& a) { return var(new internal::acos_vari(a.vi_)); }
 
+/**
+ * Return the arc cosine of each variable in a container.
+ *
+ * @tparam Container Type of container
+ * @param x Container of var
+ * @return Arc cosine of each variable in container.
+ */
 template <typename Container,
           require_container_st<is_container, is_var, Container>...>
 inline auto acos(const Container& x) {

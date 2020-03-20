@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap 1.0 / x so that it can be vectorized.
+ * Return the inverse of the arithmetic variable.
  *
  * @tparam T type of variable
  * @param x variable

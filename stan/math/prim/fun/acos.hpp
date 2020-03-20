@@ -9,12 +9,11 @@ namespace stan {
 namespace math {
 
 /**
- * Version of `acos()` that accepts std::vectors, Eigen Matrix/Array objects
- *  or expressions, and containers of these.
+ * Return the arc cosine of the arithmetic input.
  *
- * @tparam T Type of arithmetic variable
- * @param x Container
- * @return Arc cosine of each variable in the container, in radians.
+ * @tparam T type of arithmetic variable
+ * @param x variable
+ * @return Arc cosine of variable in radians.
  */
 template <typename T, require_arithmetic_t<T>...>
 auto acos(const T& x) {

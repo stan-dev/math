@@ -8,6 +8,23 @@
 namespace stan {
 namespace math {
 
+/**
+ * Return the cosine of a variable.
+ *
+ * The derivative is defined by
+ *
+   \f[
+   \frac{\partial\, \mbox{cos}(x)}{\partial x} =
+   \begin{cases}
+     -\sin(x) & \mbox{if } -\infty\leq x\leq \infty \\[6pt]
+     \textrm{NaN} & \mbox{if } x = \textrm{NaN}
+   \end{cases}
+   \f]
+ *
+ * @tparam T Inner type of the fvar
+ * @param x fvar<T> variable
+ * @return Cosine of variable.
+ */
 template <typename T>
 inline fvar<T> cos(const fvar<T>& x) {
   using std::cos;
@@ -15,6 +32,13 @@ inline fvar<T> cos(const fvar<T>& x) {
   return fvar<T>(cos(x.val_), x.d_ * -sin(x.val_));
 }
 
+/**
+ * Return the cosine of each variable in a container.
+ *
+ * @tparam Container Type of container
+ * @param x Container of fvar
+ * @return Cosine of each variable in container.
+ */
 template <typename Container,
           require_container_st<is_container, is_fvar, Container>...>
 inline auto cos(const Container& x) {

@@ -9,11 +9,11 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap `cosh()` so it can be vectorized.
+ * Return the hyperbolic cosine of the arithmetic input.
  *
- * @tparam T type of argument
- * @param x angle in radians
- * @return Hyperbolic cosine of x.
+ * @tparam T type of arithmetic variable
+ * @param x variable
+ * @return hyperbolic cosine of variable.
  */
 template <typename T, require_arithmetic_t<T>...>
 auto cosh(const T& x) {
@@ -27,7 +27,7 @@ auto cosh(const T& x) {
  *
  * @tparam Container Type of x
  * @param x Container
- * @return Hyberbolic cosine of x.
+ * @return Elementwise hyberbolic cosine of x.
  */
 template <typename Container,
           require_container_st<is_container, std::is_arithmetic, Container>...>
