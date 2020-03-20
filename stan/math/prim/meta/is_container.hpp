@@ -22,10 +22,8 @@ using is_container = bool_constant<
     math::disjunction<is_eigen<Container>, is_std_vector<Container>>::value>;
 
 
-STAN_ADD_REQUIRE_UNARY(is_container, is_container, general_types);
-STAN_ADD_REQUIRE_UNARY_SCALAR(is_container, is_container, general_types);
-STAN_ADD_REQUIRE_UNARY_VALUE(is_container, is_container, general_types);
-
+STAN_ADD_REQUIRE_UNARY(container, is_container, general_types);
+STAN_ADD_REQUIRE_CONTAINER(container, is_container, general_types);
 
 }  // namespace stan
 

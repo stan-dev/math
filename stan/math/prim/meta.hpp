@@ -115,29 +115,22 @@
  *~~~~~
  */
 
-/**
- * \ingroup require_meta
- * \defgroup require_base_types Basic Types
- * These type traits check the type properties of simple objects and are denoted
- * with an `_t` at the end to check the type, `_vt` to check the `value_type`
- * or `_st` to check the `scalar_type`
- */
 
   /**
-  * \ingroup require_base_types
-  * \defgroup require_stan_scalar Stan's Scalar types
+  * \ingroup require_meta
+  * \defgroup require_stan_scalar Scalar types
   * `require` type traits for types that are either `arithmetic`, `var`, or `fvar`
   */
 
   /**
   * \ingroup require_stan_scalar
-  * \defgroup require_stan_scalar_real Stan's Real types
+  * \defgroup require_stan_scalar_real Real types
   * `require` type traits for types that are either `arithmetic`, `var`, or `fvar`
   */
 
   /**
   * \ingroup require_stan_scalar
-  * \defgroup require_stan_scalar_complex Stan's Complex types
+  * \defgroup require_stan_scalar_complex Complex types
   * `require` type traits for types that are `Complex<T>`
   */
 
@@ -147,19 +140,8 @@
    * `require` type traits for types that are `Complex<T>`
    */
 
-/**
- * \ingroup require_meta
- * \defgroup require_container_types Container Pseudo-Concepts
- * These type traits check the type properties of objects that act as
- * containers. The @c _vt methods check that a containers @c value_type fulfills
- * certain conditions while @c _st methods check that the objects @c scalar_type
- * fulfills certain conditions. @c value_type and @c scalar_type differ in that
- * @c value_type is the first level of a container while @c scalar_type
- * recursively goes through containers of containers till it comes to a simple
- * type.
- */
 
- /**
+  /**
   * \ingroup require_meta
   * \defgroup require_eigens_types Eigen
   */

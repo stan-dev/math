@@ -35,13 +35,8 @@ template <typename T>
 struct is_vector_like
     : bool_constant<is_detected<T, internal::operator_bracket_t>::value> {};
 
-/** \addtogroup require_container_types
-*  @{
-*/
-/**
- * Require a container has a valid `operator[int]` method.
- */
 STAN_ADD_REQUIRE_UNARY(vector_like, is_vector_like, require_std);
-/** @}*/
+STAN_ADD_REQUIRE_CONTAINER(vector_like, is_vector_like, require_std);
+
 }  // namespace stan
 #endif
