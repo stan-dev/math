@@ -164,9 +164,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    * `ReduceFunction` must be default constructible without any arguments
    *
    * Each call to `ReduceFunction` is responsible for computing the
-   *   start through end - 1 terms of the overall sum. All args are passed
+   *   start through end (inclusive) terms of the overall sum. All args are passed
    *   from this function through to the `ReduceFunction` instances.
-   *   However, only elements start through end - 1 of the vmapped argument are
+   *   However, only the start through end (inclusive) elements of the vmapped argument are
    *   passed to the `ReduceFunction` instances (as the `vmapped_subset` argument).
    *
    * This function distributes computation of the desired sum and the Jacobian of

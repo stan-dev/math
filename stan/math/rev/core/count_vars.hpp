@@ -2,16 +2,9 @@
 #define STAN_MATH_REV_CORE_COUNT_VARS_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/functor.hpp>
-#include <stan/math/rev/fun.hpp>
-#include <tbb/task_arena.h>
-#include <tbb/parallel_reduce.h>
-#include <tbb/blocked_range.h>
+#include <stan/math/rev/core/var.hpp>
 
-#include <iostream>
-#include <iterator>
-#include <tuple>
-#include <algorithm>
+#include <utility>
 #include <vector>
 
 namespace stan {
