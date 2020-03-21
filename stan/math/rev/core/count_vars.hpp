@@ -10,6 +10,7 @@
 namespace stan {
 namespace math {
 
+namespace internal {
 template <typename VecVar, require_std_vector_vt<is_var, VecVar>* = nullptr,
           typename... Pargs>
 inline size_t count_vars_impl(size_t count, VecVar&& x, Pargs&&... args);
@@ -133,6 +134,7 @@ inline size_t count_vars_impl(size_t count, Arith& x, Pargs&&... args) {
  */
 inline size_t count_vars_impl(size_t count) { return count; }
 
+}
 /**
  * Count the number of vars in the input argument list
  *
@@ -141,7 +143,7 @@ inline size_t count_vars_impl(size_t count) { return count; }
  */
 template <typename... Pargs>
 inline size_t count_vars(Pargs&&... args) {
-  return count_vars_impl(0, std::forward<Pargs>(args)...);
+  return internal::count_vars_impl(0, std::forward<Pargs>(args)...);
 }
 
 }  // namespace math
