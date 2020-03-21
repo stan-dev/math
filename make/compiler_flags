@@ -1,10 +1,6 @@
 # Find files subroutine for different operating system
 # This is recursive version of the makefiles wildcard function
-ifeq ($(OS),Windows_NT)
 findfiles = $(subst \n,,$(foreach d,$(wildcard $(addsuffix *,$(1))),$(call findfiles,$(d)/,$(2)) $(wildcard $(d)/$(2))))
-else
-findfiles = $(subst \n,,$(foreach d,$(wildcard $(addsuffix *,$(1))),$(call findfiles,$(d)/,$(2)) $(wildcard $(d)/$(2))))
-endif
 
 ifneq ($(OS),Windows_NT)
 GENERATE_DISTRIBUTION_TESTS=true
