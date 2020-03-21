@@ -112,6 +112,7 @@
 #include <stan/math/rev/fun/rising_factorial.hpp>
 #include <stan/math/rev/fun/round.hpp>
 #include <stan/math/rev/fun/rows_dot_product.hpp>
+#include <stan/math/rev/fun/save_varis.hpp>
 #include <stan/math/rev/fun/sd.hpp>
 #include <stan/math/rev/fun/simplex_constrain.hpp>
 #include <stan/math/rev/fun/sin.hpp>

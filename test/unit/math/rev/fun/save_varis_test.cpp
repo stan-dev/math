@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
-#include <stan/math/rev/core.hpp>
 #include <stan/math.hpp>
+#include <stan/math/rev.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 using stan::math::var;
