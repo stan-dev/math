@@ -32,10 +32,8 @@ class broadcast_array {
   void operator=(const Y& m) {
     prim_ = m[0];
   }
-  broadcast_array& operator=(broadcast_array& other) {
-    prim_ = other.prim_;
-    return *this;
-  }
+  broadcast_array& operator=(const broadcast_array& other) = default;
+  broadcast_array& operator=(broadcast_array&& other) = default;
 };
 
 template <typename T, typename S, typename Enable = void>

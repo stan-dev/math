@@ -2,13 +2,9 @@
 #define STAN_MATH_REV_CORE_ACCUMULATE_ADJOINTS_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/functor.hpp>
-#include <stan/math/rev/fun.hpp>
+#include <stan/math/rev/core/var.hpp>
 
-#include <iostream>
-#include <iterator>
-#include <tuple>
-#include <algorithm>
+#include <utility>
 #include <vector>
 
 namespace stan {
