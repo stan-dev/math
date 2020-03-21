@@ -46,8 +46,8 @@ class empty_broadcast_array {
   /**
    * Not implemented so cannot be called.
    */
-   T_decay& operator[](int /*i*/);
-   T_decay& operator[](int /*i*/) const;
+  T_decay& operator[](int /*i*/);
+  T_decay& operator[](int /*i*/) const;
 
   /**
    * Not implemented so cannot be called.
@@ -55,9 +55,9 @@ class empty_broadcast_array {
   template <typename Y>
   void operator=(const Y& /*A*/);
 
- /**
-  * Not implemented so cannot be called.
-  */
+  /**
+   * Not implemented so cannot be called.
+   */
   template <typename R>
   void operator+=(R);
 };
