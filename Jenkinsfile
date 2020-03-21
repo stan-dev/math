@@ -175,6 +175,18 @@ pipeline {
             }
             post { always { deleteDir() } }
         }
+        stage('Linux Unit with MPI') {
+            agent { label 'linux && mpi' }
+            steps {
+                deleteDir()
+                unstash 'MathSetup'
+                sh "echo CXX=${MPICXX} >> make/local"
+                sh "echo CXX_TYPE=gcc >> make/local"                        
+                sh "echo STAN_MPI=true >> make/local"
+                runTests("test/unit")
+            }
+            post { always { retry(3) { deleteDir() } } }
+        }
         stage('Always-run tests') {
             when {
                 expression {
@@ -182,18 +194,6 @@ pipeline {
                 }
             }
             parallel {
-                stage('Linux Unit with MPI') {
-                    agent { label 'linux && mpi' }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CXX=${MPICXX} >> make/local"
-                        sh "echo CXX_TYPE=gcc >> make/local"                        
-                        sh "echo STAN_MPI=true >> make/local"
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
                 stage('Full unit with GPU') {
                     agent { label "gpu" }
                     steps {
