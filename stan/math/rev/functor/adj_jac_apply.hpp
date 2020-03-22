@@ -388,8 +388,7 @@ struct adj_jac_vari : public vari {
 
     prepare_x_vis(args...);
 
-    return build_return_varis_and_vars(
-        f_(is_var_, value_of(args)...));
+    return build_return_varis_and_vars(f_(is_var_, value_of(args)...));
   }
 
   /**
@@ -414,188 +413,189 @@ struct adj_jac_vari : public vari {
       for (int n = 0; n < y_adj_jac.size(); ++n) {
         x_vis_[offsets_[t] + n]->adj_ += y_adj_jac(n);
       }
-    accumulate_adjoints(args...);
-  }
+      accumulate_adjoints(args...);
+    }
 
-  /**
-   * Accumulate, if necessary, the values of y_adj_jac into the
-   * adjoints of the varis pointed to by the appropriate elements
-   * of x_vis_. Recursively calls accumulate_adjoints on the rest of the
-   * arguments.
-   *
-   * @tparam Pargs Types of the rest of adjoints to accumulate
-   * @param y_adj_jac set of values to be accumulated in adjoints
-   * @param args the rest of the arguments (that will be iterated through
-   * recursively)
-   */
-  template <typename... Pargs>
-  inline void accumulate_adjoints(const std::vector<double>& y_adj_jac,
-                                  const Pargs&... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
-    if (is_var_[t]) {
-      for (int n = 0; n < y_adj_jac.size(); ++n) {
-        x_vis_[offsets_[t] + n]->adj_ += y_adj_jac[n];
+    /**
+     * Accumulate, if necessary, the values of y_adj_jac into the
+     * adjoints of the varis pointed to by the appropriate elements
+     * of x_vis_. Recursively calls accumulate_adjoints on the rest of the
+     * arguments.
+     *
+     * @tparam Pargs Types of the rest of adjoints to accumulate
+     * @param y_adj_jac set of values to be accumulated in adjoints
+     * @param args the rest of the arguments (that will be iterated through
+     * recursively)
+     */
+    template <typename... Pargs>
+    inline void accumulate_adjoints(const std::vector<double>& y_adj_jac,
+                                    const Pargs&... args) {
+      static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+      if (is_var_[t]) {
+        for (int n = 0; n < y_adj_jac.size(); ++n) {
+          x_vis_[offsets_[t] + n]->adj_ += y_adj_jac[n];
+        }
       }
+
+      accumulate_adjoints(args...);
     }
 
-    accumulate_adjoints(args...);
-  }
-
-  /**
-   * Recursively call accumulate_adjoints with args. There are no adjoints to
-   * accumulate for std::vector<int> arguments.
-   *
-   * @tparam Pargs Types of the rest of adjoints to accumulate
-   * @param y_adj_jac ignored
-   * @param args the rest of the arguments (that will be iterated through
-   * recursively)
-   */
-  template <typename... Pargs>
-  inline void accumulate_adjoints(const std::vector<int>& y_adj_jac,
-                                  const Pargs&... args) {
-    accumulate_adjoints(args...);
-  }
-
-  /**
-   * Accumulate, if necessary, the value of y_adj_jac into the
-   * adjoint of the vari pointed to by the appropriate element
-   * of x_vis_. Recursively calls accumulate_adjoints on the rest of the
-   * arguments.
-   *
-   * @tparam Pargs Types of the rest of adjoints to accumulate
-   * @param y_adj_jac next set of adjoints to be accumulated
-   * @param args the rest of the arguments (that will be iterated through
-   * recursively)
-   */
-  template <typename... Pargs>
-  inline void accumulate_adjoints(const double& y_adj_jac,
-                                  const Pargs&... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
-    if (is_var_[t]) {
-      x_vis_[offsets_[t]]->adj_ += y_adj_jac;
+    /**
+     * Recursively call accumulate_adjoints with args. There are no adjoints to
+     * accumulate for std::vector<int> arguments.
+     *
+     * @tparam Pargs Types of the rest of adjoints to accumulate
+     * @param y_adj_jac ignored
+     * @param args the rest of the arguments (that will be iterated through
+     * recursively)
+     */
+    template <typename... Pargs>
+    inline void accumulate_adjoints(const std::vector<int>& y_adj_jac,
+                                    const Pargs&... args) {
+      accumulate_adjoints(args...);
     }
-    accumulate_adjoints(args...);
-  }
+
+    /**
+     * Accumulate, if necessary, the value of y_adj_jac into the
+     * adjoint of the vari pointed to by the appropriate element
+     * of x_vis_. Recursively calls accumulate_adjoints on the rest of the
+     * arguments.
+     *
+     * @tparam Pargs Types of the rest of adjoints to accumulate
+     * @param y_adj_jac next set of adjoints to be accumulated
+     * @param args the rest of the arguments (that will be iterated through
+     * recursively)
+     */
+    template <typename... Pargs>
+    inline void accumulate_adjoints(const double& y_adj_jac,
+                                    const Pargs&... args) {
+      static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+      if (is_var_[t]) {
+        x_vis_[offsets_[t]]->adj_ += y_adj_jac;
+      }
+      accumulate_adjoints(args...);
+    }
+
+    /**
+     * Recursively call accumulate_adjoints with args. There are no adjoints to
+     * accumulate for int arguments.
+     *
+     * @tparam Pargs Types of the rest of adjoints to accumulate
+     * @param y_adj_jac ignored
+     * @param args the rest of the arguments (that will be iterated through
+     * recursively)
+     */
+    template <typename... Pargs>
+    inline void accumulate_adjoints(const int& y_adj_jac,
+                                    const Pargs&... args) {
+      accumulate_adjoints(args...);
+    }
+
+    inline void accumulate_adjoints() {}
+
+    /**
+     * Propagate the adjoints at the output varis (y_vi_) back to the input
+     * varis (x_vis_) by:
+     * 1. packing the adjoints in an appropriate container using build_y_adj
+     * 2. using the multiply_adjoint_jacobian function of the user defined
+     * functor to compute what the adjoints on x_vis_ should be
+     * 3. accumulating the adjoints into the varis pointed to by elements of
+     * x_vis_ using accumulate_adjoints
+     *
+     * This operation may be called multiple times during the life of the vari
+     */
+    inline void chain() {
+      FReturnType y_adj;
+
+      internal::build_y_adj(y_vi_, M_, y_adj);
+      auto y_adj_jacs = f_.multiply_adjoint_jacobian(is_var_, y_adj);
+
+      apply([&](auto&&... args) { accumulate_adjoints(args...); }, y_adj_jacs);
+    }
+  };
 
   /**
-   * Recursively call accumulate_adjoints with args. There are no adjoints to
-   * accumulate for int arguments.
+   * Return the result of applying the function defined by a nullary
+   * construction of F to the specified input argument
    *
-   * @tparam Pargs Types of the rest of adjoints to accumulate
-   * @param y_adj_jac ignored
-   * @param args the rest of the arguments (that will be iterated through
-   * recursively)
-   */
-  template <typename... Pargs>
-  inline void accumulate_adjoints(const int& y_adj_jac, const Pargs&... args) {
-    accumulate_adjoints(args...);
-  }
-
-  inline void accumulate_adjoints() {}
-
-  /**
-   * Propagate the adjoints at the output varis (y_vi_) back to the input
-   * varis (x_vis_) by:
-   * 1. packing the adjoints in an appropriate container using build_y_adj
-   * 2. using the multiply_adjoint_jacobian function of the user defined functor
-   * to compute what the adjoints on x_vis_ should be
-   * 3. accumulating the adjoints into the varis pointed to by elements of
-   * x_vis_ using accumulate_adjoints
+   * adj_jac_apply makes it possible to write efficient reverse-mode
+   * autodiff code without ever touching Stan's autodiff internals
    *
-   * This operation may be called multiple times during the life of the vari
+   * Mathematically, to use a function in reverse mode autodiff, you need to be
+   * able to evaluate the function (y = f(x)) and multiply the Jacobian of that
+   * function (df(x)/dx) by a vector.
+   *
+   * As an example, pretend there exists some large, complicated function, L(x1,
+   * x2), which contains our smaller function f(x1, x2). The goal of autodiff is
+   * to compute the partials dL/dx1 and dL/dx2. If we break the large function
+   * into pieces:
+   *
+   * y = f(x1, x2)
+   * L = g(y)
+   *
+   * If we were given dL/dy we could compute dL/dx1 by the product dL/dy *
+   * dy/dx1 or dL/dx2 by the product dL/dy * dy/dx2
+   *
+   * Because y = f(x1, x2), dy/dx1 is just df(x1, x2)/dx1, the Jacobian of the
+   * function we're trying to define with x2 held fixed. A similar thing happens
+   * for dy/dx2. In vector form,
+   *
+   * dL/dx1 = (dL/dy)' * df(x1, x2)/dx1 and
+   * dL/dx2 = (dL/dy)' * df(x1, x2)/dx2
+   *
+   * So implementing f(x1, x2) and the products above are all that is required
+   * mathematically to implement reverse-mode autodiff for a function.
+   *
+   * adj_jac_apply takes as a template argument a functor F that supplies the
+   * non-static member functions (leaving exact template arguments off):
+   *
+   * (required) Eigen::VectorXd operator()(const std::array<bool, size>&
+   * needs_adj, const T1& x1..., const T2& x2, ...)
+   *
+   * where there can be any number of input arguments x1, x2, ... and T1, T2,
+   * ... can be either doubles or any Eigen::Matrix type with double scalar
+   * values. needs_adj is an array of size equal to the number of input
+   * arguments indicating whether or not the adjoint^T Jacobian product must be
+   * computed for each input argument. This argument is passed to operator() so
+   * that any unnecessary preparatory calculations for multiply_adjoint_jacobian
+   * can be avoided if possible.
+   *
+   * (required) std::tuple<T1, T2, ...> multiply_adjoint_jacobian(const
+   * std::array<bool, size>& needs_adj, const Eigen::VectorXd& adj)
+   *
+   * where T1, T2, etc. are the same types as in operator(), needs_adj is the
+   * same as in operator(), and adj is the vector dL/dy.
+   *
+   * operator() is responsible for computing f(x) and multiply_adjoint_jacobian
+   * is responsible for computing the necessary adjoint transpose Jacobian
+   * products (which frequently does not require the calculation of the full
+   * Jacobian).
+   *
+   * operator() will be called before multiply_adjoint_jacobian is called, and
+   * is only called once in the lifetime of the functor
+   * multiply_adjoint_jacobian is called after operator() and may be called
+   * multiple times for any single functor
+   *
+   * The functor supplied to adj_jac_apply must be careful to allocate any
+   * variables it defines in the autodiff arena because its destructor will
+   * never be called and memory will leak if allocated anywhere else.
+   *
+   * Targs (the input argument types) can be any mix of doubles, vars, ints,
+   * std::vectors with double, var, or int scalar components, or
+   * Eigen::Matrix s of any shape with var or double scalar components
+   *
+   * @tparam F functor to be connected to the autodiff stack
+   * @tparam Targs types of arguments to pass to functor
+   * @param args input to the functor
+   * @return the result of the specified operation wrapped up in vars
    */
-  inline void chain() {
-    FReturnType y_adj;
+  template <typename F, typename... Targs>
+  inline auto adj_jac_apply(const Targs&... args) {
+    auto vi = new adj_jac_vari<F, Targs...>();
 
-    internal::build_y_adj(y_vi_, M_, y_adj);
-    auto y_adj_jacs = f_.multiply_adjoint_jacobian(is_var_, y_adj);
-
-    apply([&](auto&&... args) { accumulate_adjoints(args...); },
-          y_adj_jacs);
+    return (*vi)(args...);
   }
-};
-
-/**
- * Return the result of applying the function defined by a nullary construction
- * of F to the specified input argument
- *
- * adj_jac_apply makes it possible to write efficient reverse-mode
- * autodiff code without ever touching Stan's autodiff internals
- *
- * Mathematically, to use a function in reverse mode autodiff, you need to be
- * able to evaluate the function (y = f(x)) and multiply the Jacobian of that
- * function (df(x)/dx) by a vector.
- *
- * As an example, pretend there exists some large, complicated function, L(x1,
- * x2), which contains our smaller function f(x1, x2). The goal of autodiff is
- * to compute the partials dL/dx1 and dL/dx2. If we break the large function
- * into pieces:
- *
- * y = f(x1, x2)
- * L = g(y)
- *
- * If we were given dL/dy we could compute dL/dx1 by the product dL/dy * dy/dx1
- * or dL/dx2 by the product dL/dy * dy/dx2
- *
- * Because y = f(x1, x2), dy/dx1 is just df(x1, x2)/dx1, the Jacobian of the
- * function we're trying to define with x2 held fixed. A similar thing happens
- * for dy/dx2. In vector form,
- *
- * dL/dx1 = (dL/dy)' * df(x1, x2)/dx1 and
- * dL/dx2 = (dL/dy)' * df(x1, x2)/dx2
- *
- * So implementing f(x1, x2) and the products above are all that is required
- * mathematically to implement reverse-mode autodiff for a function.
- *
- * adj_jac_apply takes as a template argument a functor F that supplies the
- * non-static member functions (leaving exact template arguments off):
- *
- * (required) Eigen::VectorXd operator()(const std::array<bool, size>&
- * needs_adj, const T1& x1..., const T2& x2, ...)
- *
- * where there can be any number of input arguments x1, x2, ... and T1, T2, ...
- * can be either doubles or any Eigen::Matrix type with double scalar values.
- * needs_adj is an array of size equal to the number of input arguments
- * indicating whether or not the adjoint^T Jacobian product must be computed for
- * each input argument. This argument is passed to operator() so that any
- * unnecessary preparatory calculations for multiply_adjoint_jacobian can be
- * avoided if possible.
- *
- * (required) std::tuple<T1, T2, ...> multiply_adjoint_jacobian(const
- * std::array<bool, size>& needs_adj, const Eigen::VectorXd& adj)
- *
- * where T1, T2, etc. are the same types as in operator(), needs_adj is the same
- * as in operator(), and adj is the vector dL/dy.
- *
- * operator() is responsible for computing f(x) and multiply_adjoint_jacobian is
- * responsible for computing the necessary adjoint transpose Jacobian products
- * (which frequently does not require the calculation of the full Jacobian).
- *
- * operator() will be called before multiply_adjoint_jacobian is called, and is
- * only called once in the lifetime of the functor multiply_adjoint_jacobian is
- * called after operator() and may be called multiple times for any single
- * functor
- *
- * The functor supplied to adj_jac_apply must be careful to allocate any
- * variables it defines in the autodiff arena because its destructor will
- * never be called and memory will leak if allocated anywhere else.
- *
- * Targs (the input argument types) can be any mix of doubles, vars, ints,
- * std::vectors with double, var, or int scalar components, or
- * Eigen::Matrix s of any shape with var or double scalar components
- *
- * @tparam F functor to be connected to the autodiff stack
- * @tparam Targs types of arguments to pass to functor
- * @param args input to the functor
- * @return the result of the specified operation wrapped up in vars
- */
-template <typename F, typename... Targs>
-inline auto adj_jac_apply(const Targs&... args) {
-  auto vi = new adj_jac_vari<F, Targs...>();
-
-  return (*vi)(args...);
-}
 
 }  // namespace math
-}  // namespace stan
+}  // namespace math
 #endif
