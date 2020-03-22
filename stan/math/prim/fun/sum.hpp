@@ -22,6 +22,11 @@ inline T sum(T v) {
   return v;
 }
 
+template <typename T1, typename... Args, require_all_stan_scalar_t<Args...>* = nullptr>
+inline auto sum(const T1& x1, const Args&... args) {
+  return x1 + sum(args...);
+}
+
 /**
  * Return the sum of the values in the specified standard vector.
  *

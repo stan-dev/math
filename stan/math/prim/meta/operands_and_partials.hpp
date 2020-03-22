@@ -10,9 +10,10 @@
 
 namespace stan {
 namespace math {
-template <typename Op1 = double, typename Op2 = double, typename Op3 = double,
-          typename Op4 = double, typename Op5 = double,
-          typename T_return_type = return_type_t<Op1, Op2, Op3, Op4, Op5>>
+template <typename ReturnType, typename Enable, typename... Args>
+class operands_and_partials_impl;  // Forward declaration
+
+template <typename... Args>
 class operands_and_partials;  // Forward declaration
 
 namespace internal {
@@ -45,8 +46,10 @@ class ops_partials_edge {
   explicit ops_partials_edge(const Op& /* op */) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
-  friend class stan::math::operands_and_partials;
+   template <typename...>
+   friend class stan::math::operands_and_partials;
+   template <typename, typename, typename...>
+   friend class stan::math::operands_and_partials_impl;
 
   void dump_partials(ViewElt* /* partials */) const {}  // reverse mode
   void dump_operands(void* /* operands */) const {}     // reverse mode
@@ -90,19 +93,10 @@ class ops_partials_edge {
  *   to calling a template metaprogram that calculates the scalar
  *   promotion of Op1..Op4
  */
-template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5,
-          typename T_return_type>
-class operands_and_partials {
+template <typename ReturnType, typename... Ops>
+class operands_and_partials_impl<ReturnType, require_arithmetic_t<ReturnType>, Ops...> {
  public:
-  explicit operands_and_partials(const Op1& /* op1 */) {}
-  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */) {}
-  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */,
-                        const Op3& /* op3 */) {}
-  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */,
-                        const Op3& /* op3 */, const Op4& /* op4 */) {}
-  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */,
-                        const Op3& /* op3 */, const Op4& /* op4 */,
-                        const Op5& /* op5 */) {}
+  explicit operands_and_partials_impl(const Ops&...) {}
 
   /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
@@ -117,14 +111,8 @@ class operands_and_partials {
    * @param value the return value of the function we are compressing
    * @return the value with its derivative
    */
-  T_return_type build(double value) { return value; }
-
-  // These will always be 0 size base template instantiations (above).
-  internal::ops_partials_edge<double, Op1> edge1_;
-  internal::ops_partials_edge<double, Op2> edge2_;
-  internal::ops_partials_edge<double, Op3> edge3_;
-  internal::ops_partials_edge<double, Op4> edge4_;
-  internal::ops_partials_edge<double, Op5> edge5_;
+  ReturnType build(double value) const { return value; }
+  std::tuple<internal::ops_partials_edge<double, Ops>...> edges_;
 };
 
 namespace internal {
@@ -144,8 +132,10 @@ class ops_partials_edge<ViewElt, Op, require_eigen_st<std::is_arithmetic, Op>> {
   explicit ops_partials_edge(const Op& /* ops */) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
-  friend class stan::math::operands_and_partials;
+   template <typename...>
+   friend class stan::math::operands_and_partials;
+   template <typename, typename, typename...>
+   friend class stan::math::operands_and_partials_impl;
 
   void dump_partials(double* /* partials */) const {}  // reverse mode
   void dump_operands(void* /* operands */) const {}    // reverse mode
@@ -166,8 +156,10 @@ class ops_partials_edge<ViewElt, std::vector<Eigen::Matrix<Op, R, C>>> {
       const std::vector<Eigen::Matrix<Op, R, C>>& /* ops */) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
-  friend class stan::math::operands_and_partials;
+   template <typename...>
+   friend class stan::math::operands_and_partials;
+   template <typename, typename, typename...>
+   friend class stan::math::operands_and_partials_impl;
 
   void dump_partials(double* /* partials */) const {}  // reverse mode
   void dump_operands(void* /* operands */) const {}    // reverse mode
@@ -189,8 +181,10 @@ class ops_partials_edge<ViewElt, std::vector<std::vector<Op>>> {
   explicit ops_partials_edge(const std::vector<std::vector<Op>>& /* ops */) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
+  template <typename...>
   friend class stan::math::operands_and_partials;
+  template <typename, typename, typename...>
+  friend class stan::math::operands_and_partials_impl;
 
   void dump_partials(double* /* partials */) const {}  // reverse mode
   void dump_operands(void* /* operands */) const {}    // reverse mode
@@ -198,6 +192,13 @@ class ops_partials_edge<ViewElt, std::vector<std::vector<Op>>> {
   int size() const { return 0; }
 };
 }  // namespace internal
+
+template <typename... Ops>
+class operands_and_partials : public operands_and_partials_impl<return_type_t<Ops...>, void, Ops...> {
+  public:
+    explicit operands_and_partials(const Ops&... ops) :
+     operands_and_partials_impl<return_type_t<Ops...>, void, Ops...>(ops...){}
+};
 }  // namespace math
 }  // namespace stan
 #endif

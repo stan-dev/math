@@ -13,6 +13,7 @@
 #include <stan/math/prim/meta/likely.hpp>
 #include <stan/math/prim/meta/promote_scalar_type.hpp>
 #include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 #include <vector>
 
 namespace stan {
@@ -31,8 +32,10 @@ class ops_partials_edge<double, var> {
       : partial_(0), partials_(partial_), operand_(op) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
-  friend class stan::math::operands_and_partials;
+   template <typename...>
+   friend class stan::math::operands_and_partials;
+   template <typename, typename, typename...>
+   friend class stan::math::operands_and_partials_impl;
   const var& operand_;
 
   void dump_partials(double* partials) { *partials = this->partial_; }
@@ -75,28 +78,18 @@ class ops_partials_edge<double, var> {
  * @tparam Op4 type of the fourth operand
  * @tparam Op5 type of the fifth operand
  */
-template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5>
-class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
+ template <typename ReturnType, typename... Ops>
+ class operands_and_partials_impl<ReturnType, require_var_t<ReturnType>, Ops...> {
  public:
-  internal::ops_partials_edge<double, Op1> edge1_;
-  internal::ops_partials_edge<double, Op2> edge2_;
-  internal::ops_partials_edge<double, Op3> edge3_;
-  internal::ops_partials_edge<double, Op4> edge4_;
-  internal::ops_partials_edge<double, Op5> edge5_;
+  std::tuple<internal::ops_partials_edge<double, Ops>...> edges_;
+  template <int id>
+  auto edge() {
+    return std::get<id - 1>(edges_);
+  }
+  explicit operands_and_partials_impl(const Ops&... ops) :
+   edges_(internal::ops_partials_edge<double, Ops>(ops)...) {}
 
-  explicit operands_and_partials(const Op1& o1) : edge1_(o1) {}
-  operands_and_partials(const Op1& o1, const Op2& o2)
-      : edge1_(o1), edge2_(o2) {}
-  operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3)
-      : edge1_(o1), edge2_(o2), edge3_(o3) {}
-  operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3,
-                        const Op4& o4)
-      : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4) {}
-  operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3,
-                        const Op4& o4, const Op5& o5)
-      : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4), edge5_(o5) {}
-
-  /** \ingroup type_trait
+  /**
    * Build the node to be stored on the autodiff graph.
    * This should contain both the value and the tangent.
    *
@@ -109,24 +102,29 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
    * @param value the return value of the function we are compressing
    * @return the node to be stored in the expression graph for autodiff
    */
+  template <typename T, typename... Args>
+  void dump_operands_and_partials(int& idx, vari**& vari_stuff, double*& partials_stuff, T& op1, Args&&... args) {
+    op1.dump_operands(&vari_stuff[idx]);
+    op1.dump_partials(&partials_stuff[idx]);
+    dump_operands_and_partials(idx + op1.size(), vari_stuff, partials_stuff, args...);
+  }
+  void dump_operands_and_partials(int& idx, vari**& vari_stuff, double*& partials_stuff) {}
+
   var build(double value) {
-    size_t edges_size = edge1_.size() + edge2_.size() + edge3_.size()
-                        + edge4_.size() + edge5_.size();
+    size_t edges_size = apply(
+    [&](auto&&... args) {
+      return sum(args.size()...);
+    },
+    this->edges_);
     vari** varis
         = ChainableStack::instance_->memalloc_.alloc_array<vari*>(edges_size);
     double* partials
         = ChainableStack::instance_->memalloc_.alloc_array<double>(edges_size);
     int idx = 0;
-    edge1_.dump_operands(&varis[idx]);
-    edge1_.dump_partials(&partials[idx]);
-    edge2_.dump_operands(&varis[idx += edge1_.size()]);
-    edge2_.dump_partials(&partials[idx]);
-    edge3_.dump_operands(&varis[idx += edge2_.size()]);
-    edge3_.dump_partials(&partials[idx]);
-    edge4_.dump_operands(&varis[idx += edge3_.size()]);
-    edge4_.dump_partials(&partials[idx]);
-    edge5_.dump_operands(&varis[idx += edge4_.size()]);
-    edge5_.dump_partials(&partials[idx]);
+
+    apply([&](auto&&... args) {
+      dump_operands_and_partials(idx, varis, partials, args...);
+    }, this->edges_);
 
     return var(
         new precomputed_gradients_vari(value, edges_size, varis, partials));
@@ -148,8 +146,10 @@ class ops_partials_edge<double, std::vector<var>> {
         operands_(op) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
-  friend class stan::math::operands_and_partials;
+   template <typename...>
+   friend class stan::math::operands_and_partials;
+   template <typename, typename, typename...>
+   friend class stan::math::operands_and_partials_impl;
   const Op& operands_;
 
   void dump_partials(double* partials) {
@@ -177,8 +177,10 @@ class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
         operands_(ops) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
-  friend class stan::math::operands_and_partials;
+   template <typename...>
+   friend class stan::math::operands_and_partials;
+   template <typename, typename, typename...>
+   friend class stan::math::operands_and_partials_impl;
   const Op& operands_;
 
   void dump_operands(vari** varis) {
@@ -210,8 +212,10 @@ class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C>>> {
   }
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
-  friend class stan::math::operands_and_partials;
+   template <typename...>
+   friend class stan::math::operands_and_partials;
+   template <typename, typename, typename...>
+   friend class stan::math::operands_and_partials_impl;
   const Op& operands_;
 
   void dump_partials(double* partials) {
@@ -252,8 +256,10 @@ class ops_partials_edge<double, std::vector<std::vector<var>>> {
   }
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
-  friend class stan::math::operands_and_partials;
+   template <typename...>
+   friend class stan::math::operands_and_partials;
+   template <typename, typename, typename...>
+   friend class stan::math::operands_and_partials_impl;
   const Op& operands_;
 
   void dump_partials(double* partials) {

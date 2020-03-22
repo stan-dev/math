@@ -29,7 +29,7 @@ TEST(MathMetaMix, OperandsAndPartialsUniMixMat) {
   operands_and_partials<Eigen::Matrix<fvar<var>, -1, -1>> ops_partials(m1);
 
   // Do normal math on the fvar<var>, do addition to partials,
-  ops_partials.edge1_.partials_vec_[0] += dxm1;
+  ops_partials.edge<1>().partials_vec_[0] += dxm1;
 
   std::vector<double> gradient;
   fvar<var> v = ops_partials.build(10.0);
@@ -77,7 +77,7 @@ TEST(MathMetaMix, OperandsAndPartialsUniMixMat_dbl) {
       ops_partials(m1, m2);
 
   // Do normal math on the fvar<var>, do addition to partials,
-  ops_partials.edge1_.partials_vec_[0] += dxm1;
+  ops_partials.edge<1>().partials_vec_[0] += dxm1;
 
   std::vector<double> gradient;
   fvar<var> v = ops_partials.build(10.0);
@@ -138,8 +138,8 @@ TEST(MathMetaMix, OperandsAndPartialsMultiMix) {
   operands_and_partials<std::vector<uni_mat_t>> ops_partials(multi_mat);
 
   // Do normal math on the fvar<var>, do addition to partials,
-  ops_partials.edge1_.partials_vec_[0] += dxm1;
-  ops_partials.edge1_.partials_vec_[1] += 2 * dxm1;
+  ops_partials.edge<1>().partials_vec_[0] += dxm1;
+  ops_partials.edge<1>().partials_vec_[1] += 2 * dxm1;
 
   std::vector<double> gradient;
   fvar<var> v = ops_partials.build(10.0);
@@ -204,8 +204,8 @@ TEST(MathMetaMix, OperandsAndPartialsMultiMix_dbl) {
       ops_partials(multi_mat, m3);
 
   // Do normal math on the fvar<var>, do addition to partials,
-  ops_partials.edge1_.partials_vec_[0] += dxm1;
-  ops_partials.edge1_.partials_vec_[1] += 2 * dxm1;
+  ops_partials.edge<1>().partials_vec_[0] += dxm1;
+  ops_partials.edge<1>().partials_vec_[1] += 2 * dxm1;
 
   std::vector<double> gradient;
   fvar<var> v = ops_partials.build(10.0);
@@ -270,8 +270,8 @@ TEST(MathMetaMix, OperandsAndPartialsMultiStdMix) {
   operands_and_partials<std::vector<uni_std_t>> ops_partials(multi_std);
 
   // Do normal math on the fvar<var>, do addition to partials,
-  ops_partials.edge1_.partials_vec_[0] = dxm1;
-  ops_partials.edge1_.partials_vec_[1] = dxm1;
+  ops_partials.edge<1>().partials_vec_[0] = dxm1;
+  ops_partials.edge<1>().partials_vec_[1] = dxm1;
 
   std::vector<double> gradient;
   fvar<var> v = ops_partials.build(10.0);
@@ -340,8 +340,8 @@ TEST(MathMetaMix, OperandsAndPartialsMultiStdMix_dbl) {
       ops_partials(multi_std, m3);
 
   // Do normal math on the fvar<var>, do addition to partials,
-  ops_partials.edge1_.partials_vec_[0] = dxm1;
-  ops_partials.edge1_.partials_vec_[1] = dxm1;
+  ops_partials.edge<1>().partials_vec_[0] = dxm1;
+  ops_partials.edge<1>().partials_vec_[1] = dxm1;
 
   std::vector<double> gradient;
   fvar<var> v = ops_partials.build(10.0);

@@ -9,7 +9,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsScal) {
 
   double d1;
   operands_and_partials<double> o3(d1);
-  EXPECT_EQ(5, sizeof(o3));
+  EXPECT_EQ(1, sizeof(o3));
 
   var v1 = var(0.0);
 
@@ -17,7 +17,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsScal) {
   v_stdvec.push_back(v1);
 
   operands_and_partials<var> o4(v1);
-  o4.edge1_.partials_[0] += 10.0;
+  o4.edge<1>().partials_[0] += 10.0;
 
   std::vector<double> grad;
   var v = o4.build(10.0);
@@ -34,7 +34,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsVec) {
 
   vector_d d_vec(4);
   operands_and_partials<vector_d> o3(d_vec);
-  EXPECT_EQ(6, sizeof(o3));
+  EXPECT_EQ(2, sizeof(o3));
 
   vector_v v_vec(4);
   var v1 = var(0.0);
@@ -50,10 +50,10 @@ TEST(AgradPartialsVari, OperandsAndPartialsVec) {
   v_stdvec.push_back(v4);
 
   operands_and_partials<vector_v> o4(v_vec);
-  o4.edge1_.partials_[0] += 10.0;
-  o4.edge1_.partials_[1] += 20.0;
-  o4.edge1_.partials_[2] += 30.0;
-  o4.edge1_.partials_[3] += 40.0;
+  o4.edge<1>().partials_[0] += 10.0;
+  o4.edge<1>().partials_[1] += 20.0;
+  o4.edge<1>().partials_[2] += 30.0;
+  o4.edge<1>().partials_[3] += 40.0;
 
   std::vector<double> grad;
   var v = o4.build(10.0);
@@ -84,10 +84,10 @@ TEST(AgradPartialsVari, OperandsAndPartialsStdVec) {
   v_vec.push_back(v4);
 
   operands_and_partials<std::vector<var> > o4(v_vec);
-  o4.edge1_.partials_[0] += 10.0;
-  o4.edge1_.partials_[1] += 20.0;
-  o4.edge1_.partials_[2] += 30.0;
-  o4.edge1_.partials_[3] += 40.0;
+  o4.edge<1>().partials_[0] += 10.0;
+  o4.edge<1>().partials_[1] += 20.0;
+  o4.edge<1>().partials_[2] += 30.0;
+  o4.edge<1>().partials_[3] += 40.0;
 
   std::vector<double> grad;
   var v = o4.build(10.0);
@@ -125,10 +125,10 @@ TEST(AgradPartialsVari, OperandsAndPartialsMat) {
   v_stdvec.push_back(v4);
 
   operands_and_partials<matrix_v> o4(v_mat);
-  o4.edge1_.partials_ += d_mat;
-  o4.edge1_.partials_vec_[1] += d_mat;
+  o4.edge<1>().partials_ += d_mat;
+  o4.edge<1>().partials_vec_[1] += d_mat;
   // Should affect the same vars as the call above
-  o4.edge1_.partials_vec_[27] += d_mat;
+  o4.edge<1>().partials_vec_[27] += d_mat;
 
   std::vector<double> grad;
   var v = o4.build(10.0);
@@ -183,10 +183,10 @@ TEST(AgradPartialsVari, OperandsAndPartialsMatMultivar) {
   v_stdvec.push_back(v8);
 
   operands_and_partials<std::vector<matrix_v> > o4(v_mat_vec);
-  o4.edge1_.partials_vec_[0] += d_mat;
+  o4.edge<1>().partials_vec_[0] += d_mat;
   // Should NOT affect the same vars as the call above
-  o4.edge1_.partials_vec_[1] += d_mat;
-  o4.edge1_.partials_vec_[1] += d_mat;
+  o4.edge<1>().partials_vec_[1] += d_mat;
+  o4.edge<1>().partials_vec_[1] += d_mat;
 
   std::vector<double> grad;
   var v = o4.build(10.0);
@@ -238,8 +238,8 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultivar) {
   v_stdvec.push_back(v4);
 
   operands_and_partials<std::vector<vector_v> > o4(v_vec);
-  o4.edge1_.partials_vec_[0] += d_vec1;
-  o4.edge1_.partials_vec_[1] += d_vec2;
+  o4.edge<1>().partials_vec_[0] += d_vec1;
+  o4.edge<1>().partials_vec_[1] += d_vec2;
 
   std::vector<double> grad;
   var v = o4.build(10.0);
@@ -287,8 +287,8 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultivarMixed) {
 
   operands_and_partials<std::vector<vector_v>, std::vector<vector_d>, vector_v>
       o4(v_vec, d_vec_vec, v_vec2);
-  o4.edge1_.partials_vec_[0] += d_vec1;
-  o4.edge3_.partials_vec_[0] += d_vec2;
+  o4.edge<1>().partials_vec_[0] += d_vec1;
+  o4.edge<3>().partials_vec_[0] += d_vec2;
 
   // 2 partials stdvecs, 4 pointers to edges, 2 pointers to operands
   // vecs
@@ -307,13 +307,13 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultivarMixed) {
   // still compile
   operands_and_partials<std::vector<vector_v>, std::vector<vector_d>, vector_d>
       o5(v_vec, d_vec_vec, d_vec2);
-  o5.edge1_.partials_vec_[0] += d_vec1;
+  o5.edge<1>().partials_vec_[0] += d_vec1;
   if (false) {
     // the test here is to make things compile as this pattern to
     // if-out things when terms are const is used in our functions
-    o5.edge3_.partials_vec_[0] += vector_d();
-    o5.edge3_.partials_vec_[0] -= vector_d();
-    o5.edge3_.partials_vec_[0](0) = 0;
+    o5.edge<3>().partials_vec_[0] += vector_d();
+    o5.edge<3>().partials_vec_[0] -= vector_d();
+    o5.edge<3>().partials_vec_[0](0) = 0;
   }
 
   // the same needs to work for the nested case
@@ -322,7 +322,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultivarMixed) {
   if (false) {
     // the test here is to make things compile as this pattern to
     // if-out things when terms are const is used in our functions
-    o6.edge1_.partials_vec_[0] += d_vec1;
+    o6.edge<1>().partials_vec_[0] += d_vec1;
   }
-  o6.edge3_.partials_vec_[0] += d_vec2;
+  o6.edge<3>().partials_vec_[0] += d_vec2;
 }
