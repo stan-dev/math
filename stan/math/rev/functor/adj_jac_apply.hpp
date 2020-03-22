@@ -414,6 +414,7 @@ struct adj_jac_vari : public vari {
       for (int n = 0; n < y_adj_jac.size(); ++n) {
         x_vis_[offsets_[t] + n]->adj_ += y_adj_jac(n);
       }
+    }
     accumulate_adjoints(args...);
   }
 
