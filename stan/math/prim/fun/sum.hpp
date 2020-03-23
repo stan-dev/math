@@ -31,7 +31,7 @@ inline T sum(T v) {
  */
 template <typename T>
 inline T sum(const std::vector<T>& v) {
-  return std::accumulate(xs.begin(), xs.end(), T{0});
+  return std::accumulate(v.begin(), v.end(), T{0});
 }
 
 /**
