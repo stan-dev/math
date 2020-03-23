@@ -321,7 +321,7 @@ class var {
    */
   void grad(std::vector<var>& x, std::vector<double>& g) {
     stan::math::grad(vi_);
-    g.reserve(x.size());
+    g.resize(x.size());
     for (size_t i = 0; i < x.size(); ++i) {
       g[i] = x[i].vi_->adj_;
     }
