@@ -18,6 +18,7 @@
 #include <stan/math/rev/fun/log.hpp>
 #include <stan/math/rev/fun/sqrt.hpp>
 #include <stan/math/rev/fun/square.hpp>
+#include <stan/math/rev/fun/value_of_rec.hpp>
 #include <cmath>
 #include <complex>
 #include <type_traits>

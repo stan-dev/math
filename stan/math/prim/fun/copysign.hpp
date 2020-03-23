@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
+#include <cmath>
 #include <complex>
 
 namespace stan {
@@ -27,8 +28,8 @@ namespace math {
  */
 template <typename T, typename U>
 inline T copysign(const T& x, const U& y) {
-  // return (x < 0 && y >= 0) || (x >= 0 && y < 0) ? -x : x;
-  return (signbit(value_of_rec(x)) != signbit(value_of_rec(y))) ? -x : x;
+  return std::signbit(value_of_rec(x)) != std::signbit(value_of_rec(y)) ? -x
+                                                                        : x;
 }
 
 /**

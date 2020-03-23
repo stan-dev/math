@@ -7,6 +7,7 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/fun/abs.hpp>
 #include <stan/math/rev/fun/asinh.hpp>
+#include <stan/math/rev/fun/value_of_rec.hpp>
 #include <cmath>
 #include <complex>
 
