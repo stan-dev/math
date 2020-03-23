@@ -187,29 +187,24 @@ TEST(ProbVonMises, random_cdf_test) {
               von_mises_cdf(3.141492653589793, -6.283185307179586, 20),
               ABS_TOL);
   ASSERT_NEAR(0.1008738431730909, von_mises_cdf(-0.16534171860998903, 0, 60),
-	      ABS_TOL);
+              ABS_TOL);
   ASSERT_NEAR(0.8991261568269097, von_mises_cdf(0.16534171860998947, 0, 60),
-	      ABS_TOL);
+              ABS_TOL);
 
   // tests for helper functions
   using stan::math::internal::von_mises_cdf_series;
-  ASSERT_NEAR(0.0000000001832846,
-              von_mises_cdf_series(-1.5707463267948965, 20),
-	      ABS_TOL);
-  ASSERT_NEAR(0.8902398103119467,
-              von_mises_cdf_series(1.5707463267948962, 1),
-	      ABS_TOL);
+  ASSERT_NEAR(0.0000000001832846, von_mises_cdf_series(-1.5707463267948965, 20),
+              ABS_TOL);
+  ASSERT_NEAR(0.8902398103119467, von_mises_cdf_series(1.5707463267948962, 1),
+              ABS_TOL);
 
   using stan::math::internal::von_mises_cdf_normalapprox;
   ASSERT_NEAR(0.8991261568269097,
-	      von_mises_cdf_normalapprox(0.16534171860998947, 60),
-	      ABS_TOL);
+              von_mises_cdf_normalapprox(0.16534171860998947, 60), ABS_TOL);
 
   using stan::math::internal::von_mises_cdf_centered;
   ASSERT_NEAR(0.1008738431730909,
-	      von_mises_cdf_centered(-0.16534171860998903, 60),
-	      ABS_TOL);
+              von_mises_cdf_centered(-0.16534171860998903, 60), ABS_TOL);
   ASSERT_NEAR(0.6968583086078725,
-	      von_mises_cdf_centered(0.16534171860998947, 10),
-	      ABS_TOL);
+              von_mises_cdf_centered(0.16534171860998947, 10), ABS_TOL);
 }

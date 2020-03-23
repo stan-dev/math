@@ -12,13 +12,13 @@ namespace math {
 namespace internal {
 
 /**
- * This implementation of the von Mises cdf 
+ * This implementation of the von Mises cdf
  * is a copy of scipy's. see:
  * https://github.com/scipy/scipy/blob/8dba340293fe20e62e173bdf2c10ae208286692f/scipy/stats/vonmises.py
  *
  * When k < 50, approximate the von Mises cdf
  * with the following expansion that comes from
- * scipy. 
+ * scipy.
  */
 template <typename T_x, typename T_k>
 return_type_t<T_x, T_k> von_mises_cdf_series(const T_x& x, const T_k& k) {
@@ -45,9 +45,9 @@ return_type_t<T_x, T_k> von_mises_cdf_series(const T_x& x, const T_k& k) {
 }
 
 /**
- * conv_mises_cdf_normapprox(x, k) is used to approximate the von 
- * Mises cdf for k > 50. In this regime, the von Mises cdf 
- * is well-approximated by a normal distribution. 
+ * conv_mises_cdf_normapprox(x, k) is used to approximate the von
+ * Mises cdf for k > 50. In this regime, the von Mises cdf
+ * is well-approximated by a normal distribution.
  */
 template <typename T_x, typename T_k>
 return_type_t<T_x, T_k> von_mises_cdf_normalapprox(const T_x& x, const T_k& k) {
@@ -62,10 +62,9 @@ return_type_t<T_x, T_k> von_mises_cdf_normalapprox(const T_x& x, const T_k& k) {
   return normal_cdf(z, mu, sigma);
 }
 
-
 /**
- * This function calculates the cdf of the von Mises distribution in 
- * the case where the distribution has support on (-pi, pi) and 
+ * This function calculates the cdf of the von Mises distribution in
+ * the case where the distribution has support on (-pi, pi) and
  * has mean 0. If k is sufficiently small, this function approximates
  * the cdf with a Gaussian. Otherwise, use the expansion from scipy.
  */
