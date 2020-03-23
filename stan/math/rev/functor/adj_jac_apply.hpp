@@ -39,9 +39,8 @@ inline void build_y_adj(vari** y_vi, const std::array<int, size>& M,
 template <size_t size>
 inline void build_y_adj(vari** y_vi, const std::array<int, size>& M,
                         std::vector<double>& y_adj) {
-  y_adj.clear();
-  y_adj.reserve(M[0]);
-  for (size_t m = 0; m < M[0]; ++m) {
+  y_adj.resize(M[0]);
+  for (size_t m = 0; m < y_adj.size(); ++m) {
     y_adj[m] = y_vi[m]->adj_;
   }
 }
