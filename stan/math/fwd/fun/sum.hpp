@@ -14,19 +14,19 @@ namespace math {
  * vector.
  *
  * @tparam T type of elements in the vector
- * @param m Vector.
+ * @param v Vector.
  * @return Sum of vector entries.
  */
 template <typename T>
-inline fvar<T> sum(const std::vector<fvar<T>>& m) {
-  if (m.size() == 0) {
+inline fvar<T> sum(const std::vector<fvar<T>>& v) {
+  if (v.size() == 0) {
     return 0.0;
   }
-  std::vector<T> vals(m.size());
-  std::vector<T> tans(m.size());
-  for (size_t i = 0; i < m.size(); ++i) {
-    vals[i] = m[i].val();
-    tans[i] = m[i].tangent();
+  std::vector<T> vals(v.size());
+  std::vector<T> tans(v.size());
+  for (size_t i = 0; i < v.size(); ++i) {
+    vals[i] = v[i].val();
+    tans[i] = v[i].tangent();
   }
   return fvar<T>(sum(vals), sum(tans));
 }
@@ -36,16 +36,16 @@ inline fvar<T> sum(const std::vector<fvar<T>>& m) {
  *
  * @tparam T type of the matrix
  *
- * @param m Matrix.
+ * @param v Matrix.
  * @return Sum of matrix entries.
  */
 template <typename T, require_eigen_vt<is_fvar, T>* = nullptr>
-inline value_type_t<T> sum(const T& m) {
-  if (m.size() == 0) {
+inline value_type_t<T> sum(const T& v) {
+  if (v.size() == 0) {
     return 0.0;
   }
-  const Eigen::Ref<const plain_type_t<T>>& m_ref = m;
-  return {sum(m_ref.val()), sum(m_ref.d())};
+  const Eigen::Ref<const plain_type_t<T>>& v_ref = v;
+  return {sum(v_ref.val()), sum(v_ref.d())};
 }
 
 }  // namespace math

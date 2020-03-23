@@ -33,7 +33,7 @@ struct floor_fun {
  */
 template <
     typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+    require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto floor(const Container& x) {
   return apply_scalar_unary<floor_fun, Container>::apply(x);
 }
@@ -47,7 +47,7 @@ inline auto floor(const Container& x) {
  * @return Greatest integer <= each value in x.
  */
 template <typename Container,
-          require_container_st<is_container, std::is_arithmetic, Container>...>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto floor(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().floor(); });

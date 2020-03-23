@@ -31,7 +31,7 @@ struct sin_fun {
  * @return Sine of each value in x.
  */
 template <typename T,
-          require_not_container_st<is_container, std::is_arithmetic, T>...>
+          require_not_container_st<std::is_arithmetic, T>* = nullptr>
 inline auto sin(const T& x) {
   return apply_scalar_unary<sin_fun, T>::apply(x);
 }
@@ -45,7 +45,7 @@ inline auto sin(const T& x) {
  * @return Sine of each value in x.
  */
 template <typename Container,
-          require_container_st<is_container, std::is_arithmetic, Container>...>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto sin(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [&](const auto& v) { return v.array().sin(); });

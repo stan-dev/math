@@ -33,7 +33,7 @@ struct acos_fun {
  */
 template <
     typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+    require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto acos(const Container& x) {
   return apply_scalar_unary<acos_fun, Container>::apply(x);
 }
@@ -47,7 +47,7 @@ inline auto acos(const Container& x) {
  * @return Arc cosine of each variable in the container, in radians.
  */
 template <typename Container,
-          require_container_st<is_container, std::is_arithmetic, Container>...>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto acos(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().acos(); });

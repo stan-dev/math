@@ -82,7 +82,7 @@ struct logit_fun {
  */
 template <
     typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+    require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto logit(const Container& x) {
   return apply_scalar_unary<logit_fun, Container>::apply(x);
 }
@@ -99,7 +99,7 @@ inline auto logit(const Container& x) {
  * of scope
  */
 template <typename Container,
-          require_container_st<is_container, std::is_arithmetic, Container>...>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto logit(const Container& x) {
   return apply_vector_unary<Container>::apply(x, [](const auto& v) {
     const Eigen::Ref<const plain_type_t<decltype(v)>>& v_ref = v;
