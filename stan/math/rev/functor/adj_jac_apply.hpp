@@ -39,6 +39,7 @@ inline void build_y_adj(vari** y_vi, const std::array<int, size>& M,
 template <size_t size>
 inline void build_y_adj(vari** y_vi, const std::array<int, size>& M,
                         std::vector<double>& y_adj) {
+  y_adj.clear();
   y_adj.reserve(M[0]);
   for (size_t m = 0; m < M[0]; ++m) {
     y_adj[m] = y_vi[m]->adj_;
@@ -510,7 +511,7 @@ struct adj_jac_vari : public vari {
     internal::build_y_adj(y_vi_, M_, y_adj);
     auto y_adj_jacs = f_.multiply_adjoint_jacobian(is_var_, y_adj);
 
-    apply([&](auto&&... args) { accumulate_adjoints(args...); }, y_adj_jacs);
+    apply([this](auto&&... args) { this->accumulate_adjoints(args...); }, y_adj_jacs);
   }
 };
 
