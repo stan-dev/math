@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_META_IS_AUTODIFF_HPP
 #define STAN_MATH_PRIM_META_IS_AUTODIFF_HPP
 
-#include <stan/math/prim/meta/scalar_type.hpp>
-#include <stan/math/prim/meta/value_type.hpp>
+#include <stan/math/prim/meta/is_var.hpp>
+#include <stan/math/prim/meta/is_fvar.hpp>
 #include <stan/math/prim/meta/require_helpers.hpp>
 #include <complex>
 #include <type_traits>
