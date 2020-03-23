@@ -17,9 +17,12 @@ struct is_double_or_int
           math::disjunction<std::is_same<double, std::decay_t<T>>,
                             std::is_same<int, std::decay_t<T>>>::value> {};
 
-STAN_ADD_REQUIRE_UNARY(double_or_int, is_double_or_int, require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_SCALAR(double_or_int, is_double_or_int, require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_VALUE(double_or_int, is_double_or_int, require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY(double_or_int, is_double_or_int,
+                       require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_SCALAR(double_or_int, is_double_or_int,
+                              require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_VALUE(double_or_int, is_double_or_int,
+                             require_stan_scalar_real);
 
 }  // namespace stan
 #endif
