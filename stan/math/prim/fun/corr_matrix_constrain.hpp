@@ -29,26 +29,20 @@ namespace math {
  * <p>The free vector entries are first constrained to be
  * valid correlation values using <code>corr_constrain(T)</code>.
  *
- * @tparam T type of scalar
+ * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
+ * have one compile-time dimension equal to 1)
  * @param x Vector of unconstrained partial correlations.
  * @param k Dimensionality of returned correlation matrix.
  * @throw std::invalid_argument if x is not a valid correlation
  * matrix.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-    math::index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>> k) {
-  using size_type = index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>>;
-
-  size_type k_choose_2 = (k * (k - 1)) / 2;
+template <typename T, require_eigen_vector_t<T>* = nullptr>
+Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
+corr_matrix_constrain(const T& x, Eigen::Index k) {
+  Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
                    k_choose_2);
-  Eigen::Array<T, Eigen::Dynamic, 1> cpcs(k_choose_2);
-  for (size_type i = 0; i < k_choose_2; ++i) {
-    cpcs[i] = corr_constrain(x[i]);
-  }
-  return read_corr_matrix(cpcs, k);
+  return read_corr_matrix(corr_constrain(x), k);
 }
 
 /**
@@ -65,26 +59,19 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
  * defined in <code>corr_constrain(T, double)</code> for
  * this function.
  *
- * @tparam T type of scalar
+ * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
+ * have one compile-time dimension equal to 1)
  * @param x Vector of unconstrained partial correlations.
  * @param k Dimensionality of returned correlation matrix.
  * @param lp Log probability reference to increment.
  */
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-    math::index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>> k, T& lp) {
-  using size_type = index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>>;
-  using Eigen::Array;
-
-  size_type k_choose_2 = (k * (k - 1)) / 2;
+Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
+corr_matrix_constrain(const T& x, Eigen::Index k, value_type_t<T>& lp) {
+  Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
                    k_choose_2);
-  Array<T, Eigen::Dynamic, 1> cpcs(k_choose_2);
-  for (size_type i = 0; i < k_choose_2; ++i) {
-    cpcs[i] = corr_constrain(x[i], lp);
-  }
-  return read_corr_matrix(cpcs, k, lp);
+  return read_corr_matrix(corr_constrain(x, lp), k, lp);
 }
 
 }  // namespace math

@@ -18,7 +18,7 @@ TEST(MathMixMatFun, qrThinQ) {
   c << 1, 2, 3, 4, 5, 6;
   stan::test::expect_ad(tols, f, c);
 
-  // exception because cols > rows
+  // cols > rows case
   Eigen::MatrixXd b_tr = b.transpose();
   stan::test::expect_ad(f, b_tr);
 }

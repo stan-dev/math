@@ -235,21 +235,42 @@ TEST(requires_prim_arr, container_type_test) {
 
 template <template <class> class ContainerCheck,
           template <class> class TypeCheck, class Check, typename = void>
-struct require_container_tester : std::false_type {};
+struct require_container_vt_tester : std::false_type {};
 
 template <template <class> class ContainerCheck,
           template <class> class TypeCheck, class Check>
-struct require_container_tester<
+struct require_container_vt_tester<
     ContainerCheck, TypeCheck, Check,
     stan::require_container_vt<ContainerCheck, TypeCheck, Check>>
     : std::true_type {};
 
-TEST(requires_prim_arr, generic_container_type_test) {
+TEST(requires_prim_arr, generic_container_vt_test) {
   EXPECT_FALSE(
-      (require_container_tester<stan::is_vector, std::is_floating_point,
-                                double>::value));
-  EXPECT_TRUE((require_container_tester<stan::is_vector, std::is_floating_point,
-                                        std::vector<double>>::value));
+      (require_container_vt_tester<stan::is_vector, std::is_floating_point,
+                                   double>::value));
+  EXPECT_TRUE(
+      (require_container_vt_tester<stan::is_vector, std::is_floating_point,
+                                   std::vector<double>>::value));
+}
+
+template <template <class> class ContainerCheck,
+          template <class> class TypeCheck, class Check, typename = void>
+struct require_container_st_tester : std::false_type {};
+
+template <template <class> class ContainerCheck,
+          template <class> class TypeCheck, class Check>
+struct require_container_st_tester<
+    ContainerCheck, TypeCheck, Check,
+    stan::require_container_st<ContainerCheck, TypeCheck, Check>>
+    : std::true_type {};
+
+TEST(requires_prim_arr, generic_container_st_test) {
+  EXPECT_FALSE(
+      (require_container_st_tester<stan::is_vector, std::is_integral,
+                                   std::vector<std::vector<double>>>::value));
+  EXPECT_TRUE(
+      (require_container_st_tester<stan::is_vector, std::is_floating_point,
+                                   std::vector<std::vector<double>>>::value));
 }
 
 TEST(requires_prim_arr, std_vector_t_test) {

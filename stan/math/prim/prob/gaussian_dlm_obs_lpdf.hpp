@@ -38,6 +38,14 @@ namespace math {
  * If V is a vector, then the Kalman filter is applied
  * sequentially.
  *
+ * @tparam T_y type of scalar
+ * @tparam T_F type of design matrix
+ * @tparam T_G type of transition matrix
+ * @tparam T_V type of observation covariance matrix
+ * @tparam T_W type of state covariance matrix
+ * @tparam T_m0 type of initial state mean vector
+ * @tparam T_C0 type of initial state covariance matrix
+ *
  * @param y A r x T matrix of observations. Rows are variables,
  * columns are observations.
  * @param F A n x r matrix. The design matrix.
@@ -51,13 +59,6 @@ namespace math {
  * @return The log of the joint density of the GDLM.
  * @throw std::domain_error if a matrix in the Kalman filter is
  * not positive semi-definite.
- * @tparam T_y Type of scalar.
- * @tparam T_F Type of design matrix.
- * @tparam T_G Type of transition matrix.
- * @tparam T_V Type of observation covariance matrix.
- * @tparam T_W Type of state covariance matrix.
- * @tparam T_m0 Type of initial state mean vector.
- * @tparam T_C0 Type of initial state covariance matrix.
  */
 template <bool propto, typename T_y, typename T_F, typename T_G, typename T_V,
           typename T_W, typename T_m0, typename T_C0>
@@ -70,14 +71,14 @@ gaussian_dlm_obs_lpdf(
     const Eigen::Matrix<T_W, Eigen::Dynamic, Eigen::Dynamic>& W,
     const Eigen::Matrix<T_m0, Eigen::Dynamic, 1>& m0,
     const Eigen::Matrix<T_C0, Eigen::Dynamic, Eigen::Dynamic>& C0) {
-  static const char* function = "gaussian_dlm_obs_lpdf";
   using T_lp
       = return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>;
+  using std::pow;
   int r = y.rows();  // number of variables
   int T = y.cols();  // number of observations
   int n = G.rows();  // number of states
-  using std::pow;
 
+  static const char* function = "gaussian_dlm_obs_lpdf";
   check_finite(function, "y", y);
   check_not_nan(function, "y", y);
   check_size_match(function, "columns of F", F.cols(), "rows of y", y.rows());

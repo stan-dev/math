@@ -39,15 +39,10 @@ template <typename T_y, typename T_scale_succ, typename T_scale_fail>
 return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
   using T_partials_return = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
-
-  if (size_zero(y, alpha, beta)) {
-    return 0.0;
-  }
-
+  using std::exp;
+  using std::log;
+  using std::pow;
   static const char* function = "beta_lcdf";
-
-  T_partials_return cdf_log(0.0);
-
   check_positive_finite(function, "First shape parameter", alpha);
   check_positive_finite(function, "Second shape parameter", beta);
   check_not_nan(function, "Random variable", y);
@@ -57,6 +52,13 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
                          "First shape parameter", alpha,
                          "Second shape parameter", beta);
 
+  if (size_zero(y, alpha, beta)) {
+    return 0;
+  }
+
+  T_partials_return cdf_log(0.0);
+  operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(y, alpha,
+                                                                      beta);
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_scale_succ> alpha_vec(alpha);
   scalar_seq_view<T_scale_fail> beta_vec(beta);
@@ -64,13 +66,6 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
   size_t size_beta = stan::math::size(beta);
   size_t size_alpha_beta = max_size(alpha, beta);
   size_t N = max_size(y, alpha, beta);
-
-  operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(y, alpha,
-                                                                      beta);
-
-  using std::exp;
-  using std::log;
-  using std::pow;
 
   VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
                 T_partials_return, T_scale_succ>

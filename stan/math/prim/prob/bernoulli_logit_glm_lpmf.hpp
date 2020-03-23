@@ -49,14 +49,11 @@ template <bool propto, typename T_y, typename T_x_scalar, int T_x_rows,
 return_type_t<T_x_scalar, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
     const T_y &y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic> &x,
     const T_alpha &alpha, const T_beta &beta) {
-  static const char *function = "bernoulli_logit_glm_lpmf";
-
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::log1p;
   using std::exp;
-
   using T_partials_return = partials_return_t<T_y, T_x_scalar, T_alpha, T_beta>;
   using T_y_val =
       typename std::conditional_t<is_vector<T_y>::value,
@@ -69,6 +66,7 @@ return_type_t<T_x_scalar, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   const size_t N_instances = T_x_rows == 1 ? stan::math::size(y) : x.rows();
   const size_t N_attributes = x.cols();
 
+  static const char *function = "bernoulli_logit_glm_lpmf";
   check_consistent_size(function, "Vector of dependent variables", y,
                         N_instances);
   check_consistent_size(function, "Weight vector", beta, N_attributes);

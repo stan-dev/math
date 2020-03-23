@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_OPERATION_HPP
-#define STAN_MATH_OPENCL_KERNEL_GENERATOR_OPERATION_HPP
+#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_OPERATION_CL_HPP
+#define STAN_MATH_OPENCL_KERNEL_GENERATOR_OPERATION_CL_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
@@ -95,12 +95,6 @@ class operation_cl : public operation_cl_base {
   }
 
   /**
-   * Converting to \c matrix_cl evaluates the expression. Used when assigning to
-   * a \c matrix_cl.
-   */
-  operator matrix_cl<Scalar>() const { return derived().eval(); }
-
-  /**
    * Evaluates \c this expression into given left-hand-side expression.
    * If the kernel for this expression is not cached it is generated and then
    * executed.
@@ -108,7 +102,7 @@ class operation_cl : public operation_cl_base {
    * @param lhs Left-hand-side expression
    */
   template <typename T_lhs>
-  inline void evaluate_into(const T_lhs& lhs) const;
+  inline void evaluate_into(T_lhs& lhs) const;
 
   /**
    * Generates kernel source for evaluating \c this expression into given

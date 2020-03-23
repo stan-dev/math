@@ -13,7 +13,6 @@ template <class RNG>
 inline std::vector<int> multinomial_rng(
     const Eigen::Matrix<double, Eigen::Dynamic, 1>& theta, int N, RNG& rng) {
   static const char* function = "multinomial_rng";
-
   check_simplex(function, "Probabilities parameter", theta);
   check_positive(function, "number of trials variables", N);
 

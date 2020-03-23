@@ -30,6 +30,9 @@ namespace math {
  +\frac{\nu}{2} \log(\det(S)) - \frac{\nu+k+1}{2}\log (\det(W)) - \frac{1}{2}
  \mbox{tr}(S W^{-1}) \f}
  *
+ * @tparam T_y type of scalar
+ * @tparam T_dof type of degrees of freedom
+ * @tparam T_scale type of scale
  * @param W A scalar matrix
  * @param nu Degrees of freedom
  * @param S The scale matrix
@@ -37,23 +40,16 @@ namespace math {
  * @throw std::domain_error if nu is not greater than k-1
  * @throw std::domain_error if S is not square, not symmetric, or not
  * semi-positive definite.
- * @tparam T_y Type of scalar.
- * @tparam T_dof Type of degrees of freedom.
- * @tparam T_scale Type of scale.
  */
 template <bool propto, typename T_y, typename T_dof, typename T_scale>
 return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
     const T_dof& nu,
     const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
-  static const char* function = "inv_wishart_lpdf";
-
   using Eigen::Dynamic;
   using Eigen::Matrix;
-
+  static const char* function = "inv_wishart_lpdf";
   index_type_t<Matrix<T_scale, Dynamic, Dynamic>> k = S.rows();
-  return_type_t<T_y, T_dof, T_scale> lp(0.0);
-
   check_greater(function, "Degrees of freedom parameter", nu, k - 1);
   check_square(function, "random variable", W);
   check_square(function, "scale parameter", S);
@@ -64,6 +60,8 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(
   check_ldlt_factor(function, "LDLT_Factor of random variable", ldlt_W);
   LDLT_factor<T_scale, Eigen::Dynamic, Eigen::Dynamic> ldlt_S(S);
   check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_S);
+
+  return_type_t<T_y, T_dof, T_scale> lp(0.0);
 
   if (include_summand<propto, T_dof>::value) {
     lp -= lmgamma(k, 0.5 * nu);

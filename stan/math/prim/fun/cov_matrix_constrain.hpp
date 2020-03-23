@@ -20,33 +20,30 @@ namespace math {
  *
  * <p>See <code>cov_matrix_free()</code> for the inverse transform.
  *
- * @tparam T type of elements in the vector
+ * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
+ * have one compile-time dimension equal to 1)
  * @param x The vector to convert to a covariance matrix.
  * @param K The number of rows and columns of the resulting
  * covariance matrix.
  * @throws std::invalid_argument if (x.size() != K + (K choose 2)).
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-    typename math::index_type<Eigen::Matrix<T, Eigen::Dynamic, 1>>::type K) {
+template <typename T, require_eigen_vector_t<T>* = nullptr>
+Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
+cov_matrix_constrain(const T& x, Eigen::Index K) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
-  using index_t = index_type_t<Matrix<T, Dynamic, Dynamic>>;
 
-  Matrix<T, Dynamic, Dynamic> L(K, K);
+  Matrix<value_type_t<T>, Dynamic, Dynamic> L(K, K);
   check_size_match("cov_matrix_constrain", "x.size()", x.size(),
                    "K + (K choose 2)", (K * (K + 1)) / 2);
+  const Eigen::Ref<const plain_type_t<T>>& x_ref = x;
   int i = 0;
-  for (index_t m = 0; m < K; ++m) {
-    for (int n = 0; n < m; ++n) {
-      L(m, n) = x(i++);
-    }
-    L(m, m) = exp(x(i++));
-    for (index_t n = m + 1; n < K; ++n) {
-      L(m, n) = 0.0;
-    }
+  for (Eigen::Index m = 0; m < K; ++m) {
+    L.row(m).head(m) = x_ref.segment(i, m);
+    i += m;
+    L.coeffRef(m, m) = exp(x_ref.coeff(i++));
+    L.row(m).tail(K - m - 1).setZero();
   }
   return multiply_lower_tri_self_transpose(L);
 }
@@ -58,40 +55,35 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain(
  *
  * <p>See <code>cov_matrix_free()</code> for the inverse transform.
  *
- * @tparam T type of elements in the vector
+ * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
+ * have one compile-time dimension equal to 1)
  * @param x The vector to convert to a covariance matrix.
  * @param K The dimensions of the resulting covariance matrix.
  * @param lp Reference
  * @throws std::domain_error if (x.size() != K + (K choose 2)).
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-    typename math::index_type<
-        Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>::type K,
-    T& lp) {
+template <typename T, require_eigen_vector_t<T>* = nullptr>
+Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
+cov_matrix_constrain(const T& x, Eigen::Index K, value_type_t<T>& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
   using std::log;
-  using index_t = index_type_t<Matrix<T, Dynamic, Dynamic>>;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(),
                    "K + (K choose 2)", (K * (K + 1)) / 2);
-  Matrix<T, Dynamic, Dynamic> L(K, K);
+  Matrix<value_type_t<T>, Dynamic, Dynamic> L(K, K);
+  const Eigen::Ref<const plain_type_t<T>>& x_ref = x;
   int i = 0;
-  for (index_t m = 0; m < K; ++m) {
-    for (index_t n = 0; n < m; ++n) {
-      L(m, n) = x(i++);
-    }
-    L(m, m) = exp(x(i++));
-    for (index_t n = m + 1; n < K; ++n) {
-      L(m, n) = 0.0;
-    }
+  for (Eigen::Index m = 0; m < K; ++m) {
+    L.row(m).head(m) = x_ref.segment(i, m);
+    i += m;
+    L.coeffRef(m, m) = exp(x_ref.coeff(i++));
+    L.row(m).tail(K - m - 1).setZero();
   }
   // Jacobian for complete transform, including exp() above
   lp += (K * LOG_TWO);  // needless constant; want propto
-  for (index_t k = 0; k < K; ++k) {
-    lp += (K - k + 1) * log(L(k, k));  // only +1 because index from 0
+  for (Eigen::Index k = 0; k < K; ++k) {
+    lp += (K - k + 1) * log(L.coeff(k, k));  // only +1 because index from 0
   }
   return multiply_lower_tri_self_transpose(L);
 }

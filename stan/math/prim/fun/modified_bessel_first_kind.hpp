@@ -46,11 +46,10 @@ inline T2 modified_bessel_first_kind(int v, const T2 z) {
  * results in overflow when the function value is large.
  */
 inline double modified_bessel_first_kind(int v, int z) {
-check_not_nan("modified_bessel_first_kind", "z", z);
+  check_not_nan("modified_bessel_first_kind", "z", z);
 
-return boost::math::cyl_bessel_i(v, double(z));
+  return boost::math::cyl_bessel_i(v, double(z));
 }
-
 
 }  // namespace math
 }  // namespace stan

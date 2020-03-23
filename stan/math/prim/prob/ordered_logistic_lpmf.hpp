@@ -21,7 +21,7 @@ namespace math {
  * of integers given the vector of continuous locations and
  * specified cutpoints in an ordered logistic model.
  *
- * <p>Typically the continous location
+ * <p>Typically the continuous location
  * will be the dot product of a vector of regression coefficients
  * and a vector of predictors for the outcome
  *
