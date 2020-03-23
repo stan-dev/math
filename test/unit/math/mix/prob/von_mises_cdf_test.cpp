@@ -32,4 +32,20 @@ TEST(mathMixScalFun, von_mises_cdf) {
   stan::test::expect_ad(f, nan, 0.3, nan);
   stan::test::expect_ad(f, nan, nan, 0.5);
   stan::test::expect_ad(f, nan, nan, nan);
+
+  // check helper functions
+  auto f2 = [](const auto& x, const auto& k) {
+    return stan::math::internal::von_mises_cdf_centered(x, k);
+  };
+  stan::test::expect_ad(f2, 0.1, 12.7);
+
+  auto f3 = [](const auto& x, const auto& k) {
+    return stan::math::internal::von_mises_cdf_normalapprox(x, k);
+  };
+  stan::test::expect_ad(f3, 0.7, 62.7);
+
+  auto f4 = [](const auto& x, const auto& k) {
+    return stan::math::internal::von_mises_cdf_series(x, k);
+  };
+  stan::test::expect_ad(f4, -1.7, 12.3);
 }

@@ -11,64 +11,84 @@ namespace math {
 
 namespace internal {
 
-template <typename T_x, typename T_k, typename T_p>
-return_type_t<T_x, T_k, T_p> von_mises_cdf_series(const T_x& x, const T_k& k,
-                                                  const T_p& p) {
-  using stan::math::cos;
-  using stan::math::sin;
-
-  double pi = stan::math::pi();
+/**
+ * This implementation of the von Mises cdf 
+ * is a copy of scipy's. see:
+ * https://github.com/scipy/scipy/blob/8dba340293fe20e62e173bdf2c10ae208286692f/scipy/stats/vonmises.py
+ *
+ * When k < 50, approximate the von Mises cdf
+ * with the following expansion that comes from
+ * scipy. 
+ */
+template <typename T_x, typename T_k>
+return_type_t<T_x, T_k> von_mises_cdf_series(const T_x& x, const T_k& k) {
+  const double pi = stan::math::pi();
+  int p = value_of_rec(28 + 0.5 * k - 100 / (k + 5) + 1);
   auto s = sin(x);
   auto c = cos(x);
   auto sn = sin(p * x);
   auto cn = cos(p * x);
 
-  return_type_t<T_x, T_k, T_p> R = 0;
-  return_type_t<T_x, T_k, T_p> V = 0;
+  using return_t = return_type_t<T_x, T_k>;
+  return_t R = 0.0;
+  return_t V = 0.0;
 
   int n;
-  for (n = p - 1; n > 0; n--) {
+  for (n = 1; n < p; n++) {
     auto sn_tmp = sn * c - cn * s;
     cn = cn * c + sn * s;
     sn = sn_tmp;
-    R = 1 / (2.0 * n / k + R);
-    V = R * (sn / n + V);
+    R = 1 / (2.0 * (p - n) / k + R);
+    V = R * (sn / (p - n) + V);
   }
-  return 0.5 + x / (2 * pi) + V / pi;
+  return 0.5 + x / TWO_PI + V / pi;
 }
 
+/**
+ * conv_mises_cdf_normapprox(x, k) is used to approximate the von 
+ * Mises cdf for k > 50. In this regime, the von Mises cdf 
+ * is well-approximated by a normal distribution. 
+ */
 template <typename T_x, typename T_k>
 return_type_t<T_x, T_k> von_mises_cdf_normalapprox(const T_x& x, const T_k& k) {
   using std::exp;
   using std::sqrt;
-  double pi = stan::math::pi();
 
-  auto b = sqrt(2 / pi) * exp(k) / modified_bessel_first_kind(0, k);
-  auto z = b * sin(x / 2);
-  double mu = 0;
-  double sigma = 1;
+  const auto b = sqrt(2 / pi()) * exp(k) / modified_bessel_first_kind(0, k);
+  const auto z = b * sin(x / 2);
+  const double mu = 0;
+  const double sigma = 1;
 
   return normal_cdf(z, mu, sigma);
 }
 
+
+/**
+ * This function calculates the cdf of the von Mises distribution in 
+ * the case where the distribution has support on (-pi, pi) and 
+ * has mean 0. If k is sufficiently small, this function approximates
+ * the cdf with a Gaussian. Otherwise, use the expansion from scipy.
+ */
 template <typename T_x, typename T_k>
 return_type_t<T_x, T_k> von_mises_cdf_centered(const T_x& x, const T_k& k) {
-  // if the scale is sufficiently small, approximate the cdf with a
-  // normal distribution, otherwise, use the expansion from scipy
   double ck = 50;
-  double a[4] = {28, 0.5, 100, 5};
-  return_type_t<T_x, T_k> f;
+  using return_t = return_type_t<T_x, T_k>;
+  return_t f;
   if (k < ck) {
-    int p = value_of_rec(a[0] + a[1] * k - a[2] / (k + a[3]) + 1);
-    f = von_mises_cdf_series(x, k, p);
-    if (f < 0)
-      f = 0;
-    if (f > 1)
-      f = 1;
+    f = von_mises_cdf_series(x, k);
+    if (f < 0) {
+      f = 0.0;
+      return f;
+    }
+    if (f > 1) {
+      f = 1.0;
+      return f;
+    }
+    return f;
   } else {
     f = von_mises_cdf_normalapprox(x, k);
+    return f;
   }
-  return f;
 }
 
 }  // namespace internal
@@ -96,8 +116,8 @@ return_type_t<T_x, T_k> von_mises_cdf_centered(const T_x& x, const T_k& k) {
 template <typename T_x, typename T_mu, typename T_k>
 inline return_type_t<T_x, T_mu, T_k> von_mises_cdf(const T_x& x, const T_mu& mu,
                                                    const T_k& k) {
-  static char const* const function = "von_mises_cdf";
-  using T_partials_return = partials_return_t<T_x, T_mu, T_k>;
+  static char const* function = "von_mises_cdf";
+  using return_t = return_type_t<T_x, T_mu, T_k>;
   using internal::von_mises_cdf_centered;
 
   check_not_nan(function, "Random variable", x);
@@ -106,13 +126,13 @@ inline return_type_t<T_x, T_mu, T_k> von_mises_cdf(const T_x& x, const T_mu& mu,
   check_positive(function, "Scale parameter", k);
 
   // shift x so that mean is 0
-  return_type_t<T_x, T_mu, T_k> x2 = x - mu;
+  return_t x2 = x - mu;
 
   // x is on an interval (2*n*pi, (2*n + 1)*pi), move it to (-pi, pi)
-  double pi = stan::math::pi();
+  const double pi = stan::math::pi();
   x2 += pi;
-  auto x_floor = floor(x2 / (2 * pi));
-  auto x_moded = x2 - x_floor * 2 * pi;
+  const auto x_floor = floor(x2 / TWO_PI);
+  const auto x_moded = x2 - x_floor * TWO_PI;
   x2 = x_moded - pi;
 
   return von_mises_cdf_centered(x2, k);
