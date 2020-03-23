@@ -13,16 +13,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the natural log of the specified argument.  This version
- * is required to disambiguate <code>log(int)</code>.
- *
- * @param[in] x Argument.
- * @return Natural log of argument.
- */
-inline double log(int x) { return std::log(x); }
-
-/**
- * Structure to wrap log() so that it can be vectorized.
+ * Structure to wrap `log()` so that it can be vectorized.
  */
 struct log_fun {
   /**
@@ -44,26 +35,30 @@ struct log_fun {
  * which may be a scalar or any Stan container of numeric scalars.
  * The return type is the same as the argument type.
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param[in] x container
  * @return Elementwise application of natural log to the argument.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
-inline auto log(const T& x) {
-  return apply_scalar_unary<log_fun, T>::apply(x);
+template <
+    typename Container,
+    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto log(const Container& x) {
+  return apply_scalar_unary<log_fun, Container>::apply(x);
 }
 
 /**
- * Version of log() that accepts Eigen Matrix or matrix expressions.
+ * Version of `log()` that accepts std::vectors, Eigen Matrix/Array objects
+ *  or expressions, and containers of these.
  *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
- * @return Elementwise application of natural log to the argument.
+ * @tparam Container Type of x
+ * @param x Container
+ * @return Natural log of each variable in the container.
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto log(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().log().matrix().eval();
+template <typename Container,
+          require_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto log(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](const auto& v) { return v.array().log(); });
 }
 
 namespace internal {

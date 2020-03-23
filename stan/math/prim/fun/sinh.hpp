@@ -27,39 +27,30 @@ struct sinh_fun {
 /**
  * Vectorized version of sinh().
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x container
  * @return Hyperbolic sine of each variable in x.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
-inline auto sinh(const T& x) {
-  return apply_scalar_unary<sinh_fun, T>::apply(x);
+template <
+    typename Container,
+    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto sinh(const Container& x) {
+  return apply_scalar_unary<sinh_fun, Container>::apply(x);
 }
 
 /**
- * Version of sinh() that accepts Eigen Matrix or matrix expressions.
+ * Version of sinh() that accepts std::vectors, Eigen Matrix/Array objects
+ *  or expressions, and containers of these.
  *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
+ * @tparam Container Type of x
+ * @param x Container
  * @return Hyperbolic sine of each variable in x.
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto sinh(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().sinh().matrix().eval();
-}
-
-/**
- * Version of sinh() that accepts Eigen Array or array expressions.
- *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
- * @return Hyperbolic sine of each variable in x.
- */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto sinh(const Eigen::ArrayBase<Derived>& x) {
-  return x.derived().sinh().eval();
+template <typename Container,
+          require_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto sinh(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](const auto& v) { return v.array().sinh(); });
 }
 
 namespace internal {

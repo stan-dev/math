@@ -13,7 +13,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap atan() so it can be vectorized.
+ * Structure to wrap \c atan() so it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -28,28 +28,33 @@ struct atan_fun {
 };
 
 /**
- * Vectorized version of atan().
+ * Returns the elementwise \c atan() of the input,
+ * which may be a scalar or any Stan container of numeric scalars.
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x container
  * @return Arctan of each value in x, in radians.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
-inline typename apply_scalar_unary<atan_fun, T>::return_t atan(const T& x) {
-  return apply_scalar_unary<atan_fun, T>::apply(x);
+template <
+    typename Container,
+    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto atan(const Container& x) {
+  return apply_scalar_unary<atan_fun, Container>::apply(x);
 }
 
 /**
- * Version of atan() that accepts Eigen Matrix or matrix expressions.
+ * Version of atan() that accepts std::vectors, Eigen Matrix/Array objects,
+ *  or expressions, and containers of these.
  *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
+ * @tparam Container Type of x
+ * @param x Container
  * @return Elementwise atan of members of container.
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto atan(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().atan().matrix().eval();
+template <typename Container,
+          require_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto atan(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](const auto& v) { return v.array().atan(); });
 }
 
 namespace internal {

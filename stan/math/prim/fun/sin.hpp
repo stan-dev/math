@@ -29,26 +29,29 @@ struct sin_fun {
 /**
  * Vectorized version of sin().
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x angles in radians
  * @return Sine of each value in x.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
+template <typename T,
+          require_not_container_st<is_container, std::is_arithmetic, T>...>
 inline auto sin(const T& x) {
   return apply_scalar_unary<sin_fun, T>::apply(x);
 }
 
 /**
- * Version of sin() that accepts Eigen Matrix or matrix expressions.
+ * Version of sin() that accepts std::vectors, Eigen Matrix/Array objects
+ *  or expressions, and containers of these.
  *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
+ * @tparam Container Type of x
+ * @param x Container
  * @return Sine of each value in x.
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto sin(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().sin().matrix().eval();
+template <typename Container,
+          require_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto sin(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [&](const auto& v) { return v.array().sin(); });
 }
 
 namespace internal {

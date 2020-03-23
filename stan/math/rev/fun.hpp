@@ -23,7 +23,6 @@
 #include <stan/math/rev/fun/bessel_second_kind.hpp>
 #include <stan/math/rev/fun/beta.hpp>
 #include <stan/math/rev/fun/binary_log_loss.hpp>
-#include <stan/math/rev/fun/calculate_chain.hpp>
 #include <stan/math/rev/fun/cbrt.hpp>
 #include <stan/math/rev/fun/ceil.hpp>
 #include <stan/math/rev/fun/cholesky_decompose.hpp>
@@ -33,7 +32,6 @@
 #include <stan/math/rev/fun/cos.hpp>
 #include <stan/math/rev/fun/cosh.hpp>
 #include <stan/math/rev/fun/cov_exp_quad.hpp>
-#include <stan/math/rev/fun/crossprod.hpp>
 #include <stan/math/rev/fun/determinant.hpp>
 #include <stan/math/rev/fun/digamma.hpp>
 #include <stan/math/rev/fun/divide.hpp>

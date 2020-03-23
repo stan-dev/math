@@ -17,7 +17,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap acos() so it can be vectorized.
+ * Structure to wrap `acos()` so it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -32,27 +32,33 @@ struct acos_fun {
 };
 
 /**
- * Vectorized version of acos().
+ * Returns the elementwise `acos()` of the input,
+ * which may be a scalar or any Stan container of numeric scalars.
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x container
  * @return Arc cosine of each variable in the container, in radians.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
-inline auto acos(const T& x) {
-  return apply_scalar_unary<acos_fun, T>::apply(x);
+template <
+    typename Container,
+    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto acos(const Container& x) {
+  return apply_scalar_unary<acos_fun, Container>::apply(x);
 }
 
 /**
- * Version of acos() that accepts Eigen Matrix or matrix expressions.
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
+ * Version of `acos()` that accepts std::vectors, Eigen Matrix/Array objects
+ *  or expressions, and containers of these.
+ *
+ * @tparam Container Type of x
+ * @param x Container
  * @return Arc cosine of each variable in the container, in radians.
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto acos(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().acos().matrix().eval();
+template <typename Container,
+          require_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto acos(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](const auto& v) { return v.array().acos(); });
 }
 
 namespace internal {

@@ -20,26 +20,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the inverse hyperbolic sine of the specified value.
- * Returns infinity for infinity argument and -infinity for
- * -infinity argument.
- * Returns nan for nan argument.
- *
- * @param[in] x Argument.
- * @return Inverse hyperbolic sine of the argument.
- */
-inline double asinh(double x) { return std::asinh(x); }
-
-/**
- * Integer version of asinh.
- *
- * @param[in] x Argument.
- * @return Inverse hyperbolic sine of the argument.
- */
-inline double asinh(int x) { return std::asinh(x); }
-
-/**
- * Structure to wrap asinh() so it can be vectorized.
+ * Structure to wrap `asinh()` so it can be vectorized.
  *
  * @tparam T argument scalar type
  * @param x argument
@@ -48,12 +29,14 @@ inline double asinh(int x) { return std::asinh(x); }
 struct asinh_fun {
   template <typename T>
   static inline T fun(const T& x) {
+    using std::asinh;
     return asinh(x);
   }
 };
 
 /**
- * Vectorized version of asinh().
+ * Returns the elementwise `asinh()` of the input,
+ * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam T type of container
  * @param x container
