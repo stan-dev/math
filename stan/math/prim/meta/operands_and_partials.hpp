@@ -97,7 +97,10 @@ template <typename ReturnType, typename... Ops>
 class operands_and_partials_impl<ReturnType, require_arithmetic_t<ReturnType>, Ops...> {
  public:
   explicit operands_and_partials_impl(const Ops&...) {}
-
+  template <int id>
+  inline auto& edge() {
+    return std::get<id - 1>(edges_);
+  }
   /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
    * This should contain both the value and the tangent.
