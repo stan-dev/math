@@ -233,6 +233,14 @@ class block_
 
 /**
  * Block of a kernel generator expression.
+ *
+ * Block operation modifies how its argument is indexed. If a matrix is both an
+ * argument and result of such an operation (such as in <code> block(a, row1,
+ * col1, rows, cols) = block(a, row2, col2, rows, cols);
+ * </code>), the result can be wrong due to aliasing. In such case the
+ * expression should be evaluating in a temporary by doing <code> block(a, row1,
+ * col1, rows, cols) = block(a, row2, col2, rows, cols).eval();</code>. This is
+ * not necessary if the bolcks do not overlap or if they are the same block.
  * @tparam T type of argument
  * @param a input argument
  * @param start_row first row of block

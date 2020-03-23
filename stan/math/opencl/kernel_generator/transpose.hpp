@@ -110,6 +110,17 @@ class transpose_
   }
 };
 
+/**
+ * Transposes a kernel generator expression.
+ *
+ * Transposition modifies how its argument is indexed. If a matrix is both an
+ * argument and result of such an operation (such as in <code> a = transpose(a);
+ * </code>), the result will be wrong due to aliasing. In such case the
+ * expression should be evaluating in a temporary by doing <code> a =
+ * transpose(a).eval();</code>.
+ * @tparam Arg type of the argument expression.
+ * @param a argument to transposition
+ */
 template <typename Arg,
           typename = require_all_valid_expressions_and_none_scalar_t<Arg>>
 inline auto transpose(Arg&& a) {
