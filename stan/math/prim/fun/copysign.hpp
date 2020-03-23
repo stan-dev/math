@@ -23,13 +23,31 @@ namespace math {
  * @tparam U type of second argument
  * @param[in] x first complex argument
  * @param[in] y second complex argument
- * @return copy of second argument, negated if necessary to match sign
- * of first argument
+ * @return copy of the first argument, negated if necessary to match
+ * the sign of the second argument
  */
 template <typename T, typename U>
 inline T copysign(const T& x, const U& y) {
-  return std::signbit(value_of_rec(x)) != std::signbit(value_of_rec(y)) ? -x
-                                                                        : x;
+  return (std::signbit(value_of_rec(x)) != std::signbit(value_of_rec(y))) ? -x
+                                                                          : x;
+}
+
+/**
+ * Return the negation of the first argument if the first and second
+ * arguments have different signs and the first argument is not zero,
+ * otherwise return a copy of the first argument.
+ *
+ * @tparam T type of first argument
+ * @tparam U type of second argument
+ * @param[in] x first complex argument
+ * @param[in] y second complex argument
+ * @return copy of the first argument, negated if necessary to match
+ * the sign of the second argument
+ * @see copysign
+ */
+template <typename T, typename U>
+inline T copysign_non_zero(const T& x, const U& y) {
+  return x != 0 ? stan::math::copysign(x, y) : x;
 }
 
 /**
@@ -38,7 +56,10 @@ inline T copysign(const T& x, const U& y) {
  * arguments to the real and complex parts of the second.
  *
  * This is an overload of the standard libary `copysign` for complex
- * numbers that will be used with argument-dependent lookup.
+ * numbers that will be used with argument-dependent lookup.  Rather
+ * than using the standard library `copysign`, it uses
+ * `copysign_non_zero`, which does not change sign if the reference
+ * value is zero (`-0.0` or `0.0`).
  *
  * @tparam T value type of first argument
  * @tparam U value type of second argument
@@ -48,9 +69,10 @@ inline T copysign(const T& x, const U& y) {
  * necessary to match sign of first argument
  */
 template <typename T, typename U>
-inline std::complex<T> copysign(const std::complex<T>& y,
-                                const std::complex<U>& x) {
-  return {copysign(y.real(), x.real()), copysign(y.imag(), x.imag())};
+inline std::complex<T> copysign(const std::complex<T>& x,
+                                const std::complex<U>& y) {
+  return {copysign_non_zero(x.real(), y.real()),
+          copysign_non_zero(x.imag(), y.imag())};
 }
 
 }  // namespace math
