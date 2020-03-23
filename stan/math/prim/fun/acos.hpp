@@ -71,7 +71,7 @@ namespace internal {
  */
 template <typename V>
 inline std::complex<V> complex_acos(const std::complex<V>& z) {
-  return V(0.5 * pi()) - asin(z);
+  return 0.5 * pi() - asin(z);
 }
 }  // namespace internal
 
