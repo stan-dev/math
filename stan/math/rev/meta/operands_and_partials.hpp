@@ -88,8 +88,9 @@ class ops_partials_edge<double, var> {
   inline auto& edge() {
     return std::get<id - 1>(edges_);
   }
-  explicit operands_and_partials_impl(const Ops&... ops) :
-   edges_(std::forward_as_tuple(internal::ops_partials_edge<double, Ops>(ops)...)) {}
+  template <typename... OpsT>
+  explicit operands_and_partials_impl(OpsT&&... ops) :
+   edges_(internal::ops_partials_edge<double, Ops>(std::forward<OpsT>(ops))...) {}
 
   /**
    * Build the node to be stored on the autodiff graph.
@@ -105,10 +106,10 @@ class ops_partials_edge<double, var> {
    * @return the node to be stored in the expression graph for autodiff
    */
   template <typename T, typename... Args>
-  inline void dump_operands_and_partials(int idx, vari** vari_stuff, double* partials_stuff, T& op1, Args&&... args) {
+  inline void dump_operands_and_partials(int idx, vari** vari_stuff, double* partials_stuff, T&& op1, Args&&... args) {
     op1.dump_operands(&vari_stuff[idx]);
     op1.dump_partials(&partials_stuff[idx]);
-    dump_operands_and_partials(idx + op1.size(), vari_stuff, partials_stuff, args...);
+    dump_operands_and_partials(idx + op1.size(), vari_stuff, partials_stuff, std::forward<Args>(args)...);
   }
   inline void dump_operands_and_partials(int idx, vari** vari_stuff, double* partials_stuff) {}
 
@@ -124,7 +125,7 @@ class ops_partials_edge<double, var> {
         = ChainableStack::instance_->memalloc_.alloc_array<double>(edges_size);
     apply([&](auto&&... args) {
       dump_operands_and_partials(0, varis, partials, args...);
-    }, this->edges_);
+    }, std::move(this->edges_));
     return var(
         new precomputed_gradients_vari(value, edges_size, varis, partials));
   }
@@ -139,9 +140,10 @@ class ops_partials_edge<double, std::vector<var>> {
   using partials_t = Eigen::VectorXd;
   partials_t partials_;                       // For univariate use-cases
   broadcast_array<partials_t> partials_vec_{partials_};  // For multivariate
-  explicit ops_partials_edge(const Op& op)
+  template <typename OpT>
+  explicit ops_partials_edge(OpT&& op)
       : partials_(partials_t::Zero(op.size())),
-        operands_(op) {}
+        operands_(std::forward<OpT>(op)) {}
 
  private:
    template <typename...>
@@ -169,10 +171,11 @@ class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
   using partials_t = promote_scalar_t<double, Op>;
   partials_t partials_;                       // For univariate use-cases
   broadcast_array<partials_t> partials_vec_{partials_};  // For multivariate
-  explicit ops_partials_edge(const Op& ops)
+  template <typename OpT>
+  explicit ops_partials_edge(OpT&& ops)
       : partials_(ops.rows(), ops.cols()),
-        operands_(ops) {
-          partials_ = partials_t::Zero(ops.rows(), ops.cols());
+        operands_(std::forward<OpT>(ops)) {
+          partials_ = partials_t::Zero(partials_.rows(), partials_.cols());
         }
 
  private:
@@ -203,10 +206,11 @@ class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C>>> {
   using Op = std::vector<Eigen::Matrix<var, R, C>>;
   using partial_t = Eigen::Matrix<double, -1, -1>;
   std::vector<partial_t> partials_vec_;
-  explicit ops_partials_edge(const Op& ops)
-      : partials_vec_(ops.size()), operands_(ops) {
-    for (size_t i = 0; i < ops.size(); ++i) {
-      partials_vec_[i] = partial_t::Zero(ops[i].rows(), ops[i].cols());
+  template <typename OpT>
+  explicit ops_partials_edge(OpT&& ops)
+  : partials_vec_(ops.size()), operands_(std::forward<OpT>(ops)) {
+    for (size_t i = 0; i < operands_.size(); ++i) {
+      partials_vec_[i] = partial_t::Zero(operands_[i].rows(), operands_[i].cols());
     }
   }
 
@@ -247,10 +251,11 @@ class ops_partials_edge<double, std::vector<std::vector<var>>> {
   using Op = std::vector<std::vector<var>>;
   using partial_t = std::vector<double>;
   std::vector<partial_t> partials_vec_;
-  explicit ops_partials_edge(const Op& ops)
-      : partials_vec_(stan::math::size(ops)), operands_(ops) {
-    for (size_t i = 0; i < stan::math::size(ops); ++i) {
-      partials_vec_[i] = partial_t(stan::math::size(ops[i]), 0.0);
+  template <typename OpT>
+  explicit ops_partials_edge(OpT&& ops)
+      : partials_vec_(stan::math::size(ops)), operands_(std::forward<OpT>(ops)) {
+    for (size_t i = 0; i < stan::math::size(operands_); ++i) {
+      partials_vec_[i] = partial_t(stan::math::size(operands_[i]), 0.0);
     }
   }
 
