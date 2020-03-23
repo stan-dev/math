@@ -65,13 +65,13 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lccdf(const T_y& y, const T_loc& mu,
     ccdf_log += log(ccdf_log_n);
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] -= rep_deriv / ccdf_log_n;
+      ops_partials.template edge<1>().partials_[n] -= rep_deriv / ccdf_log_n;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n] += rep_deriv / ccdf_log_n;
+      ops_partials.template edge<2>().partials_[n] += rep_deriv / ccdf_log_n;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n] += rep_deriv * scaled_diff / ccdf_log_n;
+      ops_partials.template edge<3>().partials_[n] += rep_deriv * scaled_diff / ccdf_log_n;
     }
   }
 

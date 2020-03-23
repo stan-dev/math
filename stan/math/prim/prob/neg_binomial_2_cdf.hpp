@@ -91,11 +91,11 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
     P *= P_i;
 
     if (!is_constant_all<T_location>::value) {
-      ops_partials.edge1_.partials_[i] -= inc_beta_ddz_i * phi_dbl;
+      ops_partials.template edge<1>().partials_[i] -= inc_beta_ddz_i * phi_dbl;
     }
 
     if (!is_constant_all<T_precision>::value) {
-      ops_partials.edge2_.partials_[i]
+      ops_partials.template edge<2>().partials_[i]
           += inc_beta_dda(phi_dbl, n_dbl_p1, p_dbl, digamma_phi_vec[i],
                           digamma_sum_vec[i])
                  / P_i
@@ -105,13 +105,13 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
 
   if (!is_constant_all<T_location>::value) {
     for (size_t i = 0; i < stan::math::size(mu); ++i) {
-      ops_partials.edge1_.partials_[i] *= P;
+      ops_partials.template edge<1>().partials_[i] *= P;
     }
   }
 
   if (!is_constant_all<T_precision>::value) {
     for (size_t i = 0; i < size_phi; ++i) {
-      ops_partials.edge2_.partials_[i] *= P;
+      ops_partials.template edge<2>().partials_[i] *= P;
     }
   }
 

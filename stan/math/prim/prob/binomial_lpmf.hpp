@@ -85,12 +85,12 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
         sum_N += N_vec[i];
       }
       const T_partials_return theta_dbl = value_of(theta_vec[0]);
-      ops_partials.edge1_.partials_[0]
+      ops_partials.template edge<1>().partials_[0]
           += sum_n / theta_dbl - (sum_N - sum_n) / (1.0 - theta_dbl);
     } else {
       for (size_t i = 0; i < max_size_seq_view; ++i) {
         const T_partials_return theta_dbl = value_of(theta_vec[i]);
-        ops_partials.edge1_.partials_[i]
+        ops_partials.template edge<1>().partials_[i]
             += n_vec[i] / theta_dbl - (N_vec[i] - n_vec[i]) / (1.0 - theta_dbl);
       }
     }

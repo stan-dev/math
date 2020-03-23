@@ -126,45 +126,45 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     Matrix<T_partials_return, Dynamic, 1> mu_derivative = inv_sigma * y_scaled;
     if (!is_constant_all<T_y>::value) {
       if (is_vector<T_y>::value) {
-        ops_partials.edge1_.partials_ = -mu_derivative;
+        ops_partials.template edge<1>().partials_ = -mu_derivative;
       } else {
-        ops_partials.edge1_.partials_[0] = -mu_derivative.sum();
+        ops_partials.template edge<1>().partials_[0] = -mu_derivative.sum();
       }
     }
     if (!is_constant_all<T_x_scalar>::value) {
       if (T_x_rows == 1) {
-        ops_partials.edge2_.partials_
+        ops_partials.template edge<2>().partials_
             = forward_as<Array<T_partials_return, Dynamic, T_x_rows>>(
                 beta_val_vec * sum(mu_derivative));
       } else {
-        ops_partials.edge2_.partials_
+        ops_partials.template edge<2>().partials_
             = (beta_val_vec * mu_derivative.transpose()).transpose();
       }
     }
     if (!is_constant_all<T_beta>::value) {
       if (T_x_rows == 1) {
-        ops_partials.edge4_.partials_
+        ops_partials.template edge<4>().partials_
             = forward_as<Matrix<T_partials_return, 1, Dynamic>>(
                 mu_derivative.sum() * x_val);
       } else {
-        ops_partials.edge4_.partials_ = mu_derivative.transpose() * x_val;
+        ops_partials.template edge<4>().partials_ = mu_derivative.transpose() * x_val;
       }
     }
     if (!is_constant_all<T_alpha>::value) {
       if (is_vector<T_alpha>::value) {
-        ops_partials.edge3_.partials_ = mu_derivative;
+        ops_partials.template edge<3>().partials_ = mu_derivative;
       } else {
-        ops_partials.edge3_.partials_[0] = sum(mu_derivative);
+        ops_partials.template edge<3>().partials_[0] = sum(mu_derivative);
       }
     }
     if (!is_constant_all<T_scale>::value) {
       if (is_vector<T_scale>::value) {
         Array<T_partials_return, Dynamic, 1> y_scaled_sq = y_scaled * y_scaled;
         y_scaled_sq_sum = sum(y_scaled_sq);
-        ops_partials.edge5_.partials_ = (y_scaled_sq - 1) * inv_sigma;
+        ops_partials.template edge<5>().partials_ = (y_scaled_sq - 1) * inv_sigma;
       } else {
         y_scaled_sq_sum = sum(y_scaled * y_scaled);
-        ops_partials.edge5_.partials_[0]
+        ops_partials.template edge<5>().partials_[0]
             = (y_scaled_sq_sum - N_instances) * forward_as<double>(inv_sigma);
       }
     }

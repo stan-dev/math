@@ -65,14 +65,14 @@ return_type_t<T_y, T_scale, T_shape> pareto_lccdf(const T_y& y,
     P += alpha_dbl * log_dbl;
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
+      ops_partials.template edge<1>().partials_[n]
           -= alpha_dbl * y_min_inv_dbl * exp(log_dbl);
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge2_.partials_[n] += alpha_dbl * y_min_inv_dbl;
+      ops_partials.template edge<2>().partials_[n] += alpha_dbl * y_min_inv_dbl;
     }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge3_.partials_[n] += log_dbl;
+      ops_partials.template edge<3>().partials_[n] += log_dbl;
     }
   }
   return ops_partials.build(P);

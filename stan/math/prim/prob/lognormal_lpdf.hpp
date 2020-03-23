@@ -118,13 +118,13 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
     }
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] -= (1 + logy_m_mu_div_sigma) * inv_y[n];
+      ops_partials.template edge<1>().partials_[n] -= (1 + logy_m_mu_div_sigma) * inv_y[n];
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n] += logy_m_mu_div_sigma;
+      ops_partials.template edge<2>().partials_[n] += logy_m_mu_div_sigma;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
+      ops_partials.template edge<3>().partials_[n]
           += (logy_m_mu_div_sigma * logy_m_mu - 1) * inv_sigma[n];
     }
   }

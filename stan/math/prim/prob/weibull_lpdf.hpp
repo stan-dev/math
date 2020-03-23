@@ -122,17 +122,17 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
 
     if (!is_constant_all<T_y>::value) {
       const T_partials_return inv_y = 1.0 / value_of(y_vec[n]);
-      ops_partials.edge1_.partials_[n]
+      ops_partials.template edge<1>().partials_[n]
           += (alpha_dbl - 1.0) * inv_y
              - alpha_dbl * y_div_sigma_pow_alpha[n] * inv_y;
     }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge2_.partials_[n]
+      ops_partials.template edge<2>().partials_[n]
           += 1.0 / alpha_dbl
              + (1.0 - y_div_sigma_pow_alpha[n]) * (log_y[n] - log_sigma[n]);
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
+      ops_partials.template edge<3>().partials_[n]
           += alpha_dbl * inv_sigma[n] * (y_div_sigma_pow_alpha[n] - 1.0);
     }
   }

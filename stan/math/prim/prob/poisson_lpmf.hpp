@@ -70,7 +70,7 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
     }
 
     if (!is_constant_all<T_rate>::value) {
-      ops_partials.edge1_.partials_[i] += n_vec[i] / lambda_val - 1.0;
+      ops_partials.template edge<1>().partials_[i] += n_vec[i] / lambda_val - 1.0;
     }
   }
 

@@ -77,7 +77,7 @@ return_type_t<T_rate> poisson_cdf(const T_n& n, const T_rate& lambda) {
     P *= Pi;
 
     if (!is_constant_all<T_rate>::value) {
-      ops_partials.edge1_.partials_[i] -= exp_minus_lambda[i]
+      ops_partials.template edge<1>().partials_[i] -= exp_minus_lambda[i]
                                           * pow(lambda_dbl, n_dbl)
                                           / (tgamma_n_plus_one[i] * Pi);
     }
@@ -85,7 +85,7 @@ return_type_t<T_rate> poisson_cdf(const T_n& n, const T_rate& lambda) {
 
   if (!is_constant_all<T_rate>::value) {
     for (size_t i = 0; i < size_lambda; ++i) {
-      ops_partials.edge1_.partials_[i] *= P;
+      ops_partials.template edge<1>().partials_[i] *= P;
     }
   }
 

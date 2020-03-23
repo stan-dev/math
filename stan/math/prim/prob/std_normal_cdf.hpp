@@ -64,14 +64,14 @@ inline return_type_t<T_y> std_normal_cdf(const T_y& y) {
                 ? 0.0
                 : INV_SQRT_TWO_PI * exp(-scaled_y * scaled_y) / cdf_n;
       if (!is_constant_all<T_y>::value) {
-        ops_partials.edge1_.partials_[n] += rep_deriv;
+        ops_partials.template edge<1>().partials_[n] += rep_deriv;
       }
     }
   }
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < N; ++n) {
-      ops_partials.edge1_.partials_[n] *= cdf;
+      ops_partials.template edge<1>().partials_[n] *= cdf;
     }
   }
 

@@ -60,17 +60,17 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lccdf(
     P += ccdf_log;
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] -= rep_deriv;
+      ops_partials.template edge<1>().partials_[n] -= rep_deriv;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n] += rep_deriv;
+      ops_partials.template edge<2>().partials_[n] += rep_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
+      ops_partials.template edge<3>().partials_[n]
           += rep_deriv * (y_dbl - mu_dbl) / lambda_dbl;
     }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge4_.partials_[n] -= log_temp;
+      ops_partials.template edge<4>().partials_[n] -= log_temp;
     }
   }
 

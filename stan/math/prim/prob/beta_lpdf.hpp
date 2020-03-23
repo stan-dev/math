@@ -166,15 +166,15 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
     }
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
+      ops_partials.template edge<1>().partials_[n]
           += (alpha_dbl - 1) / y_dbl + (beta_dbl - 1) / (y_dbl - 1);
     }
     if (!is_constant_all<T_scale_succ>::value) {
-      ops_partials.edge2_.partials_[n]
+      ops_partials.template edge<2>().partials_[n]
           += log_y[n] + digamma_alpha_beta[n] - digamma_alpha[n];
     }
     if (!is_constant_all<T_scale_fail>::value) {
-      ops_partials.edge3_.partials_[n]
+      ops_partials.template edge<3>().partials_[n]
           += log1m_y[n] + digamma_alpha_beta[n] - digamma_beta[n];
     }
   }

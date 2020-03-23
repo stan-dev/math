@@ -62,11 +62,11 @@ return_type_t<T_y, T_inv_scale> exponential_cdf(const T_y& y,
 
   for (size_t n = 0; n < N; n++) {
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
+      ops_partials.template edge<1>().partials_[n]
           += value_of(beta_vec[n]) * rep_deriv[n] * cdf;
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge2_.partials_[n]
+      ops_partials.template edge<2>().partials_[n]
           += value_of(y_vec[n]) * rep_deriv[n] * cdf;
     }
   }

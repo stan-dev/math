@@ -79,7 +79,7 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
     }
 
     if (!is_constant_all<T_log_rate>::value) {
-      ops_partials.edge1_.partials_[i] += n_vec[i] - exp_alpha[i];
+      ops_partials.template edge<1>().partials_[i] += n_vec[i] - exp_alpha[i];
     }
   }
   return ops_partials.build(logp);

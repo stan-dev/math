@@ -15,6 +15,8 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <vector>
+#include <iostream>
+
 
 namespace stan {
 namespace math {
@@ -26,10 +28,10 @@ namespace internal {
 template <>
 class ops_partials_edge<double, var> {
  public:
-  double partial_;
-  broadcast_array<double> partials_;
+  double partial_{0};
+  broadcast_array<double> partials_{partial_};
   explicit ops_partials_edge(const var& op)
-      : partial_(0), partials_(partial_), operand_(op) {}
+      : operand_(op) {}
 
  private:
    template <typename...>
@@ -83,11 +85,11 @@ class ops_partials_edge<double, var> {
  public:
   std::tuple<internal::ops_partials_edge<double, Ops>...> edges_;
   template <int id>
-  auto edge() {
+  inline auto& edge() {
     return std::get<id - 1>(edges_);
   }
   explicit operands_and_partials_impl(const Ops&... ops) :
-   edges_(internal::ops_partials_edge<double, Ops>(ops)...) {}
+   edges_(std::forward_as_tuple(internal::ops_partials_edge<double, Ops>(ops)...)) {}
 
   /**
    * Build the node to be stored on the autodiff graph.
@@ -103,14 +105,14 @@ class ops_partials_edge<double, var> {
    * @return the node to be stored in the expression graph for autodiff
    */
   template <typename T, typename... Args>
-  void dump_operands_and_partials(int& idx, vari**& vari_stuff, double*& partials_stuff, T& op1, Args&&... args) {
+  inline void dump_operands_and_partials(int idx, vari** vari_stuff, double* partials_stuff, T& op1, Args&&... args) {
     op1.dump_operands(&vari_stuff[idx]);
     op1.dump_partials(&partials_stuff[idx]);
     dump_operands_and_partials(idx + op1.size(), vari_stuff, partials_stuff, args...);
   }
-  void dump_operands_and_partials(int& idx, vari**& vari_stuff, double*& partials_stuff) {}
+  inline void dump_operands_and_partials(int idx, vari** vari_stuff, double* partials_stuff) {}
 
-  var build(double value) {
+  inline var build(double value) {
     size_t edges_size = apply(
     [&](auto&&... args) {
       return sum(args.size()...);
@@ -120,12 +122,9 @@ class ops_partials_edge<double, var> {
         = ChainableStack::instance_->memalloc_.alloc_array<vari*>(edges_size);
     double* partials
         = ChainableStack::instance_->memalloc_.alloc_array<double>(edges_size);
-    int idx = 0;
-
     apply([&](auto&&... args) {
-      dump_operands_and_partials(idx, varis, partials, args...);
+      dump_operands_and_partials(0, varis, partials, args...);
     }, this->edges_);
-
     return var(
         new precomputed_gradients_vari(value, edges_size, varis, partials));
   }
@@ -139,10 +138,9 @@ class ops_partials_edge<double, std::vector<var>> {
   using Op = std::vector<var>;
   using partials_t = Eigen::VectorXd;
   partials_t partials_;                       // For univariate use-cases
-  broadcast_array<partials_t> partials_vec_;  // For multivariate
+  broadcast_array<partials_t> partials_vec_{partials_};  // For multivariate
   explicit ops_partials_edge(const Op& op)
       : partials_(partials_t::Zero(op.size())),
-        partials_vec_(partials_),
         operands_(op) {}
 
  private:
@@ -170,11 +168,12 @@ class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
  public:
   using partials_t = promote_scalar_t<double, Op>;
   partials_t partials_;                       // For univariate use-cases
-  broadcast_array<partials_t> partials_vec_;  // For multivariate
+  broadcast_array<partials_t> partials_vec_{partials_};  // For multivariate
   explicit ops_partials_edge(const Op& ops)
-      : partials_(partials_t::Zero(ops.rows(), ops.cols())),
-        partials_vec_(partials_),
-        operands_(ops) {}
+      : partials_(ops.rows(), ops.cols()),
+        operands_(ops) {
+          partials_ = partials_t::Zero(ops.rows(), ops.cols());
+        }
 
  private:
    template <typename...>

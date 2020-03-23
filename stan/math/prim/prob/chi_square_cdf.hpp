@@ -91,12 +91,12 @@ return_type_t<T_y, T_dof> chi_square_cdf(const T_y& y, const T_dof& nu) {
     cdf *= Pn;
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl)
+      ops_partials.template edge<1>().partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl)
                                           * pow(beta_dbl * y_dbl, alpha_dbl - 1)
                                           / tgamma(alpha_dbl) / Pn;
     }
     if (!is_constant_all<T_dof>::value) {
-      ops_partials.edge2_.partials_[n]
+      ops_partials.template edge<2>().partials_[n]
           -= 0.5
              * grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
                                   digamma_vec[n])
@@ -106,12 +106,12 @@ return_type_t<T_y, T_dof> chi_square_cdf(const T_y& y, const T_dof& nu) {
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
-      ops_partials.edge1_.partials_[n] *= cdf;
+      ops_partials.template edge<1>().partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_dof>::value) {
     for (size_t n = 0; n < stan::math::size(nu); ++n) {
-      ops_partials.edge2_.partials_[n] *= cdf;
+      ops_partials.template edge<2>().partials_[n] *= cdf;
     }
   }
   return ops_partials.build(cdf);

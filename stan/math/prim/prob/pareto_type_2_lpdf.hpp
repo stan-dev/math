@@ -99,17 +99,17 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
     }
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] -= deriv_1_2;
+      ops_partials.template edge<1>().partials_[n] -= deriv_1_2;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n] += deriv_1_2;
+      ops_partials.template edge<2>().partials_[n] += deriv_1_2;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
+      ops_partials.template edge<3>().partials_[n]
           -= alpha_div_sum * (mu_dbl - y_dbl) / lambda_dbl + inv_sum;
     }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge4_.partials_[n] += inv_alpha[n] - log1p_scaled_diff;
+      ops_partials.template edge<4>().partials_[n] += inv_alpha[n] - log1p_scaled_diff;
     }
   }
   return ops_partials.build(logp);

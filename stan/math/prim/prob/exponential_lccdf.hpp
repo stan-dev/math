@@ -36,10 +36,10 @@ return_type_t<T_y, T_inv_scale> exponential_lccdf(const T_y& y,
     ccdf_log += -beta_dbl * y_dbl;
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] -= beta_dbl;
+      ops_partials.template edge<1>().partials_[n] -= beta_dbl;
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge2_.partials_[n] -= y_dbl;
+      ops_partials.template edge<2>().partials_[n] -= y_dbl;
     }
   }
   return ops_partials.build(ccdf_log);

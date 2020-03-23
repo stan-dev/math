@@ -99,12 +99,12 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
   if (!is_constant_all<T_prob>::value) {
     const auto& theta_deriv = (alpha_m_1 / theta_dbl.array()).matrix();
     for (size_t t = 0; t < t_length; t++)
-      ops_partials.edge1_.partials_vec_[t] += theta_deriv.col(t);
+      ops_partials.template edge<1>().partials_vec_[t] += theta_deriv.col(t);
   }
 
   if (!is_constant_all<T_prior_size>::value) {
     for (size_t t = 0; t < t_length; t++)
-      ops_partials.edge2_.partials_vec_[t]
+      ops_partials.template edge<2>().partials_vec_[t]
           += (digamma(alpha_dbl.col(t).sum())
               - digamma(alpha_dbl).col(t).array() + theta_log.col(t))
                  .matrix();

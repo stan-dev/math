@@ -104,10 +104,10 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
       grad_reg_inc_beta(g1, g2, alpha_dbl, n_dbl + 1, p_dbl,
                         digammaAlpha_vec[i], digammaN_vec[i], digammaSum_vec[i],
                         beta_func);
-      ops_partials.edge1_.partials_[i] -= g1 / Pi;
+      ops_partials.template edge<1>().partials_[i] -= g1 / Pi;
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge2_.partials_[i] -= d_dbl * pow(1 - p_dbl, n_dbl)
+      ops_partials.template edge<2>().partials_[i] -= d_dbl * pow(1 - p_dbl, n_dbl)
                                           * pow(p_dbl, alpha_dbl - 1)
                                           / (beta_func * Pi);
     }

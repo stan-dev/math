@@ -70,16 +70,16 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lcdf(
         = (-2.0 * deriv_owens + deriv_erfc) / cdf_log_;
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += rep_deriv;
+      ops_partials.template edge<1>().partials_[n] += rep_deriv;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n] -= rep_deriv;
+      ops_partials.template edge<2>().partials_[n] -= rep_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n] -= rep_deriv * diff;
+      ops_partials.template edge<3>().partials_[n] -= rep_deriv * diff;
     }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge4_.partials_[n]
+      ops_partials.template edge<4>().partials_[n]
           += -2.0 * exp(-0.5 * diff_sq * (1.0 + alpha_dbl_sq))
              / ((1 + alpha_dbl_sq) * TWO_PI) / cdf_log_;
     }

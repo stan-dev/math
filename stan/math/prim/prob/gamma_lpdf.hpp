@@ -128,14 +128,14 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
     }
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += (alpha_dbl - 1) / y_dbl - beta_dbl;
+      ops_partials.template edge<1>().partials_[n] += (alpha_dbl - 1) / y_dbl - beta_dbl;
     }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge2_.partials_[n]
+      ops_partials.template edge<2>().partials_[n]
           += -digamma_alpha[n] + log_beta[n] + log_y[n];
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge3_.partials_[n] += alpha_dbl / beta_dbl - y_dbl;
+      ops_partials.template edge<3>().partials_[n] += alpha_dbl / beta_dbl - y_dbl;
     }
   }
   return ops_partials.build(logp);

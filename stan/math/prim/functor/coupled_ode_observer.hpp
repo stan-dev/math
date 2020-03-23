@@ -122,19 +122,19 @@ struct coupled_ode_observer {
       // iterate over parameters for each equation
       if (!is_constant_all<T1>::value) {
         for (std::size_t k = 0; k < N_; k++) {
-          ops_partials.edge1_.partials_[k] = coupled_state[N_ + N_ * k + j];
+          ops_partials.template edge<1>().partials_[k] = coupled_state[N_ + N_ * k + j];
         }
       }
 
       if (!is_constant_all<T2>::value) {
         for (std::size_t k = 0; k < M_; k++) {
-          ops_partials.edge2_.partials_[k]
+          ops_partials.template edge<2>().partials_[k]
               = coupled_state[N_ + index_offset_theta_ + N_ * k + j];
         }
       }
 
       if (!is_constant_all<T_ts>::value) {
-        ops_partials.edge4_.partials_[0] = dy_dt[j];
+        ops_partials.template edge<4>().partials_[0] = dy_dt[j];
       }
 
       yt.emplace_back(ops_partials.build(coupled_state[j]));

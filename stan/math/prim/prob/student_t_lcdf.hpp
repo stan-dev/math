@@ -101,7 +101,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
       P += log(Pn);
 
       if (!is_constant_all<T_y>::value) {
-        ops_partials.edge1_.partials_[n]
+        ops_partials.template edge<1>().partials_[n]
             += -zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
 
@@ -113,16 +113,16 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
                           digammaNu_vec[n], digammaHalf,
                           digammaNuPlusHalf_vec[n], betaNuHalf);
 
-        ops_partials.edge2_.partials_[n]
+        ops_partials.template edge<2>().partials_[n]
             += zJacobian * (d_ibeta * (r / t) * (r / t) + 0.5 * g1) / Pn;
       }
 
       if (!is_constant_all<T_loc>::value) {
-        ops_partials.edge3_.partials_[n]
+        ops_partials.template edge<3>().partials_[n]
             += zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
       if (!is_constant_all<T_scale>::value) {
-        ops_partials.edge4_.partials_[n]
+        ops_partials.template edge<4>().partials_[n]
             += zJacobian * d_ibeta * J * sigma_inv * t / Pn;
       }
 
@@ -139,7 +139,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
       P += log(Pn);
 
       if (!is_constant_all<T_y>::value) {
-        ops_partials.edge1_.partials_[n]
+        ops_partials.template edge<1>().partials_[n]
             += zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
 
@@ -151,16 +151,16 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
                           digammaHalf, digammaNu_vec[n],
                           digammaNuPlusHalf_vec[n], betaNuHalf);
 
-        ops_partials.edge2_.partials_[n]
+        ops_partials.template edge<2>().partials_[n]
             += zJacobian * (-d_ibeta * (r / t) * (r / t) + 0.5 * g2) / Pn;
       }
 
       if (!is_constant_all<T_loc>::value) {
-        ops_partials.edge3_.partials_[n]
+        ops_partials.template edge<3>().partials_[n]
             += -zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
       if (!is_constant_all<T_scale>::value) {
-        ops_partials.edge4_.partials_[n]
+        ops_partials.template edge<4>().partials_[n]
             += -zJacobian * d_ibeta * J * sigma_inv * t / Pn;
       }
     }

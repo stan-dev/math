@@ -60,14 +60,14 @@ return_type_t<T_y, T_low, T_high> uniform_lccdf(const T_y& y,
     ccdf_log += log(ccdf_log_n);
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] -= 1.0 / (b_min_a * ccdf_log_n);
+      ops_partials.template edge<1>().partials_[n] -= 1.0 / (b_min_a * ccdf_log_n);
     }
     if (!is_constant_all<T_low>::value) {
-      ops_partials.edge2_.partials_[n]
+      ops_partials.template edge<2>().partials_[n]
           -= (y_dbl - beta_dbl) / (b_min_a * b_min_a * ccdf_log_n);
     }
     if (!is_constant_all<T_high>::value) {
-      ops_partials.edge3_.partials_[n]
+      ops_partials.template edge<3>().partials_[n]
           += (y_dbl - alpha_dbl) / (b_min_a * b_min_a * ccdf_log_n);
     }
   }

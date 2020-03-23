@@ -112,10 +112,10 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
     }
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += (half_nu - 1.0) * inv_y[n] - 0.5;
+      ops_partials.template edge<1>().partials_[n] += (half_nu - 1.0) * inv_y[n] - 0.5;
     }
     if (!is_constant_all<T_dof>::value) {
-      ops_partials.edge2_.partials_[n]
+      ops_partials.template edge<2>().partials_[n]
           -= HALF_LOG_TWO + digamma_half_nu_over_two[n] - log_y[n] * 0.5;
     }
   }

@@ -109,17 +109,17 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
       const T_partials_return common_derivative
           = n_obs_dbl * (mu_dbl - y_bar_dbl) / sigma_squared;
       if (!is_constant_all<T_y>::value) {
-        ops_partials.edge1_.partials_[i] += common_derivative;
+        ops_partials.template edge<1>().partials_[i] += common_derivative;
       }
       if (!is_constant_all<T_loc>::value) {
-        ops_partials.edge3_.partials_[i] -= common_derivative;
+        ops_partials.template edge<3>().partials_[i] -= common_derivative;
       }
     }
     if (!is_constant_all<T_s>::value) {
-      ops_partials.edge2_.partials_[i] -= 0.5 / sigma_squared;
+      ops_partials.template edge<2>().partials_[i] -= 0.5 / sigma_squared;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge4_.partials_[i]
+      ops_partials.template edge<4>().partials_[i]
           += cons_expr / pow(sigma_dbl, 3) - n_obs_dbl / sigma_dbl;
     }
   }

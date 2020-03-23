@@ -182,38 +182,38 @@ neg_binomial_2_log_glm_lpmf(
           = y_arr - theta_exp * y_plus_phi / (theta_exp + phi_arr);
       if (!is_constant_all<T_beta>::value) {
         if (T_x_rows == 1) {
-          ops_partials.edge3_.partials_
+          ops_partials.template edge<3>().partials_
               = forward_as<Matrix<T_partials_return, 1, Dynamic>>(
                   theta_derivative.sum() * x_val);
         } else {
-          ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
+          ops_partials.template edge<3>().partials_ = x_val.transpose() * theta_derivative;
         }
       }
       if (!is_constant_all<T_x_scalar>::value) {
         if (T_x_rows == 1) {
-          ops_partials.edge1_.partials_
+          ops_partials.template edge<1>().partials_
               = forward_as<Array<T_partials_return, Dynamic, T_x_rows>>(
                   beta_val_vec * theta_derivative.sum());
         } else {
-          ops_partials.edge1_.partials_
+          ops_partials.template edge<1>().partials_
               = (beta_val_vec * theta_derivative.transpose()).transpose();
         }
       }
       if (!is_constant_all<T_alpha>::value) {
         if (is_vector<T_alpha>::value) {
-          ops_partials.edge2_.partials_ = std::move(theta_derivative);
+          ops_partials.template edge<2>().partials_ = std::move(theta_derivative);
         } else {
-          ops_partials.edge2_.partials_[0] = sum(theta_derivative);
+          ops_partials.template edge<2>().partials_[0] = sum(theta_derivative);
         }
       }
     }
     if (!is_constant_all<T_precision>::value) {
       if (is_vector<T_precision>::value) {
-        ops_partials.edge4_.partials_
+        ops_partials.template edge<4>().partials_
             = 1 - y_plus_phi / (theta_exp + phi_arr) + log_phi
               - logsumexp_theta_logphi + digamma(y_plus_phi) - digamma(phi_arr);
       } else {
-        ops_partials.edge4_.partials_[0]
+        ops_partials.template edge<4>().partials_[0]
             = N_instances
               + sum(-y_plus_phi / (theta_exp + phi_arr) + log_phi
                     - logsumexp_theta_logphi + digamma(y_plus_phi)

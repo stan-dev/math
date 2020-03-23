@@ -123,22 +123,22 @@ inline return_type_t<T_n, T_k> binomial_coefficient_log(const T_n n,
     if (!is_constant_all<T_n>::value) {
       if (n_dbl == -1.0) {
         if (k_dbl == 0) {
-          ops_partials.edge1_.partials_[0] = 0;
+          ops_partials.template edge<1>().partials_[0] = 0;
         } else {
-          ops_partials.edge1_.partials_[0] = NEGATIVE_INFTY;
+          ops_partials.template edge<1>().partials_[0] = NEGATIVE_INFTY;
         }
       } else {
-        ops_partials.edge1_.partials_[0]
+        ops_partials.template edge<1>().partials_[0]
             = (digamma(n_plus_1) - digamma_n_plus_1_mk);
       }
     }
     if (!is_constant_all<T_k>::value) {
       if (k_dbl == 0 && n_dbl == -1.0) {
-        ops_partials.edge2_.partials_[0] = NEGATIVE_INFTY;
+        ops_partials.template edge<2>().partials_[0] = NEGATIVE_INFTY;
       } else if (k_dbl == -1) {
-        ops_partials.edge2_.partials_[0] = INFTY;
+        ops_partials.template edge<2>().partials_[0] = INFTY;
       } else {
-        ops_partials.edge2_.partials_[0]
+        ops_partials.template edge<2>().partials_[0]
             = (digamma_n_plus_1_mk - digamma(k_dbl + 1));
       }
     }

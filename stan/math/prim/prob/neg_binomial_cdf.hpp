@@ -88,27 +88,27 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(const T_n& n,
     P *= P_i;
 
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge1_.partials_[i]
+      ops_partials.template edge<1>().partials_[i]
           += inc_beta_dda(alpha_dbl, n_dbl + 1, p_dbl, digamma_alpha_vec[i],
                           digamma_sum_vec[i])
              / P_i;
     }
 
     if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge2_.partials_[i]
+      ops_partials.template edge<2>().partials_[i]
           += inc_beta_ddz(alpha_dbl, n_dbl + 1.0, p_dbl) * d_dbl / P_i;
     }
   }
 
   if (!is_constant_all<T_shape>::value) {
     for (size_t i = 0; i < size_alpha; ++i) {
-      ops_partials.edge1_.partials_[i] *= P;
+      ops_partials.template edge<1>().partials_[i] *= P;
     }
   }
 
   if (!is_constant_all<T_inv_scale>::value) {
     for (size_t i = 0; i < stan::math::size(beta); ++i) {
-      ops_partials.edge2_.partials_[i] *= P;
+      ops_partials.template edge<2>().partials_[i] *= P;
     }
   }
 

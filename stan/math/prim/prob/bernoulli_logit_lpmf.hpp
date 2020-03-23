@@ -68,11 +68,11 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
 
     if (!is_constant_all<T_prob>::value) {
       if (ntheta > cutoff) {
-        ops_partials.edge1_.partials_[n] -= exp_m_ntheta;
+        ops_partials.template edge<1>().partials_[n] -= exp_m_ntheta;
       } else if (ntheta < -cutoff) {
-        ops_partials.edge1_.partials_[n] += sign;
+        ops_partials.template edge<1>().partials_[n] += sign;
       } else {
-        ops_partials.edge1_.partials_[n]
+        ops_partials.template edge<1>().partials_[n]
             += sign * exp_m_ntheta / (exp_m_ntheta + 1);
       }
     }

@@ -112,18 +112,18 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
     P *= Pn;
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
+      ops_partials.template edge<1>().partials_[n]
           += inc_beta_ddz(alpha_dbl, beta_dbl, y_dbl) * inv_Pn;
     }
 
     if (!is_constant_all<T_scale_succ>::value) {
-      ops_partials.edge2_.partials_[n]
+      ops_partials.template edge<2>().partials_[n]
           += inc_beta_dda(alpha_dbl, beta_dbl, y_dbl, digamma_alpha[n],
                           digamma_sum[n])
              * inv_Pn;
     }
     if (!is_constant_all<T_scale_fail>::value) {
-      ops_partials.edge3_.partials_[n]
+      ops_partials.template edge<3>().partials_[n]
           += inc_beta_ddb(alpha_dbl, beta_dbl, y_dbl, digamma_beta[n],
                           digamma_sum[n])
              * inv_Pn;
@@ -132,17 +132,17 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
-      ops_partials.edge1_.partials_[n] *= P;
+      ops_partials.template edge<1>().partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_scale_succ>::value) {
     for (size_t n = 0; n < stan::math::size(alpha); ++n) {
-      ops_partials.edge2_.partials_[n] *= P;
+      ops_partials.template edge<2>().partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_scale_fail>::value) {
     for (size_t n = 0; n < stan::math::size(beta); ++n) {
-      ops_partials.edge3_.partials_[n] *= P;
+      ops_partials.template edge<3>().partials_[n] *= P;
     }
   }
 

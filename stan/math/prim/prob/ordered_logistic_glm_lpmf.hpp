@@ -161,20 +161,20 @@ ordered_logistic_glm_lpmf(
       Matrix<double, 1, Dynamic> location_derivative = d1 - d2;
       if (!is_constant_all<T_x_scalar>::value) {
         if (T_x_rows == 1) {
-          ops_partials.edge1_.partials_
+          ops_partials.template edge<1>().partials_
               = beta_val_vec * location_derivative.sum();
         } else {
-          ops_partials.edge1_.partials_
+          ops_partials.template edge<1>().partials_
               = (beta_val_vec * location_derivative).transpose();
         }
       }
       if (!is_constant_all<T_beta_scalar>::value) {
         if (T_x_rows == 1) {
-          ops_partials.edge2_.partials_
+          ops_partials.template edge<2>().partials_
               = (location_derivative * x_val.replicate(N_instances, 1))
                     .transpose();
         } else {
-          ops_partials.edge2_.partials_
+          ops_partials.template edge<2>().partials_
               = (location_derivative * x_val).transpose();
         }
       }
@@ -183,10 +183,10 @@ ordered_logistic_glm_lpmf(
       for (int i = 0; i < N_instances; i++) {
         int c = y_seq[i];
         if (c != N_classes) {
-          ops_partials.edge3_.partials_[c - 1] += d2[i];
+          ops_partials.template edge<3>().partials_[c - 1] += d2[i];
         }
         if (c != 1) {
-          ops_partials.edge3_.partials_[c - 2] -= d1[i];
+          ops_partials.template edge<3>().partials_[c - 2] -= d1[i];
         }
       }
     }

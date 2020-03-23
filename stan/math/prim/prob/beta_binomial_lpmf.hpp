@@ -144,10 +144,10 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
     logp += lbeta_diff[i];
 
     if (!is_constant_all<T_size1>::value)
-      ops_partials.edge1_.partials_[i]
+      ops_partials.template edge<1>().partials_[i]
           += digamma_n_plus_alpha[i] + digamma_diff[i] - digamma_alpha[i];
     if (!is_constant_all<T_size2>::value)
-      ops_partials.edge2_.partials_[i]
+      ops_partials.template edge<2>().partials_[i]
           += digamma(value_of(N_vec[i] - n_vec[i] + beta_vec[i]))
              + digamma_diff[i] - digamma_beta[i];
   }

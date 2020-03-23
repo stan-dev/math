@@ -185,7 +185,7 @@ inline return_type_t<T_y> std_normal_lcdf(const T_y& y) {
       }
 
       if (!is_constant_all<T_y>::value) {
-        ops_partials.edge1_.partials_[n] += dnlcdf * INV_SQRT_TWO;
+        ops_partials.template edge<1>().partials_[n] += dnlcdf * INV_SQRT_TWO;
       }
     }
   }

@@ -91,13 +91,13 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
     logp += kappa_cos;
 
     if (!y_const) {
-      ops_partials.edge1_.partials_[n] += kappa_sin;
+      ops_partials.template edge<1>().partials_[n] += kappa_sin;
     }
     if (!mu_const) {
-      ops_partials.edge2_.partials_[n] -= kappa_sin;
+      ops_partials.template edge<2>().partials_[n] -= kappa_sin;
     }
     if (!kappa_const) {
-      ops_partials.edge3_.partials_[n] += cos_mu_minus_y - bessel1 / bessel0;
+      ops_partials.template edge<3>().partials_[n] += cos_mu_minus_y - bessel1 / bessel0;
     }
   }
   return ops_partials.build(logp);

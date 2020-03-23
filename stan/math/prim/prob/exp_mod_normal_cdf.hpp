@@ -83,19 +83,19 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
     cdf *= cdf_n;
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += (deriv_1 - deriv_2 + deriv_3) / cdf_n;
+      ops_partials.template edge<1>().partials_[n] += (deriv_1 - deriv_2 + deriv_3) / cdf_n;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n] -= (deriv_1 - deriv_2 + deriv_3) / cdf_n;
+      ops_partials.template edge<2>().partials_[n] -= (deriv_1 - deriv_2 + deriv_3) / cdf_n;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
+      ops_partials.template edge<3>().partials_[n]
           -= ((deriv_1 - deriv_2) * v
               + (deriv_3 - deriv_2) * scaled_diff * SQRT_TWO)
              / cdf_n;
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge4_.partials_[n]
+      ops_partials.template edge<4>().partials_[n]
           += exp_term
              * (INV_SQRT_TWO_PI * sigma_dbl * exp_term_2
                 - (v * sigma_dbl - diff) * erf_calc)
@@ -105,22 +105,22 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < size_y; ++n) {
-      ops_partials.edge1_.partials_[n] *= cdf;
+      ops_partials.template edge<1>().partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_loc>::value) {
     for (size_t n = 0; n < stan::math::size(mu); ++n) {
-      ops_partials.edge2_.partials_[n] *= cdf;
+      ops_partials.template edge<2>().partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_scale>::value) {
     for (size_t n = 0; n < stan::math::size(sigma); ++n) {
-      ops_partials.edge3_.partials_[n] *= cdf;
+      ops_partials.template edge<3>().partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_inv_scale>::value) {
     for (size_t n = 0; n < stan::math::size(lambda); ++n) {
-      ops_partials.edge4_.partials_[n] *= cdf;
+      ops_partials.template edge<4>().partials_[n] *= cdf;
     }
   }
   return ops_partials.build(cdf);

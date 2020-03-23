@@ -53,30 +53,30 @@ return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y, const T_low& alpha,
     cdf *= cdf_n;
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += 1.0 / (b_min_a * cdf_n);
+      ops_partials.template edge<1>().partials_[n] += 1.0 / (b_min_a * cdf_n);
     }
     if (!is_constant_all<T_low>::value) {
-      ops_partials.edge2_.partials_[n]
+      ops_partials.template edge<2>().partials_[n]
           += (y_dbl - beta_dbl) / (b_min_a * b_min_a * cdf_n);
     }
     if (!is_constant_all<T_high>::value) {
-      ops_partials.edge3_.partials_[n] -= 1.0 / b_min_a;
+      ops_partials.template edge<3>().partials_[n] -= 1.0 / b_min_a;
     }
   }
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
-      ops_partials.edge1_.partials_[n] *= cdf;
+      ops_partials.template edge<1>().partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_low>::value) {
     for (size_t n = 0; n < stan::math::size(alpha); ++n) {
-      ops_partials.edge2_.partials_[n] *= cdf;
+      ops_partials.template edge<2>().partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_high>::value) {
     for (size_t n = 0; n < stan::math::size(beta); ++n) {
-      ops_partials.edge3_.partials_[n] *= cdf;
+      ops_partials.template edge<3>().partials_[n] *= cdf;
     }
   }
 

@@ -124,7 +124,7 @@ categorical_logit_glm_lpmf(
       for (int i = 1; i < N_instances; i++) {
         beta_y += beta_val.col(y_seq[i] - 1).array();
       }
-      ops_partials.edge1_.partials_
+      ops_partials.template edge<1>().partials_
           = beta_y
             - (exp_lin.matrix() * beta_val.transpose()).array().colwise()
                   * inv_sum_exp_lin * N_instances;
@@ -133,12 +133,12 @@ categorical_logit_glm_lpmf(
       for (int i = 0; i < N_instances; i++) {
         beta_y.row(i) = beta_val.col(y_seq[i] - 1);
       }
-      ops_partials.edge1_.partials_
+      ops_partials.template edge<1>().partials_
           = beta_y
             - (exp_lin.matrix() * beta_val.transpose()).array().colwise()
                   * inv_sum_exp_lin;
       // TODO(Tadej) maybe we can replace previous block with the following line
-      // when we have newer Eigen  ops_partials.edge1_.partials_ = beta_val(y -
+      // when we have newer Eigen  ops_partials.template edge<1>().partials_ = beta_val(y -
       // 1, all) - (exp_lin.matrix() * beta.transpose()).colwise() *
       // inv_sum_exp_lin;
     }
@@ -148,13 +148,13 @@ categorical_logit_glm_lpmf(
         = exp_lin.colwise() * -inv_sum_exp_lin;
     if (!is_constant_all<T_alpha_scalar>::value) {
       if (T_x_rows == 1) {
-        ops_partials.edge2_.partials_
+        ops_partials.template edge<2>().partials_
             = neg_softmax_lin.colwise().sum() * N_instances;
       } else {
-        ops_partials.edge2_.partials_ = neg_softmax_lin.colwise().sum();
+        ops_partials.template edge<2>().partials_ = neg_softmax_lin.colwise().sum();
       }
       for (int i = 0; i < N_instances; i++) {
-        ops_partials.edge2_.partials_[y_seq[i] - 1] += 1;
+        ops_partials.template edge<2>().partials_[y_seq[i] - 1] += 1;
       }
     }
     if (!is_constant_all<T_beta_scalar>::value) {
@@ -174,10 +174,10 @@ categorical_logit_glm_lpmf(
         }
       }
       // TODO(Tadej) maybe we can replace previous loop with the following line
-      // when we have newer Eigen  ops_partials.edge3_.partials_(Eigen::all, y -
+      // when we have newer Eigen  ops_partials.template edge<3>().partials_(Eigen::all, y -
       // 1) += x_val.colwise.sum().transpose();
 
-      ops_partials.edge3_.partials_ = std::move(beta_derivative);
+      ops_partials.template edge<3>().partials_ = std::move(beta_derivative);
     }
   }
   return ops_partials.build(logp);

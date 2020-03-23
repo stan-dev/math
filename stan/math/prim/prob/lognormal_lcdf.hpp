@@ -59,13 +59,13 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lcdf(const T_y& y, const T_loc& mu,
     cdf_log += LOG_HALF + log(erfc_calc);
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += rep_deriv / erfc_calc / y_dbl;
+      ops_partials.template edge<1>().partials_[n] += rep_deriv / erfc_calc / y_dbl;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n] -= rep_deriv / erfc_calc;
+      ops_partials.template edge<2>().partials_[n] -= rep_deriv / erfc_calc;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
+      ops_partials.template edge<3>().partials_[n]
           -= rep_deriv * scaled_diff * SQRT_TWO / erfc_calc;
     }
   }

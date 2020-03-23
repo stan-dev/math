@@ -76,20 +76,20 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
     logp += lambda_dbl * (mu_minus_y + 0.5 * lambda_sigma_sq) + log(erfc_calc);
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
+      ops_partials.template edge<1>().partials_[n]
           -= lambda_dbl + deriv_logerfc * inv_sigma;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n]
+      ops_partials.template edge<2>().partials_[n]
           += lambda_dbl + deriv_logerfc * inv_sigma;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
+      ops_partials.template edge<3>().partials_[n]
           += sigma_dbl * square(lambda_dbl)
              + deriv_logerfc * (-mu_minus_y / sigma_sq + lambda_dbl);
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge4_.partials_[n] += inv(lambda_dbl) + lambda_sigma_sq
+      ops_partials.template edge<4>().partials_[n] += inv(lambda_dbl) + lambda_sigma_sq
                                           + mu_minus_y
                                           + deriv_logerfc * sigma_dbl;
     }

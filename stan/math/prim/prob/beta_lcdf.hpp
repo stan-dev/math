@@ -102,7 +102,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
     cdf_log += log(Pn);
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += pow(1 - y_dbl, beta_dbl - 1)
+      ops_partials.template edge<1>().partials_[n] += pow(1 - y_dbl, beta_dbl - 1)
                                           * pow(y_dbl, alpha_dbl - 1) * inv_Pn
                                           / betafunc_dbl;
     }
@@ -115,10 +115,10 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
                         digamma_beta[n], digamma_sum[n], betafunc_dbl);
     }
     if (!is_constant_all<T_scale_succ>::value) {
-      ops_partials.edge2_.partials_[n] += g1 * inv_Pn;
+      ops_partials.template edge<2>().partials_[n] += g1 * inv_Pn;
     }
     if (!is_constant_all<T_scale_fail>::value) {
-      ops_partials.edge3_.partials_[n] += g2 * inv_Pn;
+      ops_partials.template edge<3>().partials_[n] += g2 * inv_Pn;
     }
   }
 

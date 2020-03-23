@@ -93,12 +93,12 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
         sum_n += n_vec[i];
         sum_N += N_vec[i];
       }
-      ops_partials.edge1_.partials_[0]
+      ops_partials.template edge<1>().partials_[0]
           += sum_n * inv_logit_neg_alpha[0]
              - (sum_N - sum_n) * inv_logit_alpha[0];
     } else {
       for (size_t i = 0; i < max_size_seq_view; ++i) {
-        ops_partials.edge1_.partials_[i]
+        ops_partials.template edge<1>().partials_[i]
             += n_vec[i] * inv_logit_neg_alpha[i]
                - (N_vec[i] - n_vec[i]) * inv_logit_alpha[i];
       }

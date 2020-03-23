@@ -93,13 +93,13 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
 
     T_partials_return scaled_diff = inv_sigma[n] * y_minus_mu_over_sigma;
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] -= scaled_diff;
+      ops_partials.template edge<1>().partials_[n] -= scaled_diff;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n] += scaled_diff;
+      ops_partials.template edge<2>().partials_[n] += scaled_diff;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
+      ops_partials.template edge<3>().partials_[n]
           += -inv_sigma[n] + inv_sigma[n] * y_minus_mu_over_sigma_squared;
     }
   }

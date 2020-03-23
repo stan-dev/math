@@ -67,13 +67,13 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lcdf(const T_y& y, const T_loc& mu,
     const T_partials_return rep_deriv
         = 1.0 / (pi() * Pn * (z * z * sigma_dbl + sigma_dbl));
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += rep_deriv;
+      ops_partials.template edge<1>().partials_[n] += rep_deriv;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n] -= rep_deriv;
+      ops_partials.template edge<2>().partials_[n] -= rep_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n] -= rep_deriv * z;
+      ops_partials.template edge<3>().partials_[n] -= rep_deriv * z;
     }
   }
   return ops_partials.build(cdf_log);

@@ -85,24 +85,24 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
                 * y_minus_mu_over_sigma / SQRT_TWO)
           / (1 + erf(alpha_dbl * y_minus_mu_over_sigma / SQRT_TWO));
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
+      ops_partials.template edge<1>().partials_[n]
           += -y_minus_mu_over_sigma / sigma_dbl
              + deriv_logerf * alpha_dbl / (sigma_dbl * SQRT_TWO);
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n]
+      ops_partials.template edge<2>().partials_[n]
           += y_minus_mu_over_sigma / sigma_dbl
              + deriv_logerf * -alpha_dbl / (sigma_dbl * SQRT_TWO);
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
+      ops_partials.template edge<3>().partials_[n]
           += -1.0 / sigma_dbl
              + y_minus_mu_over_sigma * y_minus_mu_over_sigma / sigma_dbl
              - deriv_logerf * y_minus_mu_over_sigma * alpha_dbl
                    / (sigma_dbl * SQRT_TWO);
     }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge4_.partials_[n]
+      ops_partials.template edge<4>().partials_[n]
           += deriv_logerf * y_minus_mu_over_sigma / SQRT_TWO;
     }
   }

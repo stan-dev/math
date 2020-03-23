@@ -111,11 +111,11 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
     }
 
     if (!is_constant_all<T_log_location>::value) {
-      ops_partials.edge1_.partials_[i]
+      ops_partials.template edge<1>().partials_[i]
           += n_vec[i] - n_plus_phi[i] / (phi_val[i] / exp_eta[i] + 1);
     }
     if (!is_constant_all<T_precision>::value) {
-      ops_partials.edge2_.partials_[i]
+      ops_partials.template edge<2>().partials_[i]
           += 1.0 - n_plus_phi[i] / (exp_eta[i] + phi_val[i]) + log_phi[i]
              - logsumexp_eta_logphi[i] - digamma(phi_val[i])
              + digamma(n_plus_phi[i]);

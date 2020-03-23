@@ -161,14 +161,14 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
     logp -= (half_nu[n] + 0.5) * log1p_exp[n];
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
+      ops_partials.template edge<1>().partials_[n]
           += -(half_nu[n] + 0.5) * 1.0
              / (1.0 + square_y_minus_mu_over_sigma__over_nu[n])
              * (2.0 * (y_dbl - mu_dbl) / square(sigma_dbl) / nu_dbl);
     }
     if (!is_constant_all<T_dof>::value) {
       const T_partials_return inv_nu = 1.0 / nu_dbl;
-      ops_partials.edge2_.partials_[n]
+      ops_partials.template edge<2>().partials_[n]
           += 0.5 * digamma_half_nu_plus_half[n] - 0.5 * digamma_half_nu[n]
              - 0.5 * inv_nu - 0.5 * log1p_exp[n]
              + (half_nu[n] + 0.5)
@@ -176,14 +176,14 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
                       * square_y_minus_mu_over_sigma__over_nu[n] * inv_nu);
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge3_.partials_[n]
+      ops_partials.template edge<3>().partials_[n]
           -= (half_nu[n] + 0.5)
              / (1.0 + square_y_minus_mu_over_sigma__over_nu[n])
              * (2.0 * (mu_dbl - y_dbl) / (sigma_dbl * sigma_dbl * nu_dbl));
     }
     if (!is_constant_all<T_scale>::value) {
       const T_partials_return inv_sigma = 1.0 / sigma_dbl;
-      ops_partials.edge4_.partials_[n]
+      ops_partials.template edge<4>().partials_[n]
           += -inv_sigma
              + (nu_dbl + 1.0) / (1.0 + square_y_minus_mu_over_sigma__over_nu[n])
                    * (square_y_minus_mu_over_sigma__over_nu[n] * inv_sigma);

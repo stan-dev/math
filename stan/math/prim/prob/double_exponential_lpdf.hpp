@@ -89,13 +89,13 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
     T_partials_return rep_deriv
         = is_constant_all<T_y, T_loc>::value ? 0 : sign(y_m_mu) * inv_sigma[n];
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] -= rep_deriv;
+      ops_partials.template edge<1>().partials_[n] -= rep_deriv;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n] += rep_deriv;
+      ops_partials.template edge<2>().partials_[n] += rep_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n] -= inv_sigma[n] * (1 - scaled_diff);
+      ops_partials.template edge<3>().partials_[n] -= inv_sigma[n] * (1 - scaled_diff);
     }
   }
   return ops_partials.build(logp);

@@ -154,18 +154,18 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
 
     if (!is_constant_all<T_y>::value) {
       const T_partials_return mukappa_dbl = mu_dbl * kappa_dbl;
-      ops_partials.edge1_.partials_[n]
+      ops_partials.template edge<1>().partials_[n]
           += (mukappa_dbl - 1) / y_dbl
              + (kappa_dbl - mukappa_dbl - 1) / (y_dbl - 1);
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n]
+      ops_partials.template edge<2>().partials_[n]
           += kappa_dbl
              * (digamma_kappa_mukappa[n] - digamma_mukappa[n] + log_y[n]
                 - log1m_y[n]);
     }
     if (!is_constant_all<T_prec>::value) {
-      ops_partials.edge3_.partials_[n]
+      ops_partials.template edge<3>().partials_[n]
           += digamma_kappa[n] + mu_dbl * (log_y[n] - digamma_mukappa[n])
              + (1 - mu_dbl) * (log1m_y[n] - digamma_kappa_mukappa[n]);
     }

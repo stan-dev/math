@@ -64,29 +64,29 @@ return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
 
     const T_partials_return rep_deriv = exp_n * pow_n / cdf_n;
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += rep_deriv * alpha_dbl / y_dbl;
+      ops_partials.template edge<1>().partials_[n] += rep_deriv * alpha_dbl / y_dbl;
     }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge2_.partials_[n] += rep_deriv * log(y_dbl / sigma_dbl);
+      ops_partials.template edge<2>().partials_[n] += rep_deriv * log(y_dbl / sigma_dbl);
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n] -= rep_deriv * alpha_dbl / sigma_dbl;
+      ops_partials.template edge<3>().partials_[n] -= rep_deriv * alpha_dbl / sigma_dbl;
     }
   }
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
-      ops_partials.edge1_.partials_[n] *= cdf;
+      ops_partials.template edge<1>().partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_shape>::value) {
     for (size_t n = 0; n < stan::math::size(alpha); ++n) {
-      ops_partials.edge2_.partials_[n] *= cdf;
+      ops_partials.template edge<2>().partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_scale>::value) {
     for (size_t n = 0; n < stan::math::size(sigma); ++n) {
-      ops_partials.edge3_.partials_[n] *= cdf;
+      ops_partials.template edge<3>().partials_[n] *= cdf;
     }
   }
   return ops_partials.build(cdf);

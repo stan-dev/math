@@ -65,10 +65,10 @@ return_type_t<T_y, T_scale> rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
 
     T_partials_return scaled_diff = inv_sigma[n] * y_over_sigma;
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += 1.0 / y_dbl - scaled_diff;
+      ops_partials.template edge<1>().partials_[n] += 1.0 / y_dbl - scaled_diff;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge2_.partials_[n]
+      ops_partials.template edge<2>().partials_[n]
           += y_over_sigma * scaled_diff - 2.0 * inv_sigma[n];
     }
   }

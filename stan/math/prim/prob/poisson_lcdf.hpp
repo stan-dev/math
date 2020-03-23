@@ -78,7 +78,7 @@ return_type_t<T_rate> poisson_lcdf(const T_n& n, const T_rate& lambda) {
     P += log_Pi;
 
     if (!is_constant_all<T_rate>::value) {
-      ops_partials.edge1_.partials_[i] -= exp(n_dbl * log_lambda[i] - lambda_dbl
+      ops_partials.template edge<1>().partials_[i] -= exp(n_dbl * log_lambda[i] - lambda_dbl
                                               - lgamma_n_plus_one[i] - log_Pi);
     }
   }

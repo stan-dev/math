@@ -179,13 +179,13 @@ return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
   operands_and_partials<T_theta, T_lam> ops_partials(theta, lambda);
   if (!is_constant_all<T_theta>::value) {
     for (int n = 0; n < N; ++n) {
-      ops_partials.edge1_.partials_[n] = theta_deriv[n];
+      ops_partials.template edge<1>().partials_[n] = theta_deriv[n];
     }
   }
 
   if (!is_constant_all<T_lam>::value) {
     for (int n = 0; n < N; ++n) {
-      ops_partials.edge2_.partials_[n] = lam_deriv[n];
+      ops_partials.template edge<2>().partials_[n] = lam_deriv[n];
     }
   }
 
@@ -274,13 +274,13 @@ return_type_t<T_theta, std::vector<Eigen::Matrix<T_lam, R, C>>> log_mix(
               .unaryExpr([](T_partials_return x) { return exp(x); });
     if (!is_constant_all<T_theta>::value) {
       for (int m = 0; m < M; ++m) {
-        ops_partials.edge1_.partials_[m] = derivs.row(m).sum();
+        ops_partials.template edge<1>().partials_[m] = derivs.row(m).sum();
       }
     }
 
     if (!is_constant_all<T_lam>::value) {
       for (int n = 0; n < N; ++n) {
-        ops_partials.edge2_.partials_vec_[n]
+        ops_partials.template edge<2>().partials_vec_[n]
             = derivs.col(n).cwiseProduct(theta_dbl);
       }
     }
@@ -368,14 +368,14 @@ return_type_t<T_theta, std::vector<std::vector<T_lam>>> log_mix(
   operands_and_partials<T_theta, T_lamvec_type> ops_partials(theta, lambda);
   if (!is_constant_all<T_theta>::value) {
     for (int m = 0; m < M; ++m) {
-      ops_partials.edge1_.partials_[m] = derivs.row(m).sum();
+      ops_partials.template edge<1>().partials_[m] = derivs.row(m).sum();
     }
   }
 
   if (!is_constant_all<T_lam>::value) {
     for (int n = 0; n < N; ++n) {
       for (int m = 0; m < M; ++m) {
-        ops_partials.edge2_.partials_vec_[n][m] = lam_deriv(m, n);
+        ops_partials.template edge<2>().partials_vec_[n][m] = lam_deriv(m, n);
       }
     }
   }

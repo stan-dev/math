@@ -84,19 +84,19 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
     cdf_log += log(cdf_n);
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += (deriv_1 - deriv_2 + deriv_3) / cdf_n;
+      ops_partials.template edge<1>().partials_[n] += (deriv_1 - deriv_2 + deriv_3) / cdf_n;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n] -= (deriv_1 - deriv_2 + deriv_3) / cdf_n;
+      ops_partials.template edge<2>().partials_[n] -= (deriv_1 - deriv_2 + deriv_3) / cdf_n;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
+      ops_partials.template edge<3>().partials_[n]
           -= ((deriv_1 - deriv_2) * v
               + (deriv_3 - deriv_2) * scaled_diff * SQRT_TWO)
              / cdf_n;
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge4_.partials_[n]
+      ops_partials.template edge<4>().partials_[n]
           += exp_term
              * (INV_SQRT_TWO_PI * sigma_dbl * exp_term_2
                 - (v * sigma_dbl - diff) * erf_calc)

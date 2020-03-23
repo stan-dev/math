@@ -101,11 +101,11 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     }
 
     if (!is_constant_all<T_location>::value) {
-      ops_partials.edge1_.partials_[i]
+      ops_partials.template edge<1>().partials_[i]
           += n_vec[i] / mu_val[i] - n_plus_phi[i] / mu_plus_phi[i];
     }
     if (!is_constant_all<T_precision>::value) {
-      ops_partials.edge2_.partials_[i] += 1.0 - n_plus_phi[i] / mu_plus_phi[i]
+      ops_partials.template edge<2>().partials_[i] += 1.0 - n_plus_phi[i] / mu_plus_phi[i]
                                           + log_phi[i] - log_mu_plus_phi[i]
                                           - digamma(phi_val[i])
                                           + digamma(n_plus_phi[i]);

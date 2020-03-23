@@ -101,11 +101,11 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
       logp += multiply_log(n_vec[i], lambda[i]) - lambda[i];
 
       if (!is_constant_all<T_shape>::value) {
-        ops_partials.edge1_.partials_[i]
+        ops_partials.template edge<1>().partials_[i]
             += n_vec[i] / value_of(alpha_vec[i]) - 1.0 / value_of(beta_vec[i]);
       }
       if (!is_constant_all<T_inv_scale>::value) {
-        ops_partials.edge2_.partials_[i]
+        ops_partials.template edge<2>().partials_[i]
             += (lambda[i] - n_vec[i]) / value_of(beta_vec[i]);
       }
     } else {  // standard density definition
@@ -118,12 +118,12 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
       logp += alpha_log_beta_over_1p_beta[i] - n_vec[i] * log1p_beta[i];
 
       if (!is_constant_all<T_shape>::value) {
-        ops_partials.edge1_.partials_[i]
+        ops_partials.template edge<1>().partials_[i]
             += digamma(value_of(alpha_vec[i]) + n_vec[i]) - digamma_alpha[i]
                + log_beta_m_log1p_beta[i];
       }
       if (!is_constant_all<T_inv_scale>::value) {
-        ops_partials.edge2_.partials_[i]
+        ops_partials.template edge<2>().partials_[i]
             += lambda_m_alpha_over_1p_beta[i]
                - n_vec[i] / (value_of(beta_vec[i]) + 1.0);
       }

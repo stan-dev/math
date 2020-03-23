@@ -84,10 +84,10 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
     }
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] -= beta_dbl;
+      ops_partials.template edge<1>().partials_[n] -= beta_dbl;
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge2_.partials_[n] += inv(beta_dbl) - y_dbl;
+      ops_partials.template edge<2>().partials_[n] += inv(beta_dbl) - y_dbl;
     }
   }
   return ops_partials.build(logp);

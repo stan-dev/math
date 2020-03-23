@@ -54,11 +54,11 @@ return_type_t<T_y, T_scale> rayleigh_lcdf(const T_y& y, const T_scale& sigma) {
     }
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
+      ops_partials.template edge<1>().partials_[n]
           += y_dbl * inv_sigma_sqr * exp_div_1m_exp;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge2_.partials_[n]
+      ops_partials.template edge<2>().partials_[n]
           -= y_sqr * inv_sigma_sqr * inv_sigma[n] * exp_div_1m_exp;
     }
   }

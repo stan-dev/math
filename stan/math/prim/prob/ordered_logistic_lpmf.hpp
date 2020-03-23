@@ -122,11 +122,11 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
       T_partials_return d = inv_logit(lam_dbl - c_dbl[0]);
 
       if (!is_constant_all<T_loc>::value) {
-        ops_partials.edge1_.partials_[n] -= d;
+        ops_partials.template edge<1>().partials_[n] -= d;
       }
 
       if (!is_constant_all<T_cut>::value) {
-        ops_partials.edge2_.partials_vec_[n](0) += d;
+        ops_partials.template edge<2>().partials_vec_[n](0) += d;
       }
 
     } else if (y_vec[n] == K) {
@@ -134,11 +134,11 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
       T_partials_return d = inv_logit(c_dbl[K - 2] - lam_dbl);
 
       if (!is_constant_all<T_loc>::value) {
-        ops_partials.edge1_.partials_[n] = d;
+        ops_partials.template edge<1>().partials_[n] = d;
       }
 
       if (!is_constant_all<T_cut>::value) {
-        ops_partials.edge2_.partials_vec_[n](K - 2) -= d;
+        ops_partials.template edge<2>().partials_vec_[n](K - 2) -= d;
       }
 
     } else {
@@ -152,12 +152,12 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
                                  lam_dbl - c_dbl[y_vec[n] - 1]);
 
       if (!is_constant_all<T_loc>::value) {
-        ops_partials.edge1_.partials_[n] -= d1 + d2;
+        ops_partials.template edge<1>().partials_[n] -= d1 + d2;
       }
 
       if (!is_constant_all<T_cut>::value) {
-        ops_partials.edge2_.partials_vec_[n](y_vec[n] - 2) += d1;
-        ops_partials.edge2_.partials_vec_[n](y_vec[n] - 1) += d2;
+        ops_partials.template edge<2>().partials_vec_[n](y_vec[n] - 2) += d1;
+        ops_partials.template edge<2>().partials_vec_[n](y_vec[n] - 1) += d2;
       }
     }
   }

@@ -97,10 +97,10 @@ return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
     }
 
     if (!is_constant_all<T_low>::value) {
-      ops_partials.edge2_.partials_[n] += inv_beta_minus_alpha[n];
+      ops_partials.template edge<2>().partials_[n] += inv_beta_minus_alpha[n];
     }
     if (!is_constant_all<T_high>::value) {
-      ops_partials.edge3_.partials_[n] -= inv_beta_minus_alpha[n];
+      ops_partials.template edge<3>().partials_[n] -= inv_beta_minus_alpha[n];
     }
   }
   return ops_partials.build(logp);

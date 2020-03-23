@@ -97,13 +97,13 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
     }
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] -= alpha_dbl * inv_y[n] + inv_y[n];
+      ops_partials.template edge<1>().partials_[n] -= alpha_dbl * inv_y[n] + inv_y[n];
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge2_.partials_[n] += alpha_dbl / value_of(y_min_vec[n]);
+      ops_partials.template edge<2>().partials_[n] += alpha_dbl / value_of(y_min_vec[n]);
     }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge3_.partials_[n]
+      ops_partials.template edge<3>().partials_[n]
           += 1 / alpha_dbl + log_y_min[n] - log_y[n];
     }
   }

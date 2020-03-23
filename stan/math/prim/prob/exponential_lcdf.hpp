@@ -45,10 +45,10 @@ return_type_t<T_y, T_inv_scale> exponential_lcdf(const T_y& y,
     T_partials_return rep_deriv
         = is_constant_all<T_y, T_inv_scale>::value ? 0 : -exp_val / one_m_exp;
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] -= rep_deriv * beta_dbl;
+      ops_partials.template edge<1>().partials_[n] -= rep_deriv * beta_dbl;
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge2_.partials_[n] -= rep_deriv * y_dbl;
+      ops_partials.template edge<2>().partials_[n] -= rep_deriv * y_dbl;
     }
   }
   return ops_partials.build(cdf_log);
