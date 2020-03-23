@@ -126,7 +126,7 @@ clean-all: clean clean-doxygen clean-deps clean-libraries
 
 .PHONY: test-math-dependencies
 test-math-dependencies:
-	@python runChecks.py
+	@./runChecks.py
 ##
 # Debug target that allows you to print a variable
 ##

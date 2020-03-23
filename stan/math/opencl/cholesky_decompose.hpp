@@ -10,7 +10,6 @@
 #include <stan/math/opencl/sub_block.hpp>
 #include <stan/math/opencl/kernels/cholesky_decompose.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/opencl/prim/transpose.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <CL/cl2.hpp>
 #include <algorithm>

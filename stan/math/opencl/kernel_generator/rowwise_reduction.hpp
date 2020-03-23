@@ -36,7 +36,6 @@ class rowwise_reduction
 
  protected:
   std::string init_;
-  using base::arguments_;
 
  public:
   /**
@@ -98,9 +97,9 @@ class rowwise_reduction
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
       generated.insert(this);
-      std::get<0>(arguments_).set_args(generated, kernel, arg_num);
-      kernel.setArg(arg_num++, std::get<0>(arguments_).view());
-      kernel.setArg(arg_num++, std::get<0>(arguments_).cols());
+      this->template get_arg<0>().set_args(generated, kernel, arg_num);
+      kernel.setArg(arg_num++, this->template get_arg<0>().view());
+      kernel.setArg(arg_num++, this->template get_arg<0>().cols());
     }
   }
 
@@ -157,8 +156,8 @@ class rowwise_sum_
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline auto deep_copy() {
-    auto&& arg_copy = std::get<0>(arguments_).deep_copy();
+  inline auto deep_copy() const {
+    auto&& arg_copy = this->template get_arg<0>().deep_copy();
     return rowwise_sum_<std::remove_reference_t<decltype(arg_copy)>>(
         std::move(arg_copy));
   }
@@ -225,8 +224,8 @@ class rowwise_max_
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline auto deep_copy() {
-    auto&& arg_copy = std::get<0>(arguments_).deep_copy();
+  inline auto deep_copy() const {
+    auto&& arg_copy = this->template get_arg<0>().deep_copy();
     return rowwise_max_<std::remove_reference_t<decltype(arg_copy)>>(
         std::move(arg_copy));
   }
@@ -292,8 +291,8 @@ class rowwise_min_
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline auto deep_copy() {
-    auto&& arg_copy = std::get<0>(arguments_).deep_copy();
+  inline auto deep_copy() const {
+    auto&& arg_copy = this->template get_arg<0>().deep_copy();
     return rowwise_min_<std::remove_reference_t<decltype(arg_copy)>>(
         std::move(arg_copy));
   }
