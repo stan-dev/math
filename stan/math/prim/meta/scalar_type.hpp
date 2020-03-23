@@ -24,6 +24,5 @@ struct scalar_type {
 template <typename T>
 using scalar_type_t = typename scalar_type<T>::type;
 
-
 }  // namespace stan
 #endif
