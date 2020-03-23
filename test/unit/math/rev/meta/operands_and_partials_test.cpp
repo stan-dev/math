@@ -18,7 +18,6 @@ TEST(AgradPartialsVari, OperandsAndPartialsScal) {
 
   operands_and_partials<var> o4(v1);
   o4.edge<1>().partials_[0] += 10.0;
-  o4.edge<1>().partial_ += 10.0;
 
   std::vector<double> grad;
   var v = o4.build(10.0);

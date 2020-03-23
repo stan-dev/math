@@ -30,9 +30,8 @@ class ops_partials_edge<double, var> {
  public:
   double partial_{0};
   broadcast_array<double> partials_{partial_};
-  explicit ops_partials_edge(const var& op)
-      : operand_(op) {}
-
+  explicit ops_partials_edge(const var& op):
+    partial_(0), partials_(partial_), operand_(op) {}
  private:
    template <typename...>
    friend class stan::math::operands_and_partials;
@@ -40,8 +39,8 @@ class ops_partials_edge<double, var> {
    friend class stan::math::operands_and_partials_impl;
   const var& operand_;
 
-  void dump_partials(double* partials) { *partials = this->partial_; }
-  void dump_operands(vari** varis) { *varis = this->operand_.vi_; }
+  void dump_partials(double* partials) { partials[0] = this->partial_; }
+  void dump_operands(vari** varis) { varis[0] = this->operand_.vi_; }
   int size() const { return 1; }
 };
 }  // namespace internal
@@ -89,7 +88,7 @@ class ops_partials_edge<double, var> {
     return std::get<id - 1>(edges_);
   }
   explicit operands_and_partials_impl(const Ops&... ops) :
-   edges_(std::forward_as_tuple(internal::ops_partials_edge<double, Ops>(ops)...)) {}
+   edges_(ops...) {}
 
   /**
    * Build the node to be stored on the autodiff graph.
@@ -141,6 +140,7 @@ class ops_partials_edge<double, std::vector<var>> {
   broadcast_array<partials_t> partials_vec_{partials_};  // For multivariate
   explicit ops_partials_edge(const Op& op)
       : partials_(partials_t::Zero(op.size())),
+      partials_vec_(partials_),
         operands_(op) {}
 
  private:
@@ -170,9 +170,9 @@ class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
   partials_t partials_;                       // For univariate use-cases
   broadcast_array<partials_t> partials_vec_{partials_};  // For multivariate
   explicit ops_partials_edge(const Op& ops)
-      : partials_(ops.rows(), ops.cols()),
+      : partials_(partials_t::Zero(ops.rows(), ops.cols())),
+        partials_vec_(partials_),
         operands_(ops) {
-          partials_ = partials_t::Zero(ops.rows(), ops.cols());
         }
 
  private:
