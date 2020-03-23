@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_COPYSIGN_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <complex>
 
 namespace stan {
@@ -17,17 +18,17 @@ namespace math {
  * Overload of `std::copysign` from `cmath` for argument-dependent
  * lookup.
  *
- * @tparam ADType type of first argument
+ * @tparam T type of first argument
  * @tparam U type of second argument
  * @param[in] x first complex argument
  * @param[in] y second complex argument
  * @return copy of second argument, negated if necessary to match sign
  * of first argument
  */
-template <typename ADType, typename U>
-inline ADType copysign(const ADType& x, const U& y) {
-  // +0 is positive; second condition handles -0
-  return (x < 0 && y >= 0) || (x >= 0 && y < 0) ? -x : x;
+template <typename T, typename U>
+inline T copysign(const T& x, const U& y) {
+  // return (x < 0 && y >= 0) || (x >= 0 && y < 0) ? -x : x;
+  return (signbit(value_of_rec(x)) != signbit(value_of_rec(y))) ? -x : x;
 }
 
 /**
