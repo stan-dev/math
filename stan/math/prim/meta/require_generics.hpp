@@ -19,13 +19,13 @@ namespace stan {
 
 
 
-STAN_ADD_REQUIRE_BINARY(same, std::is_same);
-STAN_ADD_REQUIRE_BINARY_SCALAR(same, std::is_same);
-STAN_ADD_REQUIRE_BINARY_VALUE(same, std::is_same);
+STAN_ADD_REQUIRE_BINARY(same, std::is_same, require_std);
+STAN_ADD_REQUIRE_BINARY_SCALAR(same, std::is_same, require_std);
+STAN_ADD_REQUIRE_BINARY_VALUE(same, std::is_same, require_std);
 
-STAN_ADD_REQUIRE_BINARY(convertible, std::is_convertible);
-STAN_ADD_REQUIRE_BINARY_SCALAR(convertible, std::is_convertible);
-STAN_ADD_REQUIRE_BINARY_VALUE(convertible, std::is_convertible);
+STAN_ADD_REQUIRE_BINARY(convertible, std::is_convertible, require_std);
+STAN_ADD_REQUIRE_BINARY_SCALAR(convertible, std::is_convertible, require_std);
+STAN_ADD_REQUIRE_BINARY_VALUE(convertible, std::is_convertible, require_std);
 
 STAN_ADD_REQUIRE_UNARY(arithmetic, std::is_arithmetic, require_stan_scalar_real);
 STAN_ADD_REQUIRE_UNARY_SCALAR(arithmetic, std::is_arithmetic, require_stan_scalar_real);

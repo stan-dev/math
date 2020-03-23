@@ -119,37 +119,45 @@
   /**
   * \ingroup require_meta
   * \defgroup require_stan_scalar Scalar types
-  * `require` type traits for types that are either `arithmetic`, `var`, or `fvar`
+  * `require` type traits for types that are either `arithmetic`, `var`, `fvar`, or `Complex`.
   */
 
   /**
   * \ingroup require_stan_scalar
   * \defgroup require_stan_scalar_real Real types
-  * `require` type traits for types that are either `arithmetic`, `var`, or `fvar`
+  * `require` type traits for types that are either `arithmetic`, `var`, or `fvar`.
   */
 
   /**
   * \ingroup require_stan_scalar
   * \defgroup require_stan_scalar_complex Complex types
-  * `require` type traits for types that are `Complex<T>`
+  * `require` type traits for types that are `Complex<T>`.
   */
 
   /**
    * \ingroup require_meta
    * \defgroup require_std Standard library types and traits
-   * `require` type traits for types that are `Complex<T>`
+   * `require` type traits that come from the standard library.
    */
 
 
   /**
   * \ingroup require_meta
   * \defgroup require_eigens_types Eigen
+  * `require` type traits to detect Eigen types.
   */
 
   /**
    * \ingroup require_meta
    * \defgroup general_types General Types
+   * `require` type traits for general types.
    */
+
+   /**
+    * \ingroup require_meta
+    * \defgroup macro_helpers Require Macro Generators
+    * These macros are used on type traits to define the set of `requires`
+    */
 
 
  /** \addtogroup type_trait
