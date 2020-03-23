@@ -31,10 +31,6 @@ class calc_if_
   using base = operation_cl<calc_if_<Do_Calculate, T>, Scalar, T>;
   using base::var_name;
 
- protected:
-  using base::arguments_;
-
- public:
   /**
    * Constructor
    * @param a expression to calc_if
@@ -66,8 +62,8 @@ class calc_if_
       const std::string& i, const std::string& j,
       const T_result& result) const {
     if (Do_Calculate) {
-      return std::get<0>(arguments_)
-          .get_whole_kernel_parts(generated, ng, i, j, result);
+      return this->template get_arg<0>().get_whole_kernel_parts(generated, ng,
+                                                                i, j, result);
     } else {
       return {};
     }
@@ -84,7 +80,7 @@ class calc_if_
   inline void set_args(std::set<const operation_cl_base*>& generated,
                        cl::Kernel& kernel, int& arg_num) const {
     if (Do_Calculate) {
-      std::get<0>(arguments_).set_args(generated, kernel, arg_num);
+      this->template get_arg<0>().set_args(generated, kernel, arg_num);
     }
   }
 
@@ -92,7 +88,9 @@ class calc_if_
    * View of a matrix that would be the result of evaluating this expression.
    * @return view
    */
-  inline matrix_cl_view view() const { return std::get<0>(arguments_).view(); }
+  inline matrix_cl_view view() const {
+    return this->template get_arg<0>().view();
+  }
 };
 
 template <bool Do_Calculate, typename T,
