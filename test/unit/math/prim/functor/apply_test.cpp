@@ -98,7 +98,8 @@ TEST(MathFunctions, apply_two_args) {
 TEST(MathFunctions, apply_three_args) {
   std::tuple<double, double, int> x = std::make_tuple(1.5, 0.75, 1);
 
-  auto y = stan::math::apply([](double x0, double x1, int x2) { return x0 + x1 + x2; }, x);
+  auto y = stan::math::apply(
+      [](double x0, double x1, int x2) { return x0 + x1 + x2; }, x);
 
   EXPECT_EQ(3.25, y);
   EXPECT_TRUE((std::is_same<double, decltype(y)>::value));
