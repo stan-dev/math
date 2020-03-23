@@ -60,7 +60,6 @@ struct value_type<T, std::enable_if_t<is_eigen<T>::value>> {
   using type = typename std::decay_t<T>::Scalar;
 };
 
-
 STAN_ADD_REQUIRE_UNARY(eigen, is_eigen, require_eigens_types);
 STAN_ADD_REQUIRE_CONTAINER(eigen, is_eigen, require_eigens_types);
 
@@ -75,7 +74,6 @@ struct is_eigen_matrix_impl<Eigen::SparseMatrix<T>> : std::true_type {};
 
 template <typename T>
 struct is_eigen_matrix : internal::is_eigen_matrix_impl<std::decay_t<T>> {};
-
 
 STAN_ADD_REQUIRE_UNARY(eigen_matrix, is_eigen_matrix, require_eigens_types);
 STAN_ADD_REQUIRE_CONTAINER(eigen_matrix, is_eigen_matrix, require_eigens_types);
@@ -96,8 +94,10 @@ template <typename T>
 using is_eigen_matrix_or_array
     = math::disjunction<is_eigen_matrix<T>, is_eigen_array<T>>;
 
-STAN_ADD_REQUIRE_UNARY(eigen_matrix_or_array, is_eigen_matrix_or_array, require_eigens_types);
-STAN_ADD_REQUIRE_CONTAINER(eigen_matrix_or_array, is_eigen_matrix_or_array, require_eigens_types);
+STAN_ADD_REQUIRE_UNARY(eigen_matrix_or_array, is_eigen_matrix_or_array,
+                       require_eigens_types);
+STAN_ADD_REQUIRE_CONTAINER(eigen_matrix_or_array, is_eigen_matrix_or_array,
+                           require_eigens_types);
 
 namespace internal {
 template <typename T>

@@ -33,9 +33,8 @@ struct inv_sqrt_fun {
  * @param x container
  * @return inverse square root of each value in x.
  */
-template <
-    typename Container,
-    require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto inv_sqrt(const Container& x) {
   return apply_scalar_unary<inv_sqrt_fun, Container>::apply(x);
 }

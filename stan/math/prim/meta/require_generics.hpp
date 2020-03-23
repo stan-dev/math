@@ -17,8 +17,6 @@
 
 namespace stan {
 
-
-
 STAN_ADD_REQUIRE_BINARY(same, std::is_same, require_std);
 STAN_ADD_REQUIRE_BINARY_SCALAR(same, std::is_same, require_std);
 STAN_ADD_REQUIRE_BINARY_VALUE(same, std::is_same, require_std);
@@ -27,17 +25,22 @@ STAN_ADD_REQUIRE_BINARY(convertible, std::is_convertible, require_std);
 STAN_ADD_REQUIRE_BINARY_SCALAR(convertible, std::is_convertible, require_std);
 STAN_ADD_REQUIRE_BINARY_VALUE(convertible, std::is_convertible, require_std);
 
-STAN_ADD_REQUIRE_UNARY(arithmetic, std::is_arithmetic, require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_SCALAR(arithmetic, std::is_arithmetic, require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_VALUE(arithmetic, std::is_arithmetic, require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY(floating_point, std::is_floating_point, require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_SCALAR(floating_point, std::is_floating_point, require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_VALUE(floating_point, std::is_floating_point, require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY(arithmetic, std::is_arithmetic,
+                       require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_SCALAR(arithmetic, std::is_arithmetic,
+                              require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_VALUE(arithmetic, std::is_arithmetic,
+                             require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY(floating_point, std::is_floating_point,
+                       require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_SCALAR(floating_point, std::is_floating_point,
+                              require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_VALUE(floating_point, std::is_floating_point,
+                             require_stan_scalar_real);
 STAN_ADD_REQUIRE_UNARY(index, std::is_integral, require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_SCALAR(index, std::is_integral, require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_SCALAR(index, std::is_integral,
+                              require_stan_scalar_real);
 STAN_ADD_REQUIRE_UNARY_VALUE(index, std::is_integral, require_stan_scalar_real);
-
-
 
 template <typename Row, typename Col>
 using require_eigen_row_and_col_t = require_t<

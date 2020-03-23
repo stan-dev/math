@@ -12,20 +12,21 @@
 
 namespace stan {
 
-  /**
-   * Checks if decayed type is a var, fvar, or arithmetic
-   * @tparam The type to check
-   */
-  template <typename T>
-  struct is_stan_scalar
-      : bool_constant<
-            math::disjunction<is_var<std::decay_t<T>>, is_fvar<std::decay_t<T>>,
-                              std::is_arithmetic<std::decay_t<T>>>::value> {};
-
+/**
+ * Checks if decayed type is a var, fvar, or arithmetic
+ * @tparam The type to check
+ */
+template <typename T>
+struct is_stan_scalar
+    : bool_constant<
+          math::disjunction<is_var<std::decay_t<T>>, is_fvar<std::decay_t<T>>,
+                            std::is_arithmetic<std::decay_t<T>>>::value> {};
 
 STAN_ADD_REQUIRE_UNARY(stan_scalar, is_stan_scalar, require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_SCALAR(stan_scalar, is_stan_scalar, require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_VALUE(stan_scalar, is_stan_scalar, require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_SCALAR(stan_scalar, is_stan_scalar,
+                              require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_VALUE(stan_scalar, is_stan_scalar,
+                             require_stan_scalar_real);
 
 }  // namespace stan
 

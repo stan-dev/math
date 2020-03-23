@@ -30,9 +30,8 @@ struct tan_fun {
  * @param x angles in radians
  * @return Tangent of each value in x.
  */
-template <
-    typename Container,
-    require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto tan(const Container& x) {
   return apply_scalar_unary<tan_fun, Container>::apply(x);
 }

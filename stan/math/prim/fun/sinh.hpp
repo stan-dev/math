@@ -30,9 +30,8 @@ struct sinh_fun {
  * @param x container
  * @return Hyperbolic sine of each variable in x.
  */
-template <
-    typename Container,
-    require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto sinh(const Container& x) {
   return apply_scalar_unary<sinh_fun, Container>::apply(x);
 }

@@ -31,9 +31,8 @@ struct atan_fun {
  * @param x container
  * @return Arctan of each value in x, in radians.
  */
-template <
-    typename Container,
-    require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto atan(const Container& x) {
   return apply_scalar_unary<atan_fun, Container>::apply(x);
 }

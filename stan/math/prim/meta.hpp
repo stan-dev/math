@@ -21,8 +21,8 @@
  * typename parameter or as an anonymous void* parameter with a default value
  * of `nullptr` There are 5 basic types of requires.
  *
- *    `requires_*_t`: This means the function requires a certain type to turn on.
- *For instance
+ *    `requires_*_t`: This means the function requires a certain type to turn
+ *on. For instance
  *~~~~~{.cpp}
  * // Works for arithmetic types
  * template <typename T, require_arithmetic_t<T>* = nullptr>
@@ -42,23 +42,23 @@
  *   require_all_arithmetic_t<T1, T2>* = nullptr>
  * auto add(T1&& x, T2&& y) { return x + y; }
  *~~~~~
- *    `require_any_*_t` : Takes a parameter pack of types to enable if any of the
- *types satisfy the check.
+ *    `require_any_*_t` : Takes a parameter pack of types to enable if any of
+ *the types satisfy the check.
  *~~~~~{.cpp}
  * // Works if either T1 or T2 enherit from EigenBase
  * template <typename T1, typename T2, require_any_eigen_t<T1, T2>* = nullptr>
  * auto add(T1&& x, T2&& y) { return x + y; }
  *~~~~~
- *    `require_not_any_*_t` : Takes a parameter pack of types to enable if any one
- *of the types are not satisfied.
+ *    `require_not_any_*_t` : Takes a parameter pack of types to enable if any
+ *one of the types are not satisfied.
  *~~~~~{.cpp}
  * // Works if either neither T1 or T2 are arithmetic
  * template <typename T1, typename T2,
  *   require_not_any_arithmetic_t<T1, T2>* = nullptr>
  * auto add(T1 x, T2 y) { return x + y; }
  *~~~~~
- *    `require_not_all_*_t` : Takes a parameter pack of types to enable if all of
- *the types are not satisfied.
+ *    `require_not_all_*_t` : Takes a parameter pack of types to enable if all
+ *of the types are not satisfied.
  *~~~~~{.cpp}
  * // Works if neither T1 and T2 are arithmetic
  * template <typename T1, typename T2,
@@ -66,10 +66,10 @@
  * auto add(T1 x, T2 y) { return x + y; }
  *~~~~~
  *
- * In addition, `std::vector` and `Eigen` types have additional requires to detect
- *if the `value_type` (the first underlying type) or the `scalar_type` (the
- *containers underlying scalar type) satisfy a condition to enable a class or
- *function.
+ * In addition, `std::vector` and `Eigen` types have additional requires to
+ *detect if the `value_type` (the first underlying type) or the `scalar_type`
+ *(the containers underlying scalar type) satisfy a condition to enable a class
+ *or function.
  *
  * The container requires have a _vt and _st to symbolize the above. A function
  *that accepts eigen matrices of whose whose value type is floating point types
@@ -115,54 +115,53 @@
  *~~~~~
  */
 
+/**
+ * \ingroup require_meta
+ * \defgroup require_stan_scalar Scalar types
+ * `require` type traits for types that are either `arithmetic`, `var`, `fvar`,
+ * or `Complex`.
+ */
 
-  /**
-  * \ingroup require_meta
-  * \defgroup require_stan_scalar Scalar types
-  * `require` type traits for types that are either `arithmetic`, `var`, `fvar`, or `Complex`.
-  */
+/**
+ * \ingroup require_stan_scalar
+ * \defgroup require_stan_scalar_real Real types
+ * `require` type traits for types that are either `arithmetic`, `var`, or
+ * `fvar`.
+ */
 
-  /**
-  * \ingroup require_stan_scalar
-  * \defgroup require_stan_scalar_real Real types
-  * `require` type traits for types that are either `arithmetic`, `var`, or `fvar`.
-  */
+/**
+ * \ingroup require_stan_scalar
+ * \defgroup require_stan_scalar_complex Complex types
+ * `require` type traits for types that are `Complex<T>`.
+ */
 
-  /**
-  * \ingroup require_stan_scalar
-  * \defgroup require_stan_scalar_complex Complex types
-  * `require` type traits for types that are `Complex<T>`.
-  */
+/**
+ * \ingroup require_meta
+ * \defgroup require_std Standard library types and traits
+ * `require` type traits that come from the standard library.
+ */
 
-  /**
-   * \ingroup require_meta
-   * \defgroup require_std Standard library types and traits
-   * `require` type traits that come from the standard library.
-   */
+/**
+ * \ingroup require_meta
+ * \defgroup require_eigens_types Eigen
+ * `require` type traits to detect Eigen types.
+ */
 
+/**
+ * \ingroup require_meta
+ * \defgroup general_types General Types
+ * `require` type traits for general types.
+ */
 
-  /**
-  * \ingroup require_meta
-  * \defgroup require_eigens_types Eigen
-  * `require` type traits to detect Eigen types.
-  */
+/**
+ * \ingroup require_meta
+ * \defgroup macro_helpers Require Macro Generators
+ * These macros are used on type traits to define the set of `requires`
+ */
 
-  /**
-   * \ingroup require_meta
-   * \defgroup general_types General Types
-   * `require` type traits for general types.
-   */
-
-   /**
-    * \ingroup require_meta
-    * \defgroup macro_helpers Require Macro Generators
-    * These macros are used on type traits to define the set of `requires`
-    */
-
-
- /** \addtogroup type_trait
-  *  @{
-  */
+/** \addtogroup type_trait
+ *  @{
+ */
 
 #include <stan/math/prim/meta/ad_promotable.hpp>
 #include <stan/math/prim/meta/append_return_type.hpp>

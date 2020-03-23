@@ -31,9 +31,8 @@ struct fabs_fun {
  * @param x container
  * @return Absolute value of each value in x.
  */
-template <
-    typename Container,
-    require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto fabs(const Container& x) {
   return apply_scalar_unary<fabs_fun, Container>::apply(x);
 }

@@ -16,8 +16,6 @@
  * Distributions with scalar, vector, or array input.
  */
 
-
-
 #include <stan/math/rev.hpp>
 
 #endif

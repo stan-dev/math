@@ -16,9 +16,8 @@ namespace math {
  * @param x container
  * @return `1 / square(x)` of each value in x.
  */
-template <
-    typename Container,
-    require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto inv_square(const Container& x) {
   return inv(square(x));
 }
