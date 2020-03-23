@@ -121,8 +121,7 @@ using require_any_not_t
   template <typename T, typename... Types>                                   \
   using require_all_not_##check_type##_t                                     \
       = require_all_not_t<checker<std::decay_t<T>, std::decay_t<Types>>...>; \
-  /*! \brief Require at least one of the `Types` and `T` do not satisfy      \
-   * checker */                                                              \
+  /*! \brief Any one of the `Types` and `T` do not satisfy */                \
   template <typename T, typename... Types>                                   \
   using require_any_not_##check_type##_t                                     \
       = require_any_not_t<checker<std::decay_t<T>, std::decay_t<Types>>...>; \

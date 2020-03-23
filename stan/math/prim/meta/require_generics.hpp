@@ -11,7 +11,6 @@
 #include <stan/math/prim/meta/value_type.hpp>
 #include <stan/math/prim/meta/conjunction.hpp>
 #include <stan/math/prim/meta/disjunction.hpp>
-#include <stan/math/prim/meta/require_helpers.hpp>
 #include <type_traits>
 #include <string>
 
