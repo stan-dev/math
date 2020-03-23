@@ -44,7 +44,6 @@ class colwise_reduction
 
  protected:
   std::string init_;
-  using base::arguments_;
   using base::derived;
 
  public:
@@ -121,7 +120,7 @@ class colwise_reduction
   inline int rows() const {
     int local_rows = opencl_context.base_opts().at("LOCAL_SIZE_");
     int wgs_rows
-        = (std::get<0>(arguments_).rows() + local_rows - 1) / local_rows;
+        = (this->template get_arg<0>().rows() + local_rows - 1) / local_rows;
     return wgs_rows;
   }
 
@@ -129,7 +128,7 @@ class colwise_reduction
    * Number of rows threads need to be launched for.
    * @return number of rows
    */
-  inline int thread_rows() const { return std::get<0>(arguments_).rows(); }
+  inline int thread_rows() const { return this->template get_arg<0>().rows(); }
 
   /**
    * View of a matrix that would be the result of evaluating this expression.
@@ -161,8 +160,8 @@ class colwise_sum_ : public colwise_reduction<colwise_sum_<T>, T, sum_op> {
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline auto deep_copy() {
-    auto&& arg_copy = std::get<0>(arguments_).deep_copy();
+  inline auto deep_copy() const {
+    auto&& arg_copy = this->template get_arg<0>().deep_copy();
     return colwise_sum_<std::remove_reference_t<decltype(arg_copy)>>(
         std::move(arg_copy));
   }
@@ -209,8 +208,8 @@ class colwise_max_ : public colwise_reduction<
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline auto deep_copy() {
-    auto&& arg_copy = std::get<0>(arguments_).deep_copy();
+  inline auto deep_copy() const {
+    auto&& arg_copy = this->template get_arg<0>().deep_copy();
     return colwise_max_<std::remove_reference_t<decltype(arg_copy)>>(
         std::move(arg_copy));
   }
@@ -257,8 +256,8 @@ class colwise_min_ : public colwise_reduction<
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline auto deep_copy() {
-    auto&& arg_copy = std::get<0>(arguments_).deep_copy();
+  inline auto deep_copy() const {
+    auto&& arg_copy = this->template get_arg<0>().deep_copy();
     return colwise_min_<std::remove_reference_t<decltype(arg_copy)>>(
         std::move(arg_copy));
   }
