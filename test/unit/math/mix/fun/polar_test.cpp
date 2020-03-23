@@ -12,8 +12,9 @@ TEST(mathMixMatFun, polar) {
   };
 
   stan::test::expect_ad(f, 0.2, 0.5);
-  // TODO(carpenter): fix this so it succeeds in test framework
-  // stan::test::expect_ad(f, 1, 0.5);
+  stan::test::expect_ad(f, 1, 0.5);
+  stan::test::expect_ad(f, 0.2, 1);
+  stan::test::expect_ad(f, 1, 1);
 
   auto f1 = [](const auto& r, const auto& theta) {
     using stan::math::polar;
@@ -47,7 +48,4 @@ TEST(mathMixMatFun, polar) {
     stan::test::expect_ad(f1, 1, theta);
     stan::test::expect_ad(f2, 1, theta);
   }
-
-  // need to fix this, too, because it's failing
-  // EXPECT_TRUE(stan::is_stan_scalar<std::complex<double>>::value);
 }

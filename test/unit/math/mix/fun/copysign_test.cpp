@@ -18,8 +18,9 @@ void expect_copysign() {
   using std::copysign;
   using std::numeric_limits;
 
+  double nan = numeric_limits<double>::quiet_NaN();
   double inf = numeric_limits<double>::infinity();
-  std::vector<double> ys{inf, -inf, -1, 0, 1};
+  std::vector<double> ys{-inf, -1, -0.0, 0.0, 1, inf, nan};
 
   // real
   for (double x : ys) {

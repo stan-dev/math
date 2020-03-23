@@ -7,8 +7,8 @@ TEST(mixScalFun, arg) {
 
   // undefined with 0 in denominator
   stan::test::expect_ad(f, std::complex<double>(0.9, 0.8));
-  for (double im : std::vector<double>{-1.3, 2.3}) {
-    for (double re : std::vector<double>{-3.6, -0.0, 0.0, 0.5}) {
+  for (double re : std::vector<double>{-3.6, -0.0, 0.0, 0.5}) {
+    for (double im : std::vector<double>{-1.3, 2.3}) {
       stan::test::expect_ad(f, std::complex<double>(re, im));
     }
   }
