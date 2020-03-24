@@ -33,17 +33,17 @@ struct multi_result_kernel_internal {
     using T_current_expression = std::remove_reference_t<
         std::tuple_element_t<n, std::tuple<T_expressions...>>>;
     /**
-     * Generates list of all events kernel assigning expressions to results must wait on.
+     * Generates list of all events kernel assigning expressions to results must wait on. Also clears those events from matrices.
      * @param[out] events list of events
      * @param results results
      * @param expressions expressions
      */
-    static void get_events(std::vector<cl::Event>& events,
+    static void get_clear_events(std::vector<cl::Event>& events,
         const std::tuple<wrapper<T_results>...>& results,
         const std::tuple<wrapper<T_expressions>...>& expressions){
-      next::get_events(events, results, expressions);
-      std::get<n>(expressions).x.get_write_events(events);
-      std::get<n>(results).x.get_read_write_events(events);
+      next::get_clear_events(events, results, expressions);
+      std::get<n>(expressions).x.get_clear_write_events(events);
+      std::get<n>(results).x.get_clear_read_write_events(events);
     }
     /**
      * Assigns the dimensions of expressions to matching results if possible.
@@ -152,7 +152,7 @@ template <typename... T_results>
 struct multi_result_kernel_internal<-1, T_results...> {
   template <typename... T_expressions>
   struct inner {
-    static void get_events(std::vector<cl::Event>& events,
+    static void get_clear_events(std::vector<cl::Event>& events,
         const std::tuple<wrapper<T_results>...>& results,
         const std::tuple<wrapper<T_expressions>...>& expressions){
     }
@@ -425,7 +425,7 @@ class results_cl {
       impl::set_args(generated, kernel, arg_num, results, expressions);
 
       std::vector<cl::Event> events;
-      impl::get_events(events, results, expressions);
+      impl::get_clear_events(events, results, expressions);
       cl::Event e;
       if (require_specific_local_size) {
         kernel.setArg(arg_num++, n_rows);
