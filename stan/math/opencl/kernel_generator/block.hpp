@@ -184,9 +184,7 @@ class block_
    * @return number of columns
    */
   inline int bottom_diagonal() const {
-    return std::max(
-        this->template get_arg<0>().bottom_diagonal() - start_col_ + start_row_,
-        1 - rows_);
+    return this->template get_arg<0>().bottom_diagonal() - start_col_ + start_row_;
   }
 
   /**
@@ -194,9 +192,7 @@ class block_
    * @return number of columns
    */
   inline int top_diagonal() const {
-    return std::min(
-        this->template get_arg<0>().top_diagonal() - start_col_ + start_row_,
-        cols_ - 1);
+    return this->template get_arg<0>().top_diagonal() - start_col_ + start_row_;
   }
 
   /**

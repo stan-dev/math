@@ -19,18 +19,17 @@ namespace math {
 
 /**
  * Represents a broadcasting operation_cl in kernel generator expressions.
- * @tparam T type of argument
- * @tparam Rows whether to broadcast rows
- * @tparam Cols whether to broadcast columns
+ * @tparam T type of arguments
+ * @tparam Colwise whether to broadcast colwise
+ * @tparam Rowwise whether to broadcast rowwise
  */
-template <typename T, bool Rows, bool Cols>
+template <typename T, bool Colwise, bool Rowwise>
 class broadcast_
-    : public operation_cl<broadcast_<T, Rows, Cols>,
+    : public operation_cl<broadcast_<T, Colwise, Rowwise>,
                           typename std::remove_reference_t<T>::Scalar, T> {
  public:
   using Scalar = typename std::remove_reference_t<T>::Scalar;
-  using base = operation_cl_cl<broadcast_<T, Rows, Cols>, Scalar, T>;
-  using base::instance;
+  using base = operation_cl<broadcast_<T, Colwise, Rowwise>, Scalar, T>;
   using base::var_name;
 
   /**
@@ -39,10 +38,10 @@ class broadcast_
    */
   explicit broadcast_(T&& a) : base(std::forward<T>(a)) {
     const char* function = "broadcast";
-    if (Rows) {
+    if (Colwise) {
       check_size_match(function, "Rows of ", "a", a.rows(), "", "", 1);
     }
-    if (Cols) {
+    if (Rowwise) {
       check_size_match(function, "Columns of ", "a", a.cols(), "", "", 1);
     }
   }
@@ -52,9 +51,9 @@ class broadcast_
    * @return copy of \c *this
    */
   inline auto deep_copy() {
-    auto&& arg_copy = std::get<0>(arguments_).deep_copy();
-    return block_<std::remove_reference_t<decltype(arg_copy)>>{
-        std::move(arg_copy), start_row_, start_col_, rows_, cols_};
+    auto&& arg_copy = this->template get_arg<0>().deep_copy();
+    return broadcast_<std::remove_reference_t<decltype(arg_copy)>, Colwise,
+                      Rowwise>{std::move(arg_copy)};
   }
 
   /**
@@ -67,78 +66,103 @@ class broadcast_
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
                                const std::string& var_name_arg) const {
-    kernel_parts res
-        = a_.generate(generated, ng, Rows ? "0" : i, Cols ? "0" : j,
-                      Rows ? "1" : rows, Cols ? "1" : rows);
-    var_name = a_.var_name;
-    return res;
+    var_name = this->template get_arg<0>().var_name;
+    return {};
   }
 
   /**
-   * Sets kernel arguments for this and nested expressions.
-   * @param[in,out] generated set of expressions that already set their kernel
-   * arguments
-   * @param kernel kernel to set arguments on
-   * @param[in,out] arg_num consecutive number of the first argument to set.
-   * This is incremented for each argument set by this function.
+   * Sets index/indices along broadcasted dimmension(s) to 0.
+   * @param[in, out] i row index
+   * @param[in, out] j column index
    */
-  inline void set_args(std::set<int>& generated, cl::Kernel& kernel,
-                       int& arg_num) const {
-    a_.set_args(generated, kernel, arg_num);
+  inline void modify_argument_indices(std::string& i, std::string& j) const {
+    if (Colwise) {
+      i = "0";
+    }
+    if (Rowwise) {
+      j = "0";
+    }
   }
-
-  /**
-   * Adds event for any matrices used by this or nested expressions.
-   * @param e the event to add
-   */
-  inline void add_event(cl::Event& e) const { a_.add_event(e); }
 
   /**
    * Number of rows of a matrix that would be the result of evaluating this
    * expression.
    * @return number of rows
    */
-  inline int rows() const { return Rows ? base::dynamic : a_.rows(); }
+  inline int rows() const {
+    return Colwise ? base::dynamic : this->template get_arg<0>().rows();
+  }
 
   /**
    * Number of columns of a matrix that would be the result of evaluating this
    * expression.
    * @return number of columns
    */
-  inline int cols() const { return Cols ? base::dynamic : a_.cols(); }
+  inline int cols() const {
+    return Rowwise ? base::dynamic : this->template get_arg<0>().cols();
+  }
 
   /**
    * View of a matrix that would be the result of evaluating this expression.
    * @return view
    */
   inline matrix_cl_view view() const {
-    matrix_cl_view view = a_.view();
-    if (Rows) {
+    matrix_cl_view view = this->template get_arg<0>().view();
+    if (Colwise) {
       view = either(view, matrix_cl_view::Lower);
     }
-    if (Cols) {
+    if (Rowwise) {
       view = either(view, matrix_cl_view::Upper);
     }
     return view;
   }
+
+  /**
+   * Determine index of bottom diagonal written.
+   * @return index of bottom diagonal
+   */
+  inline int bottom_diagonal() const {
+    if (Colwise) {
+      return std::numeric_limits<int>::min();
+    } else {
+      return this->template get_arg<0>().bottom_diagonal();
+    }
+  }
+
+  /**
+   * Determine index of top diagonal written.
+   * @return index of top diagonal
+   */
+  inline int top_diagonal() const {
+    if (Rowwise) {
+      return std::numeric_limits<int>::max();
+    } else {
+      return this->template get_arg<0>().top_diagonal();
+    }
+  }
 };
 
 /**
- * Brodcast an expression in specified dimension(s). If broadcasting a
- * dimension, that dimension of the input must be equal to 1. Further
- * expressions can use this expression as if had any size in broadcast
- * dimension, repeating the values.
- * @tparam Rows whether to broadcast rows
- * @tparam Cols whether to broadcast rows
+ * Brodcast an expression in specified dimension(s). If broadcasting rowwise,
+ * the argument must have single column. If broadcasting colwise, the argument
+ * must have single row. Further expressions can use this expression as if it
+ * had any size in broadcasted dimension, repeating the values.
+ *
+ * Broadcasting evaluates argument expression multiple times. For performance
+ * reasons don't broadcast slow operations. Instead evaluate them in a separate
+ * kernel.
+ * @tparam Colwise whether to broadcast Colwise
+ * @tparam Rowwise whether to broadcast Rowwise
  * @tparam T type of input expression
  * @param a input expression
  * @return broadcast expression
  */
-template <bool Rows, bool Cols, typename T,
-          typename = enable_if_all_valid_expressions_and_none_scalar<T>>
-inline broadcast_<as_operation_cl_t<T>, Rows, Cols> broadcast(T&& a) {
-  return broadcast_<as_operation_cl_t<T>, Rows, Cols>(
-      as_operation_cl(std::forward<T>(a)));
+template <bool Colwise, bool Rowwise, typename T,
+          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+inline broadcast_<as_operation_cl_t<T>, Colwise, Rowwise> broadcast(T&& a) {
+  auto&& a_operation = as_operation_cl(std::forward<T>(a)).deep_copy();
+  return broadcast_<as_operation_cl_t<T>, Colwise, Rowwise>(
+      std::move(a_operation));
 }
 
 }  // namespace math

@@ -59,8 +59,11 @@ struct multi_result_kernel_internal {
                        "first expression", n_cols);
       if (!is_without_output<T_current_expression>::value) {
         result.check_assign_dimensions(expression.rows(), expression.cols());
-        result.set_view(expression.bottom_diagonal(), expression.top_diagonal(),
-                        1 - expression.rows(), expression.cols() - 1);
+        int bottom_written = 1 - expression.rows();
+        int top_written = expression.cols() - 1;
+        result.set_view(std::max(expression.bottom_diagonal(), bottom_written),
+                        std::min(expression.top_diagonal(), top_written),
+                        bottom_written, top_written);
       }
     }
 
@@ -390,8 +393,8 @@ class results_cl {
     if (n_rows * n_cols == 0) {
       return;
     }
-    check_positive(function, "number of rows", n_rows);
-    check_positive(function, "number of columns", n_cols);
+    check_positive(function, "number of rows", "expr.rows()", n_rows);
+    check_positive(function, "number of columns", "expr.cols()", n_cols);
 
     try {
       if (impl::kernel_() == NULL) {
