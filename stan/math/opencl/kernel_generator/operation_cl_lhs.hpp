@@ -125,13 +125,16 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
   }
 
   /**
-   * Adds all read and write events on any matrices used by nested expressions to a list and clears them from those matrices.
+   * Adds all read and write events on any matrices used by nested expressions
+   * to a list and clears them from those matrices.
    * @param[out] events List of all events.
    */
-  inline void get_clear_read_write_events(std::vector<cl::Event>& events) const {
+  inline void get_clear_read_write_events(
+      std::vector<cl::Event>& events) const {
     index_apply<N>([&](auto... Is) {
       (void)std::initializer_list<int>{
-          (this->template get_arg<Is>().get_clear_read_write_events(events), 0)...};
+          (this->template get_arg<Is>().get_clear_read_write_events(events),
+           0)...};
     });
   }
 };

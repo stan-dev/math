@@ -48,7 +48,7 @@ class load_
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline load_<T&> deep_copy() const & { return load_<T&>(a_); }
+  inline load_<T&> deep_copy() const& { return load_<T&>(a_); }
   inline load_<T> deep_copy() && { return load_<T>(std::forward<T>(a_)); }
 
   /**
@@ -121,21 +121,27 @@ class load_
   inline void add_write_event(cl::Event& e) const { a_.add_write_event(e); }
 
   /**
-   * Adds all read and write events on the matrix used by this expression to a list and clears them from the matrix.
+   * Adds all read and write events on the matrix used by this expression to a
+   * list and clears them from the matrix.
    * @param[out] events List of all events.
    */
-  inline void get_clear_read_write_events(std::vector<cl::Event>& events) const {
-    events.insert(events.end(), a_.read_events().begin(), a_.read_events().end());
-    events.insert(events.end(), a_.write_events().begin(), a_.write_events().end());
+  inline void get_clear_read_write_events(
+      std::vector<cl::Event>& events) const {
+    events.insert(events.end(), a_.read_events().begin(),
+                  a_.read_events().end());
+    events.insert(events.end(), a_.write_events().begin(),
+                  a_.write_events().end());
     a_.clear_read_write_events();
   }
 
   /**
-   * Adds all write events on the matrix used by this expression to a list and clears them from the matrix.
+   * Adds all write events on the matrix used by this expression to a list and
+   * clears them from the matrix.
    * @param[out] events List of all events.
    */
   inline void get_clear_write_events(std::vector<cl::Event>& events) const {
-    events.insert(events.end(), a_.write_events().begin(), a_.write_events().end());
+    events.insert(events.end(), a_.write_events().begin(),
+                  a_.write_events().end());
     a_.clear_write_events();
   }
 

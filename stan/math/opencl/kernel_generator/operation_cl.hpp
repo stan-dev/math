@@ -255,7 +255,8 @@ class operation_cl : public operation_cl_base {
   }
 
   /**
-   * Adds all write events on any matrices used by nested expressions to a list and clears them from those matrices.
+   * Adds all write events on any matrices used by nested expressions to a list
+   * and clears them from those matrices.
    * @param[out] events List of all events.
    */
   inline void get_clear_write_events(std::vector<cl::Event>& events) const {

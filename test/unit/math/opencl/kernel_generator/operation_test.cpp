@@ -82,7 +82,7 @@ TEST(MathMatrixCL, events_read_after_write_and_write_after_read) {
     m1_cl = m2_cl + 1;
   }
   Eigen::MatrixXd res = stan::math::from_matrix_cl(m1_cl);
-  Eigen::MatrixXd correct = Eigen::MatrixXd::Constant(3, 3, 2*iters);
+  Eigen::MatrixXd correct = Eigen::MatrixXd::Constant(3, 3, 2 * iters);
 
   EXPECT_MATRIX_NEAR(res, correct, 1e-13);
 }
