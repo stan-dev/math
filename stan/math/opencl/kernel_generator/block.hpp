@@ -184,7 +184,8 @@ class block_
    * @return number of columns
    */
   inline int bottom_diagonal() const {
-    return this->template get_arg<0>().bottom_diagonal() - start_col_ + start_row_;
+    return this->template get_arg<0>().bottom_diagonal() - start_col_
+           + start_row_;
   }
 
   /**

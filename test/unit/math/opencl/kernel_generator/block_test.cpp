@@ -128,16 +128,16 @@ TEST(MathMatrixCL, two_blocks_of_same_expression) {
 
 TEST(MathMatrixCL, block_view_test) {
   using stan::math::block;
-  matrix_cl<double> m(4,4, stan::math::matrix_cl_view::Diagonal);
-  matrix_cl<double> res = block(m,0,0,2,2);
+  matrix_cl<double> m(4, 4, stan::math::matrix_cl_view::Diagonal);
+  matrix_cl<double> res = block(m, 0, 0, 2, 2);
   EXPECT_EQ(res.view(), stan::math::matrix_cl_view::Diagonal);
-  res = block(m,1,0,2,2);
+  res = block(m, 1, 0, 2, 2);
   EXPECT_EQ(res.view(), stan::math::matrix_cl_view::Upper);
-  res = block(m,0,1,2,2);
+  res = block(m, 0, 1, 2, 2);
   EXPECT_EQ(res.view(), stan::math::matrix_cl_view::Lower);
-  res = block(m,0,2,2,2);
+  res = block(m, 0, 2, 2, 2);
   EXPECT_EQ(res.view(), stan::math::matrix_cl_view::Diagonal);
-  res = block(m,2,0,2,2);
+  res = block(m, 2, 0, 2, 2);
   EXPECT_EQ(res.view(), stan::math::matrix_cl_view::Diagonal);
 }
 
