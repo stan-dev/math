@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <complex>
-#include <iostream>  // TODO(carpenter):  get rid of this include
 
 namespace stan {
 namespace math {
@@ -18,7 +17,7 @@ namespace math {
  * @param y second argument
  * @return `true` if the arguments are equal
  */
-template <typename U, typename V>
+template <typename U, typename V, typename = require_any_autodiff_t<U, V>>
 inline bool operator==(const std::complex<U>& x, const std::complex<V>& y) {
   return x.real() == y.real() && x.imag() == y.imag();
 }
@@ -33,7 +32,7 @@ inline bool operator==(const std::complex<U>& x, const std::complex<V>& y) {
  * @param y second argument
  * @return `true` if the arguments are equal
  */
-template <typename U, typename V>
+template <typename U, typename V, typename = require_any_autodiff_t<U, V>>
 inline bool operator==(const std::complex<U>& x, const V& y) {
   return x.real() == y && x.imag() == 0;
 }
@@ -49,23 +48,11 @@ inline bool operator==(const std::complex<U>& x, const V& y) {
  * @param y second argument
  * @return `true` if the arguments are equal
  */
-template <typename U, typename V>
+template <typename U, typename V, typename = require_any_autodiff_t<U, V>>
 inline bool operator==(const U& x, const std::complex<V>& y) {
   return x == y.real() && 0 == y.imag();
 }
 
-// ambiguous with lib wo specific autodiff type
-template <typename U, typename = require_autodiff_t<U>>
-inline bool operator==(const U& x, const std::complex<U>& y) {
-  return x == y.real() && 0 == y.imag();
-}
-
-template <typename U, typename = require_autodiff_t<U>>
-inline bool operator==(const std::complex<U>& x, const U& y) {
-  return x.real() == y && x.imag() == 0;
-}
-
 }  // namespace math
 }  // namespace stan
-
 #endif

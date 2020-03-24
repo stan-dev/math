@@ -1785,6 +1785,29 @@ void expect_complex_compare(const F& f, const std::complex<double>& z1,
   EXPECT_EQ(f(z1, z2.real()), f(z1, z2r));
 }
 
+template <typename F>
+void expect_complex_comparison(const F& f, const std::complex<double>& z1,
+                               const std::complex<double>& z2) {
+  using stan::math::fvar;
+  using stan::math::var;
+  using std::complex;
+  expect_complex_compare<double>(f, z1, z2);              // PASS
+  expect_complex_compare<var>(f, z1, z2);                 // FAIL
+  expect_complex_compare<fvar<double>>(f, z1, z2);        // PASS
+  expect_complex_compare<fvar<fvar<double>>>(f, z1, z2);  // PASS
+  expect_complex_compare<fvar<var>>(f, z1, z2);           // PASS
+  expect_complex_compare<fvar<fvar<var>>>(f, z1, z2);     // PASS
+}
+
+template <typename F>
+void expect_complex_common_comparison(const F& f) {
+  for (auto z1 : common_complex()) {
+    for (auto z2 : common_complex()) {
+      expect_complex_comparison(f, z1, z2);
+    }
+  }
+}
+
 }  // namespace test
 }  // namespace stan
 #endif
