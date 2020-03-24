@@ -3,8 +3,7 @@
 #include <iostream>
 #include <vector>
 
-TEST(mathMixMatFun, polar) {
-  // test framework can't handle (real x real) -> complex, so factor tests
+TEST(mathMixFun, polar) {
   auto f = [](const auto& r, const auto& theta) {
     using stan::math::polar;
     auto y = polar(r, theta);

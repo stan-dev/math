@@ -1774,65 +1774,16 @@ void expect_complex_compare(const F& f, const std::complex<double>& z1,
   T z1r{z1.real()};
   T z2r{z2.real()};
 
-  // EXPECT_EQ(f(z1, z2), f(cz1, cz2));    // PASS
-  // EXPECT_EQ(f(z1, z2), f(cz1, z2));     // PASS
-  // EXPECT_EQ(f(z1, z2), f(z1, cz2));     // PASS
+  EXPECT_EQ(f(z1, z2), f(cz1, cz2));
+  EXPECT_EQ(f(z1, z2), f(cz1, z2));
+  EXPECT_EQ(f(z1, z2), f(z1, cz2));
 
-  EXPECT_EQ(f(z1.real(), z2), f(z1r, cz2));  // FAIL
-  // EXPECT_EQ(f(z1.real(), z2), f(z1r, z2));      // PASS
+  EXPECT_EQ(f(z1.real(), z2), f(z1r, cz2));
+  EXPECT_EQ(f(z1.real(), z2), f(z1r, z2));
 
-  // // EXPECT_EQ(f(z1, z2.real()), f(cz1, z2r));     // FAIL
-  // EXPECT_EQ(f(z1, z2.real()), f(z1, z2r));  // PASS
+  EXPECT_EQ(f(z1, z2.real()), f(cz1, z2r));
+  EXPECT_EQ(f(z1, z2.real()), f(z1, z2r));
 }
-
-template <typename F>
-void expect_complex_comparison(const F& f, const std::complex<double>& z1,
-                               const std::complex<double>& z2) {
-  using stan::math::fvar;
-  using stan::math::var;
-  using std::complex;
-  // expect_complex_compare<double>(f, z1, z2);              // PASS
-  expect_complex_compare<var>(f, z1, z2);  // FAIL
-  // expect_complex_compare<fvar<double>>(f, z1, z2);        // PASS
-  // expect_complex_compare<fvar<fvar<double>>>(f, z1, z2);  // PASS
-  // expect_complex_compare<fvar<var>>(f, z1, z2);           // PASS
-  // expect_complex_compare<fvar<fvar<var>>>(f, z1, z2);     // PASS
-}
-
-template <typename F>
-void expect_complex_common_comparison(const F& f) {
-  for (auto z1 : common_complex()) {
-    for (auto z2 : common_complex()) {
-      expect_complex_comparison(f, z1, z2);
-    }
-  }
-}
-
-// template <typename F>
-// void expect_reduction(const F& f) {
-//   cvar_t x(1, 2);
-//   var_t y = f(x);
-
-//   cdouble_t xd(1, 2);
-//   double yd = f(xd);
-//   EXPECT_FLOAT_EQ(yd, y.val());
-// }
-
-// std::vector<double> common_complex_non_neg_parts() {
-//   double inf = std::numeric_limits<double>::infinity();
-//   double nan = std::numeric_limits<double>::quiet_NaN();
-//   double pos_zero = 0.0;
-//   return {0.0, 1.3, 2.1};
-// }
-
-// template <typename T>
-// std::vector<T> to_array(const std::complex<T>& a) {
-//   return {a.real(), a.imag()};
-// }
-// template <typename T>
-// std::complex<T> from_array(const std::vector<T>& a) {
-//   return {a[0], a[1]};
-// }
 
 }  // namespace test
 }  // namespace stan
