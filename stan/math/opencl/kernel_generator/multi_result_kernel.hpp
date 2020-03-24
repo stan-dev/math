@@ -13,6 +13,7 @@
 #include <tuple>
 #include <utility>
 #include <set>
+#include <vector>
 
 namespace stan {
 namespace math {

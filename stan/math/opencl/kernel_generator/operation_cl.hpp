@@ -17,6 +17,7 @@
 #include <set>
 #include <array>
 #include <numeric>
+#include <vector>
 
 namespace stan {
 namespace math {
