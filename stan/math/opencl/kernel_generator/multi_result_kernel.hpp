@@ -9,6 +9,7 @@
 #include <stan/math/opencl/kernel_generator/calc_if.hpp>
 #include <stan/math/opencl/kernel_generator/load.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
+#include <algorithm>
 #include <string>
 #include <tuple>
 #include <utility>
