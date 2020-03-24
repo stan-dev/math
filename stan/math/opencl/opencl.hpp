@@ -43,7 +43,6 @@
 #include <stan/math/opencl/prim/normal_id_glm_lpdf.hpp>
 #include <stan/math/opencl/prim/ordered_logistic_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/poisson_log_glm_lpmf.hpp>
-#include <stan/math/opencl/prim/transpose.hpp>
 
 #include <stan/math/opencl/err.hpp>
 
