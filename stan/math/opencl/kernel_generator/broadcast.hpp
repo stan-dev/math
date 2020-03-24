@@ -19,7 +19,7 @@ namespace stan {
 namespace math {
 
 /**
- * Represents a broadcasting operation_cl in kernel generator expressions.
+ * Represents a broadcasting operation in kernel generator expressions.
  * @tparam T type of arguments
  * @tparam Colwise whether to broadcast colwise
  * @tparam Rowwise whether to broadcast rowwise
