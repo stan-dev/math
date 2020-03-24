@@ -65,8 +65,7 @@ inline void check_2F1_converges(const char* function, const T_a1& a1,
 
   double fabs_zd = fabs(zd);
   if (!is_undefined
-      && (is_polynomial || fabs_zd < 1
-          || (fabs_zd == 1 && b1d > a1d + a2d))) {
+      && (is_polynomial || fabs_zd < 1 || (fabs_zd == 1 && b1d > a1d + a2d))) {
     return;
   }
 
