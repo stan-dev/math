@@ -58,11 +58,11 @@ TEST(MathMatrixCL, broadcast_errors) {
 
   EXPECT_NO_THROW((stan::math::broadcast<false, false>(scal_cl).eval()));
   EXPECT_THROW((stan::math::broadcast<true, false>(scal_cl).eval()),
-               std::invalid_argument);
+               std::domain_error);
   EXPECT_THROW((stan::math::broadcast<false, true>(scal_cl).eval()),
-               std::invalid_argument);
+               std::domain_error);
   EXPECT_THROW((stan::math::broadcast<true, true>(scal_cl).eval()),
-               std::invalid_argument);
+               std::domain_error);
 }
 
 TEST(MathMatrixCL, broadcast_rows_test) {

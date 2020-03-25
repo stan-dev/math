@@ -2,6 +2,7 @@
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_MULTI_RESULT_KERNEL_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/kernel_generator/wrapper.hpp>
 #include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
@@ -394,8 +395,8 @@ class results_cl {
     if (n_rows * n_cols == 0) {
       return;
     }
-    check_positive(function, "number of rows", "expr.rows()", n_rows);
-    check_positive(function, "number of columns", "expr.cols()", n_cols);
+    check_nonnegative(function, "expr.rows()", n_rows);
+    check_nonnegative(function, "expr.cols()", n_cols);
 
     try {
       if (impl::kernel_() == NULL) {

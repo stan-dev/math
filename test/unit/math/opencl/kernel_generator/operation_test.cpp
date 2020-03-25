@@ -18,7 +18,9 @@ using stan::math::matrix_cl;
 
 TEST(MathMatrixCL, operation_cl_errors) {
   EXPECT_THROW(matrix_cl<double> a = stan::math::as_operation_cl(3.5),
-               std::invalid_argument);
+               std::domain_error);
+  EXPECT_THROW(stan::math::as_operation_cl(3.5).eval(),
+               std::domain_error);
 }
 
 TEST(MathMatrixCL, kernel_caching) {
