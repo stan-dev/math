@@ -180,8 +180,7 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   // boundary terms
   if (sensitivities_for_omega_or_rho) {
     Eigen::MatrixXd log_omega_jacad
-        = Eigen::MatrixXd::Zero(n_states, n_transitions + 1);
-    // log_omega_jacad.setZero();
+      = Eigen::MatrixXd::Zero(n_states, n_transitions + 1);
 
     if (!is_constant_all<T_omega>::value) {
       for (int n = n_transitions - 1; n >= 0; --n)
@@ -191,36 +190,32 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
     }
 
     // Boundary terms
-    // TODO (charlesm93): find a better solution that the if loop
-    // for the case with 0 transitions.
-    double grad_corr_boundary;
-    Eigen::VectorXd c;
-    if (n_transitions != 0) {
-      grad_corr_boundary = std::exp(kappa_log_norms(0) - norm_norm);
-      c = Gamma_dbl * omegas.col(1).cwiseProduct(kappa[0]);
-    }
-
-    if (!is_constant_all<T_omega>::value) {
-      if (n_transitions != 0) {
-        log_omega_jacad.col(0)
-            = grad_corr_boundary * c.cwiseProduct(value_of_rec(rho));
-        log_omega_jacad
-            = log_omega_jacad.cwiseProduct(omegas / unnormed_marginal);
-      } else {
+    if (n_transitions == 0) {
+      if (!is_constant_all<T_omega>::value) {
         log_omega_jacad.col(0) = omegas.col(0).cwiseProduct(value_of_rec(rho))
                                  / exp(value_of_rec(log_marginal_density));
+        ops_partials.edge1_.partials_ = log_omega_jacad;
       }
-      ops_partials.edge1_.partials_ = log_omega_jacad;
-    }
 
-    if (!is_constant_all<T_rho>::value) {
-      if (n_transitions != 0) {
+      if (!is_constant_all<T_rho>::value) {
+        ops_partials.edge3_.partials_
+            = omegas.col(0) / exp(value_of_rec(log_marginal_density));
+      }
+    } else {
+      double grad_corr_boundary = std::exp(kappa_log_norms(0) - norm_norm);
+      Eigen::VectorXd c = Gamma_dbl * omegas.col(1).cwiseProduct(kappa[0]);
+
+      if (!is_constant_all<T_omega>::value) {
+        log_omega_jacad.col(0)
+            = grad_corr_boundary * c.cwiseProduct(value_of_rec(rho));
+        ops_partials.edge1_.partials_
+            = log_omega_jacad.cwiseProduct(omegas / unnormed_marginal);
+      }
+
+      if (!is_constant_all<T_rho>::value) {
         ops_partials.edge3_.partials_ = grad_corr_boundary
                                         * c.cwiseProduct(omegas.col(0))
                                         / unnormed_marginal;
-      } else {
-        ops_partials.edge3_.partials_
-            = omegas.col(0) / exp(value_of_rec(log_marginal_density));
       }
     }
   }
