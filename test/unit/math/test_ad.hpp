@@ -1799,6 +1799,13 @@ void expect_complex_comparison(const F& f, const std::complex<double>& z1,
   expect_complex_compare<fvar<fvar<var>>>(f, z1, z2);     // PASS
 }
 
+/**
+ * Test the specified comparison operation provides results matching
+ * those for the double version for all the common complex numbers.
+ *
+ * @tparam F type of function to test
+ * @param f function to test
+ */
 template <typename F>
 void expect_complex_common_comparison(const F& f) {
   for (auto z1 : common_complex()) {
