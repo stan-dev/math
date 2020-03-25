@@ -93,15 +93,14 @@ class hmm_marginal_lpdf_test : public ::testing::Test {
     Gamma_unconstrained = Gamma.block(0, 0, n_states, n_states - 1);
 
     double infinity = 1e10;
-      // std::numeric_limits<double>::infinity();
-    tols.hessian_val_ = infinity;
-    tols.hessian_grad_ = infinity;
+    // tols.hessian_val_ = infinity;
+    // tols.hessian_grad_ = infinity;
     tols.hessian_hessian_ = infinity;
-    tols.hessian_fvar_val_ = infinity;
+    // tols.hessian_fvar_val_ = infinity;
     tols.hessian_fvar_grad_ = infinity;
     tols.hessian_fvar_hessian_ = infinity;
-    tols.grad_hessian_val_ = infinity;
-    tols.grad_hessian_hessian_ = infinity;
+    // tols.grad_hessian_val_ = infinity;
+    // tols.grad_hessian_hessian_ = infinity;
     tols.grad_hessian_grad_hessian_ = infinity;
   }
 
@@ -114,7 +113,7 @@ class hmm_marginal_lpdf_test : public ::testing::Test {
   Eigen::MatrixXd log_omegas;
   Eigen::MatrixXd log_omegas_zero;
 
-  // Construct "uncontrained" versions of rho and Gamma, without
+  // Construct "unconstrained" versions of rho and Gamma, without
   // the final element which can be determnied using the fact
   // the columns sum to 1. This allows us to do finite diff tests,
   // without violating the simplex constraint of rho and Gamma.

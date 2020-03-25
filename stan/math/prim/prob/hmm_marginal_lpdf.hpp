@@ -19,7 +19,7 @@ namespace math {
 /**
  * For a Hidden Markov Model with observation y, hidden state x,
  * and parameters theta, return the log marginal density, log
- * pi(y | theta). In this setting, the hidden states are discrete
+ * p(y | theta). In this setting, the hidden states are discrete
  * and take values over the finite space {1, ..., K}.
  * The marginal lpdf is obtained via a forward pass.
  * The [in, out] argument are saved so that we can use them when
@@ -71,7 +71,7 @@ double hmm_marginal_lpdf(const Eigen::MatrixXd& log_omegas,
 /**
  * For a Hidden Markov Model with observation y, hidden state x,
  * and parameters theta, return the log marginal density, log
- * pi(y | theta). In this setting, the hidden states are discrete
+ * p(y | theta). In this setting, the hidden states are discrete
  * and take values over the finite space {1, ..., K}.
  * The marginal lpdf is obtained via a forward pass, and
  * the derivative is calculated with an adjoint method,
@@ -89,10 +89,11 @@ double hmm_marginal_lpdf(const Eigen::MatrixXd& log_omegas,
  *              The (i, j)th entry is the probability that x_n = j,
  *              given x_{n - 1} = i. The rows of Gamma are simplexes.
  * @param[in] rho initial state
+ * @throw <code>std::domain_error</code> if Gamma is not square.
  * @throw <code>std::domain_error</code> if the rows of Gamma are
  * not a simplex.
  * @throw <code>std::invalid_argument</code> if the size of rho is not
- * the number of states.
+ * the number of rows of Gamma.
  * @throw <code>std::domain_error</code> if rho is not a simplex.
  * @return log marginal density.
  */
@@ -106,17 +107,17 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
 
   check_square("hmm_marginal_lpdf", "Gamma", Gamma);
   check_consistent_size("hmm_marginal_lpdf", "Gamma", row(Gamma, 1), n_states);
-  {
-    // Temporary vector to use check_simplex, which only works once
-    // column vectors.
-    Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic> Gamma_transpose
-        = Gamma.transpose();
-    for (int i = 0; i < Gamma.cols(); i++) {
-      // CHECK -- does check_simplex not work on row-vectors?
-      check_simplex("hmm_marginal_lpdf", "Gamma[i, ]",
-                    col(Gamma_transpose, i + 1));
-    }
+
+  // Temporary vector to use check_simplex, which only works once
+  // column vectors.
+  Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic> Gamma_transpose
+      = Gamma.transpose();
+  for (int i = 0; i < Gamma.cols(); ++i) {
+    // CHECK -- does check_simplex not work on row-vectors?
+    check_simplex("hmm_marginal_lpdf", "Gamma[i, ]",
+                  col(Gamma_transpose, i + 1));
   }
+
   check_consistent_size("hmm_marginal_lpdf", "rho", rho, n_states);
   check_simplex("hmm_marginal_lpdf", "rho", rho);
 
@@ -161,15 +162,12 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   }
 
   if (!is_constant_all<T_Gamma>::value) {
-    Eigen::MatrixXd Gamma_jacad(n_states, n_states);
-    Gamma_jacad.setZero();
+    Eigen::MatrixXd Gamma_jacad = Eigen::MatrixXd::Zero(n_states, n_states);
 
-    if (n_transitions != 0) {
-      for (int n = n_transitions - 1; n >= 0; --n) {
-        Gamma_jacad += (grad_corr[n] * kappa[n].cwiseProduct(omegas.col(n + 1))
-                        * alphas.col(n).transpose())
-                           .transpose();
-      }
+    for (int n = n_transitions - 1; n >= 0; --n) {
+      Gamma_jacad += (grad_corr[n] * kappa[n].cwiseProduct(omegas.col(n + 1))
+                      * alphas.col(n).transpose())
+                         .transpose();
     }
 
     Gamma_jacad /= unnormed_marginal;
@@ -181,8 +179,9 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
 
   // boundary terms
   if (sensitivities_for_omega_or_rho) {
-    Eigen::MatrixXd log_omega_jacad(n_states, n_transitions + 1);
-    log_omega_jacad.setZero();
+    Eigen::MatrixXd log_omega_jacad
+      = Eigen::MatrixXd::Zero(n_states, n_transitions + 1);
+    // log_omega_jacad.setZero();
 
     if (!is_constant_all<T_omega>::value) {
       for (int n = n_transitions - 1; n >= 0; --n)
@@ -192,7 +191,7 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
     }
 
     // Boundary terms
-    // TO DO (charlesm93): find a better solution that the if loop
+    // TODO (charlesm93): find a better solution that the if loop
     // for the case with 0 transitions.
     double grad_corr_boundary;
     Eigen::VectorXd c;
