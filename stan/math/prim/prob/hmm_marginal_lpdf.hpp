@@ -9,13 +9,14 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/core.hpp>
-#include <Eigen/Core>
+// #include <Eigen/Core>
 #include <vector>
 #include <iostream>
 
 namespace stan {
 namespace math {
 
+namespace internal {
 /**
  * For a Hidden Markov Model with observation y, hidden state x,
  * and parameters theta, return the log marginal density, log
@@ -46,7 +47,7 @@ double hmm_marginal_lpdf(const Eigen::MatrixXd& log_omegas,
                          const Eigen::VectorXd& rho, Eigen::MatrixXd& alphas,
                          Eigen::VectorXd& alpha_log_norms,
                          Eigen::MatrixXd& omegas) {
-  omegas = log_omegas.array().exp();  // CHECK -- why the .array()?
+  omegas = log_omegas.array().exp();
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 
@@ -67,6 +68,8 @@ double hmm_marginal_lpdf(const Eigen::MatrixXd& log_omegas,
 
   return log(alphas.col(n_transitions).sum()) + alpha_log_norms(n_transitions);
 }
+
+}  // namespace internal
 
 /**
  * For a Hidden Markov Model with observation y, hidden state x,
@@ -89,12 +92,12 @@ double hmm_marginal_lpdf(const Eigen::MatrixXd& log_omegas,
  *              The (i, j)th entry is the probability that x_n = j,
  *              given x_{n - 1} = i. The rows of Gamma are simplexes.
  * @param[in] rho initial state
- * @throw <code>std::domain_error</code> if Gamma is not square.
- * @throw <code>std::domain_error</code> if the rows of Gamma are
+ * @throw `std::domain_error` if Gamma is not square.
+ * @throw `std::domain_error` if the rows of Gamma are
  * not a simplex.
- * @throw <code>std::invalid_argument</code> if the size of rho is not
+ * @throw `std::invalid_argument` if the size of rho is not
  * the number of rows of Gamma.
- * @throw <code>std::domain_error</code> if rho is not a simplex.
+ * @throw `std::domain_error` if rho is not a simplex.
  * @return log marginal density.
  */
 template <typename T_omega, typename T_Gamma, typename T_rho>
@@ -133,7 +136,7 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   Eigen::MatrixXd Gamma_dbl = value_of_rec(Gamma);
 
   T_partials_return log_marginal_density
-      = hmm_marginal_lpdf(value_of_rec(log_omegas), Gamma_dbl,
+      = internal::hmm_marginal_lpdf(value_of_rec(log_omegas), Gamma_dbl,
                           value_of_rec(rho), alphas, alpha_log_norms, omegas);
 
   // Variables required for all three Jacobian-adjoint products.
