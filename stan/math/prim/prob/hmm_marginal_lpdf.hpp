@@ -180,7 +180,7 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   // boundary terms
   if (sensitivities_for_omega_or_rho) {
     Eigen::MatrixXd log_omega_jacad
-      = Eigen::MatrixXd::Zero(n_states, n_transitions + 1);
+        = Eigen::MatrixXd::Zero(n_states, n_transitions + 1);
     // log_omega_jacad.setZero();
 
     if (!is_constant_all<T_omega>::value) {

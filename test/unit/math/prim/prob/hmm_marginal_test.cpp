@@ -128,8 +128,7 @@ TEST_F(hmm_marginal_lpdf_test, ten_transitions) {
   EXPECT_FLOAT_EQ(-18.37417, hmm_marginal_lpdf(log_omegas, Gamma, rho));
 
   // Differentiation tests
-  auto hmm_functor = [](const auto& log_omegas,
-                        const auto& Gamma_unconstrained,
+  auto hmm_functor = [](const auto& log_omegas, const auto& Gamma_unconstrained,
                         const auto& rho_unconstrained) {
     return hmm_marginal_test_wrapper(log_omegas, Gamma_unconstrained,
                                      rho_unconstrained);
