@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap floor() so that it can be vectorized.
+ * Structure to wrap `floor()` so that it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -24,28 +24,33 @@ struct floor_fun {
 };
 
 /**
- * Vectorized version of floor().
+ * Returns the elementwise `floor()` of the input,
+ * which may be a scalar or any Stan container of numeric scalars.
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x container
  * @return Greatest integer <= each value in x.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
-inline auto floor(const T& x) {
-  return apply_scalar_unary<floor_fun, T>::apply(x);
+template <
+    typename Container,
+    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto floor(const Container& x) {
+  return apply_scalar_unary<floor_fun, Container>::apply(x);
 }
 
 /**
- * Version of floor() that accepts Eigen Matrix or matrix expressions.
+ * Version of `floor()` that accepts std::vectors, Eigen Matrix/Array objects
+ *  or expressions, and containers of these.
  *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
+ * @tparam Container Type of x
+ * @param x Container
  * @return Greatest integer <= each value in x.
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto floor(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().floor().matrix().eval();
+template <typename Container,
+          require_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto floor(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](const auto& v) { return v.array().floor(); });
 }
 
 }  // namespace math

@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_CUMULATIVE_SUM_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <vector>
 #include <numeric>
 #include <functional>
@@ -31,28 +32,30 @@ inline std::vector<T> cumulative_sum(const std::vector<T>& x) {
 }
 
 /**
- * Return the cumulative sum of the specified matrix.
+ * Return the cumulative sum of the specified vector.
  *
  * The cumulative sum is of the same type as the input and
  * has values defined by
  *
  * \code x(0), x(1) + x(2), ..., x(1) + , ..., + x(x.size()-1) @endcode
  *
- * @tparam T type of elements in the matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam EigVec type of the vector (must be derived from \c Eigen::MatrixBase
+ * and have one compile time dimension equal to 1)
  *
- * @param m Matrix of values.
+ * @param m Vector of values.
  * @return Cumulative sum of values.
  */
-template <typename T, int R, int C>
-inline Eigen::Matrix<T, R, C> cumulative_sum(const Eigen::Matrix<T, R, C>& m) {
-  Eigen::Matrix<T, R, C> result(m.rows(), m.cols());
+template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+inline auto cumulative_sum(const EigVec& m) {
+  using T_scalar = value_type_t<EigVec>;
+  Eigen::Matrix<T_scalar, EigVec::RowsAtCompileTime, EigVec::ColsAtCompileTime>
+      result(m.rows(), m.cols());
   if (m.size() == 0) {
     return result;
   }
-  std::partial_sum(m.data(), m.data() + m.size(), result.data(),
-                   std::plus<T>());
+  const Eigen::Ref<const plain_type_t<EigVec>>& m_ref = m;
+  std::partial_sum(m_ref.data(), m_ref.data() + m_ref.size(), result.data(),
+                   std::plus<T_scalar>());
   return result;
 }
 

@@ -12,14 +12,18 @@ namespace math {
 /**
  * Returns the squared distance.
  *
- * @param x1 First vector.
- * @param x2 Second vector.
- * @return Square of distance between vectors.
- * @throw std::domain_error If the vectors are not the same
- * size or if they are both not vector dimensioned.
+ * @tparam Scal1 Type of the first scalar.
+ * @tparam Scal2 Type of the second scalar.
+ * @param x1 First scalar.
+ * @param x2 Second scalar.
+ * @return Squared distance between scalars
+ * @throw std::domain_error Any scalar is not finite.
  */
-template <typename T1, typename T2>
-inline return_type_t<T1, T2> squared_distance(const T1& x1, const T2& x2) {
+template <typename Scal1, typename Scal2,
+          require_all_stan_scalar_t<Scal1, Scal2>* = nullptr,
+          require_all_not_var_t<Scal1, Scal2>* = nullptr>
+inline return_type_t<Scal1, Scal2> squared_distance(const Scal1& x1,
+                                                    const Scal2& x2) {
   check_finite("squared_distance", "x1", x1);
   check_finite("squared_distance", "x2", x2);
   return square(x1 - x2);
@@ -29,45 +33,24 @@ inline return_type_t<T1, T2> squared_distance(const T1& x1, const T2& x2) {
  * Returns the squared distance between the specified vectors
  * of the same dimensions.
  *
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam EigVec1 type of the first vector (must be derived from \c
+ * Eigen::MatrixBase and have one compile time dimension equal to 1)
+ * @tparam EigVec2 type of the second vector (must be derived from \c
+ * Eigen::MatrixBase and have one compile time dimension equal to 1)
  * @param v1 First vector.
  * @param v2 Second vector.
  * @return Square of distance between vectors.
  * @throw std::domain_error If the vectors are not the same
- * size or if they are both not vector dimensioned.
+ * size.
  */
-template <int R, int C>
-inline double squared_distance(const Eigen::Matrix<double, R, C>& v1,
-                               const Eigen::Matrix<double, R, C>& v2) {
-  check_vector("squared_distance", "v1", v1);
-  check_vector("squared_distance", "v2", v2);
+template <typename EigVec1, typename EigVec2,
+          require_all_eigen_vector_t<EigVec1, EigVec2>* = nullptr,
+          require_all_not_eigen_vt<is_var, EigVec1, EigVec2>* = nullptr>
+inline return_type_t<EigVec1, EigVec2> squared_distance(const EigVec1& v1,
+                                                        const EigVec2& v2) {
   check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-  return (v1 - v2).squaredNorm();
-}
-
-/**
- * Returns the squared distance between the specified vectors
- * of the same dimensions.
- *
- * @tparam R1 number of rows in the first vector, can be Eigen::Dynamic
- * @tparam C1 number of columns in the first vector, can be Eigen::Dynamic
- * @tparam R2 number of rows in the second vector, can be Eigen::Dynamic
- * @tparam C2 number of columns in the second vector, can be Eigen::Dynamic
- *
- * @param v1 First vector.
- * @param v2 Second vector.
- * @return Square of distance between vectors.
- * @throw std::domain_error If the vectors are not the same
- * size or if they are both not vector dimensioned.
- */
-template <int R1, int C1, int R2, int C2>
-inline double squared_distance(const Eigen::Matrix<double, R1, C1>& v1,
-                               const Eigen::Matrix<double, R2, C2>& v2) {
-  check_vector("squared_distance", "v1", v1);
-  check_vector("squared_distance", "v2", v2);
-  check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-  return (v1.transpose() - v2).squaredNorm();
+  return (as_column_vector_or_scalar(v1) - as_column_vector_or_scalar(v2))
+      .squaredNorm();
 }
 
 }  // namespace math

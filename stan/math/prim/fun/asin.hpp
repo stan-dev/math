@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap asin() so it can be vectorized.
+ * Structure to wrap `asin()` so it can be vectorized.
  *
  * @tparam T type of argument
  * @param x argument
@@ -24,28 +24,33 @@ struct asin_fun {
 };
 
 /**
- * Vectorized version of asin().
+ * Returns the elementwise `asin()` of the input,
+ * which may be a scalar or any Stan container of numeric scalars.
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x container
  * @return Arcsine of each variable in the container, in radians.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
-inline auto asin(const T& x) {
-  return apply_scalar_unary<asin_fun, T>::apply(x);
+template <
+    typename Container,
+    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto asin(const Container& x) {
+  return apply_scalar_unary<asin_fun, Container>::apply(x);
 }
 
 /**
- * Version of asin() that accepts Eigen Matrix or matrix expressions.
+ * Version of `asin()` that accepts std::vectors, Eigen Matrix/Array objects,
+ *  or expressions, and containers of these.
  *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
+ * @tparam Container Type of x
+ * @param x Container
  * @return Arcsine of each variable in the container, in radians.
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto asin(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().asin().matrix().eval();
+template <typename Container,
+          require_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto asin(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](const auto& v) { return v.array().asin(); });
 }
 
 }  // namespace math
