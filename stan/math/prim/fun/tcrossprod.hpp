@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_TCROSSPROD_HPP
 #define STAN_MATH_PRIM_FUN_TCROSSPROD_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 
@@ -11,21 +12,24 @@ namespace math {
  * Returns the result of post-multiplying a matrix by its
  * own transpose.
  *
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam T type of the matrix (must be derived from \c Eigen::MatrixBase)
  * @param M Matrix to multiply.
  * @return M times its transpose.
  */
-template <int R, int C>
-inline Eigen::MatrixXd tcrossprod(const Eigen::Matrix<double, R, C>& M) {
+template <typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
+inline Eigen::Matrix<value_type_t<T>, T::RowsAtCompileTime,
+                     T::RowsAtCompileTime>
+tcrossprod(const T& M) {
   if (M.rows() == 0) {
     return {};
   }
   if (M.rows() == 1) {
     return M * M.transpose();
   }
-  matrix_d result(M.rows(), M.rows());
-  return result.setZero().selfadjointView<Eigen::Upper>().rankUpdate(M);
+  Eigen::Matrix<value_type_t<T>, T::RowsAtCompileTime, T::RowsAtCompileTime>
+      result(M.rows(), M.rows());
+  return result.setZero().template selfadjointView<Eigen::Upper>().rankUpdate(
+      M);
 }
 
 }  // namespace math
