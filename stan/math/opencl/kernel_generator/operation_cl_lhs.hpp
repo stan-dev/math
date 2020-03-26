@@ -90,11 +90,11 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
   inline void set_view(int bottom_diagonal, int top_diagonal,
                        int bottom_zero_diagonal, int top_zero_diagonal) const {
     index_apply<N>([&](auto... Is) {
-      (void)std::initializer_list<int>{
+      static_cast<void>(std::initializer_list<int>{
           (this->template get_arg<Is>().set_view(bottom_diagonal, top_diagonal,
                                                  bottom_zero_diagonal,
                                                  top_zero_diagonal),
-           0)...};
+           0)...});
     });
   }
 
@@ -108,9 +108,9 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
    */
   inline void check_assign_dimensions(int rows, int cols) const {
     index_apply<N>([&](auto... Is) {
-      (void)std::initializer_list<int>{
+      static_cast<void>(std::initializer_list<int>{
           (this->template get_arg<Is>().check_assign_dimensions(rows, cols),
-           0)...};
+           0)...});
     });
   }
 
@@ -120,8 +120,8 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
    */
   inline void add_write_event(cl::Event& e) const {
     index_apply<N>([&](auto... Is) {
-      (void)std::initializer_list<int>{
-          (this->template get_arg<Is>().add_write_event(e), 0)...};
+      static_cast<void>(std::initializer_list<int>{
+          (this->template get_arg<Is>().add_write_event(e), 0)...});
     });
   }
 
@@ -133,9 +133,9 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
   inline void get_clear_read_write_events(
       std::vector<cl::Event>& events) const {
     index_apply<N>([&](auto... Is) {
-      (void)std::initializer_list<int>{
+      static_cast<void>(std::initializer_list<int>{
           (this->template get_arg<Is>().get_clear_read_write_events(events),
-           0)...};
+           0)...});
     });
   }
 };
