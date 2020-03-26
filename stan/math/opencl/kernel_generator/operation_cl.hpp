@@ -38,13 +38,9 @@ struct kernel_parts {
 
   kernel_parts operator+(const kernel_parts& other) {
     return {
-      includes + other.includes,
-      initialization + other.initialization,
-      body_prefix + other.body_prefix,
-      body + other.body,
-      reduction + other.reduction,
-      args + other.args
-    };
+        includes + other.includes,       initialization + other.initialization,
+        body_prefix + other.body_prefix, body + other.body,
+        reduction + other.reduction,     args + other.args};
   }
 
   kernel_parts operator+=(const kernel_parts& other) {
@@ -200,7 +196,8 @@ class operation_cl : public operation_cl_base {
         return std::array<kernel_parts, N>{this->get_arg<Is>().get_kernel_parts(
             generated, name_gen, i_arg, j_arg)...};
       });
-      res = std::accumulate(args_parts.begin(), args_parts.end(), kernel_parts{});
+      res = std::accumulate(args_parts.begin(), args_parts.end(),
+                            kernel_parts{});
       kernel_parts my_part = index_apply<N>([&](auto... Is) {
         return this->derived().generate(i, j, this->get_arg<Is>().var_name...);
       });
