@@ -30,7 +30,7 @@ static const char* log1p_exp_device_function
             return (a > 0 ? a : 0) + log1p(exp(-fabs(a)));
           }
           // \cond
-          ) "\n#endif\n"; // NOLINT
+          ) "\n#endif\n";  // NOLINT
 // \endcond
 
 }  // namespace opencl_kernels

@@ -106,7 +106,7 @@ static const char* digamma_device_function
             return result;
           }
           // \cond
-          ) "\n#endif\n"; // NOLINT
+          ) "\n#endif\n";  // NOLINT
 // \endcond
 
 }  // namespace opencl_kernels
