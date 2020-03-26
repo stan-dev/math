@@ -10,7 +10,11 @@ namespace math {
 namespace opencl_kernels {
 
 // \cond
-static const std::string log1p_exp_device_function = STRINGIFY(
+static const char* log1p_exp_device_function =
+  "\n"
+  "#ifndef STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_LOG1P_EXP\n"
+  "#define STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_LOG1P_EXP\n"
+  STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      * Calculates the log of 1 plus the exponential of the specified
@@ -27,7 +31,7 @@ static const std::string log1p_exp_device_function = STRINGIFY(
       return (a > 0 ? a : 0) + log1p(exp(-fabs(a)));
     }
     // \cond
-);
+) "\n#endif\n";
 // \endcond
 
 }  // namespace opencl_kernels

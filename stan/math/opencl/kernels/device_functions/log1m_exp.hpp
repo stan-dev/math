@@ -10,7 +10,11 @@ namespace math {
 namespace opencl_kernels {
 
 // \cond
-static const std::string log1m_exp_device_function = STRINGIFY(
+static const char* log1m_exp_device_function =
+  "\n"
+  "#ifndef STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_LOG1M_EXP\n"
+  "#define STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_LOG1M_EXP\n"
+  STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      * Calculates the natural logarithm of one minus the exponential
@@ -32,7 +36,7 @@ static const std::string log1m_exp_device_function = STRINGIFY(
         return log1p(-exp(a));
     }
     // \cond
-);
+) "\n#endif\n";
 // \endcond
 
 }  // namespace opencl_kernels

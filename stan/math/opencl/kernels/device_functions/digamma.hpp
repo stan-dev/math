@@ -9,7 +9,11 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const std::string digamma_device_function = STRINGIFY(
+static const char* digamma_device_function =
+  "\n"
+  "#ifndef STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_DIGAMMA\n"
+  "#define STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_DIGAMMA\n"
+  STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      * Calculates the digamma function - derivative of logarithm of gamma. This
@@ -101,7 +105,7 @@ static const std::string digamma_device_function = STRINGIFY(
       return result;
     }
     // \cond
-);
+) "\n#endif\n";
 // \endcond
 
 }  // namespace opencl_kernels

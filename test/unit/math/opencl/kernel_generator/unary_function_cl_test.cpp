@@ -98,6 +98,21 @@ TEST_FUNCTION(floor)
 TEST_FUNCTION(round)
 TEST_FUNCTION(ceil)
 
+TEST_FUNCTION(digamma)
+TEST_FUNCTION(log1p_exp)
+TEST(MathMatrixCL, log1m_exp) {
+  MatrixXd m1(3, 3);
+  m1 << -0.1, -0.2, -0.3, -0.4, -0.5, -0.6, -0.7, -0.8, -0.9;
+
+  matrix_cl<double> m1_cl(m1);
+  auto tmp = stan::math::log1m_exp(m1_cl);
+  matrix_cl<double> res_cl = tmp;
+
+  MatrixXd res = stan::math::from_matrix_cl(res_cl);
+  MatrixXd correct = stan::math::log1m_exp(m1);
+  EXPECT_MATRIX_NEAR(correct, res, 1e-9);
+}
+
 TEST(MathMatrixCL, multiple_operations_test) {
   MatrixXd m1(3, 3);
   m1 << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9;
@@ -124,4 +139,18 @@ TEST(MathMatrixCL, multiple_operations_accepts_lvalue_test) {
   MatrixXd correct = stan::math::exp(stan::math::sin(m1));
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
+
+TEST(MathMatrixCL, multiple_operations_with_includes_test) {
+  MatrixXd m1(3, 3);
+  m1 << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9;
+
+  matrix_cl<double> m1_cl(m1);
+  auto tmp = stan::math::digamma(stan::math::digamma(m1_cl));
+  matrix_cl<double> res_cl = tmp;
+
+  MatrixXd res = stan::math::from_matrix_cl(res_cl);
+  MatrixXd correct = stan::math::digamma(stan::math::digamma(m1));
+  EXPECT_MATRIX_NEAR(correct, res, 1e-9);
+}
+
 #endif
