@@ -106,19 +106,19 @@ TEST(StanMathRev_reduce_sum, grainsize) {
   std::vector<int> idata;
   std::vector<var> vlambda_v(1, lambda_v);
 
-  EXPECT_THROW(stan::math::reduce_sum<count_lpdf<var>>(data, 0, msgs,
-						       vlambda_v, idata),
-	       std::domain_error);
+  EXPECT_THROW(
+      stan::math::reduce_sum<count_lpdf<var>>(data, 0, msgs, vlambda_v, idata),
+      std::domain_error);
 
-  EXPECT_THROW(stan::math::reduce_sum<count_lpdf<var>>(data, -1, msgs,
-						       vlambda_v, idata),
-	       std::domain_error);
+  EXPECT_THROW(
+      stan::math::reduce_sum<count_lpdf<var>>(data, -1, msgs, vlambda_v, idata),
+      std::domain_error);
 
-  EXPECT_NO_THROW(stan::math::reduce_sum<count_lpdf<var>>(data, 1, msgs,
-						       vlambda_v, idata));
+  EXPECT_NO_THROW(
+      stan::math::reduce_sum<count_lpdf<var>>(data, 1, msgs, vlambda_v, idata));
 
   EXPECT_NO_THROW(stan::math::reduce_sum<count_lpdf<var>>(data, 2 * elems, msgs,
-							  vlambda_v, idata));
+                                                          vlambda_v, idata));
 
   stan::math::recover_memory();
 }

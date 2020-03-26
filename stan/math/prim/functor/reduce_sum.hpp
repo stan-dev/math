@@ -172,8 +172,8 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
    * @param args Shared arguments used in every sum term
    * @return Summation of all terms
    */
-  ReturnType operator()(Vec&& vmapped, int grainsize,
-                        std::ostream* msgs, Args&&... args) const {
+  ReturnType operator()(Vec&& vmapped, int grainsize, std::ostream* msgs,
+                        Args&&... args) const {
     const std::size_t num_jobs = vmapped.size();
     if (num_jobs == 0) {
       return 0.0;

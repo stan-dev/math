@@ -115,7 +115,8 @@ TEST(MathMix_reduce_sum, std_vector_std_vector_std_vector_double_slice) {
     return stan::math::reduce_sum<sum_lpdf>(data, 1, msgs);
   };
 
-  std::vector<std::vector<std::vector<double>>> data(3, std::vector<std::vector<double>>(2, std::vector<double>(2, 10.0)));
+  std::vector<std::vector<std::vector<double>>> data(
+      3, std::vector<std::vector<double>>(2, std::vector<double>(2, 10.0)));
 
   stan::test::expect_ad(f, data);
 }
@@ -125,7 +126,8 @@ TEST(MathMix_reduce_sum, std_vector_std_vector_eigen_vector_double_slice) {
     return stan::math::reduce_sum<sum_lpdf>(data, 1, msgs);
   };
 
-  std::vector<std::vector<Eigen::VectorXd>> data(3, std::vector<Eigen::VectorXd>(2, Eigen::VectorXd::Ones(2)));
+  std::vector<std::vector<Eigen::VectorXd>> data(
+      3, std::vector<Eigen::VectorXd>(2, Eigen::VectorXd::Ones(2)));
 
   stan::test::expect_ad(f, data);
 }
@@ -135,7 +137,8 @@ TEST(MathMix_reduce_sum, std_vector_std_vector_eigen_row_vector_double_slice) {
     return stan::math::reduce_sum<sum_lpdf>(data, 1, msgs);
   };
 
-  std::vector<std::vector<Eigen::RowVectorXd>> data(3, std::vector<Eigen::RowVectorXd>(2, Eigen::RowVectorXd::Ones(2)));
+  std::vector<std::vector<Eigen::RowVectorXd>> data(
+      3, std::vector<Eigen::RowVectorXd>(2, Eigen::RowVectorXd::Ones(2)));
 
   stan::test::expect_ad(f, data);
 }
@@ -145,7 +148,8 @@ TEST(MathMix_reduce_sum, std_vector_std_vector_eigen_matrix_double_slice) {
     return stan::math::reduce_sum<sum_lpdf>(data, 1, msgs);
   };
 
-  std::vector<std::vector<Eigen::MatrixXd>> data(3, std::vector<Eigen::MatrixXd>(2, Eigen::MatrixXd::Ones(2, 4)));
+  std::vector<std::vector<Eigen::MatrixXd>> data(
+      3, std::vector<Eigen::MatrixXd>(2, Eigen::MatrixXd::Ones(2, 4)));
 
   stan::test::expect_ad(f, data);
 }
@@ -271,7 +275,8 @@ TEST(MathMix_reduce_sum, std_vector_eigen_matrix_arg) {
 
 TEST(MathMix_reduce_sum, std_vector_std_vector_std_vector_double_arg) {
   std::vector<double> data(2, 10.0);
-  std::vector<std::vector<std::vector<double>>> arg(2, std::vector<std::vector<double>>(2, std::vector<double>(2, 10.0)));
+  std::vector<std::vector<std::vector<double>>> arg(
+      2, std::vector<std::vector<double>>(2, std::vector<double>(2, 10.0)));
 
   stan::test::expect_ad(fi, arg);
   stan::test::expect_ad(fd, data, arg);
@@ -279,7 +284,8 @@ TEST(MathMix_reduce_sum, std_vector_std_vector_std_vector_double_arg) {
 
 TEST(MathMix_reduce_sum, std_vector_std_vector_eigen_vector_arg) {
   std::vector<double> data(2, 10.0);
-  std::vector<std::vector<Eigen::VectorXd>> arg(2, std::vector<Eigen::VectorXd>(2, Eigen::VectorXd::Ones(2)));
+  std::vector<std::vector<Eigen::VectorXd>> arg(
+      2, std::vector<Eigen::VectorXd>(2, Eigen::VectorXd::Ones(2)));
 
   stan::test::expect_ad(fi, arg);
   stan::test::expect_ad(fd, data, arg);
@@ -287,7 +293,8 @@ TEST(MathMix_reduce_sum, std_vector_std_vector_eigen_vector_arg) {
 
 TEST(MathMix_reduce_sum, std_vector_std_vector_eigen_row_vector_arg) {
   std::vector<double> data(2, 10.0);
-  std::vector<std::vector<Eigen::RowVectorXd>> arg(2, std::vector<Eigen::RowVectorXd>(2, Eigen::RowVectorXd::Ones(2)));
+  std::vector<std::vector<Eigen::RowVectorXd>> arg(
+      2, std::vector<Eigen::RowVectorXd>(2, Eigen::RowVectorXd::Ones(2)));
 
   stan::test::expect_ad(fi, arg);
   stan::test::expect_ad(fd, data, arg);
@@ -295,7 +302,8 @@ TEST(MathMix_reduce_sum, std_vector_std_vector_eigen_row_vector_arg) {
 
 TEST(MathMix_reduce_sum, std_vector_std_vector_eigen_matrix_arg) {
   std::vector<double> data(2, 10.0);
-  std::vector<std::vector<Eigen::MatrixXd>> arg(2, std::vector<Eigen::MatrixXd>(2, Eigen::MatrixXd::Ones(2, 2)));
+  std::vector<std::vector<Eigen::MatrixXd>> arg(
+      2, std::vector<Eigen::MatrixXd>(2, Eigen::MatrixXd::Ones(2, 2)));
 
   stan::test::expect_ad(fi, arg);
   stan::test::expect_ad(fd, data, arg);
