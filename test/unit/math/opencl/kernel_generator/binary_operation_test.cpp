@@ -45,7 +45,7 @@ TEST(KernelGenerator, addition_test) {
 }
 
 #define BINARY_OPERATION_TEST(test_name, operation, res_type)          \
-  TEST(KernelGenerator, test_name) {                                      \
+  TEST(KernelGenerator, test_name) {                                   \
     MatrixXd m1(3, 3);                                                 \
     m1 << 1, 2.5, 3, 4, 5, 6.3, 7, -8, -9.5;                           \
     MatrixXi m2(3, 3);                                                 \
