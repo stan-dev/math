@@ -2,6 +2,7 @@
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_MULTI_RESULT_KERNEL_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/opencl/kernel_generator/wrapper.hpp>
 #include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
@@ -17,21 +18,6 @@ namespace stan {
 namespace math {
 
 namespace internal {
-
-/**
- * A wrapper for references. This is used to wrap references when putting them
- * in tuples.
- */
-template <typename T>
-struct wrapper {
-  T x;
-  explicit wrapper(T&& x) : x(std::forward<T>(x)) {}
-};
-
-template <typename T>
-wrapper<T> make_wrapper(T&& x) {
-  return wrapper<T>(std::forward<T>(x));
-}
 
 // Template parameter pack can only be at the end of the template list in
 // structs. We need 2 packs for expressions and results, so we nest structs.

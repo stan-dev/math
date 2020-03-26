@@ -63,7 +63,7 @@ class unary_function_cl
    * @return view
    */
   inline matrix_cl_view view() const {
-    return std::get<0>(base::arguments_).view();
+    return this->template get_arg<0>().view();
   }
 
  protected:
@@ -83,8 +83,8 @@ class unary_function_cl
                                                                               \
    public:                                                                    \
     explicit fun##_(T&& a) : base(std::forward<T>(a), #fun) {}                \
-    inline auto deep_copy() {                                                 \
-      auto&& arg_copy = std::get<0>(arguments_).deep_copy();                  \
+    inline auto deep_copy() const {                                           \
+      auto&& arg_copy = this->template get_arg<0>().deep_copy();              \
       return fun##_<std::remove_reference_t<decltype(arg_copy)>>{             \
           std::move(arg_copy)};                                               \
     }                                                                         \
@@ -111,8 +111,8 @@ class unary_function_cl
                                                                               \
    public:                                                                    \
     explicit fun##_(T&& a) : base(std::forward<T>(a), #fun) {}                \
-    inline auto deep_copy() {                                                 \
-      auto&& arg_copy = std::get<0>(arguments_).deep_copy();                  \
+    inline auto deep_copy() const {                                           \
+      auto&& arg_copy = this->template get_arg<0>().deep_copy();              \
       return fun##_<std::remove_reference_t<decltype(arg_copy)>>{             \
           std::move(arg_copy)};                                               \
     }                                                                         \

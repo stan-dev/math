@@ -160,57 +160,40 @@ pipeline {
                 }
             }
         }
-        stage('Headers checks') {
+        stage('Headers check') {
             when {
                 expression {
                     !skipRemainingStages
                 }
             }
-            parallel {
-              stage('Headers check') {
-                agent any
-                steps {
-                    deleteDir()
-                    unstash 'MathSetup'
-                    sh "echo CXX=${env.CXX} -Werror > make/local"
-                    sh "make -j${env.PARALLEL} test-headers"
-                }
-                post { always { deleteDir() } }
-              }
-              stage('Headers check with OpenCL') {
-                agent { label "gpu" }
-                steps {
-                    deleteDir()
-                    unstash 'MathSetup'
-                    sh "echo CXX=${env.CXX} -Werror > make/local"
-                    sh "echo STAN_OPENCL=true>> make/local"
-                    sh "echo OPENCL_PLATFORM_ID=0>> make/local"
-                    sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
-                    sh "make -j${env.PARALLEL} test-headers"
-                }
-                post { always { deleteDir() } }
-              }
-           }
+            agent any
+            steps {
+                deleteDir()
+                unstash 'MathSetup'
+                sh "echo CXX=${env.CXX} -Werror > make/local"
+                sh "make -j${env.PARALLEL} test-headers"
+            }
+            post { always { deleteDir() } }
         }
-        stage('Always-run tests part 1') {
+        stage('Linux Unit with MPI') {
+            agent { label 'linux && mpi' }
+            steps {
+                deleteDir()
+                unstash 'MathSetup'
+                sh "echo CXX=${MPICXX} >> make/local"
+                sh "echo CXX_TYPE=gcc >> make/local"                        
+                sh "echo STAN_MPI=true >> make/local"
+                runTests("test/unit")
+            }
+            post { always { retry(3) { deleteDir() } } }
+        }
+        stage('Always-run tests') {
             when {
                 expression {
                     !skipRemainingStages
                 }
             }
             parallel {
-                stage('Linux Unit with MPI') {
-                    agent { label 'linux && mpi' }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CXX=${MPICXX} >> make/local"
-                        sh "echo CXX_TYPE=gcc >> make/local"
-                        sh "echo STAN_MPI=true >> make/local"
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
                 stage('Full unit with GPU') {
                     agent { label "gpu" }
                     steps {
@@ -220,19 +203,11 @@ pipeline {
                         sh "echo STAN_OPENCL=true>> make/local"
                         sh "echo OPENCL_PLATFORM_ID=0>> make/local"
                         sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
+                        sh "make -j${env.PARALLEL} test-headers"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-            }
-        }
-        stage('Always-run tests part 2') {
-            when {
-                expression {
-                    !skipRemainingStages
-                }
-            }
-            parallel {
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
                     steps {
