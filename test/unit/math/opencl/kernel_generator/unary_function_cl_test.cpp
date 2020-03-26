@@ -27,7 +27,7 @@ MatrixXd rsqrt(const MatrixXd& a) { return stan::math::inv_sqrt(a); }
     EXPECT_NEAR(A(i), B(i), DELTA);
 
 #define TEST_FUNCTION(fun)                             \
-  TEST(MathMatrixCL, fun##_test) {                     \
+  TEST(KernelGenerator, fun##_test) {                  \
     using stan::math::fun;                             \
     MatrixXd m1(3, 3);                                 \
     m1 << 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9; \
@@ -64,7 +64,7 @@ TEST_FUNCTION(asin)
 TEST_FUNCTION(asinh)
 TEST_FUNCTION(acos)
 
-TEST(MathMatrixCL, acosh_test) {
+TEST(KernelGenerator, acosh_test) {
   std::string kernel_filename = "unary_function_acosh.cl";
   MatrixXd m1(3, 3);
   m1 << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9;
@@ -100,7 +100,7 @@ TEST_FUNCTION(ceil)
 
 TEST_FUNCTION(digamma)
 TEST_FUNCTION(log1p_exp)
-TEST(MathMatrixCL, log1m_exp) {
+TEST(KernelGenerator, log1m_exp) {
   MatrixXd m1(3, 3);
   m1 << -0.1, -0.2, -0.3, -0.4, -0.5, -0.6, -0.7, -0.8, -0.9;
 
@@ -113,7 +113,7 @@ TEST(MathMatrixCL, log1m_exp) {
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
-TEST(MathMatrixCL, multiple_operations_test) {
+TEST(KernelGenerator, multiple_operations_test) {
   MatrixXd m1(3, 3);
   m1 << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9;
 
@@ -126,7 +126,7 @@ TEST(MathMatrixCL, multiple_operations_test) {
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
-TEST(MathMatrixCL, multiple_operations_accepts_lvalue_test) {
+TEST(KernelGenerator, multiple_operations_accepts_lvalue_test) {
   MatrixXd m1(3, 3);
   m1 << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9;
 
@@ -140,7 +140,7 @@ TEST(MathMatrixCL, multiple_operations_accepts_lvalue_test) {
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
-TEST(MathMatrixCL, multiple_operations_with_includes_test) {
+TEST(KernelGenerator, multiple_operations_with_includes_test) {
   MatrixXd m1(3, 3);
   m1 << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9;
 
