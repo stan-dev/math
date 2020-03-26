@@ -45,13 +45,15 @@ struct reduce_sum_impl {
    * argument are passed to the `ReduceFunction` instances (as the
    * `vmapped_subset` argument).
    *
+   * grainsize must be greater than or equal to 1
+   *
    * @param vmapped Sliced arguments used only in some sum terms
    * @param grainsize Suggested grainsize for tbb
    * @param[in, out] msgs The print stream for warning messages
    * @param args Shared arguments used in every sum term
    * @return Summation of all terms
    */
-  return_type_t<Vec, Args...> operator()(Vec&& vmapped, std::size_t grainsize,
+  return_type_t<Vec, Args...> operator()(Vec&& vmapped, int grainsize,
                                          std::ostream* msgs,
                                          Args&&... args) const {
     const std::size_t num_jobs = vmapped.size();
@@ -162,13 +164,15 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
    *   over multiple threads by coordinating calls to `ReduceFunction`
    * instances.
    *
+   * grainsize must be greater than or equal to 1
+   *
    * @param vmapped Sliced arguments used only in some sum terms
    * @param grainsize Suggested grainsize for tbb
    * @param[in, out] msgs The print stream for warning messages
    * @param args Shared arguments used in every sum term
    * @return Summation of all terms
    */
-  ReturnType operator()(Vec&& vmapped, std::size_t grainsize,
+  ReturnType operator()(Vec&& vmapped, int grainsize,
                         std::ostream* msgs, Args&&... args) const {
     const std::size_t num_jobs = vmapped.size();
     if (num_jobs == 0) {
@@ -205,17 +209,26 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
  *
  * `ReduceFunction` must be default constructible without any arguments
  *
+ * grainsize must be greater than or equal to 1
+ *
  * @tparam ReduceFunction Type of reducer function
  * @tparam ReturnType An arithmetic type
  * @tparam Vec Type of sliced argument
  * @tparam Args Types of shared arguments
+ * @param vmapped Sliced arguments used only in some sum terms
+ * @param grainsize Suggested grainsize for tbb
+ * @param[in, out] msgs The print stream for warning messages
+ * @param args Shared arguments used in every sum term
  * @return Sum of terms
  */
 template <typename ReduceFunction, typename Vec,
           typename = require_vector_like_t<Vec>, typename... Args>
-auto reduce_sum(Vec&& vmapped, std::size_t grainsize, std::ostream* msgs,
+auto reduce_sum(Vec&& vmapped, int grainsize, std::ostream* msgs,
                 Args&&... args) {
   using return_type = return_type_t<Vec, Args...>;
+
+  check_positive("reduce_sum", "grainsize", grainsize);
+
   return internal::reduce_sum_impl<ReduceFunction, void, return_type, Vec,
                                    Args...>()(
       std::forward<Vec>(vmapped), grainsize, msgs, std::forward<Args>(args)...);

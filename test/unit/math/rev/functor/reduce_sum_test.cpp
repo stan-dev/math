@@ -88,6 +88,40 @@ TEST(StanMathRev_reduce_sum, gradient) {
 
   stan::math::recover_memory();
 }
+TEST(StanMathRev_reduce_sum, grainsize) {
+  stan::math::init_threadpool_tbb();
+
+  double lambda_d = 10.0;
+  const std::size_t elems = 10000;
+  const std::size_t num_iter = 1000;
+  std::vector<int> data(elems);
+
+  for (std::size_t i = 0; i != elems; ++i)
+    data[i] = i;
+
+  using stan::math::var;
+
+  var lambda_v = lambda_d;
+
+  std::vector<int> idata;
+  std::vector<var> vlambda_v(1, lambda_v);
+
+  EXPECT_THROW(stan::math::reduce_sum<count_lpdf<var>>(data, 0, msgs,
+						       vlambda_v, idata),
+	       std::domain_error);
+
+  EXPECT_THROW(stan::math::reduce_sum<count_lpdf<var>>(data, -1, msgs,
+						       vlambda_v, idata),
+	       std::domain_error);
+
+  EXPECT_NO_THROW(stan::math::reduce_sum<count_lpdf<var>>(data, 1, msgs,
+						       vlambda_v, idata));
+
+  EXPECT_NO_THROW(stan::math::reduce_sum<count_lpdf<var>>(data, 2 * elems, msgs,
+							  vlambda_v, idata));
+
+  stan::math::recover_memory();
+}
 
 // ********************************
 // test if nested parallelism works
