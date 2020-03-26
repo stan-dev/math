@@ -306,6 +306,21 @@ inline std::complex<var> pow(T x, const std::complex<var>& y) {
   return internal::complex_pow(x, y);
 }
 
+/**
+ * Return the first argument raised to the power of the second argument.
+ *
+ * Note: this overload is required because gcc still provides the
+ * C++99 template function `pow(complex<T>, int)`, which introduces
+ * an ambiguity.
+ *
+ * @param x first argument
+ * @param y second argument
+ * @return first argument to the power of the second argument
+ */
+inline std::complex<var> pow(const std::complex<var>& x, int y) {
+  return internal::complex_pow(x, y);
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

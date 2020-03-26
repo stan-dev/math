@@ -197,6 +197,23 @@ inline std::complex<fvar<V>> pow(T x, const std::complex<fvar<V>>& y) {
   return internal::complex_pow(x, y);
 }
 
+/**
+ * Return the first argument raised to the power of the second argument.
+ *
+ * Note: this overload is required because gcc still provides the
+ * C++99 template function `pow(complex<T>, int)`, which introduces
+ * an ambiguity.
+ *
+ * @tparam T autodiff value type
+ * @param x first argument
+ * @param y second argument
+ * @return first argument to the power of the second argument
+ */
+template <typename T>
+inline std::complex<fvar<T>> pow(const std::complex<fvar<T>>& x, int y) {
+  return internal::complex_pow(x, y);
+}
+
 }  // namespace math
 }  // namespace stan
 #endif
