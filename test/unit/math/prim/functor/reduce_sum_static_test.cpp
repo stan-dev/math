@@ -58,8 +58,8 @@ struct nesting_count_lpdf {
                       const std::vector<int>& sub_slice, std::ostream* msgs,
                       const std::vector<T>& lambda,
                       const std::vector<int>& idata) const {
-    return stan::math::reduce_sum_static<count_lpdf<T>>(sub_slice, 5, msgs, lambda,
-                                                 idata);
+    return stan::math::reduce_sum_static<count_lpdf<T>>(sub_slice, 5, msgs,
+                                                        lambda, idata);
   }
 };
 
@@ -123,14 +123,15 @@ TEST(StanMathPrim_reduce_sum_static, grainsize) {
   std::vector<int> data(5, 10);
 
   EXPECT_THROW(stan::math::reduce_sum_static<sum_lpdf>(data, 0, msgs),
-	       std::domain_error);
+               std::domain_error);
 
   EXPECT_THROW(stan::math::reduce_sum_static<sum_lpdf>(data, -1, msgs),
-	       std::domain_error);
+               std::domain_error);
 
   EXPECT_NO_THROW(stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs));
 
-  EXPECT_NO_THROW(stan::math::reduce_sum_static<sum_lpdf>(data, 3 * data.size(), msgs));
+  EXPECT_NO_THROW(
+      stan::math::reduce_sum_static<sum_lpdf>(data, 3 * data.size(), msgs));
 }
 
 TEST(StanMathPrim_reduce_sum_static, std_vector_int_slice) {
@@ -146,7 +147,8 @@ TEST(StanMathPrim_reduce_sum_static, std_vector_double_slice) {
 
   std::vector<double> data(5, 10.0);
 
-  EXPECT_DOUBLE_EQ(50.0, stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs));
+  EXPECT_DOUBLE_EQ(50.0,
+                   stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs));
 }
 
 TEST(StanMathPrim_reduce_sum_static, std_vector_std_vector_double_slice) {
@@ -154,7 +156,8 @@ TEST(StanMathPrim_reduce_sum_static, std_vector_std_vector_double_slice) {
 
   std::vector<std::vector<double>> data(5, std::vector<double>(2, 10.0));
 
-  EXPECT_DOUBLE_EQ(100.0, stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs));
+  EXPECT_DOUBLE_EQ(100.0,
+                   stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs));
 }
 
 TEST(StanMathPrim_reduce_sum_static, std_vector_std_vector_int_slice) {
@@ -170,7 +173,8 @@ TEST(StanMathPrim_reduce_sum_static, std_vector_eigen_vector_slice) {
 
   std::vector<Eigen::VectorXd> data(5, Eigen::VectorXd::Ones(2));
 
-  EXPECT_DOUBLE_EQ(10.0, stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs));
+  EXPECT_DOUBLE_EQ(10.0,
+                   stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs));
 }
 
 TEST(StanMathPrim_reduce_sum_static, std_vector_eigen_row_vector_slice) {
@@ -178,7 +182,8 @@ TEST(StanMathPrim_reduce_sum_static, std_vector_eigen_row_vector_slice) {
 
   std::vector<Eigen::RowVectorXd> data(5, Eigen::RowVectorXd::Ones(2));
 
-  EXPECT_DOUBLE_EQ(10.0, stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs));
+  EXPECT_DOUBLE_EQ(10.0,
+                   stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs));
 }
 
 TEST(StanMathPrim_reduce_sum_static, std_vector_eigen_matrix_slice) {
@@ -186,47 +191,60 @@ TEST(StanMathPrim_reduce_sum_static, std_vector_eigen_matrix_slice) {
 
   std::vector<Eigen::MatrixXd> data(5, Eigen::MatrixXd::Ones(2, 2));
 
-  EXPECT_DOUBLE_EQ(20.0, stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs));
+  EXPECT_DOUBLE_EQ(20.0,
+                   stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs));
 }
 
-TEST(StanMathPrim_reduce_sum_static, std_vector_std_vector_std_vector_int_slice) {
+TEST(StanMathPrim_reduce_sum_static,
+     std_vector_std_vector_std_vector_int_slice) {
   stan::math::init_threadpool_tbb();
 
-  std::vector<std::vector<std::vector<int>>> data(5, std::vector<std::vector<int>>(2, std::vector<int>(2, 10.0)));
+  std::vector<std::vector<std::vector<int>>> data(
+      5, std::vector<std::vector<int>>(2, std::vector<int>(2, 10.0)));
 
   EXPECT_DOUBLE_EQ(200, stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs));
 }
 
-TEST(StanMathPrim_reduce_sum_static, std_vector_std_vector_std_vector_double_slice) {
+TEST(StanMathPrim_reduce_sum_static,
+     std_vector_std_vector_std_vector_double_slice) {
   stan::math::init_threadpool_tbb();
 
-  std::vector<std::vector<std::vector<double>>> data(5, std::vector<std::vector<double>>(2, std::vector<double>(2, 10.0)));
+  std::vector<std::vector<std::vector<double>>> data(
+      5, std::vector<std::vector<double>>(2, std::vector<double>(2, 10.0)));
 
-  EXPECT_DOUBLE_EQ(200.0, stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs));
+  EXPECT_DOUBLE_EQ(200.0,
+                   stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs));
 }
 
 TEST(StanMathPrim_reduce_sum_static, std_vector_std_vector_eigen_vector_slice) {
   stan::math::init_threadpool_tbb();
 
-  std::vector<std::vector<Eigen::VectorXd>> data(5, std::vector<Eigen::VectorXd>(2, Eigen::VectorXd::Ones(2)));
+  std::vector<std::vector<Eigen::VectorXd>> data(
+      5, std::vector<Eigen::VectorXd>(2, Eigen::VectorXd::Ones(2)));
 
-  EXPECT_DOUBLE_EQ(20.0, stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs));
+  EXPECT_DOUBLE_EQ(20.0,
+                   stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs));
 }
 
-TEST(StanMathPrim_reduce_sum_static, std_vector_std_vector_eigen_row_vector_slice) {
+TEST(StanMathPrim_reduce_sum_static,
+     std_vector_std_vector_eigen_row_vector_slice) {
   stan::math::init_threadpool_tbb();
 
-  std::vector<std::vector<Eigen::RowVectorXd>> data(5, std::vector<Eigen::RowVectorXd>(2, Eigen::RowVectorXd::Ones(2)));
+  std::vector<std::vector<Eigen::RowVectorXd>> data(
+      5, std::vector<Eigen::RowVectorXd>(2, Eigen::RowVectorXd::Ones(2)));
 
-  EXPECT_DOUBLE_EQ(20.0, stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs));
+  EXPECT_DOUBLE_EQ(20.0,
+                   stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs));
 }
 
 TEST(StanMathPrim_reduce_sum_static, std_vector_std_vector_eigen_matrix_slice) {
   stan::math::init_threadpool_tbb();
 
-  std::vector<std::vector<Eigen::MatrixXd>> data(5, std::vector<Eigen::MatrixXd>(2, Eigen::MatrixXd::Ones(2, 2)));
+  std::vector<std::vector<Eigen::MatrixXd>> data(
+      5, std::vector<Eigen::MatrixXd>(2, Eigen::MatrixXd::Ones(2, 2)));
 
-  EXPECT_DOUBLE_EQ(40.0, stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs));
+  EXPECT_DOUBLE_EQ(40.0,
+                   stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs));
 }
 
 struct start_end_lpdf {
@@ -248,7 +266,8 @@ TEST(StanMathPrim_reduce_sum_static, start_end_slice) {
 
   std::vector<int> data(5, 10);
 
-  EXPECT_EQ(50, stan::math::reduce_sum_static<start_end_lpdf>(data, 1, msgs, data));
+  EXPECT_EQ(50,
+            stan::math::reduce_sum_static<start_end_lpdf>(data, 1, msgs, data));
 }
 
 TEST(StanMathPrim_reduce_sum_static, int_arg) {
@@ -361,11 +380,13 @@ TEST(StanMathPrim_reduce_sum_static, std_vector_eigen_matrix_arg) {
                    stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs, arg));
 }
 
-TEST(StanMathPrim_reduce_sum_static, std_vector_std_vector_std_vector_double_arg) {
+TEST(StanMathPrim_reduce_sum_static,
+     std_vector_std_vector_std_vector_double_arg) {
   stan::math::init_threadpool_tbb();
 
   std::vector<double> data(5, 10.0);
-  std::vector<std::vector<std::vector<double>>> arg(5, std::vector<std::vector<double>>(5, std::vector<double>(5, 10.0)));
+  std::vector<std::vector<std::vector<double>>> arg(
+      5, std::vector<std::vector<double>>(5, std::vector<double>(5, 10.0)));
 
   EXPECT_DOUBLE_EQ(5 * (10 + 1250),
                    stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs, arg));
@@ -375,17 +396,20 @@ TEST(StanMathPrim_reduce_sum_static, std_vector_std_vector_eigen_vector_arg) {
   stan::math::init_threadpool_tbb();
 
   std::vector<double> data(5, 10.0);
-  std::vector<std::vector<Eigen::VectorXd>> arg(2, std::vector<Eigen::VectorXd>(2, Eigen::VectorXd::Ones(5)));
+  std::vector<std::vector<Eigen::VectorXd>> arg(
+      2, std::vector<Eigen::VectorXd>(2, Eigen::VectorXd::Ones(5)));
 
   EXPECT_DOUBLE_EQ(5 * (10 + 20),
                    stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs, arg));
 }
 
-TEST(StanMathPrim_reduce_sum_static, std_vector_std_vector_eigen_row_vector_arg) {
+TEST(StanMathPrim_reduce_sum_static,
+     std_vector_std_vector_eigen_row_vector_arg) {
   stan::math::init_threadpool_tbb();
 
   std::vector<double> data(5, 10.0);
-  std::vector<std::vector<Eigen::RowVectorXd>> arg(2, std::vector<Eigen::RowVectorXd>(2, Eigen::RowVectorXd::Ones(5)));
+  std::vector<std::vector<Eigen::RowVectorXd>> arg(
+      2, std::vector<Eigen::RowVectorXd>(2, Eigen::RowVectorXd::Ones(5)));
 
   EXPECT_DOUBLE_EQ(5 * (10 + 20),
                    stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs, arg));
@@ -395,7 +419,8 @@ TEST(StanMathPrim_reduce_sum_static, std_vector_std_vector_eigen_matrix_arg) {
   stan::math::init_threadpool_tbb();
 
   std::vector<double> data(5, 10.0);
-  std::vector<std::vector<Eigen::MatrixXd>> arg(2, std::vector<Eigen::MatrixXd>(2, Eigen::MatrixXd::Ones(5, 3)));
+  std::vector<std::vector<Eigen::MatrixXd>> arg(
+      2, std::vector<Eigen::MatrixXd>(2, Eigen::MatrixXd::Ones(5, 3)));
 
   EXPECT_DOUBLE_EQ(5 * (10 + 60),
                    stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs, arg));
@@ -417,11 +442,11 @@ TEST(StanMathPrim_reduce_sum_static, sum) {
 
   EXPECT_DOUBLE_EQ(
       5 + 5 * (1 + 1 + 5 + 5 + 5 + 5 + 25 + 10 + 10),
-      stan::math::reduce_sum_static<sum_lpdf>(data, 1, msgs, arg1, arg2, arg3, arg4,
-                                       arg5, arg6, arg7, arg8, arg9));
+      stan::math::reduce_sum_static<sum_lpdf>(
+          data, 1, msgs, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9));
 }
 
-template<int grainsize>
+template <int grainsize>
 struct static_check_lpdf {
   inline auto operator()(std::size_t start, std::size_t end,
                          const std::vector<int>&, std::ostream* msgs,
@@ -438,11 +463,14 @@ struct static_check_lpdf {
 TEST(StanMathPrim_reduce_sum_static, static_check) {
   stan::math::init_threadpool_tbb();
 
-  for(auto size : { 10, 16, 19, 31 }) {
+  for (auto size : {10, 16, 19, 31}) {
     std::vector<int> data(size, 10);
 
-    EXPECT_NO_THROW(stan::math::reduce_sum_static<static_check_lpdf<1>>(data, 1, msgs, data));
-    EXPECT_NO_THROW(stan::math::reduce_sum_static<static_check_lpdf<2>>(data, 2, msgs, data));
-    EXPECT_NO_THROW(stan::math::reduce_sum_static<static_check_lpdf<3>>(data, 3, msgs, data));
+    EXPECT_NO_THROW(stan::math::reduce_sum_static<static_check_lpdf<1>>(
+        data, 1, msgs, data));
+    EXPECT_NO_THROW(stan::math::reduce_sum_static<static_check_lpdf<2>>(
+        data, 2, msgs, data));
+    EXPECT_NO_THROW(stan::math::reduce_sum_static<static_check_lpdf<3>>(
+        data, 3, msgs, data));
   }
 }

@@ -191,9 +191,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    * @param args Shared arguments used in every sum term
    * @return Summation of all terms
    */
-  inline var operator()(Vec&& vmapped,
-			bool auto_partitioning,
-			int grainsize,
+  inline var operator()(Vec&& vmapped, bool auto_partitioning, int grainsize,
                         std::ostream* msgs, Args&&... args) const {
     const std::size_t num_jobs = vmapped.size();
 
@@ -216,14 +214,14 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     recursive_reducer worker(per_job_sliced_terms, num_shared_terms, partials,
                              vmapped, msgs, args...);
 
-    if(auto_partitioning) {
+    if (auto_partitioning) {
       tbb::parallel_reduce(
-			   tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker);
+          tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker);
     } else {
       tbb::simple_partitioner partitioner;
       tbb::parallel_deterministic_reduce(
-					 tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker,
-					 partitioner);
+          tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker,
+          partitioner);
     }
 
     save_varis(varis, std::forward<Vec>(vmapped));

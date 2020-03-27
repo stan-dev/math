@@ -40,14 +40,15 @@ namespace math {
 template <typename ReduceFunction, typename Vec,
           typename = require_vector_like_t<Vec>, typename... Args>
 auto reduce_sum_static(Vec&& vmapped, int grainsize, std::ostream* msgs,
-		       Args&&... args) {
+                       Args&&... args) {
   using return_type = return_type_t<Vec, Args...>;
 
   check_positive("reduce_sum", "grainsize", grainsize);
 
   return internal::reduce_sum_impl<ReduceFunction, void, return_type, Vec,
-                                   Args...>()(
-					      std::forward<Vec>(vmapped), false, grainsize, msgs, std::forward<Args>(args)...);
+                                   Args...>()(std::forward<Vec>(vmapped), false,
+                                              grainsize, msgs,
+                                              std::forward<Args>(args)...);
 }
 
 }  // namespace math
