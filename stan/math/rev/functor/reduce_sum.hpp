@@ -178,13 +178,22 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    * of that sum over multiple threads by coordinating calls to `ReduceFunction`
    * instances. Results are stored as precomputed varis in the autodiff tree.
    *
+   * If auto partitioning is true, break work into pieces automatically,
+   *  taking grainsize as a recommended work size (this process
+   *  is not deterministic). If false, break work deterministically
+   *  into pieces smaller than or equal to grainsize. The execution
+   *  order is non-deterministic.
+   *
    * @param vmapped Sliced arguments used only in some sum terms
+   * @param auto_partitioning Work partitioning style
    * @param grainsize Suggested grainsize for tbb
    * @param[in, out] msgs The print stream for warning messages
    * @param args Shared arguments used in every sum term
    * @return Summation of all terms
    */
-  inline var operator()(Vec&& vmapped, int grainsize,
+  inline var operator()(Vec&& vmapped,
+			bool auto_partitioning,
+			int grainsize,
                         std::ostream* msgs, Args&&... args) const {
     const std::size_t num_jobs = vmapped.size();
 
@@ -207,15 +216,15 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     recursive_reducer worker(per_job_sliced_terms, num_shared_terms, partials,
                              vmapped, msgs, args...);
 
-#ifdef STAN_DETERMINISTIC
-    tbb::inline_partitioner partitioner;
-    tbb::parallel_deterministic_reduce(
-        tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker,
-        partitioner);
-#else
-    tbb::parallel_reduce(
-        tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker);
-#endif
+    if(auto_partitioning) {
+      tbb::parallel_reduce(
+			   tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker);
+    } else {
+      tbb::simple_partitioner partitioner;
+      tbb::parallel_deterministic_reduce(
+					 tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker,
+					 partitioner);
+    }
 
     save_varis(varis, std::forward<Vec>(vmapped));
     save_varis(varis + num_sliced_terms, std::forward<Args>(args)...);

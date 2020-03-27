@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUNCTOR_REDUCE_SUM_HPP
-#define STAN_MATH_PRIM_SCAL_FUNCTOR_REDUCE_SUM_HPP
+#ifndef STAN_MATH_PRIM_FUNCTOR_REDUCE_SUM_HPP
+#define STAN_MATH_PRIM_FUNCTOR_REDUCE_SUM_HPP
 
 #include <stan/math/prim/meta.hpp>
 
@@ -45,15 +45,22 @@ struct reduce_sum_impl {
    * argument are passed to the `ReduceFunction` instances (as the
    * `vmapped_subset` argument).
    *
+   * If auto partitioning is true, do the calculation with one
+   *  ReduceFunction call. If false, break work into pieces strictly smaller
+   *  than grainsize.
+   *
    * grainsize must be greater than or equal to 1
    *
    * @param vmapped Sliced arguments used only in some sum terms
+   * @param auto_partitioning Work partitioning style (ignored)
    * @param grainsize Suggested grainsize for tbb
    * @param[in, out] msgs The print stream for warning messages
    * @param args Shared arguments used in every sum term
    * @return Summation of all terms
    */
-  return_type_t<Vec, Args...> operator()(Vec&& vmapped, int grainsize,
+  return_type_t<Vec, Args...> operator()(Vec&& vmapped,
+					 bool auto_partitioning,
+					 int grainsize,
                                          std::ostream* msgs,
                                          Args&&... args) const {
     const std::size_t num_jobs = vmapped.size();
@@ -62,8 +69,26 @@ struct reduce_sum_impl {
       return 0.0;
     }
 
-    return ReduceFunction()(0, vmapped.size() - 1, std::forward<Vec>(vmapped),
-                            msgs, std::forward<Args>(args)...);
+    if(auto_partitioning) {
+      return ReduceFunction()(0, vmapped.size() - 1, std::forward<Vec>(vmapped),
+			      msgs, std::forward<Args>(args)...);
+    } else {
+      return_type_t<Vec, Args...> sum = 0.0;
+      for(size_t i = 0; i < (vmapped.size() + grainsize - 1) / grainsize; ++i) {
+	size_t start = i * grainsize;
+	size_t end = std::min((i + 1) * grainsize, vmapped.size()) - 1;
+
+	std::decay_t<Vec> sub_slice;
+	sub_slice.reserve(end - start + 1);
+	for (int i = start; i <= end; ++i) {
+	  sub_slice.emplace_back(vmapped[i]);
+	}
+
+	sum += ReduceFunction()(start, end, std::forward<Vec>(sub_slice),
+				msgs, std::forward<Args>(args)...);
+      }
+      return sum;
+    }
   }
 };
 
@@ -164,15 +189,24 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
    *   over multiple threads by coordinating calls to `ReduceFunction`
    * instances.
    *
+   * If auto partitioning is true, break work into pieces automatically,
+   *  taking grainsize as a recommended work size (this process
+   *  is not deterministic). If false, break work deterministically
+   *  into pieces smaller than or equal to grainsize. The execution
+   *  order is non-deterministic.
+   *
    * grainsize must be greater than or equal to 1
    *
    * @param vmapped Sliced arguments used only in some sum terms
+   * @param auto_partitioning Work partitioning style
    * @param grainsize Suggested grainsize for tbb
    * @param[in, out] msgs The print stream for warning messages
    * @param args Shared arguments used in every sum term
    * @return Summation of all terms
    */
-  ReturnType operator()(Vec&& vmapped, int grainsize,
+  ReturnType operator()(Vec&& vmapped,
+			bool auto_partitioning,
+			int grainsize,
                         std::ostream* msgs, Args&&... args) const {
     const std::size_t num_jobs = vmapped.size();
     if (num_jobs == 0) {
@@ -181,15 +215,15 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
     recursive_reducer worker(std::forward<Vec>(vmapped), msgs,
                              std::forward<Args>(args)...);
 
-#ifdef STAN_DETERMINISTIC
-    tbb::static_partitioner partitioner;
-    tbb::parallel_deterministic_reduce(
-        tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker,
-        partitioner);
-#else
-    tbb::parallel_reduce(
-        tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker);
-#endif
+    if(auto_partitioning) {
+      tbb::parallel_reduce(
+			   tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker);
+    } else {
+      tbb::simple_partitioner partitioner;
+      tbb::parallel_deterministic_reduce(
+					 tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker,
+					 partitioner);
+    }
 
     return worker.sum_;
   }
@@ -231,7 +265,7 @@ auto reduce_sum(Vec&& vmapped, int grainsize, std::ostream* msgs,
 
   return internal::reduce_sum_impl<ReduceFunction, void, return_type, Vec,
                                    Args...>()(
-      std::forward<Vec>(vmapped), grainsize, msgs, std::forward<Args>(args)...);
+					      std::forward<Vec>(vmapped), true, grainsize, msgs, std::forward<Args>(args)...);
 }
 
 }  // namespace math
