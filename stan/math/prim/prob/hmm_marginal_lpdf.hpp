@@ -135,9 +135,9 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   Eigen::MatrixXd omegas;
   Eigen::MatrixXd Gamma_dbl = value_of_rec(Gamma);
 
-  T_partials_return log_marginal_density
-      = internal::hmm_marginal_lpdf(value_of_rec(log_omegas), Gamma_dbl,
-                          value_of_rec(rho), alphas, alpha_log_norms, omegas);
+  T_partials_return log_marginal_density = internal::hmm_marginal_lpdf(
+      value_of_rec(log_omegas), Gamma_dbl, value_of_rec(rho), alphas,
+      alpha_log_norms, omegas);
 
   // Variables required for all three Jacobian-adjoint products.
   double norm_norm = alpha_log_norms(n_transitions);
