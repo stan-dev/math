@@ -41,12 +41,12 @@ namespace internal {
  * @param[in, out] omegas term-wise exponential of omegas.
  * @return log marginal density.
  */
-inline
-double hmm_marginal_lpdf(const Eigen::MatrixXd& log_omegas,
-                         const Eigen::MatrixXd& Gamma,
-                         const Eigen::VectorXd& rho, Eigen::MatrixXd& alphas,
-                         Eigen::VectorXd& alpha_log_norms,
-                         Eigen::MatrixXd& omegas) {
+inline double hmm_marginal_lpdf(const Eigen::MatrixXd& log_omegas,
+                                const Eigen::MatrixXd& Gamma,
+                                const Eigen::VectorXd& rho,
+                                Eigen::MatrixXd& alphas,
+                                Eigen::VectorXd& alpha_log_norms,
+                                Eigen::MatrixXd& omegas) {
   omegas = log_omegas.array().exp();
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
@@ -113,8 +113,7 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   check_consistent_size("hmm_marginal_lpdf", "rho", rho, n_states);
   check_simplex("hmm_marginal_lpdf", "rho", rho);
   for (int i = 0; i < Gamma.rows(); ++i) {
-    check_simplex("hmm_marginal_lpdf", "Gamma[i, ]",
-                  row(Gamma, i + 1));
+    check_simplex("hmm_marginal_lpdf", "Gamma[i, ]", row(Gamma, i + 1));
   }
 
   using T_partials_return = partials_return_t<T_omega, T_Gamma, T_rho>;
