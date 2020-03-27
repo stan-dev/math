@@ -3,7 +3,6 @@
 #include <stan/math.hpp>
 #include <vector>
 
-
 TEST(AgradRev_accumulate_adjoints, zero_args) {
   Eigen::VectorXd storage = Eigen::VectorXd::Zero(1000);
   double* ptr = stan::math::accumulate_adjoints(storage.data());
