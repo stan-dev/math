@@ -93,11 +93,11 @@ double hmm_marginal_lpdf(const Eigen::MatrixXd& log_omegas,
  *              given x_{n - 1} = i. The rows of Gamma are simplexes.
  * @param[in] rho initial state
  * @throw `std::domain_error` if Gamma is not square.
- * @throw `std::domain_error` if the rows of Gamma are
- * not a simplex.
  * @throw `std::invalid_argument` if the size of rho is not
  * the number of rows of Gamma.
  * @throw `std::domain_error` if rho is not a simplex.
+ * @throw `std::domain_error` if the rows of Gamma are
+ * not a simplex.
  * @return log marginal density.
  */
 template <typename T_omega, typename T_Gamma, typename T_rho>
@@ -110,19 +110,12 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
 
   check_square("hmm_marginal_lpdf", "Gamma", Gamma);
   check_consistent_size("hmm_marginal_lpdf", "Gamma", row(Gamma, 1), n_states);
-
-  // Temporary vector to use check_simplex, which only works once
-  // column vectors.
-  Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic> Gamma_transpose
-      = Gamma.transpose();
-  for (int i = 0; i < Gamma.cols(); ++i) {
-    // CHECK -- does check_simplex not work on row-vectors?
-    check_simplex("hmm_marginal_lpdf", "Gamma[i, ]",
-                  col(Gamma_transpose, i + 1));
-  }
-
   check_consistent_size("hmm_marginal_lpdf", "rho", rho, n_states);
   check_simplex("hmm_marginal_lpdf", "rho", rho);
+  for (int i = 0; i < Gamma.rows(); ++i) {
+    check_simplex("hmm_marginal_lpdf", "Gamma[i, ]",
+                  row(Gamma, i + 1));
+  }
 
   using T_partials_return = partials_return_t<T_omega, T_Gamma, T_rho>;
   operands_and_partials<Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>,

@@ -30,9 +30,9 @@ namespace math {
  * @throw <code>std::domain_error</code> if the vector is not a
  *   simplex or if any element is <code>NaN</code>.
  */
-template <typename T_prob>
+template <typename T_prob, int N_row, int N_col>
 void check_simplex(const char* function, const char* name,
-                   const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
+                   const Eigen::Matrix<T_prob, N_row, N_col>& theta) {
   using size_type = index_type_t<Eigen::Matrix<T_prob, Eigen::Dynamic, 1>>;
   using std::fabs;
   check_nonzero_size(function, name, theta);
