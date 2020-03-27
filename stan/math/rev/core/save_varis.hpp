@@ -70,7 +70,7 @@ template <typename VarVec, require_std_vector_vt<is_var, VarVec>*,
           typename... Pargs>
 inline vari** save_varis(vari** dest, VarVec&& x, Pargs&&... args) {
   for (int i = 0; i < x.size(); ++i) {
-    dest[i] = x(i).vi_;
+    dest[i] = x[i].vi_;
   }
   return save_varis(dest + x.size(), std::forward<Pargs>(args)...);
 }

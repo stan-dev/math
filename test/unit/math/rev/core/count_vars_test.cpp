@@ -128,6 +128,10 @@ TEST(AgradRev_count_vars, std_vector_eigen_matrix_var_arg) {
   EXPECT_EQ(30, stan::math::count_vars(arg));
 }
 
+TEST(AgradRev_count_vars, zero_args) {
+  EXPECT_EQ(0, stan::math::count_vars());
+}
+
 TEST(AgradRev_count_vars, sum) {
   int arg1 = 1;
   double arg2 = 1.0;
