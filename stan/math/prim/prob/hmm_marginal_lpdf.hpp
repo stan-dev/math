@@ -9,7 +9,6 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/core.hpp>
-// #include <Eigen/Core>
 #include <vector>
 #include <iostream>
 
@@ -42,6 +41,7 @@ namespace internal {
  * @param[in, out] omegas term-wise exponential of omegas.
  * @return log marginal density.
  */
+inline
 double hmm_marginal_lpdf(const Eigen::MatrixXd& log_omegas,
                          const Eigen::MatrixXd& Gamma,
                          const Eigen::VectorXd& rho, Eigen::MatrixXd& alphas,
