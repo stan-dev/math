@@ -107,10 +107,16 @@ TEST(AgradRev_deep_copy_vars, std_vector_eigen_matrix_arg) {
 
 TEST(AgradRev_deep_copy_vars, var_arg) {
   var arg(5.0);
+  arg.vi_->adj_ = 2.0;
 
   decltype(stan::math::deep_copy_vars(arg)) out
       = stan::math::deep_copy_vars(arg);
 
+  out.grad();
+
+  EXPECT_EQ(out.vi_->adj_, 1.0);
+  EXPECT_EQ(arg.vi_->adj_, 2.0);
+  EXPECT_EQ(out, arg);
   EXPECT_NE(out.vi_, arg.vi_);
 }
 
@@ -123,6 +129,13 @@ TEST(AgradRev_deep_copy_vars, std_vector_var_arg) {
       = stan::math::deep_copy_vars(arg);
 
   for (int i = 0; i < arg.size(); ++i) {
+    stan::math::set_zero_all_adjoints();
+    arg[i].vi_->adj_ = 2.0;
+
+    out[i].grad();
+
+    EXPECT_EQ(out[i].vi_->adj_, 1.0);
+    EXPECT_EQ(arg[i].vi_->adj_, 2.0);
     EXPECT_EQ(out[i], arg[i]);
     EXPECT_NE(out[i].vi_, arg[i].vi_);
   }
@@ -139,6 +152,13 @@ TEST(AgradRev_deep_copy_vars, eigen_vector_var_arg) {
       = stan::math::deep_copy_vars(arg);
 
   for (int i = 0; i < arg.size(); ++i) {
+    stan::math::set_zero_all_adjoints();
+    arg(i).vi_->adj_ = 2.0;
+
+    out(i).grad();
+
+    EXPECT_EQ(out(i).vi_->adj_, 1.0);
+    EXPECT_EQ(arg(i).vi_->adj_, 2.0);
     EXPECT_EQ(out(i), arg(i));
     EXPECT_NE(out(i).vi_, arg(i).vi_);
   }
@@ -155,6 +175,13 @@ TEST(AgradRev_deep_copy_vars, eigen_row_vector_var_arg) {
       = stan::math::deep_copy_vars(arg);
 
   for (int i = 0; i < arg.size(); ++i) {
+    stan::math::set_zero_all_adjoints();
+    arg(i).vi_->adj_ = 2.0;
+
+    out(i).grad();
+
+    EXPECT_EQ(out(i).vi_->adj_, 1.0);
+    EXPECT_EQ(arg(i).vi_->adj_, 2.0);
     EXPECT_EQ(out(i), arg(i));
     EXPECT_NE(out(i).vi_, arg(i).vi_);
   }
@@ -171,6 +198,13 @@ TEST(AgradRev_deep_copy_vars, eigen_matrix_var_arg) {
       = stan::math::deep_copy_vars(arg);
 
   for (int i = 0; i < arg.size(); ++i) {
+    stan::math::set_zero_all_adjoints();
+    arg(i).vi_->adj_ = 2.0;
+
+    out(i).grad();
+
+    EXPECT_EQ(out(i).vi_->adj_, 1.0);
+    EXPECT_EQ(arg(i).vi_->adj_, 2.0);
     EXPECT_EQ(out(i), arg(i));
     EXPECT_NE(out(i).vi_, arg(i).vi_);
   }
@@ -188,6 +222,13 @@ TEST(AgradRev_deep_copy_vars, std_vector_std_vector_var_arg) {
 
   for (int i = 0; i < arg.size(); ++i)
     for (int j = 0; j < arg[i].size(); ++j) {
+      stan::math::set_zero_all_adjoints();
+      arg[i][j].vi_->adj_ = 2.0;
+
+      out[i][j].grad();
+
+      EXPECT_EQ(out[i][j].vi_->adj_, 1.0);
+      EXPECT_EQ(arg[i][j].vi_->adj_, 2.0);
       EXPECT_EQ(out[i][j], arg[i][j]);
       EXPECT_NE(out[i][j].vi_, arg[i][j].vi_);
     }
@@ -205,6 +246,13 @@ TEST(AgradRev_deep_copy_vars, std_vector_eigen_vector_var_arg) {
 
   for (int i = 0; i < arg.size(); ++i)
     for (int j = 0; j < arg[i].size(); ++j) {
+      stan::math::set_zero_all_adjoints();
+      arg[i](j).vi_->adj_ = 2.0;
+
+      out[i](j).grad();
+
+      EXPECT_EQ(out[i](j).vi_->adj_, 1.0);
+      EXPECT_EQ(arg[i](j).vi_->adj_, 2.0);
       EXPECT_EQ(out[i](j), arg[i](j));
       EXPECT_NE(out[i](j).vi_, arg[i](j).vi_);
     }
@@ -222,6 +270,13 @@ TEST(AgradRev_deep_copy_vars, std_vector_eigen_row_vector_var_arg) {
 
   for (int i = 0; i < arg.size(); ++i)
     for (int j = 0; j < arg[i].size(); ++j) {
+      stan::math::set_zero_all_adjoints();
+      arg[i](j).vi_->adj_ = 2.0;
+
+      out[i](j).grad();
+
+      EXPECT_EQ(out[i](j).vi_->adj_, 1.0);
+      EXPECT_EQ(arg[i](j).vi_->adj_, 2.0);
       EXPECT_EQ(out[i](j), arg[i](j));
       EXPECT_NE(out[i](j).vi_, arg[i](j).vi_);
     }
@@ -239,6 +294,13 @@ TEST(AgradRev_deep_copy_vars, std_vector_eigen_matrix_var_arg) {
 
   for (int i = 0; i < arg.size(); ++i)
     for (int j = 0; j < arg[i].size(); ++j) {
+      stan::math::set_zero_all_adjoints();
+      arg[i](j).vi_->adj_ = 2.0;
+
+      out[i](j).grad();
+
+      EXPECT_EQ(out[i](j).vi_->adj_, 1.0);
+      EXPECT_EQ(arg[i](j).vi_->adj_, 2.0);
       EXPECT_EQ(out[i](j), arg[i](j));
       EXPECT_NE(out[i](j).vi_, arg[i](j).vi_);
     }
