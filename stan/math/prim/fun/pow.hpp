@@ -22,7 +22,7 @@ namespace math {
  * @param y exponent
  * @return base raised to the power of the exponent
  */
-double pow(double x, int y) { return std::pow(x, static_cast<double>(y)); }
+inline double pow(double x, int y) { return std::pow(x, static_cast<double>(y)); }
 #endif
 
 namespace internal {
