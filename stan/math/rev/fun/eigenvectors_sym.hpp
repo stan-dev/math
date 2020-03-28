@@ -1,18 +1,18 @@
-#ifndef STAN_MATH_REV_MAT_FUN_EIGENVALUES_HPP
-#define STAN_MATH_REV_MAT_FUN_EIGENVALUES_HPP
+#ifndef STAN_MATH_REV_FUN_EIGENVECTORS_HPP
+#define STAN_MATH_REV_FUN_EIGENVECTORS_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/mat/err/check_symmetric.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/prim/err/check_symmetric.hpp>
+#include <stan/math/rev/fun/typedefs.hpp>
+#include <stan/math/prim/fun/typedefs.hpp>
 
 namespace stan {
 namespace math {
 
 namespace internal {
-class eigenvalues_vari : public vari {
+class eigenvectors_vari : public vari {
  public:
   int M_;  // A.rows() = A.cols()
   double *A_;
@@ -22,7 +22,7 @@ class eigenvalues_vari : public vari {
   vari **vari_ref_w_;
   vari **vari_ref_v_;
 
-  explicit eigenvalues_vari(const Eigen::Matrix<var, -1, -1> &A)
+  explicit eigenvectors_vari(const Eigen::Matrix<var, -1, -1> &A)
       : vari(0.0),
         M_(A.rows()),
         A_(reinterpret_cast<double *>(
@@ -99,16 +99,16 @@ std::cout << "HEHEHEHE" << std::endl;
 
 
 /**
- * Return the eigenvalues of the specified symmetric matrix.
+ * Return the eigenvectors of the specified symmetric matrix.
  * <p>See <code>eigen_decompose()</code> for more information.
  * @param m Specified matrix.
- * @return Eigenvalues of matrix.
+ * @return Eigenvectors of matrix.
  */
-inline vector_v eigenvalues_sym(const matrix_v & m) {
-  check_symmetric("eigenvalues_sym", "m", m);
-  vector_v res(m.rows());
-  internal::eigenvalues_vari *baseVari = new internal::eigenvalues_vari(m);
-  res.vi() = Eigen::Map<vector_vi>(baseVari->vari_ref_w_, res.rows(),
+inline matrix_v eigenvectors_sym(const matrix_v & m) {
+  check_symmetric("eigenvectors_sym", "m", m);
+  matrix_v res(m.rows(), m.cols());
+  internal::eigenvectors_vari *baseVari = new internal::eigenvectors_vari(m);
+  res.vi() = Eigen::Map<matrix_vi>(baseVari->vari_ref_v_, res.rows(),
                                    res.cols());
   return res;
 }
