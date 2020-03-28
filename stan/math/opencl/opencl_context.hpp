@@ -23,9 +23,9 @@
 #include <cmath>
 #include <cerrno>
 
-/** \ingroup opencl
- *  @file stan/math/opencl/opencl_context.hpp
- *  @brief Initialization for OpenCL:
+/** \ingroup \opencl
+ *  \defgroup opencl_context_group OpenCL Context
+ *  Initialization for OpenCL Context:
  *    1. create context
  *    2. Find OpenCL platforms and devices available
  *    3. set up command queue
@@ -34,7 +34,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup opencl
+/** \ingroup opencl_context_group
  * The <code>opencl_context_base</code> class represents an OpenCL context
  * in the standard Meyers singleton design pattern.
  *
@@ -55,7 +55,7 @@ class opencl_context_base {
   friend class opencl_context;
 
  private:
-  /** \ingroup opencl
+  /** \ingroup opencl_context_group
    * Construct the opencl_context by initializing the
    * OpenCL context, devices, command queues, and kernel
    * groups.
@@ -78,9 +78,9 @@ class opencl_context_base {
         system_error("OpenCL Initialization", "[Platform]", -1,
                      "CL_INVALID_PLATFORM");
       }
-      platform_ = platforms_[OPENCL_PLATFORM_ID];
-      platform_name_ = platform_.getInfo<CL_PLATFORM_NAME>();
-      platform_.getDevices(DEVICE_FILTER, &devices_);
+      platform_.push_back(platforms_[OPENCL_PLATFORM_ID]);
+      platform_name_ = platform_[0].getInfo<CL_PLATFORM_NAME>();
+      platform_[0].getDevices(DEVICE_FILTER, &devices_);
       if (devices_.size() == 0) {
         system_error("OpenCL Initialization", "[Device]", -1,
                      "CL_DEVICE_NOT_FOUND");
@@ -89,21 +89,21 @@ class opencl_context_base {
         system_error("OpenCL Initialization", "[Device]", -1,
                      "CL_INVALID_DEVICE");
       }
-      device_ = devices_[OPENCL_DEVICE_ID];
+      device_.push_back(devices_[OPENCL_DEVICE_ID]);
       // context and queue
       cl_command_queue_properties device_properties;
-      device_.getInfo<cl_command_queue_properties>(CL_DEVICE_QUEUE_PROPERTIES,
+      device_[0].getInfo<cl_command_queue_properties>(CL_DEVICE_QUEUE_PROPERTIES,
                                                    &device_properties);
-      device_.getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
+      device_[0].getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
                               &max_thread_block_size_);
 
-      context_ = cl::Context(device_);
+      context_ = cl::Context(device_[0]);
       if (device_properties & CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE) {
         command_queue_ = cl::CommandQueue(
-            context_, device_, CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE, nullptr);
+            context_, device_[0], CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE, nullptr);
         in_order_ = CL_FALSE;
       } else {
-        command_queue_ = cl::CommandQueue(context_, device_, 0, nullptr);
+        command_queue_ = cl::CommandQueue(context_, device_[0], 0, nullptr);
         in_order_ = CL_TRUE;
       }
       int thread_block_size_sqrt
@@ -139,10 +139,10 @@ class opencl_context_base {
   cl::Context context_;  // Manages the the device, queue, platform, memory, etc
   cl::CommandQueue command_queue_;       // job queue for device, one per device
   std::vector<cl::Platform> platforms_;  // Vector of available platforms
-  cl::Platform platform_;                // The platform for compiling kernels
+  std::vector<cl::Platform> platform_; // The platform for compiling kernels
   std::string platform_name_;  // The platform such as NVIDIA OpenCL or AMD SDK
+  std::vector<cl::Device> device_;                // The selected OpenCL device
   std::vector<cl::Device> devices_;  // All available OpenCL devices
-  cl::Device device_;                // The selected OpenCL device
   std::string device_name_;          // The name of OpenCL device
   size_t max_thread_block_size_;  // The maximum size of a block of workers on
                                   // the device
@@ -191,14 +191,14 @@ class opencl_context_base {
   void operator=(opencl_context_base const&) = delete;
 };
 
-/** \ingroup opencl
+/** \ingroup opencl_context_group
  * The API to access the methods and values in opencl_context_base
  */
 class opencl_context {
  public:
   opencl_context() = default;
 
-  /** \ingroup opencl
+  /** \ingroup opencl_context_group
    * Returns the description of the OpenCL platform and device that is used.
    * Devices will be an OpenCL and Platforms are a specific OpenCL
    * implementation such as AMD SDK's or Nvidia's OpenCL implementation.
@@ -209,52 +209,52 @@ class opencl_context {
     msg << "Platform ID: " << OPENCL_DEVICE_ID << "\n";
     msg << "Platform Name: "
         << opencl_context_base::getInstance()
-               .platform_.getInfo<CL_PLATFORM_NAME>()
+               .platform_[0].getInfo<CL_PLATFORM_NAME>()
         << "\n";
     msg << "Platform Vendor: "
         << opencl_context_base::getInstance()
-               .platform_.getInfo<CL_PLATFORM_VENDOR>()
+               .platform_[0].getInfo<CL_PLATFORM_VENDOR>()
         << "\n";
     msg << "\tDevice " << OPENCL_DEVICE_ID << ": "
         << "\n";
     msg << "\t\tDevice Name: "
-        << opencl_context_base::getInstance().device_.getInfo<CL_DEVICE_NAME>()
+        << opencl_context_base::getInstance().device_[0].getInfo<CL_DEVICE_NAME>()
         << "\n";
     msg << "\t\tDevice Type: "
-        << opencl_context_base::getInstance().device_.getInfo<CL_DEVICE_TYPE>()
+        << opencl_context_base::getInstance().device_[0].getInfo<CL_DEVICE_TYPE>()
         << "\n";
     msg << "\t\tDevice Vendor: "
         << opencl_context_base::getInstance()
-               .device_.getInfo<CL_DEVICE_VENDOR>()
+               .device_[0].getInfo<CL_DEVICE_VENDOR>()
         << "\n";
     msg << "\t\tDevice Max Compute Units: "
         << opencl_context_base::getInstance()
-               .device_.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>()
+               .device_[0].getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>()
         << "\n";
     msg << "\t\tDevice Global Memory: "
         << opencl_context_base::getInstance()
-               .device_.getInfo<CL_DEVICE_GLOBAL_MEM_SIZE>()
+               .device_[0].getInfo<CL_DEVICE_GLOBAL_MEM_SIZE>()
         << "\n";
     msg << "\t\tDevice Max Clock Frequency: "
         << opencl_context_base::getInstance()
-               .device_.getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>()
+               .device_[0].getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>()
         << "\n";
     msg << "\t\tDevice Max Allocateable Memory: "
         << opencl_context_base::getInstance()
-               .device_.getInfo<CL_DEVICE_MAX_MEM_ALLOC_SIZE>()
+               .device_[0].getInfo<CL_DEVICE_MAX_MEM_ALLOC_SIZE>()
         << "\n";
     msg << "\t\tDevice Local Memory: "
         << opencl_context_base::getInstance()
-               .device_.getInfo<CL_DEVICE_LOCAL_MEM_SIZE>()
+               .device_[0].getInfo<CL_DEVICE_LOCAL_MEM_SIZE>()
         << "\n";
     msg << "\t\tDevice Available: "
         << opencl_context_base::getInstance()
-               .device_.getInfo<CL_DEVICE_AVAILABLE>()
+               .device_[0].getInfo<CL_DEVICE_AVAILABLE>()
         << "\n";
     return msg.str();
   }
 
-  /** \ingroup opencl
+  /** \ingroup opencl_context_group
    * Returns the description of the OpenCL platforms and devices that
    * are available. Devices will be an OpenCL and Platforms are a specific
    * OpenCL implementation such as AMD SDK's or Nvidia's OpenCL implementation.
@@ -318,7 +318,7 @@ class opencl_context {
     return msg.str();
   }
 
-  /** \ingroup opencl
+  /** \ingroup opencl_context_group
    * Returns the reference to the OpenCL context. The OpenCL context manages
    * objects such as the device, memory, command queue, program, and kernel
    * objects. For stan, there should only be one context, queue, device, and
@@ -327,7 +327,7 @@ class opencl_context {
   inline cl::Context& context() {
     return opencl_context_base::getInstance().context_;
   }
-  /** \ingroup opencl
+  /** \ingroup opencl_context_group
    * Returns the reference to the active OpenCL command queue for the device.
    * One command queue will exist per device where
    * kernels are placed on the command queue and by default executed in order.
@@ -335,13 +335,13 @@ class opencl_context {
   inline cl::CommandQueue& queue() {
     return opencl_context_base::getInstance().command_queue_;
   }
-  /** \ingroup opencl
+  /** \ingroup opencl_context_group
    * Returns a copy of the map of kernel defines
    */
-  inline opencl_context_base::map_base_opts base_opts() {
+  inline opencl_context_base::map_base_opts& base_opts() {
     return opencl_context_base::getInstance().base_opts_;
   }
-  /** \ingroup opencl
+  /** \ingroup opencl_context_group
    * Returns the maximum thread block size defined by
    * CL_DEVICE_MAX_WORK_GROUP_SIZE for the device in the context. This is the
    * maximum product of thread block dimensions for a particular device. IE a
@@ -352,31 +352,31 @@ class opencl_context {
     return opencl_context_base::getInstance().max_thread_block_size_;
   }
 
-  /** \ingroup opencl
+  /** \ingroup opencl_context_group
    * Returns the thread block size for the Cholesky Decompositions L_11.
    */
   inline opencl_context_base::tuning_struct& tuning_opts() {
     return opencl_context_base::getInstance().tuning_opts_;
   }
 
-  /** \ingroup opencl
+  /** \ingroup opencl_context_group
    * Returns a vector containing the OpenCL device used to create the context
    */
-  inline std::vector<cl::Device> device() {
-    return {opencl_context_base::getInstance().device_};
+  inline std::vector<cl::Device>& device() {
+    return opencl_context_base::getInstance().device_;
   }
 
-  /** \ingroup opencl
+  /** \ingroup opencl_context_group
    * Returns a vector containing the OpenCL platform used to create the context
    */
-  inline std::vector<cl::Platform> platform() {
-    return {opencl_context_base::getInstance().platform_};
+  inline std::vector<cl::Platform>& platform() {
+    return opencl_context_base::getInstance().platform_;
   }
-  /**
+  /** \ingroup opencl_context_group
    * Return a bool representing whether the write to the OpenCL device are
    * blocking
    */
-  inline bool in_order() {
+  inline bool& in_order() {
     return opencl_context_base::getInstance().in_order_;
   }
 };
