@@ -266,8 +266,7 @@ using require_any_not_t
   template <typename T, typename... Types>                                     \
   using require_any_not_vt_##check_type                                        \
       = require_any_not_t<checker<value_type_t<std::decay_t<T>>,               \
-                                  value_type_t<std::decay_t<Types>>>...>;
-
+                                  value_type_t<std::decay_t<Types>>>...>;      \
 /*! @} */
 
 /**

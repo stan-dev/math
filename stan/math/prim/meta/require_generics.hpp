@@ -2,17 +2,7 @@
 #define STAN_MATH_PRIM_META_REQUIRE_GENERICS_HPP
 
 #include <stan/math/prim/meta/require_helpers.hpp>
-#include <stan/math/prim/meta/bool_constant.hpp>
-#include <stan/math/prim/meta/is_container.hpp>
-#include <stan/math/prim/meta/is_eigen.hpp>
-#include <stan/math/prim/meta/is_vector.hpp>
-#include <stan/math/prim/meta/is_vector_like.hpp>
-#include <stan/math/prim/meta/scalar_type.hpp>
-#include <stan/math/prim/meta/value_type.hpp>
-#include <stan/math/prim/meta/conjunction.hpp>
-#include <stan/math/prim/meta/disjunction.hpp>
 #include <type_traits>
-#include <string>
 
 namespace stan {
 
@@ -30,9 +20,8 @@ STAN_ADD_REQUIRE_UNARY(floating_point, std::is_floating_point,
                        require_stan_scalar_real);
 STAN_ADD_REQUIRE_UNARY_INNER(floating_point, std::is_floating_point,
                              require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY(index, std::is_integral, require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_INNER(index, std::is_integral, require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY(integral, std::is_integral, require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_INNER(integral, std::is_integral, require_stan_scalar_real);
 
-/** @}*/
 }  // namespace stan
 #endif

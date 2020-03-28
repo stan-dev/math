@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_META_PLAIN_TYPE_HPP
 
 #include <stan/math/prim/meta/plain_type.hpp>
-#include <stan/math/prim/meta/require_generics.hpp>
+#include <stan/math/prim/meta/is_eigen.hpp>
 #include <type_traits>
 
 namespace stan {
