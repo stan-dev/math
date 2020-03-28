@@ -13,8 +13,8 @@ namespace math {
  *
  * @tparam Types The types of the operation.
  */
-template <typename... Types>
-class op_vari : public vari {
+template <typename VarType, typename... Types>
+class op_vari : public VarType {
  protected:
   std::tuple<Types...> vi_;  // Holds the objects needed in the reverse pass.
 
@@ -42,8 +42,9 @@ class op_vari : public vari {
    * @param val Value to initialize the vari to.
    * @param args Ops passed into the tuple and used later in chain method.
    */
-  op_vari(double val, Types... args)
-      : vari(val), vi_(std::make_tuple(args...)) {}
+  template <typename T>
+  op_vari(T val, Types... args)
+      : VarType(val), vi_(std::make_tuple(args...)) {}
 };
 
 }  // namespace math

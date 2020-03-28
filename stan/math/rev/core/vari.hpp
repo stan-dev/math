@@ -8,6 +8,9 @@
 namespace stan {
 namespace math {
 
+  template <typename T, typename>
+  class matrix_cl ;
+
 // forward declaration of var
 class var;
 
@@ -30,7 +33,7 @@ class var;
 class vari {
  private:
   friend class var;
-
+  friend class matrix_cl<vari, void>;
  public:
   /**
    * The value of this variable.

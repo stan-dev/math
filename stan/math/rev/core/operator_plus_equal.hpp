@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 inline var& var::operator+=(var b) {
-  vi_ = new internal::add_vari<vari*, vari*>(vi_, b.vi_);
+  vi_ = new internal::add_vari<vari, vari*, vari*>(vi_, b.vi_);
   return *this;
 }
 
@@ -18,7 +18,7 @@ inline var& var::operator+=(Arith b) {
   if (b == 0.0) {
     return *this;
   }
-  vi_ = new internal::add_vari<vari*, double>(vi_, b);
+  vi_ = new internal::add_vari<vari, vari*, double>(vi_, b);
   return *this;
 }
 
