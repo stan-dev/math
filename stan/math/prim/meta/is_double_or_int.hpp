@@ -21,7 +21,7 @@ struct is_double_or_int
 STAN_ADD_REQUIRE_UNARY(double_or_int, is_double_or_int,
                        require_stan_scalar_real);
 STAN_ADD_REQUIRE_UNARY_INNER(double_or_int, is_double_or_int,
-                              require_stan_scalar_real);
+                             require_stan_scalar_real);
 
 }  // namespace stan
 #endif

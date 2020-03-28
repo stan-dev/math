@@ -125,7 +125,7 @@
  * \ingroup require_meta
  * \defgroup require_stan_scalar Scalar types
  * `require` type traits for types that are either `arithmetic`, `var`, `fvar`,
- * or `Complex`. 
+ * or `Complex`.
  */
 
 /**

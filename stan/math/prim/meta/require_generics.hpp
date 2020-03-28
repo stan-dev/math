@@ -25,14 +25,13 @@ STAN_ADD_REQUIRE_BINARY_INNER(convertible, std::is_convertible, require_std);
 STAN_ADD_REQUIRE_UNARY(arithmetic, std::is_arithmetic,
                        require_stan_scalar_real);
 STAN_ADD_REQUIRE_UNARY_INNER(arithmetic, std::is_arithmetic,
-                              require_stan_scalar_real);
+                             require_stan_scalar_real);
 STAN_ADD_REQUIRE_UNARY(floating_point, std::is_floating_point,
                        require_stan_scalar_real);
 STAN_ADD_REQUIRE_UNARY_INNER(floating_point, std::is_floating_point,
-                              require_stan_scalar_real);
+                             require_stan_scalar_real);
 STAN_ADD_REQUIRE_UNARY(index, std::is_integral, require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_INNER(index, std::is_integral,
-                              require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_INNER(index, std::is_integral, require_stan_scalar_real);
 
 /** @}*/
 }  // namespace stan

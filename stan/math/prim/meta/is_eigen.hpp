@@ -100,7 +100,8 @@ STAN_ADD_REQUIRE_UNARY(eigen_array, is_eigen_array, require_eigens_types);
 STAN_ADD_REQUIRE_CONTAINER(eigen_array, is_eigen_array, require_eigens_types);
 
 /**
- * Check if a type is an `Eigen::Matrix` or `Eigen::SparseMatrix` or `Eigen::Array`
+ * Check if a type is an `Eigen::Matrix` or `Eigen::SparseMatrix` or
+ * `Eigen::Array`
  * @ingroup type_trait
  */
 template <typename T>
@@ -133,7 +134,6 @@ STAN_ADD_REQUIRE_UNARY(eigen_contiguous_map, is_eigen_contiguous_map,
                        require_eigens_types);
 STAN_ADD_REQUIRE_CONTAINER(eigen_contiguous_map, is_eigen_contiguous_map,
                            require_eigens_types);
-
 
 }  // namespace stan
 #endif

@@ -25,7 +25,7 @@ struct is_stan_scalar
 
 STAN_ADD_REQUIRE_UNARY(stan_scalar, is_stan_scalar, require_stan_scalar_real);
 STAN_ADD_REQUIRE_UNARY_INNER(stan_scalar, is_stan_scalar,
-                              require_stan_scalar_real);
+                             require_stan_scalar_real);
 
 }  // namespace stan
 

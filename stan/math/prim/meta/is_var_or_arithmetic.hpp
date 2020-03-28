@@ -32,7 +32,7 @@ using is_var_or_arithmetic = math::conjunction<is_var_or_arithmetic_type<T>...>;
 STAN_ADD_REQUIRE_UNARY(var_or_arithmetic, is_var_or_arithmetic,
                        require_stan_scalar_real);
 STAN_ADD_REQUIRE_UNARY_INNER(var_or_arithmetic, is_var_or_arithmetic,
-                              require_stan_scalar_real);
+                             require_stan_scalar_real);
 
 }  // namespace stan
 #endif
