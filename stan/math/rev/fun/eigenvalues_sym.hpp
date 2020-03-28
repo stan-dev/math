@@ -68,7 +68,7 @@ class eigenvalues_vari : public vari {
    */
   virtual void chain() {
     using Eigen::Map;
-std::cout << "HEHEHEHE" << std::endl;
+
     matrix_d adj_w = Map<matrix_vi>(vari_ref_w_, M_, 1).adj();
     matrix_d adj_v = Map<matrix_vi>(vari_ref_v_, M_, M_).adj();
     Map<matrix_d> w(w_, M_, M_);
@@ -79,15 +79,8 @@ std::cout << "HEHEHEHE" << std::endl;
     for (int i = 0; i < M_; i++)
       for (int j = 0; j < M_; j++)
         f.coeffRef(j ,i) = (i != j ? 1 / (w.coeff(i) - w.coeff(j)) : 0);
-    std::cout << "F is\n" << f << std::endl;
-    std::cout << "v.T * adj_v\n" << v.transpose() * adj_v << std::endl;
-    std::cout << "F prod (v.T * adj_v)\n" << f.cwiseProduct(v.transpose() * adj_v) << std::endl;
 
     matrix_d diag_adj_w = adj_w.asDiagonal();
-
-    std::cout << "diag_adj_w\n" << diag_adj_w << std::endl;
-
-    std::cout << "adj_v\n" << adj_v << std::endl;
 
     matrix_d adjA =  v * f.cwiseProduct(v.transpose() * adj_v) * v.transpose();
     adjA += v * diag_adj_w * v.transpose();
@@ -104,7 +97,7 @@ std::cout << "HEHEHEHE" << std::endl;
  * @param m Specified matrix.
  * @return Eigenvalues of matrix.
  */
-inline vector_v eigenvalues_sym(const matrix_v & m) {
+inline vector_v eigenvalues_sym(const matrix_v& m) {
   check_symmetric("eigenvalues_sym", "m", m);
   vector_v res(m.rows());
   internal::eigenvalues_vari *baseVari = new internal::eigenvalues_vari(m);
