@@ -17,7 +17,7 @@ using is_string_convertible = std::is_convertible<T, std::string>;
 
 STAN_ADD_REQUIRE_UNARY(string_convertible, is_string_convertible, require_std);
 STAN_ADD_REQUIRE_UNARY_INNER(string_convertible, is_string_convertible,
-                              require_std);
+                             require_std);
 
 }  // namespace stan
 
