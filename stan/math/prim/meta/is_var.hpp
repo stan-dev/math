@@ -14,8 +14,7 @@ template <typename T, typename = void>
 struct is_var : std::false_type {};
 
 STAN_ADD_REQUIRE_UNARY(var, is_var, require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_SCALAR(var, is_var, require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_VALUE(var, is_var, require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_INNER(var, is_var, require_stan_scalar_real);
 
 }  // namespace stan
 #endif

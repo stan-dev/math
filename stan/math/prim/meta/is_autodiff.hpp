@@ -12,6 +12,7 @@ namespace stan {
 /**
  * Checks if decayed type is a var or fvar
  * @tparam The type to check
+ * @ingroup type_trait
  */
 template <typename T>
 struct is_autodiff
@@ -19,8 +20,7 @@ struct is_autodiff
                                       is_fvar<std::decay_t<T>>>::value> {};
 
 STAN_ADD_REQUIRE_UNARY(autodiff, is_autodiff, require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_SCALAR(autodiff, is_autodiff, require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_VALUE(autodiff, is_autodiff, require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_INNER(autodiff, is_autodiff, require_stan_scalar_real);
 
 }  // namespace stan
 

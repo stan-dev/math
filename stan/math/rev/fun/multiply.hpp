@@ -548,30 +548,30 @@ class multiply_mat_vari<Ta, 1, Ca, double, 1> : public vari {
  * @tparam Mat1 type of first matrix
  * @tparam Mat2 type of second matrix
  *
- * @param[in] m1 Matrix
- * @param[in] m2 Matrix
+ * @param[in] A Matrix
+ * @param[in] B Matrix
  * @return Product of scalar and matrix.
  */
 template <typename Mat1, typename Mat2,
           require_all_eigen_t<Mat1, Mat2>* = nullptr,
           require_any_eigen_vt<is_var, Mat1, Mat2>* = nullptr,
           require_not_eigen_row_and_col_t<Mat1, Mat2>* = nullptr>
-inline auto multiply(const Mat1& m1, const Mat2& m2) {
+inline auto multiply(const Mat1& A, const Mat2& B) {
   using Ta = value_type_t<Mat1>;
   using Tb = value_type_t<Mat2>;
   constexpr int Ra = Mat1::RowsAtCompileTime;
   constexpr int Ca = Mat1::ColsAtCompileTime;
   constexpr int Cb = Mat2::ColsAtCompileTime;
-  check_multiplicable("multiply", "A", m1, "B", m2);
-  check_not_nan("multiply", "m1", m1);
-  check_not_nan("multiply", "m2", m2);
+  check_multiplicable("multiply", "A", A, "B", B);
+  check_not_nan("multiply", "m1", A);
+  check_not_nan("multiply", "m2", B);
 
   // Memory managed with the arena allocator.
   multiply_mat_vari<Ta, Ra, Ca, Tb, Cb>* baseVari
-      = new multiply_mat_vari<Ta, Ra, Ca, Tb, Cb>(m1, m2);
-  Eigen::Matrix<var, Ra, Cb> AB_v(m1.rows(), m2.cols());
+      = new multiply_mat_vari<Ta, Ra, Ca, Tb, Cb>(A, B);
+  Eigen::Matrix<var, Ra, Cb> AB_v(A.rows(), B.cols());
   AB_v.vi()
-      = Eigen::Map<matrix_vi>(&baseVari->variRefAB_[0], m1.rows(), m2.cols());
+      = Eigen::Map<matrix_vi>(&baseVari->variRefAB_[0], A.rows(), B.cols());
 
   return AB_v;
 }
@@ -583,25 +583,25 @@ inline auto multiply(const Mat1& m1, const Mat2& m2) {
  * @tparam RowVec type of row vector A
  * @tparam ColVec type of column vector B
  *
- * @param[in] m2 Row vector
- * @param[in] m1 Column vector
+ * @param[in] A Row vector
+ * @param[in] B Column vector
  * @return Scalar product of row vector and vector
  */
 template <
     typename RowVec, typename ColVec,
     require_any_var_t<value_type_t<RowVec>, value_type_t<ColVec>>* = nullptr,
     require_eigen_row_and_col_t<RowVec, ColVec>* = nullptr>
-inline var multiply(const RowVec& m1, const ColVec& m2) {
+inline var multiply(const RowVec& A, const ColVec& B) {
   using RowVecScalar = value_type_t<RowVec>;
   using ColVecScalar = value_type_t<ColVec>;
   constexpr int Ca = RowVec::ColsAtCompileTime;
-  check_multiplicable("multiply", "m1", m1, "m2", m2);
-  check_not_nan("multiply", "m1", m1);
-  check_not_nan("multiply", "m2", m2);
+  check_multiplicable("multiply", "A", A, "B", B);
+  check_not_nan("multiply", "A", A);
+  check_not_nan("multiply", "B", B);
 
   // Memory managed with the arena allocator.
   multiply_mat_vari<RowVecScalar, 1, Ca, ColVecScalar, 1>* baseVari
-      = new multiply_mat_vari<RowVecScalar, 1, Ca, ColVecScalar, 1>(m1, m2);
+      = new multiply_mat_vari<RowVecScalar, 1, Ca, ColVecScalar, 1>(A, B);
   var AB_v;
   AB_v.vi_ = baseVari->variRefAB_;
   return AB_v;

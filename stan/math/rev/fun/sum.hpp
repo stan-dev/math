@@ -85,16 +85,16 @@ class sum_eigen_v_vari : public sum_v_vari {
  *
  * @tparam T type of the matrix of vector (Must be derived from \c
  * Eigen::MatrixBase and contain \c var scalars)
- * @param v Specified matrix or vector.
+ * @param m Specified matrix or vector.
  * @return Sum of coefficients of matrix.
  */
 template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
-inline var sum(const EigMat& v) {
-  if (v.size() == 0) {
+inline var sum(const EigMat& m) {
+  if (m.size() == 0) {
     return 0.0;
   }
-  const Eigen::Ref<const plain_type_t<EigMat>>& v_ref = v;
-  return var(new sum_eigen_v_vari(v_ref));
+  const Eigen::Ref<const plain_type_t<EigMat>>& m_ref = m;
+  return var(new sum_eigen_v_vari(m_ref));
 }
 
 }  // namespace math

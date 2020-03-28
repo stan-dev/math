@@ -72,6 +72,10 @@ template <typename T>
 struct is_eigen_matrix_impl<Eigen::SparseMatrix<T>> : std::true_type {};
 }  // namespace internal
 
+/**
+ * Check if a type is an `Eigen::Matrix` or `Eigen::SparseMatrix`
+ * @ingroup type_trait
+ */
 template <typename T>
 struct is_eigen_matrix : internal::is_eigen_matrix_impl<std::decay_t<T>> {};
 
@@ -85,11 +89,20 @@ template <typename T, int R, int C>
 struct is_eigen_array_impl<Eigen::Array<T, R, C>> : std::true_type {};
 }  // namespace internal
 
+/**
+ * Check if a type is an `Eigen::Array`
+ * @ingroup type_trait
+ */
 template <typename T>
 struct is_eigen_array : internal::is_eigen_array_impl<std::decay_t<T>> {};
 
 STAN_ADD_REQUIRE_UNARY(eigen_array, is_eigen_array, require_eigens_types);
 STAN_ADD_REQUIRE_CONTAINER(eigen_array, is_eigen_array, require_eigens_types);
+
+/**
+ * Check if a type is an `Eigen::Matrix` or `Eigen::SparseMatrix` or `Eigen::Array`
+ * @ingroup type_trait
+ */
 template <typename T>
 using is_eigen_matrix_or_array
     = math::disjunction<is_eigen_matrix<T>, is_eigen_array<T>>;
@@ -108,9 +121,19 @@ struct is_eigen_contiguous_map_impl<Eigen::Map<T, Opts, Eigen::Stride<0, 0>>>
 
 }  // namespace internal
 
+/**
+ * Check if a type is an `Eigen::Map` with contiguous stride
+ * @ingroup type_trait
+ */
 template <typename T>
 struct is_eigen_contiguous_map
     : internal::is_eigen_contiguous_map_impl<std::decay_t<T>> {};
+
+STAN_ADD_REQUIRE_UNARY(eigen_contiguous_map, is_eigen_contiguous_map,
+                       require_eigens_types);
+STAN_ADD_REQUIRE_CONTAINER(eigen_contiguous_map, is_eigen_contiguous_map,
+                           require_eigens_types);
+
 
 }  // namespace stan
 #endif

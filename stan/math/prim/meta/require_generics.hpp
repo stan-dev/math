@@ -26,28 +26,15 @@ STAN_ADD_REQUIRE_BINARY_VALUE(convertible, std::is_convertible, require_std);
 
 STAN_ADD_REQUIRE_UNARY(arithmetic, std::is_arithmetic,
                        require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_SCALAR(arithmetic, std::is_arithmetic,
+STAN_ADD_REQUIRE_UNARY_INNER(arithmetic, std::is_arithmetic,
                               require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_VALUE(arithmetic, std::is_arithmetic,
-                             require_stan_scalar_real);
 STAN_ADD_REQUIRE_UNARY(floating_point, std::is_floating_point,
                        require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_SCALAR(floating_point, std::is_floating_point,
+STAN_ADD_REQUIRE_UNARY_INNER(floating_point, std::is_floating_point,
                               require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_VALUE(floating_point, std::is_floating_point,
-                             require_stan_scalar_real);
 STAN_ADD_REQUIRE_UNARY(index, std::is_integral, require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_SCALAR(index, std::is_integral,
+STAN_ADD_REQUIRE_UNARY_INNER(index, std::is_integral,
                               require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_VALUE(index, std::is_integral, require_stan_scalar_real);
-
-template <typename Row, typename Col>
-using require_eigen_row_and_col_t = require_t<
-    math::conjunction<is_eigen_row_vector<Row>, is_eigen_col_vector<Col>>>;
-
-template <typename Row, typename Col>
-using require_not_eigen_row_and_col_t = require_not_t<
-    math::conjunction<is_eigen_row_vector<Row>, is_eigen_col_vector<Col>>>;
 
 /** @}*/
 }  // namespace stan

@@ -13,12 +13,14 @@ namespace stan {
 
 /**
  * If condition is true, template is enabled
+ * @ingroup type_traits
  */
 template <class Check>
 using require_t = std::enable_if_t<Check::value>;
 
 /**
  * If condition is false, template is disabled
+ * @ingroup type_traits
  */
 template <typename Check>
 using require_not_t = std::enable_if_t<!Check::value>;
@@ -26,6 +28,7 @@ using require_not_t = std::enable_if_t<!Check::value>;
 /**
  * If all conditions are true, template is enabled
  * Returns a type void if all conditions are true and otherwise fails.
+ * @ingroup type_traits
  */
 template <class... Checks>
 using require_all_t = std::enable_if_t<math::conjunction<Checks...>::value>;
@@ -34,6 +37,7 @@ using require_all_t = std::enable_if_t<math::conjunction<Checks...>::value>;
  * If any condition is true, template is enabled.
  *
  * Returns a type void if any of the conditions are true and otherwise fails.
+ * @ingroup type_traits
  */
 template <class... Checks>
 using require_any_t = std::enable_if_t<math::disjunction<Checks...>::value>;
@@ -42,6 +46,7 @@ using require_any_t = std::enable_if_t<math::disjunction<Checks...>::value>;
  * If all conditions are false, template is enabled.
  *
  * Returns a type void if all of the conditions are false.
+ * @ingroup type_traits
  */
 template <class... Checks>
 using require_all_not_t
@@ -51,6 +56,7 @@ using require_all_not_t
  * If any condition is false, template is enabled.
  *
  * Returns a type void if any of the conditions are false.
+ * @ingroup type_traits
  */
 template <class... Checks>
 using require_any_not_t
@@ -93,42 +99,6 @@ using require_any_not_t
       = require_any_not_t<checker<std::decay_t<Types>>...>;              \
 /*! @} */
 
-/** \ingroup macro_helpers
- * Adds unary require aliases that check the `scalar_type`.
- * @param check_type The name of the type to check, used to define
- * `require_<check_type>_t`.
- * @param checker A struct that returns holds a boolean `value`
- * @param doxygen_group The doxygen group to add this requires to.
- */
-#define STAN_ADD_REQUIRE_UNARY_SCALAR(check_type, checker, doxygen_group)  \
-  /*! \ingroup doxygen_group */                                            \
-  /*! \addtogroup check_type##_types */                                    \
-  /*! @{ */                                                                \
-  /*! \brief Require scalar type satisfies checker */                      \
-  template <typename T>                                                    \
-  using require_##check_type##_st                                          \
-      = require_t<checker<scalar_type_t<std::decay_t<T>>>>;                \
-  /*! \brief Require scalar type does not satisfy checker */               \
-  template <typename T>                                                    \
-  using require_not_##check_type##_st                                      \
-      = require_not_t<checker<scalar_type_t<std::decay_t<T>>>>;            \
-  /*! \brief Require all of the scalar types satisfy checker */            \
-  template <typename... Types>                                             \
-  using require_all_##check_type##_st                                      \
-      = require_all_t<checker<scalar_type_t<std::decay_t<Types>>>...>;     \
-  /*! \brief Require any of the scalar types satisfy checker */            \
-  template <typename... Types>                                             \
-  using require_any_##check_type##_st                                      \
-      = require_any_t<checker<scalar_type_t<std::decay_t<Types>>>...>;     \
-  /*! \brief Require none of the scalar types satisfy checker */           \
-  template <typename... Types>                                             \
-  using require_all_not_##check_type##_st                                  \
-      = require_all_not_t<checker<scalar_type_t<std::decay_t<Types>>>...>; \
-  /*! \brief Any of the scalar types do not satisfy checker */             \
-  template <typename... Types>                                             \
-  using require_any_not_##check_type##_st                                  \
-      = require_any_not_t<checker<scalar_type_t<std::decay_t<Types>>>...>; \
-/*! @} */
 
 /** \ingroup macro_helpers
  * Adds unary require aliases that check the `value_type`.
@@ -137,34 +107,58 @@ using require_any_not_t
  * @param checker A struct that returns holds a boolean `value`
  * @param doxygen_group The doxygen group to add this requires to.
  */
-#define STAN_ADD_REQUIRE_UNARY_VALUE(check_type, checker, doxygen_group)       \
+#define STAN_ADD_REQUIRE_UNARY_INNER(check_type, checker, doxygen_group)       \
   /*! \ingroup doxygen_group */                                                \
   /*! \addtogroup check_type##_types */                                        \
   /*! @{ */                                                                    \
   /*! \brief Require value type satisfies checker */                           \
   template <typename T>                                                        \
-  using require_##check_type##_vt                                              \
+  using require_vt_##check_type                                              \
       = require_t<checker<value_type_t<std::decay_t<T>>>>;                     \
   /*! \brief Require value type does not satisfy checker */                    \
   template <typename T>                                                        \
-  using require_not_##check_type##_vt                                          \
+  using require_not_vt_##check_type                                          \
       = require_not_t<checker<value_type_t<std::decay_t<T>>>>;                 \
   /*! \brief Require all of the value types satisfy checker */                 \
   template <typename... Types>                                                 \
-  using require_all_##check_type##_vt                                          \
+  using require_all_vt_##check_type                                          \
       = require_all_t<checker<value_type_t<std::decay_t<Types>>>...>;          \
   /*! \brief Require any of the value types satisfy checker */                 \
   template <typename... Types>                                                 \
-  using require_any_##check_type##_vt                                          \
+  using require_any_vt_##check_type                                          \
       = require_any_t<checker<value_type_t<std::decay_t<Types>>>...>;          \
   /*! \brief Require none of the value types satisfy checker */                \
   template <typename... Types>                                                 \
-  using require_all_not_##check_type##_vt                                      \
+  using require_all_not_vt_##check_type                                      \
       = require_all_not_t<checker<value_type_t<std::decay_t<Types>>>...>;      \
   /*! \brief Require at least one of the value types do not satisfy checker */ \
   template <typename... Types>                                                 \
-  using require_any_not_##check_type##_vt                                      \
+  using require_any_not_vt_##check_type                                      \
       = require_any_not_t<checker<value_type_t<std::decay_t<Types>>>...>;      \
+  /*! \brief Require scalar type satisfies checker */                      \
+  template <typename T>                                                    \
+  using require_st_##check_type                                          \
+      = require_t<checker<scalar_type_t<std::decay_t<T>>>>;                \
+  /*! \brief Require scalar type does not satisfy checker */               \
+  template <typename T>                                                    \
+  using require_not_st_##check_type                                      \
+      = require_not_t<checker<scalar_type_t<std::decay_t<T>>>>;            \
+  /*! \brief Require all of the scalar types satisfy checker */            \
+  template <typename... Types>                                             \
+  using require_all_st_##check_type                                      \
+      = require_all_t<checker<scalar_type_t<std::decay_t<Types>>>...>;     \
+  /*! \brief Require any of the scalar types satisfy checker */            \
+  template <typename... Types>                                             \
+  using require_any_st_##check_type                                      \
+      = require_any_t<checker<scalar_type_t<std::decay_t<Types>>>...>;     \
+  /*! \brief Require none of the scalar types satisfy checker */           \
+  template <typename... Types>                                             \
+  using require_all_not_st_##check_type                                  \
+      = require_all_not_t<checker<scalar_type_t<std::decay_t<Types>>>...>; \
+  /*! \brief Any of the scalar types do not satisfy checker */             \
+  template <typename... Types>                                             \
+  using require_any_not_st_##check_type                                  \
+      = require_any_not_t<checker<scalar_type_t<std::decay_t<Types>>>...>; \
 /*! @} */
 
 /** \ingroup macro_helpers
@@ -212,82 +206,71 @@ using require_any_not_t
  * @param checker A struct that returns holds a boolean `value`
  * @param doxygen_group The doxygen group to add this requires to.
  */
-#define STAN_ADD_REQUIRE_BINARY_SCALAR(check_type, checker, doxygen_group)     \
+#define STAN_ADD_REQUIRE_BINARY_INNER(check_type, checker, doxygen_group)     \
   /*! \ingroup doxygen_group */                                                \
   /*! \addtogroup check_type##_types */                                        \
   /*! @{ */                                                                    \
   /*! \brief Require that value types of `T` and `S` satisfies checker */      \
   template <typename T, typename S>                                            \
-  using require_##check_type##_st                                              \
+  using require_st_##check_type                                              \
       = require_t<checker<scalar_type_t<std::decay_t<T>>,                      \
                           scalar_type_t<std::decay_t<S>>>>;                    \
   /*! \brief Require scalar types of `T` and `S` does not satisfy checker */   \
   template <typename T, typename S>                                            \
-  using require_not_##check_type##_st                                          \
+  using require_not_st_##check_type                                          \
       = require_not_t<checker<scalar_type_t<std::decay_t<T>>,                  \
                               scalar_type_t<std::decay_t<S>>>>;                \
   /*! \brief All scalar types of `T` and all of the `Types` satisfy checker */ \
   template <typename T, typename... Types>                                     \
-  using require_all_##check_type##_st                                          \
+  using require_all_st_##check_type                                          \
       = require_all_t<checker<scalar_type_t<std::decay_t<T>>,                  \
                               scalar_type_t<std::decay_t<Types>>>...>;         \
   /*! \brief Any of the scalar types of `Types` and `T` satisfy checker */     \
   template <typename T, typename... Types>                                     \
-  using require_any_##check_type##_st                                          \
+  using require_any_st_##check_type                                          \
       = require_any_t<checker<scalar_type_t<std::decay_t<T>>,                  \
                               scalar_type_t<std::decay_t<Types>>>...>;         \
   /*! \brief None of the scalar types of `Types` and `T` satisfy checker */    \
   template <typename T, typename... Types>                                     \
-  using require_all_not_##check_type##_st                                      \
+  using require_all_not_st_##check_type                                      \
       = require_all_not_t<checker<scalar_type_t<std::decay_t<T>>,              \
                                   scalar_type_t<std::decay_t<Types>>>...>;     \
   /*! \brief Any of the scalar types `Types` and `T` do not satisfy checker */ \
   template <typename T, typename... Types>                                     \
-  using require_any_not_##check_type##_st                                      \
+  using require_any_not_st_##check_type                                      \
       = require_any_not_t<checker<scalar_type_t<std::decay_t<T>>,              \
                                   scalar_type_t<std::decay_t<Types>>>...>;     \
-  /*! @} */
-
-/** \ingroup macro_helpers
- * Adds binary require aliases that check the `value_type`.
- * @param check_type The name of the type to check, used to define
- * `require_<check_type>_t`.
- * @param checker A struct that returns holds a boolean `value`
- * @param doxygen_group The doxygen group to add this requires to.
- */
-#define STAN_ADD_REQUIRE_BINARY_VALUE(check_type, checker, doxygen_group)     \
-  /*! \ingroup doxygen_group */                                               \
-  /*! \addtogroup check_type##_types */                                       \
-  /*! @{ */                                                                   \
   /*! \brief Value types of `T` and `S` satisfies checker */                  \
   template <typename T, typename S>                                           \
-  using require_##check_type##_vt = require_t<                                \
+  using require_vt_##check_type = require_t<                                \
       checker<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>; \
   /*! \brief Value types of `T` and `S` does not satisfy checker */           \
   template <typename T, typename S>                                           \
-  using require_not_##check_type##_vt = require_not_t<                        \
+  using require_not_vt_##check_type = require_not_t<                        \
       checker<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>; \
   /*! \brief Value types of `T` and all of the `Types` satisfy checker */     \
   template <typename T, typename... Types>                                    \
-  using require_all_##check_type##_vt                                         \
+  using require_all_vt_##check_type                                         \
       = require_all_t<checker<value_type_t<std::decay_t<T>>,                  \
                               value_type_t<std::decay_t<Types>>>...>;         \
   /*! \brief Any of the value types of `Types` and `T` satisfy checker */     \
   template <typename T, typename... Types>                                    \
-  using require_any_##check_type##_vt                                         \
+  using require_any_vt_##check_type                                         \
       = require_any_t<checker<value_type_t<std::decay_t<T>>,                  \
                               value_type_t<std::decay_t<Types>>>...>;         \
   /*! \brief None of the value types of `Types` and `T` satisfy checker */    \
   template <typename T, typename... Types>                                    \
-  using require_all_not_##check_type##_vt                                     \
+  using require_all_not_vt_##check_type                                     \
       = require_all_not_t<checker<value_type_t<std::decay_t<T>>,              \
                                   value_type_t<std::decay_t<Types>>>...>;     \
   /*! \brief Any of the value types `Types` and `T` do not satisfy checker */ \
   template <typename T, typename... Types>                                    \
-  using require_any_not_##check_type##_vt                                     \
+  using require_any_not_vt_##check_type                                     \
       = require_any_not_t<checker<value_type_t<std::decay_t<T>>,              \
                                   value_type_t<std::decay_t<Types>>>...>;     \
+
   /*! @} */
+
 
 /**
  * Used as the base for checking whether a type is a container with

@@ -10,6 +10,7 @@ namespace stan {
 /**
  * Checks if decayed type is a double or integer
  * @tparam The type to check
+ * @ingroup type_trait
  */
 template <typename T>
 struct is_double_or_int
@@ -19,10 +20,8 @@ struct is_double_or_int
 
 STAN_ADD_REQUIRE_UNARY(double_or_int, is_double_or_int,
                        require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_SCALAR(double_or_int, is_double_or_int,
+STAN_ADD_REQUIRE_UNARY_INNER(double_or_int, is_double_or_int,
                               require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_VALUE(double_or_int, is_double_or_int,
-                             require_stan_scalar_real);
 
 }  // namespace stan
 #endif

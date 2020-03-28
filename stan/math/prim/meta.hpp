@@ -66,7 +66,7 @@
  * auto add(T1 x, T2 y) { return x + y; }
  *~~~~~
  *
- * In addition, `std::vector` and `Eigen` types have additional requires to
+ * `std::vector` and `Eigen` types have additional requires to
  *detect if the `value_type` (the first underlying type) or the `scalar_type`
  *(the containers underlying scalar type) satisfy a condition to enable a class
  *or function.
@@ -97,7 +97,13 @@
  * }
  *~~~~~
  *
- * In general, these methods allow Stan to have more generic types so that the
+ * There are also requires for generically checking if a type's `value_type` or
+ *  `scalar_type` is correct. To differentiate them from the Eigen and Standard
+ * vector checks the `vt` and `st` comes *before* the type such as
+ * `require_vt_var<T>` which checks if a type T's `value_type` satisfies
+ * `is_var`.
+ *
+ * The `requires` type traits allow Stan to have more generic types so that the
  * library can forward along Eigen expression and have better move semantics.
  * For instance, the code below will accept any arbitrary Eigen expression
  * that, if it's an rvalue, can be forwarded to another function.
@@ -119,7 +125,7 @@
  * \ingroup require_meta
  * \defgroup require_stan_scalar Scalar types
  * `require` type traits for types that are either `arithmetic`, `var`, `fvar`,
- * or `Complex`.
+ * or `Complex`. 
  */
 
 /**
@@ -157,10 +163,6 @@
  * \ingroup require_meta
  * \defgroup macro_helpers Require Macro Generators
  * These macros are used on type traits to define the set of `requires`
- */
-
-/** \addtogroup type_trait
- *  @{
  */
 
 #include <stan/math/prim/meta/ad_promotable.hpp>
@@ -210,6 +212,5 @@
 #include <stan/math/prim/meta/void_t.hpp>
 #include <stan/math/prim/meta/StdVectorBuilder.hpp>
 #include <stan/math/prim/meta/VectorBuilder.hpp>
-/** @}*/
 
 #endif

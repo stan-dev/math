@@ -26,12 +26,12 @@ inline T sum(T v) {
  * Return the sum of the values in the specified standard vector.
  *
  * @tparam T Type of elements summed.
- * @param v Standard vector to sum.
+ * @param xs Standard vector to sum.
  * @return Sum of elements.
  */
 template <typename T>
-inline T sum(const std::vector<T>& v) {
-  return std::accumulate(v.begin(), v.end(), T{0});
+inline T sum(const std::vector<T>& xs) {
+  return std::accumulate(xs.begin(), xs.end(), T{0});
 }
 
 /**

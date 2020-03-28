@@ -15,6 +15,7 @@ namespace stan {
 /**
  * Checks if decayed type is a var, fvar, or arithmetic
  * @tparam The type to check
+ * @ingroup type_trait
  */
 template <typename T>
 struct is_stan_scalar
@@ -23,10 +24,8 @@ struct is_stan_scalar
                             std::is_arithmetic<std::decay_t<T>>>::value> {};
 
 STAN_ADD_REQUIRE_UNARY(stan_scalar, is_stan_scalar, require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_SCALAR(stan_scalar, is_stan_scalar,
+STAN_ADD_REQUIRE_UNARY_INNER(stan_scalar, is_stan_scalar,
                               require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_VALUE(stan_scalar, is_stan_scalar,
-                             require_stan_scalar_real);
 
 }  // namespace stan
 
