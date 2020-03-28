@@ -23,7 +23,7 @@
 #include <cmath>
 #include <cerrno>
 
-/** \ingroup \opencl
+/** \ingroup opencl
  *  \defgroup opencl_context_group OpenCL Context
  *  Initialization for OpenCL Context:
  *    1. create context
