@@ -468,103 +468,103 @@ using eigen_x = Eigen::Matrix<T, -1, -1>;
 
 // Test same
 TEST(requires_prim_mat, same_vtest) {
-  using stan::require_same_vt;
+  using stan::require_vt_same;
   using stan::test::require_variadic_checker;
-  EXPECT_FALSE((require_variadic_checker<stan::require_same_vt, eigen_x<double>,
+  EXPECT_FALSE((require_variadic_checker<stan::require_st_same, eigen_x<double>,
                                          eigen_x<int>>::value));
-  EXPECT_TRUE((require_variadic_checker<stan::require_same_vt, eigen_x<double>,
+  EXPECT_TRUE((require_variadic_checker<stan::require_st_same, eigen_x<double>,
                                         eigen_x<double>>::value));
-  EXPECT_TRUE((require_variadic_checker<stan::require_same_vt, eigen_x<int>,
+  EXPECT_TRUE((require_variadic_checker<stan::require_st_same, eigen_x<int>,
                                         eigen_x<int>>::value));
 }
 
 TEST(requires_prim_mat, not_same_vtest) {
-  using stan::require_not_same_vt;
+  using stan::require_not_st_same;
   using stan::test::require_variadic_checker;
-  EXPECT_TRUE((require_variadic_checker<require_not_same_vt, eigen_x<double>,
+  EXPECT_TRUE((require_variadic_checker<require_not_st_same, eigen_x<double>,
                                         eigen_x<int>>::value));
-  EXPECT_FALSE((require_variadic_checker<require_not_same_vt, eigen_x<double>,
+  EXPECT_FALSE((require_variadic_checker<require_not_st_same, eigen_x<double>,
                                          eigen_x<double>>::value));
-  EXPECT_FALSE((require_variadic_checker<require_not_same_vt, eigen_x<int>,
+  EXPECT_FALSE((require_variadic_checker<require_not_st_same, eigen_x<int>,
                                          eigen_x<int>>::value));
 }
 
 TEST(requires_prim_mat, all_same_vtest) {
-  using stan::require_all_same_vt;
+  using stan::require_all_st_same;
   using stan::test::require_variadic_checker;
-  EXPECT_FALSE((require_variadic_checker<require_all_same_vt, eigen_x<double>,
+  EXPECT_FALSE((require_variadic_checker<require_all_st_same, eigen_x<double>,
                                          std::string, eigen_x<double>>::value));
   EXPECT_TRUE(
-      (require_variadic_checker<require_all_same_vt, eigen_x<double>,
+      (require_variadic_checker<require_all_st_same, eigen_x<double>,
                                 eigen_x<double>, eigen_x<double>>::value));
-  EXPECT_TRUE((require_variadic_checker<require_all_same_vt, eigen_x<int>,
+  EXPECT_TRUE((require_variadic_checker<require_all_st_same, eigen_x<int>,
                                         eigen_x<int>, eigen_x<int>>::value));
 }
 
 TEST(requires_prim_mat, any_not_same_vtest) {
-  using stan::require_any_not_same_vt;
+  using stan::require_any_not_st_same;
   using stan::test::require_variadic_checker;
   EXPECT_TRUE(
-      (require_variadic_checker<require_any_not_same_vt, eigen_x<double>,
+      (require_variadic_checker<require_any_not_st_same, eigen_x<double>,
                                 eigen_x<int>, eigen_x<int>>::value));
   EXPECT_TRUE(
-      (require_variadic_checker<require_any_not_same_vt, eigen_x<double>,
+      (require_variadic_checker<require_any_not_st_same, eigen_x<double>,
                                 eigen_x<int>, eigen_x<double>>::value));
   EXPECT_FALSE(
-      (require_variadic_checker<require_any_not_same_vt, eigen_x<double>,
+      (require_variadic_checker<require_any_not_st_same, eigen_x<double>,
                                 eigen_x<double>, eigen_x<double>>::value));
-  EXPECT_FALSE((require_variadic_checker<require_any_not_same_vt, eigen_x<int>,
+  EXPECT_FALSE((require_variadic_checker<require_any_not_st_same, eigen_x<int>,
                                          eigen_x<int>, eigen_x<int>>::value));
 }
 
 // Test same
 TEST(requires_prim_mat, same_stest) {
-  using stan::require_same_st;
+  using stan::require_st_same;
   using stan::test::require_variadic_checker;
-  EXPECT_FALSE((require_variadic_checker<stan::require_same_st, eigen_x<double>,
+  EXPECT_FALSE((require_variadic_checker<stan::require_st_same, eigen_x<double>,
                                          eigen_x<int>>::value));
-  EXPECT_TRUE((require_variadic_checker<stan::require_same_st, eigen_x<double>,
+  EXPECT_TRUE((require_variadic_checker<stan::require_st_same, eigen_x<double>,
                                         eigen_x<double>>::value));
-  EXPECT_TRUE((require_variadic_checker<stan::require_same_st, eigen_x<int>,
+  EXPECT_TRUE((require_variadic_checker<stan::require_st_same, eigen_x<int>,
                                         eigen_x<int>>::value));
 }
 
 TEST(requires_prim_mat, not_same_stest) {
-  using stan::require_not_same_st;
+  using stan::require_not_st_same;
   using stan::test::require_variadic_checker;
-  EXPECT_TRUE((require_variadic_checker<require_not_same_st, eigen_x<double>,
+  EXPECT_TRUE((require_variadic_checker<require_not_st_same, eigen_x<double>,
                                         eigen_x<int>>::value));
-  EXPECT_FALSE((require_variadic_checker<require_not_same_st, eigen_x<double>,
+  EXPECT_FALSE((require_variadic_checker<require_not_st_same, eigen_x<double>,
                                          eigen_x<double>>::value));
-  EXPECT_FALSE((require_variadic_checker<require_not_same_st, eigen_x<int>,
+  EXPECT_FALSE((require_variadic_checker<require_not_st_same, eigen_x<int>,
                                          eigen_x<int>>::value));
 }
 
 TEST(requires_prim_mat, all_same_stest) {
-  using stan::require_all_same_st;
+  using stan::require_all_st_same;
   using stan::test::require_variadic_checker;
-  EXPECT_FALSE((require_variadic_checker<require_all_same_st, eigen_x<double>,
+  EXPECT_FALSE((require_variadic_checker<require_all_st_same, eigen_x<double>,
                                          std::string, eigen_x<double>>::value));
   EXPECT_TRUE(
-      (require_variadic_checker<require_all_same_st, eigen_x<double>,
+      (require_variadic_checker<require_all_st_same, eigen_x<double>,
                                 eigen_x<double>, eigen_x<double>>::value));
-  EXPECT_TRUE((require_variadic_checker<require_all_same_st, eigen_x<int>,
+  EXPECT_TRUE((require_variadic_checker<require_all_st_same, eigen_x<int>,
                                         eigen_x<int>, eigen_x<int>>::value));
 }
 
 TEST(requires_prim_mat, any_not_same_stest) {
-  using stan::require_any_not_same_st;
+  using stan::require_any_not_st_same;
   using stan::test::require_variadic_checker;
   EXPECT_TRUE(
-      (require_variadic_checker<require_any_not_same_st, eigen_x<double>,
+      (require_variadic_checker<require_any_not_st_same, eigen_x<double>,
                                 eigen_x<int>, eigen_x<int>>::value));
   EXPECT_TRUE(
-      (require_variadic_checker<require_any_not_same_st, eigen_x<double>,
+      (require_variadic_checker<require_any_not_st_same, eigen_x<double>,
                                 eigen_x<int>, eigen_x<double>>::value));
   EXPECT_FALSE(
-      (require_variadic_checker<require_any_not_same_st, eigen_x<double>,
+      (require_variadic_checker<require_any_not_st_same, eigen_x<double>,
                                 eigen_x<double>, eigen_x<double>>::value));
-  EXPECT_FALSE((require_variadic_checker<require_any_not_same_st, eigen_x<int>,
+  EXPECT_FALSE((require_variadic_checker<require_any_not_st_same, eigen_x<int>,
                                          eigen_x<int>, eigen_x<int>>::value));
 }
 
