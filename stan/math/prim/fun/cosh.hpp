@@ -1,8 +1,10 @@
 #ifndef STAN_MATH_PRIM_FUN_COSH_HPP
 #define STAN_MATH_PRIM_FUN_COSH_HPP
 
+#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <cmath>
 
 namespace stan {
@@ -51,6 +53,21 @@ inline auto cosh(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().cosh(); });
 }
+
+namespace internal {
+/**
+ * Return the hyperbolic cosine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return hyperbolic cosine of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_cosh(const std::complex<V>& z) {
+  return 0.5 * (exp(z) + exp(-z));
+}
+}  // namespace internal
+
 }  // namespace math
 }  // namespace stan
 

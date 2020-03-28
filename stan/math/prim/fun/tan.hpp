@@ -3,7 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/i_times.hpp>
+#include <stan/math/prim/fun/tanh.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -50,6 +53,20 @@ inline auto tan(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().tan(); });
 }
+
+namespace internal {
+/**
+ * Return the tangent of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return tangent of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_tan(const std::complex<V>& z) {
+  return neg_i_times(tanh(i_times(z)));
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

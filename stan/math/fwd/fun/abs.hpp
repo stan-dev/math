@@ -3,9 +3,10 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/abs.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -21,6 +22,18 @@ inline fvar<T> abs(const fvar<T>& x) {
   } else {
     return fvar<T>(abs(x.val_), NOT_A_NUMBER);
   }
+}
+
+/**
+ * Return the absolute value of the complex argument.
+ *
+ * @tparam T value type of argument
+ * @param[in] z argument
+ * @return absolute value of the argument
+ */
+template <typename T>
+inline std::complex<fvar<T>> abs(const std::complex<fvar<T>>& z) {
+  return internal::complex_abs(z);
 }
 
 }  // namespace math
