@@ -3,7 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/i_times.hpp>
+#include <stan/math/prim/fun/sinh.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -50,6 +53,20 @@ inline auto sin(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [&](const auto& v) { return v.array().sin(); });
 }
+
+namespace internal {
+/**
+ * Return the sine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return sine of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_sin(const std::complex<V>& z) {
+  return neg_i_times(sinh(i_times(z)));
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan
