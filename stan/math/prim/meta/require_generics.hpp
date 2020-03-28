@@ -21,7 +21,8 @@ STAN_ADD_REQUIRE_UNARY(floating_point, std::is_floating_point,
 STAN_ADD_REQUIRE_UNARY_INNER(floating_point, std::is_floating_point,
                              require_stan_scalar_real);
 STAN_ADD_REQUIRE_UNARY(integral, std::is_integral, require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_INNER(integral, std::is_integral, require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_INNER(integral, std::is_integral,
+                             require_stan_scalar_real);
 
 }  // namespace stan
 #endif
