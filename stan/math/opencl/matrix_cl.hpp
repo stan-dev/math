@@ -39,16 +39,16 @@ template <typename T>
 class matrix_cl<T, require_arithmetic_t<T>> {
  private:
   cl::Buffer buffer_cl_;  // Holds the allocated memory on the device
-  int rows_{0}; // Number of rows.
-  int cols_{0}; // Number of columns.
+  int rows_{0};           // Number of rows.
+  int cols_{0};           // Number of columns.
   // Holds info on if matrix is a special type
   matrix_cl_view view_{matrix_cl_view::Entire};
   mutable std::vector<cl::Event> write_events_;  // Tracks write jobs
   mutable std::vector<cl::Event> read_events_;   // Tracks reads
 
  public:
-  using Scalar = T; // Underlying type of the matrix
-  using type = T; // Underlying type of the matrix
+  using Scalar = T;  // Underlying type of the matrix
+  using type = T;    // Underlying type of the matrix
   // Forward declare the methods that work in place on the matrix
   template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
   inline void zeros();

@@ -29,15 +29,15 @@ namespace math {
 template <typename T>
 class matrix_cl<T, require_var_t<T>> {
  private:
-  const int rows_{0}; // Number of rows
-  const int cols_{0}; // Number of columns
-  matrix_cl<double> val_{0, 0}; // holds autodiff values
-  matrix_cl<double> adj_{0, 0}; // holds autodiff adjoints
+  const int rows_{0};            // Number of rows
+  const int cols_{0};            // Number of columns
+  matrix_cl<double> val_{0, 0};  // holds autodiff values
+  matrix_cl<double> adj_{0, 0};  // holds autodiff adjoints
   matrix_cl_view view_{matrix_cl_view::Entire};
 
  public:
-  using Scalar = T; // Inner type of matrix
-  using type = T; // Inner type of matrix
+  using Scalar = T;  // Inner type of matrix
+  using type = T;    // Inner type of matrix
   /**
    * Return the number of rows
    */

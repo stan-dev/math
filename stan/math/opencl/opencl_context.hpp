@@ -92,15 +92,16 @@ class opencl_context_base {
       device_.push_back(devices_[OPENCL_DEVICE_ID]);
       // context and queue
       cl_command_queue_properties device_properties;
-      device_[0].getInfo<cl_command_queue_properties>(CL_DEVICE_QUEUE_PROPERTIES,
-                                                   &device_properties);
+      device_[0].getInfo<cl_command_queue_properties>(
+          CL_DEVICE_QUEUE_PROPERTIES, &device_properties);
       device_[0].getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
-                              &max_thread_block_size_);
+                                 &max_thread_block_size_);
 
       context_ = cl::Context(device_[0]);
       if (device_properties & CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE) {
-        command_queue_ = cl::CommandQueue(
-            context_, device_[0], CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE, nullptr);
+        command_queue_
+            = cl::CommandQueue(context_, device_[0],
+                               CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE, nullptr);
         in_order_ = CL_FALSE;
       } else {
         command_queue_ = cl::CommandQueue(context_, device_[0], 0, nullptr);
@@ -139,9 +140,9 @@ class opencl_context_base {
   cl::Context context_;  // Manages the the device, queue, platform, memory, etc
   cl::CommandQueue command_queue_;       // job queue for device, one per device
   std::vector<cl::Platform> platforms_;  // Vector of available platforms
-  std::vector<cl::Platform> platform_; // The platform for compiling kernels
+  std::vector<cl::Platform> platform_;   // The platform for compiling kernels
   std::string platform_name_;  // The platform such as NVIDIA OpenCL or AMD SDK
-  std::vector<cl::Device> device_;                // The selected OpenCL device
+  std::vector<cl::Device> device_;   // The selected OpenCL device
   std::vector<cl::Device> devices_;  // All available OpenCL devices
   std::string device_name_;          // The name of OpenCL device
   size_t max_thread_block_size_;  // The maximum size of a block of workers on
@@ -209,47 +210,60 @@ class opencl_context {
     msg << "Platform ID: " << OPENCL_DEVICE_ID << "\n";
     msg << "Platform Name: "
         << opencl_context_base::getInstance()
-               .platform_[0].getInfo<CL_PLATFORM_NAME>()
+               .platform_[0]
+               .getInfo<CL_PLATFORM_NAME>()
         << "\n";
     msg << "Platform Vendor: "
         << opencl_context_base::getInstance()
-               .platform_[0].getInfo<CL_PLATFORM_VENDOR>()
+               .platform_[0]
+               .getInfo<CL_PLATFORM_VENDOR>()
         << "\n";
     msg << "\tDevice " << OPENCL_DEVICE_ID << ": "
         << "\n";
     msg << "\t\tDevice Name: "
-        << opencl_context_base::getInstance().device_[0].getInfo<CL_DEVICE_NAME>()
+        << opencl_context_base::getInstance()
+               .device_[0]
+               .getInfo<CL_DEVICE_NAME>()
         << "\n";
     msg << "\t\tDevice Type: "
-        << opencl_context_base::getInstance().device_[0].getInfo<CL_DEVICE_TYPE>()
+        << opencl_context_base::getInstance()
+               .device_[0]
+               .getInfo<CL_DEVICE_TYPE>()
         << "\n";
     msg << "\t\tDevice Vendor: "
         << opencl_context_base::getInstance()
-               .device_[0].getInfo<CL_DEVICE_VENDOR>()
+               .device_[0]
+               .getInfo<CL_DEVICE_VENDOR>()
         << "\n";
     msg << "\t\tDevice Max Compute Units: "
         << opencl_context_base::getInstance()
-               .device_[0].getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>()
+               .device_[0]
+               .getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>()
         << "\n";
     msg << "\t\tDevice Global Memory: "
         << opencl_context_base::getInstance()
-               .device_[0].getInfo<CL_DEVICE_GLOBAL_MEM_SIZE>()
+               .device_[0]
+               .getInfo<CL_DEVICE_GLOBAL_MEM_SIZE>()
         << "\n";
     msg << "\t\tDevice Max Clock Frequency: "
         << opencl_context_base::getInstance()
-               .device_[0].getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>()
+               .device_[0]
+               .getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>()
         << "\n";
     msg << "\t\tDevice Max Allocateable Memory: "
         << opencl_context_base::getInstance()
-               .device_[0].getInfo<CL_DEVICE_MAX_MEM_ALLOC_SIZE>()
+               .device_[0]
+               .getInfo<CL_DEVICE_MAX_MEM_ALLOC_SIZE>()
         << "\n";
     msg << "\t\tDevice Local Memory: "
         << opencl_context_base::getInstance()
-               .device_[0].getInfo<CL_DEVICE_LOCAL_MEM_SIZE>()
+               .device_[0]
+               .getInfo<CL_DEVICE_LOCAL_MEM_SIZE>()
         << "\n";
     msg << "\t\tDevice Available: "
         << opencl_context_base::getInstance()
-               .device_[0].getInfo<CL_DEVICE_AVAILABLE>()
+               .device_[0]
+               .getInfo<CL_DEVICE_AVAILABLE>()
         << "\n";
     return msg.str();
   }

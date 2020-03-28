@@ -17,48 +17,49 @@
  * Eigen::MatrixXd C_eig = from_matrix_cl(C);
  *```
  *
- * Execution is performed in async and Kernel operations are compounded and compiled
- * Just In Time. This allows for a low amount of overhead when passing data to and from the device
- * and executing computations.
+ * Execution is performed in async and Kernel operations are compounded and
+ *compiled Just In Time. This allows for a low amount of overhead when passing
+ *data to and from the device and executing computations.
  *
  * For more details see the paper on Arvix.
  * https://arxiv.org/pdf/1907.01063.pdf
  */
 
- /**
-  * \ingroup opencl
-  * \defgroup error_checks_opencl Error Checks
-  */
+/**
+ * \ingroup opencl
+ * \defgroup error_checks_opencl Error Checks
+ */
 
-  /**
-   * \ingroup opencl
-   * \defgroup kernel_executor_opencl Kernel Executor
-   * The kernel executor allows OpenCL kernels to be executed in async. GPUs
-   * have the capability to perform reads, writes, and computation at the same
-   * time. In order to maximize the throughput to the device the Kernel
-   * Executor assigns matrices read and write events. Write events are blocking
-   * in that no further operations can be completed until the write event
-   * is finished. However, read events can happen in async together.
-   * Take the following for example
-   *
-   *```cpp
-   * matrix_cl<double> A = from_eigen_cl(A_eig);
-   * matrix_cl<double> B = from_eigen_cl(B_eig);
-   * matrix_cl<double> C = A * B;
-   * matrix_cl<double> D = A + B;
-   * matrix_cl<double> E = C + D;
-   *```
-   * In the above, When `A` and `B` are created from the Eigen matrices `A_eig` and `B_eig`.
-   * they are both assigned write events to their write event stack.
-   * `C` and `D` depend on `A` and `B` while `E` depends on
-   * `C` and `D`. When executing `C`'s operation, `A` and `B` are assigned
-   * events to their read event stack while `C` is assigned an event to it's write event stack.
-   * Once `A` and `B` have finished their write event the kernel to compute `C` can begin.
-   * The excution to create `D` also waits for the write events of `A` and `B`, but
-   * does not have to wait for the execution of `C` to finish. Executing `E` requires waiting for
-   * for the write events of both `C` and `D`.
-   *
-   */
+/**
+ * \ingroup opencl
+ * \defgroup kernel_executor_opencl Kernel Executor
+ * The kernel executor allows OpenCL kernels to be executed in async. GPUs
+ * have the capability to perform reads, writes, and computation at the same
+ * time. In order to maximize the throughput to the device the Kernel
+ * Executor assigns matrices read and write events. Write events are blocking
+ * in that no further operations can be completed until the write event
+ * is finished. However, read events can happen in async together.
+ * Take the following for example
+ *
+ *```cpp
+ * matrix_cl<double> A = from_eigen_cl(A_eig);
+ * matrix_cl<double> B = from_eigen_cl(B_eig);
+ * matrix_cl<double> C = A * B;
+ * matrix_cl<double> D = A + B;
+ * matrix_cl<double> E = C + D;
+ *```
+ * In the above, When `A` and `B` are created from the Eigen matrices `A_eig`
+ *and `B_eig`. they are both assigned write events to their write event stack.
+ * `C` and `D` depend on `A` and `B` while `E` depends on
+ * `C` and `D`. When executing `C`'s operation, `A` and `B` are assigned
+ * events to their read event stack while `C` is assigned an event to it's write
+ *event stack. Once `A` and `B` have finished their write event the kernel to
+ *compute `C` can begin. The excution to create `D` also waits for the write
+ *events of `A` and `B`, but does not have to wait for the execution of `C` to
+ *finish. Executing `E` requires waiting for for the write events of both `C`
+ *and `D`.
+ *
+ */
 
 /**
  * \ingroup opencl
