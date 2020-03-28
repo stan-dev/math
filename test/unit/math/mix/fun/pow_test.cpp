@@ -5,6 +5,7 @@
 
 template <typename T>
 void expect_arith_instantiate() {
+  using stan::math::pow;
   using std::pow;
   auto a1 = pow(T(1.0), 1);
   auto b1 = pow(T(1.0), 1.0);
@@ -91,82 +92,86 @@ TEST(mathMixFun, complexPow) {
   }
 }
 
-// TEST(mathMixFun, powIntAmbiguityTest) {
-//   using std::pow;
-//   using stan::math::var;
-//   using std::complex;
-//   int i = 2;
-//   double d = 2.5;
-//   var v = 2.5;
-//   complex<double> cd = 2.5;
-//   complex<var> cv = 2.5;
+TEST(mathMixFun, powIntAmbiguityTest) {
+  using stan::math::pow;  // included to check ambiguities
+  using stan::math::var;
+  using std::complex;
+  using std::pow;
+  int i = 2;
+  double d = 2.5;
+  var v = 2.5;
+  complex<double> cd = 2.5;
+  complex<var> cv = 2.5;
 
-//   auto a1 = pow(i, i);
-//   auto a2 = pow(i, d);
-//   auto a3 = pow(i, v);
-//   auto a4 = pow(i, cd);
-//   auto a5 = pow(i, cv);
+  auto a1 = pow(i, i);
+  auto a2 = pow(i, d);
+  auto a3 = pow(i, v);
+  auto a4 = pow(i, cd);
+  auto a5 = pow(i, cv);
 
-//   auto b1 = pow(d, i);
-//   auto b2 = pow(d, d);
-//   auto b3 = pow(d, v);
-//   auto b4 = pow(d, cd);
-//   auto b5 = pow(d, cv);
+  auto b1 = pow(d, i);
+  auto b2 = pow(d, d);
+  auto b3 = pow(d, v);
+  auto b4 = pow(d, cd);
+  auto b5 = pow(d, cv);
 
-//   auto c1 = pow(cd, i);
-//   auto c2 = pow(cd, d);
-//   auto c3 = pow(cd, v);
-//   auto c4 = pow(cd, cd);
-//   auto c5 = pow(cd, cv);
+  auto e1 = pow(v, i);
+  auto e2 = pow(v, d);
+  auto e3 = pow(v, v);
+  auto e4 = pow(v, cd);
+  auto e5 = pow(v, cv);
 
-//   auto d1 = pow(cv, i);
-//   auto d2 = pow(cv, d);
-//   auto d3 = pow(cv, v);
-//   auto d4 = pow(cv, cd);
-//   auto d5 = pow(cv, cv);
+  auto c1 = pow(cd, i);
+  auto c2 = pow(cd, d);
+  auto c3 = pow(cd, v);
+  auto c4 = pow(cd, cd);
+  auto c5 = pow(cd, cv);
 
-//   auto e = a1 + a2 + a3 + a4 + a5
-//       + b1 + b2 + b3 + b4 + b5
-//       + c1 + c2 + c3 + c4 + c5
-//       + d1 + d2 + d3 + d4 + d5;
-// }
+  auto d1 = pow(cv, i);
+  auto d2 = pow(cv, d);
+  auto d3 = pow(cv, v);
+  auto d4 = pow(cv, cd);
+  auto d5 = pow(cv, cv);
 
-// TEST(mathMixFun, powIntAmbiguityTestFvar) {
-//   using std::pow;
-//   using stan::math::fvar;
-//   using std::complex;
-//   int i = 2;
-//   double d = 2.5;
-//   fvar<double> v = 2.5;
-//   complex<double> cd = 2.5;
-//   complex<fvar<double>> cv = 2.5;
+  auto e = a1 + a2 + a3 + a4 + a5 + b1 + b2 + b3 + b4 + b5 + c1 + c2 + c3 + c4
+           + c5 + d1 + d2 + d3 + d4 + d5;
+}
 
-//   auto a1 = pow(i, i);
-//   auto a2 = pow(i, d);
-//   auto a3 = pow(i, v);
-//   auto a4 = pow(i, cd);
-//   auto a5 = pow(i, cv);
+TEST(mathMixFun, powIntAmbiguityTestFvar) {
+  using stan::math::fvar;
+  using stan::math::pow;  // included to check ambiguities
+  using std::complex;
+  using std::pow;
+  int i = 2;
+  double d = 2.5;
+  fvar<double> v = 2.5;
+  complex<double> cd = 2.5;
+  complex<fvar<double>> cv = 2.5;
 
-//   auto b1 = pow(d, i);
-//   auto b2 = pow(d, d);
-//   auto b3 = pow(d, v);
-//   auto b4 = pow(d, cd);
-//   auto b5 = pow(d, cv);
+  auto a1 = pow(i, i);
+  auto a2 = pow(i, d);
+  auto a3 = pow(i, v);
+  auto a4 = pow(i, cd);
+  auto a5 = pow(i, cv);
 
-//   auto c1 = pow(cd, i);
-//   auto c2 = pow(cd, d);
-//   auto c3 = pow(cd, v);
-//   auto c4 = pow(cd, cd);
-//   auto c5 = pow(cd, cv);
+  auto b1 = pow(d, i);
+  auto b2 = pow(d, d);
+  auto b3 = pow(d, v);
+  auto b4 = pow(d, cd);
+  auto b5 = pow(d, cv);
 
-//   auto d1 = pow(cv, i);
-//   auto d2 = pow(cv, d);
-//   auto d3 = pow(cv, v);
-//   auto d4 = pow(cv, cd);
-//   auto d5 = pow(cv, cv);
+  auto c1 = pow(cd, i);
+  auto c2 = pow(cd, d);
+  auto c3 = pow(cd, v);
+  auto c4 = pow(cd, cd);
+  auto c5 = pow(cd, cv);
 
-//   auto e = a1 + a2 + a3 + a4 + a5
-//       + b1 + b2 + b3 + b4 + b5
-//       + c1 + c2 + c3 + c4 + c5
-//       + d1 + d2 + d3 + d4 + d5;
-// }
+  auto d1 = pow(cv, i);
+  auto d2 = pow(cv, d);
+  auto d3 = pow(cv, v);
+  auto d4 = pow(cv, cd);
+  auto d5 = pow(cv, cv);
+
+  auto e = a1 + a2 + a3 + a4 + a5 + b1 + b2 + b3 + b4 + b5 + c1 + c2 + c3 + c4
+           + c5 + d1 + d2 + d3 + d4 + d5;
+}
