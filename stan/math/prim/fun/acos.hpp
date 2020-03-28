@@ -1,9 +1,17 @@
 #ifndef STAN_MATH_PRIM_FUN_ACOS_HPP
 #define STAN_MATH_PRIM_FUN_ACOS_HPP
 
+#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/asin.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/isinf.hpp>
+#include <stan/math/prim/fun/isfinite.hpp>
+#include <stan/math/prim/fun/isnan.hpp>
+#include <stan/math/prim/fun/polar.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -51,6 +59,20 @@ inline auto acos(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().acos(); });
 }
+
+namespace internal {
+/**
+ * Return the arc cosine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return arc cosine of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_acos(const std::complex<V>& z) {
+  return 0.5 * pi() - asin(z);
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

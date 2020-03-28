@@ -1,9 +1,15 @@
 #ifndef STAN_MATH_PRIM_FUN_ASIN_HPP
 #define STAN_MATH_PRIM_FUN_ASIN_HPP
 
+#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/asinh.hpp>
+#include <stan/math/prim/fun/copysign.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/i_times.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -51,6 +57,22 @@ inline auto asin(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().asin(); });
 }
+
+namespace internal {
+/**
+ * Return the arc sine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return arc sine of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_asin(const std::complex<V>& z) {
+  auto y_d = asin(value_of_rec(z));
+  auto y = neg_i_times(asinh(i_times(z)));
+  return copysign(y, y_d);
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan
