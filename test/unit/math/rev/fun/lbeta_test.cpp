@@ -74,11 +74,6 @@ TEST(MathFunctions, lbeta_identities_gradient) {
   // Successors: beta(a,b) = beta(a + 1, b) + beta(a, b + 1)
   for (double x : to_test) {
     for (double y : to_test) {
-      // TODO(martinmodrak) this restriction on testing should be lifted once
-      // the log_sum_exp bug (#1679) is resolved
-      if (x > 1e10 || y > 1e10) {
-        continue;
-      }
       auto rh = [](const var& a, const var& b) {
         return stan::math::log_sum_exp(lbeta(a + 1, b), lbeta(a, b + 1));
       };

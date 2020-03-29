@@ -589,6 +589,10 @@ TEST(ProbDistributionsNegBinomial2, derivativesZeroOne) {
       double expected_dmu_1
           = (phi_dbl * (1 - mu_dbl)) / (mu_dbl * (mu_dbl + phi_dbl));
       expect_near_rel("dmu, n = 1 " + msg.str(), gradients1[0], expected_dmu_1);
+
+      double expected_dphi_1
+          = mu_dbl * ( phi_dbl + 1) / (phi_dbl * (mu_dbl + phi_dbl)) + log(phi_dbl) - log(mu_dbl + phi_dbl);
+      expect_near_rel("dphi, n = 1 " + msg.str(), gradients1[1], expected_dphi_1);
     }
   }
 }
