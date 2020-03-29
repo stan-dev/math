@@ -17,16 +17,18 @@ namespace math {
  * return a multivariate normal random variate sampled
  * from the gaussian approximation of p(theta | y, phi).
  */
-template <typename T0, typename T1, typename D, typename K, class RNG>
+template <typename T_theta, typename T_phi, typename T_x,
+          typename D, typename K, class RNG>
 inline Eigen::VectorXd  // CHECK -- right return type
 laplace_approx_rng
   (const D& diff_likelihood,
    const K& covariance_function,
-   const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
-   const std::vector<Eigen::VectorXd>& x,
+   const Eigen::Matrix<T_phi, Eigen::Dynamic, 1>& phi,
+   const T_x& x,
+   // const std::vector<Eigen::VectorXd>& x,
    const std::vector<double>& delta,
    const std::vector<int>& delta_int,
-   const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
+   const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta_0,
    RNG& rng,
    std::ostream* msgs = nullptr,
    double tolerance = 1e-6,
@@ -55,16 +57,6 @@ laplace_approx_rng
     theta,
     diag_matrix(square(W_root_inv)) - V_dec.transpose() * V_dec,
     rng);
-
-  // CHECK -- which method to use? Both seem equivalent.
-  // R&W method
-  // Eigen::MatrixXd V;
-  // V = mdivide_left_tri<Eigen::Lower>(L,
-  //       diag_pre_multiply(W_root, covariance));
-  // return multi_normal_rng(
-  //   theta,
-  //   covariance - V.transpose() * V,
-  //   rng);
 }
 
 }  // namespace math

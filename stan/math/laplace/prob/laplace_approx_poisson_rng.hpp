@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_LAPLACE_LAPLACE_APPROX_RNG_HPP
-#define STAN_MATH_LAPLACE_LAPLACE_APPROX_RNG_HPP
+#ifndef STAN_MATH_LAPLACE_LAPLACE_APPROX_POISSON_RNG_HPP
+#define STAN_MATH_LAPLACE_LAPLACE_APPROX_POISSON_RNG_HPP
 
 #include <stan/math/laplace/prob/laplace_approx_rng.hpp>
 
@@ -8,12 +8,13 @@ namespace math {
 
 /**
  * In a latent gaussian model,
- * 
+ *
  *   theta ~ Normal(theta | 0, Sigma(phi))
  *   y ~ pi(y | theta)
- * 
+ *
  * return a multivariate normal random variate sampled
- * from the gaussian approximation of p(theta | y, phi).
+ * from the gaussian approximation of p(theta | y, phi)
+ * where the likelihood is a Poisson with a log link.
  */
 template <typename K, typename T0, typename T1, class RNG>
 inline Eigen::VectorXd  // CHECK -- right return type
