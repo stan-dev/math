@@ -49,4 +49,42 @@ TEST(MathMatrixCL, kernel_caching) {
   EXPECT_EQ(unused_cache::kernel_(), nullptr);
 }
 
+TEST(MathMatrixCL, events_write_after_write) {
+  using stan::math::matrix_cl;
+  matrix_cl<double> zero_cl(3, 3);
+  zero_cl.zeros();
+  zero_cl.wait_for_read_write_events();
+
+  for (int j = 0; j < 3000; j++) {
+    matrix_cl<double> m_cl(3, 3);
+
+    for (int i = 0; i < 4; i++) {
+      m_cl = zero_cl + i;
+    }
+
+    Eigen::MatrixXd res = stan::math::from_matrix_cl(m_cl);
+    Eigen::MatrixXd correct = Eigen::MatrixXd::Constant(3, 3, 3);
+
+    EXPECT_MATRIX_NEAR(res, correct, 1e-13);
+  }
+}
+
+TEST(MathMatrixCL, events_read_after_write_and_write_after_read) {
+  using stan::math::matrix_cl;
+  int iters = 3000;
+
+  matrix_cl<double> m1_cl(3, 3);
+  matrix_cl<double> m2_cl(3, 3);
+  m1_cl.zeros();
+
+  for (int j = 0; j < iters; j++) {
+    m2_cl = m1_cl + 1;
+    m1_cl = m2_cl + 1;
+  }
+  Eigen::MatrixXd res = stan::math::from_matrix_cl(m1_cl);
+  Eigen::MatrixXd correct = Eigen::MatrixXd::Constant(3, 3, 2 * iters);
+
+  EXPECT_MATRIX_NEAR(res, correct, 1e-13);
+}
+
 #endif

@@ -12,13 +12,30 @@ namespace math {
 /**
  * Returns `1 / square(x)`.
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x container
  * @return `1 / square(x)` of each value in x.
  */
-template <typename T>
-inline auto inv_square(const T& x) {
+template <
+    typename Container,
+    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto inv_square(const Container& x) {
   return inv(square(x));
+}
+
+/**
+ * Version of inv_square() that accepts Eigen Matrix/Array objects or
+ * expressions.
+ *
+ * @tparam T Type of x
+ * @param x Eigen Matrix/Array or expression
+ * @return 1 / the square of each value in x.
+ */
+template <typename Container,
+          require_container_st<is_container, std::is_arithmetic, Container>...>
+inline auto inv_square(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](const auto& v) { return v.array().square().inverse(); });
 }
 
 }  // namespace math
