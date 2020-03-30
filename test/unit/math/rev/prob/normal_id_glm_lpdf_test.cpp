@@ -130,7 +130,8 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_simple) {
   double sigma = 10;
 
   var lp1 = stan::math::normal_id_glm_lpdf(y, x, alpha1, beta1, sigma);
-  var lp2 = stan::math::normal_lpdf(y, ((x * beta2).array() +  alpha2).matrix().eval(), sigma);
+  var lp2 = stan::math::normal_lpdf(
+      y, ((x * beta2).array() + alpha2).matrix().eval(), sigma);
 
   EXPECT_NEAR(lp1.val(), lp2.val(), eps);
 
