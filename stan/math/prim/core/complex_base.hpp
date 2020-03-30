@@ -39,7 +39,7 @@ class complex_base {
    * @tparam U real type (assignable to `value_type`)
    * @param[in] re real part
    */
-  template <typename U, typename = require_stan_scalar_t<U>>
+  template <typename U>  // , typename = require_stan_scalar_t<U>>
   complex_base(const U& re) : re_(re) {}  // NOLINT(runtime/explicit)
 
   /**

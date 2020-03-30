@@ -34,6 +34,11 @@ namespace math {
  -\frac{\nu + 1}{2} \log (1 + \frac{1}{\nu} (\frac{y - \mu}{\sigma})^2)
  \f}
  *
+ * @tparam T_y type of scalar
+ * @tparam T_dof type of degrees of freedom
+ * @tparam T_loc type of location
+ * @tparam T_scale type of scale
+ *
  * @param y A scalar variable.
  * @param nu Degrees of freedom.
  * @param mu The mean of the Student-t distribution.
@@ -41,10 +46,6 @@ namespace math {
  * @return The log of the Student-t density at y.
  * @throw std::domain_error if sigma is not greater than 0.
  * @throw std::domain_error if nu is not greater than 0.
- * @tparam T_y Type of scalar.
- * @tparam T_dof Type of degrees of freedom.
- * @tparam T_loc Type of location.
- * @tparam T_scale Type of scale.
  */
 template <bool propto, typename T_y, typename T_dof, typename T_loc,
           typename T_scale>
@@ -52,15 +53,9 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
                                                          const T_dof& nu,
                                                          const T_loc& mu,
                                                          const T_scale& sigma) {
-  static const char* function = "student_t_lpdf";
   using T_partials_return = partials_return_t<T_y, T_dof, T_loc, T_scale>;
-
-  if (size_zero(y, nu, mu, sigma)) {
-    return 0.0;
-  }
-
-  T_partials_return logp(0.0);
-
+  using std::log;
+  static const char* function = "student_t_lpdf";
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_finite(function, "Location parameter", mu);
@@ -69,17 +64,21 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
                          "Degrees of freedom parameter", nu,
                          "Location parameter", mu, "Scale parameter", sigma);
 
+  if (size_zero(y, nu, mu, sigma)) {
+    return 0.0;
+  }
   if (!include_summand<propto, T_y, T_dof, T_loc, T_scale>::value) {
     return 0.0;
   }
 
+  T_partials_return logp(0.0);
+  operands_and_partials<T_y, T_dof, T_loc, T_scale> ops_partials(y, nu, mu,
+                                                                 sigma);
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_dof> nu_vec(nu);
   scalar_seq_view<T_loc> mu_vec(mu);
   scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, nu, mu, sigma);
-
-  using std::log;
 
   VectorBuilder<include_summand<propto, T_y, T_dof, T_loc, T_scale>::value,
                 T_partials_return, T_dof>
@@ -145,8 +144,6 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
     log1p_exp[i] = log1p(square_y_minus_mu_over_sigma__over_nu[i]);
   }
 
-  operands_and_partials<T_y, T_dof, T_loc, T_scale> ops_partials(y, nu, mu,
-                                                                 sigma);
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);

@@ -10,6 +10,7 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/is_matrix_cl.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
+#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
 #include <CL/cl2.hpp>
 #include <algorithm>
 #include <iostream>
@@ -142,24 +143,20 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * Waits for the write events and clears the read event stack.
    */
   inline void wait_for_write_events() const {
-    cl::CommandQueue queue = opencl_context.queue();
-    cl::Event copy_event;
-    queue.enqueueBarrierWithWaitList(&this->write_events(), &copy_event);
-    copy_event.wait();
+    for (cl::Event e : write_events_) {
+      e.wait();
+    }
     write_events_.clear();
-    return;
   }
 
   /** \ingroup opencl
    * Waits for the read events and clears the read event stack.
    */
   inline void wait_for_read_events() const {
-    cl::CommandQueue queue = opencl_context.queue();
-    cl::Event copy_event;
-    queue.enqueueBarrierWithWaitList(&this->read_events(), &copy_event);
-    copy_event.wait();
+    for (cl::Event e : read_events_) {
+      e.wait();
+    }
     read_events_.clear();
-    return;
   }
 
   /** \ingroup opencl
@@ -167,14 +164,8 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * read/write event stacks.
    */
   inline void wait_for_read_write_events() const {
-    cl::CommandQueue queue = opencl_context.queue();
-    cl::Event copy_event;
-    const std::vector<cl::Event> mat_events = this->read_write_events();
-    queue.enqueueBarrierWithWaitList(&mat_events, &copy_event);
-    copy_event.wait();
-    read_events_.clear();
-    write_events_.clear();
-    return;
+    wait_for_read_events();
+    wait_for_write_events();
   }
 
   const cl::Buffer& buffer() const { return buffer_cl_; }
@@ -238,7 +229,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * be allocated
    */
   template <typename Vec, require_std_vector_vt<is_eigen, Vec>...,
-            require_same_st<Vec, T>...>
+            require_st_same<Vec, T>...>
   explicit matrix_cl(Vec&& A) try : rows_(A.empty() ? 0 : A[0].size()),
                                     cols_(A.size()) {
     if (this->size() == 0) {
@@ -309,7 +300,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @throw <code>std::system_error</code> if the memory on the device could not
    * be allocated
    */
-  template <typename Mat, require_eigen_t<Mat>..., require_same_vt<Mat, T>...,
+  template <typename Mat, require_eigen_t<Mat>..., require_vt_same<Mat, T>...,
             require_not_t<is_eigen_contiguous_map<Mat>>...>
   explicit matrix_cl(Mat&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
@@ -356,7 +347,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * be allocated
    */
   template <typename Map, require_t<is_eigen_contiguous_map<Map>>...,
-            require_same_vt<Map, T>...>
+            require_vt_same<Map, T>...>
   explicit matrix_cl(Map&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
@@ -405,7 +396,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * be allocated
    */
   template <typename Vec, require_std_vector_t<Vec>...,
-            require_same_vt<Vec, T>...>
+            require_vt_same<Vec, T>...>
   explicit matrix_cl(Vec&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : matrix_cl(std::forward<Vec>(A), A.size(), 1) {}
@@ -429,7 +420,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * be allocated
    */
   template <typename Vec, require_std_vector_t<Vec>...,
-            require_same_vt<Vec, T>...>
+            require_vt_same<Vec, T>...>
   explicit matrix_cl(Vec&& A, const int& R, const int& C,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(R), cols_(C), view_(partial_view) {
@@ -460,6 +451,16 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     initialize_buffer(A);
   }
 
+  /**
+   * Construct from a kernel generator expression. It evaluates the expression
+   * into \c this.
+   * @tparam Expr type of the expression
+   * @param expression expression
+   */
+  template <typename Expr,
+            require_all_valid_expressions_and_none_scalar_t<Expr>* = nullptr>
+  matrix_cl(const Expr& expression);  // NOLINT(runtime/explicit)
+
   /** \ingroup opencl
    * Move assignment operator.
    */
@@ -488,6 +489,16 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     initialize_buffer(a);
     return *this;
   }
+
+  /**
+   * Assignment of a kernel generator expression evaluates the expression into
+   * \c this.
+   * @tparam Expr type of the expression
+   * @param expression expression
+   */
+  template <typename Expr,
+            require_all_valid_expressions_and_none_scalar_t<Expr>* = nullptr>
+  matrix_cl<T>& operator=(const Expr& expression);
 
  private:
   /** \ingroup opencl

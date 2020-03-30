@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <complex>
 #include <cstddef>
 #include <vector>
 
@@ -41,6 +42,18 @@ inline double value_of_rec(const T x) {
  * @return Specified value.
  */
 inline double value_of_rec(double x) { return x; }
+
+/**
+ * Recursively apply value-of to the parts of the argument.
+ *
+ * @tparam T value type of argument
+ * @param[in] x argument
+ * @return real complex value of argument
+ */
+template <typename T>
+inline std::complex<double> value_of_rec(const std::complex<T>& x) {
+  return {value_of_rec(x.real()), value_of_rec(x.imag())};
+}
 
 /**
  * Convert a std::vector of type T to a std::vector of doubles.
@@ -87,7 +100,7 @@ inline const std::vector<double>& value_of_rec(const std::vector<double>& x) {
  * @param[in] M Matrix to be converted
  * @return Matrix of values
  **/
-template <typename T, typename = require_not_same_st<T, double>,
+template <typename T, typename = require_not_st_same<T, double>,
           typename = require_eigen_t<T>>
 inline auto value_of_rec(const T& M) {
   return M.unaryExpr([](auto x) { return value_of_rec(x); });
@@ -105,7 +118,7 @@ inline auto value_of_rec(const T& M) {
  * @param x Specified matrix.
  * @return Specified matrix.
  */
-template <typename T, typename = require_same_st<T, double>,
+template <typename T, typename = require_st_same<T, double>,
           typename = require_eigen_t<T>>
 inline const T& value_of_rec(const T& x) {
   return x;

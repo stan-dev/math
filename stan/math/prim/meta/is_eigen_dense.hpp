@@ -4,6 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/disjunction.hpp>
+#include <stan/math/prim/meta/require_helpers.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -32,6 +33,12 @@ struct is_eigen_dense<
            Eigen::DenseBase<typename std::decay_t<T>::MatrixType>,
            typename std::decay_t<T>::MatrixType>::value>> : std::true_type {};
 /** @}*/
+
+STAN_ADD_REQUIRE_UNARY(eigen_dense, is_eigen_dense,
+                       require_eigens_types);
+STAN_ADD_REQUIRE_CONTAINER(eigen_dense, is_eigen_dense,
+                           require_eigens_types);
+
 }  // namespace stan
 
 #endif

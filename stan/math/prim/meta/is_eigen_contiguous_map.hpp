@@ -4,6 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/disjunction.hpp>
+#include <stan/math/prim/meta/require_helpers.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -29,6 +30,11 @@ struct is_eigen_contiguous_map
     : internal::is_eigen_contiguous_map_impl<std::decay_t<T>> {};
 
 /** @}*/
+
+STAN_ADD_REQUIRE_UNARY(eigen_contiguous_map, is_eigen_contiguous_map, require_eigens_types);
+STAN_ADD_REQUIRE_CONTAINER(eigen_contiguous_map, is_eigen_contiguous_map, require_eigens_types);
+
+
 }  // namespace stan
 
 #endif

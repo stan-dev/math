@@ -1,10 +1,14 @@
 #ifndef STAN_MATH_PRIM_FUN_ATANH_HPP
 #define STAN_MATH_PRIM_FUN_ATANH_HPP
 
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/copysign.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -36,12 +40,8 @@ inline double atanh(double x) {
  * @throw std::domain_error If argument is less than 1.
  */
 inline double atanh(int x) {
-  if (is_nan(x)) {
-    return x;
-  } else {
-    check_bounded("atanh", "x", x, -1, 1);
-    return std::atanh(x);
-  }
+  check_bounded("atanh", "x", x, -1, 1);
+  return std::atanh(x);
 }
 
 /**
@@ -75,6 +75,23 @@ template <typename T>
 inline auto atanh(const T& x) {
   return apply_scalar_unary<atanh_fun, T>::apply(x);
 }
+
+namespace internal {
+/**
+ * Return the hyperbolic arc tangent of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return hyperbolic arc tangent of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_atanh(const std::complex<V>& z) {
+  std::complex<double> y_d = atanh(value_of_rec(z));
+  V one(1);
+  auto y = 0.5 * (log(one + z) - log(one - z));
+  return copysign(y, y_d);
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

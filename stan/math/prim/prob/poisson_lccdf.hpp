@@ -20,23 +20,20 @@ namespace math {
 
 template <typename T_n, typename T_rate>
 return_type_t<T_rate> poisson_lccdf(const T_n& n, const T_rate& lambda) {
-  static const char* function = "poisson_lccdf";
   using T_partials_return = partials_return_t<T_n, T_rate>;
-
-  if (size_zero(n, lambda)) {
-    return 0.0;
-  }
-
-  T_partials_return P(0.0);
-
+  using std::exp;
+  using std::log;
+  static const char* function = "poisson_lccdf";
   check_not_nan(function, "Rate parameter", lambda);
   check_nonnegative(function, "Rate parameter", lambda);
   check_consistent_sizes(function, "Random variable", n, "Rate parameter",
                          lambda);
 
-  using std::exp;
-  using std::log;
+  if (size_zero(n, lambda)) {
+    return 0;
+  }
 
+  T_partials_return P(0.0);
   operands_and_partials<T_rate> ops_partials(lambda);
 
   scalar_seq_view<T_n> n_vec(n);

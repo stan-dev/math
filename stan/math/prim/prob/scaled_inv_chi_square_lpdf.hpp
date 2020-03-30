@@ -28,34 +28,39 @@ namespace math {
  &=& \frac{\nu}{2} \log(\frac{\nu}{2}) - \log (\Gamma (\nu / 2)) + \nu \log(s) -
  (\frac{\nu}{2} + 1) \log(y) - \frac{\nu s^2}{2y} \\ & & \mathrm{ where } \; y >
  0 \f}
+ *
+ * @tparam T_y type of scalar
+ * @tparam T_dof type of degrees of freedom
  * @param y A scalar variable.
  * @param nu Degrees of freedom.
  * @param s Scale parameter.
  * @throw std::domain_error if nu is not greater than 0
  * @throw std::domain_error if s is not greater than 0.
  * @throw std::domain_error if y is not greater than 0.
- * @tparam T_y Type of scalar.
- * @tparam T_dof Type of degrees of freedom.
  */
 template <bool propto, typename T_y, typename T_dof, typename T_scale>
 return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
     const T_y& y, const T_dof& nu, const T_scale& s) {
-  static const char* function = "scaled_inv_chi_square_lpdf";
   using T_partials_return = partials_return_t<T_y, T_dof, T_scale>;
-
+  using std::log;
+  static const char* function = "scaled_inv_chi_square_lpdf";
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_positive_finite(function, "Scale parameter", s);
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu, "Scale parameter",
                          s);
+
   if (size_zero(y, nu, s)) {
     return 0;
   }
   if (!include_summand<propto, T_y, T_dof, T_scale>::value) {
     return 0;
   }
+
   T_partials_return logp(0);
+  operands_and_partials<T_y, T_dof, T_scale> ops_partials(y, nu, s);
+
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_dof> nu_vec(nu);
   scalar_seq_view<T_scale> s_vec(s);
@@ -66,8 +71,6 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
       return LOG_ZERO;
     }
   }
-
-  using std::log;
 
   VectorBuilder<include_summand<propto, T_dof, T_y, T_scale>::value,
                 T_partials_return, T_dof>
@@ -123,7 +126,6 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
     }
   }
 
-  operands_and_partials<T_y, T_dof, T_scale> ops_partials(y, nu, s);
   for (size_t n = 0; n < N; n++) {
     const T_partials_return s_dbl = value_of(s_vec[n]);
     const T_partials_return nu_dbl = value_of(nu_vec[n]);

@@ -17,6 +17,25 @@ template <typename T>
 struct is_eigen_vector : bool_constant<is_eigen_col_vector<T>::value
                                        || is_eigen_row_vector<T>::value> {};
 
+STAN_ADD_REQUIRE_UNARY(eigen_vector, is_eigen_vector, require_eigens_types);
+STAN_ADD_REQUIRE_CONTAINER(eigen_vector, is_eigen_vector, require_eigens_types);
+
+/**
+ * Require `Row` is a row vector and `Col` is a column vector.
+ * @ingroup require_eigen_types
+ */
+template <typename Row, typename Col>
+using require_eigen_row_and_col_t = require_t<
+    math::conjunction<is_eigen_row_vector<Row>, is_eigen_col_vector<Col>>>;
+
+/**
+ * Require `Row` is not a row vector and `Col` is not a column vector.
+ * @ingroup require_eigen_types
+ */
+template <typename Row, typename Col>
+using require_not_eigen_row_and_col_t = require_not_t<
+    math::conjunction<is_eigen_row_vector<Row>, is_eigen_col_vector<Col>>>;
+    
 }  // namespace stan
 
 #endif

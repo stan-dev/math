@@ -34,7 +34,6 @@ class block_
 
  protected:
   int start_row_, start_col_, rows_, cols_;
-  using base::arguments_;
 
  public:
   /**
@@ -61,8 +60,8 @@ class block_
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline auto deep_copy() {
-    auto&& arg_copy = std::get<0>(arguments_).deep_copy();
+  inline auto deep_copy() const {
+    auto&& arg_copy = this->template get_arg<0>().deep_copy();
     return block_<std::remove_reference_t<decltype(arg_copy)>>{
         std::move(arg_copy), start_row_, start_col_, rows_, cols_};
   }
@@ -122,7 +121,7 @@ class block_
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
       generated.insert(this);
-      std::get<0>(arguments_).set_args(generated, kernel, arg_num);
+      this->template get_arg<0>().set_args(generated, kernel, arg_num);
       kernel.setArg(arg_num++, start_row_);
       kernel.setArg(arg_num++, start_col_);
     }
@@ -175,9 +174,9 @@ class block_
   inline void set_view(int bottom_diagonal, int top_diagonal,
                        int bottom_zero_diagonal, int top_zero_diagonal) const {
     int change = start_col_ - start_row_;
-    std::get<0>(arguments_)
-        .set_view(bottom_diagonal + change, top_diagonal + change,
-                  bottom_zero_diagonal + change, top_zero_diagonal + change);
+    this->template get_arg<0>().set_view(
+        bottom_diagonal + change, top_diagonal + change,
+        bottom_zero_diagonal + change, top_zero_diagonal + change);
   }
 
   /**
@@ -186,7 +185,7 @@ class block_
    */
   inline int bottom_diagonal() const {
     return std::max(
-        std::get<0>(arguments_).bottom_diagonal() - start_col_ + start_row_,
+        this->template get_arg<0>().bottom_diagonal() - start_col_ + start_row_,
         1 - rows_);
   }
 
@@ -196,7 +195,7 @@ class block_
    */
   inline int top_diagonal() const {
     return std::min(
-        std::get<0>(arguments_).top_diagonal() - start_col_ + start_row_,
+        this->template get_arg<0>().top_diagonal() - start_col_ + start_row_,
         cols_ - 1);
   }
 
@@ -209,24 +208,39 @@ class block_
             typename
             = require_all_valid_expressions_and_none_scalar_t<T_expression>>
   const block_<T>& operator=(T_expression&& rhs) const {
-    check_size_match("block.operator=", "Rows of ", "rhs", rhs.rows(),
-                     "rows of ", "*this", this->rows());
-    check_size_match("block.operator=", "Cols of ", "rhs", rhs.cols(),
-                     "cols of ", "*this", this->cols());
     auto expression = as_operation_cl(std::forward<T_expression>(rhs));
     if (rows_ * cols_ == 0) {
       return *this;
     }
     expression.evaluate_into(*this);
-
-    this->set_view(expression.bottom_diagonal(), expression.top_diagonal(),
-                   1 - expression.rows(), expression.cols() - 1);
     return *this;
+  }
+
+  /**
+   * Checks if desired dimensions match dimensions of the block.
+   * @param rows desired number of rows
+   * @param cols desired number of columns
+   * @throws std::invalid_argument desired dimensions do not match dimensions
+   * of the block.
+   */
+  inline void check_assign_dimensions(int rows, int cols) const {
+    check_size_match("block_.check_assign_dimensions", "Rows of ", "block",
+                     rows_, "rows of ", "expression", rows);
+    check_size_match("block_.check_assign_dimensions", "Columns of ", "block",
+                     cols_, "columns of ", "expression", cols);
   }
 };
 
 /**
  * Block of a kernel generator expression.
+ *
+ * Block operation modifies how its argument is indexed. If a matrix is both an
+ * argument and result of such an operation (such as in <code> block(a, row1,
+ * col1, rows, cols) = block(a, row2, col2, rows, cols);
+ * </code>), the result can be wrong due to aliasing. In such case the
+ * expression should be evaluating in a temporary by doing <code> block(a, row1,
+ * col1, rows, cols) = block(a, row2, col2, rows, cols).eval();</code>. This is
+ * not necessary if the bolcks do not overlap or if they are the same block.
  * @tparam T type of argument
  * @param a input argument
  * @param start_row first row of block

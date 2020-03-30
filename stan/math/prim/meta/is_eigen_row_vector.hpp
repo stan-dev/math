@@ -4,6 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/is_eigen_dense.hpp>
+#include <stan/math/prim/meta/require_helpers.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -35,6 +36,11 @@ struct is_eigen_row_vector_impl<T, false> : std::false_type {};
 template <typename T>
 struct is_eigen_row_vector : internal::is_eigen_row_vector_impl<T> {};
 /** @}*/
+
+STAN_ADD_REQUIRE_UNARY(eigen_row_vector, is_eigen_row_vector,
+                       require_eigens_types);
+STAN_ADD_REQUIRE_CONTAINER(eigen_row_vector, is_eigen_row_vector,
+                           require_eigens_types);
 
 }  // namespace stan
 

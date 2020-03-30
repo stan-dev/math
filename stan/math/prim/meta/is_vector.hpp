@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/is_eigen_vector.hpp>
 #include <stan/math/prim/meta/is_std_vector.hpp>
+#include <stan/math/prim/meta/require_helpers.hpp>
 #include <type_traits>
 #include <vector>
 
@@ -17,6 +18,12 @@ namespace stan {
 template <typename T>
 struct is_vector : bool_constant<is_eigen_vector<std::decay_t<T>>::value
                                  || is_std_vector<std::decay_t<T>>::value> {};
+
+STAN_ADD_REQUIRE_UNARY(vector, is_vector, require_std);
+STAN_ADD_REQUIRE_CONTAINER(vector, is_vector, require_std);
+
+
+
 
 }  // namespace stan
 #endif

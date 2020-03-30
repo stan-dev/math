@@ -6,5 +6,9 @@ TEST(mathMixScalFun, binomialCoefficientLog) {
   };
   stan::test::expect_ad(f, 3, 2);
   stan::test::expect_ad(f, 24.0, 12.0);
+  stan::test::expect_ad(f, 1.0, 0.0);
+  stan::test::expect_ad(f, 0.0, 1.0);
+  stan::test::expect_ad(f, -0.3, 0.5);
+
   stan::test::expect_common_nonzero_binary(f);
 }

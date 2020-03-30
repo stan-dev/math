@@ -17,9 +17,13 @@
 #include <stan/math/opencl/kernel_generator/select.hpp>
 #include <stan/math/opencl/kernel_generator/rowwise_reduction.hpp>
 #include <stan/math/opencl/kernel_generator/colwise_reduction.hpp>
+#include <stan/math/opencl/kernel_generator/transpose.hpp>
 
+#include <stan/math/opencl/kernel_generator/multi_result_kernel.hpp>
 #include <stan/math/opencl/kernel_generator/get_kernel_source_for_evaluating_into.hpp>
 #include <stan/math/opencl/kernel_generator/evaluate_into.hpp>
+
+#include <stan/math/opencl/kernel_generator/matrix_cl_conversion.hpp>
 
 #endif
 #endif

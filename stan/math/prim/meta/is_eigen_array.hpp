@@ -30,7 +30,12 @@ struct is_eigen_array<
     T, std::enable_if_t<std::is_base_of<
            Eigen::ArrayBase<typename std::decay_t<T>::MatrixType>,
            typename std::decay_t<T>::MatrixType>::value>> : std::true_type {};
+
 /** @}*/
+
+STAN_ADD_REQUIRE_UNARY(eigen_array, is_eigen_array, require_eigens_types);
+STAN_ADD_REQUIRE_CONTAINER(eigen_array, is_eigen_array, require_eigens_types);
+
 }  // namespace stan
 
 #endif

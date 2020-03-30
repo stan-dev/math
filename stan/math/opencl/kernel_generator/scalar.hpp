@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_CONSTANT_HPP
-#define STAN_MATH_OPENCL_KERNEL_GENERATOR_CONSTANT_HPP
+#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_SCALAR_HPP
+#define STAN_MATH_OPENCL_KERNEL_GENERATOR_SCALAR_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/matrix_cl.hpp>
@@ -41,7 +41,7 @@ class scalar_ : public operation_cl<scalar_<T>, T> {
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline scalar_<T> deep_copy() { return scalar_<T>(a_); }
+  inline scalar_<T> deep_copy() const { return scalar_<T>(a_); }
 
   /**
    * generates kernel code for this expression.

@@ -34,15 +34,7 @@ template <typename T_y, typename T_scale_succ, typename T_scale_fail>
 return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
   using T_partials_return = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
-
-  if (size_zero(y, alpha, beta)) {
-    return 1.0;
-  }
-
   static const char* function = "beta_cdf";
-
-  T_partials_return P(1.0);
-
   check_positive_finite(function, "First shape parameter", alpha);
   check_positive_finite(function, "Second shape parameter", beta);
   check_not_nan(function, "Random variable", y);
@@ -52,6 +44,13 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
   check_nonnegative(function, "Random variable", y);
   check_less_or_equal(function, "Random variable", y, 1);
 
+  if (size_zero(y, alpha, beta)) {
+    return 1.0;
+  }
+
+  T_partials_return P(1.0);
+  operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(y, alpha,
+                                                                      beta);
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_scale_succ> alpha_vec(alpha);
   scalar_seq_view<T_scale_fail> beta_vec(beta);
@@ -59,9 +58,6 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
   size_t size_beta = stan::math::size(beta);
   size_t size_alpha_beta = max_size(alpha, beta);
   size_t N = max_size(y, alpha, beta);
-
-  operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(y, alpha,
-                                                                      beta);
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero

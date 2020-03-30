@@ -23,15 +23,10 @@ template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale>
 return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T_inv_scale& lambda) {
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
-
   static const char* function = "exp_mod_normal_lcdf";
-
-  T_partials_return cdf_log(0.0);
-  if (size_zero(y, mu, sigma, lambda)) {
-    return cdf_log;
-  }
-
+  using std::exp;
+  using std::log;
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_not_nan(function, "Scale parameter", sigma);
@@ -42,11 +37,13 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
                          mu, "Scale parameter", sigma, "Inv_scale paramter",
                          lambda);
 
+  if (size_zero(y, mu, sigma, lambda)) {
+    return 0;
+  }
+
+  T_partials_return cdf_log(0.0);
   operands_and_partials<T_y, T_loc, T_scale, T_inv_scale> ops_partials(
       y, mu, sigma, lambda);
-
-  using std::exp;
-  using std::log;
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);

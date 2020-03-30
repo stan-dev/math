@@ -5,6 +5,7 @@
 #include <stan/math/fwd/fun/acos.hpp>
 #include <stan/math/fwd/fun/acosh.hpp>
 #include <stan/math/fwd/fun/asin.hpp>
+#include <stan/math/fwd/fun/arg.hpp>
 #include <stan/math/fwd/fun/asinh.hpp>
 #include <stan/math/fwd/fun/atan.hpp>
 #include <stan/math/fwd/fun/atan2.hpp>
@@ -15,13 +16,11 @@
 #include <stan/math/fwd/fun/binary_log_loss.hpp>
 #include <stan/math/fwd/fun/cbrt.hpp>
 #include <stan/math/fwd/fun/ceil.hpp>
+#include <stan/math/fwd/fun/conj.hpp>
 #include <stan/math/fwd/fun/cos.hpp>
 #include <stan/math/fwd/fun/cosh.hpp>
-#include <stan/math/fwd/fun/crossprod.hpp>
 #include <stan/math/fwd/fun/determinant.hpp>
 #include <stan/math/fwd/fun/digamma.hpp>
-#include <stan/math/fwd/fun/divide.hpp>
-#include <stan/math/fwd/fun/dot_self.hpp>
 #include <stan/math/fwd/fun/Eigen_NumTraits.hpp>
 #include <stan/math/fwd/fun/erf.hpp>
 #include <stan/math/fwd/fun/erfc.hpp>
@@ -82,13 +81,14 @@
 #include <stan/math/fwd/fun/multiply.hpp>
 #include <stan/math/fwd/fun/multiply_log.hpp>
 #include <stan/math/fwd/fun/multiply_lower_tri_self_transpose.hpp>
+#include <stan/math/fwd/fun/norm.hpp>
 #include <stan/math/fwd/fun/owens_t.hpp>
 #include <stan/math/fwd/fun/Phi.hpp>
 #include <stan/math/fwd/fun/Phi_approx.hpp>
+#include <stan/math/fwd/fun/polar.hpp>
 #include <stan/math/fwd/fun/pow.hpp>
 #include <stan/math/fwd/fun/primitive_value.hpp>
-#include <stan/math/fwd/fun/qr_Q.hpp>
-#include <stan/math/fwd/fun/qr_R.hpp>
+#include <stan/math/fwd/fun/proj.hpp>
 #include <stan/math/fwd/fun/quad_form.hpp>
 #include <stan/math/fwd/fun/quad_form_sym.hpp>
 #include <stan/math/fwd/fun/rising_factorial.hpp>
@@ -98,7 +98,6 @@
 #include <stan/math/fwd/fun/softmax.hpp>
 #include <stan/math/fwd/fun/sqrt.hpp>
 #include <stan/math/fwd/fun/square.hpp>
-#include <stan/math/fwd/fun/squared_distance.hpp>
 #include <stan/math/fwd/fun/sum.hpp>
 #include <stan/math/fwd/fun/tan.hpp>
 #include <stan/math/fwd/fun/tanh.hpp>

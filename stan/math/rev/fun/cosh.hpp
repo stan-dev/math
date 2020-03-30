@@ -1,9 +1,15 @@
 #ifndef STAN_MATH_REV_FUN_COSH_HPP
 #define STAN_MATH_REV_FUN_COSH_HPP
 
+#include <stan/math/prim/fun/cosh.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/core/operator_multiplication.hpp>
+#include <stan/math/rev/fun/exp.hpp>
+#include <stan/math/rev/fun/sin.hpp>
+#include <stan/math/rev/fun/sinh.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -44,6 +50,16 @@ class cosh_vari : public op_v_vari {
  * @return Hyperbolic cosine of variable.
  */
 inline var cosh(const var& a) { return var(new internal::cosh_vari(a.vi_)); }
+
+/**
+ * Return the hyperbolic cosine of the complex argument.
+ *
+ * @param[in] z argument
+ * @return hyperbolic cosine of the argument
+ */
+inline std::complex<var> cosh(const std::complex<var>& z) {
+  return stan::math::internal::complex_cosh(z);
+}
 
 }  // namespace math
 }  // namespace stan

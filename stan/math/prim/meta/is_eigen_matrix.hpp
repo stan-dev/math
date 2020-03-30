@@ -4,6 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/disjunction.hpp>
+#include <stan/math/prim/meta/require_helpers.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -49,6 +50,11 @@ struct is_eigen_matrix<
     : bool_constant<internal::is_eigen_matrix_impl<std::decay_t<T>>::value> {};
 
 /** @}*/
+
+STAN_ADD_REQUIRE_UNARY(eigen_matrix, is_eigen_matrix,
+                       require_eigens_types);
+STAN_ADD_REQUIRE_CONTAINER(eigen_matrix, is_eigen_matrix,
+                           require_eigens_types);
 
 }  // namespace stan
 

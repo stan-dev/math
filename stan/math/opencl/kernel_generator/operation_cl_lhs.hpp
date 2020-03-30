@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_OPERATION_LHS_HPP
-#define STAN_MATH_OPENCL_KERNEL_GENERATOR_OPERATION_LHS_HPP
+#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_OPERATION_CL_LHS_HPP
+#define STAN_MATH_OPENCL_KERNEL_GENERATOR_OPERATION_CL_LHS_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
@@ -8,6 +8,7 @@
 #include <set>
 #include <array>
 #include <numeric>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -24,7 +25,6 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
  protected:
   using base = operation_cl<Derived, Scalar, Args...>;
   static constexpr int N = sizeof...(Args);
-  using base::arguments_;
   using base::derived;
 
  public:
@@ -47,11 +47,11 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
     }
     std::string i_arg = i;
     std::string j_arg = j;
-    this->derived().modify_argument_indices(i_arg, j_arg);
+    derived().modify_argument_indices(i_arg, j_arg);
     std::array<kernel_parts, N> args_parts = index_apply<N>([&](auto... Is) {
       return std::array<kernel_parts, N>{
-          std::get<Is>(this->arguments_)
-              .get_kernel_parts_lhs(generated, name_gen, i_arg, j_arg)...};
+          this->template get_arg<Is>().get_kernel_parts_lhs(generated, name_gen,
+                                                            i_arg, j_arg)...};
     });
     kernel_parts res{};
     res.body = std::accumulate(
@@ -66,7 +66,7 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
                             });
       kernel_parts my_part = index_apply<N>([&](auto... Is) {
         return this->derived().generate_lhs(
-            i, j, std::get<Is>(this->arguments_).var_name...);
+            i, j, this->template get_arg<Is>().var_name...);
       });
       res.body += my_part.body;
       res.args += my_part.args;
@@ -90,11 +90,27 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
   inline void set_view(int bottom_diagonal, int top_diagonal,
                        int bottom_zero_diagonal, int top_zero_diagonal) const {
     index_apply<N>([&](auto... Is) {
-      (void)std::initializer_list<int>{
-          (std::get<Is>(this->arguments_)
-               .set_view(bottom_diagonal, top_diagonal, bottom_zero_diagonal,
-                         top_zero_diagonal),
-           0)...};
+      static_cast<void>(std::initializer_list<int>{
+          (this->template get_arg<Is>().set_view(bottom_diagonal, top_diagonal,
+                                                 bottom_zero_diagonal,
+                                                 top_zero_diagonal),
+           0)...});
+    });
+  }
+
+  /**
+   * Sets the dimensions of the underlying expressions if possible. If not
+   * checks whether they have correct dimensions.
+   * @param rows desired number of rows
+   * @param cols desired number of columns
+   * @throws std::invalid_argument desired dimensions do not match with
+   * dimensions of underlying expression that can not be resized.
+   */
+  inline void check_assign_dimensions(int rows, int cols) const {
+    index_apply<N>([&](auto... Is) {
+      static_cast<void>(std::initializer_list<int>{
+          (this->template get_arg<Is>().check_assign_dimensions(rows, cols),
+           0)...});
     });
   }
 
@@ -104,8 +120,22 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
    */
   inline void add_write_event(cl::Event& e) const {
     index_apply<N>([&](auto... Is) {
-      (void)std::initializer_list<int>{
-          (std::get<Is>(this->arguments_).add_write_event(e), 0)...};
+      static_cast<void>(std::initializer_list<int>{
+          (this->template get_arg<Is>().add_write_event(e), 0)...});
+    });
+  }
+
+  /**
+   * Adds all read and write events on any matrices used by nested expressions
+   * to a list and clears them from those matrices.
+   * @param[out] events List of all events.
+   */
+  inline void get_clear_read_write_events(
+      std::vector<cl::Event>& events) const {
+    index_apply<N>([&](auto... Is) {
+      static_cast<void>(std::initializer_list<int>{
+          (this->template get_arg<Is>().get_clear_read_write_events(events),
+           0)...});
     });
   }
 };

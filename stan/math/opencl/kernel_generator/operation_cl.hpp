@@ -1,8 +1,9 @@
-#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_OPERATION_HPP
-#define STAN_MATH_OPENCL_KERNEL_GENERATOR_OPERATION_HPP
+#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_OPERATION_CL_HPP
+#define STAN_MATH_OPENCL_KERNEL_GENERATOR_OPERATION_CL_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/opencl/kernel_generator/wrapper.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
@@ -16,6 +17,7 @@
 #include <set>
 #include <array>
 #include <numeric>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -48,7 +50,7 @@ class operation_cl : public operation_cl_base {
       "operation_cl: all arguments to operation must be operations!");
 
  protected:
-  std::tuple<Args...> arguments_;
+  std::tuple<internal::wrapper<Args>...> arguments_;
   mutable std::string var_name;  // name of the variable that holds result of
                                  // this operation in the kernel
 
@@ -75,12 +77,21 @@ class operation_cl : public operation_cl_base {
   static const int dynamic = -1;
 
   /**
+    Returns an argument to this operation
+    @tparam N index of the argument
+    */
+  template <size_t N>
+  const auto& get_arg() const {
+    return std::get<N>(arguments_).x;
+  }
+
+  /**
    * Constructor
    * @param arguments Arguments of this expression that are also valid
    * expressions
    */
   explicit operation_cl(Args&&... arguments)
-      : arguments_(std::forward<Args>(arguments)...) {}
+      : arguments_(internal::wrapper<Args>(std::forward<Args>(arguments))...) {}
 
   /**
    * Evaluates the expression.
@@ -95,12 +106,6 @@ class operation_cl : public operation_cl_base {
   }
 
   /**
-   * Converting to \c matrix_cl evaluates the expression. Used when assigning to
-   * a \c matrix_cl.
-   */
-  operator matrix_cl<Scalar>() const { return derived().eval(); }
-
-  /**
    * Evaluates \c this expression into given left-hand-side expression.
    * If the kernel for this expression is not cached it is generated and then
    * executed.
@@ -108,7 +113,7 @@ class operation_cl : public operation_cl_base {
    * @param lhs Left-hand-side expression
    */
   template <typename T_lhs>
-  inline void evaluate_into(const T_lhs& lhs) const;
+  inline void evaluate_into(T_lhs& lhs) const;
 
   /**
    * Generates kernel source for evaluating \c this expression into given
@@ -171,9 +176,8 @@ class operation_cl : public operation_cl_base {
       std::string j_arg = j;
       derived().modify_argument_indices(i_arg, j_arg);
       std::array<kernel_parts, N> args_parts = index_apply<N>([&](auto... Is) {
-        return std::array<kernel_parts, N>{
-            std::get<Is>(arguments_)
-                .get_kernel_parts(generated, name_gen, i_arg, j_arg)...};
+        return std::array<kernel_parts, N>{this->get_arg<Is>().get_kernel_parts(
+            generated, name_gen, i_arg, j_arg)...};
       });
       res.initialization
           = std::accumulate(args_parts.begin(), args_parts.end(), std::string(),
@@ -196,8 +200,7 @@ class operation_cl : public operation_cl_base {
                               return a + b.args;
                             });
       kernel_parts my_part = index_apply<N>([&](auto... Is) {
-        return this->derived().generate(i, j,
-                                        std::get<Is>(arguments_).var_name...);
+        return this->derived().generate(i, j, this->get_arg<Is>().var_name...);
       });
       res.initialization += my_part.initialization;
       res.body = my_part.body_prefix + res.body + my_part.body;
@@ -236,8 +239,7 @@ class operation_cl : public operation_cl_base {
       // expression.
       index_apply<N>([&](auto... Is) {
         static_cast<void>(std::initializer_list<int>{
-            (std::get<Is>(arguments_).set_args(generated, kernel, arg_num),
-             0)...});
+            (this->get_arg<Is>().set_args(generated, kernel, arg_num), 0)...});
       });
     }
   }
@@ -248,8 +250,20 @@ class operation_cl : public operation_cl_base {
    */
   inline void add_read_event(cl::Event& e) const {
     index_apply<N>([&](auto... Is) {
-      (void)std::initializer_list<int>{
-          (std::get<Is>(arguments_).add_read_event(e), 0)...};
+      static_cast<void>(std::initializer_list<int>{
+          (this->get_arg<Is>().add_read_event(e), 0)...});
+    });
+  }
+
+  /**
+   * Adds all write events on any matrices used by nested expressions to a list
+   * and clears them from those matrices.
+   * @param[out] events List of all events.
+   */
+  inline void get_clear_write_events(std::vector<cl::Event>& events) const {
+    index_apply<N>([&](auto... Is) {
+      static_cast<void>(std::initializer_list<int>{
+          (this->template get_arg<Is>().get_clear_write_events(events), 0)...});
     });
   }
 
@@ -261,7 +275,7 @@ class operation_cl : public operation_cl_base {
   inline int rows() const {
     return index_apply<N>([&](auto... Is) {
       // assuming all non-dynamic sizes match
-      return std::max({std::get<Is>(arguments_).rows()...});
+      return std::max({this->get_arg<Is>().rows()...});
     });
   }
 
@@ -273,7 +287,7 @@ class operation_cl : public operation_cl_base {
   inline int cols() const {
     return index_apply<N>([&](auto... Is) {
       // assuming all non-dynamic sizes match
-      return std::max({std::get<Is>(arguments_).cols()...});
+      return std::max({this->get_arg<Is>().cols()...});
     });
   }
 
@@ -299,7 +313,7 @@ class operation_cl : public operation_cl_base {
   inline int bottom_diagonal() const {
     return index_apply<N>([&](auto... Is) {
       return std::min(std::initializer_list<int>(
-          {std::get<Is>(arguments_).bottom_diagonal()...}));
+          {this->get_arg<Is>().bottom_diagonal()...}));
     });
   }
 
@@ -310,8 +324,8 @@ class operation_cl : public operation_cl_base {
    */
   inline int top_diagonal() const {
     return index_apply<N>([&](auto... Is) {
-      return std::max(std::initializer_list<int>(
-          {std::get<Is>(arguments_).top_diagonal()...}));
+      return std::max(
+          std::initializer_list<int>({this->get_arg<Is>().top_diagonal()...}));
     });
   }
 };

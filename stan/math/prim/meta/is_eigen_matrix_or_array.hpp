@@ -6,6 +6,7 @@
 #include <stan/math/prim/meta/disjunction.hpp>
 #include <stan/math/prim/meta/is_eigen_matrix.hpp>
 #include <stan/math/prim/meta/is_eigen_array.hpp>
+#include <stan/math/prim/meta/require_helpers.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -23,6 +24,11 @@ using is_eigen_matrix_or_array
     = math::disjunction<is_eigen_matrix<std::decay_t<T>>,
                         is_eigen_array<std::decay_t<T>>>;
 /** @}*/
+
+STAN_ADD_REQUIRE_UNARY(eigen_matrix_or_array, is_eigen_matrix_or_array,
+                       require_eigens_types);
+STAN_ADD_REQUIRE_CONTAINER(eigen_matrix_or_array, is_eigen_matrix_or_array,
+                           require_eigens_types);
 }  // namespace stan
 
 #endif

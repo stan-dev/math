@@ -3,6 +3,10 @@
 
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/is_detected.hpp>
+#include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_vector.hpp>
+#include <stan/math/prim/meta/require_helpers.hpp>
+
 #include <type_traits>
 
 namespace stan {
@@ -31,6 +35,9 @@ template <typename T>
 struct is_vector_like
     : bool_constant<
           is_detected<std::decay_t<T>, internal::operator_bracket_t>::value> {};
+
+STAN_ADD_REQUIRE_UNARY(vector_like, is_vector_like, require_std);
+STAN_ADD_REQUIRE_CONTAINER(vector_like, is_vector_like, require_std);
 
 }  // namespace stan
 #endif

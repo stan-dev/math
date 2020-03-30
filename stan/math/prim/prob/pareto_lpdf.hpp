@@ -19,23 +19,24 @@ template <bool propto, typename T_y, typename T_scale, typename T_shape>
 return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
                                                  const T_scale& y_min,
                                                  const T_shape& alpha) {
-  static const char* function = "pareto_lpdf";
   using T_partials_return = partials_return_t<T_y, T_scale, T_shape>;
   using std::log;
+  static const char* function = "pareto_lpdf";
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Scale parameter", y_min);
   check_positive_finite(function, "Shape parameter", alpha);
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          y_min, "Shape parameter", alpha);
+
   if (size_zero(y, y_min, alpha)) {
     return 0;
   }
-
   if (!include_summand<propto, T_y, T_scale, T_shape>::value) {
     return 0;
   }
 
   T_partials_return logp(0);
+  operands_and_partials<T_y, T_scale, T_shape> ops_partials(y, y_min, alpha);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_scale> y_min_vec(y_min);
@@ -47,8 +48,6 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
       return LOG_ZERO;
     }
   }
-
-  operands_and_partials<T_y, T_scale, T_shape> ops_partials(y, y_min, alpha);
 
   VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,
                 T_y>
