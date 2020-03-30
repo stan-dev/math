@@ -6,7 +6,6 @@
 template <typename T>
 void expect_arith_instantiate() {
   using stan::math::pow;
-  using std::pow;
   auto a1 = pow(T(1.0), 1);
   auto b1 = pow(T(1.0), 1.0);
   auto c1 = pow(1, T(1.0));
@@ -36,7 +35,6 @@ TEST(mathMixScalFun, powInstantiations) {
 
 TEST(mathMixScalFun, pow) {
   auto f = [](const auto& x1, const auto& x2) {
-    using std::pow;
     using stan::math::pow;
     return pow(x1, x2);
   };
@@ -57,7 +55,6 @@ TEST(mathMixScalFun, pow) {
 }
 TEST(mathMixFun, complexPow) {
   auto f = [](const auto& x1, const auto& x2) {
-    using std::pow;
     using stan::math::pow;
     return pow(x1, x2);
   };
@@ -96,7 +93,6 @@ TEST(mathMixFun, powIntAmbiguityTest) {
   using stan::math::pow;  // included to check ambiguities
   using stan::math::var;
   using std::complex;
-  using std::pow;
   int i = 2;
   double d = 2.5;
   var v = 2.5;
@@ -141,7 +137,6 @@ TEST(mathMixFun, powIntAmbiguityTestFvar) {
   using stan::math::fvar;
   using stan::math::pow;  // included to check ambiguities
   using std::complex;
-  using std::pow;
   int i = 2;
   double d = 2.5;
   fvar<double> v = 2.5;
