@@ -118,16 +118,11 @@ inline const std::vector<int>& value_of(const std::vector<int>& x) { return x; }
  * @param[in] M Matrix to be converted
  * @return Matrix of values
  **/
-template <typename T, int R, int C>
-inline Eigen::Matrix<typename child_type<T>::type, R, C> value_of(
-    const Eigen::Matrix<T, R, C>& M) {
-  Eigen::Matrix<typename child_type<T>::type, R, C> Md(M.rows(), M.cols());
-  for (int j = 0; j < M.cols(); j++) {
-    for (int i = 0; i < M.rows(); i++) {
-      Md(i, j) = value_of(M(i, j));
-    }
-  }
-  return Md;
+template <typename EigMat, require_container_t<EigMat>* = nullptr, require_v>
+inline Eigen::Matrix<typename child_type<value_type_t<T>>::type,
+                     EigMat::RowsAtCompileTime, EigMat::ColsAtCompileTime>
+value_of(const EigMat& M) {
+  return M.array().unaryFunc([](const auto& scal) { return value_of(scal) });
 }
 
 /**
@@ -144,29 +139,9 @@ inline Eigen::Matrix<typename child_type<T>::type, R, C> value_of(
  * @param x Specified matrix.
  * @return Specified matrix.
  */
-template <int R, int C>
-inline const Eigen::Matrix<double, R, C>& value_of(
-    const Eigen::Matrix<double, R, C>& x) {
-  return x;
-}
-
-/**
- * Return the specified argument.
- *
- * <p>See <code>value_of(T)</code> for a polymorphic
- * implementation using static casts.
- *
- * <p>This inline pass-through no-op should be compiled away.
- *
- * @tparam R number of rows in the matrix, can be Eigen::Dynamic
- * @tparam C number of columns in the matrix, can be Eigen::Dynamic
- *
- * @param x Specified matrix.
- * @return Specified matrix.
- */
-template <int R, int C>
-inline const Eigen::Matrix<int, R, C>& value_of(
-    const Eigen::Matrix<int, R, C>& x) {
+template <typename EigMat,
+          require_eigen_vt<is_double_or_int, EigMat>* = nullptr>
+inline const EigMat& value_of(const EigMat& x) {
   return x;
 }
 

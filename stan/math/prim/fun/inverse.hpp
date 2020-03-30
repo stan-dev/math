@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_INVERSE_HPP
 #define STAN_MATH_PRIM_FUN_INVERSE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 
@@ -19,13 +20,14 @@ namespace math {
  * size zero).
  * @throw std::invalid_argument if the matrix is not square.
  */
-template <typename T, int R, int C>
-inline Eigen::Matrix<T, R, C> inverse(const Eigen::Matrix<T, R, C>& m) {
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
+                     EigMat::ColsAtCompileTime>
+inverse(const EigMat& m) {
   check_square("inverse", "m", m);
   if (m.size() == 0) {
     return {};
   }
-
   return m.inverse();
 }
 

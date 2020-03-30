@@ -24,98 +24,27 @@ namespace math {
  * = \log \left( \theta \lambda_1 + (1 - \theta) \lambda_2 \right).
  * \f]
  *
+ * @tparam T_theta type of mixing proportion - must be an arithmetic type
+ * @tparam T_lambda1 type of first log density - must be an arithmetic type
+ * @tparam T_lambda2 type of second log density - must be an arithmetic type
  * @param[in] theta mixing proportion in [0, 1].
  * @param[in] lambda1 first log density.
  * @param[in] lambda2 second log density.
  * @return log mixture of densities in specified proportion
  */
-inline double log_mix(double theta, double lambda1, double lambda2) {
+template <typename T_theta, typename T_lambda1, typename T_lambda2,
+          require_all_arithmetic_t<T_theta, T_lambda1, T_lambda2>* = nullptr>
+inline double log_mix(T_theta theta, T_lambda1 lambda1, T_lambda2 lambda2) {
   using std::log;
-  check_not_nan("log_mix", "lambda1", lambda1);
-  check_not_nan("log_mix", "lambda2", lambda2);
-  check_bounded("log_mix", "theta", theta, 0, 1);
-  return log_sum_exp(log(theta) + lambda1, log1m(theta) + lambda2);
-}
+  double theta_double = theta;
+  double lambda1_double = lambda1;
+  double lambda2_double = lambda2;
 
-/**
- * Return the log mixture density with specified mixing proportion
- * and log densities.
- *
- * @param[in] theta mixing proportion in [0, 1].
- * @param[in] lambda1 first log density.
- * @param[in] lambda2 second log density.
- * @return log mixture of densities in specified proportion
- */
-inline double log_mix(double theta, double lambda1, int lambda2) {
-  return log_mix(theta, lambda1, static_cast<double>(lambda2));
-}
-
-/**
- * Return the log mixture density with specified mixing proportion
- * and log densities.
- *
- * @param[in] theta mixing proportion in [0, 1].
- * @param[in] lambda1 first log density.
- * @param[in] lambda2 second log density.
- * @return log mixture of densities in specified proportion
- */
-inline double log_mix(double theta, int lambda1, double lambda2) {
-  return log_mix(theta, static_cast<double>(lambda1), lambda2);
-}
-
-/**
- * Return the log mixture density with specified mixing proportion
- * and log densities.
- *
- * @param[in] theta mixing proportion in [0, 1].
- * @param[in] lambda1 first log density.
- * @param[in] lambda2 second log density.
- * @return log mixture of densities in specified proportion
- */
-inline double log_mix(int theta, double lambda1, double lambda2) {
-  return log_mix(static_cast<double>(theta), lambda1, lambda2);
-}
-
-/**
- * Return the log mixture density with specified mixing proportion
- * and log densities.
- *
- * @param[in] theta mixing proportion in [0, 1].
- * @param[in] lambda1 first log density.
- * @param[in] lambda2 second log density.
- * @return log mixture of densities in specified proportion
- */
-inline double log_mix(double theta, int lambda1, int lambda2) {
-  return log_mix(theta, static_cast<double>(lambda1),
-                 static_cast<double>(lambda2));
-}
-
-/**
- * Return the log mixture density with specified mixing proportion
- * and log densities.
- *
- * @param[in] theta mixing proportion in [0, 1].
- * @param[in] lambda1 first log density.
- * @param[in] lambda2 second log density.
- * @return log mixture of densities in specified proportion
- */
-inline double log_mix(int theta, double lambda1, int lambda2) {
-  return log_mix(static_cast<double>(theta), lambda1,
-                 static_cast<double>(lambda2));
-}
-
-/**
- * Return the log mixture density with specified mixing proportion
- * and log densities.
- *
- * @param[in] theta mixing proportion in [0, 1].
- * @param[in] lambda1 first log density.
- * @param[in] lambda2 second log density.
- * @return log mixture of densities in specified proportion
- */
-inline double log_mix(int theta, int lambda1, int lambda2) {
-  return log_mix(static_cast<double>(theta), static_cast<double>(lambda1),
-                 static_cast<double>(lambda2));
+  check_not_nan("log_mix", "lambda1", lambda1_double);
+  check_not_nan("log_mix", "lambda2", lambda2_double);
+  check_bounded("log_mix", "theta", theta_double, 0, 1);
+  return log_sum_exp(log(theta_double) + lambda1_double,
+                     log1m(theta_double) + lambda2_double);
 }
 
 /**
@@ -145,7 +74,6 @@ return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
                                       const T_lam& lambda) {
   static const char* function = "log_mix";
   using T_partials_return = partials_return_t<T_theta, T_lam>;
-
   using T_partials_vec = typename Eigen::Matrix<T_partials_return, -1, 1>;
 
   const int N = stan::math::size(theta);
@@ -157,36 +85,19 @@ return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
   check_finite(function, "theta", theta);
   check_consistent_sizes(function, "theta", theta, "lambda", lambda);
 
-  scalar_seq_view<T_theta> theta_vec(theta);
-  T_partials_vec theta_dbl(N);
-  for (int n = 0; n < N; ++n) {
-    theta_dbl[n] = value_of(theta_vec[n]);
-  }
+  T_partials_vec theta_dbl = value_of(theta);
+  T_partials_vec lam_dbl = value_of(lambda);
 
-  scalar_seq_view<T_lam> lam_vec(lambda);
-  T_partials_vec lam_dbl(N);
-  for (int n = 0; n < N; ++n) {
-    lam_dbl[n] = value_of(lam_vec[n]);
-  }
-
-  T_partials_return logp = log_sum_exp((log(theta_dbl) + lam_dbl).eval());
-
-  T_partials_vec theta_deriv(N);
-  theta_deriv.array() = (lam_dbl.array() - logp).exp();
-
-  T_partials_vec lam_deriv = theta_deriv.cwiseProduct(theta_dbl);
+  T_partials_return logp = log_sum_exp(log(theta_dbl) + lam_dbl);
+  T_partials_vec theta_deriv = (lam_dbl.array() - logp).exp();
 
   operands_and_partials<T_theta, T_lam> ops_partials(theta, lambda);
   if (!is_constant_all<T_theta>::value) {
-    for (int n = 0; n < N; ++n) {
-      ops_partials.edge1_.partials_[n] = theta_deriv[n];
-    }
+    ops_partials.edge1_.partials_ = std::move(theta_deriv);
   }
 
   if (!is_constant_all<T_lam>::value) {
-    for (int n = 0; n < N; ++n) {
-      ops_partials.edge2_.partials_[n] = lam_deriv[n];
-    }
+    ops_partials.edge2_.partials_ = theta_deriv.cwiseProduct(theta_dbl);
   }
 
   return ops_partials.build(logp);

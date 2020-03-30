@@ -82,11 +82,12 @@ inline auto log_sum_exp(const T& x) {
     if (v.size() == 0) {
       return NEGATIVE_INFTY;
     }
-    const double max = v.maxCoeff();
+    const Eigen::Ref<const plain_type_t<decltype(v)>> v_ref = v;
+    const double max = v_ref.maxCoeff();
     if (!std::isfinite(max)) {
       return max;
     }
-    return max + std::log((v.array() - max).exp().sum());
+    return max + std::log((v_ref.array() - max).exp().sum());
   });
 }
 

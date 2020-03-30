@@ -12,20 +12,16 @@ namespace math {
 // initializations called for local variables generate in Stan
 // code; fills in all cells in first arg with second arg
 
-template <typename T>
-inline void initialize(T& x, const T& v) {
-  x = v;
-}
-template <typename T, typename V, typename = require_arithmetic_t<V>>
+template <typename T, typename V, typename = require_all_stan_scalar_t<T,V>>
 inline void initialize(T& x, V v) {
   x = v;
 }
+
 template <typename T, int R, int C, typename V>
 inline void initialize(Eigen::Matrix<T, R, C>& x, const V& v) {
-  for (int i = 0; i < x.size(); ++i) {
-    initialize(x(i), v);
-  }
+  x = Eigen::Matrix<T, R, C>::Constant(x.rows(), x.cols(), v);
 }
+
 template <typename T, typename V>
 inline void initialize(std::vector<T>& x, const V& v) {
   for (size_t i = 0; i < x.size(); ++i) {
