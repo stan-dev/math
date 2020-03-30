@@ -19,9 +19,8 @@ namespace math {
  * @param y exponent
  * @return base raised to the power of the exponent
  */
-template<typename T1, typename T2,
-         typename = require_arithmetic_t<T1>,
-         typename = require_arithmetic_t<T2>>
+template <typename T1, typename T2, typename = require_arithmetic_t<T1>,
+          typename = require_arithmetic_t<T2>>
 inline double pow(T1 x, T2 y) {
   return std::pow(x, y);
 }
