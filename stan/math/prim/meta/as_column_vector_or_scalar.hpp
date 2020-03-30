@@ -18,9 +18,9 @@ namespace math {
  * @param a Specified scalar.
  * @return 1x1 matrix that contains the value of scalar.
  */
-template <typename T, typename = require_stan_scalar_t<T>>
-inline const T& as_column_vector_or_scalar(const T& a) {
-  return a;
+template <typename T, require_stan_scalar_t<T>* = nullptr>
+inline T&& as_column_vector_or_scalar(T&& a) {
+  return std::forward<T>(a);
 }
 
 /** \ingroup type_trait
@@ -31,9 +31,9 @@ inline const T& as_column_vector_or_scalar(const T& a) {
  * @param a Specified vector.
  * @return Same vector.
  */
-template <typename T, typename = require_t<is_eigen_col_vector<T>>>
-inline const auto& as_column_vector_or_scalar(const T& a) {
-  return a;
+template <typename T, require_t<is_eigen_col_vector<T>>* = nullptr>
+inline T&& as_column_vector_or_scalar(T&& a) {
+  return std::forward<T>(a);
 }
 
 /** \ingroup type_trait
@@ -44,8 +44,8 @@ inline const auto& as_column_vector_or_scalar(const T& a) {
  * @param a Specified vector.
  * @return Transposed vector.
  */
-template <typename T, typename = require_t<is_eigen_row_vector<T>>>
-inline auto as_column_vector_or_scalar(const T& a) {
+template <typename T, require_t<is_eigen_row_vector<T>>* = nullptr>
+inline auto as_column_vector_or_scalar(T&& a) {
   return a.transpose();
 }
 
@@ -57,11 +57,13 @@ inline auto as_column_vector_or_scalar(const T& a) {
  * @param a Specified vector.
  * @return input converted to a column vector.
  */
-template <typename T>
-inline Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>>
-as_column_vector_or_scalar(const std::vector<T>& a) {
-  return Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>>(a.data(),
-                                                               a.size());
+template <typename T, require_std_vector_t<T>* = nullptr>
+inline auto as_column_vector_or_scalar(T&& a) {
+  using plain_vector = Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1>;
+  using optionaly_const_vector
+      = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
+                           const plain_vector, plain_vector>;
+  return Eigen::Map<optionaly_const_vector>(a.data(), a.size());
 }
 
 }  // namespace math

@@ -24,7 +24,7 @@ namespace math {
  * @param x scalar to convert to double
  * @return value of scalar cast to double
  */
-template <typename T>
+template <typename T, require_arithmetic_t<T>* = nullptr>
 inline double value_of(const T x) {
   return static_cast<double>(x);
 }
@@ -66,7 +66,7 @@ inline int value_of(int x) { return x; }
  * @param[in] x std::vector to be converted
  * @return std::vector of values
  **/
-template <typename T>
+template <typename T, require_not_double_or_int_t<T>* = nullptr>
 inline std::vector<typename child_type<T>::type> value_of(
     const std::vector<T>& x) {
   size_t x_size = x.size();
@@ -88,22 +88,10 @@ inline std::vector<typename child_type<T>::type> value_of(
  * @param x Specified std::vector.
  * @return Specified std::vector.
  */
-inline const std::vector<double>& value_of(const std::vector<double>& x) {
+template<typename Scal, require_double_or_int_t<Scal>* = nullptr>
+inline const std::vector<Scal>& value_of(const std::vector<Scal>& x) {
   return x;
 }
-
-/**
- * Return the specified argument.
- *
- * <p>See <code>value_of(T)</code> for a polymorphic
- * implementation using static casts.
- *
- * <p>This inline pass-through no-op should be compiled away.
- *
- * @param x Specified std::vector.
- * @return Specified std::vector.
- */
-inline const std::vector<int>& value_of(const std::vector<int>& x) { return x; }
 
 /**
  * Convert a matrix of type T to a matrix of doubles.
@@ -118,11 +106,12 @@ inline const std::vector<int>& value_of(const std::vector<int>& x) { return x; }
  * @param[in] M Matrix to be converted
  * @return Matrix of values
  **/
-template <typename EigMat, require_container_t<EigMat>* = nullptr, require_v>
-inline Eigen::Matrix<typename child_type<value_type_t<T>>::type,
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
+          require_not_vt_double_or_int<EigMat>* = nullptr>
+inline Eigen::Matrix<typename child_type<value_type_t<EigMat>>::type,
                      EigMat::RowsAtCompileTime, EigMat::ColsAtCompileTime>
 value_of(const EigMat& M) {
-  return M.array().unaryFunc([](const auto& scal) { return value_of(scal) });
+  return M.array().unaryFunc([](const auto& scal) { return value_of(scal); });
 }
 
 /**
