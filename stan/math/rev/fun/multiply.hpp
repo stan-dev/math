@@ -563,8 +563,8 @@ inline auto multiply(const Mat1& A, const Mat2& B) {
   constexpr int Ca = Mat1::ColsAtCompileTime;
   constexpr int Cb = Mat2::ColsAtCompileTime;
   check_multiplicable("multiply", "A", A, "B", B);
-  check_not_nan("multiply", "A", A);
-  check_not_nan("multiply", "B", B);
+  check_not_nan("multiply", "m1", A);
+  check_not_nan("multiply", "m2", B);
 
   // Memory managed with the arena allocator.
   multiply_mat_vari<Ta, Ra, Ca, Tb, Cb>* baseVari

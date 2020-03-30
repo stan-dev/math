@@ -3,6 +3,9 @@
 
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/scalar_type.hpp>
+#include <stan/math/prim/meta/value_type.hpp>
+#include <stan/math/prim/meta/require_helpers.hpp>
 #include <type_traits>
 #include <vector>
 
@@ -51,6 +54,11 @@ struct is_eigen_row_vector_impl<T, false> : std::false_type {};
 template <typename T>
 struct is_eigen_col_vector : internal::is_eigen_col_vector_impl<T> {};
 
+STAN_ADD_REQUIRE_UNARY(eigen_col_vector, is_eigen_col_vector,
+                       require_eigens_types);
+STAN_ADD_REQUIRE_CONTAINER(eigen_col_vector, is_eigen_col_vector,
+                           require_eigens_types);
+
 /** \ingroup type_trait
  * If the input type T is an eigen matrix with 1 column at compile time this
  * has a static member with a value of true. Else this has a static
@@ -59,6 +67,10 @@ struct is_eigen_col_vector : internal::is_eigen_col_vector_impl<T> {};
 template <typename T>
 struct is_eigen_row_vector : internal::is_eigen_row_vector_impl<T> {};
 
+STAN_ADD_REQUIRE_UNARY(eigen_row_vector, is_eigen_row_vector,
+                       require_eigens_types);
+STAN_ADD_REQUIRE_CONTAINER(eigen_row_vector, is_eigen_row_vector,
+                           require_eigens_types);
 /** \ingroup type_trait
  * If the input type T is an eigen matrix with 1 column or 1 row at compile time
  * this has a static member with a value of true. Else this has a static
@@ -68,6 +80,25 @@ template <typename T>
 struct is_eigen_vector : bool_constant<is_eigen_col_vector<T>::value
                                        || is_eigen_row_vector<T>::value> {};
 
+STAN_ADD_REQUIRE_UNARY(eigen_vector, is_eigen_vector, require_eigens_types);
+STAN_ADD_REQUIRE_CONTAINER(eigen_vector, is_eigen_vector, require_eigens_types);
+
+/**
+ * Require `Row` is a row vector and `Col` is a column vector.
+ * @ingroup require_eigen_types
+ */
+template <typename Row, typename Col>
+using require_eigen_row_and_col_t = require_t<
+    math::conjunction<is_eigen_row_vector<Row>, is_eigen_col_vector<Col>>>;
+
+/**
+ * Require `Row` is not a row vector and `Col` is not a column vector.
+ * @ingroup require_eigen_types
+ */
+template <typename Row, typename Col>
+using require_not_eigen_row_and_col_t = require_not_t<
+    math::conjunction<is_eigen_row_vector<Row>, is_eigen_col_vector<Col>>>;
+
 /** \ingroup type_trait
  * If the input type T is either an eigen matrix with 1 column or 1 row at
  * compile time or a standard vector, this has a static member with a value
@@ -76,6 +107,9 @@ struct is_eigen_vector : bool_constant<is_eigen_col_vector<T>::value
 template <typename T>
 struct is_vector
     : bool_constant<is_eigen_vector<T>::value || is_std_vector<T>::value> {};
+
+STAN_ADD_REQUIRE_UNARY(vector, is_vector, require_std);
+STAN_ADD_REQUIRE_CONTAINER(vector, is_vector, require_std);
 
 namespace internal {
 
@@ -101,6 +135,31 @@ template <typename T>
 struct is_std_vector<
     T, std::enable_if_t<internal::is_std_vector_impl<std::decay_t<T>>::value>>
     : std::true_type {};
+
+/** \ingroup type_trait
+ * Specialization of scalar_type for vector to recursively return the inner
+ * scalar type.
+ *
+ * @tparam T type of standard vector
+ */
+template <typename T>
+struct scalar_type<T, std::enable_if_t<is_std_vector<T>::value>> {
+  using type = scalar_type_t<typename std::decay_t<T>::value_type>;
+};
+
+/** \ingroup type_trait
+ * Template metaprogram class to compute the type of values stored
+ * in a standard vector.
+ *
+ * @tparam T type of elements in standard vector.
+ */
+template <typename T>
+struct value_type<T, std::enable_if_t<is_std_vector<T>::value>> {
+  using type = typename std::decay_t<T>::value_type;
+};
+
+STAN_ADD_REQUIRE_UNARY(std_vector, is_std_vector, require_std);
+STAN_ADD_REQUIRE_CONTAINER(std_vector, is_std_vector, require_std);
 
 }  // namespace stan
 #endif

@@ -30,7 +30,7 @@ struct inv_fun {
  * @return 1 divided by each value in x.
  */
 template <typename T,
-          require_not_container_st<is_container, std::is_arithmetic, T>...>
+          require_not_container_st<std::is_arithmetic, T>* = nullptr>
 inline auto inv(const T& x) {
   return apply_scalar_unary<inv_fun, T>::apply(x);
 }
@@ -44,7 +44,7 @@ inline auto inv(const T& x) {
  * @return 1 divided by each value in x.
  */
 template <typename Container,
-          require_container_st<is_container, std::is_arithmetic, Container>...>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto inv(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().inverse(); });

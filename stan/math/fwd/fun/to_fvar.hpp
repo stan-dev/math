@@ -56,7 +56,7 @@ inline promote_scalar_t<fvar<value_type_t<T>>, T> to_fvar(const T& m) {
 }
 
 template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
-          require_same_vt<T1, T2>* = nullptr>
+          require_vt_same<T1, T2>* = nullptr>
 inline promote_scalar_t<fvar<value_type_t<T1>>, T1> to_fvar(const T1& val,
                                                             const T2& deriv) {
   check_matching_dims("to_fvar", "value", val, "deriv", deriv);
