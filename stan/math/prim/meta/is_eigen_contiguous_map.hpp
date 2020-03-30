@@ -31,9 +31,10 @@ struct is_eigen_contiguous_map
 
 /** @}*/
 
-STAN_ADD_REQUIRE_UNARY(eigen_contiguous_map, is_eigen_contiguous_map, require_eigens_types);
-STAN_ADD_REQUIRE_CONTAINER(eigen_contiguous_map, is_eigen_contiguous_map, require_eigens_types);
-
+STAN_ADD_REQUIRE_UNARY(eigen_contiguous_map, is_eigen_contiguous_map,
+                       require_eigens_types);
+STAN_ADD_REQUIRE_CONTAINER(eigen_contiguous_map, is_eigen_contiguous_map,
+                           require_eigens_types);
 
 }  // namespace stan
 

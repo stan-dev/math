@@ -22,8 +22,5 @@ struct is_vector : bool_constant<is_eigen_vector<std::decay_t<T>>::value
 STAN_ADD_REQUIRE_UNARY(vector, is_vector, require_std);
 STAN_ADD_REQUIRE_CONTAINER(vector, is_vector, require_std);
 
-
-
-
 }  // namespace stan
 #endif

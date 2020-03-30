@@ -35,8 +35,10 @@ struct is_eigen_sparse_matrix<
            typename std::decay_t<T>::MatrixType>::value>> : std::true_type {};
 /** @}*/
 
-STAN_ADD_REQUIRE_UNARY(eigen_sparse, is_eigen_sparse_matrix, require_eigens_types);
-STAN_ADD_REQUIRE_CONTAINER(eigen_sparse, is_eigen_sparse_matrix, require_eigens_types);
+STAN_ADD_REQUIRE_UNARY(eigen_sparse, is_eigen_sparse_matrix,
+                       require_eigens_types);
+STAN_ADD_REQUIRE_CONTAINER(eigen_sparse, is_eigen_sparse_matrix,
+                           require_eigens_types);
 
 }  // namespace stan
 #endif

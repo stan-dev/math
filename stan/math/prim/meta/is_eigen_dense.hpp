@@ -34,10 +34,8 @@ struct is_eigen_dense<
            typename std::decay_t<T>::MatrixType>::value>> : std::true_type {};
 /** @}*/
 
-STAN_ADD_REQUIRE_UNARY(eigen_dense, is_eigen_dense,
-                       require_eigens_types);
-STAN_ADD_REQUIRE_CONTAINER(eigen_dense, is_eigen_dense,
-                           require_eigens_types);
+STAN_ADD_REQUIRE_UNARY(eigen_dense, is_eigen_dense, require_eigens_types);
+STAN_ADD_REQUIRE_CONTAINER(eigen_dense, is_eigen_dense, require_eigens_types);
 
 }  // namespace stan
 
