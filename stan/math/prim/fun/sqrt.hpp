@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -30,9 +31,8 @@ struct sqrt_fun {
  * @param x container
  * @return Square root of each value in x.
  */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto sqrt(const Container& x) {
   return apply_scalar_unary<sqrt_fun, Container>::apply(x);
 }
@@ -46,11 +46,27 @@ inline auto sqrt(const Container& x) {
  * @return Square root of each value in x.
  */
 template <typename Container,
-          require_container_st<is_container, std::is_arithmetic, Container>...>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto sqrt(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().sqrt(); });
 }
+
+namespace internal {
+/**
+ * Return the square root of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return square root of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_sqrt(const std::complex<V>& z) {
+  auto m = sqrt(hypot(z.real(), z.imag()));
+  auto at = 0.5 * atan2(z.imag(), z.real());
+  return {m * cos(at), m * sin(at)};
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

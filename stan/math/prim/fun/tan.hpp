@@ -3,7 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/i_times.hpp>
+#include <stan/math/prim/fun/tanh.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -30,9 +33,8 @@ struct tan_fun {
  * @param x angles in radians
  * @return Tangent of each value in x.
  */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto tan(const Container& x) {
   return apply_scalar_unary<tan_fun, Container>::apply(x);
 }
@@ -46,11 +48,25 @@ inline auto tan(const Container& x) {
  * @return Tangent of each value in x.
  */
 template <typename Container,
-          require_container_st<is_container, std::is_arithmetic, Container>...>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto tan(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().tan(); });
 }
+
+namespace internal {
+/**
+ * Return the tangent of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return tangent of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_tan(const std::complex<V>& z) {
+  return neg_i_times(tanh(i_times(z)));
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan
