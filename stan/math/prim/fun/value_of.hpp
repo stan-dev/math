@@ -24,7 +24,7 @@ namespace math {
  * @param x scalar to convert to double
  * @return value of scalar cast to double
  */
-template <typename T>
+template <typename T, require_not_container_t<T>...>
 inline double value_of(const T x) {
   return static_cast<double>(x);
 }
@@ -118,16 +118,9 @@ inline const std::vector<int>& value_of(const std::vector<int>& x) { return x; }
  * @param[in] M Matrix to be converted
  * @return Matrix of values
  **/
-template <typename T, int R, int C>
-inline Eigen::Matrix<typename child_type<T>::type, R, C> value_of(
-    const Eigen::Matrix<T, R, C>& M) {
-  Eigen::Matrix<typename child_type<T>::type, R, C> Md(M.rows(), M.cols());
-  for (int j = 0; j < M.cols(); j++) {
-    for (int i = 0; i < M.rows(); i++) {
-      Md(i, j) = value_of(M(i, j));
-    }
-  }
-  return Md;
+template <typename T, require_eigen_st<is_autodiff, T>...>
+inline decltype(auto) value_of(const T& M) {
+  return M.unaryExpr([](const auto& x){ return value_of(x); }).eval();
 }
 
 /**
@@ -144,29 +137,8 @@ inline Eigen::Matrix<typename child_type<T>::type, R, C> value_of(
  * @param x Specified matrix.
  * @return Specified matrix.
  */
-template <int R, int C>
-inline const Eigen::Matrix<double, R, C>& value_of(
-    const Eigen::Matrix<double, R, C>& x) {
-  return x;
-}
-
-/**
- * Return the specified argument.
- *
- * <p>See <code>value_of(T)</code> for a polymorphic
- * implementation using static casts.
- *
- * <p>This inline pass-through no-op should be compiled away.
- *
- * @tparam R number of rows in the matrix, can be Eigen::Dynamic
- * @tparam C number of columns in the matrix, can be Eigen::Dynamic
- *
- * @param x Specified matrix.
- * @return Specified matrix.
- */
-template <int R, int C>
-inline const Eigen::Matrix<int, R, C>& value_of(
-    const Eigen::Matrix<int, R, C>& x) {
+template <typename T, require_eigen_st<std::is_arithmetic, T>...>
+inline const T& value_of(const T& x) {
   return x;
 }
 

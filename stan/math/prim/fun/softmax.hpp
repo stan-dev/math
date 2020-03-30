@@ -41,14 +41,15 @@ namespace math {
  * @param[in] v Vector to transform.
  * @return Unit simplex result of the softmax transform of the vector.
  */
-template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, 1> softmax(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& v) {
-  using std::exp;
-  check_nonzero_size("softmax", "v", v);
-  Eigen::Matrix<T, Eigen::Dynamic, 1> theta(v.size());
-  theta = (v.array() - v.maxCoeff()).exp();
-  return theta.array() / theta.sum();
+template <typename Container, require_arithmetic_t<scalar_type_t<Container>>...>
+inline auto softmax(const Container& x) {
+  return apply_vector_unary<Container>::apply(x, [](const auto& v) {
+    const Eigen::Ref<const plain_type_t<decltype(v)>>& v_ref = v;
+    check_nonzero_size("softmax", "v", v_ref);
+    plain_type_t<Container> theta(v_ref.size());
+    theta = (v_ref.array() - v_ref.maxCoeff()).exp();
+    return (theta.array() / theta.sum()).eval();
+  });
 }
 
 }  // namespace math

@@ -26,17 +26,16 @@ class softmax_op {
    * @param alpha Unconstrained input vector.
    * @return Softmax of the input.
    */
-  template <std::size_t size>
-  Eigen::VectorXd operator()(const std::array<bool, size>& /* needs_adj */,
-                             const Eigen::VectorXd& alpha) {
+  template <typename T, std::size_t size>
+  plain_type_t<T> operator()(const std::array<bool, size>& /* needs_adj */,
+                     const T& alpha) {
     N_ = alpha.size();
     y_ = ChainableStack::instance_->memalloc_.alloc_array<double>(N_);
+    Eigen::Map<plain_type_t<T>> y_map(y_, N_);
 
-    auto y = softmax(alpha);
-    for (int n = 0; n < N_; ++n) {
-      y_[n] = y(n);
-    }
-    return y;
+    y_map = softmax(alpha);
+
+    return y_map;
   }
 
   /**
@@ -48,12 +47,12 @@ class softmax_op {
    * @param adj Eigen::VectorXd of adjoints at the output of the softmax
    * @return Eigen::VectorXd of adjoints propagated through softmax operation
    */
-  template <std::size_t size>
-  std::tuple<Eigen::VectorXd> multiply_adjoint_jacobian(
+  template <typename T, std::size_t size, typename T_plain = plain_type_t<T>>
+  std::tuple<T_plain> multiply_adjoint_jacobian(
       const std::array<bool, size>& /* needs_adj */,
-      const Eigen::VectorXd& adj) const {
-    vector_d adj_times_jac(N_);
-    Eigen::Map<vector_d> y(y_, N_);
+      const T& adj) const {
+    T_plain adj_times_jac(N_);
+    Eigen::Map<T_plain> y(y_, N_);
 
     adj_times_jac = -y * adj.dot(y) + y.cwiseProduct(adj);
 
@@ -70,11 +69,14 @@ class softmax_op {
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
-inline Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
-    const Eigen::Matrix<var, Eigen::Dynamic, 1>& alpha) {
-  check_nonzero_size("softmax", "alpha", alpha);
+template <typename T, require_t<is_var<scalar_type_t<T>>>...>
+inline auto softmax(const T& x) {
+  return apply_vector_unary<T>::apply(x, [&](const auto& alpha) {
+    const Eigen::Ref<const plain_type_t<T>>& a_ref = alpha;
+    check_nonzero_size("softmax", "alpha", alpha);
 
-  return adj_jac_apply<internal::softmax_op>(alpha);
+    return adj_jac_apply<internal::softmax_op>(a_ref);
+  });
 }
 
 }  // namespace math
