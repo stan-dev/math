@@ -30,15 +30,13 @@ struct is_eigen<T, std::enable_if_t<std::is_base_of<
     : std::true_type {};
 
 template <typename T>
-struct is_eigen<
-    T, std::enable_if_t<std::is_base_of<
-           Eigen::EigenBase<typename std::decay_t<T>::MatrixType>,
-           typename std::decay_t<T>::MatrixType>::value>>
+struct is_eigen<T, std::enable_if_t<std::is_base_of<
+                       Eigen::EigenBase<typename std::decay_t<T>::MatrixType>,
+                       typename std::decay_t<T>::MatrixType>::value>>
     : std::true_type {};
 
 template <typename T>
 struct is_eigen<Eigen::EigenBase<T>, void> : std::true_type {};
-
 
 /** \ingroup type_trait
  * Template metaprogram defining the base scalar type of

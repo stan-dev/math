@@ -35,7 +35,7 @@ using require_eigen_row_and_col_t = require_t<
 template <typename Row, typename Col>
 using require_not_eigen_row_and_col_t = require_not_t<
     math::conjunction<is_eigen_row_vector<Row>, is_eigen_col_vector<Col>>>;
-    
+
 }  // namespace stan
 
 #endif

@@ -51,10 +51,8 @@ struct is_eigen_matrix<
 
 /** @}*/
 
-STAN_ADD_REQUIRE_UNARY(eigen_matrix, is_eigen_matrix,
-                       require_eigens_types);
-STAN_ADD_REQUIRE_CONTAINER(eigen_matrix, is_eigen_matrix,
-                           require_eigens_types);
+STAN_ADD_REQUIRE_UNARY(eigen_matrix, is_eigen_matrix, require_eigens_types);
+STAN_ADD_REQUIRE_CONTAINER(eigen_matrix, is_eigen_matrix, require_eigens_types);
 
 }  // namespace stan
 

@@ -9,7 +9,6 @@
 
 namespace stan {
 
-
 /** \addtogroup type_trait
  *  @{
  */
@@ -28,15 +27,13 @@ template <typename T>
 struct is_eigen_matrix_base<
     T, std::enable_if_t<std::is_base_of<
            Eigen::MatrixBase<typename std::decay_t<T>::PlainObject>,
-           typename std::decay_t<T>::PlainObject>::value>>
-    : std::true_type {};
+           typename std::decay_t<T>::PlainObject>::value>> : std::true_type {};
 
 template <typename T>
 struct is_eigen_matrix_base<
     T, std::enable_if_t<std::is_base_of<
            Eigen::MatrixBase<typename std::decay_t<T>::MatrixType>,
-           typename std::decay_t<T>::MatrixType>::value>>
-    : std::true_type {};
+           typename std::decay_t<T>::MatrixType>::value>> : std::true_type {};
 
 /** @}*/
 
