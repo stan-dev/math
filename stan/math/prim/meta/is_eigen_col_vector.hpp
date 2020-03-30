@@ -4,6 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/is_eigen_dense.hpp>
+#include <stan/math/prim/meta/require_helpers.hpp>
 #include <type_traits>
 #include <vector>
 
