@@ -13,6 +13,7 @@
 #include <stan/math/rev/fun/acos.hpp>
 #include <stan/math/rev/fun/acosh.hpp>
 #include <stan/math/rev/fun/as_bool.hpp>
+#include <stan/math/rev/fun/arg.hpp>
 #include <stan/math/rev/fun/asin.hpp>
 #include <stan/math/rev/fun/asinh.hpp>
 #include <stan/math/rev/fun/atan.hpp>
@@ -27,6 +28,7 @@
 #include <stan/math/rev/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/fun/columns_dot_product.hpp>
 #include <stan/math/rev/fun/columns_dot_self.hpp>
+#include <stan/math/rev/fun/conj.hpp>
 #include <stan/math/rev/fun/cos.hpp>
 #include <stan/math/rev/fun/cosh.hpp>
 #include <stan/math/rev/fun/cov_exp_quad.hpp>
@@ -102,11 +104,14 @@
 #include <stan/math/rev/fun/multiply.hpp>
 #include <stan/math/rev/fun/multiply_log.hpp>
 #include <stan/math/rev/fun/multiply_lower_tri_self_transpose.hpp>
+#include <stan/math/rev/fun/norm.hpp>
 #include <stan/math/rev/fun/ordered_constrain.hpp>
 #include <stan/math/rev/fun/owens_t.hpp>
+#include <stan/math/rev/fun/polar.hpp>
 #include <stan/math/rev/fun/positive_ordered_constrain.hpp>
 #include <stan/math/rev/fun/pow.hpp>
 #include <stan/math/rev/fun/primitive_value.hpp>
+#include <stan/math/rev/fun/proj.hpp>
 #include <stan/math/rev/fun/quad_form.hpp>
 #include <stan/math/rev/fun/quad_form_sym.hpp>
 #include <stan/math/rev/fun/rising_factorial.hpp>

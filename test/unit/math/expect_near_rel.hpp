@@ -122,6 +122,17 @@ void expect_near_rel(const std::string& msg, EigMat1&& x1, EigMat2&& x2,
     expect_near_rel(msg2, x1_eval(i), x2_eval(i), tol);
 }
 
+/**
+ * Tewsts that the elements of the specified standard vectors are
+ * relatively near one another by calling `expect_near_rel`
+ * recursively.
+ *
+ * @tparam T1 value type for first vector
+ * @tparam T2 value type for second vector
+ * @param[in] x1 first vector
+ * @param[in] x2 second vector
+ * @param[in] tol relative tolerance
+ */
 template <typename T1, typename T2>
 void expect_near_rel(const std::string& msg, const std::vector<T1>& x1,
                      const std::vector<T2>& x2,
@@ -134,6 +145,68 @@ void expect_near_rel(const std::string& msg, const std::vector<T1>& x1,
   std::string msg2 = "expect_near_rel; requite items x1[i] = x2[i]: " + msg;
   for (size_t i = 0; i < x1.size(); ++i)
     expect_near_rel(msg2, x1[i], x2[i], tol);
+}
+
+/**
+ * Tests that the real and complex parts of the specified complex numbers
+ * by calling `expect_near_rel` recursively with the specified message
+ * and tolerance.
+ *
+ * @tparam T1 value type of first complex number
+ * @tparam T2 value type of second complex number
+ * @param msg[in] message to print under failure
+ * @param z1[in] first complex number
+ * @param z2[in] second complex number
+ * @param tol[in] tolerance for comparison
+ */
+template <typename T1, typename T2>
+void expect_near_rel(const std::string& msg, const std::complex<T1>& z1,
+                     const std::complex<T2>& z2,
+                     relative_tolerance tol = relative_tolerance()) {
+  expect_near_rel(msg, z1.real(), z2.real(), tol);
+  expect_near_rel(msg, z1.imag(), z2.imag(), tol);
+}
+
+/**
+ * Tests that the specified real number is near the real part of the
+ * specified complex number and the complex number's imaginary part is
+ * near zero by calling `expect_near_rel` recursively with the
+ * specified message and tolerance.
+ *
+ * @tparam T1 value type of first number
+ * @tparam T2 value type of second complex number
+ * @param msg[in] message to print under failure
+ * @param x1[in] real number
+ * @param z2[in] complex number
+ * @param tol[in] tolerance for comparison
+ */
+template <typename T1, typename T2>
+void expect_near_rel(const std::string& msg, const T1& x1,
+                     const std::complex<T2>& z2,
+                     relative_tolerance tol = relative_tolerance()) {
+  expect_near_rel(msg, x1, z2.real(), tol);
+  expect_near_rel(msg, 0, z2.imag(), tol);
+}
+
+/**
+ * Tests that the specified real number is near the real part of the
+ * specified complex number and the complex number's imaginary part is
+ * near zero by calling `expect_near_rel` recursively with the
+ * specified message and tolerance.
+ *
+ * @tparam T1 value type of first number
+ * @tparam T2 value type of second complex number
+ * @param msg[in] message to print under failure
+ * @param z1[in] complex number
+ * @param x2[in] real number
+ * @param tol[in] tolerance for comparison
+ */
+template <typename T1, typename T2>
+void expect_near_rel(const std::string& msg, const std::complex<T1>& z1,
+                     const T2& x2,
+                     relative_tolerance tol = relative_tolerance()) {
+  expect_near_rel(msg, z1.real(), x2, tol);
+  expect_near_rel(msg, z1.imag(), 0, tol);
 }
 
 }  // namespace test
