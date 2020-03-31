@@ -14,7 +14,7 @@ namespace math {
 
 template <typename T1, typename T2,
           require_all_eigen_vt<is_fvar, T1, T2>* = nullptr,
-          require_same_vt<T1, T2>* = nullptr>
+          require_vt_same<T1, T2>* = nullptr>
 inline Eigen::Matrix<value_type_t<T1>, T1::RowsAtCompileTime,
                      T2::ColsAtCompileTime>
 mdivide_left_tri_low(const T1& A, const T2& b) {
@@ -50,7 +50,7 @@ mdivide_left_tri_low(const T1& A, const T2& b) {
 }
 
 template <typename T1, typename T2, require_eigen_t<T1>* = nullptr,
-          require_same_vt<double, T1>* = nullptr,
+          require_vt_same<double, T1>* = nullptr,
           require_eigen_vt<is_fvar, T2>* = nullptr>
 inline Eigen::Matrix<value_type_t<T2>, T1::RowsAtCompileTime,
                      T2::ColsAtCompileTime>
@@ -82,7 +82,7 @@ mdivide_left_tri_low(const T1& A, const T2& b) {
 
 template <typename T1, typename T2, require_eigen_vt<is_fvar, T1>* = nullptr,
           require_eigen_t<T2>* = nullptr,
-          require_same_vt<double, T2>* = nullptr>
+          require_vt_same<double, T2>* = nullptr>
 inline Eigen::Matrix<value_type_t<T1>, T1::RowsAtCompileTime,
                      T2::ColsAtCompileTime>
 mdivide_left_tri_low(const T1& A, const T2& b) {

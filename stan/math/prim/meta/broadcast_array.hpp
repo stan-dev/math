@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_META_BROADCAST_ARRAY_HPP
 #define STAN_MATH_PRIM_META_BROADCAST_ARRAY_HPP
 
-#include <stan/math/prim/meta/require_generics.hpp>
+#include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/promote_scalar_type.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stdexcept>

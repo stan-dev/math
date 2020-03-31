@@ -31,9 +31,8 @@ struct ceil_fun {
  * @param x container
  * @return Least integer >= each value in x.
  */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto ceil(const Container& x) {
   return apply_scalar_unary<ceil_fun, Container>::apply(x);
 }
@@ -47,7 +46,7 @@ inline auto ceil(const Container& x) {
  * @return Least integer >= each value in x.
  */
 template <typename Container,
-          require_container_st<is_container, std::is_arithmetic, Container>...>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto ceil(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().ceil(); });

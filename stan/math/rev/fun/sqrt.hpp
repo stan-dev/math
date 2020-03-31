@@ -1,9 +1,14 @@
 #ifndef STAN_MATH_REV_FUN_SQRT_HPP
 #define STAN_MATH_REV_FUN_SQRT_HPP
 
+#include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/atan2.hpp>
+#include <stan/math/rev/fun/cos.hpp>
+#include <stan/math/rev/fun/hypot.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -45,6 +50,16 @@ class sqrt_vari : public op_v_vari {
  * @return Square root of variable.
  */
 inline var sqrt(const var& a) { return var(new internal::sqrt_vari(a.vi_)); }
+
+/**
+ * Return the square root of the complex argument.
+ *
+ * @param[in] z argument
+ * @return square root of the argument
+ */
+inline std::complex<var> sqrt(const std::complex<var>& z) {
+  return internal::complex_sqrt(z);
+}
 
 }  // namespace math
 }  // namespace stan

@@ -1,9 +1,15 @@
 #ifndef STAN_MATH_REV_FUN_SINH_HPP
 #define STAN_MATH_REV_FUN_SINH_HPP
 
+#include <stan/math/prim/core.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/isinf.hpp>
+#include <stan/math/prim/fun/sinh.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/exp.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -44,6 +50,16 @@ class sinh_vari : public op_v_vari {
  * @return Hyperbolic sine of variable.
  */
 inline var sinh(const var& a) { return var(new internal::sinh_vari(a.vi_)); }
+
+/**
+ * Return the hyperbolic sine of the complex argument.
+ *
+ * @param[in] z argument
+ * @return hyperbolic sine of the argument
+ */
+inline std::complex<var> sinh(const std::complex<var>& z) {
+  return stan::math::internal::complex_sinh(z);
+}
 
 }  // namespace math
 }  // namespace stan

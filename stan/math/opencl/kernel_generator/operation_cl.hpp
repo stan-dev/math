@@ -18,6 +18,7 @@
 #include <set>
 #include <array>
 #include <numeric>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -254,8 +255,20 @@ class operation_cl : public operation_cl_base {
    */
   inline void add_read_event(cl::Event& e) const {
     index_apply<N>([&](auto... Is) {
-      (void)std::initializer_list<int>{
-          (this->get_arg<Is>().add_read_event(e), 0)...};
+      static_cast<void>(std::initializer_list<int>{
+          (this->get_arg<Is>().add_read_event(e), 0)...});
+    });
+  }
+
+  /**
+   * Adds all write events on any matrices used by nested expressions to a list
+   * and clears them from those matrices.
+   * @param[out] events List of all events.
+   */
+  inline void get_clear_write_events(std::vector<cl::Event>& events) const {
+    index_apply<N>([&](auto... Is) {
+      static_cast<void>(std::initializer_list<int>{
+          (this->template get_arg<Is>().get_clear_write_events(events), 0)...});
     });
   }
 
