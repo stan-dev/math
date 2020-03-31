@@ -62,20 +62,22 @@ class softmax_op {
 }  // namespace internal
 
 /**
- * Return the softmax of the specified Eigen vector.  Softmax is
+ * Return the softmax of the specified Eigen expression/object,
+ * std::vector, or container of these. Softmax is
  * guaranteed to return a simplex.
  *
  * @param alpha Unconstrained input vector.
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
-template <typename T, require_t<is_var<scalar_type_t<T>>>...>
-inline auto softmax(const T& x) {
-  return apply_vector_unary<T>::apply(x, [&](const auto& alpha) {
-    const Eigen::Ref<const plain_type_t<T>>& a_ref = alpha;
-    check_nonzero_size("softmax", "alpha", alpha);
+template <typename Container,
+          require_vector_st<is_var, Container>...>
+inline auto softmax(const Container& alpha) {
+  return apply_vector_unary<Container>::apply(alpha, [&](const auto& v) {
+    const Eigen::Ref<const plain_type_t<decltype(v)>>& v_ref = v;
+    check_nonzero_size("softmax", "alpha", v_ref);
 
-    return adj_jac_apply<internal::softmax_op>(a_ref);
+    return adj_jac_apply<internal::softmax_op>(v_ref);
   });
 }
 

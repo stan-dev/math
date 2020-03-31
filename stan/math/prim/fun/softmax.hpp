@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_SOFTMAX_HPP
 
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <cmath>
 
@@ -9,7 +10,8 @@ namespace stan {
 namespace math {
 
 /**
- * Return the softmax of the specified vector.
+ * Return the softmax of the specified Eigen expression/object,
+ * std::vector, or container of these.
  *
  * <p>
  * \f$
@@ -37,16 +39,17 @@ namespace math {
  * \end{array}
  * \f$
  *
- * @tparam T type of elements in the vector
- * @param[in] v Vector to transform.
- * @return Unit simplex result of the softmax transform of the vector.
+ * @tparam Container type of container
+ * @param[in] x Container (or container of containers) to transform.
+ * @return Unit simplex result of the softmax transform of the container.
  */
-template <typename Container, require_arithmetic_t<scalar_type_t<Container>>...>
+template <typename Container,
+          require_vector_st<std::is_arithmetic, Container>...>
 inline auto softmax(const Container& x) {
   return apply_vector_unary<Container>::apply(x, [](const auto& v) {
     const Eigen::Ref<const plain_type_t<decltype(v)>>& v_ref = v;
     check_nonzero_size("softmax", "v", v_ref);
-    plain_type_t<Container> theta(v_ref.size());
+    plain_type_t<decltype(v)> theta(v_ref.size());
     theta = (v_ref.array() - v_ref.maxCoeff()).exp();
     return (theta.array() / theta.sum()).eval();
   });

@@ -48,6 +48,7 @@ inline void build_y_adj(vari** y_vi, const std::array<int, size>& M,
 /**
  * Store the adjoints from y_vi in y_adj
  *
+ * @tparam EigT type of Eigen input
  * @tparam size dimensionality of M
  * @tparam R number of rows, can be Eigen::Dynamic
  * @tparam C number of columns, can be Eigen::Dynamic
@@ -56,10 +57,11 @@ inline void build_y_adj(vari** y_vi, const std::array<int, size>& M,
  * @param[in] M shape of y_adj
  * @param[out] y_adj reference to Eigen::Matrix where adjoints are to be stored
  */
-template <typename EigT, size_t size, require_eigen_st<std::is_arithmetic, EigT>...>
+template <typename EigT, size_t size,
+          require_eigen_st<std::is_arithmetic, EigT>...>
 inline void build_y_adj(vari** y_vi, const std::array<int, size>& M,
                         EigT& y_adj) {
-  y_adj = Eigen::Map<matrix_vi>(y_vi, M[0], M[1]).adj();
+  y_adj.matrix() = Eigen::Map<matrix_vi>(y_vi, M[0], M[1]).adj();
 }
 
 /**
@@ -71,8 +73,10 @@ template <typename T, typename Enable = void>
 struct compute_dims {};
 
 /**
- * Compute the dimensionality of the given template argument. Double
+ * Compute the dimensionality of the given template argument. Arithmetic
  * types have dimensionality zero.
+ *
+ * @tparam T arithmetic type of input
  */
 template <typename T>
 struct compute_dims<T, require_arithmetic_t<T>> {
@@ -82,6 +86,8 @@ struct compute_dims<T, require_arithmetic_t<T>> {
 /**
  * Compute the dimensionality of the given template argument.
  * std::vector has dimension 1
+ *
+ * @tparam T type of scalar within std::vector
  */
 template <typename T>
 struct compute_dims<T, require_std_vector_t<T>> {
@@ -90,14 +96,12 @@ struct compute_dims<T, require_std_vector_t<T>> {
 
 /**
  * Compute the dimensionality of the given template argument.
- * Eigen::Matrix types all have dimension two.
+ * Eigen types all have dimension two.
  *
- * @tparam T type of elements in the matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam EigT type of Eigen input
  */
-template <typename T>
-struct compute_dims<T, require_eigen_t<T>> {
+template <typename EigT>
+struct compute_dims<EigT, require_eigen_t<EigT>> {
   static constexpr size_t value = 2;
 };
 }  // namespace internal
@@ -118,7 +122,8 @@ template <typename F, typename... Targs>
 struct adj_jac_vari : public vari {
   std::array<bool, sizeof...(Targs)> is_var_;
   using FReturnType
-      = std::result_of_t<F(decltype(is_var_), decltype(value_of(plain_type_t<Targs>()))...)>;
+      = std::result_of_t<F(decltype(is_var_),
+                           decltype(value_of(plain_type_t<Targs>()))...)>;
 
   F f_;
   std::array<int, sizeof...(Targs)> offsets_;
@@ -137,12 +142,10 @@ struct adj_jac_vari : public vari {
    * The array offsets_ is populated with values to indicate where in x_vis_ the
    * vari pointers for each argument will be stored.
    *
-   * Each of the arguments can be an Eigen::Matrix with var or double scalar
+   * Each of the arguments can be an Eigen type with var or double scalar
    * types, a std::vector with var, double, or int scalar types, or a var, a
    * double, or an int.
    *
-   * @tparam R number of rows, can be Eigen::Dynamic
-   * @tparam C number of columns, can be Eigen::Dynamic
    * @tparam Pargs Types of rest of arguments
    *
    * @param count rolling count of number of varis that must be allocated
@@ -210,12 +213,10 @@ struct adj_jac_vari : public vari {
    * the index starting at offsets_[n]. For Eigen::Matrix types, this copying is
    * done in with column major ordering.
    *
-   * Each of the arguments can be an Eigen::Matrix with var or double scalar
+   * Each of the arguments can be an Eigen type with var or double scalar
    * types, a std::vector with var, double, or int scalar types, or a var, a
    * double, or an int.
    *
-   * @tparam R number of rows, can be Eigen::Dynamic
-   * @tparam C number of columns, can be Eigen::Dynamic
    * @tparam Pargs Types of the rest of the arguments to be processed
    *
    * @param x next argument to have its vari pointers copied if necessary
@@ -230,7 +231,8 @@ struct adj_jac_vari : public vari {
     prepare_x_vis(args...);
   }
 
-  template <typename T, typename... Pargs, require_eigen_st<std::is_arithmetic, T>...>
+  template <typename T, typename... Pargs,
+            require_eigen_st<std::is_arithmetic, T>...>
   inline void prepare_x_vis(const T& x, const Pargs&... args) {
     prepare_x_vis(args...);
   }
@@ -313,13 +315,11 @@ struct adj_jac_vari : public vari {
    * initialized with the values of val_y. The shape of the new matrix comes
    * from M_
    *
-   * @tparam R number of rows, can be Eigen::Dynamic
-   * @tparam C number of columns, can be Eigen::Dynamic
    * @param val_y output of F::operator()
    * @return Eigen::Matrix of vars
    */
   template <typename T, typename T_plain = plain_type_t<T>,
-            require_t<is_eigen_matrix<T_plain>>...>
+            require_t<is_eigen_matrix<plain_type_t<T>>>...>
   inline auto build_return_varis_and_vars(const T& val_y) {
     constexpr int R = T_plain::RowsAtCompileTime;
     constexpr int C = T_plain::ColsAtCompileTime;
@@ -332,6 +332,33 @@ struct adj_jac_vari : public vari {
     Eigen::Map<matrix_vi> y_vi(y_vi_, M_[0], M_[1]);
     y_vi  = val_y.unaryExpr([](double x) { return new vari(x, false); });
     var_y.vi() = y_vi;
+
+    return var_y;
+  }
+
+  /**
+   * Return an Eigen::Array of vars created from newly allocated varis
+   * initialized with the values of val_y. The shape of the new array comes
+   * from M_
+   *
+   * @param val_y output of F::operator()
+   * @return Eigen::Matrix of vars
+   */
+  template <typename T, typename T_plain = plain_type_t<T>,
+            require_t<is_eigen_array<plain_type_t<T>>>...>
+  inline auto build_return_varis_and_vars(const T& val_y) {
+    constexpr int R = T_plain::RowsAtCompileTime;
+    constexpr int C = T_plain::ColsAtCompileTime;
+    M_[0] = val_y.rows();
+    M_[1] = val_y.cols();
+    Eigen::Array<var, R, C> var_y(M_[0], M_[1]);
+
+    y_vi_
+        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(var_y.size());
+    Eigen::Map<matrix_vi> y_vi(y_vi_, M_[0], M_[1]);
+    y_vi.array()  = val_y
+                        .unaryExpr([](double x) { return new vari(x, false); });
+    var_y.vi().array() = y_vi.array();
 
     return var_y;
   }
@@ -370,8 +397,6 @@ struct adj_jac_vari : public vari {
    * of x_vis_. Recursively calls accumulate_adjoints on the rest of the
    * arguments.
    *
-   * @tparam R number of rows, can be Eigen::Dynamic
-   * @tparam C number of columns, can be Eigen::Dynamic
    * @tparam Pargs Types of the rest of adjoints to accumulate
    *
    * @param y_adj_jac set of values to be accumulated in adjoints
