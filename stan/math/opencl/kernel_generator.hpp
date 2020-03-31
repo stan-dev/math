@@ -24,6 +24,9 @@
  *
  * ## Defining a new kernel generator operation
  *
+ * Unary functions can be added using one of the macros in
+ * `unary_functions.hpp`.
+ *
  * New kernel generator classes must satsify the conditions below:
  *
  * 1. The class must be derived from a class inheriting from `operation_cl`.
