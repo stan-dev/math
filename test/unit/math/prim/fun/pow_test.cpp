@@ -6,7 +6,7 @@
 
 // Make sure stan::math has a pow implementation
 namespace test1 {
-using namespace stan::math;
+using namespace stan::math;  // NOLINT(build/namespaces)
 void test_pow() {
   EXPECT_FLOAT_EQ(pow(1.5, 1.5), 1.837117);
   EXPECT_FLOAT_EQ(pow(1.7, 2), 2.89);
@@ -15,8 +15,8 @@ void test_pow() {
 
 // Make sure std and stan::math don't conflict
 namespace test2 {
-using namespace std;
-using namespace stan::math;
+using namespace std;         // NOLINT(build/namespaces)
+using namespace stan::math;  // NOLINT(build/namespaces)
 void test_pow() {
   EXPECT_FLOAT_EQ(pow(1.5, 1.5), 1.837117);
   EXPECT_FLOAT_EQ(pow(1.7, 2), 2.89);
