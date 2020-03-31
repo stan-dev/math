@@ -5,79 +5,96 @@
 /**
  * \ingroup opencl
  * \defgroup opencl_kernel_generator OpenCL Kernel Generator
- * OpenCL kernel generator is used to combine multiple matrix operations into a
- * single OpenCL kernel. This is much simpler than writing such a kernel by
+ *
+ * The OpenCL kernel generator is used to combine multiple matrix operations into a
+ * single OpenCL kernel. This is much simpler than writing multi-operation kernels by
  * hand.
  *
- * Using one kernel for multiple operations is faster than using one kernel per
- * operation. Each kernel must load its arguments from global GPU memory
- * and store results back. Memory transfers are relatively slow compared to
- * calculations. By combining mutiple operations into a single kernel some
- * memory transfers can be avoided.
+ * Because global GPU memory loads and stores are relativly slow compared to
+ * calculations in a kernel, using one kernel for multiple operations is faster than using one kernel
+ * per operation.
  *
- * Kernel generator uses lazy evaluation. Each operation is represented by an
- * operation object. Such an object holds arguments of the operation. When an
- * operation is assigned to a \c matrix_cl, a left-hand-side operation or \c
- * .eval() is called, an operation is evaluated. Arguments to operations can be
- * other operations, scalars and \c matrix_cl objects.
+ * The kernel generator uses lazy evaluation. Each operation is represented by
+ * an object derived from `operation_cl`. Such an object holds arguments of the
+ * operations as well as meta information needed to generate calculations on the
+ * arguments. Arguments to operations can be other operations, scalars
+ * or `matrix_cl` objects. An operation is evaluated when either an operation is assigned
+ *  to a `matrix_cl` or a left-hand-side operation or `.eval()` is called.
  *
- * A new kernel generator operation class must be derived from \c operation_cl.
+ * ## Defining a new kernel generator operation
+ *
+ * New kernel generator classes must satsify the conditions below:
+ *
+ * 1. The class must be derived from a class inheriting from `operation_cl`.
  * Optionally, if the operation should support being assigned to, it can be
- * derived from \c operation_cl_lhs instead. In either case parent template
- * arguments should be set to derived type, type of scalar and types of any
- * expression arguements. Member type \c Scalar should be defined as scalar type
- * of the result of operation. Member function \c generate should accept two
- * strings with expressions for indices in kernel and one string with variable
- * name for each argument to the expression. \c generate should return \c
- * kernel_parts struct that contains code for execution of the operation.
- * Member function \c view should return \c matrix_cl_view of the result. Member
- * function \c deep_copy should make a copy of the expression. Arguments that
- * are operations should be copied by calling their \c deep_copy.
+ * derived from a class inheriting `operation_cl_lhs` instead.
+ * 2. It's parent template arguments should be set to derived type, type of
+ *  scalar and types of any expression arguements.
+ * 3. Member type `Scalar` should be defined as scalar type of the result of
+ * the operation.
+ * 4. Member function `generate` has the signature
+ * ```cpp
+ * inline kernel_parts generate(const std::string& i, const std::string& j,
+ *                            const std::string& var_name_arg)
+ * ```
+ * 5. Member function `view()` should return the correct `matrix_cl_view` after
+ * applying the operation. For instance `transpose()` returns an `UPPER` View
+ * if a `matrix_cl` with a `LOWER` view was the input.
+ * 6. Member function `deep_copy` should make a copy of the expression.
+ * Arguments that are operations should be copied by calling their `deep_copy`.
  *
- * Following functions can optionally be defined. Defaults are implemented in \c
- * operation_cl:
- * - <code> void modify_argument_indices(std::string& i, std::string& j)
- * </code>: Modifies what indices are passed to argument's \c
- * generate. By default does nothing.
- * - <code> void set_args(std::set<const operation_cl_base*>& generated,
- * cl::Kernel& kernel, int& arg_num) </code>: Sets kernel arguments. By defult
- * only calls \c set_args on arguments.
- * - <code> int rows() </code>: Returns number of rows of the result. By default
- * returns maximum of the arguments' rows.
- * - <code> int cols() </code>: Returns number of columns of the result. By
- * default returns maximum of the arguments' columns.
- * - <code> int thread_rows() </code>: Number of threads required for this
- * operation in rows direction. By default equals to \c rows().
- * - <code> int thread_cols() </code>: Number of threads required for this
- * operation in cols direction. By default equals to \c cols().
- * - <code> int bottom_diagonal() </code>: Index of bottom nonzero diagonal of
- * the result (0 is the diagonal, positive values are superdiagonals, negative
- * values are subdiagonals). By default returns minimum of arguments \c
- * bottom_diagonal.
- * - <code> int top_diagonal() </code>: Index of top nonzero diagonal of the
- * result (0 is the diagonal, positive values are superdiagonals, negative
- * values are subdiagonals). By default returns maximum of arguments \c
- * top_diagonal.
-
+ * The following functions can optionally be defined. Defaults are implemented in
+ * `operation_cl`:
+ * - `void modify_argument_indices(std::string& i, std::string& j)`:
+ *     - Modifies what indices are passed to argument's `generate()`.
+ *     - Default: No-op
+ * - `void set_args(std::set<const operation_cl_base*>& generated,
+ *        cl::Kernel& kernel, int& arg_num)`:
+ *     - Sets additional kernel arguments.
+ *     - Default: Calls `set_args()` on arguments.
+ * - `int rows()`:
+ *     - Returns Number of rows of the result.
+ *     - Default: Returns maximum of the arguments' rows.
+ * - `int cols()`:
+ *     - Returns number of columns of the result.
+ *     - Default: Returns maximum of the arguments' columns.
+ * - `int thread_rows()`:
+ *     - Number of threads required for this operation in rows direction.
+ *     - Default: returns `rows()`.
+ * - `int thread_cols()`:
+ *     - Number of threads required for this operation in cols direction.
+ *     - Default: `cols()`.
+ * - `int bottom_diagonal()`:
+ *     - Index of bottom nonzero diagonal of the result (0 is the diagonal, positive values are superdiagonals, negative
+ * values are subdiagonals).
+ *     - Default: Returns minimum of arguments' `bottom_diagonal()`.
+ * - `int top_diagonal()`:
+ *     - Index of top nonzero diagonal of the result (0 is the diagonal, positive values are superdiagonals, negative
+ * values are subdiagonals).
+ *     - Default: Returns maximum of arguments' `top_diagonal()`.
+ *
  * If an operation should support being assigned to it should also define the
- * following. Member function \c generate_lhs with same signature as \c generate
- * that returns code when the operation is assigned to. Following functions can
- * be optionally defined. Defaults are in \c operation_cl_lhs.
- * - <code> void set_view(int bottom_diagonal, int top_diagonal, int
- * bottom_zero_diagonal, int top_zero_diagonal) </code>: Sets view of the
- * underlying matrix depending on which are the extreme sub-/super-diagonals
- * written. By default just calls \c set_view on arguments with same arguments.
- * - <code> void check_assign_dimensions(int rows, int cols) </code>: If the
- * operation size can be modified, it should be set to given size. Otherwise it
- * should check that this operation's size matches given size. By default calls
- * `check_assign_dimensions` on arguments with same arguments.
+ * following:
+ *
+ * 1. Member function `generate_lhs` with same signature as `generate`
+ * that returns generated code when the operation is assigned to.
+ *
+ * The below functions can be optionally defined for operations that support
+ * being assigned to. Defaults are in `operation_cl_lhs`.
+ * - `void set_view(int bottom_diagonal, int top_diagonal, int bottom_zero_diagonal, int top_zero_diagonal)`:
+ *    - Sets view of the underlying `matrix_cl` depending on where the extreme sub-/super-diagonals  are written.
+ *    - Default: Calls `set_view` on expression arguments with the same arguments.
+ * - `void check_assign_dimensions(int rows, int cols)`:
+ *    - If the operation size can be modified, it should be set to the given size. Otherwise it
+ * should check that this operation's size matches given size.
+ *    - Default: By default calls `check_assign_dimensions` on expression arguments with the same arguments.
  *
  * A new operation should also have a user-facing function that accepts
  * arguments to the operation and returns the operation object. Arguments should
- * be passed trough function \c as_operation_cl so that they are wrapped in
- * operations if they are not already operations. If the operation defines
- * \c modify_argument_indices this function should make copies of arguments by
- * calling \c .deep_copy() on them.
+ * be passed trough function `as_operation_cl` so that they are wrapped in
+ * operations if they are not operations themselves. If the operation defines
+ * `modify_argument_indices` this function should make copies of arguments by
+ * calling `deep_copy()` on them internally.
  */
 
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
