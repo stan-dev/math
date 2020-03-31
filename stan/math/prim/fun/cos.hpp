@@ -2,8 +2,11 @@
 #define STAN_MATH_PRIM_FUN_COS_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/cosh.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/i_times.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -31,9 +34,8 @@ struct cos_fun {
  * @param x angles in radians
  * @return Cosine of each value in x.
  */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto cos(const Container& x) {
   return apply_scalar_unary<cos_fun, Container>::apply(x);
 }
@@ -47,11 +49,25 @@ inline auto cos(const Container& x) {
  * @return Cosine of each value in x.
  */
 template <typename Container,
-          require_container_st<is_container, std::is_arithmetic, Container>...>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto cos(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().cos(); });
 }
+
+namespace internal {
+/**
+ * Return the cosine of the complex argument.
+ *
+ * @tparam T value type of argument
+ * @param[in] z argument
+ * @return cosine of the argument
+ */
+template <typename T>
+inline std::complex<T> complex_cos(const std::complex<T>& z) {
+  return cosh(i_times(z));
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

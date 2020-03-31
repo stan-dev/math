@@ -1,10 +1,21 @@
 #ifndef STAN_MATH_REV_FUN_ASINH_HPP
 #define STAN_MATH_REV_FUN_ASINH_HPP
 
-#include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/core.hpp>
+#include <stan/math/prim/core.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/asinh.hpp>
+#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/fun/value_of_rec.hpp>
+#include <stan/math/rev/fun/abs.hpp>
+#include <stan/math/rev/fun/arg.hpp>
+#include <stan/math/rev/fun/cosh.hpp>
+#include <stan/math/rev/fun/is_nan.hpp>
+#include <stan/math/rev/fun/log.hpp>
+#include <stan/math/rev/fun/polar.hpp>
+#include <stan/math/rev/fun/sqrt.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -54,6 +65,16 @@ class asinh_vari : public op_v_vari {
  */
 inline var asinh(const var& a) {
   return var(new internal::asinh_vari(asinh(a.val()), a.vi_));
+}
+
+/**
+ * Return the hyperbolic arcsine of the complex argument.
+ *
+ * @param[in] z argument
+ * @return hyperbolic arcsine of the argument
+ */
+inline std::complex<var> asinh(const std::complex<var>& z) {
+  return stan::math::internal::complex_asinh(z);
 }
 
 }  // namespace math
