@@ -7,6 +7,7 @@
 #include <tbb/parallel_reduce.h>
 #include <tbb/blocked_range.h>
 
+#include <algorithm>
 #include <tuple>
 #include <vector>
 
