@@ -12,7 +12,7 @@
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-TEST(MathMatrixCL, transpose_rvalue_test) {
+TEST(KernelGenerator, transpose_rvalue_test) {
   using Eigen::MatrixXd;
   using stan::math::matrix_cl;
   MatrixXd m(3, 2);
@@ -29,7 +29,7 @@ TEST(MathMatrixCL, transpose_rvalue_test) {
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
-TEST(MathMatrixCL, transpose_test) {
+TEST(KernelGenerator, transpose_test) {
   using Eigen::MatrixXd;
   using stan::math::matrix_cl;
   MatrixXd m(3, 2);
@@ -47,7 +47,7 @@ TEST(MathMatrixCL, transpose_test) {
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
-TEST(MathMatrixCL, transpose_triangular_test) {
+TEST(KernelGenerator, transpose_triangular_test) {
   using Eigen::MatrixXd;
   using stan::math::matrix_cl;
   MatrixXd m(3, 2);
@@ -65,7 +65,7 @@ TEST(MathMatrixCL, transpose_triangular_test) {
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
-TEST(MathMatrixCL, double_transpose_test) {
+TEST(KernelGenerator, double_transpose_test) {
   using Eigen::MatrixXd;
   using stan::math::matrix_cl;
   MatrixXd m(3, 2);
@@ -83,7 +83,7 @@ TEST(MathMatrixCL, double_transpose_test) {
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
-TEST(MathMatrixCL, double_transpose_triangular_test) {
+TEST(KernelGenerator, double_transpose_triangular_test) {
   using Eigen::MatrixXd;
   using stan::math::matrix_cl;
   MatrixXd m(3, 2);
@@ -101,7 +101,7 @@ TEST(MathMatrixCL, double_transpose_triangular_test) {
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
-TEST(MathMatrixCL, double_transpose_accepts_lvalue_test) {
+TEST(KernelGenerator, double_transpose_accepts_lvalue_test) {
   using Eigen::MatrixXd;
   using stan::math::matrix_cl;
   MatrixXd m(3, 2);
@@ -120,7 +120,7 @@ TEST(MathMatrixCL, double_transpose_accepts_lvalue_test) {
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
-TEST(MathMatrixCL, transpose_block_test) {
+TEST(KernelGenerator, transpose_block_test) {
   using Eigen::MatrixXd;
   using stan::math::matrix_cl;
   MatrixXd m(5, 5);
@@ -140,7 +140,7 @@ TEST(MathMatrixCL, transpose_block_test) {
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
-TEST(MathMatrixCL, block_of_transpose_test) {
+TEST(KernelGenerator, block_of_transpose_test) {
   using Eigen::MatrixXd;
   using stan::math::matrix_cl;
   MatrixXd m(5, 5);
@@ -160,7 +160,7 @@ TEST(MathMatrixCL, block_of_transpose_test) {
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
-TEST(MathMatrixCL, a_plus_a_transpose_test) {
+TEST(KernelGenerator, a_plus_a_transpose_test) {
   using Eigen::MatrixXd;
   using stan::math::matrix_cl;
   std::string kernel_filename = "a+aT.cl";

@@ -104,10 +104,7 @@ struct multi_result_kernel_internal {
           = std::get<n>(expressions)
                 .x.get_whole_kernel_parts(generated, ng, i, j,
                                           std::get<n>(results).x);
-      parts.initialization += parts0.initialization;
-      parts.body += parts0.body;
-      parts.reduction += parts0.reduction;
-      parts.args += parts0.args;
+      parts += parts0;
       return parts;
     }
 
@@ -323,6 +320,7 @@ class results_cl {
     std::string src;
     if (require_specific_local_size) {
       src =
+          parts.includes +
           "kernel void calculate(" + parts.args +
           "const int rows, const int cols){\n"
           "const int gid_i = get_global_id(0);\n"
@@ -347,6 +345,7 @@ class results_cl {
           "}\n";
     } else {
       src =
+          parts.includes +
           "kernel void calculate(" +
           parts.args.substr(0, parts.args.size() - 2) +
           "){\n"
