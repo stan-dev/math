@@ -80,8 +80,9 @@ TEST(StanMathPrim_reduce_sum, nesting_value) {
   double poisson_lpdf = stan::math::reduce_sum<count_lpdf<double>>(
       data, 5, msgs, vlambda_d, idata);
 
-  double poisson_static_lpdf = stan::math::reduce_sum_static<count_lpdf<double>>(
-          data, 5, msgs, vlambda_d, idata);
+  double poisson_static_lpdf
+      = stan::math::reduce_sum_static<count_lpdf<double>>(data, 5, msgs,
+                                                          vlambda_d, idata);
 
   double poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_d);
 

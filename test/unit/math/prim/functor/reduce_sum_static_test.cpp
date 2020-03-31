@@ -117,7 +117,6 @@ struct sum_lpdf {
   }
 };
 
-
 TEST(StanMathPrim_reduce_sum_static, grainsize) {
   stan::math::init_threadpool_tbb();
   using stan::math::sum_lpdf;
