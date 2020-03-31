@@ -144,12 +144,12 @@ class broadcast_
 };
 
 /**
- * Brodcast an expression in specified dimension(s). If broadcasting rowwise,
- * the argument must have single column. If broadcasting colwise, the argument
- * must have single row. Further expressions can use this expression as if it
+ * Broadcast an expression in specified dimension(s). If broadcasting rowwise,
+ * the argument must have a single column. If broadcasting colwise, the argument
+ * must have a single row. Further expressions can use this expression as if it
  * had any size in broadcasted dimension, repeating the values.
  *
- * Broadcasting evaluates argument expression multiple times. For performance
+ * Broadcasting evaluates the argument expression multiple times. For performance
  * reasons don't broadcast slow operations. Instead evaluate them in a separate
  * kernel.
  * @tparam Colwise whether to broadcast Colwise
