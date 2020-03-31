@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -20,7 +21,8 @@ namespace math {
  * @return Difference between first matrix and second matrix.
  */
 template <typename Mat1, typename Mat2,
-          typename = require_all_eigen_t<Mat1, Mat2>>
+          require_all_eigen_t<Mat1, Mat2>* = nullptr,
+          require_all_not_eigen_vt<is_var, Mat1, Mat2>* = nullptr>
 inline auto subtract(const Mat1& m1, const Mat2& m2) {
   check_matching_dims("subtract", "m1", m1, "m2", m2);
   return (m1 - m2).eval();
@@ -36,8 +38,11 @@ inline auto subtract(const Mat1& m1, const Mat2& m2) {
  * @param m Matrix or expression.
  * @return The scalar minus the matrix.
  */
-template <typename Scal, typename Mat, typename = require_stan_scalar_t<Scal>,
-          typename = require_eigen_t<Mat>>
+ template <typename Mat, typename Scal,
+           require_eigen_t<Mat>* = nullptr,
+           require_stan_scalar_t<Scal>* = nullptr,
+           require_not_var_t<Scal>* = nullptr,
+           require_not_eigen_vt<is_var, Mat>* = nullptr>
 inline auto subtract(const Scal c, const Mat& m) {
   return (c - m.array()).matrix().eval();
 }
@@ -52,8 +57,11 @@ inline auto subtract(const Scal c, const Mat& m) {
  * @param c Scalar.
  * @return The matrix minus the scalar.
  */
-template <typename Mat, typename Scal, typename = require_eigen_t<Mat>,
-          typename = require_stan_scalar_t<Scal>>
+ template <typename Mat, typename Scal,
+           require_eigen_t<Mat>* = nullptr,
+           require_stan_scalar_t<Scal>* = nullptr,
+           require_not_var_t<Scal>* = nullptr,
+           require_not_eigen_vt<is_var, Mat>* = nullptr>
 inline auto subtract(const Mat& m, const Scal c) {
   return (m.array() - c).matrix().eval();
 }

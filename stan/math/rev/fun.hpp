@@ -12,6 +12,7 @@
 #include <stan/math/rev/fun/abs.hpp>
 #include <stan/math/rev/fun/acos.hpp>
 #include <stan/math/rev/fun/acosh.hpp>
+#include <stan/math/rev/fun/add.hpp>
 #include <stan/math/rev/fun/as_bool.hpp>
 #include <stan/math/rev/fun/arg.hpp>
 #include <stan/math/rev/fun/asin.hpp>
@@ -127,6 +128,7 @@
 #include <stan/math/rev/fun/squared_distance.hpp>
 #include <stan/math/rev/fun/stan_print.hpp>
 #include <stan/math/rev/fun/step.hpp>
+#include <stan/math/rev/fun/subtract.hpp>
 #include <stan/math/rev/fun/sum.hpp>
 #include <stan/math/rev/fun/tan.hpp>
 #include <stan/math/rev/fun/tanh.hpp>
