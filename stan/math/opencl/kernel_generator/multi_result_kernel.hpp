@@ -13,6 +13,7 @@
 #include <tuple>
 #include <utility>
 #include <set>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -32,6 +33,21 @@ struct multi_result_kernel_internal {
         std::tuple_element_t<n, std::tuple<T_results...>>>;
     using T_current_expression = std::remove_reference_t<
         std::tuple_element_t<n, std::tuple<T_expressions...>>>;
+    /**
+     * Generates list of all events kernel assigning expressions to results must
+     * wait on. Also clears those events from matrices.
+     * @param[out] events list of events
+     * @param results results
+     * @param expressions expressions
+     */
+    static void get_clear_events(
+        std::vector<cl::Event>& events,
+        const std::tuple<wrapper<T_results>...>& results,
+        const std::tuple<wrapper<T_expressions>...>& expressions) {
+      next::get_clear_events(events, results, expressions);
+      std::get<n>(expressions).x.get_clear_write_events(events);
+      std::get<n>(results).x.get_clear_read_write_events(events);
+    }
     /**
      * Assigns the dimensions of expressions to matching results if possible.
      * Otherwise checks that dimensions match. Also checks that all expressions
@@ -88,10 +104,7 @@ struct multi_result_kernel_internal {
           = std::get<n>(expressions)
                 .x.get_whole_kernel_parts(generated, ng, i, j,
                                           std::get<n>(results).x);
-      parts.initialization += parts0.initialization;
-      parts.body += parts0.body;
-      parts.reduction += parts0.reduction;
-      parts.args += parts0.args;
+      parts += parts0;
       return parts;
     }
 
@@ -139,6 +152,11 @@ template <typename... T_results>
 struct multi_result_kernel_internal<-1, T_results...> {
   template <typename... T_expressions>
   struct inner {
+    static void get_clear_events(
+        std::vector<cl::Event>& events,
+        const std::tuple<wrapper<T_results>...>& results,
+        const std::tuple<wrapper<T_expressions>...>& expressions) {}
+
     static void check_assign_dimensions(
         int n_rows, int n_cols,
         const std::tuple<wrapper<T_results>...>& results,
@@ -302,6 +320,7 @@ class results_cl {
     std::string src;
     if (require_specific_local_size) {
       src =
+          parts.includes +
           "kernel void calculate(" + parts.args +
           "const int rows, const int cols){\n"
           "const int gid_i = get_global_id(0);\n"
@@ -326,6 +345,7 @@ class results_cl {
           "}\n";
     } else {
       src =
+          parts.includes +
           "kernel void calculate(" +
           parts.args.substr(0, parts.args.size() - 2) +
           "){\n"
@@ -406,6 +426,8 @@ class results_cl {
       std::set<const operation_cl_base*> generated;
       impl::set_args(generated, kernel, arg_num, results, expressions);
 
+      std::vector<cl::Event> events;
+      impl::get_clear_events(events, results, expressions);
       cl::Event e;
       if (require_specific_local_size) {
         kernel.setArg(arg_num++, n_rows);
@@ -416,11 +438,11 @@ class results_cl {
 
         opencl_context.queue().enqueueNDRangeKernel(
             kernel, cl::NullRange, cl::NDRange(local * wgs_rows, wgs_cols),
-            cl::NDRange(local, 1), nullptr, &e);
+            cl::NDRange(local, 1), &events, &e);
       } else {
         opencl_context.queue().enqueueNDRangeKernel(kernel, cl::NullRange,
                                                     cl::NDRange(n_rows, n_cols),
-                                                    cl::NullRange, nullptr, &e);
+                                                    cl::NullRange, &events, &e);
       }
       impl::add_event(e, results, expressions);
     } catch (cl::Error e) {

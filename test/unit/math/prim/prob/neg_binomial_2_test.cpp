@@ -2,6 +2,7 @@
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 #include <test/unit/math/prim/prob/NegativeBinomial2LogTestRig.hpp>
 #include <test/unit/math/prim/prob/VectorIntRNGTestRig.hpp>
+#include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
@@ -238,27 +239,40 @@ TEST(ProbDistributionsNegBinomial2, chiSquareGoodnessFitTest4) {
 }
 
 TEST(ProbDistributionsNegBinomial2, extreme_values) {
-  int N = 100;
-  double mu = 8;
-  double phi = 1e12;
-  for (int n = 0; n < 10; ++n) {
-    phi *= 10;
-    double logp = stan::math::neg_binomial_2_log<false>(N, mu, phi);
-    EXPECT_LT(logp, 0);
+  std::vector<int> n_to_test = {0, 1, 5, 100, 12985, 1968422};
+  std::vector<double> mu_to_test = {1e-5, 0.1, 8, 713, 28311, 19850054};
+  for (double mu : mu_to_test) {
+    for (int n : n_to_test) {
+      // Test across a range of phi
+      for (double phi = 1e12; phi < 1e22; phi *= 10) {
+        double logp = stan::math::neg_binomial_2_log<false>(n, mu, phi);
+        EXPECT_LT(logp, 0) << "n = " << n << ", mu = " << mu
+                           << ", phi = " << phi;
+      }
+    }
   }
 }
 
-TEST(ProbDistributionsNegBinomial2, vectorAroundCutoff) {
-  int y = 10;
-  double mu = 9.36;
-  std::vector<double> phi;
-  phi.push_back(1);
-  phi.push_back(1e15);
-  double vector_value = stan::math::neg_binomial_2_lpmf(y, mu, phi);
-  double scalar_value = stan::math::neg_binomial_2_lpmf(y, mu, phi[0])
-                        + stan::math::neg_binomial_2_lpmf(y, mu, phi[1]);
+TEST(ProbDistributionsNegBinomial2, zeroOne) {
+  using stan::test::expect_near_rel;
 
-  EXPECT_FLOAT_EQ(vector_value, scalar_value);
+  std::vector<double> mu_to_test = {2.345e-5, 0.2, 13, 150, 1621, 18432, 1e10};
+  double phi_start = 1e-8;
+  double phi_max = 1e22;
+  for (double mu : mu_to_test) {
+    for (double phi = phi_start; phi < phi_max; phi *= stan::math::pi()) {
+      std::stringstream msg;
+      msg << ", mu = " << mu << ", phi = " << phi;
+
+      double expected_value_0 = phi * (-log1p(mu / phi));
+      double value_0 = stan::math::neg_binomial_2_lpmf(0, mu, phi);
+      expect_near_rel("n = 0 " + msg.str(), value_0, expected_value_0);
+
+      double expected_value_1 = (phi + 1) * (-log1p(mu / phi)) + log(mu);
+      double value_1 = stan::math::neg_binomial_2_lpmf(1, mu, phi);
+      expect_near_rel("n = 1 " + msg.str(), value_1, expected_value_1);
+    }
+  }
 }
 
 TEST(ProbDistributionsNegativeBinomial2Log, distributionCheck) {
