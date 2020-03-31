@@ -149,9 +149,9 @@ class broadcast_
  * must have a single row. Further expressions can use this expression as if it
  * had any size in broadcasted dimension, repeating the values.
  *
- * Broadcasting evaluates the argument expression multiple times. For performance
- * reasons don't broadcast slow operations. Instead evaluate them in a separate
- * kernel.
+ * Broadcasting evaluates the argument expression multiple times. For
+ * performance reasons don't broadcast slow operations. Instead evaluate them in
+ * a separate kernel.
  * @tparam Colwise whether to broadcast Colwise
  * @tparam Rowwise whether to broadcast Rowwise
  * @tparam T type of input expression
