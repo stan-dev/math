@@ -120,7 +120,7 @@ inline const std::vector<int>& value_of(const std::vector<int>& x) { return x; }
  **/
 template <typename T, require_eigen_st<is_autodiff, T>...>
 inline decltype(auto) value_of(const T& M) {
-  return M.unaryExpr([](const auto& x){ return value_of(x); }).eval();
+  return M.unaryExpr([](const auto& x) { return value_of(x); }).eval();
 }
 
 /**

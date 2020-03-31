@@ -119,9 +119,8 @@ struct compute_dims<EigT, require_eigen_t<EigT>> {
 template <typename F, typename... Targs>
 struct adj_jac_vari : public vari {
   std::array<bool, sizeof...(Targs)> is_var_;
-  using FReturnType
-      = std::result_of_t<F(decltype(is_var_),
-                           decltype(value_of(plain_type_t<Targs>()))...)>;
+  using FReturnType = std::result_of_t<F(
+      decltype(is_var_), decltype(value_of(plain_type_t<Targs>()))...)>;
 
   F f_;
   std::array<int, sizeof...(Targs)> offsets_;
@@ -225,7 +224,7 @@ struct adj_jac_vari : public vari {
   inline void prepare_x_vis(const EigT& x, const Pargs&... args) {
     static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     Eigen::Map<matrix_vi>(&x_vis_[offsets_[t]], x.rows(), x.cols())
-      = x.matrix().vi();
+        = x.matrix().vi();
     prepare_x_vis(args...);
   }
 
@@ -246,8 +245,7 @@ struct adj_jac_vari : public vari {
 
   template <typename StdVecT, typename... Pargs,
             require_std_vector_st<std::is_arithmetic, StdVecT>...>
-  inline void prepare_x_vis(const StdVecT& x,
-                            const Pargs&... args) {
+  inline void prepare_x_vis(const StdVecT& x, const Pargs&... args) {
     prepare_x_vis(args...);
   }
 
@@ -329,7 +327,7 @@ struct adj_jac_vari : public vari {
     y_vi_
         = ChainableStack::instance_->memalloc_.alloc_array<vari*>(var_y.size());
     Eigen::Map<matrix_vi> y_vi(y_vi_, M_[0], M_[1]);
-    y_vi  = val_y.unaryExpr([](double x) { return new vari(x, false); });
+    y_vi = val_y.unaryExpr([](double x) { return new vari(x, false); });
     var_y.vi() = y_vi;
 
     return var_y;
@@ -356,8 +354,7 @@ struct adj_jac_vari : public vari {
     y_vi_
         = ChainableStack::instance_->memalloc_.alloc_array<vari*>(var_y.size());
     Eigen::Map<matrix_vi> y_vi(y_vi_, M_[0], M_[1]);
-    y_vi.array()  = val_y
-                        .unaryExpr([](double x) { return new vari(x, false); });
+    y_vi.array() = val_y.unaryExpr([](double x) { return new vari(x, false); });
     var_y.vi().array() = y_vi.array();
 
     return var_y;
@@ -406,12 +403,13 @@ struct adj_jac_vari : public vari {
    */
   template <typename EigT, typename... Pargs,
             require_eigen_st<std::is_arithmetic, EigT>...>
-  inline void accumulate_adjoints(const EigT& y_adj_jac,
-                                  const Pargs&... args) {
+  inline void accumulate_adjoints(const EigT& y_adj_jac, const Pargs&... args) {
     static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     if (is_var_[t]) {
       Eigen::Map<matrix_vi>(&x_vis_[offsets_[t]], y_adj_jac.rows(),
-                            y_adj_jac.cols()).adj() += y_adj_jac;
+                            y_adj_jac.cols())
+          .adj()
+          += y_adj_jac;
     }
     accumulate_adjoints(args...);
   }
@@ -452,8 +450,7 @@ struct adj_jac_vari : public vari {
    * @param args the rest of the arguments (that will be iterated through
    * recursively)
    */
-  template <typename ArithT, typename... Pargs,
-            require_arithmetic_t<ArithT>...>
+  template <typename ArithT, typename... Pargs, require_arithmetic_t<ArithT>...>
   inline void accumulate_adjoints(const ArithT& y_adj_jac,
                                   const Pargs&... args) {
     static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;

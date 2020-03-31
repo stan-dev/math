@@ -35,9 +35,8 @@ inline auto softmax(const Container& x) {
               += softmax_alpha.val().coeff(k)
                  * (alpha(m).d_ + negative_alpha_m_d_times_softmax_alpha_t_m);
         } else {
-          softmax_alpha(k).d_
-              += negative_alpha_m_d_times_softmax_alpha_t_m
-                  * softmax_alpha.val().coeff(k);
+          softmax_alpha(k).d_ += negative_alpha_m_d_times_softmax_alpha_t_m
+                                 * softmax_alpha.val().coeff(k);
         }
       }
     }

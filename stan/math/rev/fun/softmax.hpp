@@ -28,7 +28,7 @@ class softmax_op {
    */
   template <typename T, std::size_t size>
   plain_type_t<T> operator()(const std::array<bool, size>& /* needs_adj */,
-                     const T& alpha) {
+                             const T& alpha) {
     N_ = alpha.size();
     y_ = ChainableStack::instance_->memalloc_.alloc_array<double>(N_);
     Eigen::Map<plain_type_t<T>> y_map(y_, N_);
@@ -49,8 +49,7 @@ class softmax_op {
    */
   template <typename T, std::size_t size, typename T_plain = plain_type_t<T>>
   std::tuple<T_plain> multiply_adjoint_jacobian(
-      const std::array<bool, size>& /* needs_adj */,
-      const T& adj) const {
+      const std::array<bool, size>& /* needs_adj */, const T& adj) const {
     T_plain adj_times_jac(N_);
     Eigen::Map<T_plain> y(y_, N_);
 
