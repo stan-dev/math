@@ -85,45 +85,38 @@ TEST(StanMathPrim_reduce_sum_static, nesting_value) {
   EXPECT_FLOAT_EQ(poisson_lpdf, poisson_lpdf_ref);
 }
 
-namespace stan {
-  namespace math {
-    namespace test {
-
-      template <typename T, stan::require_stan_scalar_t<T>* = nullptr>
-      T sum_(T arg) {
-        return arg;
-      }
-
-      template <typename EigMat, stan::require_eigen_t<EigMat>* = nullptr>
-      auto sum_(EigMat&& arg) {
-        return stan::math::sum(arg);
-      }
-
-      template <typename Vec, stan::require_std_vector_t<Vec>* = nullptr>
-      auto sum_(Vec&& arg) {
-        stan::scalar_type_t<Vec> sum = 0;
-        for (size_t i = 0; i < arg.size(); ++i) {
-          sum += sum_(arg[i]);
-        }
-        return sum;
-      }
-
-      struct sum_lpdf {
-        template <typename T, typename... Args>
-        inline auto operator()(std::size_t start, std::size_t end, T&& sub_slice,
-                               std::ostream* msgs, Args&&... args) const {
-          using return_type = stan::return_type_t<T, Args...>;
-
-          return sum_(sub_slice)
-                 + sub_slice.size()
-                       * stan::math::sum(std::vector<return_type>{
-                             return_type(sum_(std::forward<Args>(args)))...});
-        }
-      };
-
-    }
-  }
+template <typename T, stan::require_stan_scalar_t<T>* = nullptr>
+T sum_(T arg) {
+  return arg;
 }
+
+template <typename EigMat, stan::require_eigen_t<EigMat>* = nullptr>
+auto sum_(EigMat&& arg) {
+  return stan::math::sum(arg);
+}
+
+template <typename Vec, stan::require_std_vector_t<Vec>* = nullptr>
+auto sum_(Vec&& arg) {
+  stan::scalar_type_t<Vec> sum = 0;
+  for (size_t i = 0; i < arg.size(); ++i) {
+    sum += sum_(arg[i]);
+  }
+  return sum;
+}
+
+struct sum_lpdf {
+  template <typename T, typename... Args>
+  inline auto operator()(std::size_t start, std::size_t end, T&& sub_slice,
+                         std::ostream* msgs, Args&&... args) const {
+    using return_type = stan::return_type_t<T, Args...>;
+
+    return sum_(sub_slice)
+           + sub_slice.size()
+                 * stan::math::sum(std::vector<return_type>{
+                       return_type(sum_(std::forward<Args>(args)))...});
+  }
+};
+
 
 TEST(StanMathPrim_reduce_sum_static, grainsize) {
   stan::math::init_threadpool_tbb();
