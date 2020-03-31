@@ -6,20 +6,21 @@
  * \ingroup opencl
  * \defgroup opencl_kernel_generator OpenCL Kernel Generator
  *
- * The OpenCL kernel generator is used to combine multiple matrix operations into a
- * single OpenCL kernel. This is much simpler than writing multi-operation kernels by
- * hand.
+ * The OpenCL kernel generator is used to combine multiple matrix operations
+ * into a single OpenCL kernel. This is much simpler than writing
+ * multi-operation kernels by hand.
  *
  * Because global GPU memory loads and stores are relativly slow compared to
- * calculations in a kernel, using one kernel for multiple operations is faster than using one kernel
- * per operation.
+ * calculations in a kernel, using one kernel for multiple operations is faster
+ * than using one kernel per operation.
  *
  * The kernel generator uses lazy evaluation. Each operation is represented by
  * an object derived from `operation_cl`. Such an object holds arguments of the
  * operations as well as meta information needed to generate calculations on the
  * arguments. Arguments to operations can be other operations, scalars
- * or `matrix_cl` objects. An operation is evaluated when either an operation is assigned
- *  to a `matrix_cl` or a left-hand-side operation or `.eval()` is called.
+ * or `matrix_cl` objects. An operation is evaluated when either an operation is
+ * assigned to a `matrix_cl` or a left-hand-side operation or `.eval()` is
+ * called.
  *
  * ## Defining a new kernel generator operation
  *
@@ -43,8 +44,8 @@
  * 6. Member function `deep_copy` should make a copy of the expression.
  * Arguments that are operations should be copied by calling their `deep_copy`.
  *
- * The following functions can optionally be defined. Defaults are implemented in
- * `operation_cl`:
+ * The following functions can optionally be defined. Defaults are implemented
+ * in `operation_cl`:
  * - `void modify_argument_indices(std::string& i, std::string& j)`:
  *     - Modifies what indices are passed to argument's `generate()`.
  *     - Default: No-op
@@ -65,12 +66,12 @@
  *     - Number of threads required for this operation in cols direction.
  *     - Default: `cols()`.
  * - `int bottom_diagonal()`:
- *     - Index of bottom nonzero diagonal of the result (0 is the diagonal, positive values are superdiagonals, negative
- * values are subdiagonals).
+ *     - Index of bottom nonzero diagonal of the result (0 is the diagonal,
+ * positive values are superdiagonals, negative values are subdiagonals).
  *     - Default: Returns minimum of arguments' `bottom_diagonal()`.
  * - `int top_diagonal()`:
- *     - Index of top nonzero diagonal of the result (0 is the diagonal, positive values are superdiagonals, negative
- * values are subdiagonals).
+ *     - Index of top nonzero diagonal of the result (0 is the diagonal,
+ * positive values are superdiagonals, negative values are subdiagonals).
  *     - Default: Returns maximum of arguments' `top_diagonal()`.
  *
  * If an operation should support being assigned to it should also define the
@@ -81,13 +82,18 @@
  *
  * The below functions can be optionally defined for operations that support
  * being assigned to. Defaults are in `operation_cl_lhs`.
- * - `void set_view(int bottom_diagonal, int top_diagonal, int bottom_zero_diagonal, int top_zero_diagonal)`:
- *    - Sets view of the underlying `matrix_cl` depending on where the extreme sub-/super-diagonals  are written.
- *    - Default: Calls `set_view` on expression arguments with the same arguments.
+ * - `void set_view(int bottom_diagonal, int top_diagonal, int
+ * bottom_zero_diagonal, int top_zero_diagonal)`:
+ *    - Sets view of the underlying `matrix_cl` depending on where the extreme
+ * sub-/super-diagonals  are written.
+ *    - Default: Calls `set_view` on expression arguments with the same
+ * arguments.
  * - `void check_assign_dimensions(int rows, int cols)`:
- *    - If the operation size can be modified, it should be set to the given size. Otherwise it
- * should check that this operation's size matches given size.
- *    - Default: By default calls `check_assign_dimensions` on expression arguments with the same arguments.
+ *    - If the operation size can be modified, it should be set to the given
+ * size. Otherwise it should check that this operation's size matches given
+ * size.
+ *    - Default: By default calls `check_assign_dimensions` on expression
+ * arguments with the same arguments.
  *
  * A new operation should also have a user-facing function that accepts
  * arguments to the operation and returns the operation object. Arguments should
