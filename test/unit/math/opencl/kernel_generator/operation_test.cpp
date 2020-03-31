@@ -16,12 +16,12 @@ using stan::math::matrix_cl;
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-TEST(MathMatrixCL, operation_cl_errors) {
+TEST(KernelGenerator, operation_cl_errors) {
   EXPECT_THROW(matrix_cl<double> a = stan::math::as_operation_cl(3.5),
                std::domain_error);
 }
 
-TEST(MathMatrixCL, kernel_caching) {
+TEST(KernelGenerator, kernel_caching) {
   MatrixXd m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   MatrixXd m2(3, 3);
