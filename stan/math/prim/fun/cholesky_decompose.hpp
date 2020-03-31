@@ -30,7 +30,7 @@ namespace math {
  *   if m is not positive definite (if m has more than 0 elements)
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
-          require_not_same_vt<double, EigMat>* = nullptr,
+          require_not_vt_same<double, EigMat>* = nullptr,
           require_not_eigen_vt<is_var, EigMat>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
                      EigMat::ColsAtCompileTime>
@@ -62,7 +62,7 @@ cholesky_decompose(const EigMat& m) {
  *   if m is not positive definite (if m has more than 0 elements)
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
-          require_same_vt<double, EigMat>* = nullptr>
+          require_vt_same<double, EigMat>* = nullptr>
 inline Eigen::Matrix<double, EigMat::RowsAtCompileTime,
                      EigMat::ColsAtCompileTime>
 cholesky_decompose(const EigMat& m) {

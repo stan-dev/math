@@ -1,8 +1,9 @@
 #ifndef STAN_MATH_REV_CORE_SAVE_VARIS_HPP
 #define STAN_MATH_REV_CORE_SAVE_VARIS_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 
 #include <utility>
@@ -68,9 +69,9 @@ inline vari** save_varis(vari** dest, const var& x, Pargs&&... args) {
 template <typename VarVec, require_std_vector_vt<is_var, VarVec>*,
           typename... Pargs>
 inline vari** save_varis(vari** dest, VarVec&& x, Pargs&&... args) {
-  using write_map = Eigen::Map<Eigen::Matrix<vari*, -1, 1>>;
-  using read_map = Eigen::Map<const Eigen::Matrix<var, -1, 1>>;
-  write_map(dest, x.size(), 1) = read_map(x.data(), x.size(), 1).vi();
+  for (int i = 0; i < x.size(); ++i) {
+    dest[i] = x[i].vi_;
+  }
   return save_varis(dest + x.size(), std::forward<Pargs>(args)...);
 }
 
@@ -111,10 +112,9 @@ inline vari** save_varis(vari** dest, VecContainer&& x, Pargs&&... args) {
  */
 template <typename EigT, require_eigen_vt<is_var, EigT>*, typename... Pargs>
 inline vari** save_varis(vari** dest, EigT&& x, Pargs&&... args) {
-  using mat_t = std::decay_t<EigT>;
-  using write_map = Eigen::Map<
-      Eigen::Matrix<vari*, mat_t::RowsAtCompileTime, mat_t::ColsAtCompileTime>>;
-  write_map(dest, x.rows(), x.cols()) = x.vi();
+  for (int i = 0; i < x.size(); ++i) {
+    dest[i] = x(i).vi_;
+  }
   return save_varis(dest + x.size(), std::forward<Pargs>(args)...);
 }
 

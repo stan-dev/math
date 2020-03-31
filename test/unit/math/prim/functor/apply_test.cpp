@@ -11,6 +11,15 @@ struct func {
   }
 };
 
+TEST(MathFunctions, apply_basic_empty) {
+  std::tuple<> x;
+
+  auto y = stan::math::apply([]() { return static_cast<double>(1.7); }, x);
+
+  EXPECT_EQ(1.7, y);
+  EXPECT_TRUE((std::is_same<double, decltype(y)>::value));
+}
+
 TEST(MathFunctions, apply_basic_double) {
   std::tuple<double> x = std::make_tuple(1.0);
 

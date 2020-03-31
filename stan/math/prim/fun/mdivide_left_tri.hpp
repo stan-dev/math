@@ -27,7 +27,7 @@ namespace math {
  */
 template <Eigen::UpLoType TriView, typename T1, typename T2,
           require_all_eigen_t<T1, T2> * = nullptr,
-          require_any_not_same_vt<double, T1, T2> * = nullptr,
+          require_any_not_vt_same<double, T1, T2> * = nullptr,
           require_all_not_eigen_vt<is_var, T1, T2> * = nullptr>
 inline Eigen::Matrix<return_type_t<T1, T2>, T1::RowsAtCompileTime,
                      T2::ColsAtCompileTime>
@@ -55,7 +55,7 @@ mdivide_left_tri(const T1 &A, const T2 &b) {
  * @throws std::domain_error if A is not square
  */
 template <Eigen::UpLoType TriView, typename T, require_eigen_t<T> * = nullptr,
-          require_not_same_vt<double, T> * = nullptr>
+          require_not_vt_same<double, T> * = nullptr>
 inline plain_type_t<T> mdivide_left_tri(const T &A) {
   check_square("mdivide_left_tri", "A", A);
   if (A.rows() == 0) {
@@ -85,7 +85,7 @@ inline plain_type_t<T> mdivide_left_tri(const T &A) {
  */
 template <Eigen::UpLoType TriView, typename T1, typename T2,
           require_all_eigen_t<T1, T2> * = nullptr,
-          require_all_same_vt<double, T1, T2> * = nullptr>
+          require_all_vt_same<double, T1, T2> * = nullptr>
 inline Eigen::Matrix<double, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
 mdivide_left_tri(const T1 &A, const T2 &b) {
   check_square("mdivide_left_tri", "A", A);
@@ -123,7 +123,7 @@ mdivide_left_tri(const T1 &A, const T2 &b) {
  * @throws std::domain_error if A is not square
  */
 template <Eigen::UpLoType TriView, typename T, require_eigen_t<T> * = nullptr,
-          require_same_vt<double, T> * = nullptr>
+          require_vt_same<double, T> * = nullptr>
 inline plain_type_t<T> mdivide_left_tri(const T &A) {
   check_square("mdivide_left_tri", "A", A);
   if (A.rows() == 0) {

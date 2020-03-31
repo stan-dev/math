@@ -68,8 +68,7 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
         return this->derived().generate_lhs(
             i, j, this->template get_arg<Is>().var_name...);
       });
-      res.body += my_part.body;
-      res.args += my_part.args;
+      res += my_part;
     }
     return res;
   }

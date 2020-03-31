@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_CORE_ACCUMULATE_ADJOINTS_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 
 #include <utility>

@@ -3,7 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/i_times.hpp>
+#include <stan/math/prim/fun/sinh.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -31,7 +34,7 @@ struct sin_fun {
  * @return Sine of each value in x.
  */
 template <typename T,
-          require_not_container_st<is_container, std::is_arithmetic, T>...>
+          require_not_container_st<std::is_arithmetic, T>* = nullptr>
 inline auto sin(const T& x) {
   return apply_scalar_unary<sin_fun, T>::apply(x);
 }
@@ -45,11 +48,25 @@ inline auto sin(const T& x) {
  * @return Sine of each value in x.
  */
 template <typename Container,
-          require_container_st<is_container, std::is_arithmetic, Container>...>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto sin(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [&](const auto& v) { return v.array().sin(); });
 }
+
+namespace internal {
+/**
+ * Return the sine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return sine of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_sin(const std::complex<V>& z) {
+  return neg_i_times(sinh(i_times(z)));
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

@@ -11,6 +11,7 @@
 #include <stan/math/rev/core/std_iterator_traits.hpp>
 #include <stan/math/rev/core/deep_copy_vars.hpp>
 #include <stan/math/rev/core/ddv_vari.hpp>
+#include <stan/math/rev/core/deep_copy_vars.hpp>
 #include <stan/math/rev/core/dv_vari.hpp>
 #include <stan/math/rev/core/dvd_vari.hpp>
 #include <stan/math/rev/core/dvv_vari.hpp>
@@ -67,5 +68,6 @@
 #include <stan/math/rev/core/vv_vari.hpp>
 #include <stan/math/rev/core/vvd_vari.hpp>
 #include <stan/math/rev/core/vvv_vari.hpp>
+#include <stan/math/rev/core/save_varis.hpp>
 
 #endif

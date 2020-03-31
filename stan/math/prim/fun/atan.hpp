@@ -1,9 +1,13 @@
 #ifndef STAN_MATH_PRIM_FUN_ATAN_HPP
 #define STAN_MATH_PRIM_FUN_ATAN_HPP
 
+#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/atanh.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/i_times.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -31,9 +35,8 @@ struct atan_fun {
  * @param x container
  * @return Arctan of each value in x, in radians.
  */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto atan(const Container& x) {
   return apply_scalar_unary<atan_fun, Container>::apply(x);
 }
@@ -47,11 +50,25 @@ inline auto atan(const Container& x) {
  * @return Elementwise atan of members of container.
  */
 template <typename Container,
-          require_container_st<is_container, std::is_arithmetic, Container>...>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto atan(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().atan(); });
 }
+
+namespace internal {
+/**
+ * Return the arc tangent of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return arc tangent of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_atan(const std::complex<V>& z) {
+  return neg_i_times(atanh(i_times(z)));
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

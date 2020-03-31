@@ -1,10 +1,20 @@
-#include <gtest/gtest.h>
-#include <stan/math/rev/core.hpp>
 #include <stan/math.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 using stan::math::var;
 using stan::math::vari;
+
+TEST(AgradRev_save_varis, zero_args) {
+  std::vector<vari*> storage(1000, nullptr);
+  vari** ptr = stan::math::save_varis(storage.data());
+
+  for (int i = 0; i < storage.size(); ++i)
+    EXPECT_EQ(storage[i], nullptr);
+
+  EXPECT_EQ(ptr, storage.data());
+  stan::math::recover_memory();
+}
 
 TEST(AgradRev_save_varis, int_arg) {
   int arg = 5;
@@ -16,6 +26,7 @@ TEST(AgradRev_save_varis, int_arg) {
     EXPECT_EQ(storage[i], nullptr);
 
   EXPECT_EQ(ptr, storage.data());
+  stan::math::recover_memory();
 }
 
 TEST(AgradRev_save_varis, double_arg) {

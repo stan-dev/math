@@ -3,15 +3,14 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
-#include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/prob/poisson_lpmf.hpp>
 #include <cmath>
 
 namespace stan {
@@ -47,7 +46,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   size_t size_phi = stan::math::size(phi);
   size_t size_mu_phi = max_size(mu, phi);
   size_t size_n_phi = max_size(n, phi);
-  size_t max_size_seq_view = max_size(n, mu, phi);
+  size_t size_all = max_size(n, mu, phi);
 
   VectorBuilder<true, T_partials_return, T_location> mu_val(size_mu);
   for (size_t i = 0; i < size_mu; ++i) {
@@ -76,39 +75,30 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     n_plus_phi[i] = n_vec[i] + phi_val[i];
   }
 
-  for (size_t i = 0; i < max_size_seq_view; i++) {
-    // if phi is large we probably overflow, defer to Poisson:
-    if (phi_val[i] > 1e5) {
-      // TODO(martinmodrak) This is wrong (doesn't pass propto information),
-      // and inaccurate for n = 0, but shouldn't break most models.
-      // Also the 1e5 cutoff is too small.
-      // Will be addressed better in PR #1497
-      logp += poisson_lpmf(n_vec[i], mu_val[i]);
-    } else {
-      if (include_summand<propto>::value) {
-        logp -= lgamma(n_vec[i] + 1.0);
-      }
-      if (include_summand<propto, T_precision>::value) {
-        logp += multiply_log(phi_val[i], phi_val[i]) - lgamma(phi_val[i]);
-      }
-      if (include_summand<propto, T_location>::value) {
-        logp += multiply_log(n_vec[i], mu_val[i]);
-      }
-      if (include_summand<propto, T_precision>::value) {
-        logp += lgamma(n_plus_phi[i]);
-      }
-      logp -= n_plus_phi[i] * log_mu_plus_phi[i];
+  for (size_t i = 0; i < size_all; i++) {
+    if (include_summand<propto, T_precision>::value) {
+      logp += binomial_coefficient_log(n_plus_phi[i] - 1, n_vec[i]);
     }
+    if (include_summand<propto, T_location>::value) {
+      logp += multiply_log(n_vec[i], mu_val[i]);
+    }
+    logp += -phi_val[i] * (log1p(mu_val[i] / phi_val[i]))
+            - n_vec[i] * log_mu_plus_phi[i];
 
     if (!is_constant_all<T_location>::value) {
       ops_partials.edge1_.partials_[i]
-          += n_vec[i] / mu_val[i] - n_plus_phi[i] / mu_plus_phi[i];
+          += n_vec[i] / mu_val[i] - (n_vec[i] + phi_val[i]) / (mu_plus_phi[i]);
     }
     if (!is_constant_all<T_precision>::value) {
-      ops_partials.edge2_.partials_[i] += 1.0 - n_plus_phi[i] / mu_plus_phi[i]
-                                          + log_phi[i] - log_mu_plus_phi[i]
-                                          - digamma(phi_val[i])
-                                          + digamma(n_plus_phi[i]);
+      T_partials_return log_term;
+      if (mu_val[i] < phi_val[i]) {
+        log_term = log1p(-mu_val[i] / (mu_plus_phi[i]));
+      } else {
+        log_term = log_phi[i] - log_mu_plus_phi[i];
+      }
+      ops_partials.edge2_.partials_[i]
+          += (mu_val[i] - n_vec[i]) / (mu_plus_phi[i]) + log_term
+             - (digamma(phi_val[i]) - digamma(n_plus_phi[i]));
     }
   }
   return ops_partials.build(logp);
