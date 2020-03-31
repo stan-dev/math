@@ -47,10 +47,11 @@ template <typename Container,
           require_vector_st<std::is_arithmetic, Container>...>
 inline auto softmax(const Container& x) {
   return apply_vector_unary<Container>::apply(x, [](const auto& v) {
-    const Eigen::Ref<const plain_type_t<decltype(v)>>& v_ref = v;
+    using T_plain = plain_type_t<decltype(v)>;
+    const Eigen::Ref<const T_plain>& v_ref = v;
     check_nonzero_size("softmax", "v", v_ref);
-    plain_type_t<decltype(v)> theta(v_ref.size());
-    theta = (v_ref.array() - v_ref.maxCoeff()).exp();
+
+    T_plain theta = (v_ref.array() - v_ref.maxCoeff()).exp();
     return (theta.array() / theta.sum()).eval();
   });
 }

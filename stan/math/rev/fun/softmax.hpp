@@ -70,8 +70,7 @@ class softmax_op {
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
-template <typename Container,
-          require_vector_st<is_var, Container>...>
+template <typename Container, require_vector_st<is_var, Container>...>
 inline auto softmax(const Container& alpha) {
   return apply_vector_unary<Container>::apply(alpha, [&](const auto& v) {
     const Eigen::Ref<const plain_type_t<decltype(v)>>& v_ref = v;

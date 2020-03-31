@@ -7,9 +7,17 @@
 
 namespace stan {
 namespace math {
-
-template <typename Container,
-          require_vector_st<is_fvar, Container>...>
+/**
+ * Return the softmax of the specified Eigen expression/object,
+ * std::vector, or container of these. Softmax is
+ * guaranteed to return a simplex.
+ *
+ * @tparam Container type of container.
+ * @param x Unconstrained input vector.
+ * @return Softmax of the input.
+ * @throw std::domain_error If the input vector is size 0.
+ */
+template <typename Container, require_vector_st<is_fvar, Container>...>
 inline auto softmax(const Container& x) {
   return apply_vector_unary<Container>::apply(x, [&](const auto& alpha) {
     using T_fvar_inner = typename value_type_t<decltype(alpha)>::Scalar;
@@ -37,7 +45,6 @@ inline auto softmax(const Container& x) {
     return softmax_alpha;
   });
 }
-
 
 }  // namespace math
 }  // namespace stan
