@@ -34,10 +34,8 @@ TEST(MathMatrixCL, broadcast_errors) {
                std::invalid_argument);
   EXPECT_THROW((stan::math::broadcast<false, true>(m_cl)),
                std::invalid_argument);
-  EXPECT_THROW((stan::math::colwise_broadcast(m_cl)),
-               std::invalid_argument);
-  EXPECT_THROW((stan::math::rowwise_broadcast(m_cl)),
-               std::invalid_argument);
+  EXPECT_THROW((stan::math::colwise_broadcast(m_cl)), std::invalid_argument);
+  EXPECT_THROW((stan::math::rowwise_broadcast(m_cl)), std::invalid_argument);
   EXPECT_THROW((stan::math::broadcast<true, true>(m_cl)),
                std::invalid_argument);
 
@@ -46,8 +44,7 @@ TEST(MathMatrixCL, broadcast_errors) {
   EXPECT_THROW((stan::math::broadcast<false, true>(row_cl)),
                std::invalid_argument);
   EXPECT_NO_THROW((stan::math::colwise_broadcast(row_cl)));
-  EXPECT_THROW((stan::math::rowwise_broadcast(row_cl)),
-               std::invalid_argument);
+  EXPECT_THROW((stan::math::rowwise_broadcast(row_cl)), std::invalid_argument);
   EXPECT_THROW((stan::math::broadcast<true, true>(row_cl)),
                std::invalid_argument);
 
@@ -55,8 +52,7 @@ TEST(MathMatrixCL, broadcast_errors) {
   EXPECT_THROW((stan::math::broadcast<true, false>(col_cl)),
                std::invalid_argument);
   EXPECT_NO_THROW((stan::math::broadcast<false, true>(col_cl)));
-  EXPECT_THROW((stan::math::colwise_broadcast(col_cl)),
-               std::invalid_argument);
+  EXPECT_THROW((stan::math::colwise_broadcast(col_cl)), std::invalid_argument);
   EXPECT_NO_THROW((stan::math::rowwise_broadcast(col_cl)));
   EXPECT_THROW((stan::math::broadcast<true, true>(col_cl)),
                std::invalid_argument);
@@ -146,8 +142,7 @@ TEST(MathMatrixCL, rowwise_sum_broadcast_test) {
   matrix_cl<double> m_cl(m);
 
   matrix_cl<double> res_cl
-      = stan::math::rowwise_broadcast(stan::math::rowwise_sum(m_cl))
-        + m_cl;
+      = stan::math::rowwise_broadcast(stan::math::rowwise_sum(m_cl)) + m_cl;
   MatrixXd res = stan::math::from_matrix_cl(res_cl);
   MatrixXd correct = m.rowwise().sum().replicate(1, 2) + m;
   EXPECT_EQ(correct.rows(), res.rows());
