@@ -38,11 +38,10 @@ inline auto subtract(const Mat1& m1, const Mat2& m2) {
  * @param m Matrix or expression.
  * @return The scalar minus the matrix.
  */
- template <typename Mat, typename Scal,
-           require_eigen_t<Mat>* = nullptr,
-           require_stan_scalar_t<Scal>* = nullptr,
-           require_not_var_t<Scal>* = nullptr,
-           require_not_eigen_vt<is_var, Mat>* = nullptr>
+template <typename Mat, typename Scal, require_eigen_t<Mat>* = nullptr,
+          require_stan_scalar_t<Scal>* = nullptr,
+          require_not_var_t<Scal>* = nullptr,
+          require_not_eigen_vt<is_var, Mat>* = nullptr>
 inline auto subtract(const Scal c, const Mat& m) {
   return (c - m.array()).matrix().eval();
 }
@@ -57,11 +56,10 @@ inline auto subtract(const Scal c, const Mat& m) {
  * @param c Scalar.
  * @return The matrix minus the scalar.
  */
- template <typename Mat, typename Scal,
-           require_eigen_t<Mat>* = nullptr,
-           require_stan_scalar_t<Scal>* = nullptr,
-           require_not_var_t<Scal>* = nullptr,
-           require_not_eigen_vt<is_var, Mat>* = nullptr>
+template <typename Mat, typename Scal, require_eigen_t<Mat>* = nullptr,
+          require_stan_scalar_t<Scal>* = nullptr,
+          require_not_var_t<Scal>* = nullptr,
+          require_not_eigen_vt<is_var, Mat>* = nullptr>
 inline auto subtract(const Mat& m, const Scal c) {
   return (m.array() - c).matrix().eval();
 }
