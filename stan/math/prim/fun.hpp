@@ -42,6 +42,7 @@
 #include <stan/math/prim/fun/columns_dot_self.hpp>
 #include <stan/math/prim/fun/conj.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/conv_gaus_line.hpp>
 #include <stan/math/prim/fun/copysign.hpp>
 #include <stan/math/prim/fun/corr_constrain.hpp>
 #include <stan/math/prim/fun/corr_free.hpp>
@@ -97,6 +98,7 @@
 #include <stan/math/prim/fun/fmin.hpp>
 #include <stan/math/prim/fun/gamma_p.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
+#include <stan/math/prim/fun/gaus_interp.hpp>
 #include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/get_base1.hpp>
 #include <stan/math/prim/fun/get_base1_lhs.hpp>
