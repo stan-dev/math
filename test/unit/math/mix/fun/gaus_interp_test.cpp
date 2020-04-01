@@ -9,6 +9,7 @@ TEST(mathMixGausInterp, derivs) {
   double xmin, xmax, x, y, x2, y2, t, t0, t1, dd, dder, dder2;
   double x0, x1, y0, y1, tmp;
   int n;
+  unsigned int seed = 1;
 
   // generate function tabulation
   n = 10;
@@ -17,7 +18,7 @@ TEST(mathMixGausInterp, derivs) {
   for (int i = 0; i < n; i++) {
     x = xmin + i * (xmax - xmin) / (n - 1);
     xs.push_back(x);
-    y = rand_r(0) % 100;
+    y = rand_r(&seed) % 100;
     ys.push_back(y);
   }
 
@@ -25,7 +26,6 @@ TEST(mathMixGausInterp, derivs) {
   std::vector<stan::math::var> xs_new_v;
   std::vector<double> xs_new;
   int n_interp = 100;
-  t0 = xs[1] - 1e-4;
   t0 = xs[0];
   t1 = xmax;
   for (int i = 0; i < n_interp; i++) {

@@ -6,6 +6,8 @@
 #include <vector>
 #include <algorithm>
 
+using namespace std;
+
 namespace stan {
 namespace math {
 
@@ -35,17 +37,8 @@ void lin_interp_coefs(int n, std::vector<double> xs, std::vector<double> ys,
 /*
 linear interpolation at one point, x, given the coefficients
 */
-<<<<<<< HEAD
-double lin_interp_pt(int n, 
-		     std::vector<double> xs, 
-		     std::vector<double> ys, 
-		     std::vector<double> as, 
-		     std::vector<double> bs, 
-		     double x) {
-=======
 double lin_interp_pt(int n, vector<double> xs, vector<double> ys,
                      vector<double> as, vector<double> bs, double x) {
->>>>>>> 98fdf8bbec8eb8a07df7a99ac5b94dde87bb9654
   // find interval where x lives
   if (x <= xs[0])
     return ys[0];
@@ -62,22 +55,14 @@ double lin_interp_pt(int n, vector<double> xs, vector<double> ys,
 /*
 linear interpolation at a vector of points
 */
-<<<<<<< HEAD
-std::vector<double> lin_interp(int n, 
-			       std::vector<double> xs,
-			       std::vector<double> ys, 
-			       int n_new,
-			       std::vector<double> xs_new) {
-=======
 vector<double> lin_interp(int n, std::vector<double> xs, std::vector<double> ys,
                           int n_new, std::vector<double> xs_new) {
->>>>>>> 98fdf8bbec8eb8a07df7a99ac5b94dde87bb9654
   // compute coefficients of linear interpolation
-  std::vector<double> as, bs;
+  vector<double> as, bs;
   lin_interp_coefs(n, xs, ys, as, bs);
 
   // evaluate at new points
-  std::vector<double> ys_new;
+  vector<double> ys_new;
   for (int i = 0; i < n_new; i++) {
     ys_new.push_back(lin_interp_pt(n, xs, ys, as, bs, xs_new[i]));
   }
@@ -138,18 +123,9 @@ given a set of pairs (x_i, y_i), do a gaussian interpolation through those
 points and evaluate the interpolation at the points xs_new
 */
 template <typename Tx>
-<<<<<<< HEAD
-inline std::vector<Tx> gaus_interp(int n, 
-			      std::vector<double> xs,
-			      std::vector<double> ys, 
-			      int n_new,
-			      std::vector<Tx> xs_new) {
-
-=======
 inline vector<Tx> gaus_interp(int n, std::vector<double> xs,
                               std::vector<double> ys, int n_new,
                               std::vector<Tx> xs_new) {
->>>>>>> 98fdf8bbec8eb8a07df7a99ac5b94dde87bb9654
   // find minimum distance between points for std of gaussian kernel
   double sig2 = square(min_diff(n, xs) * SIG2_SCALE);
 
