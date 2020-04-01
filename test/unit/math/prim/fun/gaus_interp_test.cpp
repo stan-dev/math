@@ -21,7 +21,7 @@ TEST(mathPrimGausInterp, interp_line) {
   double t0 = xmin;
   double t1 = xmax;
   double t;
-  for (int i=0; i < n_interp; i++) {
+  for (int i = 0; i < n_interp; i++) {
     t = t0 + i * (t1 - t0) / (n_interp - 1);
     xs_new.push_back(t);
   }
@@ -32,7 +32,7 @@ TEST(mathPrimGausInterp, interp_line) {
 
   // test points
   double tmp, y;
-  for (int i=0; i < n_interp; i++) {
+  for (int i = 0; i < n_interp; i++) {
     tmp = (ys[1] - ys[0]) / (xs[1] - xs[0]);
     y = tmp * xs_new[i] + ys[0] - tmp * xs[0];
     ASSERT_NEAR(ys_new[i], y, ABS_TOL);
@@ -50,10 +50,10 @@ TEST(mathPrimGausInterp, gaus_and_lin_interp) {
   double xmax = 1;
   double x;
   vector<double> xs, ys;
-  for (int i=0; i < n; i++) {
+  for (int i = 0; i < n; i++) {
     x = xmin + i * (xmax - xmin) / (n - 1);
     xs.push_back(x);
-    ys.push_back(x*x);
+    ys.push_back(x * x);
   }
 
   // vector of pts at which to compute interpolation
@@ -62,7 +62,7 @@ TEST(mathPrimGausInterp, gaus_and_lin_interp) {
   double t0 = xmin;
   double t1 = xmax;
   double t;
-  for (int i=0; i < n_interp; i++) {
+  for (int i = 0; i < n_interp; i++) {
     t = t0 + i * (t1 - t0) / (n_interp - 1);
     xs_new.push_back(t);
   }
@@ -74,7 +74,7 @@ TEST(mathPrimGausInterp, gaus_and_lin_interp) {
 
   // test points
   double tmp, y;
-  for (int i=0; i < n_interp; i++) {
+  for (int i = 0; i < n_interp; i++) {
     ASSERT_NEAR(ys_new_lin[i], ys_new_gaus[i], 1e-4);
   }
 }

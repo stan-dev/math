@@ -12,8 +12,8 @@ namespace math {
 /*
 evaluate the derivative of conv_gaus_line with respect to x
 */
-double der_conv_gaus_line(double t0, double t1, double a, double b, double x0, 
-			  double sig2) {
+double der_conv_gaus_line(double t0, double t1, double a, double b, double x0,
+                          double sig2) {
   using stan::math::normal_cdf;
   double pi = stan::math::pi();
   using std::exp;
@@ -23,14 +23,15 @@ double der_conv_gaus_line(double t0, double t1, double a, double b, double x0,
   double y;
 
   double alpha = sqrt(2 * pi * sig2);
-  y = (a * x0 + b) / alpha * (-exp(-pow(t1 - x0, 2) / (2 * sig2))
-			      + exp(-pow(t0 - x0, 2) / (2 * sig2)));
-  y +=  a * (normal_cdf(t1, x0, sig) - normal_cdf(t0, x0, sig));
-  y -= a / alpha * ((t1-x0)*exp(-pow(t1 - x0, 2) / (2 * sig2))
-		    -(t0-x0)*exp(-pow(t0 - x0, 2) / (2 * sig2)));
+  y = (a * x0 + b) / alpha
+      * (-exp(-pow(t1 - x0, 2) / (2 * sig2))
+         + exp(-pow(t0 - x0, 2) / (2 * sig2)));
+  y += a * (normal_cdf(t1, x0, sig) - normal_cdf(t0, x0, sig));
+  y -= a / alpha
+       * ((t1 - x0) * exp(-pow(t1 - x0, 2) / (2 * sig2))
+          - (t0 - x0) * exp(-pow(t0 - x0, 2) / (2 * sig2)));
   return y;
 }
-
 
 /*
 evaluate the integral
@@ -41,8 +42,8 @@ evaluate the integral
 
 */
 template <typename Tx>
-double conv_gaus_line(double t0, double t1, double a, double b, Tx const& x, 
-		      double sig2) {
+double conv_gaus_line(double t0, double t1, double a, double b, Tx const& x,
+                      double sig2) {
   using stan::math::normal_cdf;
   double pi = stan::math::pi();
   using std::exp;
@@ -50,11 +51,12 @@ double conv_gaus_line(double t0, double t1, double a, double b, Tx const& x,
   using std::sqrt;
   double sig = sqrt(sig2);
 
-  double y = (a * value_of(x) + b) * (normal_cdf(t1, value_of(x), sig) 
-			     - normal_cdf(t0, value_of(x), sig));
-  y += - a * sig2 / sqrt(2 * pi * sig2) * 
-    (exp(-pow(t1 - value_of(x), 2)/ (2 * sig2)) 
-     - exp(-pow(t0 - value_of(x), 2) / (2 * sig2)));
+  double y
+      = (a * value_of(x) + b)
+        * (normal_cdf(t1, value_of(x), sig) - normal_cdf(t0, value_of(x), sig));
+  y += -a * sig2 / sqrt(2 * pi * sig2)
+       * (exp(-pow(t1 - value_of(x), 2) / (2 * sig2))
+          - exp(-pow(t0 - value_of(x), 2) / (2 * sig2)));
 
   return y;
 }

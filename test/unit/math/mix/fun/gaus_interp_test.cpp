@@ -2,10 +2,9 @@
 #include <limits>
 #include <vector>
 
-
 TEST(mathMixGausInterp, derivs) {
-  using stan::math::var;
   using stan::math::gaus_interp;
+  using stan::math::var;
   std::vector<double> xs, ys, x2s, y2s, ts, as, bs, y3s, t3s;
   double xmin, xmax, x, y, x2, y2, t, t0, t1, dd, dder, dder2;
   double x0, x1, y0, y1, tmp;
@@ -29,7 +28,7 @@ TEST(mathMixGausInterp, derivs) {
   t0 = xs[1] - 1e-4;
   t0 = xs[0];
   t1 = xmax;
-  for (int i=0; i < n_interp; i++) {
+  for (int i = 0; i < n_interp; i++) {
     t = t0 + i * (t1 - t0) / (n_interp - 1);
     xs_new.push_back(t);
     stan::math::var tvar = t;
@@ -45,7 +44,7 @@ TEST(mathMixGausInterp, derivs) {
 
   std::vector<double> ys_new_dder;
   std::vector<var> ys_new_v2;
-  for (int i=0; i < n_interp; i++) {
+  for (int i = 0; i < n_interp; i++) {
     ys_new_v[i].grad();
     dder = xs_new_v[i].adj();
     ys_new_dder.push_back(dder);
@@ -55,7 +54,7 @@ TEST(mathMixGausInterp, derivs) {
   double h = 1e-8;
   xs_new_p = xs_new;
   xs_new_n = xs_new;
-  for (int i=0; i < n_interp; i++) {
+  for (int i = 0; i < n_interp; i++) {
     xs_new_p[i] += -h;
     xs_new_n[i] += h;
     ys_new_p = gaus_interp(n, xs, ys, n_interp, xs_new_p);

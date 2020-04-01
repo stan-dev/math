@@ -11,23 +11,23 @@ namespace stan {
 namespace math {
 
 // set tolerance for how close interpolated values need to be to
-// the specified function values 
+// the specified function values
 const double INTERP_TOL = 1e-8;
 const double SIG2_SCALE = 0.1;
 
-/* 
-given a set of points (x_i, y_i) with x_i's in increasing order, find 
-a_i, b_i such that the line between (x_i, y_i) and (x_{i+1}, y_{i+1}) is 
+/*
+given a set of points (x_i, y_i) with x_i's in increasing order, find
+a_i, b_i such that the line between (x_i, y_i) and (x_{i+1}, y_{i+1}) is
 f(t) = a_i*t + b_i, store the a_i's and b_i's in as and bs.
 */
-void lin_interp_coefs(int n, std::vector<double> xs,std::vector<double> ys, 
-		      std::vector<double>& as, std::vector<double>& bs) {
+void lin_interp_coefs(int n, std::vector<double> xs, std::vector<double> ys,
+                      std::vector<double>& as, std::vector<double>& bs) {
   // initialize size of vectors of linear coefficients
   as.resize(n - 1);
   bs.resize(n - 1);
 
   // find slope and intercept between each point
-  for (int i=0; i<n - 1; i++) {
+  for (int i = 0; i < n - 1; i++) {
     as[i] = (ys[i + 1] - ys[i]) / (xs[i + 1] - xs[i]);
     bs[i] = -xs[i] * as[i] + ys[i];
   }
@@ -36,31 +36,26 @@ void lin_interp_coefs(int n, std::vector<double> xs,std::vector<double> ys,
 /*
 linear interpolation at one point, x, given the coefficients
 */
-double lin_interp_pt(int n, 
-		     vector<double> xs, 
-		     vector<double> ys, 
-		     vector<double> as, 
-		     vector<double> bs, 
-		     double x) {
+double lin_interp_pt(int n, vector<double> xs, vector<double> ys,
+                     vector<double> as, vector<double> bs, double x) {
   // find interval where x lives
-  if (x <= xs[0]) return ys[0];
-  if (x >= xs[n-1]) return ys[n-1];
+  if (x <= xs[0])
+    return ys[0];
+  if (x >= xs[n - 1])
+    return ys[n - 1];
 
   auto lb = upper_bound(xs.begin(), xs.end(), x);
   int ind = distance(xs.begin(), lb) - 1;
   ind = std::max(0, ind);
 
-  return as[ind]*x + bs[ind];
+  return as[ind] * x + bs[ind];
 }
 
 /*
 linear interpolation at a vector of points
 */
-vector<double> lin_interp(int n, 
-			  std::vector<double> xs,
-			  std::vector<double> ys, 
-			  int n_new,
-			  std::vector<double> xs_new) {
+vector<double> lin_interp(int n, std::vector<double> xs, std::vector<double> ys,
+                          int n_new, std::vector<double> xs_new) {
   // compute coefficients of linear interpolation
   vector<double> as, bs;
   lin_interp_coefs(n, xs, ys, as, bs);
@@ -78,18 +73,17 @@ given a set of points and a width for the gaussian kernel, do a convolution
 and evaluate at one point, x
 */
 template <typename Tx>
-inline return_type_t<Tx> interp_gaus_pt(int n, std::vector<double> xs, 
-					std::vector<double> ys,
-					std::vector<double> as,
-					std::vector<double> bs,
-					Tx const& x, double sig2) {
-
+inline return_type_t<Tx> interp_gaus_pt(int n, std::vector<double> xs,
+                                        std::vector<double> ys,
+                                        std::vector<double> as,
+                                        std::vector<double> bs, Tx const& x,
+                                        double sig2) {
   // extend out first and last lines for convolution
   double sig = std::sqrt(sig2);
-  xs[0] += - 10 * sig;
-  xs[n-1] += 10 * sig;
+  xs[0] += -10 * sig;
+  xs[n - 1] += 10 * sig;
 
-  // no need to convolve far from center of gaussian, so 
+  // no need to convolve far from center of gaussian, so
   // get lower and upper indexes for integration bounds
   auto lb = upper_bound(xs.begin(), xs.end(), x - 10 * sig);
   int ind_start = distance(xs.begin(), lb) - 1;
@@ -123,32 +117,29 @@ double min_diff(int n, std::vector<Tx> xs) {
   return dmin;
 }
 
-/* 
+/*
 given a set of pairs (x_i, y_i), do a gaussian interpolation through those
 points and evaluate the interpolation at the points xs_new
 */
 template <typename Tx>
-inline vector<Tx> gaus_interp(int n, 
-			      std::vector<double> xs,
-			      std::vector<double> ys, 
-			      int n_new,
-			      std::vector<Tx> xs_new) {
-
+inline vector<Tx> gaus_interp(int n, std::vector<double> xs,
+                              std::vector<double> ys, int n_new,
+                              std::vector<Tx> xs_new) {
   // find minimum distance between points for std of gaussian kernel
   double sig2 = square(min_diff(n, xs) * SIG2_SCALE);
 
-  // copy ys into a new vector 
+  // copy ys into a new vector
   std::vector<double> y2s;
   y2s.resize(n);
   for (int i = 0; i < n; i++) {
     y2s[i] = ys[i];
   }
 
-  // interatively find interpolation that coincides with ys at xs 
+  // interatively find interpolation that coincides with ys at xs
   int max_iters = 50;
   double dmax, dd;
   std::vector<double> as, bs;
-  for (int j=0; j < max_iters; j++) {
+  for (int j = 0; j < max_iters; j++) {
     // linear interpolation for new ys
     lin_interp_coefs(n, xs, y2s, as, bs);
     dmax = 0;
@@ -157,9 +148,10 @@ inline vector<Tx> gaus_interp(int n,
       y2s[i] += dd;
       dmax = std::max(std::abs(dd), dmax);
     }
-    if (dmax < INTERP_TOL) break;
+    if (dmax < INTERP_TOL)
+      break;
   }
-  
+
   // fill ys_new with interpolated values at new_xs
   std::vector<Tx> ys_new;
   for (int i = 0; i < n_new; i++) {

@@ -23,7 +23,7 @@ TEST(mathMixGausInterp, gaus_conv_der) {
   x0p = x0 - h;
   yn = conv_gaus_line(t0, t1, a, b, x0n, sig2);
   yp = conv_gaus_line(t0, t1, a, b, x0p, sig2);
-  dder = (yn - yp) / (2*h);
+  dder = (yn - yp) / (2 * h);
 
   // derivative with autodiff
   using stan::math::var;

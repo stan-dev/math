@@ -6,7 +6,7 @@
 evaluate the convolution using trapezoid rule
 */
 double check_int_dumb(double t0, double t1, double a, double b, double x0,
-		      double sig2) {
+                      double sig2) {
   double x, y, t, tot;
   vector<double> ys, ts;
   double pi = stan::math::pi();
