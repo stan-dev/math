@@ -2,10 +2,7 @@
 #define STAN_MATH_REV_FUNCTOR_REDUCE_SUM_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/rev/core/deep_copy_vars.hpp>
-#include <stan/math/rev/core/accumulate_adjoints.hpp>
-#include <stan/math/rev/core/count_vars.hpp>
-#include <stan/math/rev/core/save_varis.hpp>
+#include <stan/math/prim/functor.hpp>
 #include <stan/math/rev/core.hpp>
 #include <tbb/task_arena.h>
 #include <tbb/parallel_reduce.h>
