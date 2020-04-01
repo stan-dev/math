@@ -167,7 +167,7 @@ inline broadcast_<as_operation_cl_t<T>, Colwise, Rowwise> broadcast(T&& a) {
 }
 
 /**
- * Brodcast an expression in rowwise dimmension. The argument must have single
+ * Broadcast an expression in rowwise dimmension. The argument must have single
  * column. Further expressions can use this expression as if it had any number
  * of columns, repeating the values.
  *
@@ -185,7 +185,7 @@ inline auto rowwise_broadcast(T&& a) {
 }
 
 /**
- * Brodcast an expression in colwise dimmension. The argument must have single
+ * Broadcast an expression in colwise dimmension. The argument must have single
  * row. Further expressions can use this expression as if it had any number of
  * rows, repeating the values.
  *
