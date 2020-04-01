@@ -5,7 +5,7 @@
 #include <limits>
 #include <vector>
 
-TEST(MathMix_reduce_sum, grainsize) {
+TEST(MathMix_reduce_sum, grainsize_static) {
   using stan::math::test::get_new_msg;
   using stan::math::test::sum_lpdf;
 

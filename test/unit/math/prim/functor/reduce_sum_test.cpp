@@ -2,6 +2,8 @@
 #include <test/unit/math/reduce_sum_util.hpp>
 #include <gtest/gtest.h>
 
+#include <vector>
+
 TEST(StanMathPrim_reduce_sum, value) {
   stan::math::init_threadpool_tbb();
   using stan::math::test::count_lpdf;
