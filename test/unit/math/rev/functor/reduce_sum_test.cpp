@@ -30,8 +30,9 @@ TEST(StanMathRev_reduce_sum, value) {
       << "ref value of poisson lpdf : " << poisson_lpdf_ref << std::endl
       << "value of poisson lpdf : " << poisson_lpdf << std::endl;
 
-  double poisson_lpdf_static = stan::math::reduce_sum_static<count_lpdf<double>>(
-      data, 5, get_new_msg(), vlambda_d, idata);
+  double poisson_lpdf_static
+      = stan::math::reduce_sum_static<count_lpdf<double>>(
+          data, 5, get_new_msg(), vlambda_d, idata);
 
   EXPECT_FLOAT_EQ(poisson_lpdf_static, poisson_lpdf_ref);
 }
@@ -77,7 +78,6 @@ TEST(StanMathRev_reduce_sum, gradient) {
       << "value of poisson lpdf : " << poisson_lpdf.val() << std::endl
       << "gradient wrt to lambda: " << lambda_adj << std::endl;
 
-
   var poisson_lpdf_static = stan::math::reduce_sum_static<count_lpdf<var>>(
       data, 5, get_new_msg(), vlambda_v, idata);
 
@@ -122,12 +122,12 @@ TEST(StanMathRev_reduce_sum, grainsize) {
   EXPECT_NO_THROW(stan::math::reduce_sum<count_lpdf<var>>(
       data, 2 * elems, get_new_msg(), vlambda_v, idata));
 
-  EXPECT_THROW(stan::math::reduce_sum_static<count_lpdf<var>>(data, 0, get_new_msg(),
-                                                       vlambda_v, idata),
+  EXPECT_THROW(stan::math::reduce_sum_static<count_lpdf<var>>(
+                   data, 0, get_new_msg(), vlambda_v, idata),
                std::domain_error);
 
-  EXPECT_THROW(stan::math::reduce_sum_static<count_lpdf<var>>(data, -1, get_new_msg(),
-                                                       vlambda_v, idata),
+  EXPECT_THROW(stan::math::reduce_sum_static<count_lpdf<var>>(
+                   data, -1, get_new_msg(), vlambda_v, idata),
                std::domain_error);
 
   EXPECT_NO_THROW(stan::math::reduce_sum_static<count_lpdf<var>>(
@@ -180,8 +180,9 @@ TEST(StanMathRev_reduce_sum, nesting_gradient) {
       << "value of poisson lpdf : " << poisson_lpdf.val() << std::endl
       << "gradient wrt to lambda: " << lambda_adj << std::endl;
 
-  var poisson_lpdf_static = stan::math::reduce_sum_static<nesting_count_lpdf<var>>(
-      data, 5, get_new_msg(), vlambda_v, idata);
+  var poisson_lpdf_static
+      = stan::math::reduce_sum_static<nesting_count_lpdf<var>>(
+          data, 5, get_new_msg(), vlambda_v, idata);
 
   stan::math::set_zero_all_adjoints();
   stan::math::grad(poisson_lpdf_static.vi_);
@@ -244,8 +245,9 @@ TEST(StanMathRev_reduce_sum, grouped_gradient) {
       << "value of poisson lpdf : " << poisson_lpdf.val() << std::endl
       << "gradient wrt to lambda: " << lambda_adj << std::endl;
 
-  var poisson_lpdf_static = stan::math::reduce_sum_static<grouped_count_lpdf<var>>(
-      data, 5, get_new_msg(), vlambda_v, gidx);
+  var poisson_lpdf_static
+      = stan::math::reduce_sum_static<grouped_count_lpdf<var>>(
+          data, 5, get_new_msg(), vlambda_v, gidx);
 
   stan::math::set_zero_all_adjoints();
   stan::math::grad(poisson_lpdf_static.vi_);
@@ -306,8 +308,9 @@ TEST(StanMathRev_reduce_sum, grouped_gradient_eigen) {
       << "value of poisson lpdf : " << poisson_lpdf.val() << std::endl
       << "gradient wrt to lambda: " << lambda_adj << std::endl;
 
-  var poisson_lpdf_static = stan::math::reduce_sum_static<grouped_count_lpdf<var>>(
-      data, 5, get_new_msg(), vlambda_v, gidx);
+  var poisson_lpdf_static
+      = stan::math::reduce_sum_static<grouped_count_lpdf<var>>(
+          data, 5, get_new_msg(), vlambda_v, gidx);
 
   stan::math::set_zero_all_adjoints();
   stan::math::grad(poisson_lpdf_static.vi_);
@@ -377,7 +380,8 @@ TEST(StanMathRev_reduce_sum, slice_group_gradient) {
       << "value of poisson lpdf : " << poisson_lpdf.val() << std::endl
       << "gradient wrt to lambda: " << lambda_adj << std::endl;
 
-  var poisson_lpdf_static = stan::math::reduce_sum_static<slice_group_count_lpdf<var>>(
+  var poisson_lpdf_static
+      = stan::math::reduce_sum_static<slice_group_count_lpdf<var>>(
           vlambda_v, 5, get_new_msg(), data, gsidx);
 
   stan::math::set_zero_all_adjoints();
