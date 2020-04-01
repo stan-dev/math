@@ -1,31 +1,15 @@
-#include <stan/math/prim/core.hpp>
 #include <stan/math.hpp>
+#include <test/unit/math/reduce_sum_util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <sstream>
 #include <tuple>
 #include <vector>
 
-std::ostream* msgs = nullptr;
-
-// reduce functor which is the BinaryFunction
-// here we use iterators which represent integer indices
-template <typename T>
-struct count_lpdf {
-  count_lpdf() {}
-
-  // does the reduction in the sub-slice start to end
-  inline T operator()(std::size_t start, std::size_t end,
-                      const std::vector<int>& sub_slice, std::ostream* msgs,
-                      const std::vector<T>& lambda,
-                      const std::vector<int>& idata) const {
-    return stan::math::poisson_lpmf(sub_slice, lambda[0]);
-  }
-};
-
 TEST(StanMathRev_reduce_sum, value) {
+  using stan::math::test::get_new_msg;
+  using stan::math::test::count_lpdf;
   stan::math::init_threadpool_tbb();
-
   double lambda_d = 10.0;
   const std::size_t elems = 10000;
   const std::size_t num_iter = 1000;
@@ -38,7 +22,7 @@ TEST(StanMathRev_reduce_sum, value) {
   std::vector<double> vlambda_d(1, lambda_d);
 
   double poisson_lpdf = stan::math::reduce_sum<count_lpdf<double>>(
-      data, 5, msgs, vlambda_d, idata);
+      data, 5, get_new_msg(), vlambda_d, idata);
 
   double poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_d);
 
@@ -48,6 +32,8 @@ TEST(StanMathRev_reduce_sum, value) {
 }
 
 TEST(StanMathRev_reduce_sum, gradient) {
+  using stan::math::test::get_new_msg;
+  using stan::math::test::count_lpdf;
   stan::math::init_threadpool_tbb();
 
   double lambda_d = 10.0;
@@ -65,7 +51,7 @@ TEST(StanMathRev_reduce_sum, gradient) {
   std::vector<int> idata;
   std::vector<var> vlambda_v(1, lambda_v);
 
-  var poisson_lpdf = stan::math::reduce_sum<count_lpdf<var>>(data, 5, msgs,
+  var poisson_lpdf = stan::math::reduce_sum<count_lpdf<var>>(data, 5, get_new_msg(),
                                                              vlambda_v, idata);
 
   var lambda_ref = lambda_d;
@@ -88,7 +74,10 @@ TEST(StanMathRev_reduce_sum, gradient) {
 
   stan::math::recover_memory();
 }
+
 TEST(StanMathRev_reduce_sum, grainsize) {
+  using stan::math::test::get_new_msg;
+  using stan::math::test::count_lpdf;
   stan::math::init_threadpool_tbb();
 
   double lambda_d = 10.0;
@@ -107,40 +96,25 @@ TEST(StanMathRev_reduce_sum, grainsize) {
   std::vector<var> vlambda_v(1, lambda_v);
 
   EXPECT_THROW(
-      stan::math::reduce_sum<count_lpdf<var>>(data, 0, msgs, vlambda_v, idata),
+      stan::math::reduce_sum<count_lpdf<var>>(data, 0, get_new_msg(), vlambda_v, idata),
       std::domain_error);
 
   EXPECT_THROW(
-      stan::math::reduce_sum<count_lpdf<var>>(data, -1, msgs, vlambda_v, idata),
+      stan::math::reduce_sum<count_lpdf<var>>(data, -1, get_new_msg(), vlambda_v, idata),
       std::domain_error);
 
   EXPECT_NO_THROW(
-      stan::math::reduce_sum<count_lpdf<var>>(data, 1, msgs, vlambda_v, idata));
+      stan::math::reduce_sum<count_lpdf<var>>(data, 1, get_new_msg(), vlambda_v, idata));
 
-  EXPECT_NO_THROW(stan::math::reduce_sum<count_lpdf<var>>(data, 2 * elems, msgs,
+  EXPECT_NO_THROW(stan::math::reduce_sum<count_lpdf<var>>(data, 2 * elems, get_new_msg(),
                                                           vlambda_v, idata));
 
   stan::math::recover_memory();
 }
 
-// ********************************
-// test if nested parallelism works
-// ********************************
-template <typename T>
-struct nesting_count_lpdf {
-  nesting_count_lpdf() {}
-
-  // does the reduction in the sub-slice start to end
-  inline T operator()(std::size_t start, std::size_t end,
-                      const std::vector<int>& sub_slice, std::ostream* msgs,
-                      const std::vector<T>& lambda,
-                      const std::vector<int>& idata) const {
-    return stan::math::reduce_sum<count_lpdf<T>>(sub_slice, 5, msgs, lambda,
-                                                 idata);
-  }
-};
-
 TEST(StanMathRev_reduce_sum, nesting_gradient) {
+  using stan::math::test::get_new_msg;
+  using stan::math::test::nesting_count_lpdf;
   stan::math::init_threadpool_tbb();
 
   double lambda_d = 10.0;
@@ -159,7 +133,7 @@ TEST(StanMathRev_reduce_sum, nesting_gradient) {
   std::vector<var> vlambda_v(1, lambda_v);
 
   var poisson_lpdf = stan::math::reduce_sum<nesting_count_lpdf<var>>(
-      data, 5, msgs, vlambda_v, idata);
+      data, 5, get_new_msg(), vlambda_v, idata);
 
   var lambda_ref = lambda_d;
   var poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_ref);
@@ -182,30 +156,10 @@ TEST(StanMathRev_reduce_sum, nesting_gradient) {
   stan::math::recover_memory();
 }
 
-// ********************************
-// basic performance test for a hierarchical model
-// ********************************
-
-template <typename T>
-struct grouped_count_lpdf {
-  grouped_count_lpdf() {}
-
-  // does the reduction in the sub-slice start to end
-  template <typename VecInt1, typename VecT, typename VecInt2>
-  inline T operator()(std::size_t start, std::size_t end, VecInt1&& sub_slice,
-                      std::ostream* msgs, VecT&& lambda, VecInt2&& gidx) const {
-    const std::size_t num_terms = end - start + 1;
-    // std::cout << "sub-slice " << start << " - " << end << "; num_terms = " <<
-    // num_terms << "; size = " << sub_slice.size() << std::endl;
-    std::decay_t<VecT> lambda_slice(num_terms);
-    for (std::size_t i = 0; i != num_terms; ++i)
-      lambda_slice[i] = lambda[gidx[start + i]];
-
-    return stan::math::poisson_lpmf(sub_slice, lambda_slice);
-  }
-};
 
 TEST(StanMathRev_reduce_sum, grouped_gradient) {
+  using stan::math::test::get_new_msg;
+  using stan::math::test::grouped_count_lpdf;
   stan::math::init_threadpool_tbb();
 
   double lambda_d = 10.0;
@@ -232,7 +186,7 @@ TEST(StanMathRev_reduce_sum, grouped_gradient) {
   var lambda_v = vlambda_v[0];
 
   var poisson_lpdf = stan::math::reduce_sum<grouped_count_lpdf<var>>(
-      data, 5, msgs, vlambda_v, gidx);
+      data, 5, get_new_msg(), vlambda_v, gidx);
 
   std::vector<var> vref_lambda_v;
   for (std::size_t i = 0; i != elems; ++i) {
@@ -260,6 +214,8 @@ TEST(StanMathRev_reduce_sum, grouped_gradient) {
 }
 
 TEST(StanMathRev_reduce_sum, grouped_gradient_eigen) {
+  using stan::math::test::get_new_msg;
+  using stan::math::test::grouped_count_lpdf;
   stan::math::init_threadpool_tbb();
 
   double lambda_d = 10.0;
@@ -284,7 +240,7 @@ TEST(StanMathRev_reduce_sum, grouped_gradient_eigen) {
   var lambda_v = vlambda_v[0];
 
   var poisson_lpdf = stan::math::reduce_sum<grouped_count_lpdf<var>>(
-      data, 5, msgs, vlambda_v, gidx);
+      data, 5, get_new_msg(), vlambda_v, gidx);
 
   std::vector<var> vref_lambda_v;
   for (std::size_t i = 0; i != elems; ++i) {
@@ -312,31 +268,9 @@ TEST(StanMathRev_reduce_sum, grouped_gradient_eigen) {
   stan::math::recover_memory();
 }
 
-// ********************************
-// slice over the grouping variable which is a var
-// ********************************
-
-template <typename T>
-struct slice_group_count_lpdf {
-  slice_group_count_lpdf() {}
-
-  // does the reduction in the sub-slice start to end
-  inline T operator()(std::size_t start, std::size_t end,
-                      const std::vector<T>& lambda_slice, std::ostream* msgs,
-                      const std::vector<int>& y,
-                      const std::vector<int>& gsidx) const {
-    const std::size_t num_groups = end - start + 1;
-    T result = 0.0;
-    for (std::size_t i = 0; i != num_groups; ++i) {
-      std::vector<int> y_group(y.begin() + gsidx[start + i],
-                               y.begin() + gsidx[start + i + 1]);
-      result += stan::math::poisson_lpmf(y_group, lambda_slice[i]);
-    }
-    return result;
-  }
-};
-
 TEST(StanMathRev_reduce_sum, slice_group_gradient) {
+  using stan::math::test::get_new_msg;
+  using stan::math::test::slice_group_count_lpdf;
   stan::math::init_threadpool_tbb();
 
   double lambda_d = 10.0;
@@ -368,7 +302,7 @@ TEST(StanMathRev_reduce_sum, slice_group_gradient) {
   var lambda_v = vlambda_v[0];
 
   var poisson_lpdf = stan::math::reduce_sum<slice_group_count_lpdf<var>>(
-      vlambda_v, 5, msgs, data, gsidx);
+      vlambda_v, 5, get_new_msg(), data, gsidx);
 
   std::vector<var> vref_lambda_v;
   for (std::size_t i = 0; i != elems; ++i) {
