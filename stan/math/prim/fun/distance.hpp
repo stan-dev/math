@@ -15,6 +15,8 @@ namespace math {
 /**
  * Returns the distance between two scalars.
  *
+ * @tparam T1 type of first scalar.
+ * @tparam T2 type of second scalar
  * @param x1 First scalar.
  * @param x2 Second scalar.
  * @return Distance between two scalars

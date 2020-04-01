@@ -3,7 +3,6 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/calculate_chain.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/expm1.hpp>
 #include <stan/math/prim/fun/log_diff_exp.hpp>
@@ -17,7 +16,7 @@ class log_diff_exp_vv_vari : public op_vv_vari {
   log_diff_exp_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(log_diff_exp(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
-    avi_->adj_ += adj_ * calculate_chain(avi_->val_, val_);
+    avi_->adj_ -= adj_ / expm1(bvi_->val_ - avi_->val_);
     bvi_->adj_ -= adj_ / expm1(avi_->val_ - bvi_->val_);
   }
 };
@@ -29,7 +28,7 @@ class log_diff_exp_vd_vari : public op_vd_vari {
     if (val_ == NEGATIVE_INFTY) {
       avi_->adj_ += (bd_ == NEGATIVE_INFTY) ? adj_ : adj_ * INFTY;
     } else {
-      avi_->adj_ += adj_ * calculate_chain(avi_->val_, val_);
+      avi_->adj_ -= adj_ / expm1(bd_ - avi_->val_);
     }
   }
 };

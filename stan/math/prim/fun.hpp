@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/append_array.hpp>
 #include <stan/math/prim/fun/append_col.hpp>
 #include <stan/math/prim/fun/append_row.hpp>
+#include <stan/math/prim/fun/arg.hpp>
 #include <stan/math/prim/fun/array_builder.hpp>
 #include <stan/math/prim/fun/as_bool.hpp>
 #include <stan/math/prim/fun/asin.hpp>
@@ -39,6 +40,7 @@
 #include <stan/math/prim/fun/cols.hpp>
 #include <stan/math/prim/fun/columns_dot_product.hpp>
 #include <stan/math/prim/fun/columns_dot_self.hpp>
+#include <stan/math/prim/fun/conj.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/conv_gaus_line.hpp>
 #include <stan/math/prim/fun/copysign.hpp>
@@ -117,7 +119,9 @@
 #include <stan/math/prim/fun/identity_constrain.hpp>
 #include <stan/math/prim/fun/identity_free.hpp>
 #include <stan/math/prim/fun/identity_matrix.hpp>
+#include <stan/math/prim/fun/i_times.hpp>
 #include <stan/math/prim/fun/if_else.hpp>
+#include <stan/math/prim/fun/imag.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
 #include <stan/math/prim/fun/initialize.hpp>
 #include <stan/math/prim/fun/int_step.hpp>
@@ -149,6 +153,7 @@
 #include <stan/math/prim/fun/linspaced_vector.hpp>
 #include <stan/math/prim/fun/lmgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/logb.hpp>
 #include <stan/math/prim/fun/log10.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/log1m_exp.hpp>
@@ -206,6 +211,7 @@
 #include <stan/math/prim/fun/multiply.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/multiply_lower_tri_self_transpose.hpp>
+#include <stan/math/prim/fun/norm.hpp>
 #include <stan/math/prim/fun/num_elements.hpp>
 #include <stan/math/prim/fun/offset_multiplier_constrain.hpp>
 #include <stan/math/prim/fun/offset_multiplier_free.hpp>
@@ -222,14 +228,17 @@
 #include <stan/math/prim/fun/owens_t.hpp>
 #include <stan/math/prim/fun/Phi.hpp>
 #include <stan/math/prim/fun/Phi_approx.hpp>
+#include <stan/math/prim/fun/polar.hpp>
 #include <stan/math/prim/fun/positive_constrain.hpp>
 #include <stan/math/prim/fun/positive_free.hpp>
 #include <stan/math/prim/fun/positive_ordered_constrain.hpp>
 #include <stan/math/prim/fun/positive_ordered_free.hpp>
+#include <stan/math/prim/fun/pow.hpp>
 #include <stan/math/prim/fun/primitive_value.hpp>
 #include <stan/math/prim/fun/prob_constrain.hpp>
 #include <stan/math/prim/fun/prob_free.hpp>
 #include <stan/math/prim/fun/prod.hpp>
+#include <stan/math/prim/fun/proj.hpp>
 #include <stan/math/prim/fun/promote_elements.hpp>
 #include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/qr_Q.hpp>
@@ -244,6 +253,7 @@
 #include <stan/math/prim/fun/read_corr_matrix.hpp>
 #include <stan/math/prim/fun/read_cov_L.hpp>
 #include <stan/math/prim/fun/read_cov_matrix.hpp>
+#include <stan/math/prim/fun/real.hpp>
 #include <stan/math/prim/fun/rep_array.hpp>
 #include <stan/math/prim/fun/rep_matrix.hpp>
 #include <stan/math/prim/fun/rep_row_vector.hpp>
@@ -256,6 +266,7 @@
 #include <stan/math/prim/fun/rows.hpp>
 #include <stan/math/prim/fun/rows_dot_product.hpp>
 #include <stan/math/prim/fun/rows_dot_self.hpp>
+#include <stan/math/prim/fun/scalbn.hpp>
 #include <stan/math/prim/fun/scale_matrix_exp_multiply.hpp>
 #include <stan/math/prim/fun/scaled_add.hpp>
 #include <stan/math/prim/fun/sd.hpp>

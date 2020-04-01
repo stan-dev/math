@@ -1,6 +1,8 @@
 The <b>Stan Math Library</b> is a C++, reverse-mode automatic differentiation library designed to be usable, extensive and extensible, efficient, scalable, stable, portable, and redistributable in order to facilitate the construction and utilization of algorithms that utilize derivatives.
 
-[![DOI](https://zenodo.org/badge/38388440.svg)](https://zenodo.org/badge/latestdoi/38388440)
+\htmlonly
+ <div><a href="https://zenodo.org/badge/latestdoi/38388440"><img src="https://zenodo.org/badge/38388440.svg"/></a></div>
+\endhtmlonly
 
 Licensing
 ---------
