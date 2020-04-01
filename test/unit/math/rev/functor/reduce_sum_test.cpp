@@ -7,8 +7,8 @@
 #include <vector>
 
 TEST(StanMathRev_reduce_sum, value) {
-  using stan::math::test::get_new_msg;
   using stan::math::test::count_lpdf;
+  using stan::math::test::get_new_msg;
   stan::math::init_threadpool_tbb();
   double lambda_d = 10.0;
   const std::size_t elems = 10000;
@@ -32,8 +32,8 @@ TEST(StanMathRev_reduce_sum, value) {
 }
 
 TEST(StanMathRev_reduce_sum, gradient) {
-  using stan::math::test::get_new_msg;
   using stan::math::test::count_lpdf;
+  using stan::math::test::get_new_msg;
   stan::math::init_threadpool_tbb();
 
   double lambda_d = 10.0;
@@ -51,8 +51,8 @@ TEST(StanMathRev_reduce_sum, gradient) {
   std::vector<int> idata;
   std::vector<var> vlambda_v(1, lambda_v);
 
-  var poisson_lpdf = stan::math::reduce_sum<count_lpdf<var>>(data, 5, get_new_msg(),
-                                                             vlambda_v, idata);
+  var poisson_lpdf = stan::math::reduce_sum<count_lpdf<var>>(
+      data, 5, get_new_msg(), vlambda_v, idata);
 
   var lambda_ref = lambda_d;
   var poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_ref);
@@ -76,8 +76,8 @@ TEST(StanMathRev_reduce_sum, gradient) {
 }
 
 TEST(StanMathRev_reduce_sum, grainsize) {
-  using stan::math::test::get_new_msg;
   using stan::math::test::count_lpdf;
+  using stan::math::test::get_new_msg;
   stan::math::init_threadpool_tbb();
 
   double lambda_d = 10.0;
@@ -95,19 +95,19 @@ TEST(StanMathRev_reduce_sum, grainsize) {
   std::vector<int> idata;
   std::vector<var> vlambda_v(1, lambda_v);
 
-  EXPECT_THROW(
-      stan::math::reduce_sum<count_lpdf<var>>(data, 0, get_new_msg(), vlambda_v, idata),
-      std::domain_error);
+  EXPECT_THROW(stan::math::reduce_sum<count_lpdf<var>>(data, 0, get_new_msg(),
+                                                       vlambda_v, idata),
+               std::domain_error);
 
-  EXPECT_THROW(
-      stan::math::reduce_sum<count_lpdf<var>>(data, -1, get_new_msg(), vlambda_v, idata),
-      std::domain_error);
+  EXPECT_THROW(stan::math::reduce_sum<count_lpdf<var>>(data, -1, get_new_msg(),
+                                                       vlambda_v, idata),
+               std::domain_error);
 
-  EXPECT_NO_THROW(
-      stan::math::reduce_sum<count_lpdf<var>>(data, 1, get_new_msg(), vlambda_v, idata));
+  EXPECT_NO_THROW(stan::math::reduce_sum<count_lpdf<var>>(
+      data, 1, get_new_msg(), vlambda_v, idata));
 
-  EXPECT_NO_THROW(stan::math::reduce_sum<count_lpdf<var>>(data, 2 * elems, get_new_msg(),
-                                                          vlambda_v, idata));
+  EXPECT_NO_THROW(stan::math::reduce_sum<count_lpdf<var>>(
+      data, 2 * elems, get_new_msg(), vlambda_v, idata));
 
   stan::math::recover_memory();
 }
@@ -155,7 +155,6 @@ TEST(StanMathRev_reduce_sum, nesting_gradient) {
 
   stan::math::recover_memory();
 }
-
 
 TEST(StanMathRev_reduce_sum, grouped_gradient) {
   using stan::math::test::get_new_msg;
