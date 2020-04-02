@@ -53,7 +53,7 @@ struct reduce_sum_impl {
    *
    * grainsize must be greater than or equal to 1
    *
-   * @param vmapped Sliced arguments used only in some sum terms
+   * @param vmapped Vector containing one element per term of sum
    * @param auto_partitioning Work partitioning style (ignored)
    * @param grainsize Suggested grainsize for tbb
    * @param[in, out] msgs The print stream for warning messages
@@ -63,9 +63,9 @@ struct reduce_sum_impl {
   return_type_t<Vec, Args...> operator()(Vec&& vmapped, bool auto_partitioning,
                                          int grainsize, std::ostream* msgs,
                                          Args&&... args) const {
-    const std::size_t num_jobs = vmapped.size();
+    const std::size_t num_terms = vmapped.size();
 
-    if (num_jobs == 0) {
+    if (num_terms == 0) {
       return 0.0;
     }
 
@@ -81,7 +81,7 @@ struct reduce_sum_impl {
 
         std::decay_t<Vec> sub_slice;
         sub_slice.reserve(end - start + 1);
-        for (int i = start; i <= end; ++i) {
+        for (size_t i = start; i <= end; ++i) {
           sub_slice.emplace_back(vmapped[i]);
         }
 
@@ -106,8 +106,11 @@ template <typename ReduceFunction, typename ReturnType, typename Vec,
 struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
                        ReturnType, Vec, Args...> {
   /**
-   * Internal object meeting the Imperative form requirements of
-   * `tbb::parallel_reduce`
+   * This struct is used by the TBB to accumulate partial
+   *  sums over consecutive ranges of the input. To distribute the workload,
+   *  the TBB can split larger partial sums into smaller ones in which
+   *  case the splitting copy constructor is used. It is designed to
+   *  meet the Imperative form requirements of `tbb::parallel_reduce`. 
    *
    * @note see link [here](https://tinyurl.com/vp7xw2t) for requirements.
    */
@@ -122,9 +125,11 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
           msgs_(msgs),
           args_tuple_(std::forward<Args>(args)...) {}
 
-    /*
+    /**
      * This is the copy operator as required for tbb::parallel_reduce
-     *   Imperative form. This requires sum_ be reset to zero.
+     *   Imperative form. This requires sum_ be reset to zero since
+     *   the newly created reducer is used to accumulate an independent
+     *   partial sum.
      */
     recursive_reducer(recursive_reducer& other, tbb::split)
         : vmapped_(other.vmapped_),
@@ -146,7 +151,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
 
       std::decay_t<Vec> sub_slice;
       sub_slice.reserve(r.size());
-      for (int i = r.begin(); i < r.end(); ++i) {
+      for (size_t i = r.begin(); i < r.end(); ++i) {
         sub_slice.emplace_back(vmapped_[i]);
       }
 
@@ -155,7 +160,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
             return ReduceFunction()(r.begin(), r.end() - 1, sub_slice, msgs_,
                                     args...);
           },
-          this->args_tuple_);
+          args_tuple_);
     }
 
     /**
@@ -163,7 +168,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
      *
      * @param rhs Another partial sum
      */
-    void join(const recursive_reducer& child) { this->sum_ += child.sum_; }
+    void join(const recursive_reducer& child) { sum_ += child.sum_; }
   };
 
   /**
@@ -173,7 +178,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
    * This specialization is parallelized using tbb and works only for
    *   arithmetic types.
    *
-   * An instance, f, of `ReduceFunction` should have the signature:
+   * ReduceFunction must define an operator() with the same signature as:
    *   double f(int start, int end, Vec&& vmapped_subset, std::ostream* msgs,
    * Args&&... args)
    *
@@ -191,14 +196,17 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
    * instances.
    *
    * If auto partitioning is true, break work into pieces automatically,
-   *  taking grainsize as a recommended work size (this process
-   *  is not deterministic). If false, break work deterministically
-   *  into pieces smaller than or equal to grainsize. The execution
-   *  order is non-deterministic.
+   *  taking grainsize as a recommended work size. The partitioning is
+   *  not deterministic nor is the order guaranteed in which partial
+   *  sums are accumulated. Due to floating point imprecisions this will likely
+   *  lead to slight differences in the accumulated results between
+   *  multiple runs. If false, break work deterministically into pieces smaller
+   *  than or equal to grainsize and accumulate all the partial sums
+   *  in the same order. This still may not achieve bitwise reproducibility.
    *
    * grainsize must be greater than or equal to 1
    *
-   * @param vmapped Sliced arguments used only in some sum terms
+   * @param vmapped Vector containing one element per term of sum
    * @param auto_partitioning Work partitioning style
    * @param grainsize Suggested grainsize for tbb
    * @param[in, out] msgs The print stream for warning messages
@@ -207,8 +215,8 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
    */
   ReturnType operator()(Vec&& vmapped, bool auto_partitioning, int grainsize,
                         std::ostream* msgs, Args&&... args) const {
-    const std::size_t num_jobs = vmapped.size();
-    if (num_jobs == 0) {
+    const std::size_t num_terms = vmapped.size();
+    if (num_terms == 0) {
       return 0.0;
     }
     recursive_reducer worker(std::forward<Vec>(vmapped), msgs,
@@ -216,11 +224,11 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
 
     if (auto_partitioning) {
       tbb::parallel_reduce(
-          tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker);
+          tbb::blocked_range<std::size_t>(0, num_terms, grainsize), worker);
     } else {
       tbb::simple_partitioner partitioner;
       tbb::parallel_deterministic_reduce(
-          tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker,
+          tbb::blocked_range<std::size_t>(0, num_terms, grainsize), worker,
           partitioner);
     }
 
@@ -236,7 +244,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
  *
  * This defers to reduce_sum_impl for the appropriate implementation
  *
- * An instance, f, of `ReduceFunction` should have the signature:
+ * ReduceFunction must define an operator() with the same signature as:
  *   T f(int start, int end, Vec&& vmapped_subset, std::ostream* msgs, Args&&...
  * args)
  *
@@ -248,7 +256,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
  * @tparam ReturnType An arithmetic type
  * @tparam Vec Type of sliced argument
  * @tparam Args Types of shared arguments
- * @param vmapped Sliced arguments used only in some sum terms
+ * @param vmapped Vector containing one element per term of sum
  * @param grainsize Suggested grainsize for tbb
  * @param[in, out] msgs The print stream for warning messages
  * @param args Shared arguments used in every sum term
@@ -262,10 +270,21 @@ auto reduce_sum(Vec&& vmapped, int grainsize, std::ostream* msgs,
 
   check_positive("reduce_sum", "grainsize", grainsize);
 
+#ifdef STAN_THREADS
   return internal::reduce_sum_impl<ReduceFunction, void, return_type, Vec,
                                    Args...>()(std::forward<Vec>(vmapped), true,
                                               grainsize, msgs,
                                               std::forward<Args>(args)...);
+#else
+  const std::size_t num_terms = vmapped.size();
+
+  if (num_terms == 0) {
+    return return_type(0.0);
+  }
+
+  return ReduceFunction()(0, vmapped.size() - 1, std::forward<Vec>(vmapped),
+			  msgs, std::forward<Args>(args)...);
+#endif
 }
 
 }  // namespace math

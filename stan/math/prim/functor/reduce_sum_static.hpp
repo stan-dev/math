@@ -20,7 +20,7 @@ namespace math {
  *
  * This defers to reduce_sum_impl for the appropriate implementation
  *
- * An instance, f, of `ReduceFunction` should have the signature:
+ * ReduceFunction must define an operator() with the same signature as:
  *   T f(int start, int end, Vec&& vmapped_subset, std::ostream* msgs, Args&&...
  * args)
  *
@@ -46,10 +46,21 @@ auto reduce_sum_static(Vec&& vmapped, int grainsize, std::ostream* msgs,
 
   check_positive("reduce_sum", "grainsize", grainsize);
 
+#ifdef STAN_THREADS
   return internal::reduce_sum_impl<ReduceFunction, void, return_type, Vec,
                                    Args...>()(std::forward<Vec>(vmapped), false,
                                               grainsize, msgs,
                                               std::forward<Args>(args)...);
+#else
+    const std::size_t num_terms = vmapped.size();
+
+    if (num_terms == 0) {
+      return return_type(0.0);
+    }
+
+    return ReduceFunction()(0, vmapped.size() - 1, std::forward<Vec>(vmapped),
+			    msgs, std::forward<Args>(args)...);
+#endif
 }
 
 }  // namespace math

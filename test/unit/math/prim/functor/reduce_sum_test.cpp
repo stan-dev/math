@@ -5,7 +5,7 @@
 #include <vector>
 
 TEST(StanMathPrim_reduce_sum, value) {
-  stan::math::init_threadpool_tbb();
+  tbb::task_scheduler_init default_scheduler;
   using stan::math::test::count_lpdf;
   using stan::math::test::get_new_msg;
   double lambda_d = 10.0;
@@ -32,7 +32,7 @@ TEST(StanMathPrim_reduce_sum, value) {
 }
 
 TEST(StanMathPrim_reduce_sum, grainsize) {
-  stan::math::init_threadpool_tbb();
+  tbb::task_scheduler_init default_scheduler;
   using stan::math::test::get_new_msg;
   using stan::math::test::sum_lpdf;
 
@@ -62,7 +62,7 @@ TEST(StanMathPrim_reduce_sum, grainsize) {
 }
 
 TEST(StanMathPrim_reduce_sum, start_end_slice) {
-  stan::math::init_threadpool_tbb();
+  tbb::task_scheduler_init default_scheduler;
   using stan::math::test::get_new_msg;
   using stan::math::test::start_end_lpdf;
 

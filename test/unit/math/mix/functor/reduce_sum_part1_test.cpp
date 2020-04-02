@@ -57,6 +57,16 @@ TEST(MathMix_reduce_sum, grainsize) {
   stan::test::expect_ad(f4, data);
 }
 
+TEST(MathMix_reduce_sum, std_vector_zero_length) {
+  using stan::math::test::reduce_sum_static_sum_lpdf;
+  using stan::math::test::reduce_sum_sum_lpdf;
+
+  std::vector<double> data(0);
+
+  stan::test::expect_ad(reduce_sum_static_sum_lpdf, data);
+  stan::test::expect_ad(reduce_sum_sum_lpdf, data);
+}
+
 TEST(MathMix_reduce_sum, std_vector_double_slice) {
   using stan::math::test::reduce_sum_static_sum_lpdf;
   using stan::math::test::reduce_sum_sum_lpdf;

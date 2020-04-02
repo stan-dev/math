@@ -28,13 +28,16 @@ template <typename ReduceFunction, typename ReturnType, typename Vec,
 struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                        Vec, Args...> {
   /**
-   * Internal object meeting the Imperative form requirements of
-   * `tbb::parallel_reduce`
+   * This struct is used by the TBB to accumulate partial
+   *  sums over consecutive ranges of the input. To distribute the workload,
+   *  the TBB can split larger partial sums into smaller ones in which
+   *  case the splitting copy constructor is used. It is designed to
+   *  meet the Imperative form requirements of `tbb::parallel_reduce`. 
    *
    * @note see link [here](https://tinyurl.com/vp7xw2t) for requirements.
    */
   struct recursive_reducer {
-    size_t per_job_sliced_terms_;
+    size_t vars_per_term_;
     size_t num_shared_terms_;  // Number of terms shared across threads
     double* sliced_partials_;  // Points to adjoints of the partial calculations
     Vec vmapped_;
@@ -44,10 +47,10 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     Eigen::VectorXd args_adjoints_{0};
 
     template <typename VecT, typename... ArgsT>
-    recursive_reducer(size_t per_job_sliced_terms, size_t num_shared_terms,
+    recursive_reducer(size_t vars_per_term, size_t num_shared_terms,
                       double* sliced_partials, VecT&& vmapped,
                       std::ostream* msgs, ArgsT&&... args)
-        : per_job_sliced_terms_(per_job_sliced_terms),
+        : vars_per_term_(vars_per_term),
           num_shared_terms_(num_shared_terms),
           sliced_partials_(sliced_partials),
           vmapped_(std::forward<VecT>(vmapped)),
@@ -56,11 +59,12 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
     /*
      * This is the copy operator as required for tbb::parallel_reduce
-     *   Imperative form. This requires the reduced values (sum_ and
-     * arg_adjoints_) be reset to zero.
+     *   Imperative form. This requires sum_ and arg_adjoints_ be reset
+     *   to zero since the newly created reducer is used to accumulate
+     *   an independent partial sum.
      */
     recursive_reducer(recursive_reducer& other, tbb::split)
-        : per_job_sliced_terms_(other.per_job_sliced_terms_),
+        : vars_per_term_(other.vars_per_term_),
           num_shared_terms_(other.num_shared_terms_),
           sliced_partials_(other.sliced_partials_),
           vmapped_(other.vmapped_),
@@ -69,11 +73,14 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
     /**
      * Compute, using nested autodiff, the value and Jacobian of
-     * `ReduceFunction` called over the range defined by r and accumulate those
-     * in member variable sum_ (for the value) and args_adjoints_ (for the
-     * Jacobian). This function may be called multiple times per object
-     * instantiation (so the sum_ and args_adjoints_ must be accumulated, not
-     * just assigned).
+     *  `ReduceFunction` called over the range defined by r and accumulate those
+     *  in member variable sum_ (for the value) and args_adjoints_ (for the
+     *  Jacobian). The nested autodiff uses deep copies of the involved operands
+     *  ensuring that no side effects are implied to the adjoints of the input
+     *  operands which reside potentially on a autodiff tape stored in a
+     *  different thread other than the current thread of execution. This function
+     *  may be called multiple times per object instantiation (so the sum_ and
+     *  args_adjoints_ must be accumulated, notjust assigned).
      *
      * @param r Range over which to compute reduce_sum
      */
@@ -83,7 +90,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       }
 
       if (args_adjoints_.size() == 0) {
-        args_adjoints_ = Eigen::VectorXd::Zero(this->num_shared_terms_);
+        args_adjoints_ = Eigen::VectorXd::Zero(num_shared_terms_);
       }
 
       // Initialize nested autodiff stack
@@ -93,7 +100,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       //   back to main autodiff stack
       std::decay_t<Vec> local_sub_slice;
       local_sub_slice.reserve(r.size());
-      for (int i = r.begin(); i < r.end(); ++i) {
+      for (size_t i = r.begin(); i < r.end(); ++i) {
         local_sub_slice.emplace_back(deep_copy_vars(vmapped_[i]));
       }
 
@@ -104,13 +111,13 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
             return std::tuple<decltype(deep_copy_vars(args))...>(
                 deep_copy_vars(args)...);
           },
-          this->args_tuple_);
+          args_tuple_);
 
       // Perform calculation
       var sub_sum_v = apply(
           [&](auto&&... args) {
             return ReduceFunction()(r.begin(), r.end() - 1, local_sub_slice,
-                                    this->msgs_, args...);
+                                    msgs_, args...);
           },
           args_tuple_local_copy);
 
@@ -122,7 +129,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
       // Accumulate adjoints of sliced_arguments
       accumulate_adjoints(
-          this->sliced_partials_ + r.begin() * per_job_sliced_terms_,
+          sliced_partials_ + r.begin() * vars_per_term_,
           local_sub_slice);
 
       // Accumulate adjoints of shared_arguments
@@ -141,12 +148,12 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
      * @param rhs Another partial sum
      */
     void join(const recursive_reducer& rhs) {
-      this->sum_ += rhs.sum_;
-      if (this->args_adjoints_.size() != 0 && rhs.args_adjoints_.size() != 0) {
-        this->args_adjoints_ += rhs.args_adjoints_;
-      } else if (this->args_adjoints_.size() == 0
+      sum_ += rhs.sum_;
+      if (args_adjoints_.size() != 0 && rhs.args_adjoints_.size() != 0) {
+        args_adjoints_ += rhs.args_adjoints_;
+      } else if (args_adjoints_.size() == 0
                  && rhs.args_adjoints_.size() != 0) {
-        this->args_adjoints_ = rhs.args_adjoints_;
+        args_adjoints_ = rhs.args_adjoints_;
       }
     }
   };
@@ -158,7 +165,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    * This specialization is parallelized using tbb and works for reverse
    *   mode autodiff.
    *
-   * An instance, f, of `ReduceFunction` should have the signature:
+   * ReduceFunction must define an operator() with the same signature as:
    *   var f(int start, int end, Vec&& vmapped_subset, std::ostream* msgs,
    * Args&&... args)
    *
@@ -176,12 +183,15 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    * instances. Results are stored as precomputed varis in the autodiff tree.
    *
    * If auto partitioning is true, break work into pieces automatically,
-   *  taking grainsize as a recommended work size (this process
-   *  is not deterministic). If false, break work deterministically
-   *  into pieces smaller than or equal to grainsize. The execution
-   *  order is non-deterministic.
+   *  taking grainsize as a recommended work size. The partitioning is
+   *  not deterministic nor is the order guaranteed in which partial
+   *  sums are accumulated. Due to floating point imprecisions this will likely
+   *  lead to slight differences in the accumulated results between
+   *  multiple runs. If false, break work deterministically into pieces smaller
+   *  than or equal to grainsize and accumulate all the partial sums
+   *  in the same order. This still may not achieve bitwise reproducibility.
    *
-   * @param vmapped Sliced arguments used only in some sum terms
+   * @param vmapped Vector containing one element per term of sum
    * @param auto_partitioning Work partitioning style
    * @param grainsize Suggested grainsize for tbb
    * @param[in, out] msgs The print stream for warning messages
@@ -190,14 +200,14 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    */
   inline var operator()(Vec&& vmapped, bool auto_partitioning, int grainsize,
                         std::ostream* msgs, Args&&... args) const {
-    const std::size_t num_jobs = vmapped.size();
+    const std::size_t num_terms = vmapped.size();
 
-    if (num_jobs == 0) {
+    if (num_terms == 0) {
       return var(0.0);
     }
 
-    const std::size_t per_job_sliced_terms = count_vars(vmapped[0]);
-    const std::size_t num_sliced_terms = num_jobs * per_job_sliced_terms;
+    const std::size_t vars_per_term = count_vars(vmapped[0]);
+    const std::size_t num_sliced_terms = num_terms * vars_per_term;
     const std::size_t num_shared_terms = count_vars(args...);
 
     vari** varis = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
@@ -208,16 +218,16 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     for (size_t i = 0; i < num_sliced_terms; ++i) {
       partials[i] = 0.0;
     }
-    recursive_reducer worker(per_job_sliced_terms, num_shared_terms, partials,
+    recursive_reducer worker(vars_per_term, num_shared_terms, partials,
                              vmapped, msgs, args...);
 
     if (auto_partitioning) {
       tbb::parallel_reduce(
-          tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker);
+          tbb::blocked_range<std::size_t>(0, num_terms, grainsize), worker);
     } else {
       tbb::simple_partitioner partitioner;
       tbb::parallel_deterministic_reduce(
-          tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker,
+          tbb::blocked_range<std::size_t>(0, num_terms, grainsize), worker,
           partitioner);
     }
 

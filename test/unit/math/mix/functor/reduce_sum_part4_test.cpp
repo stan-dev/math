@@ -102,7 +102,7 @@ TEST(MathMix_reduce_sum, eigen_three_args_with_doubles3) {
 }
 
 TEST(MathMix_reduce_sum, static_check) {
-  stan::math::init_threadpool_tbb();
+  tbb::task_scheduler_init default_scheduler;
   using stan::math::test::get_new_msg;
   using stan::math::test::static_check_lpdf;
 
