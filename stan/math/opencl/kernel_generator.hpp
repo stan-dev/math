@@ -123,6 +123,7 @@
 #include <stan/math/opencl/kernel_generator/colwise_reduction.hpp>
 #include <stan/math/opencl/kernel_generator/transpose.hpp>
 #include <stan/math/opencl/kernel_generator/broadcast.hpp>
+#include <stan/math/opencl/kernel_generator/optional_broadcast.hpp>
 
 #include <stan/math/opencl/kernel_generator/multi_result_kernel.hpp>
 #include <stan/math/opencl/kernel_generator/get_kernel_source_for_evaluating_into.hpp>
