@@ -36,9 +36,9 @@ TEST(probdistributionsWishartRng, symmetry) {
 }
 
 TEST(ProbDistributionsWishart, marginalTwoChiSquareGoodnessFitTest) {
+  using Eigen::MatrixXd;
   using boost::math::chi_squared;
   using boost::math::digamma;
-  using Eigen::MatrixXd;
   using stan::math::determinant;
   using stan::math::wishart_rng;
   using std::log;
