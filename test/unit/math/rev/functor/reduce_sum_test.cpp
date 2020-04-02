@@ -6,6 +6,20 @@
 #include <tuple>
 #include <vector>
 
+TEST(StanMathPrim_reduce_sum, no_args) {
+  tbb::task_scheduler_init default_scheduler;
+  using stan::math::test::get_new_msg;
+  using stan::math::test::sum_lpdf;
+
+  std::vector<var> data(0);
+  EXPECT_EQ(0.0, stan::math::reduce_sum_static<sum_lpdf>(
+							 data, 1, stan::math::test::get_new_msg()).val())
+      << "Failed for reduce_sum_static";
+  EXPECT_EQ(0.0,
+            stan::math::reduce_sum<sum_lpdf>(data, 1, stan::math::test::get_new_msg()).val())
+      << "Failed for reduce_sum";
+}
+
 TEST(StanMathRev_reduce_sum, value) {
   using stan::math::test::count_lpdf;
   using stan::math::test::get_new_msg;
