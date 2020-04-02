@@ -130,5 +130,7 @@
 
 #include <stan/math/opencl/kernel_generator/matrix_cl_conversion.hpp>
 
+#include <stan/math/opencl/kernel_generator/matrix_vector_multiply.hpp>
+
 #endif
 #endif

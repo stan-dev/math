@@ -51,7 +51,7 @@ class broadcast_
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline auto deep_copy() {
+  inline auto deep_copy() const {
     auto&& arg_copy = this->template get_arg<0>().deep_copy();
     return broadcast_<std::remove_reference_t<decltype(arg_copy)>, Colwise,
                       Rowwise>{std::move(arg_copy)};

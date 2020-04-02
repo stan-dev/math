@@ -4,7 +4,6 @@
 
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/err.hpp>
-#include <stan/math/opencl/multiply.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
@@ -240,23 +239,6 @@ template <typename T_a, typename T_b,
 inline elewise_multiplication_<as_operation_cl_t<T_a>, scalar_<T_b>> operator*(
     T_a&& a, const T_b b) {  // NOLINT
   return {as_operation_cl(std::forward<T_a>(a)), as_operation_cl(b)};
-}
-
-/**
- * Matrix multiplication of two kernel generator expressions. Evaluates both
- * expressions before calculating the matrix product.
- * @tparam T_a type of first expression
- * @tparam T_b type of second expression
- * @param a first expression
- * @param b second expression
- * @return Matrix product of given arguments
- */
-template <typename T_a, typename T_b,
-          typename = require_all_valid_expressions_and_none_scalar_t<T_a, T_b>>
-inline matrix_cl<double> operator*(const T_a& a, const T_b& b) {
-  // no need for perfect forwarding as operations are evaluated
-  return stan::math::opencl::multiply(as_operation_cl(a).eval(),
-                                      as_operation_cl(b).eval());
 }
 
 #undef COMMA
