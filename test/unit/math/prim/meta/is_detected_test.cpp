@@ -20,9 +20,9 @@ struct Purr {
 
 TEST(MetaTraits, is_detected_checks) {
   using stan::is_detected;
-  using stan::test::internal::copy_assign_t;
   using stan::test::internal::Meow;
   using stan::test::internal::Purr;
+  using stan::test::internal::copy_assign_t;
   EXPECT_TRUE((is_detected<double, copy_assign_t>::value));
   EXPECT_TRUE((is_detected<int, copy_assign_t>::value));
   EXPECT_TRUE((is_detected<size_t, copy_assign_t>::value));

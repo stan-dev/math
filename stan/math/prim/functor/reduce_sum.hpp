@@ -110,7 +110,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
    *  sums over consecutive ranges of the input. To distribute the workload,
    *  the TBB can split larger partial sums into smaller ones in which
    *  case the splitting copy constructor is used. It is designed to
-   *  meet the Imperative form requirements of `tbb::parallel_reduce`. 
+   *  meet the Imperative form requirements of `tbb::parallel_reduce`.
    *
    * @note see link [here](https://tinyurl.com/vp7xw2t) for requirements.
    */
@@ -283,7 +283,7 @@ auto reduce_sum(Vec&& vmapped, int grainsize, std::ostream* msgs,
   }
 
   return ReduceFunction()(0, vmapped.size() - 1, std::forward<Vec>(vmapped),
-			  msgs, std::forward<Args>(args)...);
+                          msgs, std::forward<Args>(args)...);
 #endif
 }
 

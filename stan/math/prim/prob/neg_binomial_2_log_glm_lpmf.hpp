@@ -63,9 +63,9 @@ neg_binomial_2_log_glm_lpmf(
     const T_alpha& alpha, const T_beta& beta, const T_precision& phi) {
   using Eigen::Array;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using Eigen::exp;
   using Eigen::log1p;
-  using Eigen::Matrix;
   using T_partials_return
       = partials_return_t<T_y, T_x_scalar, T_alpha, T_beta, T_precision>;
   using T_precision_val = typename std::conditional_t<

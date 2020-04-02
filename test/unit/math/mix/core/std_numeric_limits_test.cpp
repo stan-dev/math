@@ -3,8 +3,8 @@
 #include <limits>
 
 TEST(AgradMixNumericLimits, All_Fvar) {
-  using stan::math::fvar;
   using stan::math::INFTY;
+  using stan::math::fvar;
   using stan::math::var;
   using std::isnan;
 

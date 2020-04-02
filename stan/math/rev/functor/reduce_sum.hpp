@@ -32,7 +32,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    *  sums over consecutive ranges of the input. To distribute the workload,
    *  the TBB can split larger partial sums into smaller ones in which
    *  case the splitting copy constructor is used. It is designed to
-   *  meet the Imperative form requirements of `tbb::parallel_reduce`. 
+   *  meet the Imperative form requirements of `tbb::parallel_reduce`.
    *
    * @note see link [here](https://tinyurl.com/vp7xw2t) for requirements.
    */
@@ -78,9 +78,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
      *  Jacobian). The nested autodiff uses deep copies of the involved operands
      *  ensuring that no side effects are implied to the adjoints of the input
      *  operands which reside potentially on a autodiff tape stored in a
-     *  different thread other than the current thread of execution. This function
-     *  may be called multiple times per object instantiation (so the sum_ and
-     *  args_adjoints_ must be accumulated, notjust assigned).
+     *  different thread other than the current thread of execution. This
+     * function may be called multiple times per object instantiation (so the
+     * sum_ and args_adjoints_ must be accumulated, notjust assigned).
      *
      * @param r Range over which to compute reduce_sum
      */
@@ -128,9 +128,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       sum_ += sub_sum_v.val();
 
       // Accumulate adjoints of sliced_arguments
-      accumulate_adjoints(
-          sliced_partials_ + r.begin() * vars_per_term_,
-          local_sub_slice);
+      accumulate_adjoints(sliced_partials_ + r.begin() * vars_per_term_,
+                          local_sub_slice);
 
       // Accumulate adjoints of shared_arguments
       apply(
@@ -151,8 +150,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       sum_ += rhs.sum_;
       if (args_adjoints_.size() != 0 && rhs.args_adjoints_.size() != 0) {
         args_adjoints_ += rhs.args_adjoints_;
-      } else if (args_adjoints_.size() == 0
-                 && rhs.args_adjoints_.size() != 0) {
+      } else if (args_adjoints_.size() == 0 && rhs.args_adjoints_.size() != 0) {
         args_adjoints_ = rhs.args_adjoints_;
       }
     }
@@ -218,8 +216,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     for (size_t i = 0; i < num_sliced_terms; ++i) {
       partials[i] = 0.0;
     }
-    recursive_reducer worker(vars_per_term, num_shared_terms, partials,
-                             vmapped, msgs, args...);
+    recursive_reducer worker(vars_per_term, num_shared_terms, partials, vmapped,
+                             msgs, args...);
 
     if (auto_partitioning) {
       tbb::parallel_reduce(
