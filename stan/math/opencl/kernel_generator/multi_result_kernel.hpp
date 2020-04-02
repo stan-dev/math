@@ -2,6 +2,7 @@
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_MULTI_RESULT_KERNEL_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/kernel_generator/wrapper.hpp>
 #include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
@@ -9,6 +10,7 @@
 #include <stan/math/opencl/kernel_generator/calc_if.hpp>
 #include <stan/math/opencl/kernel_generator/load.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
+#include <algorithm>
 #include <string>
 #include <tuple>
 #include <utility>
@@ -75,8 +77,11 @@ struct multi_result_kernel_internal {
                        "first expression", n_cols);
       if (!is_without_output<T_current_expression>::value) {
         result.check_assign_dimensions(expression.rows(), expression.cols());
-        result.set_view(expression.bottom_diagonal(), expression.top_diagonal(),
-                        1 - expression.rows(), expression.cols() - 1);
+        int bottom_written = 1 - expression.rows();
+        int top_written = expression.cols() - 1;
+        result.set_view(std::max(expression.bottom_diagonal(), bottom_written),
+                        std::min(expression.top_diagonal(), top_written),
+                        bottom_written, top_written);
       }
     }
 
@@ -410,8 +415,8 @@ class results_cl {
     if (n_rows * n_cols == 0) {
       return;
     }
-    check_positive(function, "number of rows", n_rows);
-    check_positive(function, "number of columns", n_cols);
+    check_nonnegative(function, "expr.rows()", n_rows);
+    check_nonnegative(function, "expr.cols()", n_cols);
 
     try {
       if (impl::kernel_() == NULL) {
