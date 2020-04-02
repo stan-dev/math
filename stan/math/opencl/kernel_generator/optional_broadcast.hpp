@@ -1,5 +1,6 @@
 #ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_OPTIONALBROADCAST_HPP
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_OPTIONALBROADCAST_HPP
+#ifdef STAN_OPENCL
 
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/prim/meta.hpp>
@@ -237,4 +238,5 @@ inline auto colwise_optional_broadcast(T&& a) {
 }  // namespace math
 }  // namespace stan
 
+#endif
 #endif
