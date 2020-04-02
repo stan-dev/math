@@ -1,11 +1,13 @@
 #ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_MATRIX_VECTOR_MULTIPLY_HPP
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_MATRIX_VECTOR_MULTIPLY_HPP
+#ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
 #include <stan/math/opencl/kernel_generator/binary_operation.hpp>
 #include <stan/math/opencl/kernel_generator/transpose.hpp>
 #include <stan/math/opencl/kernel_generator/rowwise_reduction.hpp>
 #include <stan/math/opencl/kernel_generator/broadcast.hpp>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -21,4 +23,5 @@ inline auto matrix_vector_multiply(T_matrix&& matrix, T_vector&& vector) {
 }  // namespace math
 }  // namespace stan
 
+#endif
 #endif
