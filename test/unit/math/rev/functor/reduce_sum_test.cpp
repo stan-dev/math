@@ -13,10 +13,12 @@ TEST(StanMathPrim_reduce_sum, no_args) {
 
   std::vector<var> data(0);
   EXPECT_EQ(0.0, stan::math::reduce_sum_static<sum_lpdf>(
-							 data, 1, stan::math::test::get_new_msg()).val())
+                     data, 1, stan::math::test::get_new_msg())
+                     .val())
       << "Failed for reduce_sum_static";
-  EXPECT_EQ(0.0,
-            stan::math::reduce_sum<sum_lpdf>(data, 1, stan::math::test::get_new_msg()).val())
+  EXPECT_EQ(0.0, stan::math::reduce_sum<sum_lpdf>(
+                     data, 1, stan::math::test::get_new_msg())
+                     .val())
       << "Failed for reduce_sum";
 }
 
