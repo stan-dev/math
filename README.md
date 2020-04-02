@@ -15,7 +15,7 @@ license](https://github.com/stan-dev/math/blob/develop/LICENSE%2Emd).
 
 The Stan Math Library depends on the Intel TBB library which is
 licensed under the Apache 2.0 license. This dependency implies an
-additional restriction as compared to the new BSD lincense alone. The
+additional restriction as compared to the new BSD license alone. The
 Apache 2.0 license is incompatible with GPL-2 licensed code if
 distributed as a unitary binary. You may refer to the Apache 2.0
 evaluation page on the [Stan Math
