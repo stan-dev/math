@@ -59,7 +59,7 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
     return temp;
   }
   if (B.cols() == 1) {
-    temp = matrix_vector_multiply(A,B);
+    temp = matrix_vector_multiply(A, B);
     return temp;
   }
   int local = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
