@@ -5,7 +5,8 @@
 #include <limits>
 #include <vector>
 
-// Reduce sum tests are broken up into four files to avoid windows compiler error
+// Reduce sum tests are broken up into four files to avoid windows compiler
+// error
 
 TEST(MathMix_reduce_sum, eigen_three_args1) {
   using stan::math::test::reduce_sum_int_sum_lpdf;

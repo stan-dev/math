@@ -5,7 +5,8 @@
 #include <limits>
 #include <vector>
 
-// Reduce sum tests are broken up into four files to avoid windows compiler error
+// Reduce sum tests are broken up into four files to avoid windows compiler
+// error
 
 TEST(MathMix_reduce_sum, grainsize_static) {
   using stan::math::test::get_new_msg;
