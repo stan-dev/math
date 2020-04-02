@@ -175,7 +175,7 @@
 
 #include <assert.h>
 #define SWIG_exception_impl(DECL, CODE, MSG, RETURNNULL) \
- { printf("In " DECL ": " MSG); assert(0); RETURNNULL; }
+ {STAN_SUNDIALS_PRINTF("In " DECL ": " MSG); assert(0); RETURNNULL; }
 
 
 enum {
