@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/kernel_generator/wrapper.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
@@ -117,7 +118,11 @@ class operation_cl : public operation_cl_base {
    * @return Result of the expression.
    */
   matrix_cl<Scalar> eval() const {
-    matrix_cl<Scalar> res(derived().rows(), derived().cols(), derived().view());
+    int rows = derived().rows();
+    int cols = derived().cols();
+    check_nonnegative("operation_cl.eval", "this->rows()", rows);
+    check_nonnegative("operation_cl.eval", "this->cols()", cols);
+    matrix_cl<Scalar> res(rows, cols, derived().view());
     if (res.size() > 0) {
       this->evaluate_into(res);
     }
