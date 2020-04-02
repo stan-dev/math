@@ -1,0 +1,50 @@
+
+idasFoodWeb_kry_p: Predator-prey DAE parallel example problem for IDA 
+
+Number of species ns: 2     Mesh dimensions: 20 x 20     Total system size: 800
+Subgrid dimensions: 10 x 10     Processor array: 2 x 2
+Tolerance parameters:  rtol = 1e-05   atol = 1e-05
+Linear solver: SUNLinSol_SPGMR     Max. Krylov dimension maxl: 16
+Preconditioner: block diagonal, block size ns, via difference quotients
+CalcIC called to correct initial predator concentrations 
+
+-----------------------------------------------------------
+  t        bottom-left  top-right    | nst  k      h
+-----------------------------------------------------------
+
+0.00e+00   1.0000e+01   1.0000e+01   |   0  0   1.6310e-08
+           1.0000e+05   1.0000e+05   |
+
+1.00e-03   1.0318e+01   1.0827e+01   |  33  4   9.7404e-05
+           1.0319e+05   1.0822e+05   |
+
+1.00e-02   1.6189e+02   1.9735e+02   |  86  4   1.7533e-04
+           1.6189e+06   1.9735e+06   |
+
+1.00e-01   2.4019e+02   2.7072e+02   | 163  1   2.2442e-02
+           2.4019e+06   2.7072e+06   |
+
+4.00e-01   2.4019e+02   2.7072e+02   | 166  1   1.7954e-01
+           2.4019e+06   2.7072e+06   |
+
+7.00e-01   2.4019e+02   2.7072e+02   | 167  1   3.5907e-01
+           2.4019e+06   2.7072e+06   |
+
+1.00e+00   2.4019e+02   2.7072e+02   | 168  1   7.1814e-01
+           2.4019e+06   2.7072e+06   |
+
+-----------------------------------------------------------
+
+Final statistics: 
+
+Number of steps                    = 168
+Number of residual evaluations     = 1217
+Number of nonlinear iterations     = 202
+Number of error test failures      = 0
+Number of nonlinear conv. failures = 0
+
+Number of linear iterations        = 1013
+Number of linear conv. failures    = 0
+
+Number of preconditioner setups    = 26
+Number of preconditioner solves    = 1217

@@ -1,0 +1,5 @@
+List of MPI+CUDA IDA examples
+
+  idaHeat2D_kry_p_mpicuda  : 2D heat equation with SPGMR, diagonal preconditioner and MPI+CUDA vector
+
+ 

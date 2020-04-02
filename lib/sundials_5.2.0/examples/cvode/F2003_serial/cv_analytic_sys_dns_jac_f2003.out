@@ -1,0 +1,32 @@
+    
+ Finished initialization, starting time steps
+    
+        t           y1           y2           y3       
+ ------------------------------------------------------
+   0.00000E+00  1.00000E+00  1.00000E+00  1.00000E+00
+   5.00000E-03  7.03275E-01  7.06270E-01  4.10045E-01
+   1.00000E-02  5.22668E-01  5.28650E-01  5.23171E-02
+   1.50000E-02  4.12493E-01  4.21452E-01 -1.64556E-01
+   2.00000E-02  3.45038E-01  3.56966E-01 -2.95998E-01
+   2.50000E-02  3.03496E-01  3.18384E-01 -3.75623E-01
+   3.00000E-02  2.77673E-01  2.95512E-01 -4.23820E-01
+   3.50000E-02  2.61385E-01  2.82166E-01 -4.52956E-01
+   4.00000E-02  2.50882E-01  2.74596E-01 -4.70529E-01
+   4.50000E-02  2.43891E-01  2.70529E-01 -4.81091E-01
+   5.00000E-02  2.39030E-01  2.68584E-01 -4.87399E-01
+  
+  General Solver Stats:
+    Total internal steps taken =       73
+    Total rhs function calls   =      106
+    Num lin solver setup calls =       21
+    Num error test failures    =        6
+    Last method order          =        5
+    Next method order          =        5
+    First internal step size   = 6.86623E-06
+    Last internal step size    = 1.52515E-03
+    Next internal step size    = 1.52515E-03
+    Current internal time      = 5.10347E-02
+    Num nonlinear solver iters =      102
+    Num nonlinear solver fails =        0
+    Num Jacobian evaluations   =        2
+  

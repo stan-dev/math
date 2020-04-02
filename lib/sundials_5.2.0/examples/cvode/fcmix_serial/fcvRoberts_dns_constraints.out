@@ -1,0 +1,32 @@
+Dense example problem:
+
+ Robertson kinetics, NEQ =  3
+
+
+At t =   0.2639E+00   y =   0.989965E+00  0.347056E-04  0.100000E-01
+     Above is a root, INFO() =   0  1
+At t =   0.4000E+00   y =   0.985165E+00  0.338627E-04  0.148011E-01
+At t =   0.4000E+01   y =   0.905528E+00  0.224062E-04  0.944493E-01
+At t =   0.4000E+02   y =   0.715866E+00  0.918722E-05  0.284125E+00
+At t =   0.4000E+03   y =   0.450547E+00  0.322302E-05  0.549450E+00
+At t =   0.4000E+04   y =   0.183226E+00  0.894390E-06  0.816773E+00
+At t =   0.4000E+05   y =   0.389863E-01  0.162191E-06  0.961014E+00
+At t =   0.4000E+06   y =   0.493403E-02  0.198330E-07  0.995066E+00
+At t =   0.4000E+07   y =   0.516524E-03  0.206719E-08  0.999483E+00
+At t =   0.1980E+08   y =   0.100000E-03  0.400071E-09  0.999900E+00
+     Above is a root, INFO() =  -1  0
+At t =   0.4000E+08   y =   0.477176E-04  0.190880E-09  0.999952E+00
+At t =   0.4000E+09   y =   0.360970E-05  0.144391E-10  0.999996E+00
+At t =   0.4000E+10   y =   0.889920E-06  0.355968E-11  0.999999E+00
+At t =   0.4000E+11   y =   0.635210E-07  0.254084E-12  0.100000E+01
+
+Final value of ydot =  -0.115031E-17 -0.460125E-23  0.272393E-17
+
+
+Final statistics:
+
+ No. steps =  399   No. f-s =  567   No. J-s =   12   No. LU-s =   98
+ No. nonlinear iterations =  564
+ No. nonlinear convergence failures =    2
+ No. error test failures =   15
+ No. root function evals =  429

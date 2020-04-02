@@ -1,0 +1,33 @@
+
+Predator-prey test problem--  KINSol (parallel-BBD version)
+
+Mesh dimensions = 20 X 20
+Number of species = 6
+Total system size = 2400
+
+Subgrid dimensions = 10 X 10
+Processor array is 2 X 2
+
+Flag globalstrategy = 0 (0 = None, 1 = Linesearch)
+Linear solver is SPGMR with maxl = 20, maxlrst = 2
+Preconditioning uses band-block-diagonal matrix from KINBBDPRE
+  Difference quotient half-bandwidths: mudq = 11, mldq = 11
+  Retained band block half-bandwidths: mukeep = 6, mlkeep = 6
+Tolerance parameters:  fnormtol = 1e-07   scsteptol = 1e-13
+
+Initial profile of concentration
+At all mesh points:  1 1 1   30000 30000 30000
+
+
+Computed equilibrium species concentrations:
+
+At bottom left:
+ 1.165 1.165 1.165 34949 34949 34949
+
+At top right:
+ 1.25552 1.25552 1.25552 37663.2 37663.2 37663.2
+
+Final Statistics.. 
+nni    =     9    nli   =   464
+nfe    =    10    nfeSG =   473
+nps    =   473    npe   =     1     ncfl  =     6

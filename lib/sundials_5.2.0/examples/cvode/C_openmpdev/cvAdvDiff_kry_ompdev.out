@@ -1,0 +1,29 @@
+
+2-D Advection-Diffusion Equation
+Mesh dimensions = 10 X 5
+Total system size = 50
+Tolerance parameters: reltol = 0   abstol = 1e-05
+
+At t = 0      max.norm(u) =  8.954716e+01 
+At t = 0.10   max.norm(u) =  4.132884e+00   nst =   82
+At t = 0.20   max.norm(u) =  1.039293e+00   nst =  102
+At t = 0.30   max.norm(u) =  2.979816e-01   nst =  112
+At t = 0.40   max.norm(u) =  8.765538e-02   nst =  119
+At t = 0.50   max.norm(u) =  2.625408e-02   nst =  125
+At t = 0.60   max.norm(u) =  7.826077e-03   nst =  129
+At t = 0.70   max.norm(u) =  2.326537e-03   nst =  133
+At t = 0.80   max.norm(u) =  6.891180e-04   nst =  137
+At t = 0.90   max.norm(u) =  2.039853e-04   nst =  140
+At t = 1.00   max.norm(u) =  5.925586e-05   nst =  143
+
+Final Statistics.. 
+
+lenrw   =   739     leniw   =    53
+lenrwLS =   654     leniwLS =    42
+nst     =   143
+nfe     =   206     nfeLS   =     0
+nni     =   203     nli     =   225
+nsetups =     0     netf    =     2
+npe     =     0     nps     =     0
+ncfn    =     0     ncfl    =     0
+

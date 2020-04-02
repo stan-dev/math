@@ -1,0 +1,61 @@
+
+ Brusselator PDE -  DAE parallel example problem for IDA 
+
+Number of species ns: 2     Mesh dimensions: 82 x 82
+Total system size: 13448
+Subgrid dimensions: 41 x 41     Processor array: 2 x 2
+Tolerance parameters:  rtol = 1e-05   atol = 1e-05
+Linear solver: SUNLinSol_SPGMR     Max. Krylov dimension maxl: 16
+Preconditioner: band-block-diagonal (IDABBDPRE), with parameters
+     mudq = 82,  mldq = 82,  mukeep = 2,  mlkeep = 2
+CalcIC called to correct initial concentrations 
+
+-----------------------------------------------------------
+  t        bottom-left  top-right    | nst  k      h
+-----------------------------------------------------------
+
+0.00e+00   5.0038e-01   1.4996e+00   |   0  0   1.0000e-06
+           1.0019e+00   5.9981e+00   |
+
+1.00e-03   4.9944e-01   1.5076e+00   |  11  1   5.1200e-04
+           1.0034e+00   5.9896e+00   |
+
+1.00e-02   4.9119e-01   1.5832e+00   |  17  2   2.0480e-03
+           1.0170e+00   5.9082e+00   |
+
+1.00e-01   4.2223e-01   3.0684e+00   |  31  4   7.4353e-03
+           1.1419e+00   4.3097e+00   |
+
+4.00e-01   3.0652e-01   5.4104e+00   |  72  5   7.4353e-03
+           1.4714e+00   6.1133e-01   |
+
+7.00e-01   2.7048e-01   4.1053e+00   | 112  5   7.4353e-03
+           1.7403e+00   7.8907e-01   |
+
+1.00e+00   2.6100e-01   3.1024e+00   | 152  5   7.4353e-03
+           1.9881e+00   1.0113e+00   |
+
+-----------------------------------------------------------
+
+Final statistics: 
+
+Number of steps                    = 152
+Number of residual evaluations     = 972
+Number of nonlinear iterations     = 164
+Number of error test failures      = 1
+Number of nonlinear conv. failures = 0
+
+Number of linear iterations        = 806
+Number of linear conv. failures    = 0
+
+Number of preconditioner setups    = 15
+Number of preconditioner solves    = 1304
+Number of local residual evals.    = 2490
+
+
+The average of u on the domain:
+g = 1.62453
+
+Sensitivities of g:
+w.r.t. eps0 =  16.1571227152
+w.r.t. eps1 =  -3.7188364999

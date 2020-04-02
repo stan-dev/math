@@ -1,0 +1,32 @@
+Superlu_mt example problem:
+
+ Robertson kinetics, NEQ =  3
+
+
+At t =   0.2640E+00   y =   0.989965E+00  0.347056E-04  0.100000E-01
+     Above is a root, INFO() =   0  1
+At t =   0.4000E+00   y =   0.985172E+00  0.338640E-04  0.147938E-01
+At t =   0.4000E+01   y =   0.905507E+00  0.224034E-04  0.944710E-01
+At t =   0.4000E+02   y =   0.715840E+00  0.918606E-05  0.284150E+00
+At t =   0.4000E+03   y =   0.450575E+00  0.322362E-05  0.549422E+00
+At t =   0.4000E+04   y =   0.183242E+00  0.894472E-06  0.816757E+00
+At t =   0.4000E+05   y =   0.389931E-01  0.162219E-06  0.961007E+00
+At t =   0.4000E+06   y =   0.493709E-02  0.198451E-07  0.995063E+00
+At t =   0.4000E+07   y =   0.516765E-03  0.206812E-08  0.999483E+00
+At t =   0.2078E+08   y =   0.100000E-03  0.400040E-09  0.999900E+00
+     Above is a root, INFO() =  -1  0
+At t =   0.4000E+08   y =   0.519865E-04  0.207957E-09  0.999948E+00
+At t =   0.4000E+09   y =   0.519161E-05  0.207666E-10  0.999995E+00
+At t =   0.4000E+10   y =   0.520292E-06  0.208117E-11  0.999999E+00
+At t =   0.4000E+11   y =   0.590048E-07  0.236019E-12  0.100000E+01
+
+Final value of ydot =  -0.166627E-17 -0.666508E-23  0.166628E-17
+
+
+Final statistics:
+
+ No. steps =  364   No. f-s = 2056   No. J-s =   18   No. LU-s =   98
+ No. nonlinear iterations = 2055
+ No. nonlinear convergence failures =    0
+ No. error test failures =   13
+ No. root function evals =  394
