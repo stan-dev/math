@@ -18,7 +18,7 @@ namespace math {
  * @return Same value (the sum of one value).
  */
 template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline T& sum(T& m) {
+inline T& sum(const T& m) {
   return m;
 }
 
