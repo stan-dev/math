@@ -18,8 +18,8 @@ namespace math {
  * @return Same value (the sum of one value).
  */
 template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline T& sum(const T& m) {
-  return m;
+inline decltype(auto) sum(T&& m) {
+  return std::forward<T>(m);
 }
 
 /**
