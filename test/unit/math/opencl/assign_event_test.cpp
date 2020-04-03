@@ -7,8 +7,8 @@
 using stan::math::matrix_cl;
 using stan::math::opencl_kernels::in_buffer;
 using stan::math::opencl_kernels::in_out_buffer;
-using stan::math::opencl_kernels::internal::assign_events;
 using stan::math::opencl_kernels::out_buffer;
+using stan::math::opencl_kernels::internal::assign_events;
 
 TEST(assign_event, correct_vectors) {
   matrix_cl<double> m;
