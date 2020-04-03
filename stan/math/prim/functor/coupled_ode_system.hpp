@@ -84,7 +84,7 @@ struct coupled_ode_system_impl<true, T_initial, T_t0, T_ts, F, Args...> {
    * @param[in, out] msgs stream for messages
    */
   coupled_ode_system_impl(const F& f, const std::vector<double>& y0,
-			  const Args&... args, std::ostream* msgs)
+			  std::ostream* msgs, const Args&... args)
       : f_(f),
         y0_(y0),
 	args_tuple_(args...),
@@ -95,7 +95,7 @@ struct coupled_ode_system_impl<true, T_initial, T_t0, T_ts, F, Args...> {
   void operator()(const std::vector<double>& y, std::vector<double>& dy_dt,
                   double t) const {
     dy_dt = apply([&](const Args&... args) {
-	return f_.template operator()<double, double, Args...>(t, y, args..., msgs_);
+	return f_(t, y, msgs_, args...);
       }, args_tuple_);
 
     check_size_match("coupled_ode_system", "y", y.size(), "dy_dt",
@@ -143,10 +143,11 @@ template <typename T_initial, typename T_t0, typename T_ts, typename F, typename
 struct coupled_ode_system :
     public coupled_ode_system_impl<std::is_arithmetic<return_type_t<T_initial, T_t0, T_ts, Args...>>::value,
 				   T_initial, T_t0, T_ts, F, Args...> {
+
   coupled_ode_system(const F& f, const std::vector<T_initial>& y0,
-		     const Args&... args, std::ostream* msgs)
+		     std::ostream* msgs, const Args&... args)
     : coupled_ode_system_impl<std::is_arithmetic<return_type_t<T_initial, T_t0, T_ts, Args...>>::value,
-			      T_initial, T_t0, T_ts, F, Args...>(f, y0, args..., msgs) {}
+			      T_initial, T_t0, T_ts, F, Args...>(f, y0, msgs, args...) {}
 };
 
 }  // namespace math

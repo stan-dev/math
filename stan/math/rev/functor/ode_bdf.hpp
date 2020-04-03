@@ -20,10 +20,10 @@ ode_bdf(const F& f, const std::vector<T_initial>& y0, const T_t0& t0,
 	const T_Args&... args) {  // NOLINT(runtime/int)
   stan::math::cvodes_integrator<CV_BDF, F, T_initial, T_t0, T_ts, T_Args...>
     integrator(f, y0, t0, ts,
-	       args...,
-	       msgs,
 	       relative_tolerance, absolute_tolerance,
-	       max_num_steps);
+	       max_num_steps,
+	       msgs,
+	       args...);
   return integrator.integrate();
 }
 

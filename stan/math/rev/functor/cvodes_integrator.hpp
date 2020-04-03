@@ -50,10 +50,10 @@ class cvodes_integrator {
 
 public:
   cvodes_integrator(const F& f, const std::vector<T_initial>& y0, const T_t0& t0,
-		    const std::vector<T_ts>& ts, const T_Args&... args,
-		    std::ostream* msgs, double relative_tolerance,
+		    const std::vector<T_ts>& ts, double relative_tolerance,
 		    double absolute_tolerance,
-		    long int max_num_steps)
+		    long int max_num_steps,
+		    std::ostream* msgs, const T_Args&... args)
     : f_(f),
       y0_(y0),
       t0_(t0),
@@ -66,7 +66,7 @@ public:
       max_num_steps_(max_num_steps),
       y0_vars_(internal::count_vars(y0_)),
       args_vars_(internal::count_vars(args...)),
-      coupled_ode_(f, y0, args..., msgs),
+      coupled_ode_(f, y0, msgs, args...),
       coupled_state_(coupled_ode_.initial_state()) {
     using initial_var = stan::is_var<T_initial>;
 
@@ -153,7 +153,7 @@ public:
   inline void rhs(double t, const double y[], double dy_dt[]) const {
     const std::vector<double> y_vec(y, y + N_);
     std::vector<double> dy_dt_vec = apply([&](auto&&... args) {
-	return f_.template operator()<double, double, decltype(value_of(args))...>(t, y_vec, value_of(args)..., msgs_);
+	return f_(t, y_vec, msgs_, value_of(args)...);
       }, args_tuple_);
     check_size_match("cvodes_ode_data", "dz_dt", dy_dt_vec.size(), "states",
                      N_);
@@ -175,7 +175,7 @@ public:
 	return std::make_tuple(value_of(args)...);
       }, args_tuple_);
     auto ode_jacobian = apply([&](auto&&... args) {
-	return coupled_ode_system<var, double, double, F, decltype(args)...>(f_, y_vec_var, args..., msgs_);
+	return coupled_ode_system<var, double, double, F, decltype(args)...>(f_, y_vec_var, msgs_, args...);
       }, double_args_tuple);
     std::vector<double>&& jacobian_y = std::vector<double>(ode_jacobian.size());
     ode_jacobian(ode_jacobian.initial_state(), jacobian_y, t);
@@ -255,7 +255,7 @@ public:
     if (is_var<T_t0>::value) {
       std::vector<double> y0_dbl = value_of(y0_);
       dy0_dt0 = apply([&](auto&&... args) {
-	  return f_.template operator()<double, double, decltype(value_of(args))...>(value_of(t0_), y0_dbl, value_of(args)..., msgs_);
+	  return f_(value_of(t0_), y0_dbl, msgs_, value_of(args)...);
 	}, args_tuple_);
       check_size_match("coupled_ode_observer", "dy_dt", dy0_dt0.size(), "states", N_);
     }

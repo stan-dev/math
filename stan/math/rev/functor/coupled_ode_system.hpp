@@ -87,7 +87,8 @@ struct coupled_ode_system_impl<false, T_initial, T_t0, T_ts, F, Args...> {
    * @param[in, out] msgs stream for messages
    */
   coupled_ode_system_impl(const F& f, const std::vector<T_initial>& y0,
-			  const Args&... args, std::ostream* msgs)
+			  std::ostream* msgs,
+			  const Args&... args)
       : f_(f),
         y0_(y0),
         args_tuple_(args...),
@@ -126,7 +127,7 @@ struct coupled_ode_system_impl<false, T_initial, T_t0, T_ts, F, Args...> {
 				  args_tuple_);
     
     vector<var> dy_dt_vars = apply(
-				   [&](auto&&... args) { return f_.template operator()<double, var, decltype(args)...>(t, y_vars, args..., msgs_); },
+				   [&](auto&&... args) { return f_(t, y_vars, msgs_, args...); },
 				   local_args_tuple);
 
     check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(), "states",
@@ -182,7 +183,7 @@ struct coupled_ode_system_impl<false, T_initial, T_t0, T_ts, F, Args...> {
 	  return f_(t, y_vars, args..., msgs_);
 	  }, local_args_tuple);*/
       dy_dt = apply([&](auto&&... args) {
-	  return f_.template operator()<double, double, decltype(value_of(args))...>(value_of(t), y_dbl, value_of(args)..., msgs_);
+	  return f_(value_of(t), y_dbl, msgs_, value_of(args)...);
 	}, args_tuple_);
       check_size_match("coupled_ode_observer", "dy_dt", dy_dt.size(), "states", N_);
     }
