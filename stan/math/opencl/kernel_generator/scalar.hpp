@@ -15,6 +15,10 @@
 namespace stan {
 namespace math {
 
+  /** \addtogroup opencl_kernel_generator
+   *  @{
+   */
+
 /**
  * Represents a scalar in kernel generator expressions.
  * @tparam T type of the scalar
@@ -101,7 +105,7 @@ class scalar_ : public operation_cl<scalar_<T>, T> {
    */
   inline int top_diagonal() const { return std::numeric_limits<int>::max(); }
 };
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 

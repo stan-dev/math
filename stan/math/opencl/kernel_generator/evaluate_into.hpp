@@ -14,6 +14,9 @@
 namespace stan {
 namespace math {
 
+  /** \addtogroup opencl_kernel_generator
+   *  @{
+   */
 template <typename Derived, typename Scalar, typename... Args>
 template <typename T_lhs>
 void operation_cl<Derived, Scalar, Args...>::evaluate_into(T_lhs& lhs) const {
@@ -22,7 +25,7 @@ void operation_cl<Derived, Scalar, Args...>::evaluate_into(T_lhs& lhs) const {
       "operation_cl::evaluate_into: left hand side is not a valid expression!");
   results(lhs) = expressions(derived());
 }
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 

@@ -17,6 +17,9 @@
 namespace stan {
 namespace math {
 
+  /** \addtogroup opencl_kernel_generator
+   *  @{
+   */
 /**
  * Represents an access to a \c matrix_cl in kernel generator expressions
  * @tparam T \c matrix_cl
@@ -229,7 +232,7 @@ class load_
     }
   }
 };
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 

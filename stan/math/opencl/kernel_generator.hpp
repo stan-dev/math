@@ -106,6 +106,7 @@
  * calling `deep_copy()` on them internally.
  */
 
+
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl_lhs.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
@@ -129,6 +130,7 @@
 #include <stan/math/opencl/kernel_generator/evaluate_into.hpp>
 
 #include <stan/math/opencl/kernel_generator/matrix_cl_conversion.hpp>
+
 
 #endif
 #endif
