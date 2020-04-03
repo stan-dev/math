@@ -1,12 +1,12 @@
 #include <stan/math.hpp>
-#include <test/unit/math/reduce_sum_util.hpp>
+#include <test/unit/math/prim/functor/reduce_sum_util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <sstream>
 #include <tuple>
 #include <vector>
 
-TEST(StanMathPrim_reduce_sum, no_args) {
+TEST(StanMathRev_reduce_sum, no_args) {
   tbb::task_scheduler_init default_scheduler;
   using stan::math::test::get_new_msg;
   using stan::math::test::sum_lpdf;

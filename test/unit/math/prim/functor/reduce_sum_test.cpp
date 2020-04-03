@@ -1,5 +1,5 @@
 #include <stan/math.hpp>
-#include <test/unit/math/reduce_sum_util.hpp>
+#include <test/unit/math/prim/functor/reduce_sum_util.hpp>
 #include <gtest/gtest.h>
 
 #include <vector>

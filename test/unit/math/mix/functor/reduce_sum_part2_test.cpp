@@ -1,6 +1,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <test/unit/math/test_ad.hpp>
-#include <test/unit/math/reduce_sum_util.hpp>
+#include <test/unit/math/mix/functor/reduce_sum_util.hpp>
 
 #include <limits>
 #include <vector>

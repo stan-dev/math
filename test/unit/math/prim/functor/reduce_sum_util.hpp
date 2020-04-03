@@ -1,8 +1,7 @@
-#ifndef TEST_UNIT_MATH_REDUCE_SUM_UTIL
-#define TEST_UNIT_MATH_REDUCE_SUM_UTIL
+#ifndef TEST_UNIT_MATH_PRIM_FUNCTOR_REDUCE_SUM_UTIL
+#define TEST_UNIT_MATH_PRIM_FUNCTOR_REDUCE_SUM_UTIL
 
 #include <stan/math.hpp>
-#include <test/unit/math/test_ad.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <sstream>
@@ -169,18 +168,6 @@ auto reduce_sum_int_sum_lpdf = [](auto&&... args) {
 auto reduce_sum_sum_lpdf = [](auto&& data, auto&&... args) {
   return stan::math::reduce_sum<sum_lpdf>(data, 1, get_new_msg(), args...);
 };
-
-template <typename T1, typename T2>
-void expect_ad_reduce_sum_lpdf(T1&& data, T2&& arg) {
-  using stan::math::test::reduce_sum_int_sum_lpdf;
-  using stan::math::test::reduce_sum_static_int_sum_lpdf;
-  using stan::math::test::reduce_sum_static_sum_lpdf;
-  using stan::math::test::reduce_sum_sum_lpdf;
-  stan::test::expect_ad(reduce_sum_static_int_sum_lpdf, arg);
-  stan::test::expect_ad(reduce_sum_static_sum_lpdf, data, arg);
-  stan::test::expect_ad(reduce_sum_int_sum_lpdf, arg);
-  stan::test::expect_ad(reduce_sum_sum_lpdf, data, arg);
-}
 
 template <int grainsize>
 struct static_check_lpdf {
