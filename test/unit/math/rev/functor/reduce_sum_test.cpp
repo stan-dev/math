@@ -10,7 +10,7 @@ TEST(StanMathRev_reduce_sum, no_args) {
   tbb::task_scheduler_init default_scheduler;
   using stan::math::test::get_new_msg;
   using stan::math::test::sum_lpdf;
-
+  using stan::math::var;
   std::vector<var> data(0);
   EXPECT_EQ(0.0, stan::math::reduce_sum_static<sum_lpdf>(
                      data, 1, stan::math::test::get_new_msg())
@@ -55,6 +55,7 @@ TEST(StanMathRev_reduce_sum, value) {
 TEST(StanMathRev_reduce_sum, gradient) {
   using stan::math::test::count_lpdf;
   using stan::math::test::get_new_msg;
+  using stan::math::var;
   tbb::task_scheduler_init default_scheduler;
 
   double lambda_d = 10.0;
@@ -64,7 +65,6 @@ TEST(StanMathRev_reduce_sum, gradient) {
   for (std::size_t i = 0; i != elems; ++i)
     data[i] = i;
 
-  using stan::math::var;
 
   var lambda_v = lambda_d;
 
@@ -105,6 +105,7 @@ TEST(StanMathRev_reduce_sum, gradient) {
 TEST(StanMathRev_reduce_sum, grainsize) {
   using stan::math::test::count_lpdf;
   using stan::math::test::get_new_msg;
+  using stan::math::var;
   tbb::task_scheduler_init default_scheduler;
 
   double lambda_d = 10.0;
@@ -113,8 +114,6 @@ TEST(StanMathRev_reduce_sum, grainsize) {
 
   for (std::size_t i = 0; i != elems; ++i)
     data[i] = i;
-
-  using stan::math::var;
 
   var lambda_v = lambda_d;
 
@@ -155,6 +154,7 @@ TEST(StanMathRev_reduce_sum, grainsize) {
 TEST(StanMathRev_reduce_sum, nesting_gradient) {
   using stan::math::test::get_new_msg;
   using stan::math::test::nesting_count_lpdf;
+  using stan::math::var;
   tbb::task_scheduler_init default_scheduler;
 
   double lambda_d = 10.0;
@@ -163,8 +163,6 @@ TEST(StanMathRev_reduce_sum, nesting_gradient) {
 
   for (std::size_t i = 0; i != elems; ++i)
     data[i] = i;
-
-  using stan::math::var;
 
   var lambda_v = lambda_d;
 
@@ -207,6 +205,7 @@ TEST(StanMathRev_reduce_sum, nesting_gradient) {
 TEST(StanMathRev_reduce_sum, grouped_gradient) {
   using stan::math::test::get_new_msg;
   using stan::math::test::grouped_count_lpdf;
+  using stan::math::var;
   tbb::task_scheduler_init default_scheduler;
 
   double lambda_d = 10.0;
@@ -221,8 +220,6 @@ TEST(StanMathRev_reduce_sum, grouped_gradient) {
     data[i] = i;
     gidx[i] = i / elems_per_group;
   }
-
-  using stan::math::var;
 
   std::vector<var> vlambda_v;
 
@@ -270,6 +267,7 @@ TEST(StanMathRev_reduce_sum, grouped_gradient) {
 TEST(StanMathRev_reduce_sum, grouped_gradient_eigen) {
   using stan::math::test::get_new_msg;
   using stan::math::test::grouped_count_lpdf;
+  using stan::math::var;
   tbb::task_scheduler_init default_scheduler;
 
   double lambda_d = 10.0;
@@ -284,7 +282,6 @@ TEST(StanMathRev_reduce_sum, grouped_gradient_eigen) {
     data[i] = i;
     gidx[i] = i / elems_per_group;
   }
-  using stan::math::var;
 
   Eigen::Matrix<var, -1, 1> vlambda_v(groups);
 
@@ -334,6 +331,7 @@ TEST(StanMathRev_reduce_sum, grouped_gradient_eigen) {
 TEST(StanMathRev_reduce_sum, slice_group_gradient) {
   using stan::math::test::get_new_msg;
   using stan::math::test::slice_group_count_lpdf;
+  using stan::math::var;
   tbb::task_scheduler_init default_scheduler;
 
   double lambda_d = 10.0;
@@ -353,8 +351,6 @@ TEST(StanMathRev_reduce_sum, slice_group_gradient) {
     }
     gsidx[i + 1] = k;
   }
-
-  using stan::math::var;
 
   std::vector<var> vlambda_v;
 
