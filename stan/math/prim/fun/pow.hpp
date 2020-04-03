@@ -9,8 +9,6 @@
 namespace stan {
 namespace math {
 
-using std::pow;
-
 namespace internal {
 
 /**
