@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 
 #include <vector>
+#include <set>
 
 TEST(StanMathPrim_reduce_sum, value) {
   tbb::task_scheduler_init default_scheduler;

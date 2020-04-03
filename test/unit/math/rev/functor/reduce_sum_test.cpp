@@ -5,6 +5,7 @@
 #include <sstream>
 #include <tuple>
 #include <vector>
+#include <set>
 
 TEST(StanMathRev_reduce_sum, no_args) {
   tbb::task_scheduler_init default_scheduler;
