@@ -58,8 +58,22 @@ auto reduce_sum_static(Vec&& vmapped, int grainsize, std::ostream* msgs,
     return return_type(0);
   }
 
-  return ReduceFunction()(0, vmapped.size() - 1, std::forward<Vec>(vmapped),
-                          msgs, std::forward<Args>(args)...);
+  return_type_t<Vec, Args...> sum = 0.0;
+  for (size_t i = 0; i < (vmapped.size() + grainsize - 1) / grainsize;
+       ++i) {
+    size_t start = i * grainsize;
+    size_t end = std::min((i + 1) * grainsize, vmapped.size()) - 1;
+    
+    std::decay_t<Vec> sub_slice;
+    sub_slice.reserve(end - start + 1);
+    for (size_t i = start; i <= end; ++i) {
+      sub_slice.emplace_back(vmapped[i]);
+    }
+
+    sum += ReduceFunction()(start, end, std::forward<Vec>(sub_slice), msgs,
+			    std::forward<Args>(args)...);
+  }
+  return sum;
 #endif
 }
 
