@@ -13,9 +13,9 @@
 namespace stan {
 namespace math {
 
-  /** \addtogroup opencl_kernel_generator
-   *  @{
-   */
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 /**
  * Base for all kernel generator operations that can be used on left hand side
  * of an expression.

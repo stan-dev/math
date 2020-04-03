@@ -12,9 +12,9 @@
 namespace stan {
 namespace math {
 
-  /** \addtogroup opencl_kernel_generator
-   *  @{
-   */
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 template <typename Derived, typename Scalar, typename... Args>
 template <typename T_lhs>
 std::string

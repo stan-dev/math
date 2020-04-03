@@ -18,9 +18,9 @@
 namespace stan {
 namespace math {
 
-  /** \addtogroup opencl_kernel_generator
-   *  @{
-   */
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 
 /**
  * Represents a selection operation in kernel generator expressions. This is

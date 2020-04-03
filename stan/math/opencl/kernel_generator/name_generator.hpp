@@ -7,9 +7,9 @@
 namespace stan {
 namespace math {
 
-  /** \addtogroup opencl_kernel_generator
-   *  @{
-   */
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 /**
  * Unique name generator for variables used in generated kernels.
  */

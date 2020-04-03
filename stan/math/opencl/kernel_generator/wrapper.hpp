@@ -5,9 +5,9 @@
 namespace stan {
 namespace math {
 
-  /** \addtogroup opencl_kernel_generator
-   *  @{
-   */
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 namespace internal {
 
 /**
