@@ -8,10 +8,10 @@
 namespace stan {
 
 namespace math {
- /**
-  * Dummy class to instantiate matrix_cl to enable for specific types.
-  * @ingroup matrix_cl_group
-  */
+/**
+ * Dummy class to instantiate matrix_cl to enable for specific types.
+ * @ingroup matrix_cl_group
+ */
 template <typename T, typename = void>
 class matrix_cl {
  public:
