@@ -10,7 +10,6 @@ namespace stan {
 namespace math {
  /**
   * Dummy class to instantiate matrix_cl to enable for specific types.
-  * @internal
   * @ingroup matrix_cl_group
   */
 template <typename T, typename = void>
@@ -51,8 +50,8 @@ struct is_matrix_cl<
     T, std::enable_if_t<internal::is_matrix_cl_impl<std::decay_t<T>>::value>>
     : std::true_type {};
 
-STAN_ADD_REQUIRE_UNARY(matrix_cl, is_matrix_cl, opencl);
-STAN_ADD_REQUIRE_CONTAINER(matrix_cl, is_matrix_cl, opencl);
+STAN_ADD_REQUIRE_UNARY(matrix_cl, is_matrix_cl, matrix_cl_group);
+STAN_ADD_REQUIRE_CONTAINER(matrix_cl, is_matrix_cl, matrix_cl_group);
 
 }  // namespace stan
 #endif
