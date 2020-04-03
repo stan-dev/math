@@ -3,8 +3,8 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-using stan::partials_return_type;
 using stan::math::var;
+using stan::partials_return_type;
 
 TEST(MetaTraitsRevScal, PartialsReturnTypeVar) {
   test::expect_same_type<double, partials_return_type<var>::type>();
@@ -17,8 +17,8 @@ TEST(MetaTraitsRevScal, PartialsReturnTypeVarTenParams) {
 }
 
 TEST(MetaTraitsRevArr, partials_return_type) {
-  using stan::partials_return_type;
   using stan::math::var;
+  using stan::partials_return_type;
 
   partials_return_type<double, stan::math::var,
                        std::vector<stan::math::var> >::type g(5.0);
