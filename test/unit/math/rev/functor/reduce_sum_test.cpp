@@ -402,8 +402,8 @@ TEST(StanMathRev_reduce_sum, slice_group_gradient) {
 std::vector<int> threading_test_global;
 struct threading_test_lpdf {
   template <typename T1>
-  inline auto operator()(std::size_t start, std::size_t end, const std::vector<T1>&,
-			 std::ostream* msgs) const {
+  inline auto operator()(std::size_t start, std::size_t end,
+                         const std::vector<T1>&, std::ostream* msgs) const {
     threading_test_global[start] = tbb::this_task_arena::current_thread_index();
 
     return stan::return_type_t<T1>(0);
@@ -416,7 +416,8 @@ TEST(StanMathRev_reduce_sum, threading) {
   std::vector<stan::math::var> data(threading_test_global.size(), 0);
   stan::math::reduce_sum_static<threading_test_lpdf>(data, 1, nullptr);
 
-  auto uniques = std::set<int>(threading_test_global.begin(), threading_test_global.end());
+  auto uniques = std::set<int>(threading_test_global.begin(),
+                               threading_test_global.end());
 
   EXPECT_GT(uniques.size(), 1);
 
@@ -424,7 +425,8 @@ TEST(StanMathRev_reduce_sum, threading) {
 
   stan::math::reduce_sum<threading_test_lpdf>(data, 1, nullptr);
 
-  uniques = std::set<int>(threading_test_global.begin(), threading_test_global.end());
+  uniques = std::set<int>(threading_test_global.begin(),
+                          threading_test_global.end());
 
   EXPECT_GT(uniques.size(), 1);
 
