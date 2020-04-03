@@ -4,7 +4,7 @@
 
 /**
  * \defgroup opencl OpenCL
- * Stan's OpenCL backend allows for computation to executed in parallel
+ * Stan's OpenCL backend allows for computation to be executed in parallel
  *  on a GPU or in multithreaded CPUs. It is meant to easily conform with Eigen
  * such that you can create and read from a `matrix_cl` by doing
  *
@@ -15,11 +15,19 @@
  * matrix_cl<double> C = cholesky_decompose(A * B);
  * // Read back to eigen matrix.
  * Eigen::MatrixXd C_eig = from_matrix_cl(C);
+ *
+ * // Also for vectors and raw pointers of pointers
+ * std::vector<var> A_vec(10, 0);
+ * matrix_cl<var> B_var(A_vec, 10, 1);
+ *
+ * vari** A_vari= // fill
+ * matrix_cl<var> B_vari(A_vari, 10, 1);
+ *
  *```
  *
  * Execution is performed in async and Kernel operations are compounded and
- *compiled Just In Time. This allows for a low amount of overhead when passing
- *data to and from the device and executing computations.
+ * compiled Just In Time. This allows for a low amount of overhead when passing
+ * data to and from the device and executing computations.
  *
  * For more details see the paper on Arvix.
  * https://arxiv.org/pdf/1907.01063.pdf
