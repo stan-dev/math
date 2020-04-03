@@ -64,7 +64,7 @@ struct reduce_sum_impl {
                                          int grainsize, std::ostream* msgs,
                                          Args&&... args) const {
     const std::size_t num_terms = vmapped.size();
-    
+
     if (num_terms == 0) {
       return 0.0;
     }
