@@ -65,13 +65,14 @@ class unary_operation_cl
 template <typename T>
 class logical_negation_
     : public unary_operation_cl<logical_negation_<T>, T, bool> {
-  static_assert(std::is_integral<typename std::remove_reference_t<T>::Scalar>::value,
-                "logical_negation: argument must be expression with integral "
-                "or boolean return type!");
+  static_assert(
+      std::is_integral<typename std::remove_reference_t<T>::Scalar>::value,
+      "logical_negation: argument must be expression with integral "
+      "or boolean return type!");
   using base = unary_operation_cl<logical_negation_<T>, T, bool>;
   using base::arguments_;
 
-public:
+ public:
   /**
    * Constructor
    * @param a argument expression
@@ -92,9 +93,7 @@ public:
    * View of a matrix that would be the result of evaluating this expression.
    * @return view
    */
-  inline matrix_cl_view view() const {
-    return matrix_cl_view::Entire;
-  }
+  inline matrix_cl_view view() const { return matrix_cl_view::Entire; }
 };
 
 /**
@@ -118,11 +117,13 @@ inline logical_negation_<as_operation_cl_t<T>> operator!(T&& a) {
  */
 template <typename T>
 class unary_minus_
-    : public unary_operation_cl<unary_minus_<T>, T, typename std::remove_reference_t<T>::Scalar> {
-  using base = unary_operation_cl<unary_minus_<T>, T, typename std::remove_reference_t<T>::Scalar>;
+    : public unary_operation_cl<unary_minus_<T>, T,
+                                typename std::remove_reference_t<T>::Scalar> {
+  using base = unary_operation_cl<unary_minus_<T>, T,
+                                  typename std::remove_reference_t<T>::Scalar>;
   using base::arguments_;
 
-public:
+ public:
   /**
    * Constructor
    * @param a argument expression

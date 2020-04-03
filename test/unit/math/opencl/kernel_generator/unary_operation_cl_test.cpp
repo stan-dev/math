@@ -21,7 +21,8 @@ TEST(KernelGenerator, logical_negation_test) {
   matrix_cl<bool> m1_cl(m1);
   matrix_cl<bool> res_cl = !m1_cl;
 
-  Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic> res = stan::math::from_matrix_cl(res_cl);
+  Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic> res
+      = stan::math::from_matrix_cl(res_cl);
   Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic> correct = !m1.array();
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
