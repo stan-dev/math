@@ -17,9 +17,9 @@
 namespace stan {
 namespace math {
 
-  /** \addtogroup opencl_kernel_generator
-   *  @{
-   */
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 
 /**
  * Represents a rowwise reduction in kernel generator expressions.

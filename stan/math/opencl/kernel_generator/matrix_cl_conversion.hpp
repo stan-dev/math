@@ -8,9 +8,9 @@
 namespace stan {
 namespace math {
 
-  /** \addtogroup opencl_kernel_generator
-   *  @{
-   */
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 template <typename T>
 template <typename Expr, require_all_valid_expressions_and_none_scalar_t<Expr>*>
 matrix_cl<T, require_arithmetic_t<T>>::matrix_cl(const Expr& expresion)

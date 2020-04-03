@@ -17,9 +17,9 @@
 namespace stan {
 namespace math {
 
-  /** \addtogroup opencl_kernel_generator
-   *  @{
-   */
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 /**
  * Represents an access to a \c matrix_cl in kernel generator expressions
  * @tparam T \c matrix_cl

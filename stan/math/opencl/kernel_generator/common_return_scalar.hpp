@@ -3,15 +3,15 @@
 #include <type_traits>
 
 namespace stan {
-  namespace math {
-    /**
-     * @ingroup type_traits
-     * Wrapper for `std::common_type_t`
-     */
-    template <typename... Types>
-    using common_scalar_t = typename std::common_type_t<
-        typename std::remove_reference_t<Types>::Scalar...>;
-  }
-}
+namespace math {
+/**
+ * @ingroup type_traits
+ * Wrapper for `std::common_type_t`
+ */
+template <typename... Types>
+using common_scalar_t = typename std::common_type_t<
+    typename std::remove_reference_t<Types>::Scalar...>;
+}  // namespace math
+}  // namespace stan
 
 #endif

@@ -9,9 +9,9 @@
 namespace stan {
 namespace math {
 
-  /** \addtogroup opencl_kernel_generator
-   *  @{
-   */
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 /**
  * Non-templated base of \c operation is needed for easy checking if something
  * is a subclass of \c operation.
