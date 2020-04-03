@@ -11,7 +11,7 @@ TEST(StanMathPrim_reduce_sum, no_args) {
   using stan::math::test::get_new_msg;
   using stan::math::test::sum_lpdf;
 
-  std::vector<var> data(0);
+  std::vector<stan::math::var> data(0);
   EXPECT_EQ(0.0, stan::math::reduce_sum_static<sum_lpdf>(
 							 data, 1, stan::math::test::get_new_msg()).val())
       << "Failed for reduce_sum_static";
@@ -399,3 +399,37 @@ TEST(StanMathRev_reduce_sum, slice_group_gradient) {
 
   stan::math::recover_memory();
 }
+
+#ifdef STAN_THREADS
+std::vector<int> threading_test_global;
+struct threading_test_lpdf {
+  template <typename T1>
+  inline auto operator()(std::size_t start, std::size_t end, const std::vector<T1>&,
+			 std::ostream* msgs) const {
+    threading_test_global[start] = tbb::this_task_arena::current_thread_index();
+
+    return stan::return_type_t<T1>(0);
+  }
+};
+
+TEST(StanMathRev_reduce_sum, threading) {
+  tbb::task_scheduler_init default_scheduler;
+  threading_test_global = std::vector<int>(10000, 0);
+  std::vector<stan::math::var> data(threading_test_global.size(), 0);
+  stan::math::reduce_sum_static<threading_test_lpdf>(data, 1, nullptr);
+
+  auto uniques = std::set<int>(threading_test_global.begin(), threading_test_global.end());
+
+  EXPECT_GT(uniques.size(), 1);
+
+  threading_test_global = std::vector<int>(10000, 0);
+
+  stan::math::reduce_sum<threading_test_lpdf>(data, 1, nullptr);
+
+  uniques = std::set<int>(threading_test_global.begin(), threading_test_global.end());
+
+  EXPECT_GT(uniques.size(), 1);
+
+  stan::math::recover_memory();
+}
+#endif

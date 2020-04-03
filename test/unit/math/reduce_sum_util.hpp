@@ -76,6 +76,7 @@ struct sum_lpdf {
                        return_type(sum_(std::forward<Args>(args)))...});
   }
 };
+
 struct start_end_lpdf {
   template <typename T1, typename T2>
   inline auto operator()(std::size_t start, std::size_t end, T1&&,
