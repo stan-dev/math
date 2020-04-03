@@ -115,6 +115,34 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars) {
   }
 }
 
+TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_simple) {
+  double eps = 1e-9;
+  Matrix<double, Dynamic, 1> y(3, 1);
+  y << 14, 32, 21;
+  Matrix<double, Dynamic, Dynamic> x(3, 2);
+  x << -12, 46, -42, 24, 25, 27;
+  Matrix<double, Dynamic, 1> beta(2, 1);
+  beta << 0.3, 2;
+  Matrix<var, Dynamic, 1> beta1 = beta;
+  Matrix<var, Dynamic, 1> beta2 = beta;
+  var alpha1 = 0.3;
+  var alpha2 = 0.3;
+  double sigma = 10;
+
+  var lp1 = stan::math::normal_id_glm_lpdf(y, x, alpha1, beta1, sigma);
+  var lp2 = stan::math::normal_lpdf(
+      y, ((x * beta2).array() + alpha2).matrix().eval(), sigma);
+
+  EXPECT_NEAR(lp1.val(), lp2.val(), eps);
+
+  (lp1 + lp2).grad();
+
+  for (int i = 0; i < 2; i++) {
+    EXPECT_NEAR(beta1[i].adj(), beta2[i].adj(), eps);
+  }
+  EXPECT_NEAR(alpha1.adj(), alpha2.adj(), eps);
+}
+
 TEST(ProbDistributionsNormalIdGLM, broadcast_x) {
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 14, 32, 21;

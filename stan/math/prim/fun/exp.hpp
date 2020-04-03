@@ -37,9 +37,8 @@ struct exp_fun {
  * @param[in] x container
  * @return Elementwise application of exponentiation to the argument.
  */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto exp(const Container& x) {
   return apply_scalar_unary<exp_fun, Container>::apply(x);
 }
@@ -53,7 +52,7 @@ inline auto exp(const Container& x) {
  * @return Elementwise application of exponentiation to the argument.
  */
 template <typename Container,
-          require_container_st<is_container, std::is_arithmetic, Container>...>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto exp(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().exp(); });

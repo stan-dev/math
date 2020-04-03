@@ -1,5 +1,9 @@
-//  Copyright (c) 2006 Xiaogang Zhang
-//  Copyright (c) 2007, 2017 John Maddock
+// Original code derived from Boost and is distributed here
+// under the Boost license (licenses/boost-license.txt)
+//    Copyright (c) 2006 Xiaogang Zhang
+//    Copyright (c) 2007, 2017 John Maddock
+// Secondary code copyright by its author and is distributed here
+// under the BSD-3 license (LICENSE.md)
 
 #ifndef STAN_MATH_PRIM_FUN_LOG_MODIFIED_BESSEL_FIRST_KIND_HPP
 #define STAN_MATH_PRIM_FUN_LOG_MODIFIED_BESSEL_FIRST_KIND_HPP
