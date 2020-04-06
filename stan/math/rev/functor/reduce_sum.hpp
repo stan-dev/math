@@ -216,8 +216,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     for (size_t i = 0; i < num_vars_sliced_terms; ++i) {
       partials[i] = 0.0;
     }
-    recursive_reducer worker(num_vars_per_term, num_vars_shared_terms, partials, vmapped,
-                             msgs, args...);
+    recursive_reducer worker(num_vars_per_term, num_vars_shared_terms, partials,
+                             vmapped, msgs, args...);
 
     if (auto_partitioning) {
       tbb::parallel_reduce(
@@ -237,7 +237,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     }
 
     return var(new precomputed_gradients_vari(
-        worker.sum_, num_vars_sliced_terms + num_vars_shared_terms, varis, partials));
+        worker.sum_, num_vars_sliced_terms + num_vars_shared_terms, varis,
+        partials));
   }
 };
 }  // namespace internal
