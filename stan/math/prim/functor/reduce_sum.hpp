@@ -144,7 +144,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
   ReturnType operator()(Vec&& vmapped, bool auto_partitioning, int grainsize,
                         std::ostream* msgs, Args&&... args) const {
     const std::size_t num_terms = vmapped.size();
-    if (num_terms == 0) {
+    if (vmapped.empty()) {
       return 0.0;
     }
     recursive_reducer worker(std::forward<Vec>(vmapped), msgs,
@@ -204,9 +204,7 @@ auto reduce_sum(Vec&& vmapped, int grainsize, std::ostream* msgs,
                                               grainsize, msgs,
                                               std::forward<Args>(args)...);
 #else
-  const std::size_t num_terms = vmapped.size();
-
-  if (num_terms == 0) {
+  if (vmapped.empty()) {
     return return_type(0.0);
   }
 

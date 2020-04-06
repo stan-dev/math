@@ -54,9 +54,7 @@ auto reduce_sum_static(Vec&& vmapped, int grainsize, std::ostream* msgs,
                                               grainsize, msgs,
                                               std::forward<Args>(args)...);
 #else
-  const std::size_t num_terms = vmapped.size();
-
-  if (num_terms == 0) {
+  if (vmapped.empty()) {
     return return_type(0);
   }
 

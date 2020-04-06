@@ -6,7 +6,6 @@
 #include <set>
 
 TEST(StanMathPrim_reduce_sum, value) {
-  tbb::task_scheduler_init default_scheduler;
   using stan::math::test::count_lpdf;
   using stan::math::test::get_new_msg;
   double lambda_d = 10.0;
@@ -33,7 +32,6 @@ TEST(StanMathPrim_reduce_sum, value) {
 }
 
 TEST(StanMathPrim_reduce_sum, grainsize) {
-  tbb::task_scheduler_init default_scheduler;
   using stan::math::test::get_new_msg;
   using stan::math::test::sum_lpdf;
 
@@ -63,7 +61,6 @@ TEST(StanMathPrim_reduce_sum, grainsize) {
 }
 
 TEST(StanMathPrim_reduce_sum, start_end_slice) {
-  tbb::task_scheduler_init default_scheduler;
   using stan::math::test::get_new_msg;
   using stan::math::test::start_end_lpdf;
 
@@ -130,7 +127,6 @@ TEST(StanMathPrim_reduce_sum, std_vector_std_vector_eigen_matrix_slice) {
 }
 
 TEST(StanMathPrim_reduce_sum, no_args) {
-  tbb::task_scheduler_init default_scheduler;
   using stan::math::test::get_new_msg;
   using stan::math::test::sum_lpdf;
 
@@ -250,7 +246,6 @@ struct threading_test_lpdf {
 };
 
 TEST(StanMathPrim_reduce_sum, threading) {
-  tbb::task_scheduler_init default_scheduler;
   threading_test_global = std::vector<int>(10000, 0);
   stan::math::reduce_sum_static<threading_test_lpdf>(threading_test_global, 1,
                                                      nullptr);

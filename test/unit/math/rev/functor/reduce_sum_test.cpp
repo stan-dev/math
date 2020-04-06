@@ -8,7 +8,6 @@
 #include <set>
 
 TEST(StanMathRev_reduce_sum, no_args) {
-  tbb::task_scheduler_init default_scheduler;
   using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::sum_lpdf;
@@ -26,7 +25,6 @@ TEST(StanMathRev_reduce_sum, no_args) {
 TEST(StanMathRev_reduce_sum, value) {
   using stan::math::test::count_lpdf;
   using stan::math::test::get_new_msg;
-  tbb::task_scheduler_init default_scheduler;
   double lambda_d = 10.0;
   const std::size_t elems = 10000;
   std::vector<int> data(elems);
@@ -57,7 +55,6 @@ TEST(StanMathRev_reduce_sum, gradient) {
   using stan::math::var;
   using stan::math::test::count_lpdf;
   using stan::math::test::get_new_msg;
-  tbb::task_scheduler_init default_scheduler;
 
   double lambda_d = 10.0;
   const std::size_t elems = 10000;
@@ -106,7 +103,6 @@ TEST(StanMathRev_reduce_sum, grainsize) {
   using stan::math::var;
   using stan::math::test::count_lpdf;
   using stan::math::test::get_new_msg;
-  tbb::task_scheduler_init default_scheduler;
 
   double lambda_d = 10.0;
   const std::size_t elems = 10000;
@@ -155,7 +151,6 @@ TEST(StanMathRev_reduce_sum, nesting_gradient) {
   using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::nesting_count_lpdf;
-  tbb::task_scheduler_init default_scheduler;
 
   double lambda_d = 10.0;
   const std::size_t elems = 10000;
@@ -206,7 +201,6 @@ TEST(StanMathRev_reduce_sum, grouped_gradient) {
   using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::grouped_count_lpdf;
-  tbb::task_scheduler_init default_scheduler;
 
   double lambda_d = 10.0;
   const std::size_t groups = 10;
@@ -268,7 +262,6 @@ TEST(StanMathRev_reduce_sum, grouped_gradient_eigen) {
   using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::grouped_count_lpdf;
-  tbb::task_scheduler_init default_scheduler;
 
   double lambda_d = 10.0;
   const std::size_t groups = 10;
@@ -332,7 +325,6 @@ TEST(StanMathRev_reduce_sum, slice_group_gradient) {
   using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::slice_group_count_lpdf;
-  tbb::task_scheduler_init default_scheduler;
 
   double lambda_d = 10.0;
   const std::size_t groups = 10;
@@ -411,7 +403,6 @@ struct threading_test_lpdf {
 };
 
 TEST(StanMathRev_reduce_sum, threading) {
-  tbb::task_scheduler_init default_scheduler;
   threading_test_global = std::vector<int>(10000, 0);
   std::vector<stan::math::var> data(threading_test_global.size(), 0);
   stan::math::reduce_sum_static<threading_test_lpdf>(data, 1, nullptr);

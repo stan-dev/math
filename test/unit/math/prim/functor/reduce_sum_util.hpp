@@ -15,8 +15,7 @@ std::ostream* get_new_msg() {
   std::ostream* msgs = nullptr;
   return msgs;
 }
-// reduce functor which is the BinaryFunction
-// here we use iterators which represent integer indices
+
 template <typename T>
 struct count_lpdf {
   count_lpdf() {}
@@ -125,8 +124,6 @@ struct grouped_count_lpdf {
   inline T operator()(std::size_t start, std::size_t end, VecInt1&& sub_slice,
                       std::ostream* msgs, VecT&& lambda, VecInt2&& gidx) const {
     const std::size_t num_terms = end - start + 1;
-    // std::cout << "sub-slice " << start << " - " << end << "; num_terms = " <<
-    // num_terms << "; size = " << sub_slice.size() << std::endl;
     std::decay_t<VecT> lambda_slice(num_terms);
     for (std::size_t i = 0; i != num_terms; ++i)
       lambda_slice[i] = lambda[gidx[start + i]];
@@ -137,7 +134,6 @@ struct grouped_count_lpdf {
 
 template <typename T1, typename T2, typename... Args>
 void test_slices(T1 result, T2&& vec_value, Args&&... args) {
-  tbb::task_scheduler_init default_scheduler;
   using stan::math::test::get_new_msg;
   using stan::math::test::sum_lpdf;
 
@@ -176,8 +172,6 @@ struct static_check_lpdf {
                          const std::vector<int>&, std::ostream* msgs,
                          const std::vector<T>& data) const {
     T sum = 0;
-    // std::cout << "start: " << start << ", end: " << end << ", grainsize: " <<
-    // grainsize << std::endl;
     EXPECT_LE(end - start + 1, grainsize);
     for (size_t i = start; i <= end; i++) {
       sum += data[i];

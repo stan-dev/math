@@ -103,7 +103,6 @@ TEST(MathMix_reduce_sum, eigen_three_args_with_doubles3) {
 
 #ifdef STAN_THREADS
 TEST(MathMix_reduce_sum, static_check) {
-  tbb::task_scheduler_init default_scheduler;
   using stan::math::test::get_new_msg;
   using stan::math::test::static_check_lpdf;
 

@@ -37,8 +37,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    * @note see link [here](https://tinyurl.com/vp7xw2t) for requirements.
    */
   struct recursive_reducer {
-    size_t vars_per_term_;
-    size_t num_shared_terms_;  // Number of terms shared across threads
+    const size_t num_vars_per_term_;
+    const size_t num_vars_shared_terms_;  // Number of vars in shared arguments
     double* sliced_partials_;  // Points to adjoints of the partial calculations
     Vec vmapped_;
     std::ostream* msgs_;
@@ -47,11 +47,11 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     Eigen::VectorXd args_adjoints_{0};
 
     template <typename VecT, typename... ArgsT>
-    recursive_reducer(size_t vars_per_term, size_t num_shared_terms,
+    recursive_reducer(size_t num_vars_per_term, size_t num_vars_shared_terms,
                       double* sliced_partials, VecT&& vmapped,
                       std::ostream* msgs, ArgsT&&... args)
-        : vars_per_term_(vars_per_term),
-          num_shared_terms_(num_shared_terms),
+        : num_vars_per_term_(num_vars_per_term),
+          num_vars_shared_terms_(num_vars_shared_terms),
           sliced_partials_(sliced_partials),
           vmapped_(std::forward<VecT>(vmapped)),
           msgs_(msgs),
@@ -64,8 +64,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
      *   an independent partial sum.
      */
     recursive_reducer(recursive_reducer& other, tbb::split)
-        : vars_per_term_(other.vars_per_term_),
-          num_shared_terms_(other.num_shared_terms_),
+        : num_vars_per_term_(other.num_vars_per_term_),
+          num_vars_shared_terms_(other.num_vars_shared_terms_),
           sliced_partials_(other.sliced_partials_),
           vmapped_(other.vmapped_),
           msgs_(other.msgs_),
@@ -80,7 +80,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
      *  operands which reside potentially on a autodiff tape stored in a
      *  different thread other than the current thread of execution. This
      * function may be called multiple times per object instantiation (so the
-     * sum_ and args_adjoints_ must be accumulated, notjust assigned).
+     * sum_ and args_adjoints_ must be accumulated, not just assigned).
      *
      * @param r Range over which to compute reduce_sum
      */
@@ -90,7 +90,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       }
 
       if (args_adjoints_.size() == 0) {
-        args_adjoints_ = Eigen::VectorXd::Zero(num_shared_terms_);
+        args_adjoints_ = Eigen::VectorXd::Zero(num_vars_shared_terms_);
       }
 
       // Initialize nested autodiff stack
@@ -128,7 +128,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       sum_ += sub_sum_v.val();
 
       // Accumulate adjoints of sliced_arguments
-      accumulate_adjoints(sliced_partials_ + r.begin() * vars_per_term_,
+      accumulate_adjoints(sliced_partials_ + r.begin() * num_vars_per_term_,
                           local_sub_slice);
 
       // Accumulate adjoints of shared_arguments
@@ -200,23 +200,23 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                         std::ostream* msgs, Args&&... args) const {
     const std::size_t num_terms = vmapped.size();
 
-    if (num_terms == 0) {
+    if (vmapped.empty()) {
       return var(0.0);
     }
 
-    const std::size_t vars_per_term = count_vars(vmapped[0]);
-    const std::size_t num_sliced_terms = num_terms * vars_per_term;
-    const std::size_t num_shared_terms = count_vars(args...);
+    const std::size_t num_vars_per_term = count_vars(vmapped[0]);
+    const std::size_t num_vars_sliced_terms = num_terms * num_vars_per_term;
+    const std::size_t num_vars_shared_terms = count_vars(args...);
 
     vari** varis = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-        num_sliced_terms + num_shared_terms);
+        num_vars_sliced_terms + num_vars_shared_terms);
     double* partials = ChainableStack::instance_->memalloc_.alloc_array<double>(
-        num_sliced_terms + num_shared_terms);
+        num_vars_sliced_terms + num_vars_shared_terms);
 
-    for (size_t i = 0; i < num_sliced_terms; ++i) {
+    for (size_t i = 0; i < num_vars_sliced_terms; ++i) {
       partials[i] = 0.0;
     }
-    recursive_reducer worker(vars_per_term, num_shared_terms, partials, vmapped,
+    recursive_reducer worker(num_vars_per_term, num_vars_shared_terms, partials, vmapped,
                              msgs, args...);
 
     if (auto_partitioning) {
@@ -230,14 +230,14 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     }
 
     save_varis(varis, std::forward<Vec>(vmapped));
-    save_varis(varis + num_sliced_terms, std::forward<Args>(args)...);
+    save_varis(varis + num_vars_sliced_terms, std::forward<Args>(args)...);
 
-    for (size_t i = 0; i < num_shared_terms; ++i) {
-      partials[num_sliced_terms + i] = worker.args_adjoints_(i);
+    for (size_t i = 0; i < num_vars_shared_terms; ++i) {
+      partials[num_vars_sliced_terms + i] = worker.args_adjoints_(i);
     }
 
     return var(new precomputed_gradients_vari(
-        worker.sum_, num_sliced_terms + num_shared_terms, varis, partials));
+        worker.sum_, num_vars_sliced_terms + num_vars_shared_terms, varis, partials));
   }
 };
 }  // namespace internal

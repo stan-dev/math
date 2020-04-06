@@ -63,9 +63,7 @@ struct reduce_sum_impl {
   return_type_t<Vec, Args...> operator()(Vec&& vmapped, bool auto_partitioning,
                                          int grainsize, std::ostream* msgs,
                                          Args&&... args) const {
-    const std::size_t num_terms = vmapped.size();
-
-    if (num_terms == 0) {
+    if (vmapped.empty()) {
       return 0.0;
     }
 
