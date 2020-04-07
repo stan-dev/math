@@ -135,7 +135,7 @@ TEST_F(hmm_marginal_lpdf_test, ten_transitions) {
   };
 
   stan::test::expect_ad(tols, hmm_functor, log_omegas, Gamma_unconstrained,
-                       rho_unconstrained);
+                        rho_unconstrained);
 }
 /*
 TEST_F(hmm_marginal_lpdf_test, zero_transitions) {
