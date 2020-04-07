@@ -141,8 +141,9 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
    * @param args Shared arguments used in every sum term
    * @return Summation of all terms
    */
-  inline ReturnType operator()(Vec&& vmapped, bool auto_partitioning, int grainsize,
-                        std::ostream* msgs, Args&&... args) const {
+  inline ReturnType operator()(Vec&& vmapped, bool auto_partitioning,
+                               int grainsize, std::ostream* msgs,
+                               Args&&... args) const {
     const std::size_t num_terms = vmapped.size();
     if (vmapped.empty()) {
       return 0.0;
@@ -193,7 +194,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
 template <typename ReduceFunction, typename Vec,
           typename = require_vector_like_t<Vec>, typename... Args>
 inline auto reduce_sum(Vec&& vmapped, int grainsize, std::ostream* msgs,
-                Args&&... args) {
+                       Args&&... args) {
   using return_type = return_type_t<Vec, Args...>;
 
   check_positive("reduce_sum", "grainsize", grainsize);
