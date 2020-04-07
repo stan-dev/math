@@ -72,7 +72,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
      *
      * @param r Range over which to compute `ReduceFunction`
      */
-    void operator()(const tbb::blocked_range<size_t>& r) {
+    inline void operator()(const tbb::blocked_range<size_t>& r) {
       if (r.empty()) {
         return;
       }
@@ -96,7 +96,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
      *
      * @param rhs Another partial sum
      */
-    void join(const recursive_reducer& child) { sum_ += child.sum_; }
+    inline void join(const recursive_reducer& child) { sum_ += child.sum_; }
   };
 
   /**
@@ -141,7 +141,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
    * @param args Shared arguments used in every sum term
    * @return Summation of all terms
    */
-  ReturnType operator()(Vec&& vmapped, bool auto_partitioning, int grainsize,
+  inline ReturnType operator()(Vec&& vmapped, bool auto_partitioning, int grainsize,
                         std::ostream* msgs, Args&&... args) const {
     const std::size_t num_terms = vmapped.size();
     if (vmapped.empty()) {
@@ -192,7 +192,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
  */
 template <typename ReduceFunction, typename Vec,
           typename = require_vector_like_t<Vec>, typename... Args>
-auto reduce_sum(Vec&& vmapped, int grainsize, std::ostream* msgs,
+inline auto reduce_sum(Vec&& vmapped, int grainsize, std::ostream* msgs,
                 Args&&... args) {
   using return_type = return_type_t<Vec, Args...>;
 

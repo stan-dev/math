@@ -129,7 +129,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
       // Accumulate adjoints of sliced_arguments
       accumulate_adjoints(sliced_partials_ + r.begin() * num_vars_per_term_,
-                          local_sub_slice);
+                          std::move(local_sub_slice));
 
       // Accumulate adjoints of shared_arguments
       apply(
@@ -146,7 +146,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
      *
      * @param rhs Another partial sum
      */
-    void join(const recursive_reducer& rhs) {
+    inline void join(const recursive_reducer& rhs) {
       sum_ += rhs.sum_;
       if (args_adjoints_.size() != 0 && rhs.args_adjoints_.size() != 0) {
         args_adjoints_ += rhs.args_adjoints_;

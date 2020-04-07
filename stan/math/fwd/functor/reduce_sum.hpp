@@ -16,6 +16,9 @@ namespace stan {
 namespace math {
 
 namespace internal {
+  template <typename ReduceFunction, typename Enable, typename ReturnType,
+            typename Vec, typename... Args>
+  struct reduce_sum_impl;
 
 /**
  * reduce_sum_impl implementation for any autodiff type.
@@ -60,7 +63,7 @@ struct reduce_sum_impl {
    * @param args Shared arguments used in every sum term
    * @return Summation of all terms
    */
-  return_type_t<Vec, Args...> operator()(Vec&& vmapped, bool auto_partitioning,
+  inline return_type_t<Vec, Args...> operator()(Vec&& vmapped, bool auto_partitioning,
                                          int grainsize, std::ostream* msgs,
                                          Args&&... args) const {
     if (vmapped.empty()) {
