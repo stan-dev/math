@@ -222,7 +222,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
     recursive_reducer worker(num_vars_per_term, num_vars_shared_terms, partials,
                              std::forward<Vec>(vmapped), msgs,
-			     std::forward<Args>(args)...);
+                             std::forward<Args>(args)...);
 
     if (auto_partitioning) {
       tbb::parallel_reduce(
