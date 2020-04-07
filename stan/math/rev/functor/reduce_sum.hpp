@@ -4,10 +4,12 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/functor.hpp>
 #include <stan/math/rev/core.hpp>
+
 #include <tbb/task_arena.h>
 #include <tbb/parallel_reduce.h>
 #include <tbb/blocked_range.h>
 
+#include <algorithm>
 #include <tuple>
 #include <vector>
 
@@ -217,7 +219,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       partials[i] = 0.0;
     }
     recursive_reducer worker(num_vars_per_term, num_vars_shared_terms, partials,
-                             vmapped, msgs, args...);
+                             std::forward<Vec>(vmapped), msgs, std::forward<Args>(args)...);
 
     if (auto_partitioning) {
       tbb::parallel_reduce(
