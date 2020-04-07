@@ -213,11 +213,16 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     double* partials = ChainableStack::instance_->memalloc_.alloc_array<double>(
         num_vars_sliced_terms + num_vars_shared_terms);
 
+    save_varis(varis, vmapped);
+    save_varis(varis + num_vars_sliced_terms, args...);
+
     for (size_t i = 0; i < num_vars_sliced_terms; ++i) {
       partials[i] = 0.0;
     }
+
     recursive_reducer worker(num_vars_per_term, num_vars_shared_terms, partials,
-                             vmapped, msgs, args...);
+                             std::forward<Vec>(vmapped), msgs,
+			     std::forward<Args>(args)...);
 
     if (auto_partitioning) {
       tbb::parallel_reduce(
@@ -228,9 +233,6 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           tbb::blocked_range<std::size_t>(0, num_terms, grainsize), worker,
           partitioner);
     }
-
-    save_varis(varis, std::forward<Vec>(vmapped));
-    save_varis(varis + num_vars_sliced_terms, std::forward<Args>(args)...);
 
     for (size_t i = 0; i < num_vars_shared_terms; ++i) {
       partials[num_vars_sliced_terms + i] = worker.args_adjoints_(i);
