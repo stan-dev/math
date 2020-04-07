@@ -9,6 +9,8 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/core.hpp>
+#include <stan/math/fwd/fun/exp.hpp>
+#include <stan/math/fwd/fun/log.hpp>
 #include <vector>
 #include <iostream>
 
@@ -41,29 +43,35 @@ namespace internal {
  * @param[in, out] omegas term-wise exponential of omegas.
  * @return log marginal density.
  */
-inline double hmm_marginal_lpdf(const Eigen::MatrixXd& log_omegas,
-                                const Eigen::MatrixXd& Gamma,
-                                const Eigen::VectorXd& rho,
-                                Eigen::MatrixXd& alphas,
-                                Eigen::VectorXd& alpha_log_norms,
-                                Eigen::MatrixXd& omegas) {
+template<typename T_omega, typename T_Gamma, typename T_rho,
+         typename T_alphas>
+ real_return_t<T_omega, T_Gamma, T_rho>
+ inline hmm_marginal_lpdf(
+   const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
+   const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma,
+   const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho,
+   Eigen::Matrix<T_alphas, Eigen::Dynamic, Eigen::Dynamic>& alphas,
+   Eigen::Matrix<T_alphas, Eigen::Dynamic, 1>& alpha_log_norms,
+   Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& omegas) {
+  using scalar = real_return_t<T_omega, T_Gamma, T_rho>;
+
   omegas = log_omegas.array().exp();
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 
   alphas.col(0) = omegas.col(0).cwiseProduct(rho);
 
-  double norm = alphas.col(0).maxCoeff();
+  scalar norm = alphas.col(0).maxCoeff();
   alphas.col(0) /= norm;
-  alpha_log_norms(0) = std::log(norm);
+  alpha_log_norms(0) = log(norm);
 
   for (int n = 0; n < n_transitions; ++n) {
     alphas.col(n + 1)
         = omegas.col(n + 1).cwiseProduct(Gamma.transpose() * alphas.col(n));
 
-    double norm = alphas.col(n + 1).maxCoeff();
+    scalar norm = alphas.col(n + 1).maxCoeff();
     alphas.col(n + 1) /= norm;
-    alpha_log_norms(n + 1) = std::log(norm) + alpha_log_norms(n);
+    alpha_log_norms(n + 1) = log(norm) + alpha_log_norms(n);
   }
 
   return log(alphas.col(n_transitions).sum()) + alpha_log_norms(n_transitions);
@@ -122,42 +130,67 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
                         Eigen::Matrix<T_rho, Eigen::Dynamic, 1> >
       ops_partials(log_omegas, Gamma, rho);
 
-  Eigen::MatrixXd alphas(n_states, n_transitions + 1);
-  Eigen::VectorXd alpha_log_norms(n_transitions + 1);
-  Eigen::MatrixXd omegas;
-  Eigen::MatrixXd Gamma_dbl = value_of_rec(Gamma);
+  using T_partial_type = real_return_t<partials_type_t<T_omega>,
+                                       partials_type_t<T_Gamma>,
+                                       partials_type_t<T_rho> >;
+
+  Eigen::Matrix<T_partial_type, Eigen::Dynamic, Eigen::Dynamic>
+    alphas(n_states, n_transitions + 1);
+  Eigen::Matrix<T_partial_type, Eigen::Dynamic, 1>
+    alpha_log_norms(n_transitions + 1);
+  Eigen::Matrix<partials_type_t<T_omega>, Eigen::Dynamic, Eigen::Dynamic>
+    omegas;
+  auto Gamma_dbl = value_of(Gamma);
+
+  // Eigen::MatrixXd alphas(n_states, n_transitions + 1);
+  // Eigen::VectorXd alpha_log_norms(n_transitions + 1);
+  // Eigen::MatrixXd omegas;
+  // Eigen::MatrixXd Gamma_dbl = value_of(Gamma);
 
   T_partials_return log_marginal_density = internal::hmm_marginal_lpdf(
-      value_of_rec(log_omegas), Gamma_dbl, value_of_rec(rho), alphas,
+      value_of(log_omegas), Gamma_dbl, value_of(rho), alphas,
       alpha_log_norms, omegas);
 
   // Variables required for all three Jacobian-adjoint products.
-  double norm_norm = alpha_log_norms(n_transitions);
-  double unnormed_marginal = alphas.col(n_transitions).sum();
+  T_partial_type norm_norm = alpha_log_norms(n_transitions);
+  T_partial_type unnormed_marginal = alphas.col(n_transitions).sum();
 
-  std::vector<Eigen::VectorXd> kappa(n_transitions);
-  Eigen::VectorXd kappa_log_norms(n_transitions);
-  std::vector<double> grad_corr(n_transitions);
+  std::vector<Eigen::Matrix<T_partial_type, Eigen::Dynamic, 1> >
+    kappa(n_transitions);
+  Eigen::Matrix<T_partial_type, Eigen::Dynamic, 1>
+    kappa_log_norms(n_transitions);
+  std::vector<T_partial_type> grad_corr(n_transitions);
+
+  // std::vector<Eigen::VectorXd> kappa(n_transitions);
+  // Eigen::VectorXd kappa_log_norms(n_transitions);
+  // std::vector<double> grad_corr(n_transitions);
 
   if (n_transitions > 0) {
     kappa[n_transitions - 1] = Eigen::VectorXd::Ones(n_states);
     kappa_log_norms(n_transitions - 1) = 0;
     grad_corr[n_transitions - 1]
-        = std::exp(alpha_log_norms(n_transitions - 1) - norm_norm);
+      = exp(alpha_log_norms(n_transitions - 1) - norm_norm);
+      // = std::exp(alpha_log_norms(n_transitions - 1) - norm_norm);
   }
 
   for (int n = n_transitions - 2; n >= 0; --n) {
     kappa[n] = Gamma_dbl * (omegas.col(n + 2).cwiseProduct(kappa[n + 1]));
 
-    double norm = kappa[n].maxCoeff();
+    T_partial_type norm = kappa[n].maxCoeff();
+    // double norm = kappa[n].maxCoeff();
     kappa[n] /= norm;
-    kappa_log_norms(n) = std::log(norm) + kappa_log_norms(n + 1);
+    kappa_log_norms(n) = log(norm) + kappa_log_norms(n + 1);
     grad_corr[n]
-        = std::exp(alpha_log_norms(n) + kappa_log_norms(n) - norm_norm);
+      = exp(alpha_log_norms(n) + kappa_log_norms(n) - norm_norm);
+    // kappa_log_norms(n) = std::log(norm) + kappa_log_norms(n + 1);
+    // grad_corr[n]
+    //     = std::exp(alpha_log_norms(n) + kappa_log_norms(n) - norm_norm);
   }
 
   if (!is_constant_all<T_Gamma>::value) {
-    Eigen::MatrixXd Gamma_jacad = Eigen::MatrixXd::Zero(n_states, n_states);
+    Eigen::Matrix<T_partial_type, Eigen::Dynamic, Eigen::Dynamic>
+      Gamma_jacad = Eigen::MatrixXd::Zero(n_states, n_states);
+    // Eigen::MatrixXd Gamma_jacad = Eigen::MatrixXd::Zero(n_states, n_states);
 
     for (int n = n_transitions - 1; n >= 0; --n) {
       Gamma_jacad += (grad_corr[n] * kappa[n].cwiseProduct(omegas.col(n + 1))
@@ -174,8 +207,9 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
 
   // boundary terms
   if (sensitivities_for_omega_or_rho) {
-    Eigen::MatrixXd log_omega_jacad
-        = Eigen::MatrixXd::Zero(n_states, n_transitions + 1);
+    // Eigen::MatrixXd log_omega_jacad
+    Eigen::Matrix<T_partial_type, Eigen::Dynamic, Eigen::Dynamic>
+      log_omega_jacad = Eigen::MatrixXd::Zero(n_states, n_transitions + 1);
 
     if (!is_constant_all<T_omega>::value) {
       for (int n = n_transitions - 1; n >= 0; --n)
@@ -197,8 +231,12 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
             = omegas.col(0) / exp(value_of_rec(log_marginal_density));
       }
     } else {
-      double grad_corr_boundary = std::exp(kappa_log_norms(0) - norm_norm);
-      Eigen::VectorXd c = Gamma_dbl * omegas.col(1).cwiseProduct(kappa[0]);
+      T_partial_type grad_corr_boundary
+        = exp(kappa_log_norms(0) - norm_norm);
+      Eigen::Matrix<T_partial_type, Eigen::Dynamic, 1>
+        c = Gamma_dbl * omegas.col(1).cwiseProduct(kappa[0]);
+      // double grad_corr_boundary = std::exp(kappa_log_norms(0) - norm_norm);
+      // Eigen::VectorXd c = Gamma_dbl * omegas.col(1).cwiseProduct(kappa[0]);
 
       if (!is_constant_all<T_omega>::value) {
         log_omega_jacad.col(0)
