@@ -5,6 +5,7 @@
 #include <stan/math/prim/meta/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/meta/is_stan_scalar.hpp>
 #include <stan/math/prim/meta/is_container.hpp>
+#include <stan/math/prim/meta/is_eigen_matrix_base.hpp>
 #include <stan/math/prim/meta/plain_type.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <vector>
@@ -45,7 +46,7 @@ struct apply_vector_unary<T, require_eigen_t<T>> {
    * @return Eigen object with result of applying functor to input
    */
   template <typename F, typename T2 = T,
-            require_t<is_eigen_matrix<plain_type_t<T2>>>...>
+            require_t<is_eigen_matrix_base<plain_type_t<T2>>>...>
   static inline auto apply(const T& x, const F& f) {
     return f(x).matrix().eval();
   }

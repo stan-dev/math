@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_META_IS_EIGEN_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta/is_eigen_matrix.hpp>
 #include <stan/math/prim/meta/disjunction.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <stan/math/prim/meta/value_type.hpp>
@@ -9,34 +10,32 @@
 
 namespace stan {
 
-/** \ingroup type_trait
- * Base implementation to check whether a type is derived from EigenBase
- */
-template <typename T, typename = void>
-struct is_eigen : std::false_type {};
+  /** \addtogroup type_trait
+   *  @{
+   */
 
-namespace internal {
-/**
- * Underlying implementation to check if a type is derived from EigenBase
- */
-template <typename T>
-struct is_eigen_base {
-  static std::false_type f(const void *);
-  template <typename Derived>
-  static std::true_type f(const Eigen::EigenBase<Derived> *);
-  enum { value = decltype(f(std::declval<T *>()))::value };
-};
+  /**
+   * Check if type derives from `EigenBase`
+   * @tparam T Type to check if it is derived from `EigenBase`
+   * @tparam Enable used for SFINAE deduction.
+   **/
+  template <typename T, typename Enable = void>
+  struct is_eigen : std::false_type {};
 
-}  // namespace internal
+  template <typename T>
+  struct is_eigen<T, std::enable_if_t<std::is_base_of<
+                         Eigen::EigenBase<typename std::decay_t<T>::PlainObject>,
+                         typename std::decay_t<T>::PlainObject>::value>>
+      : std::true_type {};
 
-/**
- * Checks whether type T is derived from EigenBase. If true this will have a
- * static member function named value with a type of true, else value is false.
- */
-template <typename T>
-struct is_eigen<
-    T, std::enable_if_t<internal::is_eigen_base<std::decay_t<T>>::value>>
-    : std::true_type {};
+  template <typename T>
+  struct is_eigen<T, std::enable_if_t<std::is_base_of<
+                         Eigen::EigenBase<typename std::decay_t<T>::MatrixType>,
+                         typename std::decay_t<T>::MatrixType>::value>>
+      : std::true_type {};
+
+  template <typename T>
+  struct is_eigen<Eigen::EigenBase<T>, void> : std::true_type {};
 
 /** \ingroup type_trait
  * Template metaprogram defining the base scalar type of
@@ -59,28 +58,10 @@ template <typename T>
 struct value_type<T, std::enable_if_t<is_eigen<T>::value>> {
   using type = typename std::decay_t<T>::Scalar;
 };
+/** @}*/
 
 STAN_ADD_REQUIRE_UNARY(eigen, is_eigen, require_eigens_types);
 STAN_ADD_REQUIRE_CONTAINER(eigen, is_eigen, require_eigens_types);
-
-namespace internal {
-template <typename T>
-struct is_eigen_matrix_impl : std::false_type {};
-template <typename T, int R, int C>
-struct is_eigen_matrix_impl<Eigen::Matrix<T, R, C>> : std::true_type {};
-template <typename T>
-struct is_eigen_matrix_impl<Eigen::SparseMatrix<T>> : std::true_type {};
-}  // namespace internal
-
-/**
- * Check if a type is an `Eigen::Matrix` or `Eigen::SparseMatrix`
- * @ingroup type_trait
- */
-template <typename T>
-struct is_eigen_matrix : internal::is_eigen_matrix_impl<std::decay_t<T>> {};
-
-STAN_ADD_REQUIRE_UNARY(eigen_matrix, is_eigen_matrix, require_eigens_types);
-STAN_ADD_REQUIRE_CONTAINER(eigen_matrix, is_eigen_matrix, require_eigens_types);
 
 namespace internal {
 template <typename T>
