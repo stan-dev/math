@@ -1,9 +1,17 @@
 #ifndef STAN_MATH_REV_FUN_ACOS_HPP
 #define STAN_MATH_REV_FUN_ACOS_HPP
 
-#include <stan/math/rev/meta.hpp>
+#include <stan/math/prim/fun/acos.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/fun/abs.hpp>
+#include <stan/math/rev/fun/arg.hpp>
+#include <stan/math/rev/fun/asin.hpp>
+#include <stan/math/rev/fun/is_inf.hpp>
+#include <stan/math/rev/fun/is_nan.hpp>
+#include <stan/math/rev/fun/polar.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -55,6 +63,16 @@ class acos_vari : public op_v_vari {
  * @return Arc cosine of variable, in radians.
  */
 inline var acos(const var& a) { return var(new internal::acos_vari(a.vi_)); }
+
+/**
+ * Return the arc cosine of the complex argument.
+ *
+ * @param[in] z argument
+ * @return arc cosine of the argument
+ */
+inline std::complex<var> acos(const std::complex<var>& z) {
+  return stan::math::internal::complex_acos(z);
+}
 
 }  // namespace math
 }  // namespace stan
