@@ -133,11 +133,13 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   const auto norm_norm = alpha_log_norms(n_transitions);
   const auto unnormed_marginal = alphas.col(n_transitions).sum();
 
-  std::vector<eig_vector_partial> kappa(n_transitions, eig_vector_partial::Ones(n_states));
-  eig_vector_partial kappa_log_norms = eig_vector_partial::Zero(n_transitions);
+  std::vector<eig_vector_partial> kappa(n_transitions);
+  eig_vector_partial kappa_log_norms(n_transitions);
   std::vector<T_partial_type> grad_corr(n_transitions);
 
   if (n_transitions > 0) {
+    kappa[n_transitions - 1] = Eigen::VectorXd::Ones(n_states);
+    kappa_log_norms(n_transitions - 1) = 0;
     grad_corr[n_transitions - 1]
         = exp(alpha_log_norms(n_transitions - 1) - norm_norm);
   }
