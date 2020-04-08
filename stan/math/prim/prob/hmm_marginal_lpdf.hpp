@@ -52,6 +52,12 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
     const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
     const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma,
     const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho) {
+
+  using T_partials_return = partials_return_t<T_omega, T_Gamma, T_rho>;
+  using T_partial_type
+      = real_return_t<partials_type_t<T_omega>, partials_type_t<T_Gamma>,
+                      partials_type_t<T_rho> >;
+
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 
@@ -63,15 +69,11 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
     check_simplex("hmm_marginal_lpdf", "Gamma[i, ]", row(Gamma, i + 1));
   }
 
-  using T_partials_return = partials_return_t<T_omega, T_Gamma, T_rho>;
   operands_and_partials<Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>,
                         Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>,
                         Eigen::Matrix<T_rho, Eigen::Dynamic, 1> >
       ops_partials(log_omegas, Gamma, rho);
 
-  using T_partial_type
-      = real_return_t<partials_type_t<T_omega>, partials_type_t<T_Gamma>,
-                      partials_type_t<T_rho> >;
 
   Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic> alphas(
       n_states, n_transitions + 1);
@@ -79,12 +81,12 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
                                                                    + 1);
   Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>
       omegas;
-  auto Gamma_dbl = value_of(Gamma);
+  auto Gamma_val = value_of(Gamma);
 
   // Eigen::MatrixXd alphas(n_states, n_transitions + 1);
   // Eigen::VectorXd alpha_log_norms(n_transitions + 1);
   // Eigen::MatrixXd omegas;
-  // Eigen::MatrixXd Gamma_dbl = value_of(Gamma);
+  // Eigen::MatrixXd Gamma_val = value_of(Gamma);
   /**
    * For a Hidden Markov Model with observation y, hidden state x,
    * and parameters theta, return the log marginal density, log
@@ -97,7 +99,7 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
    * @param[in] log_omega log matrix of observational densities.
    *              The (i, j)th entry corresponds to the
    *              density of the ith observation, y_i,
-   *              given x_i = j.
+   *              given x_i = j.qq
    * @param[in] Gamma transition density between hidden states.
    *              The (i, j)th entry is the probability that x_n = j,
    *              given x_{n - 1} = i. The rows of Gamma are simplexes.
@@ -125,18 +127,18 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
 
     for (int n = 0; n < n_transitions; ++n) {
       alphas.col(n + 1)
-          = omegas.col(n + 1).cwiseProduct(Gamma_dbl.transpose() * alphas.col(n));
+          = omegas.col(n + 1).cwiseProduct(Gamma_val.transpose() * alphas.col(n));
 
       auto norm = alphas.col(n + 1).maxCoeff();
       alphas.col(n + 1) /= norm;
       alpha_log_norms(n + 1) = log(norm) + alpha_log_norms(n);
     }
   }
-  T_partials_return log_marginal_density = log(alphas.col(log_omegas.cols() - 1).sum()) + alpha_log_norms(log_omegas.cols() - 1);
+  T_partials_return log_marginal_density = log(alphas.col(n_transitions).sum()) + alpha_log_norms(n_transitions);
 
   // Variables required for all three Jacobian-adjoint products.
-  T_partials_return norm_norm = alpha_log_norms(n_transitions);
-  T_partials_return unnormed_marginal = alphas.col(n_transitions).sum();
+  auto norm_norm = alpha_log_norms(n_transitions);
+  auto unnormed_marginal = alphas.col(n_transitions).sum();
 
   std::vector<Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> > kappa(
       n_transitions);
@@ -157,9 +159,9 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   }
 
   for (int n = n_transitions - 2; n >= 0; --n) {
-    kappa[n] = Gamma_dbl * (omegas.col(n + 2).cwiseProduct(kappa[n + 1]));
+    kappa[n] = Gamma_val * (omegas.col(n + 2).cwiseProduct(kappa[n + 1]));
 
-    T_partials_return norm = kappa[n].maxCoeff();
+    auto norm = kappa[n].maxCoeff();
     // double norm = kappa[n].maxCoeff();
     kappa[n] /= norm;
     kappa_log_norms(n) = log(norm) + kappa_log_norms(n + 1);
@@ -197,7 +199,7 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
       for (int n = n_transitions - 1; n >= 0; --n)
         log_omega_jacad.col(n + 1)
             = grad_corr[n]
-              * kappa[n].cwiseProduct(Gamma_dbl.transpose() * alphas.col(n));
+              * kappa[n].cwiseProduct(Gamma_val.transpose() * alphas.col(n));
     }
 
     // Boundary terms
@@ -213,22 +215,22 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
             = omegas.col(0) / exp(value_of(log_marginal_density));
       }
     } else {
-      T_partial_type grad_corr_boundary = exp(kappa_log_norms(0) - norm_norm);
-      Eigen::Matrix<T_partial_type, Eigen::Dynamic, 1> c
-          = Gamma_dbl * omegas.col(1).cwiseProduct(kappa[0]);
+      auto grad_corr_boundary = exp(kappa_log_norms(0) - norm_norm);
+      Eigen::Matrix<T_partial_type, Eigen::Dynamic, 1> C
+          = Gamma_val * omegas.col(1).cwiseProduct(kappa[0]);
       // double grad_corr_boundary = std::exp(kappa_log_norms(0) - norm_norm);
-      // Eigen::VectorXd c = Gamma_dbl * omegas.col(1).cwiseProduct(kappa[0]);
+      // Eigen::VectorXd C = Gamma_val * omegas.col(1).cwiseProduct(kappa[0]);
 
       if (!is_constant_all<T_omega>::value) {
         log_omega_jacad.col(0)
-            = grad_corr_boundary * c.cwiseProduct(value_of(rho));
+            = grad_corr_boundary * C.cwiseProduct(value_of(rho));
         ops_partials.edge1_.partials_
             = log_omega_jacad.cwiseProduct(omegas / unnormed_marginal);
       }
 
       if (!is_constant_all<T_rho>::value) {
         ops_partials.edge3_.partials_ = grad_corr_boundary
-                                        * c.cwiseProduct(omegas.col(0))
+                                        * C.cwiseProduct(omegas.col(0))
                                         / unnormed_marginal;
       }
     }
