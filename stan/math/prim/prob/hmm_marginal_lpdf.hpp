@@ -17,7 +17,6 @@
 namespace stan {
 namespace math {
 
-
 /**
  * For a Hidden Markov Model with observation y, hidden state x,
  * and parameters theta, return the log marginal density, log
@@ -52,12 +51,13 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
     const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
     const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma,
     const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho) {
-
   using T_partials_return = partials_return_t<T_omega, T_Gamma, T_rho>;
   using T_partial_type
-      = real_return_t<partials_type_t<T_omega>, partials_type_t<T_Gamma>,
+      = return_type_t<partials_type_t<T_omega>, partials_type_t<T_Gamma>,
                       partials_type_t<T_rho> >;
-
+  using eig_matrix_partial
+      = Eigen::Matrix<T_partial_type, Eigen::Dynamic, Eigen::Dynamic>;
+  using eig_vector_partial = Eigen::Matrix<T_partial_type, Eigen::Dynamic, 1>;
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 
@@ -74,19 +74,11 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
                         Eigen::Matrix<T_rho, Eigen::Dynamic, 1> >
       ops_partials(log_omegas, Gamma, rho);
 
+  eig_matrix_partial alphas(n_states, n_transitions + 1);
+  eig_vector_partial alpha_log_norms(n_transitions + 1);
+  eig_matrix_partial omegas;
+  auto Gamma_val = value_of(Gamma).eval();
 
-  Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic> alphas(
-      n_states, n_transitions + 1);
-  Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> alpha_log_norms(n_transitions
-                                                                   + 1);
-  Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>
-      omegas;
-  auto Gamma_val = value_of(Gamma);
-
-  // Eigen::MatrixXd alphas(n_states, n_transitions + 1);
-  // Eigen::VectorXd alpha_log_norms(n_transitions + 1);
-  // Eigen::MatrixXd omegas;
-  // Eigen::MatrixXd Gamma_val = value_of(Gamma);
   /**
    * For a Hidden Markov Model with observation y, hidden state x,
    * and parameters theta, return the log marginal density, log
@@ -113,68 +105,55 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
    * @return log marginal density.
    */
   {
-    auto log_omegas_m = value_of(log_omegas).eval();
-    auto rho_val = value_of(rho).eval();
-    omegas = log_omegas_m.array().exp();
-    int n_states = log_omegas_m.rows();
-    int n_transitions = log_omegas_m.cols() - 1;
+    const auto log_omegas_val = value_of(log_omegas).eval();
+    const auto rho_val = value_of(rho).eval();
+    omegas = log_omegas_val.array().exp();
+    const int n_states = log_omegas_val.rows();
+    const int n_transitions = log_omegas_val.cols() - 1;
 
     alphas.col(0) = omegas.col(0).cwiseProduct(rho_val);
 
-    auto norm = alphas.col(0).maxCoeff();
+    const auto norm = alphas.col(0).maxCoeff();
     alphas.col(0) /= norm;
     alpha_log_norms(0) = log(norm);
 
     for (int n = 0; n < n_transitions; ++n) {
-      alphas.col(n + 1)
-          = omegas.col(n + 1).cwiseProduct(Gamma_val.transpose() * alphas.col(n));
+      alphas.col(n + 1) = omegas.col(n + 1).cwiseProduct(Gamma_val.transpose()
+                                                         * alphas.col(n));
 
-      auto norm = alphas.col(n + 1).maxCoeff();
-      alphas.col(n + 1) /= norm;
-      alpha_log_norms(n + 1) = log(norm) + alpha_log_norms(n);
+      const auto col_norm = alphas.col(n + 1).maxCoeff();
+      alphas.col(n + 1) /= col_norm;
+      alpha_log_norms(n + 1) = log(col_norm) + alpha_log_norms(n);
     }
   }
-  T_partials_return log_marginal_density = log(alphas.col(n_transitions).sum()) + alpha_log_norms(n_transitions);
+  const T_partial_type log_marginal_density
+      = log(alphas.col(n_transitions).sum()) + alpha_log_norms(n_transitions);
 
   // Variables required for all three Jacobian-adjoint products.
-  auto norm_norm = alpha_log_norms(n_transitions);
-  auto unnormed_marginal = alphas.col(n_transitions).sum();
+  const auto norm_norm = alpha_log_norms(n_transitions);
+  const auto unnormed_marginal = alphas.col(n_transitions).sum();
 
-  std::vector<Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> > kappa(
-      n_transitions);
-  Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> kappa_log_norms(
-      n_transitions);
-  std::vector<T_partials_return> grad_corr(n_transitions);
-
-  // std::vector<Eigen::VectorXd> kappa(n_transitions);
-  // Eigen::VectorXd kappa_log_norms(n_transitions);
-  // std::vector<double> grad_corr(n_transitions);
+  std::vector<eig_vector_partial> kappa(n_transitions, eig_vector_partial::Ones(n_states));
+  eig_vector_partial kappa_log_norms = eig_vector_partial::Zero(n_transitions);
+  std::vector<T_partial_type> grad_corr(n_transitions);
 
   if (n_transitions > 0) {
-    kappa[n_transitions - 1] = Eigen::VectorXd::Ones(n_states);
-    kappa_log_norms(n_transitions - 1) = 0;
     grad_corr[n_transitions - 1]
         = exp(alpha_log_norms(n_transitions - 1) - norm_norm);
-    // = std::exp(alpha_log_norms(n_transitions - 1) - norm_norm);
   }
 
   for (int n = n_transitions - 2; n >= 0; --n) {
     kappa[n] = Gamma_val * (omegas.col(n + 2).cwiseProduct(kappa[n + 1]));
 
-    auto norm = kappa[n].maxCoeff();
-    // double norm = kappa[n].maxCoeff();
+    const auto norm = kappa[n].maxCoeff();
     kappa[n] /= norm;
-    kappa_log_norms(n) = log(norm) + kappa_log_norms(n + 1);
-    grad_corr[n] = exp(alpha_log_norms(n) + kappa_log_norms(n) - norm_norm);
-    // kappa_log_norms(n) = std::log(norm) + kappa_log_norms(n + 1);
-    // grad_corr[n]
-    //     = std::exp(alpha_log_norms(n) + kappa_log_norms(n) - norm_norm);
+    kappa_log_norms[n] = log(norm) + kappa_log_norms[n + 1];
+    grad_corr[n] = exp(alpha_log_norms[n] + kappa_log_norms[n] - norm_norm);
   }
 
   if (!is_constant_all<T_Gamma>::value) {
-    Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic> Gamma_jacad
-        = Eigen::MatrixXd::Zero(n_states, n_states);
-    // Eigen::MatrixXd Gamma_jacad = Eigen::MatrixXd::Zero(n_states, n_states);
+    eig_matrix_partial Gamma_jacad
+        = eig_matrix_partial::Zero(n_states, n_states);
 
     for (int n = n_transitions - 1; n >= 0; --n) {
       Gamma_jacad += (grad_corr[n] * kappa[n].cwiseProduct(omegas.col(n + 1))
@@ -186,14 +165,13 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
     ops_partials.edge2_.partials_ = Gamma_jacad;
   }
 
-  bool sensitivities_for_omega_or_rho
+  const bool sensitivities_for_omega_or_rho
       = (!is_constant_all<T_omega>::value) || (!is_constant_all<T_rho>::value);
 
   // boundary terms
   if (sensitivities_for_omega_or_rho) {
-    // Eigen::MatrixXd log_omega_jacad
-    Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>
-        log_omega_jacad = Eigen::MatrixXd::Zero(n_states, n_transitions + 1);
+    eig_matrix_partial log_omega_jacad
+        = eig_matrix_partial::Zero(n_states, n_transitions + 1);
 
     if (!is_constant_all<T_omega>::value) {
       for (int n = n_transitions - 1; n >= 0; --n)
@@ -215,11 +193,8 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
             = omegas.col(0) / exp(value_of(log_marginal_density));
       }
     } else {
-      auto grad_corr_boundary = exp(kappa_log_norms(0) - norm_norm);
-      Eigen::Matrix<T_partial_type, Eigen::Dynamic, 1> C
-          = Gamma_val * omegas.col(1).cwiseProduct(kappa[0]);
-      // double grad_corr_boundary = std::exp(kappa_log_norms(0) - norm_norm);
-      // Eigen::VectorXd C = Gamma_val * omegas.col(1).cwiseProduct(kappa[0]);
+      const auto grad_corr_boundary = exp(kappa_log_norms(0) - norm_norm);
+      eig_vector_partial C = Gamma_val * omegas.col(1).cwiseProduct(kappa[0]);
 
       if (!is_constant_all<T_omega>::value) {
         log_omega_jacad.col(0)
