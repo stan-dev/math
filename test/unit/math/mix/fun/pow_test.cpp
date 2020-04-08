@@ -36,8 +36,8 @@ TEST(mathMixScalFun, powInstantiations) {
 
 TEST(mathMixScalFun, pow) {
   auto f = [](const auto& x1, const auto& x2) {
-    using std::pow;
     using stan::math::pow;
+    using std::pow;
     return pow(x1, x2);
   };
   stan::test::expect_ad(f, -0.4, 0.5);
@@ -57,8 +57,8 @@ TEST(mathMixScalFun, pow) {
 }
 TEST(mathMixFun, complexPow) {
   auto f = [](const auto& x1, const auto& x2) {
-    using std::pow;
     using stan::math::pow;
+    using std::pow;
     return pow(x1, x2);
   };
   stan::test::ad_tolerances tols;
