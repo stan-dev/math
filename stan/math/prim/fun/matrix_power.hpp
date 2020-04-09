@@ -10,9 +10,7 @@ namespace math {
 /**
  * Returns the nth power of the specific matrix. M^n = M * M * ... * M.
  *
- * @tparam T type of elements in the matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam T type of the matrix
  *
  * @param[in] M a square matrix
  * @param[in] n exponent
@@ -21,9 +19,14 @@ namespace math {
  * @throw std::invalid_argument if the exponent is negative or the matrix is not
  * square.
  */
-template <typename T, int R, int C>
-inline Eigen::Matrix<T, R, C> matrix_power(const Eigen::Matrix<T, R, C> &M,
-                                           const int n) {
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
+                     EigMat::ColsAtCompileTime>
+matrix_power(const EigMat& M, const int n) {
+  using T = value_type_t<EigMat>;
+  constexpr int R = EigMat::RowsAtCompileTime;
+  constexpr int C = EigMat::ColsAtCompileTime;
+
   check_square("matrix_power", "M", M);
   if (n < 0)
     invalid_argument("matrix_power", "n", n, "is ", ", but must be >= 0!");
@@ -34,7 +37,7 @@ inline Eigen::Matrix<T, R, C> matrix_power(const Eigen::Matrix<T, R, C> &M,
   if (n == 0)
     return Eigen::Matrix<T, R, C>::Identity(M.rows(), M.cols());
   Eigen::Matrix<T, R, C> result = M;
-  Eigen::Matrix<T, R, C> MM = M;
+  Eigen::Matrix<T, R, C> MM = result;
   for (int nn = n - 1; nn > 0; nn /= 2) {
     if (nn % 2 == 1) {
       result = result * MM;
@@ -45,9 +48,10 @@ inline Eigen::Matrix<T, R, C> matrix_power(const Eigen::Matrix<T, R, C> &M,
   return result;
 }
 
-template <typename T, int R, int C>
-inline Eigen::Matrix<T, R, C> operator^(const Eigen::Matrix<T, R, C> &M,
-                                        const int n) {
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
+           EigMat::ColsAtCompileTime>
+operator^(const EigMat& M, const int n) {
   return matrix_power(M, n);
 }
 

@@ -16,14 +16,8 @@ namespace math {
  *
  * @tparam TriView Specifies whether A is upper (Eigen::Upper)
  * or lower triangular (Eigen::Lower).
- * @tparam T1 type of elements in the right-hand side matrix or vector
- * @tparam T2 type of elements in the triangular matrix
- * @tparam R1 number of rows in the right-hand side matrix, can be
- *         Eigen::Dynamic
- * @tparam C1 number of columns in the right-hand side matrix, can be
- *         Eigen::Dynamic
- * @tparam R2 number of rows in the triangular matrix, can be Eigen::Dynamic
- * @tparam C2 number of columns in the triangular matrix, can be Eigen::Dynamic
+ * @tparam EigMat1 type of the right-hand side matrix or vector
+ * @tparam EigMat2 type of the triangular matrix
  *
  * @param A Triangular matrix.  Specify upper or lower with TriView
  * being Eigen::Upper or Eigen::Lower.
@@ -32,10 +26,12 @@ namespace math {
  * @throws std::domain_error if A is not square or the rows of b don't
  * match the size of A.
  */
-template <Eigen::UpLoType TriView, typename T1, typename T2, int R1, int C1,
-          int R2, int C2>
-inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_tri(
-    const Eigen::Matrix<T1, R1, C1> &b, const Eigen::Matrix<T2, R2, C2> &A) {
+template <Eigen::UpLoType TriView, typename EigMat1, typename EigMat2,
+          require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
+          require_all_not_st_same<double, EigMat1, EigMat2>* = nullptr>
+inline Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
+                     EigMat1::RowsAtCompileTime, EigMat2::ColsAtCompileTime>
+mdivide_right_tri(const EigMat1& b, const EigMat2& A) {
   check_square("mdivide_right_tri", "A", A);
   check_multiplicable("mdivide_right_tri", "b", b, "A", A);
   if (TriView != Eigen::Lower && TriView != Eigen::Upper) {
@@ -47,10 +43,16 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_tri(
     return {b.rows(), 0};
   }
 
-  return Eigen::Matrix<return_type_t<T1, T2>, R2, C2>(A)
+  return Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
+                       EigMat2::RowsAtCompileTime, EigMat2::ColsAtCompileTime>(
+             A)
       .template triangularView<TriView>()
       .transpose()
-      .solve(Eigen::Matrix<return_type_t<T1, T2>, R1, C1>(b).transpose())
+      .solve(
+          Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
+                        EigMat1::RowsAtCompileTime, EigMat1::ColsAtCompileTime>(
+              b)
+              .transpose())
       .transpose();
 }
 
@@ -60,12 +62,8 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_tri(
  *
  * @tparam TriView Specifies whether A is upper (Eigen::Upper)
  * or lower triangular (Eigen::Lower).
- * @tparam R1 number of rows in the right-hand side matrix, can be
- *         Eigen::Dynamic
- * @tparam C1 number of columns in the right-hand side matrix, can be
- *         Eigen::Dynamic
- * @tparam R2 number of rows in the triangular matrix, can be Eigen::Dynamic
- * @tparam C2 number of columns in the triangular matrix, can be Eigen::Dynamic
+ * @tparam EigMat1 type of the right-hand side matrix or vector
+ * @tparam EigMat2 type of the triangular matrix
  *
  * @param A Triangular matrix.  Specify upper or lower with TriView
  * being Eigen::Upper or Eigen::Lower.
@@ -74,10 +72,12 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_tri(
  * @throws std::domain_error if A is not square or the rows of b don't
  * match the size of A.
  */
-template <Eigen::UpLoType TriView, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<double, R1, C2> mdivide_right_tri(
-    const Eigen::Matrix<double, R1, C1> &b,
-    const Eigen::Matrix<double, R2, C2> &A) {
+template <Eigen::UpLoType TriView, typename EigMat1, typename EigMat2,
+          require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
+          require_all_st_same<double, EigMat1, EigMat2>* = nullptr>
+inline Eigen::Matrix<double, EigMat1::RowsAtCompileTime,
+                     EigMat2::ColsAtCompileTime>
+mdivide_right_tri(const EigMat1& b, const EigMat2& A) {
   check_square("mdivide_right_tri", "A", A);
   check_multiplicable("mdivide_right_tri", "b", b, "A", A);
   if (A.rows() == 0) {
