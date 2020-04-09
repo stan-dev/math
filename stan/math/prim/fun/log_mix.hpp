@@ -65,14 +65,16 @@ inline double log_mix(T_theta theta, T_lambda1 lambda1, T_lambda2 lambda2) {
  * =\frac{e^{d_x}p_x}{e^{d_1}p_1+\cdot\cdot\cdot+e^{d_m}p_m}
  * \f]
  *
- * @tparam T_theta Type of theta. This can be a scalar, std vector or row/column vector.
- * @tparam T_lam Type of lambda. This can be a scalar, std vector or row/column vector.
+ * @tparam T_theta Type of theta. This can be a scalar, std vector or row/column
+ * vector.
+ * @tparam T_lam Type of lambda. This can be a scalar, std vector or row/column
+ * vector.
  * @param theta std/row/col vector of mixing proportions in [0, 1].
  * @param lambda std/row/col vector of log densities.
  * @return log mixture of densities in specified proportion
  */
 template <typename T_theta, typename T_lam,
-          require_any_vector_t<T_theta, T_lam>* = nullptr >
+          require_any_vector_t<T_theta, T_lam>* = nullptr>
 return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
                                       const T_lam& lambda) {
   static const char* function = "log_mix";
@@ -128,8 +130,10 @@ return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
  * =\frac{e^{d_x}p_x}{e^{d_1}p_1+\cdot\cdot\cdot+e^{d_m}p_m}
  * \f]
  *
- * @tparam T_theta Type of theta. This can be a scalar, std vector or row/column vector
- * @tparam T_lam Type of vector in std vector lambda. This can be std vector or row/column vector.
+ * @tparam T_theta Type of theta. This can be a scalar, std vector or row/column
+ * vector
+ * @tparam T_lam Type of vector in std vector lambda. This can be std vector or
+ * row/column vector.
  * @param theta std/row/col vector of mixing proportions in [0, 1].
  * @param lambda std vector containing std/row/col vectors of log densities.
  * @return log mixture of densities in specified proportion

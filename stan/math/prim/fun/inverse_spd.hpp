@@ -19,8 +19,8 @@ namespace math {
  * @throw std::domain_error if the matrix is not positive definite.
  */
 template <typename EigMat>
-inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> inverse_spd(
-    const EigMat& m) {
+inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>
+inverse_spd(const EigMat& m) {
   using Eigen::Dynamic;
   using Eigen::LDLT;
   using Eigen::Matrix;
@@ -41,8 +41,9 @@ inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> inver
   Matrix<Scalar, Dynamic, 1> diag_ldlt = ldlt.vectorD();
   check_positive("inverse_spd", "matrix not positive definite", diag_ldlt);
 
-  return ldlt.solve(Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>::Identity(
-      m.rows(), m.cols()));
+  return ldlt.solve(
+      Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>::Identity(
+          m.rows(), m.cols()));
 }
 
 }  // namespace math

@@ -20,12 +20,14 @@ namespace math {
  * @return Eigenvalues of matrix.
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
-Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, 1> eigenvalues_sym(const EigMat& m) {
+Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, 1> eigenvalues_sym(
+    const EigMat& m) {
   const plain_type_t<EigMat>& m_eval = m;
   check_nonzero_size("eigenvalues_sym", "m", m_eval);
   check_symmetric("eigenvalues_sym", "m", m_eval);
 
-  Eigen::SelfAdjointEigenSolver<plain_type_t<EigMat>> solver(m_eval, Eigen::EigenvaluesOnly);
+  Eigen::SelfAdjointEigenSolver<plain_type_t<EigMat>> solver(
+      m_eval, Eigen::EigenvaluesOnly);
   return solver.eigenvalues();
 }
 

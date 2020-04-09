@@ -9,14 +9,13 @@ namespace stan {
 namespace math {
 
 template <typename EigMat>
-Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> eigenvectors_sym(
-    const EigMat& m) {
+Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>
+eigenvectors_sym(const EigMat& m) {
   const plain_type_t<EigMat>& m_eval = m;
   check_nonzero_size("eigenvectors_sym", "m", m_eval);
   check_symmetric("eigenvalues_sym", "m", m_eval);
 
-  Eigen::SelfAdjointEigenSolver<plain_type_t<EigMat>>
-      solver(m_eval);
+  Eigen::SelfAdjointEigenSolver<plain_type_t<EigMat>> solver(m_eval);
   return solver.eigenvectors();
 }
 

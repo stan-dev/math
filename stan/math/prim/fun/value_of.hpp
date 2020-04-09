@@ -88,7 +88,7 @@ inline std::vector<typename child_type<T>::type> value_of(
  * @param x Specified std::vector.
  * @return Specified std::vector.
  */
-template<typename Scal, require_double_or_int_t<Scal>* = nullptr>
+template <typename Scal, require_double_or_int_t<Scal>* = nullptr>
 inline const std::vector<Scal>& value_of(const std::vector<Scal>& x) {
   return x;
 }
