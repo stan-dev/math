@@ -167,6 +167,8 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
         ops_partials.edge5_.partials_[0]
             = (y_scaled_sq_sum - N_instances) * forward_as<double>(inv_sigma);
       }
+    } else {
+      y_scaled_sq_sum = sum(y_scaled * y_scaled);
     }
   } else {
     y_scaled_sq_sum = sum(y_scaled * y_scaled);
