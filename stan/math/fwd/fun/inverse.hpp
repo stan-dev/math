@@ -23,9 +23,10 @@ namespace math {
  * size zero).
  * @throw std::invalid_argument if the matrix is not square.
  */
-template <typename EigMat, require_eigen_vt<is_fvar,EigMat>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime, EigMat::ColsAtCompileTime> inverse(
-    const EigMat& m) {
+template <typename EigMat, require_eigen_vt<is_fvar, EigMat>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
+                     EigMat::ColsAtCompileTime>
+inverse(const EigMat& m) {
   using T = typename value_type_t<EigMat>::Scalar;
   constexpr int R = EigMat::RowsAtCompileTime;
   constexpr int C = EigMat::ColsAtCompileTime;

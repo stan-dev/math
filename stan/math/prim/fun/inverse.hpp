@@ -20,7 +20,8 @@ namespace math {
  * size zero).
  * @throw std::invalid_argument if the matrix is not square.
  */
-template <typename EigMat, require_eigen_vt<std::is_arithmetic,EigMat>* = nullptr>
+template <typename EigMat,
+          require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
                      EigMat::ColsAtCompileTime>
 inverse(const EigMat& m) {

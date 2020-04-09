@@ -22,7 +22,7 @@ namespace math {
 template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
 inline var log_determinant_spd(const EigMat& m) {
   check_symmetric("log_determinant_spd", "m", m);
-  if (m.size() == 0){
+  if (m.size() == 0) {
     return 0;
   }
 

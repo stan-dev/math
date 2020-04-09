@@ -19,7 +19,8 @@ namespace math {
  * @return log absolute determinant of the matrix
  * @throw std::domain_error if matrix is not square and symmetric
  */
-template <typename EigMat, require_eigen_t<EigMat>* = nullptr, require_not_vt_var<EigMat>* = nullptr>
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
+          require_not_vt_var<EigMat>* = nullptr>
 inline value_type_t<EigMat> log_determinant_spd(const EigMat& m) {
   check_symmetric("log_determinant_spd", "m", m);
   if (m.size() == 0) {

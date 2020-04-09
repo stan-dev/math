@@ -40,7 +40,8 @@ inline auto log_softmax(const T& x) {
       for (int k = 0; k < alpha.size(); ++k) {
         if (m == k) {
           log_softmax_alpha(k).d_
-              += alpha_ref.coeff(m).d_ + negative_alpha_m_d_times_softmax_alpha_t_m;
+              += alpha_ref.coeff(m).d_
+                 + negative_alpha_m_d_times_softmax_alpha_t_m;
         } else {
           log_softmax_alpha(k).d_ += negative_alpha_m_d_times_softmax_alpha_t_m;
         }
