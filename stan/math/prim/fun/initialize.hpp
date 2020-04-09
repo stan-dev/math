@@ -19,7 +19,7 @@ inline void initialize(T& x, V v) {
 
 template <typename T, int R, int C, typename V>
 inline void initialize(Eigen::Matrix<T, R, C>& x, const V& v) {
-  x = Eigen::Matrix<T, R, C>::Constant(x.rows(), x.cols(), v);
+  x.fill(v);
 }
 
 template <typename T, typename V>

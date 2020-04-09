@@ -19,13 +19,15 @@ namespace math {
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
-template <typename T, require_t<is_fvar<scalar_type_t<T>>>...>
+template <typename T, require_vector_st<is_fvar, T>* = nullptr>
 inline auto log_softmax(const T& x) {
   return apply_vector_unary<T>::apply(x, [&](const auto& alpha) {
-    using T_fvar = value_type_t<decltype(alpha)>;
+    using T_alpha = decltype(alpha);
+    using T_fvar = value_type_t<T_alpha>;
     using T_fvar_inner = typename T_fvar::Scalar;
 
-    Eigen::Matrix<T_fvar_inner, -1, 1> alpha_t = alpha.val();
+    const Eigen::Ref<const plain_type_t<T_alpha>>& alpha_ref = alpha;
+    Eigen::Matrix<T_fvar_inner, -1, 1> alpha_t = alpha_ref.val();
     Eigen::Matrix<T_fvar_inner, -1, 1> softmax_alpha_t = softmax(alpha_t);
 
     Eigen::Matrix<T_fvar, -1, 1> log_softmax_alpha(alpha.size());
@@ -34,11 +36,11 @@ inline auto log_softmax(const T& x) {
 
     for (int m = 0; m < alpha.size(); ++m) {
       T_fvar_inner negative_alpha_m_d_times_softmax_alpha_t_m
-          = -alpha(m).d_ * softmax_alpha_t(m);
+          = -alpha_ref.coeff(m).d_ * softmax_alpha_t(m);
       for (int k = 0; k < alpha.size(); ++k) {
         if (m == k) {
           log_softmax_alpha(k).d_
-              += alpha(m).d_ + negative_alpha_m_d_times_softmax_alpha_t_m;
+              += alpha_ref.coeff(m).d_ + negative_alpha_m_d_times_softmax_alpha_t_m;
         } else {
           log_softmax_alpha(k).d_ += negative_alpha_m_d_times_softmax_alpha_t_m;
         }
