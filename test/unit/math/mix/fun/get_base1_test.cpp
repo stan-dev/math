@@ -73,7 +73,7 @@ TEST(AgradMixMatrixGetBase1, get_base1_matrix_fv) {
       EXPECT_FLOAT_EQ(x(i, j).val_.val(),
                       get_base1(x, i + 1, "x", 1)(0, j).val_.val());
       Matrix<fvar<var>, 1, Dynamic> xi
-          = get_base1<fvar<var> >(x, i + 1, "x", 1);
+          = get_base1(x, i + 1, "x", 1);
       EXPECT_FLOAT_EQ(x(i, j).val_.val(), xi[j].val_.val());
       EXPECT_FLOAT_EQ(x(i, j).val_.val(),
                       get_base1(xi, j + 1, "xi", 2).val_.val());
@@ -224,7 +224,7 @@ TEST(AgradMixMatrixGetBase1, get_base1_matrix_ffv) {
       EXPECT_FLOAT_EQ(x(i, j).val_.val_.val(),
                       get_base1(x, i + 1, "x", 1)(0, j).val_.val_.val());
       Matrix<fvar<fvar<var> >, 1, Dynamic> xi
-          = get_base1<fvar<fvar<var> > >(x, i + 1, "x", 1);
+          = get_base1(x, i + 1, "x", 1);
       EXPECT_FLOAT_EQ(x(i, j).val_.val_.val(), xi[j].val_.val_.val());
       EXPECT_FLOAT_EQ(x(i, j).val_.val_.val(),
                       get_base1(xi, j + 1, "xi", 2).val_.val_.val());
