@@ -415,7 +415,8 @@ TEST(ProbDistributionsNegBinomial2Log, derivativesZeroOne) {
       expect_near_rel("deta, n = 0 " + msg.str(), gradients0[0], expected_deta_0);
 
       double expected_dphi_0
-          = 1.0 / (1.0 + phi_dbl / exp(eta_dbl)) -log1p_exp(eta_dbl - log(phi_dbl))          ;
+          = 1.0 / (1.0 + phi_dbl / exp(eta_dbl)) 
+          -log1p_exp(eta_dbl - log(phi_dbl));
       // Couldn't achieve very good precision for very low phi :-(
       relative_tolerance dphi_0_tol;
       if(phi_dbl < 1e-3) {
@@ -424,14 +425,18 @@ TEST(ProbDistributionsNegBinomial2Log, derivativesZeroOne) {
       expect_near_rel("dphi, n = 0 " + msg.str(), gradients0[1],
                       expected_dphi_0, dphi_0_tol);
 
-      double expected_value_1 = (phi_dbl + 1) * (-log1p_exp(eta_dbl - log(phi_dbl))) + eta_dbl;
+      double expected_value_1 = 
+        (phi_dbl + 1) * (-log1p_exp(eta_dbl - log(phi_dbl))) + eta_dbl;
       expect_near_rel("value, n = 1 " + msg.str(), val1.val(), expected_value_1);
 
-      double expected_deta_1 = exp(log(phi_dbl) - log_sum_exp(eta_dbl, log(phi_dbl)))
-          + expected_deta_0;
+      double expected_deta_1 = 
+        exp(log(phi_dbl) - log_sum_exp(eta_dbl, log(phi_dbl))) 
+        + expected_deta_0;
       expect_near_rel("deta, n = 1 " + msg.str(), gradients1[0], expected_deta_1);
 
-      double expected_dphi_1 = (1 + phi_dbl) / (phi_dbl  + (phi_dbl * phi_dbl) / exp(eta_dbl)) -log1p_exp(eta_dbl - log(phi_dbl));
+      double expected_dphi_1 = 
+        (1 + phi_dbl) / (phi_dbl  + (phi_dbl * phi_dbl) / exp(eta_dbl)) 
+        -log1p_exp(eta_dbl - log(phi_dbl));
       // Couldn't achieve very good precision for low phi and low eta :-(
       relative_tolerance dphi_1_tol;
       if(phi_dbl < 1e-2 && eta_dbl < 100) {
