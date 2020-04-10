@@ -137,7 +137,7 @@ TEST_F(hmm_marginal_lpdf_test, ten_transitions) {
   stan::test::expect_ad(tols, hmm_functor, log_omegas, Gamma_unconstrained,
                         rho_unconstrained);
 }
-/*
+
 TEST_F(hmm_marginal_lpdf_test, zero_transitions) {
   using stan::math::hmm_marginal_lpdf;
 
@@ -184,17 +184,6 @@ TEST(hmm_marginal_lpdf, one_state) {
   };
 
   stan::test::ad_tolerances tols;
-  double infinity = 1e10;
-  tols.hessian_val_ = infinity;
-  tols.hessian_grad_ = infinity;
-  tols.hessian_hessian_ = infinity;
-  tols.hessian_fvar_val_ = infinity;
-  tols.hessian_fvar_grad_ = infinity;
-  tols.hessian_fvar_hessian_ = infinity;
-  tols.grad_hessian_val_ = infinity;
-  tols.grad_hessian_hessian_ = infinity;
-  tols.grad_hessian_grad_hessian_ = infinity;
-
   stan::test::expect_ad(tols, hmm_functor, log_omegas);
 }
 
@@ -262,4 +251,4 @@ TEST(hmm_marginal_lpdf, exceptions) {
       " array, vector, or matrix types, and they were not consistently sized;"
       "  all arguments must be scalars or multidimensional values of"
       " the same shape.")
-}  */
+}

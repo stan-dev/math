@@ -79,31 +79,7 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   eig_matrix_partial omegas;
   auto Gamma_val = value_of(Gamma).eval();
 
-  /**
-   * For a Hidden Markov Model with observation y, hidden state x,
-   * and parameters theta, return the log marginal density, log
-   * p(y | theta). In this setting, the hidden states are discrete
-   * and take values over the finite space {1, ..., K}.
-   * The marginal lpdf is obtained via a forward pass.
-   * The [in, out] argument are saved so that we can use them when
-   * calculating the derivatives.
-   *
-   * @param[in] log_omega log matrix of observational densities.
-   *              The (i, j)th entry corresponds to the
-   *              density of the ith observation, y_i,
-   *              given x_i = j.qq
-   * @param[in] Gamma transition density between hidden states.
-   *              The (i, j)th entry is the probability that x_n = j,
-   *              given x_{n - 1} = i. The rows of Gamma are simplexes.
-   * @param[in] rho initial state
-   * @param[in, out] alphas unnormalized partial marginal density.
-   *                   The jth column is the joint density over all
-   *                   observations y and the hidden state j.
-   * @param[in, out] alpha_log_norms max coefficient for column of alpha,
-   *                   to be used to normalize alphas.
-   * @param[in, out] omegas term-wise exponential of omegas.
-   * @return log marginal density.
-   */
+  // compute the density using the forward algorithm.
   {
     const auto log_omegas_val = value_of(log_omegas).eval();
     const auto rho_val = value_of(rho).eval();
@@ -170,7 +146,6 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   const bool sensitivities_for_omega_or_rho
       = (!is_constant_all<T_omega>::value) || (!is_constant_all<T_rho>::value);
 
-  // boundary terms
   if (sensitivities_for_omega_or_rho) {
     eig_matrix_partial log_omega_jacad
         = eig_matrix_partial::Zero(n_states, n_transitions + 1);
