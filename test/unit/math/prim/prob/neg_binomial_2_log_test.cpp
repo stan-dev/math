@@ -223,7 +223,7 @@ TEST(ProbDistributionsNegBinomial2Log, neg_binomial_2_log_grid_test) {
         std::stringstream msg;
         double val_orig
             = stan::math::neg_binomial_2_lpmf(n, std::exp(mu_log), phi);
-        msg << std::setprecision(22) 
+        msg << std::setprecision(22)
             << "neg_binomial_2_log_lpmf yields different result (" << val_log
             << ") than neg_binomial_2_lpmf (" << val_orig << ") for n = " << n
             << ", mu_log = " << mu_log << ", phi = " << phi << ".";
