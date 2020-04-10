@@ -9,8 +9,6 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/core.hpp>
-#include <stan/math/fwd/fun/exp.hpp>
-#include <stan/math/fwd/fun/log.hpp>
 #include <vector>
 #include <iostream>
 
