@@ -195,5 +195,49 @@ inline CwiseUnaryView<vi_Op, Derived>
 vi() { return CwiseUnaryView<vi_Op, Derived>(derived());
 }
 
+template <typename OtherDerived>
+inline decltype(auto) read_var(OtherDerived& other1, OtherDerived& other2) {
+  size_t R = derived().rows();
+  size_t C = derived().cols();
+  if(derived().IsRowMajor) {
+    for(int r = 0; r < R; ++r) {
+      for(int c = 0; c < C; ++c) {
+        other1.derived().coeffRef(r, c) = derived().coeffRef(r,c).vi_->val_;
+        other2.derived().coeffRef(r, c) = derived().coeffRef(r,c).vi_->adj_;
+      }
+    }
+  } else {
+    for(int c = 0; c < C; ++c) {
+      for(int r = 0; r < R; ++r) {
+        other1.derived().coeffRef(r, c) = derived().coeffRef(r,c).vi_->val_;
+        other2.derived().coeffRef(r, c) = derived().coeffRef(r,c).vi_->adj_;
+      }
+    }
+  }
+}
+
+template <typename OtherDerived1, typename OtherDerived2>
+inline decltype(auto) read_var(OtherDerived1& other1, OtherDerived2& other2, OtherDerived2& other3) {
+  size_t R = derived().rows();
+  size_t C = derived().cols();
+  if(derived().IsRowMajor) {
+    for(int r = 0; r < R; ++r) {
+      for(int c = 0; c < C; ++c) {
+        other1.derived().coeffRef(r, c) = derived().coeffRef(r,c).vi_;
+        other2.derived().coeffRef(r, c) = derived().coeffRef(r,c).vi_->val_;
+        other3.derived().coeffRef(r, c) = derived().coeffRef(r,c).vi_->adj_;
+      }
+    }
+  } else {
+    for(int c = 0; c < C; ++c) {
+      for(int r = 0; r < R; ++r) {
+        other1.derived().coeffRef(r, c) = derived().coeffRef(r,c).vi_;
+        other2.derived().coeffRef(r, c) = derived().coeffRef(r,c).vi_->val_;
+        other3.derived().coeffRef(r, c) = derived().coeffRef(r,c).vi_->adj_;
+      }
+    }
+  }
+}
+
 #define EIGEN_STAN_MATRIXBASE_PLUGIN
 #define EIGEN_STAN_ARRAYBASE_PLUGIN
