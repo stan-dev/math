@@ -79,7 +79,7 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
       exp_eta_over_exp_eta_phi(size_eta_phi);
   if (!is_constant_all<T_log_location, T_precision>::value) {
     for (size_t i = 0; i < size_eta_phi; ++i) {
-        exp_eta_over_exp_eta_phi[i] = inv(phi_val[i] / exp_eta[i] + 1);
+      exp_eta_over_exp_eta_phi[i] = inv(phi_val[i] / exp_eta[i] + 1);
     }
   }
 
@@ -111,8 +111,8 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
     }
     if (!is_constant_all<T_precision>::value) {
       ops_partials.edge2_.partials_[i]
-          += exp_eta_over_exp_eta_phi[i] - n_vec[i] / (exp_eta[i] + phi_val[i]) 
-             - log1p_exp_eta_m_logphi[i] 
+          += exp_eta_over_exp_eta_phi[i] - n_vec[i] / (exp_eta[i] + phi_val[i])
+             - log1p_exp_eta_m_logphi[i]
              - (digamma(phi_val[i]) - digamma(n_plus_phi[i]));
     }
   }
