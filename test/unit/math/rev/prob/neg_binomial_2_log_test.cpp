@@ -650,13 +650,8 @@ TEST(ProbDistributionsNegBinomial2Log, derivativesZeroOne) {
 
       double expected_dphi_0 = 1.0 / (1.0 + phi_dbl / exp(eta_dbl))
                                - log1p_exp(eta_dbl - log(phi_dbl));
-      // Couldn't achieve very good precision for very low phi :-(
-      relative_tolerance dphi_0_tol;
-      if (phi_dbl < 1e-3) {
-        dphi_0_tol = relative_tolerance(1e-8, 1e-11);
-      }
       expect_near_rel("dphi, n = 0 " + msg.str(), gradients0[1],
-                      expected_dphi_0, dphi_0_tol);
+                      expected_dphi_0);
 
       double expected_value_1
           = (phi_dbl + 1) * (-log1p_exp(eta_dbl - log(phi_dbl))) + eta_dbl;
@@ -672,13 +667,8 @@ TEST(ProbDistributionsNegBinomial2Log, derivativesZeroOne) {
       double expected_dphi_1
           = (1 + phi_dbl) / (phi_dbl + (phi_dbl * phi_dbl) / exp(eta_dbl))
             - log1p_exp(eta_dbl - log(phi_dbl));
-      // Couldn't achieve very good precision for low phi and low eta :-(
-      relative_tolerance dphi_1_tol;
-      if (phi_dbl < 1e-2 && eta_dbl < 100) {
-        dphi_1_tol = relative_tolerance(1e-8, 1e-8);
-      }
       expect_near_rel("dphi, n = 1 " + msg.str(), gradients1[1],
-                      expected_dphi_1, dphi_1_tol);
+                      expected_dphi_1);
     }
   }
 }
