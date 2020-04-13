@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_ISNAN_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/is_nan.hpp>
 
 namespace stan {
 namespace math {
@@ -16,10 +17,9 @@ namespace math {
  * @param[in] v argument
  * @return true if argument is not-a-number
  */
-template <typename ADType, require_autodiff_t<ADType>...>
+template <typename ADType>
 inline bool isnan(ADType&& v) {
-  using std::isnan;
-  return isnan(v.val());
+  return is_nan(v);
 }
 
 }  // namespace math

@@ -2,6 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_FUN_ISINF_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/is_inf.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -17,10 +19,9 @@ namespace math {
  * @param[in] v argument
  * @return true if argument is infinite
  */
-template <typename ADType, require_autodiff_t<ADType>...>
-inline bool isinf(ADType&& v) {
-  using std::isinf;
-  return isinf(v.val());
+template <typename T>
+inline bool isinf(const T& v) {
+  return is_inf(v);
 }
 
 }  // namespace math
