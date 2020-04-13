@@ -11,7 +11,6 @@
 #include <stan/math/prim/functor/integrate_1d.hpp>
 #include <stan/math/prim/functor/integrate_ode_rk45.hpp>
 #include <stan/math/prim/functor/ode_rk45.hpp>
-#include <stan/math/prim/functor/left_fold.hpp>
 #include <stan/math/prim/functor/map_rect.hpp>
 #include <stan/math/prim/functor/map_rect_combine.hpp>
 #include <stan/math/prim/functor/map_rect_concurrent.hpp>
