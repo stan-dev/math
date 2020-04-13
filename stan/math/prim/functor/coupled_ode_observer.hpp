@@ -87,8 +87,10 @@ struct coupled_ode_observer {
         index_offset_theta_(is_constant_all<T1>::value ? 0 : N_ * N_),
         next_ts_index_(0) {
     if (!is_constant_all<T_t0>::value) {
-      f_y0_t0_ = f(value_of(t0), value_of(y0), value_of(theta_), x_, x_int_, msgs_);
-      check_size_match("coupled_ode_observer", "dy_dt", f_y0_t0_.size(), "states", N_);
+      f_y0_t0_
+          = f(value_of(t0), value_of(y0), value_of(theta_), x_, x_int_, msgs_);
+      check_size_match("coupled_ode_observer", "dy_dt", f_y0_t0_.size(),
+                       "states", N_);
     }
   }
 
@@ -140,7 +142,7 @@ struct coupled_ode_observer {
       }
 
       if (!is_constant_all<T_t0>::value) {
-	ops_partials.edge3_.partials_[0] = -f_y0_t0_[j];
+        ops_partials.edge3_.partials_[0] = -f_y0_t0_[j];
       }
 
       if (!is_constant_all<T_ts>::value) {
