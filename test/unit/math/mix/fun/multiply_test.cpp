@@ -115,41 +115,13 @@ void instantiate_multiply() {
   auto cv_cv = cv * cv;
 }
 
-// these used to work
-
 TEST(mathMix, multiplicationPatterns) {
   using stan::math::fvar;
   using stan::math::var;
   instantiate_multiply<double>();
-
-  // THESE TEST EVERYTHING AND DON'T WORK
-  // SIMPLER TESTS BELOW
-  // instantiate_multiply<var>();
-  // instantiate_multiply<fvar<double>>();
-  // instantiate_multiply<fvar<fvar<double>>>();
-  // instantiate_multiply<fvar<var>>();
-  // instantiate_multiply<fvar<fvar<var>>>();
-}
-
-TEST(foo, bar) {
-  using Eigen::Matrix;
-  using stan::math::var;
-  using std::complex;
-
-  Matrix<var, -1, -1> a(2, 2);
-  a << 1, 2, 3, 4;
-
-  Matrix<complex<var>, -1, -1> b(2, 2);
-  b << 5, 6, 7, 8;
-
-  // ok
-  auto c = a * a;
-
-  // ERROR: NO MATCHING FUNCTION FOUND
-  // FAILSE TRYING TO BUILD A COMPLEX NUMBER FROM A MATRIX
-  // auto d = a * b;
-  // auto e = b * a;
-
-  // AMBIGUOUS
-  auto f = b * b;
+  instantiate_multiply<var>();
+  instantiate_multiply<fvar<double>>();
+  instantiate_multiply<fvar<fvar<double>>>();
+  instantiate_multiply<fvar<var>>();
+  instantiate_multiply<fvar<fvar<var>>>();
 }

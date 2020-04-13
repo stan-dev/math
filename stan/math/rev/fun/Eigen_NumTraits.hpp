@@ -123,117 +123,110 @@ struct ScalarBinaryOpTraits<double, stan::math::var, BinaryOp> {
   using ReturnType = stan::math::var;
 };
 
-// /**
-//  * Traits specialization for Eigen binary operations for reverse-mode
-//  autodiff
-//  * arguments.
-//  *
-//  * @tparam BinaryOp type of binary operation for which traits are
-//  * defined
-//  */
-// template <typename BinaryOp>
-// struct ScalarBinaryOpTraits<stan::math::var, stan::math::var, BinaryOp> {
-//   using ReturnType = stan::math::var;
-// };
+/**
+ * Traits specialization for Eigen binary operations for reverse-mode
+ autodiff
+ * arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
+ */
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<stan::math::var, stan::math::var, BinaryOp> {
+  using ReturnType = stan::math::var;
+};
 
-// /**
-//  * Traits specialization for Eigen binary operations for `double` and
-//  * complex autodiff arguments.
-//  *
-//  * @tparam BinaryOp type of binary operation for which traits are
-//  * defined
-//  */
-// template <typename BinaryOp>
-// struct ScalarBinaryOpTraits<double, std::complex<stan::math::var>, BinaryOp>
-// {
-//   using ReturnType = std::complex<stan::math::var>;
-// };
+/**
+ * Traits specialization for Eigen binary operations for `double` and
+ * complex autodiff arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
+ */
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<double, std::complex<stan::math::var>, BinaryOp> {
+  using ReturnType = std::complex<stan::math::var>;
+};
 
-// /**
-//  * Traits specialization for Eigen binary operations for complex
-//  * autodiff and `double` arguments.
-//  *
-//  * @tparam BinaryOp type of binary operation for which traits are
-//  * defined
-//  */
-// template <typename BinaryOp>
-// struct ScalarBinaryOpTraits<std::complex<stan::math::var>, double, BinaryOp>
-// {
-//   using ReturnType = std::complex<stan::math::var>;
-// };
+/**
+ * Traits specialization for Eigen binary operations for complex
+ * autodiff and `double` arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
+ */
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<std::complex<stan::math::var>, double, BinaryOp> {
+  using ReturnType = std::complex<stan::math::var>;
+};
 
-// /**
-//  * Traits specialization for Eigen binary operations for autodiff and
-//  * complex `double` arguments.
-//  *
-//  * @tparam BinaryOp type of binary operation for which traits are
-//  * defined
-//  */
-// template <typename BinaryOp>
-// struct ScalarBinaryOpTraits<stan::math::var, std::complex<double>, BinaryOp>
-// {
-//   using ReturnType = std::complex<stan::math::var>;
-// };
+/**
+ * Traits specialization for Eigen binary operations for autodiff and
+ * complex `double` arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
+ */
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<stan::math::var, std::complex<double>, BinaryOp> {
+  using ReturnType = std::complex<stan::math::var>;
+};
 
-// /**
-//  * Traits specialization for Eigen binary operations for complex
-//  * double and autodiff arguments.
-//  *
-//  * @tparam BinaryOp type of binary operation for which traits are
-//  * defined
-//  */
-// template <typename BinaryOp>
-// struct ScalarBinaryOpTraits<std::complex<double>, stan::math::var, BinaryOp>
-// {
-//   using ReturnType = std::complex<stan::math::var>;
-// };
+/**
+ * Traits specialization for Eigen binary operations for complex
+ * double and autodiff arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
+ */
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<std::complex<double>, stan::math::var, BinaryOp> {
+  using ReturnType = std::complex<stan::math::var>;
+};
 
-// /**
-//  * Traits specialization for Eigen binary operations for complex
-//  * double and complex autodiff arguments.
-//  *
-//  * @tparam BinaryOp type of binary operation for which traits are
-//  * defined
-//  */
-// template <typename BinaryOp>
-// struct ScalarBinaryOpTraits<std::complex<double>,
-// std::complex<stan::math::var>,
-//                             BinaryOp> {
-//   using ReturnType = std::complex<stan::math::var>;
-// };
+/**
+ * Traits specialization for Eigen binary operations for complex
+ * double and complex autodiff arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
+ */
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<std::complex<double>, std::complex<stan::math::var>,
+                            BinaryOp> {
+  using ReturnType = std::complex<stan::math::var>;
+};
 
-// /**
-//  * Traits specialization for Eigen binary operations for complex
-//  * autodiff and complex double arguments.
-//  *
-//  * @tparam BinaryOp type of binary operation for which traits are
-//  * defined
-//  */
-// template <typename BinaryOp>
-// struct ScalarBinaryOpTraits<std::complex<stan::math::var>,
-// std::complex<double>,
-//                             BinaryOp> {
-//   using ReturnType = std::complex<stan::math::var>;
-// };
+/**
+ * Traits specialization for Eigen binary operations for complex
+ * autodiff and complex double arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
+ */
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<std::complex<stan::math::var>, std::complex<double>,
+                            BinaryOp> {
+  using ReturnType = std::complex<stan::math::var>;
+};
 
-// // do we need these last two or are they covered by generic non-mixed
-// complex? template <typename BinaryOp> struct
-// ScalarBinaryOpTraits<stan::math::var, std::complex<stan::math::var>,
-// BinaryOp> {
-//   using ReturnType = std::complex<stan::math::var>;
-// };
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<stan::math::var, std::complex<stan::math::var>,
+                            BinaryOp> {
+  using ReturnType = std::complex<stan::math::var>;
+};
 
-// template <typename BinaryOp>
-// struct ScalarBinaryOpTraits<std::complex<stan::math::var>, stan::math::var,
-// BinaryOp> {
-//   using ReturnType = std::complex<stan::math::var>;
-// };
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<std::complex<stan::math::var>, stan::math::var,
+                            BinaryOp> {
+  using ReturnType = std::complex<stan::math::var>;
+};
 
-// template <typename BinaryOp>
-// struct ScalarBinaryOpTraits<std::complex<stan::math::var>,
-// std::complex<stan::math::var>, BinaryOp> {
-//   using ReturnType = std::complex<stan::math::var>;
-// };
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<std::complex<stan::math::var>,
+                            std::complex<stan::math::var>, BinaryOp> {
+  using ReturnType = std::complex<stan::math::var>;
+};
 
 namespace internal {
 /**
