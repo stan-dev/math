@@ -14,8 +14,9 @@ struct harm_osc_ode_fun {
   // double data
   // integer data
   operator()(const T0& t_in, const std::vector<T1>& y_in,
+	     std::ostream* msgs,
              const std::vector<T2>& theta, const std::vector<double>& x,
-             const std::vector<int>& x_int, std::ostream* msgs) const {
+             const std::vector<int>& x_int) const {
     if (y_in.size() != 2)
       throw std::domain_error(
           "this function was called with inconsistent state");
@@ -37,8 +38,9 @@ struct harm_osc_ode_data_fun {
   // double data
   // integer data
   operator()(const T0& t_in, const std::vector<T1>& y_in,
+	     std::ostream* msgs,
              const std::vector<T2>& theta, const std::vector<double>& x,
-             const std::vector<int>& x_int, std::ostream* msgs) const {
+             const std::vector<int>& x_int) const {
     if (y_in.size() != 2)
       throw std::domain_error(
           "this function was called with inconsistent state");
@@ -61,8 +63,9 @@ struct harm_osc_ode_wrong_size_1_fun {
   // double data
   // integer data
   operator()(const T0& t_in, const std::vector<T1>& y_in,
+	     std::ostream* msgs,
              const std::vector<T2>& theta, const std::vector<double>& x,
-             const std::vector<int>& x_int, std::ostream* msgs) const {
+             const std::vector<int>& x_int) const {
     if (y_in.size() != 2)
       throw std::domain_error(
           "this function was called with inconsistent state");
@@ -85,8 +88,9 @@ struct harm_osc_ode_wrong_size_2_fun {
   // double data
   // integer data
   operator()(const T0& t_in, const std::vector<T1>& y_in,
+	     std::ostream* msgs,
              const std::vector<T2>& theta, const std::vector<double>& x,
-             const std::vector<int>& x_int, std::ostream* msgs) const {
+             const std::vector<int>& x_int) const {
     if (y_in.size() != 2)
       throw std::domain_error(
           "this function was called with inconsistent state");

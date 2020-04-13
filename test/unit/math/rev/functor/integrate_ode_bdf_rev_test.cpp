@@ -129,7 +129,7 @@ TEST(StanAgradRevOde_integrate_ode_bdf, harmonic_oscillator_error) {
 
   // aligned error handling with non-stiff case
   std::string error_msg
-      = "cvodes_ode_data: dz_dt (3) and states (2) must match in size";
+      = "cvodes_integrator::rhs: dy_dt (3) and states (2) must match in size";
 
   sho_error_test<double, var>(harm_osc, y0, t0, ts, theta, x, x_int, error_msg);
   sho_error_test<var, double>(harm_osc, y0, t0, ts, theta, x, x_int, error_msg);
@@ -241,7 +241,7 @@ TEST(StanAgradRevOde_integrate_ode_bdf, time_steps_as_param_AD) {
           } else {
             std::vector<double> y0(res_d.begin(), res_d.begin() + ns);
             EXPECT_FLOAT_EQ(g[k],
-                            ode(ts[i].val(), y0, theta, x, x_int, msgs)[j]);
+                            ode(ts[i].val(), y0, msgs, theta, x, x_int)[j]);
           }
         }
         stan::math::set_zero_all_adjoints();
@@ -268,7 +268,7 @@ TEST(StanAgradRevOde_integrate_ode_bdf, t0_as_param_AD) {
   const int ns = 2;    // nb. of states
   std::ostream* msgs = NULL;
 
-  forced_harm_osc_ode_fun ode;
+  harm_osc_ode_fun ode;
 
   std::vector<double> theta{0.15, 0.25};
   std::vector<double> y0{1.0, 0.0};
@@ -287,10 +287,11 @@ TEST(StanAgradRevOde_integrate_ode_bdf, t0_as_param_AD) {
     for (auto i = 0; i < nt; ++i) {
       std::vector<double> res_d = value_of(res[i]);
       for (auto j = 0; j < ns; ++j) {
-        res[i][j].grad();
-        for (auto k = 0; k < nt; ++k) {
-          EXPECT_FLOAT_EQ(t0v.adj(), 0.0);
-        }
+        res[i][0].grad();
+	EXPECT_FLOAT_EQ(t0v.adj(), 0.0);
+        stan::math::set_zero_all_adjoints();
+        res[i][1].grad();
+	EXPECT_FLOAT_EQ(t0v.adj(), 1.0);
         stan::math::set_zero_all_adjoints();
       }
     }

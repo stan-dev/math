@@ -4,6 +4,7 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/functor/cvodes_utils.hpp>
 #include <stan/math/rev/functor/coupled_ode_system.hpp>
+#include <stan/math/rev/fun/ode_store_sensitivities.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <cvodes/cvodes.h>
@@ -22,15 +23,16 @@ namespace math {
  * @tparam Lmm ID of ODE solver (1: ADAMS, 2: BDF)
  */
 template <int Lmm, typename F, typename T_initial,
-	  typename T_t0, typename T_ts, typename... T_Args>
+	  typename... T_Args>
 class cvodes_integrator {
-  using T_Return = return_type_t<T_initial, T_t0, T_ts, T_Args...>;
+  using T_Return = return_type_t<T_initial, T_Args...>;
 
   const F& f_;
   const std::vector<T_initial>& y0_;
-  const T_t0& t0_;
-  const std::vector<T_ts>& ts_;
+  double t0_;
+  const std::vector<double>& ts_;
   std::tuple<const T_Args&...> args_tuple_;
+  std::tuple<decltype(value_of(T_Args()))...> value_of_args_tuple_;
   const size_t N_;
   std::ostream* msgs_;
   double relative_tolerance_;
@@ -40,7 +42,7 @@ class cvodes_integrator {
   const size_t y0_vars_;
   const size_t args_vars_;
 
-  const coupled_ode_system<T_initial, T_t0, T_ts, F, T_Args...> coupled_ode_;
+  coupled_ode_system<F, T_initial, T_Args...> coupled_ode_;
 
   std::vector<double> coupled_state_;
   N_Vector nv_state_;
@@ -48,9 +50,107 @@ class cvodes_integrator {
   SUNMatrix A_;
   SUNLinearSolver LS_;
 
+  /**
+   * Implements the function of type CVRhsFn which is the user-defined
+   * ODE RHS passed to CVODES.
+   */
+  static int cv_rhs(realtype t, N_Vector y, N_Vector ydot, void* user_data) {
+    const cvodes_integrator* integrator = static_cast<const cvodes_integrator*>(user_data);
+    integrator->rhs(t, NV_DATA_S(y), NV_DATA_S(ydot));
+    return 0;
+  }
+
+  /**
+   * Implements the function of type CVSensRhsFn which is the
+   * RHS of the sensitivity ODE system.
+   */
+  static int cv_rhs_sens(int Ns, realtype t, N_Vector y, N_Vector ydot,
+                         N_Vector* yS, N_Vector* ySdot, void* user_data,
+                         N_Vector tmp1, N_Vector tmp2) {
+    const cvodes_integrator* integrator = static_cast<const cvodes_integrator*>(user_data);
+    integrator->rhs_sens(t, NV_DATA_S(y), yS, ySdot);
+    return 0;
+  }
+
+  /**
+   * Implements the function of type CVDlsJacFn which is the
+   * user-defined callback for CVODES to calculate the jacobian of the
+   * ode_rhs wrt to the states y. The jacobian is stored in column
+   * major format.
+   */
+  static int cv_jacobian_states(realtype t, N_Vector y, N_Vector fy,
+                                SUNMatrix J, void* user_data, N_Vector tmp1,
+                                N_Vector tmp2, N_Vector tmp3) {
+    const cvodes_integrator* integrator = static_cast<const cvodes_integrator*>(user_data);
+    integrator->jacobian_states(t, NV_DATA_S(y), J);
+    return 0;
+  }
+
+  /**
+   * Calculates the ODE RHS, dy_dt, using the user-supplied functor at
+   * the given time t and state y.
+   */
+  inline void rhs(double t, const double y[], double dy_dt[]) const {
+    const std::vector<double> y_vec(y, y + N_);
+    std::vector<double> dy_dt_vec = apply([&](auto&&... args) {
+	return f_(t, y_vec, msgs_, args...);
+      }, value_of_args_tuple_);
+    check_size_match("cvodes_integrator::rhs", "dy_dt", dy_dt_vec.size(), "states",
+                     N_);
+    std::move(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
+  }
+
+  /**
+   * Calculates the jacobian of the ODE RHS wrt to its states y at the
+   * given time-point t and state y.
+   */
+  inline void jacobian_states(double t, const double y[], SUNMatrix J) const {
+    Eigen::VectorXd fy;
+    Eigen::MatrixXd Jfy;
+
+    auto f_wrapped = [&](const Eigen::Matrix<var, Eigen::Dynamic, 1>& y) {
+      return to_vector(apply([&](auto&&... args) {
+	    return f_(t, to_array_1d(y), msgs_, args...);
+	  }, value_of_args_tuple_));
+    };
+    
+    jacobian(f_wrapped, Eigen::Map<const Eigen::VectorXd>(y, N_), fy, Jfy);
+
+    for(size_t j = 0; j < Jfy.cols(); ++j) {
+      for(size_t i = 0; i < Jfy.rows(); ++i) {
+	SM_ELEMENT_D(J, i, j) = Jfy(i, j);
+      }
+    }
+  }
+
+  /**
+   * Calculates the RHS of the sensitivity ODE system which
+   * corresponds to the coupled ode system from which the first N
+   * states are omitted, since the first N states are the ODE RHS
+   * which CVODES separates from the main ODE RHS.
+   */
+  inline void rhs_sens(double t, const double y[], N_Vector* yS,
+                       N_Vector* ySdot) const {
+    std::vector<double> z(coupled_state_.size());
+    std::vector<double>&& dz_dt = std::vector<double>(coupled_state_.size());
+    std::copy(y, y + N_, z.begin());
+    for (std::size_t s = 0; s < y0_vars_ + args_vars_; s++) {
+      std::copy(NV_DATA_S(yS[s]), NV_DATA_S(yS[s]) + N_,
+                z.begin() + (s + 1) * N_);
+    }
+    coupled_ode_(z, dz_dt, t);
+    for (std::size_t s = 0; s < y0_vars_ + args_vars_; s++) {
+      std::move(dz_dt.begin() + (s + 1) * N_, dz_dt.begin() + (s + 2) * N_,
+                NV_DATA_S(ySdot[s]));
+    }
+  }
+
 public:
-  cvodes_integrator(const F& f, const std::vector<T_initial>& y0, const T_t0& t0,
-		    const std::vector<T_ts>& ts, double relative_tolerance,
+  cvodes_integrator(const F& f,
+		    const std::vector<T_initial>& y0,
+		    double t0,
+		    const std::vector<double>& ts,
+		    double relative_tolerance,
 		    double absolute_tolerance,
 		    long int max_num_steps,
 		    std::ostream* msgs, const T_Args&... args)
@@ -59,13 +159,14 @@ public:
       t0_(t0),
       ts_(ts),
       args_tuple_(args...),
+      value_of_args_tuple_(value_of(args)...),
       N_(y0.size()),
       msgs_(msgs),
       relative_tolerance_(relative_tolerance),
       absolute_tolerance_(absolute_tolerance),
       max_num_steps_(max_num_steps),
-      y0_vars_(internal::count_vars(y0_)),
-      args_vars_(internal::count_vars(args...)),
+      y0_vars_(count_vars(y0_)),
+      args_vars_(count_vars(args...)),
       coupled_ode_(f, y0, msgs, args...),
       coupled_state_(coupled_ode_.initial_state()) {
     using initial_var = stan::is_var<T_initial>;
@@ -108,100 +209,6 @@ public:
     N_VDestroy_Serial(nv_state_);
     if (y0_vars_ + args_vars_ > 0) {
       N_VDestroyVectorArray_Serial(nv_state_sens_, y0_vars_ + args_vars_);
-    }
-  }
-
-  /**
-   * Implements the function of type CVRhsFn which is the user-defined
-   * ODE RHS passed to CVODES.
-   */
-  static int cv_rhs(realtype t, N_Vector y, N_Vector ydot, void* user_data) {
-    const cvodes_integrator* integrator = static_cast<const cvodes_integrator*>(user_data);
-    integrator->rhs(t, NV_DATA_S(y), NV_DATA_S(ydot));
-    return 0;
-  }
-
-  /**
-   * Implements the function of type CVSensRhsFn which is the
-   * RHS of the sensitivity ODE system.
-   */
-  static int cv_rhs_sens(int Ns, realtype t, N_Vector y, N_Vector ydot,
-                         N_Vector* yS, N_Vector* ySdot, void* user_data,
-                         N_Vector tmp1, N_Vector tmp2) {
-    const cvodes_integrator* integrator = static_cast<const cvodes_integrator*>(user_data);
-    integrator->rhs_sens(t, NV_DATA_S(y), yS, ySdot);
-    return 0;
-  }
-
-  /**
-   * Implements the function of type CVDlsJacFn which is the
-   * user-defined callback for CVODES to calculate the jacobian of the
-   * ode_rhs wrt to the states y. The jacobian is stored in column
-   * major format.
-   */
-  static int cv_jacobian_states(realtype t, N_Vector y, N_Vector fy,
-                                SUNMatrix J, void* user_data, N_Vector tmp1,
-                                N_Vector tmp2, N_Vector tmp3) {
-    const cvodes_integrator* integrator = static_cast<const cvodes_integrator*>(user_data);
-    integrator->jacobian_states(t, NV_DATA_S(y), J);
-    return 0;
-  }
-  /**
-   * Calculates the ODE RHS, dy_dt, using the user-supplied functor at
-   * the given time t and state y.
-   */
-  inline void rhs(double t, const double y[], double dy_dt[]) const {
-    const std::vector<double> y_vec(y, y + N_);
-    std::vector<double> dy_dt_vec = apply([&](auto&&... args) {
-	return f_(t, y_vec, msgs_, value_of(args)...);
-      }, args_tuple_);
-    check_size_match("cvodes_ode_data", "dz_dt", dy_dt_vec.size(), "states",
-                     N_);
-    std::move(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
-  }
-
-  /**
-   * Calculates the jacobian of the ODE RHS wrt to its states y at the
-   * given time-point t and state y.
-   * Note that the jacobian of the ODE system is the coupled ode system for
-   * varying states evaluated at the state y whenever we choose state
-   * y to be the initial of the coupled ode system.
-   */
-  inline void jacobian_states(double t, const double y[], SUNMatrix J) const {
-    start_nested();
-    const std::vector<var> y_vec_var(y, y + N_);
-    // TODO: This should only be done once on construction
-    auto double_args_tuple = apply([&](auto&&... args) {
-	return std::make_tuple(value_of(args)...);
-      }, args_tuple_);
-    auto ode_jacobian = apply([&](auto&&... args) {
-	return coupled_ode_system<var, double, double, F, decltype(args)...>(f_, y_vec_var, msgs_, args...);
-      }, double_args_tuple);
-    std::vector<double>&& jacobian_y = std::vector<double>(ode_jacobian.size());
-    ode_jacobian(ode_jacobian.initial_state(), jacobian_y, t);
-    std::move(jacobian_y.begin() + N_, jacobian_y.end(), SM_DATA_D(J));
-    recover_memory_nested();
-  }
-
-  /**
-   * Calculates the RHS of the sensitivity ODE system which
-   * corresponds to the coupled ode system from which the first N
-   * states are omitted, since the first N states are the ODE RHS
-   * which CVODES separates from the main ODE RHS.
-   */
-  inline void rhs_sens(double t, const double y[], N_Vector* yS,
-                       N_Vector* ySdot) const {
-    std::vector<double> z(coupled_state_.size());
-    std::vector<double>&& dz_dt = std::vector<double>(coupled_state_.size());
-    std::copy(y, y + N_, z.begin());
-    for (std::size_t s = 0; s < y0_vars_ + args_vars_; s++) {
-      std::copy(NV_DATA_S(yS[s]), NV_DATA_S(yS[s]) + N_,
-                z.begin() + (s + 1) * N_);
-    }
-    coupled_ode_(z, dz_dt, t);
-    for (std::size_t s = 0; s < y0_vars_ + args_vars_; s++) {
-      std::move(dz_dt.begin() + (s + 1) * N_, dz_dt.begin() + (s + 2) * N_,
-                NV_DATA_S(ySdot[s]));
     }
   }
 
@@ -250,15 +257,6 @@ public:
 
     const double t0_dbl = value_of(t0_);
     const std::vector<double> ts_dbl = value_of(ts_);
-
-    std::vector<double> dy0_dt0;
-    if (is_var<T_t0>::value) {
-      std::vector<double> y0_dbl = value_of(y0_);
-      dy0_dt0 = apply([&](auto&&... args) {
-	  return f_(value_of(t0_), y0_dbl, msgs_, value_of(args)...);
-	}, args_tuple_);
-      check_size_match("coupled_ode_observer", "dy_dt", dy0_dt0.size(), "states", N_);
-    }
 
     void* cvodes_mem = CVodeCreate(Lmm);
     if (cvodes_mem == nullptr) {
@@ -312,8 +310,9 @@ public:
               "CVodeGetSens");
         }
 
-        //observer(cvodes_data.coupled_state_, t_final);
-	y.emplace_back(coupled_ode_.build_output(dy0_dt0, coupled_state_, t0_, ts_[n]));
+	y.emplace_back(apply([&](auto&&... args) {
+	      return ode_store_sensitivities(coupled_state_, y0_, args...);
+	    }, args_tuple_));
 
 	t_init = t_final;
       }

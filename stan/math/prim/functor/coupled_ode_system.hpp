@@ -60,11 +60,11 @@ namespace math {
  * msgs)</code>
  */
 
-template <bool Enable, typename T_initial, typename T_t0, typename T_ts, typename F, typename... Args>
+template <bool Enable, typename F, typename T_initial, typename... Args>
 struct coupled_ode_system_impl;
   
-template <typename T_initial, typename T_t0, typename T_ts, typename F, typename... Args>
-struct coupled_ode_system_impl<true, T_initial, T_t0, T_ts, F, Args...> {
+template <typename F, typename T_initial, typename... Args>
+struct coupled_ode_system_impl<true, F, T_initial, Args...> {
   const F& f_;
   const std::vector<double>& y0_;
   std::tuple<const Args&...> args_tuple_;
@@ -102,13 +102,6 @@ struct coupled_ode_system_impl<true, T_initial, T_t0, T_ts, F, Args...> {
                      dy_dt.size());
   }
 
-  std::vector<double> build_output(const std::vector<double>& dy0_dt0,
-				   const std::vector<double>& coupled_state,
-				   const double& t0,
-				   const double& t) const {
-    return std::vector<double>(coupled_state.data(), coupled_state.data() + N_);
-  }
-
   /**
    * Returns the size of the coupled system.
    *
@@ -139,15 +132,15 @@ struct coupled_ode_system_impl<true, T_initial, T_t0, T_ts, F, Args...> {
   }
 };
 
-template <typename T_initial, typename T_t0, typename T_ts, typename F, typename... Args>
+template <typename F, typename T_initial, typename... Args>
 struct coupled_ode_system :
-    public coupled_ode_system_impl<std::is_arithmetic<return_type_t<T_initial, T_t0, T_ts, Args...>>::value,
-				   T_initial, T_t0, T_ts, F, Args...> {
+    public coupled_ode_system_impl<std::is_arithmetic<return_type_t<T_initial, Args...>>::value,
+				   F, T_initial, Args...> {
 
   coupled_ode_system(const F& f, const std::vector<T_initial>& y0,
 		     std::ostream* msgs, const Args&... args)
-    : coupled_ode_system_impl<std::is_arithmetic<return_type_t<T_initial, T_t0, T_ts, Args...>>::value,
-			      T_initial, T_t0, T_ts, F, Args...>(f, y0, msgs, args...) {}
+    : coupled_ode_system_impl<std::is_arithmetic<return_type_t<T_initial, Args...>>::value,
+			      F, T_initial, Args...>(f, y0, msgs, args...) {}
 };
 
 }  // namespace math

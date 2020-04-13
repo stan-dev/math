@@ -32,7 +32,6 @@
 #include <stan/math/rev/fun/conj.hpp>
 #include <stan/math/rev/fun/cos.hpp>
 #include <stan/math/rev/fun/cosh.hpp>
-#include <stan/math/rev/fun/count_vars.hpp>
 #include <stan/math/rev/fun/cov_exp_quad.hpp>
 #include <stan/math/rev/fun/determinant.hpp>
 #include <stan/math/rev/fun/digamma.hpp>
@@ -107,6 +106,7 @@
 #include <stan/math/rev/fun/multiply_log.hpp>
 #include <stan/math/rev/fun/multiply_lower_tri_self_transpose.hpp>
 #include <stan/math/rev/fun/norm.hpp>
+#include <stan/math/rev/fun/ode_store_sensitivities.hpp>
 #include <stan/math/rev/fun/ordered_constrain.hpp>
 #include <stan/math/rev/fun/owens_t.hpp>
 #include <stan/math/rev/fun/polar.hpp>

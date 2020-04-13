@@ -48,7 +48,7 @@ struct Cos2Arg {
   }
 };
 
-TEST(StanMathOde_ode_bdf_tol, t0) {
+TEST(StanMathOde_ode_rk45_tol, t0) {
   using stan::math::var;
   
   std::vector<double> y0 = { 0.0 };
@@ -57,7 +57,7 @@ TEST(StanMathOde_ode_bdf_tol, t0) {
 
   double a = 1.5;
   
-  std::vector<std::vector<var>> output = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6, nullptr, a);
+  std::vector<std::vector<var>> output = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6, nullptr, a);
 
   output[0][0].grad();
 
@@ -72,7 +72,7 @@ TEST(StanMathOde_ode_bdf_tol, t0) {
   EXPECT_FLOAT_EQ(t0.adj(), -1.0);
 }
 
-TEST(StanMathOde_ode_bdf_tol, ts) {
+TEST(StanMathOde_ode_rk45_tol, ts) {
   using stan::math::var;
   
   std::vector<double> y0 = { 0.0 };
@@ -81,7 +81,7 @@ TEST(StanMathOde_ode_bdf_tol, ts) {
 
   double a = 1.5;
   
-  std::vector<std::vector<var>> output = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6, nullptr, a);
+  std::vector<std::vector<var>> output = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6, nullptr, a);
 
   output[0][0].grad();
 
@@ -96,7 +96,7 @@ TEST(StanMathOde_ode_bdf_tol, ts) {
   EXPECT_FLOAT_EQ(ts[1].adj(), -0.0791208888);
 }
 
-TEST(StanMathOde_ode_bdf_tol, scalar_arg) {
+TEST(StanMathOde_ode_rk45_tol, scalar_arg) {
   using stan::math::var;
   
   std::vector<double> y0 = { 0.0 };
@@ -105,7 +105,7 @@ TEST(StanMathOde_ode_bdf_tol, scalar_arg) {
 
   var a = 1.5;
   
-  var output = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6, nullptr, a)[0][0];
+  var output = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6, nullptr, a)[0][0];
 
   output.grad();
 
@@ -113,7 +113,7 @@ TEST(StanMathOde_ode_bdf_tol, scalar_arg) {
   EXPECT_FLOAT_EQ(a.adj(), -0.50107310888);
 }
 
-TEST(StanMathOde_ode_bdf_tol, std_vector_arg) {
+TEST(StanMathOde_ode_rk45_tol, std_vector_arg) {
   using stan::math::var;
   
   std::vector<double> y0 = { 0.0 };
@@ -122,7 +122,7 @@ TEST(StanMathOde_ode_bdf_tol, std_vector_arg) {
 
   std::vector<var> a = { 1.5 };
   
-  var output = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6, nullptr, a)[0][0];
+  var output = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6, nullptr, a)[0][0];
 
   output.grad();
 
@@ -130,7 +130,7 @@ TEST(StanMathOde_ode_bdf_tol, std_vector_arg) {
   EXPECT_FLOAT_EQ(a[0].adj(), -0.50107310888);
 }
 
-TEST(StanMathOde_ode_bdf_tol, vector_arg) {
+TEST(StanMathOde_ode_rk45_tol, vector_arg) {
   using stan::math::var;
   
   std::vector<double> y0 = { 0.0 };
@@ -140,7 +140,7 @@ TEST(StanMathOde_ode_bdf_tol, vector_arg) {
   Eigen::Matrix<var, Eigen::Dynamic, 1> a(1);
   a << 1.5;
   
-  var output = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6, nullptr, a)[0][0];
+  var output = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6, nullptr, a)[0][0];
 
   output.grad();
 
@@ -148,7 +148,7 @@ TEST(StanMathOde_ode_bdf_tol, vector_arg) {
   EXPECT_FLOAT_EQ(a(0).adj(), -0.50107310888);
 }
 
-TEST(StanMathOde_ode_bdf_tol, row_vector_arg) {
+TEST(StanMathOde_ode_rk45_tol, row_vector_arg) {
   using stan::math::var;
   
   std::vector<double> y0 = { 0.0 };
@@ -158,7 +158,7 @@ TEST(StanMathOde_ode_bdf_tol, row_vector_arg) {
   Eigen::Matrix<var, 1, Eigen::Dynamic> a(1);
   a << 1.5;
   
-  var output = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6, nullptr, a)[0][0];
+  var output = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6, nullptr, a)[0][0];
 
   output.grad();
 
@@ -166,7 +166,7 @@ TEST(StanMathOde_ode_bdf_tol, row_vector_arg) {
   EXPECT_FLOAT_EQ(a(0).adj(), -0.50107310888);
 }
 
-TEST(StanMathOde_ode_bdf_tol, matrix_arg) {
+TEST(StanMathOde_ode_rk45_tol, matrix_arg) {
   using stan::math::var;
   
   std::vector<double> y0 = { 0.0 };
@@ -176,7 +176,7 @@ TEST(StanMathOde_ode_bdf_tol, matrix_arg) {
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> a(1, 1);
   a << 1.5;
   
-  var output = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6, nullptr, a)[0][0];
+  var output = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6, nullptr, a)[0][0];
 
   output.grad();
 
@@ -184,7 +184,7 @@ TEST(StanMathOde_ode_bdf_tol, matrix_arg) {
   EXPECT_FLOAT_EQ(a(0, 0).adj(), -0.50107310888);
 }
 
-TEST(StanMathOde_ode_bdf_tol, scalar_std_vector_args) {
+TEST(StanMathOde_ode_rk45_tol, scalar_std_vector_args) {
   using stan::math::var;
   
   std::vector<double> y0 = { 0.0 };
@@ -194,7 +194,7 @@ TEST(StanMathOde_ode_bdf_tol, scalar_std_vector_args) {
   var a0 = 0.0;
   std::vector<var> a1 = { 1.5 };
   
-  var output = stan::math::ode_bdf_tol(Cos2Arg(), y0, t0, ts, 1e-8, 1e-10, 1e6, nullptr,
+  var output = stan::math::ode_rk45_tol(Cos2Arg(), y0, t0, ts, 1e-8, 1e-10, 1e6, nullptr,
 				   a0, a1)[0][0];
 
   output.grad();

@@ -1,8 +1,7 @@
 #ifndef STAN_MATH_REV_FUNCTOR_INTEGRATE_ODE_BDF_HPP
 #define STAN_MATH_REV_FUNCTOR_INTEGRATE_ODE_BDF_HPP
 
-#include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/functor/cvodes_integrator.hpp>
+#include <stan/math/rev/functor/ode_bdf.hpp>
 #include <ostream>
 #include <vector>
 
@@ -20,13 +19,11 @@ integrate_ode_bdf(const F& f, const std::vector<T_initial>& y0, const T_t0& t0,
                   double relative_tolerance = 1e-10,
                   double absolute_tolerance = 1e-10,
                   long int max_num_steps = 1e8) {  // NOLINT(runtime/int)
-  stan::math::cvodes_integrator<CV_BDF, F, T_initial, T_t0, T_ts,
-				std::vector<T_param>,
-				std::vector<double>,
-				std::vector<int>> integrator(f, y0, t0, ts, theta, x, x_int, msgs,
-							     relative_tolerance, absolute_tolerance,
-							     max_num_steps);
-  return integrator.integrate();
+  return ode_bdf_tol(f, y0, t0, ts,
+		     relative_tolerance, absolute_tolerance,
+		     max_num_steps,
+		     msgs,
+		     theta, x, x_int);
 }
 
 }  // namespace math
