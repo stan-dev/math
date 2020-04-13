@@ -181,7 +181,7 @@ pipeline {
                 deleteDir()
                 unstash 'MathSetup'
                 sh "echo CXX=${MPICXX} >> make/local"
-                sh "echo CXX_TYPE=gcc >> make/local"                        
+                sh "echo CXX_TYPE=gcc >> make/local"
                 sh "echo STAN_MPI=true >> make/local"
                 runTests("test/unit")
             }
@@ -243,6 +243,7 @@ pipeline {
                         sh "export STAN_NUM_THREADS=2"
                         sh "echo CXX=${env.CXX} -Werror > make/local"
                         sh "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
+                        sh "export STAN_NUM_THREADS=4"
                         runTests("test/unit -f thread")
                         sh "find . -name *_test.xml | xargs rm"
                         runTests("test/unit -f map_rect")
