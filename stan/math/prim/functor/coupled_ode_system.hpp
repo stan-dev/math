@@ -127,9 +127,7 @@ struct coupled_ode_system_impl<true, F, T_initial, Args...> {
    *   elements are all zero as these are the Jacobian wrt to the
    *   parameters at the initial time-point, which is zero.
    */
-  std::vector<double> initial_state() const {
-    return value_of(y0_);
-  }
+  std::vector<double> initial_state() const { return value_of(y0_); }
 };
 
 template <typename F, typename T_initial, typename... Args>

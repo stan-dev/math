@@ -74,7 +74,6 @@ std::vector<std::vector<return_type_t<T1, T_t0, T_ts, T_param>>> integrate_ode_r
 }
 
 }  // namespace math
-
 }  // namespace stan
 
 #endif

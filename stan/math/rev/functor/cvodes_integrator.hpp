@@ -55,7 +55,8 @@ class cvodes_integrator {
    * ODE RHS passed to CVODES.
    */
   static int cv_rhs(realtype t, N_Vector y, N_Vector ydot, void* user_data) {
-    const cvodes_integrator* integrator = static_cast<const cvodes_integrator*>(user_data);
+    const cvodes_integrator* integrator
+        = static_cast<const cvodes_integrator*>(user_data);
     integrator->rhs(t, NV_DATA_S(y), NV_DATA_S(ydot));
     return 0;
   }
@@ -67,7 +68,8 @@ class cvodes_integrator {
   static int cv_rhs_sens(int Ns, realtype t, N_Vector y, N_Vector ydot,
                          N_Vector* yS, N_Vector* ySdot, void* user_data,
                          N_Vector tmp1, N_Vector tmp2) {
-    const cvodes_integrator* integrator = static_cast<const cvodes_integrator*>(user_data);
+    const cvodes_integrator* integrator
+        = static_cast<const cvodes_integrator*>(user_data);
     integrator->rhs_sens(t, NV_DATA_S(y), yS, ySdot);
     return 0;
   }
@@ -81,7 +83,8 @@ class cvodes_integrator {
   static int cv_jacobian_states(realtype t, N_Vector y, N_Vector fy,
                                 SUNMatrix J, void* user_data, N_Vector tmp1,
                                 N_Vector tmp2, N_Vector tmp3) {
-    const cvodes_integrator* integrator = static_cast<const cvodes_integrator*>(user_data);
+    const cvodes_integrator* integrator
+        = static_cast<const cvodes_integrator*>(user_data);
     integrator->jacobian_states(t, NV_DATA_S(y), J);
     return 0;
   }
@@ -264,13 +267,14 @@ public:
     }
 
     try {
-      check_flag_sundials(CVodeInit(cvodes_mem, &cvodes_integrator::cv_rhs, t0_dbl,
-                                    nv_state_),
-                          "CVodeInit");
+      check_flag_sundials(
+          CVodeInit(cvodes_mem, &cvodes_integrator::cv_rhs, t0_dbl, nv_state_),
+          "CVodeInit");
 
       // Assign pointer to this as user data
-      check_flag_sundials(CVodeSetUserData(cvodes_mem, reinterpret_cast<void*>(this)),
-			  "CVodeSetUserData");
+      check_flag_sundials(
+          CVodeSetUserData(cvodes_mem, reinterpret_cast<void*>(this)),
+          "CVodeSetUserData");
 
       cvodes_set_options(cvodes_mem, relative_tolerance_, absolute_tolerance_,
                          max_num_steps_);
@@ -280,15 +284,18 @@ public:
       // create matrix object and linear solver object; resource
       // (de-)allocation is handled in the cvodes_ode_data
       check_flag_sundials(CVodeSetLinearSolver(cvodes_mem, LS_, A_),
-			  "CVodeSetLinearSolver");
-      check_flag_sundials(CVodeSetJacFn(cvodes_mem, &cvodes_integrator::cv_jacobian_states),
-			  "CVodeSetJacFn");
+                          "CVodeSetLinearSolver");
+      check_flag_sundials(
+          CVodeSetJacFn(cvodes_mem, &cvodes_integrator::cv_jacobian_states),
+          "CVodeSetJacFn");
 
       // initialize forward sensitivity system of CVODES as needed
       if (y0_vars_ + args_vars_ > 0) {
-        check_flag_sundials(CVodeSensInit(cvodes_mem, static_cast<int>(y0_vars_ + args_vars_), CV_STAGGERED,
-					  &cvodes_integrator::cv_rhs_sens, nv_state_sens_),
-			    "CVodeSensInit");
+        check_flag_sundials(
+            CVodeSensInit(cvodes_mem, static_cast<int>(y0_vars_ + args_vars_),
+                          CV_STAGGERED, &cvodes_integrator::cv_rhs_sens,
+                          nv_state_sens_),
+            "CVodeSensInit");
 
         check_flag_sundials(CVodeSensEEtolerances(cvodes_mem),
                             "CVodeSensEEtolerances");
@@ -297,30 +304,29 @@ public:
       double t_init = t0_dbl;
       for (size_t n = 0; n < ts_.size(); ++n) {
         double t_final = ts_dbl[n];
-	
+
         if (t_final != t_init) {
-          check_flag_sundials(CVode(cvodes_mem, t_final, nv_state_,
-                                    &t_init, CV_NORMAL),
-                              "CVode");
-        }
-	
-        if (y0_vars_ + args_vars_ > 0) {
           check_flag_sundials(
-              CVodeGetSens(cvodes_mem, &t_init, nv_state_sens_),
-              "CVodeGetSens");
+              CVode(cvodes_mem, t_final, nv_state_, &t_init, CV_NORMAL),
+              "CVode");
+        }
+
+        if (y0_vars_ + args_vars_ > 0) {
+          check_flag_sundials(CVodeGetSens(cvodes_mem, &t_init, nv_state_sens_),
+                              "CVodeGetSens");
         }
 
 	y.emplace_back(apply([&](auto&&... args) {
 	      return ode_store_sensitivities(coupled_state_, y0_, args...);
 	    }, args_tuple_));
 
-	t_init = t_final;
+        t_init = t_final;
       }
     } catch (const std::exception& e) {
       CVodeFree(&cvodes_mem);
       throw;
     }
-      
+
     CVodeFree(&cvodes_mem);
 
     return y;

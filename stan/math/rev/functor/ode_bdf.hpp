@@ -10,8 +10,10 @@
 namespace stan {
 namespace math {
 
-template <typename F, typename T_initial, typename T_t0, typename T_ts, typename... T_Args>
-std::vector<std::vector<typename stan::return_type<T_initial, T_t0, T_ts, T_Args...>::type>>
+template <typename F, typename T_initial, typename T_t0, typename T_ts,
+          typename... T_Args>
+std::vector<std::vector<
+    typename stan::return_type<T_initial, T_t0, T_ts, T_Args...>::type>>
 ode_bdf(const F& f, const std::vector<T_initial>& y0, const T_t0& t0,
 	const std::vector<T_ts>& ts,
 	std::ostream* msgs,

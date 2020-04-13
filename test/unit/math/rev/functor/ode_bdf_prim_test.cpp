@@ -50,10 +50,10 @@ struct Cos2Arg {
 
 TEST(StanMathOde_ode_bdf_tol, t0) {
   using stan::math::var;
-  
-  std::vector<double> y0 = { 0.0 };
+
+  std::vector<double> y0 = {0.0};
   var t0 = 0.0;
-  std::vector<double> ts = { 0.45, 1.1 };
+  std::vector<double> ts = {0.45, 1.1};
 
   double a = 1.5;
   
@@ -74,10 +74,10 @@ TEST(StanMathOde_ode_bdf_tol, t0) {
 
 TEST(StanMathOde_ode_bdf_tol, ts) {
   using stan::math::var;
-  
-  std::vector<double> y0 = { 0.0 };
+
+  std::vector<double> y0 = {0.0};
   double t0 = 0.0;
-  std::vector<var> ts = { 0.45, 1.1 };
+  std::vector<var> ts = {0.45, 1.1};
 
   double a = 1.5;
   
@@ -91,17 +91,17 @@ TEST(StanMathOde_ode_bdf_tol, ts) {
   stan::math::set_zero_all_adjoints();
 
   output[1][0].grad();
-  
+
   EXPECT_FLOAT_EQ(output[1][0].val(), 0.66457668563);
   EXPECT_FLOAT_EQ(ts[1].adj(), -0.0791208888);
 }
 
 TEST(StanMathOde_ode_bdf_tol, scalar_arg) {
   using stan::math::var;
-  
-  std::vector<double> y0 = { 0.0 };
+
+  std::vector<double> y0 = {0.0};
   double t0 = 0.0;
-  std::vector<double> ts = { 1.1 };
+  std::vector<double> ts = {1.1};
 
   var a = 1.5;
   
@@ -115,10 +115,10 @@ TEST(StanMathOde_ode_bdf_tol, scalar_arg) {
 
 TEST(StanMathOde_ode_bdf_tol, std_vector_arg) {
   using stan::math::var;
-  
-  std::vector<double> y0 = { 0.0 };
+
+  std::vector<double> y0 = {0.0};
   double t0 = 0.0;
-  std::vector<double> ts = { 1.1 };
+  std::vector<double> ts = {1.1};
 
   std::vector<var> a = { 1.5 };
   
@@ -132,10 +132,10 @@ TEST(StanMathOde_ode_bdf_tol, std_vector_arg) {
 
 TEST(StanMathOde_ode_bdf_tol, vector_arg) {
   using stan::math::var;
-  
-  std::vector<double> y0 = { 0.0 };
+
+  std::vector<double> y0 = {0.0};
   double t0 = 0.0;
-  std::vector<double> ts = { 1.1 };
+  std::vector<double> ts = {1.1};
 
   Eigen::Matrix<var, Eigen::Dynamic, 1> a(1);
   a << 1.5;
@@ -150,10 +150,10 @@ TEST(StanMathOde_ode_bdf_tol, vector_arg) {
 
 TEST(StanMathOde_ode_bdf_tol, row_vector_arg) {
   using stan::math::var;
-  
-  std::vector<double> y0 = { 0.0 };
+
+  std::vector<double> y0 = {0.0};
   double t0 = 0.0;
-  std::vector<double> ts = { 1.1 };
+  std::vector<double> ts = {1.1};
 
   Eigen::Matrix<var, 1, Eigen::Dynamic> a(1);
   a << 1.5;
@@ -168,10 +168,10 @@ TEST(StanMathOde_ode_bdf_tol, row_vector_arg) {
 
 TEST(StanMathOde_ode_bdf_tol, matrix_arg) {
   using stan::math::var;
-  
-  std::vector<double> y0 = { 0.0 };
+
+  std::vector<double> y0 = {0.0};
   double t0 = 0.0;
-  std::vector<double> ts = { 1.1 };
+  std::vector<double> ts = {1.1};
 
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> a(1, 1);
   a << 1.5;
@@ -186,10 +186,10 @@ TEST(StanMathOde_ode_bdf_tol, matrix_arg) {
 
 TEST(StanMathOde_ode_bdf_tol, scalar_std_vector_args) {
   using stan::math::var;
-  
-  std::vector<double> y0 = { 0.0 };
+
+  std::vector<double> y0 = {0.0};
   double t0 = 0.0;
-  std::vector<double> ts = { 1.1 };
+  std::vector<double> ts = {1.1};
 
   var a0 = 0.0;
   std::vector<var> a1 = { 1.5 };
