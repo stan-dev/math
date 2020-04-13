@@ -19,11 +19,8 @@ integrate_ode_bdf(const F& f, const std::vector<T_initial>& y0, const T_t0& t0,
                   double relative_tolerance = 1e-10,
                   double absolute_tolerance = 1e-10,
                   long int max_num_steps = 1e8) {  // NOLINT(runtime/int)
-  return ode_bdf_tol(f, y0, t0, ts,
-		     relative_tolerance, absolute_tolerance,
-		     max_num_steps,
-		     msgs,
-		     theta, x, x_int);
+  return ode_bdf_tol(f, y0, t0, ts, relative_tolerance, absolute_tolerance,
+                     max_num_steps, msgs, theta, x, x_int);
 }
 
 }  // namespace math

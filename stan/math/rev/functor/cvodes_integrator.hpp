@@ -22,8 +22,7 @@ namespace math {
  *
  * @tparam Lmm ID of ODE solver (1: ADAMS, 2: BDF)
  */
-template <int Lmm, typename F, typename T_initial,
-	  typename... T_Args>
+template <int Lmm, typename F, typename T_initial, typename... T_Args>
 class cvodes_integrator {
   using T_Return = return_type_t<T_initial, T_Args...>;
 
@@ -95,11 +94,11 @@ class cvodes_integrator {
    */
   inline void rhs(double t, const double y[], double dy_dt[]) const {
     const std::vector<double> y_vec(y, y + N_);
-    std::vector<double> dy_dt_vec = apply([&](auto&&... args) {
-	return f_(t, y_vec, msgs_, args...);
-      }, value_of_args_tuple_);
-    check_size_match("cvodes_integrator::rhs", "dy_dt", dy_dt_vec.size(), "states",
-                     N_);
+    std::vector<double> dy_dt_vec
+        = apply([&](auto&&... args) { return f_(t, y_vec, msgs_, args...); },
+                value_of_args_tuple_);
+    check_size_match("cvodes_integrator::rhs", "dy_dt", dy_dt_vec.size(),
+                     "states", N_);
     std::move(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
   }
 
@@ -112,16 +111,16 @@ class cvodes_integrator {
     Eigen::MatrixXd Jfy;
 
     auto f_wrapped = [&](const Eigen::Matrix<var, Eigen::Dynamic, 1>& y) {
-      return to_vector(apply([&](auto&&... args) {
-	    return f_(t, to_array_1d(y), msgs_, args...);
-	  }, value_of_args_tuple_));
+      return to_vector(apply(
+          [&](auto&&... args) { return f_(t, to_array_1d(y), msgs_, args...); },
+          value_of_args_tuple_));
     };
-    
+
     jacobian(f_wrapped, Eigen::Map<const Eigen::VectorXd>(y, N_), fy, Jfy);
 
-    for(size_t j = 0; j < Jfy.cols(); ++j) {
-      for(size_t i = 0; i < Jfy.rows(); ++i) {
-	SM_ELEMENT_D(J, i, j) = Jfy(i, j);
+    for (size_t j = 0; j < Jfy.cols(); ++j) {
+      for (size_t i = 0; i < Jfy.rows(); ++i) {
+        SM_ELEMENT_D(J, i, j) = Jfy(i, j);
       }
     }
   }
@@ -148,30 +147,26 @@ class cvodes_integrator {
     }
   }
 
-public:
-  cvodes_integrator(const F& f,
-		    const std::vector<T_initial>& y0,
-		    double t0,
-		    const std::vector<double>& ts,
-		    double relative_tolerance,
-		    double absolute_tolerance,
-		    long int max_num_steps,
-		    std::ostream* msgs, const T_Args&... args)
-    : f_(f),
-      y0_(y0),
-      t0_(t0),
-      ts_(ts),
-      args_tuple_(args...),
-      value_of_args_tuple_(value_of(args)...),
-      N_(y0.size()),
-      msgs_(msgs),
-      relative_tolerance_(relative_tolerance),
-      absolute_tolerance_(absolute_tolerance),
-      max_num_steps_(max_num_steps),
-      y0_vars_(count_vars(y0_)),
-      args_vars_(count_vars(args...)),
-      coupled_ode_(f, y0, msgs, args...),
-      coupled_state_(coupled_ode_.initial_state()) {
+ public:
+  cvodes_integrator(const F& f, const std::vector<T_initial>& y0, double t0,
+                    const std::vector<double>& ts, double relative_tolerance,
+                    double absolute_tolerance, long int max_num_steps,
+                    std::ostream* msgs, const T_Args&... args)
+      : f_(f),
+        y0_(y0),
+        t0_(t0),
+        ts_(ts),
+        args_tuple_(args...),
+        value_of_args_tuple_(value_of(args)...),
+        N_(y0.size()),
+        msgs_(msgs),
+        relative_tolerance_(relative_tolerance),
+        absolute_tolerance_(absolute_tolerance),
+        max_num_steps_(max_num_steps),
+        y0_vars_(count_vars(y0_)),
+        args_vars_(count_vars(args...)),
+        coupled_ode_(f, y0, msgs, args...),
+        coupled_state_(coupled_ode_.initial_state()) {
     using initial_var = stan::is_var<T_initial>;
 
     const char* fun = "cvodes_integrator::integrate";
@@ -180,10 +175,14 @@ public:
     check_finite(fun, "initial time", t0_);
     check_finite(fun, "times", ts_);
 
-    // Code from: https://stackoverflow.com/a/17340003 . Should probably do something better
-    apply([&](auto&&... args) {
-	std::vector<int> unused_temp{ 0, (check_finite(fun, "ode parameters and data", args), 0)... };
-      }, args_tuple_);
+    // Code from: https://stackoverflow.com/a/17340003 . Should probably do
+    // something better
+    apply(
+        [&](auto&&... args) {
+          std::vector<int> unused_temp{
+              0, (check_finite(fun, "ode parameters and data", args), 0)...};
+        },
+        args_tuple_);
 
     check_nonzero_size(fun, "times", ts_);
     check_nonzero_size(fun, "initial state", y0_);
@@ -199,7 +198,8 @@ public:
     LS_ = SUNDenseLinearSolver(nv_state_, A_);
 
     if (y0_vars_ + args_vars_ > 0) {
-      nv_state_sens_ = N_VCloneVectorArrayEmpty_Serial(y0_vars_ + args_vars_, nv_state_);
+      nv_state_sens_
+          = N_VCloneVectorArrayEmpty_Serial(y0_vars_ + args_vars_, nv_state_);
       for (std::size_t i = 0; i < y0_vars_ + args_vars_; i++) {
         NV_DATA_S(nv_state_sens_[i]) = &coupled_state_[N_] + i * N_;
       }
@@ -316,9 +316,11 @@ public:
                               "CVodeGetSens");
         }
 
-	y.emplace_back(apply([&](auto&&... args) {
-	      return ode_store_sensitivities(coupled_state_, y0_, args...);
-	    }, args_tuple_));
+        y.emplace_back(apply(
+            [&](auto&&... args) {
+              return ode_store_sensitivities(coupled_state_, y0_, args...);
+            },
+            args_tuple_));
 
         t_init = t_final;
       }

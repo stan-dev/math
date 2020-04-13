@@ -84,10 +84,8 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
    * @param[in] x_int integer data
    * @param[in, out] msgs stream for messages
    */
-  coupled_ode_system_impl(const F& f,
-			  const std::vector<T_initial>& y0,
-			  std::ostream* msgs,
-			  const Args&... args)
+  coupled_ode_system_impl(const F& f, const std::vector<T_initial>& y0,
+                          std::ostream* msgs, const Args&... args)
       : f_(f),
         y0_(y0),
         args_tuple_(args...),
@@ -118,13 +116,16 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
     nested_rev_autodiff nested;
 
     const vector<var> y_vars(z.begin(), z.begin() + N_);
-    auto local_args_tuple = apply([&](auto&&... args) {
-      return std::tuple<decltype(deep_copy_vars(args))...>(deep_copy_vars(args)...);
-      }, args_tuple_);
-    
-    vector<var> f_y_t_vars = apply(
-      [&](auto&&... args) { return f_(t, y_vars, msgs_, args...); },
-      local_args_tuple);
+    auto local_args_tuple = apply(
+        [&](auto&&... args) {
+          return std::tuple<decltype(deep_copy_vars(args))...>(
+              deep_copy_vars(args)...);
+        },
+        args_tuple_);
+
+    vector<var> f_y_t_vars
+        = apply([&](auto&&... args) { return f_(t, y_vars, msgs_, args...); },
+                local_args_tuple);
 
     check_size_match("coupled_ode_system", "dy_dt", f_y_t_vars.size(), "states",
                      N_);
@@ -147,10 +148,10 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
 
       Eigen::VectorXd args_adjoints = Eigen::VectorXd::Zero(args_vars_);
       apply(
-	    [&](auto&&... args) {
-	      accumulate_adjoints(args_adjoints.data(), args...);
-	    },
-	    local_args_tuple);
+          [&](auto&&... args) {
+            accumulate_adjoints(args_adjoints.data(), args...);
+          },
+          local_args_tuple);
       for (size_t j = 0; j < args_vars_; j++) {
         double temp_deriv = args_adjoints(j);
         for (size_t k = 0; k < N_; k++) {

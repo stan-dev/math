@@ -29,8 +29,7 @@ struct lorenz_ode_fun {
   // parameters
   // double data
   // integer data
-  operator()(const T0& t_in, const std::vector<T1>& y_in,
-	     std::ostream* msgs,
+  operator()(const T0& t_in, const std::vector<T1>& y_in, std::ostream* msgs,
              const std::vector<T2>& theta, const std::vector<double>& x,
              const std::vector<int>& x_int) const {
     return lorenz_ode(t_in, y_in, theta, x, x_int);

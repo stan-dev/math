@@ -62,7 +62,7 @@ namespace math {
 
 template <bool Enable, typename F, typename T_initial, typename... Args>
 struct coupled_ode_system_impl;
-  
+
 template <typename F, typename T_initial, typename... Args>
 struct coupled_ode_system_impl<true, F, T_initial, Args...> {
   const F& f_;
@@ -84,19 +84,13 @@ struct coupled_ode_system_impl<true, F, T_initial, Args...> {
    * @param[in, out] msgs stream for messages
    */
   coupled_ode_system_impl(const F& f, const std::vector<double>& y0,
-			  std::ostream* msgs, const Args&... args)
-      : f_(f),
-        y0_(y0),
-	args_tuple_(args...),
-        N_(y0.size()),
-        msgs_(msgs) {
-  }
+                          std::ostream* msgs, const Args&... args)
+      : f_(f), y0_(y0), args_tuple_(args...), N_(y0.size()), msgs_(msgs) {}
 
   void operator()(const std::vector<double>& y, std::vector<double>& dy_dt,
                   double t) const {
-    dy_dt = apply([&](const Args&... args) {
-	return f_(t, y, msgs_, args...);
-      }, args_tuple_);
+    dy_dt = apply([&](const Args&... args) { return f_(t, y, msgs_, args...); },
+                  args_tuple_);
 
     check_size_match("coupled_ode_system", "y", y.size(), "dy_dt",
                      dy_dt.size());
@@ -131,14 +125,15 @@ struct coupled_ode_system_impl<true, F, T_initial, Args...> {
 };
 
 template <typename F, typename T_initial, typename... Args>
-struct coupled_ode_system :
-    public coupled_ode_system_impl<std::is_arithmetic<return_type_t<T_initial, Args...>>::value,
-				   F, T_initial, Args...> {
-
+struct coupled_ode_system
+    : public coupled_ode_system_impl<
+          std::is_arithmetic<return_type_t<T_initial, Args...>>::value, F,
+          T_initial, Args...> {
   coupled_ode_system(const F& f, const std::vector<T_initial>& y0,
-		     std::ostream* msgs, const Args&... args)
-    : coupled_ode_system_impl<std::is_arithmetic<return_type_t<T_initial, Args...>>::value,
-			      F, T_initial, Args...>(f, y0, msgs, args...) {}
+                     std::ostream* msgs, const Args&... args)
+      : coupled_ode_system_impl<
+            std::is_arithmetic<return_type_t<T_initial, Args...>>::value, F,
+            T_initial, Args...>(f, y0, msgs, args...) {}
 };
 
 }  // namespace math

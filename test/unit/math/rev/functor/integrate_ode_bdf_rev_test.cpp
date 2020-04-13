@@ -288,10 +288,10 @@ TEST(StanAgradRevOde_integrate_ode_bdf, t0_as_param_AD) {
       std::vector<double> res_d = value_of(res[i]);
       for (auto j = 0; j < ns; ++j) {
         res[i][0].grad();
-	EXPECT_FLOAT_EQ(t0v.adj(), 0.0);
+        EXPECT_FLOAT_EQ(t0v.adj(), 0.0);
         stan::math::set_zero_all_adjoints();
         res[i][1].grad();
-	EXPECT_FLOAT_EQ(t0v.adj(), 1.0);
+        EXPECT_FLOAT_EQ(t0v.adj(), 1.0);
         stan::math::set_zero_all_adjoints();
       }
     }
