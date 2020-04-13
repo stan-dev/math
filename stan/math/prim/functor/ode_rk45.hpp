@@ -13,32 +13,23 @@ namespace math {
 
 template <typename F, typename T_initial, typename... Args>
 std::vector<std::vector<typename stan::return_type<T_initial, Args...>::type>>
-ode_rk45(const F& f, const std::vector<T_initial>& y0,
-	 double t0,
-	 const std::vector<double>& ts,
-	 std::ostream* msgs,
-	 const Args&... args) {
+ode_rk45(const F& f, const std::vector<T_initial>& y0, double t0,
+         const std::vector<double>& ts, std::ostream* msgs,
+         const Args&... args) {
   double relative_tolerance = 1e-6;
   double absolute_tolerance = 1e-6;
   long int max_num_steps = 1e6;
 
-  return ode_rk45_tol(f, y0, t0, ts,
-		      relative_tolerance, absolute_tolerance,
-		      max_num_steps,
-		      msgs,
-		      args...);
+  return ode_rk45_tol(f, y0, t0, ts, relative_tolerance, absolute_tolerance,
+                      max_num_steps, msgs, args...);
 }
 
 template <typename F, typename T_initial, typename... Args>
 std::vector<std::vector<typename stan::return_type<T_initial, Args...>::type>>
-ode_rk45_tol(const F& f, const std::vector<T_initial>& y0,
-	     double t0,
-	     const std::vector<double>& ts,
-	     double relative_tolerance,
-	     double absolute_tolerance,
-	     long int max_num_steps,
-	     std::ostream* msgs,
-	     const Args&... args) {
+ode_rk45_tol(const F& f, const std::vector<T_initial>& y0, double t0,
+             const std::vector<double>& ts, double relative_tolerance,
+             double absolute_tolerance, long int max_num_steps,
+             std::ostream* msgs, const Args&... args) {
   using boost::numeric::odeint::integrate_times;
   using boost::numeric::odeint::make_dense_output;
   using boost::numeric::odeint::max_step_checker;
@@ -75,7 +66,8 @@ ode_rk45_tol(const F& f, const std::vector<T_initial>& y0,
 
   using return_t = return_type_t<T_initial, Args...>;
   // creates basic or coupled system by template specializations
-  coupled_ode_system<F, T_initial, Args...> coupled_system(f, y0, msgs, args...);
+  coupled_ode_system<F, T_initial, Args...> coupled_system(f, y0, msgs,
+                                                           args...);
 
   // first time in the vector must be time of initial state
   std::vector<double> ts_vec(ts.size() + 1);
@@ -85,7 +77,7 @@ ode_rk45_tol(const F& f, const std::vector<T_initial>& y0,
   std::vector<std::vector<return_t>> y;
   bool observer_initial_recorded = false;
   size_t time_index = 0;
-  
+
   // avoid recording of the initial state which is included by the
   // conventions of odeint in the output
   auto filtered_observer

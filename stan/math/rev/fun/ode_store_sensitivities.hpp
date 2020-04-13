@@ -10,23 +10,24 @@ namespace stan {
 namespace math {
 
 template <typename T_initial, typename... Args>
-std::vector<var> ode_store_sensitivities(const std::vector<double>& coupled_state,
-					 const std::vector<T_initial>& y0,
-					 const Args&... args) {
+std::vector<var> ode_store_sensitivities(
+    const std::vector<double>& coupled_state, const std::vector<T_initial>& y0,
+    const Args&... args) {
   const size_t N = y0.size();
   const size_t y0_vars = count_vars(y0);
   const size_t args_vars = count_vars(args...);
   std::vector<var> yt;
-    
+
   for (size_t j = 0; j < N; j++) {
     const size_t total_vars = y0_vars + args_vars;
 
-    vari** varis = ChainableStack::instance_->memalloc_.alloc_array<vari*>(total_vars);
-    double* partials = ChainableStack::instance_->memalloc_.alloc_array<double>(total_vars);
+    vari** varis
+        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(total_vars);
+    double* partials
+        = ChainableStack::instance_->memalloc_.alloc_array<double>(total_vars);
 
     vari** varis_ptr = varis;
     double* partials_ptr = partials;
-
 
     // iterate over parameters for each equation
     varis_ptr = save_varis(varis_ptr, y0);
@@ -44,13 +45,14 @@ std::vector<var> ode_store_sensitivities(const std::vector<double>& coupled_stat
       partials_ptr++;
     }
 
-    yt.emplace_back(new precomputed_gradients_vari(coupled_state[j], total_vars, varis, partials));
+    yt.emplace_back(new precomputed_gradients_vari(coupled_state[j], total_vars,
+                                                   varis, partials));
   }
 
   return yt;
 }
 
-} // namespace math
-} // namespace stan
+}  // namespace math
+}  // namespace stan
 
 #endif

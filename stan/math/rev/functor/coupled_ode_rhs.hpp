@@ -12,11 +12,10 @@ namespace math {
 
 namespace internal {
 template <typename F, typename T_y, typename... Args>
-std::vector<double> coupled_ode_rhs(const F& f,
-				    double t,
-				    const std::vector<T_y>& y,
-				    std::ostream* msgs,
-				    const Args&... args) const {
+std::vector<double> coupled_ode_rhs(const F& f, double t,
+                                    const std::vector<T_y>& y,
+                                    std::ostream* msgs,
+                                    const Args&... args) const {
   // Run nested autodiff in this scope
   nested_rev_autodiff nested;
 
@@ -25,14 +24,14 @@ std::vector<double> coupled_ode_rhs(const F& f,
   const size_t args_vars = count_vars(args...);
   std::vector<double> dz_dt(N + N * y_vars + N * args_vars);
   const std::vector<var> y_vars(y.begin(), y.end());
-  std::tuple<decltype(deep_copy_vars(args))...> local_args_tuple(deep_copy_vars(args)...);
-    
-  std::vector<var> dy_dt_vars = apply([&](auto&&... args) {
-      f_(t, y_vars, msgs_, args...);
-    }, local_args_tuple);
+  std::tuple<decltype(deep_copy_vars(args))...> local_args_tuple(
+      deep_copy_vars(args)...);
+
+  std::vector<var> dy_dt_vars = apply(
+      [&](auto&&... args) { f_(t, y_vars, msgs_, args...); }, local_args_tuple);
 
   check_size_match("coupled_ode_system", "dy_dt", dy_dt_vars.size(), "states",
-		   N);
+                   N);
 
   for (size_t i = 0; i < N; ++i) {
     dz_dt[i] = dy_dt_vars[i].val();
@@ -45,26 +44,28 @@ std::vector<double> coupled_ode_rhs(const F& f,
       double temp_deriv = 0;
       const size_t offset = N + N * j;
       for (size_t k = 0; k < N; k++) {
-	temp_deriv += z[N + N * j + k] * y_vars[k].adj();
+        temp_deriv += z[N + N * j + k] * y_vars[k].adj();
       }
-	
+
       dz_dt[N + N * j + i] = temp_deriv;
     }
-      
+
     Eigen::VectorXd args_adjoints = Eigen::VectorXd::Zero(args_vars);
-    apply([&](auto&&... args) {
-	accumulate_adjoints(args_adjoints.data(), args...);
-      }, local_args_tuple);
+    apply(
+        [&](auto&&... args) {
+          accumulate_adjoints(args_adjoints.data(), args...);
+        },
+        local_args_tuple);
 
     for (size_t j = 0; j < args_vars; j++) {
       double temp_deriv = args_adjoints(j);
       for (size_t k = 0; k < N; k++) {
-	temp_deriv += z[N + N * y0_vars + N * j + k] * y_vars[k].adj();
+        temp_deriv += z[N + N * y0_vars + N * j + k] * y_vars[k].adj();
       }
-	
+
       dz_dt[N + N * y0_vars + N * j + i] = temp_deriv;
     }
-      
+
     nested.set_zero_all_adjoints();
   }
 }

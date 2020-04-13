@@ -56,21 +56,18 @@ namespace math {
  * same size as the state variable, corresponding to a time in ts.
  */
 
-template <typename F, typename T1, typename T_param, typename T_t0, typename T_ts>
-std::vector<std::vector<return_type_t<T1, T_t0, T_ts, T_param>>> integrate_ode_rk45(
-    const F& f, const std::vector<T1>& y0, const T_t0& t0,
-    const std::vector<T_ts>& ts,
-    const std::vector<T_param>& theta,
-    const std::vector<double>& x, const std::vector<int>& x_int,
-    std::ostream* msgs = nullptr,
-    double relative_tolerance = 1e-6,
-    double absolute_tolerance = 1e-6,
-    int max_num_steps = 1e6) {
-  return ode_rk45_tol(f, y0, t0, ts,
-		      relative_tolerance, absolute_tolerance,
-		      max_num_steps,
-		      msgs,
-		      theta, x, x_int);
+template <typename F, typename T1, typename T_param, typename T_t0,
+          typename T_ts>
+std::vector<std::vector<return_type_t<T1, T_t0, T_ts, T_param>>>
+integrate_ode_rk45(const F& f, const std::vector<T1>& y0, const T_t0& t0,
+                   const std::vector<T_ts>& ts,
+                   const std::vector<T_param>& theta,
+                   const std::vector<double>& x, const std::vector<int>& x_int,
+                   std::ostream* msgs = nullptr,
+                   double relative_tolerance = 1e-6,
+                   double absolute_tolerance = 1e-6, int max_num_steps = 1e6) {
+  return ode_rk45_tol(f, y0, t0, ts, relative_tolerance, absolute_tolerance,
+                      max_num_steps, msgs, theta, x, x_int);
 }
 
 }  // namespace math
