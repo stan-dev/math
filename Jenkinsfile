@@ -240,7 +240,6 @@ pipeline {
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
-                        sh "export STAN_NUM_THREADS=2"
                         sh "echo CXX=${env.CXX} -Werror > make/local"
                         sh "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
                         sh "export STAN_NUM_THREADS=4"
@@ -265,7 +264,6 @@ pipeline {
                     steps {
                         deleteDirWin()
                         unstash 'MathSetup'
-                        bat "setx STAN_NUM_THREADS 2"
                         bat "echo CXX=${env.CXX} -Werror > make/local"
                         bat "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
                         runTestsWin("test/unit -f thread")
