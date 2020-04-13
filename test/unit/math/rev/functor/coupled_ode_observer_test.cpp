@@ -221,7 +221,7 @@ TEST_F(StanRevOde, observe_states_ddvd) {
       EXPECT_FLOAT_EQ(ys_coupled[t][n], y[t][n].val());
     for (size_t n = 0; n < 2; n++) {
       y[t][n].grad();
-      EXPECT_FLOAT_EQ(0.0, t0.adj());
+      EXPECT_FLOAT_EQ(-y0[n], t0.adj());
       stan::math::set_zero_all_adjoints();
     }
   }
