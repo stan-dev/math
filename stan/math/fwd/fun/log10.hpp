@@ -4,7 +4,9 @@
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/log10.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -18,6 +20,18 @@ inline fvar<T> log10(const fvar<T>& x) {
   } else {
     return fvar<T>(log10(x.val_), x.d_ / (x.val_ * LOG_TEN));
   }
+}
+
+/**
+ * Return the base 10 logarithm of the specified complex number.
+ *
+ * @tparam T autodiff value type
+ * @param z complex argument
+ * @return base 10 log of argument
+ */
+template <typename T>
+inline std::complex<fvar<T>> log10(const std::complex<fvar<T>>& z) {
+  return internal::complex_log10(z);
 }
 
 }  // namespace math

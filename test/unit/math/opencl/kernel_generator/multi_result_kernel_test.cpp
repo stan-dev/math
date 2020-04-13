@@ -16,7 +16,7 @@ using stan::math::matrix_cl;
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-TEST(MathMatrixCL, multi_result_kernel_errors) {
+TEST(KernelGenerator, multi_result_kernel_errors) {
   matrix_cl<double> m1_cl(3, 3);
   matrix_cl<double> m2_cl(3, 3);
   matrix_cl<double> m3_cl(4, 3);
@@ -36,7 +36,7 @@ TEST(MathMatrixCL, multi_result_kernel_errors) {
                std::invalid_argument);
 }
 
-TEST(MathMatrixCL, multi_result_kernel) {
+TEST(KernelGenerator, multi_result_kernel) {
   std::string kernel_filename = "sum_dif.cl";
   MatrixXd m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
@@ -71,7 +71,7 @@ TEST(MathMatrixCL, multi_result_kernel) {
   EXPECT_MATRIX_NEAR(res_diff, correct_diff, 1e-9);
 }
 
-TEST(MathMatrixCL, multi_result_kernel_reuse_kernel) {
+TEST(KernelGenerator, multi_result_kernel_reuse_kernel) {
   MatrixXd m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   MatrixXd m2(3, 3);

@@ -10,13 +10,8 @@
 namespace stan {
 namespace math {
 
-inline double inv_sqrt(double x) {
-  using std::sqrt;
-  return inv(sqrt(x));
-}
-
 /**
- * Structure to wrap inv_sqrt() so that it can be vectorized.
+ * Structure to wrap `1 / sqrt(x)}` so that it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -25,46 +20,38 @@ inline double inv_sqrt(double x) {
 struct inv_sqrt_fun {
   template <typename T>
   static inline T fun(const T& x) {
-    return inv_sqrt(x);
+    using std::sqrt;
+    return inv(sqrt(x));
   }
 };
 
 /**
- * Vectorized version of inv_sqrt().
+ * Return the elementwise `1 / sqrt(x)}` of the specified argument,
+ * which may be a scalar or any Stan container of numeric scalars.
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x container
  * @return inverse square root of each value in x.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
-inline auto inv_sqrt(const T& x) {
-  return apply_scalar_unary<inv_sqrt_fun, T>::apply(x);
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+inline auto inv_sqrt(const Container& x) {
+  return apply_scalar_unary<inv_sqrt_fun, Container>::apply(x);
 }
 
 /**
- * Version of inv_sqrt() that accepts Eigen Matrix or matrix expressions.
+ * Version of `inv_sqrt()` that accepts std::vectors, Eigen Matrix/Array objects
+ *  or expressions, and containers of these.
  *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
- * @return inverse square root of each value in x.
+ * @tparam Container Type of x
+ * @param x Container
+ * @return inverse square root each variable in the container.
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto inv_sqrt(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().rsqrt().matrix().eval();
-}
-
-/**
- * Version of inv_sqrt() that accepts Eigen Array or array expressions.
- *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
- * @return inverse square root of each value in x.
- */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto inv_sqrt(const Eigen::ArrayBase<Derived>& x) {
-  return x.derived().rsqrt().eval();
+template <typename Container,
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
+inline auto inv_sqrt(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](const auto& v) { return v.array().rsqrt(); });
 }
 
 }  // namespace math

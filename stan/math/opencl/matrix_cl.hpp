@@ -229,7 +229,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * be allocated
    */
   template <typename Vec, require_std_vector_vt<is_eigen, Vec>...,
-            require_same_st<Vec, T>...>
+            require_st_same<Vec, T>...>
   explicit matrix_cl(Vec&& A) try : rows_(A.empty() ? 0 : A[0].size()),
                                     cols_(A.size()) {
     if (this->size() == 0) {
@@ -300,7 +300,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @throw <code>std::system_error</code> if the memory on the device could not
    * be allocated
    */
-  template <typename Mat, require_eigen_t<Mat>..., require_same_vt<Mat, T>...,
+  template <typename Mat, require_eigen_t<Mat>..., require_vt_same<Mat, T>...,
             require_not_t<is_eigen_contiguous_map<Mat>>...>
   explicit matrix_cl(Mat&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
@@ -347,7 +347,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * be allocated
    */
   template <typename Map, require_t<is_eigen_contiguous_map<Map>>...,
-            require_same_vt<Map, T>...>
+            require_vt_same<Map, T>...>
   explicit matrix_cl(Map&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
@@ -396,7 +396,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * be allocated
    */
   template <typename Vec, require_std_vector_t<Vec>...,
-            require_same_vt<Vec, T>...>
+            require_vt_same<Vec, T>...>
   explicit matrix_cl(Vec&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : matrix_cl(std::forward<Vec>(A), A.size(), 1) {}
@@ -420,7 +420,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * be allocated
    */
   template <typename Vec, require_std_vector_t<Vec>...,
-            require_same_vt<Vec, T>...>
+            require_vt_same<Vec, T>...>
   explicit matrix_cl(Vec&& A, const int& R, const int& C,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(R), cols_(C), view_(partial_view) {
@@ -452,15 +452,14 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   }
 
   /**
-   * Construct from a kernel generator expression. It evaluates the ixpression
+   * Construct from a kernel generator expression. It evaluates the expression
    * into \c this.
    * @tparam Expr type of the expression
    * @param expression expression
    */
   template <typename Expr,
             require_all_valid_expressions_and_none_scalar_t<Expr>* = nullptr>
-  matrix_cl(const Expr& expresion);  // NOLINT This constructor is intentionally
-                                     // implicit
+  matrix_cl(const Expr& expression);  // NOLINT(runtime/explicit)
 
   /** \ingroup opencl
    * Move assignment operator.
@@ -492,14 +491,14 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   }
 
   /**
-   * Assignment of a kernel generator expression evaluates the ixpression into
+   * Assignment of a kernel generator expression evaluates the expression into
    * \c this.
    * @tparam Expr type of the expression
    * @param expression expression
    */
   template <typename Expr,
             require_all_valid_expressions_and_none_scalar_t<Expr>* = nullptr>
-  matrix_cl<T>& operator=(const Expr& expresion);
+  matrix_cl<T>& operator=(const Expr& expression);
 
  private:
   /** \ingroup opencl

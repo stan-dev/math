@@ -3,7 +3,15 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/fun/cos.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/rev/fun/is_inf.hpp>
+#include <stan/math/prim/fun/isinf.hpp>
+#include <stan/math/prim/fun/isfinite.hpp>
+#include <stan/math/rev/fun/is_nan.hpp>
+#include <stan/math/rev/fun/sin.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -39,6 +47,15 @@ class exp_vari : public op_v_vari {
  * @return Exponentiated variable.
  */
 inline var exp(const var& a) { return var(new internal::exp_vari(a.vi_)); }
+
+/**
+ * Return the exponentiation (base e) of the specified complex number.
+ * @param z argument
+ * @return exponentiation of argument
+ */
+inline std::complex<var> exp(const std::complex<var>& z) {
+  return internal::complex_exp(z);
+}
 
 }  // namespace math
 }  // namespace stan
