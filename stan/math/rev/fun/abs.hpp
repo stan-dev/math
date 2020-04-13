@@ -44,9 +44,7 @@ inline var abs(const var& a) { return fabs(a); }
  * @param[in] z argument
  * @return absolute value of the argument
  */
-inline std::complex<var> abs(const std::complex<var>& z) {
-  return internal::complex_abs(z);
-}
+inline var abs(const std::complex<var>& z) { return internal::complex_abs(z); }
 
 }  // namespace math
 }  // namespace stan
