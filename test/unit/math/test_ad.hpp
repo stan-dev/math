@@ -1815,6 +1815,38 @@ void expect_complex_common_comparison(const F& f) {
   }
 }
 
+/**
+ * Return square test matrices (not symmetric) of dimensionality
+ * within the specified range (inclusive).
+ *
+ * @param min minimum matrix dimensionality to include
+ * @param max maximum matrix dimensionality to include
+ * @return square matrices within given dimensionality range (inclusive)
+ */
+std::vector<Eigen::MatrixXd> square_test_matrices(int low, int high) {
+  std::vector<Eigen::MatrixXd> xs;
+  Eigen::MatrixXd a00(0, 0);
+  if (0 >= low && 0 <= high)
+    xs.push_back(a00);
+
+  Eigen::MatrixXd a11(1, 1);
+  a11 << -1.3;
+  if (1 >= low && 1 <= high)
+    xs.push_back(a11);
+
+  Eigen::MatrixXd a22(2, 2);
+  a22 << 1, 2, 3, 0.7;
+  if (2 >= low && 2 <= high)
+    xs.push_back(a22);
+
+  Eigen::MatrixXd a33(3, 3);
+  a33 << 3, -5, 7, -7.2, 9.1, -6.3, 7, 12, -3;
+  if (3 >= low && 3 <= high)
+    xs.push_back(a33);
+
+  return xs;
+}
+
 }  // namespace test
 }  // namespace stan
 #endif
