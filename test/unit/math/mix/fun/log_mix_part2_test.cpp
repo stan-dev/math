@@ -61,9 +61,10 @@ void expect_log_mix(const std::vector<double>& p,
   stan::test::expect_ad(tols, f, p_v, ds);
   stan::test::expect_ad(tols, f, p_v, ds_v);
   stan::test::expect_ad(tols, f, p_v, ds_rv);
-  stan::test::expect_ad(tols, f, p_rv, ds);
-  stan::test::expect_ad(tols, f, p_rv, ds_v);
-  stan::test::expect_ad(tols, f, p_rv, ds_rv);
+  //these are in part 3 on the log_mix_tests
+//  stan::test::expect_ad(tols, f, p_rv, ds);
+//  stan::test::expect_ad(tols, f, p_rv, ds_v);
+//  stan::test::expect_ad(tols, f, p_rv, ds_rv);
 }
 
 TEST(mathMixMatFun, logMix) {
