@@ -74,15 +74,6 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
                + op_ + " " + var_name_b + ";\n";
     return res;
   }
-
-  /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
-   */
-  inline matrix_cl_view view() const {
-    return either(this->template get_arg<0>().view(),
-                  this->template get_arg<1>().view());
-  }
 };
 
 /**
@@ -113,6 +104,8 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
     using base::arguments_;                                                   \
                                                                               \
    public:                                                                    \
+    using base::rows;                                                         \
+    using base::cols;                                                         \
     class_name(T_a&& a, T_b&& b) /* NOLINT */                                 \
         : base(std::forward<T_a>(a), std::forward<T_b>(b), operation) {}      \
     inline auto deep_copy() const {                                           \
@@ -150,7 +143,7 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
   expression. This is a variadic argument to allow commas in code with no
   special handling.
   */
-#define ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(                                \
+#define ADD_BINARY_OPERATION_WITH_CUSTOM_EXTREME_DIAGONALS(                   \
     class_name, function_name, scalar_type_expr, operation, ...)              \
   template <typename T_a, typename T_b>                                       \
   class class_name : public binary_operation<class_name<T_a, T_b>,            \
@@ -160,6 +153,8 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
     using base::arguments_;                                                   \
                                                                               \
    public:                                                                    \
+    using base::rows;                                                         \
+    using base::cols;                                                         \
     class_name(T_a&& a, T_b&& b) /* NOLINT */                                 \
         : base(std::forward<T_a>(a), std::forward<T_b>(b), operation) {}      \
     inline auto deep_copy() const {                                           \
@@ -169,7 +164,7 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
                         std::remove_reference_t<decltype(b_copy)>>(           \
           std::move(a_copy), std::move(b_copy));                              \
     }                                                                         \
-    inline matrix_cl_view view() const { __VA_ARGS__; }                       \
+    inline std::pair<int, int> extreme_diagonals() const { __VA_ARGS__; }     \
   };                                                                          \
                                                                               \
   template <typename T_a, typename T_b,                                       \
@@ -183,27 +178,29 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
 ADD_BINARY_OPERATION(addition_, operator+, common_scalar_t<T_a COMMA T_b>, "+");
 ADD_BINARY_OPERATION(subtraction_, operator-, common_scalar_t<T_a COMMA T_b>,
                      "-");
-ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(
+ADD_BINARY_OPERATION_WITH_CUSTOM_EXTREME_DIAGONALS(
     elewise_multiplication_, elewise_multiplication,
     common_scalar_t<T_a COMMA T_b>, "*",
-    using base = binary_operation<elewise_multiplication_<T_a, T_b>,
-                                  common_scalar_t<T_a, T_b>, T_a, T_b>;
-    return both(this->template get_arg<0>().view(),
-                this->template get_arg<1>().view()););
-ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(
+    std::pair<int, int> diags0
+    = this->template get_arg<0>().extreme_diagonals();
+    std::pair<int, int> diags1
+    = this->template get_arg<1>().extreme_diagonals();
+    return {std::max(diags0.first, diags1.first),
+            std::min(diags0.second, diags1.second)};);
+ADD_BINARY_OPERATION_WITH_CUSTOM_EXTREME_DIAGONALS(
     elewise_division_, elewise_division, common_scalar_t<T_a COMMA T_b>, "/",
-    using base = binary_operation<elewise_division_<T_a, T_b>,
-                                  common_scalar_t<T_a, T_b>, T_a, T_b>;
-    return either(this->template get_arg<0>().view(),
-                  invert(this->template get_arg<1>().view())););
+    return {-rows() + 1, cols() - 1};);
 ADD_BINARY_OPERATION(less_than_, operator<, bool, "<");
-ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(less_than_or_equal_, operator<=, bool,
-                                      "<=", return matrix_cl_view::Entire);
+ADD_BINARY_OPERATION_WITH_CUSTOM_EXTREME_DIAGONALS(
+    less_than_or_equal_, operator<=, bool,
+    "<=", return {-rows() + 1, cols() - 1};);
 ADD_BINARY_OPERATION(greater_than_, operator>, bool, ">");
-ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(greater_than_or_equal_, operator>=, bool,
-                                      ">=", return matrix_cl_view::Entire);
-ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(equals_, operator==, bool,
-                                      "==", return matrix_cl_view::Entire);
+ADD_BINARY_OPERATION_WITH_CUSTOM_EXTREME_DIAGONALS(
+    greater_than_or_equal_, operator>=, bool,
+    ">=", return {-rows() + 1, cols() - 1};);
+ADD_BINARY_OPERATION_WITH_CUSTOM_EXTREME_DIAGONALS(equals_, operator==, bool,
+                                                   "==", return {-rows() + 1,
+                                                                 cols() - 1};);
 ADD_BINARY_OPERATION(not_equals_, operator!=, bool, "!=");
 
 ADD_BINARY_OPERATION(logical_or_, operator||, bool, "||");
@@ -243,7 +240,7 @@ inline elewise_multiplication_<as_operation_cl_t<T_a>, scalar_<T_b>> operator*(
 
 #undef COMMA
 #undef ADD_BINARY_OPERATION
-#undef ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW
+#undef ADD_BINARY_OPERATION_WITH_CUSTOM_EXTREME_DIAGONALS
 
 }  // namespace math
 }  // namespace stan

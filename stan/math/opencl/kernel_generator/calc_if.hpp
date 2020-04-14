@@ -83,14 +83,6 @@ class calc_if_
       this->template get_arg<0>().set_args(generated, kernel, arg_num);
     }
   }
-
-  /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
-   */
-  inline matrix_cl_view view() const {
-    return this->template get_arg<0>().view();
-  }
 };
 
 template <bool Do_Calculate, typename T,

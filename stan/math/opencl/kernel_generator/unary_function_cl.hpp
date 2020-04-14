@@ -62,14 +62,6 @@ class unary_function_cl
     return res;
   }
 
-  /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
-   */
-  inline matrix_cl_view view() const {
-    return this->template get_arg<0>().view();
-  }
-
  protected:
   std::string fun_;
 };
@@ -87,6 +79,8 @@ class unary_function_cl
     using base::arguments_;                                                   \
                                                                               \
    public:                                                                    \
+    using base::rows;                                                         \
+    using base::cols;                                                         \
     static const char* include;                                               \
     explicit fun##_(T&& a) : base(std::forward<T>(a), #fun) {}                \
     inline auto deep_copy() const {                                           \
@@ -94,7 +88,9 @@ class unary_function_cl
       return fun##_<std::remove_reference_t<decltype(arg_copy)>>{             \
           std::move(arg_copy)};                                               \
     }                                                                         \
-    inline matrix_cl_view view() const { return matrix_cl_view::Entire; }     \
+    inline std::pair<int, int> extreme_diagonals() const {                    \
+      return {-rows() + 1, cols() - 1};                                       \
+    }                                                                         \
   };                                                                          \
                                                                               \
   template <typename T, typename Cond                                         \
@@ -125,6 +121,8 @@ class unary_function_cl
     using base::arguments_;                                                   \
                                                                               \
    public:                                                                    \
+    using base::rows;                                                         \
+    using base::cols;                                                         \
     static const char* include;                                               \
     explicit fun##_(T&& a) : base(std::forward<T>(a), #fun) {}                \
     inline auto deep_copy() const {                                           \

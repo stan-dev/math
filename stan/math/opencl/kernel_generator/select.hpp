@@ -99,14 +99,22 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
   }
 
   /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
+   * Determine indices of extreme sub- and superdiagonals written.
+   * @return pair of indices - bottom and top diagonal
    */
-  inline matrix_cl_view view() const {
-    matrix_cl_view condition_view = this->template get_arg<0>().view();
-    matrix_cl_view then_view = this->template get_arg<1>().view();
-    matrix_cl_view else_view = this->template get_arg<2>().view();
-    return both(either(then_view, else_view), both(condition_view, then_view));
+  inline std::pair<int, int> extreme_diagonals() const {
+    using std::max;
+    using std::min;
+    std::pair<int, int> condition_diags
+        = this->template get_arg<0>().extreme_diagonals();
+    std::pair<int, int> then_diags
+        = this->template get_arg<1>().extreme_diagonals();
+    std::pair<int, int> else_diags
+        = this->template get_arg<2>().extreme_diagonals();
+    return {max(min(then_diags.first, else_diags.first),
+                min(condition_diags.first, else_diags.first)),
+            min(max(then_diags.second, else_diags.second),
+                max(condition_diags.second, else_diags.second))};
   }
 };
 

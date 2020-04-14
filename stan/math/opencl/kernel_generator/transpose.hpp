@@ -85,27 +85,12 @@ class transpose_
   inline int cols() const { return this->template get_arg<0>().rows(); }
 
   /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
+   * Determine indices of extreme sub- and superdiagonals written.
+   * @return pair of indices - bottom and top diagonal
    */
-  inline matrix_cl_view view() const {
-    return transpose(this->template get_arg<0>().view());
-  }
-
-  /**
-   * Determine index of bottom diagonal written.
-   * @return index of bottom diagonal
-   */
-  inline int bottom_diagonal() const {
-    return -this->template get_arg<0>().top_diagonal();
-  }
-
-  /**
-   * Determine index of top diagonal written.
-   * @return index of top diagonal
-   */
-  inline int top_diagonal() const {
-    return -this->template get_arg<0>().bottom_diagonal();
+  inline std::pair<int, int> extreme_diagonals() const {
+    std::pair<int, int> arg_diags = this->template get_arg<0>().extreme_diagonals();
+    return {-arg_diags.second, -arg_diags.first};
   }
 };
 

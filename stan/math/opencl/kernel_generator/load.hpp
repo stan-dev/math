@@ -194,21 +194,15 @@ class load_
   }
 
   /**
-   * Determine index of bottom diagonal written.
-   * @return number of columns
+   * Determine indices of extreme sub- and superdiagonals written.
+   * @return pair of indices - bottom and top diagonal
    */
-  inline int bottom_diagonal() const {
-    return contains_nonzero(a_.view(), matrix_cl_view::Lower) ? -a_.rows() + 1
-                                                              : 0;
-  }
-
-  /**
-   * Determine index of top diagonal written.
-   * @return number of columns
-   */
-  inline int top_diagonal() const {
-    return contains_nonzero(a_.view(), matrix_cl_view::Upper) ? a_.cols() - 1
-                                                              : 0;
+  inline std::pair<int, int> extreme_diagonals() const {
+    int bottom = contains_nonzero(a_.view(), matrix_cl_view::Lower) ? -a_.rows() + 1
+                                                                    : 0;
+    int top = contains_nonzero(a_.view(), matrix_cl_view::Upper) ? a_.cols() - 1
+                                                                 : 0;
+    return {bottom, top};
   }
 
   /**

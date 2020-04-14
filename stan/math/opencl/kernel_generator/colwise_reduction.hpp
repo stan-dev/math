@@ -47,6 +47,7 @@ class colwise_reduction
   using base::derived;
 
  public:
+  using base::cols;
   /**
    * Constructor
    * @param a the expression to reduce
@@ -131,16 +132,12 @@ class colwise_reduction
   inline int thread_rows() const { return this->template get_arg<0>().rows(); }
 
   /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
+   * Determine indices of extreme sub- and superdiagonals written.
+   * @return pair of indices - bottom and top diagonal
    */
-  matrix_cl_view view() const { return matrix_cl_view::Entire; }
-
-  /**
-   * Determine index of top diagonal written.
-   * @return number of columns
-   */
-  inline int top_diagonal() const { return 1; }
+  inline std::pair<int, int> extreme_diagonals() const {
+    return {-rows() + 1, cols()-1};
+  }
 };  // namespace math
 
 /**

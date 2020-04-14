@@ -104,42 +104,14 @@ class broadcast_
   }
 
   /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
+   * Determine indices of extreme sub- and superdiagonals written.
+   * @return pair of indices - bottom and top diagonal
    */
-  inline matrix_cl_view view() const {
-    matrix_cl_view view = this->template get_arg<0>().view();
-    if (Colwise) {
-      view = either(view, matrix_cl_view::Lower);
-    }
-    if (Rowwise) {
-      view = either(view, matrix_cl_view::Upper);
-    }
-    return view;
-  }
-
-  /**
-   * Determine index of bottom diagonal written.
-   * @return index of bottom diagonal
-   */
-  inline int bottom_diagonal() const {
-    if (Colwise) {
-      return std::numeric_limits<int>::min();
-    } else {
-      return this->template get_arg<0>().bottom_diagonal();
-    }
-  }
-
-  /**
-   * Determine index of top diagonal written.
-   * @return index of top diagonal
-   */
-  inline int top_diagonal() const {
-    if (Rowwise) {
-      return std::numeric_limits<int>::max();
-    } else {
-      return this->template get_arg<0>().top_diagonal();
-    }
+  inline std::pair<int, int> extreme_diagonals() const {
+    int bottom, top;
+    std::pair<int, int> arg_diags = this->template get_arg<0>().extreme_diagonals();
+    return {Colwise ? std::numeric_limits<int>::min() : arg_diags.first,
+            Rowwise ? std::numeric_limits<int>::max() : arg_diags.second};
   }
 };
 

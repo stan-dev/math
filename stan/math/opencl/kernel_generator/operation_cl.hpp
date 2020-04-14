@@ -14,6 +14,7 @@
 #include <CL/cl2.hpp>
 #include <algorithm>
 #include <string>
+#include <utility>
 #include <tuple>
 #include <set>
 #include <array>
@@ -310,27 +311,37 @@ class operation_cl : public operation_cl_base {
   inline int thread_cols() const { return derived().cols(); }
 
   /**
-   * Determine index of bottom diagonal written. Some subclasses may need to
+   * Determine indices of extreme sub- and superdiagonals written. Some subclasses may need to
    * override this.
-   * @return index of bottom diagonal
+   * @return pair of indices - bottom and top diagonal
    */
-  inline int bottom_diagonal() const {
+  inline std::pair<int,int> extreme_diagonals() const {
     return index_apply<N>([&](auto... Is) {
-      return std::min(std::initializer_list<int>(
-          {this->get_arg<Is>().bottom_diagonal()...}));
+      auto arg_diags = std::make_tuple(this->get_arg<Is>().extreme_diagonals()...);
+      int bottom = std::min(std::initializer_list<int>(
+          {std::get<Is>(arg_diags).first...}));
+      int top = std::max(std::initializer_list<int>(
+          {std::get<Is>(arg_diags).second...}));
+      return std::make_pair(bottom, top);
     });
   }
 
   /**
-   * Determine index of top diagonal written. Some subclasses may need to
-   * override this.
-   * @return index of top diagonal
+   * View of a matrix that would be the result of evaluating this expression.
+   * @return view
    */
-  inline int top_diagonal() const {
-    return index_apply<N>([&](auto... Is) {
-      return std::max(
-          std::initializer_list<int>({this->get_arg<Is>().top_diagonal()...}));
-    });
+  inline matrix_cl_view view() const {
+    std::pair<int,int> diagonals = extreme_diagonals();
+    matrix_cl_view view;
+    if (diagonals.first < 0) {
+      view = matrix_cl_view::Lower;
+    } else {
+      view = matrix_cl_view::Diagonal;
+    }
+    if (diagonals.second > 0) {
+      view = either(view, matrix_cl_view::Upper);
+    }
+    return view;
   }
 };
 

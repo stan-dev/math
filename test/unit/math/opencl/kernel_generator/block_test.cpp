@@ -139,6 +139,9 @@ TEST(MathMatrixCL, block_view_test) {
   EXPECT_EQ(res.view(), stan::math::matrix_cl_view::Diagonal);
   res = block(m, 2, 0, 2, 2);
   EXPECT_EQ(res.view(), stan::math::matrix_cl_view::Diagonal);
+
+  res = block(cos(m), 1, 0, 2, 2);
+  EXPECT_EQ(res.view(), stan::math::matrix_cl_view::Entire);
 }
 
 #endif

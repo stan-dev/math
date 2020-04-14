@@ -128,23 +128,6 @@ class block_
   }
 
   /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
-   */
-  inline matrix_cl_view view() const {
-    matrix_cl_view view;
-    if (bottom_diagonal() < 0) {
-      view = matrix_cl_view::Lower;
-    } else {
-      view = matrix_cl_view::Diagonal;
-    }
-    if (top_diagonal() > 0) {
-      view = either(view, matrix_cl_view::Upper);
-    }
-    return view;
-  }
-
-  /**
    * Number of rows of a matrix that would be the result of evaluating this
    * expression.
    * @return number of rows
@@ -180,20 +163,13 @@ class block_
   }
 
   /**
-   * Determine index of bottom diagonal written.
-   * @return number of columns
+   * Determine indices of extreme sub- and superdiagonals written.
+   * @return pair of indices - bottom and top diagonal
    */
-  inline int bottom_diagonal() const {
-    return this->template get_arg<0>().bottom_diagonal() - start_col_
-           + start_row_;
-  }
-
-  /**
-   * Determine index of top diagonal written.
-   * @return number of columns
-   */
-  inline int top_diagonal() const {
-    return this->template get_arg<0>().top_diagonal() - start_col_ + start_row_;
+  inline std::pair<int, int> extreme_diagonals() const {
+    std::pair<int, int> arg_diags = this->template get_arg<0>().extreme_diagonals();
+    return {arg_diags.first - start_col_ + start_row_,
+            arg_diags.second - start_col_ + start_row_};
   }
 
   /**

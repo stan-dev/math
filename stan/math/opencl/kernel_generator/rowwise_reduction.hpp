@@ -38,6 +38,7 @@ class rowwise_reduction
   std::string init_;
 
  public:
+  using base::rows;
   /**
    * Constructor
    * @param a the expression to reduce
@@ -111,16 +112,12 @@ class rowwise_reduction
   inline int cols() const { return 1; }
 
   /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
+   * Determine indices of extreme sub- and superdiagonals written.
+   * @return pair of indices - bottom and top diagonal
    */
-  matrix_cl_view view() const { return matrix_cl_view::Entire; }
-
-  /**
-   * Determine index of top diagonal written.
-   * @return top diagonal
-   */
-  inline int top_diagonal() const { return 1; }
+  inline std::pair<int, int> extreme_diagonals() const {
+    return {-rows() + 1, cols()-1};
+  }
 };
 
 /**

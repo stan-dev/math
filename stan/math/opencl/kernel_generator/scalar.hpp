@@ -84,22 +84,12 @@ class scalar_ : public operation_cl<scalar_<T>, T> {
   inline int cols() const { return base::dynamic; }
 
   /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
+   * Determine indices of extreme sub- and superdiagonals written.
+   * @return pair of indices - bottom and top diagonal
    */
-  inline matrix_cl_view view() const { return matrix_cl_view::Entire; }
-
-  /**
-   * Determine index of bottom diagonal written.
-   * @return number of columns
-   */
-  inline int bottom_diagonal() const { return std::numeric_limits<int>::min(); }
-
-  /**
-   * Determine index of top diagonal written.
-   * @return number of columns
-   */
-  inline int top_diagonal() const { return std::numeric_limits<int>::max(); }
+  inline std::pair<int, int> extreme_diagonals() const {
+    return {std::numeric_limits<int>::min(), std::numeric_limits<int>::max()};
+  }
 };
 
 }  // namespace math
