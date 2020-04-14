@@ -9,18 +9,32 @@ TEST(AgradRevMatrixAddons, var_matrix) {
 
   MatrixXd vals = MatrixXd::Random(100, 100);
   MatrixXd derivs = MatrixXd::Random(100, 100);
+  MatrixXd vals2(100, 100);
+  MatrixXd derivs2(100, 100);
+  matrix_vi vis2(100,100);
+  Eigen::VectorXd vals_diag(100);
+  Eigen::VectorXd derivs_diag(100);
 
   matrix_v mat_in = vals;
 
   for (int i = 0; i < 100; i++)
     for (int j = 0; j < 100; j++)
       mat_in(i, j).vi_->adj_ = derivs(i, j);
+  mat_in.read_val_adj(vals2,derivs2);
+  mat_in.read_vi_val_adj(vis2,vals2,derivs2);
+  mat_in.read_vi_val(vis2,vals2);
+  mat_in.read_vi_adj(vis2,vals2);
+  mat_in.diagonal().read_val_adj(vals_diag,derivs_diag);
 
   expect_matrix_eq(vals, mat_in.val());
+  expect_matrix_eq(vals, vals2);
   expect_matrix_eq(vals.val(), mat_in.val());
   expect_matrix_eq(vals.array().exp(), mat_in.val().array().exp());
+  expect_matrix_eq(vals.diagonal(), vals_diag);
+  expect_matrix_eq(derivs.diagonal(), derivs_diag);
 
   expect_matrix_eq(derivs, mat_in.adj());
+  expect_matrix_eq(derivs, derivs2);
   expect_matrix_eq(derivs.array().exp(), mat_in.adj().array().exp());
 
   EXPECT_EQ(mat_in.val().rows(), vals.rows());
@@ -30,6 +44,9 @@ TEST(AgradRevMatrixAddons, var_matrix) {
   EXPECT_EQ(mat_in.adj().cols(), derivs.cols());
 
   const matrix_v const_mat_in = matrix_v::Random(100, 100);
+  MatrixXd vals3(100, 100);
+  MatrixXd derivs3(100, 100);
+  const_mat_in.read_val_adj(vals3,derivs3);
 
   MatrixXd tri_out = const_mat_in.val().triangularView<Eigen::Upper>().solve(
       const_mat_in.adj().transpose());
@@ -38,7 +55,9 @@ TEST(AgradRevMatrixAddons, var_matrix) {
 
   expect_matrix_eq(vals, mat_vi.val());
   expect_matrix_eq(vals.array().exp(), mat_vi.val().array().exp());
+  expect_matrix_eq(const_mat_in.val(), vals3);
 
+  expect_matrix_eq(const_mat_in.adj(), derivs3);
   expect_matrix_eq(derivs, mat_vi.adj());
   expect_matrix_eq(derivs.array().exp(), mat_vi.adj().array().exp());
 

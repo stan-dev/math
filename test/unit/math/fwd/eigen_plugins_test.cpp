@@ -8,6 +8,8 @@ TEST(AgradFwdMatrixAddons, fvar_double_matrix) {
 
   MatrixXd vals = MatrixXd::Random(100, 100);
   MatrixXd derivs = MatrixXd::Random(100, 100);
+  MatrixXd vals2(100, 100);
+  MatrixXd derivs2(100, 100);
 
   matrix_fd mat_in(100, 100);
 
@@ -18,10 +20,14 @@ TEST(AgradFwdMatrixAddons, fvar_double_matrix) {
     }
   }
 
+  mat_in.read_fvar(vals2, derivs2);
+
   expect_matrix_eq(vals, mat_in.val());
+  expect_matrix_eq(vals, vals2);
   expect_matrix_eq(vals.array().exp(), mat_in.val().array().exp());
 
   expect_matrix_eq(derivs, mat_in.d());
+  expect_matrix_eq(derivs, derivs2);
   expect_matrix_eq(derivs.array().exp(), mat_in.d().array().exp());
 
   EXPECT_EQ(mat_in.val().rows(), vals.rows());
