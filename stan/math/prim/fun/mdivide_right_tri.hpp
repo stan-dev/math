@@ -28,7 +28,7 @@ namespace math {
  */
 template <Eigen::UpLoType TriView, typename EigMat1, typename EigMat2,
           require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
-          require_all_not_st_same<double, EigMat1, EigMat2>* = nullptr>
+          require_any_not_st_same<double, EigMat1, EigMat2>* = nullptr>
 inline Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
                      EigMat1::RowsAtCompileTime, EigMat2::ColsAtCompileTime>
 mdivide_right_tri(const EigMat1& b, const EigMat2& A) {

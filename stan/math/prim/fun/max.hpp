@@ -23,7 +23,7 @@ namespace math {
  * @throws <code>std::invalid_argument</code> if the vector is size zero and the
  * scalar type in the container is integer
  */
-template <typename T>
+template <typename T, require_container_t<T>* = nullptr>
 inline value_type_t<T> max(const T& m) {
   if (std::is_integral<value_type_t<T>>::value) {
     check_nonzero_size("max", "int vector", m);

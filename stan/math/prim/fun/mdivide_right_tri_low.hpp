@@ -22,8 +22,9 @@ namespace math {
  * match the size of A.
  */
 template <typename EigMat1, typename EigMat2,
-          require_all_eigen_t<EigMat1, EigMat2>* = nullptr>
-inline Eigen::Matrix<return_type_t<T1, T2>, EigMat1::RowsAtCompileTime,
+          require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
+          require_all_not_vt_fvar<EigMat1, EigMat2>* = nullptr>
+inline Eigen::Matrix<return_type_t<EigMat1, EigMat2>, EigMat1::RowsAtCompileTime,
                      EigMat2::ColsAtCompileTime>
 mdivide_right_tri_low(const EigMat1& b, const EigMat2& A) {
   return mdivide_right_tri<Eigen::Lower>(b, A);
