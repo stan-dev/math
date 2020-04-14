@@ -37,7 +37,7 @@ void expect_log_mix(const std::vector<double>& p,
   stan::test::expect_ad(tols, f, p_rv, ds_rv);
 }
 
-TEST(mathMixMatFun, logMix) {
+TEST(mathMixMatFun, logMix3) {
   std::vector<double> v1{-1.3};
   std::vector<double> v2{-1.3, 3.2};
 
