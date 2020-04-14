@@ -320,12 +320,17 @@ TEST_F(StanRevOde, observe_states_ddvd_error) {
     tsd[t] = t;
   }
 
-  EXPECT_THROW_MSG((stan::math::coupled_ode_observer<harm_osc_ode_wrong_size_1_fun, double, double, var,
-		    double>(harm_osc1, y0, theta, t0v, tsd, x, x_int, &msgs, y)), std::invalid_argument,
-		   std::string("coupled_ode_observer: dy_dt (3) and states (2) must match in size"));
+  EXPECT_THROW_MSG(
+      (stan::math::coupled_ode_observer<harm_osc_ode_wrong_size_1_fun, double,
+                                        double, var, double>(
+          harm_osc1, y0, theta, t0v, tsd, x, x_int, &msgs, y)),
+      std::invalid_argument,
+      std::string(
+          "coupled_ode_observer: dy_dt (3) and states (2) must match in size"));
 
-  EXPECT_NO_THROW((stan::math::coupled_ode_observer<harm_osc_ode_fun, double, double, var,
-		    double>(harm_osc2, y0, theta, t0v, tsd, x, x_int, &msgs, y)));
+  EXPECT_NO_THROW((stan::math::coupled_ode_observer<harm_osc_ode_fun, double,
+                                                    double, var, double>(
+      harm_osc2, y0, theta, t0v, tsd, x, x_int, &msgs, y)));
 }
 
 TEST_F(StanRevOde, observe_states_dddv_error) {
@@ -350,13 +355,17 @@ TEST_F(StanRevOde, observe_states_dddv_error) {
     tsv[t] = t;
   }
 
-  stan::math::coupled_ode_observer<harm_osc_ode_wrong_size_1_fun, double, double, double, var>
-    throwing_observer(harm_osc1, y0, theta, t0d, tsv, x, x_int, &msgs, y);
+  stan::math::coupled_ode_observer<harm_osc_ode_wrong_size_1_fun, double,
+                                   double, double, var>
+      throwing_observer(harm_osc1, y0, theta, t0d, tsv, x, x_int, &msgs, y);
 
-  stan::math::coupled_ode_observer<harm_osc_ode_fun, double, double, double, var>
-    observer(harm_osc2, y0, theta, t0d, tsv, x, x_int, &msgs, y);
+  stan::math::coupled_ode_observer<harm_osc_ode_fun, double, double, double,
+                                   var>
+      observer(harm_osc2, y0, theta, t0d, tsv, x, x_int, &msgs, y);
 
-  EXPECT_THROW_MSG((throwing_observer(std::vector<double>(2), 0)), std::invalid_argument,
-		   std::string("coupled_ode_observer: dy_dt (3) and states (2) must match in size"));
+  EXPECT_THROW_MSG(
+      (throwing_observer(std::vector<double>(2), 0)), std::invalid_argument,
+      std::string(
+          "coupled_ode_observer: dy_dt (3) and states (2) must match in size"));
   EXPECT_NO_THROW((observer(std::vector<double>(2), 0)));
 }
