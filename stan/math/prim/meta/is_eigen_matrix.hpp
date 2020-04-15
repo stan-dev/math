@@ -16,7 +16,8 @@ namespace internal {
  */
 
 /**
- * Underlying implimenation to check if a type is derived from MatrixBase
+ * Underlying implimenation to check if an Eigen matrix has rows or cols not
+ *  equal to 1.
  */
 template <typename T>
 struct is_eigen_matrix_impl
@@ -29,7 +30,8 @@ struct is_eigen_matrix_impl
  * Checks whether type T is derived from Eigen::MatrixBase and has columns and
  * rows not equal to 1. If true this will have a
  * static member function named value with a type of true, else value is false.
- * @tparam T Type to check if it is derived from `EigenBase`
+ * @tparam T Type to check if it is derived from `MatrixBase` and has more than
+ * 1 compile time row and column.
  * @tparam Enable used for SFINAE deduction.
  */
 template <typename T, typename Enable = void>
@@ -40,13 +42,6 @@ struct is_eigen_matrix<
     T, std::enable_if_t<std::is_base_of<
            Eigen::MatrixBase<typename std::decay_t<T>::PlainObject>,
            typename std::decay_t<T>::PlainObject>::value>>
-    : bool_constant<internal::is_eigen_matrix_impl<std::decay_t<T>>::value> {};
-
-template <typename T>
-struct is_eigen_matrix<
-    T, std::enable_if_t<std::is_base_of<
-           Eigen::MatrixBase<typename std::decay_t<T>::MatrixType>,
-           typename std::decay_t<T>::MatrixType>::value>>
     : bool_constant<internal::is_eigen_matrix_impl<std::decay_t<T>>::value> {};
 
 /** @}*/

@@ -14,9 +14,9 @@ namespace stan {
  */
 
 /**
- * Checks whether type T is derived from Eigen::MatrixBase and has columns and
- * rows not equal to 1. If true this will have a
- * static member function named value with a type of true, else value is false.
+ * Checks whether type T is derived from Eigen::MatrixBase.
+ * If true this will have a static member function named value with a type
+ * of true, else value is false.
  * @tparam T Type to check if it is derived from `EigenBase`
  * @tparam Enable used for SFINAE deduction.
  */
@@ -29,11 +29,6 @@ struct is_eigen_matrix_base<
            Eigen::MatrixBase<typename std::decay_t<T>::PlainObject>,
            typename std::decay_t<T>::PlainObject>::value>> : std::true_type {};
 
-template <typename T>
-struct is_eigen_matrix_base<
-    T, std::enable_if_t<std::is_base_of<
-           Eigen::MatrixBase<typename std::decay_t<T>::MatrixType>,
-           typename std::decay_t<T>::MatrixType>::value>> : std::true_type {};
 
 /** @}*/
 
