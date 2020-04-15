@@ -88,8 +88,8 @@ inline std::vector<typename child_type<T>::type> value_of(
  * @param x Specified std::vector.
  * @return Specified std::vector.
  */
-template <typename Scal, require_double_or_int_t<Scal>* = nullptr>
-inline const std::vector<Scal>& value_of(const std::vector<Scal>& x) {
+template <typename Vec, require_std_vector_vt<is_double_or_int,Vec>* = nullptr>
+inline Vec value_of(Vec&& x) {
   return x;
 }
 
@@ -130,7 +130,7 @@ value_of(const EigMat& M) {
  */
 template <typename EigMat,
           require_eigen_vt<is_double_or_int, EigMat>* = nullptr>
-inline const EigMat& value_of(const EigMat& x) {
+inline EigMat value_of(EigMat&& x) {
   return x;
 }
 
