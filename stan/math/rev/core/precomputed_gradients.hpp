@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_CORE_PRECOMPUTED_GRADIENTS_HPP
 
 #include <stan/math/prim/err/check_consistent_sizes.hpp>
+// #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <algorithm>
@@ -51,10 +52,7 @@ class precomputed_gradients_vari : public vari {
    * @throws std::invalid_argument if the sizes of the vectors
    * don't match.
    */
-  template <typename Arith, typename VecVar, typename VecArith,
-            require_arithmetic_t<Arith>...,
-            require_vector_like_vt<is_var, VecVar>...,
-            require_vector_like_vt<std::is_arithmetic, VecArith>...>
+  template <typename Arith, typename VecVar, typename VecArith>
   precomputed_gradients_vari(Arith val, VecVar&& vars, VecArith&& gradients)
       : vari(val),
         size_(vars.size()),
