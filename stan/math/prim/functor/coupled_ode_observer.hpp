@@ -44,6 +44,7 @@ struct coupled_ode_observer {
   const std::size_t N_;
   const std::size_t M_;
   const std::size_t index_offset_theta_;
+  std::vector<double> initial_dy_dt_;
   int next_ts_index_;
 
   /**
@@ -84,7 +85,14 @@ struct coupled_ode_observer {
         N_(y0.size()),
         M_(theta.size()),
         index_offset_theta_(is_constant_all<T1>::value ? 0 : N_ * N_),
-        next_ts_index_(0) {}
+        next_ts_index_(0) {
+    if (!is_constant_all<T_t0>::value) {
+      initial_dy_dt_
+          = f(value_of(t0), value_of(y0), value_of(theta_), x_, x_int_, msgs_);
+      check_size_match("coupled_ode_observer", "dy_dt", initial_dy_dt_.size(),
+                       "states", N_);
+    }
+  }
 
   /**
    * Callback function for ODE solvers to record values. The coupled
@@ -131,6 +139,10 @@ struct coupled_ode_observer {
           ops_partials.edge2_.partials_[k]
               = coupled_state[N_ + index_offset_theta_ + N_ * k + j];
         }
+      }
+
+      if (!is_constant_all<T_t0>::value) {
+        ops_partials.edge3_.partials_[0] = -initial_dy_dt_[j];
       }
 
       if (!is_constant_all<T_ts>::value) {
