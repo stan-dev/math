@@ -22,9 +22,8 @@ namespace test {
  * @tparam Checker A struct taking in an expression template type and returning
  *  a true if check is satisfied and false otherwise.
  */
-template <bool Base_v, bool SparseCompressed_v,
-          bool SparseMatrix_v, bool SparseMap_v, typename Scalar,
-          template <class...> class Checker>
+template <bool Base_v, bool SparseCompressed_v, bool SparseMatrix_v,
+          bool SparseMap_v, typename Scalar, template <class...> class Checker>
 void test_eigen_sparse_matrix() {
   using Eigen::EigenBase;
   using Eigen::SparseCompressedBase;
@@ -43,12 +42,11 @@ void test_eigen_sparse_matrix() {
   EXPECT_TRUE((Base_v == Checker<EigenBase<decltype(C * D)>>::value));
   EXPECT_TRUE((SparseCompressed_v
                == Checker<SparseCompressedBase<decltype(C * D)>>::value));
-  EXPECT_TRUE((SparseMatrix_v
-               == Checker<SparseMatrixBase<decltype(C * D)>>::value));
+  EXPECT_TRUE(
+      (SparseMatrix_v == Checker<SparseMatrixBase<decltype(C * D)>>::value));
   EXPECT_TRUE((SparseMatrix_v == Checker<decltype(C * D)>::value));
   EXPECT_TRUE((SparseMatrix_v == Checker<decltype(C + D)>::value));
-  EXPECT_TRUE(
-      (SparseMap_v == Checker<SparseMapBase<decltype(C * D)>>::value));
+  EXPECT_TRUE((SparseMap_v == Checker<SparseMapBase<decltype(C * D)>>::value));
 }
 
 /**
@@ -65,10 +63,11 @@ void test_eigen_sparse_matrix() {
  *   `Map` expression types.
  * @tparam Checker A struct taking in an expression template type and returning
  *  a true if check is satisfied and false otherwise.
- * @tparam EigenType The type from the Eigen namespace to validate type traits with.
+ * @tparam EigenType The type from the Eigen namespace to validate type traits
+ * with.
  */
-template <bool Base_v, bool Dense_v, bool Matrix_v, bool Array_v, bool Map_v, template <class...> class Checker,
-    typename EigenType>
+template <bool Base_v, bool Dense_v, bool Matrix_v, bool Array_v, bool Map_v,
+          template <class...> class Checker, typename EigenType>
 void test_eigen_dense_hierarchy() {
   using Eigen::ArrayBase;
   using Eigen::DenseBase;
@@ -86,7 +85,8 @@ void test_eigen_dense_hierarchy() {
   EXPECT_TRUE((Base_v == Checker<EigenBase<EigenType>>::value));
   EXPECT_TRUE((Base_v == Checker<EigenBase<decltype(A * B)>>::value));
   EXPECT_TRUE((Dense_v == Checker<DenseBase<decltype(A * B)>>::value));
-  EXPECT_TRUE((Matrix_v == Checker<MatrixBase<decltype(A * B + A.transpose())>>::value));
+  EXPECT_TRUE((Matrix_v
+               == Checker<MatrixBase<decltype(A * B + A.transpose())>>::value));
   EXPECT_TRUE((Array_v == Checker<ArrayBase<decltype(A + B)>>::value));
   EXPECT_TRUE((Map_v == Checker<Map<EigenType>>::value));
 }
@@ -94,16 +94,19 @@ void test_eigen_dense_hierarchy() {
 /**
  * Check if Eigen type traits satsify more complex Eigen expressions.
  * @tparam Base_v `bool` for the type of `EigenType` should pass.
- * @tparam Expr_v `bool` for if a product addition and transpose expression passes of `EigenType` should pass.
- * @tparam Segment_v `bool` for if calling `segment()` member from `EigenType` should pass.
- * @tparam Block_v `bool` for if calling `block` member from `EigenType` should pass.
+ * @tparam Expr_v `bool` for if a product addition and transpose expression
+ * passes of `EigenType` should pass.
+ * @tparam Segment_v `bool` for if calling `segment()` member from `EigenType`
+ * should pass.
+ * @tparam Block_v `bool` for if calling `block` member from `EigenType` should
+ * pass.
  * @tparam Checker A type trait returning a `bool` value.
  * @tparam EigenType A type from the Eigen namespace to check against.
  *  Must have addition, multiplication, `segment(int, int)`, and
  * `block(int, int, int, int)` members.
  */
-template <bool Base_v, bool Expr_v, bool Segment_v, bool Block_v, template <class...> class Checker,
-    typename EigenType>
+template <bool Base_v, bool Expr_v, bool Segment_v, bool Block_v,
+          template <class...> class Checker, typename EigenType>
 void test_eigen_dense_exprs() {
   EigenType A;
   EigenType B;
@@ -175,44 +178,58 @@ void test_eigen_dense_decomp_array() {
  * @tparam Checker A struct taking in an expression template type and returning
  *  a true if check is satisfied and false otherwise.
  * @tparam EigenType A template type from Eigen to check type traits against.
- * @tparam EigenDims template parameter pack of `int` defining `EigenType` compile time dimensions.
- *  compile time dimensions.
+ * @tparam EigenDims template parameter pack of `int` defining `EigenType`
+ * compile time dimensions. compile time dimensions.
  */
 template <bool Base_v, bool Dense_v, bool Matrix_v, bool Array_v, bool Map_v,
- template <class...> class Checker,  template <class Scalar, int...> class EigenType, int... EigenDims>
+          template <class...> class Checker,
+          template <class Scalar, int...> class EigenType, int... EigenDims>
 void all_eigen_dense() {
   using stan::math::fvar;
   using stan::math::var;
 
-  test_eigen_dense_hierarchy<Base_v, Dense_v, Matrix_v, Array_v, Map_v, Checker, EigenType<double, EigenDims...>>();
-  test_eigen_dense_hierarchy<Base_v, Dense_v, Matrix_v, Array_v, Map_v, Checker, EigenType<var, EigenDims...>>();
-  test_eigen_dense_hierarchy<Base_v, Dense_v, Matrix_v, Array_v, Map_v, Checker, EigenType<fvar<double>, EigenDims...>>();
-  test_eigen_dense_hierarchy<Base_v, Dense_v, Matrix_v, Array_v, Map_v, Checker, EigenType<fvar<var>, EigenDims...>>();
-  test_eigen_dense_hierarchy<Base_v, Dense_v, Matrix_v, Array_v, Map_v, Checker, EigenType<fvar<fvar<double>>, EigenDims...>>();
+  test_eigen_dense_hierarchy<Base_v, Dense_v, Matrix_v, Array_v, Map_v, Checker,
+                             EigenType<double, EigenDims...>>();
+  test_eigen_dense_hierarchy<Base_v, Dense_v, Matrix_v, Array_v, Map_v, Checker,
+                             EigenType<var, EigenDims...>>();
+  test_eigen_dense_hierarchy<Base_v, Dense_v, Matrix_v, Array_v, Map_v, Checker,
+                             EigenType<fvar<double>, EigenDims...>>();
+  test_eigen_dense_hierarchy<Base_v, Dense_v, Matrix_v, Array_v, Map_v, Checker,
+                             EigenType<fvar<var>, EigenDims...>>();
+  test_eigen_dense_hierarchy<Base_v, Dense_v, Matrix_v, Array_v, Map_v, Checker,
+                             EigenType<fvar<fvar<double>>, EigenDims...>>();
 }
 
 /**
  * Check if Eigen type traits satsify more complex Eigen expressions.
  * @tparam Base_v `bool` for the type of `EigenType` should pass.
- * @tparam Expr_v `bool` for if a product addition and transpose expression passes of `EigenType` should pass.
- * @tparam Segment_v `bool` for if calling `segment()` member from `EigenType` should pass.
- * @tparam Block_v `bool` for if calling `block` member from `EigenType` should pass.
+ * @tparam Expr_v `bool` for if a product addition and transpose expression
+ * passes of `EigenType` should pass.
+ * @tparam Segment_v `bool` for if calling `segment()` member from `EigenType`
+ * should pass.
+ * @tparam Block_v `bool` for if calling `block` member from `EigenType` should
+ * pass.
  * @tparam Checker A type trait returning a `bool` value.
  * @tparam EigenType A type from the Eigen namespace to check against.
  *  Must have addition, multiplication, `segment(int, int)`, and
  * `block(int, int, int, int)` members.
  */
 template <bool Base_v, bool Expr_v, bool Segment_v, bool Block_v,
-  template <class...> class Checker,
-  template <class Scalar, int...> class EigenType, int... EigenDims>
+          template <class...> class Checker,
+          template <class Scalar, int...> class EigenType, int... EigenDims>
 void all_eigen_dense_exprs() {
-  using stan::math::var;
   using stan::math::fvar;
-  test_eigen_dense_exprs<Base_v, Expr_v, Segment_v, Block_v, Checker, EigenType<double, EigenDims...>>;
-  test_eigen_dense_exprs<Base_v, Expr_v, Segment_v, Block_v, Checker, EigenType<var, EigenDims...>>;
-  test_eigen_dense_exprs<Base_v, Expr_v, Segment_v, Block_v, Checker, EigenType<fvar<double>, EigenDims...>>;
-  test_eigen_dense_exprs<Base_v, Expr_v, Segment_v, Block_v, Checker, EigenType<fvar<var>, EigenDims...>>;
-  test_eigen_dense_exprs<Base_v, Expr_v, Segment_v, Block_v, Checker, EigenType<fvar<fvar<double>>, EigenDims...>>;
+  using stan::math::var;
+  test_eigen_dense_exprs<Base_v, Expr_v, Segment_v, Block_v, Checker,
+                         EigenType<double, EigenDims...>>;
+  test_eigen_dense_exprs<Base_v, Expr_v, Segment_v, Block_v, Checker,
+                         EigenType<var, EigenDims...>>;
+  test_eigen_dense_exprs<Base_v, Expr_v, Segment_v, Block_v, Checker,
+                         EigenType<fvar<double>, EigenDims...>>;
+  test_eigen_dense_exprs<Base_v, Expr_v, Segment_v, Block_v, Checker,
+                         EigenType<fvar<var>, EigenDims...>>;
+  test_eigen_dense_exprs<Base_v, Expr_v, Segment_v, Block_v, Checker,
+                         EigenType<fvar<fvar<double>>, EigenDims...>>;
 }
 
 /*
@@ -231,13 +248,15 @@ void all_eigen_dense_decomp() {
   test_eigen_dense_decomp_matrix<eigen_dense_solver_v, var, Checker>();
   test_eigen_dense_decomp_matrix<eigen_dense_solver_v, fvar<double>, Checker>();
   test_eigen_dense_decomp_matrix<eigen_dense_solver_v, fvar<var>, Checker>();
-  test_eigen_dense_decomp_matrix<eigen_dense_solver_v, fvar<fvar<double>>, Checker>();
+  test_eigen_dense_decomp_matrix<eigen_dense_solver_v, fvar<fvar<double>>,
+                                 Checker>();
 
   test_eigen_dense_decomp_array<eigen_dense_solver_v, double, Checker>();
   test_eigen_dense_decomp_array<eigen_dense_solver_v, var, Checker>();
   test_eigen_dense_decomp_array<eigen_dense_solver_v, fvar<double>, Checker>();
   test_eigen_dense_decomp_array<eigen_dense_solver_v, fvar<var>, Checker>();
-  test_eigen_dense_decomp_array<eigen_dense_solver_v, fvar<fvar<double>>, Checker>();
+  test_eigen_dense_decomp_array<eigen_dense_solver_v, fvar<fvar<double>>,
+                                Checker>();
 }
 
 /**
@@ -253,18 +272,22 @@ void all_eigen_dense_decomp() {
  * @tparam Checker A struct taking in an expression template type and returning
  *  a true if check is satisfied and false otherwise.
  */
-template <bool Base_v, bool SparseCompressed_v,
-          bool SparseMatrix_v, bool SparseMap_v,
-          template <class...> class Checker>
+template <bool Base_v, bool SparseCompressed_v, bool SparseMatrix_v,
+          bool SparseMap_v, template <class...> class Checker>
 void all_eigen_sparse() {
   using stan::math::fvar;
   using stan::math::var;
 
-  test_eigen_sparse_matrix<Base_v, SparseCompressed_v, SparseMatrix_v, SparseMap_v, double, Checker>();
-  test_eigen_sparse_matrix<Base_v, SparseCompressed_v, SparseMatrix_v, SparseMap_v, var, Checker>();
-  test_eigen_sparse_matrix<Base_v, SparseCompressed_v, SparseMatrix_v, SparseMap_v, fvar<double>, Checker>();
-  test_eigen_sparse_matrix<Base_v, SparseCompressed_v, SparseMatrix_v, SparseMap_v, fvar<var>, Checker>();
-  test_eigen_sparse_matrix<Base_v, SparseCompressed_v, SparseMatrix_v, SparseMap_v, fvar<fvar<var>>, Checker>();
+  test_eigen_sparse_matrix<Base_v, SparseCompressed_v, SparseMatrix_v,
+                           SparseMap_v, double, Checker>();
+  test_eigen_sparse_matrix<Base_v, SparseCompressed_v, SparseMatrix_v,
+                           SparseMap_v, var, Checker>();
+  test_eigen_sparse_matrix<Base_v, SparseCompressed_v, SparseMatrix_v,
+                           SparseMap_v, fvar<double>, Checker>();
+  test_eigen_sparse_matrix<Base_v, SparseCompressed_v, SparseMatrix_v,
+                           SparseMap_v, fvar<var>, Checker>();
+  test_eigen_sparse_matrix<Base_v, SparseCompressed_v, SparseMatrix_v,
+                           SparseMap_v, fvar<fvar<var>>, Checker>();
 }
 
 }  // namespace test

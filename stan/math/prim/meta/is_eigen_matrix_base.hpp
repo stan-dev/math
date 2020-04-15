@@ -29,7 +29,6 @@ struct is_eigen_matrix_base<
            Eigen::MatrixBase<typename std::decay_t<T>::PlainObject>,
            typename std::decay_t<T>::PlainObject>::value>> : std::true_type {};
 
-
 /** @}*/
 
 STAN_ADD_REQUIRE_UNARY(eigen_matrix_base, is_eigen_matrix_base,
