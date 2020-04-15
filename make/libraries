@@ -125,11 +125,11 @@ endif
 
 $(TBB_BIN)/tbb-make-check:
 ifeq (Windows_NT,$(OS))
-ifneq (mingw32,$(MAKE))
+		if ! [[ $(MAKE) =~ mingw32 ]]; then \
 			echo "ERROR: Please use mingw32-make on Windows to build the Intel TBB library."; \
 			echo "This is packaged with RTools, for example."; \
-			exit 1;
-endif
+			exit 1; \
+		fi
 endif
 	@mkdir -p $(TBB_BIN)
 	touch $(TBB_BIN)/tbb-make-check
