@@ -59,13 +59,13 @@ class broadcast_
 
   /**
    * Generates kernel code for this and nested expressions.
-   * @param[in,out] generated set of already generated operations
-   * @param ng name generator for this kernel
    * @param i row index variable name
    * @param j column index variable name
+   * @param view_handled whether whether caller already handled matrix view
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
+                               const bool view_handeled,
                                const std::string& var_name_arg) const {
     var_name = this->template get_arg<0>().var_name;
     return {};

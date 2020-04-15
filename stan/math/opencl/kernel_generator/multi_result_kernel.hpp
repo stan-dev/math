@@ -422,6 +422,7 @@ class results_cl {
     try {
       if (impl::kernel_() == NULL) {
         std::string src = get_kernel_source_impl(results, expressions);
+        std::cout << src << std::endl;
         auto opts = opencl_context.base_opts();
         impl::kernel_ = opencl_kernels::compile_kernel(
             "calculate", {view_kernel_helpers, src}, opts);

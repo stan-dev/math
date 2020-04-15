@@ -62,11 +62,13 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
    * generates kernel code for this expression.
    * @param i row index variable name
    * @param j column index variable name
+   * @param view_handled whether whether caller already handled matrix view
    * @param var_name_a variable name of the first nested expression
    * @param var_name_b variable name of the second nested expression
    * @return part of kernel with code for this expression
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
+                               const bool view_hangled,
                                const std::string& var_name_a,
                                const std::string& var_name_b) const {
     kernel_parts res{};

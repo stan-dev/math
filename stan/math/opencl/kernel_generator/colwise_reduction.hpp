@@ -70,7 +70,7 @@ class colwise_reduction
       std::set<const operation_cl_base*>& generated, name_generator& ng,
       const std::string& i, const std::string& j,
       const T_result& result) const {
-    kernel_parts parts = derived().get_kernel_parts(generated, ng, i, j);
+    kernel_parts parts = derived().get_kernel_parts(generated, ng, i, j, false);
     kernel_parts out_parts = result.get_kernel_parts_lhs(generated, ng, i, j);
 
     parts.args += out_parts.args;
@@ -85,11 +85,13 @@ class colwise_reduction
    * generates kernel code for this and nested expressions.
    * @param i row index variable name
    * @param j column index variable name
+   * @param view_handled whether whether caller already handled matrix view
    * @param var_name_arg name of the variable in kernel that holds argument to
    * this expression
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
+                               const bool view_handeled,
                                const std::string& var_name_arg) const {
     kernel_parts res;
     res.initialization = type_str<Scalar>() + " " + var_name + " = " + init_

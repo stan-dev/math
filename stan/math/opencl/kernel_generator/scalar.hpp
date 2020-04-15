@@ -47,10 +47,12 @@ class scalar_ : public operation_cl<scalar_<T>, T> {
    * generates kernel code for this expression.
    * @param i row index variable name
    * @param j column index variable name
+   * @param view_handled whether whether caller already handled matrix view
    * @return part of kernel with code for this expression
    */
   inline kernel_parts generate(const std::string& i,
-                               const std::string& j) const {
+                               const std::string& j,
+                               const bool view_handeled) const {
     kernel_parts res{};
     res.args = type_str<Scalar>() + " " + var_name + ", ";
     return res;

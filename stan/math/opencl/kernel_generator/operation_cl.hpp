@@ -92,6 +92,7 @@ class operation_cl : public operation_cl_base {
  public:
   using Deriv = Derived;
   static const bool require_specific_local_size;
+  static const bool handles_matrix_view = false;
   // number of arguments this operation has
   static constexpr int N = sizeof...(Args);
   // value representing a not yet determined size
@@ -174,7 +175,7 @@ class operation_cl : public operation_cl_base {
       std::set<const operation_cl_base*>& generated, name_generator& ng,
       const std::string& i, const std::string& j,
       const T_result& result) const {
-    kernel_parts parts = derived().get_kernel_parts(generated, ng, i, j);
+    kernel_parts parts = derived().get_kernel_parts(generated, ng, i, j, false);
     kernel_parts out_parts = result.get_kernel_parts_lhs(generated, ng, i, j);
     out_parts.body += " = " + derived().var_name + ";\n";
     parts += out_parts;
@@ -187,11 +188,12 @@ class operation_cl : public operation_cl_base {
    * @param name_gen name generator for this kernel
    * @param i row index variable name
    * @param j column index variable name
+   * @param view_handled whether caller already handled matrix view
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
       std::set<const operation_cl_base*>& generated, name_generator& name_gen,
-      const std::string& i, const std::string& j) const {
+      const std::string& i, const std::string& j, bool view_handled) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
       this->var_name = name_gen.generate();
@@ -201,12 +203,20 @@ class operation_cl : public operation_cl_base {
       derived().modify_argument_indices(i_arg, j_arg);
       std::array<kernel_parts, N> args_parts = index_apply<N>([&](auto... Is) {
         return std::array<kernel_parts, N>{this->get_arg<Is>().get_kernel_parts(
-            generated, name_gen, i_arg, j_arg)...};
+            generated, name_gen, i_arg, j_arg,
+            Derived::handles_matrix_view
+                ? true
+                : (view_handled
+                   && this->get_arg<Is>().extreme_diagonals().first
+                          <= this->extreme_diagonals().first
+                   && this->get_arg<Is>().extreme_diagonals().second
+                          >= this->extreme_diagonals().second))...};
       });
       res = std::accumulate(args_parts.begin(), args_parts.end(),
                             kernel_parts{});
       kernel_parts my_part = index_apply<N>([&](auto... Is) {
-        return this->derived().generate(i, j, this->get_arg<Is>().var_name...);
+        return this->derived().generate(i, j, view_handled,
+                                        this->get_arg<Is>().var_name...);
       });
       res += my_part;
       res.body = res.body_prefix + res.body;
@@ -311,17 +321,18 @@ class operation_cl : public operation_cl_base {
   inline int thread_cols() const { return derived().cols(); }
 
   /**
-   * Determine indices of extreme sub- and superdiagonals written. Some subclasses may need to
-   * override this.
+   * Determine indices of extreme sub- and superdiagonals written. Some
+   * subclasses may need to override this.
    * @return pair of indices - bottom and top diagonal
    */
-  inline std::pair<int,int> extreme_diagonals() const {
+  inline std::pair<int, int> extreme_diagonals() const {
     return index_apply<N>([&](auto... Is) {
-      auto arg_diags = std::make_tuple(this->get_arg<Is>().extreme_diagonals()...);
-      int bottom = std::min(std::initializer_list<int>(
-          {std::get<Is>(arg_diags).first...}));
-      int top = std::max(std::initializer_list<int>(
-          {std::get<Is>(arg_diags).second...}));
+      auto arg_diags
+          = std::make_tuple(this->get_arg<Is>().extreme_diagonals()...);
+      int bottom = std::min(
+          std::initializer_list<int>({std::get<Is>(arg_diags).first...}));
+      int top = std::max(
+          std::initializer_list<int>({std::get<Is>(arg_diags).second...}));
       return std::make_pair(bottom, top);
     });
   }
@@ -331,7 +342,7 @@ class operation_cl : public operation_cl_base {
    * @return view
    */
   inline matrix_cl_view view() const {
-    std::pair<int,int> diagonals = extreme_diagonals();
+    std::pair<int, int> diagonals = extreme_diagonals();
     matrix_cl_view view;
     if (diagonals.first < 0) {
       view = matrix_cl_view::Lower;

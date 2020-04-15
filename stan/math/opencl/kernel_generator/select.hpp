@@ -83,12 +83,14 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
    * generates kernel code for this (select) operation.
    * @param i row index variable name
    * @param j column index variable name
+   * @param view_handled whether whether caller already handled matrix view
    * @param var_name_condition variable name of the condition expression
    * @param var_name_else variable name of the then expression
    * @param var_name_then variable name of the else expression
    * @return part of kernel with code for this expression
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
+                               const bool view_handeled,
                                const std::string& var_name_condition,
                                const std::string& var_name_then,
                                const std::string& var_name_else) const {

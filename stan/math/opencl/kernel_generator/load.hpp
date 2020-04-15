@@ -56,18 +56,26 @@ class load_
    * generates kernel code for this expression.
    * @param i row index variable name
    * @param j column index variable name
+   * @param view_handled whether whether caller already handled matrix view
    * @return part of kernel with code for this expression
    */
   inline kernel_parts generate(const std::string& i,
-                               const std::string& j) const {
+                               const std::string& j,
+                               const bool view_handeled) const {
     kernel_parts res{};
     std::string type = type_str<Scalar>();
-    res.body = type + " " + var_name + " = 0;"
-               " if (!((!contains_nonzero(" + var_name + "_view, LOWER) && "
-               + j + " < " + i + ") || (!contains_nonzero(" + var_name +
-               "_view, UPPER) && " + j + " > " + i + "))) {"
-               + var_name + " = " + var_name + "_global[" + i + " + " +
-               var_name + "_rows * " + j + "];}\n";
+    if(view_handeled){
+      res.body = type + " " + var_name + " = " + var_name + "_global[" + i + " + " +
+          var_name + "_rows * " + j + "];}\n";
+    }
+    else{
+      res.body = type + " " + var_name + " = 0;"
+                 " if (!((!contains_nonzero(" + var_name + "_view, LOWER) && "
+                 + j + " < " + i + ") || (!contains_nonzero(" + var_name +
+                 "_view, UPPER) && " + j + " > " + i + "))) {"
+                 + var_name + " = " + var_name + "_global[" + i + " + " +
+                 var_name + "_rows * " + j + "];}\n";
+    }
     res.args = "__global " + type + "* " + var_name + "_global, int " + var_name
                + "_rows, int " + var_name + "_view, ";
     return res;

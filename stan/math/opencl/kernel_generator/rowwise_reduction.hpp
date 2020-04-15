@@ -33,6 +33,7 @@ class rowwise_reduction
   using Scalar = typename std::remove_reference_t<T>::Scalar;
   using base = operation_cl<Derived, Scalar, T>;
   using base::var_name;
+  static const bool require_specific_local_size = true;
 
  protected:
   std::string init_;
@@ -51,11 +52,13 @@ class rowwise_reduction
    * Generates kernel code for this expression.
    * @param i row index variable name
    * @param j column index variable name
+   * @param view_handled whether whether caller already handled matrix view
    * @param var_name_arg name of the variable in kernel that holds argument to
    * this expression
    * @return part of kernel with code for this expression
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
+                               const bool view_handeled,
                                const std::string& var_name_arg) const {
     kernel_parts res;
     res.body_prefix
