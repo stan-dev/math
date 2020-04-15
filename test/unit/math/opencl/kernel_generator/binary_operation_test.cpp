@@ -18,7 +18,7 @@ using stan::math::matrix_cl;
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-TEST(MathMatrixCL, addition_test) {
+TEST(KernelGenerator, addition_test) {
   std::string kernel_filename = "binary_operation_addition.cl";
   MatrixXd m1(3, 3);
   m1 << 1, 2.5, 3, 4, 5, 6.3, 7, -8, -9.5;
@@ -45,7 +45,7 @@ TEST(MathMatrixCL, addition_test) {
 }
 
 #define BINARY_OPERATION_TEST(test_name, operation, res_type)          \
-  TEST(MathMatrixCL, test_name) {                                      \
+  TEST(KernelGenerator, test_name) {                                   \
     MatrixXd m1(3, 3);                                                 \
     m1 << 1, 2.5, 3, 4, 5, 6.3, 7, -8, -9.5;                           \
     MatrixXi m2(3, 3);                                                 \
@@ -65,7 +65,7 @@ TEST(MathMatrixCL, addition_test) {
 
 BINARY_OPERATION_TEST(subtraction_test, -, double);
 
-TEST(MathMatrixCL, elewise_multiplication_test) {
+TEST(KernelGenerator, elewise_multiplication_test) {
   MatrixXd m1(3, 3);
   m1 << 1, 2.5, 3, 4, 5, 6.3, 7, -8, -9.5;
   MatrixXi m2(3, 3);
@@ -82,7 +82,7 @@ TEST(MathMatrixCL, elewise_multiplication_test) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
-TEST(MathMatrixCL, elewise_division_test) {
+TEST(KernelGenerator, elewise_division_test) {
   MatrixXd m1(3, 3);
   m1 << 1, 2.5, 3, 4, 5, 6.3, 7, -8, -9.5;
   MatrixXi m2(3, 3);
@@ -106,7 +106,7 @@ BINARY_OPERATION_TEST(greater_than_or_equal_test, >=, bool);
 BINARY_OPERATION_TEST(equals_test, ==, bool);
 BINARY_OPERATION_TEST(not_equals_test, !=, bool);
 
-TEST(MathMatrixCL, logical_or_test) {
+TEST(KernelGenerator, logical_or_test) {
   Matrix<bool, -1, -1> m1(3, 3);
   m1 << true, true, true, false, false, true, true, false, false;
   Matrix<bool, -1, -1> m2(3, 3);
@@ -123,7 +123,7 @@ TEST(MathMatrixCL, logical_or_test) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
-TEST(MathMatrixCL, logical_and_test) {
+TEST(KernelGenerator, logical_and_test) {
   Matrix<bool, -1, -1> m1(3, 3);
   m1 << true, true, true, false, false, true, true, false, false;
   Matrix<bool, -1, -1> m2(3, 3);
@@ -140,7 +140,7 @@ TEST(MathMatrixCL, logical_and_test) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
-TEST(MathMatrixCL, binary_operation_multiple_operations) {
+TEST(KernelGenerator, binary_operation_multiple_operations) {
   MatrixXd m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   MatrixXi m2(3, 3);
@@ -160,7 +160,7 @@ TEST(MathMatrixCL, binary_operation_multiple_operations) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
-TEST(MathMatrixCL, binary_operation_multiple_operations_accepts_lvalue) {
+TEST(KernelGenerator, binary_operation_multiple_operations_accepts_lvalue) {
   MatrixXd m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   MatrixXi m2(3, 3);
@@ -181,7 +181,7 @@ TEST(MathMatrixCL, binary_operation_multiple_operations_accepts_lvalue) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
-TEST(MathMatrixCL, multiplication_with_scalar_test) {
+TEST(KernelGenerator, multiplication_with_scalar_test) {
   MatrixXd m1(3, 3);
   m1 << 1, 2.5, 3, 4, 5, 6.3, 7, -8, -9.5;
   MatrixXd m2(3, 3);
@@ -204,7 +204,7 @@ TEST(MathMatrixCL, multiplication_with_scalar_test) {
   EXPECT_MATRIX_NEAR(res2, correct, 1e-9);
 }
 
-TEST(MathMatrixCL, matrix_multiplication_in_expression_test) {
+TEST(KernelGenerator, matrix_multiplication_in_expression_test) {
   MatrixXd m1(3, 3);
   m1 << 1, 2.5, 3, 4, 5, 6.3, 7, -8, -9.5;
   MatrixXd m2(3, 3);
@@ -222,7 +222,7 @@ TEST(MathMatrixCL, matrix_multiplication_in_expression_test) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
-TEST(MathMatrixCL, reuse_expression_simple) {
+TEST(KernelGenerator, reuse_expression_simple) {
   MatrixXd m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   MatrixXd m2(3, 3);
@@ -248,7 +248,7 @@ TEST(MathMatrixCL, reuse_expression_simple) {
 }
 
 // Shows subexpressions tmp and tmp2 are reused in the kernel
-TEST(MathMatrixCL, reuse_expression_complicated) {
+TEST(KernelGenerator, reuse_expression_complicated) {
   std::string kernel_filename = "binary_operation_reuse_expression.cl";
   MatrixXd m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;

@@ -33,7 +33,6 @@ inline typename VectorBuilder<true, int, T_N, T_shape1, T_shape2>::type
 beta_binomial_rng(const T_N &N, const T_shape1 &alpha, const T_shape2 &beta,
                   RNG &rng) {
   static const char *function = "beta_binomial_rng";
-
   check_nonnegative(function, "Population size parameter", N);
   check_positive_finite(function, "First prior sample size parameter", alpha);
   check_positive_finite(function, "Second prior sample size parameter", beta);

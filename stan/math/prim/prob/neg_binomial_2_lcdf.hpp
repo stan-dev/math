@@ -17,11 +17,6 @@ template <typename T_n, typename T_location, typename T_precision>
 return_type_t<T_location, T_precision> neg_binomial_2_lcdf(
     const T_n& n, const T_location& mu, const T_precision& phi) {
   using std::log;
-
-  if (size_zero(n, mu, phi)) {
-    return 0.0;
-  }
-
   static const char* function = "neg_binomial_2_lcdf";
   check_positive_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Precision parameter", phi);
@@ -29,10 +24,14 @@ return_type_t<T_location, T_precision> neg_binomial_2_lcdf(
   check_consistent_sizes(function, "Random variable", n, "Location parameter",
                          mu, "Precision Parameter", phi);
 
+  if (size_zero(n, mu, phi)) {
+    return 0;
+  }
+
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_location> mu_vec(mu);
   scalar_seq_view<T_precision> phi_vec(phi);
-  size_t size_n = size(n);
+  size_t size_n = stan::math::size(n);
   size_t size_phi_mu = max_size(mu, phi);
 
   for (size_t i = 0; i < size_n; i++) {

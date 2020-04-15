@@ -1,15 +1,21 @@
 #ifndef STAN_MATH_PRIM_FUN_ASIN_HPP
 #define STAN_MATH_PRIM_FUN_ASIN_HPP
 
+#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/asinh.hpp>
+#include <stan/math/prim/fun/copysign.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/i_times.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
 
 /**
- * Structure to wrap asin() so it can be vectorized.
+ * Structure to wrap `asin()` so it can be vectorized.
  *
  * @tparam T type of argument
  * @param x argument
@@ -24,29 +30,49 @@ struct asin_fun {
 };
 
 /**
- * Vectorized version of asin().
+ * Returns the elementwise `asin()` of the input,
+ * which may be a scalar or any Stan container of numeric scalars.
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x container
  * @return Arcsine of each variable in the container, in radians.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
-inline auto asin(const T& x) {
-  return apply_scalar_unary<asin_fun, T>::apply(x);
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+inline auto asin(const Container& x) {
+  return apply_scalar_unary<asin_fun, Container>::apply(x);
 }
 
 /**
- * Version of asin() that accepts Eigen Matrix or matrix expressions.
+ * Version of `asin()` that accepts std::vectors, Eigen Matrix/Array objects,
+ *  or expressions, and containers of these.
  *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
+ * @tparam Container Type of x
+ * @param x Container
  * @return Arcsine of each variable in the container, in radians.
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto asin(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().asin().matrix().eval();
+template <typename Container,
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
+inline auto asin(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](const auto& v) { return v.array().asin(); });
 }
+
+namespace internal {
+/**
+ * Return the arc sine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return arc sine of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_asin(const std::complex<V>& z) {
+  auto y_d = asin(value_of_rec(z));
+  auto y = neg_i_times(asinh(i_times(z)));
+  return copysign(y, y_d);
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

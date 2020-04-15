@@ -1,9 +1,15 @@
 #ifndef STAN_MATH_REV_FUN_ASIN_HPP
 #define STAN_MATH_REV_FUN_ASIN_HPP
 
-#include <stan/math/rev/meta.hpp>
+#include <stan/math/prim/fun/asin.hpp>
+#include <stan/math/prim/fun/abs.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/fun/abs.hpp>
+#include <stan/math/rev/fun/asinh.hpp>
+#include <stan/math/rev/fun/value_of_rec.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -55,6 +61,16 @@ class asin_vari : public op_v_vari {
  * @return Arc sine of variable, in radians.
  */
 inline var asin(const var& a) { return var(new internal::asin_vari(a.vi_)); }
+
+/**
+ * Return the arc sine of the complex argument.
+ *
+ * @param[in] z argument
+ * @return arc sine of the argument
+ */
+inline std::complex<var> asin(const std::complex<var>& z) {
+  return stan::math::internal::complex_asin(z);
+}
 
 }  // namespace math
 }  // namespace stan

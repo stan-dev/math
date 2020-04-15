@@ -2,6 +2,8 @@
 #define STAN_MATH_PRIM_PROB_DIRICHLET_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 #include <boost/random/gamma_distribution.hpp>
@@ -29,17 +31,17 @@ namespace math {
  * 26(3):363--372, 2000.
  * </blockquote>
  *
- * @tparam RNG Type of pseudo-random number generator.
+ * @tparam RNG type of pseudo-random number generator
  * @param alpha Prior count (plus 1) parameter for Dirichlet.
  * @param rng Pseudo-random number generator.
  */
 template <class RNG>
 inline Eigen::VectorXd dirichlet_rng(
     const Eigen::Matrix<double, Eigen::Dynamic, 1>& alpha, RNG& rng) {
-  using Eigen::VectorXd;
   using boost::gamma_distribution;
-  using boost::random::uniform_real_distribution;
   using boost::variate_generator;
+  using boost::random::uniform_real_distribution;
+  using Eigen::VectorXd;
   using std::exp;
   using std::log;
 

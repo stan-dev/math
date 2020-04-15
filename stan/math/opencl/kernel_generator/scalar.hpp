@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_CONSTANT_HPP
-#define STAN_MATH_OPENCL_KERNEL_GENERATOR_CONSTANT_HPP
+#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_SCALAR_HPP
+#define STAN_MATH_OPENCL_KERNEL_GENERATOR_SCALAR_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/matrix_cl.hpp>
@@ -7,6 +7,7 @@
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
+#include <limits>
 #include <string>
 #include <type_traits>
 #include <set>
@@ -35,6 +36,12 @@ class scalar_ : public operation_cl<scalar_<T>, T> {
    * @param a scalar value
    */
   explicit scalar_(const T a) : a_(a) {}
+
+  /**
+   * Creates a deep copy of this expression.
+   * @return copy of \c *this
+   */
+  inline scalar_<T> deep_copy() const { return scalar_<T>(a_); }
 
   /**
    * generates kernel code for this expression.
@@ -81,6 +88,18 @@ class scalar_ : public operation_cl<scalar_<T>, T> {
    * @return view
    */
   inline matrix_cl_view view() const { return matrix_cl_view::Entire; }
+
+  /**
+   * Determine index of bottom diagonal written.
+   * @return number of columns
+   */
+  inline int bottom_diagonal() const { return std::numeric_limits<int>::min(); }
+
+  /**
+   * Determine index of top diagonal written.
+   * @return number of columns
+   */
+  inline int top_diagonal() const { return std::numeric_limits<int>::max(); }
 };
 
 }  // namespace math

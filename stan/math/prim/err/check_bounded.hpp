@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <string>
 
 namespace stan {
@@ -43,7 +44,7 @@ struct bounded<T_y, T_low, T_high, true> {
                     const T_low& low, const T_high& high) {
     scalar_seq_view<T_low> low_vec(low);
     scalar_seq_view<T_high> high_vec(high);
-    for (size_t n = 0; n < size(y); n++) {
+    for (size_t n = 0; n < stan::math::size(y); n++) {
       if (!(low_vec[n] <= stan::get(y, n) && stan::get(y, n) <= high_vec[n])) {
         std::stringstream msg;
         msg << ", but must be in the interval ";
@@ -72,6 +73,9 @@ struct bounded<T_y, T_low, T_high, true> {
 template <typename T_y, typename T_low, typename T_high>
 inline void check_bounded(const char* function, const char* name, const T_y& y,
                           const T_low& low, const T_high& high) {
+  if (size_zero(y, low, high)) {
+    return;
+  }
   internal::bounded<T_y, T_low, T_high, is_vector_like<T_y>::value>::check(
       function, name, y, low, high);
 }

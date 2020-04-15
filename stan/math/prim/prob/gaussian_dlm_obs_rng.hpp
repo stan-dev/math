@@ -19,7 +19,7 @@ namespace internal {
  * No error checking or templating, takes the LDLT directly to avoid
  * recomputation. Can sample from semidefinite covariance matrices.
  *
- * @tparam RNG Type of pseudo-random number generator
+ * @tparam RNG type of pseudo-random number generator
  * @param mu location parameter
  * @param S_ldlt Eigen::LDLT of covariance matrix, semidefinite is okay
  * @param rng random number generator

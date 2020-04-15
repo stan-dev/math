@@ -23,32 +23,30 @@ template <typename T_n, typename T_shape, typename T_inv_scale>
 return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(const T_n& n,
                                                      const T_shape& alpha,
                                                      const T_inv_scale& beta) {
-  static const char* function = "neg_binomial_cdf";
   using T_partials_return = partials_return_t<T_n, T_shape, T_inv_scale>;
+  static const char* function = "neg_binomial_cdf";
+  check_positive_finite(function, "Shape parameter", alpha);
+  check_positive_finite(function, "Inverse scale parameter", beta);
+  check_consistent_sizes(function, "Failures variable", n, "Shape parameter",
+                         alpha, "Inverse scale parameter", beta);
 
   if (size_zero(n, alpha, beta)) {
     return 1.0;
   }
 
   T_partials_return P(1.0);
-
-  check_positive_finite(function, "Shape parameter", alpha);
-  check_positive_finite(function, "Inverse scale parameter", beta);
-  check_consistent_sizes(function, "Failures variable", n, "Shape parameter",
-                         alpha, "Inverse scale parameter", beta);
+  operands_and_partials<T_shape, T_inv_scale> ops_partials(alpha, beta);
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   scalar_seq_view<T_inv_scale> beta_vec(beta);
-  size_t size_alpha = size(alpha);
+  size_t size_alpha = stan::math::size(alpha);
   size_t size_n_alpha = max_size(n, alpha);
   size_t max_size_seq_view = max_size(n, alpha, beta);
 
-  operands_and_partials<T_shape, T_inv_scale> ops_partials(alpha, beta);
-
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < size(n); i++) {
+  for (size_t i = 0; i < stan::math::size(n); i++) {
     if (value_of(n_vec[i]) < 0) {
       return ops_partials.build(0.0);
     }
@@ -109,7 +107,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(const T_n& n,
   }
 
   if (!is_constant_all<T_inv_scale>::value) {
-    for (size_t i = 0; i < size(beta); ++i) {
+    for (size_t i = 0; i < stan::math::size(beta); ++i) {
       ops_partials.edge2_.partials_[i] *= P;
     }
   }

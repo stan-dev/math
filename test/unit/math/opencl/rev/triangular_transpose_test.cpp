@@ -5,8 +5,8 @@
 #include <algorithm>
 
 TEST(MathMatrixRevCL, triangular_transpose_m_exception_pass) {
-  using stan::math::TriangularMapCL;
   using stan::math::matrix_cl;
+  using stan::math::TriangularMapCL;
   using stan::math::var;
   matrix_cl<var> m1(1, 1);
   matrix_cl<var> m0;
@@ -28,11 +28,11 @@ TEST(MathMatrixRevCL, triangular_transpose_m_exception_pass) {
 }
 
 TEST(MathMatrixRevCL, triangular_transpose_m_pass) {
-  using stan::math::TriangularMapCL;
   using stan::math::from_matrix_cl;
   using stan::math::matrix_cl;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
+  using stan::math::TriangularMapCL;
   using stan::math::var;
   matrix_v m0(2, 2);
   matrix_d m0_dst(2, 2);

@@ -3,9 +3,13 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/copysign.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/sqrt.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -56,7 +60,7 @@ inline double acosh(int x) {
  */
 struct acosh_fun {
   /**
-   * Return the inverse hypberbolic cosine of the specified argument.
+   * Return the inverse hyperbolic cosine of the specified argument.
    *
    * @tparam T type of argument
    * @param x argument
@@ -82,6 +86,24 @@ template <typename T>
 inline auto acosh(const T& x) {
   return apply_scalar_unary<acosh_fun, T>::apply(x);
 }
+
+namespace internal {
+
+/**
+ * Return the hyperbolic arc cosine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return hyperbolic arc cosine of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_acosh(const std::complex<V>& z) {
+  std::complex<double> y_d = acosh(value_of_rec(z));
+  auto y = log(z + sqrt(z * z - 1));
+  return copysign(y, y_d);
+}
+
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

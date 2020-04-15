@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
@@ -18,23 +19,24 @@ template <bool propto, typename T_y, typename T_scale, typename T_shape>
 return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
                                                  const T_scale& y_min,
                                                  const T_shape& alpha) {
-  static const char* function = "pareto_lpdf";
   using T_partials_return = partials_return_t<T_y, T_scale, T_shape>;
   using std::log;
+  static const char* function = "pareto_lpdf";
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Scale parameter", y_min);
   check_positive_finite(function, "Shape parameter", alpha);
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          y_min, "Shape parameter", alpha);
+
   if (size_zero(y, y_min, alpha)) {
     return 0;
   }
-
   if (!include_summand<propto, T_y, T_scale, T_shape>::value) {
     return 0;
   }
 
   T_partials_return logp(0);
+  operands_and_partials<T_y, T_scale, T_shape> ops_partials(y, y_min, alpha);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_scale> y_min_vec(y_min);
@@ -47,13 +49,11 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
     }
   }
 
-  operands_and_partials<T_y, T_scale, T_shape> ops_partials(y, y_min, alpha);
-
   VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,
                 T_y>
       log_y(size(y));
   if (include_summand<propto, T_y, T_shape>::value) {
-    for (size_t n = 0; n < size(y); n++) {
+    for (size_t n = 0; n < stan::math::size(y); n++) {
       log_y[n] = log(value_of(y_vec[n]));
     }
   }
@@ -61,7 +61,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
   VectorBuilder<!is_constant_all<T_y, T_shape>::value, T_partials_return, T_y>
       inv_y(size(y));
   if (!is_constant_all<T_y, T_shape>::value) {
-    for (size_t n = 0; n < size(y); n++) {
+    for (size_t n = 0; n < stan::math::size(y); n++) {
       inv_y[n] = 1 / value_of(y_vec[n]);
     }
   }
@@ -70,7 +70,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
                 T_partials_return, T_scale>
       log_y_min(size(y_min));
   if (include_summand<propto, T_scale, T_shape>::value) {
-    for (size_t n = 0; n < size(y_min); n++) {
+    for (size_t n = 0; n < stan::math::size(y_min); n++) {
       log_y_min[n] = log(value_of(y_min_vec[n]));
     }
   }
@@ -79,7 +79,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
                 T_shape>
       log_alpha(size(alpha));
   if (include_summand<propto, T_shape>::value) {
-    for (size_t n = 0; n < size(alpha); n++) {
+    for (size_t n = 0; n < stan::math::size(alpha); n++) {
       log_alpha[n] = log(value_of(alpha_vec[n]));
     }
   }

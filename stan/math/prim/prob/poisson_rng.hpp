@@ -27,17 +27,15 @@ namespace math {
 template <typename T_rate, class RNG>
 inline typename VectorBuilder<true, int, T_rate>::type poisson_rng(
     const T_rate& lambda, RNG& rng) {
-  using boost::random::poisson_distribution;
   using boost::variate_generator;
-
+  using boost::random::poisson_distribution;
   static const char* function = "poisson_rng";
-
   check_not_nan(function, "Rate parameter", lambda);
   check_positive(function, "Rate parameter", lambda);
   check_less(function, "Rate parameter", lambda, POISSON_MAX_RATE);
 
   scalar_seq_view<T_rate> lambda_vec(lambda);
-  size_t N = size(lambda);
+  size_t N = stan::math::size(lambda);
   VectorBuilder<true, int, T_rate> output(N);
 
   for (size_t n = 0; n < N; ++n) {

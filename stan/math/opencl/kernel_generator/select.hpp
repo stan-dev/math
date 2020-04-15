@@ -37,10 +37,6 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
                             T_condition, T_then, T_else>;
   using base::var_name;
 
- protected:
-  using base::arguments_;
-
- public:
   /**
    * Constructor
    * @param condition condition expression
@@ -70,6 +66,20 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
   }
 
   /**
+   * Creates a deep copy of this expression.
+   * @return copy of \c *this
+   */
+  inline auto deep_copy() const {
+    auto&& condition_copy = this->template get_arg<0>().deep_copy();
+    auto&& then_copy = this->template get_arg<1>().deep_copy();
+    auto&& else_copy = this->template get_arg<2>().deep_copy();
+    return select_<std::remove_reference_t<decltype(condition_copy)>,
+                   std::remove_reference_t<decltype(then_copy)>,
+                   std::remove_reference_t<decltype(else_copy)>>(
+        std::move(condition_copy), std::move(then_copy), std::move(else_copy));
+  }
+
+  /**
    * generates kernel code for this (select) operation.
    * @param i row index variable name
    * @param j column index variable name
@@ -93,9 +103,9 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
    * @return view
    */
   inline matrix_cl_view view() const {
-    matrix_cl_view condition_view = std::get<0>(arguments_).view();
-    matrix_cl_view then_view = std::get<1>(arguments_).view();
-    matrix_cl_view else_view = std::get<2>(arguments_).view();
+    matrix_cl_view condition_view = this->template get_arg<0>().view();
+    matrix_cl_view then_view = this->template get_arg<1>().view();
+    matrix_cl_view else_view = this->template get_arg<2>().view();
     return both(either(then_view, else_view), both(condition_view, then_view));
   }
 };

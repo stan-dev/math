@@ -19,7 +19,7 @@ namespace math {
  * mu can be either an Eigen::VectorXd, an Eigen::RowVectorXd, or a std::vector
  * of either of those types.
  *
- * @tparam T_loc Type of location paramater
+ * @tparam T_loc Type of location parameter
  * @tparam RNG Type of pseudo-random number generator
  * @param nu degrees of freedom parameter
  * @param mu (Sequence of) location parameter(s)
@@ -36,14 +36,14 @@ multi_student_t_rng(
     double nu, const T_loc& mu,
     const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S, RNG& rng) {
   using boost::normal_distribution;
-  using boost::random::gamma_distribution;
   using boost::variate_generator;
+  using boost::random::gamma_distribution;
 
   static const char* function = "multi_student_t_rng";
-
   check_not_nan(function, "Degrees of freedom parameter", nu);
   check_positive(function, "Degrees of freedom parameter", nu);
   check_positive(function, "Covariance matrix rows", S.rows());
+  check_not_nan(function, "Covariance matrix", S);
   check_symmetric(function, "Covariance matrix", S);
   Eigen::LLT<Eigen::MatrixXd> llt_of_S = S.llt();
   check_pos_definite(function, "covariance matrix argument", llt_of_S);

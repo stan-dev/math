@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -22,15 +23,15 @@ namespace math {
  * shape and scale parameters. y, shape, and scale parameters must
  * be greater than 0.
  *
+ * @tparam T_y type of scalar
+ * @tparam T_shape type of shape
+ * @tparam T_scale type of scale
  * @param y A scalar variable.
  * @param alpha Shape parameter.
  * @param beta Scale parameter.
  * @throw std::domain_error if alpha is not greater than 0.
  * @throw std::domain_error if beta is not greater than 0.
  * @throw std::domain_error if y is not greater than 0.
- * @tparam T_y Type of scalar.
- * @tparam T_shape Type of shape.
- * @tparam T_scale Type of scale.
  */
 
 template <typename T_y, typename T_shape, typename T_scale>
@@ -38,15 +39,9 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_cdf(const T_y& y,
                                                    const T_shape& alpha,
                                                    const T_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
-
-  if (size_zero(y, alpha, beta)) {
-    return 1.0;
-  }
-
+  using std::exp;
+  using std::pow;
   static const char* function = "inv_gamma_cdf";
-
-  T_partials_return P(1.0);
-
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Scale parameter", beta);
   check_not_nan(function, "Random variable", y);
@@ -54,23 +49,25 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_cdf(const T_y& y,
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Scale Parameter", beta);
 
+  if (size_zero(y, alpha, beta)) {
+    return 1.0;
+  }
+
+  T_partials_return P(1.0);
+  operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, beta);
+
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   scalar_seq_view<T_scale> beta_vec(beta);
   size_t N = max_size(y, alpha, beta);
 
-  operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, beta);
-
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < size(y); i++) {
+  for (size_t i = 0; i < stan::math::size(y); i++) {
     if (value_of(y_vec[i]) == 0) {
       return ops_partials.build(0.0);
     }
   }
-
-  using std::exp;
-  using std::pow;
 
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       gamma_vec(size(alpha));
@@ -78,7 +75,7 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_cdf(const T_y& y,
       digamma_vec(size(alpha));
 
   if (!is_constant_all<T_shape>::value) {
-    for (size_t i = 0; i < size(alpha); i++) {
+    for (size_t i = 0; i < stan::math::size(alpha); i++) {
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
       gamma_vec[i] = tgamma(alpha_dbl);
       digamma_vec[i] = digamma(alpha_dbl);
@@ -122,17 +119,17 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_cdf(const T_y& y,
   }
 
   if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < size(y); ++n) {
+    for (size_t n = 0; n < stan::math::size(y); ++n) {
       ops_partials.edge1_.partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_shape>::value) {
-    for (size_t n = 0; n < size(alpha); ++n) {
+    for (size_t n = 0; n < stan::math::size(alpha); ++n) {
       ops_partials.edge2_.partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    for (size_t n = 0; n < size(beta); ++n) {
+    for (size_t n = 0; n < stan::math::size(beta); ++n) {
       ops_partials.edge3_.partials_[n] *= P;
     }
   }

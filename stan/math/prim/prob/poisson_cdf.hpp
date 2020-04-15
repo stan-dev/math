@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -18,29 +19,26 @@ namespace math {
 // Poisson CDF
 template <typename T_n, typename T_rate>
 return_type_t<T_rate> poisson_cdf(const T_n& n, const T_rate& lambda) {
-  static const char* function = "poisson_cdf";
   using T_partials_return = partials_return_t<T_n, T_rate>;
+  using std::exp;
+  using std::pow;
+  static const char* function = "poisson_cdf";
+  check_not_nan(function, "Rate parameter", lambda);
+  check_nonnegative(function, "Rate parameter", lambda);
+  check_consistent_sizes(function, "Random variable", n, "Rate parameter",
+                         lambda);
 
   if (size_zero(n, lambda)) {
     return 1.0;
   }
 
   T_partials_return P(1.0);
-
-  check_not_nan(function, "Rate parameter", lambda);
-  check_nonnegative(function, "Rate parameter", lambda);
-  check_consistent_sizes(function, "Random variable", n, "Rate parameter",
-                         lambda);
-
-  using std::exp;
-  using std::pow;
-
   operands_and_partials<T_rate> ops_partials(lambda);
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_rate> lambda_vec(lambda);
-  size_t size_n = size(n);
-  size_t size_lambda = size(lambda);
+  size_t size_n = stan::math::size(n);
+  size_t size_lambda = stan::math::size(lambda);
   size_t max_size_seq_view = max_size(n, lambda);
 
   // Explicit return for extreme values

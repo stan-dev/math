@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -33,37 +34,33 @@ namespace math {
 template <typename T_y, typename T_dof>
 return_type_t<T_y, T_dof> inv_chi_square_cdf(const T_y& y, const T_dof& nu) {
   using T_partials_return = partials_return_t<T_y, T_dof>;
-
-  if (size_zero(y, nu)) {
-    return 1.0;
-  }
-
+  using std::exp;
+  using std::pow;
   static const char* function = "inv_chi_square_cdf";
-
-  T_partials_return P(1.0);
-
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu);
 
+  if (size_zero(y, nu)) {
+    return 1.0;
+  }
+
+  T_partials_return P(1.0);
+  operands_and_partials<T_y, T_dof> ops_partials(y, nu);
+
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_dof> nu_vec(nu);
   size_t N = max_size(y, nu);
 
-  operands_and_partials<T_y, T_dof> ops_partials(y, nu);
-
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < size(y); i++) {
+  for (size_t i = 0; i < stan::math::size(y); i++) {
     if (value_of(y_vec[i]) == 0) {
       return ops_partials.build(0.0);
     }
   }
-
-  using std::exp;
-  using std::pow;
 
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       gamma_vec(size(nu));
@@ -71,7 +68,7 @@ return_type_t<T_y, T_dof> inv_chi_square_cdf(const T_y& y, const T_dof& nu) {
       digamma_vec(size(nu));
 
   if (!is_constant_all<T_dof>::value) {
-    for (size_t i = 0; i < size(nu); i++) {
+    for (size_t i = 0; i < stan::math::size(nu); i++) {
       const T_partials_return nu_dbl = value_of(nu_vec[i]);
       gamma_vec[i] = tgamma(0.5 * nu_dbl);
       digamma_vec[i] = digamma(0.5 * nu_dbl);
@@ -109,12 +106,12 @@ return_type_t<T_y, T_dof> inv_chi_square_cdf(const T_y& y, const T_dof& nu) {
   }
 
   if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < size(y); ++n) {
+    for (size_t n = 0; n < stan::math::size(y); ++n) {
       ops_partials.edge1_.partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_dof>::value) {
-    for (size_t n = 0; n < size(nu); ++n) {
+    for (size_t n = 0; n < stan::math::size(nu); ++n) {
       ops_partials.edge2_.partials_[n] *= P;
     }
   }

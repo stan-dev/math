@@ -9,6 +9,7 @@
 #include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
 #include <stan/math/prim/fun/inv.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
@@ -23,31 +24,28 @@ namespace math {
 template <typename T_n, typename T_shape, typename T_inv_scale>
 return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
     const T_n& n, const T_shape& alpha, const T_inv_scale& beta) {
-  static const char* function = "neg_binomial_lccdf";
   using T_partials_return = partials_return_t<T_n, T_shape, T_inv_scale>;
-
-  if (size_zero(n, alpha, beta)) {
-    return 0.0;
-  }
-
-  T_partials_return P(0.0);
-
+  using std::exp;
+  using std::log;
+  using std::pow;
+  static const char* function = "neg_binomial_lccdf";
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Inverse scale parameter", beta);
   check_consistent_sizes(function, "Failures variable", n, "Shape parameter",
                          alpha, "Inverse scale parameter", beta);
 
-  using std::exp;
-  using std::log;
-  using std::pow;
+  if (size_zero(n, alpha, beta)) {
+    return 0;
+  }
 
+  T_partials_return P(0.0);
   operands_and_partials<T_shape, T_inv_scale> ops_partials(alpha, beta);
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   scalar_seq_view<T_inv_scale> beta_vec(beta);
-  size_t size_n = size(n);
-  size_t size_alpha = size(alpha);
+  size_t size_n = stan::math::size(n);
+  size_t size_alpha = stan::math::size(alpha);
   size_t size_n_alpha = max_size(n, alpha);
   size_t max_size_seq_view = max_size(n, alpha, beta);
 

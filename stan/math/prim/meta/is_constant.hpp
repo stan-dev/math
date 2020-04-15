@@ -2,10 +2,12 @@
 #define STAN_MATH_PRIM_META_IS_CONSTANT_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/conjunction.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
+#include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/scalar_type.hpp>
+#include <stan/math/prim/meta/value_type.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <type_traits>
 #include <vector>
@@ -30,7 +32,7 @@ struct is_constant : bool_constant<std::is_convertible<T, double>::value> {};
 /** \ingroup type_trait
  * Metaprogram defining an enum <code>value</code> which
  * is <code>true</code> if all of the type parameters
- * are constant (i.e., primtive types) and
+ * are constant (i.e., primitive types) and
  * <code>false</code> otherwise.
  */
 template <typename... T>
@@ -59,6 +61,9 @@ struct is_constant<T, require_std_vector_t<T>>
 template <typename T>
 struct is_constant<T, require_eigen_t<T>>
     : bool_constant<is_constant<typename std::decay_t<T>::Scalar>::value> {};
+
+STAN_ADD_REQUIRE_UNARY(constant, is_constant, require_stan_scalar_real);
+STAN_ADD_REQUIRE_UNARY_INNER(constant, is_constant, require_stan_scalar_real);
 
 }  // namespace stan
 #endif

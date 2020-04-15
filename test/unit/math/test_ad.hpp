@@ -16,9 +16,46 @@ namespace test {
 namespace internal {
 
 /**
- * Evaluates expression. A no-op for scalars.
- * @tparam T nested type of fvar
- * @param x value
+ * Evaluates nested matrix template expressions, which is a no-op for
+ * arithmetic arguments.
+ *
+ * @tparam T arithmetic type
+ * @param[in] x value
+ * @return value
+ */
+template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+auto eval(T x) {
+  return x;
+}
+
+/**
+ * Evaluates nested matrix template expressions, which is a no-op for
+ * complex arguments.
+ *
+ * @tparam T complex value type
+ * @param x[in] value
+ * @return value
+ */
+template <typename T>
+auto eval(const std::complex<T>& x) {
+  return x;
+}
+
+/**
+ * Evaluates all nested matrix expression templates, which is a no-op for
+ * reverse-mode autodiff variables.
+ *
+ * @param[in] x value
+ * @return value
+ */
+auto eval(const stan::math::var& x) { return x; }
+
+/**
+ * Evaluates all matrix expression templates, which is a no-op for
+ * forward-mode autodiff variables.
+ *
+ * @tparam T value type of fvar
+ * @param[in] x value
  * @return value
  */
 template <typename T>
@@ -27,28 +64,9 @@ auto eval(const stan::math::fvar<T>& x) {
 }
 
 /**
- * Evaluates expression. A no-op for scalars.
- * @param x value
- * @return value
- */
-auto eval(const stan::math::var& x) { return x; }
-
-/**
- * Evaluates expression. A no-op for scalars.
- * @param x value
- * @return value
- */
-auto eval(double x) { return x; }
-
-/**
- * Evaluates expression. A no-op for scalars.
- * @param x value
- * @return value
- */
-auto eval(int x) { return x; }
-
-/**
- * Evaluates expression.
+ * Evaluates all nested matrix expression templates, which evaluates
+ * the specified derived matrix.
+ *
  * @tparam Derived derived type of the expression
  * @param x expression
  * @return evaluated expression
@@ -57,11 +75,13 @@ template <typename Derived>
 auto eval(const Eigen::EigenBase<Derived>& x) {
   return x.derived().eval();
 }
+
 /**
- * Evaluates expressions in a \c std::vector.
- * @tparam T type of \c std::vector elements
- * @param x a \c std::vector of expressions
- * @return a \cstd::vector of evaluated expressions
+ * Evaluates all nested matrix expression templates elementwise.
+ *
+ * @tparam T type of elements
+ * @param[in] x vector of expressions
+ * @return vector of evaluated expressions
  */
 template <typename T>
 auto eval(const std::vector<T>& x) {
@@ -389,7 +409,7 @@ void expect_all_throw(const F& f, double x1, double x2) {
 
 /**
  * Succeeds if the specified function applied to the specified
- * argument thorws an exception at every level of autodiff.
+ * argument throws an exception at every level of autodiff.
  *
  * @tparam F type of function
  * @param f function to evaluate
@@ -399,7 +419,7 @@ void expect_all_throw(const F& f, double x1, double x2) {
  */
 template <typename F>
 void expect_all_throw(const F& f, double x1, double x2, double x3) {
-  auto h = [&](auto v) { return serialize_return(f(v(0), v(1), v(2))); };
+  auto h = [&](auto v) { return serialize_return(eval(f(v(0), v(1), v(2)))); };
   Eigen::VectorXd x(3);
   x << x1, x2, x3;
   expect_all_throw(h, x);
@@ -525,7 +545,7 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
   auto g1 = [&](const auto& v) {
     auto ds = to_deserializer(v);
     auto x1ds = ds.read(x1);
-    return serialize_return(f(x1ds, x2));
+    return serialize_return(eval(f(x1ds, x2)));
   };
   internal::expect_ad_helper(tols, f, g1, serialize_args(x1), x1, x2);
 
@@ -533,7 +553,7 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
   auto g2 = [&](const auto& v) {
     auto ds = to_deserializer(v);
     auto x2ds = ds.read(x2);
-    return serialize_return(f(x1, x2ds));
+    return serialize_return(eval(f(x1, x2ds)));
   };
   internal::expect_ad_helper(tols, f, g2, serialize_args(x2), x1, x2);
 
@@ -542,7 +562,7 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
     auto ds = to_deserializer(v);
     auto x1ds = ds.read(x1);
     auto x2ds = ds.read(x2);
-    return serialize_return(f(x1ds, x2ds));
+    return serialize_return(eval(f(x1ds, x2ds)));
   };
   internal::expect_ad_helper(tols, f, g12, serialize_args(x1, x2), x1, x2);
 }
@@ -637,7 +657,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
   auto g1 = [&](const auto& v) {
     auto ds = to_deserializer(v);
     auto x1ds = ds.read(x1);
-    return serialize_return(f(x1ds, x2, x3));
+    return serialize_return(eval(f(x1ds, x2, x3)));
   };
   internal::expect_ad_helper(tols, f, g1, serialize_args(x1), x1, x2, x3);
 
@@ -645,7 +665,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
   auto g2 = [&](const auto& v) {
     auto ds = to_deserializer(v);
     auto x2ds = ds.read(x2);
-    return serialize_return(f(x1, x2ds, x3));
+    return serialize_return(eval(f(x1, x2ds, x3)));
   };
   internal::expect_ad_helper(tols, f, g2, serialize_args(x2), x1, x2, x3);
 
@@ -653,7 +673,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
   auto g3 = [&](const auto& v) {
     auto ds = to_deserializer(v);
     auto x3ds = ds.read(x3);
-    return serialize_return(f(x1, x2, x3ds));
+    return serialize_return(eval(f(x1, x2, x3ds)));
   };
   internal::expect_ad_helper(tols, f, g3, serialize_args(x3), x1, x2, x3);
 
@@ -662,7 +682,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
     auto ds = to_deserializer(v);
     auto x1ds = ds.read(x1);
     auto x2ds = ds.read(x2);
-    return serialize_return(f(x1ds, x2ds, x3));
+    return serialize_return(eval(f(x1ds, x2ds, x3)));
   };
   internal::expect_ad_helper(tols, f, g12, serialize_args(x1, x2), x1, x2, x3);
 
@@ -671,7 +691,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
     auto ds = to_deserializer(v);
     auto x1ds = ds.read(x1);
     auto x3ds = ds.read(x3);
-    return serialize_return(f(x1ds, x2, x3ds));
+    return serialize_return(eval(f(x1ds, x2, x3ds)));
   };
   internal::expect_ad_helper(tols, f, g13, serialize_args(x1, x3), x1, x2, x3);
 
@@ -680,7 +700,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
     auto ds = to_deserializer(v);
     auto x2ds = ds.read(x2);
     auto x3ds = ds.read(x3);
-    return serialize_return(f(x1, x2ds, x3ds));
+    return serialize_return(eval(f(x1, x2ds, x3ds)));
   };
   internal::expect_ad_helper(tols, f, g23, serialize_args(x2, x3), x1, x2, x3);
 
@@ -690,7 +710,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
     auto x1ds = ds.read(x1);
     auto x2ds = ds.read(x2);
     auto x3ds = ds.read(x3);
-    return serialize_return(f(x1ds, x2ds, x3ds));
+    return serialize_return(eval(f(x1ds, x2ds, x3ds)));
   };
   internal::expect_ad_helper(tols, f, g123, serialize_args(x1, x2, x3), x1, x2,
                              x3);
@@ -1194,12 +1214,12 @@ void expect_ad(const F& f, const T1& x1, const T2& x2, const T3& x3) {
 }
 
 /**
- * Test that the specified vectorized polymoprhic unary function
+ * Test that the specified vectorized polymorphic unary function
  * produces autodiff results consistent with values determined by
  * double and integer inputs and 1st-, 2nd-, and 3rd-order derivatives
  * consistent with finite differences of double inputs.
  *
- * @tparam F type of poymorphic, vectorized functor to test
+ * @tparam F type of polymorphic, vectorized functor to test
  * @tparam T1 type of first argument (integer or double)
  * @param tols tolerances for test
  * @param f functor to test
@@ -1303,7 +1323,7 @@ void expect_common_nonzero_unary(const F& f) {
  * primitive version of the function, when applied to all pairs of
  * common integer and double argument combinations excluding zero.
  *
- * If the `disable_lhs_int` flag is set to `true` (it defauls to
+ * If the `disable_lhs_int` flag is set to `true` (it defaults to
  * `false`), then integers will not be considered as first arguments.
  * This is useful for testing assignment operators like `+=` and
  * division operators like `/` where integer and real arguments
@@ -1347,7 +1367,7 @@ void expect_common_nonzero_binary(const F& f, bool disable_lhs_int = false) {
  * primitive version of the function, when applied to all pairs of
  * common integer and double argument combinations.
  *
- * If the `disable_lhs_int` flag is set to `true` (it defauls to
+ * If the `disable_lhs_int` flag is set to `true` (it defaults to
  * `false`), then integers will not be considered as first arguments.
  * This is useful for testing assignment operators like `+=` and
  * division operators like `/` where integer and real arguments
@@ -1699,6 +1719,100 @@ auto ldlt_factor(const Eigen::Matrix<T, -1, -1>& x) {
   Eigen::Matrix<T, -1, -1> x_sym = (x + x.transpose()) * 0.5;
   ldlt_x.compute(x_sym);
   return ldlt_x;
+}
+
+std::vector<double> common_complex_parts() {
+  return {-4, -2.5, -1.5, -0.3, -0.0, 0.0, 1.3, 2.1, 3.9};
+}
+
+std::vector<std::complex<double>> common_complex() {
+  std::vector<std::complex<double>> zs;
+  for (double re : common_complex_parts())
+    for (double im : common_complex_parts())
+      zs.emplace_back(re, im);
+  return zs;
+}
+
+template <typename F>
+void expect_complex_common(const F& f) {
+  auto zs = common_complex();
+  for (auto z : zs) {
+    expect_ad(f, z);
+  }
+}
+
+template <typename F>
+void expect_complex_common_binary(const F& f) {
+  auto xs = common_complex_parts();
+  auto zs = common_complex();
+  // complex, complex
+  for (auto z1 : zs) {
+    for (auto z2 : zs) {
+      expect_ad(f, z1, z2);
+    }
+  }
+  // complex, real
+  for (auto z1 : zs) {
+    for (auto x2 : xs) {
+      expect_ad(f, z1, x2);
+    }
+  }
+  // real, complex
+  for (auto x1 : xs) {
+    for (auto z2 : zs) {
+      expect_ad(f, x1, z2);
+    }
+  }
+}
+
+template <typename T, typename F>
+void expect_complex_compare(const F& f, const std::complex<double>& z1,
+                            const std::complex<double>& z2) {
+  using c_t = std::complex<T>;
+  c_t cz1{z1};
+  c_t cz2{z2};
+  T z1r{z1.real()};
+  T z2r{z2.real()};
+
+  EXPECT_EQ(f(z1, z2), f(cz1, cz2));
+  EXPECT_EQ(f(z1, z2), f(cz1, z2));
+  EXPECT_EQ(f(z1, z2), f(z1, cz2));
+
+  EXPECT_EQ(f(z1.real(), z2), f(z1r, cz2));
+  EXPECT_EQ(f(z1.real(), z2), f(z1r, z2));
+
+  EXPECT_EQ(f(z1, z2.real()), f(cz1, z2r));
+  EXPECT_EQ(f(z1, z2.real()), f(z1, z2r));
+}
+
+template <typename F>
+void expect_complex_comparison(const F& f, const std::complex<double>& z1,
+                               const std::complex<double>& z2) {
+  using stan::math::fvar;
+  using stan::math::var;
+  using std::complex;
+  expect_complex_compare<double>(f, z1, z2);              // PASS
+  expect_complex_compare<var>(f, z1, z2);                 // FAIL
+  expect_complex_compare<fvar<double>>(f, z1, z2);        // PASS
+  expect_complex_compare<fvar<fvar<double>>>(f, z1, z2);  // PASS
+  expect_complex_compare<fvar<var>>(f, z1, z2);           // PASS
+  expect_complex_compare<fvar<fvar<var>>>(f, z1, z2);     // PASS
+}
+
+/**
+ * Test the specified comparison operation provides results matching
+ * those for the double version for all the common complex numbers.
+ *
+ * @tparam F type of function to test
+ * @param f function to test
+ */
+template <typename F>
+void expect_complex_common_comparison(const F& f) {
+  for (auto z1 : common_complex()) {
+    for (auto z2 : common_complex()) {
+      expect_complex_comparison(f, z1, z2);
+    }
+  }
 }
 
 }  // namespace test

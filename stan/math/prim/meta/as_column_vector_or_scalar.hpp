@@ -2,7 +2,9 @@
 #define STAN_MATH_PRIM_META_AS_COLUMN_VECTOR_OR_SCALAR_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/meta/require_generics.hpp>
+#include <stan/math/prim/meta/is_stan_scalar.hpp>
+#include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_vector.hpp>
 #include <vector>
 
 namespace stan {
@@ -53,7 +55,7 @@ inline auto as_column_vector_or_scalar(const T& a) {
  *
  * @tparam T Type of scalar element.
  * @param a Specified vector.
- * @return intut converted to a column vector.
+ * @return input converted to a column vector.
  */
 template <typename T>
 inline Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>>

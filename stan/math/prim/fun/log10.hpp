@@ -3,7 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -26,27 +28,45 @@ struct log10_fun {
 /**
  * Vectorized version of log10().
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x container
  * @return Log base-10 applied to each value in x.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
-inline auto log10(const T& x) {
-  return apply_scalar_unary<log10_fun, T>::apply(x);
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+inline auto log10(const Container& x) {
+  return apply_scalar_unary<log10_fun, Container>::apply(x);
 }
 
 /**
- * Version of log10() that accepts Eigen Matrix or matrix expressions.
+ * Version of log10() that accepts std::vectors, Eigen Matrix/Array objects
+ *  or expressions, and containers of these.
  *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
- * @return Arc cosine of each variable in the container, in radians.
+ * @tparam Container Type of x
+ * @param x Container
+ * @return Log base-10 of each variable in the container.
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto log10(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().log10().matrix().eval();
+template <typename Container,
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
+inline auto log10(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](const auto& v) { return v.array().log10(); });
 }
+
+namespace internal {
+/**
+ * Return the base 10 logarithm of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return base 10 logarithm of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_log10(const std::complex<V>& z) {
+  static const double inv_log_10 = 1 / std::log(10);
+  return log(z) * inv_log_10;
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

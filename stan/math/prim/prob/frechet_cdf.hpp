@@ -4,6 +4,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
@@ -22,22 +24,19 @@ return_type_t<T_y, T_shape, T_scale> frechet_cdf(const T_y& y,
                                                  const T_shape& alpha,
                                                  const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
-
-  static const char* function = "frechet_cdf";
-
   using std::exp;
   using std::log;
   using std::pow;
+  static const char* function = "frechet_cdf";
+  check_positive(function, "Random variable", y);
+  check_positive_finite(function, "Shape parameter", alpha);
+  check_positive_finite(function, "Scale parameter", sigma);
 
   if (size_zero(y, alpha, sigma)) {
     return 1.0;
   }
 
   T_partials_return cdf(1.0);
-  check_positive(function, "Random variable", y);
-  check_positive_finite(function, "Shape parameter", alpha);
-  check_positive_finite(function, "Scale parameter", sigma);
-
   operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
 
   scalar_seq_view<T_y> y_vec(y);
@@ -66,17 +65,17 @@ return_type_t<T_y, T_shape, T_scale> frechet_cdf(const T_y& y,
   }
 
   if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < size(y); ++n) {
+    for (size_t n = 0; n < stan::math::size(y); ++n) {
       ops_partials.edge1_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_shape>::value) {
-    for (size_t n = 0; n < size(alpha); ++n) {
+    for (size_t n = 0; n < stan::math::size(alpha); ++n) {
       ops_partials.edge2_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    for (size_t n = 0; n < size(sigma); ++n) {
+    for (size_t n = 0; n < stan::math::size(sigma); ++n) {
       ops_partials.edge3_.partials_[n] *= cdf;
     }
   }

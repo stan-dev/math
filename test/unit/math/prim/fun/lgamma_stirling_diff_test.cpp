@@ -59,7 +59,7 @@ struct TestValue {
 
 // Test values precomputed in Mathematica, reproducible notebook available at
 // https://www.wolframcloud.com/obj/martin.modrak/Published/lgamma_stirling_diff.nb
-// Code reproduced also below for convenince
+// Code reproduced also below for convenience
 //
 // lgs[x_]:=1/2 * Log[2*Pi] + (x - 1/2)*Log[x] -x
 // sdiff[x_]:= LogGamma[x] - lgs[x]

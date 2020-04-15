@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -26,40 +27,44 @@ struct sinh_fun {
 /**
  * Vectorized version of sinh().
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x container
  * @return Hyperbolic sine of each variable in x.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
-inline auto sinh(const T& x) {
-  return apply_scalar_unary<sinh_fun, T>::apply(x);
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+inline auto sinh(const Container& x) {
+  return apply_scalar_unary<sinh_fun, Container>::apply(x);
 }
 
 /**
- * Version of sinh() that accepts Eigen Matrix or matrix expressions.
+ * Version of sinh() that accepts std::vectors, Eigen Matrix/Array objects
+ *  or expressions, and containers of these.
  *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
+ * @tparam Container Type of x
+ * @param x Container
  * @return Hyperbolic sine of each variable in x.
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto sinh(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().sinh().matrix().eval();
+template <typename Container,
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
+inline auto sinh(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](const auto& v) { return v.array().sinh(); });
 }
 
+namespace internal {
 /**
- * Version of acos() that accepts Eigen Array or array expressions.
+ * Return the hyperbolic sine of the complex argument.
  *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
- * @return Hyperbolic sine of each variable in x.
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return hyperbolic sine of the argument
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto sinh(const Eigen::ArrayBase<Derived>& x) {
-  return x.derived().sinh().eval();
+template <typename V>
+inline std::complex<V> complex_sinh(const std::complex<V>& z) {
+  return 0.5 * (exp(z) - exp(-z));
 }
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

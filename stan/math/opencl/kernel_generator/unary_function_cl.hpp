@@ -4,6 +4,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/opencl/err.hpp>
+#include <stan/math/opencl/kernels/device_functions/digamma.hpp>
+#include <stan/math/opencl/kernels/device_functions/log1m_exp.hpp>
+#include <stan/math/opencl/kernels/device_functions/log1p_exp.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
@@ -53,6 +56,7 @@ class unary_function_cl
   inline kernel_parts generate(const std::string& i, const std::string& j,
                                const std::string& var_name_arg) const {
     kernel_parts res{};
+    res.includes = base::derived().include;
     res.body = type_str<Scalar>() + " " + var_name + " = " + fun_ + "("
                + var_name_arg + ");\n";
     return res;
@@ -63,7 +67,7 @@ class unary_function_cl
    * @return view
    */
   inline matrix_cl_view view() const {
-    return std::get<0>(base::arguments_).view();
+    return this->template get_arg<0>().view();
   }
 
  protected:
@@ -74,13 +78,22 @@ class unary_function_cl
  * generates a class and function for a general unary function that is defined
  * by OpenCL.
  * @param fun function
+ * @param incl function source to include into kernel
  */
-#define ADD_UNARY_FUNCTION(fun)                                               \
+#define ADD_UNARY_FUNCTION_WITH_INCLUDE(fun, incl)                            \
   template <typename T>                                                       \
   class fun##_ : public unary_function_cl<fun##_<T>, T> {                     \
+    using base = unary_function_cl<fun##_<T>, T>;                             \
+    using base::arguments_;                                                   \
+                                                                              \
    public:                                                                    \
-    explicit fun##_(T&& a)                                                    \
-        : unary_function_cl<fun##_<T>, T>(std::forward<T>(a), #fun) {}        \
+    static const char* include;                                               \
+    explicit fun##_(T&& a) : base(std::forward<T>(a), #fun) {}                \
+    inline auto deep_copy() const {                                           \
+      auto&& arg_copy = this->template get_arg<0>().deep_copy();              \
+      return fun##_<std::remove_reference_t<decltype(arg_copy)>>{             \
+          std::move(arg_copy)};                                               \
+    }                                                                         \
     inline matrix_cl_view view() const { return matrix_cl_view::Entire; }     \
   };                                                                          \
                                                                               \
@@ -88,7 +101,16 @@ class unary_function_cl
                         = require_all_valid_expressions_and_none_scalar_t<T>> \
   inline fun##_<as_operation_cl_t<T>> fun(T&& a) {                            \
     return fun##_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a))); \
-  }
+  }                                                                           \
+  template <typename T>                                                       \
+  const char* fun##_<T>::include(incl);
+
+/**
+ * generates a class and function for a general unary function that is defined
+ * by OpenCL.
+ * @param fun function
+ */
+#define ADD_UNARY_FUNCTION(fun) ADD_UNARY_FUNCTION_WITH_INCLUDE(fun, "")
 
 /**
  * generates a class and function for an unary function, defined by OpenCL with
@@ -99,16 +121,26 @@ class unary_function_cl
 #define ADD_UNARY_FUNCTION_PASS_ZERO(fun)                                     \
   template <typename T>                                                       \
   class fun##_ : public unary_function_cl<fun##_<T>, T> {                     \
+    using base = unary_function_cl<fun##_<T>, T>;                             \
+    using base::arguments_;                                                   \
+                                                                              \
    public:                                                                    \
-    explicit fun##_(T&& a)                                                    \
-        : unary_function_cl<fun##_<T>, T>(std::forward<T>(a), #fun) {}        \
+    static const char* include;                                               \
+    explicit fun##_(T&& a) : base(std::forward<T>(a), #fun) {}                \
+    inline auto deep_copy() const {                                           \
+      auto&& arg_copy = this->template get_arg<0>().deep_copy();              \
+      return fun##_<std::remove_reference_t<decltype(arg_copy)>>{             \
+          std::move(arg_copy)};                                               \
+    }                                                                         \
   };                                                                          \
                                                                               \
   template <typename T, typename Cond                                         \
                         = require_all_valid_expressions_and_none_scalar_t<T>> \
   inline fun##_<as_operation_cl_t<T>> fun(T&& a) {                            \
     return fun##_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a))); \
-  }
+  }                                                                           \
+  template <typename T>                                                       \
+  const char* fun##_<T>::include = "";
 
 ADD_UNARY_FUNCTION(rsqrt)
 ADD_UNARY_FUNCTION_PASS_ZERO(sqrt)
@@ -145,6 +177,14 @@ ADD_UNARY_FUNCTION_PASS_ZERO(floor)
 ADD_UNARY_FUNCTION_PASS_ZERO(round)
 ADD_UNARY_FUNCTION_PASS_ZERO(ceil)
 
+ADD_UNARY_FUNCTION_WITH_INCLUDE(digamma,
+                                opencl_kernels::digamma_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDE(log1m_exp,
+                                opencl_kernels::log1m_exp_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDE(log1p_exp,
+                                opencl_kernels::log1p_exp_device_function)
+
+#undef ADD_UNARY_FUNCTION_WITH_INCLUDE
 #undef ADD_UNARY_FUNCTION
 #undef ADD_UNARY_FUNCTION_PASS_ZERO
 

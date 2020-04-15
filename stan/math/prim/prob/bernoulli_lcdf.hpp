@@ -4,6 +4,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/inv.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
@@ -27,32 +29,30 @@ namespace math {
  */
 template <typename T_n, typename T_prob>
 return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
-  static const char* function = "bernoulli_lcdf";
   using T_partials_return = partials_return_t<T_n, T_prob>;
+  using std::log;
+  static const char* function = "bernoulli_lcdf";
+  check_finite(function, "Probability parameter", theta);
+  check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
+  check_consistent_sizes(function, "Random variable", n,
+                         "Probability parameter", theta);
 
   if (size_zero(n, theta)) {
     return 0.0;
   }
 
   T_partials_return P(0.0);
-
-  check_finite(function, "Probability parameter", theta);
-  check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
-  check_consistent_sizes(function, "Random variable", n,
-                         "Probability parameter", theta);
+  operands_and_partials<T_prob> ops_partials(theta);
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_prob> theta_vec(theta);
   size_t max_size_seq_view = max_size(n, theta);
 
-  using std::log;
-  operands_and_partials<T_prob> ops_partials(theta);
-
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < size(n); i++) {
+  for (size_t i = 0; i < stan::math::size(n); i++) {
     if (value_of(n_vec[i]) < 0) {
-      return ops_partials.build(negative_infinity());
+      return ops_partials.build(NEGATIVE_INFTY);
     }
   }
 
@@ -68,7 +68,7 @@ return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
     P += log(Pi);
 
     if (!is_constant_all<T_prob>::value) {
-      ops_partials.edge1_.partials_[i] -= 1 / Pi;
+      ops_partials.edge1_.partials_[i] -= inv(Pi);
     }
   }
 

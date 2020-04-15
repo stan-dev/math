@@ -1,5 +1,9 @@
-//  Copyright (c) 2006 Xiaogang Zhang
-//  Copyright (c) 2007, 2017 John Maddock
+// Original code derived from Boost and is distributed here
+// under the Boost license (licenses/boost-license.txt)
+//    Copyright (c) 2006 Xiaogang Zhang
+//    Copyright (c) 2007, 2017 John Maddock
+// Secondary code copyright by its author and is distributed here
+// under the BSD-3 license (LICENSE.md)
 
 #ifndef STAN_MATH_PRIM_FUN_LOG_MODIFIED_BESSEL_FIRST_KIND_HPP
 #define STAN_MATH_PRIM_FUN_LOG_MODIFIED_BESSEL_FIRST_KIND_HPP
@@ -10,9 +14,11 @@
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>
+#include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <boost/math/tools/rational.hpp>
 #include <cmath>

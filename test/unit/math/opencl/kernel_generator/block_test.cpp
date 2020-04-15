@@ -19,7 +19,7 @@ using stan::math::matrix_cl;
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-TEST(MathMatrixCL, block_errors) {
+TEST(KernelGenerator, block_errors) {
   using stan::math::block;
 
   matrix_cl<double> m(7, 9);
@@ -37,7 +37,7 @@ TEST(MathMatrixCL, block_errors) {
   EXPECT_THROW(block(m, 0, 0, 6, 9) = m, std::invalid_argument);
 }
 
-TEST(MathMatrixCL, block_test) {
+TEST(KernelGenerator, block_test) {
   using stan::math::block;
   std::string kernel_filename = "block.cl";
   MatrixXd m = MatrixXd::Random(7, 9);
@@ -59,7 +59,7 @@ TEST(MathMatrixCL, block_test) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
-TEST(MathMatrixCL, block_multiple_operations_test) {
+TEST(KernelGenerator, block_multiple_operations_test) {
   using stan::math::block;
   MatrixXd m = MatrixXd::Random(7, 9);
 
@@ -74,7 +74,7 @@ TEST(MathMatrixCL, block_multiple_operations_test) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
-TEST(MathMatrixCL, block_multiple_operations_accept_lvalue_test) {
+TEST(KernelGenerator, block_multiple_operations_accept_lvalue_test) {
   using stan::math::block;
   MatrixXd m = MatrixXd::Random(7, 9);
 
@@ -90,7 +90,7 @@ TEST(MathMatrixCL, block_multiple_operations_accept_lvalue_test) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
-TEST(MathMatrixCL, lhs_block_test) {
+TEST(KernelGenerator, lhs_block_test) {
   using stan::math::block;
   MatrixXd m1(2, 3);
   m1 << 1, 2, 3, 4, 5, 6;
@@ -106,6 +106,39 @@ TEST(MathMatrixCL, lhs_block_test) {
   MatrixXd correct = m2;
   correct.block(1, 1, 2, 3) = m1;
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
+}
+
+TEST(KernelGenerator, two_blocks_of_same_expression) {
+  using stan::math::block;
+  MatrixXd m(2, 3);
+  m << 1, 2, 3, 4, 5, 6;
+
+  matrix_cl<double> m_cl(m);
+
+  auto tmp = m_cl + 1;
+  auto tmp2 = block(tmp, 0, 0, 2, 2) + block(tmp, 0, 1, 2, 2);
+
+  matrix_cl<double> res_cl = tmp2;
+
+  MatrixXd res = stan::math::from_matrix_cl(res_cl);
+  MatrixXd correct = (m.block(0, 0, 2, 2) + m.block(0, 1, 2, 2)).array() + 2;
+
+  EXPECT_MATRIX_NEAR(res, correct, 1e-9);
+}
+
+TEST(MathMatrixCL, block_view_test) {
+  using stan::math::block;
+  matrix_cl<double> m(4, 4, stan::math::matrix_cl_view::Diagonal);
+  matrix_cl<double> res = block(m, 0, 0, 2, 2);
+  EXPECT_EQ(res.view(), stan::math::matrix_cl_view::Diagonal);
+  res = block(m, 1, 0, 2, 2);
+  EXPECT_EQ(res.view(), stan::math::matrix_cl_view::Upper);
+  res = block(m, 0, 1, 2, 2);
+  EXPECT_EQ(res.view(), stan::math::matrix_cl_view::Lower);
+  res = block(m, 0, 2, 2, 2);
+  EXPECT_EQ(res.view(), stan::math::matrix_cl_view::Diagonal);
+  res = block(m, 2, 0, 2, 2);
+  EXPECT_EQ(res.view(), stan::math::matrix_cl_view::Diagonal);
 }
 
 #endif

@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -19,31 +20,29 @@ template <bool propto, typename T_n, typename T_log_rate>
 return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
                                            const T_log_rate& alpha) {
   using T_partials_return = partials_return_t<T_n, T_log_rate>;
-
-  static const char* function = "poisson_log_lpmf";
-
   using std::exp;
-
-  if (size_zero(n, alpha)) {
-    return 0.0;
-  }
-
-  T_partials_return logp(0.0);
-
+  static const char* function = "poisson_log_lpmf";
   check_nonnegative(function, "Random variable", n);
   check_not_nan(function, "Log rate parameter", alpha);
   check_consistent_sizes(function, "Random variable", n, "Log rate parameter",
                          alpha);
 
+  if (size_zero(n, alpha)) {
+    return 0.0;
+  }
   if (!include_summand<propto, T_log_rate>::value) {
     return 0.0;
   }
+
+  T_partials_return logp(0.0);
+  operands_and_partials<T_log_rate> ops_partials(alpha);
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_log_rate> alpha_vec(alpha);
   size_t max_size_seq_view = max_size(n, alpha);
 
-  for (size_t i = 0, size_alpha = size(alpha); i < size_alpha; i++) {
+  for (size_t i = 0, size_alpha = stan::math::size(alpha); i < size_alpha;
+       i++) {
     if (INFTY == alpha_vec[i]) {
       return LOG_ZERO;
     }
@@ -54,12 +53,10 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
     }
   }
 
-  operands_and_partials<T_log_rate> ops_partials(alpha);
-
   VectorBuilder<include_summand<propto>::value, T_partials_return, T_n>
       lgamma_n_plus_one(size(n));
   if (include_summand<propto>::value) {
-    for (size_t i = 0, size_n = size(n); i < size_n; i++) {
+    for (size_t i = 0, size_n = stan::math::size(n); i < size_n; i++) {
       lgamma_n_plus_one[i] = lgamma(n_vec[i] + 1.0);
     }
   }
@@ -67,7 +64,8 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
   VectorBuilder<include_summand<propto, T_log_rate>::value, T_partials_return,
                 T_log_rate>
       exp_alpha(size(alpha));
-  for (size_t i = 0, size_alpha = size(alpha); i < size_alpha; i++) {
+  for (size_t i = 0, size_alpha = stan::math::size(alpha); i < size_alpha;
+       i++) {
     exp_alpha[i] = exp(value_of(alpha_vec[i]));
   }
 

@@ -24,9 +24,9 @@ class dummy_iterable {
 }  // namespace stan
 
 TEST(MetaTraits, void_t_checks) {
+  using stan::void_t;
   using stan::test::internal::dummy_iterable;
   using stan::test::internal::is_iterable;
-  using stan::void_t;
   EXPECT_FALSE(is_iterable<double>::value);
   EXPECT_FALSE(is_iterable<int>::value);
   EXPECT_FALSE(is_iterable<size_t>::value);
