@@ -103,8 +103,8 @@ TEST(AgradMixMatrixAddons, vector_fv) {
 
 TEST(AgradMixMatrixAddons, vector_ffv) {
   using Eigen::VectorXd;
-  using stan::math::vector_fv;
   using stan::math::vector_ffv;
+  using stan::math::vector_fv;
 
   VectorXd vals = VectorXd::Random(100);
   VectorXd derivs = VectorXd::Random(100);

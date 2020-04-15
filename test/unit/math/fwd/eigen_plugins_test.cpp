@@ -40,8 +40,8 @@ TEST(AgradFwdMatrixAddons, fvar_double_matrix) {
 
 TEST(AgradFwdMatrixAddons, fvarfvar_double_matrix) {
   using Eigen::MatrixXd;
-  using stan::math::matrix_ffd;
   using stan::math::matrix_fd;
+  using stan::math::matrix_ffd;
 
   MatrixXd vals = MatrixXd::Random(100, 100);
   MatrixXd derivs = MatrixXd::Random(100, 100);
@@ -110,8 +110,8 @@ TEST(AgradFwdMatrixAddons, fvar_double_vector) {
 
 TEST(AgradFwdMatrixAddons, fvarfvar_double_vector) {
   using Eigen::VectorXd;
-  using stan::math::vector_ffd;
   using stan::math::vector_fd;
+  using stan::math::vector_ffd;
 
   VectorXd vals = VectorXd::Random(100);
   VectorXd derivs = VectorXd::Random(100);
@@ -177,8 +177,8 @@ TEST(AgradFwdMatrixAddons, fvar_double_rowvector) {
 
 TEST(AgradFwdMatrixAddons, fvarfvar_double_rowvector) {
   using Eigen::RowVectorXd;
-  using stan::math::row_vector_ffd;
   using stan::math::row_vector_fd;
+  using stan::math::row_vector_ffd;
 
   RowVectorXd vals = RowVectorXd::Random(100);
   RowVectorXd derivs = RowVectorXd::Random(100);
