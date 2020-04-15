@@ -231,14 +231,14 @@ public:
   {}
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    auto operator() (Index row, Index col) const {
+    decltype(auto) operator() (Index row, Index col) const {
     vi_mat.coeffRef(row, col) = var_mat.coeffRef(row, col).vi_;
     val_mat.coeffRef(row, col) = var_mat.coeffRef(row, col).vi_->val_;
     return var_mat.coeffRef(row, col).vi_->adj_;
   }
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    auto operator() (Index index) const {
+    decltype(auto) operator() (Index index) const {
     vi_mat.coeffRef(index) = var_mat.coeffRef(index).vi_;
     val_mat.coeffRef(index) = var_mat.coeffRef(index).vi_->val_;
     return var_mat.coeffRef(index).vi_->adj_;
@@ -394,7 +394,7 @@ inline void read_vi_adj(EigVari& VariMat, EigDbl& AdjMat) const {
     AdjMat = EigDbl::NullaryExpr(
       this->rows(),
       this->cols(),
-      vi_val_functor<EigVari>(this->derived(), VariMat)
+      vi_adj_functor<EigVari>(this->derived(), VariMat)
     );
 }
 
@@ -402,14 +402,14 @@ inline void read_vi_adj(EigVari& VariMat, EigDbl& AdjMat) const {
  * Functor for extracting the values and tangents from a matrix of fvar.
  * This functor is called using Eigen's NullaryExpr framework.
  */
-template<typename EigDbl>
+template<typename EigT>
 class read_fvar_functor
 {
   const Derived& var_mat;
-  EigDbl& val_mat;
+  EigT& val_mat;
 
 public:
-  read_fvar_functor(const Derived& arg1, EigDbl& arg2)
+  read_fvar_functor(const Derived& arg1, EigT& arg2)
     : var_mat(arg1), val_mat(arg2)
   {}
 
@@ -430,12 +430,12 @@ public:
  * Member function applying the read_fvar_functor to extract the values
  * and tangents of a given fvar matrix into separate matrices.
  */
-template <typename EigDbl>
-inline void read_fvar(EigDbl& ValMat, EigDbl& DMat) const {
-    DMat = EigDbl::NullaryExpr(
+template <typename EigT>
+inline void read_fvar(EigT& ValMat, EigT& DMat) const {
+    DMat = EigT::NullaryExpr(
       this->rows(),
       this->cols(),
-      read_fvar_functor<EigDbl>(this->derived(), ValMat)
+      read_fvar_functor<EigT>(this->derived(), ValMat)
     );
 }
 
