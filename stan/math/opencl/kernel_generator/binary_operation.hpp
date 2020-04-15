@@ -13,6 +13,7 @@
 #include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
 #include <stan/math/opencl/kernel_generator/common_return_scalar.hpp>
 #include <string>
+#include <tuple>
 #include <type_traits>
 #include <set>
 #include <utility>
@@ -68,7 +69,7 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
    * @return part of kernel with code for this expression
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
-                               const bool view_hangled,
+                               const bool view_handled,
                                const std::string& var_name_a,
                                const std::string& var_name_b) const {
     kernel_parts res{};
@@ -145,7 +146,7 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
   expression. This is a variadic argument to allow commas in code with no
   special handling.
   */
-#define ADD_BINARY_OPERATION_WITH_CUSTOM_EXTREME_DIAGONALS(                   \
+#define ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(                                \
     class_name, function_name, scalar_type_expr, operation, ...)              \
   template <typename T_a, typename T_b>                                       \
   class class_name : public binary_operation<class_name<T_a, T_b>,            \
@@ -166,7 +167,7 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
                         std::remove_reference_t<decltype(b_copy)>>(           \
           std::move(a_copy), std::move(b_copy));                              \
     }                                                                         \
-    inline std::pair<int, int> extreme_diagonals() const { __VA_ARGS__; }     \
+    __VA_ARGS__                                                               \
   };                                                                          \
                                                                               \
   template <typename T_a, typename T_b,                                       \
@@ -180,33 +181,55 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
 ADD_BINARY_OPERATION(addition_, operator+, common_scalar_t<T_a COMMA T_b>, "+");
 ADD_BINARY_OPERATION(subtraction_, operator-, common_scalar_t<T_a COMMA T_b>,
                      "-");
-ADD_BINARY_OPERATION_WITH_CUSTOM_EXTREME_DIAGONALS(
+ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
     elewise_multiplication_, elewise_multiplication,
     common_scalar_t<T_a COMMA T_b>, "*",
-    std::pair<int, int> diags0
-    = this->template get_arg<0>().extreme_diagonals();
-    std::pair<int, int> diags1
-    = this->template get_arg<1>().extreme_diagonals();
-    return {std::max(diags0.first, diags1.first),
-            std::min(diags0.second, diags1.second)};);
-ADD_BINARY_OPERATION_WITH_CUSTOM_EXTREME_DIAGONALS(
+    using view_transitivity = std::tuple<std::true_type, std::true_type>;
+    inline std::pair<int, int> extreme_diagonals() const {
+      std::pair<int, int> diags0
+          = this->template get_arg<0>().extreme_diagonals();
+      std::pair<int, int> diags1
+          = this->template get_arg<1>().extreme_diagonals();
+      return {std::max(diags0.first, diags1.first),
+              std::min(diags0.second, diags1.second)};
+    });
+
+ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
     elewise_division_, elewise_division, common_scalar_t<T_a COMMA T_b>, "/",
-    return {-rows() + 1, cols() - 1};);
+    inline std::pair<int, int> extreme_diagonals() const {
+      return {-rows() + 1, cols() - 1};
+    });
 ADD_BINARY_OPERATION(less_than_, operator<, bool, "<");
-ADD_BINARY_OPERATION_WITH_CUSTOM_EXTREME_DIAGONALS(
+ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
     less_than_or_equal_, operator<=, bool,
-    "<=", return {-rows() + 1, cols() - 1};);
+    "<=", inline std::pair<int, int> extreme_diagonals() const {
+      return {-rows() + 1, cols() - 1};
+    });
 ADD_BINARY_OPERATION(greater_than_, operator>, bool, ">");
-ADD_BINARY_OPERATION_WITH_CUSTOM_EXTREME_DIAGONALS(
+ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
     greater_than_or_equal_, operator>=, bool,
-    ">=", return {-rows() + 1, cols() - 1};);
-ADD_BINARY_OPERATION_WITH_CUSTOM_EXTREME_DIAGONALS(equals_, operator==, bool,
-                                                   "==", return {-rows() + 1,
-                                                                 cols() - 1};);
+    ">=", inline std::pair<int, int> extreme_diagonals() const {
+      return {-rows() + 1, cols() - 1};
+    });
+ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
+    equals_, operator==, bool,
+    "==", inline std::pair<int, int> extreme_diagonals() const {
+      return {-rows() + 1, cols() - 1};
+    });
 ADD_BINARY_OPERATION(not_equals_, operator!=, bool, "!=");
 
 ADD_BINARY_OPERATION(logical_or_, operator||, bool, "||");
-ADD_BINARY_OPERATION(logical_and_, operator&&, bool, "&&");
+ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
+    logical_and_, operator&&, bool, "&&",
+    using view_transitivity = std::tuple<std::true_type, std::true_type>;
+    inline std::pair<int, int> extreme_diagonals() const {
+      std::pair<int, int> diags0
+          = this->template get_arg<0>().extreme_diagonals();
+      std::pair<int, int> diags1
+          = this->template get_arg<1>().extreme_diagonals();
+      return {std::max(diags0.first, diags1.first),
+              std::min(diags0.second, diags1.second)};
+    });
 
 /**
  * Multiplication of a scalar and a kernel generator expression.
@@ -242,7 +265,7 @@ inline elewise_multiplication_<as_operation_cl_t<T_a>, scalar_<T_b>> operator*(
 
 #undef COMMA
 #undef ADD_BINARY_OPERATION
-#undef ADD_BINARY_OPERATION_WITH_CUSTOM_EXTREME_DIAGONALS
+#undef ADD_BINARY_OPERATION_WITH_CUSTOM_CODE
 
 }  // namespace math
 }  // namespace stan

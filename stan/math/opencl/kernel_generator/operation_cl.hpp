@@ -95,6 +95,7 @@ class operation_cl : public operation_cl_base {
   static const bool handles_matrix_view = false;
   // number of arguments this operation has
   static constexpr int N = sizeof...(Args);
+  using view_transitivity = std::tuple<std::is_same<Args,void>...>;
   // value representing a not yet determined size
   static const int dynamic = -1;
 
@@ -207,10 +208,7 @@ class operation_cl : public operation_cl_base {
             Derived::handles_matrix_view
                 ? true
                 : (view_handled
-                   && this->get_arg<Is>().extreme_diagonals().first
-                          <= this->extreme_diagonals().first
-                   && this->get_arg<Is>().extreme_diagonals().second
-                          >= this->extreme_diagonals().second))...};
+                   && std::tuple_element_t<Is, typename Deriv::view_transitivity>::value))...};
       });
       res = std::accumulate(args_parts.begin(), args_parts.end(),
                             kernel_parts{});
@@ -342,7 +340,7 @@ class operation_cl : public operation_cl_base {
    * @return view
    */
   inline matrix_cl_view view() const {
-    std::pair<int, int> diagonals = extreme_diagonals();
+    std::pair<int, int> diagonals = derived().extreme_diagonals();
     matrix_cl_view view;
     if (diagonals.first < 0) {
       view = matrix_cl_view::Lower;

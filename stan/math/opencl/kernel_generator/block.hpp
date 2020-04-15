@@ -31,6 +31,7 @@ class block_
   using Scalar = typename std::remove_reference_t<T>::Scalar;
   using base = operation_cl_lhs<block_<T>, Scalar, T>;
   using base::var_name;
+  using view_transitivity = std::tuple<std::true_type>;
 
  protected:
   int start_row_, start_col_, rows_, cols_;

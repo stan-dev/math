@@ -32,6 +32,7 @@ class transpose_
   using Scalar = typename std::remove_reference_t<Arg>::Scalar;
   using base = operation_cl<transpose_<Arg>, Scalar, Arg>;
   using base::var_name;
+  using view_transitivity = std::tuple<std::true_type>;
 
   /**
    * Constructor

@@ -66,7 +66,7 @@ class load_
     std::string type = type_str<Scalar>();
     if(view_handeled){
       res.body = type + " " + var_name + " = " + var_name + "_global[" + i + " + " +
-          var_name + "_rows * " + j + "];}\n";
+          var_name + "_rows * " + j + "];\n";
     }
     else{
       res.body = type + " " + var_name + " = 0;"

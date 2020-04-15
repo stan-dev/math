@@ -33,7 +33,7 @@ class rowwise_reduction
   using Scalar = typename std::remove_reference_t<T>::Scalar;
   using base = operation_cl<Derived, Scalar, T>;
   using base::var_name;
-  static const bool require_specific_local_size = true;
+  static const bool handles_matrix_view = true;
 
  protected:
   std::string init_;
