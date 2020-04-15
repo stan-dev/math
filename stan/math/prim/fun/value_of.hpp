@@ -88,7 +88,7 @@ inline std::vector<typename child_type<T>::type> value_of(
  * @param x Specified std::vector.
  * @return Specified std::vector.
  */
-template <typename Vec, require_std_vector_vt<is_double_or_int,Vec>* = nullptr>
+template <typename Vec, require_std_vector_vt<is_double_or_int, Vec>* = nullptr>
 inline Vec value_of(Vec&& x) {
   return x;
 }
