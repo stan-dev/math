@@ -90,7 +90,7 @@ struct ScalarBinaryOpTraits<double, stan::math::fvar<T>, BinaryOp> {
 template <typename T, typename BinaryOp>
 struct ScalarBinaryOpTraits<double, std::complex<stan::math::fvar<T>>,
                             BinaryOp> {
-  typedef std::complex<stan::math::fvar<T>> ReturnType;
+  using ReturnType = std::complex<stan::math::fvar<T>>;
 };
 
 /**
@@ -104,7 +104,7 @@ struct ScalarBinaryOpTraits<double, std::complex<stan::math::fvar<T>>,
 template <typename T, typename BinaryOp>
 struct ScalarBinaryOpTraits<std::complex<stan::math::fvar<T>>, double,
                             BinaryOp> {
-  typedef std::complex<stan::math::fvar<T>> ReturnType;
+  using ReturnType = std::complex<stan::math::fvar<T>>;
 };
 
 /**
@@ -118,7 +118,7 @@ struct ScalarBinaryOpTraits<std::complex<stan::math::fvar<T>>, double,
 template <typename T, typename BinaryOp>
 struct ScalarBinaryOpTraits<stan::math::fvar<T>, std::complex<double>,
                             BinaryOp> {
-  typedef std::complex<stan::math::fvar<T>> ReturnType;
+  using ReturnType = std::complex<stan::math::fvar<T>>;
 };
 
 /**
@@ -132,7 +132,7 @@ struct ScalarBinaryOpTraits<stan::math::fvar<T>, std::complex<double>,
 template <typename T, typename BinaryOp>
 struct ScalarBinaryOpTraits<std::complex<double>, stan::math::fvar<T>,
                             BinaryOp> {
-  typedef std::complex<stan::math::fvar<T>> ReturnType;
+  using ReturnType = std::complex<stan::math::fvar<T>>;
 };
 
 /**
@@ -146,7 +146,7 @@ struct ScalarBinaryOpTraits<std::complex<double>, stan::math::fvar<T>,
 template <typename T, typename BinaryOp>
 struct ScalarBinaryOpTraits<std::complex<double>,
                             std::complex<stan::math::fvar<T>>, BinaryOp> {
-  typedef std::complex<stan::math::fvar<T>> ReturnType;
+  using ReturnType = std::complex<stan::math::fvar<T>>;
 };
 
 /**
@@ -160,7 +160,7 @@ struct ScalarBinaryOpTraits<std::complex<double>,
 template <typename T, typename BinaryOp>
 struct ScalarBinaryOpTraits<std::complex<stan::math::fvar<T>>,
                             std::complex<double>, BinaryOp> {
-  typedef std::complex<stan::math::fvar<T>> ReturnType;
+  using ReturnType = std::complex<stan::math::fvar<T>>;
 };
 
 }  // namespace Eigen
