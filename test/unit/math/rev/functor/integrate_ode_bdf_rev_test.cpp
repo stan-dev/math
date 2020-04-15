@@ -268,7 +268,7 @@ TEST(StanAgradRevOde_integrate_ode_bdf, t0_as_param_AD) {
   const int ns = 2;    // nb. of states
   std::ostream* msgs = NULL;
 
-  forced_harm_osc_ode_fun ode;
+  harm_osc_ode_fun ode;
 
   std::vector<double> theta{0.15, 0.25};
   std::vector<double> y0{1.0, 0.0};
@@ -286,13 +286,12 @@ TEST(StanAgradRevOde_integrate_ode_bdf, t0_as_param_AD) {
   auto test_ad = [&res, &t0v, &ode, &nt, &ns, &theta, &x, &x_int, &msgs]() {
     for (auto i = 0; i < nt; ++i) {
       std::vector<double> res_d = value_of(res[i]);
-      for (auto j = 0; j < ns; ++j) {
-        res[i][j].grad();
-        for (auto k = 0; k < nt; ++k) {
-          EXPECT_FLOAT_EQ(t0v.adj(), 0.0);
-        }
-        stan::math::set_zero_all_adjoints();
-      }
+      res[i][0].grad();
+      EXPECT_FLOAT_EQ(t0v.adj(), 0.0);
+      stan::math::set_zero_all_adjoints();
+      res[i][1].grad();
+      EXPECT_FLOAT_EQ(t0v.adj(), 1.0);
+      stan::math::set_zero_all_adjoints();
     }
   };
   res = integrate_ode_bdf(ode, y0, t0v, ts, theta, x, x_int);
