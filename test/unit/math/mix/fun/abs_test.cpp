@@ -2,8 +2,9 @@
 #include <cmath>
 #include <complex>
 #include <vector>
+#include <type_traits>
 
-TEST(mixScalFun, abs) {
+TEST(mixFun, abs) {
   auto f = [](const auto& x) {
     using std::abs;
     return abs(x);
@@ -28,4 +29,13 @@ TEST(mixScalFun, abs) {
       stan::test::expect_ad(f, std::complex<double>(re, im));
     }
   }
+}
+TEST(mixFun, absReturnType) {
+  // validate return types not overpromoted to complex by assignability
+  std::complex<stan::math::var> a = 3;
+  stan::math::var b = abs(a);
+
+  std::complex<stan::math::fvar<double>> c = 3;
+  stan::math::fvar<double> d = abs(c);
+  SUCCEED();
 }

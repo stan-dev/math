@@ -1,6 +1,7 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 #include <test/unit/math/prim/prob/NegativeBinomial2LogTestRig.hpp>
+#include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
@@ -212,29 +213,21 @@ TEST(ProbNegBinomial2, log_matches_lpmf) {
 TEST(ProbDistributionsNegBinomial2Log, neg_binomial_2_log_grid_test) {
   std::vector<double> mu_log_to_test
       = {-101, -27, -3, -1, -0.132, 0, 4, 10, 87};
-  // TODO(martinmodrak) Reducing the span of the test, should be fixed
-  // along with #1495
-  // std::vector<double> phi_to_test = {2e-5, 0.36, 1, 10, 2.3e5, 1.8e10, 6e16};
-  std::vector<double> phi_to_test = {0.36, 1, 10};
+  std::vector<double> phi_to_test = {2e-5, 0.36, 1, 10, 2.3e5, 1.8e10, 6e16};
   std::vector<int> n_to_test = {0, 1, 10, 39, 101, 3048, 150054};
-
-  // TODO(martinmdorak) Only weak tolerance for this quick fix
-  auto tolerance = [](double x) { return std::max(fabs(x * 1e-8), 1e-8); };
 
   for (double mu_log : mu_log_to_test) {
     for (double phi : phi_to_test) {
       for (int n : n_to_test) {
         double val_log = stan::math::neg_binomial_2_log_lpmf(n, mu_log, phi);
-        EXPECT_LE(val_log, 0)
-            << "neg_binomial_2_log_lpmf yields " << val_log
-            << " which si greater than 0 for n = " << n
-            << ", mu_log = " << mu_log << ", phi = " << phi << ".";
+        std::stringstream msg;
         double val_orig
             = stan::math::neg_binomial_2_lpmf(n, std::exp(mu_log), phi);
-        EXPECT_NEAR(val_log, val_orig, tolerance(val_orig))
+        msg << std::setprecision(22)
             << "neg_binomial_2_log_lpmf yields different result (" << val_log
             << ") than neg_binomial_2_lpmf (" << val_orig << ") for n = " << n
             << ", mu_log = " << mu_log << ", phi = " << phi << ".";
+        stan::test::expect_near_rel(msg.str(), val_log, val_orig);
       }
     }
   }
