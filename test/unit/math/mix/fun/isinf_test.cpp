@@ -26,7 +26,7 @@ template <typename T>
 void expect_isinf_include_stan() {
   // usage in generated model code:
   // - stan::math::isinf explicitly brought in
-  using namespace stan::math;
+  using namespace stan::math;  // NOLINT(build/namespaces)
   using std::numeric_limits;
   T inf = numeric_limits<double>::infinity();
   EXPECT_TRUE(isinf(inf));

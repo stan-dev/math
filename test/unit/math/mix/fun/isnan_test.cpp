@@ -23,7 +23,7 @@ void expect_isnan_include_std() {
 template <typename T>
 void expect_isnan_include_stan() {
   // generated model code inclusion pattern
-  using stan::math::isnan;  // defines all types
+  using namespace stan::math;  // NOLINT(build/namespaces)
   using std::numeric_limits;
   T inf = numeric_limits<double>::infinity();
   T nan = std::numeric_limits<double>::quiet_NaN();
