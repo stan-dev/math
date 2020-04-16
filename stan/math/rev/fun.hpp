@@ -122,6 +122,7 @@
 #include <stan/math/rev/fun/sin.hpp>
 #include <stan/math/rev/fun/sinh.hpp>
 #include <stan/math/rev/fun/softmax.hpp>
+#include <stan/math/rev/fun/solve_quadprog.hpp>
 #include <stan/math/rev/fun/sqrt.hpp>
 #include <stan/math/rev/fun/square.hpp>
 #include <stan/math/rev/fun/squared_distance.hpp>
