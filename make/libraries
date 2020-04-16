@@ -123,6 +123,11 @@ ifeq (,$(TBB_CC))
   $(error "Need to set TBB_CC to C compiler command for non-standard compiler other than gcc or clang.")
 endif
 
+# Set shell in order to use string matching for tbb-make-check
+ifeq (Linux, $(OS))
+  SHELL = /bin/bash
+endif
+
 $(TBB_BIN)/tbb-make-check:
 	@if [[ $(OS) == Windows_NT ]]; then \
 		if ! [[ $(MAKE) =~ mingw32 ]]; then \
