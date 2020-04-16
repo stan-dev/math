@@ -44,13 +44,13 @@ TEST(MathMetaPrim, is_eigen_matrix_expr_tests) {
   using stan::is_eigen_matrix;
   using stan::math::test::all_eigen_dense_exprs;
   all_eigen_dense_exprs<true, true, false, true, is_eigen_matrix, Matrix, -1,
-                        -1>;
-  all_eigen_dense_exprs<true, true, false, true, is_eigen_matrix, Matrix, 1,
-                        -1>;
-  all_eigen_dense_exprs<true, true, false, true, is_eigen_matrix, Matrix, -1,
-                        1>;
-  all_eigen_dense_exprs<true, true, false, true, is_eigen_matrix, Array, -1,
-                        -1>;
-  all_eigen_dense_exprs<true, true, false, true, is_eigen_matrix, Array, 1, -1>;
-  all_eigen_dense_exprs<true, true, false, true, is_eigen_matrix, Array, -1, 1>;
+                        -1>();
+  all_eigen_dense_exprs<false, false, false, true, is_eigen_matrix, Matrix, 1,
+                        -1>();
+  all_eigen_dense_exprs<false, false, false, true, is_eigen_matrix, Matrix, -1,
+                        1>();
+  all_eigen_dense_exprs<false, false, false, false, is_eigen_matrix, Array, -1,
+                        -1>();
+  all_eigen_dense_exprs<false, false, false, false, is_eigen_matrix, Array, 1, -1>();
+  all_eigen_dense_exprs<false, false, false, false, is_eigen_matrix, Array, -1, 1>();
 }

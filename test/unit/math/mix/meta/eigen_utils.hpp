@@ -1,6 +1,7 @@
 #ifndef TEST_UNIT_MATH_MIX_EIGEN_UTILS_HPP
 #define TEST_UNIT_MATH_MIX_EIGEN_UTILS_HPP
 #include <stan/math/mix.hpp>
+#include <test/unit/pretty_print_types.hpp>
 #include <Eigen/Sparse>
 #include <gtest/gtest.h>
 
@@ -112,10 +113,14 @@ void test_eigen_dense_exprs() {
   EigenType B;
 
   //  Dense Ops
-  EXPECT_TRUE((Base_v == Checker<decltype(A)>::value));
-  EXPECT_TRUE((Expr_v == Checker<decltype(A * B + A.transpose())>::value));
-  EXPECT_TRUE((Segment_v == Checker<decltype(A.segment(0, 1))>::value));
-  EXPECT_TRUE((Block_v == Checker<decltype(A.block(0, 0, 1, 1))>::value));
+  EXPECT_TRUE((Base_v == Checker<decltype(A)>::value)) << "Failed For Base: "
+   << type_name<decltype(A)>() << "\nChecking Type: " << type_name<decltype(A)>();
+  EXPECT_TRUE((Expr_v == Checker<decltype(A * B + A.transpose())>::value)) << "Failed For Base: "
+   << type_name<decltype(A)>() << "\nChecking Type: " << type_name<decltype(A * B + A.transpose())>();
+  EXPECT_TRUE((Segment_v == Checker<decltype(A.segment(0, 1))>::value)) << "Failed For Base: "
+   << type_name<decltype(A)>() << "\nChecking Type: " << type_name<decltype(A.segment(0, 1))>();
+  EXPECT_TRUE((Block_v == Checker<decltype(A.block(0, 0, 1, 1))>::value)) << "Failed For Base: "
+   << type_name<decltype(A)>() << "\nChecking Type: " << type_name<decltype(A.block(0, 0, 1, 1))>();
 }
 
 /*
@@ -221,15 +226,15 @@ void all_eigen_dense_exprs() {
   using stan::math::fvar;
   using stan::math::var;
   test_eigen_dense_exprs<Base_v, Expr_v, Segment_v, Block_v, Checker,
-                         EigenType<double, EigenDims...>>;
+                         EigenType<double, EigenDims...>>();
   test_eigen_dense_exprs<Base_v, Expr_v, Segment_v, Block_v, Checker,
-                         EigenType<var, EigenDims...>>;
+                         EigenType<var, EigenDims...>>();
   test_eigen_dense_exprs<Base_v, Expr_v, Segment_v, Block_v, Checker,
-                         EigenType<fvar<double>, EigenDims...>>;
+                         EigenType<fvar<double>, EigenDims...>>();
   test_eigen_dense_exprs<Base_v, Expr_v, Segment_v, Block_v, Checker,
-                         EigenType<fvar<var>, EigenDims...>>;
+                         EigenType<fvar<var>, EigenDims...>>();
   test_eigen_dense_exprs<Base_v, Expr_v, Segment_v, Block_v, Checker,
-                         EigenType<fvar<fvar<double>>, EigenDims...>>;
+                         EigenType<fvar<fvar<double>>, EigenDims...>>();
 }
 
 /*
