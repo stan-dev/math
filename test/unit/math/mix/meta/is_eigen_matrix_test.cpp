@@ -51,6 +51,8 @@ TEST(MathMetaPrim, is_eigen_matrix_expr_tests) {
                         1>();
   all_eigen_dense_exprs<false, false, false, false, is_eigen_matrix, Array, -1,
                         -1>();
-  all_eigen_dense_exprs<false, false, false, false, is_eigen_matrix, Array, 1, -1>();
-  all_eigen_dense_exprs<false, false, false, false, is_eigen_matrix, Array, -1, 1>();
+  all_eigen_dense_exprs<false, false, false, false, is_eigen_matrix, Array, 1,
+                        -1>();
+  all_eigen_dense_exprs<false, false, false, false, is_eigen_matrix, Array, -1,
+                        1>();
 }

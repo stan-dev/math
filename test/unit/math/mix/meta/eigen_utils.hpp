@@ -113,14 +113,18 @@ void test_eigen_dense_exprs() {
   EigenType B;
 
   //  Dense Ops
-  EXPECT_TRUE((Base_v == Checker<decltype(A)>::value)) << "Failed For Base: "
-   << type_name<decltype(A)>() << "\nChecking Type: " << type_name<decltype(A)>();
-  EXPECT_TRUE((Expr_v == Checker<decltype(A * B + A.transpose())>::value)) << "Failed For Base: "
-   << type_name<decltype(A)>() << "\nChecking Type: " << type_name<decltype(A * B + A.transpose())>();
-  EXPECT_TRUE((Segment_v == Checker<decltype(A.segment(0, 1))>::value)) << "Failed For Base: "
-   << type_name<decltype(A)>() << "\nChecking Type: " << type_name<decltype(A.segment(0, 1))>();
-  EXPECT_TRUE((Block_v == Checker<decltype(A.block(0, 0, 1, 1))>::value)) << "Failed For Base: "
-   << type_name<decltype(A)>() << "\nChecking Type: " << type_name<decltype(A.block(0, 0, 1, 1))>();
+  EXPECT_TRUE((Base_v == Checker<decltype(A)>::value))
+      << "Failed For Base: " << type_name<decltype(A)>()
+      << "\nChecking Type: " << type_name<decltype(A)>();
+  EXPECT_TRUE((Expr_v == Checker<decltype(A * B + A.transpose())>::value))
+      << "Failed For Base: " << type_name<decltype(A)>()
+      << "\nChecking Type: " << type_name<decltype(A * B + A.transpose())>();
+  EXPECT_TRUE((Segment_v == Checker<decltype(A.segment(0, 1))>::value))
+      << "Failed For Base: " << type_name<decltype(A)>()
+      << "\nChecking Type: " << type_name<decltype(A.segment(0, 1))>();
+  EXPECT_TRUE((Block_v == Checker<decltype(A.block(0, 0, 1, 1))>::value))
+      << "Failed For Base: " << type_name<decltype(A)>()
+      << "\nChecking Type: " << type_name<decltype(A.block(0, 0, 1, 1))>();
 }
 
 /*

@@ -49,10 +49,10 @@ TEST(MathMetaPrim, is_eigen_matrix_base_expr_tests) {
                         -1>();
   all_eigen_dense_exprs<true, true, true, true, is_eigen_matrix_base, Matrix,
                         -1, 1>();
-  all_eigen_dense_exprs<false, false, false, false, is_eigen_matrix_base, Array, -1,
-                        -1>();
-  all_eigen_dense_exprs<false, false, false, false, is_eigen_matrix_base, Array, 1,
-                        -1>();
-  all_eigen_dense_exprs<false, false, false, false, is_eigen_matrix_base, Array, -1,
-                        1>();
+  all_eigen_dense_exprs<false, false, false, false, is_eigen_matrix_base, Array,
+                        -1, -1>();
+  all_eigen_dense_exprs<false, false, false, false, is_eigen_matrix_base, Array,
+                        1, -1>();
+  all_eigen_dense_exprs<false, false, false, false, is_eigen_matrix_base, Array,
+                        -1, 1>();
 }
