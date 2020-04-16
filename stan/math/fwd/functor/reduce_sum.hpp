@@ -73,8 +73,7 @@ struct reduce_sum_impl {
     }
 
     if (auto_partitioning) {
-      return ReduceFunction()(std::forward<Vec>(vmapped),
-                              0, vmapped.size() - 1,
+      return ReduceFunction()(std::forward<Vec>(vmapped), 0, vmapped.size() - 1,
                               msgs, std::forward<Args>(args)...);
     } else {
       return_type_t<Vec, Args...> sum = 0.0;
@@ -89,8 +88,8 @@ struct reduce_sum_impl {
           sub_slice.emplace_back(vmapped[i]);
         }
 
-        sum += ReduceFunction()(std::forward<Vec>(sub_slice), start, end, 
-                                msgs, std::forward<Args>(args)...);
+        sum += ReduceFunction()(std::forward<Vec>(sub_slice), start, end, msgs,
+                                std::forward<Args>(args)...);
       }
       return sum;
     }

@@ -116,8 +116,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       // Perform calculation
       var sub_sum_v = apply(
           [&](auto&&... args) {
-            return ReduceFunction()(local_sub_slice,
-                                    r.begin(), r.end() - 1,
+            return ReduceFunction()(local_sub_slice, r.begin(), r.end() - 1,
                                     msgs_, args...);
           },
           args_tuple_local_copy);
