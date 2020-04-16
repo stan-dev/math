@@ -21,7 +21,7 @@ namespace math {
  * This defers to reduce_sum_impl for the appropriate implementation
  *
  * ReduceFunction must define an operator() with the same signature as:
- *   T f(int start, int end, Vec&& vmapped_subset, std::ostream* msgs, Args&&...
+ *   T f(Vec&& vmapped_subset, int start, int end, std::ostream* msgs, Args&&...
  * args)
  *
  * `ReduceFunction` must be default constructible without any arguments
