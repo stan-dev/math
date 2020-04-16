@@ -58,7 +58,7 @@ auto reduce_sum_static(Vec&& vmapped, int grainsize, std::ostream* msgs,
     return return_type(0);
   }
 
-  return ReduceFunction()(0, vmapped.size() - 1, std::forward<Vec>(vmapped),
+  return ReduceFunction()(std::forward<Vec>(vmapped), 0, vmapped.size() - 1,
                           msgs, std::forward<Args>(args)...);
 #endif
 }
