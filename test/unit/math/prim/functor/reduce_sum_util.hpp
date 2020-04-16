@@ -21,8 +21,9 @@ struct count_lpdf {
   count_lpdf() {}
 
   // does the reduction in the sub-slice start to end
-  inline T operator()(std::size_t start, std::size_t end,
-                      const std::vector<int>& sub_slice, std::ostream* msgs,
+  inline T operator()(const std::vector<int>& sub_slice,
+                      std::size_t start, std::size_t end,
+                      std::ostream* msgs,
                       const std::vector<T>& lambda,
                       const std::vector<int>& idata) const {
     return stan::math::poisson_lpmf(sub_slice, lambda[0]);
@@ -34,8 +35,8 @@ struct nesting_count_lpdf {
   nesting_count_lpdf() {}
 
   // does the reduction in the sub-slice start to end
-  inline T operator()(std::size_t start, std::size_t end,
-                      const std::vector<int>& sub_slice, std::ostream* msgs,
+  inline T operator()(const std::vector<int>& sub_slice,
+                      std::size_t start, std::size_t end, std::ostream* msgs,
                       const std::vector<T>& lambda,
                       const std::vector<int>& idata) const {
     return stan::math::reduce_sum<count_lpdf<T>>(sub_slice, 5, msgs, lambda,
@@ -64,7 +65,7 @@ struct sum_lpdf {
   }
 
   template <typename T, typename... Args>
-  inline auto operator()(std::size_t start, std::size_t end, T&& sub_slice,
+  inline auto operator()(T&& sub_slice, std::size_t start, std::size_t end,
                          std::ostream* msgs, Args&&... args) const {
     using return_type = stan::return_type_t<T, Args...>;
 
@@ -77,7 +78,7 @@ struct sum_lpdf {
 
 struct start_end_lpdf {
   template <typename T1, typename T2>
-  inline auto operator()(std::size_t start, std::size_t end, T1&&,
+  inline auto operator()(T1&&, std::size_t start, std::size_t end,
                          std::ostream* msgs, T2&& data) const {
     stan::return_type_t<T1, T2> sum = 0;
     EXPECT_GE(start, 0);
@@ -97,8 +98,9 @@ struct slice_group_count_lpdf {
   slice_group_count_lpdf() {}
 
   // does the reduction in the sub-slice start to end
-  inline T operator()(std::size_t start, std::size_t end,
-                      const std::vector<T>& lambda_slice, std::ostream* msgs,
+  inline T operator()(const std::vector<T>& lambda_slice,
+                      std::size_t start, std::size_t end,
+                      std::ostream* msgs,
                       const std::vector<int>& y,
                       const std::vector<int>& gsidx) const {
     const std::size_t num_groups = end - start + 1;
@@ -121,7 +123,7 @@ struct grouped_count_lpdf {
 
   // does the reduction in the sub-slice start to end
   template <typename VecInt1, typename VecT, typename VecInt2>
-  inline T operator()(std::size_t start, std::size_t end, VecInt1&& sub_slice,
+  inline T operator()(VecInt1&& sub_slice, std::size_t start, std::size_t end,
                       std::ostream* msgs, VecT&& lambda, VecInt2&& gidx) const {
     const std::size_t num_terms = end - start + 1;
     std::decay_t<VecT> lambda_slice(num_terms);
@@ -168,9 +170,8 @@ auto reduce_sum_sum_lpdf = [](auto&& data, auto&&... args) {
 template <int grainsize>
 struct static_check_lpdf {
   template <typename T>
-  inline auto operator()(std::size_t start, std::size_t end,
-                         const std::vector<int>&, std::ostream* msgs,
-                         const std::vector<T>& data) const {
+  inline auto operator()(const std::vector<int>&, std::size_t start, std::size_t end,
+                         std::ostream* msgs, const std::vector<T>& data) const {
     T sum = 0;
     EXPECT_LE(end - start + 1, grainsize);
     for (size_t i = start; i <= end; i++) {

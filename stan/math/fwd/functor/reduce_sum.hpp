@@ -38,7 +38,7 @@ struct reduce_sum_impl {
    * This specialization is not parallelized and works for any autodiff types.
    *
    * An instance, f, of `ReduceFunction` should have the signature:
-   *   T f(int start, int end, Vec&& vmapped_subset, std::ostream* msgs,
+   *   T f(Vec&& vmapped_subset, int start, int end, std::ostream* msgs,
    * Args&&... args)
    *
    * `ReduceFunction` must be default constructible without any arguments
@@ -73,7 +73,8 @@ struct reduce_sum_impl {
     }
 
     if (auto_partitioning) {
-      return ReduceFunction()(0, vmapped.size() - 1, std::forward<Vec>(vmapped),
+      return ReduceFunction()(std::forward<Vec>(vmapped),
+                              0, vmapped.size() - 1,
                               msgs, std::forward<Args>(args)...);
     } else {
       return_type_t<Vec, Args...> sum = 0.0;
@@ -88,8 +89,8 @@ struct reduce_sum_impl {
           sub_slice.emplace_back(vmapped[i]);
         }
 
-        sum += ReduceFunction()(start, end, std::forward<Vec>(sub_slice), msgs,
-                                std::forward<Args>(args)...);
+        sum += ReduceFunction()(std::forward<Vec>(sub_slice), start, end, 
+                                msgs, std::forward<Args>(args)...);
       }
       return sum;
     }
