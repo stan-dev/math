@@ -3,9 +3,9 @@
 #include <limits>
 
 template <typename T>
-void expect_isnan() {
-  using stan::math::isnan;
-  using std::isnan;
+void expect_isnan_include_std() {
+  // C++ idiom for clients of the math library
+  using std::isnan;  // autodiff brought in by ADL
   using std::numeric_limits;
   T inf = numeric_limits<double>::infinity();
   T nan = std::numeric_limits<double>::quiet_NaN();
@@ -18,6 +18,30 @@ void expect_isnan() {
   EXPECT_FALSE(isnan(T(0.0)));
   EXPECT_FALSE(isnan(T(-1)));
   EXPECT_FALSE(isnan(T(-1.0)));
+}
+
+template <typename T>
+void expect_isnan_include_stan() {
+  // generated model code inclusion pattern
+  using stan::math::isnan;  // defines all types
+  using std::numeric_limits;
+  T inf = numeric_limits<double>::infinity();
+  T nan = std::numeric_limits<double>::quiet_NaN();
+  EXPECT_FALSE(isnan(inf));
+  EXPECT_FALSE(isnan(-inf));
+  EXPECT_TRUE(isnan(nan));
+  EXPECT_FALSE(isnan(T(1)));
+  EXPECT_FALSE(isnan(T(1.0)));
+  EXPECT_FALSE(isnan(T(0)));
+  EXPECT_FALSE(isnan(T(0.0)));
+  EXPECT_FALSE(isnan(T(-1)));
+  EXPECT_FALSE(isnan(T(-1.0)));
+}
+
+template <typename T>
+void expect_isnan() {
+  expect_isnan_include_std<T>();
+  expect_isnan_include_stan<T>();
 }
 
 TEST(mixFun, isnan) {
