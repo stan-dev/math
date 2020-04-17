@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <stan/math.hpp>
 
 template <typename T>
 typename Eigen::Matrix<typename stan::scalar_type<T>::type, -1, -1> g1(

@@ -140,6 +140,7 @@
 #include <stan/math/rev/fun/trigamma.hpp>
 #include <stan/math/rev/fun/trunc.hpp>
 #include <stan/math/rev/fun/typedefs.hpp>
+#include <stan/math/rev/fun/unit_vector_constrain.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/rev/fun/variance.hpp>

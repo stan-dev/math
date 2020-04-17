@@ -24,9 +24,9 @@ namespace math {
  * @param x scalar to convert to double
  * @return value of scalar cast to double
  */
-template <typename T, require_t<std::is_floating_point<T>>* = nullptr, require_not_same_t<double, T>* = nullptr>
-inline double value_of(const T x) {
-  return static_cast<double>(x);
+template <typename T, require_t<std::is_floating_point<T>>* = nullptr>
+inline auto value_of(T x) {
+  return x;
 }
 
 /**
@@ -40,33 +40,20 @@ inline double value_of(const T x) {
  * @param x value
  * @return input value
  */
-template <typename T, require_same_t<double, T>* = nullptr>
+template <typename T, require_integral_t<T>* = nullptr>
+inline auto value_of(T x) { return x; }
+
+template <typename ComplexT, require_complex_t<ComplexT>* = nullptr,
+  require_not_vt_arithmetic<ComplexT>* = nullptr>
+inline auto value_of(ComplexT&& x) {
+  using complex_ret = std::complex<partials_type_t<value_type_t<ComplexT>>>;
+  return complex_ret{value_of(x.real()), value_of(x.imag())};
+}
+
+template <typename T, require_complex_t<T>* = nullptr,
+ require_vt_arithmetic<T>* = nullptr>
 inline decltype(auto) value_of(T&& x) {
   return std::forward<T>(x);
-}
-
-/**
- * Return the specified argument.
- *
- * <p>See <code>value_of(T)</code> for a polymorphic
- * implementation using static casts.
- *
- * <p>This inline pass-through no-op should be compiled away.
- *
- * @param x value
- * @return input value
- */
-template <typename T, require_same_t<int, T>* = nullptr>
-inline decltype(auto) value_of(T&& x) { return x; }
-
-template <typename T, require_complex_t<T>* = nullptr, require_not_vt_arithmetic<T>* = nullptr>
-inline std::complex<partials_type_t<T>> value_of(T&& x) {
-  return {value_of(x.real()), value_of(x.imag())};
-}
-
-template <typename T, require_complex_t<T>* = nullptr, require_vt_arithmetic<T>* = nullptr>
-inline decltype(auto) value_of(T&& x) {
-  return std::forward<T>(x); 
 }
 
 /**
@@ -120,13 +107,17 @@ template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
   require_not_vt_var<EigMat>* = nullptr,
   require_not_vt_arithmetic<EigMat>* = nullptr>
 inline auto value_of(EigMat&& M) {
-  using ref_inner = const typename std::decay_t<EigMat>::PlainObject;
-  Eigen::Matrix<partials_type_t<value_type_t<EigMat>>,
-   std::decay_t<EigMat>::RowsAtCompileTime, std::decay_t<EigMat>::ColsAtCompileTime> Md(M.rows(), M.cols());
+  using eig_mat = std::decay_t<EigMat>;
+  using ref_inner = const typename eig_mat::PlainObject;
+  using eig_index = index_type_t<EigMat>;
+  using eig_partial = partials_type_t<value_type_t<EigMat>>;
+  Eigen::Matrix<eig_partial,
+   eig_mat::RowsAtCompileTime,
+   eig_mat::ColsAtCompileTime> Md(M.rows(), M.cols());
  const Eigen::Ref<ref_inner, Eigen::Aligned16, Eigen::Stride<0,0>>& mat = M;
-  for (int j = 0; j < mat.cols(); j++) {
-    for (int i = 0; i < mat.rows(); i++) {
-      Md(i, j) = value_of(mat.coeffRef(i, j));
+  for (eig_index j = 0; j < mat.cols(); j++) {
+    for (eig_index i = 0; i < mat.rows(); i++) {
+      Md.coeffRef(i, j) = value_of(mat.coeffRef(i, j));
     }
   }
   return Md;

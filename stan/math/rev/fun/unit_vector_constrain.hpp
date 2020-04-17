@@ -52,7 +52,7 @@ class unit_vector_elt_vari : public vari {
  * @param y vector of K unrestricted variables
  * @return Unit length vector of dimension K
  **/
-template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr, require_var_t<value_type_t<EigMat>>* = nullptr>
 auto unit_vector_constrain(EigMat&& y) {
   using ref_inner = const typename std::decay_t<EigMat>::PlainObject;
   check_vector("unit_vector", "y", y);

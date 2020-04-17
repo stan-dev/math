@@ -15,44 +15,50 @@
 namespace stan {
 namespace math {
 
-template <typename T, int R, int C>
-inline Eigen::Matrix<fvar<T>, R, C> unit_vector_constrain(
-    const Eigen::Matrix<fvar<T>, R, C>& y) {
+template <typename EigMat, require_eigen_vt<is_fvar, EigMat>* = nullptr>
+inline auto unit_vector_constrain(EigMat&& y) {
   using Eigen::Matrix;
   using std::sqrt;
-
-  Matrix<T, R, C> y_t(y.size());
-  for (int k = 0; k < y.size(); ++k) {
-    y_t.coeffRef(k) = y.coeff(k).val_;
+  using eig_mat = std::decay_t<EigMat>;
+  using ref_inner = typename eig_mat::PlainObject;
+  using eig_index = index_type_t<EigMat>;
+  using eig_partial = partials_type_t<value_type_t<EigMat>>;
+  using eig_value = value_type_t<EigMat>;
+  using partial_mat = Eigen::Matrix<eig_partial,
+   eig_mat::RowsAtCompileTime,
+   eig_mat::ColsAtCompileTime>;
+  partial_mat y_t(y.rows(), y.cols());
+  const Eigen::Ref<const ref_inner, Eigen::Aligned16, Eigen::Stride<0,0>>& y_ref = y;
+  for (eig_index k = 0; k < y.size(); ++k) {
+    y_t.coeffRef(k) = y_ref.coeff(k).val_;
   }
 
-  Matrix<T, R, C> unit_vector_y_t = unit_vector_constrain(y_t);
-  Matrix<fvar<T>, R, C> unit_vector_y(y.size());
-  for (int k = 0; k < y.size(); ++k) {
+  partial_mat unit_vector_y_t = unit_vector_constrain(y_t);
+  ref_inner unit_vector_y(y.size());
+  for (eig_index k = 0; k < y.size(); ++k) {
     unit_vector_y.coeffRef(k).val_ = unit_vector_y_t.coeff(k);
   }
 
-  T squared_norm = dot_self(y_t);
-  T norm = sqrt(squared_norm);
-  T inv_norm = inv(norm);
-  Matrix<T, Eigen::Dynamic, Eigen::Dynamic> J
+  eig_partial squared_norm = dot_self(y_t);
+  eig_partial norm = sqrt(squared_norm);
+  eig_partial inv_norm = inv(norm);
+  Eigen::Matrix<eig_partial, Eigen::Dynamic, Eigen::Dynamic> J
       = divide(tcrossprod(y_t), -norm * squared_norm);
 
-  for (int m = 0; m < y.size(); ++m) {
+  for (eig_index m = 0; m < y.size(); ++m) {
     J.coeffRef(m, m) += inv_norm;
-    for (int k = 0; k < y.size(); ++k) {
+    for (eig_index k = 0; k < y.size(); ++k) {
       unit_vector_y.coeffRef(k).d_ = J.coeff(k, m);
     }
   }
   return unit_vector_y;
 }
 
-template <typename T, int R, int C>
-inline Eigen::Matrix<fvar<T>, R, C> unit_vector_constrain(
-    const Eigen::Matrix<fvar<T>, R, C>& y, fvar<T>& lp) {
-  fvar<T> squared_norm = dot_self(y);
+template <typename EigMat, require_eigen_vt<is_fvar, EigMat>* = nullptr>
+inline auto unit_vector_constrain(EigMat&& y, value_type_t<EigMat>& lp) {
+  const value_type_t<EigMat> squared_norm = dot_self(y);
   lp -= 0.5 * squared_norm;
-  return unit_vector_constrain(y);
+  return unit_vector_constrain(std::forward<EigMat>(y));
 }
 
 }  // namespace math
