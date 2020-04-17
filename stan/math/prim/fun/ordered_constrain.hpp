@@ -54,7 +54,7 @@ Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, 1> ordered_constrain(
 template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
 Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, 1> ordered_constrain(
     const EigVec& x, value_type_t<EigVec>& lp) {
-  if(x.size() > 1){
+  if (x.size() > 1) {
     lp += x.tail(x.size() - 1).sum();
   }
   return ordered_constrain(x);

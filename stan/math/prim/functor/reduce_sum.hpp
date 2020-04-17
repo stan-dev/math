@@ -85,7 +85,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
 
       sum_ += apply(
           [&](auto&&... args) {
-            return ReduceFunction()(r.begin(), r.end() - 1, sub_slice, msgs_,
+            return ReduceFunction()(sub_slice, r.begin(), r.end() - 1, msgs_,
                                     args...);
           },
           args_tuple_);
@@ -107,7 +107,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
    *   arithmetic types.
    *
    * ReduceFunction must define an operator() with the same signature as:
-   *   double f(int start, int end, Vec&& vmapped_subset, std::ostream* msgs,
+   *   double f(Vec&& vmapped_subset, int start, int end, std::ostream* msgs,
    * Args&&... args)
    *
    * `ReduceFunction` must be default constructible without any arguments
@@ -174,7 +174,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
  * This defers to reduce_sum_impl for the appropriate implementation
  *
  * ReduceFunction must define an operator() with the same signature as:
- *   T f(int start, int end, Vec&& vmapped_subset, std::ostream* msgs, Args&&...
+ *   T f(Vec&& vmapped_subset, int start, int end, std::ostream* msgs, Args&&...
  * args)
  *
  * `ReduceFunction` must be default constructible without any arguments
@@ -209,7 +209,7 @@ inline auto reduce_sum(Vec&& vmapped, int grainsize, std::ostream* msgs,
     return return_type(0.0);
   }
 
-  return ReduceFunction()(0, vmapped.size() - 1, std::forward<Vec>(vmapped),
+  return ReduceFunction()(std::forward<Vec>(vmapped), 0, vmapped.size() - 1,
                           msgs, std::forward<Args>(args)...);
 #endif
 }

@@ -394,8 +394,8 @@ TEST(StanMathRev_reduce_sum, slice_group_gradient) {
 std::vector<int> threading_test_global;
 struct threading_test_lpdf {
   template <typename T1>
-  inline auto operator()(std::size_t start, std::size_t end,
-                         const std::vector<T1>&, std::ostream* msgs) const {
+  inline auto operator()(const std::vector<T1>&, std::size_t start,
+                         std::size_t end, std::ostream* msgs) const {
     threading_test_global[start] = tbb::this_task_arena::current_thread_index();
 
     return stan::return_type_t<T1>(0);
