@@ -21,13 +21,15 @@ namespace math {
  * @return Value of variable.
  */
 template <typename Var, require_var_t<Var>* = nullptr>
-inline auto value_of(Var&& v) { return v.vi_->val_; }
+inline auto value_of(Var&& v) {
+  return v.vi_->val_;
+}
 
-template <typename EigMat, require_eigen_t<EigMat>* = nullptr, require_vt_var<EigMat>* = nullptr>
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
+          require_vt_var<EigMat>* = nullptr>
 inline auto value_of(EigMat&& x) {
   return x.val().eval();
 }
-
 
 }  // namespace math
 }  // namespace stan

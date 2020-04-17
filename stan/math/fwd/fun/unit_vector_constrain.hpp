@@ -24,11 +24,12 @@ inline auto unit_vector_constrain(EigMat&& y) {
   using eig_index = index_type_t<EigMat>;
   using eig_partial = partials_type_t<value_type_t<EigMat>>;
   using eig_value = value_type_t<EigMat>;
-  using partial_mat = Eigen::Matrix<eig_partial,
-   eig_mat::RowsAtCompileTime,
-   eig_mat::ColsAtCompileTime>;
+  using partial_mat = Eigen::Matrix<eig_partial, eig_mat::RowsAtCompileTime,
+                                    eig_mat::ColsAtCompileTime>;
   partial_mat y_t(y.rows(), y.cols());
-  const Eigen::Ref<const ref_inner, Eigen::Aligned16, Eigen::Stride<0,0>>& y_ref = y;
+  const Eigen::Ref<const ref_inner, Eigen::Aligned16, Eigen::Stride<0, 0>>&
+      y_ref
+      = y;
   for (eig_index k = 0; k < y.size(); ++k) {
     y_t.coeffRef(k) = y_ref.coeff(k).val_;
   }

@@ -40,7 +40,6 @@ TEST(MathMatrixPrimArr, value_of) {
     EXPECT_FLOAT_EQ(a[i], d_a[i]);
 }
 
-
 TEST(MathMatrixPrimMat, value_of) {
   using stan::math::value_of;
 

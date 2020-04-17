@@ -8,40 +8,38 @@
 namespace stan {
 namespace math {
 namespace internal {
-  inline auto sum_vector_sizes() {
-    return 0;
-  }
-  /**
-   * Get the internal sizes of a pack of vectors.
-   * @tparam Vec Type of first vector to count.
-   * @tparam VecArgs Parameter pack of vector types to accumulate sizes of
-   * @param x vector to start accumulation of sizes with.
-   * @param args pack of vectors to accumulate sizes for.
-   */
-  template <typename Vec, typename... VecArgs>
-  inline auto sum_vector_sizes(Vec&& x, VecArgs&&... args) {
-     return x.size() + sum_vector_sizes(std::forward<VecArgs>(args)...);
-  }
-  /**
-   * End of recursion for appending to vector.
-   */
-  template <typename VecInOut>
-  inline void append_vectors(VecInOut& x) {}
-  /**
-   * Fill a vector with other vectors.
-   * @tparam VecInOut Type of vector to be filled.
-   * @tparam VecIn Type of the first vector to insert into the in/out vector.
-   * @tparam VecArgs Parameter pack of other vectors to fill in the in/out vector.
-   * @param x Vector to be filled.
-   * @param y First vector to insert into the in/out vector.
-   * @param args Pack of other vectors to fill in the in/out vector.
-   */
-  template <typename VecInOut, typename VecIn, typename... VecArgs>
-  inline void append_vectors(VecInOut& x, VecIn&& y, VecArgs&&... args) {
-    x.insert(x.end(), y.begin(), y.end());
-    append_vectors(x, std::forward<VecArgs>(args)...);
-  }
+inline auto sum_vector_sizes() { return 0; }
+/**
+ * Get the internal sizes of a pack of vectors.
+ * @tparam Vec Type of first vector to count.
+ * @tparam VecArgs Parameter pack of vector types to accumulate sizes of
+ * @param x vector to start accumulation of sizes with.
+ * @param args pack of vectors to accumulate sizes for.
+ */
+template <typename Vec, typename... VecArgs>
+inline auto sum_vector_sizes(Vec&& x, VecArgs&&... args) {
+  return x.size() + sum_vector_sizes(std::forward<VecArgs>(args)...);
 }
+/**
+ * End of recursion for appending to vector.
+ */
+template <typename VecInOut>
+inline void append_vectors(VecInOut& x) {}
+/**
+ * Fill a vector with other vectors.
+ * @tparam VecInOut Type of vector to be filled.
+ * @tparam VecIn Type of the first vector to insert into the in/out vector.
+ * @tparam VecArgs Parameter pack of other vectors to fill in the in/out vector.
+ * @param x Vector to be filled.
+ * @param y First vector to insert into the in/out vector.
+ * @param args Pack of other vectors to fill in the in/out vector.
+ */
+template <typename VecInOut, typename VecIn, typename... VecArgs>
+inline void append_vectors(VecInOut& x, VecIn&& y, VecArgs&&... args) {
+  x.insert(x.end(), y.begin(), y.end());
+  append_vectors(x, std::forward<VecArgs>(args)...);
+}
+}  // namespace internal
 
 /**
  * Get the event stack from a vector of events and other arguments.
@@ -56,7 +54,8 @@ template <typename Vec, typename... Args>
 inline auto vec_concat(Vec&& v1, Args&&... args) {
   std::vector<value_type_t<Vec>> vec;
   vec.reserve(internal::sum_vector_sizes(v1, args...));
-  internal::append_vectors(vec, std::forward<Vec>(v1), std::forward<Args>(args)...);
+  internal::append_vectors(vec, std::forward<Vec>(v1),
+                           std::forward<Args>(args)...);
   return vec;
 }
 

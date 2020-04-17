@@ -41,17 +41,19 @@ inline auto value_of(T x) {
  * @return input value
  */
 template <typename T, require_integral_t<T>* = nullptr>
-inline auto value_of(T x) { return x; }
+inline auto value_of(T x) {
+  return x;
+}
 
 template <typename ComplexT, require_complex_t<ComplexT>* = nullptr,
-  require_not_vt_arithmetic<ComplexT>* = nullptr>
+          require_not_vt_arithmetic<ComplexT>* = nullptr>
 inline auto value_of(ComplexT&& x) {
   using complex_ret = std::complex<partials_type_t<value_type_t<ComplexT>>>;
   return complex_ret{value_of(x.real()), value_of(x.imag())};
 }
 
 template <typename T, require_complex_t<T>* = nullptr,
- require_vt_arithmetic<T>* = nullptr>
+          require_vt_arithmetic<T>* = nullptr>
 inline decltype(auto) value_of(T&& x) {
   return std::forward<T>(x);
 }
@@ -65,7 +67,7 @@ inline decltype(auto) value_of(T&& x) {
  * @return std::vector of values
  **/
 template <typename Vec, require_std_vector_t<Vec>* = nullptr,
- require_not_vt_arithmetic<Vec>* = nullptr>
+          require_not_vt_arithmetic<Vec>* = nullptr>
 inline auto value_of(Vec&& x) {
   const size_t x_size = x.size();
   std::vector<partials_type_t<value_type_t<Vec>>> result(x_size);
@@ -86,7 +88,8 @@ inline auto value_of(Vec&& x) {
  * @param x Specified std::vector.
  * @return Specified std::vector.
  */
-template <typename Vec, require_std_vector_vt<std::is_arithmetic, Vec>* = nullptr>
+template <typename Vec,
+          require_std_vector_vt<std::is_arithmetic, Vec>* = nullptr>
 inline decltype(auto) value_of(Vec&& x) {
   return std::forward<Vec>(x);
 }
@@ -104,17 +107,17 @@ inline decltype(auto) value_of(Vec&& x) {
  * @return Matrix of values
  **/
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
-  require_not_vt_var<EigMat>* = nullptr,
-  require_not_vt_arithmetic<EigMat>* = nullptr>
+          require_not_vt_var<EigMat>* = nullptr,
+          require_not_vt_arithmetic<EigMat>* = nullptr>
 inline auto value_of(EigMat&& M) {
   using eig_mat = std::decay_t<EigMat>;
   using ref_inner = const typename eig_mat::PlainObject;
   using eig_index = index_type_t<EigMat>;
   using eig_partial = partials_type_t<value_type_t<EigMat>>;
-  Eigen::Matrix<eig_partial,
-   eig_mat::RowsAtCompileTime,
-   eig_mat::ColsAtCompileTime> Md(M.rows(), M.cols());
- const Eigen::Ref<ref_inner, Eigen::Aligned16, Eigen::Stride<0,0>>& mat = M;
+  Eigen::Matrix<eig_partial, eig_mat::RowsAtCompileTime,
+                eig_mat::ColsAtCompileTime>
+      Md(M.rows(), M.cols());
+  const Eigen::Ref<ref_inner, Eigen::Aligned16, Eigen::Stride<0, 0>>& mat = M;
   for (eig_index j = 0; j < mat.cols(); j++) {
     for (eig_index i = 0; i < mat.rows(); i++) {
       Md.coeffRef(i, j) = value_of(mat.coeffRef(i, j));
@@ -137,11 +140,11 @@ inline auto value_of(EigMat&& M) {
  * @param x Specified matrix.
  * @return Specified matrix.
  */
-template <typename EigMat, require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
+template <typename EigMat,
+          require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
 inline decltype(auto) value_of(EigMat&& x) {
   return std::forward<EigMat>(x);
 }
-
 
 }  // namespace math
 }  // namespace stan

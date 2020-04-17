@@ -24,7 +24,7 @@ namespace math {
  * @return Unit length vector of dimension K
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
- require_not_vt_fvar<EigMat>* = nullptr>
+          require_not_vt_fvar<EigMat>* = nullptr>
 auto unit_vector_constrain(EigMat&& y) {
   using std::sqrt;
   check_vector("unit_vector_constrain", "y", y);
@@ -47,7 +47,7 @@ auto unit_vector_constrain(EigMat&& y) {
  * @param lp Log probability reference to increment.
  */
 template <typename EigMat, typename LP, require_eigen_t<EigMat>* = nullptr,
- require_not_vt_fvar<EigMat>* = nullptr>
+          require_not_vt_fvar<EigMat>* = nullptr>
 auto unit_vector_constrain(EigMat&& y, LP& lp) {
   using std::sqrt;
   check_vector("unit_vector_constrain", "y", y);

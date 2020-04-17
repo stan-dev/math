@@ -52,12 +52,13 @@ class unit_vector_elt_vari : public vari {
  * @param y vector of K unrestricted variables
  * @return Unit length vector of dimension K
  **/
-template <typename EigMat, require_eigen_t<EigMat>* = nullptr, require_var_t<value_type_t<EigMat>>* = nullptr>
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
+          require_var_t<value_type_t<EigMat>>* = nullptr>
 auto unit_vector_constrain(EigMat&& y) {
   using ref_inner = const typename std::decay_t<EigMat>::PlainObject;
   check_vector("unit_vector", "y", y);
   check_nonzero_size("unit_vector", "y", y);
-  const Eigen::Ref<ref_inner, Eigen::Aligned16, Eigen::Stride<0,0>>& y_mat = y;
+  const Eigen::Ref<ref_inner, Eigen::Aligned16, Eigen::Stride<0, 0>>& y_mat = y;
 
   auto y_d = y_mat.val();
 
@@ -72,7 +73,9 @@ auto unit_vector_constrain(EigMat&& y) {
   Eigen::Map<vector_d> unit_vecd(unit_vector_y_d_array, y.size());
   unit_vecd = y_d / norm;
 
-  Eigen::Matrix<var, std::decay_t<EigMat>::RowsAtCompileTime, std::decay_t<EigMat>::ColsAtCompileTime> unit_vector_y(y.size());
+  Eigen::Matrix<var, std::decay_t<EigMat>::RowsAtCompileTime,
+                std::decay_t<EigMat>::ColsAtCompileTime>
+      unit_vector_y(y.size());
   for (int k = 0; k < y.size(); ++k) {
     unit_vector_y.coeffRef(k) = var(new internal::unit_vector_elt_vari(
         unit_vecd[k], y_vi_array, unit_vector_y_d_array, y.size(), k, norm));
