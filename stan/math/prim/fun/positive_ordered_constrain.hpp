@@ -19,8 +19,8 @@ namespace math {
  * @return Positive, increasing ordered vector.
  */
 template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
-Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, 1> positive_ordered_constrain(
-    const EigVec& x) {
+Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, 1>
+positive_ordered_constrain(const EigVec& x) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
@@ -51,8 +51,8 @@ Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, 1> positive_ordered_constrai
  * @return Positive, increasing ordered vector.
  */
 template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, 1> positive_ordered_constrain(
-    const EigVec& x, value_type_t<EigVec>& lp) {
+inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, 1>
+positive_ordered_constrain(const EigVec& x, value_type_t<EigVec>& lp) {
   lp += sum(x);
   return positive_ordered_constrain(x);
 }

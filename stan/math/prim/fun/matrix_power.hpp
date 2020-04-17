@@ -50,7 +50,7 @@ matrix_power(const EigMat& M, const int n) {
 
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
-           EigMat::ColsAtCompileTime>
+                     EigMat::ColsAtCompileTime>
 operator^(const EigMat& M, const int n) {
   return matrix_power(M, n);
 }

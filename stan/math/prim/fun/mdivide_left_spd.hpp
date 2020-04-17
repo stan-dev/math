@@ -21,7 +21,8 @@ namespace math {
  * @throws std::domain_error if A is not square or the rows of b don't
  * match the size of A.
  */
-template <typename EigMat1, typename EigMat2, require_all_eigen_t<EigMat1, EigMat2>* = nullptr>
+template <typename EigMat1, typename EigMat2,
+          require_all_eigen_t<EigMat1, EigMat2>* = nullptr>
 inline Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
                      EigMat1::RowsAtCompileTime, EigMat2::ColsAtCompileTime>
 mdivide_left_spd(const EigMat1& A, const EigMat2& b) {

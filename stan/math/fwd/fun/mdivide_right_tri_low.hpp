@@ -15,9 +15,8 @@ template <typename EigMat1, typename EigMat2,
           require_all_eigen_vt<is_fvar, EigMat1, EigMat2>* = nullptr,
           require_vt_same<EigMat1, EigMat2>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat1>, EigMat1::RowsAtCompileTime,
-                     EigMat2::ColsAtCompileTime> mdivide_right_tri_low(
-    const EigMat1& A,
-    const EigMat2& b) {
+                     EigMat2::ColsAtCompileTime>
+mdivide_right_tri_low(const EigMat1& A, const EigMat2& b) {
   using T = typename value_type_t<EigMat1>::Scalar;
   constexpr int R1 = EigMat1::RowsAtCompileTime;
   constexpr int C1 = EigMat1::ColsAtCompileTime;
@@ -54,16 +53,17 @@ inline Eigen::Matrix<value_type_t<EigMat1>, EigMat1::RowsAtCompileTime,
   }
 
   Eigen::Matrix<T, R1, C2> A_mult_inv_b = mdivide_right(val_A, val_b);
-  return to_fvar(A_mult_inv_b, mdivide_right(deriv_A, val_b) - A_mult_inv_b * mdivide_right(deriv_b, val_b));
+  return to_fvar(A_mult_inv_b,
+                 mdivide_right(deriv_A, val_b)
+                     - A_mult_inv_b * mdivide_right(deriv_b, val_b));
 }
 
 template <typename EigMat1, typename EigMat2,
           require_eigen_vt<is_fvar, EigMat1>* = nullptr,
           require_eigen_vt<std::is_arithmetic, EigMat2>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat1>, EigMat1::RowsAtCompileTime,
-                     EigMat2::ColsAtCompileTime> mdivide_right_tri_low(
-    const EigMat1& A,
-    const EigMat2& b) {
+                     EigMat2::ColsAtCompileTime>
+mdivide_right_tri_low(const EigMat1& A, const EigMat2& b) {
   using T = typename value_type_t<EigMat1>::Scalar;
   constexpr int R1 = EigMat1::RowsAtCompileTime;
   constexpr int C1 = EigMat1::ColsAtCompileTime;
@@ -92,9 +92,8 @@ template <typename EigMat1, typename EigMat2,
           require_eigen_vt<std::is_arithmetic, EigMat1>* = nullptr,
           require_eigen_vt<is_fvar, EigMat2>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat2>, EigMat1::RowsAtCompileTime,
-                     EigMat2::ColsAtCompileTime> mdivide_right_tri_low(
-    const EigMat1& A,
-    const EigMat2& b) {
+                     EigMat2::ColsAtCompileTime>
+mdivide_right_tri_low(const EigMat1& A, const EigMat2& b) {
   using T = typename value_type_t<EigMat2>::Scalar;
   constexpr int R1 = EigMat1::RowsAtCompileTime;
   constexpr int C1 = EigMat1::ColsAtCompileTime;
@@ -121,7 +120,8 @@ inline Eigen::Matrix<value_type_t<EigMat2>, EigMat1::RowsAtCompileTime,
 
   A_mult_inv_b = mdivide_right(A, val_b);
 
-  return to_fvar(A_mult_inv_b, -multiply(A_mult_inv_b, mdivide_right(deriv_b, val_b)));
+  return to_fvar(A_mult_inv_b,
+                 -multiply(A_mult_inv_b, mdivide_right(deriv_b, val_b)));
 }
 
 }  // namespace math

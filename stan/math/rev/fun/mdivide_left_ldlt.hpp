@@ -200,9 +200,10 @@ class mdivide_left_ldlt_vd_vari : public vari {
  * @return x = A^-1 b, solution of the linear system.
  * @throws std::domain_error if rows of b don't match the size of A.
  */
-template <int R1, int C1, typename EigMat, require_eigen_vt<is_var,EigMat>* = nullptr>
+template <int R1, int C1, typename EigMat,
+          require_eigen_vt<is_var, EigMat> * = nullptr>
 inline Eigen::Matrix<var, R1, EigMat::ColsAtCompileTime> mdivide_left_ldlt(
-    const LDLT_factor<var, R1, C1>& A, const EigMat& b) {
+    const LDLT_factor<var, R1, C1> &A, const EigMat &b) {
   constexpr int R2 = EigMat::RowsAtCompileTime;
   constexpr int C2 = EigMat::ColsAtCompileTime;
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
@@ -230,9 +231,10 @@ inline Eigen::Matrix<var, R1, EigMat::ColsAtCompileTime> mdivide_left_ldlt(
  * @return x = A^-1 b, solution of the linear system.
  * @throws std::domain_error if rows of b don't match the size of A.
  */
-template <int R1, int C1, typename EigMat, require_eigen_vt<std::is_arithmetic,EigMat>* = nullptr>
+template <int R1, int C1, typename EigMat,
+          require_eigen_vt<std::is_arithmetic, EigMat> * = nullptr>
 inline Eigen::Matrix<var, R1, EigMat::ColsAtCompileTime> mdivide_left_ldlt(
-    const LDLT_factor<var, R1, C1>& A, const EigMat& b) {
+    const LDLT_factor<var, R1, C1> &A, const EigMat &b) {
   constexpr int R2 = EigMat::RowsAtCompileTime;
   constexpr int C2 = EigMat::ColsAtCompileTime;
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
@@ -260,9 +262,10 @@ inline Eigen::Matrix<var, R1, EigMat::ColsAtCompileTime> mdivide_left_ldlt(
  * @return x = A^-1 b, solution of the linear system.
  * @throws std::domain_error if rows of b don't match the size of A.
  */
-template <int R1, int C1, typename EigMat, require_eigen_vt<is_var,EigMat>* = nullptr>
+template <int R1, int C1, typename EigMat,
+          require_eigen_vt<is_var, EigMat> * = nullptr>
 inline Eigen::Matrix<var, R1, EigMat::ColsAtCompileTime> mdivide_left_ldlt(
-    const LDLT_factor<double, R1, C1>& A, const EigMat& b) {
+    const LDLT_factor<double, R1, C1> &A, const EigMat &b) {
   constexpr int R2 = EigMat::RowsAtCompileTime;
   constexpr int C2 = EigMat::ColsAtCompileTime;
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
