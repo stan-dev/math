@@ -14,7 +14,20 @@ namespace math {
  * @param v Variable.
  * @return Value of variable.
  */
-inline double value_of_rec(const var& v) { return v.vi_->val_; }
+template <typename Var, require_var_t<Var>* = nullptr>
+inline auto value_of_rec(Var&& v) { return v.vi_->val_; }
+
+
+template <typename Vec, require_std_vector_vt<is_var, Vec>* = nullptr>
+inline auto value_of_rec(Vec&& x) {
+  return value_of(std::forward<Vec>(x));
+}
+
+template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
+inline auto value_of_rec(EigMat&& M) {
+  return M.val().eval();
+}
+
 
 }  // namespace math
 }  // namespace stan

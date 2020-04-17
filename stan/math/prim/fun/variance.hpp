@@ -18,16 +18,17 @@ namespace math {
  * @return sample variance of vector
  * @throw <code>std::invalid_argument</code> if the vector has size zero
  */
-template <typename T>
-inline return_type_t<T> variance(const std::vector<T>& v) {
+template <typename StdVec, require_std_vector_t<StdVec>* = nullptr, require_not_vt_var<StdVec>* = nullptr>
+inline auto variance(StdVec&& v) {
+  using vec_value = value_type_t<StdVec>;
   check_nonzero_size("variance", "v", v);
   if (v.size() == 1) {
-    return 0.0;
+    return static_cast<vec_value>(0.0);
   }
-  T v_mean(mean(v));
-  T sum_sq_diff(0);
+  const vec_value v_mean(mean(v));
+  vec_value sum_sq_diff(0);
   for (size_t i = 0; i < v.size(); ++i) {
-    T diff = v[i] - v_mean;
+    const vec_value diff = v[i] - v_mean;
     sum_sq_diff += diff * diff;
   }
   return sum_sq_diff / (v.size() - 1);
@@ -45,17 +46,20 @@ inline return_type_t<T> variance(const std::vector<T>& v) {
  * @return sample variance of coefficients
  * @throw <code>std::invalid_argument</code> if the matrix has size zero
  */
-template <typename T, int R, int C>
-inline return_type_t<T> variance(const Eigen::Matrix<T, R, C>& m) {
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr, require_not_vt_var<EigMat>* = nullptr>
+inline auto variance(EigMat&& m) {
+  using eig_value = value_type_t<EigMat>;
+  using ref_inner = const typename std::decay_t<EigMat>::PlainObject;
   check_nonzero_size("variance", "m", m);
 
   if (m.size() == 1) {
-    return 0.0;
+    return static_cast<eig_value>(0.0);
   }
-  return_type_t<T> mn(mean(m));
-  return_type_t<T> sum_sq_diff(0);
+  const Eigen::Ref<ref_inner, Eigen::Aligned16, Eigen::Stride<0,0>>& mat = m;
+  const eig_value mn(mean(mat));
+  eig_value sum_sq_diff(0);
   for (int i = 0; i < m.size(); ++i) {
-    return_type_t<T> diff = m(i) - mn;
+    const eig_value diff = mat(i) - mn;
     sum_sq_diff += diff * diff;
   }
   return sum_sq_diff / (m.size() - 1);

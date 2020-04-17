@@ -22,7 +22,7 @@ namespace math {
  * @param y Value.
  */
 template <typename T, int R, int C, typename S>
-void fill(Eigen::Matrix<T, R, C>& x, const S& y) {
+inline void fill(Eigen::Matrix<T, R, C>& x, const S& y) {
   x.fill(y);
 }
 
@@ -37,7 +37,7 @@ void fill(Eigen::Matrix<T, R, C>& x, const S& y) {
  * @param y Value.
  */
 template <typename T, typename S>
-void fill(T& x, const S& y) {
+inline void fill(T& x, const S& y) {
   x = y;
 }
 
@@ -53,7 +53,7 @@ void fill(T& x, const S& y) {
  * @param[in, out] y Value.
  */
 template <typename T, typename S>
-void fill(std::vector<T>& x, const S& y) {
+inline void fill(std::vector<T>& x, const S& y) {
   for (typename std::vector<T>::size_type i = 0; i < x.size(); ++i) {
     fill(x[i], y);
   }

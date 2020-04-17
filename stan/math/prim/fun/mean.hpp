@@ -18,10 +18,11 @@ namespace math {
  * @throws std::domain_error if the size of the vector is less
  * than 1.
  */
-template <typename T>
-inline return_type_t<T> mean(const std::vector<T>& v) {
+template <typename StdVec, require_std_vector_t<StdVec>* = nullptr, require_not_vt_var<StdVec>* = nullptr>
+inline value_type_t<StdVec> mean(StdVec&& v) {
+  using vec_value = value_type_t<StdVec>;
   check_nonzero_size("mean", "v", v);
-  Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>> m(&v[0], v.size());
+  Eigen::Map<const Eigen::Matrix<vec_value, Eigen::Dynamic, 1>> m(&v[0], v.size());
   return m.mean();
 }
 
@@ -36,8 +37,8 @@ inline return_type_t<T> mean(const std::vector<T>& v) {
  * @param m Specified vector, row vector, or matrix.
  * @return Sample mean of vector coefficients.
  */
-template <typename T, int R, int C>
-inline return_type_t<T> mean(const Eigen::Matrix<T, R, C>& m) {
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr, require_not_vt_var<EigMat>* = nullptr>
+inline value_type_t<EigMat> mean(EigMat&& m) {
   check_nonzero_size("mean", "m", m);
   return m.mean();
 }

@@ -25,23 +25,25 @@ namespace math {
  * @param x Scalar to convert to double.
  * @return Value of scalar cast to a double.
  */
-template <typename T, typename = require_stan_scalar_t<T>>
-inline double value_of_rec(const T x) {
-  return static_cast<double>(x);
-}
+ template <typename T, require_floating_point_t<T>* = nullptr>
+ inline auto value_of_rec(T x) {
+   return x;
+ }
 
-/**
- * Return the specified argument.
- *
- * <p>See <code>value_of(T)</code> for a polymorphic
- * implementation using static casts.
- *
- * <p>This inline pass-through no-op should be compiled away.
- *
- * @param x Specified value.
- * @return Specified value.
- */
-inline double value_of_rec(double x) { return x; }
+ /**
+  * Return the specified argument.
+  *
+  * <p>See <code>value_of(T)</code> for a polymorphic
+  * implementation using static casts.
+  *
+  * <p>This inline pass-through no-op should be compiled away.
+  *
+  * @param x Specified value.
+  * @return Specified value.
+  */
+template <typename T, require_integral_t<T>* = nullptr>
+inline auto value_of_rec(T x) { return x; }
+
 
 /**
  * Recursively apply value-of to the parts of the argument.
@@ -50,9 +52,21 @@ inline double value_of_rec(double x) { return x; }
  * @param[in] x argument
  * @return real complex value of argument
  */
-template <typename T>
-inline std::complex<double> value_of_rec(const std::complex<T>& x) {
-  return {value_of_rec(x.real()), value_of_rec(x.imag())};
+template <typename ComplexT, require_complex_t<ComplexT>* = nullptr, require_not_vt_arithmetic<ComplexT>* = nullptr>
+inline auto value_of_rec(ComplexT&& x) {
+  return std::complex<double>{value_of_rec(x.real()), value_of_rec(x.imag())};
+}
+
+/**
+ * Recursively apply value-of to the parts of the argument.
+ *
+ * @tparam ComplexT value type of argument
+ * @param[in] x argument
+ * @return real complex value of argument
+ */
+template <typename ComplexT, require_complex_t<ComplexT>* = nullptr, require_vt_arithmetic<ComplexT>* = nullptr>
+inline decltype(auto) value_of_rec(ComplexT&& x) {
+  return std::forward<ComplexT>(x);
 }
 
 /**
@@ -65,8 +79,10 @@ inline std::complex<double> value_of_rec(const std::complex<T>& x) {
  * @param[in] x std::vector to be converted
  * @return std::vector of values
  **/
-template <typename T>
-inline std::vector<double> value_of_rec(const std::vector<T>& x) {
+ template <typename Vec, require_std_vector_t<Vec>* = nullptr,
+  require_not_vt_arithmetic<Vec>* = nullptr,
+  require_not_vt_var<Vec>* = nullptr>
+ inline auto value_of_rec(Vec&& x) {
   size_t x_size = x.size();
   std::vector<double> result(x_size);
   for (size_t i = 0; i < x_size; i++) {
@@ -86,9 +102,10 @@ inline std::vector<double> value_of_rec(const std::vector<T>& x) {
  * @param x Specified std::vector.
  * @return Specified std::vector.
  */
-inline const std::vector<double>& value_of_rec(const std::vector<double>& x) {
-  return x;
-}
+ template <typename Vec, require_std_vector_vt<std::is_arithmetic, Vec>* = nullptr>
+ inline decltype(auto) value_of_rec(Vec&& x) {
+   return std::forward<Vec>(x);
+ }
 
 /**
  * Convert a matrix of type T to a matrix of doubles.
@@ -100,11 +117,14 @@ inline const std::vector<double>& value_of_rec(const std::vector<double>& x) {
  * @param[in] M Matrix to be converted
  * @return Matrix of values
  **/
-template <typename T, typename = require_not_st_same<T, double>,
-          typename = require_eigen_t<T>>
-inline auto value_of_rec(const T& M) {
-  return M.unaryExpr([](auto x) { return value_of_rec(x); });
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
+  require_not_vt_arithmetic<EigMat>* = nullptr,
+  require_not_vt_var<EigMat>* = nullptr>
+inline auto value_of_rec(EigMat&& M) {
+  return M.unaryExpr([](auto&& x) { return value_of_rec(x); });
 }
+
+
 
 /**
  * Return the specified argument.
@@ -118,11 +138,12 @@ inline auto value_of_rec(const T& M) {
  * @param x Specified matrix.
  * @return Specified matrix.
  */
-template <typename T, typename = require_st_same<T, double>,
-          typename = require_eigen_t<T>>
-inline const T& value_of_rec(const T& x) {
-  return x;
-}
+ template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
+   require_vt_arithmetic<EigMat>* = nullptr>
+ inline decltype(auto) value_of_rec(EigMat&& M) {
+   return std::forward<EigMat>(M);
+ }
+
 }  // namespace math
 }  // namespace stan
 

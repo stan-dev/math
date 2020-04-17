@@ -38,12 +38,14 @@ inline var calc_variance(size_t size, const var* dtrs) {
  * @param[in] v a vector
  * @return sample variance of specified vector
  */
-inline var variance(const std::vector<var>& v) {
+ template <typename StdVec, require_std_vector_t<StdVec>* = nullptr,
+   require_vt_var<StdVec>* = nullptr>
+inline auto variance(StdVec&& v) {
   check_nonzero_size("variance", "v", v);
   if (v.size() == 1) {
-    return 0;
+    return var{0};
   }
-  return internal::calc_variance(v.size(), &v[0]);
+  return var{internal::calc_variance(v.size(), &v[0])};
 }
 
 /**
@@ -56,13 +58,17 @@ inline var variance(const std::vector<var>& v) {
  * @param[in] m input matrix
  * @return sample variance of specified matrix
  */
-template <int R, int C>
-var variance(const Eigen::Matrix<var, R, C>& m) {
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
+  require_vt_var<EigMat>* = nullptr>
+auto variance(EigMat&& m) {
+  using ref_inner = const typename std::decay_t<EigMat>::PlainObject;
   check_nonzero_size("variance", "m", m);
   if (m.size() == 1) {
-    return 0;
+    return var{0};
   }
-  return internal::calc_variance(m.size(), &m(0));
+
+  const Eigen::Ref<ref_inner, Eigen::Aligned16, Eigen::Stride<0,0>>& mat = m;
+  return var{internal::calc_variance(m.size(), mat.data())};
 }
 
 }  // namespace math
