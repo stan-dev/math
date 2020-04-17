@@ -18,8 +18,7 @@ namespace math {
  * @throws std::domain_error if the size of the vector is less
  * than 1.
  */
-template <typename StdVec, require_std_vector_t<StdVec>* = nullptr,
-          require_not_vt_var<StdVec>* = nullptr>
+template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
 inline value_type_t<StdVec> mean(StdVec&& v) {
   using vec_value = value_type_t<StdVec>;
   check_nonzero_size("mean", "v", v);
@@ -39,8 +38,7 @@ inline value_type_t<StdVec> mean(StdVec&& v) {
  * @param m Specified vector, row vector, or matrix.
  * @return Sample mean of vector coefficients.
  */
-template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
-          require_not_vt_var<EigMat>* = nullptr>
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
 inline value_type_t<EigMat> mean(EigMat&& m) {
   check_nonzero_size("mean", "m", m);
   return m.mean();
