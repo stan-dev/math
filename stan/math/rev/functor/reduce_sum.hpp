@@ -116,7 +116,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       // Perform calculation
       var sub_sum_v = apply(
           [&](auto&&... args) {
-            return ReduceFunction()(r.begin(), r.end() - 1, local_sub_slice,
+            return ReduceFunction()(local_sub_slice, r.begin(), r.end() - 1,
                                     msgs_, args...);
           },
           args_tuple_local_copy);
@@ -164,7 +164,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    *   mode autodiff.
    *
    * ReduceFunction must define an operator() with the same signature as:
-   *   var f(int start, int end, Vec&& vmapped_subset, std::ostream* msgs,
+   *   var f(Vec&& vmapped_subset, int start, int end, std::ostream* msgs,
    * Args&&... args)
    *
    * `ReduceFunction` must be default constructible without any arguments
