@@ -20,9 +20,9 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the matrix is not square.
  *
  */
-template <typename T>
+template <typename T, int RowsAtCompileTime, int ColsAtCompileTime>
 template <TriangularMapCL triangular_map>
-inline void matrix_cl<T, require_var_t<T>>::triangular_transpose() try {
+inline void matrix_cl<T, RowsAtCompileTime, ColsAtCompileTime, require_var_t<T>>::triangular_transpose() try {
   this->val().template triangular_transpose<triangular_map>();
   this->adj().template triangular_transpose<triangular_map>();
 } catch (const cl::Error& e) {

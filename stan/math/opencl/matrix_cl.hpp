@@ -30,8 +30,8 @@ namespace math {
  * Represents a matrix on the OpenCL device.
  * @tparam T an arithmetic type for the type stored in the OpenCL buffer.
  */
-template <typename T>
-class matrix_cl<T, require_arithmetic_t<T>> {
+template <typename T, int RowsAtCompileTime, int ColsAtCompileTime>
+class matrix_cl<T, RowsAtCompileTime, ColsAtCompileTime, require_arithmetic_t<T>> {
  private:
   cl::Buffer buffer_cl_;  // Holds the allocated memory on the device
   int rows_{0};
@@ -52,7 +52,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
   inline void triangular_transpose();
 
-  inline void sub_block(const matrix_cl<T, require_arithmetic_t<T>>& A,
+  inline void sub_block(const matrix_cl<T, RowsAtCompileTime, ColsAtCompileTime, require_arithmetic_t<T>>& A,
                         size_t A_i, size_t A_j, size_t this_i, size_t this_j,
                         size_t nrows, size_t ncols);
   int rows() const { return rows_; }
@@ -189,7 +189,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * Copy constructor.
    * @param A matrix_cl to copy
    */
-  matrix_cl(const matrix_cl<T>& A)
+  matrix_cl(const matrix_cl<T, RowsAtCompileTime, ColsAtCompileTime>& A)
       : rows_(A.rows()), cols_(A.cols()), view_(A.view()) {
     if (A.size() == 0) {
       return;
@@ -201,13 +201,14 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * Move constructor.
    * @param A matrix_cl to move
    */
-  matrix_cl(matrix_cl<T>&& A)
+  matrix_cl(matrix_cl<T, RowsAtCompileTime, ColsAtCompileTime>&& A)
       : buffer_cl_(std::move(A.buffer_cl_)),
         rows_(A.rows_),
         cols_(A.cols_),
         view_(A.view_),
         write_events_(std::move(A.write_events_)),
-        read_events_(std::move(A.read_events_)) {}
+        read_events_(std::move(A.read_events_)) {
+        }
 
   /**
    * Constructor for the matrix_cl that creates a copy of a std::vector of Eigen
@@ -464,7 +465,8 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   /** \ingroup opencl
    * Move assignment operator.
    */
-  matrix_cl<T>& operator=(matrix_cl<T>&& a) {
+  matrix_cl<T, RowsAtCompileTime, ColsAtCompileTime>& operator=(
+     matrix_cl<T, RowsAtCompileTime, ColsAtCompileTime>&& a) {
     view_ = a.view();
     rows_ = a.rows();
     cols_ = a.cols();
@@ -478,7 +480,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   /** \ingroup opencl
    * Copy assignment operator.
    */
-  matrix_cl<T>& operator=(const matrix_cl<T>& a) {
+  matrix_cl<T, RowsAtCompileTime, ColsAtCompileTime>& operator=(const matrix_cl<T, RowsAtCompileTime, ColsAtCompileTime>& a) {
     this->view_ = a.view();
     this->rows_ = a.rows();
     this->cols_ = a.cols();
@@ -498,7 +500,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    */
   template <typename Expr,
             require_all_valid_expressions_and_none_scalar_t<Expr>* = nullptr>
-  matrix_cl<T>& operator=(const Expr& expression);
+  matrix_cl<T, RowsAtCompileTime, ColsAtCompileTime, require_arithmetic_t<T>>& operator=(const Expr& expression);
 
  private:
   /** \ingroup opencl
@@ -579,7 +581,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * size of given matrix.
    * @param A matrix_cl
    */
-  void initialize_buffer(const matrix_cl<T>& A) {
+  void initialize_buffer(const matrix_cl<T, RowsAtCompileTime, ColsAtCompileTime>& A) {
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue queue = opencl_context.queue();
     try {
@@ -607,12 +609,6 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     delete static_cast<U*>(container);
   }
 };
-
-template <typename T>
-using matrix_cl_prim = matrix_cl<T, require_arithmetic_t<T>>;
-
-template <typename T>
-using matrix_cl_fp = matrix_cl<T, require_floating_point_t<T>>;
 
 }  // namespace math
 }  // namespace stan

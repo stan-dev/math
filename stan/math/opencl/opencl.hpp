@@ -11,9 +11,9 @@
  * \defgroup opencl_kernels OpenCL Kernels
  */
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/copy_triangular.hpp>
 #include <stan/math/opencl/cholesky_decompose.hpp>

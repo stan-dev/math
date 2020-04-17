@@ -9,7 +9,7 @@ namespace stan {
 
 namespace math {
 // Dummy class to instantiate matrix_cl to enable for specific types.
-template <typename T, typename = void>
+template <typename T, int RowsAtCompileTime = -1, int ColsAtCompileTime = -1, typename = void>
 class matrix_cl {
  public:
   using Scalar = T;
@@ -29,8 +29,8 @@ struct is_matrix_cl_impl : std::false_type {};
  * This specialization implementation has a static member named value when the
  * template type is an std vector.
  */
-template <typename... Args>
-struct is_matrix_cl_impl<stan::math::matrix_cl<Args...>> : std::true_type {};
+ template <typename T, int RowsAtCompileTime, int ColsAtCompileTime>
+struct is_matrix_cl_impl<stan::math::matrix_cl<T, RowsAtCompileTime, ColsAtCompileTime, void>> : std::true_type {};
 
 }  // namespace internal
 

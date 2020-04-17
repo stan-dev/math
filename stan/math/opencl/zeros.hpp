@@ -23,9 +23,9 @@ namespace math {
  * the entire matrix, lower triangular or upper triangular. The
  * value must be of type matrix_cl_view
  */
-template <typename T>
+template <typename T, int RowsAtCompileTime, int ColsAtCompileTime>
 template <matrix_cl_view matrix_view>
-inline void matrix_cl<T, require_arithmetic_t<T>>::zeros() try {
+inline void matrix_cl<T, RowsAtCompileTime, ColsAtCompileTime, require_arithmetic_t<T>>::zeros() try {
   if (size() == 0) {
     return;
   }
@@ -50,9 +50,9 @@ inline void matrix_cl<T, require_arithmetic_t<T>>::zeros() try {
  * @throw <code>std::invalid_argument</code> if the
  * matrix_view parameter is Entire.
  */
-template <typename T>
+template <typename T, int RowsAtCompileTime, int ColsAtCompileTime>
 template <matrix_cl_view matrix_view>
-inline void matrix_cl<T, require_arithmetic_t<T>>::zeros_strict_tri() try {
+inline void matrix_cl<T, RowsAtCompileTime, ColsAtCompileTime, require_arithmetic_t<T>>::zeros_strict_tri() try {
   if (matrix_view == matrix_cl_view::Entire) {
     invalid_argument(
         "zeros_strict_tri", "matrix_view",

@@ -22,9 +22,9 @@ namespace math {
  * @param nrows the number of rows in the submatrix
  * @param ncols the number of columns in the submatrix
  */
-template <typename T>
-inline void matrix_cl<T, require_var_t<T>>::sub_block(
-    const matrix_cl<T, require_var_t<T>>& A, size_t A_i, size_t A_j,
+template <typename T, int RowsAtCompileTime, int ColsAtCompileTime>
+inline void matrix_cl<T, RowsAtCompileTime, ColsAtCompileTime, require_var_t<T>>::sub_block(
+    const matrix_cl<T, RowsAtCompileTime, ColsAtCompileTime, require_var_t<T>>& A, size_t A_i, size_t A_j,
     size_t this_i, size_t this_j, size_t nrows, size_t ncols) try {
   this->val().sub_block(A.val(), A_i, A_j, this_i, this_j, nrows, ncols);
   this->adj().sub_block(A.adj(), A_i, A_j, this_i, this_j, nrows, ncols);

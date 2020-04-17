@@ -18,8 +18,8 @@
 namespace stan {
 namespace math {
 
-template <typename T>
-class matrix_cl<T, require_var_t<T>> {
+template <typename T, int RowsAtCompileTime, int ColsAtCompileTime>
+class matrix_cl<T, RowsAtCompileTime, ColsAtCompileTime, require_var_t<T>> {
  private:
   /**
    * cl::Buffer provides functionality for working with the OpenCL buffer.
@@ -28,8 +28,8 @@ class matrix_cl<T, require_var_t<T>> {
    */
   const int rows_;
   const int cols_;
-  mutable matrix_cl<double> val_;
-  mutable matrix_cl<double> adj_;
+  mutable matrix_cl<double, RowsAtCompileTime, ColsAtCompileTime> val_;
+  mutable matrix_cl<double, RowsAtCompileTime, ColsAtCompileTime> adj_;
   matrix_cl_view view_{matrix_cl_view::Entire};
 
  public:
@@ -41,8 +41,8 @@ class matrix_cl<T, require_var_t<T>> {
 
   inline int size() const { return rows_ * cols_; }
 
-  inline matrix_cl<double>& val() const { return val_; }
-  inline matrix_cl<double>& adj() const { return adj_; }
+  inline matrix_cl<double, RowsAtCompileTime, ColsAtCompileTime>& val() const { return val_; }
+  inline matrix_cl<double, RowsAtCompileTime, ColsAtCompileTime>& adj() const { return adj_; }
   matrix_cl() : rows_(0), cols_(0), val_(0, 0), adj_(0, 0) {}
 
   // Forward declare the methods that work in place on the matrix
@@ -53,7 +53,7 @@ class matrix_cl<T, require_var_t<T>> {
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
   inline void triangular_transpose();
 
-  inline void sub_block(const matrix_cl<T, require_var_t<T>>& A, size_t A_i,
+  inline void sub_block(const matrix_cl<T, RowsAtCompileTime, ColsAtCompileTime, require_var_t<T>>& A, size_t A_i,
                         size_t A_j, size_t this_i, size_t this_j, size_t nrows,
                         size_t ncols);
 
@@ -171,8 +171,8 @@ class matrix_cl<T, require_var_t<T>> {
         val_(rows, cols),
         adj_(rows, cols),
         view_(partial_view) {}
-
-  matrix_cl<var> operator=(const matrix_cl<var>& A) {
+  matrix_cl<var, RowsAtCompileTime, ColsAtCompileTime> operator=(
+    const matrix_cl<var, RowsAtCompileTime, ColsAtCompileTime>& A) {
     val_ = A.val();
     adj_ = A.adj();
     return *this;

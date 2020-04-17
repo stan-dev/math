@@ -117,12 +117,12 @@ class operation_cl : public operation_cl_base {
    * Evaluates the expression.
    * @return Result of the expression.
    */
-  matrix_cl<Scalar> eval() const {
+  auto eval() const {
     int rows = derived().rows();
     int cols = derived().cols();
     check_nonnegative("operation_cl.eval", "this->rows()", rows);
     check_nonnegative("operation_cl.eval", "this->cols()", cols);
-    matrix_cl<Scalar> res(rows, cols, derived().view());
+    matrix_cl<Scalar, -1, -1> res(rows, cols, derived().view());
     if (res.size() > 0) {
       this->evaluate_into(res);
     }
