@@ -94,7 +94,7 @@ return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
   const auto& theta_dbl = value_of(as_column_vector_or_scalar(theta));
   const auto& lam_dbl = value_of(as_column_vector_or_scalar(lambda));
 
-  T_partials_return logp = log_sum_exp(log(theta_dbl) + lam_dbl);
+  T_partials_return logp = log_sum_exp((log(theta_dbl) + lam_dbl).eval());
   T_partials_vec theta_deriv = (lam_dbl.array() - logp).exp();
 
   operands_and_partials<T_theta, T_lam> ops_partials(theta, lambda);
