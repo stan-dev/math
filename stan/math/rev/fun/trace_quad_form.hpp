@@ -81,7 +81,7 @@ class trace_quad_form_vari : public vari {
 
 template <typename EigMatL, typename EigMatR,
           require_any_eigen_vt<is_var, EigMatL, EigMatR>* = nullptr>
-inline auto trace_quad_form(EigMatL&& A, EigMatR& B) {
+inline auto trace_quad_form(EigMatL&& A, EigMatR&& B) {
   check_square("trace_quad_form", "A", A);
   check_multiplicable("trace_quad_form", "A", A, "B", B);
 
