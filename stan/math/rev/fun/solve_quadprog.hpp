@@ -137,14 +137,13 @@ using Eigen::VectorXi;
 // CHECK - Edit the first two arguments to make them constants.
 template <typename T1__, typename T2__, typename T3__,
           typename T4__, typename T5__>
-double
-solve_quadprog_1(const Eigen::Matrix<stan::math::var, -1, -1> &G,
+Eigen::Matrix<stan::math::var, -1, 1>
+solve_quadprog(const Eigen::Matrix<stan::math::var, -1, -1> &G,
                const Eigen::Matrix<T1__, -1, 1> &g0,
                const Eigen::Matrix<T2__, -1, -1> &CE,
                const Eigen::Matrix<T3__, -1, 1> &ce0,
                const Eigen::Matrix<T4__, -1, -1> &CI,
-               const Eigen::Matrix<T5__, -1, 1> &ci0,
-               Eigen::Matrix<stan::math::var, -1, 1> &x) {
+               const Eigen::Matrix<T5__, -1, 1> &ci0) {
 
   using std::abs;
   int i, j, k, l; /* indices */
@@ -156,6 +155,7 @@ solve_quadprog_1(const Eigen::Matrix<stan::math::var, -1, -1> &G,
   int n = g0.size();
   int p = ce0.size();
   int m = ci0.size();
+  Eigen::Matrix<stan::math::var, -1, 1> x(g0.size());
 
   MatrixXd R(G.rows(), G.cols()), J(G.rows(), G.cols());
 
@@ -252,7 +252,7 @@ solve_quadprog_1(const Eigen::Matrix<stan::math::var, -1, -1> &G,
     if (!add_constraint(R, J, d, iq, R_norm)) {
       // FIXME: it should raise an error
       // Equality constraints are linearly dependent
-      return f_value;
+      return x;
     }
   }
 
@@ -289,7 +289,7 @@ l1:
       mi * std::numeric_limits<double>::epsilon() * c1 * c2 * 100.0) {
     /* numerically there are not infeasibilities anymore */
     q = iq;
-    return f_value;
+    return x;
   }
 
   /* save old values for u, x and A */
@@ -306,7 +306,7 @@ l2: /* Step 2: check for feasibility and determine a new S-pair */
   }
   if (ss >= 0.0) {
     q = iq;
-    return f_value;
+    return x;
   }
 
   /* set np = n(ip) */
@@ -372,7 +372,7 @@ l2a: /* Step 2a: determine step direction */
     /* QPP is infeasible */
     // FIXME: unbounded to raise
     q = iq;
-    return inf;
+    return x;
   }
   /* case (ii): step in dual space */
   if (t2 >= inf) {
@@ -594,19 +594,6 @@ l2a: /* Step 2a: determine step direction */
 //     }
 //   }
 // }
-
-template <typename T1__, typename T2__, typename T3__, typename T4__, typename T5__>
-Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1>
-solve_quadprog(Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>& G,
-                   const Eigen::Matrix<T1__, Eigen::Dynamic, 1>& g0,
-                   const Eigen::Matrix<T2__, Eigen::Dynamic, Eigen::Dynamic>& CE,
-                   const Eigen::Matrix<T3__, Eigen::Dynamic, 1>& ce0,
-                   const Eigen::Matrix<T4__, Eigen::Dynamic, Eigen::Dynamic>& CI,
-                   const Eigen::Matrix<T5__, Eigen::Dynamic, 1>& ci0) {
-    Eigen::Matrix<stan::math::var, -1, 1> x(g0.size());
-    solve_quadprog_1(G, g0, CE, ce0, CI, ci0, x);
-    return x;    
-}
    
 }
 }
