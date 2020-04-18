@@ -43,7 +43,6 @@ inline auto value_of_rec(ComplexT&& x) {
   return std::complex<double>{value_of_rec(x.real()), value_of_rec(x.imag())};
 }
 
-
 /**
  * Convert a std::vector of type T to a std::vector of doubles.
  *
@@ -54,10 +53,9 @@ inline auto value_of_rec(ComplexT&& x) {
  * @param[in] x std::vector to be converted
  * @return std::vector of values
  **/
-template <typename Vec,
-  require_std_vector_t<Vec>* = nullptr,
-  require_not_vt_arithmetic<Vec>* = nullptr,
-  require_not_vt_var<Vec>* = nullptr>
+template <typename Vec, require_std_vector_t<Vec>* = nullptr,
+          require_not_vt_arithmetic<Vec>* = nullptr,
+          require_not_vt_var<Vec>* = nullptr>
 inline auto value_of_rec(Vec&& x) {
   size_t x_size = x.size();
   std::vector<double> result(x_size);
@@ -73,8 +71,7 @@ inline auto value_of_rec(Vec&& x) {
  * @param x Specified std::vector.
  * @return Input std::vector converted to doubles.
  */
-template <typename Vec,
-   require_std_vector_vt<std::is_integral, Vec>* = nullptr>
+template <typename Vec, require_std_vector_vt<std::is_integral, Vec>* = nullptr>
 inline auto value_of_rec(Vec&& x) {
   return std::vector<double>(x.begin(), x.end());
 }
@@ -89,10 +86,9 @@ inline auto value_of_rec(Vec&& x) {
  * @param[in] M Matrix to be converted
  * @return Matrix of values
  **/
-template <typename EigMat,
-  require_eigen_t<EigMat>* = nullptr,
-  require_not_vt_arithmetic<EigMat>* = nullptr,
-  require_not_vt_var<EigMat>* = nullptr>
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
+          require_not_vt_arithmetic<EigMat>* = nullptr,
+          require_not_vt_var<EigMat>* = nullptr>
 inline auto value_of_rec(EigMat&& M) {
   return M.unaryExpr([](auto&& x) { return value_of_rec(x); });
 }
@@ -110,11 +106,10 @@ inline auto value_of_rec(EigMat&& M) {
  * @return Specified matrix.
  */
 template <typename EigMat,
-  require_eigen_vt<std::is_integral, EigMat>* = nullptr>
+          require_eigen_vt<std::is_integral, EigMat>* = nullptr>
 inline auto value_of_rec(EigMat&& M) {
   return M.template cast<double>();
 }
-
 
 }  // namespace math
 }  // namespace stan

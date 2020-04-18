@@ -75,12 +75,10 @@ inline auto value_of(Vec&& x) {
  * @tparam Vec Standard vector holding integral type.
  * @param x Standard vector.
  */
-template <typename Vec,
-          require_std_vector_vt<std::is_integral, Vec>* = nullptr>
+template <typename Vec, require_std_vector_vt<std::is_integral, Vec>* = nullptr>
 inline auto value_of(Vec&& x) {
   return std::vector<double>(x.begin(), x.end());
 }
-
 
 /**
  * Apply `value_of` to each element of an Eigen type.
