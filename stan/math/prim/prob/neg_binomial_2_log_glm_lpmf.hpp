@@ -96,15 +96,15 @@ neg_binomial_2_log_glm_lpmf(
   check_positive_finite(function, "Precision parameter", phi);
 
   if (size_zero(y, phi)) {
-    return 0;
+    return 0.0;
   }
 
   if (!include_summand<propto, T_x_scalar, T_alpha, T_beta,
                        T_precision>::value) {
-    return 0;
+    return 0.0;
   }
 
-  T_partials_return logp(0);
+  T_partials_return logp(0.0);
   const auto& x_val = value_of_rec(x);
   const auto& y_val = value_of_rec(y);
   const auto& beta_val = value_of_rec(beta);
@@ -140,9 +140,9 @@ neg_binomial_2_log_glm_lpmf(
   // Compute the log-density.
   if (include_summand<propto>::value) {
     if (is_vector<T_y>::value) {
-      logp -= sum(lgamma(y_arr + 1));
+      logp -= sum(lgamma(y_arr + 1.0));
     } else {
-      logp -= sum(lgamma(y_arr + 1)) * N_instances;
+      logp -= sum(lgamma(y_arr + 1.0)) * N_instances;
     }
   }
   if (include_summand<propto, T_precision>::value) {
