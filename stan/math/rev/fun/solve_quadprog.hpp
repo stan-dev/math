@@ -277,14 +277,14 @@ solve_quadprog(const Eigen::Matrix<T0, -1, -1> &G,
   int n = g0.size();
   int p = ce0.size();
   int m = ci0.size();
-  stan::math::matrix_v R(G.rows(), G.cols());
-
-  stan::math::vector_v np(n), u(m + p), d(n), z(n), r(m + p), s(m + p);
-  stan::math::vector_v x_old(n), u_old(m + p);
+  
+  using T_return = return_type_t<T0, T1, T2, T3, T4, T5>;
+  Eigen::Matrix<T_return, -1, 1> np(n), u(m + p), d(n), z(n), r(m + p), s(m + p), u_old(m + p);
+  Eigen::Matrix<T_return, -1, 1> x_old(n);
   const double inf = std::numeric_limits<double>::infinity();
-  var c2, sum, psi, ss, t1; 
-      /* t is the step length, which is the minimum of the partial
-                     * step length t1 and the full step length t2 */
+  
+  T_return sum, psi, ss, t1;
+  
   Eigen::VectorXi A(m + p), A_old(m + p), iai(m + p);
   int q;
   int iq, iter = 0;
@@ -307,14 +307,16 @@ solve_quadprog(const Eigen::Matrix<T0, -1, -1> &G,
 
   /* initialize the matrix R */
   d.setZero();
+
+  Eigen::Matrix<T0, -1, -1> R(G.rows(), G.cols());
   R.setZero();
-  var R_norm = 1.0; /* this variable will hold the norm of the matrix R */
+  T_return R_norm = 1.0; /* this variable will hold the norm of the matrix R */
   
   /* compute the inverse of the factorized matrix G^-1, this is the initial
    * value for H */
   //J = L^-T
   auto J = stan::math::transpose(stan::math::mdivide_left_tri_low(chol));
-  c2 = J.trace();
+  auto c2 = J.trace();
 #ifdef TRACE_SOLVER
   print_matrix("J", J, n);
 #endif
@@ -337,8 +339,8 @@ solve_quadprog(const Eigen::Matrix<T0, -1, -1> &G,
 #endif
   /* Add equality constraints to the working set A */
   iq = 0;
-  var t2 = 0.0;
-  var t = 0.0;
+  T_return t2 = 0.0;
+  T_return t = 0.0;
   for (i = 0; i < me; i++) {
     np = CE.col(i);
     compute_d(d, J, np);
@@ -467,7 +469,7 @@ l2a: /* Step 2a: determine step direction */
   t1 = inf; /* +inf */
   /* find the index l s.t. it reaches the minimum of u+(x) / r */
   for (k = me; k < iq; k++) {
-    var tmp = u(k) / r(k);
+    T_return tmp = u(k) / r(k);
     if (r(k) > 0.0 && (tmp < t1)) {
       t1 = tmp;
       l = A(k);
