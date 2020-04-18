@@ -83,54 +83,201 @@
  */
 #include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/fabs.hpp>
+#include <stan/math/prim/fun/sqrt.hpp>
 #include <cmath>
 #include <iostream>
 
 namespace stan {
 namespace math {
  
-inline void compute_d(stan::math::vector_v &d, const stan::math::matrix_v &J, const stan::math::vector_v &np) {
+
+template <typename Scalar> 
+inline Scalar distance(Scalar a, Scalar b) {
+  Scalar a1, b1, t;
+  a1 = fabs(a);
+  b1 = fabs(b);
+  if (a1 > b1) {
+    t = (b1 / a1);
+    return a1 * sqrt(1.0 + t * t);
+  } else if (b1 > a1) {
+    t = (a1 / b1);
+    return b1 * sqrt(1.0 + t * t);
+  }
+  return a1 * sqrt(2.0);
+}
+
+template <typename T1, typename T2, typename T3>
+inline void compute_d(Eigen::Matrix<T1, -1, 1> &d, const Eigen::Matrix<T2, -1, -1> &J, const Eigen::Matrix<T3, -1, 1> &np) {
   d = J.adjoint() * np;
 }
 
-inline void update_z(stan::math::vector_v &z, const stan::math::matrix_v &J, const stan::math::vector_v &d,
+template <typename T1, typename T2, typename T3>
+inline void update_z(Eigen::Matrix<T1, -1, 1> &z, const Eigen::Matrix<T2, -1, -1> &J, const Eigen::Matrix<T3, -1, 1> &d,
                      int iq) {
   z = J.rightCols(z.size() - iq) * d.tail(d.size() - iq);
 }
 
-inline void update_r(const stan::math::matrix_v &R, stan::math::vector_v &r, const stan::math::vector_v &d,
+template <typename T1, typename T2, typename T3>
+inline void update_r(const Eigen::Matrix<T1, -1, -1> &R, Eigen::Matrix<T2, -1, 1> &r, const Eigen::Matrix<T3, -1, 1> &d,
                      int iq) {
-  r.head(iq) =
-       R.topLeftCorner(iq, iq).triangularView<Upper>().solve(d.head(iq));
+  r.head(iq) = mdivide_left_tri<Eigen::Upper>(R.block(0, 0, iq, iq), d.head(iq));
 }
 
-bool add_constraint(stan::math::matrix_v &R, stan::math::matrix_v &J, stan::math::vector_v &d, int &iq,
-                    var &R_norm);
-inline void delete_constraint(stan::math::matrix_v &R, stan::math::matrix_v &J, Eigen::VectorXi &A,
-                              stan::math::vector_v &u, int p, int &iq, int l);
-
-// CHECK - Edit the first two arguments to make them constants.
-template <typename T1__, typename T2__, typename T3__,
-          typename T4__, typename T5__>
-Eigen::Matrix<stan::math::var, -1, 1>
-solve_quadprog(const stan::math::matrix_v &G,
-               const Eigen::Matrix<T1__, -1, 1> &g0,
-               const Eigen::Matrix<T2__, -1, -1> &CE,
-               const Eigen::Matrix<T3__, -1, 1> &ce0,
-               const Eigen::Matrix<T4__, -1, -1> &CI,
-               const Eigen::Matrix<T5__, -1, 1> &ci0) {
+template <typename T1, typename T2, typename T3, typename T4>
+inline bool add_constraint(Eigen::Matrix<T1, -1, -1> &R, Eigen::Matrix<T2, -1, -1> &J, Eigen::Matrix<T3, -1, 1> &d, int &iq,
+                           T4 &R_norm) {
   using std::abs;
-  int i, j, k, l; /* indices */
-  i = 0;
-  j = 0;
-  k = 0;
-  l = 0; // silence warning
+  int n = J.rows();
+#ifdef TRACE_SOLVER
+  std::cerr << "Add constraint " << iq << '/';
+#endif
+  int i = 0, j = 0, k = 0;
+  T3 cc, ss, h, xny;
+  T2 t1, t2;
+  /* we have to find the Givens rotation which will reduce the element
+   d(j) to zero.
+   if it is already zero we don't have to do anything, except of
+   decreasing j */
+  for (j = n - 1; j >= iq + 1; j--) {
+    /* The Givens rotation is done with the matrix (cc cs, cs -cc).
+     If cc is one, then element (j) of d is zero compared with element
+     (j - 1). Hence we don't have to do anything.
+     If cc is zero, then we just have to switch column (j) and column (j - 1)
+     of J. Since we only switch columns in J, we have to be careful how we
+     update d depending on the sign of gs.
+     Otherwise we have to apply the Givens rotation to these columns.
+     The i - 1 element of d has to be updated to h. */
+    cc = d(j - 1);
+    ss = d(j);
+    h = distance(cc, ss);
+    if (h == 0.0)
+      continue;
+    d(j) = 0.0;
+    ss = ss / h;
+    cc = cc / h;
+    if (cc < 0.0) {
+      cc = -cc;
+      ss = -ss;
+      d(j - 1) = -h;
+    } else
+      d(j - 1) = h;
+    xny = ss / (1.0 + cc);
+    for (k = 0; k < n; k++) {
+      t1 = J(k, j - 1);
+      t2 = J(k, j);
+      J(k, j - 1) = t1 * cc + t2 * ss;
+      J(k, j) = xny * (t1 + J(k, j - 1)) - t2;
+    }
+  }
+  /* update the number of constraints added*/
+  iq++;
+  /* To update R we have to put the iq components of the d vector
+   into column iq - 1 of R
+   */
+  R.col(iq - 1).head(iq) = d.head(iq);
+#ifdef TRACE_SOLVER
+  std::cerr << iq << std::endl;
+#endif
+
+  if (fabs(d(iq - 1)) <= std::numeric_limits<double>::epsilon() * R_norm)
+    // problem degenerate
+    return false;
+  if (R_norm >= (fabs(d(iq - 1)))) {
+    R_norm = R_norm;
+  } else {
+    R_norm = fabs(d(iq - 1));
+  }
+  return true;
+}
+
+template <typename T1, typename T2, typename T3>
+inline void delete_constraint(Eigen::Matrix<T1, -1, -1> &R, Eigen::Matrix<T2, -1, -1> &J, Eigen::VectorXi &A,
+                              Eigen::Matrix<T3, -1, 1> &u, int p, int &iq, int l) {
+
+  int n = R.rows();
+#ifdef TRACE_SOLVER
+  std::cerr << "Delete constraint " << l << ' ' << iq;
+#endif
+  int i, j, k, qq;
+  T1 cc, ss, h, xny;
+  /* Find the index qq for active constraint l to be removed */
+  for (i = p; i < iq; i++)
+    if (A(i) == l) {
+      qq = i;
+      break;
+    }
+
+  /* remove the constraint from the active set and the duals */
+  for (i = qq; i < iq - 1; i++) {
+    A(i) = A(i + 1);
+    u(i) = u(i + 1);
+    R.col(i) = R.col(i + 1);
+  }
+
+  A(iq - 1) = A(iq);
+  u(iq - 1) = u(iq);
+  A(iq) = 0;
+  u(iq) = 0.0;
+  for (j = 0; j < iq; j++)
+    R(j, iq - 1) = 0.0;
+  /* constraint has been fully removed */
+  iq--;
+#ifdef TRACE_SOLVER
+  std::cerr << '/' << iq << std::endl;
+#endif
+
+  if (iq == 0)
+    return;
+
+  for (j = qq; j < iq; j++) {
+    cc = R(j, j);
+    ss = R(j + 1, j);
+    h = distance(cc, ss);
+    if (h == 0.0)
+      continue;
+    cc = cc / h;
+    ss = ss / h;
+    R(j + 1, j) = 0.0;
+    if (cc < 0.0) {
+      R(j, j) = -h;
+      cc = -cc;
+      ss = -ss;
+    } else
+      R(j, j) = h;
+
+    xny = ss / (1.0 + cc);
+    for (k = j + 1; k < iq; k++) {
+      T1 t1 = R(j, k);
+      T1 t2 = R(j + 1, k);
+      R(j, k) = t1 * cc + t2 * ss;
+      R(j + 1, k) = xny * (t1 + R(j, k)) - t2;
+    }
+    for (k = 0; k < n; k++) {
+      T2 t1 = J(k, j);
+      T2 t2 = J(k, j + 1);
+      J(k, j) = t1 * cc + t2 * ss;
+      J(k, j + 1) = xny * (J(k, j) + t1) - t2;
+    }
+  }
+}
+
+template <typename T0, typename T1, typename T2, typename T3,
+          typename T4, typename T5>
+auto
+solve_quadprog(const Eigen::Matrix<T0, -1, -1> &G,
+               const Eigen::Matrix<T1, -1, 1> &g0,
+               const Eigen::Matrix<T2, -1, -1> &CE,
+               const Eigen::Matrix<T3, -1, 1> &ce0,
+               const Eigen::Matrix<T4, -1, -1> &CI,
+               const Eigen::Matrix<T5, -1, 1> &ci0) {
+  using std::abs;
+  int i = 0, j = 0, k = 0, l = 0; /* indices */
   int ip, me, mi;
   int n = g0.size();
   int p = ce0.size();
   int m = ci0.size();
-  stan::math::vector_v x(g0.size());
-  stan::math::matrix_v J(G.rows(), G.cols()), R(G.rows(), G.cols());
+  stan::math::matrix_v R(G.rows(), G.cols());
 
   stan::math::vector_v np(n), u(m + p), d(n), z(n), r(m + p), s(m + p);
   stan::math::vector_v x_old(n), u_old(m + p);
@@ -153,10 +300,10 @@ solve_quadprog(const stan::math::matrix_v &G,
    */
 
   /* compute the trace of the original matrix G */
-  var c1 = G.trace();
+  auto c1 = G.trace();
 
   /* decompose the matrix G in the form LL^T */
-  stan::math::matrix_v chol = stan::math::cholesky_decompose(G);
+  auto chol = stan::math::cholesky_decompose(G);
 
   /* initialize the matrix R */
   d.setZero();
@@ -166,8 +313,7 @@ solve_quadprog(const stan::math::matrix_v &G,
   /* compute the inverse of the factorized matrix G^-1, this is the initial
    * value for H */
   //J = L^-T
-  J.setIdentity();
-  J = stan::math::transpose(stan::math::mdivide_left_tri_low(chol, J));
+  auto J = stan::math::transpose(stan::math::mdivide_left_tri_low(chol));
   c2 = J.trace();
 #ifdef TRACE_SOLVER
   print_matrix("J", J, n);
@@ -180,11 +326,11 @@ solve_quadprog(const stan::math::matrix_v &G,
    * this is a feasible point in the dual space
    * x = G^-1 * g0
    */
-  x = multiply(inverse(G), g0);
+  auto x = multiply(inverse(G), g0);
   x = -x;
   
   /* and compute the current solution value */
-  var f_value = 0.5 * g0.dot(x);
+  auto f_value = 0.5 * g0.dot(x);
 #ifdef TRACE_SOLVER
   std::cerr << "Unconstrained solution: " << f_value << std::endl;
   print_vector("x", x, n);
@@ -437,144 +583,6 @@ l2a: /* Step 2a: determine step direction */
   print_vector("s", s, mi);
 #endif
   goto l2a;
-}
-
-inline bool add_constraint(stan::math::matrix_v &R, stan::math::matrix_v &J, stan::math::vector_v &d, int &iq,
-                           var &R_norm) {
-  using std::abs;
-  int n = J.rows();
-#ifdef TRACE_SOLVER
-  std::cerr << "Add constraint " << iq << '/';
-#endif
-  int i, j, k;
-  i = 0;
-  j = 0;
-  k = 0; // silence warning
-  var cc, ss, h, xny, t1, t2;
-  /* we have to find the Givens rotation which will reduce the element
-   d(j) to zero.
-   if it is already zero we don't have to do anything, except of
-   decreasing j */
-  for (j = n - 1; j >= iq + 1; j--) {
-    /* The Givens rotation is done with the matrix (cc cs, cs -cc).
-     If cc is one, then element (j) of d is zero compared with element
-     (j - 1). Hence we don't have to do anything.
-     If cc is zero, then we just have to switch column (j) and column (j - 1)
-     of J. Since we only switch columns in J, we have to be careful how we
-     update d depending on the sign of gs.
-     Otherwise we have to apply the Givens rotation to these columns.
-     The i - 1 element of d has to be updated to h. */
-    cc = d(j - 1);
-    ss = d(j);
-    h = distance(cc, ss);
-    if (h == 0.0)
-      continue;
-    d(j) = 0.0;
-    ss = ss / h;
-    cc = cc / h;
-    if (cc < 0.0) {
-      cc = -cc;
-      ss = -ss;
-      d(j - 1) = -h;
-    } else
-      d(j - 1) = h;
-    xny = ss / (1.0 + cc);
-    for (k = 0; k < n; k++) {
-      t1 = J(k, j - 1);
-      t2 = J(k, j);
-      J(k, j - 1) = t1 * cc + t2 * ss;
-      J(k, j) = xny * (t1 + J(k, j - 1)) - t2;
-    }
-  }
-  /* update the number of constraints added*/
-  iq++;
-  /* To update R we have to put the iq components of the d vector
-   into column iq - 1 of R
-   */
-  R.col(iq - 1).head(iq) = d.head(iq);
-#ifdef TRACE_SOLVER
-  std::cerr << iq << std::endl;
-#endif
-
-  if (abs(d(iq - 1)) <= std::numeric_limits<double>::epsilon() * R_norm)
-    // problem degenerate
-    return false;
-  if (R_norm >= (abs(d(iq - 1)))) {
-    R_norm = R_norm;
-  } else {
-    R_norm = fabs(d(iq - 1));
-  }
-  return true;
-}
-
-inline void delete_constraint(stan::math::matrix_v &R, stan::math::matrix_v &J, Eigen::VectorXi &A,
-                              stan::math::vector_v &u, int p, int &iq, int l) {
-
-  int n = R.rows();
-#ifdef TRACE_SOLVER
-  std::cerr << "Delete constraint " << l << ' ' << iq;
-#endif
-  int i, j, k, qq;
-  var cc, ss, h, xny, t1, t2;
-  /* Find the index qq for active constraint l to be removed */
-  for (i = p; i < iq; i++)
-    if (A(i) == l) {
-      qq = i;
-      break;
-    }
-
-  /* remove the constraint from the active set and the duals */
-  for (i = qq; i < iq - 1; i++) {
-    A(i) = A(i + 1);
-    u(i) = u(i + 1);
-    R.col(i) = R.col(i + 1);
-  }
-
-  A(iq - 1) = A(iq);
-  u(iq - 1) = u(iq);
-  A(iq) = 0;
-  u(iq) = 0.0;
-  for (j = 0; j < iq; j++)
-    R(j, iq - 1) = 0.0;
-  /* constraint has been fully removed */
-  iq--;
-#ifdef TRACE_SOLVER
-  std::cerr << '/' << iq << std::endl;
-#endif
-
-  if (iq == 0)
-    return;
-
-  for (j = qq; j < iq; j++) {
-    cc = R(j, j);
-    ss = R(j + 1, j);
-    h = distance(cc, ss);
-    if (h == 0.0)
-      continue;
-    cc = cc / h;
-    ss = ss / h;
-    R(j + 1, j) = 0.0;
-    if (cc < 0.0) {
-      R(j, j) = -h;
-      cc = -cc;
-      ss = -ss;
-    } else
-      R(j, j) = h;
-
-    xny = ss / (1.0 + cc);
-    for (k = j + 1; k < iq; k++) {
-      t1 = R(j, k);
-      t2 = R(j + 1, k);
-      R(j, k) = t1 * cc + t2 * ss;
-      R(j + 1, k) = xny * (t1 + R(j, k)) - t2;
-    }
-    for (k = 0; k < n; k++) {
-      t1 = J(k, j);
-      t2 = J(k, j + 1);
-      J(k, j) = t1 * cc + t2 * ss;
-      J(k, j + 1) = xny * (J(k, j) + t1) - t2;
-    }
-  }
 }
    
 }
