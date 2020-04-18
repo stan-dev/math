@@ -89,62 +89,36 @@
 namespace stan {
 namespace math {
  
+inline void compute_d(stan::math::vector_v &d, const stan::math::matrix_v &J, const stan::math::vector_v &np) {
+  d = J.adjoint() * np;
+}
 
-using Eigen::LLT;
-using Eigen::Lower;
-using Eigen::MatrixXd;
-using Eigen::Upper;
-using Eigen::VectorXd;
-using Eigen::VectorXi;
-// namespace Eigen {
+inline void update_z(stan::math::vector_v &z, const stan::math::matrix_v &J, const stan::math::vector_v &d,
+                     int iq) {
+  z = J.rightCols(z.size() - iq) * d.tail(d.size() - iq);
+}
 
-// template <typename Scalar> inline Scalar distance(Scalar a, Scalar b) {
-//   using std::abs;
-//   using std::sqrt;
-//   Scalar a1, b1, t;
-//   a1 = abs(a);
-//   b1 = abs(b);
-//   if (a1 > b1) {
-//     t = (b1 / a1);
-//     return a1 * sqrt(1.0 + t * t);
-//   } else if (b1 > a1) {
-//     t = (a1 / b1);
-//     return b1 * sqrt(1.0 + t * t);
-//   }
-//   return a1 * sqrt(2.0);
-// }
+inline void update_r(const stan::math::matrix_v &R, stan::math::vector_v &r, const stan::math::vector_v &d,
+                     int iq) {
+  r.head(iq) =
+       R.topLeftCorner(iq, iq).triangularView<Upper>().solve(d.head(iq));
+}
 
-// inline void compute_d(VectorXd &d, const MatrixXd &J, const VectorXd &np) {
-//   d = J.adjoint() * np;
-// }
-
-// inline void update_z(VectorXd &z, const MatrixXd &J, const VectorXd &d,
-//                      int iq) {
-//   z = J.rightCols(z.size() - iq) * d.tail(d.size() - iq);
-// }
-
-// inline void update_r(const MatrixXd &R, VectorXd &r, const VectorXd &d,
-//                      int iq) {
-//   r.head(iq) =
-//       R.topLeftCorner(iq, iq).triangularView<Upper>().solve(d.head(iq));
-// }
-
-// bool add_constraint(MatrixXd &R, MatrixXd &J, VectorXd &d, int &iq,
-//                     double &R_norm);
-// void delete_constraint(MatrixXd &R, MatrixXd &J, VectorXi &A, VectorXd &u,
-//                        int p, int &iq, int l);
+bool add_constraint(stan::math::matrix_v &R, stan::math::matrix_v &J, stan::math::vector_v &d, int &iq,
+                    var &R_norm);
+inline void delete_constraint(stan::math::matrix_v &R, stan::math::matrix_v &J, Eigen::VectorXi &A,
+                              stan::math::vector_v &u, int p, int &iq, int l);
 
 // CHECK - Edit the first two arguments to make them constants.
 template <typename T1__, typename T2__, typename T3__,
           typename T4__, typename T5__>
 Eigen::Matrix<stan::math::var, -1, 1>
-solve_quadprog(const Eigen::Matrix<stan::math::var, -1, -1> &G,
+solve_quadprog(const stan::math::matrix_v &G,
                const Eigen::Matrix<T1__, -1, 1> &g0,
                const Eigen::Matrix<T2__, -1, -1> &CE,
                const Eigen::Matrix<T3__, -1, 1> &ce0,
                const Eigen::Matrix<T4__, -1, -1> &CI,
                const Eigen::Matrix<T5__, -1, 1> &ci0) {
-
   using std::abs;
   int i, j, k, l; /* indices */
   i = 0;
@@ -155,20 +129,16 @@ solve_quadprog(const Eigen::Matrix<stan::math::var, -1, -1> &G,
   int n = g0.size();
   int p = ce0.size();
   int m = ci0.size();
-  Eigen::Matrix<stan::math::var, -1, 1> x(g0.size());
+  stan::math::vector_v x(g0.size());
+  stan::math::matrix_v J(G.rows(), G.cols()), R(G.rows(), G.cols());
 
-  MatrixXd R(G.rows(), G.cols()), J(G.rows(), G.cols());
-
-  LLT<MatrixXd, Lower> chol(G.cols());
-
-  VectorXd s(m + p), z(n), r(m + p), d(n), np(n), u(m + p);
-  VectorXd x_old(n), u_old(m + p);
-  double f_value, psi, c2, sum, ss, R_norm;
-  double c1, t2;
+  stan::math::vector_v np(n), u(m + p), d(n), z(n), r(m + p), s(m + p);
+  stan::math::vector_v x_old(n), u_old(m + p);
   const double inf = std::numeric_limits<double>::infinity();
-  double t, t1; /* t is the step length, which is the minimum of the partial
+  var c2, sum, psi, ss, t1; 
+      /* t is the step length, which is the minimum of the partial
                      * step length t1 and the full step length t2 */
-  VectorXi A(m + p), A_old(m + p), iai(m + p);
+  Eigen::VectorXi A(m + p), A_old(m + p), iai(m + p);
   int q;
   int iq, iter = 0;
   bool iaexcl[m + p];
@@ -183,21 +153,21 @@ solve_quadprog(const Eigen::Matrix<stan::math::var, -1, -1> &G,
    */
 
   /* compute the trace of the original matrix G */
-  c1 = value_of(G.trace());
+  var c1 = G.trace();
 
   /* decompose the matrix G in the form LL^T */
-  chol.compute(value_of(G));
+  stan::math::matrix_v chol = stan::math::cholesky_decompose(G);
 
   /* initialize the matrix R */
   d.setZero();
   R.setZero();
-  R_norm = 1.0; /* this variable will hold the norm of the matrix R */
-
+  var R_norm = 1.0; /* this variable will hold the norm of the matrix R */
+  
   /* compute the inverse of the factorized matrix G^-1, this is the initial
    * value for H */
-  // J = L^-T
+  //J = L^-T
   J.setIdentity();
-  J = chol.matrixU().solve(J);
+  J = stan::math::transpose(stan::math::mdivide_left_tri_low(chol, J));
   c2 = J.trace();
 #ifdef TRACE_SOLVER
   print_matrix("J", J, n);
@@ -210,17 +180,19 @@ solve_quadprog(const Eigen::Matrix<stan::math::var, -1, -1> &G,
    * this is a feasible point in the dual space
    * x = G^-1 * g0
    */
-  x = chol.solve(g0);
+  x = multiply(inverse(G), g0);
   x = -x;
+  
   /* and compute the current solution value */
-  f_value = 0.5 * g0.dot(value_of(x));
+  var f_value = 0.5 * g0.dot(x);
 #ifdef TRACE_SOLVER
   std::cerr << "Unconstrained solution: " << f_value << std::endl;
   print_vector("x", x, n);
 #endif
-
   /* Add equality constraints to the working set A */
   iq = 0;
+  var t2 = 0.0;
+  var t = 0.0;
   for (i = 0; i < me; i++) {
     np = CE.col(i);
     compute_d(d, J, np);
@@ -236,8 +208,10 @@ solve_quadprog(const Eigen::Matrix<stan::math::var, -1, -1> &G,
     /* compute full step length t2: i.e., the minimum step in primal space s.t.
        the contraint becomes feasible */
     t2 = 0.0;
-    if (abs(z.dot(z)) > std::numeric_limits<double>::epsilon()) // i.e. z != 0
-      t2 = (-np.dot(value_of(x)) - ce0(i)) / z.dot(np);
+    if (abs(z.dot(z)) > std::numeric_limits<double>::epsilon()) {
+      // i.e. z != 0
+      t2 = (-np.dot(x) - ce0(i)) / z.dot(np);
+    }
 
     x += t2 * z;
 
@@ -255,7 +229,7 @@ solve_quadprog(const Eigen::Matrix<stan::math::var, -1, -1> &G,
       return x;
     }
   }
-
+  
   /* set iai = K \ A */
   for (i = 0; i < mi; i++)
     iai(i) = i;
@@ -277,15 +251,17 @@ l1:
   ip = 0;    /* ip will be the index of the chosen violated constraint */
   for (i = 0; i < mi; i++) {
     iaexcl[i] = true;
-    sum = CI.col(i).dot(value_of(x)) + ci0(i);
+    sum = CI.col(i).dot(x) + ci0(i);
     s(i) = sum;
-    psi += std::min(0.0, sum);
+    if (sum < 0.0) {
+      psi += sum;
+    }
   }
 #ifdef TRACE_SOLVER
   print_vector("s", s, mi);
 #endif
-
-  if (abs(psi) <=
+  
+  if (fabs(psi) <=
       mi * std::numeric_limits<double>::epsilon() * c1 * c2 * 100.0) {
     /* numerically there are not infeasibilities anymore */
     q = iq;
@@ -295,7 +271,7 @@ l1:
   /* save old values for u, x and A */
   u_old.head(iq) = u.head(iq);
   A_old.head(iq) = A.head(iq);
-  x_old = value_of(x);
+  x_old = x;
 
 l2: /* Step 2: check for feasibility and determine a new S-pair */
   for (i = 0; i < mi; i++) {
@@ -320,7 +296,7 @@ l2: /* Step 2: check for feasibility and determine a new S-pair */
   std::cerr << "Trying with constraint " << ip << std::endl;
   print_vector("np", np, n);
 #endif
-
+  
 l2a: /* Step 2a: determine step direction */
   /* compute z = H np: the step direction in the primal space (through J, see
    * the paper) */
@@ -345,8 +321,8 @@ l2a: /* Step 2a: determine step direction */
   t1 = inf; /* +inf */
   /* find the index l s.t. it reaches the minimum of u+(x) / r */
   for (k = me; k < iq; k++) {
-    double tmp;
-    if (r(k) > 0.0 && ((tmp = u(k) / r(k)) < t1)) {
+    var tmp = u(k) / r(k);
+    if (r(k) > 0.0 && (tmp < t1)) {
       t1 = tmp;
       l = A(k);
     }
@@ -359,7 +335,11 @@ l2a: /* Step 2a: determine step direction */
     t2 = inf; /* +inf */
 
   /* the step is chosen as the minimum of t1 and t2 */
-  t = std::min(t1, t2);
+  if(t1<=t2) {
+    t = t1;
+  } else {
+    t = t2;
+  }
 #ifdef TRACE_SOLVER
   std::cerr << "Step sizes: " << t << " (t1 = " << t1 << ", t2 = " << t2
             << ") ";
@@ -451,7 +431,7 @@ l2a: /* Step 2a: determine step direction */
   print_ivector("A", A, iq);
 #endif
 
-  s(ip) = CI.col(ip).dot(value_of(x)) + ci0(ip);
+  s(ip) = CI.col(ip).dot(x) + ci0(ip);
 
 #ifdef TRACE_SOLVER
   print_vector("s", s, mi);
@@ -459,141 +439,143 @@ l2a: /* Step 2a: determine step direction */
   goto l2a;
 }
 
-// inline bool add_constraint(MatrixXd &R, MatrixXd &J, VectorXd &d, int &iq,
-//                            double &R_norm) {
-//   using std::abs;
-//   int n = J.rows();
-// #ifdef TRACE_SOLVER
-//   std::cerr << "Add constraint " << iq << '/';
-// #endif
-//   int i, j, k;
-//   i = 0;
-//   j = 0;
-//   k = 0; // silence warning
-//   double cc, ss, h, t1, t2, xny;
+inline bool add_constraint(stan::math::matrix_v &R, stan::math::matrix_v &J, stan::math::vector_v &d, int &iq,
+                           var &R_norm) {
+  using std::abs;
+  int n = J.rows();
+#ifdef TRACE_SOLVER
+  std::cerr << "Add constraint " << iq << '/';
+#endif
+  int i, j, k;
+  i = 0;
+  j = 0;
+  k = 0; // silence warning
+  var cc, ss, h, xny, t1, t2;
+  /* we have to find the Givens rotation which will reduce the element
+   d(j) to zero.
+   if it is already zero we don't have to do anything, except of
+   decreasing j */
+  for (j = n - 1; j >= iq + 1; j--) {
+    /* The Givens rotation is done with the matrix (cc cs, cs -cc).
+     If cc is one, then element (j) of d is zero compared with element
+     (j - 1). Hence we don't have to do anything.
+     If cc is zero, then we just have to switch column (j) and column (j - 1)
+     of J. Since we only switch columns in J, we have to be careful how we
+     update d depending on the sign of gs.
+     Otherwise we have to apply the Givens rotation to these columns.
+     The i - 1 element of d has to be updated to h. */
+    cc = d(j - 1);
+    ss = d(j);
+    h = distance(cc, ss);
+    if (h == 0.0)
+      continue;
+    d(j) = 0.0;
+    ss = ss / h;
+    cc = cc / h;
+    if (cc < 0.0) {
+      cc = -cc;
+      ss = -ss;
+      d(j - 1) = -h;
+    } else
+      d(j - 1) = h;
+    xny = ss / (1.0 + cc);
+    for (k = 0; k < n; k++) {
+      t1 = J(k, j - 1);
+      t2 = J(k, j);
+      J(k, j - 1) = t1 * cc + t2 * ss;
+      J(k, j) = xny * (t1 + J(k, j - 1)) - t2;
+    }
+  }
+  /* update the number of constraints added*/
+  iq++;
+  /* To update R we have to put the iq components of the d vector
+   into column iq - 1 of R
+   */
+  R.col(iq - 1).head(iq) = d.head(iq);
+#ifdef TRACE_SOLVER
+  std::cerr << iq << std::endl;
+#endif
 
-//   /* we have to find the Givens rotation which will reduce the element
-//    d(j) to zero.
-//    if it is already zero we don't have to do anything, except of
-//    decreasing j */
-//   for (j = n - 1; j >= iq + 1; j--) {
-//     /* The Givens rotation is done with the matrix (cc cs, cs -cc).
-//      If cc is one, then element (j) of d is zero compared with element
-//      (j - 1). Hence we don't have to do anything.
-//      If cc is zero, then we just have to switch column (j) and column (j - 1)
-//      of J. Since we only switch columns in J, we have to be careful how we
-//      update d depending on the sign of gs.
-//      Otherwise we have to apply the Givens rotation to these columns.
-//      The i - 1 element of d has to be updated to h. */
-//     cc = d(j - 1);
-//     ss = d(j);
-//     h = distance(cc, ss);
-//     if (h == 0.0)
-//       continue;
-//     d(j) = 0.0;
-//     ss = ss / h;
-//     cc = cc / h;
-//     if (cc < 0.0) {
-//       cc = -cc;
-//       ss = -ss;
-//       d(j - 1) = -h;
-//     } else
-//       d(j - 1) = h;
-//     xny = ss / (1.0 + cc);
-//     for (k = 0; k < n; k++) {
-//       t1 = J(k, j - 1);
-//       t2 = J(k, j);
-//       J(k, j - 1) = t1 * cc + t2 * ss;
-//       J(k, j) = xny * (t1 + J(k, j - 1)) - t2;
-//     }
-//   }
-//   /* update the number of constraints added*/
-//   iq++;
-//   /* To update R we have to put the iq components of the d vector
-//    into column iq - 1 of R
-//    */
-//   R.col(iq - 1).head(iq) = d.head(iq);
-// #ifdef TRACE_SOLVER
-//   std::cerr << iq << std::endl;
-// #endif
+  if (abs(d(iq - 1)) <= std::numeric_limits<double>::epsilon() * R_norm)
+    // problem degenerate
+    return false;
+  if (R_norm >= (abs(d(iq - 1)))) {
+    R_norm = R_norm;
+  } else {
+    R_norm = fabs(d(iq - 1));
+  }
+  return true;
+}
 
-//   if (abs(d(iq - 1)) <= std::numeric_limits<double>::epsilon() * R_norm)
-//     // problem degenerate
-//     return false;
-//   R_norm = std::max<double>(R_norm, abs(d(iq - 1)));
-//   return true;
-// }
+inline void delete_constraint(stan::math::matrix_v &R, stan::math::matrix_v &J, Eigen::VectorXi &A,
+                              stan::math::vector_v &u, int p, int &iq, int l) {
 
-// inline void delete_constraint(MatrixXd &R, MatrixXd &J, VectorXi &A,
-//                               VectorXd &u, int p, int &iq, int l) {
+  int n = R.rows();
+#ifdef TRACE_SOLVER
+  std::cerr << "Delete constraint " << l << ' ' << iq;
+#endif
+  int i, j, k, qq;
+  var cc, ss, h, xny, t1, t2;
+  /* Find the index qq for active constraint l to be removed */
+  for (i = p; i < iq; i++)
+    if (A(i) == l) {
+      qq = i;
+      break;
+    }
 
-//   int n = R.rows();
-// #ifdef TRACE_SOLVER
-//   std::cerr << "Delete constraint " << l << ' ' << iq;
-// #endif
-//   int i, j, k, qq;
-//   double cc, ss, h, xny, t1, t2;
+  /* remove the constraint from the active set and the duals */
+  for (i = qq; i < iq - 1; i++) {
+    A(i) = A(i + 1);
+    u(i) = u(i + 1);
+    R.col(i) = R.col(i + 1);
+  }
 
-//   /* Find the index qq for active constraint l to be removed */
-//   for (i = p; i < iq; i++)
-//     if (A(i) == l) {
-//       qq = i;
-//       break;
-//     }
+  A(iq - 1) = A(iq);
+  u(iq - 1) = u(iq);
+  A(iq) = 0;
+  u(iq) = 0.0;
+  for (j = 0; j < iq; j++)
+    R(j, iq - 1) = 0.0;
+  /* constraint has been fully removed */
+  iq--;
+#ifdef TRACE_SOLVER
+  std::cerr << '/' << iq << std::endl;
+#endif
 
-//   /* remove the constraint from the active set and the duals */
-//   for (i = qq; i < iq - 1; i++) {
-//     A(i) = A(i + 1);
-//     u(i) = u(i + 1);
-//     R.col(i) = R.col(i + 1);
-//   }
+  if (iq == 0)
+    return;
 
-//   A(iq - 1) = A(iq);
-//   u(iq - 1) = u(iq);
-//   A(iq) = 0;
-//   u(iq) = 0.0;
-//   for (j = 0; j < iq; j++)
-//     R(j, iq - 1) = 0.0;
-//   /* constraint has been fully removed */
-//   iq--;
-// #ifdef TRACE_SOLVER
-//   std::cerr << '/' << iq << std::endl;
-// #endif
+  for (j = qq; j < iq; j++) {
+    cc = R(j, j);
+    ss = R(j + 1, j);
+    h = distance(cc, ss);
+    if (h == 0.0)
+      continue;
+    cc = cc / h;
+    ss = ss / h;
+    R(j + 1, j) = 0.0;
+    if (cc < 0.0) {
+      R(j, j) = -h;
+      cc = -cc;
+      ss = -ss;
+    } else
+      R(j, j) = h;
 
-//   if (iq == 0)
-//     return;
-
-//   for (j = qq; j < iq; j++) {
-//     cc = R(j, j);
-//     ss = R(j + 1, j);
-//     h = distance(cc, ss);
-//     if (h == 0.0)
-//       continue;
-//     cc = cc / h;
-//     ss = ss / h;
-//     R(j + 1, j) = 0.0;
-//     if (cc < 0.0) {
-//       R(j, j) = -h;
-//       cc = -cc;
-//       ss = -ss;
-//     } else
-//       R(j, j) = h;
-
-//     xny = ss / (1.0 + cc);
-//     for (k = j + 1; k < iq; k++) {
-//       t1 = R(j, k);
-//       t2 = R(j + 1, k);
-//       R(j, k) = t1 * cc + t2 * ss;
-//       R(j + 1, k) = xny * (t1 + R(j, k)) - t2;
-//     }
-//     for (k = 0; k < n; k++) {
-//       t1 = J(k, j);
-//       t2 = J(k, j + 1);
-//       J(k, j) = t1 * cc + t2 * ss;
-//       J(k, j + 1) = xny * (J(k, j) + t1) - t2;
-//     }
-//   }
-// }
+    xny = ss / (1.0 + cc);
+    for (k = j + 1; k < iq; k++) {
+      t1 = R(j, k);
+      t2 = R(j + 1, k);
+      R(j, k) = t1 * cc + t2 * ss;
+      R(j + 1, k) = xny * (t1 + R(j, k)) - t2;
+    }
+    for (k = 0; k < n; k++) {
+      t1 = J(k, j);
+      t2 = J(k, j + 1);
+      J(k, j) = t1 * cc + t2 * ss;
+      J(k, j + 1) = xny * (J(k, j) + t1) - t2;
+    }
+  }
+}
    
 }
 }
