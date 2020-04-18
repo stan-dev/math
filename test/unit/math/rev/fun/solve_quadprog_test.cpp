@@ -11,9 +11,9 @@ TEST(AgradRevMatrix, dddddd) {
   Eigen::MatrixXd CI(3,4); 
   Eigen::VectorXd ci0(4);
 
-  G << 2.1, 1.5, 1.2,
-       1.5, 2.2, 1.3,
-       1.2, 1.3, 3.1;
+  G << 2.1, 0.0, 1.0,
+        1.5, 2.2, 0.0,
+        1.2, 1.3, 3.1;
   
   g0 << 6, 1, 1;
   
@@ -29,6 +29,11 @@ TEST(AgradRevMatrix, dddddd) {
 
 
   stan::math::vector_d x = stan::math::solve_quadprog(G, g0,  CE, ce0,  CI, ci0);
+  stan::math::vector_d solution(3);
+  solution << -3e-16, 2, 0;
+  for(int i=0;i<x.size();i++) {
+      EXPECT_NEAR(solution(i), x(i), 1e-8);
+  }
 }
 
 TEST(AgradRevMatrix, vddddd) {
@@ -57,6 +62,11 @@ TEST(AgradRevMatrix, vddddd) {
 
 
   stan::math::vector_v x = stan::math::solve_quadprog(G, g0,  CE, ce0,  CI, ci0);
+  stan::math::vector_d solution(3);
+  solution << -3e-16, 2, 0;
+  for(int i=0;i<x.size();i++) {
+      EXPECT_NEAR(solution(i), x(i).val(), 1e-8);
+  }
 }
 
 TEST(AgradRevMatrix, vvdddd) {
@@ -85,6 +95,11 @@ TEST(AgradRevMatrix, vvdddd) {
 
 
   stan::math::vector_v x = stan::math::solve_quadprog(G, g0,  CE, ce0,  CI, ci0);
+  stan::math::vector_d solution(3);
+  solution << -3e-16, 2, 0;
+  for(int i=0;i<x.size();i++) {
+      EXPECT_NEAR(solution(i), x(i).val(), 1e-8);
+  }
 }
 
 TEST(AgradRevMatrix, vvvddd) {
@@ -113,6 +128,11 @@ TEST(AgradRevMatrix, vvvddd) {
 
 
   stan::math::vector_v x = stan::math::solve_quadprog(G, g0,  CE, ce0,  CI, ci0);
+  stan::math::vector_d solution(3);
+  solution << -3e-16, 2, 0;
+  for(int i=0;i<x.size();i++) {
+      EXPECT_NEAR(solution(i), x(i).val(), 1e-8);
+  }
 }
 
 TEST(AgradRevMatrix, vvvvdd) {
@@ -141,6 +161,11 @@ TEST(AgradRevMatrix, vvvvdd) {
 
 
   stan::math::vector_v x = stan::math::solve_quadprog(G, g0,  CE, ce0,  CI, ci0);
+  stan::math::vector_d solution(3);
+  solution << -3e-16, 2, 0;
+  for(int i=0;i<x.size();i++) {
+      EXPECT_NEAR(solution(i), x(i).val(), 1e-8);
+  }
 }
 
 TEST(AgradRevMatrix, vvvvvd) {
@@ -169,6 +194,11 @@ TEST(AgradRevMatrix, vvvvvd) {
 
 
   stan::math::vector_v x = stan::math::solve_quadprog(G, g0,  CE, ce0,  CI, ci0);
+  stan::math::vector_d solution(3);
+  solution << -3e-16, 2, 0;
+  for(int i=0;i<x.size();i++) {
+      EXPECT_NEAR(solution(i), x(i).val(), 1e-8);
+  }
 }
 
 TEST(AgradRevMatrix, vvvvvv) {
@@ -197,4 +227,9 @@ TEST(AgradRevMatrix, vvvvvv) {
 
 
   stan::math::vector_v x = stan::math::solve_quadprog(G, g0,  CE, ce0,  CI, ci0);
+  stan::math::vector_d solution(3);
+  solution << -3e-16, 2, 0;
+  for(int i=0;i<x.size();i++) {
+      EXPECT_NEAR(solution(i), x(i).val(), 1e-8);
+  }
 }
