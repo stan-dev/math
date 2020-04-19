@@ -3,7 +3,8 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/fun.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
 
 namespace stan {
 namespace math {

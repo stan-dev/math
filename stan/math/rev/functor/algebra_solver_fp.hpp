@@ -3,14 +3,11 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
+#include <stan/math/rev/fun.hpp>
 #include <stan/math/rev/functor/algebra_system.hpp>
 #include <stan/math/rev/functor/kinsol_data.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/mdivide_left.hpp>
-#include <stan/math/prim/fun/to_array_1d.hpp>
-#include <stan/math/prim/fun/to_vector.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun.hpp>
 #include <kinsol/kinsol.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>

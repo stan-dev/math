@@ -23,7 +23,7 @@ namespace math {
  * @param x scalar to convert to double
  * @return value of scalar cast to double
  */
-template <typename T, require_st_floating_point<T>* = nullptr>
+template <typename T, require_vt_floating_point<T>* = nullptr>
 inline decltype(auto) value_of(T&& x) {
   return std::forward<T>(x);
 }
@@ -59,8 +59,7 @@ inline auto value_of(ComplexT&& x) {
  * @param[in] x std::vector to be converted
  * @return std::vector with `value_of` applied to each element.
  **/
-template <typename Vec, require_std_vector_t<Vec>* = nullptr,
-          require_not_vt_arithmetic<Vec>* = nullptr>
+template <typename Vec, require_std_vector_t<Vec>* = nullptr>
 inline auto value_of(Vec&& x) {
   const size_t x_size = x.size();
   std::vector<partials_type_t<value_type_t<Vec>>> result(x_size);

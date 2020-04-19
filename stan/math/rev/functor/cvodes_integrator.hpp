@@ -1,12 +1,13 @@
 #ifndef STAN_MATH_REV_FUNCTOR_INTEGRATE_ODE_CVODES_HPP
 #define STAN_MATH_REV_FUNCTOR_INTEGRATE_ODE_CVODES_HPP
 
+#include <stan/math/rev/fun.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/functor/coupled_ode_system.hpp>
 #include <stan/math/rev/functor/cvodes_utils.hpp>
 #include <stan/math/rev/functor/cvodes_ode_data.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun.hpp>
 #include <stan/math/prim/functor/coupled_ode_observer.hpp>
 #include <stan/math/prim/functor/coupled_ode_system.hpp>
 #include <cvodes/cvodes.h>

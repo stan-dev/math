@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_FUNCTOR_CVODES_ODE_DATA_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/fun.hpp>
 #include <stan/math/rev/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/functor/coupled_ode_system.hpp>
 #include <cvodes/cvodes.h>
