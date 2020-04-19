@@ -423,8 +423,7 @@ TEST(AgradRev, test_matrix_sin_multiple_jac) {
  */
 struct WeirdArgumentListFunctor1 {
   template <size_t size, typename... Args>
-  Eigen::VectorXd operator()(
-      std::array<bool, size> needs_adj, Args&&...) {
+  Eigen::VectorXd operator()(std::array<bool, size> needs_adj, Args&&...) {
     return Eigen::VectorXd(1);
   }
 
@@ -547,17 +546,11 @@ struct CheckAdjointsPassingThrough {
   int rows_ed2;
   int cols_ed2;
   int cols_ed3;
-  template <size_t size, typename D1, typename VD, typename X, typename ED1, typename ED2, typename XX, typename ED3, typename ED4>
-  Eigen::VectorXd operator()(
-      std::array<bool, size> needs_adj,
-      D1&& d,
-      VD&& vd,
-      X&& x,
-      ED1&& ed1,
-      ED2&& ed2,
-      XX&& xx,
-      ED3&& ed3,
-      ED4&& ed4) {
+  template <size_t size, typename D1, typename VD, typename X, typename ED1,
+            typename ED2, typename XX, typename ED3, typename ED4>
+  Eigen::VectorXd operator()(std::array<bool, size> needs_adj, D1&& d, VD&& vd,
+                             X&& x, ED1&& ed1, ED2&& ed2, XX&& xx, ED3&& ed3,
+                             ED4&& ed4) {
     size_vd = vd.size();
     rows_ed1 = ed1.rows();
     rows_ed2 = ed2.rows();
@@ -1631,11 +1624,10 @@ struct SinCosFunctor {
   double* x1_mem_;
   double* x4_mem_;
 
-  template <std::size_t size, typename X1, typename X2, typename X3, typename X4>
-  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
-                             X1&& x1, X2&& x2,
-                             X3&& x3,
-                             X4&& x4) {
+  template <std::size_t size, typename X1, typename X2, typename X3,
+            typename X4>
+  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj, X1&& x1,
+                             X2&& x2, X3&& x3, X4&& x4) {
     stan::math::check_matching_sizes("SinCosFunctor", "x1", x1, "x4", x4);
     N_ = x1.size();
     Eigen::VectorXd out(N_);
