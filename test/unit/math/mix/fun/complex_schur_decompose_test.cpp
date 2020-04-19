@@ -65,7 +65,7 @@ void test_complex_schur_decompose_complex(const Eigen::MatrixXd& x) {
   auto X2 = U * T * U.adjoint();
   for (int j = 0; j < x.cols(); ++j) {
     for (int i = 0; i < x.rows(); ++i) {
-      EXPECT_NEAR(value_of_rec(X(i, j).real()), value_of_rec(X2(i, j).real()),
+      EXPECT_NEAR(value_of_rec(X(i, j)).real(), value_of_rec(X2(i, j)).real(),
                   1e-8);
       EXPECT_NEAR(value_of_rec(X(i, j)).imag(), value_of_rec(X2(i, j).imag()),
                   1e-8);
@@ -92,7 +92,7 @@ TEST(mathMixFun, complexSchurDecompose) {
     test_complex_schur_decompose_complex<d_t>(x);
     // TODO(carpenter): // require expanding compound arithmetic
     //                  // to more general Eigen types for *=, -=, etc.
-    // test_complex_schur_decompose_complex<v_t>(x);
+     test_complex_schur_decompose_complex<v_t>(x);
     // test_complex_schur_decompose_complex<fd_t>(x);
     // test_complex_schur_decompose_complex<ffd_t>(x);
     // test_complex_schur_decompose_complex<fv_t>(x);

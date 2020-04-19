@@ -25,12 +25,12 @@ namespace math {
  * @see complex_schur_decompose_t
  */
 template <typename T>
-Eigen::Matrix<complex_return_t<T>, -1, -1> complex_schur_decompose_u(
+auto complex_schur_decompose_u(
     const Eigen::Matrix<T, -1, -1>& m) {
   check_nonzero_size("complex_schur_decompose_u", "m", m);
   check_square("complex_schur_decompose_u", "m", m);
   Eigen::ComplexSchur<Eigen::Matrix<T, -1, -1>> cs(m);
-  return cs.matrixU();
+  return cs.matrixU().eval();
 }
 
 /**
@@ -45,12 +45,12 @@ Eigen::Matrix<complex_return_t<T>, -1, -1> complex_schur_decompose_u(
  * Schur decomposition
  */
 template <typename T>
-Eigen::Matrix<complex_return_t<T>, -1, -1> complex_schur_decompose_t(
+auto complex_schur_decompose_t(
     const Eigen::Matrix<T, -1, -1>& m) {
   check_nonzero_size("complex_schur_decompose_t", "m", m);
   check_square("complex_schur_decompose_t", "m", m);
   Eigen::ComplexSchur<Eigen::Matrix<T, -1, -1>> cs(m);
-  return cs.matrixT();
+  return cs.matrixT().eval();
 }
 
 }  // namespace math

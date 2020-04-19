@@ -53,113 +53,41 @@ struct NumTraits<stan::math::fvar<T>> : GenericNumTraits<stan::math::fvar<T>> {
   static int digits10() { return std::numeric_limits<double>::digits10; }
 };
 
-/**
- * Traits specialization for Eigen binary operations for autodiff and
- * `double` arguments.
- *
- * @tparam T value and tangent type of autodiff variable
- * @tparam BinaryOp type of binary operation for which traits are
- * defined
- */
+
+#define STAN_EIGEN_SCALAR_BINARY_OP_TRAITS(lhs, rhs, returntype) \
+ /*! Traits specialization for Eigen binary operations for autodiff lhs */ \
+ /*! rhs arguments. */ \
+ /*! @tparam T value and tangent type of autodiff variable */ \
+ /*! @tparam BinaryOp type of binary operation for which traits are */ \
+ /*! defined */ \
+template <typename T, typename BinaryOp> \
+struct ScalarBinaryOpTraits<lhs, rhs, BinaryOp> { \
+  using ReturnType = returntype; \
+}; \
+/*! Traits specialization for Eigen binary operations for autodiff rhs */ \
+/*! lhs arguments. */ \
+/*! @tparam T value and tangent type of autodiff variable */ \
+/*! @tparam BinaryOp type of binary operation for which traits are */ \
+/*! defined */ \
+template <typename T, typename BinaryOp> \
+struct ScalarBinaryOpTraits<rhs, lhs, BinaryOp> { \
+  using ReturnType = returntype; \
+};
+
+STAN_EIGEN_SCALAR_BINARY_OP_TRAITS(stan::math::fvar<T>, double, stan::math::fvar<T>);
+STAN_EIGEN_SCALAR_BINARY_OP_TRAITS(stan::math::fvar<T>, std::complex<double>, std::complex<stan::math::fvar<T>>);
+STAN_EIGEN_SCALAR_BINARY_OP_TRAITS(std::complex<stan::math::fvar<T>>, double, std::complex<stan::math::fvar<T>>);
+STAN_EIGEN_SCALAR_BINARY_OP_TRAITS(std::complex<double>, std::complex<stan::math::fvar<T>>, std::complex<stan::math::fvar<T>>);
+
+#undef STAN_EIGEN_SCALAR_BINARY_OP_TRAITS
+
 template <typename T, typename BinaryOp>
-struct ScalarBinaryOpTraits<stan::math::fvar<T>, double, BinaryOp> {
+struct ScalarBinaryOpTraits<stan::math::fvar<T>, stan::math::fvar<T>, BinaryOp> {
   using ReturnType = stan::math::fvar<T>;
 };
 
-/**
- * Traits specialization for Eigen binary operations for `double` and
- * autodiff arguments.
- *
- * @tparam T value and tangent type of autodiff variable
- * @tparam BinaryOp type of binary operation for which traits are
- * defined
- */
 template <typename T, typename BinaryOp>
-struct ScalarBinaryOpTraits<double, stan::math::fvar<T>, BinaryOp> {
-  using ReturnType = stan::math::fvar<T>;
-};
-
-/**
- * Traits specialization for Eigen binary operations for `double` and
- * complex autodiff arguments.
- *
- * @tparam T value and tangent type of autodiff variable
- * @tparam BinaryOp type of binary operation for which traits are
- * defined
- */
-template <typename T, typename BinaryOp>
-struct ScalarBinaryOpTraits<double, std::complex<stan::math::fvar<T>>,
-                            BinaryOp> {
-  using ReturnType = std::complex<stan::math::fvar<T>>;
-};
-
-/**
- * Traits specialization for Eigen binary operations for complex
- * autodiff and `double` arguments.
- *
- * @tparam T value and tangent type of autodiff variable
- * @tparam BinaryOp type of binary operation for which traits are
- * defined
- */
-template <typename T, typename BinaryOp>
-struct ScalarBinaryOpTraits<std::complex<stan::math::fvar<T>>, double,
-                            BinaryOp> {
-  using ReturnType = std::complex<stan::math::fvar<T>>;
-};
-
-/**
- * Traits specialization for Eigen binary operations for autodiff
- * and complex `double` arguments.
- *
- * @tparam T value and tangent type of autodiff variable
- * @tparam BinaryOp type of binary operation for which traits are
- * defined
- */
-template <typename T, typename BinaryOp>
-struct ScalarBinaryOpTraits<stan::math::fvar<T>, std::complex<double>,
-                            BinaryOp> {
-  using ReturnType = std::complex<stan::math::fvar<T>>;
-};
-
-/**
- * Traits specialization for Eigen binary operations for complex
- * `double` and autodiff arguments.
- *
- * @tparam T value and tangent type of autodiff variable
- * @tparam BinaryOp type of binary operation for which traits are
- * defined
- */
-template <typename T, typename BinaryOp>
-struct ScalarBinaryOpTraits<std::complex<double>, stan::math::fvar<T>,
-                            BinaryOp> {
-  using ReturnType = std::complex<stan::math::fvar<T>>;
-};
-
-/**
- * Traits specialization for Eigen binary operations for complex
- * `double` and complex autodiff arguments.
- *
- * @tparam T value and tangent type of autodiff variable
- * @tparam BinaryOp type of binary operation for which traits are
- * defined
- */
-template <typename T, typename BinaryOp>
-struct ScalarBinaryOpTraits<std::complex<double>,
-                            std::complex<stan::math::fvar<T>>, BinaryOp> {
-  using ReturnType = std::complex<stan::math::fvar<T>>;
-};
-
-/**
- * Traits specialization for Eigen binary operations for complex
- * autodiff and complex `double` arguments.
- *
- * @tparam T value and tangent type of autodiff variable
- * @tparam BinaryOp type of binary operation for which traits are
- * defined
- */
-template <typename T, typename BinaryOp>
-struct ScalarBinaryOpTraits<std::complex<stan::math::fvar<T>>,
-                            std::complex<double>, BinaryOp> {
+struct ScalarBinaryOpTraits<std::complex<stan::math::fvar<T>>, std::complex<stan::math::fvar<T>>, BinaryOp> {
   using ReturnType = std::complex<stan::math::fvar<T>>;
 };
 

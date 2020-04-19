@@ -93,7 +93,7 @@ clean-sundials:
 # variable is used if defined.
 #
 # Note that the tbb targets must not be build in parallel (so no concurrent
-# build of tbb and tbbmalloc, for example). This is ensured here with proper 
+# build of tbb and tbbmalloc, for example). This is ensured here with proper
 # dependencies.
 #
 # On windows the mingw32-make (part of RTools, for example) is required to build
