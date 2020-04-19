@@ -59,7 +59,8 @@ inline auto value_of(ComplexT&& x) {
  * @param[in] x std::vector to be converted
  * @return std::vector with `value_of` applied to each element.
  **/
-template <typename Vec, require_std_vector_t<Vec>* = nullptr>
+template <typename Vec, require_std_vector_t<Vec>* = nullptr,
+  require_not_vt_arithmetic<Vec>* = nullptr>
 inline auto value_of(Vec&& x) {
   const size_t x_size = x.size();
   std::vector<partials_type_t<value_type_t<Vec>>> result(x_size);
