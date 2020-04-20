@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_FUN_HMM_MARGINAL_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-// #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/err/hmm_check.hpp>
 #include <stan/math/prim/fun/row.hpp>
 #include <stan/math/prim/fun/col.hpp>

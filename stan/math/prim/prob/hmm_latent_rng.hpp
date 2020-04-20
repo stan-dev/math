@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err/hmm_check.hpp>
 #include <Eigen/Core>
 #include <boost/random.hpp>
 #include <vector>
@@ -23,8 +24,7 @@ inline std::vector<int> hmm_latent_rng(
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 
-  // TODO (charlesm93): Add checks. Create an hmm_check function
-  // to be used for all hmm function.
+  hmm_check(log_omegas, Gamma, rho);
 
   Eigen::MatrixXd omegas = value_of(log_omegas).array().exp();
   Eigen::VectorXd rho_dbl = value_of(rho);
