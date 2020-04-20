@@ -2,7 +2,8 @@
 #define STAN_MATH_REV_FUN_HMM_MARGINAL_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err.hpp>
+// #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err/hmm_check.hpp>
 #include <stan/math/prim/fun/row.hpp>
 #include <stan/math/prim/fun/col.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
@@ -26,7 +27,7 @@ namespace math {
  *
  * @tparam T_omega type of the log likelihood matrix
  * @tparam T_Gamma type of the transition matrix
- * @tparam T_rho type of the initial guess vector
+ * @tparam T_rho type of the initial state vector
  *
  * @param[in] log_omega log matrix of observational densities.
  *              The (i, j)th entry corresponds to the
@@ -59,13 +60,7 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 
-  check_square("hmm_marginal_lpdf", "Gamma", Gamma);
-  check_consistent_size("hmm_marginal_lpdf", "Gamma", row(Gamma, 1), n_states);
-  check_consistent_size("hmm_marginal_lpdf", "rho", rho, n_states);
-  check_simplex("hmm_marginal_lpdf", "rho", rho);
-  for (int i = 0; i < Gamma.rows(); ++i) {
-    check_simplex("hmm_marginal_lpdf", "Gamma[i, ]", row(Gamma, i + 1));
-  }
+  hmm_check(log_omegas, Gamma, rho);
 
   operands_and_partials<Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>,
                         Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>,
