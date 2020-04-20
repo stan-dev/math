@@ -85,7 +85,9 @@ mdivide_right_tri_low(const EigMat1& A, const EigMat2& b) {
     }
   }
 
-  return to_fvar(mdivide_right(val_A, b), mdivide_right(deriv_A, b));
+  plain_type_t<EigMat2> val_b = b.template triangularView<Eigen::Lower>();
+
+  return to_fvar(mdivide_right(val_A, val_b), mdivide_right(deriv_A, val_b));
 }
 
 template <typename EigMat1, typename EigMat2,
