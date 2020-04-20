@@ -1,4 +1,5 @@
 #include <stan/math/prim/prob/hmm_marginal_lpdf.hpp>
+#include <stan/math/prim/prob/hmm_latent_rng.hpp>
 #include <boost/math/distributions.hpp>
 #include <boost/random.hpp>
 #include <test/unit/math/test_ad.hpp>

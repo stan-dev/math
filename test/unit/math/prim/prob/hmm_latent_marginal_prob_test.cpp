@@ -1,5 +1,5 @@
 #include <test/unit/math/prim/prob/hmm_marginal_test.cpp>
-#include <stan/math/prim/prob/hmm_latent_rng.hpp>
+#include <stan/math/prim/prob/hmm_latent_marginal_prob.hpp>
 #include <boost/math/distributions.hpp>
 #include <boost/random.hpp>
 #include <test/unit/math/test_ad.hpp>
@@ -10,11 +10,8 @@
 
 
 TEST_F(hmm_marginal_lpdf_test, rng) {
-  using stan::math::hmm_latent_rng;
-  boost::random::mt19937 rng;
+  using stan::math::hmm_latent_marginal_prob;
 
-  std::vector<int> x = hmm_latent_rng(log_omegas, Gamma, rho, rng);
-  for (size_t i = 0; i < x.size(); ++i)
-    std::cout << x[i] << " ";
-  std::cout << std::endl;
+  Eigen::MatrixXd prob = hmm_latent_marginal_prob(log_omegas, Gamma, rho);
+  std::cout << prob << std::endl;
 }
