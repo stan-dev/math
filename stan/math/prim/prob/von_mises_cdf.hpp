@@ -73,7 +73,7 @@ return_type_t<T_x, T_k> von_mises_cdf_centered(const T_x& x, const T_k& k) {
   double ck = 50;
   using return_t = return_type_t<T_x, T_k>;
   return_t f;
-  if (k < ck) {
+  if (k < 49) {
     f = von_mises_cdf_series(x, k);
     if (f < 0) {
       f = 0.0;
@@ -83,6 +83,10 @@ return_type_t<T_x, T_k> von_mises_cdf_centered(const T_x& x, const T_k& k) {
       f = 1.0;
       return f;
     }
+    return f;
+  } else if (k < 50) {
+    f = (50.0 - k) * von_mises_cdf_series(x, 49.0) 
+      + (k - 49.0) * von_mises_cdf_normalapprox(x, 50.0);
     return f;
   } else {
     f = von_mises_cdf_normalapprox(x, k);
@@ -118,23 +122,30 @@ inline return_type_t<T_x, T_mu, T_k> von_mises_cdf(const T_x& x, const T_mu& mu,
   static char const* function = "von_mises_cdf";
   using return_t = return_type_t<T_x, T_mu, T_k>;
   using internal::von_mises_cdf_centered;
+  const double pi = stan::math::pi();
 
   check_not_nan(function, "Random variable", x);
   check_not_nan(function, "Scale parameter", k);
   check_not_nan(function, "Location parameter", mu);
   check_positive(function, "Scale parameter", k);
+  check_less_or_equal(function, "Random variable", x, pi);
+  check_greater_or_equal(function, "Random variable", x, -pi);
 
   // shift x so that mean is 0
   return_t x2 = x - mu;
 
   // x is on an interval (2*n*pi, (2*n + 1)*pi), move it to (-pi, pi)
-  const double pi = stan::math::pi();
   x2 += pi;
   const auto x_floor = floor(x2 / TWO_PI);
   const auto x_moded = x2 - x_floor * TWO_PI;
   x2 = x_moded - pi;
 
-  return von_mises_cdf_centered(x2, k);
+  // return 
+  if (mu - x > pi) {
+    return von_mises_cdf_centered(x2, k) - von_mises_cdf_centered(pi - mu, k);
+  } else {
+    return von_mises_cdf_centered(x2, k) + von_mises_cdf_centered(mu - pi, k);
+  }
 }
 
 }  // namespace math
