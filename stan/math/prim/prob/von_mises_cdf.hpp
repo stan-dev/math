@@ -85,8 +85,8 @@ return_type_t<T_x, T_k> von_mises_cdf_centered(const T_x& x, const T_k& k) {
     }
     return f;
   } else if (k < 50) {
-    f = (50.0 - k) * von_mises_cdf_series(x, 49.0) 
-      + (k - 49.0) * von_mises_cdf_normalapprox(x, 50.0);
+    f = (50.0 - k) * von_mises_cdf_series(x, 49.0)
+        + (k - 49.0) * von_mises_cdf_normalapprox(x, 50.0);
     return f;
   } else {
     f = von_mises_cdf_normalapprox(x, k);
@@ -140,7 +140,7 @@ inline return_type_t<T_x, T_mu, T_k> von_mises_cdf(const T_x& x, const T_mu& mu,
   const auto x_moded = x2 - x_floor * TWO_PI;
   x2 = x_moded - pi;
 
-  // return 
+  // return
   if (mu - x > pi) {
     return von_mises_cdf_centered(x2, k) - von_mises_cdf_centered(pi - mu, k);
   } else {
