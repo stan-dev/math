@@ -80,25 +80,6 @@ struct NumTraits<stan::math::var> : GenericNumTraits<stan::math::var> {
   static int digits10() { return std::numeric_limits<double>::digits10; }
 };
 
-// binary ops
-// double, var, complex<double>, complex<var>
-//    1. double, double
-// +  2. double, var
-//    3. double, complex<double>
-// +  4. double, complex<var>
-// +  5. var, double
-// ?  6. var, var
-// +  7. var, complex<double>
-// +  8. var, complex<var>
-//    9. complex<double>, double
-// + 10. complex<double>, var
-//   11. complex<double>, complex<double>
-// + 12. complex<double>, complex<var>
-// + 13. complex<var>, double
-// + 14. complex<var>, var
-// + 15. complex<var>, complex<double>
-// ? 16. complex<var>, complex<var>
-
 /**
  * Traits specialization for Eigen binary operations for reverse-mode
  * autodiff and `double` arguments.
