@@ -24,7 +24,7 @@ inline std::vector<int> hmm_latent_rng(
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 
-  hmm_check(log_omegas, Gamma, rho);
+  hmm_check(log_omegas, Gamma, rho, "hmm_latent_rng");
 
   Eigen::MatrixXd omegas = value_of(log_omegas).array().exp();
   Eigen::VectorXd rho_dbl = value_of(rho);

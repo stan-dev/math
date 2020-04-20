@@ -24,6 +24,7 @@ namespace math {
  *              The (i, j)th entry is the probability that x_n = j,
  *              given x_{n - 1} = i. The rows of Gamma are simplexes.
  * @param[in] rho initial state
+ * @param[in] function the name of the function using the arguments.
  * @throw `std::domain_error` if Gamma is not square.
  * @throw `std::invalid_argument` if the size of rho is not
  * the number of rows of Gamma.
@@ -35,16 +36,17 @@ template <typename T_omega, typename T_Gamma, typename T_rho>
 inline void hmm_check(
   const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
   const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma,
-  const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho) {
+  const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho,
+  const char* function) {
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 
-  check_square("hmm_marginal_lpdf", "Gamma", Gamma);
-  check_consistent_size("hmm_marginal_lpdf", "Gamma", row(Gamma, 1), n_states);
-  check_consistent_size("hmm_marginal_lpdf", "rho", rho, n_states);
-  check_simplex("hmm_marginal_lpdf", "rho", rho);
+  check_square(function, "Gamma", Gamma);
+  check_consistent_size(function, "Gamma", row(Gamma, 1), n_states);
+  check_consistent_size(function, "rho", rho, n_states);
+  check_simplex(function, "rho", rho);
   for (int i = 0; i < Gamma.rows(); ++i) {
-    check_simplex("hmm_marginal_lpdf", "Gamma[i, ]", row(Gamma, i + 1));
+    check_simplex(function, "Gamma[i, ]", row(Gamma, i + 1));
   }
 }
 

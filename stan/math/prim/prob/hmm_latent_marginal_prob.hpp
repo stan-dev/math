@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err/hmm_check.hpp>
 #include <Eigen/Core>
 #include <boost/random.hpp>
 #include <vector>
@@ -23,8 +24,7 @@ inline Eigen::MatrixXd hmm_latent_marginal_prob(
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 
-  // TODO (charlesm93): Add checks. Create an hmm_check function
-  // to be used for all hmm function.
+  hmm_check(log_omegas, Gamma, rho, "hmm_latent_marginal_prob");
 
   Eigen::MatrixXd omegas = value_of(log_omegas).array().exp();
   Eigen::VectorXd rho_dbl = value_of(rho);
@@ -34,8 +34,6 @@ inline Eigen::MatrixXd hmm_latent_marginal_prob(
   alphas.col(0) = omegas.col(0).cwiseProduct(rho);
   alphas.col(0) /= alphas.col(0).maxCoeff();
 
-  std::cout << "marker a" << std::endl;
-
   for (int n = 0; n < n_transitions; ++n)
     alphas.col(n + 1) = omegas.col(n + 1).cwiseProduct(Gamma * alphas.col(n));
 
@@ -43,8 +41,6 @@ inline Eigen::MatrixXd hmm_latent_marginal_prob(
   Eigen::VectorXd beta = Eigen::VectorXd::Ones(n_states);
 
   alphas.col(n_transitions) /= alphas.col(n_transitions).sum();
-
-  std::cout << "marker b" << std::endl;
 
   for (int n = n_transitions - 1; n >= 0; --n) {
     beta = Gamma.transpose() * (omegas.col(n + 1).cwiseProduct(beta));
@@ -54,8 +50,6 @@ inline Eigen::MatrixXd hmm_latent_marginal_prob(
     alphas.col(n) = alphas.col(n).cwiseProduct(beta);
     alphas.col(n) /= alphas.col(n).sum();
   }
-
-  std::cout << "marker c" << std::endl;
 
   return alphas;
 }

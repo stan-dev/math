@@ -59,7 +59,7 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 
-  hmm_check(log_omegas, Gamma, rho);
+  hmm_check(log_omegas, Gamma, rho, "hmm_marginal_lpdf");
 
   operands_and_partials<Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>,
                         Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>,
