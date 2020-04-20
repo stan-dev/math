@@ -16,67 +16,76 @@ namespace Eigen {
  * Documentation here:
  *   http://eigen.tuxfamily.org/dox/structEigen_1_1NumTraits.html
  */
-template <>
-struct NumTraits<stan::math::var> : GenericNumTraits<stan::math::var> {
-  using Real = stan::math::var;
-  using NonInteger = stan::math::var;
-  using Nested = stan::math::var;
+ template <>
+ struct NumTraits<stan::math::var> : GenericNumTraits<stan::math::var> {
+   using Real = stan::math::var;
+   using NonInteger = stan::math::var;
+   using Nested = stan::math::var;
+   using Literal = stan::math::var;
+   /**
+    * Return the precision for <code>stan::math::var</code> delegates
+    * to precision for <code>double</code>.
+    *
+    * @return precision
+    */
+   EIGEN_DEVICE_FUNC static inline stan::math::var dummy_precision() {
+     return NumTraits<double>::dummy_precision();
+   }
+   EIGEN_DEVICE_FUNC static inline stan::math::var epsilon() {
+     return NumTraits<double>::epsilon();
+   }
 
-  /**
-   * Return the precision for <code>stan::math::var</code> delegates
-   * to precision for <code>double</code>.
-   *
-   * @return precision
-   */
-  static inline stan::math::var dummy_precision() {
-    return NumTraits<double>::dummy_precision();
-  }
+   enum {
+     /**
+      * stan::math::var is not complex.
+      */
+     IsComplex = 0,
 
-  enum {
-    /**
-     * stan::math::var is not complex.
-     */
-    IsComplex = 0,
+     /**
+      * stan::math::var is not an integer.
+      */
+     IsInteger = 0,
 
-    /**
-     * stan::math::var is not an integer.
-     */
-    IsInteger = 0,
+     /**
+      * stan::math::var is signed.
+      */
+     IsSigned = 1,
 
-    /**
-     * stan::math::var is signed.
-     */
-    IsSigned = 1,
+     /**
+      * stan::math::var does not require initialization.
+      */
+     RequireInitialization = 0,
 
-    /**
-     * stan::math::var does not require initialization.
-     */
-    RequireInitialization = 0,
+     /**
+      * Twice the cost of copying a double.
+      */
+     ReadCost = 2 * NumTraits<double>::ReadCost,
 
-    /**
-     * Twice the cost of copying a double.
-     */
-    ReadCost = 2 * NumTraits<double>::ReadCost,
+     /**
+      * This is just forward cost, but it's the cost of a single
+      * addition (plus memory overhead) in the forward direction.
+      */
+     AddCost = NumTraits<double>::AddCost,
 
-    /**
-     * This is just forward cost, but it's the cost of a single
-     * addition (plus memory overhead) in the forward direction.
-     */
-    AddCost = NumTraits<double>::AddCost,
+     /**
+      * Multiply cost is single multiply going forward, but there's
+      * also memory allocation cost.
+      */
+     MulCost = NumTraits<double>::MulCost
+   };
 
-    /**
-     * Multiply cost is single multiply going forward, but there's
-     * also memory allocation cost.
-     */
-    MulCost = NumTraits<double>::MulCost
-  };
+   /**
+    * Return the number of decimal digits that can be represented
+    * without change.  Delegates to
+    * <code>std::numeric_limits<double>::digits10()</code>.
+    */
+   EIGEN_DEVICE_FUNC static int digits10() { return std::numeric_limits<double>::digits10; }
 
-  /**
-   * Return the number of decimal digits that can be represented
-   * without change.  Delegates to
-   * <code>std::numeric_limits<double>::digits10()</code>.
-   */
-  static int digits10() { return std::numeric_limits<double>::digits10; }
+   EIGEN_DEVICE_FUNC
+   static inline Real highest()  { return NumTraits<double>::highest(); }
+   EIGEN_DEVICE_FUNC
+   static inline Real lowest()   { return NumTraits<double>::lowest(); }
+
 };
 
 /**
@@ -97,6 +106,15 @@ struct ScalarBinaryOpTraits<double, stan::math::var, BinaryOp> {
   using ReturnType = stan::math::var;
 };
 
+/**
+ * Scalar product traits specialization for Eigen for reverse-mode
+ * autodiff variables.
+ */
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<stan::math::var, stan::math::var, BinaryOp> {
+  using ReturnType = stan::math::var;
+};
+
 namespace internal {
 /**
  * Partial specialization of Eigen's remove_all struct to stop
@@ -106,7 +124,10 @@ template <>
 struct remove_all<stan::math::vari*> {
   using type = stan::math::vari*;
 };
-
+template <>
+struct get_factor<stan::math::var, double> {
+  EIGEN_DEVICE_FUNC static EIGEN_STRONG_INLINE double run(const stan::math::var& x) { return x.val(); }
+};
 /**
  * Specialization of matrix-vector products for reverse-mode
  * autodiff variables.
@@ -153,6 +174,82 @@ struct general_matrix_vector_product<Index, stan::math::var, LhsMapper,
   }
 };
 
+/**
+ * NEW THING
+ */
+ template <typename Index, typename LhsMapper, bool ConjugateLhs,
+           bool ConjugateRhs, typename RhsMapper, int Version>
+ struct general_matrix_vector_product<Index, double, LhsMapper,
+                                      ColMajor, ConjugateLhs, stan::math::var,
+                                      RhsMapper, ConjugateRhs, Version> {
+   using LhsScalar = double;
+   using RhsScalar = stan::math::var;
+   using ResScalar = stan::math::var;
+   enum { LhsStorageOrder = ColMajor };
+
+   EIGEN_DONT_INLINE static void run(Index rows, Index cols,
+                                     const LhsMapper& lhsMapper,
+                                     const RhsMapper& rhsMapper, ResScalar* res,
+                                     Index resIncr, const ResScalar& alpha) {
+     const LhsScalar* lhs = lhsMapper.data();
+     const Index lhsStride = lhsMapper.stride();
+     const RhsScalar* rhs = rhsMapper.data();
+     const Index rhsIncr = rhsMapper.stride();
+     run(rows, cols, lhs, lhsStride, rhs, rhsIncr, res, resIncr, alpha);
+   }
+
+   EIGEN_DONT_INLINE static void run(Index rows, Index cols,
+                                     const LhsScalar* lhs, Index lhsStride,
+                                     const RhsScalar* rhs, Index rhsIncr,
+                                     ResScalar* res, Index resIncr,
+                                     const ResScalar& alpha) {
+     using stan::math::gevv_vdv_vari;
+     using stan::math::var;
+     for (Index i = 0; i < rows; ++i) {
+       res[i * resIncr] += var(
+           new gevv_vdv_vari(&alpha, &lhs[i], lhsStride, rhs, rhsIncr, cols));
+     }
+   }
+ };
+
+ /**
+  * NEW THING
+  */
+  template <typename Index, typename LhsMapper, bool ConjugateLhs,
+            bool ConjugateRhs, typename RhsMapper, int Version>
+  struct general_matrix_vector_product<Index, stan::math::var, LhsMapper,
+                                       ColMajor, ConjugateLhs, double,
+                                       RhsMapper, ConjugateRhs, Version> {
+    using LhsScalar = stan::math::var;
+    using RhsScalar = double;
+    using ResScalar = stan::math::var;
+    enum { LhsStorageOrder = ColMajor };
+
+    EIGEN_DONT_INLINE static void run(Index rows, Index cols,
+                                      const LhsMapper& lhsMapper,
+                                      const RhsMapper& rhsMapper, ResScalar* res,
+                                      Index resIncr, const ResScalar& alpha) {
+      const LhsScalar* lhs = lhsMapper.data();
+      const Index lhsStride = lhsMapper.stride();
+      const RhsScalar* rhs = rhsMapper.data();
+      const Index rhsIncr = rhsMapper.stride();
+      run(rows, cols, lhs, lhsStride, rhs, rhsIncr, res, resIncr, alpha);
+    }
+
+    EIGEN_DONT_INLINE static void run(Index rows, Index cols,
+                                      const LhsScalar* lhs, Index lhsStride,
+                                      const RhsScalar* rhs, Index rhsIncr,
+                                      ResScalar* res, Index resIncr,
+                                      const ResScalar& alpha) {
+      using stan::math::gevv_vvd_vari;
+      using stan::math::var;
+      for (Index i = 0; i < rows; ++i) {
+        res[i * resIncr] += var(
+            new gevv_vvd_vari(&alpha, &lhs[i], lhsStride, rhs, rhsIncr, cols));
+      }
+    }
+  };
+
 template <typename Index, typename LhsMapper, bool ConjugateLhs,
           bool ConjugateRhs, typename RhsMapper, int Version>
 struct general_matrix_vector_product<Index, stan::math::var, LhsMapper,
@@ -192,6 +289,92 @@ struct general_matrix_vector_product<Index, stan::math::var, LhsMapper,
     }
   }
 };
+
+/**
+ * NEW ONE
+ */
+ template <typename Index, typename LhsMapper, bool ConjugateLhs,
+           bool ConjugateRhs, typename RhsMapper, int Version>
+ struct general_matrix_vector_product<Index, double, LhsMapper,
+                                      RowMajor, ConjugateLhs, stan::math::var,
+                                      RhsMapper, ConjugateRhs, Version> {
+   using LhsScalar = double;
+   using RhsScalar = stan::math::var;
+   using ResScalar = stan::math::var;
+   enum { LhsStorageOrder = RowMajor };
+
+   EIGEN_DONT_INLINE static void run(Index rows, Index cols,
+                                     const LhsMapper& lhsMapper,
+                                     const RhsMapper& rhsMapper, ResScalar* res,
+                                     Index resIncr, const RhsScalar& alpha) {
+     const LhsScalar* lhs = lhsMapper.data();
+     const Index lhsStride = lhsMapper.stride();
+     const RhsScalar* rhs = rhsMapper.data();
+     const Index rhsIncr = rhsMapper.stride();
+     run(rows, cols, lhs, lhsStride, rhs, rhsIncr, res, resIncr, alpha);
+   }
+
+   EIGEN_DONT_INLINE static void run(Index rows, Index cols,
+                                     const LhsScalar* lhs, Index lhsStride,
+                                     const RhsScalar* rhs, Index rhsIncr,
+                                     ResScalar* res, Index resIncr,
+                                     const RhsScalar& alpha) {
+     for (Index i = 0; i < rows; i++) {
+       res[i * resIncr] += stan::math::var(new stan::math::gevv_vvd_vari(
+           &alpha,
+           (static_cast<int>(LhsStorageOrder) == static_cast<int>(ColMajor))
+               ? (&rhs[i])
+               : (&rhs[i * lhsStride]),
+           (static_cast<int>(LhsStorageOrder) == static_cast<int>(ColMajor))
+               ? (lhsStride)
+               : (1),
+           lhs, rhsIncr, cols));
+     }
+   }
+ };
+
+/**
+ * NEW ONE
+ */
+ template <typename Index, typename LhsMapper, bool ConjugateLhs,
+           bool ConjugateRhs, typename RhsMapper, int Version>
+ struct general_matrix_vector_product<Index, stan::math::var, LhsMapper,
+                                      RowMajor, ConjugateLhs, double,
+                                      RhsMapper, ConjugateRhs, Version> {
+   using LhsScalar = stan::math::var;
+   using RhsScalar = double;
+   using ResScalar = stan::math::var;
+   enum { LhsStorageOrder = RowMajor };
+
+   EIGEN_DONT_INLINE static void run(Index rows, Index cols,
+                                     const LhsMapper& lhsMapper,
+                                     const RhsMapper& rhsMapper, ResScalar* res,
+                                     Index resIncr, const RhsScalar& alpha) {
+     const LhsScalar* lhs = lhsMapper.data();
+     const Index lhsStride = lhsMapper.stride();
+     const RhsScalar* rhs = rhsMapper.data();
+     const Index rhsIncr = rhsMapper.stride();
+     run(rows, cols, lhs, lhsStride, rhs, rhsIncr, res, resIncr, alpha);
+   }
+
+   EIGEN_DONT_INLINE static void run(Index rows, Index cols,
+                                     const LhsScalar* lhs, Index lhsStride,
+                                     const RhsScalar* rhs, Index rhsIncr,
+                                     ResScalar* res, Index resIncr,
+                                     const RhsScalar& alpha) {
+     for (Index i = 0; i < rows; i++) {
+       res[i * resIncr] += stan::math::var(new stan::math::gevv_vvd_vari(
+           &alpha,
+           (static_cast<int>(LhsStorageOrder) == static_cast<int>(ColMajor))
+               ? (&lhs[i])
+               : (&lhs[i * lhsStride]),
+           (static_cast<int>(LhsStorageOrder) == static_cast<int>(ColMajor))
+               ? (lhsStride)
+               : (1),
+           rhs, rhsIncr, cols));
+     }
+   }
+ };
 
 template <typename Index, int LhsStorageOrder, bool ConjugateLhs,
           int RhsStorageOrder, bool ConjugateRhs>
@@ -247,6 +430,120 @@ struct general_matrix_matrix_product<Index, stan::math::var, LhsStorageOrder,
         alpha, blocking, info);
   }
 };
+
+/**
+ * NEW ONE
+ */
+ template <typename Index, int LhsStorageOrder, bool ConjugateLhs,
+           int RhsStorageOrder, bool ConjugateRhs>
+ struct general_matrix_matrix_product<Index, double, LhsStorageOrder,
+                                      ConjugateLhs, stan::math::var,
+                                      RhsStorageOrder, ConjugateRhs, ColMajor> {
+   using LhsScalar = double;
+   using RhsScalar = stan::math::var;
+   using ResScalar = stan::math::var;
+   using Traits = gebp_traits<RhsScalar, LhsScalar>;
+   using LhsMapper
+       = const_blas_data_mapper<stan::math::var, Index, LhsStorageOrder>;
+   using RhsMapper
+       = const_blas_data_mapper<stan::math::var, Index, RhsStorageOrder>;
+
+   EIGEN_DONT_INLINE
+   static void run(Index rows, Index cols, Index depth, const LhsScalar* lhs,
+                   Index lhsStride, const RhsScalar* rhs, Index rhsStride,
+                   ResScalar* res, Index resStride, const ResScalar& alpha,
+                   level3_blocking<LhsScalar, RhsScalar>& /* blocking */,
+                   GemmParallelInfo<Index>* /* info = 0 */) {
+     for (Index i = 0; i < cols; i++) {
+       general_matrix_vector_product<
+           Index, LhsScalar, LhsMapper, LhsStorageOrder, ConjugateLhs, RhsScalar,
+           RhsMapper,
+           ConjugateRhs>::run(rows, depth, lhs, lhsStride,
+                              &rhs[static_cast<int>(RhsStorageOrder)
+                                           == static_cast<int>(ColMajor)
+                                       ? i * rhsStride
+                                       : i],
+                              static_cast<int>(RhsStorageOrder)
+                                      == static_cast<int>(ColMajor)
+                                  ? 1
+                                  : rhsStride,
+                              &res[i * resStride], 1, alpha);
+     }
+   }
+
+   EIGEN_DONT_INLINE
+   static void run(Index rows, Index cols, Index depth,
+                   const LhsMapper& lhsMapper, const RhsMapper& rhsMapper,
+                   ResScalar* res, Index resStride, const ResScalar& alpha,
+                   level3_blocking<LhsScalar, RhsScalar>& blocking,
+                   GemmParallelInfo<Index>* info = 0) {
+     const LhsScalar* lhs = lhsMapper.data();
+     const Index lhsStride = lhsMapper.stride();
+     const RhsScalar* rhs = rhsMapper.data();
+     const Index rhsStride = rhsMapper.stride();
+
+     run(rows, cols, depth, lhs, lhsStride, rhs, rhsStride, res, resStride,
+         alpha, blocking, info);
+   }
+ };
+
+ /**
+  * NEW ONE
+  */
+  template <typename Index, int LhsStorageOrder, bool ConjugateLhs,
+            int RhsStorageOrder, bool ConjugateRhs>
+  struct general_matrix_matrix_product<Index, stan::math::var, LhsStorageOrder,
+                                       ConjugateLhs, double,
+                                       RhsStorageOrder, ConjugateRhs, ColMajor> {
+    using LhsScalar = stan::math::var;
+    using RhsScalar = double;
+    using ResScalar = stan::math::var;
+
+    using Traits = gebp_traits<RhsScalar, LhsScalar>;
+
+    using LhsMapper
+        = const_blas_data_mapper<stan::math::var, Index, LhsStorageOrder>;
+    using RhsMapper
+        = const_blas_data_mapper<stan::math::var, Index, RhsStorageOrder>;
+
+    EIGEN_DONT_INLINE
+    static void run(Index rows, Index cols, Index depth, const LhsScalar* lhs,
+                    Index lhsStride, const RhsScalar* rhs, Index rhsStride,
+                    ResScalar* res, Index resStride, const ResScalar& alpha,
+                    level3_blocking<LhsScalar, RhsScalar>& /* blocking */,
+                    GemmParallelInfo<Index>* /* info = 0 */) {
+      for (Index i = 0; i < cols; i++) {
+        general_matrix_vector_product<
+            Index, LhsScalar, LhsMapper, LhsStorageOrder, ConjugateLhs, RhsScalar,
+            RhsMapper,
+            ConjugateRhs>::run(rows, depth, lhs, lhsStride,
+                               &rhs[static_cast<int>(RhsStorageOrder)
+                                            == static_cast<int>(ColMajor)
+                                        ? i * rhsStride
+                                        : i],
+                               static_cast<int>(RhsStorageOrder)
+                                       == static_cast<int>(ColMajor)
+                                   ? 1
+                                   : rhsStride,
+                               &res[i * resStride], 1, alpha);
+      }
+    }
+
+    EIGEN_DONT_INLINE
+    static void run(Index rows, Index cols, Index depth,
+                    const LhsMapper& lhsMapper, const RhsMapper& rhsMapper,
+                    ResScalar* res, Index resStride, const ResScalar& alpha,
+                    level3_blocking<LhsScalar, RhsScalar>& blocking,
+                    GemmParallelInfo<Index>* info = 0) {
+      const LhsScalar* lhs = lhsMapper.data();
+      const Index lhsStride = lhsMapper.stride();
+      const RhsScalar* rhs = rhsMapper.data();
+      const Index rhsStride = rhsMapper.stride();
+
+      run(rows, cols, depth, lhs, lhsStride, rhs, rhsStride, res, resStride,
+          alpha, blocking, info);
+    }
+  };
 }  // namespace internal
 }  // namespace Eigen
 #endif

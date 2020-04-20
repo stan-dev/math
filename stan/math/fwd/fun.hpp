@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_FWD_FUN_HPP
 #define STAN_MATH_FWD_FUN_HPP
 
+#include <stan/math/fwd/fun/Eigen_NumTraits.hpp>
 #include <stan/math/fwd/fun/abs.hpp>
 #include <stan/math/fwd/fun/acos.hpp>
 #include <stan/math/fwd/fun/acosh.hpp>
@@ -21,7 +22,6 @@
 #include <stan/math/fwd/fun/cosh.hpp>
 #include <stan/math/fwd/fun/determinant.hpp>
 #include <stan/math/fwd/fun/digamma.hpp>
-#include <stan/math/fwd/fun/Eigen_NumTraits.hpp>
 #include <stan/math/fwd/fun/erf.hpp>
 #include <stan/math/fwd/fun/erfc.hpp>
 #include <stan/math/fwd/fun/exp.hpp>
