@@ -2,6 +2,7 @@
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_MULTI_RESULT_KERNEL_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/kernel_generator/wrapper.hpp>
 #include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
@@ -9,10 +10,12 @@
 #include <stan/math/opencl/kernel_generator/calc_if.hpp>
 #include <stan/math/opencl/kernel_generator/load.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
+#include <algorithm>
 #include <string>
 #include <tuple>
 #include <utility>
 #include <set>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -32,6 +35,21 @@ struct multi_result_kernel_internal {
         std::tuple_element_t<n, std::tuple<T_results...>>>;
     using T_current_expression = std::remove_reference_t<
         std::tuple_element_t<n, std::tuple<T_expressions...>>>;
+    /**
+     * Generates list of all events kernel assigning expressions to results must
+     * wait on. Also clears those events from matrices.
+     * @param[out] events list of events
+     * @param results results
+     * @param expressions expressions
+     */
+    static void get_clear_events(
+        std::vector<cl::Event>& events,
+        const std::tuple<wrapper<T_results>...>& results,
+        const std::tuple<wrapper<T_expressions>...>& expressions) {
+      next::get_clear_events(events, results, expressions);
+      std::get<n>(expressions).x.get_clear_write_events(events);
+      std::get<n>(results).x.get_clear_read_write_events(events);
+    }
     /**
      * Assigns the dimensions of expressions to matching results if possible.
      * Otherwise checks that dimensions match. Also checks that all expressions
@@ -59,8 +77,11 @@ struct multi_result_kernel_internal {
                        "first expression", n_cols);
       if (!is_without_output<T_current_expression>::value) {
         result.check_assign_dimensions(expression.rows(), expression.cols());
-        result.set_view(expression.bottom_diagonal(), expression.top_diagonal(),
-                        1 - expression.rows(), expression.cols() - 1);
+        int bottom_written = 1 - expression.rows();
+        int top_written = expression.cols() - 1;
+        result.set_view(std::max(expression.bottom_diagonal(), bottom_written),
+                        std::min(expression.top_diagonal(), top_written),
+                        bottom_written, top_written);
       }
     }
 
@@ -88,10 +109,7 @@ struct multi_result_kernel_internal {
           = std::get<n>(expressions)
                 .x.get_whole_kernel_parts(generated, ng, i, j,
                                           std::get<n>(results).x);
-      parts.initialization += parts0.initialization;
-      parts.body += parts0.body;
-      parts.reduction += parts0.reduction;
-      parts.args += parts0.args;
+      parts += parts0;
       return parts;
     }
 
@@ -139,6 +157,11 @@ template <typename... T_results>
 struct multi_result_kernel_internal<-1, T_results...> {
   template <typename... T_expressions>
   struct inner {
+    static void get_clear_events(
+        std::vector<cl::Event>& events,
+        const std::tuple<wrapper<T_results>...>& results,
+        const std::tuple<wrapper<T_expressions>...>& expressions) {}
+
     static void check_assign_dimensions(
         int n_rows, int n_cols,
         const std::tuple<wrapper<T_results>...>& results,
@@ -302,6 +325,7 @@ class results_cl {
     std::string src;
     if (require_specific_local_size) {
       src =
+          parts.includes +
           "kernel void calculate(" + parts.args +
           "const int rows, const int cols){\n"
           "const int gid_i = get_global_id(0);\n"
@@ -326,6 +350,7 @@ class results_cl {
           "}\n";
     } else {
       src =
+          parts.includes +
           "kernel void calculate(" +
           parts.args.substr(0, parts.args.size() - 2) +
           "){\n"
@@ -390,8 +415,8 @@ class results_cl {
     if (n_rows * n_cols == 0) {
       return;
     }
-    check_positive(function, "number of rows", n_rows);
-    check_positive(function, "number of columns", n_cols);
+    check_nonnegative(function, "expr.rows()", n_rows);
+    check_nonnegative(function, "expr.cols()", n_cols);
 
     try {
       if (impl::kernel_() == NULL) {
@@ -406,6 +431,8 @@ class results_cl {
       std::set<const operation_cl_base*> generated;
       impl::set_args(generated, kernel, arg_num, results, expressions);
 
+      std::vector<cl::Event> events;
+      impl::get_clear_events(events, results, expressions);
       cl::Event e;
       if (require_specific_local_size) {
         kernel.setArg(arg_num++, n_rows);
@@ -416,11 +443,11 @@ class results_cl {
 
         opencl_context.queue().enqueueNDRangeKernel(
             kernel, cl::NullRange, cl::NDRange(local * wgs_rows, wgs_cols),
-            cl::NDRange(local, 1), nullptr, &e);
+            cl::NDRange(local, 1), &events, &e);
       } else {
         opencl_context.queue().enqueueNDRangeKernel(kernel, cl::NullRange,
                                                     cl::NDRange(n_rows, n_cols),
-                                                    cl::NullRange, nullptr, &e);
+                                                    cl::NullRange, &events, &e);
       }
       impl::add_event(e, results, expressions);
     } catch (cl::Error e) {

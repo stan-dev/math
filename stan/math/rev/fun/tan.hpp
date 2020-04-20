@@ -1,9 +1,15 @@
 #ifndef STAN_MATH_REV_FUN_TAN_HPP
 #define STAN_MATH_REV_FUN_TAN_HPP
 
+#include <stan/math/prim/fun/isinf.hpp>
+#include <stan/math/prim/fun/tan.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/is_inf.hpp>
+#include <stan/math/rev/fun/sinh.hpp>
+#include <stan/math/rev/fun/tanh.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -44,6 +50,16 @@ class tan_vari : public op_v_vari {
  * @return Tangent of variable.
  */
 inline var tan(const var& a) { return var(new internal::tan_vari(a.vi_)); }
+
+/**
+ * Return the tangent of the complex argument.
+ *
+ * @param[in] z argument
+ * @return tangent of the argument
+ */
+inline std::complex<var> tan(const std::complex<var>& z) {
+  return stan::math::internal::complex_tan(z);
+}
 
 }  // namespace math
 }  // namespace stan
