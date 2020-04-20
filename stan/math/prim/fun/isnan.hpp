@@ -17,9 +17,9 @@ namespace math {
  * @param[in] v argument
  * @return true if argument is not-a-number
  */
-template <typename ADType>
-inline bool isnan(ADType&& v) {
-  return is_nan(v);
+template <typename T, typename = require_autodiff_t<T>>
+inline bool isnan(const T& x) {
+  return is_nan(x);
 }
 
 }  // namespace math

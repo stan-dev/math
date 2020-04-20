@@ -19,7 +19,7 @@ namespace math {
  * @param[in] v argument
  * @return true if argument is infinite
  */
-template <typename T>
+template <typename T, typename = require_autodiff_t<T>>
 inline bool isinf(const T& v) {
   return is_inf(v);
 }

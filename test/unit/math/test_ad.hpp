@@ -11,6 +11,13 @@
 #include <string>
 #include <vector>
 
+using d_t = double;
+using v_t = stan::math::var;
+using fd_t = stan::math::fvar<d_t>;
+using ffd_t = stan::math::fvar<fd_t>;
+using fv_t = stan::math::fvar<stan::math::var>;
+using ffv_t = stan::math::fvar<fv_t>;
+
 namespace stan {
 namespace test {
 namespace internal {
