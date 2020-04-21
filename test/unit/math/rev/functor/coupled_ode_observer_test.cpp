@@ -221,7 +221,7 @@ TEST_F(StanRevOde, observe_states_ddvd) {
       EXPECT_FLOAT_EQ(ys_coupled[t][n], y[t][n].val());
     for (size_t n = 0; n < 2; n++) {
       y[t][n].grad();
-      EXPECT_FLOAT_EQ(0.0, t0.adj());
+      EXPECT_FLOAT_EQ(-y0[n], t0.adj());
       stan::math::set_zero_all_adjoints();
     }
   }
@@ -296,4 +296,76 @@ TEST_F(StanRevOde, observe_states_dddv) {
   EXPECT_THROW_MSG(
       (throwing_observer(std::vector<double>(coupled_system.size(), 0.0), 0)),
       std::logic_error, message);
+}
+
+TEST_F(StanRevOde, observe_states_ddvd_error) {
+  using stan::math::coupled_ode_system;
+  using stan::math::var;
+
+  harm_osc_ode_wrong_size_1_fun harm_osc1;
+  harm_osc_ode_fun harm_osc2;
+
+  std::vector<double> y0(2);
+  std::vector<double> theta(1);
+
+  y0[0] = 1.0;
+  y0[1] = 0.5;
+  theta[0] = 0.15;
+
+  std::vector<std::vector<var>> y;
+  var t0v = 0;
+  int T = 10;
+  std::vector<double> tsd(T);
+  for (int t = 0; t < T; t++) {
+    tsd[t] = t;
+  }
+
+  EXPECT_THROW_MSG(
+      (stan::math::coupled_ode_observer<harm_osc_ode_wrong_size_1_fun, double,
+                                        double, var, double>(
+          harm_osc1, y0, theta, t0v, tsd, x, x_int, &msgs, y)),
+      std::invalid_argument,
+      std::string(
+          "coupled_ode_observer: dy_dt (3) and states (2) must match in size"));
+
+  EXPECT_NO_THROW((stan::math::coupled_ode_observer<harm_osc_ode_fun, double,
+                                                    double, var, double>(
+      harm_osc2, y0, theta, t0v, tsd, x, x_int, &msgs, y)));
+}
+
+TEST_F(StanRevOde, observe_states_dddv_error) {
+  using stan::math::coupled_ode_system;
+  using stan::math::var;
+
+  harm_osc_ode_wrong_size_1_fun harm_osc1;
+  harm_osc_ode_fun harm_osc2;
+
+  std::vector<double> y0(2);
+  std::vector<double> theta(1);
+
+  y0[0] = 1.0;
+  y0[1] = 0.5;
+  theta[0] = 0.15;
+
+  std::vector<std::vector<var>> y;
+  double t0d = 0;
+  int T = 10;
+  std::vector<var> tsv(T);
+  for (int t = 0; t < T; t++) {
+    tsv[t] = t;
+  }
+
+  stan::math::coupled_ode_observer<harm_osc_ode_wrong_size_1_fun, double,
+                                   double, double, var>
+      throwing_observer(harm_osc1, y0, theta, t0d, tsv, x, x_int, &msgs, y);
+
+  stan::math::coupled_ode_observer<harm_osc_ode_fun, double, double, double,
+                                   var>
+      observer(harm_osc2, y0, theta, t0d, tsv, x, x_int, &msgs, y);
+
+  EXPECT_THROW_MSG(
+      (throwing_observer(std::vector<double>(2), 0)), std::invalid_argument,
+      std::string(
+          "coupled_ode_observer: dy_dt (3) and states (2) must match in size"));
+  EXPECT_NO_THROW((observer(std::vector<double>(2), 0)));
 }
