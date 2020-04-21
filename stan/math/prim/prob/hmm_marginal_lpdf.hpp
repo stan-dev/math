@@ -137,10 +137,7 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
     ops_partials.edge2_.partials_ = Gamma_jacad;
   }
 
-  const bool sensitivities_for_omega_or_rho
-      = (!is_constant_all<T_omega>::value) || (!is_constant_all<T_rho>::value);
-
-  if (sensitivities_for_omega_or_rho) {
+  if (!is_constant_all<T_omega>::value || !is_constant_all<T_rho>::value) {
     eig_matrix_partial log_omega_jacad
         = Eigen::MatrixXd::Zero(n_states, n_transitions + 1);
 
