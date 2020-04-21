@@ -166,7 +166,7 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
       }
     } else {
       const auto grad_corr_boundary = exp(kappa_log_norms(0) - norm_norm);
-      auto C = Gamma_val * omegas.col(1).cwiseProduct(kappa[0]);
+      eig_vector_partial C = Gamma_val * omegas.col(1).cwiseProduct(kappa[0]);
 
       if (!is_constant_all<T_omega>::value) {
         log_omega_jacad.col(0)
