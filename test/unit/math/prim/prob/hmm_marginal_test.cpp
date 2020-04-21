@@ -91,7 +91,6 @@ class hmm_marginal_lpdf_test : public ::testing::Test {
     rho_unconstrained = rho_unconstrained_;
 
     Gamma_unconstrained = Gamma.block(0, 0, n_states, n_states - 1);
-
   }
 
   int n_states, n_transitions;

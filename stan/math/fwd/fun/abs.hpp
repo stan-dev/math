@@ -32,7 +32,7 @@ inline fvar<T> abs(const fvar<T>& x) {
  * @return absolute value of the argument
  */
 template <typename T>
-inline std::complex<fvar<T>> abs(const std::complex<fvar<T>>& z) {
+inline fvar<T> abs(const std::complex<fvar<T>>& z) {
   return internal::complex_abs(z);
 }
 
