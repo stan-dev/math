@@ -181,9 +181,9 @@ class optional_broadcast_
  * expressions can use this expression as if it had any size in the broadcast
  * dimension, repeating the values.
  *
- * Broadcasting evaluates the expression argument multiple times. For performance
- * reasons don't broadcast slow operations. Instead evaluate them in a separate
- * kernel.
+ * Broadcasting evaluates the expression argument multiple times. For
+ * performance reasons don't broadcast slow operations. Instead evaluate them in
+ * a separate kernel.
  * @tparam Colwise whether to broadcast colwise
  * @tparam Rowwise whether to broadcast rowwise
  * @tparam T type of input expression
