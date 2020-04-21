@@ -176,12 +176,12 @@ class optional_broadcast_
 };
 
 /**
- * Brodcast an expression in specified dimension(s) if the size along that
- * dimmension equals to 1. In that case further
- * expressions can use this expression as if had any size in the broadcast
+ * Broadcast an expression in specified dimension(s) if the size along that
+ * dimension equals 1. In that case further
+ * expressions can use this expression as if it had any size in the broadcast
  * dimension, repeating the values.
  *
- * Broadcasting evaluates argument expression multiple times. For performance
+ * Broadcasting evaluates the expression argument multiple times. For performance
  * reasons don't broadcast slow operations. Instead evaluate them in a separate
  * kernel.
  * @tparam Colwise whether to broadcast colwise
