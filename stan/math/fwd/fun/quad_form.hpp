@@ -47,10 +47,10 @@ inline promote_scalar_t<return_type_t<EigMat1, EigMat2>, EigMat2> quad_form(
  * multiplied by B
  */
 template <typename EigMat, typename ColVec, require_eigen_t<EigMat>* = nullptr,
-         require_eigen_col_vector_t<ColVec>* = nullptr,
-         require_any_vt_fvar<EigMat, ColVec>* = nullptr>
+          require_eigen_col_vector_t<ColVec>* = nullptr,
+          require_any_vt_fvar<EigMat, ColVec>* = nullptr>
 inline return_type_t<EigMat, ColVec> quad_form(const EigMat& A,
-                                       const ColVec& B) {
+                                               const ColVec& B) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
   return dot_product(B, multiply(A, B));

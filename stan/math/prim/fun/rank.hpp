@@ -20,8 +20,8 @@ template <typename C, require_container_t<C>* = nullptr>
 inline int rank(const C& v, int s) {
   check_range("rank", "v", v.size(), s);
   --s;  // adjust for indexing by one
-  return apply_vector_unary<C>::reduce(v, [s](const auto& vec){
-    return (vec.array()<vec.coeff(s)).template cast<int>().sum();
+  return apply_vector_unary<C>::reduce(v, [s](const auto& vec) {
+    return (vec.array() < vec.coeff(s)).template cast<int>().sum();
   });
 }
 

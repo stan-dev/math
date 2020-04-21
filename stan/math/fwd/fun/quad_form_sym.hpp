@@ -31,8 +31,7 @@ inline promote_scalar_t<return_type_t<EigMat1, EigMat2>, EigMat2> quad_form_sym(
   using T_ret = return_type_t<EigMat1, EigMat2>;
   check_multiplicable("quad_form_sym", "A", A, "B", B);
   check_symmetric("quad_form_sym", "A", A);
-  promote_scalar_t<T_ret, EigMat2> ret(
-      multiply(B.transpose(), multiply(A, B)));
+  promote_scalar_t<T_ret, EigMat2> ret(multiply(B.transpose(), multiply(A, B)));
   return T_ret(0.5) * (ret + ret.transpose());
 }
 
