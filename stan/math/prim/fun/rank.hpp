@@ -16,17 +16,13 @@ namespace math {
  * @return number of components of v less than v[s].
  * @throw std::out_of_range if s is out of range.
  */
-template <typename C>
+template <typename C, require_container_t<C>* = nullptr>
 inline int rank(const C& v, int s) {
   check_range("rank", "v", v.size(), s);
   --s;  // adjust for indexing by one
-  int count = 0;
-  for (index_type_t<C> i = 0; i < v.size(); ++i) {
-    if (v[i] < v[s]) {
-      ++count;
-    }
-  }
-  return count;
+  return apply_vector_unary<C>::reduce(v, [s](const auto& vec){
+    return (vec.array()<vec.coeff(s)).template cast<int>().sum();
+  });
 }
 
 }  // namespace math

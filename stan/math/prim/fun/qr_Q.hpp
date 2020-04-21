@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_QR_Q_HPP
 #define STAN_MATH_PRIM_FUN_QR_Q_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <algorithm>
@@ -11,14 +12,14 @@ namespace math {
 /**
  * Returns the orthogonal factor of the fat QR decomposition
  *
- * @tparam T type of elements in the matrix
+ * @tparam EigMat type of the matrix
  * @param m Matrix.
  * @return Orthogonal matrix with maximal columns
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> qr_Q(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
-  using matrix_t = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> qr_Q(
+    const EigMat& m) {
+  using matrix_t = Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>;
   check_nonzero_size("qr_Q", "m", m);
   Eigen::HouseholderQR<matrix_t> qr(m.rows(), m.cols());
   qr.compute(m);

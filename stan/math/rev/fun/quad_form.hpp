@@ -101,12 +101,8 @@ class quad_form_vari : public vari {
  * Symmetry of the resulting matrix is not guaranteed due to numerical
  * precision.
  *
- * @tparam Ta type of elements in the square matrix
- * @tparam Ra number of rows in the square matrix, can be Eigen::Dynamic
- * @tparam Ca number of columns in the square matrix, can be Eigen::Dynamic
- * @tparam Tb type of elements in the second matrix
- * @tparam Rb number of rows in the second matrix, can be Eigen::Dynamic
- * @tparam Cb number of columns in the second matrix, can be Eigen::Dynamic
+ * @tparam EigMat1 type of the first (square) matrix
+ * @tparam EigMat2 type of the second matrix
  *
  * @param A square matrix
  * @param B second matrix
@@ -114,15 +110,19 @@ class quad_form_vari : public vari {
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
  */
-template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb,
-          require_any_var_t<Ta, Tb>...>
-inline Eigen::Matrix<var, Cb, Cb> quad_form(
-    const Eigen::Matrix<Ta, Ra, Ca>& A, const Eigen::Matrix<Tb, Rb, Cb>& B) {
+template <typename EigMat1, typename EigMat2,
+          require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
+          require_not_eigen_col_vector_t<EigMat2>* = nullptr,
+          require_any_vt_var<EigMat1, EigMat2>* = nullptr>
+inline promote_scalar_t<var, EigMat2> quad_form(const EigMat1& A,
+                                                const EigMat2& B) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
 
-  internal::quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>* baseVari
-      = new internal::quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>(A, B);
+  auto* baseVari = new internal::quad_form_vari<
+      value_type_t<EigMat1>, EigMat1::RowsAtCompileTime,
+      EigMat1::ColsAtCompileTime, value_type_t<EigMat2>,
+      EigMat2::RowsAtCompileTime, EigMat2::ColsAtCompileTime>(A, B);
 
   return baseVari->impl_->C_;
 }
@@ -130,11 +130,8 @@ inline Eigen::Matrix<var, Cb, Cb> quad_form(
 /**
  * Return the quadratic form \f$ B^T A B \f$.
  *
- * @tparam Ta type of elements in the square matrix
- * @tparam Ra number of rows in the square matrix, can be Eigen::Dynamic
- * @tparam Ca number of columns in the square matrix, can be Eigen::Dynamic
- * @tparam Tb type of elements in the vector
- * @tparam Rb number of rows in the vector, can be Eigen::Dynamic
+ * @tparam EigMat type of the matrix
+ * @tparam ColVec type of the vector
  *
  * @param A square matrix
  * @param B vector
@@ -142,15 +139,17 @@ inline Eigen::Matrix<var, Cb, Cb> quad_form(
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
  */
-template <typename Ta, int Ra, int Ca, typename Tb, int Rb,
-          require_any_var_t<Ta, Tb>...>
-inline var quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
-                     const Eigen::Matrix<Tb, Rb, 1>& B) {
+template <typename EigMat, typename ColVec, require_eigen_t<EigMat>* = nullptr,
+          require_eigen_col_vector_t<ColVec>* = nullptr,
+          require_any_vt_var<EigMat, ColVec>* = nullptr>
+inline var quad_form(const EigMat& A, const ColVec& B) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
 
-  internal::quad_form_vari<Ta, Ra, Ca, Tb, Rb, 1>* baseVari
-      = new internal::quad_form_vari<Ta, Ra, Ca, Tb, Rb, 1>(A, B);
+  auto* baseVari = new internal::quad_form_vari<
+      value_type_t<EigMat>, EigMat::RowsAtCompileTime,
+      EigMat::ColsAtCompileTime, value_type_t<ColVec>,
+      ColVec::RowsAtCompileTime, 1>(A, B);
 
   return baseVari->impl_->C_(0, 0);
 }

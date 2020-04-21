@@ -13,12 +13,8 @@ namespace math {
  *
  * Symmetry of the resulting matrix is guaranteed.
  *
- * @tparam TA type of elements in the symmetric matrix
- * @tparam RA number of rows in the symmetric matrix, can be Eigen::Dynamic
- * @tparam CA number of columns in the symmetric matrix, can be Eigen::Dynamic
- * @tparam TB type of elements in the second matrix
- * @tparam RB number of rows in the second matrix, can be Eigen::Dynamic
- * @tparam CB number of columns in the second matrix, can be Eigen::Dynamic
+ * @tparam EigMat1 type of the first (symmetric) matrix
+ * @tparam EigMat2 type of the second matrix
  *
  * @param A symmetric matrix
  * @param B second matrix
@@ -26,25 +22,25 @@ namespace math {
  * @throws std::invalid_argument if A is not symmetric, or if A cannot be
  * multiplied by B
  */
-template <typename TA, int RA, int CA, typename TB, int RB, int CB,
-          require_any_fvar_t<TA, TB>...>
-inline Eigen::Matrix<return_type_t<TA, TB>, CB, CB> quad_form_sym(
-    const Eigen::Matrix<TA, RA, CA>& A, const Eigen::Matrix<TB, RB, CB>& B) {
-  using T = return_type_t<TA, TB>;
+template <typename EigMat1, typename EigMat2,
+          require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
+          require_not_eigen_col_vector_t<EigMat2>* = nullptr,
+          require_any_vt_fvar<EigMat1, EigMat2>* = nullptr>
+inline promote_scalar_t<return_type_t<EigMat1, EigMat2>, EigMat2> quad_form_sym(
+    const EigMat1& A, const EigMat2& B) {
+  using T_ret = return_type_t<EigMat1, EigMat2>;
   check_multiplicable("quad_form_sym", "A", A, "B", B);
   check_symmetric("quad_form_sym", "A", A);
-  Eigen::Matrix<T, CB, CB> ret(multiply(transpose(B), multiply(A, B)));
-  return T(0.5) * (ret + transpose(ret));
+  promote_scalar_t<T_ret, EigMat2> ret(
+      multiply(B.transpose(), multiply(A, B)));
+  return T_ret(0.5) * (ret + ret.transpose());
 }
 
 /**
  * Return the quadratic form \f$ B^T A B \f$ of a symmetric matrix.
  *
- * @tparam TA type of elements in the symmetric matrix
- * @tparam RA number of rows in the symmetric matrix, can be Eigen::Dynamic
- * @tparam CA number of columns in the symmetric matrix, can be Eigen::Dynamic
- * @tparam TB type of elements in the vector
- * @tparam RB number of rows in the vector, can be Eigen::Dynamic
+ * @tparam EigMat type of the (symmetric) matrix
+ * @tparam ColVec type of the vector
  *
  * @param A symmetric matrix
  * @param B vector
@@ -52,10 +48,11 @@ inline Eigen::Matrix<return_type_t<TA, TB>, CB, CB> quad_form_sym(
  * @throws std::invalid_argument if A is not symmetric, or if A cannot be
  * multiplied by B
  */
-template <typename TA, int RA, int CA, typename TB, int RB,
-          require_any_fvar_t<TA, TB>...>
-inline return_type_t<TA, TB> quad_form_sym(const Eigen::Matrix<TA, RA, CA>& A,
-                                           const Eigen::Matrix<TB, RB, 1>& B) {
+template <typename EigMat, typename ColVec, require_eigen_t<EigMat>* = nullptr,
+          require_eigen_col_vector_t<ColVec>* = nullptr,
+          require_any_vt_fvar<EigMat, ColVec>* = nullptr>
+inline return_type_t<EigMat, ColVec> quad_form_sym(const EigMat& A,
+                                                   const ColVec& B) {
   check_multiplicable("quad_form_sym", "A", A, "B", B);
   check_symmetric("quad_form_sym", "A", A);
   return dot_product(B, multiply(A, B));

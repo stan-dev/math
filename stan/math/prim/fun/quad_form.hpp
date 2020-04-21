@@ -13,11 +13,8 @@ namespace math {
  * Symmetry of the resulting matrix is not guaranteed due to numerical
  * precision.
  *
- * @tparam RA number of rows in the square matrix, can be Eigen::Dynamic
- * @tparam CA number of columns in the square matrix, can be Eigen::Dynamic
- * @tparam RB number of rows in the second matrix, can be Eigen::Dynamic
- * @tparam CB number of columns in the second matrix, can be Eigen::Dynamic
- * @tparam T type of elements
+ * @tparam EigMat1 type of the first (square) matrix
+ * @tparam EigMat2 type of the second matrix
  *
  * @param A square matrix
  * @param B second matrix
@@ -25,9 +22,12 @@ namespace math {
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
  */
-template <int RA, int CA, int RB, int CB, typename T>
-inline Eigen::Matrix<T, CB, CB> quad_form(const Eigen::Matrix<T, RA, CA>& A,
-                                          const Eigen::Matrix<T, RB, CB>& B) {
+template <typename EigMat1, typename EigMat2,
+          require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
+          require_not_eigen_col_vector_t<EigMat2>* = nullptr,
+          require_vt_same<EigMat1, EigMat2>* = nullptr,
+          require_all_vt_arithmetic<EigMat1, EigMat2>* = nullptr>
+inline plain_type_t<EigMat2> quad_form(const EigMat1& A, const EigMat2& B) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
   return B.transpose() * A * B;
@@ -36,10 +36,8 @@ inline Eigen::Matrix<T, CB, CB> quad_form(const Eigen::Matrix<T, RA, CA>& A,
 /**
  * Return the quadratic form \f$ B^T A B \f$.
  *
- * @tparam RA number of rows in the square matrix, can be Eigen::Dynamic
- * @tparam CA number of columns in the square matrix, can be Eigen::Dynamic
- * @tparam RB number of rows in the vector, can be Eigen::Dynamic
- * @tparam T type of elements
+ * @tparam EigMat type of the matrix
+ * @tparam ColVec type of the vector
  *
  * @param A square matrix
  * @param B vector
@@ -47,9 +45,11 @@ inline Eigen::Matrix<T, CB, CB> quad_form(const Eigen::Matrix<T, RA, CA>& A,
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
  */
-template <int RA, int CA, int RB, typename T>
-inline T quad_form(const Eigen::Matrix<T, RA, CA>& A,
-                   const Eigen::Matrix<T, RB, 1>& B) {
+template <typename EigMat, typename ColVec, require_eigen_t<EigMat>* = nullptr,
+          require_eigen_col_vector_t<ColVec>* = nullptr,
+          require_vt_same<EigMat, ColVec>* = nullptr,
+          require_all_vt_arithmetic<EigMat, ColVec>* = nullptr>
+inline value_type_t<EigMat> quad_form(const EigMat& A, const ColVec& B) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
   return B.dot(A * B);
