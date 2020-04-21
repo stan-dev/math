@@ -49,10 +49,7 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
     const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
     const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma,
     const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho) {
-  using T_partials_return = partials_return_t<T_omega, T_Gamma, T_rho>;
-  using T_partial_type
-      = return_type_t<partials_type_t<T_omega>, partials_type_t<T_Gamma>,
-                      partials_type_t<T_rho> >;
+  using T_partial_type = partials_return_t<T_omega, T_Gamma, T_rho>;
   using eig_matrix_partial
       = Eigen::Matrix<T_partial_type, Eigen::Dynamic, Eigen::Dynamic>;
   using eig_vector_partial = Eigen::Matrix<T_partial_type, Eigen::Dynamic, 1>;
@@ -100,7 +97,7 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
       alpha_log_norms(n + 1) = log(col_norm) + alpha_log_norms(n);
     }
   }
-  const T_partial_type log_marginal_density
+  const auto log_marginal_density
       = log(alphas.col(n_transitions).sum()) + alpha_log_norms(n_transitions);
 
   // Variables required for all three Jacobian-adjoint products.
@@ -109,7 +106,7 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
 
   std::vector<eig_vector_partial> kappa(n_transitions);
   eig_vector_partial kappa_log_norms(n_transitions);
-  std::vector<T_partial_type> grad_corr(n_transitions);
+  std::vector<T_partial_type> grad_corr(n_transitions, 0);
 
   if (n_transitions > 0) {
     kappa[n_transitions - 1] = Eigen::VectorXd::Ones(n_states);
@@ -129,7 +126,7 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
 
   if (!is_constant_all<T_Gamma>::value) {
     eig_matrix_partial Gamma_jacad
-        = eig_matrix_partial::Zero(n_states, n_states);
+        = Eigen::MatrixXd::Zero(n_states, n_states);
 
     for (int n = n_transitions - 1; n >= 0; --n) {
       Gamma_jacad += (grad_corr[n] * kappa[n].cwiseProduct(omegas.col(n + 1))
@@ -146,7 +143,7 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
 
   if (sensitivities_for_omega_or_rho) {
     eig_matrix_partial log_omega_jacad
-        = eig_matrix_partial::Zero(n_states, n_transitions + 1);
+        = Eigen::MatrixXd::Zero(n_states, n_transitions + 1);
 
     if (!is_constant_all<T_omega>::value) {
       for (int n = n_transitions - 1; n >= 0; --n)
@@ -159,17 +156,17 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
     if (n_transitions == 0) {
       if (!is_constant_all<T_omega>::value) {
         log_omega_jacad.col(0) = omegas.col(0).cwiseProduct(value_of(rho))
-                                 / exp(value_of(log_marginal_density));
+                                 / exp(log_marginal_density);
         ops_partials.edge1_.partials_ = log_omega_jacad;
       }
 
       if (!is_constant_all<T_rho>::value) {
         ops_partials.edge3_.partials_
-            = omegas.col(0) / exp(value_of(log_marginal_density));
+            = omegas.col(0) / exp(log_marginal_density);
       }
     } else {
       const auto grad_corr_boundary = exp(kappa_log_norms(0) - norm_norm);
-      eig_vector_partial C = Gamma_val * omegas.col(1).cwiseProduct(kappa[0]);
+      auto C = Gamma_val * omegas.col(1).cwiseProduct(kappa[0]);
 
       if (!is_constant_all<T_omega>::value) {
         log_omega_jacad.col(0)
