@@ -253,7 +253,7 @@ endif
 
 
 CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) $(CXXFLAGS_THREADS) $(CXXFLAGS_TBB) -O$(O) $(INC)
-CPPFLAGS += $(CPPFLAGS_LANG) $(CPPFLAGS_OS) $(CPPFLAGS_WARNINGS) $(CPPFLAGS_BOOST) $(CPPFLAGS_EIGEN) $(CPPFLAGS_OPENCL) $(CPPFLAGS_MPI) $(CPPFLAGS_TBB)
+CPPFLAGS += -ftemplate-backtrace-limit=0 $(CPPFLAGS_LANG) $(CPPFLAGS_OS) $(CPPFLAGS_WARNINGS) $(CPPFLAGS_BOOST) $(CPPFLAGS_EIGEN) $(CPPFLAGS_OPENCL) $(CPPFLAGS_MPI) $(CPPFLAGS_TBB)
 LDFLAGS += $(LDFLAGS_LANG) $(LDFLAGS_OS) $(LDFLAGS_WARNINGS) $(LDFLAGS_BOOST) $(LDFLAGS_EIGEN) $(LDFLAGS_OPENCL) $(LDFLAGS_MPI) $(LDFLAGS_TBB)
 LDLIBS += $(LDLIBS_LANG) $(LDLIBS_OS) $(LDLIBS_WARNINGS) $(LDLIBS_BOOST) $(LDLIBS_EIGEN) $(LDLIBS_OPENCL) $(LDLIBS_MPI) $(LDLIBS_TBB)
 
@@ -271,7 +271,7 @@ print-compiler-flags:
 	@echo '  - SUNDIALS                    ' $(SUNDIALS)
 	@echo '  - TBB                         ' $(TBB)
 	@echo '  - GTEST                       ' $(GTEST)
-	@echo '  - STAN_THREADS                ' $(STAN_THREADS) 
+	@echo '  - STAN_THREADS                ' $(STAN_THREADS)
 	@echo '  - STAN_OPENCL                 ' $(STAN_OPENCL)
 	@echo '  - STAN_MPI                    ' $(STAN_MPI)
 	@echo '  Compiler flags (each can be overriden separately):'
