@@ -125,8 +125,7 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   }
 
   if (!is_constant_all<T_Gamma>::value) {
-    eig_matrix_partial Gamma_jacad
-        = Eigen::MatrixXd::Zero(n_states, n_states);
+    eig_matrix_partial Gamma_jacad = Eigen::MatrixXd::Zero(n_states, n_states);
 
     for (int n = n_transitions - 1; n >= 0; --n) {
       Gamma_jacad += (grad_corr[n] * kappa[n].cwiseProduct(omegas.col(n + 1))
