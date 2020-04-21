@@ -44,12 +44,12 @@ namespace math {
  * not a simplex.
  * @return log marginal density.
  */
-template <typename EigOmega, typename EigGamma, typename EigRho,
-  require_eigen_t<EigOmega, EigGamma>* = nullptr,
-  require_eigen_vector_t<EigRho>* = nullptr>
-inline auto hmm_marginal_lpdf(const EigOmega& log_omegas, const EigGamma& Gamma,
-    const EigRho& rho) {
-  using T_partial_type = partials_return_t<EigOmega, EigGamma, EigRho>;
+template <typename T_omega, typename T_Gamma, typename T_rho>
+inline auto hmm_marginal_lpdf(
+    const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
+    const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma,
+    const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho) {
+  using T_partial_type = partials_return_t<T_omega, T_Gamma, T_rho>;
   using eig_matrix_partial
       = Eigen::Matrix<T_partial_type, Eigen::Dynamic, Eigen::Dynamic>;
   using eig_vector_partial = Eigen::Matrix<T_partial_type, Eigen::Dynamic, 1>;
@@ -64,7 +64,10 @@ inline auto hmm_marginal_lpdf(const EigOmega& log_omegas, const EigGamma& Gamma,
     check_simplex("hmm_marginal_lpdf", "Gamma[i, ]", row(Gamma, i + 1));
   }
 
-  operands_and_partials<EigOmega, EigGamma, EigRho> ops_partials(log_omegas, Gamma, rho);
+  operands_and_partials<Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>,
+                        Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>,
+                        Eigen::Matrix<T_rho, Eigen::Dynamic, 1> >
+      ops_partials(log_omegas, Gamma, rho);
 
   eig_matrix_partial alphas(n_states, n_transitions + 1);
   eig_vector_partial alpha_log_norms(n_transitions + 1);
