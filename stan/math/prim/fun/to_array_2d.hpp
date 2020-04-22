@@ -8,17 +8,21 @@ namespace stan {
 namespace math {
 
 // real[, ] to_array_2d(matrix)
-template <typename T>
-inline std::vector<std::vector<T> > to_array_2d(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& matrix) {
+template <typename EigMat>
+inline std::vector<std::vector<value_type_t<EigMat>>> to_array_2d(
+    const Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>&
+        matrix) {
   using std::vector;
-  const T* datap = matrix.data();
+  using T = value_type_t<EigMat>;
+  const Eigen::Ref<const Eigen::Matrix<T, EigMat::RowsAtCompileTime,
+                                       EigMat::ColsAtCompileTime>>& mat_ref
+      = matrix;
   int C = matrix.cols();
   int R = matrix.rows();
-  vector<vector<T> > result(R, vector<T>(C));
+  vector<vector<T>> result(R, vector<T>(C));
   for (int i = 0, ij = 0; i < C; i++) {
     for (int j = 0; j < R; j++, ij++) {
-      result[j][i] = datap[ij];
+      result[j][i] = mat_ref.data[ij];
     }
   }
   return result;

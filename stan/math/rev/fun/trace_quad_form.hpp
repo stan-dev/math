@@ -73,14 +73,20 @@ class trace_quad_form_vari : public vari {
 };
 }  // namespace internal
 
-template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb,
-          typename = require_any_var_t<Ta, Tb>>
-inline return_type_t<Ta, Tb> trace_quad_form(
-    const Eigen::Matrix<Ta, Ra, Ca>& A, const Eigen::Matrix<Tb, Rb, Cb>& B) {
+template <typename EigMat1, typename EigMat2,
+          typename = require_any_vt_var<EigMat1, EigMat2>>
+inline return_type_t<EigMat1, EigMat2> trace_quad_form(
+    const EigMat1& A, const EigMat2& B) {
+  using Ta = value_type_t<EigMat1>;
+  using Tb = value_type_t<EigMat2>;
+  constexpr int Ra = EigMat1::RowsAtCompileTime;
+  constexpr int Ca = EigMat1::ColsAtCompileTime;
+  constexpr int Rb = EigMat2::RowsAtCompileTime;
+  constexpr int Cb = EigMat2::ColsAtCompileTime;
   check_square("trace_quad_form", "A", A);
   check_multiplicable("trace_quad_form", "A", A, "B", B);
 
-  internal::trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>* baseVari
+  auto* baseVari
       = new internal::trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>(A, B);
 
   return var(

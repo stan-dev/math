@@ -10,11 +10,15 @@ namespace math {
 // vector to_vector(matrix)
 // vector to_vector(row_vector)
 // vector to_vector(vector)
-template <typename T, int R, int C>
-inline Eigen::Matrix<T, Eigen::Dynamic, 1> to_vector(
-    const Eigen::Matrix<T, R, C>& matrix) {
-  return Eigen::Matrix<T, Eigen::Dynamic, 1>::Map(
-      matrix.data(), matrix.rows() * matrix.cols());
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, 1> to_vector(
+    const EigMat& matrix) {
+  using T = value_type_t<EigMat>;
+  Eigen::Matrix<T, Eigen::Dynamic, 1> res;
+  Eigen::Map<Eigen::Matrix<T, EigMat::RowsAtCompileTime, EigMat::ColsAtCompileTime>>
+      res_map(res.data(), matrix.rows(), matrix.cols());
+  res_map = matrix;
+  return res;
 }
 
 // vector to_vector(real[])

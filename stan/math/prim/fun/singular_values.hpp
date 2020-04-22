@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_SINGULAR_VALUES_HPP
 #define STAN_MATH_PRIM_FUN_SINGULAR_VALUES_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 
 namespace stan {
@@ -16,14 +17,14 @@ namespace math {
  * @param m Specified matrix.
  * @return Singular values of the matrix.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> singular_values(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
+template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr>
+Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, 1> singular_values(
+    const EigMat& m) {
   if (m.size() == 0) {
     return {};
   }
 
-  return Eigen::JacobiSVD<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >(m)
+  return Eigen::JacobiSVD<Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> >(m)
       .singularValues();
 }
 

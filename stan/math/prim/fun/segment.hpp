@@ -9,35 +9,21 @@ namespace stan {
 namespace math {
 
 /**
- * Return the specified number of elements as a vector starting
- * from the specified element - 1 of the specified vector.
+ * Return the specified number of elements as a row/column vector starting
+ * from the specified element - 1 of the specified row/column vector.
  *
- * @tparam T type of elements in the vector
+ * @tparam T type of the vector
  */
-template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, 1> segment(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& v, size_t i, size_t n) {
+template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+inline plain_type_t<EigVec> segment(
+    const EigVec& v, size_t i, size_t n) {
   check_greater("segment", "n", i, 0.0);
-  check_less_or_equal("segment", "n", i, static_cast<size_t>(v.rows()));
+  check_less_or_equal("segment", "n", i, static_cast<size_t>(v.size()));
   if (n != 0) {
     check_greater("segment", "n", i + n - 1, 0.0);
     check_less_or_equal("segment", "n", i + n - 1,
-                        static_cast<size_t>(v.rows()));
+                        static_cast<size_t>(v.size()));
   }
-  return v.segment(i - 1, n);
-}
-
-template <typename T>
-inline Eigen::Matrix<T, 1, Eigen::Dynamic> segment(
-    const Eigen::Matrix<T, 1, Eigen::Dynamic>& v, size_t i, size_t n) {
-  check_greater("segment", "n", i, 0.0);
-  check_less_or_equal("segment", "n", i, static_cast<size_t>(v.cols()));
-  if (n != 0) {
-    check_greater("segment", "n", i + n - 1, 0.0);
-    check_less_or_equal("segment", "n", i + n - 1,
-                        static_cast<size_t>(v.cols()));
-  }
-
   return v.segment(i - 1, n);
 }
 

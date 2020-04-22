@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_SIZE_MVT_HPP
 #define STAN_MATH_PRIM_FUN_SIZE_MVT_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stdexcept>
 #include <vector>
@@ -19,14 +20,14 @@ namespace math {
  *   only match scalars.
  * @throw std::invalid_argument since the type is a scalar.
  */
-template <typename T>
+template <typename T, require_stan_scalar_t<T>* = nullptr>
 size_t size_mvt(const T& /* unused */) {
   throw std::invalid_argument("size_mvt passed to an unrecognized type.");
   return 1U;
 }
 
-template <typename T, int R, int C>
-size_t size_mvt(const Eigen::Matrix<T, R, C>& /* unused */) {
+template <typename T, require_eigen_t<T>* = nullptr>
+size_t size_mvt(const T& /* unused */) {
   return 1U;
 }
 

@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_TO_ROW_VECTOR_HPP
 #define STAN_MATH_PRIM_FUN_TO_ROW_VECTOR_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <vector>
 
@@ -10,11 +11,14 @@ namespace math {
 // row_vector to_row_vector(matrix)
 // row_vector to_row_vector(vector)
 // row_vector to_row_vector(row_vector)
-template <typename T, int R, int C>
-inline Eigen::Matrix<T, 1, Eigen::Dynamic> to_row_vector(
-    const Eigen::Matrix<T, R, C>& matrix) {
-  return Eigen::Matrix<T, 1, Eigen::Dynamic>::Map(
-      matrix.data(), matrix.rows() * matrix.cols());
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigMat>, 1, Eigen::Dynamic> to_row_vector(const EigMat& matrix) {
+  using T = value_type_t<EigMat>;
+  Eigen::Matrix<T, 1, Eigen::Dynamic> res;
+  Eigen::Map<Eigen::Matrix<T, EigMat::RowsAtCompileTime, EigMat::ColsAtCompileTime>>
+      res_map(res.data(), matrix.rows(), matrix.cols());
+  res_map = matrix;
+  return res;
 }
 
 // row_vector to_row_vector(real[])
