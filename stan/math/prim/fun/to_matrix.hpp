@@ -90,11 +90,12 @@ to_matrix(const std::vector<std::vector<T> >& x) {
  * do not match
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
-    EigMat&& x, int m, int n) {
+inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>
+to_matrix(EigMat&& x, int m, int n) {
   static const char* function = "to_matrix(matrix)";
   check_size_match(function, "rows * columns", m * n, "vector size", x.size());
-  Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> y = std::forward<EigMat>(x);
+  Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> y
+      = std::forward<EigMat>(x);
   y.resize(m, n);
   return y;
 }
@@ -161,15 +162,17 @@ inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
  * if the sizes do not match
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
-    EigMat&& x, int m, int n, bool col_major) {
+inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>
+to_matrix(EigMat&& x, int m, int n, bool col_major) {
   if (col_major) {
     return to_matrix(std::forward<EigMat>(x), m, n);
   }
   check_size_match("to_matrix", "rows * columns", m * n, "matrix size",
                    x.size());
-  //TODO(Tadej): after we can return general expressions just return row-major matrix
-  Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> result(m, n);
+  // TODO(Tadej): after we can return general expressions just return row-major
+  // matrix
+  Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> result(m,
+                                                                             n);
   for (int i = 0, ij = 0; i < m; i++) {
     for (int j = 0; j < n; j++, ij++) {
       result.coeffRef(i, j) = x.coeff(ij);

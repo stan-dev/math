@@ -25,8 +25,7 @@ namespace math {
  * @return Simplex of dimensionality K.
  */
 template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
-auto simplex_constrain(
-    const ColVec& y) {
+auto simplex_constrain(const ColVec& y) {
   // cut & paste simplex_constrain(Eigen::Matrix, T) w/o Jacobian
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -59,8 +58,7 @@ auto simplex_constrain(
  * @return Simplex of dimensionality K.
  */
 template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
-auto simplex_constrain(
-    const ColVec& y, value_type_t<ColVec>& lp) {
+auto simplex_constrain(const ColVec& y, value_type_t<ColVec>& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;

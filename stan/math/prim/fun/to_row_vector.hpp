@@ -12,10 +12,12 @@ namespace math {
 // row_vector to_row_vector(vector)
 // row_vector to_row_vector(row_vector)
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigMat>, 1, Eigen::Dynamic> to_row_vector(const EigMat& matrix) {
+inline Eigen::Matrix<value_type_t<EigMat>, 1, Eigen::Dynamic> to_row_vector(
+    const EigMat& matrix) {
   using T = value_type_t<EigMat>;
   Eigen::Matrix<T, 1, Eigen::Dynamic> res;
-  Eigen::Map<Eigen::Matrix<T, EigMat::RowsAtCompileTime, EigMat::ColsAtCompileTime>>
+  Eigen::Map<
+      Eigen::Matrix<T, EigMat::RowsAtCompileTime, EigMat::ColsAtCompileTime>>
       res_map(res.data(), matrix.rows(), matrix.cols());
   res_map = matrix;
   return res;

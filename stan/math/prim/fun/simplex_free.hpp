@@ -26,8 +26,7 @@ namespace math {
  * @throw std::domain_error if x is not a valid simplex
  */
 template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
-auto simplex_free(
-    const ColVec& x) {
+auto simplex_free(const ColVec& x) {
   using std::log;
   using T = value_type_t<ColVec>;
 

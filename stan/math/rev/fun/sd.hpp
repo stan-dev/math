@@ -35,10 +35,12 @@ var sd(const T& m) {
     using T_map = std::decay_t<decltype(dtrs_map)>;
     using T_vi = promote_scalar_t<vari*, T_map>;
     using T_d = promote_scalar_t<double, T_map>;
-    vari** varis = reinterpret_cast<vari**>(
-        ChainableStack::instance_->memalloc_.alloc(dtrs_map.size() * sizeof(vari*)));
-    double* partials = reinterpret_cast<double*>(
-        ChainableStack::instance_->memalloc_.alloc(dtrs_map.size() * sizeof(double)));
+    vari** varis
+        = reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
+            dtrs_map.size() * sizeof(vari*)));
+    double* partials
+        = reinterpret_cast<double*>(ChainableStack::instance_->memalloc_.alloc(
+            dtrs_map.size() * sizeof(double)));
     Eigen::Map<T_vi> varis_map(varis, dtrs_map.rows(), dtrs_map.cols());
     Eigen::Map<T_d> partials_map(partials, dtrs_map.rows(), dtrs_map.cols());
 

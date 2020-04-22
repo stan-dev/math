@@ -14,9 +14,8 @@ namespace math {
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
 inline std::vector<value_type_t<EigMat>> to_array_1d(const EigMat& matrix) {
   using T_val = value_type_t<EigMat>;
-  const Eigen::Ref<
-      const Eigen::Matrix<T_val, EigMat::RowsAtCompileTime,
-                          EigMat::ColsAtCompileTime>>& mat_ref
+  const Eigen::Ref<const Eigen::Matrix<T_val, EigMat::RowsAtCompileTime,
+                                       EigMat::ColsAtCompileTime>>& mat_ref
       = matrix;
   int matrix_size = matrix.size();
   std::vector<T_val> result(matrix_size);
