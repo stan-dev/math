@@ -21,7 +21,9 @@ namespace stan {
  * @tparam Enable used for SFINAE deduction.
  */
 template <typename T>
-struct is_eigen_matrix_base : bool_constant<is_base_pointer_convertible<Eigen::MatrixBase, T>::value> {};
+struct is_eigen_matrix_base
+    : bool_constant<is_base_pointer_convertible<Eigen::MatrixBase, T>::value> {
+};
 
 /** @}*/
 

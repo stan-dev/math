@@ -84,24 +84,24 @@ void test_eigen_dense_hierarchy() {
 
   //  Dense Matrix Hierarchy
   EXPECT_TRUE((Base_v == Checker<EigenBase<EigenType>>::value))
-  << "Failed For Base: " << type_name<decltype(A)>()
-  << "\nChecking Type: " << type_name<EigenBase<EigenType>>();
+      << "Failed For Base: " << type_name<decltype(A)>()
+      << "\nChecking Type: " << type_name<EigenBase<EigenType>>();
   EXPECT_TRUE((Base_v == Checker<EigenBase<decltype(A * B)>>::value))
-  << "Failed For Base: " << type_name<decltype(A)>()
-  << "\nChecking Type: " << type_name<EigenBase<decltype(A * B)>>();
+      << "Failed For Base: " << type_name<decltype(A)>()
+      << "\nChecking Type: " << type_name<EigenBase<decltype(A * B)>>();
   EXPECT_TRUE((Dense_v == Checker<DenseBase<decltype(A * B)>>::value))
-  << "Failed For Base: " << type_name<decltype(A)>()
-  << "\nChecking Type: " << type_name<DenseBase<decltype(A * B)>>();
-  EXPECT_TRUE((Matrix_v == Checker<MatrixBase<decltype(A * B + A.transpose())>>::value))
-  << "Failed For Base: " << type_name<decltype(A)>()
-  << "\nChecking Type: " << type_name<decltype(A * B + A.transpose())>();
+      << "Failed For Base: " << type_name<decltype(A)>()
+      << "\nChecking Type: " << type_name<DenseBase<decltype(A * B)>>();
+  EXPECT_TRUE(
+      (Matrix_v == Checker<MatrixBase<decltype(A * B + A.transpose())>>::value))
+      << "Failed For Base: " << type_name<decltype(A)>()
+      << "\nChecking Type: " << type_name<decltype(A * B + A.transpose())>();
   EXPECT_TRUE((Array_v == Checker<ArrayBase<decltype(A + B)>>::value))
-  << "Failed For Base: " << type_name<decltype(A)>()
-  << "\nChecking Type: " << type_name<ArrayBase<decltype(A + B)>>();
+      << "Failed For Base: " << type_name<decltype(A)>()
+      << "\nChecking Type: " << type_name<ArrayBase<decltype(A + B)>>();
   EXPECT_TRUE((Map_v == Checker<Map<EigenType>>::value))
-  << "Failed For Base: " << type_name<decltype(A)>()
-  << "\nChecking Type: " << type_name<Map<EigenType>>();
-
+      << "Failed For Base: " << type_name<decltype(A)>()
+      << "\nChecking Type: " << type_name<Map<EigenType>>();
 }
 
 /**

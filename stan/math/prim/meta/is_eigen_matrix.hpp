@@ -17,7 +17,6 @@ namespace stan {
 
 namespace internal {
 
-
 /**
  * Underlying implimenation to check if an Eigen matrix has rows or cols not
  *  equal to 1.
@@ -41,7 +40,9 @@ template <typename T, typename Enable = void>
 struct is_eigen_matrix : std::false_type {};
 
 template <typename T>
-struct is_eigen_matrix<T, std::enable_if_t<is_base_pointer_convertible<Eigen::MatrixBase, T>::value>>
+struct is_eigen_matrix<
+    T,
+    std::enable_if_t<is_base_pointer_convertible<Eigen::MatrixBase, T>::value>>
     : bool_constant<internal::is_eigen_matrix_impl<std::decay_t<T>>::value> {};
 
 /** @}*/

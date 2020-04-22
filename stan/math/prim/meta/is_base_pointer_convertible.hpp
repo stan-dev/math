@@ -18,13 +18,16 @@ namespace stan {
  * @tparam The type to check
  * @ingroup type_trait
  */
- template <template <typename> class Base, typename Derived>
- struct is_base_pointer_convertible {
-   static std::false_type f(const void *);
-   template <typename OtherDerived>
-   static std::true_type f(const Base<OtherDerived>*);
-   enum { value = decltype(f(std::declval<std::remove_reference_t<Derived>*>()))::value };
- };
+template <template <typename> class Base, typename Derived>
+struct is_base_pointer_convertible {
+  static std::false_type f(const void *);
+  template <typename OtherDerived>
+  static std::true_type f(const Base<OtherDerived> *);
+  enum {
+    value
+    = decltype(f(std::declval<std::remove_reference_t<Derived> *>()))::value
+  };
+};
 
 }  // namespace stan
 

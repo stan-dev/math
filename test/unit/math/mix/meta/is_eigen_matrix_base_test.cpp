@@ -14,12 +14,12 @@ TEST(MathMetaPrim, is_eigen_matrix_base_hierarchy_tests) {
                   1, -1>();
   all_eigen_dense<false, false, true, false, true, is_eigen_matrix_base, Matrix,
                   -1, 1>();
-  all_eigen_dense<false, false, true, false, false, is_eigen_matrix_base,
-                  Array, -1, -1>();
-  all_eigen_dense<false, false, true, false, false, is_eigen_matrix_base,
-                  Array, 1, -1>();
-  all_eigen_dense<false, false, true, false, false, is_eigen_matrix_base,
-                  Array, -1, 1>();
+  all_eigen_dense<false, false, true, false, false, is_eigen_matrix_base, Array,
+                  -1, -1>();
+  all_eigen_dense<false, false, true, false, false, is_eigen_matrix_base, Array,
+                  1, -1>();
+  all_eigen_dense<false, false, true, false, false, is_eigen_matrix_base, Array,
+                  -1, 1>();
 }
 
 TEST(MathMetaPrim, is_eigen_matrix_base_sparse_tests) {

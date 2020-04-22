@@ -20,7 +20,8 @@ namespace stan {
  * @tparam Enable used for SFINAE deduction.
  **/
 template <typename T, typename Enable = void>
-struct is_eigen : bool_constant<is_base_pointer_convertible<Eigen::EigenBase, T>::value> {};
+struct is_eigen
+    : bool_constant<is_base_pointer_convertible<Eigen::EigenBase, T>::value> {};
 
 /** \ingroup type_trait
  * Template metaprogram defining the base scalar type of
@@ -53,7 +54,8 @@ STAN_ADD_REQUIRE_CONTAINER(eigen, is_eigen, require_eigens_types);
  * @ingroup type_trait
  */
 template <typename T>
-struct is_eigen_array : bool_constant<is_base_pointer_convertible<Eigen::ArrayBase, T>::value> {};
+struct is_eigen_array
+    : bool_constant<is_base_pointer_convertible<Eigen::ArrayBase, T>::value> {};
 
 STAN_ADD_REQUIRE_UNARY(eigen_array, is_eigen_array, require_eigens_types);
 STAN_ADD_REQUIRE_CONTAINER(eigen_array, is_eigen_array, require_eigens_types);
