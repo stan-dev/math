@@ -239,7 +239,7 @@ inline const T& get_base1(
  * to get a row then using a second call to get the value at
  a specified column.
  *
- * @tparam T type of the matrix
+ * @tparam EigMat type of the matrix
  * @param x Matrix from which to get a row
  * @param m Index into matrix plus 1.
  * @param error_msg Error message if the index is out of range.
@@ -262,7 +262,7 @@ inline Eigen::Matrix<value_type_t<EigMat>, 1, Eigen::Dynamic> get_base1(
  * throw a <code>std::out_of_range</code> exception with the
  * specified error message and index indicated.
  *
- * @tparam T type of the matrix
+ * @tparam EigMat type of the matrix
  * @param x Matrix from which to get a row
  * @param m Row index plus 1.
  * @param n Column index plus 1.
@@ -288,7 +288,7 @@ inline const value_type_t<EigMat>& get_base1(const EigMat& x, size_t m,
  * throw a <code>std::out_of_range</code> exception with the
  * specified error message and index indicated.
  *
- * @tparam T type of vector
+ * @tparam EigVec type of the vector
  * @param x Eigen vector from which to get a value.
  * @param m Row index plus 1.
  * @param error_msg Error message if the index is out of range.

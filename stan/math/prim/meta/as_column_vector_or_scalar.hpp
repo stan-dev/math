@@ -60,10 +60,10 @@ inline auto as_column_vector_or_scalar(T&& a) {
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto as_column_vector_or_scalar(T&& a) {
   using plain_vector = Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1>;
-  using optionaly_const_vector
+  using optionally_const_vector
       = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
                            const plain_vector, plain_vector>;
-  return Eigen::Map<optionaly_const_vector>(a.data(), a.size());
+  return Eigen::Map<optionally_const_vector>(a.data(), a.size());
 }
 
 }  // namespace math

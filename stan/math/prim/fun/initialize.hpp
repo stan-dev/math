@@ -12,7 +12,8 @@ namespace math {
 // initializations called for local variables generate in Stan
 // code; fills in all cells in first arg with second arg
 
-template <typename T, typename V, typename = require_all_stan_scalar_t<T, V>>
+template <typename T, typename V, require_all_stan_scalar_t<T, V>* = nullptr,
+          require_convertible_t<V, T>* = nullptr>
 inline void initialize(T& x, V v) {
   x = v;
 }

@@ -20,10 +20,10 @@ namespace math {
 template <typename EigMat,
           require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
 inline value_type_t<EigMat> log_determinant(const EigMat& m) {
-  check_square("log_determinant", "m", m);
   if (m.size() == 0) {
     return 0;
   }
+  check_square("log_determinant", "m", m);
   return m.colPivHouseholderQr().logAbsDeterminant();
 }
 

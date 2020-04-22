@@ -48,8 +48,7 @@ inverse(const EigMat& m) {
   }
 
   m_inv = inverse(m_inv);
-  m_deriv = multiply(multiply(m_inv, m_deriv), m_inv);
-  m_deriv = -m_deriv;
+  m_deriv = -multiply(multiply(m_inv, m_deriv), m_inv);
 
   return to_fvar(m_inv, m_deriv);
 }

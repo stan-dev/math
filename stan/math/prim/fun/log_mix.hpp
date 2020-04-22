@@ -36,15 +36,10 @@ template <typename T_theta, typename T_lambda1, typename T_lambda2,
           require_all_arithmetic_t<T_theta, T_lambda1, T_lambda2>* = nullptr>
 inline double log_mix(T_theta theta, T_lambda1 lambda1, T_lambda2 lambda2) {
   using std::log;
-  double theta_double = theta;
-  double lambda1_double = lambda1;
-  double lambda2_double = lambda2;
-
-  check_not_nan("log_mix", "lambda1", lambda1_double);
-  check_not_nan("log_mix", "lambda2", lambda2_double);
-  check_bounded("log_mix", "theta", theta_double, 0, 1);
-  return log_sum_exp(log(theta_double) + lambda1_double,
-                     log1m(theta_double) + lambda2_double);
+  check_not_nan("log_mix", "lambda1", lambda1);
+  check_not_nan("log_mix", "lambda2", lambda2);
+  check_bounded("log_mix", "theta", theta, 0, 1);
+  return log_sum_exp(log(theta) + lambda1, log1m(theta) + lambda2);
 }
 
 /**
@@ -94,15 +89,17 @@ return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
   const auto& theta_dbl = value_of(as_column_vector_or_scalar(theta));
   const auto& lam_dbl = value_of(as_column_vector_or_scalar(lambda));
 
-  T_partials_return logp = log_sum_exp((log(theta_dbl) + lam_dbl).eval());
-  T_partials_vec theta_deriv = (lam_dbl.array() - logp).exp();
+  T_partials_return logp = log_sum_exp(log(theta_dbl) + lam_dbl);
 
   operands_and_partials<T_theta, T_lam> ops_partials(theta, lambda);
-  if (!is_constant_all<T_lam>::value) {
-    ops_partials.edge2_.partials_ = theta_deriv.cwiseProduct(theta_dbl);
-  }
-  if (!is_constant_all<T_theta>::value) {
-    ops_partials.edge1_.partials_ = std::move(theta_deriv);
+  if (!is_constant_all<T_lam, T_theta>::value) {
+    T_partials_vec theta_deriv = (lam_dbl.array() - logp).exp();
+    if (!is_constant_all<T_lam>::value) {
+      ops_partials.edge2_.partials_ = theta_deriv.cwiseProduct(theta_dbl);
+    }
+    if (!is_constant_all<T_theta>::value) {
+      ops_partials.edge1_.partials_ = std::move(theta_deriv);
+    }
   }
   return ops_partials.build(logp);
 }
@@ -168,7 +165,7 @@ return_type_t<T_theta, std::vector<T_lam>> log_mix(
     lam_dbl.col(n) = value_of(as_column_vector_or_scalar(lambda[n]));
   }
 
-  T_partials_mat logp_tmp = log(theta_dbl).replicate(1, N) + lam_dbl;
+  T_partials_mat logp_tmp = lam_dbl.colwise() + log(theta_dbl);
   T_partials_vec logp(N);
   for (int n = 0; n < N; ++n) {
     logp[n] = log_sum_exp(logp_tmp.col(n));
@@ -176,7 +173,7 @@ return_type_t<T_theta, std::vector<T_lam>> log_mix(
 
   operands_and_partials<T_theta, T_lamvec_type> ops_partials(theta, lambda);
   if (!is_constant_all<T_theta, T_lam>::value) {
-    T_partials_mat derivs = exp(lam_dbl - logp.transpose().replicate(M, 1));
+    T_partials_mat derivs = exp(lam_dbl.rowwise() - logp.transpose());
     if (!is_constant_all<T_theta>::value) {
       ops_partials.edge1_.partials_ = derivs.rowwise().sum();
     }
