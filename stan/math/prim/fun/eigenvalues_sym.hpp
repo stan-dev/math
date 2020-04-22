@@ -27,8 +27,8 @@ Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, 1> eigenvalues_sym(
   check_nonzero_size("eigenvalues_sym", "m", m_eval);
   check_symmetric("eigenvalues_sym", "m", m_eval);
 
-  Eigen::SelfAdjointEigenSolver<PlainMat> solver(
-      m_eval, Eigen::EigenvaluesOnly);
+  Eigen::SelfAdjointEigenSolver<PlainMat> solver(m_eval,
+                                                 Eigen::EigenvaluesOnly);
   return solver.eigenvalues();
 }
 

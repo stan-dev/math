@@ -111,7 +111,10 @@ template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
 inline Eigen::Matrix<typename child_type<value_type_t<EigMat>>::type,
                      EigMat::RowsAtCompileTime, EigMat::ColsAtCompileTime>
 value_of(const EigMat& M) {
-  return M.array().unaryExpr([](const auto& scal) { return value_of(scal); }).matrix().eval();
+  return M.array()
+      .unaryExpr([](const auto& scal) { return value_of(scal); })
+      .matrix()
+      .eval();
 }
 
 /**
