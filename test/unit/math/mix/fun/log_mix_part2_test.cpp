@@ -61,13 +61,12 @@ void expect_log_mix(const std::vector<double>& p,
   stan::test::expect_ad(tols, f, p_v, ds);
   stan::test::expect_ad(tols, f, p_v, ds_v);
   stan::test::expect_ad(tols, f, p_v, ds_rv);
-  // these are in part 3 on the log_mix_tests
-  //  stan::test::expect_ad(tols, f, p_rv, ds);
-  //  stan::test::expect_ad(tols, f, p_rv, ds_v);
-  //  stan::test::expect_ad(tols, f, p_rv, ds_rv);
+  stan::test::expect_ad(tols, f, p_rv, ds);
+  stan::test::expect_ad(tols, f, p_rv, ds_v);
+  stan::test::expect_ad(tols, f, p_rv, ds_rv);
 }
 
-TEST(mathMixMatFun, logMix2) {
+TEST(mathMixMatFun, logMix) {
   std::vector<double> u1{0.999};  // using 1 overflows with finite diffs
   std::vector<double> v1{-1.3};
   expect_log_mix(u1, v1);
