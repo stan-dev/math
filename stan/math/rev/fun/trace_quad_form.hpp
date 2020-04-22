@@ -75,8 +75,8 @@ class trace_quad_form_vari : public vari {
 
 template <typename EigMat1, typename EigMat2,
           typename = require_any_vt_var<EigMat1, EigMat2>>
-inline return_type_t<EigMat1, EigMat2> trace_quad_form(
-    const EigMat1& A, const EigMat2& B) {
+inline return_type_t<EigMat1, EigMat2> trace_quad_form(const EigMat1& A,
+                                                       const EigMat2& B) {
   using Ta = value_type_t<EigMat1>;
   using Tb = value_type_t<EigMat2>;
   constexpr int Ra = EigMat1::RowsAtCompileTime;

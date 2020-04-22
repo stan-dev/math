@@ -8,9 +8,9 @@
 namespace stan {
 namespace math {
 
-template <typename ColVec, require_eigen_col_vector_vt<is_fvar,ColVec>* = nullptr>
-inline auto softmax(
-    const ColVec& alpha) {
+template <typename ColVec,
+          require_eigen_col_vector_vt<is_fvar, ColVec>* = nullptr>
+inline auto softmax(const ColVec& alpha) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using T = typename value_type_t<ColVec>::Scalar;
@@ -35,10 +35,12 @@ inline auto softmax(
       if (m == k) {
         softmax_alpha.coeffRef(k).d_
             += softmax_alpha_t.coeff(k)
-               * (alpha.coeff(m).d_ + negative_alpha_m_d_times_softmax_alpha_t_m);
+               * (alpha.coeff(m).d_
+                  + negative_alpha_m_d_times_softmax_alpha_t_m);
       } else {
         softmax_alpha.coeffRef(k).d_
-            += softmax_alpha_t.coeff(k) * negative_alpha_m_d_times_softmax_alpha_t_m;
+            += softmax_alpha_t.coeff(k)
+               * negative_alpha_m_d_times_softmax_alpha_t_m;
       }
     }
   }

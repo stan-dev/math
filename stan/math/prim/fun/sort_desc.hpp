@@ -39,7 +39,8 @@ template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
 inline plain_type_t<EigVec> sort_desc(EigVec&& xs) {
   plain_type_t<EigVec> x = std::forward<EigVec>(xs);
   check_not_nan("sort_asc", "container argument", x);
-  std::sort(x.data(), x.data() + x.size(), std::greater<value_type_t<EigVec>>());
+  std::sort(x.data(), x.data() + x.size(),
+            std::greater<value_type_t<EigVec>>());
   return x;
 }
 

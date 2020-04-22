@@ -16,7 +16,8 @@ inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, 1> to_vector(
     const EigMat& matrix) {
   using T = value_type_t<EigMat>;
   Eigen::Matrix<T, Eigen::Dynamic, 1> res;
-  Eigen::Map<Eigen::Matrix<T, EigMat::RowsAtCompileTime, EigMat::ColsAtCompileTime>>
+  Eigen::Map<
+      Eigen::Matrix<T, EigMat::RowsAtCompileTime, EigMat::ColsAtCompileTime>>
       res_map(res.data(), matrix.rows(), matrix.cols());
   res_map = matrix;
   return res;

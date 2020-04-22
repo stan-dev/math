@@ -24,7 +24,8 @@ Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, 1> singular_values(
     return {};
   }
 
-  return Eigen::JacobiSVD<Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> >(m)
+  return Eigen::JacobiSVD<Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic,
+                                        Eigen::Dynamic> >(m)
       .singularValues();
 }
 
