@@ -20,7 +20,7 @@ inline std::vector<value_type_t<EigMat>> to_array_1d(const EigMat& matrix) {
   int matrix_size = matrix.size();
   std::vector<T_val> result(matrix_size);
   for (int i = 0; i < matrix_size; i++) {
-    result[i] = mat_ref.data[i];
+    result[i] = mat_ref.data()[i];
   }
   return result;
 }

@@ -15,7 +15,7 @@ template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, 1> to_vector(
     const EigMat& matrix) {
   using T = value_type_t<EigMat>;
-  Eigen::Matrix<T, Eigen::Dynamic, 1> res;
+  Eigen::Matrix<T, Eigen::Dynamic, 1> res(matrix.size());
   Eigen::Map<
       Eigen::Matrix<T, EigMat::RowsAtCompileTime, EigMat::ColsAtCompileTime>>
       res_map(res.data(), matrix.rows(), matrix.cols());
