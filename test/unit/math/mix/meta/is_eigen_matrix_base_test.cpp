@@ -8,17 +8,17 @@ TEST(MathMetaPrim, is_eigen_matrix_base_hierarchy_tests) {
   using Eigen::Matrix;
   using stan::is_eigen_matrix_base;
   using stan::math::test::all_eigen_dense;
-  all_eigen_dense<false, true, true, true, true, is_eigen_matrix_base, Matrix,
+  all_eigen_dense<false, false, true, false, true, is_eigen_matrix_base, Matrix,
                   -1, -1>();
-  all_eigen_dense<false, true, true, true, true, is_eigen_matrix_base, Matrix,
+  all_eigen_dense<false, false, true, false, true, is_eigen_matrix_base, Matrix,
                   1, -1>();
-  all_eigen_dense<false, true, true, true, true, is_eigen_matrix_base, Matrix,
+  all_eigen_dense<false, false, true, false, true, is_eigen_matrix_base, Matrix,
                   -1, 1>();
-  all_eigen_dense<false, false, false, false, false, is_eigen_matrix_base,
+  all_eigen_dense<false, false, true, false, false, is_eigen_matrix_base,
                   Array, -1, -1>();
-  all_eigen_dense<false, false, false, false, false, is_eigen_matrix_base,
+  all_eigen_dense<false, false, true, false, false, is_eigen_matrix_base,
                   Array, 1, -1>();
-  all_eigen_dense<false, false, false, false, false, is_eigen_matrix_base,
+  all_eigen_dense<false, false, true, false, false, is_eigen_matrix_base,
                   Array, -1, 1>();
 }
 

@@ -8,13 +8,13 @@ TEST(MathMetaPrim, is_eigen_matrix_hierarchy_tests) {
   using Eigen::Matrix;
   using stan::is_eigen_matrix;
   using stan::math::test::all_eigen_dense;
-  all_eigen_dense<false, true, true, true, true, is_eigen_matrix, Matrix, -1,
+  all_eigen_dense<false, false, true, false, true, is_eigen_matrix, Matrix, -1,
                   -1>();
   all_eigen_dense<false, false, false, false, false, is_eigen_matrix, Matrix, 1,
                   -1>();
   all_eigen_dense<false, false, false, false, false, is_eigen_matrix, Matrix,
                   -1, 1>();
-  all_eigen_dense<false, false, false, false, false, is_eigen_matrix, Array, -1,
+  all_eigen_dense<false, false, true, false, false, is_eigen_matrix, Array, -1,
                   -1>();
   all_eigen_dense<false, false, false, false, false, is_eigen_matrix, Array, 1,
                   -1>();

@@ -20,22 +20,7 @@ namespace stan {
  * @tparam Enable used for SFINAE deduction.
  **/
 template <typename T, typename Enable = void>
-struct is_eigen : std::false_type {};
-
-template <typename T>
-struct is_eigen<T, std::enable_if_t<std::is_base_of<
-                       Eigen::EigenBase<typename std::decay_t<T>::PlainObject>,
-                       typename std::decay_t<T>::PlainObject>::value>>
-    : std::true_type {};
-
-template <typename T>
-struct is_eigen<T, std::enable_if_t<std::is_base_of<
-                       Eigen::EigenBase<typename std::decay_t<T>::MatrixType>,
-                       typename std::decay_t<T>::MatrixType>::value>>
-    : std::true_type {};
-
-template <typename T>
-struct is_eigen<Eigen::EigenBase<T>, void> : std::true_type {};
+struct is_eigen : bool_constant<is_base_pointer_convertible<Eigen::EigenBase, T>::value> {};
 
 /** \ingroup type_trait
  * Template metaprogram defining the base scalar type of
@@ -63,19 +48,12 @@ struct value_type<T, std::enable_if_t<is_eigen<T>::value>> {
 STAN_ADD_REQUIRE_UNARY(eigen, is_eigen, require_eigens_types);
 STAN_ADD_REQUIRE_CONTAINER(eigen, is_eigen, require_eigens_types);
 
-namespace internal {
-template <typename T>
-struct is_eigen_array_impl : std::false_type {};
-template <typename T, int R, int C>
-struct is_eigen_array_impl<Eigen::Array<T, R, C>> : std::true_type {};
-}  // namespace internal
-
 /**
  * Check if a type is an `Eigen::Array`
  * @ingroup type_trait
  */
 template <typename T>
-struct is_eigen_array : internal::is_eigen_array_impl<std::decay_t<T>> {};
+struct is_eigen_array : bool_constant<is_base_pointer_convertible<Eigen::ArrayBase, T>::value> {};
 
 STAN_ADD_REQUIRE_UNARY(eigen_array, is_eigen_array, require_eigens_types);
 STAN_ADD_REQUIRE_CONTAINER(eigen_array, is_eigen_array, require_eigens_types);

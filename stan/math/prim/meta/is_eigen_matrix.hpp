@@ -3,17 +3,20 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/bool_constant.hpp>
+#include <stan/math/prim/meta/conjunction.hpp>
 #include <stan/math/prim/meta/disjunction.hpp>
+#include <stan/math/prim/meta/is_base_pointer_convertible.hpp>
 #include <stan/math/prim/meta/require_helpers.hpp>
 #include <type_traits>
 
 namespace stan {
 
-namespace internal {
-
 /** \addtogroup type_trait
  *  @{
  */
+
+namespace internal {
+
 
 /**
  * Underlying implimenation to check if an Eigen matrix has rows or cols not
@@ -38,10 +41,7 @@ template <typename T, typename Enable = void>
 struct is_eigen_matrix : std::false_type {};
 
 template <typename T>
-struct is_eigen_matrix<
-    T, std::enable_if_t<std::is_base_of<
-           Eigen::MatrixBase<typename std::decay_t<T>::PlainObject>,
-           typename std::decay_t<T>::PlainObject>::value>>
+struct is_eigen_matrix<T, std::enable_if_t<is_base_pointer_convertible<Eigen::MatrixBase, T>::value>>
     : bool_constant<internal::is_eigen_matrix_impl<std::decay_t<T>>::value> {};
 
 /** @}*/

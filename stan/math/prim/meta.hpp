@@ -182,6 +182,7 @@
 #include <stan/math/prim/meta/index_type.hpp>
 #include <stan/math/prim/meta/index_apply.hpp>
 #include <stan/math/prim/meta/is_autodiff.hpp>
+#include <stan/math/prim/meta/is_base_pointer_convertible.hpp>
 #include <stan/math/prim/meta/is_double_or_int.hpp>
 #include <stan/math/prim/meta/is_complex.hpp>
 #include <stan/math/prim/meta/is_constant.hpp>

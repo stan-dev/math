@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/bool_constant.hpp>
-#include <stan/math/prim/meta/disjunction.hpp>
+#include <stan/math/prim/meta/is_base_pointer_convertible.hpp>
 #include <stan/math/prim/meta/require_helpers.hpp>
 #include <type_traits>
 
@@ -20,14 +20,8 @@ namespace stan {
  * @tparam T Type to check if it is derived from `EigenBase`
  * @tparam Enable used for SFINAE deduction.
  */
-template <typename T, typename Enable = void>
-struct is_eigen_matrix_base : std::false_type {};
-
 template <typename T>
-struct is_eigen_matrix_base<
-    T, std::enable_if_t<std::is_base_of<
-           Eigen::MatrixBase<typename std::decay_t<T>::PlainObject>,
-           typename std::decay_t<T>::PlainObject>::value>> : std::true_type {};
+struct is_eigen_matrix_base : bool_constant<is_base_pointer_convertible<Eigen::MatrixBase, T>::value> {};
 
 /** @}*/
 
