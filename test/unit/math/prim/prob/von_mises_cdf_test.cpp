@@ -1,6 +1,7 @@
 #include <stan/math/prim.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(ProbVonMises, pdf_cdf_agree_test) {
   using stan::math::von_mises_cdf;
