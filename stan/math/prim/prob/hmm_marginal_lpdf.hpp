@@ -52,7 +52,7 @@ inline auto hmm_marginal_lpdf_val(
  * @tparam T_omega type of the log likelihood matrix
  * @tparam T_Gamma type of the transition matrix
  * @tparam T_rho type of the initial guess vector
- * @param[in] log_omega log matrix of observational densities.
+ * @param[in] log_omegas log matrix of observational densities.
  *              The (i, j)th entry corresponds to the
  *              density of the ith observation, y_i,
  *              given x_i = j.
