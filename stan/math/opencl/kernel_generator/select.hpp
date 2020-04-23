@@ -95,7 +95,7 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
    * @return part of kernel with code for this expression
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
-                               const bool view_handeled,
+                               const bool view_handled,
                                const std::string& var_name_condition,
                                const std::string& var_name_then,
                                const std::string& var_name_else) const {

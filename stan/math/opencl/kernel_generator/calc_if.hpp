@@ -42,7 +42,7 @@ class calc_if_
   explicit calc_if_(T&& a) : base(std::forward<T>(a)) {}
 
   inline kernel_parts generate(const std::string& i, const std::string& j,
-                               const bool view_handeled,
+                               const bool view_handled,
                                const std::string& var_name_arg) const {
     if (Do_Calculate) {
       var_name = var_name_arg;

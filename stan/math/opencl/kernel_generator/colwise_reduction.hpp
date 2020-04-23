@@ -94,7 +94,7 @@ class colwise_reduction
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
-                               const bool view_handeled,
+                               const bool view_handled,
                                const std::string& var_name_arg) const {
     kernel_parts res;
     res.initialization = type_str<Scalar>() + " " + var_name + " = " + init_

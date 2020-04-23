@@ -71,7 +71,7 @@ class broadcast_
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
-                               const bool view_handeled,
+                               const bool view_handled,
                                const std::string& var_name_arg) const {
     var_name = this->template get_arg<0>().var_name;
     return {};

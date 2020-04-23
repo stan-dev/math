@@ -8,10 +8,11 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <limits>
+#include <set>
 #include <string>
 #include <tuple>
 #include <type_traits>
-#include <set>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -56,7 +57,7 @@ class scalar_ : public operation_cl<scalar_<T>, T> {
    * @return part of kernel with code for this expression
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
-                               const bool view_handeled) const {
+                               const bool view_handled) const {
     kernel_parts res{};
     res.args = type_str<Scalar>() + " " + var_name + ", ";
     return res;

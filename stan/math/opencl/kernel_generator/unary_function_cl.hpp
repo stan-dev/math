@@ -59,7 +59,7 @@ class unary_function_cl
    * @return part of kernel with code for this expression
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
-                               const bool view_handeled,
+                               const bool view_handled,
                                const std::string& var_name_arg) const {
     kernel_parts res{};
     res.includes = base::derived().include;

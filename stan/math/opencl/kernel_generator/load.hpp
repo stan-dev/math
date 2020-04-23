@@ -63,10 +63,10 @@ class load_
    * @return part of kernel with code for this expression
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
-                               const bool view_handeled) const {
+                               const bool view_handled) const {
     kernel_parts res{};
     std::string type = type_str<Scalar>();
-    if (view_handeled) {
+    if (view_handled) {
       res.body = type + " " + var_name + " = " + var_name + "_global[" + i
                  + " + " + var_name + "_rows * " + j + "];\n";
     } else {
