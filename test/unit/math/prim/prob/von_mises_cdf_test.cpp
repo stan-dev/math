@@ -2,7 +2,44 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <gtest/gtest.h>
 
-TEST(ProbVonMises, random_cdf_test) {
+TEST(ProbVonMises, pdf_cdf_agree_test) {
+  using stan::math::von_mises_cdf;
+  using stan::math::von_mises_lpdf;
+  double sum, t, y;
+  std::vector<double> ts, ys;
+  double abs_tol_int = 1e-4;
+
+  // set random parameter values
+  double mu = 0.1;
+  double k = 6;
+
+  // tabulate pdf at equispaced nodes
+  int n = 1000;
+  double xmin = -0.2;
+  double xmax = 0.3;
+  for(int i=0; i<n; i++) {
+    t = xmin + i * (xmax - xmin) / (n - 1);
+    ts.push_back(t);
+
+    y = exp(von_mises_lpdf(t, mu, k));
+    ys.push_back(y);
+  }
+
+  // integrate pdf numerically with trapezoid rule
+  sum = ys[0] / 2 + ys[n-1] / 2;
+  for(int i=1; i<n - 1; i++) {
+    sum += ys[i];
+  }
+  sum = sum / ((n-1) / (xmax - xmin));
+
+  // and compare to cdf
+  double val2 = von_mises_cdf(xmax, mu, k) - von_mises_cdf(xmin, mu, k);
+
+  ASSERT_NEAR(val2, sum, abs_tol_int);
+}
+
+
+TEST(ProbVonMises, pointwise_cdf_test) {
   using stan::math::von_mises_cdf;
   double pi = stan::math::pi();
   // check that our von_mises_cdf coincides with scipy's

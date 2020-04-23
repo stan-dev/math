@@ -9,7 +9,6 @@ TEST(mathMixScalFun, von_mises_cdf) {
 
   // large k
   stan::test::expect_ad(f, 0.9, 0.9, 100);
-  stan::test::expect_ad(f, 0.9, 0.0, 150.0);
 
   // double instantiations
   stan::test::expect_ad(f, 10.6, 10.3, 0.5);

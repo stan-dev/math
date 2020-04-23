@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_PROB_VON_MISES_CDF_HPP
 
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/prob/normal_cdf.hpp>
+#include <stan/math/prim/prob.hpp>
 #include <stan/math/prim/fun/modified_bessel_first_kind.hpp>
 #include <cmath>
 
@@ -140,11 +140,29 @@ inline return_type_t<T_x, T_mu, T_k> von_mises_cdf(const T_x& x, const T_mu& mu,
   const auto x_moded = x2 - x_floor * TWO_PI;
   x2 = x_moded - pi;
 
-  // return 
-  if (mu - x > pi) {
-    return von_mises_cdf_centered(x2, k) - von_mises_cdf_centered(pi - mu, k);
+  // mu is on an interval (2*n*pi, (2*n + 1)*pi), move it to (-pi, pi)
+  T_mu mu2;
+  mu2 = mu + pi;
+  const auto mu_floor = floor(mu2 / TWO_PI);
+  const auto mu_moded = mu2 - mu_floor * TWO_PI;
+  mu2 = mu_moded - pi;
+
+  // find cut
+  return_t cut, bound_val;
+  if (mu2 < 0) {
+    cut = mu2 + pi;
+    bound_val = -pi - mu2;
+  }
+  if (mu2 >= 0) {
+    cut = mu2 - pi;
+    bound_val = pi - mu2;
+  }
+
+  return_t f_bound_val = von_mises_cdf_centered(bound_val, k);
+  if (x <= cut) {
+    return von_mises_cdf_centered(x2, k) - f_bound_val;
   } else {
-    return von_mises_cdf_centered(x2, k) + von_mises_cdf_centered(mu - pi, k);
+    return von_mises_cdf_centered(x2, k) + 1 - f_bound_val;
   }
 }
 
