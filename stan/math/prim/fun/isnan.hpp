@@ -14,7 +14,7 @@ namespace math {
  * lookup.
  *
  * @tparam ADType type of argument
- * @param[in] v argument
+ * @param[in] x argument
  * @return true if argument is not-a-number
  */
 template <typename T, typename = require_autodiff_t<T>>
