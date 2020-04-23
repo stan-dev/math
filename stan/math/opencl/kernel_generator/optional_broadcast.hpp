@@ -55,7 +55,8 @@ class optional_broadcast_
    * generates kernel code for this and nested expressions.
    * @param row_idx_name  row index variable name
    * @param col_idx_name  column index variable name
-   * @param var_name_arg name generator for this kernel
+   * @param var_name_arg name of the variable in kernel that holds argument to
+   * this expression
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts generate(const std::string& row_idx_name,
