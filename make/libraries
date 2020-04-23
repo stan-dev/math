@@ -6,7 +6,7 @@ BOOST ?= $(MATH)lib/boost_1.72.0
 EIGEN ?= $(MATH)lib/eigen_3.3.3
 OPENCL ?= $(MATH)lib/opencl_2.2.0
 TBB ?= $(MATH)lib/tbb_2019_U8
-SUNDIALS ?= $(MATH)lib/sundials_5.1.0
+SUNDIALS ?= $(MATH)lib/sundials_5.2.0
 GTEST ?= $(MATH)lib/gtest_1.8.1
 CPPLINT ?= $(MATH)lib/cpplint_4.45
 
@@ -121,6 +121,11 @@ TBB_CC ?= $(CC)
 
 ifeq (,$(TBB_CC))
   $(error "Need to set TBB_CC to C compiler command for non-standard compiler other than gcc or clang.")
+endif
+
+# Set shell in order to use string matching for tbb-make-check
+ifeq (Linux, $(OS))
+  SHELL = /bin/bash
 endif
 
 $(TBB_BIN)/tbb-make-check:

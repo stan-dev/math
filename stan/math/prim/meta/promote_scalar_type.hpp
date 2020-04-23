@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_META_PROMOTE_SCALAR_TYPE_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/meta/require_generics.hpp>
+#include <stan/math/prim/meta/is_eigen.hpp>
 #include <vector>
 
 namespace stan {

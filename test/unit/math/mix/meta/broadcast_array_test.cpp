@@ -5,8 +5,8 @@
 
 TEST(MathMetaMix, broadcast_array) {
   using stan::math::fvar;
-  using stan::math::internal::broadcast_array;
   using stan::math::var;
+  using stan::math::internal::broadcast_array;
 
   fvar<var> fv(1.0, 2.1);
   broadcast_array<fvar<var> > ba(fv);

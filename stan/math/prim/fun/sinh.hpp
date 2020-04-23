@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -30,9 +31,8 @@ struct sinh_fun {
  * @param x container
  * @return Hyperbolic sine of each variable in x.
  */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto sinh(const Container& x) {
   return apply_scalar_unary<sinh_fun, Container>::apply(x);
 }
@@ -46,11 +46,25 @@ inline auto sinh(const Container& x) {
  * @return Hyperbolic sine of each variable in x.
  */
 template <typename Container,
-          require_container_st<is_container, std::is_arithmetic, Container>...>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto sinh(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().sinh(); });
 }
+
+namespace internal {
+/**
+ * Return the hyperbolic sine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return hyperbolic sine of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_sinh(const std::complex<V>& z) {
+  return 0.5 * (exp(z) - exp(-z));
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan
