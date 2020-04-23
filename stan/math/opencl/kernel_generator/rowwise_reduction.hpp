@@ -61,7 +61,7 @@ struct matvec_mul_opt<
         const auto& vec_t = broadcast.template get_arg<0>();
         std::string i_bc = i;
         std::string j_bc = j;
-        broadcast.modify_argument_indices(i_bc,j_bc);
+        broadcast.modify_argument_indices(i_bc, j_bc);
         res += vec_t.get_kernel_parts(generated, name_gen, i_bc, j_bc, true);
         res += broadcast.generate(i, j, true, vec_t.var_name);
       }
@@ -72,7 +72,6 @@ struct matvec_mul_opt<
 };
 
 }  // namespace internal
-
 
 /** \addtogroup opencl_kernel_generator
  *  @{

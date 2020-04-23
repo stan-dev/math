@@ -62,16 +62,14 @@ class load_
    * @param view_handled whether whether caller already handled matrix view
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& i,
-                               const std::string& j,
+  inline kernel_parts generate(const std::string& i, const std::string& j,
                                const bool view_handeled) const {
     kernel_parts res{};
     std::string type = type_str<Scalar>();
-    if(view_handeled){
-      res.body = type + " " + var_name + " = " + var_name + "_global[" + i + " + " +
-          var_name + "_rows * " + j + "];\n";
-    }
-    else{
+    if (view_handeled) {
+      res.body = type + " " + var_name + " = " + var_name + "_global[" + i
+                 + " + " + var_name + "_rows * " + j + "];\n";
+    } else {
       res.body = type + " " + var_name + " = 0;"
                  " if (!((!contains_nonzero(" + var_name + "_view, LOWER) && "
                  + j + " < " + i + ") || (!contains_nonzero(" + var_name +
@@ -209,8 +207,9 @@ class load_
    * @return pair of indices - bottom and top diagonal
    */
   inline std::pair<int, int> extreme_diagonals() const {
-    int bottom = contains_nonzero(a_.view(), matrix_cl_view::Lower) ? -a_.rows() + 1
-                                                                    : 0;
+    int bottom = contains_nonzero(a_.view(), matrix_cl_view::Lower)
+                     ? -a_.rows() + 1
+                     : 0;
     int top = contains_nonzero(a_.view(), matrix_cl_view::Upper) ? a_.cols() - 1
                                                                  : 0;
     return {bottom, top};

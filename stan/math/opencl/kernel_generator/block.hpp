@@ -174,7 +174,8 @@ class block_
    * @return pair of indices - bottom and top diagonal
    */
   inline std::pair<int, int> extreme_diagonals() const {
-    std::pair<int, int> arg_diags = this->template get_arg<0>().extreme_diagonals();
+    std::pair<int, int> arg_diags
+        = this->template get_arg<0>().extreme_diagonals();
     return {arg_diags.first - start_col_ + start_row_,
             arg_diags.second - start_col_ + start_row_};
   }

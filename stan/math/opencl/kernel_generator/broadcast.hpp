@@ -115,7 +115,8 @@ class broadcast_
    */
   inline std::pair<int, int> extreme_diagonals() const {
     int bottom, top;
-    std::pair<int, int> arg_diags = this->template get_arg<0>().extreme_diagonals();
+    std::pair<int, int> arg_diags
+        = this->template get_arg<0>().extreme_diagonals();
     return {Colwise ? std::numeric_limits<int>::min() : arg_diags.first,
             Rowwise ? std::numeric_limits<int>::max() : arg_diags.second};
   }

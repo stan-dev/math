@@ -129,7 +129,7 @@ class unary_function_cl
    public:                                                                    \
     using base::rows;                                                         \
     using base::cols;                                                         \
-    static constexpr auto view_transitivness = std::make_tuple(true);                \
+    static constexpr auto view_transitivness = std::make_tuple(true);         \
     static const char* include;                                               \
     explicit fun##_(T&& a) : base(std::forward<T>(a), #fun) {}                \
     inline auto deep_copy() const {                                           \

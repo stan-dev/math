@@ -141,7 +141,7 @@ class colwise_reduction
    * @return pair of indices - bottom and top diagonal
    */
   inline std::pair<int, int> extreme_diagonals() const {
-    return {-rows() + 1, cols()-1};
+    return {-rows() + 1, cols() - 1};
   }
 };  // namespace math
 

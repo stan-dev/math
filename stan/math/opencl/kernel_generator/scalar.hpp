@@ -54,8 +54,7 @@ class scalar_ : public operation_cl<scalar_<T>, T> {
    * @param view_handled whether whether caller already handled matrix view
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& i,
-                               const std::string& j,
+  inline kernel_parts generate(const std::string& i, const std::string& j,
                                const bool view_handeled) const {
     kernel_parts res{};
     res.args = type_str<Scalar>() + " " + var_name + ", ";
