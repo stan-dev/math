@@ -18,6 +18,10 @@
 namespace stan {
 namespace math {
 
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
+
 /**
  * Represents a transpose in kernel generator expressions.
  *
@@ -127,7 +131,7 @@ inline auto transpose(Arg&& a) {
   return transpose_<std::remove_reference_t<decltype(a_operation)>>{
       std::move(a_operation)};
 }
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 

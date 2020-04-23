@@ -96,7 +96,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
      *
      * @param rhs Another partial sum
      */
-    inline void join(const recursive_reducer& child) { sum_ += child.sum_; }
+    inline void join(const recursive_reducer& rhs) { sum_ += rhs.sum_; }
   };
 
   /**
