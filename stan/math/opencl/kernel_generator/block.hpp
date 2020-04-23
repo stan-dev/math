@@ -12,6 +12,7 @@
 #include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
 #include <set>
 #include <string>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 

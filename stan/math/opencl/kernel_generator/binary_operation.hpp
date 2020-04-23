@@ -12,6 +12,7 @@
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
 #include <stan/math/opencl/kernel_generator/common_return_scalar.hpp>
+#include <algorithm>
 #include <string>
 #include <tuple>
 #include <type_traits>

@@ -9,6 +9,7 @@
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <limits>
 #include <string>
+#include <tuple>
 #include <type_traits>
 #include <set>
 
