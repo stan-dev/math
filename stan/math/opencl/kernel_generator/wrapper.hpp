@@ -4,6 +4,10 @@
 
 namespace stan {
 namespace math {
+
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 namespace internal {
 
 /**
@@ -22,6 +26,7 @@ wrapper<T> make_wrapper(T&& x) {
 }
 
 }  // namespace internal
+/** @}*/
 }  // namespace math
 }  // namespace stan
 

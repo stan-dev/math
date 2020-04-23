@@ -33,7 +33,7 @@ class unary_operation_cl
   /**
    * Constructor
    * @param a argument expression
-   * @param fun function
+   * @param op operation
    */
   unary_operation_cl(T&& a, const std::string& op)
       : base(std::forward<T>(a)), op_(op) {}
