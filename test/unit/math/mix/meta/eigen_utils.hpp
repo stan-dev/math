@@ -211,7 +211,7 @@ void all_eigen_dense() {
 
   test_eigen_dense_hierarchy<Base_v, Dense_v, Matrix_v, Array_v, Map_v, Checker,
                              EigenType<double, EigenDims...>>();
-/*  test_eigen_dense_hierarchy<Base_v, Dense_v, Matrix_v, Array_v, Map_v, Checker,
+  test_eigen_dense_hierarchy<Base_v, Dense_v, Matrix_v, Array_v, Map_v, Checker,
                              EigenType<var, EigenDims...>>();
   test_eigen_dense_hierarchy<Base_v, Dense_v, Matrix_v, Array_v, Map_v, Checker,
                              EigenType<fvar<double>, EigenDims...>>();
@@ -219,7 +219,7 @@ void all_eigen_dense() {
                              EigenType<fvar<var>, EigenDims...>>();
   test_eigen_dense_hierarchy<Base_v, Dense_v, Matrix_v, Array_v, Map_v, Checker,
                              EigenType<fvar<fvar<double>>, EigenDims...>>();
-*/}
+}
 
 /**
  * Check if Eigen type traits satsify more complex Eigen expressions.
@@ -243,7 +243,7 @@ void all_eigen_dense_exprs() {
   using stan::math::var;
   test_eigen_dense_exprs<Base_v, Expr_v, Segment_v, Block_v, Checker,
                          EigenType<double, EigenDims...>>();
-/*  test_eigen_dense_exprs<Base_v, Expr_v, Segment_v, Block_v, Checker,
+  test_eigen_dense_exprs<Base_v, Expr_v, Segment_v, Block_v, Checker,
                          EigenType<var, EigenDims...>>();
   test_eigen_dense_exprs<Base_v, Expr_v, Segment_v, Block_v, Checker,
                          EigenType<fvar<double>, EigenDims...>>();
@@ -251,7 +251,7 @@ void all_eigen_dense_exprs() {
                          EigenType<fvar<var>, EigenDims...>>();
   test_eigen_dense_exprs<Base_v, Expr_v, Segment_v, Block_v, Checker,
                          EigenType<fvar<fvar<double>>, EigenDims...>>();
-*/}
+}
 
 /*
  * Test type checking for Eigen dense solvers with matrics with all stan scalars
@@ -310,7 +310,6 @@ void all_eigen_sparse() {
   test_eigen_sparse_matrix<Base_v, SparseCompressed_v, SparseMatrix_v,
                            SparseMap_v, fvar<fvar<var>>, Checker>();
 }
-
 }  // namespace test
 }  // namespace math
 }  // namespace stan
