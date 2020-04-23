@@ -16,11 +16,11 @@ namespace math {
 
 template <typename T_omega, typename T_Gamma, typename T_rho, typename T_alpha>
 inline auto hmm_marginal_lpdf_val(
-  const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& omegas,
-  const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma_val,
-  const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho_val,
-  Eigen::Matrix<T_alpha, Eigen::Dynamic, Eigen::Dynamic>& alphas,
-  Eigen::Matrix<T_alpha, Eigen::Dynamic, 1>& alpha_log_norms) {
+    const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& omegas,
+    const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma_val,
+    const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho_val,
+    Eigen::Matrix<T_alpha, Eigen::Dynamic, Eigen::Dynamic>& alphas,
+    Eigen::Matrix<T_alpha, Eigen::Dynamic, 1>& alpha_log_norms) {
   const int n_states = omegas.rows();
   const int n_transitions = omegas.cols() - 1;
   alphas.col(0) = omegas.col(0).cwiseProduct(rho_val);
@@ -30,8 +30,8 @@ inline auto hmm_marginal_lpdf_val(
   alpha_log_norms(0) = log(norm);
 
   for (int n = 1; n <= n_transitions; ++n) {
-    alphas.col(n) = omegas.col(n).cwiseProduct(Gamma_val.transpose()
-                                                       * alphas.col(n - 1));
+    alphas.col(n)
+        = omegas.col(n).cwiseProduct(Gamma_val.transpose() * alphas.col(n - 1));
     const auto col_norm = alphas.col(n).maxCoeff();
     alphas.col(n) /= col_norm;
     alpha_log_norms(n) = log(col_norm) + alpha_log_norms(n - 1);
@@ -104,9 +104,8 @@ inline auto hmm_marginal_lpdf(
   // compute the density using the forward algorithm.
   auto rho_val = value_of(rho);
   eig_matrix_partial omegas = value_of(log_omegas).array().exp();
-  auto log_marginal_density
-    = hmm_marginal_lpdf_val(omegas, Gamma_val, rho_val, alphas,
-                            alpha_log_norms);
+  auto log_marginal_density = hmm_marginal_lpdf_val(omegas, Gamma_val, rho_val,
+                                                    alphas, alpha_log_norms);
 
   // Variables required for all three Jacobian-adjoint products.
   auto norm_norm = alpha_log_norms(n_transitions);
@@ -123,7 +122,7 @@ inline auto hmm_marginal_lpdf(
         = exp(alpha_log_norms(n_transitions - 1) - norm_norm);
   }
 
-  for (int n = n_transitions - 1; n-- > 0; ) {
+  for (int n = n_transitions - 1; n-- > 0;) {
     kappa[n] = Gamma_val * (omegas.col(n + 2).cwiseProduct(kappa[n + 1]));
 
     auto norm = kappa[n].maxCoeff();
@@ -161,8 +160,8 @@ inline auto hmm_marginal_lpdf(
     // Boundary terms
     if (n_transitions == 0) {
       if (!is_constant_all<T_omega>::value) {
-        log_omega_jacad = omegas.cwiseProduct(value_of(rho))
-                                 / exp(log_marginal_density);
+        log_omega_jacad
+            = omegas.cwiseProduct(value_of(rho)) / exp(log_marginal_density);
         ops_partials.edge1_.partials_ = log_omega_jacad;
       }
 
