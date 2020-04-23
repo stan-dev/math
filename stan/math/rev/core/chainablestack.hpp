@@ -6,10 +6,11 @@
 namespace stan {
 namespace math {
 
-class vari;
+template <typename T>
+class vari_type;
 class chainable_alloc;
 
-using ChainableStack = AutodiffStackSingleton<vari, chainable_alloc>;
+using ChainableStack = AutodiffStackSingleton<vari_type<double>, chainable_alloc>;
 
 }  // namespace math
 }  // namespace stan

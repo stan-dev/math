@@ -7,12 +7,13 @@
 
 namespace stan {
 namespace math {
-
+template <>
 inline var& var::operator-=(var b) {
   vi_ = new internal::subtract_vv_vari(vi_, b.vi_);
   return *this;
 }
 
+template <>
 template <typename Arith, require_arithmetic_t<Arith>...>
 inline var& var::operator-=(Arith b) {
   if (b == 0.0) {

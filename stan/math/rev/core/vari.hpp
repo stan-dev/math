@@ -9,7 +9,8 @@ namespace stan {
 namespace math {
 
 // forward declaration of var
-class var;
+template <typename T>
+class var_type;
 
 /**
  * The variable implementation base class.
@@ -27,21 +28,23 @@ class var;
  * classes will store operand variables and propagate derivative
  * information via an implementation of chain().
  */
-class vari {
+template <typename T>
+class vari_type {
  private:
-  friend class var;
+  template <typename>
+  friend class var_type;
 
  public:
   /**
    * The value of this variable.
    */
-  const double val_;
+  const T val_;
 
   /**
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
    */
-  double adj_;
+  T adj_;
 
   /**
    * Construct a variable implementation from a value.  The
@@ -55,11 +58,11 @@ class vari {
    *
    * @param x Value of the constructed variable.
    */
-  explicit vari(double x) : val_(x), adj_(0.0) {
+  explicit vari_type(double x) : val_(x), adj_(0.0) {
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
-  vari(double x, bool stacked) : val_(x), adj_(0.0) {
+  vari_type(double x, bool stacked) : val_(x), adj_(0.0) {
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
     } else {
@@ -74,7 +77,7 @@ class vari {
    *
    * @throw Logic exception always.
    */
-  virtual ~vari() {
+  virtual ~vari_type() {
     // this will never get called
   }
 
@@ -109,7 +112,7 @@ class vari {
    *
    * @return The modified ostream.
    */
-  friend std::ostream& operator<<(std::ostream& os, const vari* v) {
+  friend std::ostream& operator<<(std::ostream& os, const vari_type<T>* v) {
     return os << v->val_ << ":" << v->adj_;
   }
 
@@ -141,6 +144,8 @@ class vari {
   static inline void operator delete(void* /* ignore arg */) { /* no op */
   }
 };
+
+using vari = vari_type<double>;
 
 }  // namespace math
 }  // namespace stan

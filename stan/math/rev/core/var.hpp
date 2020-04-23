@@ -16,7 +16,7 @@ namespace stan {
 namespace math {
 
 // forward declare
-static void grad(vari* vi);
+static void grad(vari_type<double>* vi);
 
 /**
  * Independent (input) and dependent (output) variables for gradients.
@@ -31,7 +31,8 @@ static void grad(vari* vi);
  * like exponentiation and powers are overridden to operate on
  * var values objects.
  */
-class var {
+template <typename T>
+class var_type {
  public:
   // FIXME: doc what this is for
   using Scalar = double;
@@ -43,7 +44,7 @@ class var {
    * <code>var</code> operators to construct <code>vari</code>
    * instances.
    */
-  vari* vi_;
+  vari_type<T>* vi_;
 
   /**
    * Return <code>true</code> if this variable has been
@@ -54,7 +55,7 @@ class var {
    * @return <code>true</code> if this variable does not yet have
    * a defined variable.
    */
-  bool is_uninitialized() { return (vi_ == static_cast<vari*>(nullptr)); }
+  bool is_uninitialized() { return (vi_ == static_cast<vari_type<T>*>(nullptr)); }
 
   /**
    * Construct a variable for later assignment.
@@ -63,14 +64,14 @@ class var {
    * dangling.  Before an assignment, the behavior is thus undefined just
    * as for a basic double.
    */
-  var() : vi_(static_cast<vari*>(nullptr)) {}
+  var_type() : vi_(static_cast<vari_type<T>*>(nullptr)) {}
 
   /**
    * Construct a variable from a pointer to a variable implementation.
    *
    * @param vi Variable implementation.
    */
-  var(vari* vi) : vi_(vi) {}  // NOLINT
+  var_type(vari_type<T>* vi) : vi_(vi) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -79,7 +80,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(float x) : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
+  var_type(float x) : vi_(new vari_type<T>(static_cast<double>(x), false)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -88,7 +89,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(double x) : vi_(new vari(x, false)) {}  // NOLINT
+  var_type(double x) : vi_(new vari_type<T>(x, false)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -97,7 +98,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(long double x) : vi_(new vari(x, false)) {}  // NOLINT
+  var_type(long double x) : vi_(new vari_type<T>(x, false)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -106,7 +107,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(bool x) : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
+  var_type(bool x) : vi_(new vari_type<T>(static_cast<double>(x), false)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -115,7 +116,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(char x) : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
+  var_type(char x) : vi_(new vari_type<T>(static_cast<double>(x), false)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -124,7 +125,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(short x) : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
+  var_type(short x) : vi_(new vari_type<T>(static_cast<double>(x), false)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -133,7 +134,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(int x) : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
+  var_type(int x) : vi_(new vari_type<T>(static_cast<double>(x), false)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -142,7 +143,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(long x) : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
+  var_type(long x) : vi_(new vari_type<T>(static_cast<double>(x), false)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -151,18 +152,8 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(unsigned char x)  // NOLINT(runtime/explicit)
-      : vi_(new vari(static_cast<double>(x), false)) {}
-
-  /**
-   * Construct a variable from the specified arithmetic argument
-   * by constructing a new <code>vari</code> with the argument
-   * cast to <code>double</code>, and a zero adjoint.
-   *
-   * @param x Value of the variable.
-   */
-  // NOLINTNEXTLINE
-  var(unsigned short x) : vi_(new vari(static_cast<double>(x), false)) {}
+  var_type(unsigned char x)  // NOLINT(runtime/explicit)
+      : vi_(new vari_type<T>(static_cast<double>(x), false)) {}
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -172,8 +163,7 @@ class var {
    * @param x Value of the variable.
    */
   // NOLINTNEXTLINE
-  var(unsigned int x)
-      : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
+  var_type(unsigned short x) : vi_(new vari_type<T>(static_cast<double>(x), false)) {}
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -183,8 +173,19 @@ class var {
    * @param x Value of the variable.
    */
   // NOLINTNEXTLINE
-  var(unsigned long x)
-      : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
+  var_type(unsigned int x)
+      : vi_(new vari_type<T>(static_cast<double>(x), false)) {}  // NOLINT
+
+  /**
+   * Construct a variable from the specified arithmetic argument
+   * by constructing a new <code>vari</code> with the argument
+   * cast to <code>double</code>, and a zero adjoint.
+   *
+   * @param x Value of the variable.
+   */
+  // NOLINTNEXTLINE
+  var_type(unsigned long x)
+      : vi_(new vari_type<T>(static_cast<double>(x), false)) {}  // NOLINT
 
 #ifdef _WIN64
   // these two ctors are for Win64 to enable 64-bit signed
@@ -198,7 +199,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(size_t x) : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
+  var_type(size_t x) : vi_(new vari_type<T>(static_cast<double>(x), false)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -207,7 +208,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(ptrdiff_t x) : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
+  var_type(ptrdiff_t x) : vi_(new vari_type<T>(static_cast<double>(x), false)) {}  // NOLINT
 #endif
 
 #ifdef BOOST_MATH_USE_FLOAT128
@@ -222,7 +223,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(__float128 x) : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
+  var_type(__float128 x) : vi_(new vari_type<T>(static_cast<double>(x), false)) {}  // NOLINT
 
 #endif
 
@@ -255,7 +256,7 @@ class var {
    * @param g Gradient vector of partial derivatives of this
    * variable with respect to x.
    */
-  void grad(std::vector<var>& x, std::vector<double>& g) {
+  void grad(std::vector<var_type<T>>& x, std::vector<double>& g) {
     stan::math::grad(vi_);
     g.resize(x.size());
     for (size_t i = 0; i < x.size(); ++i) {
@@ -285,7 +286,7 @@ class var {
    *
    * @return variable
    */
-  inline vari& operator*() { return *vi_; }
+  inline vari_type<T>& operator*() { return *vi_; }
 
   /**
    * Return a pointer to the underlying implementation of this variable.
@@ -297,7 +298,7 @@ class var {
    * <i>Warning</i>: The returned result does not track changes to
    * this variable.
    */
-  inline vari* operator->() { return vi_; }
+  inline vari_type<T>* operator->() { return vi_; }
 
   // COMPOUND ASSIGNMENT OPERATORS
 
@@ -311,7 +312,7 @@ class var {
    * @param b The variable to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
-  inline var& operator+=(var b);
+  inline var_type<T>& operator+=(var_type<T> b);
 
   /**
    * The compound add/assignment operator for scalars (C++).
@@ -324,7 +325,7 @@ class var {
    * @return The result of adding the specified variable to this variable.
    */
   template <typename Arith, require_arithmetic_t<Arith>...>
-  inline var& operator+=(Arith b);
+  inline var_type<T>& operator+=(Arith b);
 
   /**
    * The compound subtract/assignment operator for variables (C++).
@@ -337,7 +338,7 @@ class var {
    * @return The result of subtracting the specified variable from
    * this variable.
    */
-  inline var& operator-=(var b);
+  inline var_type<T>& operator-=(var_type<T> b);
 
   /**
    * The compound subtract/assignment operator for scalars (C++).
@@ -351,7 +352,7 @@ class var {
    * variable.
    */
   template <typename Arith, require_arithmetic_t<Arith>...>
-  inline var& operator-=(Arith b);
+  inline var_type<T>& operator-=(Arith b);
 
   /**
    * The compound multiply/assignment operator for variables (C++).
@@ -364,7 +365,7 @@ class var {
    * @return The result of multiplying this variable by the
    * specified variable.
    */
-  inline var& operator*=(var b);
+  inline var_type<T>& operator*=(var_type<T> b);
 
   /**
    * The compound multiply/assignment operator for scalars (C++).
@@ -378,7 +379,7 @@ class var {
    * variable.
    */
   template <typename Arith, require_arithmetic_t<Arith>...>
-  inline var& operator*=(Arith b);
+  inline var_type<T>& operator*=(Arith b);
 
   /**
    * The compound divide/assignment operator for variables (C++).  If this
@@ -390,7 +391,7 @@ class var {
    * @return The result of dividing this variable by the
    * specified variable.
    */
-  inline var& operator/=(var b);
+  inline var_type<T>& operator/=(var_type<T> b);
 
   /**
    * The compound divide/assignment operator for scalars (C++).
@@ -404,7 +405,7 @@ class var {
    * variable.
    */
   template <typename Arith, require_arithmetic_t<Arith>...>
-  inline var& operator/=(Arith b);
+  inline var_type<T>& operator/=(Arith b);
 
   /**
    * Write the value of this autodiff variable and its adjoint to
@@ -414,13 +415,15 @@ class var {
    * @param v Variable to write.
    * @return Reference to the specified output stream.
    */
-  friend std::ostream& operator<<(std::ostream& os, const var& v) {
+  friend std::ostream& operator<<(std::ostream& os, const var_type<T> v) {
     if (v.vi_ == nullptr) {
       return os << "uninitialized";
     }
     return os << v.val();
   }
 };
+
+using var = var_type<double>;
 
 }  // namespace math
 }  // namespace stan
