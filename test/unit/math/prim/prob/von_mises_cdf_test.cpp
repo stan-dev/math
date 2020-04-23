@@ -17,7 +17,7 @@ TEST(ProbVonMises, pdf_cdf_agree_test) {
   int n = 1000;
   double xmin = -0.2;
   double xmax = 0.3;
-  for(int i=0; i<n; i++) {
+  for (int i = 0; i < n; i++) {
     t = xmin + i * (xmax - xmin) / (n - 1);
     ts.push_back(t);
 
@@ -26,18 +26,17 @@ TEST(ProbVonMises, pdf_cdf_agree_test) {
   }
 
   // integrate pdf numerically with trapezoid rule
-  sum = ys[0] / 2 + ys[n-1] / 2;
-  for(int i=1; i<n - 1; i++) {
+  sum = ys[0] / 2 + ys[n - 1] / 2;
+  for (int i = 1; i < n - 1; i++) {
     sum += ys[i];
   }
-  sum = sum / ((n-1) / (xmax - xmin));
+  sum = sum / ((n - 1) / (xmax - xmin));
 
   // and compare to cdf
   double val2 = von_mises_cdf(xmax, mu, k) - von_mises_cdf(xmin, mu, k);
 
   ASSERT_NEAR(val2, sum, abs_tol_int);
 }
-
 
 TEST(ProbVonMises, pointwise_cdf_test) {
   using stan::math::von_mises_cdf;
