@@ -91,11 +91,11 @@ class operation_cl : public operation_cl_base {
 
  public:
   using Deriv = Derived;
+  using ArgsTuple = std::tuple<Args...>;
   static const bool require_specific_local_size;
-  static const bool handles_matrix_view = false;
   // number of arguments this operation has
   static constexpr int N = sizeof...(Args);
-  using view_transitivity = std::tuple<std::is_same<Args,void>...>;
+  using view_transitivity = std::tuple<std::is_same<Args, void>...>;
   // value representing a not yet determined size
   static const int dynamic = -1;
 
@@ -205,10 +205,9 @@ class operation_cl : public operation_cl_base {
       std::array<kernel_parts, N> args_parts = index_apply<N>([&](auto... Is) {
         return std::array<kernel_parts, N>{this->get_arg<Is>().get_kernel_parts(
             generated, name_gen, i_arg, j_arg,
-            Derived::handles_matrix_view
-                ? true
-                : (view_handled
-                   && std::tuple_element_t<Is, typename Deriv::view_transitivity>::value))...};
+            view_handled
+                && std::tuple_element_t<
+                    Is, typename Deriv::view_transitivity>::value)...};
       });
       res = std::accumulate(args_parts.begin(), args_parts.end(),
                             kernel_parts{});
