@@ -251,11 +251,12 @@ TEST(StanAgradRevOde_integrate_ode_rk45, t0_as_param_AD) {
   auto test_ad = [&res, &t0v, &ode, &nt, &ns, &theta, &x, &x_int, &msgs]() {
     for (auto i = 0; i < nt; ++i) {
       std::vector<double> res_d = value_of(res[i]);
-      for (auto j = 0; j < ns; ++j) {
-        res[i][j].grad();
-        EXPECT_FLOAT_EQ(t0v.adj(), 0.0);
-        stan::math::set_zero_all_adjoints();
-      }
+      res[i][0].grad();
+      EXPECT_FLOAT_EQ(t0v.adj(), 0.0);
+      stan::math::set_zero_all_adjoints();
+      res[i][1].grad();
+      EXPECT_FLOAT_EQ(t0v.adj(), 1.0);
+      stan::math::set_zero_all_adjoints();
     }
   };
   res = integrate_ode_rk45(ode, y0, t0v, ts, theta, x, x_int);

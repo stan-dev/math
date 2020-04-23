@@ -10,9 +10,9 @@ TEST(MathFunctions, beta) {
 }
 
 TEST(MathFunctions, beta_nan) {
+  using stan::math::beta;
   using stan::math::INFTY;
   using stan::math::NOT_A_NUMBER;
-  using stan::math::beta;
 
   EXPECT_TRUE(std::isnan(beta(NOT_A_NUMBER, 2.16)));
   EXPECT_TRUE(std::isnan(beta(1.65, NOT_A_NUMBER)));
