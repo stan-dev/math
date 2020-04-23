@@ -18,6 +18,10 @@
 namespace stan {
 namespace math {
 
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
+
 /**
  * Represents a broadcasting operation in kernel generator expressions.
  * @tparam T type of arguments
@@ -59,6 +63,8 @@ class broadcast_
 
   /**
    * Generates kernel code for this and nested expressions.
+   * @param var_name_arg name of the variable in kernel that holds argument to
+   * this expression
    * @param i row index variable name
    * @param j column index variable name
    * @param view_handled whether whether caller already handled matrix view
@@ -173,7 +179,7 @@ template <typename T,
 inline auto colwise_broadcast(T&& a) {
   return broadcast<true, false>(std::forward<T>(a));
 }
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 #endif

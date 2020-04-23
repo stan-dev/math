@@ -20,6 +20,9 @@
 namespace stan {
 namespace math {
 
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 namespace internal {
 
 // Template parameter pack can only be at the end of the template list in
@@ -471,7 +474,7 @@ template <typename... T_results>
 results_cl<T_results...> results(T_results&&... results) {
   return results_cl<T_results...>(std::forward<T_results>(results)...);
 }
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 

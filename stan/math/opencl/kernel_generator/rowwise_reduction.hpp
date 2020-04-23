@@ -73,6 +73,11 @@ struct matvec_mul_opt<
 
 }  // namespace internal
 
+
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
+
 /**
  * Represents a rowwise reduction in kernel generator expressions.
  * @tparam Derived derived type
@@ -410,7 +415,7 @@ inline auto rowwise_min(T&& a) {
   return rowwise_min_<std::remove_reference_t<decltype(arg_copy)>>(
       std::move(arg_copy));
 }
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 

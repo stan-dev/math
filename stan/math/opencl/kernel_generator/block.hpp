@@ -18,6 +18,10 @@
 namespace stan {
 namespace math {
 
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
+
 /**
  * Represents submatrix block in kernel generator expressions.
  * @tparam Derived derived type
@@ -232,7 +236,7 @@ inline auto block(T&& a, int start_row, int start_col, int rows, int cols) {
   return block_<std::remove_reference_t<decltype(a_operation)>>(
       std::move(a_operation), start_row, start_col, rows, cols);
 }
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 

@@ -21,6 +21,10 @@
 namespace stan {
 namespace math {
 
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
+
 /**
  * Represents a unary function in kernel generator expressions.
  * @tparam Derived derived type
@@ -188,7 +192,7 @@ ADD_UNARY_FUNCTION_WITH_INCLUDE(log1p_exp,
 #undef ADD_UNARY_FUNCTION_WITH_INCLUDE
 #undef ADD_UNARY_FUNCTION
 #undef ADD_UNARY_FUNCTION_PASS_ZERO
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 #endif

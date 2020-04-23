@@ -18,6 +18,10 @@
 namespace stan {
 namespace math {
 
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
+
 /**
  * Represents a selection operation in kernel generator expressions. This is
  * element wise ternary operator <code>condition ? then : els</code>, also
@@ -141,7 +145,7 @@ select(T_condition&& condition, T_then&& then, T_else&& els) {  // NOLINT
           as_operation_cl(std::forward<T_then>(then)),
           as_operation_cl(std::forward<T_else>(els))};
 }
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 #endif

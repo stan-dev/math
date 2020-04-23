@@ -72,7 +72,6 @@ inline matrix_cl<Vec_scalar> to_matrix_cl(Vec&& src) {
  * @param src source matrix on the OpenCL device
  * @return Eigen matrix with a copy of the data in the source matrix
  */
-
 template <int R = Eigen::Dynamic, int C = Eigen::Dynamic, typename T,
           typename = require_arithmetic_t<T>>
 inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
