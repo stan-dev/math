@@ -113,7 +113,7 @@ class hmm_marginal_lpdf_test : public ::testing::Test {
 
 // For evaluation of the density, the C++ code is benchmarked against
 // a forward algorithm written in R.
-// TODO(charlesm93): Add public repo link with R script. 
+// TODO(charlesm93): Add public repo link with R script.
 TEST_F(hmm_marginal_lpdf_test, ten_transitions) {
   using stan::math::hmm_marginal_lpdf;
 
