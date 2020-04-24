@@ -46,19 +46,20 @@ inline auto hmm_marginal_lpdf_val(
  * and take values over the finite space {1, ..., K}.
  * The marginal lpdf is obtained via a forward pass, and
  * the derivative is calculated with an adjoint method,
- * see (Betancourt, Margossian, & Leos-Barajas, 2020).
+ * e.g (Betancourt, Margossian, & Leos-Barajas, 2020).
+ * log_omegas is a matrix of observational densities, where
+ * the (i, j)th entry corresponds to the density of the ith observation, y_i,
+ * given x_i = j.
+ * The transition matrix Gamma is such that the (i, j)th entry is the
+ * probability that x_n = j given x_{n - 1} = i. The rows of Gamma are
+ * simplexes.
  * The Gamma argument is only checked if there is at least one transition.
  *
  * @tparam T_omega type of the log likelihood matrix
  * @tparam T_Gamma type of the transition matrix
  * @tparam T_rho type of the initial guess vector
  * @param[in] log_omegas log matrix of observational densities.
- *              The (i, j)th entry corresponds to the
- *              density of the ith observation, y_i,
- *              given x_i = j.
  * @param[in] Gamma transition density between hidden states.
- *              The (i, j)th entry is the probability that x_n = j,
- *              given x_{n - 1} = i. The rows of Gamma are simplexes.
  * @param[in] rho initial state
  * @return log marginal density.
  * @throw `std::invalid_argument` if Gamma is not square, when we have
