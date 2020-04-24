@@ -9,19 +9,19 @@
 namespace stan {
 namespace math {
 namespace internal {
-double ode_time_gradient_var(double t, double grad) {
+inline double ode_time_gradient_var(double t, double grad) {
   invalid_argument("ode_time_gradient_var", "t", t,
                    "t must be of type var, not double");
   return 0.0;
 }
 
-var ode_time_gradient_var(var t, double grad) {
+inline var ode_time_gradient_var(var t, double grad) {
   return var(new precomp_v_vari(0.0, t.vi_, grad));
 }
 };  // namespace internal
 
 template <typename F, typename T_initial, typename T_out, typename... T_Args>
-auto ode_add_time_gradients(const F& f, const std::vector<T_initial>& y0,
+inline auto ode_add_time_gradients(const F& f, const std::vector<T_initial>& y0,
                             double t0, const std::vector<double>& ts,
                             const std::vector<std::vector<T_out>>& y,
                             std::ostream* msgs, const T_Args&... args) {
@@ -30,7 +30,7 @@ auto ode_add_time_gradients(const F& f, const std::vector<T_initial>& y0,
 
 template <typename F, typename T_initial, typename T_t0, typename T_ts,
           typename T_out, typename... T_Args>
-std::vector<std::vector<var>> ode_add_time_gradients(
+inline std::vector<std::vector<var>> ode_add_time_gradients(
     const F& f, const std::vector<T_initial>& y0, const T_t0& t0,
     const std::vector<T_ts>& ts, const std::vector<std::vector<T_out>>& y,
     std::ostream* msgs, const T_Args&... args) {
