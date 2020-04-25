@@ -9,6 +9,9 @@
 namespace stan {
 namespace math {
 
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 /**
  * Non-templated base of \c operation is needed for easy checking if something
  * is a subclass of \c operation.
@@ -54,7 +57,7 @@ using require_all_valid_expressions_and_none_scalar_t
 template <typename... Types>
 using require_all_valid_expressions_t
     = require_all_t<is_valid_expression<Types>...>;
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 

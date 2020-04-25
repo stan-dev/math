@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_NORM_HPP
 #define STAN_MATH_PRIM_FUN_NORM_HPP
 
+#include <stan/math/prim/fun/isinf.hpp>
 #include <cmath>
 #include <complex>
 
