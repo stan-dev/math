@@ -15,7 +15,8 @@ namespace stan {
  * ```
  * is well formed for input `std::declval<Derived*>() this has a member
  *  value equal to `true`, otherwise the value is false.
- * @tparam The type to check
+ * @tparam Base The templated base type for valid pointer conversion.
+ * @tparam Derived The type to check
  * @ingroup type_trait
  */
 template <template <typename> class Base, typename Derived>

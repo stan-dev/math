@@ -11,18 +11,20 @@
 
 namespace stan {
 
-/** \addtogroup type_trait
- *  @{
- */
-
 namespace internal {
 
 /**
  * Underlying implimenation to check if an Eigen matrix has rows or cols not
  *  equal to 1.
  */
+template <typename T, bool>
+struct is_eigen_matrix_impl : std::false_type {};
+
 template <typename T>
-struct is_eigen_matrix_impl
+struct is_eigen_matrix_impl<T, false> : std::false_type {};
+
+template <typename T>
+struct is_eigen_matrix_impl<T, true>
     : bool_constant<!(T::RowsAtCompileTime == 1 || T::ColsAtCompileTime == 1)> {
 };
 
@@ -34,18 +36,13 @@ struct is_eigen_matrix_impl
  * static member function named value with a type of true, else value is false.
  * @tparam T Type to check if it is derived from `MatrixBase` and has more than
  * 1 compile time row and column.
- * @tparam Enable used for SFINAE deduction.
+ * @ingroup type_trait
  */
-template <typename T, typename Enable = void>
-struct is_eigen_matrix : std::false_type {};
-
 template <typename T>
-struct is_eigen_matrix<
-    T,
-    std::enable_if_t<is_base_pointer_convertible<Eigen::MatrixBase, T>::value>>
-    : bool_constant<internal::is_eigen_matrix_impl<std::decay_t<T>>::value> {};
+struct is_eigen_matrix
+    : bool_constant<internal::is_eigen_matrix_impl<std::decay_t<T>,
+    is_base_pointer_convertible<Eigen::MatrixBase, T>::value>::value> {};
 
-/** @}*/
 
 STAN_ADD_REQUIRE_UNARY(eigen_matrix, is_eigen_matrix, require_eigens_types);
 STAN_ADD_REQUIRE_CONTAINER(eigen_matrix, is_eigen_matrix, require_eigens_types);
