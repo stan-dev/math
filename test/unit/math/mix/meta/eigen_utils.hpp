@@ -134,7 +134,7 @@ void test_eigen_dense_exprs() {
   EXPECT_TRUE((Base_v == Checker<decltype(A)&&>::value))
       << "Failed For Base: " << type_name<decltype(A)&&>()
       << "\nChecking Type: " << type_name<decltype(A)>();
- EXPECT_TRUE((Base_v == Checker<const decltype(A)&>::value))
+  EXPECT_TRUE((Base_v == Checker<const decltype(A)&>::value))
       << "Failed For Base: " << type_name<const decltype(A)&>()
       << "\nChecking Type: " << type_name<decltype(A)>();
   EXPECT_TRUE((Base_v == Checker<decltype(A)>::value))

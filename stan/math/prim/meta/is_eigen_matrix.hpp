@@ -40,9 +40,9 @@ struct is_eigen_matrix_impl<T, true>
  */
 template <typename T>
 struct is_eigen_matrix
-    : bool_constant<internal::is_eigen_matrix_impl<std::decay_t<T>,
-    is_base_pointer_convertible<Eigen::MatrixBase, T>::value>::value> {};
-
+    : bool_constant<internal::is_eigen_matrix_impl<
+          std::decay_t<T>,
+          is_base_pointer_convertible<Eigen::MatrixBase, T>::value>::value> {};
 
 STAN_ADD_REQUIRE_UNARY(eigen_matrix, is_eigen_matrix, require_eigens_types);
 STAN_ADD_REQUIRE_CONTAINER(eigen_matrix, is_eigen_matrix, require_eigens_types);

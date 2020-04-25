@@ -10,7 +10,6 @@
 
 namespace stan {
 
-
 /**
  * Check if type derives from `EigenBase`
  * @tparam T Type to check if it is derived from `EigenBase`
