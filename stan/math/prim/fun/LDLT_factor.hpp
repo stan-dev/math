@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
+#include <memory>
 
 namespace stan {
 namespace math {
