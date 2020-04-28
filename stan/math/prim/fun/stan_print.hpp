@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 // prints used in generator for print() statements in modeling language
 
-template <typename T, require_stan_scalar_t<T>* = nullptr>
+template <typename T, require_not_container_t<T>* = nullptr>
 void stan_print(std::ostream* o, const T& x) {
   *o << x;
 }
