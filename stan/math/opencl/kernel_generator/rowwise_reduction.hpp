@@ -20,8 +20,13 @@ namespace stan {
 namespace math {
 namespace internal {
 
+/**
+ * Implementation of an optimization for usage of rowwise reduction in
+ * matrix-vector multiplication.
+ */
 template <typename Arg>
 struct matvec_mul_opt {
+  // in general the optimization is not possible
   enum { is_possible = 0 };
 
   static matrix_cl_view view(const Arg&) { return matrix_cl_view::Entire; }
@@ -36,13 +41,32 @@ struct matvec_mul_opt {
 template <typename Mat, typename VecT>
 struct matvec_mul_opt<
     elewise_multiplication_<Mat, broadcast_<VecT, true, false>>> {
+  // if the argument of rowwise reduction is multiplication with a broadcast
+  // vector we can do the optimization
   enum { is_possible = 1 };
   using Arg = elewise_multiplication_<Mat, broadcast_<VecT, true, false>>;
 
+  /**
+   * Return view of the vector.
+   * @param a argument to rowwise reduction (multiplication with second factor
+   * being broadcast vector)
+   * @return view
+   */
   static matrix_cl_view view(const Arg& a) {
     return a.template get_arg<1>().template get_arg<0>().view();
   }
 
+  /**
+   * Generates kernel code for the argument of rowwise reduction, applying the
+   * optimization - ignoring the triangular view of the vector, as it is already
+   * handeled by rowwise reduction.
+   * @param mul argument of the rowwise reduction
+   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param name_gen name generator for this kernel
+   * @param i row index variable name
+   * @param j column index variable name
+   * @return part of kernel with code for this and nested expressions
+   */
   static kernel_parts get_kernel_parts(
       const Arg& mul, std::set<const operation_cl_base*>& generated,
       name_generator& name_gen, const std::string& i, const std::string& j) {
@@ -58,12 +82,12 @@ struct matvec_mul_opt<
         broadcast.var_name = name_gen.generate();
         generated.insert(&broadcast);
 
-        const auto& vec_t = broadcast.template get_arg<0>();
+        const auto& vec = broadcast.template get_arg<0>();
         std::string i_bc = i;
         std::string j_bc = j;
         broadcast.modify_argument_indices(i_bc, j_bc);
-        res += vec_t.get_kernel_parts(generated, name_gen, i_bc, j_bc, true);
-        res += broadcast.generate(i, j, true, vec_t.var_name);
+        res += vec.get_kernel_parts(generated, name_gen, i_bc, j_bc, true);
+        res += broadcast.generate(i, j, true, vec.var_name);
       }
       res += mul.generate(i, j, true, matrix.var_name, broadcast.var_name);
     }

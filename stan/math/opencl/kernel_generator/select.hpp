@@ -118,6 +118,8 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
         = this->template get_arg<1>().extreme_diagonals();
     std::pair<int, int> else_diags
         = this->template get_arg<2>().extreme_diagonals();
+    // Where the condition is 0 we get else's values. Otherwise we get the more
+    // extreme of then's and else's.
     return {max(min(then_diags.first, else_diags.first),
                 min(condition_diags.first, else_diags.first)),
             min(max(then_diags.second, else_diags.second),
