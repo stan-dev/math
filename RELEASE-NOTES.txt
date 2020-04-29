@@ -126,6 +126,8 @@ Thanks to everyone who submitted and reviewed pull requests! The list of pull re
 |[wds15](https://github.com/wds15) : ([#1821](https://github.com/stan-dev/math/pull/1821))                                 |clarify README.md                                                       |
 
 
+max_size, max_size_mvt, check_consistent_sizes, and check_consistent_sizes_mvt have been simplified and now take any number of arguments.
+
 ======================================================================
 v3.1.0 (24 January 2020)
 ======================================================================
