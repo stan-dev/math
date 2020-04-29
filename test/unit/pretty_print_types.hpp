@@ -70,6 +70,10 @@ inline std::ostream& operator<<(std::ostream& os, static_string const& s) {
   return os.write(s.data(), s.size());
 }
 
+/**
+ * Prints out an input type.
+ * @tparam T The type to print out.
+ */
 template <class T>
 CONSTEXPR14_TN static_string type_name() {
 #ifdef __clang__
