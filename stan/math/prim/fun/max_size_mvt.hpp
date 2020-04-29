@@ -2,33 +2,27 @@
 #define STAN_MATH_PRIM_FUN_MAX_SIZE_MVT_HPP
 
 #include <stan/math/prim/fun/size_mvt.hpp>
-#include <cstdlib>
+#include <algorithm>
 
 namespace stan {
 namespace math {
 
-template <typename T1, typename T2>
-size_t max_size_mvt(const T1& x1, const T2& x2) {
-  size_t result = size_mvt(x1);
-  result = result > size_mvt(x2) ? result : size_mvt(x2);
-  return result;
-}
-
-template <typename T1, typename T2, typename T3>
-size_t max_size_mvt(const T1& x1, const T2& x2, const T3& x3) {
-  size_t result = size_mvt(x1);
-  result = result > size_mvt(x2) ? result : size_mvt(x2);
-  result = result > size_mvt(x3) ? result : size_mvt(x3);
-  return result;
-}
-
-template <typename T1, typename T2, typename T3, typename T4>
-size_t max_size_mvt(const T1& x1, const T2& x2, const T3& x3, const T4& x4) {
-  size_t result = size_mvt(x1);
-  result = result > size_mvt(x2) ? result : size_mvt(x2);
-  result = result > size_mvt(x3) ? result : size_mvt(x3);
-  result = result > size_mvt(x4) ? result : size_mvt(x4);
-  return result;
+/**
+ * Calculate the size of the largest multivariate input. A multivariate
+ * container is either an Eigen matrix, whose mvt size is 1, or an std::vector
+ * of Eigen matrices, whose mvt size is the size of the std::vector. It is an
+ * error to supply any other type of input.
+ * @tparam T1 type of the first input
+ * @tparam Ts types of the other inputs
+ * @param x1 first input
+ * @param xs other inputs
+ * @return the size of the largest input
+ * @throw `invalid_argument` if provided with an input that is not an Eigen
+ * matrix or std::vector of Eigen matrices
+ */
+template <typename T1, typename... Ts>
+inline size_t max_size_mvt(const T1& x1, const Ts&... xs) {
+  return std::max({stan::math::size_mvt(x1), stan::math::size_mvt(xs)...});
 }
 
 }  // namespace math
