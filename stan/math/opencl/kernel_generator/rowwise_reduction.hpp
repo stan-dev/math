@@ -185,11 +185,14 @@ class rowwise_reduction
       res.body_prefix += "int " + var_name + "_start = contains_nonzero("
                          + var_name + "_view, LOWER) ? 0 : " + i + ";\n";
       if (internal::matvec_mul_opt<T_no_ref>::is_possible) {
-        res.body_prefix += "int " + var_name + "_end = contains_nonzero("
-                           + var_name + "_vec_view, UPPER) ? (contains_nonzero("
+        res.body_prefix += "int " + var_name + "_end_temp = contains_nonzero("
                            + var_name + "_view, UPPER) ? " + var_name
                            + "_cols : min(" + var_name + "_cols, " + i
-                           + " + 1)) : 1;\n";
+                           + " + 1);\n";
+        res.body_prefix += "int " + var_name + "_end = contains_nonzero("
+                           + var_name + "_vec_view, UPPER) ? " + var_name
+                           + "_end_temp : min(1, " + var_name
+                           + "_end_temp);\n";
       } else {
         res.body_prefix += "int " + var_name + "_end = contains_nonzero("
                            + var_name + "_view, UPPER) ? " + var_name
