@@ -64,15 +64,16 @@
  * direction.
  *     - Default: returns `rows()`.
  * - `int thread_cols()`:
- *     - Returns number of threads required for this operation in cols direction.
+ *     - Returns number of threads required for this operation in cols
+ * direction.
  *     - Default: `cols()`.
  * - `std::pair<int,int> extreme_diagonals()`:
- *     - Returns indices of the extreme bottom and top nonzero diagonals of the result of
- * the operation. Diagonal has index 0, first superdiagonal 1, first subdiagonal
- * -1 and so on. For instance `load_` of a matrix with lower triangular view
- * would return bottom diagonal of `1-rows()` and top diagonal `0`. Returning a
- * more extreme value is also allowed and especially useful for operations that
- * are broadcast so their exact size is not known.
+ *     - Returns indices of the extreme bottom and top nonzero diagonals of the
+ * result of the operation. Diagonal has index 0, first superdiagonal 1, first
+ * subdiagonal -1 and so on. For instance `load_` of a matrix with lower
+ * triangular view would return bottom diagonal of `1-rows()` and top diagonal
+ * `0`. Returning a more extreme value is also allowed and especially useful for
+ * operations that are broadcast so their exact size is not known.
  *     - Default: Bottom diagonal equals to min of bottom diagonals of
  * arguments. Top diagonal equals to max of top diagonals of arguments.
  *
