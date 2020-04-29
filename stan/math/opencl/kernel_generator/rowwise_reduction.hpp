@@ -191,8 +191,7 @@ class rowwise_reduction
                            + " + 1);\n";
         res.body_prefix += "int " + var_name + "_end = contains_nonzero("
                            + var_name + "_vec_view, UPPER) ? " + var_name
-                           + "_end_temp : min(1, " + var_name
-                           + "_end_temp);\n";
+                           + "_end_temp : min(1, " + var_name + "_end_temp);\n";
       } else {
         res.body_prefix += "int " + var_name + "_end = contains_nonzero("
                            + var_name + "_view, UPPER) ? " + var_name
