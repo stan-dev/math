@@ -29,7 +29,7 @@ namespace math {
  */
 static void grad(vari* vi) {
   vi->init_dependent();
-  std::vector<vari *>& var_stack = ChainableStack::instance_->var_stack_;
+  std::vector<vari*>& var_stack = ChainableStack::instance_->var_stack_;
   size_t end = var_stack.size();
   size_t beginning = empty_nested() ? 0 : end - nested_size();
   for (size_t i = end; i > beginning; i--) {
