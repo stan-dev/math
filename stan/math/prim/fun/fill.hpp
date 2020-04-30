@@ -22,7 +22,7 @@ namespace math {
  * @param y Value.
  */
 template <typename EigMat, typename S, require_eigen_t<EigMat>* = nullptr,
- require_stan_scalar_t<S>* = nullptr>
+          require_stan_scalar_t<S>* = nullptr>
 inline void fill(EigMat& x, const S& y) {
   x.fill(y);
 }
@@ -37,9 +37,10 @@ inline void fill(EigMat& x, const S& y) {
  * @param x Container.
  * @param y Value.
  */
-template <typename T, typename S,
-  require_any_t<std::is_same<std::decay_t<T>, std::decay_t<S>>,
-   conjunction<is_stan_scalar<T>, is_stan_scalar<S>>>* = nullptr>
+template <
+    typename T, typename S,
+    require_any_t<std::is_same<std::decay_t<T>, std::decay_t<S>>,
+                  conjunction<is_stan_scalar<T>, is_stan_scalar<S>>>* = nullptr>
 inline void fill(T& x, const S& y) {
   x = y;
 }

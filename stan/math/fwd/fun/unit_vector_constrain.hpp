@@ -21,7 +21,8 @@ inline auto unit_vector_constrain(EigMat&& y) {
   using std::sqrt;
   using eig_mat = std::decay_t<EigMat>;
   using ref_inner = typename eig_mat::PlainObject;
-  using eigen_ref = Eigen::Ref<const ref_inner, Eigen::Aligned16, Eigen::Stride<0, 0>>;
+  using eigen_ref
+      = Eigen::Ref<const ref_inner, Eigen::Aligned16, Eigen::Stride<0, 0>>;
   using eig_index = index_type_t<EigMat>;
   using eig_partial = partials_type_t<value_type_t<EigMat>>;
   using eig_value = value_type_t<EigMat>;
@@ -51,8 +52,8 @@ inline auto unit_vector_constrain(EigMat&& y) {
 }
 
 template <typename EigMat, typename T,
- require_eigen_vt<is_fvar, EigMat>* = nullptr,
- require_stan_scalar_t<T>* = nullptr>
+          require_eigen_vt<is_fvar, EigMat>* = nullptr,
+          require_stan_scalar_t<T>* = nullptr>
 inline auto unit_vector_constrain(EigMat&& y, T& lp) {
   const value_type_t<EigMat> squared_norm = dot_self(y);
   lp -= 0.5 * squared_norm;
