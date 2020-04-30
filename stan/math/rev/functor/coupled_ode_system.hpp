@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_REV_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 #define STAN_MATH_REV_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 
+#include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun.hpp>
 #include <stan/math/rev/meta.hpp>

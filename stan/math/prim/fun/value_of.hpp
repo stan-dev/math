@@ -76,8 +76,8 @@ inline auto value_of(Vec&& x) {
  * @param x Standard vector.
  */
 template <typename Vec, require_std_vector_vt<std::is_integral, Vec>* = nullptr>
-inline auto value_of(Vec&& x) {
-  return std::vector<double>(x.begin(), x.end());
+inline decltype(auto) value_of(Vec&& x) {
+  return std::forward<Vec>(x);
 }
 
 /**

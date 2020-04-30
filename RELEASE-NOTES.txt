@@ -1,15 +1,132 @@
 Stan Math Library Release Notes
 
 ======================================================================
-v3.2.0 (pending)
+v3.2.0 (22 April 2020)
 ======================================================================
 
-## Developer-aimed features
-[bob-carpenter](https://github.com/bob-carpenter) extended the scalar_return
-metaprograms to deal with complex numbers and added a real_return program
-and helper metaprograms for intermediate and return types.
+### Feature summary:
+* Added new `reduce_sum` utility for parallelizing calculations over multiple cores of one computer
+* Sundials upgrade to version 5.2.0
+* Support for size 0 matrices [Ben: This needs checked by someone in release candidate, it might be just a Math-facing feature]
+* discrete_range_lpmf/lcdf/lccdf/rngs/etc. added for uniform discrete random variable
+* Added row vector, array and int_array construction utilities
+* Adds reverse function for vectors, row vectors, and std::vectors
+* Added release notes section to pull request to make assembling release notes easier (this must be filled out for new pulls)
+* Added apply operator (standin for C++17 apply)
+* Added support for complex numbers at all levels of the autodiff library
 
-Miscellaneous doxygen documentation cleanup.
+### Bugfix summary:
+* Fixed problems with vectorizing neg_binomial_* functions that lead to wrong answers
+* Improved lbeta to be more numerically stable with one large and one small argument
+* Improved numerical stability with binomial_coefficient_log, neg_binomial_2_lpmf, and neg_binomial_2_log_lpmf computations
+* Fixed problem with wrong gradients for large arguments to log_sum_exp
+* Fixed bug where normal_id_glm did not work with a sigma is not an autodiff type
+* Fixed problem with makefiles on Windows
+* Fix ode gradients with respect to t0
+
+There were also extensive work in various parts of the Math library adding docs, cleaning up distribution functions, adding tests, generalizing functions to work with special Eigen temporary types, working with new template functions (`return_type_t`, etc.), and otherwise making quality of life improvements.
+
+Thanks to everyone who submitted and reviewed pull requests! The list of pull request submitters for this release are (in no particular order): @t4c1, @mcol, @martinmodrak, @rok-cesnovar, @serban-nicusor-toptal, @SteveBronder, @kedartal, @wds15, @bob-carpenter, @peterwicksstringfield, @andrjohns, @pgree, @IvanYashchuk, and @bbbales2.
+
+### Pull request details:
+|Contributor                                                                                                               |Title                                                                   |
+|:-------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------|
+|[t4c1](https://github.com/t4c1) : ([#1824](https://github.com/stan-dev/math/pull/1824))                                   |Add unary operations minus and logical negation to kernel generator     |
+|[wds15](https://github.com/wds15) : ([#1819](https://github.com/stan-dev/math/pull/1819))                                 |Feature/issue 1818 upgrade sundials 520                                 |
+|[SteveBronder](https://github.com/SteveBronder) : ([#1813](https://github.com/stan-dev/math/pull/1813))                   |adds reduce_sum and tests                                               |
+|[t4c1](https://github.com/t4c1) : ([#1802](https://github.com/stan-dev/math/pull/1802))                                   |Add extended kernel generator docs                                      |
+|[t4c1](https://github.com/t4c1) : ([#1801](https://github.com/stan-dev/math/pull/1801))                                   |Add support for device functions to kernel generator                    |
+|[SteveBronder](https://github.com/SteveBronder) : ([#1800](https://github.com/stan-dev/math/pull/1800))                   |Adds auxilary functions needed for reduce_sum                           |
+|[t4c1](https://github.com/t4c1) : ([#1797](https://github.com/stan-dev/math/pull/1797))                                   |Add broadcasting to kernel generator                                    |
+|[SteveBronder](https://github.com/SteveBronder) : ([#1791](https://github.com/stan-dev/math/pull/1791))                   |adds an apply function and cleans adj_jac_apply to use it               |
+|[peterwicksstringfield](https://github.com/peterwicksstringfield) : ([#1780](https://github.com/stan-dev/math/pull/1780)) |Feature/elementwise check                                               |
+|[bob-carpenter](https://github.com/bob-carpenter) : ([#1774](https://github.com/stan-dev/math/pull/1774))                 |Feature/0123 complex funs                                               |
+|[t4c1](https://github.com/t4c1) : ([#1769](https://github.com/stan-dev/math/pull/1769))                                   |Add transposition to kernel generator                                   |
+|[t4c1](https://github.com/t4c1) : ([#1767](https://github.com/stan-dev/math/pull/1767))                                   |avoid redundant buffer allocations in kernel generator                  |
+|[t4c1](https://github.com/t4c1) : ([#1751](https://github.com/stan-dev/math/pull/1751))                                   |Allow kernel generator to calculate multiple outputs in single kernel   |
+|[t4c1](https://github.com/t4c1) : ([#1740](https://github.com/stan-dev/math/pull/1740))                                   |Add colwise reductions to kernel generator                              |
+|[bob-carpenter](https://github.com/bob-carpenter) : ([#1736](https://github.com/stan-dev/math/pull/1736))                 |Feature/1734 return scalar meta                                         |
+|[andrjohns](https://github.com/andrjohns) : ([#1727](https://github.com/stan-dev/math/pull/1727))                         |Eigen::Map and elementwise functions                                    |
+|[t4c1](https://github.com/t4c1) : ([#1726](https://github.com/stan-dev/math/pull/1726))                                   |Bugfix common subexpression elimination in kernel generator             |
+|[bob-carpenter](https://github.com/bob-carpenter) : ([#1720](https://github.com/stan-dev/math/pull/1720))                 |Feature/0123 complex spec                                               |
+|[mcol](https://github.com/mcol) : ([#1716](https://github.com/stan-dev/math/pull/1716))                                   |Add discrete_range_cdf, discrete_range_lcdf and discrete_range_lccdf    |
+|[martinmodrak](https://github.com/martinmodrak) : ([#1706](https://github.com/stan-dev/math/pull/1706))                   |Using local_nested_autodiff for all instances of nested autodiff        |
+|[mcol](https://github.com/mcol) : ([#1680](https://github.com/stan-dev/math/pull/1680))                                   |Add discrete_range_rng(lower, upper) and discrete_range_lpmf            |
+|[wds15](https://github.com/wds15) : ([#1675](https://github.com/stan-dev/math/pull/1675))                                 |avoid vari on chain-stack if var is constructed from an arithmetic type |
+|[martinmodrak](https://github.com/martinmodrak) : ([#1657](https://github.com/stan-dev/math/pull/1657))                   |Improved behavior of expect_near_rel                                    |
+|[mcol](https://github.com/mcol) : ([#1650](https://github.com/stan-dev/math/pull/1650))                                   |Add reverse                                                             |
+|[mcol](https://github.com/mcol) : ([#1636](https://github.com/stan-dev/math/pull/1636))                                   |Add row vector, array and int_array construction utilities              |
+|[t4c1](https://github.com/t4c1) : ([#1623](https://github.com/stan-dev/math/pull/1623))                                   |Add rowwise reductions to kernel generator                              |
+|[martinmodrak](https://github.com/martinmodrak) : ([#1575](https://github.com/stan-dev/math/pull/1575))                   |Additional tests for distributions      
+|[martinmodrak](https://github.com/martinmodrak) : ([#1830](https://github.com/stan-dev/math/pull/1830))                   |More stable implementation of neg_binomial_2_log_lpmf                               |
+
+## Fixes
+
+|Contributor                                                                                                               |Title                                                                               |
+|:-------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------|
+|[mitzimorris](https://github.com/mitzimorris) : ([#1842](https://github.com/stan-dev/math/pull/1842))                     |Bugfix/1839 make shell linux                                                        |
+|[bob-carpenter](https://github.com/bob-carpenter) : ([#1837](https://github.com/stan-dev/math/pull/1837))                 |return value type for complex abs; fixes #1836                                      |
+|[bbbales2](https://github.com/bbbales2) : ([#1834](https://github.com/stan-dev/math/pull/1834))                           |Fix ode gradients with respect to t0 (Issue #1833)                                  |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1825](https://github.com/stan-dev/math/pull/1825))                   |Add licensing info to log_modified_bessel_first_kind                                |
+|[bbbales2](https://github.com/bbbales2) : ([#1810](https://github.com/stan-dev/math/pull/1810))                           |Added arithmetic version of pow (Fixes: #1809)                                      |
+|[t4c1](https://github.com/t4c1) : ([#1807](https://github.com/stan-dev/math/pull/1807))                                   |fixed normal_id_glm for const sigma                                                 |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1795](https://github.com/stan-dev/math/pull/1795))                   |Makefiles: Add $(strip) to findfiles function                                       |
+|[SteveBronder](https://github.com/SteveBronder) : ([#1794](https://github.com/stan-dev/math/pull/1794))                   |Cleanup requires with macros                                                        |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1789](https://github.com/stan-dev/math/pull/1789))                   |Reorganize Jenkins test stages                                                      |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1786](https://github.com/stan-dev/math/pull/1786))                   |Add a release notes section in the pull request template                            |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1784](https://github.com/stan-dev/math/pull/1784))                   |Makefiles: strip newlines in findiles and fix runChecks call                        |
+|[serban-nicusor-toptal](https://github.com/serban-nicusor-toptal) : ([#1777](https://github.com/stan-dev/math/pull/1777)) |Moved verify changes Jenkins step to shared libraries.                              |
+|[pgree](https://github.com/pgree) : ([#1772](https://github.com/stan-dev/math/pull/1772))                                 |Changed calculation of log_sum_exp(x1, x2)                                          |
+|[peterwicksstringfield](https://github.com/peterwicksstringfield) : ([#1771](https://github.com/stan-dev/math/pull/1771)) |More documentation fixups.                                                          |
+|[SteveBronder](https://github.com/SteveBronder) : ([#1768](https://github.com/stan-dev/math/pull/1768))                   |[WIP][WIP] Add docs and generic value type signatures for reduce_sum                |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1765](https://github.com/stan-dev/math/pull/1765))                   |Cleanup duplicated overloads of scalar std:: functions                              |
+|[mcol](https://github.com/mcol) : ([#1762](https://github.com/stan-dev/math/pull/1762))                                   |Remove fwd versions of qr_Q and qr_R                                                |
+|[mcol](https://github.com/mcol) : ([#1761](https://github.com/stan-dev/math/pull/1761))                                   |Move size_zero() calls after other consistency checks (L-Z)                         |
+|[mcol](https://github.com/mcol) : ([#1758](https://github.com/stan-dev/math/pull/1758))                                   |Move size_zero() calls after other consistency checks (A-I)                         |
+|[peterwicksstringfield](https://github.com/peterwicksstringfield) : ([#1756](https://github.com/stan-dev/math/pull/1756)) |Documentation fixups                                                                |
+|[t4c1](https://github.com/t4c1) : ([#1754](https://github.com/stan-dev/math/pull/1754))                                   |Generalize */fun starting with cr-d                                                 |
+|[t4c1](https://github.com/t4c1) : ([#1747](https://github.com/stan-dev/math/pull/1747))                                   |Generalize */fun startimg with chole-cov                                            |
+|[mcol](https://github.com/mcol) : ([#1744](https://github.com/stan-dev/math/pull/1744))                                   |Reuse intermediate computations in distributions part 1                             |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1743](https://github.com/stan-dev/math/pull/1743))                   |Update license.md year to 2020                                                      |
+|[t4c1](https://github.com/t4c1) : ([#1732](https://github.com/stan-dev/math/pull/1732))                                   |Generalize */fun starting with a-chol2                                              |
+|[mcol](https://github.com/mcol) : ([#1730](https://github.com/stan-dev/math/pull/1730))                                   |Avoid 'Blocked loading mixed active content' errors                                 |
+|[mcol](https://github.com/mcol) : ([#1728](https://github.com/stan-dev/math/pull/1728))                                   |Keep computations in log space and simplify expressions in beta binomial_*cdf       |
+|[serban-nicusor-toptal](https://github.com/serban-nicusor-toptal) : ([#1724](https://github.com/stan-dev/math/pull/1724)) |Run CI/CD only on Source Code                                                       |
+|[pgree](https://github.com/pgree) : ([#1722](https://github.com/stan-dev/math/pull/1722))                                 |remove discontinuity in lub_constrain; fixes #1441                                  |
+|[mcol](https://github.com/mcol) : ([#1718](https://github.com/stan-dev/math/pull/1718))                                   |Remove size zero checks from check_multiplicable                                    |
+|[mcol](https://github.com/mcol) : ([#1717](https://github.com/stan-dev/math/pull/1717))                                   |Remove promote_common and common_type                                               |
+|[mcol](https://github.com/mcol) : ([#1715](https://github.com/stan-dev/math/pull/1715))                                   |Cleanup mdivide_* and tests                                                         |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1712](https://github.com/stan-dev/math/pull/1712))                   |fix develop                                                                         |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1711](https://github.com/stan-dev/math/pull/1711))                   |Bugfix/include what you use in /prim/fun                                            |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1707](https://github.com/stan-dev/math/pull/1707))                   |Add namespace qualifiers to size()                                                  |
+|[mcol](https://github.com/mcol) : ([#1705](https://github.com/stan-dev/math/pull/1705))                                   |Check for positive definiteness only after computing the LLT factors                |
+|[mcol](https://github.com/mcol) : ([#1701](https://github.com/stan-dev/math/pull/1701))                                   |Don't throw when computing the inverse of a size zero matrix                        |
+|[mcol](https://github.com/mcol) : ([#1698](https://github.com/stan-dev/math/pull/1698))                                   |Improve tests and documentation for quad_form and quad_form_sym                     |
+|[mcol](https://github.com/mcol) : ([#1688](https://github.com/stan-dev/math/pull/1688))                                   |Add positive definite checks to mdivide_left_spd                                    |
+|[mcol](https://github.com/mcol) : ([#1685](https://github.com/stan-dev/math/pull/1685))                                   |Allow multiply for size 0 inputs                                                    |
+|[kedartal](https://github.com/kedartal) : ([#1684](https://github.com/stan-dev/math/pull/1684))                           |Explicitly call stan::math::size (fix ambiguous call versus std::size)              |
+|[mcol](https://github.com/mcol) : ([#1682](https://github.com/stan-dev/math/pull/1682))                                   |Check for consistent sizes before comparing arguments                               |
+|[mcol](https://github.com/mcol) : ([#1678](https://github.com/stan-dev/math/pull/1678))                                   |Reorganize files after flatten                                                      |
+|[mcol](https://github.com/mcol) : ([#1673](https://github.com/stan-dev/math/pull/1673))                                   |Remove Boost deprecation warning                                                    |
+|[mcol](https://github.com/mcol) : ([#1665](https://github.com/stan-dev/math/pull/1665))                                   |make develop build again                                                            |
+|[mcol](https://github.com/mcol) : ([#1663](https://github.com/stan-dev/math/pull/1663))                                   |correctness fixes in neg_binomial_* functions                                       |
+|[mcol](https://github.com/mcol) : ([#1661](https://github.com/stan-dev/math/pull/1661))                                   |Move vectorize files to meta folder                                                 |
+|[t4c1](https://github.com/t4c1) : ([#1660](https://github.com/stan-dev/math/pull/1660))                                   |Generalize view and size functions                                                  |
+|[mcol](https://github.com/mcol) : ([#1655](https://github.com/stan-dev/math/pull/1655))                                   |Cleanup in poisson_cdf, poisson_lccdf and poisson_lcdf                              |
+|[serban-nicusor-toptal](https://github.com/serban-nicusor-toptal) : ([#1653](https://github.com/stan-dev/math/pull/1653)) |Fix permission denied in Jenkins pipeline                                           |
+|[mcol](https://github.com/mcol) : ([#1649](https://github.com/stan-dev/math/pull/1649))                                   |Clean up code to use index_type_t,  return_type_t and partials_return_t             |
+|[t4c1](https://github.com/t4c1) : ([#1628](https://github.com/stan-dev/math/pull/1628))                                   |Generalize operator-like functions                                                  |
+|[martinmodrak](https://github.com/martinmodrak) : ([#1614](https://github.com/stan-dev/math/pull/1614))                   |Improved numerical stability of binomial_coefficient_log                            |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1567](https://github.com/stan-dev/math/pull/1567))                   |Cleanup the use of find in makefile                                                 |
+|[SteveBronder](https://github.com/SteveBronder) : ([#1525](https://github.com/stan-dev/math/pull/1525))                   |Generic var templates for operators and std::iterator_trait var/fvar specialization |
+|[martinmodrak](https://github.com/martinmodrak) : ([#1497](https://github.com/stan-dev/math/pull/1497))                   |Fixing negative binomial phi cutoff 
+|[t4c1](https://github.com/t4c1) : ([#1796](https://github.com/stan-dev/math/pull/1796))                                   |Bugfix: make kernel generator wait for events on matrices               |
+|[mcol](https://github.com/mcol) : ([#1674](https://github.com/stan-dev/math/pull/1674))                                   |Document template parameters in /prim                                   |
+|[mcol](https://github.com/mcol) : ([#1668](https://github.com/stan-dev/math/pull/1668))                                   |Rename spaced_* to linspaced_*                                          |
+|[wds15](https://github.com/wds15) : ([#1821](https://github.com/stan-dev/math/pull/1821))                                 |clarify README.md                                                       |
+
+
+max_size, max_size_mvt, check_consistent_sizes, and check_consistent_sizes_mvt have been simplified and now take any number of arguments.
 
 ======================================================================
 v3.1.0 (24 January 2020)

@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_CORE_VECTOR_VARI_HPP
 #define STAN_MATH_REV_CORE_VECTOR_VARI_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vari.hpp>
 #include <vector>

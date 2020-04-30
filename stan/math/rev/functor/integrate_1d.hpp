@@ -2,17 +2,19 @@
 #define STAN_MATH_REV_FUNCTOR_integrate_1d_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/fun.hpp>
+#include <stan/math/rev/fun/is_nan.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
+#include <stan/math/rev/core/precomputed_gradients.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun.hpp>
 #include <stan/math/prim/functor/integrate_1d.hpp>
-#include <type_traits>
-#include <string>
-#include <vector>
+#include <cmath>
 #include <functional>
 #include <ostream>
-#include <cmath>
+#include <string>
+#include <type_traits>
+#include <vector>
 
 namespace stan {
 namespace math {
