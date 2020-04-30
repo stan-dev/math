@@ -7,7 +7,7 @@
 TEST(MathMatrixCL, col_exception) {
   stan::math::matrix_cl<double> m1_cl(3,3);
   EXPECT_THROW(col(m1_cl, 0), std::invalid_argument);
-  EXPECT_THROW(col(m1_cl, 4), std::domain_error);
+  EXPECT_THROW(col(m1_cl, 4), std::invalid_argument);
 }
 
 
