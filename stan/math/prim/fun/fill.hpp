@@ -21,8 +21,9 @@ namespace math {
  * @param x Container.
  * @param y Value.
  */
-template <typename T, int R, int C, typename S>
-inline void fill(Eigen::Matrix<T, R, C>& x, const S& y) {
+template <typename EigMat, typename S, require_eigen_t<EigMat>* = nullptr,
+ require_stan_scalar_t<S>* = nullptr>
+inline void fill(EigMat& x, const S& y) {
   x.fill(y);
 }
 
@@ -36,7 +37,9 @@ inline void fill(Eigen::Matrix<T, R, C>& x, const S& y) {
  * @param x Container.
  * @param y Value.
  */
-template <typename T, typename S>
+template <typename T, typename S,
+  require_any_t<std::is_same<std::decay_t<T>, std::decay_t<S>>,
+   conjunction<is_stan_scalar<T>, is_stan_scalar<S>>>* = nullptr>
 inline void fill(T& x, const S& y) {
   x = y;
 }
@@ -52,9 +55,9 @@ inline void fill(T& x, const S& y) {
  * @param[in] x Container.
  * @param[in, out] y Value.
  */
-template <typename T, typename S>
-inline void fill(std::vector<T>& x, const S& y) {
-  for (typename std::vector<T>::size_type i = 0; i < x.size(); ++i) {
+template <typename Vec, typename S, require_std_vector_t<Vec>* = nullptr>
+inline void fill(Vec& x, const S& y) {
+  for (typename std::decay_t<Vec>::size_type i = 0; i < x.size(); ++i) {
     fill(x[i], y);
   }
 }

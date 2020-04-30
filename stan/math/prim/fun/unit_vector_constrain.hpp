@@ -25,13 +25,13 @@ namespace math {
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
           require_not_vt_fvar<EigMat>* = nullptr>
-auto unit_vector_constrain(EigMat&& y) {
+auto unit_vector_constrain(const EigMat& y) {
   using std::sqrt;
   check_vector("unit_vector_constrain", "y", y);
   check_nonzero_size("unit_vector_constrain", "y", y);
   value_type_t<EigMat> SN = dot_self(y);
   check_positive_finite("unit_vector_constrain", "norm", SN);
-  return y / sqrt(SN);
+  return (y / sqrt(SN)).eval();
 }
 
 /**
@@ -48,14 +48,14 @@ auto unit_vector_constrain(EigMat&& y) {
  */
 template <typename EigMat, typename LP, require_eigen_t<EigMat>* = nullptr,
           require_not_vt_fvar<EigMat>* = nullptr>
-auto unit_vector_constrain(EigMat&& y, LP& lp) {
+auto unit_vector_constrain(const EigMat& y, LP& lp) {
   using std::sqrt;
   check_vector("unit_vector_constrain", "y", y);
   check_nonzero_size("unit_vector_constrain", "y", y);
   value_type_t<EigMat> SN = dot_self(y);
   check_positive_finite("unit_vector_constrain", "norm", SN);
   lp -= 0.5 * SN;
-  return y / sqrt(SN);
+  return (y / sqrt(SN)).eval();
 }
 
 }  // namespace math
