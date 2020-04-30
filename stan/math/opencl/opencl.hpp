@@ -99,6 +99,7 @@
 #include <stan/math/opencl/prim/categorical_logit_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/cholesky_decompose.hpp>
 #include <stan/math/opencl/prim/divide_columns.hpp>
+#include <stan/math/opencl/prim/dims.hpp>
 #include <stan/math/opencl/prim/gp_exp_quad_cov.hpp>
 #include <stan/math/opencl/prim/mdivide_left_tri_low.hpp>
 #include <stan/math/opencl/prim/mdivide_right_tri_low.hpp>
