@@ -29,7 +29,8 @@ TEST(MathMixMatFun, subtract_1) {
 }
 
 TEST(MathMixMatFun, subtract_scal) {
-  auto f = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
+  auto f
+      = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
 
   double a = 2;
   double b = 5;

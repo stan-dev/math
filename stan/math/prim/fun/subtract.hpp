@@ -20,7 +20,8 @@ namespace math {
  */
 template <typename ScalarA, typename ScalarB,
           typename = require_all_stan_scalar_t<ScalarA, ScalarB>>
-inline return_type_t<ScalarA, ScalarB> subtract(const ScalarA a, const ScalarB b) {
+inline return_type_t<ScalarA, ScalarB> subtract(const ScalarA a,
+                                                const ScalarB b) {
   return a - b;
 }
 
