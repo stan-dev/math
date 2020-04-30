@@ -106,6 +106,14 @@ TEST(MathMixMatFun, add_mat_mat) {
   stan::test::expect_ad(f, m23, m23b);
 }
 
+TEST(MathMixMatFun, add_scal) {
+  auto f = [](const auto& x, const auto& y) { return stan::math::add(x, y); };
+
+  double a = 2;
+  double b = 5;
+  stan::test::expect_ad(f, a, b);
+}
+
 // these will throw
 TEST(MathMixMatFun, add_throw) {
   auto f = [](const auto& x, const auto& y) { return stan::math::add(x, y); };

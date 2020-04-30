@@ -28,6 +28,14 @@ TEST(MathMixMatFun, subtract_1) {
   stan::test::expect_ad(f, m11, m11b);
 }
 
+TEST(MathMixMatFun, subtract_scal) {
+  auto f = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
+
+  double a = 2;
+  double b = 5;
+  stan::test::expect_ad(f, a, b);
+}
+
 TEST(MathMixMatFun, subtract_empty) {
   auto f
       = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
