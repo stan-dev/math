@@ -58,6 +58,18 @@ class block_
         || (a.cols() != base::dynamic && (start_col + cols) > a.cols())) {
       throw_domain_error("block", "block of \"a\"", " is out of bounds", "");
     }
+    if (start_row < 0) {
+      invalid_argument("block", "start_row", start_row, " should be non-negative");
+    }
+    if (start_col < 0) {
+      invalid_argument("block", "start_col", start_col, " should be non-negative");
+    }
+    if (rows < 0) {
+      invalid_argument("block", "rows", rows, " should be non-negative");
+    }
+    if (cols < 0) {
+      invalid_argument("block", "cols", cols, " should be non-negative");
+    }
   }
 
   /**

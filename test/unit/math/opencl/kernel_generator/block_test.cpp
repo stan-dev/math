@@ -29,10 +29,16 @@ TEST(KernelGenerator, block_errors) {
   EXPECT_NO_THROW(block(m, 0, 0, 7, 9));
   EXPECT_THROW(block(m, 0, 0, 8, 1), std::domain_error);
   EXPECT_THROW(block(m, 0, 0, 1, 10), std::domain_error);
-  EXPECT_THROW(block(m, 8, 0, 1, 1), std::domain_error);
-  EXPECT_THROW(block(m, 0, 9, 1, 1), std::domain_error);
+  EXPECT_THROW(block(m, 6, -1, 1, 1), std::invalid_argument);
+  EXPECT_THROW(block(m, -1, 5, 1, 1), std::invalid_argument);
+  EXPECT_THROW(block(m, 0, 0, -1, 1), std::invalid_argument);
+  EXPECT_THROW(block(m, 0, 0, 1, -1), std::invalid_argument);
+  EXPECT_THROW(block(m, 0, 9, -1, 1), std::domain_error);
+  EXPECT_THROW(block(m, 9, 0, 1, -1), std::domain_error);
 
   EXPECT_NO_THROW(block(m, 0, 0, 7, 9) = m);
+  EXPECT_THROW(block(m, 0, 0, 7, 8) = m, std::invalid_argument);
+  EXPECT_THROW(block(m, 0, 0, 6, 9) = m, std::invalid_argument);
   EXPECT_THROW(block(m, 0, 0, 7, 8) = m, std::invalid_argument);
   EXPECT_THROW(block(m, 0, 0, 6, 9) = m, std::invalid_argument);
 }
