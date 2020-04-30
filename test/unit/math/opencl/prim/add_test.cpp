@@ -4,6 +4,8 @@
 #include <gtest/gtest.h>
 #include <algorithm>
 
+using stan::math::add;
+
 TEST(MathMatrixCL, add_v_exception_pass) {
   stan::math::vector_d d1, d2;
 
@@ -13,6 +15,7 @@ TEST(MathMatrixCL, add_v_exception_pass) {
   stan::math::matrix_cl<double> d22(d2);
   stan::math::matrix_cl<double> d33(3, 1);
   EXPECT_NO_THROW(d33 = d11 + d22);
+  EXPECT_NO_THROW(d33 = add(d11, d22));
 }
 
 TEST(MathMatrixCL, add_v_exception_pass_zero) {
@@ -23,6 +26,7 @@ TEST(MathMatrixCL, add_v_exception_pass_zero) {
   stan::math::matrix_cl<double> d22(d2);
   stan::math::matrix_cl<double> d33(0, 1);
   EXPECT_NO_THROW(d33 = d11 + d22);
+  EXPECT_NO_THROW(d33 = add(d11, d22));
 }
 
 TEST(MathMatrixCL, add_v_exception_pass_invalid_arg) {
@@ -34,6 +38,7 @@ TEST(MathMatrixCL, add_v_exception_pass_invalid_arg) {
   stan::math::matrix_cl<double> d22(d2);
   stan::math::matrix_cl<double> d33(3, 0);
   EXPECT_THROW(d33 = d11 + d22, std::invalid_argument);
+  EXPECT_THROW(d33 = add(d11, d22), std::invalid_argument);
 }
 
 TEST(MathMatrixCL, add_rv_exception_pass) {
@@ -45,6 +50,7 @@ TEST(MathMatrixCL, add_rv_exception_pass) {
   stan::math::matrix_cl<double> d22(d2);
   stan::math::matrix_cl<double> d33(1, 3);
   EXPECT_NO_THROW(d33 = d11 + d22);
+  EXPECT_NO_THROW(d33 = add(d11, d22));
 }
 
 TEST(MathMatrixCL, add_rv_exception_pass_zero) {
@@ -56,6 +62,7 @@ TEST(MathMatrixCL, add_rv_exception_pass_zero) {
   stan::math::matrix_cl<double> d22(d2);
   stan::math::matrix_cl<double> d33(1, 0);
   EXPECT_NO_THROW(d33 = d11 + d22);
+  EXPECT_NO_THROW(d33 = add(d11, d22));
 }
 
 TEST(MathMatrixCL, add_rv_exception_fail_invalid_arg) {
@@ -67,6 +74,7 @@ TEST(MathMatrixCL, add_rv_exception_fail_invalid_arg) {
   stan::math::matrix_cl<double> d22(d2);
   stan::math::matrix_cl<double> d33(3, 1);
   EXPECT_THROW(d33 = d11 + d22, std::invalid_argument);
+  EXPECT_THROW(d33 = add(d11, d22), std::invalid_argument);
 }
 
 TEST(MathMatrixCL, add_m_exception_pass_simple) {
@@ -78,6 +86,7 @@ TEST(MathMatrixCL, add_m_exception_pass_simple) {
   stan::math::matrix_cl<double> d22(d2);
   stan::math::matrix_cl<double> d33(2, 3);
   EXPECT_NO_THROW(d33 = d11 + d22);
+  EXPECT_NO_THROW(d33 = add(d11, d22));
 }
 
 TEST(MathMatrixCL, add_m_exception_pass_zero) {
@@ -88,6 +97,7 @@ TEST(MathMatrixCL, add_m_exception_pass_zero) {
   stan::math::matrix_cl<double> d22(d2);
   stan::math::matrix_cl<double> d33(0, 0);
   EXPECT_NO_THROW(d33 = d11 + d22);
+  EXPECT_NO_THROW(d33 = add(d11, d22));
 }
 
 TEST(MathMatrixCL, add_m_exception_fail_invalid_arg) {
@@ -98,6 +108,7 @@ TEST(MathMatrixCL, add_m_exception_fail_invalid_arg) {
   stan::math::matrix_cl<double> d22(d2);
   stan::math::matrix_cl<double> d33(2, 3);
   EXPECT_THROW(d33 = d11 + d22, std::invalid_argument);
+  EXPECT_THROW(d33 = add(d11, d22), std::invalid_argument);
 }
 
 TEST(MathMatrixCL, add_non_matching_sizes_exception) {
@@ -129,8 +140,11 @@ TEST(MathMatrixCL, add_non_matching_sizes_exception) {
   matrix_cl<double> m33(m1);
 
   EXPECT_THROW(v33 = v11 + v22, std::invalid_argument);
+  EXPECT_THROW(v33 = add(v11, v22), std::invalid_argument);
   EXPECT_THROW(rv33 = rv11 + rv22, std::invalid_argument);
+  EXPECT_THROW(rv33 = add(rv11, rv22), std::invalid_argument);
   EXPECT_THROW(m33 = m11 + m22, std::invalid_argument);
+  EXPECT_THROW(m33 = add(m11, m22), std::invalid_argument);
 }
 
 TEST(MathMatrixCL, add_value_check) {
@@ -163,6 +177,7 @@ TEST(MathMatrixCL, add_value_check) {
   matrix_cl<double> m11(m1);
   matrix_cl<double> m22(m2);
   matrix_cl<double> m33(3, 3);
+  matrix_cl<double> m33s(3, 3);
 
   EXPECT_NO_THROW(v33 = v11 + v22);
   EXPECT_NO_THROW(rv33 = rv11 + rv22);
@@ -188,6 +203,53 @@ TEST(MathMatrixCL, add_value_check) {
   EXPECT_EQ(9, m3(2, 0));
   EXPECT_EQ(12, m3(2, 1));
   EXPECT_EQ(17, m3(2, 2));
+
+  matrix_cl<double> m11s = add(m11, 1.5);
+  m3 = stan::math::from_matrix_cl(m11s);
+  EXPECT_EQ(2.5, m3(0, 0));
+  EXPECT_EQ(3.5, m3(0, 1));
+  EXPECT_EQ(4.5, m3(0, 2));
+  EXPECT_EQ(5.5, m3(1, 0));
+  EXPECT_EQ(6.5, m3(1, 1));
+  EXPECT_EQ(7.5, m3(1, 2));
+  EXPECT_EQ(8.5, m3(2, 0));
+  EXPECT_EQ(9.5, m3(2, 1));
+  EXPECT_EQ(10.5, m3(2, 2));
+
+  matrix_cl<double> v11fun(v1);
+  matrix_cl<double> v22fun(v2);
+  matrix_cl<double> v33fun(3, 1);
+  matrix_cl<double> rv11fun(rv1);
+  matrix_cl<double> rv22fun(rv2);
+  matrix_cl<double> rv33fun(1, 3);
+  matrix_cl<double> m11fun(m1);
+  matrix_cl<double> m22fun(m2);
+  matrix_cl<double> m33fun(3, 3);
+
+  EXPECT_NO_THROW(v33fun = add(v11fun, v22fun));
+  EXPECT_NO_THROW(rv33fun = add(rv11fun, rv22fun));
+  EXPECT_NO_THROW(m33fun = add(m11fun, m22fun));
+
+  v3 = stan::math::from_matrix_cl(v33fun);
+  EXPECT_EQ(11, v3(0));
+  EXPECT_EQ(102, v3(1));
+  EXPECT_EQ(1003, v3(2));
+
+  rv3 = stan::math::from_matrix_cl(rv33fun);
+  EXPECT_EQ(11, rv3(0));
+  EXPECT_EQ(102, rv3(1));
+  EXPECT_EQ(1003, rv3(2));
+
+  m3 = stan::math::from_matrix_cl(m33fun);
+  EXPECT_EQ(11, m3(0, 0));
+  EXPECT_EQ(102, m3(0, 1));
+  EXPECT_EQ(1003, m3(0, 2));
+  EXPECT_EQ(4, m3(1, 0));
+  EXPECT_EQ(-5, m3(1, 1));
+  EXPECT_EQ(-6, m3(1, 2));
+  EXPECT_EQ(9, m3(2, 0));
+  EXPECT_EQ(12, m3(2, 1));
+  EXPECT_EQ(17, m3(2, 2));
 }
 
 TEST(MathMatrixCL, add_tri_value_check) {
@@ -197,6 +259,7 @@ TEST(MathMatrixCL, add_tri_value_check) {
   stan::math::matrix_cl<double> a_cl(a);
   stan::math::matrix_cl<double> b_cl(b);
   stan::math::matrix_cl<double> c_cl(3, 3);
+  stan::math::matrix_cl<double> c_cl_fun(3, 3);
   Eigen::MatrixXd c(3, 3);
 
   a_cl.view(stan::math::matrix_cl_view::Lower);
@@ -211,11 +274,35 @@ TEST(MathMatrixCL, add_tri_value_check) {
   EXPECT_EQ(5, c(2, 1));
   EXPECT_EQ(6, c(2, 2));
 
+
+  c_cl_fun = add(a_cl, b_cl);
+  EXPECT_EQ(c_cl_fun.view(), stan::math::matrix_cl_view::Lower);
+  c = stan::math::from_matrix_cl(c_cl_fun);
+  EXPECT_EQ(-2, c(0, 0));
+  EXPECT_EQ(1, c(1, 0));
+  EXPECT_EQ(2, c(1, 1));
+  EXPECT_EQ(4, c(2, 0));
+  EXPECT_EQ(5, c(2, 1));
+  EXPECT_EQ(6, c(2, 2));
+
   a_cl.view(stan::math::matrix_cl_view::Lower);
   b_cl.view(stan::math::matrix_cl_view::Upper);
   c_cl = a_cl + b_cl;
   EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
   c = stan::math::from_matrix_cl(c_cl);
+  EXPECT_EQ(-2, c(0, 0));
+  EXPECT_EQ(-3, c(0, 1));
+  EXPECT_EQ(-3, c(0, 2));
+  EXPECT_EQ(4, c(1, 0));
+  EXPECT_EQ(2, c(1, 1));
+  EXPECT_EQ(-3, c(1, 2));
+  EXPECT_EQ(7, c(2, 0));
+  EXPECT_EQ(8, c(2, 1));
+  EXPECT_EQ(6, c(2, 2));
+
+  c_cl_fun = add(a_cl, b_cl);
+  EXPECT_EQ(c_cl_fun.view(), stan::math::matrix_cl_view::Entire);
+  c = stan::math::from_matrix_cl(c_cl_fun);
   EXPECT_EQ(-2, c(0, 0));
   EXPECT_EQ(-3, c(0, 1));
   EXPECT_EQ(-3, c(0, 2));
@@ -241,6 +328,20 @@ TEST(MathMatrixCL, add_tri_value_check) {
   EXPECT_EQ(-3, c(2, 1));
   EXPECT_EQ(6, c(2, 2));
 
+
+  c_cl_fun = add(a_cl, b_cl);
+  EXPECT_EQ(c_cl_fun.view(), stan::math::matrix_cl_view::Entire);
+  c = stan::math::from_matrix_cl(c_cl_fun);
+  EXPECT_EQ(-2, c(0, 0));
+  EXPECT_EQ(2, c(0, 1));
+  EXPECT_EQ(3, c(0, 2));
+  EXPECT_EQ(-3, c(1, 0));
+  EXPECT_EQ(2, c(1, 1));
+  EXPECT_EQ(6, c(1, 2));
+  EXPECT_EQ(-3, c(2, 0));
+  EXPECT_EQ(-3, c(2, 1));
+  EXPECT_EQ(6, c(2, 2));
+
   a_cl.view(stan::math::matrix_cl_view::Entire);
   b_cl.view(stan::math::matrix_cl_view::Lower);
   c_cl = a_cl + b_cl;
@@ -255,6 +356,70 @@ TEST(MathMatrixCL, add_tri_value_check) {
   EXPECT_EQ(4, c(2, 0));
   EXPECT_EQ(5, c(2, 1));
   EXPECT_EQ(6, c(2, 2));
+
+
+  c_cl_fun = add(a_cl, b_cl);
+  EXPECT_EQ(c_cl_fun.view(), stan::math::matrix_cl_view::Entire);
+  c = stan::math::from_matrix_cl(c_cl_fun);
+  EXPECT_EQ(-2, c(0, 0));
+  EXPECT_EQ(2, c(0, 1));
+  EXPECT_EQ(3, c(0, 2));
+  EXPECT_EQ(1, c(1, 0));
+  EXPECT_EQ(2, c(1, 1));
+  EXPECT_EQ(6, c(1, 2));
+  EXPECT_EQ(4, c(2, 0));
+  EXPECT_EQ(5, c(2, 1));
+  EXPECT_EQ(6, c(2, 2));
+}
+
+TEST(MathMatrixCL, add_tri_scalar_value_check) {
+  Eigen::MatrixXd a(3, 3);
+  a << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  stan::math::matrix_cl<double> a_cl(a);
+  stan::math::matrix_cl<double> c_cl(3, 3);
+  Eigen::MatrixXd c(3, 3);
+
+  a_cl.view(stan::math::matrix_cl_view::Lower);
+  c_cl = add(a_cl,1.5);
+  EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
+  c = stan::math::from_matrix_cl(c_cl);
+  EXPECT_EQ(2.5, c(0, 0));
+  EXPECT_EQ(1.5, c(0, 1));
+  EXPECT_EQ(1.5, c(0, 2));
+  EXPECT_EQ(5.5, c(1, 0));
+  EXPECT_EQ(6.5, c(1, 1));
+  EXPECT_EQ(1.5, c(1, 2));
+  EXPECT_EQ(8.5, c(2, 0));
+  EXPECT_EQ(9.5, c(2, 1));
+  EXPECT_EQ(10.5, c(2, 2));
+
+  a_cl.view(stan::math::matrix_cl_view::Upper);
+  c_cl = add(a_cl,1.5);
+  EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
+  c = stan::math::from_matrix_cl(c_cl);
+  EXPECT_EQ(2.5, c(0, 0));
+  EXPECT_EQ(3.5, c(0, 1));
+  EXPECT_EQ(4.5, c(0, 2));
+  EXPECT_EQ(1.5, c(1, 0));
+  EXPECT_EQ(6.5, c(1, 1));
+  EXPECT_EQ(7.5, c(1, 2));
+  EXPECT_EQ(1.5, c(2, 0));
+  EXPECT_EQ(1.5, c(2, 1));
+  EXPECT_EQ(10.5, c(2, 2));
+
+  a_cl.view(stan::math::matrix_cl_view::Entire);
+  c_cl = add(a_cl,1.5);
+  EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
+  c = stan::math::from_matrix_cl(c_cl);
+  EXPECT_EQ(2.5, c(0, 0));
+  EXPECT_EQ(3.5, c(0, 1));
+  EXPECT_EQ(4.5, c(0, 2));
+  EXPECT_EQ(5.5, c(1, 0));
+  EXPECT_EQ(6.5, c(1, 1));
+  EXPECT_EQ(7.5, c(1, 2));
+  EXPECT_EQ(8.5, c(2, 0));
+  EXPECT_EQ(9.5, c(2, 1));
+  EXPECT_EQ(10.5, c(2, 2));
 }
 
 TEST(MathMatrixCL, add_batch) {

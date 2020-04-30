@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_PRIM_DIMS_HPP
-#define STAN_MATH_OPENCL_PRIM_DIMS_HPP
+#ifndef STAN_MATH_OPENCL_PRIM_COLS_HPP
+#define STAN_MATH_OPENCL_PRIM_COLS_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/matrix_cl.hpp>
@@ -8,16 +8,16 @@
 namespace stan {
 namespace math {
 /** \ingroup opencl
- * Returns a vector of matrix_cl dimensions.
+ * Returns the number of columns in matrix_cl.
  *
  * @tparam T type of elements in the input matrix
  * @param x the input matrix_cl
  *
- * @return std::vector of matrix_cl dimensions
+ * @return number of columns in x
  */
 template <typename T>
-inline std::vector<int> dims(const matrix_cl<T>& x) {
-  return {x.rows(), x.cols()};
+inline int cols(const matrix_cl<T>& x) {
+  return x.cols();
 }
 
 }  // namespace math
