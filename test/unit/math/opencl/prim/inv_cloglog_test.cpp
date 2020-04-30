@@ -9,16 +9,16 @@
     EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(MathMatrixCL, inv_cloglog) {
-  stan::math::matrix_d y(1,4);
+  stan::math::matrix_d y(1, 4);
   y << 3.7, 0.0, -2.93, std::numeric_limits<double>::quiet_NaN();
 
   stan::math::matrix_cl<double> y_cl(y);
   stan::math::matrix_cl<double> z_cl = stan::math::inv_cloglog(y_cl);
   stan::math::matrix_d z = stan::math::from_matrix_cl(z_cl);
-  EXPECT_FLOAT_EQ(1 - std::exp(-std::exp(3.7)), z(0,0));
-  EXPECT_FLOAT_EQ(1 - std::exp(-std::exp(0.0)), z(0,1));
-  EXPECT_FLOAT_EQ(1 - std::exp(-std::exp(-2.93)), z(0,2));
-  EXPECT_TRUE(std::isnan(stan::math::inv_cloglog(z(0,3))));
+  EXPECT_FLOAT_EQ(1 - std::exp(-std::exp(3.7)), z(0, 0));
+  EXPECT_FLOAT_EQ(1 - std::exp(-std::exp(0.0)), z(0, 1));
+  EXPECT_FLOAT_EQ(1 - std::exp(-std::exp(-2.93)), z(0, 2));
+  EXPECT_TRUE(std::isnan(stan::math::inv_cloglog(z(0, 3))));
 
   stan::math::vector_d av(9);
   av << 1, 2, 3, 4, 22, 0.5, 5, 18, 99;

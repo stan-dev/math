@@ -8,7 +8,8 @@ namespace stan {
 namespace math {
 
 /**
- * Return the elementwise `1 / sqrt(x)` of the specified kernel generator expression.
+ * Return the elementwise `1 / sqrt(x)` of the specified kernel generator
+ * expression.
  *
  * @param x input kernel generator expression
  * @return inverse square root of each value in x.

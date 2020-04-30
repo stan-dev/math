@@ -8,7 +8,8 @@ namespace stan {
 namespace math {
 
 /**
- * Return the elementwise `1 / square(x)` of the specified kernel generator expression.
+ * Return the elementwise `1 / square(x)` of the specified kernel generator
+ * expression.
  *
  * @param x input kernel generator expression
  * @return inverse square of each value in x.
@@ -16,7 +17,8 @@ namespace math {
 template <typename T_a,
           typename = require_all_valid_expressions_and_none_scalar_t<T_a>>
 inline auto inv_square(T_a&& a) {  // NOLINT
-  return elewise_division(1.0, elewise_multiplication(std::forward<T_a>(a), std::forward<T_a>(a)));
+  return elewise_division(
+      1.0, elewise_multiplication(std::forward<T_a>(a), std::forward<T_a>(a)));
 }
 }  // namespace math
 }  // namespace stan

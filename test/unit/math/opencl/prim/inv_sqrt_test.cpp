@@ -11,17 +11,16 @@
     EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(MathMatrixCL, inv_sqrt) {
-  stan::math::matrix_d y(1,4);
+  stan::math::matrix_d y(1, 4);
   y << 4.0, 25.0, 0.0, -50.0;
 
   stan::math::matrix_cl<double> y_cl(y);
   stan::math::matrix_cl<double> z_cl = stan::math::inv_sqrt(y_cl);
   stan::math::matrix_d z = stan::math::from_matrix_cl(z_cl);
-  EXPECT_FLOAT_EQ(1 / 2.0, z(0,0));
-  EXPECT_FLOAT_EQ(1 / 5.0, z(0,1));
-  EXPECT_FLOAT_EQ(stan::math::positive_infinity(), z(0,2));
-  EXPECT_TRUE(std::isnan(z(0,3)));
-
+  EXPECT_FLOAT_EQ(1 / 2.0, z(0, 0));
+  EXPECT_FLOAT_EQ(1 / 5.0, z(0, 1));
+  EXPECT_FLOAT_EQ(stan::math::positive_infinity(), z(0, 2));
+  EXPECT_TRUE(std::isnan(z(0, 3)));
 
   stan::math::vector_d av(9);
   av << 1, 2, 3, 4, 22, 0.5, 5, 18, 99;

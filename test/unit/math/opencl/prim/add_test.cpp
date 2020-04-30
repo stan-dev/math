@@ -274,7 +274,6 @@ TEST(MathMatrixCL, add_tri_value_check) {
   EXPECT_EQ(5, c(2, 1));
   EXPECT_EQ(6, c(2, 2));
 
-
   c_cl_fun = add(a_cl, b_cl);
   EXPECT_EQ(c_cl_fun.view(), stan::math::matrix_cl_view::Lower);
   c = stan::math::from_matrix_cl(c_cl_fun);
@@ -328,7 +327,6 @@ TEST(MathMatrixCL, add_tri_value_check) {
   EXPECT_EQ(-3, c(2, 1));
   EXPECT_EQ(6, c(2, 2));
 
-
   c_cl_fun = add(a_cl, b_cl);
   EXPECT_EQ(c_cl_fun.view(), stan::math::matrix_cl_view::Entire);
   c = stan::math::from_matrix_cl(c_cl_fun);
@@ -356,7 +354,6 @@ TEST(MathMatrixCL, add_tri_value_check) {
   EXPECT_EQ(4, c(2, 0));
   EXPECT_EQ(5, c(2, 1));
   EXPECT_EQ(6, c(2, 2));
-
 
   c_cl_fun = add(a_cl, b_cl);
   EXPECT_EQ(c_cl_fun.view(), stan::math::matrix_cl_view::Entire);
@@ -392,7 +389,6 @@ TEST(MathMatrixCL, add_tri_scalar_value_check) {
   EXPECT_EQ(8.5, c(2, 0));
   EXPECT_EQ(9.5, c(2, 1));
   EXPECT_EQ(10.5, c(2, 2));
-
 
   a_cl.view(stan::math::matrix_cl_view::Lower);
   c_cl = add(1.5, a_cl);

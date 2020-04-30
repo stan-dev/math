@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 /** \ingroup opencl
  * Computes the sum on kernel generator expressions.
- * 
+ *
  * @param A first expression
  * @param B second expression
  * @return the sum of the first and second expression

@@ -25,7 +25,7 @@ namespace math {
 template <typename T_a,
           typename = require_all_valid_expressions_and_none_scalar_t<T_a>>
 inline auto row(T_a&& a, size_t j) {  // NOLINT
-  return block(std::forward<T_a>(a), j-1, 0, 1, a.cols());
+  return block(std::forward<T_a>(a), j - 1, 0, 1, a.cols());
 }
 }  // namespace math
 }  // namespace stan

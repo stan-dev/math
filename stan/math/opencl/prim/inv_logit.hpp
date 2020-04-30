@@ -8,7 +8,8 @@
 namespace stan {
 namespace math {
 /**
- * Returns the inverse logit function applied to the kernel generator expression.
+ * Returns the inverse logit function applied to the kernel generator
+ expression.
  *
  * The inverse logit function is defined by
  *
@@ -47,11 +48,10 @@ namespace math {
 template <typename T_a,
           typename = require_all_valid_expressions_and_none_scalar_t<T_a>>
 inline auto inv_logit(T_a&& a) {  // NOLINT
-  return select((a < 0.0),
-                select((a < LOG_EPSILON),
-                  exp(a),
-                  elewise_division(exp(a), 1.0 + exp(a))),
-                elewise_division(1.0, 1.0 + exp(-a)));
+  return select(
+      (a < 0.0),
+      select((a < LOG_EPSILON), exp(a), elewise_division(exp(a), 1.0 + exp(a))),
+      elewise_division(1.0, 1.0 + exp(-a)));
 }
 }  // namespace math
 }  // namespace stan
