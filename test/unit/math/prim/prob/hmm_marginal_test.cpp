@@ -224,8 +224,8 @@ TEST(hmm_marginal_lpdf, exceptions) {
 
   EXPECT_THROW_MSG(hmm_marginal_lpdf(log_omegas, Gamma_wrong_size, rho),
                    std::invalid_argument,
-                   "hmm_marginal_lpdf: size of Gamma (row and column) (3)"
-                   " and size of log_omegas (row) (2) must match in size")
+                   "hmm_marginal_lpdf: Columns of Gamma (3)"
+                   " and Rows of log_omegas (2) must match in size")
 
   // rho is not a simplex.
   VectorXd rho_bad = rho;

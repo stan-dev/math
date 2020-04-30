@@ -85,8 +85,8 @@ inline auto hmm_marginal_lpdf(
   if (n_transitions != 0) {
     check_square("hmm_marginal_lpdf", "Gamma", Gamma);
     check_nonzero_size("hmm_marginal_lpdf", "Gamma", Gamma);
-    check_matching_sizes("hmm_marginal_lpdf", "Gamma (row and column)",
-                         Gamma.row(0), "log_omegas (row)", log_omegas.col(0));
+    check_multiplicable("hmm_marginal_lpdf", "Gamma",
+                        Gamma, "log_omegas", log_omegas);
     for (int i = 0; i < Gamma.rows(); ++i) {
       check_simplex("hmm_marginal_lpdf", "Gamma[i, ]", row(Gamma, i + 1));
     }
