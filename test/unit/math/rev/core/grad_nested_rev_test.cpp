@@ -8,8 +8,7 @@ namespace math {
 
 class test_vari : public vari {
  public:
-  test_vari() : vari(0.0) {
-  }
+  test_vari() : vari(0.0) {}
 
   virtual void chain() {
     stan::math::nested_rev_autodiff nested;

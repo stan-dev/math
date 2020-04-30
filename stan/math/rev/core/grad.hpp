@@ -32,8 +32,8 @@ static void grad(vari* vi) {
   std::vector<vari *>& var_stack = ChainableStack::instance_->var_stack_;
   size_t end = var_stack.size();
   size_t beginning = empty_nested() ? 0 : end - nested_size();
-  for (size_t i = end; --i > beginning; ) {
-    var_stack[i]->chain();
+  for (size_t i = end; i > beginning; i--) {
+    var_stack[i - 1]->chain();
   }
 }
 
