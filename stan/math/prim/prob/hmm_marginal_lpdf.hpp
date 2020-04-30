@@ -63,9 +63,8 @@ inline auto hmm_marginal_lpdf_val(
  * @param[in] rho initial state
  * @return log marginal density.
  * @throw `std::invalid_argument` if Gamma is not square, when we have
- *         at least one transition.
- * @throw `std::invalid_argument` if the size of rho is not
- * the number of rows of log_omegas.
+ *         at least one transition, or if the size of rho is not the
+ *         number of rows of log_omegas.
  * @throw `std::domain_error` if rho is not a simplex and of the rows
  *         of Gamma are not a simplex (when there is at least one transition).
  */
