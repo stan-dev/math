@@ -11,11 +11,11 @@ namespace math {
 /**
  * Return the sum of the specified scalars.
  *
- * @tparam ScalarA Type of the first scalar.
- * @tparam ScalarB Type of the second scalar.
- * @param a First scalar.
- * @param b Second scalar.
- * @return The sum of the scalars.
+ * @tparam ScalarA type of the first scalar
+ * @tparam ScalarB type of the second scalar
+ * @param a first scalar
+ * @param b second scalar
+ * @return the sum of the scalars
  */
 template <typename ScalarA, typename ScalarB,
           typename = require_all_stan_scalar_t<ScalarA, ScalarB>>

@@ -12,11 +12,11 @@ namespace math {
  * Return the result of subtracting the second scalar from the first
  * scalar.
  *
- * @tparam ScalarA Type of the first scalar.
- * @tparam ScalarB Type of the second scalar.
- * @param a First scalar.
- * @param b Second scalar.
- * @return Difference between first scalar and second scalar.
+ * @tparam ScalarA type of the first scalar
+ * @tparam ScalarB type of the second scalar
+ * @param a first scalar
+ * @param b second scalar
+ * @return difference between first scalar and second scalar
  */
 template <typename ScalarA, typename ScalarB,
           typename = require_all_stan_scalar_t<ScalarA, ScalarB>>
