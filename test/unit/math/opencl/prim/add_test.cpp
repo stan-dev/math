@@ -380,7 +380,22 @@ TEST(MathMatrixCL, add_tri_scalar_value_check) {
   Eigen::MatrixXd c(3, 3);
 
   a_cl.view(stan::math::matrix_cl_view::Lower);
-  c_cl = add(a_cl,1.5);
+  c_cl = add(a_cl, 1.5);
+  EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
+  c = stan::math::from_matrix_cl(c_cl);
+  EXPECT_EQ(2.5, c(0, 0));
+  EXPECT_EQ(1.5, c(0, 1));
+  EXPECT_EQ(1.5, c(0, 2));
+  EXPECT_EQ(5.5, c(1, 0));
+  EXPECT_EQ(6.5, c(1, 1));
+  EXPECT_EQ(1.5, c(1, 2));
+  EXPECT_EQ(8.5, c(2, 0));
+  EXPECT_EQ(9.5, c(2, 1));
+  EXPECT_EQ(10.5, c(2, 2));
+
+
+  a_cl.view(stan::math::matrix_cl_view::Lower);
+  c_cl = add(1.5, a_cl);
   EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
   c = stan::math::from_matrix_cl(c_cl);
   EXPECT_EQ(2.5, c(0, 0));
@@ -394,7 +409,21 @@ TEST(MathMatrixCL, add_tri_scalar_value_check) {
   EXPECT_EQ(10.5, c(2, 2));
 
   a_cl.view(stan::math::matrix_cl_view::Upper);
-  c_cl = add(a_cl,1.5);
+  c_cl = add(a_cl, 1.5);
+  EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
+  c = stan::math::from_matrix_cl(c_cl);
+  EXPECT_EQ(2.5, c(0, 0));
+  EXPECT_EQ(3.5, c(0, 1));
+  EXPECT_EQ(4.5, c(0, 2));
+  EXPECT_EQ(1.5, c(1, 0));
+  EXPECT_EQ(6.5, c(1, 1));
+  EXPECT_EQ(7.5, c(1, 2));
+  EXPECT_EQ(1.5, c(2, 0));
+  EXPECT_EQ(1.5, c(2, 1));
+  EXPECT_EQ(10.5, c(2, 2));
+
+  a_cl.view(stan::math::matrix_cl_view::Upper);
+  c_cl = add(1.5, a_cl);
   EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
   c = stan::math::from_matrix_cl(c_cl);
   EXPECT_EQ(2.5, c(0, 0));
@@ -408,7 +437,21 @@ TEST(MathMatrixCL, add_tri_scalar_value_check) {
   EXPECT_EQ(10.5, c(2, 2));
 
   a_cl.view(stan::math::matrix_cl_view::Entire);
-  c_cl = add(a_cl,1.5);
+  c_cl = add(a_cl, 1.5);
+  EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
+  c = stan::math::from_matrix_cl(c_cl);
+  EXPECT_EQ(2.5, c(0, 0));
+  EXPECT_EQ(3.5, c(0, 1));
+  EXPECT_EQ(4.5, c(0, 2));
+  EXPECT_EQ(5.5, c(1, 0));
+  EXPECT_EQ(6.5, c(1, 1));
+  EXPECT_EQ(7.5, c(1, 2));
+  EXPECT_EQ(8.5, c(2, 0));
+  EXPECT_EQ(9.5, c(2, 1));
+  EXPECT_EQ(10.5, c(2, 2));
+
+  a_cl.view(stan::math::matrix_cl_view::Entire);
+  c_cl = add(1.5, a_cl);
   EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
   c = stan::math::from_matrix_cl(c_cl);
   EXPECT_EQ(2.5, c(0, 0));

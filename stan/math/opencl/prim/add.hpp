@@ -34,6 +34,14 @@ inline addition_<as_operation_cl_t<T_a>, scalar_<T_b>> add(
           as_operation_cl(b)};
 }
 
+template <typename T_a, typename T_b,
+          typename = require_arithmetic_t<T_a>,
+          typename = require_all_valid_expressions_and_none_scalar_t<T_b>>
+inline addition_<scalar_<T_a>, as_operation_cl_t<T_b>> add(
+    T_a&& a, T_b&& b) {  // NOLINT
+  return {as_operation_cl(a),
+          as_operation_cl(std::forward<T_b>(b))};
+}
 }  // namespace math
 }  // namespace stan
 #endif
