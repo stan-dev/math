@@ -20,7 +20,8 @@ inline auto hmm_marginal_lpdf_val(
     const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma_val,
     const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho_val,
     Eigen::Matrix<T_alpha, Eigen::Dynamic, Eigen::Dynamic>& alphas,
-    Eigen::Matrix<T_alpha, Eigen::Dynamic, 1>& alpha_log_norms) {
+    Eigen::Matrix<T_alpha, Eigen::Dynamic, 1>& alpha_log_norms,
+    T_alpha& norm_norm) {
   const int n_states = omegas.rows();
   const int n_transitions = omegas.cols() - 1;
   alphas.col(0) = omegas.col(0).cwiseProduct(rho_val);
@@ -29,14 +30,16 @@ inline auto hmm_marginal_lpdf_val(
   alphas.col(0) /= norm;
   alpha_log_norms(0) = log(norm);
 
+  auto Gamma_val_transpose = Gamma_val.transpose().eval();
   for (int n = 1; n <= n_transitions; ++n) {
     alphas.col(n)
-        = omegas.col(n).cwiseProduct(Gamma_val.transpose() * alphas.col(n - 1));
+      = omegas.col(n).cwiseProduct(Gamma_val_transpose * alphas.col(n - 1));
     const auto col_norm = alphas.col(n).maxCoeff();
     alphas.col(n) /= col_norm;
     alpha_log_norms(n) = log(col_norm) + alpha_log_norms(n - 1);
   }
-  return log(alphas.col(n_transitions).sum()) + alpha_log_norms(n_transitions);
+  norm_norm = alpha_log_norms(n_transitions);
+  return log(alphas.col(n_transitions).sum()) + norm_norm;
 }
 
 /**
@@ -104,11 +107,12 @@ inline auto hmm_marginal_lpdf(
   // compute the density using the forward algorithm.
   auto rho_val = value_of(rho);
   eig_matrix_partial omegas = value_of(log_omegas).array().exp();
+  T_partial_type norm_norm;
   auto log_marginal_density = hmm_marginal_lpdf_val(omegas, Gamma_val, rho_val,
-                                                    alphas, alpha_log_norms);
+                                                    alphas, alpha_log_norms,
+                                                    norm_norm);
 
   // Variables required for all three Jacobian-adjoint products.
-  auto norm_norm = alpha_log_norms(n_transitions);
   auto unnormed_marginal = alphas.col(n_transitions).sum();
 
   std::vector<eig_vector_partial> kappa(n_transitions);
@@ -148,12 +152,9 @@ inline auto hmm_marginal_lpdf(
         = Eigen::MatrixXd::Zero(n_states, n_transitions + 1);
 
     if (!is_constant_all<T_omega>::value) {
-      // auto Gamma_alpha = Gamma_val.transpose() * alphas;
       for (int n = n_transitions - 1; n >= 0; --n)
         log_omega_jacad.col(n + 1)
             = grad_corr[n]
-              // * kappa[n].cwiseProduct(Gamma_alpha.col(n)).eval();
-              //  * kappa[n].cwiseProduct(Gamma_alpha.col(n));
               * kappa[n].cwiseProduct(Gamma_val.transpose() * alphas.col(n));
     }
 
