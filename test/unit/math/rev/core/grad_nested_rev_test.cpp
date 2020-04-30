@@ -16,7 +16,7 @@ class test_vari : public vari {
 
     // Add enough vars to make the the var_stack_ vector reallocate
     int N_new_vars = ChainableStack::instance_->var_stack_.capacity() + 1;
-    
+
     var total = 0.0;
     for (int i = 0; i < N_new_vars; ++i) {
       total += i;
@@ -26,8 +26,8 @@ class test_vari : public vari {
   }
 };
 
-}
-}
+}  // namespace math
+}  // namespace stan
 
 TEST(AgradRev, grad_in_reverse_mode) {
   using stan::math::var;
