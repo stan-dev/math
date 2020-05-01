@@ -57,16 +57,20 @@ class block_
         rows_(rows),
         cols_(cols) {
     if (start_col < 0) {
-      invalid_argument("block", "start_col", start_col, " should be non-negative, but is ");
+      invalid_argument("block", "start_col", start_col,
+                       " should be non-negative, but is ");
     }
     if (start_row < 0) {
-      invalid_argument("block", "start_row", start_row, " should be non-negative, but is ");
+      invalid_argument("block", "start_row", start_row,
+                       " should be non-negative, but is ");
     }
     if (rows < 0) {
-      invalid_argument("block", "rows", rows, " should be non-negative, but is ");
+      invalid_argument("block", "rows", rows,
+                       " should be non-negative, but is ");
     }
     if (cols < 0) {
-      invalid_argument("block", "cols", cols, " should be non-negative, but is ");
+      invalid_argument("block", "cols", cols,
+                       " should be non-negative, but is ");
     }
     if ((a.rows() != base::dynamic && (start_row + rows) > a.rows())
         || (a.cols() != base::dynamic && (start_col + cols) > a.cols())) {
