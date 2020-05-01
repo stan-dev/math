@@ -293,50 +293,6 @@ const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, int, matrix_cl_view,
                     {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
 
 // \cond
-static const std::string matrix_vector_multiply_kernel_code = STRINGIFY(
-    // \endcond
-    /** \ingroup opencl_kernels
-     * Matrix-vector multiplication R=A*B on the OpenCL device
-     *
-     * @param[in] A matrix in matrix-vector multiplication
-     * @param[in] B vector in matrix-vector multiplication
-     * @param[out] R the output vector
-     * @param[in] M Number of rows for matrix A
-     * @param[in] N Number of cols for matrix A and number of rows for vector B
-     * @param[in] view_A the triangularity of A (lower, upper or none)
-     * @param[in] view_B the triangularity of B (lower, upper or none)
-     */
-    __kernel void matrix_vector_multiply(
-        const __global double* A, const __global double* B, __global double* R,
-        const int M, const int N, unsigned int view_A, unsigned int view_B) {
-      const int gid = get_global_id(0);
-
-      const int start = contains_nonzero(view_A, LOWER) ? 0 : gid;
-      const int stop = contains_nonzero(view_B, LOWER)
-                           ? (contains_nonzero(view_A, UPPER) ? N : gid + 1)
-                           : 1;
-
-      double acc = 0;
-      for (int i = start, j = M * start; i < stop; i++, j += M) {
-        acc += A[j + gid] * B[i];
-      }
-      R[gid] = acc;
-    }
-    // \cond
-);
-// \endcond
-
-/** \ingroup opencl_kernels
- * See the docs for \link kernels/matrix_multiply.hpp matrix_vector_multiply()
- * \endlink
- */
-const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, matrix_cl_view,
-                matrix_cl_view>
-    matrix_vector_multiply("matrix_vector_multiply",
-                           {view_kernel_helpers,
-                            matrix_vector_multiply_kernel_code});
-
-// \cond
 static const std::string row_vector_matrix_multiply_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels

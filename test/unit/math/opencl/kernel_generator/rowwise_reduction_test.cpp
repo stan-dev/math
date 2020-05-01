@@ -85,6 +85,35 @@ TEST(KernelGenerator, rowwise_sum_triangular_test) {
   EXPECT_MATRIX_NEAR(correct3, res3, 1e-9);
 }
 
+TEST(KernelGenerator, rowwise_min_triangular_test) {
+  MatrixXd m(3, 2);
+  m << -1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
+
+  matrix_cl<double> m_cl(m, stan::math::matrix_cl_view::Lower);
+
+  MatrixXd m12 = m;
+  m12.triangularView<Eigen::StrictlyUpper>() = MatrixXd::Constant(3, 2, 0);
+
+  matrix_cl<double> res1_cl = stan::math::rowwise_min(m_cl);
+  MatrixXd res1 = stan::math::from_matrix_cl(res1_cl);
+  MatrixXd correct1 = m12.rowwise().minCoeff();
+  EXPECT_EQ(correct1.rows(), res1.rows());
+  EXPECT_EQ(correct1.cols(), res1.cols());
+  EXPECT_MATRIX_NEAR(correct1, res1, 1e-9);
+
+  m_cl.view(stan::math::matrix_cl_view::Upper);
+
+  MatrixXd m34 = m;
+  m34.triangularView<Eigen::StrictlyLower>() = MatrixXd::Constant(3, 2, 0);
+
+  matrix_cl<double> res3_cl = stan::math::rowwise_min(m_cl);
+  MatrixXd res3 = stan::math::from_matrix_cl(res3_cl);
+  MatrixXd correct3 = m34.rowwise().minCoeff();
+  EXPECT_EQ(correct3.rows(), res3.rows());
+  EXPECT_EQ(correct3.cols(), res3.cols());
+  EXPECT_MATRIX_NEAR(correct3, res3, 1e-9);
+}
+
 TEST(KernelGenerator, rowwise_sum_one_col_test) {
   MatrixXd m(3, 1);
   m << 1.1, 1.2, 1.3;

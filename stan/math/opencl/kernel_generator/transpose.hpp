@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <string>
 #include <set>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 
@@ -36,6 +37,7 @@ class transpose_
   using Scalar = typename std::remove_reference_t<Arg>::Scalar;
   using base = operation_cl<transpose_<Arg>, Scalar, Arg>;
   using base::var_name;
+  using view_transitivity = std::tuple<std::true_type>;
 
   /**
    * Constructor
@@ -56,10 +58,12 @@ class transpose_
    * generates kernel code for this and nested expressions.
    * @param i row index variable name.
    * @param j column index variable name.
+   * @param view_handled whether whether caller already handled matrix view
    * @param var_name_arg The name of this variable.
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
+                               const bool view_handled,
                                const std::string& var_name_arg) const {
     var_name = var_name_arg;
     return {};
@@ -89,27 +93,13 @@ class transpose_
   inline int cols() const { return this->template get_arg<0>().rows(); }
 
   /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
+   * Determine indices of extreme sub- and superdiagonals written.
+   * @return pair of indices - bottom and top diagonal
    */
-  inline matrix_cl_view view() const {
-    return transpose(this->template get_arg<0>().view());
-  }
-
-  /**
-   * Determine index of bottom diagonal written.
-   * @return index of bottom diagonal
-   */
-  inline int bottom_diagonal() const {
-    return -this->template get_arg<0>().top_diagonal();
-  }
-
-  /**
-   * Determine index of top diagonal written.
-   * @return index of top diagonal
-   */
-  inline int top_diagonal() const {
-    return -this->template get_arg<0>().bottom_diagonal();
+  inline std::pair<int, int> extreme_diagonals() const {
+    std::pair<int, int> arg_diags
+        = this->template get_arg<0>().extreme_diagonals();
+    return {-arg_diags.second, -arg_diags.first};
   }
 };
 
