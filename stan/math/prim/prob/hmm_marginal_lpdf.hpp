@@ -85,14 +85,12 @@ inline auto hmm_marginal_lpdf(
 
   check_consistent_size("hmm_marginal_lpdf", "rho", rho, n_states);
   check_simplex("hmm_marginal_lpdf", "rho", rho);
-  if (n_transitions != 0) {
-    check_square("hmm_marginal_lpdf", "Gamma", Gamma);
-    check_nonzero_size("hmm_marginal_lpdf", "Gamma", Gamma);
-    check_multiplicable("hmm_marginal_lpdf", "Gamma", Gamma, "log_omegas",
-                        log_omegas);
-    for (int i = 0; i < Gamma.rows(); ++i) {
-      check_simplex("hmm_marginal_lpdf", "Gamma[i, ]", row(Gamma, i + 1));
-    }
+  check_square("hmm_marginal_lpdf", "Gamma", Gamma);
+  check_nonzero_size("hmm_marginal_lpdf", "Gamma", Gamma);
+  check_multiplicable("hmm_marginal_lpdf", "Gamma", Gamma, "log_omegas",
+                      log_omegas);
+  for (int i = 0; i < Gamma.rows(); ++i) {
+    check_simplex("hmm_marginal_lpdf", "Gamma[i, ]", row(Gamma, i + 1));
   }
 
   operands_and_partials<Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>,
