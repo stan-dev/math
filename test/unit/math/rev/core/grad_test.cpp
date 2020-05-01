@@ -37,7 +37,7 @@ TEST(AgradRev, ensure_first_vari_chained) {
 
   int N = 10;
   std::vector<var> vars;
-  
+
   var total = 0.0;
   for (int i = 0; i < N; ++i) {
     vars.push_back(0.0);
