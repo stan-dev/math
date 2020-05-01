@@ -4,6 +4,7 @@
 
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/rev/matrix_cl.hpp>
+#include <vector>
 
 namespace stan {
 namespace math {

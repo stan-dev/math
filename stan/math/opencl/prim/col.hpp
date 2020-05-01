@@ -17,7 +17,7 @@ namespace math {
  * a column vector.
  *
  * @tparam T type of the matrix
- * @param m input kernel generator expression.
+ * @param a input kernel generator expression.
  * @param j Column index (count from 1).
  * @return Specified column of the matrix.
  * @throw std::invalid_argument if j is out of range.

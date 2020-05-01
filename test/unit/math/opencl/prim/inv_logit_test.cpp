@@ -3,6 +3,7 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 #define EXPECT_MATRIX_NEAR(A, B, DELTA) \
   for (int i = 0; i < A.size(); i++)    \

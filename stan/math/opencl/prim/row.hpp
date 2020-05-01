@@ -17,7 +17,7 @@ namespace math {
  * a row vector.
  *
  * @tparam T type of the matrix
- * @param m input kernel generator expression.
+ * @param a input kernel generator expression.
  * @param j Row index (count from 1).
  * @return Specified row of the matrix.
  * @throw std::out_of_range if j is out of range.

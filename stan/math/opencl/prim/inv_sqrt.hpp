@@ -14,10 +14,10 @@ namespace math {
  * @param x input kernel generator expression
  * @return inverse square root of each value in x.
  */
-template <typename T_a,
-          typename = require_all_valid_expressions_and_none_scalar_t<T_a>>
-inline auto inv_sqrt(T_a&& a) {  // NOLINT
-  return rsqrt(std::forward<T_a>(a));
+template <typename T_x,
+          typename = require_all_valid_expressions_and_none_scalar_t<T_x>>
+inline auto inv_sqrt(T_x&& x) {  // NOLINT
+  return rsqrt(std::forward<T_x>(x));
 }
 }  // namespace math
 }  // namespace stan

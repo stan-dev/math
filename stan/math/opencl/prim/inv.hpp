@@ -15,10 +15,10 @@ namespace math {
  * @param x Input kernel generator expression.
  * @return elementwise 1.0 / x of the specified argument.
  */
-template <typename T_a,
-          typename = require_all_valid_expressions_and_none_scalar_t<T_a>>
-inline auto inv(T_a&& a) {  // NOLINT
-  return elewise_division(1.0, a);
+template <typename T_x,
+          typename = require_all_valid_expressions_and_none_scalar_t<T_x>>
+inline auto inv(T_x&& x) {  // NOLINT
+  return elewise_division(1.0, x);
 }
 }  // namespace math
 }  // namespace stan
