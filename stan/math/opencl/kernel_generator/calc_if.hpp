@@ -17,6 +17,10 @@
 namespace stan {
 namespace math {
 
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
+
 /**
  * Represents a calc_if in kernel generator expressions.
  * @tparam T type of the argument
@@ -110,7 +114,7 @@ struct is_without_output_impl<calc_if_<false, T>> : std::true_type {};
 
 template <typename T>
 using is_without_output = internal::is_without_output_impl<std::decay_t<T>>;
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 

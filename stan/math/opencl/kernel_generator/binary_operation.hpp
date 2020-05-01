@@ -21,6 +21,10 @@
 namespace stan {
 namespace math {
 
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
+
 /**
  * Represents a binary operation in kernel generator expressions.
  * @tparam Derived derived type
@@ -262,7 +266,7 @@ inline matrix_cl<double> operator*(const T_a& a, const T_b& b) {
 #undef COMMA
 #undef ADD_BINARY_OPERATION
 #undef ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 #endif

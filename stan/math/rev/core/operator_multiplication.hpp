@@ -7,6 +7,8 @@
 #include <stan/math/rev/core/vd_vari.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
+#include <stan/math/prim/fun/isinf.hpp>
+#include <stan/math/prim/fun/isnan.hpp>
 
 namespace stan {
 namespace math {

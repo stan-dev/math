@@ -18,6 +18,9 @@
 
 namespace stan {
 namespace math {
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 
 /**
  * Represents a column wise reduction in kernel generator expressions. So as to
@@ -281,7 +284,7 @@ inline auto colwise_min(T&& a) {
   return colwise_min_<std::remove_reference_t<decltype(arg_copy)>>(
       std::move(arg_copy));
 }
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 #endif
