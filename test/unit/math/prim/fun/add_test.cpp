@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 
 TEST(MathMatrixPrimMat, add_scalar) {
-  EXPECT_EQ(1.5, stan::math::add(1, 0.5));
-  EXPECT_EQ(1.5, stan::math::add(0.5, 1));
-  EXPECT_EQ(2.7, stan::math::add(1.2, 1.5));
+  EXPECT_FLOAT_EQ(1.5, stan::math::add(1, 0.5));
+  EXPECT_FLOAT_EQ(1.5, stan::math::add(0.5, 1));
+  EXPECT_FLOAT_EQ(2.7, stan::math::add(1.2, 1.5));
   EXPECT_EQ(4, stan::math::add(1, 3));
 }
 TEST(MathMatrixPrimMat, add_v_exception) {
