@@ -113,18 +113,18 @@ TEST(KernelGenerator, log1m_exp_test) {
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
-#define TEST_CLASSIFICATION_FUNCTION(fun)                                 \
-  TEST(KernelGenerator, fun##_test) {                                     \
-    using stan::math::fun;                                                \
+#define TEST_CLASSIFICATION_FUNCTION(func)                                 \
+  TEST(KernelGenerator, func##_test) {                                     \
+    using stan::math::func;                                                \
     MatrixXd m1(3, 3);                                                    \
     m1 << 0.0, 0.2, 0.3, 0.4, 0.5, 0.6, -INFINITY, INFINITY, NAN;         \
                                                                           \
     matrix_cl<double> m1_cl(m1);                                          \
-    auto tmp = fun(m1_cl);                                                \
+    auto tmp = func(m1_cl);                                                \
     matrix_cl<bool> res_cl = tmp;                                         \
                                                                           \
     Eigen::Matrix<bool, -1, -1> res = stan::math::from_matrix_cl(res_cl); \
-    Eigen::Matrix<bool, -1, -1> correct = fun(m1.array());                \
+    Eigen::Matrix<bool, -1, -1> correct = func(m1.array());                \
     EXPECT_MATRIX_NEAR(correct, res, 1e-9);                               \
   }
 
