@@ -20,15 +20,14 @@ namespace math {
  * @tparam T Type of scalar.
  */
 template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
-Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, 1> ordered_constrain(
-    const EigVec& x) {
+plain_type_t<EigVec> ordered_constrain(const EigVec& x) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
   using size_type = Eigen::Index;
 
   size_type k = x.size();
-  Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, 1> y(k);
+  plain_type_t<EigVec> y(k);
   if (k == 0) {
     return y;
   }

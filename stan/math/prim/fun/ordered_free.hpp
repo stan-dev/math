@@ -24,7 +24,7 @@ namespace math {
  *   ordered scalars.
  */
 template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
-Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, 1> ordered_free(
+plain_type_t<EigVec> ordered_free(
     const EigVec& y) {
   check_ordered("stan::math::ordered_free", "Ordered variable", y);
   using Eigen::Dynamic;
@@ -33,7 +33,7 @@ Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, 1> ordered_free(
   using size_type = Eigen::Index;
 
   size_type k = y.size();
-  Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, 1> x(k);
+  plain_type_t<EigVec> x(k);
   if (k == 0) {
     return x;
   }

@@ -26,8 +26,8 @@ namespace math {
 template <int R, int C, typename T, typename EigMat,
           require_eigen_t<EigMat>* = nullptr,
           require_all_not_st_var<T, EigMat>* = nullptr,
-          require_not_t<conjunction<std::is_arithmetic<T>,
-                                    is_fvar<value_type_t<EigMat>>>>* = nullptr>
+          require_any_not_t<std::is_arithmetic<T>,
+                                    is_fvar<value_type_t<EigMat>>>* = nullptr>
 inline Eigen::Matrix<return_type_t<T, EigMat>, R, EigMat::ColsAtCompileTime>
 mdivide_left_ldlt(const LDLT_factor<T, R, C>& A, const EigMat& b) {
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
