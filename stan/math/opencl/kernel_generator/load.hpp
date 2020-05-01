@@ -59,18 +59,24 @@ class load_
    * generates kernel code for this expression.
    * @param i row index variable name
    * @param j column index variable name
+   * @param view_handled whether whether caller already handled matrix view
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& i,
-                               const std::string& j) const {
+  inline kernel_parts generate(const std::string& i, const std::string& j,
+                               const bool view_handled) const {
     kernel_parts res{};
     std::string type = type_str<Scalar>();
-    res.body = type + " " + var_name + " = 0;"
-               " if (!((!contains_nonzero(" + var_name + "_view, LOWER) && "
-               + j + " < " + i + ") || (!contains_nonzero(" + var_name +
-               "_view, UPPER) && " + j + " > " + i + "))) {"
-               + var_name + " = " + var_name + "_global[" + i + " + " +
-               var_name + "_rows * " + j + "];}\n";
+    if (view_handled) {
+      res.body = type + " " + var_name + " = " + var_name + "_global[" + i
+                 + " + " + var_name + "_rows * " + j + "];\n";
+    } else {
+      res.body = type + " " + var_name + " = 0;"
+                 " if (!((!contains_nonzero(" + var_name + "_view, LOWER) && "
+                 + j + " < " + i + ") || (!contains_nonzero(" + var_name +
+                 "_view, UPPER) && " + j + " > " + i + "))) {"
+                 + var_name + " = " + var_name + "_global[" + i + " + " +
+                 var_name + "_rows * " + j + "];}\n";
+    }
     res.args = "__global " + type + "* " + var_name + "_global, int " + var_name
                + "_rows, int " + var_name + "_view, ";
     return res;
@@ -197,21 +203,16 @@ class load_
   }
 
   /**
-   * Determine index of bottom diagonal written.
-   * @return number of columns
+   * Determine indices of extreme sub- and superdiagonals written.
+   * @return pair of indices - bottom and top diagonal
    */
-  inline int bottom_diagonal() const {
-    return contains_nonzero(a_.view(), matrix_cl_view::Lower) ? -a_.rows() + 1
-                                                              : 0;
-  }
-
-  /**
-   * Determine index of top diagonal written.
-   * @return number of columns
-   */
-  inline int top_diagonal() const {
-    return contains_nonzero(a_.view(), matrix_cl_view::Upper) ? a_.cols() - 1
-                                                              : 0;
+  inline std::pair<int, int> extreme_diagonals() const {
+    int bottom = contains_nonzero(a_.view(), matrix_cl_view::Lower)
+                     ? -a_.rows() + 1
+                     : 0;
+    int top = contains_nonzero(a_.view(), matrix_cl_view::Upper) ? a_.cols() - 1
+                                                                 : 0;
+    return {bottom, top};
   }
 
   /**

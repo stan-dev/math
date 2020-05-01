@@ -54,24 +54,18 @@ class unary_function_cl
    * generates kernel code for this expression.
    * @param i row index variable name
    * @param j column index variable name
+   * @param view_handled whether whether caller already handled matrix view
    * @param var_name_arg variable name of the nested expression
    * @return part of kernel with code for this expression
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
+                               const bool view_handled,
                                const std::string& var_name_arg) const {
     kernel_parts res{};
     res.includes = base::derived().include;
     res.body = type_str<Scalar>() + " " + var_name + " = " + fun_ + "("
                + var_name_arg + ");\n";
     return res;
-  }
-
-  /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
-   */
-  inline matrix_cl_view view() const {
-    return this->template get_arg<0>().view();
   }
 
  protected:
@@ -91,6 +85,8 @@ class unary_function_cl
     using base::arguments_;                                                   \
                                                                               \
    public:                                                                    \
+    using base::rows;                                                         \
+    using base::cols;                                                         \
     static const char* include;                                               \
     explicit fun##_(T&& a) : base(std::forward<T>(a), #fun) {}                \
     inline auto deep_copy() const {                                           \
@@ -98,7 +94,9 @@ class unary_function_cl
       return fun##_<std::remove_reference_t<decltype(arg_copy)>>{             \
           std::move(arg_copy)};                                               \
     }                                                                         \
-    inline matrix_cl_view view() const { return matrix_cl_view::Entire; }     \
+    inline std::pair<int, int> extreme_diagonals() const {                    \
+      return {-rows() + 1, cols() - 1};                                       \
+    }                                                                         \
   };                                                                          \
                                                                               \
   template <typename T, typename Cond                                         \
@@ -129,6 +127,9 @@ class unary_function_cl
     using base::arguments_;                                                   \
                                                                               \
    public:                                                                    \
+    using base::rows;                                                         \
+    using base::cols;                                                         \
+    static constexpr auto view_transitivness = std::make_tuple(true);         \
     static const char* include;                                               \
     explicit fun##_(T&& a) : base(std::forward<T>(a), #fun) {}                \
     inline auto deep_copy() const {                                           \
