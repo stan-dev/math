@@ -1,3 +1,4 @@
+#ifdef STAN_OPENCL
 #include <stan/math/opencl/prim/inv_square.hpp>
 #include <stan/math/prim/fun/inv_square.hpp>
 #include <stan/math/prim/fun/constants.hpp>
@@ -34,3 +35,4 @@ TEST(MathMatrixCL, inv_square) {
   stan::math::row_vector_d brv = stan::math::from_matrix_cl(brv_cl);
   EXPECT_MATRIX_NEAR(brv, stan::math::inv_square(arv), 1E-08);
 }
+#endif

@@ -1,3 +1,5 @@
+#ifdef STAN_OPENCL
+
 #include <stan/math/opencl/prim/inv_cloglog.hpp>
 #include <stan/math/prim/fun/inv_cloglog.hpp>
 #include <stan/math/prim/fun/constants.hpp>
@@ -35,3 +37,4 @@ TEST(MathMatrixCL, inv_cloglog) {
   stan::math::row_vector_d brv = stan::math::from_matrix_cl(brv_cl);
   EXPECT_MATRIX_NEAR(brv, stan::math::inv_cloglog(arv), 1E-08);
 }
+#endif

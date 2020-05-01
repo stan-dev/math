@@ -1,3 +1,4 @@
+#ifdef STAN_OPENCL
 #include <stan/math/opencl/prim/inv_sqrt.hpp>
 #include <stan/math/prim/fun/inv_sqrt.hpp>
 #include <stan/math/prim/fun/constants.hpp>
@@ -36,3 +37,4 @@ TEST(MathMatrixCL, inv_sqrt) {
   stan::math::row_vector_d brv = stan::math::from_matrix_cl(brv_cl);
   EXPECT_MATRIX_NEAR(brv, stan::math::inv_sqrt(arv), 1E-08);
 }
+#endif
