@@ -33,8 +33,7 @@ TEST(KernelGenerator, block_errors) {
   EXPECT_THROW(block(m, -1, 5, 1, 1), std::invalid_argument);
   EXPECT_THROW(block(m, 0, 0, -1, 1), std::invalid_argument);
   EXPECT_THROW(block(m, 0, 0, 1, -1), std::invalid_argument);
-  EXPECT_THROW(block(m, 0, 9, 0, 1), std::invalid_argument);
-  EXPECT_THROW(block(m, 7, 5, 0, 1), std::invalid_argument);
+  EXPECT_THROW(block(m, 0, 9, 0, 1), std::domain_error);
 
   EXPECT_NO_THROW(block(m, 0, 0, 7, 9) = m);
   EXPECT_THROW(block(m, 0, 0, 7, 8) = m, std::invalid_argument);
