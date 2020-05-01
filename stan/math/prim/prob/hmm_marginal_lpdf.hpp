@@ -33,7 +33,7 @@ inline auto hmm_marginal_lpdf_val(
   auto Gamma_val_transpose = Gamma_val.transpose().eval();
   for (int n = 1; n <= n_transitions; ++n) {
     alphas.col(n)
-      = omegas.col(n).cwiseProduct(Gamma_val_transpose * alphas.col(n - 1));
+        = omegas.col(n).cwiseProduct(Gamma_val_transpose * alphas.col(n - 1));
     const auto col_norm = alphas.col(n).maxCoeff();
     alphas.col(n) /= col_norm;
     alpha_log_norms(n) = log(col_norm) + alpha_log_norms(n - 1);
@@ -88,8 +88,8 @@ inline auto hmm_marginal_lpdf(
   if (n_transitions != 0) {
     check_square("hmm_marginal_lpdf", "Gamma", Gamma);
     check_nonzero_size("hmm_marginal_lpdf", "Gamma", Gamma);
-    check_multiplicable("hmm_marginal_lpdf", "Gamma",
-                        Gamma, "log_omegas", log_omegas);
+    check_multiplicable("hmm_marginal_lpdf", "Gamma", Gamma, "log_omegas",
+                        log_omegas);
     for (int i = 0; i < Gamma.rows(); ++i) {
       check_simplex("hmm_marginal_lpdf", "Gamma[i, ]", row(Gamma, i + 1));
     }
@@ -108,9 +108,8 @@ inline auto hmm_marginal_lpdf(
   auto rho_val = value_of(rho);
   eig_matrix_partial omegas = value_of(log_omegas).array().exp();
   T_partial_type norm_norm;
-  auto log_marginal_density = hmm_marginal_lpdf_val(omegas, Gamma_val, rho_val,
-                                                    alphas, alpha_log_norms,
-                                                    norm_norm);
+  auto log_marginal_density = hmm_marginal_lpdf_val(
+      omegas, Gamma_val, rho_val, alphas, alpha_log_norms, norm_norm);
 
   // Variables required for all three Jacobian-adjoint products.
   auto unnormed_marginal = alphas.col(n_transitions).sum();

@@ -8,6 +8,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
+#include <memory>
 
 namespace stan {
 namespace math {
@@ -23,7 +24,7 @@ class mdivide_left_ldlt_alloc : public chainable_alloc {
    * for mdivide_left_ldlt(ldltA, b) when ldltA is a LDLT_factor<double>.
    * The pointer is shared with the LDLT_factor<double> class.
    **/
-  boost::shared_ptr<Eigen::LDLT<Eigen::Matrix<double, R1, C1> > > ldltP_;
+  std::shared_ptr<Eigen::LDLT<Eigen::Matrix<double, R1, C1> > > ldltP_;
   Eigen::Matrix<double, R2, C2> C_;
 };
 

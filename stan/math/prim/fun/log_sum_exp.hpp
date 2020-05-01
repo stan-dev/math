@@ -76,17 +76,18 @@ inline return_type_t<T1, T2> log_sum_exp(const T2& a, const T1& b) {
  * @param[in] x matrix of specified values
  * @return The log of the sum of the exponentiated vector values.
  */
-template <typename T, require_t<std::is_arithmetic<scalar_type_t<T>>>...>
+template <typename T, require_container_st<std::is_arithmetic, T>...>
 inline auto log_sum_exp(const T& x) {
   return apply_vector_unary<T>::reduce(x, [&](const auto& v) {
     if (v.size() == 0) {
       return NEGATIVE_INFTY;
     }
-    const double max = v.maxCoeff();
+    const Eigen::Ref<const plain_type_t<decltype(v)>>& v_ref = v;
+    const double max = v_ref.maxCoeff();
     if (!std::isfinite(max)) {
       return max;
     }
-    return max + std::log((v.array() - max).exp().sum());
+    return max + std::log((v_ref.array() - max).exp().sum());
   });
 }
 
