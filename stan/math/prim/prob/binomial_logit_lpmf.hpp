@@ -33,6 +33,7 @@ template <bool propto, typename T_n, typename T_N, typename T_prob>
 return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
                                           const T_prob& alpha) {
   using T_partials_return = partials_return_t<T_n, T_N, T_prob>;
+  using std::log;
   static const char* function = "binomial_logit_lpmf";
   check_bounded(function, "Successes variable", n, 0, N);
   check_nonnegative(function, "Population size parameter", N);
@@ -48,7 +49,6 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
     return 0.0;
   }
 
-  using std::log;
   T_partials_return logp = 0;
   operands_and_partials<T_prob> ops_partials(alpha);
 

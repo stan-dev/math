@@ -25,24 +25,21 @@ template <typename T_n, typename T_shape, typename T_inv_scale>
 return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(const T_n& n,
                                                       const T_shape& alpha,
                                                       const T_inv_scale& beta) {
-  static const char* function = "neg_binomial_lcdf";
   using T_partials_return = partials_return_t<T_n, T_shape, T_inv_scale>;
-
-  if (size_zero(n, alpha, beta)) {
-    return 0.0;
-  }
-
-  T_partials_return P(0.0);
-
+  using std::exp;
+  using std::log;
+  using std::pow;
+  static const char* function = "neg_binomial_lcdf";
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Inverse scale parameter", beta);
   check_consistent_sizes(function, "Failures variable", n, "Shape parameter",
                          alpha, "Inverse scale parameter", beta);
 
-  using std::exp;
-  using std::log;
-  using std::pow;
+  if (size_zero(n, alpha, beta)) {
+    return 0;
+  }
 
+  T_partials_return P(0.0);
   operands_and_partials<T_shape, T_inv_scale> ops_partials(alpha, beta);
 
   scalar_seq_view<T_n> n_vec(n);

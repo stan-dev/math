@@ -2,7 +2,7 @@
 #define STAN_MATH_REV_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/fun/value_of_rec.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -256,7 +256,7 @@ struct coupled_ode_system<F, var, double> {
    *
    * This method uses nested autodiff and is not thread safe.
    *
-   * @param[in] z state of the coupled ode syste; this must be
+   * @param[in] z state of the coupled ode system; this must be
    *   size <code>size()</code>
    * @param[out] dz_dt a vector of length size() with the
    *   derivatives of the coupled system with respect to time

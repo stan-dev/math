@@ -168,7 +168,7 @@ template <typename Dx, int R, int C>
 class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C>>> {
  public:
   using Op = std::vector<Eigen::Matrix<fvar<Dx>, R, C>>;
-  using partial_t = Eigen::Matrix<Dx, -1, -1>;
+  using partial_t = Eigen::Matrix<Dx, R, C>;
   std::vector<partial_t> partials_vec_;
   explicit ops_partials_edge(const Op& ops)
       : partials_vec_(ops.size()), operands_(ops) {

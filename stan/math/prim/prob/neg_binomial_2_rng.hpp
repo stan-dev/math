@@ -19,8 +19,8 @@ namespace math {
  * mu and phi can each be a scalar or a one-dimensional container. Any
  * non-scalar inputs must be the same size.
  *
- * @tparam T_loc Type of location parameter
- * @tparam T_prec Type of precision parameter
+ * @tparam T_loc type of location parameter
+ * @tparam T_prec type of precision parameter
  * @tparam RNG type of random number generator
  * @param mu (Sequence of) positive location parameter(s)
  * @param phi (Sequence of) positive precision parameter(s)
@@ -34,11 +34,9 @@ template <typename T_loc, typename T_prec, class RNG>
 inline typename VectorBuilder<true, int, T_loc, T_prec>::type
 neg_binomial_2_rng(const T_loc& mu, const T_prec& phi, RNG& rng) {
   using boost::gamma_distribution;
-  using boost::random::poisson_distribution;
   using boost::variate_generator;
-
+  using boost::random::poisson_distribution;
   static const char* function = "neg_binomial_2_rng";
-
   check_positive_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Precision parameter", phi);
   check_consistent_sizes(function, "Location parameter", mu,

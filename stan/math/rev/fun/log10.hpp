@@ -1,10 +1,16 @@
 #ifndef STAN_MATH_REV_FUN_LOG10_HPP
 #define STAN_MATH_REV_FUN_LOG10_HPP
 
+#include <stan/math/prim/core.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/log10.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/rev/fun/atan2.hpp>
+#include <stan/math/rev/fun/hypot.hpp>
+#include <stan/math/rev/fun/log.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -49,6 +55,16 @@ class log10_vari : public op_v_vari {
  * @return Base 10 log of variable.
  */
 inline var log10(const var& a) { return var(new internal::log10_vari(a.vi_)); }
+
+/**
+ * Return the base 10 logarithm of the specified complex number.
+ *
+ * @param z complex argument
+ * @return base 10 log of argument
+ */
+inline std::complex<var> log10(const std::complex<var>& z) {
+  return internal::complex_log10(z);
+}
 
 }  // namespace math
 }  // namespace stan

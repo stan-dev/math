@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUNCTOR_HPP
 #define STAN_MATH_PRIM_FUNCTOR_HPP
 
+#include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/coupled_ode_observer.hpp>
 #include <stan/math/prim/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/functor/finite_diff_gradient.hpp>
@@ -17,5 +18,6 @@
 #include <stan/math/prim/functor/mpi_cluster.hpp>
 #include <stan/math/prim/functor/mpi_command.hpp>
 #include <stan/math/prim/functor/mpi_distributed_apply.hpp>
-
+#include <stan/math/prim/functor/reduce_sum.hpp>
+#include <stan/math/prim/functor/reduce_sum_static.hpp>
 #endif

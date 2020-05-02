@@ -31,6 +31,7 @@ template <typename T_y, typename T_loc, typename T_scale>
 return_type_t<T_y, T_loc, T_scale> cauchy_cdf(const T_y& y, const T_loc& mu,
                                               const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
+  using std::atan;
   static const char* function = "cauchy_cdf";
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -42,7 +43,6 @@ return_type_t<T_y, T_loc, T_scale> cauchy_cdf(const T_y& y, const T_loc& mu,
     return 1.0;
   }
 
-  using std::atan;
   T_partials_return P(1.0);
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 

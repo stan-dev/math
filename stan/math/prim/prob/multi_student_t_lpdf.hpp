@@ -27,20 +27,18 @@ template <bool propto, typename T_y, typename T_dof, typename T_loc,
           typename T_scale>
 return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
     const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& Sigma) {
-  static const char* function = "multi_student_t";
-  using std::log;
   using T_scale_elem = typename scalar_type<T_scale>::type;
   using lp_type = return_type_t<T_y, T_dof, T_loc, T_scale>;
-
+  using Eigen::Matrix;
+  using std::log;
+  using std::vector;
+  static const char* function = "multi_student_t";
   check_not_nan(function, "Degrees of freedom parameter", nu);
   check_positive(function, "Degrees of freedom parameter", nu);
 
   if (is_inf(nu)) {
     return multi_normal_log(y, mu, Sigma);
   }
-
-  using Eigen::Matrix;
-  using std::vector;
 
   size_t number_of_y = size_mvt(y);
   size_t number_of_mu = size_mvt(mu);

@@ -28,6 +28,7 @@ template <typename T_y, typename T_inv_scale>
 return_type_t<T_y, T_inv_scale> exponential_cdf(const T_y& y,
                                                 const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_inv_scale>;
+  using std::exp;
   static const char* function = "exponential_cdf";
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -37,7 +38,6 @@ return_type_t<T_y, T_inv_scale> exponential_cdf(const T_y& y,
     return 1.0;
   }
 
-  using std::exp;
   T_partials_return cdf(1.0);
   operands_and_partials<T_y, T_inv_scale> ops_partials(y, beta);
 

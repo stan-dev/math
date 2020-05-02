@@ -11,6 +11,13 @@
 #include <string>
 #include <vector>
 
+using d_t = double;
+using v_t = stan::math::var;
+using fd_t = stan::math::fvar<d_t>;
+using ffd_t = stan::math::fvar<fd_t>;
+using fv_t = stan::math::fvar<stan::math::var>;
+using ffv_t = stan::math::fvar<fv_t>;
+
 namespace stan {
 namespace test {
 namespace internal {
@@ -1214,12 +1221,12 @@ void expect_ad(const F& f, const T1& x1, const T2& x2, const T3& x3) {
 }
 
 /**
- * Test that the specified vectorized polymoprhic unary function
+ * Test that the specified vectorized polymorphic unary function
  * produces autodiff results consistent with values determined by
  * double and integer inputs and 1st-, 2nd-, and 3rd-order derivatives
  * consistent with finite differences of double inputs.
  *
- * @tparam F type of poymorphic, vectorized functor to test
+ * @tparam F type of polymorphic, vectorized functor to test
  * @tparam T1 type of first argument (integer or double)
  * @param tols tolerances for test
  * @param f functor to test
@@ -1323,7 +1330,7 @@ void expect_common_nonzero_unary(const F& f) {
  * primitive version of the function, when applied to all pairs of
  * common integer and double argument combinations excluding zero.
  *
- * If the `disable_lhs_int` flag is set to `true` (it defauls to
+ * If the `disable_lhs_int` flag is set to `true` (it defaults to
  * `false`), then integers will not be considered as first arguments.
  * This is useful for testing assignment operators like `+=` and
  * division operators like `/` where integer and real arguments
@@ -1367,7 +1374,7 @@ void expect_common_nonzero_binary(const F& f, bool disable_lhs_int = false) {
  * primitive version of the function, when applied to all pairs of
  * common integer and double argument combinations.
  *
- * If the `disable_lhs_int` flag is set to `true` (it defauls to
+ * If the `disable_lhs_int` flag is set to `true` (it defaults to
  * `false`), then integers will not be considered as first arguments.
  * This is useful for testing assignment operators like `+=` and
  * division operators like `/` where integer and real arguments
@@ -1719,6 +1726,132 @@ auto ldlt_factor(const Eigen::Matrix<T, -1, -1>& x) {
   Eigen::Matrix<T, -1, -1> x_sym = (x + x.transpose()) * 0.5;
   ldlt_x.compute(x_sym);
   return ldlt_x;
+}
+
+std::vector<double> common_complex_parts() {
+  return {-4, -2.5, -1.5, -0.3, -0.0, 0.0, 1.3, 2.1, 3.9};
+}
+
+std::vector<std::complex<double>> common_complex() {
+  std::vector<std::complex<double>> zs;
+  for (double re : common_complex_parts())
+    for (double im : common_complex_parts())
+      zs.emplace_back(re, im);
+  return zs;
+}
+
+template <typename F>
+void expect_complex_common(const F& f) {
+  auto zs = common_complex();
+  for (auto z : zs) {
+    expect_ad(f, z);
+  }
+}
+
+template <typename F>
+void expect_complex_common_binary(const F& f) {
+  auto xs = common_complex_parts();
+  auto zs = common_complex();
+  // complex, complex
+  for (auto z1 : zs) {
+    for (auto z2 : zs) {
+      expect_ad(f, z1, z2);
+    }
+  }
+  // complex, real
+  for (auto z1 : zs) {
+    for (auto x2 : xs) {
+      expect_ad(f, z1, x2);
+    }
+  }
+  // real, complex
+  for (auto x1 : xs) {
+    for (auto z2 : zs) {
+      expect_ad(f, x1, z2);
+    }
+  }
+}
+
+template <typename T, typename F>
+void expect_complex_compare(const F& f, const std::complex<double>& z1,
+                            const std::complex<double>& z2) {
+  using c_t = std::complex<T>;
+  c_t cz1{z1};
+  c_t cz2{z2};
+  T z1r{z1.real()};
+  T z2r{z2.real()};
+
+  EXPECT_EQ(f(z1, z2), f(cz1, cz2));
+  EXPECT_EQ(f(z1, z2), f(cz1, z2));
+  EXPECT_EQ(f(z1, z2), f(z1, cz2));
+
+  EXPECT_EQ(f(z1.real(), z2), f(z1r, cz2));
+  EXPECT_EQ(f(z1.real(), z2), f(z1r, z2));
+
+  EXPECT_EQ(f(z1, z2.real()), f(cz1, z2r));
+  EXPECT_EQ(f(z1, z2.real()), f(z1, z2r));
+}
+
+template <typename F>
+void expect_complex_comparison(const F& f, const std::complex<double>& z1,
+                               const std::complex<double>& z2) {
+  using stan::math::fvar;
+  using stan::math::var;
+  using std::complex;
+  expect_complex_compare<double>(f, z1, z2);              // PASS
+  expect_complex_compare<var>(f, z1, z2);                 // FAIL
+  expect_complex_compare<fvar<double>>(f, z1, z2);        // PASS
+  expect_complex_compare<fvar<fvar<double>>>(f, z1, z2);  // PASS
+  expect_complex_compare<fvar<var>>(f, z1, z2);           // PASS
+  expect_complex_compare<fvar<fvar<var>>>(f, z1, z2);     // PASS
+}
+
+/**
+ * Test the specified comparison operation provides results matching
+ * those for the double version for all the common complex numbers.
+ *
+ * @tparam F type of function to test
+ * @param f function to test
+ */
+template <typename F>
+void expect_complex_common_comparison(const F& f) {
+  for (auto z1 : common_complex()) {
+    for (auto z2 : common_complex()) {
+      expect_complex_comparison(f, z1, z2);
+    }
+  }
+}
+
+/**
+ * Return square test matrices (not symmetric) of dimensionality
+ * within the specified range (inclusive).
+ *
+ * @param min minimum matrix dimensionality to include
+ * @param max maximum matrix dimensionality to include
+ * @return square matrices within given dimensionality range (inclusive)
+ */
+std::vector<Eigen::MatrixXd> square_test_matrices(int low, int high) {
+  std::vector<Eigen::MatrixXd> xs;
+  Eigen::MatrixXd a00(0, 0);
+  if (0 >= low && 0 <= high)
+    xs.push_back(a00);
+
+  Eigen::MatrixXd a11(1, 1);
+  a11 << -1.3;
+  if (1 >= low && 1 <= high)
+    xs.push_back(a11);
+
+  Eigen::MatrixXd a22(2, 2);
+  a22 << 1, 2, 3, 0.7;
+  if (2 >= low && 2 <= high)
+    xs.push_back(a22);
+
+  Eigen::MatrixXd a33(3, 3);
+  a33 << 3, -5, 7, -7.2, 9.1, -6.3, 7, 12, -3;
+  if (3 >= low && 3 <= high)
+    xs.push_back(a33);
+
+  return xs;
 }
 
 }  // namespace test

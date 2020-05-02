@@ -14,24 +14,24 @@ namespace math {
  * Returns specified input value.
  *
  * @tparam T Type of element.
- * @param v Specified value.
+ * @param m Specified value.
  * @return Same value (the sum of one value).
  */
 template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline T sum(T v) {
-  return v;
+inline decltype(auto) sum(T&& m) {
+  return std::forward<T>(m);
 }
 
 /**
  * Return the sum of the values in the specified standard vector.
  *
  * @tparam T Type of elements summed.
- * @param xs Standard vector to sum.
+ * @param m Standard vector to sum.
  * @return Sum of elements.
  */
 template <typename T>
-inline T sum(const std::vector<T>& xs) {
-  return std::accumulate(xs.begin(), xs.end(), T{0});
+inline T sum(const std::vector<T>& m) {
+  return std::accumulate(m.begin(), m.end(), T{0});
 }
 
 /**
@@ -39,12 +39,12 @@ inline T sum(const std::vector<T>& xs) {
  * Eigen Matrix, Array or expression.
  *
  * @tparam T Type of argument
- * @param v argument
+ * @param m argument
  * @return Sum of coefficients of argument.
  */
 template <typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
-inline value_type_t<T> sum(const T& v) {
-  return v.sum();
+inline value_type_t<T> sum(const T& m) {
+  return m.sum();
 }
 
 }  // namespace math

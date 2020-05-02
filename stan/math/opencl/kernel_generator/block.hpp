@@ -12,11 +12,16 @@
 #include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
 #include <set>
 #include <string>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 
 namespace stan {
 namespace math {
+
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 
 /**
  * Represents submatrix block in kernel generator expressions.
@@ -31,10 +36,10 @@ class block_
   using Scalar = typename std::remove_reference_t<T>::Scalar;
   using base = operation_cl_lhs<block_<T>, Scalar, T>;
   using base::var_name;
+  using view_transitivity = std::tuple<std::true_type>;
 
  protected:
   int start_row_, start_col_, rows_, cols_;
-  using base::arguments_;
 
  public:
   /**
@@ -61,8 +66,8 @@ class block_
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline auto deep_copy() {
-    auto&& arg_copy = std::get<0>(arguments_).deep_copy();
+  inline auto deep_copy() const {
+    auto&& arg_copy = this->template get_arg<0>().deep_copy();
     return block_<std::remove_reference_t<decltype(arg_copy)>>{
         std::move(arg_copy), start_row_, start_col_, rows_, cols_};
   }
@@ -71,11 +76,13 @@ class block_
    * Generates kernel code for this expression.
    * @param i row index variable name
    * @param j column index variable name
+   * @param view_handled whether whether caller already handled matrix view
    * @param var_name_arg name of the variable in kernel that holds argument to
    * this expression
    * @return part of kernel with code for this expression
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
+                               const bool view_handled,
                                const std::string& var_name_arg) const {
     kernel_parts res;
     res.body
@@ -122,27 +129,10 @@ class block_
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
       generated.insert(this);
-      std::get<0>(arguments_).set_args(generated, kernel, arg_num);
+      this->template get_arg<0>().set_args(generated, kernel, arg_num);
       kernel.setArg(arg_num++, start_row_);
       kernel.setArg(arg_num++, start_col_);
     }
-  }
-
-  /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
-   */
-  inline matrix_cl_view view() const {
-    matrix_cl_view view;
-    if (bottom_diagonal() < 0) {
-      view = matrix_cl_view::Lower;
-    } else {
-      view = matrix_cl_view::Diagonal;
-    }
-    if (top_diagonal() > 0) {
-      view = either(view, matrix_cl_view::Upper);
-    }
-    return view;
   }
 
   /**
@@ -175,29 +165,20 @@ class block_
   inline void set_view(int bottom_diagonal, int top_diagonal,
                        int bottom_zero_diagonal, int top_zero_diagonal) const {
     int change = start_col_ - start_row_;
-    std::get<0>(arguments_)
-        .set_view(bottom_diagonal + change, top_diagonal + change,
-                  bottom_zero_diagonal + change, top_zero_diagonal + change);
+    this->template get_arg<0>().set_view(
+        bottom_diagonal + change, top_diagonal + change,
+        bottom_zero_diagonal + change, top_zero_diagonal + change);
   }
 
   /**
-   * Determine index of bottom diagonal written.
-   * @return number of columns
+   * Determine indices of extreme sub- and superdiagonals written.
+   * @return pair of indices - bottom and top diagonal
    */
-  inline int bottom_diagonal() const {
-    return std::max(
-        std::get<0>(arguments_).bottom_diagonal() - start_col_ + start_row_,
-        1 - rows_);
-  }
-
-  /**
-   * Determine index of top diagonal written.
-   * @return number of columns
-   */
-  inline int top_diagonal() const {
-    return std::min(
-        std::get<0>(arguments_).top_diagonal() - start_col_ + start_row_,
-        cols_ - 1);
+  inline std::pair<int, int> extreme_diagonals() const {
+    std::pair<int, int> arg_diags
+        = this->template get_arg<0>().extreme_diagonals();
+    return {arg_diags.first - start_col_ + start_row_,
+            arg_diags.second - start_col_ + start_row_};
   }
 
   /**
@@ -209,24 +190,39 @@ class block_
             typename
             = require_all_valid_expressions_and_none_scalar_t<T_expression>>
   const block_<T>& operator=(T_expression&& rhs) const {
-    check_size_match("block.operator=", "Rows of ", "rhs", rhs.rows(),
-                     "rows of ", "*this", this->rows());
-    check_size_match("block.operator=", "Cols of ", "rhs", rhs.cols(),
-                     "cols of ", "*this", this->cols());
     auto expression = as_operation_cl(std::forward<T_expression>(rhs));
     if (rows_ * cols_ == 0) {
       return *this;
     }
     expression.evaluate_into(*this);
-
-    this->set_view(expression.bottom_diagonal(), expression.top_diagonal(),
-                   1 - expression.rows(), expression.cols() - 1);
     return *this;
+  }
+
+  /**
+   * Checks if desired dimensions match dimensions of the block.
+   * @param rows desired number of rows
+   * @param cols desired number of columns
+   * @throws std::invalid_argument desired dimensions do not match dimensions
+   * of the block.
+   */
+  inline void check_assign_dimensions(int rows, int cols) const {
+    check_size_match("block_.check_assign_dimensions", "Rows of ", "block",
+                     rows_, "rows of ", "expression", rows);
+    check_size_match("block_.check_assign_dimensions", "Columns of ", "block",
+                     cols_, "columns of ", "expression", cols);
   }
 };
 
 /**
  * Block of a kernel generator expression.
+ *
+ * Block operation modifies how its argument is indexed. If a matrix is both an
+ * argument and result of such an operation (such as in <code> block(a, row1,
+ * col1, rows, cols) = block(a, row2, col2, rows, cols);
+ * </code>), the result can be wrong due to aliasing. In such case the
+ * expression should be evaluating in a temporary by doing <code> block(a, row1,
+ * col1, rows, cols) = block(a, row2, col2, rows, cols).eval();</code>. This is
+ * not necessary if the bolcks do not overlap or if they are the same block.
  * @tparam T type of argument
  * @param a input argument
  * @param start_row first row of block
@@ -242,7 +238,7 @@ inline auto block(T&& a, int start_row, int start_col, int rows, int cols) {
   return block_<std::remove_reference_t<decltype(a_operation)>>(
       std::move(a_operation), start_row, start_col, rows, cols);
 }
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 

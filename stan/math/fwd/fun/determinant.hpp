@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_FWD_FUN_DETERMINANT_HPP
 #define STAN_MATH_FWD_FUN_DETERMINANT_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/fwd/core.hpp>
@@ -8,12 +9,12 @@
 namespace stan {
 namespace math {
 
-template <typename T, int R, int C>
-inline fvar<T> determinant(const Eigen::Matrix<fvar<T>, R, C>& m) {
+template <typename EigMat, require_eigen_vt<is_fvar, EigMat>* = nullptr>
+inline value_type_t<EigMat> determinant(const EigMat& m) {
   check_square("determinant", "m", m);
 
-  const T vals = m.val().determinant();
-  return fvar<T>(vals, vals * (m.val().inverse() * m.d()).trace());
+  const typename value_type_t<EigMat>::Scalar vals = m.val().determinant();
+  return {vals, vals * (m.val().inverse() * m.d()).trace()};
 }
 
 }  // namespace math

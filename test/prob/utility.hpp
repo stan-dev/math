@@ -5,9 +5,9 @@
 
 using stan::is_constant_all;
 using stan::is_vector;
+using stan::scalar_type;
 using stan::math::fvar;
 using stan::math::var;
-using stan::scalar_type;
 using std::vector;
 
 using size_type = stan::math::index_type_t<Eigen::Matrix<double, 1, 1>>;

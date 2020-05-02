@@ -20,6 +20,10 @@ For new features there should be at least one test showing the expected behavior
 
 Are there any side effects that we should be aware of?
 
+## Release notes
+
+Replace this text with a short note on what will change if this pull request is merged in which case this will be included in the release notes.
+
 ## Checklist
 
 - [ ] Math issue #(issue number)

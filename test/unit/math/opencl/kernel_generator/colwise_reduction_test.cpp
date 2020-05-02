@@ -18,7 +18,7 @@ using stan::math::matrix_cl;
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-TEST(MathMatrixCL, colwise_sum_test) {
+TEST(KernelGenerator, colwise_sum_test) {
   std::string kernel_filename = "colwise_sum.cl";
   MatrixXd m(3, 2);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
@@ -45,7 +45,7 @@ TEST(MathMatrixCL, colwise_sum_test) {
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
-TEST(MathMatrixCL, colwise_min_test) {
+TEST(KernelGenerator, colwise_min_test) {
   MatrixXd m(3, 2);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
 
@@ -61,7 +61,7 @@ TEST(MathMatrixCL, colwise_min_test) {
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
-TEST(MathMatrixCL, colwise_max_test) {
+TEST(KernelGenerator, colwise_max_test) {
   MatrixXd m(2, 3);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
 
@@ -77,7 +77,7 @@ TEST(MathMatrixCL, colwise_max_test) {
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
-TEST(MathMatrixCL, colwise_sum_triangular) {
+TEST(KernelGenerator, colwise_sum_triangular) {
   MatrixXd m(3, 2);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
 
@@ -108,7 +108,7 @@ TEST(MathMatrixCL, colwise_sum_triangular) {
   EXPECT_MATRIX_NEAR(correct2, res2, 1e-9);
 }
 
-TEST(MathMatrixCL, nested_rowwise_colwise_sum) {
+TEST(KernelGenerator, nested_rowwise_colwise_sum) {
   MatrixXd m(3, 2);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
 
@@ -125,7 +125,7 @@ TEST(MathMatrixCL, nested_rowwise_colwise_sum) {
   EXPECT_NEAR(correct, res(0), 1e-9);
 }
 
-TEST(MathMatrixCL, colwise_sum_test_large) {
+TEST(KernelGenerator, colwise_sum_test_large) {
   int N = 153;
   int M = 201;
   MatrixXd m = MatrixXd::Random(N, M);
@@ -139,6 +139,26 @@ TEST(MathMatrixCL, colwise_sum_test_large) {
   EXPECT_EQ(correct.rows(), res.rows());
   EXPECT_EQ(correct.cols(), res.cols());
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
+}
+
+TEST(KernelGenerator, colwise_sum_and_id_test) {
+  MatrixXd m(3, 2);
+  m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
+
+  matrix_cl<double> m_cl(m);
+
+  matrix_cl<double> res1_cl, res2_cl;
+  stan::math::results(res1_cl, res2_cl)
+      = stan::math::expressions(m_cl, stan::math::colwise_sum(m_cl));
+  MatrixXd res1 = stan::math::from_matrix_cl(res1_cl);
+  EXPECT_MATRIX_NEAR(m, res1, 1e-9);
+  MatrixXd raw_res2 = stan::math::from_matrix_cl(res2_cl);
+  EXPECT_GE(m.rows(), raw_res2.rows());
+  MatrixXd res2 = raw_res2.colwise().sum();
+  MatrixXd correct2 = m.colwise().sum();
+  EXPECT_EQ(correct2.rows(), res2.rows());
+  EXPECT_EQ(correct2.cols(), res2.cols());
+  EXPECT_MATRIX_NEAR(correct2, res2, 1e-9);
 }
 
 #endif
