@@ -6,6 +6,9 @@ TEST(ProbNegBinomial, log_matches_lpmf) {
   double alpha = 1.1;
   double beta = 2.3;
 
+  EXPECT_FLOAT_EQ((stan::math::neg_binomial_lpmf(13, 1e11, 1e10)),
+                  -2.6185576442208003);
+
   EXPECT_FLOAT_EQ((stan::math::neg_binomial_lpmf(y, alpha, beta)),
                   (stan::math::neg_binomial_log(y, alpha, beta)));
   EXPECT_FLOAT_EQ((stan::math::neg_binomial_lpmf<true>(y, alpha, beta)),
