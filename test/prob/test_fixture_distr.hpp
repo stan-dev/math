@@ -12,6 +12,7 @@ using stan::is_constant_all;
 using stan::is_vector;
 using stan::math::fvar;
 using stan::math::value_of;
+using stan::math::value_of_rec;
 using stan::math::var;
 using stan::scalar_type;
 using std::vector;
@@ -251,8 +252,8 @@ class AgradDistributionTestFixture : public ::testing::Test {
                                         Scalar3, Scalar4, Scalar5>(p0, p1, p2,
                                                                    p3, p4, p5);
 
-      EXPECT_TRUE(reference_logprob_false - logprob_false
-                  == reference_logprob_true - logprob_true)
+      EXPECT_TRUE(value_of_rec(reference_logprob_false - logprob_false)
+                  == value_of_rec(reference_logprob_true - logprob_true))
           << "Proportional test failed at index: " << n << std::endl
           << "  reference params: " << parameters[0] << std::endl
           << "  current params:   " << parameters[n] << std::endl
