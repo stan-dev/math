@@ -10,6 +10,7 @@
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
 #include <stan/math/opencl/kernel_generator/common_return_scalar.hpp>
+#include <algorithm>
 #include <set>
 #include <string>
 #include <type_traits>
@@ -87,12 +88,14 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
    * generates kernel code for this (select) operation.
    * @param i row index variable name
    * @param j column index variable name
+   * @param view_handled whether whether caller already handled matrix view
    * @param var_name_condition variable name of the condition expression
    * @param var_name_else variable name of the then expression
    * @param var_name_then variable name of the else expression
    * @return part of kernel with code for this expression
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
+                               const bool view_handled,
                                const std::string& var_name_condition,
                                const std::string& var_name_then,
                                const std::string& var_name_else) const {
@@ -103,14 +106,24 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
   }
 
   /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
+   * Determine indices of extreme sub- and superdiagonals written.
+   * @return pair of indices - bottom and top diagonal
    */
-  inline matrix_cl_view view() const {
-    matrix_cl_view condition_view = this->template get_arg<0>().view();
-    matrix_cl_view then_view = this->template get_arg<1>().view();
-    matrix_cl_view else_view = this->template get_arg<2>().view();
-    return both(either(then_view, else_view), both(condition_view, then_view));
+  inline std::pair<int, int> extreme_diagonals() const {
+    using std::max;
+    using std::min;
+    std::pair<int, int> condition_diags
+        = this->template get_arg<0>().extreme_diagonals();
+    std::pair<int, int> then_diags
+        = this->template get_arg<1>().extreme_diagonals();
+    std::pair<int, int> else_diags
+        = this->template get_arg<2>().extreme_diagonals();
+    // Where the condition is 0 we get else's values. Otherwise we get the more
+    // extreme of then's and else's.
+    return {max(min(then_diags.first, else_diags.first),
+                min(condition_diags.first, else_diags.first)),
+            min(max(then_diags.second, else_diags.second),
+                max(condition_diags.second, else_diags.second))};
   }
 };
 

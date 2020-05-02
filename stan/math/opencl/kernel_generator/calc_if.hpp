@@ -42,6 +42,7 @@ class calc_if_
   explicit calc_if_(T&& a) : base(std::forward<T>(a)) {}
 
   inline kernel_parts generate(const std::string& i, const std::string& j,
+                               const bool view_handled,
                                const std::string& var_name_arg) const {
     if (Do_Calculate) {
       var_name = var_name_arg;
@@ -86,14 +87,6 @@ class calc_if_
     if (Do_Calculate) {
       this->template get_arg<0>().set_args(generated, kernel, arg_num);
     }
-  }
-
-  /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
-   */
-  inline matrix_cl_view view() const {
-    return this->template get_arg<0>().view();
   }
 };
 

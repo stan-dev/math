@@ -4,6 +4,7 @@
 
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/err.hpp>
+#include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/kernels/matrix_multiply.hpp>
 #include <stan/math/opencl/kernels/add.hpp>
 #include <stan/math/opencl/sub_block.hpp>
@@ -58,13 +59,7 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
     return temp;
   }
   if (B.cols() == 1) {
-    try {
-      opencl_kernels::matrix_vector_multiply(cl::NDRange(temp.rows()), A, B,
-                                             temp, A.rows(), A.cols(), A.view(),
-                                             B.view());
-    } catch (cl::Error& e) {
-      check_opencl_error("matrix - vector multiply", e);
-    }
+    temp = matrix_vector_multiply(A, B);
     return temp;
   }
   int local = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
@@ -101,6 +96,23 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
   return temp;
 }
 }  // namespace opencl
+
+/**
+ * Matrix multiplication of two kernel generator expressions. Evaluates both
+ * expressions before calculating the matrix product.
+ * @tparam T_a type of first expression
+ * @tparam T_b type of second expression
+ * @param a first expression
+ * @param b second expression
+ * @return Matrix product of given arguments
+ */
+template <typename T_a, typename T_b,
+          typename = require_all_valid_expressions_and_none_scalar_t<T_a, T_b>>
+inline matrix_cl<double> operator*(const T_a& a, const T_b& b) {
+  // no need for perfect forwarding as operations are evaluated
+  return opencl::multiply(as_operation_cl(a).eval(), as_operation_cl(b).eval());
+}
+
 }  // namespace math
 }  // namespace stan
 #endif
