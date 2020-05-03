@@ -12,6 +12,7 @@ namespace math {
  * Return the elementwise 1.0 / x of the specified argument,
  * which may be a scalar or any Stan container of numeric scalars.
  *
+ * @tparam T_x type of input kernel generator expression x
  * @param x Input kernel generator expression.
  * @return elementwise 1.0 / x of the specified argument.
  */

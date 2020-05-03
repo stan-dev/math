@@ -43,16 +43,17 @@ namespace math {
  \frac{\partial \, \mbox{logit}^{-1}(y)}{\partial y} =
  \frac{\exp(y)}{(\exp(y)+1)^2} \f]
  *
- * @param a input kernel generator expression.
+ * @tparam T_x type of input kernel generator expression x
+ * @param x input kernel generator expression.
  * @return inverse logit of each value in x.
  */
-template <typename T_a,
-          typename = require_all_valid_expressions_and_none_scalar_t<T_a>>
-inline auto inv_logit(T_a&& a) {  // NOLINT
+template <typename T_x,
+          typename = require_all_valid_expressions_and_none_scalar_t<T_x>>
+inline auto inv_logit(T_x&& x) {  // NOLINT
   return select(
-      (a < 0.0),
-      select((a < LOG_EPSILON), exp(a), elewise_division(exp(a), 1.0 + exp(a))),
-      elewise_division(1.0, 1.0 + exp(-a)));
+      (x < 0.0),
+      select((x < LOG_EPSILON), exp(x), elewise_division(exp(x), 1.0 + exp(x))),
+      elewise_division(1.0, 1.0 + exp(-x)));
 }
 }  // namespace math
 }  // namespace stan

@@ -10,6 +10,8 @@ namespace math {
 /** \ingroup opencl
  * Computes the sum on kernel generator expressions.
  *
+ * @tparam T_a type of input kernel generator expression a
+ * @tparam T_b type of input kernel generator expression b
  * @param a first expression
  * @param b second expression
  * @return the sum of the first and second expression

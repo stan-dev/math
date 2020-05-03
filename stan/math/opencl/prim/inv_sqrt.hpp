@@ -12,6 +12,7 @@ namespace math {
  * Return the elementwise `1 / sqrt(x)` of the specified kernel generator
  * expression.
  *
+ * @tparam T_x type of input kernel generator expression x
  * @param x input kernel generator expression
  * @return inverse square root of each value in x.
  */

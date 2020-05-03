@@ -43,7 +43,8 @@ namespace math {
    \f[
    \frac{\partial \, \mbox{cloglog}^{-1}(y)}{\partial y} = \exp(y-\exp(y))
    \f]
- *
+ * 
+ * @tparam T_x type of input kernel generator expression x
  * @param x Argument.
  * @return Inverse complementary log-log of the argument.
  */

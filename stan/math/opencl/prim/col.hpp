@@ -16,7 +16,7 @@ namespace math {
  * assigning the resulting expression to a matrix_cl representing
  * a column vector.
  *
- * @tparam T type of the matrix
+ * @tparam T_a type of input kernel generator expression a
  * @param a input kernel generator expression.
  * @param j Column index (count from 1).
  * @return Specified column of the matrix.
