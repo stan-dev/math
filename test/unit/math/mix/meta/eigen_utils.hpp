@@ -4,6 +4,7 @@
 #include <test/unit/pretty_print_types.hpp>
 #include <Eigen/Sparse>
 #include <gtest/gtest.h>
+#include <vector>
 
 namespace stan {
 namespace math {
