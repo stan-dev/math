@@ -77,33 +77,26 @@ void test_eigen_dense_hierarchy() {
   using Eigen::MatrixBase;
   std::remove_reference_t<EigenType> A;
   std::remove_reference_t<EigenType> B;
-  // scalars
-  EXPECT_FALSE((Checker<bool>::value));
-  EXPECT_FALSE((Checker<double>::value));
-  EXPECT_FALSE((Checker<int>::value));
 
   //  Dense Matrix Hierarchy
   EXPECT_TRUE((Base_v == Checker<EigenBase<EigenType>>::value))
-      << "Failed For Base: " << type_name<decltype(A)>()
-      << "\nChecking Type: " << type_name<EigenBase<EigenType>>();
-  EXPECT_TRUE((Base_v == Checker<EigenBase<EigenType>>::value))
-      << "Failed For Base: " << type_name<decltype(A)>()
+      << "Failed For Base: " << type_name<EigenType>()
       << "\nChecking Type: " << type_name<EigenBase<EigenType>>();
   EXPECT_TRUE((Base_v == Checker<EigenBase<decltype(A * B)>>::value))
-      << "Failed For Base: " << type_name<decltype(A)>()
+      << "Failed For Base: " << type_name<EigenType>()
       << "\nChecking Type: " << type_name<EigenBase<decltype(A * B)>>();
   EXPECT_TRUE((Dense_v == Checker<DenseBase<decltype(A * B)>>::value))
-      << "Failed For Base: " << type_name<decltype(A)>()
+      << "Failed For Base: " << type_name<EigenType>()
       << "\nChecking Type: " << type_name<DenseBase<decltype(A * B)>>();
   EXPECT_TRUE(
       (Matrix_v == Checker<MatrixBase<decltype(A * B + A.transpose())>>::value))
-      << "Failed For Base: " << type_name<decltype(A)>()
+      << "Failed For Base: " << type_name<EigenType>()
       << "\nChecking Type: " << type_name<decltype(A * B + A.transpose())>();
   EXPECT_TRUE((Array_v == Checker<ArrayBase<decltype(A + B)>>::value))
-      << "Failed For Base: " << type_name<decltype(A)>()
+      << "Failed For Base: " << type_name<EigenType>()
       << "\nChecking Type: " << type_name<ArrayBase<decltype(A + B)>>();
   EXPECT_TRUE((Map_v == Checker<Map<EigenType>>::value))
-      << "Failed For Base: " << type_name<decltype(A)>()
+      << "Failed For Base: " << type_name<EigenType>()
       << "\nChecking Type: " << type_name<Map<EigenType>>();
 }
 
@@ -129,25 +122,25 @@ void test_eigen_dense_exprs() {
 
   //  Dense Ops
   EXPECT_TRUE((Base_v == Checker<decltype(A)&>::value))
-      << "Failed For Base: " << type_name<decltype(A)&>()
-      << "\nChecking Type: " << type_name<decltype(A)>();
+      << "Failed For Base: " << type_name<EigenType&>()
+      << "\nChecking Type: " << type_name<EigenType>();
   EXPECT_TRUE((Base_v == Checker<decltype(A)&&>::value))
-      << "Failed For Base: " << type_name<decltype(A)&&>()
-      << "\nChecking Type: " << type_name<decltype(A)>();
-  EXPECT_TRUE((Base_v == Checker<const decltype(A)&>::value))
-      << "Failed For Base: " << type_name<const decltype(A)&>()
-      << "\nChecking Type: " << type_name<decltype(A)>();
-  EXPECT_TRUE((Base_v == Checker<decltype(A)>::value))
-      << "Failed For Base: " << type_name<decltype(A)>()
-      << "\nChecking Type: " << type_name<decltype(A)>();
+      << "Failed For Base: " << type_name<EigenType&&>()
+      << "\nChecking Type: " << type_name<EigenType>();
+  EXPECT_TRUE((Base_v == Checker<const EigenType&>::value))
+      << "Failed For Base: " << type_name<const EigenType&>()
+      << "\nChecking Type: " << type_name<EigenType>();
+  EXPECT_TRUE((Base_v == Checker<EigenType>::value))
+      << "Failed For Base: " << type_name<EigenType>()
+      << "\nChecking Type: " << type_name<EigenType>();
   EXPECT_TRUE((Expr_v == Checker<decltype(A * B + A.transpose())>::value))
-      << "Failed For Base: " << type_name<decltype(A)>()
+      << "Failed For Base: " << type_name<EigenType>()
       << "\nChecking Type: " << type_name<decltype(A * B + A.transpose())>();
   EXPECT_TRUE((Segment_v == Checker<decltype(A.segment(0, 1))>::value))
-      << "Failed For Base: " << type_name<decltype(A)>()
+      << "Failed For Base: " << type_name<EigenType>()
       << "\nChecking Type: " << type_name<decltype(A.segment(0, 1))>();
   EXPECT_TRUE((Block_v == Checker<decltype(A.block(0, 0, 1, 1))>::value))
-      << "Failed For Base: " << type_name<decltype(A)>()
+      << "Failed For Base: " << type_name<EigenType>()
       << "\nChecking Type: " << type_name<decltype(A.block(0, 0, 1, 1))>();
 }
 
@@ -220,6 +213,12 @@ template <bool Base_v, bool Dense_v, bool Matrix_v, bool Array_v, bool Map_v,
 void all_eigen_dense() {
   using stan::math::fvar;
   using stan::math::var;
+
+  // scalars
+  EXPECT_FALSE((Checker<bool>::value));
+  EXPECT_FALSE((Checker<double>::value));
+  EXPECT_FALSE((Checker<int>::value));
+  EXPECT_FALSE((Checker<std::vector<double>>::value));
 
   test_eigen_dense_hierarchy<Base_v, Dense_v, Matrix_v, Array_v, Map_v, Checker,
                              EigenType<double, EigenDims...>>();
