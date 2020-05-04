@@ -9,7 +9,7 @@ using Eigen::Dynamic;
 using Eigen::Matrix;
 
 typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
-
+namespace ordered_logistic_test {
 vector_d get_simplex(double lambda, const vector_d& c) {
   using stan::math::inv_logit;
   int K = c.size() + 1;
@@ -20,6 +20,7 @@ vector_d get_simplex(double lambda, const vector_d& c) {
   // - 0.0
   theta(K - 1) = inv_logit(lambda - c(K - 2));
   return theta;
+}
 }
 
 TEST(ProbDistributions, ordered_logistic_vals) {
@@ -39,7 +40,7 @@ TEST(ProbDistributions, ordered_logistic_vals) {
   Matrix<double, Dynamic, 1> lambda(K);
   lambda << 1.1, 1.1, 1.1, 1.1, 1.1;
 
-  vector_d theta = get_simplex(lambda[0], c);
+  vector_d theta = ordered_logistic_test::get_simplex(lambda[0], c);
 
   double sum = 0.0;
   double log_sum = 0.0;
@@ -78,7 +79,7 @@ TEST(ProbDistributions, ordered_logistic_vals_2) {
   Matrix<double, Dynamic, 1> lambda(K);
   lambda << -0.9, -0.9, -0.9;
 
-  vector_d theta = get_simplex(lambda[0], c);
+  vector_d theta = ordered_logistic_test::get_simplex(lambda[0], c);
 
   double sum = 0.0;
   double log_sum = 0.0;
@@ -176,8 +177,6 @@ TEST(ProbDistributions, ordered_logistic) {
   EXPECT_THROW(ordered_logistic_log(y, lambda, c_small_vec),
                std::invalid_argument);
 }
-
-void expect_nan(double x) { EXPECT_TRUE(std::isnan(x)); }
 
 TEST(ProbDistributionOrderedLogistic, error_check) {
   boost::random::mt19937 rng;

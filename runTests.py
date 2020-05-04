@@ -31,17 +31,17 @@ allowed_paths_with_jumbo = [
 
 jumbo_folders = [
     "test/unit/math/prim/core",
-    "test/unit/math/prim/err",
+    # "test/unit/math/prim/err",
     "test/unit/math/prim/fun",
-    "test/unit/math/prim/functor",
+    #"test/unit/math/prim/functor",
     "test/unit/math/prim/meta",
-    "test/unit/math/prim/prob",
-    "test/unit/math/rev/core",
-    "test/unit/math/rev/err",
+    #"test/unit/math/prim/prob",
+    #"test/unit/math/rev/core",
+    #"test/unit/math/rev/err",
     "test/unit/math/rev/fun",
-    "test/unit/math/rev/functor",
+    #"test/unit/math/rev/functor",
     "test/unit/math/rev/meta",
-    "test/unit/math/rev/prob",
+    #"test/unit/math/rev/prob",
     "test/unit/math/fwd/core",
     "test/unit/math/fwd/fun",
     "test/unit/math/fwd/functor",
@@ -49,8 +49,8 @@ jumbo_folders = [
     "test/unit/math/fwd/prob",
     "test/unit/math/mix/core",
     "test/unit/math/mix/fun",
-    "test/unit/math/mix/functor",
-    "test/unit/math/mix/meta",
+    #"test/unit/math/mix/functor",
+    #"test/unit/math/mix/meta",
     "test/unit/math/mix/prob"
 ]
 
