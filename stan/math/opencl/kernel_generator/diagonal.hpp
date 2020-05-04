@@ -9,6 +9,7 @@
 #include <stan/math/opencl/kernel_generator/operation_cl_lhs.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <algorithm>
 #include <set>
 #include <string>
 #include <tuple>
@@ -42,7 +43,7 @@ class diagonal_
    * Constructor
    * @param a expression
    */
-  diagonal_(T&& a) : base(std::forward<T>(a)) {}
+  explicit diagonal_(T&& a) : base(std::forward<T>(a)) {}
 
   /**
    * Creates a deep copy of this expression.
