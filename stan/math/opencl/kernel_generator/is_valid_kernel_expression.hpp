@@ -47,7 +47,7 @@ struct is_valid_kernel_expression
  * valid kernel generator expressions.
  */
 template <typename... Types>
-using require_all_valid_expressions_and_none_scalar_t
+using require_all_valid_kernel_expressions_and_none_scalar_t
     = require_all_t<is_valid_kernel_expression_and_not_scalar<Types>...>;
 
 /**
