@@ -203,8 +203,8 @@ class block_
    * @param rhs input expression
    */
   template <typename T_expression,
-            typename
-            = require_all_valid_kernel_expressions_and_none_scalar_t<T_expression>>
+            typename = require_all_valid_kernel_expressions_and_none_scalar_t<
+                T_expression>>
   const block_<T>& operator=(T_expression&& rhs) const {
     auto expression = as_operation_cl(std::forward<T_expression>(rhs));
     if (rows_ * cols_ == 0) {

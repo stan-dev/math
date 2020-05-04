@@ -107,7 +107,8 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
  * @return Matrix product of given arguments
  */
 template <typename T_a, typename T_b,
-          typename = require_all_valid_kernel_expressions_and_none_scalar_t<T_a, T_b>>
+          typename
+          = require_all_valid_kernel_expressions_and_none_scalar_t<T_a, T_b>>
 inline matrix_cl<double> operator*(const T_a& a, const T_b& b) {
   // no need for perfect forwarding as operations are evaluated
   return opencl::multiply(as_operation_cl(a).eval(), as_operation_cl(b).eval());

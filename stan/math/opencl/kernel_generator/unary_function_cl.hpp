@@ -103,8 +103,9 @@ class unary_function_cl : public operation_cl<Derived, Scal, T> {
     }                                                                         \
   };                                                                          \
                                                                               \
-  template <typename T, typename Cond                                         \
-                        = require_all_valid_kernel_expressions_and_none_scalar_t<T>> \
+  template <typename T,                                                       \
+            typename Cond                                                     \
+            = require_all_valid_kernel_expressions_and_none_scalar_t<T>>      \
   inline fun##_<as_operation_cl_t<T>> fun(T&& a) {                            \
     return fun##_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a))); \
   }                                                                           \
@@ -147,8 +148,9 @@ class unary_function_cl : public operation_cl<Derived, Scal, T> {
     }                                                                         \
   };                                                                          \
                                                                               \
-  template <typename T, typename Cond                                         \
-                        = require_all_valid_kernel_expressions_and_none_scalar_t<T>> \
+  template <typename T,                                                       \
+            typename Cond                                                     \
+            = require_all_valid_kernel_expressions_and_none_scalar_t<T>>      \
   inline fun##_<as_operation_cl_t<T>> fun(T&& a) {                            \
     return fun##_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a))); \
   }                                                                           \

@@ -18,7 +18,8 @@ namespace math {
  */
 
 template <typename T_x,
-          typename = require_all_valid_kernel_expressions_and_none_scalar_t<T_x>>
+          typename
+          = require_all_valid_kernel_expressions_and_none_scalar_t<T_x>>
 inline int rows(T_x&& x) {
   return x.rows();
 }
