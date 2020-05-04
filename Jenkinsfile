@@ -3,8 +3,7 @@
 import org.stan.Utils
 
 def runTests(String testPath) {
-    sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only"
-    try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" }
+    try { sh "./runTests.py -j${env.PARALLEL} --jumbo ${testPath}" }
     finally { junit 'test/**/*.xml' }
 }
 
