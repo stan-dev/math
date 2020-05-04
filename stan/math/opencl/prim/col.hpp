@@ -12,20 +12,19 @@ namespace math {
  * Return the specified column of the specified kernel generator
  * expression using start-at-1 indexing.
  *
- * This is equivalent to calling <code>m.col(i - 1)</code> and
- * assigning the resulting expression to a matrix_cl representing
- * a column vector.
+ * This is equivalent to calling <code>x.col(i - 1)</code> and
+ * assigning the resulting expression to a column vector.
  *
- * @tparam T_a type of input kernel generator expression a
- * @param a input kernel generator expression.
+ * @tparam T_x type of input kernel generator expression a
+ * @param x input kernel generator expression.
  * @param j Column index (count from 1).
  * @return Specified column of the matrix.
  * @throw std::invalid_argument if j is out of range.
  */
-template <typename T_a,
-          typename = require_all_valid_expressions_and_none_scalar_t<T_a>>
-inline auto col(T_a&& a, size_t j) {  // NOLINT
-  return block(std::forward<T_a>(a), 0, j - 1, a.rows(), 1);
+template <typename T_x,
+          typename = require_all_valid_expressions_and_none_scalar_t<T_x>>
+inline auto col(T_x&& x, size_t j) {  // NOLINT
+  return block(std::forward<T_x>(x), 0, j - 1, x.rows(), 1);
 }
 }  // namespace math
 }  // namespace stan

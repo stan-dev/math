@@ -8,15 +8,18 @@
 namespace stan {
 namespace math {
 /** \ingroup opencl
- * Returns the number of rows in matrix_cl.
- *
- * @tparam T type of elements in the input matrix
- * @param x the input matrix_cl
+ * Returns the number of rows in the specified kernel generator
+ * expression.
+ * 
+ * @tparam T_x type of input kernel generator expression x
+ * @param x input kernel generator expression.
  *
  * @return number of rows in x
  */
-template <typename T>
-inline int rows(const matrix_cl<T>& x) {
+
+template <typename T_x,
+          typename = require_all_valid_expressions_and_none_scalar_t<T_x>>
+inline int rows(T_x&& x) {
   return x.rows();
 }
 

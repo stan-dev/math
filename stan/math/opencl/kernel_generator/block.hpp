@@ -74,7 +74,7 @@ class block_
     }
     if ((a.rows() != base::dynamic && (start_row + rows) > a.rows())
         || (a.cols() != base::dynamic && (start_col + cols) > a.cols())) {
-      throw_domain_error("block", "block of \"a\"", " is out of bounds", "");
+      invalid_argument("block", "block of \"a\"", " is out of bounds", "");
     }
   }
 

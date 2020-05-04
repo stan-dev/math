@@ -73,6 +73,11 @@
  * \ingroup opencl
  * \defgroup opencl_kernels Custom OpenCL kernels
  */
+
+/**
+ * \ingroup opencl
+ * \defgroup prim_fun_opencl OpenCL overloads of stan/math/prim functions
+ */
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
