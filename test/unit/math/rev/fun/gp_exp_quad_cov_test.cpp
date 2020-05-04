@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+namespace gp_exp_quad_cov_test {
 template <typename T_x1, typename T_x2, typename T_sigma, typename T_l>
 std::string pull_msg(std::vector<T_x1> x1, std::vector<T_x2> x2, T_sigma sigma,
                      T_l l) {
@@ -30,6 +31,7 @@ std::string pull_msg(std::vector<T_x1> x1, T_sigma sigma, T_l l) {
     message = "Threw the wrong exception";
   }
   return message;
+}
 }
 
 TEST(RevMath, gp_exp_quad_cov_vvv) {
@@ -962,9 +964,9 @@ TEST(RevMath, gp_exp_quad_cov_domain_error_training) {
   var l_bad = -1;
 
   std::string msg1, msg2, msg3;
-  msg1 = pull_msg(x, sigma, l_bad);
-  msg2 = pull_msg(x, sigma_bad, l);
-  msg3 = pull_msg(x, sigma_bad, l_bad);
+  msg1 = gp_exp_quad_cov_test::pull_msg(x, sigma, l_bad);
+  msg2 = gp_exp_quad_cov_test::pull_msg(x, sigma_bad, l);
+  msg3 = gp_exp_quad_cov_test::pull_msg(x, sigma_bad, l_bad);
   EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
   EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
@@ -1024,9 +1026,9 @@ TEST(RevMath, gp_exp_quad_cov_nan_error_training) {
   var l_bad = std::numeric_limits<var>::quiet_NaN();
 
   std::string msg1, msg2, msg3;
-  msg1 = pull_msg(x, sigma, l_bad);
-  msg2 = pull_msg(x, sigma_bad, l);
-  msg3 = pull_msg(x, sigma_bad, l_bad);
+  msg1 = gp_exp_quad_cov_test::pull_msg(x, sigma, l_bad);
+  msg2 = gp_exp_quad_cov_test::pull_msg(x, sigma_bad, l);
+  msg3 = gp_exp_quad_cov_test::pull_msg(x, sigma_bad, l_bad);
   EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
   EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
@@ -1094,9 +1096,9 @@ TEST(RevMath, gp_exp_quad_cov_domain_error) {
   var l_bad = -1;
 
   std::string msg1, msg2, msg3;
-  msg1 = pull_msg(x1, x2, sigma, l_bad);
-  msg2 = pull_msg(x1, x2, sigma_bad, l);
-  msg3 = pull_msg(x1, x2, sigma_bad, l_bad);
+  msg1 = gp_exp_quad_cov_test::pull_msg(x1, x2, sigma, l_bad);
+  msg2 = gp_exp_quad_cov_test::pull_msg(x1, x2, sigma_bad, l);
+  msg3 = gp_exp_quad_cov_test::pull_msg(x1, x2, sigma_bad, l_bad);
   EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
   EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;

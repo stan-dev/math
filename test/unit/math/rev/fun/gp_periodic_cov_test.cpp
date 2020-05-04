@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+namespace gp_periodic_cov_test {
 template <typename T_x1, typename T_x2, typename T_sigma, typename T_l,
           typename T_p>
 std::string pull_msg(std::vector<T_x1> x1, std::vector<T_x2> x2, T_sigma sigma,
@@ -31,6 +32,7 @@ std::string pull_msg(std::vector<T_x1> x1, T_sigma sigma, T_l l, T_p p) {
     message = "Threw the wrong exception";
   }
   return message;
+}
 }
 
 TEST(RevMath, gp_periodic_cov_vvvv) {
@@ -2109,13 +2111,13 @@ TEST(RevMath, gp_periodic_cov_domain_error_training) {
   var p_bad = -1;
 
   std::string msg1, msg2, msg3, msg4, msg5, msg6, msg7;
-  msg1 = pull_msg(x, sigma, l, p_bad);
-  msg2 = pull_msg(x, sigma, l_bad, p);
-  msg3 = pull_msg(x, sigma_bad, l, p);
-  msg4 = pull_msg(x, sigma, l_bad, p_bad);
-  msg5 = pull_msg(x, sigma_bad, l, p_bad);
-  msg6 = pull_msg(x, sigma_bad, l_bad, p);
-  msg7 = pull_msg(x, sigma_bad, l_bad, p_bad);
+  msg1 = gp_periodic_cov_test::pull_msg(x, sigma, l, p_bad);
+  msg2 = gp_periodic_cov_test::pull_msg(x, sigma, l_bad, p);
+  msg3 = gp_periodic_cov_test::pull_msg(x, sigma_bad, l, p);
+  msg4 = gp_periodic_cov_test::pull_msg(x, sigma, l_bad, p_bad);
+  msg5 = gp_periodic_cov_test::pull_msg(x, sigma_bad, l, p_bad);
+  msg6 = gp_periodic_cov_test::pull_msg(x, sigma_bad, l_bad, p);
+  msg7 = gp_periodic_cov_test::pull_msg(x, sigma_bad, l_bad, p_bad);
   EXPECT_TRUE(std::string::npos != msg1.find(" period")) << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" length-scale")) << msg2;
   EXPECT_TRUE(std::string::npos != msg3.find(" signal standard deviation"))
@@ -2211,13 +2213,13 @@ TEST(RevMath, gp_periodic_cov_nan_error_training) {
   var p_bad = std::numeric_limits<var>::quiet_NaN();
 
   std::string msg1, msg2, msg3, msg4, msg5, msg6, msg7;
-  msg1 = pull_msg(x, sigma, l, p_bad);
-  msg2 = pull_msg(x, sigma, l_bad, p);
-  msg3 = pull_msg(x, sigma_bad, l, p);
-  msg4 = pull_msg(x, sigma, l_bad, p_bad);
-  msg5 = pull_msg(x, sigma_bad, l, p_bad);
-  msg6 = pull_msg(x, sigma_bad, l_bad, p);
-  msg7 = pull_msg(x, sigma_bad, l_bad, p_bad);
+  msg1 = gp_periodic_cov_test::pull_msg(x, sigma, l, p_bad);
+  msg2 = gp_periodic_cov_test::pull_msg(x, sigma, l_bad, p);
+  msg3 = gp_periodic_cov_test::pull_msg(x, sigma_bad, l, p);
+  msg4 = gp_periodic_cov_test::pull_msg(x, sigma, l_bad, p_bad);
+  msg5 = gp_periodic_cov_test::pull_msg(x, sigma_bad, l, p_bad);
+  msg6 = gp_periodic_cov_test::pull_msg(x, sigma_bad, l_bad, p);
+  msg7 = gp_periodic_cov_test::pull_msg(x, sigma_bad, l_bad, p_bad);
   EXPECT_TRUE(std::string::npos != msg1.find(" period")) << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" length-scale")) << msg2;
   EXPECT_TRUE(std::string::npos != msg3.find(" signal standard deviation"))
@@ -2346,13 +2348,13 @@ TEST(RevMath, gp_periodic_cov_domain_error) {
   var p_bad = -1;
 
   std::string msg1, msg2, msg3, msg4, msg5, msg6, msg7;
-  msg1 = pull_msg(x1, x2, sigma, l, p_bad);
-  msg2 = pull_msg(x1, x2, sigma, l_bad, p);
-  msg3 = pull_msg(x1, x2, sigma_bad, l, p);
-  msg4 = pull_msg(x1, x2, sigma, l_bad, p_bad);
-  msg5 = pull_msg(x1, x2, sigma_bad, l, p_bad);
-  msg6 = pull_msg(x1, x2, sigma_bad, l_bad, p);
-  msg7 = pull_msg(x1, x2, sigma_bad, l_bad, p_bad);
+  msg1 = gp_periodic_cov_test::pull_msg(x1, x2, sigma, l, p_bad);
+  msg2 = gp_periodic_cov_test::pull_msg(x1, x2, sigma, l_bad, p);
+  msg3 = gp_periodic_cov_test::pull_msg(x1, x2, sigma_bad, l, p);
+  msg4 = gp_periodic_cov_test::pull_msg(x1, x2, sigma, l_bad, p_bad);
+  msg5 = gp_periodic_cov_test::pull_msg(x1, x2, sigma_bad, l, p_bad);
+  msg6 = gp_periodic_cov_test::pull_msg(x1, x2, sigma_bad, l_bad, p);
+  msg7 = gp_periodic_cov_test::pull_msg(x1, x2, sigma_bad, l_bad, p_bad);
   EXPECT_TRUE(std::string::npos != msg1.find(" period")) << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" length-scale")) << msg2;
   EXPECT_TRUE(std::string::npos != msg3.find(" signal standard deviation"))
