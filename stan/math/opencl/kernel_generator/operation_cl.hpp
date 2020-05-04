@@ -78,7 +78,7 @@ class operation_cl : public operation_cl_base {
   mutable std::string var_name;  // name of the variable that holds result of
                                  // this operation in the kernel
 
-public:
+ public:
   /**
    * Casts the instance into its derived type.
    * @return \c this cast into derived type
