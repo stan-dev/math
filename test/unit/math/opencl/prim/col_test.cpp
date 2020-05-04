@@ -16,11 +16,18 @@ TEST(MathMatrixCL, col_value_check) {
 
   stan::math::matrix_cl<double> m1_cl(m1);
   stan::math::matrix_cl<double> v_cl = stan::math::col(m1_cl, 3);
+  stan::math::matrix_cl<double> v_expr_cl = stan::math::col(m1_cl + m1_cl, 3);
+
 
   stan::math::vector_d m3 = stan::math::from_matrix_cl(v_cl);
   EXPECT_EQ(3, m3(0, 0));
   EXPECT_EQ(6, m3(1, 0));
   EXPECT_EQ(9, m3(2, 0));
+
+  stan::math::vector_d m3_expr = stan::math::from_matrix_cl(v_expr_cl);
+  EXPECT_EQ(6, m3_expr(0, 0));
+  EXPECT_EQ(12, m3_expr(1, 0));
+  EXPECT_EQ(18, m3_expr(2, 0));
 }
 
 #endif

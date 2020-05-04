@@ -16,11 +16,17 @@ TEST(MathMatrixCL, row_value_check) {
 
   stan::math::matrix_cl<double> m1_cl(m1);
   stan::math::matrix_cl<double> v_cl = stan::math::row(m1_cl, 3);
+  stan::math::matrix_cl<double> v_expr_cl = stan::math::row(m1_cl + m1_cl, 3);
 
   auto m3 = stan::math::from_matrix_cl(v_cl);
   EXPECT_EQ(7, m3(0));
   EXPECT_EQ(8, m3(1));
   EXPECT_EQ(9, m3(2));
+
+  auto m3_expr = stan::math::from_matrix_cl(v_expr_cl);
+  EXPECT_EQ(14, m3_expr(0));
+  EXPECT_EQ(16, m3_expr(1));
+  EXPECT_EQ(18, m3_expr(2));
 }
 
 #endif
