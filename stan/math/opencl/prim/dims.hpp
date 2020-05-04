@@ -17,7 +17,8 @@ namespace math {
  * @return std::vector of the dimensions of the input kernel generato expression
  */
 template <typename T_x,
-          typename = require_all_valid_kernel_expressions_and_none_scalar_t<T_x>>
+          typename
+          = require_all_valid_kernel_expressions_and_none_scalar_t<T_x>>
 inline std::vector<int> dims(T_x&& x) {
   return {x.rows(), x.cols()};
 }
