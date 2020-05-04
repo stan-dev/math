@@ -32,7 +32,7 @@ std::string pull_msg(std::vector<T_x1> x1, T_sigma sigma, T_l l) {
   }
   return message;
 }
-}
+}  // namespace gp_exp_quad_cov_test
 
 TEST(RevMath, gp_exp_quad_cov_vvv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;

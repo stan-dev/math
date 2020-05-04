@@ -33,7 +33,7 @@ std::string pull_msg(std::vector<T_x1> x1, T_sigma sigma, T_l l, T_p p) {
   }
   return message;
 }
-}
+}  // namespace gp_periodic_cov_test
 
 TEST(RevMath, gp_periodic_cov_vvvv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
