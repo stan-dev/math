@@ -6,6 +6,7 @@
 #include <stan/math/prim/meta/is_stan_scalar.hpp>
 #include <stan/math/prim/meta/is_container.hpp>
 #include <stan/math/prim/meta/is_eigen_matrix_base.hpp>
+#include <stan/math/prim/meta/is_eigen_array.hpp>
 #include <stan/math/prim/meta/plain_type.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <vector>
