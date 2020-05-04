@@ -82,7 +82,7 @@ class diagonal_
    * @param[in, out] j column index
    */
   inline void modify_argument_indices(std::string& i, std::string& j) const {
-    j=i;
+    j = i;
   }
 
   /**
