@@ -126,7 +126,7 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
   };                                                                          \
                                                                               \
   template <typename T_a, typename T_b,                                       \
-            typename = require_all_kernel_expressions_t<T_a, T_b>>             \
+            typename = require_all_kernel_expressions_t<T_a, T_b>>            \
   inline class_name<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>           \
   function_name(T_a&& a, T_b&& b) { /* NOLINT */                              \
     return {as_operation_cl(std::forward<T_a>(a)),                            \
@@ -176,7 +176,7 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
   };                                                                          \
                                                                               \
   template <typename T_a, typename T_b,                                       \
-            typename = require_all_kernel_expressions_t<T_a, T_b>>             \
+            typename = require_all_kernel_expressions_t<T_a, T_b>>            \
   inline class_name<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>           \
   function_name(T_a&& a, T_b&& b) { /* NOLINT */                              \
     return {as_operation_cl(std::forward<T_a>(a)),                            \
