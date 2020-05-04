@@ -204,7 +204,7 @@ class block_
    */
   template <typename T_expression,
             typename
-            = require_all_valid_expressions_and_none_scalar_t<T_expression>>
+            = require_all_valid_kernel_expressions_and_none_scalar_t<T_expression>>
   const block_<T>& operator=(T_expression&& rhs) const {
     auto expression = as_operation_cl(std::forward<T_expression>(rhs));
     if (rows_ * cols_ == 0) {
@@ -248,7 +248,7 @@ class block_
  * @return Block of given expression
  */
 template <typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_valid_kernel_expressions_and_none_scalar_t<T>>
 inline auto block(T&& a, int start_row, int start_col, int rows, int cols) {
   auto&& a_operation = as_operation_cl(std::forward<T>(a)).deep_copy();
   return block_<std::remove_reference_t<decltype(a_operation)>>(

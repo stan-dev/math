@@ -106,7 +106,7 @@ class logical_negation_
  * @return logical negation of given expression
  */
 template <typename T,
-          require_all_valid_expressions_and_none_scalar_t<T>* = nullptr>
+          require_all_valid_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline logical_negation_<as_operation_cl_t<T>> operator!(T&& a) {
   return logical_negation_<as_operation_cl_t<T>>(
       as_operation_cl(std::forward<T>(a)));
@@ -159,7 +159,7 @@ class unary_minus_
  * @return unary minus of given expression
  */
 template <typename T,
-          require_all_valid_expressions_and_none_scalar_t<T>* = nullptr>
+          require_all_valid_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline unary_minus_<as_operation_cl_t<T>> operator-(T&& a) {
   return unary_minus_<as_operation_cl_t<T>>(
       as_operation_cl(std::forward<T>(a)));

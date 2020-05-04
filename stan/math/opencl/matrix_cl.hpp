@@ -463,7 +463,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @param expression expression
    */
   template <typename Expr,
-            require_all_valid_expressions_and_none_scalar_t<Expr>* = nullptr>
+            require_all_valid_kernel_expressions_and_none_scalar_t<Expr>* = nullptr>
   matrix_cl(const Expr& expression);  // NOLINT(runtime/explicit)
 
   /**
@@ -502,7 +502,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @param expression expression
    */
   template <typename Expr,
-            require_all_valid_expressions_and_none_scalar_t<Expr>* = nullptr>
+            require_all_valid_kernel_expressions_and_none_scalar_t<Expr>* = nullptr>
   matrix_cl<T>& operator=(const Expr& expression);
 
  private:

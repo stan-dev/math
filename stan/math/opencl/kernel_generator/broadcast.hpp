@@ -138,7 +138,7 @@ class broadcast_
  * @return broadcast expression
  */
 template <bool Colwise, bool Rowwise, typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_valid_kernel_expressions_and_none_scalar_t<T>>
 inline broadcast_<as_operation_cl_t<T>, Colwise, Rowwise> broadcast(T&& a) {
   auto&& a_operation = as_operation_cl(std::forward<T>(a)).deep_copy();
   return broadcast_<as_operation_cl_t<T>, Colwise, Rowwise>(
@@ -158,7 +158,7 @@ inline broadcast_<as_operation_cl_t<T>, Colwise, Rowwise> broadcast(T&& a) {
  * @return broadcast expression
  */
 template <typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_valid_kernel_expressions_and_none_scalar_t<T>>
 inline auto rowwise_broadcast(T&& a) {
   return broadcast<false, true>(std::forward<T>(a));
 }
@@ -176,7 +176,7 @@ inline auto rowwise_broadcast(T&& a) {
  * @return broadcast expression
  */
 template <typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_valid_kernel_expressions_and_none_scalar_t<T>>
 inline auto colwise_broadcast(T&& a) {
   return broadcast<true, false>(std::forward<T>(a));
 }

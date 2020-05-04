@@ -181,7 +181,7 @@ class colwise_sum_ : public colwise_reduction<colwise_sum_<T>, T, sum_op> {
  * @return sum
  */
 template <typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_valid_kernel_expressions_and_none_scalar_t<T>>
 inline auto colwise_sum(T&& a) {
   auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
   return colwise_sum_<std::remove_reference_t<decltype(arg_copy)>>(
@@ -229,7 +229,7 @@ class colwise_max_ : public colwise_reduction<
  * @return max
  */
 template <typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_valid_kernel_expressions_and_none_scalar_t<T>>
 inline auto colwise_max(T&& a) {
   auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
   return colwise_max_<std::remove_reference_t<decltype(arg_copy)>>(
@@ -277,7 +277,7 @@ class colwise_min_ : public colwise_reduction<
  * @return min
  */
 template <typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_valid_kernel_expressions_and_none_scalar_t<T>>
 inline auto colwise_min(T&& a) {
   auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
   return colwise_min_<std::remove_reference_t<decltype(arg_copy)>>(
