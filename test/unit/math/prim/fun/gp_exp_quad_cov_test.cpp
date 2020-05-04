@@ -4,7 +4,7 @@
 #include <limits>
 #include <string>
 #include <vector>
-
+namespace gp_exp_quad_cov_test{
 template <typename T_x1, typename T_x2, typename T_sigma, typename T_l>
 std::string pull_msg(std::vector<T_x1> x1, std::vector<T_x2> x2, T_sigma sigma,
                      T_l l) {
@@ -30,6 +30,7 @@ std::string pull_msg(std::vector<T_x1> x1, T_sigma sigma, T_l l) {
     message = "Threw the wrong exception";
   }
   return message;
+}
 }
 
 void set_tuning_opts_to_use_gpu() {
@@ -239,9 +240,9 @@ TEST(MathPrimMat, domain_error_training_sig_l_gp_cov_exp) {
   double l_bad = -1;
 
   std::string msg1, msg2, msg3;
-  msg1 = pull_msg(x, sigma, l_bad);
-  msg2 = pull_msg(x, sigma_bad, l);
-  msg3 = pull_msg(x, sigma_bad, l_bad);
+  msg1 = gp_exp_quad_cov_test::pull_msg(x, sigma, l_bad);
+  msg2 = gp_exp_quad_cov_test::pull_msg(x, sigma_bad, l);
+  msg3 = gp_exp_quad_cov_test::pull_msg(x, sigma_bad, l_bad);
   EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
   EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
@@ -301,9 +302,9 @@ TEST(MathPrimMat, nan_error_training_sig_l_gp_cov_exp) {
   double l_bad = std::numeric_limits<double>::quiet_NaN();
 
   std::string msg1, msg2, msg3;
-  msg1 = pull_msg(x, sigma, l_bad);
-  msg2 = pull_msg(x, sigma_bad, l);
-  msg3 = pull_msg(x, sigma_bad, l_bad);
+  msg1 = gp_exp_quad_cov_test::pull_msg(x, sigma, l_bad);
+  msg2 = gp_exp_quad_cov_test::pull_msg(x, sigma_bad, l);
+  msg3 = gp_exp_quad_cov_test::pull_msg(x, sigma_bad, l_bad);
   EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
   EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
@@ -371,9 +372,9 @@ TEST(MathPrimMat, domain_error_gp_exp_quad_cov2) {
   double l_bad = -1;
 
   std::string msg1, msg2, msg3;
-  msg1 = pull_msg(x1, x2, sigma, l_bad);
-  msg2 = pull_msg(x1, x2, sigma_bad, l);
-  msg3 = pull_msg(x1, x2, sigma_bad, l_bad);
+  msg1 = gp_exp_quad_cov_test::pull_msg(x1, x2, sigma, l_bad);
+  msg2 = gp_exp_quad_cov_test::pull_msg(x1, x2, sigma_bad, l);
+  msg3 = gp_exp_quad_cov_test::pull_msg(x1, x2, sigma_bad, l_bad);
   EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
   EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
@@ -459,9 +460,9 @@ TEST(MathPrimMat, nan_domain_error_gp_exp_quad_cov2) {
   double l_bad = std::numeric_limits<double>::quiet_NaN();
 
   std::string msg1, msg2, msg3;
-  msg1 = pull_msg(x1, x2, sigma, l_bad);
-  msg2 = pull_msg(x1, x2, sigma_bad, l);
-  msg3 = pull_msg(x1, x2, sigma_bad, l_bad);
+  msg1 = gp_exp_quad_cov_test::pull_msg(x1, x2, sigma, l_bad);
+  msg2 = gp_exp_quad_cov_test::pull_msg(x1, x2, sigma_bad, l);
+  msg3 = gp_exp_quad_cov_test::pull_msg(x1, x2, sigma_bad, l_bad);
   EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
   EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
@@ -596,7 +597,7 @@ TEST(MathPrimMat, dim_mismatch_vec_eigen_vec_gp_exp_quad_cov2) {
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_vec_2, sigma, l),
                std::invalid_argument);
 }
-
+namespace gp_exp_quad_cov_test{
 template <typename T_x1, typename T_x2, typename T_sigma, typename T_l>
 std::string pull_msg(std::vector<T_x1> x1, std::vector<T_x2> x2, T_sigma sigma,
                      std::vector<T_l> l) {
@@ -623,7 +624,7 @@ std::string pull_msg(std::vector<T_x1> x1, T_sigma sigma, std::vector<T_l> l) {
   }
   return message;
 }
-
+}
 TEST(MathPrimMat, vec_length_scale_eigen_gp_exp_quad_cov1) {
   set_tuning_opts_to_use_gpu();
   double sigma = 0.2;
@@ -745,9 +746,9 @@ TEST(MathPrimMat, domain_error_training_sig_vec_length_scale_gp_exp_quad_cov) {
   l[2] = -1;
 
   std::string msg1, msg2, msg3;
-  msg1 = pull_msg(x_2, sigma, l_bad);
-  msg2 = pull_msg(x_2, sigma_bad, l);
-  msg3 = pull_msg(x_2, sigma_bad, l_bad);
+  msg1 = gp_exp_quad_cov_test::pull_msg(x_2, sigma, l_bad);
+  msg2 = gp_exp_quad_cov_test::pull_msg(x_2, sigma_bad, l);
+  msg3 = gp_exp_quad_cov_test::pull_msg(x_2, sigma_bad, l_bad);
 
   EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
@@ -788,7 +789,7 @@ TEST(MathPrimMat, nan_error_training_sig_vec_length_scale_gp_exp_quad_cov) {
   l_bad[1] = std::numeric_limits<double>::quiet_NaN();
 
   std::string msg1, msg2, msg3;
-  msg1 = pull_msg(x_2, sigma, l_bad);
+  msg1 = gp_exp_quad_cov_test::pull_msg(x_2, sigma, l_bad);
   EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
 
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_2, sigma, l_bad),
@@ -840,13 +841,13 @@ TEST(MathPrimMat, nan_domain_error_gp_exp_quad_cov2_vec_length_scale) {
   }
 
   std::string msg1, msg2, msg3, msg4, msg5, msg6, msg7;
-  msg1 = pull_msg(x_vec_1, x_vec_2, sigma, l_bad0);
-  msg2 = pull_msg(x_vec_1, x_vec_2, sigma_bad, l_bad1);
-  msg3 = pull_msg(x_vec_1, x_vec_2, sigma_bad, l);
-  msg4 = pull_msg(x_vec_1, x_vec_2, sigma, l_bad1);
-  msg5 = pull_msg(x_vec_1, x_vec_2, sigma, l_bad2);
-  msg6 = pull_msg(x_vec_1, x_vec_2, sigma, l_bad3);
-  msg7 = pull_msg(x_vec_1, x_vec_2, sigma, l_bad4);
+  msg1 = gp_exp_quad_cov_test::pull_msg(x_vec_1, x_vec_2, sigma, l_bad0);
+  msg2 = gp_exp_quad_cov_test::pull_msg(x_vec_1, x_vec_2, sigma_bad, l_bad1);
+  msg3 = gp_exp_quad_cov_test::pull_msg(x_vec_1, x_vec_2, sigma_bad, l);
+  msg4 = gp_exp_quad_cov_test::pull_msg(x_vec_1, x_vec_2, sigma, l_bad1);
+  msg5 = gp_exp_quad_cov_test::pull_msg(x_vec_1, x_vec_2, sigma, l_bad2);
+  msg6 = gp_exp_quad_cov_test::pull_msg(x_vec_1, x_vec_2, sigma, l_bad3);
+  msg7 = gp_exp_quad_cov_test::pull_msg(x_vec_1, x_vec_2, sigma, l_bad4);
 
   EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;

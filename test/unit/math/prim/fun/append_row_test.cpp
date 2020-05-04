@@ -1,20 +1,9 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/math/prim/util.hpp>
 #include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
 #include <gtest/gtest.h>
 
 using stan::math::append_row;
-
-template <int R, int C>
-void correct_type_vector(const Eigen::Matrix<double, R, C>& x) {
-  EXPECT_EQ(Eigen::Dynamic, R);
-  EXPECT_EQ(1, C);
-}
-
-template <int R, int C>
-void correct_type_matrix(const Eigen::Matrix<double, R, C>& x) {
-  EXPECT_EQ(Eigen::Dynamic, R);
-  EXPECT_EQ(Eigen::Dynamic, C);
-}
 
 TEST(MathMatrixPrimMat, append_row) {
   using Eigen::Dynamic;

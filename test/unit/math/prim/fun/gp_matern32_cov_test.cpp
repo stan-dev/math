@@ -4,7 +4,7 @@
 #include <limits>
 #include <string>
 #include <vector>
-
+namespace gp_matern32_cov_test{
 template <typename T_x, typename T_s, typename T_l>
 std::string pull_msg(std::vector<T_x> x, T_s sigma, T_l l) {
   std::string message;
@@ -30,6 +30,7 @@ std::string pull_msg(std::vector<T_x1> x1, std::vector<T_x2> x2, T_s sigma,
     message = "Threw the wrong exception";
   }
   return message;
+}
 }
 
 TEST(MathPrimMat, vec_double_gp_matern32_cov1) {
@@ -231,70 +232,70 @@ TEST(MathPrimMat, domain_err_training_sig_l_gamma_gp_matern32_cov) {
   }
 
   std::string msg1, msg2, msg3, msg4;
-  msg1 = pull_msg(x, sigma, l_bad);
-  msg2 = pull_msg(x, sigma_bad, l_bad);
-  msg3 = pull_msg(x, sigma_bad, l_bad);
+  msg1 = gp_matern32_cov_test::pull_msg(x, sigma, l_bad);
+  msg2 = gp_matern32_cov_test::pull_msg(x, sigma_bad, l_bad);
+  msg3 = gp_matern32_cov_test::pull_msg(x, sigma_bad, l_bad);
   EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
   EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
-  msg1 = pull_msg(x, sigma, l_bad);
-  msg3 = pull_msg(x, sigma_bad, l_bad);
+  msg1 = gp_matern32_cov_test::pull_msg(x, sigma, l_bad);
+  msg3 = gp_matern32_cov_test::pull_msg(x, sigma_bad, l_bad);
   EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
   EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
-  msg1 = pull_msg(x_2, sigma, l_bad);
-  msg2 = pull_msg(x_2, sigma_bad, l);
-  msg3 = pull_msg(x_2, sigma_bad, l_bad);
-  EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
-  EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
-  EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
-
-  msg1 = pull_msg(x_2, sigma, l_bad);
-  msg2 = pull_msg(x_2, sigma_bad, l_vec);
-  msg3 = pull_msg(x_2, sigma_bad, l_bad);
+  msg1 = gp_matern32_cov_test::pull_msg(x_2, sigma, l_bad);
+  msg2 = gp_matern32_cov_test::pull_msg(x_2, sigma_bad, l);
+  msg3 = gp_matern32_cov_test::pull_msg(x_2, sigma_bad, l_bad);
   EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
   EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
-  msg1 = pull_msg(x_2, sigma, l_vec_bad);
-  msg2 = pull_msg(x_2, sigma_bad, l_vec_bad);
-  msg3 = pull_msg(x_2, sigma_bad, l_vec);
+  msg1 = gp_matern32_cov_test::pull_msg(x_2, sigma, l_bad);
+  msg2 = gp_matern32_cov_test::pull_msg(x_2, sigma_bad, l_vec);
+  msg3 = gp_matern32_cov_test::pull_msg(x_2, sigma_bad, l_bad);
   EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
   EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
-  msg1 = pull_msg(x_2, x_3, sigma, l_bad);
-  msg2 = pull_msg(x_2, x_3, sigma_bad, l);
-  msg3 = pull_msg(x_2, x_3, sigma_bad, l_bad);
+  msg1 = gp_matern32_cov_test::pull_msg(x_2, sigma, l_vec_bad);
+  msg2 = gp_matern32_cov_test::pull_msg(x_2, sigma_bad, l_vec_bad);
+  msg3 = gp_matern32_cov_test::pull_msg(x_2, sigma_bad, l_vec);
   EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
   EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
-  msg1 = pull_msg(x_2, x_3, sigma, l_bad);
-  msg2 = pull_msg(x_2, x_3, sigma_bad, l_vec);
-  msg3 = pull_msg(x_2, x_3, sigma_bad, l_bad);
+  msg1 = gp_matern32_cov_test::pull_msg(x_2, x_3, sigma, l_bad);
+  msg2 = gp_matern32_cov_test::pull_msg(x_2, x_3, sigma_bad, l);
+  msg3 = gp_matern32_cov_test::pull_msg(x_2, x_3, sigma_bad, l_bad);
   EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
   EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
-  msg1 = pull_msg(x_2, x_3, sigma, l_vec_bad);
-  msg2 = pull_msg(x_2, x_3, sigma_bad, l_vec_bad);
-  msg3 = pull_msg(x_2, x_3, sigma_bad, l_vec);
+  msg1 = gp_matern32_cov_test::pull_msg(x_2, x_3, sigma, l_bad);
+  msg2 = gp_matern32_cov_test::pull_msg(x_2, x_3, sigma_bad, l_vec);
+  msg3 = gp_matern32_cov_test::pull_msg(x_2, x_3, sigma_bad, l_bad);
   EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
   EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
-  msg1 = pull_msg(x_3, x_3, sigma, l_vec_bad);
-  msg2 = pull_msg(x_3, x_3, sigma_bad, l_vec_bad);
-  msg3 = pull_msg(x_3, x_3, sigma_bad, l_vec);
+  msg1 = gp_matern32_cov_test::pull_msg(x_2, x_3, sigma, l_vec_bad);
+  msg2 = gp_matern32_cov_test::pull_msg(x_2, x_3, sigma_bad, l_vec_bad);
+  msg3 = gp_matern32_cov_test::pull_msg(x_2, x_3, sigma_bad, l_vec);
   EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
   EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 
-  msg1 = pull_msg(x_2, x_2, sigma, l_vec_bad);
-  msg2 = pull_msg(x_2, x_2, sigma_bad, l_vec_bad);
-  msg3 = pull_msg(x_2, x_2, sigma_bad, l_vec);
+  msg1 = gp_matern32_cov_test::pull_msg(x_3, x_3, sigma, l_vec_bad);
+  msg2 = gp_matern32_cov_test::pull_msg(x_3, x_3, sigma_bad, l_vec_bad);
+  msg3 = gp_matern32_cov_test::pull_msg(x_3, x_3, sigma_bad, l_vec);
+  EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
+  EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
+  EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
+
+  msg1 = gp_matern32_cov_test::pull_msg(x_2, x_2, sigma, l_vec_bad);
+  msg2 = gp_matern32_cov_test::pull_msg(x_2, x_2, sigma_bad, l_vec_bad);
+  msg3 = gp_matern32_cov_test::pull_msg(x_2, x_2, sigma_bad, l_vec);
   EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
   EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
@@ -342,9 +343,9 @@ TEST(MathPrimMat, nan_error_training_sig_l_gamma_gp_matern32_cov) {
   double l_bad = std::numeric_limits<double>::quiet_NaN();
 
   std::string msg1, msg2, msg3, msg4;
-  msg1 = pull_msg(x, sigma, l_bad);
-  msg2 = pull_msg(x, sigma_bad, l);
-  msg3 = pull_msg(x, sigma_bad, l_bad);
+  msg1 = gp_matern32_cov_test::pull_msg(x, sigma, l_bad);
+  msg2 = gp_matern32_cov_test::pull_msg(x, sigma_bad, l);
+  msg3 = gp_matern32_cov_test::pull_msg(x, sigma_bad, l_bad);
   EXPECT_TRUE(std::string::npos != msg1.find(" length scale")) << msg1;
   EXPECT_TRUE(std::string::npos != msg2.find(" magnitude")) << msg2;
   EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;

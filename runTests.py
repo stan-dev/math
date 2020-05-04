@@ -248,8 +248,6 @@ def main():
         jumboFiles = generateJumboTests(inputs.tests)
     
     tests = findTests(inputs.tests, inputs.f, inputs.do_jumbo)
-    print(tests)
-    print(len(tests))
     if not tests:
         stopErr("No matching tests found.", -1)
     if inputs.debug:
