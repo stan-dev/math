@@ -4,7 +4,7 @@
 #include <limits>
 #include <string>
 #include <vector>
-namespace gp_exp_quad_cov_test{
+namespace gp_exp_quad_cov_test {
 template <typename T_x1, typename T_x2, typename T_sigma, typename T_l>
 std::string pull_msg(std::vector<T_x1> x1, std::vector<T_x2> x2, T_sigma sigma,
                      T_l l) {
@@ -31,7 +31,7 @@ std::string pull_msg(std::vector<T_x1> x1, T_sigma sigma, T_l l) {
   }
   return message;
 }
-}
+}  // namespace gp_exp_quad_cov_test
 
 void set_tuning_opts_to_use_gpu() {
 #ifdef STAN_OPENCL
@@ -597,7 +597,7 @@ TEST(MathPrimMat, dim_mismatch_vec_eigen_vec_gp_exp_quad_cov2) {
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_1, x_vec_2, sigma, l),
                std::invalid_argument);
 }
-namespace gp_exp_quad_cov_test{
+namespace gp_exp_quad_cov_test {
 template <typename T_x1, typename T_x2, typename T_sigma, typename T_l>
 std::string pull_msg(std::vector<T_x1> x1, std::vector<T_x2> x2, T_sigma sigma,
                      std::vector<T_l> l) {
@@ -624,7 +624,7 @@ std::string pull_msg(std::vector<T_x1> x1, T_sigma sigma, std::vector<T_l> l) {
   }
   return message;
 }
-}
+}  // namespace gp_exp_quad_cov_test
 TEST(MathPrimMat, vec_length_scale_eigen_gp_exp_quad_cov1) {
   set_tuning_opts_to_use_gpu();
   double sigma = 0.2;

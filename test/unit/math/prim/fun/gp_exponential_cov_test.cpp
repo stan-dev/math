@@ -32,7 +32,7 @@ std::string pull_msg(std::vector<T_x1> x1, std::vector<T_x2> x2, T_s sigma,
   }
   return message;
 }
-}
+}  // namespace gp_exponential_cov_test
 
 TEST(MathPrimMat, vec_double_gp_exponential_cov1) {
   double sigma = 0.2;

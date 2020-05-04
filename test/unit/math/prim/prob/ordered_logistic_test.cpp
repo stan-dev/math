@@ -21,7 +21,7 @@ vector_d get_simplex(double lambda, const vector_d& c) {
   theta(K - 1) = inv_logit(lambda - c(K - 2));
   return theta;
 }
-}
+}  // namespace ordered_logistic_test
 
 TEST(ProbDistributions, ordered_logistic_vals) {
   using Eigen::Dynamic;

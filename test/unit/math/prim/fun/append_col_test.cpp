@@ -5,8 +5,6 @@
 
 using stan::math::append_col;
 
-
-
 TEST(MathMatrixPrimMat, append_col) {
   using Eigen::Dynamic;
   using Eigen::Matrix;

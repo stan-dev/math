@@ -4,7 +4,7 @@
 #include <limits>
 #include <string>
 #include <vector>
-namespace gp_matern32_cov_test{
+namespace gp_matern32_cov_test {
 template <typename T_x, typename T_s, typename T_l>
 std::string pull_msg(std::vector<T_x> x, T_s sigma, T_l l) {
   std::string message;
@@ -31,7 +31,7 @@ std::string pull_msg(std::vector<T_x1> x1, std::vector<T_x2> x2, T_s sigma,
   }
   return message;
 }
-}
+}  // namespace gp_matern32_cov_test
 
 TEST(MathPrimMat, vec_double_gp_matern32_cov1) {
   double sigma = 0.2;

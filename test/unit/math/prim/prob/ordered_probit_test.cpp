@@ -19,7 +19,7 @@ vector_d get_simplex(double lambda, const vector_d& c) {
   theta(K - 1) = Phi(lambda - c(K - 2));
   return theta;
 }
-}
+}  // namespace ordered_probit_test
 
 TEST(ProbDistributions, ordered_probit_vals) {
   using Eigen::Dynamic;
