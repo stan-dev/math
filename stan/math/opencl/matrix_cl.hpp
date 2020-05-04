@@ -10,7 +10,7 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/is_matrix_cl.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_valid_kernel_expression.hpp>
 #include <CL/cl2.hpp>
 #include <algorithm>
 #include <iostream>

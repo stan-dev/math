@@ -20,7 +20,7 @@ namespace math {
  *   dimensions dont match if none of tha arguments are a scalar.
  */
 template <typename T_a, typename T_b,
-          typename = require_all_valid_expressions_t<T_a, T_b>,
+          typename = require_all_kernel_expressions_t<T_a, T_b>,
           typename = require_any_not_arithmetic_t<T_a, T_b>>
 inline auto add(T_a&& a, T_b&& b) {  // NOLINT
   return std::forward<T_a>(a) + std::forward<T_b>(b);

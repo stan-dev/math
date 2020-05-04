@@ -4,7 +4,7 @@
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/kernel_generator/wrapper.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_valid_kernel_expression.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/calc_if.hpp>

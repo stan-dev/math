@@ -10,7 +10,7 @@
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/scalar.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_valid_kernel_expression.hpp>
 #include <stan/math/opencl/kernel_generator/common_return_scalar.hpp>
 #include <algorithm>
 #include <string>
@@ -126,7 +126,7 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
   };                                                                          \
                                                                               \
   template <typename T_a, typename T_b,                                       \
-            typename = require_all_valid_expressions_t<T_a, T_b>>             \
+            typename = require_all_kernel_expressions_t<T_a, T_b>>             \
   inline class_name<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>           \
   function_name(T_a&& a, T_b&& b) { /* NOLINT */                              \
     return {as_operation_cl(std::forward<T_a>(a)),                            \
@@ -176,7 +176,7 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
   };                                                                          \
                                                                               \
   template <typename T_a, typename T_b,                                       \
-            typename = require_all_valid_expressions_t<T_a, T_b>>             \
+            typename = require_all_kernel_expressions_t<T_a, T_b>>             \
   inline class_name<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>           \
   function_name(T_a&& a, T_b&& b) { /* NOLINT */                              \
     return {as_operation_cl(std::forward<T_a>(a)),                            \
@@ -245,7 +245,7 @@ ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
  * @return Multiplication of given arguments
  */
 template <typename T_a, typename T_b, typename = require_arithmetic_t<T_a>,
-          typename = require_all_valid_expressions_t<T_b>>
+          typename = require_all_kernel_expressions_t<T_b>>
 inline elewise_multiplication_<scalar_<T_a>, as_operation_cl_t<T_b>> operator*(
     T_a&& a, T_b&& b) {  // NOLINT
   return {as_operation_cl(std::forward<T_a>(a)),
@@ -261,7 +261,7 @@ inline elewise_multiplication_<scalar_<T_a>, as_operation_cl_t<T_b>> operator*(
  * @return Multiplication of given arguments
  */
 template <typename T_a, typename T_b,
-          typename = require_all_valid_expressions_t<T_a>,
+          typename = require_all_kernel_expressions_t<T_a>,
           typename = require_arithmetic_t<T_b>>
 inline elewise_multiplication_<as_operation_cl_t<T_a>, scalar_<T_b>> operator*(
     T_a&& a, const T_b b) {  // NOLINT
