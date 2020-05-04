@@ -18,6 +18,41 @@ import time
 winsfx = ".exe"
 testsfx = "_test.cpp"
 
+allowed_paths_with_jumbo = [
+    "test/unit/math/prim/",
+    "test/unit/math/rev/",
+    "test/unit/math/fwd/",
+    "test/unit/math/mix/",
+    "test/unit/math/rev/",
+    "test/unit/math/rev/",
+    "test/unit/math/",
+    "test/unit/",
+]
+
+jumbo_folders = [
+    "test/unit/math/prim/core",
+    "test/unit/math/prim/err",
+    "test/unit/math/prim/fun",
+    "test/unit/math/prim/functor",
+    "test/unit/math/prim/meta",
+    "test/unit/math/prim/prob",
+    "test/unit/math/rev/core",
+    "test/unit/math/rev/err",
+    "test/unit/math/rev/fun",
+    "test/unit/math/rev/functor",
+    "test/unit/math/rev/meta",
+    "test/unit/math/rev/prob",
+    "test/unit/math/fwd/core",
+    "test/unit/math/fwd/fun",
+    "test/unit/math/fwd/functor",
+    "test/unit/math/fwd/meta",
+    "test/unit/math/fwd/prob",
+    "test/unit/math/mix/core",
+    "test/unit/math/mix/fun",
+    "test/unit/math/mix/functor",
+    "test/unit/math/mix/meta",
+    "test/unit/math/mix/prob"
+]
 
 def processCLIArgs():
     """
@@ -49,6 +84,8 @@ def processCLIArgs():
                         action="store_true", help="Don't run tests, just try to make them.")
     parser.add_argument("--run-all", dest="run_all", action="store_true",
                         help="Don't stop at the first test failure, run all of them.")
+    parser.add_argument("--jumbo-test", dest="do_jumbo", action="store_true",
+                        help="Build/run jumbo tests.")
 
     # And parse the command line against those rules
     return parser.parse_args()
@@ -97,6 +134,27 @@ def generateTests(j):
     else:
         doCommand('make -j%d generate-tests -s' % (j or 1))
 
+def generateJumboTests(paths):
+    jumbo_files_to_create = []
+    for p in paths:
+        if not p.endswith(testsfx) and not p.endswith("/"):
+            p = p + "/"
+        if p in allowed_paths_with_jumbo:
+            jumbo_files_to_create.extend(
+                [x for x in jumbo_folders if x.startswith(p)]
+            )
+        else:
+            stopErr('The --jumbo flag is only allowed with top level folders.', 10)
+    for jf in jumbo_files_to_create:
+        tests_in_subfolder = [x for x in os.listdir(jf) if x.endswith(testsfx)]
+        jumbo_file_path = jf + testsfx
+        f = open(jumbo_file_path, "w")
+        for t in sorted(tests_in_subfolder):
+            f.write("#include <"+jf+"/"+t+">\n")
+        f.close()
+
+def cleanupJumboTests(path):
+    return ""
 
 def makeTest(name, j):
     """Run the make command for a given single test."""
@@ -128,7 +186,7 @@ def runTest(name, run_all=False, mpi=False, j=1):
         command = "mpirun -np {} {}".format(j, command)
     doCommand(command, not run_all)
 
-def findTests(base_path, filter_names):
+def findTests(base_path, filter_names, do_jumbo = False):
     folders = filter(os.path.isdir, base_path)
     nonfolders = list(set(base_path) - set(folders))
     tests = nonfolders + [os.path.join(root, n)
@@ -160,12 +218,18 @@ def main():
     if any(['test/prob' in arg for arg in inputs.tests]):
         generateTests(inputs.j)
 
-    tests = findTests(inputs.tests, inputs.f)
+    if inputs.do_jumbo:
+        generateJumboTests(inputs.tests)
+        return
+    else:
+        #cleanup jumbo test files in case non-jumbo version was requested
+        cleanupJumboTests(inputs.tests)
+
+    tests = findTests(inputs.tests, inputs.f, inputs.do_jumbo)
     if not tests:
         stopErr("No matching tests found.", -1)
     if inputs.debug:
         print("Collected the following tests:\n", tests)
-
     # pass 1: make test executables
     for batch in batched(tests):
         if inputs.debug:
