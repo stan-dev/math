@@ -86,7 +86,8 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
             = require_all_valid_expressions_and_none_scalar_t<T_expression>>
   const operation_cl_lhs<Derived, Scalar, Args...>& operator=(
       T_expression&& rhs) const {
-    auto expression = as_operation_cl(std::forward<T_expression>(rhs)).derived();
+    auto expression
+        = as_operation_cl(std::forward<T_expression>(rhs)).derived();
     int this_rows = derived().rows();
     int this_cols = derived().cols();
     if (this_rows == expression.rows() && this_cols == expression.cols()
