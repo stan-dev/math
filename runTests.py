@@ -35,7 +35,7 @@ jumbo_folders = [
     "test/unit/math/prim/fun",
     #"test/unit/math/prim/functor",
     "test/unit/math/prim/meta",
-    #"test/unit/math/prim/prob",
+    "test/unit/math/prim/prob",
     #"test/unit/math/rev/core",
     #"test/unit/math/rev/err",
     "test/unit/math/rev/fun",
@@ -134,8 +134,14 @@ def generateTests(j):
     else:
         doCommand('make -j%d generate-tests -s' % (j or 1))
 
+def divide_chunks(l, n): 
+    # looping till length l 
+    for i in range(0, len(l), n):  
+        yield l[i:i + n] 
+
 def generateJumboTests(paths):
     jumbo_files_to_create = []
+    jumbo_files = []
     for p in paths:
         if not p.endswith(testsfx) and not p.endswith("/"):
             p = p + "/"
@@ -146,15 +152,23 @@ def generateJumboTests(paths):
         else:
             stopErr('The --jumbo flag is only allowed with top level folders.', 10)
     for jf in jumbo_files_to_create:
-        tests_in_subfolder = [x for x in os.listdir(jf) if x.endswith(testsfx)]
-        jumbo_file_path = jf + testsfx
-        f = open(jumbo_file_path, "w")
-        for t in sorted(tests_in_subfolder):
-            f.write("#include <"+jf+"/"+t+">\n")
-        f.close()
+        tests_in_subfolder = sorted([x for x in os.listdir(jf) if x.endswith(testsfx)])
+        chunked_tests = divide_chunks(tests_in_subfolder, 30)
+        i = 0
+        for tests in chunked_tests:
+            i = i + 1
+            jumbo_file_path = jf + "_" + str(i) + testsfx
+            jumbo_files.append(jumbo_file_path)
+            f = open(jumbo_file_path, "w")
+            for t in tests:
+                f.write("#include <"+jf+"/"+t+">\n")
+            f.close()
+    return jumbo_files
 
-def cleanupJumboTests(path):
-    return ""
+def cleanupJumboTests(paths):
+    for f in paths:
+        if os.path.exists(f):
+            os.remove(f)
 
 def makeTest(name, j):
     """Run the make command for a given single test."""
@@ -194,6 +208,18 @@ def findTests(base_path, filter_names, do_jumbo = False):
             for root, _, names in os.walk(f)
             for n in names
             if n.endswith(testsfx)]
+    if do_jumbo:
+        filtered_jumbo_tests = []
+        for t in tests:
+            add = True
+            for k in jumbo_folders:
+                k = k + "/"
+                if t.startswith(k):
+                    add = False
+                    break
+            if add:
+                filtered_jumbo_tests.append(t)
+        tests = filtered_jumbo_tests
     tests = map(mungeName, tests)
     tests = [test
             for test in tests
@@ -217,20 +243,18 @@ def main():
     # pass 0: generate all auto-generated tests
     if any(['test/prob' in arg for arg in inputs.tests]):
         generateTests(inputs.j)
-
+    jumboFiles = []
     if inputs.do_jumbo:
-        generateJumboTests(inputs.tests)
-        return
-    else:
-        #cleanup jumbo test files in case non-jumbo version was requested
-        cleanupJumboTests(inputs.tests)
-
+        jumboFiles = generateJumboTests(inputs.tests)
+    
     tests = findTests(inputs.tests, inputs.f, inputs.do_jumbo)
+    print(tests)
+    print(len(tests))
     if not tests:
         stopErr("No matching tests found.", -1)
     if inputs.debug:
         print("Collected the following tests:\n", tests)
-    # pass 1: make test executables
+    #pass 1: make test executables
     for batch in batched(tests):
         if inputs.debug:
             print("Test batch: ", batch)
@@ -243,6 +267,7 @@ def main():
                 print("run single test: %s" % testname)
             runTest(t, inputs.run_all, mpi = stan_mpi, j = inputs.j)
 
+    cleanupJumboTests(jumboFiles)
 
 if __name__ == "__main__":
     main()
