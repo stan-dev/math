@@ -271,7 +271,7 @@ print-compiler-flags:
 	@echo '  - SUNDIALS                    ' $(SUNDIALS)
 	@echo '  - TBB                         ' $(TBB)
 	@echo '  - GTEST                       ' $(GTEST)
-	@echo '  - STAN_THREADS                ' $(STAN_THREADS) 
+	@echo '  - STAN_THREADS                ' $(STAN_THREADS)
 	@echo '  - STAN_OPENCL                 ' $(STAN_OPENCL)
 	@echo '  - STAN_MPI                    ' $(STAN_MPI)
 	@echo '  Compiler flags (each can be overriden separately):'
