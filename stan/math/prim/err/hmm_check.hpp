@@ -12,25 +12,18 @@ namespace math {
  * latent state (lpdf, rng for latent states, and marginal probabilities
  * for latent sates).
  *
- * @tparam T_omega type of log likelihood matrix
+ * @tparam T_omega type of the log likelihood matrix
  * @tparam T_Gamma type of the transition matrix
- * @tparam T_rho type of the initial state vector.
- *
- * @param[in] log_omega log matrix of observational densities.
- *              The (i, j)th entry corresponds to the
- *              density of the ith observation, y_i,
- *              given x_i = j.
+ * @tparam T_rho type of the initial guess vector
+ * @param[in] log_omegas log matrix of observational densities.
  * @param[in] Gamma transition density between hidden states.
- *              The (i, j)th entry is the probability that x_n = j,
- *              given x_{n - 1} = i. The rows of Gamma are simplexes.
  * @param[in] rho initial state
  * @param[in] function the name of the function using the arguments.
- * @throw `std::domain_error` if Gamma is not square.
- * @throw `std::invalid_argument` if the size of rho is not
- * the number of rows of Gamma.
- * @throw `std::domain_error` if rho is not a simplex.
- * @throw `std::domain_error` if the rows of Gamma are
- * not a simplex.
+ * @throw `std::invalid_argument` if Gamma is not square, when we have
+ *         at least one transition, or if the size of rho is not the
+ *         number of rows of log_omegas.
+ * @throw `std::domain_error` if rho is not a simplex and of the rows
+ *         of Gamma are not a simplex (when there is at least one transition).
  */
 template <typename T_omega, typename T_Gamma, typename T_rho>
 inline void hmm_check(
@@ -41,10 +34,12 @@ inline void hmm_check(
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 
-  check_square(function, "Gamma", Gamma);
-  check_consistent_size(function, "Gamma", row(Gamma, 1), n_states);
   check_consistent_size(function, "rho", rho, n_states);
   check_simplex(function, "rho", rho);
+  check_square(function, "Gamma", Gamma);
+  check_nonzero_size(function, "Gamma", Gamma);
+  check_multiplicable(function, "Gamma", Gamma, "log_omegas",
+                      log_omegas);
   for (int i = 0; i < Gamma.rows(); ++i) {
     check_simplex(function, "Gamma[i, ]", row(Gamma, i + 1));
   }

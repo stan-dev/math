@@ -82,3 +82,46 @@ TEST(mathMixMatFun, multiply) {
   // exception cases
   // can't compile mismatched dimensions, so no tests
 }
+
+template <typename T>
+void instantiate_multiply() {
+  Eigen::Matrix<double, -1, -1> d(2, 2);
+  d << 1, 2, 3, 4;
+  Eigen::Matrix<T, -1, -1> v(2, 2);
+  v << 1, 2, 3, 4;
+  Eigen::Matrix<std::complex<double>, -1, -1> cd(2, 2);
+  cd << 1, 2, 3, 4;
+  Eigen::Matrix<std::complex<T>, -1, -1> cv(2, 2);
+  cv << 1, 2, 3, 4;
+
+  auto d_d = d * d;
+  auto d_v = d * v;
+  auto d_cd = d * cd;
+  auto d_cv = d * cv;
+
+  auto v_d = v * d;
+  auto v_v = v * v;
+  auto v_cd = v * cd;
+  auto v_cv = v * cv;
+
+  auto cd_d = cd * d;
+  auto cd_v = cd * v;
+  auto cd_cd = cd * cd;
+  auto cd_cv = cd * cv;
+
+  auto cv_d = cv * d;
+  auto cv_v = cv * v;
+  auto cv_cd = cv * cd;
+  auto cv_cv = cv * cv;
+}
+
+TEST(mathMix, multiplicationPatterns) {
+  using stan::math::fvar;
+  using stan::math::var;
+  instantiate_multiply<double>();
+  instantiate_multiply<var>();
+  instantiate_multiply<fvar<double>>();
+  instantiate_multiply<fvar<fvar<double>>>();
+  instantiate_multiply<fvar<var>>();
+  instantiate_multiply<fvar<fvar<var>>>();
+}

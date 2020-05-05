@@ -6,9 +6,9 @@
 #include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/cholesky_decompose.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
-#include <stan/math/prim/fun/cholesky_decompose.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 
 #ifdef STAN_OPENCL
