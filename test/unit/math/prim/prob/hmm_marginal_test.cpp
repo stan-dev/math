@@ -53,7 +53,7 @@ double state_lpdf(double y, double abs_mu, double sigma, int state) {
   return -0.5 * chi * chi - 0.5 * std::log(2 * M_PI) - std::log(sigma);
 }
 
-class hmm_marginal_lpdf_test : public ::testing::Test {
+class hmm_test : public ::testing::Test {
  protected:
   void SetUp() override {
     n_states_ = 2;
@@ -114,7 +114,7 @@ class hmm_marginal_lpdf_test : public ::testing::Test {
 // For evaluation of the density, the C++ code is benchmarked against
 // a forward algorithm written in R.
 // TODO(charlesm93): Add public repo link with R script.
-TEST_F(hmm_marginal_lpdf_test, ten_transitions) {
+TEST_F(hmm_test, ten_transitions) {
   using stan::math::hmm_marginal_lpdf;
 
   EXPECT_FLOAT_EQ(-18.37417, hmm_marginal_lpdf(log_omegas_, Gamma_, rho_));
@@ -130,7 +130,7 @@ TEST_F(hmm_marginal_lpdf_test, ten_transitions) {
                         rho_unconstrained_);
 }
 
-TEST_F(hmm_marginal_lpdf_test, zero_transitions) {
+TEST_F(hmm_test, zero_transitions) {
   using stan::math::hmm_marginal_lpdf;
 
   EXPECT_FLOAT_EQ(-1.520827, hmm_marginal_lpdf(log_omegas_zero_, Gamma_, rho_));
