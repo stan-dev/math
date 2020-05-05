@@ -2,9 +2,14 @@
 #define STAN_MATH_REV_CORE_OPERATOR_ADDITION_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/fill.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/rev/core/var.hpp>
+#include <stan/math/rev/meta/is_vari.hpp>
+#include <stan/math/rev/meta/is_var.hpp>
 #include <stan/math/rev/core/vv_vari.hpp>
 #include <stan/math/rev/core/vd_vari.hpp>
+#include <stan/math/rev/core/op_vari.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
 
@@ -12,29 +17,37 @@ namespace stan {
 namespace math {
 
 namespace internal {
-class add_vv_vari : public op_vv_vari {
+template <typename VariVal, typename Vari1, typename Vari2, typename = void>
+class add_vari {};
+
+
+template <typename VariVal, typename Vari1, typename Vari2>
+class add_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>> : public op_vari<VariVal, Vari1*, Vari2*> {
  public:
-  add_vv_vari(vari* avi, vari* bvi)
-      : op_vv_vari(avi->val_ + bvi->val_, avi, bvi) {}
+  add_vari(Vari1* avi, Vari2* bvi)
+      : op_vari<VariVal, Vari1*, Vari2*>(avi->val_ + bvi->val_, avi, bvi) {}
   void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bvi_->val_))) {
-      avi_->adj_ = NOT_A_NUMBER;
-      bvi_->adj_ = NOT_A_NUMBER;
+    if (likely(is_not_nan(std::get<0>(this->vi())->val_) &&
+                        is_not_nan(std::get<1>(this->vi())->val_))) {
+      std::get<0>(this->vi())->adj_ += this->adj_;
+      std::get<1>(this->vi())->adj_ += this->adj_;
     } else {
-      avi_->adj_ += adj_;
-      bvi_->adj_ += adj_;
+      fill(std::get<0>(this->vi())->adj_, NOT_A_NUMBER);
+      fill(std::get<1>(this->vi())->adj_, NOT_A_NUMBER);
     }
   }
 };
 
-class add_vd_vari : public op_vd_vari {
+template <typename VariVal, typename Vari, typename Arith>
+class add_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> : public op_vari<VariVal, Vari*, Arith> {
  public:
-  add_vd_vari(vari* avi, double b) : op_vd_vari(avi->val_ + b, avi, b) {}
+  add_vari(Vari* avi, Arith b) : op_vari<VariVal, Vari*, Arith>(avi->val_ + b, avi, b) {}
   void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bd_))) {
-      avi_->adj_ = NOT_A_NUMBER;
+    if (likely(is_not_nan(std::get<0>(this->vi())->val_) &&
+                            is_not_nan(std::get<1>(this->vi())))) {
+      std::get<0>(this->vi())->adj_ += this->adj_;
     } else {
-      avi_->adj_ += adj_;
+      fill(std::get<0>(this->vi())->adj_, NOT_A_NUMBER);
     }
   }
 };
@@ -78,8 +91,9 @@ class add_vd_vari : public op_vd_vari {
  * @param b Second variable operand.
  * @return Variable result of adding two variables.
  */
-inline var operator+(var a, var b) {
-  return {new internal::add_vv_vari(a.vi_, b.vi_)};
+template <typename T>
+inline var_type<T> operator+(const var_type<T>& a, const var_type<T>& b) {
+  return {new internal::add_vari<T, vari_type<T>, vari_type<T>>(a.vi_, b.vi_)};
 }
 
 /**
@@ -94,12 +108,12 @@ inline var operator+(var a, var b) {
  * @param b Second scalar operand.
  * @return Result of adding variable and scalar.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
-inline var operator+(var a, Arith b) {
+template <typename T, typename Arith, require_vt_arithmetic<Arith>...>
+inline var_type<T> operator+(const var_type<T>& a, Arith b) {
   if (b == 0.0) {
     return a;
   }
-  return {new internal::add_vd_vari(a.vi_, b)};
+  return {new internal::add_vari<T, vari_type<T>, Arith>(a.vi_, b)};
 }
 
 /**
@@ -114,12 +128,12 @@ inline var operator+(var a, Arith b) {
  * @param b Second variable operand.
  * @return Result of adding variable and scalar.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
-inline var operator+(Arith a, var b) {
+template <typename T, typename Arith, require_vt_arithmetic<Arith>...>
+inline var_type<T> operator+(Arith a, const var_type<T>& b) {
   if (a == 0.0) {
     return b;
   }
-  return {new internal::add_vd_vari(b.vi_, a)};  // by symmetry
+  return {new internal::add_vari<T, vari_type<T>, Arith>(b.vi_, a)};  // by symmetry
 }
 
 }  // namespace math

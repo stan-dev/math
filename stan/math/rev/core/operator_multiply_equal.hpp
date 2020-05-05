@@ -8,19 +8,19 @@
 namespace stan {
 namespace math {
 
-template <>
-inline var& var::operator*=(var b) {
-  vi_ = new internal::multiply_vv_vari(vi_, b.vi_);
+template <typename T>
+inline var_type<T>& var_type<T>::operator*=(const var_type<T>& b) {
+  vi_ = new internal::multiply_vari<T, vari_type<T>, vari_type<T>>(this->vi_, b.vi_);
   return *this;
 }
 
-template <>
-template <typename Arith, require_arithmetic_t<Arith>...>
-inline var& var::operator*=(Arith b) {
-  if (b == 1.0) {
+template <typename T>
+template <typename Arith, require_vt_arithmetic<Arith>...>
+inline var_type<T>& var_type<T>::operator*=(Arith b) {
+  if (internal::is_any_equal(b, 1.0)) {
     return *this;
   }
-  vi_ = new internal::multiply_vd_vari(vi_, b);
+  vi_ = new internal::multiply_vari<T, vari_type<T>, Arith>(vi_, b);
   return *this;
 }
 

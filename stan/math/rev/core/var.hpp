@@ -16,7 +16,8 @@ namespace stan {
 namespace math {
 
 // forward declare
-static void grad(vari_type<double>* vi);
+static void grad(vari_base* vi);
+
 
 /**
  * Independent (input) and dependent (output) variables for gradients.
@@ -80,159 +81,16 @@ class var_type {
    *
    * @param x Value of the variable.
    */
-  var_type(float x) : vi_(new vari_type<T>(static_cast<double>(x), false)) {}  // NOLINT
+  var_type(const T& x) : vi_(new vari_type<T>(x, false)) {}
 
-  /**
-   * Construct a variable from the specified arithmetic argument
-   * by constructing a new <code>vari</code> with the argument as
-   * a value and a zero adjoint.
-   *
-   * @param x Value of the variable.
-   */
-  var_type(double x) : vi_(new vari_type<T>(x, false)) {}  // NOLINT
-
-  /**
-   * Construct a variable from the specified arithmetic argument
-   * by constructing a new <code>vari</code> with the argument
-   * cast to <code>double</code>, and a zero adjoint.
-   *
-   * @param x Value of the variable.
-   */
-  var_type(long double x) : vi_(new vari_type<T>(x, false)) {}  // NOLINT
-
-  /**
-   * Construct a variable from the specified arithmetic argument
-   * by constructing a new <code>vari</code> with the argument
-   * cast to <code>double</code>, and a zero adjoint.
-   *
-   * @param x Value of the variable.
-   */
-  var_type(bool x) : vi_(new vari_type<T>(static_cast<double>(x), false)) {}  // NOLINT
-
-  /**
-   * Construct a variable from the specified arithmetic argument
-   * by constructing a new <code>vari</code> with the argument
-   * cast to <code>double</code>, and a zero adjoint.
-   *
-   * @param x Value of the variable.
-   */
-  var_type(char x) : vi_(new vari_type<T>(static_cast<double>(x), false)) {}  // NOLINT
-
-  /**
-   * Construct a variable from the specified arithmetic argument
-   * by constructing a new <code>vari</code> with the argument
-   * cast to <code>double</code>, and a zero adjoint.
-   *
-   * @param x Value of the variable.
-   */
-  var_type(short x) : vi_(new vari_type<T>(static_cast<double>(x), false)) {}  // NOLINT
-
-  /**
-   * Construct a variable from the specified arithmetic argument
-   * by constructing a new <code>vari</code> with the argument
-   * cast to <code>double</code>, and a zero adjoint.
-   *
-   * @param x Value of the variable.
-   */
-  var_type(int x) : vi_(new vari_type<T>(static_cast<double>(x), false)) {}  // NOLINT
-
-  /**
-   * Construct a variable from the specified arithmetic argument
-   * by constructing a new <code>vari</code> with the argument
-   * cast to <code>double</code>, and a zero adjoint.
-   *
-   * @param x Value of the variable.
-   */
-  var_type(long x) : vi_(new vari_type<T>(static_cast<double>(x), false)) {}  // NOLINT
-
-  /**
-   * Construct a variable from the specified arithmetic argument
-   * by constructing a new <code>vari</code> with the argument
-   * cast to <code>double</code>, and a zero adjoint.
-   *
-   * @param x Value of the variable.
-   */
-  var_type(unsigned char x)  // NOLINT(runtime/explicit)
-      : vi_(new vari_type<T>(static_cast<double>(x), false)) {}
-
-  /**
-   * Construct a variable from the specified arithmetic argument
-   * by constructing a new <code>vari</code> with the argument
-   * cast to <code>double</code>, and a zero adjoint.
-   *
-   * @param x Value of the variable.
-   */
-  // NOLINTNEXTLINE
-  var_type(unsigned short x) : vi_(new vari_type<T>(static_cast<double>(x), false)) {}
-
-  /**
-   * Construct a variable from the specified arithmetic argument
-   * by constructing a new <code>vari</code> with the argument
-   * cast to <code>double</code>, and a zero adjoint.
-   *
-   * @param x Value of the variable.
-   */
-  // NOLINTNEXTLINE
-  var_type(unsigned int x)
-      : vi_(new vari_type<T>(static_cast<double>(x), false)) {}  // NOLINT
-
-  /**
-   * Construct a variable from the specified arithmetic argument
-   * by constructing a new <code>vari</code> with the argument
-   * cast to <code>double</code>, and a zero adjoint.
-   *
-   * @param x Value of the variable.
-   */
-  // NOLINTNEXTLINE
-  var_type(unsigned long x)
-      : vi_(new vari_type<T>(static_cast<double>(x), false)) {}  // NOLINT
-
-#ifdef _WIN64
-  // these two ctors are for Win64 to enable 64-bit signed
-  // and unsigned integers, because long and unsigned long
-  // are still 32-bit
-
-  /**
-   * Construct a variable from the specified arithmetic argument
-   * by constructing a new <code>vari</code> with the argument
-   * cast to <code>double</code>, and a zero adjoint.
-   *
-   * @param x Value of the variable.
-   */
-  var_type(size_t x) : vi_(new vari_type<T>(static_cast<double>(x), false)) {}  // NOLINT
-
-  /**
-   * Construct a variable from the specified arithmetic argument
-   * by constructing a new <code>vari</code> with the argument
-   * cast to <code>double</code>, and a zero adjoint.
-   *
-   * @param x Value of the variable.
-   */
-  var_type(ptrdiff_t x) : vi_(new vari_type<T>(static_cast<double>(x), false)) {}  // NOLINT
-#endif
-
-#ifdef BOOST_MATH_USE_FLOAT128
-
-  // this ctor is for later GCCs that have the __float128
-  // type enabled, because it gets enabled by boost
-
-  /**
-   * Construct a variable from the specified arithmetic argument
-   * by constructing a new <code>vari</code> with the argument
-   * cast to <code>double</code>, and a zero adjoint.
-   *
-   * @param x Value of the variable.
-   */
-  var_type(__float128 x) : vi_(new vari_type<T>(static_cast<double>(x), false)) {}  // NOLINT
-
-#endif
-
+  template <typename TT, require_not_same_t<T, TT>* = nullptr, require_integral_t<TT>* = nullptr>
+  var_type(TT x) : vi_(new vari_type<T>(x, false)) {}
   /**
    * Return the value of this variable.
    *
    * @return The value of this variable.
    */
-  inline double val() const { return vi_->val_; }
+  inline auto& val() const { return vi_->val_; }
 
   /**
    * Return the derivative of the root expression with
@@ -242,7 +100,7 @@ class var_type {
    *
    * @return Adjoint for this variable.
    */
-  inline double adj() const { return vi_->adj_; }
+  inline auto& adj() const { return vi_->adj_; }
 
   /**
    * Compute the gradient of this (dependent) variable with respect to
@@ -256,7 +114,7 @@ class var_type {
    * @param g Gradient vector of partial derivatives of this
    * variable with respect to x.
    */
-  void grad(std::vector<var_type<T>>& x, std::vector<double>& g) {
+  void grad(std::vector<var_type<T>>& x, std::vector<T>& g) {
     stan::math::grad(vi_);
     g.resize(x.size());
     for (size_t i = 0; i < x.size(); ++i) {
@@ -324,7 +182,7 @@ class var_type {
    * @param b The scalar to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
-  template <typename Arith, require_arithmetic_t<Arith>...>
+  template <typename Arith, require_vt_arithmetic<Arith>...>
   inline var_type<T>& operator+=(Arith b);
 
   /**
@@ -365,7 +223,7 @@ class var_type {
    * @return The result of multiplying this variable by the
    * specified variable.
    */
-  inline var_type<T>& operator*=(var_type<T> b);
+  inline var_type<T>& operator*=(const var_type<T>& b);
 
   /**
    * The compound multiply/assignment operator for scalars (C++).
@@ -378,7 +236,7 @@ class var_type {
    * @return The result of multiplying this variable by the specified
    * variable.
    */
-  template <typename Arith, require_arithmetic_t<Arith>...>
+  template <typename Arith, require_vt_arithmetic<Arith>...>
   inline var_type<T>& operator*=(Arith b);
 
   /**

@@ -12,6 +12,43 @@ namespace math {
 template <typename T>
 class var_type;
 
+class vari_base {
+public:
+  virtual void chain() = 0;
+  virtual void init_dependent()  = 0;
+  virtual void set_zero_adjoint() = 0;
+  virtual ~vari_base() {
+    // this will never get called
+  }
+};
+
+namespace internal {
+  template <typename T, require_floating_point_t<T>* = nullptr>
+  auto fill_adj(T&& x) {
+    return T{0.0};
+  }
+  template <typename T, require_integral_t<T>* = nullptr>
+  auto fill_adj(T&& x) {
+    return double{0.0};
+  }
+  template <typename T, require_eigen_t<T>* = nullptr>
+  auto fill_adj(const T& x) {
+    return std::decay_t<T>::PlainObject::Zero(x.rows(), x.cols());
+  }
+
+  template <typename T, require_floating_point_t<T>* = nullptr>
+  auto init_dep(const T& x) {
+    return T{1.0};
+  }
+  template <typename T, require_integral_t<T>* = nullptr>
+  auto init_dep(const T& x) {
+    return double{1.0};
+  }
+  template <typename T, require_eigen_t<T>* = nullptr>
+  auto init_dep(const T& x) {
+    return std::decay_t<T>::PlainObject::Ones(x.rows(), x.cols());
+  }
+}
 /**
  * The variable implementation base class.
  *
@@ -29,22 +66,22 @@ class var_type;
  * information via an implementation of chain().
  */
 template <typename T>
-class vari_type {
+class vari_type : public vari_base {
  private:
   template <typename>
   friend class var_type;
-
+  using promoted = std::conditional_t<std::is_integral<std::decay_t<T>>::value, double, T>;
  public:
   /**
    * The value of this variable.
    */
-  const T val_;
+  const promoted val_;
 
   /**
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
    */
-  T adj_;
+  promoted adj_;
 
   /**
    * Construct a variable implementation from a value.  The
@@ -58,11 +95,11 @@ class vari_type {
    *
    * @param x Value of the constructed variable.
    */
-  explicit vari_type(double x) : val_(x), adj_(0.0) {
+  explicit vari_type(const T& x) : val_(x), adj_(internal::fill_adj(x)) {
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
-  vari_type(double x, bool stacked) : val_(x), adj_(0.0) {
+  vari_type(const T& x, bool stacked) : val_(x), adj_(internal::fill_adj(x)) {
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
     } else {
@@ -94,14 +131,14 @@ class vari_type {
    * propagating derivatives, setting the derivative of the
    * result with respect to itself to be 1.
    */
-  void init_dependent() { adj_ = 1.0; }
+  void init_dependent() { adj_ = internal::init_dep(val_); }
 
   /**
    * Set the adjoint value of this variable to 0.  This is used to
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  void set_zero_adjoint() { adj_ = 0.0; }
+  void set_zero_adjoint() { adj_ = internal::fill_adj(val_); }
 
   /**
    * Insertion operator for vari. Prints the current value and

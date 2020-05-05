@@ -27,7 +27,7 @@ namespace math {
  * @param vi Variable implementation for root of partial
  * derivative propagation.
  */
-static void grad(vari* vi) {
+static void grad(vari_base* vi) {
   // simple reference implementation (intended as doc):
   //   vi->init_dependent();
   //   size_t end = var_stack_.size();
@@ -35,7 +35,7 @@ static void grad(vari* vi) {
   //   for (size_t i = end; --i > begin; )
   //     var_stack_[i]->chain();
 
-  using it_t = std::vector<vari*>::reverse_iterator;
+  using it_t = std::vector<vari_base*>::reverse_iterator;
   vi->init_dependent();
   it_t begin = ChainableStack::instance_->var_stack_.rbegin();
   it_t end = empty_nested() ? ChainableStack::instance_->var_stack_.rend()

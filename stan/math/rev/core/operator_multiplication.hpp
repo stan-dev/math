@@ -14,29 +14,36 @@ namespace stan {
 namespace math {
 
 namespace internal {
-class multiply_vv_vari : public op_vv_vari {
+template <typename VariVal, typename Vari1, typename Vari2, typename = void>
+class multiply_vari;
+
+template <typename VariVal, typename Vari1, typename Vari2>
+class multiply_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>> :
+  public op_vari<VariVal, Vari1*, Vari2*> {
  public:
-  multiply_vv_vari(vari* avi, vari* bvi)
-      : op_vv_vari(avi->val_ * bvi->val_, avi, bvi) {}
+  multiply_vari(Vari1* avi, Vari2* bvi)
+      : op_vari<VariVal, Vari1*, Vari2*>(avi->val_ * bvi->val_, avi, bvi) {}
   void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bvi_->val_))) {
-      avi_->adj_ = NOT_A_NUMBER;
-      bvi_->adj_ = NOT_A_NUMBER;
+  if (likely(is_not_nan(std::get<0>(this->vi())->val_) &&
+                      is_not_nan(std::get<1>(this->vi())->val_))) {
+      this->avi()->adj_ += this->bvi()->val_ * this->adj_;
+      this->bvi()->adj_ += this->avi()->val_ * this->adj_;
     } else {
-      avi_->adj_ += bvi_->val_ * adj_;
-      bvi_->adj_ += avi_->val_ * adj_;
+      fill(std::get<0>(this->vi())->adj_, NOT_A_NUMBER);
+      fill(std::get<1>(this->vi())->adj_, NOT_A_NUMBER);
     }
   }
 };
 
-class multiply_vd_vari : public op_vd_vari {
+template <typename VariVal, typename Vari, typename Arith>
+class multiply_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> : public op_vari<VariVal, Vari*, Arith> {
  public:
-  multiply_vd_vari(vari* avi, double b) : op_vd_vari(avi->val_ * b, avi, b) {}
+  multiply_vari(Vari* avi, Arith b) : op_vari<VariVal, Vari*, Arith>(avi->val_ * b, avi, b) {}
   void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bd_))) {
-      avi_->adj_ = NOT_A_NUMBER;
+    if (unlikely(is_any_nan(this->avi()->val_, this->bvi()))) {
+      fill(this->avi()->adj_, NOT_A_NUMBER);
     } else {
-      avi_->adj_ += adj_ * bd_;
+      this->avi()->adj_ += this->adj_ * this->bvi();
     }
   }
 };
@@ -79,10 +86,23 @@ class multiply_vd_vari : public op_vd_vari {
  * @param b Second variable operand.
  * @return Variable result of multiplying operands.
  */
-inline var operator*(var a, var b) {
-  return {new internal::multiply_vv_vari(a.vi_, b.vi_)};
+template <typename T>
+inline var_type<T> operator*(const var_type<T>& a, const var_type<T>& b) {
+  return {new internal::multiply_vari<T, vari_type<T>, vari_type<T>>(a.vi_, b.vi_)};
 }
 
+// Just shoving this here for now
+namespace internal {
+  template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
+  bool is_any_equal(T1 x, T2 y) {
+    return x == y;
+  }
+  template <typename T1, typename T2, require_eigen_t<T1>* = nullptr, require_arithmetic_t<T2>* = nullptr>
+  bool is_any_equal(const T1& x, T2 y) {
+    return (x.array() == y).any();
+  }
+
+}
 /**
  * Multiplication operator for a variable and a scalar (C++).
  *
@@ -95,12 +115,12 @@ inline var operator*(var a, var b) {
  * @param b Scalar operand.
  * @return Variable result of multiplying operands.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
-inline var operator*(var a, Arith b) {
-  if (b == 1.0) {
+template <typename T, typename Arith, require_vt_arithmetic<Arith>...>
+inline var_type<T> operator*(const var_type<T>& a, Arith b) {
+  if (internal::is_any_equal(b, 1.0)) {
     return a;
   }
-  return {new internal::multiply_vd_vari(a.vi_, b)};
+  return {new internal::multiply_vari<T, vari_type<T>, Arith>(a.vi_, b)};
 }
 
 /**
@@ -115,12 +135,14 @@ inline var operator*(var a, Arith b) {
  * @param b Variable operand.
  * @return Variable result of multiplying the operands.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
-inline var operator*(Arith a, var b) {
-  if (a == 1.0) {
+
+
+template <typename T, typename Arith, require_vt_arithmetic<Arith>...>
+inline var_type<T> operator*(Arith a, const var_type<T>& b) {
+  if (internal::is_any_equal(a, 1.0)) {
     return b;
   }
-  return {new internal::multiply_vd_vari(b.vi_, a)};  // by symmetry
+  return {new internal::multiply_vari<double, vari, Arith>(b.vi_, a)};  // by symmetry
 }
 
 }  // namespace math
