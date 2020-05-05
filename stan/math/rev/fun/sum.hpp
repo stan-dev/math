@@ -47,14 +47,12 @@ class sum_v_vari : public vari {
   }
 };
 
-template <typename VariVal, typename Vari>
-class sum_vari : public vari_type<scalar_type_t<VariVal>> {
-  vari_type<VariVal>* v_;
+template <typename VariSum, typename Vari>
+class sum_vari : public vari_type<VariSum> {
+  Vari* v_;
   public:
-    sum_vari(Vari* avi) : vari_type<scalar_type_t<VariVal>>(avi->val_.sum()),
-     v_(ChainableStack::instance_->memalloc_.template alloc_array<Vari>(1)) {
-       v_ = avi;
-     }
+    sum_vari(Vari* avi) : vari_type<VariSum>(avi->val_.sum()),
+     v_(avi) {}
      virtual void chain() {
          v_->adj_.array() += this->adj_;
      }
@@ -74,8 +72,8 @@ inline var sum(const std::vector<var>& m) {
 }
 
 template <typename T>
-inline var_type<scalar_type_t<T>> sum(const var_type<T>& x) {
-  return {new sum_vari<T, vari_type<T>>(x.vi_)};
+inline var_type<value_type_t<T>> sum(const var_type<T>& x) {
+  return {new sum_vari<value_type_t<T>, vari_type<T>>(x.vi_)};
 }
 
 /**

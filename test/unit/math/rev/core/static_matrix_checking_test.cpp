@@ -1,3 +1,4 @@
+#include <iostream>
 #include <stan/math/rev.hpp>
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
@@ -7,39 +8,33 @@ TEST(MathRev, TestVarEigen) {
   using stan::math::var_type;
   using stan::math::var;
   using stan::math::sum;
-  Eigen::Matrix<double, -1, -1> x_vals = Eigen::MatrixXd::Random(5, 5);
-  Eigen::Matrix<double, -1, -1> y_vals = Eigen::MatrixXd::Random(5, 5);
+  Eigen::Matrix<double, -1, -1> x_vals(3, 3);
+  Eigen::Matrix<double, -1, -1> y_vals(3, 3);
+  x_vals << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  y_vals << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   var_type<Eigen::Matrix<double, -1, -1>> x = x_vals;
   var_type<Eigen::Matrix<double, -1, -1>> y = y_vals;
-  var_type<double> lp = 0;
-  lp -= sum(x * y);
-  puts("Static Matrix:");
-  std::cout << "static vals: \n" << lp.val() << "\n";
+  var lp = 0;
+  auto mul_xy = x * y;
+  auto sum_mul_xy = sum(mul_xy);
+  lp -= sum_mul_xy;
   lp.grad();
-  std::cout << "static x adj: \n" << x.adj() << "\n";
-  std::cout << "static y adj: \n" << y.adj() << "\n";
+  puts("-------------");
+  std::cout << "lp static val: \n" << lp.val() << "\n";
+  std::cout << "lp static adj: \n" << lp.adj() << "\n";
+  puts("---------");
+  std::cout << "sum_mul_xy static val: \n" << sum_mul_xy.val() << "\n";
+  std::cout << "sum_mul_xy static adj: \n" << sum_mul_xy.adj() << "\n";
   puts("---------");
 
+  std::cout << "mul_xy stat val: \n" << mul_xy.val() << "\n";
+  std::cout << "mul_xy stat adj: \n" << mul_xy.adj() << "\n";
+  puts("---------");
 
-  puts("Dynamic Matrix:");
-  Eigen::Matrix<var, -1, -1> x_dyn = x_vals;
-  Eigen::Matrix<var, -1, -1> y_dyn = y_vals;
-  var_type<double> lp_dyn = 0;
-  lp_dyn -= sum(x_dyn * y_dyn);
-  std::cout << "dynamic vals: \n" << lp_dyn.val() << "\n";
-  lp_dyn.grad();
-  std::cout << "dynamic x adj: \n" << x_dyn.adj() << "\n";
-  std::cout << "dynamic y adj: \n" << y_dyn.adj() << "\n";
-/*
-  using std::pow;
-  double yy = 1.3;
-  stan::math::var mu = 0.5, sigma = 1.2;
-  stan::math::var lp_n = 0;
-  lp_n -= 0.5 * log(2 * stan::math::pi());
-  lp_n -= log(sigma);
-  lp_n -= 0.5 * pow((yy - mu) / sigma, 2);
-  std::cout << "f(mu, sigma) = " << lp_n.val() << std::endl;
-  lp_n.grad();
-  std::cout << " d.f / d.mu = " << mu.adj()
-   << " d.f / d.sigma = " << sigma.adj() << std::endl;
-*/}
+  std::cout << "x stat val: \n" << x.val() << "\n";
+  std::cout << "x stat adj: \n" << x.adj() << "\n";
+  puts("---------");
+
+  std::cout << "y stat val: \n" << y.val() << "\n";
+  std::cout << "y stat adj: \n" << y.adj() << "\n";
+}

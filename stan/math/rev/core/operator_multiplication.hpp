@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_CORE_OPERATOR_MULTIPLICATION_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vv_vari.hpp>
 #include <stan/math/rev/core/vd_vari.hpp>
@@ -24,12 +25,12 @@ class multiply_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>> :
   multiply_vari(Vari1* avi, Vari2* bvi)
       : op_vari<VariVal, Vari1*, Vari2*>(avi->val_ * bvi->val_, avi, bvi) {}
   void chain() {
-  if (unlikely(is_any_nan(this->avi()->val_, this->bvi()->val_))) {
+    if (unlikely(is_any_nan(this->avi()->val_, this->bvi()->val_))) {
       fill(this->avi()->adj_, NOT_A_NUMBER);
       fill(this->bvi()->adj_, NOT_A_NUMBER);
     } else {
-      this->avi()->adj_ += this->bvi()->val_ * this->adj_;
-      this->bvi()->adj_ += this->avi()->val_ * this->adj_;
+      this->avi()->adj_ += transpose(this->bvi()->val_ * this->adj_);
+      this->bvi()->adj_ += transpose(this->avi()->val_) * this->adj_;
     }
   }
 };

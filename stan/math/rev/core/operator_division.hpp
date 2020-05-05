@@ -40,7 +40,6 @@ class divide_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>> :
       fill(this->bvi()->adj_, NOT_A_NUMBER);
     } else {
       this->avi()->adj_ += this->adj_ / this->bvi()->val_;
-      // Because if we divide all of avi by bvi we want the adj to be the sum of those ops right?
       this->bvi()->adj_ -= sum(this->adj_ * this->avi()->val_ / (this->bvi()->val_ * this->bvi()->val_));
     }
   }

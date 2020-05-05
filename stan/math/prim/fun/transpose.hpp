@@ -13,12 +13,16 @@ namespace math {
  * @param m matrix or expression
  * @return transposed matrix
  */
-template <typename T, typename = require_eigen_t<T>>
+template <typename T, require_eigen_t<T>* = nullptr>
 Eigen::Matrix<value_type_t<T>, T::ColsAtCompileTime,
               T::RowsAtCompileTime> inline transpose(const T& m) {
   return m.transpose();
 }
 
+template <typename T, require_stan_scalar_t<T>* = nullptr>
+auto&& transpose(T&& x) {
+  return std::forward<T>(x);
+}
 }  // namespace math
 }  // namespace stan
 #endif

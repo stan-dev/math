@@ -108,7 +108,7 @@ inline var_type<T> operator+(const var_type<T>& a, const var_type<T>& b) {
  */
 template <typename T, typename Arith, require_vt_arithmetic<Arith>...>
 inline var_type<T> operator+(const var_type<T>& a, Arith b) {
-  if (b == 0.0) {
+  if (internal::is_any_equal(b, 0.0)) {
     return a;
   }
   return {new internal::add_vari<T, vari_type<T>, Arith>(a.vi_, b)};
@@ -128,7 +128,7 @@ inline var_type<T> operator+(const var_type<T>& a, Arith b) {
  */
 template <typename T, typename Arith, require_vt_arithmetic<Arith>...>
 inline var_type<T> operator+(Arith a, const var_type<T>& b) {
-  if (a == 0.0) {
+  if (internal::is_any_equal(a, 0.0)) {
     return b;
   }
   return {new internal::add_vari<T, vari_type<T>, Arith>(b.vi_, a)};  // by symmetry
