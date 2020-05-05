@@ -52,8 +52,8 @@ class op_vari : public vari_type<T> {
    */
   auto& vi() { return vi_; }
   auto& avi() {return std::get<0>(vi_);}
-  auto& bvi() {return std::get<1>(vi_);}
   auto& ad() {return std::get<0>(vi_);}
+  auto& bvi() {return std::get<1>(vi_);}
   auto& bd() {return std::get<1>(vi_);}
   /**
    * Constructor for passing in vari and ops objects.
