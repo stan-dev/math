@@ -14,18 +14,6 @@ void stan_print(std::ostream* o, const T& x) {
   *o << x;
 }
 
-template <typename T>
-void stan_print(std::ostream* o, const std::vector<T>& x) {
-  *o << '[';
-  for (size_t i = 0; i < x.size(); ++i) {
-    if (i > 0) {
-      *o << ',';
-    }
-    stan_print(o, x[i]);
-  }
-  *o << ']';
-}
-
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
 void stan_print(std::ostream* o, const EigVec& x) {
   *o << '[';
@@ -54,6 +42,18 @@ void stan_print(std::ostream* o, const EigMat& x) {
       stan_print(o, x.coeff(i, j));
     }
     *o << ']';
+  }
+  *o << ']';
+}
+
+template <typename T>
+void stan_print(std::ostream* o, const std::vector<T>& x) {
+  *o << '[';
+  for (size_t i = 0; i < x.size(); ++i) {
+    if (i > 0) {
+      *o << ',';
+    }
+    stan_print(o, x[i]);
   }
   *o << ']';
 }
