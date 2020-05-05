@@ -47,11 +47,11 @@ TEST(err, hmm_check) {
   // The size of Gamma is inconsistent with that of log_omega
   MatrixXd Gamma_wrong_size(n_states + 1, n_states + 1);
 
-  EXPECT_THROW_MSG(hmm_check(log_omegas, Gamma_wrong_size, rho,
-                   "hmm_marginal_lpdf"),
-                   std::invalid_argument,
-                   "hmm_marginal_lpdf: Columns of Gamma (3)"
-                   " and Rows of log_omegas (2) must match in size")
+  EXPECT_THROW_MSG(
+      hmm_check(log_omegas, Gamma_wrong_size, rho, "hmm_marginal_lpdf"),
+      std::invalid_argument,
+      "hmm_marginal_lpdf: Columns of Gamma (3)"
+      " and Rows of log_omegas (2) must match in size")
 
   // rho is not a simplex.
   VectorXd rho_bad = rho;

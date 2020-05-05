@@ -20,8 +20,8 @@ TEST(hmm_rng_test, chiSquareGoodnessFitTest) {
   Eigen::MatrixXd Gamma = Eigen::MatrixXd::Identity(n_states, n_states);
   Eigen::VectorXd rho(n_states);
   rho << 0.65, 0.35;
-  Eigen::MatrixXd log_omegas =
-    Eigen::MatrixXd::Ones(n_states, n_transitions + 1);
+  Eigen::MatrixXd log_omegas
+      = Eigen::MatrixXd::Ones(n_states, n_transitions + 1);
 
   boost::random::mt19937 rng;
   int N = 10000;
@@ -34,7 +34,8 @@ TEST(hmm_rng_test, chiSquareGoodnessFitTest) {
   std::vector<int> state;
   for (int i = 0; i < N; ++i) {
     state = hmm_latent_rng(log_omegas, Gamma, rho, rng);
-    for (int j = 1; j < n_states; ++j) EXPECT_EQ(state[j], state[0]);
+    for (int j = 1; j < n_states; ++j)
+      EXPECT_EQ(state[j], state[0]);
     ++counts[state[0]];
   }
 

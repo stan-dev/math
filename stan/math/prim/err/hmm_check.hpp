@@ -27,10 +27,9 @@ namespace math {
  */
 template <typename T_omega, typename T_Gamma, typename T_rho>
 inline void hmm_check(
-  const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
-  const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma,
-  const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho,
-  const char* function) {
+    const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
+    const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma,
+    const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho, const char* function) {
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 
@@ -38,8 +37,7 @@ inline void hmm_check(
   check_simplex(function, "rho", rho);
   check_square(function, "Gamma", Gamma);
   check_nonzero_size(function, "Gamma", Gamma);
-  check_multiplicable(function, "Gamma", Gamma, "log_omegas",
-                      log_omegas);
+  check_multiplicable(function, "Gamma", Gamma, "log_omegas", log_omegas);
   for (int i = 0; i < Gamma.rows(); ++i) {
     check_simplex(function, "Gamma[i, ]", row(Gamma, i + 1));
   }

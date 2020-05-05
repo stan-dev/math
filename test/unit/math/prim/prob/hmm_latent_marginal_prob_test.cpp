@@ -8,7 +8,6 @@
 #include <limits>
 #include <vector>
 
-
 TEST_F(hmm_test, latent_prob_single_outcome) {
   using stan::math::hmm_latent_marginal_prob;
 
@@ -33,8 +32,8 @@ TEST_F(hmm_test, latent_prob_identity_transition) {
   using stan::math::hmm_latent_marginal_prob;
   int n_states = 2;
   Eigen::MatrixXd Gamma = Eigen::MatrixXd::Identity(n_states, n_states);
-  Eigen::MatrixXd log_omegas =
-    Eigen::MatrixXd::Ones(n_states, n_transitions_ + 1);
+  Eigen::MatrixXd log_omegas
+      = Eigen::MatrixXd::Ones(n_states, n_transitions_ + 1);
 
   Eigen::MatrixXd prob = hmm_latent_marginal_prob(log_omegas, Gamma, rho_);
 

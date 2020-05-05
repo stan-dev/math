@@ -40,9 +40,9 @@ namespace math {
  */
 template <typename T_omega, typename T_Gamma, typename T_rho>
 inline Eigen::MatrixXd hmm_latent_marginal_prob(
-  const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
-  const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma,
-  const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho) {
+    const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
+    const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma,
+    const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho) {
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 
@@ -58,8 +58,8 @@ inline Eigen::MatrixXd hmm_latent_marginal_prob(
 
   Eigen::MatrixXd Gamma_dbl_transpose = Gamma_dbl.transpose();
   for (int n = 1; n <= n_transitions; ++n)
-    alphas.col(n) = omegas.col(n).cwiseProduct(Gamma_dbl_transpose
-                      * alphas.col(n - 1));
+    alphas.col(n)
+        = omegas.col(n).cwiseProduct(Gamma_dbl_transpose * alphas.col(n - 1));
 
   // Backward pass with running normalization
   Eigen::VectorXd beta = Eigen::VectorXd::Ones(n_states);
