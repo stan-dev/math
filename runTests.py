@@ -48,7 +48,7 @@ jumbo_folders = [
     "test/unit/math/fwd/meta",
     "test/unit/math/fwd/prob",
     "test/unit/math/mix/core",
-    #"test/unit/math/mix/fun",
+    "test/unit/math/mix/fun",
     #"test/unit/math/mix/functor",
     #"test/unit/math/mix/meta",
     "test/unit/math/mix/prob"

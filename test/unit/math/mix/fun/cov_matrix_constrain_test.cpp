@@ -1,5 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
-
+namespace cov_matrix_constrain_test {
 // easier than fiddling the quadratic equation
 template <typename T>
 int inv_size(const T& x) {
@@ -15,19 +15,19 @@ int inv_size(const T& x) {
 template <typename T>
 typename Eigen::Matrix<typename stan::scalar_type<T>::type, -1, -1> g1(
     const T& x) {
-  return stan::math::cov_matrix_constrain(x, inv_size(x));
+  return stan::math::cov_matrix_constrain(x, cov_matrix_constrain_test::inv_size(x));
 }
 template <typename T>
 typename Eigen::Matrix<typename stan::scalar_type<T>::type, -1, -1> g2(
     const T& x) {
   typename stan::scalar_type<T>::type lp = 0;
-  auto a = stan::math::cov_matrix_constrain(x, inv_size(x), lp);
+  auto a = stan::math::cov_matrix_constrain(x, cov_matrix_constrain_test::inv_size(x), lp);
   return a;
 }
 template <typename T>
 typename stan::scalar_type<T>::type g3(const T& x) {
   typename stan::scalar_type<T>::type lp = 0;
-  stan::math::cov_matrix_constrain(x, inv_size(x), lp);
+  stan::math::cov_matrix_constrain(x, cov_matrix_constrain_test::inv_size(x), lp);
   return lp;
 }
 
@@ -38,37 +38,38 @@ void expect_cov_matrix_transform(const T& x) {
   tols.hessian_hessian_ = relative_tolerance(1e-3, 1e-3);
   tols.hessian_fvar_hessian_ = relative_tolerance(1e-3, 1e-3);
 
-  auto f1 = [](const auto& x) { return g1(x); };
-  auto f2 = [](const auto& x) { return g2(x); };
-  auto f3 = [](const auto& x) { return g3(x); };
+  auto f1 = [](const auto& x) { return cov_matrix_constrain_test::g1(x); };
+  auto f2 = [](const auto& x) { return cov_matrix_constrain_test::g2(x); };
+  auto f3 = [](const auto& x) { return cov_matrix_constrain_test::g3(x); };
   stan::test::expect_ad(f1, x);
   stan::test::expect_ad(f2, x);
   stan::test::expect_ad(tols, f3, x);
+}
 }
 
 TEST(MathMixMatFun, cov_matrixTransform) {
   // sizes must be n + (n choose 2)
 
   Eigen::VectorXd v0(0);
-  expect_cov_matrix_transform(v0);
+  cov_matrix_constrain_test::expect_cov_matrix_transform(v0);
 
   // 1 x 1
   Eigen::VectorXd v1(1);
   v1 << -1.7;
-  expect_cov_matrix_transform(v1);
+  cov_matrix_constrain_test::expect_cov_matrix_transform(v1);
 
   // 2 x 2
   Eigen::VectorXd v3(3);
   v3 << -1.7, 2.9, 0.01;
-  expect_cov_matrix_transform(v3);
+  cov_matrix_constrain_test::expect_cov_matrix_transform(v3);
 
   // 3 x 3
   Eigen::VectorXd v6(6);
   v6 << 1, 2, -3, 1.5, 0.2, 2;
-  expect_cov_matrix_transform(v6);
+  cov_matrix_constrain_test::expect_cov_matrix_transform(v6);
 
   // 4 x 4
   Eigen::VectorXd v10(10);
   v10 << 1, 2, -3, 1.7, 9.8, -12.2, 0.4, 0.2, 1.2, 2.7;
-  expect_cov_matrix_transform(v10);
+  cov_matrix_constrain_test::expect_cov_matrix_transform(v10);
 }

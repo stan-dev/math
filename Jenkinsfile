@@ -186,90 +186,19 @@ pipeline {
             }
             post { always { retry(3) { deleteDir() } } }
         }
-        stage('Always-run tests') {
-            when {
-                expression {
-                    !skipRemainingStages
-                }
+        stage('Full unit with GPU') {
+            agent { label "gpu" }
+            steps {
+                deleteDir()
+                unstash 'MathSetup'
+                sh "echo CXX=${env.CXX} -Werror > make/local"
+                sh "echo STAN_OPENCL=true>> make/local"
+                sh "echo OPENCL_PLATFORM_ID=0>> make/local"
+                sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
+                sh "make -j${env.PARALLEL} test-headers"
+                runTests("test/unit")
             }
-            parallel {
-                stage('Full unit with GPU') {
-                    agent { label "gpu" }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CXX=${env.CXX} -Werror > make/local"
-                        sh "echo STAN_OPENCL=true>> make/local"
-                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
-                        sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
-                        sh "make -j${env.PARALLEL} test-headers"
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Distribution tests') {
-                    agent { label "distribution-tests" }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh """
-                            echo CXX=${env.CXX} > make/local
-                            echo O=0 >> make/local
-                            echo N_TESTS=${env.N_TESTS} >> make/local
-                            """
-                        script {
-                            if (params.withRowVector || isBranch('develop') || isBranch('master')) {
-                                sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
-                            }
-                        }
-                        sh "./runTests.py -j${env.PARALLEL} test/prob > dist.log 2>&1"
-                    }
-                    post {
-                        always {
-                            script { zip zipFile: "dist.log.zip", archive: true, glob: 'dist.log' }
-                            retry(3) { deleteDir() }
-                        }
-                        failure {
-                            echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
-                            }
-                    }
-                }
-                stage('Threading tests') {
-                    agent any
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CXX=${env.CXX} -Werror > make/local"
-                        sh "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
-                        sh "export STAN_NUM_THREADS=4"
-                        runTests("test/unit -f thread")
-                        sh "find . -name *_test.xml | xargs rm"
-                        runTests("test/unit -f map_rect")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Windows Headers & Unit') {
-                    agent { label 'windows' }
-                    steps {
-                        deleteDirWin()
-                        unstash 'MathSetup'
-                        bat "mingw32-make.exe -f make/standalone math-libs"
-                        bat "mingw32-make -j${env.PARALLEL} test-headers"
-                        runTestsWin("test/unit", false)
-                    }
-                }
-                stage('Windows Threading') {
-                    agent { label 'windows' }
-                    steps {
-                        deleteDirWin()
-                        unstash 'MathSetup'
-                        bat "echo CXX=${env.CXX} -Werror > make/local"
-                        bat "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
-                        runTestsWin("test/unit -f thread")
-                        runTestsWin("test/unit -f map_rect")
-                    }
-                }
-            }
+            post { always { retry(3) { deleteDir() } } }
         }
         stage('Additional merge tests') {
             when {
