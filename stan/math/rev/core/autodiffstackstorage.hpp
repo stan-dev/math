@@ -9,7 +9,7 @@ namespace math {
 
 // Internal macro used to modify global pointer definition to the
 // global AD instance.
-#ifdef STAN_THREADS
+// #ifdef STAN_THREADS
 // Whenever STAN_THREADS is set a TLS keyword is used. For reasons
 // explained below we use the GNU compiler extension __thread if
 // supported by the compiler while the generic thread_local C++11
