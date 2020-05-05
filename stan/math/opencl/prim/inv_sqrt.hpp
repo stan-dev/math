@@ -18,7 +18,7 @@ namespace math {
  */
 template <typename T_x,
           typename
-          = require_all_valid_kernel_expressions_and_none_scalar_t<T_x>>
+          = require_all_kernel_expressions_and_none_scalar_t<T_x>>
 inline auto inv_sqrt(T_x&& x) {  // NOLINT
   return rsqrt(std::forward<T_x>(x));
 }

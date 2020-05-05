@@ -12,7 +12,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_kernel_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <string>
 #include <type_traits>
 #include <set>
@@ -105,7 +105,7 @@ class unary_function_cl : public operation_cl<Derived, Scal, T> {
                                                                               \
   template <typename T,                                                       \
             typename Cond                                                     \
-            = require_all_valid_kernel_expressions_and_none_scalar_t<T>>      \
+            = require_all_kernel_expressions_and_none_scalar_t<T>>      \
   inline fun##_<as_operation_cl_t<T>> fun(T&& a) {                            \
     return fun##_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a))); \
   }                                                                           \
@@ -150,7 +150,7 @@ class unary_function_cl : public operation_cl<Derived, Scal, T> {
                                                                               \
   template <typename T,                                                       \
             typename Cond                                                     \
-            = require_all_valid_kernel_expressions_and_none_scalar_t<T>>      \
+            = require_all_kernel_expressions_and_none_scalar_t<T>>      \
   inline fun##_<as_operation_cl_t<T>> fun(T&& a) {                            \
     return fun##_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a))); \
   }                                                                           \
@@ -187,7 +187,7 @@ class unary_function_cl : public operation_cl<Derived, Scal, T> {
                                                                               \
   template <typename T,                                                       \
             typename Cond                                                     \
-            = require_all_valid_kernel_expressions_and_none_scalar_t<T>>      \
+            = require_all_kernel_expressions_and_none_scalar_t<T>>      \
   inline fun##_<as_operation_cl_t<T>> fun(T&& a) {                            \
     return fun##_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a))); \
   }                                                                           \

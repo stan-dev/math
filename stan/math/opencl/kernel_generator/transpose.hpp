@@ -8,7 +8,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_kernel_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <algorithm>
 #include <string>
 #include <set>
@@ -116,7 +116,7 @@ class transpose_
  */
 template <typename Arg,
           typename
-          = require_all_valid_kernel_expressions_and_none_scalar_t<Arg>>
+          = require_all_kernel_expressions_and_none_scalar_t<Arg>>
 inline auto transpose(Arg&& a) {
   auto&& a_operation = as_operation_cl(std::forward<Arg>(a)).deep_copy();
   return transpose_<std::remove_reference_t<decltype(a_operation)>>{

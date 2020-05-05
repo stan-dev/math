@@ -8,7 +8,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_kernel_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <limits>
 #include <string>
 #include <type_traits>
@@ -193,7 +193,7 @@ class optional_broadcast_
  * @return broadcast expression
  */
 template <bool Colwise, bool Rowwise, typename T,
-          typename = require_all_valid_kernel_expressions_and_none_scalar_t<T>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
 inline optional_broadcast_<as_operation_cl_t<T>, Colwise, Rowwise>
 optional_broadcast(T&& a) {
   auto&& a_operation = as_operation_cl(std::forward<T>(a)).deep_copy();
@@ -214,7 +214,7 @@ optional_broadcast(T&& a) {
  * @return broadcast expression
  */
 template <typename T,
-          typename = require_all_valid_kernel_expressions_and_none_scalar_t<T>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
 inline auto rowwise_optional_broadcast(T&& a) {
   return optional_broadcast<false, true>(std::forward<T>(a));
 }
@@ -232,7 +232,7 @@ inline auto rowwise_optional_broadcast(T&& a) {
  * @return broadcast expression
  */
 template <typename T,
-          typename = require_all_valid_kernel_expressions_and_none_scalar_t<T>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
 inline auto colwise_optional_broadcast(T&& a) {
   return optional_broadcast<true, false>(std::forward<T>(a));
 }
