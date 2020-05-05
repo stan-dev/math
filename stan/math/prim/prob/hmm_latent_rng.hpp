@@ -34,9 +34,10 @@ inline std::vector<int> hmm_latent_rng(
   alphas.col(0) = omegas.col(0).cwiseProduct(rho_dbl);
   alphas.col(0) /= alphas.col(0).maxCoeff();
 
+  Eigen::MatrixXd Gamma_dbl_transpose = Gamma_dbl.transpose();
   for (int n = 0; n < n_transitions; ++n) {
     alphas.col(n + 1) = omegas.col(n + 1).
-                          cwiseProduct(Gamma_dbl * alphas.col(n));
+                          cwiseProduct(Gamma_dbl_transpose * alphas.col(n));
     alphas.col(n + 1) /= alphas.col(n + 1).maxCoeff();
   }
 
@@ -57,7 +58,7 @@ inline std::vector<int> hmm_latent_rng(
     // CHECK -- do we need to redeclare the hidden state?
     for (int k = 0; k < n_states; ++k) {
       probs_vec[k] = alphas(k, n) * omegas(last_hs, n + 1)
-                     * Gamma_dbl(last_hs, k) * beta(last_hs);
+                     * Gamma_dbl_transpose(last_hs, k) * beta(last_hs);
     }
     probs_vec /= probs_vec.sum();
     std::vector<double> probs(probs_vec.data(), probs_vec.data() + n_states);
@@ -65,7 +66,7 @@ inline std::vector<int> hmm_latent_rng(
     hidden_states[n] = cat_hidden(rng);
 
     // update backwards state
-    beta = Gamma.transpose() * (omegas.col(n + 1).cwiseProduct(beta));
+    beta = Gamma_dbl * (omegas.col(n + 1).cwiseProduct(beta));
     beta /= beta.maxCoeff();
   }
 

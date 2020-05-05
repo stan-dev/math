@@ -27,17 +27,19 @@ TEST_F(hmm_test, latent_prob_single_outcome) {
 }
 
 TEST_F(hmm_test, latent_prob_identity_transition) {
-  // with an identity transition matrix, all latent probabilities
-  // are equal.
+  // With an identity transition matrix, all latent probabilities
+  // are equal. Setting the log density to 1 for all states makes
+  // the initial prob drive the subsequent probabilities.
   using stan::math::hmm_latent_marginal_prob;
   int n_states = 2;
   Eigen::MatrixXd Gamma = Eigen::MatrixXd::Identity(n_states, n_states);
-  Eigen::MatrixXd log_omegas(n_states, n_transitions_ + 1);
+  Eigen::MatrixXd log_omegas =
+    Eigen::MatrixXd::Ones(n_states, n_transitions_ + 1);
 
-  Eigen::MatrixXd prob = hmm_latent_marginal_prob(log_omegas_, Gamma, rho_);
+  Eigen::MatrixXd prob = hmm_latent_marginal_prob(log_omegas, Gamma, rho_);
 
-  for (int i = 1; i < n_transitions_; i++) {
-    EXPECT_FLOAT_EQ(prob(0, i), prob(0, 0));
-    EXPECT_FLOAT_EQ(prob(1, i), prob(1, 0));
+  for (int i = 0; i < n_transitions_; i++) {
+    EXPECT_FLOAT_EQ(prob(0, i), rho_(0));
+    EXPECT_FLOAT_EQ(prob(1, i), rho_(1));
   }
 }
