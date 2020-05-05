@@ -9,7 +9,7 @@
 #include <vector>
 
 
-TEST_F(hmm_test, latent_prob_transition_1) {
+TEST_F(hmm_test, latent_prob_single_outcome) {
   using stan::math::hmm_latent_marginal_prob;
 
   int n_states = 2;
@@ -20,6 +20,24 @@ TEST_F(hmm_test, latent_prob_transition_1) {
 
   Eigen::MatrixXd prob = hmm_latent_marginal_prob(log_omegas_, Gamma, rho);
 
-  for (int i = 0; i < n_transitions_; i++) EXPECT_EQ(prob(0, i), 1);
-  for (int i = 0; i < n_transitions_; i++) EXPECT_EQ(prob(1, i), 0);
+  for (int i = 0; i < n_transitions_; i++) {
+    EXPECT_EQ(prob(0, i), 1);
+    EXPECT_EQ(prob(1, i), 0);
+  }
+}
+
+TEST_F(hmm_test, latent_prob_identity_transition) {
+  // with an identity transition matrix, all latent probabilities
+  // are equal.
+  using stan::math::hmm_latent_marginal_prob;
+  int n_states = 2;
+  Eigen::MatrixXd Gamma = Eigen::MatrixXd::Identity(n_states, n_states);
+  Eigen::MatrixXd log_omegas(n_states, n_transitions_ + 1);
+
+  Eigen::MatrixXd prob = hmm_latent_marginal_prob(log_omegas_, Gamma, rho_);
+
+  for (int i = 1; i < n_transitions_; i++) {
+    EXPECT_FLOAT_EQ(prob(0, i), prob(0, 0));
+    EXPECT_FLOAT_EQ(prob(1, i), prob(1, 0));
+  }
 }
