@@ -183,7 +183,7 @@ pipeline {
                 sh "echo CXX=${MPICXX} >> make/local"
                 sh "echo CXX_TYPE=gcc >> make/local"
                 sh "echo STAN_MPI=true >> make/local"
-                runTests("test/unit/math/prim test/unit/math/rev")
+                runTests("test/unit/")
             }
             post { always { retry(3) { deleteDir() } } }
         }
