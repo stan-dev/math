@@ -30,8 +30,8 @@ allowed_paths_with_jumbo = [
 ]
 
 jumbo_folders = [
-    "test/unit/math/prim/core",
-    # "test/unit/math/prim/err",
+    #"test/unit/math/prim/core",
+    #"test/unit/math/prim/err",
     "test/unit/math/prim/fun",
     #"test/unit/math/prim/functor",
     "test/unit/math/prim/meta",
