@@ -17,7 +17,8 @@ inline var_type<T>& var_type<T>::operator+=(var_type<T> b) {
 template <typename T>
 template <typename Arith, require_vt_arithmetic<Arith>...>
 inline var_type<T>& var_type<T>::operator+=(Arith b) {
-  if (b == 0.0) {
+  // TODO: No internal from elsewhere!
+  if (internal::is_any_equal(b, 0.0)) {
     return *this;
   }
   vi_ = new internal::add_vari<double, vari_type<T>, Arith>(vi_, b);

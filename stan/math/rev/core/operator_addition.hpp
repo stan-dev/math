@@ -27,13 +27,12 @@ class add_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>> : public
   add_vari(Vari1* avi, Vari2* bvi)
       : op_vari<VariVal, Vari1*, Vari2*>(avi->val_ + bvi->val_, avi, bvi) {}
   void chain() {
-    if (likely(is_not_nan(std::get<0>(this->vi())->val_) &&
-                        is_not_nan(std::get<1>(this->vi())->val_))) {
-      std::get<0>(this->vi())->adj_ += this->adj_;
-      std::get<1>(this->vi())->adj_ += this->adj_;
+    if (unlikely(is_any_nan(this->avi()->val_, this->bvi()->val_))) {
+      fill(this->avi()->adj_, NOT_A_NUMBER);
+      fill(this->bvi()->adj_, NOT_A_NUMBER);
     } else {
-      fill(std::get<0>(this->vi())->adj_, NOT_A_NUMBER);
-      fill(std::get<1>(this->vi())->adj_, NOT_A_NUMBER);
+      this->avi()->adj_ += this->adj_;
+      this->bvi()->adj_ += this->adj_;
     }
   }
 };
@@ -43,11 +42,10 @@ class add_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> : public op_v
  public:
   add_vari(Vari* avi, Arith b) : op_vari<VariVal, Vari*, Arith>(avi->val_ + b, avi, b) {}
   void chain() {
-    if (likely(is_not_nan(std::get<0>(this->vi())->val_) &&
-                            is_not_nan(std::get<1>(this->vi())))) {
-      std::get<0>(this->vi())->adj_ += this->adj_;
+    if (unlikely(is_any_nan(this->avi()->val_, this->bd()))) {
+      fill(this->avi()->adj_, NOT_A_NUMBER);
     } else {
-      fill(std::get<0>(this->vi())->adj_, NOT_A_NUMBER);
+      this->avi()->adj_ += this->adj_;
     }
   }
 };

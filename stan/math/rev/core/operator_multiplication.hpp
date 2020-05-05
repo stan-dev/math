@@ -24,13 +24,12 @@ class multiply_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>> :
   multiply_vari(Vari1* avi, Vari2* bvi)
       : op_vari<VariVal, Vari1*, Vari2*>(avi->val_ * bvi->val_, avi, bvi) {}
   void chain() {
-  if (likely(is_not_nan(std::get<0>(this->vi())->val_) &&
-                      is_not_nan(std::get<1>(this->vi())->val_))) {
+  if (unlikely(is_any_nan(this->avi()->val_, this->bvi()->val_))) {
+      fill(this->avi()->adj_, NOT_A_NUMBER);
+      fill(this->bvi()->adj_, NOT_A_NUMBER);
+    } else {
       this->avi()->adj_ += this->bvi()->val_ * this->adj_;
       this->bvi()->adj_ += this->avi()->val_ * this->adj_;
-    } else {
-      fill(std::get<0>(this->vi())->adj_, NOT_A_NUMBER);
-      fill(std::get<1>(this->vi())->adj_, NOT_A_NUMBER);
     }
   }
 };
@@ -43,7 +42,7 @@ class multiply_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> : public
     if (unlikely(is_any_nan(this->avi()->val_, this->bvi()))) {
       fill(this->avi()->adj_, NOT_A_NUMBER);
     } else {
-      this->avi()->adj_ += this->adj_ * this->bvi();
+      this->avi()->adj_ += this->adj_ * this->bd();
     }
   }
 };
@@ -91,18 +90,7 @@ inline var_type<T> operator*(const var_type<T>& a, const var_type<T>& b) {
   return {new internal::multiply_vari<T, vari_type<T>, vari_type<T>>(a.vi_, b.vi_)};
 }
 
-// Just shoving this here for now
-namespace internal {
-  template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
-  bool is_any_equal(T1 x, T2 y) {
-    return x == y;
-  }
-  template <typename T1, typename T2, require_eigen_t<T1>* = nullptr, require_arithmetic_t<T2>* = nullptr>
-  bool is_any_equal(const T1& x, T2 y) {
-    return (x.array() == y).any();
-  }
 
-}
 /**
  * Multiplication operator for a variable and a scalar (C++).
  *

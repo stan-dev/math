@@ -8,6 +8,20 @@
 namespace stan {
 namespace math {
 
+
+// TODO: This needs its own file! But shoving it here for now
+namespace internal {
+  template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
+  bool is_any_equal(T1 x, T2 y) {
+    return x == y;
+  }
+  template <typename T1, typename T2, require_eigen_t<T1>* = nullptr, require_arithmetic_t<T2>* = nullptr>
+  bool is_any_equal(const T1& x, T2 y) {
+    return (x.array() == y).any();
+  }
+
+}
+
 /**
  * Holds the elements needed in vari operations for the reverse pass and chain
  * call.
@@ -39,6 +53,8 @@ class op_vari : public vari_type<T> {
   auto& vi() { return vi_; }
   auto& avi() {return std::get<0>(vi_);}
   auto& bvi() {return std::get<1>(vi_);}
+  auto& ad() {return std::get<0>(vi_);}
+  auto& bd() {return std::get<1>(vi_);}
   /**
    * Constructor for passing in vari and ops objects.
    * @param val Value to initialize the vari to.
