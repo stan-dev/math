@@ -12,8 +12,18 @@ TEST(MathRev, TestVarEigen) {
   var_type<Eigen::Matrix<double, -1, -1>> y(y_vals);
   auto z = x + y;
   auto zz = stan::math::sum(z);
-  std::cout << "static vals: \n" << zz.val() << "\n";
-  std::cout << "static adj: \n" << zz.adj() << "\n";
+  x.grad();
+  y.grad();
+  z.grad();
+  zz.grad()
+  std::cout << "static vals x: \n" << zz.val() << "\n";
+  std::cout << "static adj x: \n" << zz.adj() << "\n";
+  std::cout << "static vals y: \n" << zz.val() << "\n";
+  std::cout << "static adj y: \n" << zz.adj() << "\n";
+  std::cout << "static vals z: \n" << zz.val() << "\n";
+  std::cout << "static adj z: \n" << zz.adj() << "\n";
+  std::cout << "static vals zz: \n" << zz.val() << "\n";
+  std::cout << "static adj zz: \n" << zz.adj() << "\n";
   zz.grad();
   std::cout << "static grad vals: \n" << zz.val() << "\n";
   std::cout << "static grad adj: \n" << zz.adj() << "\n";
