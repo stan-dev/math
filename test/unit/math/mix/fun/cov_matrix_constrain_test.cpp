@@ -15,19 +15,22 @@ int inv_size(const T& x) {
 template <typename T>
 typename Eigen::Matrix<typename stan::scalar_type<T>::type, -1, -1> g1(
     const T& x) {
-  return stan::math::cov_matrix_constrain(x, cov_matrix_constrain_test::inv_size(x));
+  return stan::math::cov_matrix_constrain(
+      x, cov_matrix_constrain_test::inv_size(x));
 }
 template <typename T>
 typename Eigen::Matrix<typename stan::scalar_type<T>::type, -1, -1> g2(
     const T& x) {
   typename stan::scalar_type<T>::type lp = 0;
-  auto a = stan::math::cov_matrix_constrain(x, cov_matrix_constrain_test::inv_size(x), lp);
+  auto a = stan::math::cov_matrix_constrain(
+      x, cov_matrix_constrain_test::inv_size(x), lp);
   return a;
 }
 template <typename T>
 typename stan::scalar_type<T>::type g3(const T& x) {
   typename stan::scalar_type<T>::type lp = 0;
-  stan::math::cov_matrix_constrain(x, cov_matrix_constrain_test::inv_size(x), lp);
+  stan::math::cov_matrix_constrain(x, cov_matrix_constrain_test::inv_size(x),
+                                   lp);
   return lp;
 }
 
@@ -45,7 +48,7 @@ void expect_cov_matrix_transform(const T& x) {
   stan::test::expect_ad(f2, x);
   stan::test::expect_ad(tols, f3, x);
 }
-}
+}  // namespace cov_matrix_constrain_test
 
 TEST(MathMixMatFun, cov_matrixTransform) {
   // sizes must be n + (n choose 2)
