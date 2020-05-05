@@ -70,7 +70,7 @@ class ad_tape_observer : public tbb::task_scheduler_observer {
  */
 namespace {
 
-static ad_tape_observer global_observer;
+static stan::math::ad_tape_observer global_observer;
 
 }
 
@@ -84,7 +84,7 @@ static ad_tape_observer global_observer;
  */
 namespace {
 
-static ChainableStack global_ad_stack;
+static stan::math::ChainableStack global_ad_stack;
 
 }
 
