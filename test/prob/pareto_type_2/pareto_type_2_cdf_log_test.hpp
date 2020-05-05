@@ -72,4 +72,3 @@ class AgradCdfLogParetoType2 : public AgradCdfLogTest {
   }
 };
 #endif
-
