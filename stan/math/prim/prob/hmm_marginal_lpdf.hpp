@@ -56,7 +56,6 @@ inline auto hmm_marginal_lpdf_val(
  * The transition matrix Gamma is such that the (i, j)th entry is the
  * probability that x_n = j given x_{n - 1} = i. The rows of Gamma are
  * simplexes.
- * The Gamma argument is only checked if there is at least one transition.
  *
  * @tparam T_omega type of the log likelihood matrix
  * @tparam T_Gamma type of the transition matrix
@@ -83,15 +82,7 @@ inline auto hmm_marginal_lpdf(
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 
-  check_consistent_size("hmm_marginal_lpdf", "rho", rho, n_states);
-  check_simplex("hmm_marginal_lpdf", "rho", rho);
-  check_square("hmm_marginal_lpdf", "Gamma", Gamma);
-  check_nonzero_size("hmm_marginal_lpdf", "Gamma", Gamma);
-  check_multiplicable("hmm_marginal_lpdf", "Gamma", Gamma, "log_omegas",
-                      log_omegas);
-  for (int i = 0; i < Gamma.rows(); ++i) {
-    check_simplex("hmm_marginal_lpdf", "Gamma[i, ]", row(Gamma, i + 1));
-  }
+  hmm_check(log_omegas, Gamma, rho, "hmm_marginal_lpdf");
 
   operands_and_partials<Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>,
                         Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>,

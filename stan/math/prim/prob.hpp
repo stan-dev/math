@@ -134,6 +134,8 @@
 #include <stan/math/prim/prob/gumbel_log.hpp>
 #include <stan/math/prim/prob/gumbel_lpdf.hpp>
 #include <stan/math/prim/prob/gumbel_rng.hpp>
+#include <stan/math/prim/prob/hmm_latent_marginal_prob.hpp>
+#include <stan/math/prim/prob/hmm_latent_rng.hpp>
 #include <stan/math/prim/prob/hmm_marginal_lpdf.hpp>
 #include <stan/math/prim/prob/hypergeometric_log.hpp>
 #include <stan/math/prim/prob/hypergeometric_lpmf.hpp>
