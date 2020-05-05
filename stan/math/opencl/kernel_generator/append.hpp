@@ -158,7 +158,7 @@ class append_row_ : public operation_cl<append_row_<T_a, T_b>,
  * @tparam Ta type of first argument
  * @tparam Ta type of second argument
  * @param a First argument
- * @param a Second argument
+ * @param b Second argument
  * @return Stacked arguments
  */
 template <typename Ta, typename Tb,
@@ -303,7 +303,7 @@ class append_col_ : public operation_cl<append_col_<T_a, T_b>,
  * @tparam Ta type of first argument
  * @tparam Ta type of second argument
  * @param a First argument
- * @param a Second argument
+ * @param b Second argument
  * @return Stacked arguments
  */
 template <typename Ta, typename Tb,
