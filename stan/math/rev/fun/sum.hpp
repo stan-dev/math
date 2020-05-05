@@ -33,8 +33,7 @@ class sum_v_vari : public vari {
 
   explicit sum_v_vari(const std::vector<var>& v1)
       : vari(sum_of_val(v1)),
-        v_(reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
-            v1.size() * sizeof(vari*)))),
+        v_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(v1.size())),
         length_(v1.size()) {
     for (size_t i = 0; i < length_; i++) {
       v_[i] = v1[i].vi_;
@@ -46,6 +45,19 @@ class sum_v_vari : public vari {
       v_[i]->adj_ += adj_;
     }
   }
+};
+
+template <typename VariVal, typename Vari>
+class sum_vari : public vari_type<scalar_type_t<VariVal>> {
+  vari_type<VariVal>* v_;
+  public:
+    sum_vari(Vari* avi) : vari_type<scalar_type_t<VariVal>>(avi->val_.sum()),
+     v_(ChainableStack::instance_->memalloc_.template alloc_array<Vari>(1)) {
+       v_ = avi;
+     }
+     virtual void chain() {
+         v_->adj_.array() += this->adj_;
+     }
 };
 
 /**
@@ -61,6 +73,11 @@ inline var sum(const std::vector<var>& m) {
   return var(new sum_v_vari(m));
 }
 
+template <typename T>
+inline var_type<scalar_type_t<T>> sum(const var_type<T>& x) {
+  return {new sum_vari<T, vari_type<T>>(x.vi_)};
+}
+
 /**
  * Class for representing sums with constructors for Eigen.
  * The <code>chain()</code> method and member variables are
@@ -72,8 +89,7 @@ class sum_eigen_v_vari : public sum_v_vari {
   explicit sum_eigen_v_vari(const EigMat& v1)
       : sum_v_vari(
             v1.val().sum(),
-            reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
-                v1.size() * sizeof(vari*))),
+            ChainableStack::instance_->memalloc_.alloc_array<vari*>(v1.size()),
             v1.size()) {
     Eigen::Map<matrix_vi>(v_, v1.rows(), v1.cols()) = v1.vi();
   }
