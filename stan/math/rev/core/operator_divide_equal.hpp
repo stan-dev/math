@@ -7,9 +7,9 @@
 
 namespace stan {
 namespace math {
-template <>
-inline var& var::operator/=(var b) {
-  vi_ = new internal::divide_vv_vari(vi_, b.vi_);
+template <typename T>
+inline var_type<T>& var_type<T>::operator/=(const var_type<T>& b) {
+  vi_ = new internal::divide_vari<T, vari_type<T>, vari_type<T>>(vi_, b.vi_);
   return *this;
 }
 

@@ -249,7 +249,7 @@ class var_type {
    * @return The result of dividing this variable by the
    * specified variable.
    */
-  inline var_type<T>& operator/=(var_type<T> b);
+  inline var_type<T>& operator/=(const var_type<T>& b);
 
   /**
    * The compound divide/assignment operator for scalars (C++).

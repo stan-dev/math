@@ -10,6 +10,7 @@
 #include <stan/math/rev/core/vv_vari.hpp>
 #include <stan/math/rev/core/vd_vari.hpp>
 #include <stan/math/rev/core/dv_vari.hpp>
+#include <stan/math/rev/core/op_vari.hpp>
 #include <stan/math/rev/core/operator_addition.hpp>
 #include <stan/math/rev/core/operator_multiplication.hpp>
 #include <stan/math/rev/core/operator_subtraction.hpp>
@@ -23,18 +24,24 @@ namespace math {
 namespace internal {
 // (dividend/divisor)' = dividend' * (1 / divisor) - divisor' * (dividend /
 // [divisor * divisor])
-class divide_vv_vari : public op_vv_vari {
+template <typename VariVal, typename Vari1, typename Vari2, typename = void>
+class divide_vari {};
+
+template <typename VariVal, typename Vari1, typename Vari2>
+class divide_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>> :
+  public op_vari<VariVal, Vari1*, Vari2*> {
  public:
-  divide_vv_vari(vari* dividend_vi, vari* divisor_vi)
-      : op_vv_vari(dividend_vi->val_ / divisor_vi->val_, dividend_vi,
+  divide_vari(Vari1* dividend_vi, Vari2* divisor_vi)
+      : op_vari<VariVal, Vari1*, Vari2*>(dividend_vi->val_ / divisor_vi->val_, dividend_vi,
                    divisor_vi) {}
   void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bvi_->val_))) {
-      avi_->adj_ = NOT_A_NUMBER;
-      bvi_->adj_ = NOT_A_NUMBER;
+    if (unlikely(is_any_nan(this->avi()->val_, this->bvi()->val_))) {
+      fill(this->avi()->adj_, NOT_A_NUMBER);
+      fill(this->bvi()->adj_, NOT_A_NUMBER);
     } else {
-      avi_->adj_ += adj_ / bvi_->val_;
-      bvi_->adj_ -= adj_ * avi_->val_ / (bvi_->val_ * bvi_->val_);
+      this->avi()->adj_ += this->adj_ / this->bvi()->val_;
+      // Because if we divide all of avi by bvi we want the adj to be the sum of those ops right?
+      this->bvi()->adj_ -= sum(this->adj_ * this->avi()->val_ / (this->bvi()->val_ * this->bvi()->val_));
     }
   }
 };
@@ -98,8 +105,9 @@ class divide_dv_vari : public op_dv_vari {
  * @return Variable result of dividing the first variable by the
  * second.
  */
-inline var operator/(var dividend, var divisor) {
-  return {new internal::divide_vv_vari(dividend.vi_, divisor.vi_)};
+template <typename T>
+inline var_type<T> operator/(const var_type<T>& dividend, const var_type<value_type_t<T>>& divisor) {
+  return {new internal::divide_vari<T, vari_type<T>, vari_type<value_type_t<T>>>(dividend.vi_, divisor.vi_)};
 }
 
 /**
