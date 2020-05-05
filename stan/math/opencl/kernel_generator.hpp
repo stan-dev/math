@@ -115,6 +115,7 @@
 
 #include <stan/math/opencl/kernel_generator/load.hpp>
 #include <stan/math/opencl/kernel_generator/scalar.hpp>
+#include <stan/math/opencl/kernel_generator/append.hpp>
 #include <stan/math/opencl/kernel_generator/binary_operation.hpp>
 #include <stan/math/opencl/kernel_generator/unary_function_cl.hpp>
 #include <stan/math/opencl/kernel_generator/unary_operation_cl.hpp>
@@ -125,6 +126,7 @@
 #include <stan/math/opencl/kernel_generator/transpose.hpp>
 #include <stan/math/opencl/kernel_generator/broadcast.hpp>
 #include <stan/math/opencl/kernel_generator/optional_broadcast.hpp>
+#include <stan/math/opencl/kernel_generator/diagonal.hpp>
 
 #include <stan/math/opencl/kernel_generator/multi_result_kernel.hpp>
 #include <stan/math/opencl/kernel_generator/get_kernel_source_for_evaluating_into.hpp>
