@@ -16,6 +16,7 @@
 #include <string>
 #include <type_traits>
 #include <set>
+#include <tuple>
 #include <utility>
 
 namespace stan {
@@ -48,7 +49,7 @@ class holder_cl_
   /**
    * Constructor
    * @param a argument expression
-   * @param fun function
+   * @param ptrs pointers this object takes ownership of
    */
   holder_cl_(T&& a, Ptrs*... ptrs)
       : base(std::forward<T>(a)),
