@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_VERSION_HPP
 #define STAN_MATH_VERSION_HPP
 
+#include "prim/fun/Eigen.hpp"
 #include <string>
 
 #ifndef STAN_STRING_EXPAND
