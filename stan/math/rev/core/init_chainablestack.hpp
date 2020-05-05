@@ -62,25 +62,30 @@ class ad_tape_observer : public tbb::task_scheduler_observer {
   std::mutex thread_tape_map_mutex_;
 };
 
-namespace {
-
-ad_tape_observer global_observer;
-
-}  // namespace
 }  // namespace math
 }  // namespace stan
+
+
+/**
+ * g++ compilers apparently have issues with unnamed namespaces nested
+ * within a named namespace.
+ */
+namespace {
+stan::math::ad_tape_observer global_observer;
+}
+
 
 #else
 
 // STAN_THREADS absent
 
-namespace stan {
-namespace math {
+/**
+ * g++ compilers apparently have issues with unnamed namespaces nested
+ * within a named namespace.
+ */
 namespace {
-ChainableStack global_ad_stack;
+stan::math::ChainableStack global_ad_stack;
 }
-}  // namespace math
-}  // namespace stan
 
 #endif
 
