@@ -54,7 +54,6 @@ class holder_cl_
   holder_cl_(T&& a, Ptrs*... ptrs)
       : base(std::forward<T>(a)),
         m_unique_ptrs(std::unique_ptr<Ptrs>(ptrs)...) {}
-
 };
 
 /**
