@@ -183,7 +183,7 @@ pipeline {
                 sh "echo CXX=${MPICXX} >> make/local"
                 sh "echo CXX_TYPE=gcc >> make/local"
                 sh "echo STAN_MPI=true >> make/local"
-                runTests("test/unit")
+                runTests("test/unit/math/prim test/unit/math/rev")
             }
             post { always { retry(3) { deleteDir() } } }
         }
@@ -204,7 +204,7 @@ pipeline {
                         sh "echo OPENCL_PLATFORM_ID=0>> make/local"
                         sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
                         sh "make -j${env.PARALLEL} test-headers"
-                        runTests("test/unit")
+                        runTests("test/unit/math/prim test/unit/math/rev")
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
@@ -256,7 +256,7 @@ pipeline {
                         unstash 'MathSetup'
                         bat "mingw32-make.exe -f make/standalone math-libs"
                         bat "mingw32-make -j${env.PARALLEL} test-headers"
-                        runTestsWin("test/unit", false)
+                        runTestsWin("test/unit/math/prim test/unit/math/rev", false)
                     }
                 }
                 stage('Windows Threading') {
