@@ -16,9 +16,13 @@
 // _REENTRANT must be defined during compilation to ensure that cmath
 // exports the reentrant safe lgamma_r version.
 #if !_REENTRANT
-#error \
+#warning \
     "stan-math requires _REENTRANT being defined during compilation" \
     "to make lgamma_r available."
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/scal/fun/boost_policy.hpp>
+#include <boost/math/special_functions/gamma.hpp>
+#include <limits>
 #endif
 #include <cmath>
 #else
