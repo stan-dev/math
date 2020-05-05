@@ -5,7 +5,9 @@
 
 #include <boost/lexical_cast.hpp>
 
+#ifdef STAN_THREADS
 #include <tbb/task_scheduler_init.h>
+#endif
 
 #include <cstdlib>
 #include <thread>
@@ -80,6 +82,7 @@ inline int get_num_threads() {
  * @throws std::runtime_error if the value of STAN_NUM_THREADS env. variable
  * is invalid
  */
+#ifdef STAN_THREADS
 inline tbb::task_scheduler_init& init_threadpool_tbb(
     tbb::stack_size_type stack_size = 0) {
   int tbb_max_threads = internal::get_num_threads();
@@ -88,6 +91,7 @@ inline tbb::task_scheduler_init& init_threadpool_tbb(
 
   return tbb_scheduler;
 }
+#endif
 
 }  // namespace math
 }  // namespace stan

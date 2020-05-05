@@ -3,7 +3,9 @@
 
 #include <stan/math/rev/core/chainablestack.hpp>
 
+#ifdef STAN_THREADS
 #include <tbb/task_scheduler_observer.h>
+#endif
 
 #include <mutex>
 #include <unordered_map>

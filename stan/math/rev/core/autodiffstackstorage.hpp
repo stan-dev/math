@@ -19,10 +19,6 @@ namespace math {
 #else
 #define STAN_THREADS_DEF thread_local
 #endif
-#else
-// In case STAN_THREADS is not set, then no modifier is needed.
-#define STAN_THREADS_DEF
-#endif
 
 /**
  * This struct always provides access to the autodiff stack using
