@@ -226,6 +226,21 @@ class operation_cl : public operation_cl_base {
   }
 
   /**
+   * Generates kernel code for this expression.
+   * @param i row index variable name
+   * @param j column index variable name
+   * @param view_handled whether whether caller already handled matrix view
+   * @param var_name_arg variable name of the nested expression
+   * @return part of kernel with code for this expression
+   */
+  inline kernel_parts generate(const std::string& i, const std::string& j,
+                               const bool view_handled,
+                               const std::string& var_name_arg) const {
+    var_name = var_name_arg;
+    return {};
+  }
+
+  /**
    * Does nothing. Derived classes can override this to modify how indices are
    * passed to its argument expressions. On input arguments \c i and \c j are
    * expressions for indices of this operation. On output they are expressions

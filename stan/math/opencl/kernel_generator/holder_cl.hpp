@@ -54,20 +54,6 @@ class holder_cl_
       : base(std::forward<T>(a)),
         m_unique_ptrs(std::unique_ptr<Ptrs>(ptrs)...) {}
 
-  /**
-   * Generates kernel code for this expression.
-   * @param i row index variable name
-   * @param j column index variable name
-   * @param view_handled whether whether caller already handled matrix view
-   * @param var_name_arg variable name of the nested expression
-   * @return part of kernel with code for this expression
-   */
-  inline kernel_parts generate(const std::string& i, const std::string& j,
-                               const bool view_handled,
-                               const std::string& var_name_arg) const {
-    var_name = var_name_arg;
-    return {};
-  }
 };
 
 /**
