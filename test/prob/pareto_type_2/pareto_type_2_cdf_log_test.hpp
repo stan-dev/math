@@ -1,3 +1,5 @@
+#ifndef TEST_PROB_PARETO_TYPE_2_CDF_LOG_TEST
+#define TEST_PROB_PARETO_TYPE_2_CDF_LOG_TEST
 // Arguments: Doubles, Doubles, Doubles, Doubles
 #include <stan/math/prim.hpp>
 
@@ -69,3 +71,5 @@ class AgradCdfLogParetoType2 : public AgradCdfLogTest {
     return log1m(pow(1.0 + (y - mu) / lambda, -alpha));
   }
 };
+#endif
+

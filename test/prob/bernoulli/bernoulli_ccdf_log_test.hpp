@@ -1,3 +1,5 @@
+#ifndef TEST_PROB_BERNOULLI_BERNOULLI_CCDF_LOG_TEST
+#define TEST_PROB_BERNOULLI_BERNOULLI_CCDF_LOG_TEST
 // Arguments: Ints, Doubles
 #include <stan/math/prim.hpp>
 
@@ -52,3 +54,4 @@ class AgradCcdfLogBernoulli : public AgradCcdfLogTest {
       return stan::math::negative_infinity();
   }
 };
+#endif

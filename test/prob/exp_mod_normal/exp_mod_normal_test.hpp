@@ -1,3 +1,5 @@
+#ifndef TEST_PROB_EXP_MOD_NORMAL_TEST
+#define TEST_PROB_EXP_MOD_NORMAL_TEST
 // Arguments: Doubles, Doubles, Doubles, Doubles
 #include <stan/math/prim.hpp>
 
@@ -97,3 +99,4 @@ class AgradDistributionExpModNormal : public AgradDistributionTest {
            + log(erfc((mu + lambda * sigma * sigma - y) / (sqrt(2.0) * sigma)));
   }
 };
+#endif

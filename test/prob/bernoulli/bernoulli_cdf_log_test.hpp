@@ -1,3 +1,5 @@
+#ifndef TEST_PROB_BERNOULLI_BERNOULLI_CDF_LOG_TEST
+#define TEST_PROB_BERNOULLI_BERNOULLI_CDF_LOG_TEST
 // Arguments: Ints, Doubles
 #include <stan/math/prim.hpp>
 
@@ -57,3 +59,4 @@ class AgradCdfLogBernoulli : public AgradCdfLogTest {
       return 0;
   }
 };
+#endif

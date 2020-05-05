@@ -1,3 +1,5 @@
+#ifndef TEST_PROB_BERNOULLI_BERNOULLI_LOGIT_LOG_TEST
+#define TEST_PROB_BERNOULLI_BERNOULLI_LOGIT_LOG_TEST
 // Arguments: Ints, Doubles
 #include <stan/math/prim.hpp>
 
@@ -95,3 +97,4 @@ class AgradDistributionsBernoulliLogistic : public AgradDistributionTest {
     return 0.0;
   }
 };
+#endif

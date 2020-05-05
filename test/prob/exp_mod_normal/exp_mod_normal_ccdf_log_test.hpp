@@ -1,3 +1,5 @@
+#ifndef TEST_PROB_EXP_MOD_NORMAL_CCDF_LOG_TEST
+#define TEST_PROB_EXP_MOD_NORMAL_CCDF_LOG_TEST
 // Arguments: Doubles, Doubles, Doubles, Doubles
 #include <stan/math/prim.hpp>
 
@@ -89,3 +91,5 @@ class AgradCcdfLogExpModNormal : public AgradCcdfLogTest {
                           / (sqrt(2.0) * sigma)))));
   }
 };
+
+#endif

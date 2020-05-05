@@ -1,3 +1,5 @@
+#ifndef TEST_PROB_PARETO_TYPE_2_CDF_TEST
+#define TEST_PROB_PARETO_TYPE_2_CDF_TEST
 // Arguments: Doubles, Doubles, Doubles, Doubles
 #include <stan/math/prim.hpp>
 
@@ -69,3 +71,4 @@ class AgradCdfParetoType2 : public AgradCdfTest {
     return 1.0 - pow(1.0 + (y - mu) / lambda, -alpha);
   }
 };
+#endif

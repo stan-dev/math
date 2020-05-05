@@ -1,3 +1,5 @@
+#ifndef TEST_PROB_SKEW_NORMAL_CDF_TEST
+#define TEST_PROB_SKEW_NORMAL_CDF_TEST
 // Arguments: Doubles, Doubles, Doubles, Doubles
 #include <stan/math/prim.hpp>
 
@@ -92,3 +94,4 @@ class AgradCdfSkewNormal : public AgradCdfTest {
            - 2.0 * owens_t((y - mu) / sigma, alpha);
   }
 };
+#endif

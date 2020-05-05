@@ -1,3 +1,5 @@
+#ifndef TEST_PROB_PARETO_TYPE_2_TEST
+#define TEST_PROB_PARETO_TYPE_2_TEST
 // Arguments: Doubles, Doubles, Doubles, Doubles
 #include <stan/math/prim.hpp>
 
@@ -82,3 +84,5 @@ class AgradDistributionParetoType2 : public AgradDistributionTest {
     return log(alpha) - log(lambda) - (alpha + 1.0) * log1p((y - mu) / lambda);
   }
 };
+
+#endif

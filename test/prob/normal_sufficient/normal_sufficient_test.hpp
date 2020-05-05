@@ -1,3 +1,5 @@
+#ifndef TEST_PROB_NORMAL_SUFFICIENT_TEST
+#define TEST_PROB_NORMAL_SUFFICIENT_TEST
 // Arguments: Doubles, Doubles, Ints, Doubles, Doubles
 #include <stan/math/prim.hpp>
 
@@ -106,3 +108,4 @@ class AgradDistributionNormalSufficient : public AgradDistributionTest {
     return lp;
   }
 };
+#endif

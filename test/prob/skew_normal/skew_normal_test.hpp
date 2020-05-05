@@ -1,3 +1,5 @@
+#ifndef TEST_PROB_SKEW_NORMAL_TEST
+#define TEST_PROB_SKEW_NORMAL_TEST
 // Arguments: Doubles, Doubles, Doubles, Doubles
 #include <stan/math/prim.hpp>
 
@@ -94,3 +96,4 @@ class AgradDistributionSkewNormal : public AgradDistributionTest {
            + log(erfc(-alpha * (y - mu) / (sigma * std::sqrt(2.0))));
   }
 };
+#endif

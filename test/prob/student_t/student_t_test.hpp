@@ -1,3 +1,5 @@
+#ifndef TEST_PROB_STUDENT_T_TEST
+#define TEST_PROB_STUDENT_T_TEST
 // Arguments: Doubles, Doubles, Doubles, Doubles
 #include <stan/math/prim.hpp>
 
@@ -95,3 +97,4 @@ class AgradDistributionsStudentT : public AgradDistributionTest {
            - ((nu + 1.0) / 2.0) * log1p(square(((y - mu) / sigma)) / nu);
   }
 };
+#endif

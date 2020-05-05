@@ -1,3 +1,5 @@
+#ifndef TEST_PROB_BERNOULLI_BERNOULLI_TEST
+#define TEST_PROB_BERNOULLI_BERNOULLI_TEST
 // Arguments: Ints, Doubles
 #include <stan/math/prim.hpp>
 #include <stdexcept>
@@ -85,3 +87,4 @@ TEST(ProbDistributionsBernoulliCDF, Values) {
   EXPECT_FLOAT_EQ(1, stan::math::bernoulli_cdf(1, 0.57));
   EXPECT_FLOAT_EQ(1 - 0.57, stan::math::bernoulli_cdf(0, 0.57));
 }
+#endif

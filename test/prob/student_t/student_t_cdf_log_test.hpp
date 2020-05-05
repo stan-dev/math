@@ -1,3 +1,5 @@
+#ifndef TEST_PROB_STUDENT_T_CDF_LOG_TEST
+#define TEST_PROB_STUDENT_T_CDF_LOG_TEST
 // Arguments: Doubles, Doubles, Doubles, Doubles
 #include <stan/math/prim.hpp>
 
@@ -75,3 +77,4 @@ class AgradCdfLogStudentT : public AgradCdfLogTest {
     return stan::math::student_t_cdf_log(y, nu, mu, sigma);
   }
 };
+#endif

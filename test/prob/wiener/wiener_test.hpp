@@ -1,3 +1,5 @@
+#ifndef TEST_PROB_WIENER_TEST
+#define TEST_PROB_WIENER_TEST
 // Arguments: Doubles, Doubles, Doubles, Doubles, Doubles
 #include <stan/math/prim.hpp>
 #include <limits>
@@ -99,3 +101,4 @@ class AgradDistributionWiener : public AgradDistributionTest {
     return stan::math::wiener_log<true>(y, alpha, tau, beta, delta);
   }
 };
+#endif

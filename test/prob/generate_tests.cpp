@@ -82,6 +82,7 @@ void write_includes(vector<std::ostream*>& outs, const string& include) {
     *out << "#include <test/prob/test_fixture_ccdf_log.hpp>" << endl;
     *out << "#include <" << include << ">" << endl;
     *out << endl;
+    *out << "namespace test" << n << "{" << endl;
   }
 }
 
@@ -402,7 +403,10 @@ int create_files(const int& argc, const char* argv[], const int& index,
   else if (num_tests > 0)
     write_test_cases(outs, file, argument_sequence, index,
                      ceil(num_tests / BATCHES));
-
+  for (size_t n = 0; n < outs.size(); n++) {
+    std::ostream* out = outs[n];
+    *out << "}" << endl;
+  }
   for (size_t n = 0; n < outs.size(); n++) {
     static_cast<std::ofstream*>(outs[n])->close();
     delete (outs[n]);
