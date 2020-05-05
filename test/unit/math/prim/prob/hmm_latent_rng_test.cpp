@@ -9,17 +9,6 @@
 #include <limits>
 #include <vector>
 
-
-// TEST_F(hmm_test, compile_and_run) {
-//   using stan::math::hmm_latent_rng;
-//   boost::random::mt19937 rng;
-//
-//   std::vector<int> x = hmm_latent_rng(log_omegas_, Gamma_, rho_, rng);
-//   for (size_t i = 0; i < x.size(); ++i)
-//     std::cout << x[i] << " ";
-//   std::cout << std::endl;
-// }
-
 TEST(hmm_rng_test, chiSquareGoodnessFitTest) {
   // with identity transition and constant log_omegas, the sampled latent
   // states are identifcal and follow a Bernoulli distribution parameterized

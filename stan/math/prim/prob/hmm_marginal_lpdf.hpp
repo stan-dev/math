@@ -56,7 +56,6 @@ inline auto hmm_marginal_lpdf_val(
  * The transition matrix Gamma is such that the (i, j)th entry is the
  * probability that x_n = j given x_{n - 1} = i. The rows of Gamma are
  * simplexes.
- * The Gamma argument is only checked if there is at least one transition.
  *
  * @tparam T_omega type of the log likelihood matrix
  * @tparam T_Gamma type of the transition matrix
