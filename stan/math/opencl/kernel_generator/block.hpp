@@ -37,6 +37,7 @@ class block_
   using base = operation_cl_lhs<block_<T>, Scalar, T>;
   using base::var_name;
   using view_transitivity = std::tuple<std::true_type>;
+  using base::operator=;
 
  protected:
   int start_row_, start_col_, rows_, cols_;
@@ -195,23 +196,6 @@ class block_
         = this->template get_arg<0>().extreme_diagonals();
     return {arg_diags.first - start_col_ + start_row_,
             arg_diags.second - start_col_ + start_row_};
-  }
-
-  /**
-   * Evaluates an expression and assigns it to the block.
-   * @tparam T_expression type of expression
-   * @param rhs input expression
-   */
-  template <typename T_expression,
-            typename = require_all_valid_kernel_expressions_and_none_scalar_t<
-                T_expression>>
-  const block_<T>& operator=(T_expression&& rhs) const {
-    auto expression = as_operation_cl(std::forward<T_expression>(rhs));
-    if (rows_ * cols_ == 0) {
-      return *this;
-    }
-    expression.evaluate_into(*this);
-    return *this;
   }
 
   /**
