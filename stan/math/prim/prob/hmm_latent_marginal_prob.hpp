@@ -31,11 +31,13 @@ inline Eigen::MatrixXd hmm_latent_marginal_prob(
   Eigen::MatrixXd Gamma_dbl = value_of(Gamma);
 
   Eigen::MatrixXd alphas(n_states, n_transitions + 1);
-  alphas.col(0) = omegas.col(0).cwiseProduct(rho);
+  alphas.col(0) = omegas.col(0).cwiseProduct(rho_dbl);
   alphas.col(0) /= alphas.col(0).maxCoeff();
 
-  for (int n = 0; n < n_transitions; ++n)
-    alphas.col(n + 1) = omegas.col(n + 1).cwiseProduct(Gamma * alphas.col(n));
+  Eigen::MatrixXd Gamma_dbl_transpose = Gamma_dbl.transpose();
+  for (int n = 1; n <= n_transitions; ++n)
+    alphas.col(n) = omegas.col(n).cwiseProduct(Gamma_dbl_transpose
+                      * alphas.col(n - 1));
 
   // Backward pass with running normalization
   Eigen::VectorXd beta = Eigen::VectorXd::Ones(n_states);
@@ -43,7 +45,7 @@ inline Eigen::MatrixXd hmm_latent_marginal_prob(
   alphas.col(n_transitions) /= alphas.col(n_transitions).sum();
 
   for (int n = n_transitions - 1; n >= 0; --n) {
-    beta = Gamma.transpose() * (omegas.col(n + 1).cwiseProduct(beta));
+    beta = Gamma_dbl * (omegas.col(n + 1).cwiseProduct(beta));
     beta /= beta.maxCoeff();
 
     // Reuse alphas to store probabilities
