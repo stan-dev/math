@@ -37,32 +37,36 @@ TEST(MathRev, TestVarEigen) {
 
   std::cout << "y stat val: \n" << y.val() << "\n";
   std::cout << "y stat adj: \n" << y.adj() << "\n";
+
   stan::math::set_zero_all_adjoints();
+  puts("");
   puts("---------");
   puts("Dynamic Matrix");
   puts("---------");
+  puts("");
   Eigen::Matrix<var, -1, -1> x_dyn = x_vals;
   Eigen::Matrix<var, -1, -1> y_dyn = y_vals;
   Eigen::Matrix<var, -1, -1> mul_xy_dyn = x_dyn * y_dyn;
-  var sum_mul_xy_dyn = sum(mul_xy_dyn + x_dyn);
   var lp_dyn = 0;
+  var sum_mul_xy_dyn = sum(mul_xy_dyn + x_dyn);
   lp_dyn -= sum_mul_xy_dyn;
-  lp.grad();
-  std::cout << "lp dyn val: \n" << lp.val() << "\n";
-  std::cout << "lp dyn adj: \n" << lp.adj() << "\n";
+  lp_dyn.grad();
+  std::cout << "lp dyn val: \n" << lp_dyn.val() << "\n";
+  std::cout << "lp dyn adj: \n" << lp_dyn.adj() << "\n";
   puts("---------");
-  std::cout << "sum_mul_xy dyn val: \n" << sum_mul_xy.val() << "\n";
-  std::cout << "sum_mul_xy dyn adj: \n" << sum_mul_xy.adj() << "\n";
-  puts("---------");
-
-  std::cout << "mul_xy dyn val: \n" << mul_xy.val() << "\n";
-  std::cout << "mul_xy dyn adj: \n" << mul_xy.adj() << "\n";
+  std::cout << "sum_mul_xy dyn val: \n" << sum_mul_xy_dyn.val() << "\n";
+  std::cout << "sum_mul_xy dyn adj: \n" << sum_mul_xy_dyn.adj() << "\n";
   puts("---------");
 
-  std::cout << "x dyn val: \n" << x.val() << "\n";
-  std::cout << "x dyn adj: \n" << x.adj() << "\n";
+  std::cout << "mul_xy dyn val: \n" << mul_xy_dyn.val() << "\n";
+  std::cout << "mul_xy dyn adj: \n" << mul_xy_dyn.adj() << "\n";
   puts("---------");
 
-  std::cout << "y dyn val: \n" << y.val() << "\n";
-  std::cout << "y dyn adj: \n" << y.adj() << "\n";
+  std::cout << "x dyn val: \n" << x_dyn.val() << "\n";
+  std::cout << "x dyn adj: \n" << x_dyn.adj() << "\n";
+  puts("---------");
+
+  std::cout << "y dyn val: \n" << y_dyn.val() << "\n";
+  std::cout << "y dyn adj: \n" << y_dyn.adj() << "\n";
+
 }
