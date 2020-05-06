@@ -41,10 +41,7 @@
  * inline kernel_parts generate(const std::string& i, const std::string& j,
  *                            const std::string& var_name_arg)
  * ```
- * 5. Member function `view()` should return the correct `matrix_cl_view` after
- * applying the operation. For instance `transpose()` returns an `UPPER` View
- * if a `matrix_cl` with a `LOWER` view was the input.
- * 6. Member function `deep_copy` should make a copy of the expression.
+ * 5. Member function `deep_copy` should make a copy of the expression.
  * Arguments that are operations should be copied by calling their `deep_copy`.
  *
  * The following functions can optionally be defined. Defaults are implemented
@@ -63,19 +60,22 @@
  *     - Returns number of columns of the result.
  *     - Default: Returns maximum of the arguments' columns.
  * - `int thread_rows()`:
- *     - Number of threads required for this operation in rows direction.
+ *     - Returns number of threads required for this operation in rows
+ * direction.
  *     - Default: returns `rows()`.
  * - `int thread_cols()`:
- *     - Number of threads required for this operation in cols direction.
+ *     - Returns number of threads required for this operation in cols
+ * direction.
  *     - Default: `cols()`.
- * - `int bottom_diagonal()`:
- *     - Index of bottom nonzero diagonal of the result (0 is the diagonal,
- * positive values are superdiagonals, negative values are subdiagonals).
- *     - Default: Returns minimum of arguments' `bottom_diagonal()`.
- * - `int top_diagonal()`:
- *     - Index of top nonzero diagonal of the result (0 is the diagonal,
- * positive values are superdiagonals, negative values are subdiagonals).
- *     - Default: Returns maximum of arguments' `top_diagonal()`.
+ * - `std::pair<int,int> extreme_diagonals()`:
+ *     - Returns indices of the extreme bottom and top nonzero diagonals of the
+ * result of the operation. Diagonal has index 0, first superdiagonal 1, first
+ * subdiagonal -1 and so on. For instance `load_` of a matrix with lower
+ * triangular view would return bottom diagonal of `1-rows()` and top diagonal
+ * `0`. Returning a more extreme value is also allowed and especially useful for
+ * operations that are broadcast so their exact size is not known.
+ *     - Default: Bottom diagonal equals to min of bottom diagonals of
+ * arguments. Top diagonal equals to max of top diagonals of arguments.
  *
  * If an operation should support being assigned to it should also define the
  * following:
@@ -115,6 +115,7 @@
 
 #include <stan/math/opencl/kernel_generator/load.hpp>
 #include <stan/math/opencl/kernel_generator/scalar.hpp>
+#include <stan/math/opencl/kernel_generator/append.hpp>
 #include <stan/math/opencl/kernel_generator/binary_operation.hpp>
 #include <stan/math/opencl/kernel_generator/unary_function_cl.hpp>
 #include <stan/math/opencl/kernel_generator/unary_operation_cl.hpp>
@@ -125,12 +126,15 @@
 #include <stan/math/opencl/kernel_generator/transpose.hpp>
 #include <stan/math/opencl/kernel_generator/broadcast.hpp>
 #include <stan/math/opencl/kernel_generator/optional_broadcast.hpp>
+#include <stan/math/opencl/kernel_generator/diagonal.hpp>
 
 #include <stan/math/opencl/kernel_generator/multi_result_kernel.hpp>
 #include <stan/math/opencl/kernel_generator/get_kernel_source_for_evaluating_into.hpp>
 #include <stan/math/opencl/kernel_generator/evaluate_into.hpp>
 
 #include <stan/math/opencl/kernel_generator/matrix_cl_conversion.hpp>
+
+#include <stan/math/opencl/kernel_generator/matrix_vector_multiply.hpp>
 
 #endif
 #endif

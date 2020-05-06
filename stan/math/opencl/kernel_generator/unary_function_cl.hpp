@@ -29,14 +29,14 @@ namespace math {
  * Represents a unary function in kernel generator expressions.
  * @tparam Derived derived type
  * @tparam T type of argument
+ * @tparam Scal type of the scalar of result
  */
-template <typename Derived, typename T>
-class unary_function_cl
-    : public operation_cl<Derived, typename std::remove_reference_t<T>::Scalar,
-                          T> {
+template <typename Derived, typename Scal, typename T>
+class unary_function_cl : public operation_cl<Derived, Scal, T> {
  public:
-  using Scalar = typename std::remove_reference_t<T>::Scalar;
-  static_assert(std::is_floating_point<Scalar>::value,
+  using Scalar = Scal;
+  static_assert(std::is_floating_point<
+                    typename std::remove_reference_t<T>::Scalar>::value,
                 "unary_function_cl: argument must be expression with floating "
                 "point return type!");
   using base = operation_cl<Derived, Scalar, T>;
@@ -54,24 +54,18 @@ class unary_function_cl
    * generates kernel code for this expression.
    * @param i row index variable name
    * @param j column index variable name
+   * @param view_handled whether whether caller already handled matrix view
    * @param var_name_arg variable name of the nested expression
    * @return part of kernel with code for this expression
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
+                               const bool view_handled,
                                const std::string& var_name_arg) const {
     kernel_parts res{};
     res.includes = base::derived().include;
     res.body = type_str<Scalar>() + " " + var_name + " = " + fun_ + "("
                + var_name_arg + ");\n";
     return res;
-  }
-
-  /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
-   */
-  inline matrix_cl_view view() const {
-    return this->template get_arg<0>().view();
   }
 
  protected:
@@ -86,11 +80,17 @@ class unary_function_cl
  */
 #define ADD_UNARY_FUNCTION_WITH_INCLUDE(fun, incl)                            \
   template <typename T>                                                       \
-  class fun##_ : public unary_function_cl<fun##_<T>, T> {                     \
-    using base = unary_function_cl<fun##_<T>, T>;                             \
+  class fun##_                                                                \
+      : public unary_function_cl<                                             \
+            fun##_<T>, typename std::remove_reference_t<T>::Scalar, T> {      \
+    using base                                                                \
+        = unary_function_cl<fun##_<T>,                                        \
+                            typename std::remove_reference_t<T>::Scalar, T>;  \
     using base::arguments_;                                                   \
                                                                               \
    public:                                                                    \
+    using base::rows;                                                         \
+    using base::cols;                                                         \
     static const char* include;                                               \
     explicit fun##_(T&& a) : base(std::forward<T>(a), #fun) {}                \
     inline auto deep_copy() const {                                           \
@@ -98,7 +98,9 @@ class unary_function_cl
       return fun##_<std::remove_reference_t<decltype(arg_copy)>>{             \
           std::move(arg_copy)};                                               \
     }                                                                         \
-    inline matrix_cl_view view() const { return matrix_cl_view::Entire; }     \
+    inline std::pair<int, int> extreme_diagonals() const {                    \
+      return {-rows() + 1, cols() - 1};                                       \
+    }                                                                         \
   };                                                                          \
                                                                               \
   template <typename T, typename Cond                                         \
@@ -124,17 +126,60 @@ class unary_function_cl
  */
 #define ADD_UNARY_FUNCTION_PASS_ZERO(fun)                                     \
   template <typename T>                                                       \
-  class fun##_ : public unary_function_cl<fun##_<T>, T> {                     \
-    using base = unary_function_cl<fun##_<T>, T>;                             \
+  class fun##_                                                                \
+      : public unary_function_cl<                                             \
+            fun##_<T>, typename std::remove_reference_t<T>::Scalar, T> {      \
+    using base                                                                \
+        = unary_function_cl<fun##_<T>,                                        \
+                            typename std::remove_reference_t<T>::Scalar, T>;  \
     using base::arguments_;                                                   \
                                                                               \
    public:                                                                    \
+    using base::rows;                                                         \
+    using base::cols;                                                         \
+    static constexpr auto view_transitivness = std::make_tuple(true);         \
     static const char* include;                                               \
     explicit fun##_(T&& a) : base(std::forward<T>(a), #fun) {}                \
     inline auto deep_copy() const {                                           \
       auto&& arg_copy = this->template get_arg<0>().deep_copy();              \
       return fun##_<std::remove_reference_t<decltype(arg_copy)>>{             \
           std::move(arg_copy)};                                               \
+    }                                                                         \
+  };                                                                          \
+                                                                              \
+  template <typename T, typename Cond                                         \
+                        = require_all_valid_expressions_and_none_scalar_t<T>> \
+  inline fun##_<as_operation_cl_t<T>> fun(T&& a) {                            \
+    return fun##_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a))); \
+  }                                                                           \
+  template <typename T>                                                       \
+  const char* fun##_<T>::include = "";
+
+/**
+ * generates a class and function for a classification function, defined by
+ * OpenCL.
+ * @param fun function name
+ * @param ... code for determining extreme diagonals
+ */
+#define ADD_CLASSIFICATION_FUNCTION(fun, ...)                                 \
+  template <typename T>                                                       \
+  class fun##_ : public unary_function_cl<fun##_<T>, bool, T> {               \
+    using base = unary_function_cl<fun##_<T>, bool, T>;                       \
+    using base::arguments_;                                                   \
+                                                                              \
+   public:                                                                    \
+    using base::rows;                                                         \
+    using base::cols;                                                         \
+    static constexpr auto view_transitivness = std::make_tuple(true);         \
+    static const char* include;                                               \
+    explicit fun##_(T&& a) : base(std::forward<T>(a), #fun) {}                \
+    inline auto deep_copy() const {                                           \
+      auto&& arg_copy = this->template get_arg<0>().deep_copy();              \
+      return fun##_<std::remove_reference_t<decltype(arg_copy)>>{             \
+          std::move(arg_copy)};                                               \
+    }                                                                         \
+    inline std::pair<int, int> extreme_diagonals() const {                    \
+      return __VA_ARGS__;                                                     \
     }                                                                         \
   };                                                                          \
                                                                               \
@@ -188,9 +233,17 @@ ADD_UNARY_FUNCTION_WITH_INCLUDE(log1m_exp,
 ADD_UNARY_FUNCTION_WITH_INCLUDE(log1p_exp,
                                 opencl_kernels::log1p_exp_device_function)
 
+ADD_CLASSIFICATION_FUNCTION(isfinite, {-rows() + 1, cols() - 1})
+ADD_CLASSIFICATION_FUNCTION(isinf,
+                            this->template get_arg<0>().extreme_diagonals())
+ADD_CLASSIFICATION_FUNCTION(isnan,
+                            this->template get_arg<0>().extreme_diagonals())
+
 #undef ADD_UNARY_FUNCTION_WITH_INCLUDE
 #undef ADD_UNARY_FUNCTION
 #undef ADD_UNARY_FUNCTION_PASS_ZERO
+#undef ADD_CLASSIFICATION_FUNCTION
+
 /** @}*/
 }  // namespace math
 }  // namespace stan

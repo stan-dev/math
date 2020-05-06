@@ -55,12 +55,14 @@ class optional_broadcast_
    * generates kernel code for this and nested expressions.
    * @param row_idx_name  row index variable name
    * @param col_idx_name  column index variable name
+   * @param view_handled whether whether caller already handled matrix view
    * @param var_name_arg name of the variable in kernel that holds argument to
    * this expression
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts generate(const std::string& row_idx_name,
                                const std::string& col_idx_name,
+                               const bool view_handled,
                                const std::string& var_name_arg) const {
     kernel_parts res;
     res.body
