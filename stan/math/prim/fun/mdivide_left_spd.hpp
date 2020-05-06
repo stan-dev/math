@@ -12,14 +12,8 @@ namespace math {
  * Returns the solution of the system Ax=b where A is symmetric positive
  * definite.
  *
- * @tparam T1 type of elements in the first matrix
- * @tparam T2 type of elements in the right-hand side matrix or vector
- * @tparam R1 number of rows in the first matrix, can be Eigen::Dynamic
- * @tparam C1 number of columns in the first matrix, can be Eigen::Dynamic
- * @tparam R2 number of rows in the right-hand side matrix, can be
- *         Eigen::Dynamic
- * @tparam C2 number of columns in the right-hand side matrix, can be
- *         Eigen::Dynamic
+ * @tparam EigMat1 type of the first matrix
+ * @tparam EigMat2 type of the right-hand side matrix or vector
  *
  * @param A Matrix.
  * @param b Right hand side matrix or vector.
@@ -27,10 +21,12 @@ namespace math {
  * @throws std::domain_error if A is not square or the rows of b don't
  * match the size of A.
  */
-template <typename T1, typename T2, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_left_spd(
-    const Eigen::Matrix<T1, R1, C1> &A, const Eigen::Matrix<T2, R2, C2> &b) {
-  static const char *function = "mdivide_left_spd";
+template <typename EigMat1, typename EigMat2,
+          require_all_eigen_t<EigMat1, EigMat2>* = nullptr>
+inline Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
+                     EigMat1::RowsAtCompileTime, EigMat2::ColsAtCompileTime>
+mdivide_left_spd(const EigMat1& A, const EigMat2& b) {
+  static const char* function = "mdivide_left_spd";
   check_multiplicable(function, "A", A, "b", b);
   check_symmetric(function, "A", A);
   check_not_nan(function, "A", A);
@@ -38,9 +34,14 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_left_spd(
     return {0, b.cols()};
   }
 
-  auto llt = Eigen::Matrix<return_type_t<T1, T2>, R1, C1>(A).llt();
+  auto llt
+      = Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
+                      EigMat1::RowsAtCompileTime, EigMat1::ColsAtCompileTime>(A)
+            .llt();
   check_pos_definite(function, "A", llt);
-  return llt.solve(Eigen::Matrix<return_type_t<T1, T2>, R2, C2>(b));
+  return llt.solve(
+      Eigen::Matrix<return_type_t<EigMat1, EigMat2>, EigMat2::RowsAtCompileTime,
+                    EigMat2::ColsAtCompileTime>(b));
 }
 
 }  // namespace math
