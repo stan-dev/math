@@ -10,7 +10,7 @@
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-TEST(MathFunctions, log1m_inv_logit) {
+TEST(MathMatrixCL, log1m_inv_logit) {
   stan::math::matrix_d a(5,1);
   a << -7.2, 0.0, 1.9, -5.0, 0.1;
   using stan::math::log1m_inv_logit;
@@ -20,7 +20,7 @@ TEST(MathFunctions, log1m_inv_logit) {
   EXPECT_MATRIX_NEAR(log1m_inv_logit(a), res, 1E-08);
 }
 
-TEST(MathFunctions, log1m_inv_logit_nan) {
+TEST(MathMatrixCL, log1m_inv_logit_nan) {
   stan::math::matrix_d a(1,1);
   a << std::numeric_limits<double>::quiet_NaN();
   using stan::math::log1m_inv_logit;

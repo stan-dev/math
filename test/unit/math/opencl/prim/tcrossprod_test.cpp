@@ -15,7 +15,7 @@ void test_tcrossprod(const stan::math::matrix_d& x) {
       EXPECT_FLOAT_EQ(y_cl(m, n), y_correct(m, n));
 }
 
-TEST(MathMatrixPrimMat, crossprod) {
+TEST(MathMatrixCL, tcrossprod) {
   stan::math::matrix_d x;
   test_tcrossprod(x);
 
