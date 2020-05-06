@@ -12,9 +12,6 @@ namespace math {
  * Return the specified column of the specified kernel generator
  * expression using start-at-1 indexing.
  *
- * This is equivalent to calling <code>x.col(i - 1)</code> and
- * assigning the resulting expression to a column vector.
- *
  * @tparam T_x type of input kernel generator expression a
  * @param x input kernel generator expression.
  * @param j Column index (count from 1).

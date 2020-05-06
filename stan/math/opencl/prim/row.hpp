@@ -12,10 +12,6 @@ namespace math {
  * Return the specified row of the specified kernel generator
  * expression using start-at-1 indexing.
  *
- * This is equivalent to calling <code>x.row(i - 1)</code> and
- * assigning the resulting expression to a matrix_cl representing
- * a row vector.
- *
  * @tparam T_x type of input kernel generator expression x
  * @param x input kernel generator expression.
  * @param j Row index (count from 1).
