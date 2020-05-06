@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_IS_VALID_KERNEL_EXPRESSION_HPP
-#define STAN_MATH_OPENCL_KERNEL_GENERATOR_IS_VALID_KERNEL_EXPRESSION_HPP
+#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_IS_KERNEL_EXPRESSION_HPP
+#define STAN_MATH_OPENCL_KERNEL_GENERATOR_IS_KERNEL_EXPRESSION_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/is_matrix_cl.hpp>
@@ -23,12 +23,12 @@ class operation_cl_base {};
  * expression.
  */
 template <typename T, typename = void>
-struct is_valid_kernel_expression_and_not_scalar
+struct is_kernel_expression_and_not_scalar
     : bool_constant<std::is_base_of<operation_cl_base,
                                     std::remove_reference_t<T>>::value> {};
 
 template <typename T>
-struct is_valid_kernel_expression_and_not_scalar<T, require_matrix_cl_t<T>>
+struct is_kernel_expression_and_not_scalar<T, require_matrix_cl_t<T>>
     : std::true_type {};
 
 /**
@@ -37,8 +37,8 @@ struct is_valid_kernel_expression_and_not_scalar<T, require_matrix_cl_t<T>>
  * references of these types.
  */
 template <typename T>
-struct is_valid_kernel_expression
-    : bool_constant<is_valid_kernel_expression_and_not_scalar<T>::value
+struct is_kernel_expression
+    : bool_constant<is_kernel_expression_and_not_scalar<T>::value
                     || std::is_arithmetic<std::remove_reference_t<T>>::value> {
 };
 
@@ -47,8 +47,8 @@ struct is_valid_kernel_expression
  * valid kernel generator expressions.
  */
 template <typename... Types>
-using require_all_valid_kernel_expressions_and_none_scalar_t
-    = require_all_t<is_valid_kernel_expression_and_not_scalar<Types>...>;
+using require_all_kernel_expressions_and_none_scalar_t
+    = require_all_t<is_kernel_expression_and_not_scalar<Types>...>;
 
 /**
  * Enables a template if all given types are are a valid kernel generator
@@ -56,7 +56,7 @@ using require_all_valid_kernel_expressions_and_none_scalar_t
  */
 template <typename... Types>
 using require_all_kernel_expressions_t
-    = require_all_t<is_valid_kernel_expression<Types>...>;
+    = require_all_t<is_kernel_expression<Types>...>;
 /** @}*/
 }  // namespace math
 }  // namespace stan

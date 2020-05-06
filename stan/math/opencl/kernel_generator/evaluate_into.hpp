@@ -5,7 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_kernel_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <stan/math/opencl/kernel_generator/multi_result_kernel.hpp>
 #include <CL/cl2.hpp>
 #include <string>
@@ -21,7 +21,7 @@ template <typename Derived, typename Scalar, typename... Args>
 template <typename T_lhs>
 void operation_cl<Derived, Scalar, Args...>::evaluate_into(T_lhs& lhs) const {
   static_assert(
-      is_valid_kernel_expression<T_lhs>::value,
+      is_kernel_expression<T_lhs>::value,
       "operation_cl::evaluate_into: left hand side is not a valid expression!");
   results(lhs) = expressions(derived());
 }

@@ -7,7 +7,7 @@
 #include <stan/math/opencl/kernel_generator/wrapper.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_kernel_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_cl.hpp>
@@ -78,6 +78,7 @@ class operation_cl : public operation_cl_base {
   mutable std::string var_name;  // name of the variable that holds result of
                                  // this operation in the kernel
 
+ public:
   /**
    * Casts the instance into its derived type.
    * @return \c this cast into derived type
@@ -92,7 +93,6 @@ class operation_cl : public operation_cl_base {
     return *static_cast<const Derived*>(this);
   }
 
- public:
   using Deriv = Derived;
   using ArgsTuple = std::tuple<Args...>;
   static const bool require_specific_local_size;

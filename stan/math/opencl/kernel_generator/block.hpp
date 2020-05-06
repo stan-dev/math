@@ -9,7 +9,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl_lhs.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_kernel_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <set>
 #include <string>
 #include <tuple>
@@ -37,6 +37,7 @@ class block_
   using base = operation_cl_lhs<block_<T>, Scalar, T>;
   using base::var_name;
   using view_transitivity = std::tuple<std::true_type>;
+  using base::operator=;
 
  protected:
   int start_row_, start_col_, rows_, cols_;
@@ -198,23 +199,6 @@ class block_
   }
 
   /**
-   * Evaluates an expression and assigns it to the block.
-   * @tparam T_expression type of expression
-   * @param rhs input expression
-   */
-  template <typename T_expression,
-            typename = require_all_valid_kernel_expressions_and_none_scalar_t<
-                T_expression>>
-  const block_<T>& operator=(T_expression&& rhs) const {
-    auto expression = as_operation_cl(std::forward<T_expression>(rhs));
-    if (rows_ * cols_ == 0) {
-      return *this;
-    }
-    expression.evaluate_into(*this);
-    return *this;
-  }
-
-  /**
    * Checks if desired dimensions match dimensions of the block.
    * @param rows desired number of rows
    * @param cols desired number of columns
@@ -248,7 +232,7 @@ class block_
  * @return Block of given expression
  */
 template <typename T,
-          typename = require_all_valid_kernel_expressions_and_none_scalar_t<T>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
 inline auto block(T&& a, int start_row, int start_col, int rows, int cols) {
   auto&& a_operation = as_operation_cl(std::forward<T>(a)).deep_copy();
   return block_<std::remove_reference_t<decltype(a_operation)>>(
