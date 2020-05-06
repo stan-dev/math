@@ -66,7 +66,7 @@ struct coupled_ode_system_impl;
 template <typename F, typename T_initial, typename... Args>
 struct coupled_ode_system_impl<true, F, T_initial, Args...> {
   const F& f_;
-  const std::vector<double>& y0_;
+  const Eigen::VectorXd& y0_;
   std::tuple<const Args&...> args_tuple_;
   const size_t N_;
   std::ostream* msgs_;
@@ -83,11 +83,11 @@ struct coupled_ode_system_impl<true, F, T_initial, Args...> {
    * @param[in] x_int integer data
    * @param[in, out] msgs stream for messages
    */
-  coupled_ode_system_impl(const F& f, const std::vector<double>& y0,
+  coupled_ode_system_impl(const F& f, const Eigen::VectorXd& y0,
                           std::ostream* msgs, const Args&... args)
       : f_(f), y0_(y0), args_tuple_(args...), N_(y0.size()), msgs_(msgs) {}
 
-  void operator()(const std::vector<double>& y, std::vector<double>& dy_dt,
+  void operator()(const Eigen::VectorXd& y, Eigen::VectorXd& dy_dt,
                   double t) const {
     dy_dt = apply([&](const Args&... args) { return f_(t, y, msgs_, args...); },
                   args_tuple_);
@@ -121,7 +121,7 @@ struct coupled_ode_system_impl<true, F, T_initial, Args...> {
    *   elements are all zero as these are the Jacobian wrt to the
    *   parameters at the initial time-point, which is zero.
    */
-  std::vector<double> initial_state() const { return value_of(y0_); }
+  Eigen::VectorXd initial_state() const { return value_of(y0_); }
 };
 
 template <typename F, typename T_initial, typename... Args>
@@ -129,7 +129,7 @@ struct coupled_ode_system
     : public coupled_ode_system_impl<
           std::is_arithmetic<return_type_t<T_initial, Args...>>::value, F,
           T_initial, Args...> {
-  coupled_ode_system(const F& f, const std::vector<T_initial>& y0,
+  coupled_ode_system(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
                      std::ostream* msgs, const Args&... args)
       : coupled_ode_system_impl<
             std::is_arithmetic<return_type_t<T_initial, Args...>>::value, F,

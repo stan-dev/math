@@ -29,34 +29,38 @@ auto sum_(Vec&& arg) {
 
 struct CosArg1 {
   template <typename T0, typename T1, typename... T_Args>
-  inline std::vector<stan::return_type_t<T1, T_Args...>> operator()(
-      const T0& t, const std::vector<T1>& y, std::ostream* msgs,
+  inline Eigen::Matrix<stan::return_type_t<T1, T_Args...>, Eigen::Dynamic, 1> operator()(
+											 const T0& t, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y, std::ostream* msgs,
       const T_Args&... a) const {
     std::vector<typename stan::return_type<T0, T_Args...>::type> vec
         = {sum_(a)...};
-    return {stan::math::cos(sum_(vec) * t)};
+    Eigen::Matrix<stan::return_type_t<T1, T_Args...>, Eigen::Dynamic, 1> out(1);
+    out << stan::math::cos(sum_(vec) * t);
+    return out;
   }
 };
 
 struct Cos2Arg {
   template <typename T0, typename T1, typename T2, typename T3>
-  inline std::vector<typename stan::return_type<T1, T2, T3>::type> operator()(
-      const T0& t, const std::vector<T1>& y, std::ostream* msgs, const T2& a,
+  inline Eigen::Matrix<stan::return_type_t<T1, T2, T3>, Eigen::Dynamic, 1> operator()(
+										      const T0& t, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y, std::ostream* msgs, const T2& a,
       const T3& b) const {
-    return {stan::math::cos((sum_(a) + sum_(b)) * t)};
+    Eigen::Matrix<stan::return_type_t<T1, T2, T3>, Eigen::Dynamic, 1> out(1);
+    out << stan::math::cos((sum_(a) + sum_(b)) * t);
+    return out;
   }
 };
 
 TEST(StanMathOde_ode_bdf_tol, t0) {
   using stan::math::var;
 
-  std::vector<double> y0 = {0.0};
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
   var t0 = 0.0;
   std::vector<double> ts = {0.45, 1.1};
 
   double a = 1.5;
 
-  std::vector<std::vector<var>> output = stan::math::ode_bdf_tol(
+  std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> output = stan::math::ode_bdf_tol(
       CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6, nullptr, a);
 
   output[0][0].grad();
@@ -75,13 +79,13 @@ TEST(StanMathOde_ode_bdf_tol, t0) {
 TEST(StanMathOde_ode_bdf_tol, ts) {
   using stan::math::var;
 
-  std::vector<double> y0 = {0.0};
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
   double t0 = 0.0;
   std::vector<var> ts = {0.45, 1.1};
 
   double a = 1.5;
 
-  std::vector<std::vector<var>> output = stan::math::ode_bdf_tol(
+  std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> output = stan::math::ode_bdf_tol(
       CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6, nullptr, a);
 
   output[0][0].grad();
@@ -100,7 +104,7 @@ TEST(StanMathOde_ode_bdf_tol, ts) {
 TEST(StanMathOde_ode_bdf_tol, scalar_arg) {
   using stan::math::var;
 
-  std::vector<double> y0 = {0.0};
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
   double t0 = 0.0;
   std::vector<double> ts = {1.1};
 
@@ -118,7 +122,7 @@ TEST(StanMathOde_ode_bdf_tol, scalar_arg) {
 TEST(StanMathOde_ode_bdf_tol, std_vector_arg) {
   using stan::math::var;
 
-  std::vector<double> y0 = {0.0};
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
   double t0 = 0.0;
   std::vector<double> ts = {1.1};
 
@@ -136,7 +140,7 @@ TEST(StanMathOde_ode_bdf_tol, std_vector_arg) {
 TEST(StanMathOde_ode_bdf_tol, vector_arg) {
   using stan::math::var;
 
-  std::vector<double> y0 = {0.0};
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
   double t0 = 0.0;
   std::vector<double> ts = {1.1};
 
@@ -155,7 +159,7 @@ TEST(StanMathOde_ode_bdf_tol, vector_arg) {
 TEST(StanMathOde_ode_bdf_tol, row_vector_arg) {
   using stan::math::var;
 
-  std::vector<double> y0 = {0.0};
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
   double t0 = 0.0;
   std::vector<double> ts = {1.1};
 
@@ -174,7 +178,7 @@ TEST(StanMathOde_ode_bdf_tol, row_vector_arg) {
 TEST(StanMathOde_ode_bdf_tol, matrix_arg) {
   using stan::math::var;
 
-  std::vector<double> y0 = {0.0};
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
   double t0 = 0.0;
   std::vector<double> ts = {1.1};
 
@@ -193,7 +197,7 @@ TEST(StanMathOde_ode_bdf_tol, matrix_arg) {
 TEST(StanMathOde_ode_bdf_tol, scalar_std_vector_args) {
   using stan::math::var;
 
-  std::vector<double> y0 = {0.0};
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
   double t0 = 0.0;
   std::vector<double> ts = {1.1};
 
@@ -208,3 +212,12 @@ TEST(StanMathOde_ode_bdf_tol, scalar_std_vector_args) {
   EXPECT_FLOAT_EQ(output.val(), 0.66457668563);
   EXPECT_FLOAT_EQ(a1[0].adj(), -0.50107310888);
 }
+
+struct ayt {
+  template <typename T0, typename T1, typename T2>
+  inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1> operator()(
+	const T0& t, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y, std::ostream* msgs,
+      const T2& a) const {
+    return -a * y * t;
+  }
+};

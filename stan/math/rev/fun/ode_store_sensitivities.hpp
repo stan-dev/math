@@ -10,13 +10,13 @@ namespace stan {
 namespace math {
 
 template <typename T_initial, typename... Args>
-std::vector<var> ode_store_sensitivities(
-    const std::vector<double>& coupled_state, const std::vector<T_initial>& y0,
-    const Args&... args) {
+Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(const Eigen::VectorXd& coupled_state,
+							      const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
+							      const Args&... args) {
   const size_t N = y0.size();
   const size_t y0_vars = count_vars(y0);
   const size_t args_vars = count_vars(args...);
-  std::vector<var> yt;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> yt(N);
 
   for (size_t j = 0; j < N; j++) {
     const size_t total_vars = y0_vars + args_vars;
@@ -33,7 +33,7 @@ std::vector<var> ode_store_sensitivities(
     varis_ptr = save_varis(varis_ptr, y0);
     for (std::size_t k = 0; k < y0_vars; k++) {
       //*varis_ptr = y0[k].vi_;
-      *partials_ptr = coupled_state[N + y0_vars * k + j];
+      *partials_ptr = coupled_state(N + y0_vars * k + j);
       partials_ptr++;
     }
 
@@ -41,12 +41,12 @@ std::vector<var> ode_store_sensitivities(
     for (std::size_t k = 0; k < args_vars; k++) {
       // dy[j]_dtheta[k]
       // theta[k].vi_
-      *partials_ptr = coupled_state[N + N * y0_vars + N * k + j];
+      *partials_ptr = coupled_state(N + N * y0_vars + N * k + j);
       partials_ptr++;
     }
 
-    yt.emplace_back(new precomputed_gradients_vari(coupled_state[j], total_vars,
-                                                   varis, partials));
+    yt(j) = new precomputed_gradients_vari(coupled_state(j), total_vars,
+					   varis, partials);
   }
 
   return yt;

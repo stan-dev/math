@@ -10,11 +10,9 @@ namespace math {
 
 template <typename... Args,
           typename = require_all_arithmetic_t<scalar_type_t<Args>...>>
-std::vector<double> ode_store_sensitivities(
-    const std::vector<double>& coupled_state, const std::vector<double>& y0,
+Eigen::VectorXd ode_store_sensitivities(const Eigen::VectorXd& coupled_state, const Eigen::VectorXd& y0,
     const Args&... args) {
-  return std::vector<double>(coupled_state.data(),
-                             coupled_state.data() + y0.size());
+  return coupled_state.head(y0.size());
 }
 
 }  // namespace math

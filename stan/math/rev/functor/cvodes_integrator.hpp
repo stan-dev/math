@@ -27,7 +27,7 @@ class cvodes_integrator {
   using T_Return = return_type_t<T_initial, T_Args...>;
 
   const F& f_;
-  const std::vector<T_initial>& y0_;
+  const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0_;
   double t0_;
   const std::vector<double>& ts_;
   std::tuple<const T_Args&...> args_tuple_;
@@ -43,7 +43,7 @@ class cvodes_integrator {
 
   coupled_ode_system<F, T_initial, T_Args...> coupled_ode_;
 
-  std::vector<double> coupled_state_;
+  Eigen::VectorXd coupled_state_;
   N_Vector nv_state_;
   N_Vector* nv_state_sens_;
   SUNMatrix A_;
@@ -93,13 +93,16 @@ class cvodes_integrator {
    * the given time t and state y.
    */
   inline void rhs(double t, const double y[], double dy_dt[]) const {
-    const std::vector<double> y_vec(y, y + N_);
-    std::vector<double> dy_dt_vec
-        = apply([&](auto&&... args) { return f_(t, y_vec, msgs_, args...); },
-                value_of_args_tuple_);
+    const Eigen::VectorXd y_vec = Eigen::Map<const Eigen::VectorXd>(y, N_);
+
+    Eigen::VectorXd dy_dt_vec
+      = apply([&](auto&&... args) { return f_(t, y_vec, msgs_, args...); },
+	      value_of_args_tuple_);
+
     check_size_match("cvodes_integrator::rhs", "dy_dt", dy_dt_vec.size(),
                      "states", N_);
-    std::move(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
+
+    std::copy(dy_dt_vec.data(), dy_dt_vec.data() + dy_dt_vec.size(), dy_dt);
   }
 
   /**
@@ -111,9 +114,8 @@ class cvodes_integrator {
     Eigen::MatrixXd Jfy;
 
     auto f_wrapped = [&](const Eigen::Matrix<var, Eigen::Dynamic, 1>& y) {
-      return to_vector(apply(
-          [&](auto&&... args) { return f_(t, to_array_1d(y), msgs_, args...); },
-          value_of_args_tuple_));
+      return apply([&](auto&&... args) { return f_(t, y, msgs_, args...); },
+          value_of_args_tuple_);
     };
 
     jacobian(f_wrapped, Eigen::Map<const Eigen::VectorXd>(y, N_), fy, Jfy);
@@ -133,24 +135,25 @@ class cvodes_integrator {
    */
   inline void rhs_sens(double t, const double y[], N_Vector* yS,
                        N_Vector* ySdot) const {
-    std::vector<double> z(coupled_state_.size());
-    std::vector<double>&& dz_dt = std::vector<double>(coupled_state_.size());
-    std::copy(y, y + N_, z.begin());
+    Eigen::VectorXd z(coupled_state_.size());
+    Eigen::VectorXd dz_dt(coupled_state_.size());
+    std::copy(y, y + N_, z.data());
     for (std::size_t s = 0; s < y0_vars_ + args_vars_; s++) {
       std::copy(NV_DATA_S(yS[s]), NV_DATA_S(yS[s]) + N_,
-                z.begin() + (s + 1) * N_);
+                z.data() + (s + 1) * N_);
     }
     coupled_ode_(z, dz_dt, t);
     for (std::size_t s = 0; s < y0_vars_ + args_vars_; s++) {
-      std::move(dz_dt.begin() + (s + 1) * N_, dz_dt.begin() + (s + 2) * N_,
+      std::move(dz_dt.data() + (s + 1) * N_, dz_dt.data() + (s + 2) * N_,
                 NV_DATA_S(ySdot[s]));
     }
   }
 
  public:
-  cvodes_integrator(const F& f, const std::vector<T_initial>& y0, double t0,
-                    const std::vector<double>& ts, double relative_tolerance,
-                    double absolute_tolerance, long int max_num_steps,
+  cvodes_integrator(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
+		    double t0, const std::vector<double>& ts,
+		    double relative_tolerance, double absolute_tolerance,
+		    long int max_num_steps,
                     std::ostream* msgs, const T_Args&... args)
       : f_(f),
         y0_(y0),
@@ -255,8 +258,8 @@ class cvodes_integrator {
    * @return a vector of states, each state being a vector of the
    * same size as the state variable, corresponding to a time in ts.
    */
-  std::vector<std::vector<T_Return>> integrate() {  // NOLINT(runtime/int)
-    std::vector<std::vector<T_Return>> y;
+  std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> integrate() {  // NOLINT(runtime/int)
+    std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y;
 
     const double t0_dbl = value_of(t0_);
     const std::vector<double> ts_dbl = value_of(ts_);

@@ -11,9 +11,9 @@ namespace math {
 
 template <typename F, typename T_initial, typename T_t0, typename T_ts,
           typename... T_Args>
-std::vector<std::vector<var>> ode_rk45(
-    const F& f, const std::vector<T_initial>& y0, const T_t0& t0,
-    const std::vector<T_ts>& ts, std::ostream* msgs, const T_Args&... args) {
+std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>>
+ode_rk45(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0, const T_t0& t0,
+	 const std::vector<T_ts>& ts, std::ostream* msgs, const T_Args&... args) {
   double relative_tolerance = 1e-6;
   double absolute_tolerance = 1e-6;
   long int max_num_steps = 1e6;
@@ -24,11 +24,11 @@ std::vector<std::vector<var>> ode_rk45(
 
 template <typename F, typename T_initial, typename T_t0, typename T_ts,
           typename... T_Args>
-std::vector<std::vector<var>> ode_rk45_tol(
-    const F& f, const std::vector<T_initial>& y0, const T_t0& t0,
-    const std::vector<T_ts>& ts, double relative_tolerance,
-    double absolute_tolerance, long int max_num_steps, std::ostream* msgs,
-    const T_Args&... args) {
+std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>>
+ode_rk45_tol(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0, const T_t0& t0,
+	     const std::vector<T_ts>& ts, double relative_tolerance,
+	     double absolute_tolerance, long int max_num_steps, std::ostream* msgs,
+	     const T_Args&... args) {
   auto y = ode_rk45_tol(f, y0, value_of(t0), value_of(ts), relative_tolerance,
                         absolute_tolerance, max_num_steps, msgs, args...);
 

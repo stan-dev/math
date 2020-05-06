@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/fun/ode_store_sensitivities.hpp>
+#include <boost/numeric/odeint/external/eigen/eigen_algebra.hpp>
 #include <boost/numeric/odeint.hpp>
 #include <ostream>
 #include <vector>
@@ -12,8 +13,8 @@ namespace stan {
 namespace math {
 
 template <typename F, typename T_initial, typename... Args>
-std::vector<std::vector<typename stan::return_type<T_initial, Args...>::type>>
-ode_rk45(const F& f, const std::vector<T_initial>& y0, double t0,
+std::vector<Eigen::Matrix<stan::return_type_t<T_initial, Args...>, Eigen::Dynamic, 1>>
+ode_rk45(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0, double t0,
          const std::vector<double>& ts, std::ostream* msgs,
          const Args&... args) {
   double relative_tolerance = 1e-6;
@@ -25,8 +26,8 @@ ode_rk45(const F& f, const std::vector<T_initial>& y0, double t0,
 }
 
 template <typename F, typename T_initial, typename... Args>
-std::vector<std::vector<typename stan::return_type<T_initial, Args...>::type>>
-ode_rk45_tol(const F& f, const std::vector<T_initial>& y0, double t0,
+std::vector<Eigen::Matrix<stan::return_type_t<T_initial, Args...>, Eigen::Dynamic, 1>>
+ode_rk45_tol(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0, double t0,
              const std::vector<double>& ts, double relative_tolerance,
              double absolute_tolerance, long int max_num_steps,
              std::ostream* msgs, const Args&... args) {
@@ -34,6 +35,7 @@ ode_rk45_tol(const F& f, const std::vector<T_initial>& y0, double t0,
   using boost::numeric::odeint::make_dense_output;
   using boost::numeric::odeint::max_step_checker;
   using boost::numeric::odeint::runge_kutta_dopri5;
+  using boost::numeric::odeint::vector_space_algebra;
 
   const std::vector<double> ts_dbl = value_of(ts);
 
@@ -74,14 +76,14 @@ ode_rk45_tol(const F& f, const std::vector<T_initial>& y0, double t0,
   ts_vec[0] = t0;
   std::copy(ts_dbl.begin(), ts_dbl.end(), ts_vec.begin() + 1);
 
-  std::vector<std::vector<return_t>> y;
+  std::vector<Eigen::Matrix<return_t, Eigen::Dynamic, 1>> y;
   bool observer_initial_recorded = false;
   size_t time_index = 0;
 
   // avoid recording of the initial state which is included by the
   // conventions of odeint in the output
   auto filtered_observer
-      = [&](const std::vector<double>& coupled_state, double t) -> void {
+    = [&](const Eigen::VectorXd& coupled_state, double t) -> void {
     if (!observer_initial_recorded) {
       observer_initial_recorded = true;
       return;
@@ -91,15 +93,16 @@ ode_rk45_tol(const F& f, const std::vector<T_initial>& y0, double t0,
   };
 
   // the coupled system creates the coupled initial state
-  std::vector<double> initial_coupled_state = coupled_system.initial_state();
+  Eigen::VectorXd initial_coupled_state = coupled_system.initial_state();
 
   const double step_size = 0.1;
   integrate_times(
       make_dense_output(absolute_tolerance, relative_tolerance,
-                        runge_kutta_dopri5<std::vector<double>, double,
-                                           std::vector<double>, double>()),
-      std::ref(coupled_system), initial_coupled_state, std::begin(ts_vec),
-      std::end(ts_vec), step_size, filtered_observer,
+                        runge_kutta_dopri5<Eigen::VectorXd, double,
+			                   Eigen::VectorXd, double,
+			                   vector_space_algebra>()),
+      std::ref(coupled_system), initial_coupled_state,
+      std::begin(ts_vec), std::end(ts_vec), step_size, filtered_observer,
       max_step_checker(max_num_steps));
 
   return y;

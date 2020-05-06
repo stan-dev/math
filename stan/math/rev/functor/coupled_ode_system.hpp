@@ -65,7 +65,7 @@ namespace math {
 template <typename F, typename T_initial, typename... Args>
 struct coupled_ode_system_impl<false, F, T_initial, Args...> {
   const F& f_;
-  const std::vector<T_initial>& y0_;
+  const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0_;
   std::tuple<const Args&...> args_tuple_;
   const size_t y0_vars_;
   const size_t args_vars_;
@@ -84,7 +84,7 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
    * @param[in] x_int integer data
    * @param[in, out] msgs stream for messages
    */
-  coupled_ode_system_impl(const F& f, const std::vector<T_initial>& y0,
+  coupled_ode_system_impl(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
                           std::ostream* msgs, const Args&... args)
       : f_(f),
         y0_(y0),
@@ -108,14 +108,19 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
    * @throw exception if the base ode function does not return the
    *    expected number of derivatives, N.
    */
-  void operator()(const std::vector<double>& z, std::vector<double>& dz_dt,
+  void operator()(const Eigen::VectorXd& z, Eigen::VectorXd& dz_dt,
                   double t) const {
     using std::vector;
 
+    dz_dt.resize(size());
+    
     // Run nested autodiff in this scope
     nested_rev_autodiff nested;
 
-    const vector<var> y_vars(z.begin(), z.begin() + N_);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y_vars(N_);
+    for(size_t n = 0; n < N_; ++n)
+      y_vars(n) = z(n);
+
     auto local_args_tuple = apply(
         [&](auto&&... args) {
           return std::tuple<decltype(deep_copy_vars(args))...>(
@@ -123,16 +128,16 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
         },
         args_tuple_);
 
-    vector<var> f_y_t_vars
-        = apply([&](auto&&... args) { return f_(t, y_vars, msgs_, args...); },
-                local_args_tuple);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
+      = apply([&](auto&&... args) { return f_(t, y_vars, msgs_, args...); },
+	      local_args_tuple);
 
     check_size_match("coupled_ode_system", "dy_dt", f_y_t_vars.size(), "states",
                      N_);
 
     for (size_t i = 0; i < N_; i++) {
-      dz_dt[i] = f_y_t_vars[i].val();
-      f_y_t_vars[i].grad();
+      dz_dt(i) = f_y_t_vars(i).val();
+      f_y_t_vars(i).grad();
       for (size_t j = 0; j < y0_vars_; j++) {
         // orders derivatives by equation (i.e. if there are 2 eqns
         // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
@@ -190,13 +195,13 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
    *   elements are all zero as these are the Jacobian wrt to the
    *   parameters at the initial time-point, which is zero.
    */
-  std::vector<double> initial_state() const {
-    std::vector<double> initial(size(), 0.0);
+  Eigen::VectorXd initial_state() const {
+    Eigen::VectorXd initial = Eigen::VectorXd::Zero(size());
     for (size_t i = 0; i < N_; i++) {
-      initial[i] = value_of(y0_[i]);
+      initial(i) = value_of(y0_[i]);
     }
     for (size_t i = 0; i < y0_vars_; i++) {
-      initial[N_ + i * N_ + i] = 1.0;
+      initial(N_ + i * N_ + i) = 1.0;
     }
     return initial;
   }

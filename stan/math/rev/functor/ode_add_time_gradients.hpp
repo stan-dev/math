@@ -21,20 +21,21 @@ var ode_time_gradient_var(var t, double grad) {
 };  // namespace internal
 
 template <typename F, typename T_initial, typename T_out, typename... T_Args>
-auto ode_add_time_gradients(const F& f, const std::vector<T_initial>& y0,
+auto ode_add_time_gradients(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
                             double t0, const std::vector<double>& ts,
-                            const std::vector<std::vector<T_out>>& y,
+                            const std::vector<Eigen::Matrix<T_out, Eigen::Dynamic, 1>>& y,
                             std::ostream* msgs, const T_Args&... args) {
   return y;
 }
 
 template <typename F, typename T_initial, typename T_t0, typename T_ts,
           typename T_out, typename... T_Args>
-std::vector<std::vector<var>> ode_add_time_gradients(
-    const F& f, const std::vector<T_initial>& y0, const T_t0& t0,
-    const std::vector<T_ts>& ts, const std::vector<std::vector<T_out>>& y,
-    std::ostream* msgs, const T_Args&... args) {
-  std::vector<double> f_y0_t0 = {};
+std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>>
+ode_add_time_gradients(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
+		       const T_t0& t0, const std::vector<T_ts>& ts,
+		       const std::vector<Eigen::Matrix<T_out, Eigen::Dynamic, 1>>& y,
+		       std::ostream* msgs, const T_Args&... args) {
+  Eigen::VectorXd f_y0_t0;
   if (is_var<T_t0>::value) {
     f_y0_t0 = f(value_of(t0), value_of(y0), msgs, value_of(args)...);
 
@@ -42,23 +43,24 @@ std::vector<std::vector<var>> ode_add_time_gradients(
                      y0.size());
   }
 
-  std::vector<std::vector<var>> y_with_gradients(y.size());
+  std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y_with_gradients(y.size());
 
   for (size_t i = 0; i < y.size(); ++i) {
-    std::vector<double> f_y_t = {};
+    Eigen::VectorXd f_y_t;
+
+    y_with_gradients[i].resize(y[i].size());
+
     if (is_var<T_ts>::value)
       f_y_t = f(value_of(ts[i]), value_of(y[i]), msgs, value_of(args)...);
 
     for (size_t j = 0; j < y[i].size(); ++j) {
-      var tmp = y[i][j];
+      y_with_gradients[i](j) = y[i][j];
 
       if (is_var<T_t0>::value)
-        tmp += internal::ode_time_gradient_var(t0, -f_y0_t0[j]);
+        y_with_gradients[i](j) += internal::ode_time_gradient_var(t0, -f_y0_t0[j]);
 
       if (is_var<T_ts>::value)
-        tmp += internal::ode_time_gradient_var(ts[i], f_y_t[j]);
-
-      y_with_gradients[i].push_back(tmp);
+        y_with_gradients[i](j) += internal::ode_time_gradient_var(ts[i], f_y_t[j]);
     }
   }
 
