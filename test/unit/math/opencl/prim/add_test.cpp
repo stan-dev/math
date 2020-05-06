@@ -213,13 +213,13 @@ TEST(MathMatrixCL, add_value_check) {
   EXPECT_NO_THROW(m33fun = add(m11fun, m22fun));
 
   v3 = stan::math::from_matrix_cl(v33fun);
-  EXPECT_MATRIX_NEAR((v1+v2), v3, 1E-8);
+  EXPECT_MATRIX_NEAR((v1 + v2), v3, 1E-8);
 
   rv3 = stan::math::from_matrix_cl(rv33fun);
-  EXPECT_MATRIX_NEAR((rv1+rv2), v3, 1E-8);
+  EXPECT_MATRIX_NEAR((rv1 + rv2), v3, 1E-8);
 
   m3 = stan::math::from_matrix_cl(m33fun);
-  EXPECT_MATRIX_NEAR((m1+m2), m3, 1E-8);
+  EXPECT_MATRIX_NEAR((m1 + m2), m3, 1E-8);
 }
 
 TEST(MathMatrixCL, add_tri_value_check) {
@@ -238,48 +238,62 @@ TEST(MathMatrixCL, add_tri_value_check) {
   c_cl = a_cl + b_cl;
   EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Lower);
   c = stan::math::from_matrix_cl(c_cl);
-  EXPECT_MATRIX_NEAR((Eigen::MatrixXd(a.triangularView<Eigen::Lower>()) + Eigen::MatrixXd(b.triangularView<Eigen::Lower>())), c, 1E-8);
+  EXPECT_MATRIX_NEAR((Eigen::MatrixXd(a.triangularView<Eigen::Lower>())
+                      + Eigen::MatrixXd(b.triangularView<Eigen::Lower>())),
+                     c, 1E-8);
 
   c_cl_fun = add(a_cl, b_cl);
   EXPECT_EQ(c_cl_fun.view(), stan::math::matrix_cl_view::Lower);
   c = stan::math::from_matrix_cl(c_cl_fun);
-  EXPECT_MATRIX_NEAR((Eigen::MatrixXd(a.triangularView<Eigen::Lower>()) + Eigen::MatrixXd(b.triangularView<Eigen::Lower>())), c, 1E-8);
+  EXPECT_MATRIX_NEAR((Eigen::MatrixXd(a.triangularView<Eigen::Lower>())
+                      + Eigen::MatrixXd(b.triangularView<Eigen::Lower>())),
+                     c, 1E-8);
 
   a_cl.view(stan::math::matrix_cl_view::Lower);
   b_cl.view(stan::math::matrix_cl_view::Upper);
   c_cl = a_cl + b_cl;
   EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
   c = stan::math::from_matrix_cl(c_cl);
-  EXPECT_MATRIX_NEAR((Eigen::MatrixXd(a.triangularView<Eigen::Lower>()) + Eigen::MatrixXd(b.triangularView<Eigen::Upper>())), c, 1E-8);
+  EXPECT_MATRIX_NEAR((Eigen::MatrixXd(a.triangularView<Eigen::Lower>())
+                      + Eigen::MatrixXd(b.triangularView<Eigen::Upper>())),
+                     c, 1E-8);
 
   c_cl_fun = add(a_cl, b_cl);
   EXPECT_EQ(c_cl_fun.view(), stan::math::matrix_cl_view::Entire);
   c = stan::math::from_matrix_cl(c_cl_fun);
-  EXPECT_MATRIX_NEAR((Eigen::MatrixXd(a.triangularView<Eigen::Lower>()) + Eigen::MatrixXd(b.triangularView<Eigen::Upper>())), c, 1E-8);
+  EXPECT_MATRIX_NEAR((Eigen::MatrixXd(a.triangularView<Eigen::Lower>())
+                      + Eigen::MatrixXd(b.triangularView<Eigen::Upper>())),
+                     c, 1E-8);
 
   a_cl.view(stan::math::matrix_cl_view::Upper);
   b_cl.view(stan::math::matrix_cl_view::Lower);
   c_cl = a_cl + b_cl;
   EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
   c = stan::math::from_matrix_cl(c_cl);
-  EXPECT_MATRIX_NEAR((Eigen::MatrixXd(a.triangularView<Eigen::Upper>()) + Eigen::MatrixXd(b.triangularView<Eigen::Lower>())), c, 1E-8);
+  EXPECT_MATRIX_NEAR((Eigen::MatrixXd(a.triangularView<Eigen::Upper>())
+                      + Eigen::MatrixXd(b.triangularView<Eigen::Lower>())),
+                     c, 1E-8);
 
   c_cl_fun = add(a_cl, b_cl);
   EXPECT_EQ(c_cl_fun.view(), stan::math::matrix_cl_view::Entire);
   c = stan::math::from_matrix_cl(c_cl_fun);
-  EXPECT_MATRIX_NEAR((Eigen::MatrixXd(a.triangularView<Eigen::Upper>()) + Eigen::MatrixXd(b.triangularView<Eigen::Lower>())), c, 1E-8);
+  EXPECT_MATRIX_NEAR((Eigen::MatrixXd(a.triangularView<Eigen::Upper>())
+                      + Eigen::MatrixXd(b.triangularView<Eigen::Lower>())),
+                     c, 1E-8);
 
   a_cl.view(stan::math::matrix_cl_view::Entire);
   b_cl.view(stan::math::matrix_cl_view::Lower);
   c_cl = a_cl + b_cl;
   EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
   c = stan::math::from_matrix_cl(c_cl);
-  EXPECT_MATRIX_NEAR((a + Eigen::MatrixXd(b.triangularView<Eigen::Lower>())), c, 1E-8);
+  EXPECT_MATRIX_NEAR((a + Eigen::MatrixXd(b.triangularView<Eigen::Lower>())), c,
+                     1E-8);
 
   c_cl_fun = add(a_cl, b_cl);
   EXPECT_EQ(c_cl_fun.view(), stan::math::matrix_cl_view::Entire);
   c = stan::math::from_matrix_cl(c_cl_fun);
-  EXPECT_MATRIX_NEAR((a + Eigen::MatrixXd(b.triangularView<Eigen::Lower>())), c, 1E-8);
+  EXPECT_MATRIX_NEAR((a + Eigen::MatrixXd(b.triangularView<Eigen::Lower>())), c,
+                     1E-8);
 }
 
 TEST(MathMatrixCL, add_tri_scalar_value_check) {
@@ -294,26 +308,29 @@ TEST(MathMatrixCL, add_tri_scalar_value_check) {
   c_cl = add(a_cl, 1.5);
   EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
   c = stan::math::from_matrix_cl(c_cl);
-  EXPECT_MATRIX_NEAR(add(Eigen::MatrixXd(a.triangularView<Eigen::Lower>()), 1.5), c, 1E-8);
+  EXPECT_MATRIX_NEAR(
+      add(Eigen::MatrixXd(a.triangularView<Eigen::Lower>()), 1.5), c, 1E-8);
 
   a_cl.view(stan::math::matrix_cl_view::Lower);
   c_cl = add(1.5, a_cl);
   EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
   c = stan::math::from_matrix_cl(c_cl);
-  EXPECT_MATRIX_NEAR(add(1.5, Eigen::MatrixXd(a.triangularView<Eigen::Lower>())), c, 1E-8);
+  EXPECT_MATRIX_NEAR(
+      add(1.5, Eigen::MatrixXd(a.triangularView<Eigen::Lower>())), c, 1E-8);
 
   a_cl.view(stan::math::matrix_cl_view::Upper);
   c_cl = add(a_cl, 1.5);
   EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
   c = stan::math::from_matrix_cl(c_cl);
-  EXPECT_MATRIX_NEAR(add(Eigen::MatrixXd(a.triangularView<Eigen::Upper>()), 1.5), c, 1E-8);
-
+  EXPECT_MATRIX_NEAR(
+      add(Eigen::MatrixXd(a.triangularView<Eigen::Upper>()), 1.5), c, 1E-8);
 
   a_cl.view(stan::math::matrix_cl_view::Upper);
   c_cl = add(1.5, a_cl);
   EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
   c = stan::math::from_matrix_cl(c_cl);
-  EXPECT_MATRIX_NEAR(add(1.5, Eigen::MatrixXd(a.triangularView<Eigen::Upper>())), c, 1E-8);
+  EXPECT_MATRIX_NEAR(
+      add(1.5, Eigen::MatrixXd(a.triangularView<Eigen::Upper>())), c, 1E-8);
 
   a_cl.view(stan::math::matrix_cl_view::Entire);
   c_cl = add(a_cl, 1.5);

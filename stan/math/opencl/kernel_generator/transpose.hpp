@@ -115,8 +115,7 @@ class transpose_
  * @param a argument to transposition
  */
 template <typename Arg,
-          typename
-          = require_all_kernel_expressions_and_none_scalar_t<Arg>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<Arg>>
 inline auto transpose(Arg&& a) {
   auto&& a_operation = as_operation_cl(std::forward<Arg>(a)).deep_copy();
   return transpose_<std::remove_reference_t<decltype(a_operation)>>{

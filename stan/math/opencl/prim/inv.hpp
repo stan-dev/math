@@ -17,8 +17,7 @@ namespace math {
  * @return elementwise 1.0 / x of the specified argument.
  */
 template <typename T_x,
-          typename
-          = require_all_kernel_expressions_and_none_scalar_t<T_x>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T_x>>
 inline auto inv(T_x&& x) {  // NOLINT
   return elewise_division(1.0, std::forward<T_x>(x));
 }

@@ -13,7 +13,8 @@ namespace opencl_kernels {
 static const char* inv_square_device_function
     = "\n"
       "#ifndef STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_INV_SQUARE\n"
-      "#define STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_INV_SQUARE\n" STRINGIFY(
+      "#define "
+      "STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_INV_SQUARE\n" STRINGIFY(
           // \endcond
           /** \ingroup opencl_kernels
            * Calculates `1 / (x*x)`
@@ -24,9 +25,7 @@ static const char* inv_square_device_function
            * @return inverse square of the input
            *
            */
-          double inv_square(double x) {
-            return 1.0 / (x * x);
-          }
+          double inv_square(double x) { return 1.0 / (x * x); }
           // \cond
           ) "\n#endif\n";  // NOLINT
 // \endcond
