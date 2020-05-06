@@ -161,7 +161,7 @@ def generateJumboTests(paths):
             stopErr('The --jumbo flag is only allowed with top level folders.', 10)
     for jf in jumbo_files_to_create:
         tests_in_subfolder = sorted([x for x in os.listdir(jf) if x.endswith(testsfx)])
-        chunked_tests = divide_chunks(tests_in_subfolder, 30)
+        chunked_tests = divide_chunks(tests_in_subfolder, 15)
         i = 0
         for tests in chunked_tests:
             i = i + 1
