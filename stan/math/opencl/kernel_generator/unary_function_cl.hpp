@@ -227,6 +227,7 @@ ADD_UNARY_FUNCTION(erfc)
 ADD_UNARY_FUNCTION_PASS_ZERO(floor)
 ADD_UNARY_FUNCTION_PASS_ZERO(round)
 ADD_UNARY_FUNCTION_PASS_ZERO(ceil)
+ADD_UNARY_FUNCTION_PASS_ZERO(fabs)
 
 ADD_UNARY_FUNCTION_WITH_INCLUDE(digamma,
                                 opencl_kernels::digamma_device_function)
