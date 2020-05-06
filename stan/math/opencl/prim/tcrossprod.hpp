@@ -19,7 +19,7 @@ namespace math {
 template <typename T_A,
           typename = require_all_kernel_expressions_and_none_scalar_t<T_A>>
 inline auto tcrossprod(T_A&& A) {
-  const matrix_cl<double>& A_ref = A;
+  const T_A& A_ref = A;
   return A_ref * transpose(A_ref);
 }
 }  // namespace math
