@@ -11,7 +11,7 @@ namespace math {
 /**
  * Returns the result of pre-multiplying a matrix by its
  * own transpose.
- * 
+ *
  * @tparam T type of elements in A
  * @param A input matrix
  * @return transpose(A) * A

@@ -242,8 +242,7 @@ ADD_UNARY_FUNCTION_WITH_INCLUDE(inv_square,
                                 opencl_kernels::inv_square_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDE(inv_logit,
                                 opencl_kernels::inv_logit_device_function)
-ADD_UNARY_FUNCTION_WITH_INCLUDE(logit,
-                                opencl_kernels::logit_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDE(logit, opencl_kernels::logit_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDE(log1m_inv_logit,
                                 opencl_kernels::log1m_inv_logit_device_function)
 

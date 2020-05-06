@@ -187,8 +187,7 @@ ADD_BINARY_OPERATION(addition_, operator+, common_scalar_t<T_a COMMA T_b>, "+");
 ADD_BINARY_OPERATION(subtraction_, operator-, common_scalar_t<T_a COMMA T_b>,
                      "-");
 ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
-    elt_multiply_, elt_multiply,
-    common_scalar_t<T_a COMMA T_b>, "*",
+    elt_multiply_, elt_multiply, common_scalar_t<T_a COMMA T_b>, "*",
     using view_transitivity = std::tuple<std::true_type, std::true_type>;
     inline std::pair<int, int> extreme_diagonals() const {
       std::pair<int, int> diags0

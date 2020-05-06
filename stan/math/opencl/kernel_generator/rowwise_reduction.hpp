@@ -39,8 +39,7 @@ struct matvec_mul_opt {
 };
 
 template <typename Mat, typename VecT>
-struct matvec_mul_opt<
-    elt_multiply_<Mat, broadcast_<VecT, true, false>>> {
+struct matvec_mul_opt<elt_multiply_<Mat, broadcast_<VecT, true, false>>> {
   // if the argument of rowwise reduction is multiplication with a broadcast
   // vector we can do the optimization
   enum { is_possible = 1 };

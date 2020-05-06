@@ -259,10 +259,8 @@ TEST(KernelGenerator, reuse_expression_complicated) {
   matrix_cl<double> m1_cl(m1);
   matrix_cl<double> m2_cl(m2);
   auto tmp = m1_cl + m2_cl;
-  auto tmp2 = stan::math::elt_divide(
-      stan::math::elt_multiply(tmp, tmp), m1_cl);
-  auto tmp3 = stan::math::elt_multiply(
-      stan::math::elt_divide(tmp, tmp2), tmp2);
+  auto tmp2 = stan::math::elt_divide(stan::math::elt_multiply(tmp, tmp), m1_cl);
+  auto tmp3 = stan::math::elt_multiply(stan::math::elt_divide(tmp, tmp2), tmp2);
   matrix_cl<double> res_cl;
   std::string kernel_src = tmp3.get_kernel_source_for_evaluating_into(res_cl);
   stan::test::store_reference_kernel_if_needed(kernel_filename, kernel_src);
