@@ -9,19 +9,19 @@
 namespace stan {
 namespace math {
 namespace internal {
-double ode_time_gradient_var(double t, double grad) {
+inline double ode_time_gradient_var(double t, double grad) {
   invalid_argument("ode_time_gradient_var", "t", t,
                    "t must be of type var, not double");
   return 0.0;
 }
 
-var ode_time_gradient_var(var t, double grad) {
+inline var ode_time_gradient_var(var t, double grad) {
   return var(new precomp_v_vari(0.0, t.vi_, grad));
 }
 };  // namespace internal
 
 template <typename F, typename T_initial, typename T_out, typename... T_Args>
-auto ode_add_time_gradients(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
+inline auto ode_add_time_gradients(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
                             double t0, const std::vector<double>& ts,
                             const std::vector<Eigen::Matrix<T_out, Eigen::Dynamic, 1>>& y,
                             std::ostream* msgs, const T_Args&... args) {

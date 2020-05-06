@@ -39,10 +39,8 @@ ode_bdf_tol(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0, c
       f, y0, value_of(t0), value_of_ts, relative_tolerance, absolute_tolerance,
       max_num_steps, msgs, args...);
 
-  std::vector<Eigen::Matrix<
-    stan::return_type_t<T_initial, T_Args...>, Eigen::Dynamic, 1>>
-    y = integrator.integrate();
-
+  auto y = integrator.integrate();
+  
   return ode_add_time_gradients(f, y0, t0, ts, y, msgs, args...);
 }
 
