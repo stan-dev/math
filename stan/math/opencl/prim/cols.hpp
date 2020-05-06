@@ -18,7 +18,7 @@ namespace math {
  */
 template <typename T_x,
           typename = require_all_kernel_expressions_and_none_scalar_t<T_x>>
-inline int cols(T_x&& x) {
+inline int cols(const T_x& x) {
   return x.cols();
 }
 }  // namespace math
