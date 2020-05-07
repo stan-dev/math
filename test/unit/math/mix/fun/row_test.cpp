@@ -1,8 +1,9 @@
 #include <test/unit/math/test_ad.hpp>
 #include <vector>
-
+namespace row_test { 
 auto f(int i) {
   return [=](const auto& y) { return stan::math::row(y, i); };
+}
 }
 
 TEST(MathMixMatFun, row) {
@@ -23,5 +24,5 @@ TEST(MathMixMatFun, row) {
 
   for (const auto& x : std::vector<Eigen::MatrixXd>{a, b, c, d, e})
     for (size_t i = 0; i < 5; ++i)
-      stan::test::expect_ad(f(i), x);
+      stan::test::expect_ad(row_test::f(i), x);
 }
