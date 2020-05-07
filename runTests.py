@@ -31,10 +31,10 @@ allowed_paths_with_jumbo = [
 ]
 
 jumbo_folders = [
-    #"test/unit/math/prim/core",
-    #"test/unit/math/prim/err",
+    "test/unit/math/prim/core",
+    "test/unit/math/prim/err",
     "test/unit/math/prim/fun",
-    #"test/unit/math/prim/functor",
+    "test/unit/math/prim/functor",
     "test/unit/math/prim/meta",
     "test/unit/math/prim/prob",
     #"test/unit/math/rev/core",
@@ -142,10 +142,10 @@ def generateTests(j):
     else:
         doCommand('make -j%d generate-tests -s' % (j or 1))
 
-def divide_chunks(l, n): 
-    # looping till length l 
-    for i in range(0, len(l), n):  
-        yield l[i:i + n] 
+def divide_chunks(l, n):
+    # looping till length l
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
 
 def generateJumboTests(paths):
     jumbo_files_to_create = []
@@ -254,7 +254,7 @@ def main():
     jumboFiles = []
     if inputs.do_jumbo:
         jumboFiles = generateJumboTests(inputs.tests)
-    
+
     tests = findTests(inputs.tests, inputs.f, inputs.do_jumbo)
     if not tests:
         stopErr("No matching tests found.", -1)

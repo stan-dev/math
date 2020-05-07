@@ -5,18 +5,21 @@
 #include <limits>
 #include <vector>
 
-auto p = [](const auto& x) { return !stan::math::is_nan(x); };
+class ErrorHandlingScalar_elementwise_check : public ::testing::Test {
+public:
+template <typename T>
+auto p(const T& x) { return !stan::math::is_nan(x); };
 
 template <typename T>
 void do_check(const T& x) {
-  stan::math::elementwise_check([](const auto& x) { return p(x); },
+  stan::math::elementwise_check([&](const auto& x) { return this->p(x); },
                                 "elementwise_check_tests", "x", x,
                                 ", but must not be nan!");
 }
 
 template <typename T>
 bool do_is(const T& x) {
-  return stan::math::elementwise_is([](const auto& x) { return p(x); }, x);
+  return stan::math::elementwise_is([&](const auto& x) { return this->p(x); }, x);
 }
 
 template <typename T>
@@ -30,13 +33,14 @@ void expect_bad(const T& x) {
   EXPECT_THROW(do_check(x), std::domain_error);
   EXPECT_FALSE(do_is(x));
 }
+};
 
-TEST(elementwise_check, checks_scalars) {
+TEST_F(ErrorHandlingScalar_elementwise_check, checks_scalars) {
   expect_good(0);
   expect_bad(stan::math::NOT_A_NUMBER);
 }
 
-TEST(elementwise_check, works_elementwise_on_arrays) {
+TEST_F(ErrorHandlingScalar_elementwise_check, works_elementwise_on_arrays) {
   const double good = 0;
   const double bad = stan::math::NOT_A_NUMBER;
   using v = std::vector<double>;
@@ -63,7 +67,7 @@ TEST(elementwise_check, works_elementwise_on_arrays) {
                  vv{v{}, v{good}, v{good, good, good, good, bad}}, vv{}, vv{}});
 }
 
-TEST(elementwise_check, works_on_eigen_types) {
+TEST_F(ErrorHandlingScalar_elementwise_check, works_on_eigen_types) {
   const double bad = stan::math::NOT_A_NUMBER;
   using Eigen::MatrixXd;
   using Eigen::RowVectorXd;
@@ -95,7 +99,7 @@ TEST(elementwise_check, works_on_eigen_types) {
   }
 }
 
-TEST(elementwise_check, works_on_weird_eigen_types) {
+TEST_F(ErrorHandlingScalar_elementwise_check, works_on_weird_eigen_types) {
   const double bad = stan::math::NOT_A_NUMBER;
   // Static size and expression templates.
   expect_good(Eigen::Matrix<double, 3, 3>::Zero());
@@ -107,7 +111,7 @@ TEST(elementwise_check, works_on_weird_eigen_types) {
   expect_bad(Eigen::Vector3d::Zero() + Eigen::Vector3d::Constant(bad));
 }
 
-TEST(elementwise_check, works_on_a_ragged_mess_of_dynamic_matrices) {
+TEST_F(ErrorHandlingScalar_elementwise_check, works_on_a_ragged_mess_of_dynamic_matrices) {
   const double bad = stan::math::NOT_A_NUMBER;
   using m = Eigen::MatrixXd;
   using v = std::vector<m>;
@@ -131,7 +135,7 @@ TEST(elementwise_check, works_on_a_ragged_mess_of_dynamic_matrices) {
                  vv{v{good00}, v{good00}, v{good13}}, vv{v{bad13}}});
 }
 
-TEST(elementwise_check, error_messages_look_good) {
+TEST_F(ErrorHandlingScalar_elementwise_check, error_messages_look_good) {
   const double bad = stan::math::NOT_A_NUMBER;
   Eigen::VectorXd bad_eigen_v = Eigen::VectorXd::Zero(3);
   bad_eigen_v[1] = bad;

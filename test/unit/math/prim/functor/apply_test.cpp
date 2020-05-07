@@ -4,12 +4,19 @@
 #include <type_traits>
 #include <vector>
 
-struct func {
-  template <typename T>
-  T operator()(T t) {
-    return t;
+namespace stan {
+  namespace math {
+    namespace test {
+      struct return_func {
+        template <typename T>
+        T operator()(T t) {
+          return t;
+        }
+      };
+
+    }
   }
-};
+}
 
 TEST(MathFunctions, apply_basic_empty) {
   std::tuple<> x;
@@ -23,7 +30,7 @@ TEST(MathFunctions, apply_basic_empty) {
 TEST(MathFunctions, apply_basic_double) {
   std::tuple<double> x = std::make_tuple(1.0);
 
-  auto y = stan::math::apply(func{}, x);
+  auto y = stan::math::apply(stan::math::test::return_func{}, x);
 
   EXPECT_EQ(1.0, y);
   EXPECT_TRUE((std::is_same<double, decltype(y)>::value));
@@ -32,7 +39,7 @@ TEST(MathFunctions, apply_basic_double) {
 TEST(MathFunctions, apply_basic_int) {
   std::tuple<int> x = std::make_tuple(1);
 
-  auto y = stan::math::apply(func{}, x);
+  auto y = stan::math::apply(stan::math::test::return_func{}, x);
 
   EXPECT_EQ(1, y);
   EXPECT_TRUE((std::is_same<int, decltype(y)>::value));
@@ -41,14 +48,14 @@ TEST(MathFunctions, apply_basic_int) {
 TEST(MathFunctions, apply_const_double) {
   const std::tuple<const double> x = std::make_tuple(1.0);
 
-  auto y = stan::math::apply(func{}, x);
+  auto y = stan::math::apply(stan::math::test::return_func{}, x);
 
   EXPECT_EQ(1.0, y);
   EXPECT_TRUE((std::is_same<double, decltype(y)>::value));
 }
 
 TEST(MathFunctions, apply_temporary_double) {
-  auto y = stan::math::apply(func{}, std::make_tuple(1.0));
+  auto y = stan::math::apply(stan::math::test::return_func{}, std::make_tuple(1.0));
 
   EXPECT_EQ(1.0, y);
   EXPECT_TRUE((std::is_same<double, decltype(y)>::value));

@@ -3,9 +3,9 @@
 #include <limits>
 #include <string>
 
-using stan::math::check_positive_ordered;
 
 TEST(ErrorHandlingMatrix, checkPositiveOrdered) {
+  using stan::math::check_positive_ordered;
   Eigen::Matrix<double, Eigen::Dynamic, 1> y;
   y.resize(3);
 
@@ -34,6 +34,7 @@ TEST(ErrorHandlingMatrix, checkPositiveOrdered) {
 }
 
 TEST(ErrorHandlingMatrix, checkPositiveOrdered_one_indexed_message) {
+  using stan::math::check_positive_ordered;
   std::string message;
   Eigen::Matrix<double, Eigen::Dynamic, 1> y;
   y.resize(3);
@@ -64,6 +65,7 @@ TEST(ErrorHandlingMatrix, checkPositiveOrdered_one_indexed_message) {
 }
 
 TEST(ErrorHandlingMatrix, checkPositiveOrdered_nan) {
+  using stan::math::check_positive_ordered;
   Eigen::Matrix<double, Eigen::Dynamic, 1> y;
   double nan = std::numeric_limits<double>::quiet_NaN();
   y.resize(3);

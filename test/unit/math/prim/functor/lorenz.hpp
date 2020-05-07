@@ -1,5 +1,5 @@
-#ifndef TEST__UNIT__MATH__ODE__LORENZ_HPP
-#define TEST__UNIT__MATH__ODE__LORENZ_HPP
+#ifndef TEST_UNIT_MATH_ODE_LORENZ_HPP
+#define TEST_UNIT_MATH_ODE_LORENZ_HPP
 
 #include <vector>
 

@@ -3,16 +3,16 @@
 #include <test/unit/util.hpp>
 #include <limits>
 
-const char* function = "function";
-class ErrorHandlingMatrix : public ::testing::Test {
+class ErrorHandlingCheckPosSemiDefMatrix : public ::testing::Test {
  public:
+  const char* function = "function";
   void SetUp() {}
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
   Eigen::LDLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > y_ldlt;
 };
 
-TEST_F(ErrorHandlingMatrix, checkPosSemidefinite_size_1) {
+TEST_F(ErrorHandlingCheckPosSemiDefMatrix, checkPosSemidefinite_size_1) {
   using stan::math::check_pos_semidefinite;
 
   y.resize(1, 1);
@@ -28,7 +28,7 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefinite_size_1) {
                    "function: y is not positive semi-definite.");
 }
 
-TEST_F(ErrorHandlingMatrix, checkPosSemidefinite_bad_sizes) {
+TEST_F(ErrorHandlingCheckPosSemiDefMatrix, checkPosSemidefinite_bad_sizes) {
   using stan::math::check_pos_semidefinite;
 
   y.resize(0, 0);
@@ -44,7 +44,7 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefinite_bad_sizes) {
                    "rows of y (2) and columns of y (3) must match in size");
 }
 
-TEST_F(ErrorHandlingMatrix, checkPosSemidefinite) {
+TEST_F(ErrorHandlingCheckPosSemiDefMatrix, checkPosSemidefinite) {
   using stan::math::check_pos_semidefinite;
 
   y.resize(2, 2);
@@ -67,7 +67,7 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefinite) {
                    "function: y is not positive semi-definite.");
 }
 
-TEST_F(ErrorHandlingMatrix, checkPosSemidefinite_nan) {
+TEST_F(ErrorHandlingCheckPosSemiDefMatrix, checkPosSemidefinite_nan) {
   using stan::math::check_pos_semidefinite;
   double nan = std::numeric_limits<double>::quiet_NaN();
 
@@ -85,7 +85,7 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefinite_nan) {
       "function: y is not symmetric. y[2,3] = nan, but y[3,2] = nan");
 }
 
-TEST_F(ErrorHandlingMatrix, checkPosSemidefiniteLDLT_size_1) {
+TEST_F(ErrorHandlingCheckPosSemiDefMatrix, checkPosSemidefiniteLDLT_size_1) {
   using stan::math::check_pos_semidefinite;
 
   y.resize(1, 1);
@@ -105,7 +105,7 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefiniteLDLT_size_1) {
                    "function: y is not positive semi-definite.");
 }
 
-TEST_F(ErrorHandlingMatrix, checkPosSemidefiniteLDLT) {
+TEST_F(ErrorHandlingCheckPosSemiDefMatrix, checkPosSemidefiniteLDLT) {
   using stan::math::check_pos_semidefinite;
 
   y.resize(2, 2);
@@ -129,7 +129,7 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefiniteLDLT) {
                    "function: y is not positive semi-definite.");
 }
 
-TEST_F(ErrorHandlingMatrix, checkPosSemidefiniteLDLT_nan_undetected) {
+TEST_F(ErrorHandlingCheckPosSemiDefMatrix, checkPosSemidefiniteLDLT_nan_undetected) {
   using stan::math::check_not_nan;
   using stan::math::check_pos_semidefinite;
   double nan = std::numeric_limits<double>::quiet_NaN();

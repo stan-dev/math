@@ -9,6 +9,8 @@
 #include <vector>
 #include <limits>
 
+class StanMathOdeRk45 : public ::testing::Test {
+public:
 template <typename F>
 void sho_death_test(F harm_osc, std::vector<double>& y0, double t0,
                     std::vector<double>& ts, std::vector<double>& theta,
@@ -70,8 +72,9 @@ void sho_data_test(double t0) {
 
   sho_value_test(harm_osc, y0, t0, ts, theta, x, x_int);
 }
+};
 
-TEST(StanMathOde_integrate_ode_rk45, harmonic_oscillator) {
+TEST_F(StanMathOdeRk45, harmonic_oscillator) {
   sho_test(0.0);
   sho_test(1.0);
   sho_test(-1.0);
@@ -81,7 +84,7 @@ TEST(StanMathOde_integrate_ode_rk45, harmonic_oscillator) {
   sho_data_test(-1.0);
 }
 
-TEST(StanMathOde_integrate_ode_rk45, error_conditions) {
+TEST_F(StanMathOdeRk45, error_conditions) {
   using stan::math::integrate_ode_rk45;
   harm_osc_ode_data_fun harm_osc;
 
@@ -152,7 +155,7 @@ TEST(StanMathOde_integrate_ode_rk45, error_conditions) {
                    std::invalid_argument, "max_num_steps");
 }
 
-TEST(StanMathOde_integrate_ode_rk45, error_conditions_nan) {
+TEST_F(StanMathOdeRk45, error_conditions_nan) {
   using stan::math::integrate_ode_rk45;
   harm_osc_ode_data_fun harm_osc;
 
@@ -225,7 +228,7 @@ TEST(StanMathOde_integrate_ode_rk45, error_conditions_nan) {
   }
 }
 
-TEST(StanMathOde_integrate_ode_rk45, error_conditions_inf) {
+TEST_F(StanMathOdeRk45, error_conditions_inf) {
   using stan::math::integrate_ode_rk45;
   harm_osc_ode_data_fun harm_osc;
   std::stringstream expected_is_inf;
