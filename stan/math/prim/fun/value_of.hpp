@@ -100,9 +100,8 @@ inline auto value_of(EigMat&& M) {
   using eig_partial = partials_type_t<value_type_t<EigMat>>;
   constexpr Eigen::Index R = eig_mat::RowsAtCompileTime;
   constexpr Eigen::Index C = eig_mat::ColsAtCompileTime;
-  Eigen::Matrix<eig_partial, R, C> Md = M.unaryExpr([&](auto&& x) {
-    return value_of(x);
-  });
+  Eigen::Matrix<eig_partial, R, C> Md
+      = M.unaryExpr([&](auto&& x) { return value_of(x); });
   return Md;
 }
 

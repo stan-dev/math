@@ -20,9 +20,7 @@ namespace math {
  * @param v Variable.
  * @return Value of variable.
  */
-inline auto value_of(const var& v) {
-  return v.vi_->val_;
-}
+inline auto value_of(const var& v) { return v.vi_->val_; }
 
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
           require_vt_var<EigMat>* = nullptr>

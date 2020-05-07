@@ -65,7 +65,6 @@ inline auto value_of_rec(Vec&& x) {
   return result;
 }
 
-
 /**
  * Convert a matrix of type T to a matrix of doubles.
  *

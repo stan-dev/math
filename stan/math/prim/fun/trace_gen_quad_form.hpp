@@ -33,7 +33,8 @@ template <typename EigMatD, typename EigMatA, typename EigMatB,
           require_any_not_eigen_vt<std::is_arithmetic, EigMatD, EigMatA,
                                    EigMatB>* = nullptr,
           require_all_not_vt_var<EigMatD, EigMatA, EigMatB>* = nullptr>
-inline auto trace_gen_quad_form(const EigMatD& D, const EigMatA& A, const EigMatB& B) {
+inline auto trace_gen_quad_form(const EigMatD& D, const EigMatA& A,
+                                const EigMatB& B) {
   check_square("trace_gen_quad_form", "A", A);
   check_square("trace_gen_quad_form", "D", D);
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
@@ -62,7 +63,8 @@ inline auto trace_gen_quad_form(const EigMatD& D, const EigMatA& A, const EigMat
 template <typename EigMatD, typename EigMatA, typename EigMatB,
           require_all_eigen_vt<std::is_arithmetic, EigMatD, EigMatA,
                                EigMatB>* = nullptr>
-inline auto trace_gen_quad_form(const EigMatD& D, const EigMatA& A, const EigMatB& B) {
+inline auto trace_gen_quad_form(const EigMatD& D, const EigMatA& A,
+                                const EigMatB& B) {
   check_square("trace_gen_quad_form", "A", A);
   check_square("trace_gen_quad_form", "D", D);
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
