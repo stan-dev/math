@@ -1,10 +1,10 @@
 #include <test/unit/math/test_ad.hpp>
 #include <vector>
-namespace row_test { 
+namespace row_test {
 auto f(int i) {
   return [=](const auto& y) { return stan::math::row(y, i); };
 }
-}
+}  // namespace row_test
 
 TEST(MathMixMatFun, row) {
   // normal and exception returns

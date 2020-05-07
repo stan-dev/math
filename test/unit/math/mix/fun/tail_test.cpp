@@ -1,11 +1,11 @@
 #include <test/unit/math/test_ad.hpp>
 #include <vector>
 
-namespace tail_test { 
+namespace tail_test {
 auto f(int i) {
   return [=](const auto& y) { return stan::math::tail(y, i); };
 }
-}
+}  // namespace tail_test
 
 template <typename T>
 void expect_tail(const T& x, int n) {

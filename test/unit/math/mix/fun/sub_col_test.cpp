@@ -1,9 +1,9 @@
 #include <test/unit/math/test_ad.hpp>
-namespace sub_col_test { 
+namespace sub_col_test {
 auto f(int i, int j, int k) {
   return [=](const auto& y) { return stan::math::sub_col(y, i, j, k); };
 }
-}
+}  // namespace sub_col_test
 
 TEST(MathMixMatFun, subCol) {
   Eigen::MatrixXd a(1, 1);

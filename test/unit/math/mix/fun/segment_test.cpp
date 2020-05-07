@@ -1,13 +1,12 @@
 #include <test/unit/math/test_ad.hpp>
 
 namespace segment_test {
-   auto f(int i, int n) {
-    return [=](const auto& y) { return stan::math::segment(y, i, n); };
-  }
+auto f(int i, int n) {
+  return [=](const auto& y) { return stan::math::segment(y, i, n); };
 }
+}  // namespace segment_test
 
 TEST(MathMixMatFun, segment) {
- 
   Eigen::VectorXd a(0);
   stan::test::expect_ad(segment_test::f(1, 0), a);  // out of bounds
   stan::test::expect_ad(segment_test::f(1, 2), a);  // out of bounds

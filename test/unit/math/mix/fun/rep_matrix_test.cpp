@@ -1,5 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
-namespace rep_matrix_test { 
+namespace rep_matrix_test {
 // y is scalar
 auto f(int m, int n) {
   return [=](const auto& y) { return stan::math::rep_matrix(y, m, n); };
@@ -9,7 +9,7 @@ auto f(int m, int n) {
 auto g(int k) {
   return [=](const auto& y) { return stan::math::rep_matrix(y, k); };
 }
-}
+}  // namespace rep_matrix_test
 
 TEST(MathMixMatFun, repMatrix) {
   double y = 3;

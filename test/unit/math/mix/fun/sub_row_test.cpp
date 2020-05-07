@@ -1,9 +1,9 @@
 #include <test/unit/math/test_ad.hpp>
-namespace sub_row_test { 
+namespace sub_row_test {
 auto f(int i, int j, int k) {
   return [=](const auto& y) { return stan::math::sub_row(y, i, j, k); };
 }
-}
+}  // namespace sub_row_test
 
 TEST(MathMixMatFun, subRow) {
   Eigen::MatrixXd a(1, 1);
