@@ -1,5 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
-
+namespace positive_ordered_constrain_test {
 template <typename T>
 T g1(const T& x) {
   return stan::math::positive_ordered_constrain(x);
@@ -25,28 +25,29 @@ void expect_positive_ordered_transform(const T& x) {
   stan::test::expect_ad(f2, x);
   stan::test::expect_ad(f3, x);
 }
+}
 
 TEST(MathMixMatFun, positiveOrderedTransform) {
   Eigen::VectorXd v0(0);
-  expect_positive_ordered_transform(v0);
+  positive_ordered_constrain_test::expect_positive_ordered_transform(v0);
 
   Eigen::VectorXd v1(1);
   v1 << -1;
-  expect_positive_ordered_transform(v1);
+  positive_ordered_constrain_test::expect_positive_ordered_transform(v1);
 
   Eigen::VectorXd v2(2);
   v2 << 3, -1;
-  expect_positive_ordered_transform(v2);
+  positive_ordered_constrain_test::expect_positive_ordered_transform(v2);
 
   Eigen::VectorXd v3(3);
   v3 << -12, 3, -1.9;
-  expect_positive_ordered_transform(v3);
+  positive_ordered_constrain_test::expect_positive_ordered_transform(v3);
 
   Eigen::VectorXd v4(4);
   v4 << -1, 0, -1.1, 0.5;
-  expect_positive_ordered_transform(v4);
+  positive_ordered_constrain_test::expect_positive_ordered_transform(v4);
 
   Eigen::VectorXd v5(5);
   v5 << 1, -3, 2, 0, -1;
-  expect_positive_ordered_transform(v5);
+  positive_ordered_constrain_test::expect_positive_ordered_transform(v5);
 }
