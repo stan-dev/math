@@ -5,7 +5,6 @@
 
 #ifdef STAN_THREADS
 #include <tbb/task_scheduler_observer.h>
-#endif
 
 #include <mutex>
 #include <unordered_map>
@@ -69,5 +68,7 @@ ad_tape_observer global_observer;
 }  // namespace
 }  // namespace math
 }  // namespace stan
+
+#endif
 
 #endif
