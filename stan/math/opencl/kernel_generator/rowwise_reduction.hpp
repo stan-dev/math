@@ -7,7 +7,7 @@
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/broadcast.hpp>
 #include <stan/math/opencl/kernel_generator/binary_operation.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
@@ -299,7 +299,7 @@ class rowwise_sum_
  * @return sum
  */
 template <typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
 inline auto rowwise_sum(T&& a) {
   auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
   return rowwise_sum_<std::remove_reference_t<decltype(arg_copy)>>(
@@ -367,7 +367,7 @@ class rowwise_max_
  * @return max
  */
 template <typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
 inline auto rowwise_max(T&& a) {
   auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
   return rowwise_max_<std::remove_reference_t<decltype(arg_copy)>>(
@@ -434,7 +434,7 @@ class rowwise_min_
  * @return min
  */
 template <typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
 inline auto rowwise_min(T&& a) {
   auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
   return rowwise_min_<std::remove_reference_t<decltype(arg_copy)>>(

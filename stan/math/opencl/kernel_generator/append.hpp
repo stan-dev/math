@@ -10,7 +10,7 @@
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/scalar.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <stan/math/opencl/kernel_generator/common_return_scalar.hpp>
 #include <algorithm>
 #include <string>
@@ -162,7 +162,7 @@ class append_row_ : public operation_cl<append_row_<T_a, T_b>,
  * @return Stacked arguments
  */
 template <typename Ta, typename Tb,
-          typename = require_all_valid_expressions_and_none_scalar_t<Ta, Tb>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<Ta, Tb>>
 inline auto append_row(Ta&& a, Tb&& b) {
   auto&& a_operation = as_operation_cl(std::forward<Ta>(a)).deep_copy();
   auto&& b_operation = as_operation_cl(std::forward<Tb>(b)).deep_copy();
@@ -307,7 +307,7 @@ class append_col_ : public operation_cl<append_col_<T_a, T_b>,
  * @return Stacked arguments
  */
 template <typename Ta, typename Tb,
-          typename = require_all_valid_expressions_and_none_scalar_t<Ta, Tb>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<Ta, Tb>>
 inline auto append_col(Ta&& a, Tb&& b) {
   auto&& a_operation = as_operation_cl(std::forward<Ta>(a)).deep_copy();
   auto&& b_operation = as_operation_cl(std::forward<Tb>(b)).deep_copy();
