@@ -54,7 +54,7 @@ inline auto value_of_rec(ComplexT&& x) {
  * @return std::vector of values
  **/
 template <typename Vec, require_std_vector_t<Vec>* = nullptr,
-          require_not_vt_arithmetic<Vec>* = nullptr,
+          require_not_vt_floating_point<Vec>* = nullptr,
           require_not_vt_var<Vec>* = nullptr>
 inline auto value_of_rec(Vec&& x) {
   size_t x_size = x.size();
@@ -65,16 +65,6 @@ inline auto value_of_rec(Vec&& x) {
   return result;
 }
 
-/**
- * Convert a vector of integral type to double.
- * @tparam Vec A vector holding integral types.
- * @param x Specified std::vector.
- * @return Input std::vector converted to doubles.
- */
-template <typename Vec, require_std_vector_vt<std::is_integral, Vec>* = nullptr>
-inline auto value_of_rec(Vec&& x) {
-  return std::vector<double>(x.begin(), x.end());
-}
 
 /**
  * Convert a matrix of type T to a matrix of doubles.
@@ -90,7 +80,7 @@ template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
           require_not_vt_arithmetic<EigMat>* = nullptr,
           require_not_vt_var<EigMat>* = nullptr>
 inline auto value_of_rec(EigMat&& M) {
-  return M.unaryExpr([](auto&& x) { return value_of_rec(x); });
+  return M.unaryExpr([](auto&& x) { return value_of_rec(x); }).eval();
 }
 
 /**

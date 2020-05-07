@@ -423,7 +423,16 @@ TEST(AgradRev, test_matrix_sin_multiple_jac) {
  */
 struct WeirdArgumentListFunctor1 {
   template <size_t size, typename... Args>
-  Eigen::VectorXd operator()(std::array<bool, size> needs_adj, Args&&...) {
+  Eigen::VectorXd operator()(
+      std::array<bool, size> needs_adj, double, int, const double&, const int&,
+      std::vector<double>, std::vector<int>, const std::vector<double>&,
+      const std::vector<int>&, Eigen::Matrix<double, Eigen::Dynamic, 1>,
+      Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>,
+      Eigen::Matrix<double, 2, Eigen::Dynamic>, Eigen::Matrix<double, 5, 1>,
+      const Eigen::Matrix<double, Eigen::Dynamic, 1>&,
+      const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>&,
+      const Eigen::Matrix<double, 2, Eigen::Dynamic>&,
+      const Eigen::Matrix<double, 5, 1>&) {
     return Eigen::VectorXd(1);
   }
 
@@ -546,11 +555,15 @@ struct CheckAdjointsPassingThrough {
   int rows_ed2;
   int cols_ed2;
   int cols_ed3;
-  template <size_t size, typename D1, typename VD, typename X, typename ED1,
-            typename ED2, typename XX, typename ED3, typename ED4>
-  Eigen::VectorXd operator()(std::array<bool, size> needs_adj, D1&& d, VD&& vd,
-                             X&& x, ED1&& ed1, ED2&& ed2, XX&& xx, ED3&& ed3,
-                             ED4&& ed4) {
+  template <size_t size>
+  Eigen::VectorXd operator()(
+      std::array<bool, size> needs_adj, const double& d,
+      const std::vector<double>& vd, const int&,
+      const Eigen::Matrix<double, Eigen::Dynamic, 1>& ed1,
+      const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& ed2,
+      const std::vector<int>&,
+      const Eigen::Matrix<double, 1, Eigen::Dynamic>& ed3,
+      const Eigen::Matrix<double, 1, 1>& ed4) {
     size_vd = vd.size();
     rows_ed1 = ed1.rows();
     rows_ed2 = ed2.rows();
@@ -1624,10 +1637,11 @@ struct SinCosFunctor {
   double* x1_mem_;
   double* x4_mem_;
 
-  template <std::size_t size, typename X1, typename X2, typename X3,
-            typename X4>
-  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj, X1&& x1,
-                             X2&& x2, X3&& x3, X4&& x4) {
+  template <std::size_t size>
+  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
+                             const Eigen::VectorXd& x1, const int& x2,
+                             const std::vector<int>& x3,
+                             const std::vector<double>& x4) {
     stan::math::check_matching_sizes("SinCosFunctor", "x1", x1, "x4", x4);
     N_ = x1.size();
     Eigen::VectorXd out(N_);

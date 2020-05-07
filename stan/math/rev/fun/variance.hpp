@@ -26,7 +26,7 @@ inline var calc_variance(size_t size, const var* dtrs) {
   Eigen::Map<vector_d>(partials, size) = 2 * diff.array() / size_m1;
   double variance = diff.squaredNorm() / size_m1;
 
-  return var(new stored_gradient_vari(variance, size, varis, partials));
+  return {new stored_gradient_vari(variance, size, varis, partials)};
 }
 
 }  // namespace internal
@@ -40,12 +40,12 @@ inline var calc_variance(size_t size, const var* dtrs) {
  */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr,
           require_vt_var<StdVec>* = nullptr>
-inline auto variance(StdVec&& v) {
+inline var variance(StdVec&& v) {
   check_nonzero_size("variance", "v", v);
   if (v.size() == 1) {
-    return var{0};
+    return var{0.0};
   }
-  return var{internal::calc_variance(v.size(), &v[0])};
+  return {internal::calc_variance(v.size(), &v[0])};
 }
 
 /**
@@ -60,15 +60,15 @@ inline auto variance(StdVec&& v) {
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
           require_vt_var<EigMat>* = nullptr>
-auto variance(EigMat&& m) {
+var variance(EigMat&& m) {
   using ref_inner = const typename std::decay_t<EigMat>::PlainObject;
   check_nonzero_size("variance", "m", m);
   if (m.size() == 1) {
-    return var{0};
+    return var{0.0};
   }
 
   const Eigen::Ref<ref_inner, Eigen::Aligned16, Eigen::Stride<0, 0>>& mat = m;
-  return var{internal::calc_variance(m.size(), mat.data())};
+  return {internal::calc_variance(m.size(), mat.data())};
 }
 
 }  // namespace math

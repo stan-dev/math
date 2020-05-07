@@ -21,7 +21,7 @@ namespace math {
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
 auto unit_vector_free(EigVec&& x) {
   check_unit_vector("stan::math::unit_vector_free", "Unit vector variable", x);
-  return x;
+  return std::forward<EigVec>(x);
 }
 
 }  // namespace math

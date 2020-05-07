@@ -97,18 +97,12 @@ template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
           require_not_vt_arithmetic<EigMat>* = nullptr>
 inline auto value_of(EigMat&& M) {
   using eig_mat = std::decay_t<EigMat>;
-  using ref_inner = const typename eig_mat::PlainObject;
-  using eig_index = index_type_t<EigMat>;
   using eig_partial = partials_type_t<value_type_t<EigMat>>;
-  Eigen::Matrix<eig_partial, eig_mat::RowsAtCompileTime,
-                eig_mat::ColsAtCompileTime>
-      Md(M.rows(), M.cols());
-  const Eigen::Ref<ref_inner, Eigen::Aligned16, Eigen::Stride<0, 0>>& mat = M;
-  for (eig_index j = 0; j < mat.cols(); j++) {
-    for (eig_index i = 0; i < mat.rows(); i++) {
-      Md.coeffRef(i, j) = value_of(mat.coeffRef(i, j));
-    }
-  }
+  constexpr Eigen::Index R = eig_mat::RowsAtCompileTime;
+  constexpr Eigen::Index C = eig_mat::ColsAtCompileTime;
+  Eigen::Matrix<eig_partial, R, C> Md = M.unaryExpr([&](auto&& x) {
+    return value_of(x);
+  });
   return Md;
 }
 

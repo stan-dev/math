@@ -15,8 +15,7 @@ namespace math {
  * @param v Variable.
  * @return Value of variable.
  */
-template <typename Var, require_var_t<Var>* = nullptr>
-inline auto value_of_rec(Var&& v) {
+inline auto value_of_rec(const var& v) {
   return v.vi_->val_;
 }
 
@@ -26,7 +25,7 @@ inline auto value_of_rec(Vec&& x) {
 }
 
 template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
-inline auto value_of_rec(EigMat&& M) {
+inline auto value_of_rec(const EigMat& M) {
   return M.val().eval();
 }
 

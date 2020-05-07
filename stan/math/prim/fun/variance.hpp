@@ -20,11 +20,11 @@ namespace math {
  */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr,
           require_not_vt_var<StdVec>* = nullptr>
-inline auto variance(StdVec&& v) {
+inline value_type_t<StdVec> variance(StdVec&& v) {
   using vec_value = value_type_t<StdVec>;
   check_nonzero_size("variance", "v", v);
   if (v.size() == 1) {
-    return static_cast<vec_value>(0.0);
+    return vec_value{0.0};
   }
   const vec_value v_mean(mean(v));
   vec_value sum_sq_diff(0);
@@ -49,22 +49,15 @@ inline auto variance(StdVec&& v) {
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
           require_not_vt_var<EigMat>* = nullptr>
-inline auto variance(EigMat&& m) {
+inline value_type_t<EigMat> variance(EigMat&& m) {
   using eig_value = value_type_t<EigMat>;
   using ref_inner = const typename std::decay_t<EigMat>::PlainObject;
   check_nonzero_size("variance", "m", m);
-
   if (m.size() == 1) {
-    return static_cast<eig_value>(0.0);
+    return eig_value{0.0};
   }
   const Eigen::Ref<ref_inner, Eigen::Aligned16, Eigen::Stride<0, 0>>& mat = m;
-  const eig_value mn(mean(mat));
-  eig_value sum_sq_diff(0);
-  for (int i = 0; i < m.size(); ++i) {
-    const eig_value diff = mat(i) - mn;
-    sum_sq_diff += diff * diff;
-  }
-  return sum_sq_diff / (m.size() - 1);
+  return (mat.array() - mat.mean()).square().sum() / eig_value(mat.size() - 1.0);
 }
 
 }  // namespace math

@@ -30,8 +30,7 @@ class trace_quad_form_vari_alloc : public chainable_alloc {
 template <typename EigMatL, typename EigMatR>
 class trace_quad_form_vari : public vari {
  protected:
-  template <
-      typename EigMatA, typename EigMatBd,
+  template <typename EigMatA, typename EigMatBd,
       require_all_eigen_vt<std::is_arithmetic, EigMatA, EigMatBd>* = nullptr>
   static inline void chainA(EigMatA&& A, EigMatBd&& Bd, double adjC) {}
 
@@ -48,8 +47,7 @@ class trace_quad_form_vari : public vari {
     A.adj() += adjC * Bd * Bd.transpose();
   }
 
-  template <
-      typename EigMatB, typename EigMatAd, typename EigMatBd,
+  template <typename EigMatB, typename EigMatAd, typename EigMatBd,
       require_eigen_vt<is_var, EigMatB>* = nullptr,
       require_all_eigen_vt<std::is_arithmetic, EigMatAd, EigMatBd>* = nullptr>
   static inline void chainB(EigMatB&& B, EigMatAd&& Ad, EigMatBd& Bd,
@@ -84,9 +82,8 @@ template <typename EigMatL, typename EigMatR,
 inline auto trace_quad_form(EigMatL&& A, EigMatR&& B) {
   check_square("trace_quad_form", "A", A);
   check_multiplicable("trace_quad_form", "A", A, "B", B);
-
   auto* baseVari = new internal::trace_quad_form_vari_alloc<EigMatL, EigMatR>(
-      std::forward<EigMatL>(A), std::forward<EigMatR>(B));
+    std::forward<EigMatL>(A), std::forward<EigMatR>(B));
   return var(new internal::trace_quad_form_vari<EigMatL, EigMatR>(baseVari));
 }
 

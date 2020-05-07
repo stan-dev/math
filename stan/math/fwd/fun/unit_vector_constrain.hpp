@@ -17,34 +17,24 @@ namespace math {
 
 template <typename EigMat, require_eigen_vt<is_fvar, EigMat>* = nullptr>
 inline auto unit_vector_constrain(EigMat&& y) {
-  using Eigen::Matrix;
-  using std::sqrt;
   using eig_mat = std::decay_t<EigMat>;
-  using ref_inner = typename eig_mat::PlainObject;
-  using eigen_ref
-      = Eigen::Ref<const ref_inner, Eigen::Aligned16, Eigen::Stride<0, 0>>;
-  using eig_index = index_type_t<EigMat>;
+  using eigen_type = typename eig_mat::PlainObject;
   using eig_partial = partials_type_t<value_type_t<EigMat>>;
-  using eig_value = value_type_t<EigMat>;
   using partial_mat = Eigen::Matrix<eig_partial, eig_mat::RowsAtCompileTime,
                                     eig_mat::ColsAtCompileTime>;
-  partial_mat y_val(y.rows(), y.cols());
-  const eigen_ref& y_ref = y;
-  y_val = value_of(y_ref);
+  partial_mat y_val(value_of(y));
+  eigen_type unit_vector_y(y.size());
+  unit_vector_y.val() = unit_vector_constrain(y_val);
 
-  partial_mat unit_vector_y_val = unit_vector_constrain(y_val);
-  ref_inner unit_vector_y(y.size());
-  unit_vector_y.val() = unit_vector_y_val;
-
-  eig_partial squared_norm = dot_self(y_val);
-  eig_partial norm = sqrt(squared_norm);
-  eig_partial inv_norm = inv(norm);
+  auto squared_norm = dot_self(y_val);
+  auto norm = sqrt(squared_norm);
+  auto inv_norm = inv(norm);
   Eigen::Matrix<eig_partial, Eigen::Dynamic, Eigen::Dynamic> J
       = divide(tcrossprod(y_val), -norm * squared_norm);
 
-  for (eig_index m = 0; m < y.size(); ++m) {
+  for (Eigen::Index m = 0; m < y_val.size(); ++m) {
     J.coeffRef(m, m) += inv_norm;
-    for (eig_index k = 0; k < y.size(); ++k) {
+    for (Eigen::Index k = 0; k < y_val.size(); ++k) {
       unit_vector_y.coeffRef(k).d_ = J.coeff(k, m);
     }
   }
