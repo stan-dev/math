@@ -26,8 +26,8 @@ allowed_paths_with_jumbo = [
     "test/unit/math/rev/",
     "test/unit/math/rev/",
     "test/unit/math/",
-    "test/unit/",
-    "test/prob/",
+    "test/unit/"
+    # "test/prob/",
 ]
 
 jumbo_folders = [
@@ -52,14 +52,14 @@ jumbo_folders = [
     "test/unit/math/mix/fun",
     #"test/unit/math/mix/functor",
     #"test/unit/math/mix/meta",
-    "test/unit/math/mix/prob",
-    "test/prob/bernoulli",
-    "test/prob/wiener",
-    "test/prob/student_t",
-    "test/prob/skew_normal",
-    "test/prob/pareto_type_2",
-    "test/prob/exp_mod_normal",
-    "test/prob/normal_sufficient"
+    "test/unit/math/mix/prob"
+    # "test/prob/bernoulli",
+    # "test/prob/wiener",
+    # "test/prob/student_t",
+    # "test/prob/skew_normal",
+    # "test/prob/pareto_type_2",
+    # "test/prob/exp_mod_normal",
+    # "test/prob/normal_sufficient"
 ]
 
 def processCLIArgs():
