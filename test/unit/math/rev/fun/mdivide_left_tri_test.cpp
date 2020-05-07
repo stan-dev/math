@@ -14,10 +14,10 @@
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(stan::math::value_of(A(i)), stan::math::value_of(B(i)), DELTA);
 
-boost::random::mt19937 rng;
 #define MDIVIDE_OPENCL_OVERRIDE 0
 #define MDIVIDE_CPU_OVERRIDE INT_MAX
 TEST(AgradRevMatrix, mdivide_left_tri_val_cl) {
+  boost::random::mt19937 rng;
   int temp = stan::math::opencl_context.tuning_opts()
                  .tri_inverse_size_worth_transfer;
   using stan::math::matrix_d;
@@ -116,6 +116,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_val_cl) {
 }
 
 TEST(AgradRevMatrix, mdivide_left_tri_lower_grad_vv_cl) {
+  boost::random::mt19937 rng;
   int temp = stan::math::opencl_context.tuning_opts()
                  .tri_inverse_size_worth_transfer;
 
@@ -157,6 +158,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_lower_grad_vv_cl) {
 }
 
 TEST(AgradRevMatrix, mdivide_left_tri_lower_grad_dv_cl) {
+  boost::random::mt19937 rng;
   int temp = stan::math::opencl_context.tuning_opts()
                  .tri_inverse_size_worth_transfer;
 
@@ -198,6 +200,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_lower_grad_dv_cl) {
 }
 
 TEST(AgradRevMatrix, mdivide_left_tri_lower_grad_vd_cl) {
+  boost::random::mt19937 rng;
   int temp = stan::math::opencl_context.tuning_opts()
                  .tri_inverse_size_worth_transfer;
 
@@ -239,6 +242,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_lower_grad_vd_cl) {
 }
 
 TEST(AgradRevMatrix, mdivide_left_tri_upper_grad_vv_cl) {
+  boost::random::mt19937 rng;
   int temp = stan::math::opencl_context.tuning_opts()
                  .tri_inverse_size_worth_transfer;
 
@@ -280,6 +284,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_upper_grad_vv_cl) {
 }
 
 TEST(AgradRevMatrix, mdivide_left_tri_upper_grad_dv_cl) {
+  boost::random::mt19937 rng;
   int temp = stan::math::opencl_context.tuning_opts()
                  .tri_inverse_size_worth_transfer;
 
@@ -321,6 +326,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_upper_grad_dv_cl) {
 }
 
 TEST(AgradRevMatrix, mdivide_left_tri_upper_grad_vd_cl) {
+  boost::random::mt19937 rng;
   int temp = stan::math::opencl_context.tuning_opts()
                  .tri_inverse_size_worth_transfer;
 

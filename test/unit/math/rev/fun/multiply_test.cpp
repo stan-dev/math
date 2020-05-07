@@ -9,10 +9,10 @@
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(stan::math::value_of(A(i)), stan::math::value_of(B(i)), DELTA);
 
-boost::random::mt19937 rng;
 #define MULTIPLY_OPENCL_OVERRIDE 0
 #define MULTIPLY_CPU_OVERRIDE INT_MAX
 TEST(AgradRevMatrix, multiply_val_vv_cl) {
+  boost::random::mt19937 rng;
   int temp = stan::math::opencl_context.tuning_opts()
                  .multiply_dim_prod_worth_transfer;
   using stan::math::matrix_d;
@@ -44,6 +44,7 @@ TEST(AgradRevMatrix, multiply_val_vv_cl) {
 }
 
 TEST(AgradRevMatrix, multiply_val_vd_cl) {
+  boost::random::mt19937 rng;
   int temp = stan::math::opencl_context.tuning_opts()
                  .multiply_dim_prod_worth_transfer;
   using stan::math::matrix_d;
@@ -76,6 +77,7 @@ TEST(AgradRevMatrix, multiply_val_vd_cl) {
 }
 
 TEST(AgradRevMatrix, multiply_val_dv_cl) {
+  boost::random::mt19937 rng;
   int temp = stan::math::opencl_context.tuning_opts()
                  .multiply_dim_prod_worth_transfer;
   using stan::math::matrix_d;
