@@ -3,6 +3,10 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
+  for (int i = 0; i < A.size(); i++)    \
+    EXPECT_NEAR(A(i), B(i), DELTA);
+
 TEST(AgradRev, value_of_rec) {
   using stan::math::value_of_rec;
   using stan::math::var;
@@ -76,4 +80,18 @@ TEST(AgradMatrixRev, value_of_rec) {
     for (size_type j = 0; j < 5; ++j) {
       EXPECT_FLOAT_EQ(a(i, j), d_v_a(i, j));
     }
+}
+
+TEST(AgradMatrixRev, value_of_rec_expression) {
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::Array;
+  using Eigen::ArrayXXd;
+  using stan::math::value_of;
+  using stan::math::var;
+  Matrix<var,-1,-1> a = MatrixXd::Random(7,4);
+  MatrixXd res = value_of_rec(2*a);
+  MatrixXd correct = 2*value_of_rec(a);
+
+  EXPECT_MATRIX_NEAR(res, correct, 1e-10);
 }

@@ -73,8 +73,8 @@ categorical_logit_glm_lpmf(
     return 0;
   }
 
-  const auto& x_val = value_of_rec(x);
-  const auto& beta_val = value_of_rec(beta);
+  const auto& x_val = to_ref(value_of_rec(x));
+  const auto& beta_val = to_ref(value_of_rec(beta));
   const auto& alpha_val = value_of_rec(alpha);
 
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val).transpose();

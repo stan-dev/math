@@ -82,13 +82,13 @@ return_type_t<T_x_scalar, T_alpha, T_beta> poisson_log_glm_lpmf(
 
   T_partials_return logp(0);
 
-  const auto& x_val = value_of_rec(x);
+  const auto& x_val = to_ref(value_of_rec(x));
   const auto& y_val = value_of_rec(y);
   const auto& beta_val = value_of_rec(beta);
   const auto& alpha_val = value_of_rec(alpha);
 
-  const auto& y_val_vec = as_column_vector_or_scalar(y_val);
-  const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
+  const auto& y_val_vec = to_ref(as_column_vector_or_scalar(y_val));
+  const auto& beta_val_vec = to_ref(as_column_vector_or_scalar(beta_val));
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
 
   Array<T_partials_return, Dynamic, 1> theta(N_instances);

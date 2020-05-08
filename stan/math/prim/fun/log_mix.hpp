@@ -86,8 +86,8 @@ return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
   check_finite(function, "theta", theta);
   check_consistent_sizes(function, "theta", theta, "lambda", lambda);
 
-  const auto& theta_dbl = value_of(as_column_vector_or_scalar(theta));
-  const auto& lam_dbl = value_of(as_column_vector_or_scalar(lambda));
+  const auto& theta_dbl = to_ref(value_of(as_column_vector_or_scalar(theta)));
+  const auto& lam_dbl = to_ref(value_of(as_column_vector_or_scalar(lambda)));
 
   T_partials_return logp = log_sum_exp(log(theta_dbl) + lam_dbl);
 
@@ -158,7 +158,7 @@ return_type_t<T_theta, std::vector<T_lam>> log_mix(
     check_consistent_sizes(function, "theta", theta, "lambda", lambda[n]);
   }
 
-  const auto& theta_dbl = value_of(as_column_vector_or_scalar(theta));
+  const auto& theta_dbl = to_ref(value_of(as_column_vector_or_scalar(theta)));
 
   T_partials_mat lam_dbl(M, N);
   for (int n = 0; n < N; ++n) {

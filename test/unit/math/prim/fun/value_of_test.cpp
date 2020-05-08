@@ -5,6 +5,10 @@
 #include <type_traits>
 #include <vector>
 
+#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
+  for (int i = 0; i < A.size(); i++)    \
+    EXPECT_NEAR(A(i), B(i), DELTA);
+
 TEST(MathFunctions, value_of) {
   using stan::math::value_of;
   double x = 5.0;
@@ -81,6 +85,35 @@ TEST(MathMatrixPrimMat, value_of) {
       EXPECT_FLOAT_EQ(a(i, j), d_a(i, j));
 }
 
+TEST(MathMatrixPrimMat, value_of_expression) {
+  using stan::math::value_of;
+
+  Eigen::MatrixXd a = Eigen::MatrixXd::Random(5, 4);
+  Eigen::MatrixXd res_a = value_of(2 * a);
+  Eigen::MatrixXd correct_a = 2 * a;
+  EXPECT_MATRIX_NEAR(res_a, correct_a, 1e-10);
+
+  Eigen::VectorXi b = Eigen::VectorXi::Random(7);
+  Eigen::VectorXi res_b = value_of(2 * b);
+  Eigen::VectorXi correct_b = 2 * b;
+  EXPECT_MATRIX_NEAR(res_b, correct_b, 1e-10);
+
+  Eigen::ArrayXXd c = a.array();
+  Eigen::ArrayXXd res_c = value_of(2 * c);
+  Eigen::ArrayXXd correct_c = 2 * c;
+  EXPECT_MATRIX_NEAR(res_c, correct_c, 1e-10);
+}
+
+TEST(MathFunctions, value_of_return_type_short_circuit_std_vector) {
+  std::vector<double> a(5);
+  const std::vector<double> b(5);
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(a)),
+                            std::vector<double>&>::value));
+  EXPECT_TRUE(
+      (std::is_same<decltype(stan::math::value_of(b)),
+                    const std::vector<double>&>::value));
+}
+
 TEST(MathFunctions, value_of_return_type_short_circuit_vector_xd) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> a(5);
   const Eigen::Matrix<double, Eigen::Dynamic, 1> b(5);
@@ -110,6 +143,15 @@ TEST(MathFunctions, value_of_return_type_short_circuit_matrix_xd) {
   EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(b)),
                             const Eigen::Matrix<double, Eigen::Dynamic,
                                                 Eigen::Dynamic>&>::value));
+}
+
+TEST(MathFunctions, value_of_return_type_short_circuit_expression) {
+  const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> a(5, 4);
+
+  const auto& expr = 3 * a;
+
+  EXPECT_TRUE(
+      (std::is_same<decltype(stan::math::value_of(expr)), decltype(expr)>::value));
 }
 
 TEST(MathFunctions, value_of_return_type_short_circuit_static_sized_matrix) {

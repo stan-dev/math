@@ -81,12 +81,12 @@ ordered_logistic_glm_lpmf(
   if (!include_summand<propto, T_x_scalar, T_beta_scalar, T_cuts_scalar>::value)
     return 0;
 
-  const auto& x_val = value_of_rec(x);
+  const auto& x_val = to_ref(value_of_rec(x));
   const auto& beta_val = value_of_rec(beta);
   const auto& cuts_val = value_of_rec(cuts);
 
-  const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
-  const auto& cuts_val_vec = as_column_vector_or_scalar(cuts_val);
+  const auto& beta_val_vec = to_ref(as_column_vector_or_scalar(beta_val));
+  const auto& cuts_val_vec = to_ref(as_column_vector_or_scalar(cuts_val));
 
   scalar_seq_view<T_y> y_seq(y);
   Array<double, Dynamic, 1> cuts_y1(N_instances), cuts_y2(N_instances);
