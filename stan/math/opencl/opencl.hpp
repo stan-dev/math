@@ -103,7 +103,9 @@
 #include <stan/math/opencl/prim/cholesky_decompose.hpp>
 #include <stan/math/opencl/prim/col.hpp>
 #include <stan/math/opencl/prim/cols.hpp>
+#include <stan/math/opencl/prim/crossprod.hpp>
 #include <stan/math/opencl/prim/dims.hpp>
+#include <stan/math/opencl/prim/divide.hpp>
 #include <stan/math/opencl/prim/divide_columns.hpp>
 #include <stan/math/opencl/prim/gp_exp_quad_cov.hpp>
 #include <stan/math/opencl/prim/inv.hpp>
