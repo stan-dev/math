@@ -288,7 +288,7 @@ std::vector<real_return_t<T>> serialize_return(const T& x) {
  */
 template <typename... Ts>
 Eigen::VectorXd serialize_args(const Ts... xs) {
-  return to_eigen_vector(serialize<real_return_t<Ts...>>(xs...));
+  return to_eigen_vector(serialize<double>(xs...));
 }
 
 }  // namespace test

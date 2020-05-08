@@ -924,9 +924,8 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
  *
  * @return non-zero arguments
  */
- template <typename T>
-const std::vector<T>& common_nonzero_args() {
-  static const std::vector<T> common_nz_args{
+const std::vector<double>& common_nonzero_args() {
+  static const std::vector<double> common_nz_args{
       -1.3,
       0.49,
       0.99,
@@ -943,21 +942,19 @@ const std::vector<T>& common_nonzero_args() {
  *
  * @return sequence of common scalar arguments to test
  */
-template <typename T>
-std::vector<T> common_args() {
-  auto result = common_nonzero_args<T>();
+std::vector<double> common_args() {
+  auto result = common_nonzero_args();
   result.push_back(0);
   return result;
 }
-template <typename T>
-std::vector<T> common_nonzero_int_args() {
-  static const std::vector<T> args{-1, 1};
+
+std::vector<int> common_nonzero_int_args() {
+  static const std::vector<int> args{-1, 1};
   return args;
 }
 
-template <typename T>
-std::vector<T> common_int_args() {
-  std::vector<T> args = common_nonzero_int_args<T>();
+std::vector<int> common_int_args() {
+  std::vector<int> args = common_nonzero_int_args();
   args.push_back(0);
   return args;
 }
@@ -1297,10 +1294,10 @@ void expect_ad_vectorized(const F& f, const T& x) {
  */
 template <typename F>
 void expect_common_unary(const F& f) {
-  auto args = internal::common_args<double>();
+  auto args = internal::common_args();
   for (double x1 : args)
     expect_ad(f, x1);
-  auto int_args = internal::common_int_args<int>();
+  auto int_args = internal::common_int_args();
   for (int x1 : int_args)
     expect_ad(f, x1);
 }
@@ -1317,11 +1314,11 @@ void expect_common_unary(const F& f) {
  */
 template <typename F>
 void expect_common_nonzero_unary(const F& f) {
-  auto args = internal::common_nonzero_args<double>();
+  auto args = internal::common_nonzero_args();
   for (double x1 : args)
     expect_ad(f, x1);
 
-  auto int_args = internal::common_nonzero_int_args<int>();
+  auto int_args = internal::common_nonzero_int_args();
   for (int x : int_args)
     expect_ad(f, x);
 }
@@ -1346,8 +1343,8 @@ void expect_common_nonzero_unary(const F& f) {
  */
 template <typename F>
 void expect_common_nonzero_binary(const F& f, bool disable_lhs_int = false) {
-  auto args = internal::common_nonzero_args<double>();
-  auto int_args = internal::common_nonzero_int_args<int>();
+  auto args = internal::common_nonzero_args();
+  auto int_args = internal::common_nonzero_int_args();
   for (double x1 : args)
     for (double x2 : args) {
       expect_ad(f, x1, x2);
@@ -1371,39 +1368,6 @@ void expect_common_nonzero_binary(const F& f, bool disable_lhs_int = false) {
 }
 
 /**
- * See the documentation for `expect_common_binary`.
- * @tparam Arith The arithmetic type to test.
- * @tparam Integral The integral type to test.
- * @tparam F type of polymorphic binary functor
- * @param f functor to test
- * @param disable_lhs_int if integer values should only be tested
- * for second argments
- */
-template <typename Arith, typename Integral, typename F>
-void expect_common_binary_impl(const F& f, bool disable_lhs_int = false) {
-auto args = internal::common_args<Arith>();
-auto int_args = internal::common_int_args<Integral>();
-for (auto x1 : args)
-  for (auto x2 : args) {
-    expect_ad(f, x1, x2);
-  }
-for (auto x1 : args)
-  for (auto x2 : int_args) {
-    expect_ad(f, x1, x2);
-  }
-if (disable_lhs_int)
-  return;
-for (auto x1 : int_args)
-  for (auto x2 : args) {
-    expect_ad(f, x1, x2);
-  }
-for (auto x1 : int_args)
-  for (auto x2 : int_args) {
-    expect_ad(f, x1, x2);
-  }
-}
-
-/**
  * Test that the specified polymorphic binary function produces the
  * same results, exceptions, and has 1st-, 2nd-, and 3rd-order
  * derivatives consistent with finite differences as returned by the
@@ -1423,9 +1387,26 @@ for (auto x1 : int_args)
  */
 template <typename F>
 void expect_common_binary(const F& f, bool disable_lhs_int = false) {
-  expect_common_binary_impl<double, int, F>(f, disable_lhs_int);
-  expect_common_binary_impl<long double, long int, F>(f, disable_lhs_int);
-  expect_common_binary_impl<double, int, F>(f, disable_lhs_int);
+  auto args = internal::common_args();
+  auto int_args = internal::common_int_args();
+  for (double x1 : args)
+    for (double x2 : args) {
+      expect_ad(f, x1, x2);
+    }
+  for (double x1 : args)
+    for (int x2 : int_args) {
+      expect_ad(f, x1, x2);
+    }
+  if (disable_lhs_int)
+    return;
+  for (int x1 : int_args)
+    for (double x2 : args) {
+      expect_ad(f, x1, x2);
+    }
+  for (int x1 : int_args)
+    for (int x2 : int_args) {
+      expect_ad(f, x1, x2);
+    }
 }
 
 /**
@@ -1446,10 +1427,10 @@ void expect_common_binary(const F& f, bool disable_lhs_int = false) {
 template <typename F>
 void expect_common_unary_vectorized(const F& f) {
   ad_tolerances tols;
-  auto args = internal::common_args<double>();
+  auto args = internal::common_args();
   for (double x1 : args)
     stan::test::expect_ad_vectorized(tols, f, x1);
-  auto int_args = internal::common_int_args<int>();
+  auto int_args = internal::common_int_args();
   for (int x1 : args)
     stan::test::expect_ad_vectorized(tols, f, x1);
 }
@@ -1532,10 +1513,10 @@ void expect_unary_vectorized(const F& f, Ts... xs) {
 template <typename F>
 void expect_common_nonzero_unary_vectorized(const F& f) {
   ad_tolerances tols;
-  auto args = internal::common_nonzero_args<double>();
+  auto args = internal::common_nonzero_args();
   for (double x : args)
     stan::test::expect_unary_vectorized(tols, f, x);
-  auto int_args = internal::common_nonzero_int_args<int>();
+  auto int_args = internal::common_nonzero_int_args();
   for (int x : int_args)
     stan::test::expect_unary_vectorized(tols, f, x);
 }
@@ -1550,8 +1531,8 @@ void expect_common_nonzero_unary_vectorized(const F& f) {
  */
 template <typename F>
 void expect_common_comparison(const F& f) {
-  auto args = internal::common_args<double>();
-  auto int_args = internal::common_int_args<int>();
+  auto args = internal::common_args();
+  auto int_args = internal::common_int_args();
   for (double x1 : args)
     for (double x2 : args)
       internal::expect_comparison(f, x1, x2);
@@ -1613,9 +1594,9 @@ void expect_match_prim(const F1& f1, const F2& f2, const T& x) {
  */
 template <typename F1, typename F2>
 void expect_common_prim(const F1& f1, const F2& f2) {
-  for (double x : internal::common_args<double>())
+  for (double x : internal::common_args())
     expect_match_prim(f1, f2, x);
-  for (int x : internal::common_int_args<int>())
+  for (int x : internal::common_int_args())
     expect_match_prim(f1, f2, x);
 }
 
