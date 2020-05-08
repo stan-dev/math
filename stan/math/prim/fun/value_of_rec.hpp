@@ -86,7 +86,8 @@ inline std::vector<double> value_of_rec(const std::vector<T>& x) {
  * @param x Specified std::vector.
  * @return Specified std::vector.
  */
-template<typename T, require_std_vector_t<T>* = nullptr, require_vt_same<double, T>* = nullptr>
+template <typename T, require_std_vector_t<T>* = nullptr,
+          require_vt_same<double, T>* = nullptr>
 inline T value_of_rec(T&& x) {
   return std::forward<T>(x);
 }

@@ -109,9 +109,8 @@ TEST(MathFunctions, value_of_return_type_short_circuit_std_vector) {
   const std::vector<double> b(5);
   EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(a)),
                             std::vector<double>&>::value));
-  EXPECT_TRUE(
-      (std::is_same<decltype(stan::math::value_of(b)),
-                    const std::vector<double>&>::value));
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(b)),
+                            const std::vector<double>&>::value));
 }
 
 TEST(MathFunctions, value_of_return_type_short_circuit_vector_xd) {
@@ -150,8 +149,8 @@ TEST(MathFunctions, value_of_return_type_short_circuit_expression) {
 
   const auto& expr = 3 * a;
 
-  EXPECT_TRUE(
-      (std::is_same<decltype(stan::math::value_of(expr)), decltype(expr)>::value));
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(expr)),
+                            decltype(expr)>::value));
 }
 
 TEST(MathFunctions, value_of_return_type_short_circuit_static_sized_matrix) {

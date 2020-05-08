@@ -77,16 +77,13 @@ TEST(MathMatrixPrimMat, value_of_rec_expression) {
   EXPECT_MATRIX_NEAR(res_c, correct_c, 1e-10);
 }
 
-
-
 TEST(MathFunctions, value_of_rec_return_type_short_circuit_std_vector) {
   std::vector<double> a(5);
   const std::vector<double> b(5);
   EXPECT_TRUE((std::is_same<decltype(stan::math::value_of_rec(a)),
                             std::vector<double>&>::value));
-  EXPECT_TRUE(
-      (std::is_same<decltype(stan::math::value_of_rec(b)),
-                    const std::vector<double>&>::value));
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of_rec(b)),
+                            const std::vector<double>&>::value));
 }
 
 TEST(MathFunctions, value_of_rec_return_type_short_circuit_vector_xd) {
@@ -125,11 +122,12 @@ TEST(MathFunctions, value_of_rec_return_type_short_circuit_expression) {
 
   const auto& expr = 3 * a;
 
-  EXPECT_TRUE(
-      (std::is_same<decltype(stan::math::value_of_rec(expr)), decltype(expr)>::value));
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of_rec(expr)),
+                            decltype(expr)>::value));
 }
 
-TEST(MathFunctions, value_of_rec_return_type_short_circuit_static_sized_matrix) {
+TEST(MathFunctions,
+     value_of_rec_return_type_short_circuit_static_sized_matrix) {
   Eigen::Matrix<double, 5, 4> a;
   const Eigen::Matrix<double, 5, 4> b;
   EXPECT_TRUE((std::is_same<decltype(stan::math::value_of_rec(a)),

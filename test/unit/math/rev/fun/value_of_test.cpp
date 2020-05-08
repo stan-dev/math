@@ -91,15 +91,15 @@ TEST(AgradMatrix, value_of) {
 }
 
 TEST(AgradMatrix, value_of_expression) {
-  using Eigen::Matrix;
-  using Eigen::MatrixXd;
   using Eigen::Array;
   using Eigen::ArrayXXd;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
   using stan::math::value_of;
   using stan::math::var;
-  Matrix<var,-1,-1> a = MatrixXd::Random(7,4);
-  MatrixXd res = value_of(2*a);
-  MatrixXd correct = 2*value_of(a);
+  Matrix<var, -1, -1> a = MatrixXd::Random(7, 4);
+  MatrixXd res = value_of(2 * a);
+  MatrixXd correct = 2 * value_of(a);
 
   EXPECT_MATRIX_NEAR(res, correct, 1e-10);
 }
