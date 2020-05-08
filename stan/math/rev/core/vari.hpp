@@ -4,13 +4,42 @@
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <ostream>
+#include <type_traits>
 
 namespace stan {
 namespace math {
 
 // forward declaration of var
-class var;
+template <typename T>
+class var_value;
 
+class vari_base {
+public:
+  /**
+   * Apply the chain rule to this variable based on the variables
+   * on which it depends.  The base implementation in this class
+   * is a no-op.
+   */
+  virtual void chain() = 0;
+
+  /**
+   * Initialize the adjoint for this (dependent) variable to 1.
+   * This operation is applied to the dependent variable before
+   * propagating derivatives, setting the derivative of the
+   * result with respect to itself to be 1.
+   */
+  virtual void init_dependent() = 0;
+
+  /**
+   * Set the adjoint value of this variable to 0.  This is used to
+   * reset adjoints before propagating derivatives again (for
+   * example in a Jacobian calculation).
+   */
+  virtual void set_zero_adjoint() = 0;
+
+  virtual ~vari_base() {}
+
+};
 /**
  * The variable implementation base class.
  *
@@ -27,21 +56,30 @@ class var;
  * classes will store operand variables and propagate derivative
  * information via an implementation of chain().
  */
-class vari {
- private:
-  friend class var;
+template <typename T, typename = void>
+class vari_value : public vari_base {};
 
+template <typename T>
+class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>> : public vari_base {
+ private:
+  template <typename>
+  friend class var_type;
+  template <typename Val>
+  using floating_point_promoter = std::conditional_t<
+    std::is_integral<std::decay_t<Val>>::value, double, std::decay_t<Val>>;
  public:
+  using Scalar = floating_point_promoter<T>;
+  using value_type = Scalar;
   /**
    * The value of this variable.
    */
-  const double val_;
+  const Scalar val_;
 
   /**
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
    */
-  double adj_;
+  Scalar adj_;
 
   /**
    * Construct a variable implementation from a value.  The
@@ -55,11 +93,11 @@ class vari {
    *
    * @param x Value of the constructed variable.
    */
-  explicit vari(double x) : val_(x), adj_(0.0) {
+  explicit vari_value(T x) : val_(x), adj_(0.0) {
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
-  vari(double x, bool stacked) : val_(x), adj_(0.0) {
+  vari_value(T x, bool stacked) : val_(x), adj_(0.0) {
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
     } else {
@@ -74,7 +112,7 @@ class vari {
    *
    * @throw Logic exception always.
    */
-  virtual ~vari() {
+  virtual ~vari_value() {
     // this will never get called
   }
 
@@ -83,7 +121,7 @@ class vari {
    * on which it depends.  The base implementation in this class
    * is a no-op.
    */
-  virtual void chain() {}
+  void chain() {}
 
   /**
    * Initialize the adjoint for this (dependent) variable to 1.
@@ -109,7 +147,7 @@ class vari {
    *
    * @return The modified ostream.
    */
-  friend std::ostream& operator<<(std::ostream& os, const vari* v) {
+  friend std::ostream& operator<<(std::ostream& os, const vari_value<T>* v) {
     return os << v->val_ << ":" << v->adj_;
   }
 
@@ -140,7 +178,10 @@ class vari {
    */
   static inline void operator delete(void* /* ignore arg */) { /* no op */
   }
+
 };
+
+using vari = vari_value<double>;
 
 }  // namespace math
 }  // namespace stan
