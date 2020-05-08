@@ -59,7 +59,9 @@ class var_value {
    * @return <code>true</code> if this variable does not yet have
    * a defined variable.
    */
-  bool is_uninitialized() { return (vi_ == static_cast<vari_value<T>*>(nullptr)); }
+  bool is_uninitialized() {
+    return (vi_ == static_cast<vari_value<T>*>(nullptr));
+  }
 
   /**
    * Construct a variable for later assignment.
@@ -80,13 +82,17 @@ class var_value {
   /**
    * Construct a variable from the specified integral type argument
    * by constructing a new `vari_type<T>`. For integral types the
-   * `vari_type<T>` will hold doubles.
+   * `vari_type<T>` will hold doubles. This constructor is only valid when `T`
+   * is arithmetic.
    *
    * @param x Value of the variable.
    */
-   template <typename IntegralT, require_not_same_t<T, IntegralT>* = nullptr,
-    require_integral_t<IntegralT>* = nullptr>
-   var_value(IntegralT x) : vi_(new vari_value<T>(x, false)) {}
+   template <typename IntegralT,
+    require_not_same_t<T, IntegralT>* = nullptr,
+    require_integral_t<IntegralT>* = nullptr,
+    require_arithmetic_t<T>* = nullptr>
+   explicit var_value(IntegralT x) : // NOLINT
+     vi_(new vari_value<T>(x, false)) {}
 
    var_value(T x) : vi_(new vari_value<T>(x, false)) {}  // NOLINT
 

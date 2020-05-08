@@ -47,7 +47,6 @@ public:
    * @throw Logic exception always.
    */
   virtual ~vari_base() {}
-
 };
 /**
  * The variable implementation base class.
@@ -69,13 +68,15 @@ template <typename T, typename = void>
 class vari_value : public vari_base {};
 
 template <typename T>
-class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>> : public vari_base {
+class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>> :
+  public vari_base {
  private:
   template <typename>
   friend class var_type;
   template <typename Val>
   using floating_point_promoter = std::conditional_t<
     std::is_integral<std::decay_t<Val>>::value, double, std::decay_t<Val>>;
+
  public:
   using Scalar = floating_point_promoter<T>;
   using value_type = Scalar;
@@ -187,7 +188,6 @@ class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>> : public var
    */
   static inline void operator delete(void* /* ignore arg */) { /* no op */
   }
-
 };
 
 using vari = vari_value<double>;
