@@ -13,12 +13,14 @@ namespace math {
 template <typename T>
 class var_value;
 
+/**
+ * Pure virtual class that all `vari_type` and it's derived classes inherit.
+ */
 class vari_base {
 public:
   /**
    * Apply the chain rule to this variable based on the variables
-   * on which it depends.  The base implementation in this class
-   * is a no-op.
+   * on which it depends.
    */
   virtual void chain() = 0;
 
@@ -37,6 +39,13 @@ public:
    */
   virtual void set_zero_adjoint() = 0;
 
+  /**
+   * Throw an illegal argument exception.
+   *
+   * <i>Warning</i>: Destructors should never called for var objects.
+   *
+   * @throw Logic exception always.
+   */
   virtual ~vari_base() {}
 
 };

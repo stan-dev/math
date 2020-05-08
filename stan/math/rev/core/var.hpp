@@ -45,13 +45,13 @@ class var_value {
    * Pointer to the implementation of this variable.
    *
    * This value should not be modified, but may be accessed in
-   * <code>var</code> operators to construct <code>vari</code>
+   * <code>var</code> operators to construct `vari_type<T>`
    * instances.
    */
   vari_value<T>* vi_;
 
   /**
-   * Return <code>true</code> if this variable has been
+   * Return `true` if this variable has been
    * declared, but not been defined.  Any attempt to use an
    * undefined variable's value or adjoint will result in a
    * segmentation fault.
@@ -78,14 +78,15 @@ class var_value {
   var_value(vari_value<T>* vi) : vi_(vi) {}  // NOLINT
 
   /**
-   * Construct a variable from the specified arithmetic argument
-   * by constructing a new <code>vari</code> with the argument
-   * cast to <code>double</code>, and a zero adjoint.
+   * Construct a variable from the specified integral type argument
+   * by constructing a new `vari_type<T>`. For integral types the
+   * `vari_type<T>` will hold doubles.
    *
    * @param x Value of the variable.
    */
-   template <typename TT, require_not_same_t<T, TT>* = nullptr, require_integral_t<TT>* = nullptr>
-   var_value(TT x) : vi_(new vari_value<T>(x, false)) {}
+   template <typename IntegralT, require_not_same_t<T, IntegralT>* = nullptr,
+    require_integral_t<IntegralT>* = nullptr>
+   var_value(IntegralT x) : vi_(new vari_value<T>(x, false)) {}
 
    var_value(T x) : vi_(new vari_value<T>(x, false)) {}  // NOLINT
 
@@ -99,7 +100,7 @@ class var_value {
   /**
    * Return the derivative of the root expression with
    * respect to this expression.  This method only works
-   * after one of the <code>grad()</code> methods has been
+   * after one of the `grad()` methods has been
    * called.
    *
    * @return Adjoint for this variable.
