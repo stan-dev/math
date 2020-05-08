@@ -4,9 +4,13 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 
+#ifdef STAN_THREADS
+
 #include <tbb/task_arena.h>
 #include <tbb/parallel_reduce.h>
 #include <tbb/blocked_range.h>
+
+#endif
 
 #include <algorithm>
 #include <tuple>
@@ -14,6 +18,8 @@
 
 namespace stan {
 namespace math {
+
+#ifdef STAN_THREADS
 
 namespace internal {
 
@@ -166,6 +172,8 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
 };
 
 }  // namespace internal
+
+#endif // STAN_THREADS
 
 /**
  * Call an instance of the function `ReduceFunction` on every element

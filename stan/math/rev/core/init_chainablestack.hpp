@@ -69,6 +69,20 @@ ad_tape_observer global_observer;
 }  // namespace math
 }  // namespace stan
 
+#else
+
+// STAN_THREADS absent
+
+namespace stan {
+namespace math {
+namespace {
+
+ChainableStack global_ad_stack;
+
+}
+}  // namespace math
+}  // namespace stan
+
 #endif
 
 #endif

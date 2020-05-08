@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_REV_FUNCTOR_REDUCE_SUM_HPP
 #define STAN_MATH_REV_FUNCTOR_REDUCE_SUM_HPP
 
+#ifdef STAN_THREADS
+
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/functor.hpp>
 #include <stan/math/rev/core.hpp>
@@ -247,5 +249,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
 }  // namespace math
 }  // namespace stan
+
+#endif // STAN_THREADS
 
 #endif
