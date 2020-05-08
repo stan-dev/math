@@ -4,7 +4,7 @@
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/kernel_generator/wrapper.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/calc_if.hpp>
@@ -20,6 +20,9 @@
 namespace stan {
 namespace math {
 
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 namespace internal {
 
 // Template parameter pack can only be at the end of the template list in
@@ -79,8 +82,9 @@ struct multi_result_kernel_internal {
         result.check_assign_dimensions(expression.rows(), expression.cols());
         int bottom_written = 1 - expression.rows();
         int top_written = expression.cols() - 1;
-        result.set_view(std::max(expression.bottom_diagonal(), bottom_written),
-                        std::min(expression.top_diagonal(), top_written),
+        std::pair<int, int> extreme_diagonals = expression.extreme_diagonals();
+        result.set_view(std::max(extreme_diagonals.first, bottom_written),
+                        std::min(extreme_diagonals.second, top_written),
                         bottom_written, top_written);
       }
     }
@@ -470,7 +474,7 @@ template <typename... T_results>
 results_cl<T_results...> results(T_results&&... results) {
   return results_cl<T_results...>(std::forward<T_results>(results)...);
 }
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 

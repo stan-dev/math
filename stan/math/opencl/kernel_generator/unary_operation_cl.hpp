@@ -7,7 +7,7 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <string>
 #include <type_traits>
 #include <set>
@@ -33,7 +33,7 @@ class unary_operation_cl
   /**
    * Constructor
    * @param a argument expression
-   * @param fun function
+   * @param op operation
    */
   unary_operation_cl(T&& a, const std::string& op)
       : base(std::forward<T>(a)), op_(op) {}
@@ -42,10 +42,12 @@ class unary_operation_cl
    * generates kernel code for this expression.
    * @param i row index variable name
    * @param j column index variable name
+   * @param view_handled whether whether caller already handled matrix view
    * @param var_name_arg variable name of the nested expression
    * @return part of kernel with code for this expression
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
+                               const bool view_handled,
                                const std::string& var_name_arg) const {
     kernel_parts res{};
     res.body = type_str<Scalar>() + " " + var_name + " = " + op_ + var_name_arg
@@ -104,7 +106,7 @@ class logical_negation_
  * @return logical negation of given expression
  */
 template <typename T,
-          require_all_valid_expressions_and_none_scalar_t<T>* = nullptr>
+          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline logical_negation_<as_operation_cl_t<T>> operator!(T&& a) {
   return logical_negation_<as_operation_cl_t<T>>(
       as_operation_cl(std::forward<T>(a)));
@@ -157,7 +159,7 @@ class unary_minus_
  * @return unary minus of given expression
  */
 template <typename T,
-          require_all_valid_expressions_and_none_scalar_t<T>* = nullptr>
+          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline unary_minus_<as_operation_cl_t<T>> operator-(T&& a) {
   return unary_minus_<as_operation_cl_t<T>>(
       as_operation_cl(std::forward<T>(a)));

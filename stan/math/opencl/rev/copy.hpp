@@ -16,7 +16,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Copies the source Eigen matrix of vars to
  * the destination matrix that is stored
  * on the OpenCL device.
@@ -41,7 +41,7 @@ inline matrix_cl<T> to_matrix_cl(const Eigen::Matrix<T, R, C>& src) try {
   return dst;
 }
 
-/**
+/** \ingroup opencl
  * Copies the adjoint of the source matrix of vars that is stored
  * on the OpenCL device to the destination Eigen
  * matrix.
@@ -64,7 +64,7 @@ inline Eigen::Matrix<double, R, C> from_matrix_cl(const matrix_cl<T>& src) try {
   return dst;
 }
 
-/**
+/** \ingroup opencl
  * Packs the flat triangular matrix on the OpenCL device and
  * copies the adjoint values to the std::vector.
  *
@@ -88,7 +88,7 @@ inline std::vector<double> packed_copy(const matrix_cl<T>& src) try {
   return dst;
 }
 
-/**
+/** \ingroup opencl
  * Copies the packed triangular matrix from
  * the source std::vector to an OpenCL buffer and
  * unpacks it to a flat matrix on the OpenCL device.

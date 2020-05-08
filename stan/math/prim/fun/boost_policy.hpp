@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <boost/math/policies/policy.hpp>
-#include <boost/math/policies/error_handling.hpp>
 
 namespace stan {
 namespace math {
