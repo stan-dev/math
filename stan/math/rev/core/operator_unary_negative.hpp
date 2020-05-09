@@ -14,6 +14,7 @@ namespace internal {
 template <typename VariVal, typename Vari>
 class neg_vari : public op_vari<VariVal, Vari*> {
   using op_vari<VariVal, Vari*>::avi;
+
  public:
   explicit neg_vari(Vari* avi) : op_vari<VariVal, Vari*>(-(avi->val_), avi) {}
   void chain() {

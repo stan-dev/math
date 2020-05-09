@@ -19,8 +19,8 @@ template <typename VariVal, typename Vari1, typename Vari2, typename = void>
 class subtract_vari {};
 
 template <typename VariVal, typename Vari1, typename Vari2>
-class subtract_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>> :
-  public op_vari<VariVal, Vari1*, Vari2*> {
+class subtract_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>> final
+    : public op_vari<VariVal, Vari1*, Vari2*> {
   using op_vari<VariVal, Vari1*, Vari2*>::avi;
   using op_vari<VariVal, Vari1*, Vari2*>::bvi;
 
@@ -39,11 +39,14 @@ class subtract_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>> :
 };
 
 template <typename VariVal, typename Vari, typename Arith>
-class subtract_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> : public op_vari<VariVal, Vari*, Arith> {
+class subtract_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> final
+    : public op_vari<VariVal, Vari*, Arith> {
   using op_vari<VariVal, Vari*, Arith>::avi;
   using op_vari<VariVal, Vari*, Arith>::bd;
-public:
-  subtract_vari(Vari* avi, Arith b) : op_vari<VariVal, Vari*, Arith>(avi->val_ - b, avi, b) {}
+
+ public:
+  subtract_vari(Vari* avi, Arith b)
+      : op_vari<VariVal, Vari*, Arith>(avi->val_ - b, avi, b) {}
   void chain() {
     if (unlikely(is_any_nan(avi()->val_, bd()))) {
       avi()->adj_ = NOT_A_NUMBER;
@@ -54,13 +57,16 @@ public:
 };
 
 template <typename VariVal, typename Arith, typename Vari>
-class subtract_vari<VariVal, Arith, Vari,
- require_t<conjunction<std::is_arithmetic<Arith>, is_vari<Vari>>>> :
- public op_vari<VariVal, Arith, Vari*> {
-   using op_vari<VariVal, Arith, Vari*>::ad;
-   using op_vari<VariVal, Arith, Vari*>::bvi;
+class subtract_vari<
+    VariVal, Arith, Vari,
+    require_t<conjunction<std::is_arithmetic<Arith>, is_vari<Vari>>>> final
+    : public op_vari<VariVal, Arith, Vari*> {
+  using op_vari<VariVal, Arith, Vari*>::ad;
+  using op_vari<VariVal, Arith, Vari*>::bvi;
+
  public:
-  subtract_vari(Arith a, Vari* bvi) : op_vari<VariVal, Arith, Vari*>(a - bvi->val_, a, bvi) {}
+  subtract_vari(Arith a, Vari* bvi)
+      : op_vari<VariVal, Arith, Vari*>(a - bvi->val_, a, bvi) {}
   void chain() {
     if (unlikely(is_any_nan(ad(), bvi()->val_))) {
       bvi()->adj_ = NOT_A_NUMBER;
@@ -113,7 +119,8 @@ class subtract_vari<VariVal, Arith, Vari,
  */
 template <typename T>
 inline var_value<T> operator-(var_value<T> a, var_value<T> b) {
-  return {new internal::subtract_vari<T, vari_value<T>, vari_value<T>>(a.vi_, b.vi_)};
+  return {new internal::subtract_vari<T, vari_value<T>, vari_value<T>>(a.vi_,
+                                                                       b.vi_)};
 }
 
 /**

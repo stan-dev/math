@@ -8,8 +8,6 @@
 namespace stan {
 namespace math {
 
-
-
 /**
  * Holds the elements needed in vari operations for the reverse pass and chain
  * call.
@@ -39,12 +37,12 @@ class op_vari : public vari_value<T> {
    * @return The tuple holding the vari ops.
    */
   auto& vi() { return vi_; }
-  auto& avi() {return std::get<0>(vi_);}
-  auto& ad() {return std::get<0>(vi_);}
-  auto& bvi() {return std::get<1>(vi_);}
-  auto& bd() {return std::get<1>(vi_);}
-  auto& cvi() {return std::get<2>(vi_);}
-  auto& cd() {return std::get<2>(vi_);}
+  auto& avi() { return std::get<0>(vi_); }
+  auto& ad() { return std::get<0>(vi_); }
+  auto& bvi() { return std::get<1>(vi_); }
+  auto& bd() { return std::get<1>(vi_); }
+  auto& cvi() { return std::get<2>(vi_); }
+  auto& cd() { return std::get<2>(vi_); }
   /**
    * Constructor for passing in vari and ops objects.
    * @param val Value to initialize the vari to.

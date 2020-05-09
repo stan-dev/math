@@ -24,8 +24,10 @@ namespace math {
  * @return True if the first variable's value is the same as the
  * second's.
  */
- template <typename T>
-inline bool operator==(var_value<T> a, var_value<T> b) { return a.val() == b.val(); }
+template <typename T>
+inline bool operator==(var_value<T> a, var_value<T> b) {
+  return a.val() == b.val();
+}
 
 /**
  * Equality operator comparing a variable's value and a double

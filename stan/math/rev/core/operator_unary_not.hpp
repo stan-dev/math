@@ -15,7 +15,9 @@ namespace math {
  * @return negation of argument value
  */
 template <typename T>
-inline bool operator!(var_value<T> x) { return !x.val(); }
+inline bool operator!(var_value<T> x) {
+  return !x.val();
+}
 
 }  // namespace math
 }  // namespace stan

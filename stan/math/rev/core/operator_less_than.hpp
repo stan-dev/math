@@ -23,7 +23,9 @@ namespace math {
  * @return True if first variable's value is less than second's.
  */
 template <typename T>
-inline bool operator<(var_value<T> a, var_value<T> b) { return a.val() < b.val(); }
+inline bool operator<(var_value<T> a, var_value<T> b) {
+  return a.val() < b.val();
+}
 
 /**
  * Less than operator comparing variable's value and a double

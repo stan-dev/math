@@ -17,12 +17,12 @@ class var_value;
  * Pure virtual class that all `vari_value` and it's derived classes inherit.
  */
 class vari_base {
-public:
+ public:
   /**
    * Apply the chain rule to this variable based on the variables
    * on which it depends.
    */
-  virtual void chain() = 0;
+  virtual void chain() { };
 
   /**
    * Initialize the adjoint for this (dependent) variable to 1.
@@ -30,14 +30,14 @@ public:
    * propagating derivatives, setting the derivative of the
    * result with respect to itself to be 1.
    */
-  virtual void init_dependent() = 0;
+  virtual void init_dependent() { };
 
   /**
    * Set the adjoint value of this variable to 0.  This is used to
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  virtual void set_zero_adjoint() = 0;
+  virtual void set_zero_adjoint() {};
 
   /**
    * Throw an illegal argument exception.
@@ -68,14 +68,15 @@ template <typename T, typename = void>
 class vari_value : public vari_base {};
 
 template <typename T>
-class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>> :
-  public vari_base {
+class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>>
+    : public vari_base {
  private:
   template <typename>
   friend class var_value;
   template <typename Val>
-  using floating_point_promoter = std::conditional_t<
-    std::is_integral<std::decay_t<Val>>::value, double, std::decay_t<Val>>;
+  using floating_point_promoter
+      = std::conditional_t<std::is_integral<std::decay_t<Val>>::value, double,
+                           std::decay_t<Val>>;
 
  public:
   using Scalar = floating_point_promoter<T>;
@@ -115,23 +116,6 @@ class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>> :
     }
   }
 
-  /**
-   * Throw an illegal argument exception.
-   *
-   * <i>Warning</i>: Destructors should never called for var objects.
-   *
-   * @throw Logic exception always.
-   */
-  virtual ~vari_value() {
-    // this will never get called
-  }
-
-  /**
-   * Apply the chain rule to this variable based on the variables
-   * on which it depends.  The base implementation in this class
-   * is a no-op.
-   */
-  void chain() {}
 
   /**
    * Initialize the adjoint for this (dependent) variable to 1.
@@ -139,14 +123,14 @@ class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>> :
    * propagating derivatives, setting the derivative of the
    * result with respect to itself to be 1.
    */
-  void init_dependent() { adj_ = 1.0; }
+  void init_dependent() final { adj_ = 1.0; }
 
   /**
    * Set the adjoint value of this variable to 0.  This is used to
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  void set_zero_adjoint() { adj_ = 0.0; }
+  void set_zero_adjoint() final { adj_ = 0.0; }
 
   /**
    * Insertion operator for vari. Prints the current value and

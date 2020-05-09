@@ -14,6 +14,7 @@ class precomp_vv_vari : public op_vari<VariVal, Vari1*, Vari2*> {
   using op_vari<VariVal, Vari1*, Vari2*>::bvi;
   using Scalar1 = typename Vari1::Scalar;
   using Scalar2 = typename Vari2::Scalar;
+
  protected:
   Scalar1 da_;
   Scalar2 db_;

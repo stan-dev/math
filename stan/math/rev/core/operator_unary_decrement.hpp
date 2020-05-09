@@ -13,9 +13,11 @@ namespace math {
 namespace internal {
 template <typename VariVal, typename Vari>
 class decrement_vari : public op_vari<VariVal, Vari*> {
- using op_vari<VariVal, Vari*>::avi;
+  using op_vari<VariVal, Vari*>::avi;
+
  public:
-  explicit decrement_vari(Vari* avi) : op_vari<VariVal, Vari*>(avi->val_ - 1.0, avi) {}
+  explicit decrement_vari(Vari* avi)
+      : op_vari<VariVal, Vari*>(avi->val_ - 1.0, avi) {}
   void chain() {
     if (unlikely(is_nan(avi()->val_))) {
       avi()->adj_ = NOT_A_NUMBER;

@@ -16,7 +16,9 @@ namespace math {
  * @return disjunction of the arguments' values
  */
 template <typename T>
-inline bool operator||(var_value<T> x, var_value<T> y) { return x.val() || y.val(); }
+inline bool operator||(var_value<T> x, var_value<T> y) {
+  return x.val() || y.val();
+}
 
 /**
  * Return the logical disjunction of the values of the two

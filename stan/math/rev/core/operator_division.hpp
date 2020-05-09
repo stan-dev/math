@@ -29,14 +29,15 @@ class divide_vari {};
 // (dividend/divisor)' = dividend' * (1 / divisor) - divisor' * (dividend /
 // [divisor * divisor])
 template <typename VariVal, typename Vari1, typename Vari2>
-class divide_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>> :
- public op_vari<VariVal, Vari1*, Vari2*> {
- using op_vari<VariVal, Vari1*, Vari2*>::avi;
- using op_vari<VariVal, Vari1*, Vari2*>::bvi;
+class divide_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>>
+    : public op_vari<VariVal, Vari1*, Vari2*> {
+  using op_vari<VariVal, Vari1*, Vari2*>::avi;
+  using op_vari<VariVal, Vari1*, Vari2*>::bvi;
+
  public:
   divide_vari(Vari1* dividend_vi, Vari2* divisor_vi)
       : op_vari<VariVal, Vari1*, Vari2*>(dividend_vi->val_ / divisor_vi->val_,
-         dividend_vi, divisor_vi) {}
+                                         dividend_vi, divisor_vi) {}
   void chain() {
     if (unlikely(is_any_nan(avi()->val_, bvi()->val_))) {
       avi()->adj_ = NOT_A_NUMBER;
@@ -49,14 +50,17 @@ class divide_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>> :
 };
 
 template <typename VariVal, typename Vari, typename Arith>
-class divide_vari<VariVal, Vari, Arith,
- require_t<conjunction<std::is_arithmetic<Arith>, is_vari<Vari>>>> :
- public op_vari<VariVal, Vari*, Arith> {
-   using op_vari<VariVal, Vari*, Arith>::avi;
-   using op_vari<VariVal, Vari*, Arith>::bd;
+class divide_vari<
+    VariVal, Vari, Arith,
+    require_t<conjunction<std::is_arithmetic<Arith>, is_vari<Vari>>>>
+    : public op_vari<VariVal, Vari*, Arith> {
+  using op_vari<VariVal, Vari*, Arith>::avi;
+  using op_vari<VariVal, Vari*, Arith>::bd;
+
  public:
   divide_vari(Vari* dividend_vi, Arith divisor)
-      : op_vari<VariVal, Vari*, Arith>(dividend_vi->val_ / divisor, dividend_vi, divisor) {}
+      : op_vari<VariVal, Vari*, Arith>(dividend_vi->val_ / divisor, dividend_vi,
+                                       divisor) {}
   void chain() {
     if (unlikely(is_any_nan(avi()->val_, bd()))) {
       avi()->adj_ = NOT_A_NUMBER;
@@ -67,14 +71,17 @@ class divide_vari<VariVal, Vari, Arith,
 };
 
 template <typename VariVal, typename Arith, typename Vari>
-class divide_vari<VariVal, Arith, Vari,
- require_t<conjunction<std::is_arithmetic<Arith>, is_vari<Vari>>>> :
- public op_vari<VariVal, Arith, Vari*> {
-   using op_vari<VariVal, Arith, Vari*>::ad;
-   using op_vari<VariVal, Arith, Vari*>::bvi;
+class divide_vari<
+    VariVal, Arith, Vari,
+    require_t<conjunction<std::is_arithmetic<Arith>, is_vari<Vari>>>>
+    : public op_vari<VariVal, Arith, Vari*> {
+  using op_vari<VariVal, Arith, Vari*>::ad;
+  using op_vari<VariVal, Arith, Vari*>::bvi;
+
  public:
   divide_vari(Arith dividend, Vari* divisor_vi)
-      :  op_vari<VariVal, Arith, Vari*>(dividend / divisor_vi->val_, dividend, divisor_vi) {}
+      : op_vari<VariVal, Arith, Vari*>(dividend / divisor_vi->val_, dividend,
+                                       divisor_vi) {}
   void chain() {
     bvi()->adj_ -= this->adj_ * ad() / (bvi()->val_ * bvi()->val_);
   }
@@ -119,7 +126,8 @@ class divide_vari<VariVal, Arith, Vari,
  */
 template <typename T>
 inline var_value<T> operator/(var_value<T> dividend, var_value<T> divisor) {
-  return {new internal::divide_vari<T, vari_value<T>, vari_value<T>>(dividend.vi_, divisor.vi_)};
+  return {new internal::divide_vari<T, vari_value<T>, vari_value<T>>(
+      dividend.vi_, divisor.vi_)};
 }
 
 /**
@@ -140,7 +148,8 @@ inline var_value<T> operator/(var_value<T> dividend, Arith divisor) {
   if (divisor == 1.0) {
     return dividend;
   }
-  return {new internal::divide_vari<T, vari_value<T>, Arith>(dividend.vi_, divisor)};
+  return {new internal::divide_vari<T, vari_value<T>, Arith>(dividend.vi_,
+                                                             divisor)};
 }
 
 /**
@@ -157,7 +166,8 @@ inline var_value<T> operator/(var_value<T> dividend, Arith divisor) {
  */
 template <typename T, typename Arith, require_arithmetic_t<Arith>...>
 inline var_value<T> operator/(Arith dividend, var_value<T> divisor) {
-  return {new internal::divide_vari<T, Arith, vari_value<T>>(dividend, divisor.vi_)};
+  return {new internal::divide_vari<T, Arith, vari_value<T>>(dividend,
+                                                             divisor.vi_)};
 }
 
 inline std::complex<var> operator/(const std::complex<var>& x1,

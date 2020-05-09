@@ -20,11 +20,12 @@ namespace internal {
 template <typename VariVal, typename Vari1, typename Vari2, typename = void>
 class add_vari {};
 
-
 template <typename VariVal, typename Vari1, typename Vari2>
-class add_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>> : public op_vari<VariVal, Vari1*, Vari2*> {
+class add_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>> final
+    : public op_vari<VariVal, Vari1*, Vari2*> {
   using op_vari<VariVal, Vari1*, Vari2*>::avi;
   using op_vari<VariVal, Vari1*, Vari2*>::bvi;
+
  public:
   add_vari(Vari1* avi, Vari2* bvi)
       : op_vari<VariVal, Vari1*, Vari2*>(avi->val_ + bvi->val_, avi, bvi) {}
@@ -40,11 +41,14 @@ class add_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>> : public
 };
 
 template <typename VariVal, typename Vari, typename Arith>
-class add_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> : public op_vari<VariVal, Vari*, Arith> {
+class add_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> final
+    : public op_vari<VariVal, Vari*, Arith> {
   using op_vari<VariVal, Vari*, Arith>::avi;
   using op_vari<VariVal, Vari*, Arith>::bd;
+
  public:
-  add_vari(Vari* avi, Arith b) : op_vari<VariVal, Vari*, Arith>(avi->val_ + b, avi, b) {}
+  add_vari(Vari* avi, Arith b)
+      : op_vari<VariVal, Vari*, Arith>(avi->val_ + b, avi, b) {}
   void chain() {
     if (unlikely(is_any_nan(avi()->val_, bd()))) {
       fill(avi()->adj_, NOT_A_NUMBER);
@@ -93,7 +97,8 @@ class add_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> : public op_v
  */
 template <typename T>
 inline var_value<T> operator+(const var_value<T>& a, const var_value<T>& b) {
-  return {new internal::add_vari<T, vari_value<T>, vari_value<T>>(a.vi_, b.vi_)};
+  return {
+      new internal::add_vari<T, vari_value<T>, vari_value<T>>(a.vi_, b.vi_)};
 }
 
 /**
@@ -133,7 +138,8 @@ inline var_value<T> operator+(Arith a, const var_value<T>& b) {
   if (a == 0.0) {
     return b;
   }
-  return {new internal::add_vari<T, vari_value<T>, Arith>(b.vi_, a)};  // by symmetry
+  return {new internal::add_vari<T, vari_value<T>, Arith>(b.vi_,
+                                                          a)};  // by symmetry
 }
 
 }  // namespace math
