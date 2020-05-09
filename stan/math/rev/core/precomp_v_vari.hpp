@@ -8,14 +8,17 @@ namespace stan {
 namespace math {
 
 // use for single precomputed partials
-class precomp_v_vari : public op_v_vari {
+template <typename VariVal, typename Vari>
+class precomp_v_vari : public op_vari<VariVal, Vari*> {
  protected:
-  double da_;
+  using Scalar = typename Vari::Scalar;
+  using op_vari<VariVal, Vari*>::avi;
+  Scalar da_;
 
  public:
-  precomp_v_vari(double val, vari* avi, double da)
-      : op_v_vari(val, avi), da_(da) {}
-  void chain() { avi_->adj_ += adj_ * da_; }
+  precomp_v_vari(Scalar val, Vari* avi, Scalar da)
+      : op_vari<VariVal, Vari*>(val, avi), da_(da) {}
+  void chain() { avi()->adj_ += this->adj_ * da_; }
 };
 
 }  // namespace math

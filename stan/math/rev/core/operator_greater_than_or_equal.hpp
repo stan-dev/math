@@ -53,7 +53,7 @@ inline bool operator>=(var_value<T> a, Arith b) {
  * @return True if the first value is greater than or equal to the
  * second variable's value.
  */
-template <typename T, typename Arith, typename Var, require_arithmetic_t<Arith>...>
+template <typename T, typename Arith, require_arithmetic_t<Arith>...>
 inline bool operator>=(Arith a, var_value<T> b) {
   return a >= b.val();
 }

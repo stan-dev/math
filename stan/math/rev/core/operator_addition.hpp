@@ -41,8 +41,8 @@ class add_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>> : public
 
 template <typename VariVal, typename Vari, typename Arith>
 class add_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> : public op_vari<VariVal, Vari*, Arith> {
-  using op_vari<VariVal, Vari1*, Arith>::avi;
-  using op_vari<VariVal, Vari1*, Arith>::bd;
+  using op_vari<VariVal, Vari*, Arith>::avi;
+  using op_vari<VariVal, Vari*, Arith>::bd;
  public:
   add_vari(Vari* avi, Arith b) : op_vari<VariVal, Vari*, Arith>(avi->val_ + b, avi, b) {}
   void chain() {

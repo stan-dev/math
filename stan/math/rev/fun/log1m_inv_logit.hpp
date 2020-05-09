@@ -17,9 +17,10 @@ namespace math {
  * @param u argument
  * @return log of one minus the inverse logit of the argument
  */
-inline var log1m_inv_logit(const var& u) {
-  return var(
-      new precomp_v_vari(log1m_inv_logit(u.val()), u.vi_, -inv_logit(u.val())));
+template <typename T>
+inline var_value<T> log1m_inv_logit(const var_value<T>& u) {
+  return {
+      new precomp_v_vari<T, vari_value<T>>(log1m_inv_logit(u.val()), u.vi_, -inv_logit(u.val()))};
 }
 
 }  // namespace math

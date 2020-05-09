@@ -43,6 +43,8 @@ class op_vari : public vari_value<T> {
   auto& ad() {return std::get<0>(vi_);}
   auto& bvi() {return std::get<1>(vi_);}
   auto& bd() {return std::get<1>(vi_);}
+  auto& cvi() {return std::get<2>(vi_);}
+  auto& cd() {return std::get<2>(vi_);}
   /**
    * Constructor for passing in vari and ops objects.
    * @param val Value to initialize the vari to.

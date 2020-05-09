@@ -43,13 +43,14 @@ namespace math {
  * @param a Variable argument.
  * @return The corresponding unit normal cdf approximation.
  */
-inline var Phi_approx(const var& a) {
-  double av = a.vi_->val_;
-  double av_squared = av * av;
-  double av_cubed = av * av_squared;
-  double f = inv_logit(0.07056 * av_cubed + 1.5976 * av);
-  double da = f * (1 - f) * (3.0 * 0.07056 * av_squared + 1.5976);
-  return var(new precomp_v_vari(f, a.vi_, da));
+template <typename T>
+inline var_value<T> Phi_approx(const var_value<T>& a) {
+  auto av = a.vi_->val_;
+  auto av_squared = av * av;
+  auto av_cubed = av * av_squared;
+  auto f = inv_logit(0.07056 * av_cubed + 1.5976 * av);
+  auto da = f * (1 - f) * (3.0 * 0.07056 * av_squared + 1.5976);
+  return {new precomp_v_vari<T, vari_value<T>>(f, a.vi_, da)};
 }
 
 }  // namespace math

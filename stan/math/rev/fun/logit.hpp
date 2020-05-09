@@ -14,9 +14,10 @@ namespace math {
  * @param u argument
  * @return log odds of argument
  */
-inline var logit(const var& u) {
-  return var(new precomp_v_vari(logit(u.val()), u.vi_,
-                                1 / (u.val() - u.val() * u.val())));
+template <typename T>
+inline var_value<T> logit(const var_value<T>& u) {
+  return {new precomp_v_vari<T, vari_value<T>>(logit(u.val()), u.vi_,
+                                1.0 / (u.val() - u.val() * u.val()))};
 }
 
 }  // namespace math

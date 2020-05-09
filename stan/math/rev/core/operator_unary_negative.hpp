@@ -11,14 +11,16 @@ namespace stan {
 namespace math {
 
 namespace internal {
-class neg_vari : public op_v_vari {
+template <typename VariVal, typename Vari>
+class neg_vari : public op_vari<VariVal, Vari*> {
+  using op_vari<VariVal, Vari*>::avi;
  public:
-  explicit neg_vari(vari* avi) : op_v_vari(-(avi->val_), avi) {}
+  explicit neg_vari(Vari* avi) : op_vari<VariVal, Vari*>(-(avi->val_), avi) {}
   void chain() {
-    if (unlikely(is_nan(avi_->val_))) {
-      avi_->adj_ = NOT_A_NUMBER;
+    if (unlikely(is_nan(avi()->val_))) {
+      avi()->adj_ = NOT_A_NUMBER;
     } else {
-      avi_->adj_ -= adj_;
+      avi()->adj_ -= this->adj_;
     }
   }
 };
@@ -48,7 +50,10 @@ class neg_vari : public op_v_vari {
  * @param a Argument variable.
  * @return Negation of variable.
  */
-inline var operator-(var a) { return {new internal::neg_vari(a.vi_)}; }
+template <typename T>
+inline var_value<T> operator-(var_value<T> a) {
+  return {new internal::neg_vari<T, vari_value<T>>(a.vi_)};
+}
 
 }  // namespace math
 }  // namespace stan

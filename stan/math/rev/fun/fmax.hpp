@@ -58,10 +58,11 @@ namespace math {
  * @return If the first variable's value is larger than the
  * second's, the first variable, otherwise the second variable.
  */
-inline var fmax(const var& a, const var& b) {
+template <typename T>
+inline var_value<T> fmax(const var_value<T>& a, const var_value<T>& b) {
   if (unlikely(is_nan(a))) {
     if (unlikely(is_nan(b))) {
-      return var(new precomp_vv_vari(NOT_A_NUMBER, a.vi_, b.vi_, NOT_A_NUMBER,
+      return var_value<T>(new precomp_vv_vari<T, vari_value<T>, vari_value<T>>(NOT_A_NUMBER, a.vi_, b.vi_, NOT_A_NUMBER,
                                      NOT_A_NUMBER));
     }
     return b;
@@ -86,10 +87,11 @@ inline var fmax(const var& a, const var& b) {
  * to the second value, the first variable, otherwise the second
  * value promoted to a fresh variable.
  */
-inline var fmax(const var& a, double b) {
+template <typename T>
+inline var_value<T> fmax(const var_value<T>& a, T b) {
   if (unlikely(is_nan(a))) {
     if (unlikely(is_nan(b))) {
-      return var(new precomp_v_vari(NOT_A_NUMBER, a.vi_, NOT_A_NUMBER));
+      return var(new precomp_v_vari<T, vari_value<T>>(NOT_A_NUMBER, a.vi_, NOT_A_NUMBER));
     }
     return var(b);
   }
@@ -113,17 +115,18 @@ inline var fmax(const var& a, double b) {
  * return the first value promoted to a variable, otherwise return the
  * second variable.
  */
-inline var fmax(double a, const var& b) {
+template <typename T>
+inline var_value<T> fmax(T a, const var_value<T>& b) {
   if (unlikely(is_nan(b))) {
     if (unlikely(is_nan(a))) {
-      return var(new precomp_v_vari(NOT_A_NUMBER, b.vi_, NOT_A_NUMBER));
+      return var_value<T>(new precomp_v_vari<T, vari_value<T>>(NOT_A_NUMBER, b.vi_, NOT_A_NUMBER));
     }
-    return var(a);
+    return var_value<T>(a);
   }
   if (unlikely(is_nan(a))) {
     return b;
   }
-  return a > b ? var(a) : b;
+  return a > b ? var_value<T>(a) : b;
 }
 
 }  // namespace math

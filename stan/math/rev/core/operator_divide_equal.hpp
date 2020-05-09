@@ -20,7 +20,7 @@ inline var_value<T>& var_value<T>::operator/=(Arith b) {
   if (b == 1.0) {
     return *this;
   }
-  vi_ = new internal::divide_vd_vari(vi_, b);
+  vi_ = new internal::divide_vari<T, vari_value<T>, Arith>(vi_, b);
   return *this;
 }
 

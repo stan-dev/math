@@ -10,6 +10,7 @@
 #include <stan/math/rev/core/std_complex.hpp>
 #include <stan/math/rev/core/vv_vari.hpp>
 #include <stan/math/rev/core/vd_vari.hpp>
+#include <stan/math/rev/core/op_vari.hpp>
 #include <stan/math/rev/core/dv_vari.hpp>
 #include <stan/math/rev/core/operator_addition.hpp>
 #include <stan/math/rev/core/operator_multiplication.hpp>
@@ -47,24 +48,36 @@ class divide_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>> :
   }
 };
 
-class divide_vd_vari : public op_vd_vari {
+template <typename VariVal, typename Vari, typename Arith>
+class divide_vari<VariVal, Vari, Arith,
+ require_t<conjunction<std::is_arithmetic<Arith>, is_vari<Vari>>>> :
+ public op_vari<VariVal, Vari*, Arith> {
+   using op_vari<VariVal, Vari*, Arith>::avi;
+   using op_vari<VariVal, Vari*, Arith>::bd;
  public:
-  divide_vd_vari(vari* dividend_vi, double divisor)
-      : op_vd_vari(dividend_vi->val_ / divisor, dividend_vi, divisor) {}
+  divide_vari(Vari* dividend_vi, Arith divisor)
+      : op_vari<VariVal, Vari*, Arith>(dividend_vi->val_ / divisor, dividend_vi, divisor) {}
   void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bd_))) {
-      avi_->adj_ = NOT_A_NUMBER;
+    if (unlikely(is_any_nan(avi()->val_, bd()))) {
+      avi()->adj_ = NOT_A_NUMBER;
     } else {
-      avi_->adj_ += adj_ / bd_;
+      avi()->adj_ += this->adj_ / bd();
     }
   }
 };
 
-class divide_dv_vari : public op_dv_vari {
+template <typename VariVal, typename Arith, typename Vari>
+class divide_vari<VariVal, Arith, Vari,
+ require_t<conjunction<std::is_arithmetic<Arith>, is_vari<Vari>>>> :
+ public op_vari<VariVal, Arith, Vari*> {
+   using op_vari<VariVal, Arith, Vari*>::ad;
+   using op_vari<VariVal, Arith, Vari*>::bvi;
  public:
-  divide_dv_vari(double dividend, vari* divisor_vi)
-      : op_dv_vari(dividend / divisor_vi->val_, dividend, divisor_vi) {}
-  void chain() { bvi_->adj_ -= adj_ * ad_ / (bvi_->val_ * bvi_->val_); }
+  divide_vari(Arith dividend, Vari* divisor_vi)
+      :  op_vari<VariVal, Arith, Vari*>(dividend / divisor_vi->val_, dividend, divisor_vi) {}
+  void chain() {
+    bvi()->adj_ -= this->adj_ * ad() / (bvi()->val_ * bvi()->val_);
+  }
 };
 }  // namespace internal
 
@@ -122,12 +135,12 @@ inline var_value<T> operator/(var_value<T> dividend, var_value<T> divisor) {
  * @param divisor Scalar operand.
  * @return Variable result of dividing the variable by the scalar.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
-inline var operator/(var dividend, Arith divisor) {
+template <typename T, typename Arith, require_arithmetic_t<Arith>...>
+inline var_value<T> operator/(var_value<T> dividend, Arith divisor) {
   if (divisor == 1.0) {
     return dividend;
   }
-  return {new internal::divide_vd_vari(dividend.vi_, divisor)};
+  return {new internal::divide_vari<T, vari_value<T>, Arith>(dividend.vi_, divisor)};
 }
 
 /**
@@ -142,9 +155,9 @@ inline var operator/(var dividend, Arith divisor) {
  * @param divisor Variable operand.
  * @return Quotient of the dividend and divisor.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
-inline var operator/(Arith dividend, var divisor) {
-  return {new internal::divide_dv_vari(dividend, divisor.vi_)};
+template <typename T, typename Arith, require_arithmetic_t<Arith>...>
+inline var_value<T> operator/(Arith dividend, var_value<T> divisor) {
+  return {new internal::divide_vari<T, Arith, vari_value<T>>(dividend, divisor.vi_)};
 }
 
 inline std::complex<var> operator/(const std::complex<var>& x1,

@@ -11,14 +11,16 @@ namespace stan {
 namespace math {
 
 namespace internal {
-class decrement_vari : public op_v_vari {
+template <typename VariVal, typename Vari>
+class decrement_vari : public op_vari<VariVal, Vari*> {
+ using op_vari<VariVal, Vari*>::avi;
  public:
-  explicit decrement_vari(vari* avi) : op_v_vari(avi->val_ - 1.0, avi) {}
+  explicit decrement_vari(Vari* avi) : op_vari<VariVal, Vari*>(avi->val_ - 1.0, avi) {}
   void chain() {
-    if (unlikely(is_nan(avi_->val_))) {
-      avi_->adj_ = NOT_A_NUMBER;
+    if (unlikely(is_nan(avi()->val_))) {
+      avi()->adj_ = NOT_A_NUMBER;
     } else {
-      avi_->adj_ += adj_;
+      avi()->adj_ += this->adj_;
     }
   }
 };
@@ -37,8 +39,9 @@ class decrement_vari : public op_v_vari {
  * @param a Variable to decrement.
  * @return Reference the result of decrementing this input variable.
  */
-inline var& operator--(var& a) {
-  a.vi_ = new internal::decrement_vari(a.vi_);
+template <typename T>
+inline var_value<T>& operator--(var_value<T>& a) {
+  a.vi_ = new internal::decrement_vari<T, vari_value<T>>(a.vi_);
   return a;
 }
 
@@ -53,9 +56,10 @@ inline var& operator--(var& a) {
  * @param a Variable to decrement.
  * @return Input variable.
  */
-inline var operator--(var& a, int /*dummy*/) {
-  var temp(a);
-  a.vi_ = new internal::decrement_vari(a.vi_);
+template <typename T>
+inline var_value<T> operator--(var_value<T>& a, int /*dummy*/) {
+  var_value<T> temp(a);
+  a.vi_ = new internal::decrement_vari<T, vari_value<T>>(a.vi_);
   return temp;
 }
 
