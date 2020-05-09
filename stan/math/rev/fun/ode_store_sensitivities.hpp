@@ -9,14 +9,12 @@
 namespace stan {
 namespace math {
 
-template <typename F, typename T_initial_or_t0, typename T_t0, typename T_t, typename... Args>
-Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(const F& f,
-							      const Eigen::VectorXd& coupled_state,
-							      const Eigen::Matrix<T_initial_or_t0, Eigen::Dynamic, 1>& y0,
-							      const T_t0& t0,
-							      const T_t& t,
-							      std::ostream* msgs,
-							      const Args&... args) {
+template <typename F, typename T_initial_or_t0, typename T_t0, typename T_t,
+          typename... Args>
+Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
+    const F& f, const Eigen::VectorXd& coupled_state,
+    const Eigen::Matrix<T_initial_or_t0, Eigen::Dynamic, 1>& y0, const T_t0& t0,
+    const T_t& t, std::ostream* msgs, const Args&... args) {
   const size_t N = y0.size();
   const size_t y0_vars = count_vars(y0);
   const size_t args_vars = count_vars(args...);
@@ -25,7 +23,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(const F& f,
   Eigen::Matrix<var, Eigen::Dynamic, 1> yt(N);
 
   Eigen::VectorXd y = coupled_state.head(N);
-  
+
   Eigen::VectorXd f_y_t;
   if (is_var<T_t>::value)
     f_y_t = f(value_of(t), y, msgs, value_of(args)...);
@@ -62,25 +60,24 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(const F& f,
     }
 
     varis_ptr = save_varis(varis_ptr, t0);
-    if(t0_vars > 0) {
+    if (t0_vars > 0) {
       double dyt_dt0 = 0.0;
       for (std::size_t k = 0; k < y0_vars; ++k) {
-	// dy[j]_dtheta[k]
-	// theta[k].vi_
-	dyt_dt0 += -f_y0_t0[k] * coupled_state(N + y0_vars * k + j);
+        // dy[j]_dtheta[k]
+        // theta[k].vi_
+        dyt_dt0 += -f_y0_t0[k] * coupled_state(N + y0_vars * k + j);
       }
       *partials_ptr = dyt_dt0;
       partials_ptr++;
     }
 
     varis_ptr = save_varis(varis_ptr, t);
-    if(t_vars > 0) {
+    if (t_vars > 0) {
       *partials_ptr = f_y_t[j];
       partials_ptr++;
     }
 
-    yt(j) = new precomputed_gradients_vari(y(j), total_vars,
-					   varis, partials);
+    yt(j) = new precomputed_gradients_vari(y(j), total_vars, varis, partials);
   }
 
   return yt;

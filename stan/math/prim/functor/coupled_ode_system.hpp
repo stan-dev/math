@@ -129,7 +129,8 @@ struct coupled_ode_system
     : public coupled_ode_system_impl<
           std::is_arithmetic<return_type_t<T_initial, Args...>>::value, F,
           T_initial, Args...> {
-  coupled_ode_system(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
+  coupled_ode_system(const F& f,
+                     const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
                      std::ostream* msgs, const Args&... args)
       : coupled_ode_system_impl<
             std::is_arithmetic<return_type_t<T_initial, Args...>>::value, F,

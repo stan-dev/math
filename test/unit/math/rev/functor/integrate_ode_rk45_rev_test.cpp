@@ -235,7 +235,7 @@ TEST(StanAgradRevOde_integrate_ode_rk45, t0_as_param_AD) {
 
   std::vector<double> theta{0.15};
   std::vector<double> y0{1.0, 0.0};
-  std::vector<double> ts = { 5.0, 10.0 };
+  std::vector<double> ts = {5.0, 10.0};
 
   std::vector<double> x;
   std::vector<int> x_int;
@@ -243,7 +243,7 @@ TEST(StanAgradRevOde_integrate_ode_rk45, t0_as_param_AD) {
   std::vector<stan::math::var> thetav = to_var(theta);
   stan::math::var t0v = to_var(t0);
 
-  std::vector<std::vector<stan::math::var> > res;
+  std::vector<std::vector<stan::math::var>> res;
   auto test_ad = [&res, &t0v, &ode, &theta, &x, &x_int, &msgs]() {
     res[0][0].grad();
     EXPECT_FLOAT_EQ(t0v.adj(), -0.66360742442816977871);
@@ -258,12 +258,16 @@ TEST(StanAgradRevOde_integrate_ode_rk45, t0_as_param_AD) {
     EXPECT_FLOAT_EQ(t0v.adj(), -0.38494826636037426937);
     stan::math::set_zero_all_adjoints();
   };
-  res = integrate_ode_rk45(ode, y0, t0v, ts, theta, x, x_int, nullptr, 1e-10, 1e-10, 1e6);
+  res = integrate_ode_rk45(ode, y0, t0v, ts, theta, x, x_int, nullptr, 1e-10,
+                           1e-10, 1e6);
   test_ad();
-  res = integrate_ode_rk45(ode, y0v, t0v, ts, theta, x, x_int, nullptr, 1e-10, 1e-10, 1e6);
+  res = integrate_ode_rk45(ode, y0v, t0v, ts, theta, x, x_int, nullptr, 1e-10,
+                           1e-10, 1e6);
   test_ad();
-  res = integrate_ode_rk45(ode, y0, t0v, ts, thetav, x, x_int, nullptr, 1e-10, 1e-10, 1e6);
+  res = integrate_ode_rk45(ode, y0, t0v, ts, thetav, x, x_int, nullptr, 1e-10,
+                           1e-10, 1e6);
   test_ad();
-  res = integrate_ode_rk45(ode, y0v, t0v, ts, thetav, x, x_int, nullptr, 1e-10, 1e-10, 1e6);
+  res = integrate_ode_rk45(ode, y0v, t0v, ts, thetav, x, x_int, nullptr, 1e-10,
+                           1e-10, 1e6);
   test_ad();
 }

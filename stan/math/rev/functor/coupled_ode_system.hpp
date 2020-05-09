@@ -85,7 +85,8 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
    * @param[in] x_int integer data
    * @param[in, out] msgs stream for messages
    */
-  coupled_ode_system_impl(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
+  coupled_ode_system_impl(const F& f,
+                          const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
                           std::ostream* msgs, const Args&... args)
       : f_(f),
         y0_(y0),
@@ -114,12 +115,12 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
     using std::vector;
 
     dz_dt.resize(size());
-    
+
     // Run nested autodiff in this scope
     nested_rev_autodiff nested;
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> y_vars(N_);
-    for(size_t n = 0; n < N_; ++n)
+    for (size_t n = 0; n < N_; ++n)
       y_vars(n) = z(n);
 
     auto local_args_tuple = apply(
@@ -130,8 +131,8 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
         args_tuple_);
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
-      = apply([&](auto&&... args) { return f_(t, y_vars, msgs_, args...); },
-	      local_args_tuple);
+        = apply([&](auto&&... args) { return f_(t, y_vars, msgs_, args...); },
+                local_args_tuple);
 
     check_size_match("coupled_ode_system", "dy_dt", f_y_t_vars.size(), "states",
                      N_);

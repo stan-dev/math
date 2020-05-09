@@ -22,7 +22,8 @@ namespace math {
  *
  * @tparam Lmm ID of ODE solver (1: ADAMS, 2: BDF)
  */
-template <int Lmm, typename F, typename T_initial, typename T_t0, typename T_ts, typename... T_Args>
+template <int Lmm, typename F, typename T_initial, typename T_t0, typename T_ts,
+          typename... T_Args>
 class cvodes_integrator {
   using T_Return = return_type_t<T_initial, T_t0, T_ts, T_Args...>;
   using T_initial_or_t0 = return_type_t<T_initial, T_t0>;
@@ -97,8 +98,8 @@ class cvodes_integrator {
     const Eigen::VectorXd y_vec = Eigen::Map<const Eigen::VectorXd>(y, N_);
 
     Eigen::VectorXd dy_dt_vec
-      = apply([&](auto&&... args) { return f_(t, y_vec, msgs_, args...); },
-	      value_of_args_tuple_);
+        = apply([&](auto&&... args) { return f_(t, y_vec, msgs_, args...); },
+                value_of_args_tuple_);
 
     check_size_match("cvodes_integrator::rhs", "dy_dt", dy_dt_vec.size(),
                      "states", N_);
@@ -116,7 +117,7 @@ class cvodes_integrator {
 
     auto f_wrapped = [&](const Eigen::Matrix<var, Eigen::Dynamic, 1>& y) {
       return apply([&](auto&&... args) { return f_(t, y, msgs_, args...); },
-          value_of_args_tuple_);
+                   value_of_args_tuple_);
     };
 
     jacobian(f_wrapped, Eigen::Map<const Eigen::VectorXd>(y, N_), fy, Jfy);
@@ -151,13 +152,15 @@ class cvodes_integrator {
   }
 
  public:
-  cvodes_integrator(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
-		    const T_t0& t0, const std::vector<T_ts>& ts,
-		    double relative_tolerance, double absolute_tolerance,
-		    long int max_num_steps,
-                    std::ostream* msgs, const T_Args&... args)
+  cvodes_integrator(const F& f,
+                    const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
+                    const T_t0& t0, const std::vector<T_ts>& ts,
+                    double relative_tolerance, double absolute_tolerance,
+                    long int max_num_steps, std::ostream* msgs,
+                    const T_Args&... args)
       : f_(f),
-	y0_(y0.unaryExpr([](const T_initial& val) { return T_initial_or_t0(val); })),
+        y0_(y0.unaryExpr(
+            [](const T_initial& val) { return T_initial_or_t0(val); })),
         t0_(t0),
         ts_(ts),
         args_tuple_(args...),
@@ -167,7 +170,7 @@ class cvodes_integrator {
         relative_tolerance_(relative_tolerance),
         absolute_tolerance_(absolute_tolerance),
         max_num_steps_(max_num_steps),
-	y0_vars_(count_vars(y0_)),
+        y0_vars_(count_vars(y0_)),
         args_vars_(count_vars(args...)),
         coupled_ode_(f, y0_, msgs, args...),
         coupled_state_(coupled_ode_.initial_state()) {
@@ -257,7 +260,8 @@ class cvodes_integrator {
    * @return a vector of states, each state being a vector of the
    * same size as the state variable, corresponding to a time in ts.
    */
-  std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> integrate() {  // NOLINT(runtime/int)
+  std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>>
+  integrate() {  // NOLINT(runtime/int)
     std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y;
 
     const double t0_dbl = value_of(t0_);
@@ -320,9 +324,8 @@ class cvodes_integrator {
 
         y.emplace_back(apply(
             [&](auto&&... args) {
-              return ode_store_sensitivities(f_, coupled_state_, y0_,
-					     t0_, ts_[n], msgs_,
-					     args...);
+              return ode_store_sensitivities(f_, coupled_state_, y0_, t0_,
+                                             ts_[n], msgs_, args...);
             },
             args_tuple_));
 
