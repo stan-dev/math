@@ -6,15 +6,18 @@
 #include <type_traits>
 #include <string>
 
-#define EXPECT_THROW_MSG(expr, T_e, msg)            \
-  EXPECT_THROW(expr, T_e);                          \
-  try {                                             \
-    expr;                                           \
-  } catch (const T_e& e) {                          \
-    EXPECT_EQ(1, count_matches(msg, e.what()))      \
-        << "expected message: " << msg << std::endl \
-        << "found message:    " << e.what();        \
+#define EXPECT_THROW_MSG_WITH_COUNT(expr, T_e, msg, count) \
+  EXPECT_THROW(expr, T_e);                                 \
+  try {                                                    \
+    expr;                                                  \
+  } catch (const T_e& e) {                                 \
+    EXPECT_EQ(count, count_matches(msg, e.what()))         \
+        << "expected message: " << msg << std::endl        \
+        << "found message:    " << e.what();               \
   }
+
+#define EXPECT_THROW_MSG(expr, T_e, msg) \
+  EXPECT_THROW_MSG_WITH_COUNT(expr, T_e, msg, 1)
 
 int count_matches(const std::string& target, const std::string& s) {
   if (target.size() == 0)

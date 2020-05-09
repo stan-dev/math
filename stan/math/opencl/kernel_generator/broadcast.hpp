@@ -8,7 +8,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <limits>
 #include <string>
 #include <type_traits>
@@ -17,6 +17,10 @@
 
 namespace stan {
 namespace math {
+
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 
 /**
  * Represents a broadcasting operation in kernel generator expressions.
@@ -51,7 +55,7 @@ class broadcast_
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline auto deep_copy() {
+  inline auto deep_copy() const {
     auto&& arg_copy = this->template get_arg<0>().deep_copy();
     return broadcast_<std::remove_reference_t<decltype(arg_copy)>, Colwise,
                       Rowwise>{std::move(arg_copy)};
@@ -59,13 +63,15 @@ class broadcast_
 
   /**
    * Generates kernel code for this and nested expressions.
-   * @param[in,out] generated set of already generated operations
-   * @param ng name generator for this kernel
+   * @param var_name_arg name of the variable in kernel that holds argument to
+   * this expression
    * @param i row index variable name
    * @param j column index variable name
+   * @param view_handled whether whether caller already handled matrix view
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
+                               const bool view_handled,
                                const std::string& var_name_arg) const {
     var_name = this->template get_arg<0>().var_name;
     return {};
@@ -104,42 +110,15 @@ class broadcast_
   }
 
   /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
+   * Determine indices of extreme sub- and superdiagonals written.
+   * @return pair of indices - bottom and top diagonal
    */
-  inline matrix_cl_view view() const {
-    matrix_cl_view view = this->template get_arg<0>().view();
-    if (Colwise) {
-      view = either(view, matrix_cl_view::Lower);
-    }
-    if (Rowwise) {
-      view = either(view, matrix_cl_view::Upper);
-    }
-    return view;
-  }
-
-  /**
-   * Determine index of bottom diagonal written.
-   * @return index of bottom diagonal
-   */
-  inline int bottom_diagonal() const {
-    if (Colwise) {
-      return std::numeric_limits<int>::min();
-    } else {
-      return this->template get_arg<0>().bottom_diagonal();
-    }
-  }
-
-  /**
-   * Determine index of top diagonal written.
-   * @return index of top diagonal
-   */
-  inline int top_diagonal() const {
-    if (Rowwise) {
-      return std::numeric_limits<int>::max();
-    } else {
-      return this->template get_arg<0>().top_diagonal();
-    }
+  inline std::pair<int, int> extreme_diagonals() const {
+    int bottom, top;
+    std::pair<int, int> arg_diags
+        = this->template get_arg<0>().extreme_diagonals();
+    return {Colwise ? std::numeric_limits<int>::min() : arg_diags.first,
+            Rowwise ? std::numeric_limits<int>::max() : arg_diags.second};
   }
 };
 
@@ -159,7 +138,7 @@ class broadcast_
  * @return broadcast expression
  */
 template <bool Colwise, bool Rowwise, typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
 inline broadcast_<as_operation_cl_t<T>, Colwise, Rowwise> broadcast(T&& a) {
   auto&& a_operation = as_operation_cl(std::forward<T>(a)).deep_copy();
   return broadcast_<as_operation_cl_t<T>, Colwise, Rowwise>(
@@ -179,7 +158,7 @@ inline broadcast_<as_operation_cl_t<T>, Colwise, Rowwise> broadcast(T&& a) {
  * @return broadcast expression
  */
 template <typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
 inline auto rowwise_broadcast(T&& a) {
   return broadcast<false, true>(std::forward<T>(a));
 }
@@ -197,11 +176,11 @@ inline auto rowwise_broadcast(T&& a) {
  * @return broadcast expression
  */
 template <typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
 inline auto colwise_broadcast(T&& a) {
   return broadcast<true, false>(std::forward<T>(a));
 }
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 #endif

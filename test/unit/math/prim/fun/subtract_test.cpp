@@ -1,6 +1,12 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 
+TEST(MathMatrixPrimMat, subtract_scalar) {
+  EXPECT_FLOAT_EQ(0.5, stan::math::subtract(1, 0.5));
+  EXPECT_FLOAT_EQ(-0.5, stan::math::subtract(0.5, 1));
+  EXPECT_FLOAT_EQ(-0.3, stan::math::subtract(1.2, 1.5));
+  EXPECT_EQ(-2, stan::math::subtract(1, 3));
+}
 TEST(MathMatrixPrimMat, subtract_v_exception) {
   stan::math::vector_d d1, d2;
 
