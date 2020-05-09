@@ -34,8 +34,9 @@ static void grad(vari_base* vi);
 template <typename T>
 class var_value {
   template <typename Val>
-  using floating_point_promoter = std::conditional_t<
-    std::is_integral<std::decay_t<Val>>::value, double, std::decay_t<Val>>;
+  using floating_point_promoter
+      = std::conditional_t<std::is_integral<std::decay_t<Val>>::value, double,
+                           std::decay_t<Val>>;
 
  public:
   // FIXME: doc what this is for
@@ -87,14 +88,13 @@ class var_value {
    *
    * @param x Value of the variable.
    */
-   template <typename IntegralT,
-    require_not_same_t<T, IntegralT>* = nullptr,
-    require_integral_t<IntegralT>* = nullptr,
-    require_arithmetic_t<T>* = nullptr>
-   var_value(IntegralT x) : // NOLINT
-     vi_(new vari_value<T>(x, false)) {} // NOLINT
+  template <typename IntegralT, require_not_same_t<T, IntegralT>* = nullptr,
+            require_integral_t<IntegralT>* = nullptr,
+            require_arithmetic_t<T>* = nullptr>
+  var_value(IntegralT x) // NOLINT
+      : vi_(new vari_value<T>(x, false)) {}
 
-   var_value(T x) : vi_(new vari_value<T>(x, false)) {}  // NOLINT
+  var_value(T x) : vi_(new vari_value<T>(x, false)) {}  // NOLINT
 
   /**
    * Return the value of this variable.
