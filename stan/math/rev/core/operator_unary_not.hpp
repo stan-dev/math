@@ -15,7 +15,7 @@ namespace math {
  * @return negation of argument value
  */
 template <typename T>
-inline bool operator!(var_value<T> x) {
+inline bool operator!(const var_value<T>& x) {
   return !x.val();
 }
 

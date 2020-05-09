@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 template <typename T>
-inline var_value<T>& var_value<T>::operator-=(var_value<T> b) {
+inline var_value<T>& var_value<T>::operator-=(const var_value<T>& b) {
   vi_ = new internal::subtract_vari<T, vari_value<T>, vari_value<T>>(vi_,
                                                                      b.vi_);
   return *this;
@@ -16,7 +16,7 @@ inline var_value<T>& var_value<T>::operator-=(var_value<T> b) {
 
 template <typename T>
 template <typename Arith, require_arithmetic_t<Arith>...>
-inline var_value<T>& var_value<T>::operator-=(Arith b) {
+inline var_value<T>& var_value<T>::operator-=(const Arith& b) {
   if (b == 0.0) {
     return *this;
   }

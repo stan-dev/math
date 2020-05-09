@@ -92,8 +92,7 @@ class var_value {
             require_integral_t<IntegralT>* = nullptr,
             require_arithmetic_t<T>* = nullptr>
   var_value(IntegralT x)
-      :  // NOLINT
-        vi_(new vari_value<T>(x, false)) {}
+      : vi_(new vari_value<T>(x, false)) {}
 
   var_value(T x) : vi_(new vari_value<T>(x, false)) {}  // NOLINT
 
@@ -182,7 +181,7 @@ class var_value {
    * @param b The variable to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
-  inline var_value<T>& operator+=(var_value<T> b);
+  inline var_value<T>& operator+=(const var_value<T>& b);
 
   /**
    * The compound add/assignment operator for scalars (C++).
@@ -195,7 +194,7 @@ class var_value {
    * @return The result of adding the specified variable to this variable.
    */
   template <typename Arith, require_vt_arithmetic<Arith>...>
-  inline var_value<T>& operator+=(Arith b);
+  inline var_value<T>& operator+=(const Arith& b);
 
   /**
    * The compound subtract/assignment operator for variables (C++).
@@ -208,7 +207,7 @@ class var_value {
    * @return The result of subtracting the specified variable from
    * this variable.
    */
-  inline var_value<T>& operator-=(var_value<T> b);
+  inline var_value<T>& operator-=(const var_value<T>& b);
 
   /**
    * The compound subtract/assignment operator for scalars (C++).
@@ -222,7 +221,7 @@ class var_value {
    * variable.
    */
   template <typename Arith, require_arithmetic_t<Arith>...>
-  inline var_value<T>& operator-=(Arith b);
+  inline var_value<T>& operator-=(const Arith& b);
 
   /**
    * The compound multiply/assignment operator for variables (C++).
@@ -235,7 +234,7 @@ class var_value {
    * @return The result of multiplying this variable by the
    * specified variable.
    */
-  inline var_value<T>& operator*=(var_value<T> b);
+  inline var_value<T>& operator*=(const var_value<T>& b);
 
   /**
    * The compound multiply/assignment operator for scalars (C++).
@@ -249,7 +248,7 @@ class var_value {
    * variable.
    */
   template <typename Arith, require_arithmetic_t<Arith>...>
-  inline var_value<T>& operator*=(Arith b);
+  inline var_value<T>& operator*=(const Arith& b);
 
   /**
    * The compound divide/assignment operator for variables (C++).  If this
@@ -261,7 +260,7 @@ class var_value {
    * @return The result of dividing this variable by the
    * specified variable.
    */
-  inline var_value<T>& operator/=(var_value<T> b);
+  inline var_value<T>& operator/=(const var_value<T>& b);
 
   /**
    * The compound divide/assignment operator for scalars (C++).
@@ -275,7 +274,7 @@ class var_value {
    * variable.
    */
   template <typename Arith, require_arithmetic_t<Arith>...>
-  inline var_value<T>& operator/=(Arith b);
+  inline var_value<T>& operator/=(const Arith& b);
 
   /**
    * Write the value of this autodiff variable and its adjoint to

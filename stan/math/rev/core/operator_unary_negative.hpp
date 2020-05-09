@@ -52,7 +52,7 @@ class neg_vari : public op_vari<VariVal, Vari*> {
  * @return Negation of variable.
  */
 template <typename T>
-inline var_value<T> operator-(var_value<T> a) {
+inline var_value<T> operator-(const var_value<T>& a) {
   return {new internal::neg_vari<T, vari_value<T>>(a.vi_)};
 }
 

@@ -56,7 +56,7 @@ inline var_value<T>& operator++(var_value<T>& a) {
  */
 template <typename T>
 inline var_value<T> operator++(var_value<T>& a, int /*dummy*/) {
-  var temp(a);
+  var_value<T> temp(a);
   a.vi_ = new internal::increment_vari<T, vari_value<T>>(a.vi_);
   return temp;
 }

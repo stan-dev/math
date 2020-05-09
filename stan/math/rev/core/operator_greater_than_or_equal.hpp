@@ -26,7 +26,7 @@ namespace math {
  * to the second's.
  */
 template <typename T>
-inline bool operator>=(var_value<T> a, var_value<T> b) {
+inline bool operator>=(const var_value<T>& a, const var_value<T>& b) {
   return a.val() >= b.val();
 }
 
@@ -41,7 +41,7 @@ inline bool operator>=(var_value<T> a, var_value<T> b) {
  * to second value.
  */
 template <typename T, typename Arith, require_arithmetic_t<Arith>...>
-inline bool operator>=(var_value<T> a, Arith b) {
+inline bool operator>=(const var_value<T>& a, const Arith& b) {
   return a.val() >= b;
 }
 
@@ -56,7 +56,7 @@ inline bool operator>=(var_value<T> a, Arith b) {
  * second variable's value.
  */
 template <typename T, typename Arith, require_arithmetic_t<Arith>...>
-inline bool operator>=(Arith a, var_value<T> b) {
+inline bool operator>=(const Arith& a, const var_value<T>& b) {
   return a >= b.val();
 }
 

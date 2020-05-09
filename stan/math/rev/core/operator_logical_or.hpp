@@ -16,7 +16,7 @@ namespace math {
  * @return disjunction of the arguments' values
  */
 template <typename T>
-inline bool operator||(var_value<T> x, var_value<T> y) {
+inline bool operator||(const var_value<T>& x, const var_value<T>& y) {
   return x.val() || y.val();
 }
 
@@ -31,7 +31,7 @@ inline bool operator||(var_value<T> x, var_value<T> y) {
  * argument
  */
 template <typename T, typename Arith, require_arithmetic_t<Arith>...>
-inline bool operator||(var_value<T> x, Arith y) {
+inline bool operator||(const var_value<T>& x, const Arith& y) {
   return x.val() || y;
 }
 
@@ -46,7 +46,7 @@ inline bool operator||(var_value<T> x, Arith y) {
  * argument's value
  */
 template <typename T, typename Arith, require_arithmetic_t<Arith>...>
-inline bool operator||(Arith x, var_value<T> y) {
+inline bool operator||(const Arith& x, const var_value<T>& y) {
   return x || y.val();
 }
 

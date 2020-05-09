@@ -47,7 +47,7 @@ class add_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> final
   using op_vari<VariVal, Vari*, Arith>::bd;
 
  public:
-  add_vari(Vari* avi, Arith b)
+  add_vari(Vari* avi, const Arith& b)
       : op_vari<VariVal, Vari*, Arith>(avi->val_ + b, avi, b) {}
   void chain() {
     if (unlikely(is_any_nan(avi()->val_, bd()))) {
@@ -114,7 +114,7 @@ inline var_value<T> operator+(const var_value<T>& a, const var_value<T>& b) {
  * @return Result of adding variable and scalar.
  */
 template <typename T, typename Arith, require_vt_arithmetic<Arith>...>
-inline var_value<T> operator+(const var_value<T>& a, Arith b) {
+inline var_value<T> operator+(const var_value<T>& a, const Arith& b) {
   if (b == 0.0) {
     return a;
   }
@@ -134,7 +134,7 @@ inline var_value<T> operator+(const var_value<T>& a, Arith b) {
  * @return Result of adding variable and scalar.
  */
 template <typename T, typename Arith, require_vt_arithmetic<Arith>...>
-inline var_value<T> operator+(Arith a, const var_value<T>& b) {
+inline var_value<T> operator+(const Arith& a, const var_value<T>& b) {
   if (a == 0.0) {
     return b;
   }

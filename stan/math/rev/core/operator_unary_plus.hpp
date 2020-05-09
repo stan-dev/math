@@ -42,7 +42,7 @@ namespace math {
  * @return The input reference.
  */
 template <typename T>
-inline var_value<T> operator+(var_value<T> a) {
+inline var_value<T> operator+(const var_value<T>& a) {
   if (unlikely(is_nan(a.vi_->val_))) {
     return {new precomp_v_vari<T, vari_value<T>>(NOT_A_NUMBER, a.vi_,
                                                  NOT_A_NUMBER)};

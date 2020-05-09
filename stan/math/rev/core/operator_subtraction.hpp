@@ -45,7 +45,7 @@ class subtract_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> final
   using op_vari<VariVal, Vari*, Arith>::bd;
 
  public:
-  subtract_vari(Vari* avi, Arith b)
+  subtract_vari(Vari* avi, const Arith& b)
       : op_vari<VariVal, Vari*, Arith>(avi->val_ - b, avi, b) {}
   void chain() {
     if (unlikely(is_any_nan(avi()->val_, bd()))) {
@@ -65,7 +65,7 @@ class subtract_vari<
   using op_vari<VariVal, Arith, Vari*>::bvi;
 
  public:
-  subtract_vari(Arith a, Vari* bvi)
+  subtract_vari(const Arith& a, Vari* bvi)
       : op_vari<VariVal, Arith, Vari*>(a - bvi->val_, a, bvi) {}
   void chain() {
     if (unlikely(is_any_nan(ad(), bvi()->val_))) {
@@ -118,7 +118,7 @@ class subtract_vari<
  * the first.
  */
 template <typename T>
-inline var_value<T> operator-(var_value<T> a, var_value<T> b) {
+inline var_value<T> operator-(const var_value<T>& a, const var_value<T>& b) {
   return {new internal::subtract_vari<T, vari_value<T>, vari_value<T>>(a.vi_,
                                                                        b.vi_)};
 }
@@ -137,7 +137,7 @@ inline var_value<T> operator-(var_value<T> a, var_value<T> b) {
  * @return Result of subtracting the scalar from the variable.
  */
 template <typename T, typename Arith, require_vt_arithmetic<Arith>...>
-inline var_value<T> operator-(var_value<T> a, Arith b) {
+inline var_value<T> operator-(const var_value<T>& a, const Arith& b) {
   if (b == 0.0) {
     return a;
   }
@@ -158,7 +158,7 @@ inline var_value<T> operator-(var_value<T> a, Arith b) {
  * @return Result of subtracting a variable from a scalar.
  */
 template <typename T, typename Arith, require_vt_arithmetic<Arith>...>
-inline var_value<T> operator-(Arith a, var_value<T> b) {
+inline var_value<T> operator-(const Arith& a, const var_value<T>& b) {
   return {new internal::subtract_vari<T, Arith, vari_value<T>>(a, b.vi_)};
 }
 

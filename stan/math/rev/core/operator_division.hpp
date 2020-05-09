@@ -59,7 +59,7 @@ class divide_vari<
 
  public:
   divide_vari(Vari* dividend_vi, Arith divisor)
-      : op_vari<VariVal, Vari*, Arith>(dividend_vi->val_ / divisor, dividend_vi,
+      : op_vari<VariVal, Vari*, const Arith&>(dividend_vi->val_ / divisor, dividend_vi,
                                        divisor) {}
   void chain() {
     if (unlikely(is_any_nan(avi()->val_, bd()))) {
@@ -79,7 +79,7 @@ class divide_vari<
   using op_vari<VariVal, Arith, Vari*>::bvi;
 
  public:
-  divide_vari(Arith dividend, Vari* divisor_vi)
+  divide_vari(const Arith& dividend, Vari* divisor_vi)
       : op_vari<VariVal, Arith, Vari*>(dividend / divisor_vi->val_, dividend,
                                        divisor_vi) {}
   void chain() {
@@ -125,7 +125,7 @@ class divide_vari<
  * second.
  */
 template <typename T>
-inline var_value<T> operator/(var_value<T> dividend, var_value<T> divisor) {
+inline var_value<T> operator/(const var_value<T>& dividend, const var_value<T>& divisor) {
   return {new internal::divide_vari<T, vari_value<T>, vari_value<T>>(
       dividend.vi_, divisor.vi_)};
 }
@@ -144,7 +144,7 @@ inline var_value<T> operator/(var_value<T> dividend, var_value<T> divisor) {
  * @return Variable result of dividing the variable by the scalar.
  */
 template <typename T, typename Arith, require_arithmetic_t<Arith>...>
-inline var_value<T> operator/(var_value<T> dividend, Arith divisor) {
+inline var_value<T> operator/(const var_value<T>& dividend, const Arith& divisor) {
   if (divisor == 1.0) {
     return dividend;
   }
@@ -165,7 +165,7 @@ inline var_value<T> operator/(var_value<T> dividend, Arith divisor) {
  * @return Quotient of the dividend and divisor.
  */
 template <typename T, typename Arith, require_arithmetic_t<Arith>...>
-inline var_value<T> operator/(Arith dividend, var_value<T> divisor) {
+inline var_value<T> operator/(const Arith& dividend, const var_value<T>& divisor) {
   return {new internal::divide_vari<T, Arith, vari_value<T>>(dividend,
                                                              divisor.vi_)};
 }
