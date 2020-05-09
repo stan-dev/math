@@ -85,6 +85,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
+#include <stan/math.hpp>
 #include <cmath>
 #include <iostream>
 
@@ -586,7 +587,337 @@ l2a: /* Step 2a: determine step direction */
 #endif
   goto l2a;
 }
-   
+
+template <typename T0, typename T1, typename T2, typename T3,
+          typename T4, typename T5>
+auto
+solve_quadprog_chol(const Eigen::Matrix<T0, -1, -1> &L,
+               const Eigen::Matrix<T1, -1, 1> &g0,
+               const Eigen::Matrix<T2, -1, -1> &CE,
+               const Eigen::Matrix<T3, -1, 1> &ce0,
+               const Eigen::Matrix<T4, -1, -1> &CI,
+               const Eigen::Matrix<T5, -1, 1> &ci0) {
+  using std::abs;
+  int i = 0, j = 0, k = 0, l = 0; /* indices */
+  int ip, me, mi;
+  int n = g0.size();
+  int p = ce0.size();
+  int m = ci0.size();
+  
+  using T_return = return_type_t<T0, T1, T2, T3, T4, T5>;
+  Eigen::Matrix<T_return, -1, 1> np(n), u(m + p), d(n), z(n), r(m + p), s(m + p), u_old(m + p);
+  Eigen::Matrix<T_return, -1, 1> x_old(n);
+  const double inf = std::numeric_limits<double>::infinity();
+  
+  T_return sum, psi, ss, t1;
+  
+  Eigen::VectorXi A(m + p), A_old(m + p), iai(m + p);
+  int q;
+  int iq, iter = 0;
+  bool iaexcl[m + p];
+
+  me = p; /* number of equality constraints */
+  mi = m; /* number of inequality constraints */
+  q = 0;  /* size of the active set A (containing the indices of the active
+             constraints) */
+
+  /*
+   * Preprocessing phase
+   */
+
+  /* compute the trace of the original matrix G */
+  auto chol = L;
+  auto G = tcrossprod(L);
+
+  auto c1 = G.trace();
+
+
+  /* initialize the matrix R */
+  d.setZero();
+
+  Eigen::Matrix<T0, -1, -1> R(G.rows(), G.cols());
+  R.setZero();
+  T_return R_norm = 1.0; /* this variable will hold the norm of the matrix R */
+  
+  /* compute the inverse of the factorized matrix G^-1, this is the initial
+   * value for H */
+  //J = L^-T
+  auto J = stan::math::transpose(stan::math::mdivide_left_tri_low(chol));
+  auto c2 = J.trace();
+#ifdef TRACE_SOLVER
+  print_matrix("J", J, n);
+#endif
+
+  /* c1 * c2 is an estimate for cond(G) */
+
+  /*
+   * Find the unconstrained minimizer of the quadratic form 0.5 * x G x + g0 x
+   * this is a feasible point in the dual space
+   * x = G^-1 * g0
+   */
+
+  /* G^-1 = (L^-1)^T (L^-1) 
+   * https://forum.kde.org/viewtopic.php?f=74&t=127426
+   * */
+  auto Ginv = crossprod(mdivide_left_tri_low(L));
+  auto x = multiply(Ginv, g0);
+  x = -x;
+  
+  /* and compute the current solution value */
+  auto f_value = 0.5 * g0.dot(x);
+#ifdef TRACE_SOLVER
+  std::cerr << "Unconstrained solution: " << f_value << std::endl;
+  print_vector("x", x, n);
+#endif
+  /* Add equality constraints to the working set A */
+  iq = 0;
+  T_return t2 = 0.0;
+  T_return t = 0.0;
+  for (i = 0; i < me; i++) {
+    np = CE.col(i);
+    compute_d(d, J, np);
+    update_z(z, J, d, iq);
+    update_r(R, r, d, iq);
+#ifdef TRACE_SOLVER
+    print_matrix("R", R, iq);
+    print_vector("z", z, n);
+    print_vector("r", r, iq);
+    print_vector("d", d, n);
+#endif
+
+    /* compute full step length t2: i.e., the minimum step in primal space s.t.
+       the contraint becomes feasible */
+    t2 = 0.0;
+    if (abs(z.dot(z)) > std::numeric_limits<double>::epsilon()) {
+      // i.e. z != 0
+      t2 = (-np.dot(x) - ce0(i)) / z.dot(np);
+    }
+
+    x += t2 * z;
+
+    /* set u = u+ */
+    u(iq) = t2;
+    u.head(iq) -= t2 * r.head(iq);
+
+    /* compute the new solution value */
+    f_value += 0.5 * (t2 * t2) * z.dot(np);
+    A(i) = -i - 1;
+
+    if (!add_constraint(R, J, d, iq, R_norm)) {
+      // FIXME: it should raise an error
+      // Equality constraints are linearly dependent
+      return x;
+    }
+  }
+  
+  /* set iai = K \ A */
+  for (i = 0; i < mi; i++)
+    iai(i) = i;
+
+l1:
+  iter++;
+#ifdef TRACE_SOLVER
+  print_vector("x", x, n);
+#endif
+  /* step 1: choose a violated constraint */
+  for (i = me; i < iq; i++) {
+    ip = A(i);
+    iai(ip) = -1;
+  }
+
+  /* compute s(x) = ci^T * x + ci0 for all elements of K \ A */
+  ss = 0.0;
+  psi = 0.0; /* this value will contain the sum of all infeasibilities */
+  ip = 0;    /* ip will be the index of the chosen violated constraint */
+  for (i = 0; i < mi; i++) {
+    iaexcl[i] = true;
+    sum = CI.col(i).dot(x) + ci0(i);
+    s(i) = sum;
+    if (sum < 0.0) {
+      psi += sum;
+    }
+  }
+#ifdef TRACE_SOLVER
+  print_vector("s", s, mi);
+#endif
+  
+  if (fabs(psi) <=
+      mi * std::numeric_limits<double>::epsilon() * c1 * c2 * 100.0) {
+    /* numerically there are not infeasibilities anymore */
+    q = iq;
+    return x;
+  }
+
+  /* save old values for u, x and A */
+  u_old.head(iq) = u.head(iq);
+  A_old.head(iq) = A.head(iq);
+  x_old = x;
+
+l2: /* Step 2: check for feasibility and determine a new S-pair */
+  for (i = 0; i < mi; i++) {
+    if (s(i) < ss && iai(i) != -1 && iaexcl[i]) {
+      ss = s(i);
+      ip = i;
+    }
+  }
+  if (ss >= 0.0) {
+    q = iq;
+    return x;
+  }
+
+  /* set np = n(ip) */
+  np = CI.col(ip);
+  /* set u = (u 0)^T */
+  u(iq) = 0.0;
+  /* add ip to the active set A */
+  A(iq) = ip;
+
+#ifdef TRACE_SOLVER
+  std::cerr << "Trying with constraint " << ip << std::endl;
+  print_vector("np", np, n);
+#endif
+  
+l2a: /* Step 2a: determine step direction */
+  /* compute z = H np: the step direction in the primal space (through J, see
+   * the paper) */
+  compute_d(d, J, np);
+  update_z(z, J, d, iq);
+  /* compute N* np (if q > 0): the negative of the step direction in the dual
+   * space */
+  update_r(R, r, d, iq);
+#ifdef TRACE_SOLVER
+  std::cerr << "Step direction z" << std::endl;
+  print_vector("z", z, n);
+  print_vector("r", r, iq + 1);
+  print_vector("u", u, iq + 1);
+  print_vector("d", d, n);
+  print_ivector("A", A, iq + 1);
+#endif
+
+  /* Step 2b: compute step length */
+  l = 0;
+  /* Compute t1: partial step length (maximum step in dual space without
+   * violating dual feasibility */
+  t1 = inf; /* +inf */
+  /* find the index l s.t. it reaches the minimum of u+(x) / r */
+  for (k = me; k < iq; k++) {
+    T_return tmp = u(k) / r(k);
+    if (r(k) > 0.0 && (tmp < t1)) {
+      t1 = tmp;
+      l = A(k);
+    }
+  }
+  /* Compute t2: full step length (minimum step in primal space such that the
+   * constraint ip becomes feasible */
+  if (abs(z.dot(z)) > std::numeric_limits<double>::epsilon()) // i.e. z != 0
+    t2 = -s(ip) / z.dot(np);
+  else
+    t2 = inf; /* +inf */
+
+  /* the step is chosen as the minimum of t1 and t2 */
+  if(t1<=t2) {
+    t = t1;
+  } else {
+    t = t2;
+  }
+#ifdef TRACE_SOLVER
+  std::cerr << "Step sizes: " << t << " (t1 = " << t1 << ", t2 = " << t2
+            << ") ";
+#endif
+
+  /* Step 2c: determine new S-pair and take step: */
+
+  /* case (i): no step in primal or dual space */
+  if (t >= inf) {
+    /* QPP is infeasible */
+    // FIXME: unbounded to raise
+    q = iq;
+    return x;
+  }
+  /* case (ii): step in dual space */
+  if (t2 >= inf) {
+    /* set u = u +  t * [-r 1) and drop constraint l from the active set A */
+    u.head(iq) -= t * r.head(iq);
+    u(iq) += t;
+    iai(l) = l;
+    delete_constraint(R, J, A, u, p, iq, l);
+#ifdef TRACE_SOLVER
+    std::cerr << " in dual space: " << f_value << std::endl;
+    print_vector("x", x, n);
+    print_vector("z", z, n);
+    print_ivector("A", A, iq + 1);
+#endif
+    goto l2a;
+  }
+
+  /* case (iii): step in primal and dual space */
+
+  x += t * z;
+  /* update the solution value */
+  f_value += t * z.dot(np) * (0.5 * t + u(iq));
+
+  u.head(iq) -= t * r.head(iq);
+  u(iq) += t;
+#ifdef TRACE_SOLVER
+  std::cerr << " in both spaces: " << f_value << std::endl;
+  print_vector("x", x, n);
+  print_vector("u", u, iq + 1);
+  print_vector("r", r, iq + 1);
+  print_ivector("A", A, iq + 1);
+#endif
+
+  if (t == t2) {
+#ifdef TRACE_SOLVER
+    std::cerr << "Full step has taken " << t << std::endl;
+    print_vector("x", x, n);
+#endif
+    /* full step has taken */
+    /* add constraint ip to the active set*/
+    if (!add_constraint(R, J, d, iq, R_norm)) {
+      iaexcl[ip] = false;
+      delete_constraint(R, J, A, u, p, iq, ip);
+#ifdef TRACE_SOLVER
+      print_matrix("R", R, n);
+      print_ivector("A", A, iq);
+#endif
+      for (i = 0; i < m; i++)
+        iai(i) = i;
+      for (i = 0; i < iq; i++) {
+        A(i) = A_old(i);
+        iai(A(i)) = -1;
+        u(i) = u_old(i);
+      }
+      x = x_old;
+      goto l2; /* go to step 2 */
+    } else
+      iai(ip) = -1;
+#ifdef TRACE_SOLVER
+    print_matrix("R", R, n);
+    print_ivector("A", A, iq);
+#endif
+    goto l1;
+  }
+
+/* a patial step has taken */
+#ifdef TRACE_SOLVER
+  std::cerr << "Partial step has taken " << t << std::endl;
+  print_vector("x", x, n);
+#endif
+  /* drop constraint l */
+  iai(l) = l;
+  delete_constraint(R, J, A, u, p, iq, l);
+#ifdef TRACE_SOLVER
+  print_matrix("R", R, n);
+  print_ivector("A", A, iq);
+#endif
+
+  s(ip) = CI.col(ip).dot(x) + ci0(ip);
+
+#ifdef TRACE_SOLVER
+  print_vector("s", s, mi);
+#endif
+  goto l2a;
+}
 }
 }
 #endif
