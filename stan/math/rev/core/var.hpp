@@ -45,7 +45,7 @@ class var_value {
    * Pointer to the implementation of this variable.
    *
    * This value should not be modified, but may be accessed in
-   * <code>var</code> operators to construct `vari_type<T>`
+   * <code>var</code> operators to construct `vari_value<T>`
    * instances.
    */
   vari_value<T>* vi_;
@@ -81,8 +81,8 @@ class var_value {
 
   /**
    * Construct a variable from the specified integral type argument
-   * by constructing a new `vari_type<T>`. For integral types the
-   * `vari_type<T>` will hold doubles. This constructor is only valid when `T`
+   * by constructing a new `vari_value<T>`. For integral types the
+   * `vari_value<T>` will hold doubles. This constructor is only valid when `T`
    * is arithmetic.
    *
    * @param x Value of the variable.
@@ -193,7 +193,7 @@ class var_value {
    * @param b The scalar to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
-  template <typename Arith, require_arithmetic_t<Arith>...>
+  template <typename Arith, require_vt_arithmetic<Arith>...>
   inline var_value<T>& operator+=(Arith b);
 
   /**

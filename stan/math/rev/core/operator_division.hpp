@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
 #include <stan/math/rev/core/var.hpp>
+#include <stan/math/rev/meta/is_vari.hpp>
 #include <stan/math/rev/core/std_complex.hpp>
 #include <stan/math/rev/core/vv_vari.hpp>
 #include <stan/math/rev/core/vd_vari.hpp>
@@ -21,20 +22,27 @@ namespace stan {
 namespace math {
 
 namespace internal {
+template <typename VariVal, typename Vari1, typename Vari2, typename = void>
+class divide_vari {};
+
 // (dividend/divisor)' = dividend' * (1 / divisor) - divisor' * (dividend /
 // [divisor * divisor])
-class divide_vv_vari : public op_vv_vari {
+template <typename VariVal, typename Vari1, typename Vari2>
+class divide_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>> :
+ public op_vari<VariVal, Vari1*, Vari2*> {
+ using op_vari<VariVal, Vari1*, Vari2*>::avi;
+ using op_vari<VariVal, Vari1*, Vari2*>::bvi;
  public:
-  divide_vv_vari(vari* dividend_vi, vari* divisor_vi)
-      : op_vv_vari(dividend_vi->val_ / divisor_vi->val_, dividend_vi,
-                   divisor_vi) {}
+  divide_vari(Vari1* dividend_vi, Vari2* divisor_vi)
+      : op_vari<VariVal, Vari1*, Vari2*>(dividend_vi->val_ / divisor_vi->val_,
+         dividend_vi, divisor_vi) {}
   void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bvi_->val_))) {
-      avi_->adj_ = NOT_A_NUMBER;
-      bvi_->adj_ = NOT_A_NUMBER;
+    if (unlikely(is_any_nan(avi()->val_, bvi()->val_))) {
+      avi()->adj_ = NOT_A_NUMBER;
+      bvi()->adj_ = NOT_A_NUMBER;
     } else {
-      avi_->adj_ += adj_ / bvi_->val_;
-      bvi_->adj_ -= adj_ * avi_->val_ / (bvi_->val_ * bvi_->val_);
+      avi()->adj_ += this->adj_ / bvi()->val_;
+      bvi()->adj_ -= this->adj_ * avi()->val_ / (bvi()->val_ * bvi()->val_);
     }
   }
 };
@@ -76,7 +84,6 @@ class divide_dv_vari : public op_dv_vari {
      \textrm{NaN} & \mbox{if } x = \textrm{NaN or } y = \textrm{NaN}
    \end{cases}
    \f]
-
    \f[
    \frac{\partial\, \mbox{operator/}(x, y)}{\partial x} =
    \begin{cases}
@@ -84,7 +91,6 @@ class divide_dv_vari : public op_dv_vari {
      \textrm{NaN} & \mbox{if } x = \textrm{NaN or } y = \textrm{NaN}
    \end{cases}
    \f]
-
    \f[
    \frac{\partial\, \mbox{operator/}(x, y)}{\partial y} =
    \begin{cases}
@@ -98,8 +104,9 @@ class divide_dv_vari : public op_dv_vari {
  * @return Variable result of dividing the first variable by the
  * second.
  */
-inline var operator/(var dividend, var divisor) {
-  return {new internal::divide_vv_vari(dividend.vi_, divisor.vi_)};
+template <typename T>
+inline var_value<T> operator/(var_value<T> dividend, var_value<T> divisor) {
+  return {new internal::divide_vari<T, vari_value<T>, vari_value<T>>(dividend.vi_, divisor.vi_)};
 }
 
 /**

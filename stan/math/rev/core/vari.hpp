@@ -14,7 +14,7 @@ template <typename T>
 class var_value;
 
 /**
- * Pure virtual class that all `vari_type` and it's derived classes inherit.
+ * Pure virtual class that all `vari_value` and it's derived classes inherit.
  */
 class vari_base {
 public:
@@ -72,7 +72,7 @@ class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>> :
   public vari_base {
  private:
   template <typename>
-  friend class var_type;
+  friend class var_value;
   template <typename Val>
   using floating_point_promoter = std::conditional_t<
     std::is_integral<std::decay_t<Val>>::value, double, std::decay_t<Val>>;

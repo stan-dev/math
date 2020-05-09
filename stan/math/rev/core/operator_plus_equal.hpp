@@ -10,17 +10,17 @@ namespace math {
 
 template <typename T>
 inline var_value<T>& var_value<T>::operator+=(var_value<T> b) {
-  vi_ = new internal::add_vv_vari(vi_, b.vi_);
+  vi_ = new internal::add_vari<T, vari_value<T>, vari_value<T>>(vi_, b.vi_);
   return *this;
 }
 
 template <typename T>
-template <typename Arith, require_arithmetic_t<Arith>...>
+template <typename Arith, require_vt_arithmetic<Arith>...>
 inline var_value<T>& var_value<T>::operator+=(Arith b) {
-  if (b == 0.0) {
+  if (b == 0) {
     return *this;
   }
-  vi_ = new internal::add_vd_vari(vi_, b);
+  vi_ = new internal::add_vari<T, vari_value<T>, Arith>(vi_, b);
   return *this;
 }
 

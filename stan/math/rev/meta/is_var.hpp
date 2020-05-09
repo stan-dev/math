@@ -14,5 +14,25 @@ struct is_var<T,
               std::enable_if_t<std::is_same<math::var, std::decay_t<T>>::value>>
     : std::true_type {};
 
+namespace internal {
+
+/** \ingroup type_trait
+ * This underlying implementation is used when the type is not an std vector.
+ */
+template <typename T>
+struct is_var_value_impl : std::false_type {};
+
+/** \ingroup type_trait
+ * This specialization implementation has a static member named value when the
+ * template type is an std vector.
+ */
+template <typename... Args>
+struct is_var_value_impl<math::var_value<Args...>> : std::true_type {};
+
+}  // namespace internal
+
+template <typename T>
+struct is_var_value<T, std::enable_if_t<internal::is_var_value_impl<std::decay_t<T>>::value>> {};
+
 }  // namespace stan
 #endif
