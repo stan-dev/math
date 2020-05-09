@@ -2,6 +2,7 @@
 
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/zeros.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
