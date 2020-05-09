@@ -12,7 +12,8 @@
 namespace stan {
 namespace math {
 
-template <typename F, typename T_initial, typename... Args>
+template <typename F, typename T_initial, typename T_t0, typename T_ts,
+	  typename... Args>
 std::vector<Eigen::Matrix<stan::return_type_t<T_initial, Args...>, Eigen::Dynamic, 1>>
 ode_rk45(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0, double t0,
          const std::vector<double>& ts, std::ostream* msgs,
@@ -25,10 +26,12 @@ ode_rk45(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0, doub
                       max_num_steps, msgs, args...);
 }
 
-template <typename F, typename T_initial, typename... Args>
-std::vector<Eigen::Matrix<stan::return_type_t<T_initial, Args...>, Eigen::Dynamic, 1>>
-ode_rk45_tol(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0, double t0,
-             const std::vector<double>& ts, double relative_tolerance,
+template <typename F, typename T_initial, typename T_t0, typename T_ts,
+	  typename... Args>
+std::vector<Eigen::Matrix<stan::return_type_t<T_initial, T_t0, T_ts, Args...>, Eigen::Dynamic, 1>>
+ode_rk45_tol(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0_arg,
+	     T_t0 t0,
+             const std::vector<T_ts>& ts, double relative_tolerance,
              double absolute_tolerance, long int max_num_steps,
              std::ostream* msgs, const Args&... args) {
   using boost::numeric::odeint::integrate_times;
@@ -37,6 +40,11 @@ ode_rk45_tol(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0, 
   using boost::numeric::odeint::runge_kutta_dopri5;
   using boost::numeric::odeint::vector_space_algebra;
 
+  using T_initial_or_t0 = return_type_t<T_initial, T_t0>;
+  
+  Eigen::Matrix<T_initial_or_t0, Eigen::Dynamic, 1> y0 = y0_arg.unaryExpr([](const T_initial& val) {
+      return T_initial_or_t0(val);
+    });
   const std::vector<double> ts_dbl = value_of(ts);
 
   check_finite("integrate_ode_rk45", "initial state", y0);
@@ -66,14 +74,14 @@ ode_rk45_tol(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0, 
                      ", must be greater than 0");
   }
 
-  using return_t = return_type_t<T_initial, Args...>;
+  using return_t = return_type_t<T_initial, T_t0, T_ts, Args...>;
   // creates basic or coupled system by template specializations
-  coupled_ode_system<F, T_initial, Args...> coupled_system(f, y0, msgs,
-                                                           args...);
+  coupled_ode_system<F, T_initial_or_t0, Args...> coupled_system(f, y0, msgs,
+								 args...);
 
   // first time in the vector must be time of initial state
   std::vector<double> ts_vec(ts.size() + 1);
-  ts_vec[0] = t0;
+  ts_vec[0] = value_of(t0);
   std::copy(ts_dbl.begin(), ts_dbl.end(), ts_vec.begin() + 1);
 
   std::vector<Eigen::Matrix<return_t, Eigen::Dynamic, 1>> y;
@@ -88,7 +96,9 @@ ode_rk45_tol(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0, 
       observer_initial_recorded = true;
       return;
     }
-    y.emplace_back(ode_store_sensitivities(coupled_state, y0, args...));
+    y.emplace_back(ode_store_sensitivities(f, coupled_state, y0,
+					   t0, ts[time_index],
+					   msgs, args...));
     time_index++;
   };
 

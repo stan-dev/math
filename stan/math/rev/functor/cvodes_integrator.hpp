@@ -22,14 +22,15 @@ namespace math {
  *
  * @tparam Lmm ID of ODE solver (1: ADAMS, 2: BDF)
  */
-template <int Lmm, typename F, typename T_initial, typename... T_Args>
+template <int Lmm, typename F, typename T_initial, typename T_t0, typename T_ts, typename... T_Args>
 class cvodes_integrator {
-  using T_Return = return_type_t<T_initial, T_Args...>;
+  using T_Return = return_type_t<T_initial, T_t0, T_ts, T_Args...>;
+  using T_initial_or_t0 = return_type_t<T_initial, T_t0>;
 
   const F& f_;
-  const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0_;
-  double t0_;
-  const std::vector<double>& ts_;
+  const Eigen::Matrix<T_initial_or_t0, Eigen::Dynamic, 1> y0_;
+  const T_t0 t0_;
+  const std::vector<T_ts>& ts_;
   std::tuple<const T_Args&...> args_tuple_;
   std::tuple<decltype(value_of(T_Args()))...> value_of_args_tuple_;
   const size_t N_;
@@ -41,7 +42,7 @@ class cvodes_integrator {
   const size_t y0_vars_;
   const size_t args_vars_;
 
-  coupled_ode_system<F, T_initial, T_Args...> coupled_ode_;
+  coupled_ode_system<F, T_initial_or_t0, T_Args...> coupled_ode_;
 
   Eigen::VectorXd coupled_state_;
   N_Vector nv_state_;
@@ -151,12 +152,12 @@ class cvodes_integrator {
 
  public:
   cvodes_integrator(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
-		    double t0, const std::vector<double>& ts,
+		    const T_t0& t0, const std::vector<T_ts>& ts,
 		    double relative_tolerance, double absolute_tolerance,
 		    long int max_num_steps,
                     std::ostream* msgs, const T_Args&... args)
       : f_(f),
-        y0_(y0),
+	y0_(y0.unaryExpr([](const T_initial& val) { return T_initial_or_t0(val); })),
         t0_(t0),
         ts_(ts),
         args_tuple_(args...),
@@ -166,12 +167,10 @@ class cvodes_integrator {
         relative_tolerance_(relative_tolerance),
         absolute_tolerance_(absolute_tolerance),
         max_num_steps_(max_num_steps),
-        y0_vars_(count_vars(y0_)),
+	y0_vars_(count_vars(y0_)),
         args_vars_(count_vars(args...)),
-        coupled_ode_(f, y0, msgs, args...),
+        coupled_ode_(f, y0_, msgs, args...),
         coupled_state_(coupled_ode_.initial_state()) {
-    using initial_var = stan::is_var<T_initial>;
-
     const char* fun = "cvodes_integrator::integrate";
 
     check_finite(fun, "initial state", y0_);
@@ -321,7 +320,9 @@ class cvodes_integrator {
 
         y.emplace_back(apply(
             [&](auto&&... args) {
-              return ode_store_sensitivities(coupled_state_, y0_, args...);
+              return ode_store_sensitivities(f_, coupled_state_, y0_,
+					     t0_, ts_[n], msgs_,
+					     args...);
             },
             args_tuple_));
 

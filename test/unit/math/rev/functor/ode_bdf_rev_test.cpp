@@ -8,6 +8,8 @@
 #include <limits>
 #include <string>
 
+using stan::math::var;
+
 template <typename T, stan::require_stan_scalar_t<T>* = nullptr>
 T sum_(T arg) {
   return arg;
@@ -221,3 +223,133 @@ struct ayt {
     return -a * y * t;
   }
 };
+
+void check_t0(const var& t0) {
+  EXPECT_FLOAT_EQ(t0.adj(), -1.0);
+}
+
+void check_t0(double t0) {}
+
+void check_ts(const std::vector<var>& ts) {
+  EXPECT_FLOAT_EQ(ts[0].adj(), 0.0);
+  EXPECT_FLOAT_EQ(ts[1].adj(), -0.0791208888);
+}
+
+void check_ts(const std::vector<double>& ts) {}
+
+void check_y0(const Eigen::Matrix<var, Eigen::Dynamic, 1>& y0) {
+  EXPECT_FLOAT_EQ(y0(0).adj(), 0.5);
+}
+
+void check_y0(const Eigen::MatrixXd& y0) {}
+
+TEST(StanMathOde_ode_bdf_tol, arg_combos_test) {
+  var t0 = 0.5;
+  var a = 0.2;
+  std::vector<var> ts = { 1.25 };
+  Eigen::Matrix<var, Eigen::Dynamic, 1> y0(1);
+  y0 << 0.75;
+
+  double t0d = stan::math::value_of(t0);
+  double ad = stan::math::value_of(a);
+  std::vector<double> tsd = stan::math::value_of(ts);
+  Eigen::VectorXd y0d = stan::math::value_of(y0);
+
+  auto check_yT = [&](auto yT) {
+    EXPECT_FLOAT_EQ(stan::math::value_of(yT), y0d(0) * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)));
+  };
+
+  auto check_t0 = [&](var t0) {
+    EXPECT_FLOAT_EQ(t0.adj(), ad * t0d * y0d(0) * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)));
+  };
+
+  auto check_a = [&](var a) {
+    EXPECT_FLOAT_EQ(a.adj(), -0.5 * (tsd[0] * tsd[0] - t0d * t0d) * y0d(0) * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)));
+  };
+
+  auto check_ts = [&](std::vector<var> ts) {
+    EXPECT_FLOAT_EQ(ts[0].adj(), -ad * tsd[0] * y0d(0) * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)));
+  };
+
+  auto check_y0 = [&](Eigen::Matrix<var, Eigen::Dynamic, 1> y0) {
+    EXPECT_FLOAT_EQ(y0(0).adj(), exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)));
+  };
+  
+  double yT1 = stan::math::ode_bdf_tol(ayt(), y0d, t0d, tsd, 1e-10, 1e-10, 1e6, nullptr, ad)[0](0);
+  check_yT(yT1);
+
+  var yT2 = stan::math::ode_bdf_tol(ayt(), y0d, t0d, tsd, 1e-10, 1e-10, 1e6, nullptr, a)[0](0);
+  stan::math::set_zero_all_adjoints();
+  yT2.grad();
+  check_yT(yT2); check_a(a);
+
+  var yT3 = stan::math::ode_bdf_tol(ayt(), y0d, t0d, ts, 1e-10, 1e-10, 1e6, nullptr, ad)[0](0);
+  stan::math::set_zero_all_adjoints();
+  yT3.grad();
+  check_yT(yT3); check_ts(ts);
+
+  var yT4 = stan::math::ode_bdf_tol(ayt(), y0d, t0d, ts, 1e-10, 1e-10, 1e6, nullptr, a)[0](0);
+  stan::math::set_zero_all_adjoints();
+  yT4.grad();
+  check_yT(yT4); check_ts(ts); check_a(a);
+
+  var yT5 = stan::math::ode_bdf_tol(ayt(), y0d, t0, tsd, 1e-10, 1e-10, 1e6, nullptr, ad)[0](0);
+  stan::math::set_zero_all_adjoints();
+  yT5.grad();
+  check_yT(yT5); check_t0(t0);
+
+  var yT6 = stan::math::ode_bdf_tol(ayt(), y0d, t0, tsd, 1e-10, 1e-10, 1e6, nullptr, a)[0](0);
+  stan::math::set_zero_all_adjoints();
+  yT6.grad();
+  check_yT(yT6); check_t0(t0); check_a(a);
+
+  var yT7 = stan::math::ode_bdf_tol(ayt(), y0d, t0, ts, 1e-10, 1e-10, 1e6, nullptr, ad)[0](0);
+  stan::math::set_zero_all_adjoints();
+  yT7.grad();
+  check_yT(yT7); check_t0(t0); check_ts(ts);
+
+  var yT8 = stan::math::ode_bdf_tol(ayt(), y0d, t0, ts, 1e-10, 1e-10, 1e6, nullptr, a)[0](0);
+  stan::math::set_zero_all_adjoints();
+  yT8.grad();
+  check_yT(yT8); check_t0(t0); check_ts(ts); check_a(a);
+
+  var yT9 = stan::math::ode_bdf_tol(ayt(), y0, t0d, tsd, 1e-10, 1e-10, 1e6, nullptr, ad)[0](0);
+  stan::math::set_zero_all_adjoints();
+  yT9.grad();
+  check_yT(yT9); check_y0(y0);
+
+  var yT10 = stan::math::ode_bdf_tol(ayt(), y0, t0d, tsd, 1e-10, 1e-10, 1e6, nullptr, a)[0](0);
+  stan::math::set_zero_all_adjoints();
+  yT10.grad();
+  check_yT(yT10); check_y0(y0); check_a(a);
+
+  var yT11 = stan::math::ode_bdf_tol(ayt(), y0, t0d, ts, 1e-10, 1e-10, 1e6, nullptr, ad)[0](0);
+  stan::math::set_zero_all_adjoints();
+  yT11.grad();
+  check_yT(yT11); check_y0(y0); check_ts(ts);
+
+  var yT12 = stan::math::ode_bdf_tol(ayt(), y0, t0d, ts, 1e-10, 1e-10, 1e6, nullptr, a)[0](0);
+  stan::math::set_zero_all_adjoints();
+  yT12.grad();
+  check_yT(yT12); check_y0(y0); check_ts(ts); check_a(a);
+
+  var yT13 = stan::math::ode_bdf_tol(ayt(), y0, t0, tsd, 1e-10, 1e-10, 1e6, nullptr, ad)[0](0);
+  stan::math::set_zero_all_adjoints();
+  yT13.grad();
+  check_yT(yT13); check_y0(y0); check_t0(t0);
+
+  var yT14 = stan::math::ode_bdf_tol(ayt(), y0, t0, tsd, 1e-10, 1e-10, 1e6, nullptr, a)[0](0);
+  stan::math::set_zero_all_adjoints();
+  yT14.grad();
+  check_yT(yT14); check_y0(y0); check_t0(t0); check_a(a);
+
+  var yT15 = stan::math::ode_bdf_tol(ayt(), y0, t0, ts, 1e-10, 1e-10, 1e6, nullptr, ad)[0](0);
+  stan::math::set_zero_all_adjoints();
+  yT15.grad();
+  check_yT(yT15); check_y0(y0); check_t0(t0); check_ts(ts);
+
+  var yT16 = stan::math::ode_bdf_tol(ayt(), y0, t0, ts, 1e-10, 1e-10, 1e6, nullptr, a)[0](0);
+  stan::math::set_zero_all_adjoints();
+  yT16.grad();
+  check_yT(yT16); check_y0(y0); check_t0(t0); check_ts(ts); check_a(a);
+}

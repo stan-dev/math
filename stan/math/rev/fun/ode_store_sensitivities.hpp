@@ -9,17 +9,33 @@
 namespace stan {
 namespace math {
 
-template <typename T_initial, typename... Args>
-Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(const Eigen::VectorXd& coupled_state,
-							      const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
+template <typename F, typename T_initial_or_t0, typename T_t0, typename T_t, typename... Args>
+Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(const F& f,
+							      const Eigen::VectorXd& coupled_state,
+							      const Eigen::Matrix<T_initial_or_t0, Eigen::Dynamic, 1>& y0,
+							      const T_t0& t0,
+							      const T_t& t,
+							      std::ostream* msgs,
 							      const Args&... args) {
   const size_t N = y0.size();
   const size_t y0_vars = count_vars(y0);
   const size_t args_vars = count_vars(args...);
+  const size_t t0_vars = count_vars(t0);
+  const size_t t_vars = count_vars(t);
   Eigen::Matrix<var, Eigen::Dynamic, 1> yt(N);
 
+  Eigen::VectorXd y = coupled_state.head(N);
+  
+  Eigen::VectorXd f_y_t;
+  if (is_var<T_t>::value)
+    f_y_t = f(value_of(t), y, msgs, value_of(args)...);
+
+  Eigen::VectorXd f_y0_t0;
+  if (is_var<T_t0>::value)
+    f_y0_t0 = f(value_of(t0), value_of(y0), msgs, value_of(args)...);
+
   for (size_t j = 0; j < N; j++) {
-    const size_t total_vars = y0_vars + args_vars;
+    const size_t total_vars = y0_vars + args_vars + t0_vars + t_vars;
 
     vari** varis
         = ChainableStack::instance_->memalloc_.alloc_array<vari*>(total_vars);
@@ -31,21 +47,39 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(const Eigen::Vecto
 
     // iterate over parameters for each equation
     varis_ptr = save_varis(varis_ptr, y0);
-    for (std::size_t k = 0; k < y0_vars; k++) {
+    for (std::size_t k = 0; k < y0_vars; ++k) {
       //*varis_ptr = y0[k].vi_;
       *partials_ptr = coupled_state(N + y0_vars * k + j);
       partials_ptr++;
     }
 
     varis_ptr = save_varis(varis_ptr, args...);
-    for (std::size_t k = 0; k < args_vars; k++) {
+    for (std::size_t k = 0; k < args_vars; ++k) {
       // dy[j]_dtheta[k]
       // theta[k].vi_
       *partials_ptr = coupled_state(N + N * y0_vars + N * k + j);
       partials_ptr++;
     }
 
-    yt(j) = new precomputed_gradients_vari(coupled_state(j), total_vars,
+    varis_ptr = save_varis(varis_ptr, t0);
+    if(t0_vars > 0) {
+      double dyt_dt0 = 0.0;
+      for (std::size_t k = 0; k < y0_vars; ++k) {
+	// dy[j]_dtheta[k]
+	// theta[k].vi_
+	dyt_dt0 += -f_y0_t0[k] * coupled_state(N + y0_vars * k + j);
+      }
+      *partials_ptr = dyt_dt0;
+      partials_ptr++;
+    }
+
+    varis_ptr = save_varis(varis_ptr, t);
+    if(t_vars > 0) {
+      *partials_ptr = f_y_t[j];
+      partials_ptr++;
+    }
+
+    yt(j) = new precomputed_gradients_vari(y(j), total_vars,
 					   varis, partials);
   }
 

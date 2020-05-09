@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_FUNCTOR_ODE_BDF_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/functor/ode_add_time_gradients.hpp>
 #include <stan/math/rev/functor/cvodes_integrator.hpp>
 #include <ostream>
 #include <vector>
@@ -33,15 +32,11 @@ ode_bdf_tol(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0, c
             const std::vector<T_ts>& ts, double relative_tolerance,
             double absolute_tolerance, long int max_num_steps,
             std::ostream* msgs, const T_Args&... args) {
-  std::vector<double> value_of_ts = value_of(ts);
-
-  stan::math::cvodes_integrator<CV_BDF, F, T_initial, T_Args...> integrator(
-      f, y0, value_of(t0), value_of_ts, relative_tolerance, absolute_tolerance,
+  stan::math::cvodes_integrator<CV_BDF, F, T_initial, T_t0, T_ts, T_Args...> integrator(
+      f, y0, t0, ts, relative_tolerance, absolute_tolerance,
       max_num_steps, msgs, args...);
 
-  auto y = integrator.integrate();
-  
-  return ode_add_time_gradients(f, y0, t0, ts, y, msgs, args...);
+  return integrator.integrate();
 }
 
 }  // namespace math
