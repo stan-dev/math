@@ -7,12 +7,14 @@
 
 namespace stan {
 /** \ingroup type_trait
- * Specialization for checking if value of T minus cv qualifier and pointer is a vari.
+ * Specialization for checking if value of T minus cv qualifier and pointer is a
+ * vari.
  */
 template <typename T>
-struct is_vari<T, std::enable_if_t<
-  std::is_base_of<math::vari_base,
-    std::remove_pointer_t<std::decay_t<T>>>::value>> : std::true_type {};
+struct is_vari<
+    T, std::enable_if_t<std::is_base_of<
+           math::vari_base, std::remove_pointer_t<std::decay_t<T>>>::value>>
+    : std::true_type {};
 
 }  // namespace stan
 #endif

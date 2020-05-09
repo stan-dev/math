@@ -19,8 +19,8 @@ template <typename VariVal, typename Vari1, typename Vari2, typename = void>
 class subtract_vari {};
 
 template <typename VariVal, typename Vari1, typename Vari2>
-class subtract_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>> final
-    : public op_vari<VariVal, Vari1*, Vari2*> {
+class subtract_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>>
+    final : public op_vari<VariVal, Vari1*, Vari2*> {
   using op_vari<VariVal, Vari1*, Vari2*>::avi;
   using op_vari<VariVal, Vari1*, Vari2*>::bvi;
 
@@ -59,8 +59,8 @@ class subtract_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> final
 template <typename VariVal, typename Arith, typename Vari>
 class subtract_vari<
     VariVal, Arith, Vari,
-    require_t<conjunction<std::is_arithmetic<Arith>, is_vari<Vari>>>> final
-    : public op_vari<VariVal, Arith, Vari*> {
+    require_t<conjunction<std::is_arithmetic<Arith>, is_vari<Vari>>>>
+    final : public op_vari<VariVal, Arith, Vari*> {
   using op_vari<VariVal, Arith, Vari*>::ad;
   using op_vari<VariVal, Arith, Vari*>::bvi;
 

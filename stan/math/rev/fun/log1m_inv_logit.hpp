@@ -19,8 +19,8 @@ namespace math {
  */
 template <typename T>
 inline var_value<T> log1m_inv_logit(const var_value<T>& u) {
-  return {
-      new precomp_v_vari<T, vari_value<T>>(log1m_inv_logit(u.val()), u.vi_, -inv_logit(u.val()))};
+  return {new precomp_v_vari<T, vari_value<T>>(log1m_inv_logit(u.val()), u.vi_,
+                                               -inv_logit(u.val()))};
 }
 
 }  // namespace math

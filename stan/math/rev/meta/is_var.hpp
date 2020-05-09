@@ -32,7 +32,9 @@ struct is_var_value_impl<math::var_value<Args...>> : std::true_type {};
 }  // namespace internal
 
 template <typename T>
-struct is_var_value<T, std::enable_if_t<internal::is_var_value_impl<std::decay_t<T>>::value>> {};
+struct is_var_value<
+    T, std::enable_if_t<internal::is_var_value_impl<std::decay_t<T>>::value>> {
+};
 
 }  // namespace stan
 #endif

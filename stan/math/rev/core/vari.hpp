@@ -22,7 +22,7 @@ class vari_base {
    * Apply the chain rule to this variable based on the variables
    * on which it depends.
    */
-  virtual void chain() { };
+  virtual void chain(){};
 
   /**
    * Initialize the adjoint for this (dependent) variable to 1.
@@ -30,14 +30,14 @@ class vari_base {
    * propagating derivatives, setting the derivative of the
    * result with respect to itself to be 1.
    */
-  virtual void init_dependent() { };
+  virtual void init_dependent(){};
 
   /**
    * Set the adjoint value of this variable to 0.  This is used to
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  virtual void set_zero_adjoint() {};
+  virtual void set_zero_adjoint(){};
 
   /**
    * Throw an illegal argument exception.
@@ -115,7 +115,6 @@ class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>>
       ChainableStack::instance_->var_nochain_stack_.push_back(this);
     }
   }
-
 
   /**
    * Initialize the adjoint for this (dependent) variable to 1.
