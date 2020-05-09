@@ -92,7 +92,7 @@ class var_value {
     require_integral_t<IntegralT>* = nullptr,
     require_arithmetic_t<T>* = nullptr>
    var_value(IntegralT x) : // NOLINT
-     vi_(new vari_value<T>(x, false)) {}
+     vi_(new vari_value<T>(x, false)) {} // NOLINT
 
    var_value(T x) : vi_(new vari_value<T>(x, false)) {}  // NOLINT
 
