@@ -1,15 +1,13 @@
 #ifndef STAN_MATH_REV_CORE_OPERATOR_ADDITION_HPP
 #define STAN_MATH_REV_CORE_OPERATOR_ADDITION_HPP
 
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/fill.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/fill.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
-#include <stan/math/rev/meta/is_vari.hpp>
-#include <stan/math/rev/meta/is_var.hpp>
-#include <stan/math/rev/core/vv_vari.hpp>
-#include <stan/math/rev/core/vd_vari.hpp>
 #include <stan/math/rev/core/op_vari.hpp>
+#include <stan/math/rev/meta/is_var.hpp>
+#include <stan/math/rev/meta/is_vari.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
 

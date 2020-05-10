@@ -2,7 +2,8 @@
 #define STAN_MATH_REV_CORE_PRECOMP_VVV_VARI_HPP
 
 #include <stan/math/rev/core/vari.hpp>
-#include <stan/math/rev/core/vvv_vari.hpp>
+#include <stan/math/rev/core/op_vari.hpp>
+
 
 namespace stan {
 namespace math {

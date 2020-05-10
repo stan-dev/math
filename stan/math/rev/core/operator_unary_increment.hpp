@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
-#include <stan/math/rev/core/v_vari.hpp>
+#include <stan/math/rev/core/op_vari.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
 
