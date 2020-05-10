@@ -192,7 +192,7 @@ class var_value {
    * @param b The scalar to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
-  template <typename Arith, require_vt_arithmetic<Arith>...>
+  template <typename Arith, require_arithmetic_t<Arith>...>
   inline var_value<T>& operator+=(const Arith& b);
 
   /**

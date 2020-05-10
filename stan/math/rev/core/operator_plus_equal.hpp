@@ -15,7 +15,7 @@ inline var_value<T>& var_value<T>::operator+=(const var_value<T>& b) {
 }
 
 template <typename T>
-template <typename Arith, require_vt_arithmetic<Arith>...>
+template <typename Arith, require_arithmetic_t<Arith>...>
 inline var_value<T>& var_value<T>::operator+=(const Arith& b) {
   if (b == 0) {
     return *this;
