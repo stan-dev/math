@@ -17,8 +17,11 @@ TEST(StanAgradRevInternal, precomp_vvv_vari) {
   AVEC vars = createAVEC(x1, x2, x3);
 
   EXPECT_NO_THROW(
-      y = stan::math::var(new stan::math::precomp_vvv_vari<double, vari_value<double>, vari_value<double>, vari_value<double>>(
-          value, x1.vi_, x2.vi_, x3.vi_, gradient1, gradient2, gradient3)));
+      y = stan::math::var(
+          new stan::math::precomp_vvv_vari<double, vari_value<double>,
+                                           vari_value<double>,
+                                           vari_value<double>>(
+              value, x1.vi_, x2.vi_, x3.vi_, gradient1, gradient2, gradient3)));
   EXPECT_FLOAT_EQ(value, y.val());
 
   VEC g;
