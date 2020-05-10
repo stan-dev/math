@@ -56,7 +56,8 @@ inline var_value<T> fabs(const var_value<T>& a) {
   } else if (a.val() == 0) {
     return var_value<T>(new vari(0));
   } else {
-    return var_value<T>(new precomp_v_vari<T, vari_value<T>>(NOT_A_NUMBER, a.vi_, NOT_A_NUMBER));
+    return var_value<T>(new precomp_v_vari<T, vari_value<T>>(
+        NOT_A_NUMBER, a.vi_, NOT_A_NUMBER));
   }
 }
 

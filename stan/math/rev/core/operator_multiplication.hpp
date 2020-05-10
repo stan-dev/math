@@ -19,10 +19,11 @@ template <typename VariVal, typename Vari1, typename Vari2, typename = void>
 class multiply_vari {};
 
 template <typename VariVal, typename Vari1, typename Vari2>
-class multiply_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>> final
-    : public op_vari<VariVal, Vari1*, Vari2*> {
+class multiply_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>>
+    final : public op_vari<VariVal, Vari1*, Vari2*> {
   using op_vari<VariVal, Vari1*, Vari2*>::avi;
   using op_vari<VariVal, Vari1*, Vari2*>::bvi;
+
  public:
   multiply_vari(Vari1* avi, Vari2* bvi)
       : op_vari<VariVal, Vari1*, Vari2*>(avi->val_ * bvi->val_, avi, bvi) {}
@@ -42,8 +43,10 @@ class multiply_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> final
     : public op_vari<VariVal, Vari*, Arith> {
   using op_vari<VariVal, Vari*, Arith>::avi;
   using op_vari<VariVal, Vari*, Arith>::bd;
+
  public:
-  multiply_vari(Vari* avi, const Arith& b) : op_vari<VariVal, Vari*, Arith>(avi->val_ * b, avi, b) {}
+  multiply_vari(Vari* avi, const Arith& b)
+      : op_vari<VariVal, Vari*, Arith>(avi->val_ * b, avi, b) {}
   void chain() {
     if (unlikely(is_any_nan(avi()->val_, bd()))) {
       avi()->adj_ = NOT_A_NUMBER;
@@ -93,7 +96,8 @@ class multiply_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> final
  */
 template <typename T>
 inline var_value<T> operator*(const var_value<T>& a, const var_value<T>& b) {
-  return {new internal::multiply_vari<T, vari_value<T>, vari_value<T>>(a.vi_, b.vi_)};
+  return {new internal::multiply_vari<T, vari_value<T>, vari_value<T>>(a.vi_,
+                                                                       b.vi_)};
 }
 
 /**
@@ -133,7 +137,8 @@ inline var_value<T> operator*(const Arith& a, const var_value<T>& b) {
   if (a == 1.0) {
     return b;
   }
-  return {new internal::multiply_vari<T, vari_value<T>, Arith>(b.vi_, a)};  // by symmetry
+  return {new internal::multiply_vari<T, vari_value<T>, Arith>(
+      b.vi_, a)};  // by symmetry
 }
 
 }  // namespace math
