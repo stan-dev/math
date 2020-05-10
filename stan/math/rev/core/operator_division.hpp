@@ -8,10 +8,7 @@
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/meta/is_vari.hpp>
 #include <stan/math/rev/core/std_complex.hpp>
-#include <stan/math/rev/core/vv_vari.hpp>
-#include <stan/math/rev/core/vd_vari.hpp>
 #include <stan/math/rev/core/op_vari.hpp>
-#include <stan/math/rev/core/dv_vari.hpp>
 #include <stan/math/rev/core/operator_addition.hpp>
 #include <stan/math/rev/core/operator_multiplication.hpp>
 #include <stan/math/rev/core/operator_subtraction.hpp>
