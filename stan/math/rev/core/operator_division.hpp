@@ -56,7 +56,7 @@ class divide_vari<
 
  public:
   divide_vari(Vari* dividend_vi, Arith divisor)
-      : op_vari<VariVal, Vari*, const Arith&>(dividend_vi->val_ / divisor,
+      : op_vari<VariVal, Vari*, Arith>(dividend_vi->val_ / divisor,
                                               dividend_vi, divisor) {}
   void chain() {
     if (unlikely(is_any_nan(avi()->val_, bd()))) {
