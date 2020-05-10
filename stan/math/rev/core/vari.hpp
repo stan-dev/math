@@ -173,6 +173,150 @@ class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>>
   }
 };
 
+template <typename T>
+class vari_value<T, std::enable_if_t<is_eigen<T>::value>>
+    : public vari_base {
+ private:
+  template <typename>
+  friend class var_value;
+  using eigen_scalar = value_type_t<T>;
+  value_type_t<T>* val_mem_;
+  value_type_t<T>* adj_mem_;
+ public:
+  using Scalar = T;
+  using value_type = T;
+  using PlainObject = plain_type_t<T>;
+  using eigen_map = Eigen::Map<PlainObject>;
+  const Eigen::Index rows_;
+  const Eigen::Index cols_;
+  const Eigen::Index size_;
+  const Eigen::Index RowsAtCompileTime = T::RowsAtCompileTime;
+  const Eigen::Index ColsAtCompileTime = T::ColsAtCompileTime;
+  /**
+   * The value of this variable.
+   */
+  eigen_map val_;
+
+  /**
+   * The adjoint of this variable, which is the partial derivative
+   * of this variable with respect to the root variable.
+   */
+  eigen_map adj_;
+
+  /**
+   * Construct a variable implementation from a value.  The
+   * adjoint is initialized to zero.
+   *
+   * All constructed variables are added to the stack.  Variables
+   * should be constructed before variables on which they depend
+   * to insure proper partial derivative propagation.  During
+   * derivative propagation, the chain() method of each variable
+   * will be called in the reverse order of construction.
+   *
+   * @param x Value of the constructed variable.
+   */
+  explicit vari_value(const T& x) :
+  val_mem_(
+    ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(x.size())),
+  adj_mem_(
+    ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(x.size())),
+  val_(val_mem_, x.rows(), x.cols()),
+  adj_(adj_mem_, x.rows(), x.cols()),
+  rows_(x.rows()),
+  cols_(x.cols()),
+  size_(x.size()) {
+    val_ = x;
+    adj_.setZero();
+    ChainableStack::instance_->var_stack_.push_back(this);
+  }
+
+  vari_value(const T& x, bool stacked) :
+  val_mem_(
+    ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(x.size())),
+  adj_mem_(
+    ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(x.size())),
+  val_(val_mem_, x.rows(), x.cols()),
+  adj_(adj_mem_, x.rows(), x.cols()),
+  rows_(x.rows()),
+  cols_(x.cols()),
+  size_(x.size()) {
+    val_ = x;
+    adj_.setZero();
+    if (stacked) {
+      ChainableStack::instance_->var_stack_.push_back(this);
+    } else {
+      ChainableStack::instance_->var_nochain_stack_.push_back(this);
+    }
+  }
+
+  const Eigen::Index rows() const {
+    return rows_;
+  }
+  const Eigen::Index cols() const {
+    return cols_;
+  }
+  const Eigen::Index size() const {
+    return size_;
+  }
+
+  /**
+   * Initialize the adjoint for this (dependent) variable to 1.
+   * This operation is applied to the dependent variable before
+   * propagating derivatives, setting the derivative of the
+   * result with respect to itself to be 1.
+   */
+  void init_dependent() final { adj_.setOnes(); }
+
+  /**
+   * Set the adjoint value of this variable to 0.  This is used to
+   * reset adjoints before propagating derivatives again (for
+   * example in a Jacobian calculation).
+   */
+  void set_zero_adjoint() final { adj_.setZero(); }
+
+  /**
+   * Insertion operator for vari. Prints the current value and
+   * the adjoint value.
+   *
+   * @param os [in, out] ostream to modify
+   * @param v [in] vari object to print.
+   *
+   * @return The modified ostream.
+   */
+  friend std::ostream& operator<<(std::ostream& os, const vari_value<T>* v) {
+    return os << v->val_ << ":" << v->adj_;
+  }
+
+  /**
+   * Allocate memory from the underlying memory pool.  This memory is
+   * is managed as a whole externally.
+   *
+   * Warning: Classes should not be allocated with this operator
+   * if they have non-trivial destructors.
+   *
+   * @param nbytes Number of bytes to allocate.
+   * @return Pointer to allocated bytes.
+   */
+  static inline void* operator new(size_t nbytes) {
+    return ChainableStack::instance_->memalloc_.alloc(nbytes);
+  }
+
+  /**
+   * Delete a pointer from the underlying memory pool.
+   *
+   * This no-op implementation enables a subclass to throw
+   * exceptions in its constructor.  An exception thrown in the
+   * constructor of a subclass will result in an error being
+   * raised, which is in turn caught and calls delete().
+   *
+   * See the discussion of "plugging the memory leak" in:
+   *   http://www.parashift.com/c++-faq/memory-pools.html
+   */
+  static inline void operator delete(void* /* ignore arg */) { /* no op */
+  }
+};
+
+
 using vari = vari_value<double>;
 
 }  // namespace math
