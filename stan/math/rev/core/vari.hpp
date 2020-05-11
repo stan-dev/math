@@ -174,14 +174,14 @@ class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>>
 };
 
 template <typename T>
-class vari_value<T, std::enable_if_t<is_eigen<T>::value>>
-    : public vari_base {
+class vari_value<T, std::enable_if_t<is_eigen<T>::value>> : public vari_base {
  private:
   template <typename>
   friend class var_value;
   using eigen_scalar = value_type_t<T>;
   value_type_t<T>* val_mem_;
   value_type_t<T>* adj_mem_;
+
  public:
   using Scalar = T;
   using value_type = T;
@@ -215,31 +215,31 @@ class vari_value<T, std::enable_if_t<is_eigen<T>::value>>
    *
    * @param x Value of the constructed variable.
    */
-  explicit vari_value(const T& x) :
-  val_mem_(
-    ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(x.size())),
-  adj_mem_(
-    ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(x.size())),
-  val_(val_mem_, x.rows(), x.cols()),
-  adj_(adj_mem_, x.rows(), x.cols()),
-  rows_(x.rows()),
-  cols_(x.cols()),
-  size_(x.size()) {
+  explicit vari_value(const T& x)
+      : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
+            x.size())),
+        adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
+            x.size())),
+        val_(val_mem_, x.rows(), x.cols()),
+        adj_(adj_mem_, x.rows(), x.cols()),
+        rows_(x.rows()),
+        cols_(x.cols()),
+        size_(x.size()) {
     val_ = x;
     adj_.setZero();
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
-  vari_value(const T& x, bool stacked) :
-  val_mem_(
-    ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(x.size())),
-  adj_mem_(
-    ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(x.size())),
-  val_(val_mem_, x.rows(), x.cols()),
-  adj_(adj_mem_, x.rows(), x.cols()),
-  rows_(x.rows()),
-  cols_(x.cols()),
-  size_(x.size()) {
+  vari_value(const T& x, bool stacked)
+      : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
+            x.size())),
+        adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
+            x.size())),
+        val_(val_mem_, x.rows(), x.cols()),
+        adj_(adj_mem_, x.rows(), x.cols()),
+        rows_(x.rows()),
+        cols_(x.cols()),
+        size_(x.size()) {
     val_ = x;
     adj_.setZero();
     if (stacked) {
@@ -249,15 +249,9 @@ class vari_value<T, std::enable_if_t<is_eigen<T>::value>>
     }
   }
 
-  const Eigen::Index rows() const {
-    return rows_;
-  }
-  const Eigen::Index cols() const {
-    return cols_;
-  }
-  const Eigen::Index size() const {
-    return size_;
-  }
+  const Eigen::Index rows() const { return rows_; }
+  const Eigen::Index cols() const { return cols_; }
+  const Eigen::Index size() const { return size_; }
 
   /**
    * Initialize the adjoint for this (dependent) variable to 1.
@@ -315,7 +309,6 @@ class vari_value<T, std::enable_if_t<is_eigen<T>::value>>
   static inline void operator delete(void* /* ignore arg */) { /* no op */
   }
 };
-
 
 using vari = vari_value<double>;
 
