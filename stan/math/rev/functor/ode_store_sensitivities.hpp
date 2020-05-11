@@ -30,14 +30,12 @@ namespace math {
  * @param args Extra arguments passed unmodified through to ODE right hand side
  * @return ODE state with scalar type var
  */
-template <typename F, typename T_y0_t0, typename T_t0, typename T_t, typename... Args>
-Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(const F& f,
-							      const Eigen::VectorXd& coupled_state,
-							      const Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1>& y0,
-							      const T_t0& t0,
-							      const T_t& t,
-							      std::ostream* msgs,
-							      const Args&... args) {
+template <typename F, typename T_y0_t0, typename T_t0, typename T_t,
+          typename... Args>
+Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
+    const F& f, const Eigen::VectorXd& coupled_state,
+    const Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1>& y0, const T_t0& t0,
+    const T_t& t, std::ostream* msgs, const Args&... args) {
   const size_t N = y0.size();
   const size_t y0_vars = count_vars(y0);
   const size_t args_vars = count_vars(args...);

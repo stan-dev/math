@@ -11,7 +11,7 @@ namespace math {
 /**
  * Build output for state of ODE solve from the current coupled_state when
  * all arguments are arithmetic.
- * 
+ *
  * @tparam F Type of ODE right hand side
  *
  * @param f Right hand side of the ODE
@@ -26,12 +26,10 @@ namespace math {
 template <typename F, typename... Args,
           typename = require_all_arithmetic_t<scalar_type_t<Args>...>>
 Eigen::VectorXd ode_store_sensitivities(const F& f,
-					const Eigen::VectorXd& coupled_state,
-					const Eigen::VectorXd& y0,
-					double t0,
-					double t,
-					std::ostream* msgs,
-					const Args&... args) {
+                                        const Eigen::VectorXd& coupled_state,
+                                        const Eigen::VectorXd& y0, double t0,
+                                        double t, std::ostream* msgs,
+                                        const Args&... args) {
   return coupled_state.head(y0.size());
 }
 

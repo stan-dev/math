@@ -27,7 +27,8 @@ namespace math {
  * @tparam T_t0 Type of scalar of initial time point
  * @tparam T_ts Type of time-points where ODE solution is returned
  */
-template <int Lmm, typename F, typename T_y0, typename T_t0, typename T_ts, typename... T_Args>
+template <int Lmm, typename F, typename T_y0, typename T_t0, typename T_ts,
+          typename... T_Args>
 class cvodes_integrator {
   using T_Return = return_type_t<T_y0, T_t0, T_ts, T_Args...>;
   using T_y0_t0 = return_type_t<T_y0, T_t0>;
@@ -169,19 +170,20 @@ class cvodes_integrator {
    * @param max_num_steps Upper limit on the number of integration steps to
    *   take between each output (error if exceeded)
    * @param[in, out] msgs the print stream for warning messages
-   * @param args Extra arguments passed unmodified through to ODE right hand side
-   *   function
+   * @param args Extra arguments passed unmodified through to ODE right hand
+   * side function
    * @return Solution to ODE at times \p ts
    * @return a vector of states, each state being a vector of the
    * same size as the state variable, corresponding to a time in ts.
    */
-  cvodes_integrator(const F& f, const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
-		    const T_t0& t0, const std::vector<T_ts>& ts,
-		    double relative_tolerance, double absolute_tolerance,
-		    long int max_num_steps,
-                    std::ostream* msgs, const T_Args&... args)
+  cvodes_integrator(const F& f,
+                    const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
+                    const T_t0& t0, const std::vector<T_ts>& ts,
+                    double relative_tolerance, double absolute_tolerance,
+                    long int max_num_steps, std::ostream* msgs,
+                    const T_Args&... args)
       : f_(f),
-	y0_(y0.unaryExpr([](const T_y0& val) { return T_y0_t0(val); })),
+        y0_(y0.unaryExpr([](const T_y0& val) { return T_y0_t0(val); })),
         t0_(t0),
         ts_(ts),
         args_tuple_(args...),

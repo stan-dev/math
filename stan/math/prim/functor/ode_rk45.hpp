@@ -164,7 +164,7 @@ ode_rk45_tol(const F& f,
   size_t time_index = 0;
 
   max_step_checker step_checker(max_num_steps);
-  
+
   // avoid recording of the initial state which is included by the
   // conventions of odeint in the output
   auto filtered_observer
@@ -173,9 +173,8 @@ ode_rk45_tol(const F& f,
       observer_initial_recorded = true;
       return;
     }
-    y.emplace_back(ode_store_sensitivities(f, coupled_state, y0,
-					   t0, ts[time_index],
-					   msgs, args...));
+    y.emplace_back(ode_store_sensitivities(f, coupled_state, y0, t0,
+                                           ts[time_index], msgs, args...));
     step_checker.reset();
     time_index++;
   };
@@ -185,13 +184,12 @@ ode_rk45_tol(const F& f,
 
   const double step_size = 0.1;
   integrate_times(
-      make_dense_output(absolute_tolerance, relative_tolerance,
-                        runge_kutta_dopri5<Eigen::VectorXd, double,
-			                   Eigen::VectorXd, double,
-			                   vector_space_algebra>()),
-      std::ref(coupled_system), initial_coupled_state,
-      std::begin(ts_vec), std::end(ts_vec), step_size, filtered_observer,
-      step_checker);
+      make_dense_output(
+          absolute_tolerance, relative_tolerance,
+          runge_kutta_dopri5<Eigen::VectorXd, double, Eigen::VectorXd, double,
+                             vector_space_algebra>()),
+      std::ref(coupled_system), initial_coupled_state, std::begin(ts_vec),
+      std::end(ts_vec), step_size, filtered_observer, step_checker);
 
   return y;
 }
