@@ -15,6 +15,7 @@
 #include <stan/math/rev/functor/integrate_ode_adams.hpp>
 #include <stan/math/rev/functor/integrate_ode_bdf.hpp>
 #include <stan/math/rev/functor/ode_bdf.hpp>
+#include <stan/math/rev/functor/ode_store_sensitivities.hpp>
 #include <stan/math/rev/functor/jacobian.hpp>
 #include <stan/math/rev/functor/kinsol_data.hpp>
 #include <stan/math/rev/functor/kinsol_solve.hpp>

@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/functor/coupled_ode_system.hpp>
-#include <stan/math/prim/fun/ode_store_sensitivities.hpp>
+#include <stan/math/prim/functor/ode_store_sensitivities.hpp>
 #include <boost/numeric/odeint/external/eigen/eigen_algebra.hpp>
 #include <boost/numeric/odeint.hpp>
 #include <ostream>
@@ -12,20 +12,94 @@
 namespace stan {
 namespace math {
 
+/**
+ * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
+ * times, { t1, t2, t3, ... } using the non-stiff Runge-Kutta 45 solver in Boost
+ * with a relative tolerance of 1e-10, an absolute tolerance of 1e-10, and
+ * taking a maximum of 1e8 steps.
+ *
+ * If the system of equations is stiff, <code>ode_bdf</code> will likely be
+ * faster.
+ *
+ * \p f must define an operator() with the signature as:
+ *   template<typename T_t, typename T_y, typename... T_Args>
+ *   Eigen::Matrix<stan::return_type_t<T_t, T_y, T_Args...>, Eigen::Dynamic, 1>
+ *     operator()(const T_t& t, const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y,
+ *     std::ostream* msgs, const T_Args&... args);
+ *
+ * t is the time, y is the state, msgs is a stream for error messages, and args
+ * are optional arguments passed to the ODE solve function (which are passed
+ * through to \p f without modification).
+ *
+ * @tparam F Type of ODE right hand side
+ * @tparam T_0 Type of initial time
+ * @tparam T_ts Type of output times
+ * @tparam T_Args Types of pass-through parameters
+ *
+ * @param f Right hand side of the ODE
+ * @param y0 Initial state
+ * @param t0 Initial time
+ * @param ts Times at which to solve the ODE at. All values must be sorted and
+ *   not less than t0.
+ * @param relative_tolerance Relative tolerance passed to CVODES
+ * @param absolute_tolerance Absolute tolerance passed to CVODES
+ * @param max_num_steps Upper limit on the number of integration steps to
+ *   take between each output (error if exceeded)
+ * @param[in, out] msgs the print stream for warning messages
+ * @param args Extra arguments passed unmodified through to ODE right hand side
+ * @return Solution to ODE at times \p ts
+ */
 template <typename F, typename T_initial, typename T_t0, typename T_ts,
 	  typename... Args>
 std::vector<Eigen::Matrix<stan::return_type_t<T_initial, Args...>, Eigen::Dynamic, 1>>
 ode_rk45(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0, double t0,
          const std::vector<double>& ts, std::ostream* msgs,
          const Args&... args) {
-  double relative_tolerance = 1e-6;
-  double absolute_tolerance = 1e-6;
-  long int max_num_steps = 1e6;
+  double relative_tolerance = 1e-10;
+  double absolute_tolerance = 1e-10;
+  long int max_num_steps = 1e8;
 
   return ode_rk45_tol(f, y0, t0, ts, relative_tolerance, absolute_tolerance,
                       max_num_steps, msgs, args...);
 }
 
+/**
+ * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
+ * times, { t1, t2, t3, ... } using the non-stiff Runge-Kutta 45 solver in Boost
+ * with a relative tolerance of 1e-10, an absolute tolerance of 1e-10, and
+ * taking a maximum of 1e8 steps.
+ *
+ * If the system of equations is stiff, <code>ode_bdf</code> will likely be
+ * faster.
+ *
+ * \p f must define an operator() with the signature as:
+ *   template<typename T_t, typename T_y, typename... T_Args>
+ *   Eigen::Matrix<stan::return_type_t<T_t, T_y, T_Args...>, Eigen::Dynamic, 1>
+ *     operator()(const T_t& t, const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y,
+ *     std::ostream* msgs, const T_Args&... args);
+ *
+ * t is the time, y is the state, msgs is a stream for error messages, and args
+ * are optional arguments passed to the ODE solve function (which are passed
+ * through to \p f without modification).
+ *
+ * @tparam F Type of ODE right hand side
+ * @tparam T_0 Type of initial time
+ * @tparam T_ts Type of output times
+ * @tparam T_Args Types of pass-through parameters
+ *
+ * @param f Right hand side of the ODE
+ * @param y0 Initial state
+ * @param t0 Initial time
+ * @param ts Times at which to solve the ODE at. All values must be sorted and
+ *   not less than t0.
+ * @param relative_tolerance Relative tolerance passed to CVODES
+ * @param absolute_tolerance Absolute tolerance passed to CVODES
+ * @param max_num_steps Upper limit on the number of integration steps to
+ *   take between each output (error if exceeded)
+ * @param[in, out] msgs the print stream for warning messages
+ * @param args Extra arguments passed unmodified through to ODE right hand side
+ * @return Solution to ODE at times \p ts
+ */
 template <typename F, typename T_initial, typename T_t0, typename T_ts,
 	  typename... Args>
 std::vector<Eigen::Matrix<stan::return_type_t<T_initial, T_t0, T_ts, Args...>, Eigen::Dynamic, 1>>
@@ -88,6 +162,8 @@ ode_rk45_tol(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0_a
   bool observer_initial_recorded = false;
   size_t time_index = 0;
 
+  max_step_checker step_checker(max_num_steps);
+  
   // avoid recording of the initial state which is included by the
   // conventions of odeint in the output
   auto filtered_observer
@@ -99,6 +175,7 @@ ode_rk45_tol(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0_a
     y.emplace_back(ode_store_sensitivities(f, coupled_state, y0,
 					   t0, ts[time_index],
 					   msgs, args...));
+    step_checker.reset();
     time_index++;
   };
 
@@ -113,7 +190,7 @@ ode_rk45_tol(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0_a
 			                   vector_space_algebra>()),
       std::ref(coupled_system), initial_coupled_state,
       std::begin(ts_vec), std::end(ts_vec), step_size, filtered_observer,
-      max_step_checker(max_num_steps));
+      step_checker);
 
   return y;
 }

@@ -10,6 +10,9 @@
 namespace stan {
 namespace math {
 
+/**
+ *  @deprecated use <code>ode_bdf</code>
+ */
 template <typename F, typename T_initial, typename T_param, typename T_t0,
           typename T_ts>
 std::vector<std::vector<return_type_t<T_initial, T_param, T_t0, T_ts>>>

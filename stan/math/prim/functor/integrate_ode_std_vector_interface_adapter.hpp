@@ -11,10 +11,16 @@ namespace math {
 
 namespace internal {
 
+/**
+ * Wrap a functor designed for use with integrate_ode_bdf, integrate_ode_rk45,
+ * and integrate_ode_adams to use with the new ode_bdf/ode_rk45 interfaces.
+ *
+ * The old functors took the ODE state as a std::vector. The new ones take
+ * state as an Eigen::Matrix. The adapter converts to and from these forms
+ * so that the old ODE interfaces can work.
+ */
 template <typename F>
 struct integrate_ode_std_vector_interface_adapter {
-  // NOTE: I made this copy by value because
-  //  this function might go out of scope in reverse mode
   const F f_;
 
   integrate_ode_std_vector_interface_adapter(const F& f) : f_(f) {

@@ -4,7 +4,7 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/functor/cvodes_utils.hpp>
 #include <stan/math/rev/functor/coupled_ode_system.hpp>
-#include <stan/math/rev/fun/ode_store_sensitivities.hpp>
+#include <stan/math/rev/functor/ode_store_sensitivities.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <cvodes/cvodes.h>
@@ -21,14 +21,19 @@ namespace math {
  * methods).
  *
  * @tparam Lmm ID of ODE solver (1: ADAMS, 2: BDF)
+ * @tparam F Type of ODE right hand side
+ * @tparam T_y0 Type of scalars for initial state
+ * @tparam T_param Type of scalars for parameters
+ * @tparam T_t0 Type of scalar of initial time point
+ * @tparam T_ts Type of time-points where ODE solution is returned
  */
-template <int Lmm, typename F, typename T_initial, typename T_t0, typename T_ts, typename... T_Args>
+template <int Lmm, typename F, typename T_y0, typename T_t0, typename T_ts, typename... T_Args>
 class cvodes_integrator {
-  using T_Return = return_type_t<T_initial, T_t0, T_ts, T_Args...>;
-  using T_initial_or_t0 = return_type_t<T_initial, T_t0>;
+  using T_Return = return_type_t<T_y0, T_t0, T_ts, T_Args...>;
+  using T_y0_t0 = return_type_t<T_y0, T_t0>;
 
   const F& f_;
-  const Eigen::Matrix<T_initial_or_t0, Eigen::Dynamic, 1> y0_;
+  const Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1> y0_;
   const T_t0 t0_;
   const std::vector<T_ts>& ts_;
   std::tuple<const T_Args&...> args_tuple_;
@@ -42,7 +47,7 @@ class cvodes_integrator {
   const size_t y0_vars_;
   const size_t args_vars_;
 
-  coupled_ode_system<F, T_initial_or_t0, T_Args...> coupled_ode_;
+  coupled_ode_system<F, T_y0_t0, T_Args...> coupled_ode_;
 
   Eigen::VectorXd coupled_state_;
   N_Vector nv_state_;
@@ -151,13 +156,32 @@ class cvodes_integrator {
   }
 
  public:
-  cvodes_integrator(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
+  /**
+   * Construct cvodes_integrator object
+   *
+   * @param f Right hand side of the ODE
+   * @param y0 Initial state
+   * @param t0 Initial time
+   * @param ts Times at which to solve the ODE at. All values must be sorted and
+   *   not less than t0.
+   * @param relative_tolerance Relative tolerance passed to CVODES
+   * @param absolute_tolerance Absolute tolerance passed to CVODES
+   * @param max_num_steps Upper limit on the number of integration steps to
+   *   take between each output (error if exceeded)
+   * @param[in, out] msgs the print stream for warning messages
+   * @param args Extra arguments passed unmodified through to ODE right hand side
+   *   function
+   * @return Solution to ODE at times \p ts
+   * @return a vector of states, each state being a vector of the
+   * same size as the state variable, corresponding to a time in ts.
+   */
+  cvodes_integrator(const F& f, const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
 		    const T_t0& t0, const std::vector<T_ts>& ts,
 		    double relative_tolerance, double absolute_tolerance,
 		    long int max_num_steps,
                     std::ostream* msgs, const T_Args&... args)
       : f_(f),
-	y0_(y0.unaryExpr([](const T_initial& val) { return T_initial_or_t0(val); })),
+	y0_(y0.unaryExpr([](const T_y0& val) { return T_y0_t0(val); })),
         t0_(t0),
         ts_(ts),
         args_tuple_(args...),
@@ -218,44 +242,12 @@ class cvodes_integrator {
   }
 
   /**
-   * Return the solutions for the specified system of ordinary
-   * differential equations given the specified initial state,
-   * initial times, times of desired solution, and parameters and
-   * data, writing error and warning messages to the specified
-   * stream.
+   * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
+   * times, { t1, t2, t3, ... } using the stiff backward differentiation formula
+   * (BDF) solver in CVODES.
    *
-   * This function is templated to allow the initials to be
-   * either data or autodiff variables and the parameters to be data
-   * or autodiff variables.  The autodiff-based implementation for
-   * reverse-mode are defined in namespace <code>stan::math</code>
-   * and may be invoked via argument-dependent lookup by including
-   * their headers.
-   *
-   * The solver used is based on the backward differentiation
-   * formula which is an implicit numerical integration scheme
-   * appropriate for stiff ODE systems.
-   *
-   * @tparam F type of ODE system function.
-   * @tparam T_initial type of scalars for initial values.
-   * @tparam T_param type of scalars for parameters.
-   * @tparam T_t0 type of scalar of initial time point.
-   * @tparam T_ts type of time-points where ODE solution is returned.
-   *
-   * @param[in] f functor for the base ordinary differential equation.
-   * @param[in] y0 initial state.
-   * @param[in] t0 initial time.
-   * @param[in] ts times of the desired solutions, in strictly
-   * increasing order, all greater than the initial time.
-   * @param[in] theta parameter vector for the ODE.
-   * @param[in] x continuous data vector for the ODE.
-   * @param[in] x_int integer data vector for the ODE.
-   * @param[in, out] msgs the print stream for warning messages.
-   * @param[in] relative_tolerance relative tolerance passed to CVODE.
-   * @param[in] absolute_tolerance absolute tolerance passed to CVODE.
-   * @param[in] max_num_steps maximal number of admissable steps
-   * between time-points
-   * @return a vector of states, each state being a vector of the
-   * same size as the state variable, corresponding to a time in ts.
+   * @return std::vector of Eigen::Matrix of the states of the ODE, one for each
+   *   solution time (excluding the initial state)
    */
   std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> integrate() {  // NOLINT(runtime/int)
     std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y;

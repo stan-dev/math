@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_FUN_ODE_STORE_SENSITIVITIES_HPP
-#define STAN_MATH_REV_FUN_ODE_STORE_SENSITIVITIES_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_ODE_STORE_SENSITIVITIES_HPP
+#define STAN_MATH_REV_FUNCTOR_ODE_STORE_SENSITIVITIES_HPP
 
 #include <stan/math/prim/fun/ode_store_sensitivities.hpp>
 #include <stan/math/rev/core.hpp>
@@ -9,10 +9,31 @@
 namespace stan {
 namespace math {
 
-template <typename F, typename T_initial_or_t0, typename T_t0, typename T_t, typename... Args>
+/**
+ * Build output vars for a state of the ODE solve, storing the sensitivities
+ * precomputed using the forward sensitivity problem in precomputed varis.
+ *
+ * Any combination of y0, t0, ts, and any of the args arguments can have the
+ * var scalar type.
+ *
+ * @tparam F Type of ODE right hand side
+ * @tparam T_0 Type of initial time
+ * @tparam T_ts Type of output times
+ * @tparam T_Args Types of pass-through parameters
+ *
+ * @param f Right hand side of the ODE
+ * @param coupled_state Current state of the coupled_ode_system
+ * @param y0 Initial state
+ * @param t0 Initial time
+ * @param ts Times at which to solve the ODE at
+ * @param[in, out] msgs the print stream for warning messages
+ * @param args Extra arguments passed unmodified through to ODE right hand side
+ * @return ODE state with scalar type var
+ */
+template <typename F, typename T_y0_t0, typename T_t0, typename T_t, typename... Args>
 Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(const F& f,
 							      const Eigen::VectorXd& coupled_state,
-							      const Eigen::Matrix<T_initial_or_t0, Eigen::Dynamic, 1>& y0,
+							      const Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1>& y0,
 							      const T_t0& t0,
 							      const T_t& t,
 							      std::ostream* msgs,
