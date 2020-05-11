@@ -18,31 +18,60 @@
 namespace stan {
 namespace math {
 
+/** \addtogroup matrix_cl_group
+ *  @{
+ */
+
+/**
+ * Represents an var matrix on the OpenCL device.
+ * @tparam T an arithmetic type for the type stored in the OpenCL buffer.
+ */
 template <typename T>
 class matrix_cl<T, require_var_t<T>> {
  private:
-  /**
-   * cl::Buffer provides functionality for working with the OpenCL buffer.
-   * An OpenCL buffer allocates the memory in the device that
-   * is provided by the context.
-   */
-  const int rows_;
-  const int cols_;
-  mutable matrix_cl<double> val_;
-  mutable matrix_cl<double> adj_;
+  const int rows_{0};            // Number of rows
+  const int cols_{0};            // Number of columns
+  matrix_cl<double> val_{0, 0};  // holds autodiff values
+  matrix_cl<double> adj_{0, 0};  // holds autodiff adjoints
   matrix_cl_view view_{matrix_cl_view::Entire};
 
  public:
-  using Scalar = T;
-  using type = T;
+  using Scalar = T;  // Inner type of matrix
+  using type = T;    // Inner type of matrix
+  /**
+   * Return the number of rows
+   */
   inline int rows() const { return rows_; }
 
+  /**
+   * Return the number of cols
+   */
   inline int cols() const { return cols_; }
 
+  /**
+   * Return the size of the matrix
+   */
   inline int size() const { return rows_ * cols_; }
 
-  inline matrix_cl<double>& val() const { return val_; }
-  inline matrix_cl<double>& adj() const { return adj_; }
+  /**
+   * Constant accessor value matrix
+   */
+  inline const matrix_cl<double>& val() const { return val_; }
+
+  /**
+   * Accessor for value matrix
+   */
+  inline matrix_cl<double>& val() { return val_; }
+
+  /**
+   * Constant accessor for the adjoint matrix
+   */
+  inline const matrix_cl<double>& adj() const { return adj_; }
+  /**
+   * Accessor for the adjoint matrix
+   */
+  inline matrix_cl<double>& adj() { return adj_; }
+
   matrix_cl() : rows_(0), cols_(0), val_(0, 0), adj_(0, 0) {}
 
   // Forward declare the methods that work in place on the matrix
@@ -57,14 +86,27 @@ class matrix_cl<T, require_var_t<T>> {
                         size_t A_j, size_t this_i, size_t this_j, size_t nrows,
                         size_t ncols);
 
+  /**
+   * Read only accessor of the view
+   */
   inline const matrix_cl_view& view() const { return view_; }
 
+  /**
+   * Modify the view.
+   * @param view a `matrix_cl_view` that indicates a special type of matrix.
+   */
   inline void view(const matrix_cl_view& view) {
     view_ = view;
     val_.view(view);
     adj_.view(view);
   }
 
+  /**
+   * Construct a matrix from an Eigen type.
+   * @tparam Mat Type derived from `Eigen::Base`
+   * @param A an object derived from `Eigen::EigenBase`
+   * @param partial_view `matrix_cl_view` for declaring special type.
+   */
   template <typename Mat, require_eigen_st<is_var, Mat>...>
   explicit matrix_cl(Mat&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
@@ -74,6 +116,11 @@ class matrix_cl<T, require_var_t<T>> {
         adj_(A.adj().eval(), partial_view),
         view_(partial_view) {}
 
+  /**
+   * Construct a matrix from an `Eigen::Matrix<var, -1, -1>`
+   * @param A Eigen matrix with a scalar `var` type.
+   * @param partial_view `matrix_cl_view` for declaring special type.
+   */
   explicit matrix_cl(const matrix_vi& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()),
@@ -82,6 +129,13 @@ class matrix_cl<T, require_var_t<T>> {
         adj_(A.adj().eval(), partial_view),
         view_(partial_view) {}
 
+  /**
+   * Construct a matrix from a pointer of vari pointers
+   * @param A a pointer pointing to varis
+   * @param R number of rows for the matrix.
+   * @param C Number of columns for the matrix.
+   * @param partial_view `matrix_cl_view` for declaring special type.
+   */
   explicit matrix_cl(vari** A, const int& R, const int& C,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(R),
@@ -123,6 +177,13 @@ class matrix_cl<T, require_var_t<T>> {
     adj_.add_write_event(transfer_event2);
   }
 
+  /**
+   * Create matrix of vars from a vector.
+   * @param A a standard vector holding vars
+   * @param R number of rows for the matrix.
+   * @param C Number of columns for the matrix.
+   * @param partial_view `matrix_cl_view` for declaring special type.
+   */
   explicit matrix_cl(const std::vector<var>& A, const int& R, const int& C,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(R),
@@ -164,6 +225,9 @@ class matrix_cl<T, require_var_t<T>> {
     adj_.add_write_event(transfer_event2);
   }
 
+  /**
+   * Initialize a var matrix with size rows and columns
+   */
   explicit matrix_cl(const int& rows, const int& cols,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(rows),
@@ -172,12 +236,14 @@ class matrix_cl<T, require_var_t<T>> {
         adj_(rows, cols),
         view_(partial_view) {}
 
-  matrix_cl<var> operator=(const matrix_cl<var>& A) {
+  auto& operator=(const matrix_cl<var>& A) {
     val_ = A.val();
     adj_ = A.adj();
     return *this;
   }
 };
+
+/** @}*/
 
 }  // namespace math
 }  // namespace stan

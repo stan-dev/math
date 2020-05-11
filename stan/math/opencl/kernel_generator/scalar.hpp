@@ -8,12 +8,18 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <limits>
-#include <string>
-#include <type_traits>
 #include <set>
+#include <string>
+#include <tuple>
+#include <type_traits>
+#include <utility>
 
 namespace stan {
 namespace math {
+
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 
 /**
  * Represents a scalar in kernel generator expressions.
@@ -47,10 +53,11 @@ class scalar_ : public operation_cl<scalar_<T>, T> {
    * generates kernel code for this expression.
    * @param i row index variable name
    * @param j column index variable name
+   * @param view_handled whether whether caller already handled matrix view
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& i,
-                               const std::string& j) const {
+  inline kernel_parts generate(const std::string& i, const std::string& j,
+                               const bool view_handled) const {
     kernel_parts res{};
     res.args = type_str<Scalar>() + " " + var_name + ", ";
     return res;
@@ -84,24 +91,14 @@ class scalar_ : public operation_cl<scalar_<T>, T> {
   inline int cols() const { return base::dynamic; }
 
   /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
+   * Determine indices of extreme sub- and superdiagonals written.
+   * @return pair of indices - bottom and top diagonal
    */
-  inline matrix_cl_view view() const { return matrix_cl_view::Entire; }
-
-  /**
-   * Determine index of bottom diagonal written.
-   * @return number of columns
-   */
-  inline int bottom_diagonal() const { return std::numeric_limits<int>::min(); }
-
-  /**
-   * Determine index of top diagonal written.
-   * @return number of columns
-   */
-  inline int top_diagonal() const { return std::numeric_limits<int>::max(); }
+  inline std::pair<int, int> extreme_diagonals() const {
+    return {std::numeric_limits<int>::min(), std::numeric_limits<int>::max()};
+  }
 };
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 

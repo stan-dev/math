@@ -9,21 +9,22 @@
 namespace stan {
 namespace math {
 
-template <typename T, int R, int C>
-inline Eigen::Matrix<fvar<T>, R, R> multiply_lower_tri_self_transpose(
-    const Eigen::Matrix<fvar<T>, R, C>& m) {
+template <typename EigMat, require_eigen_vt<is_fvar, EigMat>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
+                     EigMat::RowsAtCompileTime>
+multiply_lower_tri_self_transpose(const EigMat& m) {
   if (m.rows() == 0) {
     return {};
   }
-  Eigen::Matrix<fvar<T>, R, C> L(m.rows(), m.cols());
+  plain_type_t<EigMat> L(m.rows(), m.cols());
   L.setZero();
 
   for (size_type i = 0; i < m.rows(); i++) {
     for (size_type j = 0; (j < i + 1) && (j < m.cols()); j++) {
-      L(i, j) = m(i, j);
+      L.coeffRef(i, j) = m.coeff(i, j);
     }
   }
-  return multiply(L, transpose(L));
+  return multiply(L, L.transpose());
 }
 
 }  // namespace math
