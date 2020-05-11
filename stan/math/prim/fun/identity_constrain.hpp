@@ -39,7 +39,7 @@ inline decltype(auto) identity_constrain(Scalar&& x) {
  */
 template <typename Scalar, typename... Types,
           require_all_stan_scalar_t<Scalar, Types...>* = nullptr>
-inline auto identity_constrain(Scalar&& x, Types&&... args) {
+inline auto identity_constrain(const Scalar& x, Types&&... args) {
   return return_type_t<Scalar, Types...>(x);
 }
 

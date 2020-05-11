@@ -18,7 +18,7 @@ namespace math {
  * @throw std::domain_error If v is not vector dimensioned.
  */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
-inline auto dot_self(StdVec&& x) {
+inline auto dot_self(const StdVec& x) {
   value_type_t<StdVec> sum = 0.0;
   for (auto&& i : x) {
     sum += i * i;

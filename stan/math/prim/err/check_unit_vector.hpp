@@ -32,7 +32,7 @@ namespace math {
  *   vector or if any element is <code>NaN</code>
  */
 template <typename Vec, require_vector_like_t<Vec>* = nullptr>
-void check_unit_vector(const char* function, const char* name, Vec&& theta) {
+void check_unit_vector(const char* function, const char* name, const Vec& theta) {
   check_nonzero_size(function, name, theta);
   using std::fabs;
   value_type_t<Vec> ssq = dot_self(theta);

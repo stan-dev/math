@@ -22,7 +22,7 @@ namespace math {
  *   values, or if any element is <code>NaN</code>.
  */
 template <typename Vec, require_vector_like_t<Vec>* = nullptr>
-inline void check_ordered(const char* function, const char* name, Vec&& y) {
+inline void check_ordered(const char* function, const char* name, const Vec& y) {
   for (int n = 1; n < y.size(); n++) {
     if (!(y[n] > y[n - 1])) {
       std::ostringstream msg1;

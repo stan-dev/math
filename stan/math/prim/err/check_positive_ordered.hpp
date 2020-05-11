@@ -24,7 +24,7 @@ namespace math {
  */
 template <typename Vec, require_vector_like_t<Vec>* = nullptr>
 inline void check_positive_ordered(const char* function, const char* name,
-                                   Vec&& y) {
+                                   const Vec& y) {
   if (y.size() == 0) {
     return;
   }
