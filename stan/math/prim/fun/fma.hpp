@@ -28,13 +28,14 @@ inline double fma(T1 x, T2 y, T3 z) {
 }
 
 template <typename T1, typename T2, typename T3,
- require_any_eigen_t<T1, T2, T3>* = nullptr,
- require_all_vt_arithmetic<T1, T2, T3>* = nullptr>
+          require_any_eigen_t<T1, T2, T3>* = nullptr,
+          require_all_vt_arithmetic<T1, T2, T3>* = nullptr>
 inline auto fma(const T1& x, const T2& y, const T3& z) {
   using std::fma;
-  return (as_array_or_scalar(x) * as_array_or_scalar(y) + as_array_or_scalar(z)).matrix().eval();
+  return (as_array_or_scalar(x) * as_array_or_scalar(y) + as_array_or_scalar(z))
+      .matrix()
+      .eval();
 }
-
 
 }  // namespace math
 }  // namespace stan
