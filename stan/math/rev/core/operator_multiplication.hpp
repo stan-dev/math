@@ -38,7 +38,7 @@ class multiply_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>>
 };
 
 template <typename VariVal, typename Vari, typename Arith>
-class multiply_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> final
+class multiply_vari<VariVal, Vari, Arith, require_arithmetic_t<Arith>> final
     : public op_vari<VariVal, Vari*, Arith> {
   using op_vari<VariVal, Vari*, Arith>::avi;
   using op_vari<VariVal, Vari*, Arith>::bd;

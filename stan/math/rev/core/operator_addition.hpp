@@ -39,7 +39,7 @@ class add_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>> final
 };
 
 template <typename VariVal, typename Vari, typename Arith>
-class add_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> final
+class add_vari<VariVal, Vari, Arith, require_arithmetic_t<Arith>> final
     : public op_vari<VariVal, Vari*, Arith> {
   using op_vari<VariVal, Vari*, Arith>::avi;
   using op_vari<VariVal, Vari*, Arith>::bd;
@@ -111,7 +111,7 @@ inline var_value<T> operator+(const var_value<T>& a, const var_value<T>& b) {
  * @param b Second scalar operand.
  * @return Result of adding variable and scalar.
  */
-template <typename T, typename Arith, require_vt_arithmetic<Arith>...>
+template <typename T, typename Arith, require_arithmetic_t<Arith>...>
 inline var_value<T> operator+(const var_value<T>& a, const Arith& b) {
   if (b == 0.0) {
     return a;
@@ -131,7 +131,7 @@ inline var_value<T> operator+(const var_value<T>& a, const Arith& b) {
  * @param b Second variable operand.
  * @return Result of adding variable and scalar.
  */
-template <typename T, typename Arith, require_vt_arithmetic<Arith>...>
+template <typename T, typename Arith, require_arithmetic_t<Arith>...>
 inline var_value<T> operator+(const Arith& a, const var_value<T>& b) {
   if (a == 0.0) {
     return b;

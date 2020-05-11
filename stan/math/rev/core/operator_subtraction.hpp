@@ -37,7 +37,7 @@ class subtract_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>>
 };
 
 template <typename VariVal, typename Vari, typename Arith>
-class subtract_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> final
+class subtract_vari<VariVal, Vari, Arith, require_arithmetic_t<Arith>> final
     : public op_vari<VariVal, Vari*, Arith> {
   using op_vari<VariVal, Vari*, Arith>::avi;
   using op_vari<VariVal, Vari*, Arith>::bd;
@@ -134,7 +134,7 @@ inline var_value<T> operator-(const var_value<T>& a, const var_value<T>& b) {
  * @param b Second scalar operand.
  * @return Result of subtracting the scalar from the variable.
  */
-template <typename T, typename Arith, require_vt_arithmetic<Arith>...>
+template <typename T, typename Arith, require_arithmetic_t<Arith>...>
 inline var_value<T> operator-(const var_value<T>& a, const Arith& b) {
   if (b == 0.0) {
     return a;
@@ -155,7 +155,7 @@ inline var_value<T> operator-(const var_value<T>& a, const Arith& b) {
  * @param b Second variable operand.
  * @return Result of subtracting a variable from a scalar.
  */
-template <typename T, typename Arith, require_vt_arithmetic<Arith>...>
+template <typename T, typename Arith, require_arithmetic_t<Arith>...>
 inline var_value<T> operator-(const Arith& a, const var_value<T>& b) {
   return {new internal::subtract_vari<T, Arith, vari_value<T>>(a, b.vi_)};
 }

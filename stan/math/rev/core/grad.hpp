@@ -28,20 +28,12 @@ namespace math {
  * derivative propagation.
  */
 static void grad(vari_base* vi) {
-  // simple reference implementation (intended as doc):
-  //   vi->init_dependent();
-  //   size_t end = var_stack_.size();
-  //   size_t begin = empty_nested() ? 0 : end - nested_size();
-  //   for (size_t i = end; --i > begin; )
-  //     var_stack_[i]->chain();
-
-  using it_t = std::vector<vari_base*>::reverse_iterator;
   vi->init_dependent();
-  it_t begin = ChainableStack::instance_->var_stack_.rbegin();
-  it_t end = empty_nested() ? ChainableStack::instance_->var_stack_.rend()
-                            : begin + nested_size();
-  for (it_t it = begin; it < end; ++it) {
-    (*it)->chain();
+  std::vector<vari_base*>& var_stack = ChainableStack::instance_->var_stack_;
+  size_t end = var_stack.size();
+  size_t beginning = empty_nested() ? 0 : end - nested_size();
+  for (size_t i = end; i-- > beginning;) {
+    var_stack[i]->chain();
   }
 }
 

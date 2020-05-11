@@ -4,7 +4,6 @@
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/op_vari.hpp>
 
-
 namespace stan {
 namespace math {
 
