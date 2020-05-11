@@ -636,7 +636,7 @@ solve_quadprog_chol(const Eigen::Matrix<T0, -1, -1> &L,
 /* tr(AB^T) = sum( A hadamard_prod B) 
 * https://en.wikipedia.org/wiki/Trace_(linear_algebra)
 */ 
-  auto c1 = sum(elt_multiply(L.template triangularView<Eigen::Lower>(), L.template triangularView<Eigen::Lower>()));
+  auto c1 = elt_multiply(L, L).sum();
 
   /* initialize the matrix R */
   d.setZero();
@@ -672,10 +672,9 @@ solve_quadprog_chol(const Eigen::Matrix<T0, -1, -1> &L,
    * */
 /* **CHANGE HERE** 
 * can use J here so don't need to compute inverse again */
-  const Eigen::Matrix<T0, -1, -1> Ginv(L.rows(), L.cols());
-  Ginv.setZero();
+  Eigen::Matrix<T0, -1, -1> Ginv = Eigen::Matrix<T0, -1, -1>::Constant(L.rows(), L.cols(), 0.0);
   Ginv.template selfadjointView<Eigen::Lower>().rankUpdate(J.transpose());
-  auto x = multiply(Ginv, g0);
+  Eigen::Matrix<T_return, -1, 1> x = multiply(Ginv, g0);
   x = -x;
   
   /* and compute the current solution value */
