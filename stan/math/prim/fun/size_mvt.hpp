@@ -20,14 +20,14 @@ namespace math {
  *   only match scalars.
  * @throw std::invalid_argument since the type is a scalar.
  */
-template <typename T, require_stan_scalar_t<T>* = nullptr>
-size_t size_mvt(const T& /* unused */) {
+template <typename ScalarT, require_stan_scalar_t<ScalarT>* = nullptr>
+size_t size_mvt(const ScalarT& /* unused */) {
   throw std::invalid_argument("size_mvt passed to an unrecognized type.");
   return 1U;
 }
 
-template <typename T, require_eigen_t<T>* = nullptr>
-size_t size_mvt(const T& /* unused */) {
+template <typename EigenT, require_eigen_t<EigenT>* = nullptr>
+size_t size_mvt(const EigenT& /* unused */) {
   return 1U;
 }
 

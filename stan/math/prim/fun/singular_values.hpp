@@ -13,7 +13,7 @@ namespace math {
  * <p>See the documentation for <code>svd()</code> for
  * information on the singular values.
  *
- * @tparam T type of elements in the matrix
+ * @tparam EigMat type of the matrix
  * @param m Specified matrix.
  * @return Singular values of the matrix.
  */

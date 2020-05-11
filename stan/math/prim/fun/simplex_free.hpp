@@ -19,7 +19,7 @@ namespace math {
  * <p>The simplex transform is defined through a centered
  * stick-breaking process.
  *
- * @tparam T type of elements in the simplex
+ * @tparam ColVec type of the simplex (must be a column vector)
  * @param x Simplex of dimensionality K.
  * @return Free vector of dimensionality (K-1) that transforms to
  * the simplex.

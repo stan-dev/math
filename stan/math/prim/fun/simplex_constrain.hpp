@@ -20,7 +20,7 @@ namespace math {
  *
  * The transform is based on a centered stick-breaking process.
  *
- * @tparam T type of the vector
+ * @tparam ColVec type of the vector
  * @param y Free vector input of dimensionality K - 1.
  * @return Simplex of dimensionality K.
  */

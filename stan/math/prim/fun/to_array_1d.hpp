@@ -14,14 +14,11 @@ namespace math {
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
 inline std::vector<value_type_t<EigMat>> to_array_1d(const EigMat& matrix) {
   using T_val = value_type_t<EigMat>;
-  const Eigen::Ref<const Eigen::Matrix<T_val, EigMat::RowsAtCompileTime,
-                                       EigMat::ColsAtCompileTime>>& mat_ref
+  std::vector<T_val> result(matrix.size());
+  Eigen::Map<Eigen::Matrix<T_val, EigMat::RowsAtCompileTime,
+                           EigMat::ColsAtCompileTime>>(result.data(), matrix.rows(),
+                                                       matrix.cols())
       = matrix;
-  int matrix_size = matrix.size();
-  std::vector<T_val> result(matrix_size);
-  for (int i = 0; i < matrix_size; i++) {
-    result[i] = mat_ref.data()[i];
-  }
   return result;
 }
 

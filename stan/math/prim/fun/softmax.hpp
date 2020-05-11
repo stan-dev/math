@@ -37,7 +37,7 @@ namespace math {
  * \end{array}
  * \f$
  *
- * @tparam T type of elements in the vector
+ * @tparam ColVec type of elements in the vector
  * @param[in] v Vector to transform.
  * @return Unit simplex result of the softmax transform of the vector.
  */
