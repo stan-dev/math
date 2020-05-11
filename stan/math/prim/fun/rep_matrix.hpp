@@ -21,20 +21,14 @@ template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
 inline Eigen::Matrix<value_type_t<ColVec>, Eigen::Dynamic, Eigen::Dynamic>
 rep_matrix(const ColVec& v, int n) {
   check_nonnegative("rep_matrix", "rows", n);
-  Eigen::Matrix<value_type_t<ColVec>, Eigen::Dynamic, Eigen::Dynamic> result(
-      v.size(), n);
-  result.colwise() = v;
-  return result;
+  return v.replicate(1, n);
 }
 
 template <typename RowVec, require_eigen_row_vector_t<RowVec>* = nullptr>
 inline Eigen::Matrix<value_type_t<RowVec>, Eigen::Dynamic, Eigen::Dynamic>
 rep_matrix(const RowVec& rv, int m) {
   check_nonnegative("rep_matrix", "cols", m);
-  Eigen::Matrix<value_type_t<RowVec>, Eigen::Dynamic, Eigen::Dynamic> result(
-      m, rv.size());
-  result.rowwise() = rv;
-  return result;
+  return rv.replicate(m, 1);
 }
 }  // namespace math
 }  // namespace stan

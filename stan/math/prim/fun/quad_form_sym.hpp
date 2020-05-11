@@ -17,7 +17,7 @@ namespace math {
  *
  * @param A symmetric matrix
  * @param B second matrix
- * @return The quadratic form, which is a symmetric matrix of size CB.
+ * @return The quadratic form, which is a symmetric matrix.
  * @throws std::invalid_argument if A is not symmetric, or if A cannot be
  * multiplied by B
  */

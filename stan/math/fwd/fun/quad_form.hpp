@@ -31,7 +31,7 @@ inline promote_scalar_t<return_type_t<EigMat1, EigMat2>, EigMat2> quad_form(
     const EigMat1& A, const EigMat2& B) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
-  return multiply(transpose(B), multiply(A, B));
+  return multiply(B.transpose(), multiply(A, B));
 }
 
 /**

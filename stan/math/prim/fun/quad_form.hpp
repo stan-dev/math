@@ -18,7 +18,7 @@ namespace math {
  *
  * @param A square matrix
  * @param B second matrix
- * @return The quadratic form, which is a symmetric matrix of size CB.
+ * @return The quadratic form, which is a symmetric matrix.
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
  */
@@ -27,7 +27,9 @@ template <typename EigMat1, typename EigMat2,
           require_not_eigen_col_vector_t<EigMat2>* = nullptr,
           require_vt_same<EigMat1, EigMat2>* = nullptr,
           require_all_vt_arithmetic<EigMat1, EigMat2>* = nullptr>
-inline plain_type_t<EigMat2> quad_form(const EigMat1& A, const EigMat2& B) {
+inline Eigen::Matrix<value_type_t<EigMat2>, EigMat2::ColsAtCompileTime,
+                     EigMat2::ColsAtCompileTime>
+quad_form(const EigMat1& A, const EigMat2& B) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
   return B.transpose() * A * B;

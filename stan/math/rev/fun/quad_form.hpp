@@ -106,7 +106,7 @@ class quad_form_vari : public vari {
  *
  * @param A square matrix
  * @param B second matrix
- * @return The quadratic form, which is a symmetric matrix of size Cb.
+ * @return The quadratic form, which is a symmetric matrix.
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
  */
