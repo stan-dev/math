@@ -83,19 +83,19 @@ inline var_value<T> fmin(const var_value<T>& a, const var_value<T>& b) {
  * value, the first variable, otherwise the second value promoted to a fresh
  * variable.
  */
-template <typename T>
-inline var_value<T> fmin(const var_value<T>& a, T b) {
+template <typename T1, typename T2>
+inline var_value<T1> fmin(const var_value<T1>& a, T2 b) {
   if (unlikely(is_nan(a))) {
     if (unlikely(is_nan(b))) {
-      return var_value<T>(new precomp_v_vari<T, vari_value<T>>(
+      return var_value<T2>(new precomp_v_vari<T1, vari_value<T2>>(
           NOT_A_NUMBER, a.vi_, NOT_A_NUMBER));
     }
-    return var_value<T>(b);
+    return var_value<T1>(b);
   }
   if (unlikely(is_nan(b))) {
     return a;
   }
-  return a <= b ? a : var_value<T>(b);
+  return a <= b ? a : var_value<T1>(b);
 }
 
 /**
@@ -112,19 +112,19 @@ inline var_value<T> fmin(const var_value<T>& a, T b) {
  * return the first value promoted to a variable, otherwise return the
  * second variable.
  */
-template <typename T>
-inline var_value<T> fmin(T a, const var_value<T>& b) {
+template <typename T1, typename T2>
+inline var_value<T2> fmin(T1 a, const var_value<T2>& b) {
   if (unlikely(is_nan(b))) {
     if (unlikely(is_nan(a))) {
-      return var_value<T>(new precomp_v_vari<T, vari_value<T>>(
+      return var_value<T2>(new precomp_v_vari<T1, vari_value<T2>>(
           NOT_A_NUMBER, b.vi_, NOT_A_NUMBER));
     }
-    return var_value<T>(a);
+    return var_value<T2>(a);
   }
   if (unlikely(is_nan(a))) {
     return b;
   }
-  return b <= a ? b : var_value<T>(a);
+  return b <= a ? b : var_value<T2>(a);
 }
 
 }  // namespace math
