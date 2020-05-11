@@ -626,23 +626,33 @@ solve_quadprog_chol(const Eigen::Matrix<T0, -1, -1> &L,
    */
 
   /* compute the trace of the original matrix G */
-  auto chol = L;
-  auto G = tcrossprod(L);
+/* can remove this  auto chol = L; 
+* can provide the trace already so don't need
+* to compute G again 
+*  auto G = tcrossprod(L);
+*  auto c1 = G.trace(); */
 
-  auto c1 = G.trace();
-
+/* tr(AB^T) = sum( A hadamard_prod B) 
+* https://en.wikipedia.org/wiki/Trace_(linear_algebra)
+*/ 
+auto c1 = sum(elt_multiply(L.triangularView<Eigen::Lower>(), L.triangularView<Eigen::Lower>()));
 
   /* initialize the matrix R */
   d.setZero();
 
-  Eigen::Matrix<T0, -1, -1> R(G.rows(), G.cols());
+  /*  compute the trace of the original matrix G */
+/* **CHANGE HERE** G to L */
+  Eigen::Matrix<T0, -1, -1> R(L.rows(), L.cols());
   R.setZero();
   T_return R_norm = 1.0; /* this variable will hold the norm of the matrix R */
-  
+
   /* compute the inverse of the factorized matrix G^-1, this is the initial
    * value for H */
   //J = L^-T
-  auto J = stan::math::transpose(stan::math::mdivide_left_tri_low(chol));
+/* **CHANGE HERE** 
+* J is only called once and trace is the same regardless of transpose 
+* also change chol to L */
+  auto J = stan::math::mdivide_left_tri_low(L);
   auto c2 = J.trace();
 #ifdef TRACE_SOLVER
   print_matrix("J", J, n);
@@ -659,7 +669,10 @@ solve_quadprog_chol(const Eigen::Matrix<T0, -1, -1> &L,
   /* G^-1 = (L^-1)^T (L^-1) 
    * https://forum.kde.org/viewtopic.php?f=74&t=127426
    * */
-  auto Ginv = crossprod(mdivide_left_tri_low(L));
+/* **CHANGE HERE** 
+* can use J here so don't need to compute inverse again */
+  Ginv.setZero();
+  Ginv.selfadjointView<Lower>().rankUpdate(J.transpose());
   auto x = multiply(Ginv, g0);
   x = -x;
   
