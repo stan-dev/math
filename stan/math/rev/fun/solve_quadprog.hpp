@@ -597,6 +597,7 @@ solve_quadprog_chol(const Eigen::Matrix<T0, -1, -1> &L,
                const Eigen::Matrix<T3, -1, 1> &ce0,
                const Eigen::Matrix<T4, -1, -1> &CI,
                const Eigen::Matrix<T5, -1, 1> &ci0) {
+  L.eval();
   using std::abs;
   int i = 0, j = 0, k = 0, l = 0; /* indices */
   int ip, me, mi;
@@ -635,7 +636,7 @@ solve_quadprog_chol(const Eigen::Matrix<T0, -1, -1> &L,
 /* tr(AB^T) = sum( A hadamard_prod B) 
 * https://en.wikipedia.org/wiki/Trace_(linear_algebra)
 */ 
-auto c1 = sum(elt_multiply(L.triangularView<Eigen::Lower>(), L.triangularView<Eigen::Lower>()));
+  auto c1 = sum(elt_multiply(L.template triangularView<Eigen::Lower>(), L.template triangularView<Eigen::Lower>()));
 
   /* initialize the matrix R */
   d.setZero();
@@ -671,8 +672,9 @@ auto c1 = sum(elt_multiply(L.triangularView<Eigen::Lower>(), L.triangularView<Ei
    * */
 /* **CHANGE HERE** 
 * can use J here so don't need to compute inverse again */
+  const Eigen::Matrix<T0, -1, -1> Ginv(L.rows(), L.cols());
   Ginv.setZero();
-  Ginv.selfadjointView<Lower>().rankUpdate(J.transpose());
+  Ginv.template selfadjointView<Eigen::Lower>().rankUpdate(J.transpose());
   auto x = multiply(Ginv, g0);
   x = -x;
   
