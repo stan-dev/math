@@ -16,8 +16,8 @@ inline std::vector<value_type_t<EigMat>> to_array_1d(const EigMat& matrix) {
   using T_val = value_type_t<EigMat>;
   std::vector<T_val> result(matrix.size());
   Eigen::Map<Eigen::Matrix<T_val, EigMat::RowsAtCompileTime,
-                           EigMat::ColsAtCompileTime>>(result.data(), matrix.rows(),
-                                                       matrix.cols())
+                           EigMat::ColsAtCompileTime>>(
+      result.data(), matrix.rows(), matrix.cols())
       = matrix;
   return result;
 }
