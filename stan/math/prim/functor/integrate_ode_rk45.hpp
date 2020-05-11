@@ -24,12 +24,12 @@ integrate_ode_rk45(const F& f, const std::vector<T1>& y0, const T_t0& t0,
                    double relative_tolerance = 1e-6,
                    double absolute_tolerance = 1e-6, int max_num_steps = 1e6) {
   internal::integrate_ode_std_vector_interface_adapter<F> f_adapted(f);
-  auto y = ode_rk45_tol(f_adapted, to_vector(y0), t0, ts,
-			relative_tolerance, absolute_tolerance,
-			max_num_steps, msgs, theta, x, x_int);
+  auto y
+      = ode_rk45_tol(f_adapted, to_vector(y0), t0, ts, relative_tolerance,
+                     absolute_tolerance, max_num_steps, msgs, theta, x, x_int);
 
   std::vector<std::vector<return_type_t<T1, T_param, T_t0, T_ts>>> y_converted;
-  for(size_t i = 0; i < y.size(); ++i)
+  for (size_t i = 0; i < y.size(); ++i)
     y_converted.push_back(to_array_1d(y[i]));
 
   return y_converted;

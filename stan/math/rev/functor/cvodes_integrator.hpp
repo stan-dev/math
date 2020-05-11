@@ -102,8 +102,8 @@ class cvodes_integrator {
     const Eigen::VectorXd y_vec = Eigen::Map<const Eigen::VectorXd>(y, N_);
 
     Eigen::VectorXd dy_dt_vec
-      = apply([&](auto&&... args) { return f_(t, y_vec, msgs_, args...); },
-	      value_of_args_tuple_);
+        = apply([&](auto&&... args) { return f_(t, y_vec, msgs_, args...); },
+                value_of_args_tuple_);
 
     check_size_match("cvodes_integrator::rhs", "dy_dt", dy_dt_vec.size(),
                      "states", N_);
@@ -121,7 +121,7 @@ class cvodes_integrator {
 
     auto f_wrapped = [&](const Eigen::Matrix<var, Eigen::Dynamic, 1>& y) {
       return apply([&](auto&&... args) { return f_(t, y, msgs_, args...); },
-          value_of_args_tuple_);
+                   value_of_args_tuple_);
     };
 
     jacobian(f_wrapped, Eigen::Map<const Eigen::VectorXd>(y, N_), fy, Jfy);
@@ -191,7 +191,7 @@ class cvodes_integrator {
         relative_tolerance_(relative_tolerance),
         absolute_tolerance_(absolute_tolerance),
         max_num_steps_(max_num_steps),
-	y0_vars_(count_vars(y0_)),
+        y0_vars_(count_vars(y0_)),
         args_vars_(count_vars(args...)),
         coupled_ode_(f, y0_, msgs, args...),
         coupled_state_(coupled_ode_.initial_state()) {
@@ -249,7 +249,8 @@ class cvodes_integrator {
    * @return std::vector of Eigen::Matrix of the states of the ODE, one for each
    *   solution time (excluding the initial state)
    */
-  std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> integrate() {  // NOLINT(runtime/int)
+  std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>>
+  integrate() {  // NOLINT(runtime/int)
     std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y;
 
     const double t0_dbl = value_of(t0_);
@@ -312,9 +313,8 @@ class cvodes_integrator {
 
         y.emplace_back(apply(
             [&](auto&&... args) {
-              return ode_store_sensitivities(f_, coupled_state_, y0_,
-					     t0_, ts_[n], msgs_,
-					     args...);
+              return ode_store_sensitivities(f_, coupled_state_, y0_, t0_,
+                                             ts_[n], msgs_, args...);
             },
             args_tuple_));
 

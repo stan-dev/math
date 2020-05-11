@@ -270,7 +270,7 @@ TEST(StanAgradRevOde_integrate_ode_bdf, t0_as_param_AD) {
 
   std::vector<double> theta{0.15};
   std::vector<double> y0{1.0, 0.0};
-  std::vector<double> ts = { 5.0, 10.0 };
+  std::vector<double> ts = {5.0, 10.0};
 
   std::vector<double> x;
   std::vector<int> x_int;
@@ -293,12 +293,16 @@ TEST(StanAgradRevOde_integrate_ode_bdf, t0_as_param_AD) {
     EXPECT_FLOAT_EQ(t0v.adj(), -0.38494826636037426937);
     stan::math::set_zero_all_adjoints();
   };
-  res = integrate_ode_bdf(ode, y0, t0v, ts, theta, x, x_int, nullptr, 1e-10, 1e-10, 1e6);
+  res = integrate_ode_bdf(ode, y0, t0v, ts, theta, x, x_int, nullptr, 1e-10,
+                          1e-10, 1e6);
   test_ad();
-  res = integrate_ode_bdf(ode, y0v, t0v, ts, theta, x, x_int, nullptr, 1e-10, 1e-10, 1e6);
+  res = integrate_ode_bdf(ode, y0v, t0v, ts, theta, x, x_int, nullptr, 1e-10,
+                          1e-10, 1e6);
   test_ad();
-  res = integrate_ode_bdf(ode, y0, t0v, ts, thetav, x, x_int, nullptr, 1e-10, 1e-10, 1e6);
+  res = integrate_ode_bdf(ode, y0, t0v, ts, thetav, x, x_int, nullptr, 1e-10,
+                          1e-10, 1e6);
   test_ad();
-  res = integrate_ode_bdf(ode, y0v, t0v, ts, thetav, x, x_int, nullptr, 1e-10, 1e-10, 1e6);
+  res = integrate_ode_bdf(ode, y0v, t0v, ts, thetav, x, x_int, nullptr, 1e-10,
+                          1e-10, 1e6);
   test_ad();
 }
