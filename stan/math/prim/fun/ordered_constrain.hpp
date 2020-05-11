@@ -56,7 +56,7 @@ Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, 1> ordered_constrain(
   if (x.size() > 1) {
     lp += x.tail(x.size() - 1).sum();
   }
-  return ordered_constrain(std::forward<Vec>(x));
+  return ordered_constrain(x);
 }
 
 }  // namespace math

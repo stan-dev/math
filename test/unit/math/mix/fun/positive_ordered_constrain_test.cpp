@@ -56,23 +56,3 @@ TEST(MathMixMatFun, positiveOrderedTransformMat) {
   v5 << 1, -3, 2, 0, -1;
   expect_positive_ordered_transform(v5);
 }
-
-TEST(MathMixMatFun, positiveOrderedTransformVec) {
-  std::vector<double> v0(0);
-  expect_positive_ordered_transform(v0);
-
-  std::vector<double> v1({1});
-  expect_positive_ordered_transform(v1);
-
-  std::vector<double> v2({3, -1});
-  expect_positive_ordered_transform(v2);
-
-  std::vector<double> v3({-12, 3, -1.9});
-  expect_positive_ordered_transform(v3);
-
-  std::vector<double> v4({-1, 0, -1.1, 0.5});
-  expect_positive_ordered_transform(v4);
-
-  std::vector<double> v5({1, -3, 2, 0, -1});
-  expect_positive_ordered_transform(v5);
-}
