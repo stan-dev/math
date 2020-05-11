@@ -91,6 +91,7 @@
 #include <stan/math/fwd/fun/proj.hpp>
 #include <stan/math/fwd/fun/quad_form.hpp>
 #include <stan/math/fwd/fun/quad_form_sym.hpp>
+#include <stan/math/fwd/fun/read_fvar.hpp>
 #include <stan/math/fwd/fun/rising_factorial.hpp>
 #include <stan/math/fwd/fun/round.hpp>
 #include <stan/math/fwd/fun/sin.hpp>

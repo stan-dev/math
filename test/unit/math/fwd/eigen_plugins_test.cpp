@@ -9,9 +9,6 @@ TEST(AgradFwdMatrixAddons, fvar_double_matrix) {
   MatrixXd vals = MatrixXd::Random(100, 100);
   MatrixXd derivs = MatrixXd::Random(100, 100);
 
-  MatrixXd vals2(100, 100);
-  MatrixXd derivs2(100, 100);
-
   matrix_fd mat_in(100, 100);
 
   for (int i = 0; i < 100; i++) {
@@ -21,14 +18,10 @@ TEST(AgradFwdMatrixAddons, fvar_double_matrix) {
     }
   }
 
-  mat_in.read_fvar(vals2, derivs2);
-
   expect_matrix_eq(vals, mat_in.val());
-  expect_matrix_eq(vals, vals2);
   expect_matrix_eq(vals.array().exp(), mat_in.val().array().exp());
 
   expect_matrix_eq(derivs, mat_in.d());
-  expect_matrix_eq(derivs, derivs2);
   expect_matrix_eq(derivs.array().exp(), mat_in.d().array().exp());
 
   EXPECT_EQ(mat_in.val().rows(), vals.rows());
@@ -40,14 +33,10 @@ TEST(AgradFwdMatrixAddons, fvar_double_matrix) {
 
 TEST(AgradFwdMatrixAddons, fvarfvar_double_matrix) {
   using Eigen::MatrixXd;
-  using stan::math::matrix_fd;
   using stan::math::matrix_ffd;
 
   MatrixXd vals = MatrixXd::Random(100, 100);
   MatrixXd derivs = MatrixXd::Random(100, 100);
-
-  matrix_fd vals2(100, 100);
-  matrix_fd derivs2(100, 100);
 
   matrix_ffd mat_in(100, 100);
 
@@ -58,14 +47,10 @@ TEST(AgradFwdMatrixAddons, fvarfvar_double_matrix) {
     }
   }
 
-  mat_in.read_fvar(vals2, derivs2);
-
   expect_matrix_eq(vals, mat_in.val().val());
-  expect_matrix_eq(vals, vals2.val());
   expect_matrix_eq(vals.array().exp(), mat_in.val().val().array().exp());
 
   expect_matrix_eq(derivs, mat_in.d().val());
-  expect_matrix_eq(derivs, derivs2.val());
   expect_matrix_eq(derivs.array().exp(), mat_in.d().val().array().exp());
 
   EXPECT_EQ(mat_in.val().rows(), vals.rows());
@@ -81,8 +66,6 @@ TEST(AgradFwdMatrixAddons, fvar_double_vector) {
 
   VectorXd vals = VectorXd::Random(100);
   VectorXd derivs = VectorXd::Random(100);
-  VectorXd vals2(100);
-  VectorXd derivs2(100);
 
   vector_fd vec_in(100);
 
@@ -91,14 +74,10 @@ TEST(AgradFwdMatrixAddons, fvar_double_vector) {
     vec_in(i).d_ = derivs(i);
   }
 
-  vec_in.read_fvar(vals2, derivs2);
-
   expect_matrix_eq(vals, vec_in.val());
-  expect_matrix_eq(vals, vals2);
   expect_matrix_eq(vals.array().exp(), vec_in.val().array().exp());
 
   expect_matrix_eq(derivs, vec_in.d());
-  expect_matrix_eq(derivs, derivs2);
   expect_matrix_eq(derivs.array().exp(), vec_in.d().array().exp());
 
   EXPECT_EQ(vec_in.val().rows(), vals.rows());
@@ -110,13 +89,10 @@ TEST(AgradFwdMatrixAddons, fvar_double_vector) {
 
 TEST(AgradFwdMatrixAddons, fvarfvar_double_vector) {
   using Eigen::VectorXd;
-  using stan::math::vector_fd;
   using stan::math::vector_ffd;
 
   VectorXd vals = VectorXd::Random(100);
   VectorXd derivs = VectorXd::Random(100);
-  vector_fd vals2(100);
-  vector_fd derivs2(100);
 
   vector_ffd vec_in(100);
 
@@ -125,14 +101,10 @@ TEST(AgradFwdMatrixAddons, fvarfvar_double_vector) {
     vec_in(i).d_.val_ = derivs(i);
   }
 
-  vec_in.read_fvar(vals2, derivs2);
-
   expect_matrix_eq(vals, vec_in.val().val());
-  expect_matrix_eq(vals, vals2.val());
   expect_matrix_eq(vals.array().exp(), vec_in.val().val().array().exp());
 
   expect_matrix_eq(derivs, vec_in.d().val());
-  expect_matrix_eq(derivs, derivs2.val());
   expect_matrix_eq(derivs.array().exp(), vec_in.d().val().array().exp());
 
   EXPECT_EQ(vec_in.val().rows(), vals.rows());
@@ -148,8 +120,6 @@ TEST(AgradFwdMatrixAddons, fvar_double_rowvector) {
 
   RowVectorXd vals = RowVectorXd::Random(100);
   RowVectorXd derivs = RowVectorXd::Random(100);
-  RowVectorXd vals2(100);
-  RowVectorXd derivs2(100);
 
   row_vector_fd row_vec_in(100);
 
@@ -158,14 +128,10 @@ TEST(AgradFwdMatrixAddons, fvar_double_rowvector) {
     row_vec_in(i).d_ = derivs(i);
   }
 
-  row_vec_in.read_fvar(vals2, derivs2);
-
   expect_matrix_eq(vals, row_vec_in.val());
-  expect_matrix_eq(vals, vals2);
   expect_matrix_eq(vals.array().exp(), row_vec_in.val().array().exp());
 
   expect_matrix_eq(derivs, row_vec_in.d());
-  expect_matrix_eq(derivs, derivs2);
   expect_matrix_eq(derivs.array().exp(), row_vec_in.d().array().exp());
 
   EXPECT_EQ(row_vec_in.val().rows(), vals.rows());
@@ -177,13 +143,10 @@ TEST(AgradFwdMatrixAddons, fvar_double_rowvector) {
 
 TEST(AgradFwdMatrixAddons, fvarfvar_double_rowvector) {
   using Eigen::RowVectorXd;
-  using stan::math::row_vector_fd;
   using stan::math::row_vector_ffd;
 
   RowVectorXd vals = RowVectorXd::Random(100);
   RowVectorXd derivs = RowVectorXd::Random(100);
-  row_vector_fd vals2(100);
-  row_vector_fd derivs2(100);
 
   row_vector_ffd row_vec_in(100);
 
@@ -192,14 +155,10 @@ TEST(AgradFwdMatrixAddons, fvarfvar_double_rowvector) {
     row_vec_in(i).d_.val_ = derivs(i);
   }
 
-  row_vec_in.read_fvar(vals2, derivs2);
-
   expect_matrix_eq(vals, row_vec_in.val().val());
-  expect_matrix_eq(vals, vals2.val());
   expect_matrix_eq(vals.array().exp(), row_vec_in.val().val().array().exp());
 
   expect_matrix_eq(derivs, row_vec_in.d().val());
-  expect_matrix_eq(derivs, derivs2.val());
   expect_matrix_eq(derivs.array().exp(), row_vec_in.d().val().array().exp());
 
   EXPECT_EQ(row_vec_in.val().rows(), vals.rows());

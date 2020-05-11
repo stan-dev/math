@@ -5,12 +5,9 @@
 TEST(AgradMixMatrixAddons, matrix_fv) {
   using Eigen::MatrixXd;
   using stan::math::matrix_fv;
-  using stan::math::matrix_v;
 
   MatrixXd vals = MatrixXd::Random(100, 100);
   MatrixXd derivs = MatrixXd::Random(100, 100);
-  matrix_v vals2(100, 100);
-  matrix_v derivs2(100, 100);
 
   matrix_fv mat_in = vals;
 
@@ -19,13 +16,11 @@ TEST(AgradMixMatrixAddons, matrix_fv) {
       mat_in(i, j).d_ = derivs(i, j);
     }
   }
-  mat_in.read_fvar(vals2, derivs2);
+
   expect_matrix_eq(vals, mat_in.val().val());
-  expect_matrix_eq(vals, vals2.val());
   expect_matrix_eq(vals.array().exp(), mat_in.val().val().array().exp());
 
   expect_matrix_eq(derivs, mat_in.d().val());
-  expect_matrix_eq(derivs, derivs2.val());
   expect_matrix_eq(derivs.array().exp(), mat_in.d().val().array().exp());
 
   EXPECT_EQ(mat_in.val().val().rows(), vals.rows());
@@ -38,12 +33,9 @@ TEST(AgradMixMatrixAddons, matrix_fv) {
 TEST(AgradMixMatrixAddons, matrix_ffv) {
   using Eigen::MatrixXd;
   using stan::math::matrix_ffv;
-  using stan::math::matrix_fv;
 
   MatrixXd vals = MatrixXd::Random(100, 100);
   MatrixXd derivs = MatrixXd::Random(100, 100);
-  matrix_fv vals2(100, 100);
-  matrix_fv derivs2(100, 100);
 
   matrix_ffv mat_in = vals;
 
@@ -53,13 +45,10 @@ TEST(AgradMixMatrixAddons, matrix_ffv) {
     }
   }
 
-  mat_in.read_fvar(vals2, derivs2);
   expect_matrix_eq(vals, mat_in.val().val().val());
-  expect_matrix_eq(vals, vals2.val().val());
   expect_matrix_eq(vals.array().exp(), mat_in.val().val().val().array().exp());
 
   expect_matrix_eq(derivs, mat_in.d().val().val());
-  expect_matrix_eq(derivs, derivs2.val().val());
   expect_matrix_eq(derivs.array().exp(), mat_in.d().val().val().array().exp());
 
   EXPECT_EQ(mat_in.val().val().val().rows(), vals.rows());
@@ -72,12 +61,9 @@ TEST(AgradMixMatrixAddons, matrix_ffv) {
 TEST(AgradMixMatrixAddons, vector_fv) {
   using Eigen::VectorXd;
   using stan::math::vector_fv;
-  using stan::math::vector_v;
 
   VectorXd vals = VectorXd::Random(100);
   VectorXd derivs = VectorXd::Random(100);
-  vector_v vals2(100);
-  vector_v derivs2(100);
 
   vector_fv vec_in = vals;
 
@@ -85,13 +71,10 @@ TEST(AgradMixMatrixAddons, vector_fv) {
     vec_in(i).d_ = derivs(i);
   }
 
-  vec_in.read_fvar(vals2, derivs2);
   expect_matrix_eq(vals, vec_in.val().val());
-  expect_matrix_eq(vals, vals2.val());
   expect_matrix_eq(vals.array().exp(), vec_in.val().val().array().exp());
 
   expect_matrix_eq(derivs, vec_in.d().val());
-  expect_matrix_eq(derivs, derivs2.val());
   expect_matrix_eq(derivs.array().exp(), vec_in.d().val().array().exp());
 
   EXPECT_EQ(vec_in.val().val().rows(), vals.rows());
@@ -104,12 +87,9 @@ TEST(AgradMixMatrixAddons, vector_fv) {
 TEST(AgradMixMatrixAddons, vector_ffv) {
   using Eigen::VectorXd;
   using stan::math::vector_ffv;
-  using stan::math::vector_fv;
 
   VectorXd vals = VectorXd::Random(100);
   VectorXd derivs = VectorXd::Random(100);
-  vector_fv vals2(100);
-  vector_fv derivs2(100);
 
   vector_ffv vec_in = vals;
 
@@ -117,13 +97,10 @@ TEST(AgradMixMatrixAddons, vector_ffv) {
     vec_in(i).d_ = derivs(i);
   }
 
-  vec_in.read_fvar(vals2, derivs2);
   expect_matrix_eq(vals, vec_in.val().val().val());
-  expect_matrix_eq(vals, vals2.val().val());
   expect_matrix_eq(vals.array().exp(), vec_in.val().val().val().array().exp());
 
   expect_matrix_eq(derivs, vec_in.d().val().val());
-  expect_matrix_eq(derivs, derivs2.val().val());
   expect_matrix_eq(derivs.array().exp(), vec_in.d().val().val().array().exp());
 
   EXPECT_EQ(vec_in.val().val().val().rows(), vals.rows());
@@ -136,12 +113,9 @@ TEST(AgradMixMatrixAddons, vector_ffv) {
 TEST(AgradMixMatrixAddons, row_vector_fv) {
   using Eigen::RowVectorXd;
   using stan::math::row_vector_fv;
-  using stan::math::row_vector_v;
 
   RowVectorXd vals = RowVectorXd::Random(100);
   RowVectorXd derivs = RowVectorXd::Random(100);
-  row_vector_v vals2(100);
-  row_vector_v derivs2(100);
 
   row_vector_fv row_vec_in = vals;
 
@@ -149,13 +123,10 @@ TEST(AgradMixMatrixAddons, row_vector_fv) {
     row_vec_in(i).d_ = derivs(i);
   }
 
-  row_vec_in.read_fvar(vals2, derivs2);
   expect_matrix_eq(vals, row_vec_in.val().val());
-  expect_matrix_eq(vals, vals2.val());
   expect_matrix_eq(vals.array().exp(), row_vec_in.val().val().array().exp());
 
   expect_matrix_eq(derivs, row_vec_in.d().val());
-  expect_matrix_eq(derivs, derivs2.val());
   expect_matrix_eq(derivs.array().exp(), row_vec_in.d().val().array().exp());
 
   EXPECT_EQ(row_vec_in.val().val().rows(), vals.rows());
@@ -168,12 +139,9 @@ TEST(AgradMixMatrixAddons, row_vector_fv) {
 TEST(AgradMixMatrixAddons, row_vector_ffv) {
   using Eigen::RowVectorXd;
   using stan::math::row_vector_ffv;
-  using stan::math::row_vector_fv;
 
   RowVectorXd vals = RowVectorXd::Random(100);
   RowVectorXd derivs = RowVectorXd::Random(100);
-  row_vector_fv vals2(100);
-  row_vector_fv derivs2(100);
 
   row_vector_ffv row_vec_in = vals;
 
@@ -181,14 +149,11 @@ TEST(AgradMixMatrixAddons, row_vector_ffv) {
     row_vec_in(i).d_ = derivs(i);
   }
 
-  row_vec_in.read_fvar(vals2, derivs2);
   expect_matrix_eq(vals, row_vec_in.val().val().val());
-  expect_matrix_eq(vals, vals2.val().val());
   expect_matrix_eq(vals.array().exp(),
                    row_vec_in.val().val().val().array().exp());
 
   expect_matrix_eq(derivs, row_vec_in.d().val().val());
-  expect_matrix_eq(derivs, derivs2.val().val());
   expect_matrix_eq(derivs.array().exp(),
                    row_vec_in.d().val().val().array().exp());
 
