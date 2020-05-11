@@ -18,17 +18,22 @@ namespace math {
  * @param x Free vector of scalars.
  * @return Positive, increasing ordered vector.
  */
-template <typename Vec, require_vector_like_t<Vec>* = nullptr>
-inline auto positive_ordered_constrain(Vec&& x) {
+template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
+Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, 1>
+positive_ordered_constrain(const EigVec& x) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using std::exp;
-  auto k = x.size();
-  plain_type_t<Vec> y(k);
+  using size_type = Eigen::Index;
+
+  size_type k = x.size();
+  Matrix<value_type_t<EigVec>, Dynamic, 1> y(k);
   if (k == 0) {
     return y;
   }
-  y[0] = exp(x[0]);
-  for (int i = 1; i < k; ++i) {
-    y[i] = y[i - 1] + exp(x[i]);
+  y.coeffRef(0) = exp(x.coeff(0));
+  for (size_type i = 1; i < k; ++i) {
+    y.coeffRef(i) = y.coeff(i - 1) + exp(x.coeff(i));
   }
   return y;
 }
@@ -45,12 +50,11 @@ inline auto positive_ordered_constrain(Vec&& x) {
  * @param lp Log probability reference.
  * @return Positive, increasing ordered vector.
  */
-template <typename Vec, typename T, require_vector_like_t<Vec>* = nullptr>
-inline auto positive_ordered_constrain(Vec&& x, T& lp) {
-  for (int i = 0; i < x.size(); ++i) {
-    lp += x[i];
-  }
-  return positive_ordered_constrain(std::forward<Vec>(x));
+template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, 1>
+positive_ordered_constrain(const EigVec& x, value_type_t<EigVec>& lp) {
+  lp += sum(x);
+  return positive_ordered_constrain(x);
 }
 
 }  // namespace math

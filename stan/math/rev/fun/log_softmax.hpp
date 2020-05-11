@@ -55,7 +55,7 @@ class log_softmax_elt_vari : public vari {
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
-template <typename T, require_t<is_var<scalar_type_t<T>>>...>
+template <typename T, require_container_st<is_var, T>* = nullptr>
 inline auto log_softmax(const T& x) {
   return apply_vector_unary<T>::apply(x, [&](const auto& alpha) {
     const int a_size = alpha.size();

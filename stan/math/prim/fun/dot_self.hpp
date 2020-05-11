@@ -27,16 +27,15 @@ inline auto dot_self(StdVec&& x) {
 }
 
 /**
- * Returns the dot product of the specified vector with itself.
+ * Returns squared norm of a vector or matrix. For vectors that equals the dot
+ * product of the specified vector with itself.
  *
- * @tparam EigVec A type deriving from `Eigen::MatrixBase` with compile time
- *  rows or columns equal to 1.
+ * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase)
  * @param v Vector.
- * @throw std::domain_error If v is not vector dimensioned.
  */
-template <typename EigMat,
-          require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
-inline double dot_self(EigMat&& v) {
+template <typename T, require_eigen_t<T>* = nullptr,
+          require_not_eigen_vt<is_var, T>* = nullptr>
+inline value_type_t<T> dot_self(const T& v) {
   return v.squaredNorm();
 }
 

@@ -43,7 +43,11 @@ class complex<stan::math::var>
    * @param[in] re real part
    */
   template <typename U, typename = stan::require_stan_scalar_t<U>>
-  complex(U&& re) : base_t(re) {}  // NOLINT(runtime/explicit)
+  complex(const U& re) : base_t(re) {}  // NOLINT(runtime/explicit)
+
+  template <typename U>
+  complex(const std::complex<U>& z)  // NOLINT(runtime/explicit)
+      : base_t(z.real(), z.imag()) {}
 
   /**
    * Set the real and imaginary components of this complex number to

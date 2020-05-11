@@ -1,15 +1,16 @@
 #ifndef STAN_MATH_REV_META_OPERANDS_AND_PARTIALS_HPP
 #define STAN_MATH_REV_META_OPERANDS_AND_PARTIALS_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/precomputed_gradients.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/fun/typedefs.hpp>
-#include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/broadcast_array.hpp>
-#include <stan/math/prim/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
+#include <stan/math/prim/meta/operands_and_partials.hpp>
 #include <stan/math/prim/meta/likely.hpp>
 #include <stan/math/prim/meta/promote_scalar_type.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -17,6 +18,7 @@
 
 namespace stan {
 namespace math {
+
 namespace internal {
 
 /** \ingroup type_trait
@@ -200,7 +202,7 @@ template <int R, int C>
 class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C>>> {
  public:
   using Op = std::vector<Eigen::Matrix<var, R, C>>;
-  using partial_t = Eigen::Matrix<double, -1, -1>;
+  using partial_t = Eigen::Matrix<double, R, C>;
   std::vector<partial_t> partials_vec_;
   explicit ops_partials_edge(const Op& ops)
       : partials_vec_(ops.size()), operands_(ops) {

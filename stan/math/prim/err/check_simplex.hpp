@@ -21,7 +21,12 @@ namespace math {
  * specified by <code>CONSTRAINT_TOLERANCE</code>. This function
  * only accepts Eigen vectors, statically typed vectors, not
  * general matrices with 1 column.
- * @tparam T_prob Scalar type of the vector
+ * @tparam T Scalar type of the vector
+ * @tparam R Eigen row type, either 1 if we have a row vector
+ *         or -1 if we have a column vector.
+ * @tparam C Eigen column type, either 1 if we have a column vector
+ *         or -1 if we have a row vector. Moreover, we either have
+ *         R = 1 and C = -1 or R = -1 and C = 1.
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param theta Vector to test.
@@ -30,13 +35,16 @@ namespace math {
  * @throw <code>std::domain_error</code> if the vector is not a
  *   simplex or if any element is <code>NaN</code>.
  */
-template <typename Vec, require_vector_like_t<Vec>* = nullptr>
-void check_simplex(const char* function, const char* name, Vec&& theta) {
+template <typename T, int R, int C>
+void check_simplex(const char* function, const char* name,
+                   const Eigen::Matrix<T, R, C>& theta) {
+  using size_type = index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>>;
   using std::fabs;
   check_nonzero_size(function, name, theta);
   const value_type_t<Vec> sum_theta = sum(theta);
   if (!(fabs(1.0 - sum_theta) <= CONSTRAINT_TOLERANCE)) {
     std::stringstream msg;
+    T sum = theta.sum();
     msg << "is not a valid simplex.";
     msg.precision(10);
     msg << " sum(" << name << ") = " << sum_theta << ", but should be ";

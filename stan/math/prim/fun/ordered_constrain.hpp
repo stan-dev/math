@@ -14,23 +14,26 @@ namespace math {
  * free vector.  The returned constrained vector will have the
  * same dimensionality as the specified free vector.
  *
- * @tparam Vec type with a `operator[]` defined.
+ * @tparam T type of the vector
  * @param x Free vector of scalars.
  * @return Positive, increasing ordered vector.
  * @tparam T Type of scalar.
  */
-template <typename Vec, require_vector_like_t<Vec>* = nullptr>
-inline auto ordered_constrain(Vec&& x) {
+template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
+plain_type_t<EigVec> ordered_constrain(const EigVec& x) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using std::exp;
+  using size_type = Eigen::Index;
 
-  auto k = x.size();
-  plain_type_t<Vec> y(k);
+  size_type k = x.size();
+  plain_type_t<EigVec> y(k);
   if (k == 0) {
     return y;
   }
   y[0] = x[0];
-  for (auto i = 1; i < k; ++i) {
-    y[i] = y[i - 1] + exp(x[i]);
+  for (size_type i = 1; i < k; ++i) {
+    y.coeffRef(i) = y.coeff(i - 1) + exp(x.coeff(i));
   }
   return y;
 }
@@ -42,16 +45,16 @@ inline auto ordered_constrain(Vec&& x) {
  * of the transform.  The returned constrained vector
  * will have the same dimensionality as the specified free vector.
  *
- * @tparam Vec type with a `operator[]` defined.
- * @tparam T type of log probability
+ * @tparam T type of the vector
  * @param x Free vector of scalars.
  * @param lp Log probability reference.
  * @return Positive, increasing ordered vector.
  */
-template <typename Vec, typename T, require_vector_like_t<Vec>* = nullptr>
-inline auto ordered_constrain(Vec&& x, T& lp) {
-  for (auto i = 1; i < x.size(); ++i) {
-    lp += x[i];
+template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
+Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, 1> ordered_constrain(
+    const EigVec& x, value_type_t<EigVec>& lp) {
+  if (x.size() > 1) {
+    lp += x.tail(x.size() - 1).sum();
   }
   return ordered_constrain(std::forward<Vec>(x));
 }

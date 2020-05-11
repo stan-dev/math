@@ -13,6 +13,10 @@
 namespace stan {
 namespace math {
 
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
+
 /**
  * Converts any valid kernel generator expression into an operation. This is an
  * overload for operations - a no-op
@@ -65,6 +69,7 @@ using as_operation_cl_t = std::conditional_t<
     decltype(as_operation_cl(std::declval<T>())),
     std::remove_reference_t<decltype(as_operation_cl(std::declval<T>()))>>;
 
+/** @}*/
 }  // namespace math
 }  // namespace stan
 

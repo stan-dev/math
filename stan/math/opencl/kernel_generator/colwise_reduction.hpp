@@ -9,7 +9,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <stan/math/opencl/kernel_generator/rowwise_reduction.hpp>
 #include <set>
 #include <string>
@@ -18,6 +18,9 @@
 
 namespace stan {
 namespace math {
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 
 /**
  * Represents a column wise reduction in kernel generator expressions. So as to
@@ -44,10 +47,10 @@ class colwise_reduction
 
  protected:
   std::string init_;
-  using base::arguments_;
   using base::derived;
 
  public:
+  using base::cols;
   /**
    * Constructor
    * @param a the expression to reduce
@@ -70,7 +73,7 @@ class colwise_reduction
       std::set<const operation_cl_base*>& generated, name_generator& ng,
       const std::string& i, const std::string& j,
       const T_result& result) const {
-    kernel_parts parts = derived().get_kernel_parts(generated, ng, i, j);
+    kernel_parts parts = derived().get_kernel_parts(generated, ng, i, j, false);
     kernel_parts out_parts = result.get_kernel_parts_lhs(generated, ng, i, j);
 
     parts.args += out_parts.args;
@@ -85,11 +88,13 @@ class colwise_reduction
    * generates kernel code for this and nested expressions.
    * @param i row index variable name
    * @param j column index variable name
+   * @param view_handled whether whether caller already handled matrix view
    * @param var_name_arg name of the variable in kernel that holds argument to
    * this expression
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
+                               const bool view_handled,
                                const std::string& var_name_arg) const {
     kernel_parts res;
     res.initialization = type_str<Scalar>() + " " + var_name + " = " + init_
@@ -121,7 +126,7 @@ class colwise_reduction
   inline int rows() const {
     int local_rows = opencl_context.base_opts().at("LOCAL_SIZE_");
     int wgs_rows
-        = (std::get<0>(arguments_).rows() + local_rows - 1) / local_rows;
+        = (this->template get_arg<0>().rows() + local_rows - 1) / local_rows;
     return wgs_rows;
   }
 
@@ -129,19 +134,15 @@ class colwise_reduction
    * Number of rows threads need to be launched for.
    * @return number of rows
    */
-  inline int thread_rows() const { return std::get<0>(arguments_).rows(); }
+  inline int thread_rows() const { return this->template get_arg<0>().rows(); }
 
   /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
+   * Determine indices of extreme sub- and superdiagonals written.
+   * @return pair of indices - bottom and top diagonal
    */
-  matrix_cl_view view() const { return matrix_cl_view::Entire; }
-
-  /**
-   * Determine index of top diagonal written.
-   * @return number of columns
-   */
-  inline int top_diagonal() const { return 1; }
+  inline std::pair<int, int> extreme_diagonals() const {
+    return {-rows() + 1, cols() - 1};
+  }
 };  // namespace math
 
 /**
@@ -161,8 +162,8 @@ class colwise_sum_ : public colwise_reduction<colwise_sum_<T>, T, sum_op> {
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline auto deep_copy() {
-    auto&& arg_copy = std::get<0>(arguments_).deep_copy();
+  inline auto deep_copy() const {
+    auto&& arg_copy = this->template get_arg<0>().deep_copy();
     return colwise_sum_<std::remove_reference_t<decltype(arg_copy)>>(
         std::move(arg_copy));
   }
@@ -180,7 +181,7 @@ class colwise_sum_ : public colwise_reduction<colwise_sum_<T>, T, sum_op> {
  * @return sum
  */
 template <typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
 inline auto colwise_sum(T&& a) {
   auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
   return colwise_sum_<std::remove_reference_t<decltype(arg_copy)>>(
@@ -209,8 +210,8 @@ class colwise_max_ : public colwise_reduction<
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline auto deep_copy() {
-    auto&& arg_copy = std::get<0>(arguments_).deep_copy();
+  inline auto deep_copy() const {
+    auto&& arg_copy = this->template get_arg<0>().deep_copy();
     return colwise_max_<std::remove_reference_t<decltype(arg_copy)>>(
         std::move(arg_copy));
   }
@@ -228,7 +229,7 @@ class colwise_max_ : public colwise_reduction<
  * @return max
  */
 template <typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
 inline auto colwise_max(T&& a) {
   auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
   return colwise_max_<std::remove_reference_t<decltype(arg_copy)>>(
@@ -257,8 +258,8 @@ class colwise_min_ : public colwise_reduction<
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline auto deep_copy() {
-    auto&& arg_copy = std::get<0>(arguments_).deep_copy();
+  inline auto deep_copy() const {
+    auto&& arg_copy = this->template get_arg<0>().deep_copy();
     return colwise_min_<std::remove_reference_t<decltype(arg_copy)>>(
         std::move(arg_copy));
   }
@@ -276,13 +277,13 @@ class colwise_min_ : public colwise_reduction<
  * @return min
  */
 template <typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
 inline auto colwise_min(T&& a) {
   auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
   return colwise_min_<std::remove_reference_t<decltype(arg_copy)>>(
       std::move(arg_copy));
 }
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 #endif

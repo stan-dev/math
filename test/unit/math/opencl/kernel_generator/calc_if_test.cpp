@@ -17,7 +17,7 @@ using stan::math::matrix_cl;
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-TEST(MathMatrixCL, is_without_output_test) {
+TEST(KernelGenerator, is_without_output_test) {
   EXPECT_TRUE((stan::math::is_without_output<
                stan::math::calc_if_<false, stan::math::scalar_<int>>>::value));
   EXPECT_TRUE((stan::math::is_without_output<const stan::math::calc_if_<
@@ -28,7 +28,7 @@ TEST(MathMatrixCL, is_without_output_test) {
       (stan::math::is_without_output<stan::math::scalar_<int>>::value));
 }
 
-TEST(MathMatrixCL, calc_if_pass_test) {
+TEST(KernelGenerator, calc_if_pass_test) {
   double eps = 0;
   MatrixXd m(2, 2);
   m << 1, 2, 3, 4;
@@ -40,7 +40,7 @@ TEST(MathMatrixCL, calc_if_pass_test) {
   EXPECT_MATRIX_NEAR(res, m, eps);
 }
 
-TEST(MathMatrixCL, calc_if_multi_result_pass_test) {
+TEST(KernelGenerator, calc_if_multi_result_pass_test) {
   double eps = 0;
   MatrixXd m(2, 2);
   m << 1, 2, 3, 4;
@@ -54,7 +54,7 @@ TEST(MathMatrixCL, calc_if_multi_result_pass_test) {
   EXPECT_MATRIX_NEAR(res, m, eps);
 }
 
-TEST(MathMatrixCL, calc_if_multi_result_no_output_test) {
+TEST(KernelGenerator, calc_if_multi_result_no_output_test) {
   double eps = 0;
   MatrixXd m(2, 2);
   m << 1, 2, 3, 4;
@@ -66,7 +66,7 @@ TEST(MathMatrixCL, calc_if_multi_result_no_output_test) {
   EXPECT_EQ(res_cl.size(), 0);
 }
 
-TEST(MathMatrixCL, calc_if_multi_result_one_output_test) {
+TEST(KernelGenerator, calc_if_multi_result_one_output_test) {
   double eps = 0;
   MatrixXd m(2, 2);
   m << 1, 2, 3, 4;
@@ -82,7 +82,7 @@ TEST(MathMatrixCL, calc_if_multi_result_one_output_test) {
   EXPECT_MATRIX_NEAR(res, m, eps);
 }
 
-TEST(MathMatrixCL, calc_if_colwise_min_test) {
+TEST(KernelGenerator, calc_if_colwise_min_test) {
   MatrixXd m(3, 2);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
 

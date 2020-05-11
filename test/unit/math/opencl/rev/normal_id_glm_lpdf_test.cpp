@@ -126,12 +126,28 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_small_simple) {
   Matrix<var, Dynamic, 1> beta_var2 = beta;
   var alpha_var1 = alpha;
   var alpha_var2 = alpha;
+
+  var res1 = stan::math::normal_id_glm_lpdf(y_cl, x_cl, alpha_var1, beta_var1,
+                                            sigma);
+  var res2 = stan::math::normal_id_glm_lpdf(y, x, alpha_var2, beta_var2, sigma);
+
+  (res1 + res2).grad();
+
+  expect_near_rel("normal_id_glm_lpdf (OpenCL)", res1.val(), res2.val());
+
+  expect_near_rel("normal_id_glm_lpdf (OpenCL)", alpha_var1.adj(),
+                  alpha_var2.adj());
+  expect_near_rel("normal_id_glm_lpdf (OpenCL)", beta_var1.adj().eval(),
+                  beta_var2.adj().eval());
+
+  stan::math::set_zero_all_adjoints();
+
   var sigma_var1 = sigma;
   var sigma_var2 = sigma;
 
-  var res1 = stan::math::normal_id_glm_lpdf(y_cl, x_cl, alpha_var1, beta_var1,
-                                            sigma_var1);
-  var res2
+  res1 = stan::math::normal_id_glm_lpdf(y_cl, x_cl, alpha_var1, beta_var1,
+                                        sigma_var1);
+  res2
       = stan::math::normal_id_glm_lpdf(y, x, alpha_var2, beta_var2, sigma_var2);
 
   (res1 + res2).grad();

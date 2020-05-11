@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_MATRIX_EXP_ACTION_HANDLER_HPP
 #define STAN_MATH_PRIM_FUN_MATRIX_EXP_ACTION_HANDLER_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <vector>
 #include <cmath>
@@ -42,8 +43,10 @@ class matrix_exp_action_handler {
    * @param [in] t double t, e.g. time.
    * @return matrix exp(A*t)*B
    */
-  inline Eigen::MatrixXd action(const Eigen::MatrixXd& mat,
-                                const Eigen::MatrixXd& b,
+  template <typename EigMat1, typename EigMat2,
+            require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
+            require_all_st_same<double, EigMat1, EigMat2>* = nullptr>
+  inline Eigen::MatrixXd action(const EigMat1& mat, const EigMat2& b,
                                 const double& t = 1.0) {
     Eigen::MatrixXd A = mat;
     double mu = A.trace() / A.rows();

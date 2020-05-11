@@ -10,9 +10,9 @@
 
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
+#include <stan/math/opencl/multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/kernels/categorical_logit_glm_lpmf.hpp>
-#include <stan/math/opencl/prim/transpose.hpp>
 
 namespace stan {
 namespace math {
