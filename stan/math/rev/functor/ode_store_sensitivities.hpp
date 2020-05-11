@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_REV_FUNCTOR_ODE_STORE_SENSITIVITIES_HPP
 #define STAN_MATH_REV_FUNCTOR_ODE_STORE_SENSITIVITIES_HPP
 
-#include <stan/math/prim/fun/ode_store_sensitivities.hpp>
+#include <stan/math/prim/functor/ode_store_sensitivities.hpp>
 #include <stan/math/rev/core.hpp>
 #include <ostream>
 #include <vector>
