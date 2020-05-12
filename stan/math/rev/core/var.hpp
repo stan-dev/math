@@ -246,7 +246,7 @@ class var_value {
    * @return The result of multiplying this variable by the specified
    * variable.
    */
-  template <typename Arith, require_arithmetic_t<Arith>...>
+  template <typename Arith, require_vt_arithmetic<Arith>...>
   inline var_value<T>& operator*=(const Arith& b);
 
   /**

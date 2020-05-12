@@ -4,6 +4,7 @@
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/operator_multiplication.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 
 namespace stan {
 namespace math {
@@ -16,9 +17,9 @@ inline var_value<T>& var_value<T>::operator*=(const var_value<T>& b) {
 }
 
 template <typename T>
-template <typename Arith, require_arithmetic_t<Arith>...>
+template <typename Arith, require_vt_arithmetic<Arith>...>
 inline var_value<T>& var_value<T>::operator*=(const Arith& b) {
-  if (b == 1.0) {
+  if (is_all_equal(b, 1.0)) {
     return *this;
   }
   vi_ = new internal::multiply_vari<T, vari_value<T>, Arith>(vi_, b);

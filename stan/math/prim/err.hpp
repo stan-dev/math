@@ -49,6 +49,8 @@
 #include <stan/math/prim/err/elementwise_check.hpp>
 #include <stan/math/prim/err/invalid_argument.hpp>
 #include <stan/math/prim/err/invalid_argument_vec.hpp>
+#include <stan/math/prim/err/is_any_equal.hpp>
+#include <stan/math/prim/err/is_all_equal.hpp>
 #include <stan/math/prim/err/is_cholesky_factor.hpp>
 #include <stan/math/prim/err/is_cholesky_factor_corr.hpp>
 #include <stan/math/prim/err/is_column_index.hpp>
