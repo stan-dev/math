@@ -8,7 +8,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <string>
 #include <type_traits>
 #include <set>
@@ -91,7 +91,7 @@ class calc_if_
 };
 
 template <bool Do_Calculate, typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
 inline calc_if_<Do_Calculate, as_operation_cl_t<T>> calc_if(T&& a) {
   return calc_if_<Do_Calculate, as_operation_cl_t<T>>(
       as_operation_cl(std::forward<T>(a)));
