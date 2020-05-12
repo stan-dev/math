@@ -3,10 +3,9 @@
 #include <gtest/gtest.h>
 
 TEST(AgradFwdMatrix, read_fvar_mat_fd) {
+  using Eigen::MatrixXd;
   using stan::math::matrix_fd;
   using stan::math::read_fvar;
-  using Eigen::MatrixXd;
-
 
   matrix_fd matrix_fvar(100, 100);
   MatrixXd matrix_val(100, 100), matrix_deriv(100, 100);
@@ -19,10 +18,9 @@ TEST(AgradFwdMatrix, read_fvar_mat_fd) {
 }
 
 TEST(AgradFwdMatrix, read_fvar_vec_fd) {
-  using stan::math::vector_fd;
-  using stan::math::read_fvar;
   using Eigen::VectorXd;
-
+  using stan::math::read_fvar;
+  using stan::math::vector_fd;
 
   vector_fd vector_fvar(100);
   VectorXd vector_val(100), vector_deriv(100);
@@ -35,10 +33,9 @@ TEST(AgradFwdMatrix, read_fvar_vec_fd) {
 }
 
 TEST(AgradFwdMatrix, read_fvar_rowvec_fd) {
-  using stan::math::row_vector_fd;
-  using stan::math::read_fvar;
   using Eigen::RowVectorXd;
-
+  using stan::math::read_fvar;
+  using stan::math::row_vector_fd;
 
   row_vector_fd row_vector_fvar(100);
   RowVectorXd row_vector_val(100), row_vector_deriv(100);
@@ -51,10 +48,9 @@ TEST(AgradFwdMatrix, read_fvar_rowvec_fd) {
 }
 
 TEST(AgradFwdMatrix, read_fvar_expr_fd) {
+  using Eigen::MatrixXd;
   using stan::math::matrix_fd;
   using stan::math::read_fvar;
-  using Eigen::MatrixXd;
-
 
   matrix_fd matrix_fvar(100, 100);
   Eigen::VectorXd matrix_diag_val(100), matrix_diag_deriv(100);
@@ -67,11 +63,10 @@ TEST(AgradFwdMatrix, read_fvar_expr_fd) {
 }
 
 TEST(AgradFwdMatrix, read_fvar_mat_ffd) {
-  using stan::math::matrix_ffd;
-  using stan::math::matrix_fd;
-  using stan::math::read_fvar;
   using Eigen::MatrixXd;
-
+  using stan::math::matrix_fd;
+  using stan::math::matrix_ffd;
+  using stan::math::read_fvar;
 
   matrix_ffd matrix_fvar_fvar(100, 100);
   matrix_fd matrix_val(100, 100), matrix_deriv(100, 100);
@@ -84,11 +79,10 @@ TEST(AgradFwdMatrix, read_fvar_mat_ffd) {
 }
 
 TEST(AgradFwdMatrix, read_fvar_vec_ffd) {
-  using stan::math::vector_ffd;
-  using stan::math::vector_fd;
-  using stan::math::read_fvar;
   using Eigen::VectorXd;
-
+  using stan::math::read_fvar;
+  using stan::math::vector_fd;
+  using stan::math::vector_ffd;
 
   vector_ffd vector_fvar_fvar(100);
   vector_fd vector_val(100), vector_deriv(100);
@@ -101,11 +95,10 @@ TEST(AgradFwdMatrix, read_fvar_vec_ffd) {
 }
 
 TEST(AgradFwdMatrix, read_fvar_rowvec_ffd) {
-  using stan::math::row_vector_ffd;
-  using stan::math::row_vector_fd;
-  using stan::math::read_fvar;
   using Eigen::RowVectorXd;
-
+  using stan::math::read_fvar;
+  using stan::math::row_vector_fd;
+  using stan::math::row_vector_ffd;
 
   row_vector_ffd row_vector_fvar_fvar(100);
   row_vector_fd row_vector_val(100), row_vector_deriv(100);
@@ -118,11 +111,10 @@ TEST(AgradFwdMatrix, read_fvar_rowvec_ffd) {
 }
 
 TEST(AgradFwdMatrix, read_fvar_expr_ffd) {
-  using stan::math::vector_fd;
+  using Eigen::MatrixXd;
   using stan::math::matrix_ffd;
   using stan::math::read_fvar;
-  using Eigen::MatrixXd;
-
+  using stan::math::vector_fd;
 
   matrix_ffd matrix_fvar_fvar(100, 100);
   vector_fd matrix_diag_val(100), matrix_diag_deriv(100);

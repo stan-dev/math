@@ -20,18 +20,17 @@ class vi_val_adj_functor {
   EigVari& vi_mat;
   EigDbl& val_mat;
 
-public:
+ public:
   vi_val_adj_functor(const EigRev& arg1, EigVari& arg2, EigDbl& arg3)
-    : var_mat(arg1), vi_mat(arg2), val_mat(arg3)
-  {}
+      : var_mat(arg1), vi_mat(arg2), val_mat(arg3) {}
 
-  inline decltype(auto) operator() (Eigen::Index row, Eigen::Index col) const {
+  inline decltype(auto) operator()(Eigen::Index row, Eigen::Index col) const {
     vi_mat.coeffRef(row, col) = var_mat.coeffRef(row, col).vi_;
     val_mat.coeffRef(row, col) = var_mat.coeffRef(row, col).vi_->val_;
     return var_mat.coeffRef(row, col).vi_->adj_;
   }
 
-  inline decltype(auto) operator() (Eigen::Index index) const {
+  inline decltype(auto) operator()(Eigen::Index index) const {
     vi_mat.coeffRef(index) = var_mat.coeffRef(index).vi_;
     val_mat.coeffRef(index) = var_mat.coeffRef(index).vi_->val_;
     return var_mat.coeffRef(index).vi_->adj_;
@@ -47,31 +46,30 @@ class val_adj_functor {
   const EigRev& var_mat;
   EigDbl& val_mat;
 
-public:
+ public:
   val_adj_functor(const EigRev& arg1, EigDbl& arg2)
-    : var_mat(arg1), val_mat(arg2)
-  {}
+      : var_mat(arg1), val_mat(arg2) {}
 
   template <typename T = EigRev, require_st_same<T, var>* = nullptr>
-  inline decltype(auto) operator() (Eigen::Index row, Eigen::Index col) const {
+  inline decltype(auto) operator()(Eigen::Index row, Eigen::Index col) const {
     val_mat.coeffRef(row, col) = var_mat.coeffRef(row, col).vi_->val_;
     return var_mat.coeffRef(row, col).vi_->adj_;
   }
 
   template <typename T = EigRev, require_st_same<T, var>* = nullptr>
-  inline decltype(auto) operator() (Eigen::Index index) const {
+  inline decltype(auto) operator()(Eigen::Index index) const {
     val_mat.coeffRef(index) = var_mat.coeffRef(index).vi_->val_;
     return var_mat.coeffRef(index).vi_->adj_;
   }
 
   template <typename T = EigRev, require_st_same<T, vari*>* = nullptr>
-  inline decltype(auto) operator() (Eigen::Index row, Eigen::Index col) const {
+  inline decltype(auto) operator()(Eigen::Index row, Eigen::Index col) const {
     val_mat.coeffRef(row, col) = var_mat.coeffRef(row, col)->val_;
     return var_mat.coeffRef(row, col)->adj_;
   }
 
   template <typename T = EigRev, require_st_same<T, vari*>* = nullptr>
-  inline decltype(auto) operator() (Eigen::Index index) const {
+  inline decltype(auto) operator()(Eigen::Index index) const {
     val_mat.coeffRef(index) = var_mat.coeffRef(index)->val_;
     return var_mat.coeffRef(index)->adj_;
   }
@@ -86,17 +84,16 @@ class vi_val_functor {
   const EigVar& var_mat;
   EigVari& vi_mat;
 
-public:
+ public:
   vi_val_functor(const EigVar& arg1, EigVari& arg2)
-    : var_mat(arg1), vi_mat(arg2)
-  {}
+      : var_mat(arg1), vi_mat(arg2) {}
 
-  inline decltype(auto) operator() (Eigen::Index row, Eigen::Index col) const {
+  inline decltype(auto) operator()(Eigen::Index row, Eigen::Index col) const {
     vi_mat.coeffRef(row, col) = var_mat.coeffRef(row, col).vi_;
     return var_mat.coeffRef(row, col).vi_->val_;
   }
 
-  inline decltype(auto) operator() (Eigen::Index index) const {
+  inline decltype(auto) operator()(Eigen::Index index) const {
     vi_mat.coeffRef(index) = var_mat.coeffRef(index).vi_;
     return var_mat.coeffRef(index).vi_->val_;
   }
@@ -111,17 +108,16 @@ class vi_adj_functor {
   const EigVar& var_mat;
   EigVari& vi_mat;
 
-public:
+ public:
   vi_adj_functor(const EigVar& arg1, EigVari& arg2)
-    : var_mat(arg1), vi_mat(arg2)
-  {}
+      : var_mat(arg1), vi_mat(arg2) {}
 
-  inline decltype(auto) operator() (Eigen::Index row, Eigen::Index col) const {
+  inline decltype(auto) operator()(Eigen::Index row, Eigen::Index col) const {
     vi_mat.coeffRef(row, col) = var_mat.coeffRef(row, col).vi_;
     return var_mat.coeffRef(row, col).vi_->adj_;
   }
 
-  inline decltype(auto) operator() (Eigen::Index index) const {
+  inline decltype(auto) operator()(Eigen::Index index) const {
     vi_mat.coeffRef(index) = var_mat.coeffRef(index).vi_;
     return var_mat.coeffRef(index).vi_->adj_;
   }
@@ -142,11 +138,10 @@ public:
 template <typename EigVar, typename EigVari, typename EigDbl>
 inline void read_vi_val_adj(const EigVar& VarMat, EigVari& VariMat,
                             EigDbl& ValMat, EigDbl& AdjMat) {
-    AdjMat = EigDbl::NullaryExpr(
-      VarMat.rows(),
-      VarMat.cols(),
-      vi_val_adj_functor<const EigVar, EigVari, EigDbl>(VarMat, VariMat,
-                                                        ValMat));
+  AdjMat
+      = EigDbl::NullaryExpr(VarMat.rows(), VarMat.cols(),
+                            vi_val_adj_functor<const EigVar, EigVari, EigDbl>(
+                                VarMat, VariMat, ValMat));
 }
 
 /**
@@ -161,11 +156,9 @@ inline void read_vi_val_adj(const EigVar& VarMat, EigVari& VariMat,
  * @param[in] AdjMat Output Eigen container of tangents.
  */
 template <typename EigRev, typename EigDbl>
-inline void read_val_adj(const EigRev& VarMat, EigDbl& ValMat,
-                         EigDbl& AdjMat) {
-    AdjMat = EigDbl::NullaryExpr(
-      VarMat.rows(),
-      VarMat.cols(),
+inline void read_val_adj(const EigRev& VarMat, EigDbl& ValMat, EigDbl& AdjMat) {
+  AdjMat = EigDbl::NullaryExpr(
+      VarMat.rows(), VarMat.cols(),
       val_adj_functor<const EigRev, EigDbl>(VarMat, ValMat));
 }
 
@@ -182,9 +175,8 @@ inline void read_val_adj(const EigRev& VarMat, EigDbl& ValMat,
 template <typename EigVar, typename EigVari, typename EigDbl>
 inline void read_vi_val(const EigVar& VarMat, EigVari& VariMat,
                         EigDbl& ValMat) {
-    ValMat = EigDbl::NullaryExpr(
-      VarMat.rows(),
-      VarMat.cols(),
+  ValMat = EigDbl::NullaryExpr(
+      VarMat.rows(), VarMat.cols(),
       vi_val_functor<const EigVar, EigVari>(VarMat, VariMat));
 }
 
@@ -201,9 +193,8 @@ inline void read_vi_val(const EigVar& VarMat, EigVari& VariMat,
 template <typename EigVar, typename EigVari, typename EigDbl>
 inline void read_vi_adj(const EigVar& VarMat, EigVari& VariMat,
                         EigDbl& AdjMat) {
-    AdjMat = EigDbl::NullaryExpr(
-      VarMat.rows(),
-      VarMat.cols(),
+  AdjMat = EigDbl::NullaryExpr(
+      VarMat.rows(), VarMat.cols(),
       vi_adj_functor<const EigVar, EigVari>(VarMat, VariMat));
 }
 

@@ -171,8 +171,7 @@ namespace internal {
  */
 template <typename EigFvar, typename EigOut>
 struct functor_has_linear_access<
-         stan::math::read_fvar_functor<EigFvar, EigOut>
-       > {
+    stan::math::read_fvar_functor<EigFvar, EigOut>> {
   enum { ret = 1 };
 };
 

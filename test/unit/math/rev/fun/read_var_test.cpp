@@ -3,14 +3,13 @@
 #include <gtest/gtest.h>
 
 TEST(AgradRevMatrix, read_var_mat) {
+  using Eigen::MatrixXd;
   using stan::math::matrix_v;
   using stan::math::matrix_vi;
-  using stan::math::read_vi_val_adj;
   using stan::math::read_val_adj;
-  using stan::math::read_vi_val;
   using stan::math::read_vi_adj;
-  using Eigen::MatrixXd;
-
+  using stan::math::read_vi_val;
+  using stan::math::read_vi_val_adj;
 
   matrix_v matrix_var(100, 100);
   matrix_vi matrix_vari(100, 100);
@@ -50,14 +49,13 @@ TEST(AgradRevMatrix, read_var_mat) {
 }
 
 TEST(AgradRevMatrix, read_var_vec) {
+  using Eigen::VectorXd;
+  using stan::math::read_val_adj;
+  using stan::math::read_vi_adj;
+  using stan::math::read_vi_val;
+  using stan::math::read_vi_val_adj;
   using stan::math::vector_v;
   using stan::math::vector_vi;
-  using stan::math::read_vi_val_adj;
-  using stan::math::read_val_adj;
-  using stan::math::read_vi_val;
-  using stan::math::read_vi_adj;
-  using Eigen::VectorXd;
-
 
   vector_v vector_var(100);
   vector_vi vector_vari(100);
@@ -91,14 +89,13 @@ TEST(AgradRevMatrix, read_var_vec) {
 }
 
 TEST(AgradRevMatrix, read_var_rowvec) {
+  using Eigen::RowVectorXd;
+  using stan::math::read_val_adj;
+  using stan::math::read_vi_adj;
+  using stan::math::read_vi_val;
+  using stan::math::read_vi_val_adj;
   using stan::math::row_vector_v;
   using stan::math::row_vector_vi;
-  using stan::math::read_vi_val_adj;
-  using stan::math::read_val_adj;
-  using stan::math::read_vi_val;
-  using stan::math::read_vi_adj;
-  using Eigen::RowVectorXd;
-
 
   row_vector_v row_vector_var(100);
   row_vector_vi row_vector_vari(100);
@@ -106,8 +103,8 @@ TEST(AgradRevMatrix, read_var_rowvec) {
   row_vector_var = RowVectorXd::Random(100);
   row_vector_var.adj() = RowVectorXd::Random(100);
 
-  read_vi_val_adj(row_vector_var, row_vector_vari,
-                  row_vector_val, row_vector_deriv);
+  read_vi_val_adj(row_vector_var, row_vector_vari, row_vector_val,
+                  row_vector_deriv);
   expect_matrix_eq(row_vector_var.val(), row_vector_val);
   expect_matrix_eq(row_vector_var.adj(), row_vector_deriv);
 
@@ -133,16 +130,15 @@ TEST(AgradRevMatrix, read_var_rowvec) {
 }
 
 TEST(AgradRevMatrix, read_var_expr) {
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
   using stan::math::matrix_v;
   using stan::math::matrix_vi;
-  using stan::math::vector_vi;
-  using stan::math::read_vi_val_adj;
   using stan::math::read_val_adj;
-  using stan::math::read_vi_val;
   using stan::math::read_vi_adj;
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
-
+  using stan::math::read_vi_val;
+  using stan::math::read_vi_val_adj;
+  using stan::math::vector_vi;
 
   matrix_v matrix_var(100, 100);
   matrix_vi matrix_vari(100, 100);

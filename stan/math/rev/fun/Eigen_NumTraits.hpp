@@ -217,8 +217,7 @@ namespace internal {
  */
 template <typename EigVar, typename EigVari, typename EigDbl>
 struct functor_has_linear_access<
-         stan::math::vi_val_adj_functor<EigVar, EigVari, EigDbl>
-       > {
+    stan::math::vi_val_adj_functor<EigVar, EigVari, EigDbl>> {
   enum { ret = 1 };
 };
 
