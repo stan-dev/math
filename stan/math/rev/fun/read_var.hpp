@@ -187,7 +187,7 @@ inline void read_vi_val(const EigVar& VarMat, EigVari& VariMat,
  * @tparam EigDbl type of the Eigen container of doubles to be copied to.
  * @param[in] VarMat Input Eigen container of var.
  * @param[in] VariMat Output Eigen container of vari.
- * @param[in] ValMat Output Eigen container of adjoints.
+ * @param[in] AdjMat Output Eigen container of adjoints.
  */
 template <typename EigVar, typename EigVari, typename EigDbl>
 inline void read_vi_adj(const EigVar& VarMat, EigVari& VariMat,
