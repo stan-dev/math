@@ -19,11 +19,10 @@ namespace math {
  * @param[in] Gamma transition density between hidden states.
  * @param[in] rho initial state
  * @param[in] function the name of the function using the arguments.
- * @throw `std::invalid_argument` if Gamma is not square, when we have
- *         at least one transition, or if the size of rho is not the
- *         number of rows of log_omegas.
- * @throw `std::domain_error` if rho is not a simplex and of the rows
- *         of Gamma are not a simplex (when there is at least one transition).
+ * @throw `std::invalid_argument` if Gamma is not square
+ *         or if the size of rho is not the number of rows of log_omegas.
+ * @throw `std::domain_error` if rho is not a simplex or the rows
+ *         of Gamma are not a simplex.
  */
 template <typename T_omega, typename T_Gamma, typename T_rho>
 inline void hmm_check(
