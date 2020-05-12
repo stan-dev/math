@@ -151,9 +151,8 @@ inline void read_vi_val_adj(const EigVar& VarMat, EigVari& VariMat,
  * @tparam EigRev type of the Eigen container of var or vari.
  * @tparam EigDbl type of the Eigen container of doubles to be copied to.
  * @param[in] VarMat Input Eigen container of var.
- * @param[in] VariMat Output Eigen container of vari.
  * @param[in] ValMat Output Eigen container of values.
- * @param[in] AdjMat Output Eigen container of tangents.
+ * @param[in] AdjMat Output Eigen container of adjoints.
  */
 template <typename EigRev, typename EigDbl>
 inline void read_val_adj(const EigRev& VarMat, EigDbl& ValMat, EigDbl& AdjMat) {
