@@ -8,12 +8,11 @@
 namespace stan {
 namespace math {
 /** \ingroup opencl
- * Returns the elementiwse division of thekernel generator expression
- * with a specified scalar.
+ * Returns the elementwise division of the kernel generator expression
  *
  * @tparam T_a type of input kernel generator expression a
  * @param a expression to divide
- * @param d scalar to divide
+ * @param d scalar to divide by
  * @return the elements of expression a divided by d
  */
 template <typename T_a,
