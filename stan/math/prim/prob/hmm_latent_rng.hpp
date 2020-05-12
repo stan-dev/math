@@ -30,7 +30,7 @@ namespace math {
  * @param[in] log_omegas log matrix of observational densities.
  * @param[in] Gamma transition density between hidden states.
  * @param[in] rho initial state
- * @param[in] rng random number generator (duh!)
+ * @param[in] rng random number generator
  * @return sample from the posterior distribution of the hidden states.
  * @throw `std::invalid_argument` if Gamma is not square, when we have
  *         at least one transition, or if the size of rho is not the
@@ -73,15 +73,14 @@ inline std::vector<int> hmm_latent_rng(
   boost::random::discrete_distribution<> cat_hidden(probs);
   hidden_states[n_transitions] = cat_hidden(rng);
 
-  for (int n = n_transitions - 1; n >= 0; --n) {
+  for (int n = n_transitions; n-- > 0; ) {
     // sample the nth hidden state conditional on (n + 1)st hidden state
     int last_hs = hidden_states[n + 1];
 
-    // CHECK -- do we need to redeclare the hidden state?
-    for (int k = 0; k < n_states; ++k) {
-      probs_vec[k] = alphas(k, n) * omegas(last_hs, n + 1)
-                     * Gamma_dbl_transpose(last_hs, k) * beta(last_hs);
-    }
+    probs_vec = alphas.col(n).
+                cwiseProduct(Gamma_dbl.col(last_hs))
+                * beta(last_hs) * omegas(last_hs, n + 1);
+
     probs_vec /= probs_vec.sum();
     std::vector<double> probs(probs_vec.data(), probs_vec.data() + n_states);
     boost::random::discrete_distribution<> cat_hidden(probs);
