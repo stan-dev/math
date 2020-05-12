@@ -73,12 +73,11 @@ inline std::vector<int> hmm_latent_rng(
   boost::random::discrete_distribution<> cat_hidden(probs);
   hidden_states[n_transitions] = cat_hidden(rng);
 
-  for (int n = n_transitions; n-- > 0; ) {
+  for (int n = n_transitions; n-- > 0;) {
     // sample the nth hidden state conditional on (n + 1)st hidden state
     int last_hs = hidden_states[n + 1];
 
-    probs_vec = alphas.col(n).
-                cwiseProduct(Gamma_dbl.col(last_hs))
+    probs_vec = alphas.col(n).cwiseProduct(Gamma_dbl.col(last_hs))
                 * beta(last_hs) * omegas(last_hs, n + 1);
 
     probs_vec /= probs_vec.sum();

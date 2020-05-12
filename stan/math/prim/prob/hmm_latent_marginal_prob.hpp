@@ -70,7 +70,7 @@ inline Eigen::MatrixXd hmm_latent_marginal_prob(
 
   alphas.col(n_transitions) /= alphas.col(n_transitions).sum();
 
-  for (int n = n_transitions; n-- > 0; ) {
+  for (int n = n_transitions; n-- > 0;) {
     beta = Gamma_dbl * omegas.col(n + 1).cwiseProduct(beta);
     beta /= beta.maxCoeff();
 
