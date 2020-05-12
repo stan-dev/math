@@ -87,12 +87,12 @@ inline var_value<T> fmax(const var_value<T>& a, const var_value<T>& b) {
  * to the second value, the first variable, otherwise the second
  * value promoted to a fresh variable.
  */
-template <typename T1 , typename T2>
+template <typename T1, typename T2>
 inline var_value<T1> fmax(const var_value<T1>& a, T2 b) {
   if (unlikely(is_nan(a))) {
     if (unlikely(is_nan(b))) {
       return var(new precomp_v_vari<T1, vari_value<T2>>(NOT_A_NUMBER, a.vi_,
-                                                      NOT_A_NUMBER));
+                                                        NOT_A_NUMBER));
     }
     return var_value<T1>(b);
   }
