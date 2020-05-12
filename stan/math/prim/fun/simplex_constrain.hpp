@@ -52,7 +52,7 @@ auto simplex_constrain(const ColVec& y) {
  * The simplex transform is defined through a centered
  * stick-breaking process.
  *
- * @tparam T type of the vector
+ * @tparam ColVec type of the vector
  * @param y Free vector input of dimensionality K - 1.
  * @param lp Log probability reference to increment.
  * @return Simplex of dimensionality K.

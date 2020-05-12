@@ -50,7 +50,7 @@ scale_matrix_exp_multiply(const double& t, const EigMat1& A, const EigMat2& B) {
  * @param[in] A Matrix
  * @param[in] B Matrix
  * @param[in] t double
- * @return exponential of At multiplies B
+ * @return exponential of At multiplied by B
  */
 template <typename Tt, typename EigMat1, typename EigMat2,
           require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
