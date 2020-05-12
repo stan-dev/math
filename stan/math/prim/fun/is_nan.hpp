@@ -20,6 +20,11 @@ inline bool is_nan(T x) {
   return std::isnan(x);
 }
 
+template <typename T, require_eigen_t<T>* = nullptr>
+inline bool is_nan(const T& x) {
+  return Eigen::isnan(x.array()).any();
+}
+
 }  // namespace math
 }  // namespace stan
 

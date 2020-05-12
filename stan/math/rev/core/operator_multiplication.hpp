@@ -26,7 +26,9 @@ class multiply_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>>
  public:
   multiply_vari(Vari1* avi, Vari2* bvi)
       : op_vari<VariVal, Vari1*, Vari2*>(avi->val_ * bvi->val_, avi, bvi) {}
-  void chain() {
+  template <typename T1 = Vari1, typename T2 = Vari2,
+   require_all_vari_vt<std::is_arithmetic, T1, T2>* = nullptr>
+  void chain_impl() {
     if (unlikely(is_any_nan(avi()->val_, bvi()->val_))) {
       avi()->adj_ = NOT_A_NUMBER;
       bvi()->adj_ = NOT_A_NUMBER;
@@ -34,6 +36,22 @@ class multiply_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>>
       avi()->adj_ += bvi()->val_ * this->adj_;
       bvi()->adj_ += avi()->val_ * this->adj_;
     }
+  }
+
+  template <typename T1 = Vari1, typename T2 = Vari2,
+   require_all_vari_vt<is_eigen, T1, T2>* = nullptr>
+  void chain_impl() {
+    if (unlikely(is_any_nan(avi()->val_, bvi()->val_))) {
+      avi()->adj_.fill(NOT_A_NUMBER);
+      bvi()->adj_.fill(NOT_A_NUMBER);
+    } else {
+      avi()->adj_ += this->adj_ * bvi()->val_.transpose();
+      bvi()->adj_ += avi()->val_.transpose() * this->adj_;
+    }
+  }
+
+  void chain() {
+    chain_impl();
   }
 };
 
@@ -93,9 +111,9 @@ class multiply_vari<VariVal, Vari, Arith, require_arithmetic_t<Arith>> final
  * @param b Second variable operand.
  * @return Variable result of multiplying operands.
  */
-template <typename T>
-inline var_value<T> operator*(const var_value<T>& a, const var_value<T>& b) {
-  return {new internal::multiply_vari<T, vari_value<T>, vari_value<T>>(a.vi_,
+template <typename T1, typename T2>
+inline var_value<T1> operator*(const var_value<T1>& a, const var_value<T2>& b) {
+  return {new internal::multiply_vari<T1, vari_value<T1>, vari_value<T2>>(a.vi_,
                                                                        b.vi_)};
 }
 

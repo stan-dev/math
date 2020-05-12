@@ -97,6 +97,22 @@ inline var sum(const EigMat& m) {
   return var(new sum_eigen_v_vari(m_ref));
 }
 
+template <typename VariSum, typename Vari>
+class sum_vari : public vari_value<VariSum> {
+  Vari* v_;
+  public:
+    sum_vari(Vari* avi) : vari_value<VariSum>(avi->val_.sum()),
+     v_(avi) {}
+     virtual void chain() {
+         v_->adj_.array() += this->adj_;
+     }
+};
+
+template <typename T>
+inline var_value<value_type_t<T>> sum(const var_value<T>& x) {
+  return {new sum_vari<value_type_t<T>, vari_value<T>>(x.vi_)};
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

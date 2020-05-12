@@ -88,9 +88,9 @@ class var_value {
    *
    * @param x Value of the variable.
    */
-  template <typename IntegralT, require_not_same_t<T, IntegralT>* = nullptr,
+  template <typename IntegralT, typename T1 = T, require_not_same_t<T1, IntegralT>* = nullptr,
             require_integral_t<IntegralT>* = nullptr,
-            require_arithmetic_t<T>* = nullptr>
+            require_arithmetic_t<T1>* = nullptr>
   var_value(IntegralT x) : vi_(new vari_value<T>(x, false)) {}  // NOLINT
 
   var_value(T x) : vi_(new vari_value<T>(x, false)) {}  // NOLINT
