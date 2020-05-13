@@ -98,6 +98,7 @@ class eigenvalues_vari : public vari {
  * @return Eigenvalues of matrix.
  */
 inline vector_v eigenvalues_sym(const matrix_v& m) {
+  check_nonzero_size("eigenvalues_sym", "m", m);
   check_symmetric("eigenvalues_sym", "m", m);
   vector_v res(m.rows());
   internal::eigenvalues_vari *baseVari = new internal::eigenvalues_vari(m);
