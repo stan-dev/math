@@ -37,12 +37,28 @@ class op_vari : public vari_value<T> {
    * @return The tuple holding the vari ops.
    */
   auto& vi() { return vi_; }
+
+  /**
+   * Return a constant reference to the tuple holding the vari ops. This is commonly
+   *  used in conjunction with \c std::get<N>()
+   * @return The tuple holding the vari ops.
+   */
+  const auto& vi() const { return vi_; }
+  /**
+   * Helper function for accessing the tuple elements.
+   */
   auto& avi() { return std::get<0>(vi_); }
+  const auto& avi() const { return std::get<0>(vi_); }
   auto& ad() { return std::get<0>(vi_); }
+  const auto& ad() const { return std::get<0>(vi_); }
   auto& bvi() { return std::get<1>(vi_); }
+  const auto& bvi() const { return std::get<1>(vi_); }
   auto& bd() { return std::get<1>(vi_); }
+  const auto& bd() const { return std::get<1>(vi_); }
   auto& cvi() { return std::get<2>(vi_); }
+  const auto& cvi() const { return std::get<2>(vi_); }
   auto& cd() { return std::get<2>(vi_); }
+  const auto& cd() const { return std::get<2>(vi_); }
   /**
    * Constructor for passing in vari and ops objects.
    * @param val Value to initialize the vari to.

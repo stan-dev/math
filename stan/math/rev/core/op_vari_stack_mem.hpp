@@ -8,6 +8,7 @@
 namespace stan {
 namespace math {
 
+// For basic types just T, vari gives vari*, Eigen gives an Eigen::Map
 template <typename T, typename = void>
 struct op_vari_tuple_type {
   using type = T;
@@ -26,39 +27,23 @@ struct op_vari_tuple_type<T, require_eigen_t<T>> {
 template <typename T>
 using op_vari_tuple_t = op_vari_tuple_type<T>::type;
 
-template <typename T, typename = void>
-struct op_vari_tuple_mem_type {
-  using type = void*;
-}
-
+// is a type an eigen type with a scalar of double
 template <typename T>
-struct op_vari_tuple_mem_type<T, require_vari_t<T>> {
-  using type = void*;
-}
+struct is_eigen_arith : bool_constant<conjunction<std::is_arithmetic<value_type_t<T>>, is_eigen<T>>::value> {};
 
-template <typename T>
-struct op_vari_tuple_mem_type<T, require_eigen_t<T>> {
-  using type = value_type_t<T>*;
-}
-
-template <typename T>
-using op_vari_tuple_mem_t = op_vari_tuple_mem_type<T>::type;
-
-template <typename T>
-struct is_eigen_dbl : bool_constant<conjunction<std::is_arithmetic<value_type_t<T>>, is_eigen<T>>::value> {};
-
+// Count the number of eigen matrices with arithmetic types
 constexpr size_t op_vari_count_dbl(size_t count) {
     return count;
 }
 
 template <typename T>
 constexpr size_t op_vari_count_dbl(size_t count, T&& x) {
-    return count + is_eigen_dbl<T>::value;
+    return count + is_eigen_arith<T>::value;
 }
 
 template <typename T, typename... Types>
 constexpr size_t op_vari_count_dbl(size_t count, T&& x, Types&&... args) {
-    return op_vari_count_dbl(count + is_eigen_dbl<T>::value, args...);
+    return op_vari_count_dbl(count + is_eigen_arith<T>::value, args...);
 }
 
 template <typename... Types>
@@ -106,6 +91,12 @@ class op_vari : public vari_value<T> {
    * Constructor for passing in vari and ops objects.
    * @param val Value to initialize the vari to.
    * @param args Ops passed into the tuple and used later in chain method.
+   *
+   * Here I think the steps are:
+   * 1. Count the number of double matrices and allocate double* pointers for them.
+   * 2. Apply a tuple constructor that for vari types just returns itself
+   *  and for Eigen matrices of doubles allocates the mem for it on our stack,
+   *   then constructs and fills the map.
    */
   op_vari(T val, Types... args)
       : vari_value<T>(val),

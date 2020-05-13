@@ -15,9 +15,15 @@ namespace stan {
 namespace math {
 
 namespace internal {
+/**
+ * Base for multiplication, to be specliazed for chain types.
+ */
 template <typename VariVal, typename Vari1, typename Vari2, typename = void>
 class multiply_vari {};
 
+/**
+ * Specialization of var multiplication for two `var_value`.
+ */
 template <typename VariVal, typename Vari1, typename Vari2>
 class multiply_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>>
     final : public op_vari<VariVal, Vari1*, Vari2*> {
@@ -27,9 +33,19 @@ class multiply_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>>
  public:
   multiply_vari(Vari1* avi, Vari2* bvi)
       : op_vari<VariVal, Vari1*, Vari2*>(avi->val_ * bvi->val_, avi, bvi) {}
+  /**
+   * `chain_impl` is called from `chain()` and exists so one specialized struct
+   * can call either the scalar or matrix `chain()` methods. SFINAE only works on
+   * "deduced" template types. So the trick here is to make template types,
+   * T1 and T2, set their defaults to the class template types, then do the
+   * regular `requires`. Since `chain_impl` has no inputs to deduce the
+   * template types will always fall back to their default values. Since the
+   * compiler has "deduced" these types we can these use the standard requires
+   * to SFINAE out either the arithmetic or matrix version.
+   */
   template <typename T1 = Vari1, typename T2 = Vari2,
    require_all_vari_vt<std::is_arithmetic, T1, T2>* = nullptr>
-  void chain_impl() {
+  inline void chain_impl() {
     if (unlikely(is_any_nan(avi()->val_, bvi()->val_))) {
       avi()->adj_ = NOT_A_NUMBER;
       bvi()->adj_ = NOT_A_NUMBER;
@@ -41,7 +57,7 @@ class multiply_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>>
 
   template <typename T1 = Vari1, typename T2 = Vari2,
    require_all_vari_vt<is_eigen, T1, T2>* = nullptr>
-  void chain_impl() {
+  inline void chain_impl() {
     if (unlikely(is_any_nan(avi()->val_, bvi()->val_))) {
       avi()->adj_.fill(NOT_A_NUMBER);
       bvi()->adj_.fill(NOT_A_NUMBER);
@@ -56,6 +72,9 @@ class multiply_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>>
   }
 };
 
+/**
+ * Specialization of var multiplication for `var_value` and arithmetic
+ */
 template <typename VariVal, typename Vari, typename Arith>
 class multiply_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> final
     : public op_vari<VariVal, Vari*, Arith> {
@@ -69,7 +88,7 @@ class multiply_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> final
   template <typename T1 = Vari, typename T2 = Arith,
    require_vari_vt<std::is_arithmetic, T1>* = nullptr,
    require_arithmetic_t<T2>* = nullptr>
-  void chain_impl() {
+   inline void chain_impl() {
     if (unlikely(is_any_nan(avi()->val_, bd()))) {
       avi()->adj_ = NOT_A_NUMBER;
     } else {
@@ -80,7 +99,7 @@ class multiply_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> final
   template <typename T1 = Vari, typename T2 = Arith,
    require_vari_vt<is_eigen, T1>* = nullptr,
    require_vt_arithmetic<T2>* = nullptr>
-  void chain_impl() {
+  inline void chain_impl() {
     if (unlikely(is_any_nan(avi()->val_, bd()))) {
       avi()->adj_.fill(NOT_A_NUMBER);
     } else {
@@ -93,6 +112,9 @@ class multiply_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> final
   }
 };
 
+/**
+ * Specialization of var multiplication for arithmetic and `var_value`
+ */
 template <typename VariVal, typename Arith, typename Vari>
 class multiply_vari<VariVal, Arith, Vari, require_vt_arithmetic<Arith>> final
     : public op_vari<VariVal, Arith, Vari*> {
@@ -130,39 +152,52 @@ class multiply_vari<VariVal, Arith, Vari, require_vt_arithmetic<Arith>> final
   }
 };
 
+/**
+ * Deduces the return type for matrix multiplication of two types
+ */
 template <typename T1, typename T2, typename = void, typename = void>
 struct mat_mul_return_type {};
 
+// arithmetic is just double
 template <typename T1, typename T2>
 struct mat_mul_return_type<T1, T2, require_all_arithmetic_t<T1, T2>> {
+  /**
+   * FIXME: Should probs do something to promote to highest type given
+   * something like float/double/int
+   */
   using type = double;
 };
 
+// two eigen matrices will be -1, -1
 template <typename T1, typename T2>
 struct mat_mul_return_type<T1, T2, require_all_eigen_matrix_t<T1, T2>> {
   using type = std::decay_t<T1>;
 };
 
+// mat and column vector is col vec -1, 1
 template <typename T1, typename T2>
 struct mat_mul_return_type<T1, T2, require_eigen_matrix_t<T1>, require_eigen_col_vector_t<T2>> {
   using type = std::decay_t<T2>;
 };
 
+// row vec and mat is row vec 1, -1
 template <typename T1, typename T2>
 struct mat_mul_return_type<T1, T2, require_eigen_row_vector_t<T1>, require_eigen_matrix_t<T2>> {
   using type = std::decay_t<T1>;
 };
 
+// row vec and col vec is arithmetic
 template <typename T1, typename T2>
 struct mat_mul_return_type<T1, T2, require_eigen_row_vector_t<T1>, require_eigen_col_vector_t<T2>> {
   using type = value_type_t<T1>;
 };
 
+//  col vec and row vec is matrix -1, -1
 template <typename T1, typename T2>
 struct mat_mul_return_type<T1, T2, require_eigen_col_vector_t<T1>, require_eigen_row_vector_t<T2>> {
   using type = Eigen::Matrix<value_type_t<T1>, -1, -1>;
 };
-
+// helper alias
 template <typename T1, typename T2>
 using mat_mul_return_type_t = typename mat_mul_return_type<T1, T2>::type;
 }  // namespace internal
