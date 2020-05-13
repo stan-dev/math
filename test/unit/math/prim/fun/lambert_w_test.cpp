@@ -13,7 +13,8 @@ TEST(MathFunctions, lambert_w) {
   EXPECT_FLOAT_EQ(1.7455280027406994, lambert_w0(10.));
   EXPECT_FLOAT_EQ(1.7455280027406994, lambert_w0(10));
   EXPECT_FLOAT_EQ(-1.0, lambert_wm1(-1 / exp(1)));
-  EXPECT_FLOAT_EQ(lambert_wm1(-std::numeric_limits<double>::min()), -714.96865723796634);
+  EXPECT_FLOAT_EQ(lambert_wm1(-std::numeric_limits<double>::min()),
+                  -714.96865723796634);
 }
 
 TEST(MathFunctions, lambert_wn1_at_0) {

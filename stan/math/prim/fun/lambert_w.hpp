@@ -35,7 +35,8 @@ inline double lambert_w0(int x) {
  *
  * @param[in] x argument
  * @return value of the W-1 branch of the Lambert W function at argument
- * @throw std::domain_error if x is smaller than -e^(-1) or equal or bigger than 0
+ * @throw std::domain_error if x is smaller than -e^(-1) or equal or bigger than
+ * 0
  */
 inline double lambert_wm1(double x) {
   return boost::math::lambert_wm1(x, boost_policy_t());
@@ -46,7 +47,8 @@ inline double lambert_wm1(double x) {
  *
  * @param[in] x argument
  * @return value of the W-1 branch of the Lambert W function at argument
- * @throw std::domain_error if x is smaller than -e^(-1) or equal or bigger than 0
+ * @throw std::domain_error if x is smaller than -e^(-1) or equal or bigger than
+ * 0
  */
 inline double lambert_wm1(int x) {
   return boost::math::lambert_wm1(x, boost_policy_t());
@@ -86,7 +88,8 @@ inline auto lambert_w0(const T& x) {
  * @tparam T type of variable
  * @param x variable
  * @return value of the W-1 branch of the Lambert W function at x.
- * @throw std::domain_error if x is smaller than -e^(-1) or equal or bigger than 0
+ * @throw std::domain_error if x is smaller than -e^(-1) or equal or bigger than
+ * 0
  */
 struct lambert_wm1_fun {
   template <typename T>
@@ -101,7 +104,8 @@ struct lambert_wm1_fun {
  * @tparam T type of container
  * @param x container
  * @return value of the W0 branch of the Lambert W function for each value in x
- * @throw std::domain_error if x is smaller than -e^(-1) or equal or bigger than 0
+ * @throw std::domain_error if x is smaller than -e^(-1) or equal or bigger than
+ * 0
  */
 template <typename T>
 inline auto lambert_wm1(const T& x) {
