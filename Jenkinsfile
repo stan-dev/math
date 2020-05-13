@@ -178,11 +178,19 @@ pipeline {
         stage('Full Unit Tests') {
             agent any
             steps {
-                deleteDir()
-                unstash 'MathSetup'
-                runTests("test/unit/math/prim")
-                runTests("test/unit/math/rev")
-                runTests("test/unit")
+                if (isUnix()) {
+                    deleteDir()
+                    unstash 'MathSetup'
+                    runTests("test/unit/math/prim")
+                    runTests("test/unit/math/rev")
+                    runTests("test/unit")
+                } else {
+                    deleteDirWin()
+                    unstash 'MathSetup'
+                    runTestsWin("test/unit/math/prim")
+                    runTestsWin("test/unit/math/rev")
+                    runTestsWin("test/unit")
+                }
             }
             post { always { retry(3) { deleteDir() } } }
         }
@@ -267,7 +275,7 @@ pipeline {
                                 sh "find . -name *_test.xml | xargs rm"
                                 runTests("test/unit -f map_rect")
                                 sh "find . -name *_test.xml | xargs rm"
-                                runTests("test/unit -f map_rect")                            
+                                runTests("test/unit -f reduce_sum")                            
                             } else {
                                 deleteDirWin()
                                 unstash 'MathSetup'
