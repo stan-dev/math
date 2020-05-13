@@ -16,8 +16,8 @@ class eigenvalues_vari : public vari {
  public:
   int M_;  // A.rows() = A.cols()
   double *A_;
-  double *w_; // eigenvalues
-  double *v_; // eigenvectors
+  double *w_;  // eigenvalues
+  double *v_;  // eigenvectors
   vari **vari_ref_A_;
   vari **vari_ref_w_;
   vari **vari_ref_v_;
@@ -29,7 +29,8 @@ class eigenvalues_vari : public vari {
             ChainableStack::instance_->memalloc_.alloc(sizeof(double) * A.rows()
                                                        * A.cols()))),
         w_(reinterpret_cast<double *>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(double) * A.rows()))),
+            ChainableStack::instance_->memalloc_.alloc(
+              sizeof(double) * A.rows()))),
         v_(reinterpret_cast<double *>(
             ChainableStack::instance_->memalloc_.alloc(sizeof(double) * A.rows()
                                                        * A.cols()))),
@@ -37,7 +38,8 @@ class eigenvalues_vari : public vari {
             ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * A.rows()
                                                        * A.cols()))),
         vari_ref_w_(reinterpret_cast<vari **>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * A.rows()))),
+            ChainableStack::instance_->memalloc_.alloc(
+              sizeof(vari *) * A.rows()))),
         vari_ref_v_(reinterpret_cast<vari **>(
             ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * A.rows()
                                                        * A.cols()))) {
@@ -78,7 +80,7 @@ class eigenvalues_vari : public vari {
     matrix_d f(M_, M_);
     for (int i = 0; i < M_; i++)
       for (int j = 0; j < M_; j++)
-        f.coeffRef(j ,i) = (i != j ? 1 / (w.coeff(i) - w.coeff(j)) : 0);
+        f.coeffRef(j, i) = (i != j ? 1 / (w.coeff(i) - w.coeff(j)) : 0);
 
     matrix_d diag_adj_w = adj_w.asDiagonal();
 
