@@ -30,15 +30,14 @@ namespace math {
  */
 template <typename TD, typename TA, typename TB,
           typename = require_all_eigen_t<TD, TA, TB>,
-          typename = require_all_not_var_t<value_type_t<TD>, value_type_t<TA>,
-                                           value_type_t<TB>>,
-          typename = require_any_not_eigen_vt<std::is_arithmetic, TD, TA, TB>>
+          typename = require_all_not_vt_var<TD, TA, TB>,
+          typename = require_any_not_vt_arithmetic<TD, TA, TB>>
 inline auto trace_gen_quad_form(const TD &D, const TA &A, const TB &B) {
   check_square("trace_gen_quad_form", "A", A);
   check_square("trace_gen_quad_form", "D", D);
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
   check_multiplicable("trace_gen_quad_form", "B", B, "D", D);
-  return trace(multiply(multiply(D, transpose(B)), multiply(A, B)));
+  return multiply(B, D.transpose()).cwiseProduct(multiply(A, B)).sum();
 }
 
 /**
@@ -66,7 +65,7 @@ inline double trace_gen_quad_form(const TD &D, const TA &A, const TB &B) {
   check_square("trace_gen_quad_form", "D", D);
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
   check_multiplicable("trace_gen_quad_form", "B", B, "D", D);
-  return (D * B.transpose() * A * B).trace();
+  return (B * D.transpose()).cwiseProduct(A * B).sum();
 }
 
 }  // namespace math

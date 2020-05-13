@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_TRACE_QUAD_FORM_HPP
 #define STAN_MATH_PRIM_FUN_TRACE_QUAD_FORM_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 
@@ -10,10 +11,8 @@ namespace math {
 /**
  * Compute trace(B^T A B).
  *
- * @tparam RA number of rows in the first matrix, can be Eigen::Dynamic
- * @tparam CA number of columns in the first matrix, can be Eigen::Dynamic
- * @tparam RB number of rows in the second matrix, can be Eigen::Dynamic
- * @tparam CB number of columns in the second matrix, can be Eigen::Dynamic
+ * @tparam EigMat1 type of the first matrix
+ * @tparam EigMat2 type of the second matrix
  *
  * @param A matrix
  * @param B matrix
@@ -21,13 +20,14 @@ namespace math {
  * @throw std::domain_error if A is not square
  * @throw std::domain_error if A cannot be multiplied by B
  */
-template <int RA, int CA, int RB, int CB>
-inline double trace_quad_form(const Eigen::Matrix<double, RA, CA> &A,
-                              const Eigen::Matrix<double, RB, CB> &B) {
+template <typename EigMat1, typename EigMat2,
+          require_all_eigen_vt<std::is_arithmetic, EigMat1, EigMat2>* = nullptr>
+inline return_type_t<EigMat1, EigMat2> trace_quad_form(const EigMat1& A,
+                                                       const EigMat2& B) {
   check_square("trace_quad_form", "A", A);
   check_multiplicable("trace_quad_form", "A", A, "B", B);
 
-  return (B.transpose() * A * B).trace();
+  return B.cwiseProduct(A * B).sum();
 }
 
 }  // namespace math

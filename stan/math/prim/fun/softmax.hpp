@@ -37,17 +37,16 @@ namespace math {
  * \end{array}
  * \f$
  *
- * @tparam T type of elements in the vector
+ * @tparam ColVec type of elements in the vector
  * @param[in] v Vector to transform.
  * @return Unit simplex result of the softmax transform of the vector.
  */
-template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, 1> softmax(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& v) {
+template <typename ColVec,
+          require_eigen_col_vector_vt<std::is_arithmetic, ColVec>* = nullptr>
+inline plain_type_t<ColVec> softmax(const ColVec& v) {
   using std::exp;
   check_nonzero_size("softmax", "v", v);
-  Eigen::Matrix<T, Eigen::Dynamic, 1> theta(v.size());
-  theta = (v.array() - v.maxCoeff()).exp();
+  plain_type_t<ColVec> theta = (v.array() - v.maxCoeff()).exp();
   return theta.array() / theta.sum();
 }
 
