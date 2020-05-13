@@ -4,6 +4,8 @@
 
 #include <string>
 
+namespace stan {
+namespace math {
 /**
  * Determines a string name of a type. Unsupported types fail static assert.
  * @return name of the type
@@ -23,6 +25,8 @@ ADD_TYPE_TO_TYPE_STR(double)
 ADD_TYPE_TO_TYPE_STR(int)
 ADD_TYPE_TO_TYPE_STR(bool)
 #undef ADD_TYPE_TO_TYPE_STR
-
+/** @}*/
+}  // namespace math
+}  // namespace stan
 #endif
 #endif

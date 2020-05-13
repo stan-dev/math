@@ -8,6 +8,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
+#include <memory>
 
 namespace stan {
 namespace math {
@@ -23,7 +24,7 @@ class mdivide_left_ldlt_alloc : public chainable_alloc {
    * for mdivide_left_ldlt(ldltA, b) when ldltA is a LDLT_factor<double>.
    * The pointer is shared with the LDLT_factor<double> class.
    **/
-  boost::shared_ptr<Eigen::LDLT<Eigen::Matrix<double, R1, C1> > > ldltP_;
+  std::shared_ptr<Eigen::LDLT<Eigen::Matrix<double, R1, C1> > > ldltP_;
   Eigen::Matrix<double, R2, C2> C_;
 };
 
@@ -194,25 +195,24 @@ class mdivide_left_ldlt_vd_vari : public vari {
  *
  * @tparam R1 number of rows in the LDLT_factor, can be Eigen::Dynamic
  * @tparam C1 number of columns in the LDLT_factor, can be Eigen::Dynamic
- * @tparam R2 number of rows in the right-hand side matrix, can be
- *         Eigen::Dynamic
- * @tparam C2 number of columns in the right-hand side matrix, can be
- *         Eigen::Dynamic
  *
  * @param A LDLT_factor
  * @param b Right hand side matrix or vector.
  * @return x = A^-1 b, solution of the linear system.
  * @throws std::domain_error if rows of b don't match the size of A.
  */
-template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
-    const LDLT_factor<var, R1, C1> &A, const Eigen::Matrix<var, R2, C2> &b) {
+template <int R1, int C1, typename EigMat,
+          require_eigen_vt<is_var, EigMat> * = nullptr>
+inline Eigen::Matrix<var, R1, EigMat::ColsAtCompileTime> mdivide_left_ldlt(
+    const LDLT_factor<var, R1, C1> &A, const EigMat &b) {
+  constexpr int R2 = EigMat::RowsAtCompileTime;
+  constexpr int C2 = EigMat::ColsAtCompileTime;
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
   if (A.cols() == 0) {
     return {0, b.cols()};
   }
 
-  internal::mdivide_left_ldlt_vv_vari<R1, C1, R2, C2> *baseVari
+  auto *baseVari
       = new internal::mdivide_left_ldlt_vv_vari<R1, C1, R2, C2>(A, b);
 
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
@@ -226,25 +226,24 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
  *
  * @tparam R1 number of rows in the LDLT_factor, can be Eigen::Dynamic
  * @tparam C1 number of columns in the LDLT_factor, can be Eigen::Dynamic
- * @tparam R2 number of rows in the right-hand side matrix, can be
- *         Eigen::Dynamic
- * @tparam C2 number of columns in the right-hand side matrix, can be
- *         Eigen::Dynamic
  *
  * @param A LDLT_factor
  * @param b Right hand side matrix or vector.
  * @return x = A^-1 b, solution of the linear system.
  * @throws std::domain_error if rows of b don't match the size of A.
  */
-template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
-    const LDLT_factor<var, R1, C1> &A, const Eigen::Matrix<double, R2, C2> &b) {
+template <int R1, int C1, typename EigMat,
+          require_eigen_vt<std::is_arithmetic, EigMat> * = nullptr>
+inline Eigen::Matrix<var, R1, EigMat::ColsAtCompileTime> mdivide_left_ldlt(
+    const LDLT_factor<var, R1, C1> &A, const EigMat &b) {
+  constexpr int R2 = EigMat::RowsAtCompileTime;
+  constexpr int C2 = EigMat::ColsAtCompileTime;
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
   if (A.cols() == 0) {
     return {0, b.cols()};
   }
 
-  internal::mdivide_left_ldlt_vd_vari<R1, C1, R2, C2> *baseVari
+  auto *baseVari
       = new internal::mdivide_left_ldlt_vd_vari<R1, C1, R2, C2>(A, b);
 
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
@@ -258,25 +257,24 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
  *
  * @tparam R1 number of rows in the LDLT_factor, can be Eigen::Dynamic
  * @tparam C1 number of columns in the LDLT_factor, can be Eigen::Dynamic
- * @tparam R2 number of rows in the right-hand side matrix, can be
- *         Eigen::Dynamic
- * @tparam C2 number of columns in the right-hand side matrix, can be
- *         Eigen::Dynamic
  *
  * @param A LDLT_factor
  * @param b Right hand side matrix or vector.
  * @return x = A^-1 b, solution of the linear system.
  * @throws std::domain_error if rows of b don't match the size of A.
  */
-template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
-    const LDLT_factor<double, R1, C1> &A, const Eigen::Matrix<var, R2, C2> &b) {
+template <int R1, int C1, typename EigMat,
+          require_eigen_vt<is_var, EigMat> * = nullptr>
+inline Eigen::Matrix<var, R1, EigMat::ColsAtCompileTime> mdivide_left_ldlt(
+    const LDLT_factor<double, R1, C1> &A, const EigMat &b) {
+  constexpr int R2 = EigMat::RowsAtCompileTime;
+  constexpr int C2 = EigMat::ColsAtCompileTime;
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
   if (A.cols() == 0) {
     return {0, b.cols()};
   }
 
-  internal::mdivide_left_ldlt_dv_vari<R1, C1, R2, C2> *baseVari
+  auto *baseVari
       = new internal::mdivide_left_ldlt_dv_vari<R1, C1, R2, C2>(A, b);
 
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());

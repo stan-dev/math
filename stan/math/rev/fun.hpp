@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_FUN_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/rev/fun/Eigen_NumTraits.hpp>
 
 #include <stan/math/prim.hpp>
 
@@ -114,6 +115,7 @@
 #include <stan/math/rev/fun/proj.hpp>
 #include <stan/math/rev/fun/quad_form.hpp>
 #include <stan/math/rev/fun/quad_form_sym.hpp>
+#include <stan/math/rev/fun/read_var.hpp>
 #include <stan/math/rev/fun/rising_factorial.hpp>
 #include <stan/math/rev/fun/round.hpp>
 #include <stan/math/rev/fun/rows_dot_product.hpp>

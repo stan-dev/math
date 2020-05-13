@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_TO_MATRIX_HPP
 #define STAN_MATH_PRIM_FUN_TO_MATRIX_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <vector>
@@ -14,17 +15,15 @@ namespace math {
  * or matrix.
  * The runtime dimensions will be the same as the input.
  *
- * @tparam T type of the elements in the matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam EigMat type of the matrix
  *
  * @param x matrix
  * @return the matrix representation of the input
  */
-template <typename T, int R, int C>
-inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
-    const Eigen::Matrix<T, R, C>& x) {
-  return x;
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>
+to_matrix(EigMat&& x) {
+  return std::forward<EigMat>(x);
 }
 
 /**
@@ -46,7 +45,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> result(rows, cols);
   for (int i = 0, ij = 0; i < cols; i++) {
     for (int j = 0; j < rows; j++, ij++) {
-      result(ij) = x[j][i];
+      result.coeffRef(ij) = x[j][i];
     }
   }
   return result;
@@ -72,7 +71,7 @@ to_matrix(const std::vector<std::vector<T> >& x) {
       result(rows, cols);
   for (size_t i = 0, ij = 0; i < cols; i++) {
     for (size_t j = 0; j < rows; j++, ij++) {
-      result(ij) = x[j][i];
+      result.coeffRef(ij) = x[j][i];
     }
   }
   return result;
@@ -82,9 +81,7 @@ to_matrix(const std::vector<std::vector<T> >& x) {
  * Returns a matrix representation of the vector in column-major
  * order with the specified number of rows and columns.
  *
- * @tparam T type of elements in the matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam EigMat type of the matrix
  *
  * @param x matrix
  * @param m rows
@@ -93,12 +90,13 @@ to_matrix(const std::vector<std::vector<T> >& x) {
  * @throw <code>std::invalid_argument</code> if the sizes
  * do not match
  */
-template <typename T, int R, int C>
-inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
-    const Eigen::Matrix<T, R, C>& x, int m, int n) {
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>
+to_matrix(EigMat&& x, int m, int n) {
   static const char* function = "to_matrix(matrix)";
   check_size_match(function, "rows * columns", m * n, "vector size", x.size());
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> y = x;
+  Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> y
+      = std::forward<EigMat>(x);
   y.resize(m, n);
   return y;
 }
@@ -142,7 +140,7 @@ inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
   check_size_match(function, "rows * columns", m * n, "vector size", x_size);
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> result(m, n);
   for (int i = 0; i < x_size; i++) {
-    result(i) = x[i];
+    result.coeffRef(i) = x[i];
   }
   return result;
 }
@@ -151,9 +149,7 @@ inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
  * Returns a matrix representation of the vector in column-major
  * order with the specified number of rows and columns.
  *
- * @tparam T type of elements in the matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam EigMat type of the matrix
  *
  * @param x matrix
  * @param m rows
@@ -166,18 +162,21 @@ inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
  * @throw <code>std::invalid_argument</code>
  * if the sizes do not match
  */
-template <typename T, int R, int C>
-inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
-    const Eigen::Matrix<T, R, C>& x, int m, int n, bool col_major) {
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>
+to_matrix(EigMat&& x, int m, int n, bool col_major) {
   if (col_major) {
-    return to_matrix(x, m, n);
+    return to_matrix(std::forward<EigMat>(x), m, n);
   }
   check_size_match("to_matrix", "rows * columns", m * n, "matrix size",
                    x.size());
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> result(m, n);
+  // TODO(Tadej): after we can return general expressions just return row-major
+  // matrix
+  Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> result(m,
+                                                                             n);
   for (int i = 0, ij = 0; i < m; i++) {
     for (int j = 0; j < n; j++, ij++) {
-      result(i, j) = x(ij);
+      result.coeffRef(i, j) = x.coeff(ij);
     }
   }
   return result;
@@ -211,7 +210,7 @@ to_matrix(const std::vector<T>& x, int m, int n, bool col_major) {
       result(m, n);
   for (int i = 0, ij = 0; i < m; i++) {
     for (int j = 0; j < n; j++, ij++) {
-      result(i, j) = x[ij];
+      result.coeffRef(i, j) = x[ij];
     }
   }
   return result;

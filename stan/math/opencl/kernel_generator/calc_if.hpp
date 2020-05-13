@@ -8,7 +8,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <string>
 #include <type_traits>
 #include <set>
@@ -16,6 +16,10 @@
 
 namespace stan {
 namespace math {
+
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 
 /**
  * Represents a calc_if in kernel generator expressions.
@@ -38,6 +42,7 @@ class calc_if_
   explicit calc_if_(T&& a) : base(std::forward<T>(a)) {}
 
   inline kernel_parts generate(const std::string& i, const std::string& j,
+                               const bool view_handled,
                                const std::string& var_name_arg) const {
     if (Do_Calculate) {
       var_name = var_name_arg;
@@ -83,18 +88,10 @@ class calc_if_
       this->template get_arg<0>().set_args(generated, kernel, arg_num);
     }
   }
-
-  /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
-   */
-  inline matrix_cl_view view() const {
-    return this->template get_arg<0>().view();
-  }
 };
 
 template <bool Do_Calculate, typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
 inline calc_if_<Do_Calculate, as_operation_cl_t<T>> calc_if(T&& a) {
   return calc_if_<Do_Calculate, as_operation_cl_t<T>>(
       as_operation_cl(std::forward<T>(a)));
@@ -110,7 +107,7 @@ struct is_without_output_impl<calc_if_<false, T>> : std::true_type {};
 
 template <typename T>
 using is_without_output = internal::is_without_output_impl<std::decay_t<T>>;
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 
