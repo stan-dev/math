@@ -30,10 +30,14 @@ namespace math {
 template <int Lmm, typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... T_Args>
 class cvodes_integrator {
-  using T_Return = return_type_t<T_y0, T_t0, T_ts, T_Args...>;
+  using T_Return = return_type_t<T_y0, T_t0, T_ts,
+                                 typename F::captured_scalar_t__, T_Args...>;
   using T_y0_t0 = return_type_t<T_y0, T_t0>;
 
+  using F_dbl = typename F::ValueOf__;
+
   const F& f_;
+  const F_dbl f_dbl_;
   const Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1> y0_;
   const T_t0 t0_;
   const std::vector<T_ts>& ts_;
@@ -103,7 +107,7 @@ class cvodes_integrator {
     const Eigen::VectorXd y_vec = Eigen::Map<const Eigen::VectorXd>(y, N_);
 
     Eigen::VectorXd dy_dt_vec
-        = apply([&](auto&&... args) { return f_(t, y_vec, msgs_, args...); },
+        = apply([&](auto&&... args) { return f_dbl_(t, y_vec, msgs_, args...); },
                 value_of_args_tuple_);
 
     check_size_match("cvodes_integrator::rhs", "dy_dt", dy_dt_vec.size(),
@@ -121,7 +125,7 @@ class cvodes_integrator {
     Eigen::MatrixXd Jfy;
 
     auto f_wrapped = [&](const Eigen::Matrix<var, Eigen::Dynamic, 1>& y) {
-      return apply([&](auto&&... args) { return f_(t, y, msgs_, args...); },
+      return apply([&](auto&&... args) { return f_dbl_(t, y, msgs_, args...); },
                    value_of_args_tuple_);
     };
 
@@ -183,6 +187,7 @@ class cvodes_integrator {
                     long int max_num_steps, std::ostream* msgs,
                     const T_Args&... args)
       : f_(f),
+        f_dbl_(f),
         y0_(y0.unaryExpr([](const T_y0& val) { return T_y0_t0(val); })),
         t0_(t0),
         ts_(ts),
@@ -225,10 +230,10 @@ class cvodes_integrator {
     A_ = SUNDenseMatrix(N_, N_);
     LS_ = SUNDenseLinearSolver(nv_state_, A_);
 
-    if (y0_vars_ + args_vars_ > 0) {
+    if (y0_vars_ + args_vars_ + f_.num_vars__ > 0) {
       nv_state_sens_
-          = N_VCloneVectorArrayEmpty_Serial(y0_vars_ + args_vars_, nv_state_);
-      for (std::size_t i = 0; i < y0_vars_ + args_vars_; i++) {
+          = N_VCloneVectorArrayEmpty_Serial(y0_vars_ + args_vars_ + f_.num_vars__, nv_state_);
+      for (std::size_t i = 0; i < y0_vars_ + args_vars_ + f_.num_vars__; i++) {
         NV_DATA_S(nv_state_sens_[i]) = &coupled_state_[N_] + i * N_;
       }
     }
@@ -238,8 +243,8 @@ class cvodes_integrator {
     SUNLinSolFree(LS_);
     SUNMatDestroy(A_);
     N_VDestroy_Serial(nv_state_);
-    if (y0_vars_ + args_vars_ > 0) {
-      N_VDestroyVectorArray_Serial(nv_state_sens_, y0_vars_ + args_vars_);
+    if (y0_vars_ + args_vars_ + f_.num_vars__> 0) {
+      N_VDestroyVectorArray_Serial(nv_state_sens_, y0_vars_ + args_vars_ + f_.num_vars__);
     }
   }
 
@@ -287,9 +292,9 @@ class cvodes_integrator {
           "CVodeSetJacFn");
 
       // initialize forward sensitivity system of CVODES as needed
-      if (y0_vars_ + args_vars_ > 0) {
+      if (y0_vars_ + args_vars_ + f_.num_vars__ > 0) {
         check_flag_sundials(
-            CVodeSensInit(cvodes_mem, static_cast<int>(y0_vars_ + args_vars_),
+            CVodeSensInit(cvodes_mem, static_cast<int>(y0_vars_ + args_vars_ + f_.num_vars__),
                           CV_STAGGERED, &cvodes_integrator::cv_rhs_sens,
                           nv_state_sens_),
             "CVodeSensInit");
@@ -308,7 +313,7 @@ class cvodes_integrator {
               "CVode");
         }
 
-        if (y0_vars_ + args_vars_ > 0) {
+        if (y0_vars_ + args_vars_ + f_.num_vars__ > 0) {
           check_flag_sundials(CVodeGetSens(cvodes_mem, &t_init, nv_state_sens_),
                               "CVodeGetSens");
         }

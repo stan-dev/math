@@ -36,25 +36,27 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
     const F& f, const Eigen::VectorXd& coupled_state,
     const Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1>& y0, const T_t0& t0,
     const T_t& t, std::ostream* msgs, const Args&... args) {
+  using F_dbl = typename F::ValueOf__;
   const size_t N = y0.size();
   const size_t y0_vars = count_vars(y0);
   const size_t args_vars = count_vars(args...);
   const size_t t0_vars = count_vars(t0);
   const size_t t_vars = count_vars(t);
+  F_dbl f_dbl = f;
   Eigen::Matrix<var, Eigen::Dynamic, 1> yt(N);
 
   Eigen::VectorXd y = coupled_state.head(N);
 
   Eigen::VectorXd f_y_t;
   if (is_var<T_t>::value)
-    f_y_t = f(value_of(t), y, msgs, value_of(args)...);
+    f_y_t = f_dbl(value_of(t), y, msgs, value_of(args)...);
 
   Eigen::VectorXd f_y0_t0;
   if (is_var<T_t0>::value)
-    f_y0_t0 = f(value_of(t0), value_of(y0), msgs, value_of(args)...);
+    f_y0_t0 = f_dbl(value_of(t0), value_of(y0), msgs, value_of(args)...);
 
   for (size_t j = 0; j < N; j++) {
-    const size_t total_vars = y0_vars + args_vars + t0_vars + t_vars;
+    const size_t total_vars = y0_vars + args_vars + t0_vars + t_vars + f.num_vars__;
 
     vari** varis
         = ChainableStack::instance_->memalloc_.alloc_array<vari*>(total_vars);
@@ -77,6 +79,13 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
       // dy[j]_dtheta[k]
       // theta[k].vi_
       *partials_ptr = coupled_state(N + N * y0_vars + N * k + j);
+      partials_ptr++;
+    }
+
+    f.save_varis(varis_ptr);
+    varis_ptr += f.num_vars__;
+    for (std::size_t k = 0; k < f.num_vars__; ++k) {
+      *partials_ptr = coupled_state(N + N * y0_vars + N * args_vars + N * k + j);
       partials_ptr++;
     }
 

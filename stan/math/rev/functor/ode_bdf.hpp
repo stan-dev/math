@@ -45,7 +45,8 @@ namespace math {
  */
 template <typename F, typename T_initial, typename T_t0, typename T_ts,
           typename... T_Args>
-std::vector<Eigen::Matrix<stan::return_type_t<T_initial, T_t0, T_ts, T_Args...>,
+std::vector<Eigen::Matrix<stan::return_type_t<T_initial, T_t0, T_ts,
+                          typename F::captured_scalar_t__, T_Args...>,
                           Eigen::Dynamic, 1>>
 ode_bdf(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
         const T_t0& t0, const std::vector<T_ts>& ts, std::ostream* msgs,
@@ -93,7 +94,8 @@ ode_bdf(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
  */
 template <typename F, typename T_initial, typename T_t0, typename T_ts,
           typename... T_Args>
-std::vector<Eigen::Matrix<stan::return_type_t<T_initial, T_t0, T_ts, T_Args...>,
+std::vector<Eigen::Matrix<stan::return_type_t<T_initial, T_t0, T_ts,
+                          typename F::captured_scalar_t__, T_Args...>,
                           Eigen::Dynamic, 1>>
 ode_bdf_tol(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
             const T_t0& t0, const std::vector<T_ts>& ts,

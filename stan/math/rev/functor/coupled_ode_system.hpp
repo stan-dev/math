@@ -73,6 +73,8 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
   const size_t N_;
   std::ostream* msgs_;
 
+  using F_copy = typename F::DeepCopy__;
+
   /**
    * Construct a coupled ode system from the base system function,
    * initial state of the base system, parameters, and a stream for
@@ -123,6 +125,8 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
     for (size_t n = 0; n < N_; ++n)
       y_vars(n) = z(n);
 
+    F_copy f_vars_ = f_;
+
     auto local_args_tuple = apply(
         [&](auto&&... args) {
           return std::tuple<decltype(deep_copy_vars(args))...>(
@@ -131,7 +135,7 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
         args_tuple_);
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
-        = apply([&](auto&&... args) { return f_(t, y_vars, msgs_, args...); },
+        = apply([&](auto&&... args) { return f_vars_(t, y_vars, msgs_, args...); },
                 local_args_tuple);
 
     check_size_match("coupled_ode_system", "dy_dt", f_y_t_vars.size(), "states",
@@ -168,6 +172,17 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
         dz_dt[N_ + N_ * y0_vars_ + N_ * j + i] = temp_deriv;
       }
 
+      args_adjoints = Eigen::VectorXd::Zero(f_.num_vars__);
+      f_vars_.accumulate_adjoints(args_adjoints.data());
+      for (size_t j = 0; j < f_.num_vars__; j++) {
+        double temp_deriv = args_adjoints(j);
+        for (size_t k = 0; k < N_; k++) {
+          temp_deriv += z[N_ + N_ * y0_vars_ + N_ * args_vars_ + N_ * j + k] * y_vars[k].adj();
+        }
+
+        dz_dt[N_ + N_ * y0_vars_ + N_ * args_vars_ + N_ * j + i] = temp_deriv;
+      }
+
       nested.set_zero_all_adjoints();
     }
   }
@@ -177,7 +192,7 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
    *
    * @return size of the coupled system.
    */
-  size_t size() const { return N_ + N_ * y0_vars_ + N_ * args_vars_; }
+  size_t size() const { return N_ + N_ * y0_vars_ + N_ * args_vars_ + N_ * f_.num_vars__; }
 
   /**
    * Returns the initial state of the coupled system.
