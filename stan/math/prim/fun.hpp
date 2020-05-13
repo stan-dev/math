@@ -142,6 +142,7 @@
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
 #include <stan/math/prim/fun/is_uninitialized.hpp>
+#include <stan/math/prim/fun/lambert_w.hpp>
 #include <stan/math/prim/fun/lb_constrain.hpp>
 #include <stan/math/prim/fun/lb_free.hpp>
 #include <stan/math/prim/fun/lbeta.hpp>
