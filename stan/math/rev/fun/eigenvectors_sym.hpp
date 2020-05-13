@@ -29,8 +29,8 @@ class eigenvectors_vari : public vari {
             ChainableStack::instance_->memalloc_.alloc(sizeof(double) * A.rows()
                                                        * A.cols()))),
         w_(reinterpret_cast<double *>(
-            ChainableStack::instance_->memalloc_.alloc(
-              sizeof(double) * A.rows()))),
+            ChainableStack::instance_->memalloc_.alloc(sizeof(double)
+                                                       * A.rows()))),
         v_(reinterpret_cast<double *>(
             ChainableStack::instance_->memalloc_.alloc(sizeof(double) * A.rows()
                                                        * A.cols()))),
@@ -38,8 +38,8 @@ class eigenvectors_vari : public vari {
             ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * A.rows()
                                                        * A.cols()))),
         vari_ref_w_(reinterpret_cast<vari **>(
-            ChainableStack::instance_->memalloc_.alloc(
-              sizeof(vari *) * A.rows()))),
+            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *)
+                                                       * A.rows()))),
         vari_ref_v_(reinterpret_cast<vari **>(
             ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * A.rows()
                                                        * A.cols()))) {
@@ -84,7 +84,7 @@ class eigenvectors_vari : public vari {
 
     matrix_d diag_adj_w = adj_w.asDiagonal();
 
-    matrix_d adjA =  v * f.cwiseProduct(v.transpose() * adj_v) * v.transpose();
+    matrix_d adjA = v * f.cwiseProduct(v.transpose() * adj_v) * v.transpose();
     adjA += v * diag_adj_w * v.transpose();
 
     Map<matrix_vi>(vari_ref_A_, M_, M_).adj() += adjA;
@@ -92,20 +92,19 @@ class eigenvectors_vari : public vari {
 };
 }  // namespace internal
 
-
 /**
  * Return the eigenvectors of the specified symmetric matrix.
  * <p>See <code>eigen_decompose()</code> for more information.
  * @param m Specified matrix.
  * @return Eigenvectors of matrix.
  */
-inline matrix_v eigenvectors_sym(const matrix_v& m) {
+inline matrix_v eigenvectors_sym(const matrix_v &m) {
   check_nonzero_size("eigenvectors_sym", "m", m);
   check_symmetric("eigenvectors_sym", "m", m);
   matrix_v res(m.rows(), m.cols());
   internal::eigenvectors_vari *baseVari = new internal::eigenvectors_vari(m);
-  res.vi() = Eigen::Map<matrix_vi>(baseVari->vari_ref_v_, res.rows(),
-                                   res.cols());
+  res.vi()
+      = Eigen::Map<matrix_vi>(baseVari->vari_ref_v_, res.rows(), res.cols());
   return res;
 }
 
