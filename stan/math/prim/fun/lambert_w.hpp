@@ -88,7 +88,7 @@ inline auto lambert_w0(const T& x) {
  * @return value of the W-1 branch of the Lambert W function at x.
  * @throw std::domain_error if x is smaller than -e^(-1) or equal or bigger than 0
  */
-struct lambert_wn1_fun {
+struct lambert_wm1_fun {
   template <typename T>
   static inline T fun(const T& x) {
     return lambert_wm1(x);
@@ -105,7 +105,7 @@ struct lambert_wn1_fun {
  */
 template <typename T>
 inline auto lambert_wm1(const T& x) {
-  return apply_scalar_unary<lambert_wn1_fun, T>::apply(x);
+  return apply_scalar_unary<lambert_wm1_fun, T>::apply(x);
 }
 
 }  // namespace math
