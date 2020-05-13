@@ -256,26 +256,28 @@ pipeline {
                 stage('Threading tests') {
                     agent any
                     steps {
-                        if (label == "windows") {
-                            deleteDirWin()
-                            unstash 'MathSetup'
-                            bat "echo CXX=${env.CXX} -Werror > make/local"
-                            bat "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
-                            runTestsWin("test/unit -f thread", false)
-                            runTestsWin("test/unit -f map_rect", false)
-                            runTestsWin("test/unit -f reduce_sum", false)
-                        } else {
-                            deleteDir()
-                            unstash 'MathSetup'
-                            sh "echo CXX=${env.CXX} -Werror > make/local"
-                            sh "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
-                            sh "export STAN_NUM_THREADS=4"
-                            runTests("test/unit -f thread")
-                            sh "find . -name *_test.xml | xargs rm"
-                            runTests("test/unit -f map_rect")
-                            sh "find . -name *_test.xml | xargs rm"
-                            runTests("test/unit -f map_rect")
-                        }                        
+                        script {
+                            if (isUnix()) {
+                                deleteDir()
+                                unstash 'MathSetup'
+                                sh "echo CXX=${env.CXX} -Werror > make/local"
+                                sh "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
+                                sh "export STAN_NUM_THREADS=4"
+                                runTests("test/unit -f thread")
+                                sh "find . -name *_test.xml | xargs rm"
+                                runTests("test/unit -f map_rect")
+                                sh "find . -name *_test.xml | xargs rm"
+                                runTests("test/unit -f map_rect")                            
+                            } else {
+                                deleteDirWin()
+                                unstash 'MathSetup'
+                                bat "echo CXX=${env.CXX} -Werror > make/local"
+                                bat "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
+                                runTestsWin("test/unit -f thread", false)
+                                runTestsWin("test/unit -f map_rect", false)
+                                runTestsWin("test/unit -f reduce_sum", false)
+                            }
+                        }                      
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
