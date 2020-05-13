@@ -28,6 +28,13 @@ using vector_d = Eigen::Matrix<double, Eigen::Dynamic, 1>;
  */
 using row_vector_d = Eigen::Matrix<double, 1, Eigen::Dynamic>;
 
+typedef struct {
+    double fwd_pass_time;
+    double bckwd_pass_time;
+} profile;
+
+using profiles = std::map<int, profile>;
+
 }  // namespace math
 }  // namespace stan
 
