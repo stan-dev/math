@@ -100,7 +100,7 @@ inline const std::vector<double>& value_of_rec(const std::vector<double>& x) {
  * @param[in] M Matrix to be converted
  * @return Matrix of values
  **/
-template <typename T, typename = require_not_same_st<T, double>,
+template <typename T, typename = require_not_st_same<T, double>,
           typename = require_eigen_t<T>>
 inline auto value_of_rec(const T& M) {
   return M.unaryExpr([](auto x) { return value_of_rec(x); });
@@ -118,7 +118,7 @@ inline auto value_of_rec(const T& M) {
  * @param x Specified matrix.
  * @return Specified matrix.
  */
-template <typename T, typename = require_same_st<T, double>,
+template <typename T, typename = require_st_same<T, double>,
           typename = require_eigen_t<T>>
 inline const T& value_of_rec(const T& x) {
   return x;

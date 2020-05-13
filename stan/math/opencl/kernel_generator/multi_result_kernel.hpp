@@ -2,13 +2,15 @@
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_MULTI_RESULT_KERNEL_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/kernel_generator/wrapper.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/calc_if.hpp>
 #include <stan/math/opencl/kernel_generator/load.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
+#include <algorithm>
 #include <string>
 #include <tuple>
 #include <utility>
@@ -18,6 +20,9 @@
 namespace stan {
 namespace math {
 
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 namespace internal {
 
 // Template parameter pack can only be at the end of the template list in
@@ -75,8 +80,12 @@ struct multi_result_kernel_internal {
                        "first expression", n_cols);
       if (!is_without_output<T_current_expression>::value) {
         result.check_assign_dimensions(expression.rows(), expression.cols());
-        result.set_view(expression.bottom_diagonal(), expression.top_diagonal(),
-                        1 - expression.rows(), expression.cols() - 1);
+        int bottom_written = 1 - expression.rows();
+        int top_written = expression.cols() - 1;
+        std::pair<int, int> extreme_diagonals = expression.extreme_diagonals();
+        result.set_view(std::max(extreme_diagonals.first, bottom_written),
+                        std::min(extreme_diagonals.second, top_written),
+                        bottom_written, top_written);
       }
     }
 
@@ -104,10 +113,7 @@ struct multi_result_kernel_internal {
           = std::get<n>(expressions)
                 .x.get_whole_kernel_parts(generated, ng, i, j,
                                           std::get<n>(results).x);
-      parts.initialization += parts0.initialization;
-      parts.body += parts0.body;
-      parts.reduction += parts0.reduction;
-      parts.args += parts0.args;
+      parts += parts0;
       return parts;
     }
 
@@ -323,6 +329,7 @@ class results_cl {
     std::string src;
     if (require_specific_local_size) {
       src =
+          parts.includes +
           "kernel void calculate(" + parts.args +
           "const int rows, const int cols){\n"
           "const int gid_i = get_global_id(0);\n"
@@ -347,6 +354,7 @@ class results_cl {
           "}\n";
     } else {
       src =
+          parts.includes +
           "kernel void calculate(" +
           parts.args.substr(0, parts.args.size() - 2) +
           "){\n"
@@ -411,8 +419,8 @@ class results_cl {
     if (n_rows * n_cols == 0) {
       return;
     }
-    check_positive(function, "number of rows", n_rows);
-    check_positive(function, "number of columns", n_cols);
+    check_nonnegative(function, "expr.rows()", n_rows);
+    check_nonnegative(function, "expr.cols()", n_cols);
 
     try {
       if (impl::kernel_() == NULL) {
@@ -466,7 +474,7 @@ template <typename... T_results>
 results_cl<T_results...> results(T_results&&... results) {
   return results_cl<T_results...>(std::forward<T_results>(results)...);
 }
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 

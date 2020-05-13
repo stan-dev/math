@@ -34,9 +34,8 @@ struct cos_fun {
  * @param x angles in radians
  * @return Cosine of each value in x.
  */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto cos(const Container& x) {
   return apply_scalar_unary<cos_fun, Container>::apply(x);
 }
@@ -50,7 +49,7 @@ inline auto cos(const Container& x) {
  * @return Cosine of each value in x.
  */
 template <typename Container,
-          require_container_st<is_container, std::is_arithmetic, Container>...>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto cos(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().cos(); });

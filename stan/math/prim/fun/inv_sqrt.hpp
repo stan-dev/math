@@ -11,7 +11,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap `1 / sqrt(x)}` so that it can be vectorized.
+ * Structure to wrap `1 / sqrt(x)` so that it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -33,9 +33,8 @@ struct inv_sqrt_fun {
  * @param x container
  * @return inverse square root of each value in x.
  */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto inv_sqrt(const Container& x) {
   return apply_scalar_unary<inv_sqrt_fun, Container>::apply(x);
 }
@@ -49,7 +48,7 @@ inline auto inv_sqrt(const Container& x) {
  * @return inverse square root each variable in the container.
  */
 template <typename Container,
-          require_container_st<is_container, std::is_arithmetic, Container>...>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto inv_sqrt(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().rsqrt(); });

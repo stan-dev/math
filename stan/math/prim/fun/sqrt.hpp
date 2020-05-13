@@ -31,9 +31,8 @@ struct sqrt_fun {
  * @param x container
  * @return Square root of each value in x.
  */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto sqrt(const Container& x) {
   return apply_scalar_unary<sqrt_fun, Container>::apply(x);
 }
@@ -47,7 +46,7 @@ inline auto sqrt(const Container& x) {
  * @return Square root of each value in x.
  */
 template <typename Container,
-          require_container_st<is_container, std::is_arithmetic, Container>...>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto sqrt(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().sqrt(); });

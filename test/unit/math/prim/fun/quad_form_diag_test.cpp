@@ -35,8 +35,6 @@ TEST(MathMatrixPrim, quadFormDiag2) {
 TEST(MathMatrixPrim, quadFormDiagException) {
   Eigen::MatrixXd m(2, 2);
   m << 2, 3, 4, 5;
-  EXPECT_THROW(quad_form_diag(m, m), std::invalid_argument);
-
   Eigen::VectorXd v(3);
   v << 1, 2, 3;
   EXPECT_THROW(quad_form_diag(m, v), std::invalid_argument);
