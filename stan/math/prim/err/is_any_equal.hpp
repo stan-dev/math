@@ -26,7 +26,8 @@ bool is_any_equal(T1 x, T2 y) {
  * @param x An Eigen expression
  * @param y An Arithmetic value
  */
-template <typename T1, typename T2, require_eigen_t<T1>* = nullptr, require_arithmetic_t<T2>* = nullptr>
+template <typename T1, typename T2, require_eigen_t<T1>* = nullptr,
+          require_arithmetic_t<T2>* = nullptr>
 bool is_any_equal(const T1& x, T2 y) {
   return (x.array() == y).any();
 }

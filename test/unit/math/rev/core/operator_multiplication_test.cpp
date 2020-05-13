@@ -4,11 +4,10 @@
 #include <vector>
 #include <limits>
 
-
 TEST(MathRev, TestVarEigen) {
-  using stan::math::var_value;
-  using stan::math::var;
   using stan::math::sum;
+  using stan::math::var;
+  using stan::math::var_value;
   Eigen::Matrix<double, -1, -1> x_vals(3, 3);
   Eigen::Matrix<double, -1, -1> y_vals(3, 3);
   x_vals << 1, 2, 3, 4, 5, 6, 7, 8, 9;
@@ -72,12 +71,10 @@ TEST(MathRev, TestVarEigen) {
   stan::math::recover_memory();
 }
 
-
-
 TEST(MathRev, TestVarEigenMatColVec) {
-  using stan::math::var_value;
-  using stan::math::var;
   using stan::math::sum;
+  using stan::math::var;
+  using stan::math::var_value;
   Eigen::Matrix<double, -1, -1> x_vals(3, 3);
   Eigen::Matrix<double, -1, 1> y_vals(3);
   x_vals << 1, 2, 3, 4, 5, 6, 7, 8, 9;
@@ -142,9 +139,9 @@ TEST(MathRev, TestVarEigenMatColVec) {
 }
 
 TEST(MathRev, TestVarEigenRowVecMat) {
-  using stan::math::var_value;
-  using stan::math::var;
   using stan::math::sum;
+  using stan::math::var;
+  using stan::math::var_value;
   Eigen::Matrix<double, 1, -1> x_vals(3);
   Eigen::Matrix<double, -1, -1> y_vals(3, 3);
   x_vals << 1, 2, 3;
@@ -209,9 +206,9 @@ TEST(MathRev, TestVarEigenRowVecMat) {
 }
 
 TEST(MathRev, TestVarEigenColVecRowVec) {
-  using stan::math::var_value;
-  using stan::math::var;
   using stan::math::sum;
+  using stan::math::var;
+  using stan::math::var_value;
   Eigen::Matrix<double, 1, -1> x_vals(3);
   Eigen::Matrix<double, -1, 1> y_vals(3);
   x_vals << 1, 2, 3;
@@ -276,9 +273,9 @@ TEST(MathRev, TestVarEigenColVecRowVec) {
 }
 
 TEST(MathRev, TestVarEigenRowVecColVec) {
-  using stan::math::var_value;
-  using stan::math::var;
   using stan::math::sum;
+  using stan::math::var;
+  using stan::math::var_value;
   Eigen::Matrix<double, -1, 1> x_vals(3);
   Eigen::Matrix<double, 1, -1> y_vals(3);
   x_vals << 1, 2, 3;
@@ -342,11 +339,10 @@ TEST(MathRev, TestVarEigenRowVecColVec) {
   stan::math::recover_memory();
 }
 
-
 TEST(MathRev, TestVarEigenVarDbl) {
-  using stan::math::var_value;
-  using stan::math::var;
   using stan::math::sum;
+  using stan::math::var;
+  using stan::math::var_value;
   Eigen::Matrix<double, -1, -1> x_vals(3, 3);
   Eigen::Matrix<double, -1, -1> y_vals(3, 3);
   x_vals << 1, 2, 3, 4, 5, 6, 7, 8, 9;
@@ -402,9 +398,9 @@ TEST(MathRev, TestVarEigenVarDbl) {
 }
 
 TEST(MathRev, TestVarEigenDblVal) {
-  using stan::math::var_value;
-  using stan::math::var;
   using stan::math::sum;
+  using stan::math::var;
+  using stan::math::var_value;
   Eigen::Matrix<double, -1, -1> x_vals(3, 3);
   Eigen::Matrix<double, -1, -1> y_vals(3, 3);
   x_vals << 1, 2, 3, 4, 5, 6, 7, 8, 9;

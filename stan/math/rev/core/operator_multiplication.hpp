@@ -35,8 +35,8 @@ class multiply_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>>
       : op_vari<VariVal, Vari1*, Vari2*>(avi->val_ * bvi->val_, avi, bvi) {}
   /**
    * `chain_impl` is called from `chain()` and exists so one specialized struct
-   * can call either the scalar or matrix `chain()` methods. SFINAE only works on
-   * "deduced" template types. So the trick here is to make template types,
+   * can call either the scalar or matrix `chain()` methods. SFINAE only works
+   * on "deduced" template types. So the trick here is to make template types,
    * T1 and T2, set their defaults to the class template types, then do the
    * regular `requires`. Since `chain_impl` has no inputs to deduce the
    * template types will always fall back to their default values. Since the
@@ -44,7 +44,7 @@ class multiply_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>>
    * to SFINAE out either the arithmetic or matrix version.
    */
   template <typename T1 = Vari1, typename T2 = Vari2,
-   require_all_vari_vt<std::is_arithmetic, T1, T2>* = nullptr>
+            require_all_vari_vt<std::is_arithmetic, T1, T2>* = nullptr>
   inline void chain_impl() {
     if (unlikely(is_any_nan(avi()->val_, bvi()->val_))) {
       avi()->adj_ = NOT_A_NUMBER;
@@ -56,7 +56,7 @@ class multiply_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>>
   }
 
   template <typename T1 = Vari1, typename T2 = Vari2,
-   require_all_vari_vt<is_eigen, T1, T2>* = nullptr>
+            require_all_vari_vt<is_eigen, T1, T2>* = nullptr>
   inline void chain_impl() {
     if (unlikely(is_any_nan(avi()->val_, bvi()->val_))) {
       avi()->adj_.fill(NOT_A_NUMBER);
@@ -67,9 +67,7 @@ class multiply_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>>
     }
   }
 
-  void chain() {
-    chain_impl();
-  }
+  void chain() { chain_impl(); }
 };
 
 /**
@@ -86,9 +84,9 @@ class multiply_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> final
       : op_vari<VariVal, Vari*, Arith>(avi->val_ * b, avi, b) {}
 
   template <typename T1 = Vari, typename T2 = Arith,
-   require_vari_vt<std::is_arithmetic, T1>* = nullptr,
-   require_arithmetic_t<T2>* = nullptr>
-   inline void chain_impl() {
+            require_vari_vt<std::is_arithmetic, T1>* = nullptr,
+            require_arithmetic_t<T2>* = nullptr>
+  inline void chain_impl() {
     if (unlikely(is_any_nan(avi()->val_, bd()))) {
       avi()->adj_ = NOT_A_NUMBER;
     } else {
@@ -97,8 +95,8 @@ class multiply_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> final
   }
 
   template <typename T1 = Vari, typename T2 = Arith,
-   require_vari_vt<is_eigen, T1>* = nullptr,
-   require_vt_arithmetic<T2>* = nullptr>
+            require_vari_vt<is_eigen, T1>* = nullptr,
+            require_vt_arithmetic<T2>* = nullptr>
   inline void chain_impl() {
     if (unlikely(is_any_nan(avi()->val_, bd()))) {
       avi()->adj_.fill(NOT_A_NUMBER);
@@ -107,9 +105,7 @@ class multiply_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> final
     }
   }
 
-  void chain() {
-    chain_impl();
-  }
+  void chain() { chain_impl(); }
 };
 
 /**
@@ -126,8 +122,8 @@ class multiply_vari<VariVal, Arith, Vari, require_vt_arithmetic<Arith>> final
       : op_vari<VariVal, Arith, Vari*>(a * bvi->val_, a, bvi) {}
 
   template <typename T1 = Arith, typename T2 = Vari,
-   require_vari_vt<std::is_arithmetic, T2>* = nullptr,
-   require_arithmetic_t<T1>* = nullptr>
+            require_vari_vt<std::is_arithmetic, T2>* = nullptr,
+            require_arithmetic_t<T1>* = nullptr>
   void chain_impl() {
     if (unlikely(is_any_nan(bvi()->val_, ad()))) {
       bvi()->adj_ = NOT_A_NUMBER;
@@ -137,8 +133,8 @@ class multiply_vari<VariVal, Arith, Vari, require_vt_arithmetic<Arith>> final
   }
 
   template <typename T1 = Arith, typename T2 = Vari,
-   require_vari_vt<is_eigen, T2>* = nullptr,
-   require_vt_arithmetic<T1>* = nullptr>
+            require_vari_vt<is_eigen, T2>* = nullptr,
+            require_vt_arithmetic<T1>* = nullptr>
   void chain_impl() {
     if (unlikely(is_any_nan(bvi()->val_, ad()))) {
       bvi()->adj_.fill(NOT_A_NUMBER);
@@ -147,9 +143,7 @@ class multiply_vari<VariVal, Arith, Vari, require_vt_arithmetic<Arith>> final
     }
   }
 
-  void chain() {
-    chain_impl();
-  }
+  void chain() { chain_impl(); }
 };
 
 /**
@@ -176,25 +170,29 @@ struct mat_mul_return_type<T1, T2, require_all_eigen_matrix_t<T1, T2>> {
 
 // mat and column vector is col vec -1, 1
 template <typename T1, typename T2>
-struct mat_mul_return_type<T1, T2, require_eigen_matrix_t<T1>, require_eigen_col_vector_t<T2>> {
+struct mat_mul_return_type<T1, T2, require_eigen_matrix_t<T1>,
+                           require_eigen_col_vector_t<T2>> {
   using type = std::decay_t<T2>;
 };
 
 // row vec and mat is row vec 1, -1
 template <typename T1, typename T2>
-struct mat_mul_return_type<T1, T2, require_eigen_row_vector_t<T1>, require_eigen_matrix_t<T2>> {
+struct mat_mul_return_type<T1, T2, require_eigen_row_vector_t<T1>,
+                           require_eigen_matrix_t<T2>> {
   using type = std::decay_t<T1>;
 };
 
 // row vec and col vec is arithmetic
 template <typename T1, typename T2>
-struct mat_mul_return_type<T1, T2, require_eigen_row_vector_t<T1>, require_eigen_col_vector_t<T2>> {
+struct mat_mul_return_type<T1, T2, require_eigen_row_vector_t<T1>,
+                           require_eigen_col_vector_t<T2>> {
   using type = value_type_t<T1>;
 };
 
 //  col vec and row vec is matrix -1, -1
 template <typename T1, typename T2>
-struct mat_mul_return_type<T1, T2, require_eigen_col_vector_t<T1>, require_eigen_row_vector_t<T2>> {
+struct mat_mul_return_type<T1, T2, require_eigen_col_vector_t<T1>,
+                           require_eigen_row_vector_t<T2>> {
   using type = Eigen::Matrix<value_type_t<T1>, -1, -1>;
 };
 // helper alias
@@ -240,10 +238,12 @@ using mat_mul_return_type_t = typename mat_mul_return_type<T1, T2>::type;
  * @return Variable result of multiplying operands.
  */
 template <typename T1, typename T2>
-inline var_value<internal::mat_mul_return_type_t<T1, T2>> operator*(const var_value<T1>& a, const var_value<T2>& b) {
+inline var_value<internal::mat_mul_return_type_t<T1, T2>> operator*(
+    const var_value<T1>& a, const var_value<T2>& b) {
   using mat_return = internal::mat_mul_return_type_t<T1, T2>;
-  return {new internal::multiply_vari<mat_return,
-     vari_value<T1>, vari_value<T2>>(a.vi_, b.vi_)};
+  return {
+      new internal::multiply_vari<mat_return, vari_value<T1>, vari_value<T2>>(
+          a.vi_, b.vi_)};
 }
 
 /**
@@ -259,12 +259,14 @@ inline var_value<internal::mat_mul_return_type_t<T1, T2>> operator*(const var_va
  * @return Variable result of multiplying operands.
  */
 template <typename T, typename Arith, require_vt_arithmetic<Arith>...>
-inline var_value<internal::mat_mul_return_type_t<T, Arith>> operator*(const var_value<T>& a, const Arith& b) {
+inline var_value<internal::mat_mul_return_type_t<T, Arith>> operator*(
+    const var_value<T>& a, const Arith& b) {
   if (is_all_equal(b, 1.0)) {
     return a;
   }
   using mat_return = internal::mat_mul_return_type_t<T, Arith>;
-  return {new internal::multiply_vari<mat_return, vari_value<T>, Arith>(a.vi_, b)};
+  return {
+      new internal::multiply_vari<mat_return, vari_value<T>, Arith>(a.vi_, b)};
 }
 
 /**
@@ -280,12 +282,14 @@ inline var_value<internal::mat_mul_return_type_t<T, Arith>> operator*(const var_
  * @return Variable result of multiplying the operands.
  */
 template <typename T, typename Arith, require_vt_arithmetic<Arith>...>
-inline var_value<internal::mat_mul_return_type_t<Arith, T>> operator*(const Arith& a, const var_value<T>& b) {
+inline var_value<internal::mat_mul_return_type_t<Arith, T>> operator*(
+    const Arith& a, const var_value<T>& b) {
   if (is_all_equal(a, 1.0)) {
     return b;
   }
   using mat_return = internal::mat_mul_return_type_t<Arith, T>;
-  return {new internal::multiply_vari<mat_return, Arith, vari_value<T>>(a, b.vi_)};
+  return {
+      new internal::multiply_vari<mat_return, Arith, vari_value<T>>(a, b.vi_)};
 }
 
 }  // namespace math

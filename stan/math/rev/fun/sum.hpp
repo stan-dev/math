@@ -100,12 +100,10 @@ inline var sum(const EigMat& m) {
 template <typename VariSum, typename Vari>
 class sum_vari : public vari_value<VariSum> {
   Vari* v_;
-  public:
-    sum_vari(Vari* avi) : vari_value<VariSum>(avi->val_.sum()),
-     v_(avi) {}
-     virtual void chain() {
-         v_->adj_.array() += this->adj_;
-     }
+
+ public:
+  sum_vari(Vari* avi) : vari_value<VariSum>(avi->val_.sum()), v_(avi) {}
+  virtual void chain() { v_->adj_.array() += this->adj_; }
 };
 
 template <typename T>

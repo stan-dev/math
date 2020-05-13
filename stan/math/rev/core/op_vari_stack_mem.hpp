@@ -29,26 +29,27 @@ using op_vari_tuple_t = op_vari_tuple_type<T>::type;
 
 // is a type an eigen type with a scalar of double
 template <typename T>
-struct is_eigen_arith : bool_constant<conjunction<std::is_arithmetic<value_type_t<T>>, is_eigen<T>>::value> {};
+struct is_eigen_arith
+    : bool_constant<conjunction<std::is_arithmetic<value_type_t<T>>,
+                                is_eigen<T>>::value> {};
 
 // Count the number of eigen matrices with arithmetic types
-constexpr size_t op_vari_count_dbl(size_t count) {
-    return count;
-}
+constexpr size_t op_vari_count_dbl(size_t count) { return count; }
 
 template <typename T>
 constexpr size_t op_vari_count_dbl(size_t count, T&& x) {
-    return count + is_eigen_arith<T>::value;
+  return count + is_eigen_arith<T>::value;
 }
 
 template <typename T, typename... Types>
 constexpr size_t op_vari_count_dbl(size_t count, T&& x, Types&&... args) {
-    return op_vari_count_dbl(count + is_eigen_arith<T>::value, args...);
+  return op_vari_count_dbl(count + is_eigen_arith<T>::value, args...);
 }
 
 template <typename... Types>
 auto make_op_vari_tuple(double** mem, Types&&... args) {
-  constexpr int num_dbls = std::make_integer_sequence<int, op_vari_count_dbl(0, args...)>;
+  constexpr int num_dbls
+      = std::make_integer_sequence<int, op_vari_count_dbl(0, args...)>;
   return std::make_tuple(make_op_vari(mem, args)...)
 }
 /**
@@ -60,8 +61,9 @@ auto make_op_vari_tuple(double** mem, Types&&... args) {
 template <typename T, typename... Types>
 class op_vari : public vari_value<T> {
  protected:
-  double** dbl_mem_; // Holds mem for eigen matrices of doubles
-  std::tuple<op_vari_tuple_t<Types>...> vi_;  // Holds the objects needed in the reverse pass.
+  double** dbl_mem_;  // Holds mem for eigen matrices of doubles
+  std::tuple<op_vari_tuple_t<Types>...>
+      vi_;  // Holds the objects needed in the reverse pass.
 
  public:
   /**
@@ -93,15 +95,17 @@ class op_vari : public vari_value<T> {
    * @param args Ops passed into the tuple and used later in chain method.
    *
    * Here I think the steps are:
-   * 1. Count the number of double matrices and allocate double* pointers for them.
+   * 1. Count the number of double matrices and allocate double* pointers for
+   * them.
    * 2. Apply a tuple constructor that for vari types just returns itself
    *  and for Eigen matrices of doubles allocates the mem for it on our stack,
    *   then constructs and fills the map.
    */
   op_vari(T val, Types... args)
       : vari_value<T>(val),
-      dbl_mem_(ChainableStack::instance_->memalloc_.alloc_array<double*>(op_vari_count_dbl(0, args...))),
-      vi_(make_op_vari_tuple(dbl_mem_, args...)) {}
+        dbl_mem_(ChainableStack::instance_->memalloc_.alloc_array<double*>(
+            op_vari_count_dbl(0, args...))),
+        vi_(make_op_vari_tuple(dbl_mem_, args...)) {}
 };
 
 }  // namespace math

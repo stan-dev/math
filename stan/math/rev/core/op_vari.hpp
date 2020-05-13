@@ -39,8 +39,8 @@ class op_vari : public vari_value<T> {
   auto& vi() { return vi_; }
 
   /**
-   * Return a constant reference to the tuple holding the vari ops. This is commonly
-   *  used in conjunction with \c std::get<N>()
+   * Return a constant reference to the tuple holding the vari ops. This is
+   * commonly used in conjunction with \c std::get<N>()
    * @return The tuple holding the vari ops.
    */
   const auto& vi() const { return vi_; }
