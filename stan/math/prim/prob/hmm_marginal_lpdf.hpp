@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/col.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
 #include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/core.hpp>
 #include <vector>
@@ -14,14 +15,17 @@
 namespace stan {
 namespace math {
 
-template <typename T_omega, typename T_Gamma, typename T_rho, typename T_alpha>
-inline auto hmm_marginal_lpdf_val(
-    const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& omegas,
-    const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma_val,
-    const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho_val,
-    Eigen::Matrix<T_alpha, Eigen::Dynamic, Eigen::Dynamic>& alphas,
-    Eigen::Matrix<T_alpha, Eigen::Dynamic, 1>& alpha_log_norms,
-    T_alpha& norm_norm) {
+template <typename T_omega, typename T_Gamma, typename T_rho, typename T_alphas,
+          typename T_alpha_log_norm, typename T_norm,
+          require_all_eigen_matrix_t<T_omega, T_Gamma, T_alphas>* = nullptr,
+          require_all_eigen_col_vector_t<T_rho, T_alpha_log_norm>* = nullptr,
+          require_stan_scalar_t<T_norm>* = nullptr,
+          require_all_vt_same<T_alphas, T_alpha_log_norm, T_norm>* = nullptr>
+inline auto hmm_marginal_lpdf_val(const T_omega& omegas,
+                                  const T_Gamma& Gamma_val,
+                                  const T_rho& rho_val, T_alphas& alphas,
+                                  T_alpha_log_norm& alpha_log_norms,
+                                  T_norm& norm_norm) {
   const int n_states = omegas.rows();
   const int n_transitions = omegas.cols() - 1;
   alphas.col(0) = omegas.col(0).cwiseProduct(rho_val);
