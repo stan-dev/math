@@ -186,6 +186,17 @@ class var {
   var(unsigned long x)
       : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
 
+  /**
+   * Construct a variable from the specified arithmetic argument
+   * by constructing a new <code>vari</code> with the argument
+   * cast to <code>double</code>, and a zero adjoint.
+   *
+   * @param x Value of the variable.
+   */
+  // NOLINTNEXTLINE
+  var(unsigned long long x)
+      : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
+
 #ifdef _WIN64
   // these two ctors are for Win64 to enable 64-bit signed
   // and unsigned integers, because long and unsigned long

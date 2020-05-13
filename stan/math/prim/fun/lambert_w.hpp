@@ -8,51 +8,6 @@
 namespace stan {
 namespace math {
 
-/**
- * Return the value of the W0 branch of the Lambert W function.
- *
- * @param[in] x argument
- * @return value of the W0 branch of the Lambert W function at argument
- * @throw std::domain_error if x is smaller than -e^(-1)
- */
-inline double lambert_w0(double x) {
-  return boost::math::lambert_w0(x, boost_policy_t());
-}
-
-/**
- * Return the value of the W0 branch of the Lambert W function.
- *
- * @param[in] x argument
- * @return value of the W0 branch of the Lambert W function at argument
- * @throw std::domain_error if x is smaller than -e^(-1)
- */
-inline double lambert_w0(int x) {
-  return boost::math::lambert_w0(x, boost_policy_t());
-}
-
-/**
- * Return the value of the W-1 branch of the Lambert W function.
- *
- * @param[in] x argument
- * @return value of the W-1 branch of the Lambert W function at argument
- * @throw std::domain_error if x is smaller than -e^(-1) or equal or bigger than
- * 0
- */
-inline double lambert_wm1(double x) {
-  return boost::math::lambert_wm1(x, boost_policy_t());
-}
-
-/**
- * Return the value of the W-1 branch of the Lambert W function.
- *
- * @param[in] x argument
- * @return value of the W-1 branch of the Lambert W function at argument
- * @throw std::domain_error if x is smaller than -e^(-1) or equal or bigger than
- * 0
- */
-inline double lambert_wm1(int x) {
-  return boost::math::lambert_wm1(x, boost_policy_t());
-}
 
 /**
  * Structure to wrap lambert_w0() so it can be vectorized.
@@ -65,7 +20,7 @@ inline double lambert_wm1(int x) {
 struct lambert_w0_fun {
   template <typename T>
   static inline T fun(const T& x) {
-    return lambert_w0(x);
+    return boost::math::lambert_w0(x, boost_policy_t());
   }
 };
 
@@ -94,7 +49,7 @@ inline auto lambert_w0(const T& x) {
 struct lambert_wm1_fun {
   template <typename T>
   static inline T fun(const T& x) {
-    return lambert_wm1(x);
+    return boost::math::lambert_wm1(x, boost_policy_t());
   }
 };
 
