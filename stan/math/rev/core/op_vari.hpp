@@ -50,18 +50,22 @@ constexpr size_t op_vari_count_dbl(size_t count, T&& x, Types&&... args) {
 }
 
 template <typename T, require_not_eigen_t<T>* = nullptr>
-decltype(auto) make_op_vari(double**& mem , size_t position, T&& x) {
-    return std::forward<T>(x);
+decltype(auto) make_op_vari(double**& mem, size_t position, T&& x) {
+  return std::forward<T>(x);
 }
 
 /**
  * Allocate memory on the stack for Eigen types with arithmetic scalar
  */
 template <typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
-auto make_op_vari(double**& mem , size_t position, T&& x) {
-    mem[position] = ChainableStack::instance_->memalloc_.alloc_array<double>(x.size());
-    Eigen::Map<typename std::decay_t<T>::PlainObject>(mem[position], x.rows(), x.cols()) = x;
-    return Eigen::Map<typename std::decay_t<T>::PlainObject>(mem[position], x.rows(), x.cols());
+auto make_op_vari(double**& mem, size_t position, T&& x) {
+  mem[position]
+      = ChainableStack::instance_->memalloc_.alloc_array<double>(x.size());
+  Eigen::Map<typename std::decay_t<T>::PlainObject>(mem[position], x.rows(),
+                                                    x.cols())
+      = x;
+  return Eigen::Map<typename std::decay_t<T>::PlainObject>(mem[position],
+                                                           x.rows(), x.cols());
 }
 
 /**
@@ -87,9 +91,11 @@ auto make_op_vari(double**& mem , size_t position, T&& x) {
  * ```
  */
 template <size_t... I, typename... Types>
-auto make_op_vari_tuple_impl(double**& mem, const std::array<size_t, sizeof...(Types)>& positions,
+auto make_op_vari_tuple_impl(
+    double**& mem, const std::array<size_t, sizeof...(Types)>& positions,
     std::index_sequence<I...> /* ignore */, Types&&... args) {
-    return std::forward_as_tuple(make_op_vari(mem, positions[I], std::forward<Types>(args))...);
+  return std::forward_as_tuple(
+      make_op_vari(mem, positions[I], std::forward<Types>(args))...);
 }
 
 /**
@@ -101,17 +107,19 @@ auto make_op_vari_tuple_impl(double**& mem, const std::array<size_t, sizeof...(T
  */
 template <typename... Types>
 auto make_op_vari_tuple(double**& mem, Types&&... args) {
-    std::array<size_t, sizeof...(Types)> positions_vec{{is_eigen_arith<Types>::value...}};
-    size_t accum_val = -1;
-    for (int i = 0; i < positions_vec.size(); ++i) {
-      if (positions_vec[i] != 0) {
-        positions_vec[i] += accum_val;
-        ++accum_val;
-      }
+  std::array<size_t, sizeof...(Types)> positions_vec{
+      {is_eigen_arith<Types>::value...}};
+  size_t accum_val = -1;
+  for (int i = 0; i < positions_vec.size(); ++i) {
+    if (positions_vec[i] != 0) {
+      positions_vec[i] += accum_val;
+      ++accum_val;
     }
-    return make_op_vari_tuple_impl(mem, positions_vec, std::index_sequence_for<Types...>{}, args...);
+  }
+  return make_op_vari_tuple_impl(mem, positions_vec,
+                                 std::index_sequence_for<Types...>{}, args...);
 }
-}
+}  // namespace internal
 /**
  * Holds the elements needed in vari operations for the reverse pass and chain
  * call.
@@ -173,7 +181,7 @@ class op_vari : public vari_value<T> {
         dbl_mem_(ChainableStack::instance_->memalloc_.alloc_array<double*>(
             internal::op_vari_count_dbl(0, args...))),
         vi_(internal::make_op_vari_tuple(dbl_mem_,
-            std::forward<Types>(args)...)) {}
+                                         std::forward<Types>(args)...)) {}
 };
 
 }  // namespace math
