@@ -148,7 +148,7 @@ neg_binomial_2_log_glm_lpmf(
   }
   if (include_summand<propto, T_precision>::value) {
     if (is_vector<T_precision>::value) {
-      scalar_seq_view<decltype(phi_val)> phi_vec(phi_val);
+      scalar_seq_view<decltype(phi_val_vec)> phi_vec(phi_val_vec);
       for (size_t n = 0; n < N_instances; ++n) {
         logp += multiply_log(phi_vec[n], phi_vec[n]) - lgamma(phi_vec[n]);
       }
