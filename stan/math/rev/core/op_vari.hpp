@@ -61,11 +61,9 @@ template <typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
 auto make_op_vari(double**& mem, size_t position, T&& x) {
   mem[position]
       = ChainableStack::instance_->memalloc_.alloc_array<double>(x.size());
-  Eigen::Map<typename std::decay_t<T>::PlainObject>(mem[position], x.rows(),
-                                                    x.cols())
-      = x;
-  return Eigen::Map<typename std::decay_t<T>::PlainObject>(mem[position],
-                                                           x.rows(), x.cols());
+  using eigen_map = Eigen::Map<typename std::decay_t<T>::PlainObject>;
+  eigen_map(mem[position], x.rows(), x.cols()) = x;
+  return eigen_map(mem[position], x.rows(), x.cols());
 }
 
 /**
