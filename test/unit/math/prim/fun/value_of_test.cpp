@@ -5,8 +5,8 @@
 #include <type_traits>
 #include <vector>
 
-#define EXPECT_MATRIX_EQ(A, B) \
-  for (int i = 0; i < A.size(); i++)    \
+#define EXPECT_MATRIX_EQ(A, B)       \
+  for (int i = 0; i < A.size(); i++) \
     EXPECT_EQ(A(i), B(i));
 
 TEST(MathFunctions, value_of) {
