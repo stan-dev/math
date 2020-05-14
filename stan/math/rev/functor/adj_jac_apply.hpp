@@ -119,7 +119,8 @@ struct compute_dims<Eigen::Matrix<T, R, C>> {
  */
 template <typename F, typename... Targs>
 struct adj_jac_vari : public vari {
-  static constexpr std::array<bool, sizeof...(Targs)> is_var_{{is_var<scalar_type_t<Targs>>::value...}};
+  static constexpr std::array<bool, sizeof...(Targs)> is_var_{
+      {is_var<scalar_type_t<Targs>>::value...}};
   using FReturnType
       = std::result_of_t<F(decltype(is_var_), decltype(value_of(Targs()))...)>;
 
