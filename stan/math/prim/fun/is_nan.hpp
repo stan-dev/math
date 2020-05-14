@@ -22,7 +22,12 @@ inline bool is_nan(T x) {
 
 template <typename T, require_eigen_t<T>* = nullptr>
 inline bool is_nan(const T& x) {
-  return Eigen::isnan(x.array()).any();
+  for (Eigen::Index i = 0; i < x.size(); ++i) {
+    if (is_nan(x(i))) {
+      return true;
+    }
+  }
+  return false;
 }
 
 }  // namespace math

@@ -119,7 +119,7 @@ struct compute_dims<Eigen::Matrix<T, R, C>> {
  */
 template <typename F, typename... Targs>
 struct adj_jac_vari : public vari {
-  std::array<bool, sizeof...(Targs)> is_var_;
+  static constexpr std::array<bool, sizeof...(Targs)> is_var_{{is_var<scalar_type_t<Targs>>::value...}};
   using FReturnType
       = std::result_of_t<F(decltype(is_var_), decltype(value_of(Targs()))...)>;
 
@@ -297,7 +297,6 @@ struct adj_jac_vari : public vari {
    */
   adj_jac_vari()
       : vari(NOT_A_NUMBER),  // The val_ in this vari is unused
-        is_var_({{is_var<typename scalar_type<Targs>::type>::value...}}),
         x_vis_(nullptr),
         y_vi_(nullptr) {}
 
@@ -514,6 +513,9 @@ struct adj_jac_vari : public vari {
           y_adj_jacs);
   }
 };
+
+template <typename F, typename... Targs>
+constexpr std::array<bool, sizeof...(Targs)> adj_jac_vari<F, Targs...>::is_var_;
 
 /**
  * Return the result of applying the function defined by a nullary

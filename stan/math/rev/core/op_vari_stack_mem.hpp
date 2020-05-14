@@ -4,28 +4,31 @@
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <tuple>
+#include <utility>
 
 namespace stan {
 namespace math {
+
+namespace internal {
 
 // For basic types just T, vari gives vari*, Eigen gives an Eigen::Map
 template <typename T, typename = void>
 struct op_vari_tuple_type {
   using type = T;
-}
+};
 
 template <typename T>
 struct op_vari_tuple_type<T, require_vari_t<T>> {
-  using type = T*;
-}
+  using type = T;
+};
 
 template <typename T>
 struct op_vari_tuple_type<T, require_eigen_t<T>> {
-  using type = Eigen::Map<typename T::PlainObject>;
-}
+  using type = Eigen::Map<typename std::decay_t<T>::PlainObject>;
+};
 
 template <typename T>
-using op_vari_tuple_t = op_vari_tuple_type<T>::type;
+using op_vari_tuple_t = typename op_vari_tuple_type<T>::type;
 
 // is a type an eigen type with a scalar of double
 template <typename T>
@@ -46,11 +49,37 @@ constexpr size_t op_vari_count_dbl(size_t count, T&& x, Types&&... args) {
   return op_vari_count_dbl(count + is_eigen_arith<T>::value, args...);
 }
 
+template <typename T, require_not_eigen_t<T>* = nullptr>
+auto make_op_vari(double**& mem , size_t position, T&& x) {
+    return std::forward<T>(x);
+}
+
+/**
+ * Note: This doesn't work!
+ * We want position to be equal to the double pointers position, but this uses
+ *  the `args` position. So if we had:
+ * {var, var, Eigen::Matrix<double>, var, var, Eigen::Matrix<double>}
+ * This currently does
+ * {0, 1, (2), 3, 4, (5}
+ * Where we want
+ * {0, 0 , 0, (0), 0, (1)}
+ */
+template <typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
+auto make_op_vari(double**& mem , size_t position, T&& x) {
+    mem[position] = ChainableStack::instance_->memalloc_.alloc_array<double>(x.size());
+    Eigen::Map<typename std::decay_t<T>::PlainObject>(mem[position], x.rows(), x.cols()) = x;
+    return Eigen::Map<typename std::decay_t<T>::PlainObject>(mem[position], x.rows(), x.cols());
+}
+
+template <size_t... I, typename... Types>
+auto make_op_vari_tuple_impl(double**& mem, std::index_sequence<I...>, Types&&... args) {
+    return std::make_tuple(make_op_vari(mem, I, args)...);
+}
+
 template <typename... Types>
-auto make_op_vari_tuple(double** mem, Types&&... args) {
-  constexpr int num_dbls
-      = std::make_integer_sequence<int, op_vari_count_dbl(0, args...)>;
-  return std::make_tuple(make_op_vari(mem, args)...)
+auto make_op_vari_tuple(double**& mem, Types&&... args) {
+    return make_op_vari_tuple_impl(mem, std::index_sequence_for<Types...>{}, args...);
+}
 }
 /**
  * Holds the elements needed in vari operations for the reverse pass and chain
@@ -62,7 +91,7 @@ template <typename T, typename... Types>
 class op_vari : public vari_value<T> {
  protected:
   double** dbl_mem_;  // Holds mem for eigen matrices of doubles
-  std::tuple<op_vari_tuple_t<Types>...>
+  std::tuple<internal::op_vari_tuple_t<Types>...>
       vi_;  // Holds the objects needed in the reverse pass.
 
  public:
@@ -104,8 +133,8 @@ class op_vari : public vari_value<T> {
   op_vari(T val, Types... args)
       : vari_value<T>(val),
         dbl_mem_(ChainableStack::instance_->memalloc_.alloc_array<double*>(
-            op_vari_count_dbl(0, args...))),
-        vi_(make_op_vari_tuple(dbl_mem_, args...)) {}
+            internal::op_vari_count_dbl(0, args...))),
+        vi_(internal::make_op_vari_tuple(dbl_mem_, args...)) {}
 };
 
 }  // namespace math
