@@ -71,10 +71,10 @@ class sum_eigen_v_vari : public sum_v_vari {
   template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
   explicit sum_eigen_v_vari(const EigMat& v1)
       : sum_v_vari(
-          v1.val().sum(),
-          reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
-              v1.size() * sizeof(vari*))),
-          v1.size()) {
+            v1.val().sum(),
+            reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
+                v1.size() * sizeof(vari*))),
+            v1.size()) {
     Eigen::Map<matrix_vi>(v_, v1.rows(), v1.cols()) = v1.vi();
   }
 };
