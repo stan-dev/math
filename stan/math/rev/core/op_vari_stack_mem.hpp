@@ -50,8 +50,8 @@ constexpr size_t op_vari_count_dbl(size_t count, T&& x, Types&&... args) {
 }
 
 template <typename T, require_not_eigen_t<T>* = nullptr>
-auto make_op_vari(double**& mem , size_t position, T&& x) {
-    return std::forward<T>(x);
+auto make_op_vari(double**& mem, size_t position, T&& x) {
+  return std::forward<T>(x);
 }
 
 /**
@@ -65,22 +65,28 @@ auto make_op_vari(double**& mem , size_t position, T&& x) {
  * {0, 0 , 0, (0), 0, (1)}
  */
 template <typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
-auto make_op_vari(double**& mem , size_t position, T&& x) {
-    mem[position] = ChainableStack::instance_->memalloc_.alloc_array<double>(x.size());
-    Eigen::Map<typename std::decay_t<T>::PlainObject>(mem[position], x.rows(), x.cols()) = x;
-    return Eigen::Map<typename std::decay_t<T>::PlainObject>(mem[position], x.rows(), x.cols());
+auto make_op_vari(double**& mem, size_t position, T&& x) {
+  mem[position]
+      = ChainableStack::instance_->memalloc_.alloc_array<double>(x.size());
+  Eigen::Map<typename std::decay_t<T>::PlainObject>(mem[position], x.rows(),
+                                                    x.cols())
+      = x;
+  return Eigen::Map<typename std::decay_t<T>::PlainObject>(mem[position],
+                                                           x.rows(), x.cols());
 }
 
 template <size_t... I, typename... Types>
-auto make_op_vari_tuple_impl(double**& mem, std::index_sequence<I...>, Types&&... args) {
-    return std::make_tuple(make_op_vari(mem, I, args)...);
+auto make_op_vari_tuple_impl(double**& mem, std::index_sequence<I...>,
+                             Types&&... args) {
+  return std::make_tuple(make_op_vari(mem, I, args)...);
 }
 
 template <typename... Types>
 auto make_op_vari_tuple(double**& mem, Types&&... args) {
-    return make_op_vari_tuple_impl(mem, std::index_sequence_for<Types...>{}, args...);
+  return make_op_vari_tuple_impl(mem, std::index_sequence_for<Types...>{},
+                                 args...);
 }
-}
+}  // namespace internal
 /**
  * Holds the elements needed in vari operations for the reverse pass and chain
  * call.
