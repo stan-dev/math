@@ -80,7 +80,7 @@ constexpr auto make_cond_sequence(std::index_sequence<J, I...> /* ignore */) {
  *   Matrix<double>, var, Matrix<double>, Matrix<double>, var)
  * ```
  * This returns the output
- * `index_sequence<0, 0, 0, 1, 1, 2>`
+ * `index_sequence<0, 0, 0, 1, 1, 2, 2>`
  * which can be used by `make_op_vari` to extract the correct pointer to memory
  * in the stack for each eigen matrix with arithmetic scalars.
  */
