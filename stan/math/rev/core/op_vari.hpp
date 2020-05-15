@@ -57,9 +57,8 @@ constexpr size_t op_vari_count_dbl(size_t count, T&& x, Types&&... args) {
  */
 template <size_t J, size_t... I>
 constexpr auto make_cond_sequence(std::index_sequence<J, I...> /* ignore */) {
-    return std::index_sequence<I...>{};
+  return std::index_sequence<I...>{};
 };
-
 
 /**
  * Create a conditinal compile time integer sequence that increments
@@ -86,9 +85,9 @@ constexpr auto make_cond_sequence(std::index_sequence<J, I...> /* ignore */) {
  */
 template <size_t J, size_t... I, typename T, typename... Types>
 constexpr auto make_cond_sequence(std::index_sequence<J, I...> /* ignore */,
-         T&& x, Types&&... args) {
-    constexpr auto iter = J + is_eigen_arith<std::decay_t<T>>::value;
-    return make_cond_sequence(std::index_sequence<iter, I...,J>{}, args...);
+                                  T&& x, Types&&... args) {
+  constexpr auto iter = J + is_eigen_arith<std::decay_t<T>>::value;
+  return make_cond_sequence(std::index_sequence<iter, I..., J>{}, args...);
 };
 
 template <typename T, require_not_eigen_t<T>* = nullptr>
@@ -111,9 +110,9 @@ auto make_op_vari(double**& mem, size_t position, T&& x) {
 /**
  * Helper implimentation that parses out the index sequence for figuring out
  * which arguments are eigen types that need memory allocated on the stack.
- * @tparam I an `size_t` non type template parameter holding used to initialize the index
- *  sequence and expand the array holding the pointer positions for each
- *  eigen arithmetic type in the argument pack.
+ * @tparam I an `size_t` non type template parameter holding used to initialize
+ * the index sequence and expand the array holding the pointer positions for
+ * each eigen arithmetic type in the argument pack.
  * @tparam Types the parameter pack of arguments to construct the tuple from.
  *   `vari_value` and arithmetic types will be passed along while eigen types
  *   with arithmetic scalars have their data copied to the autodiff stack
@@ -129,8 +128,9 @@ auto make_op_vari(double**& mem, size_t position, T&& x) {
  * ```
  */
 template <size_t... I, typename... Types>
-auto make_op_vari_tuple_impl(
-    double**& mem, std::index_sequence<I...> /* ignore */, Types&&... args) {
+auto make_op_vari_tuple_impl(double**& mem,
+                             std::index_sequence<I...> /* ignore */,
+                             Types&&... args) {
   return std::forward_as_tuple(
       make_op_vari(mem, I, std::forward<Types>(args))...);
 }
