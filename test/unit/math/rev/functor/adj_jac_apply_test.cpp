@@ -463,7 +463,7 @@ auto make_vari_for_test(const Targs&... args) {
 }
 
 TEST(AgradRev,
-     test_weird_argument_list_functor_compiles_and_sets_is_var_and_offsets_) {
+     test_weird_argument_list_functor_compiles_and_sets_is_var_) {
   int i;
   double d;
   stan::math::var v(5.0);
@@ -497,9 +497,6 @@ TEST(AgradRev,
                 {{false, false, false, false, false, false, false, false, false,
                   false, false, false, false, false, false, false}})));
 
-  EXPECT_EQ(vi1->offsets_, (std::array<int, 16>({{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                                  0, 0, 0, 0, 0, 0}})));
-
   stan::math::var(vi1).grad();
 
   auto vi2 = make_vari_for_test<WeirdArgumentListFunctor1>(
@@ -509,9 +506,6 @@ TEST(AgradRev,
             (std::array<bool, 16>(
                 {{true, false, false, false, true, false, false, false, true,
                   false, true, false, true, false, true, false}})));
-
-  EXPECT_EQ(vi2->offsets_, (std::array<int, 16>({{0, 1, 1, 1, 1, 3, 3, 3, 3, 6,
-                                                  6, 16, 16, 19, 19, 29}})));
 
   stan::math::var(vi2).grad();
 
@@ -523,9 +517,6 @@ TEST(AgradRev,
                 {{false, false, true, false, false, false, true, false, false,
                   true, false, true, false, true, false, true}})));
 
-  EXPECT_EQ(vi3->offsets_, (std::array<int, 16>({{0, 0, 0, 1, 1, 1, 1, 3, 3, 3,
-                                                  11, 11, 16, 16, 24, 24}})));
-
   stan::math::var(vi3).grad();
 
   auto vi4 = make_vari_for_test<WeirdArgumentListFunctor1>(
@@ -535,9 +526,6 @@ TEST(AgradRev,
             (std::array<bool, 16>(
                 {{true, false, false, false, false, false, true, false, true,
                   false, false, true, true, false, false, true}})));
-
-  EXPECT_EQ(vi4->offsets_, (std::array<int, 16>({{0, 1, 1, 1, 1, 1, 1, 3, 3, 6,
-                                                  6, 6, 11, 14, 14, 14}})));
 
   stan::math::var(vi4).grad();
 }
