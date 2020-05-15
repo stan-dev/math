@@ -49,6 +49,48 @@ constexpr size_t op_vari_count_dbl(size_t count, T&& x, Types&&... args) {
   return op_vari_count_dbl(count + is_eigen_arith<T>::value, args...);
 }
 
+/**
+ * End the recursion for making a compile time integer sequence
+ * @tparam J a size_t valued nttp that is tossed.
+ * @tparam I A parameter pack of size_t nttps that fill out the returned
+ *  index sequence.
+ */
+template <size_t J, size_t... I>
+constexpr auto make_cond_sequence(std::index_sequence<J, I...> /* ignore */) {
+    return std::index_sequence<I...>{};
+};
+
+
+/**
+ * Create a conditinal compile time integer sequence that increments
+ * based on the number of Eigen types with numeric scalars in the
+ * arguments.
+ * @tparam J The starting value for the integer sequence.
+ * @tparam I A parameter pack representing the integer sequence that is passed
+ *  recursivly through calls to this function.
+ * @tparam T The first input type peeled off through recursive calls. If this
+ * type is an Eigen matrix with an arithmetic scalar the next recursive call
+ * gets a +1 in the integer sequence.
+ * @tparam Types The remaining parameter pack of types used to calculate the
+ *   the integer sequence.
+ *
+ * For a given call such as
+ * ```
+ * make_cond_sequence(std::integer_sequence<0>, var, var,
+ *   Matrix<double>, var, Matrix<double>, Matrix<double>, var)
+ * ```
+ * This returns the output
+ * `index_sequence<0, 0, 0, 1, 1, 2>`
+ * which can be used by `make_op_vari` to extract the correct pointer to memory
+ * in the stack for each eigen matrix with arithmetic scalars.
+ */
+template <size_t J, size_t... I, typename T, typename... Types>
+constexpr auto make_cond_sequence(std::index_sequence<J, I...> /* ignore */,
+         T&& x, Types&&... args) {
+    constexpr auto iter = J + is_eigen_arith<std::decay_t<T>>::value;
+    return make_cond_sequence(std::index_sequence<iter, I...,J>{}, args...);
+};
+
 template <typename T, require_not_eigen_t<T>* = nullptr>
 decltype(auto) make_op_vari(double**& mem, size_t position, T&& x) {
   return std::forward<T>(x);
@@ -69,7 +111,7 @@ auto make_op_vari(double**& mem, size_t position, T&& x) {
 /**
  * Helper implimentation that parses out the index sequence for figuring out
  * which arguments are eigen types that need memory allocated on the stack.
- * @tparam I a non type template parameter holding used to initialize the index
+ * @tparam I an `size_t` non type template parameter holding used to initialize the index
  *  sequence and expand the array holding the pointer positions for each
  *  eigen arithmetic type in the argument pack.
  * @tparam Types the parameter pack of arguments to construct the tuple from.
@@ -78,8 +120,6 @@ auto make_op_vari(double**& mem, size_t position, T&& x) {
  *   and are then represented as an `Eigen::Map` whose subtype is the
  *   `PlainObject` type within the Eigen expression.
  * @param mem Pointer to memory from `op_vari` class for arithmetic eigen types
- * @param positions The array holding the positions of allocated memory in the
- *  double pointer of pointers for each eigen type with arithmetic scalars.
  * @param args parameter pack of arguments to initalize for op_vari.
  * Think of the parameter pack expansion below to be similar to
  * ```
@@ -90,10 +130,9 @@ auto make_op_vari(double**& mem, size_t position, T&& x) {
  */
 template <size_t... I, typename... Types>
 auto make_op_vari_tuple_impl(
-    double**& mem, const std::array<size_t, sizeof...(Types)>& positions,
-    std::index_sequence<I...> /* ignore */, Types&&... args) {
+    double**& mem, std::index_sequence<I...> /* ignore */, Types&&... args) {
   return std::forward_as_tuple(
-      make_op_vari(mem, positions[I], std::forward<Types>(args))...);
+      make_op_vari(mem, I, std::forward<Types>(args))...);
 }
 
 /**
@@ -105,17 +144,8 @@ auto make_op_vari_tuple_impl(
  */
 template <typename... Types>
 auto make_op_vari_tuple(double**& mem, Types&&... args) {
-  std::array<size_t, sizeof...(Types)> positions_vec{
-      {is_eigen_arith<Types>::value...}};
-  size_t accum_val = -1;
-  for (int i = 0; i < positions_vec.size(); ++i) {
-    if (positions_vec[i] != 0) {
-      positions_vec[i] += accum_val;
-      ++accum_val;
-    }
-  }
-  return make_op_vari_tuple_impl(mem, positions_vec,
-                                 std::index_sequence_for<Types...>{}, args...);
+  auto positions_vec = make_cond_sequence(std::index_sequence<0>{}, args...);
+  return make_op_vari_tuple_impl(mem, positions_vec, args...);
 }
 }  // namespace internal
 /**
