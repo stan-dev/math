@@ -462,8 +462,7 @@ auto make_vari_for_test(const Targs&... args) {
   return vi;
 }
 
-TEST(AgradRev,
-     test_weird_argument_list_functor_compiles_and_sets_is_var_) {
+TEST(AgradRev, test_weird_argument_list_functor_compiles_and_sets_is_var_) {
   int i;
   double d;
   stan::math::var v(5.0);

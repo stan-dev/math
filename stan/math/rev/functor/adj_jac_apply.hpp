@@ -231,8 +231,8 @@ struct adj_jac_vari : public vari {
   /**
    * Accumulate, if necessary, the values of y_adj_jac into the
    * adjoints of the varis pointed to by the appropriate elements
-   * of x_vis_. Recursively calls accumulate_adjoints_in_varis on the rest of the
-   * arguments.
+   * of x_vis_. Recursively calls accumulate_adjoints_in_varis on the rest of
+   * the arguments.
    *
    * @tparam R number of rows, can be Eigen::Dynamic
    * @tparam C number of columns, can be Eigen::Dynamic
@@ -243,9 +243,9 @@ struct adj_jac_vari : public vari {
    * recursively)
    */
   template <int R, int C, typename... Pargs>
-  inline void accumulate_adjoints_in_varis(vari** varis,
-					   const Eigen::Matrix<double, R, C>& y_adj_jac,
-					   const Pargs&... args) {
+  inline void accumulate_adjoints_in_varis(
+      vari** varis, const Eigen::Matrix<double, R, C>& y_adj_jac,
+      const Pargs&... args) {
     static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     if (is_var_[t]) {
       for (int n = 0; n < y_adj_jac.size(); ++n) {
@@ -259,8 +259,8 @@ struct adj_jac_vari : public vari {
   /**
    * Accumulate, if necessary, the values of y_adj_jac into the
    * adjoints of the varis pointed to by the appropriate elements
-   * of x_vis_. Recursively calls accumulate_adjoints_in_varis on the rest of the
-   * arguments.
+   * of x_vis_. Recursively calls accumulate_adjoints_in_varis on the rest of
+   * the arguments.
    *
    * @tparam Pargs Types of the rest of adjoints to accumulate
    * @param y_adj_jac set of values to be accumulated in adjoints
@@ -269,8 +269,8 @@ struct adj_jac_vari : public vari {
    */
   template <typename... Pargs>
   inline void accumulate_adjoints_in_varis(vari** varis,
-					   const std::vector<double>& y_adj_jac,
-					   const Pargs&... args) {
+                                           const std::vector<double>& y_adj_jac,
+                                           const Pargs&... args) {
     static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     if (is_var_[t]) {
       for (int n = 0; n < y_adj_jac.size(); ++n) {
@@ -283,8 +283,8 @@ struct adj_jac_vari : public vari {
   }
 
   /**
-   * Recursively call accumulate_adjoints_in_varis with args. There are no adjoints to
-   * accumulate for std::vector<int> arguments.
+   * Recursively call accumulate_adjoints_in_varis with args. There are no
+   * adjoints to accumulate for std::vector<int> arguments.
    *
    * @tparam Pargs Types of the rest of adjoints to accumulate
    * @param y_adj_jac ignored
@@ -293,16 +293,16 @@ struct adj_jac_vari : public vari {
    */
   template <typename... Pargs>
   inline void accumulate_adjoints_in_varis(vari** varis,
-				  const std::vector<int>& y_adj_jac,
-                                  const Pargs&... args) {
+                                           const std::vector<int>& y_adj_jac,
+                                           const Pargs&... args) {
     accumulate_adjoints_in_varis(varis, args...);
   }
 
   /**
    * Accumulate, if necessary, the value of y_adj_jac into the
    * adjoint of the vari pointed to by the appropriate element
-   * of x_vis_. Recursively calls accumulate_adjoints_in_varis on the rest of the
-   * arguments.
+   * of x_vis_. Recursively calls accumulate_adjoints_in_varis on the rest of
+   * the arguments.
    *
    * @tparam Pargs Types of the rest of adjoints to accumulate
    * @param y_adj_jac next set of adjoints to be accumulated
@@ -311,8 +311,8 @@ struct adj_jac_vari : public vari {
    */
   template <typename... Pargs>
   inline void accumulate_adjoints_in_varis(vari** varis,
-				  const double& y_adj_jac,
-                                  const Pargs&... args) {
+                                           const double& y_adj_jac,
+                                           const Pargs&... args) {
     static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     if (is_var_[t]) {
       varis[0]->adj_ += y_adj_jac;
@@ -322,8 +322,8 @@ struct adj_jac_vari : public vari {
   }
 
   /**
-   * Recursively call accumulate_adjoints_in_varis with args. There are no adjoints to
-   * accumulate for int arguments.
+   * Recursively call accumulate_adjoints_in_varis with args. There are no
+   * adjoints to accumulate for int arguments.
    *
    * @tparam Pargs Types of the rest of adjoints to accumulate
    * @param y_adj_jac ignored
@@ -331,11 +331,12 @@ struct adj_jac_vari : public vari {
    * recursively)
    */
   template <typename... Pargs>
-  inline void accumulate_adjoints_in_varis(vari** varis, const int& y_adj_jac, const Pargs&... args) {
+  inline void accumulate_adjoints_in_varis(vari** varis, const int& y_adj_jac,
+                                           const Pargs&... args) {
     accumulate_adjoints_in_varis(varis, args...);
   }
 
-  inline void accumulate_adjoints_in_varis(vari **) {}
+  inline void accumulate_adjoints_in_varis(vari**) {}
 
   /**
    * Propagate the adjoints at the output varis (y_vi_) back to the input
@@ -354,8 +355,11 @@ struct adj_jac_vari : public vari {
     internal::build_y_adj(y_vi_, M_, y_adj);
     auto y_adj_jacs = f_.multiply_adjoint_jacobian(is_var_, y_adj);
 
-    apply([&, this](auto&&... args) { this->accumulate_adjoints_in_varis(x_vis_, args...); },
-          y_adj_jacs);
+    apply(
+        [&, this](auto&&... args) {
+          this->accumulate_adjoints_in_varis(x_vis_, args...);
+        },
+        y_adj_jacs);
   }
 };
 
