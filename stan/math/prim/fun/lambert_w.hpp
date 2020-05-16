@@ -8,7 +8,6 @@
 namespace stan {
 namespace math {
 
-
 /**
  * Structure to wrap lambert_w0() so it can be vectorized.
  *
