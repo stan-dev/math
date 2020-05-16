@@ -128,9 +128,9 @@ TEST(StanMathOde_ode_bdf_tol, std_vector_arg) {
 
   Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
   double t0 = 0.0;
-  std::vector<double> ts = { 1.1 };
+  std::vector<double> ts = {1.1};
 
-  std::vector<var> a = { 1.5 };
+  std::vector<var> a = {1.5};
 
   var output = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
                                        nullptr, a)[0][0];

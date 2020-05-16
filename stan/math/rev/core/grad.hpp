@@ -29,7 +29,7 @@ namespace math {
  * derivative propagation.
  */
 static void grad(vari* vi = NULL) {
-  if(vi != NULL)
+  if (vi != NULL)
     vi->init_dependent();
   std::vector<vari*>& var_stack = ChainableStack::instance_->var_stack_;
   size_t end = var_stack.size();

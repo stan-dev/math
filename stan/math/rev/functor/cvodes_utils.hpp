@@ -18,8 +18,8 @@ extern "C" inline void cvodes_silent_err_handler(int error_code,
                                                  char* msg, void* eh_data) {
   // I found it handy to make this non-silent to debug CVODES while I set up
   // the adjoint sensitivity. I'm keeping this here for now
-  std::cout << "Error " << msg << " (" << error_code << ") in " <<
-    module << ", " << function << std::endl;
+  std::cout << "Error " << msg << " (" << error_code << ") in " << module
+            << ", " << function << std::endl;
 }
 
 inline void cvodes_set_options(void* cvodes_mem, double rel_tol, double abs_tol,

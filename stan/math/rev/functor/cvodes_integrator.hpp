@@ -16,59 +16,63 @@
 
 namespace stan {
 namespace math {
-  
-  template <typename T_Return>
-  std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>>
-  build_varis(vari* ode_vari, vari**& non_chaining_varis, const std::vector<Eigen::VectorXd>& y);
-  
-  template <>
-  std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>>
-  build_varis<var>(vari* ode_vari, vari**& non_chaining_varis, const std::vector<Eigen::VectorXd>& y) {
-    std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y_return(y.size());
-    
-    if(y.size() == 0) {
-      return y_return;
-    }
 
-    int N = y[0].size();
+template <typename T_Return>
+std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> build_varis(
+    vari* ode_vari, vari**& non_chaining_varis,
+    const std::vector<Eigen::VectorXd>& y);
 
-    non_chaining_varis =
-      ChainableStack::instance_->memalloc_.alloc_array<vari*>(y.size() * N);
+template <>
+std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> build_varis<var>(
+    vari* ode_vari, vari**& non_chaining_varis,
+    const std::vector<Eigen::VectorXd>& y) {
+  std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y_return(y.size());
 
-    for (size_t i = 0; i < y.size(); i++) {
-      for (size_t j = 0; j < N; j++) {
-	// The special vari that will handle the adjoint solve corresponds to
-	// the output y[y.size() - 1][N - 1]
-	/*if (i == y.size() - 1 && j == N - 1)
-	  continue;*/
-
-	// non_chaining_varis[i * N + j] corresponds to the vari attached to
-	// the ode output at time t[i] and state j
-	non_chaining_varis[i * N + j] = new vari(y[i][j], false);
-      }
-    }
-
-    for (size_t i = 0; i < y.size(); i++) {
-      y_return[i].resize(N);
-      for (size_t j = 0; j < N; j++)
-	// Inject our special vari at y[y.size() - 1][N - 1]
-	/*if (i == y.size() - 1 && j == N - 1)
-	  y_return[i][j] = var(ode_vari);
-	  else*/
-	y_return[i][j] = var(non_chaining_varis[i * N + j]);
-    }
-
+  if (y.size() == 0) {
     return y_return;
   }
 
-  /*
-   * If theta and y are both doubles, just pass the values through (there's
-   * no autodiff to handle here).
-   */
-  template <>
-  std::vector<Eigen::VectorXd> build_varis<double>(vari* ode_vari, vari**& non_chaining_varis, const std::vector<Eigen::VectorXd>& y) {
-    return y;
+  int N = y[0].size();
+
+  non_chaining_varis
+      = ChainableStack::instance_->memalloc_.alloc_array<vari*>(y.size() * N);
+
+  for (size_t i = 0; i < y.size(); i++) {
+    for (size_t j = 0; j < N; j++) {
+      // The special vari that will handle the adjoint solve corresponds to
+      // the output y[y.size() - 1][N - 1]
+      /*if (i == y.size() - 1 && j == N - 1)
+        continue;*/
+
+      // non_chaining_varis[i * N + j] corresponds to the vari attached to
+      // the ode output at time t[i] and state j
+      non_chaining_varis[i * N + j] = new vari(y[i][j], false);
+    }
   }
+
+  for (size_t i = 0; i < y.size(); i++) {
+    y_return[i].resize(N);
+    for (size_t j = 0; j < N; j++)
+      // Inject our special vari at y[y.size() - 1][N - 1]
+      /*if (i == y.size() - 1 && j == N - 1)
+        y_return[i][j] = var(ode_vari);
+        else*/
+      y_return[i][j] = var(non_chaining_varis[i * N + j]);
+  }
+
+  return y_return;
+}
+
+/*
+ * If theta and y are both doubles, just pass the values through (there's
+ * no autodiff to handle here).
+ */
+template <>
+std::vector<Eigen::VectorXd> build_varis<double>(
+    vari* ode_vari, vari**& non_chaining_varis,
+    const std::vector<Eigen::VectorXd>& y) {
+  return y;
+}
 
 /**
  * Integrator interface for CVODES' ODE solvers (Adams & BDF
@@ -121,7 +125,7 @@ class cvodes_integrator_vari : public vari, public chainable_alloc {
    */
   static int cv_rhs(realtype t, N_Vector y, N_Vector ydot, void* user_data) {
     const cvodes_integrator_vari* integrator
-      = static_cast<const cvodes_integrator_vari*>(user_data);
+        = static_cast<const cvodes_integrator_vari*>(user_data);
     integrator->rhs(t, NV_DATA_S(y), NV_DATA_S(ydot));
     return 0;
   }
@@ -130,11 +134,10 @@ class cvodes_integrator_vari : public vari, public chainable_alloc {
    * Implements the function of type CVRhsFnB which is the
    * RHS of the backward ODE system.
    */
-  static int cv_rhs_adj_sens(realtype t, N_Vector y,
-			     N_Vector yB, N_Vector yBdot,
-			     void *user_data) {
-    const cvodes_integrator_vari* integrator =
-      static_cast<const cvodes_integrator_vari*>(user_data);
+  static int cv_rhs_adj_sens(realtype t, N_Vector y, N_Vector yB,
+                             N_Vector yBdot, void* user_data) {
+    const cvodes_integrator_vari* integrator
+        = static_cast<const cvodes_integrator_vari*>(user_data);
     integrator->rhs_adj_sens(t, y, yB, yBdot);
     return 0;
   }
@@ -143,11 +146,10 @@ class cvodes_integrator_vari : public vari, public chainable_alloc {
    * Implements the function of type CVQuadRhsFnB which is the
    * RHS of the backward ODE system's quadrature.
    */
-  static int cv_quad_rhs_adj(realtype t, N_Vector y,
-			 N_Vector yB, N_Vector qBdot,
-			 void *user_data) {
-    const cvodes_integrator_vari* integrator =
-      static_cast<const cvodes_integrator_vari*>(user_data);
+  static int cv_quad_rhs_adj(realtype t, N_Vector y, N_Vector yB,
+                             N_Vector qBdot, void* user_data) {
+    const cvodes_integrator_vari* integrator
+        = static_cast<const cvodes_integrator_vari*>(user_data);
     integrator->quad_rhs_adj(t, y, yB, qBdot);
     return 0;
   }
@@ -171,18 +173,15 @@ class cvodes_integrator_vari : public vari, public chainable_alloc {
    * Implements the CVLsJacFnB function for evaluating the jacobian of
    * the adjoint problem.
    */
-  static int cv_jacobian_adj(realtype t, N_Vector y,
-			     N_Vector yB, N_Vector fyB,
-			     SUNMatrix J, void *user_data,
-			     N_Vector tmp1, N_Vector tmp2,
-			     N_Vector tmp3) {
-    const cvodes_integrator_vari* integrator =
-      static_cast<const cvodes_integrator_vari*>(user_data);
+  static int cv_jacobian_adj(realtype t, N_Vector y, N_Vector yB, N_Vector fyB,
+                             SUNMatrix J, void* user_data, N_Vector tmp1,
+                             N_Vector tmp2, N_Vector tmp3) {
+    const cvodes_integrator_vari* integrator
+        = static_cast<const cvodes_integrator_vari*>(user_data);
     integrator->jacobian_adj(t, y, J);
     return 0;
   }
 
-  
   /**
    * Calculates the ODE RHS, dy_dt, using the user-supplied functor at
    * the given time t and state y.
@@ -211,13 +210,12 @@ class cvodes_integrator_vari : public vari, public chainable_alloc {
    * @param[in] yB state of the adjoint ODE system
    * @param[out] yBdot evaluation of adjoint ODE RHS
    */
-  void rhs_adj_sens(double t, N_Vector y,
-		    N_Vector yB, N_Vector yBdot) const {
+  void rhs_adj_sens(double t, N_Vector y, N_Vector yB, N_Vector yBdot) const {
     Eigen::Map<Eigen::VectorXd> y_vec(NV_DATA_S(y), N_);
     Eigen::Map<Eigen::VectorXd> lambda(NV_DATA_S(yB), N_);
     Eigen::Map<Eigen::VectorXd> lambda_dot(NV_DATA_S(yBdot), N_);
     lambda_dot = Eigen::VectorXd::Zero(N_);
-    
+
     const nested_rev_autodiff nested;
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> y_vars(y_vec.size());
@@ -225,11 +223,11 @@ class cvodes_integrator_vari : public vari, public chainable_alloc {
       y_vars(i) = new vari(value_of(y_vec(i)));
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
-      = apply([&](auto&&... args) { return f_(t, y_vars, msgs_, args...); },
-	      value_of_args_tuple_);
+        = apply([&](auto&&... args) { return f_(t, y_vars, msgs_, args...); },
+                value_of_args_tuple_);
 
-    check_size_match("coupled_ode_system1", "dy_dt", f_y_t_vars.size(), "states",
-                     N_);
+    check_size_match("coupled_ode_system1", "dy_dt", f_y_t_vars.size(),
+                     "states", N_);
 
     for (size_t i = 0; i < f_y_t_vars.size(); ++i) {
       f_y_t_vars(i).vi_->adj_ = -lambda(i);
@@ -237,7 +235,7 @@ class cvodes_integrator_vari : public vari, public chainable_alloc {
 
     grad();
 
-    for(size_t i = 0; i < y_vars.size(); ++i) {
+    for (size_t i = 0; i < y_vars.size(); ++i) {
       lambda_dot(i) = y_vars(i).adj();
     }
   }
@@ -252,8 +250,7 @@ class cvodes_integrator_vari : public vari, public chainable_alloc {
    * @param[in] yB state of the adjoint ODE system
    * @param[out] qBdot evaluation of adjoint ODE quadrature RHS
    */
-  void quad_rhs_adj(double t, N_Vector y,
-		    N_Vector yB, N_Vector qBdot) const {
+  void quad_rhs_adj(double t, N_Vector y, N_Vector yB, N_Vector qBdot) const {
     Eigen::VectorXd y_vec = Eigen::Map<Eigen::VectorXd>(NV_DATA_S(y), N_);
     Eigen::Map<Eigen::VectorXd> lambda(NV_DATA_S(yB), N_);
     Eigen::Map<Eigen::VectorXd> mu_dot(NV_DATA_S(qBdot), N_);
@@ -269,11 +266,11 @@ class cvodes_integrator_vari : public vari, public chainable_alloc {
         args_tuple_);
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
-      = apply([&](auto&&... args) { return f_(t, y_vec, msgs_, args...); },
-	      local_args_tuple);
+        = apply([&](auto&&... args) { return f_(t, y_vec, msgs_, args...); },
+                local_args_tuple);
 
-    check_size_match("coupled_ode_system2", "dy_dt", f_y_t_vars.size(), "states",
-                     N_);
+    check_size_match("coupled_ode_system2", "dy_dt", f_y_t_vars.size(),
+                     "states", N_);
 
     for (size_t i = 0; i < f_y_t_vars.size(); ++i) {
       f_y_t_vars(i).vi_->adj_ = -lambda(i);
@@ -281,9 +278,7 @@ class cvodes_integrator_vari : public vari, public chainable_alloc {
 
     grad();
 
-    apply([&](auto&&... args) {
-            accumulate_adjoints(mu_dot.data(), args...);
-          },
+    apply([&](auto&&... args) { accumulate_adjoints(mu_dot.data(), args...); },
           local_args_tuple);
   }
 
@@ -300,7 +295,8 @@ class cvodes_integrator_vari : public vari, public chainable_alloc {
                    value_of_args_tuple_);
     };
 
-    jacobian(f_wrapped, Eigen::Map<const Eigen::VectorXd>(NV_DATA_S(y), N_), fy, Jfy);
+    jacobian(f_wrapped, Eigen::Map<const Eigen::VectorXd>(NV_DATA_S(y), N_), fy,
+             Jfy);
 
     for (size_t j = 0; j < Jfy.cols(); ++j) {
       for (size_t i = 0; i < Jfy.rows(); ++i) {
@@ -326,7 +322,8 @@ class cvodes_integrator_vari : public vari, public chainable_alloc {
                    value_of_args_tuple_);
     };
 
-    jacobian(f_wrapped, Eigen::Map<const Eigen::VectorXd>(NV_DATA_S(y), N_), fy, Jfy);
+    jacobian(f_wrapped, Eigen::Map<const Eigen::VectorXd>(NV_DATA_S(y), N_), fy,
+             Jfy);
 
     for (size_t j = 0; j < Jfy.cols(); ++j) {
       for (size_t i = 0; i < Jfy.rows(); ++i) {
@@ -356,32 +353,36 @@ class cvodes_integrator_vari : public vari, public chainable_alloc {
    * same size as the state variable, corresponding to a time in ts.
    */
   cvodes_integrator_vari(const F& f,
-			 const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
-			 const T_t0& t0, const std::vector<T_ts>& ts,
-			 double relative_tolerance, double absolute_tolerance,
-			 long int max_num_steps, std::ostream* msgs,
-			 const T_Args&... args)
-    : vari(NOT_A_NUMBER),
-      f_(f),
-      y0_(y0),
-      t0_(t0),
-      ts_(ts),
-      args_tuple_(args...),
-      value_of_args_tuple_(value_of(args)...),
-      N_(y0.size()),
-      msgs_(msgs),
-      relative_tolerance_(relative_tolerance),
-      absolute_tolerance_(absolute_tolerance),
-      max_num_steps_(max_num_steps),
-      y_(ts_.size()),
-      t0_vars_(count_vars(t0_)),
-      ts_vars_(count_vars(ts_)),
-      y0_vars_(count_vars(y0_)),
-      args_vars_(count_vars(args...)),
-      t0_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(t0_vars_)),
-      ts_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(ts_vars_)),
-      y0_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(y0_vars_)),
-      args_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(args_vars_)) {
+                         const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
+                         const T_t0& t0, const std::vector<T_ts>& ts,
+                         double relative_tolerance, double absolute_tolerance,
+                         long int max_num_steps, std::ostream* msgs,
+                         const T_Args&... args)
+      : vari(NOT_A_NUMBER),
+        f_(f),
+        y0_(y0),
+        t0_(t0),
+        ts_(ts),
+        args_tuple_(args...),
+        value_of_args_tuple_(value_of(args)...),
+        N_(y0.size()),
+        msgs_(msgs),
+        relative_tolerance_(relative_tolerance),
+        absolute_tolerance_(absolute_tolerance),
+        max_num_steps_(max_num_steps),
+        y_(ts_.size()),
+        t0_vars_(count_vars(t0_)),
+        ts_vars_(count_vars(ts_)),
+        y0_vars_(count_vars(y0_)),
+        args_vars_(count_vars(args...)),
+        t0_varis_(
+            ChainableStack::instance_->memalloc_.alloc_array<vari*>(t0_vars_)),
+        ts_varis_(
+            ChainableStack::instance_->memalloc_.alloc_array<vari*>(ts_vars_)),
+        y0_varis_(
+            ChainableStack::instance_->memalloc_.alloc_array<vari*>(y0_vars_)),
+        args_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+            args_vars_)) {
     const char* fun = "cvodes_integrator::integrate";
 
     save_varis(t0_varis_, t0);
@@ -409,7 +410,6 @@ class cvodes_integrator_vari : public vari, public chainable_alloc {
     check_positive_finite(fun, "relative_tolerance", relative_tolerance_);
     check_positive_finite(fun, "absolute_tolerance", absolute_tolerance_);
     check_positive(fun, "max_num_steps", max_num_steps_);
-
   }
 
   ~cvodes_integrator_vari() {
@@ -423,7 +423,7 @@ class cvodes_integrator_vari : public vari, public chainable_alloc {
     SUNMatDestroy(A_);
     CVodeFree(&cvodes_mem_);
   }
-  
+
   /**
    * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
    * times, { t1, t2, t3, ... } using the stiff backward differentiation formula
@@ -432,8 +432,7 @@ class cvodes_integrator_vari : public vari, public chainable_alloc {
    * @return std::vector of Eigen::Matrix of the states of the ODE, one for each
    *   solution time (excluding the initial state)
    */
-  std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>>
-  operator()() {
+  std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> operator()() {
     Eigen::VectorXd state = value_of(y0_);
     N_Vector nv_state = N_VMake_Serial(state.size(), state.data());
 
@@ -450,7 +449,8 @@ class cvodes_integrator_vari : public vari, public chainable_alloc {
 
     try {
       check_flag_sundials(
-          CVodeInit(cvodes_mem_, &cvodes_integrator_vari::cv_rhs, t0_dbl, nv_state),
+          CVodeInit(cvodes_mem_, &cvodes_integrator_vari::cv_rhs, t0_dbl,
+                    nv_state),
           "CVodeInit");
 
       // Assign pointer to this as user data
@@ -469,33 +469,34 @@ class cvodes_integrator_vari : public vari, public chainable_alloc {
                           "CVodeSetLinearSolver");
 
       check_flag_sundials(
-          CVodeSetJacFn(cvodes_mem_, &cvodes_integrator_vari::cv_jacobian_states),
+          CVodeSetJacFn(cvodes_mem_,
+                        &cvodes_integrator_vari::cv_jacobian_states),
           "CVodeSetJacFn");
 
       // initialize forward sensitivity system of CVODES as needed
       if (t0_vars_ + ts_vars_ + y0_vars_ + args_vars_ > 0) {
-	check_flag_sundials(CVodeAdjInit(cvodes_mem_, 25, CV_HERMITE),
-			  "CVodeAdjInit");
+        check_flag_sundials(CVodeAdjInit(cvodes_mem_, 25, CV_HERMITE),
+                            "CVodeAdjInit");
       }
 
       double t_init = t0_dbl;
       for (size_t n = 0; n < ts_.size(); ++n) {
         double t_final = ts_dbl[n];
 
-	if (t_final != t_init) {
-	  if (t0_vars_ + ts_vars_ + y0_vars_ + args_vars_ > 0) {
-	    int ncheck;
-	    check_flag_sundials(CVodeF(cvodes_mem_, t_final, nv_state,
-				     &t_init, CV_NORMAL, &ncheck),
-			      "CVodeF");
-	  } else {
-	    check_flag_sundials(CVode(cvodes_mem_, t_final, nv_state,
-				    &t_init, CV_NORMAL),
-			      "CVode");
-	  }
-	}
+        if (t_final != t_init) {
+          if (t0_vars_ + ts_vars_ + y0_vars_ + args_vars_ > 0) {
+            int ncheck;
+            check_flag_sundials(CVodeF(cvodes_mem_, t_final, nv_state, &t_init,
+                                       CV_NORMAL, &ncheck),
+                                "CVodeF");
+          } else {
+            check_flag_sundials(
+                CVode(cvodes_mem_, t_final, nv_state, &t_init, CV_NORMAL),
+                "CVode");
+          }
+        }
 
-	y_[n] = state;
+        y_[n] = state;
 
         t_init = t_final;
       }
@@ -512,13 +513,14 @@ class cvodes_integrator_vari : public vari, public chainable_alloc {
   virtual void chain() {
     // std::cout << "chain" << std::endl; <-- Good way to verify it's only
     //  being called once
-    if(t0_vars_ + ts_vars_ + y0_vars_ + args_vars_ == 0) {
+    if (t0_vars_ + ts_vars_ + y0_vars_ + args_vars_ == 0) {
       return;
     }
 
     Eigen::VectorXd state_sens(N_);
     Eigen::VectorXd quad(args_vars_);
-    N_Vector nv_state_sens = N_VMake_Serial(state_sens.size(), state_sens.data());
+    N_Vector nv_state_sens
+        = N_VMake_Serial(state_sens.size(), state_sens.data());
     N_Vector nv_quad = N_VMake_Serial(quad.size(), quad.data());
     N_VConst(0.0, nv_state_sens);
     N_VConst(0.0, nv_quad);
@@ -530,115 +532,109 @@ class cvodes_integrator_vari : public vari, public chainable_alloc {
       int indexB;
 
       // This is all boilerplate CVODES setting up the adjoint ODE to solve
-      check_flag_sundials(CVodeCreateB
-			(cvodes_mem_, Lmm, &indexB),
-			"CVodeCreateB");
+      check_flag_sundials(CVodeCreateB(cvodes_mem_, Lmm, &indexB),
+                          "CVodeCreateB");
 
-      check_flag_sundials(CVodeSetUserDataB
-			(cvodes_mem_, indexB,
-			 reinterpret_cast<void*>(this)),
-			"CVodeSetUserDataB");
+      check_flag_sundials(
+          CVodeSetUserDataB(cvodes_mem_, indexB, reinterpret_cast<void*>(this)),
+          "CVodeSetUserDataB");
 
       // The ode_rhs_adj_sense functions passed in here cause problems with
       // the autodiff stack (they can cause reallocations of the internal
       // vectors and cause segfaults)
-      check_flag_sundials(CVodeInitB(cvodes_mem_,
-				     indexB,
-				     &cvodes_integrator_vari::cv_rhs_adj_sens,
-				     value_of(ts_.back()),
-				     nv_state_sens),
-			"CVodeInitB");
-      
-      check_flag_sundials(CVodeSStolerancesB(cvodes_mem_,
-					   indexB,
-					   relative_tolerance_,
-					   absolute_tolerance_),
-			"CVodeSStolerancesB");
+      check_flag_sundials(CVodeInitB(cvodes_mem_, indexB,
+                                     &cvodes_integrator_vari::cv_rhs_adj_sens,
+                                     value_of(ts_.back()), nv_state_sens),
+                          "CVodeInitB");
+
+      check_flag_sundials(
+          CVodeSStolerancesB(cvodes_mem_, indexB, relative_tolerance_,
+                             absolute_tolerance_),
+          "CVodeSStolerancesB");
 
       check_flag_sundials(CVodeSetLinearSolverB(cvodes_mem_, indexB, LSB_, AB_),
-			"CVodeSetLinearSolverB");
+                          "CVodeSetLinearSolverB");
 
       // The same autodiff issue that applies to ode_rhs_adj_sense applies
       // here
-      check_flag_sundials(CVodeSetJacFnB
-			(cvodes_mem_, indexB,
-			 &cvodes_integrator_vari::cv_jacobian_adj),
-			"CVodeSetJacFnB");
+      check_flag_sundials(
+          CVodeSetJacFnB(cvodes_mem_, indexB,
+                         &cvodes_integrator_vari::cv_jacobian_adj),
+          "CVodeSetJacFnB");
 
       // Allocate space for backwards quadrature
-      if(args_vars_ > 0) {
-	check_flag_sundials(CVodeQuadInitB(cvodes_mem_,
-					   indexB,
-					   &cvodes_integrator_vari::cv_quad_rhs_adj,
-					   nv_quad),
-			    "CVodeQuadInitB");
+      if (args_vars_ > 0) {
+        check_flag_sundials(
+            CVodeQuadInitB(cvodes_mem_, indexB,
+                           &cvodes_integrator_vari::cv_quad_rhs_adj, nv_quad),
+            "CVodeQuadInitB");
 
-	check_flag_sundials(CVodeQuadSStolerancesB(cvodes_mem_,
-						   indexB,
-						  relative_tolerance_,
-						  absolute_tolerance_),
-			    "CVodeQuadSStolerancesB");
+        check_flag_sundials(
+            CVodeQuadSStolerancesB(cvodes_mem_, indexB, relative_tolerance_,
+                                   absolute_tolerance_),
+            "CVodeQuadSStolerancesB");
 
-	check_flag_sundials(CVodeSetQuadErrConB(cvodes_mem_,
-						indexB,
-						SUNTRUE),
-			    "CVodeSetQuadErrConB");
+        check_flag_sundials(CVodeSetQuadErrConB(cvodes_mem_, indexB, SUNTRUE),
+                            "CVodeSetQuadErrConB");
       }
 
       // At every time step, collect the adjoints from the output
       // variables and re-initialize the solver
       double t_init = value_of(ts_.back());
       for (int i = ts_.size() - 1; i >= 0; --i) {
-	// Take in the adjoints from all the output variables at this point
-	// in time
-	for (int j = 0; j < N_; j++) {
-	  state_sens(j) += non_chaining_varis_[i * N_ + j]->adj_;
-	}
+        // Take in the adjoints from all the output variables at this point
+        // in time
+        for (int j = 0; j < N_; j++) {
+          state_sens(j) += non_chaining_varis_[i * N_ + j]->adj_;
+        }
 
-	if (ts_vars_ > 0 && i >= 0) {
-	  ts_varis_[i]->adj_ += apply([&](auto&&... args) {
-	      return state_sens.dot(f_(t_init, y_[i], msgs_, args...));
-	    }, value_of_args_tuple_);
-	}
+        if (ts_vars_ > 0 && i >= 0) {
+          ts_varis_[i]->adj_ += apply(
+              [&](auto&&... args) {
+                return state_sens.dot(f_(t_init, y_[i], msgs_, args...));
+              },
+              value_of_args_tuple_);
+        }
 
-	double t_final = value_of((i > 0) ? ts_[i - 1] : t0_);
+        double t_final = value_of((i > 0) ? ts_[i - 1] : t0_);
         if (t_final != t_init) {
-	  check_flag_sundials(CVodeReInitB(cvodes_mem_, indexB, t_init,
-					   nv_state_sens),
-			      "CVodeReInitB");
+          check_flag_sundials(
+              CVodeReInitB(cvodes_mem_, indexB, t_init, nv_state_sens),
+              "CVodeReInitB");
 
-	  check_flag_sundials(CVodeB(cvodes_mem_, t_final,
-				     CV_NORMAL),
-			      "CVodeB");
+          check_flag_sundials(CVodeB(cvodes_mem_, t_final, CV_NORMAL),
+                              "CVodeB");
 
-	  check_flag_sundials(CVodeGetB(cvodes_mem_, indexB, &t_init,
-					nv_state_sens),
-			      "CVodeGetB");
-	}
-      }
-      
-      if(t0_vars_ > 0) {
-	t0_varis_[0]->adj_ += apply([&](auto&&... args) {
-	    return -state_sens.dot(f_(t_init, value_of(y0_), msgs_, args...));
-	  }, value_of_args_tuple_);
+          check_flag_sundials(
+              CVodeGetB(cvodes_mem_, indexB, &t_init, nv_state_sens),
+              "CVodeGetB");
+        }
       }
 
-      if(args_vars_ > 0) {
-	check_flag_sundials(CVodeGetQuadB(cvodes_mem_, indexB, &t_init,
-					  nv_quad),
-			    "CVodeGetQuadB");
+      if (t0_vars_ > 0) {
+        t0_varis_[0]->adj_ += apply(
+            [&](auto&&... args) {
+              return -state_sens.dot(f_(t_init, value_of(y0_), msgs_, args...));
+            },
+            value_of_args_tuple_);
+      }
+
+      if (args_vars_ > 0) {
+        check_flag_sundials(
+            CVodeGetQuadB(cvodes_mem_, indexB, &t_init, nv_quad),
+            "CVodeGetQuadB");
       }
 
       // After integrating all the way back to t0, we finally have the
       // the adjoints we wanted
       // These are the dlog_density / d(initial_conditions[s]) adjoints
       for (size_t s = 0; s < y0_vars_; s++) {
-	y0_varis_[s]->adj_ += state_sens(s);
+        y0_varis_[s]->adj_ += state_sens(s);
       }
-      
+
       // These are the dlog_density / d(parameters[s]) adjoints
       for (size_t s = 0; s < args_vars_; s++) {
-	args_varis_[s]->adj_ += quad(s);
+        args_varis_[s]->adj_ += quad(s);
       }
     } catch (const std::exception& e) {
       SUNLinSolFree(LSB_);
