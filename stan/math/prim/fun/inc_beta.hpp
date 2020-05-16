@@ -25,7 +25,7 @@ inline double inc_beta(double a, double b, double x) {
   check_not_nan("inc_beta", "a", a);
   check_not_nan("inc_beta", "b", b);
   check_not_nan("inc_beta", "x", x);
-  return boost::math::ibeta(a, b, x, boost_policy_t());
+  return boost::math::ibeta(a, b, x, boost_policy_t<>());
 }
 
 }  // namespace math

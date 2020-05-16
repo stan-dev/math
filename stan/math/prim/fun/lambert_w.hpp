@@ -20,7 +20,7 @@ namespace math {
 struct lambert_w0_fun {
   template <typename T>
   static inline T fun(const T& x) {
-    return boost::math::lambert_w0(x, boost_policy_t());
+    return boost::math::lambert_w0(x, boost_policy_t<52>());
   }
 };
 
@@ -49,7 +49,7 @@ inline auto lambert_w0(const T& x) {
 struct lambert_wm1_fun {
   template <typename T>
   static inline T fun(const T& x) {
-    return boost::math::lambert_wm1(x, boost_policy_t());
+    return boost::math::lambert_wm1(x, boost_policy_t<52>());
   }
 };
 
