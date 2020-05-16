@@ -10,9 +10,8 @@ TEST(mathMixMatFun, lambert_w0) {
   };
   stan::test::expect_ad_vectorized(f, 0.0);
   // seg fault
-  //stan::test::expect_ad_vectorized(f, -0.3);
+  // stan::test::expect_ad_vectorized(f, -0.3);
   // stan::test::expect_ad_vectorized(f, -0.1);
   // Wrong answer
   stan::test::expect_ad_vectorized(f, 1);
-
 }
