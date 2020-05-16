@@ -65,7 +65,7 @@ inline std::complex<double> value_of_rec(const std::complex<T>& x) {
  * @param[in] x std::vector to be converted
  * @return std::vector of values
  **/
-template <typename T>
+template <typename T, require_not_same_t<double, T>* = nullptr>
 inline std::vector<double> value_of_rec(const std::vector<T>& x) {
   size_t x_size = x.size();
   std::vector<double> result(x_size);
@@ -86,8 +86,10 @@ inline std::vector<double> value_of_rec(const std::vector<T>& x) {
  * @param x Specified std::vector.
  * @return Specified std::vector.
  */
-inline const std::vector<double>& value_of_rec(const std::vector<double>& x) {
-  return x;
+template <typename T, require_std_vector_t<T>* = nullptr,
+          require_vt_same<double, T>* = nullptr>
+inline T value_of_rec(T&& x) {
+  return std::forward<T>(x);
 }
 
 /**
@@ -120,8 +122,8 @@ inline auto value_of_rec(const T& M) {
  */
 template <typename T, typename = require_st_same<T, double>,
           typename = require_eigen_t<T>>
-inline const T& value_of_rec(const T& x) {
-  return x;
+inline T value_of_rec(T&& x) {
+  return std::forward<T>(x);
 }
 }  // namespace math
 }  // namespace stan

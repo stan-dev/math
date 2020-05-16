@@ -15,7 +15,7 @@ namespace math {
 template <typename T_matrix, typename T_vector,
           typename = require_all_kernel_expressions_t<T_matrix, T_vector>>
 inline auto matrix_vector_multiply(T_matrix&& matrix, T_vector&& vector) {
-  return rowwise_sum(elewise_multiplication(
+  return rowwise_sum(elt_multiply(
       std::forward<T_matrix>(matrix),
       colwise_broadcast(transpose(std::forward<T_vector>(vector)))));
 }

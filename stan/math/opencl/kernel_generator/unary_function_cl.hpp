@@ -6,7 +6,9 @@
 #include <stan/math/opencl/err.hpp>
 #include <stan/math/opencl/kernels/device_functions/digamma.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1m_exp.hpp>
+#include <stan/math/opencl/kernels/device_functions/log1m_inv_logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1p_exp.hpp>
+#include <stan/math/opencl/kernels/device_functions/logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/inv_logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/inv_square.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
@@ -227,6 +229,8 @@ ADD_UNARY_FUNCTION(erfc)
 ADD_UNARY_FUNCTION_PASS_ZERO(floor)
 ADD_UNARY_FUNCTION_PASS_ZERO(round)
 ADD_UNARY_FUNCTION_PASS_ZERO(ceil)
+ADD_UNARY_FUNCTION_PASS_ZERO(fabs)
+ADD_UNARY_FUNCTION_PASS_ZERO(trunc)
 
 ADD_UNARY_FUNCTION_WITH_INCLUDE(digamma,
                                 opencl_kernels::digamma_device_function)
@@ -238,6 +242,9 @@ ADD_UNARY_FUNCTION_WITH_INCLUDE(inv_square,
                                 opencl_kernels::inv_square_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDE(inv_logit,
                                 opencl_kernels::inv_logit_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDE(logit, opencl_kernels::logit_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDE(log1m_inv_logit,
+                                opencl_kernels::log1m_inv_logit_device_function)
 
 ADD_CLASSIFICATION_FUNCTION(isfinite, {-rows() + 1, cols() - 1})
 ADD_CLASSIFICATION_FUNCTION(isinf,

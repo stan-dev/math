@@ -187,8 +187,7 @@ ADD_BINARY_OPERATION(addition_, operator+, common_scalar_t<T_a COMMA T_b>, "+");
 ADD_BINARY_OPERATION(subtraction_, operator-, common_scalar_t<T_a COMMA T_b>,
                      "-");
 ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
-    elewise_multiplication_, elewise_multiplication,
-    common_scalar_t<T_a COMMA T_b>, "*",
+    elt_multiply_, elt_multiply, common_scalar_t<T_a COMMA T_b>, "*",
     using view_transitivity = std::tuple<std::true_type, std::true_type>;
     inline std::pair<int, int> extreme_diagonals() const {
       std::pair<int, int> diags0
@@ -200,7 +199,7 @@ ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
     });
 
 ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
-    elewise_division_, elewise_division, common_scalar_t<T_a COMMA T_b>, "/",
+    elt_divide_, elt_divide, common_scalar_t<T_a COMMA T_b>, "/",
     inline std::pair<int, int> extreme_diagonals() const {
       return {-rows() + 1, cols() - 1};
     });
@@ -246,7 +245,7 @@ ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
  */
 template <typename T_a, typename T_b, typename = require_arithmetic_t<T_a>,
           typename = require_all_kernel_expressions_t<T_b>>
-inline elewise_multiplication_<scalar_<T_a>, as_operation_cl_t<T_b>> operator*(
+inline elt_multiply_<scalar_<T_a>, as_operation_cl_t<T_b>> operator*(
     T_a&& a, T_b&& b) {  // NOLINT
   return {as_operation_cl(std::forward<T_a>(a)),
           as_operation_cl(std::forward<T_b>(b))};
@@ -263,7 +262,7 @@ inline elewise_multiplication_<scalar_<T_a>, as_operation_cl_t<T_b>> operator*(
 template <typename T_a, typename T_b,
           typename = require_all_kernel_expressions_t<T_a>,
           typename = require_arithmetic_t<T_b>>
-inline elewise_multiplication_<as_operation_cl_t<T_a>, scalar_<T_b>> operator*(
+inline elt_multiply_<as_operation_cl_t<T_a>, scalar_<T_b>> operator*(
     T_a&& a, const T_b b) {  // NOLINT
   return {as_operation_cl(std::forward<T_a>(a)), as_operation_cl(b)};
 }
