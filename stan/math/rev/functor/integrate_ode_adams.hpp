@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-template <typename F, typename T_initial, typename T_param, typename T_t0,
+  /*template <typename F, typename T_initial, typename T_param, typename T_t0,
           typename T_ts>
 std::vector<std::vector<return_type_t<T_initial, T_param, T_t0, T_ts>>>
 integrate_ode_adams(const F& f, const std::vector<T_initial>& y0,
@@ -26,7 +26,7 @@ integrate_ode_adams(const F& f, const std::vector<T_initial>& y0,
       integrator(f, y0, t0, ts, theta, x, x_int, msgs, relative_tolerance,
                  absolute_tolerance, max_num_steps);
   return integrator.integrate();
-}
+  }*/
 
 }  // namespace math
 }  // namespace stan

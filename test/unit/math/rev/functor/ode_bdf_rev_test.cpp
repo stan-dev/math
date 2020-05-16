@@ -128,9 +128,9 @@ TEST(StanMathOde_ode_bdf_tol, std_vector_arg) {
 
   Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
   double t0 = 0.0;
-  std::vector<double> ts = {1.1};
+  std::vector<double> ts = { 1.1 };
 
-  std::vector<var> a = {1.5};
+  std::vector<var> a = { 1.5 };
 
   var output = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
                                        nullptr, a)[0][0];
@@ -225,23 +225,6 @@ struct ayt {
     return -a * y * t;
   }
 };
-
-void check_t0(const var& t0) { EXPECT_FLOAT_EQ(t0.adj(), -1.0); }
-
-void check_t0(double t0) {}
-
-void check_ts(const std::vector<var>& ts) {
-  EXPECT_FLOAT_EQ(ts[0].adj(), 0.0);
-  EXPECT_FLOAT_EQ(ts[1].adj(), -0.0791208888);
-}
-
-void check_ts(const std::vector<double>& ts) {}
-
-void check_y0(const Eigen::Matrix<var, Eigen::Dynamic, 1>& y0) {
-  EXPECT_FLOAT_EQ(y0(0).adj(), 0.5);
-}
-
-void check_y0(const Eigen::MatrixXd& y0) {}
 
 TEST(StanMathOde_ode_bdf_tol, arg_combos_test) {
   var t0 = 0.5;
