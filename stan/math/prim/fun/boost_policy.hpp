@@ -21,7 +21,7 @@ namespace math {
  * in the type being used is demanded from Boost. Otherwise, it correspond to
  * the approximately B-bit precision, i.e. for trading speed for accuracy.
  */
-template<int B = 0>
+template <int B = 0>
 using boost_policy_t = boost::math::policies::policy<
     boost::math::policies::overflow_error<
         boost::math::policies::errno_on_error>,
