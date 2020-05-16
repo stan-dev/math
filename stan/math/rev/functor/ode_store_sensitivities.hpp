@@ -42,18 +42,23 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
   const size_t args_vars = count_vars(args...);
   const size_t t0_vars = count_vars(t0);
   const size_t t_vars = count_vars(t);
-  F_dbl f_dbl = f;
+
   Eigen::Matrix<var, Eigen::Dynamic, 1> yt(N);
 
   Eigen::VectorXd y = coupled_state.head(N);
 
   Eigen::VectorXd f_y_t;
-  if (is_var<T_t>::value)
-    f_y_t = f_dbl(value_of(t), y, msgs, value_of(args)...);
-
   Eigen::VectorXd f_y0_t0;
-  if (is_var<T_t0>::value)
-    f_y0_t0 = f_dbl(value_of(t0), value_of(y0), msgs, value_of(args)...);
+
+  if (is_var<T_t>::value || is_var<T_t0>::value) {
+    F_dbl f_dbl = f;
+
+    if (is_var<T_t>::value)
+      f_y_t = f_dbl(value_of(t), y, msgs, value_of(args)...);
+
+    if (is_var<T_t0>::value)
+      f_y0_t0 = f_dbl(value_of(t0), value_of(y0), msgs, value_of(args)...);
+  }
 
   for (size_t j = 0; j < N; j++) {
     const size_t total_vars = y0_vars + args_vars + t0_vars + t_vars + f.num_vars__;

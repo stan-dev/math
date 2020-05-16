@@ -24,7 +24,8 @@ namespace math {
  * @return ODE state
  */
 template <typename F, typename... Args,
-          typename = require_all_arithmetic_t<scalar_type_t<Args>...>>
+          typename = require_all_arithmetic_t<typename F::captured_scalar_t__,
+                                              scalar_type_t<Args>...>>
 Eigen::VectorXd ode_store_sensitivities(const F& f,
                                         const Eigen::VectorXd& coupled_state,
                                         const Eigen::VectorXd& y0, double t0,

@@ -149,12 +149,12 @@ class cvodes_integrator {
     Eigen::VectorXd z(coupled_state_.size());
     Eigen::VectorXd dz_dt(coupled_state_.size());
     std::copy(y, y + N_, z.data());
-    for (std::size_t s = 0; s < y0_vars_ + args_vars_; s++) {
+    for (std::size_t s = 0; s < y0_vars_ + args_vars_ + f_.num_vars__; s++) {
       std::copy(NV_DATA_S(yS[s]), NV_DATA_S(yS[s]) + N_,
                 z.data() + (s + 1) * N_);
     }
     coupled_ode_(z, dz_dt, t);
-    for (std::size_t s = 0; s < y0_vars_ + args_vars_; s++) {
+    for (std::size_t s = 0; s < y0_vars_ + args_vars_ + f_.num_vars__; s++) {
       std::move(dz_dt.data() + (s + 1) * N_, dz_dt.data() + (s + 2) * N_,
                 NV_DATA_S(ySdot[s]));
     }
