@@ -15,78 +15,82 @@
 namespace stan {
 namespace math {
 namespace internal {
-template <typename EigMatL, typename EigMatR>
+template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
 class trace_quad_form_vari_alloc : public chainable_alloc {
  public:
-  trace_quad_form_vari_alloc(EigMatL&& A, EigMatR&& B)
-      : A_(std::forward<EigMatL>(A)), B_(std::forward<EigMatR>(B)) {}
+  trace_quad_form_vari_alloc(const Eigen::Matrix<Ta, Ra, Ca>& A,
+                             const Eigen::Matrix<Tb, Rb, Cb>& B)
+      : A_(A), B_(B) {}
 
   double compute() { return trace_quad_form(value_of(A_), value_of(B_)); }
 
-  typename std::decay_t<EigMatL>::PlainObject A_;
-  typename std::decay_t<EigMatR>::PlainObject B_;
+  Eigen::Matrix<Ta, Ra, Ca> A_;
+  Eigen::Matrix<Tb, Rb, Cb> B_;
 };
 
-template <typename EigMatL, typename EigMatR>
+template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
 class trace_quad_form_vari : public vari {
  protected:
-  template <
-      typename EigMatA, typename EigMatBd,
-      require_all_eigen_vt<std::is_arithmetic, EigMatA, EigMatBd>* = nullptr>
-  static inline void chainA(EigMatA&& A, EigMatBd&& Bd, double adjC) {}
-
-  template <typename EigMatB, typename EigMatAd, typename EigMatBd,
-            require_all_eigen_vt<std::is_arithmetic, EigMatB, EigMatAd,
-                                 EigMatBd>* = nullptr>
-  static inline void chainB(EigMatB&& B, EigMatAd&& Ad, EigMatBd&& Bd,
+  static inline void chainA(Eigen::Matrix<double, Ra, Ca>& A,
+                            const Eigen::Matrix<double, Rb, Cb>& Bd,
+                            double adjC) {}
+  static inline void chainB(Eigen::Matrix<double, Rb, Cb>& B,
+                            const Eigen::Matrix<double, Ra, Ca>& Ad,
+                            const Eigen::Matrix<double, Rb, Cb>& Bd,
                             double adjC) {}
 
-  template <typename EigMatA, typename EigMatBd,
-            require_eigen_vt<is_var, EigMatA>* = nullptr,
-            require_eigen_vt<std::is_arithmetic, EigMatBd>* = nullptr>
-  static inline void chainA(EigMatA&& A, EigMatBd&& Bd, double adjC) {
+  static inline void chainA(Eigen::Matrix<var, Ra, Ca>& A,
+                            const Eigen::Matrix<double, Rb, Cb>& Bd,
+                            double adjC) {
     A.adj() += adjC * Bd * Bd.transpose();
   }
-
-  template <
-      typename EigMatB, typename EigMatAd, typename EigMatBd,
-      require_eigen_vt<is_var, EigMatB>* = nullptr,
-      require_all_eigen_vt<std::is_arithmetic, EigMatAd, EigMatBd>* = nullptr>
-  static inline void chainB(EigMatB&& B, EigMatAd&& Ad, EigMatBd& Bd,
+  static inline void chainB(Eigen::Matrix<var, Rb, Cb>& B,
+                            const Eigen::Matrix<double, Ra, Ca>& Ad,
+                            const Eigen::Matrix<double, Rb, Cb>& Bd,
                             double adjC) {
     B.adj() += adjC * (Ad + Ad.transpose()) * Bd;
   }
-  template <
-      typename EigMatA, typename EigMatB, typename EigMatAd, typename EigMatBd,
-      require_all_eigen_t<EigMatA, EigMatB>* = nullptr,
-      require_all_eigen_vt<std::is_arithmetic, EigMatAd, EigMatBd>* = nullptr>
-  inline void chainAB(EigMatA&& A, EigMatB&& B, EigMatAd&& Ad, EigMatBd&& Bd,
-                      double adjC) {
+
+  inline void chainAB(Eigen::Matrix<Ta, Ra, Ca>& A,
+                      Eigen::Matrix<Tb, Rb, Cb>& B,
+                      const Eigen::Matrix<double, Ra, Ca>& Ad,
+                      const Eigen::Matrix<double, Rb, Cb>& Bd, double adjC) {
     chainA(A, Bd, adjC);
     chainB(B, Ad, Bd, adjC);
   }
 
  public:
   explicit trace_quad_form_vari(
-      trace_quad_form_vari_alloc<EigMatL, EigMatR>* impl)
+      trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>* impl)
       : vari(impl->compute()), impl_(impl) {}
 
   virtual void chain() {
     chainAB(impl_->A_, impl_->B_, value_of(impl_->A_), value_of(impl_->B_),
             adj_);
   }
-  trace_quad_form_vari_alloc<EigMatL, EigMatR>* impl_;
+
+  trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>* impl_;
 };
 }  // namespace internal
 
-template <typename EigMatL, typename EigMatR,
-          require_any_eigen_vt<is_var, EigMatL, EigMatR>* = nullptr>
-inline auto trace_quad_form(EigMatL&& A, EigMatR&& B) {
+template <typename EigMat1, typename EigMat2,
+          typename = require_any_vt_var<EigMat1, EigMat2>>
+inline return_type_t<EigMat1, EigMat2> trace_quad_form(const EigMat1& A,
+                                                       const EigMat2& B) {
+  using Ta = value_type_t<EigMat1>;
+  using Tb = value_type_t<EigMat2>;
+  constexpr int Ra = EigMat1::RowsAtCompileTime;
+  constexpr int Ca = EigMat1::ColsAtCompileTime;
+  constexpr int Rb = EigMat2::RowsAtCompileTime;
+  constexpr int Cb = EigMat2::ColsAtCompileTime;
   check_square("trace_quad_form", "A", A);
   check_multiplicable("trace_quad_form", "A", A, "B", B);
-  auto* baseVari = new internal::trace_quad_form_vari_alloc<EigMatL, EigMatR>(
-      std::forward<EigMatL>(A), std::forward<EigMatR>(B));
-  return var(new internal::trace_quad_form_vari<EigMatL, EigMatR>(baseVari));
+
+  auto* baseVari
+      = new internal::trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>(A, B);
+
+  return var(
+      new internal::trace_quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>(baseVari));
 }
 
 }  // namespace math

@@ -16,54 +16,61 @@ namespace math {
  * <p>See the <code>primitive_value</code> function to
  * extract values without casting to <code>double</code>.
  *
- * This specialization handles all floating point types and passes the
- * input to the output.
+ * <p>This function is meant to cover the primitive types. For
+ * types requiring pass-by-reference, this template function
+ * should be specialized.
  *
- * @tparam T type that is or contains a floating point value.
+ * @tparam T type of scalar.
  * @param x scalar to convert to double
  * @return value of scalar cast to double
  */
-template <typename T, require_vt_floating_point<T>* = nullptr>
-inline decltype(auto) value_of(T&& x) {
-  return std::forward<T>(x);
-}
-
-/**
- * Specialization to convert integral types to double.
- *
- * @param x value
- * @return input value
- */
-template <typename T, require_integral_t<T>* = nullptr>
-inline auto value_of(T x) {
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline double value_of(const T x) {
   return static_cast<double>(x);
 }
 
 /**
- * Return the inner value of the specified complex type.
- * @tparam ComplexT The complex type.
- * @param x A complex object.
- * @return A complex with `value_of` applied to the `real` and `imag` parts.
+ * Return the specified argument.
+ *
+ * <p>See <code>value_of(T)</code> for a polymorphic
+ * implementation using static casts.
+ *
+ * <p>This inline pass-through no-op should be compiled away.
+ *
+ * @param x value
+ * @return input value
  */
-template <typename ComplexT, require_complex_t<ComplexT>* = nullptr,
-          require_not_vt_arithmetic<ComplexT>* = nullptr>
-inline auto value_of(ComplexT&& x) {
-  using complex_ret = std::complex<partials_type_t<value_type_t<ComplexT>>>;
-  return complex_ret{value_of(x.real()), value_of(x.imag())};
+template <>
+inline double value_of<double>(double x) {
+  return x;
 }
 
 /**
- * Apply `value_of` to all elements of a `std::vector`
+ * Return the specified argument.
  *
- * @tparam Vec A vector containing values with a defined `value_of`.
+ * <p>See <code>value_of(T)</code> for a polymorphic
+ * implementation using static casts.
+ *
+ * <p>This inline pass-through no-op should be compiled away.
+ *
+ * @param x value
+ * @return input value
+ */
+inline int value_of(int x) { return x; }
+
+/**
+ * Convert a std::vector of type T to a std::vector of
+ * child_type<T>::type.
+ *
+ * @tparam T Scalar type in std::vector
  * @param[in] x std::vector to be converted
- * @return std::vector with `value_of` applied to each element.
+ * @return std::vector of values
  **/
-template <typename Vec, require_std_vector_t<Vec>* = nullptr,
-          require_not_vt_arithmetic<Vec>* = nullptr>
-inline auto value_of(Vec&& x) {
-  const size_t x_size = x.size();
-  std::vector<partials_type_t<value_type_t<Vec>>> result(x_size);
+template <typename T, require_not_double_or_int_t<T>* = nullptr>
+inline std::vector<typename child_type<T>::type> value_of(
+    const std::vector<T>& x) {
+  size_t x_size = x.size();
+  std::vector<typename child_type<T>::type> result(x_size);
   for (size_t i = 0; i < x_size; i++) {
     result[i] = value_of(x[i]);
   }
@@ -71,50 +78,55 @@ inline auto value_of(Vec&& x) {
 }
 
 /**
- * Specialization to convert vector of integral types to double.
- * @tparam Vec Standard vector holding integral type.
- * @param x Standard vector.
+ * Return the specified argument.
+ *
+ * <p>See <code>value_of(T)</code> for a polymorphic
+ * implementation using static casts.
+ *
+ * <p>This inline pass-through no-op should be compiled away.
+ *
+ * @param x Specified std::vector.
+ * @return Specified std::vector.
  */
-template <typename Vec, require_std_vector_vt<std::is_integral, Vec>* = nullptr>
-inline decltype(auto) value_of(Vec&& x) {
+template <typename Vec, require_std_vector_vt<is_double_or_int, Vec>* = nullptr>
+inline Vec value_of(Vec&& x) {
   return std::forward<Vec>(x);
 }
 
 /**
- * Apply `value_of` to each element of an Eigen type.
+ * Convert a matrix of type T to a matrix of doubles.
  *
- * Scalar type of matrix must impliment `value_of`. See
+ * T must implement value_of. See
  * test/math/fwd/fun/value_of.cpp for fvar and var usage.
  *
- * @tparam EigMat type derived from `EigenBase` whose scalar type is neither
- * var or arithmetic.
+ * @tparam EigMat type of the matrix
  *
- * @param[in] M Matrix to apply over.
+ * @param[in] M Matrix to be converted
  * @return Matrix of values
  **/
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
-          require_not_vt_var<EigMat>* = nullptr,
-          require_not_vt_arithmetic<EigMat>* = nullptr>
-inline auto value_of(EigMat&& M) {
-  using eig_mat = std::decay_t<EigMat>;
-  using eig_partial = partials_type_t<value_type_t<EigMat>>;
-  constexpr Eigen::Index R = eig_mat::RowsAtCompileTime;
-  constexpr Eigen::Index C = eig_mat::ColsAtCompileTime;
-  Eigen::Matrix<eig_partial, R, C> Md
-      = M.unaryExpr([&](auto&& x) { return value_of(x); });
-  return Md;
+          require_not_vt_double_or_int<EigMat>* = nullptr>
+inline auto value_of(const EigMat& M) {
+  return M.unaryExpr([](const auto& scal) { return value_of(scal); });
 }
 
 /**
- * Specialization to convert integral matrices types to double matrices.
+ * Return the specified argument.
+ *
+ * <p>See <code>value_of(T)</code> for a polymorphic
+ * implementation using static casts.
+ *
+ * <p>This inline pass-through no-op should be compiled away.
+ *
+ * @tparam EigMat type of the matrix
  *
  * @param x Specified matrix.
  * @return Specified matrix.
  */
 template <typename EigMat,
-          require_eigen_vt<std::is_integral, EigMat>* = nullptr>
-inline auto value_of(EigMat&& x) {
-  return x.template cast<double>();
+          require_eigen_vt<is_double_or_int, EigMat>* = nullptr>
+inline EigMat value_of(EigMat&& x) {
+  return std::forward<EigMat>(x);
 }
 
 }  // namespace math

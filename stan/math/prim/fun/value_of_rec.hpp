@@ -11,36 +11,48 @@ namespace stan {
 namespace math {
 
 /**
- * Extract double "value" type from an object.
+ * Return the value of the specified scalar argument
+ * converted to a double value.
+ *
  * <p>See the <code>primitive_value</code> function to
  * extract values without casting to <code>double</code>.
+ *
+ * <p>This function is meant to cover the primitive types. For
+ * types requiring pass-by-reference, this template function
+ * should be specialized.
  *
  * @tparam T Type of scalar.
  * @param x Scalar to convert to double.
  * @return Value of scalar cast to a double.
  */
-template <typename T, require_vt_floating_point<T>* = nullptr>
-inline decltype(auto) value_of_rec(T&& x) {
-  return std::forward<T>(x);
-}
-
-template <typename T, require_integral_t<T>* = nullptr>
-inline auto value_of_rec(T x) {
+template <typename T, typename = require_stan_scalar_t<T>>
+inline double value_of_rec(const T x) {
   return static_cast<double>(x);
 }
 
 /**
- * Recursively apply `value_of_rec` to the `real` and `imag` components of a
- * complex object.
+ * Return the specified argument.
+ *
+ * <p>See <code>value_of(T)</code> for a polymorphic
+ * implementation using static casts.
+ *
+ * <p>This inline pass-through no-op should be compiled away.
+ *
+ * @param x Specified value.
+ * @return Specified value.
+ */
+inline double value_of_rec(double x) { return x; }
+
+/**
+ * Recursively apply value-of to the parts of the argument.
  *
  * @tparam T value type of argument
  * @param[in] x argument
  * @return real complex value of argument
  */
-template <typename ComplexT, require_complex_t<ComplexT>* = nullptr,
-          require_not_vt_arithmetic<ComplexT>* = nullptr>
-inline auto value_of_rec(ComplexT&& x) {
-  return std::complex<double>{value_of_rec(x.real()), value_of_rec(x.imag())};
+template <typename T>
+inline std::complex<double> value_of_rec(const std::complex<T>& x) {
+  return {value_of_rec(x.real()), value_of_rec(x.imag())};
 }
 
 /**
@@ -53,16 +65,31 @@ inline auto value_of_rec(ComplexT&& x) {
  * @param[in] x std::vector to be converted
  * @return std::vector of values
  **/
-template <typename Vec, require_std_vector_t<Vec>* = nullptr,
-          require_not_vt_floating_point<Vec>* = nullptr,
-          require_not_vt_var<Vec>* = nullptr>
-inline auto value_of_rec(Vec&& x) {
+template <typename T, require_not_same_t<double, T>* = nullptr>
+inline std::vector<double> value_of_rec(const std::vector<T>& x) {
   size_t x_size = x.size();
   std::vector<double> result(x_size);
   for (size_t i = 0; i < x_size; i++) {
     result[i] = value_of_rec(x[i]);
   }
   return result;
+}
+
+/**
+ * Return the specified argument.
+ *
+ * <p>See <code>value_of_rec(T)</code> for a polymorphic
+ * implementation using static casts.
+ *
+ * <p>This inline pass-through no-op should be compiled away.
+ *
+ * @param x Specified std::vector.
+ * @return Specified std::vector.
+ */
+template <typename T, require_std_vector_t<T>* = nullptr,
+          require_vt_same<double, T>* = nullptr>
+inline T value_of_rec(T&& x) {
+  return std::forward<T>(x);
 }
 
 /**
@@ -75,11 +102,10 @@ inline auto value_of_rec(Vec&& x) {
  * @param[in] M Matrix to be converted
  * @return Matrix of values
  **/
-template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
-          require_not_vt_arithmetic<EigMat>* = nullptr,
-          require_not_vt_var<EigMat>* = nullptr>
-inline auto value_of_rec(EigMat&& M) {
-  return M.unaryExpr([](auto&& x) { return value_of_rec(x); }).eval();
+template <typename T, typename = require_not_st_same<T, double>,
+          typename = require_eigen_t<T>>
+inline auto value_of_rec(const T& M) {
+  return M.unaryExpr([](auto x) { return value_of_rec(x); });
 }
 
 /**
@@ -94,12 +120,11 @@ inline auto value_of_rec(EigMat&& M) {
  * @param x Specified matrix.
  * @return Specified matrix.
  */
-template <typename EigMat,
-          require_eigen_vt<std::is_integral, EigMat>* = nullptr>
-inline auto value_of_rec(EigMat&& M) {
-  return M.template cast<double>();
+template <typename T, typename = require_st_same<T, double>,
+          typename = require_eigen_t<T>>
+inline T value_of_rec(T&& x) {
+  return std::forward<T>(x);
 }
-
 }  // namespace math
 }  // namespace stan
 
