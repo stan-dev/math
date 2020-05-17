@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/meta/conditional_sequence.hpp>
+#include <stan/math/rev/meta/var_tuple_filter.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core/count_vars.hpp>
 #include <stan/math/rev/core/save_varis.hpp>
@@ -16,56 +18,43 @@ namespace stan {
 namespace math {
 namespace internal {
 
-/**
- * Store the adjoint in y_vi[0] in y_adj
- *
- * @tparam size dimensionality of M
- * @param[in] y_vi pointer to pointer to vari
- * @param[in] M shape of y_adj
- * @param[out] y_adj reference to variable where adjoint is to be stored
- */
-template <size_t size>
-inline void build_y_adj(vari** y_vi, const std::array<int, size>& M,
-                        double& y_adj) {
-  y_adj = y_vi[0]->adj_;
-}
+template <typename T, typename = void>
+struct build_y_adj;
 
-/**
- * Store the adjoints from y_vi in y_adj
- *
- * @tparam size dimensionality of M
- * @param[in] y_vi pointer to pointers to varis
- * @param[in] M shape of y_adj
- * @param[out] y_adj reference to std::vector where adjoints are to be stored
- */
-template <size_t size>
-inline void build_y_adj(vari** y_vi, const std::array<int, size>& M,
-                        std::vector<double>& y_adj) {
-  y_adj.resize(M[0]);
-  for (size_t m = 0; m < y_adj.size(); ++m) {
-    y_adj[m] = y_vi[m]->adj_;
+template <typename T>
+struct build_y_adj<T, require_t<conjunction<std::is_arithmetic<T>, is_eigen<T>>>> {
+  /**
+   * Store the adjoint in y_vi[0] in y_adj
+   *
+   * @tparam size dimensionality of M
+   * @param[in] y_vi pointer to pointer to vari
+   * @param[in] M shape of y_adj
+   * @param[out] y_adj reference to variable where adjoint is to be stored
+   */
+  template <typename VariType, size_t size>
+  static inline auto operator()(VariType& y_vi, const std::array<int, size>& M) {
+     return y_vi->adj_;
   }
-}
+};
 
-/**
- * Store the adjoints from y_vi in y_adj
- *
- * @tparam size dimensionality of M
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
- *
- * @param[in] y_vi pointer to pointers to varis
- * @param[in] M shape of y_adj
- * @param[out] y_adj reference to Eigen::Matrix where adjoints are to be stored
- */
-template <size_t size, int R, int C>
-inline void build_y_adj(vari** y_vi, const std::array<int, size>& M,
-                        Eigen::Matrix<double, R, C>& y_adj) {
-  y_adj.resize(M[0], M[1]);
-  for (int m = 0; m < y_adj.size(); ++m) {
-    y_adj(m) = y_vi[m]->adj_;
+template <typename T>
+struct build_y_adj<T, require_t<require_std_vector_vt<std::is_arithmetic, T>>> {
+  /**
+   * Store the adjoints from y_vi in y_adj
+   *
+   * @tparam size dimensionality of M
+   * @param[in] y_vi pointer to pointers to varis
+   * @param[in] M shape of y_adj
+   * @param[out] y_adj reference to std::vector where adjoints are to be stored
+   */
+  template <typename VariType, size_t size>
+  static inline auto build_y_adj(VariType& y_vi, const std::array<int, size>& M) {
+    T y_adj(M[0]);
+    for (size_t m = 0; m < y_adj.size(); ++m) {
+      y_adj.push_back(y_vi[m]->adj_);
+    }
   }
-}
+};
 
 /**
  * Compute the dimensionality of the given template argument. The
@@ -107,6 +96,58 @@ struct compute_dims<Eigen::Matrix<T, R, C>> {
 };
 }  // namespace internal
 
+
+namespace internal {
+
+// var_value
+template <typename Mem, typename VarValue,
+ require_var_value_t<VarValue>* = nullptr>
+void make_adj_jac(Mem& mem, VarValue&& x) {
+  using vari_type = get_var_vari_value_t<VarValue>;
+  mem = ChainableStack::instance_->memalloc_.alloc_array<vari_type>(1);
+  save_varis(mem, x);
+}
+// std::vector<container> assumes not ragged
+template <typename Mem, typename Vec,
+ require_std_vector_vt<is_container, Vec>* = nullptr>
+void make_adj_jac(Mem& mem, Vec&& x) {
+  using vari_type = get_var_vari_value_t<scalar_type_t<Vec>>;
+  mem = ChainableStack::instance_->memalloc_.alloc_array<vari_type>(x.size() * x[0].size());
+  save_varis(mem, x);
+}
+
+// std::vector<var_value>
+template <typename Mem, typename Vec,
+ require_std_vector_vt<is_var_value, Vec>* = nullptr>
+void make_adj_jac(Mem& mem, Vec&& x) {
+  using vari_type = get_var_vari_value_t<value_type_t<Vec>>;
+  mem = ChainableStack::instance_->memalloc_.alloc_array<vari_type>(x.size());
+  save_varis(mem, x);
+}
+// Eigen
+template <typename Mem, typename EigMat, require_eigen_t<EigMat>* = nullptr>
+void make_adj_jac(Mem& mem, EigMat&& x) {
+  using vari_type = get_var_vari_value_t<value_type_t<EigMat>>;
+  mem = ChainableStack::instance_->memalloc_.alloc_array<vari_type>(x.size());
+  save_varis(mem, x);
+}
+
+template <typename Tuple, size_t... I, typename... Types>
+auto make_adj_jac_tuple_impl(Tuple& mem,
+                             std::index_sequence<I...> /* ignore */,
+                             Types&&... args) {
+  return std::forward_as_tuple(
+      make_adj_jac(std::get<I>(mem), std::forward<Types>(args))...);
+}
+
+template <typename Tuple, typename... Types>
+auto make_adj_jac_tuple(Tuple& mem, Types&&... args) {
+  auto positions_vec = conditional_sequence(is_vari_value<double>{}, std::index_sequence<0>{}, args...);
+  return make_adj_jac_tuple_impl(mem, positions_vec, args...);
+}
+
+}
+
 /**
  * adj_jac_vari interfaces a user supplied functor  with the reverse mode
  * autodiff. It allows someone to implement functions with custom reverse mode
@@ -127,9 +168,20 @@ struct adj_jac_vari : public vari {
       = std::result_of_t<F(decltype(is_var_), decltype(value_of(Targs()))...)>;
 
   F f_;
-  vari** x_vis_;
+  /**
+   * For signature (var, Matrix<var>, double, var_value<Matrix<double>>)
+   *  we want a tuple like
+   * (vari*, vari**, vari_value<Matrix<double>>)
+   */
+  std::tuple<var_to_vari_filter_t<Targs>...> x_vis_;
   std::array<int, internal::compute_dims<FReturnType>::value> M_;
-  vari** y_vi_;
+  template <typename T>
+  using is_arith_or_vec = disjunction<std::is_arithmetic<std::decay_t<T>>, is_std_vector<std::decay_t<T>>>;
+  template <typename T>
+  using y_vi_type_t = std::conditional_t<is_arith_or_vec<T>::value,
+    var_value<value_type_t<T>>**,
+    var_value<T>*>;
+  y_vi_type_t<FReturnType> y_vi_;
 
   /**
    * Initializes is_var_ with true if the scalar type in each argument
@@ -146,11 +198,13 @@ struct adj_jac_vari : public vari {
    * @param val_y output of F::operator()
    * @return var
    */
-  inline var build_return_varis_and_vars(const double& val_y) {
-    y_vi_ = ChainableStack::instance_->memalloc_.alloc_array<vari*>(1);
-    y_vi_[0] = new vari(val_y, false);
-
-    return y_vi_[0];
+  template <typename T, require_arithmetic_t<T>* = nullptr>
+  inline auto build_return_varis_and_vars(const T& val_y) {
+    using vari_type = vari_value<T>;
+    using var_type = var_value<T>;
+    y_vi_ = ChainableStack::instance_->memalloc_.alloc_array<vari_type*>(1);
+    y_vi_[0] = new vari_type(val_y, false);
+    return var_type(y_vi_[0]);
   }
 
   /**
@@ -160,16 +214,18 @@ struct adj_jac_vari : public vari {
    * @param val_y output of F::operator()
    * @return std::vector of vars
    */
-  inline std::vector<var> build_return_varis_and_vars(
-      const std::vector<double>& val_y) {
+  template <typename T>
+  inline std::vector<var_value<T>> build_return_varis_and_vars(
+      const std::vector<T>& val_y) {
+    using vari_type = vari_value<T>;
+    using var_type = var_value<T>;
     M_[0] = val_y.size();
-    std::vector<var> var_y(M_[0]);
-
+    std::vector<var_type> var_y(M_[0]);
     y_vi_
-        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(var_y.size());
+        = ChainableStack::instance_->memalloc_.alloc_array<vari_type*>(var_y.size());
     for (size_t m = 0; m < var_y.size(); ++m) {
       y_vi_[m] = new vari(val_y[m], false);
-      var_y[m] = y_vi_[m];
+      var_y.emplace_back(var_type(y_vi_[m]));
     }
 
     return var_y;
@@ -185,21 +241,15 @@ struct adj_jac_vari : public vari {
    * @param val_y output of F::operator()
    * @return Eigen::Matrix of vars
    */
-  template <int R, int C>
-  inline Eigen::Matrix<var, R, C> build_return_varis_and_vars(
-      const Eigen::Matrix<double, R, C>& val_y) {
+   template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+  inline auto build_return_varis_and_vars(EigMat&& val_y) {
+    using var_type = var_value<Eigen::Matrix<double, R, C>>;
+    using vari_type = vari_value<Eigen::Matrix<double, R, C>>;
     M_[0] = val_y.rows();
     M_[1] = val_y.cols();
-    Eigen::Matrix<var, R, C> var_y(M_[0], M_[1]);
-
-    y_vi_
-        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(var_y.size());
-    for (int m = 0; m < var_y.size(); ++m) {
-      y_vi_[m] = new vari(val_y(m), false);
-      var_y(m) = y_vi_[m];
-    }
-
-    return var_y;
+    y_vi_ = ChainableStack::instance_->memalloc_.alloc_array<vari_type*>(1);
+    y_vi_ = new vari_type(std::forward<EigMat>(val_y));
+    return var_type(y_vi_);
   }
 
   /**
@@ -220,11 +270,7 @@ struct adj_jac_vari : public vari {
    * @return Output of f_ as vars
    */
   inline auto operator()(const Targs&... args) {
-    x_vis_ = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-        count_vars(args...));
-
-    save_varis(x_vis_, args...);
-
+    make_adj_jac_tuple(x_vis_, args...);
     return build_return_varis_and_vars(f_(is_var_, value_of(args)...));
   }
 
@@ -350,10 +396,8 @@ struct adj_jac_vari : public vari {
    * This operation may be called multiple times during the life of the vari
    */
   inline void chain() {
-    FReturnType y_adj;
-
-    internal::build_y_adj(y_vi_, M_, y_adj);
-    auto y_adj_jacs = f_.multiply_adjoint_jacobian(is_var_, y_adj);
+    auto y_adj_jacs = f_.multiply_adjoint_jacobian(is_var_,
+      internal::build_y_adj<FReturnType>(y_vi_, M_));
 
     apply(
         [&, this](auto&&... args) {

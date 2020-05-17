@@ -36,5 +36,33 @@ struct is_var_value<
     T, std::enable_if_t<internal::is_var_value_impl<std::decay_t<T>>::value>> {
 };
 
+namespace internal {
+template <typename T, typename = void>
+struct get_var_value {
+  using type = value_type_t<T>;
+};
+
+// until we figure out how to get inner type for vari_value
+template <typename T>
+struct get_var_value<T, std::enable_if_t<is_var<T>::value>> {
+  using type = typename std::decay_t<T>::Scalar;
+};
+template <typename T, typename = void>
+struct get_var_vari_value {
+  using type = value_type_t<T>;
+};
+
+// until we figure out how to get inner type for vari_value
+template <typename T>
+struct get_var_vari_value<T, std::enable_if_t<is_var_value<T>::value>> {
+  using type = typename std::decay_t<T>::vari_type;
+};
+
+template <typename T>
+using get_var_vari_value_t = typename get_var_vari_value<std::decay_t<T>>::type;
+
+}  // namespace internal
+
+
 }  // namespace stan
 #endif

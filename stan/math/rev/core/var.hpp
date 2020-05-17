@@ -41,7 +41,7 @@ class var_value {
  public:
   // FIXME: doc what this is for
   using Scalar = floating_point_promoter<T>;
-
+  using vari_type = vari_value<T>;
   /**
    * Pointer to the implementation of this variable.
    *
