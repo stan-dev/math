@@ -22,8 +22,7 @@ namespace math {
  */
 inline auto value_of(const var& v) { return v.vi_->val_; }
 
-template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
-          require_vt_var<EigMat>* = nullptr>
+template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
 inline auto value_of(const EigMat& x) {
   return x.val().eval();
 }

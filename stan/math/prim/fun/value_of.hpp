@@ -105,7 +105,7 @@ inline Vec value_of(Vec&& x) {
  * @return Matrix of values
  **/
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
-          require_not_vt_double_or_int<EigMat>* = nullptr>
+          require_not_vt_var_or_arithmetic<EigMat>* = nullptr>
 inline auto value_of(const EigMat& M) {
   return M.unaryExpr([](const auto& scal) { return value_of(scal); });
 }

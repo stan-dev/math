@@ -422,7 +422,7 @@ TEST(AgradRev, test_matrix_sin_multiple_jac) {
  * specification.
  */
 struct WeirdArgumentListFunctor1 {
-  template <size_t size, typename... Args>
+  template <size_t size>
   Eigen::VectorXd operator()(
       std::array<bool, size> needs_adj, double, int, const double&, const int&,
       std::vector<double>, std::vector<int>, const std::vector<double>&,

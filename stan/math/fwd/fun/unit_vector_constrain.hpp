@@ -16,7 +16,7 @@ namespace stan {
 namespace math {
 
 template <typename EigMat, require_eigen_vt<is_fvar, EigMat>* = nullptr>
-inline auto unit_vector_constrain(EigMat&& y) {
+inline auto unit_vector_constrain(const EigMat& y) {
   using eig_mat = std::decay_t<EigMat>;
   using eigen_type = typename eig_mat::PlainObject;
   using eig_partial = partials_type_t<value_type_t<EigMat>>;
@@ -44,7 +44,7 @@ inline auto unit_vector_constrain(EigMat&& y) {
 template <typename EigMat, typename T,
           require_eigen_vt<is_fvar, EigMat>* = nullptr,
           require_stan_scalar_t<T>* = nullptr>
-inline auto unit_vector_constrain(EigMat&& y, T& lp) {
+inline auto unit_vector_constrain(const EigMat& y, T& lp) {
   const value_type_t<EigMat> squared_norm = dot_self(y);
   lp -= 0.5 * squared_norm;
   return unit_vector_constrain(std::forward<EigMat>(y));

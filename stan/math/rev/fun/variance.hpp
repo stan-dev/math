@@ -38,8 +38,7 @@ inline var calc_variance(size_t size, const var* dtrs) {
  * @param[in] v a vector
  * @return sample variance of specified vector
  */
-template <typename StdVec, require_std_vector_t<StdVec>* = nullptr,
-          require_vt_var<StdVec>* = nullptr>
+template <typename StdVec, require_std_vector_vt<is_var, StdVec>* = nullptr>
 inline var variance(StdVec&& v) {
   check_nonzero_size("variance", "v", v);
   if (v.size() == 1) {
@@ -58,8 +57,7 @@ inline var variance(StdVec&& v) {
  * @param[in] m input matrix
  * @return sample variance of specified matrix
  */
-template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
-          require_vt_var<EigMat>* = nullptr>
+template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
 var variance(EigMat&& m) {
   using ref_inner = const typename std::decay_t<EigMat>::PlainObject;
   check_nonzero_size("variance", "m", m);

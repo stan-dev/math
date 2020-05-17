@@ -16,9 +16,9 @@ namespace math {
  * Return the trace of D times the quadratic form of B and A.
  * That is, `trace_gen_quad_form(D, A, B) = trace(D * B' * A * B).`
  *
- * @tparam EigMatD type of the first matrix or expression
- * @tparam EigMatA type of the second matrix or expression
- * @tparam EigMatB type of the third matrix or expression
+ * @tparam TD type of the first matrix or expression
+ * @tparam TA type of the second matrix or expression
+ * @tparam TB type of the third matrix or expression
  *
  * @param D multiplier
  * @param A outside term in quadratic form

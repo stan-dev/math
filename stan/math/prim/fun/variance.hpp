@@ -56,7 +56,7 @@ inline value_type_t<EigMat> variance(EigMat&& m) {
   if (m.size() == 1) {
     return eig_value{0.0};
   }
-  const Eigen::Ref<ref_inner, Eigen::Aligned16, Eigen::Stride<0, 0>>& mat = m;
+  const Eigen::Ref<ref_inner>& mat = m;
   return (mat.array() - mat.mean()).square().sum()
          / eig_value(mat.size() - 1.0);
 }
