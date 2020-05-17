@@ -1,35 +1,9 @@
 #include <gtest/gtest.h>
 #include <stan/math/prim.hpp>
+#include <test/unit/util.hpp>
 #include <limits>
 #include <string>
 #include <vector>
-
-template <typename T_x, typename T_sigma>
-std::string pull_msg(std::vector<T_x> x, T_sigma sigma) {
-  std::string message;
-  try {
-    stan::math::gp_dot_prod_cov(x, sigma);
-  } catch (std::domain_error &e) {
-    message = e.what();
-  } catch (...) {
-    message = "Threw the wrong exection";
-  }
-  return message;
-}
-
-template <typename T_x1, typename T_x2, typename T_sigma>
-std::string pull_msg(std::vector<T_x1> x1, std::vector<T_x2> x2,
-                     T_sigma sigma) {
-  std::string message;
-  try {
-    stan::math::gp_dot_prod_cov(x1, x2, sigma);
-  } catch (std::domain_error &e) {
-    message = e.what();
-  } catch (...) {
-    message = "Threw the wrong exection";
-  }
-  return message;
-}
 
 TEST(MathPrimMat, vec_double_gp_dot_prod_cov0) {
   double sigma = 0.5;
@@ -75,10 +49,7 @@ TEST(MathPrimMat, vec_NaN_x_gp_dot_prod_cov_cov0) {
   x[0] = 1;
   x[1] = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_THROW(stan::math::gp_dot_prod_cov(x, sigma), std::domain_error);
-  std::string msg;
-  msg = pull_msg(x, sigma);
-  EXPECT_TRUE(std::string::npos != msg.find(" x")) << msg;
+  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x, sigma), std::domain_error, " x");
 }
 
 TEST(MathPrimMat, vec_NaN_sigma_gp_dot_prod_cov_cov0) {
@@ -87,10 +58,7 @@ TEST(MathPrimMat, vec_NaN_sigma_gp_dot_prod_cov_cov0) {
   x[0] = 1;
   x[1] = 2;
 
-  EXPECT_THROW(stan::math::gp_dot_prod_cov(x, sigma), std::domain_error);
-  std::string msg;
-  msg = pull_msg(x, sigma);
-  EXPECT_TRUE(std::string::npos != msg.find(" sigma")) << msg;
+  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x, sigma), std::domain_error, " sigma");
 }
 
 TEST(MathPrimMat, vec_NaN_x1_gp_dot_prod_cov_cov0) {
@@ -104,10 +72,7 @@ TEST(MathPrimMat, vec_NaN_x1_gp_dot_prod_cov_cov0) {
   x2[0] = 1;
   x2[1] = 2;
 
-  EXPECT_THROW(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error);
-  std::string msg;
-  msg = pull_msg(x1, x2, sigma);
-  EXPECT_TRUE(std::string::npos != msg.find(" x1")) << msg;
+  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error, " x1");
 }
 
 TEST(MathPrimMat, vec_NaN_x2_gp_dot_prod_cov_cov0) {
@@ -121,10 +86,7 @@ TEST(MathPrimMat, vec_NaN_x2_gp_dot_prod_cov_cov0) {
   x2[0] = 1;
   x2[1] = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_THROW(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error);
-  std::string msg;
-  msg = pull_msg(x1, x2, sigma);
-  EXPECT_TRUE(std::string::npos != msg.find(" x2")) << msg;
+  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error, " x2");
 }
 
 TEST(MathPrimMat, vec_NaN_x1_x2_sigma_gp_dot_prod_cov_cov0) {
@@ -138,10 +100,7 @@ TEST(MathPrimMat, vec_NaN_x1_x2_sigma_gp_dot_prod_cov_cov0) {
   x2[0] = 1;
   x2[1] = 3;
 
-  EXPECT_THROW(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error);
-  std::string msg;
-  msg = pull_msg(x1, x2, sigma);
-  EXPECT_TRUE(std::string::npos != msg.find(" sigma")) << msg;
+  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error, " sigma");
 }
 
 TEST(MathPrimMat, vec_inf_x_gp_dot_prod_cov_cov0) {
@@ -150,10 +109,7 @@ TEST(MathPrimMat, vec_inf_x_gp_dot_prod_cov_cov0) {
   x[0] = 1;
   x[1] = std::numeric_limits<double>::infinity();
 
-  EXPECT_THROW(stan::math::gp_dot_prod_cov(x, sigma), std::domain_error);
-  std::string msg;
-  msg = pull_msg(x, sigma);
-  EXPECT_TRUE(std::string::npos != msg.find(" x")) << msg;
+  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x, sigma), std::domain_error, " x");
 }
 
 TEST(MathPrimMat, vec_inf_sigma_gp_dot_prod_cov_cov0) {
@@ -162,10 +118,7 @@ TEST(MathPrimMat, vec_inf_sigma_gp_dot_prod_cov_cov0) {
   x[0] = 1;
   x[1] = 2;
 
-  EXPECT_THROW(stan::math::gp_dot_prod_cov(x, sigma), std::domain_error);
-  std::string msg;
-  msg = pull_msg(x, sigma);
-  EXPECT_TRUE(std::string::npos != msg.find(" sigma")) << msg;
+  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x, sigma), std::domain_error, " sigma");
 }
 
 TEST(MathPrimMat, vec_inf_x1_gp_dot_prod_cov_cov0) {
@@ -179,10 +132,7 @@ TEST(MathPrimMat, vec_inf_x1_gp_dot_prod_cov_cov0) {
   x2[0] = 1;
   x2[1] = 2;
 
-  EXPECT_THROW(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error);
-  std::string msg;
-  msg = pull_msg(x1, x2, sigma);
-  EXPECT_TRUE(std::string::npos != msg.find(" x1")) << msg;
+  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error, " x1");
 }
 
 TEST(MathPrimMat, vec_inf_x2_gp_dot_prod_cov_cov0) {
@@ -196,10 +146,7 @@ TEST(MathPrimMat, vec_inf_x2_gp_dot_prod_cov_cov0) {
   x2[0] = 1;
   x2[1] = std::numeric_limits<double>::infinity();
 
-  EXPECT_THROW(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error);
-  std::string msg;
-  msg = pull_msg(x1, x2, sigma);
-  EXPECT_TRUE(std::string::npos != msg.find(" x2")) << msg;
+  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error, " x2");
 }
 
 TEST(MathPrimMat, vec_inf_x1_x2_sigma_gp_dot_prod_cov_cov0) {
@@ -213,11 +160,7 @@ TEST(MathPrimMat, vec_inf_x1_x2_sigma_gp_dot_prod_cov_cov0) {
   x2[0] = 1;
   x2[1] = 3;
 
-  EXPECT_THROW(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error);
-
-  std::string msg;
-  msg = pull_msg(x1, x2, sigma);
-  EXPECT_TRUE(std::string::npos != msg.find(" sigma")) << msg;
+  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error, " sigma");
 }
 
 TEST(MathPrimMat, vec_vec_x1_x2_gp_dot_prod_cov0) {
