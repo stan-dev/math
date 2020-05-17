@@ -37,9 +37,9 @@ inline void fill(EigMat& x, const S& y) {
  * @param x Container.
  * @param y Value.
  */
-template <typename T, typename S,
-          require_t<
-              std::is_assignable<std::decay_t<T>&, std::decay_t<S>>>* = nullptr>
+template <
+    typename T, typename S,
+    require_t<std::is_assignable<std::decay_t<T>&, std::decay_t<S>>>* = nullptr>
 inline void fill(T& x, S&& y) {
   x = std::forward<S>(y);
 }
