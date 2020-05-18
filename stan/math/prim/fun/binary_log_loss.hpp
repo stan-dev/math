@@ -25,14 +25,9 @@ namespace math {
  * @param[in] y reference value, either 0 or 1
  * @param[in] y_hat response value in [0, 1]
  * @return Log loss for response given reference value
- *//*
-template <typename T>
-inline T binary_log_loss(int y, const T& y_hat) {
-  using std::log;
-  return y ? -log(y_hat) : -log1m(y_hat);
-}*/
-
-template <typename T1, typename T2>
+ */
+template <typename T1, typename T2, require_st_integral<T1>* = nullptr,
+          require_st_arithmetic<T2>* = nullptr>
 inline auto binary_log_loss(T1 y, const T2& y_hat) {
   return apply_scalar_binary<T1, T2>::apply(
       y, y_hat, [&](const auto& v, const auto& v_hat) {

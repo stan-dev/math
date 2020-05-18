@@ -59,12 +59,17 @@ class binary_log_loss_0_vari : public op_v_vari {
  * @param y_hat Response variable.
  * @return Log loss of response versus reference value.
  */
-inline var binary_log_loss(int y, const var& y_hat) {
-  if (y == 0) {
-    return var(new internal::binary_log_loss_0_vari(y_hat.vi_));
-  } else {
-    return var(new internal::binary_log_loss_1_vari(y_hat.vi_));
-  }
+template <typename T1, typename T2, require_st_integral<T1>* = nullptr,
+          require_st_var<T2>* = nullptr>
+inline auto binary_log_loss(T1 y, const T2& y_hat) {
+  return apply_scalar_binary<T1, T2>::apply(
+      y, y_hat, [&](const auto& v, const auto& v_hat) {
+        if (v == 0) {
+          return var(new internal::binary_log_loss_0_vari(v_hat.vi_));
+        } else {
+          return var(new internal::binary_log_loss_1_vari(v_hat.vi_));
+        }
+      });
 }
 
 }  // namespace math
