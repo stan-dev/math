@@ -304,7 +304,7 @@ solve_quadprog(const Eigen::Matrix<T0, -1, -1> &G,
   auto c1 = G.trace();
 
   /* decompose the matrix G in the form LL^T */
-  auto chol = stan::math::cholesky_decompose(G);
+  auto L = stan::math::cholesky_decompose(G);
 
   /* initialize the matrix R */
   d.setZero();
@@ -316,7 +316,8 @@ solve_quadprog(const Eigen::Matrix<T0, -1, -1> &G,
   /* compute the inverse of the factorized matrix G^-1, this is the initial
    * value for H */
   //J = L^-T
-  auto J = stan::math::transpose(stan::math::mdivide_left_tri_low(chol));
+  Eigen::Matrix<T0, -1, -1> Li = (1e-9 < L.array().abs()).select(L, 0.0f);
+  auto J = stan::math::transpose(stan::math::mdivide_left_tri_low(Li));
   auto c2 = J.trace();
 #ifdef TRACE_SOLVER
   print_matrix("J", J, n);
@@ -329,7 +330,8 @@ solve_quadprog(const Eigen::Matrix<T0, -1, -1> &G,
    * this is a feasible point in the dual space
    * x = G^-1 * g0
    */
-  auto x = multiply(inverse(G), g0);
+  
+  auto x = multiply(stan::math::multiply_lower_tri_self_transpose(J), g0);
   x = -x;
   
   /* and compute the current solution value */
@@ -591,15 +593,15 @@ l2a: /* Step 2a: determine step direction */
 template <typename T0, typename T1, typename T2, typename T3,
           typename T4, typename T5>
 auto
-solve_quadprog_chol(const Eigen::Matrix<T0, -1, -1> &L,
-               const Eigen::Matrix<T1, -1, 1> &g0,
-               const Eigen::Matrix<T2, -1, -1> &CE,
-               const Eigen::Matrix<T3, -1, 1> &ce0,
-               const Eigen::Matrix<T4, -1, -1> &CI,
-               const Eigen::Matrix<T5, -1, 1> &ci0) {
-  L.eval();
-  using std::abs;
-  int i = 0, j = 0, k = 0, l = 0; /* indices */
+  solve_quadprog_chol(const Eigen::Matrix<T0, -1, -1> &L,
+                      const Eigen::Matrix<T1, -1, 1> &g0,
+                      const Eigen::Matrix<T2, -1, -1> &CE,
+                      const Eigen::Matrix<T3, -1, 1> &ce0,
+                      const Eigen::Matrix<T4, -1, -1> &CI,
+                      const Eigen::Matrix<T5, -1, 1> &ci0) {
+    L.eval();
+    using std::abs;
+    int i = 0, j = 0, k = 0, l = 0; /* indices */
   int ip, me, mi;
   int n = g0.size();
   int p = ce0.size();
@@ -616,65 +618,65 @@ solve_quadprog_chol(const Eigen::Matrix<T0, -1, -1> &L,
   int q;
   int iq, iter = 0;
   bool iaexcl[m + p];
-
+  
   me = p; /* number of equality constraints */
   mi = m; /* number of inequality constraints */
   q = 0;  /* size of the active set A (containing the indices of the active
-             constraints) */
-
+   constraints) */
+  
   /*
    * Preprocessing phase
    */
-
+  
   /* compute the trace of the original matrix G */
-/* can remove this  auto chol = L; 
-* can provide the trace already so don't need
-* to compute G again 
-*  auto G = tcrossprod(L);
-*  auto c1 = G.trace(); */
-
-/* tr(AB^T) = sum( A hadamard_prod B) 
-* https://en.wikipedia.org/wiki/Trace_(linear_algebra)
-*/ 
-  auto c1 = elt_multiply(L, L).sum();
-
+  /* can remove this  auto chol = L; 
+   * can provide the trace already so don't need
+   * to compute G again 
+   *  auto G = tcrossprod(L);
+   *  auto c1 = G.trace(); */
+  
+  /* tr(AB^T) = sum( A hadamard_prod B) 
+   * https://en.wikipedia.org/wiki/Trace_(linear_algebra)
+   */ 
+ // auto c1 = elt_multiply(L, L).sum();
+   auto c1 = tcrossprod(L).trace(); 
   /* initialize the matrix R */
   d.setZero();
-
+  
   /*  compute the trace of the original matrix G */
-/* **CHANGE HERE** G to L */
+  /* **CHANGE HERE** G to L */
   Eigen::Matrix<T0, -1, -1> R(L.rows(), L.cols());
   R.setZero();
   T_return R_norm = 1.0; /* this variable will hold the norm of the matrix R */
-
+  
   /* compute the inverse of the factorized matrix G^-1, this is the initial
    * value for H */
   //J = L^-T
-/* **CHANGE HERE** 
-* J is only called once and trace is the same regardless of transpose 
-* also change chol to L */
-  auto J = stan::math::mdivide_left_tri_low(L);
+  /* **CHANGE HERE** 
+   * J is only called once and trace is the same regardless of transpose 
+   * also change chol to L */
+ Eigen::Matrix<T0, -1, -1> Li = (1e-9 < L.array().abs()).select(L, 0.0f);
+  auto J = stan::math::transpose(stan::math::mdivide_left_tri_low(Li));
   auto c2 = J.trace();
+ // std::cout << c2 << "\n";
 #ifdef TRACE_SOLVER
   print_matrix("J", J, n);
 #endif
-
+  
   /* c1 * c2 is an estimate for cond(G) */
-
+  
   /*
    * Find the unconstrained minimizer of the quadratic form 0.5 * x G x + g0 x
    * this is a feasible point in the dual space
    * x = G^-1 * g0
    */
-
+  
   /* G^-1 = (L^-1)^T (L^-1) 
    * https://forum.kde.org/viewtopic.php?f=74&t=127426
    * */
-/* **CHANGE HERE** 
-* can use J here so don't need to compute inverse again */
-  Eigen::Matrix<T0, -1, -1> Ginv = Eigen::Matrix<T0, -1, -1>::Constant(L.rows(), L.cols(), 0.0);
-  Ginv.template selfadjointView<Eigen::Lower>().rankUpdate(J.transpose());
-  Eigen::Matrix<T_return, -1, 1> x = multiply(Ginv, g0);
+  /* **CHANGE HERE** 
+   * can use J here so don't need to compute inverse again */
+  auto x = multiply(stan::math::multiply_lower_tri_self_transpose(J), g0);
   x = -x;
   
   /* and compute the current solution value */
