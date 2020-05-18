@@ -76,8 +76,8 @@ std::vector<std::vector<return_type_t<T1, T2, T_t0, T_ts>>> integrate_ode_rk45(
   using boost::numeric::odeint::integrate_times;
   using boost::numeric::odeint::make_dense_output;
   using boost::numeric::odeint::max_step_checker;
-  using boost::numeric::odeint::runge_kutta_dopri5;
   using boost::numeric::odeint::no_progress_error;
+  using boost::numeric::odeint::runge_kutta_dopri5;
 
   const double t0_dbl = value_of(t0);
   const std::vector<double> ts_dbl = value_of(ts);
@@ -138,14 +138,16 @@ std::vector<std::vector<return_type_t<T1, T2, T_t0, T_ts>>> integrate_ode_rk45(
   const double step_size = 0.1;
   try {
     integrate_times(
-		    make_dense_output(absolute_tolerance, relative_tolerance,
-				      runge_kutta_dopri5<std::vector<double>, double,
-				      std::vector<double>, double>()),
-		    std::ref(coupled_system), initial_coupled_state, std::begin(ts_vec),
-		    std::end(ts_vec), step_size, filtered_observer,
-		    max_step_checker(max_num_steps));
-  } catch(no_progress_error &e) {
-    throw_domain_error("integrate_ode_rk45", "", ts_vec[timestep + 1], "Failed to integrate to next output time (", ") in less than max_num_steps steps");
+        make_dense_output(absolute_tolerance, relative_tolerance,
+                          runge_kutta_dopri5<std::vector<double>, double,
+                                             std::vector<double>, double>()),
+        std::ref(coupled_system), initial_coupled_state, std::begin(ts_vec),
+        std::end(ts_vec), step_size, filtered_observer,
+        max_step_checker(max_num_steps));
+  } catch (no_progress_error& e) {
+    throw_domain_error("integrate_ode_rk45", "", ts_vec[timestep + 1],
+                       "Failed to integrate to next output time (",
+                       ") in less than max_num_steps steps");
   }
 
   return y;

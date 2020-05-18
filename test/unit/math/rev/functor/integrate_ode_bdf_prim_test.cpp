@@ -391,11 +391,12 @@ TEST(StanMathOde_integrate_ode_bdf, too_much_work) {
   std::vector<int> data_int;
 
   EXPECT_THROW_MSG(
-      stan::math::integrate_ode_bdf(f_, y0, t0, ts_long, theta, data,
-                                     data_int, 0, 1E-6, 1E-6, 100),
+      stan::math::integrate_ode_bdf(f_, y0, t0, ts_long, theta, data, data_int,
+                                    0, 1E-6, 1E-6, 100),
       std::domain_error,
-      "integrate_ode_bdf:  Failed to integrate to next output time (1e+10) in less than max_num_steps steps");
+      "integrate_ode_bdf:  Failed to integrate to next output time (1e+10) in "
+      "less than max_num_steps steps");
 
   EXPECT_NO_THROW(stan::math::integrate_ode_bdf(
-    f_, y0, t0, ts_short, theta, data, data_int, 0, 1E-6, 1E-6, 100));
+      f_, y0, t0, ts_short, theta, data, data_int, 0, 1E-6, 1E-6, 100));
 }

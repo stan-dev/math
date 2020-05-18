@@ -83,7 +83,7 @@ class cvodes_integrator {
 
     const char* fun;
 
-    if(Lmm == CV_BDF) {
+    if (Lmm == CV_BDF) {
       fun = "integrate_ode_bdf";
     } else {
       fun = "integrate_ode_adams";
@@ -102,16 +102,16 @@ class cvodes_integrator {
     check_ordered(fun, "times", ts_dbl);
     check_less(fun, "initial time", t0_dbl, ts_dbl[0]);
     if (relative_tolerance <= 0) {
-      invalid_argument(fun, "relative_tolerance,",
-                       relative_tolerance, "", ", must be greater than 0");
+      invalid_argument(fun, "relative_tolerance,", relative_tolerance, "",
+                       ", must be greater than 0");
     }
     if (absolute_tolerance <= 0) {
-      invalid_argument(fun, "absolute_tolerance,",
-                       absolute_tolerance, "", ", must be greater than 0");
+      invalid_argument(fun, "absolute_tolerance,", absolute_tolerance, "",
+                       ", must be greater than 0");
     }
     if (max_num_steps <= 0) {
-      invalid_argument(fun, "max_num_steps,", max_num_steps,
-                       "", ", must be greater than 0");
+      invalid_argument(fun, "max_num_steps,", max_num_steps, "",
+                       ", must be greater than 0");
     }
 
     const size_t N = y0.size();
@@ -171,12 +171,14 @@ class cvodes_integrator {
       for (size_t n = 0; n < ts.size(); ++n) {
         double t_final = ts_dbl[n];
         if (t_final != t_init) {
-          int ret = CVode(cvodes_mem, t_final, cvodes_data.nv_state_,
-			      &t_init, CV_NORMAL);
+          int ret = CVode(cvodes_mem, t_final, cvodes_data.nv_state_, &t_init,
+                          CV_NORMAL);
 
-	  if(ret == CV_TOO_MUCH_WORK) {
-	    throw_domain_error(fun, "", t_final, "Failed to integrate to next output time (" ,") in less than max_num_steps steps");
-	  }
+          if (ret == CV_TOO_MUCH_WORK) {
+            throw_domain_error(fun, "", t_final,
+                               "Failed to integrate to next output time (",
+                               ") in less than max_num_steps steps");
+          }
         }
         if (S > 0) {
           check_flag_sundials(
