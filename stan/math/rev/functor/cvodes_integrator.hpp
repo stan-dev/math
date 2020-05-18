@@ -73,7 +73,8 @@ class cvodes_integrator {
   template <typename F, typename T_initial, typename T_param, typename T_t0,
             typename T_ts>
   std::vector<std::vector<return_type_t<T_initial, T_param, T_t0, T_ts>>>
-  integrate(const char* function_name, const F& f, const std::vector<T_initial>& y0, const T_t0& t0,
+  integrate(const char* function_name, const F& f,
+            const std::vector<T_initial>& y0, const T_t0& t0,
             const std::vector<T_ts>& ts, const std::vector<T_param>& theta,
             const std::vector<double>& x, const std::vector<int>& x_int,
             std::ostream* msgs, double relative_tolerance,
@@ -95,12 +96,12 @@ class cvodes_integrator {
     check_ordered(function_name, "times", ts_dbl);
     check_less(function_name, "initial time", t0_dbl, ts_dbl[0]);
     if (relative_tolerance <= 0) {
-      invalid_argument(function_name, "relative_tolerance,", relative_tolerance, "",
-                       ", must be greater than 0");
+      invalid_argument(function_name, "relative_tolerance,", relative_tolerance,
+                       "", ", must be greater than 0");
     }
     if (absolute_tolerance <= 0) {
-      invalid_argument(function_name, "absolute_tolerance,", absolute_tolerance, "",
-                       ", must be greater than 0");
+      invalid_argument(function_name, "absolute_tolerance,", absolute_tolerance,
+                       "", ", must be greater than 0");
     }
     if (max_num_steps <= 0) {
       invalid_argument(function_name, "max_num_steps,", max_num_steps, "",
