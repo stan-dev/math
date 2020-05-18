@@ -28,7 +28,8 @@ inline void check_flag_kinsol(int flag,
                               long int max_num_steps) {  // NOLINT(runtime/int)
   std::ostringstream ss;
   if (flag == -6) {
-    throw_domain_error("algebra_solver", "maximum number of iterations", max_num_steps, "(", ") was exceeded in the solve.");
+    throw_domain_error("algebra_solver", "maximum number of iterations",
+                       max_num_steps, "(", ") was exceeded in the solve.");
   } else if (flag < 0) {
     ss << "algebra_solver failed with error flag " << flag << ".";
     throw std::runtime_error(ss.str());
