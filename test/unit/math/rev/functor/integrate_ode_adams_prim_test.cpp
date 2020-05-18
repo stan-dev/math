@@ -364,7 +364,7 @@ TEST(StanMathOde_integrate_ode_adams, error_conditions_bad_ode) {
                    std::invalid_argument, error_msg);
 }
 
-TEST(StanMathOde_integrate_ode_bdf, too_much_work) {
+TEST(StanMathOde_integrate_ode_adams, too_much_work) {
   coupled_mm_ode_fun f_;
 
   // initial value and parameters from model definition

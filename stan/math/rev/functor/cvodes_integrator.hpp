@@ -72,7 +72,7 @@ class cvodes_integrator {
   template <typename F, typename T_initial, typename T_param, typename T_t0,
             typename T_ts>
   std::vector<std::vector<return_type_t<T_initial, T_param, T_t0, T_ts>>>
-  integrate(const F& f, const std::vector<T_initial>& y0, const T_t0& t0,
+  integrate(const char* fun, const F& f, const std::vector<T_initial>& y0, const T_t0& t0,
             const std::vector<T_ts>& ts, const std::vector<T_param>& theta,
             const std::vector<double>& x, const std::vector<int>& x_int,
             std::ostream* msgs, double relative_tolerance,
@@ -80,14 +80,6 @@ class cvodes_integrator {
             long int max_num_steps) {  // NOLINT(runtime/int)
     using initial_var = stan::is_var<T_initial>;
     using param_var = stan::is_var<T_param>;
-
-    const char* fun;
-
-    if (Lmm == CV_BDF) {
-      fun = "integrate_ode_bdf";
-    } else {
-      fun = "integrate_ode_adams";
-    }
 
     const double t0_dbl = value_of(t0);
     const std::vector<double> ts_dbl = value_of(ts);

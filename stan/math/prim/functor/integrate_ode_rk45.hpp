@@ -144,7 +144,7 @@ std::vector<std::vector<return_type_t<T1, T2, T_t0, T_ts>>> integrate_ode_rk45(
         std::ref(coupled_system), initial_coupled_state, std::begin(ts_vec),
         std::end(ts_vec), step_size, filtered_observer,
         max_step_checker(max_num_steps));
-  } catch (no_progress_error& e) {
+  } catch (const no_progress_error& e) {
     throw_domain_error("integrate_ode_rk45", "", ts_vec[timestep + 1],
                        "Failed to integrate to next output time (",
                        ") in less than max_num_steps steps");
