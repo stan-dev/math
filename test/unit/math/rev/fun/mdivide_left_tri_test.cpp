@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/rev/util.hpp>
+#include <test/unit/util.hpp>
 
 // TODO(carpenter): move this to test framework;  should be able to put
 // all this GPU config into the functor
@@ -9,10 +10,6 @@
 
 #ifdef STAN_OPENCL
 #include <boost/random/mersenne_twister.hpp>
-
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(stan::math::value_of(A(i)), stan::math::value_of(B(i)), DELTA);
 
 boost::random::mt19937 rng;
 #define MDIVIDE_OPENCL_OVERRIDE 0

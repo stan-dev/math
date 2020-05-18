@@ -1,10 +1,7 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(MathMatrixPrim, mdivide_left_tri_low_val) {
   using stan::math::mdivide_left_tri_low;

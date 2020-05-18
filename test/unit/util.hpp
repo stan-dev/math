@@ -6,6 +6,12 @@
 #include <type_traits>
 #include <string>
 
+#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
+  EXPECT_EQ(A.rows(), B.rows());        \
+  EXPECT_EQ(A.cols(), B.cols());        \
+  for (int i = 0; i < A.size(); i++)    \
+    EXPECT_NEAR(stan::math::value_of(A(i)), stan::math::value_of(B(i)), DELTA);
+
 #define EXPECT_THROW_MSG_WITH_COUNT(expr, T_e, msg, count) \
   EXPECT_THROW(expr, T_e);                                 \
   try {                                                    \

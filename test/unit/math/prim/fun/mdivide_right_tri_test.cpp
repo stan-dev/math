@@ -1,15 +1,12 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/opencl.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #endif
-
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(MathMatrixPrim, mdivide_right_tri_val) {
   using stan::math::mdivide_right_tri;

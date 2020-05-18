@@ -6,6 +6,7 @@
 #include <stan/math/opencl/copy.hpp>
 #include <test/unit/math/opencl/kernel_generator/reference_kernel.hpp>
 #include <stan/math.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <string>
 
@@ -21,10 +22,6 @@ MatrixXd rsqrt(const MatrixXd& a) { return stan::math::inv_sqrt(a); }
 
 }  // namespace math
 }  // namespace stan
-
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
 
 #define TEST_FUNCTION(fun)                             \
   TEST(KernelGenerator, fun##_test) {                  \
