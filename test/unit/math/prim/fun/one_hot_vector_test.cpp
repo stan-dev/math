@@ -7,7 +7,7 @@ TEST(MathFunctions, one_hot_vector) {
     for (int k = 1; k <= K; k++) {
       Eigen::VectorXd y = Eigen::VectorXd::Zero(K);
       y[k - 1] = 1;
-      expect_matrix_eq(y, stan::math::one_hot_vector(K, k));
+      EXPECT_MATRIX_FLOAT_EQ(y, stan::math::one_hot_vector(K, k));
     }
   }
 }

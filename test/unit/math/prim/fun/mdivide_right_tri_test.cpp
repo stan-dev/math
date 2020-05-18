@@ -14,10 +14,10 @@ TEST(MathMatrixPrim, mdivide_right_tri_val) {
 
   stan::math::matrix_d Ad(2, 2);
   Ad << 2.0, 0.0, 5.0, 7.0;
-  expect_matrix_eq(I, mdivide_right_tri<Eigen::Lower>(Ad, Ad));
+  EXPECT_MATRIX_FLOAT_EQ(I, mdivide_right_tri<Eigen::Lower>(Ad, Ad));
 
   Ad << 2.0, 3.0, 0.0, 7.0;
-  expect_matrix_eq(I, mdivide_right_tri<Eigen::Upper>(Ad, Ad));
+  EXPECT_MATRIX_FLOAT_EQ(I, mdivide_right_tri<Eigen::Upper>(Ad, Ad));
 }
 
 TEST(MathMatrixPrim, mdivide_right_tri_size_zero) {

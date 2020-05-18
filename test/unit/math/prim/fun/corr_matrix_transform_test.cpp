@@ -10,7 +10,7 @@ TEST(prob_transform, corr_matrix_j) {
   double lp = -12.9;
   Eigen::MatrixXd y = stan::math::corr_matrix_constrain(x, K, lp);
   Eigen::VectorXd xrt = stan::math::corr_matrix_free(y);
-  expect_matrix_eq(x, xrt);
+  EXPECT_MATRIX_FLOAT_EQ(x, xrt);
 }
 
 TEST(prob_transform, corr_matrix_j2x2) {
@@ -22,7 +22,7 @@ TEST(prob_transform, corr_matrix_j2x2) {
   double lp = -12.9;
   Eigen::MatrixXd y = stan::math::corr_matrix_constrain(x, K, lp);
   Eigen::VectorXd xrt = stan::math::corr_matrix_free(y);
-  expect_matrix_eq(x, xrt);
+  EXPECT_MATRIX_FLOAT_EQ(x, xrt);
 }
 
 TEST(prob_transform, corr_matrix_j1x1) {
@@ -33,7 +33,7 @@ TEST(prob_transform, corr_matrix_j1x1) {
   double lp = -12.9;
   Eigen::MatrixXd y = stan::math::corr_matrix_constrain(x, K, lp);
   Eigen::VectorXd xrt = stan::math::corr_matrix_free(y);
-  expect_matrix_eq(x, xrt);
+  EXPECT_MATRIX_FLOAT_EQ(x, xrt);
 }
 
 TEST(prob_transform, corr_matrix_constrain_exception) {

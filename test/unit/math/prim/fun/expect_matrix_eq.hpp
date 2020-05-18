@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-void expect_matrix_eq(
+void EXPECT_MATRIX_FLOAT_EQ(
     const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& a,
     const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& b) {
   EXPECT_EQ(a.rows(), b.rows());

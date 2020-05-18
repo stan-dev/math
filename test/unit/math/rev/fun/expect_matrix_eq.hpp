@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 
 template <typename T1, typename T2>
-void expect_matrix_eq(
+void EXPECT_MATRIX_FLOAT_EQ(
     const Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>& a,
     const Eigen::Matrix<T2, Eigen::Dynamic, Eigen::Dynamic>& b) {
   EXPECT_EQ(a.rows(), b.rows());

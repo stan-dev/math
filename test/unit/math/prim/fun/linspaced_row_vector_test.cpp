@@ -6,7 +6,7 @@
 void expect_linspaced_row_vector(int K, double low, double high,
                                  const Eigen::RowVectorXd& expected) {
   Eigen::RowVectorXd found = stan::math::linspaced_row_vector(K, low, high);
-  expect_matrix_eq(expected, found);
+  EXPECT_MATRIX_FLOAT_EQ(expected, found);
 }
 
 TEST(MathFunctions, linspaced_row_vector) {

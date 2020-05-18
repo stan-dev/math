@@ -5,7 +5,7 @@
 TEST(MathFunctions, ones_vector) {
   for (int K = 0; K < 5; K++) {
     Eigen::VectorXd y = Eigen::VectorXd::Constant(K, 1);
-    expect_matrix_eq(y, stan::math::ones_vector(K));
+    EXPECT_MATRIX_FLOAT_EQ(y, stan::math::ones_vector(K));
   }
 }
 

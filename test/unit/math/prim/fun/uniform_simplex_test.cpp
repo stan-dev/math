@@ -8,7 +8,7 @@ TEST(MathFunctions, uniform_simplex) {
 
   for (int K = 1; K < 5; K++) {
     Eigen::VectorXd v = Eigen::VectorXd::Constant(K, 1.0 / K);
-    expect_matrix_eq(v, uniform_simplex(K));
+    EXPECT_MATRIX_FLOAT_EQ(v, uniform_simplex(K));
   }
 }
 

@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-#define EXPECT_MATRIX_EQ(A, B)       \
+#define EXPECT_MATRIX_FLOAT_EQ(A, B)       \
   for (int i = 0; i < A.size(); i++) \
     EXPECT_EQ(A(i), B(i));
 
@@ -64,17 +64,17 @@ TEST(MathMatrixPrimMat, value_of_rec_expression) {
   Eigen::MatrixXd a = Eigen::MatrixXd::Random(5, 4);
   Eigen::MatrixXd res_a = value_of_rec(2 * a);
   Eigen::MatrixXd correct_a = 2 * a;
-  EXPECT_MATRIX_EQ(res_a, correct_a);
+  EXPECT_MATRIX_FLOAT_EQ(res_a, correct_a);
 
   Eigen::VectorXi b = Eigen::VectorXi::Random(7);
   Eigen::VectorXd res_b = value_of_rec(2 * b);
   Eigen::VectorXd correct_b = (2 * b).cast<double>();
-  EXPECT_MATRIX_EQ(res_b, correct_b);
+  EXPECT_MATRIX_FLOAT_EQ(res_b, correct_b);
 
   Eigen::ArrayXXd c = a.array();
   Eigen::ArrayXXd res_c = value_of_rec(2 * c);
   Eigen::ArrayXXd correct_c = 2 * c;
-  EXPECT_MATRIX_EQ(res_c, correct_c);
+  EXPECT_MATRIX_FLOAT_EQ(res_c, correct_c);
 }
 
 TEST(MathFunctions, value_of_rec_return_type_short_circuit_std_vector) {

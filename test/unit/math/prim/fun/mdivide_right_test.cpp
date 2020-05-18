@@ -7,7 +7,7 @@ TEST(MathMatrixPrim, mdivide_right_val) {
   Ad << 2.0, 3.0, 5.0, 7.0;
 
   stan::math::matrix_d I = Eigen::MatrixXd::Identity(2, 2);
-  expect_matrix_eq(I, stan::math::mdivide_left(Ad, Ad));
+  EXPECT_MATRIX_FLOAT_EQ(I, stan::math::mdivide_left(Ad, Ad));
 }
 
 TEST(MathMatrixPrim, mdivide_right_val2) {
@@ -20,7 +20,7 @@ TEST(MathMatrixPrim, mdivide_right_val2) {
       1;
   expected << 19, -2, 1, 13, 4;
 
-  expect_matrix_eq(expected, stan::math::mdivide_right(b, A));
+  EXPECT_MATRIX_FLOAT_EQ(expected, stan::math::mdivide_right(b, A));
 }
 
 TEST(MathMatrixPrim, mdivide_right_size_zero) {

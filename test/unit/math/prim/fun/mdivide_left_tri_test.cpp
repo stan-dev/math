@@ -14,13 +14,13 @@ TEST(MathMatrixPrim, mdivide_left_tri_val) {
 
   stan::math::matrix_d Ad(2, 2);
   Ad << 2.0, 0.0, 5.0, 7.0;
-  expect_matrix_eq(I, mdivide_left_tri<Eigen::Lower>(Ad, Ad));
+  EXPECT_MATRIX_FLOAT_EQ(I, mdivide_left_tri<Eigen::Lower>(Ad, Ad));
 
   stan::math::matrix_d A_Ainv = Ad * mdivide_left_tri<Eigen::Lower>(Ad);
   EXPECT_MATRIX_NEAR(I, A_Ainv, 1e-15);
 
   Ad << 2.0, 3.0, 0.0, 7.0;
-  expect_matrix_eq(I, mdivide_left_tri<Eigen::Upper>(Ad, Ad));
+  EXPECT_MATRIX_FLOAT_EQ(I, mdivide_left_tri<Eigen::Upper>(Ad, Ad));
 }
 
 TEST(MathMatrixPrim, mdivide_left_tri_size_zero) {

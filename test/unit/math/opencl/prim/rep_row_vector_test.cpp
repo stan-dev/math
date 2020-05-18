@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 #include <algorithm>
 
-#define EXPECT_MATRIX_EQ(A, B)       \
+#define EXPECT_MATRIX_FLOAT_EQ(A, B)       \
   for (int i = 0; i < A.size(); i++) \
     EXPECT_EQ(A(i), B(i));
 
@@ -33,7 +33,7 @@ TEST(MathMatrixCL, rep_rv_value_check) {
   stan::math::matrix_d m1_cl_res = stan::math::from_matrix_cl(m1_cl);
   EXPECT_EQ(m1.rows(), m1_cl_res.rows());
   EXPECT_EQ(m1.cols(), m1_cl_res.cols());
-  EXPECT_MATRIX_EQ(m1, m1_cl_res);
+  EXPECT_MATRIX_FLOAT_EQ(m1, m1_cl_res);
 
   double val00 = -7.0;
   stan::math::matrix_cl<double> m00_cl(val00);
@@ -43,7 +43,7 @@ TEST(MathMatrixCL, rep_rv_value_check) {
   stan::math::matrix_d m2_cl_res = stan::math::from_matrix_cl(m2_cl);
   EXPECT_EQ(m2.rows(), m2_cl_res.rows());
   EXPECT_EQ(m2.cols(), m2_cl_res.cols());
-  EXPECT_MATRIX_EQ(m2, m2_cl_res);
+  EXPECT_MATRIX_FLOAT_EQ(m2, m2_cl_res);
 
   stan::math::vector_d a(1);
   a << 6.0;

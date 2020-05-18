@@ -17,11 +17,11 @@ TEST(AgradMixMatrixAddons, matrix_fv) {
     }
   }
 
-  expect_matrix_eq(vals, mat_in.val().val());
-  expect_matrix_eq(vals.array().exp(), mat_in.val().val().array().exp());
+  EXPECT_MATRIX_FLOAT_EQ(vals, mat_in.val().val());
+  EXPECT_MATRIX_FLOAT_EQ(vals.array().exp(), mat_in.val().val().array().exp());
 
-  expect_matrix_eq(derivs, mat_in.d().val());
-  expect_matrix_eq(derivs.array().exp(), mat_in.d().val().array().exp());
+  EXPECT_MATRIX_FLOAT_EQ(derivs, mat_in.d().val());
+  EXPECT_MATRIX_FLOAT_EQ(derivs.array().exp(), mat_in.d().val().array().exp());
 
   EXPECT_EQ(mat_in.val().val().rows(), vals.rows());
   EXPECT_EQ(mat_in.val().val().cols(), vals.cols());
@@ -45,11 +45,11 @@ TEST(AgradMixMatrixAddons, matrix_ffv) {
     }
   }
 
-  expect_matrix_eq(vals, mat_in.val().val().val());
-  expect_matrix_eq(vals.array().exp(), mat_in.val().val().val().array().exp());
+  EXPECT_MATRIX_FLOAT_EQ(vals, mat_in.val().val().val());
+  EXPECT_MATRIX_FLOAT_EQ(vals.array().exp(), mat_in.val().val().val().array().exp());
 
-  expect_matrix_eq(derivs, mat_in.d().val().val());
-  expect_matrix_eq(derivs.array().exp(), mat_in.d().val().val().array().exp());
+  EXPECT_MATRIX_FLOAT_EQ(derivs, mat_in.d().val().val());
+  EXPECT_MATRIX_FLOAT_EQ(derivs.array().exp(), mat_in.d().val().val().array().exp());
 
   EXPECT_EQ(mat_in.val().val().val().rows(), vals.rows());
   EXPECT_EQ(mat_in.val().val().val().cols(), vals.cols());
@@ -71,11 +71,11 @@ TEST(AgradMixMatrixAddons, vector_fv) {
     vec_in(i).d_ = derivs(i);
   }
 
-  expect_matrix_eq(vals, vec_in.val().val());
-  expect_matrix_eq(vals.array().exp(), vec_in.val().val().array().exp());
+  EXPECT_MATRIX_FLOAT_EQ(vals, vec_in.val().val());
+  EXPECT_MATRIX_FLOAT_EQ(vals.array().exp(), vec_in.val().val().array().exp());
 
-  expect_matrix_eq(derivs, vec_in.d().val());
-  expect_matrix_eq(derivs.array().exp(), vec_in.d().val().array().exp());
+  EXPECT_MATRIX_FLOAT_EQ(derivs, vec_in.d().val());
+  EXPECT_MATRIX_FLOAT_EQ(derivs.array().exp(), vec_in.d().val().array().exp());
 
   EXPECT_EQ(vec_in.val().val().rows(), vals.rows());
   EXPECT_EQ(vec_in.val().val().cols(), vals.cols());
@@ -97,11 +97,11 @@ TEST(AgradMixMatrixAddons, vector_ffv) {
     vec_in(i).d_ = derivs(i);
   }
 
-  expect_matrix_eq(vals, vec_in.val().val().val());
-  expect_matrix_eq(vals.array().exp(), vec_in.val().val().val().array().exp());
+  EXPECT_MATRIX_FLOAT_EQ(vals, vec_in.val().val().val());
+  EXPECT_MATRIX_FLOAT_EQ(vals.array().exp(), vec_in.val().val().val().array().exp());
 
-  expect_matrix_eq(derivs, vec_in.d().val().val());
-  expect_matrix_eq(derivs.array().exp(), vec_in.d().val().val().array().exp());
+  EXPECT_MATRIX_FLOAT_EQ(derivs, vec_in.d().val().val());
+  EXPECT_MATRIX_FLOAT_EQ(derivs.array().exp(), vec_in.d().val().val().array().exp());
 
   EXPECT_EQ(vec_in.val().val().val().rows(), vals.rows());
   EXPECT_EQ(vec_in.val().val().val().cols(), vals.cols());
@@ -123,11 +123,11 @@ TEST(AgradMixMatrixAddons, row_vector_fv) {
     row_vec_in(i).d_ = derivs(i);
   }
 
-  expect_matrix_eq(vals, row_vec_in.val().val());
-  expect_matrix_eq(vals.array().exp(), row_vec_in.val().val().array().exp());
+  EXPECT_MATRIX_FLOAT_EQ(vals, row_vec_in.val().val());
+  EXPECT_MATRIX_FLOAT_EQ(vals.array().exp(), row_vec_in.val().val().array().exp());
 
-  expect_matrix_eq(derivs, row_vec_in.d().val());
-  expect_matrix_eq(derivs.array().exp(), row_vec_in.d().val().array().exp());
+  EXPECT_MATRIX_FLOAT_EQ(derivs, row_vec_in.d().val());
+  EXPECT_MATRIX_FLOAT_EQ(derivs.array().exp(), row_vec_in.d().val().array().exp());
 
   EXPECT_EQ(row_vec_in.val().val().rows(), vals.rows());
   EXPECT_EQ(row_vec_in.val().val().cols(), vals.cols());
@@ -149,12 +149,12 @@ TEST(AgradMixMatrixAddons, row_vector_ffv) {
     row_vec_in(i).d_ = derivs(i);
   }
 
-  expect_matrix_eq(vals, row_vec_in.val().val().val());
-  expect_matrix_eq(vals.array().exp(),
+  EXPECT_MATRIX_FLOAT_EQ(vals, row_vec_in.val().val().val());
+  EXPECT_MATRIX_FLOAT_EQ(vals.array().exp(),
                    row_vec_in.val().val().val().array().exp());
 
-  expect_matrix_eq(derivs, row_vec_in.d().val().val());
-  expect_matrix_eq(derivs.array().exp(),
+  EXPECT_MATRIX_FLOAT_EQ(derivs, row_vec_in.d().val().val());
+  EXPECT_MATRIX_FLOAT_EQ(derivs.array().exp(),
                    row_vec_in.d().val().val().array().exp());
 
   EXPECT_EQ(row_vec_in.val().val().val().rows(), vals.rows());

@@ -13,8 +13,8 @@ TEST(AgradFwdMatrix, read_fvar_mat_fd) {
   matrix_fvar.d() = MatrixXd::Random(100, 100);
   read_fvar(matrix_fvar, matrix_val, matrix_deriv);
 
-  expect_matrix_eq(matrix_fvar.val(), matrix_val);
-  expect_matrix_eq(matrix_fvar.d(), matrix_deriv);
+  EXPECT_MATRIX_FLOAT_EQ(matrix_fvar.val(), matrix_val);
+  EXPECT_MATRIX_FLOAT_EQ(matrix_fvar.d(), matrix_deriv);
 }
 
 TEST(AgradFwdMatrix, read_fvar_vec_fd) {
@@ -28,8 +28,8 @@ TEST(AgradFwdMatrix, read_fvar_vec_fd) {
   vector_fvar.d() = VectorXd::Random(100);
   read_fvar(vector_fvar, vector_val, vector_deriv);
 
-  expect_matrix_eq(vector_fvar.val(), vector_val);
-  expect_matrix_eq(vector_fvar.d(), vector_deriv);
+  EXPECT_MATRIX_FLOAT_EQ(vector_fvar.val(), vector_val);
+  EXPECT_MATRIX_FLOAT_EQ(vector_fvar.d(), vector_deriv);
 }
 
 TEST(AgradFwdMatrix, read_fvar_rowvec_fd) {
@@ -43,8 +43,8 @@ TEST(AgradFwdMatrix, read_fvar_rowvec_fd) {
   row_vector_fvar.d() = RowVectorXd::Random(100);
   read_fvar(row_vector_fvar, row_vector_val, row_vector_deriv);
 
-  expect_matrix_eq(row_vector_fvar.val(), row_vector_val);
-  expect_matrix_eq(row_vector_fvar.d(), row_vector_deriv);
+  EXPECT_MATRIX_FLOAT_EQ(row_vector_fvar.val(), row_vector_val);
+  EXPECT_MATRIX_FLOAT_EQ(row_vector_fvar.d(), row_vector_deriv);
 }
 
 TEST(AgradFwdMatrix, read_fvar_expr_fd) {
@@ -58,8 +58,8 @@ TEST(AgradFwdMatrix, read_fvar_expr_fd) {
   matrix_fvar.d() = MatrixXd::Random(100, 100);
   read_fvar(matrix_fvar.diagonal(), matrix_diag_val, matrix_diag_deriv);
 
-  expect_matrix_eq(matrix_fvar.diagonal().val(), matrix_diag_val);
-  expect_matrix_eq(matrix_fvar.diagonal().d(), matrix_diag_deriv);
+  EXPECT_MATRIX_FLOAT_EQ(matrix_fvar.diagonal().val(), matrix_diag_val);
+  EXPECT_MATRIX_FLOAT_EQ(matrix_fvar.diagonal().d(), matrix_diag_deriv);
 }
 
 TEST(AgradFwdMatrix, read_fvar_mat_ffd) {
@@ -74,8 +74,8 @@ TEST(AgradFwdMatrix, read_fvar_mat_ffd) {
   matrix_fvar_fvar.d().val() = MatrixXd::Random(100, 100);
   read_fvar(matrix_fvar_fvar, matrix_val, matrix_deriv);
 
-  expect_matrix_eq(matrix_fvar_fvar.val().val(), matrix_val.val());
-  expect_matrix_eq(matrix_fvar_fvar.d().val(), matrix_deriv.val());
+  EXPECT_MATRIX_FLOAT_EQ(matrix_fvar_fvar.val().val(), matrix_val.val());
+  EXPECT_MATRIX_FLOAT_EQ(matrix_fvar_fvar.d().val(), matrix_deriv.val());
 }
 
 TEST(AgradFwdMatrix, read_fvar_vec_ffd) {
@@ -90,8 +90,8 @@ TEST(AgradFwdMatrix, read_fvar_vec_ffd) {
   vector_fvar_fvar.d().val() = VectorXd::Random(100);
   read_fvar(vector_fvar_fvar, vector_val, vector_deriv);
 
-  expect_matrix_eq(vector_fvar_fvar.val().val(), vector_val.val());
-  expect_matrix_eq(vector_fvar_fvar.d().val(), vector_deriv.val());
+  EXPECT_MATRIX_FLOAT_EQ(vector_fvar_fvar.val().val(), vector_val.val());
+  EXPECT_MATRIX_FLOAT_EQ(vector_fvar_fvar.d().val(), vector_deriv.val());
 }
 
 TEST(AgradFwdMatrix, read_fvar_rowvec_ffd) {
@@ -106,8 +106,8 @@ TEST(AgradFwdMatrix, read_fvar_rowvec_ffd) {
   row_vector_fvar_fvar.d().val() = RowVectorXd::Random(100);
   read_fvar(row_vector_fvar_fvar, row_vector_val, row_vector_deriv);
 
-  expect_matrix_eq(row_vector_fvar_fvar.val().val(), row_vector_val.val());
-  expect_matrix_eq(row_vector_fvar_fvar.d().val(), row_vector_deriv.val());
+  EXPECT_MATRIX_FLOAT_EQ(row_vector_fvar_fvar.val().val(), row_vector_val.val());
+  EXPECT_MATRIX_FLOAT_EQ(row_vector_fvar_fvar.d().val(), row_vector_deriv.val());
 }
 
 TEST(AgradFwdMatrix, read_fvar_expr_ffd) {
@@ -122,8 +122,8 @@ TEST(AgradFwdMatrix, read_fvar_expr_ffd) {
   matrix_fvar_fvar.d().val() = MatrixXd::Random(100, 100);
   read_fvar(matrix_fvar_fvar.diagonal(), matrix_diag_val, matrix_diag_deriv);
 
-  expect_matrix_eq(matrix_fvar_fvar.diagonal().val().val(),
+  EXPECT_MATRIX_FLOAT_EQ(matrix_fvar_fvar.diagonal().val().val(),
                    matrix_diag_val.val());
-  expect_matrix_eq(matrix_fvar_fvar.diagonal().d().val(),
+  EXPECT_MATRIX_FLOAT_EQ(matrix_fvar_fvar.diagonal().d().val(),
                    matrix_diag_deriv.val());
 }

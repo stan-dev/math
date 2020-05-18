@@ -13,7 +13,7 @@ TEST(MathMatrixPrim, quadFormDiag) {
 
   Eigen::MatrixXd v_m = v.asDiagonal();
 
-  expect_matrix_eq(v_m * m * v_m, quad_form_diag(m, v));
+  EXPECT_MATRIX_FLOAT_EQ(v_m * m * v_m, quad_form_diag(m, v));
 }
 
 TEST(MathMatrixPrim, quadFormDiag2) {
@@ -25,11 +25,11 @@ TEST(MathMatrixPrim, quadFormDiag2) {
 
   Eigen::MatrixXd v_m = v.asDiagonal();
 
-  expect_matrix_eq(v_m * m * v_m, quad_form_diag(m, v));
+  EXPECT_MATRIX_FLOAT_EQ(v_m * m * v_m, quad_form_diag(m, v));
 
   Eigen::RowVectorXd rv(3);
   rv << 1, 2, 3;
-  expect_matrix_eq(v_m * m * v_m, quad_form_diag(m, rv));
+  EXPECT_MATRIX_FLOAT_EQ(v_m * m * v_m, quad_form_diag(m, rv));
 }
 
 TEST(MathMatrixPrim, quadFormDiagException) {

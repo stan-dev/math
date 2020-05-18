@@ -29,14 +29,14 @@ void test_to_matrix_array_answers(int m, int n) {
   Eigen::MatrixXd a(m, n);
   for (int i = 0; i < m * n; ++i)
     a(i) = i;
-  expect_matrix_eq(a, to_matrix(vec, m, n));
-  expect_matrix_eq(a, to_matrix(vec, m, n, 1));
-  expect_matrix_eq(a, to_matrix(vec, m, n, -1));
-  expect_matrix_eq(a, to_matrix(vec, m, n, 2));
-  expect_matrix_eq(a, row_major_to_column_major(to_matrix(vec, m, n, 0)));
-  expect_matrix_eq(a, to_matrix(vec_int, m, n));
-  expect_matrix_eq(a, to_matrix(vec_int, m, n, 1));
-  expect_matrix_eq(a, row_major_to_column_major(to_matrix(vec_int, m, n, 0)));
+  EXPECT_MATRIX_FLOAT_EQ(a, to_matrix(vec, m, n));
+  EXPECT_MATRIX_FLOAT_EQ(a, to_matrix(vec, m, n, 1));
+  EXPECT_MATRIX_FLOAT_EQ(a, to_matrix(vec, m, n, -1));
+  EXPECT_MATRIX_FLOAT_EQ(a, to_matrix(vec, m, n, 2));
+  EXPECT_MATRIX_FLOAT_EQ(a, row_major_to_column_major(to_matrix(vec, m, n, 0)));
+  EXPECT_MATRIX_FLOAT_EQ(a, to_matrix(vec_int, m, n));
+  EXPECT_MATRIX_FLOAT_EQ(a, to_matrix(vec_int, m, n, 1));
+  EXPECT_MATRIX_FLOAT_EQ(a, row_major_to_column_major(to_matrix(vec_int, m, n, 0)));
 }
 
 TEST(ToMatrixArray, answers) {
@@ -58,7 +58,7 @@ void test_to_matrix_matrix_answers(int m, int n) {
   Eigen::MatrixXd a(m, n);
   for (int i = 0; i < m * n; ++i)
     a(i) = i;
-  expect_matrix_eq(a, to_matrix(a));
+  EXPECT_MATRIX_FLOAT_EQ(a, to_matrix(a));
 }
 
 TEST(ToMatrixMatrix, answers) {
@@ -76,15 +76,15 @@ void test_to_matrix_matrix_reshape_answers(int m1, int n1, int m2, int n2) {
     a(i) = static_cast<double>(i) / 1.26;
     b(i) = static_cast<double>(i) / 1.26;
   }
-  expect_matrix_eq(a, to_matrix(b, m1, n1));
-  expect_matrix_eq(a, to_matrix(b, m1, n1, 1));
-  expect_matrix_eq(a, to_matrix(b, m1, n1, -1));
-  expect_matrix_eq(a, to_matrix(b, m1, n1, 2));
-  expect_matrix_eq(a, row_major_to_column_major(to_matrix(b, m1, n1, 0)));
+  EXPECT_MATRIX_FLOAT_EQ(a, to_matrix(b, m1, n1));
+  EXPECT_MATRIX_FLOAT_EQ(a, to_matrix(b, m1, n1, 1));
+  EXPECT_MATRIX_FLOAT_EQ(a, to_matrix(b, m1, n1, -1));
+  EXPECT_MATRIX_FLOAT_EQ(a, to_matrix(b, m1, n1, 2));
+  EXPECT_MATRIX_FLOAT_EQ(a, row_major_to_column_major(to_matrix(b, m1, n1, 0)));
 
-  expect_matrix_eq(b, to_matrix(a, m2, n2));
-  expect_matrix_eq(b, to_matrix(a, m2, n2, 1));
-  expect_matrix_eq(b, row_major_to_column_major(to_matrix(a, m2, n2, 0)));
+  EXPECT_MATRIX_FLOAT_EQ(b, to_matrix(a, m2, n2));
+  EXPECT_MATRIX_FLOAT_EQ(b, to_matrix(a, m2, n2, 1));
+  EXPECT_MATRIX_FLOAT_EQ(b, row_major_to_column_major(to_matrix(a, m2, n2, 0)));
 
   if (n1 != 0) {
     EXPECT_THROW(to_matrix(a, m1 + 1, n1), std::invalid_argument);
@@ -127,14 +127,14 @@ void test_to_vector_matrix_answers(int m, int m2, int n2) {
     c(i) = static_cast<double>(i) / 1.26;
   }
   // without reshape
-  expect_matrix_eq(c, to_matrix(a));
+  EXPECT_MATRIX_FLOAT_EQ(c, to_matrix(a));
 
   // with reshape
-  expect_matrix_eq(b, to_matrix(a, m2, n2));
-  expect_matrix_eq(b, to_matrix(a, m2, n2, 1));
-  expect_matrix_eq(b, to_matrix(a, m2, n2, -1));
-  expect_matrix_eq(b, to_matrix(a, m2, n2, 2));
-  expect_matrix_eq(b, row_major_to_column_major(to_matrix(a, m2, n2, 0)));
+  EXPECT_MATRIX_FLOAT_EQ(b, to_matrix(a, m2, n2));
+  EXPECT_MATRIX_FLOAT_EQ(b, to_matrix(a, m2, n2, 1));
+  EXPECT_MATRIX_FLOAT_EQ(b, to_matrix(a, m2, n2, -1));
+  EXPECT_MATRIX_FLOAT_EQ(b, to_matrix(a, m2, n2, 2));
+  EXPECT_MATRIX_FLOAT_EQ(b, row_major_to_column_major(to_matrix(a, m2, n2, 0)));
 
   if (n2 != 0) {
     EXPECT_THROW(to_matrix(a, m2 + 1, n2), std::invalid_argument);
@@ -167,14 +167,14 @@ void test_to_row_vector_matrix_answers(int n, int m2, int n2) {
     c(i) = static_cast<double>(i) / 1.26;
   }
   // without reshape
-  expect_matrix_eq(c, to_matrix(a));
+  EXPECT_MATRIX_FLOAT_EQ(c, to_matrix(a));
 
   // with reshape
-  expect_matrix_eq(b, to_matrix(a, m2, n2));
-  expect_matrix_eq(b, to_matrix(a, m2, n2, 1));
-  expect_matrix_eq(b, to_matrix(a, m2, n2, -1));
-  expect_matrix_eq(b, to_matrix(a, m2, n2, 2));
-  expect_matrix_eq(b, row_major_to_column_major(to_matrix(a, m2, n2, 0)));
+  EXPECT_MATRIX_FLOAT_EQ(b, to_matrix(a, m2, n2));
+  EXPECT_MATRIX_FLOAT_EQ(b, to_matrix(a, m2, n2, 1));
+  EXPECT_MATRIX_FLOAT_EQ(b, to_matrix(a, m2, n2, -1));
+  EXPECT_MATRIX_FLOAT_EQ(b, to_matrix(a, m2, n2, 2));
+  EXPECT_MATRIX_FLOAT_EQ(b, row_major_to_column_major(to_matrix(a, m2, n2, 0)));
 
   if (n2 != 0) {
     EXPECT_THROW(to_matrix(a, m2 + 1, n2), std::invalid_argument);
@@ -212,8 +212,8 @@ void test_to_matrix_2darray_answers(int m, int n) {
       a(i, j) = i * j;
     }
   }
-  expect_matrix_eq(a, to_matrix(vec));
-  expect_matrix_eq(a, to_matrix(vec_int));
+  EXPECT_MATRIX_FLOAT_EQ(a, to_matrix(vec));
+  EXPECT_MATRIX_FLOAT_EQ(a, to_matrix(vec_int));
 }
 
 TEST(ToMatrix2dArray, answers) {

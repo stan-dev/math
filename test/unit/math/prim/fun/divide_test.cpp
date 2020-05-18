@@ -72,9 +72,9 @@ TEST(MathMatrixPrimMat, divide) {
   rv0_over_2 << 0.5, 1.0, 1.5;
   m0_over_2 << 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5;
 
-  expect_matrix_eq(v0_over_2, divide(v0, 2.0));
-  expect_matrix_eq(rv0_over_2, divide(rv0, 2.0));
-  expect_matrix_eq(m0_over_2, divide(m0, 2.0));
+  EXPECT_MATRIX_FLOAT_EQ(v0_over_2, divide(v0, 2.0));
+  EXPECT_MATRIX_FLOAT_EQ(rv0_over_2, divide(rv0, 2.0));
+  EXPECT_MATRIX_FLOAT_EQ(m0_over_2, divide(m0, 2.0));
 
   double inf = std::numeric_limits<double>::infinity();
   double nan = std::numeric_limits<double>::quiet_NaN();

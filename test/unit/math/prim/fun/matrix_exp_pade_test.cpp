@@ -7,7 +7,7 @@
 TEST(MathMatrixPrimMat, matrix_exp_pade_0x0) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(0, 0);
 
-  expect_matrix_eq(m1, stan::math::matrix_exp_pade(m1));
+  EXPECT_MATRIX_FLOAT_EQ(m1, stan::math::matrix_exp_pade(m1));
 }
 
 TEST(MathMatrixPrimMat, matrix_exp_pade_1x1) {
@@ -15,7 +15,7 @@ TEST(MathMatrixPrimMat, matrix_exp_pade_1x1) {
   m1 << 0;
   m2 << 1;
 
-  expect_matrix_eq(m2, stan::math::matrix_exp_pade(m1));
+  EXPECT_MATRIX_FLOAT_EQ(m2, stan::math::matrix_exp_pade(m1));
 }
 
 TEST(MathMatrixPrimMat, matrix_exp_pade_2x2) {
@@ -25,7 +25,7 @@ TEST(MathMatrixPrimMat, matrix_exp_pade_2x2) {
   m1 << -49, 24, -64, 31;
   m2 << -.735759, .551819, -1.471518, 1.103638;
 
-  expect_matrix_eq(m2, stan::math::matrix_exp_pade(m1));
+  EXPECT_MATRIX_FLOAT_EQ(m2, stan::math::matrix_exp_pade(m1));
 }
 
 TEST(MathMatrixPrimMat, matrix_exp_pade_3x3) {
@@ -34,7 +34,7 @@ TEST(MathMatrixPrimMat, matrix_exp_pade_3x3) {
   m1 << 0, 1, 2, 0, 0, -1, 0, 0, 0;
   m2 << 1, 1, 1.5, 0, 1, -1, 0, 0, 1;
 
-  expect_matrix_eq(m2, stan::math::matrix_exp_pade(m1));
+  EXPECT_MATRIX_FLOAT_EQ(m2, stan::math::matrix_exp_pade(m1));
 }
 
 TEST(MathMatrixPrimMat, matrix_exp_pade_3x3_2) {
@@ -43,7 +43,7 @@ TEST(MathMatrixPrimMat, matrix_exp_pade_3x3_2) {
   m2 << 245.95891, -182.43047, -49.11821, 93.41549, -67.3433, -18.68310,
       842.54120, -631.90590, -168.14036;
 
-  expect_matrix_eq(m2, stan::math::matrix_exp_pade(m1));
+  EXPECT_MATRIX_FLOAT_EQ(m2, stan::math::matrix_exp_pade(m1));
 }
 
 TEST(MathMatrixPrimMat, matrix_exp_pade_100x100) {
