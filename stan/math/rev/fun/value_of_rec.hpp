@@ -22,11 +22,6 @@ inline auto value_of_rec(Vec&& x) {
   return value_of(std::forward<Vec>(x));
 }
 
-template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
-inline auto value_of_rec(const EigMat& M) {
-  return M.val().eval();
-}
-
 }  // namespace math
 }  // namespace stan
 #endif
