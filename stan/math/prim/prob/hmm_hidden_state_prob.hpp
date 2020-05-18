@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_PROB_HMM_LATENT_MARGINAL_PROB_HPP
-#define STAN_MATH_PRIM_PROB_HMM_LATENT_MARGINAL_PROB_HPP
+#ifndef STAN_MATH_PRIM_PROB_HMM_HIDDEN_STATE_PROB_HPP
+#define STAN_MATH_PRIM_PROB_HMM_HIDDEN_STATE_PROB_HPP
 
 #include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
@@ -43,14 +43,14 @@ namespace math {
  *         of Gamma are not a simplex
  */
 template <typename T_omega, typename T_Gamma, typename T_rho>
-inline Eigen::MatrixXd hmm_latent_marginal_prob(
+inline Eigen::MatrixXd hmm_hidden_state_prob(
     const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
     const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma,
     const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho) {
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 
-  hmm_check(log_omegas, Gamma, rho, "hmm_latent_marginal_prob");
+  hmm_check(log_omegas, Gamma, rho, "hmm_hidden_state_prob");
 
   Eigen::MatrixXd omegas = value_of(log_omegas).array().exp();
   Eigen::VectorXd rho_dbl = value_of(rho);
