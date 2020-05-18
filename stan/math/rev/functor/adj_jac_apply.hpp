@@ -22,7 +22,7 @@ template <typename T, typename = void>
 struct build_y_adj;
 
 template <typename T>
-struct build_y_adj<T, require_t<conjunction<std::is_arithmetic<T>, is_eigen<T>>>> {
+struct build_y_adj<T, require_t<disjunction<std::is_arithmetic<T>, is_eigen<T>>>> {
   /**
    * Store the adjoint in y_vi[0] in y_adj
    *
@@ -38,7 +38,7 @@ struct build_y_adj<T, require_t<conjunction<std::is_arithmetic<T>, is_eigen<T>>>
 };
 
 template <typename T>
-struct build_y_adj<T, require_t<require_std_vector_vt<std::is_arithmetic, T>>> {
+struct build_y_adj<T, require_std_vector_t<T>> {
   /**
    * Store the adjoints from y_vi in y_adj
    *
@@ -48,7 +48,7 @@ struct build_y_adj<T, require_t<require_std_vector_vt<std::is_arithmetic, T>>> {
    * @param[out] y_adj reference to std::vector where adjoints are to be stored
    */
   template <typename VariType, size_t size>
-  static inline auto build_y_adj(VariType& y_vi, const std::array<int, size>& M) {
+  static inline T operator()(VariType& y_vi, const std::array<int, size>& M) {
     T y_adj(M[0]);
     for (size_t m = 0; m < y_adj.size(); ++m) {
       y_adj.push_back(y_vi[m]->adj_);
@@ -99,10 +99,15 @@ struct compute_dims<Eigen::Matrix<T, R, C>> {
 
 namespace internal {
 
+// arithmetic values are a no-op
+template <typename Mem, typename Arith,
+ require_st_arithmetic<Arith>* = nullptr>
+void fill_adj_jac(Mem& mem, Arith&& x) {}
+
 // var_value
 template <typename Mem, typename VarValue,
  require_var_value_t<VarValue>* = nullptr>
-void make_adj_jac(Mem& mem, VarValue&& x) {
+void fill_adj_jac(Mem& mem, VarValue&& x) {
   using vari_type = get_var_vari_value_t<VarValue>;
   mem = ChainableStack::instance_->memalloc_.alloc_array<vari_type>(1);
   save_varis(mem, x);
@@ -110,7 +115,7 @@ void make_adj_jac(Mem& mem, VarValue&& x) {
 // std::vector<container> assumes not ragged
 template <typename Mem, typename Vec,
  require_std_vector_vt<is_container, Vec>* = nullptr>
-void make_adj_jac(Mem& mem, Vec&& x) {
+void fill_adj_jac(Mem& mem, Vec&& x) {
   using vari_type = get_var_vari_value_t<scalar_type_t<Vec>>;
   mem = ChainableStack::instance_->memalloc_.alloc_array<vari_type>(x.size() * x[0].size());
   save_varis(mem, x);
@@ -119,31 +124,32 @@ void make_adj_jac(Mem& mem, Vec&& x) {
 // std::vector<var_value>
 template <typename Mem, typename Vec,
  require_std_vector_vt<is_var_value, Vec>* = nullptr>
-void make_adj_jac(Mem& mem, Vec&& x) {
+void fill_adj_jac(Mem& mem, Vec&& x) {
   using vari_type = get_var_vari_value_t<value_type_t<Vec>>;
   mem = ChainableStack::instance_->memalloc_.alloc_array<vari_type>(x.size());
   save_varis(mem, x);
 }
 // Eigen
 template <typename Mem, typename EigMat, require_eigen_t<EigMat>* = nullptr>
-void make_adj_jac(Mem& mem, EigMat&& x) {
+void fill_adj_jac(Mem& mem, EigMat&& x) {
   using vari_type = get_var_vari_value_t<value_type_t<EigMat>>;
   mem = ChainableStack::instance_->memalloc_.alloc_array<vari_type>(x.size());
   save_varis(mem, x);
 }
 
-template <typename Tuple, size_t... I, typename... Types>
-auto make_adj_jac_tuple_impl(Tuple& mem,
-                             std::index_sequence<I...> /* ignore */,
+template <typename Tuple, size_t J, size_t... I, typename T, typename... Types>
+void fill_adj_jac_tuple_impl(Tuple& mem,
+                             std::index_sequence<J, I...> /* ignore */,
+                             T&& x,
                              Types&&... args) {
-  return std::forward_as_tuple(
-      make_adj_jac(std::get<I>(mem), std::forward<Types>(args))...);
+    fill_adj_jac(std::get<J>(mem), std::forward<T>(x));
+    fill_adj_jac_tuple_impl(mem, std::index_sequence<I...>{}, args...);
 }
 
 template <typename Tuple, typename... Types>
-auto make_adj_jac_tuple(Tuple& mem, Types&&... args) {
+void fill_adj_jac_tuple(Tuple& mem, Types&&... args) {
   auto positions_vec = conditional_sequence(is_vari_value<double>{}, std::index_sequence<0>{}, args...);
-  return make_adj_jac_tuple_impl(mem, positions_vec, args...);
+  return fill_adj_jac_tuple_impl(mem, positions_vec, args...);
 }
 
 }
@@ -173,7 +179,7 @@ struct adj_jac_vari : public vari {
    *  we want a tuple like
    * (vari*, vari**, vari_value<Matrix<double>>)
    */
-  std::tuple<var_to_vari_filter_t<Targs>...> x_vis_;
+  var_to_vari_filter_t<Targs...> x_vis_;
   std::array<int, internal::compute_dims<FReturnType>::value> M_;
   template <typename T>
   using is_arith_or_vec = disjunction<std::is_arithmetic<std::decay_t<T>>, is_std_vector<std::decay_t<T>>>;
@@ -189,7 +195,7 @@ struct adj_jac_vari : public vari {
    */
   adj_jac_vari()
       : vari(NOT_A_NUMBER),  // The val_ in this vari is unused
-        x_vis_(nullptr),
+        x_vis_(),
         y_vi_(nullptr) {}
 
   /**
@@ -270,7 +276,7 @@ struct adj_jac_vari : public vari {
    * @return Output of f_ as vars
    */
   inline auto operator()(const Targs&... args) {
-    make_adj_jac_tuple(x_vis_, args...);
+    fill_adj_jac_tuple(x_vis_, args...);
     return build_return_varis_and_vars(f_(is_var_, value_of(args)...));
   }
 
