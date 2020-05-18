@@ -86,7 +86,8 @@ inline std::vector<double> value_of_rec(const std::vector<T>& x) {
  * @param x Specified std::vector.
  * @return Specified std::vector.
  */
-template <typename T, require_std_vector_vt<std::is_floating_point, T>* = nullptr>
+template <typename T,
+          require_std_vector_vt<std::is_floating_point, T>* = nullptr>
 inline decltype(auto) value_of_rec(T&& x) {
   return std::forward<T>(x);
 }
