@@ -26,7 +26,6 @@ namespace math {
      \textrm{NaN} & \mbox{if } y = \textrm{NaN}
    \end{cases}
    \f]
-
    \f[
    \frac{\partial\, \mbox{inv\_cloglog}(y)}{\partial y} =
    \begin{cases}
@@ -34,11 +33,9 @@ namespace math {
  -\infty\leq y\leq \infty \\[6pt] \textrm{NaN} & \mbox{if } y = \textrm{NaN}
    \end{cases}
    \f]
-
    \f[
    \mbox{cloglog}^{-1}(y) = 1 - \exp \left( - \exp(y) \right)
    \f]
-
    \f[
    \frac{\partial \, \mbox{cloglog}^{-1}(y)}{\partial y} = \exp(y-\exp(y))
    \f]
