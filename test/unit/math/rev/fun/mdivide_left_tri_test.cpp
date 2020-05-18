@@ -42,7 +42,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_val_cl) {
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
       = MDIVIDE_CPU_OVERRIDE;
   I = mdivide_left_tri<Eigen::Lower>(Av, Av);
-  EXPECT_MATRIX_NEAR(I, I_cl, 1.0E-12);
+  EXPECT_MATRIX_NEAR(I.val(), I_cl.val(), 1.0E-12);
 
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
       = MDIVIDE_OPENCL_OVERRIDE;
@@ -50,7 +50,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_val_cl) {
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
       = MDIVIDE_CPU_OVERRIDE;
   I = mdivide_left_tri<Eigen::Lower>(Av, Ad);
-  EXPECT_MATRIX_NEAR(I, I_cl, 1.0E-12);
+  EXPECT_MATRIX_NEAR(I.val(), I_cl.val(), 1.0E-12);
 
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
       = MDIVIDE_OPENCL_OVERRIDE;
@@ -58,7 +58,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_val_cl) {
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
       = MDIVIDE_CPU_OVERRIDE;
   I = mdivide_left_tri<Eigen::Lower>(Ad, Av);
-  EXPECT_MATRIX_NEAR(I, I_cl, 1.0E-12);
+  EXPECT_MATRIX_NEAR(I.val(), I_cl.val(), 1.0E-12);
 
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
       = MDIVIDE_OPENCL_OVERRIDE;
@@ -68,7 +68,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_val_cl) {
       = MDIVIDE_CPU_OVERRIDE;
   matrix_v Av_inv = mdivide_left_tri<Eigen::Lower>(Av);
   I = Av * Av_inv;
-  EXPECT_MATRIX_NEAR(I, I_cl, 1.0E-12);
+  EXPECT_MATRIX_NEAR(I.val(), I_cl.val(), 1.0E-12);
 
   for (int i = 0; i < mat_size; i++) {
     for (int j = 0; j < i; j++) {
@@ -89,7 +89,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_val_cl) {
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
       = MDIVIDE_CPU_OVERRIDE;
   I = mdivide_left_tri<Eigen::Upper>(Av, Av);
-  EXPECT_MATRIX_NEAR(I, I_cl, 1.0E-12);
+  EXPECT_MATRIX_NEAR(I.val(), I_cl.val(), 1.0E-12);
 
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
       = MDIVIDE_OPENCL_OVERRIDE;
@@ -97,7 +97,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_val_cl) {
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
       = MDIVIDE_CPU_OVERRIDE;
   I = mdivide_left_tri<Eigen::Upper>(Av, Ad);
-  EXPECT_MATRIX_NEAR(I, I_cl, 1.0E-12);
+  EXPECT_MATRIX_NEAR(I.val(), I_cl.val(), 1.0E-12);
 
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
       = MDIVIDE_OPENCL_OVERRIDE;
@@ -105,7 +105,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_val_cl) {
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
       = MDIVIDE_CPU_OVERRIDE;
   I = mdivide_left_tri<Eigen::Upper>(Ad, Av);
-  EXPECT_MATRIX_NEAR(I, I_cl, 1.0E-12);
+  EXPECT_MATRIX_NEAR(I.val(), I_cl.val(), 1.0E-12);
 
   // restore default value
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
@@ -146,7 +146,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_lower_grad_vv_cl) {
       = MDIVIDE_CPU_OVERRIDE;
   Cv = mdivide_left_tri<Eigen::Lower>(Av, Bv);
   Cv(0, 0).grad();
-  EXPECT_MATRIX_NEAR(Cv, Cv_cl, 1.0E-12);
+  EXPECT_MATRIX_NEAR(Cv.val(), Cv_cl.val(), 1.0E-12);
   EXPECT_MATRIX_NEAR(Cv.adj(), Cv_cl.adj(), 1.0E-12);
   stan::math::recover_memory();
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
@@ -187,7 +187,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_lower_grad_dv_cl) {
       = MDIVIDE_CPU_OVERRIDE;
   Cv = mdivide_left_tri<Eigen::Lower>(Ad, Bv);
   Cv(0, 0).grad();
-  EXPECT_MATRIX_NEAR(Cv, Cv_cl, 1.0E-12);
+  EXPECT_MATRIX_NEAR(Cv.val(), Cv_cl.val(), 1.0E-12);
   EXPECT_MATRIX_NEAR(Cv.adj(), Cv_cl.adj(), 1.0E-12);
   stan::math::recover_memory();
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
@@ -228,7 +228,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_lower_grad_vd_cl) {
       = MDIVIDE_CPU_OVERRIDE;
   Cv = mdivide_left_tri<Eigen::Lower>(Av, Bd);
   Cv(0, 0).grad();
-  EXPECT_MATRIX_NEAR(Cv, Cv_cl, 1.0E-12);
+  EXPECT_MATRIX_NEAR(Cv.val(), Cv_cl.val(), 1.0E-12);
   EXPECT_MATRIX_NEAR(Cv.adj(), Cv_cl.adj(), 1.0E-12);
   stan::math::recover_memory();
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
@@ -269,7 +269,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_upper_grad_vv_cl) {
       = MDIVIDE_CPU_OVERRIDE;
   Cv = mdivide_left_tri<Eigen::Upper>(Av, Bv);
   Cv(0, 0).grad();
-  EXPECT_MATRIX_NEAR(Cv, Cv_cl, 1.0E-12);
+  EXPECT_MATRIX_NEAR(Cv.val(), Cv_cl.val(), 1.0E-12);
   EXPECT_MATRIX_NEAR(Cv.adj(), Cv_cl.adj(), 1.0E-12);
   stan::math::recover_memory();
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
@@ -310,7 +310,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_upper_grad_dv_cl) {
       = MDIVIDE_CPU_OVERRIDE;
   Cv = mdivide_left_tri<Eigen::Upper>(Ad, Bv);
   Cv(0, 0).grad();
-  EXPECT_MATRIX_NEAR(Cv, Cv_cl, 1.0E-12);
+  EXPECT_MATRIX_NEAR(Cv.val(), Cv_cl.val(), 1.0E-12);
   EXPECT_MATRIX_NEAR(Cv.adj(), Cv_cl.adj(), 1.0E-12);
   stan::math::recover_memory();
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
@@ -351,7 +351,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_upper_grad_vd_cl) {
       = MDIVIDE_CPU_OVERRIDE;
   Cv = mdivide_left_tri<Eigen::Upper>(Av, Bd);
   Cv(0, 0).grad();
-  EXPECT_MATRIX_NEAR(Cv, Cv_cl, 1.0E-12);
+  EXPECT_MATRIX_NEAR(Cv.val(), Cv_cl.val(), 1.0E-12);
   EXPECT_MATRIX_NEAR(Cv.adj(), Cv_cl.adj(), 1.0E-12);
   stan::math::recover_memory();
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer

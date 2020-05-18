@@ -1,16 +1,22 @@
-#ifndef TEST__UNIT__UTIL_HPP
-#define TEST__UNIT__UTIL_HPP
+#ifndef TEST_UNIT_UTIL_HPP
+#define TEST_UNIT_UTIL_HPP
 
 #include <boost/typeof/typeof.hpp>
 #include <gtest/gtest.h>
 #include <type_traits>
 #include <string>
 
+#define EXPECT_MATRIX_FLOAT_EQ(A, B) \
+  EXPECT_EQ(A.rows(), B.rows());        \
+  EXPECT_EQ(A.cols(), B.cols());        \
+  for (int i = 0; i < A.size(); i++)    \
+    EXPECT_FLOAT_EQ(stan::math::value_of(A(i)), stan::math::value_of(B(i)), DELTA);
+
 #define EXPECT_MATRIX_NEAR(A, B, DELTA) \
   EXPECT_EQ(A.rows(), B.rows());        \
   EXPECT_EQ(A.cols(), B.cols());        \
   for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(stan::math::value_of(A(i)), stan::math::value_of(B(i)), DELTA);
+    EXPECT_NEAR(A(i), B(i), DELTA);
 
 #define EXPECT_THROW_MSG_WITH_COUNT(expr, T_e, msg, count) \
   EXPECT_THROW(expr, T_e);                                 \
@@ -34,6 +40,7 @@ int count_matches(const std::string& target, const std::string& s) {
     ++count;
   return count;
 }
+
 namespace test {
 template <typename T1, typename T2>
 void expect_same_type() {
