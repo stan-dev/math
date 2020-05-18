@@ -87,7 +87,7 @@ inline std::vector<double> value_of_rec(const std::vector<T>& x) {
  * @return Specified std::vector.
  */
 template <typename T, require_std_vector_vt<std::is_floating_point, T>* = nullptr>
-inline decltype(auto) value_of_rec(T&& x) {
+inline auto value_of_rec(T&& x) {
   return std::forward<T>(x);
 }
 
@@ -108,6 +108,7 @@ inline auto value_of_rec(const T& M) {
 }
 
 /**
+ * This function is not
  * Return the specified argument.
  *
  * <p>See <code>value_of_rec(T)</code> for a polymorphic
@@ -120,9 +121,10 @@ inline auto value_of_rec(const T& M) {
  * @return Specified matrix.
  */
 template <typename T, typename = require_eigen_vt<std::is_floating_point, T>>
-inline decltype(auto) value_of_rec(T&& x) {
+inline auto value_of_rec(T&& x) {
   return std::forward<T>(x);
 }
+
 }  // namespace math
 }  // namespace stan
 
