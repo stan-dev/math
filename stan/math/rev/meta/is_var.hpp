@@ -63,6 +63,5 @@ using get_var_vari_value_t = typename get_var_vari_value<std::decay_t<T>>::type;
 
 }  // namespace internal
 
-
 }  // namespace stan
 #endif

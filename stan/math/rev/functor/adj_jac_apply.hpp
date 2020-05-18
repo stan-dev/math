@@ -22,7 +22,8 @@ template <typename T, typename = void>
 struct build_y_adj;
 
 template <typename T>
-struct build_y_adj<T, require_t<disjunction<std::is_arithmetic<T>, is_eigen<T>>>> {
+struct build_y_adj<T,
+                   require_t<disjunction<std::is_arithmetic<T>, is_eigen<T>>>> {
   /**
    * Store the adjoint in y_vi[0] in y_adj
    *
@@ -32,8 +33,9 @@ struct build_y_adj<T, require_t<disjunction<std::is_arithmetic<T>, is_eigen<T>>>
    * @param[out] y_adj reference to variable where adjoint is to be stored
    */
   template <typename VariType, size_t size>
-  static inline auto operator()(VariType& y_vi, const std::array<int, size>& M) {
-     return y_vi->adj_;
+  static inline auto operator()(VariType& y_vi,
+                                const std::array<int, size>& M) {
+    return y_vi->adj_;
   }
 };
 
@@ -96,17 +98,15 @@ struct compute_dims<Eigen::Matrix<T, R, C>> {
 };
 }  // namespace internal
 
-
 namespace internal {
 
 // arithmetic values are a no-op
-template <typename Mem, typename Arith,
- require_st_arithmetic<Arith>* = nullptr>
+template <typename Mem, typename Arith, require_st_arithmetic<Arith>* = nullptr>
 void fill_adj_jac(Mem& mem, Arith&& x) {}
 
 // var_value
 template <typename Mem, typename VarValue,
- require_var_value_t<VarValue>* = nullptr>
+          require_var_value_t<VarValue>* = nullptr>
 void fill_adj_jac(Mem& mem, VarValue&& x) {
   using vari_type = get_var_vari_value_t<VarValue>;
   mem = ChainableStack::instance_->memalloc_.alloc_array<vari_type>(1);
@@ -114,16 +114,17 @@ void fill_adj_jac(Mem& mem, VarValue&& x) {
 }
 // std::vector<container> assumes not ragged
 template <typename Mem, typename Vec,
- require_std_vector_vt<is_container, Vec>* = nullptr>
+          require_std_vector_vt<is_container, Vec>* = nullptr>
 void fill_adj_jac(Mem& mem, Vec&& x) {
   using vari_type = get_var_vari_value_t<scalar_type_t<Vec>>;
-  mem = ChainableStack::instance_->memalloc_.alloc_array<vari_type>(x.size() * x[0].size());
+  mem = ChainableStack::instance_->memalloc_.alloc_array<vari_type>(
+      x.size() * x[0].size());
   save_varis(mem, x);
 }
 
 // std::vector<var_value>
 template <typename Mem, typename Vec,
- require_std_vector_vt<is_var_value, Vec>* = nullptr>
+          require_std_vector_vt<is_var_value, Vec>* = nullptr>
 void fill_adj_jac(Mem& mem, Vec&& x) {
   using vari_type = get_var_vari_value_t<value_type_t<Vec>>;
   mem = ChainableStack::instance_->memalloc_.alloc_array<vari_type>(x.size());
@@ -139,20 +140,20 @@ void fill_adj_jac(Mem& mem, EigMat&& x) {
 
 template <typename Tuple, size_t J, size_t... I, typename T, typename... Types>
 void fill_adj_jac_tuple_impl(Tuple& mem,
-                             std::index_sequence<J, I...> /* ignore */,
-                             T&& x,
+                             std::index_sequence<J, I...> /* ignore */, T&& x,
                              Types&&... args) {
-    fill_adj_jac(std::get<J>(mem), std::forward<T>(x));
-    fill_adj_jac_tuple_impl(mem, std::index_sequence<I...>{}, args...);
+  fill_adj_jac(std::get<J>(mem), std::forward<T>(x));
+  fill_adj_jac_tuple_impl(mem, std::index_sequence<I...>{}, args...);
 }
 
 template <typename Tuple, typename... Types>
 void fill_adj_jac_tuple(Tuple& mem, Types&&... args) {
-  auto positions_vec = conditional_sequence(is_vari_value<double>{}, std::index_sequence<0>{}, args...);
+  auto positions_vec = conditional_sequence(is_vari_value<double>{},
+                                            std::index_sequence<0>{}, args...);
   return fill_adj_jac_tuple_impl(mem, positions_vec, args...);
 }
 
-}
+}  // namespace internal
 
 /**
  * adj_jac_vari interfaces a user supplied functor  with the reverse mode
@@ -182,11 +183,12 @@ struct adj_jac_vari : public vari {
   var_to_vari_filter_t<Targs...> x_vis_;
   std::array<int, internal::compute_dims<FReturnType>::value> M_;
   template <typename T>
-  using is_arith_or_vec = disjunction<std::is_arithmetic<std::decay_t<T>>, is_std_vector<std::decay_t<T>>>;
+  using is_arith_or_vec = disjunction<std::is_arithmetic<std::decay_t<T>>,
+                                      is_std_vector<std::decay_t<T>>>;
   template <typename T>
-  using y_vi_type_t = std::conditional_t<is_arith_or_vec<T>::value,
-    var_value<value_type_t<T>>**,
-    var_value<T>*>;
+  using y_vi_type_t
+      = std::conditional_t<is_arith_or_vec<T>::value,
+                           var_value<value_type_t<T>>**, var_value<T>*>;
   y_vi_type_t<FReturnType> y_vi_;
 
   /**
@@ -227,8 +229,8 @@ struct adj_jac_vari : public vari {
     using var_type = var_value<T>;
     M_[0] = val_y.size();
     std::vector<var_type> var_y(M_[0]);
-    y_vi_
-        = ChainableStack::instance_->memalloc_.alloc_array<vari_type*>(var_y.size());
+    y_vi_ = ChainableStack::instance_->memalloc_.alloc_array<vari_type*>(
+        var_y.size());
     for (size_t m = 0; m < var_y.size(); ++m) {
       y_vi_[m] = new vari(val_y[m], false);
       var_y.emplace_back(var_type(y_vi_[m]));
@@ -247,7 +249,7 @@ struct adj_jac_vari : public vari {
    * @param val_y output of F::operator()
    * @return Eigen::Matrix of vars
    */
-   template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+  template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
   inline auto build_return_varis_and_vars(EigMat&& val_y) {
     using var_type = var_value<Eigen::Matrix<double, R, C>>;
     using vari_type = vari_value<Eigen::Matrix<double, R, C>>;
@@ -402,8 +404,8 @@ struct adj_jac_vari : public vari {
    * This operation may be called multiple times during the life of the vari
    */
   inline void chain() {
-    auto y_adj_jacs = f_.multiply_adjoint_jacobian(is_var_,
-      internal::build_y_adj<FReturnType>(y_vi_, M_));
+    auto y_adj_jacs = f_.multiply_adjoint_jacobian(
+        is_var_, internal::build_y_adj<FReturnType>(y_vi_, M_));
 
     apply(
         [&, this](auto&&... args) {

@@ -104,7 +104,8 @@ auto make_op_vari_tuple_impl(double**& mem,
  */
 template <typename... Types>
 auto make_op_vari_tuple(double**& mem, Types&&... args) {
-  auto positions_vec = conditional_sequence(is_eigen_arith<double>{}, std::index_sequence<0>{}, args...);
+  auto positions_vec = conditional_sequence(is_eigen_arith<double>{},
+                                            std::index_sequence<0>{}, args...);
   return make_op_vari_tuple_impl(mem, positions_vec, args...);
 }
 }  // namespace internal
