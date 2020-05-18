@@ -53,6 +53,7 @@ class cvodes_integrator {
    * @tparam T_t0 type of scalar of initial time point.
    * @tparam T_ts type of time-points where ODE solution is returned.
    *
+   * @param[in] function_name name of function for error messages
    * @param[in] f functor for the base ordinary differential equation.
    * @param[in] y0 initial state.
    * @param[in] t0 initial time.
@@ -72,7 +73,7 @@ class cvodes_integrator {
   template <typename F, typename T_initial, typename T_param, typename T_t0,
             typename T_ts>
   std::vector<std::vector<return_type_t<T_initial, T_param, T_t0, T_ts>>>
-  integrate(const char* fun, const F& f, const std::vector<T_initial>& y0, const T_t0& t0,
+  integrate(const char* function_name, const F& f, const std::vector<T_initial>& y0, const T_t0& t0,
             const std::vector<T_ts>& ts, const std::vector<T_param>& theta,
             const std::vector<double>& x, const std::vector<int>& x_int,
             std::ostream* msgs, double relative_tolerance,
@@ -84,25 +85,25 @@ class cvodes_integrator {
     const double t0_dbl = value_of(t0);
     const std::vector<double> ts_dbl = value_of(ts);
 
-    check_finite(fun, "initial state", y0);
-    check_finite(fun, "initial time", t0_dbl);
-    check_finite(fun, "times", ts_dbl);
-    check_finite(fun, "parameter vector", theta);
-    check_finite(fun, "continuous data", x);
-    check_nonzero_size(fun, "times", ts);
-    check_nonzero_size(fun, "initial state", y0);
-    check_ordered(fun, "times", ts_dbl);
-    check_less(fun, "initial time", t0_dbl, ts_dbl[0]);
+    check_finite(function_name, "initial state", y0);
+    check_finite(function_name, "initial time", t0_dbl);
+    check_finite(function_name, "times", ts_dbl);
+    check_finite(function_name, "parameter vector", theta);
+    check_finite(function_name, "continuous data", x);
+    check_nonzero_size(function_name, "times", ts);
+    check_nonzero_size(function_name, "initial state", y0);
+    check_ordered(function_name, "times", ts_dbl);
+    check_less(function_name, "initial time", t0_dbl, ts_dbl[0]);
     if (relative_tolerance <= 0) {
-      invalid_argument(fun, "relative_tolerance,", relative_tolerance, "",
+      invalid_argument(function_name, "relative_tolerance,", relative_tolerance, "",
                        ", must be greater than 0");
     }
     if (absolute_tolerance <= 0) {
-      invalid_argument(fun, "absolute_tolerance,", absolute_tolerance, "",
+      invalid_argument(function_name, "absolute_tolerance,", absolute_tolerance, "",
                        ", must be greater than 0");
     }
     if (max_num_steps <= 0) {
-      invalid_argument(fun, "max_num_steps,", max_num_steps, "",
+      invalid_argument(function_name, "max_num_steps,", max_num_steps, "",
                        ", must be greater than 0");
     }
 
@@ -167,7 +168,7 @@ class cvodes_integrator {
                           CV_NORMAL);
 
           if (ret == CV_TOO_MUCH_WORK) {
-            throw_domain_error(fun, "", t_final,
+            throw_domain_error(function_name, "", t_final,
                                "Failed to integrate to next output time (",
                                ") in less than max_num_steps steps");
           }
