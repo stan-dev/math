@@ -24,7 +24,7 @@ inline auto value_of(const var& v) { return v.vi_->val_; }
 
 template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
 inline auto value_of(const EigMat& x) {
-  return x.val().eval();
+  return x.val();
 }
 
 }  // namespace math

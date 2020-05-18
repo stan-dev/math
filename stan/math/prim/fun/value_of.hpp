@@ -89,7 +89,7 @@ inline std::vector<typename child_type<T>::type> value_of(
  * @return Specified std::vector.
  */
 template <typename Vec, require_std_vector_vt<is_double_or_int, Vec>* = nullptr>
-inline Vec value_of(Vec&& x) {
+inline decltype(auto) value_of(Vec&& x) {
   return std::forward<Vec>(x);
 }
 
@@ -105,7 +105,8 @@ inline Vec value_of(Vec&& x) {
  * @return Matrix of values
  **/
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
-          require_not_vt_var_or_arithmetic<EigMat>* = nullptr>
+          require_not_vt_double_or_int<EigMat>* = nullptr,
+          require_not_vt_var<EigMat>* = nullptr>
 inline auto value_of(const EigMat& M) {
   return M.unaryExpr([](const auto& scal) { return value_of(scal); });
 }
@@ -125,7 +126,7 @@ inline auto value_of(const EigMat& M) {
  */
 template <typename EigMat,
           require_eigen_vt<is_double_or_int, EigMat>* = nullptr>
-inline EigMat value_of(EigMat&& x) {
+inline decltype(auto) value_of(EigMat&& x) {
   return std::forward<EigMat>(x);
 }
 
