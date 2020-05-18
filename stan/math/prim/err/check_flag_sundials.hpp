@@ -30,7 +30,7 @@ inline void check_flag_kinsol(int flag,
   if (flag == -6) {
     ss << "algebra_solver: max number of iterations: " << max_num_steps
        << " exceeded.";
-    throw std::runtime_error(ss.str());
+    throw std::domain_error(ss.str());
   } else if (flag < 0) {
     ss << "algebra_solver failed with error flag " << flag << ".";
     throw std::runtime_error(ss.str());

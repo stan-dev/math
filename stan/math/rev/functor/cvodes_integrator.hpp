@@ -81,7 +81,13 @@ class cvodes_integrator {
     using initial_var = stan::is_var<T_initial>;
     using param_var = stan::is_var<T_param>;
 
-    const char* fun = "integrate_ode_cvodes";
+    const char* fun;
+
+    if(Lmm == CV_BDF) {
+      fun = "integrate_ode_bdf";
+    } else {
+      fun = "integrate_ode_adams";
+    }
 
     const double t0_dbl = value_of(t0);
     const std::vector<double> ts_dbl = value_of(ts);
@@ -96,15 +102,15 @@ class cvodes_integrator {
     check_ordered(fun, "times", ts_dbl);
     check_less(fun, "initial time", t0_dbl, ts_dbl[0]);
     if (relative_tolerance <= 0) {
-      invalid_argument("integrate_ode_cvodes", "relative_tolerance,",
+      invalid_argument(fun, "relative_tolerance,",
                        relative_tolerance, "", ", must be greater than 0");
     }
     if (absolute_tolerance <= 0) {
-      invalid_argument("integrate_ode_cvodes", "absolute_tolerance,",
+      invalid_argument(fun, "absolute_tolerance,",
                        absolute_tolerance, "", ", must be greater than 0");
     }
     if (max_num_steps <= 0) {
-      invalid_argument("integrate_ode_cvodes", "max_num_steps,", max_num_steps,
+      invalid_argument(fun, "max_num_steps,", max_num_steps,
                        "", ", must be greater than 0");
     }
 
@@ -165,9 +171,12 @@ class cvodes_integrator {
       for (size_t n = 0; n < ts.size(); ++n) {
         double t_final = ts_dbl[n];
         if (t_final != t_init) {
-          check_flag_sundials(CVode(cvodes_mem, t_final, cvodes_data.nv_state_,
-                                    &t_init, CV_NORMAL),
-                              "CVode");
+          int ret = CVode(cvodes_mem, t_final, cvodes_data.nv_state_,
+			      &t_init, CV_NORMAL);
+
+	  if(ret == CV_TOO_MUCH_WORK) {
+	    throw_domain_error(fun, "", t_final, "Failed to integrate to next output time (" ,") in less than max_num_steps steps");
+	  }
         }
         if (S > 0) {
           check_flag_sundials(

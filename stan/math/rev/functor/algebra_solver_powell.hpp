@@ -160,7 +160,7 @@ Eigen::VectorXd algebra_solver_powell(
     std::ostringstream message;
     message << "algebra_solver: max number of iterations: " << max_num_steps
             << " exceeded.";
-    throw boost::math::evaluation_error(message.str());
+    throw std::domain_error(message.str());
   }
 
   // Check solution is a root
@@ -172,7 +172,7 @@ Eigen::VectorXd algebra_solver_powell(
              << "tolerance: " << function_tolerance << ". Consider "
              << "decreasing the relative tolerance and increasing the "
              << "max_num_steps.";
-    throw boost::math::evaluation_error(message2.str());
+    throw std::domain_error(message2.str());
   }
 
   return theta_dbl;

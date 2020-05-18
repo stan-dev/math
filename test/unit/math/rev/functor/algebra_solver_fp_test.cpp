@@ -527,7 +527,7 @@ TEST_F(FP_2d_func_test, exception_handling) {
     std::string msg = err_msg.str();
     EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0,
                                        f_tol, max_num_steps),  // NOLINT
-                     std::runtime_error, msg);
+                     std::domain_error, msg);
   }
 
   {

@@ -37,9 +37,9 @@ TEST(StanOde_tooMuchWork_test, odeint_coupled_mm) {
   EXPECT_THROW_MSG(
       stan::math::integrate_ode_rk45(f_, y0_v, t0, ts_long, theta_v, data,
                                      data_int, 0, 1E-6, 1E-6, 100),
-      boost::numeric::odeint::no_progress_error,
-      "Max number of iterations exceeded (100).");
+      std::domain_error,
+      "Failed to integrate to next output time (1e+10) in less than max_num_steps steps");
 
   EXPECT_NO_THROW(stan::math::integrate_ode_rk45(
-      f_, y0_v, t0, ts_short, theta_v, data, data_int, 0, 1E-6, 1E-6, 100));
+    f_, y0_v, t0, ts_short, theta_v, data, data_int, 0, 1E-6, 1E-6, 100));
 }
