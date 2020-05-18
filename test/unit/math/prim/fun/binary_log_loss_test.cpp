@@ -15,11 +15,14 @@ TEST(MathFunctions, binary_log_loss) {
   in1 << 0, 0, 0;
   Eigen::VectorXd in2(3);
   in2 << 0.5, 0.5, 0.5;
+  Eigen::MatrixXd in_mat(3,3);
+  in_mat.fill(0.5);
 
   Eigen::VectorXd out(3);
   out = stan::math::binary_log_loss(in1, 0.5);
   out = stan::math::binary_log_loss(0, in2);
   out = stan::math::binary_log_loss(in1, in2);
+  out = stan::math::binary_log_loss(in1, in_mat.diagonal());
 
   std::vector<int> st_in1{0, 0, 0};
   std::vector<std::vector<int>> stst_in1{st_in1, st_in1, st_in1};
@@ -40,6 +43,7 @@ TEST(MathFunctions, binary_log_loss) {
   st_eigout = stan::math::binary_log_loss(0, st_eig2);
   double res = -log(0.5);
   for(int i = 0; i < 3; ++i) {
+    EXPECT_FLOAT_EQ(res, out[i]);
     EXPECT_FLOAT_EQ(res, st_out[i]);
     EXPECT_FLOAT_EQ(res, stst_out[i][i]);
     EXPECT_FLOAT_EQ(res, st_eigout[i][i]);
