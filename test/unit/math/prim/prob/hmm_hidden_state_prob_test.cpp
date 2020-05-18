@@ -8,7 +8,7 @@
 #include <limits>
 #include <vector>
 
-TEST_F(hmm_test, latent_prob_single_outcome) {
+TEST_F(hmm_test, hidden_state_single_outcome) {
   using stan::math::hmm_hidden_state_prob;
 
   int n_states = 2;
@@ -25,7 +25,7 @@ TEST_F(hmm_test, latent_prob_single_outcome) {
   }
 }
 
-TEST_F(hmm_test, latent_prob_identity_transition) {
+TEST_F(hmm_test, hidden_state_identity_transition) {
   // With an identity transition matrix, all latent probabilities
   // are equal. Setting the log density to 1 for all states makes
   // the initial prob drive the subsequent probabilities.
@@ -40,5 +40,33 @@ TEST_F(hmm_test, latent_prob_identity_transition) {
   for (int i = 0; i < n_transitions_; i++) {
     EXPECT_FLOAT_EQ(prob(0, i), rho_(0));
     EXPECT_FLOAT_EQ(prob(1, i), rho_(1));
+  }
+}
+
+TEST(hmm_test_nonstandard, hidden_state_symmetry) {
+  // In this two states situation, the latent states are
+  // symmetric, based on the observational log density,
+  // and transition matrix.
+  // The initial conditions introduces an asymmetry in the first
+  // state.
+  // Therefore the hidden states all have probability 0.5.
+  using stan::math::hmm_hidden_state_prob;
+  int n_states = 2;
+  int n_transitions = 2;
+  Eigen::MatrixXd Gamma(n_states, n_states);
+  Gamma << 0.5, 0.5, 0.5, 0.5;
+  Eigen::VectorXd rho(n_states);
+  rho << 0.3, 0.7;
+  Eigen::MatrixXd log_omegas
+    = Eigen::MatrixXd::Ones(n_states, n_transitions + 1);
+
+  Eigen::MatrixXd prob = hmm_hidden_state_prob(log_omegas, Gamma, rho);
+
+  EXPECT_FLOAT_EQ(prob(0, 0), 0.3);
+  EXPECT_FLOAT_EQ(prob(1, 0), 0.7);
+
+  for (int i = 1; i < n_transitions; i++) {
+    EXPECT_FLOAT_EQ(prob(0, i), 0.5);
+    EXPECT_FLOAT_EQ(prob(1, i), 0.5);
   }
 }
