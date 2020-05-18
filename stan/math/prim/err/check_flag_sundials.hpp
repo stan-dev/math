@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_ERR_CHECK_FLAG_SUNDIALS_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err/throw_domain_error.hpp>
 
 namespace stan {
 namespace math {
