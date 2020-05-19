@@ -1,4 +1,4 @@
-#include <test/unit/math/prim/prob/hmm_marginal_test.cpp>
+#include <test/unit/math/prim/prob/hmm_util.hpp>
 #include <stan/math/prim/prob/hmm_hidden_state_prob.hpp>
 #include <boost/math/distributions.hpp>
 #include <boost/random.hpp>
@@ -48,8 +48,7 @@ TEST(hmm_test_nonstandard, hidden_state_symmetry) {
   // symmetric, based on the observational log density,
   // and transition matrix.
   // The initial conditions introduces an asymmetry in the first
-  // state.
-  // Therefore the hidden states all have probability 0.5.
+  // state. The other hidden states all have probability 0.5.
   using stan::math::hmm_hidden_state_prob;
   int n_states = 2;
   int n_transitions = 2;
