@@ -10,7 +10,7 @@
   EXPECT_EQ(A.rows(), B.rows());        \
   EXPECT_EQ(A.cols(), B.cols());        \
   for (int i = 0; i < A.size(); i++)    \
-    EXPECT_FLOAT_EQ(stan::math::value_of(A(i)), stan::math::value_of(B(i)), DELTA);
+    EXPECT_FLOAT_EQ(A(i), B(i));
 
 #define EXPECT_MATRIX_NEAR(A, B, DELTA) \
   EXPECT_EQ(A.rows(), B.rows());        \
