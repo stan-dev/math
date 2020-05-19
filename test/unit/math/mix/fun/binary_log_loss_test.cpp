@@ -14,9 +14,8 @@ TEST(mathMixScalFun, binaryLogLoss) {
       Eigen::VectorXi ei_y = Eigen::VectorXi::Constant(3, y);
       std::vector<Eigen::VectorXi> stei_y{ei_y, ei_y, ei_y};
       Eigen::MatrixXd ed_yhat = Eigen::MatrixXd::Constant(3, 3, y_hat);
-      std::vector<Eigen::VectorXd> sted_y{ed_yhat.diagonal(),
-                                          ed_yhat.diagonal(),
-                                          ed_yhat.diagonal()};
+      std::vector<Eigen::VectorXd> sted_y{
+          ed_yhat.diagonal(), ed_yhat.diagonal(), ed_yhat.diagonal()};
       stan::test::expect_ad(f(y), y_hat);
       stan::test::expect_ad(f(ei_y), y_hat);
       stan::test::expect_ad(f(ei_y), ed_yhat.diagonal().eval());

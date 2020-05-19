@@ -33,8 +33,7 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   auto scal_nestvec = f(x[1], nest_y);
   for (int i = 0; i < 3; ++i) {
     for (int j = 0; j < x.size(); ++j) {
-      EXPECT_FLOAT_EQ(f(nest_x[i][j], nest_y[i][j]),
-                      nestvec_nestvec[i][j]);
+      EXPECT_FLOAT_EQ(f(nest_x[i][j], nest_y[i][j]), nestvec_nestvec[i][j]);
       EXPECT_FLOAT_EQ(f(nest_x[i][j], y[1]), nestvec_scal[i][j]);
       EXPECT_FLOAT_EQ(f(x[1], nest_y[i][j]), scal_nestvec[i][j]);
     }
@@ -60,10 +59,9 @@ template <typename F, typename T1, typename T2,
 void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
   binary_scalar_tester_impl(f, x, y);
   binary_scalar_tester_impl(f, x.transpose(), y.transpose());
-  binary_scalar_tester_impl(f, std::vector<typename T1::Scalar>(x.data(),
-                                                     x.data() + x.size()),
-                               std::vector<typename T2::Scalar>(y.data(),
-                                                     y.data() + y.size()));
+  binary_scalar_tester_impl(
+      f, std::vector<typename T1::Scalar>(x.data(), x.data() + x.size()),
+      std::vector<typename T2::Scalar>(y.data(), y.data() + y.size()));
 }
 
 }  // namespace test

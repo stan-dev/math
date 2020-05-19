@@ -24,16 +24,16 @@
 #include <Eigen/QR>
 #include <Eigen/src/Core/NumTraits.h>
 
-namespace Eigen {
-template <typename BinaryOp>
-struct ScalarBinaryOpTraits<int, double, BinaryOp> {
-  using ReturnType = double;
-};
+    namespace Eigen {
+  template <typename BinaryOp>
+  struct ScalarBinaryOpTraits<int, double, BinaryOp> {
+    using ReturnType = double;
+  };
 
-template <typename BinaryOp>
-struct ScalarBinaryOpTraits<double, int, BinaryOp> {
-  using ReturnType = double;
-};
+  template <typename BinaryOp>
+  struct ScalarBinaryOpTraits<double, int, BinaryOp> {
+    using ReturnType = double;
+  };
 }  // namespace Eigen
 
 #endif
