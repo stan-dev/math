@@ -1,5 +1,5 @@
 #include <stan/math/fwd.hpp>
-#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
 TEST(AgradFwdMatrix, read_fvar_mat_fd) {
