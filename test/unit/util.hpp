@@ -7,10 +7,14 @@
 #include <string>
 
 #define EXPECT_MATRIX_FLOAT_EQ(A, B) \
-  EXPECT_EQ(A.rows(), B.rows());        \
-  EXPECT_EQ(A.cols(), B.cols());        \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_FLOAT_EQ(A(i), B(i));
+  {                                     \
+    auto A_eval = A.eval();    \
+    auto B_eval = B.eval();    \
+    EXPECT_EQ(A_eval.rows(), B_eval.rows()); \
+    EXPECT_EQ(A_eval.cols(), B_eval.cols()); \
+    for (int i = 0; i < A_eval.size(); i++)  \
+      EXPECT_FLOAT_EQ(A_eval(i), B_eval(i)); \
+  }
 
 #define EXPECT_MATRIX_NEAR(A, B, DELTA) \
   EXPECT_EQ(A.rows(), B.rows());        \
