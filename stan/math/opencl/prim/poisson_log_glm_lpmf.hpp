@@ -136,12 +136,6 @@ return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(
   return ops_partials.build(logp);
 }
 
-template <typename T_alpha, typename T_beta>
-inline return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(
-    const matrix_cl<int>& y, const matrix_cl<double>& x, const T_alpha& alpha,
-    const T_beta& beta) {
-  return poisson_log_glm_lpmf<false>(y, x, alpha, beta);
-}
 }  // namespace math
 }  // namespace stan
 

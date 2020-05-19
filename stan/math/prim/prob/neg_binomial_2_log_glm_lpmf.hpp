@@ -55,19 +55,20 @@ namespace math {
  * @throw std::domain_error if phi is infinite or non-positive.
  * @throw std::domain_error if y is negative.
  */
-template <bool propto, typename T_y, typename T_x_scalar, int T_x_rows,
-          typename T_alpha, typename T_beta, typename T_precision>
-return_type_t<T_x_scalar, T_alpha, T_beta, T_precision>
+template <bool propto, typename T_y, typename T_x,
+          typename T_alpha, typename T_beta, typename T_precision, require_eigen_t<T_x>* = nullptr>
+return_type_t<T_x, T_alpha, T_beta, T_precision>
 neg_binomial_2_log_glm_lpmf(
-    const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
+    const T_y& y, const T_x& x,
     const T_alpha& alpha, const T_beta& beta, const T_precision& phi) {
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::exp;
   using Eigen::log1p;
   using Eigen::Matrix;
+  constexpr int T_x_rows = T_x::RowsAtCompileTime;
   using T_partials_return
-      = partials_return_t<T_y, T_x_scalar, T_alpha, T_beta, T_precision>;
+      = partials_return_t<T_y, T_x, T_alpha, T_beta, T_precision>;
   using T_precision_val = typename std::conditional_t<
       is_vector<T_precision>::value,
       Eigen::Array<partials_return_t<T_precision>, -1, 1>,
@@ -99,7 +100,7 @@ neg_binomial_2_log_glm_lpmf(
     return 0;
   }
 
-  if (!include_summand<propto, T_x_scalar, T_alpha, T_beta,
+  if (!include_summand<propto, T_x, T_alpha, T_beta,
                        T_precision>::value) {
     return 0;
   }
@@ -160,7 +161,7 @@ neg_binomial_2_log_glm_lpmf(
   }
   logp -= sum(y_plus_phi * logsumexp_theta_logphi);
 
-  if (include_summand<propto, T_x_scalar, T_alpha, T_beta>::value) {
+  if (include_summand<propto, T_x, T_alpha, T_beta>::value) {
     logp += sum(y_arr * theta);
   }
   if (include_summand<propto, T_precision>::value) {
@@ -172,12 +173,12 @@ neg_binomial_2_log_glm_lpmf(
   }
 
   // Compute the necessary derivatives.
-  operands_and_partials<Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>,
+  operands_and_partials<T_x,
                         T_alpha, T_beta, T_precision>
       ops_partials(x, alpha, beta, phi);
-  if (!is_constant_all<T_x_scalar, T_beta, T_alpha, T_precision>::value) {
+  if (!is_constant_all<T_x, T_beta, T_alpha, T_precision>::value) {
     Array<T_partials_return, Dynamic, 1> theta_exp = theta.exp();
-    if (!is_constant_all<T_x_scalar, T_beta, T_alpha>::value) {
+    if (!is_constant_all<T_x, T_beta, T_alpha>::value) {
       Matrix<T_partials_return, Dynamic, 1> theta_derivative
           = y_arr - theta_exp * y_plus_phi / (theta_exp + phi_arr);
       if (!is_constant_all<T_beta>::value) {
@@ -189,7 +190,7 @@ neg_binomial_2_log_glm_lpmf(
           ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
         }
       }
-      if (!is_constant_all<T_x_scalar>::value) {
+      if (!is_constant_all<T_x>::value) {
         if (T_x_rows == 1) {
           ops_partials.edge1_.partials_
               = forward_as<Array<T_partials_return, Dynamic, T_x_rows>>(
