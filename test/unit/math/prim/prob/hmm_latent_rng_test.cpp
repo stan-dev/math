@@ -92,24 +92,37 @@ TEST(hmm_rng_test, chiSquareGoodnessFitTest_symmetric) {
   assert_chi_squared(counts_0, expected_0, 1e-6);
   assert_chi_squared(counts_1, expected_1, 1e-6);
 
+  // Test for independence (0 correlation by construction).
+  // By independence E(XY) = E(X)E(Y). We compute the R.H.S
+  // analytically and the L.H.S numerically.
+  std::vector<int> counts_xy(2);
+  counts_xy[0] = a;
+  counts_xy[1] = c;
+  std::vector<double> expected_xy;
+  expected_xy.push_back(N * rho(0) * 0.5);
+  expected_xy.push_back(N * rho(1) * 0.5);
+  assert_chi_squared(counts_xy, expected_xy, 1e-6);
+
+  // DRAFT -- code for chi-squared independence test.
+  // (overkill, since we have analytical prob for each cell)
   // Test that the two states are independent, using a chi squared
   // test for independence.
-  Eigen::MatrixXd Expected(n_states, (n_transitions + 1));
-  Expected << (a + b) * (a + c), (a + b) * (b + d),
-              (c + d) * (a + c), (c + d) * (b + d);
-  Expected = Expected / N;
-
-  Eigen::MatrixXd Observed(n_states, (n_transitions + 1));
-  Observed << a, b, c, d;
-  double chi = 0;
-
-  for (int i = 0; i < n_states; ++i)
-    for (int j = 0; j < n_transitions + 1; ++j)
-      chi += (Observed(i, j) - Expected(i, j))
-              * (Observed(i, j) - Expected(i, j)) / Expected(i, j);
-
-  int nu = 1;
-  double p_value = exp(stan::math::chi_square_lcdf(chi, nu));
-  double threshold = 0.1;  // CHECK -- what is an appropriate threshold?
-  EXPECT_TRUE(p_value > threshold);
+  // Eigen::MatrixXd Expected(n_states, (n_transitions + 1));
+  // Expected << (a + b) * (a + c), (a + b) * (b + d),
+  //             (c + d) * (a + c), (c + d) * (b + d);
+  // Expected = Expected / N;
+  //
+  // Eigen::MatrixXd Observed(n_states, (n_transitions + 1));
+  // Observed << a, b, c, d;
+  // double chi = 0;
+  //
+  // for (int i = 0; i < n_states; ++i)
+  //   for (int j = 0; j < n_transitions + 1; ++j)
+  //     chi += (Observed(i, j) - Expected(i, j))
+  //             * (Observed(i, j) - Expected(i, j)) / Expected(i, j);
+  //
+  // int nu = 1;
+  // double p_value = exp(stan::math::chi_square_lcdf(chi, nu));
+  // double threshold = 0.1;  // CHECK -- what is an appropriate threshold?
+  // EXPECT_TRUE(p_value > threshold);
 }
