@@ -113,7 +113,7 @@ TEST(MathMatrixPower, matrix_power_operator) {
   Eigen::MatrixXd M2(2, 2);
   M2 << 7.0, 10.0, 15.0, 22.0;
 
-  EXPECT_MATRIX_FLOAT_EQ(M2, M ^ 2);
+  EXPECT_MATRIX_FLOAT_EQ(M2, (M ^ 2));
 }
 
 TEST(MathMatrixPower, large) {
