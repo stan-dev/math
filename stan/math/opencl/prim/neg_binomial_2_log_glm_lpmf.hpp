@@ -100,8 +100,6 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
   const auto& phi_val_vec = as_column_vector_or_scalar(phi_val);
 
-  const auto& phi_arr = as_array_or_scalar(phi_val_vec);
-
   const int local_size
       = opencl_kernels::neg_binomial_2_log_glm.get_option("LOCAL_SIZE_");
   const int wgs = (N + local_size - 1) / local_size;

@@ -83,9 +83,6 @@ return_type_t<T_beta, T_cuts> ordered_logistic_glm_lpmf(
   const auto& beta_val = value_of_rec(beta);
   const auto& cuts_val = value_of_rec(cuts);
 
-  const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
-  const auto& cuts_val_vec = as_column_vector_or_scalar(cuts_val);
-
   operands_and_partials<T_beta, T_cuts> ops_partials(beta, cuts);
   const int local_size
       = opencl_kernels::ordered_logistic_glm.get_option("LOCAL_SIZE_");

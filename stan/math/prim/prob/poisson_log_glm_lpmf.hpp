@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <cmath>
 
@@ -82,13 +83,13 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(
 
   T_partials_return logp(0);
 
-  const auto& x_val = value_of_rec(x);
+  const auto& x_val = to_ref(value_of_rec(x));
   const auto& y_val = value_of_rec(y);
   const auto& beta_val = value_of_rec(beta);
   const auto& alpha_val = value_of_rec(alpha);
 
-  const auto& y_val_vec = as_column_vector_or_scalar(y_val);
-  const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
+  const auto& y_val_vec = to_ref(as_column_vector_or_scalar(y_val));
+  const auto& beta_val_vec = to_ref(as_column_vector_or_scalar(beta_val));
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
 
   Array<T_partials_return, Dynamic, 1> theta(N_instances);

@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <cmath>
 
@@ -92,9 +93,9 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   const auto &sigma_val = value_of_rec(sigma);
   const auto &y_val = value_of_rec(y);
 
-  const auto &beta_val_vec = as_column_vector_or_scalar(beta_val);
+  const auto &beta_val_vec = to_ref(as_column_vector_or_scalar(beta_val));
   const auto &alpha_val_vec = as_column_vector_or_scalar(alpha_val);
-  const auto &sigma_val_vec = as_column_vector_or_scalar(sigma_val);
+  const auto &sigma_val_vec = to_ref(as_column_vector_or_scalar(sigma_val));
   const auto &y_val_vec = as_column_vector_or_scalar(y_val);
 
   T_scale_val inv_sigma = 1 / as_array_or_scalar(sigma_val_vec);

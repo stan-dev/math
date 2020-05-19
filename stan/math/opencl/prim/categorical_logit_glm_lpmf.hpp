@@ -73,8 +73,6 @@ return_type_t<T_alpha, T_beta> categorical_logit_glm_lpmf(
   const auto& beta_val = value_of_rec(beta);
   const auto& alpha_val = value_of_rec(alpha);
 
-  const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val).transpose();
-
   const int local_size
       = opencl_kernels::categorical_logit_glm.get_option("LOCAL_SIZE_");
   const int wgs = (N_instances + local_size - 1) / local_size;
