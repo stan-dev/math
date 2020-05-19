@@ -28,24 +28,12 @@ class eigenvalues_vari : public vari {
   explicit eigenvalues_vari(const Eigen::Matrix<var, -1, -1> &A)
       : vari(0.0),
         M_(A.rows()),
-        A_(reinterpret_cast<double *>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(double) * A.rows()
-                                                       * A.cols()))),
-        w_(reinterpret_cast<double *>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(double)
-                                                       * A.rows()))),
-        v_(reinterpret_cast<double *>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(double) * A.rows()
-                                                       * A.cols()))),
-        vari_ref_A_(reinterpret_cast<vari **>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * A.rows()
-                                                       * A.cols()))),
-        vari_ref_w_(reinterpret_cast<vari **>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *)
-                                                       * A.rows()))),
-        vari_ref_v_(reinterpret_cast<vari **>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * A.rows()
-                                                       * A.cols()))) {
+        A_(ChainableStack::instance_->memalloc_.alloc_array<double>(A.rows() * A.cols())),
+        w_(ChainableStack::instance_->memalloc_.alloc_array<double>(A.rows())),
+        v_(ChainableStack::instance_->memalloc_.alloc_array<double>(A.rows() * A.cols())),
+        vari_ref_A_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(A.rows() * A.cols())),
+        vari_ref_w_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(A.rows())),
+        vari_ref_v_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(A.rows() * A.cols())) {
     using Eigen::Map;
 
     Map<matrix_d> Ad(A_, M_, M_);
