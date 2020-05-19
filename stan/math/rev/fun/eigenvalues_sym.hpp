@@ -32,8 +32,7 @@ class eigenvalues_vari : public vari {
         w_(ChainableStack::instance_->memalloc_.alloc_array<double>(A.rows())),
         v_(ChainableStack::instance_->memalloc_.alloc_array<double>(A.rows() * A.cols())),
         vari_ref_A_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(A.rows() * A.cols())),
-        vari_ref_w_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(A.rows())),
-        vari_ref_v_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(A.rows() * A.cols())) {
+        vari_ref_w_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(A.rows())) {
     using Eigen::Map;
 
     Map<matrix_d> Ad(A_, M_, M_);
@@ -47,8 +46,6 @@ class eigenvalues_vari : public vari {
     Map<matrix_vi>(vari_ref_A_, M_, M_) = A.vi();
     Map<vector_vi>(vari_ref_w_, M_)
         = wd.unaryExpr([](double x) { return new vari(x, false); });
-    Map<matrix_vi>(vari_ref_v_, M_, M_)
-        = vd.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   /**
@@ -63,19 +60,9 @@ class eigenvalues_vari : public vari {
     using Eigen::Map;
 
     matrix_d adj_w = Map<matrix_vi>(vari_ref_w_, M_, 1).adj();
-    matrix_d adj_v = Map<matrix_vi>(vari_ref_v_, M_, M_).adj();
-    Map<matrix_d> w(w_, M_, M_);
     Map<matrix_d> v(v_, M_, M_);
 
-    matrix_d f(M_, M_);
-    for (int i = 0; i < M_; i++)
-      for (int j = 0; j < M_; j++)
-        f.coeffRef(j, i) = (i != j ? 1 / (w.coeff(i) - w.coeff(j)) : 0);
-
-    matrix_d diag_adj_w = adj_w.asDiagonal();
-
-    matrix_d adjA = v * f.cwiseProduct(v.transpose() * adj_v) * v.transpose();
-    adjA += v * diag_adj_w * v.transpose();
+    matrix_d adjA = v * adj_w.asDiagonal() * v.transpose();
 
     Map<matrix_vi>(vari_ref_A_, M_, M_).adj() += adjA;
   }
