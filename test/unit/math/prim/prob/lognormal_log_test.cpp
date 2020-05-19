@@ -23,5 +23,5 @@ TEST(ProbLognormal, log_matches_lpdf) {
       (stan::math::lognormal_log<double, double, double>(y, mu, sigma)));
 
   EXPECT_FLOAT_EQ((stan::math::lognormal_lpdf(0.8, 2.0, 2.0)),
-                (stan::math::lognormal_log(0.8, 2, 2)));
+                  (stan::math::lognormal_log(0.8, 2, 2)));
 }
