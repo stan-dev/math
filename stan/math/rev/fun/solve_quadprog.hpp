@@ -316,8 +316,9 @@ solve_quadprog(const Eigen::Matrix<T0, -1, -1> &G,
   /* compute the inverse of the factorized matrix G^-1, this is the initial
    * value for H */
   //J = L^-T
-  Eigen::Matrix<T0, -1, -1> Li = (1e-9 < L.array().abs()).select(L, 0.0f);
-  auto J = stan::math::transpose(stan::math::mdivide_left_tri_low(Li));
+  Eigen::Matrix<T0, -1, -1> Li = (1e-14 < L.array().abs()).select(L, 0.0f);
+  auto J = stan::math::mdivide_left_tri_low(Li);
+  J.transposeInPlace();
   auto c2 = J.trace();
 #ifdef TRACE_SOLVER
   print_matrix("J", J, n);
@@ -629,18 +630,8 @@ auto
    */
   
   /* compute the trace of the original matrix G */
-  /* can remove this  auto chol = L; 
-   * can provide the trace already so don't need
-   * to compute G again 
-   *  auto G = tcrossprod(L);
-   *  auto c1 = G.trace(); */
-  
-  /* tr(AB^T) = sum( A hadamard_prod B) 
-   * https://en.wikipedia.org/wiki/Trace_(linear_algebra)
-   */ 
- // auto c1 = elt_multiply(L, L).sum();
    auto c1 = tcrossprod(L).trace(); 
-  /* initialize the matrix R */
+   /* initialize the matrix R */
   d.setZero();
   
   /*  compute the trace of the original matrix G */
@@ -655,8 +646,9 @@ auto
   /* **CHANGE HERE** 
    * J is only called once and trace is the same regardless of transpose 
    * also change chol to L */
- Eigen::Matrix<T0, -1, -1> Li = (1e-9 < L.array().abs()).select(L, 0.0f);
-  auto J = stan::math::transpose(stan::math::mdivide_left_tri_low(Li));
+  Eigen::Matrix<T0, -1, -1> Li = (1e-14 < L.array().abs()).select(L, 0.0f);
+  auto J = stan::math::mdivide_left_tri_low(Li);
+  J.transposeInPlace();
   auto c2 = J.trace();
  // std::cout << c2 << "\n";
 #ifdef TRACE_SOLVER
