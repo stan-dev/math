@@ -6,21 +6,31 @@
 #include <type_traits>
 #include <string>
 
-#define EXPECT_MATRIX_FLOAT_EQ(A, B) \
-  {                                     \
-    auto A_eval = A.eval();    \
-    auto B_eval = B.eval();    \
+#define EXPECT_MATRIX_FLOAT_EQ(A, B)         \
+       {                                     \
+    const auto& A_eval = A.eval();                  \
+    const auto& B_eval = B.eval();                  \
     EXPECT_EQ(A_eval.rows(), B_eval.rows()); \
     EXPECT_EQ(A_eval.cols(), B_eval.cols()); \
     for (int i = 0; i < A_eval.size(); i++)  \
       EXPECT_FLOAT_EQ(A_eval(i), B_eval(i)); \
   }
 
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  EXPECT_EQ(A.rows(), B.rows());        \
-  EXPECT_EQ(A.cols(), B.cols());        \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
+#define EXPECT_STD_VECTOR_FLOAT_EQ(A, B)         \
+  EXPECT_EQ(A.size(), B.size());                 \
+  for (int i = 0; i < A.size(); ++i)             \
+    EXPECT_FLOAT_EQ(A[i], B[i]);
+
+#define EXPECT_MATRIX_NEAR(A, B, DELTA)         \
+  EXPECT_EQ(A.rows(), B.rows());                \
+    {                                           \
+    auto A_eval = A.eval();                     \
+    auto B_eval = B.eval();                     \
+    EXPECT_EQ(A_eval.rows(), B_eval.rows());    \
+    EXPECT_EQ(A_eval.cols(), B_eval.cols());    \
+    for (int i = 0; i < A_eval.size(); i++)     \
+      EXPECT_NEAR(A_eval(i), B_eval(i), DELTA); \
+  }
 
 #define EXPECT_THROW_MSG_WITH_COUNT(expr, T_e, msg, count) \
   EXPECT_THROW(expr, T_e);                                 \

@@ -6,7 +6,7 @@
 TEST(MathFunctions, zeros_int_array) {
   for (int K = 0; K < 5; K++) {
     std::vector<int> v(K, 0);
-    expect_std_vector_eq(v, stan::math::zeros_int_array(K));
+    EXPECT_STD_VECTOR_FLOAT_EQ(v, stan::math::zeros_int_array(K));
   }
 }
 

@@ -6,7 +6,7 @@
 TEST(MathFunctions, ones_array) {
   for (int K = 0; K < 5; K++) {
     std::vector<double> v(K, 1);
-    expect_std_vector_eq(v, stan::math::ones_array(K));
+    EXPECT_STD_VECTOR_FLOAT_EQ(v, stan::math::ones_array(K));
   }
 }
 
