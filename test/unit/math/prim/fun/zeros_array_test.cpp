@@ -11,5 +11,5 @@ TEST(MathFunctions, zeros_array) {
 }
 
 TEST(MathFunctions, zeros_array_throw) {
-  EXPECT_STD_VECTOR_FLOAT_EQ(stan::math::zeros_array(-1), std::domain_error);
+  EXPECT_THROW(stan::math::zeros_int_array(-1), std::domain_error);
 }
