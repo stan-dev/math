@@ -67,7 +67,6 @@ class eigenvalues_vari : public vari {
     Map<matrix_d> w(w_, M_, M_);
     Map<matrix_d> v(v_, M_, M_);
 
-    // f(i,j) = (i != j ? 1 / (e_i - e_j) : 0).
     matrix_d f(M_, M_);
     for (int i = 0; i < M_; i++)
       for (int j = 0; j < M_; j++)
