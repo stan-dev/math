@@ -15,10 +15,11 @@ inline auto binary_log_loss(T1 y, const T2& y_hat) {
       y, y_hat, [&](const auto& v, const auto& v_hat) {
         using T = typename scalar_type_t<T2>::Scalar;
         if (v) {
-          return fvar<T>(binary_log_loss(v, v_hat.val_), -v_hat.d_ / v_hat.val_);
+          return fvar<T>(binary_log_loss(v, v_hat.val_),
+                         -v_hat.d_ / v_hat.val_);
         } else {
           return fvar<T>(binary_log_loss(v, v_hat.val_),
-                       v_hat.d_ / (1.0 - v_hat.val_));
+                         v_hat.d_ / (1.0 - v_hat.val_));
         }
       });
 }

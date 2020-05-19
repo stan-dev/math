@@ -226,7 +226,7 @@ struct apply_scalar_binary<T1, T2, require_stan_scalar_t<T1>,
     using T_return = value_type_t<decltype(f(x, y[0]))>;
     std::vector<T_return> result(y.size());
     Eigen::Map<Eigen::Matrix<T_return, -1, 1>>(result.data(), result.size())
-        = y_vec.unaryExpr([&f,&x](const auto& v){ return f(x, v); });
+        = y_vec.unaryExpr([&f, &x](const auto& v){ return f(x, v); });
     return result;
   }
 };

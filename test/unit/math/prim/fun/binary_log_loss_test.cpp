@@ -1,4 +1,5 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/math/prim/fun/binary_scalar_tester.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <limits>
@@ -10,44 +11,19 @@ TEST(MathFunctions, binary_log_loss) {
   EXPECT_FLOAT_EQ(-log(0.5), stan::math::binary_log_loss(1, 0.5));
   EXPECT_FLOAT_EQ(-log(0.75), stan::math::binary_log_loss(0, 0.25));
   EXPECT_FLOAT_EQ(-log(0.75), stan::math::binary_log_loss(1, 0.75));
+}
 
-  Eigen::VectorXi in1(3);
-  in1 << 0, 0, 0;
-  Eigen::VectorXd in2(3);
-  in2 << 0.5, 0.5, 0.5;
-  Eigen::MatrixXd in_mat(3,3);
-  in_mat.fill(0.5);
+TEST(MathFunctions, binary_log_loss_vec) {
+  auto f = [](const auto& x1, const auto& x2) {
+    return stan::math::binary_log_loss(x1, x2);
+  };
 
-  Eigen::VectorXd out(3);
-  out = stan::math::binary_log_loss(in1, 0.5);
-  out = stan::math::binary_log_loss(0, in2);
-  out = stan::math::binary_log_loss(in1, in2);
-  out = stan::math::binary_log_loss(in1, in_mat.diagonal());
+  Eigen::VectorXi in1(6);
+  in1 << 0, 1, 0, 1, 0, 1;
+  Eigen::VectorXd in2(6);
+  in2 << 0, 1, 0.5, 0.5, 0.25, 0.75;
 
-  std::vector<int> st_in1{0, 0, 0};
-  std::vector<std::vector<int>> stst_in1{st_in1, st_in1, st_in1};
-  std::vector<double> st_in2{0.5, 0.5, 0.5};
-  std::vector<std::vector<double>> stst_in2{st_in2, st_in2, st_in2};
-  std::vector<double> st_out(3);
-  std::vector<std::vector<double>> stst_out(3);
-  std::vector<Eigen::VectorXi> st_eig1{in1, in1, in1};
-  std::vector<Eigen::VectorXd> st_eig2{in2, in2, in2};
-  std::vector<Eigen::VectorXd> st_eigout(3);
-  st_out = stan::math::binary_log_loss(st_in1, 0.5);
-  stst_out = stan::math::binary_log_loss(stst_in1, 0.5);
-  st_out = stan::math::binary_log_loss(0, st_in2);
-  stst_out = stan::math::binary_log_loss(0, stst_in2);
-  stst_out = stan::math::binary_log_loss(stst_in1, stst_in2);
-  st_eigout = stan::math::binary_log_loss(st_eig1, 0.5);
-  st_eigout = stan::math::binary_log_loss(st_eig1, st_eig2);
-  st_eigout = stan::math::binary_log_loss(0, st_eig2);
-  double res = -log(0.5);
-  for(int i = 0; i < 3; ++i) {
-    EXPECT_FLOAT_EQ(res, out[i]);
-    EXPECT_FLOAT_EQ(res, st_out[i]);
-    EXPECT_FLOAT_EQ(res, stst_out[i][i]);
-    EXPECT_FLOAT_EQ(res, st_eigout[i][i]);
-  }
+  stan::test::binary_scalar_tester(f, in1, in2);
 }
 
 TEST(MathFunctions, binary_log_loss_nan) {
