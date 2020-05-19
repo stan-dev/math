@@ -10,7 +10,6 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <cmath>
 
 namespace stan {
@@ -65,7 +64,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
       inv_sigma_sq(size(sigma));
   if (include_summand<propto, T_y, T_loc, T_scale>::value) {
     for (size_t n = 0; n < stan::math::size(sigma); n++) {
-      inv_sigma[n] = 1 / value_of_rec(sigma_vec[n]);
+      inv_sigma[n] = inv(value_of(sigma_vec[n]));
     }
   }
   if (include_summand<propto, T_y, T_loc, T_scale>::value) {
@@ -87,7 +86,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
       stan::math::size(y));
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::math::size(y); n++) {
-      inv_y[n] = 1 / value_of_rec(y_vec[n]);
+      inv_y[n] = inv(value_of(y_vec[n]));
     }
   }
 
