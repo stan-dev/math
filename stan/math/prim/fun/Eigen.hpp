@@ -34,6 +34,6 @@ template <typename BinaryOp>
 struct ScalarBinaryOpTraits<double, int, BinaryOp> {
   using ReturnType = double;
 };
-}  // namespace internal
+}  // namespace Eigen
 
 #endif
