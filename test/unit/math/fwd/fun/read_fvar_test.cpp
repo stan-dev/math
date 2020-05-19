@@ -106,8 +106,10 @@ TEST(AgradFwdMatrix, read_fvar_rowvec_ffd) {
   row_vector_fvar_fvar.d().val() = RowVectorXd::Random(100);
   read_fvar(row_vector_fvar_fvar, row_vector_val, row_vector_deriv);
 
-  EXPECT_MATRIX_FLOAT_EQ(row_vector_fvar_fvar.val().val(), row_vector_val.val());
-  EXPECT_MATRIX_FLOAT_EQ(row_vector_fvar_fvar.d().val(), row_vector_deriv.val());
+  EXPECT_MATRIX_FLOAT_EQ(row_vector_fvar_fvar.val().val(),
+                         row_vector_val.val());
+  EXPECT_MATRIX_FLOAT_EQ(row_vector_fvar_fvar.d().val(),
+                         row_vector_deriv.val());
 }
 
 TEST(AgradFwdMatrix, read_fvar_expr_ffd) {
@@ -123,7 +125,7 @@ TEST(AgradFwdMatrix, read_fvar_expr_ffd) {
   read_fvar(matrix_fvar_fvar.diagonal(), matrix_diag_val, matrix_diag_deriv);
 
   EXPECT_MATRIX_FLOAT_EQ(matrix_fvar_fvar.diagonal().val().val(),
-                   matrix_diag_val.val());
+                         matrix_diag_val.val());
   EXPECT_MATRIX_FLOAT_EQ(matrix_fvar_fvar.diagonal().d().val(),
-                   matrix_diag_deriv.val());
+                         matrix_diag_deriv.val());
 }

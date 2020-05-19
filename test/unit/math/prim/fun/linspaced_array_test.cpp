@@ -8,8 +8,10 @@ TEST(MathFunctions, linspaced_array) {
   using stan::math::linspaced_array;
   EXPECT_STD_VECTOR_FLOAT_EQ(linspaced_array(0, 1, 5), std::vector<int>({}));
   EXPECT_STD_VECTOR_FLOAT_EQ(linspaced_array(1, 1, 5), std::vector<int>({5}));
-  EXPECT_STD_VECTOR_FLOAT_EQ(linspaced_array(5, 1, 5), std::vector<int>({1, 2, 3, 4, 5}));
-  EXPECT_STD_VECTOR_FLOAT_EQ(linspaced_array(5, -2, 2), std::vector<int>({-2, -1, 0, 1, 2}));
+  EXPECT_STD_VECTOR_FLOAT_EQ(linspaced_array(5, 1, 5),
+                             std::vector<int>({1, 2, 3, 4, 5}));
+  EXPECT_STD_VECTOR_FLOAT_EQ(linspaced_array(5, -2, 2),
+                             std::vector<int>({-2, -1, 0, 1, 2}));
 }
 
 TEST(MathFunctions, linspaced_array_throw) {

@@ -156,10 +156,12 @@ TEST(AgradFwdMatrixAddons, fvarfvar_double_rowvector) {
   }
 
   EXPECT_MATRIX_FLOAT_EQ(vals, row_vec_in.val().val());
-  EXPECT_MATRIX_FLOAT_EQ(vals.array().exp(), row_vec_in.val().val().array().exp());
+  EXPECT_MATRIX_FLOAT_EQ(vals.array().exp(),
+                         row_vec_in.val().val().array().exp());
 
   EXPECT_MATRIX_FLOAT_EQ(derivs, row_vec_in.d().val());
-  EXPECT_MATRIX_FLOAT_EQ(derivs.array().exp(), row_vec_in.d().val().array().exp());
+  EXPECT_MATRIX_FLOAT_EQ(derivs.array().exp(),
+                         row_vec_in.d().val().array().exp());
 
   EXPECT_EQ(row_vec_in.val().rows(), vals.rows());
   EXPECT_EQ(row_vec_in.val().cols(), vals.cols());

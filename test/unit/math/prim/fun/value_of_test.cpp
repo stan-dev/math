@@ -5,7 +5,7 @@
 #include <type_traits>
 #include <vector>
 
-#define EXPECT_MATRIX_FLOAT_EQ(A, B)       \
+#define EXPECT_MATRIX_FLOAT_EQ(A, B) \
   for (int i = 0; i < A.size(); i++) \
     EXPECT_EQ(A(i), B(i));
 

@@ -36,7 +36,8 @@ void test_to_matrix_array_answers(int m, int n) {
   EXPECT_MATRIX_FLOAT_EQ(a, row_major_to_column_major(to_matrix(vec, m, n, 0)));
   EXPECT_MATRIX_FLOAT_EQ(a, to_matrix(vec_int, m, n));
   EXPECT_MATRIX_FLOAT_EQ(a, to_matrix(vec_int, m, n, 1));
-  EXPECT_MATRIX_FLOAT_EQ(a, row_major_to_column_major(to_matrix(vec_int, m, n, 0)));
+  EXPECT_MATRIX_FLOAT_EQ(
+      a, row_major_to_column_major(to_matrix(vec_int, m, n, 0)));
 }
 
 TEST(ToMatrixArray, answers) {

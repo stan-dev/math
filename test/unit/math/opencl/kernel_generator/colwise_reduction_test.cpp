@@ -15,7 +15,6 @@ using Eigen::MatrixXd;
 using Eigen::MatrixXi;
 using stan::math::matrix_cl;
 
-
 TEST(KernelGenerator, colwise_sum_test) {
   std::string kernel_filename = "colwise_sum.cl";
   MatrixXd m(3, 2);
