@@ -163,10 +163,10 @@ struct mat_mul_return_type<T1, T2, require_all_arithmetic_t<T1, T2>> {
 };
 
 struct mult_invoker {
-    template <typename T1, typename T2>
-    auto operator()(T1&& x, T2&& y) {
-        return (x * y).eval();
-    }
+  template <typename T1, typename T2>
+  auto operator()(T1&& x, T2&& y) {
+    return (x * y).eval();
+  }
 };
 
 template <typename T1, typename T2>
