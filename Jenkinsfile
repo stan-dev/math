@@ -177,6 +177,11 @@ pipeline {
         }
         stage('Full Unit Tests') {
             agent any
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
             steps {
                 script {
                     if (isUnix()) {
