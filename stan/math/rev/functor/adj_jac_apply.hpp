@@ -58,9 +58,10 @@ struct build_y_adj<T, require_std_vector_t<T>> {
    */
   template <typename VariType, size_t size>
   static inline T apply(VariType& y_vi, const std::array<int, size>& M) {
-    T y_adj(M[0]);
-    for (size_t m = 0; m < y_adj.size(); ++m) {
-      y_adj.push_back(y_vi[m]->adj_);
+    T y_adj;
+    y_adj.reserve(M[0]);
+    for (size_t m = 0; m < M[0]; ++m) {
+      y_adj.emplace_back(y_vi[m]->adj_);
     }
     return y_adj;
   }
@@ -303,14 +304,14 @@ struct adj_jac_vari : public vari {
     using vari_type = vari_value<T>;
     using var_type = var_value<T>;
     M_[0] = val_y.size();
-    std::vector<var_type> var_y(M_[0]);
+    std::vector<var_type> var_y;
+    var_y.reserve(M_[0]);
     y_vi_ = ChainableStack::instance_->memalloc_.alloc_array<vari_type*>(
-        var_y.size());
-    for (size_t m = 0; m < var_y.size(); ++m) {
-      y_vi_[m] = new vari(val_y[m], false);
-      var_y.push_back(y_vi_[m]);
+        M_[0]);
+    for (size_t m = 0; m < M_[0]; ++m) {
+      y_vi_[m] = new vari_type(val_y[m], false);
+      var_y.emplace_back(y_vi_[m]);
     }
-
     return var_y;
   }
 
@@ -454,7 +455,6 @@ struct adj_jac_vari : public vari {
    */
   inline void chain() {
     FReturnType blahh = internal::build_y_adj<FReturnType>::apply(y_vi_, M_);
-    std::cout << "\n chain: " << blahh << "\n";
     auto y_adj_jacs = f_.multiply_adjoint_jacobian(is_var_, blahh);
 
     apply(
