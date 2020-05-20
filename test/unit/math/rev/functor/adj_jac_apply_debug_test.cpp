@@ -43,7 +43,7 @@ struct SinFunctor {
 };
 
 
-TEST(AgradRev, test_vector_sin_multiple_jac) {
+TEST(AgradRev, test_vector_sin_multiple_jac_static_return) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x1(1), x2(2);
   x1 << 1.0;
   x2 << 2.0, 1.0;
@@ -67,6 +67,43 @@ TEST(AgradRev, test_vector_sin_multiple_jac) {
   Eigen::Matrix<double, 1 , -1> sum_vec(2);
   sum_vec << 1.73, 1.57;
   auto sum_y2 = sum_vec * y2;
+  sum_y2.grad();
+  EXPECT_FLOAT_EQ(x1(0).adj(), 0.0);
+  EXPECT_FLOAT_EQ(x2(0).adj(), 1.73 * -0.4161468365471424);
+  EXPECT_FLOAT_EQ(x2(1).adj(), 1.57 * 0.5403023058681398);
+}
+
+
+TEST(AgradRev, test_vector_sin_multiple_jac) {
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x1(1), x2(2), y1(1), y2(2);
+  x1 << 1.0;
+  x2 << 2.0, 1.0;
+
+  y1 = stan::math::adj_jac_apply<SinFunctor>(x1);
+  y2 = stan::math::adj_jac_apply<SinFunctor>(x2);
+
+  y1(0).grad();
+  EXPECT_FLOAT_EQ(x1(0).adj(), 0.5403023058681398);
+  EXPECT_FLOAT_EQ(x2(0).adj(), 0.0);
+  EXPECT_FLOAT_EQ(x2(1).adj(), 0.0);
+
+  stan::math::set_zero_all_adjoints();
+
+  y2(0).grad();
+  EXPECT_FLOAT_EQ(x1(0).adj(), 0.0);
+  EXPECT_FLOAT_EQ(x2(0).adj(), -0.4161468365471424);
+  EXPECT_FLOAT_EQ(x2(1).adj(), 0.0);
+
+  stan::math::set_zero_all_adjoints();
+
+  y2(1).grad();
+  EXPECT_FLOAT_EQ(x1(0).adj(), 0.0);
+  EXPECT_FLOAT_EQ(x2(0).adj(), 0.0);
+  EXPECT_FLOAT_EQ(x2(1).adj(), 0.5403023058681398);
+
+  stan::math::set_zero_all_adjoints();
+
+  stan::math::var sum_y2 = (1.73 * y2(0) + 1.57 * y2(1));
   sum_y2.grad();
   EXPECT_FLOAT_EQ(x1(0).adj(), 0.0);
   EXPECT_FLOAT_EQ(x2(0).adj(), 1.73 * -0.4161468365471424);
