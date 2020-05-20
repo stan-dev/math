@@ -96,6 +96,11 @@ class var_value {
 
   var_value(T x) : vi_(new vari_value<T>(x, false)) {}  // NOLINT
 
+  template <typename EigenT, typename T1 = T,
+            require_not_same_t<T1, EigenT>* = nullptr,
+            require_all_eigen_t<EigenT, T1>* = nullptr>
+  var_value(EigenT x) : vi_(new vari_value<T>(x, false)) {}  // NOLINT
+
   /**
    * Return the value of this variable.
    *

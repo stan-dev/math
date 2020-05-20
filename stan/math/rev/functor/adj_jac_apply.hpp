@@ -60,7 +60,7 @@ struct build_y_adj<T, require_std_vector_t<T>> {
   static inline T apply(VariType& y_vi, const std::array<int, size>& M) {
     T y_adj(M[0]);
     for (size_t m = 0; m < y_adj.size(); ++m) {
-      y_adj.push_back(y_vi[m]->adj_);
+      y_adj[m] = y_vi[m]->adj_;
     }
     return y_adj;
   }
@@ -308,7 +308,7 @@ struct adj_jac_vari : public vari {
         var_y.size());
     for (size_t m = 0; m < var_y.size(); ++m) {
       y_vi_[m] = new vari(val_y[m], false);
-      var_y.push_back(y_vi_[m]);
+      var_y[m].vi_ = y_vi_[m];
     }
 
     return var_y;
@@ -457,7 +457,6 @@ struct adj_jac_vari : public vari {
    */
   inline void chain() {
     FReturnType blahh = internal::build_y_adj<FReturnType>::apply(y_vi_, M_);
-    std::cout << "\n chain: " << blahh << "\n";
     auto y_adj_jacs = f_.multiply_adjoint_jacobian(is_var_, blahh);
 
     apply(

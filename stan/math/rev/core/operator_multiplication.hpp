@@ -162,38 +162,16 @@ struct mat_mul_return_type<T1, T2, require_all_arithmetic_t<T1, T2>> {
   using type = double;
 };
 
-// two eigen matrices will be -1, -1
-template <typename T1, typename T2>
-struct mat_mul_return_type<T1, T2, require_all_eigen_matrix_t<T1, T2>> {
-  using type = std::decay_t<T1>;
+struct mult_invoker {
+    template <typename T1, typename T2>
+    auto operator()(T1&& x, T2&& y) {
+        return (x * y).eval();
+    }
 };
 
-// mat and column vector is col vec -1, 1
 template <typename T1, typename T2>
-struct mat_mul_return_type<T1, T2, require_eigen_matrix_t<T1>,
-                           require_eigen_col_vector_t<T2>> {
-  using type = std::decay_t<T2>;
-};
-
-// row vec and mat is row vec 1, -1
-template <typename T1, typename T2>
-struct mat_mul_return_type<T1, T2, require_eigen_row_vector_t<T1>,
-                           require_eigen_matrix_t<T2>> {
-  using type = std::decay_t<T1>;
-};
-
-// row vec and col vec is arithmetic
-template <typename T1, typename T2>
-struct mat_mul_return_type<T1, T2, require_eigen_row_vector_t<T1>,
-                           require_eigen_col_vector_t<T2>> {
-  using type = value_type_t<T1>;
-};
-
-//  col vec and row vec is matrix -1, -1
-template <typename T1, typename T2>
-struct mat_mul_return_type<T1, T2, require_eigen_col_vector_t<T1>,
-                           require_eigen_row_vector_t<T2>> {
-  using type = Eigen::Matrix<value_type_t<T1>, -1, -1>;
+struct mat_mul_return_type<T1, T2, require_any_eigen_t<T1, T2>> {
+  using type = std::result_of_t<mult_invoker(T1, T2)>;
 };
 // helper alias
 template <typename T1, typename T2>
@@ -261,9 +239,6 @@ inline var_value<internal::mat_mul_return_type_t<T1, T2>> operator*(
 template <typename T, typename Arith, require_vt_arithmetic<Arith>...>
 inline var_value<internal::mat_mul_return_type_t<T, Arith>> operator*(
     const var_value<T>& a, const Arith& b) {
-  if (is_all_equal(b, 1.0)) {
-    return a;
-  }
   using mat_return = internal::mat_mul_return_type_t<T, Arith>;
   return {
       new internal::multiply_vari<mat_return, vari_value<T>, Arith>(a.vi_, b)};
@@ -284,9 +259,6 @@ inline var_value<internal::mat_mul_return_type_t<T, Arith>> operator*(
 template <typename T, typename Arith, require_vt_arithmetic<Arith>...>
 inline var_value<internal::mat_mul_return_type_t<Arith, T>> operator*(
     const Arith& a, const var_value<T>& b) {
-  if (is_all_equal(a, 1.0)) {
-    return b;
-  }
   using mat_return = internal::mat_mul_return_type_t<Arith, T>;
   return {
       new internal::multiply_vari<mat_return, Arith, vari_value<T>>(a, b.vi_)};

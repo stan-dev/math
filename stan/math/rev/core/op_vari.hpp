@@ -165,12 +165,11 @@ class op_vari : public vari_value<T> {
    *  and for Eigen matrices of doubles allocates the mem for it on our stack,
    *   then constructs and fills the map.
    */
-  op_vari(T val, Types... args)
+  op_vari(const T& val, Types... args)
       : vari_value<T>(val),
         dbl_mem_(ChainableStack::instance_->memalloc_.alloc_array<double*>(
             internal::op_vari_count_dbl(0, args...))),
-        vi_(internal::make_op_vari_tuple(dbl_mem_,
-                                         std::forward<Types>(args)...)) {}
+        vi_(internal::make_op_vari_tuple(dbl_mem_, args...)) {}
 };
 
 }  // namespace math
