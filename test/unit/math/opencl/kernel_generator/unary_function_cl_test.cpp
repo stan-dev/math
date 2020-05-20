@@ -124,7 +124,7 @@ TEST(KernelGenerator, log1m_exp_test) {
                                                                           \
     Eigen::Matrix<bool, -1, -1> res = stan::math::from_matrix_cl(res_cl); \
     Eigen::Matrix<bool, -1, -1> correct = fun(m1.array());                \
-    EXPECT_TYPED_MATRIX_EQ(correct, res, bool);                               \
+    EXPECT_TYPED_MATRIX_EQ(correct, res, bool);                           \
   }
 
 TEST_CLASSIFICATION_FUNCTION(isfinite)
