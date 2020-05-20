@@ -38,7 +38,7 @@
     EXPECT_EQ(A_eval.rows(), B_eval.rows());        \
     EXPECT_EQ(A_eval.cols(), B_eval.cols());        \
     for (int i = 0; i < A_eval.size(); i++)         \
-      EXPECT_FLOAT_EQ(A_eval(i), B_eval(i), DELTA); \
+      EXPECT_NEAR(A_eval(i), B_eval(i), DELTA); \
   }
 
 #define EXPECT_THROW_MSG_WITH_COUNT(expr, T_e, msg, count) \
