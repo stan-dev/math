@@ -58,9 +58,10 @@ struct build_y_adj<T, require_std_vector_t<T>> {
    */
   template <typename VariType, size_t size>
   static inline T apply(VariType& y_vi, const std::array<int, size>& M) {
-    T y_adj(M[0]);
-    for (size_t m = 0; m < y_adj.size(); ++m) {
-      y_adj[m] = y_vi[m]->adj_;
+    T y_adj;
+    y_adj.reserve(M[0]);
+    for (size_t m = 0; m < M[0]; ++m) {
+      y_adj.emplace_back(y_vi[m]->adj_);
     }
     return y_adj;
   }
@@ -113,9 +114,10 @@ struct compute_dims<Eigen::Matrix<T, R, C>> {
  * @param A std::array to accumulate over.
  * @param i Starting position to begin accumulation for `A`.
  */
-template<typename T, size_t N>
-constexpr size_t compile_time_accumulator(const std::array<T, N> &A, const int i = 0) {
-  return (i < N)? A[i] + compile_time_accumulator(A, i + 1) : size_t(0);
+template <typename T, size_t N>
+constexpr size_t compile_time_accumulator(const std::array<T, N>& A,
+                                          const int i = 0) {
+  return (i < N) ? A[i] + compile_time_accumulator(A, i + 1) : size_t(0);
 }
 
 /**
@@ -139,7 +141,8 @@ struct adj_jac_vari : public vari {
       = std::result_of_t<F(decltype(is_var_), decltype(value_of(Targs()))...)>;
   // Given a parameter pack, count the number that have a var type.
   template <typename... Types>
-  using remaining_vars_ = std::tuple_size<stan::math::var_to_vari_filter_t<std::decay_t<Types>...>>;
+  using remaining_vars_ = std::tuple_size<
+      stan::math::var_to_vari_filter_t<std::decay_t<Types>...>>;
   // enable functions if their primary argument is a var.
   template <size_t TargSize, size_t PargSize>
   using require_arg_var_t = std::enable_if_t<is_var_[TargSize - PargSize - 1]>;
@@ -149,10 +152,10 @@ struct adj_jac_vari : public vari {
       = std::enable_if_t<!is_var_[TargSize - PargSize - 1]>;
 
   /**
-  * For signature (var, Matrix<var>, double, std::vector<var>, var_value<Matrix<double>>)
-  *  we want a tuple like
-  * (vari*, vari_value<Matrix<double>>*, vari**, vari_value<Matrix<double>>*)
-  */
+   * For signature (var, Matrix<var>, double, std::vector<var>,
+   * var_value<Matrix<double>>) we want a tuple like (vari*,
+   * vari_value<Matrix<double>>*, vari**, vari_value<Matrix<double>>*)
+   */
   using x_vis_tuple_ = var_to_vari_filter_t<std::decay_t<Targs>...>;
   using x_vis_size_ = std::tuple_size<x_vis_tuple_>;
 
@@ -161,10 +164,9 @@ struct adj_jac_vari : public vari {
    * the tuple holding pointers to vari that is associated with in input var.
    */
   template <typename... Types>
-  using var_position_
-      = std::integral_constant<size_t, x_vis_size_::value
-                                           - remaining_vars_<std::decay_t<Types>...>::value>;
-
+  using var_position_ = std::integral_constant<
+      size_t,
+      x_vis_size_::value - remaining_vars_<std::decay_t<Types>...>::value>;
 
   /**
    * y_vi will be a pointer for eigen and arithmetic types but a pointer to
@@ -175,13 +177,13 @@ struct adj_jac_vari : public vari {
       = std::conditional_t<is_std_vector<std::decay_t<T>>::value,
                            vari_value<value_type_t<T>>**, vari_value<T>*>;
 
-  F f_; // Function to be invoked
+  F f_;  // Function to be invoked
 
-  x_vis_tuple_ x_vis_; // tuple holding pointers to input are var mem.
+  x_vis_tuple_ x_vis_;  // tuple holding pointers to input are var mem.
   // dimensions of output matrix.
   std::array<int, internal::compute_dims<FReturnType>::value> M_;
 
-  y_vi_type_t<FReturnType> y_vi_; // vari pointer for output.
+  y_vi_type_t<FReturnType> y_vi_;  // vari pointer for output.
 
   /**
    * Initializes is_var_ with true if the scalar type in each argument
@@ -191,7 +193,6 @@ struct adj_jac_vari : public vari {
       : vari(NOT_A_NUMBER),  // The val_ in this vari is unused
         x_vis_(),
         y_vi_(nullptr) {}
-
 
   /**
    * Fill out the x_vis_ argument for each input that is a var.
@@ -303,14 +304,13 @@ struct adj_jac_vari : public vari {
     using vari_type = vari_value<T>;
     using var_type = var_value<T>;
     M_[0] = val_y.size();
-    std::vector<var_type> var_y(M_[0]);
-    y_vi_ = ChainableStack::instance_->memalloc_.alloc_array<vari_type*>(
-        var_y.size());
-    for (size_t m = 0; m < var_y.size(); ++m) {
-      y_vi_[m] = new vari(val_y[m], false);
-      var_y[m].vi_ = y_vi_[m];
+    std::vector<var_type> var_y;
+    var_y.reserve(M_[0]);
+    y_vi_ = ChainableStack::instance_->memalloc_.alloc_array<vari_type*>(M_[0]);
+    for (size_t m = 0; m < M_[0]; ++m) {
+      y_vi_[m] = new vari_type(val_y[m], false);
+      var_y.emplace_back(y_vi_[m]);
     }
-
     return var_y;
   }
 
@@ -358,7 +358,8 @@ struct adj_jac_vari : public vari {
     return build_return_varis_and_vars(res);
   }
 
-  template <typename Mem, typename T, typename... Pargs,
+  template <
+      typename Mem, typename T, typename... Pargs,
       require_not_arg_var_t<sizeof...(Targs), sizeof...(Pargs)>* = nullptr>
   inline void accumulate_adjoints_in_varis(Mem& varis, T&& x, Pargs&&... args) {
     accumulate_adjoints_in_varis(varis, args...);
@@ -382,11 +383,10 @@ struct adj_jac_vari : public vari {
             require_arg_var_t<sizeof...(Targs), sizeof...(Pargs)>* = nullptr>
   inline void accumulate_adjoints_in_varis(Mem& varis, const EigMat& y_adj_jac,
                                            const Pargs&... args) {
-
-   static constexpr size_t position = sizeof...(Targs) - sizeof...(Pargs) - 1;
-   static constexpr size_t ind = compile_time_accumulator(is_var_, position);
-   static constexpr size_t t = x_vis_size_::value - ind;
-   auto&& local_mem = std::get<t>(varis);
+    static constexpr size_t position = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr size_t ind = compile_time_accumulator(is_var_, position);
+    static constexpr size_t t = x_vis_size_::value - ind;
+    auto&& local_mem = std::get<t>(varis);
     local_mem->adj_ += y_adj_jac;
     accumulate_adjoints_in_varis(varis, args...);
   }
@@ -407,7 +407,6 @@ struct adj_jac_vari : public vari {
   inline void accumulate_adjoints_in_varis(Mem& varis,
                                            const std::vector<double>& y_adj_jac,
                                            const Pargs&... args) {
-
     static constexpr size_t position = sizeof...(Targs) - sizeof...(Pargs) - 1;
     static constexpr size_t ind = compile_time_accumulator(is_var_, position);
     static constexpr size_t t = x_vis_size_::value - ind;
@@ -416,7 +415,6 @@ struct adj_jac_vari : public vari {
     }
     accumulate_adjoints_in_varis(varis, args...);
   }
-
 
   /**
    * Accumulate, if necessary, the value of y_adj_jac into the
@@ -433,10 +431,9 @@ struct adj_jac_vari : public vari {
             require_arg_var_t<sizeof...(Targs), sizeof...(Pargs)>* = nullptr>
   inline void accumulate_adjoints_in_varis(Mem& varis, const double& y_adj_jac,
                                            const Pargs&... args) {
-
-   static constexpr size_t position = sizeof...(Targs) - sizeof...(Pargs) - 1;
-   static constexpr size_t ind = compile_time_accumulator(is_var_, position);
-   static constexpr size_t t = x_vis_size_::value - ind;
+    static constexpr size_t position = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr size_t ind = compile_time_accumulator(is_var_, position);
+    static constexpr size_t t = x_vis_size_::value - ind;
     std::get<t>(varis)->adj_ += y_adj_jac;
     accumulate_adjoints_in_varis(varis, args...);
   }
