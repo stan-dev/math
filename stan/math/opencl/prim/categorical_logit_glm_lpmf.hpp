@@ -70,8 +70,11 @@ return_type_t<T_alpha, T_beta> categorical_logit_glm_lpmf(
     return 0;
   }
 
-  const auto& beta_val = value_of_rec(beta);
-  const auto& alpha_val = value_of_rec(alpha);
+  const auto& alpha_ref = to_ref_if<!is_constant<T_alpha>::value>(alpha);
+  const auto& beta_ref = to_ref_if<!is_constant<T_beta>::value>(beta);
+
+  const auto& alpha_val = value_of_rec(alpha_ref);
+  const auto& beta_val = value_of_rec(beta_ref);
 
   const int local_size
       = opencl_kernels::categorical_logit_glm.get_option("LOCAL_SIZE_");
@@ -114,7 +117,8 @@ return_type_t<T_alpha, T_beta> categorical_logit_glm_lpmf(
                  from_matrix_cl(x_cl));
   }
 
-  operands_and_partials<T_alpha, T_beta> ops_partials(alpha, beta);
+  operands_and_partials<decltype(alpha_ref), decltype(beta_ref)> ops_partials(
+      alpha_ref, beta_ref);
   if (!is_constant_all<T_alpha>::value) {
     ops_partials.edge1_.partials_
         = from_matrix_cl(alpha_derivative_cl).colwise().sum();

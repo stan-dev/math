@@ -35,8 +35,8 @@ namespace math {
  * bounds
  * @throw std::invalid_argument if container sizes mismatch.
  */
-template <bool propto, typename T_y, typename T_x,
-          typename T_alpha, typename T_beta, require_eigen_t<T_x>* = nullptr,
+template <bool propto, typename T_y, typename T_x, typename T_alpha,
+          typename T_beta, require_eigen_t<T_x>* = nullptr,
           require_eigen_col_vector_t<T_alpha>* = nullptr,
           require_eigen_matrix_t<T_beta>* = nullptr>
 return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
@@ -59,20 +59,26 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   check_consistent_size(function, "Intercept vector", alpha, N_classes);
   check_size_match(function, "x.cols()", N_attributes, "beta.rows()",
                    beta.rows());
-  check_bounded(function, "categorical outcome out of support", y, 1,
+  const auto& y_ref = to_ref(y);
+  check_bounded(function, "categorical outcome out of support", y_ref, 1,
                 N_classes);
 
   if (size_zero(y) || N_classes == 1) {
     return 0;
   }
-
   if (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
     return 0;
   }
 
-  const auto& x_val = to_ref(value_of_rec(x));
-  const auto& beta_val = to_ref(value_of_rec(beta));
-  const auto& alpha_val = value_of_rec(alpha);
+  const auto& x_ref = to_ref_if<!is_constant<T_x>::value>(x);
+  const auto& alpha_ref = to_ref_if<!is_constant<T_alpha>::value>(alpha);
+  const auto& beta_ref = to_ref_if<!is_constant<T_beta>::value>(beta);
+
+  const auto& x_val
+      = to_ref_if<!is_constant<T_beta>::value>(value_of_rec(x_ref));
+  const auto& alpha_val = value_of_rec(alpha_ref);
+  const auto& beta_val
+      = to_ref_if<!is_constant<T_x>::value>(value_of_rec(beta_ref));
 
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val).transpose();
 
@@ -91,7 +97,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   if (T_x_rows == 1) {
     logp *= N_instances;
   }
-  scalar_seq_view<T_y> y_seq(y);
+  scalar_seq_view<T_y> y_seq(y_ref);
   for (int i = 0; i < N_instances; i++) {
     if (T_x_rows == 1) {
       logp += lin(0, y_seq[i] - 1);
@@ -110,8 +116,9 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   }
 
   // Compute the derivatives.
-  operands_and_partials<T_x, T_alpha, T_beta>
-      ops_partials(x, alpha, beta);
+  operands_and_partials<decltype(x_ref), decltype(alpha_ref),
+                        decltype(beta_ref)>
+      ops_partials(x_ref, alpha_ref, beta_ref);
 
   if (!is_constant_all<T_x>::value) {
     if (T_x_rows == 1) {
@@ -178,8 +185,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   return ops_partials.build(logp);
 }
 
-template <typename T_y, typename T_x, typename T_alpha,
-          typename T_beta>
+template <typename T_y, typename T_x, typename T_alpha, typename T_beta>
 return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
   return categorical_logit_glm_lpmf<false>(y, x, alpha, beta);

@@ -42,9 +42,7 @@ template <bool propto, typename T_y, typename T_x, typename T_beta,
           typename T_cuts, require_eigen_t<T_x>* = nullptr,
           require_all_eigen_col_vector_t<T_beta, T_cuts>* = nullptr>
 return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
-    const T_y& y, const T_x& x,
-    const T_beta& beta,
-    const T_cuts& cuts) {
+    const T_y& y, const T_x& x, const T_beta& beta, const T_cuts& cuts) {
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -52,8 +50,7 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
   using std::exp;
   using std::isfinite;
   constexpr int T_x_rows = T_x::RowsAtCompileTime;
-  using T_partials_return
-      = partials_return_t<T_y, T_x, T_beta, T_cuts>;
+  using T_partials_return = partials_return_t<T_y, T_x, T_beta, T_cuts>;
   typedef typename std::conditional_t<T_x_rows == 1, double, VectorXd>
       T_location;
 
@@ -65,41 +62,47 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
   check_consistent_size(function, "Vector of dependent variables", y,
                         N_instances);
   check_consistent_size(function, "Weight vector", beta, N_attributes);
-  check_bounded(function, "Vector of dependent variables", y, 1, N_classes);
-  check_ordered(function, "Cut-points", cuts);
+  const auto& y_ref = to_ref(y);
+  const auto& cuts_ref = to_ref(cuts);
+  check_bounded(function, "Vector of dependent variables", y_ref, 1, N_classes);
+  check_ordered(function, "Cut-points", cuts_ref);
   if (N_classes > 1) {
     if (N_classes > 2) {
-      check_finite(function, "Final cut-point", cuts[N_classes - 2]);
+      check_finite(function, "Final cut-point", cuts_ref[N_classes - 2]);
     }
-    check_finite(function, "First cut-point", cuts[0]);
+    check_finite(function, "First cut-point", cuts_ref[0]);
   }
 
-  if (size_zero(y, cuts))
+  if (size_zero(y, cuts)){
     return 0;
-
-  if (!include_summand<propto, T_x, T_beta, T_cuts>::value)
+  }
+  if (!include_summand<propto, T_x, T_beta, T_cuts>::value){
     return 0;
+  }
 
-  const auto& x_val = to_ref(value_of_rec(x));
-  const auto& beta_val = value_of_rec(beta);
-  const auto& cuts_val = value_of_rec(cuts);
+  const auto& x_ref = to_ref_if<!is_constant<T_x>::value>(x);
+  const auto& beta_ref = to_ref_if<!is_constant<T_beta>::value>(beta);
 
-  const auto& beta_val_vec = to_ref(as_column_vector_or_scalar(beta_val));
+  const auto& x_val = to_ref_if<!is_constant<T_beta>::value>(value_of_rec(x_ref));
+  const auto& beta_val = value_of_rec(beta_ref);
+  const auto& cuts_val = value_of_rec(cuts_ref);
+
+  const auto& beta_val_vec = to_ref_if<!is_constant<T_x>::value>(as_column_vector_or_scalar(beta_val));
   const auto& cuts_val_vec = to_ref(as_column_vector_or_scalar(cuts_val));
 
-  scalar_seq_view<T_y> y_seq(y);
+  scalar_seq_view<T_y> y_seq(y_ref);
   Array<double, Dynamic, 1> cuts_y1(N_instances), cuts_y2(N_instances);
   for (int i = 0; i < N_instances; i++) {
     int c = y_seq[i];
     if (c != N_classes) {
-      cuts_y1[i] = cuts_val_vec[c - 1];
+      cuts_y1.coeffRef(i) = cuts_val_vec.coeff(c - 1);
     } else {
-      cuts_y1[i] = INFINITY;
+      cuts_y1.coeffRef(i) = INFINITY;
     }
     if (c != 1) {
-      cuts_y2[i] = cuts_val_vec[c - 2];
+      cuts_y2.coeffRef(i) = cuts_val_vec.coeff(c - 2);
     } else {
-      cuts_y2[i] = -INFINITY;
+      cuts_y2.coeffRef(i) = -INFINITY;
     }
   }
 
@@ -141,9 +144,8 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
     }
   }
 
-  operands_and_partials<T_x, T_beta,
-                        T_cuts>
-      ops_partials(x, beta, cuts);
+  operands_and_partials<decltype(x_ref), decltype(beta_ref), decltype(cuts_ref)>
+      ops_partials(x_ref, beta_ref, cuts_ref);
   if (!is_constant_all<T_x, T_beta, T_cuts>::value) {
     Array<double, Dynamic, 1> exp_m_cut1 = exp(-cut1);
     Array<double, Dynamic, 1> exp_m_cut2 = exp(-cut2);
@@ -181,10 +183,10 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
       for (int i = 0; i < N_instances; i++) {
         int c = y_seq[i];
         if (c != N_classes) {
-          ops_partials.edge3_.partials_[c - 1] += d2[i];
+          ops_partials.edge3_.partials_[c - 1] += d2.coeff(i);
         }
         if (c != 1) {
-          ops_partials.edge3_.partials_[c - 2] -= d1[i];
+          ops_partials.edge3_.partials_[c - 2] -= d1.coeff(i);
         }
       }
     }
@@ -192,12 +194,9 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
   return ops_partials.build(logp);
 }
 
-template <typename T_y, typename T_x, typename T_beta,
-          typename T_cuts>
+template <typename T_y, typename T_x, typename T_beta, typename T_cuts>
 return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
-    const T_y& y, const T_x& x,
-    const T_beta& beta,
-    const T_cuts& cuts) {
+    const T_y& y, const T_x& x, const T_beta& beta, const T_cuts& cuts) {
   return ordered_logistic_glm_lpmf<false>(y, x, beta, cuts);
 }
 
