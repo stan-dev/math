@@ -73,21 +73,23 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
     check_finite(function, "First cut-point", cuts_ref[0]);
   }
 
-  if (size_zero(y, cuts)){
+  if (size_zero(y, cuts)) {
     return 0;
   }
-  if (!include_summand<propto, T_x, T_beta, T_cuts>::value){
+  if (!include_summand<propto, T_x, T_beta, T_cuts>::value) {
     return 0;
   }
 
   const auto& x_ref = to_ref_if<!is_constant<T_x>::value>(x);
   const auto& beta_ref = to_ref_if<!is_constant<T_beta>::value>(beta);
 
-  const auto& x_val = to_ref_if<!is_constant<T_beta>::value>(value_of_rec(x_ref));
+  const auto& x_val
+      = to_ref_if<!is_constant<T_beta>::value>(value_of_rec(x_ref));
   const auto& beta_val = value_of_rec(beta_ref);
   const auto& cuts_val = value_of_rec(cuts_ref);
 
-  const auto& beta_val_vec = to_ref_if<!is_constant<T_x>::value>(as_column_vector_or_scalar(beta_val));
+  const auto& beta_val_vec = to_ref_if<!is_constant<T_x>::value>(
+      as_column_vector_or_scalar(beta_val));
   const auto& cuts_val_vec = to_ref(as_column_vector_or_scalar(cuts_val));
 
   scalar_seq_view<T_y> y_seq(y_ref);

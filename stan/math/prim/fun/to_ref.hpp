@@ -44,8 +44,8 @@ inline T to_ref_if(T&& a) {
 }
 
 /**
- * If the condition is true, converts Eigen argument into `Eigen::Ref`. This evaluates expensive
- * expressions.
+ * If the condition is true, converts Eigen argument into `Eigen::Ref`. This
+ * evaluates expensive expressions.
  * @tparam Cond condition
  * @tparam T argument type (Eigen expression)
  * @param a argument

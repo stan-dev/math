@@ -95,14 +95,13 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   const auto& beta_ref = to_ref_if<!is_constant<T_beta>::value>(beta);
   const auto& alpha_ref = to_ref_if<!is_constant<T_alpha>::value>(alpha);
 
-  const auto &beta_val = value_of_rec(beta_ref);
-  const auto &alpha_val = value_of_rec(alpha_ref);
-  const auto &sigma_val = value_of_rec(sigma_ref);
+  const auto& beta_val = value_of_rec(beta_ref);
+  const auto& alpha_val = value_of_rec(alpha_ref);
+  const auto& sigma_val = value_of_rec(sigma_ref);
 
   const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
-  const auto& sigma_val_vec
-      = to_ref(as_column_vector_or_scalar(sigma_val));
+  const auto& sigma_val_vec = to_ref(as_column_vector_or_scalar(sigma_val));
 
   T_scale_val inv_sigma = 1 / as_array_or_scalar(sigma_val_vec);
   Matrix<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma_mat(N);

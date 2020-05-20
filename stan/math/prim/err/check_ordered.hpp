@@ -22,8 +22,7 @@ namespace math {
  *   values, or if any element is <code>NaN</code>.
  */
 template <typename T_y, require_eigen_vector_t<T_y>* = nullptr>
-void check_ordered(const char* function, const char* name,
-                   const T_y& y) {
+void check_ordered(const char* function, const char* name, const T_y& y) {
   for (Eigen::Index n = 1; n < y.size(); n++) {
     if (!(y[n] > y[n - 1])) {
       std::ostringstream msg1;
