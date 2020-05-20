@@ -3,11 +3,12 @@
 #include <gtest/gtest.h>
 
 TEST(MetaTraitsRevScal, var_tuple_filter) {
-  using stan::math::var_value;
   using stan::math::var;
   using stan::math::var_to_vari_filter_t;
+  using stan::math::var_value;
   using stan::math::test::type_name;
-  using checker = var_to_vari_filter_t<var, double, double,
-   Eigen::Matrix<var, -1, -1>, std::vector<var>>;
+  using checker
+      = var_to_vari_filter_t<var, double, double, Eigen::Matrix<var, -1, -1>,
+                             std::vector<var>>;
   std::cout << "\n" << type_name<checker>() << "\n";
 }

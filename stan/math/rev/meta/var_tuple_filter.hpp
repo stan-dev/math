@@ -16,7 +16,8 @@ struct tuple_cat_caller {
 template <template <typename...> class Pred,
           template <typename...> class Filter, typename T>
 using var_filter_helper
-    = std::conditional_t<Pred<std::decay_t<T>>::value, std::tuple<Filter<T>>, std::tuple<>>;
+    = std::conditional_t<Pred<std::decay_t<T>>::value, std::tuple<Filter<T>>,
+                         std::tuple<>>;
 
 template <typename T>
 using var_vari_value_t

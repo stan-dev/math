@@ -34,8 +34,8 @@ struct is_var_value_impl<math::var_value<Args...>> : std::true_type {};
 
 template <typename T>
 struct is_var_value<
-    T, std::enable_if_t<internal::is_var_value_impl<std::decay_t<T>>::value>>  : std::true_type {
-};
+    T, std::enable_if_t<internal::is_var_value_impl<std::decay_t<T>>::value>>
+    : std::true_type {};
 
 namespace internal {
 template <typename T, typename = void>
@@ -60,12 +60,17 @@ struct get_var_vari_value<T, std::enable_if_t<is_var_value<T>::value>> {
 };
 
 template <typename T>
-struct is_eigen_var : bool_constant<math::conjunction<is_eigen<T>, is_var_value<scalar_type_t<T>>>::value> {};
+struct is_eigen_var
+    : bool_constant<math::conjunction<is_eigen<T>,
+                                      is_var_value<scalar_type_t<T>>>::value> {
+};
 
 // until we figure out how to get inner type for vari_value
 template <typename T>
 struct get_var_vari_value<T, std::enable_if_t<is_eigen_var<T>::value>> {
-  using type = math::vari_value<Eigen::Matrix<typename scalar_type_t<T>::Scalar, T::RowsAtCompileTime, T::ColsAtCompileTime>>;
+  using type = math::vari_value<
+      Eigen::Matrix<typename scalar_type_t<T>::Scalar, T::RowsAtCompileTime,
+                    T::ColsAtCompileTime>>;
 };
 
 template <typename T>
