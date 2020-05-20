@@ -3,15 +3,22 @@ name: Math - Windows with RTools 3.5
 on:
   push:
     branches: [ develop ]
+    paths-ignore:
+      - 'doygen/**'
+      - 'hooks/**'
+      - 'licenses/**'
+      - 'LICENSE.md'
+      - 'README.md'
+      - 'RELEASE-NOTES.txt'
   pull_request:
     branches: [ develop ]
-  paths-ignore:
-    - 'doygen/**'
-    - 'hooks/**'
-    - 'licenses/**'
-    - 'LICENSE.md'
-    - 'README.md'
-    - 'RELEASE-NOTES.txt'
+    paths-ignore:
+      - 'doygen/**'
+      - 'hooks/**'
+      - 'licenses/**'
+      - 'LICENSE.md'
+      - 'README.md'
+      - 'RELEASE-NOTES.txt'
 jobs:
   prim:
     name: prim tests
