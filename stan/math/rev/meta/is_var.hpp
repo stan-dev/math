@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -19,7 +20,7 @@ namespace internal {
 /** \ingroup type_trait
  * This underlying implementation is used when the type is not an std vector.
  */
-template <typename T>
+template <typename... Args>
 struct is_var_value_impl : std::false_type {};
 
 /** \ingroup type_trait
@@ -33,7 +34,7 @@ struct is_var_value_impl<math::var_value<Args...>> : std::true_type {};
 
 template <typename T>
 struct is_var_value<
-    T, std::enable_if_t<internal::is_var_value_impl<std::decay_t<T>>::value>> {
+    T, std::enable_if_t<internal::is_var_value_impl<std::decay_t<T>>::value>>  : std::true_type {
 };
 
 namespace internal {
@@ -56,6 +57,15 @@ struct get_var_vari_value {
 template <typename T>
 struct get_var_vari_value<T, std::enable_if_t<is_var_value<T>::value>> {
   using type = typename std::decay_t<T>::vari_type;
+};
+
+template <typename T>
+struct is_eigen_var : bool_constant<math::conjunction<is_eigen<T>, is_var_value<scalar_type_t<T>>>::value> {};
+
+// until we figure out how to get inner type for vari_value
+template <typename T>
+struct get_var_vari_value<T, std::enable_if_t<is_eigen_var<T>::value>> {
+  using type = math::vari_value<Eigen::Matrix<typename scalar_type_t<T>::Scalar, T::RowsAtCompileTime, T::ColsAtCompileTime>>;
 };
 
 template <typename T>

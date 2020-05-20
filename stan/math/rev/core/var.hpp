@@ -290,9 +290,20 @@ class var_value {
     }
     return os << v.val();
   }
+
+  template <int R, int C>
+  operator Eigen::Matrix<var_value<double>, R, C>();
 };
 
 using var = var_value<double>;
+
+template <typename T>
+template <int R, int C>
+var_value<T>::operator Eigen::Matrix<var_value<double>, R, C>() {
+  Eigen::Matrix<var, R, C> x(this->val());
+  x.adj() = this->adj();
+  return x;
+}
 
 }  // namespace math
 }  // namespace stan

@@ -18,27 +18,35 @@ namespace stan {
 namespace math {
 namespace internal {
 
+/**
+ * Place the data for the y_adj_ into the appropriate container.
+ */
 template <typename T, typename = void>
 struct build_y_adj;
 
+/**
+ * Specialization returns the real adjoint value for arithmetic and eigen
+ * types. Since `vari_value<Eigen>`` holds the dimensions we don't need M.
+ */
 template <typename T>
 struct build_y_adj<T,
                    require_t<disjunction<std::is_arithmetic<T>, is_eigen<T>>>> {
   /**
-   * Store the adjoint in y_vi[0] in y_adj
+   * Retreive the adjoints for y_adj_
    *
    * @tparam size dimensionality of M
    * @param[in] y_vi pointer to pointer to vari
-   * @param[in] M shape of y_adj
-   * @param[out] y_adj reference to variable where adjoint is to be stored
+   * @param[in] M shape of y_adj (not used in this specialization)
    */
   template <typename VariType, size_t size>
-  static inline auto operator()(VariType& y_vi,
-                                const std::array<int, size>& M) {
+  static inline auto& apply(VariType&& y_vi, const std::array<int, size>& M) {
     return y_vi->adj_;
   }
 };
 
+/**
+ * Specialization returns the real adjoint value for std vector return types.
+ */
 template <typename T>
 struct build_y_adj<T, require_std_vector_t<T>> {
   /**
@@ -47,14 +55,14 @@ struct build_y_adj<T, require_std_vector_t<T>> {
    * @tparam size dimensionality of M
    * @param[in] y_vi pointer to pointers to varis
    * @param[in] M shape of y_adj
-   * @param[out] y_adj reference to std::vector where adjoints are to be stored
    */
   template <typename VariType, size_t size>
-  static inline T operator()(VariType& y_vi, const std::array<int, size>& M) {
+  static inline T apply(VariType& y_vi, const std::array<int, size>& M) {
     T y_adj(M[0]);
     for (size_t m = 0; m < y_adj.size(); ++m) {
       y_adj.push_back(y_vi[m]->adj_);
     }
+    return y_adj;
   }
 };
 
@@ -98,62 +106,17 @@ struct compute_dims<Eigen::Matrix<T, R, C>> {
 };
 }  // namespace internal
 
-namespace internal {
-
-// arithmetic values are a no-op
-template <typename Mem, typename Arith, require_st_arithmetic<Arith>* = nullptr>
-void fill_adj_jac(Mem& mem, Arith&& x) {}
-
-// var_value
-template <typename Mem, typename VarValue,
-          require_var_value_t<VarValue>* = nullptr>
-void fill_adj_jac(Mem& mem, VarValue&& x) {
-  using vari_type = get_var_vari_value_t<VarValue>;
-  mem = ChainableStack::instance_->memalloc_.alloc_array<vari_type>(1);
-  save_varis(mem, x);
+/**
+ * Compile time accumulator for std::arrays
+ * @tparam T type held in the std::array.
+ * @tparam N size in the std::array.
+ * @param A std::array to accumulate over.
+ * @param i Starting position to begin accumulation for `A`.
+ */
+template<typename T, size_t N>
+constexpr size_t compile_time_accumulator(const std::array<T, N> &A, const int i = 0) {
+  return (i < N)? A[i] + compile_time_accumulator(A, i + 1) : size_t(0);
 }
-// std::vector<container> assumes not ragged
-template <typename Mem, typename Vec,
-          require_std_vector_vt<is_container, Vec>* = nullptr>
-void fill_adj_jac(Mem& mem, Vec&& x) {
-  using vari_type = get_var_vari_value_t<scalar_type_t<Vec>>;
-  mem = ChainableStack::instance_->memalloc_.alloc_array<vari_type>(
-      x.size() * x[0].size());
-  save_varis(mem, x);
-}
-
-// std::vector<var_value>
-template <typename Mem, typename Vec,
-          require_std_vector_vt<is_var_value, Vec>* = nullptr>
-void fill_adj_jac(Mem& mem, Vec&& x) {
-  using vari_type = get_var_vari_value_t<value_type_t<Vec>>;
-  mem = ChainableStack::instance_->memalloc_.alloc_array<vari_type>(x.size());
-  save_varis(mem, x);
-}
-// Eigen
-template <typename Mem, typename EigMat, require_eigen_t<EigMat>* = nullptr>
-void fill_adj_jac(Mem& mem, EigMat&& x) {
-  using vari_type = get_var_vari_value_t<value_type_t<EigMat>>;
-  mem = ChainableStack::instance_->memalloc_.alloc_array<vari_type>(x.size());
-  save_varis(mem, x);
-}
-
-template <typename Tuple, size_t J, size_t... I, typename T, typename... Types>
-void fill_adj_jac_tuple_impl(Tuple& mem,
-                             std::index_sequence<J, I...> /* ignore */, T&& x,
-                             Types&&... args) {
-  fill_adj_jac(std::get<J>(mem), std::forward<T>(x));
-  fill_adj_jac_tuple_impl(mem, std::index_sequence<I...>{}, args...);
-}
-
-template <typename Tuple, typename... Types>
-void fill_adj_jac_tuple(Tuple& mem, Types&&... args) {
-  auto positions_vec = conditional_sequence(is_vari_value<double>{},
-                                            std::index_sequence<0>{}, args...);
-  return fill_adj_jac_tuple_impl(mem, positions_vec, args...);
-}
-
-}  // namespace internal
 
 /**
  * adj_jac_vari interfaces a user supplied functor  with the reverse mode
@@ -169,27 +132,56 @@ void fill_adj_jac_tuple(Tuple& mem, Types&&... args) {
  */
 template <typename F, typename... Targs>
 struct adj_jac_vari : public vari {
+  // holds whether each input type held a vari_value
   static constexpr std::array<bool, sizeof...(Targs)> is_var_{
-      {is_var<scalar_type_t<Targs>>::value...}};
+      {is_var_value<scalar_type_t<Targs>>::value...}};
   using FReturnType
       = std::result_of_t<F(decltype(is_var_), decltype(value_of(Targs()))...)>;
+  // Given a parameter pack, count the number that have a var type.
+  template <typename... Types>
+  using remaining_vars_ = std::tuple_size<stan::math::var_to_vari_filter_t<std::decay_t<Types>...>>;
+  // enable functions if their primary argument is a var.
+  template <size_t TargSize, size_t PargSize>
+  using require_arg_var_t = std::enable_if_t<is_var_[TargSize - PargSize - 1]>;
+  template <size_t TargSize, size_t PargSize>
+  // enable functions if their primary argument is not a var.
+  using require_not_arg_var_t
+      = std::enable_if_t<!is_var_[TargSize - PargSize - 1]>;
 
-  F f_;
   /**
-   * For signature (var, Matrix<var>, double, var_value<Matrix<double>>)
-   *  we want a tuple like
-   * (vari*, vari**, vari_value<Matrix<double>>)
+  * For signature (var, Matrix<var>, double, std::vector<var>, var_value<Matrix<double>>)
+  *  we want a tuple like
+  * (vari*, vari_value<Matrix<double>>*, vari**, vari_value<Matrix<double>>*)
+  */
+  using x_vis_tuple_ = var_to_vari_filter_t<std::decay_t<Targs>...>;
+  using x_vis_size_ = std::tuple_size<x_vis_tuple_>;
+
+  /**
+   * Given the stored vari types, calculate the position of the element in
+   * the tuple holding pointers to vari that is associated with in input var.
    */
-  var_to_vari_filter_t<Targs...> x_vis_;
-  std::array<int, internal::compute_dims<FReturnType>::value> M_;
-  template <typename T>
-  using is_arith_or_vec = disjunction<std::is_arithmetic<std::decay_t<T>>,
-                                      is_std_vector<std::decay_t<T>>>;
+  template <typename... Types>
+  using var_position_
+      = std::integral_constant<size_t, x_vis_size_::value
+                                           - remaining_vars_<std::decay_t<Types>...>::value>;
+
+
+  /**
+   * y_vi will be a pointer for eigen and arithmetic types but a pointer to
+   * pointers for std::vectors.
+   */
   template <typename T>
   using y_vi_type_t
-      = std::conditional_t<is_arith_or_vec<T>::value,
-                           var_value<value_type_t<T>>**, var_value<T>*>;
-  y_vi_type_t<FReturnType> y_vi_;
+      = std::conditional_t<is_std_vector<std::decay_t<T>>::value,
+                           vari_value<value_type_t<T>>**, vari_value<T>*>;
+
+  F f_; // Function to be invoked
+
+  x_vis_tuple_ x_vis_; // tuple holding pointers to input are var mem.
+  // dimensions of output matrix.
+  std::array<int, internal::compute_dims<FReturnType>::value> M_;
+
+  y_vi_type_t<FReturnType> y_vi_; // vari pointer for output.
 
   /**
    * Initializes is_var_ with true if the scalar type in each argument
@@ -200,6 +192,90 @@ struct adj_jac_vari : public vari {
         x_vis_(),
         y_vi_(nullptr) {}
 
+
+  /**
+   * Fill out the x_vis_ argument for each input that is a var.
+   */
+  template <typename Mem>
+  void fill_adj_jac(Mem&) {}
+  /**
+   * Specialization that is a no-op for arithmetic class argument types.
+   * @tparam Mem tuple of vari pointers associated with the adjoint if it's
+   * was originally a vari type.
+   * @tparam Arith An arithmetic type.
+   * @tparam Pargs parameter pack passed along recursivly.
+   * @param mem tuple of vari pointers.
+   * @param x Arithmetic.
+   * @param args forwarded to recursive calls.
+   */
+  template <typename Mem, typename Arith, typename... Pargs,
+            require_st_arithmetic<Arith>* = nullptr>
+  void fill_adj_jac(Mem& mem, Arith&& x, Pargs&&... args) {
+    fill_adj_jac(mem, args...);
+  }
+
+  /**
+   * Specialization for `var_value` types.
+   * @tparam Mem tuple of vari pointers associated with the adjoint
+   * @tparam VarValue Type A `var_value<T>`.
+   * @tparam Pargs parameter pack passed along recursivly.
+   * @param mem tuple of vari pointers.
+   * @param x var_value<T> type.
+   * @param args forwarded to recursive calls.
+   */
+  template <typename Mem, typename VarValue, typename... Pargs,
+            require_var_value_t<VarValue>* = nullptr>
+  void fill_adj_jac(Mem& mem, VarValue&& x, Pargs&&... args) {
+    using ::stan::internal::get_var_vari_value_t;
+    using vari_type = get_var_vari_value_t<VarValue>;
+    static constexpr size_t t = var_position_<VarValue, Pargs...>::value;
+    std::get<t>(mem)
+        = ChainableStack::instance_->memalloc_.alloc_array<vari_type>(1);
+    std::get<t>(mem) = x.vi_;
+    fill_adj_jac(mem, args...);
+  }
+  // std::vector<container> assumes not ragged
+  template <typename Mem, typename Vec, typename... Pargs,
+            require_std_vector_vt<is_container, Vec>* = nullptr>
+  void fill_adj_jac(Mem& mem, Vec&& x, Pargs&&... args) {
+    using ::stan::internal::get_var_vari_value_t;
+    using vari_type = get_var_vari_value_t<scalar_type_t<Vec>>;
+    static constexpr size_t t = var_position_<Vec, Pargs...>::value;
+    std::get<t>(mem)
+        = ChainableStack::instance_->memalloc_.alloc_array<vari_type>(
+            x.size() * x[0].size());
+    save_varis(std::get<t>(mem), x);
+    fill_adj_jac(mem, args...);
+  }
+
+  // std::vector<var_value>
+  template <typename Mem, typename Vec, typename... Pargs,
+            require_std_vector_vt<is_var_value, Vec>* = nullptr>
+  void fill_adj_jac(Mem& mem, Vec&& x, Pargs&&... args) {
+    using ::stan::internal::get_var_vari_value_t;
+    using vari_type = get_var_vari_value_t<value_type_t<Vec>>;
+    static constexpr size_t t = var_position_<Vec, Pargs...>::value;
+    std::get<t>(mem)
+        = ChainableStack::instance_->memalloc_.alloc_array<vari_type*>(
+            x.size());
+    auto&& inner_mem = std::get<t>(mem);
+    for (int i = 0; i < x.size(); ++i) {
+      inner_mem[i] = x[i].vi_;
+    }
+    fill_adj_jac(mem, args...);
+  }
+  // Eigen
+  template <typename Mem, typename EigMat, typename... Pargs,
+            require_eigen_vt<is_var_value, EigMat>* = nullptr>
+  void fill_adj_jac(Mem& mem, EigMat&& x, Pargs&&... args) {
+    using ::stan::internal::get_var_vari_value_t;
+    using vari_type = get_var_vari_value_t<EigMat>;
+    static constexpr size_t t = var_position_<EigMat, Pargs...>::value;
+    auto&& local_mem = std::get<t>(mem);
+    local_mem = new vari_type(x.val().eval());
+    local_mem->adj_ = x.adj().eval();
+    fill_adj_jac(mem, args...);
+  }
   /**
    * Return a var with a new vari holding the given value
    *
@@ -210,9 +286,8 @@ struct adj_jac_vari : public vari {
   inline auto build_return_varis_and_vars(const T& val_y) {
     using vari_type = vari_value<T>;
     using var_type = var_value<T>;
-    y_vi_ = ChainableStack::instance_->memalloc_.alloc_array<vari_type*>(1);
-    y_vi_[0] = new vari_type(val_y, false);
-    return var_type(y_vi_[0]);
+    y_vi_ = new vari_type(val_y);
+    return var_type(y_vi_);
   }
 
   /**
@@ -233,7 +308,7 @@ struct adj_jac_vari : public vari {
         var_y.size());
     for (size_t m = 0; m < var_y.size(); ++m) {
       y_vi_[m] = new vari(val_y[m], false);
-      var_y.emplace_back(var_type(y_vi_[m]));
+      var_y.push_back(y_vi_[m]);
     }
 
     return var_y;
@@ -251,12 +326,12 @@ struct adj_jac_vari : public vari {
    */
   template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
   inline auto build_return_varis_and_vars(EigMat&& val_y) {
-    using var_type = var_value<Eigen::Matrix<double, R, C>>;
-    using vari_type = vari_value<Eigen::Matrix<double, R, C>>;
+    using eig_type = typename std::decay_t<EigMat>::PlainObject;
+    using var_type = var_value<eig_type>;
+    using vari_type = vari_value<eig_type>;
     M_[0] = val_y.rows();
     M_[1] = val_y.cols();
-    y_vi_ = ChainableStack::instance_->memalloc_.alloc_array<vari_type*>(1);
-    y_vi_ = new vari_type(std::forward<EigMat>(val_y));
+    y_vi_ = new vari_type(val_y);
     return var_type(y_vi_);
   }
 
@@ -278,10 +353,16 @@ struct adj_jac_vari : public vari {
    * @return Output of f_ as vars
    */
   inline auto operator()(const Targs&... args) {
-    fill_adj_jac_tuple(x_vis_, args...);
-    return build_return_varis_and_vars(f_(is_var_, value_of(args)...));
+    fill_adj_jac(x_vis_, args...);
+    auto res = f_(is_var_, value_of(args)...);
+    return build_return_varis_and_vars(res);
   }
 
+  template <typename Mem, typename T, typename... Pargs,
+      require_not_arg_var_t<sizeof...(Targs), sizeof...(Pargs)>* = nullptr>
+  inline void accumulate_adjoints_in_varis(Mem& varis, T&& x, Pargs&&... args) {
+    accumulate_adjoints_in_varis(varis, args...);
+  }
   /**
    * Accumulate, if necessary, the values of y_adj_jac into the
    * adjoints of the varis pointed to by the appropriate elements
@@ -296,17 +377,17 @@ struct adj_jac_vari : public vari {
    * @param args the rest of the arguments (that will be iterated through
    * recursively)
    */
-  template <int R, int C, typename... Pargs>
-  inline void accumulate_adjoints_in_varis(
-      vari** varis, const Eigen::Matrix<double, R, C>& y_adj_jac,
-      const Pargs&... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
-    if (is_var_[t]) {
-      for (int n = 0; n < y_adj_jac.size(); ++n) {
-        varis[n]->adj_ += y_adj_jac(n);
-      }
-      varis += y_adj_jac.size();
-    }
+  template <typename Mem, typename EigMat, typename... Pargs,
+            require_eigen_t<EigMat>* = nullptr,
+            require_arg_var_t<sizeof...(Targs), sizeof...(Pargs)>* = nullptr>
+  inline void accumulate_adjoints_in_varis(Mem& varis, const EigMat& y_adj_jac,
+                                           const Pargs&... args) {
+
+   static constexpr size_t position = sizeof...(Targs) - sizeof...(Pargs) - 1;
+   static constexpr size_t ind = compile_time_accumulator(is_var_, position);
+   static constexpr size_t t = x_vis_size_::value - ind;
+   auto&& local_mem = std::get<t>(varis);
+    local_mem->adj_ += y_adj_jac;
     accumulate_adjoints_in_varis(varis, args...);
   }
 
@@ -321,36 +402,21 @@ struct adj_jac_vari : public vari {
    * @param args the rest of the arguments (that will be iterated through
    * recursively)
    */
-  template <typename... Pargs>
-  inline void accumulate_adjoints_in_varis(vari** varis,
+  template <typename Mem, typename... Pargs,
+            require_arg_var_t<sizeof...(Targs), sizeof...(Pargs)>* = nullptr>
+  inline void accumulate_adjoints_in_varis(Mem& varis,
                                            const std::vector<double>& y_adj_jac,
                                            const Pargs&... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
-    if (is_var_[t]) {
-      for (int n = 0; n < y_adj_jac.size(); ++n) {
-        varis[n]->adj_ += y_adj_jac[n];
-      }
-      varis += y_adj_jac.size();
+
+    static constexpr size_t position = sizeof...(Targs) - sizeof...(Pargs) - 1;
+    static constexpr size_t ind = compile_time_accumulator(is_var_, position);
+    static constexpr size_t t = x_vis_size_::value - ind;
+    for (int n = 0; n < y_adj_jac.size(); ++n) {
+      std::get<t>(varis)[n]->adj_ += y_adj_jac[n];
     }
-
     accumulate_adjoints_in_varis(varis, args...);
   }
 
-  /**
-   * Recursively call accumulate_adjoints_in_varis with args. There are no
-   * adjoints to accumulate for std::vector<int> arguments.
-   *
-   * @tparam Pargs Types of the rest of adjoints to accumulate
-   * @param y_adj_jac ignored
-   * @param args the rest of the arguments (that will be iterated through
-   * recursively)
-   */
-  template <typename... Pargs>
-  inline void accumulate_adjoints_in_varis(vari** varis,
-                                           const std::vector<int>& y_adj_jac,
-                                           const Pargs&... args) {
-    accumulate_adjoints_in_varis(varis, args...);
-  }
 
   /**
    * Accumulate, if necessary, the value of y_adj_jac into the
@@ -363,34 +429,20 @@ struct adj_jac_vari : public vari {
    * @param args the rest of the arguments (that will be iterated through
    * recursively)
    */
-  template <typename... Pargs>
-  inline void accumulate_adjoints_in_varis(vari** varis,
-                                           const double& y_adj_jac,
+  template <typename Mem, typename... Pargs,
+            require_arg_var_t<sizeof...(Targs), sizeof...(Pargs)>* = nullptr>
+  inline void accumulate_adjoints_in_varis(Mem& varis, const double& y_adj_jac,
                                            const Pargs&... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
-    if (is_var_[t]) {
-      varis[0]->adj_ += y_adj_jac;
-      varis++;
-    }
+
+   static constexpr size_t position = sizeof...(Targs) - sizeof...(Pargs) - 1;
+   static constexpr size_t ind = compile_time_accumulator(is_var_, position);
+   static constexpr size_t t = x_vis_size_::value - ind;
+    std::get<t>(varis)->adj_ += y_adj_jac;
     accumulate_adjoints_in_varis(varis, args...);
   }
 
-  /**
-   * Recursively call accumulate_adjoints_in_varis with args. There are no
-   * adjoints to accumulate for int arguments.
-   *
-   * @tparam Pargs Types of the rest of adjoints to accumulate
-   * @param y_adj_jac ignored
-   * @param args the rest of the arguments (that will be iterated through
-   * recursively)
-   */
-  template <typename... Pargs>
-  inline void accumulate_adjoints_in_varis(vari** varis, const int& y_adj_jac,
-                                           const Pargs&... args) {
-    accumulate_adjoints_in_varis(varis, args...);
-  }
-
-  inline void accumulate_adjoints_in_varis(vari**) {}
+  template <typename Mem>
+  inline void accumulate_adjoints_in_varis(Mem&) {}
 
   /**
    * Propagate the adjoints at the output varis (y_vi_) back to the input
@@ -404,8 +456,9 @@ struct adj_jac_vari : public vari {
    * This operation may be called multiple times during the life of the vari
    */
   inline void chain() {
-    auto y_adj_jacs = f_.multiply_adjoint_jacobian(
-        is_var_, internal::build_y_adj<FReturnType>(y_vi_, M_));
+    FReturnType blahh = internal::build_y_adj<FReturnType>::apply(y_vi_, M_);
+    std::cout << "\n chain: " << blahh << "\n";
+    auto y_adj_jacs = f_.multiply_adjoint_jacobian(is_var_, blahh);
 
     apply(
         [&, this](auto&&... args) {

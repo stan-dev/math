@@ -67,10 +67,9 @@ inline int value_of(int x) { return x; }
  * @return std::vector of values
  **/
 template <typename T, require_not_double_or_int_t<T>* = nullptr>
-inline std::vector<typename child_type<T>::type> value_of(
-    const std::vector<T>& x) {
+inline auto value_of(const std::vector<T>& x) {
   size_t x_size = x.size();
-  std::vector<typename child_type<T>::type> result(x_size);
+  std::vector<decltype(value_of(x[0]))> result(x_size);
   for (size_t i = 0; i < x_size; i++) {
     result[i] = value_of(x[i]);
   }
