@@ -134,6 +134,8 @@ jobs:
     - name: Check mingw32-make path
       shell: powershell
       run: Get-Command mingw32-make | Select-Object -ExpandProperty Definition
+    - name: Build libs
+      shell: powershell
       run: mingw32-make -f make/standalone math-libs
     - name: PATH Setup
       shell: powershell
