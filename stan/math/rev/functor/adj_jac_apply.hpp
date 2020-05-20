@@ -306,8 +306,7 @@ struct adj_jac_vari : public vari {
     M_[0] = val_y.size();
     std::vector<var_type> var_y;
     var_y.reserve(M_[0]);
-    y_vi_ = ChainableStack::instance_->memalloc_.alloc_array<vari_type*>(
-        M_[0]);
+    y_vi_ = ChainableStack::instance_->memalloc_.alloc_array<vari_type*>(M_[0]);
     for (size_t m = 0; m < M_[0]; ++m) {
       y_vi_[m] = new vari_type(val_y[m], false);
       var_y.emplace_back(y_vi_[m]);
