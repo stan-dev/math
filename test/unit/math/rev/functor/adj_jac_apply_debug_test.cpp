@@ -42,7 +42,6 @@ struct SinFunctor {
   }
 };
 
-
 TEST(AgradRev, test_vector_sin_multiple_jac) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x1(1), x2(2);
   x1 << 1.0;
@@ -64,7 +63,7 @@ TEST(AgradRev, test_vector_sin_multiple_jac) {
   EXPECT_FLOAT_EQ(x2(1).adj(), 0.5403023058681398);
 
   stan::math::set_zero_all_adjoints();
-  Eigen::Matrix<double, 1 , -1> sum_vec(2);
+  Eigen::Matrix<double, 1, -1> sum_vec(2);
   sum_vec << 1.73, 1.57;
   auto sum_y2 = sum_vec * y2;
   sum_y2.grad();
