@@ -42,7 +42,6 @@ struct SinFunctor {
   }
 };
 
-
 TEST(AgradRev, test_vector_sin_multiple_jac_static_return) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x1(1), x2(2);
   x1 << 1.0;
@@ -72,7 +71,6 @@ TEST(AgradRev, test_vector_sin_multiple_jac_static_return) {
   EXPECT_FLOAT_EQ(x2(0).adj(), 1.73 * -0.4161468365471424);
   EXPECT_FLOAT_EQ(x2(1).adj(), 1.57 * 0.5403023058681398);
 }
-
 
 TEST(AgradRev, test_vector_sin_multiple_jac) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x1(1), x2(2), y1(1), y2(2);
