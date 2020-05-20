@@ -58,7 +58,7 @@ TEST(KernelGenerator, addition_test) {
                                                                        \
     Matrix<res_type, -1, -1> correct                                   \
         = m1.array() operation m2.cast<double>().array();              \
-    EXPECT_MATRIX_NEAR(res, correct, 1e-9);                            \
+    EXPECT_TYPED_MATRIX_NEAR(res, correct, 1e-9, res_type);                            \
   }
 
 BINARY_OPERATION_TEST(subtraction_test, -, double);
@@ -118,7 +118,7 @@ TEST(KernelGenerator, logical_or_test) {
   Matrix<bool, -1, -1> res = stan::math::from_matrix_cl(res_cl);
 
   Matrix<bool, -1, -1> correct = m1 || m2;
-  EXPECT_MATRIX_NEAR(res, correct, 1e-9);
+  EXPECT_TYPED_MATRIX_EQ(res, correct, bool);
 }
 
 TEST(KernelGenerator, logical_and_test) {
@@ -135,7 +135,7 @@ TEST(KernelGenerator, logical_and_test) {
   Matrix<bool, -1, -1> res = stan::math::from_matrix_cl(res_cl);
 
   Matrix<bool, -1, -1> correct = m1 && m2;
-  EXPECT_MATRIX_NEAR(res, correct, 1e-9);
+  EXPECT_TYPED_MATRIX_EQ(res, correct, bool);
 }
 
 TEST(KernelGenerator, binary_operation_multiple_operations) {
