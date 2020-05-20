@@ -6,24 +6,24 @@
 #include <type_traits>
 #include <string>
 
-#define EXPECT_MATRIX_EQ(A, B)                       \
-  {                                                  \
-    const Eigen::MatrixXd& A_eval = A;               \
-    const Eigen::MatrixXd& B_eval = B;               \
-    EXPECT_EQ(A_eval.rows(), B_eval.rows());         \
-    EXPECT_EQ(A_eval.cols(), B_eval.cols());         \
-    for (int i = 0; i < A_eval.size(); i++)          \
-        EXPECT_EQ(A_eval(i), B_eval(i));             \
+#define EXPECT_MATRIX_EQ(A, B)               \
+  {                                          \
+    const Eigen::MatrixXd& A_eval = A;       \
+    const Eigen::MatrixXd& B_eval = B;       \
+    EXPECT_EQ(A_eval.rows(), B_eval.rows()); \
+    EXPECT_EQ(A_eval.cols(), B_eval.cols()); \
+    for (int i = 0; i < A_eval.size(); i++)  \
+      EXPECT_EQ(A_eval(i), B_eval(i));       \
   }
 
-#define EXPECT_MATRIX_FLOAT_EQ(A, B)                 \
-  {                                                  \
-    const Eigen::MatrixXd& A_eval = A;               \
-    const Eigen::MatrixXd& B_eval = B;               \
-    EXPECT_EQ(A_eval.rows(), B_eval.rows());         \
-    EXPECT_EQ(A_eval.cols(), B_eval.cols());         \
-    for (int i = 0; i < A_eval.size(); i++)          \
-        EXPECT_FLOAT_EQ(A_eval(i), B_eval(i));       \
+#define EXPECT_MATRIX_FLOAT_EQ(A, B)         \
+  {                                          \
+    const Eigen::MatrixXd& A_eval = A;       \
+    const Eigen::MatrixXd& B_eval = B;       \
+    EXPECT_EQ(A_eval.rows(), B_eval.rows()); \
+    EXPECT_EQ(A_eval.cols(), B_eval.cols()); \
+    for (int i = 0; i < A_eval.size(); i++)  \
+      EXPECT_FLOAT_EQ(A_eval(i), B_eval(i)); \
   }
 
 #define EXPECT_STD_VECTOR_FLOAT_EQ(A, B) \
@@ -31,14 +31,14 @@
   for (int i = 0; i < A.size(); ++i)     \
     EXPECT_FLOAT_EQ(A[i], B[i]);
 
-#define EXPECT_MATRIX_NEAR(A, B, DELTA)              \
-  {                                                  \
-    const Eigen::MatrixXd& A_eval = A;               \
-    const Eigen::MatrixXd& B_eval = B;               \
-    EXPECT_EQ(A_eval.rows(), B_eval.rows());         \
-    EXPECT_EQ(A_eval.cols(), B_eval.cols());         \
-    for (int i = 0; i < A_eval.size(); i++)          \
-      EXPECT_FLOAT_EQ(A_eval(i), B_eval(i), DELTA);  \
+#define EXPECT_MATRIX_NEAR(A, B, DELTA)             \
+  {                                                 \
+    const Eigen::MatrixXd& A_eval = A;              \
+    const Eigen::MatrixXd& B_eval = B;              \
+    EXPECT_EQ(A_eval.rows(), B_eval.rows());        \
+    EXPECT_EQ(A_eval.cols(), B_eval.cols());        \
+    for (int i = 0; i < A_eval.size(); i++)         \
+      EXPECT_FLOAT_EQ(A_eval(i), B_eval(i), DELTA); \
   }
 
 #define EXPECT_THROW_MSG_WITH_COUNT(expr, T_e, msg, count) \
