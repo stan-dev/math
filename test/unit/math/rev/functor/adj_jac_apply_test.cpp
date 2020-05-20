@@ -160,7 +160,6 @@ TEST(AgradRev, test_vector_sin_multiple_jac) {
   EXPECT_FLOAT_EQ(x2(0).adj(), -0.4161468365471424);
   EXPECT_FLOAT_EQ(x2(1).adj(), 0.5403023058681398);
 
-
   stan::math::set_zero_all_adjoints();
   Eigen::Matrix<double, 1 , -1> sum_vec(2);
   sum_vec << 1.73, 1.57;

@@ -306,7 +306,7 @@ template <typename T>
 template <int R, int C>
 var_value<T>::operator Eigen::Matrix<var_value<double>, R, C>() {
   Eigen::Matrix<var, R, C> x(this->val());
-  x.adj() = this->adj();
+  puts("\nThis was called\n");
   return x;
 }
 
