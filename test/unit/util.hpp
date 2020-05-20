@@ -31,13 +31,13 @@
   for (int i = 0; i < A.size(); ++i)     \
     EXPECT_FLOAT_EQ(A[i], B[i]);
 
-#define EXPECT_MATRIX_NEAR(A, B, DELTA)             \
-  {                                                 \
-    const Eigen::MatrixXd& A_eval = A;              \
-    const Eigen::MatrixXd& B_eval = B;              \
-    EXPECT_EQ(A_eval.rows(), B_eval.rows());        \
-    EXPECT_EQ(A_eval.cols(), B_eval.cols());        \
-    for (int i = 0; i < A_eval.size(); i++)         \
+#define EXPECT_MATRIX_NEAR(A, B, DELTA)         \
+  {                                             \
+    const Eigen::MatrixXd& A_eval = A;          \
+    const Eigen::MatrixXd& B_eval = B;          \
+    EXPECT_EQ(A_eval.rows(), B_eval.rows());    \
+    EXPECT_EQ(A_eval.cols(), B_eval.cols());    \
+    for (int i = 0; i < A_eval.size(); i++)     \
       EXPECT_NEAR(A_eval(i), B_eval(i), DELTA); \
   }
 
