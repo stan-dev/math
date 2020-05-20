@@ -12,8 +12,9 @@
     const auto& B_eval = B.eval();           \
     EXPECT_EQ(A_eval.rows(), B_eval.rows()); \
     EXPECT_EQ(A_eval.cols(), B_eval.cols()); \
-    for (int i = 0; i < A_eval.size(); i++)  \
-      EXPECT_EQ(A_eval(i), B_eval(i));       \
+    for (int i = 0; i < A_eval.rows(); i++)  \
+    for (int j = 0; j < A_eval.cols(); j++)  \
+      EXPECT_FLOAT_EQ(A_eval(i, j), B_eval(i, j)); \
   }
 
 #define EXPECT_MATRIX_FLOAT_EQ(A, B)         \
@@ -22,8 +23,9 @@
     const auto& B_eval = B.eval();           \
     EXPECT_EQ(A_eval.rows(), B_eval.rows()); \
     EXPECT_EQ(A_eval.cols(), B_eval.cols()); \
-    for (int i = 0; i < A_eval.size(); i++)  \
-      EXPECT_FLOAT_EQ(A_eval(i), B_eval(i)); \
+    for (int i = 0; i < A_eval.rows(); i++)  \
+    for (int j = 0; j < A_eval.cols(); j++)  \
+      EXPECT_FLOAT_EQ(A_eval(i, j), B_eval(i, j)); \
   }
 
 #define EXPECT_STD_VECTOR_FLOAT_EQ(A, B) \
@@ -37,8 +39,9 @@
     auto B_eval = B.eval();                     \
     EXPECT_EQ(A_eval.rows(), B_eval.rows());    \
     EXPECT_EQ(A_eval.cols(), B_eval.cols());    \
-    for (int i = 0; i < A_eval.size(); i++)     \
-      EXPECT_NEAR(A_eval(i), B_eval(i), DELTA); \
+    for (int i = 0; i < A_eval.rows(); i++)  \
+    for (int j = 0; j < A_eval.cols(); j++)  \
+      EXPECT_FLOAT_EQ(A_eval(i, j), B_eval(i, j)); \
   }
 
 #define EXPECT_THROW_MSG_WITH_COUNT(expr, T_e, msg, count) \
