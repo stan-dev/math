@@ -29,8 +29,10 @@ using vector_d = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 using row_vector_d = Eigen::Matrix<double, 1, Eigen::Dynamic>;
 
 typedef struct {
-    double fwd_pass_time;
-    double bckwd_pass_time;
+    std::chrono::time_point<std::chrono::steady_clock> fwd_pass_time_start;
+    std::chrono::time_point<std::chrono::steady_clock> fwd_pass_time_stop;
+    std::chrono::time_point<std::chrono::steady_clock> bkcwd_pass_time_start;
+    std::chrono::time_point<std::chrono::steady_clock> bkcwd_pass_time_stop;
 } profile;
 
 using profiles = std::map<int, profile>;

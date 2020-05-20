@@ -39,49 +39,58 @@ void eval(T var1, Types... var2)
 }
 
 namespace internal {
- template <typename... Types> 
+template <typename... Types>
 class start_profiling_vari : public vari {
- int id_;
- profiles& pp;
+  int id_;
+  profiles& pp;
+  private:
+  std::tuple<Types const & ...> m_args;
 
- public:
-  start_profiling_vari(int id, profiles& p, Types... args) : vari(0), pp(p) {
+  public:
+  start_profiling_vari(int id, profiles& p, Types const & ... args) : vari(0), pp(p), m_args{std::forward_as_tuple(args...)} {
       eval(args...);
       id_ = id;
-      std::cout << "Forward pass start: " << id << std::endl;
+      p[id].fwd_pass_time_start = std::chrono::steady_clock::now();
+      // std::cout << "Forward pass start: " << id << std::endl;
 
   }
   void chain() {
-    std::cout << "Reverse pass end: " << id_ << std::endl;
+    eval(m_args);
+    pp[id_].bkcwd_pass_time_stop = std::chrono::steady_clock::now();
+    // std::cout << "Reverse pass end: " << id_ << std::endl;
   }
 };
 
- template <typename... Types> 
+template <typename... Types>
 class stop_profiling_vari : public vari {
- int id_;
- profiles& pp;
- public:
-  stop_profiling_vari(int id, profiles& p, Types... args) : vari(0), pp(p) {
-      eval(args...);
-      id_ = id;
-      std::cout << "Forward pass stop: " << id << std::endl;
+  int id_;
+  profiles& pp;
+  private:
+    std::tuple<Types const & ...> m_args;
+  public:
+    stop_profiling_vari(int id, profiles& p, Types const & ... args) : vari(0), pp(p), m_args{std::forward_as_tuple(args...)} {
+        eval(args...);
+        id_ = id;
+        p[id].fwd_pass_time_stop = std::chrono::steady_clock::now();
+        // std::cout << "Forward pass stop: " << id << std::endl;
 
-  }
+    }
   void chain() {
-    //eval(args..);
-    std::cout << "Reverse pass start: " << id_ << std::endl;
+    eval(m_args);
+    pp[id_].bkcwd_pass_time_start = std::chrono::steady_clock::now();
+    // std::cout << "Reverse pass start: " << id_ << std::endl;
   }
 };
 }  // namespace internal
 
 template <typename... Types> 
 inline var start_profiling(int id, profiles& p, Types... args) {
-  return var(new internal::start_profiling_vari(id, p, args...));
+  return var(new internal::start_profiling_vari<Types...>(id, p, args...));
 }
 
 template <typename... Types> 
-inline var stop_profiling(int id, profiles& p, Types... args) {
-  return var(new internal::stop_profiling_vari(id, p, args...));
+inline var stop_profiling(int id, profiles& p, Types&&... args) {
+  return var(new internal::stop_profiling_vari<Types...>(id, p, args...));
 }
 
 }  // namespace math
