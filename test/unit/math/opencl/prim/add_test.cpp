@@ -213,7 +213,7 @@ TEST(MathMatrixCL, add_value_check) {
   EXPECT_MATRIX_NEAR((v1 + v2), v3, 1E-8);
 
   rv3 = stan::math::from_matrix_cl(rv33fun);
-  EXPECT_MATRIX_NEAR((rv1 + rv2), v3, 1E-8);
+  EXPECT_MATRIX_NEAR((rv1 + rv2), rv3, 1E-8);
 
   m3 = stan::math::from_matrix_cl(m33fun);
   EXPECT_MATRIX_NEAR((m1 + m2), m3, 1E-8);
