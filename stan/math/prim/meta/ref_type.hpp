@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_META_REF_TYPE_HPP
 #define STAN_MATH_PRIM_META_REF_TYPE_HPP
 
+#include <type_traits>
+
 namespace stan {
 
 /**
