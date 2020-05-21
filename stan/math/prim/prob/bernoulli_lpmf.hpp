@@ -29,12 +29,14 @@ namespace math {
 template <bool propto, typename T_n, typename T_prob>
 return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_prob>;
+  using T_theta_ref = ref_type_t<T_prob>;
+  using T_n_ref = ref_type_t<T_n>;
   using std::log;
   static const char* function = "bernoulli_lpmf";
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
-  const auto& n_ref = to_ref(n);
-  const auto& theta_ref = to_ref(theta);
+  const T_n_ref n_ref = to_ref(n);
+  const T_theta_ref theta_ref = to_ref(theta);
   check_bounded(function, "n", n_ref, 0, 1);
   check_bounded(function, "Probability parameter", theta_ref, 0.0, 1.0);
 
@@ -46,13 +48,14 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   }
 
   T_partials_return logp(0.0);
-  operands_and_partials<decltype (theta_ref)> ops_partials(theta_ref);
+  operands_and_partials<T_theta_ref> ops_partials(theta_ref);
 
-  scalar_seq_view<T_n> n_vec(n_ref);
-  scalar_seq_view<T_prob> theta_vec(theta_ref);
+  scalar_seq_view<T_n_ref> n_vec(n_ref);
+  scalar_seq_view<T_theta_ref> theta_vec(theta_ref);
   size_t N = max_size(n, theta);
 
   if (size(theta) == 1) {
+    size_t sum = 0;
     for (size_t n = 0; n < N; n++) {
       sum += value_of(n_vec[n]);
     }
