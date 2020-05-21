@@ -123,6 +123,33 @@ TEST(StanMathOde_ode_bdf_tol, scalar_arg) {
   EXPECT_FLOAT_EQ(a.adj(), -0.50107310888);
 }
 
+TEST(StanMathOde_ode_bdf_tol, scalar_arg_multi_time) {
+  using stan::math::var;
+
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
+  double t0 = 0.0;
+  std::vector<double> ts = {0.45, 1.1};
+
+  var a = 1.5;
+
+  std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> output =
+    stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
+			    nullptr, a);
+
+
+  output[0](0).grad();
+
+  EXPECT_FLOAT_EQ(output[0](0).val(), 0.4165982112);
+  EXPECT_FLOAT_EQ(a.adj(), -0.04352005542);
+
+  stan::math::set_zero_all_adjoints();
+
+  output[1](0).grad();
+
+  EXPECT_FLOAT_EQ(output[1](0).val(), 0.66457668563);
+  EXPECT_FLOAT_EQ(a.adj(), -0.50107310888);
+}
+
 TEST(StanMathOde_ode_bdf_tol, std_vector_arg) {
   using stan::math::var;
 

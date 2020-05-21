@@ -118,6 +118,8 @@ void test_ode_finite_diff_dv(const F& f, const double& t_in,
       stan::math::set_zero_all_adjoints();
     }
   }
+
+  stan::math::recover_memory();
 }
 
 // test integrate_ode with initial positions as vars and parameters as doubles
@@ -161,6 +163,8 @@ void test_ode_finite_diff_vd(const F& f, const double& t_in,
       stan::math::set_zero_all_adjoints();
     }
   }
+
+  stan::math::recover_memory();
 }
 
 // test integrate_ode with initial positions as vars and parameters as vars
@@ -227,6 +231,8 @@ void test_ode_finite_diff_vv(const F& f, const double& t_in,
       stan::math::set_zero_all_adjoints();
     }
   }
+
+  stan::math::recover_memory();
 }
 
 template <typename F, typename T1, typename T2>
