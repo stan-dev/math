@@ -67,15 +67,16 @@ TEST(MathMetaPrim, ref_type_eigen_expression) {
   using stan::ref_type_t;
   Eigen::MatrixXd m(3, 3);
   m << 1, 2, 3, 4, 5, 6, 7, 8, 9;
-  auto a = m*3;
+  auto a = m * 3;
   ref_type_t<decltype(a)> a_ref1 = a;
   ref_type_t<decltype(a)&> a_ref2 = a;
-  ref_type_t<decltype(a)&&> a_ref3 = m*3;
+  ref_type_t<decltype(a)&&> a_ref3 = m * 3;
 
   Eigen::MatrixXd a_eval = a;
   expect_matrix_eq(a_ref1, a_eval);
   expect_matrix_eq(a_ref2, a_eval);
   expect_matrix_eq(a_ref3, a_eval);
 
-  EXPECT_TRUE((std::is_same<plain_type_t<decltype(a)>, std::decay_t<ref_type_t<decltype(a)&&>>>::value));
+  EXPECT_TRUE((std::is_same<plain_type_t<decltype(a)>,
+                            std::decay_t<ref_type_t<decltype(a)&&>>>::value));
 }
