@@ -11,6 +11,7 @@
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <vector>
 #include <cmath>
@@ -105,16 +106,16 @@ neg_binomial_2_log_glm_lpmf(
   }
 
   T_partials_return logp(0);
-  const auto& x_val = value_of_rec(x);
+  const auto& x_val = to_ref(value_of_rec(x));
   const auto& y_val = value_of_rec(y);
   const auto& beta_val = value_of_rec(beta);
   const auto& alpha_val = value_of_rec(alpha);
   const auto& phi_val = value_of_rec(phi);
 
-  const auto& y_val_vec = as_column_vector_or_scalar(y_val);
-  const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
+  const auto& y_val_vec = to_ref(as_column_vector_or_scalar(y_val));
+  const auto& beta_val_vec = to_ref(as_column_vector_or_scalar(beta_val));
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
-  const auto& phi_val_vec = as_column_vector_or_scalar(phi_val);
+  const auto& phi_val_vec = to_ref(as_column_vector_or_scalar(phi_val));
 
   const auto& y_arr = as_array_or_scalar(y_val_vec);
   const auto& phi_arr = as_array_or_scalar(phi_val_vec);
@@ -147,7 +148,7 @@ neg_binomial_2_log_glm_lpmf(
   }
   if (include_summand<propto, T_precision>::value) {
     if (is_vector<T_precision>::value) {
-      scalar_seq_view<decltype(phi_val)> phi_vec(phi_val);
+      scalar_seq_view<decltype(phi_val_vec)> phi_vec(phi_val_vec);
       for (size_t n = 0; n < N_instances; ++n) {
         logp += multiply_log(phi_vec[n], phi_vec[n]) - lgamma(phi_vec[n]);
       }
