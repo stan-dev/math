@@ -85,47 +85,47 @@ class cvodes_integrator_memory : public chainable_alloc {
   SUNLinearSolver LS_;
 
   cvodes_integrator_memory(const F& f,
-			   const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
-			   const T_t0& t0, const std::vector<T_ts>& ts,
-			   const T_Args&... args) :
-    N_(y0.size()),
-    f_(f),
-    y0_(y0),
-    t0_(t0),
-    ts_(ts),
-    args_tuple_(std::make_tuple(args...)),
-    value_of_args_tuple_(std::make_tuple(value_of(args)...)),
-    y_(ts_.size()),
-    cvodes_mem_(nullptr),
-    state(value_of(y0)) {
-    if(N_ > 0) {
+                           const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
+                           const T_t0& t0, const std::vector<T_ts>& ts,
+                           const T_Args&... args)
+      : N_(y0.size()),
+        f_(f),
+        y0_(y0),
+        t0_(t0),
+        ts_(ts),
+        args_tuple_(std::make_tuple(args...)),
+        value_of_args_tuple_(std::make_tuple(value_of(args)...)),
+        y_(ts_.size()),
+        cvodes_mem_(nullptr),
+        state(value_of(y0)) {
+    if (N_ > 0) {
       nv_state_ = N_VMake_Serial(N_, state.data());
       A_ = SUNDenseMatrix(N_, N_);
       LS_ = SUNDenseLinearSolver(nv_state_, A_);
 
       cvodes_mem_ = CVodeCreate(Lmm);
       if (cvodes_mem_ == nullptr) {
-	throw std::runtime_error("CVodeCreate failed to allocate memory");
+        throw std::runtime_error("CVodeCreate failed to allocate memory");
       }
     }
   }
 
   ~cvodes_integrator_memory() {
-    if(N_ > 0) {
+    if (N_ > 0) {
       SUNLinSolFree(LS_);
       SUNMatDestroy(A_);
 
       N_VDestroy_Serial(nv_state_);
 
-      if(cvodes_mem_) {
-	CVodeFree(&cvodes_mem_);
+      if (cvodes_mem_) {
+        CVodeFree(&cvodes_mem_);
       }
     }
   }
 
   friend class cvodes_integrator_vari<Lmm, F, T_y0, T_t0, T_ts, T_Args...>;
 };
-  
+
 /**
  * Integrator interface for CVODES' ODE solvers (Adams & BDF
  * methods).
@@ -233,9 +233,9 @@ class cvodes_integrator_vari : public vari {
   inline void rhs(double t, const double y[], double dy_dt[]) const {
     const Eigen::VectorXd y_vec = Eigen::Map<const Eigen::VectorXd>(y, N_);
 
-    Eigen::VectorXd dy_dt_vec
-        = apply([&](auto&&... args) { return memory->f_(t, y_vec, msgs_, args...); },
-                memory->value_of_args_tuple_);
+    Eigen::VectorXd dy_dt_vec = apply(
+        [&](auto&&... args) { return memory->f_(t, y_vec, msgs_, args...); },
+        memory->value_of_args_tuple_);
 
     check_size_match("cvodes_integrator::rhs", "dy_dt", dy_dt_vec.size(),
                      "states", N_);
@@ -266,9 +266,9 @@ class cvodes_integrator_vari : public vari {
     for (size_t i = 0; i < y_vars.size(); ++i)
       y_vars(i) = new vari(y_vec(i));
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
-        = apply([&](auto&&... args) { return memory->f_(t, y_vars, msgs_, args...); },
-                memory->value_of_args_tuple_);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars = apply(
+        [&](auto&&... args) { return memory->f_(t, y_vars, msgs_, args...); },
+        memory->value_of_args_tuple_);
 
     check_size_match("coupled_ode_system1", "dy_dt", f_y_t_vars.size(),
                      "states", N_);
@@ -303,15 +303,15 @@ class cvodes_integrator_vari : public vari {
     nested_rev_autodiff nested;
 
     auto local_args_tuple = apply(
-				  [&](auto&&... args) {
+        [&](auto&&... args) {
           return std::tuple<decltype(deep_copy_vars(args))...>(
               deep_copy_vars(args)...);
         },
         memory->args_tuple_);
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
-        = apply([&](auto&&... args) { return memory->f_(t, y_vec, msgs_, args...); },
-                local_args_tuple);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars = apply(
+        [&](auto&&... args) { return memory->f_(t, y_vec, msgs_, args...); },
+        local_args_tuple);
 
     check_size_match("coupled_ode_system2", "dy_dt", f_y_t_vars.size(),
                      "states", N_);
@@ -335,8 +335,9 @@ class cvodes_integrator_vari : public vari {
     Eigen::MatrixXd Jfy;
 
     auto f_wrapped = [&](const Eigen::Matrix<var, Eigen::Dynamic, 1>& y) {
-      return apply([&](auto&&... args) { return memory->f_(t, y, msgs_, args...); },
-                   memory->value_of_args_tuple_);
+      return apply(
+          [&](auto&&... args) { return memory->f_(t, y, msgs_, args...); },
+          memory->value_of_args_tuple_);
     };
 
     jacobian(f_wrapped, Eigen::Map<const Eigen::VectorXd>(NV_DATA_S(y), N_), fy,
@@ -362,8 +363,9 @@ class cvodes_integrator_vari : public vari {
     Eigen::MatrixXd Jfy;
 
     auto f_wrapped = [&](const Eigen::Matrix<var, Eigen::Dynamic, 1>& y) {
-      return apply([&](auto&&... args) { return memory->f_(t, y, msgs_, args...); },
-                   memory->value_of_args_tuple_);
+      return apply(
+          [&](auto&&... args) { return memory->f_(t, y, msgs_, args...); },
+          memory->value_of_args_tuple_);
     };
 
     jacobian(f_wrapped, Eigen::Map<const Eigen::VectorXd>(NV_DATA_S(y), N_), fy,
@@ -404,8 +406,8 @@ class cvodes_integrator_vari : public vari {
                          const T_Args&... args)
       : vari(NOT_A_NUMBER),
         N_(y0.size()),
-	returned_(false),
-	memory(NULL),
+        returned_(false),
+        memory(NULL),
         msgs_(msgs),
         relative_tolerance_(relative_tolerance),
         absolute_tolerance_(absolute_tolerance),
@@ -424,9 +426,9 @@ class cvodes_integrator_vari : public vari {
             args_vars_)) {
     const char* fun = "cvodes_integrator::integrate";
 
-    memory = new cvodes_integrator_memory
-      <Lmm, F, T_y0, T_t0, T_ts, T_Args...>(f, y0, t0, ts, args...);
-  
+    memory = new cvodes_integrator_memory<Lmm, F, T_y0, T_t0, T_ts, T_Args...>(
+        f, y0, t0, ts, args...);
+
     save_varis(t0_varis_, t0);
     save_varis(ts_varis_, ts);
     save_varis(y0_varis_, y0);
@@ -454,8 +456,7 @@ class cvodes_integrator_vari : public vari {
     check_positive(fun, "max_num_steps", max_num_steps_);
   }
 
-  ~cvodes_integrator_vari() {
-  }
+  ~cvodes_integrator_vari() {}
 
   /**
    * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
@@ -469,34 +470,36 @@ class cvodes_integrator_vari : public vari {
     const double t0_dbl = value_of(memory->t0_);
     const std::vector<double> ts_dbl = value_of(memory->ts_);
 
-    check_flag_sundials(CVodeInit(memory->cvodes_mem_, &cvodes_integrator_vari::cv_rhs, t0_dbl,
-				  memory->nv_state_),
-			"CVodeInit");
+    check_flag_sundials(
+        CVodeInit(memory->cvodes_mem_, &cvodes_integrator_vari::cv_rhs, t0_dbl,
+                  memory->nv_state_),
+        "CVodeInit");
 
     // Assign pointer to this as user data
     check_flag_sundials(
-			CVodeSetUserData(memory->cvodes_mem_, reinterpret_cast<void*>(this)),
-			"CVodeSetUserData");
+        CVodeSetUserData(memory->cvodes_mem_, reinterpret_cast<void*>(this)),
+        "CVodeSetUserData");
 
-    cvodes_set_options(memory->cvodes_mem_, relative_tolerance_, absolute_tolerance_,
-		       max_num_steps_);
+    cvodes_set_options(memory->cvodes_mem_, relative_tolerance_,
+                       absolute_tolerance_, max_num_steps_);
 
     // for the stiff solvers we need to reserve additional memory
     // and provide a Jacobian function call. new API since 3.0.0:
     // create matrix object and linear solver object; resource
     // (de-)allocation is handled in the cvodes_ode_data
-    check_flag_sundials(CVodeSetLinearSolver(memory->cvodes_mem_, memory->LS_, memory->A_),
-			"CVodeSetLinearSolver");
+    check_flag_sundials(
+        CVodeSetLinearSolver(memory->cvodes_mem_, memory->LS_, memory->A_),
+        "CVodeSetLinearSolver");
 
     check_flag_sundials(
-			CVodeSetJacFn(memory->cvodes_mem_,
-				      &cvodes_integrator_vari::cv_jacobian_states),
-			"CVodeSetJacFn");
+        CVodeSetJacFn(memory->cvodes_mem_,
+                      &cvodes_integrator_vari::cv_jacobian_states),
+        "CVodeSetJacFn");
 
     // initialize forward sensitivity system of CVODES as needed
     if (t0_vars_ + ts_vars_ + y0_vars_ + args_vars_ > 0) {
       check_flag_sundials(CVodeAdjInit(memory->cvodes_mem_, 25, CV_HERMITE),
-			  "CVodeAdjInit");
+                          "CVodeAdjInit");
     }
 
     double t_init = t0_dbl;
@@ -504,16 +507,17 @@ class cvodes_integrator_vari : public vari {
       double t_final = ts_dbl[n];
 
       if (t_final != t_init) {
-	if (t0_vars_ + ts_vars_ + y0_vars_ + args_vars_ > 0) {
-	  int ncheck;
-	  check_flag_sundials(CVodeF(memory->cvodes_mem_, t_final, memory->nv_state_, &t_init,
-				     CV_NORMAL, &ncheck),
-			      "CVodeF");
-	} else {
-	  check_flag_sundials(
-			      CVode(memory->cvodes_mem_, t_final, memory->nv_state_, &t_init, CV_NORMAL),
-			      "CVode");
-	}
+        if (t0_vars_ + ts_vars_ + y0_vars_ + args_vars_ > 0) {
+          int ncheck;
+          check_flag_sundials(
+              CVodeF(memory->cvodes_mem_, t_final, memory->nv_state_, &t_init,
+                     CV_NORMAL, &ncheck),
+              "CVodeF");
+        } else {
+          check_flag_sundials(CVode(memory->cvodes_mem_, t_final,
+                                    memory->nv_state_, &t_init, CV_NORMAL),
+                              "CVode");
+        }
       }
 
       memory->y_[n] = memory->state;
@@ -528,13 +532,13 @@ class cvodes_integrator_vari : public vari {
   virtual void chain() {
     // std::cout << "chain" << std::endl; <-- Good way to verify it's only
     //  being called once
-    if(memory == NULL)
+    if (memory == NULL)
       return;
 
-    if(memory->cvodes_mem_ == NULL)
+    if (memory->cvodes_mem_ == NULL)
       return;
-    
-    if(returned_ == false)
+
+    if (returned_ == false)
       return;
 
     if (t0_vars_ + ts_vars_ + y0_vars_ + args_vars_ == 0) {
@@ -559,25 +563,27 @@ class cvodes_integrator_vari : public vari {
       check_flag_sundials(CVodeCreateB(memory->cvodes_mem_, Lmm, &indexB),
                           "CVodeCreateB");
 
-      check_flag_sundials(
-          CVodeSetUserDataB(memory->cvodes_mem_, indexB, reinterpret_cast<void*>(this)),
-          "CVodeSetUserDataB");
+      check_flag_sundials(CVodeSetUserDataB(memory->cvodes_mem_, indexB,
+                                            reinterpret_cast<void*>(this)),
+                          "CVodeSetUserDataB");
 
       // The ode_rhs_adj_sense functions passed in here cause problems with
       // the autodiff stack (they can cause reallocations of the internal
       // vectors and cause segfaults)
-      check_flag_sundials(CVodeInitB(memory->cvodes_mem_, indexB,
-                                     &cvodes_integrator_vari::cv_rhs_adj_sens,
-                                     value_of(memory->ts_.back()), nv_state_sens),
-                          "CVodeInitB");
+      check_flag_sundials(
+          CVodeInitB(memory->cvodes_mem_, indexB,
+                     &cvodes_integrator_vari::cv_rhs_adj_sens,
+                     value_of(memory->ts_.back()), nv_state_sens),
+          "CVodeInitB");
 
       check_flag_sundials(
           CVodeSStolerancesB(memory->cvodes_mem_, indexB, relative_tolerance_,
                              absolute_tolerance_),
           "CVodeSStolerancesB");
 
-      check_flag_sundials(CVodeSetLinearSolverB(memory->cvodes_mem_, indexB, LSB_, AB_),
-                          "CVodeSetLinearSolverB");
+      check_flag_sundials(
+          CVodeSetLinearSolverB(memory->cvodes_mem_, indexB, LSB_, AB_),
+          "CVodeSetLinearSolverB");
 
       // The same autodiff issue that applies to ode_rhs_adj_sense applies
       // here
@@ -594,12 +600,13 @@ class cvodes_integrator_vari : public vari {
             "CVodeQuadInitB");
 
         check_flag_sundials(
-            CVodeQuadSStolerancesB(memory->cvodes_mem_, indexB, relative_tolerance_,
-                                   absolute_tolerance_),
+            CVodeQuadSStolerancesB(memory->cvodes_mem_, indexB,
+                                   relative_tolerance_, absolute_tolerance_),
             "CVodeQuadSStolerancesB");
 
-        check_flag_sundials(CVodeSetQuadErrConB(memory->cvodes_mem_, indexB, SUNTRUE),
-                            "CVodeSetQuadErrConB");
+        check_flag_sundials(
+            CVodeSetQuadErrConB(memory->cvodes_mem_, indexB, SUNTRUE),
+            "CVodeSetQuadErrConB");
       }
 
       // At every time step, collect the adjoints from the output
@@ -608,9 +615,9 @@ class cvodes_integrator_vari : public vari {
       for (int i = memory->ts_.size() - 1; i >= 0; --i) {
         // Take in the adjoints from all the output variables at this point
         // in time
-	Eigen::VectorXd step_sens = Eigen::VectorXd::Zero(N_);
+        Eigen::VectorXd step_sens = Eigen::VectorXd::Zero(N_);
         for (int j = 0; j < N_; j++) {
-	  //std::cout << "i: " << i << ", j: " << j << std::endl;
+          // std::cout << "i: " << i << ", j: " << j << std::endl;
           state_sens(j) += non_chaining_varis_[i * N_ + j]->adj_;
           step_sens(j) += non_chaining_varis_[i * N_ + j]->adj_;
         }
@@ -618,8 +625,9 @@ class cvodes_integrator_vari : public vari {
         if (ts_vars_ > 0 && i >= 0) {
           ts_varis_[i]->adj_ += apply(
               [&](auto&&... args) {
-		double adj = step_sens.dot(memory->f_(t_init, memory->y_[i], msgs_, args...));
-		//std::cout << "adj: " << adj << ", i: " << i << std::endl;
+                double adj = step_sens.dot(
+                    memory->f_(t_init, memory->y_[i], msgs_, args...));
+                // std::cout << "adj: " << adj << ", i: " << i << std::endl;
                 return adj;
               },
               memory->value_of_args_tuple_);
@@ -631,27 +639,29 @@ class cvodes_integrator_vari : public vari {
               CVodeReInitB(memory->cvodes_mem_, indexB, t_init, nv_state_sens),
               "CVodeReInitB");
 
-	  if(args_vars_ > 0) {
-	    check_flag_sundials(CVodeQuadReInitB(memory->cvodes_mem_, indexB, nv_quad),
-	    			"CVodeQuadReInitB");
-	  }
+          if (args_vars_ > 0) {
+            check_flag_sundials(
+                CVodeQuadReInitB(memory->cvodes_mem_, indexB, nv_quad),
+                "CVodeQuadReInitB");
+          }
 
           check_flag_sundials(CVodeB(memory->cvodes_mem_, t_final, CV_NORMAL),
                               "CVodeB");
 
-	  check_flag_sundials(
-	  		      CVodeGetB(memory->cvodes_mem_, indexB, &t_init, nv_state_sens),
-	  		      "CVodeGetB");
+          check_flag_sundials(
+              CVodeGetB(memory->cvodes_mem_, indexB, &t_init, nv_state_sens),
+              "CVodeGetB");
 
-	  if(args_vars_ > 0) {
-	    check_flag_sundials(CVodeGetQuadB(memory->cvodes_mem_, indexB, &t_init, nv_quad),
-	    		"CVodeGetQuadB");
-	  }
+          if (args_vars_ > 0) {
+            check_flag_sundials(
+                CVodeGetQuadB(memory->cvodes_mem_, indexB, &t_init, nv_quad),
+                "CVodeGetQuadB");
+          }
         }
       }
 
       if (t0_vars_ > 0) {
-	Eigen::VectorXd y0d = value_of(memory->y0_);
+        Eigen::VectorXd y0d = value_of(memory->y0_);
         t0_varis_[0]->adj_ += apply(
             [&](auto&&... args) {
               return -state_sens.dot(memory->f_(t_init, y0d, msgs_, args...));

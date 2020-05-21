@@ -132,10 +132,9 @@ TEST(StanMathOde_ode_bdf_tol, scalar_arg_multi_time) {
 
   var a = 1.5;
 
-  std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> output =
-    stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-			    nullptr, a);
-
+  std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> output
+      = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
+                                nullptr, a);
 
   output[0](0).grad();
 

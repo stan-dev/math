@@ -241,7 +241,8 @@ TEST(StanAgradRevOde_integrate_ode_bdf, time_steps_as_param_AD) {
         res[i][j].grad();
         for (auto k = 0; k < nt; ++k) {
           if (k != i) {
-	    //std::cout << "setup: i = " << i << ", j = " << j << ", k = " << k << std::endl;
+            // std::cout << "setup: i = " << i << ", j = " << j << ", k = " << k
+            // << std::endl;
             EXPECT_FLOAT_EQ(ts[k].adj(), 0.0);
           } else {
             std::vector<double> y0(res_d.begin(), res_d.begin() + ns);
@@ -312,4 +313,3 @@ TEST(StanAgradRevOde_integrate_ode_bdf, t0_as_param_AD) {
   test_ad();
   stan::math::recover_memory();
 }
-
