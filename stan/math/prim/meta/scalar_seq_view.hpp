@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta/plain_type.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
+#include <stan/math/prim/meta/ref_type.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
 #include <type_traits>
 #include <utility>
