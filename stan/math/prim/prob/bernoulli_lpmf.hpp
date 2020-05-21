@@ -31,11 +31,12 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_prob>;
   using std::log;
   static const char* function = "bernoulli_lpmf";
-  check_bounded(function, "n", n, 0, 1);
-  check_finite(function, "Probability parameter", theta);
-  check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
+  const auto& n_ref = to_ref(n);
+  const auto& theta_ref = to_ref(theta);
+  check_bounded(function, "n", n_ref, 0, 1);
+  check_bounded(function, "Probability parameter", theta_ref, 0.0, 1.0);
 
   if (size_zero(n, theta)) {
     return 0.0;
@@ -45,14 +46,13 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   }
 
   T_partials_return logp(0.0);
-  operands_and_partials<T_prob> ops_partials(theta);
+  operands_and_partials<decltype (theta_ref)> ops_partials(theta_ref);
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_prob> theta_vec(theta);
+  scalar_seq_view<T_n> n_vec(n_ref);
+  scalar_seq_view<T_prob> theta_vec(theta_ref);
   size_t N = max_size(n, theta);
 
   if (size(theta) == 1) {
-    size_t sum = 0;
     for (size_t n = 0; n < N; n++) {
       sum += value_of(n_vec[n]);
     }
