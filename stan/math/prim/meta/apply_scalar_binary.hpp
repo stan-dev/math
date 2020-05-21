@@ -78,8 +78,8 @@ struct apply_scalar_binary<T1, T2, require_all_eigen_t<T1, T2>> {
  * scalar to be captured and applied to each element in the Eigen object.
  */
 template <typename T1, typename T2>
-struct apply_scalar_binary<T1, T2, require_eigen_t<T1>,
-                           require_stan_scalar_t<T2>> {
+struct apply_scalar_binary<T1, T2, require_any_eigen_t<T1, T2>,
+                           require_any_stan_scalar_t<T1, T2>> {
   /**
    * Member function for applying a functor to an Eigen object and
    * a scalar, and subsequently returning an Eigen object.
@@ -91,22 +91,17 @@ struct apply_scalar_binary<T1, T2, require_eigen_t<T1>,
    * @param y Scalar input to which operation is applied.
    * @param f functor to apply to Eigen and scalar inputs.
    * @return Eigen object with result of applying functor to inputs.
+   *
+   * Note: The return expresssion needs to be evaluated, otherwise the captured
+   *         function and scalar fall out of scope.
    */
-  template <typename F>
+  template <typename F, typename T1_2 = T1, typename T2_2 = T2,
+            require_eigen_t<T1_2>* = nullptr,
+            require_stan_scalar_t<T2_2>* = nullptr>
   static inline auto apply(const T1& x, const T2& y, const F& f) {
     return x.unaryExpr([&f, &y](const auto& v) { return f(v, y); }).eval();
   }
-};
 
-/**
- * Specialisation for use with one scalar and one Eigen input. Eigen's
- * unaryExpr framework is used for more efficient indexing of both row-
- * and column-major inputs. The unaryExpr framework also allows for the
- * scalar to be captured and applied to each element in the Eigen object.
- */
-template <typename T1, typename T2>
-struct apply_scalar_binary<T1, T2, require_stan_scalar_t<T1>,
-                           require_eigen_t<T2>> {
   /**
    * Member function for applying a functor to a scalar and
    * an Eigen object, and subsequently returning an Eigen object.
@@ -118,8 +113,13 @@ struct apply_scalar_binary<T1, T2, require_stan_scalar_t<T1>,
    * @param y Eigen input to which operation is applied.
    * @param f functor to apply to scalar and Eigen inputs.
    * @return Eigen object with result of applying functor to inputs.
+   *
+   * Note: The return expresssion needs to be evaluated, otherwise the captured
+   *         function and scalar fall out of scope.
    */
-  template <typename F>
+  template <typename F, typename T1_2 = T1, typename T2_2 = T2,
+            require_stan_scalar_t<T1_2>* = nullptr,
+            require_eigen_t<T2_2>* = nullptr>
   static inline auto apply(const T1& x, const T2& y, const F& f) {
     return y.unaryExpr([&f, &x](const auto& v) { return f(x, v); }).eval();
   }
@@ -171,8 +171,9 @@ struct apply_scalar_binary<T1, T2,
  * integers).
  */
 template <typename T1, typename T2>
-struct apply_scalar_binary<T1, T2, require_std_vector_vt<is_stan_scalar, T1>,
-                           require_stan_scalar_t<T2>> {
+struct apply_scalar_binary<T1, T2,
+                           require_any_std_vector_vt<is_stan_scalar, T1, T2>,
+                           require_any_stan_scalar_t<T1, T2>> {
   /**
    * Member function for applying a functor to one (non-nested) std::vector
    * and one scalar, and subsequently returning an std::vector.
@@ -185,7 +186,9 @@ struct apply_scalar_binary<T1, T2, require_std_vector_vt<is_stan_scalar, T1>,
    * @param f functor to apply to std::vector and scalar inputs.
    * @return std::vector with result of applying functor to inputs.
    */
-  template <typename F>
+  template <typename F, typename T1_2 = T1, typename T2_2 = T2,
+            require_std_vector_vt<is_stan_scalar, T1_2>* = nullptr,
+            require_stan_scalar_t<T2_2>* = nullptr>
   static inline auto apply(const T1& x, const T2& y, const F& f) {
     decltype(auto) x_vec = as_column_vector_or_scalar(x);
     using T_return = value_type_t<decltype(f(x[0], y))>;
@@ -194,20 +197,7 @@ struct apply_scalar_binary<T1, T2, require_std_vector_vt<is_stan_scalar, T1>,
         = x_vec.unaryExpr([&f, &y](const auto& v) { return f(v, y); });
     return result;
   }
-};
 
-/**
- * Specialisation for use with one scalar and one (non-nested) std::vector.
- * The std::vector input is mapped to an Eigen column vector and then the
- * result is evaluated directly into the returned std::vector (via Eigen::Map).
- *
- * The returned scalar type is deduced to allow for cases where the input and
- * return scalar types differ (e.g., functions implicitly promoting
- * integers).
- */
-template <typename T1, typename T2>
-struct apply_scalar_binary<T1, T2, require_stan_scalar_t<T1>,
-                           require_std_vector_vt<is_stan_scalar, T2>> {
   /**
    * Member function for applying a functor to one scalar and
    * one (non-nested) std::vector, and subsequently returning an std::vector.
@@ -220,7 +210,9 @@ struct apply_scalar_binary<T1, T2, require_stan_scalar_t<T1>,
    * @param f functor to apply to scalar and std::vector inputs.
    * @return std::vector with result of applying functor to inputs.
    */
-  template <typename F>
+  template <typename F, typename T1_2 = T1, typename T2_2 = T2,
+            require_stan_scalar_t<T1_2>* = nullptr,
+            require_std_vector_vt<is_stan_scalar, T2_2>* = nullptr>
   static inline auto apply(const T1& x, const T2& y, const F& f) {
     decltype(auto) y_vec = as_column_vector_or_scalar(y);
     using T_return = value_type_t<decltype(f(x, y[0]))>;
@@ -240,9 +232,6 @@ struct apply_scalar_binary<T1, T2, require_stan_scalar_t<T1>,
 template <typename T1, typename T2>
 struct apply_scalar_binary<T1, T2,
                            require_all_std_vector_vt<is_container, T1, T2>> {
-  using T1_vt = value_type_t<T1>;
-  using T2_vt = value_type_t<T2>;
-
   /**
    * Member function for applying a functor to two std::vectors of containers,
    * and subsequently returning an std::vector of containers.
@@ -257,6 +246,8 @@ struct apply_scalar_binary<T1, T2,
    */
   template <typename F>
   static inline auto apply(const T1& x, const T2& y, const F& f) {
+    using T1_vt = value_type_t<T1>;
+    using T2_vt = value_type_t<T2>;
     using T_return
         = decltype(apply_scalar_binary<T1_vt, T2_vt>::apply(x[0], y[0], f));
     size_t y_size = y.size();
@@ -274,10 +265,9 @@ struct apply_scalar_binary<T1, T2,
  * integers).
  */
 template <typename T1, typename T2>
-struct apply_scalar_binary<T1, T2, require_std_vector_vt<is_container, T1>,
-                           require_stan_scalar_t<T2>> {
-  using T1_vt = value_type_t<T1>;
-
+struct apply_scalar_binary<T1, T2,
+                           require_any_std_vector_vt<is_container, T1, T2>,
+                           require_any_stan_scalar_t<T1, T2>> {
   /**
    * Member function for applying a functor to an std::vector of containers
    * and a scalar, and subsequently returning an std::vector of containers.
@@ -290,8 +280,11 @@ struct apply_scalar_binary<T1, T2, require_std_vector_vt<is_container, T1>,
    * @param f functor to apply to inputs.
    * @return std::vector with result of applying functor to inputs.
    */
-  template <typename F>
+  template <typename F, typename T1_2 = T1, typename T2_2 = T2,
+            require_std_vector_vt<is_container, T1_2>* = nullptr,
+            require_stan_scalar_t<T2_2>* = nullptr>
   static inline auto apply(const T1& x, const T2& y, const F& f) {
+    using T1_vt = value_type_t<T1>;
     using T_return
         = decltype(apply_scalar_binary<T1_vt, T2>::apply(x[0], y, f));
     size_t x_size = x.size();
@@ -300,18 +293,6 @@ struct apply_scalar_binary<T1, T2, require_std_vector_vt<is_container, T1>,
       result[i] = apply_scalar_binary<T1_vt, T2>::apply(x[i], y, f);
     return result;
   }
-};
-
-/**
- * Specialisation for use with one scalar and one nested container
- * (std::vector). The returned scalar type is deduced to allow for cases where
- * the input and return scalar types differ (e.g., functions implicitly
- * promoting integers).
- */
-template <typename T1, typename T2>
-struct apply_scalar_binary<T1, T2, require_stan_scalar_t<T1>,
-                           require_std_vector_vt<is_container, T2>> {
-  using T2_vt = value_type_t<T2>;
 
   /**
    * Member function for applying a functor to a scalar and an std::vector of
@@ -325,8 +306,11 @@ struct apply_scalar_binary<T1, T2, require_stan_scalar_t<T1>,
    * @param f functor to apply to inputs.
    * @return std::vector with result of applying functor to inputs.
    */
-  template <typename F>
+  template <typename F, typename T1_2 = T1, typename T2_2 = T2,
+            require_stan_scalar_t<T1_2>* = nullptr,
+            require_std_vector_vt<is_container, T2_2>* = nullptr>
   static inline auto apply(const T1& x, const T2& y, const F& f) {
+    using T2_vt = value_type_t<T2>;
     using T_return
         = decltype(apply_scalar_binary<T1, T2_vt>::apply(x, y[0], f));
     size_t y_size = y.size();
