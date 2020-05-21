@@ -38,7 +38,7 @@ class scalar_seq_view<
   int size() const { return c_.size(); }
 
  private:
-  eval_return_type_t<C> c_;
+  ref_type_t<C> c_;
 };
 
 /** \ingroup type_trait
