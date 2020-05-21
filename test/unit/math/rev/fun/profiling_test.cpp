@@ -14,28 +14,22 @@ TEST(Profiling, simple) {
     using stan::math::stop_profiling;
 
     boost::random::mt19937 rng;
-    matrix_d I(800, 800);
+    matrix_d I(1500, 1500);
     I.setZero();
     I.diagonal().setOnes();
 
     matrix_v Y = wishart_rng(5000, I, rng);
-    matrix_v PP = Eigen::VectorXd::Ones(800);
+    matrix_v PP = Eigen::VectorXd::Ones(1500);
 
-    start_profiling(0, profiles, Y);
+    start_profiling(0, profiles);
     matrix_v L = cholesky_decompose(Y);
-    stop_profiling(0, profiles, L);
+    stop_profiling(0, profiles);
 
-    start_profiling(1, profiles, L);
+    start_profiling(1, profiles);
     matrix_v P = L * PP;
-    stop_profiling(1, profiles, P);
+    stop_profiling(1, profiles);
 
     P(0,0).grad();
 
-    std::chrono::duration<double> diff0f = profiles[0].fwd_pass_time_stop - profiles[0].fwd_pass_time_start;
-    std::chrono::duration<double> diff0b = profiles[0].bkcwd_pass_time_stop - profiles[0].bkcwd_pass_time_start;
-    std::chrono::duration<double> diff1f = profiles[1].fwd_pass_time_stop - profiles[1].fwd_pass_time_start;
-    std::chrono::duration<double> diff1b = profiles[1].bkcwd_pass_time_stop - profiles[1].bkcwd_pass_time_start;
-
-    std::cout << "0: FWD: " << diff0f.count() << ", BCKWD: " << diff0b.count() << std::endl;
-    std::cout << "1: FWD: " << diff1f.count() << ", BCKWD: " << diff1b.count() << std::endl;
+    stan::math::print_profiling(profiles);
 }

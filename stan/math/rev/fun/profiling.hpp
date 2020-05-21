@@ -18,79 +18,88 @@
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <cmath>
 #include <complex>
+#include <utility>
 
 namespace stan {
 namespace math {
 
-void eval() { } 
-
-template <typename T, typename = require_not_eigen_t<T>>
-void eval(T a) { } 
-
-template <typename T, require_eigen_t<T>* = nullptr>
-void eval(T a) { a.eval(); } 
-
-template <typename T, typename... Types> 
-void eval(T var1, Types... var2) 
-{ 
-    eval(var1);
-  
-    eval(var2...) ; 
-}
-
 namespace internal {
-template <typename... Types>
 class start_profiling_vari : public vari {
   int id_;
   profiles& pp;
-  private:
-  std::tuple<Types const & ...> m_args;
 
   public:
-  start_profiling_vari(int id, profiles& p, Types const & ... args) : vari(0), pp(p), m_args{std::forward_as_tuple(args...)} {
-      eval(args...);
+  start_profiling_vari(int id, profiles& p) : vari(0), pp(p) {
       id_ = id;
+      profiles::iterator it;
+      it = p.find(id);
+      if (it == p.end()) {
+        p[id].fwd_pass_time = 0.0;
+        p[id].bckwd_pass_time = 0.0;
+      }
       p[id].fwd_pass_time_start = std::chrono::steady_clock::now();
+      if (p[id].fwd_pass_running) {
+        std::stringstream s;
+        s << "profiling with id = "
+          << id << " was already started!" << std::endl;
+        throw std::runtime_error(s.str());
+      } else {
+        p[id].fwd_pass_running = true;
+      }
+      
       // std::cout << "Forward pass start: " << id << std::endl;
 
   }
   void chain() {
-    eval(m_args);
-    pp[id_].bkcwd_pass_time_stop = std::chrono::steady_clock::now();
+    std::chrono::duration<double> diff = std::chrono::steady_clock::now() - pp[id_].fwd_pass_time_start;
+    pp[id_].bckwd_pass_time += diff.count();
+    pp[id_].bckwd_pass_running = false;
     // std::cout << "Reverse pass end: " << id_ << std::endl;
   }
 };
 
-template <typename... Types>
 class stop_profiling_vari : public vari {
   int id_;
   profiles& pp;
-  private:
-    std::tuple<Types const & ...> m_args;
-  public:
-    stop_profiling_vari(int id, profiles& p, Types const & ... args) : vari(0), pp(p), m_args{std::forward_as_tuple(args...)} {
-        eval(args...);
-        id_ = id;
-        p[id].fwd_pass_time_stop = std::chrono::steady_clock::now();
-        // std::cout << "Forward pass stop: " << id << std::endl;
 
+  public:
+    stop_profiling_vari(int id, profiles& p) : vari(0), pp(p) {
+        id_ = id;
+        std::chrono::duration<double> diff = std::chrono::steady_clock::now() - p[id].fwd_pass_time_start;
+        p[id].fwd_pass_time += diff.count();
+        if (!p[id].fwd_pass_running) {
+          std::stringstream s;
+          s << "profiling with id = "
+            << id << " was already stopped!" << std::endl;
+          throw std::runtime_error(s.str());
+        } else {
+          p[id].fwd_pass_running = false;
+        }
+        // std::cout << "Forward pass stop: " << id << std::endl;
     }
   void chain() {
-    eval(m_args);
     pp[id_].bkcwd_pass_time_start = std::chrono::steady_clock::now();
+    pp[id_].bckwd_pass_running = true;
     // std::cout << "Reverse pass start: " << id_ << std::endl;
   }
 };
 }  // namespace internal
 
 template <typename... Types> 
-inline var start_profiling(int id, profiles& p, Types... args) {
-  return var(new internal::start_profiling_vari<Types...>(id, p, args...));
+inline var start_profiling(int id, profiles& p) {
+  return var(new internal::start_profiling_vari(id, p));
 }
 
 template <typename... Types> 
-inline var stop_profiling(int id, profiles& p, Types&&... args) {
-  return var(new internal::stop_profiling_vari<Types...>(id, p, args...));
+inline var stop_profiling(int id, profiles& p) {
+  return var(new internal::stop_profiling_vari(id, p));
+}
+
+
+void print_profiling(profiles& p) {
+  for (auto const& x : p) {
+      std::cout << x.first << ": " << x.second.fwd_pass_time << " - " << x.second.bckwd_pass_time << std::endl;
+  }
 }
 
 }  // namespace math
