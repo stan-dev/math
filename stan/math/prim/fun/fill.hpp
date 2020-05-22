@@ -21,8 +21,8 @@ namespace math {
  * @param x Container.
  * @param y Value.
  */
-template <typename T, int R, int C, typename S>
-void fill(Eigen::Matrix<T, R, C>& x, const S& y) {
+template <typename T, typename S, require_eigen_t<T>* = nullptr>
+void fill(T& x, const S& y) {
   x.fill(y);
 }
 
@@ -36,7 +36,7 @@ void fill(Eigen::Matrix<T, R, C>& x, const S& y) {
  * @param x Container.
  * @param y Value.
  */
-template <typename T, typename S>
+template <typename T, typename S, require_not_eigen_t<T>* = nullptr>
 void fill(T& x, const S& y) {
   x = y;
 }

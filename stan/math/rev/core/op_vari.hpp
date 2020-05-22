@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/meta/conditional_sequence.hpp>
+#include <stan/math/rev/meta/var_tuple_filter.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <tuple>
 #include <utility>
@@ -37,6 +38,15 @@ struct is_eigen_arith
     : bool_constant<conjunction<std::is_arithmetic<value_type_t<T>>,
                                 is_eigen<T>>::value> {};
 
+
+template <typename T>
+using pointer_filter_t = scalar_type_t<T>*;
+
+template <typename... Ts>
+using matrix_double_filter_t = std::result_of_t<tuple_cat_caller(
+  var_filter_helper<is_eigen_arith,  pointer_filter_t, Ts>...)>;
+
+
 // Count the number of eigen matrices with arithmetic types
 constexpr size_t op_vari_count_dbl(size_t count) { return count; }
 
@@ -47,24 +57,27 @@ constexpr size_t op_vari_count_dbl(size_t count, T&& x) {
 
 template <typename T, typename... Types>
 constexpr size_t op_vari_count_dbl(size_t count, T&& x, Types&&... args) {
-  return op_vari_count_dbl(count + is_eigen_arith<T>::value, args...);
+  return op_vari_count_dbl(count + is_eigen_arith<std::decay_t<T>>::value, args...);
 }
 
-template <typename T, require_not_eigen_t<T>* = nullptr>
-decltype(auto) make_op_vari(double**& mem, size_t position, T&& x) {
+template <typename Arr, typename T, require_not_eigen_t<T>* = nullptr>
+decltype(auto) make_op_vari(Arr& mem, size_t position, T&& x) {
   return std::forward<T>(x);
 }
 
 /**
  * Allocate memory on the stack for Eigen types with arithmetic scalar
  */
-template <typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
-auto make_op_vari(double**& mem, size_t position, T&& x) {
+template <typename Arr, typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
+auto make_op_vari(Arr& mem, size_t position, T&& x) {
   mem[position]
       = ChainableStack::instance_->memalloc_.alloc_array<double>(x.size());
   using eigen_map = Eigen::Map<typename std::decay_t<T>::PlainObject>;
-  eigen_map(mem[position], x.rows(), x.cols()) = x;
-  return eigen_map(mem[position], x.rows(), x.cols());
+  for (size_t i = 0; i < x.size(); ++i) {
+    mem[position][i] = x(i);
+  }
+  eigen_map xx(mem[position], x.rows(), x.cols());
+  return xx;
 }
 
 /**
@@ -87,11 +100,11 @@ auto make_op_vari(double**& mem, size_t position, T&& x) {
  *      make_op_vari(mem, pos[2], args[2]))
  * ```
  */
-template <size_t... I, typename... Types>
-auto make_op_vari_tuple_impl(double**& mem,
+template <typename Arr, size_t... I, typename... Types>
+auto make_op_vari_tuple_impl(Arr& mem,
                              std::index_sequence<I...> /* ignore */,
                              Types&&... args) {
-  return std::forward_as_tuple(
+  return std::make_tuple(
       make_op_vari(mem, I, std::forward<Types>(args))...);
 }
 
@@ -102,8 +115,8 @@ auto make_op_vari_tuple_impl(double**& mem,
  * @param mem Pointer to memory from `op_vari` class for arithmetic eigen types
  * @param args parameter pack of arguments to initalize for op_vari.
  */
-template <typename... Types>
-auto make_op_vari_tuple(double**& mem, Types&&... args) {
+template <typename Arr, typename... Types>
+auto make_op_vari_tuple(Arr& mem, Types&&... args) {
   auto positions_vec = conditional_sequence(is_eigen_arith<double>{},
                                             std::index_sequence<0>{}, args...);
   return make_op_vari_tuple_impl(mem, positions_vec, args...);
@@ -118,10 +131,10 @@ auto make_op_vari_tuple(double**& mem, Types&&... args) {
 template <typename T, typename... Types>
 class op_vari : public vari_value<T> {
  protected:
-  double** dbl_mem_;  // Holds mem for eigen matrices of doubles
+  std::array<double*, std::tuple_size<internal::matrix_double_filter_t<Types...>>::value> dbl_mem_;  // Holds mem for eigen matrices of doubles
   std::tuple<internal::op_vari_tuple_t<Types>...>
       vi_;  // Holds the objects needed in the reverse pass.
-
+size_t num_dbls_;
  public:
   /**
    * Get an element from the tuple of vari ops. Because of name lookup rules
@@ -143,9 +156,15 @@ class op_vari : public vari_value<T> {
   const auto& vi() const { return vi_; }
   auto& avi() { return std::get<0>(vi_); }
   const auto& avi() const { return std::get<0>(vi_); }
-  auto& ad() { return std::get<0>(vi_); }
+  auto& ad() {
+    auto& xx = std::get<0>(vi_);
+    return xx;
+  }
   const auto& ad() const { return std::get<0>(vi_); }
-  auto& bvi() { return std::get<1>(vi_); }
+  auto&& bvi() {
+    auto&& xx = std::get<1>(vi_);
+    return xx;
+  }
   const auto& bvi() const { return std::get<1>(vi_); }
   auto& bd() { return std::get<1>(vi_); }
   const auto& bd() const { return std::get<1>(vi_); }
@@ -167,8 +186,8 @@ class op_vari : public vari_value<T> {
    */
   op_vari(const T& val, Types... args)
       : vari_value<T>(val),
-        dbl_mem_(ChainableStack::instance_->memalloc_.alloc_array<double*>(
-            internal::op_vari_count_dbl(0, args...))),
+        num_dbls_(internal::op_vari_count_dbl(0, args...)),
+        dbl_mem_(),
         vi_(internal::make_op_vari_tuple(dbl_mem_, args...)) {}
 };
 

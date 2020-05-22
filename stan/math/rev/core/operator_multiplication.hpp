@@ -125,25 +125,25 @@ class multiply_vari<VariVal, Arith, Vari, require_vt_arithmetic<Arith>> final
             require_vari_vt<std::is_arithmetic, T2>* = nullptr,
             require_arithmetic_t<T1>* = nullptr>
   void chain_impl() {
-    if (unlikely(is_any_nan(bvi()->val_, ad()))) {
-      bvi()->adj_ = NOT_A_NUMBER;
-    } else {
       bvi()->adj_ += this->adj_ * ad();
-    }
   }
 
   template <typename T1 = Arith, typename T2 = Vari,
             require_vari_vt<is_eigen, T2>* = nullptr,
             require_vt_arithmetic<T1>* = nullptr>
   void chain_impl() {
-    if (unlikely(is_any_nan(bvi()->val_, ad()))) {
-      bvi()->adj_.fill(NOT_A_NUMBER);
-    } else {
       bvi()->adj_ += (this->adj_ * ad()).transpose();
-    }
   }
 
-  void chain() { chain_impl(); }
+  void chain() {
+    auto a = ad();
+    auto b = bvi()->val_;
+    if (unlikely(is_any_nan(b, a))) {
+      fill(bvi()->adj_, NOT_A_NUMBER);
+    } else {
+      chain_impl();
+    }
+  }
 };
 
 /**
