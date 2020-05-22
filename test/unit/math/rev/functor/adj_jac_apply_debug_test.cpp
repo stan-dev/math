@@ -32,15 +32,16 @@ struct SinFunctor {
   template <std::size_t size>
   auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
                                  const Eigen::VectorXd& adj) {
-//    puts("Begin MulAdjJac:");
+    //    puts("Begin MulAdjJac:");
     Eigen::VectorXd out(N_);
 
     for (int n = 0; n < N_; ++n) {
-//      std::cout << "cos(x_mem_[" << n << "]): " << cos(x_mem_[n]) << "  adj(" << n << "): " << adj(n) << std::endl;
+      //      std::cout << "cos(x_mem_[" << n << "]): " << cos(x_mem_[n]) << "
+      //      adj(" << n << "): " << adj(n) << std::endl;
       out(n) = cos(x_mem_[n]) * adj(n);
     }
 
-//    puts("End MulAdjJac:");
+    //    puts("End MulAdjJac:");
     return std::make_tuple(out);
   }
 };
@@ -106,9 +107,7 @@ TEST(AgradRev, test_vector_sin_multiple_jac_static_return) {
 
   stan::math::set_zero_all_adjoints();
   puts("Got here 2: ");
-
 }
-
 
 TEST(AgradRev, test_vector_sin_multiple_jac_static_matrix) {
   using stan::math::var_value;

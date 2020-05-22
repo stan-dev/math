@@ -121,7 +121,6 @@ constexpr size_t compile_time_accumulator(const std::array<T, N>& A,
 }
 template <typename... Targs>
 struct x_vis_alloc : vari {
-
   using x_vis_tuple_ = var_to_vari_filter_t<std::decay_t<Targs>...>;
   using x_vis_size_ = std::tuple_size<x_vis_tuple_>;
   x_vis_tuple_ x_vis_{};  // tuple holding pointers to input are var mem.
@@ -227,12 +226,10 @@ struct x_vis_alloc : vari {
     local_mem->adj_ = x.adj().eval();
     using plain_obj = typename vari_type::PlainObject;
     ChainableStack::instance_->var_stack_.push_back(
-      new static_to_dynamic_vari<plain_obj>(x.data()[0].vi_, std::get<t>(mem), x.size()));
+        new static_to_dynamic_vari<plain_obj>(x.data()[0].vi_, std::get<t>(mem),
+                                              x.size()));
     fill_adj_jac(mem, args...);
   }
-
-
-
 };
 /**
  * adj_jac_vari interfaces a user supplied functor  with the reverse mode
@@ -304,7 +301,8 @@ struct adj_jac_vari : public vari {
       : vari(NOT_A_NUMBER),  // The val_ in this vari is unused
         y_vi_(nullptr) {}
 
-  adj_jac_vari(x_vis_alloc<Targs...>* x) : vari(NOT_A_NUMBER), x_vis_alloc_(x), y_vi_(nullptr) {};
+  adj_jac_vari(x_vis_alloc<Targs...>* x)
+      : vari(NOT_A_NUMBER), x_vis_alloc_(x), y_vi_(nullptr){};
 
   /**
    * Return a var with a new vari holding the given value

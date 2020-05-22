@@ -17,7 +17,6 @@ TEST(RevCore, static_to_dynamic_multi_grad) {
   puts("Next Grad: ");
   x2(1, 1).grad();
   std::cout << x1.adj() << std::endl;
-
 }
 
 TEST(RevCore, static_to_dynamic_multi_grad_clear) {
