@@ -41,6 +41,7 @@
 #include <stan/math/rev/core/operator_unary_negative.hpp>
 #include <stan/math/rev/core/operator_unary_not.hpp>
 #include <stan/math/rev/core/operator_unary_plus.hpp>
+#include <stan/math/rev/core/propogate_static_matrix.hpp>
 #include <stan/math/rev/core/precomp_v_vari.hpp>
 #include <stan/math/rev/core/precomp_vv_vari.hpp>
 #include <stan/math/rev/core/precomp_vvv_vari.hpp>

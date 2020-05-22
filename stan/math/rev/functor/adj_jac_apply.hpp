@@ -119,45 +119,17 @@ constexpr size_t compile_time_accumulator(const std::array<T, N>& A,
                                           const int i = 0) {
   return (i < N) ? A[i] + compile_time_accumulator(A, i + 1) : size_t(0);
 }
+template <typename... Targs>
+struct x_vis_alloc : vari {
 
-/**
- * adj_jac_vari interfaces a user supplied functor  with the reverse mode
- * autodiff. It allows someone to implement functions with custom reverse mode
- * autodiff without having to deal with autodiff types.
- *
- * The requirements on the functor F are described in the documentation for
- * adj_jac_apply
- *
- * @tparam F class of functor
- * @tparam Targs types of arguments: can be any mix of double, var, or
- * Eigen::Matrices with double or var scalar components
- */
-template <typename F, typename... Targs>
-struct adj_jac_vari : public vari {
-  // holds whether each input type held a vari_value
-  static constexpr std::array<bool, sizeof...(Targs)> is_var_{
-      {is_var_value<scalar_type_t<Targs>>::value...}};
-  using FReturnType
-      = std::result_of_t<F(decltype(is_var_), decltype(value_of(Targs()))...)>;
+  using x_vis_tuple_ = var_to_vari_filter_t<std::decay_t<Targs>...>;
+  using x_vis_size_ = std::tuple_size<x_vis_tuple_>;
+  x_vis_tuple_ x_vis_{};  // tuple holding pointers to input are var mem.
+
   // Given a parameter pack, count the number that have a var type.
   template <typename... Types>
   using remaining_vars_ = std::tuple_size<
       stan::math::var_to_vari_filter_t<std::decay_t<Types>...>>;
-  // enable functions if their primary argument is a var.
-  template <size_t TargSize, size_t PargSize>
-  using require_arg_var_t = std::enable_if_t<is_var_[TargSize - PargSize - 1]>;
-  template <size_t TargSize, size_t PargSize>
-  // enable functions if their primary argument is not a var.
-  using require_not_arg_var_t
-      = std::enable_if_t<!is_var_[TargSize - PargSize - 1]>;
-
-  /**
-   * For signature (var, Matrix<var>, double, std::vector<var>,
-   * var_value<Matrix<double>>) we want a tuple like (vari*,
-   * vari_value<Matrix<double>>*, vari**, vari_value<Matrix<double>>*)
-   */
-  using x_vis_tuple_ = var_to_vari_filter_t<std::decay_t<Targs>...>;
-  using x_vis_size_ = std::tuple_size<x_vis_tuple_>;
 
   /**
    * Given the stored vari types, calculate the position of the element in
@@ -168,31 +140,9 @@ struct adj_jac_vari : public vari {
       size_t,
       x_vis_size_::value - remaining_vars_<std::decay_t<Types>...>::value>;
 
-  /**
-   * y_vi will be a pointer for eigen and arithmetic types but a pointer to
-   * pointers for std::vectors.
-   */
-  template <typename T>
-  using y_vi_type_t
-      = std::conditional_t<is_std_vector<std::decay_t<T>>::value,
-                           vari_value<value_type_t<T>>**, vari_value<T>*>;
-
-  F f_;  // Function to be invoked
-
-  x_vis_tuple_ x_vis_;  // tuple holding pointers to input are var mem.
-  // dimensions of output matrix.
-  std::array<int, internal::compute_dims<FReturnType>::value> M_;
-
-  y_vi_type_t<FReturnType> y_vi_;  // vari pointer for output.
-
-  /**
-   * Initializes is_var_ with true if the scalar type in each argument
-   * is a var (and false if not)
-   */
-  adj_jac_vari()
-      : vari(NOT_A_NUMBER),  // The val_ in this vari is unused
-        x_vis_(),
-        y_vi_(nullptr) {}
+  x_vis_alloc(const Targs&... args) : vari(NOT_A_NUMBER) {
+    fill_adj_jac(x_vis_, args...);
+  }
 
   /**
    * Fill out the x_vis_ argument for each input that is a var.
@@ -275,8 +225,87 @@ struct adj_jac_vari : public vari {
     auto&& local_mem = std::get<t>(mem);
     local_mem = new vari_type(x.val().eval());
     local_mem->adj_ = x.adj().eval();
+    using plain_obj = typename vari_type::PlainObject;
+    ChainableStack::instance_->var_stack_.push_back(
+      new static_to_dynamic_vari<plain_obj>(x.data()[0].vi_, std::get<t>(mem), x.size()));
     fill_adj_jac(mem, args...);
   }
+
+
+
+};
+/**
+ * adj_jac_vari interfaces a user supplied functor  with the reverse mode
+ * autodiff. It allows someone to implement functions with custom reverse mode
+ * autodiff without having to deal with autodiff types.
+ *
+ * The requirements on the functor F are described in the documentation for
+ * adj_jac_apply
+ *
+ * @tparam F class of functor
+ * @tparam Targs types of arguments: can be any mix of double, var, or
+ * Eigen::Matrices with double or var scalar components
+ */
+template <typename F, typename... Targs>
+struct adj_jac_vari : public vari {
+  // holds whether each input type held a vari_value
+  static constexpr std::array<bool, sizeof...(Targs)> is_var_{
+      {is_var_value<scalar_type_t<Targs>>::value...}};
+  using FReturnType
+      = std::result_of_t<F(decltype(is_var_), decltype(value_of(Targs()))...)>;
+  // Given a parameter pack, count the number that have a var type.
+  template <typename... Types>
+  using remaining_vars_ = std::tuple_size<
+      stan::math::var_to_vari_filter_t<std::decay_t<Types>...>>;
+
+  using x_vis_tuple_ = var_to_vari_filter_t<std::decay_t<Targs>...>;
+  using x_vis_size_ = std::tuple_size<x_vis_tuple_>;
+
+  // enable functions if their primary argument is a var.
+  template <size_t TargSize, size_t PargSize>
+  using require_arg_var_t = std::enable_if_t<is_var_[TargSize - PargSize - 1]>;
+  template <size_t TargSize, size_t PargSize>
+  // enable functions if their primary argument is not a var.
+  using require_not_arg_var_t
+      = std::enable_if_t<!is_var_[TargSize - PargSize - 1]>;
+
+  /**
+   * Given the stored vari types, calculate the position of the element in
+   * the tuple holding pointers to vari that is associated with in input var.
+   */
+  template <typename... Types>
+  using var_position_ = std::integral_constant<
+      size_t,
+      x_vis_size_::value - remaining_vars_<std::decay_t<Types>...>::value>;
+
+  /**
+   * y_vi will be a pointer for eigen and arithmetic types but a pointer to
+   * pointers for std::vectors.
+   */
+  template <typename T>
+  using y_vi_type_t
+      = std::conditional_t<is_std_vector<std::decay_t<T>>::value,
+                           vari_value<value_type_t<T>>**, vari_value<T>*>;
+
+  F f_;  // Function to be invoked
+  x_vis_alloc<Targs...>* x_vis_alloc_;
+
+  x_vis_tuple_& x_vis_{x_vis_alloc_->x_vis_};
+  // dimensions of output matrix.
+  std::array<int, internal::compute_dims<FReturnType>::value> M_;
+
+  y_vi_type_t<FReturnType> y_vi_;  // vari pointer for output.
+
+  /**
+   * Initializes is_var_ with true if the scalar type in each argument
+   * is a var (and false if not)
+   */
+  adj_jac_vari()
+      : vari(NOT_A_NUMBER),  // The val_ in this vari is unused
+        y_vi_(nullptr) {}
+
+  adj_jac_vari(x_vis_alloc<Targs...>* x) : vari(NOT_A_NUMBER), x_vis_alloc_(x), y_vi_(nullptr) {};
+
   /**
    * Return a var with a new vari holding the given value
    *
@@ -353,9 +382,9 @@ struct adj_jac_vari : public vari {
    * @return Output of f_ as vars
    */
   inline auto operator()(const Targs&... args) {
-    fill_adj_jac(x_vis_, args...);
-    auto res = f_(is_var_, value_of(args)...);
-    return build_return_varis_and_vars(res);
+    auto func_ret = f_(is_var_, value_of(args)...);
+    auto return_obj = build_return_varis_and_vars(func_ret);
+    return return_obj;
   }
 
   template <
@@ -461,6 +490,8 @@ struct adj_jac_vari : public vari {
           this->accumulate_adjoints_in_varis(x_vis_, args...);
         },
         y_adj_jacs);
+        auto&& local_test = std::get<0>(x_vis_);
+        puts("Adj Jac Chain:");
   }
 };
 
@@ -544,7 +575,8 @@ constexpr std::array<bool, sizeof...(Targs)> adj_jac_vari<F, Targs...>::is_var_;
  */
 template <typename F, typename... Targs>
 inline auto adj_jac_apply(const Targs&... args) {
-  auto vi = new adj_jac_vari<F, Targs...>();
+  auto* x_alloc = new x_vis_alloc<Targs...>(args...);
+  auto vi = new adj_jac_vari<F, Targs...>(x_alloc);
 
   return (*vi)(args...);
 }
