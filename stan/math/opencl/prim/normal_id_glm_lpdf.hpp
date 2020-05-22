@@ -101,7 +101,7 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
 
   const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
-  const auto& sigma_val_vec = to_ref(as_column_vector_or_scalar(sigma_val));
+  const auto& sigma_val_vec = to_ref<Eigen::Stride<0,0>>(as_column_vector_or_scalar(sigma_val));
 
   T_scale_val inv_sigma = 1 / as_array_or_scalar(sigma_val_vec);
   Matrix<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma_mat(N);

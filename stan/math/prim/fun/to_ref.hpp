@@ -12,7 +12,13 @@ namespace math {
  * @tparam T argument type
  * @param a argument
  * @return optionally evaluated argument
+ * @tparam Ref_stride Stride type (see the documentation for `Eigen::Ref`).
+ * Default is same as in `Eigen::Ref`.
  */
+template <typename Ref_stride, typename T>
+inline ref_type_t<T&&, Ref_stride> to_ref(T&& a) {
+  return std::forward<T>(a);
+}
 template <typename T>
 inline ref_type_t<T&&> to_ref(T&& a) {
   return std::forward<T>(a);
