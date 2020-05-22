@@ -20,7 +20,6 @@ namespace stan {
           output_(output) {
       }
       void chain() {
-        puts("Dynamic -> Static Chain: ");
         for(size_t n = 0; n < N_; ++n) {
           input_->adj_(n) += output_->adj_;
           ++output_;
@@ -40,7 +39,6 @@ namespace stan {
           output_(output) {
       }
       void chain() {
-        puts("Static -> Dynamic Chain: ");
         for(size_t n = 0; n < N_; ++n) {
           input_->adj_ += output_->adj_(n);
           --input_;

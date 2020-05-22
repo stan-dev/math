@@ -490,8 +490,6 @@ struct adj_jac_vari : public vari {
           this->accumulate_adjoints_in_varis(x_vis_, args...);
         },
         y_adj_jacs);
-        auto&& local_test = std::get<0>(x_vis_);
-        puts("Adj Jac Chain:");
   }
 };
 
