@@ -50,11 +50,9 @@ ode_bdf_tol(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
             const T_t0& t0, const std::vector<T_ts>& ts,
             double relative_tolerance, double absolute_tolerance,
             long int max_num_steps, std::ostream* msgs, const T_Args&... args) {
-  cvodes_integrator<CV_BDF, F, T_initial, T_t0, T_ts,
-		    T_Args...> integrator(f, y0, t0, ts,
-					  relative_tolerance, absolute_tolerance,
-					  max_num_steps,
-					  msgs, args...);
+  cvodes_integrator<CV_BDF, F, T_initial, T_t0, T_ts, T_Args...> integrator(
+      f, y0, t0, ts, relative_tolerance, absolute_tolerance, max_num_steps,
+      msgs, args...);
 
   return integrator();
 }
