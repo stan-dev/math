@@ -65,7 +65,7 @@ return_type_t<T_beta, T_cuts> ordered_logistic_glm_lpmf(
                      "y_cl", y_cl.size());
   }
   check_consistent_size(function, "Weight vector", beta, N_attributes);
-  const auto& cuts_ref = to_ref(cuts);
+  const auto& cuts_ref = to_ref<Eigen::Stride<0, 0>>(cuts);
   check_ordered(function, "Cut-points", cuts_ref);
   if (N_classes > 1) {
     if (N_classes > 2) {

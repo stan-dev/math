@@ -15,8 +15,12 @@ namespace stan {
  * to evaluate expensive expressions, but not make a copy if T involves no
  * calculations. This works similarly as `Eigen::Ref`. It also handles
  * rvalue references, so it can be used with perfect forwarding.
+ *
+ * Warning: if a variable of this type could be assigned a rvalue, make sure
+ * template parameter `T` is of correct reference type (rvalue).
  * @tparam T type to determine reference for
- * @tparam Ref_stride Stride type (see the documentation for `Eigen::Ref`)
+ * @tparam Ref_stride Stride type (see the documentation for `Eigen::Ref`).
+ * Default is same as in `Eigen::Ref`.
  */
 template <typename T,
           typename Ref_stride
@@ -41,7 +45,10 @@ struct ref_type<T, Ref_stride, require_not_eigen_t<T>> {
       = std::conditional_t<std::is_rvalue_reference<T>::value, T, const T&>;
 };
 
-template <typename T>
+template <typename T,
+          typename Ref_stride
+          = std::conditional_t<is_eigen_vector<T>::value, Eigen::InnerStride<1>,
+                               Eigen::OuterStride<>>>
 using ref_type_t = typename ref_type<T>::type;
 
 }  // namespace stan

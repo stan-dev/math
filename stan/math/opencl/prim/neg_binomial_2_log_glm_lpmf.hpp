@@ -83,7 +83,7 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
     check_size_match(function, "Rows of ", "x_cl", N, "size of ", "alpha",
                      stan::math::size(alpha));
   }
-  const auto& phi_ref = to_ref(phi);
+  const auto& phi_ref = to_ref<Eigen::Stride<0, 0>>(phi);
   check_positive_finite(function, "Precision parameter", phi_ref);
 
   if (N == 0) {
