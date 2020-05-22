@@ -107,7 +107,7 @@ class var_value {
             require_not_same_t<T1, EigenT>* = nullptr,
             require_all_eigen_t<EigenT, T1>* = nullptr,
             require_eigen_vt<is_var, EigenT>* = nullptr>
-  var_value(EigenT x); // NOLINT
+  var_value(EigenT x);  // NOLINT
 
   /**
    * Return the value of this variable.

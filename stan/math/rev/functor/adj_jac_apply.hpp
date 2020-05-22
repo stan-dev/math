@@ -296,14 +296,6 @@ struct adj_jac_vari : public vari {
 
   y_vi_type_t<FReturnType> y_vi_;  // vari pointer for output.
 
-  /**
-   * Initializes is_var_ with true if the scalar type in each argument
-   * is a var (and false if not)
-   */
-  adj_jac_vari()
-      : vari(NOT_A_NUMBER),  // The val_ in this vari is unused
-        x_vis_alloc_(new x_vis_alloc<Targs...>()),
-        y_vi_(nullptr) {}
 
   adj_jac_vari(x_vis_alloc<Targs...>* x) : vari(NOT_A_NUMBER), x_vis_alloc_(x), y_vi_(nullptr) {};
 
