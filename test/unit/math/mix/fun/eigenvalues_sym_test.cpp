@@ -39,25 +39,3 @@ TEST(MathMixMatFun, eigenvaluesSym) {
   tols.grad_hessian_grad_hessian_ = relative_tolerance(1e-1, 5e-1);
   stan::test::expect_ad(tols, f, a22);
 }
-
-TEST(MathMixMatFun, eigenvaluesSymLogDet) {
-  // logdet(A) can be calculated using eigenvalues of matrix A
-  // the derivative of logdet(A) should be inverse(A)
-  // See stan-dev/math/issues/1803
-
-  Eigen::MatrixXd a(4, 4);
-  // Random symmetric matrix
-  a << 1.8904, 0.7204, -0.1599, 1.2028, 0.7204, 7.3394, 2.0895, -0.6151,
-      -0.1599, 2.0895, 2.4601, -1.7219, 1.2028, -0.6151, -1.7219, 4.5260;
-
-  stan::math::matrix_d a_inv = stan::math::inverse(a);
-
-  stan::math::matrix_v a_v(a);
-  auto w = eigenvalues_sym(a_v);
-  auto logdet = stan::math::sum(stan::math::log(w));
-
-  stan::math::set_zero_all_adjoints();
-  logdet.grad();
-
-  ASSERT_TRUE(a_inv.val().isApprox(a_v.adj()));
-}
