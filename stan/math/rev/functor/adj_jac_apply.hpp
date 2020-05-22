@@ -139,7 +139,7 @@ struct x_vis_alloc : vari {
       size_t,
       x_vis_size_::value - remaining_vars_<std::decay_t<Types>...>::value>;
 
-  x_vis_alloc(const Targs&... args) : vari(NOT_A_NUMBER) {
+  x_vis_alloc(const Targs&... args) : vari(NOT_A_NUMBER) { // NOLINT
     fill_adj_jac(x_vis_, args...);
   }
 
@@ -292,8 +292,8 @@ struct adj_jac_vari : public vari {
 
   y_vi_type_t<FReturnType> y_vi_;  // vari pointer for output.
 
-  adj_jac_vari(x_vis_alloc<Targs...>* x)
-      : vari(NOT_A_NUMBER), x_vis_alloc_(x), y_vi_(nullptr){};
+  explicit adj_jac_vari(x_vis_alloc<Targs...>* x)
+      : vari(NOT_A_NUMBER), x_vis_alloc_(x), y_vi_(nullptr){}
 
   /**
    * Return a var with a new vari holding the given value
