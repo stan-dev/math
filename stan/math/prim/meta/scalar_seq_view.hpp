@@ -33,8 +33,8 @@ class scalar_seq_view<
    * @param i index
    * @return the element at the specified position in the container
    */
-  auto& operator[](int i) const { return c_[i]; }
-  auto& operator[](int i) { return c_[i]; }
+  decltype(auto) operator[](int i) const { return c_[i]; }
+  decltype(auto) operator[](int i) { return c_[i]; }
 
   int size() const { return c_.size(); }
 

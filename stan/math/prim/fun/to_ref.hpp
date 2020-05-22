@@ -14,7 +14,7 @@ namespace math {
  * @return optionally evaluated argument
  */
 template <typename T>
-inline ref_type_t<T> to_ref(T&& a) {
+inline ref_type_t<T&&> to_ref(T&& a) {
   return std::forward<T>(a);
 }
 
@@ -42,7 +42,7 @@ inline T to_ref_if(T&& a) {
  */
 template <bool Cond, typename T, require_eigen_vt<is_var, T>* = nullptr,
           std::enable_if_t<Cond>* = nullptr>
-inline ref_type_t<T> to_ref_if(T&& a) {
+inline ref_type_t<T&&> to_ref_if(T&& a) {
   return std::forward<T>(a);
 }
 
