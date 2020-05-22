@@ -38,14 +38,12 @@ struct is_eigen_arith
     : bool_constant<conjunction<std::is_arithmetic<value_type_t<T>>,
                                 is_eigen<T>>::value> {};
 
-
 template <typename T>
 using pointer_filter_t = scalar_type_t<T>*;
 
 template <typename... Ts>
 using matrix_double_filter_t = std::result_of_t<tuple_cat_caller(
-  var_filter_helper<is_eigen_arith,  pointer_filter_t, Ts>...)>;
-
+    var_filter_helper<is_eigen_arith, pointer_filter_t, Ts>...)>;
 
 // Count the number of eigen matrices with arithmetic types
 constexpr size_t op_vari_count_dbl(size_t count) { return count; }
@@ -57,7 +55,8 @@ constexpr size_t op_vari_count_dbl(size_t count, T&& x) {
 
 template <typename T, typename... Types>
 constexpr size_t op_vari_count_dbl(size_t count, T&& x, Types&&... args) {
-  return op_vari_count_dbl(count + is_eigen_arith<std::decay_t<T>>::value, args...);
+  return op_vari_count_dbl(count + is_eigen_arith<std::decay_t<T>>::value,
+                           args...);
 }
 
 template <typename Arr, typename T, require_not_eigen_t<T>* = nullptr>
@@ -68,7 +67,8 @@ decltype(auto) make_op_vari(Arr& mem, size_t position, T&& x) {
 /**
  * Allocate memory on the stack for Eigen types with arithmetic scalar
  */
-template <typename Arr, typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
+template <typename Arr, typename T,
+          require_eigen_vt<std::is_arithmetic, T>* = nullptr>
 auto make_op_vari(Arr& mem, size_t position, T&& x) {
   mem[position]
       = ChainableStack::instance_->memalloc_.alloc_array<double>(x.size());
@@ -101,11 +101,9 @@ auto make_op_vari(Arr& mem, size_t position, T&& x) {
  * ```
  */
 template <typename Arr, size_t... I, typename... Types>
-auto make_op_vari_tuple_impl(Arr& mem,
-                             std::index_sequence<I...> /* ignore */,
+auto make_op_vari_tuple_impl(Arr& mem, std::index_sequence<I...> /* ignore */,
                              Types&&... args) {
-  return std::make_tuple(
-      make_op_vari(mem, I, std::forward<Types>(args))...);
+  return std::make_tuple(make_op_vari(mem, I, std::forward<Types>(args))...);
 }
 
 /**
@@ -131,10 +129,13 @@ auto make_op_vari_tuple(Arr& mem, Types&&... args) {
 template <typename T, typename... Types>
 class op_vari : public vari_value<T> {
  protected:
-  std::array<double*, std::tuple_size<internal::matrix_double_filter_t<Types...>>::value> dbl_mem_;  // Holds mem for eigen matrices of doubles
+  std::array<double*,
+             std::tuple_size<internal::matrix_double_filter_t<Types...>>::value>
+      dbl_mem_;  // Holds mem for eigen matrices of doubles
   std::tuple<internal::op_vari_tuple_t<Types>...>
       vi_;  // Holds the objects needed in the reverse pass.
-size_t num_dbls_;
+  size_t num_dbls_;
+
  public:
   /**
    * Get an element from the tuple of vari ops. Because of name lookup rules

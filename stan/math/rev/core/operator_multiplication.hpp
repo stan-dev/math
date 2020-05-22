@@ -125,14 +125,14 @@ class multiply_vari<VariVal, Arith, Vari, require_vt_arithmetic<Arith>> final
             require_vari_vt<std::is_arithmetic, T2>* = nullptr,
             require_arithmetic_t<T1>* = nullptr>
   void chain_impl() {
-      bvi()->adj_ += this->adj_ * ad();
+    bvi()->adj_ += this->adj_ * ad();
   }
 
   template <typename T1 = Arith, typename T2 = Vari,
             require_vari_vt<is_eigen, T2>* = nullptr,
             require_vt_arithmetic<T1>* = nullptr>
   void chain_impl() {
-      bvi()->adj_ += (this->adj_ * ad()).transpose();
+    bvi()->adj_ += (this->adj_ * ad()).transpose();
   }
 
   void chain() {

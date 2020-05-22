@@ -455,8 +455,8 @@ struct WeirdArgumentListFunctor1 {
 
 template <typename F, typename... Targs>
 auto make_vari_for_test(const Targs&... args) {
-  using stan::math::x_vis_alloc;
   using stan::math::adj_jac_vari;
+  using stan::math::x_vis_alloc;
   auto* x_alloc = new x_vis_alloc<Targs...>(args...);
   auto vi = new adj_jac_vari<F, Targs...>(x_alloc);
   (*vi)(args...);
