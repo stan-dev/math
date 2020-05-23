@@ -372,10 +372,25 @@ struct adj_jac_vari : public vari {
     return return_obj;
   }
 
+  /**
+   * Accumulate, if necessary, the values of y_adj_jac into the
+   * adjoints of the varis pointed to by the appropriate elements
+   * of x_vis_. Recursively calls accumulate_adjoints_in_varis on the rest of
+   * the arguments.
+   *
+   * @tparam Mem A tuple holding pointers to memory
+   * @tparam T Any type which is not associated with a vari type in Mem
+   * @tparam Pargs Types of the rest of adjoints to accumulate
+   *
+   * @param varis tuple pointing to vari memory
+   * @param y_adj_jac set of values to be passed over
+   * @param args the rest of the arguments (that will be iterated through
+   * recursively)
+   */
   template <
       typename Mem, typename T, typename... Pargs,
       require_not_arg_var_t<sizeof...(Targs), sizeof...(Pargs)>* = nullptr>
-  inline void accumulate_adjoints_in_varis(Mem& varis, T&& x, Pargs&&... args) {
+  inline void accumulate_adjoints_in_varis(Mem& varis, T&& y_adj_jac, Pargs&&... args) {
     accumulate_adjoints_in_varis(varis, args...);
   }
   /**
@@ -384,10 +399,11 @@ struct adj_jac_vari : public vari {
    * of x_vis_. Recursively calls accumulate_adjoints_in_varis on the rest of
    * the arguments.
    *
-   * @tparam R number of rows, can be Eigen::Dynamic
-   * @tparam C number of columns, can be Eigen::Dynamic
+   * @tparam Mem A tuple holding pointers to memory
+   * @tparam EigMat A type inheriting from EigenBase
    * @tparam Pargs Types of the rest of adjoints to accumulate
    *
+   * @param varis tuple pointing to vari memory
    * @param y_adj_jac set of values to be accumulated in adjoints
    * @param args the rest of the arguments (that will be iterated through
    * recursively)
@@ -413,7 +429,10 @@ struct adj_jac_vari : public vari {
    * of x_vis_. Recursively calls accumulate_adjoints_in_varis on the rest of
    * the arguments.
    *
+   * @tparam Mem A tuple holding pointers to memory
    * @tparam Pargs Types of the rest of adjoints to accumulate
+   *
+   * @param varis tuple pointing to vari memory
    * @param y_adj_jac set of values to be accumulated in adjoints
    * @param args the rest of the arguments (that will be iterated through
    * recursively)
@@ -433,13 +452,16 @@ struct adj_jac_vari : public vari {
   }
 
   /**
-   * Accumulate, if necessary, the value of y_adj_jac into the
-   * adjoint of the vari pointed to by the appropriate element
+   * Accumulate, if necessary, the values of y_adj_jac into the
+   * adjoints of the varis pointed to by the appropriate elements
    * of x_vis_. Recursively calls accumulate_adjoints_in_varis on the rest of
    * the arguments.
    *
+   * @tparam Mem A tuple holding pointers to memory
    * @tparam Pargs Types of the rest of adjoints to accumulate
-   * @param y_adj_jac next set of adjoints to be accumulated
+   *
+   * @param varis tuple pointing to vari memory
+   * @param y_adj_jac set of values to be accumulated in adjoints
    * @param args the rest of the arguments (that will be iterated through
    * recursively)
    */

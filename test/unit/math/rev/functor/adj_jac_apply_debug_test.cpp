@@ -42,7 +42,7 @@ struct SinFunctor {
   }
 };
 
-TEST(AgradRev, test_vector_sin_multiple_jac_static_matrix) {
+TEST(AgradRev, test_vector_sin_multiple_jac_static_matrix2) {
   using stan::math::var_value;
   Eigen::Matrix<double, Eigen::Dynamic, 1> x1(1), x2(2);
   x1 << 1.0;
