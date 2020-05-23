@@ -107,7 +107,7 @@ class sum_vari : public vari_value<VariSum> {
   virtual void chain() { v_->adj_.array() += this->adj_; }
 };
 
-template <typename T>
+template <typename T, require_eigen_t<T>* = nullptr>
 inline var_value<value_type_t<T>> sum(const var_value<T>& x) {
   return {new sum_vari<value_type_t<T>, vari_value<T>>(x.vi_)};
 }

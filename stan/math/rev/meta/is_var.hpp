@@ -85,7 +85,7 @@ struct get_var_scalar<T, require_var_value_t<T>> {
 };
 
 template <typename T>
-using get_var_scalar_t = typename get_var_scalar<T>::type;
+using get_var_scalar_t = typename get_var_scalar<std::decay_t<T>>::type;
 
 }  // namespace stan
 #endif
