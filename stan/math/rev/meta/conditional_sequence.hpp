@@ -1,6 +1,9 @@
 #ifndef STAN_MATH_REV_META_CONDITIONAL_SEQUENCE_HPP
 #define STAN_MATH_REV_META_CONDITIONAL_SEQUENCE_HPP
 
+#include <utility>
+#include <stddef.h>
+
 namespace stan {
 
 /**

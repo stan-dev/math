@@ -308,24 +308,6 @@ class var_value {
   operator Eigen::Matrix<var_value<double>, R, C>();
 };
 
-template <typename T>
-template <typename EigenT, typename T1, require_not_same_t<T1, EigenT>*,
-          require_all_eigen_t<EigenT, T1>*, require_eigen_vt<is_var, EigenT>*>
-var_value<T>::var_value(EigenT x)
-    : vi_(new vari_value<T>(x.val(), false)) {  // NOLINT
-  ChainableStack::instance_->var_stack_.push_back(
-      new static_to_dynamic_vari<T>(x, this->vi_, x.size()));
-}
-
-template <typename T>
-template <int R, int C>
-var_value<T>::operator Eigen::Matrix<var_value<double>, R, C>() {
-  Eigen::Matrix<var_value<double>, R, C> x(this->val());
-  ChainableStack::instance_->var_stack_.push_back(
-      new dynamic_to_static_vari<T>(this->vi_, x, x.size()));
-  return x;
-}
-
 using var = var_value<double>;
 
 }  // namespace math

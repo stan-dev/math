@@ -1,9 +1,8 @@
 #ifndef STAN_MATH_REV_CORE_PROPOGATE_STATIC_MATRIX_HPP
 #define STAN_MATH_REV_CORE_PROPOGATE_STATIC_MATRIX_HPP
 
+#include <stan/math/rev/core/vari.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/rev/meta.hpp>
-
 #include <utility>
 #include <vector>
 
