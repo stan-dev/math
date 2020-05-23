@@ -48,10 +48,20 @@ namespace math {
  * @param b Second value
  * @return Beta function applied to the two values.
  */
-template <typename T1, typename T2>
+template <typename T1, typename T2,
+          require_all_arithmetic_t<T1, T2>* = nullptr>
 inline return_type_t<T1, T2> beta(const T1 a, const T2 b) {
   using std::exp;
   return exp(lgamma(a) + lgamma(b) - lgamma(a + b));
+}
+
+template <typename T1, typename T2,
+          require_any_container_t<T1, T2>* = nullptr>
+inline auto beta(const T1& a, const T2& b) {
+  return apply_scalar_binary<T1, T2>::apply(
+      a, b, [&](const auto& c, const auto& d) {
+        return beta(c, d);
+      });
 }
 
 }  // namespace math

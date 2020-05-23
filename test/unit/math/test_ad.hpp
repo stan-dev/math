@@ -1282,6 +1282,30 @@ void expect_ad_vectorized(const F& f, const T& x) {
   expect_ad_vectorized(tols, f, x);
 }
 
+template <typename F, typename T1, typename T2>
+void expect_ad_vectorized_binary(const ad_tolerances& tols, const F& f,
+                                 const T1& x, const T2& y) {
+  std::vector<T1> nest_x{x, x, x};
+  std::vector<T2> nest_y{y, y, y};
+  std::vector<std::vector<T1>> nest_nest_x{nest_x, nest_x, nest_x};
+  std::vector<std::vector<T2>> nest_nest_y{nest_y, nest_y, nest_y};
+  expect_ad(tols, f, x, y);
+  expect_ad(tols, f, x, y[1]);
+  expect_ad(tols, f, x[1], y);
+  expect_ad(tols, f, nest_x, nest_y);
+  expect_ad(tols, f, nest_x, y[1]);
+  expect_ad(tols, f, x[1], nest_y);
+  expect_ad(tols, f, nest_nest_x, nest_nest_y);
+  expect_ad(tols, f, nest_nest_x, y[1]);
+  expect_ad(tols, f, x[1], nest_nest_y);
+}
+
+template <typename F, typename T1, typename T2>
+void expect_ad_vectorized_binary(const F& f, const T1& x, const T2& y) {
+  ad_tolerances tols;
+  expect_ad_vectorized_binary(tols, f, x, y);
+}
+
 /**
  * Test that the specified polymorphic unary function produces the
  * same results, exceptions, and has 1st-, 2nd-, and 3rd-order

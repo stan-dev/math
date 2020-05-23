@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_FUN_BINARY_LOG_LOSS_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/meta/apply_scalar_binary.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 #include <cmath>
@@ -26,19 +25,10 @@ namespace math {
  * @param[in] y_hat response value in [0, 1]
  * @return Log loss for response given reference value
  */
-template <typename T, require_arithmetic_t<T>* = nullptr>
+template <typename T>
 inline T binary_log_loss(int y, const T& y_hat) {
   using std::log;
   return y ? -log(y_hat) : -log1m(y_hat);
-}
-
-template <typename T1, typename T2,
-          require_any_container_t<T1, T2>* = nullptr>
-inline auto binary_log_loss(const T1& a, const T2& b) {
-  return apply_scalar_binary<T1, T2>::apply(
-      a, b, [&](const auto& c, const auto& d) {
-        return binary_log_loss(c, d);
-      });
 }
 
 }  // namespace math

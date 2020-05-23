@@ -53,31 +53,6 @@ struct NumTraits<stan::math::fvar<T>> : GenericNumTraits<stan::math::fvar<T>> {
    */
   static int digits10() { return std::numeric_limits<double>::digits10; }
 };
-/**
- * Traits specialization for Eigen binary operations for autodiff and
- * `int` arguments.
- *
- * @tparam T value and tangent type of autodiff variable
- * @tparam BinaryOp type of binary operation for which traits are
- * defined
- */
-template <typename T, typename BinaryOp>
-struct ScalarBinaryOpTraits<stan::math::fvar<T>, int, BinaryOp> {
-  using ReturnType = stan::math::fvar<T>;
-};
-
-/**
- * Traits specialization for Eigen binary operations for `int` and
- * autodiff arguments.
- *
- * @tparam T value and tangent type of autodiff variable
- * @tparam BinaryOp type of binary operation for which traits are
- * defined
- */
-template <typename T, typename BinaryOp>
-struct ScalarBinaryOpTraits<int, stan::math::fvar<T>, BinaryOp> {
-  using ReturnType = stan::math::fvar<T>;
-};
 
 /**
  * Traits specialization for Eigen binary operations for autodiff and

@@ -83,30 +83,6 @@ struct NumTraits<stan::math::var> : GenericNumTraits<stan::math::var> {
 
 /**
  * Traits specialization for Eigen binary operations for reverse-mode
- * autodiff and `int` arguments.
- *
- * @tparam BinaryOp type of binary operation for which traits are
- * defined
- */
-template <typename BinaryOp>
-struct ScalarBinaryOpTraits<stan::math::var, int, BinaryOp> {
-  using ReturnType = stan::math::var;
-};
-
-/**
- * Traits specialization for Eigen binary operations for `int` and
- * reverse-mode autodiff arguments.
- *
- * @tparam BinaryOp type of binary operation for which traits are
- * defined
- */
-template <typename BinaryOp>
-struct ScalarBinaryOpTraits<int, stan::math::var, BinaryOp> {
-  using ReturnType = stan::math::var;
-};
-
-/**
- * Traits specialization for Eigen binary operations for reverse-mode
  * autodiff and `double` arguments.
  *
  * @tparam BinaryOp type of binary operation for which traits are
