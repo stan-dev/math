@@ -390,7 +390,8 @@ struct adj_jac_vari : public vari {
   template <
       typename Mem, typename T, typename... Pargs,
       require_not_arg_var_t<sizeof...(Targs), sizeof...(Pargs)>* = nullptr>
-  inline void accumulate_adjoints_in_varis(Mem& varis, T&& y_adj_jac, Pargs&&... args) {
+  inline void accumulate_adjoints_in_varis(Mem& varis, T&& y_adj_jac,
+                                           Pargs&&... args) {
     accumulate_adjoints_in_varis(varis, args...);
   }
   /**
