@@ -14,30 +14,30 @@ namespace math {
 
 template <typename T, typename... Pargs>
 inline vari_value<T>** save_varis(vari_value<T>** dest, const var_value<T>& x,
-                                   Pargs&&... args);
+                                  Pargs&&... args);
 
 template <typename T, typename VarVec,
           require_std_vector_vt<is_var, VarVec>* = nullptr, typename... Pargs>
 inline vari_value<T>** save_varis(vari_value<T>** dest, VarVec&& x,
-                                   Pargs&&... args);
+                                  Pargs&&... args);
 
 template <typename T, typename VecContainer,
           require_std_vector_st<is_var, VecContainer>* = nullptr,
           require_std_vector_vt<is_container, VecContainer>* = nullptr,
           typename... Pargs>
 inline vari_value<T>** save_varis(vari_value<T>** dest, VecContainer&& x,
-                                   Pargs&&... args);
+                                  Pargs&&... args);
 
 template <typename T, typename EigT, require_eigen_vt<is_var, EigT>* = nullptr,
           typename... Pargs>
 inline vari_value<T>** save_varis(vari_value<T>** dest, EigT&& x,
-                                   Pargs&&... args);
+                                  Pargs&&... args);
 
 template <typename T, typename Arith,
           require_arithmetic_t<scalar_type_t<Arith>>* = nullptr,
           typename... Pargs>
 inline vari_value<T>** save_varis(vari_value<T>** dest, Arith&& x,
-                                   Pargs&&... args);
+                                  Pargs&&... args);
 template <typename T>
 inline vari_value<T>** save_varis(vari_value<T>** dest);
 
@@ -65,7 +65,7 @@ inline vari_value<T>** save_varis(vari_value<T>** dest) {
  */
 template <typename T, typename... Pargs>
 inline vari_value<T>** save_varis(vari_value<T>** dest, const var_value<T>& x,
-                                   Pargs&&... args) {
+                                  Pargs&&... args) {
   *dest = x.vi_;
   return save_varis(dest + 1, std::forward<Pargs>(args)...);
 }
@@ -86,7 +86,7 @@ inline vari_value<T>** save_varis(vari_value<T>** dest, const var_value<T>& x,
 template <typename T, typename VarVec, require_std_vector_vt<is_var, VarVec>*,
           typename... Pargs>
 inline vari_value<T>** save_varis(vari_value<T>** dest, VarVec&& x,
-                                   Pargs&&... args) {
+                                  Pargs&&... args) {
   for (int i = 0; i < x.size(); ++i) {
     dest[i] = x[i].vi_;
   }
@@ -110,7 +110,7 @@ template <typename T, typename VecContainer,
           require_std_vector_st<is_var, VecContainer>*,
           require_std_vector_vt<is_container, VecContainer>*, typename... Pargs>
 inline vari_value<T>** save_varis(vari_value<T>** dest, VecContainer&& x,
-                                   Pargs&&... args) {
+                                  Pargs&&... args) {
   for (size_t i = 0; i < x.size(); ++i) {
     dest = save_varis(dest, x[i]);
   }
@@ -133,7 +133,7 @@ inline vari_value<T>** save_varis(vari_value<T>** dest, VecContainer&& x,
 template <typename T, typename EigT, require_eigen_vt<is_var, EigT>*,
           typename... Pargs>
 inline vari_value<T>** save_varis(vari_value<T>** dest, EigT&& x,
-                                   Pargs&&... args) {
+                                  Pargs&&... args) {
   for (int i = 0; i < x.size(); ++i) {
     dest[i] = x(i).vi_;
   }
@@ -156,7 +156,7 @@ inline vari_value<T>** save_varis(vari_value<T>** dest, EigT&& x,
 template <typename T, typename Arith,
           require_arithmetic_t<scalar_type_t<Arith>>*, typename... Pargs>
 inline vari_value<T>** save_varis(vari_value<T>** dest, Arith&& x,
-                                   Pargs&&... args) {
+                                  Pargs&&... args) {
   return save_varis(dest, std::forward<Pargs>(args)...);
 }
 

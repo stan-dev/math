@@ -139,7 +139,7 @@ struct x_vis_alloc : vari {
       size_t,
       x_vis_size_::value - remaining_vars_<std::decay_t<Types>...>::value>;
 
-  x_vis_alloc(const Targs&... args) : vari(NOT_A_NUMBER) { // NOLINT
+  x_vis_alloc(const Targs&... args) : vari(NOT_A_NUMBER) {  // NOLINT
     fill_adj_jac(x_vis_, args...);
   }
 
