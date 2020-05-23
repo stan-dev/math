@@ -82,7 +82,7 @@ class multiply_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> final
 
   template <typename T1 = Vari, typename T2 = Arith,
             require_vari_vt<std::is_arithmetic, T1>* = nullptr,
-            require_vt_arithmetic<T2>* = nullptr>
+            require_arithmetic_t<T2>* = nullptr>
   inline void chain_impl() {
       avi()->adj_ += this->adj_ * bd();
   }
@@ -92,6 +92,13 @@ class multiply_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> final
             require_vt_arithmetic<T2>* = nullptr>
   inline void chain_impl() {
       avi()->adj_ += this->adj_ * bd().transpose();
+  }
+  // NOTE: THIS IS WRONG
+  template <typename T1 = Arith, typename T2 = Vari,
+            require_eigen_t<T1>* = nullptr,
+            require_vari_vt<std::is_arithmetic, T2>* = nullptr>
+  void chain_impl() {
+    avi()->adj_ += this->adj_.sum();
   }
 
   void chain() {
@@ -117,23 +124,28 @@ class multiply_vari<VariVal, Arith, Vari, require_vt_arithmetic<Arith>> final
       : op_vari<VariVal, Arith, Vari*>(a * bvi->val_, a, bvi) {}
 
   template <typename T1 = Arith, typename T2 = Vari,
-            require_vari_vt<std::is_arithmetic, T2>* = nullptr,
-            require_vt_arithmetic<T1>* = nullptr>
+            require_arithmetic_t<T1>* = nullptr,
+            require_vari_vt<std::is_arithmetic, T2>* = nullptr>
   void chain_impl() {
     bvi()->adj_ += this->adj_ * ad();
   }
 
   template <typename T1 = Arith, typename T2 = Vari,
-            require_vari_vt<is_eigen, T2>* = nullptr,
-            require_vt_arithmetic<T1>* = nullptr>
+            require_vt_arithmetic<T1>* = nullptr,
+            require_vari_vt<is_eigen, T2>* = nullptr>
   void chain_impl() {
     bvi()->adj_ += (this->adj_ * ad()).transpose();
   }
+  // NOTE: THIS IS WRONG
+  template <typename T1 = Arith, typename T2 = Vari,
+            require_eigen_t<T1>* = nullptr,
+            require_vari_vt<std::is_arithmetic, T2>* = nullptr>
+  void chain_impl() {
+    bvi()->adj_ += this->adj_.sum();
+  }
 
   void chain() {
-    auto a = ad();
-    auto b = bvi()->val_;
-    if (unlikely(is_any_nan(b, a))) {
+    if (unlikely(is_any_nan(bvi()->val_, ad()))) {
       fill(bvi()->adj_, NOT_A_NUMBER);
     } else {
       chain_impl();
