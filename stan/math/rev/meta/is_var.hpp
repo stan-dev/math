@@ -37,7 +37,6 @@ struct is_var_value<
     T, std::enable_if_t<internal::is_var_value_impl<std::decay_t<T>>::value>>
     : std::true_type {};
 
-namespace internal {
 template <typename T, typename = void>
 struct get_var_value {
   using type = value_type_t<T>;
@@ -76,7 +75,17 @@ struct get_var_vari_value<T, std::enable_if_t<is_eigen_var<T>::value>> {
 template <typename T>
 using get_var_vari_value_t = typename get_var_vari_value<std::decay_t<T>>::type;
 
-}  // namespace internal
+template <typename T, typename = void>
+struct get_var_scalar {
+  using type = scalar_type_t<T>;
+};
+template <typename T>
+struct get_var_scalar<T, require_var_value_t<T>> {
+  using type = typename std::decay_t<T>::Scalar;
+};
+
+template <typename T>
+using get_var_scalar_t = typename get_var_scalar<T>::type;
 
 }  // namespace stan
 #endif

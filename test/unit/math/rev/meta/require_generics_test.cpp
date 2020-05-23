@@ -1,7 +1,7 @@
-#include <stan/math/rev/meta/is_var.hpp>  // just this is bad
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/meta/is_var.hpp>  // just this is bad
 #include <test/unit/math/require_util.hpp>
 #include <gtest/gtest.h>
 #include <type_traits>

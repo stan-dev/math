@@ -21,13 +21,13 @@ using var_filter_helper
 
 template <typename T>
 using var_vari_value_t
-    = ::stan::internal::get_var_vari_value_t<scalar_type_t<T>>;
+    = get_var_vari_value_t<scalar_type_t<T>>;
 
 template <typename T>
 using container_var_vari_value_t = std::conditional_t<
     is_std_vector<std::decay_t<T>>::value,
-    ::stan::internal::get_var_vari_value_t<scalar_type_t<T>>**,
-    ::stan::internal::get_var_vari_value_t<T>*>;
+    get_var_vari_value_t<scalar_type_t<T>>**,
+    get_var_vari_value_t<T>*>;
 
 template <typename T>
 using contains_var_value = is_var_value<scalar_type_t<T>>;

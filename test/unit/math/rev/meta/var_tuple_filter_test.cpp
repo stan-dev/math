@@ -1,4 +1,4 @@
-#include <stan/math/rev/meta/var_tuple_filter.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <test/unit/pretty_print_types.hpp>
 #include <gtest/gtest.h>
 
