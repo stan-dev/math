@@ -176,7 +176,6 @@ struct x_vis_alloc : vari {
   template <typename Mem, typename VarValue, typename... Pargs,
             require_var_value_t<VarValue>* = nullptr>
   void fill_adj_jac(Mem& mem, VarValue&& x, Pargs&&... args) {
-    ;
     using vari_type = get_var_vari_value_t<VarValue>;
     static constexpr size_t t = var_position_<VarValue, Pargs...>::value;
     std::get<t>(mem)
@@ -188,7 +187,6 @@ struct x_vis_alloc : vari {
   template <typename Mem, typename Vec, typename... Pargs,
             require_std_vector_vt<is_container, Vec>* = nullptr>
   void fill_adj_jac(Mem& mem, Vec&& x, Pargs&&... args) {
-    ;
     using vari_type = get_var_vari_value_t<scalar_type_t<Vec>>;
     static constexpr size_t t = var_position_<Vec, Pargs...>::value;
     std::get<t>(mem)
@@ -202,7 +200,6 @@ struct x_vis_alloc : vari {
   template <typename Mem, typename Vec, typename... Pargs,
             require_std_vector_vt<is_var_value, Vec>* = nullptr>
   void fill_adj_jac(Mem& mem, Vec&& x, Pargs&&... args) {
-    ;
     using vari_type = get_var_vari_value_t<value_type_t<Vec>>;
     static constexpr size_t t = var_position_<Vec, Pargs...>::value;
     std::get<t>(mem)
@@ -218,7 +215,6 @@ struct x_vis_alloc : vari {
   template <typename Mem, typename EigMat, typename... Pargs,
             require_eigen_vt<is_var_value, EigMat>* = nullptr>
   void fill_adj_jac(Mem& mem, EigMat&& x, Pargs&&... args) {
-    ;
     using vari_type = get_var_vari_value_t<EigMat>;
     static constexpr size_t t = var_position_<EigMat, Pargs...>::value;
     auto&& local_mem = std::get<t>(mem);
@@ -293,7 +289,7 @@ struct adj_jac_vari : public vari {
   y_vi_type_t<FReturnType> y_vi_;  // vari pointer for output.
 
   explicit adj_jac_vari(x_vis_alloc<Targs...>* x)
-      : vari(NOT_A_NUMBER), x_vis_alloc_(x), y_vi_(nullptr){}
+      : vari(NOT_A_NUMBER), x_vis_alloc_(x), y_vi_(nullptr) {}
 
   /**
    * Return a var with a new vari holding the given value

@@ -46,15 +46,15 @@ class multiply_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>>
   template <typename T1 = Vari1, typename T2 = Vari2,
             require_all_vari_vt<std::is_arithmetic, T1, T2>* = nullptr>
   inline void chain_impl() {
-      avi()->adj_ += bvi()->val_ * this->adj_;
-      bvi()->adj_ += avi()->val_ * this->adj_;
+    avi()->adj_ += bvi()->val_ * this->adj_;
+    bvi()->adj_ += avi()->val_ * this->adj_;
   }
 
   template <typename T1 = Vari1, typename T2 = Vari2,
             require_all_vari_vt<is_eigen, T1, T2>* = nullptr>
   inline void chain_impl() {
-      avi()->adj_ += this->adj_ * bvi()->val_.transpose();
-      bvi()->adj_ += avi()->val_.transpose() * this->adj_;
+    avi()->adj_ += this->adj_ * bvi()->val_.transpose();
+    bvi()->adj_ += avi()->val_.transpose() * this->adj_;
   }
 
   void chain() {
@@ -62,7 +62,7 @@ class multiply_vari<VariVal, Vari1, Vari2, require_all_vari_t<Vari1, Vari2>>
       fill(avi()->adj_, NOT_A_NUMBER);
       fill(bvi()->adj_, NOT_A_NUMBER);
     } else {
-     chain_impl();
+      chain_impl();
     }
   }
 };
@@ -84,14 +84,14 @@ class multiply_vari<VariVal, Vari, Arith, require_vt_arithmetic<Arith>> final
             require_vari_vt<std::is_arithmetic, T1>* = nullptr,
             require_arithmetic_t<T2>* = nullptr>
   inline void chain_impl() {
-      avi()->adj_ += this->adj_ * bd();
+    avi()->adj_ += this->adj_ * bd();
   }
 
   template <typename T1 = Vari, typename T2 = Arith,
             require_vari_vt<is_eigen, T1>* = nullptr,
             require_vt_arithmetic<T2>* = nullptr>
   inline void chain_impl() {
-      avi()->adj_ += this->adj_ * bd().transpose();
+    avi()->adj_ += this->adj_ * bd().transpose();
   }
   // NOTE: THIS IS WRONG
   template <typename T1 = Arith, typename T2 = Vari,
@@ -228,7 +228,8 @@ inline auto operator*(const T1& a, const T2& b) {
   using vari2 = get_var_vari_value_t<T2>;
   using scalar1_type = typename T1::Scalar;
   using scalar2_type = typename T2::Scalar;
-  using mat_return = internal::mat_mul_return_type_t<scalar1_type, scalar2_type>;
+  using mat_return
+      = internal::mat_mul_return_type_t<scalar1_type, scalar2_type>;
   using multiply_type = internal::multiply_vari<mat_return, vari1, vari2>;
   return var_value<mat_return>{new multiply_type(a.vi_, b.vi_)};
 }
@@ -236,13 +237,15 @@ inline auto operator*(const T1& a, const T2& b) {
 /**
  * idk how to name this, but we need something that at SFINAE
  * that allows mixes of stan scalar types or var<eig> with eigen but not
- * var and Eig<double> which should differ to the old implimentation for dynamic types.
+ * var and Eig<double> which should differ to the old implimentation for dynamic
+ * types.
  */
- template <typename T, typename S, typename = void>
- struct is_conformable : std::true_type {};
+template <typename T, typename S, typename = void>
+struct is_conformable : std::true_type {};
 
- template <typename T, typename S>
- struct is_conformable<T, S, require_var_t<T>> : bool_constant<!is_eigen<S>::value> {};
+template <typename T, typename S>
+struct is_conformable<T, S, require_var_t<T>>
+    : bool_constant<!is_eigen<S>::value> {};
 
 template <typename T, typename S>
 using require_conformable_t = require_t<is_conformable<T, S>>;
@@ -260,8 +263,8 @@ using require_conformable_t = require_t<is_conformable<T, S>>;
  * @return Variable result of multiplying operands.
  */
 template <typename T, typename Arith, require_var_value_t<T>* = nullptr,
- require_vt_arithmetic<Arith>* = nullptr,
- require_conformable_t<T, Arith>* = nullptr>
+          require_vt_arithmetic<Arith>* = nullptr,
+          require_conformable_t<T, Arith>* = nullptr>
 inline auto operator*(const T& a, const Arith& b) {
   using vari_type = get_var_vari_value_t<T>;
   using scalar_type = typename T::Scalar;
@@ -283,8 +286,8 @@ inline auto operator*(const T& a, const Arith& b) {
  * @return Variable result of multiplying the operands.
  */
 template <typename T, typename Arith, require_var_value_t<T>* = nullptr,
-  require_vt_arithmetic<Arith>* = nullptr,
-   require_conformable_t<T, Arith>* = nullptr>
+          require_vt_arithmetic<Arith>* = nullptr,
+          require_conformable_t<T, Arith>* = nullptr>
 inline auto operator*(const Arith& a, const T& b) {
   using vari_type = get_var_vari_value_t<T>;
   using scalar_type = typename T::Scalar;
