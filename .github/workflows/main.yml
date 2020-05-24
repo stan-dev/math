@@ -1,4 +1,4 @@
-name: Math - Windows with RTools 3.5
+name: Windows RTools 3.5
 
 on:
   push:
@@ -20,8 +20,8 @@ on:
       - 'README.md'
       - 'RELEASE-NOTES.txt'
 jobs:
-  prim:
-    name: prim tests
+  full:
+    name: Full unit tests
     runs-on: windows-latest
 
     steps:
@@ -40,148 +40,24 @@ jobs:
     - name: PATH Setup
       shell: powershell
       run: echo "::add-path::C:/Rtools/mingw_64/bin"
-    - name: Check g++ version
+    - name: Print g++ version
       shell: powershell
       run: g++ --version
-    - name: Check g++ path
+    - name: Print g++ path
       shell: powershell
-      run: Get-Command gcc | Select-Object -ExpandProperty Definition
-    - name: Check mingw32-make version
-      shell: powershell
-      run: mingw32-make --version
-    - name: Check mingw32-make path
-      shell: powershell
-      run: Get-Command mingw32-make | Select-Object -ExpandProperty Definition
-    - name: Build libs
-      shell: powershell
-      run: mingw32-make -f make/standalone math-libs
-    - name: PATH Setup
-      shell: powershell
-      run: echo "::add-path::D:/a/math/math/lib/tbb"
-    - name: Run tests
-      shell: powershell
-      run: python.exe runTests.py -j2 test/unit -f test/unit/math/prim/
-  rev:
-    name: rev tests
-    runs-on: windows-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: '2.x'
-    - name: Download RTools
-      run: Invoke-WebRequest -Uri https://cran.rstudio.com/bin/windows/Rtools/Rtools35.exe -OutFile ./R35.exe
-    - name: Install RTools
-      shell: powershell
-      run: Start-Process -FilePath ./R35.exe -ArgumentList /VERYSILENT -NoNewWindow -Wait
-    - name: PATH Setup
-      shell: powershell
-      run: echo "::add-path::C:/Rtools/bin"
-    - name: PATH Setup
-      shell: powershell
-      run: echo "::add-path::C:/Rtools/mingw_64/bin"
-    - name: Check g++ version
-      shell: powershell
-      run: g++ --version
-    - name: Check g++ path
-      shell: powershell
-      run: Get-Command gcc | Select-Object -ExpandProperty Definition
-    - name: Check mingw32-make version
+      run: Get-Command g++ | Select-Object -ExpandProperty Definition
+    - name: Print mingw32-make version
       shell: powershell
       run: mingw32-make --version
-    - name: Check mingw32-make path
+    - name: Print mingw32-make path
       shell: powershell
       run: Get-Command mingw32-make | Select-Object -ExpandProperty Definition
-    - name: Build libs
+    - name: Build Math libs
       shell: powershell
       run: mingw32-make -f make/standalone math-libs
-    - name: PATH Setup
+    - name: Add TBB to PATH
       shell: powershell
       run: echo "::add-path::D:/a/math/math/lib/tbb"
-    - name: Run tests
+    - name: Run full unit tests
       shell: powershell
-      run: python.exe runTests.py -j2 test/unit -f test/unit/math/rev/
-  fwd:
-    name: fwd tests
-    runs-on: windows-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: '2.x'
-    - name: Download RTools
-      run: Invoke-WebRequest -Uri https://cran.rstudio.com/bin/windows/Rtools/Rtools35.exe -OutFile ./R35.exe
-    - name: Install RTools
-      shell: powershell
-      run: Start-Process -FilePath ./R35.exe -ArgumentList /VERYSILENT -NoNewWindow -Wait
-    - name: PATH Setup
-      shell: powershell
-      run: echo "::add-path::C:/Rtools/bin"
-    - name: PATH Setup
-      shell: powershell
-      run: echo "::add-path::C:/Rtools/mingw_64/bin"
-    - name: Check g++ version
-      shell: powershell
-      run: g++ --version
-    - name: Check g++ path
-      shell: powershell
-      run: Get-Command gcc | Select-Object -ExpandProperty Definition
-    - name: Check mingw32-make version
-      shell: powershell
-      run: mingw32-make --version
-    - name: Check mingw32-make path
-      shell: powershell
-      run: Get-Command mingw32-make | Select-Object -ExpandProperty Definition
-    - name: Build libs
-      shell: powershell
-      run: mingw32-make -f make/standalone math-libs
-    - name: PATH Setup
-      shell: powershell
-      run: echo "::add-path::D:/a/math/math/lib/tbb"
-    - name: Run tests
-      shell: powershell
-      run: python.exe runTests.py -j2 test/unit -f test/unit/math/fwd/
-  mix:
-    name: mix tests
-    runs-on: windows-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: '2.x'
-    - name: Download RTools
-      run: Invoke-WebRequest -Uri https://cran.rstudio.com/bin/windows/Rtools/Rtools35.exe -OutFile ./R35.exe
-    - name: Install RTools
-      shell: powershell
-      run: Start-Process -FilePath ./R35.exe -ArgumentList /VERYSILENT -NoNewWindow -Wait
-    - name: PATH Setup
-      shell: powershell
-      run: echo "::add-path::C:/Rtools/bin"
-    - name: PATH Setup
-      shell: powershell
-      run: echo "::add-path::C:/Rtools/mingw_64/bin"
-    - name: Check g++ version
-      shell: powershell
-      run: g++ --version
-    - name: Check g++ path
-      shell: powershell
-      run: Get-Command gcc | Select-Object -ExpandProperty Definition
-    - name: Check mingw32-make version
-      shell: powershell
-      run: mingw32-make --version
-    - name: Check mingw32-make path
-      shell: powershell
-      run: Get-Command mingw32-make | Select-Object -ExpandProperty Definition
-    - name: Build libs
-      shell: powershell
-      run: mingw32-make -f make/standalone math-libs
-    - name: PATH Setup
-      shell: powershell
-      run: echo "::add-path::D:/a/math/math/lib/tbb"
-    - name: Run tests
-      shell: powershell
-      run: python.exe runTests.py -j2 test/unit -f test/unit/math/mix/
-
+      run: python.exe runTests.py -j2 test/unit -f test/unit/
