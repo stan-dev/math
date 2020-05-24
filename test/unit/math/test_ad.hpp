@@ -1331,8 +1331,7 @@ template <typename F, typename T1, typename T2,
 void expect_ad_vectorized_binary(const ad_tolerances& tols, const F& f,
                                  const T1& x, const T2& y) {
   expect_ad_vectorized_binary_impl(tols, f, x, y);
-  expect_ad_vectorized_binary_impl(tols, f, to_std_vector(x),
-                                   to_std_vector(y));
+  expect_ad_vectorized_binary_impl(tols, f, to_std_vector(x), to_std_vector(y));
 }
 
 /**

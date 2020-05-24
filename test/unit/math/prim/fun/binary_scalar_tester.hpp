@@ -135,13 +135,13 @@ void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
   binary_scalar_tester_impl(f, x, y);
   binary_scalar_tester_impl(f, x.transpose().eval(), y.transpose().eval());
   binary_scalar_tester_impl(f, x.replicate(1, x.size()).eval(),
-                               y.replicate(1, y.size()).eval());
+                            y.replicate(1, y.size()).eval());
   binary_scalar_tester_impl(f, x.replicate(1, x.size()).array().eval(),
-                               y.replicate(1, y.size()).array().eval());
+                            y.replicate(1, y.size()).array().eval());
   binary_scalar_tester_impl(f, x.transpose(), y.transpose());
   binary_scalar_tester_impl(
       f, std::vector<typename T1::Scalar>(x.data(), x.data() + x.size()),
-         std::vector<typename T2::Scalar>(y.data(), y.data() + y.size()));
+      std::vector<typename T2::Scalar>(y.data(), y.data() + y.size()));
 }
 
 }  // namespace test
