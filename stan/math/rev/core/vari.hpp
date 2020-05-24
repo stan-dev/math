@@ -220,11 +220,11 @@ class vari_value<T, std::enable_if_t<is_eigen<T>::value>> : public vari_base {
             x.size())),
         adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
-        val_(val_mem_, x.rows(), x.cols()),
-        adj_(adj_mem_, x.rows(), x.cols()),
         rows_(x.rows()),
         cols_(x.cols()),
-        size_(x.size()) {
+        size_(x.size()),
+        val_(val_mem_, x.rows(), x.cols()),
+        adj_(adj_mem_, x.rows(), x.cols()) {
     val_ = x;
     adj_.setZero();
     ChainableStack::instance_->var_stack_.push_back(this);
@@ -235,11 +235,11 @@ class vari_value<T, std::enable_if_t<is_eigen<T>::value>> : public vari_base {
             x.size())),
         adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
-        val_(val_mem_, x.rows(), x.cols()),
-        adj_(adj_mem_, x.rows(), x.cols()),
         rows_(x.rows()),
         cols_(x.cols()),
-        size_(x.size()) {
+        size_(x.size()),
+        val_(val_mem_, x.rows(), x.cols()),
+        adj_(adj_mem_, x.rows(), x.cols()) {
     val_ = x;
     adj_.setZero();
     if (stacked) {

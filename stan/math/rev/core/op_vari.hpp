@@ -129,12 +129,10 @@ auto make_op_vari_tuple(Arr& mem, Types&&... args) {
 template <typename T, typename... Types>
 class op_vari : public vari_value<T> {
  protected:
-  std::array<double*,
-             std::tuple_size<internal::matrix_double_filter_t<Types...>>::value>
-      dbl_mem_;  // Holds mem for eigen matrices of doubles
+  using num_dbls_ = std::tuple_size<internal::matrix_double_filter_t<Types...>>;
+  std::array<double*, num_dbls_::value> dbl_mem_;  // mem for eigen mat doubles
   std::tuple<internal::op_vari_tuple_t<Types>...>
       vi_;  // Holds the objects needed in the reverse pass.
-  size_t num_dbls_;
 
  public:
   /**
@@ -187,7 +185,6 @@ class op_vari : public vari_value<T> {
    */
   op_vari(const T& val, Types... args)
       : vari_value<T>(val),
-        num_dbls_(internal::op_vari_count_dbl(0, args...)),
         dbl_mem_(),
         vi_(internal::make_op_vari_tuple(dbl_mem_, args...)) {}
 };
