@@ -19,7 +19,7 @@ class dynamic_to_static_vari : public vari_base {
   dynamic_to_static_vari(vari_value<T>* input, TT&& output, Eigen::Index N)
       : N_(N),
         output_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(N_)),
-        input_(input){
+        input_(input) {
     using matrix_vi = Eigen::Matrix<vari*, Eigen::Dynamic, Eigen::Dynamic>;
     Eigen::Map<matrix_vi>(output_, output.rows(), output.cols()) = output.vi();
   }
