@@ -35,7 +35,7 @@ return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
   static const char* function = "bernoulli_lcdf";
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
-  T_theta_ref theta_ref = to_ref(theta);
+  T_theta_ref theta_ref = theta;
   check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
 
   if (size_zero(n, theta)) {
@@ -46,7 +46,7 @@ return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
   operands_and_partials<T_theta_ref> ops_partials(theta_ref);
 
   scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_theta_ref> theta_vec(theta);
+  scalar_seq_view<T_theta_ref> theta_vec(theta_ref);
   size_t max_size_seq_view = max_size(n, theta);
 
   // Explicit return for extreme values
