@@ -229,7 +229,7 @@ class operation_cl : public operation_cl_base {
    * Generates kernel code for this expression.
    * @param i row index variable name
    * @param j column index variable name
-   * @param view_handled whether whether caller already handled matrix view
+   * @param view_handled whether caller already handled matrix view
    * @param var_name_arg variable name of the nested expression
    * @return part of kernel with code for this expression
    */

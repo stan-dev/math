@@ -73,24 +73,59 @@ auto holder_cl(T&& a, Ptrs*... ptrs) {
 }
 
 namespace internal {
+/**
+ * Handles single element (moving rvalues to heap) for construction of
+ * `holder_cl` from a functor. For lvalues just sets the `res` pointer.
+ * @tparam T type of the element
+ * @param a element to handle
+ * @param res resulting pointer to element
+ * @return tuple of pointer allocated on heap (empty).
+ */
 template <typename T>
 auto holder_cl_handle_element(const T& a, const T*& res) {
   res = &a;
   return std::make_tuple();
 }
 
+/**
+ * Handles single element (moving rvalues to heap) for construction of
+ * `holder_cl` from a functor. Rvalue is moved to heap and the pointer to heap
+ * memory is assigned to res and returned in a tuple.
+ * @tparam T type of the element
+ * @param a element to handle
+ * @param res resulting pointer to element
+ * @return tuple of pointer allocated on heap (containing single pointer).
+ */
 template <typename T>
 auto holder_cl_handle_element(std::remove_reference_t<T>&& a, const T*& res) {
   res = new T(std::move(a));
   return std::make_tuple(res);
 }
 
+/**
+ * Second step in implementation of construction `holder_cl` from a functor.
+ * @tparam T type of the result expression
+ * @tparam Is index sequence for `ptrs`
+ * @tparam Args types of pointes to heap
+ * @param expr result expression
+ * @param ptrs pointers to heap that need to be released when the expression is destructed
+ * @return `holder_cl` referencing given expression
+ */
 template <typename T, std::size_t... Is, typename... Args>
 auto make_holder_cl_impl2(T&& expr, std::index_sequence<Is...>,
                           const std::tuple<Args*...>& ptrs) {
   return holder_cl(std::forward<T>(expr), std::get<Is>(ptrs)...);
 }
 
+/**
+ * First step in implementation of construction `holder_cl` from a functor.
+ * @tparam T type of the functor
+ * @tparam Is index sequence for `args`
+ * @tparam Args types of arguments
+ * @param func functor
+ * @param args arguments for the functor
+ * @return `holder_cl` referencing given expression
+ */
 template <typename T, std::size_t... Is, typename... Args>
 auto make_holder_cl_impl(const T& func, std::index_sequence<Is...>,
                          Args&&... args) {
