@@ -106,8 +106,8 @@ class cvodes_integrator {
         = apply([&](auto&&... args) { return f_(t, y_vec, msgs_, args...); },
                 value_of_args_tuple_);
 
-    check_size_match("cvodes_integrator", "dy_dt", dy_dt_vec.size(),
-                     "states", N_);
+    check_size_match("cvodes_integrator", "dy_dt", dy_dt_vec.size(), "states",
+                     N_);
 
     std::copy(dy_dt_vec.data(), dy_dt_vec.data() + dy_dt_vec.size(), dy_dt);
   }

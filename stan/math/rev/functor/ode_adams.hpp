@@ -44,11 +44,13 @@ namespace math {
  */
 template <typename F, typename T_initial, typename T_t0, typename T_ts,
           typename... T_Args>
-std::vector<Eigen::Matrix<stan::return_type_t<T_initial, T_t0, T_ts, T_Args...>, Eigen::Dynamic, 1>>
+std::vector<Eigen::Matrix<stan::return_type_t<T_initial, T_t0, T_ts, T_Args...>,
+                          Eigen::Dynamic, 1>>
 ode_adams_tol(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
-            const T_t0& t0, const std::vector<T_ts>& ts,
-            double relative_tolerance, double absolute_tolerance,
-            long int max_num_steps, std::ostream* msgs, const T_Args&... args) {
+              const T_t0& t0, const std::vector<T_ts>& ts,
+              double relative_tolerance, double absolute_tolerance,
+              long int max_num_steps, std::ostream* msgs,
+              const T_Args&... args) {
   cvodes_integrator<CV_ADAMS, F, T_initial, T_t0, T_ts, T_Args...> integrator(
       f, y0, t0, ts, relative_tolerance, absolute_tolerance, max_num_steps,
       msgs, args...);
@@ -95,14 +97,14 @@ template <typename F, typename T_initial, typename T_t0, typename T_ts,
 std::vector<Eigen::Matrix<stan::return_type_t<T_initial, T_t0, T_ts, T_Args...>,
                           Eigen::Dynamic, 1>>
 ode_adams(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
-        const T_t0& t0, const std::vector<T_ts>& ts, std::ostream* msgs,
-        const T_Args&... args) {
+          const T_t0& t0, const std::vector<T_ts>& ts, std::ostream* msgs,
+          const T_Args&... args) {
   double relative_tolerance = 1e-10;
   double absolute_tolerance = 1e-10;
   long int max_num_steps = 1e8;
 
   return ode_adams_tol(f, y0, t0, ts, relative_tolerance, absolute_tolerance,
-                     max_num_steps, msgs, args...);
+                       max_num_steps, msgs, args...);
 }
 
 }  // namespace math
