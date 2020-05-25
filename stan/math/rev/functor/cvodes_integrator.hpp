@@ -255,9 +255,6 @@ class cvodes_integrator {
   operator()() {  // NOLINT(runtime/int)
     std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y;
 
-    const double t0_dbl = value_of(t0_);
-    const std::vector<double> ts_dbl = value_of(ts_);
-
     void* cvodes_mem = CVodeCreate(Lmm);
     if (cvodes_mem == nullptr) {
       throw std::runtime_error("CVodeCreate failed to allocate memory");
@@ -265,7 +262,7 @@ class cvodes_integrator {
 
     try {
       check_flag_sundials(
-          CVodeInit(cvodes_mem, &cvodes_integrator::cv_rhs, t0_dbl, nv_state_),
+			  CVodeInit(cvodes_mem, &cvodes_integrator::cv_rhs, value_of(t0_), nv_state_),
           "CVodeInit");
 
       // Assign pointer to this as user data
@@ -298,9 +295,9 @@ class cvodes_integrator {
                             "CVodeSensEEtolerances");
       }
 
-      double t_init = t0_dbl;
+      double t_init = value_of(t0_);
       for (size_t n = 0; n < ts_.size(); ++n) {
-        double t_final = ts_dbl[n];
+        double t_final = value_of(ts_[n]);
 
         if (t_final != t_init) {
           check_flag_sundials(

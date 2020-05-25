@@ -31,7 +31,7 @@ namespace math {
  * @return ODE state with scalar type var
  */
 template <typename F, typename T_y0_t0, typename T_t0, typename T_t,
-          typename... Args>
+          typename... Args, typename = require_any_autodiff_t<T_y0_t0, T_t0, T_t, scalar_type_t<Args>...>>
 Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
     const F& f, const Eigen::VectorXd& coupled_state,
     const Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1>& y0, const T_t0& t0,

@@ -68,11 +68,10 @@ ode_rk45_tol(const F& f,
 
   Eigen::Matrix<T_initial_or_t0, Eigen::Dynamic, 1> y0 = y0_arg.unaryExpr(
       [](const T_initial& val) { return T_initial_or_t0(val); });
-  const std::vector<double> ts_dbl = value_of(ts);
 
   check_finite("integrate_ode_rk45", "initial state", y0);
   check_finite("integrate_ode_rk45", "initial time", t0);
-  check_finite("integrate_ode_rk45", "times", ts_dbl);
+  check_finite("integrate_ode_rk45", "times", ts);
 
   // Code from https://stackoverflow.com/a/17340003
   std::vector<int> unused_temp{
@@ -80,9 +79,9 @@ ode_rk45_tol(const F& f,
           0)...};
 
   check_nonzero_size("integrate_ode_rk45", "initial state", y0);
-  check_nonzero_size("integrate_ode_rk45", "times", ts_dbl);
-  check_ordered("integrate_ode_rk45", "times", ts_dbl);
-  check_less("integrate_ode_rk45", "initial time", t0, ts_dbl[0]);
+  check_nonzero_size("integrate_ode_rk45", "times", ts);
+  check_ordered("integrate_ode_rk45", "times", ts);
+  check_less("integrate_ode_rk45", "initial time", t0, ts[0]);
 
   if (relative_tolerance <= 0) {
     invalid_argument("integrate_ode_rk45", "relative_tolerance,",
@@ -105,7 +104,8 @@ ode_rk45_tol(const F& f,
   // first time in the vector must be time of initial state
   std::vector<double> ts_vec(ts.size() + 1);
   ts_vec[0] = value_of(t0);
-  std::copy(ts_dbl.begin(), ts_dbl.end(), ts_vec.begin() + 1);
+  for (size_t i = 0; i < ts.size(); ++i)
+    ts_vec[i + 1] = value_of(ts[i]);
 
   std::vector<Eigen::Matrix<return_t, Eigen::Dynamic, 1>> y;
   bool observer_initial_recorded = false;

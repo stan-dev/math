@@ -56,6 +56,40 @@ struct Cos2Arg {
   }
 };
 
+TEST(StanMathOde_ode_rk45_tol, int_t0) {
+  using stan::math::var;
+
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
+  int t0 = 0;
+  std::vector<double> ts = {0.45, 1.1};
+
+  double a = 1.5;
+
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> output
+      = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
+				nullptr, a);
+
+  EXPECT_FLOAT_EQ(output[0][0], 0.4165982112);
+  EXPECT_FLOAT_EQ(output[1][0], 0.66457668563);
+}
+
+TEST(StanMathOde_ode_rk45_tol, int_ts) {
+  using stan::math::var;
+
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
+  double t0 = 0.0;
+  std::vector<int> ts = {1, 2};
+
+  double a = 1.5;
+
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> output
+      = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
+				nullptr, a);
+
+  EXPECT_FLOAT_EQ(output[0][0], 0.6649966577);
+  EXPECT_FLOAT_EQ(output[1][0], 0.09408000537);
+}
+
 TEST(StanMathOde_ode_rk45_tol, t0) {
   using stan::math::var;
 
