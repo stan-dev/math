@@ -261,9 +261,9 @@ class cvodes_integrator {
     }
 
     try {
-      check_flag_sundials(
-			  CVodeInit(cvodes_mem, &cvodes_integrator::cv_rhs, value_of(t0_), nv_state_),
-          "CVodeInit");
+      check_flag_sundials(CVodeInit(cvodes_mem, &cvodes_integrator::cv_rhs,
+                                    value_of(t0_), nv_state_),
+                          "CVodeInit");
 
       // Assign pointer to this as user data
       check_flag_sundials(
