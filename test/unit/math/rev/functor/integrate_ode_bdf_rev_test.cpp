@@ -131,7 +131,7 @@ TEST(StanAgradRevOde_integrate_ode_bdf, harmonic_oscillator_error) {
 
   // aligned error handling with non-stiff case
   std::string error_msg
-      = "cvodes_integrator::rhs: dy_dt (3) and states (2) must match in size";
+      = "cvodes_integrator: dy_dt (3) and states (2) must match in size";
 
   sho_error_test<double, var>(harm_osc, y0, t0, ts, theta, x, x_int, error_msg);
   sho_error_test<var, double>(harm_osc, y0, t0, ts, theta, x, x_int, error_msg);
@@ -241,8 +241,6 @@ TEST(StanAgradRevOde_integrate_ode_bdf, time_steps_as_param_AD) {
         res[i][j].grad();
         for (auto k = 0; k < nt; ++k) {
           if (k != i) {
-            // std::cout << "setup: i = " << i << ", j = " << j << ", k = " << k
-            // << std::endl;
             EXPECT_FLOAT_EQ(ts[k].adj(), 0.0);
           } else {
             std::vector<double> y0(res_d.begin(), res_d.begin() + ns);
