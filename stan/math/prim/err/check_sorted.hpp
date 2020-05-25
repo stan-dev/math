@@ -12,7 +12,8 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the specified vector is sorted into increasing order (repeated values are okay).
+ * Check if the specified vector is sorted into increasing order (repeated
+ * values are okay).
  * @tparam T_y Type of scalar
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -22,7 +23,7 @@ namespace math {
  */
 template <typename T_y>
 void check_sorted(const char* function, const char* name,
-                   const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y) {
+                  const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y) {
   using size_type = index_type_t<Eigen::Matrix<T_y, Eigen::Dynamic, 1>>;
 
   for (size_type n = 1; n < y.size(); n++) {
@@ -32,7 +33,8 @@ void check_sorted(const char* function, const char* name,
            << " The element at " << stan::error_index::value + n << " is ";
       std::string msg1_str(msg1.str());
       std::ostringstream msg2;
-      msg2 << ", but should be greater than or equal to the previous element, " << y[n - 1];
+      msg2 << ", but should be greater than or equal to the previous element, "
+           << y[n - 1];
       std::string msg2_str(msg2.str());
       throw_domain_error(function, name, y[n], msg1_str.c_str(),
                          msg2_str.c_str());
@@ -41,7 +43,8 @@ void check_sorted(const char* function, const char* name,
 }
 
 /**
- * Check if the specified vector is sorted into increasing order (repeated values are okay).
+ * Check if the specified vector is sorted into increasing order (repeated
+ * values are okay).
  * @tparam T_y Type of scalar
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -52,7 +55,7 @@ void check_sorted(const char* function, const char* name,
  */
 template <typename T_y>
 void check_sorted(const char* function, const char* name,
-                   const std::vector<T_y>& y) {
+                  const std::vector<T_y>& y) {
   for (size_t n = 1; n < y.size(); n++) {
     if (!(y[n] >= y[n - 1])) {
       std::ostringstream msg1;
@@ -60,7 +63,8 @@ void check_sorted(const char* function, const char* name,
            << " The element at " << stan::error_index::value + n << " is ";
       std::string msg1_str(msg1.str());
       std::ostringstream msg2;
-      msg2 << ", but should be greater than or equal to the previous element, " << y[n - 1];
+      msg2 << ", but should be greater than or equal to the previous element, "
+           << y[n - 1];
       std::string msg2_str(msg2.str());
       throw_domain_error(function, name, y[n], msg1_str.c_str(),
                          msg2_str.c_str());

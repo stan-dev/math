@@ -165,7 +165,7 @@ TEST(StanMathOde_ode_bdf_tol, ts_repeat) {
   EXPECT_FLOAT_EQ(ts[1].adj(), 0.78070695113);
 
   stan::math::set_zero_all_adjoints();
-  
+
   output[2][0].grad();
 
   EXPECT_FLOAT_EQ(output[2][0].val(), 0.66457668563);

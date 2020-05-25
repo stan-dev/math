@@ -27,7 +27,7 @@ TEST(ErrorHandling, checkSorted) {
        std::numeric_limits<double>::infinity()};
   EXPECT_NO_THROW(check_sorted("check_sorted", "y", y));
 
-  y = { -1, 3, 2 };
+  y = {-1, 3, 2};
   EXPECT_THROW(check_sorted("check_sorted", "y", y), std::domain_error);
 }
 

@@ -304,10 +304,11 @@ class cvodes_integrator {
               CVode(cvodes_mem, t_final, nv_state_, &t_init, CV_NORMAL),
               "CVode");
 
-	  if (y0_vars_ + args_vars_ > 0) {
-	    check_flag_sundials(CVodeGetSens(cvodes_mem, &t_init, nv_state_sens_),
-				"CVodeGetSens");
-	  }
+          if (y0_vars_ + args_vars_ > 0) {
+            check_flag_sundials(
+                CVodeGetSens(cvodes_mem, &t_init, nv_state_sens_),
+                "CVodeGetSens");
+          }
         }
 
         y.emplace_back(apply(

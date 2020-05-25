@@ -153,7 +153,7 @@ TEST(StanMathOde_ode_rk45_tol, ts_repeat) {
 
   std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> output
       = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-                                nullptr, a);
+                                 nullptr, a);
 
   output[0][0].grad();
 
@@ -168,7 +168,7 @@ TEST(StanMathOde_ode_rk45_tol, ts_repeat) {
   EXPECT_FLOAT_EQ(ts[1].adj(), 0.78070695113);
 
   stan::math::set_zero_all_adjoints();
-  
+
   output[2][0].grad();
 
   EXPECT_FLOAT_EQ(output[2][0].val(), 0.66457668563);
