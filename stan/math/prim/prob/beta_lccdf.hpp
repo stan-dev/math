@@ -57,8 +57,8 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
   }
 
   T_partials_return ccdf_log(0.0);
-  operands_and_partials<T_y, T_scale_succ, T_scale_fail>
-    ops_partials(y, alpha, beta_param);
+  operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(
+      y, alpha, beta_param);
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_scale_succ> alpha_vec(alpha);
   scalar_seq_view<T_scale_fail> beta_vec(beta_param);

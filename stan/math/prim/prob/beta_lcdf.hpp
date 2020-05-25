@@ -57,8 +57,8 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
   }
 
   T_partials_return cdf_log(0.0);
-  operands_and_partials<T_y, T_scale_succ, T_scale_fail>
-    ops_partials(y, alpha, beta_param);
+  operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(
+      y, alpha, beta_param);
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_scale_succ> alpha_vec(alpha);
   scalar_seq_view<T_scale_fail> beta_vec(beta_param);
@@ -93,8 +93,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
     const T_partials_return beta_dbl = value_of(beta_vec[n]);
-    const T_partials_return betafunc_dbl
-        = beta(alpha_dbl, beta_dbl);
+    const T_partials_return betafunc_dbl = beta(alpha_dbl, beta_dbl);
     const T_partials_return Pn = inc_beta(alpha_dbl, beta_dbl, y_dbl);
     const T_partials_return inv_Pn
         = is_constant_all<T_y, T_scale_succ, T_scale_fail>::value ? 0 : inv(Pn);
