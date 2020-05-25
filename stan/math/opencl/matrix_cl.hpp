@@ -10,7 +10,7 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/is_matrix_cl.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <CL/cl2.hpp>
 #include <algorithm>
 #include <iostream>
@@ -463,7 +463,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @param expression expression
    */
   template <typename Expr,
-            require_all_valid_expressions_and_none_scalar_t<Expr>* = nullptr>
+            require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr>
   matrix_cl(const Expr& expression);  // NOLINT(runtime/explicit)
 
   /**
@@ -502,7 +502,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @param expression expression
    */
   template <typename Expr,
-            require_all_valid_expressions_and_none_scalar_t<Expr>* = nullptr>
+            require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr>
   matrix_cl<T>& operator=(const Expr& expression);
 
  private:

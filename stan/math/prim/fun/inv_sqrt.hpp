@@ -11,7 +11,7 @@ namespace stan {
 namespace math {
 
 /**
- * Structure to wrap `1 / sqrt(x)}` so that it can be vectorized.
+ * Structure to wrap `1 / sqrt(x)` so that it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable

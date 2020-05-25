@@ -8,7 +8,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl_lhs.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <algorithm>
 #include <set>
 #include <string>
@@ -166,7 +166,7 @@ class diagonal_
  * @return Diagonal of given expression
  */
 template <typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
 inline auto diagonal(T&& a) {
   auto&& a_operation = as_operation_cl(std::forward<T>(a)).deep_copy();
   return diagonal_<std::remove_reference_t<decltype(a_operation)>>(

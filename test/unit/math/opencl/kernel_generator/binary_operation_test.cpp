@@ -66,7 +66,7 @@ TEST(KernelGenerator, addition_test) {
 
 BINARY_OPERATION_TEST(subtraction_test, -, double);
 
-TEST(KernelGenerator, elewise_multiplication_test) {
+TEST(KernelGenerator, elt_multiply_test) {
   MatrixXd m1(3, 3);
   m1 << 1, 2.5, 3, 4, 5, 6.3, 7, -8, -9.5;
   MatrixXi m2(3, 3);
@@ -75,7 +75,7 @@ TEST(KernelGenerator, elewise_multiplication_test) {
   matrix_cl<double> m1_cl(m1);
   matrix_cl<int> m2_cl(m2);
 
-  auto tmp = elewise_multiplication(m1_cl, m2_cl);
+  auto tmp = elt_multiply(m1_cl, m2_cl);
   matrix_cl<double> res_cl = tmp;
   MatrixXd res = stan::math::from_matrix_cl(res_cl);
 
@@ -83,7 +83,7 @@ TEST(KernelGenerator, elewise_multiplication_test) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
-TEST(KernelGenerator, elewise_division_test) {
+TEST(KernelGenerator, elt_divide_test) {
   MatrixXd m1(3, 3);
   m1 << 1, 2.5, 3, 4, 5, 6.3, 7, -8, -9.5;
   MatrixXi m2(3, 3);
@@ -91,7 +91,7 @@ TEST(KernelGenerator, elewise_division_test) {
 
   matrix_cl<double> m1_cl(m1);
   matrix_cl<int> m2_cl(m2);
-  auto tmp = elewise_division(m1_cl, m2_cl);
+  auto tmp = elt_divide(m1_cl, m2_cl);
   matrix_cl<double> res_cl = tmp;
 
   MatrixXd res = stan::math::from_matrix_cl(res_cl);
@@ -231,8 +231,8 @@ TEST(KernelGenerator, reuse_expression_simple) {
 
   matrix_cl<double> m1_cl(m1);
   matrix_cl<double> m2_cl(m2);
-  auto tmp = stan::math::elewise_division(m1_cl, m2_cl);
-  auto tmp2 = stan::math::elewise_multiplication(tmp, tmp);
+  auto tmp = stan::math::elt_divide(m1_cl, m2_cl);
+  auto tmp2 = stan::math::elt_multiply(tmp, tmp);
   matrix_cl<double> res_cl;
   std::string kernel_src = tmp2.get_kernel_source_for_evaluating_into(res_cl);
   // if the expression is correctly reused, division will only occur once in the
@@ -259,10 +259,8 @@ TEST(KernelGenerator, reuse_expression_complicated) {
   matrix_cl<double> m1_cl(m1);
   matrix_cl<double> m2_cl(m2);
   auto tmp = m1_cl + m2_cl;
-  auto tmp2 = stan::math::elewise_division(
-      stan::math::elewise_multiplication(tmp, tmp), m1_cl);
-  auto tmp3 = stan::math::elewise_multiplication(
-      stan::math::elewise_division(tmp, tmp2), tmp2);
+  auto tmp2 = stan::math::elt_divide(stan::math::elt_multiply(tmp, tmp), m1_cl);
+  auto tmp3 = stan::math::elt_multiply(stan::math::elt_divide(tmp, tmp2), tmp2);
   matrix_cl<double> res_cl;
   std::string kernel_src = tmp3.get_kernel_source_for_evaluating_into(res_cl);
   stan::test::store_reference_kernel_if_needed(kernel_filename, kernel_src);

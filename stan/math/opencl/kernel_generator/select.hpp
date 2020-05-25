@@ -8,7 +8,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <stan/math/opencl/kernel_generator/common_return_scalar.hpp>
 #include <algorithm>
 #include <set>
@@ -140,7 +140,7 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
  */
 template <typename T_condition, typename T_then, typename T_else,
           typename
-          = require_all_valid_expressions_t<T_condition, T_then, T_else>>
+          = require_all_kernel_expressions_t<T_condition, T_then, T_else>>
 inline select_<as_operation_cl_t<T_condition>, as_operation_cl_t<T_then>,
                as_operation_cl_t<T_else>>
 select(T_condition&& condition, T_then&& then, T_else&& els) {  // NOLINT

@@ -15,7 +15,7 @@ namespace math {
  * @return 0 or 1
  */
 template <typename T>
-inline bool size_zero(T& x) {
+inline bool size_zero(const T& x) {
   return !size(x);
 }
 
@@ -28,8 +28,8 @@ inline bool size_zero(T& x) {
  * @return 0 or 1
  */
 template <typename T, typename... Ts>
-inline bool size_zero(T& x, Ts&&... xs) {
-  return (size_zero(x) || size_zero(std::forward<Ts>(xs)...));
+inline bool size_zero(const T& x, const Ts&... xs) {
+  return (size_zero(x) || size_zero(xs...));
 }
 }  // namespace math
 }  // namespace stan

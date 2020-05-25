@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/core.hpp>
+#include <stan/math/fwd/fun/read_fvar.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/core/std_numeric_limits.hpp>
 #include <limits>
@@ -163,5 +164,17 @@ struct ScalarBinaryOpTraits<std::complex<stan::math::fvar<T>>,
   using ReturnType = std::complex<stan::math::fvar<T>>;
 };
 
+namespace internal {
+
+/**
+ * Enable linear access of inputs when using read_fvar.
+ */
+template <typename EigFvar, typename EigOut>
+struct functor_has_linear_access<
+    stan::math::read_fvar_functor<EigFvar, EigOut>> {
+  enum { ret = 1 };
+};
+
+}  // namespace internal
 }  // namespace Eigen
 #endif

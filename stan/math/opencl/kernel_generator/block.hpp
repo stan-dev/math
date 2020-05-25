@@ -9,7 +9,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl_lhs.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <set>
 #include <string>
 #include <tuple>
@@ -57,9 +57,25 @@ class block_
         start_col_(start_col),
         rows_(rows),
         cols_(cols) {
+    if (start_col < 0) {
+      invalid_argument("block", "start_col", start_col,
+                       " should be non-negative, but is ");
+    }
+    if (start_row < 0) {
+      invalid_argument("block", "start_row", start_row,
+                       " should be non-negative, but is ");
+    }
+    if (rows < 0) {
+      invalid_argument("block", "rows", rows,
+                       " should be non-negative, but is ");
+    }
+    if (cols < 0) {
+      invalid_argument("block", "cols", cols,
+                       " should be non-negative, but is ");
+    }
     if ((a.rows() != base::dynamic && (start_row + rows) > a.rows())
         || (a.cols() != base::dynamic && (start_col + cols) > a.cols())) {
-      throw_domain_error("block", "block of \"a\"", " is out of bounds", "");
+      invalid_argument("block", "block of \"a\"", " is out of bounds", "");
     }
   }
 
@@ -216,7 +232,7 @@ class block_
  * @return Block of given expression
  */
 template <typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
 inline auto block(T&& a, int start_row, int start_col, int rows, int cols) {
   auto&& a_operation = as_operation_cl(std::forward<T>(a)).deep_copy();
   return block_<std::remove_reference_t<decltype(a_operation)>>(
