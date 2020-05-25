@@ -40,7 +40,7 @@ namespace math {
  * @param y0 Initial state
  * @param t0 Initial time
  * @param ts Times at which to solve the ODE at. All values must be sorted and
- *   not less than t0.
+ *   greater than t0.
  * @param relative_tolerance Relative tolerance passed to CVODES
  * @param absolute_tolerance Absolute tolerance passed to CVODES
  * @param max_num_steps Upper limit on the number of integration steps to
@@ -80,7 +80,7 @@ ode_rk45_tol(const F& f,
 
   check_nonzero_size("integrate_ode_rk45", "initial state", y0);
   check_nonzero_size("integrate_ode_rk45", "times", ts);
-  check_ordered("integrate_ode_rk45", "times", ts);
+  check_sorted("integrate_ode_rk45", "times", ts);
   check_less("integrate_ode_rk45", "initial time", t0, ts[0]);
 
   if (relative_tolerance <= 0) {
@@ -168,7 +168,7 @@ ode_rk45_tol(const F& f,
  * @param y0 Initial state
  * @param t0 Initial time
  * @param ts Times at which to solve the ODE at. All values must be sorted and
- *   not less than t0.
+ *   greather than t0.
  * @param relative_tolerance Relative tolerance passed to CVODES
  * @param absolute_tolerance Absolute tolerance passed to CVODES
  * @param max_num_steps Upper limit on the number of integration steps to

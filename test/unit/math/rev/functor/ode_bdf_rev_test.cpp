@@ -139,6 +139,46 @@ TEST(StanMathOde_ode_bdf_tol, ts) {
   EXPECT_FLOAT_EQ(ts[1].adj(), -0.0791208888);
 }
 
+TEST(StanMathOde_ode_bdf_tol, ts_repeat) {
+  using stan::math::var;
+
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
+  double t0 = 0.0;
+  std::vector<var> ts = {0.45, 0.45, 1.1, 1.1};
+
+  double a = 1.5;
+
+  std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> output
+      = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
+                                nullptr, a);
+
+  output[0][0].grad();
+
+  EXPECT_FLOAT_EQ(output[0][0].val(), 0.4165982112);
+  EXPECT_FLOAT_EQ(ts[0].adj(), 0.78070695113);
+
+  stan::math::set_zero_all_adjoints();
+
+  output[1][0].grad();
+
+  EXPECT_FLOAT_EQ(output[1][0].val(), 0.4165982112);
+  EXPECT_FLOAT_EQ(ts[1].adj(), 0.78070695113);
+
+  stan::math::set_zero_all_adjoints();
+  
+  output[2][0].grad();
+
+  EXPECT_FLOAT_EQ(output[2][0].val(), 0.66457668563);
+  EXPECT_FLOAT_EQ(ts[2].adj(), -0.0791208888);
+
+  stan::math::set_zero_all_adjoints();
+
+  output[3][0].grad();
+
+  EXPECT_FLOAT_EQ(output[3][0].val(), 0.66457668563);
+  EXPECT_FLOAT_EQ(ts[3].adj(), -0.0791208888);
+}
+
 TEST(StanMathOde_ode_bdf_tol, scalar_arg) {
   using stan::math::var;
 

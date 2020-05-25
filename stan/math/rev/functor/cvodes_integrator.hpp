@@ -214,7 +214,7 @@ class cvodes_integrator {
 
     check_nonzero_size(fun, "times", ts_);
     check_nonzero_size(fun, "initial state", y0_);
-    check_ordered(fun, "times", ts_);
+    check_sorted(fun, "times", ts_);
     check_less(fun, "initial time", t0_, ts_[0]);
     check_positive_finite(fun, "relative_tolerance", relative_tolerance_);
     check_positive_finite(fun, "absolute_tolerance", absolute_tolerance_);
@@ -303,11 +303,11 @@ class cvodes_integrator {
           check_flag_sundials(
               CVode(cvodes_mem, t_final, nv_state_, &t_init, CV_NORMAL),
               "CVode");
-        }
 
-        if (y0_vars_ + args_vars_ > 0) {
-          check_flag_sundials(CVodeGetSens(cvodes_mem, &t_init, nv_state_sens_),
-                              "CVodeGetSens");
+	  if (y0_vars_ + args_vars_ > 0) {
+	    check_flag_sundials(CVodeGetSens(cvodes_mem, &t_init, nv_state_sens_),
+				"CVodeGetSens");
+	  }
         }
 
         y.emplace_back(apply(

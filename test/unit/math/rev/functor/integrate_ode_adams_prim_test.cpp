@@ -117,7 +117,7 @@ TEST(StanMathOde_integrate_ode_adams, error_conditions) {
   ts_bad.push_back(1);
   EXPECT_THROW_MSG(integrate_ode_adams(harm_osc, y0, t0, ts_bad, theta, x,
                                        x_int, 0, 1e-8, 1e-10, 1e6),
-                   std::domain_error, "times is not a valid ordered vector");
+                   std::domain_error, "times is not a valid sorted vector");
 
   // TODO(carpenter): g++6 failure
   std::vector<double> theta_bad;
@@ -356,7 +356,7 @@ TEST(StanMathOde_integrate_ode_adams, error_conditions_bad_ode) {
   std::vector<int> x_int(2, 0);
 
   std::string error_msg
-      = "cvodes_integrator::rhs: dy_dt (3) and states (2) must match in size";
+      = "cvodes_integrator: dy_dt (3) and states (2) must match in size";
 
   EXPECT_THROW_MSG(integrate_ode_adams(harm_osc, y0, t0, ts, theta, x, x_int, 0,
                                        1e-8, 1e-10, 1e6),
