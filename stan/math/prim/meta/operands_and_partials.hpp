@@ -120,11 +120,11 @@ class operands_and_partials {
   T_return_type build(double value) { return value; }
 
   // These will always be 0 size base template instantiations (above).
-  internal::ops_partials_edge<double, Op1> edge1_;
-  internal::ops_partials_edge<double, Op2> edge2_;
-  internal::ops_partials_edge<double, Op3> edge3_;
-  internal::ops_partials_edge<double, Op4> edge4_;
-  internal::ops_partials_edge<double, Op5> edge5_;
+  internal::ops_partials_edge<double, std::decay_t<Op1>> edge1_;
+  internal::ops_partials_edge<double, std::decay_t<Op2>> edge2_;
+  internal::ops_partials_edge<double, std::decay_t<Op3>> edge3_;
+  internal::ops_partials_edge<double, std::decay_t<Op4>> edge4_;
+  internal::ops_partials_edge<double, std::decay_t<Op5>> edge5_;
 };
 
 namespace internal {
