@@ -130,35 +130,36 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
         },
         args_tuple_);
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
-        = apply([&](auto&&... args) { return f_(t, y_vars, msgs_, args...); },
+    Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars = apply([&](auto&&... args) { return f_(t, y_vars, msgs_, args...); },
                 local_args_tuple);
 
     check_size_match("coupled_ode_system", "dy_dt", f_y_t_vars.size(), "states",
                      N_);
 
+    Eigen::VectorXd args_adjoints(args_vars_);
     for (size_t i = 0; i < N_; i++) {
       dz_dt(i) = f_y_t_vars(i).val();
       f_y_t_vars(i).grad();
-      for (size_t j = 0; j < y0_vars_; j++) {
-        // orders derivatives by equation (i.e. if there are 2 eqns
-        // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
-        // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
-        double temp_deriv = 0;
-        const size_t offset = N_ + N_ * j;
-        for (size_t k = 0; k < N_; k++) {
-          temp_deriv += z[N_ + N_ * j + k] * y_vars[k].adj();
-        }
 
-        dz_dt[N_ + N_ * j + i] = temp_deriv;
+      for (size_t j = 0; j < y0_vars_; j++) {
+	// orders derivatives by equation (i.e. if there are 2 eqns
+	// (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
+	// dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
+	double temp_deriv = 0;
+	for (size_t k = 0; k < N_; k++) {
+	  temp_deriv += z[N_ + N_ * j + k] * y_vars[k].adj();
+	}
+
+	dz_dt[N_ + N_ * j + i] = temp_deriv;
       }
 
-      Eigen::VectorXd args_adjoints = Eigen::VectorXd::Zero(args_vars_);
+      args_adjoints.setZero();
       apply(
           [&](auto&&... args) {
             accumulate_adjoints(args_adjoints.data(), args...);
           },
           local_args_tuple);
+
       for (size_t j = 0; j < args_vars_; j++) {
         double temp_deriv = args_adjoints(j);
         for (size_t k = 0; k < N_; k++) {
