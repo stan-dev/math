@@ -66,4 +66,4 @@ jobs:
       if: failure()
       with:
         name: gtest_outputs_xml
-        path: **/*_test.xml
+        path: '**/*_test.xml'
