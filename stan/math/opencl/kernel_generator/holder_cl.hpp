@@ -108,7 +108,8 @@ auto holder_cl_handle_element(std::remove_reference_t<T>&& a, const T*& res) {
  * @tparam Is index sequence for `ptrs`
  * @tparam Args types of pointes to heap
  * @param expr result expression
- * @param ptrs pointers to heap that need to be released when the expression is destructed
+ * @param ptrs pointers to heap that need to be released when the expression is
+ * destructed
  * @return `holder_cl` referencing given expression
  */
 template <typename T, std::size_t... Is, typename... Args>
