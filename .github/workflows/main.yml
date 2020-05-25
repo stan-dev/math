@@ -61,3 +61,9 @@ jobs:
     - name: Run full unit tests
       shell: powershell
       run: python.exe runTests.py -j2 test/unit -f test/unit/
+    - name: Upload gtest_output xml
+      uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: gtest_outputs_xml
+        path: **/*_test.xml
