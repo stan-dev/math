@@ -60,7 +60,7 @@ jobs:
       run: echo "::add-path::D:/a/math/math/lib/tbb"
     - name: Run full unit tests
       shell: powershell
-      run: python.exe runTests.py -j2 test/unit -f test/unit/math/prim/fun/abs_test.cpp
+      run: python.exe runTests.py -j2 test/unit -f test/unit/math/prim/fun/abs_test
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v2
       if: failure()
