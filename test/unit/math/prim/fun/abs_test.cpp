@@ -7,7 +7,7 @@ TEST(MathFunctions, abs) {
   using stan::math::abs;
 
   double y = 2.0;
-  EXPECT_FLOAT_EQ(2.0, abs(y));
+  EXPECT_FLOAT_EQ(5.0, abs(y));
 
   y = 128745.72;
   EXPECT_FLOAT_EQ(128745.72, abs(y));
