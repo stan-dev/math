@@ -48,7 +48,8 @@ namespace math {
  * @param b Second value
  * @return Beta function applied to the two values.
  */
-template <typename T1, typename T2>
+template <typename T1, typename T2,
+          require_all_arithmetic_t<T1, T2>* = nullptr>
 inline return_type_t<T1, T2> beta(const T1 a, const T2 b) {
   using std::exp;
   return exp(lgamma(a) + lgamma(b) - lgamma(a + b));
