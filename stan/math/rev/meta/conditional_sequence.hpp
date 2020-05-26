@@ -47,9 +47,9 @@ template <template <typename...> class Checker, typename T1, size_t J,
 constexpr auto conditional_sequence(Checker<T1> toss,
                                     std::index_sequence<J, I...> /* ignore */,
                                     T&& x, Types&&... args) {
-  constexpr auto iter = J + Checker<std::decay_t<T>>::value;
-  return conditional_sequence(toss, std::index_sequence<iter, I..., J>{},
-                              args...);
+  return conditional_sequence(toss,
+     std::index_sequence<J + Checker<std::decay_t<T>>::value, I..., J>{},
+     args...);
 }
 }  // namespace stan
 #endif
