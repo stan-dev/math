@@ -11,7 +11,7 @@
  * the supplied type with he EXPECT_EQ macro from GTest.
  * This EXPECT test should be used when the elements
  * of the supplied matrices are not doubles.
- * 
+ *
  * @param A first input matrix to compare
  * @param B second input matrix to compare
  * @param type types of elements in matrices A and B
@@ -29,7 +29,7 @@
 /**
  * Tests for  exact elementwise equality of the input matrices
  * of doubles with he EXPECT_EQ macro from GTest.
- * 
+ *
  * @param A first input matrix to compare
  * @param B second input matrix to compare
  */
@@ -47,7 +47,7 @@
  * Tests for elementwise equality of the input matrices
  * of doubles with the EXPECT_FLOAT_EQ macro from
  * GTest.
- * 
+ *
  * @param A first input matrix to compare
  * @param B second input matrix to compare
  */
@@ -61,11 +61,10 @@
       EXPECT_FLOAT_EQ(A_eval(i), B_eval(i)); \
   }
 
-
 /**
  * Tests for elementwise equality of the input std::vectors
  * of any type with the EXPECT_FLOAT_EQ macro from GTest.
- * 
+ *
  * @param A first input vector to compare
  * @param B second input vector to compare
  */
@@ -76,9 +75,9 @@
 
 /**
  * Tests if any elementwise difference of the input matrices
- * of doubles is greater than DELTA. This uses the 
+ * of doubles is greater than DELTA. This uses the
  * EXPECT_NEAR macro from GTest.
- * 
+ *
  * @param A first input matrix to compare
  * @param B second input matrix to compare
  * @param DELTA the maximum allowed difference
@@ -95,9 +94,9 @@
 
 /**
  * Tests if any elementwise difference of the input matrices
- * of the specified type is greater than DELTA. This uses the 
+ * of the specified type is greater than DELTA. This uses the
  * EXPECT_NEAR macro from GTest.
- * 
+ *
  * @param A first input matrix to compare
  * @param B second input matrix to compare
  * @param DELTA the maximum allowed difference
@@ -115,9 +114,9 @@
 
 /**
  * Tests if the expression throws the expected
- * exception with a specific number of occurrences of 
+ * exception with a specific number of occurrences of
  * the expected message in the throw message.
- * 
+ *
  * @param expr expression to test
  * @param T_e type of exception
  * @param msg expected message
@@ -137,7 +136,7 @@
 /**
  * Tests if the expression throws the expected
  * exception with the expected message.
- * 
+ *
  * @param expr expression to test
  * @param T_e type of exception
  * @param msg expected message
@@ -148,9 +147,9 @@
 /**
  * Count the number of times a substring is found in
  * a supplied string.
- * 
+ *
  * @param target substring to match in s
- * @param s string to match count occurrences 
+ * @param s string to match count occurrences
  * @return number of found occurrences of target in s
  */
 int count_matches(const std::string& target, const std::string& s) {
@@ -165,7 +164,7 @@ int count_matches(const std::string& target, const std::string& s) {
 
 /**
  * Test for equality of the supplied types
- * 
+ *
  * @tparam T1 first tpye
  * @tparam T2 second type
  */
