@@ -153,7 +153,8 @@ auto make_holder_cl_impl(const T& func, std::index_sequence<Is...>,
  */
 template <typename T, typename... Args,
           require_all_kernel_expressions_t<
-              decltype(std::declval<T>()(std::declval<Args&>()...)), Args...>* = nullptr>
+              decltype(std::declval<T>()(std::declval<Args&>()...)),
+              Args...>* = nullptr>
 auto make_holder_cl(const T& func, Args&&... args) {
   return internal::make_holder_cl_impl(
       func, std::make_index_sequence<sizeof...(Args)>(),
