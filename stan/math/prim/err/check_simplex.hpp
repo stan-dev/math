@@ -35,29 +35,29 @@ namespace math {
  * @throw <code>std::domain_error</code> if the vector is not a
  *   simplex or if any element is <code>NaN</code>.
  */
-template <typename T, int R, int C>
+template <typename T, require_eigen_t<T>* = nullptr>
 void check_simplex(const char* function, const char* name,
-                   const Eigen::Matrix<T, R, C>& theta) {
-  using size_type = index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>>;
+                   const T& theta) {
   using std::fabs;
   check_nonzero_size(function, name, theta);
-  if (!(fabs(1.0 - theta.sum()) <= CONSTRAINT_TOLERANCE)) {
+  ref_type_t<T> theta_ref = theta;
+  if (!(fabs(1.0 - theta_ref.sum()) <= CONSTRAINT_TOLERANCE)) {
     std::stringstream msg;
-    T sum = theta.sum();
+    value_type_t<T> sum = theta_ref.sum();
     msg << "is not a valid simplex.";
     msg.precision(10);
     msg << " sum(" << name << ") = " << sum << ", but should be ";
     std::string msg_str(msg.str());
     throw_domain_error(function, name, 1.0, msg_str.c_str());
   }
-  for (size_type n = 0; n < theta.size(); n++) {
-    if (!(theta[n] >= 0)) {
+  for (Eigen::Index n = 0; n < theta.size(); n++) {
+    if (!(theta_ref.coeff(n) >= 0)) {
       std::ostringstream msg;
       msg << "is not a valid simplex. " << name << "["
           << n + stan::error_index::value << "]"
           << " = ";
       std::string msg_str(msg.str());
-      throw_domain_error(function, name, theta[n], msg_str.c_str(),
+      throw_domain_error(function, name, theta_ref.coeff(n), msg_str.c_str(),
                          ", but should be greater than or equal to 0");
     }
   }

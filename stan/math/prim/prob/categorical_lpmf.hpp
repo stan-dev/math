@@ -12,42 +12,31 @@ namespace stan {
 namespace math {
 
 // Categorical(n|theta)  [0 < n <= N;   0 <= theta[n] <= 1;  SUM theta = 1]
-template <bool propto, typename T_prob>
+template <bool propto, typename T_prob, require_eigen_col_vector_t<T_prob>* = nullptr>
 return_type_t<T_prob> categorical_lpmf(
-    int n, const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
+    int n, const T_prob& theta) {
   static const char* function = "categorical_lpmf";
   using std::log;
 
-  int lb = 1;
-  check_bounded(function, "Number of categories", n, lb, theta.size());
-  check_simplex(function, "Probabilities parameter", theta);
+  check_bounded(function, "Number of categories", n, 1, theta.size());
+  ref_type_t<T_prob> theta_ref = theta;
+  check_simplex(function, "Probabilities parameter", theta_ref);
 
   if (include_summand<propto, T_prob>::value) {
-    return log(theta(n - 1));
+    return log(theta_ref.coeff(n - 1));
   }
   return 0.0;
 }
 
-template <typename T_prob>
-inline return_type_t<T_prob> categorical_lpmf(
-    const typename math::index_type<
-        Eigen::Matrix<T_prob, Eigen::Dynamic, 1> >::type n,
-    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
-  return categorical_lpmf<false>(n, theta);
-}
-
-template <bool propto, typename T_prob>
+template <bool propto, typename T_prob, require_eigen_col_vector_t<T_prob>* = nullptr>
 return_type_t<T_prob> categorical_lpmf(
     const std::vector<int>& ns,
-    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
+    const T_prob& theta) {
   static const char* function = "categorical_lpmf";
 
-  using std::log;
-
-  int lb = 1;
-
-  check_bounded(function, "element of outcome array", ns, lb, theta.size());
-  check_simplex(function, "Probabilities parameter", theta);
+  check_bounded(function, "element of outcome array", ns, 1, theta.size());
+  ref_type_t<T_prob> theta_ref = theta;
+  check_simplex(function, "Probabilities parameter", theta_ref);
 
   if (!include_summand<propto, T_prob>::value) {
     return 0.0;
@@ -57,11 +46,7 @@ return_type_t<T_prob> categorical_lpmf(
     return 0.0;
   }
 
-  Eigen::Matrix<T_prob, Eigen::Dynamic, 1> log_theta(theta.size());
-  for (int i = 0; i < theta.size(); ++i) {
-    log_theta(i) = log(theta(i));
-  }
-
+  Eigen::Matrix<value_type_t<T_prob>, Eigen::Dynamic, 1> log_theta = log(theta_ref);
   Eigen::Matrix<return_type_t<T_prob>, Eigen::Dynamic, 1> log_theta_ns(
       ns.size());
   for (size_t i = 0; i < ns.size(); ++i) {
@@ -71,10 +56,10 @@ return_type_t<T_prob> categorical_lpmf(
   return sum(log_theta_ns);
 }
 
-template <typename T_prob>
+template <typename T_n, typename T_prob, require_st_integral<T_n>* = nullptr, require_eigen_col_vector_t<T_prob>* = nullptr>
 inline return_type_t<T_prob> categorical_lpmf(
-    const std::vector<int>& ns,
-    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
+    const T_n& ns,
+    const T_prob& theta) {
   return categorical_lpmf<false>(ns, theta);
 }
 

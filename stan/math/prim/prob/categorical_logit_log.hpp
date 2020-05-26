@@ -12,39 +12,19 @@ namespace math {
 /** \ingroup multivar_dists
  * @deprecated use <code>categorical_logit_lpmf</code>
  */
-template <bool propto, typename T_prob>
-return_type_t<T_prob> categorical_logit_log(
-    int n, const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
-  return categorical_logit_lpmf<propto, T_prob>(n, beta);
+template <bool propto, typename T_n, typename T_prob>
+inline return_type_t<T_prob> categorical_logit_log(const T_n& ns,
+                                                    const T_prob& beta) {
+  return categorical_logit_lpmf<propto>(ns, beta);
 }
 
 /** \ingroup multivar_dists
  * @deprecated use <code>categorical_logit_lpmf</code>
  */
-template <typename T_prob>
-inline return_type_t<T_prob> categorical_logit_log(
-    int n, const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
-  return categorical_logit_lpmf<T_prob>(n, beta);
-}
-
-/** \ingroup multivar_dists
- * @deprecated use <code>categorical_logit_lpmf</code>
- */
-template <bool propto, typename T_prob>
-return_type_t<T_prob> categorical_logit_log(
-    const std::vector<int>& ns,
-    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
-  return categorical_logit_lpmf<propto, T_prob>(ns, beta);
-}
-
-/** \ingroup multivar_dists
- * @deprecated use <code>categorical_logit_lpmf</code>
- */
-template <typename T_prob>
-inline return_type_t<T_prob> categorical_logit_log(
-    const std::vector<int>& ns,
-    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
-  return categorical_logit_lpmf<T_prob>(ns, beta);
+template <typename T_n, typename T_prob>
+inline return_type_t<T_prob> categorical_logit_log(const T_n& ns,
+                                                   const T_prob& beta) {
+  return categorical_logit_lpmf(ns, beta);
 }
 
 }  // namespace math
