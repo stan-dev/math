@@ -6,7 +6,6 @@
 #include <gtest/gtest.h>
 #include <algorithm>
 
-
 TEST(MathMatrixCL, rep_rv_exception_pass) {
   stan::math::matrix_cl<double> a(2, 2);
   EXPECT_THROW(stan::math::rep_row_vector(a, 5), std::invalid_argument);

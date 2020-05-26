@@ -6,7 +6,6 @@
 #include <gtest/gtest.h>
 #include <algorithm>
 
-
 TEST(MathMatrixCL, rep_matrix_size_one_exception_pass) {
   stan::math::matrix_cl<double> a(2, 2);
   EXPECT_THROW(stan::math::rep_matrix(a, 5, 5), std::invalid_argument);

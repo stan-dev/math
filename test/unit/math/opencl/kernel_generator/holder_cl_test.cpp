@@ -11,7 +11,6 @@ using Eigen::MatrixXd;
 using Eigen::MatrixXi;
 using stan::math::matrix_cl;
 
-
 template <typename T>
 auto f(T&& a) {
   auto* a_heap = new std::remove_reference_t<T>(std::forward<T>(a));
