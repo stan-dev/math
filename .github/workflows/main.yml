@@ -10,15 +10,6 @@ on:
       - 'LICENSE.md'
       - 'README.md'
       - 'RELEASE-NOTES.txt'
-  pull_request:
-    branches: [ develop ]
-    paths-ignore:
-      - 'doygen/**'
-      - 'hooks/**'
-      - 'licenses/**'
-      - 'LICENSE.md'
-      - 'README.md'
-      - 'RELEASE-NOTES.txt'
 jobs:
   full:
     name: Full unit tests
