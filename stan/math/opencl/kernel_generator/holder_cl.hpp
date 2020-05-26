@@ -11,7 +11,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <memory>
 #include <string>
 #include <type_traits>
@@ -66,7 +66,8 @@ class holder_cl_
  * @param ptrs pointers to objects the constructed object will own.
  * @return holder_cl_ operation
  */
-template <typename T, typename... Ptrs>
+template <typename T, typename... Ptrs,
+          require_all_kernel_expressions_t<T, Ptrs...>* = nullptr>
 auto holder_cl(T&& a, Ptrs*... ptrs) {
   return holder_cl_<as_operation_cl_t<T>, Ptrs...>(
       as_operation_cl(std::forward<T>(a)), ptrs...);
@@ -150,7 +151,9 @@ auto make_holder_cl_impl(const T& func, std::index_sequence<Is...>,
  * @param func the functor
  * @param args arguments for the functor
  */
-template <typename T, typename... Args>
+template <typename T, typename... Args,
+          require_all_kernel_expressions_t<
+              decltype(std::declval<T>()(std::declval<Args&>()...)), Args...>* = nullptr>
 auto make_holder_cl(const T& func, Args&&... args) {
   return internal::make_holder_cl_impl(
       func, std::make_index_sequence<sizeof...(Args)>(),
