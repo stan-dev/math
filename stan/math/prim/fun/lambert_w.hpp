@@ -4,9 +4,13 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/boost_policy.hpp>
 #include <boost/math/special_functions/lambert_w.hpp>
-
 namespace stan {
 namespace math {
+
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline auto lambert_w0(const T& x) {
+  return boost::math::lambert_w0(x, boost_policy_t<>());
+}
 
 /**
  * Structure to wrap lambert_w0() so it can be vectorized.
@@ -19,7 +23,7 @@ namespace math {
 struct lambert_w0_fun {
   template <typename T>
   static inline T fun(const T& x) {
-    return boost::math::lambert_w0(x, boost_policy_t<52>());
+    return lambert_w0(x);
   }
 };
 
@@ -31,7 +35,7 @@ struct lambert_w0_fun {
  * @return value of the W0 branch of the Lambert W function for each value in x
  * @throw std::domain_error if x is smaller than -e^(-1)
  */
-template <typename T>
+template <typename T, require_not_stan_scalar_t<T>* = nullptr>
 inline auto lambert_w0(const T& x) {
   return apply_scalar_unary<lambert_w0_fun, T>::apply(x);
 }
