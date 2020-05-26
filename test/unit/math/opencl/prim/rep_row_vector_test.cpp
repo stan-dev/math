@@ -2,12 +2,10 @@
 #include <stan/math/prim.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 
-#define EXPECT_MATRIX_FLOAT_EQ(A, B) \
-  for (int i = 0; i < A.size(); i++) \
-    EXPECT_EQ(A(i), B(i));
 
 TEST(MathMatrixCL, rep_rv_exception_pass) {
   stan::math::matrix_cl<double> a(2, 2);
@@ -47,6 +45,12 @@ TEST(MathMatrixCL, rep_rv_value_check) {
 
   stan::math::vector_d a(1);
   a << 6.0;
+  stan::math::matrix_cl<double> m33_cl(a);
   stan::math::matrix_d b = stan::math::rep_matrix(a, 5);
+  stan::math::matrix_cl<double> m3_cl = stan::math::rep_matrix(m33_cl, 1, 5);
+  stan::math::matrix_d m3_cl_res = stan::math::from_matrix_cl(m3_cl);
+  EXPECT_EQ(b.rows(), m3_cl_res.rows());
+  EXPECT_EQ(b.cols(), m3_cl_res.cols());
+  EXPECT_MATRIX_FLOAT_EQ(b, m3_cl_res);
 }
 #endif

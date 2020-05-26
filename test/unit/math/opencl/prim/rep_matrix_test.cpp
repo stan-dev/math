@@ -2,12 +2,10 @@
 #include <stan/math/prim.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 
-#define EXPECT_MATRIX_FLOAT_EQ(A, B) \
-  for (int i = 0; i < A.size(); i++) \
-    EXPECT_EQ(A(i), B(i));
 
 TEST(MathMatrixCL, rep_matrix_size_one_exception_pass) {
   stan::math::matrix_cl<double> a(2, 2);
