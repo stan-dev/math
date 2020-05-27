@@ -74,9 +74,10 @@ class load_
     } else {
       res.body = type + " " + var_name_ + " = 0;"
                  " if (!((!contains_nonzero(" + var_name_ + "_view, LOWER) && "
-                 + col_index_name + " < " + row_index_name + ") || (!contains_nonzero(" + var_name_ +
-                 "_view, UPPER) && " + col_index_name + " > " + row_index_name + "))) {"
-                 + var_name_ + " = " + var_name_ + "_global[" + row_index_name + " + " +
+                 + col_index_name + " < " + row_index_name
+                 + ") || (!contains_nonzero(" + var_name_ + "_view, UPPER) && "
+                 + col_index_name + " > " + row_index_name + "))) {" + var_name_
+                 + " = " + var_name_ + "_global[" + row_index_name + " + " +
                  var_name_ + "_rows * " + col_index_name + "];}\n";
     }
     res.args = "__global " + type + "* " + var_name_ + "_global, int "
