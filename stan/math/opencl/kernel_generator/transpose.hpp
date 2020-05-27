@@ -36,7 +36,7 @@ class transpose_
  public:
   using Scalar = typename std::remove_reference_t<Arg>::Scalar;
   using base = operation_cl<transpose_<Arg>, Scalar, Arg>;
-  using base::var_name;
+  using base::var_name_;
   using view_transitivity = std::tuple<std::true_type>;
 
   /**
@@ -55,12 +55,14 @@ class transpose_
   }
 
   /**
-   * Swaps indices \c i and \c j for the argument expression.
-   * @param[in, out] i row index
-   * @param[in, out] j column index
+   * Swaps indices \c row_index_name and \c col_index_name for the argument
+   * expression.
+   * @param[in, out] row_index_name row index
+   * @param[in, out] col_index_name column index
    */
-  inline void modify_argument_indices(std::string& i, std::string& j) const {
-    std::swap(i, j);
+  inline void modify_argument_indices(std::string& row_index_name,
+                                      std::string& col_index_name) const {
+    std::swap(row_index_name, col_index_name);
   }
 
   /**
