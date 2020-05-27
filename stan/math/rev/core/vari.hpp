@@ -104,17 +104,24 @@ class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>>
    *
    * @param x Value of the constructed variable.
    */
-  explicit vari_value(T x) : val_(x), adj_(0.0) {
+  template <typename T1, std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
+  explicit vari_value(T1 x) : val_(x), adj_(0.0) {
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
-  vari_value(T x, bool stacked) : val_(x), adj_(0.0) {
+  template <typename T1, std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
+  vari_value(T1 x, bool stacked) : val_(x), adj_(0.0) {
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
     } else {
       ChainableStack::instance_->var_nochain_stack_.push_back(this);
     }
   }
+
+  template <typename Arith,
+    std::enable_if_t<std::is_arithmetic<Arith>::value>* = nullptr,
+    std::enable_if_t<!std::is_same<T, Arith>::value>* = nullptr>
+  explicit vari_value(const vari_value<Arith>& x) : val_(x.val_), adj_(x.adj_) {}
 
   /**
    * Initialize the adjoint for this (dependent) variable to 1.

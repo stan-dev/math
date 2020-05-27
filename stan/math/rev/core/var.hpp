@@ -40,9 +40,14 @@ class var_value {
                            std::decay_t<Val>>;
 
  public:
-  // FIXME: doc what this is for
+  /** FIXME: This changes integral (int etc) types to double and leaves the type
+   * untouched otherwise. Since this can be an Eigen matrix it's a pretty
+   * dumb name. Just for the purposes of readability it may be better to
+   * use SFINAE on var_value and have a scalar and eigen representation.
+   * that would also get rid of some of the weirder requires here.
+   */
   using Scalar = floating_point_promoter<T>;
-  using vari_type = vari_value<T>;
+  using vari_type = vari_value<Scalar>;
   /**
    * Pointer to the implementation of this variable.
    *
@@ -50,7 +55,7 @@ class var_value {
    * <code>var</code> operators to construct `vari_value<T>`
    * instances.
    */
-  vari_value<T>* vi_;
+  vari_value<Scalar>* vi_;
 
   /**
    * Return `true` if this variable has been
@@ -62,7 +67,7 @@ class var_value {
    * a defined variable.
    */
   bool is_uninitialized() {
-    return (vi_ == static_cast<vari_value<T>*>(nullptr));
+    return (vi_ == static_cast<vari_value<Scalar>*>(nullptr));
   }
 
   /**
@@ -72,14 +77,15 @@ class var_value {
    * dangling.  Before an assignment, the behavior is thus undefined just
    * as for a basic double.
    */
-  var_value() : vi_(static_cast<vari_value<T>*>(nullptr)) {}
+  var_value() : vi_(static_cast<vari_value<Scalar>*>(nullptr)) {}
 
   /**
    * Construct a variable from a pointer to a variable implementation.
    *
    * @param vi Variable implementation.
    */
-  var_value(vari_value<T>* vi) : vi_(vi) {}  // NOLINT
+  template <typename VariValue, require_vari_t<VariValue>* = nullptr>
+  var_value(VariValue* vi) : vi_(vi) {}  // NOLINT
 
   /**
    * Construct a variable from the specified integral type argument
@@ -93,15 +99,15 @@ class var_value {
             require_not_same_t<T1, IntegralT>* = nullptr,
             require_integral_t<IntegralT>* = nullptr,
             require_arithmetic_t<T1>* = nullptr>
-  var_value(IntegralT x) : vi_(new vari_value<T>(x, false)) {}  // NOLINT
+  var_value(IntegralT x) : vi_(new vari_value<Scalar>(x, false)) {}  // NOLINT
 
-  var_value(T x) : vi_(new vari_value<T>(x, false)) {}  // NOLINT
+  var_value(T x) : vi_(new vari_value<Scalar>(x, false)) {}  // NOLINT
 
   template <typename EigenT, typename T1 = T,
             require_not_same_t<T1, EigenT>* = nullptr,
             require_all_eigen_t<EigenT, T1>* = nullptr,
             require_eigen_vt<std::is_arithmetic, EigenT>* = nullptr>
-  var_value(EigenT x) : vi_(new vari_value<T>(x, false)) {}  // NOLINT
+  var_value(EigenT x) : vi_(new vari_value<Scalar>(x, false)) {}  // NOLINT
 
   template <typename EigenT, typename T1 = T,
             require_not_same_t<T1, EigenT>* = nullptr,
