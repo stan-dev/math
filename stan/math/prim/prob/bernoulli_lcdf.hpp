@@ -36,7 +36,7 @@ return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
   T_theta_ref theta_ref = theta;
-  check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
+  check_bounded(function, "Probability parameter", theta_ref, 0.0, 1.0);
 
   if (size_zero(n, theta)) {
     return 0.0;

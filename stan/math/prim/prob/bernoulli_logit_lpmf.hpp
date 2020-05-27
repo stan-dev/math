@@ -51,18 +51,19 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   T_partials_return logp(0.0);
   operands_and_partials<T_theta_ref> ops_partials(theta_ref);
 
-  const auto& theta_val = as_array_or_scalar(value_of(theta_ref));
+  const auto& theta_val = value_of(theta_ref);
+  const auto& theta_arr = as_array_or_scalar(theta_val);
+  const auto& n_double = value_of_rec(n_ref);
 
   auto signs = to_ref_if<!is_constant<T_prob>::value>(
-      (2 * as_array_or_scalar(value_of_rec(n_ref)) - 1));
+      (2 * as_array_or_scalar(n_double) - 1));
   T_partials_array ntheta;
   if (is_vector<T_n>::value || is_vector<T_prob>::value) {
-    ntheta = forward_as<T_partials_array>(signs * theta_val);
+    ntheta = forward_as<T_partials_array>(signs * theta_arr);
   } else {
-    T_partials_return theta_val2 = theta_val;
-    T_partials_return ntheta_s = forward_as<T_partials_return>(signs * theta_val);
-    ntheta = T_partials_array::Constant(1, 1,
-                                        ntheta_s);
+    T_partials_return ntheta_s
+        = forward_as<T_partials_return>(signs * theta_arr);
+    ntheta = T_partials_array::Constant(1, 1, ntheta_s);
   }
   T_partials_array exp_m_ntheta = exp(-ntheta);
   static const double cutoff = 20.0;
@@ -72,12 +73,21 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
                   (ntheta < -cutoff).select(ntheta, -log1p(exp_m_ntheta))));
 
   if (!is_constant_all<T_prob>::value) {
-    ops_partials.edge1_.partials_
-        = (ntheta > cutoff)
+    if (is_vector<T_prob>::value) {
+      ops_partials.edge1_.partials_ = forward_as<T_partials_array>(
+          (ntheta > cutoff)
               .select(-exp_m_ntheta,
-                      (ntheta < -cutoff)
-                          .select(signs,
-                                  signs * exp_m_ntheta / (exp_m_ntheta + 1)));
+                      (ntheta >= -cutoff)
+                          .select(signs * exp_m_ntheta / (exp_m_ntheta + 1),
+                                  signs)));
+    } else {
+      ops_partials.edge1_.partials_[0]
+          = sum((ntheta > cutoff)
+                    .select(-exp_m_ntheta, (ntheta >= -cutoff)
+                                               .select(signs * exp_m_ntheta
+                                                           / (exp_m_ntheta + 1),
+                                                       signs)));
+    }
   }
   return ops_partials.build(logp);
 }
