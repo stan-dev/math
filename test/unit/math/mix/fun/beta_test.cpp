@@ -13,9 +13,9 @@ TEST(mathMixScalFun, beta) {
   stan::test::expect_ad(f, 5.2, 6.7);
   stan::test::expect_ad(f, 7.5, 1.8);
 
-  Eigen::VectorXd in1(4);
-  in1 << 0.5, 3.4, 5.2, 7.5;
-  Eigen::VectorXd in2(4);
-  in2 << 3.3, 0.9, 6.7, 1.8;
+  Eigen::VectorXd in1(3);
+  in1 << 0.5, 3.4, 5.2;
+  Eigen::VectorXd in2(3);
+  in2 << 3.3, 0.9, 6.7;
   stan::test::expect_ad_vectorized_binary(f, in1, in2);
 }
