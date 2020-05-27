@@ -66,7 +66,8 @@ class broadcast_
    * @param[in, out] row_index_name row index
    * @param[in, out] col_index_name column index
    */
-  inline void modify_argument_indices(std::string& row_index_name, std::string& col_index_name) const {
+  inline void modify_argument_indices(std::string& row_index_name,
+                                      std::string& col_index_name) const {
     if (Colwise) {
       row_index_name = "0";
     }

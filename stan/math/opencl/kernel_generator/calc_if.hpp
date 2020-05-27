@@ -41,7 +41,8 @@ class calc_if_
    */
   explicit calc_if_(T&& a) : base(std::forward<T>(a)) {}
 
-  inline kernel_parts generate(const std::string& row_index_name, const std::string& col_index_name,
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
                                const bool view_handled,
                                const std::string& var_name_arg) const {
     if (Do_Calculate) {
@@ -67,8 +68,8 @@ class calc_if_
       const std::string& row_index_name, const std::string& col_index_name,
       const T_result& result) const {
     if (Do_Calculate) {
-      return this->template get_arg<0>().get_whole_kernel_parts(generated, ng,
-                                                                row_index_name, col_index_name, result);
+      return this->template get_arg<0>().get_whole_kernel_parts(
+          generated, ng, row_index_name, col_index_name, result);
     } else {
       return {};
     }

@@ -98,7 +98,8 @@ class block_
    * this expression
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& row_index_name, const std::string& col_index_name,
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
                                const bool view_handled,
                                const std::string& var_name_arg) const {
     kernel_parts res;
@@ -113,7 +114,8 @@ class block_
    * @param[in, out] row_index_name row index
    * @param[in, out] col_index_name column index
    */
-  inline void modify_argument_indices(std::string& row_index_name, std::string& col_index_name) const {
+  inline void modify_argument_indices(std::string& row_index_name,
+                                      std::string& col_index_name) const {
     row_index_name = "(" + row_index_name + " + " + var_name_ + "_i)";
     col_index_name = "(" + col_index_name + " + " + var_name_ + "_j)";
   }

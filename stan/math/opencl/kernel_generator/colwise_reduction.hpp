@@ -73,8 +73,10 @@ class colwise_reduction
       std::set<const operation_cl_base*>& generated, name_generator& ng,
       const std::string& row_index_name, const std::string& col_index_name,
       const T_result& result) const {
-    kernel_parts parts = derived().get_kernel_parts(generated, ng, row_index_name, col_index_name, false);
-    kernel_parts out_parts = result.get_kernel_parts_lhs(generated, ng, row_index_name, col_index_name);
+    kernel_parts parts = derived().get_kernel_parts(
+        generated, ng, row_index_name, col_index_name, false);
+    kernel_parts out_parts = result.get_kernel_parts_lhs(
+        generated, ng, row_index_name, col_index_name);
 
     parts.args += out_parts.args;
     parts.reduction += "if (lid_i == 0) {\n"
@@ -93,7 +95,8 @@ class colwise_reduction
    * this expression
    * @return part of kernel with code for this and nested expressions
    */
-  inline kernel_parts generate(const std::string& row_index_name, const std::string& col_index_name,
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
                                const bool view_handled,
                                const std::string& var_name_arg) const {
     kernel_parts res;

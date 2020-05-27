@@ -87,12 +87,14 @@ class append_row_ : public operation_cl<append_row_<T_a, T_b>,
    */
   inline kernel_parts get_kernel_parts(
       std::set<const operation_cl_base*>& generated, name_generator& name_gen,
-      const std::string& row_index_name, const std::string& col_index_name, bool view_handled) const {
+      const std::string& row_index_name, const std::string& col_index_name,
+      bool view_handled) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
       var_name_ = name_gen.generate();
       generated.insert(this);
-      std::string row_index_name_b = "(" + row_index_name + " - " + var_name_ + "_first_rows)";
+      std::string row_index_name_b
+          = "(" + row_index_name + " - " + var_name_ + "_first_rows)";
       kernel_parts parts_a = this->template get_arg<0>().get_kernel_parts(
           generated, name_gen, row_index_name, col_index_name, true);
       kernel_parts parts_b = this->template get_arg<1>().get_kernel_parts(
@@ -232,12 +234,14 @@ class append_col_ : public operation_cl<append_col_<T_a, T_b>,
    */
   inline kernel_parts get_kernel_parts(
       std::set<const operation_cl_base*>& generated, name_generator& name_gen,
-      const std::string& row_index_name, const std::string& col_index_name, bool view_handled) const {
+      const std::string& row_index_name, const std::string& col_index_name,
+      bool view_handled) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
       var_name_ = name_gen.generate();
       generated.insert(this);
-      std::string col_index_name_b = "(" + col_index_name + " - " + var_name_ + "_first_cols)";
+      std::string col_index_name_b
+          = "(" + col_index_name + " - " + var_name_ + "_first_cols)";
       kernel_parts parts_a = this->template get_arg<0>().get_kernel_parts(
           generated, name_gen, row_index_name, col_index_name, true);
       kernel_parts parts_b = this->template get_arg<1>().get_kernel_parts(

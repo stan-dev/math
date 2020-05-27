@@ -76,7 +76,7 @@ class operation_cl : public operation_cl_base {
  protected:
   std::tuple<internal::wrapper<Args>...> arguments_;
   mutable std::string var_name_;  // name of the variable that holds result of
-                                 // this operation in the kernel
+                                  // this operation in the kernel
 
  public:
   /**
@@ -179,8 +179,10 @@ class operation_cl : public operation_cl_base {
       std::set<const operation_cl_base*>& generated, name_generator& ng,
       const std::string& row_index_name, const std::string& col_index_name,
       const T_result& result) const {
-    kernel_parts parts = derived().get_kernel_parts(generated, ng, row_index_name, col_index_name, false);
-    kernel_parts out_parts = result.get_kernel_parts_lhs(generated, ng, row_index_name, col_index_name);
+    kernel_parts parts = derived().get_kernel_parts(
+        generated, ng, row_index_name, col_index_name, false);
+    kernel_parts out_parts = result.get_kernel_parts_lhs(
+        generated, ng, row_index_name, col_index_name);
     out_parts.body += " = " + derived().var_name_ + ";\n";
     parts += out_parts;
     return parts;
@@ -197,7 +199,8 @@ class operation_cl : public operation_cl_base {
    */
   inline kernel_parts get_kernel_parts(
       std::set<const operation_cl_base*>& generated, name_generator& name_gen,
-      const std::string& row_index_name, const std::string& col_index_name, bool view_handled) const {
+      const std::string& row_index_name, const std::string& col_index_name,
+      bool view_handled) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
       this->var_name_ = name_gen.generate();
@@ -215,7 +218,8 @@ class operation_cl : public operation_cl_base {
       res = std::accumulate(args_parts.begin(), args_parts.end(),
                             kernel_parts{});
       kernel_parts my_part = index_apply<N>([&](auto... Is) {
-        return this->derived().generate(row_index_name, col_index_name, view_handled,
+        return this->derived().generate(row_index_name, col_index_name,
+                                        view_handled,
                                         this->get_arg<Is>().var_name_...);
       });
       res += my_part;
@@ -233,7 +237,8 @@ class operation_cl : public operation_cl_base {
    * @param var_name_arg variable name of the nested expression
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& row_index_name, const std::string& col_index_name,
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
                                const bool view_handled,
                                const std::string& var_name_arg) const {
     var_name_ = var_name_arg;
@@ -242,13 +247,14 @@ class operation_cl : public operation_cl_base {
 
   /**
    * Does nothing. Derived classes can override this to modify how indices are
-   * passed to its argument expressions. On input arguments \c row_index_name and \c col_index_name are
-   * expressions for indices of this operation. On output they are expressions
-   * for indices of argument operations.
+   * passed to its argument expressions. On input arguments \c row_index_name
+   * and \c col_index_name are expressions for indices of this operation. On
+   * output they are expressions for indices of argument operations.
    * @param[in, out] row_index_name row index
    * @param[in, out] col_index_name column index
    */
-  inline void modify_argument_indices(std::string& row_index_name, std::string& col_index_name) const {}
+  inline void modify_argument_indices(std::string& row_index_name,
+                                      std::string& col_index_name) const {}
 
   /**
    * Sets kernel arguments for nested expressions.

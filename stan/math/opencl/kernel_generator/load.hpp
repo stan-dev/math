@@ -62,13 +62,15 @@ class load_
    * @param view_handled whether whether caller already handled matrix view
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& row_index_name, const std::string& col_index_name,
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
                                const bool view_handled) const {
     kernel_parts res{};
     std::string type = type_str<Scalar>();
     if (view_handled) {
-      res.body = type + " " + var_name_ + " = " + var_name_ + "_global[" + row_index_name
-                 + " + " + var_name_ + "_rows * " + col_index_name + "];\n";
+      res.body = type + " " + var_name_ + " = " + var_name_ + "_global["
+                 + row_index_name + " + " + var_name_ + "_rows * "
+                 + col_index_name + "];\n";
     } else {
       res.body = type + " " + var_name_ + " = 0;"
                  " if (!((!contains_nonzero(" + var_name_ + "_view, LOWER) && "
@@ -77,8 +79,8 @@ class load_
                  + var_name_ + " = " + var_name_ + "_global[" + row_index_name + " + " +
                  var_name_ + "_rows * " + col_index_name + "];}\n";
     }
-    res.args = "__global " + type + "* " + var_name_ + "_global, int " + var_name_
-               + "_rows, int " + var_name_ + "_view, ";
+    res.args = "__global " + type + "* " + var_name_ + "_global, int "
+               + var_name_ + "_rows, int " + var_name_ + "_view, ";
     return res;
   }
 
@@ -93,10 +95,10 @@ class load_
                                    const std::string& col_index_name) const {
     kernel_parts res;
     std::string type = type_str<Scalar>();
-    res.args = "__global " + type + "* " + var_name_ + "_global, int " + var_name_
-               + "_rows, int " + var_name_ + "_view, ";
-    res.body
-        = var_name_ + "_global[" + row_index_name + " + " + var_name_ + "_rows * " + col_index_name + "]";
+    res.args = "__global " + type + "* " + var_name_ + "_global, int "
+               + var_name_ + "_rows, int " + var_name_ + "_view, ";
+    res.body = var_name_ + "_global[" + row_index_name + " + " + var_name_
+               + "_rows * " + col_index_name + "]";
     return res;
   }
 

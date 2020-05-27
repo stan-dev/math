@@ -66,23 +66,26 @@ class diagonal_
    */
   inline kernel_parts get_kernel_parts(
       std::set<const operation_cl_base*>& generated, name_generator& name_gen,
-      const std::string& row_index_name, const std::string& col_index_name, bool view_handled) const {
+      const std::string& row_index_name, const std::string& col_index_name,
+      bool view_handled) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
       generated.insert(this);
-      res = this->template get_arg<0>().get_kernel_parts(generated, name_gen, row_index_name,
-                                                         row_index_name, true);
+      res = this->template get_arg<0>().get_kernel_parts(
+          generated, name_gen, row_index_name, row_index_name, true);
       var_name_ = this->template get_arg<0>().var_name_;
     }
     return res;
   }
 
   /**
-   * Sets col_index_name to value of row_index_name. This is only used when diagonal is assigned to.
+   * Sets col_index_name to value of row_index_name. This is only used when
+   * diagonal is assigned to.
    * @param[in, out] row_index_name row index
    * @param[in, out] col_index_name column index
    */
-  inline void modify_argument_indices(std::string& row_index_name, std::string& col_index_name) const {
+  inline void modify_argument_indices(std::string& row_index_name,
+                                      std::string& col_index_name) const {
     col_index_name = row_index_name;
   }
 
@@ -95,7 +98,8 @@ class diagonal_
    * this expression
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate_lhs(const std::string& row_index_name, const std::string& col_index_name,
+  inline kernel_parts generate_lhs(const std::string& row_index_name,
+                                   const std::string& col_index_name,
                                    const std::string& var_name_arg) const {
     return {};
   }

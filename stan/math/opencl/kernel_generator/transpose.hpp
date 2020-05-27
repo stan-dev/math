@@ -55,11 +55,13 @@ class transpose_
   }
 
   /**
-   * Swaps indices \c row_index_name and \c col_index_name for the argument expression.
+   * Swaps indices \c row_index_name and \c col_index_name for the argument
+   * expression.
    * @param[in, out] row_index_name row index
    * @param[in, out] col_index_name column index
    */
-  inline void modify_argument_indices(std::string& row_index_name, std::string& col_index_name) const {
+  inline void modify_argument_indices(std::string& row_index_name,
+                                      std::string& col_index_name) const {
     std::swap(row_index_name, col_index_name);
   }
 

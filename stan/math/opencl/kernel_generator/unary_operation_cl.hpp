@@ -46,7 +46,8 @@ class unary_operation_cl
    * @param var_name_arg variable name of the nested expression
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& row_index_name, const std::string& col_index_name,
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
                                const bool view_handled,
                                const std::string& var_name_arg) const {
     kernel_parts res{};

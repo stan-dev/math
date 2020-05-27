@@ -33,7 +33,8 @@ struct matvec_mul_opt {
 
   static kernel_parts get_kernel_parts(
       const Arg& a, std::set<const operation_cl_base*>& generated,
-      name_generator& name_gen, const std::string& row_index_name, const std::string& col_index_name) {
+      name_generator& name_gen, const std::string& row_index_name,
+      const std::string& col_index_name) {
     return {};
   }
 };
@@ -68,7 +69,8 @@ struct matvec_mul_opt<elt_multiply_<Mat, broadcast_<VecT, true, false>>> {
    */
   static kernel_parts get_kernel_parts(
       const Arg& mul, std::set<const operation_cl_base*>& generated,
-      name_generator& name_gen, const std::string& row_index_name, const std::string& col_index_name) {
+      name_generator& name_gen, const std::string& row_index_name,
+      const std::string& col_index_name) {
     kernel_parts res{};
     if (generated.count(&mul) == 0) {
       mul.var_name_ = name_gen.generate();
@@ -76,7 +78,8 @@ struct matvec_mul_opt<elt_multiply_<Mat, broadcast_<VecT, true, false>>> {
 
       const auto& matrix = mul.template get_arg<0>();
       const auto& broadcast = mul.template get_arg<1>();
-      res = matrix.get_kernel_parts(generated, name_gen, row_index_name, col_index_name, true);
+      res = matrix.get_kernel_parts(generated, name_gen, row_index_name,
+                                    col_index_name, true);
       if (generated.count(&broadcast) == 0) {
         broadcast.var_name_ = name_gen.generate();
         generated.insert(&broadcast);
@@ -85,10 +88,13 @@ struct matvec_mul_opt<elt_multiply_<Mat, broadcast_<VecT, true, false>>> {
         std::string row_index_name_bc = row_index_name;
         std::string col_index_name_bc = col_index_name;
         broadcast.modify_argument_indices(row_index_name_bc, col_index_name_bc);
-        res += vec.get_kernel_parts(generated, name_gen, row_index_name_bc, col_index_name_bc, true);
-        res += broadcast.generate(row_index_name, col_index_name, true, vec.var_name_);
+        res += vec.get_kernel_parts(generated, name_gen, row_index_name_bc,
+                                    col_index_name_bc, true);
+        res += broadcast.generate(row_index_name, col_index_name, true,
+                                  vec.var_name_);
       }
-      res += mul.generate(row_index_name, col_index_name, true, matrix.var_name_, broadcast.var_name_);
+      res += mul.generate(row_index_name, col_index_name, true,
+                          matrix.var_name_, broadcast.var_name_);
     }
     return res;
   }
@@ -142,7 +148,8 @@ class rowwise_reduction
    */
   inline kernel_parts get_kernel_parts(
       std::set<const operation_cl_base*>& generated, name_generator& name_gen,
-      const std::string& row_index_name, const std::string& col_index_name, bool view_handled) const {
+      const std::string& row_index_name, const std::string& col_index_name,
+      bool view_handled) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
       this->var_name_ = name_gen.generate();
@@ -154,10 +161,12 @@ class rowwise_reduction
             var_name_ + "_j");
       } else {
         res = this->template get_arg<0>().get_kernel_parts(
-            generated, name_gen, row_index_name, var_name_ + "_j", view_handled || PassZero);
+            generated, name_gen, row_index_name, var_name_ + "_j",
+            view_handled || PassZero);
       }
       kernel_parts my_part
-          = generate(row_index_name, col_index_name, view_handled, this->template get_arg<0>().var_name_);
+          = generate(row_index_name, col_index_name, view_handled,
+                     this->template get_arg<0>().var_name_);
       res += my_part;
       res.body = res.body_prefix + res.body;
       res.body_prefix = "";
@@ -174,7 +183,8 @@ class rowwise_reduction
    * this expression
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& row_index_name, const std::string& col_index_name,
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
                                const bool view_handled,
                                const std::string& var_name_arg) const {
     kernel_parts res;
@@ -182,27 +192,30 @@ class rowwise_reduction
         = type_str<Scalar>() + " " + var_name_ + " = " + init_ + ";\n";
     if (PassZero) {
       res.body_prefix += "int " + var_name_ + "_start = contains_nonzero("
-                         + var_name_ + "_view, LOWER) ? 0 : " + row_index_name + ";\n";
+                         + var_name_ + "_view, LOWER) ? 0 : " + row_index_name
+                         + ";\n";
       if (internal::matvec_mul_opt<T_no_ref>::is_possible) {
         res.body_prefix += "int " + var_name_ + "_end_temp = contains_nonzero("
                            + var_name_ + "_view, UPPER) ? " + var_name_
-                           + "_cols : min(" + var_name_ + "_cols, " + row_index_name
-                           + " + 1);\n";
+                           + "_cols : min(" + var_name_ + "_cols, "
+                           + row_index_name + " + 1);\n";
         res.body_prefix += "int " + var_name_ + "_end = contains_nonzero("
                            + var_name_ + "_vec_view, UPPER) ? " + var_name_
-                           + "_end_temp : min(1, " + var_name_ + "_end_temp);\n";
+                           + "_end_temp : min(1, " + var_name_
+                           + "_end_temp);\n";
       } else {
         res.body_prefix += "int " + var_name_ + "_end = contains_nonzero("
                            + var_name_ + "_view, UPPER) ? " + var_name_
-                           + "_cols : min(" + var_name_ + "_cols, " + row_index_name
-                           + " + 1);\n";
+                           + "_cols : min(" + var_name_ + "_cols, "
+                           + row_index_name + " + 1);\n";
       }
-      res.body_prefix += "for(int " + var_name_ + "_j = " + var_name_ + "_start; "
-                         + var_name_ + "_j < " + var_name_ + "_end; " + var_name_
-                         + "_j++){\n";
+      res.body_prefix += "for(int " + var_name_ + "_j = " + var_name_
+                         + "_start; " + var_name_ + "_j < " + var_name_
+                         + "_end; " + var_name_ + "_j++){\n";
     } else {
-      res.body_prefix += "for(int " + var_name_ + "_j = 0; " + var_name_ + "_j < "
-                         + var_name_ + "_cols; " + var_name_ + "_j++){\n";
+      res.body_prefix += "for(int " + var_name_ + "_j = 0; " + var_name_
+                         + "_j < " + var_name_ + "_cols; " + var_name_
+                         + "_j++){\n";
     }
     res.body += var_name_ + " = " + operation::generate(var_name_, var_name_arg)
                 + ";\n}\n";

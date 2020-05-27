@@ -104,15 +104,15 @@ struct multi_result_kernel_internal {
         const std::string& row_index_name, const std::string& col_index_name,
         const std::tuple<wrapper<T_results>...>& results,
         const std::tuple<wrapper<T_expressions>...>& expressions) {
-      kernel_parts parts
-          = next::generate(generated, ng, row_index_name, col_index_name, results, expressions);
+      kernel_parts parts = next::generate(generated, ng, row_index_name,
+                                          col_index_name, results, expressions);
       if (is_without_output<T_current_expression>::value) {
         return parts;
       }
-      kernel_parts parts0
-          = std::get<N>(expressions)
-                .x.get_whole_kernel_parts(generated, ng, row_index_name, col_index_name,
-                                          std::get<N>(results).x);
+      kernel_parts parts0 = std::get<N>(expressions)
+                                .x.get_whole_kernel_parts(
+                                    generated, ng, row_index_name,
+                                    col_index_name, std::get<N>(results).x);
       parts += parts0;
       return parts;
     }

@@ -73,7 +73,8 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
    * @param var_name_b variable name of the second nested expression
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& row_index_name, const std::string& col_index_name,
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
                                const bool view_handled,
                                const std::string& var_name_a,
                                const std::string& var_name_b) const {

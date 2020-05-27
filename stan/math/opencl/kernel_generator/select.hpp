@@ -94,7 +94,8 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
    * @param var_name_then variable name of the else expression
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& row_index_name, const std::string& col_index_name,
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
                                const bool view_handled,
                                const std::string& var_name_condition,
                                const std::string& var_name_then,
@@ -138,9 +139,10 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
  * @param els else expression
  * @return selection operation expression
  */
-template <typename T_condition, typename T_then, typename T_else,
-          require_all_kernel_expressions_t<T_condition, T_then, T_else>* = nullptr,
-          require_any_not_arithmetic_t<T_condition, T_then, T_else>* = nullptr>
+template <
+    typename T_condition, typename T_then, typename T_else,
+    require_all_kernel_expressions_t<T_condition, T_then, T_else>* = nullptr,
+    require_any_not_arithmetic_t<T_condition, T_then, T_else>* = nullptr>
 inline select_<as_operation_cl_t<T_condition>, as_operation_cl_t<T_then>,
                as_operation_cl_t<T_else>>
 select(T_condition&& condition, T_then&& then, T_else&& els) {  // NOLINT
