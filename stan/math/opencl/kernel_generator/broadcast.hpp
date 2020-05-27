@@ -62,22 +62,6 @@ class broadcast_
   }
 
   /**
-   * Generates kernel code for this and nested expressions.
-   * @param var_name_arg name of the variable in kernel that holds argument to
-   * this expression
-   * @param i row index variable name
-   * @param j column index variable name
-   * @param view_handled whether whether caller already handled matrix view
-   * @return part of kernel with code for this and nested expressions
-   */
-  inline kernel_parts generate(const std::string& i, const std::string& j,
-                               const bool view_handled,
-                               const std::string& var_name_arg) const {
-    var_name = this->template get_arg<0>().var_name;
-    return {};
-  }
-
-  /**
    * Sets index/indices along broadcasted dimmension(s) to 0.
    * @param[in, out] i row index
    * @param[in, out] j column index
