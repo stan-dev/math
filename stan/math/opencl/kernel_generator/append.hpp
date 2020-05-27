@@ -37,7 +37,7 @@ class append_row_ : public operation_cl<append_row_<T_a, T_b>,
  public:
   using Scalar = common_scalar_t<T_a, T_b>;
   using base = operation_cl<append_row_<T_a, T_b>, Scalar, T_a, T_b>;
-  using base::var_name;
+  using base::var_name_;
 
  protected:
   using base::arguments_;
@@ -80,33 +80,35 @@ class append_row_ : public operation_cl<append_row_<T_a, T_b>,
    * Generates kernel code for this and nested expressions.
    * @param[in,out] generated set of (pointer to) already generated operations
    * @param name_gen name generator for this kernel
-   * @param i row index variable name
-   * @param j column index variable name
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
    * @param view_handled whether caller already handled matrix view
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
       std::set<const operation_cl_base*>& generated, name_generator& name_gen,
-      const std::string& i, const std::string& j, bool view_handled) const {
+      const std::string& row_index_name, const std::string& col_index_name,
+      bool view_handled) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
-      var_name = name_gen.generate();
+      var_name_ = name_gen.generate();
       generated.insert(this);
-      std::string i_b = "(" + i + " - " + var_name + "_first_rows)";
+      std::string row_index_name_b
+          = "(" + row_index_name + " - " + var_name_ + "_first_rows)";
       kernel_parts parts_a = this->template get_arg<0>().get_kernel_parts(
-          generated, name_gen, i, j, true);
+          generated, name_gen, row_index_name, col_index_name, true);
       kernel_parts parts_b = this->template get_arg<1>().get_kernel_parts(
-          generated, name_gen, i_b, j, true);
+          generated, name_gen, row_index_name_b, col_index_name, true);
       res = parts_a + parts_b;
-      res.body = type_str<Scalar>() + " " + var_name + ";\n"
-          "if("+ i +" < " + var_name + "_first_rows){\n"
+      res.body = type_str<Scalar>() + " " + var_name_ + ";\n"
+          "if("+ row_index_name +" < " + var_name_ + "_first_rows){\n"
           + parts_a.body +
-          var_name + " = " + this->template get_arg<0>().var_name + ";\n"
+          var_name_ + " = " + this->template get_arg<0>().var_name_ + ";\n"
           "} else{\n"
           + parts_b.body +
-          var_name + " = " + this->template get_arg<1>().var_name + ";\n"
+          var_name_ + " = " + this->template get_arg<1>().var_name_ + ";\n"
           "}\n";
-      res.args += "int " + var_name + "_first_rows, ";
+      res.args += "int " + var_name_ + "_first_rows, ";
     }
     return res;
   }
@@ -182,7 +184,7 @@ class append_col_ : public operation_cl<append_col_<T_a, T_b>,
  public:
   using Scalar = common_scalar_t<T_a, T_b>;
   using base = operation_cl<append_col_<T_a, T_b>, Scalar, T_a, T_b>;
-  using base::var_name;
+  using base::var_name_;
 
  protected:
   using base::arguments_;
@@ -225,33 +227,35 @@ class append_col_ : public operation_cl<append_col_<T_a, T_b>,
    * Generates kernel code for this and nested expressions.
    * @param[in,out] generated set of (pointer to) already generated operations
    * @param name_gen name generator for this kernel
-   * @param i row index variable name
-   * @param j column index variable name
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
    * @param view_handled whether caller already handled matrix view
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
       std::set<const operation_cl_base*>& generated, name_generator& name_gen,
-      const std::string& i, const std::string& j, bool view_handled) const {
+      const std::string& row_index_name, const std::string& col_index_name,
+      bool view_handled) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
-      var_name = name_gen.generate();
+      var_name_ = name_gen.generate();
       generated.insert(this);
-      std::string j_b = "(" + j + " - " + var_name + "_first_cols)";
+      std::string col_index_name_b
+          = "(" + col_index_name + " - " + var_name_ + "_first_cols)";
       kernel_parts parts_a = this->template get_arg<0>().get_kernel_parts(
-          generated, name_gen, i, j, true);
+          generated, name_gen, row_index_name, col_index_name, true);
       kernel_parts parts_b = this->template get_arg<1>().get_kernel_parts(
-          generated, name_gen, i, j_b, true);
+          generated, name_gen, row_index_name, col_index_name_b, true);
       res = parts_a + parts_b;
-      res.body = type_str<Scalar>() + " " + var_name + ";\n"
-          "if("+ j +" < " + var_name + "_first_cols){\n"
+      res.body = type_str<Scalar>() + " " + var_name_ + ";\n"
+          "if("+ col_index_name +" < " + var_name_ + "_first_cols){\n"
           + parts_a.body +
-          var_name + " = " + this->template get_arg<0>().var_name + ";\n"
+          var_name_ + " = " + this->template get_arg<0>().var_name_ + ";\n"
           "} else{\n"
           + parts_b.body +
-          var_name + " = " + this->template get_arg<1>().var_name + ";\n"
+          var_name_ + " = " + this->template get_arg<1>().var_name_ + ";\n"
           "}\n";
-      res.args += "int " + var_name + "_first_cols, ";
+      res.args += "int " + var_name_ + "_first_cols, ";
     }
     return res;
   }

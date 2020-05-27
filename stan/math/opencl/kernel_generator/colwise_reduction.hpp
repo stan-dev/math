@@ -42,7 +42,7 @@ class colwise_reduction
  public:
   using Scalar = typename std::remove_reference_t<T>::Scalar;
   using base = operation_cl<Derived, Scalar, T>;
-  using base::var_name;
+  using base::var_name_;
   static const bool require_specific_local_size = true;
 
  protected:
@@ -63,54 +63,58 @@ class colwise_reduction
    * Generates kernel code for assigning this expression into result expression.
    * @param[in,out] generated set of (pointer to) already generated operations
    * @param ng name generator for this kernel
-   * @param i row index variable name
-   * @param j column index variable name
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
    * @param result expression into which result is to be assigned
    * @return part of kernel with code for this and nested expressions
    */
   template <typename T_result>
   kernel_parts get_whole_kernel_parts(
       std::set<const operation_cl_base*>& generated, name_generator& ng,
-      const std::string& i, const std::string& j,
+      const std::string& row_index_name, const std::string& col_index_name,
       const T_result& result) const {
-    kernel_parts parts = derived().get_kernel_parts(generated, ng, i, j, false);
-    kernel_parts out_parts = result.get_kernel_parts_lhs(generated, ng, i, j);
+    kernel_parts parts = derived().get_kernel_parts(
+        generated, ng, row_index_name, col_index_name, false);
+    kernel_parts out_parts = result.get_kernel_parts_lhs(
+        generated, ng, row_index_name, col_index_name);
 
     parts.args += out_parts.args;
     parts.reduction += "if (lid_i == 0) {\n"
-                     + result.var_name + "_global[j * blocks_rows + wg_id_i] = "
-                            + derived().var_name + "_local[0];\n"
+                     + result.var_name_
+                     + "_global[j * blocks_rows + wg_id_i] = "
+                     + derived().var_name_ + "_local[0];\n"
                      "}\n";
     return parts;
   }
 
   /**
-   * generates kernel code for this and nested expressions.
-   * @param i row index variable name
-   * @param j column index variable name
+   * Generates kernel code for this and nested expressions.
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
    * @param view_handled whether whether caller already handled matrix view
    * @param var_name_arg name of the variable in kernel that holds argument to
    * this expression
    * @return part of kernel with code for this and nested expressions
    */
-  inline kernel_parts generate(const std::string& i, const std::string& j,
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
                                const bool view_handled,
                                const std::string& var_name_arg) const {
     kernel_parts res;
-    res.initialization = type_str<Scalar>() + " " + var_name + " = " + init_
+    res.initialization = type_str<Scalar>() + " " + var_name_ + " = " + init_
         + ";\n" "__local " + type_str<Scalar>() + " "
-        + var_name + "_local[LOCAL_SIZE_];\n";
-    res.body = var_name + " = " + var_name_arg + ";\n";
+        + var_name_ + "_local[LOCAL_SIZE_];\n";
+    res.body = var_name_ + " = " + var_name_arg + ";\n";
     res.reduction =
-          var_name + "_local[lid_i] = " + var_name + ";\n"
+          var_name_ + "_local[lid_i] = " + var_name_ + ";\n"
           "barrier(CLK_LOCAL_MEM_FENCE);\n"
           "for (int step = lsize_i / REDUCTION_STEP_SIZE; "
                 "step > 0; step /= REDUCTION_STEP_SIZE) {\n"
           "  if (lid_i < step) {\n"
           "    for (int i = 1; i < REDUCTION_STEP_SIZE; i++) {\n"
-          "      " + var_name + "_local[lid_i] = " +
-        Operation::generate(var_name + "_local[lid_i]",
-                            var_name + "_local[lid_i + step * i]") + ";\n"
+          "      " + var_name_ + "_local[lid_i] = " +
+        Operation::generate(var_name_ + "_local[lid_i]",
+                            var_name_ + "_local[lid_i + step * i]") + ";\n"
           "    }\n"
           "  }\n"
           "  barrier(CLK_LOCAL_MEM_FENCE);\n"
