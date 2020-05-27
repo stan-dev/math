@@ -282,7 +282,6 @@ TEST_F(AgradRev, grad) {
   EXPECT_FLOAT_EQ(5.0, b.adj());
 }
 
-
 TEST_F(AgradRev, int_to_double) {
   using stan::math::var_value;
   var_value<int> a(5);
