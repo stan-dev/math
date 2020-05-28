@@ -25,8 +25,7 @@ inline ref_type_t<T&&> to_ref(T&& a) {
  * @param a argument
  * @return argument
  */
-template <
-    bool Cond, typename T, std::enable_if_t<!Cond>* = nullptr>
+template <bool Cond, typename T, std::enable_if_t<!Cond>* = nullptr>
 inline T to_ref_if(T&& a) {
   return std::forward<T>(a);
 }
