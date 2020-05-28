@@ -34,7 +34,7 @@ class load_
  public:
   using Scalar = typename std::remove_reference_t<T>::type;
   using base = operation_cl<load_<T>, Scalar>;
-  using base::var_name;
+  using base::var_name_;
   static_assert(std::is_base_of<matrix_cl<Scalar>,
                                 typename std::remove_reference_t<T>>::value,
                 "load_: argument a must be a matrix_cl<T>!");
@@ -56,47 +56,50 @@ class load_
   inline load_<T> deep_copy() && { return load_<T>(std::forward<T>(a_)); }
 
   /**
-   * generates kernel code for this expression.
-   * @param i row index variable name
-   * @param j column index variable name
+   * Generates kernel code for this expression.
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
    * @param view_handled whether whether caller already handled matrix view
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& i, const std::string& j,
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
                                const bool view_handled) const {
     kernel_parts res{};
     std::string type = type_str<Scalar>();
     if (view_handled) {
-      res.body = type + " " + var_name + " = " + var_name + "_global[" + i
-                 + " + " + var_name + "_rows * " + j + "];\n";
+      res.body = type + " " + var_name_ + " = " + var_name_ + "_global["
+                 + row_index_name + " + " + var_name_ + "_rows * "
+                 + col_index_name + "];\n";
     } else {
-      res.body = type + " " + var_name + " = 0;"
-                 " if (!((!contains_nonzero(" + var_name + "_view, LOWER) && "
-                 + j + " < " + i + ") || (!contains_nonzero(" + var_name +
-                 "_view, UPPER) && " + j + " > " + i + "))) {"
-                 + var_name + " = " + var_name + "_global[" + i + " + " +
-                 var_name + "_rows * " + j + "];}\n";
+      res.body = type + " " + var_name_ + " = 0;"
+                 " if (!((!contains_nonzero(" + var_name_ + "_view, LOWER) && "
+                 + col_index_name + " < " + row_index_name
+                 + ") || (!contains_nonzero(" + var_name_ + "_view, UPPER) && "
+                 + col_index_name + " > " + row_index_name + "))) {" + var_name_
+                 + " = " + var_name_ + "_global[" + row_index_name + " + " +
+                 var_name_ + "_rows * " + col_index_name + "];}\n";
     }
-    res.args = "__global " + type + "* " + var_name + "_global, int " + var_name
-               + "_rows, int " + var_name + "_view, ";
+    res.args = "__global " + type + "* " + var_name_ + "_global, int "
+               + var_name_ + "_rows, int " + var_name_ + "_view, ";
     return res;
   }
 
   /**
-   * generates kernel code for this expression if it appears on the left hand
+   * Generates kernel code for this expression if it appears on the left hand
    * side of an assignment.
-   * @param i row index variable name
-   * @param j column index variable name
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
    * @return part of kernel with code for this expressions
    */
-  inline kernel_parts generate_lhs(const std::string& i,
-                                   const std::string& j) const {
+  inline kernel_parts generate_lhs(const std::string& row_index_name,
+                                   const std::string& col_index_name) const {
     kernel_parts res;
     std::string type = type_str<Scalar>();
-    res.args = "__global " + type + "* " + var_name + "_global, int " + var_name
-               + "_rows, int " + var_name + "_view, ";
-    res.body
-        = var_name + "_global[" + i + " + " + var_name + "_rows * " + j + "]";
+    res.args = "__global " + type + "* " + var_name_ + "_global, int "
+               + var_name_ + "_rows, int " + var_name_ + "_view, ";
+    res.body = var_name_ + "_global[" + row_index_name + " + " + var_name_
+               + "_rows * " + col_index_name + "]";
     return res;
   }
 

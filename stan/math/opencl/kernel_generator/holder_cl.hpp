@@ -40,7 +40,7 @@ class holder_cl_
  public:
   using Scalar = typename std::remove_reference_t<T>::Scalar;
   using base = operation_cl<holder_cl_<T, Ptrs...>, Scalar, T>;
-  using base::var_name;
+  using base::var_name_;
 
  protected:
   std::tuple<std::unique_ptr<Ptrs>...> m_unique_ptrs;
