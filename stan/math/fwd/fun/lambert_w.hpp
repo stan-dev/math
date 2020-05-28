@@ -12,12 +12,14 @@ namespace math {
 
 template <typename T>
 inline fvar<T> lambert_w0(const fvar<T>& x) {
-  return fvar<T>(lambert_w0(x.val_),  (x.d_ / (x.val_ + exp(lambert_w0(x.val_)))));
+  return fvar<T>(lambert_w0(x.val_),
+                 (x.d_ / (x.val_ + exp(lambert_w0(x.val_)))));
 }
 
 template <typename T>
 inline fvar<T> lambert_wm1(const fvar<T>& x) {
-  return fvar<T>(lambert_wm1(x.val_),  (x.d_ / (x.val_ + exp(lambert_wm1(x.val_)))));
+  return fvar<T>(lambert_wm1(x.val_),
+                 (x.d_ / (x.val_ + exp(lambert_wm1(x.val_)))));
 }
 
 }  // namespace math

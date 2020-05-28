@@ -16,19 +16,18 @@ class lambertw0_vari : public op_v_vari {
   explicit lambertw0_vari(vari* avi) : op_v_vari(lambert_w0(avi->val_), avi) {}
   void chain() {
     if (avi_->val_ == 0.0) {
-      avi_ ->adj_ += adj_;
+      avi_->adj_ += adj_;
     } else {
-      avi_->adj_ +=  (adj_ / (avi_->val_ + exp(val_)));
+      avi_->adj_ += (adj_ / (avi_->val_ + exp(val_)));
     }
   }
 };
 
 class lambertwm1_vari : public op_v_vari {
  public:
-  explicit lambertwm1_vari(vari* avi) : op_v_vari(lambert_wm1(avi->val_), avi) {}
-  void chain() {
-    avi_->adj_ += (adj_ / (avi_->val_ + exp(val_)));
-  }
+  explicit lambertwm1_vari(vari* avi)
+      : op_v_vari(lambert_wm1(avi->val_), avi) {}
+  void chain() { avi_->adj_ += (adj_ / (avi_->val_ + exp(val_))); }
 };
 }  // namespace internal
 
