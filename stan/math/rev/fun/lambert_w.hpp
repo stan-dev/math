@@ -22,10 +22,22 @@ class lambertw0_vari : public op_v_vari {
     }
   }
 };
+
+class lambertwm1_vari : public op_v_vari {
+ public:
+  explicit lambertwm1_vari(vari* avi) : op_v_vari(lambert_wm1(avi->val_), avi) {}
+  void chain() {
+    avi_->adj_ += (adj_ / (avi_->val_ + exp(val_)));
+  }
+};
 }  // namespace internal
 
 inline var lambert_w0(const var& a) {
   return var(new internal::lambertw0_vari(a.vi_));
+}
+
+inline var lambert_wm1(const var& a) {
+  return var(new internal::lambertwm1_vari(a.vi_));
 }
 
 }  // namespace math
