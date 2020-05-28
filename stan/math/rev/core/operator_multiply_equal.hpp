@@ -8,13 +8,16 @@
 namespace stan {
 namespace math {
 
-inline var& var::operator*=(var b) {
+template <typename T>
+template <typename S, require_convertible_t<S, internal::floating_point_promoter<T>>*>
+inline var_value<T>& var_value<T>::operator*=(const var_value<S>& b) {
   vi_ = new internal::multiply_vv_vari(vi_, b.vi_);
   return *this;
 }
 
-template <typename Arith, require_arithmetic_t<Arith>...>
-inline var& var::operator*=(Arith b) {
+template <typename T>
+template <typename Arith, require_arithmetic_t<Arith>*>
+inline var_value<T>& var_value<T>::operator*=(Arith b) {
   if (b == 1.0) {
     return *this;
   }

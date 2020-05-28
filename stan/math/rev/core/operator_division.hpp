@@ -115,8 +115,8 @@ inline var operator/(var dividend, var divisor) {
  * @param divisor Scalar operand.
  * @return Variable result of dividing the variable by the scalar.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
-inline var operator/(var dividend, Arith divisor) {
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
+inline var operator/(const var& dividend, Arith divisor) {
   if (divisor == 1.0) {
     return dividend;
   }
@@ -135,8 +135,8 @@ inline var operator/(var dividend, Arith divisor) {
  * @param divisor Variable operand.
  * @return Quotient of the dividend and divisor.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
-inline var operator/(Arith dividend, var divisor) {
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
+inline var operator/(Arith dividend, const var& divisor) {
   return {new internal::divide_dv_vari(dividend, divisor.vi_)};
 }
 

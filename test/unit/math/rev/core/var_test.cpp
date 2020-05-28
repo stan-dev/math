@@ -1,5 +1,6 @@
 #include <stan/math.hpp>
 #include <stan/math/prim.hpp>
+#include <test/unit/pretty_print_types.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/rev/core/gradable.hpp>
 #include <gtest/gtest.h>
@@ -13,62 +14,63 @@ struct AgradRev : public testing::Test {
   }
 };
 
+template <typename T, typename S>
+void ctor_overloads_impl() {
+  using stan::math::var_value;
+  using stan::math::vari_value;
+  using stan::math::test::type_name;
+  // make sure copy ctor is used rather than casting vari* to unsigned int
+  EXPECT_FLOAT_EQ(12.3, var_value<T>(new vari_value<S>(12.3)).val()) <<
+  "Failed For T: " << type_name<T>() << " and S: " << type_name<S>() << "\n";
+
+  EXPECT_FLOAT_EQ(12.3, var_value<T>(var_value<S>(12.3)).val()) <<
+  "Failed For T: " << type_name<T>() << " and S: " << type_name<S>() << "\n";
+
+  EXPECT_FLOAT_EQ(static_cast<S>(3.7), var_value<T>(static_cast<S>(3.7)).val()) <<
+  "Failed For T: " << type_name<T>() << " and S: " << type_name<S>() << "\n";
+  // double
+  EXPECT_FLOAT_EQ(3.7, var_value<T>(3.7).val()) <<
+  "Failed For T: " << type_name<T>() << " and S: " << type_name<S>() << "\n";
+  // long double
+  EXPECT_FLOAT_EQ(static_cast<S>(3.7), var_value<T>(static_cast<S>(3.7)).val()) <<
+  "Failed For T: " << type_name<T>() << " and S: " << type_name<S>() << "\n";
+  EXPECT_FLOAT_EQ(0, var_value<T>(static_cast<S>(0)).val()) <<
+  "Failed For T: " << type_name<T>() << " and S:" << type_name<S>() << "\n";
+
+}
+
+template <typename T>
+void ctor_overloads() {
+  ctor_overloads_impl<T, double>();
+  ctor_overloads_impl<T, long double>();
+  ctor_overloads_impl<T, float>();
+  ctor_overloads_impl<T, bool>();
+  ctor_overloads_impl<T, char>();
+  ctor_overloads_impl<T, int>();
+  ctor_overloads_impl<T, int16_t>();
+  ctor_overloads_impl<T, int32_t>();
+  ctor_overloads_impl<T, unsigned char>();
+  ctor_overloads_impl<T, unsigned int>();
+  ctor_overloads_impl<T, uint32_t>();
+  ctor_overloads_impl<T, size_t>();
+  ctor_overloads_impl<T, ptrdiff_t>();
+}
 TEST_F(AgradRev, ctorOverloads) {
   using stan::math::var;
   using stan::math::vari;
-
-  // make sure copy ctor is used rather than casting vari* to unsigned int
-  EXPECT_FLOAT_EQ(12.3, var(new vari(12.3)).val());
-
-  // double
-  EXPECT_FLOAT_EQ(3.7, var(3.7).val());
-
-  // long double
-  EXPECT_FLOAT_EQ(3.7, var(static_cast<long double>(3.7)).val());
-
-  // float
-  EXPECT_FLOAT_EQ(3.7, var(static_cast<float>(3.7)).val());
-
-  // bool
-  EXPECT_FLOAT_EQ(1, var(static_cast<bool>(true)).val());
-
-  // char
-  EXPECT_FLOAT_EQ(3, var(static_cast<char>(3)).val());
-
-  // short
-  EXPECT_FLOAT_EQ(1, var(static_cast<int16_t>(1)).val());
-
-  // int
-  EXPECT_FLOAT_EQ(37, var(static_cast<int>(37)).val());
-
-  // long
-  EXPECT_FLOAT_EQ(37, var(static_cast<int32_t>(37)).val());
-
-  // unsigned char
-  EXPECT_FLOAT_EQ(37, var(static_cast<unsigned char>(37)).val());
-
-  // unsigned short
-  EXPECT_FLOAT_EQ(37, var(static_cast<uint16_t>(37)).val());
-
-  // unsigned int
-  EXPECT_FLOAT_EQ(37, var(static_cast<unsigned int>(37)).val());
-
-  // unsigned int (test conflict with null pointer)
-  EXPECT_FLOAT_EQ(0, var(static_cast<unsigned int>(0)).val());
-
-  // unsigned long
-  EXPECT_FLOAT_EQ(37, var(static_cast<uint32_t>(37)).val());
-
-  // unsigned long (test for conflict with pointer)
-  EXPECT_FLOAT_EQ(0, var(static_cast<uint32_t>(0)).val());
-
-  // size_t
-  EXPECT_FLOAT_EQ(37, var(static_cast<size_t>(37)).val());
-  EXPECT_FLOAT_EQ(0, var(static_cast<size_t>(0)).val());
-
-  // ptrdiff_t
-  EXPECT_FLOAT_EQ(37, var(static_cast<ptrdiff_t>(37)).val());
-  EXPECT_FLOAT_EQ(0, var(static_cast<ptrdiff_t>(0)).val());
+  ctor_overloads<double>();
+  ctor_overloads<long double>();
+  ctor_overloads<float>();
+  ctor_overloads<bool>();
+  ctor_overloads<char>();
+  ctor_overloads<int>();
+  ctor_overloads<int16_t>();
+  ctor_overloads<int32_t>();
+  ctor_overloads<unsigned char>();
+  ctor_overloads<unsigned char>();
+  ctor_overloads<uint32_t>();
+  ctor_overloads<size_t>();
+  ctor_overloads<ptrdiff_t>();
 }
 
 TEST_F(AgradRev, a_eq_x) {
@@ -280,4 +282,12 @@ TEST_F(AgradRev, grad) {
   EXPECT_FLOAT_EQ(1.0, f.adj());
   EXPECT_FLOAT_EQ(11.0, a.adj());
   EXPECT_FLOAT_EQ(5.0, b.adj());
+}
+
+TEST_F(AgradRev, type_convs) {
+  using stan::math::var_value;
+  var_value<double> a(1);
+  var_value<int> b(a);
+  var_value<long double> c(a);
+  var_value<float> d(a);
 }

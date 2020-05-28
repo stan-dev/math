@@ -10,8 +10,8 @@ namespace std {
  * Specialization of iterator traits for Stan math.  These all take
  * the form of typedefs.
  */
-template <>
-struct iterator_traits<stan::math::var> {
+template <typename Iter>
+struct iterator_traits<stan::math::var_value<Iter>> {
   /**
    * Iterator category for traits.
    */
@@ -25,17 +25,18 @@ struct iterator_traits<stan::math::var> {
   /**
    * Type for value of pointer to values.
    */
-  typedef stan::math::var value_type;
+  typedef stan::math::var_value<Iter> value_type;
 
   /**
    * Type of pointer to variables.
    */
-  typedef stan::math::var* pointer;
+  typedef stan::math::var_value<Iter>* pointer;
 
   /**
    * Type of reference to variables.
    */
-  typedef stan::math::var& reference;
+  typedef stan::math::var_value<Iter>& reference;
+
 };
 }  // namespace std
 

@@ -15,7 +15,7 @@ namespace math {
  * @param[in] y second argument
  * @return disjunction of the arguments' values
  */
-inline bool operator||(var x, var y) { return x.val() || y.val(); }
+inline bool operator||(const var& x, const var& y) { return x.val() || y.val(); }
 
 /**
  * Return the logical disjunction of the values of the two
@@ -27,8 +27,8 @@ inline bool operator||(var x, var y) { return x.val() || y.val(); }
  * @return disjunction of first argument's value and second
  * argument
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
-inline bool operator||(var x, Arith y) {
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
+inline bool operator||(const var& x, Arith y) {
   return x.val() || y;
 }
 
@@ -42,8 +42,8 @@ inline bool operator||(var x, Arith y) {
  * @return disjunction of first argument and the second
  * argument's value
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
-inline bool operator||(Arith x, var y) {
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
+inline bool operator||(Arith x, const var& y) {
   return x || y.val();
 }
 

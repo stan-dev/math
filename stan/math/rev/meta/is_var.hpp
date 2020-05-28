@@ -6,13 +6,19 @@
 #include <type_traits>
 
 namespace stan {
+
+namespace internal {
+  template <typename T>
+  struct is_var_impl : std::false_type {};
+
+  template <typename T>
+  struct is_var_impl<math::var_value<T>> : std::true_type {};
+}
 /** \ingroup type_trait
- * Specialization for checking if value of T minus cv qualifier is a var.
+ * Specialization for checking if value of T minus cv qualifier is a var_value.
  */
 template <typename T>
-struct is_var<T,
-              std::enable_if_t<std::is_same<math::var, std::decay_t<T>>::value>>
-    : std::true_type {};
+struct is_var<T, std::enable_if_t<internal::is_var_impl<std::decay_t<T>>::value>> : std::true_type {};
 
 }  // namespace stan
 #endif
