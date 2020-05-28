@@ -12,6 +12,16 @@
 namespace stan {
 namespace math {
 
+/**
+ * Multiplies a matrix and a vector on an OpenCL device.
+ * @tparam T_matrix type of the matrix or matrix expression
+ * @tparam T_vector type of the vector or vector expression
+ * @param matrix the matrix
+ * @param vector the vector
+ * @return matrix-vector multiplication expression
+ * @throw invalid_argument vector has more than column or matrix has different
+ * number of rows than vector columns.
+ */
 template <typename T_matrix, typename T_vector,
           typename = require_all_kernel_expressions_t<T_matrix, T_vector>>
 inline auto matrix_vector_multiply(T_matrix&& matrix, T_vector&& vector) {
