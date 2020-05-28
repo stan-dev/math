@@ -15,3 +15,15 @@ TEST(mathMixMatFun, lambert_w0) {
   stan::test::expect_ad_vectorized(f, 20);
   stan::math::recover_memory();
 }
+
+TEST(mathMixMatFun, lambert_wm1) {
+  auto f = [](const auto& x1) {
+    using stan::math::lambert_wm1;
+    return lambert_wm1(x1);
+  };
+  stan::test::expect_ad_vectorized(f, -0.35);
+  stan::test::expect_ad_vectorized(f, -0.3);
+  stan::test::expect_ad_vectorized(f, -0.1);
+  stan::test::expect_ad_vectorized(f, -0.01);
+  stan::math::recover_memory();
+}
