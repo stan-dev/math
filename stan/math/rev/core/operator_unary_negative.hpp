@@ -11,7 +11,7 @@ namespace stan {
 namespace math {
 
 namespace internal {
-class neg_vari : public op_v_vari {
+class neg_vari final : public op_v_vari {
  public:
   explicit neg_vari(vari* avi) : op_v_vari(-(avi->val_), avi) {}
   void chain() {

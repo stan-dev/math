@@ -12,7 +12,7 @@ namespace stan {
 namespace math {
 
 namespace internal {
-class add_vv_vari : public op_vv_vari {
+class add_vv_vari final : public op_vv_vari {
  public:
   add_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(avi->val_ + bvi->val_, avi, bvi) {}
@@ -27,7 +27,7 @@ class add_vv_vari : public op_vv_vari {
   }
 };
 
-class add_vd_vari : public op_vd_vari {
+class add_vd_vari final : public op_vd_vari {
  public:
   add_vd_vari(vari* avi, double b) : op_vd_vari(avi->val_ + b, avi, b) {}
   void chain() {

@@ -23,7 +23,7 @@ namespace math {
 namespace internal {
 // (dividend/divisor)' = dividend' * (1 / divisor) - divisor' * (dividend /
 // [divisor * divisor])
-class divide_vv_vari : public op_vv_vari {
+class divide_vv_vari final : public op_vv_vari {
  public:
   divide_vv_vari(vari* dividend_vi, vari* divisor_vi)
       : op_vv_vari(dividend_vi->val_ / divisor_vi->val_, dividend_vi,
@@ -39,7 +39,7 @@ class divide_vv_vari : public op_vv_vari {
   }
 };
 
-class divide_vd_vari : public op_vd_vari {
+class divide_vd_vari final : public op_vd_vari {
  public:
   divide_vd_vari(vari* dividend_vi, double divisor)
       : op_vd_vari(dividend_vi->val_ / divisor, dividend_vi, divisor) {}
@@ -52,7 +52,7 @@ class divide_vd_vari : public op_vd_vari {
   }
 };
 
-class divide_dv_vari : public op_dv_vari {
+class divide_dv_vari final : public op_dv_vari {
  public:
   divide_dv_vari(double dividend, vari* divisor_vi)
       : op_dv_vari(dividend / divisor_vi->val_, dividend, divisor_vi) {}
