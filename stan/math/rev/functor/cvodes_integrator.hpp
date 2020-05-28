@@ -43,6 +43,7 @@ class cvodes_integrator {
   std::ostream* msgs_;
   double relative_tolerance_;
   double absolute_tolerance_;
+  bool include_sensitivities_in_errors_;
   long int max_num_steps_;
 
   const size_t y0_vars_;
@@ -180,6 +181,7 @@ class cvodes_integrator {
                     const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
                     const T_t0& t0, const std::vector<T_ts>& ts,
                     double relative_tolerance, double absolute_tolerance,
+		    bool include_sensitivities_in_errors,
                     long int max_num_steps, std::ostream* msgs,
                     const T_Args&... args)
       : f_(f),
@@ -192,6 +194,7 @@ class cvodes_integrator {
         msgs_(msgs),
         relative_tolerance_(relative_tolerance),
         absolute_tolerance_(absolute_tolerance),
+	include_sensitivities_in_errors_(include_sensitivities_in_errors),
         max_num_steps_(max_num_steps),
         y0_vars_(count_vars(y0_)),
         args_vars_(count_vars(args...)),
@@ -252,7 +255,12 @@ class cvodes_integrator {
    *   solution time (excluding the initial state)
    */
   std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>>
-  operator()() {  // NOLINT(runtime/int)
+  operator()() {
+    return (*this)(0.0, {});
+  }
+
+  std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>>
+  operator()(double rtols, std::vector<double> atols) {
     std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y;
 
     void* cvodes_mem = CVodeCreate(Lmm);
@@ -272,7 +280,7 @@ class cvodes_integrator {
 
       cvodes_set_options(cvodes_mem, relative_tolerance_, absolute_tolerance_,
                          max_num_steps_);
-
+      
       // for the stiff solvers we need to reserve additional memory
       // and provide a Jacobian function call. new API since 3.0.0:
       // create matrix object and linear solver object; resource
@@ -291,8 +299,24 @@ class cvodes_integrator {
                           nv_state_sens_),
             "CVodeSensInit");
 
-        check_flag_sundials(CVodeSensEEtolerances(cvodes_mem),
-                            "CVodeSensEEtolerances");
+	if(include_sensitivities_in_errors_) {
+	  check_flag_sundials(CVodeSetSensErrCon(cvodes_mem, SUNTRUE),
+			      "CVodeSetSensErrCon");
+	} else {
+	  check_flag_sundials(CVodeSetSensErrCon(cvodes_mem, SUNFALSE),
+			      "CVodeSetSensErrCon");
+	}
+
+	if(atols.size() > 0) {
+	  check_positive_finite("cvodes_integrator", "sensitivity relative_tolerance", rtols);
+	  check_size_match("cvodes_interator", "atols.size()", atols.size(), "number of sensitivities", y0_vars_ + args_vars_);
+	  check_positive_finite("cvodes_integrator", "sensitivity absolute_tolerance", atols);
+	  check_flag_sundials(CVodeSensSStolerances(cvodes_mem, rtols, atols.data()),
+			  "CVodeSensSStolerances");
+	} else {
+	  check_flag_sundials(CVodeSensEEtolerances(cvodes_mem),
+			      "CVodeSensEEtolerances");
+	}
       }
 
       double t_init = value_of(t0_);
