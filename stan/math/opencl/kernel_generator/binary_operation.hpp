@@ -38,7 +38,7 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
  public:
   using Scalar = T_res;
   using base = operation_cl<Derived, Scalar, T_a, T_b>;
-  using base::var_name;
+  using base::var_name_;
 
  protected:
   std::string op_;
@@ -65,20 +65,21 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
   }
 
   /**
-   * generates kernel code for this expression.
-   * @param i row index variable name
-   * @param j column index variable name
+   * Generates kernel code for this expression.
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
    * @param view_handled whether whether caller already handled matrix view
    * @param var_name_a variable name of the first nested expression
    * @param var_name_b variable name of the second nested expression
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& i, const std::string& j,
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
                                const bool view_handled,
                                const std::string& var_name_a,
                                const std::string& var_name_b) const {
     kernel_parts res{};
-    res.body = type_str<Scalar>() + " " + var_name + " = " + var_name_a + " "
+    res.body = type_str<Scalar>() + " " + var_name_ + " = " + var_name_a + " "
                + op_ + " " + var_name_b + ";\n";
     return res;
   }
@@ -126,7 +127,8 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
   };                                                                          \
                                                                               \
   template <typename T_a, typename T_b,                                       \
-            typename = require_all_kernel_expressions_t<T_a, T_b>>            \
+            require_all_kernel_expressions_t<T_a, T_b>* = nullptr,            \
+            require_any_not_arithmetic_t<T_a, T_b>* = nullptr>                \
   inline class_name<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>           \
   function_name(T_a&& a, T_b&& b) { /* NOLINT */                              \
     return {as_operation_cl(std::forward<T_a>(a)),                            \
@@ -176,7 +178,8 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
   };                                                                          \
                                                                               \
   template <typename T_a, typename T_b,                                       \
-            typename = require_all_kernel_expressions_t<T_a, T_b>>            \
+            require_all_kernel_expressions_t<T_a, T_b>* = nullptr,            \
+            require_any_not_arithmetic_t<T_a, T_b>* = nullptr>                \
   inline class_name<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>           \
   function_name(T_a&& a, T_b&& b) { /* NOLINT */                              \
     return {as_operation_cl(std::forward<T_a>(a)),                            \

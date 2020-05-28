@@ -36,7 +36,7 @@ class transpose_
  public:
   using Scalar = typename std::remove_reference_t<Arg>::Scalar;
   using base = operation_cl<transpose_<Arg>, Scalar, Arg>;
-  using base::var_name;
+  using base::var_name_;
   using view_transitivity = std::tuple<std::true_type>;
 
   /**
@@ -55,27 +55,14 @@ class transpose_
   }
 
   /**
-   * generates kernel code for this and nested expressions.
-   * @param i row index variable name.
-   * @param j column index variable name.
-   * @param view_handled whether whether caller already handled matrix view
-   * @param var_name_arg The name of this variable.
-   * @return part of kernel with code for this and nested expressions
+   * Swaps indices \c row_index_name and \c col_index_name for the argument
+   * expression.
+   * @param[in, out] row_index_name row index
+   * @param[in, out] col_index_name column index
    */
-  inline kernel_parts generate(const std::string& i, const std::string& j,
-                               const bool view_handled,
-                               const std::string& var_name_arg) const {
-    var_name = var_name_arg;
-    return {};
-  }
-
-  /**
-   * Swaps indices \c i and \c j for the argument expression.
-   * @param[in, out] i row index
-   * @param[in, out] j column index
-   */
-  inline void modify_argument_indices(std::string& i, std::string& j) const {
-    std::swap(i, j);
+  inline void modify_argument_indices(std::string& row_index_name,
+                                      std::string& col_index_name) const {
+    std::swap(row_index_name, col_index_name);
   }
 
   /**
