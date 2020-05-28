@@ -208,8 +208,6 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
 template <typename T1, typename T2, typename F,
           require_all_std_vector_vt<is_container, T1, T2>* = nullptr>
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
-  using T1_vt = value_type_t<T1>;
-  using T2_vt = value_type_t<T2>;
   using T_return = decltype(apply_scalar_binary(x[0], y[0], f));
   size_t y_size = y.size();
   std::vector<T_return> result(y_size);
@@ -237,7 +235,6 @@ template <typename T1, typename T2, typename F,
           require_std_vector_vt<is_container, T1>* = nullptr,
           require_stan_scalar_t<T2>* = nullptr>
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
-  using T1_vt = value_type_t<T1>;
   using T_return = decltype(apply_scalar_binary(x[0], y, f));
   size_t x_size = x.size();
   std::vector<T_return> result(x_size);
@@ -265,7 +262,6 @@ template <typename T1, typename T2, typename F,
           require_stan_scalar_t<T1>* = nullptr,
           require_std_vector_vt<is_container, T2>* = nullptr>
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
-  using T2_vt = value_type_t<T2>;
   using T_return = decltype(apply_scalar_binary(x, y[0], f));
   size_t y_size = y.size();
   std::vector<T_return> result(y_size);
