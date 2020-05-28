@@ -78,20 +78,20 @@ TEST(ode_bdf_prim, y0_errors) {
 
   double a = 1.5;
 
-  EXPECT_NO_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-					  nullptr, a));
+  EXPECT_NO_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
+                                          1e6, nullptr, a));
 
-  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0inf, t0, ts, 1e-10, 1e-10, 1e6,
-				       nullptr, a),
-	       std::domain_error);
+  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0inf, t0, ts, 1e-10, 1e-10,
+                                       1e6, nullptr, a),
+               std::domain_error);
 
-  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0NaN, t0, ts, 1e-10, 1e-10, 1e6,
-				       nullptr, a),
-	       std::domain_error);
+  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0NaN, t0, ts, 1e-10, 1e-10,
+                                       1e6, nullptr, a),
+               std::domain_error);
 
-  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0_empty, t0, ts, 1e-10, 1e-10, 1e6,
-				       nullptr, a),
-	       std::invalid_argument);
+  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0_empty, t0, ts, 1e-10,
+                                       1e-10, 1e6, nullptr, a),
+               std::invalid_argument);
 }
 
 TEST(ode_bdf_prim, t0_errors) {
@@ -103,70 +103,70 @@ TEST(ode_bdf_prim, t0_errors) {
 
   double a = 1.5;
 
-  EXPECT_NO_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-					  nullptr, a));
+  EXPECT_NO_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
+                                          1e6, nullptr, a));
 
-  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0inf, ts, 1e-10, 1e-10, 1e6,
-				       nullptr, a),
-	       std::domain_error);
+  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0inf, ts, 1e-10, 1e-10,
+                                       1e6, nullptr, a),
+               std::domain_error);
 
-  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0NaN, ts, 1e-10, 1e-10, 1e6,
-				       nullptr, a),
-	       std::domain_error);
+  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0NaN, ts, 1e-10, 1e-10,
+                                       1e6, nullptr, a),
+               std::domain_error);
 }
 
 TEST(ode_bdf_prim, ts_errors) {
   Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
   double t0 = 0;
-  std::vector<double> ts = { 0.45, 1.1 };
-  std::vector<double> ts_repeat = { 0.45, 0.45 };
-  std::vector<double> ts_empty = { };
-  std::vector<double> ts_early = { -0.45, 0.2 };
-  std::vector<double> ts_decreasing = { 0.45, 0.2 };
-  std::vector<double> tsinf = { stan::math::INFTY, 1.1 };
-  std::vector<double> tsNaN = { 0.45, stan::math::NOT_A_NUMBER };
+  std::vector<double> ts = {0.45, 1.1};
+  std::vector<double> ts_repeat = {0.45, 0.45};
+  std::vector<double> ts_empty = {};
+  std::vector<double> ts_early = {-0.45, 0.2};
+  std::vector<double> ts_decreasing = {0.45, 0.2};
+  std::vector<double> tsinf = {stan::math::INFTY, 1.1};
+  std::vector<double> tsNaN = {0.45, stan::math::NOT_A_NUMBER};
 
   double a = 1.5;
 
-  EXPECT_NO_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-					  nullptr, a));
+  EXPECT_NO_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
+                                          1e6, nullptr, a));
 
-  EXPECT_NO_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts_repeat, 1e-10, 1e-10, 1e6,
-					  nullptr, a));
+  EXPECT_NO_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts_repeat, 1e-10,
+                                          1e-10, 1e6, nullptr, a));
 
-  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts_empty, 1e-10, 1e-10, 1e6,
-				       nullptr, a),
-	       std::invalid_argument);
+  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts_empty, 1e-10,
+                                       1e-10, 1e6, nullptr, a),
+               std::invalid_argument);
 
-  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts_early, 1e-10, 1e-10, 1e6,
-				       nullptr, a),
-	       std::domain_error);
+  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts_early, 1e-10,
+                                       1e-10, 1e6, nullptr, a),
+               std::domain_error);
 
-  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts_decreasing, 1e-10, 1e-10, 1e6,
-				       nullptr, a),
-	       std::domain_error);
+  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts_decreasing, 1e-10,
+                                       1e-10, 1e6, nullptr, a),
+               std::domain_error);
 
-  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, tsinf, 1e-10, 1e-10, 1e6,
-				       nullptr, a),
-	       std::domain_error);
+  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, tsinf, 1e-10, 1e-10,
+                                       1e6, nullptr, a),
+               std::domain_error);
 
-  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, tsNaN, 1e-10, 1e-10, 1e6,
-				       nullptr, a),
-	       std::domain_error);
+  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, tsNaN, 1e-10, 1e-10,
+                                       1e6, nullptr, a),
+               std::domain_error);
 }
 
 TEST(ode_bdf_prim, one_arg_errors) {
   Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
   double t0 = 0;
-  std::vector<double> ts = { 0.45, 1.1 };
+  std::vector<double> ts = {0.45, 1.1};
 
   double a = 1.5;
   double ainf = stan::math::INFTY;
   double aNaN = stan::math::NOT_A_NUMBER;
 
-  std::vector<double> va = { a };
-  std::vector<double> vainf = { ainf };
-  std::vector<double> vaNaN = { aNaN };
+  std::vector<double> va = {a};
+  std::vector<double> vainf = {ainf};
+  std::vector<double> vaNaN = {aNaN};
 
   Eigen::VectorXd ea(1);
   ea << a;
@@ -175,52 +175,52 @@ TEST(ode_bdf_prim, one_arg_errors) {
   Eigen::VectorXd eaNaN(1);
   eaNaN << aNaN;
 
-  EXPECT_NO_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-					  nullptr, a));
+  EXPECT_NO_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
+                                          1e6, nullptr, a));
 
   EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-				       nullptr, ainf),
-	       std::domain_error);
+                                       nullptr, ainf),
+               std::domain_error);
 
   EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-				       nullptr, aNaN),
-	       std::domain_error);
+                                       nullptr, aNaN),
+               std::domain_error);
 
-  EXPECT_NO_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-					  nullptr, va));
-
-  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-				       nullptr, vainf),
-	       std::domain_error);
+  EXPECT_NO_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
+                                          1e6, nullptr, va));
 
   EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-				       nullptr, vaNaN),
-	       std::domain_error);
-  
-  EXPECT_NO_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-					  nullptr, ea));
+                                       nullptr, vainf),
+               std::domain_error);
 
   EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-				       nullptr, eainf),
-	       std::domain_error);
+                                       nullptr, vaNaN),
+               std::domain_error);
+
+  EXPECT_NO_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
+                                          1e6, nullptr, ea));
 
   EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-				       nullptr, eaNaN),
-	       std::domain_error);
+                                       nullptr, eainf),
+               std::domain_error);
+
+  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
+                                       nullptr, eaNaN),
+               std::domain_error);
 }
 
 TEST(ode_bdf_prim, two_arg_errors) {
   Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
   double t0 = 0;
-  std::vector<double> ts = { 0.45, 1.1 };
+  std::vector<double> ts = {0.45, 1.1};
 
   double a = 1.5;
   double ainf = stan::math::INFTY;
   double aNaN = stan::math::NOT_A_NUMBER;
 
-  std::vector<double> va = { a };
-  std::vector<double> vainf = { ainf };
-  std::vector<double> vaNaN = { aNaN };
+  std::vector<double> va = {a};
+  std::vector<double> vainf = {ainf};
+  std::vector<double> vaNaN = {aNaN};
 
   Eigen::VectorXd ea(1);
   ea << a;
@@ -229,38 +229,38 @@ TEST(ode_bdf_prim, two_arg_errors) {
   Eigen::VectorXd eaNaN(1);
   eaNaN << aNaN;
 
-  EXPECT_NO_THROW(stan::math::ode_bdf_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-					  nullptr, a, a));
+  EXPECT_NO_THROW(stan::math::ode_bdf_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10,
+                                          1e6, nullptr, a, a));
 
   EXPECT_THROW(stan::math::ode_bdf_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-				       nullptr, a, ainf),
-	       std::domain_error);
+                                       nullptr, a, ainf),
+               std::domain_error);
 
   EXPECT_THROW(stan::math::ode_bdf_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-				       nullptr, a, aNaN),
-	       std::domain_error);
+                                       nullptr, a, aNaN),
+               std::domain_error);
 
-  EXPECT_NO_THROW(stan::math::ode_bdf_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-					  nullptr, a, va));
-
-  EXPECT_THROW(stan::math::ode_bdf_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-				       nullptr, a, vainf),
-	       std::domain_error);
+  EXPECT_NO_THROW(stan::math::ode_bdf_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10,
+                                          1e6, nullptr, a, va));
 
   EXPECT_THROW(stan::math::ode_bdf_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-				       nullptr, a, vaNaN),
-	       std::domain_error);
-
-  EXPECT_NO_THROW(stan::math::ode_bdf_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-					  nullptr, a, ea));
+                                       nullptr, a, vainf),
+               std::domain_error);
 
   EXPECT_THROW(stan::math::ode_bdf_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-				       nullptr, a, eainf),
-	       std::domain_error);
+                                       nullptr, a, vaNaN),
+               std::domain_error);
+
+  EXPECT_NO_THROW(stan::math::ode_bdf_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10,
+                                          1e6, nullptr, a, ea));
 
   EXPECT_THROW(stan::math::ode_bdf_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-				       nullptr, a, eaNaN),
-	       std::domain_error);
+                                       nullptr, a, eainf),
+               std::domain_error);
+
+  EXPECT_THROW(stan::math::ode_bdf_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10, 1e6,
+                                       nullptr, a, eaNaN),
+               std::domain_error);
 }
 
 TEST(ode_bdf_prim, rtol_errors) {
@@ -275,20 +275,20 @@ TEST(ode_bdf_prim, rtol_errors) {
 
   double a = 1.5;
 
-  EXPECT_NO_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, rtol, 1e-10, 1e6,
-					  nullptr, a));
+  EXPECT_NO_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, rtol, 1e-10,
+                                          1e6, nullptr, a));
 
-  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, rtol_negative, 1e-10, 1e6,
-				       nullptr, a),
-	       std::domain_error);
+  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, rtol_negative,
+                                       1e-10, 1e6, nullptr, a),
+               std::domain_error);
 
-  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, rtolinf, 1e-10, 1e6,
-				       nullptr, a),
-	       std::domain_error);
+  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, rtolinf, 1e-10,
+                                       1e6, nullptr, a),
+               std::domain_error);
 
-  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, rtolNaN, 1e-10, 1e6,
-				       nullptr, a),
-	       std::domain_error);
+  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, rtolNaN, 1e-10,
+                                       1e6, nullptr, a),
+               std::domain_error);
 }
 
 TEST(ode_bdf_prim, atol_errors) {
@@ -303,20 +303,20 @@ TEST(ode_bdf_prim, atol_errors) {
 
   double a = 1.5;
 
-  EXPECT_NO_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-6, atol, 1e6,
-					  nullptr, a));
+  EXPECT_NO_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-6, atol,
+                                          1e6, nullptr, a));
 
-  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-6, atol_negative, 1e6,
-				       nullptr, a),
-	       std::domain_error);
+  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-6,
+                                       atol_negative, 1e6, nullptr, a),
+               std::domain_error);
 
-  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-6, atolinf, 1e6,
-				       nullptr, a),
-	       std::domain_error);
+  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-6, atolinf,
+                                       1e6, nullptr, a),
+               std::domain_error);
 
-  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-6, atolNaN, 1e6,
-				       nullptr, a),
-	       std::domain_error);
+  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-6, atolNaN,
+                                       1e6, nullptr, a),
+               std::domain_error);
 }
 
 TEST(ode_bdf_prim, max_num_steps_errors) {
@@ -330,16 +330,16 @@ TEST(ode_bdf_prim, max_num_steps_errors) {
 
   double a = 1.5;
 
-  EXPECT_NO_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-6, 1e-6, max_num_steps,
-					  nullptr, a));
+  EXPECT_NO_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-6, 1e-6,
+                                          max_num_steps, nullptr, a));
 
-  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-6, 1e-6, max_num_steps_negative,
-				       nullptr, a),
-	       std::domain_error);
+  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-6, 1e-6,
+                                       max_num_steps_negative, nullptr, a),
+               std::domain_error);
 
-  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-6, 1e-6, max_num_steps_zero,
-				       nullptr, a),
-	       std::domain_error);
+  EXPECT_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-6, 1e-6,
+                                       max_num_steps_zero, nullptr, a),
+               std::domain_error);
 }
 
 TEST(ode_bdf_prim, rhs_wrong_size_errors) {
@@ -349,10 +349,10 @@ TEST(ode_bdf_prim, rhs_wrong_size_errors) {
 
   double a = 1.5;
 
-  EXPECT_NO_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-6, 1e-6, 100,
-					  nullptr, a));
+  EXPECT_NO_THROW(stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-6, 1e-6,
+                                          100, nullptr, a));
 
-  EXPECT_THROW(stan::math::ode_bdf_tol(CosArgWrongSize(), y0, t0, ts, 1e-6, 1e-6, 100,
-				       nullptr, a),
-	       std::invalid_argument);
+  EXPECT_THROW(stan::math::ode_bdf_tol(CosArgWrongSize(), y0, t0, ts, 1e-6,
+                                       1e-6, 100, nullptr, a),
+               std::invalid_argument);
 }
