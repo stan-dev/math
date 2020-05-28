@@ -27,7 +27,8 @@ namespace math {
  * @param vi Variable implementation for root of partial
  * derivative propagation.
  */
-static void grad(vari_base* vi) {
+template <typename Vari, require_vari_t<Vari>* = nullptr>
+static void grad(Vari* vi) {
   vi->init_dependent();
   std::vector<vari_base*>& var_stack = ChainableStack::instance_->var_stack_;
   size_t end = var_stack.size();

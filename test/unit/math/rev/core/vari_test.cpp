@@ -9,7 +9,7 @@ TEST(AgradRev, insertion_operator) {
   EXPECT_EQ("5:0", ss.str());
 }
 
-TEST(AgradRev, insertion_operator) {
+TEST(AgradRev, int_test) {
   stan::math::vari_value<int> v(5);
   std::stringstream ss;
   ss << &v;

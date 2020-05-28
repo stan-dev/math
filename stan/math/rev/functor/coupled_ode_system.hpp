@@ -149,7 +149,7 @@ struct coupled_ode_system<F, double, var> {
       // See efficiency note above on template specialization for more details
       // on this.
       for (size_t j = 0; j < M_; ++j) {
-        theta_nochain_[j].vi_->set_zero_adjoint();
+        theta_nochain_[j].vi_->adj_ = 0.0;
       }
     }
   }
@@ -484,7 +484,7 @@ struct coupled_ode_system<F, var, var> {
       // See efficiency note above on template specialization for more details
       // on this.
       for (size_t j = 0; j < M_; ++j) {
-        theta_nochain_[j].vi_->set_zero_adjoint();
+        theta_nochain_[j].vi_->adj_ = 0.0;
       }
     }
   }
