@@ -21,12 +21,9 @@ namespace math {
  *   not ordered, if there are duplicated
  *   values, or if any element is <code>NaN</code>.
  */
-template <typename T_y>
-void check_ordered(const char* function, const char* name,
-                   const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y) {
-  using size_type = index_type_t<Eigen::Matrix<T_y, Eigen::Dynamic, 1>>;
-
-  for (size_type n = 1; n < y.size(); n++) {
+template <typename T_y, require_eigen_vector_t<T_y>* = nullptr>
+void check_ordered(const char* function, const char* name, const T_y& y) {
+  for (Eigen::Index n = 1; n < y.size(); n++) {
     if (!(y[n] > y[n - 1])) {
       std::ostringstream msg1;
       msg1 << "is not a valid ordered vector."
