@@ -56,6 +56,8 @@ template <typename ArgType, typename... Ptrs>
 class Holder
     : public Eigen::internal::dense_xpr_base<Holder<ArgType, Ptrs...>>::type {
  public:
+  typedef typename Eigen::internal::ref_selector<Holder<ArgType, Ptrs...>>::type
+      Nested;
   typename Eigen::internal::ref_selector<ArgType>::non_const_type m_arg;
   std::tuple<std::unique_ptr<Ptrs>...> m_unique_ptrs;
 
