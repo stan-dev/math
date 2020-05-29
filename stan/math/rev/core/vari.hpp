@@ -106,7 +106,7 @@ class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>>
    * @param x Value of the constructed variable.
    */
   template <typename S,
-            std::enable_if_t<std::is_convertible<S, Scalar>::value>* = nullptr>
+            std::enable_if_t<std::is_convertible<S&, Scalar>::value>* = nullptr>
   vari_value(S x) : val_(x), adj_(0.0) { // NOLINT
     ChainableStack::instance_->var_stack_.push_back(this);
   }
@@ -129,7 +129,7 @@ class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>>
    *  it's `chain()` method is not called.
    */
   template <typename S,
-            std::enable_if_t<std::is_convertible<S, Scalar>::value>* = nullptr>
+            std::enable_if_t<std::is_convertible<S&, Scalar>::value>* = nullptr>
   vari_value(S x, bool stacked) : val_(x), adj_(0.0) {
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
