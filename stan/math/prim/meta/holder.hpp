@@ -114,7 +114,7 @@ struct evaluator<stan::math::Holder<ArgType, Ptrs...>>
 
   evaluator<ArgTypeNestedCleaned> m_argImpl;
 
-  evaluator(const XprType& xpr) : m_argImpl(xpr.m_arg) {}
+  explicit evaluator(const XprType& xpr) : m_argImpl(xpr.m_arg) {}
 
   EIGEN_STRONG_INLINE CoeffReturnType coeff(Index row, Index col) const {
     return m_argImpl.coeff(row, col);
