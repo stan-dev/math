@@ -18,6 +18,8 @@ inline auto lambert_wm1(const T& x) {
   return boost::math::lambert_wm1(x, boost_policy_t<>());
 }
 
+namespace internal {
+
 /**
  * Structure to wrap lambert_w0() so it can be vectorized.
  *
@@ -34,19 +36,6 @@ struct lambert_w0_fun {
 };
 
 /**
- * Vectorized version of lambert_w0().
- *
- * @tparam T type of container
- * @param x container
- * @return value of the W0 branch of the Lambert W function for each value in x
- * @throw std::domain_error if x is smaller than -e^(-1)
- */
-template <typename T, require_not_stan_scalar_t<T>* = nullptr>
-inline auto lambert_w0(const T& x) {
-  return apply_scalar_unary<lambert_w0_fun, T>::apply(x);
-}
-
-/**
  * Structure to wrap lambert_wm1() so it can be vectorized.
  *
  * @tparam T type of variable
@@ -61,6 +50,20 @@ struct lambert_wm1_fun {
     return lambert_wm1(x);
   }
 };
+}  // namespace internal
+
+/**
+ * Vectorized version of lambert_w0().
+ *
+ * @tparam T type of container
+ * @param x container
+ * @return value of the W0 branch of the Lambert W function for each value in x
+ * @throw std::domain_error if x is smaller than -e^(-1)
+ */
+template <typename T, require_not_stan_scalar_t<T>* = nullptr>
+inline auto lambert_w0(const T& x) {
+  return apply_scalar_unary<internal::lambert_w0_fun, T>::apply(x);
+}
 
 /**
  * Vectorized version of lambert_wm1().
@@ -73,7 +76,7 @@ struct lambert_wm1_fun {
  */
 template <typename T, require_not_stan_scalar_t<T>* = nullptr>
 inline auto lambert_wm1(const T& x) {
-  return apply_scalar_unary<lambert_wm1_fun, T>::apply(x);
+  return apply_scalar_unary<internal::lambert_wm1_fun, T>::apply(x);
 }
 
 }  // namespace math
