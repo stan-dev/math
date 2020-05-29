@@ -15,7 +15,9 @@ namespace math {
  * @param[in] y second argument
  * @return disjunction of the arguments' values
  */
-inline bool operator||(const var& x, const var& y) { return x.val() || y.val(); }
+inline bool operator||(const var& x, const var& y) {
+  return x.val() || y.val();
+}
 
 /**
  * Return the logical disjunction of the values of the two

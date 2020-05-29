@@ -19,24 +19,26 @@ void ctor_overloads_impl() {
   using stan::math::var_value;
   using stan::math::vari_value;
   using stan::math::test::type_name;
+  // standard constructor
+  EXPECT_FLOAT_EQ(3.7, var_value<T>(3.7).val())
+      << "Failed For T: " << type_name<T>() << " and S: " << type_name<S>()
+      << "\n";
   // make sure copy ctor is used rather than casting vari* to unsigned int
-  EXPECT_FLOAT_EQ(12.3, var_value<T>(new vari_value<S>(12.3)).val()) <<
-  "Failed For T: " << type_name<T>() << " and S: " << type_name<S>() << "\n";
-
-  EXPECT_FLOAT_EQ(12.3, var_value<T>(var_value<S>(12.3)).val()) <<
-  "Failed For T: " << type_name<T>() << " and S: " << type_name<S>() << "\n";
-
-  EXPECT_FLOAT_EQ(static_cast<S>(3.7), var_value<T>(static_cast<S>(3.7)).val()) <<
-  "Failed For T: " << type_name<T>() << " and S: " << type_name<S>() << "\n";
-  // double
-  EXPECT_FLOAT_EQ(3.7, var_value<T>(3.7).val()) <<
-  "Failed For T: " << type_name<T>() << " and S: " << type_name<S>() << "\n";
-  // long double
-  EXPECT_FLOAT_EQ(static_cast<S>(3.7), var_value<T>(static_cast<S>(3.7)).val()) <<
-  "Failed For T: " << type_name<T>() << " and S: " << type_name<S>() << "\n";
-  EXPECT_FLOAT_EQ(0, var_value<T>(static_cast<S>(0)).val()) <<
-  "Failed For T: " << type_name<T>() << " and S:" << type_name<S>() << "\n";
-
+  EXPECT_FLOAT_EQ(12.3, var_value<T>(new vari_value<S>(12.3)).val())
+      << "Failed For T: " << type_name<T>() << " and S: " << type_name<S>()
+      << "\n";
+  // make sure rvalue var_value can be accepted
+  EXPECT_FLOAT_EQ(12.3, var_value<T>(var_value<S>(12.3)).val())
+      << "Failed For T: " << type_name<T>() << " and S: " << type_name<S>()
+      << "\n";
+  // S type is preserved
+  EXPECT_FLOAT_EQ(static_cast<S>(3.7), var_value<T>(static_cast<S>(3.7)).val())
+      << "Failed For T: " << type_name<T>() << " and S: " << type_name<S>()
+      << "\n";
+  // Make sure integral types don't hold a nullptr instead of zero.
+  EXPECT_FLOAT_EQ(0, var_value<T>(static_cast<S>(0)).val())
+      << "Failed For T: " << type_name<T>() << " and S:" << type_name<S>()
+      << "\n";
 }
 
 template <typename T>

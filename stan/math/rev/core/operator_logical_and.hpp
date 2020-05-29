@@ -15,7 +15,9 @@ namespace math {
  * @param[in] y second argument
  * @return conjunction of the arguments' values
  */
-inline bool operator&&(const var& x, const var& y) { return x.val() && y.val(); }
+inline bool operator&&(const var& x, const var& y) {
+  return x.val() && y.val();
+}
 
 /**
  * Return the logical conjunction of the values of the two

@@ -9,7 +9,8 @@ namespace stan {
 namespace math {
 
 template <typename T>
-template <typename S, require_convertible_t<S, internal::floating_point_promoter<T>>*>
+template <typename S,
+          require_convertible_t<S&, internal::floating_point_promoter<T>>*>
 inline var_value<T>& var_value<T>::operator-=(const var_value<S>& b) {
   vi_ = new internal::subtract_vv_vari(vi_, b.vi_);
   return *this;

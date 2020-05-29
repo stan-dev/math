@@ -36,7 +36,6 @@ struct iterator_traits<stan::math::var_value<Iter>> {
    * Type of reference to variables.
    */
   typedef stan::math::var_value<Iter>& reference;
-
 };
 }  // namespace std
 

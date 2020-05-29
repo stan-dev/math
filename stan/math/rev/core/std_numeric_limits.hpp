@@ -16,8 +16,12 @@ template <typename T>
 struct numeric_limits<stan::math::var_value<T>> {
   typedef stan::math::internal::floating_point_promoter<T> value_type;
   static constexpr bool is_specialized = true;
-  static constexpr stan::math::var_value<T> min() noexcept { return numeric_limits<value_type>::min(); }
-  static constexpr stan::math::var_value<T> max() noexcept { return numeric_limits<value_type>::max(); }
+  static constexpr stan::math::var_value<T> min() noexcept {
+    return numeric_limits<value_type>::min();
+  }
+  static constexpr stan::math::var_value<T> max() noexcept {
+    return numeric_limits<value_type>::max();
+  }
   static constexpr int digits = numeric_limits<value_type>::digits;
   static constexpr int digits10 = numeric_limits<value_type>::digits10;
   static constexpr int max_digits10 = numeric_limits<value_type>::max_digits10;
@@ -25,7 +29,9 @@ struct numeric_limits<stan::math::var_value<T>> {
   static constexpr bool is_integer = numeric_limits<value_type>::is_integer;
   static constexpr bool is_exact = numeric_limits<value_type>::is_exact;
   static constexpr int radix = numeric_limits<value_type>::radix;
-  static constexpr stan::math::var_value<T> epsilon() noexcept { return numeric_limits<value_type>::epsilon(); }
+  static constexpr stan::math::var_value<T> epsilon() noexcept {
+    return numeric_limits<value_type>::epsilon();
+  }
   static constexpr stan::math::var_value<T> round_error() noexcept {
     return numeric_limits<value_type>::round_error();
   }
@@ -34,17 +40,21 @@ struct numeric_limits<stan::math::var_value<T>> {
   };
 
   static constexpr int min_exponent = numeric_limits<value_type>::min_exponent;
-  static constexpr int min_exponent10 = numeric_limits<value_type>::min_exponent10;
+  static constexpr int min_exponent10
+      = numeric_limits<value_type>::min_exponent10;
   static constexpr int max_exponent = numeric_limits<value_type>::max_exponent;
-  static constexpr int max_exponent10 = numeric_limits<value_type>::max_exponent10;
+  static constexpr int max_exponent10
+      = numeric_limits<value_type>::max_exponent10;
 
   static constexpr bool has_infinity = numeric_limits<value_type>::has_infinity;
-  static constexpr bool has_quiet_NaN = numeric_limits<value_type>::has_quiet_NaN;
+  static constexpr bool has_quiet_NaN
+      = numeric_limits<value_type>::has_quiet_NaN;
   static constexpr bool has_signaling_NaN
       = numeric_limits<value_type>::has_signaling_NaN;
   static constexpr float_denorm_style has_denorm
       = numeric_limits<value_type>::has_denorm;
-  static constexpr bool has_denorm_loss = numeric_limits<value_type>::has_denorm_loss;
+  static constexpr bool has_denorm_loss
+      = numeric_limits<value_type>::has_denorm_loss;
   static constexpr stan::math::var_value<T> infinity() noexcept {
     return numeric_limits<value_type>::infinity();
   }
@@ -63,7 +73,8 @@ struct numeric_limits<stan::math::var_value<T>> {
   static constexpr bool is_modulo = numeric_limits<value_type>::is_modulo;
 
   static constexpr bool traps = numeric_limits<value_type>::traps;
-  static constexpr bool tinyness_before = numeric_limits<value_type>::tinyness_before;
+  static constexpr bool tinyness_before
+      = numeric_limits<value_type>::tinyness_before;
   static constexpr float_round_style round_style
       = numeric_limits<value_type>::round_style;
 };

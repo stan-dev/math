@@ -25,7 +25,9 @@ namespace math {
  * @return True if first variable's value is greater than or equal
  * to the second's.
  */
-inline bool operator>=(const var& a, const var& b) { return a.val() >= b.val(); }
+inline bool operator>=(const var& a, const var& b) {
+  return a.val() >= b.val();
+}
 
 /**
  * Greater than or equal operator comparing variable's value and

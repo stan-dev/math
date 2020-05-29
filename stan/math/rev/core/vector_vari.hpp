@@ -15,7 +15,8 @@ class op_vector_vari : public vari {
   vari** vis_;
 
  public:
-  template <typename Arith, typename VecVar, require_arithmetic_t<Arith>* = nullptr,
+  template <typename Arith, typename VecVar,
+            require_arithmetic_t<Arith>* = nullptr,
             require_vector_like_vt<is_var, VecVar>* = nullptr>
   op_vector_vari(Arith f, VecVar&& vs) : vari(f), size_(vs.size()) {
     vis_ = reinterpret_cast<vari**>(operator new(sizeof(vari*) * vs.size()));
