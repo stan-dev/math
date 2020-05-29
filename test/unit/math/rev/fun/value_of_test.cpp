@@ -91,8 +91,6 @@ TEST(AgradMatrix, value_of) {
 }
 
 TEST(AgradMatrix, value_of_expression) {
-  using Eigen::Array;
-  using Eigen::ArrayXXd;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
   using stan::math::value_of;
@@ -100,6 +98,20 @@ TEST(AgradMatrix, value_of_expression) {
   Matrix<var, -1, -1> a = MatrixXd::Random(7, 4);
   MatrixXd res = value_of(2 * a);
   MatrixXd correct = 2 * value_of(a);
+
+  EXPECT_MATRIX_NEAR(res, correct, 1e-10);
+}
+
+TEST(AgradMatrixRev, value_of_rec_matrix_rvalue) {
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using stan::math::value_of;
+  using stan::math::var;
+  Matrix<var, -1, -1> a = MatrixXd::Random(7, 4);
+  MatrixXd correct = value_of(a);
+  const auto& tmp = value_of(std::move(a));
+  a.setZero();
+  MatrixXd res = tmp;
 
   EXPECT_MATRIX_NEAR(res, correct, 1e-10);
 }

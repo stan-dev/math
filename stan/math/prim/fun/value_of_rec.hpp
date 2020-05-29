@@ -104,8 +104,14 @@ inline T value_of_rec(T&& x) {
  **/
 template <typename T, typename = require_not_st_same<T, double>,
           typename = require_eigen_t<T>>
-inline auto value_of_rec(const T& M) {
-  return M.unaryExpr([](auto x) { return value_of_rec(x); });
+inline auto value_of_rec(T&& M) {
+  return make_holder(
+      [](auto& m) {
+        return m.unaryExpr([](auto x) {
+          return value_of_rec(x);
+        });
+      },
+      std::forward<T>(M));
 }
 
 /**

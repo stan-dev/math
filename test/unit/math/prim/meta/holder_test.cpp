@@ -73,7 +73,7 @@ TEST(MathFunctions, make_holder_rvalue) {
 
 template <typename T>
 auto f4(T&& a) {
-  return stan::math::make_holder([](auto&& mat) { return mat.array(); },
+  return stan::math::make_holder([](auto& mat) { return mat.array(); },
                                  std::forward<T>(a));
 }
 

@@ -83,8 +83,6 @@ TEST(AgradMatrixRev, value_of_rec) {
 }
 
 TEST(AgradMatrixRev, value_of_rec_expression) {
-  using Eigen::Array;
-  using Eigen::ArrayXXd;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
   using stan::math::value_of;
@@ -95,3 +93,18 @@ TEST(AgradMatrixRev, value_of_rec_expression) {
 
   EXPECT_MATRIX_NEAR(res, correct, 1e-10);
 }
+
+TEST(AgradMatrixRev, value_of_rec_matrix_rvalue) {
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using stan::math::value_of;
+  using stan::math::var;
+  Matrix<var, -1, -1> a = MatrixXd::Random(7, 4);
+  MatrixXd correct = value_of_rec(a);
+  const auto& tmp = value_of_rec(std::move(a));
+  a.setZero();
+  MatrixXd res = tmp;
+
+  EXPECT_MATRIX_NEAR(res, correct, 1e-10);
+}
+
