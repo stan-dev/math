@@ -107,9 +107,7 @@ template <typename T, typename = require_not_st_same<T, double>,
 inline auto value_of_rec(T&& M) {
   return make_holder(
       [](auto& m) {
-        return m.unaryExpr([](auto x) {
-          return value_of_rec(x);
-        });
+        return m.unaryExpr([](auto x) { return value_of_rec(x); });
       },
       std::forward<T>(M));
 }

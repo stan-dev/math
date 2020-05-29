@@ -31,8 +31,7 @@ inline T as_array_or_scalar(const T& v) {
  */
 template <typename T, typename = require_eigen_t<T>>
 inline auto as_array_or_scalar(T&& v) {
-  return make_holder([](auto& x) { return x.array(); },
-                     std::forward<T>(v));
+  return make_holder([](auto& x) { return x.array(); }, std::forward<T>(v));
 }
 
 /** \ingroup type_trait
