@@ -75,35 +75,6 @@ auto holder_cl(T&& a, Ptrs*... ptrs) {
 
 namespace internal {
 /**
- * Handles single element (moving rvalues to heap) for construction of
- * `holder_cl` from a functor. For lvalues just sets the `res` pointer.
- * @tparam T type of the element
- * @param a element to handle
- * @param res resulting pointer to element
- * @return tuple of pointer allocated on heap (empty).
- */
-template <typename T>
-auto holder_cl_handle_element(const T& a, const T*& res) {
-  res = &a;
-  return std::make_tuple();
-}
-
-/**
- * Handles single element (moving rvalues to heap) for construction of
- * `holder_cl` from a functor. Rvalue is moved to heap and the pointer to heap
- * memory is assigned to res and returned in a tuple.
- * @tparam T type of the element
- * @param a element to handle
- * @param res resulting pointer to element
- * @return tuple of pointer allocated on heap (containing single pointer).
- */
-template <typename T>
-auto holder_cl_handle_element(std::remove_reference_t<T>&& a, const T*& res) {
-  res = new T(std::move(a));
-  return std::make_tuple(res);
-}
-
-/**
  * Second step in implementation of construction `holder_cl` from a functor.
  * @tparam T type of the result expression
  * @tparam Is index sequence for `ptrs`
@@ -131,9 +102,9 @@ auto make_holder_cl_impl2(T&& expr, std::index_sequence<Is...>,
 template <typename T, std::size_t... Is, typename... Args>
 auto make_holder_cl_impl(const T& func, std::index_sequence<Is...>,
                          Args&&... args) {
-  std::tuple<const std::remove_reference_t<Args>*...> res;
+  std::tuple<std::remove_reference_t<Args>*...> res;
   auto ptrs = std::tuple_cat(
-      holder_cl_handle_element(std::forward<Args>(args), std::get<Is>(res))...);
+      holder_handle_element(std::forward<Args>(args), std::get<Is>(res))...);
   return make_holder_cl_impl2(
       func(*std::get<Is>(res)...),
       std::make_index_sequence<std::tuple_size<decltype(ptrs)>::value>(), ptrs);
