@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/holder.hpp>
+#include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_stan_scalar.hpp>
 #include <vector>
