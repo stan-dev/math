@@ -59,7 +59,7 @@ class Holder
   typename Eigen::internal::ref_selector<ArgType>::non_const_type m_arg;
   std::tuple<std::unique_ptr<Ptrs>...> m_unique_ptrs;
 
-  Holder(ArgType&& arg, Ptrs*... pointers)
+  explicit Holder(ArgType&& arg, Ptrs*... pointers)
       : m_arg(arg), m_unique_ptrs(std::unique_ptr<Ptrs>(pointers)...) {}
 
   Holder(const Holder<ArgType, Ptrs...>&) = default;

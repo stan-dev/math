@@ -102,7 +102,7 @@ TEST(AgradMatrix, value_of_expression) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-10);
 }
 
-TEST(AgradMatrixRev, value_of_rec_matrix_rvalue) {
+TEST(AgradMatrixRev, value_of_matrix_rvalue) {
   using Eigen::Matrix;
   using Eigen::MatrixXd;
   using stan::math::value_of;
