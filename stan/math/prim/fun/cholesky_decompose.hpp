@@ -59,7 +59,8 @@ cholesky_decompose(const EigMat& m) {
  * @throw std::domain_error if m is not a symmetric matrix or
  *   if m is not positive definite (if m has more than 0 elements)
  */
-template <typename EigMat, require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
+template <typename EigMat,
+          require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
                      EigMat::ColsAtCompileTime>
 cholesky_decompose(const EigMat& m) {
