@@ -20,7 +20,7 @@ template <typename T_omega, typename T_Gamma, typename T_rho, typename T_alphas,
           require_all_eigen_matrix_t<T_omega, T_Gamma, T_alphas>* = nullptr,
           require_all_eigen_col_vector_t<T_rho, T_alpha_log_norm>* = nullptr,
           require_stan_scalar_t<T_norm>* = nullptr,
-          require_all_vt_same<T_alphas, T_alpha_log_norm, T_norm>* = nullptr>
+          require_all_same_t<value_type_t<T_alphas>, value_type_t<T_alpha_log_norm>, T_norm>* = nullptr>
 inline auto hmm_marginal_lpdf_val(const T_omega& omegas,
                                   const T_Gamma& Gamma_val,
                                   const T_rho& rho_val, T_alphas& alphas,
