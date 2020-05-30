@@ -14,6 +14,5 @@ struct is_vari : std::false_type {};
 STAN_ADD_REQUIRE_UNARY(vari, is_vari, require_stan_scalar_real);
 STAN_ADD_REQUIRE_CONTAINER(vari, is_vari, require_stan_scalar_real);
 
-
 }  // namespace stan
 #endif

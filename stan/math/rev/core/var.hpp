@@ -93,7 +93,7 @@ class var_value {
    */
   template <typename S, typename K = internal::floating_point_promoter<S>,
             require_vari_convertible_t<K>* = nullptr>
-  var_value(vari_value<S>* vi) // NOLINT
+  var_value(vari_value<S>* vi)  // NOLINT
       : vi_(reinterpret_cast<vari_type*>(vi)) {}
 
   /**

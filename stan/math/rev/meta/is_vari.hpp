@@ -16,6 +16,5 @@ struct is_vari<
            math::vari_base, std::remove_pointer_t<std::decay_t<T>>>::value>>
     : std::true_type {};
 
-
 }  // namespace stan
 #endif

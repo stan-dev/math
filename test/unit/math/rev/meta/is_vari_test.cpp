@@ -3,8 +3,8 @@
 
 TEST(MetaTraitsRevScal, is_vari) {
   using stan::is_vari;
-  using stan::math::vari_value;
   using stan::math::vari;
+  using stan::math::vari_value;
   EXPECT_TRUE(is_vari<stan::math::vari>::value);
   EXPECT_TRUE((is_vari<stan::math::vari_value<float>>::value));
   EXPECT_TRUE((is_vari<stan::math::vari_value<int>>::value));

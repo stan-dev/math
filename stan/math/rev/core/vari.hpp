@@ -107,7 +107,7 @@ class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>>
    */
   template <typename S,
             std::enable_if_t<std::is_convertible<S&, Scalar>::value>* = nullptr>
-  vari_value(S x) : val_(x), adj_(0.0) { // NOLINT
+  vari_value(S x) : val_(x), adj_(0.0) {  // NOLINT
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 

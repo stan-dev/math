@@ -21,7 +21,9 @@ namespace math {
  * @return Value of variable.
  */
 template <typename T>
-inline auto value_of(const var_value<T>& v) { return v.vi_->val_; }
+inline auto value_of(const var_value<T>& v) {
+  return v.vi_->val_;
+}
 
 }  // namespace math
 }  // namespace stan
