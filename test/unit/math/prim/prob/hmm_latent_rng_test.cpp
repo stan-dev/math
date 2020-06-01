@@ -59,7 +59,7 @@ TEST(hmm_rng_test, chiSquareGoodnessFitTest_symmetric) {
   Eigen::VectorXd rho(n_states);
   rho << 0.3, 0.7;
   Eigen::MatrixXd log_omegas
-    = Eigen::MatrixXd::Ones(n_states, n_transitions + 1);
+      = Eigen::MatrixXd::Ones(n_states, n_transitions + 1);
 
   boost::random::mt19937 rng;
   int N = 10000;
