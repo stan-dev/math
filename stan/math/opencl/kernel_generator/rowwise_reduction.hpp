@@ -33,7 +33,8 @@ struct matvec_mul_opt {
 
   static kernel_parts get_kernel_parts(
       const Arg& a, std::set<const operation_cl_base*>& generated,
-      name_generator& name_gen, const std::string& i, const std::string& j) {
+      name_generator& name_gen, const std::string& row_index_name,
+      const std::string& col_index_name) {
     return {};
   }
 };
@@ -62,33 +63,38 @@ struct matvec_mul_opt<elt_multiply_<Mat, broadcast_<VecT, true, false>>> {
    * @param mul argument of the rowwise reduction
    * @param[in,out] generated set of (pointer to) already generated operations
    * @param name_gen name generator for this kernel
-   * @param i row index variable name
-   * @param j column index variable name
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
    * @return part of kernel with code for this and nested expressions
    */
   static kernel_parts get_kernel_parts(
       const Arg& mul, std::set<const operation_cl_base*>& generated,
-      name_generator& name_gen, const std::string& i, const std::string& j) {
+      name_generator& name_gen, const std::string& row_index_name,
+      const std::string& col_index_name) {
     kernel_parts res{};
     if (generated.count(&mul) == 0) {
-      mul.var_name = name_gen.generate();
+      mul.var_name_ = name_gen.generate();
       generated.insert(&mul);
 
       const auto& matrix = mul.template get_arg<0>();
       const auto& broadcast = mul.template get_arg<1>();
-      res = matrix.get_kernel_parts(generated, name_gen, i, j, true);
+      res = matrix.get_kernel_parts(generated, name_gen, row_index_name,
+                                    col_index_name, true);
       if (generated.count(&broadcast) == 0) {
-        broadcast.var_name = name_gen.generate();
+        broadcast.var_name_ = name_gen.generate();
         generated.insert(&broadcast);
 
         const auto& vec = broadcast.template get_arg<0>();
-        std::string i_bc = i;
-        std::string j_bc = j;
-        broadcast.modify_argument_indices(i_bc, j_bc);
-        res += vec.get_kernel_parts(generated, name_gen, i_bc, j_bc, true);
-        res += broadcast.generate(i, j, true, vec.var_name);
+        std::string row_index_name_bc = row_index_name;
+        std::string col_index_name_bc = col_index_name;
+        broadcast.modify_argument_indices(row_index_name_bc, col_index_name_bc);
+        res += vec.get_kernel_parts(generated, name_gen, row_index_name_bc,
+                                    col_index_name_bc, true);
+        res += broadcast.generate(row_index_name, col_index_name, true,
+                                  vec.var_name_);
       }
-      res += mul.generate(i, j, true, matrix.var_name, broadcast.var_name);
+      res += mul.generate(row_index_name, col_index_name, true,
+                          matrix.var_name_, broadcast.var_name_);
     }
     return res;
   }
@@ -116,7 +122,7 @@ class rowwise_reduction
   using T_no_ref = std::remove_reference_t<T>;
   using Scalar = typename T_no_ref::Scalar;
   using base = operation_cl<Derived, Scalar, T>;
-  using base::var_name;
+  using base::var_name_;
 
  protected:
   std::string init_;
@@ -135,29 +141,32 @@ class rowwise_reduction
    * Generates kernel code for this and nested expressions.
    * @param[in,out] generated set of (pointer to) already generated operations
    * @param name_gen name generator for this kernel
-   * @param i row index variable name
-   * @param j column index variable name
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
    * @param view_handled whether caller already handled matrix view
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
       std::set<const operation_cl_base*>& generated, name_generator& name_gen,
-      const std::string& i, const std::string& j, bool view_handled) const {
+      const std::string& row_index_name, const std::string& col_index_name,
+      bool view_handled) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
-      this->var_name = name_gen.generate();
+      this->var_name_ = name_gen.generate();
       generated.insert(this);
 
       if (PassZero && internal::matvec_mul_opt<T_no_ref>::is_possible) {
         res = internal::matvec_mul_opt<T_no_ref>::get_kernel_parts(
-            this->template get_arg<0>(), generated, name_gen, i,
-            var_name + "_j");
+            this->template get_arg<0>(), generated, name_gen, row_index_name,
+            var_name_ + "_j");
       } else {
         res = this->template get_arg<0>().get_kernel_parts(
-            generated, name_gen, i, var_name + "_j", view_handled || PassZero);
+            generated, name_gen, row_index_name, var_name_ + "_j",
+            view_handled || PassZero);
       }
       kernel_parts my_part
-          = generate(i, j, view_handled, this->template get_arg<0>().var_name);
+          = generate(row_index_name, col_index_name, view_handled,
+                     this->template get_arg<0>().var_name_);
       res += my_part;
       res.body = res.body_prefix + res.body;
       res.body_prefix = "";
@@ -167,48 +176,52 @@ class rowwise_reduction
 
   /**
    * Generates kernel code for this expression.
-   * @param i row index variable name
-   * @param j column index variable name
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
    * @param view_handled whether whether caller already handled matrix view
    * @param var_name_arg name of the variable in kernel that holds argument to
    * this expression
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& i, const std::string& j,
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
                                const bool view_handled,
                                const std::string& var_name_arg) const {
     kernel_parts res;
     res.body_prefix
-        = type_str<Scalar>() + " " + var_name + " = " + init_ + ";\n";
+        = type_str<Scalar>() + " " + var_name_ + " = " + init_ + ";\n";
     if (PassZero) {
-      res.body_prefix += "int " + var_name + "_start = contains_nonzero("
-                         + var_name + "_view, LOWER) ? 0 : " + i + ";\n";
+      res.body_prefix += "int " + var_name_ + "_start = contains_nonzero("
+                         + var_name_ + "_view, LOWER) ? 0 : " + row_index_name
+                         + ";\n";
       if (internal::matvec_mul_opt<T_no_ref>::is_possible) {
-        res.body_prefix += "int " + var_name + "_end_temp = contains_nonzero("
-                           + var_name + "_view, UPPER) ? " + var_name
-                           + "_cols : min(" + var_name + "_cols, " + i
-                           + " + 1);\n";
-        res.body_prefix += "int " + var_name + "_end = contains_nonzero("
-                           + var_name + "_vec_view, UPPER) ? " + var_name
-                           + "_end_temp : min(1, " + var_name + "_end_temp);\n";
+        res.body_prefix += "int " + var_name_ + "_end_temp = contains_nonzero("
+                           + var_name_ + "_view, UPPER) ? " + var_name_
+                           + "_cols : min(" + var_name_ + "_cols, "
+                           + row_index_name + " + 1);\n";
+        res.body_prefix += "int " + var_name_ + "_end = contains_nonzero("
+                           + var_name_ + "_vec_view, UPPER) ? " + var_name_
+                           + "_end_temp : min(1, " + var_name_
+                           + "_end_temp);\n";
       } else {
-        res.body_prefix += "int " + var_name + "_end = contains_nonzero("
-                           + var_name + "_view, UPPER) ? " + var_name
-                           + "_cols : min(" + var_name + "_cols, " + i
-                           + " + 1);\n";
+        res.body_prefix += "int " + var_name_ + "_end = contains_nonzero("
+                           + var_name_ + "_view, UPPER) ? " + var_name_
+                           + "_cols : min(" + var_name_ + "_cols, "
+                           + row_index_name + " + 1);\n";
       }
-      res.body_prefix += "for(int " + var_name + "_j = " + var_name + "_start; "
-                         + var_name + "_j < " + var_name + "_end; " + var_name
-                         + "_j++){\n";
+      res.body_prefix += "for(int " + var_name_ + "_j = " + var_name_
+                         + "_start; " + var_name_ + "_j < " + var_name_
+                         + "_end; " + var_name_ + "_j++){\n";
     } else {
-      res.body_prefix += "for(int " + var_name + "_j = 0; " + var_name + "_j < "
-                         + var_name + "_cols; " + var_name + "_j++){\n";
+      res.body_prefix += "for(int " + var_name_ + "_j = 0; " + var_name_
+                         + "_j < " + var_name_ + "_cols; " + var_name_
+                         + "_j++){\n";
     }
-    res.body += var_name + " = " + operation::generate(var_name, var_name_arg)
+    res.body += var_name_ + " = " + operation::generate(var_name_, var_name_arg)
                 + ";\n}\n";
-    res.args = "int " + var_name + "_view, int " + var_name + "_cols, ";
+    res.args = "int " + var_name_ + "_view, int " + var_name_ + "_cols, ";
     if (PassZero && internal::matvec_mul_opt<T_no_ref>::is_possible) {
-      res.args += "int " + var_name + "_vec_view, ";
+      res.args += "int " + var_name_ + "_vec_view, ";
     }
     return res;
   }

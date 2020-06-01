@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta/plain_type.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
+#include <stan/math/prim/meta/ref_type.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
 #include <type_traits>
 #include <utility>
@@ -32,13 +33,13 @@ class scalar_seq_view<
    * @param i index
    * @return the element at the specified position in the container
    */
-  auto& operator[](int i) const { return c_[i]; }
-  auto& operator[](int i) { return c_[i]; }
+  decltype(auto) operator[](int i) const { return c_[i]; }
+  decltype(auto) operator[](int i) { return c_[i]; }
 
   int size() const { return c_.size(); }
 
  private:
-  eval_return_type_t<C> c_;
+  ref_type_t<C> c_;
 };
 
 /** \ingroup type_trait

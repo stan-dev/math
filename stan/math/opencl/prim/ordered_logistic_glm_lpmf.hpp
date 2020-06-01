@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
@@ -26,8 +27,8 @@ namespace math {
  * This is an overload of the GLM in
  * prim/prob/ordered_logistic_glm_lpmf.hpp that is implemented in OpenCL.
  *
- * @tparam T_beta_scalar type of a scalar in the vector of weights
- * @tparam T_cuts_scalar type of a scalar in the vector of cutpoints
+ * @tparam T_beta type the vector of weights
+ * @tparam T_cuts type the vector of cutpoints
  * @param y_cl a scalar or vector of classes on OpenCL device. If it is a scalar
  * it will be broadcast - used for all instances. Values should be between 1 and
  * number of classes, including endpoints.
@@ -41,17 +42,17 @@ namespace math {
  * ascending order or any input is not finite
  * @throw std::invalid_argument if container sizes mismatch.
  */
-template <bool propto, typename T_beta_scalar, typename T_cuts_scalar>
-return_type_t<T_beta_scalar, T_cuts_scalar> ordered_logistic_glm_lpmf(
+template <bool propto, typename T_beta, typename T_cuts,
+          require_all_eigen_col_vector_t<T_beta, T_cuts>* = nullptr>
+return_type_t<T_beta, T_cuts> ordered_logistic_glm_lpmf(
     const matrix_cl<int>& y_cl, const matrix_cl<double>& x_cl,
-    const Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, 1>& beta,
-    const Eigen::Matrix<T_cuts_scalar, Eigen::Dynamic, 1>& cuts) {
+    const T_beta& beta, const T_cuts& cuts) {
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
   using std::isfinite;
-  using T_partials_return = partials_return_t<T_beta_scalar, T_cuts_scalar>;
+  using T_partials_return = partials_return_t<T_beta, T_cuts>;
 
   static const char* function = "ordered_logistic_glm_lpmf";
 
@@ -64,28 +65,29 @@ return_type_t<T_beta_scalar, T_cuts_scalar> ordered_logistic_glm_lpmf(
                      "y_cl", y_cl.size());
   }
   check_consistent_size(function, "Weight vector", beta, N_attributes);
-  check_ordered(function, "Cut-points", cuts);
+  const auto& cuts_ref = to_ref(cuts);
+  check_ordered(function, "Cut-points", cuts_ref);
   if (N_classes > 1) {
     if (N_classes > 2) {
-      check_finite(function, "Final cut-point", cuts[N_classes - 2]);
+      check_finite(function, "Final cut-point", cuts_ref[N_classes - 2]);
     }
-    check_finite(function, "First cut-point", cuts[0]);
+    check_finite(function, "First cut-point", cuts_ref[0]);
   }
 
   if (N_instances == 0 || N_classes == 1) {
     return 0;
   }
-
-  if (!include_summand<propto, T_beta_scalar, T_cuts_scalar>::value) {
+  if (!include_summand<propto, T_beta, T_cuts>::value) {
     return 0;
   }
 
-  const auto& beta_val = value_of_rec(beta);
-  const auto& cuts_val = value_of_rec(cuts);
+  const auto& beta_ref = to_ref_if<!is_constant<T_beta>::value>(beta);
 
-  operands_and_partials<Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, 1>,
-                        Eigen::Matrix<T_cuts_scalar, Eigen::Dynamic, 1>>
-      ops_partials(beta, cuts);
+  const auto& beta_val = value_of_rec(beta_ref);
+  const auto& cuts_val = value_of_rec(cuts_ref);
+
+  operands_and_partials<decltype(beta_ref), decltype(cuts_ref)> ops_partials(
+      beta_ref, cuts_ref);
   const int local_size
       = opencl_kernels::ordered_logistic_glm.get_option("LOCAL_SIZE_");
   const int wgs = (N_instances + local_size - 1) / local_size;
@@ -93,8 +95,8 @@ return_type_t<T_beta_scalar, T_cuts_scalar> ordered_logistic_glm_lpmf(
   const matrix_cl<double> beta_cl(beta_val);
   const matrix_cl<double> cuts_cl(cuts_val);
 
-  bool need_location_derivative = !is_constant_all<T_beta_scalar>::value;
-  bool need_cuts_derivative = !is_constant_all<T_cuts_scalar>::value;
+  bool need_location_derivative = !is_constant_all<T_beta>::value;
+  bool need_cuts_derivative = !is_constant_all<T_cuts>::value;
   matrix_cl<double> logp_cl(wgs, 1);
   matrix_cl<double> location_sum_cl(wgs, 1);
   matrix_cl<double> location_derivative_cl(need_location_derivative ? 1 : 0,
@@ -122,23 +124,15 @@ return_type_t<T_beta_scalar, T_cuts_scalar> ordered_logistic_glm_lpmf(
                  from_matrix_cl(x_cl));
   }
 
-  if (!is_constant_all<T_beta_scalar>::value) {
+  if (!is_constant_all<T_beta>::value) {
     ops_partials.edge1_.partials_
         = from_matrix_cl<1, Dynamic>(location_derivative_cl * x_cl);
   }
-  if (!is_constant_all<T_cuts_scalar>::value) {
+  if (!is_constant_all<T_cuts>::value) {
     ops_partials.edge2_.partials_
         = from_matrix_cl(cuts_derivative_cl).colwise().sum();
   }
   return ops_partials.build(logp);
-}
-
-template <typename T_beta_scalar, typename T_cuts_scalar>
-return_type_t<T_beta_scalar, T_cuts_scalar> ordered_logistic_glm_lpmf(
-    const matrix_cl<int>& y, const matrix_cl<double>& x,
-    const Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, 1>& beta,
-    const Eigen::Matrix<T_cuts_scalar, Eigen::Dynamic, 1>& cuts) {
-  return ordered_logistic_glm_lpmf<false>(y, x, beta, cuts);
 }
 
 }  // namespace math
