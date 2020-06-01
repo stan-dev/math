@@ -27,7 +27,8 @@ inline auto lambert_w0(const T& x) {
  * @tparam T type of value
  * @param x value
  * @return value of the W-1 branch of the Lambert W function for x
- * @throw std::domain_error if x is less than or equal to `-e^(-1)` or greater than or equal to 0
+ * @throw std::domain_error if x is less than or equal to `-e^(-1)` or greater
+ * than or equal to 0
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
 inline auto lambert_wm1(const T& x) {
@@ -57,7 +58,8 @@ struct lambert_w0_fun {
  * @tparam T type of variable
  * @param x variable
  * @return value of the W-1 branch of the Lambert W function at x.
- * @throw std::domain_error if x is less than or equal to `-e^(-1)` or greater than or equal to 0
+ * @throw std::domain_error if x is less than or equal to `-e^(-1)` or greater
+ * than or equal to 0
  */
 struct lambert_wm1_fun {
   template <typename T>
@@ -86,7 +88,8 @@ inline auto lambert_w0(const T& x) {
  * @tparam T type of container
  * @param x container
  * @return value of the W0 branch of the Lambert W function for each value in x
- * @throw std::domain_error if x is less than or equal to `-e^(-1)` or greater than or equal to 0
+ * @throw std::domain_error if x is less than or equal to `-e^(-1)` or greater
+ * than or equal to 0
  */
 template <typename T, require_not_stan_scalar_t<T>* = nullptr>
 inline auto lambert_wm1(const T& x) {

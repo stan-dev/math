@@ -49,10 +49,12 @@ inline var lambert_w0(const var& a) {
 }
 
 /**
- * Return the Lambert W function on W-1 branch applied to the specified variable.
+ * Return the Lambert W function on W-1 branch applied to the specified
+ * variable.
  *
  * @param a Variable argument.
- * @return the Lambert W function (W-1 branch) applied to the specified argument.
+ * @return the Lambert W function (W-1 branch) applied to the specified
+ * argument.
  */
 inline var lambert_wm1(const var& a) {
   return var(new internal::lambertwm1_vari(a.vi_));
