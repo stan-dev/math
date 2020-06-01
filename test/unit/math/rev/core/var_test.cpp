@@ -14,22 +14,21 @@ struct AgradRev : public testing::Test {
   }
 };
 
-template <typename T, typename S>
-void ctor_overloads_impl() {
+template <typename T, typename S, typename K>
+void ctor_overloads_impl_impl() {
   using stan::math::var_value;
   using stan::math::vari_value;
   using stan::math::test::type_name;
   // standard constructor
   EXPECT_FLOAT_EQ(3.7, var_value<T>(3.7).val())
-      << "Failed For T: " << type_name<T>() << " and S: " << type_name<S>()
-      << "\n";
+      << "Failed For T: " << type_name<T>() << "\n";
   // make sure copy ctor is used rather than casting vari* to unsigned int
-  EXPECT_FLOAT_EQ(12.3, var_value<T>(new vari_value<S>(12.3)).val())
-      << "Failed For T: " << type_name<T>() << " and S: " << type_name<S>()
+  EXPECT_FLOAT_EQ(12.3, var_value<T>(new vari_value<K>(12.3)).val())
+      << "Failed For T: " << type_name<T>() << " and K: " << type_name<K>()
       << "\n";
   // make sure rvalue var_value can be accepted
-  EXPECT_FLOAT_EQ(12.3, var_value<T>(var_value<S>(12.3)).val())
-      << "Failed For T: " << type_name<T>() << " and S: " << type_name<S>()
+  EXPECT_FLOAT_EQ(12.3, var_value<T>(var_value<K>(12.3)).val())
+      << "Failed For T: " << type_name<T>() << " and K: " << type_name<K>()
       << "\n";
   // S type is preserved
   EXPECT_FLOAT_EQ(static_cast<S>(3.7), var_value<T>(static_cast<S>(3.7)).val())
@@ -41,38 +40,35 @@ void ctor_overloads_impl() {
       << "\n";
 }
 
+template <typename T, typename K>
+void ctor_overloads_impl() {
+  ctor_overloads_impl_impl<T, double, K>();
+  ctor_overloads_impl_impl<T, long double, K>();
+  ctor_overloads_impl_impl<T, float, K>();
+  ctor_overloads_impl_impl<T, bool, K>();
+  ctor_overloads_impl_impl<T, char, K>();
+  ctor_overloads_impl_impl<T, int, K>();
+  ctor_overloads_impl_impl<T, int16_t, K>();
+  ctor_overloads_impl_impl<T, int32_t, K>();
+  ctor_overloads_impl_impl<T, unsigned char, K>();
+  ctor_overloads_impl_impl<T, unsigned int, K>();
+  ctor_overloads_impl_impl<T, uint32_t, K>();
+  ctor_overloads_impl_impl<T, size_t, K>();
+  ctor_overloads_impl_impl<T, ptrdiff_t, K>();
+}
 template <typename T>
 void ctor_overloads() {
+  ctor_overloads_impl<T, float>();
   ctor_overloads_impl<T, double>();
   ctor_overloads_impl<T, long double>();
-  ctor_overloads_impl<T, float>();
-  ctor_overloads_impl<T, bool>();
-  ctor_overloads_impl<T, char>();
-  ctor_overloads_impl<T, int>();
-  ctor_overloads_impl<T, int16_t>();
-  ctor_overloads_impl<T, int32_t>();
-  ctor_overloads_impl<T, unsigned char>();
-  ctor_overloads_impl<T, unsigned int>();
-  ctor_overloads_impl<T, uint32_t>();
-  ctor_overloads_impl<T, size_t>();
-  ctor_overloads_impl<T, ptrdiff_t>();
 }
+
 TEST_F(AgradRev, ctorOverloads) {
   using stan::math::var;
   using stan::math::vari;
+  ctor_overloads<float>();
   ctor_overloads<double>();
   ctor_overloads<long double>();
-  ctor_overloads<float>();
-  ctor_overloads<bool>();
-  ctor_overloads<char>();
-  ctor_overloads<int>();
-  ctor_overloads<int16_t>();
-  ctor_overloads<int32_t>();
-  ctor_overloads<unsigned char>();
-  ctor_overloads<unsigned char>();
-  ctor_overloads<uint32_t>();
-  ctor_overloads<size_t>();
-  ctor_overloads<ptrdiff_t>();
 }
 
 TEST_F(AgradRev, a_eq_x) {
@@ -284,12 +280,4 @@ TEST_F(AgradRev, grad) {
   EXPECT_FLOAT_EQ(1.0, f.adj());
   EXPECT_FLOAT_EQ(11.0, a.adj());
   EXPECT_FLOAT_EQ(5.0, b.adj());
-}
-
-TEST_F(AgradRev, type_convs) {
-  using stan::math::var_value;
-  var_value<double> a(1);
-  var_value<int> b(a);
-  var_value<long double> c(a);
-  var_value<float> d(a);
 }

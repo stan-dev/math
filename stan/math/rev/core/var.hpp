@@ -30,11 +30,14 @@ static void grad(Vari* vi);
  * var values objects.
  * @tparam T An Arithmetic type.
  */
+template <typename T, typename = void>
+class var_value {};
+
 template <typename T>
-class var_value {
+class var_value<T, require_floating_point_t<T>> {
  public:
   // The internal value_type is always a floating point type
-  using value_type = internal::floating_point_promoter<T>;
+  using value_type = std::decay_t<T>;
   using vari_type = vari_value<value_type>;
 
   template <typename K>
@@ -91,10 +94,10 @@ class var_value {
    * same as `vari_value<double>` so can be `reinterpret_cast` without a copy.
    * @param vi A vari_value pointer.
    */
-  template <typename S, typename K = internal::floating_point_promoter<S>,
+  template <typename S, typename K = promote_args_t<S>,
             require_vari_convertible_t<K>* = nullptr>
   var_value(vari_value<S>* vi)  // NOLINT
-      : vi_(reinterpret_cast<vari_type*>(vi)) {}
+      : vi_(vi) {}
 
   /**
    * Construct a variable from a pointer to a variable implementation when.
@@ -103,7 +106,7 @@ class var_value {
    *  as the `value_type` of this `var_value`.
    * @param vi A `vari_value`.
    */
-  template <typename S, typename K = internal::floating_point_promoter<S>,
+  template <typename S, typename K = promote_args_t<S>,
             require_not_vari_convertible_t<K>* = nullptr>
   var_value(vari_value<S>* vi) : vi_(new vari_type(*vi)) {}  // NOLINT
 
@@ -116,13 +119,9 @@ class var_value {
    * param x a `var_value` whose underlying vari_type can be dynamically cast
    * to `this::vari_value<value_type>``.
    */
-  template <typename S, typename K = internal::floating_point_promoter<S>,
+  template <typename S, typename K = promote_args_t<S>,
             require_not_vari_convertible_t<K>* = nullptr>
-  var_value(var_value<S>& x) : vi_(new vari_type(*x.vi_)) {}  // NOLINT
-
-  template <typename S, typename K = internal::floating_point_promoter<S>,
-            require_not_vari_convertible_t<K>* = nullptr>
-  var_value(var_value<S>&& x) : vi_(new vari_type(*x.vi_)) {}  // NOLINT
+  var_value(const var_value<S>& x) : vi_(new vari_type(*x.vi_)) {}  // NOLINT
 
   /**
    * Constructor from `var_value` whose value_type is the same as this class's
@@ -130,12 +129,9 @@ class var_value {
    * `var_value<double> a(4.0); var_value<int> b(a)` since the `value_type` for
    *  a `var_value` with an integral type is a double.
    */
-  template <typename S, typename K = internal::floating_point_promoter<S>,
+  template <typename S, typename K = promote_args_t<S>,
             require_vari_convertible_t<K>* = nullptr>
-  var_value(var_value<S>& x) : vi_(x.vi_) {}  // NOLINT
-  template <typename S, typename K = internal::floating_point_promoter<S>,
-            require_vari_convertible_t<K>* = nullptr>
-  var_value(var_value<S>&& x) : vi_(x.vi_) {}  // NOLINT
+  var_value(const var_value<S>& x) : vi_(x.vi_) {}  // NOLINT
 
   /**
    * Return the value of this variable.
@@ -225,8 +221,8 @@ class var_value {
    */
   template <typename S,
             require_convertible_t<
-                S&, internal::floating_point_promoter<T>>* = nullptr>
-  inline var_value<T>& operator+=(const var_value<S>& b);
+                S&, promote_args_t<T>>* = nullptr>
+  inline var_value<T, require_floating_point_t<T>>& operator+=(const var_value<S>& b);
 
   /**
    * The compound add/assignment operator for scalars (C++).
@@ -240,7 +236,7 @@ class var_value {
    * @return The result of adding the specified variable to this variable.
    */
   template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
-  inline var_value<T>& operator+=(Arith b);
+  inline var_value<T, require_floating_point_t<T>>& operator+=(Arith b);
 
   /**
    * The compound subtract/assignment operator for variables (C++).
@@ -256,8 +252,8 @@ class var_value {
    */
   template <typename S,
             require_convertible_t<
-                S&, internal::floating_point_promoter<T>>* = nullptr>
-  inline var_value<T>& operator-=(const var_value<S>& b);
+                S&, promote_args_t<T>>* = nullptr>
+  inline var_value<T, require_floating_point_t<T>>& operator-=(const var_value<S>& b);
 
   /**
    * The compound subtract/assignment operator for scalars (C++).
@@ -272,7 +268,7 @@ class var_value {
    * variable.
    */
   template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
-  inline var_value<T>& operator-=(Arith b);
+  inline var_value<T, require_floating_point_t<T>>& operator-=(Arith b);
 
   /**
    * The compound multiply/assignment operator for variables (C++).
@@ -288,8 +284,8 @@ class var_value {
    */
   template <typename S,
             require_convertible_t<
-                S&, internal::floating_point_promoter<T>>* = nullptr>
-  inline var_value<T>& operator*=(const var_value<S>& b);
+                S&, promote_args_t<T>>* = nullptr>
+  inline var_value<T, require_floating_point_t<T>>& operator*=(const var_value<S>& b);
 
   /**
    * The compound multiply/assignment operator for scalars (C++).
@@ -304,7 +300,7 @@ class var_value {
    * variable.
    */
   template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
-  inline var_value<T>& operator*=(Arith b);
+  inline var_value<T, require_floating_point_t<T>>& operator*=(Arith b);
 
   /**
    * The compound divide/assignment operator for variables (C++).  If this
@@ -319,8 +315,8 @@ class var_value {
    */
   template <typename S,
             require_convertible_t<
-                S&, internal::floating_point_promoter<T>>* = nullptr>
-  inline var_value<T>& operator/=(const var_value<S>& b);
+                S&, promote_args_t<T>>* = nullptr>
+  inline var_value<T, require_floating_point_t<T>>& operator/=(const var_value<S>& b);
 
   /**
    * The compound divide/assignment operator for scalars (C++).
@@ -335,7 +331,7 @@ class var_value {
    * variable.
    */
   template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
-  inline var_value<T>& operator/=(Arith b);
+  inline var_value<T, require_floating_point_t<T>>& operator/=(Arith b);
 
   /**
    * Write the value of this autodiff variable and its adjoint to

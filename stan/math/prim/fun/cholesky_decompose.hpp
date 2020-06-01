@@ -68,7 +68,7 @@ cholesky_decompose(const EigMat& m) {
   eval_return_type_t<EigMat>& m_eval = m.eval();
   check_not_nan("cholesky_decompose", "m", m_eval);
 #ifdef STAN_OPENCL
-  if (m.rows() >= opencl_context.tuning_opts().cholesky_size_worth_transfer) {
+  if (std::is_same<double, eig_val>::value && m.rows() >= opencl_context.tuning_opts().cholesky_size_worth_transfer) {
     matrix_cl<double> m_cl(m_eval);
     return from_matrix_cl(cholesky_decompose(m_cl));
   } else {

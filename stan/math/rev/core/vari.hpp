@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <ostream>
 #include <type_traits>
 
@@ -10,11 +11,11 @@ namespace stan {
 namespace math {
 
 // forward declaration of var
-template <typename T>
+template <typename T, typename>
 class var_value;
 
 /**
- * Pure virtual class that all `vari_value` and it's derived classes inherit.
+ * Abstract class that all `vari_value` and it's derived classes inherit.
  */
 class vari_base {
  public:
@@ -41,17 +42,6 @@ class vari_base {
   virtual ~vari_base() {}
 };
 
-namespace internal {
-/**
- * Promote integral types to double
- * @tparam Val Any type
- */
-template <typename Val>
-using floating_point_promoter
-    = std::conditional_t<std::is_integral<std::decay_t<Val>>::value, double,
-                         std::decay_t<Val>>;
-}  // namespace internal
-
 /**
  * The variable implementation base class.
  *
@@ -72,14 +62,14 @@ template <typename T, typename = void>
 class vari_value;
 
 template <typename T>
-class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>>
+class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
     : public vari_base {
  private:
-  template <typename>
+  template <typename, typename>
   friend class var_value;
 
  public:
-  using Scalar = internal::floating_point_promoter<T>;
+  using Scalar = T;
   using value_type = Scalar;
   /**
    * The value of this variable.
@@ -125,7 +115,7 @@ class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>>
    *
    * @tparam S an Arithmetic type.
    * @param x Value of the constructed variable.
-   * @param stacked If true will put this this vari on the nochain stack so that
+   * @param stacked If false will put this this vari on the nochain stack so that
    *  it's `chain()` method is not called.
    */
   template <typename S,
@@ -145,13 +135,7 @@ class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>>
    */
   template <typename S,
             std::enable_if_t<std::is_arithmetic<S>::value>* = nullptr>
-  vari_value(vari_value<S>& x) : val_(x.val_), adj_(x.adj_) {
-    ChainableStack::instance_->var_stack_.push_back(this);
-  }
-
-  template <typename S,
-            std::enable_if_t<std::is_arithmetic<S>::value>* = nullptr>
-  vari_value(vari_value<S>&& x) : val_(x.val_), adj_(x.adj_) {
+  vari_value(const vari_value<S>& x) : val_(x.val_), adj_(x.adj_) {
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 

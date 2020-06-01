@@ -14,7 +14,7 @@ namespace std {
  */
 template <typename T>
 struct numeric_limits<stan::math::var_value<T>> {
-  typedef stan::math::internal::floating_point_promoter<T> value_type;
+  typedef stan::promote_args_t<T> value_type;
   static constexpr bool is_specialized = true;
   static constexpr stan::math::var_value<T> min() noexcept {
     return numeric_limits<value_type>::min();
