@@ -8,8 +8,12 @@ namespace stan {
 namespace math {
 
 /**
- * Throws an exception when a Sundial function fails
+ * Throws a std::runtime_error exception when a Sundial function fails
  * (i.e. returns a negative flag)
+ *
+ * @param flag Error flag
+ * @param func_name Name of the function that returned the flag
+ * @throw <code>std::runtime_error</code> if the flag is negative
  */
 inline void check_flag_sundials(int flag, const char* func_name) {
   if (flag < 0) {
@@ -24,6 +28,13 @@ inline void check_flag_sundials(int flag, const char* func_name) {
  * (call to the solver) fails. When the exception is caused
  * by a tuning parameter the user controls, gives a specific
  * error.
+ *
+ * @param flag Error flag
+ * @param func_name Name of the function that returned the flag
+ * @throw <code>std::domain_error</code> if flag means maximum number of
+ *   iterations exceeded in the algebra solver.
+ * @throw <code>std::runtime_error</code> if the flag is negative for
+ *   any other reason.
  */
 inline void check_flag_kinsol(int flag,
                               long int max_num_steps) {  // NOLINT(runtime/int)
