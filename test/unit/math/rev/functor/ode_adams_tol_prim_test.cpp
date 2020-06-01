@@ -72,18 +72,18 @@ TEST(ode_adams_tol_prim, y0_errors) {
   double a = 1.5;
 
   EXPECT_NO_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
-                                          1e6, nullptr, a));
+                                            1e6, nullptr, a));
 
   EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0inf, t0, ts, 1e-10, 1e-10,
-                                       1e6, nullptr, a),
+                                         1e6, nullptr, a),
                std::domain_error);
 
   EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0NaN, t0, ts, 1e-10, 1e-10,
-                                       1e6, nullptr, a),
+                                         1e6, nullptr, a),
                std::domain_error);
 
   EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0_empty, t0, ts, 1e-10,
-                                       1e-10, 1e6, nullptr, a),
+                                         1e-10, 1e6, nullptr, a),
                std::invalid_argument);
 }
 
@@ -97,14 +97,14 @@ TEST(ode_adams_tol_prim, t0_errors) {
   double a = 1.5;
 
   EXPECT_NO_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
-                                          1e6, nullptr, a));
+                                            1e6, nullptr, a));
 
   EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0inf, ts, 1e-10, 1e-10,
-                                       1e6, nullptr, a),
+                                         1e6, nullptr, a),
                std::domain_error);
 
   EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0NaN, ts, 1e-10, 1e-10,
-                                       1e6, nullptr, a),
+                                         1e6, nullptr, a),
                std::domain_error);
 }
 
@@ -122,29 +122,29 @@ TEST(ode_adams_tol_prim, ts_errors) {
   double a = 1.5;
 
   EXPECT_NO_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
-                                          1e6, nullptr, a));
+                                            1e6, nullptr, a));
 
   EXPECT_NO_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts_repeat, 1e-10,
-                                          1e-10, 1e6, nullptr, a));
+                                            1e-10, 1e6, nullptr, a));
 
   EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts_empty, 1e-10,
-                                       1e-10, 1e6, nullptr, a),
+                                         1e-10, 1e6, nullptr, a),
                std::invalid_argument);
 
   EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts_early, 1e-10,
-                                       1e-10, 1e6, nullptr, a),
+                                         1e-10, 1e6, nullptr, a),
                std::domain_error);
 
-  EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts_decreasing, 1e-10,
-                                       1e-10, 1e6, nullptr, a),
+  EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts_decreasing,
+                                         1e-10, 1e-10, 1e6, nullptr, a),
                std::domain_error);
 
   EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, tsinf, 1e-10, 1e-10,
-                                       1e6, nullptr, a),
+                                         1e6, nullptr, a),
                std::domain_error);
 
   EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, tsNaN, 1e-10, 1e-10,
-                                       1e6, nullptr, a),
+                                         1e6, nullptr, a),
                std::domain_error);
 }
 
@@ -169,36 +169,36 @@ TEST(ode_adams_tol_prim, one_arg_errors) {
   eaNaN << aNaN;
 
   EXPECT_NO_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
-                                          1e6, nullptr, a));
+                                            1e6, nullptr, a));
 
-  EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-                                       nullptr, ainf),
+  EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
+                                         1e6, nullptr, ainf),
                std::domain_error);
 
-  EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-                                       nullptr, aNaN),
-               std::domain_error);
-
-  EXPECT_NO_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
-                                          1e6, nullptr, va));
-
-  EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-                                       nullptr, vainf),
-               std::domain_error);
-
-  EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-                                       nullptr, vaNaN),
+  EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
+                                         1e6, nullptr, aNaN),
                std::domain_error);
 
   EXPECT_NO_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
-                                          1e6, nullptr, ea));
+                                            1e6, nullptr, va));
 
-  EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-                                       nullptr, eainf),
+  EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
+                                         1e6, nullptr, vainf),
                std::domain_error);
 
-  EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-                                       nullptr, eaNaN),
+  EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
+                                         1e6, nullptr, vaNaN),
+               std::domain_error);
+
+  EXPECT_NO_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
+                                            1e6, nullptr, ea));
+
+  EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
+                                         1e6, nullptr, eainf),
+               std::domain_error);
+
+  EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
+                                         1e6, nullptr, eaNaN),
                std::domain_error);
 }
 
@@ -223,36 +223,36 @@ TEST(ode_adams_tol_prim, two_arg_errors) {
   eaNaN << aNaN;
 
   EXPECT_NO_THROW(stan::math::ode_adams_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10,
-                                          1e6, nullptr, a, a));
+                                            1e6, nullptr, a, a));
 
-  EXPECT_THROW(stan::math::ode_adams_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-                                       nullptr, a, ainf),
+  EXPECT_THROW(stan::math::ode_adams_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10,
+                                         1e6, nullptr, a, ainf),
                std::domain_error);
 
-  EXPECT_THROW(stan::math::ode_adams_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-                                       nullptr, a, aNaN),
-               std::domain_error);
-
-  EXPECT_NO_THROW(stan::math::ode_adams_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10,
-                                          1e6, nullptr, a, va));
-
-  EXPECT_THROW(stan::math::ode_adams_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-                                       nullptr, a, vainf),
-               std::domain_error);
-
-  EXPECT_THROW(stan::math::ode_adams_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-                                       nullptr, a, vaNaN),
+  EXPECT_THROW(stan::math::ode_adams_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10,
+                                         1e6, nullptr, a, aNaN),
                std::domain_error);
 
   EXPECT_NO_THROW(stan::math::ode_adams_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10,
-                                          1e6, nullptr, a, ea));
+                                            1e6, nullptr, a, va));
 
-  EXPECT_THROW(stan::math::ode_adams_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-                                       nullptr, a, eainf),
+  EXPECT_THROW(stan::math::ode_adams_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10,
+                                         1e6, nullptr, a, vainf),
                std::domain_error);
 
-  EXPECT_THROW(stan::math::ode_adams_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-                                       nullptr, a, eaNaN),
+  EXPECT_THROW(stan::math::ode_adams_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10,
+                                         1e6, nullptr, a, vaNaN),
+               std::domain_error);
+
+  EXPECT_NO_THROW(stan::math::ode_adams_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10,
+                                            1e6, nullptr, a, ea));
+
+  EXPECT_THROW(stan::math::ode_adams_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10,
+                                         1e6, nullptr, a, eainf),
+               std::domain_error);
+
+  EXPECT_THROW(stan::math::ode_adams_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10,
+                                         1e6, nullptr, a, eaNaN),
                std::domain_error);
 }
 
@@ -269,18 +269,18 @@ TEST(ode_adams_tol_prim, rtol_errors) {
   double a = 1.5;
 
   EXPECT_NO_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, rtol, 1e-10,
-                                          1e6, nullptr, a));
+                                            1e6, nullptr, a));
 
   EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, rtol_negative,
-                                       1e-10, 1e6, nullptr, a),
+                                         1e-10, 1e6, nullptr, a),
                std::domain_error);
 
   EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, rtolinf, 1e-10,
-                                       1e6, nullptr, a),
+                                         1e6, nullptr, a),
                std::domain_error);
 
   EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, rtolNaN, 1e-10,
-                                       1e6, nullptr, a),
+                                         1e6, nullptr, a),
                std::domain_error);
 }
 
@@ -297,18 +297,18 @@ TEST(ode_adams_tol_prim, atol_errors) {
   double a = 1.5;
 
   EXPECT_NO_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-6, atol,
-                                          1e6, nullptr, a));
+                                            1e6, nullptr, a));
 
   EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-6,
-                                       atol_negative, 1e6, nullptr, a),
+                                         atol_negative, 1e6, nullptr, a),
                std::domain_error);
 
   EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-6, atolinf,
-                                       1e6, nullptr, a),
+                                         1e6, nullptr, a),
                std::domain_error);
 
   EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-6, atolNaN,
-                                       1e6, nullptr, a),
+                                         1e6, nullptr, a),
                std::domain_error);
 }
 
@@ -324,14 +324,14 @@ TEST(ode_adams_tol_prim, max_num_steps_errors) {
   double a = 1.5;
 
   EXPECT_NO_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-6, 1e-6,
-                                          max_num_steps, nullptr, a));
+                                            max_num_steps, nullptr, a));
 
   EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-6, 1e-6,
-                                       max_num_steps_negative, nullptr, a),
+                                         max_num_steps_negative, nullptr, a),
                std::domain_error);
 
   EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-6, 1e-6,
-                                       max_num_steps_zero, nullptr, a),
+                                         max_num_steps_zero, nullptr, a),
                std::domain_error);
 }
 
@@ -343,9 +343,9 @@ TEST(ode_adams_tol_prim, rhs_wrong_size_errors) {
   double a = 1.5;
 
   EXPECT_NO_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-6, 1e-6,
-                                          100, nullptr, a));
+                                            100, nullptr, a));
 
   EXPECT_THROW(stan::math::ode_adams_tol(CosArgWrongSize(), y0, t0, ts, 1e-6,
-                                       1e-6, 100, nullptr, a),
+                                         1e-6, 100, nullptr, a),
                std::invalid_argument);
 }
