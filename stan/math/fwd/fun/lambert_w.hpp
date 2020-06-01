@@ -5,7 +5,6 @@
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/prim/fun/lambert_w.hpp>
 #include <cmath>
-#include <complex>
 
 namespace stan {
 namespace math {
