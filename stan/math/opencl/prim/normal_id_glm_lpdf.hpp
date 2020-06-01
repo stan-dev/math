@@ -50,9 +50,9 @@ namespace math {
  */
 template <bool propto, typename T_alpha, typename T_beta, typename T_scale>
 return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
-    const matrix_cl<double> &y_cl, const matrix_cl<double> &x_cl,
-    const T_alpha &alpha, const T_beta &beta, const T_scale &sigma) {
-  static const char *function = "normal_id_glm_lpdf(OpenCL)";
+    const matrix_cl<double>& y_cl, const matrix_cl<double>& x_cl,
+    const T_alpha& alpha, const T_beta& beta, const T_scale& sigma) {
+  static const char* function = "normal_id_glm_lpdf(OpenCL)";
   using T_partials_return = partials_return_t<T_alpha, T_beta, T_scale>;
   using T_scale_val = typename std::conditional_t<
       is_vector<T_scale>::value,
@@ -68,7 +68,6 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   const size_t N = x_cl.rows();
   const size_t M = x_cl.cols();
 
-  check_positive_finite(function, "Scale vector", sigma);
   if (y_cl.size() != 1) {
     check_size_match(function, "Rows of ", "x_cl", N, "rows of ", "y_cl",
                      y_cl.size());
@@ -82,6 +81,8 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     check_size_match(function, "Rows of ", "x_cl", N, "size of ", "alpha",
                      stan::math::size(alpha));
   }
+  const auto& sigma_ref = to_ref(sigma);
+  check_positive_finite(function, "Scale vector", sigma_ref);
 
   if (!include_summand<propto, T_alpha, T_beta, T_scale>::value) {
     return 0;
@@ -91,13 +92,16 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     return 0;
   }
 
-  const auto &beta_val = value_of_rec(beta);
-  const auto &alpha_val = value_of_rec(alpha);
-  const auto &sigma_val = value_of_rec(sigma);
+  const auto& beta_ref = to_ref_if<!is_constant<T_beta>::value>(beta);
+  const auto& alpha_ref = to_ref_if<!is_constant<T_alpha>::value>(alpha);
 
-  const auto &beta_val_vec = as_column_vector_or_scalar(beta_val);
-  const auto &alpha_val_vec = as_column_vector_or_scalar(alpha_val);
-  const auto &sigma_val_vec = to_ref(as_column_vector_or_scalar(sigma_val));
+  const auto& beta_val = value_of_rec(beta_ref);
+  const auto& alpha_val = value_of_rec(alpha_ref);
+  const auto& sigma_val = value_of_rec(sigma_ref);
+
+  const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
+  const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
+  const auto& sigma_val_vec = to_ref(as_column_vector_or_scalar(sigma_val));
 
   T_scale_val inv_sigma = 1 / as_array_or_scalar(sigma_val_vec);
   Matrix<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma_mat(N);
@@ -133,14 +137,15 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
         y_cl.size() != 1, stan::math::size(alpha) != 1,
         stan::math::size(sigma) != 1, need_mu_derivative,
         need_mu_derivative_sum, need_sigma_derivative, need_log_sigma_sum);
-  } catch (const cl::Error &e) {
+  } catch (const cl::Error& e) {
     check_opencl_error(function, e);
   }
   double y_scaled_sq_sum
       = sum(from_matrix_cl(y_minus_mu_over_sigma_squared_sum_cl));
 
-  operands_and_partials<T_alpha, T_beta, T_scale> ops_partials(alpha, beta,
-                                                               sigma);
+  operands_and_partials<decltype(alpha_ref), decltype(beta_ref),
+                        decltype(sigma_ref)>
+      ops_partials(alpha_ref, beta_ref, sigma_ref);
 
   if (!is_constant_all<T_alpha>::value && is_vector<T_alpha>::value) {
     ops_partials.edge1_.partials_
@@ -186,19 +191,12 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     if (is_vector<T_scale>::value) {
       logp -= sum(from_matrix_cl(log_sigma_sum_cl));
     } else {
-      logp -= N * log(forward_as<double>(sigma_val));
+      logp -= N * log(forward_as<double>(sigma_val_vec));
     }
   }
   logp -= 0.5 * y_scaled_sq_sum;
 
   return ops_partials.build(logp);
-}
-
-template <typename T_alpha, typename T_beta, typename T_scale>
-inline return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
-    const matrix_cl<double> &y, const matrix_cl<double> &x,
-    const T_alpha &alpha, const T_beta &beta, const T_scale &sigma) {
-  return normal_id_glm_lpdf<false>(y, x, alpha, beta, sigma);
 }
 
 }  // namespace math
