@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/multiply.hpp>
@@ -82,19 +83,22 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
     check_size_match(function, "Rows of ", "x_cl", N, "size of ", "alpha",
                      stan::math::size(alpha));
   }
-  check_positive_finite(function, "Precision parameter", phi);
+  const auto& phi_ref = to_ref(phi);
+  check_positive_finite(function, "Precision parameter", phi_ref);
 
   if (N == 0) {
     return 0;
   }
-
   if (!include_summand<propto, T_alpha, T_beta, T_precision>::value) {
     return 0;
   }
 
-  const auto& beta_val = value_of_rec(beta);
-  const auto& alpha_val = value_of_rec(alpha);
-  const auto& phi_val = value_of_rec(phi);
+  const auto& alpha_ref = to_ref_if<!is_constant<T_alpha>::value>(alpha);
+  const auto& beta_ref = to_ref_if<!is_constant<T_beta>::value>(beta);
+
+  const auto& beta_val = value_of_rec(beta_ref);
+  const auto& alpha_val = value_of_rec(alpha_ref);
+  const auto& phi_val = value_of_rec(phi_ref);
 
   const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
@@ -192,13 +196,6 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
     }
   }
   return ops_partials.build(logp);
-}
-
-template <typename T_alpha, typename T_beta, typename T_precision>
-inline return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
-    const matrix_cl<int>& y, const matrix_cl<double>& x, const T_alpha& alpha,
-    const T_beta& beta, const T_precision& phi) {
-  return neg_binomial_2_log_glm_lpmf<false>(y, x, alpha, beta, phi);
 }
 
 }  // namespace math
