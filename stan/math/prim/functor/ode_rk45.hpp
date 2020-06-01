@@ -65,7 +65,7 @@ ode_rk45_tol(const F& f,
   using boost::numeric::odeint::vector_space_algebra;
 
   using T_initial_or_t0 = return_type_t<T_initial, T_t0>;
-
+  
   Eigen::Matrix<T_initial_or_t0, Eigen::Dynamic, 1> y0 = y0_arg.unaryExpr(
       [](const T_initial& val) { return T_initial_or_t0(val); });
 
@@ -83,18 +83,9 @@ ode_rk45_tol(const F& f,
   check_sorted("integrate_ode_rk45", "times", ts);
   check_less("integrate_ode_rk45", "initial time", t0, ts[0]);
 
-  if (relative_tolerance <= 0) {
-    invalid_argument("integrate_ode_rk45", "relative_tolerance,",
-                     relative_tolerance, "", ", must be greater than 0");
-  }
-  if (absolute_tolerance <= 0) {
-    invalid_argument("integrate_ode_rk45", "absolute_tolerance,",
-                     absolute_tolerance, "", ", must be greater than 0");
-  }
-  if (max_num_steps <= 0) {
-    invalid_argument("integrate_ode_rk45", "max_num_steps,", max_num_steps, "",
-                     ", must be greater than 0");
-  }
+  check_positive_finite("integrate_ode_rk45", "relative_tolerance", relative_tolerance);
+  check_positive_finite("integrate_ode_rk45", "absolute_tolerance", absolute_tolerance);
+  check_positive("integrate_ode_rk45", "max_num_steps", max_num_steps);
 
   using return_t = return_type_t<T_initial, T_t0, T_ts, Args...>;
   // creates basic or coupled system by template specializations
