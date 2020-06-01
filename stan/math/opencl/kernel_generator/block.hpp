@@ -35,7 +35,7 @@ class block_
  public:
   using Scalar = typename std::remove_reference_t<T>::Scalar;
   using base = operation_cl_lhs<block_<T>, Scalar, T>;
-  using base::var_name;
+  using base::var_name_;
   using view_transitivity = std::tuple<std::true_type>;
   using base::operator=;
 
@@ -91,31 +91,33 @@ class block_
 
   /**
    * Generates kernel code for this expression.
-   * @param i row index variable name
-   * @param j column index variable name
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
    * @param view_handled whether whether caller already handled matrix view
    * @param var_name_arg name of the variable in kernel that holds argument to
    * this expression
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& i, const std::string& j,
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
                                const bool view_handled,
                                const std::string& var_name_arg) const {
     kernel_parts res;
     res.body
-        = type_str<Scalar>() + " " + var_name + " = " + var_name_arg + ";\n";
-    res.args = "int " + var_name + "_i, int " + var_name + "_j, ";
+        = type_str<Scalar>() + " " + var_name_ + " = " + var_name_arg + ";\n";
+    res.args = "int " + var_name_ + "_i, int " + var_name_ + "_j, ";
     return res;
   }
 
   /**
    * Sets offset of block to indices of the argument expression
-   * @param[in, out] i row index
-   * @param[in, out] j column index
+   * @param[in, out] row_index_name row index
+   * @param[in, out] col_index_name column index
    */
-  inline void modify_argument_indices(std::string& i, std::string& j) const {
-    i = "(" + i + " + " + var_name + "_i)";
-    j = "(" + j + " + " + var_name + "_j)";
+  inline void modify_argument_indices(std::string& row_index_name,
+                                      std::string& col_index_name) const {
+    row_index_name = "(" + row_index_name + " + " + var_name_ + "_i)";
+    col_index_name = "(" + col_index_name + " + " + var_name_ + "_j)";
   }
 
   /**
@@ -130,7 +132,7 @@ class block_
   inline kernel_parts generate_lhs(const std::string& i, const std::string& j,
                                    const std::string& var_name_arg) const {
     kernel_parts res;
-    res.args = "int " + var_name + "_i, int " + var_name + "_j, ";
+    res.args = "int " + var_name_ + "_i, int " + var_name_ + "_j, ";
     return res;
   }
 

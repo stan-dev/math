@@ -38,6 +38,8 @@
 #include <stan/math/rev/fun/divide.hpp>
 #include <stan/math/rev/fun/dot_product.hpp>
 #include <stan/math/rev/fun/dot_self.hpp>
+#include <stan/math/rev/fun/eigenvalues_sym.hpp>
+#include <stan/math/rev/fun/eigenvectors_sym.hpp>
 #include <stan/math/rev/fun/erf.hpp>
 #include <stan/math/rev/fun/erfc.hpp>
 #include <stan/math/rev/fun/exp.hpp>

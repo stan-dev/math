@@ -44,7 +44,7 @@ class unary_function_cl : public operation_cl<Derived, Scal, T> {
                 "unary_function_cl: argument must be expression with floating "
                 "point return type!");
   using base = operation_cl<Derived, Scalar, T>;
-  using base::var_name;
+  using base::var_name_;
 
   /**
    * Constructor
@@ -55,19 +55,20 @@ class unary_function_cl : public operation_cl<Derived, Scal, T> {
       : base(std::forward<T>(a)), fun_(fun) {}
 
   /**
-   * generates kernel code for this expression.
-   * @param i row index variable name
-   * @param j column index variable name
+   * Generates kernel code for this expression.
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
    * @param view_handled whether whether caller already handled matrix view
    * @param var_name_arg variable name of the nested expression
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& i, const std::string& j,
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
                                const bool view_handled,
                                const std::string& var_name_arg) const {
     kernel_parts res{};
     res.includes = base::derived().include;
-    res.body = type_str<Scalar>() + " " + var_name + " = " + fun_ + "("
+    res.body = type_str<Scalar>() + " " + var_name_ + " = " + fun_ + "("
                + var_name_arg + ");\n";
     return res;
   }
@@ -77,7 +78,7 @@ class unary_function_cl : public operation_cl<Derived, Scal, T> {
 };
 
 /**
- * generates a class and function for a general unary function that is defined
+ * Generates a class and function for a general unary function that is defined
  * by OpenCL.
  * @param fun function
  * @param incl function source to include into kernel
@@ -116,14 +117,14 @@ class unary_function_cl : public operation_cl<Derived, Scal, T> {
   const char* fun##_<T>::include(incl);
 
 /**
- * generates a class and function for a general unary function that is defined
+ * Generates a class and function for a general unary function that is defined
  * by OpenCL.
  * @param fun function
  */
 #define ADD_UNARY_FUNCTION(fun) ADD_UNARY_FUNCTION_WITH_INCLUDE(fun, "")
 
 /**
- * generates a class and function for an unary function, defined by OpenCL with
+ * Generates a class and function for an unary function, defined by OpenCL with
  * special property that it passes trough zero. That is \f$ f(0)=0 \f$. Such a
  * function can have triangular view equal to its argument's.
  * @param fun function name
@@ -160,7 +161,7 @@ class unary_function_cl : public operation_cl<Derived, Scal, T> {
   const char* fun##_<T>::include = "";
 
 /**
- * generates a class and function for a classification function, defined by
+ * Generates a class and function for a classification function, defined by
  * OpenCL.
  * @param fun function name
  * @param ... code for determining extreme diagonals

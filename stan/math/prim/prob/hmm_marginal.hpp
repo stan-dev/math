@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/col.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
 #include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/core.hpp>
 #include <vector>
@@ -91,10 +92,10 @@ inline auto hmm_marginal(
 
   eig_matrix_partial alphas(n_states, n_transitions + 1);
   eig_vector_partial alpha_log_norms(n_transitions + 1);
-  auto Gamma_val = value_of(Gamma);
+  const auto& Gamma_val = to_ref(value_of(Gamma));
 
   // compute the density using the forward algorithm.
-  auto rho_val = value_of(rho);
+  const auto& rho_val = to_ref(value_of(rho));
   eig_matrix_partial omegas = value_of(log_omegas).array().exp();
   T_partial_type norm_norm;
   auto log_marginal_density = hmm_marginal_val(

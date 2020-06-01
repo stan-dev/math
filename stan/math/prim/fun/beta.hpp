@@ -48,10 +48,26 @@ namespace math {
  * @param b Second value
  * @return Beta function applied to the two values.
  */
-template <typename T1, typename T2>
+template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
 inline return_type_t<T1, T2> beta(const T1 a, const T2 b) {
   using std::exp;
   return exp(lgamma(a) + lgamma(b) - lgamma(a + b));
+}
+
+/**
+ * Enables the vectorised application of the beta function, when
+ * the first and/or second arguments are containers.
+ *
+ * @tparam T1 type of first input
+ * @tparam T2 type of second input
+ * @param a First input
+ * @param b Second input
+ * @return Beta function applied to the two inputs.
+ */
+template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
+inline auto beta(const T1& a, const T2& b) {
+  return apply_scalar_binary(
+      a, b, [&](const auto& c, const auto& d) { return beta(c, d); });
 }
 
 }  // namespace math
