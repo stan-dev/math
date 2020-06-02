@@ -36,16 +36,15 @@
  *  scalar and types of any expression arguements.
  * 3. Member type `Scalar` should be defined as scalar type of the result of
  * the operation.
- * 4. Member function `generate` has the signature
- * ```cpp
- * inline kernel_parts generate(const std::string& i, const std::string& j,
- *                            const std::string& var_name_arg)
- * ```
- * 5. Member function `deep_copy` should make a copy of the expression.
+ * 4. Member function `deep_copy` should make a copy of the expression.
  * Arguments that are operations should be copied by calling their `deep_copy`.
  *
  * The following functions can optionally be defined. Defaults are implemented
  * in `operation_cl`:
+ * - `kernel_parts generate(const std::string& i, const std::string& j,
+ *                            const std::string& var_name_arg)`:
+ *     - Generates kernel code for this expression
+ *     - Default: Generates code that copies the result of the first argument.
  * - `void modify_argument_indices(std::string& i, std::string& j)`:
  *     - Modifies what indices are passed to argument's `generate()`.
  *     - Default: No-op
@@ -127,6 +126,7 @@
 #include <stan/math/opencl/kernel_generator/broadcast.hpp>
 #include <stan/math/opencl/kernel_generator/optional_broadcast.hpp>
 #include <stan/math/opencl/kernel_generator/diagonal.hpp>
+#include <stan/math/opencl/kernel_generator/holder_cl.hpp>
 
 #include <stan/math/opencl/kernel_generator/multi_result_kernel.hpp>
 #include <stan/math/opencl/kernel_generator/get_kernel_source_for_evaluating_into.hpp>

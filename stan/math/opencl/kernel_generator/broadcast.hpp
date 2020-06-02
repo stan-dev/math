@@ -35,7 +35,7 @@ class broadcast_
  public:
   using Scalar = typename std::remove_reference_t<T>::Scalar;
   using base = operation_cl<broadcast_<T, Colwise, Rowwise>, Scalar, T>;
-  using base::var_name;
+  using base::var_name_;
 
   /**
    * Constructor
@@ -62,32 +62,17 @@ class broadcast_
   }
 
   /**
-   * Generates kernel code for this and nested expressions.
-   * @param var_name_arg name of the variable in kernel that holds argument to
-   * this expression
-   * @param i row index variable name
-   * @param j column index variable name
-   * @param view_handled whether whether caller already handled matrix view
-   * @return part of kernel with code for this and nested expressions
-   */
-  inline kernel_parts generate(const std::string& i, const std::string& j,
-                               const bool view_handled,
-                               const std::string& var_name_arg) const {
-    var_name = this->template get_arg<0>().var_name;
-    return {};
-  }
-
-  /**
    * Sets index/indices along broadcasted dimmension(s) to 0.
-   * @param[in, out] i row index
-   * @param[in, out] j column index
+   * @param[in, out] row_index_name row index
+   * @param[in, out] col_index_name column index
    */
-  inline void modify_argument_indices(std::string& i, std::string& j) const {
+  inline void modify_argument_indices(std::string& row_index_name,
+                                      std::string& col_index_name) const {
     if (Colwise) {
-      i = "0";
+      row_index_name = "0";
     }
     if (Rowwise) {
-      j = "0";
+      col_index_name = "0";
     }
   }
 

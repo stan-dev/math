@@ -27,17 +27,17 @@ namespace internal {
 
 // Template parameter pack can only be at the end of the template list in
 // structs. We need 2 packs for expressions and results, so we nest structs.
-template <int n, typename... T_results>
+template <int N, typename... T_results>
 struct multi_result_kernel_internal {
   template <typename... T_expressions>
   struct inner {
     static cl::Kernel kernel_;
     using next = typename multi_result_kernel_internal<
-        n - 1, T_results...>::template inner<T_expressions...>;
+        N - 1, T_results...>::template inner<T_expressions...>;
     using T_current_result = std::remove_reference_t<
-        std::tuple_element_t<n, std::tuple<T_results...>>>;
+        std::tuple_element_t<N, std::tuple<T_results...>>>;
     using T_current_expression = std::remove_reference_t<
-        std::tuple_element_t<n, std::tuple<T_expressions...>>>;
+        std::tuple_element_t<N, std::tuple<T_expressions...>>>;
     /**
      * Generates list of all events kernel assigning expressions to results must
      * wait on. Also clears those events from matrices.
@@ -50,8 +50,8 @@ struct multi_result_kernel_internal {
         const std::tuple<wrapper<T_results>...>& results,
         const std::tuple<wrapper<T_expressions>...>& expressions) {
       next::get_clear_events(events, results, expressions);
-      std::get<n>(expressions).x.get_clear_write_events(events);
-      std::get<n>(results).x.get_clear_read_write_events(events);
+      std::get<N>(expressions).x.get_clear_write_events(events);
+      std::get<N>(results).x.get_clear_read_write_events(events);
     }
     /**
      * Assigns the dimensions of expressions to matching results if possible.
@@ -69,8 +69,8 @@ struct multi_result_kernel_internal {
         const std::tuple<wrapper<T_results>...>& results,
         const std::tuple<wrapper<T_expressions>...>& expressions) {
       next::check_assign_dimensions(n_rows, n_cols, results, expressions);
-      const auto& expression = std::get<n>(expressions).x;
-      const auto& result = std::get<n>(results).x;
+      const auto& expression = std::get<N>(expressions).x;
+      const auto& result = std::get<N>(results).x;
       const char* function = "results.operator=";
       check_size_match(function, "Rows of ", "expression",
                        expression.thread_rows(), "rows of ", "first expression",
@@ -93,26 +93,26 @@ struct multi_result_kernel_internal {
      * Generates kernel source for assignment of expressions to results.
      * @param generated set of already generated expressions
      * @param ng name generator
-     * @param i variable name of the index i
-     * @param j variable name of the index j
+     * @param row_index_name variable name of the row index
+     * @param col_index_name variable name of the column index
      * @param results results
      * @param expressions expressions
      * @return kernel parts for the kernel
      */
     static kernel_parts generate(
         std::set<const operation_cl_base*>& generated, name_generator& ng,
-        const std::string& i, const std::string& j,
+        const std::string& row_index_name, const std::string& col_index_name,
         const std::tuple<wrapper<T_results>...>& results,
         const std::tuple<wrapper<T_expressions>...>& expressions) {
-      kernel_parts parts
-          = next::generate(generated, ng, i, j, results, expressions);
+      kernel_parts parts = next::generate(generated, ng, row_index_name,
+                                          col_index_name, results, expressions);
       if (is_without_output<T_current_expression>::value) {
         return parts;
       }
-      kernel_parts parts0
-          = std::get<n>(expressions)
-                .x.get_whole_kernel_parts(generated, ng, i, j,
-                                          std::get<n>(results).x);
+      kernel_parts parts0 = std::get<N>(expressions)
+                                .x.get_whole_kernel_parts(
+                                    generated, ng, row_index_name,
+                                    col_index_name, std::get<N>(results).x);
       parts += parts0;
       return parts;
     }
@@ -135,8 +135,8 @@ struct multi_result_kernel_internal {
         return;
       }
 
-      std::get<n>(expressions).x.set_args(generated, kernel, arg_num);
-      std::get<n>(results).x.set_args(generated, kernel, arg_num);
+      std::get<N>(expressions).x.set_args(generated, kernel, arg_num);
+      std::get<N>(results).x.set_args(generated, kernel, arg_num);
     }
 
     /**
@@ -150,13 +150,13 @@ struct multi_result_kernel_internal {
         const std::tuple<wrapper<T_expressions>...>& expressions) {
       next::add_event(e, results, expressions);
 
-      std::get<n>(expressions).x.add_read_event(e);
-      std::get<n>(results).x.add_write_event(e);
+      std::get<N>(expressions).x.add_read_event(e);
+      std::get<N>(results).x.add_write_event(e);
     }
   };
 };
 
-// Specialization for n == -1 ends the recursion.
+// Specialization for N == -1 ends the recursion.
 template <typename... T_results>
 struct multi_result_kernel_internal<-1, T_results...> {
   template <typename... T_expressions>
@@ -175,7 +175,7 @@ struct multi_result_kernel_internal<-1, T_results...> {
 
     static kernel_parts generate(
         std::set<const operation_cl_base*>& generated, name_generator& ng,
-        const std::string& i, const std::string& j,
+        const std::string& row_index_name, const std::string& col_index_name,
         const std::tuple<wrapper<T_results>...>& results,
         const std::tuple<wrapper<T_expressions>...>& expressions) {
       return {};
@@ -196,9 +196,9 @@ struct multi_result_kernel_internal<-1, T_results...> {
   };
 };
 
-template <int n, typename... T_results>
+template <int N, typename... T_results>
 template <typename... T_expressions>
-cl::Kernel multi_result_kernel_internal<n, T_results...>::inner<
+cl::Kernel multi_result_kernel_internal<N, T_results...>::inner<
     T_expressions...>::kernel_;
 
 }  // namespace internal
@@ -454,7 +454,7 @@ class results_cl {
                                                     cl::NullRange, &events, &e);
       }
       impl::add_event(e, results, expressions);
-    } catch (cl::Error e) {
+    } catch (const cl::Error& e) {
       check_opencl_error(function, e);
     }
   }
