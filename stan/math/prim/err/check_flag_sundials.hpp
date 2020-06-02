@@ -30,7 +30,8 @@ inline void check_flag_sundials(int flag, const char* func_name) {
  * error.
  *
  * @param flag Error flag
- * @param func_name Name of the function that returned the flag
+ * @param max_num_steps Maximum number of iterations the algebra solver
+ *   should take before throwing an error
  * @throw <code>std::domain_error</code> if flag means maximum number of
  *   iterations exceeded in the algebra solver.
  * @throw <code>std::runtime_error</code> if the flag is negative for
