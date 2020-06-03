@@ -47,29 +47,23 @@ endif
 # - CXX_MINOR: minor version of CXX
 ifneq (,$(findstring clang,$(CXX)))
   CXX_TYPE ?= clang
-  CXXFLAGS_FLTO := -flto -fwhole-program-vtables -fstrict-vtable-pointers
+  CXXFLAGS_FLTO ?= -flto -fwhole-program-vtables -fstrict-vtable-pointers
 endif
 ifneq (,$(findstring mingw32-g,$(CXX)))
   CXX_TYPE ?= mingw32-gcc
 endif
 ifneq (,$(findstring gcc,$(CXX)))
   CXX_TYPE ?= gcc
-  CXXFLAGS_FLTO := -flto -fuse-linker-plugin -fdevirtualize-at-ltrans -fipa-pta
+  CXXFLAGS_FLTO ?= -flto -fuse-linker-plugin -fdevirtualize-at-ltrans -fipa-pta
 endif
 ifneq (,$(findstring g++,$(CXX)))
   CXX_TYPE ?= gcc
-  CXXFLAGS_FLTO := -flto -fuse-linker-plugin -fdevirtualize-at-ltrans -fipa-pta
+  CXXFLAGS_FLTO ?= -flto -fuse-linker-plugin -fdevirtualize-at-ltrans -fipa-pta
 endif
 CXX_TYPE ?= other
 CXX_MAJOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f1)
 CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
 
-ifeq (default,$(origin CXX))
-  ifeq ($(OS),Darwin)  ## Darwin is Mac OS X
-    # gcc on mac actually calls clang
-    CXXFLAGS_FLTO := -flto -fwhole-program-vtables -fstrict-vtable-pointers
-  endif
-endif
 
 
 ################################################################################
