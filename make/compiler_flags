@@ -64,6 +64,14 @@ CXX_TYPE ?= other
 CXX_MAJOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f1)
 CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
 
+ifeq (default,$(origin CXX))
+  ifeq ($(OS),Darwin)  ## Darwin is Mac OS X
+    # gcc on mac actually calls clang
+    CXXFLAGS_FLTO := -flto -fwhole-program-vtables -fstrict-vtable-pointers
+  endif
+endif
+
+
 ################################################################################
 # Set default compiler flags
 #
