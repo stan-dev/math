@@ -47,7 +47,7 @@ endif
 # - CXX_MINOR: minor version of CXX
 ifneq (,$(findstring clang,$(CXX)))
   CXX_TYPE ?= clang
-  CXXFLAGS_FLTO ?= -flto -fstrict-vtable-pointers
+  CXXFLAGS_FLTO ?= -flto
 endif
 ifneq (,$(findstring mingw32-g,$(CXX)))
   CXX_TYPE ?= mingw32-gcc
