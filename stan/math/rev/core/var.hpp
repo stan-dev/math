@@ -219,10 +219,9 @@ class var_value<T, require_floating_point_t<T>> {
    * @param b The variable to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
-  template <typename S,
-            require_convertible_t<
-                S&, promote_args_t<T>>* = nullptr>
-  inline var_value<T, require_floating_point_t<T>>& operator+=(const var_value<S>& b);
+  template <typename S, require_convertible_t<S&, promote_args_t<T>>* = nullptr>
+  inline var_value<T, require_floating_point_t<T>>& operator+=(
+      const var_value<S>& b);
 
   /**
    * The compound add/assignment operator for scalars (C++).
@@ -250,10 +249,9 @@ class var_value<T, require_floating_point_t<T>> {
    * @return The result of subtracting the specified variable from
    * this variable.
    */
-  template <typename S,
-            require_convertible_t<
-                S&, promote_args_t<T>>* = nullptr>
-  inline var_value<T, require_floating_point_t<T>>& operator-=(const var_value<S>& b);
+  template <typename S, require_convertible_t<S&, promote_args_t<T>>* = nullptr>
+  inline var_value<T, require_floating_point_t<T>>& operator-=(
+      const var_value<S>& b);
 
   /**
    * The compound subtract/assignment operator for scalars (C++).
@@ -282,10 +280,9 @@ class var_value<T, require_floating_point_t<T>> {
    * @return The result of multiplying this variable by the
    * specified variable.
    */
-  template <typename S,
-            require_convertible_t<
-                S&, promote_args_t<T>>* = nullptr>
-  inline var_value<T, require_floating_point_t<T>>& operator*=(const var_value<S>& b);
+  template <typename S, require_convertible_t<S&, promote_args_t<T>>* = nullptr>
+  inline var_value<T, require_floating_point_t<T>>& operator*=(
+      const var_value<S>& b);
 
   /**
    * The compound multiply/assignment operator for scalars (C++).
@@ -313,10 +310,9 @@ class var_value<T, require_floating_point_t<T>> {
    * @return The result of dividing this variable by the
    * specified variable.
    */
-  template <typename S,
-            require_convertible_t<
-                S&, promote_args_t<T>>* = nullptr>
-  inline var_value<T, require_floating_point_t<T>>& operator/=(const var_value<S>& b);
+  template <typename S, require_convertible_t<S&, promote_args_t<T>>* = nullptr>
+  inline var_value<T, require_floating_point_t<T>>& operator/=(
+      const var_value<S>& b);
 
   /**
    * The compound divide/assignment operator for scalars (C++).
