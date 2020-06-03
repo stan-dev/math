@@ -93,11 +93,9 @@ struct deserializer {
    * @param x pattern argument to determine result shape and size
    * @return deserialized value with shape and size matching argument
    */
-  template <typename U,
-            require_std_vector_t<U>* = nullptr,
+  template <typename U, require_std_vector_t<U>* = nullptr,
             require_not_std_vector_st<is_complex, U>* = nullptr>
-  typename stan::math::promote_scalar_type<T, U>::type read(
-      const U& x) {
+  typename stan::math::promote_scalar_type<T, U>::type read(const U& x) {
     typename stan::math::promote_scalar_type<T, U>::type y;
     y.reserve(x.size());
     for (size_t i = 0; i < x.size(); ++i)
@@ -159,7 +157,7 @@ struct deserializer {
    */
   template <typename U, int R, int C>
   Eigen::Matrix<std::complex<T>, R, C> read(
-    const Eigen::Matrix<std::complex<U>, R, C>& x) {
+      const Eigen::Matrix<std::complex<U>, R, C>& x) {
     Eigen::Matrix<std::complex<T>, R, C> y(x.rows(), x.cols());
     for (int i = 0; i < x.size(); ++i)
       y(i) = read(x(i));
