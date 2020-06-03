@@ -115,8 +115,8 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
    *
    * @tparam S an Arithmetic type.
    * @param x Value of the constructed variable.
-   * @param stacked If false will put this this vari on the nochain stack so that
-   *  it's `chain()` method is not called.
+   * @param stacked If false will put this this vari on the nochain stack so
+   * that it's `chain()` method is not called.
    */
   template <typename S,
             std::enable_if_t<std::is_convertible<S&, Scalar>::value>* = nullptr>
