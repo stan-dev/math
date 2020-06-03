@@ -29,8 +29,8 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   }
   plain_type_t<T1> x_zero;
   plain_type_t<T2> y_zero;
-  EXPECT_THROW(f(x_zero,y),std::domain_error);
-  EXPECT_THROW(f(x,y_zero),std::domain_error);
+  EXPECT_THROW(f(x_zero, y), std::domain_error);
+  EXPECT_THROW(f(x, y_zero), std::domain_error);
 
   std::vector<T1> nest_x{x, x, x};
   std::vector<T2> nest_y{y, y, y};
@@ -46,8 +46,8 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   }
   std::vector<T1> nest_x_small{x, x};
   std::vector<T2> nest_y_small{y, y};
-  EXPECT_THROW(f(nest_x,nest_y_small),std::domain_error);
-  EXPECT_THROW(f(nest_x_small,nest_y),std::domain_error);
+  EXPECT_THROW(f(nest_x, nest_y_small), std::domain_error);
+  EXPECT_THROW(f(nest_x_small, nest_y), std::domain_error);
 
   std::vector<std::vector<T1>> nest_nest_x{nest_x, nest_x, nest_x};
   std::vector<std::vector<T2>> nest_nest_y{nest_y, nest_y, nest_y};
@@ -68,8 +68,8 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   }
   std::vector<std::vector<T1>> nest_nest_x_small{nest_x, nest_x};
   std::vector<std::vector<T2>> nest_nest_y_small{nest_y, nest_y};
-  EXPECT_THROW(f(nest_nest_x,nest_nest_y_small),std::domain_error);
-  EXPECT_THROW(f(nest_nest_x_small,nest_nest_y),std::domain_error);
+  EXPECT_THROW(f(nest_nest_x, nest_nest_y_small), std::domain_error);
+  EXPECT_THROW(f(nest_nest_x_small, nest_nest_y), std::domain_error);
 }
 
 /**
@@ -99,8 +99,8 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   }
   T1 x_zero;
   T2 y_zero;
-  EXPECT_THROW(f(x_zero,y),std::domain_error);
-  EXPECT_THROW(f(x,y_zero),std::domain_error);
+  EXPECT_THROW(f(x_zero, y), std::domain_error);
+  EXPECT_THROW(f(x, y_zero), std::domain_error);
 
   std::vector<T1> nest_x{x, x, x};
   std::vector<T2> nest_y{y, y, y};
@@ -116,8 +116,8 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   }
   std::vector<T1> nest_x_small{x, x};
   std::vector<T2> nest_y_small{y, y};
-  EXPECT_THROW(f(nest_x,nest_y_small),std::domain_error);
-  EXPECT_THROW(f(nest_x_small,nest_y),std::domain_error);
+  EXPECT_THROW(f(nest_x, nest_y_small), std::domain_error);
+  EXPECT_THROW(f(nest_x_small, nest_y), std::domain_error);
 
   std::vector<std::vector<T1>> nest_nest_x{nest_x, nest_x, nest_x};
   std::vector<std::vector<T2>> nest_nest_y{nest_y, nest_y, nest_y};
@@ -138,8 +138,8 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   }
   std::vector<std::vector<T1>> nest_nest_x_small{nest_x, nest_x};
   std::vector<std::vector<T2>> nest_nest_y_small{nest_y, nest_y};
-  EXPECT_THROW(f(nest_nest_x,nest_nest_y_small),std::domain_error);
-  EXPECT_THROW(f(nest_nest_x_small,nest_nest_y),std::domain_error);
+  EXPECT_THROW(f(nest_nest_x, nest_nest_y_small), std::domain_error);
+  EXPECT_THROW(f(nest_nest_x_small, nest_nest_y), std::domain_error);
 }
 
 /**
