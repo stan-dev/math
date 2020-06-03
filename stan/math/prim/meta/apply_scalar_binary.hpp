@@ -51,6 +51,12 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
 template <typename T1, typename T2, typename F,
           require_all_eigen_t<T1, T2>* = nullptr>
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
+  if ((x.rows() != y.rows()) || (x.cols() != y.cols())) {
+    std::ostringstream msg;
+    msg << "Inputs to vectorized binary function must match in"
+        << " size if one is not a scalar";
+    throw std::domain_error(msg.str());
+  }
   return x.binaryExpr(y, f).eval();
 }
 
@@ -122,6 +128,12 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
 template <typename T1, typename T2, typename F,
           require_all_std_vector_vt<is_stan_scalar, T1, T2>* = nullptr>
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
+  if (x.size() != y.size()) {
+    std::ostringstream msg;
+    msg << "Inputs to vectorized binary function must match in"
+        << " size if one is not a scalar";
+    throw std::domain_error(msg.str());
+  }
   decltype(auto) x_vec = as_column_vector_or_scalar(x);
   decltype(auto) y_vec = as_column_vector_or_scalar(y);
   using T_return = value_type_t<decltype(x_vec.binaryExpr(y_vec, f))>;
@@ -208,6 +220,12 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
 template <typename T1, typename T2, typename F,
           require_all_std_vector_vt<is_container, T1, T2>* = nullptr>
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
+  if (x.size() != y.size()) {
+    std::ostringstream msg;
+    msg << "Inputs to vectorized binary function must match in"
+        << " size if one is not a scalar";
+    throw std::domain_error(msg.str());
+  }
   using T_return = decltype(apply_scalar_binary(x[0], y[0], f));
   size_t y_size = y.size();
   std::vector<T_return> result(y_size);
