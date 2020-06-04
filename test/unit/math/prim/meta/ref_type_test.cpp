@@ -154,9 +154,12 @@ TEST(MathMetaPrim, ref_type_for_opencl_eigen_contiguous) {
       (std::is_same<decltype(b), ref_type_for_opencl_t<decltype(b)&&>>::value));
   EXPECT_TRUE(
       (std::is_same<decltype(c), ref_type_for_opencl_t<decltype(c)&&>>::value));
-  EXPECT_TRUE(std::is_lvalue_reference<ref_type_for_opencl_t<Eigen::MatrixXd>>::value);
-  EXPECT_TRUE(std::is_lvalue_reference<ref_type_for_opencl_t<Eigen::MatrixXd&>>::value);
-  EXPECT_FALSE(std::is_reference<ref_type_for_opencl_t<Eigen::MatrixXd&&>>::value);
+  EXPECT_TRUE(
+      std::is_lvalue_reference<ref_type_for_opencl_t<Eigen::MatrixXd>>::value);
+  EXPECT_TRUE(
+      std::is_lvalue_reference<ref_type_for_opencl_t<Eigen::MatrixXd&>>::value);
+  EXPECT_FALSE(
+      std::is_reference<ref_type_for_opencl_t<Eigen::MatrixXd&&>>::value);
 }
 
 TEST(MathMetaPrim, ref_type_for_opencl_eigen_non_contiguous) {
