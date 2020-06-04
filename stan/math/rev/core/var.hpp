@@ -220,8 +220,7 @@ class var_value<T, require_floating_point_t<T>> {
    * @return The result of adding the specified variable to this variable.
    */
   template <typename S, require_convertible_t<S&, promote_args_t<T>>* = nullptr>
-  inline var_value<T, require_floating_point_t<T>>& operator+=(
-      const var_value<S>& b);
+  inline var_value<T>& operator+=(const var_value<S>& b);
 
   /**
    * The compound add/assignment operator for scalars (C++).
@@ -235,7 +234,7 @@ class var_value<T, require_floating_point_t<T>> {
    * @return The result of adding the specified variable to this variable.
    */
   template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
-  inline var_value<T, require_floating_point_t<T>>& operator+=(Arith b);
+  inline var_value<T>& operator+=(Arith b);
 
   /**
    * The compound subtract/assignment operator for variables (C++).
@@ -250,8 +249,7 @@ class var_value<T, require_floating_point_t<T>> {
    * this variable.
    */
   template <typename S, require_convertible_t<S&, promote_args_t<T>>* = nullptr>
-  inline var_value<T, require_floating_point_t<T>>& operator-=(
-      const var_value<S>& b);
+  inline var_value<T>& operator-=(const var_value<S>& b);
 
   /**
    * The compound subtract/assignment operator for scalars (C++).
@@ -266,7 +264,7 @@ class var_value<T, require_floating_point_t<T>> {
    * variable.
    */
   template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
-  inline var_value<T, require_floating_point_t<T>>& operator-=(Arith b);
+  inline var_value<T>& operator-=(Arith b);
 
   /**
    * The compound multiply/assignment operator for variables (C++).
@@ -281,8 +279,7 @@ class var_value<T, require_floating_point_t<T>> {
    * specified variable.
    */
   template <typename S, require_convertible_t<S&, promote_args_t<T>>* = nullptr>
-  inline var_value<T, require_floating_point_t<T>>& operator*=(
-      const var_value<S>& b);
+  inline var_value<T>& operator*=(const var_value<S>& b);
 
   /**
    * The compound multiply/assignment operator for scalars (C++).
@@ -297,7 +294,7 @@ class var_value<T, require_floating_point_t<T>> {
    * variable.
    */
   template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
-  inline var_value<T, require_floating_point_t<T>>& operator*=(Arith b);
+  inline var_value<T>& operator*=(Arith b);
 
   /**
    * The compound divide/assignment operator for variables (C++).  If this
@@ -311,8 +308,7 @@ class var_value<T, require_floating_point_t<T>> {
    * specified variable.
    */
   template <typename S, require_convertible_t<S&, promote_args_t<T>>* = nullptr>
-  inline var_value<T, require_floating_point_t<T>>& operator/=(
-      const var_value<S>& b);
+  inline var_value<T>& operator/=(const var_value<S>& b);
 
   /**
    * The compound divide/assignment operator for scalars (C++).
@@ -327,7 +323,7 @@ class var_value<T, require_floating_point_t<T>> {
    * variable.
    */
   template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
-  inline var_value<T, require_floating_point_t<T>>& operator/=(Arith b);
+  inline var_value<T>& operator/=(Arith b);
 
   /**
    * Write the value of this autodiff variable and its adjoint to
