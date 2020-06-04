@@ -17,7 +17,7 @@ namespace math {
  * @throw std::domain_error if x is less than or equal to `-e^(-1)`
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
-inline auto lambert_w0(const T& x) {
+inline double lambert_w0(const T& x) {
   return boost::math::lambert_w0(x, boost_policy_t<>());
 }
 
@@ -31,7 +31,7 @@ inline auto lambert_w0(const T& x) {
  * than or equal to 0
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
-inline auto lambert_wm1(const T& x) {
+inline double lambert_wm1(const T& x) {
   return boost::math::lambert_wm1(x, boost_policy_t<>());
 }
 
