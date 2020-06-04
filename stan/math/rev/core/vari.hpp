@@ -91,7 +91,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
   template <typename S,
             std::enable_if_t<std::is_convertible<S&, Scalar>::value>* = nullptr>
   vari_value(S x) : val_(x), adj_(0.0) {  // NOLINT
-    ChainableStack::instance_->var_stack_.emplace_back(this);
+    ChainableStack::instance_->var_stack_.push_back(this);
   }
 
   /**
@@ -115,9 +115,9 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
             std::enable_if_t<std::is_convertible<S&, Scalar>::value>* = nullptr>
   vari_value(S x, bool stacked) : val_(x), adj_(0.0) {
     if (stacked) {
-      ChainableStack::instance_->var_stack_.emplace_back(this);
+      ChainableStack::instance_->var_stack_.push_back(this);
     } else {
-      ChainableStack::instance_->var_nochain_stack_.emplace_back(this);
+      ChainableStack::instance_->var_nochain_stack_.push_back(this);
     }
   }
 
@@ -129,7 +129,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
   template <typename S,
             std::enable_if_t<std::is_arithmetic<S>::value>* = nullptr>
   vari_value(const vari_value<S>& x) : val_(x.val_), adj_(x.adj_) {
-    ChainableStack::instance_->var_stack_.emplace_back(this);
+    ChainableStack::instance_->var_stack_.push_back(this);
   }
 
   /**
@@ -194,26 +194,26 @@ using vari = vari_value<double>;
 
 class vari_zero_adj : public boost::static_visitor<> {
   public:
-      void operator()(vari_value<double>*& x) const {
+      inline void operator()(vari_value<double>*& x) const {
         x->adj_ = 0.0;
       }
-      void operator()(vari_value<float>*& x) const {
+      inline void operator()(vari_value<float>*& x) const {
         x->adj_ = 0.0;
       }
-      void operator()(vari_value<long double>*& x) const {
+      inline void operator()(vari_value<long double>*& x) const {
         x->adj_ = 0.0;
       }
 };
 
 class vari_chainer : public boost::static_visitor<> {
   public:
-      void operator()(vari_value<double>*& x) const {
+      inline void operator()(vari_value<double>*& x) const {
         x->chain();
       }
-      void operator()(vari_value<float>*& x) const {
+      inline void operator()(vari_value<float>*& x) const {
         x->chain();
       }
-      void operator()(vari_value<long double>*& x) const {
+      inline void operator()(vari_value<long double>*& x) const {
         x->chain();
       }
 };

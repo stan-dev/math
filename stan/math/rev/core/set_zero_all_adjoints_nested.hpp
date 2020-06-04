@@ -27,14 +27,14 @@ static void set_zero_all_adjoints_nested() {
   // avoid wrap with unsigned when start1 == 0
   for (size_t i = (start1 == 0U) ? 0U : (start1 - 1);
        i < ChainableStack::instance_->var_stack_.size(); ++i) {
-     boost::apply_visitor(vari_zero_adj(), ChainableStack::instance_->var_stack_[i]);
+     boost::apply_visitor([](auto*& x) { x->adj_ = 0.0;}, ChainableStack::instance_->var_stack_[i]);
   }
 
   size_t start2
       = ChainableStack::instance_->nested_var_nochain_stack_sizes_.back();
   for (size_t i = (start2 == 0U) ? 0U : (start2 - 1);
        i < ChainableStack::instance_->var_nochain_stack_.size(); ++i) {
-    boost::apply_visitor(vari_zero_adj(), ChainableStack::instance_->var_nochain_stack_[i]);
+    boost::apply_visitor([](auto*& x) { x->adj_ = 0.0;}, ChainableStack::instance_->var_nochain_stack_[i]);
   }
 }
 
