@@ -110,6 +110,9 @@ TEST(AgradMatrixRev, value_of_matrix_rvalue) {
   Matrix<var, -1, -1> a = MatrixXd::Random(7, 4);
   MatrixXd correct = value_of(a);
   const auto& tmp = value_of(std::move(a));
+  // we are expecting an expression, not a plain matrix
+  EXPECT_FALSE((std::is_same<std::decay_t<decltype(tmp)>,
+                             stan::plain_type_t<decltype(tmp)>>::value));
   a.setZero();
   MatrixXd res = tmp;
 

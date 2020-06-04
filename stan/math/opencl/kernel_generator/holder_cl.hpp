@@ -85,8 +85,8 @@ namespace internal {
  * @return `holder_cl` referencing given expression
  */
 template <typename T, std::size_t... Is, typename... Args>
-auto make_holder_cl_impl2(T&& expr, std::index_sequence<Is...>,
-                          const std::tuple<Args*...>& ptrs) {
+auto make_holder_cl_impl_step2(T&& expr, std::index_sequence<Is...>,
+                               const std::tuple<Args*...>& ptrs) {
   return holder_cl(std::forward<T>(expr), std::get<Is>(ptrs)...);
 }
 
@@ -100,12 +100,12 @@ auto make_holder_cl_impl2(T&& expr, std::index_sequence<Is...>,
  * @return `holder_cl` referencing given expression
  */
 template <typename T, std::size_t... Is, typename... Args>
-auto make_holder_cl_impl(const T& func, std::index_sequence<Is...>,
-                         Args&&... args) {
+auto make_holder_cl_impl_step1(const T& func, std::index_sequence<Is...>,
+                               Args&&... args) {
   std::tuple<std::remove_reference_t<Args>*...> res;
   auto ptrs = std::tuple_cat(
       holder_handle_element(std::forward<Args>(args), std::get<Is>(res))...);
-  return make_holder_cl_impl2(
+  return make_holder_cl_impl_step2(
       func(*std::get<Is>(res)...),
       std::make_index_sequence<std::tuple_size<decltype(ptrs)>::value>(), ptrs);
 }
@@ -127,7 +127,7 @@ template <typename T, typename... Args,
               decltype(std::declval<T>()(std::declval<Args&>()...)),
               Args...>* = nullptr>
 auto make_holder_cl(const T& func, Args&&... args) {
-  return internal::make_holder_cl_impl(
+  return internal::make_holder_cl_impl_step1(
       func, std::make_index_sequence<sizeof...(Args)>(),
       std::forward<Args>(args)...);
 }
