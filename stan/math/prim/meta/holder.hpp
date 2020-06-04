@@ -223,7 +223,7 @@ auto holder_handle_element(std::remove_reference_t<T>&& a, T*& res) {
  */
 template <typename T, std::size_t... Is, typename... Args>
 auto make_holder_impl_step2(T&& expr, std::index_sequence<Is...>,
-                       const std::tuple<Args*...>& ptrs) {
+                            const std::tuple<Args*...>& ptrs) {
   return holder(std::forward<T>(expr), std::get<Is>(ptrs)...);
 }
 
@@ -238,7 +238,7 @@ auto make_holder_impl_step2(T&& expr, std::index_sequence<Is...>,
  */
 template <typename T, std::size_t... Is, typename... Args>
 auto make_holder_impl_step1(const T& func, std::index_sequence<Is...>,
-                      Args&&... args) {
+                            Args&&... args) {
   std::tuple<std::remove_reference_t<Args>*...> res;
   auto ptrs = std::tuple_cat(
       holder_handle_element(std::forward<Args>(args), std::get<Is>(res))...);
@@ -263,9 +263,9 @@ template <typename T, typename... Args,
           require_eigen_t<
               decltype(std::declval<T>()(std::declval<Args&>()...))>* = nullptr>
 auto make_holder(const T& func, Args&&... args) {
-  return internal::make_holder_impl_step1(func,
-                                    std::make_index_sequence<sizeof...(Args)>(),
-                                    std::forward<Args>(args)...);
+  return internal::make_holder_impl_step1(
+      func, std::make_index_sequence<sizeof...(Args)>(),
+      std::forward<Args>(args)...);
 }
 
 }  // namespace math
