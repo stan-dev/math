@@ -316,8 +316,8 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     if (std::is_same<std::decay_t<Mat>, Mat_type>::value
         && (std::is_lvalue_reference<Mat>::value
             || is_eigen_contiguous_map<Mat>::value)) {
-      // .eval)= is here just in case other branch is selected and A does not have
-      // data directley accessible
+      // .eval)= is here just in case other branch is selected and A does not
+      // have data directley accessible
       initialize_buffer(A.eval().data());
     } else {
       auto* A_heap = new Mat_type(std::move(A));
