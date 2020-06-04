@@ -31,10 +31,11 @@ namespace math {
  * @return ODE state with scalar type var
  */
 template <typename F, typename T_y0_t0, typename T_t0, typename T_t,
-          typename... Args>
-Eigen::Matrix<typename std::enable_if_t<is_var<
-    return_type_t<typename F::captured_scalar_t__, T_y0_t0, T_t0, T_t, Args...>
-  >::value, var>, Eigen::Dynamic, 1> ode_store_sensitivities(
+          typename... Args,
+          typename
+          = require_any_autodiff_t<typename F::captured_scalar_t__, T_y0_t0,
+                                   T_t0, T_t, scalar_type_t<Args>...>>
+Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
     const F& f, const Eigen::VectorXd& coupled_state,
     const Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1>& y0, const T_t0& t0,
     const T_t& t, std::ostream* msgs, const Args&... args) {

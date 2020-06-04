@@ -121,7 +121,7 @@ TEST(StanMathOde_integrate_ode_rk45, error_conditions) {
   ts_bad.push_back(1);
   EXPECT_THROW_MSG(
       (integrate_ode_rk45(harm_osc, y0, t0, ts_bad, theta, x, x_int)),
-      std::domain_error, "times is not a valid ordered vector");
+      std::domain_error, "times is not a valid sorted vector");
 
   std::vector<double> theta_bad;
   EXPECT_THROW_MSG(
@@ -140,15 +140,15 @@ TEST(StanMathOde_integrate_ode_rk45, error_conditions) {
 
   EXPECT_THROW_MSG((integrate_ode_rk45(harm_osc, y0, t0, ts, theta, x, x_int, 0,
                                        -1, 1e-6, 10)),
-                   std::invalid_argument, "relative_tolerance");
+                   std::domain_error, "relative_tolerance");
 
   EXPECT_THROW_MSG((integrate_ode_rk45(harm_osc, y0, t0, ts, theta, x, x_int, 0,
                                        1e-6, -1, 10)),
-                   std::invalid_argument, "absolute_tolerance");
+                   std::domain_error, "absolute_tolerance");
 
   EXPECT_THROW_MSG((integrate_ode_rk45(harm_osc, y0, t0, ts, theta, x, x_int, 0,
                                        1e-6, 1e-6, -1)),
-                   std::invalid_argument, "max_num_steps");
+                   std::domain_error, "max_num_steps");
 }
 
 TEST(StanMathOde_integrate_ode_rk45, error_conditions_nan) {

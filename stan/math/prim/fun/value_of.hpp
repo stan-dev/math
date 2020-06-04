@@ -99,22 +99,15 @@ inline Vec value_of(Vec&& x) {
  * T must implement value_of. See
  * test/math/fwd/fun/value_of.cpp for fvar and var usage.
  *
- * @tparam T type of elements in the matrix
- * @tparam R number of rows in the matrix, can be Eigen::Dynamic
- * @tparam C number of columns in the matrix, can be Eigen::Dynamic
+ * @tparam EigMat type of the matrix
  *
  * @param[in] M Matrix to be converted
  * @return Matrix of values
  **/
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
           require_not_vt_double_or_int<EigMat>* = nullptr>
-inline Eigen::Matrix<typename child_type<value_type_t<EigMat>>::type,
-                     EigMat::RowsAtCompileTime, EigMat::ColsAtCompileTime>
-value_of(const EigMat& M) {
-  return M.array()
-      .unaryExpr([](const auto& scal) { return value_of(scal); })
-      .matrix()
-      .eval();
+inline auto value_of(const EigMat& M) {
+  return M.unaryExpr([](const auto& scal) { return value_of(scal); }).eval();
 }
 
 /**
@@ -125,8 +118,7 @@ value_of(const EigMat& M) {
  *
  * <p>This inline pass-through no-op should be compiled away.
  *
- * @tparam R number of rows in the matrix, can be Eigen::Dynamic
- * @tparam C number of columns in the matrix, can be Eigen::Dynamic
+ * @tparam EigMat type of the matrix
  *
  * @param x Specified matrix.
  * @return Specified matrix.

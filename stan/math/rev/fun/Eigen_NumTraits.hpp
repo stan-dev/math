@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/core.hpp>
+#include <stan/math/rev/fun/read_var.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/core/std_numeric_limits.hpp>
@@ -210,6 +211,40 @@ struct ScalarBinaryOpTraits<std::complex<stan::math::var>,
 };
 
 namespace internal {
+
+/**
+ * Enable linear access of inputs when using read_vi_val_adj.
+ */
+template <typename EigVar, typename EigVari, typename EigDbl>
+struct functor_has_linear_access<
+    stan::math::vi_val_adj_functor<EigVar, EigVari, EigDbl>> {
+  enum { ret = 1 };
+};
+
+/**
+ * Enable linear access of inputs when using read_val_adj.
+ */
+template <typename EigVar, typename EigDbl>
+struct functor_has_linear_access<stan::math::val_adj_functor<EigVar, EigDbl>> {
+  enum { ret = 1 };
+};
+
+/**
+ * Enable linear access of inputs when using read_vi_val.
+ */
+template <typename EigVar, typename EigVari>
+struct functor_has_linear_access<stan::math::vi_val_functor<EigVar, EigVari>> {
+  enum { ret = 1 };
+};
+
+/**
+ * Enable linear access of inputs when using read_vi_adj.
+ */
+template <typename EigVar, typename EigVari>
+struct functor_has_linear_access<stan::math::vi_adj_functor<EigVar, EigVari>> {
+  enum { ret = 1 };
+};
+
 /**
  * Partial specialization of Eigen's remove_all struct to stop
  * Eigen removing pointer from vari* variables

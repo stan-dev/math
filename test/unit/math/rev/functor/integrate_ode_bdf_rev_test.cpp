@@ -26,6 +26,8 @@ void sho_value_test(F harm_osc, std::vector<double>& y0, double t0,
 
   EXPECT_NEAR(-0.421907, ode_res_vd[99][0].val(), 1e-5);
   EXPECT_NEAR(0.246407, ode_res_vd[99][1].val(), 1e-5);
+
+  stan::math::recover_memory();
 }
 
 void sho_finite_diff_test(double t0) {
@@ -129,7 +131,7 @@ TEST(StanAgradRevOde_integrate_ode_bdf, harmonic_oscillator_error) {
 
   // aligned error handling with non-stiff case
   std::string error_msg
-      = "cvodes_integrator::rhs: dy_dt (3) and states (2) must match in size";
+      = "cvodes_integrator: dy_dt (3) and states (2) must match in size";
 
   sho_error_test<double, var>(harm_osc, y0, t0, ts, theta, x, x_int, error_msg);
   sho_error_test<var, double>(harm_osc, y0, t0, ts, theta, x, x_int, error_msg);
@@ -159,7 +161,7 @@ TEST(StanAgradRevOde_integrate_ode_bdf, lorenz_finite_diff) {
   for (int i = 0; i < 100; i++)
     ts.push_back(0.1 * (i + 1));
 
-  test_ode_cvode(lorenz, t0, ts, y0, theta, x, x_int, 1e-8, 1e-1);
+  test_ode_cvode(lorenz, t0, ts, y0, theta, x, x_int, 1e-6, 1e-1);
 }
 
 TEST(StanAgradRevOde_integrate_ode_bdf, time_steps_as_param) {
@@ -202,6 +204,8 @@ TEST(StanAgradRevOde_integrate_ode_bdf, time_steps_as_param) {
   test_val();
   res = integrate_ode_bdf(ode, y0v, t0v, ts, thetav, x, x_int);
   test_val();
+
+  stan::math::recover_memory();
 }
 
 TEST(StanAgradRevOde_integrate_ode_bdf, time_steps_as_param_AD) {
@@ -234,13 +238,13 @@ TEST(StanAgradRevOde_integrate_ode_bdf, time_steps_as_param_AD) {
       std::vector<double> res_d = value_of(res[i]);
       for (auto j = 0; j < ns; ++j) {
         g.clear();
-        res[i][j].grad(ts, g);
+        res[i][j].grad();
         for (auto k = 0; k < nt; ++k) {
           if (k != i) {
-            EXPECT_FLOAT_EQ(g[k], 0.0);
+            EXPECT_FLOAT_EQ(ts[k].adj(), 0.0);
           } else {
             std::vector<double> y0(res_d.begin(), res_d.begin() + ns);
-            EXPECT_FLOAT_EQ(g[k],
+            EXPECT_FLOAT_EQ(ts[k].adj(),
                             ode(ts[i].val(), y0, msgs, theta, x, x_int)[j]);
           }
         }
@@ -305,4 +309,5 @@ TEST(StanAgradRevOde_integrate_ode_bdf, t0_as_param_AD) {
   res = integrate_ode_bdf(ode, y0v, t0v, ts, thetav, x, x_int, nullptr, 1e-10,
                           1e-10, 1e6);
   test_ad();
+  stan::math::recover_memory();
 }

@@ -47,6 +47,7 @@ class cvodes_integrator {
   std::ostream* msgs_;
   double relative_tolerance_;
   double absolute_tolerance_;
+  bool include_sensitivities_in_errors_;
   long int max_num_steps_;
 
   const size_t y0_vars_;
@@ -110,8 +111,8 @@ class cvodes_integrator {
         = apply([&](auto&&... args) { return f_dbl_(t, y_vec, msgs_, args...); },
                 value_of_args_tuple_);
 
-    check_size_match("cvodes_integrator::rhs", "dy_dt", dy_dt_vec.size(),
-                     "states", N_);
+    check_size_match("cvodes_integrator", "dy_dt", dy_dt_vec.size(), "states",
+                     N_);
 
     std::copy(dy_dt_vec.data(), dy_dt_vec.data() + dy_dt_vec.size(), dy_dt);
   }
@@ -147,7 +148,7 @@ class cvodes_integrator {
   inline void rhs_sens(double t, const double y[], N_Vector* yS,
                        N_Vector* ySdot) const {
     Eigen::VectorXd z(coupled_state_.size());
-    Eigen::VectorXd dz_dt(coupled_state_.size());
+    Eigen::VectorXd dz_dt;
     std::copy(y, y + N_, z.data());
     for (std::size_t s = 0; s < y0_vars_ + args_vars_ + f_.num_vars__; s++) {
       std::copy(NV_DATA_S(yS[s]), NV_DATA_S(yS[s]) + N_,
@@ -184,6 +185,7 @@ class cvodes_integrator {
                     const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
                     const T_t0& t0, const std::vector<T_ts>& ts,
                     double relative_tolerance, double absolute_tolerance,
+                    bool include_sensitivities_in_errors,
                     long int max_num_steps, std::ostream* msgs,
                     const T_Args&... args)
       : f_(f),
@@ -197,6 +199,7 @@ class cvodes_integrator {
         msgs_(msgs),
         relative_tolerance_(relative_tolerance),
         absolute_tolerance_(absolute_tolerance),
+        include_sensitivities_in_errors_(include_sensitivities_in_errors),
         max_num_steps_(max_num_steps),
         y0_vars_(count_vars(y0_)),
         args_vars_(count_vars(args...)),
@@ -219,7 +222,7 @@ class cvodes_integrator {
 
     check_nonzero_size(fun, "times", ts_);
     check_nonzero_size(fun, "initial state", y0_);
-    check_ordered(fun, "times", ts_);
+    check_sorted(fun, "times", ts_);
     check_less(fun, "initial time", t0_, ts_[0]);
     check_positive_finite(fun, "relative_tolerance", relative_tolerance_);
     check_positive_finite(fun, "absolute_tolerance", absolute_tolerance_);
@@ -256,12 +259,13 @@ class cvodes_integrator {
    * @return std::vector of Eigen::Matrix of the states of the ODE, one for each
    *   solution time (excluding the initial state)
    */
-  std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>>
-  integrate() {  // NOLINT(runtime/int)
-    std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y;
+  std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> operator()() {
+    return (*this)(0.0, {});
+  }
 
-    const double t0_dbl = value_of(t0_);
-    const std::vector<double> ts_dbl = value_of(ts_);
+  std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> operator()(
+      double rtols, std::vector<double> atols) {
+    std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y;
 
     void* cvodes_mem = CVodeCreate(Lmm);
     if (cvodes_mem == nullptr) {
@@ -269,9 +273,9 @@ class cvodes_integrator {
     }
 
     try {
-      check_flag_sundials(
-          CVodeInit(cvodes_mem, &cvodes_integrator::cv_rhs, t0_dbl, nv_state_),
-          "CVodeInit");
+      check_flag_sundials(CVodeInit(cvodes_mem, &cvodes_integrator::cv_rhs,
+                                    value_of(t0_), nv_state_),
+                          "CVodeInit");
 
       // Assign pointer to this as user data
       check_flag_sundials(
@@ -299,23 +303,44 @@ class cvodes_integrator {
                           nv_state_sens_),
             "CVodeSensInit");
 
-        check_flag_sundials(CVodeSensEEtolerances(cvodes_mem),
-                            "CVodeSensEEtolerances");
+        if (include_sensitivities_in_errors_) {
+          check_flag_sundials(CVodeSetSensErrCon(cvodes_mem, SUNTRUE),
+                              "CVodeSetSensErrCon");
+        } else {
+          check_flag_sundials(CVodeSetSensErrCon(cvodes_mem, SUNFALSE),
+                              "CVodeSetSensErrCon");
+        }
+
+        if (atols.size() > 0) {
+          check_positive_finite("cvodes_integrator",
+                                "sensitivity relative_tolerance", rtols);
+          check_size_match("cvodes_interator", "atols.size()", atols.size(),
+                           "number of sensitivities", y0_vars_ + args_vars_);
+          check_positive_finite("cvodes_integrator",
+                                "sensitivity absolute_tolerance", atols);
+          check_flag_sundials(
+              CVodeSensSStolerances(cvodes_mem, rtols, atols.data()),
+              "CVodeSensSStolerances");
+        } else {
+          check_flag_sundials(CVodeSensEEtolerances(cvodes_mem),
+                              "CVodeSensEEtolerances");
+        }
       }
 
-      double t_init = t0_dbl;
+      double t_init = value_of(t0_);
       for (size_t n = 0; n < ts_.size(); ++n) {
-        double t_final = ts_dbl[n];
+        double t_final = value_of(ts_[n]);
 
         if (t_final != t_init) {
           check_flag_sundials(
               CVode(cvodes_mem, t_final, nv_state_, &t_init, CV_NORMAL),
               "CVode");
-        }
 
-        if (y0_vars_ + args_vars_ + f_.num_vars__ > 0) {
-          check_flag_sundials(CVodeGetSens(cvodes_mem, &t_init, nv_state_sens_),
-                              "CVodeGetSens");
+          if (y0_vars_ + args_vars_ + f_.num_vars__ > 0) {
+            check_flag_sundials(
+                CVodeGetSens(cvodes_mem, &t_init, nv_state_sens_),
+                "CVodeGetSens");
+          }
         }
 
         y.emplace_back(apply(

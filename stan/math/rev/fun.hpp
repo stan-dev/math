@@ -38,6 +38,8 @@
 #include <stan/math/rev/fun/divide.hpp>
 #include <stan/math/rev/fun/dot_product.hpp>
 #include <stan/math/rev/fun/dot_self.hpp>
+#include <stan/math/rev/fun/eigenvalues_sym.hpp>
+#include <stan/math/rev/fun/eigenvectors_sym.hpp>
 #include <stan/math/rev/fun/erf.hpp>
 #include <stan/math/rev/fun/erfc.hpp>
 #include <stan/math/rev/fun/exp.hpp>
@@ -115,6 +117,7 @@
 #include <stan/math/rev/fun/proj.hpp>
 #include <stan/math/rev/fun/quad_form.hpp>
 #include <stan/math/rev/fun/quad_form_sym.hpp>
+#include <stan/math/rev/fun/read_var.hpp>
 #include <stan/math/rev/fun/rising_factorial.hpp>
 #include <stan/math/rev/fun/round.hpp>
 #include <stan/math/rev/fun/rows_dot_product.hpp>

@@ -75,8 +75,8 @@ class operation_cl : public operation_cl_base {
 
  protected:
   std::tuple<internal::wrapper<Args>...> arguments_;
-  mutable std::string var_name;  // name of the variable that holds result of
-                                 // this operation in the kernel
+  mutable std::string var_name_;  // name of the variable that holds result of
+                                  // this operation in the kernel
 
  public:
   /**
@@ -169,45 +169,48 @@ class operation_cl : public operation_cl_base {
    * Generates kernel code for assigning this expression into result expression.
    * @param[in,out] generated set of (pointer to) already generated operations
    * @param ng name generator for this kernel
-   * @param i row index variable name
-   * @param j column index variable name
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
    * @param result expression into which result is to be assigned
    * @return part of kernel with code for this and nested expressions
    */
   template <typename T_result>
   kernel_parts get_whole_kernel_parts(
       std::set<const operation_cl_base*>& generated, name_generator& ng,
-      const std::string& i, const std::string& j,
+      const std::string& row_index_name, const std::string& col_index_name,
       const T_result& result) const {
-    kernel_parts parts = derived().get_kernel_parts(generated, ng, i, j, false);
-    kernel_parts out_parts = result.get_kernel_parts_lhs(generated, ng, i, j);
-    out_parts.body += " = " + derived().var_name + ";\n";
+    kernel_parts parts = derived().get_kernel_parts(
+        generated, ng, row_index_name, col_index_name, false);
+    kernel_parts out_parts = result.get_kernel_parts_lhs(
+        generated, ng, row_index_name, col_index_name);
+    out_parts.body += " = " + derived().var_name_ + ";\n";
     parts += out_parts;
     return parts;
   }
 
   /**
-   * generates kernel code for this and nested expressions.
+   * Generates kernel code for this and nested expressions.
    * @param[in,out] generated set of (pointer to) already generated operations
    * @param name_gen name generator for this kernel
-   * @param i row index variable name
-   * @param j column index variable name
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
    * @param view_handled whether caller already handled matrix view
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
       std::set<const operation_cl_base*>& generated, name_generator& name_gen,
-      const std::string& i, const std::string& j, bool view_handled) const {
+      const std::string& row_index_name, const std::string& col_index_name,
+      bool view_handled) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
-      this->var_name = name_gen.generate();
+      this->var_name_ = name_gen.generate();
       generated.insert(this);
-      std::string i_arg = i;
-      std::string j_arg = j;
-      derived().modify_argument_indices(i_arg, j_arg);
+      std::string row_index_name_arg = row_index_name;
+      std::string col_index_name_arg = col_index_name;
+      derived().modify_argument_indices(row_index_name_arg, col_index_name_arg);
       std::array<kernel_parts, N> args_parts = index_apply<N>([&](auto... Is) {
         return std::array<kernel_parts, N>{this->get_arg<Is>().get_kernel_parts(
-            generated, name_gen, i_arg, j_arg,
+            generated, name_gen, row_index_name_arg, col_index_name_arg,
             view_handled
                 && std::tuple_element_t<
                        Is, typename Deriv::view_transitivity>::value)...};
@@ -215,8 +218,9 @@ class operation_cl : public operation_cl_base {
       res = std::accumulate(args_parts.begin(), args_parts.end(),
                             kernel_parts{});
       kernel_parts my_part = index_apply<N>([&](auto... Is) {
-        return this->derived().generate(i, j, view_handled,
-                                        this->get_arg<Is>().var_name...);
+        return this->derived().generate(row_index_name, col_index_name,
+                                        view_handled,
+                                        this->get_arg<Is>().var_name_...);
       });
       res += my_part;
       res.body = res.body_prefix + res.body;
@@ -226,14 +230,31 @@ class operation_cl : public operation_cl_base {
   }
 
   /**
-   * Does nothing. Derived classes can override this to modify how indices are
-   * passed to its argument expressions. On input arguments \c i and \c j are
-   * expressions for indices of this operation. On output they are expressions
-   * for indices of argument operations.
-   * @param[in, out] i row index
-   * @param[in, out] j column index
+   * Generates kernel code for this expression.
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
+   * @param view_handled whether caller already handled matrix view
+   * @param var_name_arg variable name of the nested expression
+   * @return part of kernel with code for this expression
    */
-  inline void modify_argument_indices(std::string& i, std::string& j) const {}
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
+                               const bool view_handled,
+                               const std::string& var_name_arg) const {
+    var_name_ = var_name_arg;
+    return {};
+  }
+
+  /**
+   * Does nothing. Derived classes can override this to modify how indices are
+   * passed to its argument expressions. On input arguments \c row_index_name
+   * and \c col_index_name are expressions for indices of this operation. On
+   * output they are expressions for indices of argument operations.
+   * @param[in, out] row_index_name row index
+   * @param[in, out] col_index_name column index
+   */
+  inline void modify_argument_indices(std::string& row_index_name,
+                                      std::string& col_index_name) const {}
 
   /**
    * Sets kernel arguments for nested expressions.
