@@ -30,11 +30,10 @@ inline typename VectorBuilder<true, int, T_t>::type bernoulli_logit_rng(
     const T_t& t, RNG& rng) {
   using boost::bernoulli_distribution;
   using boost::variate_generator;
-  ref_type_t<T_t> t_ref = t;
   check_finite("bernoulli_logit_rng", "Logit transformed probability parameter",
-               t_ref);
+               t);
 
-  scalar_seq_view<T_t> t_vec(t_ref);
+  scalar_seq_view<T_t> t_vec(t);
   size_t N = stan::math::size(t);
   VectorBuilder<true, int, T_t> output(N);
 
