@@ -26,13 +26,6 @@ class vari_base {
   virtual void chain() {}
 
   /**
-   * Set the adjoint value of this variable to 0.  This is used to
-   * reset adjoints before propagating derivatives again (for
-   * example in a Jacobian calculation).
-   */
-  virtual void set_zero_adjoint() = 0;
-
-  /**
    * Throw an illegal argument exception.
    *
    * <i>Warning</i>: Destructors should never called for var objects.
@@ -58,7 +51,7 @@ class vari_base {
  * classes will store operand variables and propagate derivative
  * information via an implementation of chain().
  */
-template <typename T, typename = void>
+template <typename T, typename>
 class vari_value;
 
 template <typename T>
@@ -98,7 +91,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
   template <typename S,
             std::enable_if_t<std::is_convertible<S&, Scalar>::value>* = nullptr>
   vari_value(S x) : val_(x), adj_(0.0) {  // NOLINT
-    ChainableStack::instance_->var_stack_.push_back(this);
+    ChainableStack::instance_->var_stack_.emplace_back(this);
   }
 
   /**
@@ -122,9 +115,9 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
             std::enable_if_t<std::is_convertible<S&, Scalar>::value>* = nullptr>
   vari_value(S x, bool stacked) : val_(x), adj_(0.0) {
     if (stacked) {
-      ChainableStack::instance_->var_stack_.push_back(this);
+      ChainableStack::instance_->var_stack_.emplace_back(this);
     } else {
-      ChainableStack::instance_->var_nochain_stack_.push_back(this);
+      ChainableStack::instance_->var_nochain_stack_.emplace_back(this);
     }
   }
 
@@ -136,7 +129,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
   template <typename S,
             std::enable_if_t<std::is_arithmetic<S>::value>* = nullptr>
   vari_value(const vari_value<S>& x) : val_(x.val_), adj_(x.adj_) {
-    ChainableStack::instance_->var_stack_.push_back(this);
+    ChainableStack::instance_->var_stack_.emplace_back(this);
   }
 
   /**
@@ -152,7 +145,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  void set_zero_adjoint() final { adj_ = 0.0; }
+  void set_zero_adjoint() { adj_ = 0.0; }
 
   /**
    * Insertion operator for vari. Prints the current value and
@@ -199,6 +192,47 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
 // For backwards compatability the default is double
 using vari = vari_value<double>;
 
+class vari_zero_adj : public boost::static_visitor<> {
+  public:
+      void operator()(vari_value<double>*& x) const {
+        x->adj_ = 0.0;
+      }
+      void operator()(vari_value<float>*& x) const {
+        x->adj_ = 0.0;
+      }
+      void operator()(vari_value<long double>*& x) const {
+        x->adj_ = 0.0;
+      }
+};
+
+class vari_chainer : public boost::static_visitor<> {
+  public:
+      void operator()(vari_value<double>*& x) const {
+        x->chain();
+      }
+      void operator()(vari_value<float>*& x) const {
+        x->chain();
+      }
+      void operator()(vari_value<long double>*& x) const {
+        x->chain();
+      }
+};
+
+class vari_printer : public boost::static_visitor<> {
+public:
+    int i_{0};
+    std::ostream& o_;
+    vari_printer(std::ostream& o, int i) : o_(o), i_(i) {}
+    template <typename T>
+    void operator()(T*& x) const {
+      // TODO(carpenter): this shouldn't need to be cast any more
+        o_ << i_ << "  " << x << "  "
+          << x->val_
+          << " : "
+          << x->adj_
+          << std::endl;
+      }
+};
 }  // namespace math
 }  // namespace stan
 #endif

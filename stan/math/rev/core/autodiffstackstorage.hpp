@@ -101,8 +101,8 @@ struct AutodiffStackSingleton {
   struct AutodiffStackStorage {
     AutodiffStackStorage &operator=(const AutodiffStackStorage &) = delete;
 
-    std::vector<ChainableT *> var_stack_;
-    std::vector<ChainableT *> var_nochain_stack_;
+    std::vector<ChainableT> var_stack_;
+    std::vector<ChainableT> var_nochain_stack_;
     std::vector<ChainableAllocT *> var_alloc_stack_;
     stack_alloc memalloc_;
 
