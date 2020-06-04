@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/opencl/copy.hpp>
@@ -74,18 +75,21 @@ return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(
 
   T_partials_return logp(0);
 
-  const auto& beta_val = value_of_rec(beta);
-  const auto& alpha_val = value_of_rec(alpha);
+  const auto& alpha_ref = to_ref_if<!is_constant<T_alpha>::value>(alpha);
+  const auto& beta_ref = to_ref_if<!is_constant<T_beta>::value>(beta);
 
-  const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
+  const auto& alpha_val = value_of_rec(alpha_ref);
+  const auto& beta_val = value_of_rec(beta_ref);
+
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
+  const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
 
   const int local_size
       = opencl_kernels::poisson_log_glm.get_option("LOCAL_SIZE_");
   const int wgs = (N + local_size - 1) / local_size;
 
-  matrix_cl<double> beta_cl(beta_val_vec);
   matrix_cl<double> alpha_cl(alpha_val_vec);
+  matrix_cl<double> beta_cl(beta_val_vec);
 
   matrix_cl<double> theta_derivative_cl(N, 1);
   matrix_cl<double> theta_derivative_sum_cl(wgs, 1);
@@ -116,7 +120,8 @@ return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(
                  from_matrix_cl(x_cl));
   }
 
-  operands_and_partials<T_alpha, T_beta> ops_partials(alpha, beta);
+  operands_and_partials<decltype(alpha_ref), decltype(beta_ref)> ops_partials(
+      alpha_ref, beta_ref);
   // Compute the necessary derivatives.
   if (!is_constant_all<T_alpha>::value) {
     if (is_vector<T_alpha>::value)
@@ -136,12 +141,6 @@ return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(
   return ops_partials.build(logp);
 }
 
-template <typename T_alpha, typename T_beta>
-inline return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(
-    const matrix_cl<int>& y, const matrix_cl<double>& x, const T_alpha& alpha,
-    const T_beta& beta) {
-  return poisson_log_glm_lpmf<false>(y, x, alpha, beta);
-}
 }  // namespace math
 }  // namespace stan
 

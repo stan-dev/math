@@ -25,8 +25,7 @@ namespace math {
  *
  * @tparam T_y type of vector of variates (labels), integers >=0;
  * this can also be a single positive integer;
- * @tparam T_x_scalar type of a scalar in the matrix of independent variables
- * (features)
+ * @tparam T_x type the matrix of independent variables (features)
  * @tparam T_x_rows compile-time number of rows of `x`. It can be either
  * `Eigen::Dynamic` or 1.
  * @tparam T_alpha type of the intercept(s);
@@ -45,16 +44,18 @@ namespace math {
  * @throw std::domain_error if y is negative.
  * @throw std::invalid_argument if container sizes mismatch.
  */
-template <bool propto, typename T_y, typename T_x_scalar, int T_x_rows,
-          typename T_alpha, typename T_beta>
-return_type_t<T_x_scalar, T_alpha, T_beta> poisson_log_glm_lpmf(
-    const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
-    const T_alpha& alpha, const T_beta& beta) {
+template <bool propto, typename T_y, typename T_x, typename T_alpha,
+          typename T_beta, require_eigen_t<T_x>* = nullptr>
+return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
+                                                         const T_x& x,
+                                                         const T_alpha& alpha,
+                                                         const T_beta& beta) {
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
-  using T_partials_return = partials_return_t<T_y, T_x_scalar, T_alpha, T_beta>;
+  constexpr int T_x_rows = T_x::RowsAtCompileTime;
+  using T_partials_return = partials_return_t<T_y, T_x, T_alpha, T_beta>;
   using T_alpha_val = typename std::conditional_t<
       is_vector<T_alpha>::value,
       Eigen::Array<partials_return_t<T_alpha>, -1, 1>,
@@ -71,31 +72,38 @@ return_type_t<T_x_scalar, T_alpha, T_beta> poisson_log_glm_lpmf(
                         N_instances);
   check_consistent_size(function, "Weight vector", beta, N_attributes);
   check_consistent_size(function, "Vector of intercepts", alpha, N_instances);
-  check_nonnegative(function, "Vector of dependent variables", y);
+  const auto& y_ref = to_ref(y);
+  check_nonnegative(function, "Vector of dependent variables", y_ref);
 
   if (size_zero(y)) {
     return 0;
   }
 
-  if (!include_summand<propto, T_x_scalar, T_alpha, T_beta>::value) {
+  if (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
     return 0;
   }
 
   T_partials_return logp(0);
 
-  const auto& x_val = to_ref(value_of_rec(x));
-  const auto& y_val = value_of_rec(y);
-  const auto& beta_val = value_of_rec(beta);
-  const auto& alpha_val = value_of_rec(alpha);
+  const auto& x_ref = to_ref_if<!is_constant<T_x>::value>(x);
+  const auto& alpha_ref = to_ref_if<!is_constant<T_alpha>::value>(alpha);
+  const auto& beta_ref = to_ref_if<!is_constant<T_beta>::value>(beta);
+
+  const auto& y_val = value_of_rec(y_ref);
+  const auto& x_val
+      = to_ref_if<!is_constant<T_beta>::value>(value_of_rec(x_ref));
+  const auto& alpha_val = value_of_rec(alpha_ref);
+  const auto& beta_val = value_of_rec(beta_ref);
 
   const auto& y_val_vec = to_ref(as_column_vector_or_scalar(y_val));
-  const auto& beta_val_vec = to_ref(as_column_vector_or_scalar(beta_val));
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
+  const auto& beta_val_vec = to_ref_if<!is_constant<T_x>::value>(
+      as_column_vector_or_scalar(beta_val));
 
   Array<T_partials_return, Dynamic, 1> theta(N_instances);
   if (T_x_rows == 1) {
     T_theta_tmp theta_tmp
-        = forward_as<T_theta_tmp>((x_val * beta_val_vec)(0, 0));
+        = forward_as<T_theta_tmp>((x_val * beta_val_vec).coeff(0, 0));
     theta = theta_tmp + as_array_or_scalar(alpha_val_vec);
   } else {
     theta = x_val * beta_val_vec;
@@ -121,9 +129,9 @@ return_type_t<T_x_scalar, T_alpha, T_beta> poisson_log_glm_lpmf(
   logp += sum(as_array_or_scalar(y_val_vec) * theta.array()
               - exp(theta.array()));
 
-  operands_and_partials<Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>,
-                        T_alpha, T_beta>
-      ops_partials(x, alpha, beta);
+  operands_and_partials<decltype(x_ref), decltype(alpha_ref),
+                        decltype(beta_ref)>
+      ops_partials(x_ref, alpha_ref, beta_ref);
   // Compute the necessary derivatives.
   if (!is_constant_all<T_beta>::value) {
     if (T_x_rows == 1) {
@@ -134,7 +142,7 @@ return_type_t<T_x_scalar, T_alpha, T_beta> poisson_log_glm_lpmf(
       ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
     }
   }
-  if (!is_constant_all<T_x_scalar>::value) {
+  if (!is_constant_all<T_x>::value) {
     if (T_x_rows == 1) {
       ops_partials.edge1_.partials_
           = forward_as<Array<T_partials_return, Dynamic, T_x_rows>>(

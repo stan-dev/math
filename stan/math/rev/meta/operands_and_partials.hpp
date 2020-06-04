@@ -80,11 +80,11 @@ class ops_partials_edge<double, var> {
 template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5>
 class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
  public:
-  internal::ops_partials_edge<double, Op1> edge1_;
-  internal::ops_partials_edge<double, Op2> edge2_;
-  internal::ops_partials_edge<double, Op3> edge3_;
-  internal::ops_partials_edge<double, Op4> edge4_;
-  internal::ops_partials_edge<double, Op5> edge5_;
+  internal::ops_partials_edge<double, std::decay_t<Op1>> edge1_;
+  internal::ops_partials_edge<double, std::decay_t<Op2>> edge2_;
+  internal::ops_partials_edge<double, std::decay_t<Op3>> edge3_;
+  internal::ops_partials_edge<double, std::decay_t<Op4>> edge4_;
+  internal::ops_partials_edge<double, std::decay_t<Op5>> edge5_;
 
   explicit operands_and_partials(const Op1& o1) : edge1_(o1) {}
   operands_and_partials(const Op1& o1, const Op2& o2)
@@ -184,14 +184,14 @@ class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
   const Op& operands_;
 
   void dump_operands(vari** varis) {
-    for (int i = 0; i < this->operands_.size(); ++i) {
-      varis[i] = this->operands_(i).vi_;
-    }
+    Eigen::Map<promote_scalar_t<vari*, Op>>(varis, this->operands_.rows(),
+                                            this->operands_.cols())
+        = this->operands_.vi();
   }
   void dump_partials(double* partials) {
-    for (int i = 0; i < this->partials_.size(); ++i) {
-      partials[i] = this->partials_(i);
-    }
+    Eigen::Map<partials_t>(partials, this->partials_.rows(),
+                           this->partials_.cols())
+        = this->partials_;
   }
   int size() { return this->operands_.size(); }
 };
