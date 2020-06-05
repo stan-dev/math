@@ -160,11 +160,11 @@ struct evaluator<stan::math::Holder<ArgType, Ptrs...>>
   template <int StoreMode, typename PacketType>
   EIGEN_STRONG_INLINE void writePacket(Index row, Index col,
                                        const PacketType& x) {
-    return m_argImpl.template writePacket<LoadMode, PacketType>(row, col, x);
+    return m_argImpl.template writePacket<StoreMode, PacketType>(row, col, x);
   }
   template <int StoreMode, typename PacketType>
   EIGEN_STRONG_INLINE void writePacket(Index index, const PacketType& x) {
-    return m_argImpl.template writePacket<LoadMode, PacketType>(index, x);
+    return m_argImpl.template writePacket<StoreMode, PacketType>(index, x);
   }
 };
 
@@ -222,7 +222,7 @@ auto holder_handle_element(T& a, T*& res) {
  * @return tuple of pointers allocated on heap (containing single pointer).
  */
 template <typename T,
-          std::enable_if_t<std::is_rvalue_reference<T&&>>* = nullptr>
+          require_t<std::is_rvalue_reference<T&&>>* = nullptr>
 auto holder_handle_element(T&& a, T*& res) {
   res = new T(std::move(a));
   return std::make_tuple(res);
