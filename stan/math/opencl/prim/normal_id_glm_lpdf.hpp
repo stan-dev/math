@@ -116,12 +116,10 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   auto sigma_bc_expr = broadcast<!is_sigma_vector, false>(sigma_cl);
   auto inv_sigma_expr = elt_divide(1., sigma_bc_expr);
   auto y_scaled_expr = elt_multiply(
-      (colwise_optional_broadcast(y_cl)
-       - matrix_vector_multiply(x_cl, beta_cl)
+      (colwise_optional_broadcast(y_cl) - matrix_vector_multiply(x_cl, beta_cl)
        - broadcast<!is_alpha_vector, false>(alpha_cl)),
       inv_sigma_expr);
-  auto mu_derivative_expr
-      = elt_multiply(y_scaled_expr, inv_sigma_expr);
+  auto mu_derivative_expr = elt_multiply(y_scaled_expr, inv_sigma_expr);
   auto mu_derivative_sum_expr = colwise_sum(mu_derivative_expr);
   auto y_scaled_sq_expr = elt_multiply(y_scaled_expr, y_scaled_expr);
   auto y_scaled_sq_sum_expr = colwise_sum(y_scaled_sq_expr);

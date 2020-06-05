@@ -74,8 +74,8 @@ struct multi_result_kernel_internal {
       const char* function = "results.operator=";
       if (!is_without_output<T_current_expression>::value) {
         check_size_match(function, "Rows of ", "expression",
-                         expression.thread_rows(), "rows of ", "first expression",
-                         n_rows);
+                         expression.thread_rows(), "rows of ",
+                         "first expression", n_rows);
         check_size_match(function, "Columns of ", "expression",
                          expression.thread_cols(), "columns of ",
                          "first expression", n_cols);
