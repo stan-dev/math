@@ -51,7 +51,8 @@ namespace math {
  */
 template <typename F, typename T_initial, typename T_t0, typename T_ts,
           typename... Args>
-std::vector<Eigen::Matrix<stan::return_type_t<T_initial, T_t0, T_ts, Args...>,
+std::vector<Eigen::Matrix<stan::return_type_t<typename F::captured_scalar_t__,
+                                              T_initial, T_t0, T_ts, Args...>,
                           Eigen::Dynamic, 1>>
 ode_rk45_tol(const F& f,
              const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0_arg, T_t0 t0,
@@ -89,7 +90,8 @@ ode_rk45_tol(const F& f,
                         absolute_tolerance);
   check_positive("integrate_ode_rk45", "max_num_steps", max_num_steps);
 
-  using return_t = return_type_t<T_initial, T_t0, T_ts, Args...>;
+  using return_t = return_type_t<typename F::captured_scalar_t__,
+                                 T_initial, T_t0, T_ts, Args...>;
   // creates basic or coupled system by template specializations
   coupled_ode_system<F, T_initial_or_t0, Args...> coupled_system(f, y0, msgs,
                                                                  args...);
@@ -173,7 +175,8 @@ ode_rk45_tol(const F& f,
 template <typename F, typename T_initial, typename T_t0, typename T_ts,
           typename... Args>
 std::vector<
-    Eigen::Matrix<stan::return_type_t<T_initial, Args...>, Eigen::Dynamic, 1>>
+    Eigen::Matrix<stan::return_type_t<typename F::captured_scalar_t__,
+                                      T_initial, Args...>, Eigen::Dynamic, 1>>
 ode_rk45(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
          T_t0 t0, const std::vector<T_ts>& ts, std::ostream* msgs,
          const Args&... args) {
