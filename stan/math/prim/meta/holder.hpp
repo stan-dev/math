@@ -221,8 +221,7 @@ auto holder_handle_element(T& a, T*& res) {
  * @param res resulting pointer to element
  * @return tuple of pointers allocated on heap (containing single pointer).
  */
-template <typename T,
-          require_t<std::is_rvalue_reference<T&&>>* = nullptr>
+template <typename T, require_t<std::is_rvalue_reference<T&&>>* = nullptr>
 auto holder_handle_element(T&& a, T*& res) {
   res = new T(std::move(a));
   return std::make_tuple(res);
