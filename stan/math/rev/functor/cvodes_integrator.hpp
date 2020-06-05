@@ -107,9 +107,9 @@ class cvodes_integrator {
   inline void rhs(double t, const double y[], double dy_dt[]) const {
     const Eigen::VectorXd y_vec = Eigen::Map<const Eigen::VectorXd>(y, N_);
 
-    Eigen::VectorXd dy_dt_vec
-        = apply([&](auto&&... args) { return f_dbl_(t, y_vec, msgs_, args...); },
-                value_of_args_tuple_);
+    Eigen::VectorXd dy_dt_vec = apply(
+        [&](auto&&... args) { return f_dbl_(t, y_vec, msgs_, args...); },
+        value_of_args_tuple_);
 
     check_size_match("cvodes_integrator", "dy_dt", dy_dt_vec.size(), "states",
                      N_);
@@ -234,8 +234,8 @@ class cvodes_integrator {
     LS_ = SUNDenseLinearSolver(nv_state_, A_);
 
     if (y0_vars_ + args_vars_ + f_.num_vars__ > 0) {
-      nv_state_sens_
-          = N_VCloneVectorArrayEmpty_Serial(y0_vars_ + args_vars_ + f_.num_vars__, nv_state_);
+      nv_state_sens_ = N_VCloneVectorArrayEmpty_Serial(
+          y0_vars_ + args_vars_ + f_.num_vars__, nv_state_);
       for (std::size_t i = 0; i < y0_vars_ + args_vars_ + f_.num_vars__; i++) {
         NV_DATA_S(nv_state_sens_[i]) = &coupled_state_[N_] + i * N_;
       }
@@ -246,8 +246,9 @@ class cvodes_integrator {
     SUNLinSolFree(LS_);
     SUNMatDestroy(A_);
     N_VDestroy_Serial(nv_state_);
-    if (y0_vars_ + args_vars_ + f_.num_vars__> 0) {
-      N_VDestroyVectorArray_Serial(nv_state_sens_, y0_vars_ + args_vars_ + f_.num_vars__);
+    if (y0_vars_ + args_vars_ + f_.num_vars__ > 0) {
+      N_VDestroyVectorArray_Serial(nv_state_sens_,
+                                   y0_vars_ + args_vars_ + f_.num_vars__);
     }
   }
 
@@ -298,9 +299,10 @@ class cvodes_integrator {
       // initialize forward sensitivity system of CVODES as needed
       if (y0_vars_ + args_vars_ + f_.num_vars__ > 0) {
         check_flag_sundials(
-            CVodeSensInit(cvodes_mem, static_cast<int>(y0_vars_ + args_vars_ + f_.num_vars__),
-                          CV_STAGGERED, &cvodes_integrator::cv_rhs_sens,
-                          nv_state_sens_),
+            CVodeSensInit(
+                cvodes_mem,
+                static_cast<int>(y0_vars_ + args_vars_ + f_.num_vars__),
+                CV_STAGGERED, &cvodes_integrator::cv_rhs_sens, nv_state_sens_),
             "CVodeSensInit");
 
         if (include_sensitivities_in_errors_) {

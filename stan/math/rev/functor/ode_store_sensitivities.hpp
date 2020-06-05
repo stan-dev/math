@@ -30,11 +30,10 @@ namespace math {
  * @param args Extra arguments passed unmodified through to ODE right hand side
  * @return ODE state with scalar type var
  */
-template <typename F, typename T_y0_t0, typename T_t0, typename T_t,
-          typename... Args,
-          typename
-          = require_any_autodiff_t<typename F::captured_scalar_t__, T_y0_t0,
-                                   T_t0, T_t, scalar_type_t<Args>...>>
+template <
+    typename F, typename T_y0_t0, typename T_t0, typename T_t, typename... Args,
+    typename = require_any_autodiff_t<typename F::captured_scalar_t__, T_y0_t0,
+                                      T_t0, T_t, scalar_type_t<Args>...>>
 Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
     const F& f, const Eigen::VectorXd& coupled_state,
     const Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1>& y0, const T_t0& t0,
@@ -64,7 +63,8 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
   }
 
   for (size_t j = 0; j < N; j++) {
-    const size_t total_vars = y0_vars + args_vars + t0_vars + t_vars + f.num_vars__;
+    const size_t total_vars
+        = y0_vars + args_vars + t0_vars + t_vars + f.num_vars__;
 
     vari** varis
         = ChainableStack::instance_->memalloc_.alloc_array<vari*>(total_vars);
@@ -93,7 +93,8 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
     f.save_varis(varis_ptr);
     varis_ptr += f.num_vars__;
     for (std::size_t k = 0; k < f.num_vars__; ++k) {
-      *partials_ptr = coupled_state(N + N * y0_vars + N * args_vars + N * k + j);
+      *partials_ptr
+          = coupled_state(N + N * y0_vars + N * args_vars + N * k + j);
       partials_ptr++;
     }
 

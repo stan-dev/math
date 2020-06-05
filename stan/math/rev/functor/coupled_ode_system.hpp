@@ -134,9 +134,9 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
         },
         args_tuple_);
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
-        = apply([&](auto&&... args) { return f_vars_(t, y_vars, msgs_, args...); },
-                local_args_tuple);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars = apply(
+        [&](auto&&... args) { return f_vars_(t, y_vars, msgs_, args...); },
+        local_args_tuple);
 
     check_size_match("coupled_ode_system", "dy_dt", f_y_t_vars.size(), "states",
                      N_);
@@ -180,7 +180,8 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
       for (size_t j = 0; j < f_.num_vars__; j++) {
         double temp_deriv = f_adjoints(j);
         for (size_t k = 0; k < N_; k++) {
-          temp_deriv += z[N_ + N_ * y0_vars_ + N_ * args_vars_ + N_ * j + k] * y_vars[k].adj();
+          temp_deriv += z[N_ + N_ * y0_vars_ + N_ * args_vars_ + N_ * j + k]
+                        * y_vars[k].adj();
         }
 
         dz_dt[N_ + N_ * y0_vars_ + N_ * args_vars_ + N_ * j + i] = temp_deriv;
@@ -195,7 +196,9 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
    *
    * @return size of the coupled system.
    */
-  size_t size() const { return N_ + N_ * y0_vars_ + N_ * args_vars_ + N_ * f_.num_vars__; }
+  size_t size() const {
+    return N_ + N_ * y0_vars_ + N_ * args_vars_ + N_ * f_.num_vars__;
+  }
 
   /**
    * Returns the initial state of the coupled system.
