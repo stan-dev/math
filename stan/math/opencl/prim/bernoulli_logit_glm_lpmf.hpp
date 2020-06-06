@@ -9,6 +9,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/opencl/copy.hpp>
@@ -45,9 +46,9 @@ namespace math {
 
 template <bool propto, typename T_alpha, typename T_beta>
 return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
-    const matrix_cl<int> &y_cl, const matrix_cl<double> &x_cl,
-    const T_alpha &alpha, const T_beta &beta) {
-  static const char *function = "bernoulli_logit_glm_lpmf(OpenCL)";
+    const matrix_cl<int>& y_cl, const matrix_cl<double>& x_cl,
+    const T_alpha& alpha, const T_beta& beta) {
+  static const char* function = "bernoulli_logit_glm_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_alpha, T_beta>;
 
   using Eigen::Dynamic;
@@ -75,11 +76,15 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   }
 
   T_partials_return logp(0);
-  const auto &beta_val = value_of_rec(beta);
-  const auto &alpha_val = value_of_rec(alpha);
 
-  const auto &beta_val_vec = as_column_vector_or_scalar(beta_val);
-  const auto &alpha_val_vec = as_column_vector_or_scalar(alpha_val);
+  const auto& beta_ref = to_ref_if<!is_constant<T_beta>::value>(beta);
+  const auto& alpha_ref = to_ref_if<!is_constant<T_alpha>::value>(alpha);
+
+  const auto& beta_val = value_of_rec(beta_ref);
+  const auto& alpha_val = value_of_rec(alpha_ref);
+
+  const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
+  const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
 
   const int local_size
       = opencl_kernels::bernoulli_logit_glm.get_option("LOCAL_SIZE_");
@@ -102,7 +107,7 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
         theta_derivative_cl, theta_derivative_sum_cl, y_cl, x_cl, alpha_cl,
         beta_cl, N, M, y_cl.size() != 1, stan::math::size(alpha) != 1,
         need_theta_derivative, need_theta_derivative_sum);
-  } catch (const cl::Error &e) {
+  } catch (const cl::Error& e) {
     check_opencl_error(function, e);
   }
 
@@ -119,7 +124,8 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
                  from_matrix_cl(x_cl));
   }
 
-  operands_and_partials<T_alpha, T_beta> ops_partials(alpha, beta);
+  operands_and_partials<decltype(alpha_ref), decltype(beta_ref)> ops_partials(
+      alpha_ref, beta_ref);
   // Compute the necessary derivatives.
   if (!is_constant_all<T_alpha>::value) {
     if (is_vector<T_alpha>::value) {
@@ -139,13 +145,6 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
         = from_matrix_cl<1, Dynamic>(theta_derivative_transpose_cl * x_cl);
   }
   return ops_partials.build(logp);
-}
-
-template <typename T_alpha, typename T_beta>
-inline return_type_t<T_beta, T_alpha> bernoulli_logit_glm_lpmf(
-    const matrix_cl<int> &y, const matrix_cl<double> &x, const T_alpha &alpha,
-    const T_beta &beta) {
-  return bernoulli_logit_glm_lpmf<false>(y, x, alpha, beta);
 }
 
 }  // namespace math

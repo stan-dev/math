@@ -10,7 +10,7 @@ namespace stan {
 namespace math {
 
 template <typename T>
-inline var_value<T>& var_value<T>::operator*=(const var_value<T>& b) {
+inline var_value<T>& var_value<T, require_vt_floating_point<T>>::operator*=(const var_value<T>& b) {
   vi_ = new internal::multiply_vari<T, vari_value<T>, vari_value<T>>(vi_,
                                                                      b.vi_);
   return *this;
@@ -18,10 +18,7 @@ inline var_value<T>& var_value<T>::operator*=(const var_value<T>& b) {
 
 template <typename T>
 template <typename Arith, require_vt_arithmetic<Arith>...>
-inline var_value<T>& var_value<T>::operator*=(const Arith& b) {
-  if (is_all_equal(b, 1.0)) {
-    return *this;
-  }
+inline var_value<T>& var_value<T, require_vt_floating_point<T>>::operator*=(const Arith& b) {
   vi_ = new internal::multiply_vari<T, vari_value<T>, Arith>(vi_, b);
   return *this;
 }

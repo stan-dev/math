@@ -20,8 +20,9 @@ namespace stan {
 template <typename T>
 struct is_stan_scalar
     : bool_constant<
-          math::disjunction<is_var<std::decay_t<T>>, is_fvar<std::decay_t<T>>,
-                            std::is_arithmetic<std::decay_t<T>>>::value> {};
+  math::conjunction<std::is_same<std::decay_t<T>, scalar_type_t<std::decay_t<T>>>,
+		    math::disjunction<is_var<scalar_type_t<std::decay_t<T>>>, is_fvar<scalar_type_t<std::decay_t<T>>>,
+				      std::is_arithmetic<scalar_type_t<std::decay_t<T>>>>>::value> {};
 
 STAN_ADD_REQUIRE_UNARY(stan_scalar, is_stan_scalar, require_stan_scalar_real);
 STAN_ADD_REQUIRE_UNARY_INNER(stan_scalar, is_stan_scalar,

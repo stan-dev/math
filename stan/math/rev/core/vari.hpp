@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <ostream>
 #include <type_traits>
 
@@ -10,7 +11,7 @@ namespace stan {
 namespace math {
 
 // forward declaration of var
-template <typename T>
+template <typename T, typename>
 class var_value;
 
 /**
@@ -65,21 +66,17 @@ class vari_base {
  * information via an implementation of chain().
  */
 template <typename T, typename = void>
-class vari_value : public vari_base {};
+class vari_value;
 
 template <typename T>
-class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>>
+class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
     : public vari_base {
  private:
-  template <typename>
+  template <typename, typename>
   friend class var_value;
-  template <typename Val>
-  using floating_point_promoter
-      = std::conditional_t<std::is_integral<std::decay_t<Val>>::value, double,
-                           std::decay_t<Val>>;
 
  public:
-  using Scalar = floating_point_promoter<T>;
+  using Scalar = T;
   using value_type = Scalar;
   /**
    * The value of this variable.
@@ -102,17 +99,35 @@ class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>>
    * derivative propagation, the chain() method of each variable
    * will be called in the reverse order of construction.
    *
+   * @tparam S an Arithmetic type.
    * @param x Value of the constructed variable.
    */
-  template <typename T1,
-            std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
-  explicit vari_value(T1 x) : val_(x), adj_(0.0) {
+  template <typename S,
+            std::enable_if_t<std::is_convertible<S&, Scalar>::value>* = nullptr>
+  vari_value(S x) : val_(x), adj_(0.0) {  // NOLINT
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
-  template <typename T1,
-            std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
-  vari_value(T1 x, bool stacked) : val_(x), adj_(0.0) {
+  /**
+   * Construct a variable implementation from a value.  The
+   *  adjoint is initialized to zero and if `stacked` is `false` this vari
+   *  will be moved to the nochain stack s.t. it's chain method will not be
+   *  called when calling `grad()`.
+   *
+   * All constructed variables are added to the stack.  Variables
+   *  should be constructed before variables on which they depend
+   *  to insure proper partial derivative propagation.  During
+   *  derivative propagation, the chain() method of each variable
+   *  will be called in the reverse order of construction.
+   *
+   * @tparam S an Arithmetic type.
+   * @param x Value of the constructed variable.
+   * @param stacked If false will put this this vari on the nochain stack so
+   * that it's `chain()` method is not called.
+   */
+  template <typename S,
+            std::enable_if_t<std::is_convertible<S&, Scalar>::value>* = nullptr>
+  vari_value(S x, bool stacked) : val_(x), adj_(0.0) {
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
     } else {
@@ -127,11 +142,16 @@ class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>>
       : val_(x.val_), adj_(x.adj_) {}
 
   /**
-   * Initialize the adjoint for this (dependent) variable to 1.
-   * This operation is applied to the dependent variable before
-   * propagating derivatives, setting the derivative of the
-   * result with respect to itself to be 1.
+   * Constructor from vari_value
+   * @tparam S An arithmetic type
+   * @param x A vari_value
    */
+  template <typename S,
+            std::enable_if_t<std::is_arithmetic<S>::value>* = nullptr>
+  vari_value(const vari_value<S>& x) : val_(x.val_), adj_(x.adj_) {
+    ChainableStack::instance_->var_stack_.push_back(this);
+  }
+
   void init_dependent() final { adj_ = 1.0; }
 
   /**
@@ -186,7 +206,7 @@ class vari_value<T, std::enable_if_t<std::is_arithmetic<T>::value>>
 template <typename T>
 class vari_value<T, std::enable_if_t<is_eigen<T>::value>> : public vari_base {
  private:
-  template <typename>
+  template <typename, typename>
   friend class var_value;
   using eigen_scalar = value_type_t<T>;
   value_type_t<T>* val_mem_;
@@ -320,6 +340,7 @@ class vari_value<T, std::enable_if_t<is_eigen<T>::value>> : public vari_base {
   }
 };
 
+// For backwards compatability the default is double
 using vari = vari_value<double>;
 
 }  // namespace math

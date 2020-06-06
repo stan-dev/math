@@ -9,7 +9,7 @@ namespace math {
 
 // use for single precomputed partials
 template <typename VariVal, typename Vari1, typename Vari2, typename Vari3>
-class precomp_vvv_vari : public op_vari<VariVal, Vari1*, Vari2*, Vari3*> {
+class precomp_vvv_vari final : public op_vari<VariVal, Vari1*, Vari2*, Vari3*> {
   using op_vari<VariVal, Vari1*, Vari2*, Vari3*>::avi;
   using op_vari<VariVal, Vari1*, Vari2*, Vari3*>::bvi;
   using op_vari<VariVal, Vari1*, Vari2*, Vari3*>::cvi;

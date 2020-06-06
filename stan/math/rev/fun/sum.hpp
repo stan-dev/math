@@ -88,28 +88,31 @@ class sum_eigen_v_vari : public sum_v_vari {
  * @param m Specified matrix or vector.
  * @return Sum of coefficients of matrix.
  */
-template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
-inline var sum(const EigMat& m) {
+template<int R, int C>
+inline var sum(const Eigen::Matrix<var, R, C>& m) {
   if (m.size() == 0) {
     return 0.0;
   }
-  const Eigen::Ref<const plain_type_t<EigMat>>& m_ref = m;
-  return var(new sum_eigen_v_vari(m_ref));
+  return var(new sum_eigen_v_vari(m));
 }
 
-template <typename VariSum, typename Vari>
-class sum_vari : public vari_value<VariSum> {
-  Vari* v_;
+template <int R, int C>
+class sum_vari : public vari {
+  vari_value<Eigen::Matrix<double, R, C>>* v_;
 
  public:
-  sum_vari(Vari* avi)  // NOLINT
-      : vari_value<VariSum>(avi->val_.sum()), v_(avi) {}
+  sum_vari(vari_value<Eigen::Matrix<double, R, C>>* avi)  // NOLINT
+    : vari(avi->val_.sum()), v_(avi) {}
   virtual void chain() { v_->adj_.array() += this->adj_; }
 };
 
-template <typename T, require_eigen_t<T>* = nullptr>
-inline var_value<value_type_t<T>> sum(const var_value<T>& x) {
-  return {new sum_vari<value_type_t<T>, vari_value<T>>(x.vi_)};
+template <int R, int C>
+inline var sum(const var_value<Eigen::Matrix<double, R, C>>& x) {
+  return {new sum_vari<R, C>(x.vi_)};
+}
+
+inline var sum(var_value<double> x) {
+  return x;
 }
 
 }  // namespace math

@@ -8,7 +8,7 @@
 namespace stan {
 /** \ingroup type_trait
  * Specialization for checking if value of T minus cv qualifier and pointer is a
- * vari.
+ * vari_value.
  */
 template <typename T>
 struct is_vari<
@@ -25,7 +25,7 @@ struct get_vari_value {
 // until we figure out how to get inner type for vari_value
 template <typename T>
 struct get_vari_value<T, std::enable_if_t<is_vari<T>::value>> {
-  using type = typename std::decay_t<T>::Scalar;
+  using type = typename std::decay_t<T>::value_type;
 };
 }  // namespace internal
 
@@ -38,7 +38,7 @@ using require_vari_vt = require_t<
 
 template <template <class...> class TypeCheck, class... Check>
 using require_all_vari_vt = require_all_t<
-    container_type_check_base<is_vari, get_vari_t, TypeCheck, Check>...>;
-
+container_type_check_base<is_vari, get_vari_t, TypeCheck, Check>...>;
+  
 }  // namespace stan
 #endif

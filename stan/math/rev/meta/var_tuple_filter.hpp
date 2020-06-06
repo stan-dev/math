@@ -24,7 +24,7 @@ using var_vari_value_t = get_var_vari_value_t<scalar_type_t<T>>;
 
 template <typename T>
 using container_var_vari_value_t
-    = std::conditional_t<is_std_vector<std::decay_t<T>>::value,
+    = std::conditional_t<is_container<std::decay_t<T>>::value,
                          get_var_vari_value_t<scalar_type_t<T>>**,
                          get_var_vari_value_t<T>*>;
 

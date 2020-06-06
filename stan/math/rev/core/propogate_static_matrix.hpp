@@ -8,49 +8,49 @@
 
 namespace stan {
 namespace math {
-template <typename T>
-class dynamic_to_static_vari : public vari_base {
-  Eigen::Index N_;
-  vari_value<double>** output_;
-  vari_value<T>* input_;
+
+template <int R, int C>
+class from_static_vari : public vari_base {
+  size_t N_;
+  vari_value<Eigen::Matrix<double, R, C>>* input_vi_;
+  vari** output_vis_;
 
  public:
-  template <typename TT>
-  dynamic_to_static_vari(vari_value<T>* input, TT&& output, Eigen::Index N)
-      : N_(N),
-        output_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(N_)),
-        input_(input) {
-    using matrix_vi = Eigen::Matrix<vari*, Eigen::Dynamic, Eigen::Dynamic>;
-    Eigen::Map<matrix_vi>(output_, output.rows(), output.cols()) = output.vi();
+  from_static_vari(size_t N,
+		   vari_value<Eigen::Matrix<double, R, C>>* input_vi,
+		   vari** output_vis)
+    : N_(N),
+      input_vi_(input_vi),
+      output_vis_(output_vis) {
   }
   void chain() {
     for (size_t n = 0; n < N_; ++n) {
-      input_->adj_(n) += output_[n]->adj_;
+      input_vi_->adj_(n) += output_vis_[n]->adj_;
     }
   }
 };
 
-template <typename T>
-class static_to_dynamic_vari : public vari_base {
+template<int R, int C>
+class to_static_vari : public vari_base {
   Eigen::Index N_;
-  vari_value<T>* output_;
-  vari_value<double>** input_;
+  vari** input_vis_;
+  vari_value<Eigen::Matrix<double, R, C>>* output_vi_;
 
  public:
-  template <typename TT>
-  static_to_dynamic_vari(TT&& input, vari_value<T>* output, Eigen::Index N)
-      : N_(N),
-        output_(output),
-        input_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(N_)) {
-    using matrix_vi = Eigen::Matrix<vari*, Eigen::Dynamic, Eigen::Dynamic>;
-    Eigen::Map<matrix_vi>(input_, input.rows(), input.cols()) = input.vi();
+  to_static_vari(size_t N,
+		 vari** input_vis,
+		 vari_value<Eigen::Matrix<double, R, C>>* output_vi)
+    : N_(N),
+      input_vis_(input_vis),
+      output_vi_(output_vi) {
   }
   void chain() {
     for (size_t n = 0; n < N_; ++n) {
-      input_[n]->adj_ += output_->adj_(n);
+      input_vis_[n]->adj_ += output_vi_->adj_(n);
     }
   }
 };
+
 }  // namespace math
 }  // namespace stan
 #endif

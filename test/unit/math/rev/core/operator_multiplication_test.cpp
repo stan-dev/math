@@ -15,8 +15,9 @@ TEST(MathRev, TestVarEigen) {
   var_value<Eigen::Matrix<double, -1, -1>> x = x_vals;
   var_value<Eigen::Matrix<double, -1, -1>> y = y_vals;
   var lp = 0;
-  auto mul_xy = x * y;
-  auto sum_mul_xy = sum(mul_xy);
+  var_value<Eigen::Matrix<double, -1, -1>> mul_xy = x * y;
+  var sum_mul_xy = sum(mul_xy);
+
   lp -= sum_mul_xy;
   lp.grad();
   puts("-------------");

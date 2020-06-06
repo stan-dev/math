@@ -29,9 +29,7 @@ namespace math {
  * @throw std::domain_error if m is not a symmetric matrix or
  *   if m is not positive definite (if m has more than 0 elements)
  */
-template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
-          require_not_vt_same<double, EigMat>* = nullptr,
-          require_not_eigen_vt<is_var, EigMat>* = nullptr>
+template <typename EigMat, require_eigen_vt<is_fvar, EigMat>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
                      EigMat::ColsAtCompileTime>
 cholesky_decompose(const EigMat& m) {
@@ -61,20 +59,23 @@ cholesky_decompose(const EigMat& m) {
  * @throw std::domain_error if m is not a symmetric matrix or
  *   if m is not positive definite (if m has more than 0 elements)
  */
-template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
-          require_vt_same<double, EigMat>* = nullptr>
-inline Eigen::Matrix<double, EigMat::RowsAtCompileTime,
+template <typename EigMat,
+          require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
                      EigMat::ColsAtCompileTime>
 cholesky_decompose(const EigMat& m) {
+  using eig_val = value_type_t<EigMat>;
   eval_return_type_t<EigMat>& m_eval = m.eval();
   check_not_nan("cholesky_decompose", "m", m_eval);
 #ifdef STAN_OPENCL
-  if (m.rows() >= opencl_context.tuning_opts().cholesky_size_worth_transfer) {
+  if (std::is_same<double, eig_val>::value
+      && m.rows()
+             >= opencl_context.tuning_opts().cholesky_size_worth_transfer) {
     matrix_cl<double> m_cl(m_eval);
     return from_matrix_cl(cholesky_decompose(m_cl));
   } else {
     check_symmetric("cholesky_decompose", "m", m_eval);
-    Eigen::LLT<Eigen::Matrix<double, EigMat::RowsAtCompileTime,
+    Eigen::LLT<Eigen::Matrix<eig_val, EigMat::RowsAtCompileTime,
                              EigMat::ColsAtCompileTime>>
         llt = m_eval.llt();
     check_pos_definite("cholesky_decompose", "m", llt);
@@ -82,7 +83,7 @@ cholesky_decompose(const EigMat& m) {
   }
 #else
   check_symmetric("cholesky_decompose", "m", m_eval);
-  Eigen::LLT<Eigen::Matrix<double, EigMat::RowsAtCompileTime,
+  Eigen::LLT<Eigen::Matrix<eig_val, EigMat::RowsAtCompileTime,
                            EigMat::ColsAtCompileTime>>
       llt = m_eval.llt();
   check_pos_definite("cholesky_decompose", "m", llt);

@@ -133,9 +133,6 @@ inline var_value<T> operator+(const var_value<T>& a, const Arith& b) {
  */
 template <typename T, typename Arith, require_arithmetic_t<Arith>...>
 inline var_value<T> operator+(const Arith& a, const var_value<T>& b) {
-  if (a == 0.0) {
-    return b;
-  }
   return {new internal::add_vari<T, vari_value<T>, Arith>(b.vi_,
                                                           a)};  // by symmetry
 }

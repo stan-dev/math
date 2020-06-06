@@ -222,12 +222,13 @@ using mat_mul_return_type_t = typename mat_mul_return_type<T1, T2>::type;
  * @param b Second variable operand.
  * @return Variable result of multiplying operands.
  */
-template <typename T1, typename T2, require_all_var_value_t<T1, T2>* = nullptr>
+template <typename T1, typename T2,
+	  require_all_var_value_t<T1, T2>* = nullptr>
 inline auto operator*(const T1& a, const T2& b) {
   using vari1 = get_var_vari_value_t<T1>;
   using vari2 = get_var_vari_value_t<T2>;
-  using scalar1_type = typename T1::Scalar;
-  using scalar2_type = typename T2::Scalar;
+  using scalar1_type = typename T1::value_type;
+  using scalar2_type = typename T2::value_type;
   using mat_return
       = internal::mat_mul_return_type_t<scalar1_type, scalar2_type>;
   using multiply_type = internal::multiply_vari<mat_return, vari1, vari2>;
@@ -263,11 +264,12 @@ using require_conformable_t = require_t<is_conformable<T, S>>;
  * @return Variable result of multiplying operands.
  */
 template <typename T, typename Arith, require_var_value_t<T>* = nullptr,
-          require_vt_arithmetic<Arith>* = nullptr,
-          require_conformable_t<T, Arith>* = nullptr>
+          require_st_arithmetic<Arith>* = nullptr>
+//,
+//          require_conformable_t<T, Arith>* = nullptr>
 inline auto operator*(const T& a, const Arith& b) {
   using vari_type = get_var_vari_value_t<T>;
-  using scalar_type = typename T::Scalar;
+  using scalar_type = typename T::value_type;
   using mat_return = internal::mat_mul_return_type_t<scalar_type, Arith>;
   using multiply_type = internal::multiply_vari<mat_return, vari_type, Arith>;
   return var_value<mat_return>{new multiply_type(a.vi_, b)};
@@ -286,11 +288,12 @@ inline auto operator*(const T& a, const Arith& b) {
  * @return Variable result of multiplying the operands.
  */
 template <typename T, typename Arith, require_var_value_t<T>* = nullptr,
-          require_vt_arithmetic<Arith>* = nullptr,
-          require_conformable_t<T, Arith>* = nullptr>
+          require_st_arithmetic<Arith>* = nullptr>
+//,
+//          require_conformable_t<T, Arith>* = nullptr>
 inline auto operator*(const Arith& a, const T& b) {
   using vari_type = get_var_vari_value_t<T>;
-  using scalar_type = typename T::Scalar;
+  using scalar_type = typename T::value_type;
   using mat_return = internal::mat_mul_return_type_t<Arith, scalar_type>;
   using multiply_type = internal::multiply_vari<mat_return, Arith, vari_type>;
   return var_value<mat_return>{new multiply_type(a, b.vi_)};

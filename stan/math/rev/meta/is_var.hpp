@@ -7,12 +7,20 @@
 #include <type_traits>
 
 namespace stan {
+
+namespace internal {
+template <typename T>
+struct is_var_impl : std::false_type {};
+
+template <typename T, typename U>
+struct is_var_impl<math::var_value<T, U>> : std::true_type {};
+}  // namespace internal
 /** \ingroup type_trait
- * Specialization for checking if value of T minus cv qualifier is a var.
+ * Specialization for checking if value of T minus cv qualifier is a var_value.
  */
 template <typename T>
 struct is_var<T,
-              std::enable_if_t<std::is_same<math::var, std::decay_t<T>>::value>>
+              std::enable_if_t<internal::is_var_impl<std::decay_t<T>>::value>>
     : std::true_type {};
 
 namespace internal {
@@ -47,6 +55,7 @@ template <typename T>
 struct get_var_value<T, std::enable_if_t<is_var<T>::value>> {
   using type = typename std::decay_t<T>::Scalar;
 };
+
 template <typename T, typename = void>
 struct get_var_vari_value {
   using type = value_type_t<T>;
@@ -68,7 +77,7 @@ struct is_eigen_var
 template <typename T>
 struct get_var_vari_value<T, std::enable_if_t<is_eigen_var<T>::value>> {
   using type = math::vari_value<
-      Eigen::Matrix<typename scalar_type_t<T>::Scalar, T::RowsAtCompileTime,
+      Eigen::Matrix<value_type_t<T>, T::RowsAtCompileTime,
                     T::ColsAtCompileTime>>;
 };
 
@@ -79,6 +88,7 @@ template <typename T, typename = void>
 struct get_var_scalar {
   using type = scalar_type_t<T>;
 };
+
 template <typename T>
 struct get_var_scalar<T, require_var_value_t<T>> {
   using type = typename std::decay_t<T>::Scalar;

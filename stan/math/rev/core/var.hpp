@@ -6,18 +6,16 @@
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/propogate_static_matrix.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <boost/math/tools/config.hpp>
+#include <stan/math/rev/meta/is_vari.hpp>
 #include <ostream>
 #include <vector>
-#include <complex>
-#include <string>
-#include <exception>
 
 namespace stan {
 namespace math {
 
 // forward declare
-static void grad(vari_base* vi);
+template <typename Vari>
+static void grad(Vari* vi);
 
 /**
  * Independent (input) and dependent (output) variables for gradients.
@@ -26,28 +24,30 @@ static void grad(vari_base* vi);
  * an arena-based memory manager scoped to a single gradient
  * calculation.
  *
- * A var is constructed with a double and used like any
+ * A var is constructed with a type `T` and used like any
  * other scalar.  Arithmetical functions like negation, addition,
  * and subtraction, as well as a range of mathematical functions
  * like exponentiation and powers are overridden to operate on
  * var values objects.
+ * @tparam T An Arithmetic type.
  */
-template <typename T>
-class var_value {
-  template <typename Val>
-  using floating_point_promoter
-      = std::conditional_t<std::is_integral<std::decay_t<Val>>::value, double,
-                           std::decay_t<Val>>;
+template <typename T, typename = void>
+class var_value {};
 
+template <typename T>
+class var_value<T, require_vt_floating_point<T>> {
  public:
-  /** FIXME: This changes integral (int etc) types to double and leaves the type
-   * untouched otherwise. Since this can be an Eigen matrix it's a pretty
-   * dumb name. Just for the purposes of readability it may be better to
-   * use SFINAE on var_value and have a scalar and eigen representation.
-   * that would also get rid of some of the weirder requires here.
-   */
-  using Scalar = floating_point_promoter<T>;
-  using vari_type = vari_value<Scalar>;
+  // The internal value_type is always a floating point type
+  using value_type = std::decay_t<T>;
+  using vari_type = vari_value<value_type>;
+
+  template <typename K>
+  using require_vari_convertible_t
+      = require_t<std::is_convertible<vari_value<K>*, vari_type*>>;
+  template <typename K>
+  using require_not_vari_convertible_t = require_t<
+      bool_constant<!std::is_convertible<vari_value<K>*, vari_type*>::value>>;
+ public:
   /**
    * Pointer to the implementation of this variable.
    *
@@ -55,7 +55,7 @@ class var_value {
    * <code>var</code> operators to construct `vari_value<T>`
    * instances.
    */
-  vari_value<Scalar>* vi_;
+  vari_type* vi_;
 
   /**
    * Return `true` if this variable has been
@@ -66,9 +66,7 @@ class var_value {
    * @return <code>true</code> if this variable does not yet have
    * a defined variable.
    */
-  bool is_uninitialized() {
-    return (vi_ == static_cast<vari_value<Scalar>*>(nullptr));
-  }
+  bool is_uninitialized() { return (vi_ == static_cast<vari_type*>(nullptr)); }
 
   /**
    * Construct a variable for later assignment.
@@ -77,43 +75,45 @@ class var_value {
    * dangling.  Before an assignment, the behavior is thus undefined just
    * as for a basic double.
    */
-  var_value() : vi_(static_cast<vari_value<Scalar>*>(nullptr)) {}
+  var_value() : vi_(static_cast<vari_type*>(nullptr)) {}
+
+  /**
+   * Construct a variable from the specified arithmetic type argument
+   * by constructing a new `vari_value<value_type>`. For integral types the
+   * `vari_value<value_type>` will hold doubles. This constructor is only valid
+   * when `S` is convertible to this `vari_value`'s `value_type`.
+   * @tparam S A type that is convertible to `value_type`.
+   * @param x Value of the variable.
+   */
+  template <typename S, require_convertible_t<S&, value_type>* = nullptr>
+  var_value(S x) : vi_(new vari_type(x, false)) {}  // NOLINT
 
   /**
    * Construct a variable from a pointer to a variable implementation.
-   *
-   * @param vi Variable implementation.
+   * @tparam S The type in the vari_value pointer that has the same `value_type`
+   *  as this `var_value`. For integral types a `vari_value<Integral>` is the
+   * same as `vari_value<double>` so can be `reinterpret_cast` without a copy.
+   * @param vi A vari_value pointer.
    */
-  template <typename VariValue, require_vari_t<VariValue>* = nullptr>
-  var_value(VariValue* vi) : vi_(vi) {}  // NOLINT
+  var_value(vari_value<T>* vi)  // NOLINT
+      : vi_(vi) {}
 
   /**
-   * Construct a variable from the specified integral type argument
-   * by constructing a new `vari_value<T>`. For integral types the
-   * `vari_value<T>` will hold doubles. This constructor is only valid when `T`
-   * is arithmetic.
-   *
-   * @param x Value of the variable.
+   * Constructor from `var_value` whose value_type is the same as this class's
+   * `value_type`. This is used in cases such as
+   * `var_value<double> a(4.0); var_value<int> b(a)` since the `value_type` for
+   *  a `var_value` with an integral type is a double.
    */
-  template <typename IntegralT, typename T1 = T,
-            require_not_same_t<T1, IntegralT>* = nullptr,
-            require_integral_t<IntegralT>* = nullptr,
-            require_arithmetic_t<T1>* = nullptr>
-  var_value(IntegralT x) : vi_(new vari_value<Scalar>(x, false)) {}  // NOLINT
+  var_value(const var_value<T>& x) : vi_(x.vi_) {}  // NOLINT
 
-  var_value(T x) : vi_(new vari_value<Scalar>(x, false)) {}  // NOLINT
-
-  template <typename EigenT, typename T1 = T,
+  /*template <typename EigenT, typename T1 = T,
             require_not_same_t<T1, EigenT>* = nullptr,
             require_all_eigen_t<EigenT, T1>* = nullptr,
             require_eigen_vt<std::is_arithmetic, EigenT>* = nullptr>
-  var_value(EigenT x) : vi_(new vari_value<Scalar>(x, false)) {}  // NOLINT
+	    var_value(EigenT x) : vi_(new vari_type(x, false)) {}  // NOLINT*/
 
-  template <typename EigenT, typename T1 = T,
-            require_not_same_t<T1, EigenT>* = nullptr,
-            require_all_eigen_t<EigenT, T1>* = nullptr,
-            require_eigen_vt<is_var, EigenT>* = nullptr>
-  var_value(EigenT x);  // NOLINT
+  template <int R, int C>
+  var_value(const Eigen::Matrix<var_value<double>, R, C>& x);
 
   /**
    * Return the value of this variable.
@@ -144,7 +144,7 @@ class var_value {
    * @param g Gradient vector of partial derivatives of this
    * variable with respect to x.
    */
-  inline void grad(std::vector<var_value<T>>& x, std::vector<Scalar>& g) {
+  inline void grad(std::vector<var_value<T>>& x, std::vector<value_type>& g) {
     stan::math::grad(vi_);
     g.resize(x.size());
     for (size_t i = 0; i < x.size(); ++i) {
@@ -174,7 +174,7 @@ class var_value {
    *
    * @return variable
    */
-  inline vari_value<T>& operator*() { return *vi_; }
+  inline vari_type& operator*() { return *vi_; }
 
   /**
    * Return a pointer to the underlying implementation of this variable.
@@ -186,7 +186,7 @@ class var_value {
    * <i>Warning</i>: The returned result does not track changes to
    * this variable.
    */
-  inline vari_value<T>* operator->() { return vi_; }
+  inline vari_type* operator->() { return vi_; }
 
   // COMPOUND ASSIGNMENT OPERATORS
 
@@ -197,10 +197,12 @@ class var_value {
    * then (a += b) behaves exactly the same way as (a = a + b),
    * creating an intermediate variable representing (a + b).
    *
+   * @tparam S a type that is convertible to `value_type`
    * @param b The variable to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
-  inline var_value<T>& operator+=(const var_value<T>& b);
+  inline var_value<T>& operator+=(
+      const var_value<T>& b);
 
   /**
    * The compound add/assignment operator for scalars (C++).
@@ -209,10 +211,11 @@ class var_value {
    * (a += b) behaves exactly the same way as (a = a + b).  Note
    * that the result is an assignable lvalue.
    *
+   * @tparam Arith An arithmetic type
    * @param b The scalar to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
-  template <typename Arith, require_arithmetic_t<Arith>...>
+  template <typename Arith, require_vt_arithmetic<Arith>...>
   inline var_value<T>& operator+=(const Arith& b);
 
   /**
@@ -222,11 +225,13 @@ class var_value {
    * then (a -= b) behaves exactly the same way as (a = a - b).
    * Note that the result is an assignable lvalue.
    *
+   * @tparam S a type that is convertible to `value_type`
    * @param b The variable to subtract from this variable.
    * @return The result of subtracting the specified variable from
    * this variable.
    */
-  inline var_value<T>& operator-=(const var_value<T>& b);
+  inline var_value<T>& operator-=(
+      const var_value<T>& b);
 
   /**
    * The compound subtract/assignment operator for scalars (C++).
@@ -235,11 +240,12 @@ class var_value {
    * (a -= b) behaves exactly the same way as (a = a - b).  Note
    * that the result is an assignable lvalue.
    *
+   * @tparam Arith An arithmetic type
    * @param b The scalar to subtract from this variable.
    * @return The result of subtracting the specified variable from this
    * variable.
    */
-  template <typename Arith, require_arithmetic_t<Arith>...>
+  template <typename Arith, require_vt_arithmetic<Arith>...>
   inline var_value<T>& operator-=(const Arith& b);
 
   /**
@@ -253,7 +259,8 @@ class var_value {
    * @return The result of multiplying this variable by the
    * specified variable.
    */
-  inline var_value<T>& operator*=(const var_value<T>& b);
+  inline var_value<T>& operator*=(
+      const var_value<T>& b);
 
   /**
    * The compound multiply/assignment operator for scalars (C++).
@@ -262,6 +269,7 @@ class var_value {
    * (a *= b) behaves exactly the same way as (a = a * b).  Note
    * that the result is an assignable lvalue.
    *
+   * @tparam Arith An arithmetic type
    * @param b The scalar to multiply this variable by.
    * @return The result of multiplying this variable by the specified
    * variable.
@@ -275,11 +283,13 @@ class var_value {
    * behaves exactly the same way as (a = a / b).  Note that the
    * result is an assignable lvalue.
    *
+   * @tparam S a type that is convertible to `value_type`
    * @param b The variable to divide this variable by.
    * @return The result of dividing this variable by the
    * specified variable.
    */
-  inline var_value<T>& operator/=(const var_value<T>& b);
+  inline var_value<T>& operator/=(
+      const var_value<T>& b);
 
   /**
    * The compound divide/assignment operator for scalars (C++).
@@ -288,11 +298,12 @@ class var_value {
    * (a /= b) behaves exactly the same way as (a = a / b).  Note
    * that the result is an assignable lvalue.
    *
+   * @tparam Arith An arithmetic type
    * @param b The scalar to divide this variable by.
    * @return The result of dividing this variable by the specified
    * variable.
    */
-  template <typename Arith, require_arithmetic_t<Arith>...>
+  template <typename Arith, require_vt_arithmetic<Arith>...>
   inline var_value<T>& operator/=(const Arith& b);
 
   /**
@@ -314,25 +325,34 @@ class var_value {
   operator Eigen::Matrix<var_value<double>, R, C>();
 };
 
+// For backwards compatability the default value is double
+using var = var_value<double>;
+
 template <typename T>
-template <typename EigenT, typename T1, require_not_same_t<T1, EigenT>*,
-          require_all_eigen_t<EigenT, T1>*, require_eigen_vt<is_var, EigenT>*>
-var_value<T>::var_value(EigenT x)
-    : vi_(new vari_value<T>(x.val(), false)) {  // NOLINT
-  ChainableStack::instance_->var_stack_.push_back(
-      new static_to_dynamic_vari<T>(x, this->vi_, x.size()));
+template <int R, int C>
+var_value<T, require_vt_floating_point<T>>::var_value(const Eigen::Matrix<var, R, C>& x)
+  : vi_(new vari_value<T>(x.val(), false)) {  // NOLINT
+
+  vari** x_vis_ = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
+  Eigen::Map<Eigen::Matrix<vari*, R, C>>(x_vis_, x.rows(), x.cols()) = x.vi();
+
+  ChainableStack::instance_->var_stack_.
+    push_back(new to_static_vari<R, C>(x.size(), x_vis_, this->vi_));
 }
 
 template <typename T>
 template <int R, int C>
-var_value<T>::operator Eigen::Matrix<var_value<double>, R, C>() {
-  Eigen::Matrix<var_value<double>, R, C> x(this->val());
-  ChainableStack::instance_->var_stack_.push_back(
-      new dynamic_to_static_vari<T>(this->vi_, x, x.size()));
+var_value<T, require_vt_floating_point<T>>::operator Eigen::Matrix<var, R, C>() {
+  Eigen::Matrix<var, R, C> x(this->val());
+
+  vari** x_vis_ = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
+  Eigen::Map<Eigen::Matrix<vari*, R, C>>(x_vis_, x.rows(), x.cols()) = x.vi();
+  
+  ChainableStack::instance_->var_stack_.
+    push_back(new from_static_vari<R, C>(x.size(), this->vi_, x_vis_));
+
   return x;
 }
-
-using var = var_value<double>;
 
 }  // namespace math
 }  // namespace stan

@@ -28,7 +28,7 @@ ifeq ($(OS),Linux)
   LIBRARY_SUFFIX ?= .so
 endif
 
-## Set default compiler
+## Set default compiler and flto compiler flags
 ifeq (default,$(origin CXX))
   ifeq ($(OS),Darwin)  ## Darwin is Mac OS X
     CXX := clang++
@@ -47,19 +47,24 @@ endif
 # - CXX_MINOR: minor version of CXX
 ifneq (,$(findstring clang,$(CXX)))
   CXX_TYPE ?= clang
+  CXXFLAGS_FLTO ?= -flto
 endif
 ifneq (,$(findstring mingw32-g,$(CXX)))
   CXX_TYPE ?= mingw32-gcc
 endif
 ifneq (,$(findstring gcc,$(CXX)))
   CXX_TYPE ?= gcc
+  CXXFLAGS_FLTO ?= -flto -fuse-linker-plugin -fdevirtualize-at-ltrans -fipa-pta
 endif
 ifneq (,$(findstring g++,$(CXX)))
   CXX_TYPE ?= gcc
+  CXXFLAGS_FLTO ?= -flto -fuse-linker-plugin -fdevirtualize-at-ltrans -fipa-pta
 endif
 CXX_TYPE ?= other
 CXX_MAJOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f1)
 CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
+
+
 
 ################################################################################
 # Set default compiler flags
@@ -254,9 +259,7 @@ ifdef STAN_MPI
   CXXFLAGS_MPI ?= -Wno-delete-non-virtual-dtor
 endif
 
-
-
-CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) $(CXXFLAGS_THREADS) $(CXXFLAGS_TBB) -O$(O) $(INC) -Wreorder
+CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_FLTO) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) $(CXXFLAGS_THREADS) $(CXXFLAGS_TBB) -O$(O) $(INC)
 CPPFLAGS += $(CPPFLAGS_LANG) $(CPPFLAGS_OS) $(CPPFLAGS_WARNINGS) $(CPPFLAGS_BOOST) $(CPPFLAGS_EIGEN) $(CPPFLAGS_OPENCL) $(CPPFLAGS_MPI) $(CPPFLAGS_TBB)
 LDFLAGS += $(LDFLAGS_LANG) $(LDFLAGS_OS) $(LDFLAGS_WARNINGS) $(LDFLAGS_BOOST) $(LDFLAGS_EIGEN) $(LDFLAGS_OPENCL) $(LDFLAGS_MPI) $(LDFLAGS_TBB)
 LDLIBS += $(LDLIBS_LANG) $(LDLIBS_OS) $(LDLIBS_WARNINGS) $(LDLIBS_BOOST) $(LDLIBS_EIGEN) $(LDLIBS_OPENCL) $(LDLIBS_MPI) $(LDLIBS_TBB)

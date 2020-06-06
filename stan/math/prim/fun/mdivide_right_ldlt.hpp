@@ -25,7 +25,7 @@ namespace math {
  */
 template <typename EigMat, typename T, int R, int C,
           require_eigen_t<EigMat>* = nullptr,
-          require_any_not_vt_same<double, EigMat, T>* = nullptr>
+          require_any_not_arithmetic_t<value_type_t<EigMat>, T>* = nullptr>
 inline Eigen::Matrix<return_type_t<EigMat, T>, EigMat::RowsAtCompileTime, C>
 mdivide_right_ldlt(const EigMat& b, const LDLT_factor<T, R, C>& A) {
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A);
@@ -36,10 +36,11 @@ mdivide_right_ldlt(const EigMat& b, const LDLT_factor<T, R, C>& A) {
   return transpose(mdivide_left_ldlt(A, transpose(b)));
 }
 
-template <typename EigMat, int R, int C, require_eigen_t<EigMat>* = nullptr,
-          require_vt_same<double, EigMat>* = nullptr>
-inline Eigen::Matrix<double, EigMat::RowsAtCompileTime, C> mdivide_right_ldlt(
-    const EigMat& b, const LDLT_factor<double, R, C>& A) {
+template <typename EigMat, typename T, int R, int C,
+          require_eigen_t<EigMat>* = nullptr,
+          require_all_arithmetic_t<value_type_t<EigMat>, T>* = nullptr>
+inline Eigen::Matrix<T, EigMat::RowsAtCompileTime, C> mdivide_right_ldlt(
+    const EigMat& b, const LDLT_factor<T, R, C>& A) {
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A);
   if (A.rows() == 0) {
     return {b.rows(), 0};
