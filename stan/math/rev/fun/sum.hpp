@@ -88,7 +88,7 @@ class sum_eigen_v_vari : public sum_v_vari {
  * @param m Specified matrix or vector.
  * @return Sum of coefficients of matrix.
  */
-template<int R, int C>
+template <int R, int C>
 inline var sum(const Eigen::Matrix<var, R, C>& m) {
   if (m.size() == 0) {
     return 0.0;
@@ -102,7 +102,7 @@ class sum_vari : public vari {
 
  public:
   sum_vari(vari_value<Eigen::Matrix<double, R, C>>* avi)  // NOLINT
-    : vari(avi->val_.sum()), v_(avi) {}
+      : vari(avi->val_.sum()), v_(avi) {}
   virtual void chain() { v_->adj_.array() += this->adj_; }
 };
 
@@ -111,9 +111,7 @@ inline var sum(const var_value<Eigen::Matrix<double, R, C>>& x) {
   return {new sum_vari<R, C>(x.vi_)};
 }
 
-inline var sum(var_value<double> x) {
-  return x;
-}
+inline var sum(var_value<double> x) { return x; }
 
 }  // namespace math
 }  // namespace stan

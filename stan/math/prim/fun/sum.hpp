@@ -17,14 +17,13 @@ namespace math {
  * @param m Specified value.
  * @return Same value (the sum of one value).
  */
-//template <typename T, require_stan_scalar_t<T>* = nullptr>
-//inline decltype(auto) sum(T&& m) {
+// template <typename T, require_stan_scalar_t<T>* = nullptr>
+// inline decltype(auto) sum(T&& m) {
 //  return std::forward<T>(m);
 //}
 
 // THIS IS BROKEN. It should also accept fvars
-template <typename T,
-	  require_arithmetic_t<T>* = nullptr>
+template <typename T, require_arithmetic_t<T>* = nullptr>
 inline decltype(auto) sum(T&& m) {
   return std::forward<T>(m);
 }

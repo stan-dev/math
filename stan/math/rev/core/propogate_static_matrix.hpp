@@ -16,13 +16,9 @@ class from_static_vari : public vari_base {
   vari** output_vis_;
 
  public:
-  from_static_vari(size_t N,
-		   vari_value<Eigen::Matrix<double, R, C>>* input_vi,
-		   vari** output_vis)
-    : N_(N),
-      input_vi_(input_vi),
-      output_vis_(output_vis) {
-  }
+  from_static_vari(size_t N, vari_value<Eigen::Matrix<double, R, C>>* input_vi,
+                   vari** output_vis)
+      : N_(N), input_vi_(input_vi), output_vis_(output_vis) {}
   void chain() {
     for (size_t n = 0; n < N_; ++n) {
       input_vi_->adj_(n) += output_vis_[n]->adj_;
@@ -30,20 +26,16 @@ class from_static_vari : public vari_base {
   }
 };
 
-template<int R, int C>
+template <int R, int C>
 class to_static_vari : public vari_base {
   Eigen::Index N_;
   vari** input_vis_;
   vari_value<Eigen::Matrix<double, R, C>>* output_vi_;
 
  public:
-  to_static_vari(size_t N,
-		 vari** input_vis,
-		 vari_value<Eigen::Matrix<double, R, C>>* output_vi)
-    : N_(N),
-      input_vis_(input_vis),
-      output_vi_(output_vi) {
-  }
+  to_static_vari(size_t N, vari** input_vis,
+                 vari_value<Eigen::Matrix<double, R, C>>* output_vi)
+      : N_(N), input_vis_(input_vis), output_vi_(output_vi) {}
   void chain() {
     for (size_t n = 0; n < N_; ++n) {
       input_vis_[n]->adj_ += output_vi_->adj_(n);

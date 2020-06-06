@@ -47,6 +47,7 @@ class var_value<T, require_vt_floating_point<T>> {
   template <typename K>
   using require_not_vari_convertible_t = require_t<
       bool_constant<!std::is_convertible<vari_value<K>*, vari_type*>::value>>;
+
  public:
   /**
    * Pointer to the implementation of this variable.
@@ -110,7 +111,7 @@ class var_value<T, require_vt_floating_point<T>> {
             require_not_same_t<T1, EigenT>* = nullptr,
             require_all_eigen_t<EigenT, T1>* = nullptr,
             require_eigen_vt<std::is_arithmetic, EigenT>* = nullptr>
-	    var_value(EigenT x) : vi_(new vari_type(x, false)) {}  // NOLINT*/
+            var_value(EigenT x) : vi_(new vari_type(x, false)) {}  // NOLINT*/
 
   template <int R, int C>
   var_value(const Eigen::Matrix<var_value<double>, R, C>& x);
@@ -201,8 +202,7 @@ class var_value<T, require_vt_floating_point<T>> {
    * @param b The variable to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
-  inline var_value<T>& operator+=(
-      const var_value<T>& b);
+  inline var_value<T>& operator+=(const var_value<T>& b);
 
   /**
    * The compound add/assignment operator for scalars (C++).
@@ -230,8 +230,7 @@ class var_value<T, require_vt_floating_point<T>> {
    * @return The result of subtracting the specified variable from
    * this variable.
    */
-  inline var_value<T>& operator-=(
-      const var_value<T>& b);
+  inline var_value<T>& operator-=(const var_value<T>& b);
 
   /**
    * The compound subtract/assignment operator for scalars (C++).
@@ -259,8 +258,7 @@ class var_value<T, require_vt_floating_point<T>> {
    * @return The result of multiplying this variable by the
    * specified variable.
    */
-  inline var_value<T>& operator*=(
-      const var_value<T>& b);
+  inline var_value<T>& operator*=(const var_value<T>& b);
 
   /**
    * The compound multiply/assignment operator for scalars (C++).
@@ -288,8 +286,7 @@ class var_value<T, require_vt_floating_point<T>> {
    * @return The result of dividing this variable by the
    * specified variable.
    */
-  inline var_value<T>& operator/=(
-      const var_value<T>& b);
+  inline var_value<T>& operator/=(const var_value<T>& b);
 
   /**
    * The compound divide/assignment operator for scalars (C++).
@@ -330,26 +327,30 @@ using var = var_value<double>;
 
 template <typename T>
 template <int R, int C>
-var_value<T, require_vt_floating_point<T>>::var_value(const Eigen::Matrix<var, R, C>& x)
-  : vi_(new vari_value<T>(x.val(), false)) {  // NOLINT
+var_value<T, require_vt_floating_point<T>>::var_value(
+    const Eigen::Matrix<var, R, C>& x)
+    : vi_(new vari_value<T>(x.val(), false)) {  // NOLINT
 
-  vari** x_vis_ = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
+  vari** x_vis_
+      = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
   Eigen::Map<Eigen::Matrix<vari*, R, C>>(x_vis_, x.rows(), x.cols()) = x.vi();
 
-  ChainableStack::instance_->var_stack_.
-    push_back(new to_static_vari<R, C>(x.size(), x_vis_, this->vi_));
+  ChainableStack::instance_->var_stack_.push_back(
+      new to_static_vari<R, C>(x.size(), x_vis_, this->vi_));
 }
 
 template <typename T>
 template <int R, int C>
-var_value<T, require_vt_floating_point<T>>::operator Eigen::Matrix<var, R, C>() {
+var_value<T, require_vt_floating_point<T>>::
+operator Eigen::Matrix<var, R, C>() {
   Eigen::Matrix<var, R, C> x(this->val());
 
-  vari** x_vis_ = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
+  vari** x_vis_
+      = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
   Eigen::Map<Eigen::Matrix<vari*, R, C>>(x_vis_, x.rows(), x.cols()) = x.vi();
-  
-  ChainableStack::instance_->var_stack_.
-    push_back(new from_static_vari<R, C>(x.size(), this->vi_, x_vis_));
+
+  ChainableStack::instance_->var_stack_.push_back(
+      new from_static_vari<R, C>(x.size(), this->vi_, x_vis_));
 
   return x;
 }

@@ -14,12 +14,12 @@ struct is_vari : std::false_type {};
 
 STAN_ADD_REQUIRE_UNARY(vari, is_vari, require_stan_scalar_real);
 STAN_ADD_REQUIRE_UNARY_INNER(vari, is_vari, require_stan_scalar_real);
-  //STAN_ADD_REQUIRE_CONTAINER(vari, is_vari, require_stan_scalar_real);
+// STAN_ADD_REQUIRE_CONTAINER(vari, is_vari, require_stan_scalar_real);
 
-  /*template <typename T>
+/*template <typename T>
 struct value_type<T, std::enable_if_t<is_vari<T>::value>> {
-  using type = typename std::decay_t<T>::value_type;
-  };*/
+using type = typename std::decay_t<T>::value_type;
+};*/
 
 }  // namespace stan
 #endif

@@ -29,7 +29,7 @@ namespace math {
  */
 template <typename Vari>
 static void grad(Vari* vi = nullptr) {
-  if(vi)
+  if (vi)
     vi->init_dependent();
   std::vector<vari_base*>& var_stack = ChainableStack::instance_->var_stack_;
   size_t end = var_stack.size();

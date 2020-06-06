@@ -38,7 +38,7 @@ using require_vari_vt = require_t<
 
 template <template <class...> class TypeCheck, class... Check>
 using require_all_vari_vt = require_all_t<
-container_type_check_base<is_vari, get_vari_t, TypeCheck, Check>...>;
-  
+    container_type_check_base<is_vari, get_vari_t, TypeCheck, Check>...>;
+
 }  // namespace stan
 #endif
