@@ -222,8 +222,7 @@ using mat_mul_return_type_t = typename mat_mul_return_type<T1, T2>::type;
  * @param b Second variable operand.
  * @return Variable result of multiplying operands.
  */
-template <typename T1, typename T2,
-	  require_all_var_value_t<T1, T2>* = nullptr>
+template <typename T1, typename T2, require_all_var_value_t<T1, T2>* = nullptr>
 inline auto operator*(const T1& a, const T2& b) {
   using vari1 = get_var_vari_value_t<T1>;
   using vari2 = get_var_vari_value_t<T2>;

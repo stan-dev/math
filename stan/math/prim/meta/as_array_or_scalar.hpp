@@ -17,8 +17,8 @@ namespace math {
  * @return Same value.
  */
 template <typename T, typename = require_stan_scalar_t<T>>
-inline T as_array_or_scalar(T&& v) {
-  return std::forward<T>(v);
+inline const T& as_array_or_scalar(const T& v) {
+  return v;
 }
 
 /** \ingroup type_trait

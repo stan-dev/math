@@ -76,9 +76,9 @@ struct is_eigen_var
 // until we figure out how to get inner type for vari_value
 template <typename T>
 struct get_var_vari_value<T, std::enable_if_t<is_eigen_var<T>::value>> {
-  using type = math::vari_value<
-      Eigen::Matrix<value_type_t<T>, T::RowsAtCompileTime,
-                    T::ColsAtCompileTime>>;
+  using type
+      = math::vari_value<Eigen::Matrix<value_type_t<T>, T::RowsAtCompileTime,
+                                       T::ColsAtCompileTime>>;
 };
 
 template <typename T>
