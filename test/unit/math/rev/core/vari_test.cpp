@@ -20,3 +20,10 @@ TEST(AgradRev, eigen_obj) {
   stan::math::vari_value<eigen_arr> C_arr(eigen_arr::Random(10, 10), false);
   stan::math::recover_memory();
 }
+
+TEST(AgradRev, long_double_test) {
+  stan::math::vari_value<long double> v(5);
+  std::stringstream ss;
+  ss << &v;
+  EXPECT_EQ("5:0", ss.str());
+}

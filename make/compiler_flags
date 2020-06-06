@@ -52,13 +52,19 @@ endif
 ifneq (,$(findstring mingw32-g,$(CXX)))
   CXX_TYPE ?= mingw32-gcc
 endif
-ifneq (,$(findstring gcc,$(CXX)))
+ifneq ($(filter gcc,$(CXX)),)  
   CXX_TYPE ?= gcc
-  CXXFLAGS_FLTO ?= -flto -fuse-linker-plugin -fdevirtualize-at-ltrans -fipa-pta
+  CXXFLAGS_FLTO ?= -flto -fuse-linker-plugin -fipa-pta
+  ifneq ($(OS),Windows_NT)
+    CXXFLAGS_FLTO += -fdevirtualize-at-ltrans
+  endif
 endif
-ifneq (,$(findstring g++,$(CXX)))
+ifneq ($(filter g++,$(CXX)),)
   CXX_TYPE ?= gcc
-  CXXFLAGS_FLTO ?= -flto -fuse-linker-plugin -fdevirtualize-at-ltrans -fipa-pta
+  CXXFLAGS_FLTO ?= -flto -fuse-linker-plugin -fipa-pta
+  ifneq ($(OS),Windows_NT)
+    CXXFLAGS_FLTO += -fdevirtualize-at-ltrans
+  endif
 endif
 CXX_TYPE ?= other
 CXX_MAJOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f1)
