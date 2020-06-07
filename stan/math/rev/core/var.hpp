@@ -114,7 +114,7 @@ class var_value<T, require_vt_floating_point<T>> {
             var_value(EigenT x) : vi_(new vari_type(x, false)) {}  // NOLINT*/
 
   template <int R, int C>
-  var_value(const Eigen::Matrix<var_value<double>, R, C>& x); // NOLINT
+  var_value(const Eigen::Matrix<var_value<double>, R, C>& x);  // NOLINT
 
   /**
    * Return the value of this variable.
