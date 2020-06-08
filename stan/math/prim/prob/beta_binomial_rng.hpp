@@ -32,15 +32,22 @@ template <typename T_N, typename T_shape1, typename T_shape2, class RNG>
 inline typename VectorBuilder<true, int, T_N, T_shape1, T_shape2>::type
 beta_binomial_rng(const T_N &N, const T_shape1 &alpha, const T_shape2 &beta,
                   RNG &rng) {
+  using T_N_ref = ref_type_t<T_N>;
+  using T_alpha_ref = ref_type_t<T_shape1>;
+  using T_beta_ref = ref_type_t<T_shape2>;
   static const char *function = "beta_binomial_rng";
-  check_nonnegative(function, "Population size parameter", N);
-  check_positive_finite(function, "First prior sample size parameter", alpha);
-  check_positive_finite(function, "Second prior sample size parameter", beta);
   check_consistent_sizes(function, "First prior sample size parameter", alpha,
                          "Second prior sample size parameter", beta);
 
-  auto p = beta_rng(alpha, beta, rng);
-  return binomial_rng(N, p, rng);
+  T_N_ref N_ref = N;
+  T_alpha_ref alpha_ref = alpha;
+  T_beta_ref beta_ref = beta;
+  check_nonnegative(function, "Population size parameter", N_ref);
+  check_positive_finite(function, "First prior sample size parameter", alpha_ref);
+  check_positive_finite(function, "Second prior sample size parameter", beta_ref);
+
+  auto p = beta_rng(alpha_ref, beta_ref, rng);
+  return binomial_rng(N_ref, p, rng);
 }
 
 }  // namespace math
