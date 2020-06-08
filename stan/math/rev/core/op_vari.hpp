@@ -13,10 +13,34 @@ namespace math {
 
 namespace internal {
 
+  // For basic types just T, vari gives vari, Eigen gives an Eigen::Map
+  template <typename T, typename = void>
+  struct op_vari_tuple_arg_type {
+    using type = std::decay_t<T>;
+  };
+
+  template <typename T>
+  struct op_vari_tuple_arg_type<T, require_vari_t<T>> {
+    using type = T;
+  };
+
+  template <typename T>
+  struct op_vari_tuple_arg_type<T, require_var_t<T>> {
+    using type = typename std::decay_t<T>::vari_pointer;
+  };
+
+  template <typename T>
+  struct op_vari_tuple_arg_type<T, require_eigen_t<T>> {
+    using type = std::decay_t<T>;
+  };
+
+  template <typename T>
+  using op_vari_tuple_arg_t = typename op_vari_tuple_arg_type<T>::type;
+
 // For basic types just T, vari gives vari, Eigen gives an Eigen::Map
 template <typename T, typename = void>
 struct op_vari_tuple_type {
-  using type = T;
+  using type = std::decay_t<T>;
 };
 
 template <typename T>
@@ -132,7 +156,7 @@ auto make_op_vari_tuple(Arr& mem, Types&&... args) {
  * @tparam Types The types of the operation.
  */
 template <typename T, typename... Types>
-class op_vari : public vari_value<T> {
+class op_vari : public vari_value<std::decay_t<T>> {
  protected:
   using num_dbls_ = std::tuple_size<internal::matrix_double_filter_t<Types...>>;
   std::array<double*, num_dbls_::value> dbl_mem_;  // mem for eigen mat doubles
@@ -189,7 +213,7 @@ class op_vari : public vari_value<T> {
    *  and for Eigen matrices of doubles allocates the mem for it on our stack,
    *   then constructs and fills the map.
    */
-  op_vari(const T& val, const internal::op_vari_tuple_t<Types>&... args)
+  op_vari(const T& val, const internal::op_vari_tuple_arg_t<Types>&... args)
       : vari_value<T>(val),
         dbl_mem_(),
         vi_(internal::make_op_vari_tuple(dbl_mem_, args...)) {}

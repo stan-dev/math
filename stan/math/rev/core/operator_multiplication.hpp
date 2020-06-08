@@ -14,7 +14,12 @@
 namespace stan {
 namespace math {
 
+template <typename T>
+struct is_not_var : bool_constant<!is_var<T>::value> {};
+
 namespace internal {
+
+
 /**
  * Deduces the return type for matrix multiplication of two types
  */
@@ -23,7 +28,7 @@ struct mat_mul_return_type {};
 
 // helper alias
 template <typename T1, typename T2>
-using mat_mul_return_t = typename mat_mul_return_type<T1, T2>::type;
+using mat_mul_return_t = std::decay_t<typename mat_mul_return_type<std::decay_t<T1>, std::decay_t<T2>>::type>;
 
 // arithmetic is just double
 template <typename T1, typename T2>
@@ -36,42 +41,47 @@ struct mat_mul_return_type<T1, T2, require_any_eigen_t<T1, T2>> {
   using type = decltype((std::declval<T1>() * std::declval<T2>()).eval());
 };
 
+template <typename T1, typename T2, typename = void>
+struct mat_mul_var_return_type {};
+
 template <typename T1, typename T2>
-struct mat_mul_return_type<T1, T2, require_all_var_t<T1, T2>> {
+struct mat_mul_var_return_type<T1, T2, require_all_var_t<T1, T2>> {
   using type = mat_mul_return_t<value_type_t<T1>, value_type_t<T2>>;
 };
 
 template <typename T1, typename T2>
-struct mat_mul_return_type<T1, T2, require_all_t<is_var<T1>, is_eigen<T2>>> {
+struct mat_mul_var_return_type<T1, T2, require_all_t<is_var<T1>, is_not_var<T2>>> {
   using type = mat_mul_return_t<value_type_t<T1>, T2>;
 };
 
 template <typename T1, typename T2>
-struct mat_mul_return_type<T1, T2, require_all_t<is_eigen<T1>, is_var<T2>>> {
+struct mat_mul_var_return_type<T1, T2, require_all_t<is_not_var<T1>, is_var<T2>>> {
   using type = mat_mul_return_t<T1, value_type_t<T2>>;
 };
 
+template <typename T1, typename T2>
+using mat_mul_var_return_t = typename mat_mul_var_return_type<std::decay_t<T1>, std::decay_t<T2>>::type;
 
 /**
  * Base for multiplication, to be specliazed for chain types.
  */
 template <typename Var1, typename Var2, typename = void>
-class multiply_vari {};
+class multiply_vari;
 
 /**
  * Specialization of var multiplication for two `var_value`.
  */
 template <typename Var1, typename Var2>
 class multiply_vari<Var1, Var2, require_all_var_t<Var1, Var2>>
-    final : public op_vari<mat_mul_return_t<Var1, Var2>, Var1, Var2> {
-  using op_vari_mul = op_vari<mat_mul_return_t<Var1, Var2>, Var1, Var2>;
+    final : public op_vari<mat_mul_var_return_t<Var1, Var2>, Var1, Var2> {
+  using op_vari_mul = op_vari<mat_mul_var_return_t<Var1, Var2>, Var1, Var2>;
   using op_vari_mul::avi;
   using op_vari_mul::bvi;
  public:
   using op_vari_mul::return_t;
   template <typename T1, typename T2>
   multiply_vari(T1* avi, T2* bvi)
-      : op_vari<mat_mul_return_t<Var1, Var2>, Var1, Var2>(avi->val_ * bvi->val_, avi, bvi) {}
+      : op_vari<mat_mul_var_return_t<Var1, Var2>, Var1, Var2>(avi->val_ * bvi->val_, avi, bvi) {}
   /**
    * `chain_impl` is called from `chain()` and exists so one specialized struct
    * can call either the scalar or matrix `chain()` methods. SFINAE only works
@@ -106,15 +116,13 @@ class multiply_vari<Var1, Var2, require_all_var_t<Var1, Var2>>
   }
 };
 
-template <typename T>
-struct is_not_var : bool_constant<!is_var<T>::value> {};
 /**
  * Specialization of var multiplication for `var_value` and arithmetic
  */
 template <typename Var, typename Arith>
 class multiply_vari<Var, Arith, require_all_t<is_var<Var>, is_not_var<Arith>>> final
-    : public op_vari<mat_mul_return_t<Var, Arith>, Var, Arith> {
-  using op_vari_mul = op_vari<mat_mul_return_t<Var, Arith>, Var, Arith>;
+    : public op_vari<mat_mul_var_return_t<Var, Arith>, Var, Arith> {
+  using op_vari_mul = op_vari<mat_mul_var_return_t<Var, Arith>, Var, Arith>;
   using op_vari_mul::avi;
   using op_vari_mul::bd;
 
@@ -159,8 +167,8 @@ class multiply_vari<Var, Arith, require_all_t<is_var<Var>, is_not_var<Arith>>> f
  */
 template <typename Arith, typename Var>
 class multiply_vari<Arith, Var, require_all_t<is_not_var<Arith>, is_var<Var>>> final
-    : public op_vari<mat_mul_return_t<Arith, Var>, Arith, Var> {
-  using op_vari_mul = op_vari<mat_mul_return_t<Arith, Var>, Arith, Var>;
+    : public op_vari<mat_mul_var_return_t<Arith, Var>, Arith, Var> {
+  using op_vari_mul = op_vari<mat_mul_var_return_t<Arith, Var>, Arith, Var>;
   using op_vari_mul::ad;
   using op_vari_mul::bvi;
  public:
