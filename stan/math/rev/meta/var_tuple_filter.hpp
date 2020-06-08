@@ -17,7 +17,7 @@ template <template <typename...> class Pred,
           template <typename...> class Filter, typename T>
 using var_filter_helper
     = std::conditional_t<Pred<std::decay_t<T>>::value, std::tuple<Filter<T>>,
-                         std::tuple<>>;
+                         std::tuple<std::nullptr_t>>;
 
 template <typename T>
 using var_vari_value_t = get_var_vari_value_t<scalar_type_t<T>>;

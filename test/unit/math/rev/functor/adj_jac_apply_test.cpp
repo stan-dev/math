@@ -454,14 +454,17 @@ struct WeirdArgumentListFunctor1 {
 };
 
 template <typename F, typename... Targs>
-auto make_vari_for_test(const Targs&... args) {
+auto make_vari_for_test_impl(const Targs&... args) {
   using stan::math::adj_jac_vari;
-  using stan::math::x_vis_alloc;
-  auto* x_alloc = new x_vis_alloc<Targs...>(args...);
-  auto vi = new adj_jac_vari<F, Targs...>(x_alloc);
+  auto vi = new adj_jac_vari<F, Targs...>(args...);
   (*vi)(args...);
 
   return vi;
+}
+
+template <typename F, typename... Targs>
+auto make_vari_for_test(const Targs&... args) {
+  return make_vari_for_test_impl<F>(stan::math::convert_to_whole_matrix(args)...);
 }
 
 TEST(AgradRev, test_weird_argument_list_functor_compiles_and_sets_is_var_) {

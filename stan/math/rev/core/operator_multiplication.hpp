@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/op_vari.hpp>
+#include <stan/math/rev/functor/adj_jac_apply.hpp>
 #include <stan/math/rev/meta/is_vari.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
@@ -153,150 +154,175 @@ class multiply_vari<VariVal, Arith, Vari, require_vt_arithmetic<Arith>> final
   }
 };
 
-/**
- * Deduces the return type for matrix multiplication of two types
- */
-template <typename T1, typename T2, typename = void, typename = void>
-struct mat_mul_return_type {};
+}  // namespace internal
 
-// arithmetic is just double
-template <typename T1, typename T2>
-struct mat_mul_return_type<T1, T2, require_all_arithmetic_t<T1, T2>> {
-  /**
-   * FIXME: Should probs do something to promote to highest type given
-   * something like float/double/int
-   */
-  using type = double;
-};
+template <typename T> 
+using require_scalar_t = require_t<std::is_same<std::decay_t<T>, scalar_type_t<std::decay_t<T>>>>;
 
-struct mult_invoker {
-  template <typename T1, typename T2>
-  auto operator()(T1&& x, T2&& y) {
-    return (x * y).eval();
+template <typename T>
+using require_matrix_t = require_t<disjunction<is_eigen<T>,
+					       std::is_same<std::decay_t<T>, var_value<Eigen::MatrixXd>>,
+					       std::is_same<std::decay_t<T>, var_value<Eigen::VectorXd>>,
+					       std::is_same<std::decay_t<T>, var_value<Eigen::RowVectorXd>>>>;
+
+struct OpMultiplyScalarScalar {
+  double a_;
+  double b_;
+
+  template <std::size_t size>
+  double operator()(const std::array<bool, size>& needs_adj,
+		    double a,
+		    double b) {
+    a_ = a;
+    b_ = b;
+
+    return a * b;
+  }
+
+  template <std::size_t size>
+  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
+                                 double adj) {
+    return std::make_tuple(adj * b_, adj * a_);
   }
 };
 
-template <typename T1, typename T2>
-struct mat_mul_return_type<T1, T2, require_any_eigen_t<T1, T2>> {
-  using type = std::result_of_t<mult_invoker(T1, T2)>;
+struct OpMultiplyMatrixScalar {
+  int N_;
+  int M_;
+  double* x_mem_;
+  double b_;
+
+  template <std::size_t size, typename Derived>
+  Eigen::MatrixXd operator()(const std::array<bool, size>& needs_adj,
+			     const Eigen::MatrixBase<Derived>& x,
+			     double b) {
+    N_ = x.rows();
+    M_ = x.cols();
+
+    if(needs_adj[1]) {
+      x_mem_
+        = stan::math::ChainableStack::instance_->memalloc_.alloc_array<double>(N_ * M_);
+
+      for (int n = 0; n < N_ * M_; ++n) {
+	x_mem_[n] = x(n);
+      }
+    }
+
+    b_ = b;
+
+    return x * b;
+  }
+
+  template <std::size_t size, int R, int C>
+  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
+                                 const Eigen::MatrixXd& adj) {
+    Eigen::MatrixXd adja;
+    double adjb = 0.0;
+
+    if(needs_adj[0]) {
+      adja.resize(N_, M_);
+      adja = adj * b_;
+    }
+    
+    if(needs_adj[1]) {
+      Eigen::Map<Eigen::MatrixXd> x(x_mem_, N_, M_);
+      adjb = x.dot(adj);
+    }
+
+    return std::make_tuple(adja, adjb);
+  }
 };
-// helper alias
-template <typename T1, typename T2>
-using mat_mul_return_type_t = typename mat_mul_return_type<T1, T2>::type;
-}  // namespace internal
 
-/**
- * Multiplication operator for two variables (C++).
- *
- * The partial derivatives are
- *
- * \f$\frac{\partial}{\partial x} (x * y) = y\f$, and
- *
- * \f$\frac{\partial}{\partial y} (x * y) = x\f$.
- *
-   \f[
-   \mbox{operator*}(x, y) =
-   \begin{cases}
-     xy & \mbox{if } -\infty\leq x, y \leq \infty \\[6pt]
-     \textrm{NaN} & \mbox{if } x = \textrm{NaN or } y = \textrm{NaN}
-   \end{cases}
-   \f]
+struct OpMultiplyMatrixMatrix {
+  int N1_;
+  int M1_;
+  int N2_;
+  int M2_;
+  double* A_mem_;
+  double* B_mem_;
 
-   \f[
-   \frac{\partial\, \mbox{operator*}(x, y)}{\partial x} =
-   \begin{cases}
-     y & \mbox{if } -\infty\leq x, y \leq \infty \\[6pt]
-     \textrm{NaN} & \mbox{if } x = \textrm{NaN or } y = \textrm{NaN}
-   \end{cases}
-   \f]
+  template <std::size_t size, typename Derived1, typename Derived2>
+  Eigen::MatrixXd operator()(const std::array<bool, size>& needs_adj,
+			     const Eigen::MatrixBase<Derived1>& A,
+			     const Eigen::MatrixBase<Derived2>& B) {
+    N1_ = A.rows();
+    M1_ = A.cols();
+    N2_ = B.rows();
+    M2_ = B.cols();
 
-   \f[
-   \frac{\partial\, \mbox{operator*}(x, y)}{\partial y} =
-   \begin{cases}
-     x & \mbox{if } -\infty\leq x, y \leq \infty \\[6pt]
-     \textrm{NaN} & \mbox{if } x = \textrm{NaN or } y = \textrm{NaN}
-   \end{cases}
-   \f]
- *
- * @param a First variable operand.
- * @param b Second variable operand.
- * @return Variable result of multiplying operands.
- */
-template <typename T1, typename T2, require_all_var_value_t<T1, T2>* = nullptr>
+    if(needs_adj[0]) {
+      B_mem_
+        = stan::math::ChainableStack::instance_->memalloc_.alloc_array<double>(N2_ * M2_);
+
+      for (int n = 0; n < N2_ * M2_; ++n) {
+	B_mem_[n] = B(n);
+      }
+    }
+
+    if(needs_adj[1]) {
+      A_mem_
+        = stan::math::ChainableStack::instance_->memalloc_.alloc_array<double>(N1_ * M1_);
+
+      for (int n = 0; n < N1_ * M1_; ++n) {
+	A_mem_[n] = A(n);
+      }
+    }
+
+    return A * B;
+  }
+
+  template <std::size_t size>
+  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
+                                 const Eigen::MatrixXd& adj) {
+    Eigen::MatrixXd adjA;
+    Eigen::MatrixXd adjB;
+
+    if(needs_adj[0]) {
+      Eigen::Map<Eigen::MatrixXd> B(B_mem_, N2_, M2_);
+      adjA = adj * B.transpose();
+    }
+    
+    if(needs_adj[1]) {
+      Eigen::Map<Eigen::MatrixXd> A(A_mem_, N1_, M1_);
+      adjB = A.transpose() * adj;
+    }
+
+    return std::make_tuple(adjA, adjB);
+  }
+};
+
+template <typename T1, typename T2,
+	  require_scalar_t<T1>...,
+	  require_scalar_t<T2>...,
+	  require_any_var_value_t<T1, T2>...>
 inline auto operator*(const T1& a, const T2& b) {
-  using vari1 = get_var_vari_value_t<T1>;
-  using vari2 = get_var_vari_value_t<T2>;
-  using scalar1_type = typename T1::value_type;
-  using scalar2_type = typename T2::value_type;
-  using mat_return
-      = internal::mat_mul_return_type_t<scalar1_type, scalar2_type>;
-  using multiply_type = internal::multiply_vari<mat_return, vari1, vari2>;
-  return var_value<mat_return>{new multiply_type(a.vi_, b.vi_)};
+  return adj_jac_apply<OpMultiplyScalarScalar>(a, b);
 }
 
-/**
- * idk how to name this, but we need something that at SFINAE
- * that allows mixes of stan scalar types or var<eig> with eigen but not
- * var and Eig<double> which should differ to the old implimentation for dynamic
- * types.
- */
-template <typename T, typename S, typename = void>
-struct is_conformable : std::true_type {};
-
-template <typename T, typename S>
-struct is_conformable<T, S, require_var_t<T>>
-    : bool_constant<!is_eigen<S>::value> {};
-
-template <typename T, typename S>
-using require_conformable_t = require_t<is_conformable<T, S>>;
-
-/**
- * Multiplication operator for a variable and a scalar (C++).
- *
- * The partial derivative for the variable is
- *
- * \f$\frac{\partial}{\partial x} (x * c) = c\f$, and
- *
- * @tparam Arith An arithmetic type
- * @param a Variable operand.
- * @param b Scalar operand.
- * @return Variable result of multiplying operands.
- */
-template <typename T, typename Arith, require_var_value_t<T>* = nullptr,
-          require_st_arithmetic<Arith>* = nullptr>
-//,
-//          require_conformable_t<T, Arith>* = nullptr>
-inline auto operator*(const T& a, const Arith& b) {
-  using vari_type = get_var_vari_value_t<T>;
-  using scalar_type = typename T::value_type;
-  using mat_return = internal::mat_mul_return_type_t<scalar_type, Arith>;
-  using multiply_type = internal::multiply_vari<mat_return, vari_type, Arith>;
-  return var_value<mat_return>{new multiply_type(a.vi_, b)};
+template <typename T1, typename T2,
+	  require_matrix_t<T1>...,
+	  require_scalar_t<T2>...,
+	  require_any_var_value_t<T1, T2>...>
+inline auto operator*(const T1& a, const T2& b) {
+  return adj_jac_apply<OpMultiplyMatrixScalar>(a, b);
 }
 
-/**
- * Multiplication operator for a scalar and a variable (C++).
- *
- * The partial derivative for the variable is
- *
- * \f$\frac{\partial}{\partial y} (c * y) = c\f$.
- *
- * @tparam Arith An arithmetic type
- * @param a Scalar operand.
- * @param b Variable operand.
- * @return Variable result of multiplying the operands.
- */
-template <typename T, typename Arith, require_var_value_t<T>* = nullptr,
-          require_st_arithmetic<Arith>* = nullptr>
-//,
-//          require_conformable_t<T, Arith>* = nullptr>
-inline auto operator*(const Arith& a, const T& b) {
-  using vari_type = get_var_vari_value_t<T>;
-  using scalar_type = typename T::value_type;
-  using mat_return = internal::mat_mul_return_type_t<Arith, scalar_type>;
-  using multiply_type = internal::multiply_vari<mat_return, Arith, vari_type>;
-  return var_value<mat_return>{new multiply_type(a, b.vi_)};
+template <typename T1, typename T2,
+	  require_scalar_t<T1>...,
+	  require_matrix_t<T2>...,
+	  require_any_var_value_t<T1, T2>...>
+inline auto operator*(const T1& a, const T2& b) {
+  return b * a;
 }
+ 
+template <typename T1, typename T2,
+	  require_matrix_t<T1>...,
+	  require_matrix_t<T2>...,
+	  require_any_var_value_t<T1, T2>...>
+inline auto operator*(const T1& a, const T2& b) {
+  return adj_jac_apply<OpMultiplyMatrixMatrix>(a, b);
+}
+
 
 }  // namespace math
 }  // namespace stan

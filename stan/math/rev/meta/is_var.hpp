@@ -97,5 +97,10 @@ struct get_var_scalar<T, require_var_value_t<T>> {
 template <typename T>
 using get_var_scalar_t = typename get_var_scalar<std::decay_t<T>>::type;
 
+template <typename T>
+struct scalar_type<T, std::enable_if_t<is_var_value<T>::value>> {
+  using type = math::var_value<double>;
+};
+  
 }  // namespace stan
 #endif
