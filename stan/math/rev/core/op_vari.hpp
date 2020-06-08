@@ -13,29 +13,29 @@ namespace math {
 
 namespace internal {
 
-  // For basic types just T, vari gives vari, Eigen gives an Eigen::Map
-  template <typename T, typename = void>
-  struct op_vari_tuple_arg_type {
-    using type = std::decay_t<T>;
-  };
+// For basic types just T, vari gives vari, Eigen gives an Eigen::Map
+template <typename T, typename = void>
+struct op_vari_tuple_arg_type {
+  using type = std::decay_t<T>;
+};
 
-  template <typename T>
-  struct op_vari_tuple_arg_type<T, require_vari_t<T>> {
-    using type = T;
-  };
+template <typename T>
+struct op_vari_tuple_arg_type<T, require_vari_t<T>> {
+  using type = T;
+};
 
-  template <typename T>
-  struct op_vari_tuple_arg_type<T, require_var_t<T>> {
-    using type = typename std::decay_t<T>::vari_pointer;
-  };
+template <typename T>
+struct op_vari_tuple_arg_type<T, require_var_t<T>> {
+  using type = typename std::decay_t<T>::vari_pointer;
+};
 
-  template <typename T>
-  struct op_vari_tuple_arg_type<T, require_eigen_t<T>> {
-    using type = std::decay_t<T>;
-  };
+template <typename T>
+struct op_vari_tuple_arg_type<T, require_eigen_t<T>> {
+  using type = std::decay_t<T>;
+};
 
-  template <typename T>
-  using op_vari_tuple_arg_t = typename op_vari_tuple_arg_type<T>::type;
+template <typename T>
+using op_vari_tuple_arg_t = typename op_vari_tuple_arg_type<T>::type;
 
 // For basic types just T, vari gives vari, Eigen gives an Eigen::Map
 template <typename T, typename = void>

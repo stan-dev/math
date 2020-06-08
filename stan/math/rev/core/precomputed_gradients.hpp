@@ -97,8 +97,9 @@ class precomputed_gradients_vari : public vari {
 template <typename Arith, typename VecVar, typename VecArith>
 inline var precomputed_gradients(Arith value, VecVar&& operands,
                                  VecArith&& gradients) {
-  return var(new precomputed_gradients_vari(value, std::forward<VecVar>(operands),
-                                         std::forward<VecArith>(gradients)));
+  return var(new precomputed_gradients_vari(value,
+                                            std::forward<VecVar>(operands),
+                                            std::forward<VecArith>(gradients)));
 }
 
 }  // namespace math

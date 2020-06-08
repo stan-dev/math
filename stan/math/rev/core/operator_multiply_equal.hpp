@@ -12,8 +12,7 @@ namespace math {
 template <typename T>
 inline var_value<T>& var_value<T, require_vt_floating_point<T>>::operator*=(
     const var_value<T>& b) {
-  vi_ = new internal::multiply_vari<var_value<T>, var_value<T>>(vi_,
-                                                                     b.vi_);
+  vi_ = new internal::multiply_vari<var_value<T>, var_value<T>>(vi_, b.vi_);
   return *this;
 }
 
