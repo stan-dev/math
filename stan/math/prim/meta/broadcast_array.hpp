@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/promote_scalar_type.hpp>
-#include <stan/math/prim/meta/ref_type.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stdexcept>
 
@@ -29,8 +28,7 @@ class broadcast_array {
    */
   template <typename Y>
   void operator=(const Y& m) {
-    ref_type_t<Y> m_ref = m;
-    prim_ = m_ref[0];
+    prim_ = m[0];
   }
 };
 

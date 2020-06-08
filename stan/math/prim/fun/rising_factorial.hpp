@@ -63,7 +63,7 @@ inline return_type_t<T> rising_factorial(const T& x, int n) {
   static const char* function = "rising_factorial";
   check_not_nan(function, "first argument", x);
   check_nonnegative(function, "second argument", n);
-  return boost::math::rising_factorial(x, n, boost_policy_t());
+  return boost::math::rising_factorial(x, n, boost_policy_t<>());
 }
 
 }  // namespace math
