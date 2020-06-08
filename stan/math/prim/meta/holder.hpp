@@ -115,7 +115,7 @@ template <typename ArgType, typename... Ptrs>
 struct evaluator<stan::math::Holder<ArgType, Ptrs...>>
     : evaluator_base<stan::math::Holder<ArgType, Ptrs...>> {
   typedef stan::math::Holder<ArgType, Ptrs...> XprType;
-  typedef typename remove_all<typename nested_eval<ArgType, 1>::type>::type
+  typedef typename remove_all<ArgType>::type
       ArgTypeNestedCleaned;
   typedef typename XprType::CoeffReturnType CoeffReturnType;
   typedef typename XprType::Scalar Scalar;
@@ -124,8 +124,7 @@ struct evaluator<stan::math::Holder<ArgType, Ptrs...>>
     // Possible flags are documented here:
     // https://eigen.tuxfamily.org/dox/group__flags.html
     Flags
-    = evaluator<ArgTypeNestedCleaned>::Flags
-      & (HereditaryBits | LinearAccessBit | PacketAccessBit | DirectAccessBit),
+    = evaluator<ArgTypeNestedCleaned>::Flags,
     Alignment = evaluator<ArgTypeNestedCleaned>::Alignment,
   };
 
