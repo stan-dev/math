@@ -39,6 +39,7 @@ class var_value<T, require_vt_floating_point<T>> {
  public:
   // The internal value_type is always a floating point type
   using value_type = std::decay_t<T>;
+  using vari_pointer = vari_value<value_type>*;
   using vari_type = vari_value<value_type>;
 
   template <typename K>
@@ -96,7 +97,7 @@ class var_value<T, require_vt_floating_point<T>> {
    * same as `vari_value<double>` so can be `reinterpret_cast` without a copy.
    * @param vi A vari_value pointer.
    */
-  var_value(vari_value<T>* vi)  // NOLINT
+  var_value(vari_pointer vi)  // NOLINT
       : vi_(vi) {}
 
   /**

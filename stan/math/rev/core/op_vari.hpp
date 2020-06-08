@@ -25,6 +25,11 @@ struct op_vari_tuple_type<T, require_vari_t<T>> {
 };
 
 template <typename T>
+struct op_vari_tuple_type<T, require_var_t<T>> {
+  using type = typename std::decay_t<T>::vari_pointer;
+};
+
+template <typename T>
 struct op_vari_tuple_type<T, require_eigen_t<T>> {
   using type = Eigen::Map<typename std::decay_t<T>::PlainObject>;
 };
@@ -135,6 +140,7 @@ class op_vari : public vari_value<T> {
       vi_;  // Holds the objects needed in the reverse pass.
 
  public:
+  using return_t = std::decay_t<T>;
   /**
    * Get an element from the tuple of vari ops. Because of name lookup rules
    *  this function needs to be called as \c this->template get<N>()
@@ -183,7 +189,7 @@ class op_vari : public vari_value<T> {
    *  and for Eigen matrices of doubles allocates the mem for it on our stack,
    *   then constructs and fills the map.
    */
-  op_vari(const T& val, Types... args)
+  op_vari(const T& val, const internal::op_vari_tuple_t<Types>&... args)
       : vari_value<T>(val),
         dbl_mem_(),
         vi_(internal::make_op_vari_tuple(dbl_mem_, args...)) {}
