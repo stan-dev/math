@@ -14,7 +14,6 @@
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/multiply.hpp>
-#include <stan/math/opencl/kernels/normal_id_glm_lpdf.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <cmath>
 
@@ -53,10 +52,13 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     const matrix_cl<double>& y_cl, const matrix_cl<double>& x_cl,
     const T_alpha& alpha, const T_beta& beta, const T_scale& sigma) {
   static const char* function = "normal_id_glm_lpdf(OpenCL)";
+
+  constexpr bool is_sigma_vector = is_vector<T_scale>::value;
+  constexpr bool is_alpha_vector = is_vector<T_alpha>::value;
+
   using T_partials_return = partials_return_t<T_alpha, T_beta, T_scale>;
   using T_scale_val = typename std::conditional_t<
-      is_vector<T_scale>::value,
-      Eigen::Array<partials_return_t<T_scale>, -1, 1>,
+      is_sigma_vector, Eigen::Array<partials_return_t<T_scale>, -1, 1>,
       partials_return_t<T_scale>>;
 
   using Eigen::Array;
@@ -73,11 +75,11 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
                      y_cl.size());
   }
   check_consistent_size(function, "Weight vector", beta, M);
-  if (is_vector<T_scale>::value) {
+  if (is_sigma_vector) {
     check_size_match(function, "Rows of ", "x_cl", N, "size of ", "sigma",
                      stan::math::size(sigma));
   }
-  if (is_vector<T_alpha>::value) {
+  if (is_alpha_vector) {
     check_size_match(function, "Rows of ", "x_cl", N, "size of ", "alpha",
                      stan::math::size(alpha));
   }
@@ -107,47 +109,52 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   Matrix<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma_mat(N);
   auto y_scaled = y_minus_mu_over_sigma_mat.array();
 
-  const int local_size
-      = opencl_kernels::normal_id_glm.get_option("LOCAL_SIZE_");
-  const int wgs = (N + local_size - 1) / local_size;
-
   matrix_cl<double> beta_cl(beta_val_vec);
   matrix_cl<double> alpha_cl(alpha_val_vec);
   matrix_cl<double> sigma_cl(sigma_val_vec);
 
-  const bool need_mu_derivative = !is_constant_all<T_beta, T_alpha>::value;
+  auto sigma_bc_expr = broadcast<!is_sigma_vector, false>(sigma_cl);
+  auto inv_sigma_expr = elt_divide(1., sigma_bc_expr);
+  auto y_scaled_expr = elt_multiply(
+      (colwise_optional_broadcast(y_cl) - matrix_vector_multiply(x_cl, beta_cl)
+       - broadcast<!is_alpha_vector, false>(alpha_cl)),
+      inv_sigma_expr);
+  auto mu_derivative_expr = elt_multiply(y_scaled_expr, inv_sigma_expr);
+  auto mu_derivative_sum_expr = colwise_sum(mu_derivative_expr);
+  auto y_scaled_sq_expr = elt_multiply(y_scaled_expr, y_scaled_expr);
+  auto y_scaled_sq_sum_expr = colwise_sum(y_scaled_sq_expr);
+  auto sigma_derivative_expr
+      = elt_multiply((y_scaled_sq_expr - 1), inv_sigma_expr);
+  auto log_sigma_sum_expr = colwise_sum(log(sigma_bc_expr));
+
+  const int wgs = y_scaled_sq_sum_expr.rows();
+
+  constexpr bool need_mu_derivative = !is_constant_all<T_beta, T_alpha>::value;
   matrix_cl<double> mu_derivative_cl(need_mu_derivative ? N : 0, 1);
-  const bool need_mu_derivative_sum
-      = !is_constant_all<T_alpha>::value && !is_vector<T_alpha>::value;
+  constexpr bool need_mu_derivative_sum
+      = !is_constant_all<T_alpha>::value && !is_alpha_vector;
   matrix_cl<double> mu_derivative_sum_cl(need_mu_derivative_sum ? wgs : 0, 1);
-  matrix_cl<double> y_minus_mu_over_sigma_squared_sum_cl(wgs, 1);
-  const bool need_sigma_derivative
-      = !is_constant_all<T_scale>::value && is_vector<T_scale>::value;
+  matrix_cl<double> y_scaled_sq_sum_cl(wgs, 1);
+  constexpr bool need_sigma_derivative
+      = !is_constant_all<T_scale>::value && is_sigma_vector;
   matrix_cl<double> sigma_derivative_cl(need_sigma_derivative ? N : 0, 1);
-  const bool need_log_sigma_sum
-      = include_summand<propto, T_scale>::value && is_vector<T_scale>::value;
+  constexpr bool need_log_sigma_sum
+      = include_summand<propto, T_scale>::value && is_sigma_vector;
   matrix_cl<double> log_sigma_sum_cl(need_log_sigma_sum ? wgs : 0, 1);
 
-  try {
-    opencl_kernels::normal_id_glm(
-        cl::NDRange(local_size * wgs), cl::NDRange(local_size),
-        mu_derivative_cl, mu_derivative_sum_cl,
-        y_minus_mu_over_sigma_squared_sum_cl, sigma_derivative_cl,
-        log_sigma_sum_cl, y_cl, x_cl, alpha_cl, beta_cl, sigma_cl, N, M,
-        y_cl.size() != 1, stan::math::size(alpha) != 1,
-        stan::math::size(sigma) != 1, need_mu_derivative,
-        need_mu_derivative_sum, need_sigma_derivative, need_log_sigma_sum);
-  } catch (const cl::Error& e) {
-    check_opencl_error(function, e);
-  }
-  double y_scaled_sq_sum
-      = sum(from_matrix_cl(y_minus_mu_over_sigma_squared_sum_cl));
+  results(mu_derivative_cl, mu_derivative_sum_cl, y_scaled_sq_sum_cl,
+          sigma_derivative_cl, log_sigma_sum_cl)
+      = expressions(calc_if<need_mu_derivative>(mu_derivative_expr),
+                    calc_if<need_mu_derivative_sum>(mu_derivative_sum_expr),
+                    y_scaled_sq_sum_expr,
+                    calc_if<need_sigma_derivative>(sigma_derivative_expr),
+                    calc_if<need_log_sigma_sum>(log_sigma_sum_expr));
 
+  double y_scaled_sq_sum = sum(from_matrix_cl(y_scaled_sq_sum_cl));
   operands_and_partials<decltype(alpha_ref), decltype(beta_ref),
                         decltype(sigma_ref)>
       ops_partials(alpha_ref, beta_ref, sigma_ref);
-
-  if (!is_constant_all<T_alpha>::value && is_vector<T_alpha>::value) {
+  if (!is_constant_all<T_alpha>::value && is_alpha_vector) {
     ops_partials.edge1_.partials_
         = from_matrix_cl<Dynamic, 1>(mu_derivative_cl);
   }
@@ -164,7 +171,7 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
         = from_matrix_cl<1, Dynamic>(mu_derivative_transpose_cl * x_cl);
   }
   if (!is_constant_all<T_scale>::value) {
-    if (is_vector<T_scale>::value) {
+    if (is_sigma_vector) {
       ops_partials.edge3_.partials_
           = from_matrix_cl<Dynamic, 1>(sigma_derivative_cl);
     } else {
@@ -188,7 +195,7 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     logp += NEG_LOG_SQRT_TWO_PI * N;
   }
   if (include_summand<propto, T_scale>::value) {
-    if (is_vector<T_scale>::value) {
+    if (is_sigma_vector) {
       logp -= sum(from_matrix_cl(log_sigma_sum_cl));
     } else {
       logp -= N * log(forward_as<double>(sigma_val_vec));
