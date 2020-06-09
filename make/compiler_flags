@@ -28,7 +28,7 @@ ifeq ($(OS),Linux)
   LIBRARY_SUFFIX ?= .so
 endif
 
-## Set default compiler and flto compiler flags
+## Set default compiler
 ifeq (default,$(origin CXX))
   ifeq ($(OS),Darwin)  ## Darwin is Mac OS X
     CXX := clang++
@@ -47,28 +47,19 @@ endif
 # - CXX_MINOR: minor version of CXX
 ifneq (,$(findstring clang,$(CXX)))
   CXX_TYPE ?= clang
-  CXXFLAGS_FLTO ?= -flto
 endif
 ifneq (,$(findstring mingw32-g,$(CXX)))
   CXX_TYPE ?= mingw32-gcc
 endif
-ifneq ($(filter gcc,$(CXX)),)
+ifneq (,$(findstring gcc,$(CXX)))
   CXX_TYPE ?= gcc
-  ifneq ($(OS),Windows_NT)
-    CXXFLAGS_FLTO ?= -fdevirtualize-at-ltrans -flto -fuse-linker-plugin -fipa-pta
-  endif
 endif
-ifneq ($(filter g++,$(CXX)),)
+ifneq (,$(findstring g++,$(CXX)))
   CXX_TYPE ?= gcc
-  ifneq ($(OS),Windows_NT)
-    CXXFLAGS_FLTO ?= -fdevirtualize-at-ltrans -flto -fuse-linker-plugin -fipa-pta
-  endif
 endif
 CXX_TYPE ?= other
 CXX_MAJOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f1)
 CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
-
-
 
 ################################################################################
 # Set default compiler flags
@@ -263,9 +254,11 @@ ifdef STAN_MPI
   CXXFLAGS_MPI ?= -Wno-delete-non-virtual-dtor
 endif
 
-CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_FLTO) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) $(CXXFLAGS_THREADS) $(CXXFLAGS_TBB) -O$(O) $(INC)
+
+
+CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) $(CXXFLAGS_THREADS) $(CXXFLAGS_TBB) -O$(O) $(INC)
 CPPFLAGS += $(CPPFLAGS_LANG) $(CPPFLAGS_OS) $(CPPFLAGS_WARNINGS) $(CPPFLAGS_BOOST) $(CPPFLAGS_EIGEN) $(CPPFLAGS_OPENCL) $(CPPFLAGS_MPI) $(CPPFLAGS_TBB)
-LDFLAGS += $(LDFLAGS_LANG) $(LDFLAGS_OS) $(CXXFLAGS_FLTO) $(LDFLAGS_WARNINGS) $(LDFLAGS_BOOST) $(LDFLAGS_EIGEN) $(LDFLAGS_OPENCL) $(LDFLAGS_MPI) $(LDFLAGS_TBB)
+LDFLAGS += $(LDFLAGS_LANG) $(LDFLAGS_OS) $(LDFLAGS_WARNINGS) $(LDFLAGS_BOOST) $(LDFLAGS_EIGEN) $(LDFLAGS_OPENCL) $(LDFLAGS_MPI) $(LDFLAGS_TBB)
 LDLIBS += $(LDLIBS_LANG) $(LDLIBS_OS) $(LDLIBS_WARNINGS) $(LDLIBS_BOOST) $(LDLIBS_EIGEN) $(LDLIBS_OPENCL) $(LDLIBS_MPI) $(LDLIBS_TBB)
 
 .PHONY: print-compiler-flags
@@ -290,7 +283,6 @@ print-compiler-flags:
 	@echo '  - CXXFLAGS_WARNINGS           ' $(CXXFLAGS_WARNINGS)
 	@echo '  - CXXFLAGS_BOOST              ' $(CXXFLAGS_BOOST)
 	@echo '  - CXXFLAGS_EIGEN              ' $(CXXFLAGS_EIGEN)
-	@echo '  - CXXFLAGS_FLTO               ' $(CXXFLAGS_FLTO)
 	@echo '  - CXXFLAGS_OS                 ' $(CXXFLAGS_OS)
 	@echo '  - CXXFLAGS_GTEST              ' $(CXXFLAGS_GTEST)
 	@echo '  - CXXFLAGS_THREADS            ' $(CXXFLAGS_THREADS)
