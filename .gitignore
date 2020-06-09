@@ -92,3 +92,7 @@ lib/tbb/**
 
 # gdb debug history
 .gdb_history
+
+# jetbrains IDEs
+.idea/
+.idea/*
