@@ -51,9 +51,7 @@ inline scalar_<T_scalar> as_operation_cl(const T_scalar a) {
  * @param a scalar
  * @return \c scalar_<char> wrapping the input
  */
-inline scalar_<char> as_operation_cl(const bool a){
-  return scalar_<char>(a);
-}
+inline scalar_<char> as_operation_cl(const bool a) { return scalar_<char>(a); }
 
 /**
  * Converts any valid kernel generator expression into an operation. This is an
