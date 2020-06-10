@@ -30,11 +30,10 @@ namespace math {
 template <typename Vari>
 static void grad(Vari* vi) {
   vi->init_dependent();
-  std::vector<vari_base*>& var_stack = ChainableStack::instance_->var_stack_;
-  size_t end = var_stack.size();
+  size_t end = ChainableStack::instance_->var_stack_.size();
   size_t beginning = empty_nested() ? 0 : end - nested_size();
   for (size_t i = end; i-- > beginning;) {
-    var_stack[i]->chain();
+    boost::apply_visitor(vari_chainer(), ChainableStack::instance_->var_stack_[i]);
   }
 }
 

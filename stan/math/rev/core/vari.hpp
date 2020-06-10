@@ -15,34 +15,6 @@ template <typename T, typename>
 class var_value;
 
 /**
- * Abstract class that all `vari_value` and it's derived classes inherit.
- */
-class vari_base {
- public:
-  /**
-   * Apply the chain rule to this variable based on the variables
-   * on which it depends.
-   */
-  virtual void chain() {}
-
-  /**
-   * Set the adjoint value of this variable to 0.  This is used to
-   * reset adjoints before propagating derivatives again (for
-   * example in a Jacobian calculation).
-   */
-  virtual void set_zero_adjoint() = 0;
-
-  /**
-   * Throw an illegal argument exception.
-   *
-   * <i>Warning</i>: Destructors should never called for var objects.
-   *
-   * @throw Logic exception always.
-   */
-  virtual ~vari_base() {}
-};
-
-/**
  * The variable implementation base class.
  *
  * This class is complete (not abstract) and may be used for
@@ -58,12 +30,11 @@ class vari_base {
  * classes will store operand variables and propagate derivative
  * information via an implementation of chain().
  */
-template <typename T, typename = void>
+template <typename T, typename>
 class vari_value;
 
 template <typename T>
-class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
-    : public vari_base {
+class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
  private:
   template <typename, typename>
   friend class var_value;
@@ -145,14 +116,16 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
    * propagating derivatives, setting the derivative of the
    * result with respect to itself to be 1.
    */
-  void init_dependent() { adj_ = 1.0; }
+  inline void init_dependent() { adj_ = 1.0; }
 
   /**
    * Set the adjoint value of this variable to 0.  This is used to
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  void set_zero_adjoint() final { adj_ = 0.0; }
+  inline void set_zero_adjoint() { adj_ = 0.0; }
+
+  virtual void chain() {}
 
   /**
    * Insertion operator for vari. Prints the current value and
@@ -199,6 +172,47 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
 // For backwards compatability the default is double
 using vari = vari_value<double>;
 
+class vari_zero_adj : public boost::static_visitor<> {
+  public:
+      inline void operator()(vari_value<double>*& x) const {
+        x->adj_ = 0.0;
+      }
+      inline void operator()(vari_value<float>*& x) const {
+        x->adj_ = 0.0;
+      }
+      inline void operator()(vari_value<long double>*& x) const {
+        x->adj_ = 0.0;
+      }
+};
+
+class vari_chainer : public boost::static_visitor<> {
+  public:
+      inline void operator()(vari_value<double>*& x) const {
+        x->chain();
+      }
+      inline void operator()(vari_value<float>*& x) const {
+        x->chain();
+      }
+      inline void operator()(vari_value<long double>*& x) const {
+        x->chain();
+      }
+};
+
+class vari_printer : public boost::static_visitor<> {
+public:
+    int i_{0};
+    std::ostream& o_;
+    vari_printer(std::ostream& o, int i) : o_(o), i_(i) {}
+    template <typename T>
+    void operator()(T*& x) const {
+      // TODO(carpenter): this shouldn't need to be cast any more
+        o_ << i_ << "  " << x << "  "
+          << x->val_
+          << " : "
+          << x->adj_
+          << std::endl;
+      }
+};
 }  // namespace math
 }  // namespace stan
 #endif
