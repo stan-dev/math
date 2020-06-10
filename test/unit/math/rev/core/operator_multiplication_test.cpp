@@ -4,6 +4,21 @@
 #include <vector>
 #include <limits>
 
+TEST(MathRev, TestVarEigenVectors) {
+  using stan::math::sum;
+  using stan::math::var;
+  using stan::math::var_value;
+  Eigen::Matrix<double, -1, 1> x_vals(9);
+  Eigen::Matrix<double, 1, -1> y_vals(9);
+  x_vals << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  y_vals << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  var_value<Eigen::Matrix<double, -1, 1>> x = x_vals;
+  var_value<Eigen::Matrix<double, 1, -1>> y = y_vals;
+  var lp = sum(x * 5.0);
+  lp += sum(y * lp);
+  stan::math::recover_memory();
+}
+
 TEST(MathRev, TestVarEigen) {
   using stan::math::sum;
   using stan::math::var;

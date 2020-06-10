@@ -182,23 +182,28 @@ struct OpMultiplyScalarScalar {
   template <std::size_t size>
   auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
                                  double adj) {
-    return std::make_tuple(adj * b_, adj * a_);
+    return std::forward_as_tuple(adj * b_, adj * a_);
   }
 };
 
 struct OpMultiplyMatrixScalar {
   int N_;
   int M_;
+  double* work_mem_;
   double* x_mem_;
   double b_;
 
   template <std::size_t size, typename Derived>
-  Eigen::MatrixXd operator()(const std::array<bool, size>& needs_adj,
-			     const Eigen::MatrixBase<Derived>& x,
-			     double b) {
+  auto operator()(const std::array<bool, size>& needs_adj,
+	     const Eigen::MatrixBase<Derived>& x,
+	     double b) {
     N_ = x.rows();
     M_ = x.cols();
 
+    if(needs_adj[0]) {
+      work_mem_ = stan::math::ChainableStack::instance_->memalloc_.alloc_array<double>(N_ * M_);
+    }
+    
     if(needs_adj[1]) {
       x_mem_
         = stan::math::ChainableStack::instance_->memalloc_.alloc_array<double>(N_ * M_);
@@ -213,23 +218,24 @@ struct OpMultiplyMatrixScalar {
     return x * b;
   }
 
-  template <std::size_t size, int R, int C>
+  template <std::size_t size, typename Derived>
   auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const Eigen::MatrixXd& adj) {
-    Eigen::MatrixXd adja;
+                                 const Eigen::MatrixBase<Derived>& adj) {
+    Eigen::Map<Eigen::MatrixXd> adja(work_mem_, N_, M_);
     double adjb = 0.0;
 
     if(needs_adj[0]) {
-      adja.resize(N_, M_);
-      adja = adj * b_;
-    }
-    
-    if(needs_adj[1]) {
-      Eigen::Map<Eigen::MatrixXd> x(x_mem_, N_, M_);
-      adjb = x.dot(adj);
+      for(size_t i = 0; i < adj.size(); ++i)      
+	adja.coeffRef(i) = adj.coeff(i) * b_;
     }
 
-    return std::make_tuple(adja, adjb);
+    if(needs_adj[1]) {
+      Eigen::Map<Eigen::MatrixXd> x(x_mem_, N_, M_);
+      for(size_t i = 0; i < x.size(); ++i)
+	adjb += x(i) * adj(i);
+    }
+    
+    return std::forward_as_tuple(adja, adjb);
   }
 };
 
@@ -287,7 +293,7 @@ struct OpMultiplyMatrixMatrix {
       adjB = A.transpose() * adj;
     }
 
-    return std::make_tuple(adjA, adjB);
+    return std::forward_as_tuple(adjA, adjB);
   }
 };
 
