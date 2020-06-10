@@ -43,8 +43,9 @@ return_type_t<T_prob> poisson_binomial_lpmf(const T_n &n, const T_prob &theta) {
   check_bounded(function, "Successes variable", n, 0, size_theta);
 
   if (size_zero(size_theta)) {
-    if (size_zero(n))
+    if (size_zero(n)) {
       return 0.0;
+    }
     return LOG_ZERO;
   }
   if (!include_summand<propto, T_prob>::value) {
@@ -61,22 +62,20 @@ return_type_t<T_prob> poisson_binomial_lpmf(const T_n &n, const T_prob &theta) {
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> alpha(size_theta + 1, size_theta + 1);
 
-  size_t sz_n = static_cast<size_t>(n);
+  int sz_n = static_cast<size_t>(value_of(n));
   for (size_t i = 0; i < size_theta; ++i) {
     log_theta[i] = log(value_of(theta_vec[i]));
     log1m_theta[i] = log1m(value_of(theta_vec[i]));
   }
 
   alpha(0, 0) = 0.0;
-  for (size_t i = 0; i < 1; ++i) {
+  for (size_t i = 0; i < size_theta; ++i) {
     alpha(i + 1, 0) = alpha(i, 0) + log1m_theta[i];
-
     for (size_t j = 0; j < std::min(sz_n, i - 1); ++j) {
       alpha(i + 1, j + 1) = log_sum_exp(
           alpha(i, j) + log_theta[i],
           alpha(i, j + 1) + log1m_theta[i]);
     }
-
     if (i > n) continue;
     alpha(i + 1, i + 1) = alpha(i, i) + log_theta[n];
   }
