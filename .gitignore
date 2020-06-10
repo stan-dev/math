@@ -96,3 +96,5 @@ lib/tbb/**
 # jetbrains IDEs
 .idea/
 .idea/*
+CMakeLists.txt
+cmake-build-debug
