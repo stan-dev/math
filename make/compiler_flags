@@ -61,6 +61,16 @@ CXX_TYPE ?= other
 CXX_MAJOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f1)
 CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
 
+# Set the ar to use
+ifneq ($(OS),Windows_NT)
+	ifneq (,$(findstring clang,$(CXX_TYPE)))
+  	AR := llvm-ar
+	endif
+	ifneq (,$(findstring gcc,$(CXX_TYPE)))
+	  AR := gcc-ar
+	endif
+endif
+
 ################################################################################
 # Set default compiler flags
 #
