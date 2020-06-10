@@ -173,45 +173,29 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
 using vari = vari_value<double>;
 
 class vari_zero_adj : public boost::static_visitor<> {
-  public:
-      inline void operator()(vari_value<double>*& x) const {
-        x->adj_ = 0.0;
-      }
-      inline void operator()(vari_value<float>*& x) const {
-        x->adj_ = 0.0;
-      }
-      inline void operator()(vari_value<long double>*& x) const {
-        x->adj_ = 0.0;
-      }
+ public:
+  inline void operator()(vari_value<double>*& x) const { x->adj_ = 0.0; }
+  inline void operator()(vari_value<float>*& x) const { x->adj_ = 0.0; }
+  inline void operator()(vari_value<long double>*& x) const { x->adj_ = 0.0; }
 };
 
 class vari_chainer : public boost::static_visitor<> {
-  public:
-      inline void operator()(vari_value<double>*& x) const {
-        x->chain();
-      }
-      inline void operator()(vari_value<float>*& x) const {
-        x->chain();
-      }
-      inline void operator()(vari_value<long double>*& x) const {
-        x->chain();
-      }
+ public:
+  inline void operator()(vari_value<double>*& x) const { x->chain(); }
+  inline void operator()(vari_value<float>*& x) const { x->chain(); }
+  inline void operator()(vari_value<long double>*& x) const { x->chain(); }
 };
 
 class vari_printer : public boost::static_visitor<> {
-public:
-    int i_{0};
-    std::ostream& o_;
-    vari_printer(std::ostream& o, int i) : o_(o), i_(i) {}
-    template <typename T>
-    void operator()(T*& x) const {
-      // TODO(carpenter): this shouldn't need to be cast any more
-        o_ << i_ << "  " << x << "  "
-          << x->val_
-          << " : "
-          << x->adj_
-          << std::endl;
-      }
+ public:
+  int i_{0};
+  std::ostream& o_;
+  vari_printer(std::ostream& o, int i) : o_(o), i_(i) {}
+  template <typename T>
+  void operator()(T*& x) const {
+    // TODO(carpenter): this shouldn't need to be cast any more
+    o_ << i_ << "  " << x << "  " << x->val_ << " : " << x->adj_ << std::endl;
+  }
 };
 }  // namespace math
 }  // namespace stan

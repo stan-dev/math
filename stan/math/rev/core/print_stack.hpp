@@ -22,7 +22,8 @@ inline void print_stack(std::ostream& o) {
     << std::endl;
   // TODO(carpenter): this shouldn't need to be cast any more
   for (size_t i = 0; i < ChainableStack::instance_->var_stack_.size(); ++i) {
-    boost::apply_visitor(vari_printer(o, i), ChainableStack::instance_->var_stack_[i]);
+    boost::apply_visitor(vari_printer(o, i),
+                         ChainableStack::instance_->var_stack_[i]);
   }
 }
 
