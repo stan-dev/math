@@ -41,8 +41,7 @@ template <bool propto, typename T_y, typename T_scale_succ,
 return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
   using T_partials_return = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
-  using T_partials_matrix
-      = Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1>;
+  using T_partials_matrix = Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1>;
   using T_y_ref = ref_type_t<T_y>;
   using T_alpha_ref = ref_type_t<T_scale_succ>;
   using T_beta_ref = ref_type_t<T_scale_fail>;
@@ -69,9 +68,13 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
   operands_and_partials<T_y_ref, T_alpha_ref, T_beta_ref> ops_partials(
       y_ref, alpha_ref, beta_ref);
 
-  const auto& y_arr = as_array_or_scalar(y_ref);
-  const auto& alpha_arr = as_array_or_scalar(alpha_ref);
-  const auto& beta_arr = as_array_or_scalar(beta_ref);
+  const auto& y_col = as_column_vector_or_scalar(y_ref);
+  const auto& alpha_col = as_column_vector_or_scalar(alpha_ref);
+  const auto& beta_col = as_column_vector_or_scalar(beta_ref);
+
+  const auto& y_arr = as_array_or_scalar(y_col);
+  const auto& alpha_arr = as_array_or_scalar(alpha_col);
+  const auto& beta_arr = as_array_or_scalar(beta_col);
 
   ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
   ref_type_t<decltype(value_of(alpha_arr))> alpha_val = value_of(alpha_arr);
@@ -80,27 +83,33 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
   auto log_y = log(y_val);
   auto log1m_y = log1m(y_val);
 
+  size_t N = max_size(y, alpha, beta);
   if (include_summand<propto, T_scale_succ>::value) {
-    logp -= sum(lgamma(alpha_val));
+    logp -= sum(lgamma(alpha_val)) * max_size(alpha) / N;
   }
   if (include_summand<propto, T_scale_fail>::value) {
-    logp -= sum(lgamma(beta_val));
+    logp -= sum(lgamma(beta_val)) * max_size(beta) / N;
   }
   if (include_summand<propto, T_y, T_scale_succ>::value) {
-    logp += sum((alpha_val - 1.0) * log_y);
+    logp += sum((alpha_val - 1.0) * log_y) * max_size(y, alpha) / N;
   }
   if (include_summand<propto, T_y, T_scale_fail>::value) {
-    logp += sum((beta_val - 1.0) * log1m_y);
+    logp += sum((beta_val - 1.0) * log1m_y) * max_size(y, beta) / N;
   }
 
   if (!is_constant_all<T_y>::value) {
-    ops_partials.edge1_.partials_
-        = (alpha_val - 1) / y_val + (beta_val - 1) / (y_val - 1);
+    if (is_vector<T_y>::value) {
+      ops_partials.edge1_.partials_ = forward_as<T_partials_matrix>(
+          (alpha_val - 1) / y_val + (beta_val - 1) / (y_val - 1));
+    } else {
+      ops_partials.edge1_.partials_[0] = forward_as<T_partials_return>(
+          (alpha_val - 1) / y_val + (beta_val - 1) / (y_val - 1));
+    }
   }
 
   if (include_summand<propto, T_scale_succ, T_scale_fail>::value) {
     auto alpha_beta = alpha_val + beta_val;
-    logp += sum(lgamma(alpha_beta));
+    logp += sum(lgamma(alpha_beta)) * max_size(alpha, beta) / N;
     if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
       auto digamma_alpha_beta = digamma(alpha_beta);
       if (!is_constant_all<T_scale_succ>::value) {
@@ -108,17 +117,17 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
           ops_partials.edge2_.partials_ = forward_as<T_partials_matrix>(
               log_y + digamma_alpha_beta - digamma(alpha_val));
         } else {
-          ops_partials.edge2_.partials_ = forward_as<T_partials_return>(
-              log_y + digamma_alpha_beta - digamma(alpha_val));
+          ops_partials.edge2_.partials_[0]
+              = sum(log_y + digamma_alpha_beta - digamma(alpha_val));
         }
       }
       if (!is_constant_all<T_scale_fail>::value) {
-        if (is_vector<T_scale_succ>::value) {
+        if (is_vector<T_scale_fail>::value) {
           ops_partials.edge3_.partials_ = forward_as<T_partials_matrix>(
               log1m_y + digamma_alpha_beta - digamma(beta_val));
         } else {
-          ops_partials.edge3_.partials_ = forward_as<T_partials_return>(
-              log1m_y + digamma_alpha_beta - digamma(beta_val));
+          ops_partials.edge3_.partials_[0]
+              = sum(log1m_y + digamma_alpha_beta - digamma(beta_val));
         }
       }
     }

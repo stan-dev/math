@@ -52,7 +52,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
 
   T_y_ref y_ref = y;
   T_alpha_ref alpha_ref = alpha;
-  T_beta_ref beta_ref = beta;
+  T_beta_ref beta_ref = beta_param;
   check_positive_finite(function, "First shape parameter", alpha_ref);
   check_positive_finite(function, "Second shape parameter", beta_ref);
   check_bounded(function, "Random variable", y_ref, 0, 1);
