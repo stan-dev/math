@@ -28,7 +28,7 @@ ifeq ($(OS),Linux)
   LIBRARY_SUFFIX ?= .so
 endif
 
-## Set default compiler and flto compiler flags
+## Set default compiler 
 ifeq (default,$(origin CXX))
   ifeq ($(OS),Darwin)  ## Darwin is Mac OS X
     CXX := clang++
