@@ -29,7 +29,8 @@ struct ref_type_if {
                            std::remove_reference_t<T>, const T&>;
   using type = std::conditional_t<
       Eigen::internal::traits<Eigen::Ref<std::decay_t<T_plain>>>::
-          template match<std::decay_t<T>>::MatchAtCompileTime || !Condition,
+              template match<std::decay_t<T>>::MatchAtCompileTime
+          || !Condition,
       T_optionally_ref, T_plain>;
 };
 

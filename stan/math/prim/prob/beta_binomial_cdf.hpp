@@ -56,15 +56,18 @@ return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n, const T_N& N,
   T_alpha_ref alpha_ref = alpha;
   T_beta_ref beta_ref = beta;
   check_nonnegative(function, "Population size parameter", N_ref);
-  check_positive_finite(function, "First prior sample size parameter", alpha_ref);
-  check_positive_finite(function, "Second prior sample size parameter", beta_ref);
+  check_positive_finite(function, "First prior sample size parameter",
+                        alpha_ref);
+  check_positive_finite(function, "Second prior sample size parameter",
+                        beta_ref);
 
   if (size_zero(n, N, alpha, beta)) {
     return 1.0;
   }
 
   T_partials_return P(1.0);
-  operands_and_partials<T_alpha_ref, T_beta_ref> ops_partials(alpha_ref, beta_ref);
+  operands_and_partials<T_alpha_ref, T_beta_ref> ops_partials(alpha_ref,
+                                                              beta_ref);
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_N_ref> N_vec(N_ref);
