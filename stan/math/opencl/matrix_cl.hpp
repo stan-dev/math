@@ -305,20 +305,22 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @throw <code>std::system_error</code> if the memory on the device could not
    * be allocated
    */
-  template <typename Mat, require_eigen_t<Mat>..., require_vt_same<Mat, T>...,
-            require_not_t<is_eigen_contiguous_map<Mat>>...>
+  template <typename Mat, require_eigen_t<Mat>..., require_vt_same<Mat, T>...>
   explicit matrix_cl(Mat&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
-    using Mat_type = std::decay_t<decltype(A.eval())>;
+    using Mat_type = std::decay_t<ref_type_for_opencl_t<Mat>>;
     if (size() == 0) {
       return;
     }
-    if (is_eigen_matrix_or_array<Mat>::value
-        && std::is_lvalue_reference<Mat>::value) {
+    if (std::is_same<std::decay_t<Mat>, Mat_type>::value
+        && (std::is_lvalue_reference<Mat>::value
+            || is_eigen_contiguous_map<Mat>::value)) {
+      // .eval)= is here just in case other branch is selected and A does not
+      // have data directley accessible
       initialize_buffer(A.eval().data());
     } else {
-      auto* A_heap = new Mat_type(std::move(A.eval()));
+      auto* A_heap = new Mat_type(std::move(A));
       try {
         cl::Event e = initialize_buffer(A_heap->data());
         // We set a callback that will delete the memory once copying is
@@ -331,32 +333,6 @@ class matrix_cl<T, require_arithmetic_t<T>> {
         throw;
       }
     }
-  }
-
-  /**
-   * Constructor for the matrix_cl that creates a copy of the Eigen Map on the
-   * OpenCL device. Regardless of `partial_view`, whole matrix is stored. The
-   * caller must make sure that the memory referenced by map is not deleted
-   * before copying is complete.
-   *
-   * That means `.wait()` must be called on the event associated on copying or
-   * any other event that requires completion of this event. This can be done by
-   * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
-   * this matrix or any matrix that is calculated from this one.
-   *
-   * @tparam T type of data in the \c Eigen \c Matrix
-   * @param A the \c Eigen \c Map
-   * @param partial_view which part of the matrix is used
-   *
-   * @throw <code>std::system_error</code> if the memory on the device could not
-   * be allocated
-   */
-  template <typename Map, require_t<is_eigen_contiguous_map<Map>>...,
-            require_vt_same<Map, T>...>
-  explicit matrix_cl(Map&& A,
-                     matrix_cl_view partial_view = matrix_cl_view::Entire)
-      : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
-    initialize_buffer(A.data());
   }
 
   /**

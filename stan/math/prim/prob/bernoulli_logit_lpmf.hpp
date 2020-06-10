@@ -52,9 +52,12 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   T_partials_return logp(0.0);
   operands_and_partials<T_theta_ref> ops_partials(theta_ref);
 
-  const auto& theta_val = value_of(theta_ref);
+  const auto& theta_col = as_column_vector_or_scalar(theta_ref);
+  const auto& theta_val = value_of(theta_col);
   const auto& theta_arr = as_array_or_scalar(theta_val);
-  const auto& n_double = value_of_rec(n_ref);
+
+  const auto& n_col = as_column_vector_or_scalar(n_ref);
+  const auto& n_double = value_of_rec(n_col);
 
   auto signs = to_ref_if<!is_constant<T_prob>::value>(
       (2 * as_array_or_scalar(n_double) - 1));

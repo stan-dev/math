@@ -44,7 +44,7 @@ namespace math {
  * @return derivative of log gamma function at argument
  */
 inline double digamma(double x) {
-  return boost::math::digamma(x, boost_policy_t());
+  return boost::math::digamma(x, boost_policy_t<>());
 }
 
 /**
