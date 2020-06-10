@@ -95,10 +95,10 @@ return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(
   auto y_bc_expr = colwise_optional_broadcast(y_cl);
   auto exp_theta_expr = exp(theta_expr);
   auto theta_derivative_expr = select(y_bc_expr < 0 || !isfinite(theta_expr),
-                                      NAN, y_bc_expr - exp_theta_expr);
-  auto logp_expr = colwise_sum(select(need_logp, -lgamma(y_bc_expr + 1.0), 0.0)
-                   + elt_multiply(y_bc_expr, theta_expr)
-                   - exp_theta_expr);
+                                      NOT_A_NUMBER, y_bc_expr - exp_theta_expr);
+  auto logp_expr
+      = colwise_sum(select(need_logp, -lgamma(y_bc_expr + 1.0), 0.0)
+                    + elt_multiply(y_bc_expr, theta_expr) - exp_theta_expr);
 
   const int wgs = logp_expr.rows();
 

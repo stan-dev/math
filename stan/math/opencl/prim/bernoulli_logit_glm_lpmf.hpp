@@ -101,16 +101,15 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   auto low_bound_expr = ytheta_signs_expr < -cutoff;
   auto err_cond_expr = y_bc_expr < 0 || y_bc_expr > 1;
   auto logp_expr
-      = colwise_sum(select(err_cond_expr, NAN,
+      = colwise_sum(select(err_cond_expr, NOT_A_NUMBER,
                            select(high_bound_expr, -exp_m_ytheta_expr,
                                   select(low_bound_expr, ytheta_signs_expr,
                                          -log1p(exp_m_ytheta_expr)))));
   auto theta_derivative_expr
       = select(high_bound_expr, -exp_m_ytheta_expr,
                select(low_bound_expr, signs_expr,
-                      elt_divide(
-                          elt_multiply(signs_expr, exp_m_ytheta_expr),
-                          (exp_m_ytheta_expr + 1))));
+                      elt_divide(elt_multiply(signs_expr, exp_m_ytheta_expr),
+                                 (exp_m_ytheta_expr + 1))));
 
   const int wgs = logp_expr.rows();
 
