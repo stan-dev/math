@@ -9,11 +9,11 @@
 
 /**
  * \defgroup eigen_expressions Eigen expressions
-*/
+ */
 /**
  * \ingroup eigen_expressions
  * \defgroup returning_expressions Returning expressions
-*/
+ */
 /**
  * \ingroup returning_expressions
  *
