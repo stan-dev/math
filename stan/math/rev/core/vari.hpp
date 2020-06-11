@@ -182,7 +182,9 @@ class vari_zero_adj : public boost::static_visitor<> {
 class vari_chainer : public boost::static_visitor<> {
  public:
   template <typename T>
-  inline void operator()(vari_value<double>*& x) const { x->chain(); }
+  inline void operator()(vari_value<double>*& x) const {
+    x->chain();
+  }
   inline void operator()(vari_value<float>*& x) const { x->chain(); }
   inline void operator()(vari_value<long double>*& x) const { x->chain(); }
 };
