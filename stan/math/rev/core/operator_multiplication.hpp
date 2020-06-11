@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_CORE_OPERATOR_MULTIPLICATION_HPP
 #define STAN_MATH_REV_CORE_OPERATOR_MULTIPLICATION_HPP
 
+#include <iostream>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/rev/core/var.hpp>
@@ -170,7 +171,7 @@ struct OpMultiplyScalarScalar {
   double b_;
 
   template <std::size_t size>
-  double operator()(const std::array<bool, size>& needs_adj,
+  inline double operator()(const std::array<bool, size>& needs_adj,
 		    double a,
 		    double b) {
     a_ = a;
@@ -180,9 +181,9 @@ struct OpMultiplyScalarScalar {
   }
 
   template <std::size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
+  inline std::tuple<double, double> multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
                                  double adj) {
-    return std::forward_as_tuple(adj * b_, adj * a_);
+    return { adj * b_, adj * a_ };
   }
 };
 
@@ -235,7 +236,7 @@ struct OpMultiplyMatrixScalar {
 	adjb += x(i) * adj(i);
     }
     
-    return std::forward_as_tuple(adja, adjb);
+    return std::make_tuple(adja, adjb);
   }
 };
 

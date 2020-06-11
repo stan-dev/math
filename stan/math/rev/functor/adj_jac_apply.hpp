@@ -19,37 +19,6 @@ namespace math {
 namespace internal {
 
 /**
- * Store the adjoint in y_vi[0] in y_adj
- *
- * @tparam size dimensionality of M
- * @param[in] y_vi pointer to pointer to vari
- * @param[in] M shape of y_adj
- * @param[out] y_adj reference to variable where adjoint is to be stored
- */
-template <typename T>
-inline auto build_y_adj(vari_base** y_vi, int M) {
-  return static_cast<T>(y_vi[0])->adj_;
-}
-
-/**
- * Store the adjoints from y_vi in y_adj
- *
- * @tparam size dimensionality of M
- * @param[in] y_vi pointer to pointers to varis
- * @param[in] M shape of y_adj
- * @param[out] y_adj reference to std::vector where adjoints are to be stored
- */
-template <>
-inline auto build_y_adj<vari**>(vari_base** y_vi, int M) {
-  std::vector<double> y_adj;
-  y_adj.reserve(M);
-  for (size_t m = 0; m < M; ++m) {
-    y_adj.emplace_back(static_cast<vari*>(y_vi[m])->adj_);
-  }
-  return y_adj;
-}
-
-/**
  * Compute the dimensionality of the given template argument. The
  * definition of dimensionality is deferred to specializations. By
  * default don't have a value (fail to compile)
@@ -124,7 +93,7 @@ struct adj_jac_vari : public vari {
   static constexpr std::array<bool, sizeof...(Targs)> is_var_{
       {is_var_value<scalar_type_t<Targs>>::value...}};
   using FReturnType =
-    std::decay_t<std::result_of_t<F(decltype(is_var_), decltype(value_of(Targs()))...)>>;
+    std::decay_t<plain_type_t<std::result_of_t<F(decltype(is_var_), decltype(value_of(Targs()))...)>>>;
 
   F f_;  // Function to be invoked
 
@@ -136,8 +105,8 @@ struct adj_jac_vari : public vari {
   using y_vari_type = std::conditional_t<is_std_vector<FReturnType>::value,
 					 vari**,
 					 vari_value<FReturnType>*>;
-  vari_base** y_vi_;  // vari pointer for output.
-
+  y_vari_type y_vi_;  // vari pointer for output.
+  
   inline void fill_adj_jac() {}
 
   template <typename Arith, typename... Pargs,
@@ -188,10 +157,10 @@ struct adj_jac_vari : public vari {
     fill_adj_jac(args...);
   }
 
-  inline var build_return_varis_and_vars(const double& val_y) {
-    y_vi_ = ChainableStack::instance_->memalloc_.alloc_array<vari_base*>(1);
-    y_vi_[0] = new vari(val_y, false);
-    return static_cast<vari*>(y_vi_[0]);
+  inline var build_return_varis_and_vars(double val_y) {
+    const_cast<double&>(val_) = val_y;
+    y_vi_ = static_cast<vari*>(this);//new vari(val_y, false);
+    return this;
   }
 
   template <typename Derived,
@@ -200,9 +169,8 @@ struct adj_jac_vari : public vari {
 				       Eigen::MatrixBase<Derived>::ColsAtCompileTime>>
   inline var_value<T>
   build_return_varis_and_vars(const Eigen::MatrixBase<Derived>& val_y) {
-    y_vi_ = ChainableStack::instance_->memalloc_.alloc_array<vari_base*>(1);
-    y_vi_[0] = new vari_value<T>(val_y, false);
-    return static_cast<vari_value<T>*>(y_vi_[0]);
+    y_vi_ = new vari_value<T>(val_y, false);
+    return y_vi_;
   }
 
   /**
@@ -272,7 +240,7 @@ struct adj_jac_vari : public vari {
     }
   }
 
-  inline void accumulate_adjoints_in_varis_impl(vari *vi, const double& y_adj_jac) {
+  inline void accumulate_adjoints_in_varis_impl(vari *vi, double y_adj_jac) {
     vi->adj_ += y_adj_jac;
   }
 
@@ -289,6 +257,40 @@ struct adj_jac_vari : public vari {
   }
 
   /**
+   * Store the adjoint in y_vi[0] in y_adj
+   *
+   * @tparam size dimensionality of M
+   * @param[in] y_vi pointer to pointer to vari
+   * @param[in] M shape of y_adj
+   * @param[out] y_adj reference to variable where adjoint is to be stored
+   */
+  template <typename T>
+  inline auto build_y_adj(vari_value<T>* y_vi, int M) {
+    return y_vi->adj_;
+  }
+
+  inline auto build_y_adj(vari* y_vi, int M) {
+    return adj_;
+  }
+
+  /**
+   * Store the adjoints from y_vi in y_adj
+   *
+   * @tparam size dimensionality of M
+   * @param[in] y_vi pointer to pointers to varis
+   * @param[in] M shape of y_adj
+   * @param[out] y_adj reference to std::vector where adjoints are to be stored
+   */
+  inline auto build_y_adj(vari** y_vi, int M) {
+    std::vector<double> y_adj;
+    y_adj.reserve(M);
+    for (size_t m = 0; m < M; ++m) {
+      y_adj.emplace_back(static_cast<vari*>(y_vi[m])->adj_);
+    }
+    return y_adj;
+  }
+
+  /**
    * Propagate the adjoints at the output varis (y_vi_) back to the input
    * varis (x_vis_) by:
    * 1. packing the adjoints in an appropriate container using build_y_adj
@@ -300,13 +302,11 @@ struct adj_jac_vari : public vari {
    * This operation may be called multiple times during the life of the vari
    */
   inline void chain() {
-    auto y_adj_jacs = f_.multiply_adjoint_jacobian(is_var_, internal::build_y_adj<y_vari_type>(y_vi_, M_));
-
     apply(
         [&, this](auto&&... args) {
           this->accumulate_adjoints_in_varis(args...);
         },
-        y_adj_jacs);
+        f_.multiply_adjoint_jacobian(is_var_, build_y_adj(y_vi_, M_)));
   }
 };
 

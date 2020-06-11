@@ -4,7 +4,49 @@
 #include <vector>
 #include <limits>
 
-TEST(MathRev, TestVarEigenVectors) {
+TEST(MathRev, multiplication_scalar_scalar) {
+  using stan::math::var;
+  var x = 2.0;
+  var y = 3.5;
+  var lp = x * y;
+  lp.grad();
+
+  EXPECT_FLOAT_EQ(lp.val(), 7.0);
+  EXPECT_FLOAT_EQ(x.adj(), 3.5);
+  EXPECT_FLOAT_EQ(y.adj(), 2.0);
+  stan::math::recover_memory();
+}
+
+TEST(MathRev, multiplication_scalar_vector) {
+  using stan::math::sum;
+  using stan::math::var;
+  using stan::math::var_value;
+  int N = 3;
+  var x = 2.0;
+  Eigen::VectorXd y_val(N);
+  for(size_t i = 0; i < y_val.size(); ++i)
+    y_val(i) = i + 1;
+  var_value<Eigen::VectorXd> y = y_val;
+  var lp = sum(x * y);
+  lp.grad();
+
+  EXPECT_FLOAT_EQ(lp.val(), 12.0);
+  EXPECT_FLOAT_EQ(x.adj(), 6.0);
+  EXPECT_FLOAT_EQ(y.adj()(0), 2.0);
+  EXPECT_FLOAT_EQ(y.adj()(1), 2.0);
+  EXPECT_FLOAT_EQ(y.adj()(2), 2.0);
+  stan::math::set_zero_all_adjoints();
+  var lp2 = sum(y * x);
+  lp2.grad();
+  EXPECT_FLOAT_EQ(lp.val(), 12.0);
+  EXPECT_FLOAT_EQ(x.adj(), 6.0);
+  EXPECT_FLOAT_EQ(y.adj()(0), 2.0);
+  EXPECT_FLOAT_EQ(y.adj()(1), 2.0);
+  EXPECT_FLOAT_EQ(y.adj()(2), 2.0);
+  stan::math::recover_memory();
+}
+
+/*TEST(MathRev, TestVarEigenVectors) {
   using stan::math::sum;
   using stan::math::var;
   using stan::math::var_value;
@@ -469,3 +511,4 @@ TEST(MathRev, TestVarEigenDblVal) {
   std::cout << "y dyn adj: \n" << y_dyn.adj() << "\n";
   stan::math::recover_memory();
 }
+*/
