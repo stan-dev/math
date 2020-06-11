@@ -30,22 +30,23 @@ namespace math {
 template <typename T_n, typename T_prob>
 return_type_t<T_prob> bernoulli_lccdf(const T_n& n, const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_prob>;
+  using T_theta_ref = ref_type_t<T_prob>;
   using std::log;
   static const char* function = "bernoulli_lccdf";
-  check_finite(function, "Probability parameter", theta);
-  check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
+  T_theta_ref theta_ref = theta;
+  check_bounded(function, "Probability parameter", theta_ref, 0.0, 1.0);
 
   if (size_zero(n, theta)) {
     return 0.0;
   }
 
   T_partials_return P(0.0);
-  operands_and_partials<T_prob> ops_partials(theta);
+  operands_and_partials<T_theta_ref> ops_partials(theta_ref);
 
   scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_prob> theta_vec(theta);
+  scalar_seq_view<T_theta_ref> theta_vec(theta_ref);
   size_t max_size_seq_view = max_size(n, theta);
 
   // Explicit return for extreme values

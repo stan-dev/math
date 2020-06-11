@@ -12,13 +12,7 @@ namespace math {
  * @tparam T argument type
  * @param a argument
  * @return optionally evaluated argument
- * @tparam Ref_stride Stride type (see the documentation for `Eigen::Ref`).
- * Default is same as in `Eigen::Ref`.
  */
-template <typename Ref_stride, typename T>
-inline ref_type_t<T&&, Ref_stride> to_ref(T&& a) {
-  return std::forward<T>(a);
-}
 template <typename T>
 inline ref_type_t<T&&> to_ref(T&& a) {
   return std::forward<T>(a);
@@ -31,24 +25,35 @@ inline ref_type_t<T&&> to_ref(T&& a) {
  * @param a argument
  * @return argument
  */
-template <bool Cond, typename T,
-          require_not_t<conjunction<is_eigen<T>, is_var<value_type_t<T>>,
-                                    bool_constant<Cond>>>* = nullptr>
+template <bool Cond, typename T, std::enable_if_t<!Cond>* = nullptr>
 inline T to_ref_if(T&& a) {
   return std::forward<T>(a);
 }
 
 /**
- * If the condition is true, converts Eigen argument into `Eigen::Ref`. This
- * evaluates expensive expressions.
+ * If the condition is true, evaluates expensive Eigen expressions. If given
+ * expression involves no calculations this is a no-op that should be optimized
+ * away.
  * @tparam Cond condition
  * @tparam T argument type (Eigen expression)
  * @param a argument
  * @return argument converted to `Eigen::Ref`
  */
-template <bool Cond, typename T, require_eigen_vt<is_var, T>* = nullptr,
-          std::enable_if_t<Cond>* = nullptr>
+template <bool Cond, typename T, std::enable_if_t<Cond>* = nullptr>
 inline ref_type_t<T&&> to_ref_if(T&& a) {
+  return std::forward<T>(a);
+}
+
+/**
+ * Converts given Eigen expression into one that can be directly copied to an
+ * OpenCL device to create `matrix_cl`. If given expression can be directly
+ * copied, this is a no-op that should be optimized away.
+ * @tparam T argument type
+ * @param a argument
+ * @return optionally evaluated argument
+ */
+template <typename T>
+inline ref_type_for_opencl_t<T&&> to_ref_for_opencl(T&& a) {
   return std::forward<T>(a);
 }
 
