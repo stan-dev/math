@@ -31,8 +31,9 @@ inline T to_ref_if(T&& a) {
 }
 
 /**
- * If the condition is true, converts Eigen argument into `Eigen::Ref`. This
- * evaluates expensive expressions.
+ * If the condition is true, evaluates expensive Eigen expressions. If given
+ * expression involves no calculations this is a no-op that should be optimized
+ * away.
  * @tparam Cond condition
  * @tparam T argument type (Eigen expression)
  * @param a argument
@@ -40,6 +41,19 @@ inline T to_ref_if(T&& a) {
  */
 template <bool Cond, typename T, std::enable_if_t<Cond>* = nullptr>
 inline ref_type_t<T&&> to_ref_if(T&& a) {
+  return std::forward<T>(a);
+}
+
+/**
+ * Converts given Eigen expression into one that can be directly copied to an
+ * OpenCL device to create `matrix_cl`. If given expression can be directly
+ * copied, this is a no-op that should be optimized away.
+ * @tparam T argument type
+ * @param a argument
+ * @return optionally evaluated argument
+ */
+template <typename T>
+inline ref_type_for_opencl_t<T&&> to_ref_for_opencl(T&& a) {
   return std::forward<T>(a);
 }
 

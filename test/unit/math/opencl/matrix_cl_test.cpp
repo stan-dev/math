@@ -5,6 +5,7 @@
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/zeros.hpp>
 #include <stan/math/opencl/sub_block.hpp>
+#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <vector>
@@ -26,6 +27,20 @@ TEST(MathMatrixCL, matrix_cl_types_creation) {
   test_matrix_creation<float>();
   test_matrix_creation<int>();
   test_matrix_creation<long double>();
+}
+
+TEST(MathMatrixCL, matrix_cl_value) {
+  Eigen::Matrix<double, -1, -1> col_major(3, 3);
+  col_major << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  stan::math::matrix_cl<double> cl_from_col_major(col_major);
+  Eigen::MatrixXd res = stan::math::from_matrix_cl(cl_from_col_major);
+  expect_matrix_eq(col_major, res);
+
+  Eigen::Matrix<double, -1, -1, Eigen::RowMajor> row_major(3, 3);
+  row_major << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  stan::math::matrix_cl<double> cl_from_row_major(row_major);
+  res = stan::math::from_matrix_cl(cl_from_row_major);
+  expect_matrix_eq(row_major, res);
 }
 
 TEST(MathMatrixCL, assignment) {

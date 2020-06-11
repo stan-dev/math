@@ -72,13 +72,13 @@ struct multi_result_kernel_internal {
       const auto& expression = std::get<N>(expressions).x;
       const auto& result = std::get<N>(results).x;
       const char* function = "results.operator=";
-      check_size_match(function, "Rows of ", "expression",
-                       expression.thread_rows(), "rows of ", "first expression",
-                       n_rows);
-      check_size_match(function, "Columns of ", "expression",
-                       expression.thread_cols(), "columns of ",
-                       "first expression", n_cols);
       if (!is_without_output<T_current_expression>::value) {
+        check_size_match(function, "Rows of ", "expression",
+                         expression.thread_rows(), "rows of ",
+                         "first expression", n_rows);
+        check_size_match(function, "Columns of ", "expression",
+                         expression.thread_cols(), "columns of ",
+                         "first expression", n_cols);
         result.check_assign_dimensions(expression.rows(), expression.cols());
         int bottom_written = 1 - expression.rows();
         int top_written = expression.cols() - 1;
