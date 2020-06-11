@@ -77,12 +77,12 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
                   (ntheta < -cutoff).select(ntheta, -log1p(exp_m_ntheta))));
 
   if (!is_constant_all<T_prob>::value) {
-    ops_partials.edge1_.partials_ =
-        (ntheta > cutoff)
-            .select(
-                -exp_m_ntheta,
-                (ntheta >= -cutoff)
-                    .select(signs * exp_m_ntheta / (exp_m_ntheta + 1), signs));
+    ops_partials.edge1_.partials_
+        = (ntheta > cutoff)
+              .select(-exp_m_ntheta,
+                      (ntheta >= -cutoff)
+                          .select(signs * exp_m_ntheta / (exp_m_ntheta + 1),
+                                  signs));
   }
   return ops_partials.build(logp);
 }
