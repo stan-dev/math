@@ -157,11 +157,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
       }
     }
     if (!is_constant_all<T_alpha>::value) {
-      if (is_vector<T_alpha>::value) {
-        ops_partials.edge2_.partials_ = theta_derivative;
-      } else {
-        ops_partials.edge2_.partials_[0] = sum(theta_derivative);
-      }
+      ops_partials.edge2_.partials_ = theta_derivative;
     }
   }
   return ops_partials.build(logp);
