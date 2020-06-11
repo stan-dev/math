@@ -72,6 +72,7 @@
 #include <stan/math/rev/fun/is_inf.hpp>
 #include <stan/math/rev/fun/is_nan.hpp>
 #include <stan/math/rev/fun/is_uninitialized.hpp>
+#include <stan/math/rev/fun/lambert_w.hpp>
 #include <stan/math/rev/fun/lbeta.hpp>
 #include <stan/math/rev/fun/ldexp.hpp>
 #include <stan/math/rev/fun/lgamma.hpp>

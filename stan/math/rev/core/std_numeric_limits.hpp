@@ -19,6 +19,7 @@ struct numeric_limits<stan::math::var> {
   static stan::math::var max() { return numeric_limits<double>::max(); }
   static const int digits = numeric_limits<double>::digits;
   static const int digits10 = numeric_limits<double>::digits10;
+  static constexpr int max_digits10{numeric_limits<double>::max_digits10};
   static const bool is_signed = numeric_limits<double>::is_signed;
   static const bool is_integer = numeric_limits<double>::is_integer;
   static const bool is_exact = numeric_limits<double>::is_exact;
