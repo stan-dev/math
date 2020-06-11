@@ -21,7 +21,7 @@ namespace math {
  *
  * @tparam T_n type of successes parameter
  * @tparam T_N type of population size parameter
- * @tparam theta type of chance of success parameter
+ * @tparam T_prob type of chance of success parameter
  * @param n successes parameter
  * @param N population size parameter
  * @param theta chance of success parameter

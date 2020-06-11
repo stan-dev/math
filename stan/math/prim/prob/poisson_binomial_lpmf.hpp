@@ -13,6 +13,8 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 
+#include <iostream>
+
 namespace stan {
 namespace math {
 
@@ -20,71 +22,62 @@ namespace math {
  * Returns the log PMF for the Poisson-binomial distribution evaluated at the
  * specified number of successes and probabilities of successes.
  *
- * @tparam T_n type of successes parameter
- * @tparam theta type of chance of success parameters
- * @param n number of successes parameter
+ * @tparam T_prob type of chance of success parameters
+ * @param y number of successes parameter
  * @param theta chance of success parameters
  * @return log probability or log sum of probabilities
- * @throw std::domain_error if n is negative
+ * @throw std::domain_error if y is negative
  * @throw std::domain_error if theta is not a valid vector of probabilities
  */
-template<bool propto, typename T_n, typename T_prob>
-return_type_t<T_prob> poisson_binomial_lpmf(const T_n &n, const T_prob &theta) {
+template<bool propto, typename T_prob>
+return_type_t<T_prob> poisson_binomial_lpmf(
+  int y,
+  const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
 
-  using T_partials_return = partials_return_t<T_n, T_prob>;
   static const char *function = "poisson_binomial_lpmf";
-  check_nonnegative(function, "Successes variable", n);
+  check_nonnegative(function, "Successes variable", y);
+  check_bounded(function, "Successes variable", y, 0, theta.size());
   check_finite(function, "Probability parameters", theta);
   check_bounded(function, "Probability parameters", theta, 0.0, 1.0);
-  check_consistent_sizes(function, "Successes variable", n,
-                         "Probability parameters", theta);
 
-  size_t size_theta = stan::math::size(theta);
-  check_bounded(function, "Successes variable", n, 0, size_theta);
+  size_t size_theta = theta.size();
+  Eigen::Matrix<T_prob, Eigen::Dynamic, 1> log_theta(size_theta);
+  Eigen::Matrix<T_prob, Eigen::Dynamic, 1> log1m_theta(size_theta);
+  Eigen::Matrix<T_prob, Eigen::Dynamic, Eigen::Dynamic> alpha(
+    size_theta + 1, size_theta + 1);
 
-  if (size_zero(size_theta)) {
-    if (size_zero(n)) {
-      return 0.0;
-    }
-    return LOG_ZERO;
-  }
-  if (!include_summand<propto, T_prob>::value) {
-    return 0.0;
-  }
-
-  T_partials_return logp = 0;
-  operands_and_partials<T_prob> ops_partials(theta);
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_prob> theta_vec(theta);
-
-  VectorBuilder<true, T_partials_return, T_prob> log_theta(size_theta);
-  VectorBuilder<true, T_partials_return, T_prob> log1m_theta(size_theta);
-
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> alpha(size_theta + 1, size_theta + 1);
-
-  int sz_n = static_cast<size_t>(value_of(n));
   for (size_t i = 0; i < size_theta; ++i) {
-    log_theta[i] = log(value_of(theta_vec[i]));
-    log1m_theta[i] = log1m(value_of(theta_vec[i]));
+    log_theta[i] = log(theta(i));
+    log1m_theta[i] = log1m(theta(i));
   }
 
+  size_t sz_y = static_cast<size_t>(y);
+  // alpha[i, j] = log prob of j successes in first i trials
   alpha(0, 0) = 0.0;
   for (size_t i = 0; i < size_theta; ++i) {
+    // no success in i trials
     alpha(i + 1, 0) = alpha(i, 0) + log1m_theta[i];
-    for (size_t j = 0; j < std::min(sz_n, i - 1); ++j) {
+
+    // 0 < j < i successes in i trials
+    for (size_t j = 0; j < std::min(sz_y, i); ++j) {
       alpha(i + 1, j + 1) = log_sum_exp(
           alpha(i, j) + log_theta[i],
           alpha(i, j + 1) + log1m_theta[i]);
     }
-    if (i > n) continue;
-    alpha(i + 1, i + 1) = alpha(i, i) + log_theta[n];
+
+    // i successes in i trials
+    if (i < sz_y) {
+      alpha(i + 1, i + 1) = alpha(i, i) + log_theta(i);
+    }
   }
 
-  return alpha(size_theta, n);
+  return alpha(size_theta, y);
 }
 
-template<typename T_n, typename T_prob>
-inline return_type_t<T_prob> poisson_binomial_lpmf(const T_n &n, const T_prob &theta) {
+template<typename T_prob>
+inline return_type_t<T_prob> poisson_binomial_lpmf(
+  int n,
+  const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
   return poisson_binomial_lpmf<false>(n, theta);
 }
 
