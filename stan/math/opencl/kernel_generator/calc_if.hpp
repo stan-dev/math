@@ -89,6 +89,22 @@ class calc_if_
       this->template get_arg<0>().set_args(generated, kernel, arg_num);
     }
   }
+
+  /**
+   * Number of rows threads need to be launched for.
+   * @return number of rows
+   */
+  inline int thread_rows() const {
+    return this->template get_arg<0>().thread_rows();
+  }
+
+  /**
+   * Number of columns threads need to be launched for.
+   * @return number of columns
+   */
+  inline int thread_cols() const {
+    return this->template get_arg<0>().thread_cols();
+  }
 };
 
 template <bool Do_Calculate, typename T,
