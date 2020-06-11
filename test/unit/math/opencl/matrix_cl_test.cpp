@@ -37,7 +37,7 @@ TEST(MathMatrixCL, matrix_cl_value) {
   Eigen::MatrixXd res = stan::math::from_matrix_cl(cl_from_col_major);
   expect_matrix_eq(col_major, res);
 
-  Eigen::Map<Eigen::MatrixXd> map(col_major.data(),3,3);
+  Eigen::Map<Eigen::MatrixXd> map(col_major.data(), 3, 3);
   stan::math::matrix_cl<double> cl_from_map(map);
   res = stan::math::from_matrix_cl(cl_from_map);
   expect_matrix_eq(col_major, res);
