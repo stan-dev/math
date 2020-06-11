@@ -18,12 +18,10 @@ namespace math {
  * @param beta Vector of unnormalized log probabilities
  * @return log probability
  */
-template <bool propto, typename T_beta,
-          typename T_prob = scalar_type_t<T_beta>,
+template <bool propto, typename T_beta, typename T_prob = scalar_type_t<T_beta>,
           require_eigen_col_vector_t<T_beta>* = nullptr>
-return_type_t<T_prob> multinomial_logit_lpmf(
-    const std::vector<int>& ns,
-    const T_beta& beta) {
+return_type_t<T_prob> multinomial_logit_lpmf(const std::vector<int>& ns,
+                                             const T_beta& beta) {
   static const char* function = "multinomial_logit_lpmf";
   check_nonnegative(function, "Number of trials variable", ns);
   check_finite(function, "log-probabilities parameter", beta);
