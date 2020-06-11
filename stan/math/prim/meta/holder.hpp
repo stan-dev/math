@@ -7,6 +7,33 @@
 #include <type_traits>
 #include <utility>
 
+/**
+ * \defgroup eigen_expressions Eigen expressions
+ * \ingroup eigen_expressions
+ *
+ * \defgroup returning_expressions Returning expressions
+ * \ingroup returning_expressions
+ *
+ * Operations in Eigen Expressions hold their arguments either by value or by
+ * reference. Which one is chosen depends on type of the argument. Other
+ * operations are held by value. "Heavy" objects that can hold data themselves,
+ * such as `Eigen::Matrix` or `Eigen::Ref` are instead held by reference. THis
+ * is the only criterion - holding rvalue arguments by value is not supported,
+ * so we can not use perfect forwarding.
+ *
+ * When returning an expression from function we have to be careful that any
+ * arguments in this expression that are held by reference do not go out of
+ * scope. So a function returning an expression referencing local matrices or
+ * matrices that were rvalue reference arguments to the function will not work.
+ *
+ * A workarount to this issue is allocating and constructing or moving such
+ * objects to heap. `Holder` object is a no-op operation that can also take
+ * pointers to such objects and release them when it goes out of scope. It can
+ * be created either by directly supplying pointers to such objects to `holder`
+ * function or by forwarding function arguments and moving local variables to
+ * `make_holder`, which will move any rvalues to heap first.
+ */
+
 // This was implenmented following the tutorial on edding new expressions to
 // Eigen: https://eigen.tuxfamily.org/dox/TopicNewExpressionType.html
 
@@ -115,16 +142,14 @@ template <typename ArgType, typename... Ptrs>
 struct evaluator<stan::math::Holder<ArgType, Ptrs...>>
     : evaluator_base<stan::math::Holder<ArgType, Ptrs...>> {
   typedef stan::math::Holder<ArgType, Ptrs...> XprType;
-  typedef typename remove_all<ArgType>::type
-      ArgTypeNestedCleaned;
+  typedef typename remove_all<ArgType>::type ArgTypeNestedCleaned;
   typedef typename XprType::CoeffReturnType CoeffReturnType;
   typedef typename XprType::Scalar Scalar;
   enum {
     CoeffReadCost = evaluator<ArgTypeNestedCleaned>::CoeffReadCost,
     // Possible flags are documented here:
     // https://eigen.tuxfamily.org/dox/group__flags.html
-    Flags
-    = evaluator<ArgTypeNestedCleaned>::Flags,
+    Flags = evaluator<ArgTypeNestedCleaned>::Flags,
     Alignment = evaluator<ArgTypeNestedCleaned>::Alignment,
   };
 
