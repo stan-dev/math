@@ -87,7 +87,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
    * @tparam S an Arithmetic type.
    * @param x Value of the constructed variable.
    * @param stacked If false will put this this vari on the nochain stack so
-   * that it's `chain()` method is not called.
+   * that its `chain()` method is not called.
    */
   template <typename S,
             std::enable_if_t<std::is_convertible<S&, Scalar>::value>* = nullptr>
@@ -181,6 +181,7 @@ class vari_zero_adj : public boost::static_visitor<> {
 
 class vari_chainer : public boost::static_visitor<> {
  public:
+  template <typename T>
   inline void operator()(vari_value<double>*& x) const { x->chain(); }
   inline void operator()(vari_value<float>*& x) const { x->chain(); }
   inline void operator()(vari_value<long double>*& x) const { x->chain(); }
@@ -193,7 +194,6 @@ class vari_printer : public boost::static_visitor<> {
   vari_printer(std::ostream& o, int i) : o_(o), i_(i) {}
   template <typename T>
   void operator()(T*& x) const {
-    // TODO(carpenter): this shouldn't need to be cast any more
     o_ << i_ << "  " << x << "  " << x->val_ << " : " << x->adj_ << std::endl;
   }
 };
