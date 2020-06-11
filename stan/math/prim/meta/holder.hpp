@@ -9,9 +9,12 @@
 
 /**
  * \defgroup eigen_expressions Eigen expressions
+*/
+/**
  * \ingroup eigen_expressions
- *
  * \defgroup returning_expressions Returning expressions
+*/
+/**
  * \ingroup returning_expressions
  *
  * Operations in Eigen Expressions hold their arguments either by value or by
