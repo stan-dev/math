@@ -22,17 +22,17 @@ namespace math {
  * Returns the log PMF for the Poisson-binomial distribution evaluated at the
  * specified number of successes and probabilities of successes.
  *
- * @tparam T_prob type of chance of success parameters
+ * @tparam T_theta type of chance of success parameters
  * @param y number of successes parameter
  * @param theta chance of success parameters
  * @return log probability or log sum of probabilities
  * @throw std::domain_error if y is negative
  * @throw std::domain_error if theta is not a valid vector of probabilities
  */
-template<bool propto, typename T_prob>
-return_type_t<T_prob> poisson_binomial_lpmf(
+template<bool propto, typename T_theta>
+return_type_t<T_theta> poisson_binomial_lpmf(
   int y,
-  const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
+  const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta) {
 
   static const char *function = "poisson_binomial_lpmf";
   check_nonnegative(function, "Successes variable", y);
@@ -41,9 +41,9 @@ return_type_t<T_prob> poisson_binomial_lpmf(
   check_bounded(function, "Probability parameters", theta, 0.0, 1.0);
 
   size_t size_theta = theta.size();
-  Eigen::Matrix<T_prob, Eigen::Dynamic, 1> log_theta(size_theta);
-  Eigen::Matrix<T_prob, Eigen::Dynamic, 1> log1m_theta(size_theta);
-  Eigen::Matrix<T_prob, Eigen::Dynamic, Eigen::Dynamic> alpha(
+  Eigen::Matrix<T_theta, Eigen::Dynamic, 1> log_theta(size_theta);
+  Eigen::Matrix<T_theta, Eigen::Dynamic, 1> log1m_theta(size_theta);
+  Eigen::Matrix<T_theta, Eigen::Dynamic, Eigen::Dynamic> alpha(
     size_theta + 1, size_theta + 1);
 
   for (size_t i = 0; i < size_theta; ++i) {
@@ -71,14 +71,15 @@ return_type_t<T_prob> poisson_binomial_lpmf(
     }
   }
 
+  std::cout << alpha << std::endl;
   return alpha(size_theta, y);
 }
 
-template<typename T_prob>
-inline return_type_t<T_prob> poisson_binomial_lpmf(
-  int n,
-  const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
-  return poisson_binomial_lpmf<false>(n, theta);
+template<typename T_theta>
+inline return_type_t<T_theta> poisson_binomial_lpmf(
+  int y,
+  const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta) {
+  return poisson_binomial_lpmf<false>(y, theta);
 }
 
 }  // namespace math
