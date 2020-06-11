@@ -34,23 +34,30 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lcdf(const T_y& y, const T_loc& mu,
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using std::atan;
   using std::log;
+  using T_y_ref = ref_type_t<T_y>;
+  using T_mu_ref = ref_type_t<T_loc>;
+  using T_sigma_ref = ref_type_t<T_scale>;
   static const char* function = "cauchy_lcdf";
-  check_not_nan(function, "Random variable", y);
-  check_finite(function, "Location parameter", mu);
-  check_positive_finite(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale Parameter", sigma);
+  T_y_ref y_ref = y;
+  T_mu_ref mu_ref = mu;
+  T_sigma_ref sigma_ref = sigma;
+  check_not_nan(function, "Random variable", y_ref);
+  check_finite(function, "Location parameter", mu_ref);
+  check_positive_finite(function, "Scale parameter", sigma_ref);
 
   if (size_zero(y, mu, sigma)) {
     return 0;
   }
 
   T_partials_return cdf_log(0.0);
-  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
+  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
+      y_ref, mu_ref, sigma_ref);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
+  scalar_seq_view<T_y_ref> y_vec(y_ref);
+  scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
+  scalar_seq_view<T_sigma_ref> sigma_vec(sigma_ref);
   size_t N = max_size(y, mu, sigma);
 
   for (size_t n = 0; n < N; n++) {

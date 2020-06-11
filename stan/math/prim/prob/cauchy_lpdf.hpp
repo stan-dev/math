@@ -36,13 +36,17 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale>
 return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
                                                const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
+  using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
   using std::log;
+  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
+  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
+  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
   static const char* function = "cauchy_lpdf";
-  check_not_nan(function, "Random variable", y);
-  check_finite(function, "Location parameter", mu);
-  check_positive_finite(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
+  T_y_ref y_ref = y;
+  T_mu_ref mu_ref = mu;
+  T_sigma_ref sigma_ref = sigma;
 
   if (size_zero(y, mu, sigma)) {
     return 0.0;
@@ -52,57 +56,76 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
   }
 
   T_partials_return logp(0.0);
-  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
+  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
+      y_ref, mu_ref, sigma_ref);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
+  const auto& y_col = as_column_vector_or_scalar(y_ref);
+  const auto& mu_col = as_column_vector_or_scalar(mu_ref);
+  const auto& sigma_col = as_column_vector_or_scalar(sigma_ref);
+
+  const auto& y_arr = as_array_or_scalar(y_col);
+  const auto& mu_arr = as_array_or_scalar(mu_col);
+  const auto& sigma_arr = as_array_or_scalar(sigma_col);
+
+  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
+  ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
+  ref_type_t<decltype(value_of(sigma_arr))> sigma_val = value_of(sigma_arr);
+  check_not_nan(function, "Random variable", y_val);
+  check_finite(function, "Location parameter", mu_val);
+  check_positive_finite(function, "Scale parameter", sigma_val);
+
   size_t N = max_size(y, mu, sigma);
 
-  VectorBuilder<true, T_partials_return, T_scale> inv_sigma(size(sigma));
-  VectorBuilder<true, T_partials_return, T_scale> sigma_squared(size(sigma));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
-                T_scale>
-      log_sigma(size(sigma));
-  for (size_t i = 0; i < stan::math::size(sigma); i++) {
-    const T_partials_return sigma_dbl = value_of(sigma_vec[i]);
-    inv_sigma[i] = 1.0 / sigma_dbl;
-    sigma_squared[i] = sigma_dbl * sigma_dbl;
-    if (include_summand<propto, T_scale>::value) {
-      log_sigma[i] = log(sigma_dbl);
-    }
+  const auto& inv_sigma
+      = to_ref_if<!is_constant_all<T_scale>::value>(inv(sigma_val));
+  const auto& y_minus_mu
+      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(y_val - mu_val);
+
+  logp -= sum(log1p(square(y_minus_mu * inv_sigma)));
+  if (include_summand<propto>::value) {
+    logp -= N * LOG_PI;
+  }
+  if (include_summand<propto, T_scale>::value) {
+    logp -= sum(log(sigma_val)) * N / size(sigma);
   }
 
-  for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-
-    const T_partials_return y_minus_mu = y_dbl - mu_dbl;
-    const T_partials_return y_minus_mu_squared = y_minus_mu * y_minus_mu;
-    const T_partials_return y_minus_mu_over_sigma = y_minus_mu * inv_sigma[n];
-    const T_partials_return y_minus_mu_over_sigma_squared
-        = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
-
-    if (include_summand<propto>::value) {
-      logp -= LOG_PI;
-    }
-    if (include_summand<propto, T_scale>::value) {
-      logp -= log_sigma[n];
-    }
-    logp -= log1p(y_minus_mu_over_sigma_squared);
-
-    if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
-          -= 2 * y_minus_mu / (sigma_squared[n] + y_minus_mu_squared);
-    }
-    if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n]
-          += 2 * y_minus_mu / (sigma_squared[n] + y_minus_mu_squared);
+  if (!is_constant_all<T_y, T_loc, T_scale>::value) {
+    const auto& sigma_squared
+        = to_ref_if<!is_constant_all<T_scale>::value>(square(sigma_val));
+    const auto& y_minus_mu_squared
+        = to_ref_if<!is_constant_all<T_scale>::value>(square(y_minus_mu));
+    if (!is_constant_all<T_y, T_loc>::value) {
+      const auto& mu_deriv
+          = to_ref_if < !is_constant_all<T_y>::value
+            && !is_constant_all<T_loc>::value
+                   > (2 * y_minus_mu / (sigma_squared + y_minus_mu_squared));
+      if (!is_constant_all<T_y>::value) {
+        if (is_vector<T_y>::value) {
+          ops_partials.edge1_.partials_
+              = forward_as<T_partials_array>(-mu_deriv);
+        } else {
+          ops_partials.edge1_.partials_[0] = -sum(mu_deriv);
+        }
+      }
+      if (!is_constant_all<T_loc>::value) {
+        if (is_vector<T_loc>::value) {
+          ops_partials.edge2_.partials_
+              = std::move(forward_as<T_partials_array>(mu_deriv));
+        } else {
+          ops_partials.edge2_.partials_[0] = sum(mu_deriv);
+        }
+      }
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
-          += (y_minus_mu_squared - sigma_squared[n]) * inv_sigma[n]
-             / (sigma_squared[n] + y_minus_mu_squared);
+      if (is_vector<T_scale>::value) {
+        ops_partials.edge3_.partials_ = forward_as<T_partials_array>(
+            (y_minus_mu_squared - sigma_squared) * inv_sigma
+            / (sigma_squared + y_minus_mu_squared));
+      } else {
+        ops_partials.edge3_.partials_[0]
+            = sum((y_minus_mu_squared - sigma_squared) * inv_sigma
+                  / (sigma_squared + y_minus_mu_squared));
+      }
     }
   }
   return ops_partials.build(logp);

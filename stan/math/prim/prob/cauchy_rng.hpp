@@ -34,13 +34,17 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type cauchy_rng(
   using boost::variate_generator;
   using boost::random::cauchy_distribution;
   static const char* function = "cauchy_rng";
-  check_finite(function, "Location parameter", mu);
-  check_positive_finite(function, "Scale parameter", sigma);
+  using T_mu_ref = ref_type_t<T_loc>;
+  using T_sigma_ref = ref_type_t<T_scale>;
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",
                          sigma);
+  T_mu_ref mu_ref = mu;
+  T_sigma_ref sigma_ref = sigma;
+  check_finite(function, "Location parameter", mu_ref);
+  check_positive_finite(function, "Scale parameter", sigma_ref);
 
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
+  scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
+  scalar_seq_view<T_sigma_ref> sigma_vec(sigma_ref);
   size_t N = max_size(mu, sigma);
   VectorBuilder<true, double, T_loc, T_scale> output(N);
 
