@@ -27,7 +27,8 @@ return_type_t<T_prob> categorical_logit_lpmf(int n, const T_prob& beta) {
   }
 
   // FIXME:  wasteful vs. creating term (n-1) if not vectorized
-  return beta_ref.coeff(n - 1) - log_sum_exp(beta_ref);  // == log_softmax(beta)(n-1);
+  return beta_ref.coeff(n - 1)
+         - log_sum_exp(beta_ref);  // == log_softmax(beta)(n-1);
 }
 
 template <bool propto, typename T_prob,

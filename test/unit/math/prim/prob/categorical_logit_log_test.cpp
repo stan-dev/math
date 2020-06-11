@@ -28,9 +28,8 @@ TEST(ProbCategoricalLogit, log_matches_lpmf) {
 
   EXPECT_FLOAT_EQ((stan::math::categorical_logit_lpmf<true>(ns, theta)),
                   (stan::math::categorical_logit_log<true>(ns, theta)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::categorical_logit_lpmf<false>(ns, theta)),
-      (stan::math::categorical_logit_log<false>(ns, theta)));
+  EXPECT_FLOAT_EQ((stan::math::categorical_logit_lpmf<false>(ns, theta)),
+                  (stan::math::categorical_logit_log<false>(ns, theta)));
   EXPECT_FLOAT_EQ((stan::math::categorical_logit_lpmf<>(ns, theta)),
                   (stan::math::categorical_logit_log<>(ns, theta)));
   EXPECT_FLOAT_EQ((stan::math::categorical_logit_lpmf(ns, theta)),

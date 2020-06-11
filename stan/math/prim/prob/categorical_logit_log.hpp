@@ -14,7 +14,7 @@ namespace math {
  */
 template <bool propto, typename T_n, typename T_prob>
 inline return_type_t<T_prob> categorical_logit_log(const T_n& ns,
-                                                    const T_prob& beta) {
+                                                   const T_prob& beta) {
   return categorical_logit_lpmf<propto>(ns, beta);
 }
 

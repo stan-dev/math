@@ -36,8 +36,7 @@ namespace math {
  *   simplex or if any element is <code>NaN</code>.
  */
 template <typename T, require_eigen_t<T>* = nullptr>
-void check_simplex(const char* function, const char* name,
-                   const T& theta) {
+void check_simplex(const char* function, const char* name, const T& theta) {
   using std::fabs;
   check_nonzero_size(function, name, theta);
   ref_type_t<T> theta_ref = theta;
