@@ -34,8 +34,8 @@ struct ref_type {
 
 template <typename T>
 struct ref_type<T, require_not_eigen_t<T>> {
-  using type
-      = std::conditional_t<std::is_rvalue_reference<T>::value, T, const T&>;
+  using type = std::conditional_t<std::is_rvalue_reference<T>::value,
+                                  std::remove_reference_t<T>, const T&>;
 };
 
 template <typename T>
