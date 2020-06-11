@@ -39,13 +39,13 @@ class var_value<T, require_floating_point_t<T>> {
   // The internal value_type is always a floating point type
   using value_type = std::decay_t<T>;
   using vari_type = vari_value<value_type>;
-
+  using vari_pointer = vari_type*;
   template <typename K>
   using require_vari_convertible_t
-      = require_t<std::is_convertible<vari_value<K>*, vari_type*>>;
+      = require_t<std::is_convertible<vari_value<K>*, vari_pointer>>;
   template <typename K>
   using require_not_vari_convertible_t = require_t<
-      bool_constant<!std::is_convertible<vari_value<K>*, vari_type*>::value>>;
+      bool_constant<!std::is_convertible<vari_value<K>*, vari_pointer>::value>>;
 
   /**
    * Pointer to the implementation of this variable.
@@ -94,8 +94,7 @@ class var_value<T, require_floating_point_t<T>> {
    * same as `vari_value<double>` so can be `reinterpret_cast` without a copy.
    * @param vi A vari_value pointer.
    */
-  template <typename S, typename K = promote_args_t<S>,
-            require_vari_convertible_t<K>* = nullptr>
+  template <typename S, require_vari_convertible_t<S>* = nullptr>
   var_value(vari_value<S>* vi)  // NOLINT
       : vi_(vi) {}
 
@@ -106,8 +105,7 @@ class var_value<T, require_floating_point_t<T>> {
    *  as the `value_type` of this `var_value`.
    * @param vi A `vari_value`.
    */
-  template <typename S, typename K = promote_args_t<S>,
-            require_not_vari_convertible_t<K>* = nullptr>
+  template <typename S, require_not_vari_convertible_t<S>* = nullptr>
   var_value(vari_value<S>* vi) : vi_(new vari_type(*vi)) {}  // NOLINT
 
   /**
@@ -119,8 +117,7 @@ class var_value<T, require_floating_point_t<T>> {
    * param x a `var_value` whose underlying vari_type can be dynamically cast
    * to `this::vari_value<value_type>``.
    */
-  template <typename S, typename K = promote_args_t<S>,
-            require_not_vari_convertible_t<K>* = nullptr>
+  template <typename S, require_not_vari_convertible_t<S>* = nullptr>
   var_value(const var_value<S>& x) : vi_(new vari_type(*x.vi_)) {}  // NOLINT
 
   /**
@@ -129,8 +126,7 @@ class var_value<T, require_floating_point_t<T>> {
    * `var_value<double> a(4.0); var_value<int> b(a)` since the `value_type` for
    *  a `var_value` with an integral type is a double.
    */
-  template <typename S, typename K = promote_args_t<S>,
-            require_vari_convertible_t<K>* = nullptr>
+  template <typename S, require_vari_convertible_t<S>* = nullptr>
   var_value(const var_value<S>& x) : vi_(x.vi_) {}  // NOLINT
 
   /**
@@ -219,7 +215,7 @@ class var_value<T, require_floating_point_t<T>> {
    * @param b The variable to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
-  template <typename S, require_convertible_t<S&, promote_args_t<T>>* = nullptr>
+  template <typename S, require_convertible_t<S&, T>* = nullptr>
   inline var_value<T>& operator+=(const var_value<S>& b);
 
   /**
@@ -248,7 +244,7 @@ class var_value<T, require_floating_point_t<T>> {
    * @return The result of subtracting the specified variable from
    * this variable.
    */
-  template <typename S, require_convertible_t<S&, promote_args_t<T>>* = nullptr>
+  template <typename S, require_convertible_t<S&, T>* = nullptr>
   inline var_value<T>& operator-=(const var_value<S>& b);
 
   /**
@@ -278,7 +274,7 @@ class var_value<T, require_floating_point_t<T>> {
    * @return The result of multiplying this variable by the
    * specified variable.
    */
-  template <typename S, require_convertible_t<S&, promote_args_t<T>>* = nullptr>
+  template <typename S, require_convertible_t<S&, T>* = nullptr>
   inline var_value<T>& operator*=(const var_value<S>& b);
 
   /**
@@ -307,7 +303,7 @@ class var_value<T, require_floating_point_t<T>> {
    * @return The result of dividing this variable by the
    * specified variable.
    */
-  template <typename S, require_convertible_t<S&, promote_args_t<T>>* = nullptr>
+  template <typename S, require_convertible_t<S&, T>* = nullptr>
   inline var_value<T>& operator/=(const var_value<S>& b);
 
   /**
