@@ -18,10 +18,12 @@ namespace math {
  * @param beta Vector of unnormalized log probabilities
  * @return log probability
  */
-template <bool propto, typename T_prob>
+template <bool propto, typename T_beta,
+          typename T_prob = scalar_type_t<T_beta>,
+          require_eigen_col_vector_t<T_beta>* = nullptr>
 return_type_t<T_prob> multinomial_logit_lpmf(
     const std::vector<int>& ns,
-    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
+    const T_beta& beta) {
   static const char* function = "multinomial_logit_lpmf";
   check_nonnegative(function, "Number of trials variable", ns);
   check_finite(function, "log-probabilities parameter", beta);
@@ -30,23 +32,18 @@ return_type_t<T_prob> multinomial_logit_lpmf(
 
   return_type_t<T_prob> lp(0.0);
 
-  if (include_summand<propto>::value) {
-    double sum = 1.0;
+  decltype(auto) ns_map = as_array_or_scalar(ns);
 
-    for (int n : ns) {
-      sum += n;
-    }
-    lp += lgamma(sum);
-    for (int n : ns) {
-      lp -= lgamma(n + 1.0);
-    }
+  if (include_summand<propto>::value) {
+    lp += lgamma(1 + ns_map.sum()) - lgamma(1 + ns_map).sum();
   }
 
   if (include_summand<propto, T_prob>::value) {
-    T_prob alpha = log_sum_exp(beta);
+    decltype(auto) beta_ref = to_ref(beta);
+    T_prob alpha = log_sum_exp(beta_ref);
     for (unsigned int i = 0; i < ns.size(); ++i) {
       if (ns[i] != 0)
-        lp += ns[i] * (beta[i] - alpha);
+        lp += ns[i] * (beta_ref[i] - alpha);
     }
   }
 

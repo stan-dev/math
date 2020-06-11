@@ -21,14 +21,15 @@ namespace math {
  * @param rng Pseudo-random number generator.
  * @return Multinomial random variate
  */
-template <class RNG>
+template <class RNG, typename T_beta,
+          require_eigen_col_vector_t<T_beta>* = nullptr>
 inline std::vector<int> multinomial_logit_rng(
-    const Eigen::Matrix<double, Eigen::Dynamic, 1>& beta, int N, RNG& rng) {
+    const T_beta& beta, int N, RNG& rng)
   static const char* function = "multinomial_logit_rng";
   check_finite(function, "Log-probabilities parameter", beta);
   check_positive(function, "number of trials variables", N);
 
-  Eigen::Matrix<double, Eigen::Dynamic, 1> theta = softmax(beta);
+  plain_type_t<T_beta> theta = softmax(beta);
   std::vector<int> result(theta.size(), 0);
   double mass_left = 1.0;
   int n_left = N;
