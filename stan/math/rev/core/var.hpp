@@ -130,21 +130,31 @@ class var_value<T, require_floating_point_t<T>> {
   var_value(const var_value<S>& x) : vi_(x.vi_) {}  // NOLINT
 
   /**
-   * Return the value of this variable.
+   * Return a constant reference to the value of this variable.
    *
    * @return The value of this variable.
    */
-  inline auto val() const { return vi_->val_; }
+  inline const auto& val() const { return vi_->val_; }
 
   /**
-   * Return the derivative of the root expression with
+   * Return a const reference of the derivative of the root expression with
    * respect to this expression.  This method only works
    * after one of the `grad()` methods has been
    * called.
    *
    * @return Adjoint for this variable.
    */
-  inline auto adj() const { return vi_->adj_; }
+  inline const auto& adj() const { return vi_->adj_; }
+
+  /**
+   * Return a reference to the derivative of the root expression with
+   * respect to this expression.  This method only works
+   * after one of the `grad()` methods has been
+   * called.
+   *
+   * @return Adjoint for this variable.
+   */
+  inline auto& adj() { return vi_->adj_; }
 
   /**
    * Compute the gradient of this (dependent) variable with respect to
