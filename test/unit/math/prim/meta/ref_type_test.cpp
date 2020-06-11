@@ -26,6 +26,15 @@ TEST(MathMetaPrim, ref_type_non_eigen) {
   EXPECT_EQ(b_ref3, b);
   expect_std_vector_eq(c_ref1, c);
   expect_std_vector_eq(c_ref2, c);
+  EXPECT_TRUE(std::is_lvalue_reference<ref_type_t<double>>::value);
+  EXPECT_TRUE(std::is_lvalue_reference<ref_type_t<double&>>::value);
+  EXPECT_FALSE(std::is_reference<ref_type_t<double&&>>::value);
+  EXPECT_TRUE(
+      std::is_lvalue_reference<ref_type_t<const std::vector<double>>>::value);
+  EXPECT_TRUE(
+      std::is_lvalue_reference<ref_type_t<const std::vector<double>&>>::value);
+  EXPECT_FALSE(
+      std::is_reference<ref_type_t<const std::vector<double>&&>>::value);
 }
 
 TEST(MathMetaPrim, ref_type_eigen_directly_accessible) {
@@ -59,7 +68,12 @@ TEST(MathMetaPrim, ref_type_eigen_directly_accessible) {
   expect_matrix_eq(c_ref1, c);
   expect_matrix_eq(c_ref2, c);
   expect_matrix_eq(c_ref3, c);
+  EXPECT_TRUE((std::is_same<decltype(a), ref_type_t<decltype(a)&&>>::value));
   EXPECT_TRUE((std::is_same<decltype(b), ref_type_t<decltype(b)&&>>::value));
+  EXPECT_TRUE((std::is_same<decltype(c), ref_type_t<decltype(c)&&>>::value));
+  EXPECT_TRUE(std::is_lvalue_reference<ref_type_t<Eigen::MatrixXd>>::value);
+  EXPECT_TRUE(std::is_lvalue_reference<ref_type_t<Eigen::MatrixXd&>>::value);
+  EXPECT_FALSE(std::is_reference<ref_type_t<Eigen::MatrixXd&&>>::value);
 }
 
 TEST(MathMetaPrim, ref_type_eigen_expression) {
@@ -77,8 +91,12 @@ TEST(MathMetaPrim, ref_type_eigen_expression) {
   expect_matrix_eq(a_ref2, a_eval);
   expect_matrix_eq(a_ref3, a_eval);
 
+  EXPECT_TRUE((
+      std::is_same<plain_type_t<decltype(a)>, ref_type_t<decltype(a)>>::value));
   EXPECT_TRUE((std::is_same<plain_type_t<decltype(a)>,
-                            std::decay_t<ref_type_t<decltype(a)&&>>>::value));
+                            ref_type_t<decltype(a)&>>::value));
+  EXPECT_TRUE((std::is_same<plain_type_t<decltype(a)>,
+                            ref_type_t<decltype(a)&&>>::value));
 }
 
 TEST(MathMetaPrim, ref_type_for_opencl_for_opencl_non_eigen) {
