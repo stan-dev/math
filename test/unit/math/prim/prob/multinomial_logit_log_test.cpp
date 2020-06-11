@@ -18,10 +18,4 @@ TEST(ProbMultinomialLogit, log_matches_lpmf) {
                   (multinomial_logit_log<true>(ns, theta)));
   EXPECT_FLOAT_EQ((multinomial_logit_lpmf<false>(ns, theta)),
                   (multinomial_logit_log<false>(ns, theta)));
-  EXPECT_FLOAT_EQ((multinomial_logit_lpmf<true, double>(ns, theta)),
-                  (multinomial_logit_log<true, double>(ns, theta)));
-  EXPECT_FLOAT_EQ((multinomial_logit_lpmf<false, double>(ns, theta)),
-                  (multinomial_logit_log<false, double>(ns, theta)));
-  EXPECT_FLOAT_EQ((multinomial_logit_lpmf<double>(ns, theta)),
-                  (multinomial_logit_log<double>(ns, theta)));
 }

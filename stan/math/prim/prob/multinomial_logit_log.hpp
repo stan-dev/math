@@ -12,21 +12,21 @@ namespace math {
 /** \ingroup multivar_dists
  * @deprecated use <code>multinomial_logit_lpmf</code>
  */
-template <bool propto, typename T_prob>
-return_type_t<T_prob> multinomial_logit_log(
-    const std::vector<int>& ns,
-    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
-  return multinomial_logit_lpmf<propto, T_prob>(ns, theta);
+template <bool propto, typename T_beta, typename T_prob = scalar_type_t<T_beta>,
+          require_eigen_col_vector_t<T_beta>* = nullptr>
+return_type_t<T_prob> multinomial_logit_log(const std::vector<int>& ns,
+                                            const T_beta& beta) {
+  return multinomial_logit_lpmf<propto, T_beta>(ns, beta);
 }
 
 /** \ingroup multivar_dists
  * @deprecated use <code>multinomial_logit_lpmf</code>
  */
-template <typename T_prob>
-return_type_t<T_prob> multinomial_logit_log(
-    const std::vector<int>& ns,
-    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
-  return multinomial_logit_lpmf<false>(ns, theta);
+template <typename T_beta, typename T_prob = scalar_type_t<T_beta>,
+          require_eigen_col_vector_t<T_beta>* = nullptr>
+return_type_t<T_prob> multinomial_logit_log(const std::vector<int>& ns,
+                                            const T_beta& beta) {
+  return multinomial_logit_lpmf<false>(ns, beta);
 }
 
 }  // namespace math
