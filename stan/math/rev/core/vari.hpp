@@ -174,17 +174,14 @@ using vari = vari_value<double>;
 
 class vari_zero_adj : public boost::static_visitor<> {
  public:
-  inline void operator()(vari_value<double>*& x) const { x->adj_ = 0.0; }
-  inline void operator()(vari_value<float>*& x) const { x->adj_ = 0.0; }
-  inline void operator()(vari_value<long double>*& x) const { x->adj_ = 0.0; }
+  template <typename T, require_arithmetic_t<T>* = nullptr>
+  inline void operator()(vari_value<T>*& x) const { x->adj_ = 0.0; }
 };
 
 class vari_chainer : public boost::static_visitor<> {
  public:
   template <typename T>
-  inline void operator()(vari_value<double>*& x) const { x->chain(); }
-  inline void operator()(vari_value<float>*& x) const { x->chain(); }
-  inline void operator()(vari_value<long double>*& x) const { x->chain(); }
+  inline void operator()(vari_value<T>*& x) const { x->chain(); }
 };
 
 class vari_printer : public boost::static_visitor<> {
