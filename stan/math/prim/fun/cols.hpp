@@ -15,7 +15,7 @@ namespace math {
  * @param[in] m Input matrix, vector, or row vector.
  * @return Number of columns.
  */
-template <typename T, typename = require_eigen_t<T>>
+template <typename T, require_eigen_t<T>* = nullptr>
 inline int cols(const T& m) {
   return m.cols();
 }

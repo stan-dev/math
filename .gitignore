@@ -89,3 +89,6 @@ compile_commands.json
 
 # Ignore things made with tbb
 lib/tbb/**
+
+# gdb debug history
+.gdb_history

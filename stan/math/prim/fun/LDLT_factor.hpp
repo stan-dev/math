@@ -6,7 +6,7 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace stan {
 namespace math {
@@ -17,7 +17,7 @@ namespace math {
  * log determinants and solutions to linear systems.
  *
  * Memory is allocated in the constructor and stored in a
- * <code>boost::shared_ptr</code>, which ensures that is freed
+ * <code>std::shared_ptr</code>, which ensures that is freed
  * when the object is released.
  *
  * After the constructor and/or compute() is called, users of
@@ -123,7 +123,7 @@ class LDLT_factor {
   inline size_t cols() const { return N_; }
 
   size_t N_;
-  boost::shared_ptr<ldlt_t> ldltP_;
+  std::shared_ptr<ldlt_t> ldltP_;
 };
 
 }  // namespace math

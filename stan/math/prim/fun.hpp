@@ -142,6 +142,7 @@
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
 #include <stan/math/prim/fun/is_uninitialized.hpp>
+#include <stan/math/prim/fun/lambert_w.hpp>
 #include <stan/math/prim/fun/lb_constrain.hpp>
 #include <stan/math/prim/fun/lb_free.hpp>
 #include <stan/math/prim/fun/lbeta.hpp>
@@ -306,6 +307,7 @@
 #include <stan/math/prim/fun/to_array_1d.hpp>
 #include <stan/math/prim/fun/to_array_2d.hpp>
 #include <stan/math/prim/fun/to_matrix.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/to_row_vector.hpp>
 #include <stan/math/prim/fun/to_vector.hpp>
 #include <stan/math/prim/fun/trace.hpp>

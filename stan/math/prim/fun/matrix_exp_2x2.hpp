@@ -17,18 +17,19 @@ namespace math {
  * algorithm: http://mathworld.wolfram.com/MatrixExponential.html
  * Note: algorithm only works if delta > 0;
  *
- * @tparam Mtype type of elements in the matrix
+ * @tparam EigMat type of the matrix
  * @param[in] A 2x2 matrix to exponentiate.
  * @return Matrix exponential of A.
  */
-template <typename Mtype>
-Mtype matrix_exp_2x2(const Mtype& A) {
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>
+matrix_exp_2x2(const EigMat& A) {
   using std::cosh;
   using std::exp;
   using std::sinh;
   using std::sqrt;
 
-  using T = typename Mtype::Scalar;
+  using T = value_type_t<EigMat>;
   T a = A(0, 0), b = A(0, 1), c = A(1, 0), d = A(1, 1), delta;
   delta = sqrt(square(a - d) + 4 * b * c);
 

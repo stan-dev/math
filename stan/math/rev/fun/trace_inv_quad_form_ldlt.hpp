@@ -143,33 +143,32 @@ class trace_inv_quad_form_ldlt_vari : public vari {
  *       trace(B^T A^-1 B)
  * where the LDLT_factor of A is provided.
  *
- * @tparam T2 type of elements in the LDLT_factor
- * @tparam R2 number of rows, can be Eigen::Dynamic
- * @tparam C2 number of columns, can be Eigen::Dynamic
- * @tparam T3 type of elements in the second matrix
- * @tparam R3 number of rows, can be Eigen::Dynamic
- * @tparam C3 number of columns, can be Eigen::Dynamic
+ * @tparam T type of elements in the LDLT_factor
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam EigMat3 type of the second matrix
  *
  * @param A an LDLT_factor
  * @param B a matrix
  * @return The trace of the inverse quadratic form.
  */
-template <typename T2, int R2, int C2, typename T3, int R3, int C3,
-          typename = require_any_var_t<T2, T3>>
-inline return_type_t<T2, T3> trace_inv_quad_form_ldlt(
-    const LDLT_factor<T2, R2, C2> &A, const Eigen::Matrix<T3, R3, C3> &B) {
+template <typename T, int R, int C, typename EigMat,
+          typename = require_any_vt_var<T, EigMat>>
+inline return_type_t<T, EigMat> trace_inv_quad_form_ldlt(
+    const LDLT_factor<T, R, C> &A, const EigMat &B) {
+  using T2 = value_type_t<EigMat>;
+  constexpr int R2 = EigMat::RowsAtCompileTime;
+  constexpr int C2 = EigMat::ColsAtCompileTime;
   check_multiplicable("trace_inv_quad_form_ldlt", "A", A, "B", B);
   if (A.cols() == 0) {
     return 0;
   }
 
-  internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3> *impl_
-      = new internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3>(A,
-                                                                            B);
+  auto *impl_
+      = new internal::trace_inv_quad_form_ldlt_impl<T, R, C, T2, R2, C2>(A, B);
 
   return var(
-      new internal::trace_inv_quad_form_ldlt_vari<T2, R2, C2, T3, R3, C3>(
-          impl_));
+      new internal::trace_inv_quad_form_ldlt_vari<T, R, C, T2, R2, C2>(impl_));
 }
 
 }  // namespace math
