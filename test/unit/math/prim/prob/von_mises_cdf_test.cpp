@@ -3,6 +3,19 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+TEST(ProbVonMises, throwing) {
+  using stan::math::von_mises_cdf;
+  double nan = std::numeric_limits<double>::quiet_NaN();
+
+  EXPECT_THROW(stan::math::von_mises_cdf(-4, 0.6, 1.0), std::domain_error);
+  EXPECT_THROW(stan::math::von_mises_cdf(4, 0.1, 1.0), std::domain_error);
+  EXPECT_THROW(stan::math::von_mises_cdf(0.0, 0.1, -1.0), std::domain_error);
+  EXPECT_THROW(stan::math::von_mises_cdf(nan, 0.1, -1.0), std::domain_error);
+  EXPECT_THROW(stan::math::von_mises_cdf(0.0, nan, -1.0), std::domain_error);
+  EXPECT_THROW(stan::math::von_mises_cdf(0.0, 0.1, nan), std::domain_error);
+
+}
+
 TEST(ProbVonMises, pdf_cdf_agree_test) {
   using stan::math::von_mises_cdf;
   using stan::math::von_mises_lpdf;

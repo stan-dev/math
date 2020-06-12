@@ -100,15 +100,15 @@ return_type_t<T_x, T_k> von_mises_cdf_centered(const T_x& x, const T_k& k) {
  * Calculates the cumulative distribution function of the von Mises
  * distribution:
  *
- * \f$VonMisesCDF(x, mu, \kappa) = \frac{1}{2\pi I_0(\kappa)} \int_{-\mu-\pi}^x
+ * \f$VonMisesCDF(x, mu, \kappa) = \frac{1}{2\pi I_0(\kappa)} \int_{-\pi}^x
  * e^{\kappa cos(t - \mu)} dt\f$
  *
  * where
  *
- * \f$\mu \in \mathbb{R}\f$, \f$x \in (\mu - \pi, \mu + \pi)\f$, and \f$\kappa
- * \in \mathbb{R}^+\f$.
+ * \f$x \in [-\pi, \pi], \f$\mu \in \mathbb{R}\f$, 
+ * and \f$\kappa \in \mathbb{R}^+\f$.
  *
- * @param x A scalar variate
+ * @param x A scalar variate on the interval \f$(-pi, pi)$
  * @param mu The mean of the distribution
  * @param k The inverse scale of the distriubtion
  * @return The von Mises cdf evaluated at the specified arguments
@@ -134,7 +134,7 @@ inline return_type_t<T_x, T_mu, T_k> von_mises_cdf(const T_x& x, const T_mu& mu,
   // shift x so that mean is 0
   return_t x2 = x - mu;
 
-  // x is on an interval (2*n*pi, (2*n + 1)*pi), move it to (-pi, pi)
+  // x2 is on an interval (2*n*pi, (2*n + 1)*pi), move it to (-pi, pi)
   x2 += pi;
   const auto x_floor = floor(x2 / TWO_PI);
   const auto x_moded = x2 - x_floor * TWO_PI;
