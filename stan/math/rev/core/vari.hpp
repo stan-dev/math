@@ -194,7 +194,7 @@ class vari_printer : public boost::static_visitor<> {
   int i_{0};
   vari_printer(std::ostream& o, int i) : o_(o), i_(i) {}
   template <typename T>
-  void operator()(T*& x) const {
+  inline void operator()(T*& x) const {
     o_ << i_ << "  " << x << "  " << x->val_ << " : " << x->adj_ << std::endl;
   }
 };
