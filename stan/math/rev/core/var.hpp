@@ -99,28 +99,6 @@ class var_value<T, require_floating_point_t<T>> {
       : vi_(vi) {}
 
   /**
-   * Construct a variable from a pointer to a variable implementation when.
-   *  the `value_type`s differ. This forces a copy of the vari
-   * @tparam S the type in the vari_value* that does not have the same type
-   *  as the `value_type` of this `var_value`.
-   * @param vi A `vari_value`.
-   */
-  template <typename S, require_not_vari_convertible_t<S>* = nullptr>
-  var_value(vari_value<S>* vi) : vi_(new vari_type(*vi)) {}  // NOLINT
-
-  /**
-   * Construct from a var_value whose underlying value_type differs in type
-   * to this class's value_type. This is for cases such as
-   * `var_value<double> a(5.0); var_value<long double> b(a);`
-   * @tparam S A type that is not the same as the underlying value type.
-   *  same as the underlying value_type.
-   * param x a `var_value` whose underlying vari_type can be dynamically cast
-   * to `this::vari_value<value_type>``.
-   */
-  template <typename S, require_not_vari_convertible_t<S>* = nullptr>
-  var_value(const var_value<S>& x) : vi_(new vari_type(*x.vi_)) {}  // NOLINT
-
-  /**
    * Constructor from `var_value` whose value_type is the same as this class's
    * `value_type`. This is used in cases such as
    * `var_value<double> a(4.0); var_value<int> b(a)` since the `value_type` for
