@@ -100,7 +100,7 @@ return_type_t<T_x, T_k> von_mises_cdf_centered(const T_x& x, const T_k& k) {
  * Calculates the cumulative distribution function of the von Mises
  * distribution:
  *
- * \f$VonMisesCDF(x, mu, \kappa) = \frac{1}{2\pi I_0(\kappa)} \int_{-\pi}^x
+ * \f$VonMisesCDF(x, \mu, \kappa) = \frac{1}{2\pi I_0(\kappa)} \int_{-\pi}^x
  * e^{\kappa cos(t - \mu)} dt\f$
  *
  * where
@@ -108,7 +108,7 @@ return_type_t<T_x, T_k> von_mises_cdf_centered(const T_x& x, const T_k& k) {
  * \f$x \in [-\pi, \pi], \f$\mu \in \mathbb{R}\f$, 
  * and \f$\kappa \in \mathbb{R}^+\f$.
  *
- * @param x A scalar variate on the interval \f$(-pi, pi)$
+ * @param x A scalar variate on the interval \f$[-pi, pi]$
  * @param mu The mean of the distribution
  * @param k The inverse scale of the distriubtion
  * @return The von Mises cdf evaluated at the specified arguments
