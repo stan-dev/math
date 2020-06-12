@@ -105,7 +105,7 @@ return_type_t<T_x, T_k> von_mises_cdf_centered(const T_x& x, const T_k& k) {
  *
  * where
  *
- * \f$x \in [-\pi, \pi], \f$\mu \in \mathbb{R}\f$, 
+ * \f$x \in [-\pi, \pi], \f$\mu \in \mathbb{R}\f$,
  * and \f$\kappa \in \mathbb{R}^+\f$.
  *
  * @param x A scalar variate on the interval \f$(-pi, pi)$
