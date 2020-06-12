@@ -38,22 +38,26 @@ return_type_t<T_y, T_dof> chi_square_lccdf(const T_y& y, const T_dof& nu) {
   using std::exp;
   using std::log;
   using std::pow;
+  using T_y_ref = ref_type_t<T_y>;
+  using T_nu_ref = ref_type_t<T_dof>;
   static const char* function = "chi_square_lccdf";
-  check_not_nan(function, "Random variable", y);
-  check_nonnegative(function, "Random variable", y);
-  check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu);
+  T_y_ref y_ref = y;
+  T_nu_ref nu_ref = nu;
+  check_not_nan(function, "Random variable", y_ref);
+  check_nonnegative(function, "Random variable", y_ref);
+  check_positive_finite(function, "Degrees of freedom parameter", nu_ref);
 
   if (size_zero(y, nu)) {
     return 0;
   }
 
   T_partials_return ccdf_log(0.0);
-  operands_and_partials<T_y, T_dof> ops_partials(y, nu);
+  operands_and_partials<T_y_ref, T_nu_ref> ops_partials(y_ref, nu_ref);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_dof> nu_vec(nu);
+  scalar_seq_view<T_y_ref> y_vec(y_ref);
+  scalar_seq_view<T_nu_ref> nu_vec(nu_ref);
   size_t N = max_size(y, nu);
 
   // Explicit return for extreme values
