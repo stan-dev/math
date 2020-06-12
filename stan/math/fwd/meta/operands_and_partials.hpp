@@ -70,11 +70,11 @@ template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5,
           typename Dx>
 class operands_and_partials<Op1, Op2, Op3, Op4, Op5, fvar<Dx>> {
  public:
-  internal::ops_partials_edge<Dx, Op1> edge1_;
-  internal::ops_partials_edge<Dx, Op2> edge2_;
-  internal::ops_partials_edge<Dx, Op3> edge3_;
-  internal::ops_partials_edge<Dx, Op4> edge4_;
-  internal::ops_partials_edge<Dx, Op5> edge5_;
+  internal::ops_partials_edge<Dx, std::decay_t<Op1>> edge1_;
+  internal::ops_partials_edge<Dx, std::decay_t<Op2>> edge2_;
+  internal::ops_partials_edge<Dx, std::decay_t<Op3>> edge3_;
+  internal::ops_partials_edge<Dx, std::decay_t<Op4>> edge4_;
+  internal::ops_partials_edge<Dx, std::decay_t<Op5>> edge5_;
   using T_return_type = fvar<Dx>;
   explicit operands_and_partials(const Op1& o1) : edge1_(o1) {}
   operands_and_partials(const Op1& o1, const Op2& o2)
@@ -168,7 +168,7 @@ template <typename Dx, int R, int C>
 class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C>>> {
  public:
   using Op = std::vector<Eigen::Matrix<fvar<Dx>, R, C>>;
-  using partial_t = Eigen::Matrix<Dx, -1, -1>;
+  using partial_t = Eigen::Matrix<Dx, R, C>;
   std::vector<partial_t> partials_vec_;
   explicit ops_partials_edge(const Op& ops)
       : partials_vec_(ops.size()), operands_(ops) {
