@@ -190,8 +190,8 @@ class vari_chainer : public boost::static_visitor<> {
 
 class vari_printer : public boost::static_visitor<> {
  public:
-  int i_{0};
   std::ostream& o_;
+  int i_{0};
   vari_printer(std::ostream& o, int i) : o_(o), i_(i) {}
   template <typename T>
   void operator()(T*& x) const {
