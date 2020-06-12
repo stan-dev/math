@@ -5,6 +5,7 @@
 #include <stan/math/prim/meta/promote_scalar_type.hpp>
 #include <stan/math/prim/meta/ref_type.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 #include <stdexcept>
 
 namespace stan {
@@ -27,7 +28,7 @@ class broadcast_array {
    */
   template <typename Y>
   void operator=(const Y& m) {
-    prim_ = m.sum();
+    prim_ = sum(m);
   }
 };
 
