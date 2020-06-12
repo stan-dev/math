@@ -1,8 +1,0 @@
-../../3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/sigsys_handlers.cc:**CRASHING**:seccomp-bpf failure in syscall 0230
-The X11 connection broke (error 1). Did the X11 server die?
-Gdk-Message: 14:16:34.225: rstudio: Fatal IO error 11 (Resource temporarily unavailable) on X server :1.
-
-../../3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/sigsys_handlers.cc:**CRASHING**:seccomp-bpf failure in syscall 0230
-The X11 connection broke (error 1). Did the X11 server die?
-Gdk-Message: 14:16:54.082: rstudio: Fatal IO error 11 (Resource temporarily unavailable) on X server :1.
-
