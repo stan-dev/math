@@ -33,8 +33,10 @@ inline void set_zero_all_adjoints_nested() {
 
   size_t start2
       = ChainableStack::instance_->nested_var_nochain_stack_sizes_.back();
-  const auto nochain_stack_size = ChainableStack::instance_->var_nochain_stack_.size();
-  for (size_t i = (start2 == 0U) ? 0U : (start2 - 1); i < nochain_stack_size; ++i) {
+  const auto nochain_stack_size
+      = ChainableStack::instance_->var_nochain_stack_.size();
+  for (size_t i = (start2 == 0U) ? 0U : (start2 - 1); i < nochain_stack_size;
+       ++i) {
     boost::apply_visitor(vari_zero_adj(),
                          ChainableStack::instance_->var_nochain_stack_[i]);
   }
