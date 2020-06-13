@@ -65,8 +65,9 @@ mat<T_theta> compute_alpha_(int y, const vec<T_theta>& theta) {
  * @param y array of numbers of successes
  * @param theta array of chances of success parameters
  * @return sum of log probabilities
- * @throw std::domain_error if y is negative
+ * @throw std::domain_error if y is out of bounds
  * @throw std::domain_error if theta is not a valid vector of probabilities
+ * @throw std::invalid_argument If y and theta are different lengths
  */
 template<bool propto, typename T_theta>
 return_type_t<T_theta> poisson_binomial_lpmf(
@@ -109,7 +110,7 @@ return_type_t<T_theta> poisson_binomial_lpmf(
  * @param y array of numbers of successes
  * @param theta chance of success parameters
  * @return sum of log probabilities
- * @throw std::domain_error if y is negative
+ * @throw std::domain_error if y is out of bounds
  * @throw std::domain_error if theta is not a valid vector of probabilities
  */
 template<bool propto, typename T_theta>
@@ -149,7 +150,7 @@ inline return_type_t<T_theta> poisson_binomial_lpmf(
  * @param y number of successes
  * @param theta chance of success parameters
  * @return log probability
- * @throw std::domain_error if y is negative
+ * @throw std::domain_error if y is out of bounds
  * @throw std::domain_error if theta is not a valid vector of probabilities
  */
 template<bool propto, typename T_theta>
