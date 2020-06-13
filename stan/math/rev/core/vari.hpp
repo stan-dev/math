@@ -172,7 +172,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
 // For backwards compatability the default is double
 using vari = vari_value<double>;
 
-class vari_zero_adj : public boost::static_visitor<> {
+class vari_zero_adj final : public boost::static_visitor<> {
  public:
   template <typename T, require_arithmetic_t<T>* = nullptr>
   inline void operator()(vari_value<T>*& x) const {
@@ -180,7 +180,7 @@ class vari_zero_adj : public boost::static_visitor<> {
   }
 };
 
-class vari_chainer : public boost::static_visitor<> {
+class vari_chainer final : public boost::static_visitor<> {
  public:
   template <typename T>
   inline void operator()(vari_value<T>*& x) const {
@@ -188,7 +188,7 @@ class vari_chainer : public boost::static_visitor<> {
   }
 };
 
-class vari_printer : public boost::static_visitor<> {
+class vari_printer final : public boost::static_visitor<> {
  public:
   std::ostream& o_;
   int i_{0};
