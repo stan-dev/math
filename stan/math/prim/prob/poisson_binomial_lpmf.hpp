@@ -8,8 +8,6 @@
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/size.hpp>
 
-#include <iostream>
-
 namespace stan {
 namespace math {
 
@@ -51,8 +49,6 @@ mat<T_theta> compute_alpha_(int y, const vec<T_theta>& theta) {
       alpha(i + 1, i + 1) = alpha(i, i) + log_theta(i);
     }
   }
-
-  std::cout << alpha << "\n";
 
   return alpha;
 }

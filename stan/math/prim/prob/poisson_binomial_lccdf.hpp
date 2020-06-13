@@ -30,8 +30,9 @@ using mat = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
  * @param y array of numbers of successes
  * @param theta array of chances of success parameters
  * @return sum of log probabilities
- * @throw std::domain_error if y is negative
+ * @throw std::domain_error if y is out of bounds
  * @throw std::domain_error if theta is not a valid vector of probabilities
+ * @throw std::invalid_argument If y and theta are different lengths
  */
 template<bool propto, typename T_theta>
 return_type_t<T_theta> poisson_binomial_lccdf(
@@ -54,7 +55,7 @@ return_type_t<T_theta> poisson_binomial_lccdf(
   for (int i = 0; i < sz_theta; ++i) {
     mat<T_theta> alpha = compute_alpha_(y[i], theta[i]);
     std::vector<T_theta> Pi(y[i] + 1);
-    for (int j = 0; j <= y[i]; j++) {
+    for (int j = 0; j <= y[i]; ++j) {
       Pi[j] = alpha(theta[i].size(), j);
     }
     P += std::log(1 - std::exp(log_sum_exp(Pi)));
@@ -78,7 +79,7 @@ return_type_t<T_theta> poisson_binomial_lccdf(
  * @param y array of numbers of successes
  * @param theta chance of success parameters
  * @return sum of log probabilities
- * @throw std::domain_error if y is negative
+ * @throw std::domain_error if y is out of bounds
  * @throw std::domain_error if theta is not a valid vector of probabilities
  */
 template<bool propto, typename T_theta>
@@ -95,12 +96,11 @@ return_type_t<T_theta> poisson_binomial_lccdf(
   int max_y = *std::max_element(y.begin(), y.end());
   mat<T_theta> alpha = compute_alpha_(max_y, theta);
 
-  size_t size_theta = theta.size();
   T_theta P = 0.0;
   for (std::vector<int>::size_type i = 0; i < y.size(); ++i) {
     std::vector<T_theta> Pi(y[i] + 1);
-    for (int j = 0; j <= y[i]; j++) {
-      Pi[j] = alpha(size_theta, j);
+    for (int j = 0; j <= y[i]; ++j) {
+      Pi[j] = alpha(theta.size(), j);
     }
     P += std::log(1 - std::exp(log_sum_exp(Pi)));
   }
@@ -123,7 +123,7 @@ inline return_type_t<T_theta> poisson_binomial_lccdf(
  * @param y number of successes
  * @param theta chance of success parameters
  * @return log probability
- * @throw std::domain_error if y is negative
+ * @throw std::domain_error if y is out of bounds
  * @throw std::domain_error if theta is not a valid vector of probabilities
  */
 template<bool propto, typename T_theta>
