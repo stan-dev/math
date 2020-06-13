@@ -27,7 +27,7 @@ void jacobian(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
   grad(fx_var(0).vi_);
   J.col(0) = x_var.adj();
   for (int i = 1; i < fx_var.size(); ++i) {
-    nested.set_zero_all_adjoints();
+    set_zero_all_adjoints_nested();
     grad(fx_var(i).vi_);
     J.col(i) = x_var.adj();
   }
