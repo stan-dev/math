@@ -261,6 +261,7 @@
 #include <stan/math/prim/prob/pareto_type_2_log.hpp>
 #include <stan/math/prim/prob/pareto_type_2_lpdf.hpp>
 #include <stan/math/prim/prob/pareto_type_2_rng.hpp>
+#include <stan/math/prim/prob/poisson_binomial_lccdf.hpp>
 #include <stan/math/prim/prob/poisson_binomial_lcdf.hpp>
 #include <stan/math/prim/prob/poisson_binomial_lpmf.hpp>
 #include <stan/math/prim/prob/poisson_binomial_rng.hpp>

@@ -17,10 +17,10 @@
 namespace stan {
 namespace math {
 
-template<typename T_theta>
-using vec = Eigen::Matrix<T_theta, Eigen::Dynamic, 1>;
-template<typename T_theta>
-using mat = Eigen::Matrix<T_theta, Eigen::Dynamic, Eigen::Dynamic>;
+template<typename T>
+using vec = Eigen::Matrix<T, Eigen::Dynamic, 1>;
+template<typename T>
+using mat = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
 
 /** \ingroup prob_dists
  * Returns the log CDF for the Poisson-binomial distribution evaluated at the
@@ -37,7 +37,7 @@ template<bool propto, typename T_theta>
 return_type_t<T_theta> poisson_binomial_lcdf(
   const std::vector<int>& y,
   const std::vector< vec<T_theta> >& theta) {
-  static const char *function = "poisson_binomial_lpmf";
+  static const char *function = "poisson_binomial_lcdf";
 
   int sz_theta = static_cast<int>(theta.size());
   check_consistent_sizes(function,
@@ -85,7 +85,7 @@ template<bool propto, typename T_theta>
 return_type_t<T_theta> poisson_binomial_lcdf(
   const std::vector<int>& y,
   const vec<T_theta>& theta) {
-  static const char *function = "poisson_binomial_lpmf";
+  static const char *function = "poisson_binomial_lcdf";
 
   check_bounded(function, "Successes variable", y, 0, theta.size());
   check_finite(function, "Probability parameters", theta);
