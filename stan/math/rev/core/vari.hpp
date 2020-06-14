@@ -68,8 +68,8 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
    */
   template <typename S,
             std::enable_if_t<std::is_convertible<S&, Scalar>::value>* = nullptr>
-  vari_value(S x) : val_(x), adj_(0.0) {  // NOLINT
-    ChainableStack::instance_->var_stack_.push_back(this);
+  vari_value(S x) noexcept : val_(x), adj_(0.0) {  // NOLINT
+    ChainableStack::instance_->var_stack_.emplace_back(this);
   }
 
   /**
@@ -91,11 +91,11 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
    */
   template <typename S,
             std::enable_if_t<std::is_convertible<S&, Scalar>::value>* = nullptr>
-  vari_value(S x, bool stacked) : val_(x), adj_(0.0) {
+  vari_value(S x, bool stacked) noexcept : val_(x), adj_(0.0) {
     if (stacked) {
-      ChainableStack::instance_->var_stack_.push_back(this);
+      ChainableStack::instance_->var_stack_.emplace_back(this);
     } else {
-      ChainableStack::instance_->var_nochain_stack_.push_back(this);
+      ChainableStack::instance_->var_nochain_stack_.emplace_back(this);
     }
   }
 
@@ -107,7 +107,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
   template <typename S,
             std::enable_if_t<std::is_arithmetic<S>::value>* = nullptr>
   vari_value(const vari_value<S>& x) noexcept : val_(x.val_), adj_(x.adj_) {
-    ChainableStack::instance_->var_stack_.push_back(this);
+    ChainableStack::instance_->var_stack_.emplace_back(this);
   }
   /**
    * Constructor from vari_value
@@ -117,7 +117,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
   template <typename S,
             std::enable_if_t<std::is_arithmetic<S>::value>* = nullptr>
   vari_value(vari_value<S>&& x) noexcept : val_(x.val_), adj_(x.adj_) {
-    ChainableStack::instance_->var_stack_.push_back(this);
+    ChainableStack::instance_->var_stack_.emplace_back(this);
   }
 
   /**
@@ -126,14 +126,14 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
    * propagating derivatives, setting the derivative of the
    * result with respect to itself to be 1.
    */
-  inline void init_dependent() { adj_ = 1.0; }
+  inline void init_dependent() noexcept { adj_ = 1.0; }
 
   /**
    * Set the adjoint value of this variable to 0.  This is used to
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  inline void set_zero_adjoint() { adj_ = 0.0; }
+  inline void set_zero_adjoint() noexcept { adj_ = 0.0; }
 
   virtual void chain() {}
 
@@ -160,7 +160,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
    * @param nbytes Number of bytes to allocate.
    * @return Pointer to allocated bytes.
    */
-  static inline void* operator new(size_t nbytes) {
+  static inline void* operator new(size_t nbytes) noexcept {
     return ChainableStack::instance_->memalloc_.alloc(nbytes);
   }
 
@@ -175,7 +175,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
    * See the discussion of "plugging the memory leak" in:
    *   http://www.parashift.com/c++-faq/memory-pools.html
    */
-  static inline void operator delete(void* /* ignore arg */) { /* no op */
+  static inline void operator delete(void* /* ignore arg */) noexcept { /* no op */
   }
 };
 
