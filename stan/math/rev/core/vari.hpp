@@ -175,7 +175,8 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
    * See the discussion of "plugging the memory leak" in:
    *   http://www.parashift.com/c++-faq/memory-pools.html
    */
-  static inline void operator delete(void* /* ignore arg */) noexcept { /* no op */
+  static inline void operator delete(
+      void* /* ignore arg */) noexcept { /* no op */
   }
 };
 

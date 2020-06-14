@@ -12,7 +12,8 @@ class vari_base;
 class chainable_alloc;
 
 using vari_variant
-    = boost::variant2::variant<vari_value<double>*, vari_value<float>*, vari_value<long double>*>;
+    = boost::variant2::variant<vari_value<double>*, vari_value<float>*,
+                               vari_value<long double>*>;
 
 using ChainableStack = AutodiffStackSingleton<vari_variant, chainable_alloc>;
 
