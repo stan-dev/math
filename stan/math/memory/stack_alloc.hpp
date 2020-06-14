@@ -13,6 +13,7 @@
 
 namespace stan {
 namespace math {
+using byte = unsigned char;
 
 /**
  * Return <code>true</code> if the specified pointer is aligned
@@ -35,18 +36,8 @@ const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
 
 // FIXME: enforce alignment
 // big fun to inline, but only called twice
-inline char* eight_byte_aligned_malloc(size_t size) {
-  char* ptr = static_cast<char*>(malloc(size));
-  if (!ptr) {
-    return ptr;  // malloc failed to alloc
-  }
-  if (!is_aligned(ptr, 8U)) {
-    std::stringstream s;
-    s << "invalid alignment to 8 bytes, ptr="
-      << reinterpret_cast<uintptr_t>(ptr) << std::endl;
-    throw std::runtime_error(s.str());
-  }
-  return ptr;
+EIGEN_STRONG_INLINE byte* eight_byte_aligned_malloc(size_t size) noexcept {
+  return reinterpret_cast<byte*>(malloc(size));
 }
 }  // namespace internal
 
@@ -71,17 +62,17 @@ inline char* eight_byte_aligned_malloc(size_t size) {
  */
 class stack_alloc {
  private:
-  std::vector<char*> blocks_;  // storage for blocks,
+  std::vector<byte*> blocks_;  // storage for blocks,
                                // may be bigger than cur_block_
   std::vector<size_t> sizes_;  // could store initial & shift for others
   size_t cur_block_;           // index into blocks_ for next alloc
-  char* cur_block_end_;        // ptr to cur_block_ptr_ + sizes_[cur_block_]
-  char* next_loc_;             // ptr to next available spot in cur
+  byte* cur_block_end_;        // ptr to cur_block_ptr_ + sizes_[cur_block_]
+  byte* next_loc_;             // ptr to next available spot in cur
                                // block
   // next three for keeping track of nested allocations on top of stack:
   std::vector<size_t> nested_cur_blocks_;
-  std::vector<char*> nested_next_locs_;
-  std::vector<char*> nested_cur_block_ends_;
+  std::vector<byte*> nested_next_locs_;
+  std::vector<byte*> nested_cur_block_ends_;
 
   /**
    * Moves us to the next block of memory, allocating that block
@@ -91,8 +82,8 @@ class stack_alloc {
    * @param len Number of bytes to allocate.
    * @return A pointer to the allocated memory.
    */
-  char* move_to_next_block(size_t len) {
-    char* result;
+  EIGEN_STRONG_INLINE byte* move_to_next_block(size_t len) {
+    byte* result;
     ++cur_block_;
     // Find the next block (if any) containing at least len bytes.
     while ((cur_block_ < blocks_.size()) && (sizes_[cur_block_] < len)) {
@@ -128,15 +119,12 @@ class stack_alloc {
    * @throws std::runtime_error if the underlying malloc is not 8-byte
    * aligned.
    */
-  explicit stack_alloc(size_t initial_nbytes = internal::DEFAULT_INITIAL_NBYTES)
+  explicit stack_alloc(size_t initial_nbytes = internal::DEFAULT_INITIAL_NBYTES) noexcept 
       : blocks_(1, internal::eight_byte_aligned_malloc(initial_nbytes)),
         sizes_(1, initial_nbytes),
         cur_block_(0),
         cur_block_end_(blocks_[0] + initial_nbytes),
         next_loc_(blocks_[0]) {
-    if (!blocks_[0]) {
-      throw std::bad_alloc();  // no msg allowed in bad_alloc ctor
-    }
   }
 
   /**
@@ -145,7 +133,7 @@ class stack_alloc {
    * This is implemented as a no-op as there is no destruction
    * required.
    */
-  ~stack_alloc() {
+  ~stack_alloc() noexcept {
     // free ALL blocks
     for (auto& block : blocks_) {
       if (block) {
@@ -166,9 +154,9 @@ class stack_alloc {
    * @param len Number of bytes to allocate.
    * @return A pointer to the allocated memory.
    */
-  inline void* alloc(size_t len) {
+  EIGEN_STRONG_INLINE void* alloc(size_t len) noexcept {
     // Typically, just return and increment the next location.
-    char* result = next_loc_;
+    byte* result = next_loc_;
     next_loc_ += len;
     // Occasionally, we have to switch blocks.
     if (unlikely(next_loc_ >= cur_block_end_)) {
@@ -186,7 +174,7 @@ class stack_alloc {
    * @return new array allocated on the arena.
    */
   template <typename T>
-  inline T* alloc_array(size_t n) {
+  EIGEN_STRONG_INLINE T* alloc_array(size_t n) noexcept  {
     return static_cast<T*>(alloc(n * sizeof(T)));
   }
 
@@ -196,7 +184,7 @@ class stack_alloc {
    * allocations.  To free memory back to the system, use the
    * function free_all().
    */
-  inline void recover_all() {
+  EIGEN_STRONG_INLINE void recover_all() noexcept {
     cur_block_ = 0;
     next_loc_ = blocks_[0];
     cur_block_end_ = next_loc_ + sizes_[0];
@@ -206,7 +194,7 @@ class stack_alloc {
    * Store current positions before doing nested operation so can
    * recover back to start.
    */
-  inline void start_nested() {
+  EIGEN_STRONG_INLINE void start_nested() noexcept {
     nested_cur_blocks_.push_back(cur_block_);
     nested_next_locs_.push_back(next_loc_);
     nested_cur_block_ends_.push_back(cur_block_end_);
@@ -215,7 +203,7 @@ class stack_alloc {
   /**
    * recover memory back to the last start_nested call.
    */
-  inline void recover_nested() {
+  EIGEN_STRONG_INLINE void recover_nested() noexcept {
     if (unlikely(nested_cur_blocks_.empty())) {
       recover_all();
     }
@@ -235,7 +223,7 @@ class stack_alloc {
    * initial block allocation back to the system.  Note:  the
    * destructor will free all memory.
    */
-  inline void free_all() {
+  EIGEN_STRONG_INLINE void free_all() noexcept {
     // frees all BUT the first (index 0) block
     for (size_t i = 1; i < blocks_.size(); ++i) {
       if (blocks_[i]) {
@@ -257,7 +245,7 @@ class stack_alloc {
    *
    * @return number of bytes allocated to this instance
    */
-  inline size_t bytes_allocated() const {
+  EIGEN_STRONG_INLINE size_t bytes_allocated() const noexcept {
     size_t sum = 0;
     for (size_t i = 0; i <= cur_block_; ++i) {
       sum += sizes_[i];
@@ -273,7 +261,7 @@ class stack_alloc {
    * @return true if the pointer is in the stack,
    *    false otherwise.
    */
-  inline bool in_stack(const void* ptr) const {
+  EIGEN_STRONG_INLINE bool in_stack(const void* ptr) const noexcept {
     for (size_t i = 0; i < cur_block_; ++i) {
       if (ptr >= blocks_[i] && ptr < blocks_[i] + sizes_[i]) {
         return true;
