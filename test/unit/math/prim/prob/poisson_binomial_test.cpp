@@ -5,15 +5,15 @@
 #include <limits>
 #include <vector>
 
-
-using stan::math::poisson_binomial_lpmf;
-using stan::math::poisson_binomial_lcdf;
 using stan::math::poisson_binomial_lccdf;
+using stan::math::poisson_binomial_lcdf;
+using stan::math::poisson_binomial_lpmf;
 using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
 static double inff = std::numeric_limits<double>::infinity();
 
-TEST(ProbDistributionsPoissonBinomial, poisson_binomial_check_error_scalar_y_oob) {
+TEST(ProbDistributionsPoissonBinomial,
+     poisson_binomial_check_error_scalar_y_oob) {
   vec theta(3);
   theta << 0.5, 0.2, 0.7;
 
@@ -53,7 +53,8 @@ TEST(ProbDistributionsPoissonBinomial, check_error_vectorial_y_oob) {
   EXPECT_THROW(poisson_binomial_lccdf(ys2, theta), std::domain_error);
 }
 
-TEST(ProbDistributionsPoissonBinomial, check_error_vectorial_y_theta_is_not_prob) {
+TEST(ProbDistributionsPoissonBinomial,
+     check_error_vectorial_y_theta_is_not_prob) {
   vec theta(3);
   theta << inff, 0.2, 0.1;
   std::vector<int> y{0, 2};
@@ -63,8 +64,8 @@ TEST(ProbDistributionsPoissonBinomial, check_error_vectorial_y_theta_is_not_prob
   EXPECT_THROW(poisson_binomial_lccdf(y, theta), std::domain_error);
 }
 
-
-TEST(ProbDistributionsPoissonBinomial, check_error_vectorial_theta_is_not_prob) {
+TEST(ProbDistributionsPoissonBinomial,
+     check_error_vectorial_theta_is_not_prob) {
   vec theta1(3);
   theta1 << -0.1, 0.2, 0.1;
   vec theta2(3);
@@ -80,7 +81,8 @@ TEST(ProbDistributionsPoissonBinomial, check_error_vectorial_theta_is_not_prob) 
   EXPECT_THROW(poisson_binomial_lccdf(ys, thetas), std::domain_error);
 }
 
-TEST(ProbDistributionsPoissonBinomial, check_error_vectorial_y_oob_with_vectorial_theta) {
+TEST(ProbDistributionsPoissonBinomial,
+     check_error_vectorial_y_oob_with_vectorial_theta) {
   vec theta1(3);
   theta1 << 0.5, 0.2, 0.1;
   vec theta2(3);
@@ -94,7 +96,8 @@ TEST(ProbDistributionsPoissonBinomial, check_error_vectorial_y_oob_with_vectoria
   EXPECT_THROW(poisson_binomial_lccdf(ys, thetas), std::domain_error);
 }
 
-TEST(ProbDistributionsPoissonBinomial, check_error_vectorial_y_and_theta_inconsistent_sizes) {
+TEST(ProbDistributionsPoissonBinomial,
+     check_error_vectorial_y_and_theta_inconsistent_sizes) {
   vec theta1(3);
   theta1 << 0.5, 0.2, 0.1;
   vec theta2(3);

@@ -24,7 +24,7 @@ namespace math {
  */
 template <typename T_theta, typename RNG>
 inline int poisson_binomial_rng(
-  const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta, RNG& rng) {
+    const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta, RNG& rng) {
   static const char* function = "poisson_binomial_rng";
   check_finite(function, "Probability parameters", theta);
   check_bounded(function, "Probability parameters", theta, 0.0, 1.0);
@@ -32,8 +32,8 @@ inline int poisson_binomial_rng(
   int y = 0;
   size_t size_theta = theta.size();
   for (size_t i = 0; i < size_theta; ++i) {
-    boost::variate_generator< RNG&, boost::bernoulli_distribution<> > bernoulli_rng(
-      rng, boost::bernoulli_distribution<>(theta(i)));
+    boost::variate_generator<RNG&, boost::bernoulli_distribution<> >
+        bernoulli_rng(rng, boost::bernoulli_distribution<>(theta(i)));
 
     y += bernoulli_rng();
   }
@@ -43,4 +43,4 @@ inline int poisson_binomial_rng(
 
 }  // namespace math
 }  // namespace stan
-#endif //STAN_MATH_PRIM_PROB_POISSON_BINOMIAL_RNG_HPP
+#endif  // STAN_MATH_PRIM_PROB_POISSON_BINOMIAL_RNG_HPP
