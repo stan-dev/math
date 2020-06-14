@@ -175,27 +175,12 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
    * See the discussion of "plugging the memory leak" in:
    *   http://www.parashift.com/c++-faq/memory-pools.html
    */
-  static inline void operator delete(
-      void* /* ignore arg */) noexcept { /* no op */
+  static inline void operator delete(void* /* ignore arg */) noexcept { /* no op */
   }
 };
 
 // For backwards compatability the default is double
 using vari = vari_value<double>;
-
-struct vari_zero_adj {
-  template <typename T>
-  inline void operator()(T&& x) const {
-    x->adj_ = 0.0;
-  }
-};
-
-struct vari_chainer {
-  template <typename T>
-  inline void operator()(T&& x) const {
-    x->chain();
-  }
-};
 
 struct vari_printer {
   std::ostream& o_;
