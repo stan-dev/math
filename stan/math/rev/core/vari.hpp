@@ -106,7 +106,17 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
    */
   template <typename S,
             std::enable_if_t<std::is_arithmetic<S>::value>* = nullptr>
-  vari_value(const vari_value<S>& x) : val_(x.val_), adj_(x.adj_) {
+  vari_value(const vari_value<S>& x) noexcept : val_(x.val_), adj_(x.adj_) {
+    ChainableStack::instance_->var_stack_.push_back(this);
+  }
+  /**
+   * Constructor from vari_value
+   * @tparam S An arithmetic type
+   * @param x A vari_value
+   */
+  template <typename S,
+            std::enable_if_t<std::is_arithmetic<S>::value>* = nullptr>
+  vari_value(vari_value<S>&& x) noexcept : val_(x.val_), adj_(x.adj_) {
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
@@ -172,24 +182,21 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
 // For backwards compatability the default is double
 using vari = vari_value<double>;
 
-class vari_zero_adj final : public boost::static_visitor<> {
- public:
-  template <typename T, require_arithmetic_t<T>* = nullptr>
-  inline void operator()(vari_value<T>*& x) const {
+struct vari_zero_adj {
+  template <typename T>
+  inline void operator()(T&& x) const {
     x->adj_ = 0.0;
   }
 };
 
-class vari_chainer final : public boost::static_visitor<> {
- public:
+struct vari_chainer {
   template <typename T>
-  inline void operator()(vari_value<T>*& x) const {
+  inline void operator()(T&& x) const {
     x->chain();
   }
 };
 
-class vari_printer final : public boost::static_visitor<> {
- public:
+struct vari_printer {
   std::ostream& o_;
   int i_{0};
   vari_printer(std::ostream& o, int i) : o_(o), i_(i) {}

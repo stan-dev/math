@@ -13,10 +13,10 @@ namespace math {
  */
 inline void set_zero_all_adjoints() {
   for (auto &x : ChainableStack::instance_->var_stack_) {
-    boost::apply_visitor(vari_zero_adj(), x);
+    boost::variant2::visit([&](auto& x) {x->adj_ = 0.0;}, x);
   }
   for (auto &x : ChainableStack::instance_->var_nochain_stack_) {
-    boost::apply_visitor(vari_zero_adj(), x);
+    boost::variant2::visit([&](auto& x) {x->adj_ = 0.0;}, x);
   }
 }
 
