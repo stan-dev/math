@@ -11,7 +11,7 @@ namespace math {
 /**
  * Reset all adjoint values in the stack to zero.
  */
- static EIGEN_STRONG_INLINE void set_zero_all_adjoints() {
+static EIGEN_STRONG_INLINE void set_zero_all_adjoints() {
   for (auto& x : ChainableStack::instance_->var_stack_) {
     boost::variant2::visit([](auto& x) { x->adj_ = 0.0; }, x);
   }
