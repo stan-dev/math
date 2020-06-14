@@ -59,6 +59,7 @@ void ctor_overloads() {
 TEST_F(AgradRev, ctorOverloads) {
   ctor_overloads<float>();
   ctor_overloads<double>();
+  ctor_overloads<long double>();
 }
 
 TEST_F(AgradRev, a_eq_x) {
