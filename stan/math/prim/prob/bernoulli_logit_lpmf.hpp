@@ -32,20 +32,16 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_prob>;
   using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
   using std::exp;
-  using T_n_ref = ref_type_t<T_n>;
-  using T_theta_ref = ref_type_t<T_prob>;
+  using T_n_ref = ref_type_if_t<!is_constant<T_n>::value, T_n>;
+  using T_theta_ref = ref_type_if_t<!is_constant<T_prob>::value, T_prob>;
   static const char* function = "bernoulli_logit_lpmf";
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
   T_n_ref n_ref = n;
   T_theta_ref theta_ref = theta;
   check_bounded(function, "n", n_ref, 0, 1);
-  check_not_nan(function, "Logit transformed probability parameter", theta_ref);
 
   if (size_zero(n, theta)) {
-    return 0.0;
-  }
-  if (!include_summand<propto, T_prob>::value) {
     return 0.0;
   }
 
@@ -54,10 +50,15 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
 
   const auto& theta_col = as_column_vector_or_scalar(theta_ref);
   const auto& theta_val = value_of(theta_col);
-  const auto& theta_arr = as_array_or_scalar(theta_val);
+  const auto& theta_arr = to_ref(as_array_or_scalar(theta_val));
 
   const auto& n_col = as_column_vector_or_scalar(n_ref);
   const auto& n_double = value_of_rec(n_col);
+
+  check_not_nan(function, "Logit transformed probability parameter", theta_arr);
+  if (!include_summand<propto, T_prob>::value) {
+    return 0.0;
+  }
 
   auto signs = to_ref_if<!is_constant<T_prob>::value>(
       (2 * as_array_or_scalar(n_double) - 1));
