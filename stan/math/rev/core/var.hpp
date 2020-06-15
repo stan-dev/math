@@ -84,8 +84,8 @@ class var_value<T, require_floating_point_t<T>> {
    * @tparam S A type that is convertible to `value_type`.
    * @param x Value of the variable.
    */
-   template <typename S, require_convertible_t<S&, value_type>* = nullptr>
-   var_value(const S& x) : vi_(new vari_type(x, false)) {}  // NOLINT
+  template <typename S, require_convertible_t<S&, value_type>* = nullptr>
+  var_value(const S& x) : vi_(new vari_type(x, false)) {}  // NOLINT
 
   /**
    * Construct a variable from a pointer to a variable implementation.
