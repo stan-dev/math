@@ -9,17 +9,14 @@ namespace stan {
 namespace math {
 
 template <typename T>
-template <typename S, require_convertible_t<S&, T>*>
 inline var_value<T>& var_value<T, require_floating_point_t<T>>::operator-=(
-    const var_value<S>& b) {
+    const var_value<T>& b) {
   vi_ = new internal::subtract_vv_vari(vi_, b.vi_);
   return *this;
 }
 
 template <typename T>
-template <typename Arith, require_arithmetic_t<Arith>*>
-inline var_value<T>& var_value<T, require_floating_point_t<T>>::operator-=(
-    Arith b) {
+inline var_value<T>& var_value<T, require_floating_point_t<T>>::operator-=(T b) {
   if (b == 0.0) {
     return *this;
   }
