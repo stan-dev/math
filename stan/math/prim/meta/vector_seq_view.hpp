@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_META_vector_SEQ_VIEW_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <vector>
 
 namespace stan {
@@ -18,7 +19,7 @@ namespace stan {
  * @tparam T the wrapped type, either a Vector or std::vector of them.
  */
 template <typename T, typename = void>
-class vector_seq_view {};
+class vector_seq_view;
 
 /** \ingroup type_trait
  * This class provides a low-cost wrapper for situations where you either need
@@ -34,15 +35,12 @@ class vector_seq_view {};
 template <typename T>
 class vector_seq_view<T, require_eigen_t<T>> {
  public:
-  explicit vector_seq_view(const T& m)
-      : m_(m) {}
+  explicit vector_seq_view(T& m) : m_(m) {}
   int size() const { return 1; }
-  const T& operator[](int /* i */) const {
-    return m_;
-  }
+  T& operator[](int /* i */) const { return m_; }
 
  private:
-  const T& m_;
+  T& m_;
 };
 
 /** \ingroup type_trait
@@ -54,19 +52,20 @@ class vector_seq_view<T, require_eigen_t<T>> {
  * only allows std::vectors as the container type, since we would have
  * difficulty figuring out which contained type was the container otherwise.
  *
- * @tparam T the type inside of the underlying std::vector
+ * @tparam T std vector of eigen types
  */
 template <typename T>
-class vector_seq_view<std::vector<T>, require_eigen_t<T>> {
+class vector_seq_view<T, require_std_vector_vt<is_eigen, T>> {
+  using inner = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
+                                   const value_type_t<T>, value_type_t<T>>;
+
  public:
-  explicit vector_seq_view(
-      const std::vector<T>& v)
-      : v_(v) {}
+  explicit vector_seq_view(T& v) : v_(v) {}
   int size() const { return v_.size(); }
-  T operator[](int i) const { return v_[i]; }
+  inner& operator[](int i) const { return v_[i]; }
 
  private:
-  const std::vector<T>& v_;
+  T& v_;
 };
 
 }  // namespace stan

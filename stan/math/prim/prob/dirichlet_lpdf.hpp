@@ -55,11 +55,15 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
                                                    const T_prior_size& alpha) {
   using T_partials_return = partials_return_t<T_prob, T_prior_size>;
   using T_partials_vec = typename Eigen::Matrix<T_partials_return, -1, 1>;
-  using T_partials_mat = typename Eigen::Matrix<T_partials_return, -1, -1>;
+  using T_partials_array = typename Eigen::Array<T_partials_return, -1, -1>;
+  using T_theta_ref = ref_type_t<T_prob>;
+  using T_alpha_ref = ref_type_t<T_prior_size>;
   static const char* function = "dirichlet_lpdf";
 
-  vector_seq_view<T_prob> theta_vec(theta);
-  vector_seq_view<T_prior_size> alpha_vec(alpha);
+  T_theta_ref theta_ref = theta;
+  T_alpha_ref alpha_ref = alpha;
+  vector_seq_view<T_theta_ref> theta_vec(theta_ref);
+  vector_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
   const size_t t_length = max_size_mvt(theta, alpha);
 
   check_consistent_sizes(function, "probabilities", theta_vec[0],
@@ -72,13 +76,14 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
 
   const size_t t_size = theta_vec[0].size();
 
-  T_partials_mat theta_dbl(t_size, t_length);
-  for (size_t t = 0; t < t_length; t++)
+  T_partials_array theta_dbl(t_size, t_length);
+  for (size_t t = 0; t < t_length; t++) {
     theta_dbl.col(t) = value_of(theta_vec[t]);
-
-  T_partials_mat alpha_dbl(t_size, t_length);
-  for (size_t t = 0; t < t_length; t++)
+  }
+  T_partials_array alpha_dbl(t_size, t_length);
+  for (size_t t = 0; t < t_length; t++) {
     alpha_dbl.col(t) = value_of(alpha_vec[t]);
+  }
 
   T_partials_return lp(0.0);
 
@@ -88,26 +93,29 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
               .sum();
   }
 
-  const auto& alpha_m_1 = (alpha_dbl.array() - 1.0);
-  const auto& theta_log = theta_dbl.array().log();
+  const auto& alpha_m_1
+      = to_ref_if<!is_constant_all<T_prob>::value>(alpha_dbl - 1.0);
+  const auto& theta_log
+      = to_ref_if<!is_constant_all<T_prior_size>::value>(theta_dbl.log());
 
   if (include_summand<propto, T_prob, T_prior_size>::value) {
     lp += (theta_log * alpha_m_1).sum();
   }
 
-  operands_and_partials<T_prob, T_prior_size> ops_partials(theta, alpha);
+  operands_and_partials<T_theta_ref, T_alpha_ref> ops_partials(theta_ref,
+                                                               alpha_ref);
   if (!is_constant_all<T_prob>::value) {
-    const auto& theta_deriv = (alpha_m_1 / theta_dbl.array()).matrix();
-    for (size_t t = 0; t < t_length; t++)
-      ops_partials.edge1_.partials_vec_[t] += theta_deriv.col(t);
+    for (size_t t = 0; t < t_length; t++) {
+      ops_partials.edge1_.partials_vec_[t] = alpha_m_1.col(t) / theta_dbl.col(t);
+    }
   }
 
   if (!is_constant_all<T_prior_size>::value) {
-    for (size_t t = 0; t < t_length; t++)
-      ops_partials.edge2_.partials_vec_[t]
-          += (digamma(alpha_dbl.col(t).sum())
-              - digamma(alpha_dbl).col(t).array() + theta_log.col(t))
-                 .matrix();
+    for (size_t t = 0; t < t_length; t++) {
+      ops_partials.edge2_.partials_vec_[t] = digamma(alpha_dbl.col(t).sum())
+                                             - digamma(alpha_dbl.col(t))
+                                             + theta_log.col(t);
+    }
   }
   return ops_partials.build(lp);
 }
