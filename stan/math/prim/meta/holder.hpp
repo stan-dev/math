@@ -26,7 +26,29 @@
  *
  * When returning an expression from function we have to be careful that any
  * arguments in this expression that are held by reference do not go out of
- * scope. So a function returning an expression referencing local matrices or
+ * scope. For instance, consider the function:
+ *
+ * ```
+ * template<typename T>
+ * auto f(const T& x){
+ *   const Eigen::Ref<const Eigen::VectorXd>& x_ref = x;
+ *   return x_ref.cwiseProduct(x_ref);
+ * }
+ * ```
+ * And the code calling it:
+ * ```
+ * Eigen::MatrixXd test_mat(2,2);
+ * test_mat << 5, 5, 5, 5;
+ * VectorXd X  = f(test_mat.diagonal());
+ * ```
+ * This function will return back a `CwiseBinaryOp` Eigen expression, which is
+ * then evaluated out of the function scope when assigned to `X`. The expression
+ * references `x_ref`, which was created withing function and destroyed, when
+ * the function returned. The returned expression is evaluated later than the
+ * function returned, so its evaluation references a matrix that was already
+ * deleted. In other words returned expression contains a dangling reference.
+ *
+ * So a function returning an expression referencing local matrices or
  * matrices that were rvalue reference arguments to the function will not work.
  *
  * A workarount to this issue is allocating and constructing or moving such
