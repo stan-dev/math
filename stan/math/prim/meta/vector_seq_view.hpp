@@ -17,7 +17,7 @@ namespace stan {
  *
  * @tparam T the wrapped type, either a Vector or std::vector of them.
  */
-template <typename T>
+template <typename T, typename = void>
 class vector_seq_view {};
 
 /** \ingroup type_trait
@@ -29,20 +29,20 @@ class vector_seq_view {};
  * only allows std::vectors as the container type, since we would have
  * difficulty figuring out which contained type was the container otherwise.
  *
- * @tparam S the type inside of the underlying Vector
+ * @tparam T the underlying Vector or expression type
  */
-template <typename S>
-class vector_seq_view<Eigen::Matrix<S, Eigen::Dynamic, 1> > {
+template <typename T>
+class vector_seq_view<T, require_eigen_t<T>> {
  public:
-  explicit vector_seq_view(const Eigen::Matrix<S, Eigen::Dynamic, 1>& m)
+  explicit vector_seq_view(const T& m)
       : m_(m) {}
   int size() const { return 1; }
-  Eigen::Matrix<S, Eigen::Dynamic, 1> operator[](int /* i */) const {
+  const T& operator[](int /* i */) const {
     return m_;
   }
 
  private:
-  const Eigen::Matrix<S, Eigen::Dynamic, 1>& m_;
+  const T& m_;
 };
 
 /** \ingroup type_trait
@@ -54,68 +54,19 @@ class vector_seq_view<Eigen::Matrix<S, Eigen::Dynamic, 1> > {
  * only allows std::vectors as the container type, since we would have
  * difficulty figuring out which contained type was the container otherwise.
  *
- * @tparam S the type inside of the underlying RowVector
+ * @tparam T the type inside of the underlying std::vector
  */
-template <typename S>
-class vector_seq_view<Eigen::Matrix<S, 1, Eigen::Dynamic> > {
- public:
-  explicit vector_seq_view(const Eigen::Matrix<S, 1, Eigen::Dynamic>& m)
-      : m_(m) {}
-  int size() const { return 1; }
-  Eigen::Matrix<S, 1, Eigen::Dynamic> operator[](int /* i */) const {
-    return m_;
-  }
-
- private:
-  const Eigen::Matrix<S, 1, Eigen::Dynamic>& m_;
-};
-
-/** \ingroup type_trait
- * This class provides a low-cost wrapper for situations where you either need
- * an Eigen Vector or RowVector or a std::vector of them and you want to be
- * agnostic between those two options. This is similar to scalar_seq_view but
- * instead of being a sequence-like view over a scalar or seq of scalars, it's
- * a sequence-like view over a Vector or seq of Vectors. Notably this version
- * only allows std::vectors as the container type, since we would have
- * difficulty figuring out which contained type was the container otherwise.
- *
- * @tparam S the type inside of the underlying Vector
- */
-template <typename S>
-class vector_seq_view<std::vector<Eigen::Matrix<S, Eigen::Dynamic, 1> > > {
+template <typename T>
+class vector_seq_view<std::vector<T>, require_eigen_t<T>> {
  public:
   explicit vector_seq_view(
-      const std::vector<Eigen::Matrix<S, Eigen::Dynamic, 1> >& v)
+      const std::vector<T>& v)
       : v_(v) {}
   int size() const { return v_.size(); }
-  Eigen::Matrix<S, Eigen::Dynamic, 1> operator[](int i) const { return v_[i]; }
+  T operator[](int i) const { return v_[i]; }
 
  private:
-  const std::vector<Eigen::Matrix<S, Eigen::Dynamic, 1> >& v_;
-};
-
-/** \ingroup type_trait
- * This class provides a low-cost wrapper for situations where you either need
- * an Eigen Vector or RowVector or a std::vector of them and you want to be
- * agnostic between those two options. This is similar to scalar_seq_view but
- * instead of being a sequence-like view over a scalar or seq of scalars, it's
- * a sequence-like view over a Vector or seq of Vectors. Notably this version
- * only allows std::vectors as the container type, since we would have
- * difficulty figuring out which contained type was the container otherwise.
- *
- * @tparam S the type inside of the underlying RowVector
- */
-template <typename S>
-class vector_seq_view<std::vector<Eigen::Matrix<S, 1, Eigen::Dynamic> > > {
- public:
-  explicit vector_seq_view(
-      const std::vector<Eigen::Matrix<S, 1, Eigen::Dynamic> >& v)
-      : v_(v) {}
-  int size() const { return v_.size(); }
-  Eigen::Matrix<S, 1, Eigen::Dynamic> operator[](int i) const { return v_[i]; }
-
- private:
-  const std::vector<Eigen::Matrix<S, 1, Eigen::Dynamic> >& v_;
+  const std::vector<T>& v_;
 };
 
 }  // namespace stan
