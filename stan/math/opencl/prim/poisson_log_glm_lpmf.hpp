@@ -15,7 +15,6 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/multiply.hpp>
-#include <stan/math/opencl/kernels/poisson_log_glm_lpmf.hpp>
 #include <cmath>
 
 namespace stan {
@@ -53,6 +52,8 @@ return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(
   using Eigen::Matrix;
   using std::exp;
 
+  constexpr int is_alpha_vector = is_vector<T_alpha>::value;
+
   const size_t N = x_cl.rows();
   const size_t M = x_cl.cols();
 
@@ -84,33 +85,33 @@ return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
   const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
 
-  const int local_size
-      = opencl_kernels::poisson_log_glm.get_option("LOCAL_SIZE_");
-  const int wgs = (N + local_size - 1) / local_size;
-
-  matrix_cl<double> alpha_cl(alpha_val_vec);
   matrix_cl<double> beta_cl(beta_val_vec);
+  matrix_cl<double> alpha_cl(alpha_val_vec);
+
+  const bool need_logp = include_summand<propto>::value;
+
+  auto theta_expr = matrix_vector_multiply(x_cl, beta_cl)
+                    + broadcast<!is_alpha_vector, false>(alpha_cl);
+  auto y_bc_expr = colwise_optional_broadcast(y_cl);
+  auto exp_theta_expr = exp(theta_expr);
+  auto theta_derivative_expr = select(y_bc_expr < 0 || !isfinite(theta_expr),
+                                      NOT_A_NUMBER, y_bc_expr - exp_theta_expr);
+  auto logp_expr
+      = colwise_sum(select(need_logp, -lgamma(y_bc_expr + 1.0), 0.0)
+                    + elt_multiply(y_bc_expr, theta_expr) - exp_theta_expr);
+
+  const int wgs = logp_expr.rows();
 
   matrix_cl<double> theta_derivative_cl(N, 1);
   matrix_cl<double> theta_derivative_sum_cl(wgs, 1);
-  const bool need_logp = include_summand<propto>::value;
   matrix_cl<double> logp_cl(wgs, 1);
 
-  try {
-    opencl_kernels::poisson_log_glm(
-        cl::NDRange(local_size * wgs), cl::NDRange(local_size),
-        theta_derivative_cl, theta_derivative_sum_cl, logp_cl, y_cl, x_cl,
-        alpha_cl, beta_cl, N, M, y_cl.size() != 1, stan::math::size(alpha) != 1,
-        need_logp);
-  } catch (const cl::Error& e) {
-    check_opencl_error(function, e);
-  }
-  Matrix<T_partials_return, Dynamic, 1> theta_derivative_partial_sum(wgs);
-  theta_derivative_partial_sum = from_matrix_cl(theta_derivative_sum_cl);
-  double theta_derivative_sum = sum(theta_derivative_partial_sum);
-  Eigen::VectorXd logp_partial_sum(wgs);
-  logp_partial_sum = from_matrix_cl(logp_cl);
-  logp += sum(logp_partial_sum);
+  results(theta_derivative_cl, theta_derivative_sum_cl, logp_cl) = expressions(
+      theta_derivative_expr, colwise_sum(theta_derivative_expr), logp_expr);
+
+  double theta_derivative_sum
+      = sum(from_matrix_cl<Dynamic, 1>(theta_derivative_sum_cl));
+  logp += sum(from_matrix_cl<Dynamic, 1>(logp_cl));
   if (!std::isfinite(theta_derivative_sum)) {
     check_nonnegative(function, "Vector of dependent variables",
                       from_matrix_cl(y_cl));
