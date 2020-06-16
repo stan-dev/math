@@ -62,8 +62,8 @@ class cvodes_integrator {
    * ODE RHS passed to CVODES.
    */
   static int cv_rhs(realtype t, N_Vector y, N_Vector ydot, void* user_data) {
-    const cvodes_integrator* integrator
-        = static_cast<const cvodes_integrator*>(user_data);
+    cvodes_integrator* integrator
+        = static_cast<cvodes_integrator*>(user_data);
     integrator->rhs(t, NV_DATA_S(y), NV_DATA_S(ydot));
     return 0;
   }
@@ -75,8 +75,8 @@ class cvodes_integrator {
   static int cv_rhs_sens(int Ns, realtype t, N_Vector y, N_Vector ydot,
                          N_Vector* yS, N_Vector* ySdot, void* user_data,
                          N_Vector tmp1, N_Vector tmp2) {
-    const cvodes_integrator* integrator
-        = static_cast<const cvodes_integrator*>(user_data);
+    cvodes_integrator* integrator
+      = static_cast<cvodes_integrator*>(user_data);
     integrator->rhs_sens(t, NV_DATA_S(y), yS, ySdot);
     return 0;
   }
@@ -90,8 +90,8 @@ class cvodes_integrator {
   static int cv_jacobian_states(realtype t, N_Vector y, N_Vector fy,
                                 SUNMatrix J, void* user_data, N_Vector tmp1,
                                 N_Vector tmp2, N_Vector tmp3) {
-    const cvodes_integrator* integrator
-        = static_cast<const cvodes_integrator*>(user_data);
+    cvodes_integrator* integrator
+        = static_cast<cvodes_integrator*>(user_data);
     integrator->jacobian_states(t, NV_DATA_S(y), J);
     return 0;
   }
@@ -142,7 +142,7 @@ class cvodes_integrator {
    * which CVODES separates from the main ODE RHS.
    */
   inline void rhs_sens(double t, const double y[], N_Vector* yS,
-                       N_Vector* ySdot) const {
+                       N_Vector* ySdot) {
     Eigen::VectorXd z(coupled_state_.size());
     Eigen::VectorXd dz_dt;
     std::copy(y, y + N_, z.data());

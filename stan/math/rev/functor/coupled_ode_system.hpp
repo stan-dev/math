@@ -71,6 +71,8 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
   const size_t y0_vars_;
   const size_t args_vars_;
   const size_t N_;
+  Eigen::VectorXd args_adjoints_;
+  Eigen::VectorXd y_adjoints_;
   std::ostream* msgs_;
 
   /**
@@ -94,6 +96,8 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
         y0_vars_(count_vars(y0_)),
         args_vars_(count_vars(args...)),
         N_(y0.size()),
+	args_adjoints_(args_vars_),
+	y_adjoints_(N_),
         msgs_(msgs) {}
 
   /**
@@ -111,7 +115,7 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
    *    expected number of derivatives, N.
    */
   void operator()(const Eigen::VectorXd& z, Eigen::VectorXd& dz_dt,
-                  double t) const {
+                  double t) {
     using std::vector;
 
     dz_dt.resize(size());
@@ -137,40 +141,41 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
     check_size_match("coupled_ode_system", "dy_dt", f_y_t_vars.size(), "states",
                      N_);
 
-    Eigen::VectorXd args_adjoints(args_vars_);
-    for (size_t i = 0; i < N_; i++) {
+    for (size_t i = 0; i < N_; ++i) {
       dz_dt(i) = f_y_t_vars(i).val();
       f_y_t_vars(i).grad();
 
-      for (size_t j = 0; j < y0_vars_; j++) {
+      y_adjoints_ = y_vars.adj();
+
+      memset(args_adjoints_.data(), 0, sizeof(double) * args_vars_);
+      apply(
+          [&](auto&&... args) {
+            accumulate_adjoints(args_adjoints_.data(), args...);
+          },
+          local_args_tuple);
+
+      nested.set_zero_all_adjoints();
+
+      for (size_t j = 0; j < y0_vars_; ++j) {
         // orders derivatives by equation (i.e. if there are 2 eqns
         // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
         // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
-        double temp_deriv = 0;
-        for (size_t k = 0; k < N_; k++) {
-          temp_deriv += z[N_ + N_ * j + k] * y_vars[k].adj();
+        double temp_deriv = 0.0;
+        for (size_t k = 0; k < N_; ++k) {
+          temp_deriv += z[N_ + N_ * j + k] * y_adjoints_[k];
         }
 
         dz_dt[N_ + N_ * j + i] = temp_deriv;
       }
 
-      args_adjoints.setZero();
-      apply(
-          [&](auto&&... args) {
-            accumulate_adjoints(args_adjoints.data(), args...);
-          },
-          local_args_tuple);
-
-      for (size_t j = 0; j < args_vars_; j++) {
-        double temp_deriv = args_adjoints(j);
-        for (size_t k = 0; k < N_; k++) {
-          temp_deriv += z[N_ + N_ * y0_vars_ + N_ * j + k] * y_vars[k].adj();
+      for (size_t j = 0; j < args_vars_; ++j) {
+        double temp_deriv = args_adjoints_[j];
+        for (size_t k = 0; k < N_; ++k) {
+          temp_deriv += z[N_ + N_ * y0_vars_ + N_ * j + k] * y_adjoints_[k];
         }
 
         dz_dt[N_ + N_ * y0_vars_ + N_ * j + i] = temp_deriv;
       }
-
-      nested.set_zero_all_adjoints();
     }
   }
 
