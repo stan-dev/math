@@ -15,7 +15,6 @@
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/opencl/kernels/bernoulli_logit_glm_lpmf.hpp>
 
 #include <cmath>
 
@@ -54,6 +53,8 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
+  constexpr int is_alpha_vector = is_vector<T_alpha>::value;
+
   const size_t N = x_cl.rows();
   const size_t M = x_cl.cols();
 
@@ -62,7 +63,7 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
                      y_cl.rows());
   }
   check_consistent_size(function, "Weight vector", beta, M);
-  if (is_vector<T_alpha>::value) {
+  if (is_alpha_vector) {
     check_size_match(function, "Rows of ", "x_cl", N, "size of ", "alpha",
                      stan::math::size(alpha));
   }
@@ -86,34 +87,46 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
 
-  const int local_size
-      = opencl_kernels::bernoulli_logit_glm.get_option("LOCAL_SIZE_");
-  const int wgs = (N + local_size - 1) / local_size;
-
   matrix_cl<double> beta_cl(beta_val_vec);
   matrix_cl<double> alpha_cl(alpha_val_vec);
 
+  auto ytheta_expr = matrix_vector_multiply(x_cl, beta_cl)
+                     + broadcast<!is_alpha_vector, false>(alpha_cl);
+  auto y_bc_expr = colwise_optional_broadcast(y_cl);
+  auto signs_expr = 2 * y_bc_expr - 1;
+  auto ytheta_signs_expr = elt_multiply(ytheta_expr, signs_expr);
+  auto exp_m_ytheta_expr = exp(-ytheta_signs_expr);
+  const double cutoff = 20.0;
+  auto high_bound_expr = ytheta_signs_expr > cutoff;
+  auto low_bound_expr = ytheta_signs_expr < -cutoff;
+  auto err_cond_expr = y_bc_expr < 0 || y_bc_expr > 1;
+  auto logp_expr
+      = colwise_sum(select(err_cond_expr, NOT_A_NUMBER,
+                           select(high_bound_expr, -exp_m_ytheta_expr,
+                                  select(low_bound_expr, ytheta_signs_expr,
+                                         -log1p(exp_m_ytheta_expr)))));
+  auto theta_derivative_expr
+      = select(high_bound_expr, -exp_m_ytheta_expr,
+               select(low_bound_expr, signs_expr,
+                      elt_divide(elt_multiply(signs_expr, exp_m_ytheta_expr),
+                                 (exp_m_ytheta_expr + 1))));
+
+  const int wgs = logp_expr.rows();
+
   matrix_cl<double> logp_cl(wgs, 1);
-  const bool need_theta_derivative = !is_constant_all<T_beta, T_alpha>::value;
+  constexpr bool need_theta_derivative
+      = !is_constant_all<T_beta, T_alpha>::value;
   matrix_cl<double> theta_derivative_cl(need_theta_derivative ? N : 0, 1);
-  const bool need_theta_derivative_sum
-      = need_theta_derivative && !is_vector<T_alpha>::value;
+  constexpr bool need_theta_derivative_sum
+      = need_theta_derivative && !is_alpha_vector;
   matrix_cl<double> theta_derivative_sum_cl(need_theta_derivative_sum ? wgs : 0,
                                             1);
 
-  try {
-    opencl_kernels::bernoulli_logit_glm(
-        cl::NDRange(local_size * wgs), cl::NDRange(local_size), logp_cl,
-        theta_derivative_cl, theta_derivative_sum_cl, y_cl, x_cl, alpha_cl,
-        beta_cl, N, M, y_cl.size() != 1, stan::math::size(alpha) != 1,
-        need_theta_derivative, need_theta_derivative_sum);
-  } catch (const cl::Error& e) {
-    check_opencl_error(function, e);
-  }
+  results(logp_cl, theta_derivative_cl, theta_derivative_sum_cl) = expressions(
+      logp_expr, calc_if<need_theta_derivative>(theta_derivative_expr),
+      calc_if<need_theta_derivative_sum>(colwise_sum(theta_derivative_expr)));
 
-  Eigen::VectorXd logp_partial_sum(wgs);
-  logp_partial_sum = from_matrix_cl(logp_cl);
-  logp += sum(logp_partial_sum);
+  logp += sum(from_matrix_cl<Eigen::Dynamic, 1>(logp_cl));
 
   if (!std::isfinite(logp)) {
     check_bounded(function, "Vector of dependent variables",
@@ -128,7 +141,7 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
       alpha_ref, beta_ref);
   // Compute the necessary derivatives.
   if (!is_constant_all<T_alpha>::value) {
-    if (is_vector<T_alpha>::value) {
+    if (is_alpha_vector) {
       ops_partials.edge1_.partials_
           = std::move(from_matrix_cl<Dynamic, 1>(theta_derivative_cl));
     } else {
