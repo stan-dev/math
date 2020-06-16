@@ -6,6 +6,7 @@
 #include <stan/math/rev/core/empty_nested.hpp>
 #include <stan/math/rev/core/nested_size.hpp>
 #include <stan/math/rev/core/vari.hpp>
+#include <stan/math/rev/core/vari_visitor.hpp>
 #include <vector>
 
 namespace stan {
@@ -33,8 +34,7 @@ static void grad(Vari* vi) {
   size_t end = ChainableStack::instance_->var_stack_.size();
   size_t beginning = empty_nested() ? 0 : end - nested_size();
   for (size_t i = end; i-- > beginning;) {
-    boost::variant2::visit([&](auto& x) { x->chain(); },
-                           ChainableStack::instance_->var_stack_[i]);
+    vari_visitor(ChainableStack::instance_->var_stack_[i], [&](auto& x) { x->chain(); });
   }
 }
 
