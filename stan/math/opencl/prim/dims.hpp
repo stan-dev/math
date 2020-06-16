@@ -19,7 +19,7 @@ namespace math {
  */
 template <typename T_x,
           require_all_kernel_expressions_and_none_scalar_t<T_x>* = nullptr>
-inline void dims(const T_x& x, std::vector<int>& result ) {
+inline void dims(const T_x& x, std::vector<int>& result) {
   result.push_back(x.rows());
   result.push_back(x.cols());
 }
