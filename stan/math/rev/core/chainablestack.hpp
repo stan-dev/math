@@ -6,7 +6,7 @@
 namespace stan {
 namespace math {
 
-template <typename T, typename = void>
+template <typename T, typename>
 class vari_value;
 class vari_base;
 class chainable_alloc;
