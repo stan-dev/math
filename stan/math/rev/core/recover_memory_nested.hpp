@@ -31,10 +31,6 @@ static inline void recover_memory_nested() {
       ChainableStack::instance_->nested_var_stack_sizes_.back());
   ChainableStack::instance_->nested_var_stack_sizes_.pop_back();
 
-  ChainableStack::instance_->var_nochain_stack_.resize(
-      ChainableStack::instance_->nested_var_nochain_stack_sizes_.back());
-  ChainableStack::instance_->nested_var_nochain_stack_sizes_.pop_back();
-
   for (size_t i
        = ChainableStack::instance_->nested_var_alloc_stack_starts_.back();
        i < ChainableStack::instance_->var_alloc_stack_.size(); ++i) {

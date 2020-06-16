@@ -483,9 +483,9 @@ struct coupled_ode_system<F, var, var> {
       // reset to zero by the last call. This is done as a separate step here.
       // See efficiency note above on template specialization for more details
       // on this.
-      for (size_t j = 0; j < M_; ++j) {
-        theta_nochain_[j].vi_->adj_ = 0.0;
-      }
+//      for (size_t j = 0; j < M_; ++j) {
+//        theta_nochain_[j].vi_->adj_ = 0.0;
+//      }
     }
   }
 

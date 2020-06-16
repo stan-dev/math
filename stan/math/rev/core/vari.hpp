@@ -17,7 +17,7 @@ class var_value;
 class vari_base {
 public:
   virtual void chain() {}
-  virtual void set_zero_adjoint() noexcept {}
+  inline virtual void set_zero_adjoint() noexcept {}
 };
 /**
  * The variable implementation base class.
@@ -97,11 +97,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> : public
   template <typename S,
             std::enable_if_t<std::is_convertible<S&, Scalar>::value>* = nullptr>
   vari_value(S x, bool stacked) noexcept : val_(x), adj_(0.0) {
-    if (stacked) {
       ChainableStack::instance_->var_stack_.emplace_back(this);
-    } else {
-      ChainableStack::instance_->var_nochain_stack_.emplace_back(this);
-    }
   }
 
   /**
@@ -134,7 +130,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> : public
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  void set_zero_adjoint() noexcept final { adj_ = 0.0; }
+  inline void set_zero_adjoint() noexcept final { adj_ = 0.0; }
 
   /**
    * Insertion operator for vari. Prints the current value and
