@@ -137,7 +137,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> : public
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  void set_zero_adjoint() noexcept { adj_ = 0.0; }
+  inline void set_zero_adjoint() noexcept { adj_ = 0.0; }
 
   /**
    * Insertion operator for vari. Prints the current value and
