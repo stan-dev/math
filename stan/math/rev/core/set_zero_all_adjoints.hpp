@@ -13,10 +13,10 @@ namespace math {
  */
 static EIGEN_STRONG_INLINE void set_zero_all_adjoints() {
   for (auto& x : ChainableStack::instance_->var_stack_) {
-    boost::variant2::visit([](auto& x) { x->adj_ = 0.0; }, x);
+    x->set_zero_adjoint();
   }
   for (auto& x : ChainableStack::instance_->var_nochain_stack_) {
-    boost::variant2::visit([](auto& x) { x->adj_ = 0.0; }, x);
+    x->set_zero_adjoint();
   }
 }
 

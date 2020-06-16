@@ -14,6 +14,11 @@ namespace math {
 template <typename T, typename>
 class var_value;
 
+class vari_base {
+public:
+  virtual void chain() {}
+  virtual void set_zero_adjoint() noexcept {}
+};
 /**
  * The variable implementation base class.
  *
@@ -34,7 +39,7 @@ template <typename T, typename>
 class vari_value;
 
 template <typename T>
-class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
+class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> : public vari_base {
  private:
   template <typename, typename>
   friend class var_value;
@@ -129,9 +134,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  inline void set_zero_adjoint() noexcept { adj_ = 0.0; }
-
-  virtual void chain() {}
+  void set_zero_adjoint() noexcept final { adj_ = 0.0; }
 
   /**
    * Insertion operator for vari. Prints the current value and
@@ -179,15 +182,6 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
 // For backwards compatability the default is double
 using vari = vari_value<double>;
 
-struct vari_printer {
-  std::ostream& o_;
-  int i_{0};
-  vari_printer(std::ostream& o, int i) : o_(o), i_(i) {}
-  template <typename T>
-  inline void operator()(T*& x) const {
-    o_ << i_ << "  " << x << "  " << x->val_ << " : " << x->adj_ << std::endl;
-  }
-};
 }  // namespace math
 }  // namespace stan
 #endif
