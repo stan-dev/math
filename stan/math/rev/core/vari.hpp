@@ -100,9 +100,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> : public
      ChainableStack::instance_->var_dbl_stack_.emplace_back(this);
     if (stacked) {
       ChainableStack::instance_->var_stack_.emplace_back(this);
-    } else {
-      ChainableStack::instance_->var_nochain_stack_.emplace_back(this);
-    }
+    } 
   }
 
   /**
