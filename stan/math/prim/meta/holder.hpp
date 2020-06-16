@@ -43,10 +43,10 @@
  * ```
  * This function will return back a `CwiseBinaryOp` Eigen expression, which is
  * then evaluated out of the function scope when assigned to `X`. The expression
- * references `x_ref`, which was created withing function and destroyed, when
- * the function returned. The returned expression is evaluated later than the
+ * references `x_ref`, which was created withing function and destroyed when
+ * the function returned. The returned expression is evaluated after the
  * function returned, so its evaluation references a matrix that was already
- * deleted. In other words returned expression contains a dangling reference.
+ * deleted. In other words the returned expression contains a dangling reference.
  *
  * So a function returning an expression referencing local matrices or
  * matrices that were rvalue reference arguments to the function will not work.
