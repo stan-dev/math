@@ -18,6 +18,7 @@
 #include <stan/math/prim/functor/mpi_cluster.hpp>
 #include <stan/math/prim/functor/mpi_command.hpp>
 #include <stan/math/prim/functor/mpi_distributed_apply.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <stan/math/prim/functor/reduce_sum.hpp>
 #include <stan/math/prim/functor/reduce_sum_static.hpp>
 #endif

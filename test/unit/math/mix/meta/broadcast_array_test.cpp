@@ -17,5 +17,5 @@ TEST(MathMetaMix, broadcast_array) {
   broadcast_array<double> ba2(two);
   std::vector<double> vd = {{1.0, 2.0}};
   ba2 = vd;
-  EXPECT_EQ(1.0, ba2[0]);
+  EXPECT_EQ(3.0, ba2[0]);
 }
