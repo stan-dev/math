@@ -7,49 +7,11 @@
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/poisson_binomial_log_probs.hpp>
 
 namespace stan {
 namespace math {
 
-template <typename T>
-using vec = Eigen::Matrix<T, Eigen::Dynamic, 1>;
-template <typename T>
-using mat = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
-
-template <typename T_theta>
-mat<T_theta> compute_alpha_(int y, const vec<T_theta>& theta) {
-  size_t sz_y = static_cast<size_t>(y);
-  size_t size_theta = theta.size();
-  vec<T_theta> log_theta(size_theta);
-  vec<T_theta> log1m_theta(size_theta);
-
-  for (size_t i = 0; i < size_theta; ++i) {
-    log_theta[i] = log(theta(i));
-    log1m_theta[i] = log1m(theta(i));
-  }
-
-  mat<T_theta> alpha(size_theta + 1, sz_y + 1);
-
-  // alpha[i, j] = log prob of j successes in first i trials
-  alpha(0, 0) = 0.0;
-  for (size_t i = 0; i < size_theta; ++i) {
-    // no success in i trials
-    alpha(i + 1, 0) = alpha(i, 0) + log1m_theta[i];
-
-    // 0 < j < i successes in i trials
-    for (size_t j = 0; j < std::min(sz_y, i); ++j) {
-      alpha(i + 1, j + 1) = log_sum_exp(alpha(i, j) + log_theta[i],
-                                        alpha(i, j + 1) + log1m_theta[i]);
-    }
-
-    // i successes in i trials
-    if (i < sz_y) {
-      alpha(i + 1, i + 1) = alpha(i, i) + log_theta(i);
-    }
-  }
-
-  return alpha;
-}
 
 /** \ingroup prob_dists
  * Returns the log PMF for the Poisson-binomial distribution evaluated at an
@@ -65,10 +27,10 @@ mat<T_theta> compute_alpha_(int y, const vec<T_theta>& theta) {
  */
 template <bool propto, typename T_theta>
 return_type_t<T_theta> poisson_binomial_lpmf(
-    const std::vector<int>& y, const std::vector<vec<T_theta> >& theta) {
+    const std::vector<int>& y, const std::vector<Eigen::Matrix<T_theta, Eigen::Dynamic, 1> >& theta) {
   static const char* function = "poisson_binomial_lpmf";
 
-  int sz_theta = static_cast<int>(theta.size());
+  int sz_theta = theta.size();
   check_consistent_sizes(function, "Successes variables", y,
                          "Probability parameters", theta);
 
@@ -80,8 +42,8 @@ return_type_t<T_theta> poisson_binomial_lpmf(
 
   T_theta log_prob = 0.0;
   for (int i = 0; i < sz_theta; ++i) {
-    mat<T_theta> alpha = compute_alpha_(y[i], theta[i]);
-    log_prob += alpha(theta[i].size(), y[i]);
+    auto alpha = poisson_binomial_log_probs(y[i], theta[i]);
+    log_prob += alpha(y[i]);
   }
 
   return log_prob;
@@ -89,7 +51,7 @@ return_type_t<T_theta> poisson_binomial_lpmf(
 
 template <typename T_theta>
 return_type_t<T_theta> poisson_binomial_lpmf(
-    const std::vector<int>& y, const std::vector<vec<T_theta> >& theta) {
+    const std::vector<int>& y, const std::vector<Eigen::Matrix<T_theta, Eigen::Dynamic, 1> >& theta) {
   return poisson_binomial_lpmf<false>(y, theta);
 }
 
@@ -106,7 +68,7 @@ return_type_t<T_theta> poisson_binomial_lpmf(
  */
 template <bool propto, typename T_theta>
 return_type_t<T_theta> poisson_binomial_lpmf(const std::vector<int>& y,
-                                             const vec<T_theta>& theta) {
+                                             const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta) {
   static const char* function = "poisson_binomial_lpmf";
 
   check_bounded(function, "Successes variable", y, 0, theta.size());
@@ -115,11 +77,12 @@ return_type_t<T_theta> poisson_binomial_lpmf(const std::vector<int>& y,
 
   // find largest y and build log-prob matrix only for largest y
   int max_y = *std::max_element(y.begin(), y.end());
-  mat<T_theta> alpha = compute_alpha_(max_y, theta);
+  auto alpha = poisson_binomial_log_probs(max_y, theta);
 
+  int sz_y = y.size();
   T_theta log_prob = 0;
-  for (std::vector<int>::size_type i = 0; i < y.size(); ++i) {
-    log_prob += alpha(theta.size(), y[i]);
+  for (int i = 0; i < sz_y; ++i) {
+    log_prob += alpha(y[i]);
   }
 
   return log_prob;
@@ -127,7 +90,7 @@ return_type_t<T_theta> poisson_binomial_lpmf(const std::vector<int>& y,
 
 template <typename T_theta>
 inline return_type_t<T_theta> poisson_binomial_lpmf(const std::vector<int>& y,
-                                                    const vec<T_theta>& theta) {
+                                                    const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta) {
   return poisson_binomial_lpmf<false>(y, theta);
 }
 
@@ -143,14 +106,14 @@ inline return_type_t<T_theta> poisson_binomial_lpmf(const std::vector<int>& y,
  * @throw std::domain_error if theta is not a valid vector of probabilities
  */
 template <bool propto, typename T_theta>
-return_type_t<T_theta> poisson_binomial_lpmf(int y, const vec<T_theta>& theta) {
+return_type_t<T_theta> poisson_binomial_lpmf(int y, const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta) {
   const std::vector<int> ys{y};
   return poisson_binomial_lpmf<propto>(ys, theta);
 }
 
 template <typename T_theta>
 inline return_type_t<T_theta> poisson_binomial_lpmf(int y,
-                                                    const vec<T_theta>& theta) {
+                                                    const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta) {
   return poisson_binomial_lpmf<false>(y, theta);
 }
 

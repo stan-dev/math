@@ -29,12 +29,11 @@ inline int poisson_binomial_rng(
   check_finite(function, "Probability parameters", theta);
   check_bounded(function, "Probability parameters", theta, 0.0, 1.0);
 
+  int sz = theta.size();
   int y = 0;
-  size_t size_theta = theta.size();
-  for (size_t i = 0; i < size_theta; ++i) {
+  for (int i = 0; i < sz; ++i) {
     boost::variate_generator<RNG&, boost::bernoulli_distribution<> >
         bernoulli_rng(rng, boost::bernoulli_distribution<>(theta(i)));
-
     y += bernoulli_rng();
   }
 
