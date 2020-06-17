@@ -16,20 +16,20 @@ TEST(AgradRevErrorHandlingScalar, CheckLessOrEqualVarCheckVectorized) {
 
   size_t stack_size
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
+        + std::get<std::vector<stan::math::vari*>>(stan::math::ChainableStack::instance_->var_zeroing_stacks_).size();
 
   EXPECT_EQ(5U, stack_size);
   EXPECT_NO_THROW(check_less_or_equal(function, "a", a, 10.0));
 
   size_t stack_size_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
+        + std::get<std::vector<stan::math::vari*>>(stan::math::ChainableStack::instance_->var_zeroing_stacks_).size();
   EXPECT_EQ(5U, stack_size_after_call);
 
   EXPECT_THROW(check_less_or_equal(function, "a", a, 2.0), std::domain_error);
   stack_size_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
+        + std::get<std::vector<stan::math::vari*>>(stan::math::ChainableStack::instance_->var_zeroing_stacks_).size();
   EXPECT_EQ(5U, stack_size_after_call);
 
   stan::math::recover_memory();
@@ -161,27 +161,27 @@ TEST(AgradRevErrorHandlingScalar, CheckLessOrEqualVarCheckUnivariate) {
 
   size_t stack_size
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
+        + std::get<std::vector<stan::math::vari*>>(stan::math::ChainableStack::instance_->var_zeroing_stacks_).size();
 
   EXPECT_EQ(1U, stack_size);
   EXPECT_THROW(check_less_or_equal(function, "a", a, 2.0), std::domain_error);
 
   size_t stack_size_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
+        + std::get<std::vector<stan::math::vari*>>(stan::math::ChainableStack::instance_->var_zeroing_stacks_).size();
   EXPECT_EQ(1U, stack_size_after_call);
 
   EXPECT_NO_THROW(check_less_or_equal(function, "a", a, 5.0));
 
   stack_size_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
+        + std::get<std::vector<stan::math::vari*>>(stan::math::ChainableStack::instance_->var_zeroing_stacks_).size();
   EXPECT_EQ(1U, stack_size_after_call);
 
   EXPECT_NO_THROW(check_less_or_equal(function, "a", a, 10.0));
   stack_size_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
+        + std::get<std::vector<stan::math::vari*>>(stan::math::ChainableStack::instance_->var_zeroing_stacks_).size();
   EXPECT_EQ(1U, stack_size_after_call);
 
   stan::math::recover_memory();

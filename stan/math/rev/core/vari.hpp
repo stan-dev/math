@@ -13,9 +13,15 @@ namespace math {
 // forward declaration of var
 template <typename T, typename>
 class var_value;
-
+/**
+ * Abstract base class that all `vari_value` and it's derived classes inherit.
+ */
 class vari_base {
  public:
+ /**
+  * Apply the chain rule to this variable based on the variables
+  * on which it depends.
+  */
   virtual void chain(){}
 };
 /**

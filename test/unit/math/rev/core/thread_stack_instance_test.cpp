@@ -93,14 +93,14 @@ TEST(thread_stack_instance, child_instances) {
     ChainableStack thread_instance;
     EXPECT_TRUE(
         main_ad_stack->var_stack_.size()
-            + stan::math::ChainableStack::instance_->var_nochain_stack_.size()
+            + std::get<std::vector<stan::math::vari*>>(stan::math::ChainableStack::instance_->var_zeroing_stacks_).size()
 #ifdef STAN_THREADS
         >
 #else
         ==
 #endif
         ChainableStack::instance_->var_stack_.size()
-            + stan::math::ChainableStack::instance_->var_nochain_stack_.size());
+            + std::get<std::vector<stan::math::vari*>>(stan::math::ChainableStack::instance_->var_zeroing_stacks_).size());
   };
 
   std::thread other_work(thread_tester);
