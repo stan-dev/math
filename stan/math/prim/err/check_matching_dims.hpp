@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/err/check_size_match.hpp>
+#include <stan/math/prim/fun/dims.hpp>
 #include <stan/math/prim/err/invalid_argument.hpp>
 #include <sstream>
 #include <string>
@@ -68,6 +68,56 @@ inline void check_matching_dims(const char* function, const char* name1,
     invalid_argument(function, msg_str.c_str(), "", "");
   }
   check_matching_dims(function, name1, y1, name2, y2);
+}
+
+/**
+ * Check if the two containers have the same dimensions.
+ * @tparam T1 type of the first container
+ * @tparam T2 type of the second container
+ * @param function name of function (for error messages)
+ * @param name1 variable name for the first container (for error messages)
+ * @param y1 first container to test
+ * @param name2 variable name for the second container (for error messages)
+ * @param y2 second container to test
+ * @throw <code>std::invalid_argument</code> if the dimensions of the
+ *    containers do not match
+ */
+template <typename T1, typename T2, require_all_std_vector_t<T1, T2>* = nullptr>
+inline void check_matching_dims(const char* function, const char* name1,
+                                const T1& y1, const char* name2, const T2& y2) {
+  std::vector<int> y1_d = dims(y1);
+  std::vector<int> y2_d = dims(y2);
+  bool error = false;
+  if (y1_d.size() != y2_d.size()) {
+    error = true;
+  } else {
+    for (int i = 0; i < y1_d.size(); i++) {
+      if (y1_d[i] != y2_d[i]) {
+        error = true;
+        break;
+      }
+    }
+  }
+  if (error) {
+    std::ostringstream y1s;
+    if (y1_d.size() > 0) {
+      y1s << y1_d[0];
+      for (int i = 1; i < y1_d.size(); i++) {
+        y1s << ", " << y1_d[i];
+      }
+    }
+    std::ostringstream msg;
+    msg << ") and " << name2 << " (";
+    if (y2_d.size() > 0) {
+      msg << y2_d[0];
+      for (int i = 1; i < y2_d.size(); i++) {
+        msg << ", " << y2_d[i];
+      }
+    }
+    msg << ") must match in size";
+    std::string msg_str(msg.str());
+    invalid_argument(function, name1, y1s.str(), "(", msg_str.c_str());
+  }
 }
 
 }  // namespace math
