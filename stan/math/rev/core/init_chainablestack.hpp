@@ -24,7 +24,7 @@ namespace math {
  * on the observer concept.
  */
 class ad_tape_observer : public tbb::task_scheduler_observer {
-  using stack_ptr = std::unique_ptr<ChainableStack>;
+  using stack_ptr = const std::unique_ptr<const ChainableStack>;
   using ad_map = std::unordered_map<std::thread::id, stack_ptr>;
 
  public:
@@ -39,11 +39,7 @@ class ad_tape_observer : public tbb::task_scheduler_observer {
     std::lock_guard<std::mutex> thread_tape_map_lock(thread_tape_map_mutex_);
     const std::thread::id thread_id = std::this_thread::get_id();
     if (thread_tape_map_.find(thread_id) == thread_tape_map_.end()) {
-      ad_map::iterator insert_elem;
-      bool status = false;
-      std::tie(insert_elem, status)
-          = thread_tape_map_.emplace(ad_map::value_type{thread_id, nullptr});
-      insert_elem->second = stack_ptr(new ChainableStack());
+      thread_tape_map_.emplace(std::move(thread_id), std::make_unique<const ChainableStack>());
     }
   }
 
