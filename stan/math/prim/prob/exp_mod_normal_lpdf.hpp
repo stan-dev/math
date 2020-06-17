@@ -24,17 +24,39 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T_inv_scale& lambda) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
-  using std::exp;
-  using std::log;
-  using std::sqrt;
+  using T_y_ref = ref_type_if_t<is_constant<T_y>::value, T_y>;
+  using T_mu_ref = ref_type_if_t<is_constant<T_loc>::value, T_loc>;
+  using T_sigma_ref = ref_type_if_t<is_constant<T_scale>::value, T_scale>;
+  using T_lambda_ref
+      = ref_type_if_t<is_constant<T_inv_scale>::value, T_inv_scale>;
   static const char* function = "exp_mod_normal_lpdf";
-  check_not_nan(function, "Random variable", y);
-  check_finite(function, "Location parameter", mu);
-  check_positive_finite(function, "Inv_scale parameter", lambda);
-  check_positive_finite(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma, "Inv_scale paramter",
                          lambda);
+  T_y_ref y_ref = y;
+  T_mu_ref mu_ref = mu;
+  T_sigma_ref sigma_ref = sigma;
+  T_lambda_ref lambda_ref = lambda;
+
+  const auto& y_col = as_column_vector_or_scalar(y_ref);
+  const auto& mu_col = as_column_vector_or_scalar(mu_ref);
+  const auto& sigma_col = as_column_vector_or_scalar(sigma_ref);
+  const auto& lambda_col = as_column_vector_or_scalar(lambda_ref);
+
+  const auto& y_arr = as_array_or_scalar(y_col);
+  const auto& mu_arr = as_array_or_scalar(mu_col);
+  const auto& sigma_arr = as_array_or_scalar(sigma_col);
+  const auto& lambda_arr = as_array_or_scalar(lambda_col);
+
+  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
+  ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
+  ref_type_t<decltype(value_of(sigma_arr))> sigma_val = value_of(sigma_arr);
+  ref_type_t<decltype(value_of(lambda_arr))> lambda_val = value_of(lambda_arr);
+
+  check_not_nan(function, "Random variable", y_val);
+  check_finite(function, "Location parameter", mu_val);
+  check_positive_finite(function, "Scale parameter", sigma_val);
+  check_positive_finite(function, "Inv_scale parameter", lambda_val);
 
   if (size_zero(y, mu, sigma, lambda)) {
     return 0.0;
@@ -43,58 +65,107 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
     return 0.0;
   }
 
+  const auto& inv_sigma
+      = to_ref_if<!is_constant_all<T_y, T_loc>::value>(inv(sigma_val));
+  const auto& sigma_sq
+      = to_ref_if<!is_constant_all<T_scale>::value>(square(sigma_val));
+  const auto& lambda_sigma_sq = to_ref(lambda_val * sigma_sq);
+  const auto& mu_minus_y = to_ref(mu_val - y_val);
+  const auto& inner_term
+      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale, T_inv_scale>::value>(
+          (mu_minus_y + lambda_sigma_sq) * INV_SQRT_TWO * inv_sigma);
+  const auto& erfc_calc = to_ref(erfc(inner_term));
+
+    size_t N = max_size(y, mu, sigma, lambda);
   T_partials_return logp(0.0);
-  operands_and_partials<T_y, T_loc, T_scale, T_inv_scale> ops_partials(
-      y, mu, sigma, lambda);
+  if (include_summand<propto>::value) {
+    logp -= LOG_TWO * N;
+  }
+  if (include_summand<propto, T_inv_scale>::value) {
+    logp += sum(log(lambda_val)) * N / size(lambda);
+  }
+  const auto& log_erfc_calc = log(erfc_calc);
+  logp += sum(lambda_val * (mu_minus_y + 0.5 * lambda_sigma_sq)
+              + log_erfc_calc);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
-  scalar_seq_view<T_inv_scale> lambda_vec(lambda);
-  size_t N = max_size(y, mu, sigma, lambda);
-
-  for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials_return lambda_dbl = value_of(lambda_vec[n]);
-    const T_partials_return inv_sigma = inv(sigma_dbl);
-    const T_partials_return sigma_sq = square(sigma_dbl);
-    const T_partials_return lambda_sigma_sq = lambda_dbl * sigma_sq;
-    const T_partials_return mu_minus_y = mu_dbl - y_dbl;
-    const T_partials_return inner_term
-        = (mu_minus_y + lambda_sigma_sq) * INV_SQRT_TWO * inv_sigma;
-    const T_partials_return erfc_calc = erfc(inner_term);
-    const T_partials_return deriv_logerfc
-        = -SQRT_TWO_OVER_SQRT_PI * exp(-square(inner_term)) / erfc_calc;
-
-    if (include_summand<propto>::value) {
-      logp -= LOG_TWO;
-    }
-    if (include_summand<propto, T_inv_scale>::value) {
-      logp += log(lambda_dbl);
-    }
-    logp += lambda_dbl * (mu_minus_y + 0.5 * lambda_sigma_sq) + log(erfc_calc);
-
-    if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
-          -= lambda_dbl + deriv_logerfc * inv_sigma;
-    }
-    if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n]
-          += lambda_dbl + deriv_logerfc * inv_sigma;
+  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_lambda_ref>
+      ops_partials(y_ref, mu_ref, sigma_ref, lambda_ref);
+  if (!is_constant_all<T_y, T_loc, T_scale, T_inv_scale>::value) {
+    const auto& exp_m_sq_inner_term = exp(-square(inner_term));
+    const auto& deriv_logerfc = to_ref_if<
+        !is_constant_all<T_y, T_loc>::value + !is_constant_all<T_scale>::value
+            + !is_constant_all<T_inv_scale>::value
+        >= 2>(-SQRT_TWO_OVER_SQRT_PI * exp_m_sq_inner_term / erfc_calc);
+    if (!is_constant_all<T_y, T_loc>::value) {
+      const auto& deriv = to_ref_if < !is_constant_all<T_y>::value
+                          && !is_constant_all<T_loc>::value
+                                 > (lambda_val + deriv_logerfc * inv_sigma);
+      if (!is_constant_all<T_y>::value) {
+        ops_partials.edge1_.partials_ = deriv;
+      }
+      if (!is_constant_all<T_loc>::value) {
+        ops_partials.edge2_.partials_ = std::move(deriv);
+      }
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
-          += sigma_dbl * square(lambda_dbl)
-             + deriv_logerfc * (-mu_minus_y / sigma_sq + lambda_dbl);
+      ops_partials.edge3_.partials_
+          = sigma_val * square(lambda_val)
+            + deriv_logerfc * (-mu_minus_y / sigma_sq + lambda_val);
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge4_.partials_[n] += inv(lambda_dbl) + lambda_sigma_sq
-                                          + mu_minus_y
-                                          + deriv_logerfc * sigma_dbl;
+      ops_partials.edge4_.partials_ = inv(lambda_val) + lambda_sigma_sq
+                                      + mu_minus_y + deriv_logerfc * sigma_val;
     }
   }
+
+//  scalar_seq_view<T_y> y_vec(y);
+//  scalar_seq_view<T_loc> mu_vec(mu);
+//  scalar_seq_view<T_scale> sigma_vec(sigma);
+//  scalar_seq_view<T_inv_scale> lambda_vec(lambda);
+//  size_t N = max_size(y, mu, sigma, lambda);
+
+//  for (size_t n = 0; n < N; n++) {
+//    const T_partials_return y_dbl = value_of(y_vec[n]);
+//    const T_partials_return mu_dbl = value_of(mu_vec[n]);
+//    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
+//    const T_partials_return lambda_dbl = value_of(lambda_vec[n]);
+//    const T_partials_return inv_sigma = inv(sigma_dbl);
+//    const T_partials_return sigma_sq = square(sigma_dbl);
+//    const T_partials_return lambda_sigma_sq = lambda_dbl * sigma_sq;
+//    const T_partials_return mu_minus_y = mu_dbl - y_dbl;
+//    const T_partials_return inner_term
+//        = (mu_minus_y + lambda_sigma_sq) * INV_SQRT_TWO * inv_sigma;
+//    const T_partials_return erfc_calc = erfc(inner_term);
+//    const T_partials_return deriv_logerfc
+//        = -SQRT_TWO_OVER_SQRT_PI * exp(-square(inner_term)) / erfc_calc;
+
+//    if (include_summand<propto>::value) {
+//      logp -= LOG_TWO;
+//    }
+//    if (include_summand<propto, T_inv_scale>::value) {
+//      logp += log(lambda_dbl);
+//    }
+//    logp += lambda_dbl * (mu_minus_y + 0.5 * lambda_sigma_sq) + log(erfc_calc);
+
+//    if (!is_constant_all<T_y>::value) {
+//      ops_partials.edge1_.partials_[n]
+//          -= lambda_dbl + deriv_logerfc * inv_sigma;
+//    }
+//    if (!is_constant_all<T_loc>::value) {
+//      ops_partials.edge2_.partials_[n]
+//          += lambda_dbl + deriv_logerfc * inv_sigma;
+//    }
+//    if (!is_constant_all<T_scale>::value) {
+//      ops_partials.edge3_.partials_[n]
+//          += sigma_dbl * square(lambda_dbl)
+//             + deriv_logerfc * (-mu_minus_y / sigma_sq + lambda_dbl);
+//    }
+//    if (!is_constant_all<T_inv_scale>::value) {
+//      ops_partials.edge4_.partials_[n] += inv(lambda_dbl) + lambda_sigma_sq
+//                                          + mu_minus_y
+//                                          + deriv_logerfc * sigma_dbl;
+//    }
+//  }
   return ops_partials.build(logp);
 }
 
