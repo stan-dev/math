@@ -37,7 +37,8 @@ constexpr inline auto for_each(F&& f, T&& t) {
  * @tparam T1 tuple
  * @tparam Any container with an `operator[]`
  * @param f A functor to apply over each element of the tuple.
- * @param t A tuple.
+ * @param t1 A tuple.
+ * @param t2 Any container with `operator[]`.
  */
 template<typename F, typename T1, typename T2>
 constexpr inline auto for_each(F&& f, T1&& t1, T2&& t2) {

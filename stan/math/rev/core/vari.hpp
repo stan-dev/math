@@ -16,7 +16,7 @@ class var_value;
 
 class vari_base {
  public:
-  virtual void chain() {}
+  virtual void chain() = 0
 };
 /**
  * The variable implementation base class.
