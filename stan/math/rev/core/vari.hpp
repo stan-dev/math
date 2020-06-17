@@ -24,12 +24,12 @@ class var_value;
  */
 class vari_base {
  public:
- /**
-  * Apply the chain rule to this variable based on the variables
-  * on which it depends.
-  */
-  virtual void chain(){}
-  virtual ~vari_base() {};
+  /**
+   * Apply the chain rule to this variable based on the variables
+   * on which it depends.
+   */
+  virtual void chain() {}
+  virtual ~vari_base(){};
 };
 /**
  * The variable implementation base class.

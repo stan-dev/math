@@ -36,9 +36,9 @@ class var_value {};
 template <typename T>
 class var_value<T, require_floating_point_t<T>> {
  public:
-  using value_type = std::decay_t<T>; // Numeric type in vari_value.
-  using vari_type = vari_value<value_type>; // Type of underlying vari impl.
-  using vari_pointer = vari_type*; // pointer type for underlying vari.
+  using value_type = std::decay_t<T>;        // Numeric type in vari_value.
+  using vari_type = vari_value<value_type>;  // Type of underlying vari impl.
+  using vari_pointer = vari_type*;  // pointer type for underlying vari.
 
   /**
    * Pointer to the implementation of this variable.
@@ -71,8 +71,8 @@ class var_value<T, require_floating_point_t<T>> {
 
   /**
    * Construct a variable from the specified floating point argument
-   * by constructing a new `vari_value<value_type>`. This constructor is only valid
-   * when `S` is convertible to this `vari_value`'s `value_type`.
+   * by constructing a new `vari_value<value_type>`. This constructor is only
+   * valid when `S` is convertible to this `vari_value`'s `value_type`.
    * @tparam S A type that is convertible to `value_type`.
    * @param x Value of the variable.
    */
