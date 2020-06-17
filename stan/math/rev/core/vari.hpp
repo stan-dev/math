@@ -17,7 +17,7 @@ class var_value;
 class vari_base {
 public:
   virtual void chain() {}
-  virtual void set_zero_adjoint() noexcept {}
+  EIGEN_STRONG_INLINE virtual void set_zero_adjoint() noexcept {}
 };
 /**
  * The variable implementation base class.
@@ -134,7 +134,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> : public
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  void set_zero_adjoint() noexcept final { adj_ = 0.0; }
+  EIGEN_STRONG_INLINE void set_zero_adjoint() noexcept final { adj_ = 0.0; }
 
   /**
    * Insertion operator for vari. Prints the current value and
