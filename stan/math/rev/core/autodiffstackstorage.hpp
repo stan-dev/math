@@ -105,14 +105,13 @@ struct AutodiffStackSingleton {
     AutodiffStackStorage &operator=(const AutodiffStackStorage &) = delete;
 
     std::vector<ChainableT*> var_stack_;
-    std::vector<ChainableT*> var_nochain_stack_;
     std::vector<vari_value<double>*> var_dbl_stack_;
     std::vector<ChainableAllocT *> var_alloc_stack_;
     stack_alloc memalloc_;
 
     // nested positions
     std::vector<size_t> nested_var_stack_sizes_;
-    std::vector<size_t> nested_var_nochain_stack_sizes_;
+    std::vector<size_t> nested_var_dbl_stack_sizes_;
     std::vector<size_t> nested_var_alloc_stack_starts_;
   };
 

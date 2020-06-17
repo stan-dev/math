@@ -22,7 +22,7 @@ static inline void recover_memory() {
         " before calling recover_memory()");
   }
   ChainableStack::instance_->var_stack_.clear();
-  ChainableStack::instance_->var_nochain_stack_.clear();
+  ChainableStack::instance_->var_dbl_stack_.clear();
   for (auto &x : ChainableStack::instance_->var_alloc_stack_) {
     delete x;
   }
