@@ -13,20 +13,10 @@ namespace math {
  */
 static EIGEN_STRONG_INLINE void set_zero_all_adjoints() {
   for (auto& x : ChainableStack::instance_->var_stack_) {
-    auto* item = dynamic_cast<vari_value<double>*>(x);
-    if (likely(item)) {
-      item->set_zero_adjoint();
-    } else {
-      x->set_zero_adjoint();      
-    }
+    x->set_zero_adjoint();
   }
   for (auto& x : ChainableStack::instance_->var_nochain_stack_) {
-    auto* item = dynamic_cast<vari_value<double>*>(x);
-    if (likely(item)) {
-      item->set_zero_adjoint();
-    } else {
-      x->set_zero_adjoint();
-    }
+    x->set_zero_adjoint();
   }
 }
 
