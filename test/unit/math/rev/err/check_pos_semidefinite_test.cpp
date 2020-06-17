@@ -50,13 +50,17 @@ TEST(AgradRevErrorHandlingMatrix, checkPosSemiDefiniteMatrixVarCheck) {
 
   size_t stack_before_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + std::get<std::vector<stan::math::vari*>>(stan::math::ChainableStack::instance_->var_zeroing_stacks_).size();
+        + std::get<std::vector<stan::math::vari*>>(
+              stan::math::ChainableStack::instance_->var_zeroing_stacks_)
+              .size();
   EXPECT_EQ(9U, stack_before_call);
 
   EXPECT_NO_THROW(check_pos_semidefinite("checkPosDefiniteMatrix", "y", y));
   size_t stack_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + std::get<std::vector<stan::math::vari*>>(stan::math::ChainableStack::instance_->var_zeroing_stacks_).size();
+        + std::get<std::vector<stan::math::vari*>>(
+              stan::math::ChainableStack::instance_->var_zeroing_stacks_)
+              .size();
 
   EXPECT_EQ(9U, stack_after_call);
 }
