@@ -25,12 +25,16 @@ static EIGEN_STRONG_INLINE void set_zero_all_adjoints_nested() {
         " set_zero_all_adjoints_nested()");
   }
   size_t start1 = ChainableStack::instance_->nested_var_stack_sizes_.back();
-  for_each([&start1](auto& x, auto& x_size) {
-    const auto stack_size = x.size();
-      for (size_t i = (start1 == 0U) ? 0U : (start1 - 1); i < stack_size; ++i) {
-        x[i]->set_zero_adjoint();
-      }
-  }, ChainableStack::instance_->var_zeroing_stacks_, ChainableStack::instance_->nested_var_zeroing_stack_sizes_);
+  for_each(
+      [&start1](auto& x, auto& x_size) {
+        const auto stack_size = x.size();
+        for (size_t i = (start1 == 0U) ? 0U : (start1 - 1); i < stack_size;
+             ++i) {
+          x[i]->set_zero_adjoint();
+        }
+      },
+      ChainableStack::instance_->var_zeroing_stacks_,
+      ChainableStack::instance_->nested_var_zeroing_stack_sizes_);
   // avoid wrap with unsigned when start1 == 0
 }
 

@@ -111,7 +111,8 @@ struct AutodiffStackSingleton {
 
     // nested positions
     std::vector<size_t> nested_var_stack_sizes_;
-    std::array<std::vector<size_t>, std::tuple_size<ZeroingT>::value> nested_var_zeroing_stack_sizes_;
+    std::array<std::vector<size_t>, std::tuple_size<ZeroingT>::value>
+        nested_var_zeroing_stack_sizes_;
     std::vector<size_t> nested_var_alloc_stack_starts_;
   };
 
@@ -140,9 +141,9 @@ struct AutodiffStackSingleton {
 };
 
 template <typename ChainableT, typename ChainableAllocT, typename ZeroingT>
-STAN_THREADS_DEF
-    typename AutodiffStackSingleton<ChainableT, ChainableAllocT, ZeroingT>::AutodiffStackStorage
-        *AutodiffStackSingleton<ChainableT, ChainableAllocT, ZeroingT>::instance_;
+STAN_THREADS_DEF typename AutodiffStackSingleton<ChainableT, ChainableAllocT,
+                                                 ZeroingT>::AutodiffStackStorage
+    *AutodiffStackSingleton<ChainableT, ChainableAllocT, ZeroingT>::instance_;
 
 }  // namespace math
 }  // namespace stan
