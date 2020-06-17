@@ -13,8 +13,7 @@ class chainable_alloc;
 using zeroing_stacks = std::tuple<std::vector<vari_value<double>*>,
   std::vector<vari_value<float>*>,
   std::vector<vari_value<long double>*>>;
-using zeroing_stacks_sizes = std::tuple<std::vector<size_t>, std::vector<size_t>, std::vector<size_t>>;
-using ChainableStack = AutodiffStackSingleton<vari_base, chainable_alloc, zeroing_stacks, zeroing_stacks_sizes>;
+using ChainableStack = AutodiffStackSingleton<vari_base, chainable_alloc, zeroing_stacks>;
 
 }  // namespace math
 }  // namespace stan

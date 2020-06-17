@@ -88,10 +88,10 @@ class vari_value;
  * [3]
  * http://discourse.mc-stan.org/t/potentially-dropping-support-for-older-versions-of-apples-version-of-clang/3780/
  */
-template <typename ChainableT, typename ChainableAllocT, typename ZeroingT, typename NumZeroingT>
+template <typename ChainableT, typename ChainableAllocT, typename ZeroingT>
 struct AutodiffStackSingleton {
   using AutodiffStackSingleton_t
-      = AutodiffStackSingleton<ChainableT, ChainableAllocT, ZeroingT, NumZeroingT>;
+      = AutodiffStackSingleton<ChainableT, ChainableAllocT, ZeroingT>;
 
   AutodiffStackSingleton() : own_instance_(init()) {}
   ~AutodiffStackSingleton() {
@@ -111,7 +111,7 @@ struct AutodiffStackSingleton {
 
     // nested positions
     std::vector<size_t> nested_var_stack_sizes_;
-    NumZeroingT nested_var_zeroing_stack_sizes_;
+    std::array<std::vector<size_t>, std::tuple_size<ZeroingT>::value> nested_var_zeroing_stack_sizes_;
     std::vector<size_t> nested_var_alloc_stack_starts_;
   };
 
@@ -139,11 +139,10 @@ struct AutodiffStackSingleton {
   bool own_instance_;
 };
 
-template <typename ChainableT, typename ChainableAllocT, typename ZeroingT, typename NumZeroingT>
+template <typename ChainableT, typename ChainableAllocT, typename ZeroingT>
 STAN_THREADS_DEF
-    typename AutodiffStackSingleton<ChainableT,
-                                    ChainableAllocT, ZeroingT, NumZeroingT>::AutodiffStackStorage
-        *AutodiffStackSingleton<ChainableT, ChainableAllocT, ZeroingT, NumZeroingT>::instance_;
+    typename AutodiffStackSingleton<ChainableT, ChainableAllocT, ZeroingT>::AutodiffStackStorage
+        *AutodiffStackSingleton<ChainableT, ChainableAllocT, ZeroingT>::instance_;
 
 }  // namespace math
 }  // namespace stan

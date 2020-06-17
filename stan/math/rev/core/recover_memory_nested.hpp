@@ -31,10 +31,10 @@ static inline void recover_memory_nested() {
   ChainableStack::instance_->var_stack_.resize(
       ChainableStack::instance_->nested_var_stack_sizes_.back());
   ChainableStack::instance_->nested_var_stack_sizes_.pop_back();
-  for_each_tuple([](auto& x, auto& y) {
+  for_each([](auto& x, auto& y) {
     if (y.size() > 0) {
       x.resize(y.back());
-      y.pop_back();      
+      y.pop_back();
     }
   }, ChainableStack::instance_->var_zeroing_stacks_,
   ChainableStack::instance_->nested_var_zeroing_stack_sizes_);
