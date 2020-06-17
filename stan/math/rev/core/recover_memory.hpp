@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_CORE_RECOVER_MEMORY_HPP
 #define STAN_MATH_REV_CORE_RECOVER_MEMORY_HPP
 
+#include <stan/math/prim/functor.hpp>
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/empty_nested.hpp>
@@ -22,7 +23,10 @@ static inline void recover_memory() {
         " before calling recover_memory()");
   }
   ChainableStack::instance_->var_stack_.clear();
-  ChainableStack::instance_->var_dbl_stack_.clear();
+  for_each_tuple([](auto& x) {
+    x.clear();
+    return 0;
+  }, ChainableStack::instance_->var_zeroing_stacks_);
   for (auto &x : ChainableStack::instance_->var_alloc_stack_) {
     delete x;
   }

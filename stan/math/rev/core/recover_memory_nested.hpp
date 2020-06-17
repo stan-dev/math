@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_CORE_RECOVER_MEMORY_NESTED_HPP
 #define STAN_MATH_REV_CORE_RECOVER_MEMORY_NESTED_HPP
 
+#include <stan/math/prim/functor.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/empty_nested.hpp>
@@ -30,11 +31,12 @@ static inline void recover_memory_nested() {
   ChainableStack::instance_->var_stack_.resize(
       ChainableStack::instance_->nested_var_stack_sizes_.back());
   ChainableStack::instance_->nested_var_stack_sizes_.pop_back();
-
-  ChainableStack::instance_->var_dbl_stack_.resize(
-      ChainableStack::instance_->nested_var_dbl_stack_sizes_.back());
-  ChainableStack::instance_->nested_var_dbl_stack_sizes_.pop_back();
-
+  for_each_tuple([](auto& x, auto& y) {
+    x.resize(y.back());
+    y.pop_back();
+    return 0;
+  }, ChainableStack::instance_->var_zeroing_stacks_,
+  ChainableStack::instance_->nested_var_zeroing_stack_sizes_);
   for (size_t i
        = ChainableStack::instance_->nested_var_alloc_stack_starts_.back();
        i < ChainableStack::instance_->var_alloc_stack_.size(); ++i) {

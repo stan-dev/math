@@ -50,7 +50,6 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> : public
    * The value of this variable.
    */
   const Scalar val_;
-
   /**
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
@@ -73,7 +72,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> : public
   template <typename S,
             std::enable_if_t<std::is_convertible<S&, Scalar>::value>* = nullptr>
   vari_value(S x) noexcept : val_(x), adj_(0.0) {  // NOLINT
-    ChainableStack::instance_->var_dbl_stack_.emplace_back(this);
+    std::get<std::vector<vari_value<T>*>>(ChainableStack::instance_->var_zeroing_stacks_).emplace_back(this);
     ChainableStack::instance_->var_stack_.emplace_back(this);
   }
 
@@ -97,10 +96,10 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> : public
   template <typename S,
             std::enable_if_t<std::is_convertible<S&, Scalar>::value>* = nullptr>
   vari_value(S x, bool stacked) noexcept : val_(x), adj_(0.0) {
-     ChainableStack::instance_->var_dbl_stack_.emplace_back(this);
+    std::get<std::vector<vari_value<T>*>>(ChainableStack::instance_->var_zeroing_stacks_).emplace_back(this);
     if (stacked) {
       ChainableStack::instance_->var_stack_.emplace_back(this);
-    } 
+    }
   }
 
   /**
@@ -109,7 +108,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> : public
    * @param x A vari_value
    */
   vari_value(const vari_value<T>& x) noexcept : val_(x.val_), adj_(x.adj_) {
-    ChainableStack::instance_->var_dbl_stack_.emplace_back(this);
+    std::get<std::vector<vari_value<T>*>>(ChainableStack::instance_->var_zeroing_stacks_).emplace_back(this);
     ChainableStack::instance_->var_stack_.emplace_back(this);
   }
   /**
@@ -118,7 +117,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> : public
    * @param x A vari_value
    */
   vari_value(vari_value<T>&& x) noexcept : val_(x.val_), adj_(x.adj_) {
-    ChainableStack::instance_->var_dbl_stack_.emplace_back(this);
+    std::get<std::vector<vari_value<T>*>>(ChainableStack::instance_->var_zeroing_stacks_).emplace_back(this);
     ChainableStack::instance_->var_stack_.emplace_back(this);
   }
 
