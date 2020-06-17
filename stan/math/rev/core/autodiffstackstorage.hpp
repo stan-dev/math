@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_CORE_AUTODIFFSTACKSTORAGE_HPP
 
 #include <stan/math/memory/stack_alloc.hpp>
+#include <array>
 #include <vector>
 
 namespace stan {
@@ -112,7 +113,7 @@ struct AutodiffStackSingleton {
     // nested positions
     std::vector<size_t> nested_var_stack_sizes_;
     std::array<std::vector<size_t>, std::tuple_size<ZeroingT>::value>
-        nested_var_zeroing_stack_sizes_;
+        nested_var_zeroing_stack_sizes_{};
     std::vector<size_t> nested_var_alloc_stack_starts_;
   };
 
