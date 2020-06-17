@@ -37,20 +37,13 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
                                || is_vector<T_scale>::value,
                            T_partials_array, T_partials_return>;
   using std::exp;
-  using T_y_ref = ref_type_t<T_y>;
-  using T_mu_ref = ref_type_t<T_loc>;
-  using T_sigma_ref = ref_type_t<T_scale>;
+  using T_y_ref = ref_type_if_t<is_constant<T_y>::value, T_y>;
+  using T_mu_ref = ref_type_if_t<is_constant<T_loc>::value, T_loc>;
+  using T_sigma_ref = ref_type_if_t<is_constant<T_scale>::value, T_scale>;
   static const char* function = "double_exponential_cdf";
   T_y_ref y_ref = y;
   T_mu_ref mu_ref = mu;
   T_sigma_ref sigma_ref = sigma;
-  check_not_nan(function, "Random variable", y_ref);
-  check_finite(function, "Location parameter", mu_ref);
-  check_positive_finite(function, "Scale parameter", sigma_ref);
-
-  if (size_zero(y, mu, sigma)) {
-    return 1.0;
-  }
 
   T_partials_return cdf(1.0);
   operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
@@ -67,6 +60,14 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
   ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
   ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
   ref_type_t<decltype(value_of(sigma_arr))> sigma_val = value_of(sigma_arr);
+
+  check_not_nan(function, "Random variable", y_val);
+  check_finite(function, "Location parameter", mu_val);
+  check_positive_finite(function, "Scale parameter", sigma_val);
+
+  if (size_zero(y, mu, sigma)) {
+    return 1.0;
+  }
 
   const auto& inv_sigma = to_ref(inv(sigma_val));
   const auto& scaled_diff = to_ref_if<!is_constant_all<T_scale>::value>(
@@ -115,7 +116,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
       ops_partials.edge3_.partials_
           = -forward_as<T_partials_array>(rep_deriv * scaled_diff);
     } else {
-      ops_partials.edge3_.partials_[0] = -sum(rep_deriv) * sum(scaled_diff);
+      ops_partials.edge3_.partials_[0] = -sum(rep_deriv * scaled_diff);
     }
   }
   if (!is_constant_all<T_y>::value) {
@@ -126,56 +127,6 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
       ops_partials.edge1_.partials_[0] = sum(rep_deriv);
     }
   }
-
-  //  scalar_seq_view<T_y_ref> y_vec(y_ref);
-  //  scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
-  //  scalar_seq_view<T_sigma_ref> sigma_vec(sigma_ref);
-  //  size_t size_sigma = stan::math::size(sigma);
-  //  size_t N = max_size(y, mu, sigma);
-
-  //  VectorBuilder<true, T_partials_return, T_scale> inv_sigma(size_sigma);
-  //  for (size_t i = 0; i < size_sigma; i++) {
-  //    inv_sigma[i] = inv(value_of(sigma_vec[i]));
-  //  }
-
-  //  VectorBuilder<true, T_partials_return, T_y, T_loc, T_scale>
-  //  scaled_diff(N); VectorBuilder<true, T_partials_return, T_y, T_loc,
-  //  T_scale> exp_scaled_diff(
-  //      N);
-
-  //  for (size_t n = 0; n < N; n++) {
-  //    const T_partials_return y_dbl = value_of(y_vec[n]);
-  //    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-  //    scaled_diff[n] = (y_dbl - mu_dbl) * inv_sigma[n];
-  //    exp_scaled_diff[n] = exp(scaled_diff[n]);
-
-  //    if (y_dbl < mu_dbl) {
-  //      cdf *= exp_scaled_diff[n] * 0.5;
-  //    } else {
-  //      cdf *= 1.0 - 0.5 / exp_scaled_diff[n];
-  //    }
-  //  }
-
-  //  for (size_t n = 0; n < N; n++) {
-  //    const T_partials_return y_dbl = value_of(y_vec[n]);
-  //    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-  //    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
-
-  //    const T_partials_return rep_deriv
-  //        = y_dbl < mu_dbl ? cdf * inv_sigma[n]
-  //                         : cdf * inv_sigma[n] / (2 * exp_scaled_diff[n] -
-  //                         1);
-
-  //    if (!is_constant_all<T_y>::value) {
-  //      ops_partials.edge1_.partials_[n] += rep_deriv;
-  //    }
-  //    if (!is_constant_all<T_loc>::value) {
-  //      ops_partials.edge2_.partials_[n] -= rep_deriv;
-  //    }
-  //    if (!is_constant_all<T_scale>::value) {
-  //      ops_partials.edge3_.partials_[n] -= rep_deriv * scaled_diff[n];
-  //    }
-  //  }
   return ops_partials.build(cdf);
 }
 
