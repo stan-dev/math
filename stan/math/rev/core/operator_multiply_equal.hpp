@@ -13,7 +13,7 @@ inline var& var::operator*=(var b) {
   return *this;
 }
 
-template <typename Arith, require_arithmetic_t<Arith>...>
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline var& var::operator*=(Arith b) {
   if (b == 1.0) {
     return *this;

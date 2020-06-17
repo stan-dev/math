@@ -233,8 +233,8 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @throw <code>std::system_error</code> if the memory on the device could not
    * be allocated
    */
-  template <typename Vec, require_std_vector_vt<is_eigen, Vec>...,
-            require_st_same<Vec, T>...>
+  template <typename Vec, require_std_vector_vt<is_eigen, Vec>* = nullptr,
+            require_st_same<Vec, T>* = nullptr>
   explicit matrix_cl(Vec&& A) try : rows_(A.empty() ? 0 : A[0].size()),
                                     cols_(A.size()) {
     if (this->size() == 0) {
@@ -305,7 +305,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @throw <code>std::system_error</code> if the memory on the device could not
    * be allocated
    */
-  template <typename Mat, require_eigen_t<Mat>..., require_vt_same<Mat, T>...>
+  template <typename Mat, require_eigen_t<Mat>* = nullptr, require_vt_same<Mat, T>* = nullptr>
   explicit matrix_cl(Mat&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
@@ -360,8 +360,8 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @throw <code>std::system_error</code> if the memory on the device could not
    * be allocated
    */
-  template <typename Vec, require_std_vector_t<Vec>...,
-            require_vt_same<Vec, T>...>
+  template <typename Vec, require_std_vector_t<Vec>* = nullptr,
+            require_vt_same<Vec, T>* = nullptr>
   explicit matrix_cl(Vec&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : matrix_cl(std::forward<Vec>(A), A.size(), 1) {}
@@ -384,8 +384,8 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @throw <code>std::system_error</code> if the memory on the device could not
    * be allocated
    */
-  template <typename Vec, require_std_vector_t<Vec>...,
-            require_vt_same<Vec, T>...>
+  template <typename Vec, require_std_vector_t<Vec>* = nullptr,
+            require_vt_same<Vec, T>* = nullptr>
   explicit matrix_cl(Vec&& A, const int& R, const int& C,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(R), cols_(C), view_(partial_view) {
@@ -409,7 +409,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @throw <code>std::system_error</code> if the memory on the device could not
    * be allocated
    */
-  template <typename U, require_same_t<T, U>...>
+  template <typename U, require_same_t<T, U>* = nullptr>
   explicit matrix_cl(const U* A, const int& R, const int& C,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(R), cols_(C), view_(partial_view) {

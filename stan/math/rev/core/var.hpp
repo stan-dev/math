@@ -323,7 +323,7 @@ class var {
    * @param b The scalar to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
-  template <typename Arith, require_arithmetic_t<Arith>...>
+  template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
   inline var& operator+=(Arith b);
 
   /**
@@ -350,7 +350,7 @@ class var {
    * @return The result of subtracting the specified variable from this
    * variable.
    */
-  template <typename Arith, require_arithmetic_t<Arith>...>
+  template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
   inline var& operator-=(Arith b);
 
   /**
@@ -377,7 +377,7 @@ class var {
    * @return The result of multiplying this variable by the specified
    * variable.
    */
-  template <typename Arith, require_arithmetic_t<Arith>...>
+  template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
   inline var& operator*=(Arith b);
 
   /**
@@ -403,7 +403,7 @@ class var {
    * @return The result of dividing this variable by the specified
    * variable.
    */
-  template <typename Arith, require_arithmetic_t<Arith>...>
+  template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
   inline var& operator/=(Arith b);
 
   /**
