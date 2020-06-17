@@ -85,10 +85,10 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
     return 0;
   }
 
-  auto log_y = to_ref_if<!is_constant_all<T_loc, T_prec>::value>(log(y_val));
-  auto log1m_y
+  const auto& log_y = to_ref_if<!is_constant_all<T_loc, T_prec>::value>(log(y_val));
+  const auto& log1m_y
       = to_ref_if<!is_constant_all<T_loc, T_prec>::value>(log1m(y_val));
-  auto mukappa = to_ref(mu_val * kappa_val);
+  const auto& mukappa = to_ref(mu_val * kappa_val);
 
   size_t N = max_size(y, mu, kappa);
   T_partials_return logp(0);
