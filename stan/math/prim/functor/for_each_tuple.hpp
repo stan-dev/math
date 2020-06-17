@@ -11,14 +11,11 @@ namespace math {
 namespace internal {
 template<typename F, typename T, size_t... Is>
 inline auto for_each(F&& f, T&& t, std::index_sequence<Is...>) {
-    using tuple_ret = std::tuple<std::result_of_t<F( decltype(std::get<Is>(std::declval<T>())))>...>;
-    return tuple_ret{ std::forward<F>(f)(std::get<Is>(t))... };
+  auto l = { (std::forward<F>(f)(std::get<Is>(t)), 0)...};
 }
 template<typename F, typename T1, typename T2, size_t... Is>
 inline auto for_each(F&& f, T1&& t1, T2&& t2, std::index_sequence<Is...>) {
-    using tuple_ret = std::tuple<std::result_of_t<F(decltype(std::get<Is>(std::declval<T1>())),
-     decltype(std::get<Is>(std::declval<T2>())))>...>;
-    return tuple_ret{ std::forward<F>(f)(std::get<Is>(t1), std::get<Is>(t2))... };
+    auto l = { (std::forward<F>(f)(std::get<Is>(t1), std::get<Is>(t2)), 0)...};
 }
 }
 template<typename F, typename T>

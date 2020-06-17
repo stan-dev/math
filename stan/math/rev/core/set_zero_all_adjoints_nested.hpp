@@ -32,7 +32,6 @@ static EIGEN_STRONG_INLINE void set_zero_all_adjoints_nested() {
         x[i]->set_zero_adjoint();
       }
     }
-    return 0;
   }, ChainableStack::instance_->var_zeroing_stacks_, ChainableStack::instance_->nested_var_zeroing_stack_sizes_);
   // avoid wrap with unsigned when start1 == 0
 }

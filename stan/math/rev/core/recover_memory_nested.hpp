@@ -32,11 +32,17 @@ static inline void recover_memory_nested() {
       ChainableStack::instance_->nested_var_stack_sizes_.back());
   ChainableStack::instance_->nested_var_stack_sizes_.pop_back();
   for_each_tuple([](auto& x, auto& y) {
-    x.resize(y.back());
-    y.pop_back();
-    return 0;
+    if (std::is_same<value_type_t<decltype(x)>, vari_value<double>*>::value) {
+    std::cout << "zero_stack size : " << x.size() << " nested_zero_stack size: " << y.size() << std::endl;
+    if(y.size() > 0) {
+      std::cout << "nested_zero_end : " << *(y.end()-1) << std::endl;
+      x.resize(y.back());
+      y.pop_back();
+    }
+  }
   }, ChainableStack::instance_->var_zeroing_stacks_,
   ChainableStack::instance_->nested_var_zeroing_stack_sizes_);
+
   for (size_t i
        = ChainableStack::instance_->nested_var_alloc_stack_starts_.back();
        i < ChainableStack::instance_->var_alloc_stack_.size(); ++i) {

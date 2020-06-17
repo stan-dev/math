@@ -24,8 +24,7 @@ static inline void recover_memory() {
   }
   ChainableStack::instance_->var_stack_.clear();
   for_each_tuple([](auto& x) {
-    x.clear();
-    return 0;
+      x.clear();
   }, ChainableStack::instance_->var_zeroing_stacks_);
   for (auto &x : ChainableStack::instance_->var_alloc_stack_) {
     delete x;
