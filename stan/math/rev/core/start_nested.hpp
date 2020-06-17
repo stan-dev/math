@@ -17,13 +17,7 @@ static inline void start_nested() {
   ChainableStack::instance_->nested_var_stack_sizes_.push_back(
       ChainableStack::instance_->var_stack_.size());
   for_each_tuple([](auto& x, auto& y) {
-    if (std::is_same<value_type_t<decltype(x)>, vari_value<double>*>::value) {
-    std::cout << "1 size : " << x.size() << " 2 size: " << y.size() << std::endl;
-    }
-    if (y.size() > 0) {
       x.push_back(y.size());
-    }
-
   }, ChainableStack::instance_->nested_var_zeroing_stack_sizes_,
    ChainableStack::instance_->var_zeroing_stacks_);
   ChainableStack::instance_->nested_var_alloc_stack_starts_.push_back(

@@ -14,11 +14,9 @@ namespace math {
  */
 static EIGEN_STRONG_INLINE void set_zero_all_adjoints() {
   for_each_tuple([](auto& x) {
-    if (x.size() > 0) {
       for (auto& xx : x) {
         xx->set_zero_adjoint();
       }
-    }
   }, ChainableStack::instance_->var_zeroing_stacks_);
 }
 
