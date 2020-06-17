@@ -124,17 +124,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
         .emplace_back(this);
     ChainableStack::instance_->var_stack_.emplace_back(this);
   }
-  /**
-   * Constructor from vari_value
-   * @tparam S An arithmetic type
-   * @param x A vari_value
-   */
-  vari_value(vari_value<T>&& x) noexcept : val_(x.val_), adj_(x.adj_) {
-    std::get<std::vector<vari_value<T>*>>(
-        ChainableStack::instance_->var_zeroing_stacks_)
-        .emplace_back(this);
-    ChainableStack::instance_->var_stack_.emplace_back(this);
-  }
+
 
   /**
    * Initialize the adjoint for this (dependent) variable to 1.
