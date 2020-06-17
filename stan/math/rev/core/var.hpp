@@ -70,9 +70,8 @@ class var_value<T, require_floating_point_t<T>> {
   var_value() : vi_(nullptr) {}
 
   /**
-   * Construct a variable from the specified arithmetic type argument
-   * by constructing a new `vari_value<value_type>`. For integral types the
-   * `vari_value<value_type>` will hold doubles. This constructor is only valid
+   * Construct a variable from the specified floating point argument
+   * by constructing a new `vari_value<value_type>`. This constructor is only valid
    * when `S` is convertible to this `vari_value`'s `value_type`.
    * @tparam S A type that is convertible to `value_type`.
    * @param x Value of the variable.
