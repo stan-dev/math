@@ -305,7 +305,8 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @throw <code>std::system_error</code> if the memory on the device could not
    * be allocated
    */
-  template <typename Mat, require_eigen_t<Mat>* = nullptr, require_vt_same<Mat, T>* = nullptr>
+  template <typename Mat, require_eigen_t<Mat>* = nullptr,
+            require_vt_same<Mat, T>* = nullptr>
   explicit matrix_cl(Mat&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {

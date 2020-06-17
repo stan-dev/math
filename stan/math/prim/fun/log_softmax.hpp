@@ -40,7 +40,8 @@ namespace math {
  * Note: The return must be evaluated otherwise the Ref object falls out
  * of scope
  */
-template <typename Container, require_arithmetic_t<scalar_type_t<Container>>* = nullptr>
+template <typename Container,
+          require_arithmetic_t<scalar_type_t<Container>>* = nullptr>
 inline auto log_softmax(const Container& x) {
   return apply_vector_unary<Container>::apply(x, [](const auto& v) {
     const Eigen::Ref<const plain_type_t<decltype(v)>>& v_ref = v;
