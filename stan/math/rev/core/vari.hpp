@@ -29,7 +29,7 @@ class vari_base {
   * on which it depends.
   */
   virtual void chain(){}
-  virtual ~vari_base {}
+  virtual ~vari_base() {};
 };
 /**
  * The variable implementation base class.
