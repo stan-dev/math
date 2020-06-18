@@ -52,6 +52,10 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(const T_y& y,
   static const char* function = "beta_proportion_lccdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Precision parameter", kappa);
+  if (size_zero(y, mu, kappa)) {
+    return 0;
+  }
+
   T_y_ref y_ref = y;
   T_mu_ref mu_ref = mu;
   T_kappa_ref kappa_ref = kappa;
@@ -59,10 +63,6 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(const T_y& y,
   check_less(function, "Location parameter", mu_ref, 1.0);
   check_positive_finite(function, "Precision parameter", kappa_ref);
   check_bounded(function, "Random variable", y_ref, 0.0, 1.0);
-
-  if (size_zero(y, mu, kappa)) {
-    return 0;
-  }
 
   T_partials_return ccdf_log(0.0);
   operands_and_partials<T_y_ref, T_mu_ref, T_kappa_ref> ops_partials(

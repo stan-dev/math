@@ -9,6 +9,7 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
@@ -45,6 +46,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
                                                        const T_loc& mu,
                                                        const T_prec& kappa) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_prec>;
+  using T_partials_return_kappa = return_type_t<T_prec>;
   using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
   using std::log;
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
@@ -56,6 +58,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   if (size_zero(y, mu, kappa)) {
     return 0;
   }
+
   T_y_ref y_ref = y;
   T_mu_ref mu_ref = mu;
   T_kappa_ref kappa_ref = kappa;
@@ -66,7 +69,8 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
 
   const auto& y_arr = as_array_or_scalar(y_col);
   const auto& mu_arr = as_array_or_scalar(mu_col);
-  const auto& kappa_arr = as_array_or_scalar(kappa_col);
+  const auto& kappa_arr
+      = promote_scalar<T_partials_return_kappa>(as_array_or_scalar(kappa_col));
 
   ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
   ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
@@ -81,16 +85,14 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
     return 0;
   }
 
-  T_partials_return logp(0);
-  operands_and_partials<T_y_ref, T_mu_ref, T_kappa_ref> ops_partials(
-      y_ref, mu_ref, kappa_ref);
-
-  auto log_y = to_ref_if<!is_constant_all<T_loc, T_prec>::value>(log(y_val));
-  auto log1m_y
+  const auto& log_y
+      = to_ref_if<!is_constant_all<T_loc, T_prec>::value>(log(y_val));
+  const auto& log1m_y
       = to_ref_if<!is_constant_all<T_loc, T_prec>::value>(log1m(y_val));
-  auto mukappa = to_ref(mu_val * kappa_val);
+  const auto& mukappa = to_ref(mu_val * kappa_val);
 
   size_t N = max_size(y, mu, kappa);
+  T_partials_return logp(0);
   if (include_summand<propto, T_prec>::value) {
     logp += sum(lgamma(kappa_val)) * N / size(kappa);
   }
@@ -100,6 +102,8 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   }
   logp += sum((mukappa - 1) * log_y + (kappa_val - mukappa - 1) * log1m_y);
 
+  operands_and_partials<T_y_ref, T_mu_ref, T_kappa_ref> ops_partials(
+      y_ref, mu_ref, kappa_ref);
   if (!is_constant_all<T_y>::value) {
     if (is_vector<T_y>::value) {
       ops_partials.edge1_.partials_ = forward_as<T_partials_array>(

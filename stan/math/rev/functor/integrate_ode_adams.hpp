@@ -21,9 +21,9 @@ integrate_ode_adams(const F& f, const std::vector<T_initial>& y0,
                     double absolute_tolerance = 1e-10,
                     long int max_num_steps = 1e8) {  // NOLINT(runtime/int)
   stan::math::cvodes_integrator<CV_ADAMS> integrator;
-  return integrator.integrate(f, y0, t0, ts, theta, x, x_int, msgs,
-                              relative_tolerance, absolute_tolerance,
-                              max_num_steps);
+  return integrator.integrate("integrate_ode_adams", f, y0, t0, ts, theta, x,
+                              x_int, msgs, relative_tolerance,
+                              absolute_tolerance, max_num_steps);
 }
 
 }  // namespace math
