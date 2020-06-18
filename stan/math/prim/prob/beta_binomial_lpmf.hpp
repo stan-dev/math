@@ -50,6 +50,9 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
                          "Population size parameter", N,
                          "First prior sample size parameter", alpha,
                          "Second prior sample size parameter", beta);
+  if (size_zero(n, N, alpha, beta)) {
+    return 0.0;
+  }
 
   T_N_ref N_ref = N;
   T_alpha_ref alpha_ref = alpha;
@@ -60,9 +63,6 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
   check_positive_finite(function, "Second prior sample size parameter",
                         beta_ref);
 
-  if (size_zero(n, N, alpha, beta)) {
-    return 0.0;
-  }
   if (!include_summand<propto, T_size1, T_size2>::value) {
     return 0.0;
   }
