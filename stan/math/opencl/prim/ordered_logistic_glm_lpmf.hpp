@@ -123,8 +123,8 @@ return_type_t<T_beta, T_cuts> ordered_logistic_glm_lpmf(
                  from_matrix_cl(x_cl));
   }
 
-  operands_and_partials<T_beta_ref, T_cuts_ref> ops_partials(
-      beta_ref, cuts_ref);
+  operands_and_partials<T_beta_ref, T_cuts_ref> ops_partials(beta_ref,
+                                                             cuts_ref);
   if (!is_constant_all<T_beta>::value) {
     ops_partials.edge1_.partials_
         = from_matrix_cl<1, Dynamic>(location_derivative_cl * x_cl);

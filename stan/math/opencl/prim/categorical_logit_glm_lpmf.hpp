@@ -118,8 +118,8 @@ return_type_t<T_alpha, T_beta> categorical_logit_glm_lpmf(
                  from_matrix_cl(x_cl));
   }
 
-  operands_and_partials<T_alpha_ref, T_beta_ref> ops_partials(
-      alpha_ref, beta_ref);
+  operands_and_partials<T_alpha_ref, T_beta_ref> ops_partials(alpha_ref,
+                                                              beta_ref);
   if (!is_constant_all<T_alpha>::value) {
     ops_partials.edge1_.partials_
         = from_matrix_cl(alpha_derivative_cl).colwise().sum();
