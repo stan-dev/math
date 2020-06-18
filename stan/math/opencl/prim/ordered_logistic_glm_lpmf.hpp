@@ -53,6 +53,8 @@ return_type_t<T_beta, T_cuts> ordered_logistic_glm_lpmf(
   using Eigen::VectorXd;
   using std::isfinite;
   using T_partials_return = partials_return_t<T_beta, T_cuts>;
+  using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
+  using T_cuts_ref = ref_type_if_t<!is_constant<T_cuts>::value, T_cuts>;
 
   static const char* function = "ordered_logistic_glm_lpmf";
 
@@ -65,13 +67,14 @@ return_type_t<T_beta, T_cuts> ordered_logistic_glm_lpmf(
                      "y_cl", y_cl.size());
   }
   check_consistent_size(function, "Weight vector", beta, N_attributes);
-  const auto& cuts_ref = to_ref(cuts);
-  check_ordered(function, "Cut-points", cuts_ref);
+  T_cuts_ref cuts_ref = cuts;
+  const auto& cuts_val = to_ref_for_opencl(value_of_rec(cuts_ref));
+  check_ordered(function, "Cut-points", cuts_val);
   if (N_classes > 1) {
     if (N_classes > 2) {
-      check_finite(function, "Final cut-point", cuts_ref[N_classes - 2]);
+      check_finite(function, "Final cut-point", cuts_val[N_classes - 2]);
     }
-    check_finite(function, "First cut-point", cuts_ref[0]);
+    check_finite(function, "First cut-point", cuts_val[0]);
   }
 
   if (N_instances == 0 || N_classes == 1) {
@@ -81,13 +84,9 @@ return_type_t<T_beta, T_cuts> ordered_logistic_glm_lpmf(
     return 0;
   }
 
-  const auto& beta_ref = to_ref_if<!is_constant<T_beta>::value>(beta);
-
+  T_beta_ref beta_ref = beta;
   const auto& beta_val = value_of_rec(beta_ref);
-  const auto& cuts_val = value_of_rec(cuts_ref);
 
-  operands_and_partials<decltype(beta_ref), decltype(cuts_ref)> ops_partials(
-      beta_ref, cuts_ref);
   const int local_size
       = opencl_kernels::ordered_logistic_glm.get_option("LOCAL_SIZE_");
   const int wgs = (N_instances + local_size - 1) / local_size;
@@ -124,6 +123,8 @@ return_type_t<T_beta, T_cuts> ordered_logistic_glm_lpmf(
                  from_matrix_cl(x_cl));
   }
 
+  operands_and_partials<T_beta_ref, T_cuts_ref> ops_partials(
+      beta_ref, cuts_ref);
   if (!is_constant_all<T_beta>::value) {
     ops_partials.edge1_.partials_
         = from_matrix_cl<1, Dynamic>(location_derivative_cl * x_cl);
