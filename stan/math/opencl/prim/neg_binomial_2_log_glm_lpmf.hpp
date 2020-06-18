@@ -61,7 +61,8 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   using T_partials_return = partials_return_t<T_alpha, T_beta, T_precision>;
   using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
   using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
-  using T_phi_ref = ref_type_if_t<!is_constant<T_precision>::value, T_precision>;
+  using T_phi_ref
+      = ref_type_if_t<!is_constant<T_precision>::value, T_precision>;
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
