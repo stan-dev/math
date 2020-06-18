@@ -3,6 +3,7 @@
 #include <test/unit/math/prim/functor/utils_threads.hpp>
 #include <gtest/gtest.h>
 
+// tests with deprecated STAN_NUM_THREADS env. variable
 TEST(get_num_threads, correct_values) {
   set_n_threads("10");
   EXPECT_EQ(stan::math::internal::get_num_threads(), 10);
