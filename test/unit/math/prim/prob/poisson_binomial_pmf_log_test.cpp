@@ -3,11 +3,10 @@
 #include <vector>
 
 
-using stan::math::poisson_binomial_lpmf;
-using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
-using mat = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
-
 TEST(ProbDistributionsPoissonBinomial, lpmf_works_on_scalar_arguments) {
+  using stan::math::poisson_binomial_lpmf;
+  using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
+
   vec p(3, 1);
   p << 0.5, 0.2, 0.7;
 
@@ -18,6 +17,9 @@ TEST(ProbDistributionsPoissonBinomial, lpmf_works_on_scalar_arguments) {
 }
 
 TEST(ProbDistributionsPoissonBinomial, lpmf_works_on_vectorial_y) {
+  using stan::math::poisson_binomial_lpmf;
+  using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
+
   vec p(3, 1);
   p << 0.5, 0.2, 0.7;
   std::vector<int> y{2, 2};
@@ -26,6 +28,9 @@ TEST(ProbDistributionsPoissonBinomial, lpmf_works_on_vectorial_y) {
 }
 
 TEST(ProbDistributionsPoissonBinomial, lpmf_works_on_vectorial_y_and_theta) {
+  using stan::math::poisson_binomial_lpmf;
+  using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
+
   vec p(3, 1);
   p << 0.5, 0.2, 0.7;
   std::vector<int> y{2, 0};

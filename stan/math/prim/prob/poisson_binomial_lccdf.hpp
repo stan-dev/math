@@ -15,6 +15,7 @@
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/poisson_binomial_log_probs.hpp>
 
+
 namespace stan {
 namespace math {
 
@@ -23,6 +24,7 @@ namespace math {
  * Returns the log CCDF for the Poisson-binomial distribution evaluated at the
  * specified number of successes and probabilities of successes.
  *
+ * @tparam T_y type of number of succeses parameter
  * @tparam T_theta type of chance of success parameters
  * @param y array of numbers of successes
  * @param theta array of chances of success parameters
@@ -31,104 +33,33 @@ namespace math {
  * @throw std::domain_error if theta is not a valid vector of probabilities
  * @throw std::invalid_argument If y and theta are different lengths
  */
-template <bool propto, typename T_theta>
+template<bool propto, typename T_y, typename T_theta>
+return_type_t<T_theta> poisson_binomial_lccdf(const T_y &y, const T_theta &theta) {
+  static const char *function = "poisson_binomial_lccdf";
+
+  int size_theta = size_mvt(theta);
+  if (size_theta > 1) {
+    check_consistent_sizes(function, "Successes variables", y,
+                           "Probability parameters", theta);
+  }
+
+  int max_sz = max_size(y, size_theta);
+  scalar_seq_view<T_y> y_vec(y);
+  vector_seq_view < T_theta > theta_vec(theta);
+
+  for (int i = 0; i < max_sz; ++i) {
+    check_bounded(function, "Successes variable", y_vec[i], 0, theta_vec[i].size());
+    check_finite(function, "Probability parameters", theta_vec[i]);
+    check_bounded(function, "Probability parameters", theta_vec[i], 0.0, 1.0);
+  }
+
+  return sum(log1m_exp(log_sum_exp(poisson_binomial_log_probs(y, theta))));
+}
+
+
+template<typename T_y, typename T_theta>
 return_type_t<T_theta> poisson_binomial_lccdf(
-    const std::vector<int>& y, const std::vector< Eigen::Matrix<T_theta, Eigen::Dynamic, 1> >& theta) {
-  static const char* function = "poisson_binomial_lccdf";
-
-  const int sz_theta = theta.size();
-  check_consistent_sizes(function, "Successes variables", y,
-                         "Probability parameters", theta);
-
-  for (int i = 0; i < sz_theta; ++i) {
-    check_bounded(function, "Successes variable", y[i], 0, theta[i].size());
-    check_finite(function, "Probability parameters", theta[i]);
-    check_bounded(function, "Probability parameters", theta[i], 0.0, 1.0);
-  }
-
-  T_theta P = 0.0;
-  for (int i = 0; i < sz_theta; ++i) {
-    auto alpha = poisson_binomial_log_probs(y[i], theta[i]);
-    std::vector<T_theta> Pi(y[i] + 1);
-    for (int j = 0; j <= y[i]; ++j) {
-      Pi[j] = alpha(j);
-    }
-    P += log1m_exp(log_sum_exp(Pi));
-  }
-
-  return P;
-}
-
-template <typename T_theta>
-return_type_t<T_theta> poisson_binomial_lccdf(
-    const std::vector<int>& y, const std::vector< Eigen::Matrix<T_theta, Eigen::Dynamic, 1> >& theta) {
-  return poisson_binomial_lccdf<false>(y, theta);
-}
-
-/** \ingroup prob_dists
- * Returns the log CCDF for the Poisson-binomial distribution evaluated at the
- * specified number of successes and probabilities of successes.
- *
- * @tparam T_theta type of chance of success parameters
- * @param y array of numbers of successes
- * @param theta chance of success parameters
- * @return sum of log probabilities
- * @throw std::domain_error if y is out of bounds
- * @throw std::domain_error if theta is not a valid vector of probabilities
- */
-template <bool propto, typename T_theta>
-return_type_t<T_theta> poisson_binomial_lccdf(const std::vector<int>& y,
-                                              const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta) {
-  static const char* function = "poisson_binomial_lccdf";
-
-  check_bounded(function, "Successes variable", y, 0, theta.size());
-  check_finite(function, "Probability parameters", theta);
-  check_bounded(function, "Probability parameters", theta, 0.0, 1.0);
-
-  // find largest y and build log-prob matrix only for largest y
-  int max_y = *std::max_element(y.begin(), y.end());
-  auto alpha = poisson_binomial_log_probs(max_y, theta);
-
-  int sz_y = y.size();
-  T_theta P = 0.0;
-  for (int i = 0; i < sz_y; ++i) {
-    std::vector<T_theta> Pi(y[i] + 1);
-    for (int j = 0; j <= y[i]; ++j) {
-      Pi[j] = alpha(j);
-    }
-    P += log1m_exp(log_sum_exp(Pi));
-  }
-
-  return P;
-}
-
-template <typename T_theta>
-inline return_type_t<T_theta> poisson_binomial_lccdf(
-    const std::vector<int>& y, const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta) {
-  return poisson_binomial_lccdf<false>(y, theta);
-}
-
-/** \ingroup prob_dists
- * Returns the log CCDF for the Poisson-binomial distribution evaluated at the
- * specified number of successes and probabilities of successes.
- *
- * @tparam T_theta type of chance of success parameters
- * @param y number of successes
- * @param theta chance of success parameters
- * @return log probability
- * @throw std::domain_error if y is out of bounds
- * @throw std::domain_error if theta is not a valid vector of probabilities
- */
-template <bool propto, typename T_theta>
-return_type_t<T_theta> poisson_binomial_lccdf(int y,
-                                              const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta) {
-  const std::vector<int> ys{y};
-  return poisson_binomial_lccdf<propto>(ys, theta);
-}
-
-template <typename T_theta>
-inline return_type_t<T_theta> poisson_binomial_lccdf(
-    int y, const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta) {
+  const T_y &y, const T_theta &theta) {
   return poisson_binomial_lccdf<false>(y, theta);
 }
 

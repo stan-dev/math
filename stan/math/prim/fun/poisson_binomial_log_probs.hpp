@@ -54,7 +54,8 @@ plain_type_t<T_theta> poisson_binomial_log_probs(int y, const T_theta& theta) {
 
 template <typename T_theta, typename T_scalar = scalar_type_t<T_theta>>
 auto poisson_binomial_log_probs(const std::vector<int>& y, const T_theta& theta) {
-  size_t max_sizes = max_size(y, theta);
+  int size_theta = size_mvt(theta);
+  size_t max_sizes = max_size(y, size_theta);
   std::vector<Eigen::Matrix<T_scalar, Eigen::Dynamic, 1>> result(max_sizes);
   vector_seq_view<T_theta> theta_vec(theta);
 
