@@ -2,7 +2,6 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-
 TEST(ProbDistributionsPoissonBinomial, lccdf_works_on_scalar_arguments) {
   using stan::math::poisson_binomial_lccdf;
   using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
@@ -36,5 +35,5 @@ TEST(ProbDistributionsPoissonBinomial, lccdf_works_on_vectorial_y_and_theta) {
   std::vector<int> y{2, 1};
   std::vector<vec> ps{p, p};
 
-  EXPECT_NEAR(-2.65926 -0.798508, poisson_binomial_lccdf(y, ps), 0.001);
+  EXPECT_NEAR(-2.65926 - 0.798508, poisson_binomial_lccdf(y, ps), 0.001);
 }
