@@ -18,8 +18,9 @@ static EIGEN_STRONG_INLINE void set_zero_all_adjoints() {
   }
   for_each(
       [](auto& x) {
+        using x_type = typename std::decay_t<decltype(x)>::value_type;
         for (auto& xx : x) {
-          xx->set_zero_adjoint();
+          static_cast<x_type>(xx)->set_zero_adjoint();
         }
       },
       ChainableStack::instance_->var_zeroing_stacks_);

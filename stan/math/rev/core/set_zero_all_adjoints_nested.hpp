@@ -24,7 +24,7 @@ static EIGEN_STRONG_INLINE void set_zero_all_adjoints_nested() {
         "empty_nested() must be false before calling"
         " set_zero_all_adjoints_nested()");
   }
-  size_t start1 = ChainableStack::instance_->nested_var_stack_sizes_.back();
+  const size_t start1 = ChainableStack::instance_->nested_var_stack_sizes_.back();
   // avoid wrap with unsigned when start1 == 0
   for (size_t i = (start1 == 0U) ? 0U : (start1 - 1);
        i < ChainableStack::instance_->var_stack_.size(); ++i) {
@@ -32,11 +32,12 @@ static EIGEN_STRONG_INLINE void set_zero_all_adjoints_nested() {
   }
   for_each(
       [](auto& x, auto& x_size) {
-        size_t start2 = x_size.size();
+        using x_type = typename std::decay_t<decltype(x)>::value_type;
+        const size_t start2 = x_size.size();
         const auto stack_size = x.size();
         for (size_t i = (start2 == 0U) ? 0U : (start2 - 1); i < stack_size;
              ++i) {
-          x[i]->set_zero_adjoint();
+          static_cast<x_type>(x[i])->set_zero_adjoint();
         }
       },
       ChainableStack::instance_->var_zeroing_stacks_,
