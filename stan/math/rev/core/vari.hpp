@@ -29,6 +29,7 @@ class vari_base {
    * on which it depends.
    */
   virtual void chain() {}
+  virtual void set_zero_adjoint() {}
   virtual ~vari_base() {}
 };
 /**
@@ -81,9 +82,6 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
   template <typename S,
             std::enable_if_t<std::is_convertible<S&, Scalar>::value>* = nullptr>
   vari_value(S x) noexcept : val_(x), adj_(0.0) {  // NOLINT
-    std::get<std::vector<vari_value<T>*>>(
-        ChainableStack::instance_->var_zeroing_stacks_)
-        .emplace_back(this);
     ChainableStack::instance_->var_stack_.emplace_back(this);
   }
 
@@ -107,11 +105,12 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
   template <typename S,
             std::enable_if_t<std::is_convertible<S&, Scalar>::value>* = nullptr>
   vari_value(S x, bool stacked) noexcept : val_(x), adj_(0.0) {
-    std::get<std::vector<vari_value<T>*>>(
-        ChainableStack::instance_->var_zeroing_stacks_)
-        .emplace_back(this);
     if (stacked) {
       ChainableStack::instance_->var_stack_.emplace_back(this);
+    } else {
+      std::get<std::vector<vari_value<T>*>>(
+          ChainableStack::instance_->var_zeroing_stacks_)
+          .emplace_back(this);
     }
   }
 
@@ -121,9 +120,6 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
    * @param x A vari_value
    */
   vari_value(const vari_value<T>& x) noexcept : val_(x.val_), adj_(x.adj_) {
-    std::get<std::vector<vari_value<T>*>>(
-        ChainableStack::instance_->var_zeroing_stacks_)
-        .emplace_back(this);
     ChainableStack::instance_->var_stack_.emplace_back(this);
   }
 
@@ -140,7 +136,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  inline void set_zero_adjoint() noexcept { adj_ = 0.0; }
+  inline void set_zero_adjoint() noexcept final { adj_ = 0.0; }
 
   /**
    * Insertion operator for vari. Prints the current value and
