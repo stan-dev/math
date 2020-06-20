@@ -17,7 +17,11 @@ namespace math {
 static inline void start_nested() {
   ChainableStack::instance_->nested_var_stack_sizes_.push_back(
       ChainableStack::instance_->var_stack_.size());
-  for_each([](auto& x, auto& y) { x.push_back(y.size()); },
+  for_each([](auto& x, auto& y) {
+    if (y.size() > 0) {
+      x.push_back(y.size());
+    }
+  },
            ChainableStack::instance_->nested_var_zeroing_stack_sizes_,
            ChainableStack::instance_->var_zeroing_stacks_);
   ChainableStack::instance_->nested_var_alloc_stack_starts_.push_back(

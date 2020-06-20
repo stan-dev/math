@@ -113,7 +113,7 @@ struct AutodiffStackSingleton {
     // nested positions
     std::vector<size_t> nested_var_stack_sizes_;
     std::array<std::vector<size_t>, std::tuple_size<ZeroingT>::value>
-        nested_var_zeroing_stack_sizes_{std::vector<size_t>{1, 0}};
+        nested_var_zeroing_stack_sizes_;
     std::vector<size_t> nested_var_alloc_stack_starts_;
   };
 
