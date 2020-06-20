@@ -217,11 +217,6 @@ class vari_value<T, std::enable_if_t<is_eigen<T>::value>> : public vari_base {
   using value_type = T;
   using PlainObject = plain_type_t<T>;
   using eigen_map = Eigen::Map<PlainObject>;
-  const Eigen::Index rows_;
-  const Eigen::Index cols_;
-  const Eigen::Index size_;
-  const Eigen::Index RowsAtCompileTime = T::RowsAtCompileTime;
-  const Eigen::Index ColsAtCompileTime = T::ColsAtCompileTime;
   /**
    * The value of this variable.
    */
@@ -245,33 +240,18 @@ class vari_value<T, std::enable_if_t<is_eigen<T>::value>> : public vari_base {
    *
    * @param x Value of the constructed variable.
    */
-  explicit vari_value(const T& x)
+  template <typename Derived>
+  vari_value(const Eigen::MatrixBase<Derived>& x, bool stacked)
       : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
         adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
-        rows_(x.rows()),
-        cols_(x.cols()),
-        size_(x.size()),
         val_(val_mem_, x.rows(), x.cols()),
         adj_(adj_mem_, x.rows(), x.cols()) {
     val_ = x;
-    adj_.setZero();
-    ChainableStack::instance_->var_stack_.push_back(this);
-  }
 
-  vari_value(const T& x, bool stacked)
-      : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-            x.size())),
-        adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-            x.size())),
-        rows_(x.rows()),
-        cols_(x.cols()),
-        size_(x.size()),
-        val_(val_mem_, x.rows(), x.cols()),
-        adj_(adj_mem_, x.rows(), x.cols()) {
-    val_ = x;
-    adj_.setZero();
+    set_zero_adjoint();
+
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
     } else {
@@ -279,9 +259,10 @@ class vari_value<T, std::enable_if_t<is_eigen<T>::value>> : public vari_base {
     }
   }
 
-  const Eigen::Index rows() const { return rows_; }
-  const Eigen::Index cols() const { return cols_; }
-  const Eigen::Index size() const { return size_; }
+  template <typename Derived>
+  explicit vari_value(const Eigen::MatrixBase<Derived>& x) : vari_value(x, true) {
+  }
+
 
   /**
    * Initialize the adjoint for this (dependent) variable to 1.
@@ -289,14 +270,16 @@ class vari_value<T, std::enable_if_t<is_eigen<T>::value>> : public vari_base {
    * propagating derivatives, setting the derivative of the
    * result with respect to itself to be 1.
    */
-  void init_dependent() final { adj_.setOnes(); }
+  inline void init_dependent() final { adj_.setOnes(); }
 
   /**
    * Set the adjoint value of this variable to 0.  This is used to
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  void set_zero_adjoint() final { adj_.setZero(); }
+  inline void set_zero_adjoint() final {
+    std::memset(adj_mem_, 0, adj_.size() * sizeof(eigen_scalar));
+  }
 
   /**
    * Insertion operator for vari. Prints the current value and

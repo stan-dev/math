@@ -109,7 +109,7 @@ class sum_vari : public vari {
 
 template <int R, int C>
 inline var sum(const var_value<Eigen::Matrix<double, R, C>>& x) {
-  return {new sum_vari<R, C>(x.vi_)};
+  return { new sum_vari<R, C>(x.vi_) };
 }
 
 inline var sum(var_value<double> x) { return x; }

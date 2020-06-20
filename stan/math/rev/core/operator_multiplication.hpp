@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_CORE_OPERATOR_MULTIPLICATION_HPP
 #define STAN_MATH_REV_CORE_OPERATOR_MULTIPLICATION_HPP
 
+#include <iostream>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/rev/core/var.hpp>
@@ -161,7 +162,7 @@ struct OpMultiplyScalarScalar {
   double b_;
 
   template <std::size_t size>
-  double operator()(const std::array<bool, size>& needs_adj,
+  inline double operator()(const std::array<bool, size>& needs_adj,
 		    double a,
 		    double b) {
     a_ = a;
@@ -171,15 +172,16 @@ struct OpMultiplyScalarScalar {
   }
 
   template <std::size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
+  inline std::tuple<double, double> multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
                                  double adj) {
-    return std::make_tuple(adj * b_, adj * a_);
+    return { adj * b_, adj * a_ };
   }
 };
 
 struct OpMultiplyMatrixScalar {
   int N_;
   int M_;
+  double* work_mem_;
   double* x_mem_;
   double b_;
 
@@ -193,6 +195,10 @@ struct OpMultiplyMatrixScalar {
     N_ = x.rows();
     M_ = x.cols();
 
+    if(needs_adj[0]) {
+      work_mem_ = stan::math::ChainableStack::instance_->memalloc_.alloc_array<double>(N_ * M_);
+    }
+    
     if(needs_adj[1]) {
       x_mem_
         = stan::math::ChainableStack::instance_->memalloc_.alloc_array<double>(N_ * M_);
@@ -210,20 +216,28 @@ struct OpMultiplyMatrixScalar {
   template <std::size_t size, typename Derived>
   auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
                                  const Eigen::MatrixBase<Derived>& adj) {
+<<<<<<< HEAD
     Eigen::MatrixXd adja;
+=======
+    Eigen::Map<Eigen::MatrixXd> adja(work_mem_, N_, M_);
+>>>>>>> 04fa972ce410a5ad16ecfe1d994541eed58e2c79
     double adjb = 0.0;
 
     if(needs_adj[0]) {
-      adja.resize(N_, M_);
-      adja = adj * b_;
-    }
-    
-    if(needs_adj[1]) {
-      Eigen::Map<Eigen::MatrixXd> x(x_mem_, N_, M_);
-      for(size_t i = 0; i < N_ * M_; ++i)
-	adjb += x(i) * adj(i);
+      for(size_t i = 0; i < adj.size(); ++i)      
+	adja.coeffRef(i) = adj.coeff(i) * b_;
     }
 
+    if(needs_adj[1]) {
+      Eigen::Map<Eigen::MatrixXd> x(x_mem_, N_, M_);
+<<<<<<< HEAD
+      for(size_t i = 0; i < N_ * M_; ++i)
+=======
+      for(size_t i = 0; i < x.size(); ++i)
+>>>>>>> 04fa972ce410a5ad16ecfe1d994541eed58e2c79
+	adjb += x(i) * adj(i);
+    }
+    
     return std::make_tuple(adja, adjb);
   }
 };
@@ -329,7 +343,7 @@ struct OpMultiplyMatrixMatrix {
       adjB = A.transpose() * adj;
     }
 
-    return std::make_tuple(adjA, adjB);
+    return std::forward_as_tuple(adjA, adjB);
   }
 };
 
