@@ -50,8 +50,8 @@ SUNDIALS_KINSOL := $(patsubst %.c,%.o, \
 SUNDIALS_NVECSERIAL := $(patsubst %.c,%.o,\
   $(addprefix $(SUNDIALS)/src/, nvector/serial/nvector_serial.c sundials/sundials_math.c))
 
-$(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL)) : CXXFLAGS = $(CXXFLAGS_SUNDIALS) $(CXXFLAGS_OS) -O$(O) $(INC_SUNDIALS)
-$(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL)) : CPPFLAGS = $(CPPFLAGS_SUNDIALS) $(CPPFLAGS_OS)
+$(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL)) : CXXFLAGS = $(CXXFLAGS_SUNDIALS) $(CXXFLAGS_OS) -O$(O) $(INC_SUNDIALS) $(CXXFLAGS_FLTO)
+$(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL)) : CPPFLAGS = $(CPPFLAGS_SUNDIALS) $(CPPFLAGS_OS) $(CXXFLAGS_FLTO)
 $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL)) : %.o : %.c
 	@mkdir -p $(dir $@)
 	$(COMPILE.cpp) -x c -include $(SUNDIALS)/include/stan_sundials_printf_override.hpp $< $(OUTPUT_OPTION)
@@ -146,7 +146,7 @@ $(TBB_BIN)/tbb.def: $(TBB_BIN)/tbb-make-check $(TBB_BIN)/tbbmalloc.def
 
 $(TBB_BIN)/tbbmalloc.def: $(TBB_BIN)/tbb-make-check
 	@mkdir -p $(TBB_BIN)
-	tbb_root="$(TBB_RELATIVE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS='$(LDFLAGS_TBB)' $(MAKE) -C "$(TBB_BIN)" -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" compiler=$(TBB_CXX_TYPE) cfg=release stdver=c++1y malloc
+	tbb_root="$(TBB_RELATIVE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" CXXFLAGS='$(CXXFLAGS_FLTO) -O3' LDFLAGS='$(LDFLAGS_TBB) $(CXXFLAGS_FLTO)' $(MAKE) -C "$(TBB_BIN)" -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" compiler=$(TBB_CXX_TYPE) cfg=release stdver=c++1y malloc
 
 $(TBB_BIN)/libtbb.dylib: $(TBB_BIN)/tbb.def
 $(TBB_BIN)/libtbbmalloc.dylib: $(TBB_BIN)/tbbmalloc.def
