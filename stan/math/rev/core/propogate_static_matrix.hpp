@@ -20,6 +20,10 @@ class from_static_vari : public vari_base {
                    vari** output_vis)
       : N_(N), input_vi_(input_vi), output_vis_(output_vis) {}
   void chain() {
+    /*input_vi_->adj_ +=
+      Eigen::Map<Eigen::Matrix<vari*, R, C>>(output_vis_,
+					     input_vi_->adj_.rows(),
+					     input_vi_->adj_.cols()).adj_();*/
     for (size_t n = 0; n < N_; ++n) {
       input_vi_->adj_(n) += output_vis_[n]->adj_;
     }
@@ -37,6 +41,10 @@ class to_static_vari : public vari_base {
                  vari_value<Eigen::Matrix<double, R, C>>* output_vi)
       : N_(N), input_vis_(input_vis), output_vi_(output_vi) {}
   void chain() {
+    /*Eigen::Map<Eigen::Matrix<vari*, R, C>>(input_vis_,
+					   output_vi_->adj_.rows(),
+					   output_vi_->adj_.cols()).adj_() +=
+					   output_vi_->adj_;*/
     for (size_t n = 0; n < N_; ++n) {
       input_vis_[n]->adj_ += output_vi_->adj_(n);
     }

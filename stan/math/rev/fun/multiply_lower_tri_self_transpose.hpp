@@ -41,7 +41,7 @@ struct OpLLT : public AdjJacOp {
     Eigen::MatrixXd adjL = (adj.transpose() + adj) * L;
 
     for(size_t j = 1; j < adjL.cols(); ++j)
-      for(size_t i = 0; i < j; ++i)
+      for(size_t i = 0; i < std::min(static_cast<size_t>(adjL.rows()), j); ++i)
 	adjL(i, j) = 0.0;
 
     return std::make_tuple(adjL);

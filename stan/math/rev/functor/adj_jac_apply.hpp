@@ -20,24 +20,31 @@ namespace math {
 class AdjJacOp {
 public:
   template <typename Derived>
-  double* allocate_and_save(const Eigen::EigenBase<Derived>& x) const {
-    double* x_mem_
-      = stan::math::ChainableStack::instance_->memalloc_.alloc_array<double>(x.size());
+  inline double* allocate_and_save(const Eigen::EigenBase<Derived>& x) const {
+    double* x_mem_ = allocate(x);
 
     Eigen::Map<Eigen::MatrixXd>(x_mem_, x.rows(), x.cols()) = x;
 
     return x_mem_;
   }
 
-  Eigen::Map<Eigen::MatrixXd> map_matrix(double* mem, size_t rows, size_t cols) {
+  template <typename Derived>
+  inline double* allocate(const Eigen::EigenBase<Derived>& x) const {
+    double* x_mem_
+      = stan::math::ChainableStack::instance_->memalloc_.alloc_array<double>(x.size());
+
+    return x_mem_;
+  }
+
+  inline Eigen::Map<Eigen::MatrixXd> map_matrix(double* mem, size_t rows, size_t cols) {
     return Eigen::Map<Eigen::MatrixXd>(mem, rows, cols);
   }
 
-  Eigen::Map<Eigen::VectorXd> map_vector(double* mem, size_t rows) {
+  inline Eigen::Map<Eigen::VectorXd> map_vector(double* mem, size_t rows) {
     return Eigen::Map<Eigen::VectorXd>(mem, rows);
   }
 
-  Eigen::Map<Eigen::RowVectorXd> map_row_vector(double* mem, size_t cols) {
+  inline Eigen::Map<Eigen::RowVectorXd> map_row_vector(double* mem, size_t cols) {
     return Eigen::Map<Eigen::RowVectorXd>(mem, cols);
   }
 };
@@ -133,7 +140,7 @@ struct adj_jac_vari : public vari {
 					 vari_value<FReturnType>*>;
   y_vari_type y_vi_;  // vari pointer for output.
   
-  inline void fill_adj_jac() {}
+inline void fill_adj_jac() {}
 
   template <typename Arith, typename... Pargs,
             require_st_arithmetic<Arith>* = nullptr>
@@ -177,7 +184,7 @@ struct adj_jac_vari : public vari {
 
     fill_adj_jac(args...);
   }
-
+  
   explicit adj_jac_vari(const Targs&... args)
     : vari(NOT_A_NUMBER), y_vi_(nullptr), M_(0) {
     fill_adj_jac(args...);
@@ -247,16 +254,17 @@ struct adj_jac_vari : public vari {
   template <int R1, int C1, typename Derived>
   inline void accumulate_adjoints_in_varis_impl
   (vari_value<Eigen::Matrix<double, R1, C1>> *vi, const Eigen::MatrixBase<Derived>& y_adj_jac) {
-    for (int n = 0; n < y_adj_jac.size(); ++n)
-      vi->adj_.coeffRef(n) += y_adj_jac.coeff(n);
+    vi->adj_ += y_adj_jac;
   }
 
-  template <int R, int C>
+  template <typename Derived>
   inline void accumulate_adjoints_in_varis_impl
-  (vari **vis, const Eigen::Matrix<double, R, C>& y_adj_jac) {
-    for (int n = 0; n < y_adj_jac.size(); ++n) {
-      vis[n]->adj_ += y_adj_jac.coeff(n);
-    }
+  (vari **vis, const Eigen::MatrixBase<Derived>& y_adj_jac) {
+    Eigen::Map<
+      Eigen::Matrix<vari*,
+		    Eigen::MatrixBase<Derived>::RowsAtCompileTime,
+		    Eigen::MatrixBase<Derived>::ColsAtCompileTime>>
+      (vis, y_adj_jac.rows(), y_adj_jac.cols()).adj() += y_adj_jac;
   }
 
   inline void accumulate_adjoints_in_varis_impl(vari **vis,
@@ -291,12 +299,8 @@ struct adj_jac_vari : public vari {
    * @param[out] y_adj reference to variable where adjoint is to be stored
    */
   template <typename T>
-  inline auto build_y_adj(vari_value<T>* y_vi, int M) {
+  inline const auto& build_y_adj(vari_value<T>* y_vi, int M) {
     return y_vi->adj_;
-  }
-
-  inline auto build_y_adj(vari* y_vi, int M) {
-    return adj_;
   }
 
   /**

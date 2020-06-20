@@ -24,7 +24,7 @@ namespace stan {
 namespace math {
 namespace internal {
 
-struct OpDotProductEigen {
+struct OpDotProductEigen : AdjJacOp {
   int N_;
   double* a_mem_;
   double* b_mem_;
@@ -40,12 +40,10 @@ struct OpDotProductEigen {
     double ret = 0.0;
 
     if(needs_adj[0])
-      b_mem_
-        = stan::math::ChainableStack::instance_->memalloc_.alloc_array<double>(N_);
+      b_mem_ = allocate(b);
     
     if(needs_adj[1])
-      a_mem_
-        = stan::math::ChainableStack::instance_->memalloc_.alloc_array<double>(N_);
+      a_mem_ = allocate(a);
 
     for (int n = 0; n < N_; ++n) {
       ret += a(n) * b(n);
@@ -63,22 +61,10 @@ struct OpDotProductEigen {
   template <std::size_t size>
   auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
                                  const double& adj) {
-    Eigen::VectorXd adja;
-    Eigen::VectorXd adjb;
+    auto a = map_vector(a_mem_, (needs_adj[1]) ? N_ : 0);
+    auto b = map_vector(b_mem_, (needs_adj[0]) ? N_ : 0);
 
-    if(needs_adj[0]) {
-      Eigen::Map<Eigen::VectorXd> b(b_mem_, N_);
-      adja.resize(N_);
-      adja = adj * b;
-    }
-    
-    if(needs_adj[1]) {
-      Eigen::Map<Eigen::VectorXd> a(a_mem_, N_);
-      adjb.resize(N_);
-      adjb = adj * a;
-    }
-
-    return std::make_tuple(adja, adjb);
+    return std::make_tuple(adj * b, adj * a);
   }
 };
 

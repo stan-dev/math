@@ -216,11 +216,7 @@ struct OpMultiplyMatrixScalar {
   template <std::size_t size, typename Derived>
   auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
                                  const Eigen::MatrixBase<Derived>& adj) {
-<<<<<<< HEAD
-    Eigen::MatrixXd adja;
-=======
     Eigen::Map<Eigen::MatrixXd> adja(work_mem_, N_, M_);
->>>>>>> 04fa972ce410a5ad16ecfe1d994541eed58e2c79
     double adjb = 0.0;
 
     if(needs_adj[0]) {
@@ -230,11 +226,7 @@ struct OpMultiplyMatrixScalar {
 
     if(needs_adj[1]) {
       Eigen::Map<Eigen::MatrixXd> x(x_mem_, N_, M_);
-<<<<<<< HEAD
-      for(size_t i = 0; i < N_ * M_; ++i)
-=======
       for(size_t i = 0; i < x.size(); ++i)
->>>>>>> 04fa972ce410a5ad16ecfe1d994541eed58e2c79
 	adjb += x(i) * adj(i);
     }
     

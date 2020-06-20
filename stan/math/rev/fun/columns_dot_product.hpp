@@ -26,50 +26,34 @@ struct ColumnsDotProductOp : public AdjJacOp {
 	    typename Derived1,
 	    typename Derived2>
   Eigen::RowVectorXd operator()(const std::array<bool, size>& needs_adj,
-				const Eigen::MatrixBase<Derived1>& a_arg,
-				const Eigen::MatrixBase<Derived2>& b_arg) {
-    const auto& a = a_arg.eval();
-    const auto& b = b_arg.eval();
-    
+				const Eigen::MatrixBase<Derived1>& a,
+				const Eigen::MatrixBase<Derived2>& b) {
     N_ = a.rows();
     M_ = a.cols();
 
-    if(needs_adj[0])
+    if(needs_adj[0]) {
       b_mem_ = allocate_and_save(b);
+    }
 
-    if(needs_adj[1])
+    if(needs_adj[1]) {
       a_mem_ = allocate_and_save(a);
+    }
 
     Eigen::RowVectorXd out(M_);
     for(size_t m = 0; m < M_; ++m)
       out(m) = a.col(m).dot(b.col(m));
-    
+ 
     return out;
   }
 
   template <std::size_t size, typename Derived>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
+  decltype(auto) multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
                                  const Eigen::MatrixBase<Derived>& adj) {
-    Eigen::MatrixXd adja;
-    Eigen::MatrixXd adjb;
+    auto a = map_matrix(a_mem_, (needs_adj[1]) ? N_ : 0, M_);
+    auto b = map_matrix(b_mem_, (needs_adj[0]) ? N_ : 0, M_);
 
-    if(needs_adj[0]) {
-      auto b = map_matrix(b_mem_, N_, M_);
-      adja.resize(N_, M_);
-
-      for(size_t m = 0; m < M_; ++m)
-	adja.col(m) = adj(m) * b.col(m);
-    }
-
-    if(needs_adj[1]) {
-      auto a = map_matrix(a_mem_, N_, M_);
-      adjb.resize(N_, M_);
-
-      for(size_t m = 0; m < M_; ++m)
-	adjb.col(m) = adj(m) * a.col(m);
-    }
-
-    return std::make_tuple(adja, adjb);
+    return std::make_tuple(b * adj.asDiagonal(),
+			   a * adj.asDiagonal());
   }
 };
 
