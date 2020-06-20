@@ -54,11 +54,11 @@ ifneq (,$(findstring mingw32-g,$(CXX)))
 endif
 ifneq (,$(findstring gcc,$(CXX)))
   CXX_TYPE ?= gcc
-  CXXFLAGS_FLTO ?= -flto -fuse-linker-plugin
+  CXXFLAGS_FLTO ?= -flto
 endif
 ifneq (,$(findstring g++,$(CXX)))
   CXX_TYPE ?= gcc
-  CXXFLAGS_FLTO ?= -flto -fuse-linker-plugin
+  CXXFLAGS_FLTO ?= -flto
 endif
 CXX_TYPE ?= other
 CXX_MAJOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f1)
