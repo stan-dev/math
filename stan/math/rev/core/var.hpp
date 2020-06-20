@@ -86,7 +86,10 @@ class var_value<T, require_vt_floating_point<T>> {
    * @tparam S A type that is convertible to `value_type`.
    * @param x Value of the variable.
    */
-  template <typename S, require_convertible_t<S&, value_type>* = nullptr>
+  template <typename S,
+	    require_convertible_t<S&, value_type>* = nullptr,
+	    require_not_vt_var<S>* = nullptr,
+	    require_not_var_t<S>* = nullptr>
   var_value(S x) : vi_(new vari_type(x, false)) {}  // NOLINT
 
   /**
@@ -113,8 +116,11 @@ class var_value<T, require_vt_floating_point<T>> {
             require_eigen_vt<std::is_arithmetic, EigenT>* = nullptr>
             var_value(EigenT x) : vi_(new vari_type(x, false)) {}  // NOLINT*/
 
-  template <int R, int C>
-  var_value(const Eigen::Matrix<var_value<double>, R, C>& x);  // NOLINT
+  template <typename S,
+	    require_eigen_vt<is_var, S>* = nullptr,
+	    int R = S::RowsAtCompileTime,
+	    int C = S::ColsAtCompileTime>
+  var_value(const S& x);  // NOLINT
 
   /**
    * Return the value of this variable.
@@ -318,6 +324,10 @@ class var_value<T, require_vt_floating_point<T>> {
     return os << v.val();
   }
 
+  var_value<T>& eval() {
+    return *this;
+  }
+
   template <int R, int C>
   operator Eigen::Matrix<var_value<double>, R, C>();
 };
@@ -326,17 +336,21 @@ class var_value<T, require_vt_floating_point<T>> {
 using var = var_value<double>;
 
 template <typename T>
-template <int R, int C>
-var_value<T, require_vt_floating_point<T>>::var_value(
-    const Eigen::Matrix<var, R, C>& x)
+template <typename S,
+	  require_eigen_vt<is_var, S>*,
+	  int R, int C>
+var_value<T, require_vt_floating_point<T>>::var_value(const S& x)
     : vi_(new vari_value<T>(x.val(), false)) {  // NOLINT
 
-  vari** x_vis_
-      = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
-  Eigen::Map<Eigen::Matrix<vari*, R, C>>(x_vis_, x.rows(), x.cols()) = x.vi();
+  const auto& xv = x.eval();
+  
+  vari** x_vis
+      = ChainableStack::instance_->memalloc_.alloc_array<vari*>(xv.size());
+  Eigen::Map<Eigen::Matrix<vari*, R, C>>
+    (x_vis, x.rows(), x.cols()) = xv.vi();
 
   ChainableStack::instance_->var_stack_.push_back(
-      new to_static_vari<R, C>(x.size(), x_vis_, this->vi_));
+      new to_static_vari<R, C>(x.size(), x_vis, this->vi_));
 }
 
 template <typename T>

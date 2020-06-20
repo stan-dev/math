@@ -12,19 +12,75 @@
 namespace stan {
 namespace math {
 
-template <typename Mat1, typename Mat2,
-          require_all_eigen_t<Mat1, Mat2>* = nullptr,
-          require_any_eigen_vt<is_var, Mat1, Mat2>* = nullptr>
-inline Eigen::Matrix<var, Mat1::RowsAtCompileTime, 1> rows_dot_product(
-    const Mat1& v1, const Mat2& v2) {
-  check_matching_sizes("dot_product", "v1", v1, "v2", v2);
-  Eigen::Matrix<var, Mat1::RowsAtCompileTime, 1> ret(v1.rows(), 1);
-  for (size_type j = 0; j < v1.rows(); ++j) {
-    ret(j) = var(
-        new internal::dot_product_vari<value_type_t<Mat1>, value_type_t<Mat2>>(
-            v1.row(j), v2.row(j)));
+namespace internal {
+
+struct RowsDotProductOp : public AdjJacOp {
+  int N_;
+  int M_;
+  double* a_mem_;
+  double* b_mem_;
+
+  template <std::size_t size,
+	    typename Derived1,
+	    typename Derived2>
+  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
+			     const Eigen::MatrixBase<Derived1>& a_arg,
+			     const Eigen::MatrixBase<Derived2>& b_arg) {
+    const auto& a = a_arg.eval();
+    const auto& b = b_arg.eval();
+    
+    N_ = a.rows();
+    M_ = a.cols();
+
+    if(needs_adj[0])
+      b_mem_ = allocate_and_save(b);
+
+    if(needs_adj[1])
+      a_mem_ = allocate_and_save(a);
+
+    Eigen::VectorXd out(N_);
+    for(size_t n = 0; n < N_; ++n)
+      out(n) = a.row(n).dot(b.row(n));
+    
+    return out;
   }
-  return ret;
+
+  template <std::size_t size, typename Derived>
+  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
+                                 const Eigen::MatrixBase<Derived>& adj) {
+    Eigen::MatrixXd adja;
+    Eigen::MatrixXd adjb;
+
+    if(needs_adj[0]) {
+      auto b = map_matrix(b_mem_, N_, M_);
+      adja.resize(N_, M_);
+
+      for(size_t n = 0; n < N_; ++n)
+	adja.row(n) = adj(n) * b.row(n);
+    }
+
+    if(needs_adj[1]) {
+      auto a = map_matrix(a_mem_, N_, M_);
+      adjb.resize(N_, M_);
+
+      for(size_t n = 0; n < N_; ++n)
+	adjb.row(n) = adj(n) * a.row(n);
+    }
+
+    return std::make_tuple(adja, adjb);
+  }
+};
+
+}
+
+template <typename Mat1, typename Mat2,
+          require_matrix2_t<Mat1>* = nullptr,
+          require_matrix2_t<Mat2>* = nullptr,
+          require_any_var2_t<Mat1, Mat2>* = nullptr>
+inline auto rows_dot_product(const Mat1& v1, const Mat2& v2) {
+  check_matching_sizes("rows_dot_product", "v1", v1, "v2", v2);
+
+  return adj_jac_apply<internal::RowsDotProductOp>(v1, v2);
 }
 
 }  // namespace math

@@ -101,6 +101,42 @@ template <typename T>
 struct scalar_type<T, std::enable_if_t<is_var_value<T>::value>> {
   using type = math::var_value<double>;
 };
+
+template <typename... Targs>
+using require_any_var2 = math::disjunction<
+  is_var<value_type_t<Targs>>...,
+  std::is_same<std::decay_t<Targs>, math::var_value<Eigen::MatrixXd>>...,
+  std::is_same<std::decay_t<Targs>, math::var_value<Eigen::VectorXd>>...,
+  std::is_same<std::decay_t<Targs>, math::var_value<Eigen::RowVectorXd>>...>;
+
+template <typename... Targs>
+using require_any_var2_t = require_t<require_any_var2<Targs...>>;
+
+template <typename T> 
+using require_scalar2_t = require_t<std::is_same<std::decay_t<T>, scalar_type_t<std::decay_t<T>>>>;
+
+template <typename T>
+using require_matrix2 = math::disjunction<is_eigen<T>,
+					  std::is_same<std::decay_t<T>, math::var_value<Eigen::MatrixXd>>,
+					  std::is_same<std::decay_t<T>, math::var_value<Eigen::VectorXd>>,
+					  std::is_same<std::decay_t<T>, math::var_value<Eigen::RowVectorXd>>>;
+
+template <typename T>
+using require_matrix2_t = require_t<require_matrix2<T>>;
+
+template <typename T>
+using require_vector2 = math::disjunction<is_eigen_col_vector<T>,
+					 std::is_same<std::decay_t<T>, math::var_value<Eigen::VectorXd>>>;
+  
+template <typename T>
+using require_vector2_t = require_t<require_vector2<T>>;
+
+template <typename T>
+using require_row_vector2 = math::disjunction<is_eigen_row_vector<T>,
+					     std::is_same<std::decay_t<T>, math::var_value<Eigen::RowVectorXd>>>;
+
+template <typename T>
+using require_row_vector2_t = require_t<require_row_vector2<T>>;
   
 }  // namespace stan
 #endif

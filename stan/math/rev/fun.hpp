@@ -126,6 +126,7 @@
 #include <stan/math/rev/fun/simplex_constrain.hpp>
 #include <stan/math/rev/fun/sin.hpp>
 #include <stan/math/rev/fun/sinh.hpp>
+#include <stan/math/rev/fun/size.hpp>
 #include <stan/math/rev/fun/softmax.hpp>
 #include <stan/math/rev/fun/sqrt.hpp>
 #include <stan/math/rev/fun/square.hpp>

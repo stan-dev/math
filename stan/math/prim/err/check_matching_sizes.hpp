@@ -24,8 +24,8 @@ template <typename T_y1, typename T_y2>
 inline void check_matching_sizes(const char* function, const char* name1,
                                  const T_y1& y1, const char* name2,
                                  const T_y2& y2) {
-  check_size_match(function, "size of ", name1, y1.size(), "size of ", name2,
-                   y2.size());
+  check_size_match(function, "size of ", name1, size(y1), "size of ", name2,
+                   size(y2));
 }
 
 }  // namespace math

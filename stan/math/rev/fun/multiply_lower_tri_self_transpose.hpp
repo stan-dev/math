@@ -11,42 +11,50 @@
 namespace stan {
 namespace math {
 
-inline matrix_v multiply_lower_tri_self_transpose(const matrix_v& L) {
-  // check_square("multiply_lower_tri_self_transpose",
-  // L, "L", (double*)0);
-  int K = L.rows();
-  int J = L.cols();
-  matrix_v LLt(K, K);
-  if (K == 0) {
-    return LLt;
+namespace internal {
+
+struct OpLLT : public AdjJacOp {
+  int N_;
+  int M_;
+  double* l_mem_;
+
+  template <std::size_t size, typename Derived>
+  Eigen::MatrixXd operator()(const std::array<bool, size>& needs_adj,
+			     const Eigen::MatrixBase<Derived>& L_arg) {
+    const auto& L = L_arg.eval();
+    
+    N_ = L.rows();
+    M_ = L.cols();
+
+    l_mem_ = allocate_and_save(L.template triangularView<Eigen::Lower>());
+
+    auto LT = map_matrix(l_mem_, N_, M_).transpose();
+
+    return L.template triangularView<Eigen::Lower>() * LT;
   }
-  // if (K == 1) {
-  //   LLt(0, 0) = L(0, 0) * L(0, 0);
-  //   return LLt;
-  // }
-  int Knz;
-  if (K >= J) {
-    Knz = (K - J) * J + (J * (J + 1)) / 2;
-  } else {  // if (K < J)
-    Knz = (K * (K + 1)) / 2;
+
+  template <std::size_t size, typename Derived>
+  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
+                                 const Eigen::MatrixBase<Derived>& adj) {
+    auto L = map_matrix(l_mem_, N_, M_);
+ 
+    Eigen::MatrixXd adjL = (adj.transpose() + adj) * L;
+
+    for(size_t j = 1; j < adjL.cols(); ++j)
+      for(size_t i = 0; i < j; ++i)
+	adjL(i, j) = 0.0;
+
+    return std::make_tuple(adjL);
   }
-  vari** vs = reinterpret_cast<vari**>(
-      ChainableStack::instance_->memalloc_.alloc(Knz * sizeof(vari*)));
-  int pos = 0;
-  for (int m = 0; m < K; ++m) {
-    for (int n = 0; n < ((J < (m + 1)) ? J : (m + 1)); ++n) {
-      vs[pos++] = L(m, n).vi_;
-    }
-  }
-  for (int m = 0, mpos = 0; m < K; ++m, mpos += (J < m) ? J : m) {
-    LLt(m, m) = var(
-        new internal::dot_self_vari(vs + mpos, (J < (m + 1)) ? J : (m + 1)));
-    for (int n = 0, npos = 0; n < m; ++n, npos += (J < n) ? J : n) {
-      LLt(m, n) = LLt(n, m) = var(new internal::dot_product_vari<var, var>(
-          vs + mpos, vs + npos, (J < (n + 1)) ? J : (n + 1)));
-    }
-  }
-  return LLt;
+};
+
+}
+
+template <typename T,
+	  require_matrix2_t<T>* = nullptr,
+	  require_any_var2_t<T>* = nullptr>
+inline auto multiply_lower_tri_self_transpose(const T& L) {
+  return adj_jac_apply<internal::OpLLT>(L);
 }
 
 }  // namespace math

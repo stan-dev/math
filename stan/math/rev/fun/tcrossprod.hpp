@@ -13,6 +13,38 @@
 namespace stan {
 namespace math {
 
+namespace internal {
+
+struct TCrossProdOp : public AdjJacOp {
+  int N_;
+  int M_;
+  double* x_mem_;
+
+  template <std::size_t size, typename Derived>
+  Eigen::MatrixXd operator()(const std::array<bool, size>& needs_adj,
+			     const Eigen::MatrixBase<Derived>& x_arg) {
+    const auto& x = x_arg.eval();
+    
+    N_ = x.rows();
+    M_ = x.cols();
+
+    x_mem_ = allocate_and_save(x);
+
+    return x * x.transpose();
+  }
+
+  template <std::size_t size, typename Derived>
+  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
+                                 const Eigen::MatrixBase<Derived>& adj) {
+    auto x = map_matrix(x_mem_, N_, M_);
+ 
+    Eigen::MatrixXd adjx = (adj.transpose() + adj) * x;
+
+    return std::make_tuple(adjx);
+  }
+};
+
+}
 /**
  * Returns the result of post-multiplying a matrix by its
  * own transpose.
@@ -21,42 +53,11 @@ namespace math {
  * @param M Matrix to multiply.
  * @return M times its transpose.
  */
-template <typename T, require_eigen_vt<is_var, T>* = nullptr>
-inline Eigen::Matrix<var, T::RowsAtCompileTime, T::RowsAtCompileTime>
-tcrossprod(const T& M) {
-  if (M.rows() == 0) {
-    return {};
-  }
-  // if (M.rows() == 1)
-  //   return M * M.transpose();
-
-  // WAS JUST THIS
-  // matrix_v result(M.rows(), M.rows());
-  // return result.setZero().selfadjointView<Eigen::Upper>().rankUpdate(M);
-
-  Eigen::Matrix<var, T::RowsAtCompileTime, T::RowsAtCompileTime> MMt(M.rows(),
-                                                                     M.rows());
-
-  vari** vs
-      = reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
-          (M.rows() * M.cols()) * sizeof(vari*)));
-  int pos = 0;
-  for (int m = 0; m < M.rows(); ++m) {
-    for (int n = 0; n < M.cols(); ++n) {
-      vs[pos++] = M(m, n).vi_;
-    }
-  }
-  for (int m = 0; m < M.rows(); ++m) {
-    MMt(m, m) = var(new internal::dot_self_vari(vs + m * M.cols(), M.cols()));
-  }
-  for (int m = 0; m < M.rows(); ++m) {
-    for (int n = 0; n < m; ++n) {
-      MMt(m, n) = var(new internal::dot_product_vari<var, var>(
-          vs + m * M.cols(), vs + n * M.cols(), M.cols()));
-      MMt(n, m) = MMt(m, n);
-    }
-  }
-  return MMt;
+template <typename T,
+	  require_matrix2_t<T>* = nullptr,
+	  require_any_var2_t<T>* = nullptr>
+inline auto tcrossprod(const T& M) {
+  return adj_jac_apply<internal::TCrossProdOp>(M);
 }
 
 }  // namespace math

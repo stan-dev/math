@@ -156,15 +156,6 @@ class multiply_vari<VariVal, Arith, Vari, require_vt_arithmetic<Arith>> final
 
 }  // namespace internal
 
-template <typename T> 
-using require_scalar_t = require_t<std::is_same<std::decay_t<T>, scalar_type_t<std::decay_t<T>>>>;
-
-template <typename T>
-using require_matrix_t = require_t<disjunction<is_eigen<T>,
-					       std::is_same<std::decay_t<T>, var_value<Eigen::MatrixXd>>,
-					       std::is_same<std::decay_t<T>, var_value<Eigen::VectorXd>>,
-					       std::is_same<std::decay_t<T>, var_value<Eigen::RowVectorXd>>>>;
-
 struct OpMultiplyScalarScalar {
   double a_;
   double b_;
@@ -193,9 +184,12 @@ struct OpMultiplyMatrixScalar {
   double b_;
 
   template <std::size_t size, typename Derived>
-  Eigen::MatrixXd operator()(const std::array<bool, size>& needs_adj,
-			     const Eigen::MatrixBase<Derived>& x,
-			     double b) {
+  Eigen::Matrix<double,
+		Eigen::MatrixBase<Derived>::RowsAtCompileTime,
+		Eigen::MatrixBase<Derived>::ColsAtCompileTime>
+  operator()(const std::array<bool, size>& needs_adj,
+	     const Eigen::MatrixBase<Derived>& x,
+	     double b) {
     N_ = x.rows();
     M_ = x.cols();
 
@@ -213,9 +207,9 @@ struct OpMultiplyMatrixScalar {
     return x * b;
   }
 
-  template <std::size_t size, int R, int C>
+  template <std::size_t size, typename Derived>
   auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const Eigen::MatrixXd& adj) {
+                                 const Eigen::MatrixBase<Derived>& adj) {
     Eigen::MatrixXd adja;
     double adjb = 0.0;
 
@@ -226,10 +220,59 @@ struct OpMultiplyMatrixScalar {
     
     if(needs_adj[1]) {
       Eigen::Map<Eigen::MatrixXd> x(x_mem_, N_, M_);
-      adjb = x.dot(adj);
+      for(size_t i = 0; i < N_ * M_; ++i)
+	adjb += x(i) * adj(i);
     }
 
     return std::make_tuple(adja, adjb);
+  }
+};
+
+struct OpMultiplyRowVectorVector {
+  int N_;
+  double* A_mem_;
+  double* B_mem_;
+
+  template <std::size_t size, typename Derived1, typename Derived2>
+  double operator()(const std::array<bool, size>& needs_adj,
+		    const Eigen::MatrixBase<Derived1>& A,
+		    const Eigen::MatrixBase<Derived2>& B) {
+    N_ = A.cols();
+
+    if(needs_adj[0]) {
+      B_mem_
+        = stan::math::ChainableStack::instance_->memalloc_.alloc_array<double>(N_);
+
+      Eigen::Map<Eigen::VectorXd>(B_mem_, N_) = B;
+    }
+
+    if(needs_adj[1]) {
+      A_mem_
+        = stan::math::ChainableStack::instance_->memalloc_.alloc_array<double>(N_);
+
+      Eigen::Map<Eigen::VectorXd>(A_mem_, N_) = A;
+    }
+
+    return (A * B)(0, 0);
+  }
+
+  template <std::size_t size>
+  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
+                                 const double& adj) {
+    Eigen::RowVectorXd adjA;
+    Eigen::VectorXd adjB;
+
+    if(needs_adj[0]) {
+      Eigen::Map<Eigen::VectorXd> B(B_mem_, N_);
+      adjA = B * adj;
+    }
+    
+    if(needs_adj[1]) {
+      Eigen::Map<Eigen::RowVectorXd> A(A_mem_, N_);
+      adjB = A * adj;
+    }
+
+    return std::make_tuple(adjA, adjB);
   }
 };
 
@@ -242,9 +285,12 @@ struct OpMultiplyMatrixMatrix {
   double* B_mem_;
 
   template <std::size_t size, typename Derived1, typename Derived2>
-  Eigen::MatrixXd operator()(const std::array<bool, size>& needs_adj,
-			     const Eigen::MatrixBase<Derived1>& A,
-			     const Eigen::MatrixBase<Derived2>& B) {
+  Eigen::Matrix<double,
+		Eigen::MatrixBase<Derived1>::RowsAtCompileTime,
+		Eigen::MatrixBase<Derived2>::ColsAtCompileTime>
+  operator()(const std::array<bool, size>& needs_adj,
+	     const Eigen::MatrixBase<Derived1>& A,
+	     const Eigen::MatrixBase<Derived2>& B) {
     N1_ = A.rows();
     M1_ = A.cols();
     N2_ = B.rows();
@@ -254,18 +300,14 @@ struct OpMultiplyMatrixMatrix {
       B_mem_
         = stan::math::ChainableStack::instance_->memalloc_.alloc_array<double>(N2_ * M2_);
 
-      for (int n = 0; n < N2_ * M2_; ++n) {
-	B_mem_[n] = B(n);
-      }
+      Eigen::Map<Eigen::MatrixXd>(B_mem_, N2_, M2_) = B;
     }
 
     if(needs_adj[1]) {
       A_mem_
         = stan::math::ChainableStack::instance_->memalloc_.alloc_array<double>(N1_ * M1_);
 
-      for (int n = 0; n < N1_ * M1_; ++n) {
-	A_mem_[n] = A(n);
-      }
+      Eigen::Map<Eigen::MatrixXd>(A_mem_, N1_, M1_) = A;
     }
 
     return A * B;
@@ -292,32 +334,42 @@ struct OpMultiplyMatrixMatrix {
 };
 
 template <typename T1, typename T2,
-	  require_scalar_t<T1>...,
-	  require_scalar_t<T2>...,
+	  require_scalar2_t<T1>...,
+	  require_scalar2_t<T2>...,
 	  require_any_var_value_t<T1, T2>...>
 inline auto operator*(const T1& a, const T2& b) {
   return adj_jac_apply<OpMultiplyScalarScalar>(a, b);
 }
 
 template <typename T1, typename T2,
-	  require_matrix_t<T1>...,
-	  require_scalar_t<T2>...,
+	  require_matrix2_t<T1>...,
+	  require_scalar2_t<T2>...,
 	  require_any_var_value_t<T1, T2>...>
 inline auto operator*(const T1& a, const T2& b) {
   return adj_jac_apply<OpMultiplyMatrixScalar>(a, b);
 }
 
 template <typename T1, typename T2,
-	  require_scalar_t<T1>...,
-	  require_matrix_t<T2>...,
+	  require_scalar2_t<T1>...,
+	  require_matrix2_t<T2>...,
 	  require_any_var_value_t<T1, T2>...>
 inline auto operator*(const T1& a, const T2& b) {
   return b * a;
 }
+
+template <typename T1, typename T2,
+	  require_row_vector2_t<T1>...,
+	  require_vector2_t<T2>...,
+	  require_any_var_value_t<T1, T2>...>
+inline auto operator*(const T1& a, const T2& b) {
+  return adj_jac_apply<OpMultiplyRowVectorVector>(a, b);
+}
  
 template <typename T1, typename T2,
-	  require_matrix_t<T1>...,
-	  require_matrix_t<T2>...,
+	  require_matrix2_t<T1>...,
+	  require_matrix2_t<T2>...,
+	  require_t<bool_constant<!bool(conjunction<require_row_vector2<T1>,
+					require_vector2<T2>>::value)>>...,
 	  require_any_var_value_t<T1, T2>...>
 inline auto operator*(const T1& a, const T2& b) {
   return adj_jac_apply<OpMultiplyMatrixMatrix>(a, b);

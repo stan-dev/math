@@ -88,12 +88,13 @@ class sum_eigen_v_vari : public sum_v_vari {
  * @param m Specified matrix or vector.
  * @return Sum of coefficients of matrix.
  */
-template <int R, int C>
-inline var sum(const Eigen::Matrix<var, R, C>& m) {
+template <typename T,
+	  require_eigen_vt<is_var, T>* = nullptr>
+inline var sum(const T& m) {
   if (m.size() == 0) {
     return 0.0;
   }
-  return var(new sum_eigen_v_vari(m));
+  return var(new sum_eigen_v_vari(m.eval()));
 }
 
 template <int R, int C>

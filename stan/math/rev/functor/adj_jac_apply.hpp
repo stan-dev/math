@@ -16,6 +16,32 @@
 
 namespace stan {
 namespace math {
+
+class AdjJacOp {
+public:
+  template <typename Derived>
+  double* allocate_and_save(const Eigen::EigenBase<Derived>& x) const {
+    double* x_mem_
+      = stan::math::ChainableStack::instance_->memalloc_.alloc_array<double>(x.size());
+
+    Eigen::Map<Eigen::MatrixXd>(x_mem_, x.rows(), x.cols()) = x;
+
+    return x_mem_;
+  }
+
+  Eigen::Map<Eigen::MatrixXd> map_matrix(double* mem, size_t rows, size_t cols) {
+    return Eigen::Map<Eigen::MatrixXd>(mem, rows, cols);
+  }
+
+  Eigen::Map<Eigen::VectorXd> map_vector(double* mem, size_t rows) {
+    return Eigen::Map<Eigen::VectorXd>(mem, rows);
+  }
+
+  Eigen::Map<Eigen::RowVectorXd> map_row_vector(double* mem, size_t cols) {
+    return Eigen::Map<Eigen::RowVectorXd>(mem, cols);
+  }
+};
+  
 namespace internal {
 
 /**
@@ -122,9 +148,9 @@ template <typename F, typename... Targs>
 struct adj_jac_vari : public vari {
   // holds whether each input type held a vari_value
   static constexpr std::array<bool, sizeof...(Targs)> is_var_{
-      {is_var_value<scalar_type_t<Targs>>::value...}};
+    {is_var_value<scalar_type_t<Targs>>::value...}};
   using FReturnType =
-    std::decay_t<std::result_of_t<F(decltype(is_var_), decltype(value_of(Targs()))...)>>;
+    std::decay_t<std::result_of_t<F(decltype(is_var_), decltype(value_of(std::declval<Targs>()))...)>>;
 
   F f_;  // Function to be invoked
 
@@ -389,14 +415,18 @@ constexpr std::array<bool, sizeof...(Targs)> adj_jac_vari<F, Targs...>::is_var_;
  * @param args input to the functor
  * @return the result of the specified operation wrapped up in vars
  */
-template <typename T>
+template <typename T,
+	  require_not_eigen_vt<is_var, T>* = nullptr>
 const T& convert_to_whole_matrix(const T& arg) {
   return arg;
 }
 
-template <int R, int C>
-var_value<Eigen::Matrix<double, R, C>> convert_to_whole_matrix(
-    const Eigen::Matrix<var, R, C>& arg) {
+template <typename T,
+	  require_eigen_vt<is_var, T>* = nullptr>
+var_value<Eigen::Matrix<double,
+			T::RowsAtCompileTime,
+			T::ColsAtCompileTime>>
+convert_to_whole_matrix(const T& arg) {
   return arg;
 }
 
@@ -409,7 +439,7 @@ inline auto adj_jac_apply_impl(const Targs&... args) {
 
 template <typename F, typename... Targs>
 inline auto adj_jac_apply(const Targs&... args) {
-  return adj_jac_apply_impl<F>(convert_to_whole_matrix(args)...);
+  return adj_jac_apply_impl<F>(args...);
 }
 
 }  // namespace math
