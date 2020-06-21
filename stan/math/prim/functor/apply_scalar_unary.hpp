@@ -1,10 +1,13 @@
-#ifndef STAN_MATH_PRIM_META_APPLY_SCALAR_UNARY_HPP
-#define STAN_MATH_PRIM_META_APPLY_SCALAR_UNARY_HPP
+#ifndef STAN_MATH_PRIM_FUNCTOR_APPLY_SCALAR_UNARY_HPP
+#define STAN_MATH_PRIM_FUNCTOR_APPLY_SCALAR_UNARY_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta/is_autodiff.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
+#include <stan/math/prim/meta/is_stan_scalar.hpp>
+#include <stan/math/prim/meta/require_generics.hpp>
 #include <utility>
 #include <vector>
 
@@ -78,31 +81,6 @@ struct apply_scalar_unary<F, T, require_eigen_t<T>> {
 
 /**
  * Template specialization for vectorized functions applying to
- * double arguments.
- *
- * @tparam F Type of function defining static apply function.
- */
-template <typename F>
-struct apply_scalar_unary<F, double> {
-  /**
-   * The return type, double.
-   */
-  using return_t = double;
-
-  /**
-   * Apply the function specified by F to the specified argument.
-   * This is defined through a direct application of
-   * <code>F::fun()</code>, which must be defined for double
-   * arguments.
-   *
-   * @param x Argument scalar.
-   * @return Result of applying F to the scalar.
-   */
-  static inline return_t apply(double x) { return F::fun(x); }
-};
-
-/**
- * Template specialization for vectorized functions applying to
  * integer arguments.  Although the argument is integer, the
  * return type is specified as double.  This allows promotion of
  * integers to doubles in vectorized functions, or in containers.
@@ -126,6 +104,31 @@ struct apply_scalar_unary<F, int> {
    * @return Result of applying F to the scalar.
    */
   static inline return_t apply(int x) { return F::fun(static_cast<double>(x)); }
+};
+
+/**
+ * Template specialization for vectorized functions applying to
+ * double arguments.
+ *
+ * @tparam F Type of function defining static apply function.
+ */
+template <typename F>
+struct apply_scalar_unary<F, double> {
+  /**
+   * The return type, double.
+   */
+  using return_t = double;
+
+  /**
+   * Apply the function specified by F to the specified argument.
+   * This is defined through a direct application of
+   * <code>F::fun()</code>, which must be defined for double
+   * arguments.
+   *
+   * @param x Argument scalar.
+   * @return Result of applying F to the scalar.
+   */
+  static inline return_t apply(double x) { return F::fun(x); }
 };
 
 /**

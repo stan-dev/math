@@ -13,7 +13,7 @@
 #include <stan/math/rev/core/operator_addition.hpp>
 #include <stan/math/rev/core/operator_multiplication.hpp>
 #include <stan/math/rev/core/operator_subtraction.hpp>
-#include <stan/math/rev/meta/apply_scalar_unary.hpp>
+#include <stan/math/rev/functor/apply_scalar_unary.hpp>
 #include <complex>
 #include <type_traits>
 
