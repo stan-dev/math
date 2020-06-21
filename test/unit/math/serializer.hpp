@@ -94,7 +94,7 @@ struct deserializer {
    * @return deserialized value with shape and size matching argument
    */
   template <typename U, require_std_vector_t<U>* = nullptr,
-            require_not_std_vector_st<is_complex, U>* = nullptr>
+            require_not_st_complex<U>* = nullptr>
   typename stan::math::promote_scalar_type<T, U>::type read(const U& x) {
     typename stan::math::promote_scalar_type<T, U>::type y;
     y.reserve(x.size());
