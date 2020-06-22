@@ -66,7 +66,7 @@ inline double lgamma(double x) {
 #else
   if (unlikely(x == 0.0))
     return std::numeric_limits<double>::infinity();
-  return boost::math::lgamma(x, boost_policy_t());
+  return boost::math::lgamma(x, boost_policy_t<>());
 #endif
 }
 
@@ -85,7 +85,7 @@ inline double lgamma(int x) {
 #else
   if (unlikely(x == 0.0))
     return std::numeric_limits<double>::infinity();
-  return boost::math::lgamma(x, boost_policy_t());
+  return boost::math::lgamma(x, boost_policy_t<>());
 #endif
 }
 

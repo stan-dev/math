@@ -41,7 +41,7 @@ namespace math {
  * @return matrix_cl with a copy of the data in the source matrix
  */
 template <typename Mat, typename Mat_scalar = scalar_type_t<Mat>,
-          require_eigen_vt<std::is_arithmetic, Mat>...>
+          require_eigen_vt<std::is_arithmetic, Mat>* = nullptr>
 inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
   return matrix_cl<Mat_scalar>(std::forward<Mat>(src));
 }
@@ -60,7 +60,7 @@ inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
  * @return matrix_cl with a copy of the data in the source matrix
  */
 template <typename Vec, typename Vec_scalar = scalar_type_t<Vec>,
-          require_std_vector_vt<std::is_arithmetic, Vec>...>
+          require_std_vector_vt<std::is_arithmetic, Vec>* = nullptr>
 inline matrix_cl<Vec_scalar> to_matrix_cl(Vec&& src) {
   return matrix_cl<Vec_scalar>(std::forward<Vec>(src));
 }
@@ -158,7 +158,7 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
  */
 template <matrix_cl_view matrix_view, typename Vec,
           typename Vec_scalar = scalar_type_t<Vec>,
-          require_vector_vt<std::is_arithmetic, Vec>...>
+          require_vector_vt<std::is_arithmetic, Vec>* = nullptr>
 inline matrix_cl<Vec_scalar> packed_copy(Vec&& src, int rows) {
   const int packed_size = rows * (rows + 1) / 2;
   check_size_match("copy (packed std::vector -> OpenCL)", "src.size()",

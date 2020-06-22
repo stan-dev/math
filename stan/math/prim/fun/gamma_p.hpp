@@ -72,7 +72,7 @@ inline double gamma_p(double z, double a) {
   }
   check_positive("gamma_p", "first argument (z)", z);
   check_nonnegative("gamma_p", "second argument (a)", a);
-  return boost::math::gamma_p(z, a, boost_policy_t());
+  return boost::math::gamma_p(z, a, boost_policy_t<>());
 }
 
 }  // namespace math

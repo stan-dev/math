@@ -107,7 +107,7 @@ class matrix_cl<T, require_var_t<T>> {
    * @param A an object derived from `Eigen::EigenBase`
    * @param partial_view `matrix_cl_view` for declaring special type.
    */
-  template <typename Mat, require_eigen_st<is_var, Mat>...>
+  template <typename Mat, require_eigen_st<is_var, Mat>* = nullptr>
   explicit matrix_cl(Mat&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()),

@@ -36,7 +36,7 @@ inline bool operator==(var a, var b) { return a.val() == b.val(); }
  * @return True if the first variable's value is the same as the
  * second value.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline bool operator==(var a, Arith b) {
   return a.val() == b;
 }
@@ -50,7 +50,7 @@ inline bool operator==(var a, Arith b) {
  * @param b Second variable.
  * @return True if the variable's value is equal to the scalar.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline bool operator==(Arith a, var b) {
   return a == b.val();
 }

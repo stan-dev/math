@@ -33,7 +33,7 @@ class optional_broadcast_
   using Scalar = typename std::remove_reference_t<T>::Scalar;
   using base
       = operation_cl<optional_broadcast_<T, Colwise, Rowwise>, Scalar, T>;
-  using base::var_name;
+  using base::var_name_;
 
   /**
    * Constructor
@@ -52,7 +52,7 @@ class optional_broadcast_
   }
 
   /**
-   * generates kernel code for this and nested expressions.
+   * Generates kernel code for this and nested expressions.
    * @param row_idx_name  row index variable name
    * @param col_idx_name  column index variable name
    * @param view_handled whether whether caller already handled matrix view
@@ -66,12 +66,12 @@ class optional_broadcast_
                                const std::string& var_name_arg) const {
     kernel_parts res;
     res.body
-        += type_str<Scalar>() + " " + var_name + " = " + var_name_arg + ";\n";
+        += type_str<Scalar>() + " " + var_name_ + " = " + var_name_arg + ";\n";
     if (Colwise) {
-      res.args += "int " + var_name + "is_multirow, ";
+      res.args += "int " + var_name_ + "is_multirow, ";
     }
     if (Rowwise) {
-      res.args += "int " + var_name + "is_multicol, ";
+      res.args += "int " + var_name_ + "is_multicol, ";
     }
     return res;
   }
@@ -84,10 +84,10 @@ class optional_broadcast_
   inline void modify_argument_indices(std::string& row_idx_name,
                                       std::string& col_idx_name) const {
     if (Colwise) {
-      row_idx_name = "(" + row_idx_name + " * " + var_name + "is_multirow)";
+      row_idx_name = "(" + row_idx_name + " * " + var_name_ + "is_multirow)";
     }
     if (Rowwise) {
-      col_idx_name = "(" + col_idx_name + " * " + var_name + "is_multicol)";
+      col_idx_name = "(" + col_idx_name + " * " + var_name_ + "is_multicol)";
     }
   }
 

@@ -40,7 +40,7 @@ class holder_cl_
  public:
   using Scalar = typename std::remove_reference_t<T>::Scalar;
   using base = operation_cl<holder_cl_<T, Ptrs...>, Scalar, T>;
-  using base::var_name;
+  using base::var_name_;
 
  protected:
   std::tuple<std::unique_ptr<Ptrs>...> m_unique_ptrs;
@@ -75,35 +75,6 @@ auto holder_cl(T&& a, Ptrs*... ptrs) {
 
 namespace internal {
 /**
- * Handles single element (moving rvalues to heap) for construction of
- * `holder_cl` from a functor. For lvalues just sets the `res` pointer.
- * @tparam T type of the element
- * @param a element to handle
- * @param res resulting pointer to element
- * @return tuple of pointer allocated on heap (empty).
- */
-template <typename T>
-auto holder_cl_handle_element(const T& a, const T*& res) {
-  res = &a;
-  return std::make_tuple();
-}
-
-/**
- * Handles single element (moving rvalues to heap) for construction of
- * `holder_cl` from a functor. Rvalue is moved to heap and the pointer to heap
- * memory is assigned to res and returned in a tuple.
- * @tparam T type of the element
- * @param a element to handle
- * @param res resulting pointer to element
- * @return tuple of pointer allocated on heap (containing single pointer).
- */
-template <typename T>
-auto holder_cl_handle_element(std::remove_reference_t<T>&& a, const T*& res) {
-  res = new T(std::move(a));
-  return std::make_tuple(res);
-}
-
-/**
  * Second step in implementation of construction `holder_cl` from a functor.
  * @tparam T type of the result expression
  * @tparam Is index sequence for `ptrs`
@@ -114,8 +85,8 @@ auto holder_cl_handle_element(std::remove_reference_t<T>&& a, const T*& res) {
  * @return `holder_cl` referencing given expression
  */
 template <typename T, std::size_t... Is, typename... Args>
-auto make_holder_cl_impl2(T&& expr, std::index_sequence<Is...>,
-                          const std::tuple<Args*...>& ptrs) {
+auto make_holder_cl_impl_step2(T&& expr, std::index_sequence<Is...>,
+                               const std::tuple<Args*...>& ptrs) {
   return holder_cl(std::forward<T>(expr), std::get<Is>(ptrs)...);
 }
 
@@ -129,12 +100,12 @@ auto make_holder_cl_impl2(T&& expr, std::index_sequence<Is...>,
  * @return `holder_cl` referencing given expression
  */
 template <typename T, std::size_t... Is, typename... Args>
-auto make_holder_cl_impl(const T& func, std::index_sequence<Is...>,
-                         Args&&... args) {
-  std::tuple<const std::remove_reference_t<Args>*...> res;
+auto make_holder_cl_impl_step1(const T& func, std::index_sequence<Is...>,
+                               Args&&... args) {
+  std::tuple<std::remove_reference_t<Args>*...> res;
   auto ptrs = std::tuple_cat(
-      holder_cl_handle_element(std::forward<Args>(args), std::get<Is>(res))...);
-  return make_holder_cl_impl2(
+      holder_handle_element(std::forward<Args>(args), std::get<Is>(res))...);
+  return make_holder_cl_impl_step2(
       func(*std::get<Is>(res)...),
       std::make_index_sequence<std::tuple_size<decltype(ptrs)>::value>(), ptrs);
 }
@@ -156,7 +127,7 @@ template <typename T, typename... Args,
               decltype(std::declval<T>()(std::declval<Args&>()...)),
               Args...>* = nullptr>
 auto make_holder_cl(const T& func, Args&&... args) {
-  return internal::make_holder_cl_impl(
+  return internal::make_holder_cl_impl_step1(
       func, std::make_index_sequence<sizeof...(Args)>(),
       std::forward<Args>(args)...);
 }

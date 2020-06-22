@@ -29,7 +29,7 @@ namespace math {
  * @tparam T_scale_fail type of failure parameter
  * @param y (Sequence of) scalar(s) between zero and one
  * @param alpha (Sequence of) success parameter(s)
- * @param beta (Sequence of) failure parameter(s)
+ * @param beta_param (Sequence of) failure parameter(s)
  * @return log probability or sum of log of probabilities
  * @throw std::domain_error if alpha or beta is negative
  * @throw std::domain_error if y is not a valid probability
@@ -37,35 +37,39 @@ namespace math {
  */
 template <typename T_y, typename T_scale_succ, typename T_scale_fail>
 return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
-    const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
+    const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta_param) {
   using T_partials_return = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
   using std::exp;
   using std::log;
   using std::pow;
+  using T_y_ref = ref_type_t<T_y>;
+  using T_alpha_ref = ref_type_t<T_scale_succ>;
+  using T_beta_ref = ref_type_t<T_scale_fail>;
   static const char* function = "beta_lcdf";
-  check_positive_finite(function, "First shape parameter", alpha);
-  check_positive_finite(function, "Second shape parameter", beta);
-  check_not_nan(function, "Random variable", y);
-  check_nonnegative(function, "Random variable", y);
-  check_less_or_equal(function, "Random variable", y, 1);
   check_consistent_sizes(function, "Random variable", y,
                          "First shape parameter", alpha,
-                         "Second shape parameter", beta);
-
-  if (size_zero(y, alpha, beta)) {
+                         "Second shape parameter", beta_param);
+  if (size_zero(y, alpha, beta_param)) {
     return 0;
   }
 
+  T_y_ref y_ref = y;
+  T_alpha_ref alpha_ref = alpha;
+  T_beta_ref beta_ref = beta_param;
+  check_positive_finite(function, "First shape parameter", alpha_ref);
+  check_positive_finite(function, "Second shape parameter", beta_ref);
+  check_bounded(function, "Random variable", y_ref, 0, 1);
+
   T_partials_return cdf_log(0.0);
-  operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(y, alpha,
-                                                                      beta);
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_scale_succ> alpha_vec(alpha);
-  scalar_seq_view<T_scale_fail> beta_vec(beta);
+  operands_and_partials<T_y_ref, T_alpha_ref, T_beta_ref> ops_partials(
+      y_ref, alpha_ref, beta_ref);
+  scalar_seq_view<T_y_ref> y_vec(y_ref);
+  scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
+  scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
   size_t size_alpha = stan::math::size(alpha);
-  size_t size_beta = stan::math::size(beta);
-  size_t size_alpha_beta = max_size(alpha, beta);
-  size_t N = max_size(y, alpha, beta);
+  size_t size_beta = stan::math::size(beta_param);
+  size_t size_alpha_beta = max_size(alpha, beta_param);
+  size_t N = max_size(y, alpha, beta_param);
 
   VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
                 T_partials_return, T_scale_succ>
@@ -93,8 +97,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
     const T_partials_return beta_dbl = value_of(beta_vec[n]);
-    const T_partials_return betafunc_dbl
-        = stan::math::beta(alpha_dbl, beta_dbl);
+    const T_partials_return betafunc_dbl = beta(alpha_dbl, beta_dbl);
     const T_partials_return Pn = inc_beta(alpha_dbl, beta_dbl, y_dbl);
     const T_partials_return inv_Pn
         = is_constant_all<T_y, T_scale_succ, T_scale_fail>::value ? 0 : inv(Pn);
