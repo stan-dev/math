@@ -1,11 +1,8 @@
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
-
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(AgradRev, value_of) {
   using stan::math::value_of;
@@ -91,8 +88,6 @@ TEST(AgradMatrix, value_of) {
 }
 
 TEST(AgradMatrix, value_of_expression) {
-  using Eigen::Array;
-  using Eigen::ArrayXXd;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
   using stan::math::value_of;
@@ -100,6 +95,23 @@ TEST(AgradMatrix, value_of_expression) {
   Matrix<var, -1, -1> a = MatrixXd::Random(7, 4);
   MatrixXd res = value_of(2 * a);
   MatrixXd correct = 2 * value_of(a);
+
+  EXPECT_MATRIX_NEAR(res, correct, 1e-10);
+}
+
+TEST(AgradMatrixRev, value_of_matrix_rvalue) {
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using stan::math::value_of;
+  using stan::math::var;
+  Matrix<var, -1, -1> a = MatrixXd::Random(7, 4);
+  MatrixXd correct = value_of(a);
+  const auto& tmp = value_of(std::move(a));
+  // we are expecting an expression, not a plain matrix
+  EXPECT_FALSE((std::is_same<std::decay_t<decltype(tmp)>,
+                             stan::plain_type_t<decltype(tmp)>>::value));
+  a.setZero();
+  MatrixXd res = tmp;
 
   EXPECT_MATRIX_NEAR(res, correct, 1e-10);
 }

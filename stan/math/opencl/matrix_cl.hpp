@@ -233,8 +233,8 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @throw <code>std::system_error</code> if the memory on the device could not
    * be allocated
    */
-  template <typename Vec, require_std_vector_vt<is_eigen, Vec>...,
-            require_st_same<Vec, T>...>
+  template <typename Vec, require_std_vector_vt<is_eigen, Vec>* = nullptr,
+            require_st_same<Vec, T>* = nullptr>
   explicit matrix_cl(Vec&& A) try : rows_(A.empty() ? 0 : A[0].size()),
                                     cols_(A.size()) {
     if (this->size() == 0) {
@@ -305,58 +305,19 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @throw <code>std::system_error</code> if the memory on the device could not
    * be allocated
    */
-  template <typename Mat, require_eigen_t<Mat>..., require_vt_same<Mat, T>...,
-            require_not_t<is_eigen_contiguous_map<Mat>>...>
+  template <typename Mat, require_eigen_t<Mat>* = nullptr,
+            require_vt_same<Mat, T>* = nullptr>
   explicit matrix_cl(Mat&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
-    using Mat_type = std::decay_t<decltype(A.eval())>;
+    using Mat_type = std::decay_t<ref_type_for_opencl_t<Mat>>;
     if (size() == 0) {
       return;
     }
-    if (is_eigen_matrix_or_array<Mat>::value
-        && std::is_lvalue_reference<Mat>::value) {
-      initialize_buffer(A.eval().data());
-    } else {
-      auto* A_heap = new Mat_type(std::move(A.eval()));
-      try {
-        cl::Event e = initialize_buffer(A_heap->data());
-        // We set a callback that will delete the memory once copying is
-        // complete. This event object does not hold the information about
-        // callback. OpenCL implementation does. So nothing is lost as event
-        // goes out of scope.
-        e.setCallback(CL_COMPLETE, &delete_it<Mat_type>, A_heap);
-      } catch (...) {
-        delete A_heap;
-        throw;
-      }
-    }
-  }
-
-  /**
-   * Constructor for the matrix_cl that creates a copy of the Eigen Map on the
-   * OpenCL device. Regardless of `partial_view`, whole matrix is stored. The
-   * caller must make sure that the memory referenced by map is not deleted
-   * before copying is complete.
-   *
-   * That means `.wait()` must be called on the event associated on copying or
-   * any other event that requires completion of this event. This can be done by
-   * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
-   * this matrix or any matrix that is calculated from this one.
-   *
-   * @tparam T type of data in the \c Eigen \c Matrix
-   * @param A the \c Eigen \c Map
-   * @param partial_view which part of the matrix is used
-   *
-   * @throw <code>std::system_error</code> if the memory on the device could not
-   * be allocated
-   */
-  template <typename Map, require_t<is_eigen_contiguous_map<Map>>...,
-            require_vt_same<Map, T>...>
-  explicit matrix_cl(Map&& A,
-                     matrix_cl_view partial_view = matrix_cl_view::Entire)
-      : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
-    initialize_buffer(A.data());
+    initialize_buffer_no_heap_if<
+        std::is_same<std::decay_t<Mat>, Mat_type>::value
+        && (std::is_lvalue_reference<Mat>::value
+            || is_eigen_contiguous_map<Mat>::value)>(A);
   }
 
   /**
@@ -400,8 +361,8 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @throw <code>std::system_error</code> if the memory on the device could not
    * be allocated
    */
-  template <typename Vec, require_std_vector_t<Vec>...,
-            require_vt_same<Vec, T>...>
+  template <typename Vec, require_std_vector_t<Vec>* = nullptr,
+            require_vt_same<Vec, T>* = nullptr>
   explicit matrix_cl(Vec&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : matrix_cl(std::forward<Vec>(A), A.size(), 1) {}
@@ -424,12 +385,12 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @throw <code>std::system_error</code> if the memory on the device could not
    * be allocated
    */
-  template <typename Vec, require_std_vector_t<Vec>...,
-            require_vt_same<Vec, T>...>
+  template <typename Vec, require_std_vector_t<Vec>* = nullptr,
+            require_vt_same<Vec, T>* = nullptr>
   explicit matrix_cl(Vec&& A, const int& R, const int& C,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(R), cols_(C), view_(partial_view) {
-    initialize_buffer_optionally_from_heap(std::forward<Vec>(A));
+    initialize_buffer_no_heap_if<std::is_lvalue_reference<Vec>::value>(A);
   }
 
   /**
@@ -449,7 +410,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @throw <code>std::system_error</code> if the memory on the device could not
    * be allocated
    */
-  template <typename U, require_same_t<T, U>...>
+  template <typename U, require_same_t<T, U>* = nullptr>
   explicit matrix_cl(const U* A, const int& R, const int& C,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(R), cols_(C), view_(partial_view) {
@@ -544,37 +505,43 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   /**
    * Initializes the OpenCL buffer of this matrix by copying the data from given
    * object. Assumes that size of \c this is already set and matches the
-   * buffer size. If the object is rvalue (temporary) it is first moved to heap
+   * buffer size. If No_heap is false the object is first moved to heap
    * and callback is set to delete it after copying to OpenCL device is
-   * complete. If a lvalue is passed to this function the caller must make
-   * sure that input object does not go out of scope before copying is complete.
+   * complete. Otherwise the caller must make sure that input object does not go
+   * out of scope before copying is complete.
    *
    * That means `.wait()` must be called on the event associated on copying or
    * any other event that requires completion of this event. This can be done by
    * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
    * this matrix or any matrix that is calculated from this one.
    *
+   * @tparam No_heap whether to move the object to heap first
    * @tparam U type of object
    * @param obj object
    * @return event for the copy
    */
-  template <typename U>
-  void initialize_buffer_optionally_from_heap(U&& obj) {
-    using U_val = std::decay_t<U>;
+  template <bool No_heap, typename U, std::enable_if_t<No_heap>* = nullptr>
+  void initialize_buffer_no_heap_if(U&& obj) {
     if (size() == 0) {
       return;
     }
-    if (std::is_lvalue_reference<U>::value) {
-      initialize_buffer(obj.data());
-    } else {
-      auto* obj_heap = new U_val(std::move(obj));
-      try {
-        cl::Event e = initialize_buffer(obj_heap->data());
-        e.setCallback(CL_COMPLETE, &delete_it<U_val>, obj_heap);
-      } catch (...) {
-        delete obj_heap;
-        throw;
-      }
+    initialize_buffer(obj.data());
+  }
+  // we need separate overloads as obj.data() might not be available when second
+  // overload is called.
+  template <bool No_heap, typename U, std::enable_if_t<!No_heap>* = nullptr>
+  void initialize_buffer_no_heap_if(U&& obj) {
+    using U_val = std::decay_t<ref_type_for_opencl_t<U>>;
+    if (size() == 0) {
+      return;
+    }
+    auto* obj_heap = new U_val(std::move(obj));
+    try {
+      cl::Event e = initialize_buffer(obj_heap->data());
+      e.setCallback(CL_COMPLETE, &delete_it<U_val>, obj_heap);
+    } catch (...) {
+      delete obj_heap;
+      throw;
     }
   }
 

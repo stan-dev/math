@@ -38,7 +38,7 @@ class cvodes_integrator {
   const T_t0 t0_;
   const std::vector<T_ts>& ts_;
   std::tuple<const T_Args&...> args_tuple_;
-  std::tuple<decltype(value_of(T_Args()))...> value_of_args_tuple_;
+  std::tuple<plain_type_t<decltype(value_of(T_Args()))>...> value_of_args_tuple_;
   const size_t N_;
   std::ostream* msgs_;
   double relative_tolerance_;
@@ -175,7 +175,12 @@ class cvodes_integrator {
    * side function
    * @return Solution to ODE at times \p ts
    * @return a vector of states, each state being a vector of the
-   * same size as the state variable, corresponding to a time in ts.
+   *   same size as the state variable, corresponding to a time in ts.
+   * @throw <code>std::domain_error</code> if y0, t0, ts, theta, x are not
+   *   finite, all elements of ts are not greater than t0, or ts is not
+   *   sorted in strictly increasing order.
+   * @throw <code>std::invalid_argument</code> if arguments are the wrong
+   *   size or tolerances or max_num_steps are out of range.
    */
   cvodes_integrator(const F& f,
                     const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,

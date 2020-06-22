@@ -1,5 +1,5 @@
 #include <stan/math/prim.hpp>
-#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -8,7 +8,7 @@ TEST(MathFunctions, one_hot_array) {
     for (int k = 1; k <= K; k++) {
       std::vector<double> v(K);
       v[k - 1] = 1;
-      expect_std_vector_eq(v, stan::math::one_hot_array(K, k));
+      EXPECT_STD_VECTOR_FLOAT_EQ(v, stan::math::one_hot_array(K, k));
     }
   }
 }

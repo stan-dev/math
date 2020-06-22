@@ -33,7 +33,7 @@ inline bool operator<(var a, var b) { return a.val() < b.val(); }
  * @param b Second value.
  * @return True if first variable's value is less than second value.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline bool operator<(var a, Arith b) {
   return a.val() < b;
 }
@@ -47,7 +47,7 @@ inline bool operator<(var a, Arith b) {
  * @param b Second variable.
  * @return True if first value is less than second variable's value.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline bool operator<(Arith a, var b) {
   return a < b.val();
 }

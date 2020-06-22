@@ -25,24 +25,24 @@ auto sum_(Vec&& arg) {
 }
 
 struct CosArg1 {
-  template <typename T0, typename T1, typename... T_Args>
-  inline Eigen::Matrix<stan::return_type_t<T1, T_Args...>, Eigen::Dynamic, 1>
-  operator()(const T0& t, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+  template <typename T0, typename T_y, typename... T_Args>
+  inline Eigen::Matrix<stan::return_type_t<T_y, T_Args...>, Eigen::Dynamic, 1>
+  operator()(const T0& t, const T_y& y,
              std::ostream* msgs, const T_Args&... a) const {
     std::vector<typename stan::return_type<T0, T_Args...>::type> vec
         = {sum_(a)...};
-    Eigen::Matrix<stan::return_type_t<T1, T_Args...>, Eigen::Dynamic, 1> out(1);
+    Eigen::Matrix<stan::return_type_t<T_y, T_Args...>, Eigen::Dynamic, 1> out(1);
     out << stan::math::cos(sum_(vec) * t);
     return out;
   }
 };
 
 struct Cos2Arg {
-  template <typename T0, typename T1, typename T2, typename T3>
-  inline Eigen::Matrix<stan::return_type_t<T1, T2, T3>, Eigen::Dynamic, 1>
-  operator()(const T0& t, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+  template <typename T0, typename T_y, typename T2, typename T3>
+  inline Eigen::Matrix<stan::return_type_t<T_y, T2, T3>, Eigen::Dynamic, 1>
+  operator()(const T0& t, const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y,
              std::ostream* msgs, const T2& a, const T3& b) const {
-    Eigen::Matrix<stan::return_type_t<T1, T2, T3>, Eigen::Dynamic, 1> out(1);
+    Eigen::Matrix<stan::return_type_t<T_y, T2, T3>, Eigen::Dynamic, 1> out(1);
     out << stan::math::cos((sum_(a) + sum_(b)) * t);
     return out;
   }
@@ -303,9 +303,9 @@ TEST(StanMathOde_ode_bdf, scalar_std_vector_args) {
 }
 
 struct ayt {
-  template <typename T0, typename T1, typename T2>
-  inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>
-  operator()(const T0& t, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+  template <typename T0, typename T_y, typename T2>
+  inline Eigen::Matrix<stan::return_type_t<T_y, T2>, Eigen::Dynamic, 1>
+  operator()(const T0& t, const T_y& y,
              std::ostream* msgs, const T2& a) const {
     return -a * y * t;
   }

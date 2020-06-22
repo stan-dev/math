@@ -110,7 +110,7 @@ inline var operator-(var a, var b) {
  * @param b Second scalar operand.
  * @return Result of subtracting the scalar from the variable.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline var operator-(var a, Arith b) {
   if (b == 0.0) {
     return a;
@@ -131,7 +131,7 @@ inline var operator-(var a, Arith b) {
  * @param b Second variable operand.
  * @return Result of subtracting a variable from a scalar.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline var operator-(Arith a, var b) {
   return {new internal::subtract_dv_vari(a, b.vi_)};
 }
