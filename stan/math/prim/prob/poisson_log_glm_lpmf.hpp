@@ -63,6 +63,9 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
   using T_theta_tmp =
       typename std::conditional_t<T_x_rows == 1, T_partials_return,
                                   Array<T_partials_return, Dynamic, 1>>;
+  using T_x_ref = ref_type_if_t<!is_constant<T_x>::value, T_x>;
+  using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
+  using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
 
   const size_t N_instances = T_x_rows == 1 ? stan::math::size(y) : x.rows();
   const size_t N_attributes = x.cols();
@@ -78,16 +81,13 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
   if (size_zero(y)) {
     return 0;
   }
-
   if (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
     return 0;
   }
 
-  T_partials_return logp(0);
-
-  const auto& x_ref = to_ref_if<!is_constant<T_x>::value>(x);
-  const auto& alpha_ref = to_ref_if<!is_constant<T_alpha>::value>(alpha);
-  const auto& beta_ref = to_ref_if<!is_constant<T_beta>::value>(beta);
+  T_x_ref x_ref = x;
+  T_alpha_ref alpha_ref = alpha;
+  T_beta_ref beta_ref = beta;
 
   const auto& y_val = value_of_rec(y_ref);
   const auto& x_val
@@ -118,6 +118,8 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
     check_finite(function, "Intercept", alpha);
     check_finite(function, "Matrix of independent variables", theta);
   }
+
+  T_partials_return logp(0);
   if (include_summand<propto>::value) {
     if (is_vector<T_y>::value) {
       logp -= sum(lgamma(as_array_or_scalar(y_val_vec) + 1));
@@ -129,9 +131,8 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
   logp += sum(as_array_or_scalar(y_val_vec) * theta.array()
               - exp(theta.array()));
 
-  operands_and_partials<decltype(x_ref), decltype(alpha_ref),
-                        decltype(beta_ref)>
-      ops_partials(x_ref, alpha_ref, beta_ref);
+  operands_and_partials<T_x_ref, T_alpha_ref, T_beta_ref> ops_partials(
+      x_ref, alpha_ref, beta_ref);
   // Compute the necessary derivatives.
   if (!is_constant_all<T_beta>::value) {
     if (T_x_rows == 1) {

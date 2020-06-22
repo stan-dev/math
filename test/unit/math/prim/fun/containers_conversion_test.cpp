@@ -1,5 +1,5 @@
 #include <stan/math/prim.hpp>
-#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -122,7 +122,7 @@ TEST(MathMatrixPrimMat, conversions_1) {
 
   // matrix to_matrix(vector)
   a2 = to_matrix(a1);
-  expect_matrix_eq(a1, a2);
+  EXPECT_MATRIX_FLOAT_EQ(a1, a2);
 
   // matrix to_matrix(vector)
   a2 = to_matrix(c1);
@@ -172,7 +172,7 @@ TEST(MathMatrixPrimMat, conversions_1) {
 
   // vector to_vector(vector)
   c2 = to_vector(c1);
-  expect_matrix_eq(c1, c2);
+  EXPECT_MATRIX_FLOAT_EQ(c1, c2);
 
   // vector to_vector(real[])
   c2 = to_vector(e1);
@@ -204,7 +204,7 @@ TEST(MathMatrixPrimMat, conversions_1) {
 
   // row_vector to_row_vector(row_vector)
   d2 = to_row_vector(d1);
-  expect_matrix_eq(d1, d2);
+  EXPECT_MATRIX_FLOAT_EQ(d1, d2);
 
   // row_vector to_row_vector(real[])
   d2 = to_row_vector(e1);
@@ -253,13 +253,13 @@ TEST(MathMatrixPrimMat, conversions_1) {
   EXPECT_EQ(c1(2), e2[2]);
 
   // Now we play with some lossless operations
-  expect_matrix_eq(a1, to_matrix(to_array_2d(a1)));
-  expect_matrix_eq(c1, to_vector(to_array_1d(c1)));
-  expect_matrix_eq(c1, to_vector(to_matrix(c1)));
-  expect_matrix_eq(c1, to_vector(to_row_vector(c1)));
-  expect_matrix_eq(d1, to_row_vector(to_array_1d(d1)));
-  expect_matrix_eq(d1, to_row_vector(to_matrix(d1)));
-  expect_matrix_eq(d1, to_row_vector(to_vector(d1)));
+  EXPECT_MATRIX_FLOAT_EQ(a1, to_matrix(to_array_2d(a1)));
+  EXPECT_MATRIX_FLOAT_EQ(c1, to_vector(to_array_1d(c1)));
+  EXPECT_MATRIX_FLOAT_EQ(c1, to_vector(to_matrix(c1)));
+  EXPECT_MATRIX_FLOAT_EQ(c1, to_vector(to_row_vector(c1)));
+  EXPECT_MATRIX_FLOAT_EQ(d1, to_row_vector(to_array_1d(d1)));
+  EXPECT_MATRIX_FLOAT_EQ(d1, to_row_vector(to_matrix(d1)));
+  EXPECT_MATRIX_FLOAT_EQ(d1, to_row_vector(to_vector(d1)));
 }
 TEST(MathMatrixPrimMat, conversions_2) {
   vector<vector<vector<double> > > a1(

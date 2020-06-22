@@ -32,29 +32,29 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_prob>;
   using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
   using std::exp;
-  using T_n_ref = ref_type_t<T_n>;
-  using T_theta_ref = ref_type_t<T_prob>;
+  using T_n_ref = ref_type_if_t<!is_constant<T_n>::value, T_n>;
+  using T_theta_ref = ref_type_if_t<!is_constant<T_prob>::value, T_prob>;
   static const char* function = "bernoulli_logit_lpmf";
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
-  T_n_ref n_ref = n;
-  T_theta_ref theta_ref = theta;
-  check_bounded(function, "n", n_ref, 0, 1);
-  check_not_nan(function, "Logit transformed probability parameter", theta_ref);
-
   if (size_zero(n, theta)) {
     return 0.0;
   }
+  T_n_ref n_ref = n;
+  T_theta_ref theta_ref = theta;
+  check_bounded(function, "n", n_ref, 0, 1);
+
+  const auto& theta_col = as_column_vector_or_scalar(theta_ref);
+  const auto& theta_val = value_of(theta_col);
+  const auto& theta_arr = to_ref(as_array_or_scalar(theta_val));
+
+  check_not_nan(function, "Logit transformed probability parameter", theta_arr);
   if (!include_summand<propto, T_prob>::value) {
     return 0.0;
   }
 
-  T_partials_return logp(0.0);
-  operands_and_partials<T_theta_ref> ops_partials(theta_ref);
-
-  const auto& theta_val = value_of(theta_ref);
-  const auto& theta_arr = as_array_or_scalar(theta_val);
-  const auto& n_double = value_of_rec(n_ref);
+  const auto& n_col = as_column_vector_or_scalar(n_ref);
+  const auto& n_double = value_of_rec(n_col);
 
   auto signs = to_ref_if<!is_constant<T_prob>::value>(
       (2 * as_array_or_scalar(n_double) - 1));
@@ -68,11 +68,12 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   }
   T_partials_array exp_m_ntheta = exp(-ntheta);
   static const double cutoff = 20.0;
-  logp += sum(
+  T_partials_return logp = sum(
       (ntheta > cutoff)
           .select(-exp_m_ntheta,
                   (ntheta < -cutoff).select(ntheta, -log1p(exp_m_ntheta))));
 
+  operands_and_partials<T_theta_ref> ops_partials(theta_ref);
   if (!is_constant_all<T_prob>::value) {
     if (is_vector<T_prob>::value) {
       ops_partials.edge1_.partials_ = forward_as<T_partials_array>(

@@ -106,8 +106,12 @@ inline Vec value_of(Vec&& x) {
  **/
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
           require_not_vt_double_or_int<EigMat>* = nullptr>
-inline auto value_of(const EigMat& M) {
-  return M.unaryExpr([](const auto& scal) { return value_of(scal); });
+inline auto value_of(EigMat&& M) {
+  return make_holder(
+      [](auto& a) {
+        return a.unaryExpr([](const auto& scal) { return value_of(scal); });
+      },
+      std::forward<EigMat>(M));
 }
 
 /**
