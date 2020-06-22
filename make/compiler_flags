@@ -58,7 +58,7 @@ ifneq (,$(findstring gcc,$(CXX)))
 endif
 ifneq (,$(findstring g++,$(CXX)))
   CXX_TYPE ?= gcc
-  CXXFLAGS_FLTO ?= -fltovim
+  CXXFLAGS_FLTO ?= -flto
 endif
 CXX_TYPE ?= other
 CXX_MAJOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f1)
@@ -297,6 +297,7 @@ print-compiler-flags:
 	@echo '  - CXX_TYPE                    ' $(CXX_TYPE)
 	@echo '  - Compiler version:           ' $(CXX_MAJOR).$(CXX_MINOR)
 	@echo '  - O (Optimization Level):     ' $(O)
+	@echo '  - Archive Utility (AR)        ' $(AR)
 	@echo '  Library configuration:'
 	@echo '  - EIGEN                       ' $(EIGEN)
 	@echo '  - BOOST                       ' $(BOOST)
@@ -338,6 +339,4 @@ print-compiler-flags:
 	@echo '  - LDFLAGS_OPENCL              ' $(LDFLAGS_OPENCL)
 	@echo '  - LDFLAGS_TBB                 ' $(LDFLAGS_TBB)
 	@echo '  - LDFLAGS_MPI                 ' $(LDFLAGS_MPI)
-	@echo ' CXX_ver:'$(CXX_VER_MAJOR)
-	@echo '  Fail State: ' $(FAIL_STATE)
 	@echo ''
