@@ -2,11 +2,10 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using stan::math::diag_pre_multiply;
-
 TEST(MathMatrixPrimMat, diagPreMultiply) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::diag_pre_multiply;
   Matrix<double, Dynamic, Dynamic> m(1, 1);
   m << 3;
 
@@ -20,6 +19,9 @@ TEST(MathMatrixPrimMat, diagPreMultiply) {
 }
 
 TEST(MathMatrixPrimMat, diagPreMultiply2) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::diag_pre_multiply;
   Matrix<double, Dynamic, Dynamic> m(3, 3);
   m << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
@@ -37,6 +39,9 @@ TEST(MathMatrixPrimMat, diagPreMultiply2) {
 }
 
 TEST(MathMatrixPrimMat, diagPreMultiplyException) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::diag_pre_multiply;
   Matrix<double, Dynamic, Dynamic> m(2, 2);
   m << 2, 3, 4, 5;
   Matrix<double, Dynamic, 1> v(3);

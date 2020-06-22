@@ -176,4 +176,25 @@ void expect_same_type() {
 }
 }  // namespace test
 
+namespace stan {
+namespace test {
+template <int R, int C>
+void correct_type_vector(const Eigen::Matrix<double, R, C>& x) {
+  EXPECT_EQ(Eigen::Dynamic, R);
+  EXPECT_EQ(1, C);
+}
+template <int R, int C>
+void correct_type_row_vector(const Eigen::Matrix<double, R, C>& x) {
+  EXPECT_EQ(Eigen::Dynamic, C);
+  EXPECT_EQ(1, R);
+}
+
+template <int R, int C>
+void correct_type_matrix(const Eigen::Matrix<double, R, C>& x) {
+  EXPECT_EQ(Eigen::Dynamic, C);
+  EXPECT_EQ(Eigen::Dynamic, R);
+}
+}
+}
+
 #endif

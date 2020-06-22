@@ -2,21 +2,8 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-using stan::math::append_col;
-
-template <int R, int C>
-void correct_type_row_vector(const Eigen::Matrix<double, R, C>& x) {
-  EXPECT_EQ(Eigen::Dynamic, C);
-  EXPECT_EQ(1, R);
-}
-
-template <int R, int C>
-void correct_type_matrix(const Eigen::Matrix<double, R, C>& x) {
-  EXPECT_EQ(Eigen::Dynamic, C);
-  EXPECT_EQ(Eigen::Dynamic, R);
-}
-
 TEST(MathMatrixPrimMat, append_col) {
+  using stan::math::append_col;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -170,10 +157,10 @@ TEST(MathMatrixPrimMat, append_col) {
   correct_type_matrix(append_col(v3, m32));
   correct_type_matrix(append_col(v3, v3b));
   correct_type_matrix(append_col(v3b, v3));
-  correct_type_row_vector(append_col(rv3, rv3b));
-  correct_type_row_vector(append_col(rv3b, rv3));
-  correct_type_row_vector(append_col(rv3, -4.31));
-  correct_type_row_vector(append_col(5.23, rv3));
+  stan::test::correct_type_row_vector(append_col(rv3, rv3b));
+  stan::test::correct_type_row_vector(append_col(rv3b, rv3));
+  stan::test::correct_type_row_vector(append_col(rv3, -4.31));
+  stan::test::correct_type_row_vector(append_col(5.23, rv3));
 }
 
 TEST(MathMatrixPrimMat, append_col_different_types) {

@@ -2,14 +2,14 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using stan::math::array_builder;
-using stan::math::to_matrix;
-using stan::math::to_row_vector;
-using std::vector;
 
 TEST(MathArray, arrayBuilder) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::array_builder;
+  using stan::math::to_matrix;
+  using stan::math::to_row_vector;
+  using std::vector;
   EXPECT_EQ(0U, array_builder<double>().array().size());
 
   vector<double> v3 = array_builder<double>().add(1).add(3).add(2).array();
@@ -36,7 +36,13 @@ TEST(MathArray, arrayBuilder) {
   EXPECT_EQ(6, v3v2[2][1]);
 }
 
-TEST(MathMatrixPrimMat, arrayBuilder) {
+TEST(MathMatrixPrimMat, arrayBuilder) {  
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::array_builder;
+  using stan::math::to_matrix;
+  using stan::math::to_row_vector;
+  using std::vector;
   vector<Matrix<double, 1, Dynamic> > mEmpty
       = array_builder<Matrix<double, 1, Dynamic> >().array();
   EXPECT_EQ(0U, mEmpty.size());
