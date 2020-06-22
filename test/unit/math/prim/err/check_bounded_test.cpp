@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-using stan::math::check_bounded;
 
 TEST(ErrorHandlingScalar, CheckBounded_x) {
+  using stan::math::check_bounded;
   const char* function = "check_bounded";
   const char* name = "x";
   double x = 0;
@@ -51,6 +51,7 @@ TEST(ErrorHandlingScalar, CheckBounded_x) {
       << ", " << low;
 }
 TEST(ErrorHandlingScalar, CheckBounded_Low) {
+  using stan::math::check_bounded;
   const char* function = "check_bounded";
   const char* name = "x";
   double x = 0;
@@ -77,6 +78,7 @@ TEST(ErrorHandlingScalar, CheckBounded_Low) {
       << ", " << high;
 }
 TEST(ErrorHandlingScalar, CheckBounded_High) {
+  using stan::math::check_bounded;
   const char* function = "check_bounded";
   const char* name = "x";
   double x = 0;
@@ -103,6 +105,7 @@ TEST(ErrorHandlingScalar, CheckBounded_High) {
       << ", " << high;
 }
 TEST(ErrorHandlingScalar, CheckBounded_nan) {
+  using stan::math::check_bounded;
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   const char* function = "check_bounded";
@@ -123,6 +126,7 @@ TEST(ErrorHandlingScalar, CheckBounded_nan) {
 }
 
 TEST(ErrorHandlingScalar, CheckBounded_size_zero_vector) {
+  using stan::math::check_bounded;
   const char* function = "check_bounded";
   const char* name = "x";
   double x = 0;

@@ -3,13 +3,13 @@
 #include <sstream>
 #include <string>
 
-const char* function_ = "function";
-const char* y_name_ = "y";
-const char* msg1_ = "error_message ";
-const char* msg2_ = " after y";
 
 class ErrorHandlingScalar_throw_domain_error : public ::testing::Test {
  public:
+  const char* function_ = "function";
+  const char* y_name_ = "y";
+  const char* msg1_ = "error_message ";
+  const char* msg2_ = " after y";
   void SetUp() {}
 
   template <class T>
