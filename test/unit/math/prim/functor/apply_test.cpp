@@ -11,7 +11,7 @@ struct func {
     return t;
   }
 };
-}
+}  // namespace apply_test
 
 TEST(MathFunctions, apply_basic_empty) {
   std::tuple<> x;

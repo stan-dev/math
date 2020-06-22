@@ -3,7 +3,6 @@
 #include <sstream>
 #include <string>
 
-
 class ErrorHandlingScalar_throw_domain_error : public ::testing::Test {
  public:
   const char* function_ = "function";

@@ -4,7 +4,6 @@
 #include <boost/math/distributions.hpp>
 #include <limits>
 
-
 TEST(ProbDistributionsCategoricalLogit, error_check) {
   using Eigen::VectorXd;
   using stan::math::categorical_logit_rng;
@@ -25,7 +24,7 @@ TEST(ProbDistributionsCategoricalLogit, error_check) {
   EXPECT_THROW(categorical_logit_rng(beta, rng), std::domain_error);
 }
 
-TEST(ProbDistributionsCategoricalLogit, chiSquareGoodnessFitTest) {  
+TEST(ProbDistributionsCategoricalLogit, chiSquareGoodnessFitTest) {
   using Eigen::VectorXd;
   using stan::math::softmax;
   boost::random::mt19937 rng;

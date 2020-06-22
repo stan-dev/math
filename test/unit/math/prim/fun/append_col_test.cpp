@@ -3,12 +3,12 @@
 #include <gtest/gtest.h>
 
 TEST(MathMatrixPrimMat, append_col) {
-  using stan::math::append_col;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
   using Eigen::RowVectorXd;
   using Eigen::VectorXd;
+  using stan::math::append_col;
   using std::vector;
 
   MatrixXd m33(3, 3);

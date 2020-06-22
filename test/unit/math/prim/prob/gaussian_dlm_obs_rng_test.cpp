@@ -11,6 +11,7 @@ class ProbDistributionsGaussianDLMInputsRng : public ::testing::Test {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   using stan::math::gaussian_dlm_obs_rng;
+
  protected:
   virtual void SetUp() {
     FF = MatrixXd::Random(2, 3);

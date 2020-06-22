@@ -2,7 +2,6 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-
 TEST(ErrorHandlingScalar, CheckBounded_x) {
   using stan::math::check_bounded;
   const char* function = "check_bounded";

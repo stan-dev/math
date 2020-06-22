@@ -927,11 +927,11 @@ TEST(RevMath, cov_exp_quad_domain_error_training) {
 
   var sigma_bad = -1;
   var l_bad = -1;
-  
-  EXPECT_THROW_MSG(stan::math::cov_exp_quad(x, sigma, l_bad),
-                   std::domain_error, " length scale");
-  EXPECT_THROW_MSG(stan::math::cov_exp_quad(x, sigma_bad, l),
-                   std::domain_error, " magnitude");
+
+  EXPECT_THROW_MSG(stan::math::cov_exp_quad(x, sigma, l_bad), std::domain_error,
+                   " length scale");
+  EXPECT_THROW_MSG(stan::math::cov_exp_quad(x, sigma_bad, l), std::domain_error,
+                   " magnitude");
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x, sigma_bad, l_bad),
                    std::domain_error, " magnitude");
 
@@ -980,10 +980,10 @@ TEST(RevMath, cov_exp_quad_nan_error_training) {
   var sigma_bad = std::numeric_limits<var>::quiet_NaN();
   var l_bad = std::numeric_limits<var>::quiet_NaN();
 
-  EXPECT_THROW_MSG(stan::math::cov_exp_quad(x, sigma, l_bad),
-                   std::domain_error, " length scale");
-  EXPECT_THROW_MSG(stan::math::cov_exp_quad(x, sigma_bad, l),
-                   std::domain_error, " magnitude");
+  EXPECT_THROW_MSG(stan::math::cov_exp_quad(x, sigma, l_bad), std::domain_error,
+                   " length scale");
+  EXPECT_THROW_MSG(stan::math::cov_exp_quad(x, sigma_bad, l), std::domain_error,
+                   " magnitude");
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x, sigma_bad, l_bad),
                    std::domain_error, " magnitude");
 

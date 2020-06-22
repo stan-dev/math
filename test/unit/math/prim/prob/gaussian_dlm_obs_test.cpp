@@ -138,6 +138,7 @@ class ProbDistributionsGaussianDLMInputs : public ::testing::Test {
   using Eigen::Matrix;
   using Eigen::MatrixXd;
   using stan::math::gaussian_dlm_obs_log;
+
  protected:
   virtual void SetUp() {
     FF = MatrixXd::Random(2, 3);

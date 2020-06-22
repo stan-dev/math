@@ -5,7 +5,6 @@
 #include <vector>
 #include <limits>
 
-
 TEST(ProbDistributionsCategorical, Categorical) {
   using Eigen::Dynamic;
   using Eigen::Matrix;

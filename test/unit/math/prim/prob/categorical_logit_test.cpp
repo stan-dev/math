@@ -3,7 +3,7 @@
 #include <limits>
 #include <vector>
 
-TEST(ProbDistributionsCategoricalLogit, Categorical) {  
+TEST(ProbDistributionsCategoricalLogit, Categorical) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::log_softmax;
@@ -19,7 +19,7 @@ TEST(ProbDistributionsCategoricalLogit, Categorical) {
                   stan::math::categorical_logit_log(3, theta));
 }
 
-TEST(ProbDistributionsCategoricalLogit, CategoricalVectorized) {  
+TEST(ProbDistributionsCategoricalLogit, CategoricalVectorized) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::log_softmax;
@@ -40,7 +40,7 @@ TEST(ProbDistributionsCategoricalLogit, CategoricalVectorized) {
       stan::math::categorical_logit_log(ms, theta));
 }
 
-TEST(ProbDistributionsCategoricalLogit, Propto) {  
+TEST(ProbDistributionsCategoricalLogit, Propto) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   Matrix<double, Dynamic, 1> theta(3, 1);
@@ -49,7 +49,7 @@ TEST(ProbDistributionsCategoricalLogit, Propto) {
   EXPECT_FLOAT_EQ(0, stan::math::categorical_logit_log<true>(3, theta));
 }
 
-TEST(ProbDistributionsCategoricalLogit, error) {  
+TEST(ProbDistributionsCategoricalLogit, error) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::categorical_logit_log;

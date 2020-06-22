@@ -49,7 +49,8 @@ TEST(MathPrimMat, vec_NaN_x_gp_dot_prod_cov_cov0) {
   x[0] = 1;
   x[1] = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x, sigma), std::domain_error, " x");
+  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x, sigma), std::domain_error,
+                   " x");
 }
 
 TEST(MathPrimMat, vec_NaN_sigma_gp_dot_prod_cov_cov0) {
@@ -58,7 +59,8 @@ TEST(MathPrimMat, vec_NaN_sigma_gp_dot_prod_cov_cov0) {
   x[0] = 1;
   x[1] = 2;
 
-  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x, sigma), std::domain_error, " sigma");
+  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x, sigma), std::domain_error,
+                   " sigma");
 }
 
 TEST(MathPrimMat, vec_NaN_x1_gp_dot_prod_cov_cov0) {
@@ -72,7 +74,8 @@ TEST(MathPrimMat, vec_NaN_x1_gp_dot_prod_cov_cov0) {
   x2[0] = 1;
   x2[1] = 2;
 
-  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error, " x1");
+  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x1, x2, sigma),
+                   std::domain_error, " x1");
 }
 
 TEST(MathPrimMat, vec_NaN_x2_gp_dot_prod_cov_cov0) {
@@ -86,7 +89,8 @@ TEST(MathPrimMat, vec_NaN_x2_gp_dot_prod_cov_cov0) {
   x2[0] = 1;
   x2[1] = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error, " x2");
+  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x1, x2, sigma),
+                   std::domain_error, " x2");
 }
 
 TEST(MathPrimMat, vec_NaN_x1_x2_sigma_gp_dot_prod_cov_cov0) {
@@ -100,7 +104,8 @@ TEST(MathPrimMat, vec_NaN_x1_x2_sigma_gp_dot_prod_cov_cov0) {
   x2[0] = 1;
   x2[1] = 3;
 
-  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error, " sigma");
+  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x1, x2, sigma),
+                   std::domain_error, " sigma");
 }
 
 TEST(MathPrimMat, vec_inf_x_gp_dot_prod_cov_cov0) {
@@ -109,7 +114,8 @@ TEST(MathPrimMat, vec_inf_x_gp_dot_prod_cov_cov0) {
   x[0] = 1;
   x[1] = std::numeric_limits<double>::infinity();
 
-  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x, sigma), std::domain_error, " x");
+  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x, sigma), std::domain_error,
+                   " x");
 }
 
 TEST(MathPrimMat, vec_inf_sigma_gp_dot_prod_cov_cov0) {
@@ -118,7 +124,8 @@ TEST(MathPrimMat, vec_inf_sigma_gp_dot_prod_cov_cov0) {
   x[0] = 1;
   x[1] = 2;
 
-  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x, sigma), std::domain_error, " sigma");
+  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x, sigma), std::domain_error,
+                   " sigma");
 }
 
 TEST(MathPrimMat, vec_inf_x1_gp_dot_prod_cov_cov0) {
@@ -132,7 +139,8 @@ TEST(MathPrimMat, vec_inf_x1_gp_dot_prod_cov_cov0) {
   x2[0] = 1;
   x2[1] = 2;
 
-  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error, " x1");
+  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x1, x2, sigma),
+                   std::domain_error, " x1");
 }
 
 TEST(MathPrimMat, vec_inf_x2_gp_dot_prod_cov_cov0) {
@@ -146,7 +154,8 @@ TEST(MathPrimMat, vec_inf_x2_gp_dot_prod_cov_cov0) {
   x2[0] = 1;
   x2[1] = std::numeric_limits<double>::infinity();
 
-  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error, " x2");
+  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x1, x2, sigma),
+                   std::domain_error, " x2");
 }
 
 TEST(MathPrimMat, vec_inf_x1_x2_sigma_gp_dot_prod_cov_cov0) {
@@ -160,7 +169,8 @@ TEST(MathPrimMat, vec_inf_x1_x2_sigma_gp_dot_prod_cov_cov0) {
   x2[0] = 1;
   x2[1] = 3;
 
-  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x1, x2, sigma), std::domain_error, " sigma");
+  EXPECT_THROW_MSG(stan::math::gp_dot_prod_cov(x1, x2, sigma),
+                   std::domain_error, " sigma");
 }
 
 TEST(MathPrimMat, vec_vec_x1_x2_gp_dot_prod_cov0) {

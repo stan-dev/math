@@ -14,8 +14,8 @@ TEST(matrixTest, seq_view_double_stdvector) {
 }
 
 TEST(matrixTest, seq_view_double_vector) {
-  using stan::math::vector_d;
   using stan::math::seq_view;
+  using stan::math::vector_d;
   vector_d y(2);
   y[0] = 1.0;
   y[1] = 2.0;

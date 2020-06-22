@@ -15,11 +15,13 @@ TEST(MathMetaPrim, IncludeSummandProptoTrueDouble) {
 }
 
 TEST(MathMetaPrim, IncludeSummandConstantPropToTrueTen) {
-  EXPECT_FALSE((stan::math::include_summand<true, double, double, int, int, double, double,
-                                int, int, double, int>::value));
+  EXPECT_FALSE(
+      (stan::math::include_summand<true, double, double, int, int, double,
+                                   double, int, int, double, int>::value));
 }
 
 TEST(MathMetaPrim, IncludeSummandConstantProptoFalseTen) {
-  EXPECT_TRUE((stan::math::include_summand<false, double, double, int, int, double, double,
-                               int, int, double, int>::value));
+  EXPECT_TRUE(
+      (stan::math::include_summand<false, double, double, int, int, double,
+                                   double, int, int, double, int>::value));
 }

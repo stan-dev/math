@@ -4,8 +4,6 @@
 #include <limits>
 #include <string>
 
-
-
 class ErrorHandlingMatrixPosDef : public ::testing::Test {
  public:
   const char* function = "function";

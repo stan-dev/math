@@ -934,7 +934,7 @@ TEST(RevMath, gp_exp_quad_cov_domain_error_training) {
 
   var sigma_bad = -1;
   var l_bad = -1;
-  
+
   EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x, sigma, l_bad),
                    std::domain_error, " length scale");
   EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x, sigma_bad, l),

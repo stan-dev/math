@@ -212,10 +212,13 @@ TEST(MathPrimMat, domain_error_training_sig_l_gp_cov_exp) {
   double sigma_bad = -1;
   double l_bad = -1;
 
-  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x, sigma, l_bad), std::domain_error, " length scale");
-  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x, sigma_bad, l), std::domain_error, " magnitude");
-  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x, sigma_bad, l_bad), std::domain_error, " magnitude");
-  
+  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x, sigma, l_bad),
+                   std::domain_error, " length scale");
+  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x, sigma_bad, l),
+                   std::domain_error, " magnitude");
+  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x, sigma_bad, l_bad),
+                   std::domain_error, " magnitude");
+
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_2, sigma, l_bad),
                std::domain_error);
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_2, sigma_bad, l),
@@ -265,9 +268,12 @@ TEST(MathPrimMat, nan_error_training_sig_l_gp_cov_exp) {
   double sigma_bad = std::numeric_limits<double>::quiet_NaN();
   double l_bad = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x, sigma, l_bad), std::domain_error, " length scale");
-  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x, sigma_bad, l), std::domain_error, " magnitude");
-  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x, sigma_bad, l_bad), std::domain_error, " magnitude");
+  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x, sigma, l_bad),
+                   std::domain_error, " length scale");
+  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x, sigma_bad, l),
+                   std::domain_error, " magnitude");
+  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x, sigma_bad, l_bad),
+                   std::domain_error, " magnitude");
 
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x, sigma, l_bad), std::domain_error);
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x, sigma_bad, l), std::domain_error);
@@ -331,9 +337,12 @@ TEST(MathPrimMat, domain_error_gp_exp_quad_cov2) {
   double sigma_bad = -1;
   double l_bad = -1;
 
-  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x1, x2, sigma, l_bad), std::domain_error, " length scale");
-  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x1, x2, sigma_bad, l), std::domain_error, " magnitude");
-  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x1, x2, sigma_bad, l_bad), std::domain_error, " magnitude");
+  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x1, x2, sigma, l_bad),
+                   std::domain_error, " length scale");
+  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x1, x2, sigma_bad, l),
+                   std::domain_error, " magnitude");
+  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x1, x2, sigma_bad, l_bad),
+                   std::domain_error, " magnitude");
 
   std::vector<Eigen::Matrix<double, -1, 1>> x_vec_1(3);
   for (size_t i = 0; i < x_vec_1.size(); ++i) {
@@ -408,9 +417,12 @@ TEST(MathPrimMat, nan_domain_error_gp_exp_quad_cov2) {
   double sigma_bad = std::numeric_limits<double>::quiet_NaN();
   double l_bad = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x1, x2, sigma, l_bad), std::domain_error, " length scale");
-  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x1, x2, sigma_bad, l), std::domain_error, " magnitude");
-  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x1, x2, sigma_bad, l_bad), std::domain_error, " magnitude");
+  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x1, x2, sigma, l_bad),
+                   std::domain_error, " length scale");
+  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x1, x2, sigma_bad, l),
+                   std::domain_error, " magnitude");
+  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x1, x2, sigma_bad, l_bad),
+                   std::domain_error, " magnitude");
 
   std::vector<Eigen::Matrix<double, -1, 1>> x_vec_1(3);
   for (size_t i = 0; i < x_vec_1.size(); ++i) {
@@ -656,9 +668,12 @@ TEST(MathPrimMat, domain_error_training_sig_vec_length_scale_gp_exp_quad_cov) {
   }
   l[2] = -1;
 
-  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x_2, sigma, l_bad), std::domain_error, " length scale");
-  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x_2, sigma_bad, l), std::domain_error, " magnitude");
-  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x_2, sigma_bad, l_bad), std::domain_error, " magnitude");
+  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x_2, sigma, l_bad),
+                   std::domain_error, " length scale");
+  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x_2, sigma_bad, l),
+                   std::domain_error, " magnitude");
+  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x_2, sigma_bad, l_bad),
+                   std::domain_error, " magnitude");
 }
 
 TEST(MathPrimMat, nan_error_training_sig_vec_length_scale_gp_exp_quad_cov) {
@@ -687,7 +702,8 @@ TEST(MathPrimMat, nan_error_training_sig_vec_length_scale_gp_exp_quad_cov) {
   }
   l_bad[1] = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x_2, sigma, l_bad), std::domain_error, " length scale");
+  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x_2, sigma, l_bad),
+                   std::domain_error, " length scale");
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_2, sigma_bad, l_bad),
                std::domain_error);
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_bad_2, sigma, l_bad),
@@ -736,8 +752,9 @@ TEST(MathPrimMat, nan_domain_error_gp_exp_quad_cov2_vec_length_scale) {
 
   EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x_vec_1, x_vec_2, sigma, l_bad0),
                    std::domain_error, " length scale");
-  EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x_vec_1, x_vec_2, sigma_bad, l_bad1),
-                   std::domain_error, " magnitude");
+  EXPECT_THROW_MSG(
+      stan::math::gp_exp_quad_cov(x_vec_1, x_vec_2, sigma_bad, l_bad1),
+      std::domain_error, " magnitude");
   EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x_vec_1, x_vec_2, sigma_bad, l),
                    std::domain_error, " magnitude");
   EXPECT_THROW_MSG(stan::math::gp_exp_quad_cov(x_vec_1, x_vec_2, sigma, l_bad1),

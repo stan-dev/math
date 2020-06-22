@@ -5,10 +5,10 @@
 #include <boost/math/special_functions/digamma.hpp>
 
 TEST(ProbDistributionsInvWishart, LowerTriangular) {
-    using Eigen::Dynamic;
-    using Eigen::Matrix;
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
 
-    using stan::math::inv_wishart_log;
+  using stan::math::inv_wishart_log;
   // Tests if only of the lower triangular portion of
   // outcome and scale matrices are taken
   using Eigen::MatrixXd;

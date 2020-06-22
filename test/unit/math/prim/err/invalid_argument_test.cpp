@@ -27,7 +27,6 @@ class ErrorHandlingScalar_invalid_argument : public ::testing::Test {
 
   template <class T>
   void test_throw(T y) {
-
     try {
       stan::math::invalid_argument<T>(function_, y_name_, y, msg1_, msg2_);
       FAIL() << "expecting call to invalid_argument<> "

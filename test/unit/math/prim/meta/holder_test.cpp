@@ -26,7 +26,7 @@ auto f4(T&& a) {
   return stan::math::make_holder([](auto& mat) { return mat.array(); },
                                  std::forward<T>(a));
 }
-}
+}  // namespace holder_test
 
 TEST(MathFunctions, holder_lvalue) {
   using Eigen::MatrixXd;
@@ -47,7 +47,6 @@ TEST(MathFunctions, holder_rvalue) {
   EXPECT_MATRIX_EQ(res, correct);
 }
 
-
 TEST(MathFunctions, holder_lvalue_assign) {
   using Eigen::MatrixXd;
   MatrixXd m = MatrixXd::Identity(3, 3);
@@ -58,7 +57,6 @@ TEST(MathFunctions, holder_lvalue_assign) {
   MatrixXd res = array_holder;
   EXPECT_MATRIX_EQ(res, m2);
 }
-
 
 TEST(MathFunctions, make_holder_lvalue) {
   using Eigen::MatrixXd;

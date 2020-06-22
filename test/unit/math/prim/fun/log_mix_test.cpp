@@ -5,7 +5,6 @@
 #include <stdexcept>
 #include <vector>
 
-
 TEST(MathFunctions, log_mix_exceptions) {
   using stan::math::log_mix;
   using stan::math::row_vector_d;

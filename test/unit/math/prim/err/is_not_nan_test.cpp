@@ -2,7 +2,6 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-
 TEST(ErrorHandlingScalar, isNotNan) {
   using stan::math::is_not_nan;
   double x = 0;

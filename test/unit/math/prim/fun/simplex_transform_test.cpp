@@ -2,7 +2,6 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-
 TEST(prob_transform, simplex_rt0) {
   using Eigen::Dynamic;
   using Eigen::Matrix;

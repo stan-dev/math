@@ -2,7 +2,6 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-
 TEST(MathArray, arrayBuilder) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -36,7 +35,7 @@ TEST(MathArray, arrayBuilder) {
   EXPECT_EQ(6, v3v2[2][1]);
 }
 
-TEST(MathMatrixPrimMat, arrayBuilder) {  
+TEST(MathMatrixPrimMat, arrayBuilder) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::array_builder;

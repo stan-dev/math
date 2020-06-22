@@ -108,9 +108,6 @@ TEST(ProbDistributionsMultiNormal, Mu) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::vector;
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
@@ -351,8 +348,8 @@ TEST(ProbDistributionsMultiNormal, marginalThreeChiSquareGoodnessFitTest) {
 TEST(multiNormalRng, nonPosDefErrorTest) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using std::vector;
   using stan::math::multi_normal_rng;
+  using std::vector;
   Eigen::MatrixXd S(2, 2);
   S << 0, 1, 1, 0;  // not pos definite
   Eigen::VectorXd mu(2);

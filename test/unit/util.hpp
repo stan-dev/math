@@ -194,7 +194,7 @@ void correct_type_matrix(const Eigen::Matrix<double, R, C>& x) {
   EXPECT_EQ(Eigen::Dynamic, C);
   EXPECT_EQ(Eigen::Dynamic, R);
 }
-}
-}
+}  // namespace test
+}  // namespace stan
 
 #endif

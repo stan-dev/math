@@ -38,8 +38,8 @@ TEST(ProbDistributionsWishart, LowerTriangular) {
   EXPECT_EQ(wishart_log(Y, dof, Sigma), wishart_log(Y_sym, dof, Sigma_sym));
 }
 TEST(ProbDistributionsWishart, 2x2) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, Dynamic> Sigma(2, 2);
   Sigma << 1.848220, 1.899623, 1.899623, 12.751941;
 
@@ -54,8 +54,8 @@ TEST(ProbDistributionsWishart, 2x2) {
   EXPECT_NEAR(lp, stan::math::wishart_log(Y, dof, Sigma), 0.01);
 }
 TEST(ProbDistributionsWishart, 4x4) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, Dynamic> Y(4, 4);
   Y << 7.988168, -9.555605, -14.47483, 4.395895, -9.555605, 44.750570, 49.21577,
       -18.454186, -14.474830, 49.215769, 60.08987, -21.481079, 4.395895,
@@ -75,8 +75,8 @@ TEST(ProbDistributionsWishart, 4x4) {
   EXPECT_NEAR(log_p, stan::math::wishart_log(Y, dof, Sigma), 0.01);
 }
 TEST(ProbDistributionsWishart, 2x2Propto) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, Dynamic> Sigma(2, 2);
   Sigma << 1.848220, 1.899623, 1.899623, 12.751941;
 
@@ -88,8 +88,8 @@ TEST(ProbDistributionsWishart, 2x2Propto) {
   EXPECT_FLOAT_EQ(0.0, stan::math::wishart_log<true>(Y, dof, Sigma));
 }
 TEST(ProbDistributionsWishart, 4x4Propto) {
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, Dynamic> Y(4, 4);
   Y << 7.988168, -9.555605, -14.47483, 4.395895, -9.555605, 44.750570, 49.21577,
       -18.454186, -14.474830, 49.215769, 60.08987, -21.481079, 4.395895,
@@ -107,11 +107,10 @@ TEST(ProbDistributionsWishart, 4x4Propto) {
   EXPECT_FLOAT_EQ(0.0, stan::math::wishart_log<true>(Y, dof, Sigma));
 }
 
-
 TEST(ProbDistributionsWishart, error) {
-  using stan::math::wishart_log;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::wishart_log;
   Matrix<double, Dynamic, Dynamic> Sigma;
   Matrix<double, Dynamic, Dynamic> Y;
   double nu;

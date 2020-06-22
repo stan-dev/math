@@ -15,7 +15,7 @@ TEST(MathMetaPrim, PartialsReturnTypeInt) {
 }
 
 TEST(MathMetaPrim, PartialsReturnTypeScalarTenParams) {
-  test::expect_same_type<
-      double, stan::partials_return_type<double, int, double, float, float, double,
-                                   float, int, double, double>::type>();
+  test::expect_same_type<double, stan::partials_return_type<
+                                     double, int, double, float, float, double,
+                                     float, int, double, double>::type>();
 }
