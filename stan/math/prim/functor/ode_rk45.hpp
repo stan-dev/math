@@ -172,8 +172,8 @@ ode_rk45_tol(const F& f,
  */
 template <typename F, typename T_initial, typename T_t0, typename T_ts,
           typename... Args>
-std::vector<
-  Eigen::Matrix<stan::return_type_t<T_initial, T_t0, T_ts, Args...>, Eigen::Dynamic, 1>>
+std::vector<Eigen::Matrix<stan::return_type_t<T_initial, T_t0, T_ts, Args...>,
+                          Eigen::Dynamic, 1>>
 ode_rk45(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
          T_t0 t0, const std::vector<T_ts>& ts, std::ostream* msgs,
          const Args&... args) {

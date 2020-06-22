@@ -38,7 +38,8 @@ class cvodes_integrator {
   const T_t0 t0_;
   const std::vector<T_ts>& ts_;
   std::tuple<const T_Args&...> args_tuple_;
-  std::tuple<plain_type_t<decltype(value_of(T_Args()))>...> value_of_args_tuple_;
+  std::tuple<plain_type_t<decltype(value_of(T_Args()))>...>
+      value_of_args_tuple_;
   const size_t N_;
   std::ostream* msgs_;
   double relative_tolerance_;
@@ -62,8 +63,7 @@ class cvodes_integrator {
    * ODE RHS passed to CVODES.
    */
   static int cv_rhs(realtype t, N_Vector y, N_Vector ydot, void* user_data) {
-    cvodes_integrator* integrator
-        = static_cast<cvodes_integrator*>(user_data);
+    cvodes_integrator* integrator = static_cast<cvodes_integrator*>(user_data);
     integrator->rhs(t, NV_DATA_S(y), NV_DATA_S(ydot));
     return 0;
   }
@@ -75,8 +75,7 @@ class cvodes_integrator {
   static int cv_rhs_sens(int Ns, realtype t, N_Vector y, N_Vector ydot,
                          N_Vector* yS, N_Vector* ySdot, void* user_data,
                          N_Vector tmp1, N_Vector tmp2) {
-    cvodes_integrator* integrator
-      = static_cast<cvodes_integrator*>(user_data);
+    cvodes_integrator* integrator = static_cast<cvodes_integrator*>(user_data);
     integrator->rhs_sens(t, NV_DATA_S(y), yS, ySdot);
     return 0;
   }
@@ -90,8 +89,7 @@ class cvodes_integrator {
   static int cv_jacobian_states(realtype t, N_Vector y, N_Vector fy,
                                 SUNMatrix J, void* user_data, N_Vector tmp1,
                                 N_Vector tmp2, N_Vector tmp3) {
-    cvodes_integrator* integrator
-        = static_cast<cvodes_integrator*>(user_data);
+    cvodes_integrator* integrator = static_cast<cvodes_integrator*>(user_data);
     integrator->jacobian_states(t, NV_DATA_S(y), J);
     return 0;
   }

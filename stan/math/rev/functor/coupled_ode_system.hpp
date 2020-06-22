@@ -96,8 +96,8 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
         y0_vars_(count_vars(y0_)),
         args_vars_(count_vars(args...)),
         N_(y0.size()),
-	args_adjoints_(args_vars_),
-	y_adjoints_(N_),
+        args_adjoints_(args_vars_),
+        y_adjoints_(N_),
         msgs_(msgs) {}
 
   /**
@@ -114,8 +114,7 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
    * @throw exception if the base ode function does not return the
    *    expected number of derivatives, N.
    */
-  void operator()(const Eigen::VectorXd& z, Eigen::VectorXd& dz_dt,
-                  double t) {
+  void operator()(const Eigen::VectorXd& z, Eigen::VectorXd& dz_dt, double t) {
     using std::vector;
 
     dz_dt.resize(size());
