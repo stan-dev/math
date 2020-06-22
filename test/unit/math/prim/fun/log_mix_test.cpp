@@ -5,12 +5,11 @@
 #include <stdexcept>
 #include <vector>
 
-using stan::math::log_mix;
-using stan::math::row_vector_d;
-using stan::math::vector_d;
 
 TEST(MathFunctions, log_mix_exceptions) {
   using stan::math::log_mix;
+  using stan::math::row_vector_d;
+  using stan::math::vector_d;
   EXPECT_THROW(log_mix(-1, 10, 20), std::domain_error);
   EXPECT_THROW(log_mix(std::numeric_limits<double>::quiet_NaN(), 10, 20),
                std::domain_error);
@@ -21,6 +20,8 @@ TEST(MathFunctions, log_mix_exceptions) {
 }
 void test_log_mix(double theta, double lambda1, double lambda2) {
   using stan::math::log_mix;
+  using stan::math::row_vector_d;
+  using stan::math::vector_d;
   using std::exp;
   using std::log;
   EXPECT_FLOAT_EQ(log(theta * exp(lambda1) + (1 - theta) * exp(lambda2)),
@@ -34,7 +35,7 @@ TEST(MathFunctions, log_mix_values) {
 }
 
 template <typename T_a, typename T_b>
-void val_test(T_a a, T_b b) {
+void log_mix_val_test(T_a a, T_b b) {
   a[0] = 0.321;
   a[1] = 0.115;
   a[2] = 0.261;
@@ -81,17 +82,17 @@ TEST(MatrixFunctions, LogMix_Combin) {
   std::vector<double> std_prob(4);
   std::vector<double> std_dens(4);
 
-  val_test(vecd_prob, vecd_dens);
-  val_test(vecd_prob, row_vecd_dens);
-  val_test(vecd_prob, std_dens);
+  log_mix_val_test(vecd_prob, vecd_dens);
+  log_mix_val_test(vecd_prob, row_vecd_dens);
+  log_mix_val_test(vecd_prob, std_dens);
 
-  val_test(row_vecd_prob, vecd_dens);
-  val_test(row_vecd_prob, row_vecd_dens);
-  val_test(row_vecd_prob, std_dens);
+  log_mix_val_test(row_vecd_prob, vecd_dens);
+  log_mix_val_test(row_vecd_prob, row_vecd_dens);
+  log_mix_val_test(row_vecd_prob, std_dens);
 
-  val_test(std_prob, vecd_dens);
-  val_test(std_prob, row_vecd_dens);
-  val_test(std_prob, std_dens);
+  log_mix_val_test(std_prob, vecd_dens);
+  log_mix_val_test(std_prob, row_vecd_dens);
+  log_mix_val_test(std_prob, std_dens);
 }
 
 TEST(MatrixFunctions, LogMix_Values) {
