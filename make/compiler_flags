@@ -58,27 +58,35 @@ ifneq (,$(findstring gcc,$(CXX)))
 endif
 ifneq (,$(findstring g++,$(CXX)))
   CXX_TYPE ?= gcc
-  CXXFLAGS_FLTO ?= -flto
+  CXXFLAGS_FLTO ?= -fltovim
 endif
 CXX_TYPE ?= other
 CXX_MAJOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f1)
 CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
 CXX_VER_MAJOR := $(shell $(CXX) --version | sed -n -e 's/^.*\(version \)/\1/p' | cut -c9)
+AR_TYPE ?= other
 ifeq (clang, $(CXX_TYPE))
-ifeq (6, $(CXX_VER_MAJOR))
-TEST_LLVM_AR:= $(shell llvm-ar-6.0 -help 2> /dev/null)
-FAIL_STATE:= $(shell echo $?)
-ifeq (, $(FAIL_STATE))
-AR:= llvm-ar-6.0
-else
-TEST_LLVM_AR:= $(shell llvm-ar -help 2> /dev/null)
-FAIL_STATE:= $(shell echo $?)
-ifneq (,$(FAIL_STATE))
-    $(error "Error Clang 6 requires access to llvm-ar or llvm-ar-6")
-endif
-AR:= llvm-ar
-endif
-endif
+	ifeq (6,$(CXX_VER_MAJOR))
+		ifneq ($(AR_TYPE),other)
+			AR := $(AR_TYPE)
+		endif
+		TEST_LLVM_AR:= $(shell llvm-ar-6.0 -help 2> /dev/null)
+		FAIL_STATE:= $(.SHELLSTATUS)
+		ifeq (0,$(FAIL_STATE))
+			AR:= llvm-ar-6.0
+			AR_TYPE:=llvm-ar-6.0
+		else
+			TEST_LLVM_AR:= $(shell llvm-ar -help 2> /dev/null)
+			FAIL_STATE:= $(.SHELLSTATUS)
+			ifeq (0,$(FAIL_STATE))
+				AR:= llvm-ar
+				AR_TYPE:=llvm-ar
+			endif
+		endif
+	  ifeq ($(AR_TYPE),other)
+		  $(error "Error Clang 6 requires access to llvm-ar or llvm-ar-6.0. Neither could be found on your path so please specify the path to llvm-ar or llvm-ar-6.0 via setting the AR_TYPE variable in make/local")
+		endif
+	endif
 endif
 
 ################################################################################
