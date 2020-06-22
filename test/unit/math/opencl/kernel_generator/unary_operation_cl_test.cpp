@@ -6,12 +6,9 @@
 #include <stan/math/opencl/copy.hpp>
 #include <test/unit/math/opencl/kernel_generator/reference_kernel.hpp>
 #include <stan/math.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <string>
-
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(KernelGenerator, logical_negation_test) {
   using stan::math::matrix_cl;
@@ -24,7 +21,7 @@ TEST(KernelGenerator, logical_negation_test) {
   Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic> res
       = stan::math::from_matrix_cl(res_cl);
   Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic> correct = !m1.array();
-  EXPECT_MATRIX_NEAR(correct, res, 1e-9);
+  EXPECT_TYPED_MATRIX_EQ(correct, res, bool);
 }
 
 TEST(KernelGenerator, unary_minus_test) {

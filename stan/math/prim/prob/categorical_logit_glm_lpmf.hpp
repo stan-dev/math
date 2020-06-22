@@ -47,6 +47,10 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   using Eigen::Matrix;
   using std::exp;
   using std::log;
+  using T_y_ref = ref_type_t<T_y>;
+  using T_x_ref = ref_type_if_t<!is_constant<T_x>::value, T_x>;
+  using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
+  using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
   constexpr int T_x_rows = T_x::RowsAtCompileTime;
 
   const size_t N_instances = T_x_rows == 1 ? stan::math::size(y) : x.rows();
@@ -59,20 +63,20 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   check_consistent_size(function, "Intercept vector", alpha, N_classes);
   check_size_match(function, "x.cols()", N_attributes, "beta.rows()",
                    beta.rows());
-  const auto& y_ref = to_ref(y);
-  check_bounded(function, "categorical outcome out of support", y_ref, 1,
-                N_classes);
-
   if (size_zero(y) || N_classes == 1) {
     return 0;
   }
+  T_y_ref y_ref = y;
+  check_bounded(function, "categorical outcome out of support", y_ref, 1,
+                N_classes);
+
   if (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
     return 0;
   }
 
-  const auto& x_ref = to_ref_if<!is_constant<T_x>::value>(x);
-  const auto& alpha_ref = to_ref_if<!is_constant<T_alpha>::value>(alpha);
-  const auto& beta_ref = to_ref_if<!is_constant<T_beta>::value>(beta);
+  T_x_ref x_ref = x;
+  T_alpha_ref alpha_ref = alpha;
+  T_beta_ref beta_ref = beta;
 
   const auto& x_val
       = to_ref_if<!is_constant<T_beta>::value>(value_of_rec(x_ref));
@@ -97,7 +101,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   if (T_x_rows == 1) {
     logp *= N_instances;
   }
-  scalar_seq_view<T_y> y_seq(y_ref);
+  scalar_seq_view<T_y_ref> y_seq(y_ref);
   for (int i = 0; i < N_instances; i++) {
     if (T_x_rows == 1) {
       logp += lin(0, y_seq[i] - 1);
@@ -116,9 +120,8 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   }
 
   // Compute the derivatives.
-  operands_and_partials<decltype(x_ref), decltype(alpha_ref),
-                        decltype(beta_ref)>
-      ops_partials(x_ref, alpha_ref, beta_ref);
+  operands_and_partials<T_x_ref, T_alpha_ref, T_beta_ref> ops_partials(
+      x_ref, alpha_ref, beta_ref);
 
   if (!is_constant_all<T_x>::value) {
     if (T_x_rows == 1) {
