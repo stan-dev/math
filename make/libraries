@@ -58,19 +58,19 @@ $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSER
 
 $(SUNDIALS)/lib/libsundials_cvodes.a: $(SUNDIALS_CVODES)
 	@mkdir -p $(dir $@)
-	$(AR) -rs $@ $^
+	$(AR) $(ARFLAGS) $@ $^
 
 $(SUNDIALS)/lib/libsundials_idas.a: $(SUNDIALS_IDAS)
 	@mkdir -p $(dir $@)
-	$(AR) -rs $@ $^
+	$(AR) $(ARFLAGS) $@ $^
 
 $(SUNDIALS)/lib/libsundials_kinsol.a: $(SUNDIALS_KINSOL)
 	@mkdir -p $(dir $@)
-	$(AR) -rs $@ $^
+	$(AR) $(ARFLAGS) $@ $^
 
 $(SUNDIALS)/lib/libsundials_nvecserial.a: $(SUNDIALS_NVECSERIAL)
 	@mkdir -p $(dir $@)
-	$(AR) -rs $@ $^
+	$(AR) $(ARFLAGS) $@ $^
 
 LIBSUNDIALS := $(SUNDIALS)/lib/libsundials_nvecserial.a $(SUNDIALS)/lib/libsundials_cvodes.a $(SUNDIALS)/lib/libsundials_idas.a $(SUNDIALS)/lib/libsundials_kinsol.a
 

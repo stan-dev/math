@@ -63,8 +63,18 @@ endif
 CXX_TYPE ?= other
 CXX_MAJOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f1)
 CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
-
-
+CXX_VER_MAJOR := $(shell $(CXX) --version | sed -n -e 's/^.*\(version \)/\1/p' | cut -c9)
+ifeq (clang, $(CXX_TYPE))
+ifeq (6, $(CXX_VER_MAJOR))
+TEST_LLVM_AR:= $(shell llvm-ar-6.0 -help 2> /dev/null)
+FAIL_STATE:= $(shell echo $?)
+ifeq (, $(FAIL_STATE))
+AR:= llvm-ar-6.0
+else
+AR:= llvm-ar
+endif
+endif
+endif
 
 ################################################################################
 # Set default compiler flags
@@ -269,6 +279,8 @@ print-compiler-flags:
 	@echo '  Current configuration:'
 	@echo '  - OS (Operating System):      ' $(OS)
 	@echo '  - CXX (Compiler):             ' $(CXX)
+	@echo '  - CXX Major Version           ' $(CXX_MAJOR)
+	@echo '  - CXX Minor Version           ' $(CXX_MINOR)
 	@echo '  - CXX_TYPE                    ' $(CXX_TYPE)
 	@echo '  - Compiler version:           ' $(CXX_MAJOR).$(CXX_MINOR)
 	@echo '  - O (Optimization Level):     ' $(O)
@@ -313,4 +325,6 @@ print-compiler-flags:
 	@echo '  - LDFLAGS_OPENCL              ' $(LDFLAGS_OPENCL)
 	@echo '  - LDFLAGS_TBB                 ' $(LDFLAGS_TBB)
 	@echo '  - LDFLAGS_MPI                 ' $(LDFLAGS_MPI)
+	@echo ' CXX_ver:'$(CXX_VER_MAJOR)
+	@echo '  Fail State: ' $(FAIL_STATE)
 	@echo ''
