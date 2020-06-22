@@ -1,5 +1,5 @@
 #include <stan/math/prim.hpp>
-#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 
@@ -16,11 +16,11 @@ TEST(MathMatrixPower, two_by_two) {
   Eigen::MatrixXd M9(2, 2);
   M9 << 890461.0, 1297782.0, 1946673.0, 2837134.0;
 
-  expect_matrix_eq(I, matrix_power(M, 0));
-  expect_matrix_eq(M, matrix_power(M, 1));
-  expect_matrix_eq(M2, matrix_power(M, 2));
-  expect_matrix_eq(M3, matrix_power(M, 3));
-  expect_matrix_eq(M9, matrix_power(M, 9));
+  EXPECT_MATRIX_FLOAT_EQ(I, matrix_power(M, 0));
+  EXPECT_MATRIX_FLOAT_EQ(M, matrix_power(M, 1));
+  EXPECT_MATRIX_FLOAT_EQ(M2, matrix_power(M, 2));
+  EXPECT_MATRIX_FLOAT_EQ(M3, matrix_power(M, 3));
+  EXPECT_MATRIX_FLOAT_EQ(M9, matrix_power(M, 9));
 }
 
 TEST(MathMatrixPower, one_by_one) {
@@ -37,11 +37,11 @@ TEST(MathMatrixPower, one_by_one) {
   Eigen::MatrixXd M9(1, 1);
   M9 << 19683.0;
 
-  expect_matrix_eq(I, matrix_power(M, 0));
-  expect_matrix_eq(M, matrix_power(M, 1));
-  expect_matrix_eq(M2, matrix_power(M, 2));
-  expect_matrix_eq(M3, matrix_power(M, 3));
-  expect_matrix_eq(M9, matrix_power(M, 9));
+  EXPECT_MATRIX_FLOAT_EQ(I, matrix_power(M, 0));
+  EXPECT_MATRIX_FLOAT_EQ(M, matrix_power(M, 1));
+  EXPECT_MATRIX_FLOAT_EQ(M2, matrix_power(M, 2));
+  EXPECT_MATRIX_FLOAT_EQ(M3, matrix_power(M, 3));
+  EXPECT_MATRIX_FLOAT_EQ(M9, matrix_power(M, 9));
 }
 
 TEST(MathMatrixPower, compare_to_simple_impl) {
@@ -54,7 +54,7 @@ TEST(MathMatrixPower, compare_to_simple_impl) {
   for (int i = 0; i < exponent; i++)
     expected *= M;
 
-  expect_matrix_eq(expected, matrix_power(M, exponent));
+  EXPECT_MATRIX_FLOAT_EQ(expected, matrix_power(M, exponent));
 }
 
 TEST(MathMatrixPower, zero_size) {
@@ -113,7 +113,7 @@ TEST(MathMatrixPower, matrix_power_operator) {
   Eigen::MatrixXd M2(2, 2);
   M2 << 7.0, 10.0, 15.0, 22.0;
 
-  expect_matrix_eq(M2, M ^ 2);
+  EXPECT_MATRIX_FLOAT_EQ(M2, (M ^ 2));
 }
 
 TEST(MathMatrixPower, large) {
@@ -165,5 +165,5 @@ TEST(MathMatrixPower, large) {
       109278.842978772, 190220.314850057, 156078.552041347, 185519.091744448,
       174246.126849153, 143954.733727807, 157071.213262326, 135683.920871181;
 
-  expect_matrix_eq(M9, matrix_power(M, 9));
+  EXPECT_MATRIX_FLOAT_EQ(M9, matrix_power(M, 9));
 }

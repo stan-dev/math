@@ -1,12 +1,9 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim.hpp>
 #include <stan/math/opencl/opencl.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
-
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(MathMatrixCL, add_v_exception_pass) {
   stan::math::vector_d d1, d2;
@@ -216,7 +213,7 @@ TEST(MathMatrixCL, add_value_check) {
   EXPECT_MATRIX_NEAR((v1 + v2), v3, 1E-8);
 
   rv3 = stan::math::from_matrix_cl(rv33fun);
-  EXPECT_MATRIX_NEAR((rv1 + rv2), v3, 1E-8);
+  EXPECT_MATRIX_NEAR((rv1 + rv2), rv3, 1E-8);
 
   m3 = stan::math::from_matrix_cl(m33fun);
   EXPECT_MATRIX_NEAR((m1 + m2), m3, 1E-8);
