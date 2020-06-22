@@ -7,10 +7,9 @@
 #include <limits>
 #include <vector>
 
-using Eigen::MatrixXd;
-using stan::math::matrix_normal_prec_rng;
-
 TEST(ProbDistributionsMatrixNormalPrecRng, ErrorSigma) {
+  using Eigen::MatrixXd;
+  using stan::math::matrix_normal_prec_rng;
   boost::random::mt19937 rng;
   double nan = std::numeric_limits<double>::quiet_NaN();
   double inf = std::numeric_limits<double>::infinity();
@@ -57,6 +56,8 @@ TEST(ProbDistributionsMatrixNormalPrecRng, ErrorSigma) {
 }
 
 TEST(ProbDistributionsMatrixNormalPrecRng, ErrorD) {
+  using Eigen::MatrixXd;
+  using stan::math::matrix_normal_prec_rng;
   boost::random::mt19937 rng;
   double nan = std::numeric_limits<double>::quiet_NaN();
   double inf = std::numeric_limits<double>::infinity();
@@ -103,6 +104,8 @@ TEST(ProbDistributionsMatrixNormalPrecRng, ErrorD) {
 }
 
 TEST(ProbDistributionsMatrixNormalPrecRng, ErrorSize) {
+  using Eigen::MatrixXd;
+  using stan::math::matrix_normal_prec_rng;
   boost::random::mt19937 rng;
 
   MatrixXd Mu = MatrixXd::Zero(3, 5);
@@ -131,6 +134,8 @@ TEST(ProbDistributionsMatrixNormalPrecRng, ErrorSize) {
 void assert_matches_normal_distribution(const double mean,
                                         const double variance,
                                         const std::vector<double> &samples) {
+  using Eigen::MatrixXd;
+  using stan::math::matrix_normal_prec_rng;
   int N = samples.size();
   int K = boost::math::round(2 * std::pow(N, 0.4));
   boost::math::normal_distribution<> dist(mean, sqrt(variance));
@@ -143,6 +148,8 @@ void assert_matches_normal_distribution(const double mean,
 
 std::vector<double> extract_entry(const unsigned int r, const unsigned int c,
                                   const std::vector<MatrixXd> &samples) {
+  using Eigen::MatrixXd;
+  using stan::math::matrix_normal_prec_rng;
   std::vector<double> univariate_samples;
   for (auto sample : samples)
     univariate_samples.push_back(sample(r, c));
@@ -152,6 +159,8 @@ std::vector<double> extract_entry(const unsigned int r, const unsigned int c,
 std::vector<double> extract_sum_of_entries(
     const unsigned int r1, const unsigned int c1, const unsigned int r2,
     const unsigned int c2, const std::vector<MatrixXd> &samples) {
+  using Eigen::MatrixXd;
+  using stan::math::matrix_normal_prec_rng;
   std::vector<double> univariate_samples;
   for (auto sample : samples)
     univariate_samples.push_back(sample(r1, c1) + sample(r2, c2));
@@ -159,6 +168,8 @@ std::vector<double> extract_sum_of_entries(
 }
 
 TEST(ProbDistributionsMatrixNormalPrecRng, marginalChiSquareGoodnessFitTest) {
+  using Eigen::MatrixXd;
+  using stan::math::matrix_normal_prec_rng;
   boost::random::mt19937 rng;
 
   MatrixXd Mu(2, 3);

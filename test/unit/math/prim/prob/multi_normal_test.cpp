@@ -5,11 +5,11 @@
 #include <limits>
 #include <vector>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using std::vector;
-
 TEST(ProbDistributionsMultiNormal, NotVectorized) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
+
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
@@ -22,6 +22,9 @@ TEST(ProbDistributionsMultiNormal, NotVectorized) {
 }
 
 TEST(ProbDistributionsMultiNormal, Vectorized) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   boost::random::mt19937 rng;
   vector<Matrix<double, Dynamic, 1> > vec_y(2);
   vector<Matrix<double, 1, Dynamic> > vec_y_t(2);
@@ -83,6 +86,9 @@ TEST(ProbDistributionsMultiNormal, Vectorized) {
   EXPECT_NO_THROW(stan::math::multi_normal_rng(vec_mu_t, Sigma, rng));
 }
 TEST(ProbDistributionsMultiNormal, Sigma) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, 1> y(2, 1);
   y << 2.0, -2.0;
@@ -99,6 +105,12 @@ TEST(ProbDistributionsMultiNormal, Sigma) {
   EXPECT_THROW(stan::math::multi_normal_rng(mu, Sigma, rng), std::domain_error);
 }
 TEST(ProbDistributionsMultiNormal, Mu) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
@@ -120,6 +132,9 @@ TEST(ProbDistributionsMultiNormal, Mu) {
   EXPECT_THROW(stan::math::multi_normal_rng(mu, Sigma, rng), std::domain_error);
 }
 TEST(ProbDistributionsMultiNormal, MultiNormalOneRow) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, 1, Dynamic> y(1, 3);
   y << 2.0, -2.0, 11.0;
@@ -132,6 +147,9 @@ TEST(ProbDistributionsMultiNormal, MultiNormalOneRow) {
 }
 
 TEST(ProbDistributionsMultiNormal, SigmaMultiRow) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, 1, Dynamic> y(1, 2);
   y << 2.0, -2.0;
@@ -154,6 +172,9 @@ TEST(ProbDistributionsMultiNormal, SigmaMultiRow) {
   EXPECT_THROW(stan::math::multi_normal_rng(mu, Sigma, rng), std::domain_error);
 }
 TEST(ProbDistributionsMultiNormal, MuMultiRow) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, 1, Dynamic> y(1, 3);
   y << 2.0, -2.0, 11.0;
@@ -175,6 +196,9 @@ TEST(ProbDistributionsMultiNormal, MuMultiRow) {
   EXPECT_THROW(stan::math::multi_normal_rng(mu, Sigma, rng), std::domain_error);
 }
 TEST(ProbDistributionsMultiNormal, SizeMismatch) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, 1, Dynamic> y(1, 3);
   y << 2.0, -2.0, 11.0;
@@ -189,6 +213,9 @@ TEST(ProbDistributionsMultiNormal, SizeMismatch) {
 }
 
 TEST(ProbDistributionsMultiNormal, marginalOneChiSquareGoodnessFitTest) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, Dynamic> sigma(3, 3);
   sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 1.0, 0.0, 1.0, 3.0;
@@ -233,6 +260,9 @@ TEST(ProbDistributionsMultiNormal, marginalOneChiSquareGoodnessFitTest) {
 }
 
 TEST(ProbDistributionsMultiNormal, marginalTwoChiSquareGoodnessFitTest) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, Dynamic> sigma(3, 3);
   sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 1.0, 0.0, 1.0, 3.0;
@@ -277,6 +307,9 @@ TEST(ProbDistributionsMultiNormal, marginalTwoChiSquareGoodnessFitTest) {
 }
 
 TEST(ProbDistributionsMultiNormal, marginalThreeChiSquareGoodnessFitTest) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, Dynamic> sigma(3, 3);
   sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 1.0, 0.0, 1.0, 16.0;
@@ -316,6 +349,9 @@ TEST(ProbDistributionsMultiNormal, marginalThreeChiSquareGoodnessFitTest) {
 }
 
 TEST(multiNormalRng, nonPosDefErrorTest) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   using stan::math::multi_normal_rng;
   Eigen::MatrixXd S(2, 2);
   S << 0, 1, 1, 0;  // not pos definite
@@ -326,6 +362,9 @@ TEST(multiNormalRng, nonPosDefErrorTest) {
 }
 
 TEST(ProbDistributionsMultiNormal, WrongSize) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   vector<Matrix<double, Dynamic, 1> > y_3_3(3);
   vector<Matrix<double, Dynamic, 1> > y_3_1(3);
   vector<Matrix<double, Dynamic, 1> > y_3_2(3);

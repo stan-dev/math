@@ -5,15 +5,10 @@
 #include <limits>
 #include <vector>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-
-typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
-
-vector_d get_simplex(double lambda, const vector_d& c) {
+stan::math::vector_d get_simplex(double lambda, const stan::math::vector_d& c) {
   using stan::math::inv_logit;
   int K = c.size() + 1;
-  vector_d theta(K);
+  stan::math::vector_d theta(K);
   theta(0) = 1.0 - inv_logit(lambda - c(0));
   for (int k = 1; k < (K - 1); ++k)
     theta(k) = inv_logit(lambda - c(k - 1)) - inv_logit(lambda - c(k));
@@ -39,7 +34,7 @@ TEST(ProbDistributions, ordered_logistic_vals) {
   Matrix<double, Dynamic, 1> lambda(K);
   lambda << 1.1, 1.1, 1.1, 1.1, 1.1;
 
-  vector_d theta = get_simplex(lambda[0], c);
+  stan::math::vector_d theta = get_simplex(lambda[0], c);
 
   double sum = 0.0;
   double log_sum = 0.0;
@@ -78,7 +73,7 @@ TEST(ProbDistributions, ordered_logistic_vals_2) {
   Matrix<double, Dynamic, 1> lambda(K);
   lambda << -0.9, -0.9, -0.9;
 
-  vector_d theta = get_simplex(lambda[0], c);
+  stan::math::vector_d theta = get_simplex(lambda[0], c);
 
   double sum = 0.0;
   double log_sum = 0.0;

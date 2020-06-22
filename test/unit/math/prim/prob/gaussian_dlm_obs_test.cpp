@@ -2,16 +2,15 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using Eigen::MatrixXd;
-using stan::math::gaussian_dlm_obs_log;
-
 /*
    The log-likelihoods are compared with results from R package dlm
 */
 
 TEST(ProbDistributionsGaussianDLM, LoglikeUU) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using stan::math::gaussian_dlm_obs_log;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> FF(1, 1);
   FF << 0.585528817843856;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> GG(1, 1);
@@ -36,6 +35,10 @@ TEST(ProbDistributionsGaussianDLM, LoglikeUU) {
 }
 
 TEST(ProbDistributionsGaussianDLM, LoglikeMM) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using stan::math::gaussian_dlm_obs_log;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> FF(2, 3);
   FF << 0.585528817843856, 0.709466017509524, -0.109303314681054,
       -0.453497173462763, 0.605887455840394, -1.81795596770373;
@@ -69,6 +72,10 @@ TEST(ProbDistributionsGaussianDLM, LoglikeMM) {
 }
 
 TEST(ProbDistributionsGaussianDLM, LoglikeUUSeq) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using stan::math::gaussian_dlm_obs_log;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> FF(1, 1);
   FF << 0.585528817843856;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> GG(1, 1);
@@ -93,6 +100,10 @@ TEST(ProbDistributionsGaussianDLM, LoglikeUUSeq) {
 }
 
 TEST(ProbDistributionsGaussianDLM, LoglikeMMSeq) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using stan::math::gaussian_dlm_obs_log;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> FF(2, 3);
   FF << 0.585528817843856, 0.709466017509524, -0.109303314681054,
       -0.453497173462763, 0.605887455840394, -1.81795596770373;
@@ -123,6 +134,10 @@ TEST(ProbDistributionsGaussianDLM, LoglikeMMSeq) {
 }
 
 class ProbDistributionsGaussianDLMInputs : public ::testing::Test {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using stan::math::gaussian_dlm_obs_log;
  protected:
   virtual void SetUp() {
     FF = MatrixXd::Random(2, 3);
@@ -146,6 +161,10 @@ class ProbDistributionsGaussianDLMInputs : public ::testing::Test {
 };
 
 TEST_F(ProbDistributionsGaussianDLMInputs, PoliciesY) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using stan::math::gaussian_dlm_obs_log;
   Matrix<double, Dynamic, Dynamic> y_inf = y;
   y_inf(0, 0) = std::numeric_limits<double>::infinity();
   EXPECT_THROW(gaussian_dlm_obs_log(y_inf, FF, GG, V, W, m0, C0),
@@ -161,6 +180,10 @@ TEST_F(ProbDistributionsGaussianDLMInputs, PoliciesY) {
 }
 
 TEST_F(ProbDistributionsGaussianDLMInputs, PoliciesF) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using stan::math::gaussian_dlm_obs_log;
   Matrix<double, Dynamic, Dynamic> FF_sz1 = MatrixXd::Random(4, 3);
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF_sz1, GG, V, W, m0, C0),
                std::invalid_argument);
@@ -187,6 +210,10 @@ TEST_F(ProbDistributionsGaussianDLMInputs, PoliciesF) {
 }
 
 TEST_F(ProbDistributionsGaussianDLMInputs, PoliciesG) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using stan::math::gaussian_dlm_obs_log;
   // size
   Matrix<double, Dynamic, Dynamic> GG_sz1 = MatrixXd::Random(3, 3);
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG_sz1, V, W, m0, C0),
@@ -214,6 +241,10 @@ TEST_F(ProbDistributionsGaussianDLMInputs, PoliciesG) {
 }
 
 TEST_F(ProbDistributionsGaussianDLMInputs, PoliciesW) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using stan::math::gaussian_dlm_obs_log;
   // Not symmetric
   Matrix<double, Dynamic, Dynamic> W_asym = W;
   W_asym(0, 1) = 1;
@@ -261,6 +292,10 @@ TEST_F(ProbDistributionsGaussianDLMInputs, PoliciesW) {
 }
 
 TEST_F(ProbDistributionsGaussianDLMInputs, PoliciesVMatrix) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using stan::math::gaussian_dlm_obs_log;
   // Not symmetric
   Matrix<double, Dynamic, Dynamic> V_asym = V;
   V_asym(0, 2) = 1;
@@ -295,6 +330,10 @@ TEST_F(ProbDistributionsGaussianDLMInputs, PoliciesVMatrix) {
 }
 
 TEST_F(ProbDistributionsGaussianDLMInputs, PoliciesVVector) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using stan::math::gaussian_dlm_obs_log;
   // negative
   Matrix<double, Dynamic, Dynamic> V_neg = V_vec;
   V_neg(0) = -1;
@@ -321,6 +360,10 @@ TEST_F(ProbDistributionsGaussianDLMInputs, PoliciesVVector) {
 }
 
 TEST_F(ProbDistributionsGaussianDLMInputs, Policiesm0) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using stan::math::gaussian_dlm_obs_log;
   // m0
   // size
   Matrix<double, Dynamic, 1> m0_sz = Matrix<double, Dynamic, 1>::Zero(4, 1);
@@ -344,6 +387,10 @@ TEST_F(ProbDistributionsGaussianDLMInputs, Policiesm0) {
 }
 
 TEST_F(ProbDistributionsGaussianDLMInputs, PoliciesC0) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using stan::math::gaussian_dlm_obs_log;
   // size
   Matrix<double, Dynamic, Dynamic> C0_sz = MatrixXd::Identity(3, 3);
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG, V, W, m0, C0_sz),

@@ -4,11 +4,10 @@
 #include <boost/math/distributions.hpp>
 #include <vector>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using Eigen::VectorXd;
-
 TEST(ProbDistributions, Dirichlet) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::VectorXd;
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 0.2, 0.3, 0.5;
   Matrix<double, Dynamic, 1> alpha(3, 1);
@@ -23,6 +22,9 @@ TEST(ProbDistributions, Dirichlet) {
 }
 
 TEST(ProbDistributions, DirichletVectorised) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::VectorXd;
   using stan::math::dirichlet_log;
   Matrix<double, Dynamic, 1> theta1(3, 1), theta2(3, 1), theta3(3, 1);
   theta1 << 0.2, 0.3, 0.5;
@@ -65,6 +67,9 @@ TEST(ProbDistributions, DirichletVectorised) {
 }
 
 TEST(ProbDistributions, DirichletPropto) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::VectorXd;
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 0.2, 0.3, 0.5;
   Matrix<double, Dynamic, 1> alpha(3, 1);
@@ -79,6 +84,9 @@ TEST(ProbDistributions, DirichletPropto) {
 }
 
 TEST(ProbDistributions, DirichletBounds) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::VectorXd;
   Matrix<double, Dynamic, 1> good_alpha(2, 1), bad_alpha(2, 1);
   Matrix<double, Dynamic, 1> good_theta(2, 1), bad_theta(2, 1);
 
@@ -157,6 +165,9 @@ void test_dirichlet3_1(VectorXd alpha) {
 }
 
 void test_dirichlet3_2(VectorXd alpha) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::VectorXd;
   boost::random::mt19937 rng;
   int N = 10000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
@@ -184,6 +195,9 @@ void test_dirichlet3_2(VectorXd alpha) {
 }
 
 TEST(ProbDistributionsDirichlet, rngTest) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::VectorXd;
   VectorXd alpha(3);
   alpha << 2.0, 3.0, 11.0;
   test_dirichlet3_1(alpha);
@@ -196,6 +210,9 @@ TEST(ProbDistributionsDirichlet, rngTest) {
 }
 
 TEST(ProbDistributionsDirichlet, random) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::VectorXd;
   boost::random::mt19937 rng;
   VectorXd alpha(3);
   alpha << 2.0, 3.0, 11.0;

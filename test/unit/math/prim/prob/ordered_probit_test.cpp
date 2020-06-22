@@ -4,15 +4,10 @@
 #include <boost/math/distributions.hpp>
 #include <limits>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-
-typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
-
-vector_d get_simplex(double lambda, const vector_d& c) {
+stan::math::vector_d get_simplex(double lambda, const stan::math::vector_d& c) {
   using stan::math::Phi;
   int K = c.size() + 1;
-  vector_d theta(K);
+  stan::math::vector_d theta(K);
   theta(0) = 1.0 - Phi(lambda - c(0));
   for (int k = 1; k < (K - 1); ++k)
     theta(k) = Phi(lambda - c(k - 1)) - Phi(lambda - c(k));
@@ -33,7 +28,7 @@ TEST(ProbDistributions, ordered_probit_vals) {
   c << -1.7, -0.3, 1.2, 2.6;
   double lambda = 1.1;
 
-  vector_d theta = get_simplex(lambda, c);
+  stan::math::vector_d theta = get_simplex(lambda, c);
 
   double sum = 0.0;
   for (int k = 0; k < theta.size(); ++k)
@@ -59,7 +54,7 @@ TEST(ProbDistributions, ordered_probit_vals_2) {
   c << -0.2, 4;
   double lambda = -0.9;
 
-  vector_d theta = get_simplex(lambda, c);
+  stan::math::vector_d theta = get_simplex(lambda, c);
 
   double sum = 0.0;
   for (int k = 0; k < theta.size(); ++k)

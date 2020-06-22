@@ -3,11 +3,10 @@
 #include <limits>
 #include <vector>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using stan::math::log_softmax;
-
-TEST(ProbDistributionsCategoricalLogit, Categorical) {
+TEST(ProbDistributionsCategoricalLogit, Categorical) {  
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::log_softmax;
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << -1, 2, -10;
   Matrix<double, Dynamic, 1> theta_log_softmax = log_softmax(theta);
@@ -20,7 +19,10 @@ TEST(ProbDistributionsCategoricalLogit, Categorical) {
                   stan::math::categorical_logit_log(3, theta));
 }
 
-TEST(ProbDistributionsCategoricalLogit, CategoricalVectorized) {
+TEST(ProbDistributionsCategoricalLogit, CategoricalVectorized) {  
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::log_softmax;
   Matrix<double, Dynamic, 1> theta(3);
   theta << -1, 2, -10;
 
@@ -38,14 +40,18 @@ TEST(ProbDistributionsCategoricalLogit, CategoricalVectorized) {
       stan::math::categorical_logit_log(ms, theta));
 }
 
-TEST(ProbDistributionsCategoricalLogit, Propto) {
+TEST(ProbDistributionsCategoricalLogit, Propto) {  
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << -1, 2, 10;
   EXPECT_FLOAT_EQ(0, stan::math::categorical_logit_log<true>(1, theta));
   EXPECT_FLOAT_EQ(0, stan::math::categorical_logit_log<true>(3, theta));
 }
 
-TEST(ProbDistributionsCategoricalLogit, error) {
+TEST(ProbDistributionsCategoricalLogit, error) {  
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::categorical_logit_log;
 
   unsigned int n = 1;

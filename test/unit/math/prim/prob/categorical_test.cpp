@@ -5,16 +5,18 @@
 #include <vector>
 #include <limits>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
 
 TEST(ProbDistributionsCategorical, Categorical) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 0.3, 0.5, 0.2;
   EXPECT_FLOAT_EQ(-1.203973, stan::math::categorical_log(1, theta));
   EXPECT_FLOAT_EQ(-0.6931472, stan::math::categorical_log(2, theta));
 }
 TEST(ProbDistributionsCategorical, Propto) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 0.3, 0.5, 0.2;
   EXPECT_FLOAT_EQ(0.0, stan::math::categorical_log<true>(1, theta));
@@ -22,6 +24,8 @@ TEST(ProbDistributionsCategorical, Propto) {
 }
 
 TEST(ProbDistributionsCategorical, VectorInt) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 0.3, 0.5, 0.2;
   std::vector<int> xs0;
@@ -36,9 +40,8 @@ TEST(ProbDistributionsCategorical, VectorInt) {
                   stan::math::categorical_log(xs, theta));
 }
 
-using stan::math::categorical_log;
-
 TEST(ProbDistributionsCategorical, error) {
+  using stan::math::categorical_log;
   double nan = std::numeric_limits<double>::quiet_NaN();
   double inf = std::numeric_limits<double>::infinity();
 
@@ -81,6 +84,7 @@ TEST(ProbDistributionsCategorical, error) {
 }
 
 TEST(ProbDistributionsCategorical, error_check) {
+  using stan::math::categorical_log;
   boost::random::mt19937 rng;
 
   Matrix<double, Dynamic, Dynamic> theta(3, 1);
@@ -90,6 +94,7 @@ TEST(ProbDistributionsCategorical, error_check) {
 }
 
 TEST(ProbDistributionsCategorical, chiSquareGoodnessFitTest) {
+  using stan::math::categorical_log;
   boost::random::mt19937 rng;
 
   int N = 10000;
