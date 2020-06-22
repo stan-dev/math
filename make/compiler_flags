@@ -71,6 +71,11 @@ FAIL_STATE:= $(shell echo $?)
 ifeq (, $(FAIL_STATE))
 AR:= llvm-ar-6.0
 else
+TEST_LLVM_AR:= $(shell llvm-ar -help 2> /dev/null)
+FAIL_STATE:= $(shell echo $?)
+ifneq (,$(FAIL_STATE))
+    $(error "Error Clang 6 requires access to llvm-ar or llvm-ar-6")
+endif
 AR:= llvm-ar
 endif
 endif
