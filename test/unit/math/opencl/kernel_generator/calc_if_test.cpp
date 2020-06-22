@@ -3,6 +3,7 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
+#include <test/unit/util.hpp>
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
 
@@ -10,12 +11,6 @@ using Eigen::Matrix;
 using Eigen::MatrixXd;
 using Eigen::MatrixXi;
 using stan::math::matrix_cl;
-
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  EXPECT_EQ(A.rows(), B.rows());        \
-  EXPECT_EQ(A.cols(), B.cols());        \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(KernelGenerator, is_without_output_test) {
   EXPECT_TRUE((stan::math::is_without_output<

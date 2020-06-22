@@ -60,7 +60,9 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   using T_scale_val = typename std::conditional_t<
       is_sigma_vector, Eigen::Array<partials_return_t<T_scale>, -1, 1>,
       partials_return_t<T_scale>>;
-
+  using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
+  using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
+  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -83,27 +85,26 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     check_size_match(function, "Rows of ", "x_cl", N, "size of ", "alpha",
                      stan::math::size(alpha));
   }
-  const auto& sigma_ref = to_ref(sigma);
-  check_positive_finite(function, "Scale vector", sigma_ref);
+  T_sigma_ref sigma_ref = sigma;
+  const auto& sigma_val = value_of_rec(sigma_ref);
+  const auto& sigma_val_vec = to_ref(as_column_vector_or_scalar(sigma_val));
+  check_positive_finite(function, "Scale vector", sigma_val_vec);
 
   if (!include_summand<propto, T_alpha, T_beta, T_scale>::value) {
     return 0;
   }
-
   if (N == 0) {
     return 0;
   }
 
-  const auto& beta_ref = to_ref_if<!is_constant<T_beta>::value>(beta);
-  const auto& alpha_ref = to_ref_if<!is_constant<T_alpha>::value>(alpha);
+  T_beta_ref beta_ref = beta;
+  T_alpha_ref alpha_ref = alpha;
 
   const auto& beta_val = value_of_rec(beta_ref);
   const auto& alpha_val = value_of_rec(alpha_ref);
-  const auto& sigma_val = value_of_rec(sigma_ref);
 
   const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
-  const auto& sigma_val_vec = to_ref(as_column_vector_or_scalar(sigma_val));
 
   T_scale_val inv_sigma = 1 / as_array_or_scalar(sigma_val_vec);
   Matrix<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma_mat(N);
@@ -151,9 +152,8 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
                     calc_if<need_log_sigma_sum>(log_sigma_sum_expr));
 
   double y_scaled_sq_sum = sum(from_matrix_cl(y_scaled_sq_sum_cl));
-  operands_and_partials<decltype(alpha_ref), decltype(beta_ref),
-                        decltype(sigma_ref)>
-      ops_partials(alpha_ref, beta_ref, sigma_ref);
+  operands_and_partials<T_alpha_ref, T_beta_ref, T_sigma_ref> ops_partials(
+      alpha_ref, beta_ref, sigma_ref);
   if (!is_constant_all<T_alpha>::value && is_alpha_vector) {
     ops_partials.edge1_.partials_
         = from_matrix_cl<Dynamic, 1>(mu_derivative_cl);

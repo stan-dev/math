@@ -244,3 +244,18 @@ TEST(MathMetaPrim, ref_type_for_opencl_eigen_expression) {
   EXPECT_TRUE((std::is_same<plain_type_t<decltype(a)>,
                             ref_type_for_opencl_t<decltype(a)&&>>::value));
 }
+
+TEST(MathMetaPrim, ref_type_if_test) {
+  using stan::plain_type_t;
+  using stan::ref_type_if_t;
+  Eigen::MatrixXd m(3, 3);
+  m << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  auto a = m * 3;
+
+  EXPECT_TRUE(
+      (std::is_same<plain_type_t<decltype(a)>,
+                    std::decay_t<ref_type_if_t<true, decltype(a)&&>>>::value));
+  EXPECT_TRUE(
+      (std::is_same<decltype(a),
+                    std::decay_t<ref_type_if_t<false, decltype(a)&&>>>::value));
+}
