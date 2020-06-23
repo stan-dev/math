@@ -35,6 +35,7 @@ TEST(MathFunctions, log_mix_values) {
 
 template <typename T_a, typename T_b>
 void log_mix_val_test(T_a a, T_b b) {
+  using stan::math::log_mix;
   a[0] = 0.321;
   a[1] = 0.115;
   a[2] = 0.261;
@@ -95,6 +96,7 @@ TEST(MatrixFunctions, LogMix_Combin) {
 }
 
 TEST(MatrixFunctions, LogMix_Values) {
+  using stan::math::log_mix;
   /**
    * Test that the function is equivalent to scalar and
    * log_sum_exp implementations.
@@ -124,6 +126,7 @@ TEST(MatrixFunctions, LogMix_Values) {
 }
 
 TEST(MatrixFunctions, LogMix_Throws) {
+  using stan::math::log_mix;
   /**
    * Test invalid vector of probabilities
    */
