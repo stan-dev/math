@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/functor/ode_store_sensitivities.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <ostream>
 #include <vector>
 
@@ -32,8 +33,7 @@ namespace math {
  */
 template <typename F, typename T_y0_t0, typename T_t0, typename T_t,
           typename... Args,
-          typename
-          = require_any_autodiff_t<T_y0_t0, T_t0, T_t, scalar_type_t<Args>...>>
+          require_any_autodiff_t<T_y0_t0, T_t0, T_t, scalar_type_t<Args>...>* = nullptr>
 Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
     const F& f, const Eigen::VectorXd& coupled_state,
     const Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1>& y0, const T_t0& t0,
@@ -53,7 +53,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
 
   Eigen::VectorXd f_y0_t0;
   if (is_var<T_t0>::value)
-    f_y0_t0 = f(value_of(t0), value_of(y0), msgs, value_of(args)...);
+    f_y0_t0 = f(value_of(t0), value_of(y0).eval(), msgs, value_of(args)...);
 
   for (size_t j = 0; j < N; j++) {
     const size_t total_vars = y0_vars + args_vars + t0_vars + t_vars;
