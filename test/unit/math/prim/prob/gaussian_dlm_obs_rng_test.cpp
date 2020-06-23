@@ -8,7 +8,6 @@
 #include <vector>
 
 class ProbDistributionsGaussianDLMInputsRng : public ::testing::Test {
-
  protected:
   virtual void SetUp() {
     FF = Eigen::MatrixXd::Random(2, 3);
@@ -34,7 +33,6 @@ class ProbDistributionsGaussianDLMInputsRng : public ::testing::Test {
 };
 
 TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesF) {
-  using stan::math::gaussian_dlm_obs_rng;
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   using stan::math::gaussian_dlm_obs_rng;
@@ -65,7 +63,6 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesF) {
 }
 
 TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesG) {
-  using stan::math::gaussian_dlm_obs_rng;
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   using stan::math::gaussian_dlm_obs_rng;
