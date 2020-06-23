@@ -17,7 +17,7 @@ class var_value;
 class vari_base {
 public:
   virtual void chain() {}
-  virtual void set_zero_adjoint() noexcept {}
+  inline virtual void set_zero_adjoint() noexcept {}
 };
 /**
  * The variable implementation base class.
@@ -102,23 +102,6 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> : public
     } else {
       ChainableStack::instance_->var_nochain_stack_.emplace_back(this);
     }
-  }
-
-  /**
-   * Constructor from vari_value
-   * @tparam S An arithmetic type
-   * @param x A vari_value
-   */
-  vari_value(const vari_value<T>& x) noexcept : val_(x.val_), adj_(x.adj_) {
-    ChainableStack::instance_->var_stack_.emplace_back(this);
-  }
-  /**
-   * Constructor from vari_value
-   * @tparam S An arithmetic type
-   * @param x A vari_value
-   */
-  vari_value(vari_value<T>&& x) noexcept : val_(x.val_), adj_(x.adj_) {
-    ChainableStack::instance_->var_stack_.emplace_back(this);
   }
 
   /**
