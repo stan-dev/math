@@ -108,7 +108,7 @@ TEST(MathFunctions, make_holder_assign_holder) {
   MatrixXd m2(3, 3);
   m2 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   auto array_holder = holder_test::f4(m);
-  array_holder = f4(m2);
+  array_holder = holder_test::f4(m2);
   MatrixXd res = array_holder;
   EXPECT_MATRIX_EQ(res, m2);
   EXPECT_MATRIX_EQ(m, m2);
@@ -118,7 +118,7 @@ TEST(MathFunctions, block_of_holder) {
   using Eigen::MatrixXd;
   MatrixXd m(3, 3);
   m << 1, 2, 3, 4, 5, 6, 7, 8, 9;
-  MatrixXd res = f(m).block(1, 0, 2, 2);
+  MatrixXd res = holder_test::f(m).block(1, 0, 2, 2);
   MatrixXd correct = (m + m).block(1, 0, 2, 2);
   EXPECT_MATRIX_EQ(res, correct);
 }
