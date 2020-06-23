@@ -4,7 +4,7 @@
 #include <boost/math/distributions.hpp>
 #include <limits>
 
-stan::math::vector_d get_simplex(double lambda, const stan::math::vector_d& c) {
+stan::math::vector_d get_simplex_Phi(double lambda, const stan::math::vector_d& c) {
   using stan::math::Phi;
   int K = c.size() + 1;
   stan::math::vector_d theta(K);
@@ -28,7 +28,7 @@ TEST(ProbDistributions, ordered_probit_vals) {
   c << -1.7, -0.3, 1.2, 2.6;
   double lambda = 1.1;
 
-  stan::math::vector_d theta = get_simplex(lambda, c);
+  stan::math::vector_d theta = get_simplex_Phi(lambda, c);
 
   double sum = 0.0;
   for (int k = 0; k < theta.size(); ++k)
@@ -54,7 +54,7 @@ TEST(ProbDistributions, ordered_probit_vals_2) {
   c << -0.2, 4;
   double lambda = -0.9;
 
-  stan::math::vector_d theta = get_simplex(lambda, c);
+  stan::math::vector_d theta = get_simplex_Phi(lambda, c);
 
   double sum = 0.0;
   for (int k = 0; k < theta.size(); ++k)
@@ -121,8 +121,6 @@ TEST(ProbDistributions, ordered_probit) {
   cbad3[1] = nan;
   EXPECT_THROW(ordered_probit_log(1, 1.0, cbad3), std::domain_error);
 }
-
-void expect_nan(double x) { EXPECT_TRUE(std::isnan(x)); }
 
 TEST(ProbDistributionOrderedProbit, error_check) {
   boost::random::mt19937 rng;

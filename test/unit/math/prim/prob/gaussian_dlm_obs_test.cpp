@@ -134,31 +134,26 @@ TEST(ProbDistributionsGaussianDLM, LoglikeMMSeq) {
 }
 
 class ProbDistributionsGaussianDLMInputs : public ::testing::Test {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-  using Eigen::MatrixXd;
-  using stan::math::gaussian_dlm_obs_log;
-
  protected:
   virtual void SetUp() {
-    FF = MatrixXd::Random(2, 3);
-    GG = MatrixXd::Random(2, 2);
-    V = MatrixXd::Identity(3, 3);
-    V_vec = Matrix<double, Dynamic, 1>::Constant(3, 1.0);
-    W = MatrixXd::Identity(2, 2);
-    y = MatrixXd::Random(3, 5);
-    m0 = Matrix<double, Dynamic, 1>::Random(2);
-    C0 = MatrixXd::Identity(2, 2);
+    FF = Eigen::MatrixXd::Random(2, 3);
+    GG = Eigen::MatrixXd::Random(2, 2);
+    V = Eigen::MatrixXd::Identity(3, 3);
+    V_vec = Eigen::Matrix<double, Eigen::Dynamic, 1>::Constant(3, 1.0);
+    W = Eigen::MatrixXd::Identity(2, 2);
+    y = Eigen::MatrixXd::Random(3, 5);
+    m0 = Eigen::Matrix<double, Eigen::Dynamic, 1>::Random(2);
+    C0 = Eigen::MatrixXd::Identity(2, 2);
   }
 
-  Matrix<double, Dynamic, Dynamic> FF;
-  Matrix<double, Dynamic, Dynamic> GG;
-  Matrix<double, Dynamic, Dynamic> V;
-  Matrix<double, Dynamic, 1> V_vec;
-  Matrix<double, Dynamic, Dynamic> W;
-  Matrix<double, Dynamic, Dynamic> y;
-  Matrix<double, Dynamic, 1> m0;
-  Matrix<double, Dynamic, Dynamic> C0;
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> FF;
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> GG;
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> V;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> V_vec;
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> W;
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> m0;
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> C0;
 };
 
 TEST_F(ProbDistributionsGaussianDLMInputs, PoliciesY) {

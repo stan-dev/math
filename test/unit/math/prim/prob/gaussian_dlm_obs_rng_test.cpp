@@ -8,35 +8,33 @@
 #include <vector>
 
 class ProbDistributionsGaussianDLMInputsRng : public ::testing::Test {
-  using Eigen::MatrixXd;
-  using Eigen::VectorXd;
-  using stan::math::gaussian_dlm_obs_rng;
 
  protected:
   virtual void SetUp() {
-    FF = MatrixXd::Random(2, 3);
-    GG = MatrixXd::Random(2, 2);
-    V = MatrixXd::Identity(3, 3);
-    V_vec = VectorXd::Constant(3, 1.0);
-    W = MatrixXd::Identity(2, 2);
-    y = MatrixXd::Random(3, 5);
-    m0 = VectorXd::Random(2);
-    C0 = MatrixXd::Identity(2, 2);
+    FF = Eigen::MatrixXd::Random(2, 3);
+    GG = Eigen::MatrixXd::Random(2, 2);
+    V = Eigen::MatrixXd::Identity(3, 3);
+    V_vec = Eigen::VectorXd::Constant(3, 1.0);
+    W = Eigen::MatrixXd::Identity(2, 2);
+    y = Eigen::MatrixXd::Random(3, 5);
+    m0 = Eigen::VectorXd::Random(2);
+    C0 = Eigen::MatrixXd::Identity(2, 2);
     T = 5;
   }
 
-  MatrixXd FF;
-  MatrixXd GG;
-  MatrixXd V;
-  VectorXd V_vec;
-  MatrixXd W;
-  MatrixXd y;
-  VectorXd m0;
-  MatrixXd C0;
+  Eigen::MatrixXd FF;
+  Eigen::MatrixXd GG;
+  Eigen::MatrixXd V;
+  Eigen::VectorXd V_vec;
+  Eigen::MatrixXd W;
+  Eigen::MatrixXd y;
+  Eigen::VectorXd m0;
+  Eigen::MatrixXd C0;
   int T;
 };
 
 TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesF) {
+  using stan::math::gaussian_dlm_obs_rng;
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   using stan::math::gaussian_dlm_obs_rng;
@@ -67,6 +65,7 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesF) {
 }
 
 TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesG) {
+  using stan::math::gaussian_dlm_obs_rng;
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   using stan::math::gaussian_dlm_obs_rng;
