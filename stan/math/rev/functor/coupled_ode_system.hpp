@@ -5,7 +5,6 @@
 #include <stan/math/prim/functor/coupled_ode_system.hpp>
 #include <stan/math/rev/functor/cvodes_utils.hpp>
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stdexcept>
@@ -82,10 +81,8 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
    *
    * @param[in] f the base ODE system functor
    * @param[in] y0 the initial state of the base ode
-   * @param[in] theta parameters of the base ode
-   * @param[in] x real data
-   * @param[in] x_int integer data
    * @param[in, out] msgs stream for messages
+   * @param[in] args other additional arguments
    */
   coupled_ode_system_impl(const F& f,
                           const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
@@ -96,8 +93,8 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
         y0_vars_(count_vars(y0_)),
         args_vars_(count_vars(args...)),
         N_(y0.size()),
-	args_adjoints_(args_vars_),
-	y_adjoints_(N_),
+        args_adjoints_(args_vars_),
+        y_adjoints_(N_),
         msgs_(msgs) {}
 
   /**
@@ -114,8 +111,7 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
    * @throw exception if the base ode function does not return the
    *    expected number of derivatives, N.
    */
-  void operator()(const Eigen::VectorXd& z, Eigen::VectorXd& dz_dt,
-                  double t) {
+  void operator()(const Eigen::VectorXd& z, Eigen::VectorXd& dz_dt, double t) {
     using std::vector;
 
     dz_dt.resize(size());

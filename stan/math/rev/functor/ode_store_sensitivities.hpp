@@ -26,7 +26,7 @@ namespace math {
  * @param coupled_state Current state of the coupled_ode_system
  * @param y0 Initial state
  * @param t0 Initial time
- * @param ts Times at which to solve the ODE at
+ * @param t Times at which to solve the ODE at
  * @param[in, out] msgs the print stream for warning messages
  * @param args Extra arguments passed unmodified through to ODE right hand side
  * @return ODE state with scalar type var
@@ -69,7 +69,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
     // iterate over parameters for each equation
     varis_ptr = save_varis(varis_ptr, y0);
     for (std::size_t k = 0; k < y0_vars; ++k) {
-      //*varis_ptr = y0[k].vi_;
+      // *varis_ptr = y0[k].vi_;
       *partials_ptr = coupled_state(N + y0_vars * k + j);
       partials_ptr++;
     }

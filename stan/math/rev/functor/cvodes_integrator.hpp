@@ -8,6 +8,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <cvodes/cvodes.h>
+#include <nvector/nvector_serial.h>
 #include <sunlinsol/sunlinsol_dense.h>
 #include <algorithm>
 #include <ostream>
@@ -38,13 +39,14 @@ class cvodes_integrator {
   const T_t0 t0_;
   const std::vector<T_ts>& ts_;
   std::tuple<const T_Args&...> args_tuple_;
-  std::tuple<plain_type_t<decltype(value_of(T_Args()))>...> value_of_args_tuple_;
+  std::tuple<plain_type_t<decltype(value_of(T_Args()))>...>
+      value_of_args_tuple_;
   const size_t N_;
   std::ostream* msgs_;
   double relative_tolerance_;
   double absolute_tolerance_;
   bool include_sensitivities_in_errors_;
-  long int max_num_steps_;
+  long int max_num_steps_;  // NOLINT(runtime/int)
 
   const size_t y0_vars_;
   const size_t args_vars_;
@@ -62,8 +64,7 @@ class cvodes_integrator {
    * ODE RHS passed to CVODES.
    */
   static int cv_rhs(realtype t, N_Vector y, N_Vector ydot, void* user_data) {
-    cvodes_integrator* integrator
-        = static_cast<cvodes_integrator*>(user_data);
+    cvodes_integrator* integrator = static_cast<cvodes_integrator*>(user_data);
     integrator->rhs(t, NV_DATA_S(y), NV_DATA_S(ydot));
     return 0;
   }
@@ -75,8 +76,7 @@ class cvodes_integrator {
   static int cv_rhs_sens(int Ns, realtype t, N_Vector y, N_Vector ydot,
                          N_Vector* yS, N_Vector* ySdot, void* user_data,
                          N_Vector tmp1, N_Vector tmp2) {
-    cvodes_integrator* integrator
-      = static_cast<cvodes_integrator*>(user_data);
+    cvodes_integrator* integrator = static_cast<cvodes_integrator*>(user_data);
     integrator->rhs_sens(t, NV_DATA_S(y), yS, ySdot);
     return 0;
   }
@@ -90,8 +90,7 @@ class cvodes_integrator {
   static int cv_jacobian_states(realtype t, N_Vector y, N_Vector fy,
                                 SUNMatrix J, void* user_data, N_Vector tmp1,
                                 N_Vector tmp2, N_Vector tmp3) {
-    cvodes_integrator* integrator
-        = static_cast<cvodes_integrator*>(user_data);
+    cvodes_integrator* integrator = static_cast<cvodes_integrator*>(user_data);
     integrator->jacobian_states(t, NV_DATA_S(y), J);
     return 0;
   }
@@ -168,6 +167,8 @@ class cvodes_integrator {
    *   not less than t0.
    * @param relative_tolerance Relative tolerance passed to CVODES
    * @param absolute_tolerance Absolute tolerance passed to CVODES
+   * @param include_sensitivities_in_errors A bool to determine whether
+   * to store the sensitivities in errors
    * @param max_num_steps Upper limit on the number of integration steps to
    *   take between each output (error if exceeded)
    * @param[in, out] msgs the print stream for warning messages
@@ -187,8 +188,8 @@ class cvodes_integrator {
                     const T_t0& t0, const std::vector<T_ts>& ts,
                     double relative_tolerance, double absolute_tolerance,
                     bool include_sensitivities_in_errors,
-                    long int max_num_steps, std::ostream* msgs,
-                    const T_Args&... args)
+                    long int max_num_steps,  // NOLINT(runtime/int)
+                    std::ostream* msgs, const T_Args&... args)
       : f_(f),
         y0_(y0.unaryExpr([](const T_y0& val) { return T_y0_t0(val); })),
         t0_(t0),

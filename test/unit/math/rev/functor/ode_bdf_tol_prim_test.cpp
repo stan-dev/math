@@ -59,7 +59,7 @@ struct CosArgWrongSize {
   }
 };
 
-TEST(ode_bdf_prim, y0_errors) {
+TEST(ode_bdf_tol_prim, y0_errors) {
   Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
   Eigen::VectorXd y0inf(1);
   Eigen::VectorXd y0NaN(1);
@@ -87,7 +87,7 @@ TEST(ode_bdf_prim, y0_errors) {
                std::invalid_argument);
 }
 
-TEST(ode_bdf_prim, t0_errors) {
+TEST(ode_bdf_tol_prim, t0_errors) {
   Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
   double t0 = 0;
   double t0inf = stan::math::INFTY;
@@ -108,7 +108,7 @@ TEST(ode_bdf_prim, t0_errors) {
                std::domain_error);
 }
 
-TEST(ode_bdf_prim, ts_errors) {
+TEST(ode_bdf_tol_prim, ts_errors) {
   Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
   double t0 = 0;
   std::vector<double> ts = {0.45, 1.1};
@@ -148,7 +148,7 @@ TEST(ode_bdf_prim, ts_errors) {
                std::domain_error);
 }
 
-TEST(ode_bdf_prim, one_arg_errors) {
+TEST(ode_bdf_tol_prim, one_arg_errors) {
   Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
   double t0 = 0;
   std::vector<double> ts = {0.45, 1.1};
@@ -202,7 +202,7 @@ TEST(ode_bdf_prim, one_arg_errors) {
                std::domain_error);
 }
 
-TEST(ode_bdf_prim, two_arg_errors) {
+TEST(ode_bdf_tol_prim, two_arg_errors) {
   Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
   double t0 = 0;
   std::vector<double> ts = {0.45, 1.1};
@@ -256,7 +256,7 @@ TEST(ode_bdf_prim, two_arg_errors) {
                std::domain_error);
 }
 
-TEST(ode_bdf_prim, rtol_errors) {
+TEST(ode_bdf_tol_prim, rtol_errors) {
   Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
   double t0 = 0;
   std::vector<double> ts = {0.45, 1.1};
@@ -284,7 +284,7 @@ TEST(ode_bdf_prim, rtol_errors) {
                std::domain_error);
 }
 
-TEST(ode_bdf_prim, atol_errors) {
+TEST(ode_bdf_tol_prim, atol_errors) {
   Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
   double t0 = 0;
   std::vector<double> ts = {0.45, 1.1};
@@ -312,7 +312,7 @@ TEST(ode_bdf_prim, atol_errors) {
                std::domain_error);
 }
 
-TEST(ode_bdf_prim, max_num_steps_errors) {
+TEST(ode_bdf_tol_prim, max_num_steps_errors) {
   Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
   double t0 = 0;
   std::vector<double> ts = {0.45, 1.1};
@@ -335,7 +335,7 @@ TEST(ode_bdf_prim, max_num_steps_errors) {
                std::domain_error);
 }
 
-TEST(ode_bdf_prim, rhs_wrong_size_errors) {
+TEST(ode_bdf_tol_prim, rhs_wrong_size_errors) {
   Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
   double t0 = 0;
   std::vector<double> ts = {0.45, 1.1};

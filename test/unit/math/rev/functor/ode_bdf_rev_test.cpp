@@ -27,11 +27,12 @@ auto sum_(Vec&& arg) {
 struct CosArg1 {
   template <typename T0, typename T_y, typename... T_Args>
   inline Eigen::Matrix<stan::return_type_t<T_y, T_Args...>, Eigen::Dynamic, 1>
-  operator()(const T0& t, const T_y& y,
-             std::ostream* msgs, const T_Args&... a) const {
+  operator()(const T0& t, const T_y& y, std::ostream* msgs,
+             const T_Args&... a) const {
     std::vector<typename stan::return_type<T0, T_Args...>::type> vec
         = {sum_(a)...};
-    Eigen::Matrix<stan::return_type_t<T_y, T_Args...>, Eigen::Dynamic, 1> out(1);
+    Eigen::Matrix<stan::return_type_t<T_y, T_Args...>, Eigen::Dynamic, 1> out(
+        1);
     out << stan::math::cos(sum_(vec) * t);
     return out;
   }
@@ -305,8 +306,7 @@ TEST(StanMathOde_ode_bdf, scalar_std_vector_args) {
 struct ayt {
   template <typename T0, typename T_y, typename T2>
   inline Eigen::Matrix<stan::return_type_t<T_y, T2>, Eigen::Dynamic, 1>
-  operator()(const T0& t, const T_y& y,
-             std::ostream* msgs, const T2& a) const {
+  operator()(const T0& t, const T_y& y, std::ostream* msgs, const T2& a) const {
     return -a * y * t;
   }
 };

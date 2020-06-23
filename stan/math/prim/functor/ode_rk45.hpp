@@ -37,7 +37,7 @@ namespace math {
  * @tparam T_Args Types of pass-through parameters
  *
  * @param f Right hand side of the ODE
- * @param y0 Initial state
+ * @param y0_arg Initial state
  * @param t0 Initial time
  * @param ts Times at which to solve the ODE at. All values must be sorted and
  *   greater than t0.
@@ -56,7 +56,8 @@ std::vector<Eigen::Matrix<stan::return_type_t<T_initial, T_t0, T_ts, Args...>,
 ode_rk45_tol(const F& f,
              const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0_arg, T_t0 t0,
              const std::vector<T_ts>& ts, double relative_tolerance,
-             double absolute_tolerance, long int max_num_steps,
+             double absolute_tolerance,
+             long int max_num_steps,  // NOLINT(runtime/int)
              std::ostream* msgs, const Args&... args) {
   using boost::numeric::odeint::integrate_times;
   using boost::numeric::odeint::make_dense_output;
@@ -162,24 +163,20 @@ ode_rk45_tol(const F& f,
  * @param t0 Initial time
  * @param ts Times at which to solve the ODE at. All values must be sorted and
  *   greather than t0.
- * @param relative_tolerance Relative tolerance passed to CVODES
- * @param absolute_tolerance Absolute tolerance passed to CVODES
- * @param max_num_steps Upper limit on the number of integration steps to
- *   take between each output (error if exceeded)
  * @param[in, out] msgs the print stream for warning messages
  * @param args Extra arguments passed unmodified through to ODE right hand side
  * @return Solution to ODE at times \p ts
  */
 template <typename F, typename T_initial, typename T_t0, typename T_ts,
           typename... Args>
-std::vector<
-  Eigen::Matrix<stan::return_type_t<T_initial, T_t0, T_ts, Args...>, Eigen::Dynamic, 1>>
+std::vector<Eigen::Matrix<stan::return_type_t<T_initial, T_t0, T_ts, Args...>,
+                          Eigen::Dynamic, 1>>
 ode_rk45(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
          T_t0 t0, const std::vector<T_ts>& ts, std::ostream* msgs,
          const Args&... args) {
   double relative_tolerance = 1e-10;
   double absolute_tolerance = 1e-10;
-  long int max_num_steps = 1e8;
+  long int max_num_steps = 1e8;  // NOLINT(runtime/int)
 
   return ode_rk45_tol(f, y0, t0, ts, relative_tolerance, absolute_tolerance,
                       max_num_steps, msgs, args...);

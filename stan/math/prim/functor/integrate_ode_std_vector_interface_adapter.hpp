@@ -23,7 +23,7 @@ template <typename F>
 struct integrate_ode_std_vector_interface_adapter {
   const F f_;
 
-  integrate_ode_std_vector_interface_adapter(const F& f) : f_(f) {}
+  explicit integrate_ode_std_vector_interface_adapter(const F& f) : f_(f) {}
 
   template <typename T0, typename T1, typename T2>
   auto operator()(const T0& t, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
