@@ -40,6 +40,8 @@ TEST(ProbDistributionsCategorical, VectorInt) {
 }
 
 TEST(ProbDistributionsCategorical, error) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::categorical_log;
   double nan = std::numeric_limits<double>::quiet_NaN();
   double inf = std::numeric_limits<double>::infinity();
@@ -83,6 +85,8 @@ TEST(ProbDistributionsCategorical, error) {
 }
 
 TEST(ProbDistributionsCategorical, error_check) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::categorical_log;
   boost::random::mt19937 rng;
 
@@ -93,6 +97,8 @@ TEST(ProbDistributionsCategorical, error_check) {
 }
 
 TEST(ProbDistributionsCategorical, chiSquareGoodnessFitTest) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::categorical_log;
   boost::random::mt19937 rng;
 
