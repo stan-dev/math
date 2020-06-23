@@ -5,6 +5,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <cmath>
 
 namespace stan {
@@ -22,11 +23,12 @@ namespace math {
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
           require_not_vt_var<EigMat>* = nullptr>
 inline value_type_t<EigMat> log_determinant_spd(const EigMat& m) {
-  check_symmetric("log_determinant_spd", "m", m);
+  const auto& m_ref = to_ref(m);
+  check_symmetric("log_determinant_spd", "m", m_ref);
   if (m.size() == 0) {
     return 0;
   }
-  return sum(log(m.ldlt().vectorD().array()));
+  return sum(log(m_ref.ldlt().vectorD().array()));
 }
 
 }  // namespace math

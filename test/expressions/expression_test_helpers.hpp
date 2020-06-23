@@ -3,21 +3,36 @@
 #include <stan/math/rev.hpp>
 #include <stan/math/fwd.hpp>
 #include <vector>
+#include <random>
 
 namespace stan {
 namespace test {
+
+template<typename T>
+auto recursive_sum(const T& a){
+  return math::sum(a);
+}
+
+template<typename T>
+auto recursive_sum(const std::vector<T>& a){
+  scalar_type_t<T> res = recursive_sum(a[0]);
+  for (int i=0;i<a.size();i++){
+    res += recursive_sum(a[i]);
+  }
+  return res;
+}
 
 template<typename T, require_integral_t<T>* = nullptr> T make_arg() { return 1; }
 template<typename T, require_floating_point_t<T>* = nullptr> T make_arg() { return 0.4; }
 template<typename T, require_autodiff_t<T>* = nullptr> T make_arg() { return 0.4; }
 template<typename T, require_eigen_vector_t<T>* = nullptr> T make_arg() {
-  T res(3);
-  res << 0.1, 0.2, 0.3;
+  T res(1);
+  res << 0.1;
   return res;
 }
 template<typename T, require_eigen_matrix_t<T>* = nullptr> T make_arg() {
-  T res(3, 3);
-  res << 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9;
+  T res(1, 1);
+  res << 0.1;
   return res;
 }
 template<typename T, require_std_vector_t<T>* = nullptr> T make_arg() {
@@ -25,9 +40,10 @@ template<typename T, require_std_vector_t<T>* = nullptr> T make_arg() {
   V tmp = make_arg<V>();
   T res;
   res.push_back(tmp);
-  res.push_back(tmp);
-  res.push_back(tmp);
   return res;
+}
+template<typename T, require_same_t<T, std::minstd_rand>* = nullptr> T make_arg() {
+  return std::minstd_rand(0);
 }
 
 template <typename T, require_arithmetic_t<T>* = nullptr>
