@@ -12,33 +12,33 @@ endif
 
 ## Detect operating system
 ifneq ($(OS),Windows_NT)
-  OS := $(shell uname -s)
+	OS := $(shell uname -s)
 endif
 
 ## Set OS specific library filename extensions
 ifeq ($(OS),Windows_NT)
-  LIBRARY_SUFFIX ?= .dll
+	LIBRARY_SUFFIX ?= .dll
 endif
 
 ifeq ($(OS),Darwin)
-  LIBRARY_SUFFIX ?= .dylib
+	LIBRARY_SUFFIX ?= .dylib
 endif
 
 ifeq ($(OS),Linux)
-  LIBRARY_SUFFIX ?= .so
+	LIBRARY_SUFFIX ?= .so
 endif
 
 ## Set default compiler and flto compiler flags
 ifeq (default,$(origin CXX))
-  ifeq ($(OS),Darwin)  ## Darwin is Mac OS X
-    CXX := clang++
-  endif
-  ifeq ($(OS),Linux)
-    CXX := g++
-  endif
-  ifeq ($(OS),Windows_NT)
-    CXX := g++
-  endif
+	ifeq ($(OS),Darwin)  ## Darwin is Mac OS X
+		CXX := clang++
+	endif
+	ifeq ($(OS),Linux)
+		CXX := g++
+	endif
+	ifeq ($(OS),Windows_NT)
+		CXX := g++
+	endif
 endif
 
 # Detect compiler type
@@ -46,16 +46,16 @@ endif
 # - CXX_MAJOR: major version of CXX
 # - CXX_MINOR: minor version of CXX
 ifneq (,$(findstring clang,$(CXX)))
-  CXX_TYPE ?= clang
+	CXX_TYPE ?= clang
 endif
 ifneq (,$(findstring mingw32-g,$(CXX)))
-  CXX_TYPE ?= mingw32-gcc
+	CXX_TYPE ?= mingw32-gcc
 endif
 ifneq (,$(findstring gcc,$(CXX)))
-  CXX_TYPE ?= gcc
+	CXX_TYPE ?= gcc
 endif
 ifneq (,$(findstring g++,$(CXX)))
-  CXX_TYPE ?= gcc
+	CXX_TYPE ?= gcc
 endif
 
 ifeq ($(OS),Darwin)  ## Darwin is Mac OS X
@@ -87,9 +87,6 @@ ifeq (clang, $(CXX_TYPE))
 				ifeq (0,$(FAIL_STATE))
 					AR:= llvm-ar
 					AR_TYPE:=llvm-ar
-				endif
-				ifeq ($(AR_TYPE),other)
-					$(error "Error Clang 6 requires access to llvm-ar or llvm-ar-6.0. Neither could be found on your path so please specify the path to llvm-ar or llvm-ar-6.0 via setting the AR_TYPE variable in make/local")
 				endif
 			endif
 		endif
@@ -152,46 +149,46 @@ CXXFLAGS_SUNDIALS ?= -pipe
 # Update compiler flags with operating system specific modifications
 ##
 ifeq ($(OS),Windows_NT)
-  CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-variable -Wno-sign-compare -Wno-unused-local-typedefs
-  CPPFLAGS_GTEST ?= -DGTEST_HAS_PTHREAD=0
-  CPPFLAGS_OS ?= -D_USE_MATH_DEFINES
-  ## Detecting Process Bitness:
-  ## http://blogs.msdn.com/b/david.wang/archive/2006/03/26/howto-detect-process-bitness.aspx
-  ifeq ($(PROCESSOR_ARCHITECTURE)$(PROCESSOR_ARCHITEW6432),x86)
-    CXXFLAGS_OS ?= -m32
-  else
-    CXXFLAGS_OS ?= -m64
-  endif
+	CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-variable -Wno-sign-compare -Wno-unused-local-typedefs
+	CPPFLAGS_GTEST ?= -DGTEST_HAS_PTHREAD=0
+	CPPFLAGS_OS ?= -D_USE_MATH_DEFINES
+	## Detecting Process Bitness:
+	## http://blogs.msdn.com/b/david.wang/archive/2006/03/26/howto-detect-process-bitness.aspx
+	ifeq ($(PROCESSOR_ARCHITECTURE)$(PROCESSOR_ARCHITEW6432),x86)
+		CXXFLAGS_OS ?= -m32
+	else
+		CXXFLAGS_OS ?= -m64
+	endif
 
-  ifneq (gcc,$(CXX_TYPE))
-    LDLIBS_OS ?= -static-libgcc
-  else
-    LDLIBS_OS ?= -static-libgcc -static-libstdc++
-  endif
+	ifneq (gcc,$(CXX_TYPE))
+		LDLIBS_OS ?= -static-libgcc
+	else
+		LDLIBS_OS ?= -static-libgcc -static-libstdc++
+	endif
 
-  EXE := .exe
+	EXE := .exe
 endif
 
 ifeq ($(OS),Darwin)
-  ifeq (clang,$(CXX_TYPE))
-    CXXFLAGS_OS ?= -Wno-unknown-warning-option -Wno-tautological-compare -Wno-sign-compare
-  endif
+	ifeq (clang,$(CXX_TYPE))
+		CXXFLAGS_OS ?= -Wno-unknown-warning-option -Wno-tautological-compare -Wno-sign-compare
+	endif
 endif
 
 ifeq ($(OS),Linux)
-  CPPFLAGS_GTEST ?= -DGTEST_HAS_PTHREAD=0
-  CXXFLAGS_WARNINGS ?= -Wno-sign-compare
-  ifeq (gcc,$(CXX_TYPE))
-    CXXFLAGS_OS ?= -pthread
-  endif
-  ifeq (mingw32-gcc,$(CXX_TYPE))
-    LDLIBS_OS ?= -static -lwinpthread
-    EXE := .exe
-    WINE ?= wine
-  endif
-  ifeq (clang,$(CXX_TYPE))
-    LDLIBS_OS ?= -lpthread
-  endif
+	CPPFLAGS_GTEST ?= -DGTEST_HAS_PTHREAD=0
+	CXXFLAGS_WARNINGS ?= -Wno-sign-compare
+	ifeq (gcc,$(CXX_TYPE))
+		CXXFLAGS_OS ?= -pthread
+	endif
+	ifeq (mingw32-gcc,$(CXX_TYPE))
+		LDLIBS_OS ?= -static -lwinpthread
+		EXE := .exe
+		WINE ?= wine
+	endif
+	ifeq (clang,$(CXX_TYPE))
+		LDLIBS_OS ?= -lpthread
+	endif
 endif
 
 ## makes reentrant version lgamma_r available from cmath
@@ -210,18 +207,18 @@ endif
 # Both IDs can be found through installing and calling clinfo
 
 ifdef STAN_OPENCL
-  ifeq ($(OS),Darwin)  # Mac OS X
-    LDLIBS_OPENCL ?= -framework OpenCL
-  else
-    LDLIBS_OPENCL ?= -lOpenCL
-  endif
-  OPENCL_DEVICE_ID ?= 0
-  OPENCL_PLATFORM_ID ?= 0
+	ifeq ($(OS),Darwin)  # Mac OS X
+		LDLIBS_OPENCL ?= -framework OpenCL
+	else
+		LDLIBS_OPENCL ?= -lOpenCL
+	endif
+	OPENCL_DEVICE_ID ?= 0
+	OPENCL_PLATFORM_ID ?= 0
 
-  CPPFLAGS_OPENCL ?= -DSTAN_OPENCL -DOPENCL_DEVICE_ID=$(OPENCL_DEVICE_ID) -DOPENCL_PLATFORM_ID=$(OPENCL_PLATFORM_ID)
-  CPPFLAGS_OPENCL += -DCL_HPP_TARGET_OPENCL_VERSION=120 -DCL_HPP_MINIMUM_OPENCL_VERSION=120
-  CPPFLAGS_OPENCL += -DCL_HPP_ENABLE_EXCEPTIONS -Wno-ignored-attributes
-  CXXFLAGS_OPENCL ?= -I $(OPENCL)
+	CPPFLAGS_OPENCL ?= -DSTAN_OPENCL -DOPENCL_DEVICE_ID=$(OPENCL_DEVICE_ID) -DOPENCL_PLATFORM_ID=$(OPENCL_PLATFORM_ID)
+	CPPFLAGS_OPENCL += -DCL_HPP_TARGET_OPENCL_VERSION=120 -DCL_HPP_MINIMUM_OPENCL_VERSION=120
+	CPPFLAGS_OPENCL += -DCL_HPP_ENABLE_EXCEPTIONS -Wno-ignored-attributes
+	CXXFLAGS_OPENCL ?= -I $(OPENCL)
 endif
 
 ################################################################################
@@ -241,19 +238,19 @@ TBB_BIN_ABSOLUTE_PATH = $(abspath $(TBB_BIN))
 TBB_ABSOLUTE_PATH = $(abspath $(TBB))
 
 ifeq ($(OS),Darwin)
-  TBB_LIBRARIES ?= tbb tbbmalloc tbbmalloc_proxy
+	TBB_LIBRARIES ?= tbb tbbmalloc tbbmalloc_proxy
 else
-  TBB_LIBRARIES ?= tbb
+	TBB_LIBRARIES ?= tbb
 endif
 
 ifeq ($(OS),Windows_NT)
-  TBB_TARGETS ?= $(addprefix $(TBB_BIN)/,$(addsuffix $(LIBRARY_SUFFIX),$(TBB_LIBRARIES)))
+	TBB_TARGETS ?= $(addprefix $(TBB_BIN)/,$(addsuffix $(LIBRARY_SUFFIX),$(TBB_LIBRARIES)))
 endif
 ifeq ($(OS),Darwin)
-  TBB_TARGETS ?= $(addprefix $(TBB_BIN)/lib,$(addsuffix $(LIBRARY_SUFFIX), $(TBB_LIBRARIES)))
+	TBB_TARGETS ?= $(addprefix $(TBB_BIN)/lib,$(addsuffix $(LIBRARY_SUFFIX), $(TBB_LIBRARIES)))
 endif
 ifeq ($(OS),Linux)
-  TBB_TARGETS ?= $(addprefix $(TBB_BIN)/lib,$(addsuffix $(LIBRARY_SUFFIX).2,$(TBB_LIBRARIES)))
+	TBB_TARGETS ?= $(addprefix $(TBB_BIN)/lib,$(addsuffix $(LIBRARY_SUFFIX).2,$(TBB_LIBRARIES)))
 endif
 
 
@@ -267,7 +264,7 @@ LDLIBS_TBB ?=
 # Sets up CXXFLAGS_THREADS to use threading
 
 ifdef STAN_THREADS
-  CXXFLAGS_THREADS ?= -DSTAN_THREADS
+	CXXFLAGS_THREADS ?= -DSTAN_THREADS
 endif
 
 ################################################################################
@@ -276,17 +273,17 @@ endif
 # Sets up MPI CXXFLAGS_MPI and LDLIBS_MPI to compile and link to MPI
 
 ifdef STAN_MPI
-  ifeq ($(OS),Windows_NT)
-    $(error MPI is not supported on Windows.)
-  endif
+	ifeq ($(OS),Windows_NT)
+		$(error MPI is not supported on Windows.)
+	endif
 
-  MPI_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(BOOST)/stage/lib/libboost_serialization $(BOOST)/stage/lib/libboost_mpi) $(MPI_TEMPLATE_INSTANTIATION)
-  CPPFLAGS_MPI ?= -DSTAN_MPI
+	MPI_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(BOOST)/stage/lib/libboost_serialization $(BOOST)/stage/lib/libboost_mpi) $(MPI_TEMPLATE_INSTANTIATION)
+	CPPFLAGS_MPI ?= -DSTAN_MPI
 
-  BOOST_LIBRARY_ABSOLUTE_PATH = $(abspath $(BOOST)/stage/lib)
+	BOOST_LIBRARY_ABSOLUTE_PATH = $(abspath $(BOOST)/stage/lib)
 
-  LDFLAGS_MPI ?= -Wl,-L,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" -Wl,-rpath,"$(BOOST_LIBRARY_ABSOLUTE_PATH)"
-  CXXFLAGS_MPI ?= -Wno-delete-non-virtual-dtor
+	LDFLAGS_MPI ?= -Wl,-L,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" -Wl,-rpath,"$(BOOST_LIBRARY_ABSOLUTE_PATH)"
+	CXXFLAGS_MPI ?= -Wno-delete-non-virtual-dtor
 endif
 
 CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(FLTO_FLAG) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) $(CXXFLAGS_THREADS) $(CXXFLAGS_TBB) -O$(O) $(INC)
