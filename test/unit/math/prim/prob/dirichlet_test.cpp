@@ -164,7 +164,7 @@ void test_dirichlet3_1(Eigen::VectorXd alpha) {
   EXPECT_TRUE(chi_square(bin, expect) < quantile(complement(mydist, 1e-6)));
 }
 
-void test_dirichlet3_2(VectorXd alpha) {
+void test_dirichlet3_2(Eigen::VectorXd alpha) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
