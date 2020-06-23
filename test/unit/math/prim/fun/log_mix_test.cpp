@@ -164,7 +164,7 @@ TEST(MatrixFunctions, LogMix_Throws) {
   stan::math::vector_d dens_neg_inf(5, 1);
   dens_neg_inf << -5.65, -7.62, stan::math::NEGATIVE_INFTY, -55.62, -2.35;
   std::vector<stan::math::vector_d> std_dens_neg_inf{dens_neg_inf, dens_neg_inf,
-                                         dens_neg_inf};
+                                                     dens_neg_inf};
 
   stan::math::vector_d dens_nan(5, 1);
   dens_nan << -5.65, -7.62, -12.63, stan::math::NOT_A_NUMBER, -2.35;
@@ -188,7 +188,8 @@ TEST(MatrixFunctions, LogMix_Throws) {
 
   stan::math::vector_d dens_large(7, 1);
   dens_large << -5.65, -7.62, -12.63, -55.62, -2.35, -9.6, -0.7;
-  std::vector<stan::math::vector_d> std_dens_large{dens_large, dens_large, dens_large};
+  std::vector<stan::math::vector_d> std_dens_large{dens_large, dens_large,
+                                                   dens_large};
 
   EXPECT_THROW(log_mix(prob_small, dens), std::invalid_argument);
   EXPECT_THROW(log_mix(prob_small, std_dens), std::invalid_argument);
