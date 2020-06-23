@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/functor/ode_adams.hpp>
+#include <stan/math/prim/functor/integrate_ode_std_vector_interface_adapter.hpp>
 #include <ostream>
 #include <vector>
 

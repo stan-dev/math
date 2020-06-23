@@ -8,6 +8,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <cvodes/cvodes.h>
+#include <nvector/nvector_serial.h>
 #include <sunlinsol/sunlinsol_dense.h>
 #include <algorithm>
 #include <ostream>
