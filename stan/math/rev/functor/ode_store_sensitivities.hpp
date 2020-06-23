@@ -66,18 +66,14 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
     vari** varis_ptr = varis;
     double* partials_ptr = partials;
 
-    // iterate over parameters for each equation
     varis_ptr = save_varis(varis_ptr, y0);
     for (std::size_t k = 0; k < y0_vars; ++k) {
-      // *varis_ptr = y0[k].vi_;
       *partials_ptr = coupled_state(N + y0_vars * k + j);
       partials_ptr++;
     }
 
     varis_ptr = save_varis(varis_ptr, args...);
     for (std::size_t k = 0; k < args_vars; ++k) {
-      // dy[j]_dtheta[k]
-      // theta[k].vi_
       *partials_ptr = coupled_state(N + N * y0_vars + N * k + j);
       partials_ptr++;
     }
@@ -86,8 +82,6 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
     if (t0_vars > 0) {
       double dyt_dt0 = 0.0;
       for (std::size_t k = 0; k < y0_vars; ++k) {
-        // dy[j]_dtheta[k]
-        // theta[k].vi_
         dyt_dt0 += -f_y0_t0[k] * coupled_state(N + y0_vars * k + j);
       }
       *partials_ptr = dyt_dt0;
