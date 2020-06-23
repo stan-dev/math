@@ -138,7 +138,7 @@ double chi_square(std::vector<int> bin, std::vector<double> expect) {
   return chi;
 }
 
-void test_dirichlet3_1(VectorXd alpha) {
+void test_dirichlet3_1(Eigen::VectorXd alpha) {
   boost::random::mt19937 rng;
   int N = 10000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
