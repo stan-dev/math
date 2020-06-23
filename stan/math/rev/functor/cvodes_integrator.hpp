@@ -188,8 +188,7 @@ class cvodes_integrator {
                     double relative_tolerance, double absolute_tolerance,
                     bool include_sensitivities_in_errors,
                     long int max_num_steps,  // NOLINT(runtime/int)
-                    std::ostream* msgs,
-                    const T_Args&... args)
+                    std::ostream* msgs, const T_Args&... args)
       : f_(f),
         y0_(y0.unaryExpr([](const T_y0& val) { return T_y0_t0(val); })),
         t0_(t0),
