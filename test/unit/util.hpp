@@ -1,6 +1,7 @@
 #ifndef TEST_UNIT_UTIL_HPP
 #define TEST_UNIT_UTIL_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <boost/typeof/typeof.hpp>
 #include <gtest/gtest.h>
 #include <type_traits>
