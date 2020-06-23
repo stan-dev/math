@@ -26,7 +26,7 @@ namespace math {
  * @tparam Type of object to which pointer points.
  */
 template <typename T>
-bool is_aligned(T* ptr, unsigned int bytes_aligned) {
+inline bool is_aligned(T* ptr, unsigned int bytes_aligned) {
   return (reinterpret_cast<uintptr_t>(ptr) % bytes_aligned) == 0U;
 }
 
@@ -91,7 +91,7 @@ class stack_alloc {
    * @param len Number of bytes to allocate.
    * @return A pointer to the allocated memory.
    */
-  char* move_to_next_block(size_t len) {
+  inline char* move_to_next_block(size_t len) {
     char* result;
     ++cur_block_;
     // Find the next block (if any) containing at least len bytes.

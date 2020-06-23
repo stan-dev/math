@@ -30,8 +30,8 @@ namespace math {
 template <typename Vari>
 static void grad(Vari* vi) {
   vi->init_dependent();
-  size_t end = ChainableStack::instance_->var_stack_.size();
-  size_t beginning = empty_nested() ? 0 : end - nested_size();
+  const size_t end = ChainableStack::instance_->var_stack_.size();
+  const size_t beginning = empty_nested() ? 0 : end - nested_size();
   for (size_t i = end; i-- > beginning;) {
     ChainableStack::instance_->var_stack_[i]->chain();
   }
