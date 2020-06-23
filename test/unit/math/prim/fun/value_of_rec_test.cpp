@@ -1,10 +1,7 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
-
-#define EXPECT_MATRIX_EQ(A, B)       \
-  for (int i = 0; i < A.size(); i++) \
-    EXPECT_EQ(A(i), B(i));
 
 TEST(MathFunctions, value_of_rec) {
   using stan::math::value_of_rec;
@@ -28,11 +25,8 @@ TEST(MathMatrixPrimArr, value_of_rec) {
   vector<double> d_a = value_of_rec(a);
   vector<double> d_b = value_of_rec(b);
 
-  for (int i = 0; i < 5; ++i)
-    EXPECT_FLOAT_EQ(b[i], d_b[i]);
-
-  for (int i = 0; i < 10; ++i)
-    EXPECT_FLOAT_EQ(a[i], d_a[i]);
+  EXPECT_STD_VECTOR_FLOAT_EQ(a, d_a);
+  EXPECT_STD_VECTOR_FLOAT_EQ(b, d_b);
 }
 
 TEST(MathMatrixPrimMat, value_of_rec) {
@@ -50,12 +44,8 @@ TEST(MathMatrixPrimMat, value_of_rec) {
   Eigen::MatrixXd d_a = value_of_rec(a);
   Eigen::VectorXd d_b = value_of_rec(b);
 
-  for (int i = 0; i < 5; ++i)
-    EXPECT_FLOAT_EQ(b(i), d_b(i));
-
-  for (int i = 0; i < 2; ++i)
-    for (int j = 0; j < 5; ++j)
-      EXPECT_FLOAT_EQ(a(i, j), d_a(i, j));
+  EXPECT_MATRIX_FLOAT_EQ(a, d_a);
+  EXPECT_MATRIX_FLOAT_EQ(b, d_b);
 }
 
 TEST(MathMatrixPrimMat, value_of_rec_expression) {
@@ -69,12 +59,13 @@ TEST(MathMatrixPrimMat, value_of_rec_expression) {
   Eigen::VectorXi b = Eigen::VectorXi::Random(7);
   Eigen::VectorXd res_b = value_of_rec(2 * b);
   Eigen::VectorXd correct_b = (2 * b).cast<double>();
-  EXPECT_MATRIX_EQ(res_b, correct_b);
+  EXPECT_MATRIX_EQ(correct_b, res_b);
 
   Eigen::ArrayXXd c = a.array();
   Eigen::ArrayXXd res_c = value_of_rec(2 * c);
   Eigen::ArrayXXd correct_c = 2 * c;
-  EXPECT_MATRIX_EQ(res_c, correct_c);
+  for (int i = 0; i < res_c.size(); i++)
+    EXPECT_EQ(correct_c(i), res_c(i));
 }
 
 TEST(MathFunctions, value_of_rec_return_type_short_circuit_std_vector) {
