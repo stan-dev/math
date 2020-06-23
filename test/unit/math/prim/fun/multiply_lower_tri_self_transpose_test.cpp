@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 
 stan::math::matrix_d generate_large_L_tri_mat() {
-  matrix_d x;
+  stan::math::matrix_d x;
   double vals[10000];
 
   vals[0] = 0.1;
