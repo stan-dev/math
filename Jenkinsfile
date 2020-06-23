@@ -3,7 +3,8 @@
 import org.stan.Utils
 
 def runTests(String testPath) {
-    try { sh "./runTests.py -j${env.PARALLEL} ${testPath} --jumbo" }
+    sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only"
+    try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" }
     finally { junit 'test/**/*.xml' }
 }
 
@@ -13,8 +14,8 @@ def runTestsWin(String testPath, boolean buildLibs = true) {
        if (buildLibs){
            bat "mingw32-make.exe -f make/standalone math-libs"
        }
-       
-       try { bat "runTests.py -j${env.PARALLEL} ${testPath} --jumbo" }
+       bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
+       try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
        finally { junit 'test/**/*.xml' }
     }
 }
