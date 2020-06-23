@@ -47,19 +47,25 @@ endif
 # - CXX_MINOR: minor version of CXX
 ifneq (,$(findstring clang,$(CXX)))
   CXX_TYPE ?= clang
-  FLTO_FLAG ?= -flto
 endif
 ifneq (,$(findstring mingw32-g,$(CXX)))
   CXX_TYPE ?= mingw32-gcc
 endif
 ifneq (,$(findstring gcc,$(CXX)))
   CXX_TYPE ?= gcc
-  FLTO_FLAG ?= -flto
 endif
 ifneq (,$(findstring g++,$(CXX)))
   CXX_TYPE ?= gcc
-  FLTO_FLAG ?= -flto
 endif
+
+ifeq ($(OS),Darwin)  ## Darwin is Mac OS X
+	FLTO_FLAG ?= -flto
+endif
+ifeq ($(OS),Linux)
+	FLTO_FLAG ?= -flto
+endif
+
+
 CXX_TYPE ?= other
 CXX_MAJOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f1)
 CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
