@@ -10,10 +10,9 @@
 namespace stan {
 namespace math {
 
-extern "C" inline void cvodes_err_handler(int error_code,
-                                                 const char* module,
-                                                 const char* function,
-                                                 char* msg, void* eh_data) {
+extern "C" inline void cvodes_err_handler(int error_code, const char* module,
+                                          const char* function, char* msg,
+                                          void* eh_data) {
   std::ostringstream msg1;
   msg1 << msg << " Error code: ";
 
