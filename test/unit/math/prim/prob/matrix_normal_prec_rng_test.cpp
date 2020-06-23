@@ -147,7 +147,7 @@ void assert_matches_normal_distribution(const double mean,
 }
 
 std::vector<double> extract_entry(const unsigned int r, const unsigned int c,
-                                  const std::vector<MatrixXd> &samples) {
+                                  const std::vector<Eigen::MatrixXd> &samples) {
   using Eigen::MatrixXd;
   using stan::math::matrix_normal_prec_rng;
   std::vector<double> univariate_samples;
@@ -158,7 +158,7 @@ std::vector<double> extract_entry(const unsigned int r, const unsigned int c,
 
 std::vector<double> extract_sum_of_entries(
     const unsigned int r1, const unsigned int c1, const unsigned int r2,
-    const unsigned int c2, const std::vector<MatrixXd> &samples) {
+    const unsigned int c2, const std::vector<Eigen::MatrixXd> &samples) {
   using Eigen::MatrixXd;
   using stan::math::matrix_normal_prec_rng;
   std::vector<double> univariate_samples;
@@ -204,7 +204,7 @@ TEST(ProbDistributionsMatrixNormalPrecRng, marginalChiSquareGoodnessFitTest) {
 
   int N = 10000;
 
-  std::vector<MatrixXd> samples;
+  std::vector<Eigen::MatrixXd> samples;
   for (int count = 0; count < N; ++count) {
     MatrixXd Y = matrix_normal_prec_rng(Mu, Sigma, D, rng);
     samples.push_back(Y);
