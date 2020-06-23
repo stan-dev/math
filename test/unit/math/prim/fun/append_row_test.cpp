@@ -157,7 +157,7 @@ TEST(MathMatrixPrimMat, append_row) {
   stan::test::correct_type_matrix(append_row(m23, rv3));
   stan::test::correct_type_matrix(append_row(rv3, m23));
   stan::test::correct_type_matrix(append_row(rv3, rv3b));
-  stan::test:: correct_type_matrix(append_row(rv3b, rv3));
+  stan::test::correct_type_matrix(append_row(rv3b, rv3));
   stan::test::correct_type_vector(append_row(v3, v3b));
   stan::test::correct_type_vector(append_row(v3b, v3));
   stan::test::correct_type_vector(append_row(v3, -4.31));
