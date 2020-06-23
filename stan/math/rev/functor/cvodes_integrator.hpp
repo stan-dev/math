@@ -45,7 +45,7 @@ class cvodes_integrator {
   double relative_tolerance_;
   double absolute_tolerance_;
   bool include_sensitivities_in_errors_;
-  long int max_num_steps_;
+  long int max_num_steps_;  // NOLINT(runtime/int)
 
   const size_t y0_vars_;
   const size_t args_vars_;
@@ -166,6 +166,8 @@ class cvodes_integrator {
    *   not less than t0.
    * @param relative_tolerance Relative tolerance passed to CVODES
    * @param absolute_tolerance Absolute tolerance passed to CVODES
+   * @param include_sensitivities_in_errors A bool to determine whether
+   * to store the sensitivities in errors
    * @param max_num_steps Upper limit on the number of integration steps to
    *   take between each output (error if exceeded)
    * @param[in, out] msgs the print stream for warning messages
@@ -185,7 +187,8 @@ class cvodes_integrator {
                     const T_t0& t0, const std::vector<T_ts>& ts,
                     double relative_tolerance, double absolute_tolerance,
                     bool include_sensitivities_in_errors,
-                    long int max_num_steps, std::ostream* msgs,
+                    long int max_num_steps,  // NOLINT(runtime/int)
+                    std::ostream* msgs,
                     const T_Args&... args)
       : f_(f),
         y0_(y0.unaryExpr([](const T_y0& val) { return T_y0_t0(val); })),

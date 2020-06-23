@@ -17,7 +17,8 @@ ode_bdf_tol_sens_error(const F& f,
                        const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
                        const T_t0& t0, const std::vector<T_ts>& ts, double rtol,
                        double atol, double rtols,
-                       const std::vector<double>& atols, long int max_num_steps,
+                       const std::vector<double>& atols,
+                       long int max_num_steps,  // NOLINT(runtime/int)
                        std::ostream* msgs, const T_Args&... args) {
   cvodes_integrator<CV_BDF, F, T_initial, T_t0, T_ts, T_Args...> integrator(
       f, y0, t0, ts, rtol, atol, true, max_num_steps, msgs, args...);
@@ -33,7 +34,8 @@ ode_bdf_tol_error(const F& f,
                   const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
                   const T_t0& t0, const std::vector<T_ts>& ts,
                   double relative_tolerance, double absolute_tolerance,
-                  long int max_num_steps, std::ostream* msgs,
+                  long int max_num_steps,  // NOLINT(runtime/int)
+                  std::ostream* msgs,
                   const T_Args&... args) {
   cvodes_integrator<CV_BDF, F, T_initial, T_t0, T_ts, T_Args...> integrator(
       f, y0, t0, ts, relative_tolerance, absolute_tolerance, true,
@@ -82,7 +84,9 @@ std::vector<Eigen::Matrix<stan::return_type_t<T_initial, T_t0, T_ts, T_Args...>,
 ode_bdf_tol(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
             const T_t0& t0, const std::vector<T_ts>& ts,
             double relative_tolerance, double absolute_tolerance,
-            long int max_num_steps, std::ostream* msgs, const T_Args&... args) {
+            long int max_num_steps,  // NOLINT(runtime/int)
+            std::ostream* msgs,
+            const T_Args&... args) {
   cvodes_integrator<CV_BDF, F, T_initial, T_t0, T_ts, T_Args...> integrator(
       f, y0, t0, ts, relative_tolerance, absolute_tolerance, false,
       max_num_steps, msgs, args...);
@@ -116,10 +120,6 @@ ode_bdf_tol(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
  * @param t0 Initial time
  * @param ts Times at which to solve the ODE at. All values must be sorted and
  *   not less than t0.
- * @param relative_tolerance Relative tolerance passed to CVODES
- * @param absolute_tolerance Absolute tolerance passed to CVODES
- * @param max_num_steps Upper limit on the number of integration steps to
- *   take between each output (error if exceeded)
  * @param[in, out] msgs the print stream for warning messages
  * @param args Extra arguments passed unmodified through to ODE right hand side
  * @return Solution to ODE at times \p ts
@@ -133,7 +133,7 @@ ode_bdf(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
         const T_Args&... args) {
   double relative_tolerance = 1e-10;
   double absolute_tolerance = 1e-10;
-  long int max_num_steps = 1e8;
+  long int max_num_steps = 1e8;  // NOLINT(runtime/int)
 
   return ode_bdf_tol(f, y0, t0, ts, relative_tolerance, absolute_tolerance,
                      max_num_steps, msgs, args...);
