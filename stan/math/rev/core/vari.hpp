@@ -16,8 +16,8 @@ class var_value;
 
 class vari_base {
 public:
-  virtual void chain() {}
-  inline virtual void set_zero_adjoint() noexcept {}
+  inline virtual void chain() {}
+  EIGEN_STRONG_INLINE virtual void set_zero_adjoint() noexcept {}
 };
 /**
  * The variable implementation base class.
@@ -105,6 +105,23 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> : public
   }
 
   /**
+   * Constructor from vari_value
+   * @tparam S An arithmetic type
+   * @param x A vari_value
+   */
+  vari_value(const vari_value<T>& x) noexcept : val_(x.val_), adj_(x.adj_) {
+    ChainableStack::instance_->var_stack_.emplace_back(this);
+  }
+  /**
+   * Constructor from vari_value
+   * @tparam S An arithmetic type
+   * @param x A vari_value
+   */
+  vari_value(vari_value<T>&& x) noexcept : val_(x.val_), adj_(x.adj_) {
+    ChainableStack::instance_->var_stack_.emplace_back(this);
+  }
+
+  /**
    * Initialize the adjoint for this (dependent) variable to 1.
    * This operation is applied to the dependent variable before
    * propagating derivatives, setting the derivative of the
@@ -117,7 +134,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> : public
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  inline void set_zero_adjoint() noexcept final { adj_ = 0.0; }
+  EIGEN_STRONG_INLINE void set_zero_adjoint() noexcept final { adj_ = 0.0; }
 
   /**
    * Insertion operator for vari. Prints the current value and
