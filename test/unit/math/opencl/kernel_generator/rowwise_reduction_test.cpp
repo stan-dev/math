@@ -1,18 +1,15 @@
 #ifdef STAN_OPENCL
 
+#include <stan/math.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
-#include <stan/math.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
 using Eigen::MatrixXd;
 using stan::math::matrix_cl;
-
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(KernelGenerator, rowwise_sum_test) {
   MatrixXd m(3, 2);
