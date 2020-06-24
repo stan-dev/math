@@ -40,12 +40,6 @@ class var_value<T, require_floating_point_t<T>> {
   using value_type = std::decay_t<T>;
   using vari_type = vari_value<value_type>;
   using vari_pointer = vari_type*;
-  template <typename K>
-  using require_vari_convertible_t
-      = require_t<std::is_convertible<vari_value<K>*, vari_pointer>>;
-  template <typename K>
-  using require_not_vari_convertible_t = require_t<
-      bool_constant<!std::is_convertible<vari_value<K>*, vari_pointer>::value>>;
 
   /**
    * Pointer to the implementation of this variable.
@@ -96,14 +90,6 @@ class var_value<T, require_floating_point_t<T>> {
    */
   var_value(vari_value<T>* vi)  // NOLINT
       : vi_(vi) {}
-
-  /**
-   * Constructor from `var_value` whose value_type is the same as this class's
-   * `value_type`. This is used in cases such as
-   * `var_value<double> a(4.0); var_value<int> b(a)` since the `value_type` for
-   *  a `var_value` with an integral type is a double.
-   */
-  var_value(const var_value<T>& x) : vi_(x.vi_) {}  // NOLINT
 
   /**
    * Return a constant reference to the value of this variable.
