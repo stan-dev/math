@@ -29,9 +29,8 @@ inline int poisson_binomial_rng(
   check_finite(function, "Probability parameters", theta);
   check_bounded(function, "Probability parameters", theta, 0.0, 1.0);
 
-  int sz = theta.size();
   int y = 0;
-  for (int i = 0; i < sz; ++i) {
+  for (size_t i = 0; i < theta.size(); ++i) {
     boost::variate_generator<RNG&, boost::bernoulli_distribution<> >
         bernoulli_rng(rng, boost::bernoulli_distribution<>(theta(i)));
     y += bernoulli_rng();
@@ -42,4 +41,4 @@ inline int poisson_binomial_rng(
 
 }  // namespace math
 }  // namespace stan
-#endif  // STAN_MATH_PRIM_PROB_POISSON_BINOMIAL_RNG_HPP
+#endif

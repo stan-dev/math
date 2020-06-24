@@ -22,9 +22,9 @@ namespace math {
  * Returns the log CCDF for the Poisson-binomial distribution evaluated at the
  * specified number of successes and probabilities of successes.
  *
- * @tparam T_y type of number of succeses parameter
+ * @tparam T_y type of number of successes parameter
  * @tparam T_theta type of chance of success parameters
- * @param y array of numbers of successes
+ * @param y input scalar, vector, or nested vector of numbers of successes
  * @param theta array of chances of success parameters
  * @return sum of log probabilities
  * @throw std::domain_error if y is out of bounds
@@ -36,17 +36,17 @@ return_type_t<T_theta> poisson_binomial_lccdf(const T_y &y,
                                               const T_theta &theta) {
   static const char *function = "poisson_binomial_lccdf";
 
-  int size_theta = size_mvt(theta);
+  size_t size_theta = size_mvt(theta);
   if (size_theta > 1) {
     check_consistent_sizes(function, "Successes variables", y,
                            "Probability parameters", theta);
   }
 
-  int max_sz = max_size(y, size_theta);
+  size_t max_sz = std::max(stan::math::size(y), size_mvt(theta));
   scalar_seq_view<T_y> y_vec(y);
   vector_seq_view<T_theta> theta_vec(theta);
 
-  for (int i = 0; i < max_sz; ++i) {
+  for (size_t i = 0; i < max_sz; ++i) {
     check_bounded(function, "Successes variable", y_vec[i], 0,
                   theta_vec[i].size());
     check_finite(function, "Probability parameters", theta_vec[i]);
@@ -64,4 +64,4 @@ return_type_t<T_theta> poisson_binomial_lccdf(const T_y &y,
 
 }  // namespace math
 }  // namespace stan
-#endif  // STAN_MATH_PRIM_PROB_POISSON_BINOMIAL_LCCDF_HPP
+#endif

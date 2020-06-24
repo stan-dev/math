@@ -16,20 +16,19 @@ namespace math {
  * probabilities.
  *
  * @tparam T_theta template expression
- * @tparam T_scalar scalar type of T_Theta
- * @param y number of successes in N experiments
+ * @param y numbers of successes
  * @param theta N-dimensional vector of success probabilities for each trial
  * @return the last row of the computed log probability matrix
  */
 template <typename T_theta, typename T_scalar = scalar_type_t<T_theta>,
           require_eigen_col_vector_t<T_theta>* = nullptr>
 plain_type_t<T_theta> poisson_binomial_log_probs(int y, const T_theta& theta) {
+
   int size_theta = theta.size();
   plain_type_t<T_theta> log_theta = log(theta);
   plain_type_t<T_theta> log1m_theta = log1m(theta);
 
-  Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic> alpha(size_theta + 1,
-                                                                y + 1);
+  Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic> alpha(size_theta + 1, y + 1);
 
   // alpha[i, j] = log prob of j successes in first i trials
   alpha(0, 0) = 0.0;
@@ -55,8 +54,8 @@ plain_type_t<T_theta> poisson_binomial_log_probs(int y, const T_theta& theta) {
 template <typename T_theta, typename T_scalar = scalar_type_t<T_theta>>
 auto poisson_binomial_log_probs(const std::vector<int>& y,
                                 const T_theta& theta) {
-  int size_theta = size_mvt(theta);
-  size_t max_sizes = max_size(y, size_theta);
+
+  size_t max_sizes = std::max(stan::math::size(y), size_mvt(theta));
   std::vector<Eigen::Matrix<T_scalar, Eigen::Dynamic, 1>> result(max_sizes);
   vector_seq_view<T_theta> theta_vec(theta);
 
@@ -69,5 +68,4 @@ auto poisson_binomial_log_probs(const std::vector<int>& y,
 
 }  // namespace math
 }  // namespace stan
-
-#endif  // STAN_MATH_PRIM_FUN_POISSON_BINOMIAL_LOG_PROBS_HPP
+#endif

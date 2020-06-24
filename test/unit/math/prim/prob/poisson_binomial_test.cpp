@@ -5,8 +5,43 @@
 #include <limits>
 #include <vector>
 
-TEST(ProbDistributionsPoissonBinomial,
-     poisson_binomial_check_error_scalar_y_oob) {
+TEST(ProbDistributionsPoissonBinomial, lpmf_works_on_scalar_arguments) {
+  using stan::math::poisson_binomial_lpmf;
+  using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
+
+  vec p(3, 1);
+  p << 0.5, 0.2, 0.7;
+
+  EXPECT_NEAR(-2.12026, poisson_binomial_lpmf(0, p), 0.001);
+  EXPECT_NEAR(-0.84397, poisson_binomial_lpmf(1, p), 0.001);
+  EXPECT_NEAR(-0.967584, poisson_binomial_lpmf(2, p), 0.001);
+  EXPECT_NEAR(-2.65926, poisson_binomial_lpmf(3, p), 0.001);
+}
+
+TEST(ProbDistributionsPoissonBinomial, lpmf_works_on_vectorial_y) {
+  using stan::math::poisson_binomial_lpmf;
+  using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
+
+  vec p(3, 1);
+  p << 0.5, 0.2, 0.7;
+  std::vector<int> y{2, 2};
+
+  EXPECT_NEAR(-0.967584 * 2, poisson_binomial_lpmf(y, p), 0.001);
+}
+
+TEST(ProbDistributionsPoissonBinomial, lpmf_works_on_vectorial_y_and_theta) {
+  using stan::math::poisson_binomial_lpmf;
+  using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
+
+  vec p(3, 1);
+  p << 0.5, 0.2, 0.7;
+  std::vector<int> y{2, 0};
+  std::vector<vec> ps{p, p};
+
+  EXPECT_NEAR(-0.967584 - 2.12026, poisson_binomial_lpmf(y, ps), 0.001);
+}
+
+TEST(ProbDistributionsPoissonBinomial, lpmf_check_error_scalar_y_oob) {
   static double inff = std::numeric_limits<double>::infinity();
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> theta(3);
@@ -14,14 +49,9 @@ TEST(ProbDistributionsPoissonBinomial,
 
   EXPECT_THROW(stan::math::poisson_binomial_lpmf(-1, theta), std::domain_error);
   EXPECT_THROW(stan::math::poisson_binomial_lpmf(4, theta), std::domain_error);
-  EXPECT_THROW(stan::math::poisson_binomial_lcdf(-1, theta), std::domain_error);
-  EXPECT_THROW(stan::math::poisson_binomial_lcdf(4, theta), std::domain_error);
-  EXPECT_THROW(stan::math::poisson_binomial_lccdf(-1, theta),
-               std::domain_error);
-  EXPECT_THROW(stan::math::poisson_binomial_lccdf(4, theta), std::domain_error);
 }
 
-TEST(ProbDistributionsPoissonBinomial, check_error_theta_is_not_prob) {
+TEST(ProbDistributionsPoissonBinomial, lpmf_check_error_theta_is_not_prob) {
   static double inff = std::numeric_limits<double>::infinity();
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> theta(3);
@@ -31,14 +61,9 @@ TEST(ProbDistributionsPoissonBinomial, check_error_theta_is_not_prob) {
 
   EXPECT_THROW(stan::math::poisson_binomial_lpmf(1, theta), std::domain_error);
   EXPECT_THROW(stan::math::poisson_binomial_lpmf(1, theta2), std::domain_error);
-  EXPECT_THROW(stan::math::poisson_binomial_lcdf(1, theta), std::domain_error);
-  EXPECT_THROW(stan::math::poisson_binomial_lcdf(1, theta2), std::domain_error);
-  EXPECT_THROW(stan::math::poisson_binomial_lccdf(1, theta), std::domain_error);
-  EXPECT_THROW(stan::math::poisson_binomial_lccdf(1, theta2),
-               std::domain_error);
 }
 
-TEST(ProbDistributionsPoissonBinomial, check_error_vectorial_y_oob) {
+TEST(ProbDistributionsPoissonBinomial, lpmf_check_error_vectorial_y_oob) {
   static double inff = std::numeric_limits<double>::infinity();
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> theta(3);
@@ -50,18 +75,10 @@ TEST(ProbDistributionsPoissonBinomial, check_error_vectorial_y_oob) {
                std::domain_error);
   EXPECT_THROW(stan::math::poisson_binomial_lpmf(ys2, theta),
                std::domain_error);
-  EXPECT_THROW(stan::math::poisson_binomial_lcdf(ys1, theta),
-               std::domain_error);
-  EXPECT_THROW(stan::math::poisson_binomial_lcdf(ys2, theta),
-               std::domain_error);
-  EXPECT_THROW(stan::math::poisson_binomial_lccdf(ys1, theta),
-               std::domain_error);
-  EXPECT_THROW(stan::math::poisson_binomial_lccdf(ys2, theta),
-               std::domain_error);
 }
 
 TEST(ProbDistributionsPoissonBinomial,
-     check_error_vectorial_y_theta_is_not_prob) {
+     lpmf_check_error_vectorial_y_theta_is_not_prob) {
   static double inff = std::numeric_limits<double>::infinity();
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> theta(3);
@@ -69,12 +86,10 @@ TEST(ProbDistributionsPoissonBinomial,
   std::vector<int> y{0, 2};
 
   EXPECT_THROW(stan::math::poisson_binomial_lpmf(y, theta), std::domain_error);
-  EXPECT_THROW(stan::math::poisson_binomial_lcdf(y, theta), std::domain_error);
-  EXPECT_THROW(stan::math::poisson_binomial_lccdf(y, theta), std::domain_error);
 }
 
 TEST(ProbDistributionsPoissonBinomial,
-     check_error_vectorial_theta_is_not_prob) {
+     lpmf_check_error_vectorial_theta_is_not_prob) {
   using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
   static double inff = std::numeric_limits<double>::infinity();
 
@@ -90,14 +105,10 @@ TEST(ProbDistributionsPoissonBinomial,
 
   EXPECT_THROW(stan::math::poisson_binomial_lpmf(ys, thetas),
                std::domain_error);
-  EXPECT_THROW(stan::math::poisson_binomial_lcdf(ys, thetas),
-               std::domain_error);
-  EXPECT_THROW(stan::math::poisson_binomial_lccdf(ys, thetas),
-               std::domain_error);
 }
 
 TEST(ProbDistributionsPoissonBinomial,
-     check_error_vectorial_y_oob_with_vectorial_theta) {
+     lpmf_check_error_vectorial_y_oob_with_vectorial_theta) {
   using mat = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
   using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
@@ -111,31 +122,21 @@ TEST(ProbDistributionsPoissonBinomial,
 
   EXPECT_THROW(stan::math::poisson_binomial_lpmf(ys, thetas),
                std::domain_error);
-  EXPECT_THROW(stan::math::poisson_binomial_lcdf(ys, thetas),
-               std::domain_error);
-  EXPECT_THROW(stan::math::poisson_binomial_lccdf(ys, thetas),
-               std::domain_error);
 }
 
 TEST(ProbDistributionsPoissonBinomial,
-     check_error_vectorial_y_and_theta_inconsistent_sizes) {
+     lpmf_check_error_vectorial_y_and_theta_inconsistent_sizes) {
   using mat = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
   using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
-  vec theta1(3);
-  theta1 << 0.5, 0.2, 0.1;
-  vec theta2(3);
-  theta2 << 0.5, 0.2, 0.1;
+  vec theta(3);
+  theta << 0.5, 0.2, 0.1;
 
-  std::vector<int> ys{0};
-  std::vector<vec> thetas{theta1, theta2};
+  std::vector<int> ys{0, 1};
+  std::vector<vec> thetas{theta, theta, theta};
 
   EXPECT_THROW(stan::math::poisson_binomial_lpmf(ys, thetas),
-               std::invalid_argument);
-  EXPECT_THROW(stan::math::poisson_binomial_lcdf(ys, thetas),
-               std::invalid_argument);
-  EXPECT_THROW(stan::math::poisson_binomial_lccdf(ys, thetas),
-               std::invalid_argument);
+    std::invalid_argument);
 }
 
 /*
