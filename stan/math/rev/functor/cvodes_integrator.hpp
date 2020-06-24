@@ -53,7 +53,7 @@ class cvodes_integrator {
 
   coupled_ode_system<F, T_y0_t0, T_Args...> coupled_ode_;
 
-  Eigen::VectorXd coupled_state_;
+  std::vector<double> coupled_state_;
   N_Vector nv_state_;
   N_Vector* nv_state_sens_;
   SUNMatrix A_;
@@ -142,8 +142,8 @@ class cvodes_integrator {
    */
   inline void rhs_sens(double t, const double y[], N_Vector* yS,
                        N_Vector* ySdot) {
-    Eigen::VectorXd z(coupled_state_.size());
-    Eigen::VectorXd dz_dt;
+    std::vector<double> z(coupled_state_.size());
+    std::vector<double> dz_dt;
     std::copy(y, y + N_, z.data());
     for (std::size_t s = 0; s < y0_vars_ + args_vars_; s++) {
       std::copy(NV_DATA_S(yS[s]), NV_DATA_S(yS[s]) + N_,

@@ -67,6 +67,7 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
   const F& f_;
   const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0_;
   std::tuple<const Args&...> args_tuple_;
+  std::tuple<decltype(deep_copy_vars(std::declval<Args>()))...> local_args_tuple_;
   const size_t y0_vars_;
   const size_t args_vars_;
   const size_t N_;
@@ -90,13 +91,44 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
       : f_(f),
         y0_(y0),
         args_tuple_(args...),
+	local_args_tuple_(deep_copy_vars(args)...),
         y0_vars_(count_vars(y0_)),
         args_vars_(count_vars(args...)),
         N_(y0.size()),
         args_adjoints_(args_vars_),
         y_adjoints_(N_),
-        msgs_(msgs) {}
+        msgs_(msgs) {  
+  }
 
+  inline void zero_local_adjoints() {}
+  
+  template <typename T,
+	    typename... Pargs>
+  inline void zero_local_adjoints(T& x, Pargs&... args) {
+    zero_local_adjoints(args...);
+  }
+
+  template <typename... Pargs>
+  inline void zero_local_adjoints(var& x, Pargs&... args) {
+    x.vi_->set_zero_adjoint();
+    zero_local_adjoints(args...);
+  }
+
+  template <typename... Pargs>
+  inline void zero_local_adjoints(std::vector<var>& x, Pargs&... args) {
+    for(size_t i = 0; i < x.size(); ++i)
+      x[i].vi_->set_zero_adjoint();
+    zero_local_adjoints(args...);
+  }
+
+  template <int R, int C, typename... Pargs>
+  inline void zero_local_adjoints(Eigen::Matrix<var, R, C>& x,
+				  Pargs&... args) {
+    for(size_t i = 0; i < x.size(); ++i)
+      x.coeffRef(i).vi_->set_zero_adjoint();
+    zero_local_adjoints(args...);
+  }
+  
   /**
    * Calculates the derivative of the coupled ode system with respect
    * to time.
@@ -111,35 +143,33 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
    * @throw exception if the base ode function does not return the
    *    expected number of derivatives, N.
    */
-  void operator()(const Eigen::VectorXd& z, Eigen::VectorXd& dz_dt, double t) {
+  void operator()(const std::vector<double>& z,
+		  std::vector<double>& dz_dt, double t) {
     using std::vector;
 
     dz_dt.resize(size());
 
     // Run nested autodiff in this scope
     nested_rev_autodiff nested;
+    
+    /*auto local_args_tuple_ = apply([&](auto&&... args) {
+	return std::tuple<decltype(deep_copy_vars(args))...>(deep_copy_vars(args)...);
+	}, args_tuple_);*/
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> y_vars(N_);
     for (size_t n = 0; n < N_; ++n)
-      y_vars(n) = z(n);
-
-    auto local_args_tuple = apply(
-        [&](auto&&... args) {
-          return std::tuple<decltype(deep_copy_vars(args))...>(
-              deep_copy_vars(args)...);
-        },
-        args_tuple_);
+      y_vars.coeffRef(n) = z[n];
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
         = apply([&](auto&&... args) { return f_(t, y_vars, msgs_, args...); },
-                local_args_tuple);
+                local_args_tuple_);
 
     check_size_match("coupled_ode_system", "dy_dt", f_y_t_vars.size(), "states",
                      N_);
 
     for (size_t i = 0; i < N_; ++i) {
-      dz_dt(i) = f_y_t_vars(i).val();
-      f_y_t_vars(i).grad();
+      dz_dt[i] = f_y_t_vars.coeffRef(i).val();
+      f_y_t_vars.coeffRef(i).grad();
 
       y_adjoints_ = y_vars.adj();
 
@@ -148,8 +178,12 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
           [&](auto&&... args) {
             accumulate_adjoints(args_adjoints_.data(), args...);
           },
-          local_args_tuple);
+          local_args_tuple_);
 
+      apply([&](auto&&... args) {
+	  zero_local_adjoints(args...);
+	}, local_args_tuple_);
+      
       nested.set_zero_all_adjoints();
 
       for (size_t j = 0; j < y0_vars_; ++j) {
@@ -158,16 +192,16 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
         // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
         double temp_deriv = 0.0;
         for (size_t k = 0; k < N_; ++k) {
-          temp_deriv += z[N_ + N_ * j + k] * y_adjoints_[k];
+          temp_deriv += z[N_ + N_ * j + k] * y_adjoints_.coeffRef(k);
         }
 
         dz_dt[N_ + N_ * j + i] = temp_deriv;
       }
 
       for (size_t j = 0; j < args_vars_; ++j) {
-        double temp_deriv = args_adjoints_[j];
+        double temp_deriv = args_adjoints_.coeffRef(j);
         for (size_t k = 0; k < N_; ++k) {
-          temp_deriv += z[N_ + N_ * y0_vars_ + N_ * j + k] * y_adjoints_[k];
+          temp_deriv += z[N_ + N_ * y0_vars_ + N_ * j + k] * y_adjoints_.coeffRef(k);
         }
 
         dz_dt[N_ + N_ * y0_vars_ + N_ * j + i] = temp_deriv;
@@ -200,13 +234,13 @@ struct coupled_ode_system_impl<false, F, T_initial, Args...> {
    *   elements are all zero as these are the Jacobian wrt to the
    *   parameters at the initial time-point, which is zero.
    */
-  Eigen::VectorXd initial_state() const {
-    Eigen::VectorXd initial = Eigen::VectorXd::Zero(size());
+  std::vector<double> initial_state() const {
+    std::vector<double> initial(size(), 0.0);
     for (size_t i = 0; i < N_; i++) {
-      initial(i) = value_of(y0_[i]);
+      initial[i] = value_of(y0_(i));
     }
     for (size_t i = 0; i < y0_vars_; i++) {
-      initial(N_ + i * N_ + i) = 1.0;
+      initial[N_ + i * N_ + i] = 1.0;
     }
     return initial;
   }

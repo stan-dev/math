@@ -85,13 +85,23 @@ struct coupled_ode_system_impl<true, F, T_initial, Args...> {
                           std::ostream* msgs, const Args&... args)
       : f_(f), y0_(y0), args_tuple_(args...), N_(y0.size()), msgs_(msgs) {}
 
-  void operator()(const Eigen::VectorXd& y, Eigen::VectorXd& dy_dt,
+  void operator()(const std::vector<double>& z,
+		  std::vector<double>& dy_dt,
                   double t) const {
-    dy_dt = apply([&](const Args&... args) { return f_(t, y, msgs_, args...); },
-                  args_tuple_);
+    Eigen::VectorXd y(N_);
+    for (size_t n = 0; n < N_; ++n)
+      y.coeffRef(n) = z[n];
+
+    dy_dt.resize(N_);
+
+    Eigen::VectorXd f_y_t =
+      apply([&](const Args&... args) { return f_(t, y, msgs_, args...); },
+	    args_tuple_);
 
     check_size_match("coupled_ode_system", "y", y.size(), "dy_dt",
-                     dy_dt.size());
+                     f_y_t.size());
+
+    Eigen::Map<Eigen::VectorXd>(dy_dt.data(), dy_dt.size()) = f_y_t;
   }
 
   /**
@@ -119,7 +129,15 @@ struct coupled_ode_system_impl<true, F, T_initial, Args...> {
    *   elements are all zero as these are the Jacobian wrt to the
    *   parameters at the initial time-point, which is zero.
    */
-  Eigen::VectorXd initial_state() const { return value_of(y0_); }
+  std::vector<double> initial_state() const {
+    std::vector<double> initial(size(), 0.0);
+
+    for (size_t i = 0; i < N_; i++) {
+      initial[i] = value_of(y0_(i));
+    }
+
+    return initial;
+  }
 };
 
 template <typename F, typename T_initial, typename... Args>

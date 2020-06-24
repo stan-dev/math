@@ -36,8 +36,10 @@ template <typename F, typename T_y0_t0, typename T_t0, typename T_t,
           require_any_autodiff_t<T_y0_t0, T_t0, T_t,
                                  scalar_type_t<Args>...>* = nullptr>
 Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
-    const F& f, const Eigen::VectorXd& coupled_state,
-    const Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1>& y0, const T_t0& t0,
+    const F& f,
+    const std::vector<double>& coupled_state,
+    const Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1>& y0,
+    const T_t0& t0,
     const T_t& t, std::ostream* msgs, const Args&... args) {
   const size_t N = y0.size();
   const size_t y0_vars = count_vars(y0);
@@ -46,7 +48,10 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
   const size_t t_vars = count_vars(t);
   Eigen::Matrix<var, Eigen::Dynamic, 1> yt(N);
 
-  Eigen::VectorXd y = coupled_state.head(N);
+  Eigen::VectorXd y(N);
+  for(size_t n = 0; n < N; ++n) {
+    y.coeffRef(n) = coupled_state[n];
+  }
 
   Eigen::VectorXd f_y_t;
   if (is_var<T_t>::value)
@@ -55,48 +60,45 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
   Eigen::VectorXd f_y0_t0;
   if (is_var<T_t0>::value)
     f_y0_t0 = f(value_of(t0), value_of(y0).eval(), msgs, value_of(args)...);
+  
+  const size_t total_vars = y0_vars + args_vars + t0_vars + t_vars;
 
-  for (size_t j = 0; j < N; j++) {
-    const size_t total_vars = y0_vars + args_vars + t0_vars + t_vars;
+  vari** varis
+    = ChainableStack::instance_->memalloc_.alloc_array<vari*>(total_vars);
+  double* partials
+    = ChainableStack::instance_->memalloc_.alloc_array<double>(N * total_vars);
 
-    vari** varis
-        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(total_vars);
-    double* partials
-        = ChainableStack::instance_->memalloc_.alloc_array<double>(total_vars);
+  vari** varis_ptr = varis;
+  varis_ptr = save_varis(varis_ptr, y0);
+  varis_ptr = save_varis(varis_ptr, args...);
+  varis_ptr = save_varis(varis_ptr, t0);
+  varis_ptr = save_varis(varis_ptr, t);
 
-    vari** varis_ptr = varis;
-    double* partials_ptr = partials;
+   for (size_t j = 0; j < N; ++j) {
+     double* partials_j = partials + j * total_vars;
+     for (size_t k = 0; k < y0_vars; ++k) {
+       partials_j[k] = coupled_state[N + y0_vars * k + j];
+     }
 
-    varis_ptr = save_varis(varis_ptr, y0);
-    for (std::size_t k = 0; k < y0_vars; ++k) {
-      *partials_ptr = coupled_state(N + y0_vars * k + j);
-      partials_ptr++;
-    }
+     for (size_t k = 0; k < args_vars; ++k) {
+       partials_j[y0_vars + k] = coupled_state[N + N * y0_vars + N * k + j];
+     }
 
-    varis_ptr = save_varis(varis_ptr, args...);
-    for (std::size_t k = 0; k < args_vars; ++k) {
-      *partials_ptr = coupled_state(N + N * y0_vars + N * k + j);
-      partials_ptr++;
-    }
+     if (t0_vars > 0) {
+       double dyt_dt0 = 0.0;
+       for (size_t k = 0; k < y0_vars; ++k) {
+	 dyt_dt0 += -f_y0_t0.coeffRef(k) * coupled_state[N + y0_vars * k + j];
+       }
+       partials_j[y0_vars + args_vars] = dyt_dt0;
+     }
 
-    varis_ptr = save_varis(varis_ptr, t0);
-    if (t0_vars > 0) {
-      double dyt_dt0 = 0.0;
-      for (std::size_t k = 0; k < y0_vars; ++k) {
-        dyt_dt0 += -f_y0_t0[k] * coupled_state(N + y0_vars * k + j);
-      }
-      *partials_ptr = dyt_dt0;
-      partials_ptr++;
-    }
+     if (t_vars > 0) {
+       partials_j[y0_vars + args_vars + t0_vars] = f_y_t.coeffRef(j);
+     }
 
-    varis_ptr = save_varis(varis_ptr, t);
-    if (t_vars > 0) {
-      *partials_ptr = f_y_t[j];
-      partials_ptr++;
-    }
-
-    yt(j) = new precomputed_gradients_vari(y(j), total_vars, varis, partials);
-  }
+     yt(j) = new precomputed_gradients_vari(y(j), total_vars,
+					    varis, partials_j);
+   }
 
   return yt;
 }
