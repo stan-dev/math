@@ -85,8 +85,7 @@ struct coupled_ode_system_impl<true, F, T_initial, Args...> {
                           std::ostream* msgs, const Args&... args)
       : f_(f), y0_(y0), args_tuple_(args...), N_(y0.size()), msgs_(msgs) {}
 
-  void operator()(const std::vector<double>& z,
-		  std::vector<double>& dy_dt,
+  void operator()(const std::vector<double>& z, std::vector<double>& dy_dt,
                   double t) const {
     Eigen::VectorXd y(N_);
     for (size_t n = 0; n < N_; ++n)
@@ -94,9 +93,9 @@ struct coupled_ode_system_impl<true, F, T_initial, Args...> {
 
     dy_dt.resize(N_);
 
-    Eigen::VectorXd f_y_t =
-      apply([&](const Args&... args) { return f_(t, y, msgs_, args...); },
-	    args_tuple_);
+    Eigen::VectorXd f_y_t
+        = apply([&](const Args&... args) { return f_(t, y, msgs_, args...); },
+                args_tuple_);
 
     check_size_match("coupled_ode_system", "y", y.size(), "dy_dt",
                      f_y_t.size());
