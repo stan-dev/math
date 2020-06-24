@@ -8,6 +8,18 @@
 namespace stan {
 namespace test {
 
+template<typename Scal>
+struct counterOp{
+  int* counter_;
+  counterOp(int* counter){
+    counter_ = counter;
+  }
+  const Scal& operator()(const Scal& a) const {
+    (*counter_)++;
+    return a;
+  }
+};
+
 template<typename T>
 auto recursive_sum(const T& a){
   return math::sum(a);

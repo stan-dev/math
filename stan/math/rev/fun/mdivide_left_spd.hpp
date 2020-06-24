@@ -6,6 +6,7 @@
 #include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <vector>
 
@@ -143,13 +144,20 @@ class mdivide_left_spd_vd_vari : public vari {
 };
 }  // namespace internal
 
-template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
-    const Eigen::Matrix<var, R1, C1> &A, const Eigen::Matrix<var, R2, C2> &b) {
+template <typename EigMat1, typename EigMat2,
+          require_all_eigen_matrix_base_vt<is_var, EigMat1, EigMat2> * = nullptr>
+inline Eigen::Matrix<var, EigMat1::RowsAtCompileTime,
+                     EigMat2::ColsAtCompileTime>
+mdivide_left_spd(const EigMat1 &A, const EigMat2 &b) {
+  constexpr int R1 = EigMat1::RowsAtCompileTime;
+  constexpr int C1 = EigMat1::ColsAtCompileTime;
+  constexpr int R2 = EigMat2::RowsAtCompileTime;
+  constexpr int C2 = EigMat2::ColsAtCompileTime;
   static const char *function = "mdivide_left_spd";
   check_multiplicable(function, "A", A, "b", b);
-  check_symmetric(function, "A", A);
-  check_not_nan(function, "A", A);
+  const auto &A_ref = to_ref(A);
+  check_symmetric(function, "A", A_ref);
+  check_not_nan(function, "A", A_ref);
   if (A.size() == 0) {
     return {0, b.cols()};
   }
@@ -159,21 +167,28 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
   internal::mdivide_left_spd_vv_vari<R1, C1, R2, C2> *baseVari
-      = new internal::mdivide_left_spd_vv_vari<R1, C1, R2, C2>(A, b);
+      = new internal::mdivide_left_spd_vv_vari<R1, C1, R2, C2>(A_ref, b);
 
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
   res.vi() = Eigen::Map<matrix_vi>(&baseVari->variRefC_[0], b.rows(), b.cols());
   return res;
 }
 
-template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
-    const Eigen::Matrix<var, R1, C1> &A,
-    const Eigen::Matrix<double, R2, C2> &b) {
+template <typename EigMat1, typename EigMat2,
+          require_eigen_matrix_base_vt<is_var, EigMat1> * = nullptr,
+          require_eigen_matrix_base_vt<std::is_arithmetic, EigMat2> * = nullptr>
+inline Eigen::Matrix<var, EigMat1::RowsAtCompileTime,
+                     EigMat2::ColsAtCompileTime>
+mdivide_left_spd(const EigMat1 &A, const EigMat2 &b) {
+  constexpr int R1 = EigMat1::RowsAtCompileTime;
+  constexpr int C1 = EigMat1::ColsAtCompileTime;
+  constexpr int R2 = EigMat2::RowsAtCompileTime;
+  constexpr int C2 = EigMat2::ColsAtCompileTime;
   static const char *function = "mdivide_left_spd";
   check_multiplicable(function, "A", A, "b", b);
-  check_symmetric(function, "A", A);
-  check_not_nan(function, "A", A);
+  const auto &A_ref = to_ref(A);
+  check_symmetric(function, "A", A_ref);
+  check_not_nan(function, "A", A_ref);
   if (A.size() == 0) {
     return {0, b.cols()};
   }
@@ -183,21 +198,28 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
   internal::mdivide_left_spd_vd_vari<R1, C1, R2, C2> *baseVari
-      = new internal::mdivide_left_spd_vd_vari<R1, C1, R2, C2>(A, b);
+      = new internal::mdivide_left_spd_vd_vari<R1, C1, R2, C2>(A_ref, b);
 
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
   res.vi() = Eigen::Map<matrix_vi>(&baseVari->variRefC_[0], b.rows(), b.cols());
   return res;
 }
 
-template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
-    const Eigen::Matrix<double, R1, C1> &A,
-    const Eigen::Matrix<var, R2, C2> &b) {
+template <typename EigMat1, typename EigMat2,
+          require_eigen_matrix_base_vt<std::is_arithmetic, EigMat1> * = nullptr,
+          require_eigen_matrix_base_vt<is_var, EigMat2> * = nullptr>
+inline Eigen::Matrix<var, EigMat1::RowsAtCompileTime,
+                     EigMat2::ColsAtCompileTime>
+mdivide_left_spd(const EigMat1 &A, const EigMat2 &b) {
+  constexpr int R1 = EigMat1::RowsAtCompileTime;
+  constexpr int C1 = EigMat1::ColsAtCompileTime;
+  constexpr int R2 = EigMat2::RowsAtCompileTime;
+  constexpr int C2 = EigMat2::ColsAtCompileTime;
   static const char *function = "mdivide_left_spd";
   check_multiplicable(function, "A", A, "b", b);
-  check_symmetric(function, "A", A);
-  check_not_nan(function, "A", A);
+  const auto &A_ref = to_ref(A);
+  check_symmetric(function, "A", A_ref);
+  check_not_nan(function, "A", A_ref);
   if (A.size() == 0) {
     return {0, b.cols()};
   }
@@ -207,7 +229,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
   internal::mdivide_left_spd_dv_vari<R1, C1, R2, C2> *baseVari
-      = new internal::mdivide_left_spd_dv_vari<R1, C1, R2, C2>(A, b);
+      = new internal::mdivide_left_spd_dv_vari<R1, C1, R2, C2>(A_ref, b);
 
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
   res.vi() = Eigen::Map<matrix_vi>(&baseVari->variRefC_[0], b.rows(), b.cols());

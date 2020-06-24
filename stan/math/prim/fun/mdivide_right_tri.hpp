@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/opencl.hpp>
 #endif
@@ -94,7 +95,7 @@ mdivide_right_tri(const EigMat1& b, const EigMat2& A) {
     return from_matrix_cl(C_cl);
   } else {
 #endif
-    return A.template triangularView<TriView>()
+    return to_ref(A).template triangularView<TriView>()
         .transpose()
         .solve(b.transpose())
         .transpose();

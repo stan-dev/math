@@ -563,12 +563,14 @@ inline auto multiply(const Mat1& m1, const Mat2& m2) {
   constexpr int Ca = Mat1::ColsAtCompileTime;
   constexpr int Cb = Mat2::ColsAtCompileTime;
   check_multiplicable("multiply", "m1", m1, "m2", m2);
-  check_not_nan("multiply", "m1", m1);
-  check_not_nan("multiply", "m2", m2);
+  const auto& m1_ref = to_ref(m1);
+  const auto& m2_ref = to_ref(m2);
+  check_not_nan("multiply", "m1", m1_ref);
+  check_not_nan("multiply", "m2", m2_ref);
 
   // Memory managed with the arena allocator.
   multiply_mat_vari<Ta, Ra, Ca, Tb, Cb>* baseVari
-      = new multiply_mat_vari<Ta, Ra, Ca, Tb, Cb>(m1, m2);
+      = new multiply_mat_vari<Ta, Ra, Ca, Tb, Cb>(m1_ref, m2_ref);
   Eigen::Matrix<var, Ra, Cb> AB_v(m1.rows(), m2.cols());
   AB_v.vi()
       = Eigen::Map<matrix_vi>(&baseVari->variRefAB_[0], m1.rows(), m2.cols());
@@ -596,12 +598,13 @@ inline var multiply(const RowVec& m1, const ColVec& m2) {
   using ColVecScalar = value_type_t<ColVec>;
   constexpr int Ca = RowVec::ColsAtCompileTime;
   check_multiplicable("multiply", "m1", m1, "m2", m2);
-  check_not_nan("multiply", "m1", m1);
-  check_not_nan("multiply", "m2", m2);
-
+  const auto& m1_ref = to_ref(m1);
+  const auto& m2_ref = to_ref(m2);
+  check_not_nan("multiply", "m1", m1_ref);
+  check_not_nan("multiply", "m2", m2_ref);
   // Memory managed with the arena allocator.
   multiply_mat_vari<RowVecScalar, 1, Ca, ColVecScalar, 1>* baseVari
-      = new multiply_mat_vari<RowVecScalar, 1, Ca, ColVecScalar, 1>(m1, m2);
+      = new multiply_mat_vari<RowVecScalar, 1, Ca, ColVecScalar, 1>(m1_ref, m2_ref);
   var AB_v;
   AB_v.vi_ = baseVari->variRefAB_;
   return AB_v;

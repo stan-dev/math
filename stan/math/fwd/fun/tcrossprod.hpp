@@ -16,7 +16,8 @@ tcrossprod(const EigMat& m) {
   if (m.rows() == 0) {
     return {};
   }
-  return multiply(m, m.transpose());
+  const auto& m_ref = to_ref(m);
+  return multiply(m_ref, m_ref.transpose());
 }
 
 }  // namespace math

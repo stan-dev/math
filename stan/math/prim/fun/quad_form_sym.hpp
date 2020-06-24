@@ -30,8 +30,9 @@ template <typename EigMat1, typename EigMat2,
 inline plain_type_t<EigMat2> quad_form_sym(const EigMat1& A, const EigMat2& B) {
   check_multiplicable("quad_form_sym", "A", A, "B", B);
   const auto& A_ref = to_ref(A);
+  const auto& B_ref = to_ref(B);
   check_symmetric("quad_form_sym", "A", A_ref);
-  plain_type_t<EigMat2> ret(B.transpose() * A_ref * B);
+  plain_type_t<EigMat2> ret(B_ref.transpose() * A_ref * B_ref);
   return value_type_t<EigMat2>(0.5) * (ret + ret.transpose());
 }
 
@@ -54,8 +55,9 @@ template <typename EigMat, typename ColVec, require_eigen_t<EigMat>* = nullptr,
 inline value_type_t<EigMat> quad_form_sym(const EigMat& A, const ColVec& B) {
   check_multiplicable("quad_form_sym", "A", A, "B", B);
   const auto& A_ref = to_ref(A);
+  const auto& B_ref = to_ref(B);
   check_symmetric("quad_form_sym", "A", A_ref);
-  return B.dot(A_ref * B);
+  return B_ref.dot(A_ref * B_ref);
 }
 
 }  // namespace math

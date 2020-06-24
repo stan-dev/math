@@ -377,8 +377,9 @@ class cholesky_opencl : public vari {
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
 inline Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime>
 cholesky_decompose(const T& A) {
+  const auto& A_ref = to_ref(A);
   Eigen::Matrix<double, T::RowsAtCompileTime, T::ColsAtCompileTime> L_A(
-      value_of_rec(A));
+      value_of_rec(A_ref));
   check_not_nan("cholesky_decompose", "A", L_A);
 #ifdef STAN_OPENCL
   L_A = cholesky_decompose(L_A);
@@ -394,7 +395,7 @@ cholesky_decompose(const T& A) {
   Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime> L(A.rows(),
                                                                    A.cols());
   if (L_A.rows() <= 35) {
-    cholesky_scalar* baseVari = new cholesky_scalar(A, L_A);
+    cholesky_scalar* baseVari = new cholesky_scalar(A_ref, L_A);
     size_t accum = 0;
     size_t accum_i = accum;
     for (size_type j = 0; j < L.cols(); ++j) {
@@ -413,14 +414,14 @@ cholesky_decompose(const T& A) {
 #ifdef STAN_OPENCL
     if (L_A.rows()
         > opencl_context.tuning_opts().cholesky_size_worth_transfer) {
-      cholesky_opencl* baseVari = new cholesky_opencl(A, L_A);
+      cholesky_opencl* baseVari = new cholesky_opencl(A_ref, L_A);
       internal::set_lower_tri_coeff_ref(L, baseVari->vari_ref_L_);
     } else {
-      cholesky_block* baseVari = new cholesky_block(A, L_A);
+      cholesky_block* baseVari = new cholesky_block(A_ref, L_A);
       internal::set_lower_tri_coeff_ref(L, baseVari->vari_ref_L_);
     }
 #else
-    cholesky_block* baseVari = new cholesky_block(A, L_A);
+    cholesky_block* baseVari = new cholesky_block(A_ref, L_A);
     internal::set_lower_tri_coeff_ref(L, baseVari->vari_ref_L_);
 #endif
   }

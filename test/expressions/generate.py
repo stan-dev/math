@@ -90,19 +90,28 @@ for signature in signatures:
 
         for n, arg in enumerate(args):
             test_code += make_arg_code(arg, scalar, "arg_expr%d" % n, function_name)
+            if arg in arg2test:
+                test_code += "  int counter%d = 0;\n"%n
+                test_code += "  stan::test::counterOp<%s> counter_op%d(&counter%d);\n"%(scalar, n, n)
         test_code += "  auto res_expr = stan::math::%s(" % function_name
         for n, arg in enumerate(args[:-1]):
             if arg in arg2test:
-                test_code += "1*arg_expr%d, " % n
+                test_code += "arg_expr%d.unaryExpr(counter_op%d), " % (n,n)
             else:
                 test_code += "arg_expr%d, " % n
         if args[-1] in arg2test:
-            test_code += "1*arg_expr%d);\n\n" % (len(args) - 1)
+            test_code += "arg_expr%d.unaryExpr(counter_op%d));\n\n" % (len(args) - 1, len(args) - 1)
         else:
             test_code += "arg_expr%d);\n\n" % (len(args) - 1)
 
         test_code += "  EXPECT_STAN_EQ(res_expr, res_mat);\n"
 
+        for n, arg in enumerate(args):
+            if arg in arg2test:
+                if function_name=="rank":
+                    test_code +='  EXPECT_LE(counter%d, 2);\n'%(n)
+                else:
+                    test_code +='  EXPECT_LE(counter%d, 1);\n'%(n)
         if overload == "Rev" and (return_type.startswith("real") or
                                   return_type.startswith("vector") or
                                   return_type.startswith("row_vector") or

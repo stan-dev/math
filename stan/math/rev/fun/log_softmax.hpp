@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log_softmax.hpp>
 #include <stan/math/prim/fun/softmax.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <cmath>
 #include <vector>
@@ -57,7 +58,7 @@ class log_softmax_elt_vari : public vari {
  */
 template <typename T, require_container_st<is_var, T>* = nullptr>
 inline auto log_softmax(const T& x) {
-  return apply_vector_unary<T>::apply(x, [&](const auto& alpha) {
+  return apply_vector_unary<ref_type_t<T>>::apply(to_ref(x), [&](const auto& alpha) {
     const int a_size = alpha.size();
 
     check_nonzero_size("log_softmax", "alpha", alpha);
