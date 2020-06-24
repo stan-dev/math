@@ -1,6 +1,5 @@
 #include <stan/math.hpp>
 #include <stan/math/prim.hpp>
-#include <boost/type_traits/has_nothrow_copy.hpp>
 #include <test/unit/pretty_print_types.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/rev/core/gradable.hpp>

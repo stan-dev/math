@@ -2,11 +2,10 @@
 #define STAN_MATH_REV_CORE_CHAINABLESTACK_HPP
 
 #include <stan/math/rev/core/autodiffstackstorage.hpp>
-#include <tuple>
 namespace stan {
 namespace math {
 
-template <typename T, typename>
+template <typename T, typename = void>
 class vari_value;
 class vari_base;
 class chainable_alloc;

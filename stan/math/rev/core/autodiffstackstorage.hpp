@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_CORE_AUTODIFFSTACKSTORAGE_HPP
 
 #include <stan/math/memory/stack_alloc.hpp>
-#include <array>
 #include <vector>
 
 namespace stan {
@@ -24,9 +23,6 @@ namespace math {
 // In case STAN_THREADS is not set, then no modifier is needed.
 #define STAN_THREADS_DEF
 #endif
-
-template <typename T, typename = void>
-class vari_value;
 
 /**
  * This struct always provides access to the autodiff stack using

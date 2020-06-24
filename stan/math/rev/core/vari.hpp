@@ -32,6 +32,7 @@ class vari_base {
   virtual void set_zero_adjoint() = 0;
   virtual ~vari_base() noexcept {}
 };
+
 /**
  * The variable implementation base class.
  *
@@ -43,9 +44,6 @@ class vari_base {
  * derivative with respect to the root of the derivative tree.
  *
  */
-template <typename T, typename>
-class vari_value;
-
 template <typename T>
 class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
     : public vari_base {

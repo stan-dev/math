@@ -5,6 +5,7 @@
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/fill.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/coupled_ode_system.hpp>
 #include <stdexcept>
@@ -484,7 +485,7 @@ struct coupled_ode_system<F, var, var> {
       // See efficiency note above on template specialization for more details
       // on this.
       for (size_t j = 0; j < M_; ++j) {
-        theta_nochain_[j].vi_->adj_ = 0.0;
+        fill(theta_nochain_[j].vi_->adj_, 0.0);
       }
     }
   }
