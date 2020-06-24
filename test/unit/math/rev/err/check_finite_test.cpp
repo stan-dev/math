@@ -17,27 +17,21 @@ TEST(AgradRevErrorHandlingScalar, CheckFiniteVarCheckVectorized) {
 
   size_t stack_size
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + 
-              stan::math::ChainableStack::instance_->var_nochain_stack_
-              .size();
+        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
 
   EXPECT_EQ(5U, stack_size);
   EXPECT_NO_THROW(check_finite(function, "a", a));
 
   size_t stack_size_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + 
-              stan::math::ChainableStack::instance_->var_nochain_stack_
-              .size();
+        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
   EXPECT_EQ(5U, stack_size_after_call);
 
   a[1] = std::numeric_limits<double>::infinity();
   EXPECT_THROW(check_finite(function, "a", a), std::domain_error);
   stack_size_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + 
-              stan::math::ChainableStack::instance_->var_nochain_stack_
-              .size();
+        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
   EXPECT_EQ(6U, stack_size_after_call);
 
   stan::math::recover_memory();
@@ -77,27 +71,21 @@ TEST(AgradRevErrorHandlingScalar, CheckFiniteVarCheckUnivariate) {
 
   size_t stack_size
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + 
-              stan::math::ChainableStack::instance_->var_nochain_stack_
-              .size();
+        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
 
   EXPECT_EQ(1U, stack_size);
   EXPECT_NO_THROW(check_finite(function, "a", a));
 
   size_t stack_size_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + 
-              stan::math::ChainableStack::instance_->var_nochain_stack_
-              .size();
+        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
   EXPECT_EQ(1U, stack_size_after_call);
 
   a = std::numeric_limits<double>::infinity();
   EXPECT_THROW(check_finite(function, "a", a), std::domain_error);
   stack_size_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + 
-              stan::math::ChainableStack::instance_->var_nochain_stack_
-              .size();
+        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
   EXPECT_EQ(2U, stack_size_after_call);
 
   stan::math::recover_memory();
