@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_REV_CORE_RECOVER_MEMORY_HPP
 #define STAN_MATH_REV_CORE_RECOVER_MEMORY_HPP
 
-#include <stan/math/prim/functor.hpp>
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/empty_nested.hpp>
@@ -17,19 +16,18 @@ namespace math {
  * <code>false</code>
  */
 static inline void recover_memory() {
-  if (!empty_nested()) {
-    throw std::logic_error(
-        "empty_nested() must be true"
-        " before calling recover_memory()");
-  }
-  ChainableStack::instance_->var_stack_.clear();
-  for_each([](auto& x) { x.clear(); },
-           ChainableStack::instance_->var_zeroing_stacks_);
-  for (auto& x : ChainableStack::instance_->var_alloc_stack_) {
-    delete x;
-  }
-  ChainableStack::instance_->var_alloc_stack_.clear();
-  ChainableStack::instance_->memalloc_.recover_all();
+	if (!empty_nested()) {
+	 throw std::logic_error(
+	     "empty_nested() must be true"
+	     " before calling recover_memory()");
+	}
+	ChainableStack::instance_->var_stack_.clear();
+	ChainableStack::instance_->var_nochain_stack_.clear();
+	for (auto &x : ChainableStack::instance_->var_alloc_stack_) {
+	 delete x;
+	}
+	ChainableStack::instance_->var_alloc_stack_.clear();
+	ChainableStack::instance_->memalloc_.recover_all();
 }
 
 }  // namespace math

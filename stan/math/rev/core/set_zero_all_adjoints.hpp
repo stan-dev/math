@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_REV_CORE_SET_ZERO_ALL_ADJOINTS_HPP
 #define STAN_MATH_REV_CORE_SET_ZERO_ALL_ADJOINTS_HPP
 
-#include <stan/math/prim/functor.hpp>
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
@@ -12,17 +11,13 @@ namespace math {
 /**
  * Reset all adjoint values in the stack to zero.
  */
-static EIGEN_STRONG_INLINE void set_zero_all_adjoints() {
-  for (auto& xx : ChainableStack::instance_->var_stack_) {
-    xx->set_zero_adjoint();
-  }
-  for_each(
-      [](auto& x) {
-        for (auto& xx : x) {
-          xx->set_zero_adjoint();
-        }
-      },
-      ChainableStack::instance_->var_zeroing_stacks_);
+static void set_zero_all_adjoints() {
+ for (auto &x : ChainableStack::instance_->var_stack_) {
+   x->set_zero_adjoint();
+ }
+ for (auto &x : ChainableStack::instance_->var_nochain_stack_) {
+   x->set_zero_adjoint();
+ }
 }
 
 }  // namespace math

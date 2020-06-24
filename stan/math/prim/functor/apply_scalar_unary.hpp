@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_META_APPLY_SCALAR_UNARY_HPP
-#define STAN_MATH_PRIM_META_APPLY_SCALAR_UNARY_HPP
+#ifndef STAN_MATH_PRIM_FUNCTOR_APPLY_SCALAR_UNARY_HPP
+#define STAN_MATH_PRIM_FUNCTOR_APPLY_SCALAR_UNARY_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>

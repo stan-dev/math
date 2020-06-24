@@ -10,11 +10,8 @@ template <typename T, typename>
 class vari_value;
 class vari_base;
 class chainable_alloc;
-using zeroing_stacks = std::tuple<std::vector<vari_value<double>*>,
-                                  std::vector<vari_value<float>*>,
-                                  std::vector<vari_value<long double>*>>;
 using ChainableStack
-    = AutodiffStackSingleton<vari_base, chainable_alloc, zeroing_stacks>;
+    = AutodiffStackSingleton<vari_base, chainable_alloc>;
 
 }  // namespace math
 }  // namespace stan

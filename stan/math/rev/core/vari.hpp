@@ -28,9 +28,9 @@ class vari_base {
    * Apply the chain rule to this variable based on the variables
    * on which it depends.
    */
-  virtual void chain() {}
-  virtual void set_zero_adjoint() {}
-  virtual ~vari_base() {}
+  virtual void chain() = 0;
+  virtual void set_zero_adjoint() = 0;
+  virtual ~vari_base() noexcept {}
 };
 /**
  * The variable implementation base class.
@@ -108,9 +108,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
     if (stacked) {
       ChainableStack::instance_->var_stack_.emplace_back(this);
     } else {
-      std::get<std::vector<vari_value<T>*>>(
-          ChainableStack::instance_->var_zeroing_stacks_)
-          .emplace_back(this);
+			ChainableStack::instance_->var_nochain_stack_.emplace_back(this);
     }
   }
 
@@ -122,6 +120,11 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
   vari_value(const vari_value<T>& x) noexcept : val_(x.val_), adj_(x.adj_) {
     ChainableStack::instance_->var_stack_.emplace_back(this);
   }
+
+  ~vari_value() = default;
+
+	inline void chain() {}
+
   /**
    * Initialize the adjoint for this (dependent) variable to 1.
    * This operation is applied to the dependent variable before
