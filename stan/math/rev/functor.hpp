@@ -6,6 +6,7 @@
 #include <stan/math/rev/functor/algebra_solver_powell.hpp>
 #include <stan/math/rev/functor/algebra_solver_newton.hpp>
 #include <stan/math/rev/functor/algebra_system.hpp>
+#include <stan/math/rev/functor/apply_scalar_unary.hpp>
 #include <stan/math/rev/functor/coupled_ode_system.hpp>
 #include <stan/math/rev/functor/cvodes_integrator.hpp>
 #include <stan/math/rev/functor/cvodes_utils.hpp>
