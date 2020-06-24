@@ -16,18 +16,14 @@ TEST(AgradRevErrorHandlingScalar, CheckNotNanVarCheckVectorized) {
 
   size_t stack_size
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + 
-              stan::math::ChainableStack::instance_->var_nochain_stack_
-              .size();
+        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
 
   EXPECT_EQ(5U, stack_size);
   EXPECT_NO_THROW(check_not_nan(function, "a", a));
 
   size_t stack_size_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + 
-              stan::math::ChainableStack::instance_->var_nochain_stack_
-              .size();
+        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
   EXPECT_EQ(5U, stack_size_after_call);
   stan::math::recover_memory();
 }
@@ -45,18 +41,14 @@ TEST(ErrorHandlingScalar, CheckNotNanVarCheckVectorized) {
 
   size_t stack_size
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + 
-              stan::math::ChainableStack::instance_->var_nochain_stack_
-              .size();
+        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
 
   EXPECT_EQ(5U, stack_size);
   EXPECT_NO_THROW(check_not_nan(function, "a", a));
 
   size_t stack_size_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + 
-              stan::math::ChainableStack::instance_->var_nochain_stack_
-              .size();
+        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
   EXPECT_EQ(5U, stack_size_after_call);
   stan::math::recover_memory();
 }
@@ -106,18 +98,14 @@ TEST(AgradRevErrorHandlingScalar, CheckNotNanVarCheckUnivariate) {
 
   size_t stack_size
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + 
-              stan::math::ChainableStack::instance_->var_nochain_stack_
-              .size();
+        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
 
   EXPECT_EQ(1U, stack_size);
   EXPECT_NO_THROW(check_not_nan(function, "a", a));
 
   size_t stack_size_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + 
-              stan::math::ChainableStack::instance_->var_nochain_stack_
-              .size();
+        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
   EXPECT_EQ(1U, stack_size_after_call);
 
   stan::math::recover_memory();
@@ -132,18 +120,14 @@ TEST(ErrorHandlingScalar, CheckNotNanVarCheckUnivariate) {
 
   size_t stack_size
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + 
-              stan::math::ChainableStack::instance_->var_nochain_stack_
-              .size();
+        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
 
   EXPECT_EQ(1U, stack_size);
   EXPECT_NO_THROW(check_not_nan(function, "a", a));
 
   size_t stack_size_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + 
-              stan::math::ChainableStack::instance_->var_nochain_stack_
-              .size();
+        + stan::math::ChainableStack::instance_->var_nochain_stack_.size();
   EXPECT_EQ(1U, stack_size_after_call);
 
   stan::math::recover_memory();
