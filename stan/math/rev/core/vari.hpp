@@ -122,7 +122,6 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
   vari_value(const vari_value<T>& x) noexcept : val_(x.val_), adj_(x.adj_) {
     ChainableStack::instance_->var_stack_.emplace_back(this);
   }
-
   /**
    * Initialize the adjoint for this (dependent) variable to 1.
    * This operation is applied to the dependent variable before
