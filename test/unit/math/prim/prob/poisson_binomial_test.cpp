@@ -136,7 +136,7 @@ TEST(ProbDistributionsPoissonBinomial,
   std::vector<vec> thetas{theta, theta, theta};
 
   EXPECT_THROW(stan::math::poisson_binomial_lpmf(ys, thetas),
-    std::invalid_argument);
+               std::invalid_argument);
 }
 
 /*
