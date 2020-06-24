@@ -108,7 +108,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
     if (stacked) {
       ChainableStack::instance_->var_stack_.emplace_back(this);
     } else {
-			ChainableStack::instance_->var_nochain_stack_.emplace_back(this);
+      ChainableStack::instance_->var_nochain_stack_.emplace_back(this);
     }
   }
 
@@ -123,7 +123,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
 
   ~vari_value() = default;
 
-	inline void chain() {}
+  inline void chain() {}
 
   /**
    * Initialize the adjoint for this (dependent) variable to 1.

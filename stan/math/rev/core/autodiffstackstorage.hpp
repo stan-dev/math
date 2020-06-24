@@ -91,60 +91,60 @@ class vari_value;
  */
 template <typename ChainableT, typename ChainableAllocT>
 struct AutodiffStackSingleton {
- using AutodiffStackSingleton_t
-     = AutodiffStackSingleton<ChainableT, ChainableAllocT>;
+  using AutodiffStackSingleton_t
+      = AutodiffStackSingleton<ChainableT, ChainableAllocT>;
 
- AutodiffStackSingleton() : own_instance_(init()) {}
- ~AutodiffStackSingleton() {
-   if (own_instance_) {
-     delete instance_;
-     instance_ = nullptr;
-   }
- }
+  AutodiffStackSingleton() : own_instance_(init()) {}
+  ~AutodiffStackSingleton() {
+    if (own_instance_) {
+      delete instance_;
+      instance_ = nullptr;
+    }
+  }
 
- struct AutodiffStackStorage {
-   AutodiffStackStorage &operator=(const AutodiffStackStorage &) = delete;
+  struct AutodiffStackStorage {
+    AutodiffStackStorage &operator=(const AutodiffStackStorage &) = delete;
 
-   std::vector<ChainableT *> var_stack_;
-   std::vector<ChainableT *> var_nochain_stack_;
-   std::vector<ChainableAllocT *> var_alloc_stack_;
-   stack_alloc memalloc_;
+    std::vector<ChainableT *> var_stack_;
+    std::vector<ChainableT *> var_nochain_stack_;
+    std::vector<ChainableAllocT *> var_alloc_stack_;
+    stack_alloc memalloc_;
 
-   // nested positions
-   std::vector<size_t> nested_var_stack_sizes_;
-   std::vector<size_t> nested_var_nochain_stack_sizes_;
-   std::vector<size_t> nested_var_alloc_stack_starts_;
- };
+    // nested positions
+    std::vector<size_t> nested_var_stack_sizes_;
+    std::vector<size_t> nested_var_nochain_stack_sizes_;
+    std::vector<size_t> nested_var_alloc_stack_starts_;
+  };
 
- explicit AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
- AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
+  explicit AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
+  AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
 
- static STAN_THREADS_DEF AutodiffStackStorage *instance_;
+  static STAN_THREADS_DEF AutodiffStackStorage *instance_;
 
-private:
- static bool init() {
-   static STAN_THREADS_DEF bool is_initialized = false;
-   if (!is_initialized) {
-     is_initialized = true;
-     instance_ = new AutodiffStackStorage();
-     return true;
-   }
-   if (!instance_) {
-     is_initialized = true;
-     instance_ = new AutodiffStackStorage();
-     return true;
-   }
-   return false;
- }
+ private:
+  static bool init() {
+    static STAN_THREADS_DEF bool is_initialized = false;
+    if (!is_initialized) {
+      is_initialized = true;
+      instance_ = new AutodiffStackStorage();
+      return true;
+    }
+    if (!instance_) {
+      is_initialized = true;
+      instance_ = new AutodiffStackStorage();
+      return true;
+    }
+    return false;
+  }
 
- bool own_instance_;
+  bool own_instance_;
 };
 
 template <typename ChainableT, typename ChainableAllocT>
 STAN_THREADS_DEF
-   typename AutodiffStackSingleton<ChainableT,
-                                   ChainableAllocT>::AutodiffStackStorage
-       *AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_;
+    typename AutodiffStackSingleton<ChainableT,
+                                    ChainableAllocT>::AutodiffStackStorage
+        *AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_;
 
 }  // namespace math
 }  // namespace stan

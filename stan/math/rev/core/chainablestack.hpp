@@ -10,8 +10,7 @@ template <typename T, typename>
 class vari_value;
 class vari_base;
 class chainable_alloc;
-using ChainableStack
-    = AutodiffStackSingleton<vari_base, chainable_alloc>;
+using ChainableStack = AutodiffStackSingleton<vari_base, chainable_alloc>;
 
 }  // namespace math
 }  // namespace stan
