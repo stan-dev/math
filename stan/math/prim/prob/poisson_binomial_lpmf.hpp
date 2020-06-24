@@ -54,8 +54,8 @@ return_type_t<T_theta> poisson_binomial_lpmf(const T_y& y,
 }
 
 template <typename T_y, typename T_theta>
-return_type_t<T_theta> poisson_binomial_lpmf(const T_y &y,
-                                             const T_theta &theta) {
+return_type_t<T_theta> poisson_binomial_lpmf(const T_y& y,
+                                             const T_theta& theta) {
   return poisson_binomial_lpmf<false>(y, theta);
 }
 
