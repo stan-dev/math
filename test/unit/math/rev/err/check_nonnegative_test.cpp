@@ -48,8 +48,8 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckVectorized) {
 
   size_t stack_size
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + std::get<std::vector<stan::math::vari*>>(
-              stan::math::ChainableStack::instance_->var_zeroing_stacks_)
+        + 
+              stan::math::ChainableStack::instance_->var_nochain_stack_
               .size();
 
   EXPECT_EQ(5U, stack_size);
@@ -57,8 +57,8 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckVectorized) {
 
   size_t stack_size_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + std::get<std::vector<stan::math::vari*>>(
-              stan::math::ChainableStack::instance_->var_zeroing_stacks_)
+        + 
+              stan::math::ChainableStack::instance_->var_nochain_stack_
               .size();
   EXPECT_EQ(5U, stack_size_after_call);
 
@@ -66,8 +66,8 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckVectorized) {
   EXPECT_NO_THROW(check_nonnegative(function, "a", a));
   stack_size_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + std::get<std::vector<stan::math::vari*>>(
-              stan::math::ChainableStack::instance_->var_zeroing_stacks_)
+        + 
+              stan::math::ChainableStack::instance_->var_nochain_stack_
               .size();
   EXPECT_EQ(6U, stack_size_after_call);
 
@@ -75,8 +75,8 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckVectorized) {
   EXPECT_THROW(check_nonnegative(function, "a", a), std::domain_error);
   stack_size_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + std::get<std::vector<stan::math::vari*>>(
-              stan::math::ChainableStack::instance_->var_zeroing_stacks_)
+        + 
+              stan::math::ChainableStack::instance_->var_nochain_stack_
               .size();
   EXPECT_EQ(7U, stack_size_after_call);
 
@@ -84,8 +84,8 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckVectorized) {
   EXPECT_NO_THROW(check_nonnegative(function, "a", a));
   stack_size_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + std::get<std::vector<stan::math::vari*>>(
-              stan::math::ChainableStack::instance_->var_zeroing_stacks_)
+        + 
+              stan::math::ChainableStack::instance_->var_nochain_stack_
               .size();
   EXPECT_EQ(8U, stack_size_after_call);
 
@@ -126,8 +126,8 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckUnivariate) {
 
   size_t stack_size
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + std::get<std::vector<stan::math::vari*>>(
-              stan::math::ChainableStack::instance_->var_zeroing_stacks_)
+        + 
+              stan::math::ChainableStack::instance_->var_nochain_stack_
               .size();
 
   EXPECT_EQ(1U, stack_size);
@@ -135,8 +135,8 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckUnivariate) {
 
   size_t stack_size_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + std::get<std::vector<stan::math::vari*>>(
-              stan::math::ChainableStack::instance_->var_zeroing_stacks_)
+        + 
+              stan::math::ChainableStack::instance_->var_nochain_stack_
               .size();
   EXPECT_EQ(1U, stack_size_after_call);
 
@@ -144,8 +144,8 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckUnivariate) {
   EXPECT_NO_THROW(check_nonnegative(function, "a", a));
   stack_size_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + std::get<std::vector<stan::math::vari*>>(
-              stan::math::ChainableStack::instance_->var_zeroing_stacks_)
+        + 
+              stan::math::ChainableStack::instance_->var_nochain_stack_
               .size();
   EXPECT_EQ(2U, stack_size_after_call);
 
@@ -153,8 +153,8 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckUnivariate) {
   EXPECT_NO_THROW(check_nonnegative(function, "a", a));
   stack_size_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + std::get<std::vector<stan::math::vari*>>(
-              stan::math::ChainableStack::instance_->var_zeroing_stacks_)
+        + 
+              stan::math::ChainableStack::instance_->var_nochain_stack_
               .size();
   EXPECT_EQ(3U, stack_size_after_call);
 
@@ -162,8 +162,8 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckUnivariate) {
   EXPECT_THROW(check_nonnegative(function, "a", a), std::domain_error);
   stack_size_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size()
-        + std::get<std::vector<stan::math::vari*>>(
-              stan::math::ChainableStack::instance_->var_zeroing_stacks_)
+        + 
+              stan::math::ChainableStack::instance_->var_nochain_stack_
               .size();
   EXPECT_EQ(4U, stack_size_after_call);
   stan::math::recover_memory();
