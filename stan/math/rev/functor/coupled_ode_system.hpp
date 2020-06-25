@@ -5,6 +5,7 @@
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/fill.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/coupled_ode_system.hpp>
 #include <stdexcept>
@@ -143,7 +144,7 @@ struct coupled_ode_system<F, double, var> {
         dz_dt[offset + i] = temp_deriv;
       }
 
-      set_zero_all_adjoints_nested();
+      nested.set_zero_all_adjoints();
       // Parameters stored on the outer (non-nested) nochain stack are not
       // reset to zero by the last call. This is done as a separate step here.
       // See efficiency note above on template specialization for more details
@@ -296,7 +297,7 @@ struct coupled_ode_system<F, var, double> {
         dz_dt[offset + i] = temp_deriv;
       }
 
-      set_zero_all_adjoints_nested();
+      nested.set_zero_all_adjoints();
     }
   }
 
@@ -478,13 +479,13 @@ struct coupled_ode_system<F, var, var> {
         dz_dt[offset + i] = temp_deriv;
       }
 
-      set_zero_all_adjoints_nested();
+      nested.set_zero_all_adjoints();
       // Parameters stored on the outer (non-nested) nochain stack are not
       // reset to zero by the last call. This is done as a separate step here.
       // See efficiency note above on template specialization for more details
       // on this.
       for (size_t j = 0; j < M_; ++j) {
-        theta_nochain_[j].vi_->adj_ = 0.0;
+        fill(theta_nochain_[j].vi_->adj_, 0.0);
       }
     }
   }

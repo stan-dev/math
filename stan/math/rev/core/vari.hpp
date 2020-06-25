@@ -13,7 +13,28 @@ namespace math {
 // forward declaration of var
 template <typename T, typename>
 class var_value;
+/**
+ * Abstract base class that all `vari_value` and it's derived classes inherit.
+ *
+ * The chain() method applies the chain rule. Concrete extensions
+ * of this class will represent base variables or the result
+ * of operations such as addition or subtraction. These extended
+ * classes will store operand variables and propagate derivative
+ * information via an implementation of chain().
+ */
+class vari_base {
+ public:
+  /**
+   * Apply the chain rule to this variable based on the variables
+   * on which it depends.
+   */
+  virtual void chain() = 0;
+  virtual void set_zero_adjoint() = 0;
+  virtual ~vari_base() noexcept {}
+};
 
+template <typename T, typename = void>
+class vari_value;
 /**
  * The variable implementation base class.
  *
@@ -24,17 +45,10 @@ class var_value;
  * value. It also stores the adjoint for storing the partial
  * derivative with respect to the root of the derivative tree.
  *
- * The chain() method applies the chain rule. Concrete extensions
- * of this class will represent base variables or the result
- * of operations such as addition or subtraction. These extended
- * classes will store operand variables and propagate derivative
- * information via an implementation of chain().
  */
-template <typename T, typename>
-class vari_value;
-
 template <typename T>
-class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
+class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
+    : public vari_base {
  private:
   template <typename, typename>
   friend class var_value;
@@ -46,7 +60,6 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
    * The value of this variable.
    */
   const Scalar val_;
-
   /**
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
@@ -63,7 +76,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
    * derivative propagation, the chain() method of each variable
    * will be called in the reverse order of construction.
    *
-   * @tparam S an Arithmetic type.
+   * @tparam S a floating point type.
    * @param x Value of the constructed variable.
    */
   template <typename S,
@@ -75,16 +88,16 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
   /**
    * Construct a variable implementation from a value.  The
    *  adjoint is initialized to zero and if `stacked` is `false` this vari
-   *  will be moved to the nochain stack s.t. it's chain method will not be
-   *  called when calling `grad()`.
+   *  will be not be put on the var_stack. Instead it will only be put on
+   *  a stack to keep track of whether the adjoint needs to be set to zero.
    *
-   * All constructed variables are added to the stack.  Variables
+   * All constructed variables are added to a stack.  Variables
    *  should be constructed before variables on which they depend
    *  to insure proper partial derivative propagation.  During
    *  derivative propagation, the chain() method of each variable
    *  will be called in the reverse order of construction.
    *
-   * @tparam S an Arithmetic type.
+   * @tparam S n floating point type.
    * @param x Value of the constructed variable.
    * @param stacked If false will put this this vari on the nochain stack so
    * that its `chain()` method is not called.
@@ -101,20 +114,16 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
 
   /**
    * Constructor from vari_value
-   * @tparam S An arithmetic type
+   * @tparam S A floating point type
    * @param x A vari_value
    */
   vari_value(const vari_value<T>& x) noexcept : val_(x.val_), adj_(x.adj_) {
     ChainableStack::instance_->var_stack_.emplace_back(this);
   }
-  /**
-   * Constructor from vari_value
-   * @tparam S An arithmetic type
-   * @param x A vari_value
-   */
-  vari_value(vari_value<T>&& x) noexcept : val_(x.val_), adj_(x.adj_) {
-    ChainableStack::instance_->var_stack_.emplace_back(this);
-  }
+
+  ~vari_value() = default;
+
+  inline void chain() {}
 
   /**
    * Initialize the adjoint for this (dependent) variable to 1.
@@ -129,9 +138,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>> {
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  inline void set_zero_adjoint() noexcept { adj_ = 0.0; }
-
-  virtual void chain() {}
+  inline void set_zero_adjoint() noexcept final { adj_ = 0.0; }
 
   /**
    * Insertion operator for vari. Prints the current value and

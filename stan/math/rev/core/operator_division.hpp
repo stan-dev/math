@@ -13,7 +13,7 @@
 #include <stan/math/rev/core/operator_addition.hpp>
 #include <stan/math/rev/core/operator_multiplication.hpp>
 #include <stan/math/rev/core/operator_subtraction.hpp>
-#include <stan/math/rev/meta/apply_scalar_unary.hpp>
+#include <stan/math/rev/functor/apply_scalar_unary.hpp>
 #include <complex>
 #include <type_traits>
 
@@ -98,7 +98,7 @@ class divide_dv_vari final : public op_dv_vari {
  * @return Variable result of dividing the first variable by the
  * second.
  */
-inline var operator/(var dividend, var divisor) {
+inline var operator/(const var& dividend, const var& divisor) {
   return {new internal::divide_vv_vari(dividend.vi_, divisor.vi_)};
 }
 

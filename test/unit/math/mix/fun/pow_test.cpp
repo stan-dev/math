@@ -54,6 +54,12 @@ TEST(mathMixScalFun, pow) {
   stan::test::expect_ad(f, 1.0, nan);
   stan::test::expect_ad(f, nan, 1.0);
   stan::test::expect_ad(f, nan, nan);
+
+  Eigen::VectorXd in1(3);
+  in1 << 0.5, 3.4, 5.2;
+  Eigen::VectorXd in2(3);
+  in2 << 3.3, 0.9, 6.7;
+  stan::test::expect_ad_vectorized_binary(f, in1, in2);
 }
 TEST(mathMixFun, complexPow) {
   auto f = [](const auto& x1, const auto& x2) {
@@ -90,6 +96,15 @@ TEST(mathMixFun, complexPow) {
       }
     }
   }
+
+  Eigen::Matrix<std::complex<double>, -1, 1> din1(2);
+  din1.real() << 0.5, 0.1;
+  din1.imag() << 1.6, 5.4;
+  Eigen::Matrix<std::complex<double>, -1, 1> din2(2);
+  din2.real() << 1.2, 2.3;
+  din2.imag() << 8.1, 6.1;
+
+  stan::test::expect_ad_vectorized_binary(tols, f, din1, din2);
 }
 
 TEST(mathMixFun, powIntAmbiguityTest) {

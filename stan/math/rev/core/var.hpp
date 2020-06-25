@@ -24,28 +24,21 @@ static void grad(Vari* vi);
  * calculation.
  *
  * A var is constructed with a type `T` and used like any
- * other scalar.  Arithmetical functions like negation, addition,
+ * other scalar. Arithmetical functions like negation, addition,
  * and subtraction, as well as a range of mathematical functions
  * like exponentiation and powers are overridden to operate on
  * var values objects.
- * @tparam T An Arithmetic type.
+ * @tparam T An Floating point type.
  */
 template <typename T, typename = void>
 class var_value {};
 
 template <typename T>
-class var_value<T, require_floating_point_t<T>> {
+class var_value<T, require_vt_floating_point<T>> {
  public:
-  // The internal value_type is always a floating point type
-  using value_type = std::decay_t<T>;
-  using vari_type = vari_value<value_type>;
-  using vari_pointer = vari_type*;
-  template <typename K>
-  using require_vari_convertible_t
-      = require_t<std::is_convertible<vari_value<K>*, vari_pointer>>;
-  template <typename K>
-  using require_not_vari_convertible_t = require_t<
-      bool_constant<!std::is_convertible<vari_value<K>*, vari_pointer>::value>>;
+  using value_type = std::decay_t<T>;        // Numeric type in vari_value.
+  using vari_type = vari_value<value_type>;  // Type of underlying vari impl.
+  using vari_pointer = vari_type*;  // pointer type for underlying vari.
 
   /**
    * Pointer to the implementation of this variable.
@@ -65,7 +58,7 @@ class var_value<T, require_floating_point_t<T>> {
    * @return <code>true</code> if this variable does not yet have
    * a defined variable.
    */
-  bool is_uninitialized() { return (vi_ == static_cast<vari_type*>(nullptr)); }
+  bool is_uninitialized() { return (vi_ == nullptr); }
 
   /**
    * Construct a variable for later assignment.
@@ -74,13 +67,12 @@ class var_value<T, require_floating_point_t<T>> {
    * dangling.  Before an assignment, the behavior is thus undefined just
    * as for a basic double.
    */
-  var_value() : vi_(static_cast<vari_type*>(nullptr)) {}
+  var_value() : vi_(nullptr) {}
 
   /**
-   * Construct a variable from the specified arithmetic type argument
-   * by constructing a new `vari_value<value_type>`. For integral types the
-   * `vari_value<value_type>` will hold doubles. This constructor is only valid
-   * when `S` is convertible to this `vari_value`'s `value_type`.
+   * Construct a variable from the specified floating point argument
+   * by constructing a new `vari_value<value_type>`. This constructor is only
+   * valid when `S` is convertible to this `vari_value`'s `value_type`.
    * @tparam S A type that is convertible to `value_type`.
    * @param x Value of the variable.
    */
@@ -89,21 +81,10 @@ class var_value<T, require_floating_point_t<T>> {
 
   /**
    * Construct a variable from a pointer to a variable implementation.
-   * @tparam S The type in the vari_value pointer that has the same `value_type`
-   *  as this `var_value`. For integral types a `vari_value<Integral>` is the
-   * same as `vari_value<double>` so can be `reinterpret_cast` without a copy.
    * @param vi A vari_value pointer.
    */
   var_value(vari_value<T>* vi)  // NOLINT
       : vi_(vi) {}
-
-  /**
-   * Constructor from `var_value` whose value_type is the same as this class's
-   * `value_type`. This is used in cases such as
-   * `var_value<double> a(4.0); var_value<int> b(a)` since the `value_type` for
-   *  a `var_value` with an integral type is a double.
-   */
-  var_value(const var_value<T>& x) : vi_(x.vi_) {}  // NOLINT
 
   /**
    * Return a constant reference to the value of this variable.
@@ -197,7 +178,6 @@ class var_value<T, require_floating_point_t<T>> {
    * then (a += b) behaves exactly the same way as (a = a + b),
    * creating an intermediate variable representing (a + b).
    *
-   * @tparam S a type that is convertible to `value_type`
    * @param b The variable to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
@@ -210,7 +190,6 @@ class var_value<T, require_floating_point_t<T>> {
    * (a += b) behaves exactly the same way as (a = a + b).  Note
    * that the result is an assignable lvalue.
    *
-   * @tparam Arith An arithmetic type
    * @param b The scalar to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
@@ -223,7 +202,6 @@ class var_value<T, require_floating_point_t<T>> {
    * then (a -= b) behaves exactly the same way as (a = a - b).
    * Note that the result is an assignable lvalue.
    *
-   * @tparam S a type that is convertible to `value_type`
    * @param b The variable to subtract from this variable.
    * @return The result of subtracting the specified variable from
    * this variable.
@@ -237,7 +215,6 @@ class var_value<T, require_floating_point_t<T>> {
    * (a -= b) behaves exactly the same way as (a = a - b).  Note
    * that the result is an assignable lvalue.
    *
-   * @tparam Arith An arithmetic type
    * @param b The scalar to subtract from this variable.
    * @return The result of subtracting the specified variable from this
    * variable.
@@ -251,7 +228,6 @@ class var_value<T, require_floating_point_t<T>> {
    * then (a *= b) behaves exactly the same way as (a = a * b).
    * Note that the result is an assignable lvalue.
    *
-   * @tparam S a type that is convertible to `value_type`
    * @param b The variable to multiply this variable by.
    * @return The result of multiplying this variable by the
    * specified variable.
@@ -265,7 +241,6 @@ class var_value<T, require_floating_point_t<T>> {
    * (a *= b) behaves exactly the same way as (a = a * b).  Note
    * that the result is an assignable lvalue.
    *
-   * @tparam Arith An arithmetic type
    * @param b The scalar to multiply this variable by.
    * @return The result of multiplying this variable by the specified
    * variable.
@@ -278,7 +253,6 @@ class var_value<T, require_floating_point_t<T>> {
    * behaves exactly the same way as (a = a / b).  Note that the
    * result is an assignable lvalue.
    *
-   * @tparam S a type that is convertible to `value_type`
    * @param b The variable to divide this variable by.
    * @return The result of dividing this variable by the
    * specified variable.
@@ -292,7 +266,6 @@ class var_value<T, require_floating_point_t<T>> {
    * (a /= b) behaves exactly the same way as (a = a / b).  Note
    * that the result is an assignable lvalue.
    *
-   * @tparam Arith An arithmetic type
    * @param b The scalar to divide this variable by.
    * @return The result of dividing this variable by the specified
    * variable.

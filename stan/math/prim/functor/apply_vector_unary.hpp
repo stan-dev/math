@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_META_APPLY_VECTOR_UNARY_HPP
-#define STAN_MATH_PRIM_META_APPLY_VECTOR_UNARY_HPP
+#ifndef STAN_MATH_PRIM_FUNCTOR_APPLY_VECTOR_UNARY_HPP
+#define STAN_MATH_PRIM_FUNCTOR_APPLY_VECTOR_UNARY_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/as_column_vector_or_scalar.hpp>
@@ -46,13 +46,13 @@ struct apply_vector_unary<T, require_eigen_t<T>> {
    * @return Eigen object with result of applying functor to input
    */
   template <typename F, typename T2 = T,
-            require_t<is_eigen_matrix_base<plain_type_t<T2>>>...>
+            require_t<is_eigen_matrix_base<plain_type_t<T2>>>* = nullptr>
   static inline auto apply(const T& x, const F& f) {
     return f(x).matrix().eval();
   }
 
   template <typename F, typename T2 = T,
-            require_t<is_eigen_array<plain_type_t<T2>>>...>
+            require_t<is_eigen_array<plain_type_t<T2>>>* = nullptr>
   static inline auto apply(const T& x, const F& f) {
     return f(x).array().eval();
   }

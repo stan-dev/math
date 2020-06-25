@@ -49,7 +49,8 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
     const T_alpha& alpha, const T_beta& beta) {
   static const char* function = "bernoulli_logit_glm_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_alpha, T_beta>;
-
+  using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
+  using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
@@ -71,15 +72,12 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   if (N == 0) {
     return 0;
   }
-
   if (!include_summand<propto, T_alpha, T_beta>::value) {
     return 0;
   }
 
-  T_partials_return logp(0);
-
-  const auto& beta_ref = to_ref_if<!is_constant<T_beta>::value>(beta);
-  const auto& alpha_ref = to_ref_if<!is_constant<T_alpha>::value>(alpha);
+  T_beta_ref beta_ref = beta;
+  T_alpha_ref alpha_ref = alpha;
 
   const auto& beta_val = value_of_rec(beta_ref);
   const auto& alpha_val = value_of_rec(alpha_ref);
@@ -112,7 +110,6 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
                                  (exp_m_ytheta_expr + 1))));
 
   const int wgs = logp_expr.rows();
-
   matrix_cl<double> logp_cl(wgs, 1);
   constexpr bool need_theta_derivative
       = !is_constant_all<T_beta, T_alpha>::value;
@@ -126,8 +123,7 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
       logp_expr, calc_if<need_theta_derivative>(theta_derivative_expr),
       calc_if<need_theta_derivative_sum>(colwise_sum(theta_derivative_expr)));
 
-  logp += sum(from_matrix_cl<Eigen::Dynamic, 1>(logp_cl));
-
+  T_partials_return logp = sum(from_matrix_cl<Eigen::Dynamic, 1>(logp_cl));
   if (!std::isfinite(logp)) {
     check_bounded(function, "Vector of dependent variables",
                   from_matrix_cl(y_cl), 0, 1);
@@ -137,8 +133,8 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
                  from_matrix_cl(x_cl));
   }
 
-  operands_and_partials<decltype(alpha_ref), decltype(beta_ref)> ops_partials(
-      alpha_ref, beta_ref);
+  operands_and_partials<T_alpha_ref, T_beta_ref> ops_partials(alpha_ref,
+                                                              beta_ref);
   // Compute the necessary derivatives.
   if (!is_constant_all<T_alpha>::value) {
     if (is_alpha_vector) {
