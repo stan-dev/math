@@ -144,7 +144,7 @@ struct coupled_ode_system<F, double, var> {
         dz_dt[offset + i] = temp_deriv;
       }
 
-      set_zero_all_adjoints_nested();
+      nested.set_zero_all_adjoints();
       // Parameters stored on the outer (non-nested) nochain stack are not
       // reset to zero by the last call. This is done as a separate step here.
       // See efficiency note above on template specialization for more details
@@ -297,7 +297,7 @@ struct coupled_ode_system<F, var, double> {
         dz_dt[offset + i] = temp_deriv;
       }
 
-      set_zero_all_adjoints_nested();
+      nested.set_zero_all_adjoints();
     }
   }
 
@@ -479,7 +479,7 @@ struct coupled_ode_system<F, var, var> {
         dz_dt[offset + i] = temp_deriv;
       }
 
-      set_zero_all_adjoints_nested();
+      nested.set_zero_all_adjoints();
       // Parameters stored on the outer (non-nested) nochain stack are not
       // reset to zero by the last call. This is done as a separate step here.
       // See efficiency note above on template specialization for more details

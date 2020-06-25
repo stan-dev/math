@@ -43,7 +43,7 @@ class ad_tape_observer final : public tbb::task_scheduler_observer {
       bool status = false;
       std::tie(insert_elem, status)
           = thread_tape_map_.emplace(ad_map::value_type{thread_id, nullptr});
-      insert_elem->second = std::move(std::make_unique<ChainableStack>());
+      insert_elem->second = std::make_unique<ChainableStack>();
     }
   }
 
