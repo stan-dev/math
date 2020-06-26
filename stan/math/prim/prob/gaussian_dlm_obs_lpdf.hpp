@@ -11,8 +11,10 @@
 #include <stan/math/prim/fun/multiply.hpp>
 #include <stan/math/prim/fun/quad_form.hpp>
 #include <stan/math/prim/fun/quad_form_sym.hpp>
+#include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/subtract.hpp>
 #include <stan/math/prim/fun/tcrossprod.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/trace_quad_form.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
 #include <stan/math/prim/fun/constants.hpp>
@@ -61,48 +63,51 @@ namespace math {
  * not positive semi-definite.
  */
 template <bool propto, typename T_y, typename T_F, typename T_G, typename T_V,
-          typename T_W, typename T_m0, typename T_C0>
-inline return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>
-gaussian_dlm_obs_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
-    const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic>& F,
-    const Eigen::Matrix<T_G, Eigen::Dynamic, Eigen::Dynamic>& G,
-    const Eigen::Matrix<T_V, Eigen::Dynamic, Eigen::Dynamic>& V,
-    const Eigen::Matrix<T_W, Eigen::Dynamic, Eigen::Dynamic>& W,
-    const Eigen::Matrix<T_m0, Eigen::Dynamic, 1>& m0,
-    const Eigen::Matrix<T_C0, Eigen::Dynamic, Eigen::Dynamic>& C0) {
-  using T_lp
-      = return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>;
+          typename T_W, typename T_m0, typename T_C0,
+          require_all_eigen_matrix_t<T_y, T_F, T_G, T_V, T_W, T_C0>* = nullptr,
+          require_eigen_col_vector_t<T_m0>* = nullptr>
+inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>
+gaussian_dlm_obs_lpdf(const T_y& y, const T_F& F, const T_G& G, const T_V& V,
+                      const T_W& W, const T_m0& m0, const T_C0& C0) {
+  using T_lp = return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>;
   using std::pow;
-  int r = y.rows();  // number of variables
-  int T = y.cols();  // number of observations
-  int n = G.rows();  // number of states
-
   static const char* function = "gaussian_dlm_obs_lpdf";
-  check_finite(function, "y", y);
-  check_not_nan(function, "y", y);
   check_size_match(function, "columns of F", F.cols(), "rows of y", y.rows());
   check_size_match(function, "rows of F", F.rows(), "rows of G", G.rows());
-  check_finite(function, "F", F);
-  check_square(function, "G", G);
-  check_finite(function, "G", G);
   check_size_match(function, "rows of V", V.rows(), "rows of y", y.rows());
-  // TODO(anyone): incorporate support for infinite V
-  check_finite(function, "V", V);
-  check_pos_semidefinite(function, "V", V);
   check_size_match(function, "rows of W", W.rows(), "rows of G", G.rows());
-  // TODO(anyone): incorporate support for infinite W
-  check_finite(function, "W", W);
-  check_pos_semidefinite(function, "W", W);
   check_size_match(function, "size of m0", m0.size(), "rows of G", G.rows());
-  check_finite(function, "m0", m0);
   check_size_match(function, "rows of C0", C0.rows(), "rows of G", G.rows());
-  check_pos_definite(function, "C0", C0);
-  check_finite(function, "C0", C0);
+  check_square(function, "G", G);
+
+  const auto& y_ref = to_ref(y);
+  const auto& F_ref = to_ref(F);
+  const auto& G_ref = to_ref(G);
+  const auto& V_ref = to_ref(V);
+  const auto& W_ref = to_ref(W);
+  const auto& m0_ref = to_ref(m0);
+  const auto& C0_ref = to_ref(C0);
+
+  check_finite(function, "y", y_ref);
+  check_finite(function, "F", F_ref);
+  check_finite(function, "G", G_ref);
+  // TODO(anyone): incorporate support for infinite V
+  check_finite(function, "V", V_ref);
+  check_pos_semidefinite(function, "V", V_ref);
+  // TODO(anyone): incorporate support for infinite W
+  check_finite(function, "W", W_ref);
+  check_pos_semidefinite(function, "W", W_ref);
+  check_finite(function, "m0", m0_ref);
+  check_pos_definite(function, "C0", C0_ref);
+  check_finite(function, "C0", C0_ref);
 
   if (size_zero(y)) {
     return 0;
   }
+
+  int r = y.rows();  // number of variables
+  int T = y.cols();  // number of observations
+  int n = G.rows();  // number of states
 
   T_lp lp(0);
   if (include_summand<propto>::value) {
@@ -110,9 +115,8 @@ gaussian_dlm_obs_lpdf(
   }
 
   if (include_summand<propto, T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>::value) {
-    Eigen::Matrix<T_lp, Eigen::Dynamic, 1> m{m0};
-    Eigen::Matrix<T_lp, Eigen::Dynamic, Eigen::Dynamic> C{C0};
-    Eigen::Matrix<return_type_t<T_y>, Eigen::Dynamic, 1> yi(r);
+    Eigen::Matrix<T_lp, Eigen::Dynamic, 1> m{m0_ref};
+    Eigen::Matrix<T_lp, Eigen::Dynamic, Eigen::Dynamic> C{C0_ref};
     Eigen::Matrix<T_lp, Eigen::Dynamic, 1> a(n);
     Eigen::Matrix<T_lp, Eigen::Dynamic, Eigen::Dynamic> R(n, n);
     Eigen::Matrix<T_lp, Eigen::Dynamic, 1> f(r);
@@ -122,45 +126,30 @@ gaussian_dlm_obs_lpdf(
     Eigen::Matrix<T_lp, Eigen::Dynamic, Eigen::Dynamic> A(n, r);
 
     for (int i = 0; i < y.cols(); i++) {
-      yi = y.col(i);
       // // Predict state
       // a_t = G_t m_{t-1}
-      a = multiply(G, m);
+      a = multiply(G_ref, m);
       // R_t = G_t C_{t-1} G_t' + W_t
-      R = add(quad_form_sym(C, transpose(G)), W);
+      R = quad_form_sym(C, transpose(G_ref)) + W_ref;
       // // predict observation
       // f_t = F_t' a_t
-      f = multiply(transpose(F), a);
+      f = multiply(transpose(F_ref), a);
       // Q_t = F'_t R_t F_t + V_t
-      Q = add(quad_form_sym(R, F), V);
+      Q = quad_form_sym(R, F_ref) + V_ref;
       Q_inv = inverse_spd(Q);
       // // filtered state
       // e_t = y_t - f_t
-      e = subtract(yi, f);
+      e = y.col(i) - f;
       // A_t = R_t F_t Q^{-1}_t
-      A = multiply(multiply(R, F), Q_inv);
+      A = multiply(multiply(R, F_ref), Q_inv);
       // m_t = a_t + A_t e_t
-      m = add(a, multiply(A, e));
+      m = a + multiply(A, e);
       // C = R_t - A_t Q_t A_t'
-      C = subtract(R, quad_form_sym(Q, transpose(A)));
+      C = R - quad_form_sym(Q, transpose(A));
       lp -= 0.5 * (log_determinant_spd(Q) + trace_quad_form(Q_inv, e));
     }
   }
   return lp;
-}
-
-template <typename T_y, typename T_F, typename T_G, typename T_V, typename T_W,
-          typename T_m0, typename T_C0>
-inline return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>
-gaussian_dlm_obs_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
-    const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic>& F,
-    const Eigen::Matrix<T_G, Eigen::Dynamic, Eigen::Dynamic>& G,
-    const Eigen::Matrix<T_V, Eigen::Dynamic, Eigen::Dynamic>& V,
-    const Eigen::Matrix<T_W, Eigen::Dynamic, Eigen::Dynamic>& W,
-    const Eigen::Matrix<T_m0, Eigen::Dynamic, 1>& m0,
-    const Eigen::Matrix<T_C0, Eigen::Dynamic, Eigen::Dynamic>& C0) {
-  return gaussian_dlm_obs_lpdf<false>(y, F, G, V, W, m0, C0);
 }
 
 /** \ingroup multivar_dists
@@ -199,53 +188,52 @@ gaussian_dlm_obs_lpdf(
  * @tparam T_C0 Type of initial state covariance matrix.
  */
 template <bool propto, typename T_y, typename T_F, typename T_G, typename T_V,
-          typename T_W, typename T_m0, typename T_C0>
-inline return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>
-gaussian_dlm_obs_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
-    const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic>& F,
-    const Eigen::Matrix<T_G, Eigen::Dynamic, Eigen::Dynamic>& G,
-    const Eigen::Matrix<T_V, Eigen::Dynamic, 1>& V,
-    const Eigen::Matrix<T_W, Eigen::Dynamic, Eigen::Dynamic>& W,
-    const Eigen::Matrix<T_m0, Eigen::Dynamic, 1>& m0,
-    const Eigen::Matrix<T_C0, Eigen::Dynamic, Eigen::Dynamic>& C0) {
-  static const char* function = "gaussian_dlm_obs_lpdf";
+          typename T_W, typename T_m0, typename T_C0,
+          require_all_eigen_matrix_t<T_y, T_F, T_G, T_W, T_C0>* = nullptr,
+          require_all_eigen_col_vector_t<T_V, T_m0>* = nullptr>
+inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>
+gaussian_dlm_obs_lpdf(const T_y& y, const T_F& F, const T_G& G, const T_V& V,
+                      const T_W& W, const T_m0& m0, const T_C0& C0) {
   using T_lp
-      = return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>;
+      = return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>;
   using std::log;
-
-  int r = y.rows();  // number of variables
-  int T = y.cols();  // number of observations
-  int n = G.rows();  // number of states
-
-  check_finite(function, "y", y);
-  check_not_nan(function, "y", y);
+  static const char* function = "gaussian_dlm_obs_lpdf";
   check_size_match(function, "columns of F", F.cols(), "rows of y", y.rows());
   check_size_match(function, "rows of F", F.rows(), "rows of G", G.rows());
-  check_finite(function, "F", F);
-  check_not_nan(function, "F", F);
   check_size_match(function, "rows of G", G.rows(), "columns of G", G.cols());
-  check_finite(function, "G", G);
-  check_not_nan(function, "G", G);
-  check_nonnegative(function, "V", V);
   check_size_match(function, "size of V", V.size(), "rows of y", y.rows());
-  // TODO(anyone): support infinite V
-  check_finite(function, "V", V);
-  check_not_nan(function, "V", V);
-  check_pos_semidefinite(function, "W", W);
   check_size_match(function, "rows of W", W.rows(), "rows of G", G.rows());
-  // TODO(anyone): support infinite W
-  check_finite(function, "W", W);
   check_size_match(function, "size of m0", m0.size(), "rows of G", G.rows());
-  check_finite(function, "m0", m0);
-  check_not_nan(function, "m0", m0);
-  check_pos_definite(function, "C0", C0);
   check_size_match(function, "rows of C0", C0.rows(), "rows of G", G.rows());
-  check_finite(function, "C0", C0);
+
+  const auto& y_ref = to_ref(y);
+  const auto& F_ref = to_ref(F);
+  const auto& G_ref = to_ref(G);
+  const auto& V_ref = to_ref(V);
+  const auto& W_ref = to_ref(W);
+  const auto& m0_ref = to_ref(m0);
+  const auto& C0_ref = to_ref(C0);
+
+  check_finite(function, "y", y_ref);
+  check_finite(function, "F", F_ref);
+  check_finite(function, "G", G_ref);
+  check_nonnegative(function, "V", V_ref);
+  // TODO(anyone): support infinite V
+  check_finite(function, "V", V_ref);
+  check_pos_semidefinite(function, "W", W_ref);
+  // TODO(anyone): support infinite W
+  check_finite(function, "W", W_ref);
+  check_finite(function, "m0", m0_ref);
+  check_pos_definite(function, "C0", C0_ref);
+  check_finite(function, "C0", C0_ref);
 
   if (y.cols() == 0 || y.rows() == 0) {
     return 0;
   }
+
+  int r = y.rows();  // number of variables
+  int T = y.cols();  // number of observations
+  int n = G.rows();  // number of states
 
   T_lp lp(0);
   if (include_summand<propto>::value) {
@@ -259,28 +247,25 @@ gaussian_dlm_obs_lpdf(
     T_lp e;
     Eigen::Matrix<T_lp, Eigen::Dynamic, 1> A(n);
     Eigen::Matrix<T_lp, Eigen::Dynamic, 1> Fj(n);
-    Eigen::Matrix<T_lp, Eigen::Dynamic, 1> m{m0};
-    Eigen::Matrix<T_lp, Eigen::Dynamic, Eigen::Dynamic> C{C0};
+    Eigen::Matrix<T_lp, Eigen::Dynamic, 1> m{m0_ref};
+    Eigen::Matrix<T_lp, Eigen::Dynamic, Eigen::Dynamic> C{C0_ref};
 
     for (int i = 0; i < y.cols(); i++) {
       // Predict state
       // reuse m and C instead of using a and R
-      m = multiply(G, m);
-      C = add(quad_form_sym(C, transpose(G)), W);
+      m = multiply(G_ref, m);
+      C = quad_form_sym(C, transpose(G_ref)) + W_ref;
       for (int j = 0; j < y.rows(); ++j) {
         // predict observation
-        T_lp yij(y(j, i));
         // dim Fj = (n, 1)
-        for (int k = 0; k < F.rows(); ++k) {
-          Fj(k) = F(k, j);
-        }
+        const auto& Fj = F_ref.col(j);
         // f_{t, i} = F_{t, i}' m_{t, i-1}
         f = dot_product(Fj, m);
-        Q = trace_quad_form(C, Fj) + V(j);
+        Q = trace_quad_form(C, Fj) + V_ref.coeff(j);
         Q_inv = 1.0 / Q;
         // filtered observation
         // e_{t, i} = y_{t, i} - f_{t, i}
-        e = yij - f;
+        e = y.coeff(j, i) - f;
         // A_{t, i} = C_{t, i-1} F_{t, i} Q_{t, i}^{-1}
         A = multiply(multiply(C, Fj), Q_inv);
         // m_{t, i} = m_{t, i-1} + A_{t, i} e_{t, i}
@@ -289,8 +274,8 @@ gaussian_dlm_obs_lpdf(
         // tcrossprod throws an error (ambiguous)
         // C = subtract(C, multiply(Q, tcrossprod(A)));
         C -= multiply(Q, multiply(A, transpose(A)));
-        C = 0.5 * add(C, transpose(C));
-        lp -= 0.5 * (log(Q) + pow(e, 2) * Q_inv);
+        C = 0.5 * (C + transpose(C));
+        lp -= 0.5 * (log(Q) + square(e) * Q_inv);
       }
     }
   }
@@ -299,15 +284,9 @@ gaussian_dlm_obs_lpdf(
 
 template <typename T_y, typename T_F, typename T_G, typename T_V, typename T_W,
           typename T_m0, typename T_C0>
-inline return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>
-gaussian_dlm_obs_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
-    const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic>& F,
-    const Eigen::Matrix<T_G, Eigen::Dynamic, Eigen::Dynamic>& G,
-    const Eigen::Matrix<T_V, Eigen::Dynamic, 1>& V,
-    const Eigen::Matrix<T_W, Eigen::Dynamic, Eigen::Dynamic>& W,
-    const Eigen::Matrix<T_m0, Eigen::Dynamic, 1>& m0,
-    const Eigen::Matrix<T_C0, Eigen::Dynamic, Eigen::Dynamic>& C0) {
+inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>
+gaussian_dlm_obs_lpdf(const T_y& y, const T_F& F, const T_G& G, const T_V& V,
+                      const T_W& W, const T_m0& m0, const T_C0& C0) {
   return gaussian_dlm_obs_lpdf<false>(y, F, G, V, W, m0, C0);
 }
 
