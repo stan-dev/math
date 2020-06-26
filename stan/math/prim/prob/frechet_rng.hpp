@@ -32,14 +32,18 @@ inline typename VectorBuilder<true, double, T_shape, T_scale>::type frechet_rng(
     const T_shape& alpha, const T_scale& sigma, RNG& rng) {
   using boost::variate_generator;
   using boost::random::weibull_distribution;
+  using T_alpha_ref = ref_type_t<T_shape>;
+  using T_sigma_ref = ref_type_t<T_scale>;
   static const char* function = "frechet_rng";
-  check_positive_finite(function, "Shape parameter", alpha);
-  check_positive_finite(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Shape parameter", alpha, "Scale Parameter",
                          sigma);
+  T_alpha_ref alpha_ref = alpha;
+  T_sigma_ref sigma_ref = sigma;
+  check_positive_finite(function, "Shape parameter", alpha_ref);
+  check_positive_finite(function, "Scale parameter", sigma_ref);
 
-  scalar_seq_view<T_shape> alpha_vec(alpha);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
+  scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
+  scalar_seq_view<T_sigma_ref> sigma_vec(sigma_ref);
   size_t N = max_size(alpha, sigma);
   VectorBuilder<true, double, T_shape, T_scale> output(N);
 

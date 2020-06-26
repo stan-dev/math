@@ -26,14 +26,31 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
                                                   const T_shape& alpha,
                                                   const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
-  using std::log;
-  using std::pow;
+  using T_y_ref = ref_type_t<T_y>;
+  using T_alpha_ref = ref_type_t<T_shape>;
+  using T_sigma_ref = ref_type_t<T_scale>;
   static const char* function = "frechet_lpdf";
-  check_positive(function, "Random variable", y);
-  check_positive_finite(function, "Shape parameter", alpha);
-  check_positive_finite(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Scale parameter", sigma);
+  T_y_ref y_ref = y;
+  T_alpha_ref alpha_ref = alpha;
+  T_sigma_ref sigma_ref = sigma;
+
+  const auto& y_col = as_column_vector_or_scalar(y_ref);
+  const auto& alpha_col = as_column_vector_or_scalar(alpha_ref);
+  const auto& sigma_col = as_column_vector_or_scalar(sigma_ref);
+
+  const auto& y_arr = as_array_or_scalar(y_col);
+  const auto& alpha_arr = as_array_or_scalar(alpha_col);
+  const auto& sigma_arr = as_array_or_scalar(sigma_col);
+
+  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
+  ref_type_t<decltype(value_of(alpha_arr))> alpha_val = value_of(alpha_arr);
+  ref_type_t<decltype(value_of(sigma_arr))> sigma_val = value_of(sigma_arr);
+
+  check_positive(function, "Random variable", y_val);
+  check_positive_finite(function, "Shape parameter", alpha_val);
+  check_positive_finite(function, "Scale parameter", sigma_val);
 
   if (size_zero(y, alpha, sigma)) {
     return 0;
@@ -42,85 +59,41 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
     return 0;
   }
 
-  T_partials_return logp(0);
-  operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
+  operands_and_partials<T_y_ref, T_alpha_ref, T_sigma_ref> ops_partials(
+      y_ref, alpha_ref, sigma_ref);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
+  const auto& log_y
+      = to_ref_if<(include_summand<propto, T_y, T_shape>::value
+                   && include_summand<propto, T_shape, T_scale>::value)>(
+          log(y_val));
+  const auto& sigma_div_y_pow_alpha
+      = to_ref_if<!is_constant_all<T_y, T_shape, T_scale>::value>(
+          pow(sigma_val / y_val, alpha_val));
+
   size_t N = max_size(y, alpha, sigma);
-
-  VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
-                T_shape>
-      log_alpha(size(alpha));
-  for (size_t i = 0; i < stan::math::size(alpha); i++) {
-    if (include_summand<propto, T_shape>::value) {
-      log_alpha[i] = log(value_of(alpha_vec[i]));
-    }
+  T_partials_return logp = -sum(sigma_div_y_pow_alpha);
+  if (include_summand<propto, T_shape>::value) {
+    logp += sum(log(alpha_val)) * N / size(alpha);
   }
-
-  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,
-                T_y>
-      log_y(size(y));
-  for (size_t i = 0; i < stan::math::size(y); i++) {
-    if (include_summand<propto, T_y, T_shape>::value) {
-      log_y[i] = log(value_of(y_vec[i]));
-    }
+  if (include_summand<propto, T_y, T_shape>::value) {
+    logp -= sum((alpha_val + 1.0) * log_y) * N / max_size(y, alpha);
   }
-
-  VectorBuilder<include_summand<propto, T_shape, T_scale>::value,
-                T_partials_return, T_scale>
-      log_sigma(size(sigma));
-  for (size_t i = 0; i < stan::math::size(sigma); i++) {
-    if (include_summand<propto, T_shape, T_scale>::value) {
-      log_sigma[i] = log(value_of(sigma_vec[i]));
-    }
-  }
-
-  VectorBuilder<include_summand<propto, T_y, T_shape, T_scale>::value,
-                T_partials_return, T_y>
-      inv_y(size(y));
-  for (size_t i = 0; i < stan::math::size(y); i++) {
-    inv_y[i] = 1.0 / value_of(y_vec[i]);
-  }
-
-  VectorBuilder<include_summand<propto, T_y, T_shape, T_scale>::value,
-                T_partials_return, T_y, T_shape, T_scale>
-      sigma_div_y_pow_alpha(N);
-  for (size_t i = 0; i < N; i++) {
-    const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
-    sigma_div_y_pow_alpha[i]
-        = pow(inv_y[i] * value_of(sigma_vec[i]), alpha_dbl);
-  }
-
-  for (size_t n = 0; n < N; n++) {
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-    if (include_summand<propto, T_shape>::value) {
-      logp += log_alpha[n];
-    }
-    if (include_summand<propto, T_y, T_shape>::value) {
-      logp -= (alpha_dbl + 1.0) * log_y[n];
-    }
-    if (include_summand<propto, T_shape, T_scale>::value) {
-      logp += alpha_dbl * log_sigma[n];
-    }
-    logp -= sigma_div_y_pow_alpha[n];
-
-    if (!is_constant_all<T_y>::value) {
-      const T_partials_return inv_y_dbl = value_of(inv_y[n]);
-      ops_partials.edge1_.partials_[n]
-          += -(alpha_dbl + 1.0) * inv_y_dbl
-             + alpha_dbl * sigma_div_y_pow_alpha[n] * inv_y_dbl;
-    }
+  if (include_summand<propto, T_shape, T_scale>::value) {
+    const auto& log_sigma
+        = to_ref_if<!is_constant_all<T_shape>::value>(log(sigma_val));
+    logp += sum(alpha_val * log_sigma) * N / max_size(alpha, sigma);
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge2_.partials_[n]
-          += 1.0 / alpha_dbl
-             + (1.0 - sigma_div_y_pow_alpha[n]) * (log_sigma[n] - log_y[n]);
+      ops_partials.edge2_.partials_
+          = inv(alpha_val) + (1 - sigma_div_y_pow_alpha) * (log_sigma - log_y);
     }
-    if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n] += alpha_dbl / value_of(sigma_vec[n])
-                                          * (1 - sigma_div_y_pow_alpha[n]);
-    }
+  }
+  if (!is_constant_all<T_y>::value) {
+    ops_partials.edge1_.partials_
+        = (alpha_val * sigma_div_y_pow_alpha - (alpha_val + 1)) / y_val;
+  }
+  if (!is_constant_all<T_scale>::value) {
+    ops_partials.edge3_.partials_
+        = alpha_val / sigma_val * (1 - sigma_div_y_pow_alpha);
   }
   return ops_partials.build(logp);
 }
