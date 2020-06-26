@@ -46,50 +46,53 @@ template <bool propto, typename T_y, typename T_inv_scale>
 return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
                                                  const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_inv_scale>;
-  using std::log;
+  using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
+  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
+  using T_beta_ref
+      = ref_type_if_t<!is_constant<T_inv_scale>::value, T_inv_scale>;
   static const char* function = "exponential_lpdf";
-  check_nonnegative(function, "Random variable", y);
-  check_positive_finite(function, "Inverse scale parameter", beta);
   check_consistent_sizes(function, "Random variable", y,
                          "Inverse scale parameter", beta);
+  T_y_ref y_ref = y;
+  T_beta_ref beta_ref = beta;
+
+  const auto& y_col = as_column_vector_or_scalar(y_ref);
+  const auto& beta_col = as_column_vector_or_scalar(beta_ref);
+
+  const auto& y_arr = as_array_or_scalar(y_col);
+  const auto& beta_arr = as_array_or_scalar(beta_col);
+
+  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
+  ref_type_t<decltype(value_of(beta_arr))> beta_val = value_of(beta_arr);
+
+  check_nonnegative(function, "Random variable", y_val);
+  check_positive_finite(function, "Inverse scale parameter", beta_val);
 
   if (size_zero(y, beta)) {
     return 0.0;
   }
 
+  operands_and_partials<T_y_ref, T_beta_ref> ops_partials(y_ref, beta_ref);
+
   T_partials_return logp(0.0);
-  operands_and_partials<T_y, T_inv_scale> ops_partials(y, beta);
-
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_inv_scale> beta_vec(beta);
-  size_t size_beta = stan::math::size(beta);
-  size_t N = max_size(y, beta);
-
-  VectorBuilder<include_summand<propto, T_inv_scale>::value, T_partials_return,
-                T_inv_scale>
-      log_beta(size_beta);
   if (include_summand<propto, T_inv_scale>::value) {
-    for (size_t i = 0; i < size_beta; i++) {
-      log_beta[i] = log(value_of(beta_vec[i]));
-    }
+    logp = sum(log(beta_val)) * max_size(y, beta) / size(beta);
+  }
+  if (include_summand<propto, T_y, T_inv_scale>::value) {
+    logp -= sum(beta_val * y_val);
   }
 
-  for (size_t n = 0; n < N; n++) {
-    const T_partials_return beta_dbl = value_of(beta_vec[n]);
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    if (include_summand<propto, T_inv_scale>::value) {
-      logp += log_beta[n];
+  if (!is_constant_all<T_y>::value) {
+    if (is_vector<T_y>::value && !is_vector<T_inv_scale>::value) {
+      ops_partials.edge1_.partials_ = T_partials_array::Constant(
+          size(y), -forward_as<double>(beta_val));
+    } else {
+      ops_partials.edge1_.partials_
+          = -forward_as<decltype(to_ref(y_val * beta_val))>(beta_val);
     }
-    if (include_summand<propto, T_y, T_inv_scale>::value) {
-      logp -= beta_dbl * y_dbl;
-    }
-
-    if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] -= beta_dbl;
-    }
-    if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge2_.partials_[n] += inv(beta_dbl) - y_dbl;
-    }
+  }
+  if (!is_constant_all<T_inv_scale>::value) {
+    ops_partials.edge2_.partials_ = inv(beta_val) - y_val;
   }
   return ops_partials.build(logp);
 }
