@@ -19,7 +19,7 @@ namespace stan {
  */
 template <typename T>
 struct is_eigen_sparse_base
-    : bool_constant<is_base_pointer_convertible<Eigen::SparseCompressedBase, T>::value> {
+    : bool_constant<is_base_pointer_convertible<Eigen::SparseMatrixBase, T>::value> {
 };
 
 STAN_ADD_REQUIRE_UNARY(eigen_sparse_base, is_eigen_sparse_base,

@@ -189,24 +189,25 @@ using vari = vari_value<double>;
 
 
 template <typename T>
-class vari_value<T, std::enable_if_t<is_eigen<T>::value>> {
+class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>> : public vari_base {
  private:
   template <typename, typename>
   friend class var_value;
-  using eigen_scalar = value_type_t<T>;
-  value_type_t<T>* val_mem_;
-  value_type_t<T>* adj_mem_;
-
+  template <typename, typename>
+	friend class vari_value;
  public:
-  using Scalar = T;
-  using value_type = T;
-  using PlainObject = typename T::PlainObject;
+	using PlainObject = typename std::decay_t<T>::PlainObject;
+	using eigen_scalar = value_type_t<PlainObject>;
+	value_type_t<PlainObject>* val_mem_;
+	value_type_t<PlainObject>* adj_mem_;
+  using Scalar = std::decay_t<PlainObject>;
+  using value_type = Scalar;
   using eigen_map = Eigen::Map<PlainObject>;
   const Eigen::Index rows_;
   const Eigen::Index cols_;
   const Eigen::Index size_;
-  const Eigen::Index RowsAtCompileTime = T::RowsAtCompileTime;
-  const Eigen::Index ColsAtCompileTime = T::ColsAtCompileTime;
+  const Eigen::Index RowsAtCompileTime = Scalar::RowsAtCompileTime;
+  const Eigen::Index ColsAtCompileTime = Scalar::ColsAtCompileTime;
   /**
    * The value of this variable.
    */
@@ -230,7 +231,8 @@ class vari_value<T, std::enable_if_t<is_eigen<T>::value>> {
    *
    * @param x Value of the constructed variable.
    */
-  explicit vari_value(const T& x)
+ template <typename S, require_convertible_t<S&, value_type>* = nullptr>
+  explicit vari_value(S&& x)
       : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
         adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
@@ -244,8 +246,8 @@ class vari_value<T, std::enable_if_t<is_eigen<T>::value>> {
     adj_.setZero();
     ChainableStack::instance_->var_stack_.push_back(this);
   }
-
-  vari_value(const T& x, bool stacked)
+  template <typename S, require_convertible_t<S&, value_type>* = nullptr>
+  vari_value(S&& x, bool stacked)
       : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
         adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
@@ -325,15 +327,180 @@ class vari_value<T, std::enable_if_t<is_eigen<T>::value>> {
   }
 };
 
-struct vari_printer {
-  std::ostream& o_;
-  int i_{0};
-  vari_printer(std::ostream& o, int i) : o_(o), i_(i) {}
-  template <typename T>
-  inline void operator()(T*& x) const {
-    o_ << i_ << "  " << x << "  " << x->val_ << " : " << x->adj_ << std::endl;
+template <typename T>
+class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>> : public vari_base {
+ private:
+  template <typename, typename>
+  friend class var_value;
+ public:
+  using PlainObject = std::decay_t<typename std::decay_t<T>::PlainObject>;
+	using eigen_scalar = value_type_t<PlainObject>;
+ 	using eigen_index = typename std::decay_t<PlainObject>::StorageIndex;
+	using Scalar = std::decay_t<PlainObject>;
+  using value_type = Scalar;
+  using eigen_map = Eigen::Map<PlainObject>;
+  eigen_scalar* val_mem_;
+ 	eigen_index* val_outer_index_;
+ 	eigen_index* val_inner_index_;
+ 	eigen_scalar* adj_mem_;
+ 	eigen_index* adj_outer_index_;
+ 	eigen_index* adj_inner_index_;
+  const Eigen::Index rows_;
+  const Eigen::Index cols_;
+  const Eigen::Index size_;
+  const Eigen::Index RowsAtCompileTime = T::RowsAtCompileTime;
+  const Eigen::Index ColsAtCompileTime = T::ColsAtCompileTime;
+  /**
+   * The value of this variable.
+   */
+  eigen_map val_;
+
+  /**
+   * The adjoint of this variable, which is the partial derivative
+   * of this variable with respect to the root variable.
+   */
+  eigen_map adj_;
+
+  /**
+   * Construct a variable implementation from a value.  The
+   * adjoint is initialized to zero.
+   *
+   * All constructed variables are added to the stack.  Variables
+   * should be constructed before variables on which they depend
+   * to insure proper partial derivative propagation.  During
+   * derivative propagation, the chain() method of each variable
+   * will be called in the reverse order of construction.
+   *
+   * @param x Value of the constructed variable.
+   */
+	 template <typename S, require_convertible_t<S&, value_type>* = nullptr>
+  explicit vari_value(S&& x)
+      : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
+            x.nonZeros())),
+				val_outer_index_(ChainableStack::instance_->memalloc_.alloc_array<eigen_index>(
+							x.outerSize())),
+				val_inner_index_(ChainableStack::instance_->memalloc_.alloc_array<eigen_index>(
+							x.innerSize())),
+				adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
+			 			x.nonZeros())),
+			 	adj_outer_index_(ChainableStack::instance_->memalloc_.alloc_array<eigen_index>(
+			 				x.outerSize())),
+			 	adj_inner_index_(ChainableStack::instance_->memalloc_.alloc_array<eigen_index>(
+			 				x.innerSize())),
+        rows_(x.rows()),
+        cols_(x.cols()),
+        size_(x.size()),
+        val_(x.rows(), x.cols(), x.nonZeros(), val_outer_index_, val_inner_index_, val_mem_),
+				adj_(x.rows(), x.cols(), x.nonZeros(), adj_outer_index_, adj_inner_index_, adj_mem_) {
+		val_ = Eigen::Map<T>(x.rows(), x.cols(), x.nonZeros(), x.outerIndexPtr(), x.innerIndexPtr(),x.valuePtr());
+		adj_ = Eigen::Map<T>(x.rows(), x.cols(), x.nonZeros(), x.outerIndexPtr(), x.innerIndexPtr(), adj_mem_);
+		for (int k = 0; k < adj_.outerSize(); ++k) {
+			for (typename eigen_map::InnerIterator it(adj_, k); it; ++it) {
+				it.valueRef() = 0.0;
+			}
+		}
+    ChainableStack::instance_->var_stack_.push_back(this);
+  }
+  template <typename S, require_convertible_t<S&, value_type>* = nullptr>
+  vari_value(S&& x, bool stacked)
+		: val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
+					x.nonZeros())),
+			val_outer_index_(ChainableStack::instance_->memalloc_.alloc_array<eigen_index>(
+						x.outerSize())),
+			val_inner_index_(ChainableStack::instance_->memalloc_.alloc_array<eigen_index>(
+						x.innerSize())),
+			adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
+					x.nonZeros())),
+			adj_outer_index_(ChainableStack::instance_->memalloc_.alloc_array<eigen_index>(
+						x.outerSize())),
+			adj_inner_index_(ChainableStack::instance_->memalloc_.alloc_array<eigen_index>(
+						x.innerSize())),
+			rows_(x.rows()),
+			cols_(x.cols()),
+			size_(x.size()),
+			val_(x.rows(), x.cols(), x.nonZeros(), val_outer_index_, val_inner_index_, val_mem_),
+			adj_(x.rows(), x.cols(), x.nonZeros(), adj_outer_index_, adj_inner_index_, adj_mem_) {
+			val_ = Eigen::Map<T>(x.rows(), x.cols(), x.nonZeros(), x.outerIndexPtr(), x.innerIndexPtr(), x.valuePtr());
+			adj_ = Eigen::Map<T>(x.rows(), x.cols(), x.nonZeros(), x.outerIndexPtr(), x.innerIndexPtr(), adj_mem_);
+			for (int k = 0; k < adj_.outerSize(); ++k) {
+				for (typename eigen_map::InnerIterator it(adj_, k); it; ++it) {
+          it.valueRef() = 0.0;
+				}
+			}
+    if (stacked) {
+      ChainableStack::instance_->var_stack_.push_back(this);
+    } else {
+      ChainableStack::instance_->var_nochain_stack_.push_back(this);
+    }
+  }
+
+  const Eigen::Index rows() const { return rows_; }
+  const Eigen::Index cols() const { return cols_; }
+  const Eigen::Index size() const { return size_; }
+  void chain() {}
+  /**
+   * Initialize the adjoint for this (dependent) variable to 1.
+   * This operation is applied to the dependent variable before
+   * propagating derivatives, setting the derivative of the
+   * result with respect to itself to be 1.
+   */
+  inline void init_dependent() { adj_.setOnes(); }
+
+  /**
+   * Set the adjoint value of this variable to 0.  This is used to
+   * reset adjoints before propagating derivatives again (for
+   * example in a Jacobian calculation).
+   */
+  inline void set_zero_adjoint() noexcept final {
+		for (int k = 0; k < adj_.outerSize(); ++k) {
+			for (typename eigen_map::InnerIterator it(adj_, k); it; ++it) {
+				it.valueRef() = 0.0;
+			}
+		}
+	}
+
+  /**
+   * Insertion operator for vari. Prints the current value and
+   * the adjoint value.
+   *
+   * @param os [in, out] ostream to modify
+   * @param v [in] vari object to print.
+   *
+   * @return The modified ostream.
+   */
+  friend std::ostream& operator<<(std::ostream& os, const vari_value<T>* v) {
+    return os << v->val_ << ":" << v->adj_;
+  }
+
+  /**
+   * Allocate memory from the underlying memory pool.  This memory is
+   * is managed as a whole externally.
+   *
+   * Warning: Classes should not be allocated with this operator
+   * if they have non-trivial destructors.
+   *
+   * @param nbytes Number of bytes to allocate.
+   * @return Pointer to allocated bytes.
+   */
+  static inline void* operator new(size_t nbytes) {
+    return ChainableStack::instance_->memalloc_.alloc(nbytes);
+  }
+
+  /**
+   * Delete a pointer from the underlying memory pool.
+   *
+   * This no-op implementation enables a subclass to throw
+   * exceptions in its constructor.  An exception thrown in the
+   * constructor of a subclass will result in an error being
+   * raised, which is in turn caught and calls delete().
+   *
+   * See the discussion of "plugging the memory leak" in:
+   *   http://www.parashift.com/c++-faq/memory-pools.html
+   */
+  static inline void operator delete(void* /* ignore arg */) { /* no op */
   }
 };
+
 }  // namespace math
 }  // namespace stan
 #endif

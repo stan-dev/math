@@ -1,5 +1,6 @@
 #include <stan/math.hpp>
 #include <stan/math/prim.hpp>
+#include <test/unit/util.hpp>
 #include <test/unit/pretty_print_types.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/rev/core/gradable.hpp>
@@ -15,7 +16,7 @@ struct AgradRev : public testing::Test {
 };
 
 template <typename T, typename S>
-void ctor_overloads_impl() {
+void ctor_overloads_float_impl() {
   using stan::math::var_value;
   using stan::math::vari_value;
   using stan::math::test::type_name;
@@ -39,27 +40,93 @@ void ctor_overloads_impl() {
 }
 
 template <typename T>
-void ctor_overloads() {
-  ctor_overloads_impl<T, double>();
-  ctor_overloads_impl<T, long double>();
-  ctor_overloads_impl<T, float>();
-  ctor_overloads_impl<T, bool>();
-  ctor_overloads_impl<T, char>();
-  ctor_overloads_impl<T, int>();
-  ctor_overloads_impl<T, int16_t>();
-  ctor_overloads_impl<T, int32_t>();
-  ctor_overloads_impl<T, unsigned char>();
-  ctor_overloads_impl<T, unsigned int>();
-  ctor_overloads_impl<T, uint32_t>();
-  ctor_overloads_impl<T, size_t>();
-  ctor_overloads_impl<T, ptrdiff_t>();
+void ctor_overloads_float() {
+  ctor_overloads_float_impl<T, double>();
+  ctor_overloads_float_impl<T, long double>();
+  ctor_overloads_float_impl<T, float>();
+  ctor_overloads_float_impl<T, bool>();
+  ctor_overloads_float_impl<T, char>();
+  ctor_overloads_float_impl<T, int>();
+  ctor_overloads_float_impl<T, int16_t>();
+  ctor_overloads_float_impl<T, int32_t>();
+  ctor_overloads_float_impl<T, unsigned char>();
+  ctor_overloads_float_impl<T, unsigned int>();
+  ctor_overloads_float_impl<T, uint32_t>();
+  ctor_overloads_float_impl<T, size_t>();
+  ctor_overloads_float_impl<T, ptrdiff_t>();
 }
 
-TEST_F(AgradRev, ctorOverloads) {
-  ctor_overloads<float>();
-  ctor_overloads<double>();
-  ctor_overloads<long double>();
+TEST_F(AgradRev, ctorfloatOverloads) {
+  ctor_overloads_float<float>();
+  ctor_overloads_float<double>();
+  ctor_overloads_float<long double>();
 }
+
+template <typename EigenMat>
+void ctor_overloads_matrix(EigenMat&& xx) {
+  using stan::math::var_value;
+  using stan::math::vari_value;
+  using stan::math::test::type_name;
+	using plain_type = std::decay_t<stan::plain_type_t<EigenMat>>;
+  // standard constructor
+	plain_type x = xx;
+  EXPECT_MATRIX_FLOAT_EQ(x, var_value<plain_type>(x).val());
+  // make sure copy ctor is used rather than casting vari* to unsigned int
+  EXPECT_MATRIX_FLOAT_EQ(x, var_value<plain_type>(new vari_value<plain_type>(x)).val());
+  // make sure rvalue var_value can be accepted
+  EXPECT_MATRIX_FLOAT_EQ(x, var_value<plain_type>(var_value<plain_type>(x)).val());
+}
+
+template <typename EigenMat>
+void ctor_overloads_sparse_matrix(EigenMat&& x) {
+  using stan::math::var_value;
+  using stan::math::vari_value;
+  using stan::math::test::type_name;
+  // standard constructor
+  std::decay_t<EigenMat> xx = var_value<std::decay_t<EigenMat>>(x).val();
+	for (int k = 0; k < x.outerSize(); ++k) {
+		for (typename std::decay_t<EigenMat>::InnerIterator it(x,k), iz(xx,k);
+		  it; ++it, ++iz) {
+		  EXPECT_FLOAT_EQ(iz.value(), it.value());
+		}
+	}
+	std::decay_t<EigenMat> xxx = var_value<std::decay_t<EigenMat>>(var_value<std::decay_t<EigenMat>>(x)).val();
+	for (int k = 0; k < x.outerSize(); ++k) {
+		for (typename std::decay_t<EigenMat>::InnerIterator it(x,k), iz(xxx,k);
+		  it; ++it, ++iz) {
+			EXPECT_FLOAT_EQ(iz.value(), it.value());
+			std::cout << "iz[" << iz.index() << "]: " << iz.value() << " it[" << it.index() << "]: " << it.value() << std::endl;
+		}
+	}
+
+}
+
+auto make_sparse_matrix_random(int rows, int cols) {
+using eigen_triplet = Eigen::Triplet<double>;
+boost::mt19937 gen;
+boost::random::uniform_real_distribution<double> dist(0.0,1.0);
+std::vector<eigen_triplet> tripletList;
+	for(int i = 0; i < rows; ++i) {
+		for(int j = 0; j < cols; ++j) {
+       auto v_ij = dist(gen);                         //generate random number
+       if(v_ij < 0.1) {
+           tripletList.push_back(eigen_triplet(i,j,v_ij));      //if larger than treshold, insert it
+       }
+    }
+	}
+	Eigen::SparseMatrix<double> mat(rows, cols);
+	mat.setFromTriplets(tripletList.begin(), tripletList.end());
+	return mat;
+}
+
+TEST_F(AgradRev, ctormatrixOverloads) {
+	using dense_mat = Eigen::Matrix<double, -1, -1>;
+	using sparse_mat = Eigen::SparseMatrix<double>;
+  ctor_overloads_matrix(dense_mat::Random(2, 2));
+	sparse_mat sparse_x = make_sparse_matrix_random(2, 2);
+	ctor_overloads_sparse_matrix(sparse_x);
+}
+
 
 TEST_F(AgradRev, a_eq_x) {
   AVAR a = 5.0;

@@ -36,7 +36,7 @@ class var_value {};
 template <typename T>
 class var_value<T, require_vt_floating_point<T>> {
  public:
-  using value_type = std::decay_t<T>;        // Numeric type in vari_value.
+  using value_type = std::decay_t<plain_type_t<T>>; // type in vari_value.
   using vari_type = vari_value<value_type>;  // Type of underlying vari impl.
   using vari_pointer = vari_type*;  // pointer type for underlying vari.
 
@@ -77,14 +77,15 @@ class var_value<T, require_vt_floating_point<T>> {
    * @param x Value of the variable.
    */
   template <typename S, require_convertible_t<S&, value_type>* = nullptr>
-  var_value(const S& x) : vi_(new vari_type(x, false)) {}  // NOLINT
+  var_value(S&& x) : vi_(new vari_type(std::forward<S>(x), false)) {}  // NOLINT
 
   /**
    * Construct a variable from a pointer to a variable implementation.
    * @param vi A vari_value pointer.
    */
-  var_value(vari_value<T>* vi)  // NOLINT
-      : vi_(vi) {}
+  template <typename S, require_convertible_t<S&, value_type>* = nullptr>
+  var_value(vari_value<S>* vi)  // NOLINT
+    : vi_(vi) {}
 
   /**
    * Return a constant reference to the value of this variable.
