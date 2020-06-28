@@ -23,8 +23,8 @@ static void set_zero_all_adjoints_nested() {
         "empty_nested() must be false before calling"
         " set_zero_all_adjoints_nested()");
   }
-  const size_t start1 =
-   ChainableStack::instance_->nested_var_stack_sizes_.back();
+  const size_t start1
+      = ChainableStack::instance_->nested_var_stack_sizes_.back();
   // avoid wrap with unsigned when start1 == 0
   for (size_t i = (start1 == 0U) ? 0U : (start1 - 1);
        i < ChainableStack::instance_->var_stack_.size(); ++i) {

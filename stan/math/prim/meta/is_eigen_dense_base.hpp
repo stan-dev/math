@@ -19,8 +19,7 @@ namespace stan {
  */
 template <typename T>
 struct is_eigen_dense_base
-    : bool_constant<is_base_pointer_convertible<Eigen::DenseBase, T>::value> {
-};
+    : bool_constant<is_base_pointer_convertible<Eigen::DenseBase, T>::value> {};
 
 STAN_ADD_REQUIRE_UNARY(eigen_dense_base, is_eigen_dense_base,
                        require_eigens_types);

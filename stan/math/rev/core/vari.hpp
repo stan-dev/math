@@ -250,7 +250,7 @@ class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
   template <typename S, require_convertible_t<S&, value_type>* = nullptr>
   explicit vari_value(S&& x)
       : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-          x.size())),
+            x.size())),
         adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
         rows_(x.rows()),
@@ -281,7 +281,7 @@ class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
   template <typename S, require_convertible_t<S&, value_type>* = nullptr>
   vari_value(S&& x, bool stacked)
       : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-          x.size())),
+            x.size())),
         adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
         rows_(x.rows()),
@@ -460,7 +460,7 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
   template <typename S, require_convertible_t<S&, value_type>* = nullptr>
   explicit vari_value(S&& x)
       : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-          x.nonZeros())),
+            x.nonZeros())),
         val_outer_index_(
             ChainableStack::instance_->memalloc_.alloc_array<eigen_index>(
                 x.innerSize())),
@@ -502,7 +502,7 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
   template <typename S, require_convertible_t<S&, value_type>* = nullptr>
   vari_value(S&& x, bool stacked)
       : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-          x.innerSize())),
+            x.innerSize())),
         val_outer_index_(
             ChainableStack::instance_->memalloc_.alloc_array<eigen_index>(
                 x.outerSize())),
@@ -618,7 +618,7 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
    */
   template <typename S>
   inline eigen_map make_val(eigen_index*& outer_mem, eigen_index*& inner_mem,
-                     eigen_scalar*& val_mem, S&& x) {
+                            eigen_scalar*& val_mem, S&& x) {
     for (int k = 0; k < x.innerSize(); ++k) {
       val_mem[k] = x.valuePtr()[k];
       inner_mem[k] = x.innerIndexPtr()[k];
@@ -640,7 +640,7 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
    */
   template <typename S>
   inline eigen_map make_adj(eigen_index*& outer_mem, eigen_index*& inner_mem,
-                     eigen_scalar*& val_mem, S&& x) {
+                            eigen_scalar*& val_mem, S&& x) {
     for (int k = 0; k < x.innerSize(); ++k) {
       val_mem[k] = 0.0;
       inner_mem[k] = x.innerIndexPtr()[k];
