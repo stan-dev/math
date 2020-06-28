@@ -60,7 +60,7 @@ cholesky_decompose(const EigMat& m) {
  *   if m is not positive definite (if m has more than 0 elements)
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
-  require_same_t<double, value_type_t<EigMat>>* = nullptr>
+          require_same_t<double, value_type_t<EigMat>>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
                      EigMat::ColsAtCompileTime>
 cholesky_decompose(const EigMat& m) {
