@@ -67,14 +67,16 @@ void ctor_overloads_matrix(EigenMat&& xx) {
   using stan::math::var_value;
   using stan::math::vari_value;
   using stan::math::test::type_name;
-	using plain_type = std::decay_t<stan::plain_type_t<EigenMat>>;
+  using eigen_plain = std::decay_t<stan::plain_type_t<EigenMat>>;
+  eigen_plain x = xx;
   // standard constructor
-	plain_type x = xx;
-  EXPECT_MATRIX_FLOAT_EQ(x, var_value<plain_type>(x).val());
+  EXPECT_MATRIX_FLOAT_EQ((x * x).eval(), var_value<eigen_plain>(x * x).val());
   // make sure copy ctor is used rather than casting vari* to unsigned int
-  EXPECT_MATRIX_FLOAT_EQ(x, var_value<plain_type>(new vari_value<plain_type>(x)).val());
+  EXPECT_MATRIX_FLOAT_EQ(
+      x, var_value<eigen_plain>(new vari_value<eigen_plain>(x)).val());
   // make sure rvalue var_value can be accepted
-  EXPECT_MATRIX_FLOAT_EQ(x, var_value<plain_type>(var_value<plain_type>(x)).val());
+  EXPECT_MATRIX_FLOAT_EQ(
+      x, var_value<eigen_plain>(var_value<eigen_plain>(x)).val());
 }
 
 template <typename EigenMat>
@@ -82,51 +84,63 @@ void ctor_overloads_sparse_matrix(EigenMat&& x) {
   using stan::math::var_value;
   using stan::math::vari_value;
   using stan::math::test::type_name;
-  // standard constructor
-  std::decay_t<EigenMat> xx = var_value<std::decay_t<EigenMat>>(x).val();
-	for (int k = 0; k < x.outerSize(); ++k) {
-		for (typename std::decay_t<EigenMat>::InnerIterator it(x,k), iz(xx,k);
-		  it; ++it, ++iz) {
-		  EXPECT_FLOAT_EQ(iz.value(), it.value());
-		}
-	}
-	std::decay_t<EigenMat> xxx = var_value<std::decay_t<EigenMat>>(var_value<std::decay_t<EigenMat>>(x)).val();
-	for (int k = 0; k < x.outerSize(); ++k) {
-		for (typename std::decay_t<EigenMat>::InnerIterator it(x,k), iz(xxx,k);
-		  it; ++it, ++iz) {
-			EXPECT_FLOAT_EQ(iz.value(), it.value());
-			std::cout << "iz[" << iz.index() << "]: " << iz.value() << " it[" << it.index() << "]: " << it.value() << std::endl;
-		}
-	}
+  using eigen_plain = std::decay_t<stan::plain_type_t<EigenMat>>;
+  using inner_iterator = typename eigen_plain::InnerIterator;
+  // standard constructor with eigen expression
+  eigen_plain matmul_x = x * x;
+  eigen_plain matmul_xx = var_value<eigen_plain>(x * x).val();
+  for (int k = 0; k < matmul_x.outerSize(); ++k) {
+    for (inner_iterator it(matmul_x, k), iz(matmul_xx, k); it; ++it, ++iz) {
+      EXPECT_FLOAT_EQ(iz.value(), it.value());
+    }
+  }
+  // make sure rvalue var_value can be accepted
+  eigen_plain x_rv = var_value<eigen_plain>(var_value<eigen_plain>(x)).val();
+  for (int k = 0; k < x.outerSize(); ++k) {
+    for (inner_iterator it(x, k), iz(x_rv, k); it; ++it, ++iz) {
+      EXPECT_FLOAT_EQ(iz.value(), it.value());
+    }
+  }
 
+  /** from a vari_value with sparse
+   * NOTE: This will fail with an expression since allocating the mem
+   * for the vari requires knowing the sizes of the inner and outer indices
+   * which is not computed for expressions.
+   */
+  eigen_plain x_from_vari
+      = var_value<eigen_plain>(new vari_value<eigen_plain>(x)).val();
+  for (int k = 0; k < x.outerSize(); ++k) {
+    for (inner_iterator it(x, k), iz(x_from_vari, k); it; ++it, ++iz) {
+      EXPECT_FLOAT_EQ(iz.value(), it.value());
+    }
+  }
 }
 
 auto make_sparse_matrix_random(int rows, int cols) {
-using eigen_triplet = Eigen::Triplet<double>;
-boost::mt19937 gen;
-boost::random::uniform_real_distribution<double> dist(0.0,1.0);
-std::vector<eigen_triplet> tripletList;
-	for(int i = 0; i < rows; ++i) {
-		for(int j = 0; j < cols; ++j) {
-       auto v_ij = dist(gen);                         //generate random number
-       if(v_ij < 0.1) {
-           tripletList.push_back(eigen_triplet(i,j,v_ij));      //if larger than treshold, insert it
-       }
+  using eigen_triplet = Eigen::Triplet<double>;
+  boost::mt19937 gen;
+  boost::random::uniform_real_distribution<double> dist(0.0, 1.0);
+  std::vector<eigen_triplet> tripletList;
+  for (int i = 0; i < rows; ++i) {
+    for (int j = 0; j < cols; ++j) {
+      auto v_ij = dist(gen);
+      if (v_ij < 0.1) {
+        tripletList.push_back(eigen_triplet(i, j, v_ij));
+      }
     }
-	}
-	Eigen::SparseMatrix<double> mat(rows, cols);
-	mat.setFromTriplets(tripletList.begin(), tripletList.end());
-	return mat;
+  }
+  Eigen::SparseMatrix<double> mat(rows, cols);
+  mat.setFromTriplets(tripletList.begin(), tripletList.end());
+  return mat;
 }
 
 TEST_F(AgradRev, ctormatrixOverloads) {
-	using dense_mat = Eigen::Matrix<double, -1, -1>;
-	using sparse_mat = Eigen::SparseMatrix<double>;
-  ctor_overloads_matrix(dense_mat::Random(2, 2));
-	sparse_mat sparse_x = make_sparse_matrix_random(2, 2);
-	ctor_overloads_sparse_matrix(sparse_x);
+  using dense_mat = Eigen::Matrix<double, -1, -1>;
+  using sparse_mat = Eigen::SparseMatrix<double>;
+  ctor_overloads_matrix(dense_mat::Random(10, 10));
+  sparse_mat sparse_x = make_sparse_matrix_random(10, 10);
+  ctor_overloads_sparse_matrix(sparse_x);
 }
-
 
 TEST_F(AgradRev, a_eq_x) {
   AVAR a = 5.0;

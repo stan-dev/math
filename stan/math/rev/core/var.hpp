@@ -36,7 +36,7 @@ class var_value {};
 template <typename T>
 class var_value<T, require_vt_floating_point<T>> {
  public:
-  using value_type = std::decay_t<plain_type_t<T>>; // type in vari_value.
+  using value_type = std::decay_t<std::decay_t<T>>;  // type in vari_value.
   using vari_type = vari_value<value_type>;  // Type of underlying vari impl.
   using vari_pointer = vari_type*;  // pointer type for underlying vari.
 
@@ -76,8 +76,25 @@ class var_value<T, require_vt_floating_point<T>> {
    * @tparam S A type that is convertible to `value_type`.
    * @param x Value of the variable.
    */
-  template <typename S, require_convertible_t<S&, value_type>* = nullptr>
+  template <typename S, require_convertible_t<S&, value_type>* = nullptr,
+            require_not_eigen_sparse_base_t<S>* = nullptr>
   var_value(S&& x) : vi_(new vari_type(std::forward<S>(x), false)) {}  // NOLINT
+
+  /**
+   * Construct a variable from the specified floating point argument
+   * by constructing a new `vari_value<value_type>`. This constructor is only
+   * valid when `S` is convertible to this `vari_value`'s `value_type` and is
+   * derived from Eigen's sparse matrix base class. This specialization exists
+   * because Eigen sparse matrix expressions do not have `innerSize()` and
+   * `outerSize()` members. While dense matrix expressions can be passed along
+   * to the constructor for `vari_value`, sparse matrix expressions need to
+   * be evaluated before they are passed to the `vari_value` constructor.
+   * @tparam S A type that is convertible to `value_type`.
+   * @param x Value of the variable.
+   */
+  template <typename S, require_convertible_t<S&, value_type>* = nullptr,
+            require_eigen_sparse_base_t<S>* = nullptr>
+  var_value(S&& x) : vi_(new vari_type(ref_type_t<S>(x), false)) {}  // NOLINT
 
   /**
    * Construct a variable from a pointer to a variable implementation.
@@ -85,7 +102,7 @@ class var_value<T, require_vt_floating_point<T>> {
    */
   template <typename S, require_convertible_t<S&, value_type>* = nullptr>
   var_value(vari_value<S>* vi)  // NOLINT
-    : vi_(vi) {}
+      : vi_(vi) {}
 
   /**
    * Return a constant reference to the value of this variable.
