@@ -414,9 +414,9 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
   using eigen_index = typename PlainObject::StorageIndex;  // Index type
   using Scalar = PlainObject;  // vari's adj_ and val_ member type
   using value_type = Scalar;   // vari's adj_ and val_ member type
-  const Eigen::Index rows_;       // Number of rows in val_
-  const Eigen::Index cols_;       // Number of cols in val_
-  const Eigen::Index size_;       // Size of val_
+  const Eigen::Index rows_;    // Number of rows in val_
+  const Eigen::Index cols_;    // Number of cols in val_
+  const Eigen::Index size_;    // Size of val_
   /**
    * Rows at compile time
    */

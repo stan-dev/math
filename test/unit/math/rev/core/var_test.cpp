@@ -115,7 +115,8 @@ void ctor_overloads_sparse_matrix(EigenMat&& x) {
   const eigen_plain const_matmul_x = x * x;
   eigen_plain const_matmul_xx = var_value<eigen_plain>(const_matmul_x).val();
   for (int k = 0; k < matmul_x.outerSize(); ++k) {
-    for (inner_iterator it(const_matmul_x, k), iz(const_matmul_xx, k); it; ++it, ++iz) {
+    for (inner_iterator it(const_matmul_x, k), iz(const_matmul_xx, k); it;
+         ++it, ++iz) {
       EXPECT_FLOAT_EQ(iz.value(), it.value());
     }
   }
@@ -155,7 +156,6 @@ void ctor_overloads_sparse_matrix(EigenMat&& x) {
       }
     }
   }
-
 }
 
 TEST_F(AgradRev, ctormatrixOverloads) {
