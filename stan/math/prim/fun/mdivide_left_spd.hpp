@@ -39,7 +39,8 @@ mdivide_left_spd(const EigMat1& A, const EigMat2& b) {
 
   auto llt
       = Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
-                      EigMat1::RowsAtCompileTime, EigMat1::ColsAtCompileTime>(A_ref)
+                      EigMat1::RowsAtCompileTime, EigMat1::ColsAtCompileTime>(
+            A_ref)
             .llt();
   check_pos_definite(function, "A", llt);
   return llt.solve(

@@ -52,15 +52,17 @@ inline fvar<T> log_sum_exp(const fvar<T>& x1, double x2) {
  */
 template <typename T, require_container_st<is_fvar, T>* = nullptr>
 inline auto log_sum_exp(const T& x) {
-  return apply_vector_unary<ref_type_t<T>>::reduce(to_ref(x), [&](const auto& v) {
-    using T_fvar_inner = typename value_type_t<decltype(v)>::Scalar;
-    using mat_type = Eigen::Matrix<T_fvar_inner, -1, -1>;
-    mat_type vals = v.val();
-    mat_type exp_vals = vals.array().exp();
+  return apply_vector_unary<ref_type_t<T>>::reduce(
+      to_ref(x), [&](const auto& v) {
+        using T_fvar_inner = typename value_type_t<decltype(v)>::Scalar;
+        using mat_type = Eigen::Matrix<T_fvar_inner, -1, -1>;
+        mat_type vals = v.val();
+        mat_type exp_vals = vals.array().exp();
 
-    return fvar<T_fvar_inner>(
-        log_sum_exp(vals), v.d().cwiseProduct(exp_vals).sum() / exp_vals.sum());
-  });
+        return fvar<T_fvar_inner>(
+            log_sum_exp(vals),
+            v.d().cwiseProduct(exp_vals).sum() / exp_vals.sum());
+      });
 }
 
 }  // namespace math

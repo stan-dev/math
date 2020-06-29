@@ -95,7 +95,8 @@ mdivide_right_tri(const EigMat1& b, const EigMat2& A) {
     return from_matrix_cl(C_cl);
   } else {
 #endif
-    return to_ref(A).template triangularView<TriView>()
+    return to_ref(A)
+        .template triangularView<TriView>()
         .transpose()
         .solve(b.transpose())
         .transpose();
