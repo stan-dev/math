@@ -1,11 +1,8 @@
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
-
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(AgradRev, value_of) {
   using stan::math::value_of;

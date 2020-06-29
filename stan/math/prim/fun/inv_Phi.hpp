@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/Phi.hpp>
 #include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
