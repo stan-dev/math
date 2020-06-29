@@ -414,9 +414,9 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
   using eigen_index = typename PlainObject::StorageIndex;  // Index type
   using Scalar = PlainObject;  // vari's adj_ and val_ member type
   using value_type = Scalar;   // vari's adj_ and val_ member type
-  const Eigen::Index rows_;       // Number of rows in val_
-  const Eigen::Index cols_;       // Number of cols in val_
-  const Eigen::Index size_;       // Size of val_
+  const Eigen::Index rows_;    // Number of rows in val_
+  const Eigen::Index cols_;    // Number of cols in val_
+  const Eigen::Index size_;    // Size of val_
   /**
    * Rows at compile time
    */
@@ -451,12 +451,8 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
    * @param x Value of the constructed variable.
    */
   template <typename S, require_convertible_t<S&, value_type>* = nullptr>
-  explicit vari_value(S&& x) :
-        rows_(x.rows()),
-        cols_(x.cols()),
-        size_(x.size()),
-        val_(x),
-        adj_(x) {
+  explicit vari_value(S&& x)
+      : rows_(x.rows()), cols_(x.cols()), size_(x.size()), val_(x), adj_(x) {
     this->set_zero_adjoint();
     ChainableStack::instance_->var_stack_.push_back(this);
   }
@@ -478,12 +474,8 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
    * that its `chain()` method is not called.
    */
   template <typename S, require_convertible_t<S&, value_type>* = nullptr>
-  vari_value(S&& x, bool stacked) :
-        rows_(x.rows()),
-        cols_(x.cols()),
-        size_(x.size()),
-        val_(x),
-        adj_(x) {
+  vari_value(S&& x, bool stacked)
+      : rows_(x.rows()), cols_(x.cols()), size_(x.size()), val_(x), adj_(x) {
     this->set_zero_adjoint();
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
