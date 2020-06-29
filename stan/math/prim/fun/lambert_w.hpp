@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_LAMBERT_W_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <stan/math/prim/fun/boost_policy.hpp>
 #include <boost/math/special_functions/lambert_w.hpp>
 

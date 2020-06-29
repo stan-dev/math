@@ -604,7 +604,8 @@ inline var multiply(const RowVec& m1, const ColVec& m2) {
   check_not_nan("multiply", "m2", m2_ref);
   // Memory managed with the arena allocator.
   multiply_mat_vari<RowVecScalar, 1, Ca, ColVecScalar, 1>* baseVari
-      = new multiply_mat_vari<RowVecScalar, 1, Ca, ColVecScalar, 1>(m1_ref, m2_ref);
+      = new multiply_mat_vari<RowVecScalar, 1, Ca, ColVecScalar, 1>(m1_ref,
+                                                                    m2_ref);
   var AB_v;
   AB_v.vi_ = baseVari->variRefAB_;
   return AB_v;

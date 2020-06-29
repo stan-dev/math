@@ -144,8 +144,9 @@ class mdivide_left_spd_vd_vari : public vari {
 };
 }  // namespace internal
 
-template <typename EigMat1, typename EigMat2,
-          require_all_eigen_matrix_base_vt<is_var, EigMat1, EigMat2> * = nullptr>
+template <
+    typename EigMat1, typename EigMat2,
+    require_all_eigen_matrix_base_vt<is_var, EigMat1, EigMat2> * = nullptr>
 inline Eigen::Matrix<var, EigMat1::RowsAtCompileTime,
                      EigMat2::ColsAtCompileTime>
 mdivide_left_spd(const EigMat1 &A, const EigMat2 &b) {

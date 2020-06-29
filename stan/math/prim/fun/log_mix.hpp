@@ -88,12 +88,15 @@ return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
   check_bounded(function, "theta", theta_ref, 0, 1);
   check_finite(function, "lambda", lambda_ref);
 
-  const auto& theta_dbl = to_ref(value_of(as_column_vector_or_scalar(theta_ref)));
-  const auto& lam_dbl = to_ref(value_of(as_column_vector_or_scalar(lambda_ref)));
+  const auto& theta_dbl
+      = to_ref(value_of(as_column_vector_or_scalar(theta_ref)));
+  const auto& lam_dbl
+      = to_ref(value_of(as_column_vector_or_scalar(lambda_ref)));
 
   T_partials_return logp = log_sum_exp(log(theta_dbl) + lam_dbl);
 
-  operands_and_partials<T_theta_ref, T_lam_ref> ops_partials(theta_ref, lambda_ref);
+  operands_and_partials<T_theta_ref, T_lam_ref> ops_partials(theta_ref,
+                                                             lambda_ref);
   if (!is_constant_all<T_lam, T_theta>::value) {
     T_partials_vec theta_deriv = (lam_dbl.array() - logp).exp();
     if (!is_constant_all<T_lam>::value) {
@@ -160,7 +163,8 @@ return_type_t<T_theta, std::vector<T_lam>> log_mix(
     check_consistent_sizes(function, "theta", theta, "lambda", lambda[n]);
   }
 
-  const auto& theta_dbl = to_ref(value_of(as_column_vector_or_scalar(theta_ref)));
+  const auto& theta_dbl
+      = to_ref(value_of(as_column_vector_or_scalar(theta_ref)));
 
   T_partials_mat lam_dbl(M, N);
   for (int n = 0; n < N; ++n) {
@@ -173,7 +177,8 @@ return_type_t<T_theta, std::vector<T_lam>> log_mix(
     logp[n] = log_sum_exp(logp_tmp.col(n));
   }
 
-  operands_and_partials<T_theta_ref, T_lamvec_type> ops_partials(theta_ref, lambda);
+  operands_and_partials<T_theta_ref, T_lamvec_type> ops_partials(theta_ref,
+                                                                 lambda);
   if (!is_constant_all<T_theta, T_lam>::value) {
     T_partials_mat derivs = exp(lam_dbl.rowwise() - logp.transpose());
     if (!is_constant_all<T_theta>::value) {

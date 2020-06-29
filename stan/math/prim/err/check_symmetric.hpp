@@ -28,9 +28,8 @@ namespace math {
  *   main diagonal is <code>NaN</code>
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
-inline void check_symmetric(
-    const char* function, const char* name,
-    const EigMat& y) {
+inline void check_symmetric(const char* function, const char* name,
+                            const EigMat& y) {
   check_square(function, name, y);
   using std::fabs;
 
