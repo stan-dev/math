@@ -456,7 +456,8 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
         cols_(x.cols()),
         size_(x.size()),
         val_(x),
-        adj_(x) {
+        adj_(x),
+        chainable_alloc() {
     this->set_zero_adjoint();
     ChainableStack::instance_->var_stack_.push_back(this);
   }
@@ -483,7 +484,8 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
         cols_(x.cols()),
         size_(x.size()),
         val_(x),
-        adj_(x) {
+        adj_(x),
+        chainable_alloc() {
     this->set_zero_adjoint();
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
