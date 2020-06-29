@@ -613,6 +613,7 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
    * @param outer_mem Stack allocated memory for the outer index.
    * @param inner_mem Stack allocated memory for the inner index.
    * @param val_mem Stack allocated memory for the matrix values.
+   * @param x The Eigen sparse type to fill in the stack memory.
    * @note This function exists because Eigen's `Map` class for sparse matrices
    *  has a lot of gotchas.
    */
@@ -635,6 +636,7 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
    * @param outer_mem Stack allocated memory for the outer index.
    * @param inner_mem Stack allocated memory for the inner index.
    * @param val_mem Stack allocated memory for the matrix values.
+   * @param x The Eigen sparse type to fill in the stack memory.
    * @note This function exists because Eigen's `Map` class for sparse matrices
    *  has a lot of gotchas.
    */
