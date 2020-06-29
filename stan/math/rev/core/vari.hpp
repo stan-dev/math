@@ -406,7 +406,7 @@ class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
  */
 template <typename T>
 class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
-    : public vari_base {
+    : public vari_base, chainable_alloc {
  public:
   using PlainObject
       = std::decay_t<plain_type_t<T>>;             // Base type of Eigen class
@@ -414,13 +414,6 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
   using eigen_index = typename PlainObject::StorageIndex;  // Index type
   using Scalar = PlainObject;  // vari's adj_ and val_ member type
   using value_type = Scalar;   // vari's adj_ and val_ member type
-  using eigen_map = Eigen::Map<PlainObject>;  // Map of stack alloc'd mem
-  eigen_scalar* val_mem_;                     // The value's nonzero values
-  eigen_index* val_outer_index_;  // Value's Outer index of nonzero members
-  eigen_index* val_inner_index_;  // Value's Inner index of nonzero members
-  eigen_scalar* adj_mem_;         // Adjoint's nonzero values
-  eigen_index* adj_outer_index_;  // Adjoint's outer index of nonzero members
-  eigen_index* adj_inner_index_;  // Adjont's inner index of nonzero members
   const Eigen::Index rows_;       // Number of rows in val_
   const Eigen::Index cols_;       // Number of cols in val_
   const Eigen::Index size_;       // Size of val_
@@ -435,13 +428,13 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
   /**
    * The value of this variable.
    */
-  const eigen_map val_;
+  const PlainObject val_;
 
   /**
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
    */
-  eigen_map adj_;
+  PlainObject adj_;
 
   /**
    * Construct a variable implementation from a value. The
@@ -458,28 +451,13 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
    * @param x Value of the constructed variable.
    */
   template <typename S, require_convertible_t<S&, value_type>* = nullptr>
-  explicit vari_value(S&& x)
-      : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-            x.nonZeros())),
-        val_outer_index_(
-            ChainableStack::instance_->memalloc_.alloc_array<eigen_index>(
-                x.innerSize())),
-        val_inner_index_(
-            ChainableStack::instance_->memalloc_.alloc_array<eigen_index>(
-                x.innerSize())),
-        adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-            x.innerSize())),
-        adj_outer_index_(
-            ChainableStack::instance_->memalloc_.alloc_array<eigen_index>(
-                x.outerSize())),
-        adj_inner_index_(
-            ChainableStack::instance_->memalloc_.alloc_array<eigen_index>(
-                x.innerSize())),
+  explicit vari_value(S&& x) :
         rows_(x.rows()),
         cols_(x.cols()),
         size_(x.size()),
-        val_(make_val(val_outer_index_, val_inner_index_, val_mem_, x)),
-        adj_(make_adj(adj_outer_index_, adj_inner_index_, adj_mem_, x)) {
+        val_(x),
+        adj_(x) {
+    this->set_zero_adjoint();
     ChainableStack::instance_->var_stack_.push_back(this);
   }
   /**
@@ -500,28 +478,13 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
    * that its `chain()` method is not called.
    */
   template <typename S, require_convertible_t<S&, value_type>* = nullptr>
-  vari_value(S&& x, bool stacked)
-      : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-            x.innerSize())),
-        val_outer_index_(
-            ChainableStack::instance_->memalloc_.alloc_array<eigen_index>(
-                x.outerSize())),
-        val_inner_index_(
-            ChainableStack::instance_->memalloc_.alloc_array<eigen_index>(
-                x.innerSize())),
-        adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-            x.innerSize())),
-        adj_outer_index_(
-            ChainableStack::instance_->memalloc_.alloc_array<eigen_index>(
-                x.outerSize())),
-        adj_inner_index_(
-            ChainableStack::instance_->memalloc_.alloc_array<eigen_index>(
-                x.innerSize())),
+  vari_value(S&& x, bool stacked) :
         rows_(x.rows()),
         cols_(x.cols()),
         size_(x.size()),
-        val_(make_val(val_outer_index_, val_inner_index_, val_mem_, x)),
-        adj_(make_adj(adj_outer_index_, adj_inner_index_, adj_mem_, x)) {
+        val_(x),
+        adj_(x) {
+    this->set_zero_adjoint();
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
     } else {
@@ -557,7 +520,7 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
    */
   inline void set_zero_adjoint() noexcept final {
     for (int k = 0; k < adj_.outerSize(); ++k) {
-      for (typename eigen_map::InnerIterator it(adj_, k); it; ++it) {
+      for (typename PlainObject::InnerIterator it(adj_, k); it; ++it) {
         it.valueRef() = 0.0;
       }
     }
@@ -607,52 +570,6 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
  private:
   template <typename, typename>
   friend class var_value;
-  /**
-   * Fill the val_ map and it's pointers.
-   * @tparam S An Eigen sparse matrix type.
-   * @param outer_mem Stack allocated memory for the outer index.
-   * @param inner_mem Stack allocated memory for the inner index.
-   * @param val_mem Stack allocated memory for the matrix values.
-   * @param x The Eigen sparse type to fill in the stack memory.
-   * @note This function exists because Eigen's `Map` class for sparse matrices
-   *  has a lot of gotchas.
-   */
-  template <typename S>
-  inline eigen_map make_val(eigen_index*& outer_mem, eigen_index*& inner_mem,
-                            eigen_scalar*& val_mem, S&& x) {
-    for (int k = 0; k < x.innerSize(); ++k) {
-      val_mem[k] = x.valuePtr()[k];
-      inner_mem[k] = x.innerIndexPtr()[k];
-    }
-    for (int k = 0; k < x.outerSize(); ++k) {
-      outer_mem[k] = x.outerIndexPtr()[k];
-    }
-    return eigen_map(x.rows(), x.cols(), x.nonZeros(), outer_mem, inner_mem,
-                     val_mem);
-  }
-  /**
-   * Fill the val_ map and it's pointers.
-   * @tparam S An Eigen sparse matrix type.
-   * @param outer_mem Stack allocated memory for the outer index.
-   * @param inner_mem Stack allocated memory for the inner index.
-   * @param val_mem Stack allocated memory for the matrix values.
-   * @param x The Eigen sparse type to fill in the stack memory.
-   * @note This function exists because Eigen's `Map` class for sparse matrices
-   *  has a lot of gotchas.
-   */
-  template <typename S>
-  inline eigen_map make_adj(eigen_index*& outer_mem, eigen_index*& inner_mem,
-                            eigen_scalar*& val_mem, S&& x) {
-    for (int k = 0; k < x.innerSize(); ++k) {
-      val_mem[k] = 0.0;
-      inner_mem[k] = x.innerIndexPtr()[k];
-    }
-    for (int k = 0; k < x.outerSize(); ++k) {
-      outer_mem[k] = x.outerIndexPtr()[k];
-    }
-    return eigen_map(x.rows(), x.cols(), x.nonZeros(), outer_mem, inner_mem,
-                     val_mem);
-  }
 };
 
 }  // namespace math

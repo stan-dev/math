@@ -79,6 +79,24 @@ void ctor_overloads_matrix(EigenMat&& xx) {
       x, var_value<eigen_plain>(var_value<eigen_plain>(x)).val());
 }
 
+auto make_sparse_matrix_random(int rows, int cols) {
+  using eigen_triplet = Eigen::Triplet<double>;
+  boost::mt19937 gen;
+  boost::random::uniform_real_distribution<double> dist(0.0, 1.0);
+  std::vector<eigen_triplet> tripletList;
+  for (int i = 0; i < rows; ++i) {
+    for (int j = 0; j < cols; ++j) {
+      auto v_ij = dist(gen);
+      if (v_ij < 0.1) {
+        tripletList.push_back(eigen_triplet(i, j, v_ij));
+      }
+    }
+  }
+  Eigen::SparseMatrix<double> mat(rows, cols);
+  mat.setFromTriplets(tripletList.begin(), tripletList.end());
+  return mat;
+}
+
 template <typename EigenMat>
 void ctor_overloads_sparse_matrix(EigenMat&& x) {
   using stan::math::var_value;
@@ -94,6 +112,14 @@ void ctor_overloads_sparse_matrix(EigenMat&& x) {
       EXPECT_FLOAT_EQ(iz.value(), it.value());
     }
   }
+  const eigen_plain const_matmul_x = x * x;
+  eigen_plain const_matmul_xx = var_value<eigen_plain>(const_matmul_x).val();
+  for (int k = 0; k < matmul_x.outerSize(); ++k) {
+    for (inner_iterator it(const_matmul_x, k), iz(const_matmul_xx, k); it; ++it, ++iz) {
+      EXPECT_FLOAT_EQ(iz.value(), it.value());
+    }
+  }
+
   // make sure rvalue var_value can be accepted
   eigen_plain x_rv = var_value<eigen_plain>(var_value<eigen_plain>(x)).val();
   for (int k = 0; k < x.outerSize(); ++k) {
@@ -114,24 +140,22 @@ void ctor_overloads_sparse_matrix(EigenMat&& x) {
       EXPECT_FLOAT_EQ(iz.value(), it.value());
     }
   }
-}
-
-auto make_sparse_matrix_random(int rows, int cols) {
-  using eigen_triplet = Eigen::Triplet<double>;
-  boost::mt19937 gen;
-  boost::random::uniform_real_distribution<double> dist(0.0, 1.0);
-  std::vector<eigen_triplet> tripletList;
-  for (int i = 0; i < rows; ++i) {
-    for (int j = 0; j < cols; ++j) {
-      auto v_ij = dist(gen);
-      if (v_ij < 0.1) {
-        tripletList.push_back(eigen_triplet(i, j, v_ij));
+  // test inplace addition works
+  auto inplace_add_var = var_value<eigen_plain>(new vari_value<eigen_plain>(x));
+  eigen_plain test_y = make_sparse_matrix_random(10, 10);
+  inplace_add_var.adj() += test_y;
+  // adjoints sparsity pattern will be pattern of x and test_y for addition
+  for (int k = 0; k < x.outerSize(); ++k) {
+    for (inner_iterator it(test_y, k), iz(inplace_add_var.adj(), k); iz; ++iz) {
+      if (iz.row() == it.row() && iz.col() == it.col()) {
+        EXPECT_FLOAT_EQ(iz.value(), it.value());
+        ++it;
+      } else {
+        EXPECT_FLOAT_EQ(iz.value(), 0.0);
       }
     }
   }
-  Eigen::SparseMatrix<double> mat(rows, cols);
-  mat.setFromTriplets(tripletList.begin(), tripletList.end());
-  return mat;
+
 }
 
 TEST_F(AgradRev, ctormatrixOverloads) {
