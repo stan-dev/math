@@ -34,14 +34,18 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type gumbel_rng(
     const T_loc& mu, const T_scale& beta, RNG& rng) {
   using boost::uniform_01;
   using boost::variate_generator;
+  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
+  using T_beta_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
   static const char* function = "gumbel_rng";
-  check_finite(function, "Location parameter", mu);
-  check_positive_finite(function, "Scale parameter", beta);
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",
                          beta);
+  T_mu_ref mu_ref = mu;
+  T_beta_ref beta_ref = beta;
+  check_finite(function, "Location parameter", mu_ref);
+  check_positive_finite(function, "Scale parameter", beta_ref);
 
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> beta_vec(beta);
+  scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
+  scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
   size_t N = max_size(mu, beta);
   VectorBuilder<true, double, T_loc, T_scale> output(N);
 
