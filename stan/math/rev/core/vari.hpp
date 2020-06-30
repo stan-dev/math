@@ -519,7 +519,7 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
         it.valueRef() = 1.0;
       }
     }
-   }
+  }
 
   /**
    * Set the adjoint value of this variable to 0.  This is used to
