@@ -97,18 +97,37 @@ class multiply_vari<Var1, Var2, require_all_var_t<Var1, Var2>> final
    * compiler has "deduced" these types we can these use the standard requires
    * to SFINAE out either the arithmetic or matrix version.
    */
+  // Two vars
   template <typename T1 = Var1, typename T2 = Var2,
             require_all_var_vt<std::is_arithmetic, T1, T2>* = nullptr>
   inline void chain_impl() {
     avi()->adj_ += bvi()->val_ * this->adj_;
     bvi()->adj_ += avi()->val_ * this->adj_;
   }
-
+  // Two var Eigen matrices
   template <typename T1 = Var1, typename T2 = Var2,
             require_all_var_vt<is_eigen, T1, T2>* = nullptr>
   inline void chain_impl() {
     avi()->adj_ += this->adj_ * bvi()->val_.transpose();
     bvi()->adj_ += avi()->val_.transpose() * this->adj_;
+  }
+
+  // var float and var eigen, not sure if this is right
+  template <typename T1 = Var1, typename T2 = Var2,
+    require_var_vt<std::is_arithmetic, T1>* = nullptr,
+    require_var_vt<is_eigen, T2>* = nullptr>
+  inline void chain_impl() {
+    avi()->adj_ += (bvi()->val_.array() * this->adj_.array()).sum();
+    bvi()->adj_.array() += avi()->val_ * this->adj_.array();
+  }
+
+  // var eigen and var float, not sure if this is right
+  template <typename T1 = Var1, typename T2 = Var2,
+    require_var_vt<is_eigen, T1>* = nullptr,
+    require_var_vt<std::is_arithmetic, T2>* = nullptr>
+  inline void chain_impl() {
+    avi()->adj_.array() += bvi()->val_ * this->adj_.array();
+    bvi()->adj_ += (avi()->val_.array() * this->adj_.array()).sum();
   }
 
   void chain() {
@@ -136,26 +155,17 @@ class multiply_vari<Var, Arith, require_all_t<is_var<Var>, is_not_var<Arith>>>
   template <typename T1, typename T2>
   multiply_vari(T1* avi, const T2& b) : op_vari_mul(avi->val_ * b, avi, b) {}
 
-  template <typename T1 = Var, typename T2 = Arith,
-            require_var_vt<std::is_arithmetic, T1>* = nullptr,
-            require_arithmetic_t<T2>* = nullptr>
+  template <typename Var1 = Var, typename Arith1 = Arith,
+            require_arithmetic_t<Arith1>* = nullptr>
   inline void chain_impl() {
     avi()->adj_ += this->adj_ * bd();
   }
 
-  template <typename T1 = Var, typename T2 = Arith,
-            require_var_vt<is_eigen, T1>* = nullptr,
-            require_eigen_t<T2>* = nullptr,
-            require_vt_arithmetic<T2>* = nullptr>
+  template <typename Var1 = Var, typename Arith1 = Arith,
+            require_eigen_t<Arith1>* = nullptr,
+            require_vt_arithmetic<Arith1>* = nullptr>
   inline void chain_impl() {
     avi()->adj_ += this->adj_ * bd().transpose();
-  }
-  // NOTE: THIS IS WRONG
-  template <typename T1 = Arith, typename T2 = Var,
-            require_eigen_t<T1>* = nullptr,
-            require_var_vt<std::is_arithmetic, T2>* = nullptr>
-  void chain_impl() {
-    avi()->adj_ += this->adj_.sum();
   }
 
   void chain() {
@@ -183,24 +193,15 @@ class multiply_vari<Arith, Var, require_all_t<is_not_var<Arith>, is_var<Var>>>
   multiply_vari(const Arith& a, T2* bvi) : op_vari_mul(a * bvi->val_, a, bvi) {}
 
   template <typename T1 = Arith, typename T2 = Var,
-            require_arithmetic_t<T1>* = nullptr,
             require_var_vt<std::is_arithmetic, T2>* = nullptr>
   void chain_impl() {
     bvi()->adj_ += this->adj_ * ad();
   }
 
   template <typename T1 = Arith, typename T2 = Var,
-            require_vt_arithmetic<T1>* = nullptr,
             require_var_vt<is_eigen, T2>* = nullptr>
   void chain_impl() {
     bvi()->adj_ += (this->adj_ * ad()).transpose();
-  }
-  // NOTE: THIS IS WRONG
-  template <typename T1 = Arith, typename T2 = Var,
-            require_eigen_t<T1>* = nullptr,
-            require_var_vt<std::is_arithmetic, T2>* = nullptr>
-  void chain_impl() {
-    bvi()->adj_ += this->adj_.sum();
   }
 
   void chain() {
