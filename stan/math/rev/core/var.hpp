@@ -39,11 +39,14 @@ class var_value<T, require_vt_floating_point<T>> {
    * Checks whether the template type `T` is an assignable type.
    */
   template <typename S>
-  using check_plain_type = std::is_same<std::decay_t<S>,
-   std::decay_t<plain_type_t<S>>>;
-  static_assert(check_plain_type<T>::value, "The template for this var is an"
-   " expression but a var_value's inner type must be assignable such as"
-   " a double, Eigen::Matrix, or Eigen::Array");
+  using check_plain_type
+      = std::is_same<std::decay_t<S>, std::decay_t<plain_type_t<S>>>;
+  static_assert(
+      check_plain_type<T>::value,
+      "The template for this var is an"
+      " expression but a var_value's inner type must be assignable such as"
+      " a double, Eigen::Matrix, or Eigen::Array");
+
  public:
   using value_type = std::decay_t<std::decay_t<T>>;  // type in vari_value.
   using vari_type = vari_value<value_type>;  // Type of underlying vari impl.
@@ -91,7 +94,7 @@ class var_value<T, require_vt_floating_point<T>> {
    * Construct a variable from a pointer to a variable implementation.
    * @param vi A vari_value pointer.
    */
-  var_value(vari_type* vi) : vi_(vi) {} // NOLINT
+  var_value(vari_type* vi) : vi_(vi) {}  // NOLINT
 
   /**
    * Return a constant reference to the value of this variable.
