@@ -167,9 +167,6 @@
 
 #include <stan/math/prim/meta/ad_promotable.hpp>
 #include <stan/math/prim/meta/append_return_type.hpp>
-#include <stan/math/prim/meta/apply_scalar_unary.hpp>
-#include <stan/math/prim/meta/apply_scalar_binary.hpp>
-#include <stan/math/prim/meta/apply_vector_unary.hpp>
 #include <stan/math/prim/meta/as_array_or_scalar.hpp>
 #include <stan/math/prim/meta/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/meta/base_type.hpp>
@@ -179,6 +176,7 @@
 #include <stan/math/prim/meta/contains_vector.hpp>
 #include <stan/math/prim/meta/error_index.hpp>
 #include <stan/math/prim/meta/forward_as.hpp>
+#include <stan/math/prim/meta/holder.hpp>
 #include <stan/math/prim/meta/include_summand.hpp>
 #include <stan/math/prim/meta/index_type.hpp>
 #include <stan/math/prim/meta/index_apply.hpp>

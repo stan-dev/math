@@ -48,26 +48,31 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lcdf(const T_y& y,
   using std::exp;
   using std::log;
   using std::pow;
+  using T_y_ref = ref_type_t<T_y>;
+  using T_mu_ref = ref_type_t<T_loc>;
+  using T_kappa_ref = ref_type_t<T_prec>;
   static const char* function = "beta_proportion_lcdf";
-  check_positive(function, "Location parameter", mu);
-  check_less(function, "Location parameter", mu, 1.0);
-  check_positive_finite(function, "Precision parameter", kappa);
-  check_not_nan(function, "Random variable", y);
-  check_nonnegative(function, "Random variable", y);
-  check_less_or_equal(function, "Random variable", y, 1.0);
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Precision parameter", kappa);
-
   if (size_zero(y, mu, kappa)) {
     return 0;
   }
 
-  T_partials_return cdf_log(0.0);
-  operands_and_partials<T_y, T_loc, T_prec> ops_partials(y, mu, kappa);
+  T_y_ref y_ref = y;
+  T_mu_ref mu_ref = mu;
+  T_kappa_ref kappa_ref = kappa;
+  check_positive(function, "Location parameter", mu_ref);
+  check_less(function, "Location parameter", mu_ref, 1.0);
+  check_positive_finite(function, "Precision parameter", kappa_ref);
+  check_bounded(function, "Random variable", y_ref, 0.0, 1.0);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_prec> kappa_vec(kappa);
+  T_partials_return cdf_log(0.0);
+  operands_and_partials<T_y_ref, T_mu_ref, T_kappa_ref> ops_partials(
+      y_ref, mu_ref, kappa_ref);
+
+  scalar_seq_view<T_y_ref> y_vec(y_ref);
+  scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
+  scalar_seq_view<T_kappa_ref> kappa_vec(kappa_ref);
   size_t size_kappa = stan::math::size(kappa);
   size_t size_mu_kappa = max_size(mu, kappa);
   size_t N = max_size(y, mu, kappa);

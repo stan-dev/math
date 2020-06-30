@@ -76,6 +76,7 @@ std::vector<std::vector<return_type_t<T1, T2, T_t0, T_ts>>> integrate_ode_rk45(
   using boost::numeric::odeint::integrate_times;
   using boost::numeric::odeint::make_dense_output;
   using boost::numeric::odeint::max_step_checker;
+  using boost::numeric::odeint::no_progress_error;
   using boost::numeric::odeint::runge_kutta_dopri5;
 
   const double t0_dbl = value_of(t0);
@@ -120,6 +121,7 @@ std::vector<std::vector<return_type_t<T1, T2, T_t0, T_ts>>> integrate_ode_rk45(
 
   // avoid recording of the initial state which is included by the
   // conventions of odeint in the output
+  size_t timestep = 0;
   auto filtered_observer
       = [&](const std::vector<double>& coupled_state, double t) -> void {
     if (!observer_initial_recorded) {
@@ -127,19 +129,26 @@ std::vector<std::vector<return_type_t<T1, T2, T_t0, T_ts>>> integrate_ode_rk45(
       return;
     }
     observer(coupled_state, t);
+    timestep++;
   };
 
   // the coupled system creates the coupled initial state
   std::vector<double> initial_coupled_state = coupled_system.initial_state();
 
   const double step_size = 0.1;
-  integrate_times(
-      make_dense_output(absolute_tolerance, relative_tolerance,
-                        runge_kutta_dopri5<std::vector<double>, double,
-                                           std::vector<double>, double>()),
-      std::ref(coupled_system), initial_coupled_state, std::begin(ts_vec),
-      std::end(ts_vec), step_size, filtered_observer,
-      max_step_checker(max_num_steps));
+  try {
+    integrate_times(
+        make_dense_output(absolute_tolerance, relative_tolerance,
+                          runge_kutta_dopri5<std::vector<double>, double,
+                                             std::vector<double>, double>()),
+        std::ref(coupled_system), initial_coupled_state, std::begin(ts_vec),
+        std::end(ts_vec), step_size, filtered_observer,
+        max_step_checker(max_num_steps));
+  } catch (const no_progress_error& e) {
+    throw_domain_error("integrate_ode_rk45", "", ts_vec[timestep + 1],
+                       "Failed to integrate to next output time (",
+                       ") in less than max_num_steps steps");
+  }
 
   return y;
 }

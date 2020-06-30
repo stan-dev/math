@@ -67,6 +67,11 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   using T_y_scaled_tmp =
       typename std::conditional_t<T_x_rows == 1, T_partials_return,
                                   Array<T_partials_return, Dynamic, 1>>;
+  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
+  using T_x_ref = ref_type_if_t<!is_constant<T_x>::value, T_x>;
+  using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
+  using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
+  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
 
   const size_t N_instances = T_x_rows == 1 ? stan::math::size(y) : x.rows();
   const size_t N_attributes = x.cols();
@@ -78,8 +83,10 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   check_consistent_size(function, "Vector of scale parameters", sigma,
                         N_instances);
   check_consistent_size(function, "Vector of intercepts", alpha, N_instances);
-  const auto& sigma_ref = to_ref(sigma);
-  check_positive_finite(function, "Scale vector", sigma_ref);
+  T_sigma_ref sigma_ref = sigma;
+  const auto& sigma_val = value_of_rec(sigma_ref);
+  const auto& sigma_val_vec = to_ref(as_column_vector_or_scalar(sigma_val));
+  check_positive_finite(function, "Scale vector", sigma_val_vec);
 
   if (size_zero(y, sigma)) {
     return 0;
@@ -88,25 +95,21 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     return 0;
   }
 
-  const auto& y_ref = to_ref_if<!is_constant<T_y>::value>(y);
-  const auto& x_ref = to_ref_if<!is_constant<T_x>::value>(x);
-  const auto& alpha_ref = to_ref_if<!is_constant<T_alpha>::value>(alpha);
-  const auto& beta_ref = to_ref_if<!is_constant<T_beta>::value>(beta);
+  T_y_ref y_ref = y;
+  T_x_ref x_ref = x;
+  T_alpha_ref alpha_ref = alpha;
+  T_beta_ref beta_ref = beta;
 
   const auto& y_val = value_of_rec(y_ref);
   const auto& x_val
       = to_ref_if<!is_constant<T_beta>::value>(value_of_rec(x_ref));
   const auto& alpha_val = value_of_rec(alpha_ref);
   const auto& beta_val = value_of_rec(beta_ref);
-  const auto& sigma_val = value_of_rec(sigma_ref);
 
   const auto& y_val_vec = as_column_vector_or_scalar(y_val);
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
   const auto& beta_val_vec = to_ref_if<!is_constant<T_x>::value>(
       as_column_vector_or_scalar(beta_val));
-  const auto& sigma_val_vec
-      = to_ref_if<include_summand<propto, T_scale>::value>(
-          as_column_vector_or_scalar(sigma_val));
 
   T_scale_val inv_sigma = 1 / as_array_or_scalar(sigma_val_vec);
 
@@ -127,8 +130,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
                * inv_sigma;
   }
 
-  operands_and_partials<decltype(y_ref), decltype(x_ref), decltype(alpha_ref),
-                        decltype(beta_ref), decltype(sigma_ref)>
+  operands_and_partials<T_y_ref, T_x_ref, T_alpha_ref, T_beta_ref, T_sigma_ref>
       ops_partials(y_ref, x_ref, alpha_ref, beta_ref, sigma_ref);
 
   if (!(is_constant_all<T_y, T_x, T_beta, T_alpha>::value)) {

@@ -28,7 +28,7 @@ inline bool operator&&(var x, var y) { return x.val() && y.val(); }
  * @return conjunction of first argument's value and second
  * argument
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline bool operator&&(var x, Arith y) {
   return x.val() && y;
 }
@@ -44,7 +44,7 @@ inline bool operator&&(var x, Arith y) {
  * @return conjunction of first argument and second argument's
  * value
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline bool operator&&(Arith x, var y) {
   return x && y.val();
 }

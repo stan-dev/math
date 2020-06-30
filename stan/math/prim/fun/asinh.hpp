@@ -13,6 +13,7 @@
 #include <stan/math/prim/fun/polar.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
 #include <complex>
 

@@ -35,26 +35,30 @@ template <typename T_y, typename T_scale_succ, typename T_scale_fail>
 return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
   using T_partials_return = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
+  using T_y_ref = ref_type_t<T_y>;
+  using T_alpha_ref = ref_type_t<T_scale_succ>;
+  using T_beta_ref = ref_type_t<T_scale_fail>;
   static const char* function = "beta_cdf";
-  check_positive_finite(function, "First shape parameter", alpha);
-  check_positive_finite(function, "Second shape parameter", beta);
-  check_not_nan(function, "Random variable", y);
   check_consistent_sizes(function, "Random variable", y,
                          "First shape parameter", alpha,
                          "Second shape parameter", beta);
-  check_nonnegative(function, "Random variable", y);
-  check_less_or_equal(function, "Random variable", y, 1);
-
   if (size_zero(y, alpha, beta)) {
     return 1.0;
   }
 
+  T_y_ref y_ref = y;
+  T_alpha_ref alpha_ref = alpha;
+  T_beta_ref beta_ref = beta;
+  check_positive_finite(function, "First shape parameter", alpha_ref);
+  check_positive_finite(function, "Second shape parameter", beta_ref);
+  check_bounded(function, "Random variable", y_ref, 0, 1);
+
   T_partials_return P(1.0);
-  operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(y, alpha,
-                                                                      beta);
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_scale_succ> alpha_vec(alpha);
-  scalar_seq_view<T_scale_fail> beta_vec(beta);
+  operands_and_partials<T_y_ref, T_alpha_ref, T_beta_ref> ops_partials(
+      y_ref, alpha_ref, beta_ref);
+  scalar_seq_view<T_y_ref> y_vec(y_ref);
+  scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
+  scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
   size_t size_alpha = stan::math::size(alpha);
   size_t size_beta = stan::math::size(beta);
   size_t size_alpha_beta = max_size(alpha, beta);

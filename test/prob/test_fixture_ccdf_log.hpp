@@ -575,7 +575,8 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
       calculate_gradients_1storder(multiple_gradients2, multiple_ccdf_log, x1);
       calculate_gradients_1storder(multiple_gradients3, multiple_ccdf_log, x1);
 
-      EXPECT_TRUE(single_ccdf_log * N_REPEAT - multiple_ccdf_log < 1e-8)
+      EXPECT_NEAR(stan::math::value_of_rec(single_ccdf_log * N_REPEAT),
+                  stan::math::value_of_rec(multiple_ccdf_log), 1e-8)
           << "ccdf_log with repeated vector input should match "
           << "a multiple of ccdf_log of single input";
 
