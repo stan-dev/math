@@ -145,6 +145,7 @@ class multiply_vari<Var, Arith, require_all_t<is_var<Var>, is_not_var<Arith>>>
 
   template <typename T1 = Var, typename T2 = Arith,
             require_var_vt<is_eigen, T1>* = nullptr,
+            require_eigen_t<T2>* = nullptr,
             require_vt_arithmetic<T2>* = nullptr>
   inline void chain_impl() {
     avi()->adj_ += this->adj_ * bd().transpose();
