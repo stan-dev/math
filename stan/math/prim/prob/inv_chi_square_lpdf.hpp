@@ -40,84 +40,60 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_dof>
 return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
-  using std::log;
   using T_partials_return = partials_return_t<T_y, T_dof>;
+  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
+  using T_nu_ref = ref_type_if_t<!is_constant<T_dof>::value, T_dof>;
   static const char* function = "inv_chi_square_lpdf";
-  check_positive_finite(function, "Degrees of freedom parameter", nu);
-  check_not_nan(function, "Random variable", y);
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu);
+
+  T_y_ref y_ref = y;
+  T_nu_ref nu_ref = nu;
+
+  const auto& y_col = as_column_vector_or_scalar(y_ref);
+  const auto& nu_col = as_column_vector_or_scalar(nu_ref);
+
+  const auto& y_arr = as_array_or_scalar(y_col);
+  const auto& nu_arr = as_array_or_scalar(nu_col);
+
+  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
+  ref_type_t<decltype(value_of(nu_arr))> nu_val = value_of(nu_arr);
+
+  check_positive_finite(function, "Degrees of freedom parameter", nu_val);
+  check_not_nan(function, "Random variable", y_val);
 
   if (size_zero(y, nu)) {
     return 0;
   }
+  if (!include_summand<propto, T_y, T_dof>::value) {
+    return 0;
+  }
 
-  T_partials_return logp(0);
-  operands_and_partials<T_y, T_dof> ops_partials(y, nu);
+  if(sum(promote_scalar<int>(y_val<=0))){
+    return LOG_ZERO;
+  }
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_dof> nu_vec(nu);
+  operands_and_partials<T_y_ref, T_nu_ref> ops_partials(y_ref, nu_ref);
+
+  const auto& log_y = to_ref_if<!is_constant_all<T_dof>::value>(log(y_val));
+  const auto& half_nu = to_ref(0.5 * nu_val);
+
   size_t N = max_size(y, nu);
-
-  for (size_t n = 0; n < stan::math::size(y); n++) {
-    if (value_of(y_vec[n]) <= 0) {
-      return LOG_ZERO;
-    }
+  T_partials_return logp = -sum((half_nu + 1.0) * log_y);
+  if (include_summand<propto, T_dof>::value) {
+    logp -= (sum(nu_val) * HALF_LOG_TWO + sum(lgamma(half_nu))) * N / size(nu);
   }
-
-  VectorBuilder<include_summand<propto, T_y, T_dof>::value, T_partials_return,
-                T_y>
-      log_y(size(y));
-  for (size_t i = 0; i < stan::math::size(y); i++) {
-    if (include_summand<propto, T_y, T_dof>::value) {
-      log_y[i] = log(value_of(y_vec[i]));
-    }
-  }
-
-  VectorBuilder<include_summand<propto, T_y>::value, T_partials_return, T_y>
-      inv_y(size(y));
-  for (size_t i = 0; i < stan::math::size(y); i++) {
-    if (include_summand<propto, T_y>::value) {
-      inv_y[i] = 1.0 / value_of(y_vec[i]);
-    }
-  }
-
-  VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
-      lgamma_half_nu(size(nu));
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digamma_half_nu_over_two(size(nu));
-  for (size_t i = 0; i < stan::math::size(nu); i++) {
-    T_partials_return half_nu = 0.5 * value_of(nu_vec[i]);
-    if (include_summand<propto, T_dof>::value) {
-      lgamma_half_nu[i] = lgamma(half_nu);
-    }
-    if (!is_constant_all<T_dof>::value) {
-      digamma_half_nu_over_two[i] = digamma(half_nu) * 0.5;
-    }
-  }
-
-  for (size_t n = 0; n < N; n++) {
-    const T_partials_return nu_dbl = value_of(nu_vec[n]);
-    const T_partials_return half_nu = 0.5 * nu_dbl;
-
-    if (include_summand<propto, T_dof>::value) {
-      logp -= nu_dbl * HALF_LOG_TWO + lgamma_half_nu[n];
-    }
-    if (include_summand<propto, T_y, T_dof>::value) {
-      logp -= (half_nu + 1.0) * log_y[n];
-    }
-    if (include_summand<propto, T_y>::value) {
-      logp -= 0.5 * inv_y[n];
-    }
-
+  if (include_summand<propto, T_y>::value) {
+    const auto& inv_y = to_ref_if<!is_constant_all<T_y>::value>(inv(y_val));
+    logp -= 0.5 * sum(inv_y) * N / size(y);
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
-          += -(half_nu + 1.0) * inv_y[n] + 0.5 * inv_y[n] * inv_y[n];
+      ops_partials.edge1_.partials_ = (0.5 * inv_y - half_nu - 1.0) * inv_y;
     }
-    if (!is_constant_all<T_dof>::value) {
-      ops_partials.edge2_.partials_[n]
-          -= HALF_LOG_TWO + digamma_half_nu_over_two[n] + 0.5 * log_y[n];
-    }
+  }
+
+  if (!is_constant_all<T_dof>::value) {
+    ops_partials.edge2_.partials_
+        = -HALF_LOG_TWO - (digamma(half_nu) + log_y) * 0.5;
   }
   return ops_partials.build(logp);
 }
