@@ -451,8 +451,8 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
    * @param x Value of the constructed variable.
    */
   template <typename S, require_convertible_t<S&, value_type>* = nullptr>
-  explicit vari_value(S&& x) :
-        rows_(x.rows()),
+  explicit vari_value(S&& x)
+      : rows_(x.rows()),
         cols_(x.cols()),
         size_(x.size()),
         val_(x),
@@ -479,8 +479,8 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
    * that its `chain()` method is not called.
    */
   template <typename S, require_convertible_t<S&, value_type>* = nullptr>
-  vari_value(S&& x, bool stacked) :
-        rows_(x.rows()),
+  vari_value(S&& x, bool stacked)
+      : rows_(x.rows()),
         cols_(x.cols()),
         size_(x.size()),
         val_(x),
