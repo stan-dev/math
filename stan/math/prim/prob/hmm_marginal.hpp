@@ -19,8 +19,8 @@ namespace math {
 template <typename T_omega, typename T_Gamma, typename T_rho, typename T_alpha>
 inline auto hmm_marginal_val(
     const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& omegas,
-    const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma_val,
-    const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho_val,
+    const T_Gamma& Gamma_val,
+    const T_rho& rho_val,
     Eigen::Matrix<T_alpha, Eigen::Dynamic, Eigen::Dynamic>& alphas,
     Eigen::Matrix<T_alpha, Eigen::Dynamic, 1>& alpha_log_norms,
     T_alpha& norm_norm) {
@@ -72,32 +72,36 @@ inline auto hmm_marginal_val(
  * @throw `std::domain_error` if rho is not a simplex and of the rows
  *         of Gamma are not a simplex (when there is at least one transition).
  */
-template <typename T_omega, typename T_Gamma, typename T_rho>
-inline auto hmm_marginal(
-    const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
-    const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma,
-    const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho) {
+template <typename T_omega, typename T_Gamma, typename T_rho,
+          require_all_eigen_t<T_omega, T_Gamma>* = nullptr,
+          require_eigen_col_vector_t<T_rho>* = nullptr>
+inline auto hmm_marginal(const T_omega& log_omegas, const T_Gamma& Gamma,
+                         const T_rho& rho) {
   using T_partial_type = partials_return_t<T_omega, T_Gamma, T_rho>;
   using eig_matrix_partial
       = Eigen::Matrix<T_partial_type, Eigen::Dynamic, Eigen::Dynamic>;
   using eig_vector_partial = Eigen::Matrix<T_partial_type, Eigen::Dynamic, 1>;
+  using T_omega_ref = ref_type_if_t<!is_constant<T_omega>::value, T_omega>;
+  using T_Gamma_ref = ref_type_if_t<!is_constant<T_Gamma>::value, T_Gamma>;
+  using T_rho_ref = ref_type_if_t<!is_constant<T_rho>::value, T_rho>;
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 
-  hmm_check(log_omegas, Gamma, rho, "hmm_marginal");
+  T_omega_ref log_omegas_ref = log_omegas;
+  T_Gamma_ref Gamma_ref = Gamma;
+  T_rho_ref rho_ref = rho;
 
-  operands_and_partials<Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>,
-                        Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>,
-                        Eigen::Matrix<T_rho, Eigen::Dynamic, 1> >
-      ops_partials(log_omegas, Gamma, rho);
+  const auto& Gamma_val = to_ref(value_of(Gamma_ref));
+  const auto& rho_val = to_ref(value_of(rho_ref));
+  hmm_check(log_omegas, Gamma_val, rho_val, "hmm_marginal");
+
+  operands_and_partials<T_omega_ref, T_Gamma_ref, T_rho_ref> ops_partials(
+      log_omegas_ref, Gamma_ref, rho_ref);
 
   eig_matrix_partial alphas(n_states, n_transitions + 1);
   eig_vector_partial alpha_log_norms(n_transitions + 1);
-  const auto& Gamma_val = to_ref(value_of(Gamma));
-
   // compute the density using the forward algorithm.
-  const auto& rho_val = to_ref(value_of(rho));
-  eig_matrix_partial omegas = value_of(log_omegas).array().exp();
+  eig_matrix_partial omegas = value_of(log_omegas_ref).array().exp();
   T_partial_type norm_norm;
   auto log_marginal_density = hmm_marginal_val(
       omegas, Gamma_val, rho_val, alphas, alpha_log_norms, norm_norm);
@@ -126,34 +130,18 @@ inline auto hmm_marginal(
   }
 
   if (!is_constant_all<T_Gamma>::value) {
-    eig_matrix_partial Gamma_jacad = Eigen::MatrixXd::Zero(n_states, n_states);
-
     for (int n = n_transitions - 1; n >= 0; --n) {
-      Gamma_jacad += grad_corr[n] * alphas.col(n)
+      ops_partials.edge2_.partials_ += grad_corr[n] * alphas.col(n)
                      * kappa[n].cwiseProduct(omegas.col(n + 1)).transpose()
                      / unnormed_marginal;
     }
-
-    ops_partials.edge2_.partials_ = Gamma_jacad;
   }
 
   if (!is_constant_all<T_omega, T_rho>::value) {
-    eig_matrix_partial log_omega_jacad
-        = Eigen::MatrixXd::Zero(n_states, n_transitions + 1);
-
-    if (!is_constant_all<T_omega>::value) {
-      for (int n = n_transitions - 1; n >= 0; --n)
-        log_omega_jacad.col(n + 1)
-            = grad_corr[n]
-              * kappa[n].cwiseProduct(Gamma_val.transpose() * alphas.col(n));
-    }
-
     // Boundary terms
     if (n_transitions == 0) {
       if (!is_constant_all<T_omega>::value) {
-        log_omega_jacad
-            = omegas.cwiseProduct(value_of(rho)) / exp(log_marginal_density);
-        ops_partials.edge1_.partials_ = log_omega_jacad;
+        ops_partials.edge1_.partials_ = omegas.cwiseProduct(rho_val) / exp(log_marginal_density);
       }
 
       if (!is_constant_all<T_rho>::value) {
@@ -166,8 +154,16 @@ inline auto hmm_marginal(
       eig_vector_partial C = Gamma_val * omegas.col(1).cwiseProduct(kappa[0]);
 
       if (!is_constant_all<T_omega>::value) {
-        log_omega_jacad.col(0)
-            = grad_corr_boundary * C.cwiseProduct(value_of(rho));
+        eig_matrix_partial log_omega_jacad
+            = Eigen::MatrixXd::Zero(n_states, n_transitions + 1);
+
+        for (int n = n_transitions - 1; n >= 0; --n){
+          log_omega_jacad.col(n + 1)
+              = grad_corr[n]
+                * kappa[n].cwiseProduct(Gamma_val.transpose() * alphas.col(n));
+        }
+
+        log_omega_jacad.col(0) = grad_corr_boundary * C.cwiseProduct(rho_val);
         ops_partials.edge1_.partials_
             = log_omega_jacad.cwiseProduct(omegas / unnormed_marginal);
       }

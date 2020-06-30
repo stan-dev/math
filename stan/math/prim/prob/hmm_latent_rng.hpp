@@ -38,28 +38,27 @@ namespace math {
  * @throw `std::domain_error` if rho is not a simplex and of the rows
  *         of Gamma are not a simplex (when there is at least one transition).
  */
-template <typename T_omega, typename T_Gamma, typename T_rho, class RNG>
-inline std::vector<int> hmm_latent_rng(
-    const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
-    const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma,
-    const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho, RNG& rng) {
+template <typename T_omega, typename T_Gamma, typename T_rho, class RNG,
+          require_all_eigen_t<T_omega, T_Gamma>* = nullptr,
+          require_eigen_col_vector_t<T_rho>* = nullptr>
+inline std::vector<int> hmm_latent_rng(const T_omega& log_omegas,
+                                       const T_Gamma& Gamma, const T_rho& rho,
+                                       RNG& rng) {
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 
-  hmm_check(log_omegas, Gamma, rho, "hmm_latent_rng");
-
   Eigen::MatrixXd omegas = value_of(log_omegas).array().exp();
-  Eigen::VectorXd rho_dbl = value_of(rho);
-  Eigen::MatrixXd Gamma_dbl = value_of(Gamma);
+  ref_type_t<decltype(value_of(rho))> rho_dbl = value_of(rho);
+  ref_type_t<decltype(value_of(Gamma))> Gamma_dbl = value_of(Gamma);
+  hmm_check(log_omegas, Gamma_dbl, rho_dbl, "hmm_latent_rng");
 
   Eigen::MatrixXd alphas(n_states, n_transitions + 1);
   alphas.col(0) = omegas.col(0).cwiseProduct(rho_dbl);
   alphas.col(0) /= alphas.col(0).maxCoeff();
 
-  Eigen::MatrixXd Gamma_dbl_transpose = Gamma_dbl.transpose();
   for (int n = 0; n < n_transitions; ++n) {
     alphas.col(n + 1)
-        = omegas.col(n + 1).cwiseProduct(Gamma_dbl_transpose * alphas.col(n));
+        = omegas.col(n + 1).cwiseProduct(Gamma_dbl.transpose() * alphas.col(n));
     alphas.col(n + 1) /= alphas.col(n + 1).maxCoeff();
   }
 
@@ -67,9 +66,9 @@ inline std::vector<int> hmm_latent_rng(
 
   // sample the last hidden state
   std::vector<int> hidden_states(n_transitions + 1);
-  Eigen::VectorXd probs_vec
-      = alphas.col(n_transitions) / alphas.col(n_transitions).sum();
-  std::vector<double> probs(probs_vec.data(), probs_vec.data() + n_states);
+  std::vector<double> probs(n_states);
+  Eigen::Map<Eigen::VectorXd> probs_vec(probs.data(), n_states);
+  probs_vec = alphas.col(n_transitions) / alphas.col(n_transitions).sum();
   boost::random::discrete_distribution<> cat_hidden(probs);
   hidden_states[n_transitions] = cat_hidden(rng);
 
@@ -81,7 +80,6 @@ inline std::vector<int> hmm_latent_rng(
                 * beta(last_hs) * omegas(last_hs, n + 1);
 
     probs_vec /= probs_vec.sum();
-    std::vector<double> probs(probs_vec.data(), probs_vec.data() + n_states);
     boost::random::discrete_distribution<> cat_hidden(probs);
     hidden_states[n] = cat_hidden(rng);
 
