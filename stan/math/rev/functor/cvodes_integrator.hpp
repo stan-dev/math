@@ -187,22 +187,22 @@ class cvodes_integrator {
                     double relative_tolerance, double absolute_tolerance,
                     long int max_num_steps,  // NOLINT(runtime/int)
                     std::ostream* msgs, const T_Args&... args)
-    : function_name_(function_name),
-      f_(f),
-      y0_(y0.unaryExpr([](const T_y0& val) { return T_y0_t0(val); })),
-      t0_(t0),
-      ts_(ts),
-      args_tuple_(args...),
-      value_of_args_tuple_(value_of(args)...),
-      N_(y0.size()),
-      msgs_(msgs),
-      relative_tolerance_(relative_tolerance),
-      absolute_tolerance_(absolute_tolerance),
-      max_num_steps_(max_num_steps),
-      y0_vars_(count_vars(y0_)),
-      args_vars_(count_vars(args...)),
-      coupled_ode_(f, y0_, msgs, args...),
-      coupled_state_(coupled_ode_.initial_state()) {
+      : function_name_(function_name),
+        f_(f),
+        y0_(y0.unaryExpr([](const T_y0& val) { return T_y0_t0(val); })),
+        t0_(t0),
+        ts_(ts),
+        args_tuple_(args...),
+        value_of_args_tuple_(value_of(args)...),
+        N_(y0.size()),
+        msgs_(msgs),
+        relative_tolerance_(relative_tolerance),
+        absolute_tolerance_(absolute_tolerance),
+        max_num_steps_(max_num_steps),
+        y0_vars_(count_vars(y0_)),
+        args_vars_(count_vars(args...)),
+        coupled_ode_(f, y0_, msgs, args...),
+        coupled_state_(coupled_ode_.initial_state()) {
     check_finite(function_name, "initial state", y0_);
     check_finite(function_name, "initial time", t0_);
     check_finite(function_name, "times", ts_);
@@ -212,7 +212,8 @@ class cvodes_integrator {
     apply(
         [&](auto&&... args) {
           std::vector<int> unused_temp{
-              0, (check_finite(function_name, "ode parameters and data", args), 0)...};
+              0, (check_finite(function_name, "ode parameters and data", args),
+                  0)...};
         },
         args_tuple_);
 
@@ -220,8 +221,10 @@ class cvodes_integrator {
     check_nonzero_size(function_name, "initial state", y0_);
     check_sorted(function_name, "times", ts_);
     check_less(function_name, "initial time", t0_, ts_[0]);
-    check_positive_finite(function_name, "relative_tolerance", relative_tolerance_);
-    check_positive_finite(function_name, "absolute_tolerance", absolute_tolerance_);
+    check_positive_finite(function_name, "relative_tolerance",
+                          relative_tolerance_);
+    check_positive_finite(function_name, "absolute_tolerance",
+                          absolute_tolerance_);
     check_positive(function_name, "max_num_steps", max_num_steps_);
 
     nv_state_ = N_VMake_Serial(N_, &coupled_state_[0]);
@@ -299,8 +302,8 @@ class cvodes_integrator {
                           nv_state_sens_),
             "CVodeSensInit");
 
-	check_flag_sundials(CVodeSetSensErrCon(cvodes_mem, SUNTRUE),
-			    "CVodeSetSensErrCon");
+        check_flag_sundials(CVodeSetSensErrCon(cvodes_mem, SUNTRUE),
+                            "CVodeSetSensErrCon");
 
         if (atols.size() > 0) {
           check_positive_finite("cvodes_integrator",
@@ -323,21 +326,22 @@ class cvodes_integrator {
         double t_final = value_of(ts_[n]);
 
         if (t_final != t_init) {
-          int error_code =
-              CVode(cvodes_mem, t_final, nv_state_, &t_init, CV_NORMAL);
+          int error_code
+              = CVode(cvodes_mem, t_final, nv_state_, &t_init, CV_NORMAL);
 
-	  if (error_code == CV_TOO_MUCH_WORK) {
-	    throw_domain_error(function_name_, "", t_final,
-			       "Failed to integrate to next output time (",
-			       ") in less than max_num_steps steps");
-	  } else {
-	    check_flag_sundials(error_code, "CVode");
-	  }
+          if (error_code == CV_TOO_MUCH_WORK) {
+            throw_domain_error(function_name_, "", t_final,
+                               "Failed to integrate to next output time (",
+                               ") in less than max_num_steps steps");
+          } else {
+            check_flag_sundials(error_code, "CVode");
+          }
 
-	  if (y0_vars_ + args_vars_ > 0) {
-	    check_flag_sundials(CVodeGetSens(cvodes_mem, &t_init, nv_state_sens_),
-				"CVodeGetSens");
-	  }
+          if (y0_vars_ + args_vars_ > 0) {
+            check_flag_sundials(
+                CVodeGetSens(cvodes_mem, &t_init, nv_state_sens_),
+                "CVodeGetSens");
+          }
         }
 
         y.emplace_back(apply(

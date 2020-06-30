@@ -248,5 +248,5 @@ TEST(ode_bdf_prim, error_name) {
   double ainf = stan::math::INFTY;
 
   EXPECT_THROW_MSG(stan::math::ode_bdf(CosArg1(), y0, t0, ts, nullptr, ainf),
-		   std::domain_error, "ode_bdf");
+                   std::domain_error, "ode_bdf");
 }

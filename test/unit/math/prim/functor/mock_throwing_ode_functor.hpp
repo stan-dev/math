@@ -18,12 +18,10 @@ struct mock_throwing_ode_functor {
 
   template <typename T0, typename T1, typename T2>
   inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>
-  operator()(const T0& t_in,
-	     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y_in,
-	     std::ostream* msgs,
-	     const std::vector<T2>& theta,
-	     const std::vector<double>& x,
-	     const std::vector<int>& x_int) const {
+  operator()(const T0& t_in, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y_in,
+             std::ostream* msgs, const std::vector<T2>& theta,
+             const std::vector<double>& x,
+             const std::vector<int>& x_int) const {
     mock_throwing_ode_functor_count++;
     if (N_ == mock_throwing_ode_functor_count)
       throw E(msg_);

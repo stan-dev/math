@@ -28,8 +28,9 @@ TEST_F(StanMathOde, initial_state_dd) {
   for (int m = 0; m < M; m++)
     theta_d[m] = 10 * (m + 1);
 
-  coupled_ode_system<mock_ode_functor, double, std::vector<double>, std::vector<double>, std::vector<int>> coupled_system_dd(
-      base_ode, y0_d, &msgs, theta_d, x, x_int);
+  coupled_ode_system<mock_ode_functor, double, std::vector<double>,
+                     std::vector<double>, std::vector<int>>
+      coupled_system_dd(base_ode, y0_d, &msgs, theta_d, x, x_int);
 
   Eigen::VectorXd state = coupled_system_dd.initial_state();
   for (int n = 0; n < N; n++)
@@ -50,9 +51,8 @@ TEST_F(StanMathOde, size) {
   Eigen::VectorXd y0_d(N);
   std::vector<double> theta_d(M, 0.0);
 
-  coupled_ode_system<mock_ode_functor, double,
-		     int, double,
-		     Eigen::MatrixXd> coupled_system_dd(base_ode, y0_d, &msgs, 1, 1.0, y0_d);
+  coupled_ode_system<mock_ode_functor, double, int, double, Eigen::MatrixXd>
+      coupled_system_dd(base_ode, y0_d, &msgs, 1, 1.0, y0_d);
 
   EXPECT_EQ(N, coupled_system_dd.size());
 }
@@ -80,4 +80,3 @@ TEST_F(StanMathOde, recover_exception) {
 
   EXPECT_THROW_MSG(coupled_system_dd(y, dy_dt, t), std::logic_error, message);
 }
-

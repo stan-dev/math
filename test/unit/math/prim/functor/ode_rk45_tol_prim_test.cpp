@@ -358,7 +358,7 @@ TEST(ode_rk45_tol_prim, error_name) {
 
   double ainf = stan::math::INFTY;
 
-  EXPECT_THROW_MSG(stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-6, 1e-6, 100,
-					nullptr, ainf),
-               std::domain_error, "ode_rk45_tol");
+  EXPECT_THROW_MSG(stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-6, 1e-6,
+                                            100, nullptr, ainf),
+                   std::domain_error, "ode_rk45_tol");
 }

@@ -54,11 +54,11 @@ template <typename F, typename T_initial, typename T_t0, typename T_ts,
 std::vector<Eigen::Matrix<stan::return_type_t<T_initial, T_t0, T_ts, Args...>,
                           Eigen::Dynamic, 1>>
 ode_rk45_tol_impl(const char* function_name, const F& f,
-		  const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0_arg, T_t0 t0,
-		  const std::vector<T_ts>& ts, double relative_tolerance,
-		  double absolute_tolerance,
-		  long int max_num_steps,  // NOLINT(runtime/int)
-		  std::ostream* msgs, const Args&... args) {
+                  const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0_arg,
+                  T_t0 t0, const std::vector<T_ts>& ts,
+                  double relative_tolerance, double absolute_tolerance,
+                  long int max_num_steps,  // NOLINT(runtime/int)
+                  std::ostream* msgs, const Args&... args) {
   using boost::numeric::odeint::integrate_times;
   using boost::numeric::odeint::make_dense_output;
   using boost::numeric::odeint::max_step_checker;
@@ -76,8 +76,7 @@ ode_rk45_tol_impl(const char* function_name, const F& f,
 
   // Code from https://stackoverflow.com/a/17340003
   std::vector<int> unused_temp{
-      0, (check_finite(function_name, "ode parameters and data", args),
-          0)...};
+      0, (check_finite(function_name, "ode parameters and data", args), 0)...};
 
   check_nonzero_size(function_name, "initial state", y0);
   check_nonzero_size(function_name, "times", ts);
@@ -176,15 +175,14 @@ template <typename F, typename T_initial, typename T_t0, typename T_ts,
 std::vector<Eigen::Matrix<stan::return_type_t<T_initial, T_t0, T_ts, Args...>,
                           Eigen::Dynamic, 1>>
 ode_rk45_tol(const F& f,
-	     const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0_arg, T_t0 t0,
-	     const std::vector<T_ts>& ts, double relative_tolerance,
-	     double absolute_tolerance,
-	     long int max_num_steps,  // NOLINT(runtime/int)
-	     std::ostream* msgs, const Args&... args) {
+             const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0_arg, T_t0 t0,
+             const std::vector<T_ts>& ts, double relative_tolerance,
+             double absolute_tolerance,
+             long int max_num_steps,  // NOLINT(runtime/int)
+             std::ostream* msgs, const Args&... args) {
   return ode_rk45_tol_impl("ode_rk45_tol", f, y0_arg, t0, ts,
-			   relative_tolerance, absolute_tolerance,
-			   max_num_steps, msgs,
-			   args...);
+                           relative_tolerance, absolute_tolerance,
+                           max_num_steps, msgs, args...);
 }
 
 /**
@@ -231,9 +229,8 @@ ode_rk45(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
   double absolute_tolerance = 1e-10;
   long int max_num_steps = 1e8;  // NOLINT(runtime/int)
 
-  return ode_rk45_tol_impl("ode_rk45",
-			   f, y0, t0, ts, relative_tolerance, absolute_tolerance,
-			   max_num_steps, msgs, args...);
+  return ode_rk45_tol_impl("ode_rk45", f, y0, t0, ts, relative_tolerance,
+                           absolute_tolerance, max_num_steps, msgs, args...);
 }
 
 }  // namespace math

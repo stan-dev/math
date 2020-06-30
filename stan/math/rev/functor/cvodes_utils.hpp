@@ -13,7 +13,7 @@ namespace math {
 extern "C" inline void cvodes_err_handler(int error_code, const char* module,
                                           const char* function, char* msg,
                                           void* eh_data) {
-  if(error_code != CV_TOO_MUCH_WORK) {
+  if (error_code != CV_TOO_MUCH_WORK) {
     std::ostringstream msg1;
     msg1 << msg << " Error code: ";
 
