@@ -13,10 +13,12 @@ namespace math {
 extern "C" inline void cvodes_err_handler(int error_code, const char* module,
                                           const char* function, char* msg,
                                           void* eh_data) {
-  std::ostringstream msg1;
-  msg1 << msg << " Error code: ";
+  if(error_code != CV_TOO_MUCH_WORK) {
+    std::ostringstream msg1;
+    msg1 << msg << " Error code: ";
 
-  domain_error(module, function, error_code, msg1.str().c_str());
+    throw_domain_error(module, function, error_code, msg1.str().c_str());
+  }
 }
 
 inline void cvodes_set_options(void* cvodes_mem, double rel_tol, double abs_tol,

@@ -333,3 +333,25 @@ TEST(StanMathOde_integrate_ode_rk45, error_conditions_inf) {
         std::domain_error, expected_is_neg_inf.str());
   }
 }
+
+TEST(StanMathOde_integrate_ode_rk45, error_name) {
+  using stan::math::integrate_ode_rk45;
+  harm_osc_ode_data_fun harm_osc;
+
+  std::vector<double> theta;
+  theta.push_back(0.15);
+
+  double t0 = 0;
+
+  std::vector<double> ts;
+  for (int i = 0; i < 100; i++)
+    ts.push_back(t0 + 0.1 * (i + 1));
+
+  std::vector<double> x(3, 1);
+  std::vector<int> x_int(2, 0);
+
+  std::vector<double> y0_bad;
+  EXPECT_THROW_MSG(
+      (integrate_ode_rk45(harm_osc, y0_bad, t0, ts, theta, x, x_int)),
+      std::invalid_argument, "integrate_ode_rk45");
+}

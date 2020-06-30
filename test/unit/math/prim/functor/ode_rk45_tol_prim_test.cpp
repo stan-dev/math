@@ -1,5 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/util.hpp>
 #include <iostream>
 #include <vector>
 
@@ -348,4 +349,16 @@ TEST(ode_rk45_tol_prim, rhs_wrong_size_errors) {
   EXPECT_THROW(stan::math::ode_rk45_tol(CosArgWrongSize(), y0, t0, ts, 1e-6,
                                         1e-6, 100, nullptr, a),
                std::invalid_argument);
+}
+
+TEST(ode_rk45_tol_prim, error_name) {
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
+  double t0 = 0;
+  std::vector<double> ts = {0.45, 1.1};
+
+  double ainf = stan::math::INFTY;
+
+  EXPECT_THROW_MSG(stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-6, 1e-6, 100,
+					nullptr, ainf),
+               std::domain_error, "ode_rk45_tol");
 }
