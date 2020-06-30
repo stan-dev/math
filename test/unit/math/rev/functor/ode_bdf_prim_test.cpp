@@ -107,6 +107,7 @@ TEST(ode_bdf_prim, ts_errors) {
   double t0 = 0;
   std::vector<double> ts = {0.45, 1.1};
   std::vector<double> ts_repeat = {0.45, 0.45};
+  std::vector<double> ts_lots = {0.45, 0.45, 1.1, 1.1, 2.0};
   std::vector<double> ts_empty = {};
   std::vector<double> ts_early = {-0.45, 0.2};
   std::vector<double> ts_decreasing = {0.45, 0.2};
@@ -119,6 +120,9 @@ TEST(ode_bdf_prim, ts_errors) {
 
   EXPECT_NO_THROW(
       stan::math::ode_bdf(CosArg1(), y0, t0, ts_repeat, nullptr, a));
+
+  EXPECT_NO_THROW(
+      stan::math::ode_bdf(CosArg1(), y0, t0, ts_lots, nullptr, a));
 
   EXPECT_THROW(stan::math::ode_bdf(CosArg1(), y0, t0, ts_empty, nullptr, a),
                std::invalid_argument);

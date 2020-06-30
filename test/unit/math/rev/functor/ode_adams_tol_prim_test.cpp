@@ -114,6 +114,7 @@ TEST(ode_adams_tol_prim, ts_errors) {
   double t0 = 0;
   std::vector<double> ts = {0.45, 1.1};
   std::vector<double> ts_repeat = {0.45, 0.45};
+  std::vector<double> ts_lots = {0.45, 0.45, 1.1, 1.1, 2.0};
   std::vector<double> ts_empty = {};
   std::vector<double> ts_early = {-0.45, 0.2};
   std::vector<double> ts_decreasing = {0.45, 0.2};
@@ -126,6 +127,9 @@ TEST(ode_adams_tol_prim, ts_errors) {
                                             1e6, nullptr, a));
 
   EXPECT_NO_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts_repeat, 1e-10,
+                                            1e-10, 1e6, nullptr, a));
+
+  EXPECT_NO_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts_lots, 1e-10,
                                             1e-10, 1e6, nullptr, a));
 
   EXPECT_THROW(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts_empty, 1e-10,
