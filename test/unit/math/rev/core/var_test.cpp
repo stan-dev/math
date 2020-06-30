@@ -77,6 +77,10 @@ void ctor_overloads_matrix(EigenMat&& xx) {
   // make sure rvalue var_value can be accepted
   EXPECT_MATRIX_FLOAT_EQ(
       x, var_value<eigen_plain>(var_value<eigen_plain>(x)).val());
+  // test init_dependent for adj
+  auto test_var_x = var_value<eigen_plain>(var_value<eigen_plain>(x));
+  test_var_x.vi_->init_dependent();
+  EXPECT_MATRIX_FLOAT_EQ(eigen_plain::Ones(x.rows(), x.cols()) , test_var_x.adj());
 }
 
 auto make_sparse_matrix_random(int rows, int cols) {
