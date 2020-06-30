@@ -129,30 +129,27 @@ void ctor_overloads_sparse_matrix(EigenMat&& x) {
     }
   }
 
-  /** from a vari_value with sparse
-   * NOTE: This will fail with an expression since allocating the mem
-   * for the vari requires knowing the sizes of the inner and outer indices
-   * which is not computed for expressions.
-   */
+  // from a vari_value with sparse eigen expression
   eigen_plain x_from_vari
-      = var_value<eigen_plain>(new vari_value<eigen_plain>(x)).val();
-  for (int k = 0; k < x.outerSize(); ++k) {
-    for (inner_iterator it(x, k), iz(x_from_vari, k); it; ++it, ++iz) {
+      = var_value<eigen_plain>(new vari_value<eigen_plain>(x * x)).val();
+  for (int k = 0; k < matmul_x.outerSize(); ++k) {
+    for (inner_iterator it(matmul_x, k), iz(x_from_vari, k); it; ++it, ++iz) {
       EXPECT_FLOAT_EQ(iz.value(), it.value());
     }
   }
   // test inplace addition works
   auto inplace_add_var = var_value<eigen_plain>(new vari_value<eigen_plain>(x));
   eigen_plain test_y = make_sparse_matrix_random(10, 10);
+  inplace_add_var.vi_->init_dependent();
   inplace_add_var.adj() += test_y;
   // adjoints sparsity pattern will be pattern of x and test_y for addition
   for (int k = 0; k < x.outerSize(); ++k) {
     for (inner_iterator it(test_y, k), iz(inplace_add_var.adj(), k); iz; ++iz) {
       if (iz.row() == it.row() && iz.col() == it.col()) {
-        EXPECT_FLOAT_EQ(iz.value(), it.value());
+        EXPECT_FLOAT_EQ(iz.value() - 1, it.value());
         ++it;
       } else {
-        EXPECT_FLOAT_EQ(iz.value(), 0.0);
+        EXPECT_FLOAT_EQ(iz.value(), 1.0);
       }
     }
   }

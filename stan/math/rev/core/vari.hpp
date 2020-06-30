@@ -513,7 +513,13 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
    * propagating derivatives, setting the derivative of the
    * result with respect to itself to be 1.
    */
-  inline void init_dependent() { adj_.setOnes(); }
+  inline void init_dependent() {
+    for (int k = 0; k < adj_.outerSize(); ++k) {
+      for (typename PlainObject::InnerIterator it(adj_, k); it; ++it) {
+        it.valueRef() = 1.0;
+      }
+    }
+   }
 
   /**
    * Set the adjoint value of this variable to 0.  This is used to
