@@ -67,8 +67,8 @@ ode_rk45_tol_impl(const char* function_name, const F& f,
 
   using T_initial_or_t0 = return_type_t<T_initial, T_t0>;
 
-  Eigen::Matrix<T_initial_or_t0, Eigen::Dynamic, 1> y0 = y0_arg.
-    unaryExpr([](const T_initial& val) { return T_initial_or_t0(val); });
+  Eigen::Matrix<T_initial_or_t0, Eigen::Dynamic, 1> y0 = y0_arg.unaryExpr(
+      [](const T_initial& val) { return T_initial_or_t0(val); });
 
   check_finite(function_name, "initial state", y0);
   check_finite(function_name, "initial time", t0);
@@ -109,7 +109,7 @@ ode_rk45_tol_impl(const char* function_name, const F& f,
   // avoid recording of the initial state which is included by the
   // conventions of odeint in the output
   auto filtered_observer
-    = [&](const std::vector<double>& coupled_state, double t) -> void {
+      = [&](const std::vector<double>& coupled_state, double t) -> void {
     if (!observer_initial_recorded) {
       observer_initial_recorded = true;
       return;
@@ -120,15 +120,13 @@ ode_rk45_tol_impl(const char* function_name, const F& f,
   };
 
   // the coupled system creates the coupled initial state
-  std::vector<double> initial_coupled_state =
-    coupled_system.initial_state();
+  std::vector<double> initial_coupled_state = coupled_system.initial_state();
 
   const double step_size = 0.1;
   integrate_times(
-      make_dense_output(
-          absolute_tolerance, relative_tolerance,
-          runge_kutta_dopri5<std::vector<double>, double,
-	                     std::vector<double>, double>()),
+      make_dense_output(absolute_tolerance, relative_tolerance,
+                        runge_kutta_dopri5<std::vector<double>, double,
+                                           std::vector<double>, double>()),
       std::ref(coupled_system), initial_coupled_state, std::begin(ts_vec),
       std::end(ts_vec), step_size, filtered_observer,
       max_step_checker(max_num_steps));
