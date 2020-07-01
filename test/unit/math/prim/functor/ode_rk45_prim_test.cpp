@@ -121,8 +121,7 @@ TEST(ode_rk45_prim, ts_errors) {
   EXPECT_NO_THROW(
       stan::math::ode_rk45(CosArg1(), y0, t0, ts_repeat, nullptr, a));
 
-  EXPECT_NO_THROW(
-      stan::math::ode_rk45(CosArg1(), y0, t0, ts_lots, nullptr, a));
+  EXPECT_NO_THROW(stan::math::ode_rk45(CosArg1(), y0, t0, ts_lots, nullptr, a));
 
   EXPECT_THROW(stan::math::ode_rk45(CosArg1(), y0, t0, ts_empty, nullptr, a),
                std::invalid_argument);

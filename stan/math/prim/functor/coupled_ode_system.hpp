@@ -102,14 +102,14 @@ struct coupled_ode_system_impl<true, F, T_y0, Args...> {
 template <typename F, typename T_y0, typename... Args>
 struct coupled_ode_system
     : public coupled_ode_system_impl<
-          std::is_arithmetic<return_type_t<T_y0, Args...>>::value, F,
-          T_y0, Args...> {
+          std::is_arithmetic<return_type_t<T_y0, Args...>>::value, F, T_y0,
+          Args...> {
   coupled_ode_system(const F& f,
                      const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
                      std::ostream* msgs, const Args&... args)
       : coupled_ode_system_impl<
-            std::is_arithmetic<return_type_t<T_y0, Args...>>::value, F,
-            T_y0, Args...>(f, y0, msgs, args...) {}
+            std::is_arithmetic<return_type_t<T_y0, Args...>>::value, F, T_y0,
+            Args...>(f, y0, msgs, args...) {}
 };
 
 }  // namespace math

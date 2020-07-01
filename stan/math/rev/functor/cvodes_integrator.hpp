@@ -296,8 +296,8 @@ class cvodes_integrator {
         check_flag_sundials(CVodeSetSensErrCon(cvodes_mem, SUNTRUE),
                             "CVodeSetSensErrCon");
 
-	check_flag_sundials(CVodeSensEEtolerances(cvodes_mem),
-			    "CVodeSensEEtolerances");
+        check_flag_sundials(CVodeSensEEtolerances(cvodes_mem),
+                            "CVodeSensEEtolerances");
       }
 
       double t_init = value_of(t0_);
