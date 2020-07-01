@@ -14,11 +14,9 @@ namespace math {
  * Build output vars for a state of the ODE solve, storing the sensitivities
  * precomputed using the forward sensitivity problem in precomputed varis.
  *
- * Any combination of y0, t0, ts, and any of the args arguments can have the
- * var scalar type.
- *
  * @tparam F Type of ODE right hand side
- * @tparam T_0 Type of initial time
+ * @tparam T_y0_t0 Type of initial state
+ * @tparam T_t0 Type of initial time
  * @tparam T_ts Type of output times
  * @tparam T_Args Types of pass-through parameters
  *
@@ -82,7 +80,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
       partials_j[y0_vars + k] = coupled_state[N + N * y0_vars + N * k + j];
     }
 
-    if (t0_vars > 0) {
+    if (is_var<T_t0>::value) {
       double dyt_dt0 = 0.0;
       for (size_t k = 0; k < y0_vars; ++k) {
         dyt_dt0 += -f_y0_t0.coeffRef(k) * coupled_state[N + y0_vars * k + j];
@@ -90,7 +88,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
       partials_j[y0_vars + args_vars] = dyt_dt0;
     }
 
-    if (t_vars > 0) {
+    if (is_var<T_t>::value) {
       partials_j[y0_vars + args_vars + t0_vars] = f_y_t.coeffRef(j);
     }
 

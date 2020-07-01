@@ -189,7 +189,7 @@ class cvodes_integrator {
                     std::ostream* msgs, const T_Args&... args)
       : function_name_(function_name),
         f_(f),
-        y0_(y0.unaryExpr([](const T_y0& val) { return T_y0_t0(val); })),
+        y0_(y0.template cast<T_y0_t0>()),
         t0_(t0),
         ts_(ts),
         args_tuple_(args...),
@@ -259,11 +259,6 @@ class cvodes_integrator {
    *   solution time (excluding the initial state)
    */
   std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> operator()() {
-    return (*this)(0.0, {});
-  }
-
-  std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> operator()(
-      double rtols, std::vector<double> atols) {
     std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y;
 
     void* cvodes_mem = CVodeCreate(Lmm);
@@ -284,10 +279,6 @@ class cvodes_integrator {
       cvodes_set_options(cvodes_mem, relative_tolerance_, absolute_tolerance_,
                          max_num_steps_);
 
-      // for the stiff solvers we need to reserve additional memory
-      // and provide a Jacobian function call. new API since 3.0.0:
-      // create matrix object and linear solver object; resource
-      // (de-)allocation is handled in the cvodes_ode_data
       check_flag_sundials(CVodeSetLinearSolver(cvodes_mem, LS_, A_),
                           "CVodeSetLinearSolver");
       check_flag_sundials(
@@ -305,20 +296,8 @@ class cvodes_integrator {
         check_flag_sundials(CVodeSetSensErrCon(cvodes_mem, SUNTRUE),
                             "CVodeSetSensErrCon");
 
-        if (atols.size() > 0) {
-          check_positive_finite("cvodes_integrator",
-                                "sensitivity relative_tolerance", rtols);
-          check_size_match("cvodes_interator", "atols.size()", atols.size(),
-                           "number of sensitivities", y0_vars_ + args_vars_);
-          check_positive_finite("cvodes_integrator",
-                                "sensitivity absolute_tolerance", atols);
-          check_flag_sundials(
-              CVodeSensSStolerances(cvodes_mem, rtols, atols.data()),
-              "CVodeSensSStolerances");
-        } else {
-          check_flag_sundials(CVodeSensEEtolerances(cvodes_mem),
-                              "CVodeSensEEtolerances");
-        }
+	check_flag_sundials(CVodeSensEEtolerances(cvodes_mem),
+			    "CVodeSensEEtolerances");
       }
 
       double t_init = value_of(t0_);

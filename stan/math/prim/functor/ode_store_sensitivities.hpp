@@ -9,10 +9,14 @@ namespace stan {
 namespace math {
 
 /**
- * Build output for state of ODE solve from the current coupled_state when
- * all arguments are arithmetic.
+ * When all arguments are arithmetic, there are no sensitivities to store, so
+ *  the function just returns the current coupled_state.
  *
  * @tparam F Type of ODE right hand side
+ * @tparam T_y0_t0 Type of initial state
+ * @tparam T_t0 Type of initial time
+ * @tparam T_ts Type of output times
+ * @tparam T_Args Types of pass-through parameters
  *
  * @param f Right hand side of the ODE
  * @param coupled_state Current state of the coupled_ode_system

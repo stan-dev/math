@@ -42,17 +42,17 @@ namespace math {
  * @param args Extra arguments passed unmodified through to ODE right hand side
  * @return Solution to ODE at times \p ts
  */
-template <typename F, typename T_initial, typename T_t0, typename T_ts,
+template <typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... T_Args>
-std::vector<Eigen::Matrix<stan::return_type_t<T_initial, T_t0, T_ts, T_Args...>,
+std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
                           Eigen::Dynamic, 1>>
 ode_bdf_tol_impl(const char* function_name, const F& f,
-                 const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
+                 const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
                  const T_t0& t0, const std::vector<T_ts>& ts,
                  double relative_tolerance, double absolute_tolerance,
                  long int max_num_steps,  // NOLINT(runtime/int)
                  std::ostream* msgs, const T_Args&... args) {
-  cvodes_integrator<CV_BDF, F, T_initial, T_t0, T_ts, T_Args...> integrator(
+  cvodes_integrator<CV_BDF, F, T_y0, T_t0, T_ts, T_Args...> integrator(
       function_name, f, y0, t0, ts, relative_tolerance, absolute_tolerance,
       max_num_steps, msgs, args...);
 
@@ -92,11 +92,11 @@ ode_bdf_tol_impl(const char* function_name, const F& f,
  * @param args Extra arguments passed unmodified through to ODE right hand side
  * @return Solution to ODE at times \p ts
  */
-template <typename F, typename T_initial, typename T_t0, typename T_ts,
+template <typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... T_Args>
-std::vector<Eigen::Matrix<stan::return_type_t<T_initial, T_t0, T_ts, T_Args...>,
+std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
                           Eigen::Dynamic, 1>>
-ode_bdf_tol(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
+ode_bdf_tol(const F& f, const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
             const T_t0& t0, const std::vector<T_ts>& ts,
             double relative_tolerance, double absolute_tolerance,
             long int max_num_steps,  // NOLINT(runtime/int)
@@ -135,11 +135,11 @@ ode_bdf_tol(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
  * @param args Extra arguments passed unmodified through to ODE right hand side
  * @return Solution to ODE at times \p ts
  */
-template <typename F, typename T_initial, typename T_t0, typename T_ts,
+template <typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... T_Args>
-std::vector<Eigen::Matrix<stan::return_type_t<T_initial, T_t0, T_ts, T_Args...>,
+std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
                           Eigen::Dynamic, 1>>
-ode_bdf(const F& f, const Eigen::Matrix<T_initial, Eigen::Dynamic, 1>& y0,
+ode_bdf(const F& f, const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
         const T_t0& t0, const std::vector<T_ts>& ts, std::ostream* msgs,
         const T_Args&... args) {
   double relative_tolerance = 1e-10;

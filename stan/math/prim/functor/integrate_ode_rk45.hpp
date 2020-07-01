@@ -13,10 +13,10 @@ namespace math {
 /**
  * @deprecated use <code>ode_rk45</code>
  */
-template <typename F, typename T1, typename T_param, typename T_t0,
+template <typename F, typename T_y0, typename T_param, typename T_t0,
           typename T_ts>
-std::vector<std::vector<return_type_t<T1, T_t0, T_ts, T_param>>>
-integrate_ode_rk45(const F& f, const std::vector<T1>& y0, const T_t0& t0,
+std::vector<std::vector<return_type_t<T_y0, T_t0, T_ts, T_param>>>
+integrate_ode_rk45(const F& f, const std::vector<T_y0>& y0, const T_t0& t0,
                    const std::vector<T_ts>& ts,
                    const std::vector<T_param>& theta,
                    const std::vector<double>& x, const std::vector<int>& x_int,
@@ -28,7 +28,7 @@ integrate_ode_rk45(const F& f, const std::vector<T1>& y0, const T_t0& t0,
                              ts, relative_tolerance, absolute_tolerance,
                              max_num_steps, msgs, theta, x, x_int);
 
-  std::vector<std::vector<return_type_t<T1, T_param, T_t0, T_ts>>> y_converted;
+  std::vector<std::vector<return_type_t<T_y0, T_param, T_t0, T_ts>>> y_converted;
   for (size_t i = 0; i < y.size(); ++i)
     y_converted.push_back(to_array_1d(y[i]));
 
