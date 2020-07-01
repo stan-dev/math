@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 
 namespace stan {
 namespace math {
@@ -46,13 +47,14 @@ return_type_t<double, T_shape> do_lkj_constant(const T_shape& eta,
 //                  eta > 0; eta == 1 <-> uniform]
 template <bool propto, typename T_y, typename T_shape>
 return_type_t<T_y, T_shape> lkj_corr_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
+    const T_y& y,
     const T_shape& eta) {
   static const char* function = "lkj_corr_lpdf";
 
   return_type_t<T_y, T_shape> lp(0.0);
+  const auto& y_ref = to_ref(y);
   check_positive(function, "Shape parameter", eta);
-  check_corr_matrix(function, "Correlation matrix", y);
+  check_corr_matrix(function, "Correlation matrix", y_ref);
 
   const unsigned int K = y.rows();
   if (K == 0) {
@@ -71,7 +73,7 @@ return_type_t<T_y, T_shape> lkj_corr_lpdf(
     return lp;
   }
 
-  T_y sum_values = sum(log(y.ldlt().vectorD()));
+  value_type_t<T_y> sum_values = sum(log(y_ref.ldlt().vectorD()));
   lp += (eta - 1.0) * sum_values;
   return lp;
 }
