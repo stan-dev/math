@@ -49,10 +49,6 @@ class vari_value;
 template <typename T>
 class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
     : public vari_base {
- private:
-  template <typename, typename>
-  friend class var_value;
-
  public:
   using Scalar = T;
   using value_type = Scalar;
@@ -181,6 +177,11 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
   static inline void operator delete(
       void* /* ignore arg */) noexcept { /* no op */
   }
+  private:
+  template <typename, typename>
+  friend class var_value;
+  template <typename T1, typename T2, require_all_floating_point_t<T1, T2>* = nullptr>
+  explicit vari_value(T1&& A, T2&& B) : val_(A), adj_(B) {}
 };
 
 // For backwards compatability the default is double
@@ -201,19 +202,23 @@ template <typename T>
 class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
     : public vari_base {
  public:
+   static_assert(
+       is_plain_type<T>::value,
+       "The template for this var is an"
+       " expression but a var_value's inner type must be assignable such as"
+       " a double, Eigen::Matrix, or Eigen::Array");
+
   /**
    * `PlainObject` represents a user constructible type such as Matrix or Array
    */
   using PlainObject = std::decay_t<plain_type_t<T>>;
-  using eigen_scalar = value_type_t<PlainObject>;  // A floating point type
-  eigen_scalar* val_mem_;  // Pointer to memory allocated on the stack for val_
-  eigen_scalar* adj_mem_;  // Pointer to memory allocated on the stack for adj_
   using Scalar = PlainObject;  // The underlying type for this class
   using value_type = Scalar;   // The underlying type for this class
+  using eigen_scalar = value_type_t<PlainObject>;  // A floating point type
   using eigen_map = Eigen::Map<PlainObject>;  // Maps for adj_ and val_
-  const Eigen::Index rows_;                   // Number of rows
-  const Eigen::Index cols_;                   // Number of cols
-  const Eigen::Index size_;                   // Size of rows * cols
+  using vari_type = vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>;
+  eigen_scalar* val_mem_;  // Pointer to memory allocated on the stack for val_
+  eigen_scalar* adj_mem_;  // Pointer to memory allocated on the stack for adj_
   /**
    * Number of rows known at compile time
    */
@@ -253,11 +258,8 @@ class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
             x.size())),
         adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
-        rows_(x.rows()),
-        cols_(x.cols()),
-        size_(x.size()),
-        adj_(make_adj(adj_mem_, x)),
-        val_(make_val(val_mem_, std::forward<S>(x))) {
+        adj_(make_adj(x)),
+        val_(make_val(x)) {
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
@@ -284,11 +286,8 @@ class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
             x.size())),
         adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
-        rows_(x.rows()),
-        cols_(x.cols()),
-        size_(x.size()),
-        adj_(make_adj(adj_mem_, x)),
-        val_(make_val(val_mem_, x)) {
+        adj_(make_adj(x)),
+        val_(make_val(x)) {
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
     } else {
@@ -299,15 +298,15 @@ class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
   /**
    * Return the number of rows for this class's `val_` member
    */
-  const Eigen::Index rows() const { return rows_; }
+  const Eigen::Index rows() const { return val_.rows(); }
   /**
    * Return the number of columns for this class's `val_` member
    */
-  const Eigen::Index cols() const { return cols_; }
+  const Eigen::Index cols() const { return val_.rows(); }
   /**
    * Return the size of this class's `val_` member
    */
-  const Eigen::Index size() const { return size_; }
+  const Eigen::Index size() const { return val_.size(); }
 
   virtual void chain() {}
   /**
@@ -334,9 +333,9 @@ class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
    *
    * @return The modified ostream.
    */
-  friend std::ostream& operator<<(std::ostream& os, const vari_value<T>* v) {
-    return os << v->val_ << ":" << v->adj_;
-  }
+   friend std::ostream& operator<<(std::ostream& os, const vari_value<T>* v) {
+     return os << "val: \n" << v->val_ << " \nadj: \n" << v->adj_;
+   }
 
   /**
    * Allocate memory from the underlying memory pool.  This memory is
@@ -369,6 +368,8 @@ class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
  private:
   template <typename, typename>
   friend class var_value;
+  template <typename, typename>
+  friend class vari_value;
   /**
    * Create the map to the val_ stack allocated memory for an Eigen input.
    * @tparam S an Eigen type.
@@ -376,9 +377,9 @@ class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
    * @param x The Eigen type whose values will be assigned to `val_`
    */
   template <typename S>
-  inline eigen_map make_val(eigen_scalar*& mem, S&& x) {
-    eigen_map(mem, x.rows(), x.cols()) = std::forward<S>(x);
-    return eigen_map(mem, x.rows(), x.cols());
+  inline eigen_map make_val(S&& x) {
+    eigen_map(val_mem_, x.rows(), x.cols()) = x;
+    return eigen_map(val_mem_, x.rows(), x.cols());
   }
   /**
    * Create the map to the adj_ stack allocated memory for an Eigen input.
@@ -387,9 +388,9 @@ class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
    * @param x The Eigen type whose dimensions are set the `adj_`s dimensions.
    */
   template <typename S>
-  inline eigen_map make_adj(eigen_scalar*& mem, S&& x) {
-    eigen_map(mem, x.rows(), x.cols()).setZero();
-    return eigen_map(mem, x.rows(), x.cols());
+  inline eigen_map make_adj(S&& x) {
+    eigen_map(adj_mem_, x.rows(), x.cols()).setZero();
+    return eigen_map(adj_mem_, x.rows(), x.cols());
   }
 };
 
@@ -414,9 +415,6 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
   using eigen_index = typename PlainObject::StorageIndex;  // Index type
   using Scalar = PlainObject;  // vari's adj_ and val_ member type
   using value_type = Scalar;   // vari's adj_ and val_ member type
-  const Eigen::Index rows_;    // Number of rows in val_
-  const Eigen::Index cols_;    // Number of cols in val_
-  const Eigen::Index size_;    // Size of val_
   /**
    * Rows at compile time
    */
@@ -452,10 +450,7 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
    */
   template <typename S, require_convertible_t<S&, value_type>* = nullptr>
   explicit vari_value(S&& x)
-      : rows_(x.rows()),
-        cols_(x.cols()),
-        size_(x.size()),
-        val_(x),
+      : val_(x),
         adj_(x),
         chainable_alloc() {
     this->set_zero_adjoint();
@@ -480,10 +475,7 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
    */
   template <typename S, require_convertible_t<S&, value_type>* = nullptr>
   vari_value(S&& x, bool stacked)
-      : rows_(x.rows()),
-        cols_(x.cols()),
-        size_(x.size()),
-        val_(x),
+      : val_(x),
         adj_(x),
         chainable_alloc() {
     this->set_zero_adjoint();
@@ -497,15 +489,15 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
   /**
    * Return the number of rows for this class's `val_` member
    */
-  const Eigen::Index rows() const { return rows_; }
+  const Eigen::Index rows() const { return val_.rows(); }
   /**
    * Return the number of columns for this class's `val_` member
    */
-  const Eigen::Index cols() const { return cols_; }
+  const Eigen::Index cols() const { return val_.cols(); }
   /**
    * Return the size of this class's `val_` member
    */
-  const Eigen::Index size() const { return size_; }
+  const Eigen::Index size() const { return val_.size(); }
   void chain() {}
   /**
    * Initialize the adjoint for this (dependent) variable to 1.
@@ -544,7 +536,7 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
    * @return The modified ostream.
    */
   friend std::ostream& operator<<(std::ostream& os, const vari_value<T>* v) {
-    return os << v->val_ << ":" << v->adj_;
+    return os << "val: \n" << v->val_ << " \nadj: \n" << v->adj_;
   }
 
   /**

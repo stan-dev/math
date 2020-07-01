@@ -15,3 +15,8 @@ TEST(AgradRev, long_double_test) {
   ss << &v;
   EXPECT_EQ("5:0", ss.str());
 }
+
+TEST(AgradRev, dense_matrix_vari) {
+  using stan::math::vari_value;
+  stan::math::vari_value<Eigen::MatrixXd> A(Eigen::MatrixXd::Random(3, 3));
+}
