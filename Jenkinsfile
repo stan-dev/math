@@ -248,7 +248,7 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                stage('OpenCL tests') {
+                stage('OpenCL tests async') {
                     agent { label "gpu-async" }
                     when {
                         expression {
