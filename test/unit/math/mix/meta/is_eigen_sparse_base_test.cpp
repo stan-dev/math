@@ -8,18 +8,18 @@ TEST(MathMetaPrim, is_eigen_sparse_base_hierarchy_tests) {
   using Eigen::Matrix;
   using stan::is_eigen_sparse_base;
   using stan::math::test::all_eigen_dense;
-  all_eigen_dense<false, false, false, false, false, is_eigen_sparse_base, Matrix,
-                  -1, -1>();
-  all_eigen_dense<false, false, false, false, false, is_eigen_sparse_base, Matrix,
-                  1, -1>();
-  all_eigen_dense<false, false, false, false, false, is_eigen_sparse_base, Matrix,
-                  -1, 1>();
-  all_eigen_dense<false, false, false, false, false, is_eigen_sparse_base, Array,
-                  -1, -1>();
-  all_eigen_dense<false, false, false, false, false, is_eigen_sparse_base, Array,
-                  1, -1>();
-  all_eigen_dense<false, false, false, false, false, is_eigen_sparse_base, Array,
-                  -1, 1>();
+  all_eigen_dense<false, false, false, false, false, is_eigen_sparse_base,
+                  Matrix, -1, -1>();
+  all_eigen_dense<false, false, false, false, false, is_eigen_sparse_base,
+                  Matrix, 1, -1>();
+  all_eigen_dense<false, false, false, false, false, is_eigen_sparse_base,
+                  Matrix, -1, 1>();
+  all_eigen_dense<false, false, false, false, false, is_eigen_sparse_base,
+                  Array, -1, -1>();
+  all_eigen_dense<false, false, false, false, false, is_eigen_sparse_base,
+                  Array, 1, -1>();
+  all_eigen_dense<false, false, false, false, false, is_eigen_sparse_base,
+                  Array, -1, 1>();
 }
 
 TEST(MathMetaPrim, is_eigen_sparse_base_sparse_tests) {
@@ -43,12 +43,12 @@ TEST(MathMetaPrim, is_eigen_sparse_base_expr_tests) {
   using Eigen::Matrix;
   using stan::is_eigen_sparse_base;
   using stan::math::test::all_eigen_dense_exprs;
-  all_eigen_dense_exprs<false, false, false, false, is_eigen_sparse_base, Matrix,
-                        -1, -1>();
-  all_eigen_dense_exprs<false, false, false, false, is_eigen_sparse_base, Matrix, 1,
-                        -1>();
-  all_eigen_dense_exprs<false, false, false, false, is_eigen_sparse_base, Matrix,
-                        -1, 1>();
+  all_eigen_dense_exprs<false, false, false, false, is_eigen_sparse_base,
+                        Matrix, -1, -1>();
+  all_eigen_dense_exprs<false, false, false, false, is_eigen_sparse_base,
+                        Matrix, 1, -1>();
+  all_eigen_dense_exprs<false, false, false, false, is_eigen_sparse_base,
+                        Matrix, -1, 1>();
   all_eigen_dense_exprs<false, false, false, false, is_eigen_sparse_base, Array,
                         -1, -1>();
   all_eigen_dense_exprs<false, false, false, false, is_eigen_sparse_base, Array,

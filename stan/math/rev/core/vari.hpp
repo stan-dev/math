@@ -177,10 +177,12 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
   static inline void operator delete(
       void* /* ignore arg */) noexcept { /* no op */
   }
-  private:
+
+ private:
   template <typename, typename>
   friend class var_value;
-  template <typename T1, typename T2, require_all_floating_point_t<T1, T2>* = nullptr>
+  template <typename T1, typename T2,
+            require_all_floating_point_t<T1, T2>* = nullptr>
   explicit vari_value(T1&& A, T2&& B) : val_(A), adj_(B) {}
 };
 
@@ -202,11 +204,11 @@ template <typename T>
 class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
     : public vari_base {
  public:
-   static_assert(
-       is_plain_type<T>::value,
-       "The template for this var is an"
-       " expression but a var_value's inner type must be assignable such as"
-       " a double, Eigen::Matrix, or Eigen::Array");
+  static_assert(
+      is_plain_type<T>::value,
+      "The template for this var is an"
+      " expression but a var_value's inner type must be assignable such as"
+      " a double, Eigen::Matrix, or Eigen::Array");
 
   /**
    * `PlainObject` represents a user constructible type such as Matrix or Array
@@ -215,8 +217,9 @@ class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
   using Scalar = PlainObject;  // The underlying type for this class
   using value_type = Scalar;   // The underlying type for this class
   using eigen_scalar = value_type_t<PlainObject>;  // A floating point type
-  using eigen_map = Eigen::Map<PlainObject>;  // Maps for adj_ and val_
-  using vari_type = vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>;
+  using eigen_map = Eigen::Map<PlainObject>;       // Maps for adj_ and val_
+  using vari_type
+      = vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>;
   eigen_scalar* val_mem_;  // Pointer to memory allocated on the stack for val_
   eigen_scalar* adj_mem_;  // Pointer to memory allocated on the stack for adj_
   /**
@@ -333,9 +336,9 @@ class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
    *
    * @return The modified ostream.
    */
-   friend std::ostream& operator<<(std::ostream& os, const vari_value<T>* v) {
-     return os << "val: \n" << v->val_ << " \nadj: \n" << v->adj_;
-   }
+  friend std::ostream& operator<<(std::ostream& os, const vari_value<T>* v) {
+    return os << "val: \n" << v->val_ << " \nadj: \n" << v->adj_;
+  }
 
   /**
    * Allocate memory from the underlying memory pool.  This memory is
@@ -449,10 +452,7 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
    * @param x Value of the constructed variable.
    */
   template <typename S, require_convertible_t<S&, value_type>* = nullptr>
-  explicit vari_value(S&& x)
-      : val_(x),
-        adj_(x),
-        chainable_alloc() {
+  explicit vari_value(S&& x) : val_(x), adj_(x), chainable_alloc() {
     this->set_zero_adjoint();
     ChainableStack::instance_->var_stack_.push_back(this);
   }
@@ -474,10 +474,7 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
    * that its `chain()` method is not called.
    */
   template <typename S, require_convertible_t<S&, value_type>* = nullptr>
-  vari_value(S&& x, bool stacked)
-      : val_(x),
-        adj_(x),
-        chainable_alloc() {
+  vari_value(S&& x, bool stacked) : val_(x), adj_(x), chainable_alloc() {
     this->set_zero_adjoint();
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);

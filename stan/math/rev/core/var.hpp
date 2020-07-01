@@ -42,7 +42,7 @@ class var_value<T, require_vt_floating_point<T>> {
       " a double, Eigen::Matrix, or Eigen::Array");
 
  public:
-  using value_type = std::decay_t<T>;  // type in vari_value.
+  using value_type = std::decay_t<T>;        // type in vari_value.
   using vari_type = vari_value<value_type>;  // Type of underlying vari impl.
 
   /**

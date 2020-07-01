@@ -10,9 +10,9 @@ namespace stan {
  * Checks whether the template type `T` is an assignable type. This is used
  * to detect whether a type is an Eigen matrix expression.
  */
- template <typename S>
- using is_plain_type
-     = std::is_same<std::decay_t<S>, std::decay_t<plain_type_t<S>>>;
+template <typename S>
+using is_plain_type
+    = std::is_same<std::decay_t<S>, std::decay_t<plain_type_t<S>>>;
 
 STAN_ADD_REQUIRE_UNARY(plain_type, is_plain_type, require_eigens_types);
 STAN_ADD_REQUIRE_UNARY_INNER(plain_type, is_plain_type, require_eigens_types);
