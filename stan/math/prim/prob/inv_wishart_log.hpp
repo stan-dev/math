@@ -30,10 +30,10 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_dof, typename T_scale>
 return_type_t<T_y, T_dof, T_scale> inv_wishart_log(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
+    const T_y& W,
     const T_dof& nu,
-    const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
-  return inv_wishart_lpdf<propto, T_y, T_dof, T_scale>(W, nu, S);
+    const T_scale& S) {
+  return inv_wishart_lpdf<propto>(W, nu, S);
 }
 
 /** \ingroup multivar_dists
@@ -41,10 +41,10 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_log(
  */
 template <typename T_y, typename T_dof, typename T_scale>
 inline return_type_t<T_y, T_dof, T_scale> inv_wishart_log(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
+    const T_y& W,
     const T_dof& nu,
-    const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
-  return inv_wishart_lpdf<T_y, T_dof, T_scale>(W, nu, S);
+    const T_scale& S) {
+  return inv_wishart_lpdf<>(W, nu, S);
 }
 
 }  // namespace math
