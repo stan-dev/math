@@ -201,7 +201,7 @@ class multiply_vari<Arith, Var, require_all_t<is_not_var<Arith>, is_var<Var>>>
   template <typename T1 = Arith, typename T2 = Var,
             require_var_vt<is_eigen, T2>* = nullptr>
   void chain_impl() {
-    bvi()->adj_ += (this->adj_ * ad()).transpose();
+    bvi()->adj_ += ad().transpose() * this->adj_;
   }
 
   void chain() {
