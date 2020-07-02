@@ -291,34 +291,34 @@ TEST(MathPrimMat, domain_err_training_sig_l_gamma_gp_matern52_cov) {
 
   EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x, sigma, l_bad),
                    std::domain_error, " length scale");
-  EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x, sigma_bad, l_bad),
-                   std::domain_error, " magnitude");
-  EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x, sigma_bad, l_bad),
-                   std::domain_error, " magnitude");
+  EXPECT_THROW(stan::math::gp_matern32_cov(x, sigma_bad, l_bad),
+                   std::domain_error);
+  EXPECT_THROW(stan::math::gp_matern32_cov(x, sigma_bad, l_bad),
+                   std::domain_error);
 
   EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x, sigma, l_bad),
                    std::domain_error, " length scale");
-  EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x, sigma_bad, l_bad),
-                   std::domain_error, " magnitude");
+  EXPECT_THROW(stan::math::gp_matern32_cov(x, sigma_bad, l_bad),
+                   std::domain_error);
 
   EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x_2, sigma, l_bad),
                    std::domain_error, " length scale");
   EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x_2, sigma_bad, l),
                    std::domain_error, " magnitude");
-  EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x_2, sigma_bad, l_bad),
-                   std::domain_error, " magnitude");
+  EXPECT_THROW(stan::math::gp_matern32_cov(x_2, sigma_bad, l_bad),
+                   std::domain_error);
 
   EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x_2, sigma, l_bad),
                    std::domain_error, " length scale");
   EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x_2, sigma_bad, l_vec),
                    std::domain_error, " magnitude");
-  EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x_2, sigma_bad, l_bad),
-                   std::domain_error, " magnitude");
+  EXPECT_THROW(stan::math::gp_matern32_cov(x_2, sigma_bad, l_bad),
+                   std::domain_error);
 
   EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x_2, sigma, l_vec_bad),
                    std::domain_error, " length scale");
-  EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x_2, sigma_bad, l_vec_bad),
-                   std::domain_error, " magnitude");
+  EXPECT_THROW(stan::math::gp_matern32_cov(x_2, sigma_bad, l_vec_bad),
+                   std::domain_error);
   EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x_2, sigma_bad, l_vec),
                    std::domain_error, " magnitude");
 
@@ -326,27 +326,27 @@ TEST(MathPrimMat, domain_err_training_sig_l_gamma_gp_matern52_cov) {
                    std::domain_error, " length scale");
   EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x_2, x_2, sigma_bad, l),
                    std::domain_error, " magnitude");
-  EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x_2, x_2, sigma_bad, l_bad),
-                   std::domain_error, " magnitude");
+  EXPECT_THROW(stan::math::gp_matern32_cov(x_2, x_2, sigma_bad, l_bad),
+                   std::domain_error);
 
   EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x_2, x_2, sigma, l_bad),
                    std::domain_error, " length scale");
   EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x_2, x_2, sigma_bad, l_vec),
                    std::domain_error, " magnitude");
-  EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x_2, x_2, sigma_bad, l_bad),
-                   std::domain_error, " magnitude");
+  EXPECT_THROW(stan::math::gp_matern32_cov(x_2, x_2, sigma_bad, l_bad),
+                   std::domain_error);
 
   EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x_2, x_2, sigma, l_vec_bad),
                    std::domain_error, " length scale");
-  EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x_2, x_2, sigma_bad, l_vec_bad),
-                   std::domain_error, " magnitude");
+  EXPECT_THROW(stan::math::gp_matern32_cov(x_2, x_2, sigma_bad, l_vec_bad),
+                   std::domain_error);
   EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x_2, x_2, sigma_bad, l_vec),
                    std::domain_error, " magnitude");
 
   EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x_2, x_2, sigma, l_vec_bad),
                    std::domain_error, " length scale");
-  EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x_2, x_2, sigma_bad, l_vec_bad),
-                   std::domain_error, " magnitude");
+  EXPECT_THROW(stan::math::gp_matern32_cov(x_2, x_2, sigma_bad, l_vec_bad),
+                   std::domain_error);
   EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x_2, x_2, sigma_bad, l_vec),
                    std::domain_error, " magnitude");
 }
@@ -390,8 +390,8 @@ TEST(MathPrimMat, nan_error_training_sig_l_gamma_gp_matern52_cov) {
                    std::domain_error, " length scale");
   EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x, sigma_bad, l),
                    std::domain_error, " magnitude");
-  EXPECT_THROW_MSG(stan::math::gp_matern32_cov(x, sigma_bad, l_bad),
-                   std::domain_error, " magnitude");
+  EXPECT_THROW(stan::math::gp_matern32_cov(x, sigma_bad, l_bad),
+                   std::domain_error);
 
   EXPECT_THROW(stan::math::gp_matern52_cov(x, sigma, l_bad), std::domain_error);
   EXPECT_THROW(stan::math::gp_matern52_cov(x, sigma_bad, l), std::domain_error);
