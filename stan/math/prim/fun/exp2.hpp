@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_EXP2_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
