@@ -376,7 +376,6 @@ class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
   /**
    * Create the map to the val_ stack allocated memory for an Eigen input.
    * @tparam S an Eigen type.
-   * @param mem A pointer to stack allocated memory.
    * @param x The Eigen type whose values will be assigned to `val_`
    */
   template <typename S>
@@ -387,7 +386,6 @@ class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
   /**
    * Create the map to the adj_ stack allocated memory for an Eigen input.
    * @tparam S an Eigen type.
-   * @param mem A pointer to stack allocated memory.
    * @param x The Eigen type whose dimensions are set the `adj_`s dimensions.
    */
   template <typename S>
