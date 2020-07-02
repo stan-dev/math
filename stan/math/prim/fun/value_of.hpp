@@ -18,7 +18,7 @@ namespace math {
  * @return Forwarded input argument
  **/
 template <typename T,
-	  require_arithmetic_t<stan::return_type_t<T>>* = nullptr>
+	  require_st_arithmetic<T>* = nullptr>
 inline decltype(auto) value_of(T&& x) {
   return std::forward<decltype(x)>(x);
 }
@@ -32,9 +32,9 @@ inline decltype(auto) value_of(T&& x) {
  * @return std::vector of values
  **/
 template <typename T,
-	  require_not_arithmetic_t<stan::return_type_t<T>>* = nullptr>
+	  require_not_st_arithmetic<T>* = nullptr>
 inline auto value_of(const std::vector<T>& x) {
-  std::vector<std::decay_t<decltype(value_of(std::declval<T>()))>> out;
+  std::vector<plain_type_t<decltype(value_of(std::declval<T>()))>> out;
   out.reserve(x.size());
   for (size_t n = 0; n < x.size(); ++n)
     out.emplace_back(value_of(x[n]));
@@ -52,14 +52,13 @@ inline auto value_of(const std::vector<T>& x) {
  **/
 template <typename EigMat,
 	  require_eigen_t<EigMat>* = nullptr,
-	  require_not_arithmetic_t<stan::return_type_t<EigMat>>* = nullptr>
+	  require_not_st_arithmetic<EigMat>* = nullptr>
 inline auto value_of(EigMat&& M) {
-  /*return make_holder(
+  return make_holder(
       [](auto& a) {
         return a.unaryExpr([](const auto& scal) { return value_of(scal); });
       },
-      std::forward<EigMat>(M));*/
-  return M.unaryExpr([](const auto& scal) { return value_of(scal); }).eval();
+      std::forward<EigMat>(M));
 }
 
 }  // namespace math

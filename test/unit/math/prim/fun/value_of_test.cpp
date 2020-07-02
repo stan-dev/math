@@ -84,6 +84,49 @@ TEST(MathFunctions, value_of_vector_of_vectors) {
 	       std::vector<std::vector<double>>&>::value));
   EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(vb)),
 	       const std::vector<std::vector<double>>&>::value));
+
+  auto vva = stan::math::value_of(va);
+  auto vvb = stan::math::value_of(va);
+
+  for(size_t i = 0; i < va.size(); ++i) {
+    for(size_t j = 0; j < va[i].size(); ++j) {
+      EXPECT_FLOAT_EQ(vva[i][j], a[j]);
+    }
+  }
+
+  for(size_t i = 0; i < vb.size(); ++i) {
+    for(size_t j = 0; j < vb[i].size(); ++j) {
+      EXPECT_FLOAT_EQ(vvb[i][j], b[j]);
+    }
+  }
+}
+
+TEST(MathFunctions, value_of_vector_of_eigen) {
+  Eigen::VectorXd a = Eigen::VectorXd::Random(5);
+  Eigen::RowVectorXd b = Eigen::RowVectorXd::Random(5);
+  Eigen::MatrixXd c = Eigen::MatrixXd::Random(5, 5);
+  std::vector<Eigen::VectorXd> va(5, a);
+  std::vector<Eigen::RowVectorXd> vb(5, b);
+  std::vector<Eigen::MatrixXd> vc(5, c);
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(va)),
+	       std::vector<Eigen::VectorXd>&>::value));
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(vb)),
+	       std::vector<Eigen::RowVectorXd>&>::value));
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(vc)),
+	       std::vector<Eigen::MatrixXd>&>::value));
+
+  auto vva = stan::math::value_of(va);
+  auto vvb = stan::math::value_of(vb);
+  auto vvc = stan::math::value_of(vc);
+
+  for(size_t i = 0; i < vva.size(); ++i)
+    EXPECT_MATRIX_FLOAT_EQ(vva[i], a);
+
+  for(size_t i = 0; i < vvb.size(); ++i)
+    EXPECT_MATRIX_FLOAT_EQ(vvb[i], b);
+
+  for(size_t i = 0; i < vvc.size(); ++i)
+    EXPECT_MATRIX_FLOAT_EQ(vvc[i], c);
 }
 
 TEST(MathMatrixPrimMat, value_of_expression) {
