@@ -260,7 +260,7 @@ TEST(MathPrimMat, nan_error_training_sig_l_gp_exp_cov) {
   EXPECT_THROW_MSG(stan::math::gp_exponential_cov(x, sigma_bad, l),
                    std::domain_error, " magnitude");
   EXPECT_THROW(stan::math::gp_exponential_cov(x, sigma_bad, l_bad),
-                   std::domain_error);
+               std::domain_error);
 
   EXPECT_THROW(stan::math::gp_exponential_cov(x_bad, l, sigma),
                std::domain_error);

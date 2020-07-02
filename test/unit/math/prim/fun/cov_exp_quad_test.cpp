@@ -347,7 +347,7 @@ TEST(MathPrimMat, domain_error_training_sig_l_cov_exp_quad) {
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x, sigma_bad, l), std::domain_error,
                    " magnitude");
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma_bad, l_bad),
-                   std::domain_error);
+               std::domain_error);
 
   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma, l_bad), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma_bad, l), std::domain_error);
@@ -398,7 +398,7 @@ TEST(MathPrimMat, nan_error_training_sig_l_cov_exp_quad) {
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x, sigma_bad, l), std::domain_error,
                    " magnitude");
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma_bad, l_bad),
-                   std::domain_error);
+               std::domain_error);
 
   EXPECT_THROW(stan::math::cov_exp_quad(x_bad, sigma, l), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_bad, sigma_bad, l),
@@ -456,7 +456,7 @@ TEST(MathPrimMat, domain_error_cov_exp_quad2) {
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x1, x2, sigma_bad, l),
                    std::domain_error, " magnitude");
   EXPECT_THROW(stan::math::cov_exp_quad(x1, x2, sigma_bad, l_bad),
-                   std::domain_error);
+               std::domain_error);
 
   std::vector<Eigen::Matrix<double, -1, 1> > x_vec_1(3);
   for (size_t i = 0; i < x_vec_1.size(); ++i) {
@@ -534,7 +534,7 @@ TEST(MathPrimMat, nan_domain_error_cov_exp_quad2) {
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x1, x2, sigma_bad, l),
                    std::domain_error, " magnitude");
   EXPECT_THROW(stan::math::cov_exp_quad(x1, x2, sigma_bad, l_bad),
-                   std::domain_error);
+               std::domain_error);
 
   EXPECT_THROW(stan::math::cov_exp_quad(x1, x2, sigma, l_bad),
                std::domain_error);
