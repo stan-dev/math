@@ -401,13 +401,13 @@ TEST(MathPrimMat, domain_error_training_sig_l_p) {
   EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x, sigma_bad, l, p),
                    std::domain_error, " signal standard deviation");
   EXPECT_THROW(stan::math::gp_periodic_cov(x, sigma, l_bad, p_bad),
-                   std::domain_error);
+               std::domain_error);
   EXPECT_THROW(stan::math::gp_periodic_cov(x, sigma_bad, l, p_bad),
-                   std::domain_error);
+               std::domain_error);
   EXPECT_THROW(stan::math::gp_periodic_cov(x, sigma_bad, l_bad, p),
-                   std::domain_error);
+               std::domain_error);
   EXPECT_THROW(stan::math::gp_periodic_cov(x, sigma_bad, l_bad, p_bad),
-                   std::domain_error);
+               std::domain_error);
 
   EXPECT_THROW(stan::math::gp_periodic_cov(x_2, sigma, l, p_bad),
                std::domain_error);
@@ -483,13 +483,13 @@ TEST(MathPrimMat, nan_error_training_sig_l_p) {
   EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x, sigma_bad, l, p),
                    std::domain_error, " signal standard deviation");
   EXPECT_THROW(stan::math::gp_periodic_cov(x, sigma, l_bad, p_bad),
-                   std::domain_error);
+               std::domain_error);
   EXPECT_THROW(stan::math::gp_periodic_cov(x, sigma_bad, l, p_bad),
-                   std::domain_error);
+               std::domain_error);
   EXPECT_THROW(stan::math::gp_periodic_cov(x, sigma_bad, l_bad, p),
-                   std::domain_error);
+               std::domain_error);
   EXPECT_THROW(stan::math::gp_periodic_cov(x, sigma_bad, l_bad, p_bad),
-                   std::domain_error);
+               std::domain_error);
 
   EXPECT_THROW(stan::math::gp_periodic_cov(x_bad, sigma, l, p),
                std::domain_error);
@@ -598,13 +598,13 @@ TEST(MathPrimMat, domain_error_gp_periodic_cov2) {
   EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x1, x2, sigma_bad, l, p),
                    std::domain_error, " signal standard deviation");
   EXPECT_THROW(stan::math::gp_periodic_cov(x1, x2, sigma, l_bad, p_bad),
-                   std::domain_error);
+               std::domain_error);
   EXPECT_THROW(stan::math::gp_periodic_cov(x1, x2, sigma_bad, l, p_bad),
-                   std::domain_error);
+               std::domain_error);
   EXPECT_THROW(stan::math::gp_periodic_cov(x1, x2, sigma_bad, l_bad, p),
-                   std::domain_error);
+               std::domain_error);
   EXPECT_THROW(stan::math::gp_periodic_cov(x1, x2, sigma_bad, l_bad, p_bad),
-                   std::domain_error);
+               std::domain_error);
 
   std::vector<Eigen::Matrix<double, -1, 1> > x_vec_1(3);
   for (size_t i = 0; i < x_vec_1.size(); ++i) {
