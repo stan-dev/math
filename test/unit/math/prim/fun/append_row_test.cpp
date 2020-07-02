@@ -148,20 +148,20 @@ TEST(MathMatrixPrimMat, append_row) {
   EXPECT_THROW(append_row(m32, v3), std::invalid_argument);
   EXPECT_THROW(append_row(rv3, v3), std::invalid_argument);
 
-  stan::test::correct_type_matrix(append_row(m23, m33));
-  stan::test::correct_type_matrix(append_row(m33, m23));
-  stan::test::correct_type_matrix(append_row(m32, m32b));
-  stan::test::correct_type_matrix(append_row(m32b, m32));
-  stan::test::correct_type_matrix(append_row(m33, rv3));
-  stan::test::correct_type_matrix(append_row(rv3, m33));
-  stan::test::correct_type_matrix(append_row(m23, rv3));
-  stan::test::correct_type_matrix(append_row(rv3, m23));
-  stan::test::correct_type_matrix(append_row(rv3, rv3b));
-  stan::test::correct_type_matrix(append_row(rv3b, rv3));
-  stan::test::correct_type_vector(append_row(v3, v3b));
-  stan::test::correct_type_vector(append_row(v3b, v3));
-  stan::test::correct_type_vector(append_row(v3, -4.31));
-  stan::test::correct_type_vector(append_row(5.23, v3));
+  stan::test::expect_type_matrix(append_row(m23, m33));
+  stan::test::expect_type_matrix(append_row(m33, m23));
+  stan::test::expect_type_matrix(append_row(m32, m32b));
+  stan::test::expect_type_matrix(append_row(m32b, m32));
+  stan::test::expect_type_matrix(append_row(m33, rv3));
+  stan::test::expect_type_matrix(append_row(rv3, m33));
+  stan::test::expect_type_matrix(append_row(m23, rv3));
+  stan::test::expect_type_matrix(append_row(rv3, m23));
+  stan::test::expect_type_matrix(append_row(rv3, rv3b));
+  stan::test::expect_type_matrix(append_row(rv3b, rv3));
+  stan::test::expect_type_vector(append_row(v3, v3b));
+  stan::test::expect_type_vector(append_row(v3b, v3));
+  stan::test::expect_type_vector(append_row(v3, -4.31));
+  stan::test::expect_type_vector(append_row(5.23, v3));
 }
 
 TEST(MathMatrixPrimMat, append_row_different_types) {
