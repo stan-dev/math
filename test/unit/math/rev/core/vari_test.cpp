@@ -28,8 +28,8 @@ TEST(AgradRev, dense_matrix_vari_block) {
   Eigen::MatrixXd b = Eigen::MatrixXd::Random(3, 3);
 
   vari_value<Eigen::MatrixXd> A(a);
-  EXPECT_MATRIX_EQ(a.block(0,1,2,2), A.block(0,1,2,2).val_);
-  vari_value<Eigen::MatrixXd> B(a,b);
-  EXPECT_MATRIX_EQ(a.block(0,1,2,2), B.block(0,1,2,2).val_);
-  EXPECT_MATRIX_EQ(b.block(0,1,2,2), B.block(0,1,2,2).adj_);
+  EXPECT_MATRIX_EQ(a.block(0, 1, 2, 2), A.block(0, 1, 2, 2).val_);
+  vari_value<Eigen::MatrixXd> B(a, b);
+  EXPECT_MATRIX_EQ(a.block(0, 1, 2, 2), B.block(0, 1, 2, 2).val_);
+  EXPECT_MATRIX_EQ(b.block(0, 1, 2, 2), B.block(0, 1, 2, 2).adj_);
 }
