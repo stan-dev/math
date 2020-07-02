@@ -181,9 +181,6 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
  private:
   template <typename, typename>
   friend class var_value;
-  template <typename T1, typename T2,
-            require_all_floating_point_t<T1, T2>* = nullptr>
-  explicit vari_value(T1&& A, T2&& B) : val_(A), adj_(B) {}
 };
 
 // For backwards compatability the default is double
