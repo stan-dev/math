@@ -4,8 +4,6 @@
 #include <vector>
 #include <stdexcept>
 
-using stan::math::to_matrix;
-
 template <typename T, int R, int C>
 inline Eigen::Matrix<T, R, C> row_major_to_column_major(
     const Eigen::Matrix<T, R, C>& x) {
@@ -20,6 +18,7 @@ inline Eigen::Matrix<T, R, C> row_major_to_column_major(
 
 // [T] -> Matrix
 void test_to_matrix_array_answers(int m, int n) {
+  using stan::math::to_matrix;
   std::vector<double> vec(m * n);
   std::vector<int> vec_int(m * n);
   for (int i = 0; i < m * n; ++i) {
@@ -48,6 +47,7 @@ TEST(ToMatrixArray, answers) {
 }
 
 TEST(ToMatrixArray, exceptions) {
+  using stan::math::to_matrix;
   std::vector<double> vec(3);
   EXPECT_THROW(to_matrix(vec, 2, 2), std::invalid_argument);
   EXPECT_THROW(to_matrix(vec, 1, 2), std::invalid_argument);
@@ -56,6 +56,7 @@ TEST(ToMatrixArray, exceptions) {
 
 // Matrix -> Matrix
 void test_to_matrix_matrix_answers(int m, int n) {
+  using stan::math::to_matrix;
   Eigen::MatrixXd a(m, n);
   for (int i = 0; i < m * n; ++i)
     a(i) = i;
@@ -71,6 +72,7 @@ TEST(ToMatrixMatrix, answers) {
 
 // Matrix -> Matrix (with reshape)
 void test_to_matrix_matrix_reshape_answers(int m1, int n1, int m2, int n2) {
+  using stan::math::to_matrix;
   Eigen::MatrixXd a(m1, n1);
   Eigen::MatrixXd b(m2, n2);
   for (int i = 0; i < m1 * n1; ++i) {
@@ -119,6 +121,7 @@ TEST(ToMatrixMatrixReshape, answers) {
 
 // Vector -> Matrix
 void test_to_vector_matrix_answers(int m, int m2, int n2) {
+  using stan::math::to_matrix;
   Eigen::VectorXd a(m);
   Eigen::MatrixXd b(m2, n2);
   Eigen::MatrixXd c(m, 1);
@@ -159,6 +162,7 @@ TEST(ToMatrixVector, answers) {
 
 // RowVector -> Matrix
 void test_to_row_vector_matrix_answers(int n, int m2, int n2) {
+  using stan::math::to_matrix;
   Eigen::RowVectorXd a(n);
   Eigen::MatrixXd b(m2, n2);
   Eigen::MatrixXd c(1, n);
@@ -199,6 +203,7 @@ TEST(ToMatrixRowVector, answers) {
 
 // [[T]] -> Matrix
 void test_to_matrix_2darray_answers(int m, int n) {
+  using stan::math::to_matrix;
   std::vector<std::vector<double> > vec(m, std::vector<double>(n));
   std::vector<std::vector<int> > vec_int(m, std::vector<int>(n));
   // Any vec (0, C) will become (0, 0)
