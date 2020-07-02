@@ -129,7 +129,7 @@ TEST(ode_rk45_tol_prim, ts_errors) {
   EXPECT_NO_THROW(stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts_repeat, 1e-10,
                                            1e-10, 1e6, nullptr, a));
 
-    EXPECT_NO_THROW(stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts_lots, 1e-10,
+  EXPECT_NO_THROW(stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts_lots, 1e-10,
                                            1e-10, 1e6, nullptr, a));
 
   EXPECT_THROW(stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts_empty, 1e-10,

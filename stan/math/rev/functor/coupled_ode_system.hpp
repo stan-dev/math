@@ -177,8 +177,8 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
 	    local_args_tuple_);
 
       // No need to zero adjoints after last sweep
-      if(i < N_) {
-	nested.set_zero_all_adjoints();
+      if (i < N_) {
+        nested.set_zero_all_adjoints();
       }
 
       for (size_t j = 0; j < y0_vars_; ++j) {
