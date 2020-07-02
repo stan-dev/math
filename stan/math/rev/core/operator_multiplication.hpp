@@ -198,7 +198,7 @@ struct OpMultiplyMatrixScalar {
     if(needs_adj[0]) {
       work_mem_ = stan::math::ChainableStack::instance_->memalloc_.alloc_array<double>(N_ * M_);
     }
-    
+
     if(needs_adj[1]) {
       x_mem_
         = stan::math::ChainableStack::instance_->memalloc_.alloc_array<double>(N_ * M_);
@@ -220,7 +220,7 @@ struct OpMultiplyMatrixScalar {
     double adjb = 0.0;
 
     if(needs_adj[0]) {
-      for(size_t i = 0; i < adj.size(); ++i)      
+      for(size_t i = 0; i < adj.size(); ++i)
 	adja.coeffRef(i) = adj.coeff(i) * b_;
     }
 
@@ -229,7 +229,7 @@ struct OpMultiplyMatrixScalar {
       for(size_t i = 0; i < x.size(); ++i)
 	adjb += x(i) * adj(i);
     }
-    
+
     return std::make_tuple(adja, adjb);
   }
 };
@@ -272,7 +272,7 @@ struct OpMultiplyRowVectorVector {
       Eigen::Map<Eigen::VectorXd> B(B_mem_, N_);
       adjA = B * adj;
     }
-    
+
     if(needs_adj[1]) {
       Eigen::Map<Eigen::RowVectorXd> A(A_mem_, N_);
       adjB = A * adj;
@@ -281,6 +281,7 @@ struct OpMultiplyRowVectorVector {
     return std::make_tuple(adjA, adjB);
   }
 };
+
 
 struct OpMultiplyMatrixMatrix {
   int N1_;
@@ -329,7 +330,7 @@ struct OpMultiplyMatrixMatrix {
       Eigen::Map<Eigen::MatrixXd> B(B_mem_, N2_, M2_);
       adjA = adj * B.transpose();
     }
-    
+
     if(needs_adj[1]) {
       Eigen::Map<Eigen::MatrixXd> A(A_mem_, N1_, M1_);
       adjB = A.transpose() * adj;
@@ -339,12 +340,74 @@ struct OpMultiplyMatrixMatrix {
   }
 };
 
-template <typename T1, typename T2,
-	  require_scalar2_t<T1>...,
-	  require_scalar2_t<T2>...,
-	  require_any_var_value_t<T1, T2>...>
+/**
+ * Multiplcation Operator for adj_jac_apply
+ */
+template <typename T1, typename T2>
+struct OpMultiply {
+  adj_op<T1> A_; // view that only holds data if type is var
+  adj_op<T2> B_;
+  /**
+   * Allocated data for the var inputs
+   */
+  template <typename S1, typename S2>
+  explicit OpMultiply(S1&& A, S2&& B) : A_(value_of(A)), B_(value_of(B)) {}
+
+  /**
+   * Compute the forward pass
+   */
+  template <typename S1, typename S2>
+  auto operator()(const S1& A, const S2& B) {
+    return (A * B).eval();
+  }
+  /**
+   * This sucks and I hate it
+   * reverse_pass holds a static member function for calculating
+   * the adjoint jacobian. We need different specializations for each
+   * matrix / var / arithmetic combination. Since we have the templates
+   * T1 and T2 we know which ones are vars and which are not. So we can just
+   * write specializations
+   *
+   */
+  template <typename S1, typename S2, typename = nullptr, typename = nullptr>
+  auto reverse_pass;
+
+  template <typename S1, typename S2>
+  auto reverse_pass<S1, S2, require_all_eigen_vt<is_var, S1, S2>> {
+    template <typename V1, typename V2, typename V3>
+    static inline auto chain(V1&& adj, V2&& A, V3&& B) {
+      return std::forward_as_tuple((adj * B.transpose()).eval(), (A.transpose() * adj).eval())
+    }
+  };
+
+  template <typename S1, typename S2>
+  auto reverse_pass<S1, S2, require_eigen_vt<is_var, S1>, require_eigen_vt<std::is_arithmetic, S2>> {
+    template <typename V1, typename V2, typename V3>
+    static inline auto chain(V1&& adj, V2&& A, V3&& B) {
+      return std::forward_as_tuple((adj * B.transpose()).eval())
+    }
+  };
+
+  template <typename S1, typename S2>
+  auto reverse_pass<S1, S2, require_eigen_vt<std::is_arithmetic, S1>, require_eigen_vt<is_var, S2>> {
+    template <typename V1, typename V2, typename V3>
+    static inline auto chain(V1&& adj, V2&& A, V3&& B) {
+      return std::forward_as_tuple((A.transpose() * adj).eval())
+    }
+  };
+
+  /**
+   * Compute the reverse pass
+   */
+  template <typename S>
+  auto multiply_adjoint_jacobian(const S& adj) {
+    return reverse_pass<T1, T2>::chain(adj, A_.map(), B_.map());
+  }
+};
+
+template <typename T1, typename T2, require_any_var_value_t<T1, T2>* = nullptr>
 inline auto operator*(const T1& a, const T2& b) {
-  return adj_jac_apply<OpMultiplyScalarScalar>(a, b);
+  return adj_jac_apply<OpMultiply<T1, T2>>(a, b);
 }
 
 template <typename T1, typename T2,
@@ -370,7 +433,7 @@ template <typename T1, typename T2,
 inline auto operator*(const T1& a, const T2& b) {
   return adj_jac_apply<OpMultiplyRowVectorVector>(a, b);
 }
- 
+
 template <typename T1, typename T2,
 	  require_matrix2_t<T1>...,
 	  require_matrix2_t<T2>...,

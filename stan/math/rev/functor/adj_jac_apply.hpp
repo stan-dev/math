@@ -48,7 +48,91 @@ public:
     return Eigen::Map<Eigen::RowVectorXd>(mem, cols);
   }
 };
-  
+
+template <typename T, typename = void>
+class adj_op;
+
+template <typename T>
+struct adj_op<T, require_var_vt<std::is_floating_point, T>> {
+  using value_type = std::decay_t<plain_type_t<T>>;
+  using Scalar = value_type_t<T>;
+  using eigen_map = Eigen::Map<value_type>;
+  static constexpr Eigen::Index RowsAtCompileTime{0};
+  static constexpr Eigen::Index ColsAtCompileTime{0};
+  std::decay_t<T>::value_type map_;
+  template <typename S, require_floating_point_t<S>* = nullptr>
+  explicit adj_op(S&& x) : map_(x) {}
+  inline auto rows() const {
+    return map_.rows();
+  }
+
+  inline auto cols() const {
+    return map_.cols();
+  }
+
+  inline const auto& map() const {
+    return map_;
+  }
+
+  inline auto& map() {
+    return map_;
+  }
+};
+template <typename T>
+struct adj_op<T, require_eigen_vt<is_var, T>> {
+  using value_type = std::decay_t<plain_type_t<T>>;
+  using Scalar = typename value_type_t<T>::value_type;
+  using eigen_map = Eigen::Map<value_type>;
+  static constexpr Eigen::Index RowsAtCompileTime{value_type::RowsAtCompileTime};
+  static constexpr Eigen::Index ColsAtCompileTime{value_type::ColsAtCompileTime};
+  value_type* data_;
+  eigen_map map_;
+
+  template <typename S, require_eigen_t<S>* = nullptr>
+  explicit adj_op(S&& x) : rows_(x.rows()), cols_(x.cols()),
+    data_(stan::math::ChainableStack::instance_->memalloc_.alloc_array<Scalar>(rows_ * cols_)),
+    map_(data_, rows_, cols_) {}
+
+  inline auto rows() const {
+    return map_.rows();
+  }
+
+  inline auto cols() const {
+    return map_.cols();
+  }
+
+  inline const auto& map() const {
+    return map_;
+  }
+
+  inline auto& map() {
+    return map_;
+  }
+
+};
+
+template <typename T>
+struct adj_op<T, require_eigen_vt<is_arithmetic, T>> {
+  using value_type = std::decay_t<plain_type_t<T>>;
+  using Scalar = value_type_t<T>;
+  using eigen_map = Eigen::Map<value_type>;
+  static constexpr Eigen::Index RowsAtCompileTime{0};
+  static constexpr Eigen::Index ColsAtCompileTime{0};
+
+  template <typename S, require_eigen_t<S>* = nullptr>
+  explicit adj_op(S&& x) {};
+  inline Eigen::Index rows() const {
+    return 0;
+  }
+
+  inline Eigen::Index cols() const {
+    return 0;
+  }
+
+  inline auto map() const {
+    return Eigen::Map<std::decay_t<plain_type_t<T>>>(nullptr, 0, 0);
+  }
+}
 namespace internal {
 
 /**
@@ -139,7 +223,7 @@ struct adj_jac_vari : public vari {
 					 vari**,
 					 vari_value<FReturnType>*>;
   y_vari_type y_vi_;  // vari pointer for output.
-  
+
 inline void fill_adj_jac() {}
 
   template <typename Arith, typename... Pargs,
@@ -166,7 +250,7 @@ inline void fill_adj_jac() {}
         = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
 
     M_ = x.size();
-    
+
     save_varis(std::get<t>(x_vis_), x);
 
     fill_adj_jac(args...);
@@ -184,7 +268,7 @@ inline void fill_adj_jac() {}
 
     fill_adj_jac(args...);
   }
-  
+
   explicit adj_jac_vari(const Targs&... args)
     : vari(NOT_A_NUMBER), y_vi_(nullptr), M_(0) {
     fill_adj_jac(args...);
