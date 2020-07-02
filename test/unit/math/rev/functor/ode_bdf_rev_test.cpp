@@ -61,8 +61,8 @@ TEST(StanMathOde_ode_bdf, int_t0) {
   std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> output
       = stan::math::ode_bdf(CosArg1(), y0, t0, ts, nullptr, a);
 
-  EXPECT_FLOAT_EQ(output[0][0], 0.4165982112);
-  EXPECT_FLOAT_EQ(output[1][0], 0.66457668563);
+  EXPECT_NEAR(output[0][0], 0.4165982112, 1e-5);
+  EXPECT_NEAR(output[1][0], 0.66457668563, 1e-5);
 }
 
 TEST(StanMathOde_ode_bdf, int_ts) {
@@ -77,8 +77,8 @@ TEST(StanMathOde_ode_bdf, int_ts) {
   std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> output
       = stan::math::ode_bdf(CosArg1(), y0, t0, ts, nullptr, a);
 
-  EXPECT_FLOAT_EQ(output[0][0], 0.6649966577);
-  EXPECT_FLOAT_EQ(output[1][0], 0.09408000537);
+  EXPECT_NEAR(output[0][0], 0.6649966577, 1e-5);
+  EXPECT_NEAR(output[1][0], 0.09408000537, 1e-5);
 }
 
 TEST(StanMathOde_ode_bdf, t0) {
@@ -95,15 +95,15 @@ TEST(StanMathOde_ode_bdf, t0) {
 
   output[0][0].grad();
 
-  EXPECT_FLOAT_EQ(output[0][0].val(), 0.4165982112);
-  EXPECT_FLOAT_EQ(t0.adj(), -1.0);
+  EXPECT_NEAR(output[0][0].val(), 0.4165982112, 1e-5);
+  EXPECT_NEAR(t0.adj(), -1.0, 1e-5);
 
   stan::math::set_zero_all_adjoints();
 
   output[1][0].grad();
 
-  EXPECT_FLOAT_EQ(output[1][0].val(), 0.66457668563);
-  EXPECT_FLOAT_EQ(t0.adj(), -1.0);
+  EXPECT_NEAR(output[1][0].val(), 0.66457668563, 1e-5);
+  EXPECT_NEAR(t0.adj(), -1.0, 1e-5);
 }
 
 TEST(StanMathOde_ode_bdf, ts) {
@@ -120,15 +120,15 @@ TEST(StanMathOde_ode_bdf, ts) {
 
   output[0][0].grad();
 
-  EXPECT_FLOAT_EQ(output[0][0].val(), 0.4165982112);
-  EXPECT_FLOAT_EQ(ts[0].adj(), 0.78070695113);
+  EXPECT_NEAR(output[0][0].val(), 0.4165982112, 1e-5);
+  EXPECT_NEAR(ts[0].adj(), 0.78070695113, 1e-5);
 
   stan::math::set_zero_all_adjoints();
 
   output[1][0].grad();
 
-  EXPECT_FLOAT_EQ(output[1][0].val(), 0.66457668563);
-  EXPECT_FLOAT_EQ(ts[1].adj(), -0.0791208888);
+  EXPECT_NEAR(output[1][0].val(), 0.66457668563, 1e-5);
+  EXPECT_NEAR(ts[1].adj(), -0.0791208888, 1e-5);
 }
 
 TEST(StanMathOde_ode_bdf, ts_repeat) {
@@ -145,29 +145,29 @@ TEST(StanMathOde_ode_bdf, ts_repeat) {
 
   output[0][0].grad();
 
-  EXPECT_FLOAT_EQ(output[0][0].val(), 0.4165982112);
-  EXPECT_FLOAT_EQ(ts[0].adj(), 0.78070695113);
+  EXPECT_NEAR(output[0][0].val(), 0.4165982112, 1e-5);
+  EXPECT_NEAR(ts[0].adj(), 0.78070695113, 1e-5);
 
   stan::math::set_zero_all_adjoints();
 
   output[1][0].grad();
 
-  EXPECT_FLOAT_EQ(output[1][0].val(), 0.4165982112);
-  EXPECT_FLOAT_EQ(ts[1].adj(), 0.78070695113);
+  EXPECT_NEAR(output[1][0].val(), 0.4165982112, 1e-5);
+  EXPECT_NEAR(ts[1].adj(), 0.78070695113, 1e-5);
 
   stan::math::set_zero_all_adjoints();
 
   output[2][0].grad();
 
-  EXPECT_FLOAT_EQ(output[2][0].val(), 0.66457668563);
-  EXPECT_FLOAT_EQ(ts[2].adj(), -0.0791208888);
+  EXPECT_NEAR(output[2][0].val(), 0.66457668563, 1e-5);
+  EXPECT_NEAR(ts[2].adj(), -0.0791208888, 1e-5);
 
   stan::math::set_zero_all_adjoints();
 
   output[3][0].grad();
 
-  EXPECT_FLOAT_EQ(output[3][0].val(), 0.66457668563);
-  EXPECT_FLOAT_EQ(ts[3].adj(), -0.0791208888);
+  EXPECT_NEAR(output[3][0].val(), 0.66457668563, 1e-5);
+  EXPECT_NEAR(ts[3].adj(), -0.0791208888, 1e-5);
 }
 
 TEST(StanMathOde_ode_bdf, scalar_arg) {
@@ -183,8 +183,8 @@ TEST(StanMathOde_ode_bdf, scalar_arg) {
 
   output.grad();
 
-  EXPECT_FLOAT_EQ(output.val(), 0.66457668563);
-  EXPECT_FLOAT_EQ(a.adj(), -0.50107310888);
+  EXPECT_NEAR(output.val(), 0.66457668563, 1e-5);
+  EXPECT_NEAR(a.adj(), -0.50107310888, 1e-5);
 }
 
 TEST(StanMathOde_ode_bdf, scalar_arg_multi_time) {
@@ -201,15 +201,15 @@ TEST(StanMathOde_ode_bdf, scalar_arg_multi_time) {
 
   output[0](0).grad();
 
-  EXPECT_FLOAT_EQ(output[0](0).val(), 0.4165982112);
-  EXPECT_FLOAT_EQ(a.adj(), -0.04352005542);
+  EXPECT_NEAR(output[0](0).val(), 0.4165982112, 1e-5);
+  EXPECT_NEAR(a.adj(), -0.04352005542, 1e-5);
 
   stan::math::set_zero_all_adjoints();
 
   output[1](0).grad();
 
-  EXPECT_FLOAT_EQ(output[1](0).val(), 0.66457668563);
-  EXPECT_FLOAT_EQ(a.adj(), -0.50107310888);
+  EXPECT_NEAR(output[1](0).val(), 0.66457668563, 1e-5);
+  EXPECT_NEAR(a.adj(), -0.50107310888, 1e-5);
 }
 
 TEST(StanMathOde_ode_bdf, std_vector_arg) {
@@ -225,8 +225,8 @@ TEST(StanMathOde_ode_bdf, std_vector_arg) {
 
   output.grad();
 
-  EXPECT_FLOAT_EQ(output.val(), 0.66457668563);
-  EXPECT_FLOAT_EQ(a[0].adj(), -0.50107310888);
+  EXPECT_NEAR(output.val(), 0.66457668563, 1e-5);
+  EXPECT_NEAR(a[0].adj(), -0.50107310888, 1e-5);
 }
 
 TEST(StanMathOde_ode_bdf, vector_arg) {
@@ -243,8 +243,8 @@ TEST(StanMathOde_ode_bdf, vector_arg) {
 
   output.grad();
 
-  EXPECT_FLOAT_EQ(output.val(), 0.66457668563);
-  EXPECT_FLOAT_EQ(a(0).adj(), -0.50107310888);
+  EXPECT_NEAR(output.val(), 0.66457668563, 1e-5);
+  EXPECT_NEAR(a(0).adj(), -0.50107310888, 1e-5);
 }
 
 TEST(StanMathOde_ode_bdf, row_vector_arg) {
@@ -261,8 +261,8 @@ TEST(StanMathOde_ode_bdf, row_vector_arg) {
 
   output.grad();
 
-  EXPECT_FLOAT_EQ(output.val(), 0.66457668563);
-  EXPECT_FLOAT_EQ(a(0).adj(), -0.50107310888);
+  EXPECT_NEAR(output.val(), 0.66457668563, 1e-5);
+  EXPECT_NEAR(a(0).adj(), -0.50107310888, 1e-5);
 }
 
 TEST(StanMathOde_ode_bdf, matrix_arg) {
@@ -279,8 +279,8 @@ TEST(StanMathOde_ode_bdf, matrix_arg) {
 
   output.grad();
 
-  EXPECT_FLOAT_EQ(output.val(), 0.66457668563);
-  EXPECT_FLOAT_EQ(a(0, 0).adj(), -0.50107310888);
+  EXPECT_NEAR(output.val(), 0.66457668563, 1e-5);
+  EXPECT_NEAR(a(0, 0).adj(), -0.50107310888, 1e-5);
 }
 
 TEST(StanMathOde_ode_bdf, scalar_std_vector_args) {
@@ -298,9 +298,92 @@ TEST(StanMathOde_ode_bdf, scalar_std_vector_args) {
 
   output.grad();
 
-  EXPECT_FLOAT_EQ(output.val(), 0.66457668563);
-  EXPECT_FLOAT_EQ(a0.adj(), -0.50107310888);
-  EXPECT_FLOAT_EQ(a1[0].adj(), -0.50107310888);
+  EXPECT_NEAR(output.val(), 0.66457668563, 1e-5);
+  EXPECT_NEAR(a0.adj(), -0.50107310888, 1e-5);
+  EXPECT_NEAR(a1[0].adj(), -0.50107310888, 1e-5);
+}
+
+TEST(StanMathOde_ode_bdf, std_vector_std_vector_args) {
+  using stan::math::var;
+
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
+  double t0 = 0.0;
+  std::vector<double> ts = {1.1};
+
+  var a0 = 1.5;
+  std::vector<var> a1(1, a0);
+  std::vector<std::vector<var>> a2(1, a1);
+
+  var output
+    = stan::math::ode_bdf(CosArg1(), y0, t0, ts, nullptr, a2)[0][0];
+
+  output.grad();
+
+  EXPECT_NEAR(output.val(), 0.66457668563, 1e-5);
+  EXPECT_NEAR(a2[0][0].adj(), -0.50107310888, 1e-5);
+}
+
+TEST(StanMathOde_ode_bdf, std_vector_vector_args) {
+  using stan::math::var;
+
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
+  double t0 = 0.0;
+  std::vector<double> ts = {1.1};
+
+  var a0 = 1.5;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> a1(1);
+  a1 << a0;
+  std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> a2(1, a1);
+
+  var output
+    = stan::math::ode_bdf(CosArg1(), y0, t0, ts, nullptr, a2)[0][0];
+
+  output.grad();
+
+  EXPECT_NEAR(output.val(), 0.66457668563, 1e-5);
+  EXPECT_NEAR(a2[0](0).adj(), -0.50107310888, 1e-5);
+}
+
+TEST(StanMathOde_ode_bdf, std_vector_row_vector_args) {
+  using stan::math::var;
+
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
+  double t0 = 0.0;
+  std::vector<double> ts = {1.1};
+
+  var a0 = 1.5;
+  Eigen::Matrix<var, 1, Eigen::Dynamic> a1(1);
+  a1 << a0;
+  std::vector<Eigen::Matrix<var, 1, Eigen::Dynamic>> a2(1, a1);
+
+  var output
+    = stan::math::ode_bdf(CosArg1(), y0, t0, ts, nullptr, a2)[0][0];
+
+  output.grad();
+
+  EXPECT_NEAR(output.val(), 0.66457668563, 1e-5);
+  EXPECT_NEAR(a2[0](0).adj(), -0.50107310888, 1e-5);
+}
+
+TEST(StanMathOde_ode_bdf, std_vector_matrix_args) {
+  using stan::math::var;
+
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
+  double t0 = 0.0;
+  std::vector<double> ts = {1.1};
+
+  var a0 = 1.5;
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> a1(1, 1);
+  a1 << a0;
+  std::vector<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> a2(1, a1);
+
+  var output
+    = stan::math::ode_bdf(CosArg1(), y0, t0, ts, nullptr, a2)[0][0];
+
+  output.grad();
+
+  EXPECT_NEAR(output.val(), 0.66457668563, 1e-5);
+  EXPECT_NEAR(a2[0](0).adj(), -0.50107310888, 1e-5);
 }
 
 struct ayt {
@@ -324,31 +407,31 @@ TEST(StanMathOde_ode_bdf, arg_combos_test) {
   Eigen::VectorXd y0d = stan::math::value_of(y0);
 
   auto check_yT = [&](auto yT) {
-    EXPECT_FLOAT_EQ(stan::math::value_of(yT),
-                    y0d(0) * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)));
+    EXPECT_NEAR(stan::math::value_of(yT),
+                    y0d(0) * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)), 1e-5);
   };
 
   auto check_t0 = [&](var t0) {
-    EXPECT_FLOAT_EQ(
+    EXPECT_NEAR(
         t0.adj(),
-        ad * t0d * y0d(0) * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)));
+        ad * t0d * y0d(0) * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)), 1e-5);
   };
 
   auto check_a = [&](var a) {
-    EXPECT_FLOAT_EQ(a.adj(),
+    EXPECT_NEAR(a.adj(),
                     -0.5 * (tsd[0] * tsd[0] - t0d * t0d) * y0d(0)
-                        * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)));
+                        * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)), 1e-5);
   };
 
   auto check_ts = [&](std::vector<var> ts) {
-    EXPECT_FLOAT_EQ(
+    EXPECT_NEAR(
         ts[0].adj(),
-        -ad * tsd[0] * y0d(0) * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)));
+        -ad * tsd[0] * y0d(0) * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)), 1e-5);
   };
 
   auto check_y0 = [&](Eigen::Matrix<var, Eigen::Dynamic, 1> y0) {
-    EXPECT_FLOAT_EQ(y0(0).adj(),
-                    exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)));
+    EXPECT_NEAR(y0(0).adj(),
+                    exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)), 1e-5);
   };
 
   double yT1 = stan::math::ode_bdf(ayt(), y0d, t0d, tsd, nullptr, ad)[0](0);

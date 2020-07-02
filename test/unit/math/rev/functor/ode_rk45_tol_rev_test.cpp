@@ -313,6 +313,93 @@ TEST(StanMathOde_ode_rk45_tol, scalar_std_vector_args) {
   EXPECT_FLOAT_EQ(a1[0].adj(), -0.50107310888);
 }
 
+TEST(StanMathOde_ode_rk45_tol, std_vector_std_vector_args) {
+  using stan::math::var;
+
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
+  double t0 = 0.0;
+  std::vector<double> ts = {1.1};
+
+  var a0 = 1.5;
+  std::vector<var> a1(1, a0);
+  std::vector<std::vector<var>> a2(1, a1);
+
+  var output
+    = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
+			       nullptr, a2)[0][0];
+
+  output.grad();
+
+  EXPECT_FLOAT_EQ(output.val(), 0.66457668563);
+  EXPECT_FLOAT_EQ(a2[0][0].adj(), -0.50107310888);
+}
+
+TEST(StanMathOde_ode_rk45_tol, std_vector_vector_args) {
+  using stan::math::var;
+
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
+  double t0 = 0.0;
+  std::vector<double> ts = {1.1};
+
+  var a0 = 1.5;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> a1(1);
+  a1 << a0;
+  std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> a2(1, a1);
+
+  var output
+    = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
+			       nullptr, a2)[0][0];
+
+  output.grad();
+
+  EXPECT_FLOAT_EQ(output.val(), 0.66457668563);
+  EXPECT_FLOAT_EQ(a2[0](0).adj(), -0.50107310888);
+}
+
+TEST(StanMathOde_ode_rk45_tol, std_vector_row_vector_args) {
+  using stan::math::var;
+
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
+  double t0 = 0.0;
+  std::vector<double> ts = {1.1};
+
+  var a0 = 1.5;
+  Eigen::Matrix<var, 1, Eigen::Dynamic> a1(1);
+  a1 << a0;
+  std::vector<Eigen::Matrix<var, 1, Eigen::Dynamic>> a2(1, a1);
+
+  var output
+    = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
+			       nullptr, a2)[0][0];
+
+  output.grad();
+
+  EXPECT_FLOAT_EQ(output.val(), 0.66457668563);
+  EXPECT_FLOAT_EQ(a2[0](0).adj(), -0.50107310888);
+}
+
+TEST(StanMathOde_ode_rk45_tol, std_vector_matrix_args) {
+  using stan::math::var;
+
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
+  double t0 = 0.0;
+  std::vector<double> ts = {1.1};
+
+  var a0 = 1.5;
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> a1(1, 1);
+  a1 << a0;
+  std::vector<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> a2(1, a1);
+
+  var output
+    = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
+			       nullptr, a2)[0][0];
+
+  output.grad();
+
+  EXPECT_FLOAT_EQ(output.val(), 0.66457668563);
+  EXPECT_FLOAT_EQ(a2[0](0).adj(), -0.50107310888);
+}
+
 struct ayt {
   template <typename T0, typename T1, typename T2>
   inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>

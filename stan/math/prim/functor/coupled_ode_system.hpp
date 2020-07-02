@@ -63,16 +63,16 @@ struct coupled_ode_system_impl<true, F, T_y0, Args...> {
     for (size_t n = 0; n < N_; ++n)
       y.coeffRef(n) = z[n];
 
-    dy_dt.resize(N_);
+    dz_dt.resize(N_);
 
     Eigen::VectorXd f_y_t
         = apply([&](const Args&... args) { return f_(t, y, msgs_, args...); },
                 args_tuple_);
 
-    check_size_match("coupled_ode_system", "y", y.size(), "dy_dt",
+    check_size_match("coupled_ode_system", "y", y.size(), "dz_dt",
                      f_y_t.size());
 
-    Eigen::Map<Eigen::VectorXd>(dy_dt.data(), dy_dt.size()) = f_y_t;
+    Eigen::Map<Eigen::VectorXd>(dz_dt.data(), dz_dt.size()) = f_y_t;
   }
 
   /**

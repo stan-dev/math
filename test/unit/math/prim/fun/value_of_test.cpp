@@ -75,6 +75,17 @@ TEST(MathMatrixPrimMat, value_of) {
   EXPECT_MATRIX_FLOAT_EQ(b, d_b);
 }
 
+TEST(MathFunctions, value_of_vector_of_vectors) {
+  std::vector<double> a(5, 0);
+  const std::vector<double> b(5, 0);
+  std::vector<std::vector<double>> va(5, a);
+  const std::vector<std::vector<double>> vb(5, b);
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(va)),
+	       std::vector<std::vector<double>>&>::value));
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(vb)),
+	       const std::vector<std::vector<double>>&>::value));
+}
+
 TEST(MathMatrixPrimMat, value_of_expression) {
   using stan::math::value_of;
 

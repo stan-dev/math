@@ -173,6 +173,14 @@ TEST(ode_rk45_tol_prim, one_arg_errors) {
   Eigen::VectorXd eaNaN(1);
   eaNaN << aNaN;
 
+  std::vector<std::vector<double>> vva = { va };
+  std::vector<std::vector<double>> vvainf = { vainf };
+  std::vector<std::vector<double>> vvaNaN = { vaNaN };
+
+  std::vector<Eigen::VectorXd> vea = { ea };
+  std::vector<Eigen::VectorXd> veainf = { eainf };
+  std::vector<Eigen::VectorXd> veaNaN = { eaNaN };
+
   EXPECT_NO_THROW(stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
                                            1e6, nullptr, a));
 
@@ -205,6 +213,28 @@ TEST(ode_rk45_tol_prim, one_arg_errors) {
   EXPECT_THROW(stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
                                         1e6, nullptr, eaNaN),
                std::domain_error);
+
+  EXPECT_NO_THROW(stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
+                                           1e6, nullptr, vva));
+
+  EXPECT_THROW(stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
+                                        1e6, nullptr, vvainf),
+               std::domain_error);
+
+  EXPECT_THROW(stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
+                                        1e6, nullptr, vvaNaN),
+               std::domain_error);
+
+  EXPECT_NO_THROW(stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
+                                           1e6, nullptr, vea));
+
+  EXPECT_THROW(stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
+                                        1e6, nullptr, veainf),
+               std::domain_error);
+
+  EXPECT_THROW(stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
+                                        1e6, nullptr, veaNaN),
+               std::domain_error);
 }
 
 TEST(ode_rk45_tol_prim, two_arg_errors) {
@@ -226,6 +256,14 @@ TEST(ode_rk45_tol_prim, two_arg_errors) {
   eainf << ainf;
   Eigen::VectorXd eaNaN(1);
   eaNaN << aNaN;
+
+  std::vector<std::vector<double>> vva = { va };
+  std::vector<std::vector<double>> vvainf = { vainf };
+  std::vector<std::vector<double>> vvaNaN = { vaNaN };
+
+  std::vector<Eigen::VectorXd> vea = { ea };
+  std::vector<Eigen::VectorXd> veainf = { eainf };
+  std::vector<Eigen::VectorXd> veaNaN = { eaNaN };
 
   EXPECT_NO_THROW(stan::math::ode_rk45_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10,
                                            1e6, nullptr, a, a));
@@ -258,6 +296,28 @@ TEST(ode_rk45_tol_prim, two_arg_errors) {
 
   EXPECT_THROW(stan::math::ode_rk45_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10,
                                         1e6, nullptr, a, eaNaN),
+               std::domain_error);
+
+  EXPECT_NO_THROW(stan::math::ode_rk45_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10,
+                                           1e6, nullptr, a, vva));
+
+  EXPECT_THROW(stan::math::ode_rk45_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10,
+                                        1e6, nullptr, a, vvainf),
+               std::domain_error);
+
+  EXPECT_THROW(stan::math::ode_rk45_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10,
+                                        1e6, nullptr, a, vvaNaN),
+               std::domain_error);
+
+  EXPECT_NO_THROW(stan::math::ode_rk45_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10,
+                                           1e6, nullptr, a, vea));
+
+  EXPECT_THROW(stan::math::ode_rk45_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10,
+                                        1e6, nullptr, a, veainf),
+               std::domain_error);
+
+  EXPECT_THROW(stan::math::ode_rk45_tol(Cos2Arg(), y0, t0, ts, 1e-10, 1e-10,
+                                        1e6, nullptr, a, veaNaN),
                std::domain_error);
 }
 

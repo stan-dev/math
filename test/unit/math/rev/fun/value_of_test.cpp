@@ -115,3 +115,4 @@ TEST(AgradMatrixRev, value_of_matrix_rvalue) {
 
   EXPECT_MATRIX_NEAR(res, correct, 1e-10);
 }
+
