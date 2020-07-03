@@ -99,33 +99,6 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
         y_adjoints_(N_),
         msgs_(msgs) {}
 
-  inline void zero_adjoints() {}
-
-  template <typename T, typename... Pargs>
-  inline void zero_adjoints(T& x, Pargs&... args) {
-    zero_adjoints(args...);
-  }
-
-  template <typename... Pargs>
-  inline void zero_adjoints(var& x, Pargs&... args) {
-    x.vi_->set_zero_adjoint();
-    zero_adjoints(args...);
-  }
-
-  template <typename T, typename... Pargs>
-  inline void zero_adjoints(std::vector<T>& x, Pargs&... args) {
-    for (size_t i = 0; i < x.size(); ++i)
-      zero_adjoints(x[i]);
-    zero_adjoints(args...);
-  }
-
-  template <int R, int C, typename... Pargs>
-  inline void zero_adjoints(Eigen::Matrix<var, R, C>& x, Pargs&... args) {
-    for (size_t i = 0; i < x.size(); ++i)
-      x.coeffRef(i).vi_->set_zero_adjoint();
-    zero_adjoints(args...);
-  }
-
   /**
    * Calculates the right hand side of the coupled ode system (the regular
    * ode system with forward sensitivities).
