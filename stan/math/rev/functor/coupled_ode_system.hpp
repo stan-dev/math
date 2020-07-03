@@ -173,8 +173,7 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
           },
           local_args_tuple_);
 
-      apply([&](auto&&... args) { zero_adjoints(args...); },
-	    local_args_tuple_);
+      apply([&](auto&&... args) { zero_adjoints(args...); }, local_args_tuple_);
 
       // No need to zero adjoints after last sweep
       if (i < N_) {

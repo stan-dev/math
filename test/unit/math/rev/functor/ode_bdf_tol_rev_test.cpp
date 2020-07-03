@@ -59,7 +59,7 @@ TEST(StanMathOde_ode_bdf_tol, int_t0) {
 
   std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> output
       = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-                                 nullptr, a);
+                                nullptr, a);
 
   EXPECT_FLOAT_EQ(output[0][0], 0.4165982112);
   EXPECT_FLOAT_EQ(output[1][0], 0.66457668563);
@@ -76,7 +76,7 @@ TEST(StanMathOde_ode_bdf_tol, int_ts) {
 
   std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> output
       = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-                                 nullptr, a);
+                                nullptr, a);
 
   EXPECT_FLOAT_EQ(output[0][0], 0.6649966577);
   EXPECT_FLOAT_EQ(output[1][0], 0.09408000537);
@@ -93,7 +93,7 @@ TEST(StanMathOde_ode_bdf_tol, t0) {
 
   std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> output
       = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-                                 nullptr, a);
+                                nullptr, a);
 
   output[0][0].grad();
 
@@ -119,7 +119,7 @@ TEST(StanMathOde_ode_bdf_tol, ts) {
 
   std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> output
       = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-                                 nullptr, a);
+                                nullptr, a);
 
   output[0][0].grad();
 
@@ -145,7 +145,7 @@ TEST(StanMathOde_ode_bdf_tol, ts_repeat) {
 
   std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> output
       = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-                                 nullptr, a);
+                                nullptr, a);
 
   output[0][0].grad();
 
@@ -184,7 +184,7 @@ TEST(StanMathOde_ode_bdf_tol, scalar_arg) {
   var a = 1.5;
 
   var output = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-                                        nullptr, a)[0][0];
+                                       nullptr, a)[0][0];
 
   output.grad();
 
@@ -203,7 +203,7 @@ TEST(StanMathOde_ode_bdf_tol, scalar_arg_multi_time) {
 
   std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> output
       = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-                                 nullptr, a);
+                                nullptr, a);
 
   output[0](0).grad();
 
@@ -228,7 +228,7 @@ TEST(StanMathOde_ode_bdf_tol, std_vector_arg) {
   std::vector<var> a = {1.5};
 
   var output = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-                                        nullptr, a)[0][0];
+                                       nullptr, a)[0][0];
 
   output.grad();
 
@@ -247,7 +247,7 @@ TEST(StanMathOde_ode_bdf_tol, vector_arg) {
   a << 1.5;
 
   var output = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-                                        nullptr, a)[0][0];
+                                       nullptr, a)[0][0];
 
   output.grad();
 
@@ -266,7 +266,7 @@ TEST(StanMathOde_ode_bdf_tol, row_vector_arg) {
   a << 1.5;
 
   var output = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-                                        nullptr, a)[0][0];
+                                       nullptr, a)[0][0];
 
   output.grad();
 
@@ -285,7 +285,7 @@ TEST(StanMathOde_ode_bdf_tol, matrix_arg) {
   a << 1.5;
 
   var output = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-                                        nullptr, a)[0][0];
+                                       nullptr, a)[0][0];
 
   output.grad();
 
@@ -304,7 +304,7 @@ TEST(StanMathOde_ode_bdf_tol, scalar_std_vector_args) {
   std::vector<var> a1 = {0.75};
 
   var output = stan::math::ode_bdf_tol(Cos2Arg(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-                                        nullptr, a0, a1)[0][0];
+                                       nullptr, a0, a1)[0][0];
 
   output.grad();
 
@@ -324,9 +324,8 @@ TEST(StanMathOde_ode_bdf_tol, std_vector_std_vector_args) {
   std::vector<var> a1(1, a0);
   std::vector<std::vector<var>> a2(1, a1);
 
-  var output
-    = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-			       nullptr, a2)[0][0];
+  var output = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
+                                       nullptr, a2)[0][0];
 
   output.grad();
 
@@ -346,9 +345,8 @@ TEST(StanMathOde_ode_bdf_tol, std_vector_vector_args) {
   a1 << a0;
   std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> a2(1, a1);
 
-  var output
-    = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-			       nullptr, a2)[0][0];
+  var output = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
+                                       nullptr, a2)[0][0];
 
   output.grad();
 
@@ -368,9 +366,8 @@ TEST(StanMathOde_ode_bdf_tol, std_vector_row_vector_args) {
   a1 << a0;
   std::vector<Eigen::Matrix<var, 1, Eigen::Dynamic>> a2(1, a1);
 
-  var output
-    = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-			       nullptr, a2)[0][0];
+  var output = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
+                                       nullptr, a2)[0][0];
 
   output.grad();
 
@@ -390,9 +387,8 @@ TEST(StanMathOde_ode_bdf_tol, std_vector_matrix_args) {
   a1 << a0;
   std::vector<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> a2(1, a1);
 
-  var output
-    = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-			       nullptr, a2)[0][0];
+  var output = stan::math::ode_bdf_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
+                                       nullptr, a2)[0][0];
 
   output.grad();
 
@@ -450,25 +446,25 @@ TEST(StanMathOde_ode_bdf_tol, arg_combos_test) {
   };
 
   double yT1 = stan::math::ode_bdf_tol(ayt(), y0d, t0d, tsd, 1e-10, 1e-10, 1e6,
-                                        nullptr, ad)[0](0);
+                                       nullptr, ad)[0](0);
   check_yT(yT1);
 
   var yT2 = stan::math::ode_bdf_tol(ayt(), y0d, t0d, tsd, 1e-10, 1e-10, 1e6,
-                                     nullptr, a)[0](0);
+                                    nullptr, a)[0](0);
   stan::math::set_zero_all_adjoints();
   yT2.grad();
   check_yT(yT2);
   check_a(a);
 
   var yT3 = stan::math::ode_bdf_tol(ayt(), y0d, t0d, ts, 1e-10, 1e-10, 1e6,
-                                     nullptr, ad)[0](0);
+                                    nullptr, ad)[0](0);
   stan::math::set_zero_all_adjoints();
   yT3.grad();
   check_yT(yT3);
   check_ts(ts);
 
   var yT4 = stan::math::ode_bdf_tol(ayt(), y0d, t0d, ts, 1e-10, 1e-10, 1e6,
-                                     nullptr, a)[0](0);
+                                    nullptr, a)[0](0);
   stan::math::set_zero_all_adjoints();
   yT4.grad();
   check_yT(yT4);
@@ -476,14 +472,14 @@ TEST(StanMathOde_ode_bdf_tol, arg_combos_test) {
   check_a(a);
 
   var yT5 = stan::math::ode_bdf_tol(ayt(), y0d, t0, tsd, 1e-10, 1e-10, 1e6,
-                                     nullptr, ad)[0](0);
+                                    nullptr, ad)[0](0);
   stan::math::set_zero_all_adjoints();
   yT5.grad();
   check_yT(yT5);
   check_t0(t0);
 
   var yT6 = stan::math::ode_bdf_tol(ayt(), y0d, t0, tsd, 1e-10, 1e-10, 1e6,
-                                     nullptr, a)[0](0);
+                                    nullptr, a)[0](0);
   stan::math::set_zero_all_adjoints();
   yT6.grad();
   check_yT(yT6);
@@ -491,7 +487,7 @@ TEST(StanMathOde_ode_bdf_tol, arg_combos_test) {
   check_a(a);
 
   var yT7 = stan::math::ode_bdf_tol(ayt(), y0d, t0, ts, 1e-10, 1e-10, 1e6,
-                                     nullptr, ad)[0](0);
+                                    nullptr, ad)[0](0);
   stan::math::set_zero_all_adjoints();
   yT7.grad();
   check_yT(yT7);
@@ -499,7 +495,7 @@ TEST(StanMathOde_ode_bdf_tol, arg_combos_test) {
   check_ts(ts);
 
   var yT8 = stan::math::ode_bdf_tol(ayt(), y0d, t0, ts, 1e-10, 1e-10, 1e6,
-                                     nullptr, a)[0](0);
+                                    nullptr, a)[0](0);
   stan::math::set_zero_all_adjoints();
   yT8.grad();
   check_yT(yT8);
@@ -508,14 +504,14 @@ TEST(StanMathOde_ode_bdf_tol, arg_combos_test) {
   check_a(a);
 
   var yT9 = stan::math::ode_bdf_tol(ayt(), y0, t0d, tsd, 1e-10, 1e-10, 1e6,
-                                     nullptr, ad)[0](0);
+                                    nullptr, ad)[0](0);
   stan::math::set_zero_all_adjoints();
   yT9.grad();
   check_yT(yT9);
   check_y0(y0);
 
   var yT10 = stan::math::ode_bdf_tol(ayt(), y0, t0d, tsd, 1e-10, 1e-10, 1e6,
-                                      nullptr, a)[0](0);
+                                     nullptr, a)[0](0);
   stan::math::set_zero_all_adjoints();
   yT10.grad();
   check_yT(yT10);
@@ -523,7 +519,7 @@ TEST(StanMathOde_ode_bdf_tol, arg_combos_test) {
   check_a(a);
 
   var yT11 = stan::math::ode_bdf_tol(ayt(), y0, t0d, ts, 1e-10, 1e-10, 1e6,
-                                      nullptr, ad)[0](0);
+                                     nullptr, ad)[0](0);
   stan::math::set_zero_all_adjoints();
   yT11.grad();
   check_yT(yT11);
@@ -531,7 +527,7 @@ TEST(StanMathOde_ode_bdf_tol, arg_combos_test) {
   check_ts(ts);
 
   var yT12 = stan::math::ode_bdf_tol(ayt(), y0, t0d, ts, 1e-10, 1e-10, 1e6,
-                                      nullptr, a)[0](0);
+                                     nullptr, a)[0](0);
   stan::math::set_zero_all_adjoints();
   yT12.grad();
   check_yT(yT12);
@@ -540,7 +536,7 @@ TEST(StanMathOde_ode_bdf_tol, arg_combos_test) {
   check_a(a);
 
   var yT13 = stan::math::ode_bdf_tol(ayt(), y0, t0, tsd, 1e-10, 1e-10, 1e6,
-                                      nullptr, ad)[0](0);
+                                     nullptr, ad)[0](0);
   stan::math::set_zero_all_adjoints();
   yT13.grad();
   check_yT(yT13);
@@ -548,7 +544,7 @@ TEST(StanMathOde_ode_bdf_tol, arg_combos_test) {
   check_t0(t0);
 
   var yT14 = stan::math::ode_bdf_tol(ayt(), y0, t0, tsd, 1e-10, 1e-10, 1e6,
-                                      nullptr, a)[0](0);
+                                     nullptr, a)[0](0);
   stan::math::set_zero_all_adjoints();
   yT14.grad();
   check_yT(yT14);
@@ -557,7 +553,7 @@ TEST(StanMathOde_ode_bdf_tol, arg_combos_test) {
   check_a(a);
 
   var yT15 = stan::math::ode_bdf_tol(ayt(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-                                      nullptr, ad)[0](0);
+                                     nullptr, ad)[0](0);
   stan::math::set_zero_all_adjoints();
   yT15.grad();
   check_yT(yT15);
@@ -566,7 +562,7 @@ TEST(StanMathOde_ode_bdf_tol, arg_combos_test) {
   check_ts(ts);
 
   var yT16 = stan::math::ode_bdf_tol(ayt(), y0, t0, ts, 1e-10, 1e-10, 1e6,
-                                      nullptr, a)[0](0);
+                                     nullptr, a)[0](0);
   stan::math::set_zero_all_adjoints();
   yT16.grad();
   check_yT(yT16);

@@ -161,13 +161,13 @@ TEST(ode_adams_prim, one_arg_errors) {
   Eigen::VectorXd eaNaN(1);
   eaNaN << aNaN;
 
-  std::vector<std::vector<double>> vva = { va };
-  std::vector<std::vector<double>> vvainf = { vainf };
-  std::vector<std::vector<double>> vvaNaN = { vaNaN };
+  std::vector<std::vector<double>> vva = {va};
+  std::vector<std::vector<double>> vvainf = {vainf};
+  std::vector<std::vector<double>> vvaNaN = {vaNaN};
 
-  std::vector<Eigen::VectorXd> vea = { ea };
-  std::vector<Eigen::VectorXd> veainf = { eainf };
-  std::vector<Eigen::VectorXd> veaNaN = { eaNaN };
+  std::vector<Eigen::VectorXd> vea = {ea};
+  std::vector<Eigen::VectorXd> veainf = {eainf};
+  std::vector<Eigen::VectorXd> veaNaN = {eaNaN};
 
   EXPECT_NO_THROW(stan::math::ode_adams(CosArg1(), y0, t0, ts, nullptr, a));
 
@@ -230,13 +230,13 @@ TEST(ode_adams_prim, two_arg_errors) {
   Eigen::VectorXd eaNaN(1);
   eaNaN << aNaN;
 
-  std::vector<std::vector<double>> vva = { va };
-  std::vector<std::vector<double>> vvainf = { vainf };
-  std::vector<std::vector<double>> vvaNaN = { vaNaN };
+  std::vector<std::vector<double>> vva = {va};
+  std::vector<std::vector<double>> vvainf = {vainf};
+  std::vector<std::vector<double>> vvaNaN = {vaNaN};
 
-  std::vector<Eigen::VectorXd> vea = { ea };
-  std::vector<Eigen::VectorXd> veainf = { eainf };
-  std::vector<Eigen::VectorXd> veaNaN = { eaNaN };
+  std::vector<Eigen::VectorXd> vea = {ea};
+  std::vector<Eigen::VectorXd> veainf = {eainf};
+  std::vector<Eigen::VectorXd> veaNaN = {eaNaN};
 
   EXPECT_NO_THROW(stan::math::ode_adams(Cos2Arg(), y0, t0, ts, nullptr, a, a));
 
@@ -262,7 +262,8 @@ TEST(ode_adams_prim, two_arg_errors) {
   EXPECT_THROW(stan::math::ode_adams(Cos2Arg(), y0, t0, ts, nullptr, a, eaNaN),
                std::domain_error);
 
-  EXPECT_NO_THROW(stan::math::ode_adams(Cos2Arg(), y0, t0, ts, nullptr, a, vva));
+  EXPECT_NO_THROW(
+      stan::math::ode_adams(Cos2Arg(), y0, t0, ts, nullptr, a, vva));
 
   EXPECT_THROW(stan::math::ode_adams(Cos2Arg(), y0, t0, ts, nullptr, a, vvainf),
                std::domain_error);
@@ -270,7 +271,8 @@ TEST(ode_adams_prim, two_arg_errors) {
   EXPECT_THROW(stan::math::ode_adams(Cos2Arg(), y0, t0, ts, nullptr, a, vvaNaN),
                std::domain_error);
 
-  EXPECT_NO_THROW(stan::math::ode_adams(Cos2Arg(), y0, t0, ts, nullptr, a, vea));
+  EXPECT_NO_THROW(
+      stan::math::ode_adams(Cos2Arg(), y0, t0, ts, nullptr, a, vea));
 
   EXPECT_THROW(stan::math::ode_adams(Cos2Arg(), y0, t0, ts, nullptr, a, veainf),
                std::domain_error);

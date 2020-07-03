@@ -160,13 +160,13 @@ TEST(ode_rk45_prim, one_arg_errors) {
   Eigen::VectorXd eaNaN(1);
   eaNaN << aNaN;
 
-  std::vector<std::vector<double>> vva = { va };
-  std::vector<std::vector<double>> vvainf = { vainf };
-  std::vector<std::vector<double>> vvaNaN = { vaNaN };
+  std::vector<std::vector<double>> vva = {va};
+  std::vector<std::vector<double>> vvainf = {vainf};
+  std::vector<std::vector<double>> vvaNaN = {vaNaN};
 
-  std::vector<Eigen::VectorXd> vea = { ea };
-  std::vector<Eigen::VectorXd> veainf = { eainf };
-  std::vector<Eigen::VectorXd> veaNaN = { eaNaN };
+  std::vector<Eigen::VectorXd> vea = {ea};
+  std::vector<Eigen::VectorXd> veainf = {eainf};
+  std::vector<Eigen::VectorXd> veaNaN = {eaNaN};
 
   EXPECT_NO_THROW(stan::math::ode_rk45(CosArg1(), y0, t0, ts, nullptr, a));
 
@@ -229,13 +229,13 @@ TEST(ode_rk45_prim, two_arg_errors) {
   Eigen::VectorXd eaNaN(1);
   eaNaN << aNaN;
 
-  std::vector<std::vector<double>> vva = { va };
-  std::vector<std::vector<double>> vvainf = { vainf };
-  std::vector<std::vector<double>> vvaNaN = { vaNaN };
+  std::vector<std::vector<double>> vva = {va};
+  std::vector<std::vector<double>> vvainf = {vainf};
+  std::vector<std::vector<double>> vvaNaN = {vaNaN};
 
-  std::vector<Eigen::VectorXd> vea = { ea };
-  std::vector<Eigen::VectorXd> veainf = { eainf };
-  std::vector<Eigen::VectorXd> veaNaN = { eaNaN };
+  std::vector<Eigen::VectorXd> vea = {ea};
+  std::vector<Eigen::VectorXd> veainf = {eainf};
+  std::vector<Eigen::VectorXd> veaNaN = {eaNaN};
 
   EXPECT_NO_THROW(stan::math::ode_rk45(Cos2Arg(), y0, t0, ts, nullptr, a, a));
 

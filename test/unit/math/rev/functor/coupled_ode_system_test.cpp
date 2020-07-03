@@ -43,10 +43,9 @@ TEST_F(StanAgradRevOde, coupled_ode_system_dv) {
 
   std::size_t stack_size = stan::math::nested_size();
 
-  coupled_ode_system<decltype(harm_osc), double,
-		     std::vector<stan::math::var>,
-		     std::vector<double>, std::vector<int>> system(
-      harm_osc, y0, &msgs, theta, x, x_int);
+  coupled_ode_system<decltype(harm_osc), double, std::vector<stan::math::var>,
+                     std::vector<double>, std::vector<int>>
+      system(harm_osc, y0, &msgs, theta, x, x_int);
 
   EXPECT_EQ(stack_size, stan::math::nested_size())
       << "expecting no new things on the stack";
@@ -76,10 +75,9 @@ TEST_F(StanAgradRevOde, initial_state_dv) {
   for (size_t m = 0; m < M; m++)
     theta_v[m] = 10 * (m + 1);
 
-  coupled_ode_system<decltype(base_ode), double,
-		     std::vector<stan::math::var>,
-		     std::vector<double>, std::vector<int>> coupled_system_dv(
-      base_ode, y0_d, &msgs, theta_v, x, x_int);
+  coupled_ode_system<decltype(base_ode), double, std::vector<stan::math::var>,
+                     std::vector<double>, std::vector<int>>
+      coupled_system_dv(base_ode, y0_d, &msgs, theta_v, x, x_int);
 
   std::vector<double> state = coupled_system_dv.initial_state();
   for (size_t n = 0; n < N; n++)
@@ -102,10 +100,9 @@ TEST_F(StanAgradRevOde, size_dv) {
   Eigen::VectorXd y0_d = Eigen::VectorXd::Zero(N);
   std::vector<var> theta_v(M, 0.0);
 
-  coupled_ode_system<decltype(base_ode), double,
-		     std::vector<stan::math::var>,
-		     std::vector<double>, std::vector<int>> coupled_system_dv(
-      base_ode, y0_d, &msgs, theta_v, x, x_int);
+  coupled_ode_system<decltype(base_ode), double, std::vector<stan::math::var>,
+                     std::vector<double>, std::vector<int>>
+      coupled_system_dv(base_ode, y0_d, &msgs, theta_v, x, x_int);
 
   EXPECT_EQ(z_size, coupled_system_dv.size());
 }
@@ -122,10 +119,9 @@ TEST_F(StanAgradRevOde, memory_recovery_dv) {
   Eigen::VectorXd y0_d = Eigen::VectorXd::Zero(N);
   std::vector<var> theta_v(M, 0.0);
 
-  coupled_ode_system<decltype(base_ode), double,
-		     std::vector<stan::math::var>,
-		     std::vector<double>, std::vector<int>> coupled_system_dv(
-      base_ode, y0_d, &msgs, theta_v, x, x_int);
+  coupled_ode_system<decltype(base_ode), double, std::vector<stan::math::var>,
+                     std::vector<double>, std::vector<int>>
+      coupled_system_dv(base_ode, y0_d, &msgs, theta_v, x, x_int);
 
   std::vector<double> z(z_size, 0);
   std::vector<double> dz_dt(z_size, 0);
@@ -155,9 +151,9 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_dv) {
     std::vector<var> theta_v(M, 0.0);
 
     coupled_ode_system<decltype(throwing_ode), double,
-		       std::vector<stan::math::var>,
-		       std::vector<double>, std::vector<int>>
-      coupled_system_dv(throwing_ode, y0_d, &msgs, theta_v, x, x_int);
+                       std::vector<stan::math::var>, std::vector<double>,
+                       std::vector<int>>
+        coupled_system_dv(throwing_ode, y0_d, &msgs, theta_v, x, x_int);
 
     std::vector<double> z(z_size, 0);
     std::vector<double> dz_dt(z_size, 0);
@@ -204,10 +200,9 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vd) {
 
   std::size_t stack_size = stan::math::nested_size();
 
-  coupled_ode_system<decltype(harm_osc), stan::math::var,
-		       std::vector<double>,
-		       std::vector<double>, std::vector<int>>
-    system(harm_osc, y0_var, &msgs, theta, x, x_int);
+  coupled_ode_system<decltype(harm_osc), stan::math::var, std::vector<double>,
+                     std::vector<double>, std::vector<int>>
+      system(harm_osc, y0_var, &msgs, theta, x, x_int);
 
   EXPECT_EQ(stack_size, stan::math::nested_size())
       << "expecting no new things on the stack";
@@ -230,8 +225,8 @@ TEST_F(StanAgradRevOde, initial_state_vd) {
   const size_t N = 3;
   const size_t M = 4;
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y0_v =
-    Eigen::VectorXd::Zero(N).template cast<var>();
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y0_v
+      = Eigen::VectorXd::Zero(N).template cast<var>();
   std::vector<double> theta_d(M, 0.0);
 
   for (size_t n = 0; n < N; n++)
@@ -239,10 +234,9 @@ TEST_F(StanAgradRevOde, initial_state_vd) {
   for (size_t m = 0; m < M; m++)
     theta_d[m] = 10 * (m + 1);
 
-  coupled_ode_system<decltype(base_ode), stan::math::var,
-		       std::vector<double>,
-		       std::vector<double>, std::vector<int>>
-    coupled_system_vd(base_ode, y0_v, &msgs, theta_d, x, x_int);
+  coupled_ode_system<decltype(base_ode), stan::math::var, std::vector<double>,
+                     std::vector<double>, std::vector<int>>
+      coupled_system_vd(base_ode, y0_v, &msgs, theta_d, x, x_int);
 
   std::vector<double> state;
 
@@ -263,14 +257,13 @@ TEST_F(StanAgradRevOde, size_vd) {
   const size_t M = 4;
   const size_t z_size = N + N * N;
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y0_v =
-    Eigen::VectorXd::Zero(N).template cast<var>();
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y0_v
+      = Eigen::VectorXd::Zero(N).template cast<var>();
   std::vector<double> theta_d(M, 0.0);
 
-  coupled_ode_system<decltype(base_ode), stan::math::var,
-		       std::vector<double>,
-		       std::vector<double>, std::vector<int>>
-    coupled_system_vd(base_ode, y0_v, &msgs, theta_d, x, x_int);
+  coupled_ode_system<decltype(base_ode), stan::math::var, std::vector<double>,
+                     std::vector<double>, std::vector<int>>
+      coupled_system_vd(base_ode, y0_v, &msgs, theta_d, x, x_int);
 
   EXPECT_EQ(z_size, coupled_system_vd.size());
 }
@@ -284,14 +277,13 @@ TEST_F(StanAgradRevOde, memory_recovery_vd) {
   const size_t M = 4;
   const size_t z_size = N + N * N;
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y0_v =
-    Eigen::VectorXd::Zero(N).template cast<var>();
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y0_v
+      = Eigen::VectorXd::Zero(N).template cast<var>();
   std::vector<double> theta_d(M, 0.0);
 
-  coupled_ode_system<decltype(base_ode), stan::math::var,
-		     std::vector<double>,
-		     std::vector<double>, std::vector<int>>
-    coupled_system_vd(base_ode, y0_v, &msgs, theta_d, x, x_int);
+  coupled_ode_system<decltype(base_ode), stan::math::var, std::vector<double>,
+                     std::vector<double>, std::vector<int>>
+      coupled_system_vd(base_ode, y0_v, &msgs, theta_d, x, x_int);
 
   std::vector<double> z(z_size, 0);
   std::vector<double> dz_dt(z_size, 0);
@@ -317,14 +309,14 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_vd) {
     SCOPED_TRACE(scoped_message.str());
     mock_throwing_ode_functor<std::logic_error> throwing_ode(message, 1);
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y0_v =
-    Eigen::VectorXd::Zero(N).template cast<var>();
+    Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y0_v
+        = Eigen::VectorXd::Zero(N).template cast<var>();
     std::vector<double> theta_d(M, 0.0);
 
     coupled_ode_system<decltype(throwing_ode), stan::math::var,
-		       std::vector<double>,
-		       std::vector<double>, std::vector<int>>
-      coupled_system_vd(throwing_ode, y0_v, &msgs, theta_d, x, x_int);
+                       std::vector<double>, std::vector<double>,
+                       std::vector<int>>
+        coupled_system_vd(throwing_ode, y0_v, &msgs, theta_d, x, x_int);
 
     std::vector<double> z(z_size, 0);
     std::vector<double> dz_dt(z_size, 0);
@@ -359,9 +351,9 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
   std::size_t stack_size = stan::math::nested_size();
 
   coupled_ode_system<decltype(harm_osc), stan::math::var,
-		     std::vector<stan::math::var>,
-		     std::vector<double>, std::vector<int>>
-    system(harm_osc, y0_var, &msgs, theta_var, x, x_int);
+                     std::vector<stan::math::var>, std::vector<double>,
+                     std::vector<int>>
+      system(harm_osc, y0_var, &msgs, theta_var, x, x_int);
 
   EXPECT_EQ(stack_size, stan::math::nested_size())
       << "expecting no new things on the stack";
@@ -405,8 +397,8 @@ TEST_F(StanAgradRevOde, initial_state_vv) {
   const size_t N = 3;
   const size_t M = 4;
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y0_v =
-    Eigen::VectorXd::Zero(N).template cast<var>();
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y0_v
+      = Eigen::VectorXd::Zero(N).template cast<var>();
   std::vector<var> theta_v(M, 0.0);
 
   for (size_t n = 0; n < N; n++)
@@ -415,9 +407,9 @@ TEST_F(StanAgradRevOde, initial_state_vv) {
     theta_v[m] = 10 * (m + 1);
 
   coupled_ode_system<decltype(base_ode), stan::math::var,
-		     std::vector<stan::math::var>,
-		     std::vector<double>, std::vector<int>>
-    coupled_system_vv(base_ode, y0_v, &msgs, theta_v, x, x_int);
+                     std::vector<stan::math::var>, std::vector<double>,
+                     std::vector<int>>
+      coupled_system_vv(base_ode, y0_v, &msgs, theta_v, x, x_int);
 
   std::vector<double> state = coupled_system_vv.initial_state();
   for (size_t n = 0; n < N; n++)
@@ -438,14 +430,14 @@ TEST_F(StanAgradRevOde, size_vv) {
   const size_t M = 4;
   const size_t z_size = N + N * N + N * M;
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y0_v =
-    Eigen::VectorXd::Zero(N).template cast<var>();
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y0_v
+      = Eigen::VectorXd::Zero(N).template cast<var>();
   std::vector<var> theta_v(M, 0.0);
 
   coupled_ode_system<decltype(base_ode), stan::math::var,
-		     std::vector<stan::math::var>,
-		     std::vector<double>, std::vector<int>>
-    coupled_system_vv(base_ode, y0_v, &msgs, theta_v, x, x_int);
+                     std::vector<stan::math::var>, std::vector<double>,
+                     std::vector<int>>
+      coupled_system_vv(base_ode, y0_v, &msgs, theta_v, x, x_int);
 
   EXPECT_EQ(z_size, coupled_system_vv.size());
 }
@@ -459,14 +451,14 @@ TEST_F(StanAgradRevOde, memory_recovery_vv) {
   const size_t M = 4;
   const size_t z_size = N + N * N + N * M;
 
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y0_v =
-    Eigen::VectorXd::Zero(N).template cast<var>();
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y0_v
+      = Eigen::VectorXd::Zero(N).template cast<var>();
   std::vector<var> theta_v(M, 0.0);
 
   coupled_ode_system<decltype(base_ode), stan::math::var,
-		     std::vector<stan::math::var>,
-		     std::vector<double>, std::vector<int>>
-    coupled_system_vv(base_ode, y0_v, &msgs, theta_v, x, x_int);
+                     std::vector<stan::math::var>, std::vector<double>,
+                     std::vector<int>>
+      coupled_system_vv(base_ode, y0_v, &msgs, theta_v, x, x_int);
 
   std::vector<double> z(z_size, 0);
   std::vector<double> dz_dt(z_size, 0);
@@ -492,14 +484,14 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_vv) {
     SCOPED_TRACE(scoped_message.str());
     mock_throwing_ode_functor<std::logic_error> throwing_ode(message, 1);
 
-    Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y0_v =
-      Eigen::VectorXd::Zero(N).template cast<var>();
+    Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y0_v
+        = Eigen::VectorXd::Zero(N).template cast<var>();
     std::vector<var> theta_v(M, 0.0);
 
     coupled_ode_system<decltype(throwing_ode), stan::math::var,
-		       std::vector<stan::math::var>,
-		       std::vector<double>, std::vector<int>>
-      coupled_system_vv(throwing_ode, y0_v, &msgs, theta_v, x, x_int);
+                       std::vector<stan::math::var>, std::vector<double>,
+                       std::vector<int>>
+        coupled_system_vv(throwing_ode, y0_v, &msgs, theta_v, x, x_int);
 
     std::vector<double> z(z_size, 0);
     std::vector<double> dz_dt(z_size, 0);
@@ -533,10 +525,11 @@ auto sum_(Vec&& arg) {
 struct ayt {
   template <typename T0, typename T_y, typename... T_Args>
   inline auto operator()(const T0& t, const T_y& y, std::ostream* msgs,
-			 const T_Args&... args) const {
+                         const T_Args&... args) const {
     std::vector<typename stan::return_type<T_Args...>::type> vec
         = {sum_(args)...};
-    Eigen::Matrix<stan::return_type_t<T0, T_y, T_Args...>, Eigen::Dynamic, 1> out(2);
+    Eigen::Matrix<stan::return_type_t<T0, T_y, T_Args...>, Eigen::Dynamic, 1>
+        out(2);
     out(0) = -sum_(vec) * y(0) * t;
     out(1) = -1.7 * sum_(vec) * y(1) * t;
     return out;
@@ -556,11 +549,10 @@ TEST_F(StanAgradRevOde, coupled_ode_system_var) {
 
   ayt func;
 
-  coupled_ode_system<ayt, stan::math::var,
-		     decltype(av)>
-    system(func, y0v, &msgs, av);
+  coupled_ode_system<ayt, stan::math::var, decltype(av)> system(func, y0v,
+                                                                &msgs, av);
 
-  std::vector<double> z = { y0(0), y0(1), 3.2, 3.3, 4.4, 4.5, 2.1, 2.2 };
+  std::vector<double> z = {y0(0), y0(1), 3.2, 3.3, 4.4, 4.5, 2.1, 2.2};
 
   double t0 = 0.75;
 
@@ -585,15 +577,14 @@ TEST_F(StanAgradRevOde, coupled_ode_system_std_vector) {
   y0 << 0.1, 0.2;
   Eigen::Matrix<var, Eigen::Dynamic, 1> y0v = y0.template cast<var>();
 
-  std::vector<var> av = { 1.3 };
+  std::vector<var> av = {1.3};
 
   ayt func;
 
-  coupled_ode_system<ayt, stan::math::var,
-		     decltype(av)>
-    system(func, y0v, &msgs, av);
+  coupled_ode_system<ayt, stan::math::var, decltype(av)> system(func, y0v,
+                                                                &msgs, av);
 
-  std::vector<double> z = { y0(0), y0(1), 3.2, 3.3, 4.4, 4.5, 2.1, 2.2 };
+  std::vector<double> z = {y0(0), y0(1), 3.2, 3.3, 4.4, 4.5, 2.1, 2.2};
 
   double t0 = 0.75;
 
@@ -619,15 +610,14 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vector) {
   Eigen::Matrix<var, Eigen::Dynamic, 1> y0v = y0.template cast<var>();
 
   Eigen::Matrix<var, Eigen::Dynamic, 1> av(1);
-  av << 1.3 ;
+  av << 1.3;
 
   ayt func;
 
-  coupled_ode_system<ayt, stan::math::var,
-		     decltype(av)>
-    system(func, y0v, &msgs, av);
+  coupled_ode_system<ayt, stan::math::var, decltype(av)> system(func, y0v,
+                                                                &msgs, av);
 
-  std::vector<double> z = { y0(0), y0(1), 3.2, 3.3, 4.4, 4.5, 2.1, 2.2 };
+  std::vector<double> z = {y0(0), y0(1), 3.2, 3.3, 4.4, 4.5, 2.1, 2.2};
 
   double t0 = 0.75;
 
@@ -653,15 +643,14 @@ TEST_F(StanAgradRevOde, coupled_ode_system_row_vector) {
   Eigen::Matrix<var, Eigen::Dynamic, 1> y0v = y0.template cast<var>();
 
   Eigen::Matrix<var, 1, Eigen::Dynamic> av(1);
-  av << 1.3 ;
+  av << 1.3;
 
   ayt func;
 
-  coupled_ode_system<ayt, stan::math::var,
-		     decltype(av)>
-    system(func, y0v, &msgs, av);
+  coupled_ode_system<ayt, stan::math::var, decltype(av)> system(func, y0v,
+                                                                &msgs, av);
 
-  std::vector<double> z = { y0(0), y0(1), 3.2, 3.3, 4.4, 4.5, 2.1, 2.2 };
+  std::vector<double> z = {y0(0), y0(1), 3.2, 3.3, 4.4, 4.5, 2.1, 2.2};
 
   double t0 = 0.75;
 
@@ -687,15 +676,14 @@ TEST_F(StanAgradRevOde, coupled_ode_system_matrix) {
   Eigen::Matrix<var, Eigen::Dynamic, 1> y0v = y0.template cast<var>();
 
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> av(1, 1);
-  av << 1.3 ;
+  av << 1.3;
 
   ayt func;
 
-  coupled_ode_system<ayt, stan::math::var,
-		     decltype(av)>
-    system(func, y0v, &msgs, av);
+  coupled_ode_system<ayt, stan::math::var, decltype(av)> system(func, y0v,
+                                                                &msgs, av);
 
-  std::vector<double> z = { y0(0), y0(1), 3.2, 3.3, 4.4, 4.5, 2.1, 2.2 };
+  std::vector<double> z = {y0(0), y0(1), 3.2, 3.3, 4.4, 4.5, 2.1, 2.2};
 
   double t0 = 0.75;
 
@@ -724,7 +712,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_extra_args) {
   av << -0.2;
   int e1 = 1;
   double e2 = 0.1;
-  std::vector<double> e3 = { 0.1 };
+  std::vector<double> e3 = {0.1};
   Eigen::VectorXd e4(1);
   e4 << 0.1;
   Eigen::VectorXd e5(1);
@@ -734,13 +722,12 @@ TEST_F(StanAgradRevOde, coupled_ode_system_extra_args) {
 
   ayt func;
 
-  coupled_ode_system<ayt, stan::math::var,
-		     decltype(av),
-		     decltype(e1), decltype(e2), decltype(e3),
-		     decltype(e4), decltype(e5), decltype(e6)>
-    system(func, y0v, &msgs, av, e1, e2, e3, e4, e5, e6);
+  coupled_ode_system<ayt, stan::math::var, decltype(av), decltype(e1),
+                     decltype(e2), decltype(e3), decltype(e4), decltype(e5),
+                     decltype(e6)>
+      system(func, y0v, &msgs, av, e1, e2, e3, e4, e5, e6);
 
-  std::vector<double> z = { y0(0), y0(1), 3.2, 3.3, 4.4, 4.5, 2.1, 2.2 };
+  std::vector<double> z = {y0(0), y0(1), 3.2, 3.3, 4.4, 4.5, 2.1, 2.2};
 
   double t0 = 0.75;
 
