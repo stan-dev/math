@@ -186,9 +186,18 @@ class vari_value<T, T, std::enable_if_t<std::is_floating_point<T>::value>>
 // For backwards compatability the default is double
 using vari = vari_value<double>;
 
+/**
+ * Version of `vari_base` that ensures its destructor is called when memory is
+ * recovered.
+ */
 class vari_base_destructor : public vari_base, public chainable_alloc {};
 
-template <bool>
+/**
+ * Determines approbriate base (`vari_base` or `vari_base_destructor`) for a
+ * vari type depending on whether its variable and adjoint types are trivially
+ * destructible.
+ */
+template <bool IsTriviallyDestructible>
 struct get_vari_base {
   using type = vari_base;
 };
@@ -282,8 +291,10 @@ class vari_value<T_val, T_adj,
    * derivative propagation, the chain() method of each variable
    * will be called in the reverse order of construction.
    *
-   * @tparam S A dense Eigen type that is convertible to `value_type`
-   * @param x Value of the constructed variable.
+   * @tparam R A dense Eigen type that is convertible to `T_val`
+   * @tparam S A dense Eigen type that is convertible to `T_adj`
+   * @param val Value of the constructed variable.
+   * @param adj Adjoint of the constructed variable.
    */
   template <typename R, typename S, require_convertible_t<R&, T_val>* = nullptr,
             require_convertible_t<S&, T_adj>* = nullptr>
@@ -321,6 +332,14 @@ class vari_value<T_val, T_adj,
     }
   }
 
+  /**
+   * Returns a view into a block of matrix.
+   * @param row starting row of the block
+   * @param col starting column of the block
+   * @param rows number of rows in the block
+   * @param cols number of columns in the block
+   * @return block
+   */
   const vari_value<Eigen::Block<const T_val>, Eigen::Block<T_adj>> block(
       Eigen::Index row, Eigen::Index col, Eigen::Index rows,
       Eigen::Index cols) {
