@@ -31,8 +31,7 @@ TEST(AgradRev, zero_arithmetic) {
   stan::math::zero_adjoints(vd);
   stan::math::zero_adjoints(ve);
 
-  stan::math::zero_adjoints(a, b, va, vb, c, d, e,
-		vva, vvb, vc, vd, ve);
+  stan::math::zero_adjoints(a, b, va, vb, c, d, e, vva, vvb, vc, vd, ve);
 }
 
 TEST(AgradRev, zero_var) {
@@ -53,11 +52,11 @@ TEST(AgradRev, zero_std_vector_var) {
   using stan::math::vari;
 
   std::vector<var> a(5, 0.0);
-  for(size_t i = 0; i < a.size(); ++i)
+  for (size_t i = 0; i < a.size(); ++i)
     a[i].vi_->adj_ = i + 1.0;
 
   stan::math::zero_adjoints(a);
-  for(size_t i = 0; i < a.size(); ++i)
+  for (size_t i = 0; i < a.size(); ++i)
     EXPECT_FLOAT_EQ(a[i].vi_->adj_, 0.0);
 
   stan::math::recover_memory();
@@ -67,13 +66,13 @@ TEST(AgradRev, zero_vector_var) {
   using stan::math::var;
   using stan::math::vari;
 
-  Eigen::Matrix<var, Eigen::Dynamic, 1> a =
-    Eigen::VectorXd::Zero(5).template cast<var>();
-  for(size_t i = 0; i < a.size(); ++i)
+  Eigen::Matrix<var, Eigen::Dynamic, 1> a
+      = Eigen::VectorXd::Zero(5).template cast<var>();
+  for (size_t i = 0; i < a.size(); ++i)
     a(i).vi_->adj_ = i + 1.0;
 
   stan::math::zero_adjoints(a);
-  for(size_t i = 0; i < a.size(); ++i)
+  for (size_t i = 0; i < a.size(); ++i)
     EXPECT_FLOAT_EQ(a(i).vi_->adj_, 0.0);
 
   stan::math::recover_memory();
@@ -83,13 +82,13 @@ TEST(AgradRev, zero_row_vector_var) {
   using stan::math::var;
   using stan::math::vari;
 
-  Eigen::Matrix<var, 1, Eigen::Dynamic> a =
-    Eigen::RowVectorXd::Zero(5).template cast<var>();
-  for(size_t i = 0; i < a.size(); ++i)
+  Eigen::Matrix<var, 1, Eigen::Dynamic> a
+      = Eigen::RowVectorXd::Zero(5).template cast<var>();
+  for (size_t i = 0; i < a.size(); ++i)
     a(i).vi_->adj_ = i + 1.0;
 
   stan::math::zero_adjoints(a);
-  for(size_t i = 0; i < a.size(); ++i)
+  for (size_t i = 0; i < a.size(); ++i)
     EXPECT_FLOAT_EQ(a(i).vi_->adj_, 0.0);
 
   stan::math::recover_memory();
@@ -99,13 +98,13 @@ TEST(AgradRev, zero_matrix_var) {
   using stan::math::var;
   using stan::math::vari;
 
-  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> a =
-    Eigen::MatrixXd::Zero(5, 5).template cast<var>();
-  for(size_t i = 0; i < a.size(); ++i)
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> a
+      = Eigen::MatrixXd::Zero(5, 5).template cast<var>();
+  for (size_t i = 0; i < a.size(); ++i)
     a(i).vi_->adj_ = i + 1.0;
 
   stan::math::zero_adjoints(a);
-  for(size_t i = 0; i < a.size(); ++i)
+  for (size_t i = 0; i < a.size(); ++i)
     EXPECT_FLOAT_EQ(a(i).vi_->adj_, 0.0);
 
   stan::math::recover_memory();
@@ -118,14 +117,14 @@ TEST(AgradRev, zero_std_vector_std_vector_var) {
   std::vector<var> a(5, 0.0);
   std::vector<var> b(5, 1.0);
   std::vector<var> c(5, 2.0);
-  std::vector<std::vector<var>> va = { a, b, c };
-  for(size_t i = 0; i < va.size(); ++i)
-    for(size_t j = 0; j < va[i].size(); ++j)
+  std::vector<std::vector<var>> va = {a, b, c};
+  for (size_t i = 0; i < va.size(); ++i)
+    for (size_t j = 0; j < va[i].size(); ++j)
       va[i][j].vi_->adj_ = i + 1.0;
 
   stan::math::zero_adjoints(va);
-  for(size_t i = 0; i < va.size(); ++i)
-    for(size_t j = 0; j < va[i].size(); ++j)
+  for (size_t i = 0; i < va.size(); ++i)
+    for (size_t j = 0; j < va[i].size(); ++j)
       EXPECT_FLOAT_EQ(va[i][j].vi_->adj_, 0.0);
 
   stan::math::recover_memory();
@@ -135,20 +134,20 @@ TEST(AgradRev, zero_std_vector_vector_var) {
   using stan::math::var;
   using stan::math::vari;
 
-  Eigen::Matrix<var, Eigen::Dynamic, 1> a =
-    Eigen::VectorXd::Zero(3).template cast<var>();
-  Eigen::Matrix<var, Eigen::Dynamic, 1> b =
-    Eigen::VectorXd::Zero(4).template cast<var>();
-  Eigen::Matrix<var, Eigen::Dynamic, 1> c =
-    Eigen::VectorXd::Zero(5).template cast<var>();
-  std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> va = { a, b, c };
-  for(size_t i = 0; i < va.size(); ++i)
-    for(size_t j = 0; j < va[i].size(); ++j)
+  Eigen::Matrix<var, Eigen::Dynamic, 1> a
+      = Eigen::VectorXd::Zero(3).template cast<var>();
+  Eigen::Matrix<var, Eigen::Dynamic, 1> b
+      = Eigen::VectorXd::Zero(4).template cast<var>();
+  Eigen::Matrix<var, Eigen::Dynamic, 1> c
+      = Eigen::VectorXd::Zero(5).template cast<var>();
+  std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> va = {a, b, c};
+  for (size_t i = 0; i < va.size(); ++i)
+    for (size_t j = 0; j < va[i].size(); ++j)
       va[i](j).vi_->adj_ = i + 1.0;
 
   stan::math::zero_adjoints(va);
-  for(size_t i = 0; i < va.size(); ++i)
-    for(size_t j = 0; j < va[i].size(); ++j)
+  for (size_t i = 0; i < va.size(); ++i)
+    for (size_t j = 0; j < va[i].size(); ++j)
       EXPECT_FLOAT_EQ(va[i](j).vi_->adj_, 0.0);
 
   stan::math::recover_memory();
@@ -158,20 +157,20 @@ TEST(AgradRev, zero_std_vector_row_vector_var) {
   using stan::math::var;
   using stan::math::vari;
 
-  Eigen::Matrix<var, 1, Eigen::Dynamic> a =
-    Eigen::RowVectorXd::Zero(3).template cast<var>();
-  Eigen::Matrix<var, 1, Eigen::Dynamic> b =
-    Eigen::RowVectorXd::Zero(4).template cast<var>();
-  Eigen::Matrix<var, 1, Eigen::Dynamic> c =
-    Eigen::RowVectorXd::Zero(5).template cast<var>();
-  std::vector<Eigen::Matrix<var, 1, Eigen::Dynamic>> va = { a, b, c };
-  for(size_t i = 0; i < va.size(); ++i)
-    for(size_t j = 0; j < va[i].size(); ++j)
+  Eigen::Matrix<var, 1, Eigen::Dynamic> a
+      = Eigen::RowVectorXd::Zero(3).template cast<var>();
+  Eigen::Matrix<var, 1, Eigen::Dynamic> b
+      = Eigen::RowVectorXd::Zero(4).template cast<var>();
+  Eigen::Matrix<var, 1, Eigen::Dynamic> c
+      = Eigen::RowVectorXd::Zero(5).template cast<var>();
+  std::vector<Eigen::Matrix<var, 1, Eigen::Dynamic>> va = {a, b, c};
+  for (size_t i = 0; i < va.size(); ++i)
+    for (size_t j = 0; j < va[i].size(); ++j)
       va[i](j).vi_->adj_ = i + 1.0;
 
   stan::math::zero_adjoints(va);
-  for(size_t i = 0; i < va.size(); ++i)
-    for(size_t j = 0; j < va[i].size(); ++j)
+  for (size_t i = 0; i < va.size(); ++i)
+    for (size_t j = 0; j < va[i].size(); ++j)
       EXPECT_FLOAT_EQ(va[i](j).vi_->adj_, 0.0);
 
   stan::math::recover_memory();
@@ -181,20 +180,21 @@ TEST(AgradRev, zero_std_vector_matrix_var) {
   using stan::math::var;
   using stan::math::vari;
 
-  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> a =
-    Eigen::MatrixXd::Zero(3, 4).template cast<var>();
-  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> b =
-    Eigen::MatrixXd::Zero(4, 5).template cast<var>();
-  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> c =
-    Eigen::MatrixXd::Zero(5, 6).template cast<var>();
-  std::vector<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> va = { a, b, c };
-  for(size_t i = 0; i < va.size(); ++i)
-    for(size_t j = 0; j < va[i].size(); ++j)
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> a
+      = Eigen::MatrixXd::Zero(3, 4).template cast<var>();
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> b
+      = Eigen::MatrixXd::Zero(4, 5).template cast<var>();
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> c
+      = Eigen::MatrixXd::Zero(5, 6).template cast<var>();
+  std::vector<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> va
+      = {a, b, c};
+  for (size_t i = 0; i < va.size(); ++i)
+    for (size_t j = 0; j < va[i].size(); ++j)
       va[i](j).vi_->adj_ = i + 1.0;
 
   stan::math::zero_adjoints(va);
-  for(size_t i = 0; i < va.size(); ++i)
-    for(size_t j = 0; j < va[i].size(); ++j)
+  for (size_t i = 0; i < va.size(); ++i)
+    for (size_t j = 0; j < va[i].size(); ++j)
       EXPECT_FLOAT_EQ(va[i](j).vi_->adj_, 0.0);
 
   stan::math::recover_memory();
@@ -209,14 +209,14 @@ TEST(AgradRev, zero_multi) {
   var c(5.0);
   c.vi_->adj_ = 2.0;
   std::vector<var> d(5, 1.0);
-  for(size_t i = 0; i < d.size(); ++i)
+  for (size_t i = 0; i < d.size(); ++i)
     d[i].vi_->adj_ = i + 1.0;
   std::vector<int> e(5, 1);
   std::vector<double> f(5, 1.0);
 
   stan::math::zero_adjoints(a, b, c, d, e, f);
   EXPECT_FLOAT_EQ(c.vi_->adj_, 0.0);
-  for(size_t i = 0; i < d.size(); ++i)
+  for (size_t i = 0; i < d.size(); ++i)
     EXPECT_FLOAT_EQ(d[i].vi_->adj_, 0.0);
 
   stan::math::recover_memory();
