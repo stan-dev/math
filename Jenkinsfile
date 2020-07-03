@@ -26,6 +26,8 @@ def deleteDirWin() {
 }
 
 def skipRemainingStages = false
+def runGpuAsync = false
+def openClGpuLabel = "gpu"
 
 def utils = new org.stan.Utils()
 
@@ -45,13 +47,10 @@ String stan_pr() { params.stan_pr ?: ( env.CHANGE_TARGET == "master" ? "downstre
 pipeline {
     agent none
     parameters {
-        string(defaultValue: '', name: 'cmdstan_pr',
-          description: 'PR to test CmdStan upstream against e.g. PR-630')
-        string(defaultValue: '', name: 'stan_pr',
-          description: 'PR to test Stan upstream against e.g. PR-630')
-        booleanParam(defaultValue: false, description:
-        'Run additional distribution tests on RowVectors (takes 5x as long)',
-        name: 'withRowVector')
+        string(defaultValue: '', name: 'cmdstan_pr', description: 'PR to test CmdStan upstream against e.g. PR-630')
+        string(defaultValue: '', name: 'stan_pr', description: 'PR to test Stan upstream against e.g. PR-630')
+        booleanParam(defaultValue: false, name: 'withRowVector', description: 'Run additional distribution tests on RowVectors (takes 5x as long)')
+        booleanParam(defaultValue: false, name: 'gpu_async', description: 'Run the OpenCL tests on both a sync (AMD) GPU and an async (NVIDIA) one.')
     }
     options {
         skipDefaultCheckout()
@@ -157,6 +156,14 @@ pipeline {
 
                     def paths = ['stan', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format'].join(" ")
                     skipRemainingStages = utils.verifyChanges(paths)
+
+                    if(!utils.verifyChanges(["stan/math/opencl", "test/unit/math/opencl"].join(" ")) || params.gpu_async){
+                        runGpuAsync = true
+                        openClGpuLabel = "gpu-no-async"
+                    }
+                    else{
+                        runGpuAsync = false
+                    }
                 }
             }
         }
@@ -222,7 +229,32 @@ pipeline {
                     post { always { retry(3) { deleteDir() } } }
                 }
                 stage('OpenCL tests') {
-                    agent { label "gpu" }
+                    agent { label openClGpuLabel }
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh "echo CXX=${env.CXX} -Werror > make/local"
+                        sh "echo STAN_OPENCL=true>> make/local"
+                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
+                        sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
+                        sh "make -j${env.PARALLEL} test-headers"
+                        runTests("test/unit/math/opencl")
+                        runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test")
+                        runTests("test/unit/math/prim/fun/mdivide_left_tri_test")
+                        runTests("test/unit/math/prim/fun/mdivide_right_tri_test")
+                        runTests("test/unit/math/prim/fun/multiply_test")
+                        runTests("test/unit/math/rev/fun/mdivide_left_tri_test")
+                        runTests("test/unit/math/rev/fun/multiply_test")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('OpenCL tests async') {
+                    agent { label "gpu-async" }
+                    when {
+                        expression {
+                            runGpuAsync
+                        }
+                    }
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
