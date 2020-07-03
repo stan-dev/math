@@ -324,9 +324,8 @@ TEST(StanMathOde_ode_rk45_tol, std_vector_std_vector_args) {
   std::vector<var> a1(1, a0);
   std::vector<std::vector<var>> a2(1, a1);
 
-  var output
-    = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-			       nullptr, a2)[0][0];
+  var output = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
+                                        nullptr, a2)[0][0];
 
   output.grad();
 
@@ -346,9 +345,8 @@ TEST(StanMathOde_ode_rk45_tol, std_vector_vector_args) {
   a1 << a0;
   std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> a2(1, a1);
 
-  var output
-    = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-			       nullptr, a2)[0][0];
+  var output = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
+                                        nullptr, a2)[0][0];
 
   output.grad();
 
@@ -368,9 +366,8 @@ TEST(StanMathOde_ode_rk45_tol, std_vector_row_vector_args) {
   a1 << a0;
   std::vector<Eigen::Matrix<var, 1, Eigen::Dynamic>> a2(1, a1);
 
-  var output
-    = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-			       nullptr, a2)[0][0];
+  var output = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
+                                        nullptr, a2)[0][0];
 
   output.grad();
 
@@ -390,9 +387,8 @@ TEST(StanMathOde_ode_rk45_tol, std_vector_matrix_args) {
   a1 << a0;
   std::vector<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> a2(1, a1);
 
-  var output
-    = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-			       nullptr, a2)[0][0];
+  var output = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
+                                        nullptr, a2)[0][0];
 
   output.grad();
 

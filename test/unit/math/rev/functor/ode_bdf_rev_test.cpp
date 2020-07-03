@@ -314,8 +314,7 @@ TEST(StanMathOde_ode_bdf, std_vector_std_vector_args) {
   std::vector<var> a1(1, a0);
   std::vector<std::vector<var>> a2(1, a1);
 
-  var output
-    = stan::math::ode_bdf(CosArg1(), y0, t0, ts, nullptr, a2)[0][0];
+  var output = stan::math::ode_bdf(CosArg1(), y0, t0, ts, nullptr, a2)[0][0];
 
   output.grad();
 
@@ -335,8 +334,7 @@ TEST(StanMathOde_ode_bdf, std_vector_vector_args) {
   a1 << a0;
   std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> a2(1, a1);
 
-  var output
-    = stan::math::ode_bdf(CosArg1(), y0, t0, ts, nullptr, a2)[0][0];
+  var output = stan::math::ode_bdf(CosArg1(), y0, t0, ts, nullptr, a2)[0][0];
 
   output.grad();
 
@@ -356,8 +354,7 @@ TEST(StanMathOde_ode_bdf, std_vector_row_vector_args) {
   a1 << a0;
   std::vector<Eigen::Matrix<var, 1, Eigen::Dynamic>> a2(1, a1);
 
-  var output
-    = stan::math::ode_bdf(CosArg1(), y0, t0, ts, nullptr, a2)[0][0];
+  var output = stan::math::ode_bdf(CosArg1(), y0, t0, ts, nullptr, a2)[0][0];
 
   output.grad();
 
@@ -377,8 +374,7 @@ TEST(StanMathOde_ode_bdf, std_vector_matrix_args) {
   a1 << a0;
   std::vector<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> a2(1, a1);
 
-  var output
-    = stan::math::ode_bdf(CosArg1(), y0, t0, ts, nullptr, a2)[0][0];
+  var output = stan::math::ode_bdf(CosArg1(), y0, t0, ts, nullptr, a2)[0][0];
 
   output.grad();
 
@@ -408,30 +404,33 @@ TEST(StanMathOde_ode_bdf, arg_combos_test) {
 
   auto check_yT = [&](auto yT) {
     EXPECT_NEAR(stan::math::value_of(yT),
-                    y0d(0) * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)), 1e-5);
+                y0d(0) * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)), 1e-5);
   };
 
   auto check_t0 = [&](var t0) {
     EXPECT_NEAR(
         t0.adj(),
-        ad * t0d * y0d(0) * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)), 1e-5);
+        ad * t0d * y0d(0) * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)),
+        1e-5);
   };
 
   auto check_a = [&](var a) {
     EXPECT_NEAR(a.adj(),
-                    -0.5 * (tsd[0] * tsd[0] - t0d * t0d) * y0d(0)
-                        * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)), 1e-5);
+                -0.5 * (tsd[0] * tsd[0] - t0d * t0d) * y0d(0)
+                    * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)),
+                1e-5);
   };
 
   auto check_ts = [&](std::vector<var> ts) {
     EXPECT_NEAR(
         ts[0].adj(),
-        -ad * tsd[0] * y0d(0) * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)), 1e-5);
+        -ad * tsd[0] * y0d(0) * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)),
+        1e-5);
   };
 
   auto check_y0 = [&](Eigen::Matrix<var, Eigen::Dynamic, 1> y0) {
-    EXPECT_NEAR(y0(0).adj(),
-                    exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)), 1e-5);
+    EXPECT_NEAR(y0(0).adj(), exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)),
+                1e-5);
   };
 
   double yT1 = stan::math::ode_bdf(ayt(), y0d, t0d, tsd, nullptr, ad)[0](0);

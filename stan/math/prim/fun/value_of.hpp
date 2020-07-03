@@ -17,8 +17,7 @@ namespace math {
  * @param[in] x Input argument
  * @return Forwarded input argument
  **/
-template <typename T,
-	  require_st_arithmetic<T>* = nullptr>
+template <typename T, require_st_arithmetic<T>* = nullptr>
 inline decltype(auto) value_of(T&& x) {
   return std::forward<decltype(x)>(x);
 }
@@ -31,8 +30,7 @@ inline decltype(auto) value_of(T&& x) {
  * @param[in] x Input std::vector
  * @return std::vector of values
  **/
-template <typename T,
-	  require_not_st_arithmetic<T>* = nullptr>
+template <typename T, require_not_st_arithmetic<T>* = nullptr>
 inline auto value_of(const std::vector<T>& x) {
   std::vector<plain_type_t<decltype(value_of(std::declval<T>()))>> out;
   out.reserve(x.size());
@@ -42,17 +40,17 @@ inline auto value_of(const std::vector<T>& x) {
 }
 
 /**
- * For Eigen matrices and expressions of non-arithmetic types, return an expression
- * that represents the Eigen::Matrix resulting from applying value_of elementwise
+ * For Eigen matrices and expressions of non-arithmetic types, return an
+ *expression that represents the Eigen::Matrix resulting from applying value_of
+ *elementwise
  *
  * @tparam EigMat type of the matrix
  *
  * @param[in] M Matrix to be converted
  * @return Matrix of values
  **/
-template <typename EigMat,
-	  require_eigen_t<EigMat>* = nullptr,
-	  require_not_st_arithmetic<EigMat>* = nullptr>
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
+          require_not_st_arithmetic<EigMat>* = nullptr>
 inline auto value_of(EigMat&& M) {
   return make_holder(
       [](auto& a) {

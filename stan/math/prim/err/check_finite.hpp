@@ -37,7 +37,7 @@ bool is_finite(const std::vector<T_y>& y) {
   }
   return all;
 }
-}
+}  // namespace internal
 
 /**
  * Check if <code>y</code> is finite.
@@ -49,8 +49,7 @@ bool is_finite(const std::vector<T_y>& y) {
  * @param y Variable to check
  * @throw <code>domain_error</code> if y is infinity, -infinity, or NaN
  */
-template <typename T_y,
-	  require_stan_scalar_t<T_y>* = nullptr>
+template <typename T_y, require_stan_scalar_t<T_y>* = nullptr>
 inline void check_finite(const char* function, const char* name, const T_y& y) {
   if (!internal::is_finite(y)) {
     throw_domain_error(function, name, y, "is ", ", but must be finite!");
@@ -67,14 +66,13 @@ inline void check_finite(const char* function, const char* name, const T_y& y) {
  * @param y std::vector to test
  * @return <code>true</code> if all values are finite
  **/
-template <typename T_y,
-	  require_stan_scalar_t<T_y>* = nullptr>
+template <typename T_y, require_stan_scalar_t<T_y>* = nullptr>
 inline void check_finite(const char* function, const char* name,
-			 const std::vector<T_y>& y) {
+                         const std::vector<T_y>& y) {
   for (size_t n = 0; n < stan::math::size(y); n++) {
     if (!internal::is_finite(stan::get(y, n))) {
       throw_domain_error_vec(function, name, y, n, "is ",
-			     ", but must be finite!");
+                             ", but must be finite!");
     }
   }
 }
@@ -93,12 +91,12 @@ inline void check_finite(const char* function, const char* name,
  **/
 template <typename T_y, int R, int C>
 inline void check_finite(const char* function, const char* name,
-			 const Eigen::Matrix<T_y, R, C>& y) {
+                         const Eigen::Matrix<T_y, R, C>& y) {
   if (!value_of(y).allFinite()) {
     for (int n = 0; n < y.size(); ++n) {
       if (!std::isfinite(value_of_rec(y(n)))) {
-	throw_domain_error_vec(function, name, y, n, "is ",
-			       ", but must be finite!");
+        throw_domain_error_vec(function, name, y, n, "is ",
+                               ", but must be finite!");
       }
     }
   }
@@ -114,14 +112,12 @@ inline void check_finite(const char* function, const char* name,
  * @param y std::vector to test
  * @return <code>true</code> if all values are finite
  **/
-template <typename T_y,
-	  require_not_stan_scalar_t<T_y>* = nullptr>
+template <typename T_y, require_not_stan_scalar_t<T_y>* = nullptr>
 inline void check_finite(const char* function, const char* name,
-			 const std::vector<T_y>& y) {
+                         const std::vector<T_y>& y) {
   for (size_t n = 0; n < stan::math::size(y); n++) {
     if (!internal::is_finite(stan::get(y, n))) {
-      throw_domain_error(function, name, "", "",
-			 "is not finite!");
+      throw_domain_error(function, name, "", "", "is not finite!");
     }
   }
 }
