@@ -1,14 +1,10 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-using stan::math::as_column_vector_or_scalar;
-
-#define EXPECT_MATRIX_EQ(A, B)       \
-  for (int i = 0; i < A.size(); i++) \
-    EXPECT_EQ(A(i), B(i));
-
 TEST(MathMetaPrim, as_column_vector_or_scalar_scalar) {
+  using stan::math::as_column_vector_or_scalar;
   int a = 3;
   double b = 4;
   EXPECT_EQ(a, as_column_vector_or_scalar(a));
@@ -16,6 +12,7 @@ TEST(MathMetaPrim, as_column_vector_or_scalar_scalar) {
 }
 
 TEST(MathMetaPrim, as_column_vector_or_scalar_std_vector_lvalue) {
+  using stan::math::as_column_vector_or_scalar;
   int n = 100;
   Eigen::VectorXd a = Eigen::VectorXd::Random(n);
   std::vector<double> b(n);
@@ -29,6 +26,7 @@ TEST(MathMetaPrim, as_column_vector_or_scalar_std_vector_lvalue) {
 }
 
 TEST(MathMetaPrim, as_column_vector_or_scalar_std_vector_rvalue) {
+  using stan::math::as_column_vector_or_scalar;
   int n = 100;
   Eigen::VectorXd a = Eigen::VectorXd::Random(n);
   std::vector<double> b(n);
@@ -42,6 +40,7 @@ TEST(MathMetaPrim, as_column_vector_or_scalar_std_vector_rvalue) {
 }
 
 TEST(MathMetaPrim, as_column_vector_or_scalar_const_row_vector_lvalue) {
+  using stan::math::as_column_vector_or_scalar;
   int n = 100;
   const Eigen::RowVectorXd a = Eigen::RowVectorXd::Random(n);
   auto&& tmp = as_column_vector_or_scalar(a);
@@ -51,6 +50,7 @@ TEST(MathMetaPrim, as_column_vector_or_scalar_const_row_vector_lvalue) {
 }
 
 TEST(MathMetaPrim, as_column_vector_or_scalar_row_vector_lvalue) {
+  using stan::math::as_column_vector_or_scalar;
   int n = 100;
   Eigen::RowVectorXd a = Eigen::RowVectorXd::Random(n);
   auto&& tmp = as_column_vector_or_scalar(a);
@@ -61,6 +61,7 @@ TEST(MathMetaPrim, as_column_vector_or_scalar_row_vector_lvalue) {
 }
 
 TEST(MathMetaPrim, as_column_vector_or_scalar_row_vector_rvalue) {
+  using stan::math::as_column_vector_or_scalar;
   int n = 100;
   Eigen::RowVectorXd a = Eigen::RowVectorXd::Random(n);
   Eigen::RowVectorXd b = a;

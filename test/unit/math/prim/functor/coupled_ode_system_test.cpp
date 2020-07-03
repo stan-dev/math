@@ -7,13 +7,13 @@
 #include <vector>
 #include <string>
 
-struct StanMathOde : public ::testing::Test {
+struct StanMathCoupledOdeSystem : public ::testing::Test {
   std::stringstream msgs;
   std::vector<double> x;
   std::vector<int> x_int;
 };
 
-TEST_F(StanMathOde, initial_state_dd) {
+TEST_F(StanMathCoupledOdeSystem, initial_state_dd) {
   using stan::math::coupled_ode_system;
   mock_ode_functor base_ode;
 
@@ -41,7 +41,7 @@ TEST_F(StanMathOde, initial_state_dd) {
     EXPECT_FLOAT_EQ(0.0, state(n));
 }
 
-TEST_F(StanMathOde, size) {
+TEST_F(StanMathCoupledOdeSystem, size) {
   using stan::math::coupled_ode_system;
   mock_ode_functor base_ode;
 
@@ -57,7 +57,7 @@ TEST_F(StanMathOde, size) {
   EXPECT_EQ(N, coupled_system_dd.size());
 }
 
-TEST_F(StanMathOde, recover_exception) {
+TEST_F(StanMathCoupledOdeSystem, recover_exception) {
   using stan::math::coupled_ode_system;
   std::string message = "ode throws";
 
