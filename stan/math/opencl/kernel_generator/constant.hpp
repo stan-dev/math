@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_SCALAR_HPP
-#define STAN_MATH_OPENCL_KERNEL_GENERATOR_SCALAR_HPP
+#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_CONSTANT_HPP
+#define STAN_MATH_OPENCL_KERNEL_GENERATOR_CONSTANT_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/matrix_cl.hpp>
@@ -22,32 +22,36 @@ namespace math {
  */
 
 /**
- * Represents a scalar in kernel generator expressions.
+ * Represents a matrix of single repeated value in kernel generator expressions.
  * @tparam T type of the scalar
  */
 template <typename T>
-class scalar_ : public operation_cl<scalar_<T>, T> {
- protected:
+class constant_ : public operation_cl<constant_<T>, T> {
   T a_;
+  int rows_;
+  int cols_;
 
  public:
   static_assert(std::is_arithmetic<T>::value,
                 "class scalar_<T>: std::is_arithmetic<T> must be true!");
   using Scalar = T;
-  using base = operation_cl<scalar_<T>, T>;
+  using base = operation_cl<constant_<T>, T>;
   using base::var_name_;
 
   /**
    * Constructor for an arithmetic type
    * @param a scalar value
    */
-  explicit scalar_(const T a) : a_(a) {}
+  explicit constant_(const T a, int rows, int cols)
+      : a_(a), rows_(rows), cols_(cols) {}
 
   /**
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline scalar_<T> deep_copy() const { return scalar_<T>(a_); }
+  inline constant_<T> deep_copy() const {
+    return constant_<T>(a_, rows_, cols_);
+  }
 
   /**
    * Generates kernel code for this expression.
@@ -82,23 +86,34 @@ class scalar_ : public operation_cl<scalar_<T>, T> {
    * expression.
    * @return number of rows
    */
-  inline int rows() const { return base::dynamic; }
+  inline int rows() const { return rows_; }
 
   /**
    * Number of columns of a matrix that would be the result of evaluating this
    * expression.
    * @return number of columns
    */
-  inline int cols() const { return base::dynamic; }
-
-  /**
-   * Determine indices of extreme sub- and superdiagonals written.
-   * @return pair of indices - bottom and top diagonal
-   */
-  inline std::pair<int, int> extreme_diagonals() const {
-    return {std::numeric_limits<int>::min(), std::numeric_limits<int>::max()};
-  }
+  inline int cols() const { return cols_; }
 };
+
+/**
+ * Matrix of repeated values in kernel generator expressions.
+ *
+ * In most cases scalars should be directly used instead of this. This is,
+ * however, useful for initializing some expression to specific value if that
+ * expresssion could also be plain `matrix_cl`.
+ *
+ * @tparam T type of argument
+ * @param a input argument
+ * @param rows number of rows
+ * @param cols number of columns
+ * @return Block of given expression
+ */
+template <typename T, typename = require_arithmetic_t<T>>
+inline auto constant(const T a, int rows, int cols) {
+  return constant_<T>(a, rows, cols);
+}
+
 /** @}*/
 }  // namespace math
 }  // namespace stan
