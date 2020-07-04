@@ -1,9 +1,8 @@
 #ifndef STAN_MATH_REV_CORE_ZERO_ADJOINTS_HPP
 #define STAN_MATH_REV_CORE_ZERO_ADJOINTS_HPP
 
-#include <stan/math/rev/core/vari.hpp>
-#include <stan/math/rev/core/chainable_alloc.hpp>
-#include <stan/math/rev/core/chainablestack.hpp>
+#include <stan/math/rev/core/var.hpp>
+#include <vector>
 
 namespace stan {
 namespace math {
