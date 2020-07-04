@@ -32,13 +32,13 @@ TEST_F(StanMathCoupledOdeSystem, initial_state_dd) {
                      std::vector<double>, std::vector<int>>
       coupled_system_dd(base_ode, y0_d, &msgs, theta_d, x, x_int);
 
-  Eigen::VectorXd state = coupled_system_dd.initial_state();
+  std::vector<double> state = coupled_system_dd.initial_state();
   for (int n = 0; n < N; n++)
-    EXPECT_FLOAT_EQ(y0_d(n), state(n))
+    EXPECT_FLOAT_EQ(y0_d(n), state[n])
         << "we don't need derivatives of y0; "
         << "initial state gets the initial values";
   for (size_t n = N; n < state.size(); n++)
-    EXPECT_FLOAT_EQ(0.0, state(n));
+    EXPECT_FLOAT_EQ(0.0, state[n]);
 }
 
 TEST_F(StanMathCoupledOdeSystem, size) {
@@ -73,8 +73,8 @@ TEST_F(StanMathCoupledOdeSystem, recover_exception) {
                      std::vector<double>, std::vector<double>, std::vector<int>>
       coupled_system_dd(throwing_ode, y0_d, &msgs, theta_v, x, x_int);
 
-  Eigen::VectorXd y(3);
-  Eigen::VectorXd dy_dt(3);
+  std::vector<double> y(3);
+  std::vector<double> dy_dt(3);
 
   double t = 10;
 
