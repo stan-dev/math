@@ -114,7 +114,7 @@ TEST(AgradMatrix, value_of_vector_of_vectors) {
   }
 }
 
-TEST(MathFunctions, value_of_vector_of_eigen) {
+TEST(AgradMatrix, value_of_vector_of_eigen) {
   using stan::math::var;
   Eigen::Matrix<var, Eigen::Dynamic, 1> a
       = Eigen::VectorXd::Random(5).template cast<var>();

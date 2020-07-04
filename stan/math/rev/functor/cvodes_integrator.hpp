@@ -160,6 +160,7 @@ class cvodes_integrator {
   /**
    * Construct cvodes_integrator object
    *
+   * @param function_name Calling function name (for printing debugging messages)
    * @param f Right hand side of the ODE
    * @param y0 Initial state
    * @param t0 Initial time

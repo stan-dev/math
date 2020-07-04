@@ -37,6 +37,7 @@ namespace math {
  * @tparam T_ts Type of output times
  * @tparam T_Args Types of pass-through parameters
  *
+ * @param function_name Calling function name (for printing debugging messages)
  * @param f Right hand side of the ODE
  * @param y0_arg Initial state
  * @param t0 Initial time
