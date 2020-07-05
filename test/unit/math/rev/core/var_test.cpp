@@ -168,6 +168,42 @@ TEST_F(AgradRev, ctormatrixOverloads) {
   ctor_overloads_sparse_matrix(sparse_x);
 }
 
+TEST_F(AgradRev, var_matrix_views) {
+  using dense_mat = Eigen::Matrix<double, -1, -1>;
+  dense_mat A(10, 10);
+  for (Eigen::Index i = 0; i < A.size(); ++i) {
+    A(i) = i;
+  }
+  stan::math::var_value<dense_mat> A_v(A);
+  auto A_block = A_v.block(1, 1, 3, 3);
+  EXPECT_MATRIX_FLOAT_EQ(A.block(1, 1, 3, 3), A_block.vi_->val_);
+  auto A_row = A_v.row(3);
+  EXPECT_MATRIX_FLOAT_EQ(A.row(3), A_row.vi_->val_);
+  auto A_col = A_v.col(3);
+  EXPECT_MATRIX_FLOAT_EQ(A.col(3), A_col.vi_->val_);
+}
+
+TEST_F(AgradRev, var_vector_views) {
+  using dense_vec = Eigen::Matrix<double, -1, 1>;
+  dense_vec A(10);
+  for (Eigen::Index i = 0; i < A.size(); ++i) {
+    A(i) = i;
+  }
+  stan::math::var_value<dense_vec> A_v(A);
+  auto A_head = A_v.head(3);
+  EXPECT_MATRIX_FLOAT_EQ(A.head(3), A_head.vi_->val_);
+
+  auto A_tail = A_v.tail(3);
+  EXPECT_MATRIX_FLOAT_EQ(A.tail(3), A_tail.vi_->val_);
+
+
+  auto A_segment = A_v.segment(3, 5);
+  EXPECT_MATRIX_FLOAT_EQ(A.segment(3, 5), A_segment.vi_->val_);
+
+  EXPECT_MATRIX_FLOAT_EQ(A, A_v.vi_->val_);
+
+}
+
 TEST_F(AgradRev, a_eq_x) {
   AVAR a = 5.0;
   EXPECT_FLOAT_EQ(5.0, a.val());
