@@ -39,8 +39,10 @@ class constant_ : public operation_cl<constant_<T>, T> {
   using base::var_name_;
 
   /**
-   * Constructor for an arithmetic type
+   * Constructor
    * @param a scalar value
+   * @param rows number of rows of the matrix
+   * @param cols number of columns of the matrix
    */
   explicit constant_(const T a, int rows, int cols)
       : a_(a), rows_(rows), cols_(cols) {}
