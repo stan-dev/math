@@ -36,18 +36,6 @@ struct is_kernel_expression_and_not_scalar<T, require_matrix_cl_t<T>>
     : std::true_type {};
 
 /**
- * Determines whether a type is an assignable kernel generator
- * expression.
- */
-template <typename T, typename = void>
-struct is_kernel_expression_lhs
-    : bool_constant<std::is_base_of<operation_cl_lhs_base,
-                                    std::remove_reference_t<T>>::value> {};
-template <typename T>
-struct is_kernel_expression_lhs<T, require_matrix_cl_t<T>>
-    : std::true_type {};
-
-/**
  * Determines whether a type is is a valid kernel generator expression. Valid
  * expressions are kernel generator operations, scalars and \c matrix_cl and
  * references of these types.
@@ -73,6 +61,20 @@ using require_all_kernel_expressions_and_none_scalar_t
 template <typename... Types>
 using require_all_kernel_expressions_t
     = require_all_t<is_kernel_expression<Types>...>;
+
+/**
+ * Determines whether a type is an assignable kernel generator
+ * expression.
+ */
+template <typename T, typename = void>
+struct is_kernel_expression_lhs
+    : bool_constant<std::is_base_of<operation_cl_lhs_base,
+                                    std::remove_reference_t<T>>::value> {};
+template <typename T>
+struct is_kernel_expression_lhs<T, require_matrix_cl_t<T>>
+    : std::true_type {};
+STAN_ADD_REQUIRE_UNARY(kernel_expression_lhs, is_kernel_expression_lhs, opencl_kernel_generator);
+
 /** @}*/
 }  // namespace stan
 

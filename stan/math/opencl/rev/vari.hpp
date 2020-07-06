@@ -19,28 +19,21 @@ namespace math {
  * derivative with respect to the root of the derivative tree.
  *
  */
-template <typename T_val, typename T_adj>
-class vari_value<T_val, T_adj,
-                 std::enable_if_t<is_kernel_expression_lhs<T_val>::value
-                                  && is_kernel_expression_lhs<T_adj>::value>>
-    : public get_vari_base<
-          std::is_trivially_destructible<T_val>::value
-          && std::is_trivially_destructible<T_adj>::value>::type {
-  using Base = typename get_vari_base<
-      std::is_trivially_destructible<T_val>::value
-      && std::is_trivially_destructible<T_adj>::value>::type;
+template <typename T>
+class vari_value<T, require_kernel_expression_lhs_t<T>>
+    : public vari_base, public chainable_alloc {
 
  public:
   /**
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
    */
-  T_adj adj_;
+  T adj_;
 
   /**
    * The value of this variable.
    */
-  T_val val_;
+  T val_;
 
   /**
    * Construct a dense Eigen variable implementation from a value. The
@@ -55,9 +48,9 @@ class vari_value<T_val, T_adj,
    * @tparam S A dense Eigen type that is convertible to `value_type`
    * @param x Value of the constructed variable.
    */
-  template <typename S, require_convertible_t<S&, T_val>* = nullptr>
+  template <typename S, require_convertible_t<S&, T>* = nullptr>
   explicit vari_value(S&& x)
-      : Base(),
+      : chainable_alloc(),
         adj_(constant(0, x.rows(), x.cols())),
         val_(std::forward<S>(x)) {
     ChainableStack::instance_->var_stack_.push_back(this);
@@ -77,10 +70,10 @@ class vari_value<T_val, T_adj,
    * @param val Value of the constructed variable.
    * @param adj Adjoint of the constructed variable.
    */
-  template <typename R, typename S, require_convertible_t<R&, T_val>* = nullptr,
-            require_convertible_t<S&, T_adj>* = nullptr>
+  template <typename R, typename S, require_convertible_t<R&, T>* = nullptr,
+            require_convertible_t<S&, T>* = nullptr>
   vari_value(R&& val, S&& adj)
-      : Base(), adj_(std::forward<S>(adj)), val_(std::forward<R>(val)) {
+      : chainable_alloc(), adj_(std::forward<S>(adj)), val_(std::forward<R>(val)) {
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
@@ -101,9 +94,9 @@ class vari_value<T_val, T_adj,
    * @param stacked If false will put this this vari on the nochain stack so
    * that its `chain()` method is not called.
    */
-  template <typename S, require_convertible_t<S&, T_val>* = nullptr>
+  template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(S&& x, bool stacked)
-      : Base(),
+      : chainable_alloc(),
         adj_(constant(0, x.rows(), x.cols())),
         val_(std::forward<S>(x)) {
     if (stacked) {
@@ -121,13 +114,11 @@ class vari_value<T_val, T_adj,
    * @param cols number of columns in the block
    * @return block
    */
-  auto block(Eigen::Index row, Eigen::Index col, Eigen::Index rows,
-             Eigen::Index cols) {
-    using stan::math::block;
-    const auto& val_block = block(val_, row, col, rows, cols);
-    const auto& adj_block = block(adj_, row, col, rows, cols);
-    return vari_value<std::decay_t<decltype(val_block)>,
-                      std::decay_t<decltype(adj_block)>>(val_block, adj_block);
+  auto block(int row, int col, int rows, int cols) {
+//    using stan::math::block;
+    const auto& val_block = stan::math::block(val_, row, col, rows, cols);
+    const auto& adj_block = stan::math::block(adj_, row, col, rows, cols);
+    return vari_value<std::decay_t<decltype(val_block)>>(val_block, adj_block);
   }
 
   /**
