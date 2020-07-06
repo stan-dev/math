@@ -5,6 +5,7 @@
 #include <stan/math/fwd/functor/gradient.hpp>
 #include <stan/math/fwd/functor/hessian.hpp>
 #include <stan/math/fwd/functor/jacobian.hpp>
+#include <stan/math/fwd/functor/operands_and_partials.hpp>
 #include <stan/math/fwd/functor/reduce_sum.hpp>
 
 #endif

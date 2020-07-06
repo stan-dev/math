@@ -7,13 +7,13 @@
 #include <vector>
 #include <string>
 
-struct StanMathOde : public ::testing::Test {
+struct StanMathCoupledOdeObserver : public ::testing::Test {
   std::stringstream msgs;
   std::vector<double> x;
   std::vector<int> x_int;
 };
 
-TEST_F(StanMathOde, observe_states_dddd) {
+TEST_F(StanMathCoupledOdeObserver, observe_states_dddd) {
   using stan::math::coupled_ode_system;
 
   harm_osc_ode_fun harm_osc;

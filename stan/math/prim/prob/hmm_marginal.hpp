@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/core.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <vector>
 
 namespace stan {

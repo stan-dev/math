@@ -1,3 +1,5 @@
+#ifndef TEST_UNIT_MATH_PRIM_FUNCTOR_MOCK_THROWING_ODE_FUNCTOR
+#define TEST_UNIT_MATH_PRIM_FUNCTOR_MOCK_THROWING_ODE_FUNCTOR
 #include <vector>
 #include <string>
 
@@ -27,3 +29,4 @@ struct mock_throwing_ode_functor {
     return y_in;
   }
 };
+#endif

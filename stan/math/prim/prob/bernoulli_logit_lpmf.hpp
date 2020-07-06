@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
 
 namespace stan {
@@ -75,21 +76,12 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
 
   operands_and_partials<T_theta_ref> ops_partials(theta_ref);
   if (!is_constant_all<T_prob>::value) {
-    if (is_vector<T_prob>::value) {
-      ops_partials.edge1_.partials_ = forward_as<T_partials_array>(
-          (ntheta > cutoff)
+    ops_partials.edge1_.partials_
+        = (ntheta > cutoff)
               .select(-exp_m_ntheta,
                       (ntheta >= -cutoff)
                           .select(signs * exp_m_ntheta / (exp_m_ntheta + 1),
-                                  signs)));
-    } else {
-      ops_partials.edge1_.partials_[0]
-          = sum((ntheta > cutoff)
-                    .select(-exp_m_ntheta, (ntheta >= -cutoff)
-                                               .select(signs * exp_m_ntheta
-                                                           / (exp_m_ntheta + 1),
-                                                       signs)));
-    }
+                                  signs));
   }
   return ops_partials.build(logp);
 }

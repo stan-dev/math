@@ -1,3 +1,5 @@
+#ifndef TEST_UNIT_MATH_PRIM_FUNCTOR_MOCK_ODE_FUNCTOR
+#define TEST_UNIT_MATH_PRIM_FUNCTOR_MOCK_ODE_FUNCTOR
 #include <vector>
 
 struct mock_ode_functor {
@@ -11,3 +13,4 @@ struct mock_ode_functor {
     return states;
   }
 };
+#endif
