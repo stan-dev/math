@@ -16,7 +16,7 @@ struct AgradRev : public testing::Test {
 };
 
 namespace stan {
-  namespace test {
+namespace test {
 template <typename T, typename S>
 void ctor_overloads_float_impl() {
   using stan::math::var_value;
@@ -138,8 +138,8 @@ void ctor_overloads_sparse_matrix(EigenMat&& x) {
   }
 }
 
-}
-}
+}  // namespace test
+}  // namespace stan
 TEST_F(AgradRev, ctorfloatOverloads) {
   stan::test::ctor_overloads_float<float>();
   stan::test::ctor_overloads_float<double>();

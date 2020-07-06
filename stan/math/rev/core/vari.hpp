@@ -377,9 +377,9 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
     : public vari_base, chainable_alloc {
  public:
   using PlainObject
-      = std::decay_t<plain_type_t<T>>;             // Base type of Eigen class
-  using Scalar = PlainObject;  // vari's adj_ and val_ member type
-  using value_type = Scalar;   // vari's adj_ and val_ member type
+      = std::decay_t<plain_type_t<T>>;  // Base type of Eigen class
+  using Scalar = PlainObject;           // vari's adj_ and val_ member type
+  using value_type = Scalar;            // vari's adj_ and val_ member type
   /**
    * Rows at compile time
    */

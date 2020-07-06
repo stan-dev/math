@@ -42,7 +42,7 @@ class var_value {
       "The template for must be a floating point or a container holding"
       " floating point types");
   static_assert(std::is_reference<T>::value,
-     "The template for a var_value must not be a reference!");
+                "The template for a var_value must not be a reference!");
 
  public:
   using value_type = std::decay_t<T>;        // type in vari_value.
