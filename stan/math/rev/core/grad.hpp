@@ -7,7 +7,6 @@
 #include <stan/math/rev/core/nested_size.hpp>
 #include <stan/math/rev/core/vari.hpp>
 #include <vector>
-#include <iostream>
 
 namespace stan {
 namespace math {

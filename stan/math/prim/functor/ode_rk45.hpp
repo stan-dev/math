@@ -4,7 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/functor/ode_store_sensitivities.hpp>
-#include <boost/numeric/odeint/external/eigen/eigen_algebra.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <boost/numeric/odeint.hpp>
 #include <ostream>
 #include <vector>

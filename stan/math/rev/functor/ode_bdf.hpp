@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/functor/cvodes_integrator.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <ostream>
 #include <vector>
 

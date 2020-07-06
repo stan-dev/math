@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUNCTOR_ODE_STORE_SENSITIVITIES_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <ostream>
 #include <vector>
 

@@ -1,4 +1,4 @@
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/err/check_sorted.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <string>

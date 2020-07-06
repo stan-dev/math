@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_CORE_ZERO_ADJOINTS_HPP
 
 #include <stan/math/rev/core/var.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <vector>
 
 namespace stan {

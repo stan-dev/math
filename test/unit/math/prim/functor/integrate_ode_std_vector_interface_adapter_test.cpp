@@ -1,4 +1,4 @@
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/functor/integrate_ode_std_vector_interface_adapter.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/prim/functor/harmonic_oscillator.hpp>

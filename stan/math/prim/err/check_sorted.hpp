@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_ERR_CHECK_SORTED_HPP
 #define STAN_MATH_PRIM_ERR_CHECK_SORTED_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <sstream>
