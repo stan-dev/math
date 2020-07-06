@@ -80,18 +80,16 @@ inline void check_finite(const char* function, const char* name,
 /**
  * Return <code>true</code> is the specified matrix is finite.
  *
- * @tparam T_y type of elements in the matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam Derived Eigen derived type
  *
  * @param function name of function (for error messages)
  * @param name variable name (for error messages)
  * @param y matrix to test
  * @return <code>true</code> if the matrix is finite
  **/
-template <typename T_y, int R, int C>
+template <typename Derived>
 inline void check_finite(const char* function, const char* name,
-                         const Eigen::Matrix<T_y, R, C>& y) {
+                         const Eigen::MatrixBase<Derived>& y) {
   if (!value_of(y).allFinite()) {
     for (int n = 0; n < y.size(); ++n) {
       if (!std::isfinite(value_of_rec(y(n)))) {
