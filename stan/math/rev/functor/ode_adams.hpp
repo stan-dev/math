@@ -21,7 +21,7 @@ namespace math {
  *     std::ostream* msgs, const T_Args&... args);
  *
  * t is the time, y is the vector-valued state, msgs is a stream for error
- * messages, and args are optional arguments passed to the ODE solve function 
+ * messages, and args are optional arguments passed to the ODE solve function
  * (which are passed through to \p f without modification).
  *
  * @tparam F Type of ODE right hand side
@@ -72,7 +72,7 @@ ode_adams_tol_impl(const char* function_name, const F& f,
  *     std::ostream* msgs, const T_Args&... args);
  *
  * t is the time, y is the vector-valued state, msgs is a stream for error
- * messages, and args are optional arguments passed to the ODE solve function 
+ * messages, and args are optional arguments passed to the ODE solve function
  * (which are passed through to \p f without modification).
  *
  * @tparam F Type of ODE right hand side
@@ -119,7 +119,7 @@ ode_adams_tol(const F& f, const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
  *     std::ostream* msgs, const T_Args&... args);
  *
  * t is the time, y is the vector-valued state, msgs is a stream for error
- * messages, and args are optional arguments passed to the ODE solve function 
+ * messages, and args are optional arguments passed to the ODE solve function
  * (which are passed through to \p f without modification).
  *
  * @tparam F Type of ODE right hand side
