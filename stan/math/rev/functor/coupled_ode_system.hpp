@@ -15,8 +15,8 @@ namespace stan {
 namespace math {
 
 /**
- * The <code>coupled_ode_system_impl</code> template specialization
- * for unknown initial values and unknown parameters.
+ * The <code>coupled_ode_system_impl</code> template specialization when
+ * the state or parameters are autodiff types.
  *
  * <p>This coupled ode system has N + (N +  M) * N states where N is
  * the size of the base ode system and M is the number of parameters.

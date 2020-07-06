@@ -20,9 +20,9 @@ namespace math {
  *     operator()(const T_t& t, const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y,
  *     std::ostream* msgs, const T_Args&... args);
  *
- * t is the time, y is the state, msgs is a stream for error messages, and args
- * are optional arguments passed to the ODE solve function (which are passed
- * through to \p f without modification).
+ * t is the time, y is the vector-valued state, msgs is a stream for error
+ * messages, and args are optional arguments passed to the ODE solve function 
+ * (which are passed through to \p f without modification).
  *
  * @tparam F Type of ODE right hand side
  * @tparam T_0 Type of initial time
@@ -71,9 +71,9 @@ ode_adams_tol_impl(const char* function_name, const F& f,
  *     operator()(const T_t& t, const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y,
  *     std::ostream* msgs, const T_Args&... args);
  *
- * t is the time, y is the state, msgs is a stream for error messages, and args
- * are optional arguments passed to the ODE solve function (which are passed
- * through to \p f without modification).
+ * t is the time, y is the vector-valued state, msgs is a stream for error
+ * messages, and args are optional arguments passed to the ODE solve function 
+ * (which are passed through to \p f without modification).
  *
  * @tparam F Type of ODE right hand side
  * @tparam T_0 Type of initial time
@@ -109,8 +109,8 @@ ode_adams_tol(const F& f, const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
 /**
  * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
  * times, { t1, t2, t3, ... } using the non-stiff Adams-Moulton
- * solver in CVODES with a relative tolerance of 1e-10, an absolute
- * tolerance of 1e-10, and taking a maximum of 1e8 steps.
+ * solver in CVODES with defaults for relative_tolerance, absolute_tolerance,
+ * and max_num_steps.
  *
  * \p f must define an operator() with the signature as:
  *   template<typename T_t, typename T_y, typename... T_Args>
@@ -118,9 +118,9 @@ ode_adams_tol(const F& f, const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
  *     operator()(const T_t& t, const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y,
  *     std::ostream* msgs, const T_Args&... args);
  *
- * t is the time, y is the state, msgs is a stream for error messages, and args
- * are optional arguments passed to the ODE solve function (which are passed
- * through to \p f without modification).
+ * t is the time, y is the vector-valued state, msgs is a stream for error
+ * messages, and args are optional arguments passed to the ODE solve function 
+ * (which are passed through to \p f without modification).
  *
  * @tparam F Type of ODE right hand side
  * @tparam T_0 Type of initial time

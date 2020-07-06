@@ -14,9 +14,7 @@ namespace math {
 
 /**
  * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
- * times, { t1, t2, t3, ... } using the non-stiff Runge-Kutta 45 solver in Boost
- * with a relative tolerance of 1e-10, an absolute tolerance of 1e-10, and
- * taking a maximum of 1e8 steps.
+ * times, { t1, t2, t3, ... } using the non-stiff Runge-Kutta 45 solver in Boost.
  *
  * If the system of equations is stiff, <code>ode_bdf</code> will likely be
  * faster.
@@ -27,9 +25,9 @@ namespace math {
  *     operator()(const T_t& t, const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y,
  *     std::ostream* msgs, const T_Args&... args);
  *
- * t is the time, y is the state, msgs is a stream for error messages, and args
- * are optional arguments passed to the ODE solve function (which are passed
- * through to \p f without modification).
+ * t is the time, y is the vector-valued state, msgs is a stream for error
+ * messages, and args are optional arguments passed to the ODE solve function 
+ * (which are passed through to \p f without modification).
  *
  * @tparam F Type of ODE right hand side
  * @tparam T_y0 Type of initial condition
@@ -143,9 +141,7 @@ ode_rk45_tol_impl(const char* function_name, const F& f,
 
 /**
  * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
- * times, { t1, t2, t3, ... } using the non-stiff Runge-Kutta 45 solver in Boost
- * with a relative tolerance of 1e-10, an absolute tolerance of 1e-10, and
- * taking a maximum of 1e8 steps.
+ * times, { t1, t2, t3, ... } using the non-stiff Runge-Kutta 45 solver in Boost.
  *
  * If the system of equations is stiff, <code>ode_bdf</code> will likely be
  * faster.
@@ -156,9 +152,9 @@ ode_rk45_tol_impl(const char* function_name, const F& f,
  *     operator()(const T_t& t, const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y,
  *     std::ostream* msgs, const T_Args&... args);
  *
- * t is the time, y is the state, msgs is a stream for error messages, and args
- * are optional arguments passed to the ODE solve function (which are passed
- * through to \p f without modification).
+ * t is the time, y is the vector-valued state, msgs is a stream for error
+ * messages, and args are optional arguments passed to the ODE solve function 
+ * (which are passed through to \p f without modification).
  *
  * @tparam F Type of ODE right hand side
  * @tparam T_0 Type of initial time
@@ -195,8 +191,7 @@ ode_rk45_tol(const F& f, const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0_arg,
 /**
  * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
  * times, { t1, t2, t3, ... } using the non-stiff Runge-Kutta 45 solver in Boost
- * with a relative tolerance of 1e-10, an absolute tolerance of 1e-10, and
- * taking a maximum of 1e8 steps.
+ * with defaults for relative_tolerance, absolute_tolerance, and max_num_steps.
  *
  * If the system of equations is stiff, <code>ode_bdf</code> will likely be
  * faster.
@@ -207,9 +202,9 @@ ode_rk45_tol(const F& f, const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0_arg,
  *     operator()(const T_t& t, const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y,
  *     std::ostream* msgs, const T_Args&... args);
  *
- * t is the time, y is the state, msgs is a stream for error messages, and args
- * are optional arguments passed to the ODE solve function (which are passed
- * through to \p f without modification).
+ * t is the time, y is the vector-valued state, msgs is a stream for error
+ * messages, and args are optional arguments passed to the ODE solve function 
+ * (which are passed through to \p f without modification).
  *
  * @tparam F Type of ODE right hand side
  * @tparam T_y0 Type of initial time

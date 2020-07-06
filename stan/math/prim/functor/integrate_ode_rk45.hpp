@@ -30,8 +30,9 @@ integrate_ode_rk45(const F& f, const std::vector<T_y0>& y0, const T_t0& t0,
 
   std::vector<std::vector<return_type_t<T_y0, T_param, T_t0, T_ts>>>
       y_converted;
+  y_converted.reserve(y.size());
   for (size_t i = 0; i < y.size(); ++i)
-    y_converted.push_back(to_array_1d(y[i]));
+    y_converted.emplace_back(to_array_1d(y[i]));
 
   return y_converted;
 }

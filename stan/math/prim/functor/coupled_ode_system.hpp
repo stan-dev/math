@@ -11,11 +11,11 @@
 namespace stan {
 namespace math {
 
-template <bool Enable, typename F, typename T_y0, typename... Args>
+template <bool ArithmeticArguments, typename F, typename T_y0, typename... Args>
 struct coupled_ode_system_impl;
 
 /**
- * The <code>coupled_ode_system_impl</code> for arithmetic types reduces to
+ * The <code>coupled_ode_system_impl</code> for arithmetic arguments reduces to
  * the regular ode system (there are no sensitivities)
  *
  * @tparam F base ode system functor. Must provide
