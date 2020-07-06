@@ -24,7 +24,7 @@ allowed_paths_with_jumbo = [
     "test/unit/math/rev/",	
     "test/unit/math/fwd/",	
     "test/unit/math/mix/",
-    "test/unit"
+    "test/unit/"
 ]	
 
 jumbo_folders = [	
