@@ -54,7 +54,8 @@ inline T2 bessel_first_kind(int v, const T2 z) {
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto bessel_first_kind(const T1& a, const T2& b) {
   return apply_scalar_binary(
-      a, b, [&](const auto& c, const auto& d) { return bessel_first_kind(c, d); });
+      a, b, [&](const auto& c, const auto& d) {
+        return bessel_first_kind(c, d); });
 }
 
 }  // namespace math
