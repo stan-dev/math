@@ -41,9 +41,6 @@ class var_value {
       std::is_floating_point<value_type_t<T>>::value,
       "The template for must be a floating point or a container holding"
       " floating point types");
-  static_assert(std::is_reference<T>::value,
-                "The template for a var_value must not be a reference!");
-
  public:
   using value_type = std::decay_t<T>;        // type in vari_value.
   using vari_type = vari_value<value_type>;  // Type of underlying vari impl.
@@ -66,7 +63,7 @@ class var_value {
    * @return <code>true</code> if this variable does not yet have
    * a defined variable.
    */
-  using bool is_uninitialized() { return (vi_ == nullptr); }
+  inline bool is_uninitialized() { return (vi_ == nullptr); }
 
   /**
    * Construct a variable for later assignment.

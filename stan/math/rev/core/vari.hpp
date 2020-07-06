@@ -11,7 +11,7 @@ namespace stan {
 namespace math {
 
 // forward declaration of var
-template <typename T, typename>
+template <typename T>
 class var_value;
 /**
  * Abstract base class that all `vari_value` and it's derived classes inherit.
@@ -167,7 +167,7 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
   }
 
  private:
-  template <typename, typename>
+  template <typename>
   friend class var_value;
 };
 
@@ -355,7 +355,7 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
   }
 
  private:
-  template <typename, typename>
+  template <typename>
   friend class var_value;
   template <typename, typename>
   friend class vari_value;
@@ -528,7 +528,7 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
   }
 
  private:
-  template <typename, typename>
+  template <typename>
   friend class var_value;
   template <typename, typename>
   friend class vari_value;
