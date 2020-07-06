@@ -9,6 +9,18 @@ namespace stan {
 namespace math {
 
 /**
+ * Returns the product of given scalar. This is a no-op.
+ *
+ * @tparam T type of the scalar
+ * @param v specified scalar
+ * @return the scalar
+ */
+template<typename T, require_stan_scalar_t<T>* = nullptr>
+T prod(const T& a){
+  return a;
+}
+
+/**
  * Returns the product of the coefficients of the specified
  * standard vector.
  *
