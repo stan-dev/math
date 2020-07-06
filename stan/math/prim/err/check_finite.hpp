@@ -87,9 +87,9 @@ inline void check_finite(const char* function, const char* name,
  * @param y matrix to test
  * @return <code>true</code> if the matrix is finite
  **/
-template <typename Derived>
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
 inline void check_finite(const char* function, const char* name,
-                         const Eigen::MatrixBase<Derived>& y) {
+                         const EigMat& y) {
   if (!value_of(y).allFinite()) {
     for (int n = 0; n < y.size(); ++n) {
       if (!std::isfinite(value_of_rec(y(n)))) {

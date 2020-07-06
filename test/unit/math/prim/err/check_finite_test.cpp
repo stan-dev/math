@@ -49,6 +49,9 @@ TEST(ErrorHandlingMat, CheckFinite_Matrix) {
   ASSERT_NO_THROW(check_finite(function, "x", x))
       << "check_finite should be true with finite x";
 
+  ASSERT_NO_THROW(check_finite(function, "x", x.array()))
+      << "check_finite should be true with finite x";
+
   ASSERT_NO_THROW(check_finite(function, "x", x.transpose()))
       << "check_finite should be true with finite x";
 

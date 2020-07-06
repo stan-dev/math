@@ -19,7 +19,7 @@ namespace math {
  **/
 template <typename T, require_st_arithmetic<T>* = nullptr>
 inline decltype(auto) value_of(T&& x) {
-  return std::forward<decltype(x)>(x);
+  return std::forward<T>(x);
 }
 
 /**
