@@ -22,7 +22,7 @@ namespace math {
  *     std::ostream* msgs, const T_Args&... args);
  *
  * t is the time, y is the vector-valued state, msgs is a stream for error
- * messages, and args are optional arguments passed to the ODE solve function 
+ * messages, and args are optional arguments passed to the ODE solve function
  * (which are passed through to \p f without modification).
  *
  * @tparam F Type of ODE right hand side
@@ -73,7 +73,7 @@ ode_bdf_tol_impl(const char* function_name, const F& f,
  *     std::ostream* msgs, const T_Args&... args);
  *
  * t is the time, y is the vector-valued state, msgs is a stream for error
- * messages, and args are optional arguments passed to the ODE solve function 
+ * messages, and args are optional arguments passed to the ODE solve function
  * (which are passed through to \p f without modification).
  *
  * @tparam F Type of ODE right hand side
@@ -110,8 +110,8 @@ ode_bdf_tol(const F& f, const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
 /**
  * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
  * times, { t1, t2, t3, ... } using the stiff backward differentiation formula
- * (BDF) solver in CVODES with defaults for relative_tolerance, absolute_tolerance,
- * and max_num_steps.
+ * (BDF) solver in CVODES with defaults for relative_tolerance,
+ * absolute_tolerance, and max_num_steps.
  *
  * \p f must define an operator() with the signature as:
  *   template<typename T_t, typename T_y, typename... T_Args>
@@ -120,7 +120,7 @@ ode_bdf_tol(const F& f, const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
  *     std::ostream* msgs, const T_Args&... args);
  *
  * t is the time, y is the vector-valued state, msgs is a stream for error
- * messages, and args are optional arguments passed to the ODE solve function 
+ * messages, and args are optional arguments passed to the ODE solve function
  * (which are passed through to \p f without modification).
  *
  * @tparam F Type of ODE right hand side
