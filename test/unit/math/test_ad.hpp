@@ -1331,10 +1331,8 @@ template <typename F, typename T1, typename T2,
           require_st_integral<T1>* = nullptr>
 void expect_ad_vectorized_binary_impl(const ad_tolerances& tols, const F& f,
                                       const T1& x, const T2& y) {
-  auto f_bind = [&](const auto& x) {
-    return
-        [=](const auto& y) { return f(x, y); };
-  };
+  auto f_bind
+      = [&](const auto& x) { return [=](const auto& y) { return f(x, y); }; };
   std::vector<T1> nest_x{x, x};
   std::vector<T2> nest_y{y, y};
   std::vector<std::vector<T1>> nest_nest_x{nest_x, nest_x};
@@ -1368,10 +1366,8 @@ template <typename F, typename T1, typename T2,
           require_st_integral<T2>* = nullptr>
 void expect_ad_vectorized_binary_impl(const ad_tolerances& tols, const F& f,
                                       const T1& x, const T2& y) {
-  auto f_bind = [&](const auto& y) {
-    return
-        [=](const auto& x) { return f(x, y); };
-  };
+  auto f_bind
+      = [&](const auto& y) { return [=](const auto& x) { return f(x, y); }; };
   std::vector<T1> nest_x{x, x};
   std::vector<T2> nest_y{y, y};
   std::vector<std::vector<T1>> nest_nest_x{nest_x, nest_x};

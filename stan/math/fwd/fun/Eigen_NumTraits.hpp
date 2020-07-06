@@ -143,8 +143,7 @@ struct ScalarBinaryOpTraits<std::complex<stan::math::fvar<T>>, double,
  * defined
  */
 template <typename T, typename BinaryOp>
-struct ScalarBinaryOpTraits<int, std::complex<stan::math::fvar<T>>,
-                            BinaryOp> {
+struct ScalarBinaryOpTraits<int, std::complex<stan::math::fvar<T>>, BinaryOp> {
   using ReturnType = std::complex<stan::math::fvar<T>>;
 };
 
@@ -157,8 +156,7 @@ struct ScalarBinaryOpTraits<int, std::complex<stan::math::fvar<T>>,
  * defined
  */
 template <typename T, typename BinaryOp>
-struct ScalarBinaryOpTraits<std::complex<stan::math::fvar<T>>, int,
-                            BinaryOp> {
+struct ScalarBinaryOpTraits<std::complex<stan::math::fvar<T>>, int, BinaryOp> {
   using ReturnType = std::complex<stan::math::fvar<T>>;
 };
 
