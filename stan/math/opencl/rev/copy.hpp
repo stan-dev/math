@@ -31,7 +31,8 @@ class op_copy_to_cl_vari : public vari<matrix_cl<value_type_t<T::value_type>>> {
 
 template <typename T>
 inline var_value<matrix_cl> to_matrix_cl(const var_value<T>& a) {
-  return op_copy_to_cl_vari<>(a.vi_); //Is this corret type? Only if T is actual type, or ... ?
+  return op_copy_to_cl_vari<>(
+      a.vi_);  // Is this corret type? Only if T is actual type, or ... ?
 }
 
 /** \ingroup opencl
