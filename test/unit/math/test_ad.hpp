@@ -1294,13 +1294,14 @@ void expect_ad_vectorized(const F& f, const T& x) {
  * @param x argument to test
  * @param y argument to test
  */
-template <typename F, typename T1, typename T2>
+template <typename F, typename T1, typename T2,
+          require_all_not_st_integral<T1, T2>* = nullptr>
 void expect_ad_vectorized_binary_impl(const ad_tolerances& tols, const F& f,
                                       const T1& x, const T2& y) {
-  std::vector<T1> nest_x{x, x, x};
-  std::vector<T2> nest_y{y, y, y};
-  std::vector<std::vector<T1>> nest_nest_x{nest_x, nest_x, nest_x};
-  std::vector<std::vector<T2>> nest_nest_y{nest_y, nest_y, nest_y};
+  std::vector<T1> nest_x{x, x};
+  std::vector<T2> nest_y{y, y};
+  std::vector<std::vector<T1>> nest_nest_x{nest_x, nest_x};
+  std::vector<std::vector<T2>> nest_nest_y{nest_y, nest_y};
   expect_ad(tols, f, x, y);
   expect_ad(tols, f, x, y[0]);
   expect_ad(tols, f, x[0], y);
@@ -1310,6 +1311,80 @@ void expect_ad_vectorized_binary_impl(const ad_tolerances& tols, const F& f,
   expect_ad(tols, f, nest_nest_x, nest_nest_y);
   expect_ad(tols, f, nest_nest_x, y[0]);
   expect_ad(tols, f, x[0], nest_nest_y);
+}
+
+/**
+ * Implementation function for testing that binary functions with vector inputs
+ * (both Eigen and std::vector types) return 1st-, 2nd-, and 3rd-order
+ * derivatives consistent with finite differences of double inputs.
+ *
+ * This is a specialisation for use when the first input is an integer type
+ *
+ * @tparam F type of function
+ * @tparam T1 type of first argument
+ * @tparam T2 type of second argument
+ * @param f function to test
+ * @param x argument to test
+ * @param y argument to test
+ */
+template <typename F, typename T1, typename T2,
+          require_st_integral<T1>* = nullptr>
+void expect_ad_vectorized_binary_impl(const ad_tolerances& tols, const F& f,
+                                      const T1& x, const T2& y) {
+  auto f_bind = [&](const auto& x) {
+    return
+        [=](const auto& y) { return f(x, y); };
+  };
+  std::vector<T1> nest_x{x, x};
+  std::vector<T2> nest_y{y, y};
+  std::vector<std::vector<T1>> nest_nest_x{nest_x, nest_x};
+  std::vector<std::vector<T2>> nest_nest_y{nest_y, nest_y};
+  expect_ad(tols, f_bind(x), y);
+  expect_ad(tols, f_bind(x), y[0]);
+  expect_ad(tols, f_bind(x[0]), y);
+  expect_ad(tols, f_bind(nest_x), nest_y);
+  expect_ad(tols, f_bind(nest_x), y[0]);
+  expect_ad(tols, f_bind(x[0]), nest_y);
+  expect_ad(tols, f_bind(nest_nest_x), nest_nest_y);
+  expect_ad(tols, f_bind(nest_nest_x), y[0]);
+  expect_ad(tols, f_bind(x[0]), nest_nest_y);
+}
+
+/**
+ * Implementation function for testing that binary functions with vector inputs
+ * (both Eigen and std::vector types) return 1st-, 2nd-, and 3rd-order
+ * derivatives consistent with finite differences of double inputs.
+ *
+ * This is a specialisation for use when the second input is an integer type
+ *
+ * @tparam F type of function
+ * @tparam T1 type of first argument
+ * @tparam T2 type of second argument
+ * @param f function to test
+ * @param x argument to test
+ * @param y argument to test
+ */
+template <typename F, typename T1, typename T2,
+          require_st_integral<T2>* = nullptr>
+void expect_ad_vectorized_binary_impl(const ad_tolerances& tols, const F& f,
+                                      const T1& x, const T2& y) {
+  auto f_bind = [&](const auto& y) {
+    return
+        [=](const auto& x) { return f(x, y); };
+  };
+  std::vector<T1> nest_x{x, x};
+  std::vector<T2> nest_y{y, y};
+  std::vector<std::vector<T1>> nest_nest_x{nest_x, nest_x};
+  std::vector<std::vector<T2>> nest_nest_y{nest_y, nest_y};
+  expect_ad(tols, f_bind(y), x);
+  expect_ad(tols, f_bind(y[0]), x);
+  expect_ad(tols, f_bind(y), x[0]);
+  expect_ad(tols, f_bind(nest_y), nest_x);
+  expect_ad(tols, f_bind(y[0]), nest_x);
+  expect_ad(tols, f_bind(nest_y), x[0]);
+  expect_ad(tols, f_bind(nest_nest_y), nest_nest_x);
+  expect_ad(tols, f_bind(y[0]), nest_nest_x);
+  expect_ad(tols, f_bind(nest_nest_y), x[0]);
 }
 
 /**

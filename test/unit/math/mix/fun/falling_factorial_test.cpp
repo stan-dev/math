@@ -20,3 +20,16 @@ TEST(mathMixScalFun, fallingFactorial) {
 
   stan::test::expect_ad(f(2), std::numeric_limits<double>::quiet_NaN());
 }
+
+TEST(mathMixScalFun, fallingFactorial_vec) {
+  auto f = [](const auto& x1, const auto& x2) {
+    using stan::math::falling_factorial;
+    return falling_factorial(x1, x2);
+  };
+
+  Eigen::VectorXd in1(2);
+  in1 << 0.5, 3.4;
+  Eigen::VectorXi in2(2);
+  in2 << 3, 1;
+  stan::test::expect_ad_vectorized_binary(f, in1, in2);
+}
