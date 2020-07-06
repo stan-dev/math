@@ -41,6 +41,7 @@ class var_value {
       std::is_floating_point<value_type_t<T>>::value,
       "The template for must be a floating point or a container holding"
       " floating point types");
+
  public:
   using value_type = std::decay_t<T>;        // type in vari_value.
   using vari_type = vari_value<value_type>;  // Type of underlying vari impl.
