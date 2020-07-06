@@ -15,7 +15,8 @@ template <typename T, Eigen::AlignmentType Alignment = Eigen::Aligned8,
 class vari_value;
 
 // forward declaration of var
-template <typename T, typename VariType = vari_value<std::remove_reference_t<T>>>
+template <typename T,
+          typename VariType = vari_value<std::remove_reference_t<T>>>
 class var_value;
 /**
  * Abstract base class that all `vari_value` and it's derived classes inherit.
@@ -223,7 +224,8 @@ class vari_value<T, Alignment, StrideType,
   using eigen_scalar = typename T::Scalar;  // A floating point type
   eigen_scalar* val_mem_;  // Pointer to memory allocated on the stack for val_
   eigen_scalar* adj_mem_;  // Pointer to memory allocated on the stack for adj_
-  using eigen_map = Eigen::Map<T, Alignment, StrideType>;  // Maps for adj_ and val_
+  using eigen_map
+      = Eigen::Map<T, Alignment, StrideType>;  // Maps for adj_ and val_
   using Stride = StrideType;
   static constexpr Eigen::AlignmentType Aligned{Alignment};
   using VariType = vari_value<T, Alignment, StrideType>;
@@ -327,19 +329,21 @@ class vari_value<T, Alignment, StrideType,
    * propagating derivatives, setting the derivative of the
    * result with respect to itself to be 1.
    */
-  void init_dependent() { adj_.setOnes();}
+  void init_dependent() { adj_.setOnes(); }
   /**
    * Set the adjoint value of this variable to 0.  This is used to
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
   template <typename Checker = T, require_t<is_not_const<Checker>>* = nullptr>
-  inline void set_zero_adjoint_impl() { adj_.setZero(); }
+  inline void set_zero_adjoint_impl() {
+    adj_.setZero();
+  }
 
   template <typename Checker = T, require_t<std::is_const<Checker>>* = nullptr>
-  inline void set_zero_adjoint_impl() {  }
+  inline void set_zero_adjoint_impl() {}
 
-  inline void set_zero_adjoint() final { set_zero_adjoint_impl();}
+  inline void set_zero_adjoint() final { set_zero_adjoint_impl(); }
   /**
    * Insertion operator for vari. Prints the current value and
    * the adjoint value.
@@ -349,8 +353,8 @@ class vari_value<T, Alignment, StrideType,
    *
    * @return The modified ostream.
    */
-  friend std::ostream& operator<<(std::ostream& os,
-                                  const vari_value<T, Alignment, StrideType>* v) {
+  friend std::ostream& operator<<(
+      std::ostream& os, const vari_value<T, Alignment, StrideType>* v) {
     return os << "val: \n" << v->val_ << " \nadj: \n" << v->adj_;
   }
 
@@ -489,11 +493,11 @@ class vari_value<T, Alignment, StrideType,
     : public vari_base, chainable_alloc {
  public:
   using PlainObject
-      = std::decay_t<plain_type_t<T>>;             // Base type of Eigen class
+      = std::remove_reference_t<plain_type_t<T>>;  // Base type of Eigen class
   using eigen_scalar = value_type_t<PlainObject>;  // Scalar type of Eigen class
   using eigen_index = typename PlainObject::StorageIndex;  // Index type
-  using Scalar = PlainObject;  // vari's adj_ and val_ member type
-  using value_type = Scalar;   // vari's adj_ and val_ member type
+  using Scalar = PlainObject;      // vari's adj_ and val_ member type
+  using value_type = PlainObject;  // vari's adj_ and val_ member type
   using Stride = StrideType;
   static constexpr Eigen::AlignmentType Aligned{Alignment};
   using VariType = vari_value<T, Alignment, StrideType>;
@@ -604,6 +608,20 @@ class vari_value<T, Alignment, StrideType,
   }
 
   /**
+   * A block view of the underlying Sparse Eigen matrices.
+   * @param i Starting row of block.
+   * @param j Starting columns of block.
+   * @param p Number of rows to return.
+   * @param q Number of columns to return.
+   */
+  inline const auto block(Eigen::Index startRow, Eigen::Index startCol,
+                          Eigen::Index rows, Eigen::Index cols) const {
+    return vari_value<const PlainObject>(
+        val_.block(startRow, startCol, rows, cols),
+        adj_.block(startRow, startCol, rows, cols));
+  }
+
+  /**
    * Insertion operator for vari. Prints the current value and
    * the adjoint value.
    *
@@ -645,8 +663,15 @@ class vari_value<T, Alignment, StrideType,
   }
 
  private:
-   template <typename, typename>
-   friend class var_value;
+  template <typename, typename>
+  friend class var_value;
+  template <typename, Eigen::AlignmentType, typename, typename>
+  friend class vari_value;
+  // For converting from a subset
+  template <typename S, typename K,
+            require_convertible_t<S&, value_type>* = nullptr,
+            require_convertible_t<K&, value_type>* = nullptr>
+  explicit vari_value(S&& val, K&& adj) : adj_(adj), val_(val) {}
 };
 
 }  // namespace math

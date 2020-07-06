@@ -84,24 +84,6 @@ void ctor_overloads_matrix(EigenMat&& xx) {
                          test_var_x.adj());
 }
 
-auto make_sparse_matrix_random(int rows, int cols) {
-  using eigen_triplet = Eigen::Triplet<double>;
-  boost::mt19937 gen;
-  boost::random::uniform_real_distribution<double> dist(0.0, 1.0);
-  std::vector<eigen_triplet> tripletList;
-  for (int i = 0; i < rows; ++i) {
-    for (int j = 0; j < cols; ++j) {
-      auto v_ij = dist(gen);
-      if (v_ij < 0.1) {
-        tripletList.push_back(eigen_triplet(i, j, v_ij));
-      }
-    }
-  }
-  Eigen::SparseMatrix<double> mat(rows, cols);
-  mat.setFromTriplets(tripletList.begin(), tripletList.end());
-  return mat;
-}
-
 template <typename EigenMat>
 void ctor_overloads_sparse_matrix(EigenMat&& x) {
   using stan::math::var_value;
@@ -144,7 +126,7 @@ void ctor_overloads_sparse_matrix(EigenMat&& x) {
   }
   // test inplace addition works
   auto inplace_add_var = var_value<eigen_plain>(new vari_value<eigen_plain>(x));
-  eigen_plain test_y = make_sparse_matrix_random(10, 10);
+  eigen_plain test_y = test::make_sparse_matrix_random(10, 10);
   inplace_add_var.vi_->init_dependent();
   inplace_add_var.adj() += test_y;
   // adjoints sparsity pattern will be pattern of x and test_y for addition
@@ -164,7 +146,7 @@ TEST_F(AgradRev, ctormatrixOverloads) {
   using dense_mat = Eigen::Matrix<double, -1, -1>;
   using sparse_mat = Eigen::SparseMatrix<double>;
   ctor_overloads_matrix(dense_mat::Random(10, 10));
-  sparse_mat sparse_x = make_sparse_matrix_random(10, 10);
+  sparse_mat sparse_x = test::make_sparse_matrix_random(10, 10);
   ctor_overloads_sparse_matrix(sparse_x);
 }
 

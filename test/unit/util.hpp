@@ -174,6 +174,24 @@ void expect_same_type() {
   bool b = std::is_same<T1, T2>::value;
   EXPECT_TRUE(b);
 }
+
+auto make_sparse_matrix_random(int rows, int cols) {
+  using eigen_triplet = Eigen::Triplet<double>;
+  boost::mt19937 gen;
+  boost::random::uniform_real_distribution<double> dist(0.0, 1.0);
+  std::vector<eigen_triplet> tripletList;
+  for (int i = 0; i < rows; ++i) {
+    for (int j = 0; j < cols; ++j) {
+      auto v_ij = dist(gen);
+      if (v_ij < 0.1) {
+        tripletList.push_back(eigen_triplet(i, j, v_ij));
+      }
+    }
+  }
+  Eigen::SparseMatrix<double> mat(rows, cols);
+  mat.setFromTriplets(tripletList.begin(), tripletList.end());
+  return mat;
+}
 }  // namespace test
 
 #endif
