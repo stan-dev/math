@@ -22,7 +22,6 @@ namespace math {
 template <typename T>
 class vari_value<T, require_kernel_expression_lhs_t<T>>
     : public vari_base, public chainable_alloc {
-
  public:
   /**
    * The adjoint of this variable, which is the partial derivative
@@ -73,7 +72,9 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
   template <typename R, typename S, require_convertible_t<R&, T>* = nullptr,
             require_convertible_t<S&, T>* = nullptr>
   vari_value(R&& val, S&& adj)
-      : chainable_alloc(), adj_(std::forward<S>(adj)), val_(std::forward<R>(val)) {
+      : chainable_alloc(),
+        adj_(std::forward<S>(adj)),
+        val_(std::forward<R>(val)) {
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
@@ -115,7 +116,7 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
    * @return block
    */
   auto block(int row, int col, int rows, int cols) {
-//    using stan::math::block;
+    //    using stan::math::block;
     const auto& val_block = stan::math::block(val_, row, col, rows, cols);
     const auto& adj_block = stan::math::block(adj_, row, col, rows, cols);
     return vari_value<std::decay_t<decltype(val_block)>>(val_block, adj_block);

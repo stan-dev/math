@@ -71,9 +71,9 @@ struct is_kernel_expression_lhs
     : bool_constant<std::is_base_of<operation_cl_lhs_base,
                                     std::remove_reference_t<T>>::value> {};
 template <typename T>
-struct is_kernel_expression_lhs<T, require_matrix_cl_t<T>>
-    : std::true_type {};
-STAN_ADD_REQUIRE_UNARY(kernel_expression_lhs, is_kernel_expression_lhs, opencl_kernel_generator);
+struct is_kernel_expression_lhs<T, require_matrix_cl_t<T>> : std::true_type {};
+STAN_ADD_REQUIRE_UNARY(kernel_expression_lhs, is_kernel_expression_lhs,
+                       opencl_kernel_generator);
 
 /** @}*/
 }  // namespace stan
