@@ -64,9 +64,9 @@ ode_rk45_tol_impl(const char* function_name, const F& f,
   using boost::numeric::odeint::integrate_times;
   using boost::numeric::odeint::make_dense_output;
   using boost::numeric::odeint::max_step_checker;
+  using boost::numeric::odeint::no_progress_error;
   using boost::numeric::odeint::runge_kutta_dopri5;
   using boost::numeric::odeint::vector_space_algebra;
-  using boost::numeric::odeint::no_progress_error;
 
   using T_y0_t0 = return_type_t<T_y0, T_t0>;
 
@@ -126,12 +126,12 @@ ode_rk45_tol_impl(const char* function_name, const F& f,
   const double step_size = 0.1;
   try {
     integrate_times(
-		    make_dense_output(absolute_tolerance, relative_tolerance,
-				      runge_kutta_dopri5<std::vector<double>, double,
-				      std::vector<double>, double>()),
-		    std::ref(coupled_system), initial_coupled_state, std::begin(ts_vec),
-		    std::end(ts_vec), step_size, filtered_observer,
-		    max_step_checker(max_num_steps));
+        make_dense_output(absolute_tolerance, relative_tolerance,
+                          runge_kutta_dopri5<std::vector<double>, double,
+                                             std::vector<double>, double>()),
+        std::ref(coupled_system), initial_coupled_state, std::begin(ts_vec),
+        std::end(ts_vec), step_size, filtered_observer,
+        max_step_checker(max_num_steps));
   } catch (const no_progress_error& e) {
     throw_domain_error("integrate_ode_rk45", "", ts_vec[time_index + 1],
                        "Failed to integrate to next output time (",
