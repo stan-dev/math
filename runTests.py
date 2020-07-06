@@ -21,9 +21,9 @@ testsfx = "_test.cpp"
 allowed_paths_with_jumbo = [	
     "test/unit/math/prim/",	
     "test/unit/math/",	
-    # "test/unit/math/rev/",	
-    # "test/unit/math/fwd/",	
-    # "test/unit/math/mix/"	
+    "test/unit/math/rev/",	
+    "test/unit/math/fwd/",	
+    "test/unit/math/mix/"	
 ]	
 
 jumbo_folders = [	
