@@ -22,7 +22,7 @@ class op_copy_to_cl_vari final : public vari_value<matrix_cl<value_type_t<T>>> {
   vari_value<T>& a_;
 
  public:
-  op_copy_to_cl_vari(vari_value<T>& a)
+  explicit op_copy_to_cl_vari(vari_value<T>& a)
       : vari_value<matrix_cl<value_type_t<T>>>(to_matrix_cl(a.val_)), a_(a) {}
 
   virtual void chain() {
@@ -53,7 +53,7 @@ class op_copy_from_cl_vari final
   vari_value<T>& a_;
 
  public:
-  op_copy_from_cl_vari(vari_value<T>& a)
+  explicit op_copy_from_cl_vari(vari_value<T>& a)
       : vari_value<Eigen::Matrix<value_type_t<T>, Rows, Cols>>(
           from_matrix_cl<Rows, Cols>(a.val_)),
         a_(a) {}
