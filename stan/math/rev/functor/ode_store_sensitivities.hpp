@@ -38,10 +38,10 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
     const Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1>& y0, const T_t0& t0,
     const T_t& t, std::ostream* msgs, const Args&... args) {
   const size_t N = y0.size();
-  const size_t y0_vars = count_vars(y0);
-  const size_t args_vars = count_vars(args...);
-  const size_t t0_vars = count_vars(t0);
-  const size_t t_vars = count_vars(t);
+  const size_t num_y0_vars = count_vars(y0);
+  const size_t num_args_vars = count_vars(args...);
+  const size_t num_t0_vars = count_vars(t0);
+  const size_t num_t_vars = count_vars(t);
   Eigen::Matrix<var, Eigen::Dynamic, 1> yt(N);
 
   Eigen::VectorXd y(N);
@@ -57,7 +57,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
   if (is_var<T_t0>::value)
     f_y0_t0 = f(value_of(t0), value_of(y0).eval(), msgs, value_of(args)...);
 
-  const size_t total_vars = y0_vars + args_vars + t0_vars + t_vars;
+  const size_t total_vars = num_y0_vars + num_args_vars + num_t0_vars + num_t_vars;
 
   vari** varis
       = ChainableStack::instance_->memalloc_.alloc_array<vari*>(total_vars);
@@ -72,24 +72,24 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
 
   for (size_t j = 0; j < N; ++j) {
     double* partials_j = partials + j * total_vars;
-    for (size_t k = 0; k < y0_vars; ++k) {
-      partials_j[k] = coupled_state[N + y0_vars * k + j];
+    for (size_t k = 0; k < num_y0_vars; ++k) {
+      partials_j[k] = coupled_state[N + num_y0_vars * k + j];
     }
 
-    for (size_t k = 0; k < args_vars; ++k) {
-      partials_j[y0_vars + k] = coupled_state[N + N * y0_vars + N * k + j];
+    for (size_t k = 0; k < num_args_vars; ++k) {
+      partials_j[num_y0_vars + k] = coupled_state[N + N * num_y0_vars + N * k + j];
     }
 
     if (is_var<T_t0>::value) {
       double dyt_dt0 = 0.0;
-      for (size_t k = 0; k < y0_vars; ++k) {
-        dyt_dt0 += -f_y0_t0.coeffRef(k) * coupled_state[N + y0_vars * k + j];
+      for (size_t k = 0; k < num_y0_vars; ++k) {
+        dyt_dt0 += -f_y0_t0.coeffRef(k) * coupled_state[N + num_y0_vars * k + j];
       }
-      partials_j[y0_vars + args_vars] = dyt_dt0;
+      partials_j[num_y0_vars + num_args_vars] = dyt_dt0;
     }
 
     if (is_var<T_t>::value) {
-      partials_j[y0_vars + args_vars + t0_vars] = f_y_t.coeffRef(j);
+      partials_j[num_y0_vars + num_args_vars + num_t0_vars] = f_y_t.coeffRef(j);
     }
 
     yt(j) = new precomputed_gradients_vari(y(j), total_vars, varis, partials_j);

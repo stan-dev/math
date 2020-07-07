@@ -48,8 +48,8 @@ class cvodes_integrator {
   double absolute_tolerance_;
   long int max_num_steps_;  // NOLINT(runtime/int)
 
-  const size_t y0_vars_;
-  const size_t args_vars_;
+  const size_t num_y0_vars_;
+  const size_t num_args_vars_;
 
   coupled_ode_system<F, T_y0_t0, T_Args...> coupled_ode_;
 
@@ -145,12 +145,12 @@ class cvodes_integrator {
     std::vector<double> z(coupled_state_.size());
     std::vector<double> dz_dt;
     std::copy(y, y + N_, z.data());
-    for (std::size_t s = 0; s < y0_vars_ + args_vars_; s++) {
+    for (std::size_t s = 0; s < num_y0_vars_ + num_args_vars_; s++) {
       std::copy(NV_DATA_S(yS[s]), NV_DATA_S(yS[s]) + N_,
                 z.data() + (s + 1) * N_);
     }
     coupled_ode_(z, dz_dt, t);
-    for (std::size_t s = 0; s < y0_vars_ + args_vars_; s++) {
+    for (std::size_t s = 0; s < num_y0_vars_ + num_args_vars_; s++) {
       std::move(dz_dt.data() + (s + 1) * N_, dz_dt.data() + (s + 2) * N_,
                 NV_DATA_S(ySdot[s]));
     }
@@ -201,8 +201,8 @@ class cvodes_integrator {
         relative_tolerance_(relative_tolerance),
         absolute_tolerance_(absolute_tolerance),
         max_num_steps_(max_num_steps),
-        y0_vars_(count_vars(y0_)),
-        args_vars_(count_vars(args...)),
+        num_y0_vars_(count_vars(y0_)),
+        num_args_vars_(count_vars(args...)),
         coupled_ode_(f, y0_, msgs, args...),
         coupled_state_(coupled_ode_.initial_state()) {
     check_finite(function_name, "initial state", y0_);
@@ -234,10 +234,10 @@ class cvodes_integrator {
     A_ = SUNDenseMatrix(N_, N_);
     LS_ = SUNDenseLinearSolver(nv_state_, A_);
 
-    if (y0_vars_ + args_vars_ > 0) {
+    if (num_y0_vars_ + num_args_vars_ > 0) {
       nv_state_sens_
-          = N_VCloneVectorArrayEmpty_Serial(y0_vars_ + args_vars_, nv_state_);
-      for (std::size_t i = 0; i < y0_vars_ + args_vars_; i++) {
+          = N_VCloneVectorArrayEmpty_Serial(num_y0_vars_ + num_args_vars_, nv_state_);
+      for (std::size_t i = 0; i < num_y0_vars_ + num_args_vars_; i++) {
         NV_DATA_S(nv_state_sens_[i]) = &coupled_state_[N_] + i * N_;
       }
     }
@@ -247,8 +247,8 @@ class cvodes_integrator {
     SUNLinSolFree(LS_);
     SUNMatDestroy(A_);
     N_VDestroy_Serial(nv_state_);
-    if (y0_vars_ + args_vars_ > 0) {
-      N_VDestroyVectorArray_Serial(nv_state_sens_, y0_vars_ + args_vars_);
+    if (num_y0_vars_ + num_args_vars_ > 0) {
+      N_VDestroyVectorArray_Serial(nv_state_sens_, num_y0_vars_ + num_args_vars_);
     }
   }
 
@@ -288,9 +288,9 @@ class cvodes_integrator {
           "CVodeSetJacFn");
 
       // initialize forward sensitivity system of CVODES as needed
-      if (y0_vars_ + args_vars_ > 0) {
+      if (num_y0_vars_ + num_args_vars_ > 0) {
         check_flag_sundials(
-            CVodeSensInit(cvodes_mem, static_cast<int>(y0_vars_ + args_vars_),
+            CVodeSensInit(cvodes_mem, static_cast<int>(num_y0_vars_ + num_args_vars_),
                           CV_STAGGERED, &cvodes_integrator::cv_rhs_sens,
                           nv_state_sens_),
             "CVodeSensInit");
@@ -318,7 +318,7 @@ class cvodes_integrator {
             check_flag_sundials(error_code, "CVode");
           }
 
-          if (y0_vars_ + args_vars_ > 0) {
+          if (num_y0_vars_ + num_args_vars_ > 0) {
             check_flag_sundials(
                 CVodeGetSens(cvodes_mem, &t_init, nv_state_sens_),
                 "CVodeGetSens");

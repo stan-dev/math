@@ -69,8 +69,8 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
   const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0_;
   std::tuple<decltype(deep_copy_vars(std::declval<Args>()))...>
       local_args_tuple_;
-  const size_t y0_vars_;
-  const size_t args_vars_;
+  const size_t num_y0_vars_;
+  const size_t num_args_vars;
   const size_t N_;
   Eigen::VectorXd args_adjoints_;
   Eigen::VectorXd y_adjoints_;
@@ -92,18 +92,16 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
       : f_(f),
         y0_(y0),
         local_args_tuple_(deep_copy_vars(args)...),
-        y0_vars_(count_vars(y0_)),
-        args_vars_(count_vars(args...)),
+        num_y0_vars_(count_vars(y0_)),
+        num_args_vars(count_vars(args...)),
         N_(y0.size()),
-        args_adjoints_(args_vars_),
+        args_adjoints_(num_args_vars),
         y_adjoints_(N_),
         msgs_(msgs) {}
 
   /**
    * Calculates the right hand side of the coupled ode system (the regular
    * ode system with forward sensitivities).
-   *
-   * This method uses nested autodiff and is not thread safe.
    *
    * @param[in] z state of the coupled ode system; this must be size
    *   <code>size()</code>
@@ -139,7 +137,7 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
 
       y_adjoints_ = y_vars.adj();
 
-      memset(args_adjoints_.data(), 0, sizeof(double) * args_vars_);
+      memset(args_adjoints_.data(), 0, sizeof(double) * num_args_vars);
       apply(
           [&](auto&&... args) {
             accumulate_adjoints(args_adjoints_.data(), args...);
@@ -149,11 +147,11 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
       apply([&](auto&&... args) { zero_adjoints(args...); }, local_args_tuple_);
 
       // No need to zero adjoints after last sweep
-      if (i < N_) {
+      if (i + 1 < N_) {
         nested.set_zero_all_adjoints();
       }
 
-      for (size_t j = 0; j < y0_vars_; ++j) {
+      for (size_t j = 0; j < num_y0_vars_; ++j) {
         double temp_deriv = 0.0;
         for (size_t k = 0; k < N_; ++k) {
           temp_deriv += z[N_ + N_ * j + k] * y_adjoints_.coeffRef(k);
@@ -162,14 +160,14 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
         dz_dt[N_ + N_ * j + i] = temp_deriv;
       }
 
-      for (size_t j = 0; j < args_vars_; ++j) {
+      for (size_t j = 0; j < num_args_vars; ++j) {
         double temp_deriv = args_adjoints_.coeffRef(j);
         for (size_t k = 0; k < N_; ++k) {
           temp_deriv
-              += z[N_ + N_ * y0_vars_ + N_ * j + k] * y_adjoints_.coeffRef(k);
+              += z[N_ + N_ * num_y0_vars_ + N_ * j + k] * y_adjoints_.coeffRef(k);
         }
 
-        dz_dt[N_ + N_ * y0_vars_ + N_ * j + i] = temp_deriv;
+        dz_dt[N_ + N_ * num_y0_vars_ + N_ * j + i] = temp_deriv;
       }
     }
   }
@@ -179,7 +177,7 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
    *
    * @return size of the coupled system.
    */
-  size_t size() const { return N_ + N_ * y0_vars_ + N_ * args_vars_; }
+  size_t size() const { return N_ + N_ * num_y0_vars_ + N_ * num_args_vars; }
 
   /**
    * Returns the initial state of the coupled system.
@@ -204,7 +202,7 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
     for (size_t i = 0; i < N_; i++) {
       initial[i] = value_of(y0_(i));
     }
-    for (size_t i = 0; i < y0_vars_; i++) {
+    for (size_t i = 0; i < num_y0_vars_; i++) {
       initial[N_ + i * N_ + i] = 1.0;
     }
     return initial;

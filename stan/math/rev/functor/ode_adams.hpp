@@ -12,8 +12,8 @@ namespace math {
 
 /**
  * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
- * times, { t1, t2, t3, ... } using the stiff backward differentiation formula
- * Adams-Moulton solver from CVODES.
+ * times, { t1, t2, t3, ... } using the non-stiff Adams-Moulton solver from
+ * CVODES.
  *
  * \p f must define an operator() with the signature as:
  *   template<typename T_t, typename T_y, typename... T_Args>
@@ -63,8 +63,8 @@ ode_adams_tol_impl(const char* function_name, const F& f,
 
 /**
  * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
- * times, { t1, t2, t3, ... } using the stiff backward differentiation formula
- * Adams-Moulton solver from CVODES.
+ * times, { t1, t2, t3, ... } using the non-stiff Adams-Moulton solver from
+ * CVODES.
  *
  * \p f must define an operator() with the signature as:
  *   template<typename T_t, typename T_y, typename... T_Args>

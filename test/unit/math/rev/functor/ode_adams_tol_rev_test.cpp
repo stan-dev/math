@@ -1,5 +1,6 @@
 #include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/util.hpp>
 #include <iostream>
 #include <vector>
 
@@ -146,6 +147,8 @@ TEST(StanMathOde_ode_adams_tol, ts_repeat) {
   std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> output
       = stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6,
                                   nullptr, a);
+
+  EXPECT_EQ(output.size(), ts.size());
 
   output[0][0].grad();
 
@@ -570,4 +573,17 @@ TEST(StanMathOde_ode_adams_tol, arg_combos_test) {
   check_t0(t0);
   check_ts(ts);
   check_a(a);
+}
+
+TEST(StanMathOde_ode_adams_tol, too_much_work) {
+  Eigen::Matrix<var, Eigen::Dynamic, 1> y0 =
+    Eigen::VectorXd::Zero(1).template cast<var>();
+  var t0 = 0;
+  std::vector<var> ts = {0.45, 1e10};
+
+  var a = 1.0;
+
+  EXPECT_THROW_MSG(stan::math::ode_adams_tol(CosArg1(), y0, t0, ts, 1e-6, 1e-6,
+					     100, nullptr, a),
+                   std::domain_error, "Failed to integrate to next output time");
 }

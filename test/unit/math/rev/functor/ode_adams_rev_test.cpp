@@ -143,6 +143,8 @@ TEST(StanMathOde_ode_adams, ts_repeat) {
   std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> output
       = stan::math::ode_adams(CosArg1(), y0, t0, ts, nullptr, a);
 
+  EXPECT_EQ(output.size(), ts.size());
+
   output[0][0].grad();
 
   EXPECT_NEAR(output[0][0].val(), 0.4165982112, 1e-5);

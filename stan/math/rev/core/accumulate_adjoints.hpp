@@ -29,7 +29,7 @@ template <typename EigT, require_eigen_vt<is_var, EigT>* = nullptr,
           typename... Pargs>
 inline double* accumulate_adjoints(double* dest, EigT&& x, Pargs&&... args);
 
-template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>* = nullptr,
+template <typename Arith, require_st_arithmetic<Arith>* = nullptr,
           typename... Pargs>
 inline double* accumulate_adjoints(double* dest, Arith&& x, Pargs&&... args);
 
@@ -135,7 +135,7 @@ inline double* accumulate_adjoints(double* dest, EigT&& x, Pargs&&... args) {
  * @param args Further args to accumulate over
  * @return Final position of adjoint storage pointer
  */
-template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>*,
+template <typename Arith, require_st_arithmetic<Arith>*,
           typename... Pargs>
 inline double* accumulate_adjoints(double* dest, Arith&& x, Pargs&&... args) {
   return accumulate_adjoints(dest, std::forward<Pargs>(args)...);
