@@ -9,15 +9,13 @@ namespace stan {
 namespace math {
 
 template <typename T>
-inline var_value<T>& var_value<T, require_vt_floating_point<T>>::operator*=(
-    const var_value<T>& b) {
+inline var_value<T>& var_value<T>::operator*=(const var_value<T>& b) {
   vi_ = new internal::multiply_vv_vari(vi_, b.vi_);
   return *this;
 }
 
 template <typename T>
-inline var_value<T>& var_value<T, require_vt_floating_point<T>>::operator*=(
-    T b) {
+inline var_value<T>& var_value<T>::operator*=(T b) {
   if (b == 1.0) {
     return *this;
   }

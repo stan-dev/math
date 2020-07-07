@@ -4,9 +4,8 @@
 #include <string>
 #include <vector>
 
-using stan::math::check_ordered;
-
 TEST(ErrorHandling, checkOrdered) {
+  using stan::math::check_ordered;
   std::vector<double> y = {0, 1, 2};
   EXPECT_NO_THROW(check_ordered("check_ordered", "y", y));
 
@@ -29,6 +28,7 @@ TEST(ErrorHandling, checkOrdered) {
 }
 
 TEST(ErrorHandling, checkOrdered_one_indexed_message) {
+  using stan::math::check_ordered;
   std::string message;
   std::vector<double> y = {0, 5, 1};
 
@@ -45,6 +45,7 @@ TEST(ErrorHandling, checkOrdered_one_indexed_message) {
 }
 
 TEST(ErrorHandling, checkOrdered_nan) {
+  using stan::math::check_ordered;
   double nan = std::numeric_limits<double>::quiet_NaN();
   std::vector<double> y = {0, 1, 2};
 
@@ -61,6 +62,7 @@ TEST(ErrorHandling, checkOrdered_nan) {
 }
 
 TEST(ErrorHandlingMatrix, checkOrdered) {
+  using stan::math::check_ordered;
   Eigen::Matrix<double, Eigen::Dynamic, 1> y;
   y.resize(3);
 
@@ -89,6 +91,7 @@ TEST(ErrorHandlingMatrix, checkOrdered) {
 }
 
 TEST(ErrorHandlingMatrix, checkOrdered_one_indexed_message) {
+  using stan::math::check_ordered;
   std::string message;
   Eigen::Matrix<double, Eigen::Dynamic, 1> y;
   y.resize(3);
@@ -107,6 +110,7 @@ TEST(ErrorHandlingMatrix, checkOrdered_one_indexed_message) {
 }
 
 TEST(ErrorHandlingMatrix, checkOrdered_nan) {
+  using stan::math::check_ordered;
   Eigen::Matrix<double, Eigen::Dynamic, 1> y;
   double nan = std::numeric_limits<double>::quiet_NaN();
   y.resize(3);

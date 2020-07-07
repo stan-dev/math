@@ -1,6 +1,9 @@
 #ifndef TEST_UNIT_UTIL_HPP
 #define TEST_UNIT_UTIL_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/uniform_real_distribution.hpp>
 #include <boost/typeof/typeof.hpp>
 #include <gtest/gtest.h>
 #include <type_traits>
@@ -175,5 +178,45 @@ void expect_same_type() {
   EXPECT_TRUE(b);
 }
 }  // namespace test
+
+namespace stan {
+namespace test {
+template <int R, int C>
+void expect_type_vector(const Eigen::Matrix<double, R, C>& x) {
+  EXPECT_EQ(Eigen::Dynamic, R);
+  EXPECT_EQ(1, C);
+}
+template <int R, int C>
+void expect_type_row_vector(const Eigen::Matrix<double, R, C>& x) {
+  EXPECT_EQ(Eigen::Dynamic, C);
+  EXPECT_EQ(1, R);
+}
+
+template <int R, int C>
+void expect_type_matrix(const Eigen::Matrix<double, R, C>& x) {
+  EXPECT_EQ(Eigen::Dynamic, C);
+  EXPECT_EQ(Eigen::Dynamic, R);
+}
+
+auto make_sparse_matrix_random(int rows, int cols) {
+  using eigen_triplet = Eigen::Triplet<double>;
+  boost::mt19937 gen;
+  boost::random::uniform_real_distribution<double> dist(0.0, 1.0);
+  std::vector<eigen_triplet> tripletList;
+  for (int i = 0; i < rows; ++i) {
+    for (int j = 0; j < cols; ++j) {
+      auto v_ij = dist(gen);
+      if (v_ij < 0.1) {
+        tripletList.push_back(eigen_triplet(i, j, v_ij));
+      }
+    }
+  }
+  Eigen::SparseMatrix<double> mat(rows, cols);
+  mat.setFromTriplets(tripletList.begin(), tripletList.end());
+  return mat;
+}
+
+}  // namespace test
+}  // namespace stan
 
 #endif

@@ -11,7 +11,7 @@ namespace stan {
 namespace math {
 
 // forward declaration of var
-template <typename T, typename>
+template <typename T>
 class var_value;
 /**
  * Abstract base class that all `vari_value` and it's derived classes inherit.
@@ -47,8 +47,7 @@ class vari_value;
  *
  */
 template <typename T>
-class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
-    : public vari_base {
+class vari_value<T, require_floating_point_t<T>> : public vari_base {
  public:
   using Scalar = T;
   using value_type = Scalar;
@@ -75,8 +74,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
    * @tparam S a floating point type.
    * @param x Value of the constructed variable.
    */
-  template <typename S,
-            std::enable_if_t<std::is_convertible<S&, Scalar>::value>* = nullptr>
+  template <typename S, require_convertible_t<S&, Scalar>* = nullptr>
   vari_value(S x) noexcept : val_(x), adj_(0.0) {  // NOLINT
     ChainableStack::instance_->var_stack_.emplace_back(this);
   }
@@ -98,23 +96,13 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
    * @param stacked If false will put this this vari on the nochain stack so
    * that its `chain()` method is not called.
    */
-  template <typename S,
-            std::enable_if_t<std::is_convertible<S&, Scalar>::value>* = nullptr>
+  template <typename S, require_convertible_t<S&, Scalar>* = nullptr>
   vari_value(S x, bool stacked) noexcept : val_(x), adj_(0.0) {
     if (stacked) {
       ChainableStack::instance_->var_stack_.emplace_back(this);
     } else {
       ChainableStack::instance_->var_nochain_stack_.emplace_back(this);
     }
-  }
-
-  /**
-   * Constructor from vari_value
-   * @tparam S A floating point type
-   * @param x A vari_value
-   */
-  vari_value(const vari_value<T>& x) noexcept : val_(x.val_), adj_(x.adj_) {
-    ChainableStack::instance_->var_stack_.emplace_back(this);
   }
 
   ~vari_value() = default;
@@ -179,7 +167,7 @@ class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
   }
 
  private:
-  template <typename, typename>
+  template <typename>
   friend class var_value;
 };
 
@@ -198,8 +186,7 @@ using vari = vari_value<double>;
  *
  */
 template <typename T>
-class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
-    : public vari_base {
+class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
  public:
   static_assert(
       is_plain_type<T>::value,
@@ -214,9 +201,11 @@ class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
   using Scalar = PlainObject;  // The underlying type for this class
   using value_type = Scalar;   // The underlying type for this class
   using eigen_scalar = value_type_t<PlainObject>;  // A floating point type
-  using eigen_map = Eigen::Map<PlainObject>;       // Maps for adj_ and val_
-  using vari_type
-      = vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>;
+  /**
+   * Maps for adj_ and val_
+   */
+  using eigen_map = Eigen::Map<PlainObject, Eigen::Aligned8>;
+  using vari_type = vari_value<T, require_eigen_dense_base_t<T>>;
   eigen_scalar* val_mem_;  // Pointer to memory allocated on the stack for val_
   eigen_scalar* adj_mem_;  // Pointer to memory allocated on the stack for adj_
   /**
@@ -229,15 +218,15 @@ class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
   static constexpr Eigen::Index ColsAtCompileTime = Scalar::ColsAtCompileTime;
 
   /**
+   * The value of this variable.
+   */
+  const eigen_map val_;
+
+  /**
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
    */
   eigen_map adj_;
-
-  /**
-   * The value of this variable.
-   */
-  const eigen_map val_;
 
   /**
    * Construct a dense Eigen variable implementation from a value. The
@@ -258,8 +247,8 @@ class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
             x.size())),
         adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
-        adj_(make_adj(x)),
-        val_(make_val(x)) {
+        val_(eigen_map(val_mem_, x.rows(), x.cols()) = x),
+        adj_(eigen_map(adj_mem_, x.rows(), x.cols()).setZero()) {
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
@@ -286,8 +275,8 @@ class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
             x.size())),
         adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
-        adj_(make_adj(x)),
-        val_(make_val(x)) {
+        val_(eigen_map(val_mem_, x.rows(), x.cols()) = x),
+        adj_(eigen_map(adj_mem_, x.rows(), x.cols()).setZero()) {
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
     } else {
@@ -315,7 +304,7 @@ class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
    * propagating derivatives, setting the derivative of the
    * result with respect to itself to be 1.
    */
-  void init_dependent() { adj_.setOnes(); }
+  inline void init_dependent() { adj_.setOnes(); }
 
   /**
    * Set the adjoint value of this variable to 0.  This is used to
@@ -366,30 +355,10 @@ class vari_value<T, std::enable_if_t<is_eigen_dense_base<T>::value>>
   }
 
  private:
-  template <typename, typename>
+  template <typename>
   friend class var_value;
   template <typename, typename>
   friend class vari_value;
-  /**
-   * Create the map to the val_ stack allocated memory for an Eigen input.
-   * @tparam S an Eigen type.
-   * @param x The Eigen type whose values will be assigned to `val_`
-   */
-  template <typename S>
-  inline eigen_map make_val(S&& x) {
-    eigen_map(val_mem_, x.rows(), x.cols()) = x;
-    return eigen_map(val_mem_, x.rows(), x.cols());
-  }
-  /**
-   * Create the map to the adj_ stack allocated memory for an Eigen input.
-   * @tparam S an Eigen type.
-   * @param x The Eigen type whose dimensions are set the `adj_`s dimensions.
-   */
-  template <typename S>
-  inline eigen_map make_adj(S&& x) {
-    eigen_map(adj_mem_, x.rows(), x.cols()).setZero();
-    return eigen_map(adj_mem_, x.rows(), x.cols());
-  }
 };
 
 /**
@@ -408,11 +377,9 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
     : public vari_base, chainable_alloc {
  public:
   using PlainObject
-      = std::decay_t<plain_type_t<T>>;             // Base type of Eigen class
-  using eigen_scalar = value_type_t<PlainObject>;  // Scalar type of Eigen class
-  using eigen_index = typename PlainObject::StorageIndex;  // Index type
-  using Scalar = PlainObject;  // vari's adj_ and val_ member type
-  using value_type = Scalar;   // vari's adj_ and val_ member type
+      = std::decay_t<plain_type_t<T>>;  // Base type of Eigen class
+  using Scalar = PlainObject;           // vari's adj_ and val_ member type
+  using value_type = Scalar;            // vari's adj_ and val_ member type
   /**
    * Rows at compile time
    */
@@ -490,6 +457,7 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
    * Return the size of this class's `val_` member
    */
   const Eigen::Index size() const { return val_.size(); }
+
   void chain() {}
   /**
    * Initialize the adjoint for this (dependent) variable to 1.
@@ -560,8 +528,10 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
   }
 
  private:
-  template <typename, typename>
+  template <typename>
   friend class var_value;
+  template <typename, typename>
+  friend class vari_value;
 };
 
 }  // namespace math

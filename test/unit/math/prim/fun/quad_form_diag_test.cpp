@@ -2,9 +2,8 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-using stan::math::quad_form_diag;
-
 TEST(MathMatrixPrim, quadFormDiag) {
+  using stan::math::quad_form_diag;
   Eigen::MatrixXd m(1, 1);
   m << 3;
 
@@ -17,6 +16,7 @@ TEST(MathMatrixPrim, quadFormDiag) {
 }
 
 TEST(MathMatrixPrim, quadFormDiag2) {
+  using stan::math::quad_form_diag;
   Eigen::MatrixXd m(3, 3);
   m << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
@@ -33,6 +33,7 @@ TEST(MathMatrixPrim, quadFormDiag2) {
 }
 
 TEST(MathMatrixPrim, quadFormDiagException) {
+  using stan::math::quad_form_diag;
   Eigen::MatrixXd m(2, 2);
   m << 2, 3, 4, 5;
   Eigen::VectorXd v(3);

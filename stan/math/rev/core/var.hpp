@@ -33,16 +33,17 @@ static void grad(Vari* vi);
  * var values objects.
  * @tparam T An Floating point type.
  */
-template <typename T, typename = void>
-class var_value {};
-
 template <typename T>
-class var_value<T, require_vt_floating_point<T>> {
+class var_value {
   static_assert(
       is_plain_type<T>::value,
       "The template for this var is an"
       " expression but a var_value's inner type must be assignable such as"
       " a double, Eigen::Matrix, or Eigen::Array");
+  static_assert(
+      std::is_floating_point<value_type_t<T>>::value,
+      "The template for must be a floating point or a container holding"
+      " floating point types");
 
  public:
   using value_type = std::decay_t<T>;        // type in vari_value.
@@ -66,7 +67,7 @@ class var_value<T, require_vt_floating_point<T>> {
    * @return <code>true</code> if this variable does not yet have
    * a defined variable.
    */
-  bool is_uninitialized() { return (vi_ == nullptr); }
+  inline bool is_uninitialized() { return (vi_ == nullptr); }
 
   /**
    * Construct a variable for later assignment.
