@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 
 namespace stan {
 namespace math {
@@ -21,7 +22,7 @@ namespace math {
  *
  * @tparam T_n type of successes parameter
  * @tparam T_N type of population size parameter
- * @tparam theta type of chance of success parameter
+ * @tparam T_prob type of chance of success parameter
  * @param n successes parameter
  * @param N population size parameter
  * @param theta chance of success parameter

@@ -97,7 +97,6 @@ def generateTests(j):
     else:
         doCommand('make -j%d generate-tests -s' % (j or 1))
 
-
 def makeTest(name, j):
     """Run the make command for a given single test."""
     if isWin():

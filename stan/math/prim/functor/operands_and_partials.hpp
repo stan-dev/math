@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
-#include <stan/math/prim/meta/broadcast_array.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
+#include <stan/math/prim/functor/broadcast_array.hpp>
 #include <vector>
 #include <type_traits>
 

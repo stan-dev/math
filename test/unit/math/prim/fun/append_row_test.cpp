@@ -2,26 +2,13 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-using stan::math::append_row;
-
-template <int R, int C>
-void correct_type_vector(const Eigen::Matrix<double, R, C>& x) {
-  EXPECT_EQ(Eigen::Dynamic, R);
-  EXPECT_EQ(1, C);
-}
-
-template <int R, int C>
-void correct_type_matrix(const Eigen::Matrix<double, R, C>& x) {
-  EXPECT_EQ(Eigen::Dynamic, R);
-  EXPECT_EQ(Eigen::Dynamic, C);
-}
-
 TEST(MathMatrixPrimMat, append_row) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
   using Eigen::RowVectorXd;
   using Eigen::VectorXd;
+  using stan::math::append_row;
   using std::vector;
 
   MatrixXd m33(3, 3);
@@ -161,20 +148,20 @@ TEST(MathMatrixPrimMat, append_row) {
   EXPECT_THROW(append_row(m32, v3), std::invalid_argument);
   EXPECT_THROW(append_row(rv3, v3), std::invalid_argument);
 
-  correct_type_matrix(append_row(m23, m33));
-  correct_type_matrix(append_row(m33, m23));
-  correct_type_matrix(append_row(m32, m32b));
-  correct_type_matrix(append_row(m32b, m32));
-  correct_type_matrix(append_row(m33, rv3));
-  correct_type_matrix(append_row(rv3, m33));
-  correct_type_matrix(append_row(m23, rv3));
-  correct_type_matrix(append_row(rv3, m23));
-  correct_type_matrix(append_row(rv3, rv3b));
-  correct_type_matrix(append_row(rv3b, rv3));
-  correct_type_vector(append_row(v3, v3b));
-  correct_type_vector(append_row(v3b, v3));
-  correct_type_vector(append_row(v3, -4.31));
-  correct_type_vector(append_row(5.23, v3));
+  stan::test::expect_type_matrix(append_row(m23, m33));
+  stan::test::expect_type_matrix(append_row(m33, m23));
+  stan::test::expect_type_matrix(append_row(m32, m32b));
+  stan::test::expect_type_matrix(append_row(m32b, m32));
+  stan::test::expect_type_matrix(append_row(m33, rv3));
+  stan::test::expect_type_matrix(append_row(rv3, m33));
+  stan::test::expect_type_matrix(append_row(m23, rv3));
+  stan::test::expect_type_matrix(append_row(rv3, m23));
+  stan::test::expect_type_matrix(append_row(rv3, rv3b));
+  stan::test::expect_type_matrix(append_row(rv3b, rv3));
+  stan::test::expect_type_vector(append_row(v3, v3b));
+  stan::test::expect_type_vector(append_row(v3b, v3));
+  stan::test::expect_type_vector(append_row(v3, -4.31));
+  stan::test::expect_type_vector(append_row(5.23, v3));
 }
 
 TEST(MathMatrixPrimMat, append_row_different_types) {
