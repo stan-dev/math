@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/mdivide_left_tri_low.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 
 namespace stan {
 namespace math {
@@ -34,20 +35,23 @@ namespace math {
  * @throw std::domain_error if Sigma is not square, not symmetric,
  * or not semi-positive definite.
  */
-template <bool propto, typename T_y, typename T_covar, typename T_w>
-return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
-    const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,
-    const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
+template <bool propto, typename T_y, typename T_covar, typename T_w,
+          require_all_eigen_matrix_t<T_y, T_covar>* = nullptr,
+          require_eigen_col_vector_t<T_w>* = nullptr>
+return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_lpdf(const T_y& y,
+                                                        const T_covar& L,
+                                                        const T_w& w) {
   using T_lp = return_type_t<T_y, T_covar, T_w>;
   static const char* function = "multi_gp_cholesky_lpdf";
   check_size_match(function, "Size of random variable (rows y)", y.rows(),
                    "Size of kernel scales (w)", w.size());
   check_size_match(function, "Size of random variable", y.cols(),
                    "rows of covariance parameter", L.rows());
-  check_finite(function, "Kernel scales", w);
-  check_positive(function, "Kernel scales", w);
-  check_finite(function, "Random variable", y);
+  const auto& y_ref = to_ref(y);
+  const auto& L_ref = to_ref(L);
+  const auto& w_ref = to_ref(w);
+  check_positive_finite(function, "Kernel scales", w_ref);
+  check_finite(function, "Random variable", y_ref);
 
   if (y.rows() == 0) {
     return 0;
@@ -55,24 +59,23 @@ return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_lpdf(
 
   T_lp lp(0);
   if (include_summand<propto>::value) {
-    lp += NEG_LOG_SQRT_TWO_PI * y.rows() * y.cols();
+    lp += NEG_LOG_SQRT_TWO_PI * y.size();
   }
 
   if (include_summand<propto, T_covar>::value) {
-    lp -= sum(log(L.diagonal())) * y.rows();
+    lp -= sum(log(L_ref.diagonal())) * y.rows();
   }
 
   if (include_summand<propto, T_w>::value) {
-    lp += 0.5 * y.cols() * sum(log(w));
+    lp += 0.5 * y.cols() * sum(log(w_ref));
   }
 
   if (include_summand<propto, T_y, T_w, T_covar>::value) {
     T_lp sum_lp_vec(0);
     for (int i = 0; i < y.rows(); i++) {
-      Eigen::Matrix<T_y, Eigen::Dynamic, 1> y_row(y.row(i));
-      Eigen::Matrix<return_type_t<T_y, T_covar>, Eigen::Dynamic, 1> half(
-          mdivide_left_tri_low(L, y_row));
-      sum_lp_vec += w(i) * dot_self(half);
+      sum_lp_vec
+          += w_ref.coeff(i)
+             * dot_self(mdivide_left_tri_low(L_ref, y_ref.row(i).transpose()));
     }
     lp -= 0.5 * sum_lp_vec;
   }
@@ -81,10 +84,9 @@ return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_lpdf(
 }
 
 template <typename T_y, typename T_covar, typename T_w>
-inline return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
-    const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,
-    const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
+inline return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_lpdf(const T_y& y,
+                                                               const T_covar& L,
+                                                               const T_w& w) {
   return multi_gp_cholesky_lpdf<false>(y, L, w);
 }
 

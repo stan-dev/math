@@ -30,26 +30,32 @@ namespace math {
  * @throw std::domain_error if Sigma is not square, not symmetric,
  * or not semi-positive definite.
  */
-template <bool propto, typename T_y, typename T_covar, typename T_w>
-return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
-    const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
-    const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
+template <bool propto, typename T_y, typename T_covar, typename T_w,
+          require_all_eigen_matrix_t<T_y, T_covar>* = nullptr,
+          require_eigen_col_vector_t<T_w>* = nullptr>
+return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(const T_y& y,
+                                               const T_covar& Sigma,
+                                               const T_w& w) {
   using T_lp = return_type_t<T_y, T_covar, T_w>;
   static const char* function = "multi_gp_lpdf";
-  check_positive(function, "Kernel rows", Sigma.rows());
-  check_finite(function, "Kernel", Sigma);
-  check_symmetric(function, "Kernel", Sigma);
-
-  LDLT_factor<T_covar, Eigen::Dynamic, Eigen::Dynamic> ldlt_Sigma(Sigma);
-  check_ldlt_factor(function, "LDLT_Factor of Sigma", ldlt_Sigma);
-
   check_size_match(function, "Size of random variable (rows y)", y.rows(),
                    "Size of kernel scales (w)", w.size());
   check_size_match(function, "Size of random variable", y.cols(),
                    "rows of covariance parameter", Sigma.rows());
-  check_positive_finite(function, "Kernel scales", w);
-  check_finite(function, "Random variable", y);
+  check_positive(function, "Kernel rows", Sigma.rows());
+
+  const auto& Sigma_ref = to_ref(Sigma);
+  const auto& w_ref = to_ref(w);
+  const auto& y_t_ref = to_ref(y.transpose());
+
+  check_finite(function, "Kernel", Sigma_ref);
+  check_symmetric(function, "Kernel", Sigma_ref);
+  check_positive_finite(function, "Kernel scales", w_ref);
+  check_finite(function, "Random variable", y_t_ref);
+
+  LDLT_factor<value_type_t<T_covar>, Eigen::Dynamic, Eigen::Dynamic> ldlt_Sigma(
+      Sigma_ref);
+  check_ldlt_factor(function, "LDLT_Factor of Sigma", ldlt_Sigma);
 
   T_lp lp(0.0);
 
@@ -58,7 +64,7 @@ return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(
   }
 
   if (include_summand<propto>::value) {
-    lp += NEG_LOG_SQRT_TWO_PI * y.rows() * y.cols();
+    lp += NEG_LOG_SQRT_TWO_PI * y.size();
   }
 
   if (include_summand<propto, T_covar>::value) {
@@ -66,23 +72,22 @@ return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(
   }
 
   if (include_summand<propto, T_w>::value) {
-    lp += (0.5 * y.cols()) * sum(log(w));
+    lp += (0.5 * y.cols()) * sum(log(w_ref));
   }
 
   if (include_summand<propto, T_y, T_w, T_covar>::value) {
-    Eigen::Matrix<T_w, Eigen::Dynamic, Eigen::Dynamic> w_mat(w.asDiagonal());
-    Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> yT(y.transpose());
-    lp -= 0.5 * trace_gen_inv_quad_form_ldlt(w_mat, ldlt_Sigma, yT);
+    Eigen::Matrix<value_type_t<T_w>, Eigen::Dynamic, Eigen::Dynamic> w_mat(
+        w_ref.asDiagonal());
+    lp -= 0.5 * trace_gen_inv_quad_form_ldlt(w_mat, ldlt_Sigma, y_t_ref);
   }
 
   return lp;
 }
 
 template <typename T_y, typename T_covar, typename T_w>
-inline return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
-    const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
-    const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
+inline return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(const T_y& y,
+                                                      const T_covar& Sigma,
+                                                      const T_w& w) {
   return multi_gp_lpdf<false>(y, Sigma, w);
 }
 
