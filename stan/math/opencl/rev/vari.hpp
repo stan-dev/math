@@ -119,7 +119,6 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
    * @return block
    */
   auto block(int row, int col, int rows, int cols) {
-    //    using stan::math::block;
     const auto& val_block = stan::math::block(val_, row, col, rows, cols);
     const auto& adj_block = stan::math::block(adj_, row, col, rows, cols);
     return vari_value<std::decay_t<decltype(val_block)>>(val_block, adj_block);
@@ -176,7 +175,7 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
   }
 
  private:
-  template <typename, typename>
+  template <typename>
   friend class var_value;
 };
 

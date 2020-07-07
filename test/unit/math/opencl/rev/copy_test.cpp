@@ -15,7 +15,8 @@ TEST(MathMatrixRevCL, matrix_cl_vector_copy) {
   // vector
   stan::math::matrix_cl<var> d11_cl(3, 1);
   stan::math::matrix_cl<var> d111_cl(3, 1);
-  EXPECT_NO_THROW(d11_cl = stan::math::to_matrix_cl(d1_cpu));
+  d11_cl.val() = stan::math::to_matrix_cl(d1_cpu.val());
+  d11_cl.adj() = stan::math::to_matrix_cl(d1_cpu.adj());
   EXPECT_NO_THROW(d11_cl.adj() = stan::math::copy_cl(d11_cl.val()));
   EXPECT_NO_THROW(d111_cl = stan::math::copy_cl(d11_cl));
   EXPECT_NO_THROW(d1_a_cpu = stan::math::from_matrix_cl(d11_cl));
@@ -40,7 +41,8 @@ TEST(MathMatrixRevCL, matrix_cl_matrix_copy) {
   stan::math::matrix_cl<var> d000_cl;
   stan::math::matrix_cl<var> d22_cl(2, 3);
   stan::math::matrix_cl<var> d222_cl(2, 3);
-  EXPECT_NO_THROW(d22_cl = stan::math::to_matrix_cl(d2_cpu));
+  d22_cl.val() = stan::math::to_matrix_cl(d2_cpu.val());
+  d22_cl.adj() = stan::math::to_matrix_cl(d2_cpu.adj());
   EXPECT_NO_THROW(d222_cl = stan::math::copy_cl(d22_cl));
   EXPECT_NO_THROW(d2_a_cpu = stan::math::from_matrix_cl(d22_cl.val()));
   EXPECT_NO_THROW(d2_b_cpu = stan::math::from_matrix_cl(d222_cl.val()));
@@ -56,8 +58,8 @@ TEST(MathMatrixRevCL, matrix_cl_matrix_copy) {
   EXPECT_EQ(4, d2_b_cpu(1, 0));
   EXPECT_EQ(5, d2_b_cpu(1, 1));
   EXPECT_EQ(6, d2_b_cpu(1, 2));
-  d00_cl = stan::math::to_matrix_cl(d0_cpu);
-  EXPECT_NO_THROW(d00_cl = stan::math::to_matrix_cl(d0_cpu));
+  d00_cl.val() = stan::math::to_matrix_cl(d0_cpu.val());
+  d00_cl.adj() = stan::math::to_matrix_cl(d0_cpu.adj());
   EXPECT_NO_THROW(d0_cpu = stan::math::from_matrix_cl(d00_cl.val()));
   EXPECT_NO_THROW(d000_cl = stan::math::copy_cl(d00_cl));
 }
@@ -152,7 +154,7 @@ TEST(MathMatrixRevCL, matrix_cl_pack_unpack_copy_exception) {
   */
 }
 
-TEST(VariCL, to_matrix_cl) {
+TEST(VariCL, var_matrix_to_matrix_cl) {
   using stan::math::var_value;
   Eigen::MatrixXd vals(2, 3);
   vals << 1, 2, 3, 4, 5, 6;
@@ -162,6 +164,18 @@ TEST(VariCL, to_matrix_cl) {
   a_cl.adj() = stan::math::constant(1, 2, 3);
   a_cl.vi_->chain();
   EXPECT_MATRIX_EQ(a.adj(), Eigen::MatrixXd::Constant(2, 3, 1));
+}
+
+TEST(VariCL, matrix_var_to_matrix_cl) {
+  using stan::math::var_value;
+  Eigen::MatrixXd vals(2, 3);
+  vals << 1, 2, 3, 4, 5, 6;
+  stan::math::matrix_v vars = vals;
+  var_value<stan::math::matrix_cl<double>> a_cl = stan::math::to_matrix_cl(vars);
+  EXPECT_MATRIX_EQ(from_matrix_cl(a_cl.val()), vals);
+  a_cl.adj() = stan::math::constant(1, 2, 3);
+  a_cl.vi_->chain();
+  EXPECT_MATRIX_EQ(vars.adj(), Eigen::MatrixXd::Constant(2, 3, 1));
 }
 
 TEST(VariCL, from_matrix_cl) {

@@ -17,16 +17,21 @@ namespace stan {
 namespace math {
 
 namespace internal {
-template <typename T, require_eigen_t<T>* = nullptr>
-class op_copy_to_cl_vari final : public vari_value<matrix_cl<value_type_t<T>>> {
-  vari_value<T>& a_;
+template <typename T_arg_adj, require_eigen_t<T_arg_adj>* = nullptr>
+class op_copy_to_cl_vari final
+    : public vari_value<matrix_cl<value_type_t<T_arg_adj>>> {
+  T_arg_adj arg_adj_;
 
  public:
-  explicit op_copy_to_cl_vari(vari_value<T>& a)
-      : vari_value<matrix_cl<value_type_t<T>>>(to_matrix_cl(a.val_)), a_(a) {}
+  template <typename T_arg_val, require_eigen_t<T_arg_val>* = nullptr,
+            require_vt_same<T_arg_val, T_arg_adj>* = nullptr>
+  explicit op_copy_to_cl_vari(const T_arg_val& val, T_arg_adj adj)
+      : vari_value<matrix_cl<value_type_t<T_arg_adj>>>(to_matrix_cl(val)),
+        arg_adj_(adj) {}
 
   virtual void chain() {
-    a_.adj_ += from_matrix_cl<T::RowsAtCompileTime, T::ColsAtCompileTime>(
+    arg_adj_ += from_matrix_cl<std::decay_t<T_arg_adj>::RowsAtCompileTime,
+                               std::decay_t<T_arg_adj>::ColsAtCompileTime>(
         this->adj_);
   }
 };
@@ -42,7 +47,7 @@ class op_copy_to_cl_vari final : public vari_value<matrix_cl<value_type_t<T>>> {
  */
 template <typename T>
 inline var_value<matrix_cl<value_type_t<T>>> to_matrix_cl(var_value<T>& a) {
-  return new internal::op_copy_to_cl_vari<T>(*a.vi_);
+  return new internal::op_copy_to_cl_vari<decltype(a.adj())>(a.val(), a.adj());
 }
 
 namespace internal {
@@ -55,7 +60,7 @@ class op_copy_from_cl_vari final
  public:
   explicit op_copy_from_cl_vari(vari_value<T>& a)
       : vari_value<Eigen::Matrix<value_type_t<T>, Rows, Cols>>(
-            from_matrix_cl<Rows, Cols>(a.val_)),
+          from_matrix_cl<Rows, Cols>(a.val_)),
         a_(a) {}
 
   virtual void chain() { a_.adj_ = a_.adj_ + to_matrix_cl(this->adj_); }
@@ -89,19 +94,11 @@ inline var_value<Eigen::Matrix<value_type_t<T>, Rows, Cols>> from_matrix_cl(
  * @param src source Eigen matrix
  * @return matrix_cl with a copy of the data in the source matrix
  */
-template <typename T, int R, int C, require_var_t<T>* = nullptr>
-inline matrix_cl<T> to_matrix_cl(const Eigen::Matrix<T, R, C>& src) try {
-  matrix_cl<T> dst(src.rows(), src.cols());
-  if (src.size() == 0) {
-    return dst;
-  }
-  dst.val() = to_matrix_cl(src.val().eval());
-  dst.adj() = to_matrix_cl(src.adj().eval());
-  return dst;
-} catch (const cl::Error& e) {
-  check_opencl_error("copy var Eigen->(OpenCL)", e);
-  matrix_cl<T> dst(src.rows(), src.cols());
-  return dst;
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+inline var_value<matrix_cl<value_type_t<value_type_t<T>>>> to_matrix_cl(
+    T& src) {
+  return new internal::op_copy_to_cl_vari<decltype(src.adj())>(src.val(),
+                                                               src.adj());
 }
 
 /** \ingroup opencl
