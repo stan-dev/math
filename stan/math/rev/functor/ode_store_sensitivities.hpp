@@ -57,7 +57,8 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
   if (is_var<T_t0>::value)
     f_y0_t0 = f(value_of(t0), value_of(y0).eval(), msgs, value_of(args)...);
 
-  const size_t total_vars = num_y0_vars + num_args_vars + num_t0_vars + num_t_vars;
+  const size_t total_vars
+      = num_y0_vars + num_args_vars + num_t0_vars + num_t_vars;
 
   vari** varis
       = ChainableStack::instance_->memalloc_.alloc_array<vari*>(total_vars);
@@ -77,13 +78,15 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
     }
 
     for (size_t k = 0; k < num_args_vars; ++k) {
-      partials_j[num_y0_vars + k] = coupled_state[N + N * num_y0_vars + N * k + j];
+      partials_j[num_y0_vars + k]
+          = coupled_state[N + N * num_y0_vars + N * k + j];
     }
 
     if (is_var<T_t0>::value) {
       double dyt_dt0 = 0.0;
       for (size_t k = 0; k < num_y0_vars; ++k) {
-        dyt_dt0 += -f_y0_t0.coeffRef(k) * coupled_state[N + num_y0_vars * k + j];
+        dyt_dt0
+            += -f_y0_t0.coeffRef(k) * coupled_state[N + num_y0_vars * k + j];
       }
       partials_j[num_y0_vars + num_args_vars] = dyt_dt0;
     }
