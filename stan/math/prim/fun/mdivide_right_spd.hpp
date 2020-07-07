@@ -5,6 +5,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/mdivide_left_spd.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 
 namespace stan {
 namespace math {
@@ -29,13 +30,14 @@ inline Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
 mdivide_right_spd(const EigMat1& b, const EigMat2& A) {
   static const char* function = "mdivide_right_spd";
   check_multiplicable(function, "b", b, "A", A);
-  check_symmetric(function, "A", A);
-  check_not_nan(function, "A", A);
+  const auto& A_ref = to_ref(A);
+  check_symmetric(function, "A", A_ref);
+  check_not_nan(function, "A", A_ref);
   if (A.size() == 0) {
     return {b.rows(), 0};
   }
 
-  return mdivide_left_spd(A, b.transpose()).transpose();
+  return mdivide_left_spd(A_ref, b.transpose()).transpose();
 }
 
 }  // namespace math
