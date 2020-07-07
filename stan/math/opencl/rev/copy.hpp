@@ -16,22 +16,67 @@
 namespace stan {
 namespace math {
 
-template <typename T, require_vari_vt<is_eigen, T>* = nullptr>
-class op_copy_to_cl_vari : public vari<matrix_cl<value_type_t<T::value_type>>> {
-  T& a_;
+namespace internal {
+template <typename T, require_eigen_t<T>* = nullptr>
+class op_copy_to_cl_vari final : public vari_value<matrix_cl<value_type_t<T>>> {
+  vari_value<T>& a_;
 
  public:
-  op_to_cl_copy_vari(T& a) : vari(to_matrix_cl(a.val())), a_(a) {}
+  op_copy_to_cl_vari(vari_value<T>& a)
+      : vari_value<matrix_cl<value_type_t<T>>>(to_matrix_cl(a.val_)), a_(a) {}
 
   virtual void chain() {
-    a_.adj()
-        += from_matrix_cl<T::RowsAtCompileTime, T::ColsAtCompileTime>(adj());
+    a_.adj_ += from_matrix_cl<T::RowsAtCompileTime, T::ColsAtCompileTime>(
+        this->adj_);
   }
 };
+}  // namespace internal
 
+/** \ingroup opencl
+ * Copies the source var containing Eigen matrices to destination var that has
+ * data stored on the OpenCL device.
+ *
+ * @tparam T type of the Eigen matrix
+ * @param a source Eigen matrix
+ * @return var with a copy of the data on the OpenCL device
+ */
 template <typename T>
-inline var_value<matrix_cl> to_matrix_cl(const var_value<T>& a) {
-  return op_copy_to_cl_vari<>(a.vi_); //Is this corret type? Only if T is actual type, or ... ?
+inline var_value<matrix_cl<value_type_t<T>>> to_matrix_cl(var_value<T>& a) {
+  return new internal::op_copy_to_cl_vari<T>(*a.vi_);
+}
+
+namespace internal {
+template <typename T, int Rows, int Cols,
+          require_all_kernel_expressions_t<T>* = nullptr>
+class op_copy_from_cl_vari final
+    : public vari_value<Eigen::Matrix<value_type_t<T>, Rows, Cols>> {
+  vari_value<T>& a_;
+
+ public:
+  op_copy_from_cl_vari(vari_value<T>& a)
+      : vari_value<Eigen::Matrix<value_type_t<T>, Rows, Cols>>(
+          from_matrix_cl<Rows, Cols>(a.val_)),
+        a_(a) {}
+
+  virtual void chain() { a_.adj_ = a_.adj_ + to_matrix_cl(this->adj_); }
+};
+}  // namespace internal
+
+/** \ingroup opencl
+ * Copies the source var that has data stored on the OpenCL device to
+ * destination var containing Eigen matrices.
+ *
+ * @tparam Rows number of compile time rows of the destination matrix
+ * @tparam Rows number of compile time columns of the destination matrix
+ * @tparam T type of the matrix or expression on the OpenCL device
+ * @param a source matrix_cl or expression
+ * @return var with a copy of the data on the host
+ */
+template <int Rows = Eigen::Dynamic, int Cols = Eigen::Dynamic, typename T,
+          require_all_kernel_expressions_t<T>* = nullptr>
+inline var_value<Eigen::Matrix<value_type_t<T>, Rows, Cols>> from_matrix_cl(
+    var_value<T>& a) {
+  return new internal::op_copy_from_cl_vari<T, Rows, Cols>(*a.vi_);
 }
 
 /** \ingroup opencl

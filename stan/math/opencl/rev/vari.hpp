@@ -35,7 +35,7 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
   T val_;
 
   /**
-   * Construct a dense Eigen variable implementation from a value. The
+   * Construct a dense matrix_cl variable implementation from a value. The
    * adjoint is initialized to zero.
    *
    * All constructed variables are added to the stack. Variables
@@ -55,8 +55,10 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
+ protected:
   /**
-   * Construct a dense Eigen variable implementation from a value and adjoint.
+   * Construct a dense matrix_cl variable implementation from a value and
+   * adjoint.
    *
    * All constructed variables are added to the stack. Variables
    * should be constructed before variables on which they depend
@@ -78,8 +80,9 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
+ public:
   /**
-   * Construct an dense Eigen variable implementation from a value. The
+   * Construct an dense matrix_cl variable implementation from a value. The
    *  adjoint is initialized to zero and if `stacked` is `false` this vari
    *  will be not be put on the var_stack. Instead it will only be put on
    *  a stack to keep track of whether the adjoint needs to be set to zero.
