@@ -117,14 +117,17 @@ TEST(ode_adams_prim, ts_errors) {
   double a = 1.5;
 
   std::vector<Eigen::VectorXd> out;
-  EXPECT_NO_THROW(out = stan::math::ode_adams(CosArg1(), y0, t0, ts, nullptr, a));
+  EXPECT_NO_THROW(out
+                  = stan::math::ode_adams(CosArg1(), y0, t0, ts, nullptr, a));
   EXPECT_EQ(out.size(), ts.size());
 
-  EXPECT_NO_THROW(out = stan::math::ode_adams(CosArg1(), y0, t0, ts_repeat, nullptr, a));
+  EXPECT_NO_THROW(
+      out = stan::math::ode_adams(CosArg1(), y0, t0, ts_repeat, nullptr, a));
   EXPECT_EQ(out.size(), ts_repeat.size());
   EXPECT_MATRIX_FLOAT_EQ(out[0], out[1]);
 
-  EXPECT_NO_THROW(out = stan::math::ode_adams(CosArg1(), y0, t0, ts_lots, nullptr, a));
+  EXPECT_NO_THROW(
+      out = stan::math::ode_adams(CosArg1(), y0, t0, ts_lots, nullptr, a));
   EXPECT_EQ(out.size(), ts_lots.size());
 
   EXPECT_THROW(stan::math::ode_adams(CosArg1(), y0, t0, ts_empty, nullptr, a),

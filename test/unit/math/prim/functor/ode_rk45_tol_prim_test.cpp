@@ -124,17 +124,19 @@ TEST(ode_rk45_tol_prim, ts_errors) {
   double a = 1.5;
 
   std::vector<Eigen::VectorXd> out;
-  EXPECT_NO_THROW(out = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-10, 1e-10,
-                                           1e6, nullptr, a));
+  EXPECT_NO_THROW(out = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-10,
+                                                 1e-10, 1e6, nullptr, a));
   EXPECT_EQ(out.size(), ts.size());
 
-  EXPECT_NO_THROW(out = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts_repeat, 1e-10,
-                                           1e-10, 1e6, nullptr, a));
+  EXPECT_NO_THROW(out
+                  = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts_repeat,
+                                             1e-10, 1e-10, 1e6, nullptr, a));
   EXPECT_EQ(out.size(), ts_repeat.size());
   EXPECT_MATRIX_FLOAT_EQ(out[0], out[1]);
 
-  EXPECT_NO_THROW(out = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts_lots, 1e-10,
-                                           1e-10, 1e6, nullptr, a));
+  EXPECT_NO_THROW(out
+                  = stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts_lots, 1e-10,
+                                             1e-10, 1e6, nullptr, a));
   EXPECT_EQ(out.size(), ts_lots.size());
 
   EXPECT_THROW(stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts_empty, 1e-10,
@@ -441,5 +443,6 @@ TEST(ode_rk45_tol_prim, too_much_work) {
 
   EXPECT_THROW_MSG(stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-6, 1e-6,
                                             100, nullptr, a),
-                   std::domain_error, "Failed to integrate to next output time");
+                   std::domain_error,
+                   "Failed to integrate to next output time");
 }

@@ -163,8 +163,8 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
       for (size_t j = 0; j < num_args_vars; ++j) {
         double temp_deriv = args_adjoints_.coeffRef(j);
         for (size_t k = 0; k < N_; ++k) {
-          temp_deriv
-              += z[N_ + N_ * num_y0_vars_ + N_ * j + k] * y_adjoints_.coeffRef(k);
+          temp_deriv += z[N_ + N_ * num_y0_vars_ + N_ * j + k]
+                        * y_adjoints_.coeffRef(k);
         }
 
         dz_dt[N_ + N_ * num_y0_vars_ + N_ * j + i] = temp_deriv;

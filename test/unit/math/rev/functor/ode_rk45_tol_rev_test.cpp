@@ -576,14 +576,15 @@ TEST(StanMathOde_ode_rk45_tol, arg_combos_test) {
 }
 
 TEST(StanMathOde_ode_rk45_tol, too_much_work) {
-  Eigen::Matrix<var, Eigen::Dynamic, 1> y0 =
-    Eigen::VectorXd::Zero(1).template cast<var>();
+  Eigen::Matrix<var, Eigen::Dynamic, 1> y0
+      = Eigen::VectorXd::Zero(1).template cast<var>();
   var t0 = 0;
   std::vector<var> ts = {0.45, 1e10};
 
   var a = 1.0;
 
   EXPECT_THROW_MSG(stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-6, 1e-6,
-					    100, nullptr, a),
-                   std::domain_error, "Failed to integrate to next output time");
+                                            100, nullptr, a),
+                   std::domain_error,
+                   "Failed to integrate to next output time");
 }

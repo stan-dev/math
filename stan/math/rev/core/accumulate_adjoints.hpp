@@ -135,8 +135,7 @@ inline double* accumulate_adjoints(double* dest, EigT&& x, Pargs&&... args) {
  * @param args Further args to accumulate over
  * @return Final position of adjoint storage pointer
  */
-template <typename Arith, require_st_arithmetic<Arith>*,
-          typename... Pargs>
+template <typename Arith, require_st_arithmetic<Arith>*, typename... Pargs>
 inline double* accumulate_adjoints(double* dest, Arith&& x, Pargs&&... args) {
   return accumulate_adjoints(dest, std::forward<Pargs>(args)...);
 }

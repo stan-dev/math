@@ -78,22 +78,26 @@ return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
   using T_partials_return = partials_return_t<T_theta, T_lam>;
   using T_partials_vec =
       typename Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1>;
+  using T_theta_ref = ref_type_t<T_theta>;
+  using T_lam_ref = ref_type_t<T_lam>;
 
   const int N = stan::math::size(theta);
 
-  check_bounded(function, "theta", theta, 0, 1);
-  check_not_nan(function, "lambda", lambda);
-  check_not_nan(function, "theta", theta);
-  check_finite(function, "lambda", lambda);
-  check_finite(function, "theta", theta);
   check_consistent_sizes(function, "theta", theta, "lambda", lambda);
+  T_theta_ref theta_ref = theta;
+  T_lam_ref lambda_ref = lambda;
+  check_bounded(function, "theta", theta_ref, 0, 1);
+  check_finite(function, "lambda", lambda_ref);
 
-  const auto& theta_dbl = to_ref(value_of(as_column_vector_or_scalar(theta)));
-  const auto& lam_dbl = to_ref(value_of(as_column_vector_or_scalar(lambda)));
+  const auto& theta_dbl
+      = to_ref(value_of(as_column_vector_or_scalar(theta_ref)));
+  const auto& lam_dbl
+      = to_ref(value_of(as_column_vector_or_scalar(lambda_ref)));
 
   T_partials_return logp = log_sum_exp(log(theta_dbl) + lam_dbl);
 
-  operands_and_partials<T_theta, T_lam> ops_partials(theta, lambda);
+  operands_and_partials<T_theta_ref, T_lam_ref> ops_partials(theta_ref,
+                                                             lambda_ref);
   if (!is_constant_all<T_lam, T_theta>::value) {
     T_partials_vec theta_deriv = (lam_dbl.array() - logp).exp();
     if (!is_constant_all<T_lam>::value) {
@@ -147,20 +151,21 @@ return_type_t<T_theta, std::vector<T_lam>> log_mix(
   using T_partials_mat =
       typename Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>;
   using T_lamvec_type = typename std::vector<T_lam>;
+  using T_theta_ref = ref_type_t<T_theta>;
 
   const int N = stan::math::size(lambda);
   const int M = theta.size();
 
-  check_bounded(function, "theta", theta, 0, 1);
-  check_not_nan(function, "theta", theta);
-  check_finite(function, "theta", theta);
+  T_theta_ref theta_ref = theta;
+  check_bounded(function, "theta", theta_ref, 0, 1);
   for (int n = 0; n < N; ++n) {
     check_not_nan(function, "lambda", lambda[n]);
     check_finite(function, "lambda", lambda[n]);
     check_consistent_sizes(function, "theta", theta, "lambda", lambda[n]);
   }
 
-  const auto& theta_dbl = to_ref(value_of(as_column_vector_or_scalar(theta)));
+  const auto& theta_dbl
+      = to_ref(value_of(as_column_vector_or_scalar(theta_ref)));
 
   T_partials_mat lam_dbl(M, N);
   for (int n = 0; n < N; ++n) {
@@ -173,7 +178,8 @@ return_type_t<T_theta, std::vector<T_lam>> log_mix(
     logp[n] = log_sum_exp(logp_tmp.col(n));
   }
 
-  operands_and_partials<T_theta, T_lamvec_type> ops_partials(theta, lambda);
+  operands_and_partials<T_theta_ref, T_lamvec_type> ops_partials(theta_ref,
+                                                                 lambda);
   if (!is_constant_all<T_theta, T_lam>::value) {
     T_partials_mat derivs = exp(lam_dbl.rowwise() - logp.transpose());
     if (!is_constant_all<T_theta>::value) {

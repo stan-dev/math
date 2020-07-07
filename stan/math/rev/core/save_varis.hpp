@@ -131,8 +131,7 @@ inline vari** save_varis(vari** dest, EigT&& x, Pargs&&... args) {
  * @param[in] args Additional arguments to have their varis saved
  * @return Final position of dest pointer
  */
-template <typename Arith, require_st_arithmetic<Arith>*,
-          typename... Pargs>
+template <typename Arith, require_st_arithmetic<Arith>*, typename... Pargs>
 inline vari** save_varis(vari** dest, Arith&& x, Pargs&&... args) {
   return save_varis(dest, std::forward<Pargs>(args)...);
 }
