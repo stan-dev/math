@@ -1,12 +1,15 @@
 #ifndef STAN_MATH_REV_META_IS_VARI_HPP
 #define STAN_MATH_REV_META_IS_VARI_HPP
 
-#include <stan/math/rev/core/vari.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <type_traits>
 
 namespace stan {
 
+namespace math {
+  template <typename T, typename = void>
+  class vari_value;
+}
 namespace internal {
 template <typename T>
 struct is_vari_impl : std::false_type {};
