@@ -33,7 +33,7 @@ template <typename EigMat, require_eigen_vt<is_fvar, EigMat>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
                      EigMat::ColsAtCompileTime>
 cholesky_decompose(const EigMat& m) {
-  eval_return_type_t<EigMat>& m_eval = m.eval();
+  const eval_return_type_t<EigMat>& m_eval = m.eval();
   check_symmetric("cholesky_decompose", "m", m_eval);
   check_not_nan("cholesky_decompose", "m", m_eval);
   Eigen::LLT<Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
@@ -64,8 +64,7 @@ template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
                      EigMat::ColsAtCompileTime>
 cholesky_decompose(const EigMat& m) {
-  using eig_val = value_type_t<EigMat>;
-  eval_return_type_t<EigMat>& m_eval = m.eval();
+  const eval_return_type_t<EigMat>& m_eval = m.eval();
   check_not_nan("cholesky_decompose", "m", m_eval);
 #ifdef STAN_OPENCL
   if (m.rows() >= opencl_context.tuning_opts().cholesky_size_worth_transfer) {
@@ -73,7 +72,7 @@ cholesky_decompose(const EigMat& m) {
     return from_matrix_cl(cholesky_decompose(m_cl));
   } else {
     check_symmetric("cholesky_decompose", "m", m_eval);
-    Eigen::LLT<Eigen::Matrix<eig_val, EigMat::RowsAtCompileTime,
+    Eigen::LLT<Eigen::Matrix<double, EigMat::RowsAtCompileTime,
                              EigMat::ColsAtCompileTime>>
         llt = m_eval.llt();
     check_pos_definite("cholesky_decompose", "m", llt);
@@ -81,7 +80,7 @@ cholesky_decompose(const EigMat& m) {
   }
 #else
   check_symmetric("cholesky_decompose", "m", m_eval);
-  Eigen::LLT<Eigen::Matrix<eig_val, EigMat::RowsAtCompileTime,
+  Eigen::LLT<Eigen::Matrix<double, EigMat::RowsAtCompileTime,
                            EigMat::ColsAtCompileTime>>
       llt = m_eval.llt();
   check_pos_definite("cholesky_decompose", "m", llt);

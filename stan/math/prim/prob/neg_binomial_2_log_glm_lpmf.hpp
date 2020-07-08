@@ -104,8 +104,8 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   const auto& alpha_val = value_of_rec(alpha_ref);
   const auto& beta_val_vec = to_ref(as_column_vector_or_scalar(beta_val));
   const auto& alpha_val_vec = to_ref(as_column_vector_or_scalar(alpha_val));
-  check_finite(function, "Weight vector", beta_ref);
-  check_finite(function, "Intercept", alpha_ref);
+  check_finite(function, "Weight vector", beta_val_vec);
+  check_finite(function, "Intercept", alpha_val_vec);
 
   if (size_zero(y, phi)) {
     return 0;
