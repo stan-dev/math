@@ -7,8 +7,8 @@
 namespace stan {
 
 namespace math {
-  template <typename T, typename = void>
-  class vari_value;
+template <typename T, typename = void>
+class vari_value;
 }
 namespace internal {
 template <typename T>
