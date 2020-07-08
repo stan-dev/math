@@ -34,8 +34,9 @@ template <typename T, require_not_st_arithmetic<T>* = nullptr>
 inline auto value_of(const std::vector<T>& x) {
   std::vector<plain_type_t<decltype(value_of(std::declval<T>()))>> out;
   out.reserve(x.size());
-  for (size_t n = 0; n < x.size(); ++n)
-    out.emplace_back(value_of(x[n]));
+  for (auto&& x_iter : x) {
+    out.emplace_back(value_of(x_iter));
+  }
   return out;
 }
 

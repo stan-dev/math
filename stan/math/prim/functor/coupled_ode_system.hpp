@@ -56,21 +56,23 @@ struct coupled_ode_system_impl<true, F, T_y0, Args...> {
    * @param[in] z State of coupled system
    * @param[out] dz_dt Evaluation of right hand side of coupled system
    * @param[in] t Time at which to evaluated right hand side
+   * @throw exception if the system function does not return
+   * the expected number of derivatives, N.
    */
   void operator()(const std::vector<double>& z, std::vector<double>& dz_dt,
                   double t) const {
-    Eigen::VectorXd y(N_);
-    for (size_t n = 0; n < N_; ++n)
+    Eigen::VectorXd y(z.size());
+    for (size_t n = 0; n < z.size(); ++n)
       y.coeffRef(n) = z[n];
 
-    dz_dt.resize(N_);
+    dz_dt.resize(y.size());
 
     Eigen::VectorXd f_y_t
         = apply([&](const Args&... args) { return f_(t, y, msgs_, args...); },
                 args_tuple_);
 
-    check_size_match("coupled_ode_system", "y", y.size(), "dz_dt",
-                     f_y_t.size());
+    check_size_match("coupled_ode_system", "dy_dt", f_y_t.size(), "states",
+                     y.size());
 
     Eigen::Map<Eigen::VectorXd>(dz_dt.data(), dz_dt.size()) = f_y_t;
   }

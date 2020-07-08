@@ -78,7 +78,7 @@ ode_rk45_tol_impl(const char* function_name, const F& f,
 
   // Code from https://stackoverflow.com/a/17340003
   std::vector<int> unused_temp{
-      0, (check_finite(function_name, "ode parameters and data", args), 0)...};
+    0, (check_finite(function_name, "ode parameters and data", args), 0)...};
 
   check_nonzero_size(function_name, "initial state", y0);
   check_nonzero_size(function_name, "times", ts);

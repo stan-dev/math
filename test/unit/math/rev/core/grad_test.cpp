@@ -4,12 +4,6 @@
 #include <stan/math/rev/fun/sin.hpp>
 #include <vector>
 
-TEST(AgradRev, grad_no_argument) {
-  AVAR d = 2.0;
-  d = 2 * d;
-  stan::math::grad();
-}
-
 TEST(AgradRev, multiple_grads) {
   for (int i = 0; i < 100; ++i) {
     AVAR a = 2.0;

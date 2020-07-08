@@ -15,7 +15,7 @@ namespace math {
  */
 template <typename F, typename T_y0, typename T_param, typename T_t0,
           typename T_ts>
-std::vector<std::vector<return_type_t<T_y0, T_t0, T_ts, T_param>>>
+inline auto
 integrate_ode_rk45(const F& f, const std::vector<T_y0>& y0, const T_t0& t0,
                    const std::vector<T_ts>& ts,
                    const std::vector<T_param>& theta,

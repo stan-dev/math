@@ -65,11 +65,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
   double* partials = ChainableStack::instance_->memalloc_.alloc_array<double>(
       N * total_vars);
 
-  vari** varis_ptr = varis;
-  varis_ptr = save_varis(varis_ptr, y0);
-  varis_ptr = save_varis(varis_ptr, args...);
-  varis_ptr = save_varis(varis_ptr, t0);
-  varis_ptr = save_varis(varis_ptr, t);
+  save_varis(varis, y0, args..., t0, t);
 
   for (size_t j = 0; j < N; ++j) {
     double* partials_j = partials + j * total_vars;
@@ -86,7 +82,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
       double dyt_dt0 = 0.0;
       for (size_t k = 0; k < num_y0_vars; ++k) {
         dyt_dt0
-            += -f_y0_t0.coeffRef(k) * coupled_state[N + num_y0_vars * k + j];
+	  -= f_y0_t0.coeffRef(k) * coupled_state[N + num_y0_vars * k + j];
       }
       partials_j[num_y0_vars + num_args_vars] = dyt_dt0;
     }
