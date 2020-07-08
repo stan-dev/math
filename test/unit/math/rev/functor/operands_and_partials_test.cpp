@@ -1,5 +1,6 @@
 #include <stan/math/rev.hpp>
 #include <stan/math/prim.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -325,4 +326,22 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultivarMixed) {
     o6.edge1_.partials_vec_[0] += d_vec1;
   }
   o6.edge3_.partials_vec_[0] += d_vec2;
+}
+
+TEST(AgradPartialsVari, OperandsAndPartialsVarValueMat) {
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::operands_and_partials;
+  using stan::math::var;
+
+  Eigen::MatrixXd a(2, 2);
+  a << 10.0, 20.0, 30.0, 40.0;
+  stan::math::var_value<Eigen::MatrixXd> av(a);
+
+  operands_and_partials<stan::math::var_value<Eigen::MatrixXd>> ops(av);
+
+  ops.edge1_.partials_ = Eigen::MatrixXd::Constant(2,2,-2);
+  var lp = ops.build(1);
+  (2*lp).grad();
+  EXPECT_MATRIX_EQ(av.adj(), Eigen::MatrixXd::Constant(2,2,-4))
 }

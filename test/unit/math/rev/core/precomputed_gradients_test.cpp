@@ -1,5 +1,6 @@
 #include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/util.hpp>
 #include <vector>
 
 TEST(StanAgradRevInternal, precomputed_gradients) {
@@ -98,5 +99,37 @@ TEST(StanAgradRevInternal, precomputed_gradients_mismatched_sizes) {
 
   EXPECT_THROW(stan::math::precomputed_gradients(value, vars, gradients),
                std::invalid_argument);
+  stan::math::recover_memory();
+}
+
+TEST(StanAgradRevInternal, precomputed_gradients_containers) {
+  double value = 1;
+  std::vector<stan::math::var> vars;
+  std::vector<double> gradients;
+  stan::math::var_value<Eigen::MatrixXd> a(Eigen::MatrixXd::Constant(3, 3, 2));
+  std::tuple<stan::math::var_value<Eigen::MatrixXd>&> ops{a};
+  Eigen::MatrixXd grad = Eigen::MatrixXd::Constant(3, 3, -1);
+  std::tuple<Eigen::MatrixXd&> grads(grad);
+
+  stan::math::var lp
+      = stan::math::precomputed_gradients(value, vars, gradients, ops, grads);
+  (2 * lp).grad();
+  EXPECT_MATRIX_EQ(a.adj(), Eigen::MatrixXd::Constant(3, 3, -2));
+
+  stan::math::recover_memory();
+}
+
+TEST(StanAgradRevInternal, precomputed_gradients_mismatched_containers) {
+  double value = 1;
+  std::vector<stan::math::var> vars;
+  std::vector<double> gradients;
+  stan::math::var_value<Eigen::MatrixXd> a(Eigen::MatrixXd::Constant(3, 3, 2));
+  std::tuple<stan::math::var_value<Eigen::MatrixXd>&> ops(a);
+  Eigen::MatrixXd grad = Eigen::MatrixXd::Constant(3, 2, -1);
+  std::tuple<Eigen::MatrixXd&> grads(grad);
+
+  EXPECT_THROW(
+      stan::math::precomputed_gradients(value, vars, gradients, ops, grads),
+      std::invalid_argument);
   stan::math::recover_memory();
 }

@@ -15,6 +15,7 @@
 #include <stan/math/prim/functor/broadcast_array.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <vector>
+#include <tuple>
 
 namespace stan {
 namespace math {
@@ -40,6 +41,8 @@ class ops_partials_edge<double, var> {
   void dump_partials(double* partials) { *partials = this->partial_; }
   void dump_operands(vari** varis) { *varis = this->operand_.vi_; }
   int size() const { return 1; }
+  std::tuple<> container_operands() { return std::tuple<>(); }
+  std::tuple<> container_partials() { return std::tuple<>(); }
 };
 }  // namespace internal
 
@@ -130,8 +133,18 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
     edge5_.dump_operands(&varis[idx += edge4_.size()]);
     edge5_.dump_partials(&partials[idx]);
 
+    auto container_operands = std::tuple_cat(
+        edge1_.container_operands(), edge2_.container_operands(),
+        edge3_.container_operands(), edge4_.container_operands());
+    auto container_partials = std::tuple_cat(
+        edge1_.container_partials(), edge2_.container_partials(),
+        edge3_.container_partials(), edge4_.container_partials());
+
     return var(
-        new precomputed_gradients_vari(value, edges_size, varis, partials));
+        new precomputed_gradients_vari_template<decltype(container_operands),
+                                                decltype(container_partials)>(
+            value, edges_size, varis, partials, std::move(container_operands),
+            std::move(container_partials)));
   }
 };
 
@@ -165,6 +178,8 @@ class ops_partials_edge<double, std::vector<var>> {
     }
   }
   int size() { return this->operands_.size(); }
+  std::tuple<> container_operands() { return std::tuple<>(); }
+  std::tuple<> container_partials() { return std::tuple<>(); }
 };
 
 template <typename Op>
@@ -194,6 +209,35 @@ class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
         = this->partials_;
   }
   int size() { return this->operands_.size(); }
+  std::tuple<> container_operands() { return std::tuple<>(); }
+  std::tuple<> container_partials() { return std::tuple<>(); }
+};
+
+template <typename Op>
+class ops_partials_edge<double, var_value<Op>, require_eigen_t<Op>> {
+ public:
+  using partials_t = plain_type_t<Op>;
+  partials_t partials_;                       // For univariate use-cases
+  broadcast_array<partials_t> partials_vec_;  // For multivariate
+  explicit ops_partials_edge(const var_value<Op>& ops)
+      : partials_(partials_t::Zero(ops.vi_->rows(), ops.vi_->cols())),
+        partials_vec_(partials_),
+        operands_(ops) {}
+
+ private:
+  template <typename, typename, typename, typename, typename, typename>
+  friend class stan::math::operands_and_partials;
+  const var_value<Op>& operands_;
+
+  void dump_operands(vari** varis) {}
+  void dump_partials(double* partials) {}
+  int size() { return 0; }
+  std::tuple<var_value<Op>> container_operands() {
+    return std::make_tuple(operands_);
+  }
+  std::tuple<partials_t> container_partials() {
+    return std::make_tuple(partials_);
+  }
 };
 
 // SPECIALIZATIONS FOR MULTIVARIATE VECTORIZATIONS
@@ -238,6 +282,8 @@ class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C>>> {
     }
     return this->operands_.size() * this->operands_[0].size();
   }
+  std::tuple<> container_operands() { return std::tuple<>(); }
+  std::tuple<> container_partials() { return std::tuple<>(); }
 };
 
 template <>
@@ -280,6 +326,8 @@ class ops_partials_edge<double, std::vector<std::vector<var>>> {
     }
     return this->operands_.size() * this->operands_[0].size();
   }
+  std::tuple<> container_operands() { return std::tuple<>(); }
+  std::tuple<> container_partials() { return std::tuple<>(); }
 };
 }  // namespace internal
 }  // namespace math

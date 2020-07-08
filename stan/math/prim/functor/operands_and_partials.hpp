@@ -7,6 +7,7 @@
 #include <stan/math/prim/functor/broadcast_array.hpp>
 #include <vector>
 #include <type_traits>
+#include <tuple>
 
 namespace stan {
 namespace math {
@@ -52,6 +53,8 @@ class ops_partials_edge {
   void dump_operands(void* /* operands */) const {}     // reverse mode
   ViewElt dx() const { return 0; }                      // used for fvars
   int size() const { return 0; }                        // reverse mode
+  std::tuple<> container_operands() {return std::tuple<>();}
+  std::tuple<> container_partials() {return std::tuple<>();}
 };
 }  // namespace internal
 
@@ -151,6 +154,8 @@ class ops_partials_edge<ViewElt, Op, require_eigen_st<std::is_arithmetic, Op>> {
   void dump_operands(void* /* operands */) const {}    // reverse mode
   double dx() const { return 0; }                      // used for fvars
   int size() const { return 0; }
+  std::tuple<> container_operands() {return std::tuple<>();}
+  std::tuple<> container_partials() {return std::tuple<>();}
 };
 
 /** \ingroup type_trait
@@ -173,6 +178,8 @@ class ops_partials_edge<ViewElt, std::vector<Eigen::Matrix<Op, R, C>>> {
   void dump_operands(void* /* operands */) const {}    // reverse mode
   double dx() const { return 0; }                      // used for fvars
   int size() const { return 0; }
+  std::tuple<> container_operands() {return std::tuple<>();}
+  std::tuple<> container_partials() {return std::tuple<>();}
 };
 
 /** \ingroup type_trait
@@ -196,6 +203,8 @@ class ops_partials_edge<ViewElt, std::vector<std::vector<Op>>> {
   void dump_operands(void* /* operands */) const {}    // reverse mode
   double dx() const { return 0; }                      // used for fvars
   int size() const { return 0; }
+  std::tuple<> container_operands() {return std::tuple<>();}
+  std::tuple<> container_partials() {return std::tuple<>();}
 };
 }  // namespace internal
 }  // namespace math

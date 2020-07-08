@@ -535,5 +535,18 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
 };
 
 }  // namespace math
+
+/**
+ * Template specialization defining the scalar type of
+ * values stored in vari_value.
+ *
+ * @tparam T type to check.
+ * @ingroup type_trait
+ */
+template<typename T>
+struct scalar_type<math::vari_value<T>>{
+  using type = math::vari_value<scalar_type_t<T>>;
+};
+
 }  // namespace stan
 #endif
