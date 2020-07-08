@@ -32,7 +32,6 @@ TEST(mathMixScalFun, fallingFactorial_vec) {
   std::vector<int> std_in2{3, 1};
   stan::test::expect_ad_vectorized_binary(f, in1, std_in2);
 
-
   Eigen::MatrixXd mat_in1 = in1.replicate(1, 2);
   std::vector<std::vector<int>> std_std_in2{std_in2, std_in2};
   stan::test::expect_ad_vectorized_binary(f, mat_in1, std_std_in2);

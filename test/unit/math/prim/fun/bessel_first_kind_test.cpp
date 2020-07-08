@@ -34,5 +34,4 @@ TEST(MathFunctions, bessel_first_kind_vec) {
   Eigen::MatrixXd mat_in2 = in2.replicate(1, 3);
   std::vector<std::vector<int>> std_std_in1{std_in1, std_in1, std_in1};
   stan::test::binary_scalar_tester(f, std_std_in1, mat_in2);
-
 }

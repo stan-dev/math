@@ -124,8 +124,8 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
     throw std::invalid_argument(msg.str());
   }
   using return_st = decltype(f(x(0), y[0][0]));
-  Eigen::Matrix<return_st, Eigen::Dynamic, Eigen::Dynamic>
-    result(x.rows(), x.cols());
+  Eigen::Matrix<return_st, Eigen::Dynamic, Eigen::Dynamic> result(x.rows(),
+                                                                  x.cols());
   for (size_t i = 0; i < y.size(); ++i) {
     result.row(i) = apply_scalar_binary(x.row(i).transpose(),
                                         as_column_vector_or_scalar(y[i]), f);
@@ -157,8 +157,8 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
     throw std::invalid_argument(msg.str());
   }
   using return_st = decltype(f(x[0][0], y(0)));
-  Eigen::Matrix<return_st, Eigen::Dynamic, Eigen::Dynamic>
-    result(y.rows(), y.cols());
+  Eigen::Matrix<return_st, Eigen::Dynamic, Eigen::Dynamic> result(y.rows(),
+                                                                  y.cols());
   for (size_t i = 0; i < x.size(); ++i) {
     result.row(i) = apply_scalar_binary(as_column_vector_or_scalar(x[i]),
                                         y.row(i).transpose(), f);

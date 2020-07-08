@@ -119,8 +119,10 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   EXPECT_THROW(f(nest_x, nest_y_small), std::invalid_argument);
   EXPECT_THROW(f(nest_x_small, nest_y), std::invalid_argument);
 
-  std::vector<std::vector<plain_type_t<T1>>> nest_nest_x{nest_x, nest_x, nest_x};
-  std::vector<std::vector<plain_type_t<T2>>> nest_nest_y{nest_y, nest_y, nest_y};
+  std::vector<std::vector<plain_type_t<T1>>> nest_nest_x{nest_x, nest_x,
+                                                         nest_x};
+  std::vector<std::vector<plain_type_t<T2>>> nest_nest_y{nest_y, nest_y,
+                                                         nest_y};
   auto nestnestvec_nestnestvec = f(nest_nest_x, nest_nest_y);
   auto nestnestvec_scal = f(nest_nest_x, y[0]);
   auto scal_nestnestvec = f(x[0], nest_nest_y);
@@ -142,7 +144,6 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   EXPECT_THROW(f(nest_nest_x_small, nest_nest_y), std::invalid_argument);
 }
 
-
 /**
  * Implementation function which checks that the binary vectorisation
  * framework returns the same value as the function with scalar inputs,
@@ -155,14 +156,13 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
  * @param y Second vector input to which operation is applied.
  * @param f functor to apply to inputs.
  */
-template <typename F, typename T1, typename T2,
-          typename T1_plain = plain_type_t<T1>,
-          require_eigen_matrix_t<T1>* = nullptr,
-          require_std_vector_t<T2>* = nullptr>
+template <
+    typename F, typename T1, typename T2, typename T1_plain = plain_type_t<T1>,
+    require_eigen_matrix_t<T1>* = nullptr, require_std_vector_t<T2>* = nullptr>
 void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   auto vec_vec = f(x, y);
   for (int r = 0; r < x.rows(); ++r) {
-    for(int c = 0; c < x.cols(); ++c) {
+    for (int c = 0; c < x.cols(); ++c) {
       EXPECT_FLOAT_EQ(f(x(r, c), y[r][c]), vec_vec(r, c));
     }
   }
@@ -177,8 +177,9 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   auto nestvec_nestvec = f(nest_x, nest_y);
   for (int i = 0; i < 3; ++i) {
     for (int r = 0; r < x.rows(); ++r) {
-      for(int c = 0; c < x.cols(); ++c) {
-        EXPECT_FLOAT_EQ(f(nest_x[i](r, c), nest_y[i][r][c]), nestvec_nestvec[i](r, c));
+      for (int c = 0; c < x.cols(); ++c) {
+        EXPECT_FLOAT_EQ(f(nest_x[i](r, c), nest_y[i][r][c]),
+                        nestvec_nestvec[i](r, c));
       }
     }
   }
@@ -194,7 +195,7 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   for (int i = 0; i < 3; ++i) {
     for (int j = 0; j < 3; ++j) {
       for (int r = 0; r < x.rows(); ++r) {
-        for(int c = 0; c < x.cols(); ++c) {
+        for (int c = 0; c < x.cols(); ++c) {
           EXPECT_FLOAT_EQ(f(nest_nest_x[i][j](r, c), nest_nest_y[i][j][r][c]),
                           nestnestvec_nestnestvec[i][j](r, c));
         }
@@ -207,14 +208,13 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   EXPECT_THROW(f(nest_nest_x_small, nest_nest_y), std::invalid_argument);
 }
 
-template <typename F, typename T1, typename T2,
-          typename T2_plain = plain_type_t<T2>,
-          require_std_vector_t<T1>* = nullptr,
-          require_eigen_matrix_t<T2>* = nullptr>
+template <
+    typename F, typename T1, typename T2, typename T2_plain = plain_type_t<T2>,
+    require_std_vector_t<T1>* = nullptr, require_eigen_matrix_t<T2>* = nullptr>
 void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   auto vec_vec = f(x, y);
   for (int r = 0; r < y.rows(); ++r) {
-    for(int c = 0; c < y.cols(); ++c) {
+    for (int c = 0; c < y.cols(); ++c) {
       EXPECT_FLOAT_EQ(f(x[r][c], y(r, c)), vec_vec(r, c));
     }
   }
@@ -229,8 +229,9 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   auto nestvec_nestvec = f(nest_x, nest_y);
   for (int i = 0; i < 3; ++i) {
     for (int r = 0; r < y.rows(); ++r) {
-      for(int c = 0; c < y.cols(); ++c) {
-        EXPECT_FLOAT_EQ(f(nest_x[i][r][c], nest_y[i](r, c)), nestvec_nestvec[i](r, c));
+      for (int c = 0; c < y.cols(); ++c) {
+        EXPECT_FLOAT_EQ(f(nest_x[i][r][c], nest_y[i](r, c)),
+                        nestvec_nestvec[i](r, c));
       }
     }
   }
@@ -246,7 +247,7 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   for (int i = 0; i < 3; ++i) {
     for (int j = 0; j < 3; ++j) {
       for (int r = 0; r < y.rows(); ++r) {
-        for(int c = 0; c < y.cols(); ++c) {
+        for (int c = 0; c < y.cols(); ++c) {
           EXPECT_FLOAT_EQ(f(nest_nest_x[i][j][r][c], nest_nest_y[i][j](r, c)),
                           nestnestvec_nestnestvec[i][j](r, c));
         }
