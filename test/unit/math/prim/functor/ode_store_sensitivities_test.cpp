@@ -16,15 +16,12 @@ TEST(MathPrim, ode_store_sensitivities) {
   std::vector<std::vector<double>> ignored4;
 
   std::vector<double> coupled_state(N);
-  for(size_t i = 0; i < coupled_state.size(); ++i)
+  for (size_t i = 0; i < coupled_state.size(); ++i)
     coupled_state[i] = i + 1;
 
-  Eigen::VectorXd output =
-    stan::math::ode_store_sensitivities(base_ode, coupled_state,
-					Eigen::VectorXd::Ones(3).eval(),
-					0, 0.0, nullptr,
-					ignored1, ignored2,
-					ignored3, ignored4);
+  Eigen::VectorXd output = stan::math::ode_store_sensitivities(
+      base_ode, coupled_state, Eigen::VectorXd::Ones(3).eval(), 0, 0.0, nullptr,
+      ignored1, ignored2, ignored3, ignored4);
 
   EXPECT_EQ(output.size(), coupled_state.size());
   EXPECT_MATRIX_FLOAT_EQ(output, stan::math::to_vector(coupled_state).eval());

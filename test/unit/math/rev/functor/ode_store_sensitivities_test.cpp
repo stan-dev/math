@@ -56,12 +56,11 @@ TEST(AgradRev, ode_store_sensitivities) {
   var t0v = t0;
   var tv = t;
 
-  std::vector<double> coupled_state = { -0.0975, -0.3315, -3.12000, -5.46975,
-					-4.29000, -7.45875, -2.1225, -3.9015 };
+  std::vector<double> coupled_state = {-0.0975,  -0.3315,  -3.12000, -5.46975,
+                                       -4.29000, -7.45875, -2.1225,  -3.9015};
 
-  auto output = stan::math::ode_store_sensitivities(func, coupled_state,
-						    y0v, t0v, tv, nullptr,
-						    av);
+  auto output = stan::math::ode_store_sensitivities(func, coupled_state, y0v,
+                                                    t0v, tv, nullptr, av);
 
   output(0).grad();
 
