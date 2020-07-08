@@ -6,9 +6,8 @@
 #include <limits>
 #include <vector>
 
-using stan::math::bernoulli_logit_glm_rng;
-
 TEST(ProbDistributionsBernoulliLogitGlm, vectorized) {
+  using stan::math::bernoulli_logit_glm_rng;
   //  Test scalar/vector combinations.
   boost::random::mt19937 rng;
 
@@ -69,6 +68,7 @@ TEST(ProbDistributionsBernoulliLogitGlm, vectorized) {
 }
 
 TEST(ProbDistributionsBernoulliLogitGlm, errorCheck) {
+  using stan::math::bernoulli_logit_glm_rng;
   // Check errors for nonfinite and wrong sizes.
   boost::random::mt19937 rng;
 
@@ -105,6 +105,7 @@ TEST(ProbDistributionsBernoulliLogitGlm, errorCheck) {
 }
 
 TEST(ProbDistributionsBernoulliLogitGlm, marginalChiSquareGoodnessFitTest) {
+  using stan::math::bernoulli_logit_glm_rng;
   // Check distribution of result.
   boost::random::mt19937 rng;
   Eigen::MatrixXd x(2, 2);

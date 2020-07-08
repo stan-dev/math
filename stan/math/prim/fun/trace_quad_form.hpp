@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 
 namespace stan {
 namespace math {
@@ -26,8 +27,8 @@ inline return_type_t<EigMat1, EigMat2> trace_quad_form(const EigMat1& A,
                                                        const EigMat2& B) {
   check_square("trace_quad_form", "A", A);
   check_multiplicable("trace_quad_form", "A", A, "B", B);
-
-  return B.cwiseProduct(A * B).sum();
+  const auto& B_ref = to_ref(B);
+  return B_ref.cwiseProduct(A * B_ref).sum();
 }
 
 }  // namespace math

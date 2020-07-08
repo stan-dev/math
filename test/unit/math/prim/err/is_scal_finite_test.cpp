@@ -2,9 +2,8 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-using stan::math::is_scal_finite;
-
 TEST(ErrorHandlingScalar, isScalFinite) {
+  using stan::math::is_scal_finite;
   double x = 0;
   EXPECT_TRUE(is_scal_finite(x));
 
@@ -19,6 +18,7 @@ TEST(ErrorHandlingScalar, isScalFinite) {
 }
 
 TEST(ErrorHandlingScalar, isScalFinite_nan) {
+  using stan::math::is_scal_finite;
   double nan = std::numeric_limits<double>::quiet_NaN();
   EXPECT_FALSE(is_scal_finite(nan));
 }

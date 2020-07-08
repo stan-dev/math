@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
 
 namespace stan {
@@ -157,11 +158,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
       }
     }
     if (!is_constant_all<T_alpha>::value) {
-      if (is_vector<T_alpha>::value) {
-        ops_partials.edge2_.partials_ = theta_derivative;
-      } else {
-        ops_partials.edge2_.partials_[0] = sum(theta_derivative);
-      }
+      ops_partials.edge2_.partials_ = theta_derivative;
     }
   }
   return ops_partials.build(logp);

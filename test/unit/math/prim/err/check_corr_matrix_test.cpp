@@ -3,9 +3,8 @@
 #include <limits>
 #include <string>
 
-using stan::math::check_corr_matrix;
-
 TEST(ErrorHandlingMatrix, CheckCorrMatrix) {
+  using stan::math::check_corr_matrix;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
   y.resize(2, 2);
 
@@ -17,6 +16,7 @@ TEST(ErrorHandlingMatrix, CheckCorrMatrix) {
 }
 
 TEST(ErrorHandlingMatrix, CheckCorrMatrix_one_indexed_message) {
+  using stan::math::check_corr_matrix;
   std::string message;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
   y.resize(2, 2);
@@ -37,6 +37,7 @@ TEST(ErrorHandlingMatrix, CheckCorrMatrix_one_indexed_message) {
 }
 
 TEST(ErrorHandlingMatrix, CheckCorrMatrix_nan) {
+  using stan::math::check_corr_matrix;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
   y.resize(2, 2);
   double nan = std::numeric_limits<double>::quiet_NaN();

@@ -5,6 +5,7 @@
 #include <stan/math/prim/meta/promote_scalar_type.hpp>
 #include <stan/math/prim/meta/ref_type.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 #include <stdexcept>
 
 namespace stan {
@@ -22,15 +23,13 @@ class broadcast_array {
   T& operator[](int /*i*/) { return prim_; }
 
   /** \ingroup type_trait
-   * We can assign any right hand side which allows for indexing to a
-   * broadcast_array. The idea is that the entry for the first index is what
-   * gets assigned. The most common use-case should be where the rhs is some
-   * container of length 1.
+   * Broadcast array can be assigned a scalar or a vector. If assigned a scalar,
+   * it will be used directly. If assigned a vector, the argument will be summed
+   * first.
    */
   template <typename Y>
   void operator=(const Y& m) {
-    ref_type_t<Y> m_ref = m;
-    prim_ = m_ref[0];
+    prim_ = sum(m);
   }
 };
 

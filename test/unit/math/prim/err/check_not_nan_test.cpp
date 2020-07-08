@@ -5,9 +5,8 @@
 #include <string>
 #include <stdexcept>
 
-using stan::math::check_not_nan;
-
 TEST(ErrorHandlingArr, CheckNotNanVectorized) {
+  using stan::math::check_not_nan;
   int N = 5;
   const char* function = "check_not_nan";
   std::vector<double> x(N);
@@ -30,6 +29,7 @@ TEST(ErrorHandlingArr, CheckNotNanVectorized) {
 }
 
 TEST(ErrorHandlingArr, CheckNotNanVectorized_one_indexed_message) {
+  using stan::math::check_not_nan;
   int N = 5;
   const char* function = "check_not_nan";
   std::vector<double> x(N);
@@ -50,6 +50,7 @@ TEST(ErrorHandlingArr, CheckNotNanVectorized_one_indexed_message) {
 }
 
 TEST(ErrorHandlingMatrix, checkNotNanEigenRow) {
+  using stan::math::check_not_nan;
   stan::math::vector_d y;
   y.resize(3);
   y << 1, 2, 3;
@@ -65,6 +66,7 @@ TEST(ErrorHandlingMatrix, checkNotNanEigenRow) {
 }
 
 TEST(ErrorHandlingScalar, CheckNotNan) {
+  using stan::math::check_not_nan;
   const char* function = "check_not_nan";
   double x = 0;
 
