@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
 #include <stan/math/fwd/fun/multiply.hpp>
 
@@ -16,7 +17,8 @@ tcrossprod(const EigMat& m) {
   if (m.rows() == 0) {
     return {};
   }
-  return multiply(m, m.transpose());
+  const auto& m_ref = to_ref(m);
+  return multiply(m_ref, m_ref.transpose());
 }
 
 }  // namespace math
