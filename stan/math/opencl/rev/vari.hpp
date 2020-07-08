@@ -56,6 +56,10 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
   }
 
  protected:
+  // to allow access to this constructor from instantinations with different
+  // template parameters
+  template <typename, typename>
+  friend class vari_value;
   /**
    * Construct a dense matrix_cl variable implementation from a value and
    * adjoint.
