@@ -81,8 +81,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
     if (is_var<T_t0>::value) {
       double dyt_dt0 = 0.0;
       for (size_t k = 0; k < num_y0_vars; ++k) {
-        dyt_dt0
-	  -= f_y0_t0.coeffRef(k) * coupled_state[N + num_y0_vars * k + j];
+        dyt_dt0 -= f_y0_t0.coeffRef(k) * coupled_state[N + num_y0_vars * k + j];
       }
       partials_j[num_y0_vars + num_args_vars] = dyt_dt0;
     }
