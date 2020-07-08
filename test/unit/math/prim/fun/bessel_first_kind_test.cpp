@@ -26,9 +26,13 @@ TEST(MathFunctions, bessel_first_kind_vec) {
     return bessel_first_kind(x1, x2);
   };
 
-  Eigen::VectorXi in1(3);
-  in1 << 1, 3, 1;
+  std::vector<int> std_in1{1, 3, 1};
   Eigen::VectorXd in2(3);
   in2 << -1.3, 0.7, 2.8;
-  stan::test::binary_scalar_tester(f, in1, in2);
+  stan::test::binary_scalar_tester(f, std_in1, in2);
+
+  Eigen::MatrixXd mat_in2 = in2.replicate(1, 3);
+  std::vector<std::vector<int>> std_std_in1{std_in1, std_in1, std_in1};
+  stan::test::binary_scalar_tester(f, std_std_in1, mat_in2);
+
 }

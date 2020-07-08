@@ -20,9 +20,12 @@ TEST(mathMixScalFun, besselFirstKind_vec) {
     return bessel_first_kind(x1, x2);
   };
 
-  Eigen::VectorXi in1(2);
-  in1 << 3, 1;
+  std::vector<int> std_in1{3, 1};
   Eigen::VectorXd in2(2);
   in2 << 0.5, 3.4;
-  stan::test::expect_ad_vectorized_binary(f, in1, in2);
+  stan::test::expect_ad_vectorized_binary(f, std_in1, in2);
+
+  std::vector<std::vector<int>> std_std_in1{std_in1, std_in1};
+  Eigen::MatrixXd mat_in2 = in2.replicate(1, 2);
+  stan::test::expect_ad_vectorized_binary(f, std_std_in1, mat_in2);
 }

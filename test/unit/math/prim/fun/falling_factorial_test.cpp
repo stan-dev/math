@@ -25,7 +25,10 @@ TEST(MathFunctions, falling_factorial_vec) {
 
   Eigen::VectorXd in1(3);
   in1 << -1.3, 0.7, 2.8;
-  Eigen::VectorXi in2(3);
-  in2 << 1, 3, 1;
-  stan::test::binary_scalar_tester(f, in1, in2);
+  std::vector<int> std_in2{1, 3, 1};
+  stan::test::binary_scalar_tester(f, in1, std_in2);
+
+  Eigen::MatrixXd mat_in1 = in1.replicate(1, 3);
+  std::vector<std::vector<int>> std_std_in2{std_in2, std_in2, std_in2};
+  stan::test::binary_scalar_tester(f, mat_in1, std_std_in2);
 }

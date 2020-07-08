@@ -17,7 +17,7 @@ namespace test {
  * @param f functor to apply to inputs.
  */
 template <typename F, typename T1, typename T2,
-          require_all_not_std_vector_t<T1, T2>* = nullptr>
+          require_all_not_vector_t<T1, T2>* = nullptr>
 void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   auto vec_vec = f(x, y);
   auto vec_scal = f(x, y(0));
@@ -87,7 +87,7 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
  * @param f functor to apply to inputs.
  */
 template <typename F, typename T1, typename T2,
-          require_all_std_vector_t<T1, T2>* = nullptr>
+          require_all_vector_t<T1, T2>* = nullptr>
 void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   auto vec_vec = f(x, y);
   auto vec_scal = f(x, y[0]);
@@ -97,13 +97,13 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
     EXPECT_FLOAT_EQ(f(x[i], y[0]), vec_scal[i]);
     EXPECT_FLOAT_EQ(f(x[0], y[i]), scal_vec[i]);
   }
-  T1 x_zero;
-  T2 y_zero;
+  plain_type_t<T1> x_zero;
+  plain_type_t<T2> y_zero;
   EXPECT_THROW(f(x_zero, y), std::invalid_argument);
   EXPECT_THROW(f(x, y_zero), std::invalid_argument);
 
-  std::vector<T1> nest_x{x, x, x};
-  std::vector<T2> nest_y{y, y, y};
+  std::vector<plain_type_t<T1>> nest_x{x, x, x};
+  std::vector<plain_type_t<T2>> nest_y{y, y, y};
   auto nestvec_nestvec = f(nest_x, nest_y);
   auto nestvec_scal = f(nest_x, y[0]);
   auto scal_nestvec = f(x[0], nest_y);
@@ -114,13 +114,13 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
       EXPECT_FLOAT_EQ(f(x[0], nest_y[i][j]), scal_nestvec[i][j]);
     }
   }
-  std::vector<T1> nest_x_small{x, x};
-  std::vector<T2> nest_y_small{y, y};
+  std::vector<plain_type_t<T1>> nest_x_small{x, x};
+  std::vector<plain_type_t<T2>> nest_y_small{y, y};
   EXPECT_THROW(f(nest_x, nest_y_small), std::invalid_argument);
   EXPECT_THROW(f(nest_x_small, nest_y), std::invalid_argument);
 
-  std::vector<std::vector<T1>> nest_nest_x{nest_x, nest_x, nest_x};
-  std::vector<std::vector<T2>> nest_nest_y{nest_y, nest_y, nest_y};
+  std::vector<std::vector<plain_type_t<T1>>> nest_nest_x{nest_x, nest_x, nest_x};
+  std::vector<std::vector<plain_type_t<T2>>> nest_nest_y{nest_y, nest_y, nest_y};
   auto nestnestvec_nestnestvec = f(nest_nest_x, nest_nest_y);
   auto nestnestvec_scal = f(nest_nest_x, y[0]);
   auto scal_nestnestvec = f(x[0], nest_nest_y);
@@ -136,8 +136,125 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
       }
     }
   }
-  std::vector<std::vector<T1>> nest_nest_x_small{nest_x, nest_x};
+  std::vector<std::vector<plain_type_t<T1>>> nest_nest_x_small{nest_x, nest_x};
+  std::vector<std::vector<plain_type_t<T2>>> nest_nest_y_small{nest_y, nest_y};
+  EXPECT_THROW(f(nest_nest_x, nest_nest_y_small), std::invalid_argument);
+  EXPECT_THROW(f(nest_nest_x_small, nest_nest_y), std::invalid_argument);
+}
+
+
+/**
+ * Implementation function which checks that the binary vectorisation
+ * framework returns the same value as the function with scalar inputs,
+ * for all valid combinations of scalar/vector/nested vector.
+ *
+ * @tparam F Type of functor to apply.
+ * @tparam T1 Type of first vector.
+ * @tparam T2 Type of second vector.
+ * @param x First vector input to which operation is applied.
+ * @param y Second vector input to which operation is applied.
+ * @param f functor to apply to inputs.
+ */
+template <typename F, typename T1, typename T2,
+          typename T1_plain = plain_type_t<T1>,
+          require_eigen_matrix_t<T1>* = nullptr,
+          require_std_vector_t<T2>* = nullptr>
+void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
+  auto vec_vec = f(x, y);
+  for (int r = 0; r < x.rows(); ++r) {
+    for(int c = 0; c < x.cols(); ++c) {
+      EXPECT_FLOAT_EQ(f(x(r, c), y[r][c]), vec_vec(r, c));
+    }
+  }
+
+  T1_plain x_zero;
+  T2 y_zero;
+  EXPECT_THROW(f(x_zero, y), std::invalid_argument);
+  EXPECT_THROW(f(x, y_zero), std::invalid_argument);
+
+  std::vector<T1_plain> nest_x{x, x, x};
+  std::vector<T2> nest_y{y, y, y};
+  auto nestvec_nestvec = f(nest_x, nest_y);
+  for (int i = 0; i < 3; ++i) {
+    for (int r = 0; r < x.rows(); ++r) {
+      for(int c = 0; c < x.cols(); ++c) {
+        EXPECT_FLOAT_EQ(f(nest_x[i](r, c), nest_y[i][r][c]), nestvec_nestvec[i](r, c));
+      }
+    }
+  }
+  std::vector<T1_plain> nest_x_small{x, x};
+  std::vector<T2> nest_y_small{y, y};
+  EXPECT_THROW(f(nest_x, nest_y_small), std::invalid_argument);
+  EXPECT_THROW(f(nest_x_small, nest_y), std::invalid_argument);
+
+  std::vector<std::vector<T1_plain>> nest_nest_x{nest_x, nest_x, nest_x};
+  std::vector<std::vector<T2>> nest_nest_y{nest_y, nest_y, nest_y};
+
+  auto nestnestvec_nestnestvec = f(nest_nest_x, nest_nest_y);
+  for (int i = 0; i < 3; ++i) {
+    for (int j = 0; j < 3; ++j) {
+      for (int r = 0; r < x.rows(); ++r) {
+        for(int c = 0; c < x.cols(); ++c) {
+          EXPECT_FLOAT_EQ(f(nest_nest_x[i][j](r, c), nest_nest_y[i][j][r][c]),
+                          nestnestvec_nestnestvec[i][j](r, c));
+        }
+      }
+    }
+  }
+  std::vector<std::vector<T1_plain>> nest_nest_x_small{nest_x, nest_x};
   std::vector<std::vector<T2>> nest_nest_y_small{nest_y, nest_y};
+  EXPECT_THROW(f(nest_nest_x, nest_nest_y_small), std::invalid_argument);
+  EXPECT_THROW(f(nest_nest_x_small, nest_nest_y), std::invalid_argument);
+}
+
+template <typename F, typename T1, typename T2,
+          typename T2_plain = plain_type_t<T2>,
+          require_std_vector_t<T1>* = nullptr,
+          require_eigen_matrix_t<T2>* = nullptr>
+void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
+  auto vec_vec = f(x, y);
+  for (int r = 0; r < y.rows(); ++r) {
+    for(int c = 0; c < y.cols(); ++c) {
+      EXPECT_FLOAT_EQ(f(x[r][c], y(r, c)), vec_vec(r, c));
+    }
+  }
+
+  T1 x_zero;
+  T2_plain y_zero;
+  EXPECT_THROW(f(x_zero, y), std::invalid_argument);
+  EXPECT_THROW(f(x, y_zero), std::invalid_argument);
+
+  std::vector<T1> nest_x{x, x, x};
+  std::vector<T2_plain> nest_y{y, y, y};
+  auto nestvec_nestvec = f(nest_x, nest_y);
+  for (int i = 0; i < 3; ++i) {
+    for (int r = 0; r < y.rows(); ++r) {
+      for(int c = 0; c < y.cols(); ++c) {
+        EXPECT_FLOAT_EQ(f(nest_x[i][r][c], nest_y[i](r, c)), nestvec_nestvec[i](r, c));
+      }
+    }
+  }
+  std::vector<T1> nest_x_small{x, x};
+  std::vector<T2_plain> nest_y_small{y, y};
+  EXPECT_THROW(f(nest_x, nest_y_small), std::invalid_argument);
+  EXPECT_THROW(f(nest_x_small, nest_y), std::invalid_argument);
+
+  std::vector<std::vector<T1>> nest_nest_x{nest_x, nest_x, nest_x};
+  std::vector<std::vector<T2_plain>> nest_nest_y{nest_y, nest_y, nest_y};
+
+  auto nestnestvec_nestnestvec = f(nest_nest_x, nest_nest_y);
+  for (int i = 0; i < 3; ++i) {
+    for (int j = 0; j < 3; ++j) {
+      for (int r = 0; r < y.rows(); ++r) {
+        for(int c = 0; c < y.cols(); ++c) {
+          EXPECT_FLOAT_EQ(f(nest_nest_x[i][j][r][c], nest_nest_y[i][j](r, c)),
+                          nestnestvec_nestnestvec[i][j](r, c));
+        }
+      }
+    }
+  }
+  std::vector<std::vector<T1>> nest_nest_x_small{nest_x, nest_x};
+  std::vector<std::vector<T2_plain>> nest_nest_y_small{nest_y, nest_y};
   EXPECT_THROW(f(nest_nest_x, nest_nest_y_small), std::invalid_argument);
   EXPECT_THROW(f(nest_nest_x_small, nest_nest_y), std::invalid_argument);
 }
@@ -172,5 +289,10 @@ void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
       std::vector<typename T2::Scalar>(y.data(), y.data() + y.size()));
 }
 
+template <typename F, typename T1, typename T2,
+          require_any_std_vector_t<T1, T2>* = nullptr>
+void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
+  binary_scalar_tester_impl(f, x, y);
+}
 }  // namespace test
 }  // namespace stan
