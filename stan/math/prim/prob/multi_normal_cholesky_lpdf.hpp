@@ -51,6 +51,9 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
   using vector_partials_t = Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1>;
   using row_vector_partials_t
       = Eigen::Matrix<T_partials_return, 1, Eigen::Dynamic>;
+  using T_y_ref = ref_type_t<T_y>;
+  using T_mu_ref = ref_type_t<T_loc>;
+  using T_L_ref = ref_type_t<T_covar>;
 
   check_consistent_sizes_mvt(function, "y", y, "mu", mu);
   size_t number_of_y = size_mvt(y);
@@ -66,30 +69,24 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
   const int size_mu = mu_vec[0].size();
   if (likely(size_vec > 1)) {
     // check size consistency of all random variables y
-    int size_y_old = size_y;
     for (size_t i = 1, size_mvt_y = size_mvt(y); i < size_mvt_y; i++) {
-      int size_y_new = y_vec[i].size();
       check_size_match(function,
                        "Size of one of the vectors of "
                        "the random variable",
-                       size_y_new,
-                       "Size of another vector of the "
+                       y_vec[i].size(),
+                       "Size of the first vector of the "
                        "random variable",
-                       size_y_old);
-      size_y_old = size_y_new;
+                       size_y);
     }
     // check size consistency of all means mu
-    int size_mu_old = size_mu;
     for (size_t i = 1, size_mvt_mu = size_mvt(mu); i < size_mvt_mu; i++) {
-      int size_mu_new = mu_vec[i].size();
       check_size_match(function,
                        "Size of one of the vectors of "
                        "the location variable",
-                       size_mu_new,
-                       "Size of another vector of the "
+                       mu_vec[i].size(),
+                       "Size of the first vector of the "
                        "location variable",
-                       size_mu_old);
-      size_mu_old = size_mu_new;
+                       size_mu);
     }
   }
 
@@ -100,34 +97,40 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
   check_size_match(function, "Size of random variable", size_y,
                    "columns of covariance parameter", L.cols());
 
+  T_y_ref y_ref = y;
+  T_mu_ref mu_ref = mu;
+  T_L_ref L_ref = L;
+
+  vector_seq_view<T_y_ref> y_ref_vec(y_ref);
+  vector_seq_view<T_mu_ref> mu_ref_vec(mu_ref);
   for (size_t i = 0; i < size_vec; i++) {
-    check_finite(function, "Location parameter", mu_vec[i]);
-    check_not_nan(function, "Random variable", y_vec[i]);
+    check_finite(function, "Location parameter", mu_ref_vec[i]);
+    check_not_nan(function, "Random variable", y_ref_vec[i]);
   }
 
   if (unlikely(size_y == 0)) {
     return T_return(0);
   }
 
-  T_partials_return logp(0);
-  operands_and_partials<T_y, T_loc, T_covar> ops_partials(y, mu, L);
+  operands_and_partials<T_y_ref, T_mu_ref, T_L_ref> ops_partials(y_ref, mu_ref,
+                                                                 L_ref);
 
+  T_partials_return logp(0);
   if (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
   }
 
   const matrix_partials_t inv_L_dbl
-      = mdivide_left_tri<Eigen::Lower>(value_of(L));
+      = mdivide_left_tri<Eigen::Lower>(value_of(L_ref));
 
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     for (size_t i = 0; i < size_vec; i++) {
-      vector_partials_t y_minus_mu_dbl(size_y);
-      for (int j = 0; j < size_y; j++) {
-        y_minus_mu_dbl(j) = value_of(y_vec[i](j)) - value_of(mu_vec[i](j));
-      }
+      const auto& y_col = as_column_vector_or_scalar(y_ref_vec[i]);
+      const auto& mu_col = as_column_vector_or_scalar(mu_ref_vec[i]);
 
       const row_vector_partials_t half
-          = (inv_L_dbl.template triangularView<Eigen::Lower>() * y_minus_mu_dbl)
+          = (inv_L_dbl.template triangularView<Eigen::Lower>()
+             * (value_of(y_col) - value_of(mu_col)))
                 .transpose();
       const vector_partials_t scaled_diff
           = (half * inv_L_dbl.template triangularView<Eigen::Lower>())
@@ -136,17 +139,13 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
       logp -= 0.5 * dot_self(half);
 
       if (!is_constant_all<T_y>::value) {
-        for (int j = 0; j < size_y; j++) {
-          ops_partials.edge1_.partials_vec_[i](j) -= scaled_diff(j);
-        }
-      }
-      if (!is_constant_all<T_loc>::value) {
-        for (int j = 0; j < size_y; j++) {
-          ops_partials.edge2_.partials_vec_[i](j) += scaled_diff(j);
-        }
+        ops_partials.edge1_.partials_vec_[i] = -scaled_diff;
       }
       if (!is_constant_all<T_covar>::value) {
-        ops_partials.edge3_.partials_ += scaled_diff * half;
+        ops_partials.edge3_.partials_ = scaled_diff * half;
+      }
+      if (!is_constant_all<T_loc>::value) {
+        ops_partials.edge2_.partials_vec_[i] = std::move(scaled_diff);
       }
     }
   }
