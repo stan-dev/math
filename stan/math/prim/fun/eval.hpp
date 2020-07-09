@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <cstddef>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -25,11 +27,11 @@ inline decltype(auto) eval(T&& arg) {
  *
  * @tparam T Input type
  * @param[in] arg Input argument
- * @return Forwarded input argument
+ * @return Eval'd argument
  **/
 template <typename T,
 	  require_eigen_t<T>* = nullptr>
-inline decltype(auto) eval(T&& arg) {
+inline decltype(auto) eval(T arg) {
   return arg.eval();
 }
 
