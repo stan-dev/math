@@ -129,6 +129,7 @@ TEST(ErrorHandlingScalar, CheckFinite_nan) {
 }
 
 TEST(ErrorHandlingScalar, CheckFiniteVectorization) {
+  using stan::math::check_finite;
   const char* function = "check_finite";
   Eigen::MatrixXd m = Eigen::MatrixXd::Constant(3, 2, 0);
   EXPECT_NO_THROW(

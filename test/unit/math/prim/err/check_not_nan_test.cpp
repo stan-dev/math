@@ -87,6 +87,7 @@ TEST(ErrorHandlingScalar, CheckNotNan) {
 }
 
 TEST(ErrorHandlingScalar, CheckNotNaNVectorization) {
+  using stan::math::check_not_nan;
   const char* function = "check_not_nan";
   Eigen::MatrixXd m = Eigen::MatrixXd::Constant(3, 2, 0);
   EXPECT_NO_THROW(

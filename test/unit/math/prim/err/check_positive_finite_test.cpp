@@ -190,6 +190,7 @@ TEST(ErrorHandlingScalar, CheckPositiveFinite_nan) {
 }
 
 TEST(ErrorHandlingScalar, CheckPositiveFiniteVectorization) {
+  using stan::math::check_positive_finite;
   const char* function = "check_positive_finite";
   Eigen::MatrixXd m = Eigen::MatrixXd::Constant(3, 2, 1);
   EXPECT_NO_THROW(check_positive_finite(function, "m",
