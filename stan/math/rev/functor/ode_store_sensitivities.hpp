@@ -66,8 +66,9 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
   save_varis(varis, y0, args..., t0, t);
 
   // memory for a column major jacobian
-  double* jacobian_mem = ChainableStack::instance_->memalloc_.alloc_array<double>(
-      N * total_vars);
+  double* jacobian_mem
+      = ChainableStack::instance_->memalloc_.alloc_array<double>(N
+                                                                 * total_vars);
 
   Eigen::Map<Eigen::MatrixXd> jacobian(jacobian_mem, total_vars, N);
 
