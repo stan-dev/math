@@ -12,19 +12,18 @@ namespace math {
 /** \ingroup multivar_dists
  * @deprecated use <code>multinomial_logit_lpmf</code>
  */
-template <bool propto, typename T_beta, typename T_prob = scalar_type_t<T_beta>,
+template <bool propto, typename T_beta,
           require_eigen_col_vector_t<T_beta>* = nullptr>
-return_type_t<T_prob> multinomial_logit_log(const std::vector<int>& ns,
+return_type_t<T_beta> multinomial_logit_log(const std::vector<int>& ns,
                                             const T_beta& beta) {
-  return multinomial_logit_lpmf<propto, T_beta>(ns, beta);
+  return multinomial_logit_lpmf<propto>(ns, beta);
 }
 
 /** \ingroup multivar_dists
  * @deprecated use <code>multinomial_logit_lpmf</code>
  */
-template <typename T_beta, typename T_prob = scalar_type_t<T_beta>,
-          require_eigen_col_vector_t<T_beta>* = nullptr>
-return_type_t<T_prob> multinomial_logit_log(const std::vector<int>& ns,
+template <typename T_beta, require_eigen_col_vector_t<T_beta>* = nullptr>
+return_type_t<T_beta> multinomial_logit_log(const std::vector<int>& ns,
                                             const T_beta& beta) {
   return multinomial_logit_lpmf<false>(ns, beta);
 }

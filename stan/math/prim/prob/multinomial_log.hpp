@@ -15,8 +15,8 @@ namespace math {
 template <bool propto, typename T_prob>
 return_type_t<T_prob> multinomial_log(
     const std::vector<int>& ns,
-    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
-  return multinomial_lpmf<propto, T_prob>(ns, theta);
+    const T_prob& theta) {
+  return multinomial_lpmf<propto>(ns, theta);
 }
 
 /** \ingroup multivar_dists
@@ -25,7 +25,7 @@ return_type_t<T_prob> multinomial_log(
 template <typename T_prob>
 return_type_t<T_prob> multinomial_log(
     const std::vector<int>& ns,
-    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
+    const T_prob& theta) {
   return multinomial_lpmf<false>(ns, theta);
 }
 
