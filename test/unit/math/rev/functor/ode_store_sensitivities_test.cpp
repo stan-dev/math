@@ -41,10 +41,9 @@ struct aytm {
   template <typename T0, typename T_y, typename T_Arg, int R, int C>
   inline auto operator()(const T0& t, const T_y& y, std::ostream* msgs,
                          const Eigen::Matrix<T_Arg, R, C>& args) const {
-    std::vector<typename stan::return_type<T_Arg>::type> vec
-        = {sum_(args)};
-    Eigen::Matrix<stan::return_type_t<T0, T_y, T_Arg>, Eigen::Dynamic, 1>
-        out(2);
+    std::vector<typename stan::return_type<T_Arg>::type> vec = {sum_(args)};
+    Eigen::Matrix<stan::return_type_t<T0, T_y, T_Arg>, Eigen::Dynamic, 1> out(
+        2);
     out(0) = -sum_(vec) * y(0) * t;
     out(1) = -1.7 * sum_(vec) * y(1) * t;
     return out;
