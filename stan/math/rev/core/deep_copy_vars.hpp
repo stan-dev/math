@@ -12,7 +12,7 @@ namespace stan {
 namespace math {
 
 /**
- * Forward arguments that do not contain vars. There
+ * Pass through const references to arguments that do not contain vars. There
  *   is no copying to be done.
  *
  * @tparam Arith an arithmetic type.

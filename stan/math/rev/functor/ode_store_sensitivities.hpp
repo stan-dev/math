@@ -68,6 +68,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
   save_varis(varis, y0, args..., t0, t);
 
   for (size_t j = 0; j < N; ++j) {
+    // Point to memory allocated in partials to store the derivatives
     double* partials_j = partials + j * total_vars;
     for (size_t k = 0; k < num_y0_vars; ++k) {
       partials_j[k] = coupled_state[N + num_y0_vars * k + j];
