@@ -303,8 +303,8 @@ using var = var_value<double>;
  * @tparam T type to check.
  * @ingroup type_trait
  */
-template<typename T>
-struct scalar_type<math::var_value<T>>{
+template <typename T>
+struct scalar_type<math::var_value<T>> {
   using type = math::var_value<scalar_type_t<T>>;
 };
 

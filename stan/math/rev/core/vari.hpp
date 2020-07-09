@@ -541,8 +541,8 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
  * @tparam T type to check.
  * @ingroup type_trait
  */
-template<typename T>
-struct scalar_type<math::vari_value<T>>{
+template <typename T>
+struct scalar_type<math::vari_value<T>> {
   using type = math::vari_value<scalar_type_t<T>>;
 };
 

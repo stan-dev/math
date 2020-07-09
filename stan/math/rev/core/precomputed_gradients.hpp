@@ -172,8 +172,8 @@ using precomputed_gradients_vari
  * @param[in] operands operands.
  * @param[in] gradients vector of partial derivatives of result with
  * respect to operands.
-   * @param container_operands any container operands
-   * @param container_gradients any container gradients
+ * @param container_operands any container operands
+ * @param container_gradients any container gradients
  * @return An autodiff variable that uses the precomputed
  * gradients provided.
  */
