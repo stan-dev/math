@@ -2,7 +2,7 @@
 #define STAN_MATH_REV_FUN_GRAD_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/fun/Eigen_NumTraits.hpp>
+#include <stan/math/rev/core/Eigen_NumTraits.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 

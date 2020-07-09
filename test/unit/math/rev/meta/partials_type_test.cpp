@@ -1,4 +1,4 @@
-#include <stan/math/rev/meta.hpp>
+#include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
 
 TEST(MetaTraitsRevScal, partials_type) {

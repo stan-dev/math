@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_REV_CORE_GEVV_VVV_VARI_HPP
 #define STAN_MATH_REV_CORE_GEVV_VVV_VARI_HPP
 
-#include <stan/math/rev/core/vari.hpp>
-#include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
+#include <stan/math/rev/core/var.hpp>
+#include <stan/math/rev/core/vari.hpp>
 
 namespace stan {
 namespace math {
