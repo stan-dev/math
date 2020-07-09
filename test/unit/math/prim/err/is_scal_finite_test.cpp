@@ -3,8 +3,6 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <vector>
 
-using stan::math::is_scal_finite;
-
 TEST(ErrorHandlingScalar, isScalFinite) {
   EXPECT_FALSE(is_scal_finite(stan::math::NEGATIVE_INFTY));
   EXPECT_TRUE(is_scal_finite(-3.0));
@@ -17,6 +15,7 @@ TEST(ErrorHandlingScalar, isScalFinite) {
   EXPECT_TRUE(is_scal_finite(3.0));
   EXPECT_TRUE(is_scal_finite(3));
   EXPECT_FALSE(is_scal_finite(stan::math::INFTY));
+  EXPECT_FALSE(is_scal_finite(-stan::math::INFTY));
   EXPECT_FALSE(is_scal_finite(stan::math::NOT_A_NUMBER));
 }
 

@@ -3,7 +3,11 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -30,9 +34,8 @@ struct log10_fun {
  * @param x container
  * @return Log base-10 applied to each value in x.
  */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto log10(const Container& x) {
   return apply_scalar_unary<log10_fun, Container>::apply(x);
 }
@@ -46,11 +49,26 @@ inline auto log10(const Container& x) {
  * @return Log base-10 of each variable in the container.
  */
 template <typename Container,
-          require_container_st<is_container, std::is_arithmetic, Container>...>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto log10(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().log10(); });
 }
+
+namespace internal {
+/**
+ * Return the base 10 logarithm of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return base 10 logarithm of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_log10(const std::complex<V>& z) {
+  static const double inv_log_10 = 1 / std::log(10);
+  return log(z) * inv_log_10;
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

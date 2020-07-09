@@ -7,7 +7,10 @@
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
 
 namespace stan {
@@ -28,54 +31,57 @@ namespace math {
 template <bool propto, typename T_n, typename T_prob>
 return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_prob>;
+  using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
   using std::exp;
+  using T_n_ref = ref_type_if_t<!is_constant<T_n>::value, T_n>;
+  using T_theta_ref = ref_type_if_t<!is_constant<T_prob>::value, T_prob>;
   static const char* function = "bernoulli_logit_lpmf";
-  check_bounded(function, "n", n, 0, 1);
-  check_not_nan(function, "Logit transformed probability parameter", theta);
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
-
   if (size_zero(n, theta)) {
     return 0.0;
   }
+  T_n_ref n_ref = n;
+  T_theta_ref theta_ref = theta;
+  check_bounded(function, "n", n_ref, 0, 1);
+
+  const auto& theta_col = as_column_vector_or_scalar(theta_ref);
+  const auto& theta_val = value_of(theta_col);
+  const auto& theta_arr = to_ref(as_array_or_scalar(theta_val));
+
+  check_not_nan(function, "Logit transformed probability parameter", theta_arr);
   if (!include_summand<propto, T_prob>::value) {
     return 0.0;
   }
 
-  T_partials_return logp(0.0);
-  operands_and_partials<T_prob> ops_partials(theta);
+  const auto& n_col = as_column_vector_or_scalar(n_ref);
+  const auto& n_double = value_of_rec(n_col);
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_prob> theta_vec(theta);
-  size_t N = max_size(n, theta);
+  auto signs = to_ref_if<!is_constant<T_prob>::value>(
+      (2 * as_array_or_scalar(n_double) - 1));
+  T_partials_array ntheta;
+  if (is_vector<T_n>::value || is_vector<T_prob>::value) {
+    ntheta = forward_as<T_partials_array>(signs * theta_arr);
+  } else {
+    T_partials_return ntheta_s
+        = forward_as<T_partials_return>(signs * theta_arr);
+    ntheta = T_partials_array::Constant(1, 1, ntheta_s);
+  }
+  T_partials_array exp_m_ntheta = exp(-ntheta);
+  static const double cutoff = 20.0;
+  T_partials_return logp = sum(
+      (ntheta > cutoff)
+          .select(-exp_m_ntheta,
+                  (ntheta < -cutoff).select(ntheta, -log1p(exp_m_ntheta))));
 
-  for (size_t n = 0; n < N; n++) {
-    const T_partials_return theta_dbl = value_of(theta_vec[n]);
-
-    const int sign = 2 * n_vec[n] - 1;
-    const T_partials_return ntheta = sign * theta_dbl;
-    const T_partials_return exp_m_ntheta = exp(-ntheta);
-
-    // Handle extreme values gracefully using Taylor approximations.
-    static const double cutoff = 20.0;
-    if (ntheta > cutoff) {
-      logp -= exp_m_ntheta;
-    } else if (ntheta < -cutoff) {
-      logp += ntheta;
-    } else {
-      logp -= log1p(exp_m_ntheta);
-    }
-
-    if (!is_constant_all<T_prob>::value) {
-      if (ntheta > cutoff) {
-        ops_partials.edge1_.partials_[n] -= exp_m_ntheta;
-      } else if (ntheta < -cutoff) {
-        ops_partials.edge1_.partials_[n] += sign;
-      } else {
-        ops_partials.edge1_.partials_[n]
-            += sign * exp_m_ntheta / (exp_m_ntheta + 1);
-      }
-    }
+  operands_and_partials<T_theta_ref> ops_partials(theta_ref);
+  if (!is_constant_all<T_prob>::value) {
+    ops_partials.edge1_.partials_
+        = (ntheta > cutoff)
+              .select(-exp_m_ntheta,
+                      (ntheta >= -cutoff)
+                          .select(signs * exp_m_ntheta / (exp_m_ntheta + 1),
+                                  signs));
   }
   return ops_partials.build(logp);
 }

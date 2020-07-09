@@ -4,10 +4,9 @@
 #include <limits>
 #include <string>
 
-using stan::math::check_nonnegative;
-const char* function = "check_nonnegative";
-
 TEST(ErrorHandlingArr, CheckNonnegativeVectorized) {
+  using stan::math::check_nonnegative;
+  const char* function = "check_nonnegative";
   int N = 5;
   std::vector<double> x(N);
 
@@ -34,6 +33,8 @@ TEST(ErrorHandlingArr, CheckNonnegativeVectorized) {
 }
 
 TEST(ErrorHandlingArr, CheckNonnegativeVectorized_one_indexed_message) {
+  using stan::math::check_nonnegative;
+  const char* function = "check_nonnegative";
   int N = 5;
   std::vector<double> x(N);
   std::string message;
@@ -53,6 +54,8 @@ TEST(ErrorHandlingArr, CheckNonnegativeVectorized_one_indexed_message) {
 }
 
 TEST(ErrorHandlingArr, CheckNonnegative_nan) {
+  using stan::math::check_nonnegative;
+  const char* function = "check_nonnegative";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   std::vector<double> x = {1, 2, 3};
@@ -65,6 +68,8 @@ TEST(ErrorHandlingArr, CheckNonnegative_nan) {
 }
 
 TEST(ErrorHandlingScalar, CheckNonnegative) {
+  using stan::math::check_nonnegative;
+  const char* function = "check_nonnegative";
   double x = 0;
 
   EXPECT_NO_THROW(check_nonnegative(function, "x", x))
@@ -88,12 +93,16 @@ TEST(ErrorHandlingScalar, CheckNonnegative) {
 }
 
 TEST(ErrorHandlingScalar, CheckNonnegative_nan) {
+  using stan::math::check_nonnegative;
+  const char* function = "check_nonnegative";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   EXPECT_THROW(check_nonnegative(function, "x", nan), std::domain_error);
 }
 
 TEST(ErrorHandlingScalar, CheckNonnegative_0) {
+  using stan::math::check_nonnegative;
+  const char* function = "check_nonnegative";
   EXPECT_NO_THROW(check_nonnegative(function, "x", 0U));
   EXPECT_NO_THROW(check_nonnegative(function, "x", (size_t)0));
   EXPECT_NO_THROW(check_nonnegative(function, "x", 0.0));
@@ -102,6 +111,8 @@ TEST(ErrorHandlingScalar, CheckNonnegative_0) {
 }
 
 TEST(ErrorHandlingScalar, CheckNonNegativeVectorization) {
+  using stan::math::check_nonnegative;
+  const char* function = "check_nonnegative";
   Eigen::MatrixXd m = Eigen::MatrixXd::Constant(3, 2, 0);
   EXPECT_NO_THROW(
       check_nonnegative(function, "m", std::vector<Eigen::MatrixXd>{m, m, m}));

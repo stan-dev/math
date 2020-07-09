@@ -4,15 +4,11 @@
 #include <boost/math/distributions.hpp>
 #include <limits>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-
-typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
-
-vector_d get_simplex(double lambda, const vector_d& c) {
+stan::math::vector_d get_simplex_Phi(double lambda,
+                                     const stan::math::vector_d& c) {
   using stan::math::Phi;
   int K = c.size() + 1;
-  vector_d theta(K);
+  stan::math::vector_d theta(K);
   theta(0) = 1.0 - Phi(lambda - c(0));
   for (int k = 1; k < (K - 1); ++k)
     theta(k) = Phi(lambda - c(k - 1)) - Phi(lambda - c(k));
@@ -25,15 +21,15 @@ TEST(ProbDistributions, ordered_probit_vals) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
-  using stan::math::Phi;
   using stan::math::ordered_probit_log;
+  using stan::math::Phi;
 
   int K = 5;
   Matrix<double, Dynamic, 1> c(K - 1);
   c << -1.7, -0.3, 1.2, 2.6;
   double lambda = 1.1;
 
-  vector_d theta = get_simplex(lambda, c);
+  stan::math::vector_d theta = get_simplex_Phi(lambda, c);
 
   double sum = 0.0;
   for (int k = 0; k < theta.size(); ++k)
@@ -51,15 +47,15 @@ TEST(ProbDistributions, ordered_probit_vals_2) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
-  using stan::math::Phi;
   using stan::math::ordered_probit_log;
+  using stan::math::Phi;
 
   int K = 3;
   Matrix<double, Dynamic, 1> c(K - 1);
   c << -0.2, 4;
   double lambda = -0.9;
 
-  vector_d theta = get_simplex(lambda, c);
+  stan::math::vector_d theta = get_simplex_Phi(lambda, c);
 
   double sum = 0.0;
   for (int k = 0; k < theta.size(); ++k)
@@ -126,8 +122,6 @@ TEST(ProbDistributions, ordered_probit) {
   cbad3[1] = nan;
   EXPECT_THROW(ordered_probit_log(1, 1.0, cbad3), std::domain_error);
 }
-
-void expect_nan(double x) { EXPECT_TRUE(std::isnan(x)); }
 
 TEST(ProbDistributionOrderedProbit, error_check) {
   boost::random::mt19937 rng;

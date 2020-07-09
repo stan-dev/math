@@ -2,13 +2,10 @@
 #include <stan/math/prim.hpp>
 #include <stan/math/opencl/opencl.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
+#include <test/unit/util.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
-
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(MathMatrixCL, mdivide_left_tri_low_cl_exception) {
   stan::math::matrix_d m1(2, 3);

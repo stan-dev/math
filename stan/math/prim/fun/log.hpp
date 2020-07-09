@@ -3,7 +3,14 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/isinf.hpp>
+#include <stan/math/prim/fun/is_inf.hpp>
+#include <stan/math/prim/fun/is_nan.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
+#include <complex>
+#include <limits>
 
 namespace stan {
 namespace math {
@@ -35,9 +42,8 @@ struct log_fun {
  * @param[in] x container
  * @return Elementwise application of natural log to the argument.
  */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto log(const Container& x) {
   return apply_scalar_unary<log_fun, Container>::apply(x);
 }
@@ -51,11 +57,33 @@ inline auto log(const Container& x) {
  * @return Natural log of each variable in the container.
  */
 template <typename Container,
-          require_container_st<is_container, std::is_arithmetic, Container>...>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto log(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().log(); });
 }
+
+namespace internal {
+/**
+ * Return the natural logarithm of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return natural logarithm of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_log(const std::complex<V>& z) {
+  static const double inf = std::numeric_limits<double>::infinity();
+  static const double nan = std::numeric_limits<double>::quiet_NaN();
+  if ((is_nan(z.real()) && is_inf(z.imag()))
+      || (is_inf(z.real()) && is_nan(z.imag()))) {
+    return {inf, nan};
+  }
+  V r = sqrt(norm(z));
+  V theta = arg(z);
+  return {log(r), theta};
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

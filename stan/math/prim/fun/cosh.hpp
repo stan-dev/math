@@ -1,8 +1,12 @@
 #ifndef STAN_MATH_PRIM_FUN_COSH_HPP
 #define STAN_MATH_PRIM_FUN_COSH_HPP
 
+#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -31,9 +35,8 @@ struct cosh_fun {
  * @param x angles in radians
  * @return Hyberbolic cosine of x.
  */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto cosh(const Container& x) {
   return apply_scalar_unary<cosh_fun, Container>::apply(x);
 }
@@ -47,11 +50,26 @@ inline auto cosh(const Container& x) {
  * @return Hyberbolic cosine of x.
  */
 template <typename Container,
-          require_container_st<is_container, std::is_arithmetic, Container>...>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto cosh(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().cosh(); });
 }
+
+namespace internal {
+/**
+ * Return the hyperbolic cosine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return hyperbolic cosine of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_cosh(const std::complex<V>& z) {
+  return 0.5 * (exp(z) + exp(-z));
+}
+}  // namespace internal
+
 }  // namespace math
 }  // namespace stan
 

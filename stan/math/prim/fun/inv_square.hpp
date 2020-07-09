@@ -5,6 +5,8 @@
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/inv_square.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 
 namespace stan {
 namespace math {
@@ -16,9 +18,8 @@ namespace math {
  * @param x container
  * @return `1 / square(x)` of each value in x.
  */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto inv_square(const Container& x) {
   return inv(square(x));
 }
@@ -32,7 +33,7 @@ inline auto inv_square(const Container& x) {
  * @return 1 / the square of each value in x.
  */
 template <typename Container,
-          require_container_st<is_container, std::is_arithmetic, Container>...>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto inv_square(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().square().inverse(); });

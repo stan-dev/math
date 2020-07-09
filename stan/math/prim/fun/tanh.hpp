@@ -3,7 +3,12 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/core/operator_division.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -30,9 +35,8 @@ struct tanh_fun {
  * @param x angles in radians
  * @return Hyperbolic tangent of each value in x.
  */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto tanh(const Container& x) {
   return apply_scalar_unary<tanh_fun, Container>::apply(x);
 }
@@ -46,11 +50,30 @@ inline auto tanh(const Container& x) {
  * @return Hyperbolic tangent of each value in x.
  */
 template <typename Container,
-          require_container_st<is_container, std::is_arithmetic, Container>...>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto tanh(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().tanh(); });
 }
+
+namespace internal {
+/**
+ * Return the hyperbolic tangent of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return hyperbolic tangent of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_tanh(const std::complex<V>& z) {
+  using std::exp;
+  using stan::math::operator/;
+  auto exp_z = exp(z);
+  auto exp_neg_z = exp(-z);
+  return stan::math::internal::complex_divide(exp_z - exp_neg_z,
+                                              exp_z + exp_neg_z);
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

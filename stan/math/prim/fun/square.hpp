@@ -4,6 +4,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -45,9 +47,8 @@ struct square_fun {
  * @param x container
  * @return Each value in x squared.
  */
-template <
-    typename Container,
-    require_not_container_st<is_container, std::is_arithmetic, Container>...>
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto square(const Container& x) {
   return apply_scalar_unary<square_fun, Container>::apply(x);
 }
@@ -61,7 +62,7 @@ inline auto square(const Container& x) {
  * @return Each value in x squared.
  */
 template <typename Container,
-          require_container_st<is_container, std::is_arithmetic, Container>...>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto square(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().square(); });

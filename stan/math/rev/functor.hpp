@@ -6,6 +6,7 @@
 #include <stan/math/rev/functor/algebra_solver_powell.hpp>
 #include <stan/math/rev/functor/algebra_solver_newton.hpp>
 #include <stan/math/rev/functor/algebra_system.hpp>
+#include <stan/math/rev/functor/apply_scalar_unary.hpp>
 #include <stan/math/rev/functor/coupled_ode_system.hpp>
 #include <stan/math/rev/functor/cvodes_integrator.hpp>
 #include <stan/math/rev/functor/cvodes_ode_data.hpp>
@@ -20,5 +21,7 @@
 #include <stan/math/rev/functor/kinsol_solve.hpp>
 #include <stan/math/rev/functor/map_rect_concurrent.hpp>
 #include <stan/math/rev/functor/map_rect_reduce.hpp>
+#include <stan/math/rev/functor/operands_and_partials.hpp>
+#include <stan/math/rev/functor/reduce_sum.hpp>
 
 #endif

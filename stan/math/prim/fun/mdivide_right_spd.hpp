@@ -5,6 +5,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/mdivide_left_spd.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 
 namespace stan {
 namespace math {
@@ -13,14 +14,8 @@ namespace math {
  * Returns the solution of the system xA=b where A is symmetric
  * positive definite.
  *
- * @tparam T1 type of elements in the right-hand side matrix or vector
- * @tparam T2 type of elements in the second matrix
- * @tparam R1 number of rows in the right-hand side matrix, can be
- *         Eigen::Dynamic
- * @tparam C1 number of columns in the right-hand side matrix, can be
- *         Eigen::Dynamic
- * @tparam R2 number of rows in the second matrix, can be Eigen::Dynamic
- * @tparam C2 number of columns in the second matrix, can be Eigen::Dynamic
+ * @tparam EigMat1 type of the right-hand side matrix or vector
+ * @tparam EigMat2 type of the second matrix
  *
  * @param b right-hand side matrix or vector
  * @param A matrix
@@ -28,20 +23,21 @@ namespace math {
  * @throws std::domain_error if A is not square or the rows of b don't
  * match the size of A.
  */
-template <typename T1, typename T2, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_spd(
-    const Eigen::Matrix<T1, R1, C1> &b, const Eigen::Matrix<T2, R2, C2> &A) {
-  static const char *function = "mdivide_right_spd";
+template <typename EigMat1, typename EigMat2,
+          require_all_eigen_t<EigMat1, EigMat2>* = nullptr>
+inline Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
+                     EigMat1::RowsAtCompileTime, EigMat2::ColsAtCompileTime>
+mdivide_right_spd(const EigMat1& b, const EigMat2& A) {
+  static const char* function = "mdivide_right_spd";
   check_multiplicable(function, "b", b, "A", A);
-  check_symmetric(function, "A", A);
-  check_not_nan(function, "A", A);
+  const auto& A_ref = to_ref(A);
+  check_symmetric(function, "A", A_ref);
+  check_not_nan(function, "A", A_ref);
   if (A.size() == 0) {
     return {b.rows(), 0};
   }
 
-  // FIXME: After allowing for general MatrixBase in mdivide_left_spd,
-  //        change to b.transpose()
-  return mdivide_left_spd(A, transpose(b)).transpose();
+  return mdivide_left_spd(A_ref, b.transpose()).transpose();
 }
 
 }  // namespace math

@@ -1,6 +1,6 @@
 # Find files subroutine for different operating system
 # This is recursive version of the makefiles wildcard function
-findfiles = $(subst \n,,$(foreach d,$(wildcard $(addsuffix *,$(1))),$(call findfiles,$(d)/,$(2)) $(wildcard $(d)/$(2))))
+findfiles = $(strip $(subst \n,,$(foreach d,$(wildcard $(addsuffix *,$(1))),$(call findfiles,$(d)/,$(2)) $(wildcard $(d)/$(2)))))
 
 ifneq ($(OS),Windows_NT)
 GENERATE_DISTRIBUTION_TESTS=true
@@ -162,6 +162,10 @@ endif
 ## makes reentrant version lgamma_r available from cmath
 CXXFLAGS_OS += -D_REENTRANT
 
+ifeq (gcc,$(CXX_TYPE))
+CXXFLAGS_WARNINGS += -Wno-int-in-bool-context -Wno-attributes
+endif
+
 ################################################################################
 # Setup OpenCL
 #
@@ -271,7 +275,7 @@ print-compiler-flags:
 	@echo '  - SUNDIALS                    ' $(SUNDIALS)
 	@echo '  - TBB                         ' $(TBB)
 	@echo '  - GTEST                       ' $(GTEST)
-	@echo '  - STAN_THREADS                ' $(STAN_THREADS) 
+	@echo '  - STAN_THREADS                ' $(STAN_THREADS)
 	@echo '  - STAN_OPENCL                 ' $(STAN_OPENCL)
 	@echo '  - STAN_MPI                    ' $(STAN_MPI)
 	@echo '  Compiler flags (each can be overriden separately):'

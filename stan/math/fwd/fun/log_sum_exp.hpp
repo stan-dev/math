@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <cmath>
 #include <vector>
 
@@ -50,17 +51,19 @@ inline fvar<T> log_sum_exp(const fvar<T>& x1, double x2) {
  * @param[in] x Matrix of specified values.
  * @return The log of the sum of the exponentiated vector values.
  */
-template <typename T, require_t<is_fvar<scalar_type_t<T>>>...>
+template <typename T, require_container_st<is_fvar, T>* = nullptr>
 inline auto log_sum_exp(const T& x) {
-  return apply_vector_unary<T>::reduce(x, [&](const auto& v) {
-    using T_fvar_inner = typename value_type_t<decltype(v)>::Scalar;
-    using mat_type = Eigen::Matrix<T_fvar_inner, -1, -1>;
-    mat_type vals = v.val();
-    mat_type exp_vals = vals.array().exp();
+  return apply_vector_unary<ref_type_t<T>>::reduce(
+      to_ref(x), [&](const auto& v) {
+        using T_fvar_inner = typename value_type_t<decltype(v)>::Scalar;
+        using mat_type = Eigen::Matrix<T_fvar_inner, -1, -1>;
+        mat_type vals = v.val();
+        mat_type exp_vals = vals.array().exp();
 
-    return fvar<T_fvar_inner>(
-        log_sum_exp(vals), v.d().cwiseProduct(exp_vals).sum() / exp_vals.sum());
-  });
+        return fvar<T_fvar_inner>(
+            log_sum_exp(vals),
+            v.d().cwiseProduct(exp_vals).sum() / exp_vals.sum());
+      });
 }
 
 }  // namespace math

@@ -5,6 +5,7 @@
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/zeros.hpp>
 #include <stan/math/opencl/sub_block.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <vector>
@@ -19,6 +20,7 @@ inline void test_matrix_creation() {
   EXPECT_NO_THROW(stan::math::matrix_cl<T> vec_1cl(vec_1, 2, 2));
   EXPECT_NO_THROW(stan::math::matrix_cl<T> mat_1cl(mat_1));
   EXPECT_NO_THROW(stan::math::matrix_cl<T> mat_2cl(mat_2));
+  EXPECT_NO_THROW(stan::math::matrix_cl<T> mat_2cl(mat_2 * 2));
 }
 
 TEST(MathMatrixCL, matrix_cl_types_creation) {
@@ -26,6 +28,25 @@ TEST(MathMatrixCL, matrix_cl_types_creation) {
   test_matrix_creation<float>();
   test_matrix_creation<int>();
   test_matrix_creation<long double>();
+}
+
+TEST(MathMatrixCL, matrix_cl_value) {
+  Eigen::Matrix<double, -1, -1> col_major(3, 3);
+  col_major << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  stan::math::matrix_cl<double> cl_from_col_major(col_major);
+  Eigen::MatrixXd res = stan::math::from_matrix_cl(cl_from_col_major);
+  EXPECT_MATRIX_EQ(col_major, res);
+
+  Eigen::Map<Eigen::MatrixXd> map(col_major.data(), 3, 3);
+  stan::math::matrix_cl<double> cl_from_map(map);
+  res = stan::math::from_matrix_cl(cl_from_map);
+  EXPECT_MATRIX_EQ(col_major, res);
+
+  Eigen::Matrix<double, -1, -1, Eigen::RowMajor> row_major(3, 3);
+  row_major << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  stan::math::matrix_cl<double> cl_from_row_major(row_major);
+  res = stan::math::from_matrix_cl(cl_from_row_major);
+  EXPECT_MATRIX_EQ(row_major, res);
 }
 
 TEST(MathMatrixCL, assignment) {

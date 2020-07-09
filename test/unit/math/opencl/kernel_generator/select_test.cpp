@@ -4,6 +4,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <test/unit/math/opencl/kernel_generator/reference_kernel.hpp>
+#include <test/unit/util.hpp>
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
 #include <string>
@@ -13,11 +14,7 @@ using Eigen::MatrixXd;
 using Eigen::MatrixXi;
 using stan::math::matrix_cl;
 
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
-
-TEST(MathMatrixCL, select_errors) {
+TEST(KernelGenerator, select_errors) {
   using stan::math::select;
 
   matrix_cl<double> m_double(2, 3);
@@ -38,7 +35,7 @@ TEST(MathMatrixCL, select_errors) {
   EXPECT_THROW(select(m_bool, m_double, m_cols), std::invalid_argument);
 }
 
-TEST(MathMatrixCL, select_zero_size) {
+TEST(KernelGenerator, select_zero_size) {
   matrix_cl<double> m_bool_zero(0, 0);
   matrix_cl<double> m_double_zero(0, 0);
   matrix_cl<int> m_int_zero(0, 0);
@@ -51,7 +48,7 @@ TEST(MathMatrixCL, select_zero_size) {
                std::invalid_argument);
 }
 
-TEST(MathMatrixCL, select_test) {
+TEST(KernelGenerator, select_test) {
   std::string kernel_filename = "select.cl";
   using stan::math::select;
   MatrixXd m1(2, 3);
@@ -81,7 +78,7 @@ TEST(MathMatrixCL, select_test) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
-TEST(MathMatrixCL, multiple_operations) {
+TEST(KernelGenerator, multiple_operations) {
   using stan::math::select;
   MatrixXd m1(2, 3);
   m1 << 1, 2.5, 3, 4, 5, 6.3;
@@ -108,7 +105,7 @@ TEST(MathMatrixCL, multiple_operations) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
-TEST(MathMatrixCL, multiple_operations_size_zero) {
+TEST(KernelGenerator, multiple_operations_size_zero) {
   using stan::math::select;
 
   matrix_cl<double> m1_cl(0, 0);
@@ -123,7 +120,7 @@ TEST(MathMatrixCL, multiple_operations_size_zero) {
   EXPECT_EQ(0, res_cl.cols());
 }
 
-TEST(MathMatrixCL, multiple_operations_accepts_lvalue) {
+TEST(KernelGenerator, multiple_operations_accepts_lvalue) {
   using stan::math::select;
   MatrixXd m1(2, 3);
   m1 << 1, 2.5, 3, 4, 5, 6.3;

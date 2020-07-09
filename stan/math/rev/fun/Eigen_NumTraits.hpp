@@ -1,10 +1,12 @@
 #ifndef STAN_MATH_REV_FUN_EIGEN_NUMTRAITS_HPP
 #define STAN_MATH_REV_FUN_EIGEN_NUMTRAITS_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/core.hpp>
+#include <stan/math/rev/fun/read_var.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/core/std_numeric_limits.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <limits>
 
 namespace Eigen {
@@ -80,8 +82,11 @@ struct NumTraits<stan::math::var> : GenericNumTraits<stan::math::var> {
 };
 
 /**
- * Scalar product traits specialization for Eigen for reverse-mode
- * autodiff variables.
+ * Traits specialization for Eigen binary operations for reverse-mode
+ * autodiff and `double` arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
  */
 template <typename BinaryOp>
 struct ScalarBinaryOpTraits<stan::math::var, double, BinaryOp> {
@@ -89,15 +94,157 @@ struct ScalarBinaryOpTraits<stan::math::var, double, BinaryOp> {
 };
 
 /**
- * Scalar product traits specialization for Eigen for reverse-mode
- * autodiff variables.
+ * Traits specialization for Eigen binary operations for `double` and
+ * reverse-mode autodiff arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
  */
 template <typename BinaryOp>
 struct ScalarBinaryOpTraits<double, stan::math::var, BinaryOp> {
   using ReturnType = stan::math::var;
 };
 
+/**
+ * Traits specialization for Eigen binary operations for reverse-mode
+ autodiff
+ * arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
+ */
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<stan::math::var, stan::math::var, BinaryOp> {
+  using ReturnType = stan::math::var;
+};
+
+/**
+ * Traits specialization for Eigen binary operations for `double` and
+ * complex autodiff arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
+ */
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<double, std::complex<stan::math::var>, BinaryOp> {
+  using ReturnType = std::complex<stan::math::var>;
+};
+
+/**
+ * Traits specialization for Eigen binary operations for complex
+ * autodiff and `double` arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
+ */
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<std::complex<stan::math::var>, double, BinaryOp> {
+  using ReturnType = std::complex<stan::math::var>;
+};
+
+/**
+ * Traits specialization for Eigen binary operations for autodiff and
+ * complex `double` arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
+ */
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<stan::math::var, std::complex<double>, BinaryOp> {
+  using ReturnType = std::complex<stan::math::var>;
+};
+
+/**
+ * Traits specialization for Eigen binary operations for complex
+ * double and autodiff arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
+ */
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<std::complex<double>, stan::math::var, BinaryOp> {
+  using ReturnType = std::complex<stan::math::var>;
+};
+
+/**
+ * Traits specialization for Eigen binary operations for complex
+ * double and complex autodiff arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
+ */
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<std::complex<double>, std::complex<stan::math::var>,
+                            BinaryOp> {
+  using ReturnType = std::complex<stan::math::var>;
+};
+
+/**
+ * Traits specialization for Eigen binary operations for complex
+ * autodiff and complex double arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
+ */
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<std::complex<stan::math::var>, std::complex<double>,
+                            BinaryOp> {
+  using ReturnType = std::complex<stan::math::var>;
+};
+
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<stan::math::var, std::complex<stan::math::var>,
+                            BinaryOp> {
+  using ReturnType = std::complex<stan::math::var>;
+};
+
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<std::complex<stan::math::var>, stan::math::var,
+                            BinaryOp> {
+  using ReturnType = std::complex<stan::math::var>;
+};
+
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<std::complex<stan::math::var>,
+                            std::complex<stan::math::var>, BinaryOp> {
+  using ReturnType = std::complex<stan::math::var>;
+};
+
 namespace internal {
+
+/**
+ * Enable linear access of inputs when using read_vi_val_adj.
+ */
+template <typename EigVar, typename EigVari, typename EigDbl>
+struct functor_has_linear_access<
+    stan::math::vi_val_adj_functor<EigVar, EigVari, EigDbl>> {
+  enum { ret = 1 };
+};
+
+/**
+ * Enable linear access of inputs when using read_val_adj.
+ */
+template <typename EigVar, typename EigDbl>
+struct functor_has_linear_access<stan::math::val_adj_functor<EigVar, EigDbl>> {
+  enum { ret = 1 };
+};
+
+/**
+ * Enable linear access of inputs when using read_vi_val.
+ */
+template <typename EigVar, typename EigVari>
+struct functor_has_linear_access<stan::math::vi_val_functor<EigVar, EigVari>> {
+  enum { ret = 1 };
+};
+
+/**
+ * Enable linear access of inputs when using read_vi_adj.
+ */
+template <typename EigVar, typename EigVari>
+struct functor_has_linear_access<stan::math::vi_adj_functor<EigVar, EigVari>> {
+  enum { ret = 1 };
+};
+
 /**
  * Partial specialization of Eigen's remove_all struct to stop
  * Eigen removing pointer from vari* variables

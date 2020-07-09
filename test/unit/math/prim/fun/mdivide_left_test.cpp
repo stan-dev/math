@@ -1,5 +1,5 @@
 #include <stan/math/prim.hpp>
-#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathMatrixPrim, mdivide_left_val) {
@@ -7,7 +7,7 @@ TEST(MathMatrixPrim, mdivide_left_val) {
   Ad << 2.0, 3.0, 5.0, 7.0;
 
   stan::math::matrix_d I = Eigen::MatrixXd::Identity(2, 2);
-  expect_matrix_eq(I, stan::math::mdivide_left(Ad, Ad));
+  EXPECT_MATRIX_FLOAT_EQ(I, stan::math::mdivide_left(Ad, Ad));
 }
 
 TEST(MathMatrixPrim, mdivide_left_val2) {
@@ -20,7 +20,7 @@ TEST(MathMatrixPrim, mdivide_left_val2) {
   b << 19, 150, -170, 140, 31;
   expected << -1204, -1154, -915, 295, 31;
 
-  expect_matrix_eq(expected, stan::math::mdivide_left(A, b));
+  EXPECT_MATRIX_FLOAT_EQ(expected, stan::math::mdivide_left(A, b));
 }
 
 TEST(MathMatrixPrim, mdivide_left_size_zero) {
