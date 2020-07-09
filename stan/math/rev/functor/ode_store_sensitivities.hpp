@@ -62,20 +62,20 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
 
   vari** varis
       = ChainableStack::instance_->memalloc_.alloc_array<vari*>(total_vars);
-  double* partials = ChainableStack::instance_->memalloc_.alloc_array<double>(
+  // partials is a column major Jacobian
+  double* jacobian_mem = ChainableStack::instance_->memalloc_.alloc_array<double>(
       N * total_vars);
 
   save_varis(varis, y0, args..., t0, t);
 
+  Eigen::Map<Eigen::MatrixXd> jacobian(partials, total_vars, N);
   for (size_t j = 0; j < N; ++j) {
-    // Point to memory allocated in partials to store the derivatives
-    double* partials_j = partials + j * total_vars;
     for (size_t k = 0; k < num_y0_vars; ++k) {
-      partials_j[k] = coupled_state[N + num_y0_vars * k + j];
+      jacobian.coeffRef(k, j) = coupled_state[N + num_y0_vars * k + j];
     }
 
     for (size_t k = 0; k < num_args_vars; ++k) {
-      partials_j[num_y0_vars + k]
+      jacobian.coeffRef(num_y0_vars + k, j)
           = coupled_state[N + N * num_y0_vars + N * k + j];
     }
 
@@ -84,14 +84,15 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
       for (size_t k = 0; k < num_y0_vars; ++k) {
         dyt_dt0 -= f_y0_t0.coeffRef(k) * coupled_state[N + num_y0_vars * k + j];
       }
-      partials_j[num_y0_vars + num_args_vars] = dyt_dt0;
+      jacobian.coeffRef(num_y0_vars + num_args_vars, j) = dyt_dt0;
     }
 
     if (is_var<T_t>::value) {
-      partials_j[num_y0_vars + num_args_vars + num_t0_vars] = f_y_t.coeffRef(j);
+      jacobian.coeffRef(num_y0_vars + num_args_vars + num_t0_vars, j) = f_y_t.coeffRef(j);
     }
 
-    yt(j) = new precomputed_gradients_vari(y(j), total_vars, varis, partials_j);
+    // jacobian_mem + j * total_vars points to the jth column of jacobian
+    yt(j) = new precomputed_gradients_vari(y(j), total_vars, varis, jacobian_mem + j * total_vars);
   }
 
   return yt;

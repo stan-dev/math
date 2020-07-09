@@ -12,7 +12,7 @@ namespace stan {
 namespace math {
 
 /**
- * Pass through const references to arguments that do not contain vars. There
+ * Forward arguments that do not contain vars. There
  *   is no copying to be done.
  *
  * @tparam Arith an arithmetic type.
@@ -20,8 +20,8 @@ namespace math {
  *  Otherwise it will be moved.
  */
 template <typename Arith, typename = require_arithmetic_t<scalar_type_t<Arith>>>
-inline const Arith& deep_copy_vars(const Arith& arg) {
-  return arg;
+inline decltype(auto) deep_copy_vars(Arith&& arg) {
+  return std::forward<Arith>(arg);
 }
 
 /**

@@ -67,7 +67,7 @@ template <typename F, typename T_y0, typename... Args>
 struct coupled_ode_system_impl<false, F, T_y0, Args...> {
   const F& f_;
   const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0_;
-  std::tuple<decltype(deep_copy_vars(std::declval<Args>()))...>
+  std::tuple<decltype(deep_copy_vars(std::declval<const Args&>()))...>
       local_args_tuple_;
   const size_t num_y0_vars_;
   const size_t num_args_vars;
@@ -137,13 +137,17 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
 
       y_adjoints_ = y_vars.adj();
 
+      // memset was faster than Eigen setZero
       memset(args_adjoints_.data(), 0, sizeof(double) * num_args_vars);
+
       apply(
           [&](auto&&... args) {
             accumulate_adjoints(args_adjoints_.data(), args...);
           },
           local_args_tuple_);
 
+      // The vars here do not live on the nested stack so must be zero'd
+      // separately
       apply([&](auto&&... args) { zero_adjoints(args...); }, local_args_tuple_);
 
       // No need to zero adjoints after last sweep
@@ -151,6 +155,8 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
         nested.set_zero_all_adjoints();
       }
 
+      // Compute the right hand side for the sensitivities with respect to the
+      // initial conditions
       for (size_t j = 0; j < num_y0_vars_; ++j) {
         double temp_deriv = 0.0;
         for (size_t k = 0; k < N_; ++k) {
@@ -160,6 +166,8 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
         dz_dt[N_ + N_ * j + i] = temp_deriv;
       }
 
+      // Compute the right hand size for the sensitivities with respect to the
+      // parameters
       for (size_t j = 0; j < num_args_vars; ++j) {
         double temp_deriv = args_adjoints_.coeffRef(j);
         for (size_t k = 0; k < N_; ++k) {
