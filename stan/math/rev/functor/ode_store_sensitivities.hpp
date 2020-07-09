@@ -51,11 +51,11 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
 
   Eigen::VectorXd f_y_t;
   if (is_var<T_t>::value)
-    f_y_t = f(value_of(t), y, msgs, value_of(args)...);
+    f_y_t = f(value_of(t), y, msgs, eval(value_of(args))...);
 
   Eigen::VectorXd f_y0_t0;
   if (is_var<T_t0>::value)
-    f_y0_t0 = f(value_of(t0), value_of(y0).eval(), msgs, value_of(args)...);
+    f_y0_t0 = f(value_of(t0), eval(value_of(y0)), msgs, eval(value_of(args))...);
 
   const size_t total_vars
       = num_y0_vars + num_args_vars + num_t0_vars + num_t_vars;

@@ -40,7 +40,7 @@ class cvodes_integrator {
   const T_t0 t0_;
   const std::vector<T_ts>& ts_;
   std::tuple<const T_Args&...> args_tuple_;
-  std::tuple<plain_type_t<decltype(value_of(std::declval<T_Args>()))>...>
+  std::tuple<plain_type_t<decltype(value_of(std::declval<const T_Args&>()))>...>
       value_of_args_tuple_;
   const size_t N_;
   std::ostream* msgs_;
