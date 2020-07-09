@@ -90,11 +90,13 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
     }
 
     if (is_var<T_t>::value) {
-      jacobian.coeffRef(num_y0_vars + num_args_vars + num_t0_vars, j) = f_y_t.coeffRef(j);
+      jacobian.coeffRef(num_y0_vars + num_args_vars + num_t0_vars, j)
+          = f_y_t.coeffRef(j);
     }
 
     // jacobian_mem + j * total_vars points to the jth column of jacobian
-    yt(j) = new precomputed_gradients_vari(y(j), total_vars, varis, jacobian_mem + j * total_vars);
+    yt(j) = new precomputed_gradients_vari(y(j), total_vars, varis,
+                                           jacobian_mem + j * total_vars);
   }
 
   return yt;
