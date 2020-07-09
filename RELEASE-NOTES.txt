@@ -4,22 +4,12 @@ Stan Math Library Release Notes
 v3.2.0 (pending)
 ======================================================================
 
-## Features
-
-New functions is_nonnegative and is_positive_finite to parallel check_nonnegative and check_positive_finite. They signal failure by returning false instead of by throwing std::domain_error.
-
 ## Developer-aimed features
 [bob-carpenter](https://github.com/bob-carpenter) extended the scalar_return
 metaprograms to deal with complex numbers and added a real_return program
 and helper metaprograms for intermediate and return types.
 
 Miscellaneous doxygen documentation cleanup.
-
-Functions check_not_nan, check_nonnegative, check_positive, check_finite, check_positive_finite, is_not_nan, is_nonnegative, is_positive, is_scal_finite, and is_positive_finite now operate on nested containers.
-
-Clearer error messages when csr_u_to_z is called with out of range indices.
-
-check_positive now throws domain error when given an unsigned 0.
 
 ======================================================================
 v3.1.0 (24 January 2020)
