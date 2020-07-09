@@ -14,8 +14,7 @@ namespace math {
  * @param[in] arg Input argument
  * @return Forwarded input argument
  **/
-template <typename T,
-	  require_not_eigen_t<T>* = nullptr>
+template <typename T, require_not_eigen_t<T>* = nullptr>
 inline decltype(auto) eval(T&& arg) {
   return std::forward<T>(arg);
 }
@@ -27,8 +26,7 @@ inline decltype(auto) eval(T&& arg) {
  * @param[in] arg Input argument
  * @return Forwarded input argument
  **/
-template <typename T,
-	  require_eigen_t<T>* = nullptr>
+template <typename T, require_eigen_t<T>* = nullptr>
 inline decltype(auto) eval(T&& arg) {
   return arg.eval();
 }
