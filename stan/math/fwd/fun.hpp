@@ -2,7 +2,7 @@
 #define STAN_MATH_FWD_FUN_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/fwd/fun/Eigen_NumTraits.hpp>
+#include <stan/math/fwd/core/Eigen_NumTraits.hpp>
 
 #include <stan/math/fwd/fun/abs.hpp>
 #include <stan/math/fwd/fun/acos.hpp>
@@ -94,7 +94,6 @@
 #include <stan/math/fwd/fun/proj.hpp>
 #include <stan/math/fwd/fun/quad_form.hpp>
 #include <stan/math/fwd/fun/quad_form_sym.hpp>
-#include <stan/math/fwd/fun/read_fvar.hpp>
 #include <stan/math/fwd/fun/rising_factorial.hpp>
 #include <stan/math/fwd/fun/round.hpp>
 #include <stan/math/fwd/fun/sin.hpp>
@@ -111,7 +110,6 @@
 #include <stan/math/fwd/fun/trace_quad_form.hpp>
 #include <stan/math/fwd/fun/trigamma.hpp>
 #include <stan/math/fwd/fun/trunc.hpp>
-#include <stan/math/fwd/fun/typedefs.hpp>
 #include <stan/math/fwd/fun/unit_vector_constrain.hpp>
 #include <stan/math/fwd/fun/value_of.hpp>
 #include <stan/math/fwd/fun/value_of_rec.hpp>
