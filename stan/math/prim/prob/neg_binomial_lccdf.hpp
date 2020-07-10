@@ -29,22 +29,28 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
   using std::exp;
   using std::log;
   using std::pow;
+  using T_alpha_ref = ref_type_t<T_shape>;
+  using T_beta_ref = ref_type_t<T_inv_scale>;
   static const char* function = "neg_binomial_lccdf";
-  check_positive_finite(function, "Shape parameter", alpha);
-  check_positive_finite(function, "Inverse scale parameter", beta_param);
   check_consistent_sizes(function, "Failures variable", n, "Shape parameter",
                          alpha, "Inverse scale parameter", beta_param);
+
+  T_alpha_ref alpha_ref = alpha;
+  T_beta_ref beta_ref = beta_param;
+
+  check_positive_finite(function, "Shape parameter", alpha_ref);
+  check_positive_finite(function, "Inverse scale parameter", beta_ref);
 
   if (size_zero(n, alpha, beta_param)) {
     return 0;
   }
 
   T_partials_return P(0.0);
-  operands_and_partials<T_shape, T_inv_scale> ops_partials(alpha, beta_param);
+  operands_and_partials<T_alpha_ref, T_beta_ref> ops_partials(alpha_ref, beta_ref);
 
   scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
-  scalar_seq_view<T_inv_scale> beta_vec(beta_param);
+  scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
+  scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
   size_t size_n = stan::math::size(n);
   size_t size_alpha = stan::math::size(alpha);
   size_t size_n_alpha = max_size(n, alpha);
