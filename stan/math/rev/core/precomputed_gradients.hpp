@@ -113,7 +113,8 @@ class precomputed_gradients_vari_template : public vari {
    * don't match.
    */
   template <typename Arith, typename VecVar, typename VecArith,
-            typename COps = std::tuple<>, typename CGrads = std::tuple<>>
+            typename COps = std::tuple<>, typename CGrads = std::tuple<>,
+            require_all_vector_t<VecVar, VecArith>* = nullptr>
   precomputed_gradients_vari_template(Arith val, const VecVar& vars,
                                       const VecArith& gradients,
                                       COps&& container_operands
