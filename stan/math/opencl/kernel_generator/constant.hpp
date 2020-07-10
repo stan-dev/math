@@ -96,6 +96,14 @@ class constant_ : public operation_cl<constant_<T>, T> {
    * @return number of columns
    */
   inline int cols() const { return cols_; }
+
+  /**
+   * Determine indices of extreme sub- and superdiagonals written.
+   * @return pair of indices - bottom and top diagonal
+   */
+  inline std::pair<int, int> extreme_diagonals() const {
+    return {std::numeric_limits<int>::min(), std::numeric_limits<int>::max()};
+  }
 };
 
 /**
