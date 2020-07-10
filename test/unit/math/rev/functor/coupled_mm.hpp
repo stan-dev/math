@@ -12,9 +12,9 @@ struct coupled_mm_ode_fun {
   // parameters
   // double data
   // integer data
-  operator()(const T0& t_in, const std::vector<T1>& y, std::ostream* msgs,
+  operator()(const T0& t_in, const std::vector<T1>& y,
              const std::vector<T2>& parms, const std::vector<double>& sx,
-             const std::vector<int>& sx_int) const {
+             const std::vector<int>& sx_int, std::ostream* msgs) const {
     std::vector<stan::return_type_t<T1, T2>> ydot(2);
 
     const T2 act = parms[0];

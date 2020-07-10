@@ -38,10 +38,10 @@ class sho_functor {
   inline std::vector<stan::return_type_t<T1, T2>> operator()(
       const T0& t_in,                         // time
       const std::vector<T1>& y_in,            // state
-      std::ostream* msgs,                     // error stream
       const std::vector<T2>& theta,           // parameters
       const std::vector<double>& x,           // double data
-      const std::vector<int>& x_int) const {  // integer data
+      const std::vector<int>& x_int,          // integer data
+      std::ostream* msgs) const {             // error stream
     if (y_in.size() != 2)
       throw std::domain_error("Functor called with inconsistent state");
 

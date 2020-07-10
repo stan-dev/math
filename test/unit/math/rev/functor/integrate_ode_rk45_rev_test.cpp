@@ -206,7 +206,7 @@ TEST(StanAgradRevOde_integrate_ode_rk45, time_steps_as_param_AD) {
           } else {
             std::vector<double> y0(res_d.begin(), res_d.begin() + ns);
             EXPECT_FLOAT_EQ(g[k],
-                            ode(ts[i].val(), y0, msgs, theta, x, x_int)[j]);
+                            ode(ts[i].val(), y0, theta, x, x_int, msgs)[j]);
           }
         }
         stan::math::set_zero_all_adjoints();

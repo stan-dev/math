@@ -30,7 +30,7 @@ struct integrate_ode_std_vector_interface_adapter {
                   std::ostream* msgs, const std::vector<T2>& theta,
                   const std::vector<double>& x,
                   const std::vector<int>& x_int) const {
-    return to_vector(f_(t, to_array_1d(y), msgs, theta, x, x_int));
+    return to_vector(f_(t, to_array_1d(y), theta, x, x_int, msgs));
   }
 };
 
