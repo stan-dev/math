@@ -39,13 +39,31 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
                                                       const T_loc& mu,
                                                       const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
-  using std::log;
+  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
+  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
+  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
   static const char* function = "normal_lpdf";
-  check_not_nan(function, "Random variable", y);
-  check_finite(function, "Location parameter", mu);
-  check_positive(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
+  T_y_ref y_ref = y;
+  T_mu_ref mu_ref = mu;
+  T_sigma_ref sigma_ref = sigma;
+
+  const auto& y_col = as_column_vector_or_scalar(y_ref);
+  const auto& mu_col = as_column_vector_or_scalar(mu_ref);
+  const auto& sigma_col = as_column_vector_or_scalar(sigma_ref);
+
+  const auto& y_arr = as_array_or_scalar(y_col);
+  const auto& mu_arr = as_array_or_scalar(mu_col);
+  const auto& sigma_arr = as_array_or_scalar(sigma_col);
+
+  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
+  ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
+  ref_type_t<decltype(value_of(sigma_arr))> sigma_val = value_of(sigma_arr);
+
+  check_not_nan(function, "Random variable", y_val);
+  check_finite(function, "Location parameter", mu_val);
+  check_positive(function, "Scale parameter", sigma_val);
 
   if (size_zero(y, mu, sigma)) {
     return 0.0;
@@ -54,54 +72,37 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
     return 0.0;
   }
 
-  T_partials_return logp(0.0);
-  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
+  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
+      y_ref, mu_ref, sigma_ref);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
+  const auto& inv_sigma
+      = to_ref_if<!is_constant_all<T_y, T_scale, T_loc>::value>(inv(sigma_val));
+  const auto& y_scaled = to_ref((y_val - mu_val) * inv_sigma);
+  const auto& y_scaled_sq
+      = to_ref_if<!is_constant_all<T_scale>::value>(y_scaled * y_scaled);
+
   size_t N = max_size(y, mu, sigma);
-
-  VectorBuilder<true, T_partials_return, T_scale> inv_sigma(size(sigma));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
-                T_scale>
-      log_sigma(size(sigma));
-  for (size_t i = 0; i < stan::math::size(sigma); i++) {
-    inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
-    if (include_summand<propto, T_scale>::value) {
-      log_sigma[i] = log(value_of(sigma_vec[i]));
-    }
+  T_partials_return logp = -0.5 * sum(y_scaled_sq);
+  if (include_summand<propto>::value) {
+    logp += NEG_LOG_SQRT_TWO_PI * N;
+  }
+  if (include_summand<propto, T_scale>::value) {
+    logp -= sum(log(sigma_val)) * N / size(sigma);
   }
 
-  for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-
-    const T_partials_return y_minus_mu_over_sigma
-        = (y_dbl - mu_dbl) * inv_sigma[n];
-    const T_partials_return y_minus_mu_over_sigma_squared
-        = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
-
-    static double NEGATIVE_HALF = -0.5;
-
-    if (include_summand<propto>::value) {
-      logp += NEG_LOG_SQRT_TWO_PI;
-    }
-    if (include_summand<propto, T_scale>::value) {
-      logp -= log_sigma[n];
-    }
-    logp += NEGATIVE_HALF * y_minus_mu_over_sigma_squared;
-
-    T_partials_return scaled_diff = inv_sigma[n] * y_minus_mu_over_sigma;
+  if (!is_constant_all<T_y, T_scale, T_loc>::value) {
+    const auto& scaled_diff = to_ref_if<!is_constant_all<T_y>::value
+                                            + !is_constant_all<T_scale>::value
+                                            + !is_constant_all<T_loc>::value
+                                        >= 2>(inv_sigma * y_scaled);
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] -= scaled_diff;
-    }
-    if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n] += scaled_diff;
+      ops_partials.edge1_.partials_ = -scaled_diff;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
-          += -inv_sigma[n] + inv_sigma[n] * y_minus_mu_over_sigma_squared;
+      ops_partials.edge3_.partials_ = inv_sigma * y_scaled_sq - inv_sigma;
+    }
+    if (!is_constant_all<T_loc>::value) {
+      ops_partials.edge2_.partials_ = std::move(scaled_diff);
     }
   }
   return ops_partials.build(logp);

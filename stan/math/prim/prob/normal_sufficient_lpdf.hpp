@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -50,22 +51,51 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
     const T_y& y_bar, const T_s& s_squared, const T_n& n_obs, const T_loc& mu,
     const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_s, T_n, T_loc, T_scale>;
-  using std::log;
-  using std::pow;
+  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
+  using T_s_ref = ref_type_if_t<!is_constant<T_s>::value, T_s>;
+  using T_n_ref = ref_type_if_t<!is_constant<T_n>::value, T_n>;
+  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
+  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
   static const char* function = "normal_sufficient_lpdf";
-  check_finite(function, "Location parameter sufficient statistic", y_bar);
-  check_finite(function, "Scale parameter sufficient statistic", s_squared);
-  check_nonnegative(function, "Scale parameter sufficient statistic",
-                    s_squared);
-  check_finite(function, "Number of observations", n_obs);
-  check_positive(function, "Number of observations", n_obs);
-  check_finite(function, "Location parameter", mu);
-  check_finite(function, "Scale parameter", sigma);
-  check_positive(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Location parameter sufficient statistic",
                          y_bar, "Scale parameter sufficient statistic",
                          s_squared, "Number of observations", n_obs,
                          "Location parameter", mu, "Scale parameter", sigma);
+
+  T_y_ref y_ref = y_bar;
+  T_s_ref s_squared_ref = s_squared;
+  T_n_ref n_obs_ref = n_obs;
+  T_mu_ref mu_ref = mu;
+  T_sigma_ref sigma_ref = sigma;
+
+  const auto& y_col = as_column_vector_or_scalar(y_ref);
+  const auto& s_squared_col = as_column_vector_or_scalar(s_squared_ref);
+  const auto& n_obs_col = as_column_vector_or_scalar(n_obs_ref);
+  const auto& mu_col = as_column_vector_or_scalar(mu_ref);
+  const auto& sigma_col = as_column_vector_or_scalar(sigma_ref);
+
+  const auto& y_arr = as_array_or_scalar(y_col);
+  const auto& s_squared_arr = as_array_or_scalar(s_squared_col);
+  const auto& n_obs_arr = as_array_or_scalar(n_obs_col);
+  const auto& mu_arr = as_array_or_scalar(mu_col);
+  const auto& sigma_arr = as_array_or_scalar(sigma_col);
+
+  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
+  ref_type_t<decltype(value_of(s_squared_arr))> s_squared_val
+      = value_of(s_squared_arr);
+  const auto& n_obs_val_int = value_of(n_obs_arr);
+  ref_type_t<decltype(promote_scalar<double>(n_obs_arr))> n_obs_val
+      = promote_scalar<double>(n_obs_arr);
+  ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
+  ref_type_t<decltype(value_of(sigma_arr))> sigma_val = value_of(sigma_arr);
+
+  check_finite(function, "Location parameter sufficient statistic", y_val);
+  check_finite(function, "Scale parameter sufficient statistic", s_squared_val);
+  check_nonnegative(function, "Scale parameter sufficient statistic",
+                    s_squared_val);
+  check_positive_finite(function, "Number of observations", n_obs_val);
+  check_finite(function, "Location parameter", mu_val);
+  check_positive_finite(function, "Scale parameter", sigma_val);
 
   if (size_zero(y_bar, s_squared, n_obs, mu, sigma)) {
     return 0.0;
@@ -74,55 +104,41 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
     return 0.0;
   }
 
-  T_partials_return logp(0.0);
-  operands_and_partials<T_y, T_s, T_loc, T_scale> ops_partials(y_bar, s_squared,
-                                                               mu, sigma);
-  scalar_seq_view<const T_y> y_bar_vec(y_bar);
-  scalar_seq_view<const T_s> s_squared_vec(s_squared);
-  scalar_seq_view<const T_n> n_obs_vec(n_obs);
-  scalar_seq_view<const T_loc> mu_vec(mu);
-  scalar_seq_view<const T_scale> sigma_vec(sigma);
+  const auto& sigma_squared
+      = to_ref_if<!is_constant_all<T_y, T_loc, T_s, T_scale>::value>(
+          square(sigma_val));
+  const auto& diff = to_ref(mu_val - y_val);
+  const auto& cons_expr = to_ref_if<!is_constant_all<T_scale>::value>(
+      s_squared_val + n_obs_val * diff * diff);
+
   size_t N = max_size(y_bar, s_squared, n_obs, mu, sigma);
+  T_partials_return logp = -sum(cons_expr / (2 * sigma_squared));
+  if (include_summand<propto>::value) {
+    logp += NEG_LOG_SQRT_TWO_PI * sum(n_obs_val) * N / size(n_obs);
+  }
+  if (include_summand<propto, T_scale>::value) {
+    logp -= sum(n_obs_val * log(sigma_val)) * N / max_size(n_obs, sigma);
+  }
 
-  for (size_t i = 0; i < N; i++) {
-    const T_partials_return y_bar_dbl = value_of(y_bar_vec[i]);
-    const T_partials_return s_squared_dbl = value_of(s_squared_vec[i]);
-    const T_partials_return n_obs_dbl = n_obs_vec[i];
-    const T_partials_return mu_dbl = value_of(mu_vec[i]);
-    const T_partials_return sigma_dbl = value_of(sigma_vec[i]);
-    const T_partials_return sigma_squared = pow(sigma_dbl, 2);
-
-    if (include_summand<propto>::value) {
-      logp += NEG_LOG_SQRT_TWO_PI * n_obs_dbl;
+  operands_and_partials<T_y_ref, T_s_ref, T_mu_ref, T_sigma_ref> ops_partials(
+      y_ref, s_squared_ref, mu_ref, sigma_ref);
+  if (!is_constant_all<T_y, T_loc>::value) {
+    const auto& common_derivative = to_ref_if<(
+        !is_constant_all<T_loc>::value && !is_constant_all<T_y>::value)>(
+        n_obs_val / sigma_squared * diff);
+    if (!is_constant_all<T_loc>::value) {
+      ops_partials.edge3_.partials_ = -common_derivative;
     }
-
-    if (include_summand<propto, T_scale>::value) {
-      logp -= n_obs_dbl * log(sigma_dbl);
+    if (!is_constant_all<T_y>::value) {
+      ops_partials.edge1_.partials_ = std::move(common_derivative);
     }
-
-    const T_partials_return cons_expr
-        = (s_squared_dbl + n_obs_dbl * pow(y_bar_dbl - mu_dbl, 2));
-
-    logp -= cons_expr / (2 * sigma_squared);
-
-    // gradients
-    if (!is_constant_all<T_y, T_loc>::value) {
-      const T_partials_return common_derivative
-          = n_obs_dbl * (mu_dbl - y_bar_dbl) / sigma_squared;
-      if (!is_constant_all<T_y>::value) {
-        ops_partials.edge1_.partials_[i] += common_derivative;
-      }
-      if (!is_constant_all<T_loc>::value) {
-        ops_partials.edge3_.partials_[i] -= common_derivative;
-      }
-    }
-    if (!is_constant_all<T_s>::value) {
-      ops_partials.edge2_.partials_[i] -= 0.5 / sigma_squared;
-    }
-    if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge4_.partials_[i]
-          += cons_expr / pow(sigma_dbl, 3) - n_obs_dbl / sigma_dbl;
-    }
+  }
+  if (!is_constant_all<T_s>::value) {
+    ops_partials.edge2_.partials_ = -0.5 / sigma_squared;
+  }
+  if (!is_constant_all<T_scale>::value) {
+    ops_partials.edge4_.partials_
+        = (cons_expr / sigma_squared - n_obs_val) / sigma_val;
   }
   return ops_partials.build(logp);
 }
