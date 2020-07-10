@@ -309,7 +309,8 @@ class operation_cl : public operation_cl_base {
    * @return number of rows
    */
   inline int rows() const {
-    static_assert (N>0, "default rows does not work on expressions with no arguments!");
+    static_assert(
+        N > 0, "default rows does not work on expressions with no arguments!");
     return index_apply<N>([&](auto... Is) {
       // assuming all non-dynamic sizes match
       return std::max({this->get_arg<Is>().rows()...});
@@ -322,7 +323,8 @@ class operation_cl : public operation_cl_base {
    * @return number of columns
    */
   inline int cols() const {
-    static_assert (N>0, "default cols does not work on expressions with no arguments!");
+    static_assert(
+        N > 0, "default cols does not work on expressions with no arguments!");
     return index_apply<N>([&](auto... Is) {
       // assuming all non-dynamic sizes match
       return std::max({this->get_arg<Is>().cols()...});
@@ -349,7 +351,9 @@ class operation_cl : public operation_cl_base {
    * @return pair of indices - bottom and top diagonal
    */
   inline std::pair<int, int> extreme_diagonals() const {
-      static_assert (N>0, "default extreme_diagonals does not work on expressions with no arguments!");
+    static_assert(N > 0,
+                  "default extreme_diagonals does not work on expressions with "
+                  "no arguments!");
     return index_apply<N>([&](auto... Is) {
       auto arg_diags
           = std::make_tuple(this->get_arg<Is>().extreme_diagonals()...);
