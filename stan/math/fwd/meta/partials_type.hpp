@@ -6,6 +6,10 @@
 #include <type_traits>
 
 namespace stan {
+namespace math {
+template <typename T>
+struct fvar;
+}
 
 template <typename T>
 struct partials_type<T, require_fvar_t<T>> {
