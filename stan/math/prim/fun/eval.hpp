@@ -10,26 +10,30 @@ namespace stan {
 namespace math {
 
 /**
- * Inputs that are not Eigen types are forwarded unmodified
+ * Inputs which have a plain_type equal to the own time are forwarded
+ * unmodified (for Eigen expressions these types are different)
  *
  * @tparam T Input type
  * @param[in] arg Input argument
  * @return Forwarded input argument
  **/
-template <typename T, require_not_eigen_t<T>* = nullptr>
+template <typename T,
+	  require_same_t<std::decay_t<T>, plain_type_t<T>>* = nullptr>
 inline decltype(auto) eval(T&& arg) {
   return std::forward<T>(arg);
 }
 
 /**
- * Inputs that are Eigen types are eval'd and returned
+ * Inputs which have a plain_type different from their own type are
+ * Eval'd (this catches Eigen expressions)
  *
  * @tparam T Input type
  * @param[in] arg Input argument
  * @return Eval'd argument
  **/
-template <typename T, require_eigen_t<T>* = nullptr>
-inline decltype(auto) eval(T arg) {
+template <typename T,
+	  require_not_same_t<std::decay_t<T>, plain_type_t<T>>* = nullptr>
+inline decltype(auto) eval(const T& arg) {
   return arg.eval();
 }
 
