@@ -2,9 +2,8 @@
 #define STAN_MATH_FWD_FUN_EIGEN_NUMTRAITS_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/core.hpp>
-#include <stan/math/fwd/fun/read_fvar.hpp>
-#include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/core/read_fvar.hpp>
+#include <stan/math/fwd/core/fvar.hpp>
 #include <stan/math/fwd/core/std_numeric_limits.hpp>
 #include <limits>
 

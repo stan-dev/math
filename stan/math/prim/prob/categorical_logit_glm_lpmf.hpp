@@ -115,9 +115,9 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   // lin(Eigen::all,y-1).sum() + log(inv_sum_exp_lin).sum() - lin_max.sum();
 
   if (!std::isfinite(logp)) {
-    check_finite(function, "Weight vector", beta);
-    check_finite(function, "Intercept", alpha);
-    check_finite(function, "Matrix of independent variables", x);
+    check_finite(function, "Weight vector", beta_ref);
+    check_finite(function, "Intercept", alpha_ref);
+    check_finite(function, "Matrix of independent variables", x_ref);
   }
 
   // Compute the derivatives.

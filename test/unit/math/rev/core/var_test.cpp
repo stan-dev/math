@@ -64,6 +64,7 @@ void ctor_overloads_matrix(EigenMat&& xx) {
   using stan::math::vari_value;
   using stan::math::test::type_name;
   using eigen_plain = std::decay_t<stan::plain_type_t<EigenMat>>;
+
   eigen_plain x = xx;
   // standard constructor
   EXPECT_MATRIX_FLOAT_EQ((x * x).eval(), var_value<eigen_plain>(x * x).val());
