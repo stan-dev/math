@@ -316,7 +316,7 @@ void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
  * functions returns the same results as the binary function with
  * scalar inputs. This specialization takes an std::vector of integers
  * and an Eigen vector. The Eigen vector is then transformed to a row-vector
- * and an Eigen Array to also be tested. 
+ * and an Eigen Array to also be tested.
  *
  * @tparam F Type of functor to apply.
  * @tparam T1 Type of std::vector.
@@ -339,7 +339,7 @@ void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
  * functions returns the same results as the binary function with
  * scalar inputs. This specialization takes an Eigen vector
  * and an std::vector of integers. The Eigen vector is then transformed
- * to a row-vector and an Eigen Array to also be tested. 
+ * to a row-vector and an Eigen Array to also be tested.
  *
  * @tparam F Type of functor to apply.
  * @tparam T1 Type of std::vector.
