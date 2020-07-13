@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta/partials_type.hpp>
 #include <stan/math/rev/meta/is_var.hpp>
-#include <stan/math/rev/core/var.hpp>
 #include <type_traits>
 
 namespace stan {
