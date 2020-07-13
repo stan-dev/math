@@ -7,8 +7,8 @@
 namespace stan {
 
 namespace math {
-template <typename T>
-struct fvar;
+  template <typename T>
+  struct fvar;
 }
 namespace internal {
 template <typename T>
