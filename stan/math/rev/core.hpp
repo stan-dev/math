@@ -1,8 +1,6 @@
 #ifndef STAN_MATH_REV_CORE_HPP
 #define STAN_MATH_REV_CORE_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
-
 #include <stan/math/rev/core/accumulate_adjoints.hpp>
 #include <stan/math/rev/core/autodiffstackstorage.hpp>
 #include <stan/math/rev/core/build_vari_array.hpp>
@@ -50,7 +48,6 @@
 #include <stan/math/rev/core/print_stack.hpp>
 #include <stan/math/rev/core/recover_memory.hpp>
 #include <stan/math/rev/core/recover_memory_nested.hpp>
-#include <stan/math/rev/core/read_var.hpp>
 #include <stan/math/rev/core/set_zero_all_adjoints.hpp>
 #include <stan/math/rev/core/set_zero_all_adjoints_nested.hpp>
 #include <stan/math/rev/core/start_nested.hpp>

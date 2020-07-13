@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_REV_CORE_VARI_HPP
 #define STAN_MATH_REV_CORE_VARI_HPP
 
-#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <ostream>
 #include <type_traits>
 
@@ -33,6 +33,8 @@ class vari_base {
   virtual ~vari_base() noexcept {}
 };
 
+template <typename T, typename = void>
+class vari_value;
 /**
  * The variable implementation for floating point types.
  *
