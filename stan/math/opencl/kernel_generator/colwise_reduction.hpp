@@ -101,10 +101,10 @@ class colwise_reduction
                                const bool view_handled,
                                const std::string& var_name_arg) const {
     kernel_parts res;
-    res.declarations = "__local " + type_str<Scalar>() + " "
-        + var_name_ + "_local[LOCAL_SIZE_];\n";
-    res.initialization = type_str<Scalar>() + " " + var_name_ + " = " + init_
-        + ";\n";
+    res.declarations = "__local " + type_str<Scalar>() + " " + var_name_
+                       + "_local[LOCAL_SIZE_];\n";
+    res.initialization
+        = type_str<Scalar>() + " " + var_name_ + " = " + init_ + ";\n";
     res.body = var_name_ + " = " + var_name_arg + ";\n";
     res.reduction =
           var_name_ + "_local[lid_i] = " + var_name_ + ";\n"
