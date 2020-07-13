@@ -586,5 +586,5 @@ TEST(StanMathOde_ode_rk45_tol, too_much_work) {
   EXPECT_THROW_MSG(stan::math::ode_rk45_tol(CosArg1(), y0, t0, ts, 1e-6, 1e-6,
                                             100, nullptr, a),
                    std::domain_error,
-                   "Failed to integrate to next output time");
+                   "ode_rk45_tol:  Failed to integrate to next output time");
 }

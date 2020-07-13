@@ -132,7 +132,7 @@ ode_rk45_tol_impl(const char* function_name, const F& f,
         std::end(ts_vec), step_size, filtered_observer,
         max_step_checker(max_num_steps));
   } catch (const no_progress_error& e) {
-    throw_domain_error("integrate_ode_rk45", "", ts_vec[time_index + 1],
+    throw_domain_error(function_name, "", ts_vec[time_index + 1],
                        "Failed to integrate to next output time (",
                        ") in less than max_num_steps steps");
   }
