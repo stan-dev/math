@@ -181,7 +181,6 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
  private:
   template <typename>
   friend class var_value;
-
 };
 
 }  // namespace math
