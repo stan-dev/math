@@ -354,9 +354,10 @@ TEST(AgradPartialsVari, OperandsAndPartialsStdVectorVarValueMat) {
 
   Eigen::MatrixXd a(2, 2);
   a << 10.0, 20.0, 30.0, 40.0;
-  std::vector<stan::math::var_value<Eigen::MatrixXd>> av{a,a};
+  std::vector<stan::math::var_value<Eigen::MatrixXd>> av{a, a};
 
-  operands_and_partials<std::vector<stan::math::var_value<Eigen::MatrixXd>>> ops(av);
+  operands_and_partials<std::vector<stan::math::var_value<Eigen::MatrixXd>>>
+      ops(av);
 
   ops.edge1_.partials_vec_[0] = Eigen::MatrixXd::Constant(2, 2, -2);
   ops.edge1_.partials_vec_[1] = Eigen::MatrixXd::Constant(2, 2, -3);

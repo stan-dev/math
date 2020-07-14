@@ -339,7 +339,8 @@ class ops_partials_edge<double, std::vector<var_value<Op>>,
   explicit ops_partials_edge(const std::vector<var_value<Op>>& ops)
       : partials_vec_(ops.size()), operands_(ops) {
     for (size_t i = 0; i < ops.size(); ++i) {
-      partials_vec_[i] = plain_type_t<Op>::Zero(ops[i].vi_->rows(), ops[i].vi_->cols());
+      partials_vec_[i]
+          = plain_type_t<Op>::Zero(ops[i].vi_->rows(), ops[i].vi_->cols());
     }
   }
 
