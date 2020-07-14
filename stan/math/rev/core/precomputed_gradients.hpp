@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/err/check_matching_sizes.hpp>
-// #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <algorithm>
@@ -66,9 +65,9 @@ class precomputed_gradients_vari_template : public vari {
    * operands, gradients and optionally container operands and containers of
    * gradients.
    *
-   * @tparam COps tuple of any container operands (var_value
+   * @tparam ContainerOps tuple of any container operands (var_value
    * containing Eigen types)
-   * @tparam CGrads tupleof any container gradients (Eigen types)
+   * @tparam ContainerGrads tupleof any container gradients (Eigen types)
    * @param[in] val The value of the variable.
    * @param[in] size Size of operands and gradients
    * @param[in] varis Operand implementations.
@@ -76,19 +75,19 @@ class precomputed_gradients_vari_template : public vari {
    * @param container_operands any container operands
    * @param container_gradients any container gradients
    */
-  template <typename COps = std::tuple<>, typename CGrads = std::tuple<>>
+  template <typename ContainerOps = std::tuple<>, typename ContainerGrads = std::tuple<>>
   precomputed_gradients_vari_template(double val, size_t size, vari** varis,
                                       double* gradients,
-                                      COps&& container_operands
+                                      ContainerOps&& container_operands
                                       = std::tuple<>(),
-                                      CGrads&& container_gradients
+                                      ContainerGrads&& container_gradients
                                       = std::tuple<>())
       : vari(val),
         size_(size),
         varis_(varis),
         gradients_(gradients),
-        container_operands_(std::forward<COps>(container_operands)),
-        container_gradients_(std::forward<CGrads>(container_gradients)) {
+        container_operands_(std::forward<ContainerOps>(container_operands)),
+        container_gradients_(std::forward<ContainerGrads>(container_gradients)) {
     check_sizes(std::make_index_sequence<N_containers>());
   }
 
@@ -100,9 +99,9 @@ class precomputed_gradients_vari_template : public vari {
    * @tparam Arith An arithmetic type
    * @tparam VecVar A vector of vars
    * @tparam VecArith A vector of arithmetic types
-   * @tparam COps tuple of any container operands (var_value
+   * @tparam ContainerOps tuple of any container operands (var_value
    * containing Eigen types)
-   * @tparam CGrads tupleof any container gradients (Eigen types)
+   * @tparam ContainerGrads tupleof any container gradients (Eigen types)
    * @param[in] val The value of the variable.
    * @param[in] vars Vector of operands.
    * @param[in] gradients Vector of partial derivatives of value
@@ -113,13 +112,13 @@ class precomputed_gradients_vari_template : public vari {
    * don't match.
    */
   template <typename Arith, typename VecVar, typename VecArith,
-            typename COps = std::tuple<>, typename CGrads = std::tuple<>,
+            typename ContainerOps = std::tuple<>, typename ContainerGrads = std::tuple<>,
             require_all_vector_t<VecVar, VecArith>* = nullptr>
   precomputed_gradients_vari_template(Arith val, const VecVar& vars,
                                       const VecArith& gradients,
-                                      COps&& container_operands
+                                      ContainerOps&& container_operands
                                       = std::tuple<>(),
-                                      CGrads&& container_gradients
+                                      ContainerGrads&& container_gradients
                                       = std::tuple<>())
       : vari(val),
         size_(vars.size()),
@@ -127,8 +126,8 @@ class precomputed_gradients_vari_template : public vari {
             vars.size())),
         gradients_(ChainableStack::instance_->memalloc_.alloc_array<double>(
             vars.size())),
-        container_operands_(std::forward<COps>(container_operands)),
-        container_gradients_(std::forward<CGrads>(container_gradients)) {
+        container_operands_(std::forward<ContainerOps>(container_operands)),
+        container_gradients_(std::forward<ContainerGrads>(container_gradients)) {
     check_consistent_sizes("precomputed_gradients_vari", "vars", vars,
                            "gradients", gradients);
     check_sizes(std::make_index_sequence<N_containers>());
@@ -180,19 +179,19 @@ using precomputed_gradients_vari
  */
 template <typename Arith, typename VecVar, typename VecArith,
           typename ContainerOperands = std::tuple<>,
-          typename ContainerGradinets = std::tuple<>>
+          typename ContainerGradients = std::tuple<>>
 inline var precomputed_gradients(Arith value, const VecVar& operands,
                                  const VecArith& gradients,
                                  ContainerOperands&& container_operands
                                  = std::tuple<>(),
-                                 ContainerGradinets&& container_gradients
+                                 ContainerGradients&& container_gradients
                                  = std::tuple<>()) {
   return {
       new precomputed_gradients_vari_template<std::decay_t<ContainerOperands>,
-                                              std::decay_t<ContainerGradinets>>(
+                                              std::decay_t<ContainerGradients>>(
           value, operands, gradients,
           std::forward<ContainerOperands>(container_operands),
-          std::forward<ContainerGradinets>(container_gradients))};
+          std::forward<ContainerGradients>(container_gradients))};
 }
 
 }  // namespace math
