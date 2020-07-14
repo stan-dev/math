@@ -24,4 +24,56 @@
 #include <Eigen/QR>
 #include <Eigen/src/Core/NumTraits.h>
 
+    namespace Eigen {
+
+  /**
+   * Traits specialization for Eigen binary operations for `int`
+   * and `double` arguments.
+   *
+   * @tparam BinaryOp type of binary operation for which traits are
+   * defined
+   */
+  template <typename BinaryOp>
+  struct ScalarBinaryOpTraits<int, double, BinaryOp> {
+    using ReturnType = double;
+  };
+
+  /**
+   * Traits specialization for Eigen binary operations for `double`
+   * and `int` arguments.
+   *
+   * @tparam BinaryOp type of binary operation for which traits are
+   * defined
+   */
+  template <typename BinaryOp>
+  struct ScalarBinaryOpTraits<double, int, BinaryOp> {
+    using ReturnType = double;
+  };
+
+  /**
+   * Traits specialization for Eigen binary operations for `int`
+   * and complex `double` arguments.
+   *
+   * @tparam BinaryOp type of binary operation for which traits are
+   * defined
+   */
+  template <typename BinaryOp>
+  struct ScalarBinaryOpTraits<int, std::complex<double>, BinaryOp> {
+    using ReturnType = std::complex<double>;
+  };
+
+  /**
+   * Traits specialization for Eigen binary operations for complex
+   * `double` and `int` arguments.
+   *
+   * @tparam BinaryOp type of binary operation for which traits are
+   * defined
+   */
+  template <typename BinaryOp>
+  struct ScalarBinaryOpTraits<std::complex<double>, int, BinaryOp> {
+    using ReturnType = std::complex<double>;
+  };
+
+}  // namespace Eigen
+
 #endif

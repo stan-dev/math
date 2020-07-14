@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/size.hpp>
-#include <stan/math/prim/meta/broadcast_array.hpp>
-#include <stan/math/prim/meta/operands_and_partials.hpp>
+#include <stan/math/prim/functor/broadcast_array.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <stan/math/fwd/core/fvar.hpp>
 #include <vector>
 

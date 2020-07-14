@@ -1,5 +1,5 @@
 #include <stan/math/prim/meta.hpp>
-#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathMetaPrim, ref_type_non_eigen) {
@@ -18,14 +18,14 @@ TEST(MathMetaPrim, ref_type_non_eigen) {
   ref_type_t<const std::vector<double>> c_ref1 = c;
   ref_type_t<const std::vector<double>&> c_ref2 = c;
 
-  expect_std_vector_eq(a_ref1, a);
-  expect_std_vector_eq(a_ref2, a);
-  expect_std_vector_eq(a_ref3, a);
+  EXPECT_STD_VECTOR_FLOAT_EQ(a_ref1, a);
+  EXPECT_STD_VECTOR_FLOAT_EQ(a_ref2, a);
+  EXPECT_STD_VECTOR_FLOAT_EQ(a_ref3, a);
   EXPECT_EQ(b_ref1, b);
   EXPECT_EQ(b_ref2, b);
   EXPECT_EQ(b_ref3, b);
-  expect_std_vector_eq(c_ref1, c);
-  expect_std_vector_eq(c_ref2, c);
+  EXPECT_STD_VECTOR_FLOAT_EQ(c_ref1, c);
+  EXPECT_STD_VECTOR_FLOAT_EQ(c_ref2, c);
   EXPECT_TRUE(std::is_lvalue_reference<ref_type_t<double>>::value);
   EXPECT_TRUE(std::is_lvalue_reference<ref_type_t<double&>>::value);
   EXPECT_FALSE(std::is_reference<ref_type_t<double&&>>::value);
@@ -57,17 +57,17 @@ TEST(MathMetaPrim, ref_type_eigen_directly_accessible) {
   ref_type_t<Eigen::Ref<Eigen::MatrixXd>&> c_ref2 = c;
   ref_type_t<Eigen::Ref<Eigen::MatrixXd>&&> c_ref3 = std::move(c2);
 
-  expect_matrix_eq(a_ref1, a);
-  expect_matrix_eq(a_ref2, a);
-  expect_matrix_eq(a_ref3, a);
+  EXPECT_MATRIX_EQ(a_ref1, a);
+  EXPECT_MATRIX_EQ(a_ref2, a);
+  EXPECT_MATRIX_EQ(a_ref3, a);
 
-  expect_matrix_eq(b_ref1, b);
-  expect_matrix_eq(b_ref2, b);
-  expect_matrix_eq(b_ref3, b);
+  EXPECT_MATRIX_EQ(b_ref1, b);
+  EXPECT_MATRIX_EQ(b_ref2, b);
+  EXPECT_MATRIX_EQ(b_ref3, b);
 
-  expect_matrix_eq(c_ref1, c);
-  expect_matrix_eq(c_ref2, c);
-  expect_matrix_eq(c_ref3, c);
+  EXPECT_MATRIX_EQ(c_ref1, c);
+  EXPECT_MATRIX_EQ(c_ref2, c);
+  EXPECT_MATRIX_EQ(c_ref3, c);
   EXPECT_TRUE((std::is_same<decltype(a), ref_type_t<decltype(a)&&>>::value));
   EXPECT_TRUE((std::is_same<decltype(b), ref_type_t<decltype(b)&&>>::value));
   EXPECT_TRUE((std::is_same<decltype(c), ref_type_t<decltype(c)&&>>::value));
@@ -87,9 +87,9 @@ TEST(MathMetaPrim, ref_type_eigen_expression) {
   ref_type_t<decltype(a)&&> a_ref3 = m * 3;
 
   Eigen::MatrixXd a_eval = a;
-  expect_matrix_eq(a_ref1, a_eval);
-  expect_matrix_eq(a_ref2, a_eval);
-  expect_matrix_eq(a_ref3, a_eval);
+  EXPECT_MATRIX_EQ(a_ref1, a_eval);
+  EXPECT_MATRIX_EQ(a_ref2, a_eval);
+  EXPECT_MATRIX_EQ(a_ref3, a_eval);
 
   EXPECT_TRUE((
       std::is_same<plain_type_t<decltype(a)>, ref_type_t<decltype(a)>>::value));
@@ -115,14 +115,14 @@ TEST(MathMetaPrim, ref_type_for_opencl_for_opencl_non_eigen) {
   ref_type_for_opencl_t<const std::vector<double>> c_ref1 = c;
   ref_type_for_opencl_t<const std::vector<double>&> c_ref2 = c;
 
-  expect_std_vector_eq(a_ref1, a);
-  expect_std_vector_eq(a_ref2, a);
-  expect_std_vector_eq(a_ref3, a);
+  EXPECT_STD_VECTOR_FLOAT_EQ(a_ref1, a);
+  EXPECT_STD_VECTOR_FLOAT_EQ(a_ref2, a);
+  EXPECT_STD_VECTOR_FLOAT_EQ(a_ref3, a);
   EXPECT_EQ(b_ref1, b);
   EXPECT_EQ(b_ref2, b);
   EXPECT_EQ(b_ref3, b);
-  expect_std_vector_eq(c_ref1, c);
-  expect_std_vector_eq(c_ref2, c);
+  EXPECT_STD_VECTOR_FLOAT_EQ(c_ref1, c);
+  EXPECT_STD_VECTOR_FLOAT_EQ(c_ref2, c);
   EXPECT_TRUE(std::is_lvalue_reference<ref_type_for_opencl_t<double>>::value);
   EXPECT_TRUE(std::is_lvalue_reference<ref_type_for_opencl_t<double&>>::value);
   EXPECT_FALSE(std::is_reference<ref_type_for_opencl_t<double&&>>::value);
@@ -155,17 +155,17 @@ TEST(MathMetaPrim, ref_type_for_opencl_eigen_contiguous) {
   ref_type_for_opencl_t<ContiguousMap&> c_ref2 = c;
   ref_type_for_opencl_t<ContiguousMap&&> c_ref3 = std::move(c2);
 
-  expect_matrix_eq(a_ref1, a);
-  expect_matrix_eq(a_ref2, a);
-  expect_matrix_eq(a_ref3, a);
+  EXPECT_MATRIX_EQ(a_ref1, a);
+  EXPECT_MATRIX_EQ(a_ref2, a);
+  EXPECT_MATRIX_EQ(a_ref3, a);
 
-  expect_matrix_eq(b_ref1, b);
-  expect_matrix_eq(b_ref2, b);
-  expect_matrix_eq(b_ref3, b);
+  EXPECT_MATRIX_EQ(b_ref1, b);
+  EXPECT_MATRIX_EQ(b_ref2, b);
+  EXPECT_MATRIX_EQ(b_ref3, b);
 
-  expect_matrix_eq(c_ref1, c);
-  expect_matrix_eq(c_ref2, c);
-  expect_matrix_eq(c_ref3, c);
+  EXPECT_MATRIX_EQ(c_ref1, c);
+  EXPECT_MATRIX_EQ(c_ref2, c);
+  EXPECT_MATRIX_EQ(c_ref3, c);
   EXPECT_TRUE(
       (std::is_same<decltype(a), ref_type_for_opencl_t<decltype(a)&&>>::value));
   EXPECT_TRUE(
@@ -203,17 +203,17 @@ TEST(MathMetaPrim, ref_type_for_opencl_eigen_non_contiguous) {
   ref_type_for_opencl_t<Eigen::Ref<Eigen::MatrixXd>&> c_ref2 = c;
   ref_type_for_opencl_t<Eigen::Ref<Eigen::MatrixXd>&&> c_ref3 = std::move(c2);
 
-  expect_matrix_eq(a_ref1, a);
-  expect_matrix_eq(a_ref2, a);
-  expect_matrix_eq(a_ref3, a);
+  EXPECT_MATRIX_EQ(a_ref1, a);
+  EXPECT_MATRIX_EQ(a_ref2, a);
+  EXPECT_MATRIX_EQ(a_ref3, a);
 
-  expect_matrix_eq(b_ref1, b);
-  expect_matrix_eq(b_ref2, b);
-  expect_matrix_eq(b_ref3, b);
+  EXPECT_MATRIX_EQ(b_ref1, b);
+  EXPECT_MATRIX_EQ(b_ref2, b);
+  EXPECT_MATRIX_EQ(b_ref3, b);
 
-  expect_matrix_eq(c_ref1, c);
-  expect_matrix_eq(c_ref2, c);
-  expect_matrix_eq(c_ref3, c);
+  EXPECT_MATRIX_EQ(c_ref1, c);
+  EXPECT_MATRIX_EQ(c_ref2, c);
+  EXPECT_MATRIX_EQ(c_ref3, c);
   EXPECT_TRUE((std::is_same<Eigen::MatrixXd,
                             ref_type_for_opencl_t<decltype(a)&&>>::value));
   EXPECT_TRUE((std::is_same<Eigen::MatrixXd,
@@ -233,9 +233,9 @@ TEST(MathMetaPrim, ref_type_for_opencl_eigen_expression) {
   ref_type_for_opencl_t<decltype(a)&&> a_ref3 = m * 3;
 
   Eigen::MatrixXd a_eval = a;
-  expect_matrix_eq(a_ref1, a_eval);
-  expect_matrix_eq(a_ref2, a_eval);
-  expect_matrix_eq(a_ref3, a_eval);
+  EXPECT_MATRIX_EQ(a_ref1, a_eval);
+  EXPECT_MATRIX_EQ(a_ref2, a_eval);
+  EXPECT_MATRIX_EQ(a_ref3, a_eval);
 
   EXPECT_TRUE((std::is_same<plain_type_t<decltype(a)>,
                             ref_type_for_opencl_t<decltype(a)>>::value));
@@ -243,4 +243,19 @@ TEST(MathMetaPrim, ref_type_for_opencl_eigen_expression) {
                             ref_type_for_opencl_t<decltype(a)&>>::value));
   EXPECT_TRUE((std::is_same<plain_type_t<decltype(a)>,
                             ref_type_for_opencl_t<decltype(a)&&>>::value));
+}
+
+TEST(MathMetaPrim, ref_type_if_test) {
+  using stan::plain_type_t;
+  using stan::ref_type_if_t;
+  Eigen::MatrixXd m(3, 3);
+  m << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  auto a = m * 3;
+
+  EXPECT_TRUE(
+      (std::is_same<plain_type_t<decltype(a)>,
+                    std::decay_t<ref_type_if_t<true, decltype(a)&&>>>::value));
+  EXPECT_TRUE(
+      (std::is_same<decltype(a),
+                    std::decay_t<ref_type_if_t<false, decltype(a)&&>>>::value));
 }

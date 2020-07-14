@@ -39,7 +39,7 @@ inline bool operator!=(var a, var b) { return a.val() != b.val(); }
  * @return True if the first variable's value is not the same as the
  * second value.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline bool operator!=(var a, Arith b) {
   return a.val() != b;
 }
@@ -54,7 +54,7 @@ inline bool operator!=(var a, Arith b) {
  * @return True if the first value is not the same as the
  * second variable's value.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline bool operator!=(Arith a, var b) {
   return a != b.val();
 }

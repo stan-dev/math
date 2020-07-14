@@ -1,3 +1,5 @@
+#ifndef TEST_UNIT_MATH_PRIM_PROB_HMM_UTIL
+#define TEST_UNIT_MATH_PRIM_PROB_HMM_UTIL
 #include <stan/math/prim/prob/hmm_marginal.hpp>
 #include <boost/math/distributions.hpp>
 #include <boost/random.hpp>
@@ -110,3 +112,4 @@ class hmm_test : public ::testing::Test {
   Eigen::MatrixXd Gamma_unconstrained_;
   stan::test::ad_tolerances tols_;
 };
+#endif
