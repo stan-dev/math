@@ -2,7 +2,6 @@
 #define STAN_MATH_FWD_CORE_HPP
 
 #include <stan/math/fwd/core/fvar.hpp>
-#include <stan/math/fwd/core/Eigen_NumTraits.hpp>
 #include <stan/math/fwd/core/operator_addition.hpp>
 #include <stan/math/fwd/core/operator_division.hpp>
 #include <stan/math/fwd/core/operator_equal.hpp>
@@ -18,10 +17,8 @@
 #include <stan/math/fwd/core/operator_unary_minus.hpp>
 #include <stan/math/fwd/core/operator_unary_not.hpp>
 #include <stan/math/fwd/core/operator_unary_plus.hpp>
-#include <stan/math/fwd/core/read_fvar.hpp>
 #include <stan/math/fwd/core/std_complex.hpp>
 #include <stan/math/fwd/core/std_numeric_limits.hpp>
 #include <stan/math/fwd/core/std_iterator_traits.hpp>
-#include <stan/math/fwd/core/typedefs.hpp>
 
 #endif

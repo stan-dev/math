@@ -6,6 +6,7 @@
 #include <stan/math/prim/meta/is_container.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
+#include <stan/math/prim/fun/num_elements.hpp>
 #include <vector>
 
 namespace stan {
@@ -53,6 +54,116 @@ template <typename T1, typename T2, typename F,
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
   check_matching_dims("Binary function", "x", x, "y", y);
   return x.binaryExpr(y, f).eval();
+}
+
+/**
+ * Specialisation for use with one Eigen vector (row or column) and
+ * a one-dimensional std::vector of integer types
+ *
+ * @tparam T1 Type of first argument to which functor is applied.
+ * @tparam T2 Type of second argument to which functor is applied.
+ * @tparam F Type of functor to apply.
+ * @param x Eigen input to which operation is applied.
+ * @param y Integer std::vector input to which operation is applied.
+ * @param f functor to apply to inputs.
+ * @return Eigen object with result of applying functor to inputs.
+ */
+template <typename T1, typename T2, typename F,
+          require_eigen_vector_vt<is_stan_scalar, T1>* = nullptr,
+          require_std_vector_vt<std::is_integral, T2>* = nullptr>
+inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
+  check_matching_sizes("Binary function", "x", x, "y", y);
+  using int_vec_t = promote_scalar_t<value_type_t<T2>, plain_type_t<T1>>;
+  Eigen::Map<const int_vec_t> y_map(y.data(), y.size());
+  return x.binaryExpr(y_map, f).eval();
+}
+
+/**
+ * Specialisation for use with a one-dimensional std::vector of integer types
+ * and one Eigen vector (row or column).
+ *
+ * @tparam T1 Type of first argument to which functor is applied.
+ * @tparam T2 Type of second argument to which functor is applied.
+ * @tparam F Type of functor to apply.
+ * @param x Integer std::vector input to which operation is applied.
+ * @param y Eigen input to which operation is applied.
+ * @param f functor to apply to inputs.
+ * @return Eigen object with result of applying functor to inputs.
+ */
+template <typename T1, typename T2, typename F,
+          require_std_vector_vt<std::is_integral, T1>* = nullptr,
+          require_eigen_vector_vt<is_stan_scalar, T2>* = nullptr>
+inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
+  check_matching_sizes("Binary function", "x", x, "y", y);
+  using int_vec_t = promote_scalar_t<value_type_t<T1>, plain_type_t<T2>>;
+  Eigen::Map<const int_vec_t> x_map(x.data(), x.size());
+  return x_map.binaryExpr(y, f).eval();
+}
+
+/**
+ * Specialisation for use with one Eigen matrix and
+ * a two-dimensional std::vector of integer types
+ *
+ * @tparam T1 Type of first argument to which functor is applied.
+ * @tparam T2 Type of second argument to which functor is applied.
+ * @tparam F Type of functor to apply.
+ * @param x Eigen matrix input to which operation is applied.
+ * @param y Nested integer std::vector input to which operation is applied.
+ * @param f functor to apply to inputs.
+ * @return Eigen object with result of applying functor to inputs.
+ */
+template <typename T1, typename T2, typename F,
+          require_eigen_matrix_vt<is_stan_scalar, T1>* = nullptr,
+          require_std_vector_vt<is_std_vector, T2>* = nullptr,
+          require_std_vector_st<std::is_integral, T2>* = nullptr>
+inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
+  if (num_elements(x) != num_elements(y)) {
+    std::ostringstream msg;
+    msg << "Inputs to vectorized binary function must match in"
+        << " size if one is not a scalar";
+    throw std::invalid_argument(msg.str());
+  }
+  using return_st = decltype(f(x(0), y[0][0]));
+  Eigen::Matrix<return_st, Eigen::Dynamic, Eigen::Dynamic> result(x.rows(),
+                                                                  x.cols());
+  for (size_t i = 0; i < y.size(); ++i) {
+    result.row(i) = apply_scalar_binary(x.row(i).transpose(),
+                                        as_column_vector_or_scalar(y[i]), f);
+  }
+  return result;
+}
+
+/**
+ * Specialisation for use with a two-dimensional std::vector of integer types
+ * and one Eigen matrix.
+ *
+ * @tparam T1 Type of first argument to which functor is applied.
+ * @tparam T2 Type of second argument to which functor is applied.
+ * @tparam F Type of functor to apply.
+ * @param x Nested integer std::vector input to which operation is applied.
+ * @param y Eigen matrix input to which operation is applied.
+ * @param f functor to apply to inputs.
+ * @return Eigen object with result of applying functor to inputs.
+ */
+template <typename T1, typename T2, typename F,
+          require_std_vector_vt<is_std_vector, T1>* = nullptr,
+          require_std_vector_st<std::is_integral, T1>* = nullptr,
+          require_eigen_matrix_vt<is_stan_scalar, T2>* = nullptr>
+inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
+  if (num_elements(x) != num_elements(y)) {
+    std::ostringstream msg;
+    msg << "Inputs to vectorized binary function must match in"
+        << " size if one is not a scalar";
+    throw std::invalid_argument(msg.str());
+  }
+  using return_st = decltype(f(x[0][0], y(0)));
+  Eigen::Matrix<return_st, Eigen::Dynamic, Eigen::Dynamic> result(y.rows(),
+                                                                  y.cols());
+  for (size_t i = 0; i < x.size(); ++i) {
+    result.row(i) = apply_scalar_binary(as_column_vector_or_scalar(x[i]),
+                                        y.row(i).transpose(), f);
+  }
+  return result;
 }
 
 /**
