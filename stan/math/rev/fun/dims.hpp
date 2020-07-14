@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/rev/core.hpp>
 #include <vector>
 
 namespace stan {
