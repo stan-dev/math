@@ -345,3 +345,23 @@ TEST(AgradPartialsVari, OperandsAndPartialsVarValueMat) {
   (2 * lp).grad();
   EXPECT_MATRIX_EQ(av.adj(), Eigen::MatrixXd::Constant(2, 2, -4))
 }
+
+TEST(AgradPartialsVari, OperandsAndPartialsStdVectorVarValueMat) {
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::operands_and_partials;
+  using stan::math::var;
+
+  Eigen::MatrixXd a(2, 2);
+  a << 10.0, 20.0, 30.0, 40.0;
+  std::vector<stan::math::var_value<Eigen::MatrixXd>> av{a,a};
+
+  operands_and_partials<std::vector<stan::math::var_value<Eigen::MatrixXd>>> ops(av);
+
+  ops.edge1_.partials_vec_[0] = Eigen::MatrixXd::Constant(2, 2, -2);
+  ops.edge1_.partials_vec_[1] = Eigen::MatrixXd::Constant(2, 2, -3);
+  var lp = ops.build(1);
+  (2 * lp).grad();
+  EXPECT_MATRIX_EQ(av[0].adj(), Eigen::MatrixXd::Constant(2, 2, -4));
+  EXPECT_MATRIX_EQ(av[1].adj(), Eigen::MatrixXd::Constant(2, 2, -6));
+}

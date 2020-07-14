@@ -329,6 +329,35 @@ class ops_partials_edge<double, std::vector<std::vector<var>>> {
   std::tuple<> container_operands() { return std::tuple<>(); }
   std::tuple<> container_partials() { return std::tuple<>(); }
 };
+
+template <typename Op>
+class ops_partials_edge<double, std::vector<var_value<Op>>,
+                        require_eigen_t<Op>> {
+ public:
+  using partials_t = std::vector<plain_type_t<Op>>;
+  partials_t partials_vec_;
+  explicit ops_partials_edge(const std::vector<var_value<Op>>& ops)
+      : partials_vec_(ops.size()), operands_(ops) {
+    for (size_t i = 0; i < ops.size(); ++i) {
+      partials_vec_[i] = plain_type_t<Op>::Zero(ops[i].vi_->rows(), ops[i].vi_->cols());
+    }
+  }
+
+ private:
+  template <typename, typename, typename, typename, typename, typename>
+  friend class stan::math::operands_and_partials;
+  const std::vector<var_value<Op>>& operands_;
+
+  void dump_operands(vari** varis) {}
+  void dump_partials(double* partials) {}
+  int size() { return 0; }
+  std::tuple<std::vector<var_value<Op>>> container_operands() {
+    return std::make_tuple(operands_);
+  }
+  std::tuple<partials_t> container_partials() {
+    return std::make_tuple(partials_vec_);
+  }
+};
 }  // namespace internal
 }  // namespace math
 }  // namespace stan

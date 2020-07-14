@@ -35,6 +35,7 @@
 #include <stan/math/rev/fun/cov_exp_quad.hpp>
 #include <stan/math/rev/fun/determinant.hpp>
 #include <stan/math/rev/fun/digamma.hpp>
+#include <stan/math/rev/fun/dims.hpp>
 #include <stan/math/rev/fun/divide.hpp>
 #include <stan/math/rev/fun/dot_product.hpp>
 #include <stan/math/rev/fun/dot_self.hpp>

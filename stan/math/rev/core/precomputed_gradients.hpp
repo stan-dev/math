@@ -1,8 +1,7 @@
 #ifndef STAN_MATH_REV_CORE_PRECOMPUTED_GRADIENTS_HPP
 #define STAN_MATH_REV_CORE_PRECOMPUTED_GRADIENTS_HPP
 
-#include <stan/math/prim/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/err/check_matching_sizes.hpp>
+#include <stan/math/prim/err/check_matching_dims.hpp>
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <algorithm>
@@ -48,14 +47,9 @@ class precomputed_gradients_vari_template : public vari {
   template <size_t... Is>
   void check_sizes(std::index_sequence<Is...>) {
     static_cast<void>(std::initializer_list<int>{
-        (check_size_match("precomputed_gradients_vari", "rows of operands",
-                          std::get<Is>(container_operands_).vi_->rows(),
-                          "rows of gradients",
-                          std::get<Is>(container_gradients_).rows()),
-         check_size_match("precomputed_gradients_vari", "cols of operands",
-                          std::get<Is>(container_operands_).vi_->cols(),
-                          "cols of gradients",
-                          std::get<Is>(container_gradients_).cols()),
+        (check_matching_dims("precomputed_gradients_vari", "operands",
+                             std::get<Is>(container_operands_), "gradients",
+                             std::get<Is>(container_gradients_)),
          0)...});
   }
 
@@ -75,7 +69,8 @@ class precomputed_gradients_vari_template : public vari {
    * @param container_operands any container operands
    * @param container_gradients any container gradients
    */
-  template <typename ContainerOps = std::tuple<>, typename ContainerGrads = std::tuple<>>
+  template <typename ContainerOps = std::tuple<>,
+            typename ContainerGrads = std::tuple<>>
   precomputed_gradients_vari_template(double val, size_t size, vari** varis,
                                       double* gradients,
                                       ContainerOps&& container_operands
@@ -87,7 +82,8 @@ class precomputed_gradients_vari_template : public vari {
         varis_(varis),
         gradients_(gradients),
         container_operands_(std::forward<ContainerOps>(container_operands)),
-        container_gradients_(std::forward<ContainerGrads>(container_gradients)) {
+        container_gradients_(
+            std::forward<ContainerGrads>(container_gradients)) {
     check_sizes(std::make_index_sequence<N_containers>());
   }
 
@@ -112,7 +108,8 @@ class precomputed_gradients_vari_template : public vari {
    * don't match.
    */
   template <typename Arith, typename VecVar, typename VecArith,
-            typename ContainerOps = std::tuple<>, typename ContainerGrads = std::tuple<>,
+            typename ContainerOps = std::tuple<>,
+            typename ContainerGrads = std::tuple<>,
             require_all_vector_t<VecVar, VecArith>* = nullptr>
   precomputed_gradients_vari_template(Arith val, const VecVar& vars,
                                       const VecArith& gradients,
@@ -127,7 +124,8 @@ class precomputed_gradients_vari_template : public vari {
         gradients_(ChainableStack::instance_->memalloc_.alloc_array<double>(
             vars.size())),
         container_operands_(std::forward<ContainerOps>(container_operands)),
-        container_gradients_(std::forward<ContainerGrads>(container_gradients)) {
+        container_gradients_(
+            std::forward<ContainerGrads>(container_gradients)) {
     check_consistent_sizes("precomputed_gradients_vari", "vars", vars,
                            "gradients", gradients);
     check_sizes(std::make_index_sequence<N_containers>());
@@ -147,10 +145,38 @@ class precomputed_gradients_vari_template : public vari {
     }
     index_apply<N_containers>([this](auto... Is) {
       static_cast<void>(std::initializer_list<int>{
-          (std::get<Is>(this->container_operands_).adj()
-           += this->adj_ * std::get<Is>(this->container_gradients_),
+          (chain_one(std::get<Is>(this->container_operands_),
+                     std::get<Is>(this->container_gradients_)),
            0)...});
     });
+  }
+
+ private:
+  /**
+   * Implements the chain rule for one non-`std::vector` operand.
+   * @tparam Op type of the operand
+   * @tparam Grad type of the gradient
+   * @param op operand
+   * @param grad gradient
+   */
+  template <typename Op, typename Grad,
+            require_all_not_std_vector_t<Op, Grad>* = nullptr>
+  void chain_one(Op& op, const Grad& grad) {
+    op.adj() += this->adj_ * grad;
+  }
+
+  /**
+   * Implements the chain rule for one `std::vector` operand.
+   * @tparam Op type of the operand element
+   * @tparam Grad type of the gradient element
+   * @param op operand
+   * @param grad gradient
+   */
+  template <typename Op, typename Grad>
+  void chain_one(std::vector<Op>& op, const std::vector<Grad>& grad) {
+    for (int i = 0; i < op.size(); i++) {
+      chain_one(op[i], grad[i]);
+    }
   }
 };
 
