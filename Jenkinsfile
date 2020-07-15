@@ -248,31 +248,31 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                stage('OpenCL tests async') {
-                    agent { label "gpu-async" }
-                    when {
-                        expression {
-                            runGpuAsync
-                        }
-                    }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CXX=${env.CXX} -Werror > make/local"
-                        sh "echo STAN_OPENCL=true>> make/local"
-                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
-                        sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
-                        sh "make -j${env.PARALLEL} test-headers"
-                        runTests("test/unit/math/opencl")
-                        runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test")
-                        runTests("test/unit/math/prim/fun/mdivide_left_tri_test")
-                        runTests("test/unit/math/prim/fun/mdivide_right_tri_test")
-                        runTests("test/unit/math/prim/fun/multiply_test")
-                        runTests("test/unit/math/rev/fun/mdivide_left_tri_test")
-                        runTests("test/unit/math/rev/fun/multiply_test")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
+                // stage('OpenCL tests async') {
+                //     agent { label "gpu-async" }
+                //     when {
+                //         expression {
+                //             runGpuAsync
+                //         }
+                //     }
+                //     steps {
+                //         deleteDir()
+                //         unstash 'MathSetup'
+                //         sh "echo CXX=${env.CXX} -Werror > make/local"
+                //         sh "echo STAN_OPENCL=true>> make/local"
+                //         sh "echo OPENCL_PLATFORM_ID=0>> make/local"
+                //         sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
+                //         sh "make -j${env.PARALLEL} test-headers"
+                //         runTests("test/unit/math/opencl")
+                //         runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test")
+                //         runTests("test/unit/math/prim/fun/mdivide_left_tri_test")
+                //         runTests("test/unit/math/prim/fun/mdivide_right_tri_test")
+                //         runTests("test/unit/math/prim/fun/multiply_test")
+                //         runTests("test/unit/math/rev/fun/mdivide_left_tri_test")
+                //         runTests("test/unit/math/rev/fun/multiply_test")
+                //     }
+                //     post { always { retry(3) { deleteDir() } } }
+                // }
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
                     steps {
