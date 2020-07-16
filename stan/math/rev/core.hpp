@@ -67,5 +67,6 @@
 #include <stan/math/rev/core/vvd_vari.hpp>
 #include <stan/math/rev/core/vvv_vari.hpp>
 #include <stan/math/rev/core/save_varis.hpp>
+#include <stan/math/rev/core/zero_adjoints.hpp>
 
 #endif
