@@ -18,7 +18,7 @@ namespace math {
  */
 template <typename K, typename T0, typename T1, class RNG>
 inline Eigen::VectorXd  // CHECK -- right return type
-  laplace_approx_poisson_rng
+  laplace_poisson_log_rng
   (const std::vector<int>& y,
    const std::vector<int>& n_samples,
    const K& covariance_function,
@@ -32,7 +32,7 @@ inline Eigen::VectorXd  // CHECK -- right return type
    double tolerance = 1e-6,
    long int max_num_steps = 100) {
     return
-    laplace_approx_rng(diff_poisson_log(to_vector(n_samples), to_vector(y)),
+    laplace_rng(diff_poisson_log(to_vector(n_samples), to_vector(y)),
                        covariance_function, phi, x, delta, delta_int, theta_0,
                        rng, msgs, tolerance, max_num_steps);
   }
@@ -42,7 +42,7 @@ inline Eigen::VectorXd  // CHECK -- right return type
  */
 template <typename K, typename T0, typename T1, class RNG>
 inline Eigen::VectorXd  // CHECK -- right return type
-  laplace_approx_poisson_rng
+  laplace_poisson_log_rng
   (const std::vector<int>& y,
    const std::vector<int>& n_samples,
    const Eigen::VectorXd& exposure,
@@ -57,7 +57,7 @@ inline Eigen::VectorXd  // CHECK -- right return type
    double tolerance = 1e-6,
    long int max_num_steps = 100) {
     return
-    laplace_approx_rng(diff_poisson_log(to_vector(n_samples), to_vector(y),
+    laplace_rng(diff_poisson_log(to_vector(n_samples), to_vector(y),
                                         log(exposure)),
                        covariance_function, phi, x, delta, delta_int, theta_0,
                        rng, msgs, tolerance, max_num_steps);

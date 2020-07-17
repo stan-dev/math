@@ -20,7 +20,7 @@ namespace math {
 template <typename T_theta, typename T_phi, typename T_x,
           typename D, typename K, class RNG>
 inline Eigen::VectorXd  // CHECK -- right return type
-laplace_approx_rng
+laplace_rng
   (const D& diff_likelihood,
    const K& covariance_function,
    const Eigen::Matrix<T_phi, Eigen::Dynamic, 1>& phi,

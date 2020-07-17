@@ -1,5 +1,6 @@
 #include <stan/math.hpp>
 #include <stan/math/laplace/prob/laplace_approx_rng.hpp>
+#include <stan/math/laplace/prob/laplace_approx_poisson_rng.hpp>
 
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
@@ -49,7 +50,8 @@ TEST(laplace, basic_rng) {
   using stan::math::diff_poisson_log;
   using stan::math::to_vector;
   using stan::math::diag_matrix;
-  using stan::math::laplace_approx_rng;
+  using stan::math::laplace_rng;
+  using stan::math::laplace_poisson_log_rng;
   using stan::math::value_of;
   using stan::math::mdivide_left_tri;
   using stan::math::diag_pre_multiply;
@@ -127,11 +129,9 @@ TEST(laplace, basic_rng) {
   // Call to rng function
   boost::random::mt19937 rng;
   Eigen::MatrixXd theta_pred
-   = laplace_approx_rng(diff_likelihood, covariance_function,
-                        sigma, x_dummy, d0, di0, theta_0,
-                        rng);
+   = laplace_rng(diff_likelihood, covariance_function,
+                 sigma, x_dummy, d0, di0, theta_0, rng);
 
-    // = laplace_approx_rng(theta_0, sigma, x_dummy,
-    //                      diff_likelihood, covariance_function,
-    //                      rng);
+  theta_pred = laplace_poisson_log_rng(sums, n_samples, covariance_function,
+                                       sigma, x_dummy, d0, di0, theta_0, rng);
 }
