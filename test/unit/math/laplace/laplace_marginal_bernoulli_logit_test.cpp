@@ -1,6 +1,6 @@
 #include <stan/math.hpp>
 #include <stan/math/laplace/laplace_likelihood.hpp>
-#include <stan/math/laplace/laplace_marginal_bernoulli.hpp>
+#include <stan/math/laplace/laplace_marginal_bernoulli_logit.hpp>
 #include <test/unit/math/laplace/laplace_utility.hpp>
 
 // #include <test/unit/math/rev/laplace/laplace_utility.hpp>

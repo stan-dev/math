@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_LAPLACE_LAPLACE_APPROX_BERNOULLI_RNG_HPP
 #define STAN_MATH_LAPLACE_LAPLACE_APPROX_BERNOULLI_RNG_HPP
 
-#include <stan/math/laplace/prob/laplace_approx_rng.hpp>
+#include <stan/math/laplace/prob/laplace_rng.hpp>
 
 namespace stan {
 namespace math {

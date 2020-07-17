@@ -1,5 +1,5 @@
 #include <stan/math.hpp>
-#include <stan/math/laplace/laplace_marginal_poisson.hpp>
+#include <stan/math/laplace/laplace_marginal_poisson_log.hpp>
 
 #include <test/unit/math/laplace/laplace_utility.hpp>
 #include <test/unit/math/rev/fun/util.hpp>

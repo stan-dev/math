@@ -1,6 +1,6 @@
 #include <stan/math.hpp>
-#include <stan/math/laplace/prob/laplace_approx_rng.hpp>
-#include <stan/math/laplace/prob/laplace_approx_poisson_rng.hpp>
+#include <stan/math/laplace/prob/laplace_rng.hpp>
+#include <stan/math/laplace/prob/laplace_poisson_log_rng.hpp>
 
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
