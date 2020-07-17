@@ -18,8 +18,8 @@ namespace math {
  * nu and sigma can each be a scalar or a one-dimensional container. Any
  * non-scalar inputs must be the same size.
  *
- * @tparam T_deg Type of degrees of freedom parameter
- * @tparam T_scale Type of scale parameter
+ * @tparam T_deg type of degrees of freedom parameter
+ * @tparam T_scale type of scale parameter
  * @tparam RNG type of random number generator
  * @param nu (Sequence of) positive degrees of freedom parameter(s)
  * @param s (Sequence of) positive scale parameter(s)
@@ -32,11 +32,9 @@ namespace math {
 template <typename T_deg, typename T_scale, class RNG>
 inline typename VectorBuilder<true, double, T_deg, T_scale>::type
 scaled_inv_chi_square_rng(const T_deg& nu, const T_scale& s, RNG& rng) {
-  using boost::random::chi_squared_distribution;
   using boost::variate_generator;
-
+  using boost::random::chi_squared_distribution;
   static const char* function = "scaled_inv_chi_square_rng";
-
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_positive_finite(function, "Scale parameter", s);
   check_consistent_sizes(function, "Location parameter", nu, "Scale Parameter",

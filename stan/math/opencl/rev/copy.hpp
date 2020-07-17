@@ -16,7 +16,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Copies the source Eigen matrix of vars to
  * the destination matrix that is stored
  * on the OpenCL device.
@@ -26,7 +26,7 @@ namespace math {
  * @param src source Eigen matrix
  * @return matrix_cl with a copy of the data in the source matrix
  */
-template <typename T, int R, int C, require_var_t<T>...>
+template <typename T, int R, int C, require_var_t<T>* = nullptr>
 inline matrix_cl<T> to_matrix_cl(const Eigen::Matrix<T, R, C>& src) try {
   matrix_cl<T> dst(src.rows(), src.cols());
   if (src.size() == 0) {
@@ -41,7 +41,7 @@ inline matrix_cl<T> to_matrix_cl(const Eigen::Matrix<T, R, C>& src) try {
   return dst;
 }
 
-/**
+/** \ingroup opencl
  * Copies the adjoint of the source matrix of vars that is stored
  * on the OpenCL device to the destination Eigen
  * matrix.
@@ -50,7 +50,7 @@ inline matrix_cl<T> to_matrix_cl(const Eigen::Matrix<T, R, C>& src) try {
  * @return Eigen matrix with a copy of the adjoints in the source matrix
  */
 template <int R = Eigen::Dynamic, int C = Eigen::Dynamic, typename T,
-          require_var_t<T>...>
+          require_var_t<T>* = nullptr>
 inline Eigen::Matrix<double, R, C> from_matrix_cl(const matrix_cl<T>& src) try {
   Eigen::Matrix<double, R, C> dst(src.rows(), src.cols());
   if (src.size() == 0) {
@@ -64,7 +64,7 @@ inline Eigen::Matrix<double, R, C> from_matrix_cl(const matrix_cl<T>& src) try {
   return dst;
 }
 
-/**
+/** \ingroup opencl
  * Packs the flat triangular matrix on the OpenCL device and
  * copies the adjoint values to the std::vector.
  *
@@ -88,7 +88,7 @@ inline std::vector<double> packed_copy(const matrix_cl<T>& src) try {
   return dst;
 }
 
-/**
+/** \ingroup opencl
  * Copies the packed triangular matrix from
  * the source std::vector to an OpenCL buffer and
  * unpacks it to a flat matrix on the OpenCL device.
@@ -130,7 +130,7 @@ inline matrix_cl<var> packed_copy(vari** src, int rows) try {
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
-template <typename T, require_var_t<T>...>
+template <typename T, require_var_t<T>* = nullptr>
 inline matrix_cl<T> copy_cl(const matrix_cl<T>& src) {
   matrix_cl<T> dst(src.rows(), src.cols(), src.view());
   if (src.size() == 0) {

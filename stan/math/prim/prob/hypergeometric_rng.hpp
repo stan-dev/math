@@ -12,11 +12,9 @@ namespace math {
 
 template <class RNG>
 inline int hypergeometric_rng(int N, int a, int b, RNG& rng) {
-  using boost::math::hypergeometric_distribution;
   using boost::variate_generator;
-
+  using boost::math::hypergeometric_distribution;
   static const char* function = "hypergeometric_rng";
-
   check_bounded(function, "Draws parameter", N, 0, a + b);
   check_positive(function, "Draws parameter", N);
   check_positive(function, "Successes in population parameter", a);

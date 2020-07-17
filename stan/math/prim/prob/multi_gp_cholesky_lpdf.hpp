@@ -39,9 +39,8 @@ return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_lpdf(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,
     const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
-  static const char* function = "multi_gp_cholesky_lpdf";
   using T_lp = return_type_t<T_y, T_covar, T_w>;
-
+  static const char* function = "multi_gp_cholesky_lpdf";
   check_size_match(function, "Size of random variable (rows y)", y.rows(),
                    "Size of kernel scales (w)", w.size());
   check_size_match(function, "Size of random variable", y.cols(),

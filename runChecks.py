@@ -41,12 +41,13 @@ def check_non_unique_test_names():
                 # look for TEST() and TEST_F()
                 matches = re.findall(r"TEST(?:_F)?\((.*?)\)", test_file_content, re.DOTALL)
                 for x in matches:
-                    # strips for test names written in two lines
-                    x_stripped = x.replace("\n", "").replace(" ", "").replace(",",", ")
-                    if x_stripped in tests:                        
-                        duplicates[x_stripped].append(filepath)
-                    else:
-                        tests[x_stripped] = filepath
+                    if not ("#" in x):
+                        # strips for test names written in two lines
+                        x_stripped = x.replace("\n", "").replace(" ", "").replace(",",", ")
+                        if x_stripped in tests:                        
+                            duplicates[x_stripped].append(filepath)
+                        else:
+                            tests[x_stripped] = filepath
     errors = []
     if len(duplicates)>0:
         duplicates_error_msg = ""

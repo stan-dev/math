@@ -8,7 +8,9 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
 
 namespace stan {
@@ -21,11 +23,9 @@ namespace math {
  * The idea is that normal_id_glm_lpdf(y, x, alpha, beta, sigma) should
  * compute a more efficient version of normal_lpdf(y, alpha + x * beta, sigma)
  * by using analytically simplified gradients.
+ *
  * @tparam T_y type of vector of dependent variables (labels);
- * @tparam T_x_scalar type of a scalar in the matrix of independent variables
- * (features)
- * @tparam T_x_rows compile-time number of rows of `x`. It can be either
- * `Eigen::Dynamic` or 1.
+ * @tparam T_x type of the matrix of independent variables (features)
  * @tparam T_alpha type of the intercept(s);
  * this can be a vector (of the same length as y) of intercepts or a single
  * value (for models with constant intercept);
@@ -34,6 +34,7 @@ namespace math {
  * @tparam T_scale type of the (positive) scale(s);
  * this can be a vector (of the same length as y, for heteroskedasticity)
  * or a scalar.
+ *
  * @param y scalar or vector of dependent variables. If it is a scalar it will
  * be broadcast - used for all instances.
  * @param x design matrix or row vector. If it is a row vector it will be
@@ -47,18 +48,18 @@ namespace math {
  * @throw std::domain_error if the scale is not positive.
  * @throw std::invalid_argument if container sizes mismatch.
  */
-template <bool propto, typename T_y, typename T_x_scalar, int T_x_rows,
-          typename T_alpha, typename T_beta, typename T_scale>
-return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
-    const T_y &y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic> &x,
-    const T_alpha &alpha, const T_beta &beta, const T_scale &sigma) {
+template <bool propto, typename T_y, typename T_x, typename T_alpha,
+          typename T_beta, typename T_scale, require_eigen_t<T_x>* = nullptr>
+return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
+    const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta,
+    const T_scale& sigma) {
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
-
+  constexpr int T_x_rows = T_x::RowsAtCompileTime;
   using T_partials_return
-      = partials_return_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale>;
+      = partials_return_t<T_y, T_x, T_alpha, T_beta, T_scale>;
   using T_scale_val = typename std::conditional_t<
       is_vector<T_scale>::value,
       Eigen::Array<partials_return_t<T_scale>, -1, 1>,
@@ -66,39 +67,49 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   using T_y_scaled_tmp =
       typename std::conditional_t<T_x_rows == 1, T_partials_return,
                                   Array<T_partials_return, Dynamic, 1>>;
-
-  static const char *function = "normal_id_glm_lpdf";
+  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
+  using T_x_ref = ref_type_if_t<!is_constant<T_x>::value, T_x>;
+  using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
+  using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
+  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
 
   const size_t N_instances = T_x_rows == 1 ? stan::math::size(y) : x.rows();
   const size_t N_attributes = x.cols();
 
+  static const char* function = "normal_id_glm_lpdf";
   check_consistent_size(function, "Vector of dependent variables", y,
                         N_instances);
   check_consistent_size(function, "Weight vector", beta, N_attributes);
   check_consistent_size(function, "Vector of scale parameters", sigma,
                         N_instances);
   check_consistent_size(function, "Vector of intercepts", alpha, N_instances);
-  check_positive_finite(function, "Scale vector", sigma);
+  T_sigma_ref sigma_ref = sigma;
+  const auto& sigma_val = value_of_rec(sigma_ref);
+  const auto& sigma_val_vec = to_ref(as_column_vector_or_scalar(sigma_val));
+  check_positive_finite(function, "Scale vector", sigma_val_vec);
 
   if (size_zero(y, sigma)) {
     return 0;
   }
-
-  if (!include_summand<propto, T_y, T_x_scalar, T_alpha, T_beta,
-                       T_scale>::value) {
+  if (!include_summand<propto, T_y, T_x, T_alpha, T_beta, T_scale>::value) {
     return 0;
   }
 
-  const auto &x_val = value_of_rec(x);
-  const auto &beta_val = value_of_rec(beta);
-  const auto &alpha_val = value_of_rec(alpha);
-  const auto &sigma_val = value_of_rec(sigma);
-  const auto &y_val = value_of_rec(y);
+  T_y_ref y_ref = y;
+  T_x_ref x_ref = x;
+  T_alpha_ref alpha_ref = alpha;
+  T_beta_ref beta_ref = beta;
 
-  const auto &beta_val_vec = as_column_vector_or_scalar(beta_val);
-  const auto &alpha_val_vec = as_column_vector_or_scalar(alpha_val);
-  const auto &sigma_val_vec = as_column_vector_or_scalar(sigma_val);
-  const auto &y_val_vec = as_column_vector_or_scalar(y_val);
+  const auto& y_val = value_of_rec(y_ref);
+  const auto& x_val
+      = to_ref_if<!is_constant<T_beta>::value>(value_of_rec(x_ref));
+  const auto& alpha_val = value_of_rec(alpha_ref);
+  const auto& beta_val = value_of_rec(beta_ref);
+
+  const auto& y_val_vec = as_column_vector_or_scalar(y_val);
+  const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
+  const auto& beta_val_vec = to_ref_if<!is_constant<T_x>::value>(
+      as_column_vector_or_scalar(beta_val));
 
   T_scale_val inv_sigma = 1 / as_array_or_scalar(sigma_val_vec);
 
@@ -108,7 +119,7 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   Array<T_partials_return, Dynamic, 1> y_scaled(N_instances);
   if (T_x_rows == 1) {
     T_y_scaled_tmp y_scaled_tmp
-        = forward_as<T_y_scaled_tmp>((x_val * beta_val_vec)(0, 0));
+        = forward_as<T_y_scaled_tmp>((x_val * beta_val_vec).coeff(0, 0));
     y_scaled = (as_array_or_scalar(y_val_vec) - y_scaled_tmp
                 - as_array_or_scalar(alpha_val_vec))
                * inv_sigma;
@@ -119,11 +130,10 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
                * inv_sigma;
   }
 
-  operands_and_partials<T_y, Matrix<T_x_scalar, T_x_rows, Dynamic>, T_alpha,
-                        T_beta, T_scale>
-      ops_partials(y, x, alpha, beta, sigma);
+  operands_and_partials<T_y_ref, T_x_ref, T_alpha_ref, T_beta_ref, T_sigma_ref>
+      ops_partials(y_ref, x_ref, alpha_ref, beta_ref, sigma_ref);
 
-  if (!(is_constant_all<T_y, T_x_scalar, T_beta, T_alpha>::value)) {
+  if (!(is_constant_all<T_y, T_x, T_beta, T_alpha>::value)) {
     Matrix<T_partials_return, Dynamic, 1> mu_derivative = inv_sigma * y_scaled;
     if (!is_constant_all<T_y>::value) {
       if (is_vector<T_y>::value) {
@@ -132,7 +142,7 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
         ops_partials.edge1_.partials_[0] = -mu_derivative.sum();
       }
     }
-    if (!is_constant_all<T_x_scalar>::value) {
+    if (!is_constant_all<T_x>::value) {
       if (T_x_rows == 1) {
         ops_partials.edge2_.partials_
             = forward_as<Array<T_partials_return, Dynamic, T_x_rows>>(
@@ -168,15 +178,17 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
         ops_partials.edge5_.partials_[0]
             = (y_scaled_sq_sum - N_instances) * forward_as<double>(inv_sigma);
       }
+    } else {
+      y_scaled_sq_sum = sum(y_scaled * y_scaled);
     }
   } else {
     y_scaled_sq_sum = sum(y_scaled * y_scaled);
   }
 
   if (!std::isfinite(y_scaled_sq_sum)) {
-    check_finite(function, "Vector of dependent variables", y);
-    check_finite(function, "Weight vector", beta);
-    check_finite(function, "Intercept", alpha);
+    check_finite(function, "Vector of dependent variables", y_val_vec);
+    check_finite(function, "Weight vector", beta_val_vec);
+    check_finite(function, "Intercept", alpha_val_vec);
     // if all other checks passed, next will only fail if x is not finite
     check_finite(function, "Matrix of independent variables", y_scaled_sq_sum);
   }
@@ -190,7 +202,7 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     if (is_vector<T_scale>::value) {
       logp -= sum(log(sigma_val_vec));
     } else {
-      logp -= N_instances * log(forward_as<double>(sigma_val));
+      logp -= N_instances * log(forward_as<double>(sigma_val_vec));
     }
   }
   logp -= 0.5 * y_scaled_sq_sum;
@@ -201,8 +213,8 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
 template <typename T_y, typename T_x, typename T_alpha, typename T_beta,
           typename T_scale>
 inline return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
-    const T_y &y, const T_x &x, const T_alpha &alpha, const T_beta &beta,
-    const T_scale &sigma) {
+    const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta,
+    const T_scale& sigma) {
   return normal_id_glm_lpdf<false>(y, x, alpha, beta, sigma);
 }
 }  // namespace math

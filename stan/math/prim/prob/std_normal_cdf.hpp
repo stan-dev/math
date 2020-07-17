@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
 
 namespace stan {
@@ -29,17 +30,14 @@ template <typename T_y>
 inline return_type_t<T_y> std_normal_cdf(const T_y& y) {
   using T_partials_return = partials_return_t<T_y>;
   using std::exp;
-
   static const char* function = "std_normal_cdf";
-
-  T_partials_return cdf(1.0);
-
-  if (size_zero(y)) {
-    return cdf;
-  }
-
   check_not_nan(function, "Random variable", y);
 
+  if (size_zero(y)) {
+    return 1.0;
+  }
+
+  T_partials_return cdf(1.0);
   operands_and_partials<T_y> ops_partials(y);
 
   scalar_seq_view<T_y> y_vec(y);

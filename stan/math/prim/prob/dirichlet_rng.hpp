@@ -31,17 +31,17 @@ namespace math {
  * 26(3):363--372, 2000.
  * </blockquote>
  *
- * @tparam RNG Type of pseudo-random number generator.
+ * @tparam RNG type of pseudo-random number generator
  * @param alpha Prior count (plus 1) parameter for Dirichlet.
  * @param rng Pseudo-random number generator.
  */
 template <class RNG>
 inline Eigen::VectorXd dirichlet_rng(
     const Eigen::Matrix<double, Eigen::Dynamic, 1>& alpha, RNG& rng) {
-  using Eigen::VectorXd;
   using boost::gamma_distribution;
-  using boost::random::uniform_real_distribution;
   using boost::variate_generator;
+  using boost::random::uniform_real_distribution;
+  using Eigen::VectorXd;
   using std::exp;
   using std::log;
 

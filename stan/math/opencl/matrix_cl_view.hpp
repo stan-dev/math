@@ -98,7 +98,7 @@ enum class TriangularMapCL { UpperToLower = 0, LowerToUpper = 1 };
 // \cond
 static const char* view_kernel_helpers = STRINGIFY(
     // \endcond
-    /** \ingroup opencl
+    /** \ingroup opencl_kernels
      * Determines which parts are nonzero in any of the input views.
      * @param left_view first view
      * @param right_view second view
@@ -106,7 +106,7 @@ static const char* view_kernel_helpers = STRINGIFY(
      */
     int either(int left_view, int right_view) { return left_view | right_view; }
 
-    /** \ingroup opencl
+    /** \ingroup opencl_kernels
      * Determines which parts are nonzero in both input views.
      * @param left_view first view
      * @param right_view second view
@@ -114,7 +114,7 @@ static const char* view_kernel_helpers = STRINGIFY(
      */
     int both(int left_view, int right_view) { return left_view & right_view; }
 
-    /** \ingroup opencl
+    /** \ingroup opencl_kernels
      * Check whether a view contains certain nonzero part
      * @param view view to check
      * @param part part to check for (usually `Lower` or `Upper`)

@@ -60,13 +60,14 @@ struct deserializer {
    * @param x pattern argument to determine result shape and size
    * @return deserialized value with shape and size matching argument
    */
-  template <typename U>
+  template <typename U, require_stan_scalar_t<U>* = nullptr,
+            require_not_complex_t<U>* = nullptr>
   T read(const U& x) {
     return vals_[position_++];
   }
 
   /**
-   * Read a complex number comforming to the shape of the specified
+   * Read a complex number conforming to the shape of the specified
    * argument. The specified argument is only used for its
    * shape---there is no relationship between the value type of the
    * argument and the type of the result.
@@ -92,10 +93,30 @@ struct deserializer {
    * @param x pattern argument to determine result shape and size
    * @return deserialized value with shape and size matching argument
    */
-  template <typename U>
-  typename stan::math::promote_scalar_type<T, std::vector<U>>::type read(
-      const std::vector<U>& x) {
-    typename stan::math::promote_scalar_type<T, std::vector<U>>::type y;
+  template <typename U, require_std_vector_t<U>* = nullptr,
+            require_not_st_complex<U>* = nullptr>
+  typename stan::math::promote_scalar_type<T, U>::type read(const U& x) {
+    typename stan::math::promote_scalar_type<T, U>::type y;
+    y.reserve(x.size());
+    for (size_t i = 0; i < x.size(); ++i)
+      y.push_back(read(x[i]));
+    return y;
+  }
+
+  /**
+   * Read a standard vector of std::complex variables conforming to the
+   * shape of the specified argument, here a standard vector. The specified
+   * argument is only used for its shape---there is no relationship between
+   * the type of argument and type of result.
+   *
+   * @tparam U type of pattern sequence elements
+   * @param x pattern argument to determine result shape and size
+   * @return deserialized value with shape and size matching argument
+   */
+  template <typename U, require_std_vector_st<is_complex, U>* = nullptr>
+  typename stan::math::promote_scalar_type<std::complex<T>, U>::type read(
+      const U& x) {
+    typename stan::math::promote_scalar_type<std::complex<T>, U>::type y;
     y.reserve(x.size());
     for (size_t i = 0; i < x.size(); ++i)
       y.push_back(read(x[i]));
@@ -117,6 +138,27 @@ struct deserializer {
   template <typename U, int R, int C>
   Eigen::Matrix<T, R, C> read(const Eigen::Matrix<U, R, C>& x) {
     Eigen::Matrix<T, R, C> y(x.rows(), x.cols());
+    for (int i = 0; i < x.size(); ++i)
+      y(i) = read(x(i));
+    return y;
+  }
+
+  /**
+   * Read a standard vector of std::complex variables conforming to the
+   * shape of the specified argument, here an Eigen matrix, vector, or
+   * row vector. The specified argument is only used for its shape---there
+   * is no relationship between the type of argument and type of result.
+   *
+   * @tparam U type of pattern scalar
+   * @tparam R row specification for Eigen container
+   * @tparam C column specification for Eigen container
+   * @param x pattern argument to determine result shape and size
+   * @return deserialized value with shape and size matching argument
+   */
+  template <typename U, int R, int C>
+  Eigen::Matrix<std::complex<T>, R, C> read(
+      const Eigen::Matrix<std::complex<U>, R, C>& x) {
+    Eigen::Matrix<std::complex<T>, R, C> y(x.rows(), x.cols());
     for (int i = 0; i < x.size(); ++i)
       y(i) = read(x(i));
     return y;

@@ -2,34 +2,14 @@
 #define STAN_MATH_PRIM_FUN_ERF_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
 namespace math {
 
 /**
- * Return the error function of the specified value.
- *
- * \f[
- * \mbox{erf}(x) = \frac{2}{\sqrt{\pi}} \int_0^x e^{-t^2} dt
- * \f]
- *
- * @param[in] x Argument.
- * @return Error function of the argument.
- */
-inline double erf(double x) { return std::erf(x); }
-
-/**
- * Return the error function of the specified argument.  This
- * version is required to disambiguate <code>erf(int)</code>.
- *
- * @param[in] x Argument.
- * @return Error function of the argument.
- */
-inline double erf(int x) { return std::erf(x); }
-
-/**
- * Structure to wrap erf() so it can be vectorized.
+ * Structure to wrap `erf()` so it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -38,12 +18,14 @@ inline double erf(int x) { return std::erf(x); }
 struct erf_fun {
   template <typename T>
   static inline T fun(const T& x) {
+    using std::erf;
     return erf(x);
   }
 };
 
 /**
- * Vectorized version of erf().
+ * Returns the elementwise `erf()` of the input,
+ * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam T type of container
  * @param x container

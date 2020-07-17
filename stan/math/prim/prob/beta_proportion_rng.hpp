@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <boost/random/variate_generator.hpp>
 
 namespace stan {
@@ -32,16 +33,19 @@ namespace math {
 template <typename T_loc, typename T_prec, class RNG>
 inline typename VectorBuilder<true, double, T_loc, T_prec>::type
 beta_proportion_rng(const T_loc &mu, const T_prec &kappa, RNG &rng) {
+  using T_mu_ref = ref_type_t<T_loc>;
+  using T_kappa_ref = ref_type_t<T_prec>;
   static const char *function = "beta_proportion_rng";
-
-  check_positive(function, "Location parameter", mu);
-  check_less(function, "Location parameter", mu, 1.0);
-  check_positive_finite(function, "Precision parameter", kappa);
   check_consistent_sizes(function, "Location parameter", mu,
                          "Precision parameter", kappa);
+  T_mu_ref mu_ref = mu;
+  T_kappa_ref kappa_ref = kappa;
+  check_positive(function, "Location parameter", mu_ref);
+  check_less(function, "Location parameter", mu_ref, 1.0);
+  check_positive_finite(function, "Precision parameter", kappa_ref);
 
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_prec> kappa_vec(kappa);
+  scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
+  scalar_seq_view<T_kappa_ref> kappa_vec(kappa_ref);
   size_t N = max_size(mu, kappa);
   VectorBuilder<true, double, T_loc, T_prec> output(N);
 

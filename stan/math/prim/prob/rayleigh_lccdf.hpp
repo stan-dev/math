@@ -8,21 +8,15 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 
 namespace stan {
 namespace math {
 
 template <typename T_y, typename T_scale>
 return_type_t<T_y, T_scale> rayleigh_lccdf(const T_y& y, const T_scale& sigma) {
-  static const char* function = "rayleigh_lccdf";
   using T_partials_return = partials_return_t<T_y, T_scale>;
-
-  T_partials_return ccdf_log(0.0);
-
-  if (size_zero(y, sigma)) {
-    return ccdf_log;
-  }
-
+  static const char* function = "rayleigh_lccdf";
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_not_nan(function, "Scale parameter", sigma);
@@ -30,6 +24,11 @@ return_type_t<T_y, T_scale> rayleigh_lccdf(const T_y& y, const T_scale& sigma) {
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          sigma);
 
+  if (size_zero(y, sigma)) {
+    return 0;
+  }
+
+  T_partials_return ccdf_log(0.0);
   operands_and_partials<T_y, T_scale> ops_partials(y, sigma);
 
   scalar_seq_view<T_y> y_vec(y);

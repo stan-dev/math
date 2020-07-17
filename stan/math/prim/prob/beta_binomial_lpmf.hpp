@@ -14,6 +14,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 
 namespace stan {
 namespace math {
@@ -40,30 +41,40 @@ template <bool propto, typename T_n, typename T_N, typename T_size1,
 return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
                                                    const T_size1& alpha,
                                                    const T_size2& beta) {
-  static const char* function = "beta_binomial_lpmf";
   using T_partials_return = partials_return_t<T_size1, T_size2>;
-
-  if (size_zero(n, N, alpha, beta))
-    return 0.0;
-
-  T_partials_return logp(0.0);
-  check_nonnegative(function, "Population size parameter", N);
-  check_positive_finite(function, "First prior sample size parameter", alpha);
-  check_positive_finite(function, "Second prior sample size parameter", beta);
+  using T_N_ref = ref_type_t<T_N>;
+  using T_alpha_ref = ref_type_t<T_size1>;
+  using T_beta_ref = ref_type_t<T_size2>;
+  static const char* function = "beta_binomial_lpmf";
   check_consistent_sizes(function, "Successes variable", n,
                          "Population size parameter", N,
                          "First prior sample size parameter", alpha,
                          "Second prior sample size parameter", beta);
-
-  if (!include_summand<propto, T_size1, T_size2>::value)
+  if (size_zero(n, N, alpha, beta)) {
     return 0.0;
+  }
 
-  operands_and_partials<T_size1, T_size2> ops_partials(alpha, beta);
+  T_N_ref N_ref = N;
+  T_alpha_ref alpha_ref = alpha;
+  T_beta_ref beta_ref = beta;
+  check_nonnegative(function, "Population size parameter", N_ref);
+  check_positive_finite(function, "First prior sample size parameter",
+                        alpha_ref);
+  check_positive_finite(function, "Second prior sample size parameter",
+                        beta_ref);
+
+  if (!include_summand<propto, T_size1, T_size2>::value) {
+    return 0.0;
+  }
+
+  T_partials_return logp(0.0);
+  operands_and_partials<T_alpha_ref, T_beta_ref> ops_partials(alpha_ref,
+                                                              beta_ref);
 
   scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_N> N_vec(N);
-  scalar_seq_view<T_size1> alpha_vec(alpha);
-  scalar_seq_view<T_size2> beta_vec(beta);
+  scalar_seq_view<T_N_ref> N_vec(N_ref);
+  scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
+  scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
   size_t size_alpha = stan::math::size(alpha);
   size_t size_beta = stan::math::size(beta);
   size_t size_n_N = max_size(n, N);

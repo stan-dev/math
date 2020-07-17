@@ -2,31 +2,14 @@
 #define STAN_MATH_PRIM_FUN_CBRT_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
 namespace math {
 
 /**
- * Return the cube root of the specified value
- *
- * @param[in] x Argument.
- * @return Cube root of the argument.
- * @throw std::domain_error If argument is negative.
- */
-inline double cbrt(double x) { return std::cbrt(x); }
-
-/**
- * Integer version of cbrt.
- *
- * @param[in] x Argument.
- * @return Cube root of the argument.
- * @throw std::domain_error If argument is less than 1.
- */
-inline double cbrt(int x) { return std::cbrt(x); }
-
-/**
- * Structure to wrap cbrt() so it can be vectorized.
+ * Structure to wrap `cbrt()` so it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -35,12 +18,14 @@ inline double cbrt(int x) { return std::cbrt(x); }
 struct cbrt_fun {
   template <typename T>
   static inline T fun(const T& x) {
+    using std::cbrt;
     return cbrt(x);
   }
 };
 
 /**
- * Vectorized version of cbrt().
+ * Returns the elementwise `cbrt()` of the input,
+ * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam T type of container
  * @param x container

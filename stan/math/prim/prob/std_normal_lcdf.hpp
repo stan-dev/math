@@ -13,6 +13,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
 #include <limits>
 
@@ -26,16 +27,14 @@ inline return_type_t<T_y> std_normal_lcdf(const T_y& y) {
   using std::fabs;
   using std::log;
   using std::pow;
-
   static const char* function = "std_normal_lcdf";
-
-  T_partials_return lcdf(0.0);
-  if (size_zero(y)) {
-    return lcdf;
-  }
-
   check_not_nan(function, "Random variable", y);
 
+  if (size_zero(y)) {
+    return 0;
+  }
+
+  T_partials_return lcdf(0.0);
   operands_and_partials<T_y> ops_partials(y);
 
   scalar_seq_view<T_y> y_vec(y);
@@ -96,7 +95,7 @@ inline return_type_t<T_y> std_normal_lcdf(const T_y& y) {
       T_partials_return t2 = 0.0;
       T_partials_return t4 = 0.0;
 
-      // calculate using piecewise funciton
+      // calculate using piecewise function
       // (due to instability / inaccuracy in the various approximations)
       if (scaled_y > 2.9) {
         // approximation derived from Abramowitz and Stegun (1964) 7.1.26

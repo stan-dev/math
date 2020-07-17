@@ -17,18 +17,16 @@ namespace math {
  * outcome given the continuous location and specified cutpoints
  * in an ordered probit model.
  *
- * <p>Typically the continous location
+ * <p>Typically the continuous location
  * will be the dot product of a vector of regression coefficients
  * and a vector of predictors for the outcome.
  *
- * @tparam propto True if calculating up to a proportion.
- * @tparam T_loc Location type.
- * @tparam T_cut Cut-point type.
+ * @tparam T_loc location type
+ * @tparam T_cut cut-point type
  * @param y Outcome.
  * @param lambda Location.
  * @param c Positive increasing vector of cutpoints.
- * @return Log probability of outcome given location and
- * cutpoints.
+ * @return Log probability of outcome given location and cutpoints.
  * @throw std::domain_error If the outcome is not between 1 and
  * the number of cutpoints plus 2; if the cutpoint vector is
  * empty; if the cutpoint vector contains a non-positive,
@@ -41,11 +39,8 @@ return_type_t<T_loc, T_cut> ordered_probit_lpmf(
     const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
   using std::exp;
   using std::log;
-
   static const char* function = "ordered_probit";
-
   int K = c.size() + 1;
-
   check_bounded(function, "Random variable", y, 1, K);
   check_finite(function, "Location parameter", lambda);
   check_greater(function, "Size of cut points parameter", c.size(), 0);
@@ -73,7 +68,7 @@ return_type_t<T_loc, T_cut> ordered_probit_lpmf(
  * of integers given the vector of continuous locations and
  * specified cutpoints in an ordered probit model.
  *
- * <p>Typically the continous location
+ * <p>Typically the continuous location
  * will be the dot product of a vector of regression coefficients
  * and a vector of predictors for the outcome.
  *
@@ -98,9 +93,6 @@ return_type_t<T_loc, T_cut> ordered_probit_lpmf(
     const std::vector<int>& y,
     const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
     const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
-  using std::exp;
-  using std::log;
-
   static const char* function = "ordered_probit";
 
   int N = lambda.size();
@@ -113,6 +105,8 @@ return_type_t<T_loc, T_cut> ordered_probit_lpmf(
   check_greater(function, "Size of cut points parameter", c.size(), 0);
   check_finite(function, "Cut-points", c);
 
+  using std::exp;
+  using std::log;
   return_type_t<T_loc, T_cut> logp_n(0.0);
 
   for (int i = 0; i < N; ++i) {
@@ -141,7 +135,7 @@ return_type_t<T_loc, T_cut> ordered_probit_lpmf(
  * of integers given the vector of continuous locations and
  * array of specified cutpoints in an ordered probit model.
  *
- * <p>Typically the continous location
+ * <p>Typically the continuous location
  * will be the dot product of a vector of regression coefficients
  * and a vector of predictors for the outcome.
  *
@@ -168,13 +162,8 @@ return_type_t<T_loc, T_cut> ordered_probit_lpmf(
     const std::vector<int>& y,
     const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
     const std::vector<Eigen::Matrix<T_cut, Eigen::Dynamic, 1> >& c) {
-  using std::exp;
-  using std::log;
-
   static const char* function = "ordered_probit";
-
   int N = lambda.size();
-
   check_consistent_sizes(function, "Integers", y, "Locations", lambda);
   check_consistent_sizes(function, "Integers", y, "Cut-points", c);
 
@@ -188,6 +177,8 @@ return_type_t<T_loc, T_cut> ordered_probit_lpmf(
   check_finite(function, "Location parameter", lambda);
   check_finite(function, "Cut-points", c);
 
+  using std::exp;
+  using std::log;
   return_type_t<T_loc, T_cut> logp_n(0.0);
 
   for (int i = 0; i < N; ++i) {

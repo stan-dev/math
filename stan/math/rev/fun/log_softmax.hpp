@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log_softmax.hpp>
 #include <stan/math/prim/fun/softmax.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <cmath>
 #include <vector>
@@ -55,41 +56,42 @@ class log_softmax_elt_vari : public vari {
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
-template <typename T, require_t<is_var<scalar_type_t<T>>>...>
+template <typename T, require_container_st<is_var, T>* = nullptr>
 inline auto log_softmax(const T& x) {
-  return apply_vector_unary<T>::apply(x, [&](const auto& alpha) {
-    const int a_size = alpha.size();
+  return apply_vector_unary<ref_type_t<T>>::apply(
+      to_ref(x), [&](const auto& alpha) {
+        const int a_size = alpha.size();
 
-    check_nonzero_size("log_softmax", "alpha", alpha);
+        check_nonzero_size("log_softmax", "alpha", alpha);
 
-    vari** alpha_vi_array
-        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(a_size);
-    Eigen::Map<vector_vi>(alpha_vi_array, a_size) = alpha.vi();
+        vari** alpha_vi_array
+            = ChainableStack::instance_->memalloc_.alloc_array<vari*>(a_size);
+        Eigen::Map<vector_vi>(alpha_vi_array, a_size) = alpha.vi();
 
-    vector_d alpha_d = alpha.val();
+        vector_d alpha_d = alpha.val();
 
-    // fold logic of math::softmax() and math::log_softmax()
-    // to save computations
+        // fold logic of math::softmax() and math::log_softmax()
+        // to save computations
 
-    vector_d diff = (alpha_d.array() - alpha_d.maxCoeff());
-    vector_d softmax_alpha_d = diff.array().exp();
-    double sum = softmax_alpha_d.sum();
-    vector_d log_softmax_alpha_d = diff.array() - std::log(sum);
+        vector_d diff = (alpha_d.array() - alpha_d.maxCoeff());
+        vector_d softmax_alpha_d = diff.array().exp();
+        double sum = softmax_alpha_d.sum();
+        vector_d log_softmax_alpha_d = diff.array() - std::log(sum);
 
-    // end fold
-    double* softmax_alpha_d_array
-        = ChainableStack::instance_->memalloc_.alloc_array<double>(a_size);
-    Eigen::Map<vector_d>(softmax_alpha_d_array, a_size)
-        = softmax_alpha_d.array() / sum;
+        // end fold
+        double* softmax_alpha_d_array
+            = ChainableStack::instance_->memalloc_.alloc_array<double>(a_size);
+        Eigen::Map<vector_d>(softmax_alpha_d_array, a_size)
+            = softmax_alpha_d.array() / sum;
 
-    vector_v log_softmax_alpha(a_size);
-    for (int k = 0; k < a_size; ++k) {
-      log_softmax_alpha(k) = var(new internal::log_softmax_elt_vari(
-          log_softmax_alpha_d[k], alpha_vi_array, softmax_alpha_d_array, a_size,
-          k));
-    }
-    return log_softmax_alpha;
-  });
+        vector_v log_softmax_alpha(a_size);
+        for (int k = 0; k < a_size; ++k) {
+          log_softmax_alpha(k) = var(new internal::log_softmax_elt_vari(
+              log_softmax_alpha_d[k], alpha_vi_array, softmax_alpha_d_array,
+              a_size, k));
+        }
+        return log_softmax_alpha;
+      });
 }
 
 }  // namespace math

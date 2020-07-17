@@ -2,31 +2,14 @@
 #define STAN_MATH_PRIM_FUN_EXPM1_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
 namespace math {
 
 /**
- * Return the natural exponentiation of x minus one.
- * Returns infinity for infinity argument and -infinity for
- * -infinity argument.
- *
- * @param[in] x Argument.
- * @return Natural exponentiation of argument minus one.
- */
-inline double expm1(double x) { return std::expm1(x); }
-
-/**
- * Integer version of expm1.
- *
- * @param[in] x Argument.
- * @return Natural exponentiation of argument minus one.
- */
-inline double expm1(int x) { return std::expm1(x); }
-
-/**
- * Structure to wrap expm1() so that it can be vectorized.
+ * Structure to wrap `expm1()` so that it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -35,12 +18,15 @@ inline double expm1(int x) { return std::expm1(x); }
 struct expm1_fun {
   template <typename T>
   static inline T fun(const T& x) {
+    using std::expm1;
     return expm1(x);
   }
 };
 
 /**
- * Vectorized version of expm1().
+ * Return the elementwise `expm1()` of the specified argument,
+ * which may be a scalar or any Stan container of numeric scalars.
+ * The return type is the same as the argument type.
  *
  * @tparam T type of container
  * @param x container

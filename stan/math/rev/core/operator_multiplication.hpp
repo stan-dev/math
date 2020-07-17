@@ -7,6 +7,8 @@
 #include <stan/math/rev/core/vd_vari.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
+#include <stan/math/prim/fun/isinf.hpp>
+#include <stan/math/prim/fun/isnan.hpp>
 
 namespace stan {
 namespace math {
@@ -93,7 +95,7 @@ inline var operator*(var a, var b) {
  * @param b Scalar operand.
  * @return Variable result of multiplying operands.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline var operator*(var a, Arith b) {
   if (b == 1.0) {
     return a;
@@ -113,7 +115,7 @@ inline var operator*(var a, Arith b) {
  * @param b Variable operand.
  * @return Variable result of multiplying the operands.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline var operator*(Arith a, var b) {
   if (a == 1.0) {
     return b;

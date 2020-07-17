@@ -9,9 +9,9 @@ using Eigen::Dynamic;
 using Eigen::Matrix;
 using stan::is_constant_all;
 using stan::is_vector;
+using stan::scalar_type;
 using stan::math::value_of;
 using stan::math::var;
-using stan::scalar_type;
 using std::vector;
 
 class AgradCdfTest {
@@ -566,7 +566,8 @@ class AgradCdfTestFixture : public ::testing::Test {
       calculate_gradients_1storder(multiple_gradients2, multiple_cdf, x1);
       calculate_gradients_1storder(multiple_gradients3, multiple_cdf, x1);
 
-      EXPECT_TRUE(pow(single_cdf, N_REPEAT) - multiple_cdf < 1e-8)
+      EXPECT_NEAR(stan::math::value_of_rec(pow(single_cdf, N_REPEAT)),
+                  stan::math::value_of_rec(multiple_cdf), 1e-8)
           << "cdf with repeated vector input should match "
           << "a multiple of cdf of single input";
 

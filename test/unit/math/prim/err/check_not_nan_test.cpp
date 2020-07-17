@@ -5,9 +5,8 @@
 #include <string>
 #include <stdexcept>
 
-using stan::math::check_not_nan;
-
 TEST(ErrorHandlingArr, CheckNotNanVectorized) {
+  using stan::math::check_not_nan;
   int N = 5;
   const char* function = "check_not_nan";
   std::vector<double> x(N);
@@ -30,6 +29,7 @@ TEST(ErrorHandlingArr, CheckNotNanVectorized) {
 }
 
 TEST(ErrorHandlingArr, CheckNotNanVectorized_one_indexed_message) {
+  using stan::math::check_not_nan;
   int N = 5;
   const char* function = "check_not_nan";
   std::vector<double> x(N);
@@ -50,8 +50,10 @@ TEST(ErrorHandlingArr, CheckNotNanVectorized_one_indexed_message) {
 }
 
 TEST(ErrorHandlingMatrix, checkNotNanEigenRow) {
+  using stan::math::check_not_nan;
   stan::math::vector_d y;
   y.resize(3);
+  y << 1, 2, 3;
 
   EXPECT_NO_THROW(stan::math::check_not_nan("checkNotNanEigenRow(%1)", "y", y));
   EXPECT_NO_THROW(stan::math::check_not_nan("checkNotNanEigenRow(%1)", "y", y));
@@ -64,6 +66,7 @@ TEST(ErrorHandlingMatrix, checkNotNanEigenRow) {
 }
 
 TEST(ErrorHandlingScalar, CheckNotNan) {
+  using stan::math::check_not_nan;
   const char* function = "check_not_nan";
   double x = 0;
 
@@ -81,4 +84,17 @@ TEST(ErrorHandlingScalar, CheckNotNan) {
   x = std::numeric_limits<double>::quiet_NaN();
   EXPECT_THROW(check_not_nan(function, "x", x), std::domain_error)
       << "check_not_nan should throw exception on NaN: " << x;
+}
+
+TEST(ErrorHandlingScalar, CheckNotNaNVectorization) {
+  using stan::math::check_not_nan;
+  const char* function = "check_not_nan";
+  Eigen::MatrixXd m = Eigen::MatrixXd::Constant(3, 2, 0);
+  EXPECT_NO_THROW(
+      check_not_nan(function, "m", std::vector<Eigen::MatrixXd>{m, m, m}));
+  Eigen::MatrixXd m2 = m;
+  m2(1, 1) = stan::math::NOT_A_NUMBER;
+  EXPECT_THROW(
+      check_not_nan(function, "m", std::vector<Eigen::MatrixXd>{m, m2, m}),
+      std::domain_error);
 }

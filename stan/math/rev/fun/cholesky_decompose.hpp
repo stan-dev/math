@@ -6,9 +6,10 @@
 #include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/fun/cholesky_decompose.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 
 #ifdef STAN_OPENCL
@@ -374,14 +375,17 @@ class cholesky_opencl : public vari {
  * @param A Matrix
  * @return L Cholesky factor of A
  */
-inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
-    const Eigen::Matrix<var, -1, -1>& A) {
-  check_not_nan("cholesky_decompose", "A", A);
-  Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+inline Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime>
+cholesky_decompose(const T& A) {
+  const auto& A_ref = to_ref(A);
+  Eigen::Matrix<double, T::RowsAtCompileTime, T::ColsAtCompileTime> L_A(
+      value_of_rec(A_ref));
+  check_not_nan("cholesky_decompose", "A", L_A);
 #ifdef STAN_OPENCL
   L_A = cholesky_decompose(L_A);
 #else
-  check_symmetric("cholesky_decompose", "A", A);
+  check_symmetric("cholesky_decompose", "A", L_A);
   Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);
   check_pos_definite("cholesky_decompose", "A", L_factor);
 #endif
@@ -389,9 +393,10 @@ inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
   // cholesky_scalar gradient faster for small matrices compared to
   // cholesky_block
   vari* dummy = new vari(0.0, false);
-  Eigen::Matrix<var, -1, -1> L(A.rows(), A.cols());
+  Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime> L(A.rows(),
+                                                                   A.cols());
   if (L_A.rows() <= 35) {
-    cholesky_scalar* baseVari = new cholesky_scalar(A, L_A);
+    cholesky_scalar* baseVari = new cholesky_scalar(A_ref, L_A);
     size_t accum = 0;
     size_t accum_i = accum;
     for (size_type j = 0; j < L.cols(); ++j) {
@@ -410,14 +415,14 @@ inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
 #ifdef STAN_OPENCL
     if (L_A.rows()
         > opencl_context.tuning_opts().cholesky_size_worth_transfer) {
-      cholesky_opencl* baseVari = new cholesky_opencl(A, L_A);
+      cholesky_opencl* baseVari = new cholesky_opencl(A_ref, L_A);
       internal::set_lower_tri_coeff_ref(L, baseVari->vari_ref_L_);
     } else {
-      cholesky_block* baseVari = new cholesky_block(A, L_A);
+      cholesky_block* baseVari = new cholesky_block(A_ref, L_A);
       internal::set_lower_tri_coeff_ref(L, baseVari->vari_ref_L_);
     }
 #else
-    cholesky_block* baseVari = new cholesky_block(A, L_A);
+    cholesky_block* baseVari = new cholesky_block(A_ref, L_A);
     internal::set_lower_tri_coeff_ref(L, baseVari->vari_ref_L_);
 #endif
   }

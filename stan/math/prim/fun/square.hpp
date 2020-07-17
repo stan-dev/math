@@ -4,6 +4,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -41,26 +43,29 @@ struct square_fun {
 /**
  * Vectorized version of square().
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x container
  * @return Each value in x squared.
  */
-template <typename T>
-inline auto square(const T& x) {
-  return apply_scalar_unary<square_fun, T>::apply(x);
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+inline auto square(const Container& x) {
+  return apply_scalar_unary<square_fun, Container>::apply(x);
 }
 
 /**
- * Version of square() that accepts Eigen Matrix or matrix expressions.
+ * Version of square() that accepts std::vectors, Eigen Matrix/Array objects
+ *  or expressions, and containers of these.
  *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
+ * @tparam Container Type of x
+ * @param x Container
  * @return Each value in x squared.
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto square(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().square().matrix();
+template <typename Container,
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
+inline auto square(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](const auto& v) { return v.array().square(); });
 }
 
 }  // namespace math

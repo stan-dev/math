@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
@@ -10,13 +11,13 @@
 namespace stan {
 namespace math {
 
-template <int R, int C>
-inline var log_determinant(const Eigen::Matrix<var, R, C>& m) {
+template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
+inline var log_determinant(const EigMat& m) {
   using Eigen::Matrix;
 
   math::check_square("log_determinant", "m", m);
 
-  Eigen::FullPivHouseholderQR<Matrix<double, R, C> > hh
+  Eigen::FullPivHouseholderQR<promote_scalar_t<double, EigMat>> hh
       = m.val().fullPivHouseholderQr();
 
   vari** varis

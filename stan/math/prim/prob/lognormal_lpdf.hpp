@@ -4,11 +4,13 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
 
 namespace stan {
@@ -18,20 +20,22 @@ namespace math {
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
 return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
                                                   const T_scale& sigma) {
-  static const char* function = "lognormal_lpdf";
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
-
+  using std::log;
+  static const char* function = "lognormal_lpdf";
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
+
   if (size_zero(y, mu, sigma)) {
     return 0;
   }
 
   T_partials_return logp(0);
+  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);
@@ -43,10 +47,6 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
       return LOG_ZERO;
     }
   }
-
-  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
-
-  using std::log;
 
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
@@ -65,7 +65,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
       inv_sigma_sq(size(sigma));
   if (include_summand<propto, T_y, T_loc, T_scale>::value) {
     for (size_t n = 0; n < stan::math::size(sigma); n++) {
-      inv_sigma[n] = 1 / value_of(sigma_vec[n]);
+      inv_sigma[n] = inv(value_of(sigma_vec[n]));
     }
   }
   if (include_summand<propto, T_y, T_loc, T_scale>::value) {
@@ -87,7 +87,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
       stan::math::size(y));
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::math::size(y); n++) {
-      inv_y[n] = 1 / value_of(y_vec[n]);
+      inv_y[n] = inv(value_of(y_vec[n]));
     }
   }
 

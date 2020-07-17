@@ -1,15 +1,21 @@
 #ifndef STAN_MATH_PRIM_FUN_ATAN_HPP
 #define STAN_MATH_PRIM_FUN_ATAN_HPP
 
+#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/atanh.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/i_times.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
 
 /**
- * Structure to wrap atan() so it can be vectorized.
+ * Structure to wrap \c atan() so it can be vectorized.
  *
  * @tparam T type of variable
  * @param x variable
@@ -24,29 +30,47 @@ struct atan_fun {
 };
 
 /**
- * Vectorized version of atan().
+ * Returns the elementwise \c atan() of the input,
+ * which may be a scalar or any Stan container of numeric scalars.
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x container
  * @return Arctan of each value in x, in radians.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
-inline typename apply_scalar_unary<atan_fun, T>::return_t atan(const T& x) {
-  return apply_scalar_unary<atan_fun, T>::apply(x);
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+inline auto atan(const Container& x) {
+  return apply_scalar_unary<atan_fun, Container>::apply(x);
 }
 
 /**
- * Version of atan() that accepts Eigen Matrix or matrix expressions.
+ * Version of atan() that accepts std::vectors, Eigen Matrix/Array objects,
+ *  or expressions, and containers of these.
  *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
+ * @tparam Container Type of x
+ * @param x Container
  * @return Elementwise atan of members of container.
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto atan(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().atan().matrix().eval();
+template <typename Container,
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
+inline auto atan(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](const auto& v) { return v.array().atan(); });
 }
+
+namespace internal {
+/**
+ * Return the arc tangent of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return arc tangent of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_atan(const std::complex<V>& z) {
+  return neg_i_times(atanh(i_times(z)));
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

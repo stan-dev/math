@@ -14,44 +14,37 @@ namespace math {
  * Returns specified input value.
  *
  * @tparam T Type of element.
- * @param v Specified value.
+ * @param m Specified value.
  * @return Same value (the sum of one value).
  */
-inline double sum(double v) { return v; }
-
-/**
- * Returns specified input value.
- *
- * @tparam T Type of element.
- * @param v Specified value.
- * @return Same value (the sum of one value).
- */
-inline int sum(int v) { return v; }
+template <typename T, require_stan_scalar_t<T>* = nullptr>
+inline decltype(auto) sum(T&& m) {
+  return std::forward<T>(m);
+}
 
 /**
  * Return the sum of the values in the specified standard vector.
  *
  * @tparam T Type of elements summed.
- * @param xs Standard vector to sum.
+ * @param m Standard vector to sum.
  * @return Sum of elements.
  */
 template <typename T>
-inline T sum(const std::vector<T>& xs) {
-  return std::accumulate(xs.begin(), xs.end(), T{0});
+inline T sum(const std::vector<T>& m) {
+  return std::accumulate(m.begin(), m.end(), T{0});
 }
 
 /**
  * Returns the sum of the coefficients of the specified
  * Eigen Matrix, Array or expression.
  *
- * @tparam Derived type of argument
- * @param v argument
+ * @tparam T Type of argument
+ * @param m argument
  * @return Sum of coefficients of argument.
  */
-template <typename Derived>
-inline typename Eigen::DenseBase<Derived>::Scalar sum(
-    const Eigen::DenseBase<Derived>& v) {
-  return v.sum();
+template <typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
+inline value_type_t<T> sum(const T& m) {
+  return m.sum();
 }
 
 }  // namespace math

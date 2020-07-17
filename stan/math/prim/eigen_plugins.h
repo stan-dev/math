@@ -1,6 +1,3 @@
-#ifndef STAN_MATH_PRIM_EIGEN_PLUGINS_H
-#define STAN_MATH_PRIM_EIGEN_PLUGINS_H
-
 /**
  * Reimplements is_fvar without requiring external math headers
  *
@@ -56,14 +53,14 @@ struct val_Op{
   //Returns value from a vari*
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    std::enable_if_t<std::is_pointer<T>::value, reverse_return_t<T>>
+    std::enable_if_t<std::is_pointer<T>::value, const double&>
       operator()(T &v) const { return v->val_; }
 
   //Returns value from a var
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     std::enable_if_t<(!std::is_pointer<T>::value && !is_fvar<T>::value
-                      && !std::is_arithmetic<T>::value), reverse_return_t<T>>
+                      && !std::is_arithmetic<T>::value), const double&>
       operator()(T &v) const { return v.vi_->val_; }
 
   //Returns value from an fvar
@@ -199,5 +196,4 @@ vi() { return CwiseUnaryView<vi_Op, Derived>(derived());
 }
 
 #define EIGEN_STAN_MATRIXBASE_PLUGIN
-
-#endif
+#define EIGEN_STAN_ARRAYBASE_PLUGIN

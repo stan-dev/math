@@ -11,6 +11,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_mvt.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <vector>
 
 namespace stan {
@@ -21,7 +22,7 @@ namespace math {
  * of integers given the vector of continuous locations and
  * specified cutpoints in an ordered logistic model.
  *
- * <p>Typically the continous location
+ * <p>Typically the continuous location
  * will be the dot product of a vector of regression coefficients
  * and a vector of predictors for the outcome
  *

@@ -186,71 +186,7 @@ class var {
   var(unsigned long x)
       : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
 
-  /**
-   * Construct a variable from the specified arithmetic argument
-   * by constructing a new <code>vari</code> with the argument
-   * cast to <code>double</code>, and a zero adjoint. Only works
-   * if the imaginary part is zero.
-   *
-   * @param x Value of the variable.
-   */
-  explicit var(const std::complex<double>& x) {
-    if (imag(x) == 0) {
-      vi_ = new vari(real(x), false);
-    } else {
-      std::stringstream ss;
-      ss << "Imaginary part of std::complex used to construct var"
-         << " must be zero. Found real part = " << real(x) << " and "
-         << " found imaginary part = " << imag(x) << std::endl;
-      std::string msg = ss.str();
-      throw std::invalid_argument(msg);
-    }
-  }
-
-  /**
-   * Construct a variable from the specified arithmetic argument
-   * by constructing a new <code>vari</code> with the argument
-   * cast to <code>double</code>, and a zero adjoint. Only works
-   * if the imaginary part is zero.
-   *
-   * @param x Value of the variable.
-   */
-  explicit var(const std::complex<float>& x) {
-    if (imag(x) == 0) {
-      vi_ = new vari(static_cast<double>(real(x)), false);
-    } else {
-      std::stringstream ss;
-      ss << "Imaginary part of std::complex used to construct var"
-         << " must be zero. Found real part = " << real(x) << " and "
-         << " found imaginary part = " << imag(x) << std::endl;
-      std::string msg = ss.str();
-      throw std::invalid_argument(msg);
-    }
-  }
-
-  /**
-   * Construct a variable from the specified arithmetic argument
-   * by constructing a new <code>vari</code> with the argument
-   * cast to <code>double</code>, and a zero adjoint. Only works
-   * if the imaginary part is zero.
-   *
-   * @param x Value of the variable.
-   */
-  explicit var(const std::complex<long double>& x) {
-    if (imag(x) == 0) {
-      vi_ = new vari(static_cast<double>(real(x)), false);
-    } else {
-      std::stringstream ss;
-      ss << "Imaginary part of std::complex used to construct var"
-         << " must be zero. Found real part = " << real(x) << " and "
-         << " found imaginary part = " << imag(x) << std::endl;
-      std::string msg = ss.str();
-      throw std::invalid_argument(msg);
-    }
-  }
-
 #ifdef _WIN64
-
   // these two ctors are for Win64 to enable 64-bit signed
   // and unsigned integers, because long and unsigned long
   // are still 32-bit
@@ -387,7 +323,7 @@ class var {
    * @param b The scalar to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
-  template <typename Arith, require_arithmetic_t<Arith>...>
+  template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
   inline var& operator+=(Arith b);
 
   /**
@@ -414,7 +350,7 @@ class var {
    * @return The result of subtracting the specified variable from this
    * variable.
    */
-  template <typename Arith, require_arithmetic_t<Arith>...>
+  template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
   inline var& operator-=(Arith b);
 
   /**
@@ -441,7 +377,7 @@ class var {
    * @return The result of multiplying this variable by the specified
    * variable.
    */
-  template <typename Arith, require_arithmetic_t<Arith>...>
+  template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
   inline var& operator*=(Arith b);
 
   /**
@@ -467,7 +403,7 @@ class var {
    * @return The result of dividing this variable by the specified
    * variable.
    */
-  template <typename Arith, require_arithmetic_t<Arith>...>
+  template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
   inline var& operator/=(Arith b);
 
   /**

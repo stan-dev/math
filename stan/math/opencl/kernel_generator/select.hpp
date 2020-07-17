@@ -8,8 +8,9 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <stan/math/opencl/kernel_generator/common_return_scalar.hpp>
+#include <algorithm>
 #include <set>
 #include <string>
 #include <type_traits>
@@ -17,6 +18,10 @@
 
 namespace stan {
 namespace math {
+
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 
 /**
  * Represents a selection operation in kernel generator expressions. This is
@@ -35,12 +40,8 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
   using Scalar = common_scalar_t<T_then, T_else>;
   using base = operation_cl<select_<T_condition, T_then, T_else>, Scalar,
                             T_condition, T_then, T_else>;
-  using base::var_name;
+  using base::var_name_;
 
- protected:
-  using base::arguments_;
-
- public:
   /**
    * Constructor
    * @param condition condition expression
@@ -73,10 +74,10 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline auto deep_copy() {
-    auto&& condition_copy = std::get<0>(arguments_).deep_copy();
-    auto&& then_copy = std::get<0>(arguments_).deep_copy();
-    auto&& else_copy = std::get<0>(arguments_).deep_copy();
+  inline auto deep_copy() const {
+    auto&& condition_copy = this->template get_arg<0>().deep_copy();
+    auto&& then_copy = this->template get_arg<1>().deep_copy();
+    auto&& else_copy = this->template get_arg<2>().deep_copy();
     return select_<std::remove_reference_t<decltype(condition_copy)>,
                    std::remove_reference_t<decltype(then_copy)>,
                    std::remove_reference_t<decltype(else_copy)>>(
@@ -84,33 +85,46 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
   }
 
   /**
-   * generates kernel code for this (select) operation.
-   * @param i row index variable name
-   * @param j column index variable name
+   * Generates kernel code for this (select) operation.
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
+   * @param view_handled whether whether caller already handled matrix view
    * @param var_name_condition variable name of the condition expression
    * @param var_name_else variable name of the then expression
    * @param var_name_then variable name of the else expression
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& i, const std::string& j,
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
+                               const bool view_handled,
                                const std::string& var_name_condition,
                                const std::string& var_name_then,
                                const std::string& var_name_else) const {
     kernel_parts res{};
-    res.body = type_str<Scalar>() + " " + var_name + " = " + var_name_condition
+    res.body = type_str<Scalar>() + " " + var_name_ + " = " + var_name_condition
                + " ? " + var_name_then + " : " + var_name_else + ";\n";
     return res;
   }
 
   /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
+   * Determine indices of extreme sub- and superdiagonals written.
+   * @return pair of indices - bottom and top diagonal
    */
-  inline matrix_cl_view view() const {
-    matrix_cl_view condition_view = std::get<0>(arguments_).view();
-    matrix_cl_view then_view = std::get<1>(arguments_).view();
-    matrix_cl_view else_view = std::get<2>(arguments_).view();
-    return both(either(then_view, else_view), both(condition_view, then_view));
+  inline std::pair<int, int> extreme_diagonals() const {
+    using std::max;
+    using std::min;
+    std::pair<int, int> condition_diags
+        = this->template get_arg<0>().extreme_diagonals();
+    std::pair<int, int> then_diags
+        = this->template get_arg<1>().extreme_diagonals();
+    std::pair<int, int> else_diags
+        = this->template get_arg<2>().extreme_diagonals();
+    // Where the condition is 0 we get else's values. Otherwise we get the more
+    // extreme of then's and else's.
+    return {max(min(then_diags.first, else_diags.first),
+                min(condition_diags.first, else_diags.first)),
+            min(max(then_diags.second, else_diags.second),
+                max(condition_diags.second, else_diags.second))};
   }
 };
 
@@ -125,9 +139,10 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
  * @param els else expression
  * @return selection operation expression
  */
-template <typename T_condition, typename T_then, typename T_else,
-          typename
-          = require_all_valid_expressions_t<T_condition, T_then, T_else>>
+template <
+    typename T_condition, typename T_then, typename T_else,
+    require_all_kernel_expressions_t<T_condition, T_then, T_else>* = nullptr,
+    require_any_not_arithmetic_t<T_condition, T_then, T_else>* = nullptr>
 inline select_<as_operation_cl_t<T_condition>, as_operation_cl_t<T_then>,
                as_operation_cl_t<T_else>>
 select(T_condition&& condition, T_then&& then, T_else&& els) {  // NOLINT
@@ -135,7 +150,7 @@ select(T_condition&& condition, T_then&& then, T_else&& els) {  // NOLINT
           as_operation_cl(std::forward<T_then>(then)),
           as_operation_cl(std::forward<T_else>(els))};
 }
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 #endif

@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 
 namespace stan {
 namespace math {
@@ -14,18 +15,16 @@ template <typename T_y, typename T_inv_scale>
 return_type_t<T_y, T_inv_scale> exponential_lccdf(const T_y& y,
                                                   const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_inv_scale>;
-
   static const char* function = "exponential_lccdf";
-
-  T_partials_return ccdf_log(0.0);
-  if (size_zero(y, beta)) {
-    return ccdf_log;
-  }
-
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_positive_finite(function, "Inverse scale parameter", beta);
 
+  if (size_zero(y, beta)) {
+    return 0;
+  }
+
+  T_partials_return ccdf_log(0.0);
   operands_and_partials<T_y, T_inv_scale> ops_partials(y, beta);
 
   scalar_seq_view<T_y> y_vec(y);

@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -26,7 +28,6 @@ namespace math {
      \textrm{NaN} & \mbox{if } y = \textrm{NaN}
    \end{cases}
    \f]
-
    \f[
    \frac{\partial\, \mbox{inv\_cloglog}(y)}{\partial y} =
    \begin{cases}
@@ -34,11 +35,9 @@ namespace math {
  -\infty\leq y\leq \infty \\[6pt] \textrm{NaN} & \mbox{if } y = \textrm{NaN}
    \end{cases}
    \f]
-
    \f[
    \mbox{cloglog}^{-1}(y) = 1 - \exp \left( - \exp(y) \right)
    \f]
-
    \f[
    \frac{\partial \, \mbox{cloglog}^{-1}(y)}{\partial y} = \exp(y-\exp(y))
    \f]
@@ -68,39 +67,29 @@ struct inv_cloglog_fun {
 /**
  * Vectorized version of inv_cloglog().
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x container
  * @return 1 - exp(-exp()) applied to each value in x.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
-inline auto inv_cloglog(const T& x) {
-  return apply_scalar_unary<inv_cloglog_fun, T>::apply(x);
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+inline auto inv_cloglog(const Container& x) {
+  return apply_scalar_unary<inv_cloglog_fun, Container>::apply(x);
 }
 
 /**
- * Version of inv_cloglog() that accepts Eigen Matrix or matrix expressions.
+ * Version of inv_cloglog() that accepts std::vectors, Eigen Matrix/Array
+ * objects or expressions, and containers of these.
  *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
+ * @tparam Container Type of x
+ * @param x Container
  * @return 1 - exp(-exp()) applied to each value in x.
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto inv_cloglog(const Eigen::MatrixBase<Derived>& x) {
-  return (1 - exp(-exp(x.derived().array()))).matrix().eval();
-}
-
-/**
- * Version of inv_cloglog() that accepts Eigen Array or array expressions.
- *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
- * @return 1 - exp(-exp()) applied to each value in x.
- */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto inv_cloglog(const Eigen::ArrayBase<Derived>& x) {
-  return (1 - exp(-exp(x.derived()))).eval();
+template <typename Container,
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
+inline auto inv_cloglog(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [](const auto& v) { return 1 - (-v.array().exp()).exp(); });
 }
 
 }  // namespace math

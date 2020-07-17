@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
 
 namespace stan {
@@ -32,22 +33,19 @@ return_type_t<T_y, T_shape, T_scale> weibull_lcdf(const T_y& y,
                                                   const T_shape& alpha,
                                                   const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
-
-  static const char* function = "weibull_lcdf";
-
   using std::exp;
   using std::log;
   using std::pow;
+  static const char* function = "weibull_lcdf";
+  check_nonnegative(function, "Random variable", y);
+  check_positive_finite(function, "Shape parameter", alpha);
+  check_positive_finite(function, "Scale parameter", sigma);
 
   if (size_zero(y, alpha, sigma)) {
     return 0.0;
   }
 
   T_partials_return cdf_log(0.0);
-  check_nonnegative(function, "Random variable", y);
-  check_positive_finite(function, "Shape parameter", alpha);
-  check_positive_finite(function, "Scale parameter", sigma);
-
   operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
 
   scalar_seq_view<T_y> y_vec(y);
