@@ -6,6 +6,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/squared_distance.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <vector>
 
@@ -120,7 +121,7 @@ template <
     require_all_eigen_vector_vt<is_var, EigVecVar1, EigVecVar2>* = nullptr>
 inline var squared_distance(const EigVecVar1& v1, const EigVecVar2& v2) {
   check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-  return {new internal::squared_distance_vv_vari(v1, v2)};
+  return {new internal::squared_distance_vv_vari(to_ref(v1), to_ref(v2))};
 }
 
 template <typename EigVecVar, typename EigVecArith,
@@ -128,7 +129,7 @@ template <typename EigVecVar, typename EigVecArith,
           require_eigen_vector_vt<std::is_arithmetic, EigVecArith>* = nullptr>
 inline var squared_distance(const EigVecVar& v1, const EigVecArith& v2) {
   check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-  return {new internal::squared_distance_vd_vari(v1, v2)};
+  return {new internal::squared_distance_vd_vari(to_ref(v1), to_ref(v2))};
 }
 
 template <typename EigVecArith, typename EigVecVar,
@@ -136,7 +137,7 @@ template <typename EigVecArith, typename EigVecVar,
           require_eigen_vector_vt<is_var, EigVecVar>* = nullptr>
 inline var squared_distance(const EigVecArith& v1, const EigVecVar& v2) {
   check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-  return {new internal::squared_distance_vd_vari(v2, v1)};
+  return {new internal::squared_distance_vd_vari(to_ref(v2), to_ref(v1))};
 }
 
 }  // namespace math

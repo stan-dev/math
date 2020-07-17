@@ -1,4 +1,5 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <limits>
@@ -33,11 +34,8 @@ TEST(MathMatrixPrimArr, value_of) {
   vector<double> d_a = value_of(a);
   vector<double> d_b = value_of(b);
 
-  for (int i = 0; i < 5; ++i)
-    EXPECT_FLOAT_EQ(b[i], d_b[i]);
-
-  for (int i = 0; i < 10; ++i)
-    EXPECT_FLOAT_EQ(a[i], d_a[i]);
+  EXPECT_STD_VECTOR_FLOAT_EQ(a, d_a);
+  EXPECT_STD_VECTOR_FLOAT_EQ(b, d_b);
 }
 
 TEST(MathFunctions, value_of_int_return_type_short_circuit) {
@@ -73,12 +71,91 @@ TEST(MathMatrixPrimMat, value_of) {
   Eigen::MatrixXd d_a = value_of(a);
   Eigen::VectorXd d_b = value_of(b);
 
-  for (int i = 0; i < 5; ++i)
-    EXPECT_FLOAT_EQ(b(i), d_b(i));
+  EXPECT_MATRIX_FLOAT_EQ(a, d_a);
+  EXPECT_MATRIX_FLOAT_EQ(b, d_b);
+}
 
-  for (int i = 0; i < 2; ++i)
-    for (int j = 0; j < 5; ++j)
-      EXPECT_FLOAT_EQ(a(i, j), d_a(i, j));
+TEST(MathFunctions, value_of_vector_of_vectors) {
+  std::vector<double> a(5, 0);
+  const std::vector<double> b(5, 0);
+  std::vector<std::vector<double>> va(5, a);
+  const std::vector<std::vector<double>> vb(5, b);
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(va)),
+                            std::vector<std::vector<double>>&>::value));
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(vb)),
+                            const std::vector<std::vector<double>>&>::value));
+
+  auto vva = stan::math::value_of(va);
+  auto vvb = stan::math::value_of(va);
+
+  for (size_t i = 0; i < va.size(); ++i) {
+    for (size_t j = 0; j < va[i].size(); ++j) {
+      EXPECT_FLOAT_EQ(vva[i][j], a[j]);
+    }
+  }
+
+  for (size_t i = 0; i < vb.size(); ++i) {
+    for (size_t j = 0; j < vb[i].size(); ++j) {
+      EXPECT_FLOAT_EQ(vvb[i][j], b[j]);
+    }
+  }
+}
+
+TEST(MathFunctions, value_of_vector_of_eigen) {
+  Eigen::VectorXd a = Eigen::VectorXd::Random(5);
+  Eigen::RowVectorXd b = Eigen::RowVectorXd::Random(5);
+  Eigen::MatrixXd c = Eigen::MatrixXd::Random(5, 5);
+  std::vector<Eigen::VectorXd> va(5, a);
+  std::vector<Eigen::RowVectorXd> vb(5, b);
+  std::vector<Eigen::MatrixXd> vc(5, c);
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(va)),
+                            std::vector<Eigen::VectorXd>&>::value));
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(vb)),
+                            std::vector<Eigen::RowVectorXd>&>::value));
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(vc)),
+                            std::vector<Eigen::MatrixXd>&>::value));
+
+  auto vva = stan::math::value_of(va);
+  auto vvb = stan::math::value_of(vb);
+  auto vvc = stan::math::value_of(vc);
+
+  for (size_t i = 0; i < vva.size(); ++i)
+    EXPECT_MATRIX_FLOAT_EQ(vva[i], a);
+
+  for (size_t i = 0; i < vvb.size(); ++i)
+    EXPECT_MATRIX_FLOAT_EQ(vvb[i], b);
+
+  for (size_t i = 0; i < vvc.size(); ++i)
+    EXPECT_MATRIX_FLOAT_EQ(vvc[i], c);
+}
+
+TEST(MathMatrixPrimMat, value_of_expression) {
+  using stan::math::value_of;
+
+  Eigen::MatrixXd a = Eigen::MatrixXd::Random(5, 4);
+  Eigen::MatrixXd res_a = value_of(2 * a);
+  Eigen::MatrixXd correct_a = 2 * a;
+  EXPECT_MATRIX_EQ(correct_a, res_a);
+
+  Eigen::VectorXi b = Eigen::VectorXi::Random(7);
+  Eigen::VectorXi res_b = value_of(2 * b);
+  Eigen::VectorXi correct_b = 2 * b;
+  EXPECT_TYPED_MATRIX_EQ(correct_b, res_b, int);
+
+  Eigen::ArrayXXd c = a.array();
+  Eigen::ArrayXXd res_c = value_of(2 * c);
+  Eigen::ArrayXXd correct_c = 2 * c;
+  for (int i = 0; i < res_c.size(); i++)
+    EXPECT_EQ(correct_c(i), res_c(i));
+}
+
+TEST(MathFunctions, value_of_return_type_short_circuit_std_vector) {
+  std::vector<double> a(5);
+  const std::vector<double> b(5);
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(a)),
+                            std::vector<double>&>::value));
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(b)),
+                            const std::vector<double>&>::value));
 }
 
 TEST(MathFunctions, value_of_return_type_short_circuit_vector_xd) {
@@ -110,6 +187,15 @@ TEST(MathFunctions, value_of_return_type_short_circuit_matrix_xd) {
   EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(b)),
                             const Eigen::Matrix<double, Eigen::Dynamic,
                                                 Eigen::Dynamic>&>::value));
+}
+
+TEST(MathFunctions, value_of_return_type_short_circuit_expression) {
+  const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> a(5, 4);
+
+  const auto& expr = 3 * a;
+
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(expr)),
+                            decltype(expr)>::value));
 }
 
 TEST(MathFunctions, value_of_return_type_short_circuit_static_sized_matrix) {

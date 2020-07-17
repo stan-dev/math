@@ -2,10 +2,9 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-
 TEST(ProbDistributionsMultiGP, MultiGP) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, 1> mu(5, 1);
   mu.setZero();
 
@@ -31,6 +30,8 @@ TEST(ProbDistributionsMultiGP, MultiGP) {
 }
 
 TEST(ProbDistributionsMultiGP, ErrorSigma) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, Dynamic> y(3, 5);
   y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
       -2.0, -11.0;
@@ -54,6 +55,8 @@ TEST(ProbDistributionsMultiGP, ErrorSigma) {
 }
 
 TEST(ProbDistributionsMultiGP, ErrorW) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, Dynamic> y(3, 5);
   y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
       -2.0, -11.0;
@@ -79,6 +82,8 @@ TEST(ProbDistributionsMultiGP, ErrorW) {
 }
 
 TEST(ProbDistributionsMultiGP, ErrorY) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, Dynamic> y(3, 5);
   y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
       -2.0, -11.0;

@@ -118,11 +118,9 @@ struct algebra_solver_vari : public vari {
  * @throw <code>std::invalid_argument</code> if function_tolerance is strictly
  * negative.
  * @throw <code>std::invalid_argument</code> if max_num_steps is not positive.
- * @throw <code>boost::math::evaluation_error</code> (which is a subclass of
- * <code>std::runtime_error</code>) if solver exceeds max_num_steps.
- * @throw <code>boost::math::evaluation_error</code> (which is a subclass of
- * <code>std::runtime_error</code>) if the norm of the solution exceeds the
- * function tolerance.
+ * @throw <code>std::domain_error</code> solver exceeds max_num_steps.
+ * @throw <code>std::domain_error</code> if the norm of the solution exceeds
+ * the function tolerance.
  */
 template <typename F, typename T>
 Eigen::VectorXd algebra_solver_powell(
@@ -157,22 +155,21 @@ Eigen::VectorXd algebra_solver_powell(
 
   // Check if the max number of steps has been exceeded
   if (solver.nfev >= max_num_steps) {
-    std::ostringstream message;
-    message << "algebra_solver: max number of iterations: " << max_num_steps
-            << " exceeded.";
-    throw boost::math::evaluation_error(message.str());
+    throw_domain_error("algebra_solver", "maximum number of iterations",
+                       max_num_steps, "(", ") was exceeded in the solve.");
   }
 
   // Check solution is a root
   double system_norm = fx.get_value(theta_dbl).stableNorm();
   if (system_norm > function_tolerance) {
-    std::ostringstream message2;
-    message2 << "algebra_solver: the norm of the algebraic function is: "
-             << system_norm << " but should be lower than the function "
-             << "tolerance: " << function_tolerance << ". Consider "
-             << "decreasing the relative tolerance and increasing the "
-             << "max_num_steps.";
-    throw boost::math::evaluation_error(message2.str());
+    std::ostringstream message;
+    message << "the norm of the algebraic function is " << system_norm
+            << " but should be lower than the function "
+            << "tolerance:";
+    throw_domain_error("algebra_solver", message.str().c_str(),
+                       function_tolerance, "",
+                       ". Consider decreasing the relative tolerance and "
+                       "increasing max_num_steps.");
   }
 
   return theta_dbl;
@@ -219,11 +216,9 @@ Eigen::VectorXd algebra_solver_powell(
  * @throw <code>std::invalid_argument</code> if function_tolerance is strictly
  * negative.
  * @throw <code>std::invalid_argument</code> if max_num_steps is not positive.
- * @throw <code>boost::math::evaluation_error</code> (which is a subclass of
- * <code>std::runtime_error</code>) if solver exceeds max_num_steps.
- * @throw <code>boost::math::evaluation_error</code> (which is a subclass of
- * <code>std::runtime_error</code>) if the norm of the solution exceeds the
- * function tolerance.
+ * @throw <code>std::domain_error</code> solver exceeds max_num_steps.
+ * @throw <code>std::domain_error</code> if the norm of the solution exceeds
+ * the function tolerance.
  */
 template <typename F, typename T1, typename T2>
 Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_powell(
@@ -299,9 +294,9 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_powell(
  * negative.
  * @throw <code>std::invalid_argument</code> if max_num_steps is not positive.
  * @throw <code>boost::math::evaluation_error</code> (which is a subclass of
- * <code>std::runtime_error</code>) if solver exceeds max_num_steps.
+ * <code>std::domain_error</code>) if solver exceeds max_num_steps.
  * @throw <code>boost::math::evaluation_error</code> (which is a subclass of
- * <code>std::runtime_error</code>) if the norm of the solution exceeds the
+ * <code>std::domain_error</code>) if the norm of the solution exceeds the
  * function tolerance.
  */
 template <typename F, typename T1, typename T2>

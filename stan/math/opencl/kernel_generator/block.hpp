@@ -9,7 +9,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl_lhs.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <set>
 #include <string>
 #include <tuple>
@@ -35,8 +35,9 @@ class block_
  public:
   using Scalar = typename std::remove_reference_t<T>::Scalar;
   using base = operation_cl_lhs<block_<T>, Scalar, T>;
-  using base::var_name;
+  using base::var_name_;
   using view_transitivity = std::tuple<std::true_type>;
+  using base::operator=;
 
  protected:
   int start_row_, start_col_, rows_, cols_;
@@ -56,9 +57,25 @@ class block_
         start_col_(start_col),
         rows_(rows),
         cols_(cols) {
+    if (start_col < 0) {
+      invalid_argument("block", "start_col", start_col,
+                       " should be non-negative, but is ");
+    }
+    if (start_row < 0) {
+      invalid_argument("block", "start_row", start_row,
+                       " should be non-negative, but is ");
+    }
+    if (rows < 0) {
+      invalid_argument("block", "rows", rows,
+                       " should be non-negative, but is ");
+    }
+    if (cols < 0) {
+      invalid_argument("block", "cols", cols,
+                       " should be non-negative, but is ");
+    }
     if ((a.rows() != base::dynamic && (start_row + rows) > a.rows())
         || (a.cols() != base::dynamic && (start_col + cols) > a.cols())) {
-      throw_domain_error("block", "block of \"a\"", " is out of bounds", "");
+      invalid_argument("block", "block of \"a\"", " is out of bounds", "");
     }
   }
 
@@ -74,31 +91,33 @@ class block_
 
   /**
    * Generates kernel code for this expression.
-   * @param i row index variable name
-   * @param j column index variable name
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
    * @param view_handled whether whether caller already handled matrix view
    * @param var_name_arg name of the variable in kernel that holds argument to
    * this expression
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& i, const std::string& j,
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
                                const bool view_handled,
                                const std::string& var_name_arg) const {
     kernel_parts res;
     res.body
-        = type_str<Scalar>() + " " + var_name + " = " + var_name_arg + ";\n";
-    res.args = "int " + var_name + "_i, int " + var_name + "_j, ";
+        = type_str<Scalar>() + " " + var_name_ + " = " + var_name_arg + ";\n";
+    res.args = "int " + var_name_ + "_i, int " + var_name_ + "_j, ";
     return res;
   }
 
   /**
    * Sets offset of block to indices of the argument expression
-   * @param[in, out] i row index
-   * @param[in, out] j column index
+   * @param[in, out] row_index_name row index
+   * @param[in, out] col_index_name column index
    */
-  inline void modify_argument_indices(std::string& i, std::string& j) const {
-    i = "(" + i + " + " + var_name + "_i)";
-    j = "(" + j + " + " + var_name + "_j)";
+  inline void modify_argument_indices(std::string& row_index_name,
+                                      std::string& col_index_name) const {
+    row_index_name = "(" + row_index_name + " + " + var_name_ + "_i)";
+    col_index_name = "(" + col_index_name + " + " + var_name_ + "_j)";
   }
 
   /**
@@ -113,7 +132,7 @@ class block_
   inline kernel_parts generate_lhs(const std::string& i, const std::string& j,
                                    const std::string& var_name_arg) const {
     kernel_parts res;
-    res.args = "int " + var_name + "_i, int " + var_name + "_j, ";
+    res.args = "int " + var_name_ + "_i, int " + var_name_ + "_j, ";
     return res;
   }
 
@@ -182,23 +201,6 @@ class block_
   }
 
   /**
-   * Evaluates an expression and assigns it to the block.
-   * @tparam T_expression type of expression
-   * @param rhs input expression
-   */
-  template <typename T_expression,
-            typename
-            = require_all_valid_expressions_and_none_scalar_t<T_expression>>
-  const block_<T>& operator=(T_expression&& rhs) const {
-    auto expression = as_operation_cl(std::forward<T_expression>(rhs));
-    if (rows_ * cols_ == 0) {
-      return *this;
-    }
-    expression.evaluate_into(*this);
-    return *this;
-  }
-
-  /**
    * Checks if desired dimensions match dimensions of the block.
    * @param rows desired number of rows
    * @param cols desired number of columns
@@ -232,7 +234,7 @@ class block_
  * @return Block of given expression
  */
 template <typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
 inline auto block(T&& a, int start_row, int start_col, int rows, int cols) {
   auto&& a_operation = as_operation_cl(std::forward<T>(a)).deep_copy();
   return block_<std::remove_reference_t<decltype(a_operation)>>(

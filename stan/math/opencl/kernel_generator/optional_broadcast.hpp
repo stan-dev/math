@@ -8,7 +8,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <limits>
 #include <string>
 #include <type_traits>
@@ -33,7 +33,7 @@ class optional_broadcast_
   using Scalar = typename std::remove_reference_t<T>::Scalar;
   using base
       = operation_cl<optional_broadcast_<T, Colwise, Rowwise>, Scalar, T>;
-  using base::var_name;
+  using base::var_name_;
 
   /**
    * Constructor
@@ -52,7 +52,7 @@ class optional_broadcast_
   }
 
   /**
-   * generates kernel code for this and nested expressions.
+   * Generates kernel code for this and nested expressions.
    * @param row_idx_name  row index variable name
    * @param col_idx_name  column index variable name
    * @param view_handled whether whether caller already handled matrix view
@@ -66,12 +66,12 @@ class optional_broadcast_
                                const std::string& var_name_arg) const {
     kernel_parts res;
     res.body
-        += type_str<Scalar>() + " " + var_name + " = " + var_name_arg + ";\n";
+        += type_str<Scalar>() + " " + var_name_ + " = " + var_name_arg + ";\n";
     if (Colwise) {
-      res.args += "int " + var_name + "is_multirow, ";
+      res.args += "int " + var_name_ + "is_multirow, ";
     }
     if (Rowwise) {
-      res.args += "int " + var_name + "is_multicol, ";
+      res.args += "int " + var_name_ + "is_multicol, ";
     }
     return res;
   }
@@ -84,10 +84,10 @@ class optional_broadcast_
   inline void modify_argument_indices(std::string& row_idx_name,
                                       std::string& col_idx_name) const {
     if (Colwise) {
-      row_idx_name = "(" + row_idx_name + " * " + var_name + "is_multirow)";
+      row_idx_name = "(" + row_idx_name + " * " + var_name_ + "is_multirow)";
     }
     if (Rowwise) {
-      col_idx_name = "(" + col_idx_name + " * " + var_name + "is_multicol)";
+      col_idx_name = "(" + col_idx_name + " * " + var_name_ + "is_multicol)";
     }
   }
 
@@ -193,7 +193,7 @@ class optional_broadcast_
  * @return broadcast expression
  */
 template <bool Colwise, bool Rowwise, typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
 inline optional_broadcast_<as_operation_cl_t<T>, Colwise, Rowwise>
 optional_broadcast(T&& a) {
   auto&& a_operation = as_operation_cl(std::forward<T>(a)).deep_copy();
@@ -214,7 +214,7 @@ optional_broadcast(T&& a) {
  * @return broadcast expression
  */
 template <typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
 inline auto rowwise_optional_broadcast(T&& a) {
   return optional_broadcast<false, true>(std::forward<T>(a));
 }
@@ -232,7 +232,7 @@ inline auto rowwise_optional_broadcast(T&& a) {
  * @return broadcast expression
  */
 template <typename T,
-          typename = require_all_valid_expressions_and_none_scalar_t<T>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
 inline auto colwise_optional_broadcast(T&& a) {
   return optional_broadcast<true, false>(std::forward<T>(a));
 }

@@ -26,6 +26,8 @@ def deleteDirWin() {
 }
 
 def skipRemainingStages = false
+def runGpuAsync = false
+def openClGpuLabel = "gpu"
 
 def utils = new org.stan.Utils()
 
@@ -45,13 +47,10 @@ String stan_pr() { params.stan_pr ?: ( env.CHANGE_TARGET == "master" ? "downstre
 pipeline {
     agent none
     parameters {
-        string(defaultValue: '', name: 'cmdstan_pr',
-          description: 'PR to test CmdStan upstream against e.g. PR-630')
-        string(defaultValue: '', name: 'stan_pr',
-          description: 'PR to test Stan upstream against e.g. PR-630')
-        booleanParam(defaultValue: false, description:
-        'Run additional distribution tests on RowVectors (takes 5x as long)',
-        name: 'withRowVector')
+        string(defaultValue: '', name: 'cmdstan_pr', description: 'PR to test CmdStan upstream against e.g. PR-630')
+        string(defaultValue: '', name: 'stan_pr', description: 'PR to test Stan upstream against e.g. PR-630')
+        booleanParam(defaultValue: false, name: 'withRowVector', description: 'Run additional distribution tests on RowVectors (takes 5x as long)')
+        booleanParam(defaultValue: false, name: 'gpu_async', description: 'Run the OpenCL tests on both a sync (AMD) GPU and an async (NVIDIA) one.')
     }
     options {
         skipDefaultCheckout()
@@ -157,6 +156,14 @@ pipeline {
 
                     def paths = ['stan', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format'].join(" ")
                     skipRemainingStages = utils.verifyChanges(paths)
+
+                    if(!utils.verifyChanges(["stan/math/opencl", "test/unit/math/opencl"].join(" ")) || params.gpu_async){
+                        runGpuAsync = true
+                        openClGpuLabel = "gpu-no-async"
+                    }
+                    else{
+                        runGpuAsync = false
+                    }
                 }
             }
         }
@@ -175,15 +182,29 @@ pipeline {
             }
             post { always { deleteDir() } }
         }
-        stage('Linux Unit with MPI') {
-            agent { label 'linux && mpi' }
+        stage('Full Unit Tests') {
+            agent any
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
             steps {
-                deleteDir()
-                unstash 'MathSetup'
-                sh "echo CXX=${MPICXX} >> make/local"
-                sh "echo CXX_TYPE=gcc >> make/local"
-                sh "echo STAN_MPI=true >> make/local"
-                runTests("test/unit")
+                script {
+                    if (isUnix()) {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        runTests("test/unit/math/prim")
+                        runTests("test/unit/math/rev")
+                        runTests("test/unit")
+                    } else {
+                        deleteDirWin()
+                        unstash 'MathSetup'
+                        runTestsWin("test/unit/math/prim")
+                        runTestsWin("test/unit/math/rev")
+                        runTestsWin("test/unit")
+                    }
+                }
             }
             post { always { retry(3) { deleteDir() } } }
         }
@@ -194,8 +215,21 @@ pipeline {
                 }
             }
             parallel {
-                stage('Full unit with GPU') {
-                    agent { label "gpu" }
+                stage('MPI tests') {
+                    agent { label 'linux && mpi' }
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh "echo CXX=${MPICXX} >> make/local"
+                        sh "echo CXX_TYPE=gcc >> make/local"
+                        sh "echo STAN_MPI=true >> make/local"
+                        runTests("test/unit/math/prim/functor")
+                        runTests("test/unit/math/rev/functor")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('OpenCL tests') {
+                    agent { label openClGpuLabel }
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
@@ -204,10 +238,41 @@ pipeline {
                         sh "echo OPENCL_PLATFORM_ID=0>> make/local"
                         sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
                         sh "make -j${env.PARALLEL} test-headers"
-                        runTests("test/unit")
+                        runTests("test/unit/math/opencl")
+                        runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test")
+                        runTests("test/unit/math/prim/fun/mdivide_left_tri_test")
+                        runTests("test/unit/math/prim/fun/mdivide_right_tri_test")
+                        runTests("test/unit/math/prim/fun/multiply_test")
+                        runTests("test/unit/math/rev/fun/mdivide_left_tri_test")
+                        runTests("test/unit/math/rev/fun/multiply_test")
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
+                // stage('OpenCL tests async') {
+                //     agent { label "gpu-async" }
+                //     when {
+                //         expression {
+                //             runGpuAsync
+                //         }
+                //     }
+                //     steps {
+                //         deleteDir()
+                //         unstash 'MathSetup'
+                //         sh "echo CXX=${env.CXX} -Werror > make/local"
+                //         sh "echo STAN_OPENCL=true>> make/local"
+                //         sh "echo OPENCL_PLATFORM_ID=0>> make/local"
+                //         sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
+                //         sh "make -j${env.PARALLEL} test-headers"
+                //         runTests("test/unit/math/opencl")
+                //         runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test")
+                //         runTests("test/unit/math/prim/fun/mdivide_left_tri_test")
+                //         runTests("test/unit/math/prim/fun/mdivide_right_tri_test")
+                //         runTests("test/unit/math/prim/fun/multiply_test")
+                //         runTests("test/unit/math/rev/fun/mdivide_left_tri_test")
+                //         runTests("test/unit/math/rev/fun/multiply_test")
+                //     }
+                //     post { always { retry(3) { deleteDir() } } }
+                // }
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
                     steps {
@@ -238,14 +303,28 @@ pipeline {
                 stage('Threading tests') {
                     agent any
                     steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CXX=${env.CXX} -Werror > make/local"
-                        sh "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
-                        sh "export STAN_NUM_THREADS=4"
-                        runTests("test/unit -f thread")
-                        sh "find . -name *_test.xml | xargs rm"
-                        runTests("test/unit -f map_rect")
+                        script {
+                            if (isUnix()) {
+                                deleteDir()
+                                unstash 'MathSetup'
+                                sh "echo CXX=${env.CXX} -Werror > make/local"
+                                sh "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
+                                sh "export STAN_NUM_THREADS=4"
+                                runTests("test/unit -f thread")
+                                sh "find . -name *_test.xml | xargs rm"
+                                runTests("test/unit -f map_rect")
+                                sh "find . -name *_test.xml | xargs rm"
+                                runTests("test/unit -f reduce_sum")                            
+                            } else {
+                                deleteDirWin()
+                                unstash 'MathSetup'
+                                bat "echo CXX=${env.CXX} -Werror > make/local"
+                                bat "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
+                                runTestsWin("test/unit -f thread", false)
+                                runTestsWin("test/unit -f map_rect", false)
+                                runTestsWin("test/unit -f reduce_sum", false)
+                            }
+                        }                      
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
@@ -257,17 +336,6 @@ pipeline {
                         bat "mingw32-make.exe -f make/standalone math-libs"
                         bat "mingw32-make -j${env.PARALLEL} test-headers"
                         runTestsWin("test/unit", false)
-                    }
-                }
-                stage('Windows Threading') {
-                    agent { label 'windows' }
-                    steps {
-                        deleteDirWin()
-                        unstash 'MathSetup'
-                        bat "echo CXX=${env.CXX} -Werror > make/local"
-                        bat "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
-                        runTestsWin("test/unit -f thread")
-                        runTestsWin("test/unit -f map_rect")
                     }
                 }
             }
