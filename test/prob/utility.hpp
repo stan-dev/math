@@ -596,7 +596,7 @@ typename scalar_type<T>::type select_var_param(
     const vector<vector<double>>& parameters, const size_t n, const size_t p) {
   typename scalar_type<T>::type param(0);
   if (p < parameters[0].size()) {
-    if (!is_vector<T>::value && !is_constant_all<T>::value)
+    if (!is_constant_all<T>::value)
       param = parameters[n][p];
     else
       param = parameters[0][p];
