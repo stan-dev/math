@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/value_type.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl_lhs.hpp>
 
