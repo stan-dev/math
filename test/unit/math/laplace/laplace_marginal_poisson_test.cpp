@@ -67,7 +67,7 @@ TEST(laplace, likelihood_differentiation2) {
 }
 
 TEST(laplace, poisson_lgm_dim2) {
-  using stan::math::laplace_marginal_poisson;
+  using stan::math::laplace_marginal_poisson_log;
   using stan::math::var;
   using stan::math::to_vector;
   using stan::math::value_of;
@@ -96,21 +96,21 @@ TEST(laplace, poisson_lgm_dim2) {
   std::vector<int> sums = {1, 0};
 
   squared_kernel_functor K;
-  var target = laplace_marginal_poisson(sums, n_samples, K, phi, x, delta,
-                                        delta_int, theta_0);
+  var target = laplace_marginal_poisson_log(sums, n_samples, K, phi, x, delta,
+                                            delta_int, theta_0);
 
   // Test with exposure argument
-  // Eigen::VectorXd exposure(2);
-  // exposure << 1, 1;
-  // var target = laplace_marginal_poisson(theta_0, phi, x, n_samples, sums,
-  //                                       exposure);
+  Eigen::VectorXd ye(2);
+  ye << 1, 1;
+  target = laplace_marginal_poisson_log(sums, n_samples, ye, K, phi, x, delta,
+                                        delta_int, theta_0);
 
   // How to test this? The best way would be to generate a few
   // benchmarks using gpstuff.
   VEC g;
   AVEC parm_vec = createAVEC(phi(0), phi(1));
   target.grad(parm_vec, g);
-/*
+
   // finite diff test
   double diff = 1e-7;
   Eigen::VectorXd phi_dbl = value_of(phi);
@@ -121,14 +121,14 @@ TEST(laplace, poisson_lgm_dim2) {
   phi_2l(1) -= diff;
   phi_2u(1) += diff;
 
-  double target_1u = laplace_marginal_poisson(sums, n_samples, phi_1u, x,
-                                              delta,  delta_int, theta_0),
-         target_1l = laplace_marginal_poisson(sums, n_samples, phi_1l, x,
-                                              delta,  delta_int, theta_0),
-         target_2u = laplace_marginal_poisson(sums, n_samples, phi_2u, x,
-                                              delta,  delta_int, theta_0),
-         target_2l = laplace_marginal_poisson(sums, n_samples, phi_2l, x,
-                                              delta,  delta_int, theta_0);
+  double target_1u = laplace_marginal_poisson_log(sums, n_samples, K, phi_1u, x,
+                                                  delta, delta_int, theta_0),
+         target_1l = laplace_marginal_poisson_log(sums, n_samples, K, phi_1l, x,
+                                              delta, delta_int, theta_0),
+         target_2u = laplace_marginal_poisson_log(sums, n_samples, K, phi_2u, x,
+                                              delta, delta_int, theta_0),
+         target_2l = laplace_marginal_poisson_log(sums, n_samples, K, phi_2l, x,
+                                              delta, delta_int, theta_0);
 
   VEC g_finite(dim_phi);
   g_finite[0] = (target_1u - target_1l) / (2 * diff);
@@ -136,5 +136,5 @@ TEST(laplace, poisson_lgm_dim2) {
 
   double tol = 1.1e-4;
   EXPECT_NEAR(g_finite[0], g[0], tol);
-  EXPECT_NEAR(g_finite[1], g[1], tol); */
+  EXPECT_NEAR(g_finite[1], g[1], tol);
 }
