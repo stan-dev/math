@@ -47,9 +47,9 @@ struct diagonal_kernel_functor {
 TEST(laplace, basic_rng) {
   // make sure the right covariance function is computed
   // and compare results.
-  using stan::math::laplace_approx_rng;
-  using stan::math::laplace_approx_poisson_rng;
-  using stan::math::laplace_approx_bernoulli_rng;
+  using stan::math::laplace_rng;
+  using stan::math::laplace_poisson_log_rng;
+  using stan::math::laplace_bernoulli_logit_rng;
   using stan::math::diff_poisson_log;
 
   using stan::math::algebra_solver;
@@ -132,15 +132,16 @@ TEST(laplace, basic_rng) {
   // Check calls to rng functions compile
   boost::random::mt19937 rng;
   Eigen::MatrixXd theta_pred
-   = laplace_approx_rng(diff_likelihood, covariance_function,
+   = laplace_rng(diff_likelihood, covariance_function,
                         sigma, x_dummy, d0, di0, theta_0,
                         rng);
 
   theta_pred
-    = laplace_approx_poisson_rng(sums, n_samples, covariance_function,
-                                 sigma, x_dummy, d0, di0, theta_0, rng);
+    = laplace_bernoulli_logit_rng(sums, n_samples, covariance_function,
+                                  sigma, x_dummay_mat, d0, di0, theta_0, rng);
 
+  // Bonus: make the distribution with a poisson rng also runs.
   theta_pred
-    = laplace_approx_bernoulli_rng(sums, n_samples, covariance_function,
-                                   sigma, x_dummay_mat, d0, di0, theta_0, rng);
+    = laplace_poisson_log_rng(sums, n_samples, covariance_function,
+                              sigma, x_dummy, d0, di0, theta_0, rng);
 }

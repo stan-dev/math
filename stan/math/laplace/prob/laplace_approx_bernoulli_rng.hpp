@@ -19,7 +19,7 @@ namespace math {
 template <typename K, typename T_phi, typename T_theta,
           typename T_x, class RNG>
 inline Eigen::VectorXd  // CHECK -- right return type
-  laplace_approx_bernoulli_rng
+  laplace_bernoulli_logit_rng
   (const std::vector<int>& y,
    const std::vector<int>& n_samples,
    const K& covariance_function,
@@ -33,9 +33,9 @@ inline Eigen::VectorXd  // CHECK -- right return type
    double tolerance = 1e-6,
    long int max_num_steps = 100) {
     return
-    laplace_approx_rng(diff_logistic_log(to_vector(n_samples), to_vector(y)),
-                       covariance_function, phi, x, delta, delta_int, theta_0,
-                       rng, msgs, tolerance, max_num_steps);
+    laplace_rng(diff_logistic_log(to_vector(n_samples), to_vector(y)),
+                covariance_function, phi, x, delta, delta_int, theta_0,
+                rng, msgs, tolerance, max_num_steps);
   }
 
 }  // namespace math

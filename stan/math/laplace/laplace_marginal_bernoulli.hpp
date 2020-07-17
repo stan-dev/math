@@ -1,4 +1,4 @@
-#ifndef STAN_MATH_LAPLACE_LAPLACE_MARGINAL_BERNOULLI_HPP
+ #ifndef STAN_MATH_LAPLACE_LAPLACE_MARGINAL_BERNOULLI_HPP
 #define STAN_MATH_LAPLACE_LAPLACE_MARGINAL_BERNOULLI_HPP
 
 #include <stan/math/laplace/laplace_marginal.hpp>
@@ -32,8 +32,9 @@ namespace math {
    * @param[in] max_num_steps maximum number of steps before the Newton solver
    *            breaks and returns an error.
    */
+  // TODO: deprecate the below function. No default functor.
   template <typename T0, typename T1>
-  T1 laplace_marginal_bernoulli
+  T1 laplace_marginal_bernoulli_logit
                (const std::vector<int>& y,
                 const std::vector<int>& n_samples,
                 // const K& covariance function,
@@ -54,7 +55,7 @@ namespace math {
 
   // Add signature that takes in a Kernel functor specified by the user.
   template <typename T0, typename T1, typename K>
-  T1 laplace_marginal_bernoulli
+  T1 laplace_marginal_bernoulli_logit
     (const std::vector<int>& y,
      const std::vector<int>& n_samples,
      const K& covariance_function,
@@ -75,7 +76,7 @@ namespace math {
 
   // Add signature that takes x as a matrix instead of a vector.
   template <typename T0, typename T1, typename K>
-  T1 laplace_marginal_bernoulli
+  T1 laplace_marginal_bernoulli_logit
     (const std::vector<int>& y,
      const std::vector<int>& n_samples,
      const K& covariance_function,

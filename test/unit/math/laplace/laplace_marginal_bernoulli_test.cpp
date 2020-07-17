@@ -1,8 +1,9 @@
 #include <stan/math.hpp>
 #include <stan/math/laplace/laplace_likelihood.hpp>
 #include <stan/math/laplace/laplace_marginal_bernoulli.hpp>
+#include <test/unit/math/laplace/laplace_utility.hpp>
 
-#include <test/unit/math/rev/laplace/laplace_utility.hpp>
+// #include <test/unit/math/rev/laplace/laplace_utility.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 
 #include <gtest/gtest.h>
@@ -166,21 +167,21 @@ TEST(laplace, logistic_lgm_dim500) {
   // TO DO -- get total time from GPStuff and do more comparisons.
 
   // CASE 3: use wrapper function and compare result.
-  using stan::math::laplace_marginal_bernoulli;
+  using stan::math::laplace_marginal_bernoulli_logit;
   using stan::math::value_of;
 
   double marginal_density_v2
-    = laplace_marginal_bernoulli(y, n_samples,
-                                 phi, x, delta, delta_int,
-                                 theta_0, 0, 1e-3, 100);
+    = laplace_marginal_bernoulli_logit(y, n_samples,
+                                       phi, x, delta, delta_int,
+                                       theta_0, 0, 1e-3, 100);
 
   EXPECT_FLOAT_EQ(marginal_density, marginal_density_v2);
 
   marginal_density_v2
-    = laplace_marginal_bernoulli(y, n_samples,
-                                 sqr_exp_kernel_functor(),
-                                 phi, x, delta, delta_int,
-                                 theta_0, 0, 1e-3, 100);
+    = laplace_marginal_bernoulli_logit(y, n_samples,
+                                       sqr_exp_kernel_functor(),
+                                       phi, x, delta, delta_int,
+                                       theta_0, 0, 1e-3, 100);
 
   EXPECT_FLOAT_EQ(marginal_density, marginal_density_v2);
 }
