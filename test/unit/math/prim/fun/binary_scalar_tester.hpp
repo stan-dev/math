@@ -324,7 +324,7 @@ void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
  * @param f functor to apply to inputs.
  */
 template <typename F, typename T1, typename T2,
-          require_any_std_vector_vt<std::is_integral, T1, T2>* = nullptr>
+          require_all_std_vector_vt<std::is_integral, T1, T2>* = nullptr>
 void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
   binary_scalar_tester_impl(f, x, y);
 }
