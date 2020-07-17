@@ -41,7 +41,7 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
   /**
    * Constructor.
    * @param function function name (for error messages)
-   * @param var_name variable name (for error messages)
+   * @param err_variabhle variable name (for error messages)
    * @param y variable to check (for error messages)
    * @param must_be description of what the value must be (for error messages)
    */
@@ -65,7 +65,6 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
    * @param name_gen name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
-   * @param view_handled whether caller already handled matrix view
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts_lhs(
