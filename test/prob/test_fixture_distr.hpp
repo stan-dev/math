@@ -253,7 +253,7 @@ class AgradDistributionTestFixture : public ::testing::Test {
                                                                    p3, p4, p5);
 
       EXPECT_NEAR(value_of_rec(reference_logprob_false - logprob_false),
-		  value_of_rec(reference_logprob_true - logprob_true), 1e-12)
+                  value_of_rec(reference_logprob_true - logprob_true), 1e-12)
           << "Proportional test failed at index: " << n << std::endl
           << "  reference params: " << parameters[0] << std::endl
           << "  current params:   " << parameters[n] << std::endl
