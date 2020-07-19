@@ -5,6 +5,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/value_type.hpp>
+#include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl_lhs.hpp>
 
 namespace stan {
