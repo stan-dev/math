@@ -38,7 +38,7 @@ inline auto trace_gen_quad_form(const TD& D, const TA& A, const TB& B) {
   check_square("trace_gen_quad_form", "D", D);
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
   check_multiplicable("trace_gen_quad_form", "B", B, "D", D);
-  const auto &B_ref = to_ref(B);
+  const auto& B_ref = to_ref(B);
   return multiply(B_ref, D.transpose()).cwiseProduct(multiply(A, B_ref)).sum();
 }
 
@@ -69,7 +69,7 @@ inline double trace_gen_quad_form(const EigMatD& D, const EigMatA& A,
   check_square("trace_gen_quad_form", "D", D);
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
   check_multiplicable("trace_gen_quad_form", "B", B, "D", D);
-  const auto &B_ref = to_ref(B);
+  const auto& B_ref = to_ref(B);
   return (B_ref * D.transpose()).cwiseProduct(A * B_ref).sum();
 }
 
