@@ -10,94 +10,40 @@ namespace stan {
 namespace math {
 
 /**
- * Return the value of the specified scalar argument
- * converted to a double value.
+ * Inputs that are arithmetic types or containers of airthmetric types
+ * are returned from value_of unchanged
  *
- * <p>See the <code>primitive_value</code> function to
- * extract values without casting to <code>double</code>.
- *
- * <p>This function is meant to cover the primitive types. For
- * types requiring pass-by-reference, this template function
- * should be specialized.
- *
- * @tparam T type of scalar.
- * @param x scalar to convert to double
- * @return value of scalar cast to double
- */
-template <typename T, require_arithmetic_t<T>* = nullptr>
-inline double value_of(const T x) {
-  return static_cast<double>(x);
+ * @tparam T Input type
+ * @param[in] x Input argument
+ * @return Forwarded input argument
+ **/
+template <typename T, require_st_arithmetic<T>* = nullptr>
+inline decltype(auto) value_of(T&& x) {
+  return std::forward<T>(x);
 }
 
 /**
- * Return the specified argument.
+ * For std::vectors of non-arithmetic types, return a std::vector composed
+ * of value_of applied to each element.
  *
- * <p>See <code>value_of(T)</code> for a polymorphic
- * implementation using static casts.
- *
- * <p>This inline pass-through no-op should be compiled away.
- *
- * @param x value
- * @return input value
- */
-template <>
-inline double value_of<double>(double x) {
-  return x;
-}
-
-/**
- * Return the specified argument.
- *
- * <p>See <code>value_of(T)</code> for a polymorphic
- * implementation using static casts.
- *
- * <p>This inline pass-through no-op should be compiled away.
- *
- * @param x value
- * @return input value
- */
-inline int value_of(int x) { return x; }
-
-/**
- * Convert a std::vector of type T to a std::vector of
- * child_type<T>::type.
- *
- * @tparam T Scalar type in std::vector
- * @param[in] x std::vector to be converted
+ * @tparam T Input element type
+ * @param[in] x Input std::vector
  * @return std::vector of values
  **/
-template <typename T, require_not_double_or_int_t<T>* = nullptr>
-inline std::vector<typename child_type<T>::type> value_of(
-    const std::vector<T>& x) {
-  size_t x_size = x.size();
-  std::vector<typename child_type<T>::type> result(x_size);
-  for (size_t i = 0; i < x_size; i++) {
-    result[i] = value_of(x[i]);
+template <typename T, require_not_st_arithmetic<T>* = nullptr>
+inline auto value_of(const std::vector<T>& x) {
+  std::vector<plain_type_t<decltype(value_of(std::declval<T>()))>> out;
+  out.reserve(x.size());
+  for (auto&& x_elem : x) {
+    out.emplace_back(value_of(x_elem));
   }
-  return result;
+  return out;
 }
 
 /**
- * Return the specified argument.
- *
- * <p>See <code>value_of(T)</code> for a polymorphic
- * implementation using static casts.
- *
- * <p>This inline pass-through no-op should be compiled away.
- *
- * @param x Specified std::vector.
- * @return Specified std::vector.
- */
-template <typename Vec, require_std_vector_vt<is_double_or_int, Vec>* = nullptr>
-inline decltype(auto) value_of(Vec&& x) {
-  return std::forward<Vec>(x);
-}
-
-/**
- * Convert a matrix of type T to a matrix of doubles.
- *
- * T must implement value_of. See
- * test/math/fwd/fun/value_of.cpp for fvar and var usage.
+ * For Eigen matrices and expressions of non-arithmetic types, return an
+ *expression that represents the Eigen::Matrix resulting from applying value_of
+ *elementwise
  *
  * @tparam EigMat type of the matrix
  *
@@ -105,29 +51,13 @@ inline decltype(auto) value_of(Vec&& x) {
  * @return Matrix of values
  **/
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
-          require_not_vt_double_or_int<EigMat>* = nullptr,
-          require_not_vt_var<EigMat>* = nullptr>
-inline auto value_of(const EigMat& M) {
-  return M.unaryExpr([](const auto& scal) { return value_of(scal); });
-}
-
-/**
- * Return the specified argument.
- *
- * <p>See <code>value_of(T)</code> for a polymorphic
- * implementation using static casts.
- *
- * <p>This inline pass-through no-op should be compiled away.
- *
- * @tparam EigMat type of the matrix
- *
- * @param x Specified matrix.
- * @return Specified matrix.
- */
-template <typename EigMat,
-          require_eigen_vt<is_double_or_int, EigMat>* = nullptr>
-inline decltype(auto) value_of(EigMat&& x) {
-  return std::forward<EigMat>(x);
+          require_not_st_arithmetic<EigMat>* = nullptr>
+inline auto value_of(EigMat&& M) {
+  return make_holder(
+      [](auto& a) {
+        return a.unaryExpr([](const auto& scal) { return value_of(scal); });
+      },
+      std::forward<EigMat>(M));
 }
 
 }  // namespace math

@@ -47,7 +47,7 @@ template <typename EigMat, typename T,
 inline auto unit_vector_constrain(const EigMat& y, T& lp) {
   const value_type_t<EigMat> squared_norm = dot_self(y);
   lp -= 0.5 * squared_norm;
-  return unit_vector_constrain(std::forward<EigMat>(y));
+  return unit_vector_constrain(y);
 }
 
 }  // namespace math

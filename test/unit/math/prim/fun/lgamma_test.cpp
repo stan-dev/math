@@ -23,8 +23,8 @@ TEST(MathFunctions, lgamma_nan) {
   // ensure that boost::math::lgamma contains the needed bugfixes we
   // test here specifically the boost::math::lgamma by testing for a
   // finite return for a large argument.
-  EXPECT_TRUE(
-      std::isnormal(boost::math::lgamma(1.0E50, stan::math::boost_policy_t())));
+  EXPECT_TRUE(std::isnormal(
+      boost::math::lgamma(1.0E50, stan::math::boost_policy_t<>())));
 }
 
 TEST(MathFunctions, lgamma_works_with_other_functions) {

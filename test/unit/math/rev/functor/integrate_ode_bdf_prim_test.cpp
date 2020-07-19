@@ -2,6 +2,7 @@
 #include <boost/numeric/odeint.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/prim/functor/harmonic_oscillator.hpp>
+#include <test/unit/math/rev/functor/coupled_mm.hpp>
 #include <test/unit/util.hpp>
 #include <iostream>
 #include <sstream>
@@ -116,7 +117,7 @@ TEST(StanMathOde_integrate_ode_bdf, error_conditions) {
   ts_bad.push_back(1);
   EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts_bad, theta, x, x_int,
                                      0, 1e-8, 1e-10, 1e6),
-                   std::domain_error, "times is not a valid ordered vector");
+                   std::domain_error, "times is not a valid sorted vector");
 
   // TODO(carpenter): g++6 failure
   std::vector<double> theta_bad;
@@ -138,15 +139,15 @@ TEST(StanMathOde_integrate_ode_bdf, error_conditions) {
 
   EXPECT_THROW_MSG(
       integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x, x_int, 0, -1, 1e-6, 10),
-      std::invalid_argument, "relative_tolerance");
+      std::domain_error, "relative_tolerance");
 
   EXPECT_THROW_MSG(
       integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x, x_int, 0, 1e-6, -1, 10),
-      std::invalid_argument, "absolute_tolerance");
+      std::domain_error, "absolute_tolerance");
 
   EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x, x_int, 0,
                                      1e-6, 1e-6, -1),
-                   std::invalid_argument, "max_num_steps");
+                   std::domain_error, "max_num_steps");
 }
 
 TEST(StanMathOde_integrate_ode_bdf, error_conditions_nan) {
@@ -206,7 +207,7 @@ TEST(StanMathOde_integrate_ode_bdf, error_conditions_nan) {
   theta_bad[0] = nan;
   EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta_bad, x, x_int,
                                      0, 1e-8, 1e-10, 1e6),
-                   std::domain_error, "parameter vector");
+                   std::domain_error, "ode parameters and data");
   EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta_bad, x, x_int,
                                      0, 1e-8, 1e-10, 1e6),
                    std::domain_error, expected_is_nan.str());
@@ -216,7 +217,7 @@ TEST(StanMathOde_integrate_ode_bdf, error_conditions_nan) {
     x_bad[0] = nan;
     EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x_bad,
                                        x_int, 0, 1e-8, 1e-10, 1e6),
-                     std::domain_error, "continuous data");
+                     std::domain_error, "ode parameters and data");
     EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x_bad,
                                        x_int, 0, 1e-8, 1e-10, 1e6),
                      std::domain_error, expected_is_nan.str());
@@ -303,14 +304,14 @@ TEST(StanMathOde_integrate_ode_bdf, error_conditions_inf) {
   theta_bad[0] = inf;
   EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta_bad, x, x_int,
                                      0, 1e-8, 1e-10, 1e6),
-                   std::domain_error, "parameter vector");
+                   std::domain_error, "ode parameters and data");
   EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta_bad, x, x_int,
                                      0, 1e-8, 1e-10, 1e6),
                    std::domain_error, expected_is_inf.str());
   theta_bad[0] = -inf;
   EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta_bad, x, x_int,
                                      0, 1e-8, 1e-10, 1e6),
-                   std::domain_error, "parameter vector");
+                   std::domain_error, "ode parameters and data");
   EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta_bad, x, x_int,
                                      0, 1e-8, 1e-10, 1e6),
                    std::domain_error, expected_is_neg_inf.str());
@@ -320,14 +321,14 @@ TEST(StanMathOde_integrate_ode_bdf, error_conditions_inf) {
     x_bad[0] = inf;
     EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x_bad,
                                        x_int, 0, 1e-8, 1e-10, 1e6),
-                     std::domain_error, "continuous data");
+                     std::domain_error, "ode parameters and data");
     EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x_bad,
                                        x_int, 0, 1e-8, 1e-10, 1e6),
                      std::domain_error, expected_is_inf.str());
     x_bad[0] = -inf;
     EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x_bad,
                                        x_int, 0, 1e-8, 1e-10, 1e6),
-                     std::domain_error, "continuous data");
+                     std::domain_error, "ode parameters and data");
     EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x_bad,
                                        x_int, 0, 1e-8, 1e-10, 1e6),
                      std::domain_error, expected_is_neg_inf.str());
@@ -355,9 +356,46 @@ TEST(StanMathOde_integrate_ode_bdf, error_conditions_bad_ode) {
   std::vector<int> x_int(2, 0);
 
   std::string error_msg
-      = "cvodes_ode_data: dz_dt (3) and states (2) must match in size";
+      = "cvodes_integrator: dy_dt (3) and states (2) must match in size";
 
   EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x, x_int, 0,
                                      1e-8, 1e-10, 1e6),
                    std::invalid_argument, error_msg);
+}
+
+TEST(StanMathOde_integrate_ode_bdf, too_much_work) {
+  coupled_mm_ode_fun f_;
+
+  // initial value and parameters from model definition
+  std::vector<double> y0(2);
+  y0[0] = 1E5;
+  y0[1] = 1E-1;
+
+  double t0 = 0;
+
+  std::vector<double> ts_long;
+  ts_long.push_back(1E10);
+
+  std::vector<double> ts_short;
+  ts_short.push_back(1);
+
+  std::vector<double> theta(4);
+
+  theta[0] = 1.0;
+  theta[1] = 0.5;
+  theta[2] = 0.5;
+  theta[3] = 0.1;
+
+  std::vector<double> data;
+
+  std::vector<int> data_int;
+
+  EXPECT_THROW_MSG(
+      stan::math::integrate_ode_bdf(f_, y0, t0, ts_long, theta, data, data_int,
+                                    0, 1E-6, 1E-6, 100),
+      std::domain_error,
+      "integrate_ode_bdf:  Failed to integrate to next output time");
+
+  EXPECT_NO_THROW(stan::math::integrate_ode_bdf(
+      f_, y0, t0, ts_short, theta, data, data_int, 0, 1E-6, 1E-6, 100));
 }

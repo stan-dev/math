@@ -13,7 +13,7 @@
 #include <stan/math/rev/core/operator_addition.hpp>
 #include <stan/math/rev/core/operator_multiplication.hpp>
 #include <stan/math/rev/core/operator_subtraction.hpp>
-#include <stan/math/rev/meta/apply_scalar_unary.hpp>
+#include <stan/math/rev/functor/apply_scalar_unary.hpp>
 #include <complex>
 #include <type_traits>
 
@@ -115,7 +115,7 @@ inline var operator/(var dividend, var divisor) {
  * @param divisor Scalar operand.
  * @return Variable result of dividing the variable by the scalar.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline var operator/(var dividend, Arith divisor) {
   if (divisor == 1.0) {
     return dividend;
@@ -135,7 +135,7 @@ inline var operator/(var dividend, Arith divisor) {
  * @param divisor Variable operand.
  * @return Quotient of the dividend and divisor.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline var operator/(Arith dividend, var divisor) {
   return {new internal::divide_dv_vari(dividend, divisor.vi_)};
 }

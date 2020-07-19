@@ -2,9 +2,8 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-using stan::math::check_2F1_converges;
-
 TEST(passesOnConvergentArgs, Check2F1Converges) {
+  using stan::math::check_2F1_converges;
   const char* function = "check_2F1_converges";
   double a1 = 1.0;
   double a2 = 1.0;

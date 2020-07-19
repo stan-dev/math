@@ -36,7 +36,7 @@ class diagonal_
  public:
   using Scalar = typename std::remove_reference_t<T>::Scalar;
   using base = operation_cl_lhs<diagonal_<T>, Scalar, T>;
-  using base::var_name;
+  using base::var_name_;
   using base::operator=;
 
   /**
@@ -59,43 +59,47 @@ class diagonal_
    * Generates kernel code for this and nested expressions.
    * @param[in,out] generated set of (pointer to) already generated operations
    * @param name_gen name generator for this kernel
-   * @param i row index variable name
-   * @param j column index variable name
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
    * @param view_handled whether caller already handled matrix view
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
       std::set<const operation_cl_base*>& generated, name_generator& name_gen,
-      const std::string& i, const std::string& j, bool view_handled) const {
+      const std::string& row_index_name, const std::string& col_index_name,
+      bool view_handled) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
       generated.insert(this);
-      res = this->template get_arg<0>().get_kernel_parts(generated, name_gen, i,
-                                                         i, true);
-      var_name = this->template get_arg<0>().var_name;
+      res = this->template get_arg<0>().get_kernel_parts(
+          generated, name_gen, row_index_name, row_index_name, true);
+      var_name_ = this->template get_arg<0>().var_name_;
     }
     return res;
   }
 
   /**
-   * Sets j to value of i. This is only used when diagonal is assigned to.
-   * @param[in, out] i row index
-   * @param[in, out] j column index
+   * Sets col_index_name to value of row_index_name. This is only used when
+   * diagonal is assigned to.
+   * @param[in, out] row_index_name row index
+   * @param[in, out] col_index_name column index
    */
-  inline void modify_argument_indices(std::string& i, std::string& j) const {
-    j = i;
+  inline void modify_argument_indices(std::string& row_index_name,
+                                      std::string& col_index_name) const {
+    col_index_name = row_index_name;
   }
 
   /**
    * Generates kernel code for this and nested expressions if this expression
    * appears on the left hand side of an assignment.
-   * @param i row index variable name
-   * @param j column index variable name
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
    * @param var_name_arg name of the variable in kernel that holds argument to
    * this expression
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate_lhs(const std::string& i, const std::string& j,
+  inline kernel_parts generate_lhs(const std::string& row_index_name,
+                                   const std::string& col_index_name,
                                    const std::string& var_name_arg) const {
     return {};
   }

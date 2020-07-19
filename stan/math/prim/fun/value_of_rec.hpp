@@ -65,7 +65,7 @@ inline std::complex<double> value_of_rec(const std::complex<T>& x) {
  * @param[in] x std::vector to be converted
  * @return std::vector of values
  **/
-template <typename T, require_not_floating_point_t<T>* = nullptr>
+template <typename T, require_not_same_t<double, T>* = nullptr>
 inline std::vector<double> value_of_rec(const std::vector<T>& x) {
   size_t x_size = x.size();
   std::vector<double> result(x_size);
@@ -86,9 +86,9 @@ inline std::vector<double> value_of_rec(const std::vector<T>& x) {
  * @param x Specified std::vector.
  * @return Specified std::vector.
  */
-template <typename T,
-          require_std_vector_vt<std::is_floating_point, T>* = nullptr>
-inline auto value_of_rec(T&& x) {
+template <typename T, require_std_vector_t<T>* = nullptr,
+          require_vt_same<double, T>* = nullptr>
+inline T value_of_rec(T&& x) {
   return std::forward<T>(x);
 }
 
@@ -102,14 +102,17 @@ inline auto value_of_rec(T&& x) {
  * @param[in] M Matrix to be converted
  * @return Matrix of values
  **/
-template <typename T, typename = require_not_st_floating_point<T>,
+template <typename T, typename = require_not_st_same<T, double>,
           typename = require_eigen_t<T>>
-inline auto value_of_rec(const T& M) {
-  return M.unaryExpr([](auto x) { return value_of_rec(x); });
+inline auto value_of_rec(T&& M) {
+  return make_holder(
+      [](auto& m) {
+        return m.unaryExpr([](auto x) { return value_of_rec(x); });
+      },
+      std::forward<T>(M));
 }
 
 /**
- * This function is not
  * Return the specified argument.
  *
  * <p>See <code>value_of_rec(T)</code> for a polymorphic
@@ -121,11 +124,11 @@ inline auto value_of_rec(const T& M) {
  * @param x Specified matrix.
  * @return Specified matrix.
  */
-template <typename T, typename = require_eigen_vt<std::is_floating_point, T>>
-inline auto value_of_rec(T&& x) {
+template <typename T, typename = require_st_same<T, double>,
+          typename = require_eigen_t<T>>
+inline T value_of_rec(T&& x) {
   return std::forward<T>(x);
 }
-
 }  // namespace math
 }  // namespace stan
 

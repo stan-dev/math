@@ -2,11 +2,10 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using std::vector;
-
 TEST(ProbDistributionsMultiNormalPrec, NotVectorized) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
   Matrix<double, Dynamic, 1> mu(3, 1);
@@ -18,6 +17,9 @@ TEST(ProbDistributionsMultiNormalPrec, NotVectorized) {
 }
 
 TEST(ProbDistributionsMultiNormalPrec, Vectorized) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   vector<Matrix<double, Dynamic, 1> > vec_y(2);
   vector<Matrix<double, 1, Dynamic> > vec_y_t(2);
   Matrix<double, Dynamic, 1> y(3);
@@ -106,6 +108,9 @@ TEST(ProbDistributionsMultiNormalPrec, MultiNormalMultiRow) {
 */
 
 TEST(ProbDistributionsMultiNormalPrec, WrongSize) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   vector<Matrix<double, Dynamic, 1> > y_3_3(3);
   vector<Matrix<double, Dynamic, 1> > y_3_1(3);
   vector<Matrix<double, Dynamic, 1> > y_3_2(3);

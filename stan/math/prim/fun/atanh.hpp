@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/copysign.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
 #include <complex>
 

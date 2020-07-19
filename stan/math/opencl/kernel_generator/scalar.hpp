@@ -35,7 +35,7 @@ class scalar_ : public operation_cl<scalar_<T>, T> {
                 "class scalar_<T>: std::is_arithmetic<T> must be true!");
   using Scalar = T;
   using base = operation_cl<scalar_<T>, T>;
-  using base::var_name;
+  using base::var_name_;
 
   /**
    * Constructor for an arithmetic type
@@ -50,16 +50,17 @@ class scalar_ : public operation_cl<scalar_<T>, T> {
   inline scalar_<T> deep_copy() const { return scalar_<T>(a_); }
 
   /**
-   * generates kernel code for this expression.
-   * @param i row index variable name
-   * @param j column index variable name
+   * Generates kernel code for this expression.
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
    * @param view_handled whether whether caller already handled matrix view
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& i, const std::string& j,
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
                                const bool view_handled) const {
     kernel_parts res{};
-    res.args = type_str<Scalar>() + " " + var_name + ", ";
+    res.args = type_str<Scalar>() + " " + var_name_ + ", ";
     return res;
   }
 

@@ -52,8 +52,7 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if function_tolerance is strictly
  * negative.
  * @throw <code>std::invalid_argument</code> if max_num_steps is not positive.
- * @throw <code>boost::math::evaluation_error</code> (which is a subclass of
- * <code>std::runtime_error</code>) if solver exceeds max_num_steps.
+ * @throw <code>std::domain_error</code> if solver exceeds max_num_steps.
  */
 template <typename F, typename T>
 Eigen::VectorXd algebra_solver_newton(
@@ -115,8 +114,7 @@ Eigen::VectorXd algebra_solver_newton(
  * @throw <code>std::invalid_argument</code> if function_tolerance is strictly
  * negative.
  * @throw <code>std::invalid_argument</code> if max_num_steps is not positive.
- * @throw <code>boost::math::evaluation_error</code> (which is a subclass of
- * <code>std::runtime_error</code>) if solver exceeds max_num_steps.
+ * @throw <code>std::domain_error if solver exceeds max_num_steps.
  */
 template <typename F, typename T1, typename T2>
 Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_newton(
