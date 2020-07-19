@@ -41,6 +41,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(const T_y& y,
                                                    const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_inv_scale>;
   using std::exp;
+  using std::pow;
   static const char* function = "gamma_cdf";
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Inverse scale parameter", beta);
