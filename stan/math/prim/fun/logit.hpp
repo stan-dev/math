@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -76,13 +78,34 @@ struct logit_fun {
  * underlying scalar argument type to double if it is an integer,
  * and otherwise is the argument type.
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x container
  * @return elementwise logit of container elements
  */
-template <typename T>
-inline auto logit(const T& x) {
-  return apply_scalar_unary<logit_fun, T>::apply(x);
+template <typename Container,
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+inline auto logit(const Container& x) {
+  return apply_scalar_unary<logit_fun, Container>::apply(x);
+}
+
+/**
+ * Version of logit() that accepts std::vectors, Eigen Matrix/Array objects
+ *  or expressions, and containers of these.
+ *
+ * @tparam Container Type of x
+ * @param x Container
+ * @return the logit of each variable in the container.
+ *
+ * Note: The return must be evaluated otherwise the Ref object falls out
+ * of scope
+ */
+template <typename Container,
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
+inline auto logit(const Container& x) {
+  return apply_vector_unary<Container>::apply(x, [](const auto& v) {
+    const Eigen::Ref<const plain_type_t<decltype(v)>>& v_ref = v;
+    return (v_ref.array() / (1 - v_ref.array())).log().eval();
+  });
 }
 
 }  // namespace math

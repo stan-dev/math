@@ -3,7 +3,12 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/i_times.hpp>
+#include <stan/math/prim/fun/sinh.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -26,27 +31,44 @@ struct sin_fun {
 /**
  * Vectorized version of sin().
  *
- * @tparam T type of container
+ * @tparam Container type of container
  * @param x angles in radians
  * @return Sine of each value in x.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
+template <typename T,
+          require_not_container_st<std::is_arithmetic, T>* = nullptr>
 inline auto sin(const T& x) {
   return apply_scalar_unary<sin_fun, T>::apply(x);
 }
 
 /**
- * Version of sin() that accepts Eigen Matrix or matrix expressions.
+ * Version of sin() that accepts std::vectors, Eigen Matrix/Array objects
+ *  or expressions, and containers of these.
  *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
+ * @tparam Container Type of x
+ * @param x Container
  * @return Sine of each value in x.
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto sin(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().sin().matrix().eval();
+template <typename Container,
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
+inline auto sin(const Container& x) {
+  return apply_vector_unary<Container>::apply(
+      x, [&](const auto& v) { return v.array().sin(); });
 }
+
+namespace internal {
+/**
+ * Return the sine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return sine of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_sin(const std::complex<V>& z) {
+  return neg_i_times(sinh(i_times(z)));
+}
+}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

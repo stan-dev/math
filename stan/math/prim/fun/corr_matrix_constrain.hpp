@@ -30,7 +30,7 @@ namespace math {
  * valid correlation values using <code>corr_constrain(T)</code>.
  *
  * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile-time dimmension equal to 1)
+ * have one compile-time dimension equal to 1)
  * @param x Vector of unconstrained partial correlations.
  * @param k Dimensionality of returned correlation matrix.
  * @throw std::invalid_argument if x is not a valid correlation
@@ -60,7 +60,7 @@ corr_matrix_constrain(const T& x, Eigen::Index k) {
  * this function.
  *
  * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile-time dimmension equal to 1)
+ * have one compile-time dimension equal to 1)
  * @param x Vector of unconstrained partial correlations.
  * @param k Dimensionality of returned correlation matrix.
  * @param lp Log probability reference to increment.

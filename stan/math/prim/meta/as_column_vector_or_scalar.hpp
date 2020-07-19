@@ -2,7 +2,10 @@
 #define STAN_MATH_PRIM_META_AS_COLUMN_VECTOR_OR_SCALAR_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/meta/require_generics.hpp>
+#include <stan/math/prim/meta/holder.hpp>
+#include <stan/math/prim/meta/is_stan_scalar.hpp>
+#include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_vector.hpp>
 #include <vector>
 
 namespace stan {
@@ -14,10 +17,10 @@ namespace math {
  *
  * @tparam T Type of scalar element.
  * @param a Specified scalar.
- * @return 1x1 matrix that contains the value of scalar.
+ * @return the scalar.
  */
-template <typename T, typename = require_stan_scalar_t<T>>
-inline const T& as_column_vector_or_scalar(const T& a) {
+template <typename T, require_stan_scalar_t<T>* = nullptr>
+inline T as_column_vector_or_scalar(const T& a) {
   return a;
 }
 
@@ -29,9 +32,9 @@ inline const T& as_column_vector_or_scalar(const T& a) {
  * @param a Specified vector.
  * @return Same vector.
  */
-template <typename T, typename = require_t<is_eigen_col_vector<T>>>
-inline const auto& as_column_vector_or_scalar(const T& a) {
-  return a;
+template <typename T, require_t<is_eigen_col_vector<T>>* = nullptr>
+inline T&& as_column_vector_or_scalar(T&& a) {
+  return std::forward<T>(a);
 }
 
 /** \ingroup type_trait
@@ -42,9 +45,9 @@ inline const auto& as_column_vector_or_scalar(const T& a) {
  * @param a Specified vector.
  * @return Transposed vector.
  */
-template <typename T, typename = require_t<is_eigen_row_vector<T>>>
-inline auto as_column_vector_or_scalar(const T& a) {
-  return a.transpose();
+template <typename T, require_t<is_eigen_row_vector<T>>* = nullptr>
+inline auto as_column_vector_or_scalar(T&& a) {
+  return make_holder([](auto& x) { return x.transpose(); }, std::forward<T>(a));
 }
 
 /** \ingroup type_trait
@@ -55,11 +58,15 @@ inline auto as_column_vector_or_scalar(const T& a) {
  * @param a Specified vector.
  * @return input converted to a column vector.
  */
-template <typename T>
-inline Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>>
-as_column_vector_or_scalar(const std::vector<T>& a) {
-  return Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>>(a.data(),
-                                                               a.size());
+template <typename T, require_std_vector_t<T>* = nullptr>
+inline auto as_column_vector_or_scalar(T&& a) {
+  using plain_vector = Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1>;
+  using optionally_const_vector
+      = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
+                           const plain_vector, plain_vector>;
+  using T_map = Eigen::Map<optionally_const_vector>;
+  return make_holder([](auto& x) { return T_map(x.data(), x.size()); },
+                     std::forward<T>(a));
 }
 
 }  // namespace math

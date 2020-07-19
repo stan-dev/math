@@ -22,7 +22,7 @@ namespace math {
  * with the constrained deviations.
  *
  * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile-time dimmension equal to 1)
+ * have one compile-time dimension equal to 1)
  * @param x Input vector of unconstrained partial correlations and
  * standard deviations.
  * @param k Dimensionality of returned covariance matrix.
@@ -54,7 +54,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain_lkj(
  * into a covariance matrix by scaling by standard deviations.
  *
  * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile-time dimmension equal to 1)
+ * have one compile-time dimension equal to 1)
  * @param x Input vector of unconstrained partial correlations and
  * standard deviations.
  * @param k Dimensionality of returned covariance matrix.

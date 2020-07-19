@@ -17,7 +17,7 @@ namespace math {
  * outcome given the continuous location and specified cutpoints
  * in an ordered probit model.
  *
- * <p>Typically the continous location
+ * <p>Typically the continuous location
  * will be the dot product of a vector of regression coefficients
  * and a vector of predictors for the outcome.
  *
@@ -68,7 +68,7 @@ return_type_t<T_loc, T_cut> ordered_probit_lpmf(
  * of integers given the vector of continuous locations and
  * specified cutpoints in an ordered probit model.
  *
- * <p>Typically the continous location
+ * <p>Typically the continuous location
  * will be the dot product of a vector of regression coefficients
  * and a vector of predictors for the outcome.
  *
@@ -135,7 +135,7 @@ return_type_t<T_loc, T_cut> ordered_probit_lpmf(
  * of integers given the vector of continuous locations and
  * array of specified cutpoints in an ordered probit model.
  *
- * <p>Typically the continous location
+ * <p>Typically the continuous location
  * will be the dot product of a vector of regression coefficients
  * and a vector of predictors for the outcome.
  *

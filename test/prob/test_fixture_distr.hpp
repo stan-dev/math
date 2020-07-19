@@ -10,10 +10,10 @@ using Eigen::Dynamic;
 using Eigen::Matrix;
 using stan::is_constant_all;
 using stan::is_vector;
+using stan::scalar_type;
 using stan::math::fvar;
 using stan::math::value_of;
 using stan::math::var;
-using stan::scalar_type;
 using std::vector;
 
 /**
@@ -640,7 +640,8 @@ class AgradDistributionTestFixture : public ::testing::Test {
       calculate_gradients_1storder(multiple_gradients2, multiple_lp, x1);
       calculate_gradients_1storder(multiple_gradients3, multiple_lp, x1);
 
-      EXPECT_TRUE(N_REPEAT * single_lp - multiple_lp < 1e-8)
+      EXPECT_NEAR(stan::math::value_of_rec(N_REPEAT * single_lp),
+                  stan::math::value_of_rec(multiple_lp), 1e-8)
           << "log prob with repeated vector input should match "
           << "a multiple of log prob of single input";
 

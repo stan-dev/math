@@ -2,11 +2,10 @@
 #define STAN_MATH_FWD_FUN_UNIT_VECTOR_CONSTRAIN_HPP
 
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/fun/divide.hpp>
-#include <stan/math/fwd/fun/dot_self.hpp>
 #include <stan/math/fwd/fun/tcrossprod.hpp>
 #include <stan/math/fwd/fun/sqrt.hpp>
 #include <stan/math/prim/fun/divide.hpp>
+#include <stan/math/prim/fun/dot_self.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/unit_vector_constrain.hpp>

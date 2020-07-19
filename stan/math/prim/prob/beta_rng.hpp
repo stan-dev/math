@@ -34,17 +34,21 @@ namespace math {
 template <typename T_shape1, typename T_shape2, class RNG>
 inline typename VectorBuilder<true, double, T_shape1, T_shape2>::type beta_rng(
     const T_shape1 &alpha, const T_shape2 &beta, RNG &rng) {
+  using boost::variate_generator;
   using boost::random::gamma_distribution;
   using boost::random::uniform_real_distribution;
-  using boost::variate_generator;
+  using T_alpha_ref = ref_type_t<T_shape1>;
+  using T_beta_ref = ref_type_t<T_shape2>;
   static const char *function = "beta_rng";
-  check_positive_finite(function, "First shape parameter", alpha);
-  check_positive_finite(function, "Second shape parameter", beta);
   check_consistent_sizes(function, "First shape parameter", alpha,
                          "Second shape Parameter", beta);
+  T_alpha_ref alpha_ref = alpha;
+  T_beta_ref beta_ref = beta;
+  check_positive_finite(function, "First shape parameter", alpha_ref);
+  check_positive_finite(function, "Second shape parameter", beta_ref);
 
-  scalar_seq_view<T_shape1> alpha_vec(alpha);
-  scalar_seq_view<T_shape2> beta_vec(beta);
+  scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
+  scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
   size_t N = max_size(alpha, beta);
   VectorBuilder<true, double, T_shape1, T_shape2> output(N);
 

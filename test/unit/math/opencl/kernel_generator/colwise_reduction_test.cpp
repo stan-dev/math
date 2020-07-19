@@ -1,11 +1,12 @@
 #ifdef STAN_OPENCL
 
+#include <stan/math.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math.hpp>
 #include <test/unit/math/opencl/kernel_generator/reference_kernel.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <string>
 
@@ -14,11 +15,7 @@ using Eigen::MatrixXd;
 using Eigen::MatrixXi;
 using stan::math::matrix_cl;
 
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
-
-TEST(MathMatrixCL, colwise_sum_test) {
+TEST(KernelGenerator, colwise_sum_test) {
   std::string kernel_filename = "colwise_sum.cl";
   MatrixXd m(3, 2);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
@@ -45,7 +42,7 @@ TEST(MathMatrixCL, colwise_sum_test) {
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
-TEST(MathMatrixCL, colwise_min_test) {
+TEST(KernelGenerator, colwise_min_test) {
   MatrixXd m(3, 2);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
 
@@ -61,7 +58,7 @@ TEST(MathMatrixCL, colwise_min_test) {
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
-TEST(MathMatrixCL, colwise_max_test) {
+TEST(KernelGenerator, colwise_max_test) {
   MatrixXd m(2, 3);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
 
@@ -77,7 +74,7 @@ TEST(MathMatrixCL, colwise_max_test) {
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
-TEST(MathMatrixCL, colwise_sum_triangular) {
+TEST(KernelGenerator, colwise_sum_triangular) {
   MatrixXd m(3, 2);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
 
@@ -108,7 +105,7 @@ TEST(MathMatrixCL, colwise_sum_triangular) {
   EXPECT_MATRIX_NEAR(correct2, res2, 1e-9);
 }
 
-TEST(MathMatrixCL, nested_rowwise_colwise_sum) {
+TEST(KernelGenerator, nested_rowwise_colwise_sum) {
   MatrixXd m(3, 2);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
 
@@ -125,7 +122,7 @@ TEST(MathMatrixCL, nested_rowwise_colwise_sum) {
   EXPECT_NEAR(correct, res(0), 1e-9);
 }
 
-TEST(MathMatrixCL, colwise_sum_test_large) {
+TEST(KernelGenerator, colwise_sum_test_large) {
   int N = 153;
   int M = 201;
   MatrixXd m = MatrixXd::Random(N, M);
@@ -141,7 +138,7 @@ TEST(MathMatrixCL, colwise_sum_test_large) {
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
-TEST(MathMatrixCL, colwise_sum_and_id_test) {
+TEST(KernelGenerator, colwise_sum_and_id_test) {
   MatrixXd m(3, 2);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
 

@@ -2,12 +2,20 @@
 #define STAN_MATH_REV_CORE_OPERATOR_DIVISION_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/core/operator_division.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/is_any_nan.hpp>
 #include <stan/math/rev/core/var.hpp>
+#include <stan/math/rev/core/std_complex.hpp>
 #include <stan/math/rev/core/vv_vari.hpp>
 #include <stan/math/rev/core/vd_vari.hpp>
 #include <stan/math/rev/core/dv_vari.hpp>
-#include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/is_any_nan.hpp>
+#include <stan/math/rev/core/operator_addition.hpp>
+#include <stan/math/rev/core/operator_multiplication.hpp>
+#include <stan/math/rev/core/operator_subtraction.hpp>
+#include <stan/math/rev/functor/apply_scalar_unary.hpp>
+#include <complex>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -107,7 +115,7 @@ inline var operator/(var dividend, var divisor) {
  * @param divisor Scalar operand.
  * @return Variable result of dividing the variable by the scalar.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline var operator/(var dividend, Arith divisor) {
   if (divisor == 1.0) {
     return dividend;
@@ -127,9 +135,14 @@ inline var operator/(var dividend, Arith divisor) {
  * @param divisor Variable operand.
  * @return Quotient of the dividend and divisor.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline var operator/(Arith dividend, var divisor) {
   return {new internal::divide_dv_vari(dividend, divisor.vi_)};
+}
+
+inline std::complex<var> operator/(const std::complex<var>& x1,
+                                   const std::complex<var>& x2) {
+  return internal::complex_divide(x1, x2);
 }
 
 }  // namespace math

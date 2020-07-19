@@ -34,7 +34,7 @@ TEST(MathMixMatFun, quadFormDiag) {
   stan::test::expect_ad(tols, f, m22, v2);
   stan::test::expect_ad(tols, f, m33, v3);
 
-  // exceptions from mismached sizes
+  // exceptions from mismatched sizes
   stan::test::expect_ad(tols, f, m33, v2);
   stan::test::expect_ad(tols, f, m22, v3);
 }

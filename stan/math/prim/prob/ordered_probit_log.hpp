@@ -12,7 +12,7 @@ namespace math {
  * given the vector of continuous location/s and
  * specified cutpoints in an ordered probit model.
  *
- * <p>Typically the continous location
+ * <p>Typically the continuous location
  * will be the dot product of a vector of regression coefficients
  * and a vector of predictors for the outcome.
  *

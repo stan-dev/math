@@ -11,14 +11,15 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the dimension of x is consistent, which is defined to be
- * <code>expected_size</code> if x is a vector or 1 if x is not a vector.
- * @tparam T Type of value
- * @param function Function name (for error messages)
- * @param name Variable name (for error messages)
- * @param x Variable to check for consistent size
- * @param expected_size Expected size if x is a vector
- * @throw <code>invalid_argument</code> if the size is inconsistent
+ * Check if `x` is consistent with size `expected_size`. `x` is consistent with
+ * size `expected_size` if `x` is a vector of size `expected_size`, or a non
+ * vector.
+ * @tparam T type of value
+ * @param function function name (for error messages)
+ * @param name variable name (for error messages)
+ * @param x variable to check for consistent size
+ * @param expected_size expected size if `x` is a vector
+ * @throw `invalid_argument` if the size is inconsistent
  */
 template <typename T>
 inline void check_consistent_size(const char* function, const char* name,

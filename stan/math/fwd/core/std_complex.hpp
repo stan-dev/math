@@ -9,7 +9,7 @@
 namespace std {
 
 /**
- * Specialization of the standard libary complex number type for
+ * Specialization of the standard library complex number type for
  * reverse-mode autodiff type `stan::math::fvar<T>`.
  *
  * @tparam T forward-mode autodiff value type
@@ -33,7 +33,11 @@ class complex<stan::math::fvar<T>>
    * @param[in] re real part
    */
   template <typename U, typename = stan::require_stan_scalar_t<U>>
-  complex(U&& re) : base_t(re) {}  // NOLINT(runtime/explicit)
+  complex(const U& re) : base_t(re) {}  // NOLINT(runtime/explicit)
+
+  template <typename U>
+  complex(const std::complex<U>& z)  // NOLINT(runtime/explicit)
+      : base_t(z.real(), z.imag()) {}
 
   /**
    * Construct a complex number from the specified real and imaginary

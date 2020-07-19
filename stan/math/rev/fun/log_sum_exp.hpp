@@ -3,11 +3,11 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/calculate_chain.hpp>
 #include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <cmath>
 #include <vector>
@@ -22,8 +22,8 @@ class log_sum_exp_vv_vari : public op_vv_vari {
   log_sum_exp_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(log_sum_exp(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
-    avi_->adj_ += adj_ * calculate_chain(avi_->val_, val_);
-    bvi_->adj_ += adj_ * calculate_chain(bvi_->val_, val_);
+    avi_->adj_ += adj_ * inv_logit(avi_->val_ - bvi_->val_);
+    bvi_->adj_ += adj_ * inv_logit(bvi_->val_ - avi_->val_);
   }
 };
 class log_sum_exp_vd_vari : public op_vd_vari {
@@ -34,7 +34,7 @@ class log_sum_exp_vd_vari : public op_vd_vari {
     if (val_ == NEGATIVE_INFTY) {
       avi_->adj_ += adj_;
     } else {
-      avi_->adj_ += adj_ * calculate_chain(avi_->val_, val_);
+      avi_->adj_ += adj_ * inv_logit(avi_->val_ - bd_);
     }
   }
 };
@@ -80,10 +80,10 @@ class log_sum_exp_matrix_vari : public op_matrix_vari {
  * @tparam T Type of input vector or matrix.
  * @param x matrix
  */
-template <typename T, require_t<is_var<scalar_type_t<T>>>...>
+template <typename T, require_container_st<is_var, T>* = nullptr>
 inline auto log_sum_exp(const T& x) {
   return apply_vector_unary<T>::reduce(x, [&](const auto& v) {
-    return var(new internal::log_sum_exp_matrix_vari(v));
+    return var(new internal::log_sum_exp_matrix_vari(v.eval()));
   });
 }
 

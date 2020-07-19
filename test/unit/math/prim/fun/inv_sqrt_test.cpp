@@ -14,7 +14,7 @@ TEST(MathFunctions, inv_sqrt) {
   EXPECT_FLOAT_EQ(stan::math::positive_infinity(), stan::math::inv_sqrt(y));
 
   y = -50.0;
-  std::isnan(stan::math::inv_sqrt(y));
+  EXPECT_TRUE(std::isnan(stan::math::inv_sqrt(y)));
 }
 
 TEST(MathFunctions, inv_sqrt_nan) {

@@ -25,20 +25,9 @@ def deleteDirWin() {
     deleteDir()
 }
 
-def sourceCodePaths(){
-    // These paths will be passed to git diff
-    // If there are changes to them, CI/CD will continue else skip
-    def paths = ['stan', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format']
-    def bashArray = ""
-
-    for(path in paths){
-        bashArray += path + (path != paths[paths.size() - 1] ? " " : "")
-    }
-
-    return bashArray
-}
-
-def skipRemainingStages = true
+def skipRemainingStages = false
+def runGpuAsync = false
+def openClGpuLabel = "gpu"
 
 def utils = new org.stan.Utils()
 
@@ -58,13 +47,10 @@ String stan_pr() { params.stan_pr ?: ( env.CHANGE_TARGET == "master" ? "downstre
 pipeline {
     agent none
     parameters {
-        string(defaultValue: '', name: 'cmdstan_pr',
-          description: 'PR to test CmdStan upstream against e.g. PR-630')
-        string(defaultValue: '', name: 'stan_pr',
-          description: 'PR to test Stan upstream against e.g. PR-630')
-        booleanParam(defaultValue: false, description:
-        'Run additional distribution tests on RowVectors (takes 5x as long)',
-        name: 'withRowVector')
+        string(defaultValue: '', name: 'cmdstan_pr', description: 'PR to test CmdStan upstream against e.g. PR-630')
+        string(defaultValue: '', name: 'stan_pr', description: 'PR to test Stan upstream against e.g. PR-630')
+        booleanParam(defaultValue: false, name: 'withRowVector', description: 'Run additional distribution tests on RowVectors (takes 5x as long)')
+        booleanParam(defaultValue: false, name: 'gpu_async', description: 'Run the OpenCL tests on both a sync (AMD) GPU and an async (NVIDIA) one.')
     }
     options {
         skipDefaultCheckout()
@@ -72,7 +58,6 @@ pipeline {
     }
     environment {
         STAN_NUM_THREADS = '4'
-        scPaths = sourceCodePaths()
     }
     stages {
         stage('Kill previous builds') {
@@ -164,109 +149,87 @@ pipeline {
         stage('Verify changes') {
             agent { label 'linux' }
             steps {
-                script {         
+                script {
 
                     retry(3) { checkout scm }
                     sh 'git clean -xffd'
 
-                    def commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
-                    def changeTarget = ""
+                    def paths = ['stan', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format'].join(" ")
+                    skipRemainingStages = utils.verifyChanges(paths)
 
-                    if (env.CHANGE_TARGET) {
-                        println "This build is a PR, checking out target branch to compare changes."
-                        changeTarget = env.CHANGE_TARGET
-                        sh(script: "git pull && git checkout ${changeTarget}", returnStdout: false)
+                    if(!utils.verifyChanges(["stan/math/opencl", "test/unit/math/opencl"].join(" ")) || params.gpu_async){
+                        runGpuAsync = true
+                        openClGpuLabel = "gpu-no-async"
                     }
                     else{
-                        println "This build is not PR, checking out current branch and extract HEAD^1 commit to compare changes or develop when downstream_tests."
-                        if (env.BRANCH_NAME == "downstream_tests"){
-                            sh(script: "git checkout develop && git pull", returnStdout: false)
-                            changeTarget = sh(script: "git rev-parse HEAD^1 | tr '\\n' ' '", returnStdout: true)
-                            sh(script: "git checkout ${commitHash}", returnStdout: false)
-                        }
-                        else{
-                            sh(script: "git pull && git checkout ${env.BRANCH_NAME}", returnStdout: false)
-                            changeTarget = sh(script: "git rev-parse HEAD^1 | tr '\\n' ' '", returnStdout: true)
-                        }
-                    }
-
-                    println "Comparing differences between current ${commitHash} and target ${changeTarget}"
-
-                    def bashScript = """
-                        for i in ${env.scPaths};
-                        do
-                            git diff ${commitHash} ${changeTarget} -- \$i
-                        done
-                    """
-
-                    def differences = sh(script: bashScript, returnStdout: true)
-
-                    println differences
-
-                    if (differences?.trim()) {
-                        println "There are differences in the source code, CI/CD will run."
-                        skipRemainingStages = false
-                    }
-                    else{
-                        println "There aren't any differences in the source code, CI/CD will not run."
-                        skipRemainingStages = true
+                        runGpuAsync = false
                     }
                 }
             }
         }
-        stage('Headers checks') {
+        stage('Headers check') {
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
+            agent any
+            steps {
+                deleteDir()
+                unstash 'MathSetup'
+                sh "echo CXX=${env.CXX} -Werror > make/local"
+                sh "make -j${env.PARALLEL} test-headers"
+            }
+            post { always { deleteDir() } }
+        }
+        stage('Full Unit Tests') {
+            agent any
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
+            steps {
+                script {
+                    if (isUnix()) {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        runTests("test/unit/math/prim")
+                        runTests("test/unit/math/rev")
+                        runTests("test/unit")
+                    } else {
+                        deleteDirWin()
+                        unstash 'MathSetup'
+                        runTestsWin("test/unit/math/prim")
+                        runTestsWin("test/unit/math/rev")
+                        runTestsWin("test/unit")
+                    }
+                }
+            }
+            post { always { retry(3) { deleteDir() } } }
+        }
+        stage('Always-run tests') {
             when {
                 expression {
                     !skipRemainingStages
                 }
             }
             parallel {
-              stage('Headers check') {
-                agent any
-                steps {
-                    deleteDir()
-                    unstash 'MathSetup'
-                    sh "echo CXX=${env.CXX} -Werror > make/local"
-                    sh "make -j${env.PARALLEL} test-headers"
-                }
-                post { always { deleteDir() } }
-              }
-              stage('Headers check with OpenCL') {
-                agent { label "gpu" }
-                steps {
-                    deleteDir()
-                    unstash 'MathSetup'
-                    sh "echo CXX=${env.CXX} -Werror > make/local"
-                    sh "echo STAN_OPENCL=true>> make/local"
-                    sh "echo OPENCL_PLATFORM_ID=0>> make/local"
-                    sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
-                    sh "make -j${env.PARALLEL} test-headers"
-                }
-                post { always { deleteDir() } }
-              }
-           }
-        }
-        stage('Always-run tests part 1') {
-            when {
-                expression {
-                    !skipRemainingStages
-                }
-            }
-            parallel {
-                stage('Linux Unit with MPI') {
+                stage('MPI tests') {
                     agent { label 'linux && mpi' }
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
                         sh "echo CXX=${MPICXX} >> make/local"
-                        sh "echo CXX_TYPE=gcc >> make/local"                        
+                        sh "echo CXX_TYPE=gcc >> make/local"
                         sh "echo STAN_MPI=true >> make/local"
-                        runTests("test/unit")
+                        runTests("test/unit/math/prim/functor")
+                        runTests("test/unit/math/rev/functor")
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                stage('Full unit with GPU') {
-                    agent { label "gpu" }
+                stage('OpenCL tests') {
+                    agent { label openClGpuLabel }
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
@@ -274,19 +237,42 @@ pipeline {
                         sh "echo STAN_OPENCL=true>> make/local"
                         sh "echo OPENCL_PLATFORM_ID=0>> make/local"
                         sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
-                        runTests("test/unit")
+                        sh "make -j${env.PARALLEL} test-headers"
+                        runTests("test/unit/math/opencl")
+                        runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test")
+                        runTests("test/unit/math/prim/fun/mdivide_left_tri_test")
+                        runTests("test/unit/math/prim/fun/mdivide_right_tri_test")
+                        runTests("test/unit/math/prim/fun/multiply_test")
+                        runTests("test/unit/math/rev/fun/mdivide_left_tri_test")
+                        runTests("test/unit/math/rev/fun/multiply_test")
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-            }
-        }
-        stage('Always-run tests part 2') {
-            when {
-                expression {
-                    !skipRemainingStages
-                }
-            }
-            parallel {
+                // stage('OpenCL tests async') {
+                //     agent { label "gpu-async" }
+                //     when {
+                //         expression {
+                //             runGpuAsync
+                //         }
+                //     }
+                //     steps {
+                //         deleteDir()
+                //         unstash 'MathSetup'
+                //         sh "echo CXX=${env.CXX} -Werror > make/local"
+                //         sh "echo STAN_OPENCL=true>> make/local"
+                //         sh "echo OPENCL_PLATFORM_ID=0>> make/local"
+                //         sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
+                //         sh "make -j${env.PARALLEL} test-headers"
+                //         runTests("test/unit/math/opencl")
+                //         runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test")
+                //         runTests("test/unit/math/prim/fun/mdivide_left_tri_test")
+                //         runTests("test/unit/math/prim/fun/mdivide_right_tri_test")
+                //         runTests("test/unit/math/prim/fun/multiply_test")
+                //         runTests("test/unit/math/rev/fun/mdivide_left_tri_test")
+                //         runTests("test/unit/math/rev/fun/multiply_test")
+                //     }
+                //     post { always { retry(3) { deleteDir() } } }
+                // }
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
                     steps {
@@ -317,13 +303,28 @@ pipeline {
                 stage('Threading tests') {
                     agent any
                     steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CXX=${env.CXX} -Werror > make/local"
-                        sh "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
-                        runTests("test/unit -f thread")
-                        sh "find . -name *_test.xml | xargs rm"
-                        runTests("test/unit -f map_rect")
+                        script {
+                            if (isUnix()) {
+                                deleteDir()
+                                unstash 'MathSetup'
+                                sh "echo CXX=${env.CXX} -Werror > make/local"
+                                sh "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
+                                sh "export STAN_NUM_THREADS=4"
+                                runTests("test/unit -f thread")
+                                sh "find . -name *_test.xml | xargs rm"
+                                runTests("test/unit -f map_rect")
+                                sh "find . -name *_test.xml | xargs rm"
+                                runTests("test/unit -f reduce_sum")                            
+                            } else {
+                                deleteDirWin()
+                                unstash 'MathSetup'
+                                bat "echo CXX=${env.CXX} -Werror > make/local"
+                                bat "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
+                                runTestsWin("test/unit -f thread", false)
+                                runTestsWin("test/unit -f map_rect", false)
+                                runTestsWin("test/unit -f reduce_sum", false)
+                            }
+                        }                      
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
@@ -337,21 +338,10 @@ pipeline {
                         runTestsWin("test/unit", false)
                     }
                 }
-                stage('Windows Threading') {
-                    agent { label 'windows' }
-                    steps {
-                        deleteDirWin()
-                        unstash 'MathSetup'
-                        bat "echo CXX=${env.CXX} -Werror > make/local"
-                        bat "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
-                        runTestsWin("test/unit -f thread")
-                        runTestsWin("test/unit -f map_rect")
-                    }
-                }
             }
         }
         stage('Additional merge tests') {
-            when { 
+            when {
                 allOf {
                     anyOf {
                         branch 'develop'
@@ -388,12 +378,12 @@ pipeline {
             }
         }
         stage('Upstream tests') {
-            when { 
+            when {
                 allOf {
-                    expression { 
-                        env.BRANCH_NAME ==~ /PR-\d+/ 
+                    expression {
+                        env.BRANCH_NAME ==~ /PR-\d+/
                     }
-                    expression { 
+                    expression {
                         !skipRemainingStages
                     }
                 }

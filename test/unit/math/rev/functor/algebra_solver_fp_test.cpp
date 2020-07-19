@@ -10,11 +10,11 @@
 #include <string>
 #include <limits>
 
+using stan::math::algebra_solver_fp;
+using stan::math::finite_diff_gradient_auto;
 using stan::math::FixedPointADJac;
 using stan::math::FixedPointSolver;
 using stan::math::KinsolFixedPointEnv;
-using stan::math::algebra_solver_fp;
-using stan::math::finite_diff_gradient_auto;
 using stan::math::to_array_1d;
 using stan::math::to_var;
 using stan::math::value_of;
@@ -523,11 +523,12 @@ TEST_F(FP_2d_func_test, exception_handling) {
 
   {
     std::stringstream err_msg;
-    err_msg << "algebra_solver: max number of iterations: 4 exceeded.";
+    err_msg << "algebra_solver: maximum number of iterations (4) was exceeded "
+               "in the solve.";
     std::string msg = err_msg.str();
     EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0,
                                        f_tol, max_num_steps),  // NOLINT
-                     std::runtime_error, msg);
+                     std::domain_error, msg);
   }
 
   {

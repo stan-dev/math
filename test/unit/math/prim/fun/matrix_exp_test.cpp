@@ -1,6 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
+#include <test/unit/util.hpp>
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
@@ -9,7 +9,7 @@
 TEST(MathMatrixPrimMat, matrix_exp_0x0) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(0, 0);
 
-  expect_matrix_eq(m1, stan::math::matrix_exp(m1));
+  EXPECT_MATRIX_FLOAT_EQ(m1, stan::math::matrix_exp(m1));
 }
 
 TEST(MathMatrixPrimMat, matrix_exp_1x1) {
@@ -17,7 +17,7 @@ TEST(MathMatrixPrimMat, matrix_exp_1x1) {
   m1 << 0;
   m2 << 1;
 
-  expect_matrix_eq(m2, stan::math::matrix_exp(m1));
+  EXPECT_MATRIX_FLOAT_EQ(m2, stan::math::matrix_exp(m1));
 }
 
 TEST(MathMatrixPrimMat, matrix_exp_2x2) {
@@ -26,7 +26,7 @@ TEST(MathMatrixPrimMat, matrix_exp_2x2) {
   m1 << -49, 24, -64, 31;
   m2 << -.735759, .551819, -1.471518, 1.103638;
 
-  expect_matrix_eq(m2, stan::math::matrix_exp(m1));
+  EXPECT_MATRIX_FLOAT_EQ(m2, stan::math::matrix_exp(m1));
 }
 
 TEST(MathMatrixPrimMat, matrix_exp_2x2_2) {
@@ -39,7 +39,7 @@ TEST(MathMatrixPrimMat, matrix_exp_2x2_2) {
 
   exp_m << 0.2746483852, 0.2893267425, -0.4170720513, 0.7937977746;
 
-  expect_matrix_eq(exp_m, stan::math::matrix_exp(m));
+  EXPECT_MATRIX_FLOAT_EQ(exp_m, stan::math::matrix_exp(m));
 }
 
 TEST(MathMatrixPrimMat, matrix_exp_3x3) {
@@ -48,7 +48,7 @@ TEST(MathMatrixPrimMat, matrix_exp_3x3) {
   m1 << 0, 1, 2, 0, 0, -1, 0, 0, 0;
   m2 << 1, 1, 1.5, 0, 1, -1, 0, 0, 1;
 
-  expect_matrix_eq(m2, stan::math::matrix_exp(m1));
+  EXPECT_MATRIX_FLOAT_EQ(m2, stan::math::matrix_exp(m1));
 }
 
 TEST(MathMatrixPrimMat, matrix_exp_3x3_2) {
@@ -57,7 +57,7 @@ TEST(MathMatrixPrimMat, matrix_exp_3x3_2) {
   m2 << 245.95891, -182.43047, -49.11821, 93.41549, -67.3433, -18.68310,
       842.54120, -631.90590, -168.14036;
 
-  expect_matrix_eq(m2, stan::math::matrix_exp(m1));
+  EXPECT_MATRIX_FLOAT_EQ(m2, stan::math::matrix_exp(m1));
 }
 
 TEST(MathMatrixPrimMat, matrix_exp_100x100) {

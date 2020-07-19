@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_DETERMINANT_HPP
 
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 
 namespace stan {
@@ -10,21 +11,15 @@ namespace math {
 /**
  * Returns the determinant of the specified square matrix.
  *
- * @tparam T type of elements in the matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam T type of the matrix (must be derived from \c Eigen::MatrixBase)
  *
  * @param m Specified matrix.
  * @return Determinant of the matrix.
  * @throw std::domain_error if matrix is not square.
  */
-template <typename T, int R, int C>
-inline T determinant(const Eigen::Matrix<T, R, C>& m) {
+template <typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
+inline value_type_t<T> determinant(const T& m) {
   check_square("determinant", "m", m);
-  if (m.size() == 0) {
-    return 1;
-  }
-
   return m.determinant();
 }
 
