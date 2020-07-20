@@ -69,11 +69,10 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
    * @tparam S A dense Eigen value or expression that has same scalar type as T
    * @param x Value of the constructed variable.
    */
-  template <typename S, require_eigen_t<S>* = nullptr, require_vt_same<T, S>* = nullptr>
+  template <typename S, require_eigen_t<S>* = nullptr,
+            require_vt_same<T, S>* = nullptr>
   explicit vari_value(const S& x)
-      : chainable_alloc(),
-        adj_(constant(0, x.rows(), x.cols())),
-        val_(x) {
+      : chainable_alloc(), adj_(constant(0, x.rows(), x.cols())), val_(x) {
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
@@ -115,7 +114,8 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
    *  derivative propagation, the chain() method of each variable
    *  will be called in the reverse order of construction.
    *
-   * @tparam S A `matrix_cl` or kernel generator expression type that is convertible to `value_type`
+   * @tparam S A `matrix_cl` or kernel generator expression type that is
+   * convertible to `value_type`
    * @param x Value of the constructed variable.
    * @param stacked If false will put this this vari on the nochain stack so
    * that its `chain()` method is not called.
