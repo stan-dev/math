@@ -6,129 +6,13 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/Phi.hpp>
+#include <stan/math/prim/fun/size_mvt.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <vector>
 #include <cmath>
 
 namespace stan {
 namespace math {
-
-/** \ingroup multivar_dists
- * Returns the (natural) log probability of the specified integer
- * outcome given the continuous location and specified cutpoints
- * in an ordered probit model.
- *
- * <p>Typically the continuous location
- * will be the dot product of a vector of regression coefficients
- * and a vector of predictors for the outcome.
- *
- * @tparam T_loc location type
- * @tparam T_cut cut-point type
- * @param y Outcome.
- * @param lambda Location.
- * @param c Positive increasing vector of cutpoints.
- * @return Log probability of outcome given location and cutpoints.
- * @throw std::domain_error If the outcome is not between 1 and
- * the number of cutpoints plus 2; if the cutpoint vector is
- * empty; if the cutpoint vector contains a non-positive,
- * non-finite value; or if the cutpoint vector is not sorted in
- * ascending order.
- */
-template <bool propto, typename T_loc, typename T_cut>
-return_type_t<T_loc, T_cut> ordered_probit_lpmf(
-    int y, const T_loc& lambda,
-    const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
-  using std::exp;
-  using std::log;
-  static const char* function = "ordered_probit";
-  int K = c.size() + 1;
-  check_bounded(function, "Random variable", y, 1, K);
-  check_finite(function, "Location parameter", lambda);
-  check_greater(function, "Size of cut points parameter", c.size(), 0);
-  check_ordered(function, "Cut-points", c);
-  check_finite(function, "Cut-points", c);
-
-  if (y == 1) {
-    return log1m(Phi(lambda - c[0]));
-  } else if (y == K) {
-    return log(Phi(lambda - c[K - 2]));
-  } else {
-    return log(Phi(lambda - c[y - 2]) - Phi(lambda - c[y - 1]));
-  }
-}
-
-template <typename T_loc, typename T_cut>
-return_type_t<T_loc, T_cut> ordered_probit_lpmf(
-    int y, const T_loc& lambda,
-    const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
-  return ordered_probit_lpmf<false>(y, lambda, c);
-}
-
-/** \ingroup multivar_dists
- * Returns the (natural) log probability of the specified array
- * of integers given the vector of continuous locations and
- * specified cutpoints in an ordered probit model.
- *
- * <p>Typically the continuous location
- * will be the dot product of a vector of regression coefficients
- * and a vector of predictors for the outcome.
- *
- * @tparam propto True if calculating up to a proportion.
- * @tparam T_loc Location type.
- * @tparam T_cut Cut-point type.
- * @param y Array of integers
- * @param lambda Vector of continuous location variables.
- * @param c Positive increasing vector of cutpoints.
- * @return Log probability of outcome given location and
- * cutpoints.
- * @throw std::domain_error If the outcome is not between 1 and
- * the number of cutpoints plus 2; if the cutpoint vector is
- * empty; if the cutpoint vector contains a non-positive,
- * non-finite value; or if the cutpoint vector is not sorted in
- * ascending order.
- * @throw std::invalid_argument If y and lambda are different
- * lengths.
- */
-template <bool propto, typename T_loc, typename T_cut>
-return_type_t<T_loc, T_cut> ordered_probit_lpmf(
-    const std::vector<int>& y,
-    const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
-    const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
-  static const char* function = "ordered_probit";
-
-  int N = lambda.size();
-  int K = c.size() + 1;
-
-  check_consistent_sizes(function, "Integers", y, "Locations", lambda);
-  check_bounded(function, "Random variable", y, 1, K);
-  check_finite(function, "Location parameter", lambda);
-  check_ordered(function, "Cut-points", c);
-  check_greater(function, "Size of cut points parameter", c.size(), 0);
-  check_finite(function, "Cut-points", c);
-
-  using std::exp;
-  using std::log;
-  return_type_t<T_loc, T_cut> logp_n(0.0);
-
-  for (int i = 0; i < N; ++i) {
-    if (y[i] == 1) {
-      logp_n += log1m(Phi(lambda[i] - c[0]));
-    } else if (y[i] == K) {
-      logp_n += log(Phi(lambda[i] - c[K - 2]));
-    } else {
-      logp_n
-          += log(Phi(lambda[i] - c[y[i] - 2]) - Phi(lambda[i] - c[y[i] - 1]));
-    }
-  }
-  return logp_n;
-}
-
-template <typename T_loc, typename T_cut>
-return_type_t<T_loc, T_cut> ordered_probit_lpmf(
-    const std::vector<int>& y,
-    const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
-    const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
-  return ordered_probit_lpmf<false>(y, lambda, c);
-}
 
 /** \ingroup multivar_dists
  * Returns the (natural) log probability of the specified array
@@ -140,67 +24,81 @@ return_type_t<T_loc, T_cut> ordered_probit_lpmf(
  * and a vector of predictors for the outcome.
  *
  * @tparam propto True if calculating up to a proportion.
- * @tparam T_y Type of y variable (should be std::vector<int>).
- * @tparam T_loc Location type.
- * @tparam T_cut Cut-point type.
- * @param y Array of integers
- * @param lambda Vector of continuous location variables.
- * @param c array of Positive increasing vectors of cutpoints.
+ * @tparam T_y Type of y variable - `int` or `std::vector<int>`.
+ * @tparam T_loc Location type - Eigen vector or scalar.
+ * @tparam T_cut Cut-point type - Eigen vector or a std vector of Eigen vectors.
+ * @param y integer or Array of integers
+ * @param lambda Location.
+ * @param c Positive increasing vectors of cutpoints.
  * @return Log probability of outcome given location and
  * cutpoints.
  * @throw std::domain_error If the outcome is not between 1 and
- * the number of cutpoints plus 2; if the cutpoint vector is
- * empty; if the cutpoint vector contains a non-positive,
- * non-finite value; or if the cutpoint vector is not sorted in
+ * the number of cutpoints plus 2; if the cutpoint vector contains a
+ * non-positive or non-finite value; or if the cutpoint vector is not sorted in
  * ascending order.
  * @throw std::invalid_argument If y and lambda are different
- * lengths, or if y and the array of cutpoints are of different
- * lengths.
+ * lengths; if the cutpoint vector is empty; if y and the array of cutpoints are
+ * of different lengths.
  */
-template <bool propto, typename T_loc, typename T_cut>
-return_type_t<T_loc, T_cut> ordered_probit_lpmf(
-    const std::vector<int>& y,
-    const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
-    const std::vector<Eigen::Matrix<T_cut, Eigen::Dynamic, 1> >& c) {
-  static const char* function = "ordered_probit";
-  int N = lambda.size();
-  check_consistent_sizes(function, "Integers", y, "Locations", lambda);
-  check_consistent_sizes(function, "Integers", y, "Cut-points", c);
-
-  for (int i = 0; i < N; ++i) {
-    int K = c[i].size() + 1;
-    check_bounded(function, "Random variable", y[i], 1, K);
-    check_greater(function, "Size of cut points parameter", c[i].size(), 0);
-    check_ordered(function, "Cut-points", c[i]);
-  }
-
-  check_finite(function, "Location parameter", lambda);
-  check_finite(function, "Cut-points", c);
-
+template <bool propto, typename T_y, typename T_loc, typename T_cut>
+return_type_t<T_loc, T_cut> ordered_probit_lpmf(const T_y& y,
+                                                const T_loc& lambda,
+                                                const T_cut& c) {
   using std::exp;
   using std::log;
+  using T_lambda_ref = ref_type_t<T_loc>;
+  static const char* function = "ordered_probit";
+
+  check_nonzero_size(function, "Cut-points", c);
+  int N = size(lambda);
+  int C_l = size_mvt(c);
+  int K = vector_seq_view<T_cut>(c)[0].size() + 1;
+
+  check_consistent_sizes(function, "Integers", y, "Locations", lambda);
+  if (C_l > 1) {
+    check_size_match(function, "Length of location variables ", N,
+                     "Number of cutpoint vectors ", C_l);
+  }
+
+  check_bounded(function, "Random variable", y, 1, K);
+  scalar_seq_view<T_y> y_vec(y);
+  vector_seq_view<T_cut> c_vec(c);
+  check_nonzero_size(function, "First cutpoint set", c_vec[0]);
+  for (int i = 0; i < size_mvt(c); ++i) {
+    check_size_match(function, "One cutpoint set", K - 1, "First cutpoint set",
+                     c_vec[i].size());
+    check_ordered(function, "Cut-points", c_vec[i]);
+    if (K > 2) {
+      check_finite(function, "Final cut point", c_vec[i].coeff(K - 2));
+    }
+    check_finite(function, "First cut point", c_vec[i].coeff(0));
+  }
+
+  T_lambda_ref lambda_ref = lambda;
+  check_finite(function, "Location parameter", lambda_ref);
+  scalar_seq_view<T_lambda_ref> lambda_vec(lambda_ref);
+
   return_type_t<T_loc, T_cut> logp_n(0.0);
 
   for (int i = 0; i < N; ++i) {
-    int K = c[i].size() + 1;
+    int K = c_vec[i].size() + 1;
 
-    if (y[i] == 1) {
-      logp_n += log1m(Phi(lambda[i] - c[i][0]));
-    } else if (y[i] == K) {
-      logp_n += log(Phi(lambda[i] - c[i][K - 2]));
+    if (y_vec[i] == 1) {
+      logp_n += log1m(Phi(lambda_vec[i] - c_vec[i].coeff(0)));
+    } else if (y_vec[i] == K) {
+      logp_n += log(Phi(lambda_vec[i] - c_vec[i].coeff(K - 2)));
     } else {
-      logp_n += log(Phi(lambda[i] - c[i][y[i] - 2])
-                    - Phi(lambda[i] - c[i][y[i] - 1]));
+      logp_n += log(Phi(lambda_vec[i] - c_vec[i].coeff(y_vec[i] - 2))
+                    - Phi(lambda_vec[i] - c_vec[i].coeff(y_vec[i] - 1)));
     }
   }
   return logp_n;
 }
 
-template <typename T_loc, typename T_cut>
-return_type_t<T_loc, T_cut> ordered_probit_lpmf(
-    const std::vector<int>& y,
-    const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
-    const std::vector<Eigen::Matrix<T_cut, Eigen::Dynamic, 1> >& c) {
+template <typename T_y, typename T_loc, typename T_cut>
+return_type_t<T_loc, T_cut> ordered_probit_lpmf(const T_y& y,
+                                                const T_loc& lambda,
+                                                const T_cut& c) {
   return ordered_probit_lpmf<false>(y, lambda, c);
 }
 }  // namespace math

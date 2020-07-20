@@ -69,15 +69,18 @@ template <bool propto, typename T_y, typename T_loc, typename T_cut>
 return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
                                                   const T_loc& lambda,
                                                   const T_cut& c) {
-  static const char* function = "ordered_logistic";
-
   using T_partials_return = partials_return_t<T_loc, T_cut>;
-  using T_partials_vec = typename Eigen::Matrix<T_partials_return, -1, 1>;
+  using T_partials_array = Eigen::Array<T_partials_return, -1, 1>;
+  using T_cuts_val = value_type_t<scalar_type_t<T_cut>>;
   using T_y_ref = ref_type_t<T_y>;
   using T_lambda_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
   using T_cut_ref = ref_type_if_t<!is_constant<T_cut>::value, T_cut>;
+  using Eigen::Array;
+  using Eigen::Dynamic;
+  static const char* function = "ordered_logistic";
 
-  int K = c_vec[0].size() + 1;
+  check_nonzero_size(function, "Cut-points", c);
+  int K = vector_seq_view<T_cut>(c)[0].size() + 1;
   int N = size(lambda);
   int C_l = size_mvt(c);
 
@@ -91,14 +94,8 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
   T_lambda_ref lambda_ref = lambda;
   T_cut_ref c_ref = c;
 
-  scalar_seq_view<T_y_ref> y_vec(y_ref);
+  scalar_seq_view<T_y_ref> y_seq(y_ref);
   vector_seq_view<T_cut_ref> c_vec(c_ref);
-
-  for (int i = 1; i < C_l; i++) {
-    check_size_match(function, "Size of one of the vectors of cutpoints ",
-                     c_vec[i].size(), "Size of the first vector of the cutpoints ",
-                     c_vec[0].size());
-  }
 
   const auto& lambda_arr = as_array_or_scalar(lambda_ref);
   ref_type_t<decltype(value_of(lambda_arr))> lambda_val = value_of(lambda_arr);
@@ -106,19 +103,22 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
   check_bounded(function, "Random variable", y_ref, 1, K);
   check_finite(function, "Location parameter", lambda_val);
 
+  check_nonzero_size(function, "Cut-points", c_vec[0]);
   for (int i = 0; i < C_l; i++) {
+    check_size_match(function, "One cutpoint set", c_vec[i].size(),
+                     "First cutpoint set", K - 1);
     check_ordered(function, "Cut-points", c_vec[i]);
-    check_greater(function, "Size of cut points parameter", c_vec[i].size(), 0);
-    check_finite(function, "Final cut-point", c_vec[i](c_vec[i].size() - 1));
-    check_finite(function, "First cut-point", c_vec[i](0));
+    if (K > 2) {
+      check_finite(function, "Final cut-point", c_vec[i].coeff(K - 2));
+    }
+    check_finite(function, "First cut-point", c_vec[i].coeff(0));
   }
 
   scalar_seq_view<decltype(lambda_val)> lam_vec(lambda_val);
   T_partials_return logp(0.0);
-  Array<double, Dynamic, 1> cuts_y1(N_instances), cuts_y2(N_instances);
+  Array<T_cuts_val, Dynamic, 1> cuts_y1(N), cuts_y2(N);
   for (int i = 0; i < N; i++) {
-    logp -= log1p_exp(lam_vec[i] - value_of(c_vec[i][0]));
-    int c = y_vec[i];
+    int c = y_seq[i];
     if (c != K) {
       cuts_y1.coeffRef(i) = value_of(c_vec[i].coeff(c - 1));
     } else {
@@ -131,56 +131,62 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
     }
   }
 
-  operands_and_partials<T_loc, T_cut> ops_partials(lambda, c);
+  Array<T_partials_return, Dynamic, 1> cut2 = lambda_val - cuts_y2;
+  Array<T_partials_return, Dynamic, 1> cut1 = lambda_val - cuts_y1;
 
-  T_partials_vec c_dbl = value_of(c_vec[0]).template cast<T_partials_return>();
+  // Not immediately evaluating next two expressions benefits performance
+  auto m_log_1p_exp_cut1
+      = (cut1 > 0.0).select(-cut1, 0) - (-cut1.abs()).exp().log1p();
+  auto m_log_1p_exp_m_cut2
+      = (cut2 <= 0.0).select(cut2, 0) - (-cut2.abs()).exp().log1p();
 
-  for (int n = 0; n < N; ++n) {
-    if (C_l > 1) {
-      c_dbl = value_of(c_vec[n]).template cast<T_partials_return>();
-    }
-    T_partials_return lam_dbl = value_of(lam_vec[n]);
-
-    if (y_vec[n] == 1) {
-      T_partials_return d = inv_logit(lam_dbl - c_dbl[0]);
-
-      if (!is_constant_all<T_loc>::value) {
-        ops_partials.edge1_.partials_[n] -= d;
-      }
-
-      if (!is_constant_all<T_cut>::value) {
-        ops_partials.edge2_.partials_vec_[n](0) += d;
-      }
-
-    } else if (y_vec[n] == K) {
-      logp -= log1p_exp(c_dbl[K - 2] - lam_dbl);
-      T_partials_return d = inv_logit(c_dbl[K - 2] - lam_dbl);
-
-      if (!is_constant_all<T_loc>::value) {
-        ops_partials.edge1_.partials_[n] = d;
-      }
-
-      if (!is_constant_all<T_cut>::value) {
-        ops_partials.edge2_.partials_vec_[n](K - 2) -= d;
-      }
-
+  if (is_vector<T_y>::value) {
+    Eigen::Map<const Eigen::Matrix<value_type_t<T_y>, Eigen::Dynamic, 1>> y_vec(
+        &y_seq[0], y_seq.size());
+    auto log1m_exp_cuts_diff = log1m_exp(cut1 - cut2);
+    logp = y_vec.cwiseEqual(1)
+               .select(m_log_1p_exp_cut1,
+                       y_vec.cwiseEqual(K).select(
+                           m_log_1p_exp_m_cut2, m_log_1p_exp_m_cut2
+                                                    + log1m_exp_cuts_diff
+                                                    + m_log_1p_exp_cut1))
+               .sum();
+  } else {
+    if (y_seq[0] == 1) {
+      logp = m_log_1p_exp_cut1.sum();
+    } else if (y_seq[0] == K) {
+      logp = m_log_1p_exp_m_cut2.sum();
     } else {
-      T_partials_return d1
-          = inv(1 - exp(c_dbl[y_vec[n] - 1] - c_dbl[y_vec[n] - 2]))
-            - inv_logit(c_dbl[y_vec[n] - 2] - lam_dbl);
-      T_partials_return d2
-          = inv(1 - exp(c_dbl[y_vec[n] - 2] - c_dbl[y_vec[n] - 1]))
-            - inv_logit(c_dbl[y_vec[n] - 1] - lam_dbl);
-      logp += log_inv_logit_diff(lam_dbl - c_dbl[y_vec[n] - 2],
-                                 lam_dbl - c_dbl[y_vec[n] - 1]);
+      logp = (m_log_1p_exp_m_cut2 + log1m_exp(cut1 - cut2).array()
+              + m_log_1p_exp_cut1)
+                 .sum();
+    }
+  }
 
-      if (!is_constant_all<T_loc>::value) {
-        ops_partials.edge1_.partials_[n] -= d1 + d2;
-      }
-
-      if (!is_constant_all<T_cut>::value) {
-        ops_partials.edge2_.partials_vec_[n](y_vec[n] - 2) += d1;
-        ops_partials.edge2_.partials_vec_[n](y_vec[n] - 1) += d2;
+  operands_and_partials<T_loc, T_cut> ops_partials(lambda, c);
+  if (!is_constant_all<T_loc, T_cut>::value) {
+    Array<T_partials_return, Dynamic, 1> exp_m_cut1 = exp(-cut1);
+    Array<T_partials_return, Dynamic, 1> exp_m_cut2 = exp(-cut2);
+    Array<T_partials_return, Dynamic, 1> exp_cuts_diff = exp(cuts_y2 - cuts_y1);
+    Array<T_partials_return, Dynamic, 1> d1
+        = (cut2 > 0).select(exp_m_cut2 / (1 + exp_m_cut2), 1 / (1 + exp(cut2)))
+          - exp_cuts_diff / (exp_cuts_diff - 1);
+    Array<T_partials_return, Dynamic, 1> d2
+        = 1 / (1 - exp_cuts_diff)
+          - (cut1 > 0).select(exp_m_cut1 / (1 + exp_m_cut1),
+                              1 / (1 + exp(cut1)));
+    if (!is_constant_all<T_loc>::value) {
+      ops_partials.edge1_.partials_ = d1 - d2;
+    }
+    if (!is_constant_all<T_cut>::value) {
+      for (int i = 0; i < N; i++) {
+        int c = y_seq[i];
+        if (c != K) {
+          ops_partials.edge3_.partials_[c - 1] += d2.coeff(i);
+        }
+        if (c != 1) {
+          ops_partials.edge3_.partials_[c - 2] -= d1.coeff(i);
+        }
       }
     }
   }
