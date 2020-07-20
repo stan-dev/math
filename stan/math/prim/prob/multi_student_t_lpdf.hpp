@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/max_size_mvt.hpp>
 #include <stan/math/prim/fun/size_mvt.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/prob/multi_normal_log.hpp>
 #include <cmath>
 #include <cstdlib>
@@ -94,9 +95,11 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
     check_finite(function, "Location parameter", mu_vec[i]);
     check_not_nan(function, "Random variable", y_vec[i]);
   }
-  check_symmetric(function, "Scale parameter", Sigma);
+  const auto& Sigma_ref = to_ref(Sigma);
+  check_symmetric(function, "Scale parameter", Sigma_ref);
 
-  LDLT_factor<T_scale_elem, Eigen::Dynamic, Eigen::Dynamic> ldlt_Sigma(Sigma);
+  LDLT_factor<T_scale_elem, Eigen::Dynamic, Eigen::Dynamic> ldlt_Sigma(
+      Sigma_ref);
   check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_Sigma);
 
   if (size_y == 0) {
@@ -124,13 +127,10 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
   if (include_summand<propto, T_y, T_dof, T_loc, T_scale_elem>::value) {
     lp_type sum_lp_vec(0.0);
     for (size_t i = 0; i < size_vec; i++) {
-      Eigen::Matrix<return_type_t<T_y, T_loc>, Eigen::Dynamic, 1> y_minus_mu(
-          size_y);
-      for (int j = 0; j < size_y; j++) {
-        y_minus_mu(j) = y_vec[i](j) - mu_vec[i](j);
-      }
+      const auto& y_col = as_column_vector_or_scalar(y_vec[i]);
+      const auto& mu_col = as_column_vector_or_scalar(mu_vec[i]);
       sum_lp_vec
-          += log1p(trace_inv_quad_form_ldlt(ldlt_Sigma, y_minus_mu) / nu);
+          += log1p(trace_inv_quad_form_ldlt(ldlt_Sigma, y_col - mu_col) / nu);
     }
     lp -= 0.5 * (nu + size_y) * sum_lp_vec;
   }

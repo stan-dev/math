@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -33,11 +34,6 @@ multi_normal_prec_rng(const T_loc &mu, const Eigen::MatrixXd &S, RNG &rng) {
   using boost::variate_generator;
   static const char *function = "multi_normal_prec_rng";
   check_positive(function, "Precision matrix rows", S.rows());
-  check_finite(function, "Precision matrix", S);
-  check_symmetric(function, "Precision matrix", S);
-
-  Eigen::LLT<Eigen::MatrixXd> llt_of_S = S.llt();
-  check_pos_definite(function, "precision matrix argument", llt_of_S);
 
   vector_seq_view<T_loc> mu_vec(mu);
   check_positive(function, "number of location parameter vectors",
@@ -47,22 +43,26 @@ multi_normal_prec_rng(const T_loc &mu, const Eigen::MatrixXd &S, RNG &rng) {
   size_t N = mu_vec.size();
 
   for (size_t i = 1; i < N; i++) {
-    int size_mu_new = mu_vec[i].size();
     check_size_match(function,
                      "Size of one of the vectors of "
                      "the location variable",
-                     size_mu_new,
-                     "Size of another vector of the "
+                     mu_vec[i].size(),
+                     "Size of the first vector of the "
                      "location variable",
                      size_mu);
   }
+  check_size_match(function, "Rows of location parameter", size_mu, "Rows of S",
+                   S.rows());
 
   for (size_t i = 0; i < N; i++) {
     check_finite(function, "Location parameter", mu_vec[i]);
   }
+  const auto& S_ref = to_ref(S);
+  check_finite(function, "Precision matrix", S_ref);
+  check_symmetric(function, "Precision matrix", S_ref);
+  Eigen::LLT<Eigen::MatrixXd> llt_of_S = S_ref.llt();
+  check_pos_definite(function, "precision matrix argument", llt_of_S);
 
-  check_size_match(function, "Rows of location parameter", size_mu, "Rows of S",
-                   S.rows());
 
   StdVectorBuilder<true, Eigen::VectorXd, T_loc> output(N);
 
@@ -75,7 +75,7 @@ multi_normal_prec_rng(const T_loc &mu, const Eigen::MatrixXd &S, RNG &rng) {
       z(i) = std_normal_rng();
     }
 
-    output[n] = Eigen::VectorXd(mu_vec[n]) + llt_of_S.matrixU().solve(z);
+    output[n] = as_column_vector_or_scalar(mu_vec[n]) + llt_of_S.matrixU().solve(z);
   }
 
   return output.data();

@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/max_size_mvt.hpp>
 #include <stan/math/prim/fun/size_mvt.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/trace_quad_form.hpp>
 
 namespace stan {
@@ -22,10 +23,6 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_prec_lpdf(
   using std::vector;
   static const char* function = "multi_normal_prec_lpdf";
   check_positive(function, "Precision matrix rows", Sigma.rows());
-  check_symmetric(function, "Precision matrix", Sigma);
-
-  LDLT_factor<T_covar_elem, Eigen::Dynamic, Eigen::Dynamic> ldlt_Sigma(Sigma);
-  check_ldlt_factor(function, "LDLT_Factor of precision parameter", ldlt_Sigma);
 
   size_t number_of_y = size_mvt(y);
   size_t number_of_mu = size_mvt(mu);
@@ -42,36 +39,24 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_prec_lpdf(
   int size_y = y_vec[0].size();
   int size_mu = mu_vec[0].size();
   if (size_vec > 1) {
-    int size_y_old = size_y;
-    int size_y_new;
     for (size_t i = 1, size_mvt_y = size_mvt(y); i < size_mvt_y; i++) {
-      int size_y_new = y_vec[i].size();
       check_size_match(function,
                        "Size of one of the vectors "
                        "of the random variable",
-                       size_y_new,
-                       "Size of another vector of "
+                       y_vec[i].size(),
+                       "Size of the first vector of "
                        "the random variable",
-                       size_y_old);
-      size_y_old = size_y_new;
+                       size_y);
     }
-    int size_mu_old = size_mu;
-    int size_mu_new;
     for (size_t i = 1, size_mvt_mu = size_mvt(mu); i < size_mvt_mu; i++) {
-      int size_mu_new = mu_vec[i].size();
       check_size_match(function,
                        "Size of one of the vectors "
                        "of the location variable",
-                       size_mu_new,
-                       "Size of another vector of "
+                       mu_vec[i].size(),
+                       "Size of the first vector of "
                        "the location variable",
-                       size_mu_old);
-      size_mu_old = size_mu_new;
+                       size_mu);
     }
-    (void)size_y_old;
-    (void)size_y_new;
-    (void)size_mu_old;
-    (void)size_mu_new;
   }
 
   check_size_match(function, "Size of random variable", size_y,
@@ -85,6 +70,11 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_prec_lpdf(
     check_finite(function, "Location parameter", mu_vec[i]);
     check_not_nan(function, "Random variable", y_vec[i]);
   }
+  const auto& Sigma_ref = to_ref(Sigma);
+  check_symmetric(function, "Precision matrix", Sigma_ref);
+
+  LDLT_factor<T_covar_elem, Eigen::Dynamic, Eigen::Dynamic> ldlt_Sigma(Sigma_ref);
+  check_ldlt_factor(function, "LDLT_Factor of precision parameter", ldlt_Sigma);
 
   if (size_y == 0) {
     return lp;
@@ -101,12 +91,9 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_prec_lpdf(
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     lp_type sum_lp_vec(0.0);
     for (size_t i = 0; i < size_vec; i++) {
-      Eigen::Matrix<return_type_t<T_y, T_loc>, Eigen::Dynamic, 1> y_minus_mu(
-          size_y);
-      for (int j = 0; j < size_y; j++) {
-        y_minus_mu(j) = y_vec[i](j) - mu_vec[i](j);
-      }
-      sum_lp_vec += trace_quad_form(Sigma, y_minus_mu);
+      const auto& y_col = as_column_vector_or_scalar(y_vec[i]);
+      const auto& mu_col = as_column_vector_or_scalar(mu_vec[i]);
+      sum_lp_vec += trace_quad_form(Sigma_ref, y_col - mu_col);
     }
     lp -= 0.5 * sum_lp_vec;
   }

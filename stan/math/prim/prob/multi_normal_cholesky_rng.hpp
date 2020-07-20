@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/size_mvt.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -39,22 +40,24 @@ multi_normal_cholesky_rng(
   size_t size_mu = mu_vec[0].size();
 
   size_t N = size_mvt(mu);
-  int size_mu_old = size_mu;
   for (size_t i = 1; i < N; i++) {
-    int size_mu_new = mu_vec[i].size();
     check_size_match(function,
                      "Size of one of the vectors of "
                      "the location variable",
-                     size_mu_new,
-                     "Size of another vector of the "
+                     mu_vec[i].size(),
+                     "Size of the first vector of the "
                      "location variable",
-                     size_mu_old);
-    size_mu_old = size_mu_new;
+                     size_mu);
   }
 
+  const auto& mu_ref = to_ref(mu);
+  vector_seq_view<T_loc> mu_ref_vec(mu_ref);
+
   for (size_t i = 0; i < N; i++) {
-    check_finite(function, "Location parameter", mu_vec[i]);
+    check_finite(function, "Location parameter", mu_ref_vec[i]);
   }
+
+  const auto& L_ref = to_ref(L);
 
   StdVectorBuilder<true, Eigen::VectorXd, T_loc> output(N);
 
@@ -67,7 +70,7 @@ multi_normal_cholesky_rng(
       z(i) = std_normal_rng();
     }
 
-    output[n] = Eigen::VectorXd(mu_vec[n]) + L * z;
+    output[n] = as_column_vector_or_scalar(mu_ref_vec[n]) + L_ref * z;
   }
 
   return output.data();
