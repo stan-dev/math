@@ -9,11 +9,28 @@
 namespace stan {
 namespace math {
 
-template <typename T, typename = require_eigen_t<T>, typename = void>
+/**
+ * Pushes dimensions of given argument into given result vector.
+ *
+ * For `var_value` that is the dimensions of inner `vari_value`.
+ * @tparam type in `var_value`
+ * @param x argument
+ * @param result result
+ */
+template <typename T, require_eigen_t<T>* = nullptr>
 inline void dims(const var_value<T>& x, std::vector<int>& result) {
   dims(*x.vi_, result);
 }
-template <typename T, typename = require_eigen_t<T>, typename = void>
+
+/**
+ * Pushes dimensions of given argument into given result vector.
+ *
+ * For `vari_value` containing Eigen type those are the numbers of rows and
+ * columns.
+ * @param x argument
+ * @param result result
+ */
+template <typename T, require_eigen_t<T>* = nullptr>
 inline void dims(const vari_value<T>& x, std::vector<int>& result) {
   result.push_back(x.rows());
   result.push_back(x.cols());
