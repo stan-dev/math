@@ -67,7 +67,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
     }
   }
 
-  VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
+                T_shape>
       inv_alpha(size(alpha));
   if (include_summand<propto, T_shape>::value) {
     for (size_t n = 0; n < stan::math::size(alpha); n++) {
@@ -85,9 +86,9 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
     const T_partials_return deriv_1_2 = inv_sum + alpha_div_sum;
 
     const T_partials_return log1p_scaled_diff
-      = include_summand<propto, T_y, T_loc, T_scale, T_shape>::value
-      ? log1p((y_dbl - mu_dbl) / lambda_dbl)
-      : 0;
+        = include_summand<propto, T_y, T_loc, T_scale, T_shape>::value
+              ? log1p((y_dbl - mu_dbl) / lambda_dbl)
+              : 0;
 
     if (include_summand<propto, T_shape>::value) {
       logp += log_alpha[n];
@@ -95,7 +96,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
     if (include_summand<propto, T_scale>::value) {
       logp -= log_lambda[n];
     }
-    
+
     if (include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
       logp -= (alpha_dbl + 1.0) * log1p_scaled_diff;
     }
