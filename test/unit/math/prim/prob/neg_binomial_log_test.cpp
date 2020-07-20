@@ -10,9 +10,10 @@ TEST(ProbNegBinomial, log_matches_lpmf) {
   long double beta2 = 1e10;
 
   EXPECT_FLOAT_EQ(stan::math::neg_binomial_lpmf(0, 1e11, 1e10),
-		  -alpha2 * std::log1p(1.0 / beta2));
+                  -alpha2 * std::log1p(1.0 / beta2));
   EXPECT_FLOAT_EQ(stan::math::neg_binomial_lpmf(1, 1e11, 1e10),
-		  std::log(alpha2 - 1.0) - alpha2 * std::log1p(1.0 / beta2) - std::log1p(beta2));
+                  std::log(alpha2 - 1.0) - alpha2 * std::log1p(1.0 / beta2)
+                      - std::log1p(beta2));
   EXPECT_FLOAT_EQ((stan::math::neg_binomial_lpmf(13, 1e11, 1e10)),
                   -2.6185576442208003);
 
