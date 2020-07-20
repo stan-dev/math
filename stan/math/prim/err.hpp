@@ -28,6 +28,7 @@
 #include <stan/math/prim/err/check_nonzero_size.hpp>
 #include <stan/math/prim/err/check_not_nan.hpp>
 #include <stan/math/prim/err/check_ordered.hpp>
+#include <stan/math/prim/err/check_sorted.hpp>
 #include <stan/math/prim/err/check_pos_definite.hpp>
 #include <stan/math/prim/err/check_pos_semidefinite.hpp>
 #include <stan/math/prim/err/check_positive.hpp>

@@ -3,7 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/core/Eigen_NumTraits.hpp>
+#include <stan/math/rev/fun/Eigen_NumTraits.hpp>
 #include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/rev/fun/dot_product.hpp>
 #include <stan/math/rev/fun/dot_self.hpp>

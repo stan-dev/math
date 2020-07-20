@@ -33,6 +33,7 @@ namespace math {
 struct kernel_parts {
   std::string includes;  // any function definitions - as if they were includet
                          // at the start of kernel source
+  std::string declarations;    // declarations of any local variables
   std::string initialization;  // the code for initializations done by all
                                // threads, even if they have no work
   std::string body_prefix;     // the code that should be placed at the start of
@@ -43,14 +44,18 @@ struct kernel_parts {
   std::string args;       // kernel arguments
 
   kernel_parts operator+(const kernel_parts& other) {
-    return {
-        includes + other.includes,       initialization + other.initialization,
-        body_prefix + other.body_prefix, body + other.body,
-        reduction + other.reduction,     args + other.args};
+    return {includes + other.includes,
+            declarations += other.declarations,
+            initialization + other.initialization,
+            body_prefix + other.body_prefix,
+            body + other.body,
+            reduction + other.reduction,
+            args + other.args};
   }
 
   kernel_parts operator+=(const kernel_parts& other) {
     includes += other.includes;
+    declarations += other.declarations;
     initialization += other.initialization;
     body_prefix += other.body_prefix;
     body += other.body;
