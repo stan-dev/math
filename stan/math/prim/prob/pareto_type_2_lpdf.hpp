@@ -67,12 +67,11 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
     }
   }
 
-  VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
-                T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       inv_alpha(size(alpha));
-  if (include_summand<propto, T_shape>::value) {
+  if (!is_constant_all<T_shape>::value) {
     for (size_t n = 0; n < stan::math::size(alpha); n++) {
-      inv_alpha[n] = 1 / value_of(alpha_vec[n]);
+      inv_alpha[n] = inv(value_of(alpha_vec[n]));
     }
   }
 
