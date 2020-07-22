@@ -127,7 +127,11 @@ else ifeq ($(OS),Linux)
  OS_TAG := linux
 endif
 
+ifeq ($(OS),Windows_NT)
+TEST_STANC = test/expressions/stanc$(EXE) test\\expressions\\stanc$(EXE)
+else
 TEST_STANC = test/expressions/stanc$(EXE)
+endif
 
 ifneq ($(STANC3),)
   
@@ -143,23 +147,23 @@ else ifneq ($(STANC3_TEST_BIN_URL),)
 ifeq ($(OS_TAG),windows)
     $(TEST_STANC) :
 	@mkdir -p $(dir $@)
-	$(shell echo "curl -L $(STANC3_TEST_BIN_URL)/bin/$(OS_TAG)-stanc -o $(TEST_STANC) --retry $(STANC_DL_RETRY) --retry-delay $(STANC_DL_DELAY)")
+	$(shell echo "curl -L $(STANC3_TEST_BIN_URL)/bin/$(OS_TAG)-stanc -o $@ --retry $(STANC_DL_RETRY) --retry-delay $(STANC_DL_DELAY)")
 else
     $(TEST_STANC) :
 	@mkdir -p $(dir $@)
-	curl -L $(STANC3_TEST_BIN_URL)/bin/$(OS_TAG)-stanc -o $(TEST_STANC) --retry $(STANC_DL_RETRY) --retry-delay $(STANC_DL_DELAY)
-	chmod +x $(TEST_STANC)
+	curl -L $(STANC3_TEST_BIN_URL)/bin/$(OS_TAG)-stanc -o $@ --retry $(STANC_DL_RETRY) --retry-delay $(STANC_DL_DELAY)
+	chmod +x $@
 endif # end download if/else
 
 else ifeq ($(OS_TAG),windows)
 # get latest stanc3 - Windows
     $(TEST_STANC) :
 	@mkdir -p $(dir $@)
-	$(shell echo "curl -L https://github.com/stan-dev/stanc3/releases/download/nightly/$(OS_TAG)-stanc -o $(TEST_STANC) --retry $(STANC_DL_RETRY) --retry-delay $(STANC_DL_DELAY)")
+	$(shell echo "curl -L https://github.com/stan-dev/stanc3/releases/download/nightly/$(OS_TAG)-stanc -o $@ --retry $(STANC_DL_RETRY) --retry-delay $(STANC_DL_DELAY)")
 else
 # get latest stanc3 - Linux & MacOS
     $(TEST_STANC) :
 	@mkdir -p $(dir $@)
-	curl -L https://github.com/stan-dev/stanc3/releases/download/nightly/$(OS_TAG)-stanc -o $(TEST_STANC) --retry $(STANC_DL_RETRY) --retry-delay $(STANC_DL_DELAY)
-	chmod +x $(TEST_STANC)
+	curl -L https://github.com/stan-dev/stanc3/releases/download/nightly/$(OS_TAG)-stanc -o $@ --retry $(STANC_DL_RETRY) --retry-delay $(STANC_DL_DELAY)
+	chmod +x $@
 endif
