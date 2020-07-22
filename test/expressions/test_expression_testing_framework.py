@@ -24,9 +24,8 @@ class TestExpressionTestingFramework(unittest.TestCase):
         self.assertTrue(content in stdout, msg = error_template.format(content, stdout, stderr))
 
     def testExpressionNotAcceptedFailure(self):
-        return_code, stdout, stderr = self.runCommand((sys.executable, "./runTests.py", "./test/expressions", "--only-functions", "bad_no_expressions"))
+        return_code, stdout, stderr = self.runCommand((sys.executable, "./runTests.py", "./test/expressions", "--make-only", "--only-functions", "bad_no_expressions"))
         self.assertNotEqual(return_code, 0)
-        self.assertStdoutContains("recipe for target 'test/expressions/tests0_test.o' failed", stdout, stderr)
 
     def testMultipleEvaluationsFailure(self):
         return_code, stdout, stderr = self.runCommand((sys.executable, "./runTests.py", "./test/expressions", "--only-functions", "bad_multiple_evaluations"))
