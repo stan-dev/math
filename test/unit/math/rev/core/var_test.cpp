@@ -51,6 +51,7 @@ void ctor_overloads() {
   ctor_overloads_impl<T, unsigned char>();
   ctor_overloads_impl<T, unsigned int>();
   ctor_overloads_impl<T, uint32_t>();
+  ctor_overloads_impl<T, uint16_t>();
   ctor_overloads_impl<T, size_t>();
   ctor_overloads_impl<T, ptrdiff_t>();
 }
