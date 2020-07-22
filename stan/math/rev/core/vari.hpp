@@ -74,7 +74,7 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
    * @tparam S a floating point type.
    * @param x Value of the constructed variable.
    */
-  template <typename S, require_convertible_t<S&, Scalar>* = nullptr>
+  template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(S x) noexcept : val_(x), adj_(0.0) {  // NOLINT
     ChainableStack::instance_->var_stack_.emplace_back(this);
   }
@@ -84,9 +84,7 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
    *  adjoint is initialized to zero and if `stacked` is `false` this vari
    *  will be not be put on the var_stack. Instead it will only be put on
    *  a stack to keep track of whether the adjoint needs to be set to zero.
-   *
-   * All constructed variables are added to a stack.  Variables
-   *  should be constructed before variables on which they depend
+   *  Variables should be constructed before variables on which they depend
    *  to insure proper partial derivative propagation.  During
    *  derivative propagation, the chain() method of each variable
    *  will be called in the reverse order of construction.
@@ -96,7 +94,7 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
    * @param stacked If false will put this this vari on the nochain stack so
    * that its `chain()` method is not called.
    */
-  template <typename S, require_convertible_t<S&, Scalar>* = nullptr>
+  template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(S x, bool stacked) noexcept : val_(x), adj_(0.0) {
     if (stacked) {
       ChainableStack::instance_->var_stack_.emplace_back(this);
@@ -197,9 +195,9 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
   /**
    * `PlainObject` represents a user constructible type such as Matrix or Array
    */
-  using PlainObject = std::decay_t<plain_type_t<T>>;
-  using Scalar = PlainObject;  // The underlying type for this class
-  using value_type = Scalar;   // The underlying type for this class
+  using PlainObject = plain_type_t<T>;
+  using Scalar = typename PlainObject::Scalar;  // The underlying type for this class
+  using value_type = PlainObject;   // The underlying type for this class
   using eigen_scalar = value_type_t<PlainObject>;  // A floating point type
   /**
    * Maps for adj_ and val_
@@ -211,11 +209,11 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
   /**
    * Number of rows known at compile time
    */
-  static constexpr Eigen::Index RowsAtCompileTime = Scalar::RowsAtCompileTime;
+  static constexpr Eigen::Index RowsAtCompileTime = PlainObject::RowsAtCompileTime;
   /**
    * Number of columns known at compile time
    */
-  static constexpr Eigen::Index ColsAtCompileTime = Scalar::ColsAtCompileTime;
+  static constexpr Eigen::Index ColsAtCompileTime = PlainObject::ColsAtCompileTime;
 
   /**
    * The value of this variable.
@@ -241,7 +239,7 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
    * @tparam S A dense Eigen type that is convertible to `value_type`
    * @param x Value of the constructed variable.
    */
-  template <typename S, require_convertible_t<S&, value_type>* = nullptr>
+  template <typename S, require_convertible_t<S&, T>* = nullptr>
   explicit vari_value(S&& x)
       : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
@@ -253,13 +251,11 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
   }
 
   /**
-   * Construct an dense Eigen variable implementation from a value. The
+   * Construct a dense Eigen variable implementation from a value. The
    *  adjoint is initialized to zero and if `stacked` is `false` this vari
    *  will be not be put on the var_stack. Instead it will only be put on
    *  a stack to keep track of whether the adjoint needs to be set to zero.
-   *
-   * All constructed variables are added to a stack.  Variables
-   *  should be constructed before variables on which they depend
+   *  Variables should be constructed before variables on which they depend
    *  to insure proper partial derivative propagation.  During
    *  derivative propagation, the chain() method of each variable
    *  will be called in the reverse order of construction.
@@ -269,7 +265,7 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
    * @param stacked If false will put this this vari on the nochain stack so
    * that its `chain()` method is not called.
    */
-  template <typename S, require_convertible_t<S&, value_type>* = nullptr>
+  template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(S&& x, bool stacked)
       : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
@@ -373,13 +369,12 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
  *
  */
 template <typename T>
-class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
+class vari_value<T, require_eigen_sparse_base_t<T>>
     : public vari_base, chainable_alloc {
  public:
-  using PlainObject
-      = std::decay_t<plain_type_t<T>>;  // Base type of Eigen class
-  using Scalar = PlainObject;           // vari's adj_ and val_ member type
-  using value_type = Scalar;            // vari's adj_ and val_ member type
+  using PlainObject = plain_type_t<T>;  // Base type of Eigen class
+  using Scalar = typename PlainObject::Scalar;           // vari's adj_ and val_ member type
+  using value_type = PlainObject;            // vari's adj_ and val_ member type
   /**
    * Rows at compile time
    */
@@ -413,7 +408,7 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
    * @tparam S A sparse Eigen type that is convertible to `value_type`
    * @param x Value of the constructed variable.
    */
-  template <typename S, require_convertible_t<S&, value_type>* = nullptr>
+  template <typename S, require_convertible_t<S&, T>* = nullptr>
   explicit vari_value(S&& x) : val_(x), adj_(x), chainable_alloc() {
     this->set_zero_adjoint();
     ChainableStack::instance_->var_stack_.push_back(this);
@@ -435,7 +430,7 @@ class vari_value<T, std::enable_if_t<is_eigen_sparse_base<T>::value>>
    * @param stacked If false will put this this vari on the nochain stack so
    * that its `chain()` method is not called.
    */
-  template <typename S, require_convertible_t<S&, value_type>* = nullptr>
+  template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(S&& x, bool stacked) : val_(x), adj_(x), chainable_alloc() {
     this->set_zero_adjoint();
     if (stacked) {
