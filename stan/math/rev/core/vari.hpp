@@ -196,8 +196,9 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
    * `PlainObject` represents a user constructible type such as Matrix or Array
    */
   using PlainObject = plain_type_t<T>;
-  using Scalar = typename PlainObject::Scalar;  // The underlying type for this class
-  using value_type = PlainObject;   // The underlying type for this class
+  using Scalar =
+      typename PlainObject::Scalar;  // The underlying type for this class
+  using value_type = PlainObject;    // The underlying type for this class
   using eigen_scalar = value_type_t<PlainObject>;  // A floating point type
   /**
    * Maps for adj_ and val_
@@ -209,11 +210,13 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
   /**
    * Number of rows known at compile time
    */
-  static constexpr Eigen::Index RowsAtCompileTime = PlainObject::RowsAtCompileTime;
+  static constexpr Eigen::Index RowsAtCompileTime
+      = PlainObject::RowsAtCompileTime;
   /**
    * Number of columns known at compile time
    */
-  static constexpr Eigen::Index ColsAtCompileTime = PlainObject::ColsAtCompileTime;
+  static constexpr Eigen::Index ColsAtCompileTime
+      = PlainObject::ColsAtCompileTime;
 
   /**
    * The value of this variable.
@@ -369,12 +372,13 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
  *
  */
 template <typename T>
-class vari_value<T, require_eigen_sparse_base_t<T>>
-    : public vari_base, chainable_alloc {
+class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
+                                                      chainable_alloc {
  public:
   using PlainObject = plain_type_t<T>;  // Base type of Eigen class
-  using Scalar = typename PlainObject::Scalar;           // vari's adj_ and val_ member type
-  using value_type = PlainObject;            // vari's adj_ and val_ member type
+  using Scalar =
+      typename PlainObject::Scalar;  // vari's adj_ and val_ member type
+  using value_type = PlainObject;    // vari's adj_ and val_ member type
   /**
    * Rows at compile time
    */
