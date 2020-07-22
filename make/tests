@@ -128,7 +128,7 @@ else ifeq ($(OS),Linux)
 endif
 
 ifeq ($(OS),Windows_NT)
-TEST_STANC = test/expressions/stanc$(EXE) test\\expressions\\stanc$(EXE)
+TEST_STANC = test/expressions/stanc$(EXE) test\expressions\stanc$(EXE)
 else
 TEST_STANC = test/expressions/stanc$(EXE)
 endif
