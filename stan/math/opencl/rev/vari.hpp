@@ -76,32 +76,6 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
- protected:
-  // to allow access to this constructor from instantinations with different
-  // template parameters
-  template <typename, typename>
-  friend class vari_value;
-  /**
-   * Construct a matrix_cl variable implementation from a value and
-   * adjoint.
-   *
-   * All constructed variables are added to the stack. Variables
-   * should be constructed before variables on which they depend
-   * to insure proper partial derivative propagation.  During
-   * derivative propagation, the chain() method of each variable
-   * will be called in the reverse order of construction.
-   *
-   * @param val Value of the constructed variable.
-   * @param adj Adjoint of the constructed variable.
-   */
-  vari_value(T&& val, T&& adj)
-      : chainable_alloc(),
-        adj_(std::forward<T>(adj)),
-        val_(std::forward<T>(val)) {
-    ChainableStack::instance_->var_stack_.push_back(this);
-  }
-
- public:
   /**
    * Construct an matrix_cl variable implementation from a value. The
    *  adjoint is initialized to zero and if `stacked` is `false` this vari
@@ -196,6 +170,27 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
    */
   static inline void operator delete(void* /* ignore arg */) { /* no op */
   }
+
+ protected:
+  // to allow access to this constructor from instantinations with different
+  // template parameters
+  template <typename, typename>
+  friend class vari_value;
+
+  /**
+   * Construct a matrix_cl variable implementation from a value and
+   * adjoint.
+   *
+   * This constructor does not add the matrix to any stack! It is intended only
+   * for views into matrices already on stack.
+   *
+   * @param val Value of the constructed variable.
+   * @param adj Adjoint of the constructed variable.
+   */
+  vari_value(T&& val, T&& adj)
+      : chainable_alloc(),
+        adj_(std::forward<T>(adj)),
+        val_(std::forward<T>(val)) {}
 
  private:
   template <typename>
