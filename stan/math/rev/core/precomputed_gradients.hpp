@@ -135,22 +135,6 @@ class precomputed_gradients_vari_template : public vari {
     std::copy(gradients.begin(), gradients.end(), gradients_);
   }
 
-  /**
-   * Implements the chain rule for this variable, using the
-   * prestored operands and gradient.
-   */
-  void chain() {
-    for (size_t i = 0; i < size_; ++i) {
-      varis_[i]->adj_ += adj_ * gradients_[i];
-    }
-    index_apply<N_containers>([this](auto... Is) {
-      static_cast<void>(std::initializer_list<int>{
-          (chain_one(std::get<Is>(this->container_operands_),
-                     std::get<Is>(this->container_gradients_)),
-           0)...});
-    });
-  }
-
  private:
   /**
    * Implements the chain rule for one non-`std::vector` operand.
@@ -177,6 +161,23 @@ class precomputed_gradients_vari_template : public vari {
     for (int i = 0; i < op.size(); i++) {
       chain_one(op[i], grad[i]);
     }
+  }
+
+ public:
+  /**
+   * Implements the chain rule for this variable, using the
+   * prestored operands and gradient.
+   */
+  void chain() {
+    for (size_t i = 0; i < size_; ++i) {
+      varis_[i]->adj_ += adj_ * gradients_[i];
+    }
+    index_apply<N_containers>([this](auto... Is) {
+      static_cast<void>(std::initializer_list<int>{
+          (chain_one(std::get<Is>(this->container_operands_),
+                     std::get<Is>(this->container_gradients_)),
+           0)...});
+    });
   }
 };
 
