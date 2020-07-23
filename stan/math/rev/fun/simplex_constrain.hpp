@@ -13,12 +13,15 @@ namespace stan {
 namespace math {
 
 namespace internal {
+template <typename T>
 class simplex_constrain_op {
-  int N_;
-  double* diag_;  // diagonal of the Jacobian of the operator
-  double* z_;
-
- public:
+public:
+  adj_op<T> diag_;
+  adj_op<T> z_;
+//  int N_;
+//  double* diag_;  // diagonal of the Jacobian of the operator
+//  double* z_;
+  explicit simplex_constrain_op(const T& x) : diag_(x.size()), z_(x.size()) {}
   /**
    * Return the simplex corresponding to the specified free vector.
    * A simplex is a vector containing values greater than or equal
@@ -36,20 +39,16 @@ class simplex_constrain_op {
   template <std::size_t size>
   Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
                              const Eigen::VectorXd& y) {
-    N_ = y.size();
-    diag_ = ChainableStack::instance_->memalloc_.alloc_array<double>(N_);
-    z_ = ChainableStack::instance_->memalloc_.alloc_array<double>(N_);
-
-    Eigen::Matrix<double, Eigen::Dynamic, 1> x(N_ + 1);
+    Eigen::Matrix<double, Eigen::Dynamic, 1> x(y.size() + 1);
     double stick_len(1.0);
-    for (int k = 0; k < N_; ++k) {
-      double log_N_minus_k = std::log(N_ - k);
-      z_[k] = inv_logit(y(k) - log_N_minus_k);
-      diag_[k] = stick_len * z_[k] * inv_logit(log_N_minus_k - y(k));
-      x(k) = stick_len * z_[k];
+    for (int k = 0; k < y.size(); ++k) {
+      double log_N_minus_k = std::log(y.size() - k);
+      z_(k) = inv_logit(y(k) - log_N_minus_k);
+      diag_(k) = stick_len * z_(k) * inv_logit(log_N_minus_k - y(k));
+      x(k) = stick_len * z_(k);
       stick_len -= x(k);
     }
-    x(N_) = stick_len;
+    x(y.size()) = stick_len;
     return x;
   }
 
@@ -66,17 +65,17 @@ class simplex_constrain_op {
   template <std::size_t size>
   auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
                                  const Eigen::VectorXd& adj) const {
-    Eigen::VectorXd adj_times_jac(N_);
-    double acc = adj(N_);
+    const auto z_size = z_.size();
+    Eigen::VectorXd adj_times_jac(z_size);
+    double acc = adj(z_size);
 
-    if (N_ > 0) {
-      adj_times_jac(N_ - 1) = diag_[N_ - 1] * (adj(N_ - 1) - acc);
-      for (int n = N_ - 1; --n >= 0;) {
-        acc = adj(n + 1) * z_[n + 1] + (1 - z_[n + 1]) * acc;
-        adj_times_jac(n) = diag_[n] * (adj(n) - acc);
+    if (z_size > 0) {
+      adj_times_jac(z_size - 1) = diag_(z_size - 1) * (adj(z_size - 1) - acc);
+      for (int n = z_size - 1; --n >= 0;) {
+        acc = adj(n + 1) * z_(n + 1) + (1 - z_(n + 1)) * acc;
+        adj_times_jac(n) = diag_(n) * (adj(n) - acc);
       }
     }
-
     return std::make_tuple(adj_times_jac);
   }
 };
@@ -93,9 +92,9 @@ class simplex_constrain_op {
  * @param y Free vector input of dimensionality K - 1
  * @return Simplex of dimensionality K
  */
-inline Eigen::Matrix<var, Eigen::Dynamic, 1> simplex_constrain(
-    const Eigen::Matrix<var, Eigen::Dynamic, 1>& y) {
-  return adj_jac_apply<internal::simplex_constrain_op>(y);
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+inline auto simplex_constrain(const T& y) {
+  return adj_jac_apply<internal::simplex_constrain_op<T>>(y);
 }
 
 }  // namespace math

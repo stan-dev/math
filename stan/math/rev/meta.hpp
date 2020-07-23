@@ -4,5 +4,5 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/meta/is_var.hpp>
 #include <stan/math/rev/meta/partials_type.hpp>
-
+#include <stan/math/rev/meta/var_tuple_filter.hpp>
 #endif

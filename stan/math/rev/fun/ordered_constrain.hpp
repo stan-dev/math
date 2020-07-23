@@ -12,11 +12,13 @@ namespace stan {
 namespace math {
 
 namespace internal {
+template <typename T>
 class ordered_constrain_op {
+public:
+  adj_op<T> exp_x_tmp_;
   int N_;
   double* exp_x_;
-
- public:
+  explicit ordered_constrain_op(const T& x) : exp_x_(x.size() > 0 ? x.size() - 1 : 0) {}
   /**
    * Return an increasing ordered vector derived from the specified
    * free vector.  The returned constrained vector will have the
@@ -88,7 +90,7 @@ class ordered_constrain_op {
  */
 inline Eigen::Matrix<var, Eigen::Dynamic, 1> ordered_constrain(
     const Eigen::Matrix<var, Eigen::Dynamic, 1>& x) {
-  return adj_jac_apply<internal::ordered_constrain_op>(x);
+  return adj_jac_apply<internal::ordered_constrain_op<Eigen::Matrix<var, Eigen::Dynamic, 1>>(x);
 }
 
 }  // namespace math

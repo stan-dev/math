@@ -12,98 +12,157 @@
 
 namespace stan {
 namespace math {
+
 namespace internal {
-
-/**
- * Store the adjoint in y_vi[0] in y_adj
- *
- * @tparam size dimensionality of M
- * @param[in] y_vi pointer to pointer to vari
- * @param[in] M shape of y_adj
- * @param[out] y_adj reference to variable where adjoint is to be stored
- */
-template <size_t size>
-inline void build_y_adj(vari** y_vi, const std::array<int, size>& M,
-                        double& y_adj) {
-  y_adj = y_vi[0]->adj_;
-}
-
-/**
- * Store the adjoints from y_vi in y_adj
- *
- * @tparam size dimensionality of M
- * @param[in] y_vi pointer to pointers to varis
- * @param[in] M shape of y_adj
- * @param[out] y_adj reference to std::vector where adjoints are to be stored
- */
-template <size_t size>
-inline void build_y_adj(vari** y_vi, const std::array<int, size>& M,
-                        std::vector<double>& y_adj) {
-  y_adj.resize(M[0]);
-  for (size_t m = 0; m < y_adj.size(); ++m) {
-    y_adj[m] = y_vi[m]->adj_;
-  }
-}
-
-/**
- * Store the adjoints from y_vi in y_adj
- *
- * @tparam size dimensionality of M
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
- *
- * @param[in] y_vi pointer to pointers to varis
- * @param[in] M shape of y_adj
- * @param[out] y_adj reference to Eigen::Matrix where adjoints are to be stored
- */
-template <size_t size, int R, int C>
-inline void build_y_adj(vari** y_vi, const std::array<int, size>& M,
-                        Eigen::Matrix<double, R, C>& y_adj) {
-  y_adj.resize(M[0], M[1]);
-  for (int m = 0; m < y_adj.size(); ++m) {
-    y_adj(m) = y_vi[m]->adj_;
-  }
-}
-
-/**
- * Compute the dimensionality of the given template argument. The
- * definition of dimensionality is deferred to specializations. By
- * default don't have a value (fail to compile)
- */
+template <typename T, typename = void>
+struct var_return_type;
 template <typename T>
-struct compute_dims {};
-
-/**
- * Compute the dimensionality of the given template argument. Double
- * types have dimensionality zero.
- */
-template <>
-struct compute_dims<double> {
-  static constexpr size_t value = 0;
+struct var_return_type<T, require_arithmetic_t<T>> {
+  using type = vari*;
 };
-
-/**
- * Compute the dimensionality of the given template argument.
- * std::vector has dimension 1
- */
 template <typename T>
-struct compute_dims<std::vector<T>> {
-  static constexpr size_t value = 1;
+struct var_return_type<T, require_std_vector_t<T>> {
+  using type = vari**;
+};
+template <typename T>
+struct var_return_type<T, require_eigen_t<T>> {
+  using type = vari**;
 };
 
-/**
- * Compute the dimensionality of the given template argument.
- * Eigen::Matrix types all have dimension two.
- *
- * @tparam T type of elements in the matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
- */
-template <typename T, int R, int C>
-struct compute_dims<Eigen::Matrix<T, R, C>> {
-  static constexpr size_t value = 2;
-};
 }  // namespace internal
+
+
+template <typename T, bool IsVar = is_var<value_type_t<T>>::value, typename = void>
+class adj_op;
+
+template <typename T>
+class adj_op<T, true, require_container_t<T>> {
+ public:
+  double* mem_;
+  using FReturnType = plain_type_t<decltype(value_of(plain_type_t<T>()))>;
+  Eigen::Map<FReturnType> map_;
+  explicit adj_op(size_t n) :
+    mem_(ChainableStack::instance_->memalloc_.alloc_array<double>(n)),
+    map_(mem_, n) {}
+  explicit adj_op(size_t n, size_t m) :
+    mem_(ChainableStack::instance_->memalloc_.alloc_array<double>(n * m)),
+    map_(mem_, n, m) {}
+
+  inline auto rows() const {
+    return map_.rows();
+  }
+
+  inline auto cols() const {
+    return map_.cols();
+  }
+
+  inline auto size() const {
+    return map_.size();
+  }
+
+  inline auto& map() {
+    return map_;
+  }
+
+  inline const auto& map() const {
+    return map_;
+  }
+
+  inline double& operator()(size_t i) {
+    return map_(i);
+  }
+
+  inline const double& operator()(size_t i) const {
+    return map_(i);
+  }
+
+  inline double& operator()(size_t i, size_t j) {
+    return map_(i, j);
+  }
+
+  inline const double& operator()(size_t i, size_t j) const {
+    return map_(i, j);
+  }
+};
+
+template <typename T>
+class adj_op<T, false, require_container_t<T>> {
+ public:
+  explicit adj_op(size_t n) {}
+  explicit adj_op(size_t n, size_t m) {}
+
+  inline auto rows() const {
+    return 0;
+  }
+
+  inline auto cols() const {
+    return 0;
+  }
+
+  inline auto size() const {
+    return 0;
+  }
+
+  inline auto map() {
+    return Eigen::Matrix<double, -1, -1>(0, 0);
+  }
+  inline const auto map() const {
+    return Eigen::Matrix<double, -1, -1>(0, 0);
+  }
+};
+
+template <typename T>
+class adj_op<T, true, require_stan_scalar_t<T>> {
+ public:
+  double* mem_{ChainableStack::instance_->memalloc_.alloc_array<double>(1)};
+  explicit adj_op(size_t n) {}
+  explicit adj_op(size_t n, size_t m) {}
+
+  inline auto rows() const {
+    return 0;
+  }
+
+  inline auto cols() const {
+    return 0;
+  }
+
+  inline auto size() const {
+    return 0;
+  }
+
+  inline auto& map() {
+    return *mem_;
+  }
+  inline const auto& map() const {
+    return *mem_;
+  }
+};
+
+template <typename T>
+class adj_op<T, false, require_stan_scalar_t<T>> {
+ public:
+  explicit adj_op(size_t n) {}
+  explicit adj_op(size_t n, size_t m) {}
+
+  inline auto rows() const {
+    return 0;
+  }
+
+  inline auto cols() const {
+    return 0;
+  }
+
+  inline auto size() const {
+    return 0;
+  }
+
+  inline auto map() {
+    return 0;
+  }
+  inline const auto map() const {
+    return 0;
+  }
+};
 
 /**
  * adj_jac_vari interfaces a user supplied functor  with the reverse mode
@@ -119,106 +178,38 @@ struct compute_dims<Eigen::Matrix<T, R, C>> {
  */
 template <typename F, typename... Targs>
 struct adj_jac_vari : public vari {
-  std::array<bool, sizeof...(Targs)> is_var_;
+  static constexpr std::array<bool, sizeof...(Targs)> is_var_{
+      is_var<scalar_type_t<Targs>>::value...};
   using FReturnType
-      = std::result_of_t<F(decltype(is_var_), decltype(value_of(Targs()))...)>;
-
+      = std::result_of_t<F(decltype(is_var_), plain_type_t<decltype(value_of(plain_type_t<Targs>()))>...)>;
+  using x_vis_tuple_ = var_to_vari_filter_t<std::decay_t<Targs>...>;
   F f_;
-  std::array<int, sizeof...(Targs)> offsets_;
-  vari** x_vis_;
-  std::array<int, internal::compute_dims<FReturnType>::value> M_;
-  vari** y_vi_;
+  x_vis_tuple_ x_vis_;
+  typename internal::var_return_type<FReturnType>::type y_vi_;
+  std::array<size_t, 2> dims_;
 
-  /**
-   * count_memory returns count (the first argument) + the number of varis used
-   * in the second argument + the number of arguments used to encode the
-   * variadic tail args.
-   *
-   * The adj_jac_vari constructor uses this to figure out how much space to
-   * allocate in x_vis_.
-   *
-   * The array offsets_ is populated with values to indicate where in x_vis_ the
-   * vari pointers for each argument will be stored.
-   *
-   * Each of the arguments can be an Eigen::Matrix with var or double scalar
-   * types, a std::vector with var, double, or int scalar types, or a var, a
-   * double, or an int.
-   *
-   * @tparam R number of rows, can be Eigen::Dynamic
-   * @tparam C number of columns, can be Eigen::Dynamic
-   * @tparam Pargs Types of rest of arguments
-   *
-   * @param count rolling count of number of varis that must be allocated
-   * @param x next argument to have its varis counted
-   * @param args the rest of the arguments (that will be iterated through
-   * recursively)
-   */
-  template <int R, int C, typename... Pargs>
-  inline size_t count_memory(size_t count, const Eigen::Matrix<var, R, C>& x,
-                             const Pargs&... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
-    offsets_[t] = count;
-    count += x.size();
-    return count_memory(count, args...);
+  template <typename RetType = FReturnType, require_arithmetic_t<RetType>* = nullptr>
+  inline auto y_adj() { return y_vi_->adj_; }
+
+  template <typename RetType = FReturnType, require_std_vector_t<RetType>* = nullptr>
+  inline auto y_adj() {
+     std::vector<double> var_y(dims_[0]);
+     for (size_t i = 0; i < dims_[0]; ++i) {
+       var_y[i] = y_vi_[i]->adj_;
+     }
+     return var_y;
+   }
+
+  template <typename RetType = FReturnType, require_eigen_t<RetType>* = nullptr>
+  inline auto y_adj() {
+    Eigen::Matrix<double, FReturnType::RowsAtCompileTime, FReturnType::ColsAtCompileTime> var_y(dims_[0], dims_[1]);
+    const size_t iter_size{dims_[0] * dims_[1]};
+    for (size_t i = 0; i < iter_size; ++i) {
+      var_y(i) = y_vi_[i]->adj_;
+    }
+    return var_y;
   }
 
-  template <int R, int C, typename... Pargs>
-  inline size_t count_memory(size_t count, const Eigen::Matrix<double, R, C>& x,
-                             const Pargs&... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
-    offsets_[t] = count;
-    return count_memory(count, args...);
-  }
-
-  template <typename... Pargs>
-  inline size_t count_memory(size_t count, const std::vector<var>& x,
-                             const Pargs&... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
-    offsets_[t] = count;
-    count += x.size();
-    return count_memory(count, args...);
-  }
-
-  template <typename... Pargs>
-  inline size_t count_memory(size_t count, const std::vector<double>& x,
-                             const Pargs&... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
-    offsets_[t] = count;
-    return count_memory(count, args...);
-  }
-
-  template <typename... Pargs>
-  inline size_t count_memory(size_t count, const std::vector<int>& x,
-                             const Pargs&... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
-    offsets_[t] = count;
-    return count_memory(count, args...);
-  }
-
-  template <typename... Pargs>
-  inline size_t count_memory(size_t count, const var& x, const Pargs&... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
-    offsets_[t] = count;
-    count += 1;
-    return count_memory(count, args...);
-  }
-
-  template <typename... Pargs>
-  inline size_t count_memory(size_t count, const double& x,
-                             const Pargs&... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
-    offsets_[t] = count;
-    return count_memory(count, args...);
-  }
-
-  template <typename... Pargs>
-  inline size_t count_memory(size_t count, const int& x, const Pargs&... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
-    offsets_[t] = count;
-    return count_memory(count, args...);
-  }
-
-  size_t count_memory(size_t count) const { return count; }
 
   /**
    * prepare_x_vis populates x_vis_ with the varis from each of its
@@ -238,135 +229,178 @@ struct adj_jac_vari : public vari {
    * @param args the rest of the arguments (that will be iterated through
    * recursively)
    */
-  template <int R, int C, typename... Pargs>
-  inline void prepare_x_vis(const Eigen::Matrix<var, R, C>& x,
-                            const Pargs&... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+  template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
+  inline auto prepare_x_vis_impl(const EigMat& x) {
+    vari** y = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
     for (int i = 0; i < x.size(); ++i) {
-      x_vis_[offsets_[t] + i] = x(i).vi_;
+      y[i] = x(i).vi_;
     }
-    prepare_x_vis(args...);
+    return y;
   }
 
-  template <int R, int C, typename... Pargs>
-  inline void prepare_x_vis(const Eigen::Matrix<double, R, C>& x,
-                            const Pargs&... args) {
-    prepare_x_vis(args...);
-  }
-
-  template <typename... Pargs>
-  inline void prepare_x_vis(const std::vector<var>& x, const Pargs&... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
+  inline auto prepare_x_vis_impl(const std::vector<var>& x) {
+    vari** y = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
     for (size_t i = 0; i < x.size(); ++i) {
-      x_vis_[offsets_[t] + i] = x[i].vi_;
+      y[i] = x[i].vi_;
     }
-    prepare_x_vis(args...);
+    return y;
   }
 
-  template <typename... Pargs>
-  inline void prepare_x_vis(const std::vector<double>& x,
-                            const Pargs&... args) {
-    prepare_x_vis(args...);
+  inline auto prepare_x_vis_impl(const var& x) {
+    vari* y = ChainableStack::instance_->memalloc_.alloc_array<vari>(1);
+    y = x.vi_;
+    return y;
   }
 
-  template <typename... Pargs>
-  inline void prepare_x_vis(const std::vector<int>& x, const Pargs&... args) {
-    prepare_x_vis(args...);
+  template <typename Arith, require_st_arithmetic<Arith>* = nullptr>
+  inline auto prepare_x_vis_impl(Arith&& x) { return nullptr; }
+
+  auto prepare_x_vis() { return x_vis_tuple_{};}
+
+  template <typename... Args>
+  inline x_vis_tuple_ prepare_x_vis(Args&&... args) {
+    return x_vis_tuple_{prepare_x_vis_impl(args)...};
   }
 
-  template <typename... Pargs>
-  inline void prepare_x_vis(const var& x, const Pargs&... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
-    x_vis_[offsets_[t]] = x.vi_;
-    prepare_x_vis(args...);
+  inline auto& collect_forward_pass(const double& val_y) {
+    y_vi_ = new vari(val_y, false);
+    return y_vi_;
   }
-
-  template <typename... Pargs>
-  inline void prepare_x_vis(const double& x, const Pargs&... args) {
-    prepare_x_vis(args...);
-  }
-
-  template <typename... Pargs>
-  inline void prepare_x_vis(const int& x, const Pargs&... args) {
-    prepare_x_vis(args...);
-  }
-
-  /**
-   * Initializes is_var_ with true if the scalar type in each argument
-   * is a var (and false if not)
-   */
-  adj_jac_vari()
-      : vari(NOT_A_NUMBER),  // The val_ in this vari is unused
-        is_var_({{is_var<typename scalar_type<Targs>::type>::value...}}),
-        x_vis_(nullptr),
-        y_vi_(nullptr) {}
-
-  /**
-   * Return a var with a new vari holding the given value
-   *
-   * @param val_y output of F::operator()
-   * @return var
-   */
-  inline var build_return_varis_and_vars(const double& val_y) {
-    y_vi_ = ChainableStack::instance_->memalloc_.alloc_array<vari*>(1);
-    y_vi_[0] = new vari(val_y, false);
-
-    return y_vi_[0];
-  }
-
-  /**
-   * Return a std::vector of vars created from newly allocated varis initialized
-   * with the values of val_y
-   *
-   * @param val_y output of F::operator()
-   * @return std::vector of vars
-   */
-  inline std::vector<var> build_return_varis_and_vars(
-      const std::vector<double>& val_y) {
-    M_[0] = val_y.size();
-    std::vector<var> var_y(M_[0]);
-
-    y_vi_
-        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(var_y.size());
-    for (size_t m = 0; m < var_y.size(); ++m) {
-      y_vi_[m] = new vari(val_y[m], false);
-      var_y[m] = y_vi_[m];
+  template <typename Vec, require_std_vector_t<Vec>* = nullptr>
+  inline auto& collect_forward_pass(Vec&& val_y) {
+    y_vi_ = ChainableStack::instance_->memalloc_.alloc_array<vari*>(val_y.size());
+    this->dims_[0] = val_y.size();
+    for (size_t i = 0; i < val_y.size(); ++i) {
+      y_vi_[i] = new vari(val_y[i], false);
     }
-
-    return var_y;
+    return y_vi_;
   }
 
+  template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+  inline auto& collect_forward_pass(EigMat&& val_y) {
+    using eig_mat = std::decay_t<EigMat>;
+    using ret_mat = Eigen::Matrix<var, eig_mat::RowsAtCompileTime,
+                                  eig_mat::ColsAtCompileTime>;
+    y_vi_ = ChainableStack::instance_->memalloc_.alloc_array<vari*>(val_y.size());
+    this->dims_[0] = val_y.rows();
+    this->dims_[1] = val_y.cols();
+    for (size_t i = 0; i < val_y.size(); ++i) {
+      y_vi_[i] = new vari(val_y(i), false);
+    }
+    return y_vi_;
+  }
+  template <typename... Pargs>
+  struct var_idx_ {
+    static constexpr size_t value{sizeof...(Targs) - sizeof...(Pargs) - 1};
+  };
+
+  template <typename... Pargs>
+  struct is_var_check_ {
+    static constexpr bool value{is_var_[var_idx_<Pargs...>::value]};
+  };
+
   /**
-   * Return an Eigen::Matrix of vars created from newly allocated varis
-   * initialized with the values of val_y. The shape of the new matrix comes
-   * from M_
+   * Accumulate, if necessary, the values of y_adj_jac into the
+   * adjoints of the varis pointed to by the appropriate elements
+   * of x_vis_. Recursively calls accumulate_adjoints on the rest of the
+   * arguments.
    *
    * @tparam R number of rows, can be Eigen::Dynamic
    * @tparam C number of columns, can be Eigen::Dynamic
-   * @param val_y output of F::operator()
-   * @return Eigen::Matrix of vars
+   * @tparam Pargs Types of the rest of adjoints to accumulate
+   *
+   * @param y_adj_jac set of values to be accumulated in adjoints
+   * @param args the rest of the arguments (that will be iterated through
+   * recursively)
    */
-  template <int R, int C>
-  inline Eigen::Matrix<var, R, C> build_return_varis_and_vars(
-      const Eigen::Matrix<double, R, C>& val_y) {
-    M_[0] = val_y.rows();
-    M_[1] = val_y.cols();
-    Eigen::Matrix<var, R, C> var_y(M_[0], M_[1]);
-
-    y_vi_
-        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(var_y.size());
-    for (int m = 0; m < var_y.size(); ++m) {
-      y_vi_[m] = new vari(val_y(m), false);
-      var_y(m) = y_vi_[m];
+  template <typename Toss, typename... Pargs,
+            bool is_var = is_var_check_<Pargs...>::value,
+            std::enable_if_t<!is_var>* = nullptr>
+  inline void accumulate_adjoints(Toss&&, Pargs&&... args) {
+    accumulate_adjoints(std::forward<Pargs>(args)...);
+  }
+  template <typename EigMat, typename... Pargs,
+            bool is_var = is_var_check_<Pargs...>::value,
+            std::enable_if_t<is_var>* = nullptr,
+            require_eigen_t<EigMat>* = nullptr>
+  inline void accumulate_adjoints(EigMat&& y_adj_jac, Pargs&&... args) {
+    static constexpr size_t t = var_idx_<Pargs...>::value;
+    for (int n = 0; n < y_adj_jac.size(); ++n) {
+      std::get<t>(x_vis_)[n]->adj_ += y_adj_jac(n);
     }
+    accumulate_adjoints(std::forward<Pargs>(args)...);
+  }
 
+  /**
+   * Accumulate, if necessary, the values of y_adj_jac into the
+   * adjoints of the varis pointed to by the appropriate elements
+   * of x_vis_. Recursively calls accumulate_adjoints on the rest of the
+   * arguments.
+   *
+   * @tparam Pargs Types of the rest of adjoints to accumulate
+   * @param y_adj_jac set of values to be accumulated in adjoints
+   * @param args the rest of the arguments (that will be iterated through
+   * recursively)
+   */
+  template <typename Vec, typename... Pargs,
+            bool is_var = is_var_check_<Pargs...>::value,
+            std::enable_if_t<is_var>* = nullptr,
+            require_std_vector_t<Vec>* = nullptr>
+  inline void accumulate_adjoints(Vec&& y_adj_jac, Pargs&&... args) {
+    static constexpr size_t t = var_idx_<Pargs...>::value;
+    for (int n = 0; n < y_adj_jac.size(); ++n) {
+      std::get<t>(x_vis_)[n]->adj_ += y_adj_jac[n];
+    }
+    accumulate_adjoints(std::forward<Pargs>(args)...);
+  }
+
+  /**
+   * Accumulate, if necessary, the value of y_adj_jac into the
+   * adjoint of the vari pointed to by the appropriate element
+   * of x_vis_. Recursively calls accumulate_adjoints on the rest of the
+   * arguments.
+   *
+   * @tparam Pargs Types of the rest of adjoints to accumulate
+   * @param y_adj_jac next set of adjoints to be accumulated
+   * @param args the rest of the arguments (that will be iterated through
+   * recursively)
+   */
+  template <typename... Pargs, bool is_var = is_var_check_<Pargs...>::value,
+            std::enable_if_t<is_var>* = nullptr>
+  inline void accumulate_adjoints(const double& y_adj_jac,
+                                  Pargs&&... args) {
+  static constexpr size_t t = var_idx_<Pargs...>::value;
+    std::get<t>(x_vis_)->adj_ += y_adj_jac;
+    accumulate_adjoints(std::forward<Pargs>(args)...);
+  }
+
+  inline void accumulate_adjoints() {}
+
+  template <typename RetType = FReturnType, require_arithmetic_t<RetType>* = nullptr>
+  inline auto y_var() { return var(y_vi_); }
+
+  template <typename RetType = FReturnType, require_std_vector_t<RetType>* = nullptr>
+  inline auto y_var() {
+     std::vector<var> var_y(dims_[0]);
+     for (size_t i = 0; i < dims_[0]; ++i) {
+       var_y[i] = y_vi_[i];
+     }
+     return var_y;
+   }
+
+  template <typename RetType = FReturnType, require_eigen_t<RetType>* = nullptr>
+  inline auto y_var() {
+    Eigen::Matrix<var, FReturnType::RowsAtCompileTime, FReturnType::ColsAtCompileTime> var_y(dims_[0], dims_[1]);
+    const size_t iter_size{dims_[0] * dims_[1]};
+    for (size_t i = 0; i < iter_size; ++i) {
+      var_y(i) = y_vi_[i];
+    }
     return var_y;
   }
 
-  void prepare_x_vis() {}
 
   /**
-   * The adj_jac_vari functor
+   * The adj_jac_vari constructor
    *  1. Initializes an instance of the user defined functor F
    *  2. Calls operator() on the F instance with the double values from the
    * input args
@@ -382,116 +416,12 @@ struct adj_jac_vari : public vari {
    * @param args Input arguments
    * @return Output of f_ as vars
    */
-  inline auto operator()(const Targs&... args) {
-    x_vis_ = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-        count_memory(0, args...));
-
-    prepare_x_vis(args...);
-
-    return build_return_varis_and_vars(f_(is_var_, value_of(args)...));
-  }
-
-  /**
-   * Accumulate, if necessary, the values of y_adj_jac into the
-   * adjoints of the varis pointed to by the appropriate elements
-   * of x_vis_. Recursively calls accumulate_adjoints on the rest of the
-   * arguments.
-   *
-   * @tparam R number of rows, can be Eigen::Dynamic
-   * @tparam C number of columns, can be Eigen::Dynamic
-   * @tparam Pargs Types of the rest of adjoints to accumulate
-   *
-   * @param y_adj_jac set of values to be accumulated in adjoints
-   * @param args the rest of the arguments (that will be iterated through
-   * recursively)
-   */
-  template <int R, int C, typename... Pargs>
-  inline void accumulate_adjoints(const Eigen::Matrix<double, R, C>& y_adj_jac,
-                                  const Pargs&... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
-    if (is_var_[t]) {
-      for (int n = 0; n < y_adj_jac.size(); ++n) {
-        x_vis_[offsets_[t] + n]->adj_ += y_adj_jac(n);
-      }
-    }
-    accumulate_adjoints(args...);
-  }
-
-  /**
-   * Accumulate, if necessary, the values of y_adj_jac into the
-   * adjoints of the varis pointed to by the appropriate elements
-   * of x_vis_. Recursively calls accumulate_adjoints on the rest of the
-   * arguments.
-   *
-   * @tparam Pargs Types of the rest of adjoints to accumulate
-   * @param y_adj_jac set of values to be accumulated in adjoints
-   * @param args the rest of the arguments (that will be iterated through
-   * recursively)
-   */
-  template <typename... Pargs>
-  inline void accumulate_adjoints(const std::vector<double>& y_adj_jac,
-                                  const Pargs&... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
-    if (is_var_[t]) {
-      for (int n = 0; n < y_adj_jac.size(); ++n) {
-        x_vis_[offsets_[t] + n]->adj_ += y_adj_jac[n];
-      }
-    }
-
-    accumulate_adjoints(args...);
-  }
-
-  /**
-   * Recursively call accumulate_adjoints with args. There are no adjoints to
-   * accumulate for std::vector<int> arguments.
-   *
-   * @tparam Pargs Types of the rest of adjoints to accumulate
-   * @param y_adj_jac ignored
-   * @param args the rest of the arguments (that will be iterated through
-   * recursively)
-   */
-  template <typename... Pargs>
-  inline void accumulate_adjoints(const std::vector<int>& y_adj_jac,
-                                  const Pargs&... args) {
-    accumulate_adjoints(args...);
-  }
-
-  /**
-   * Accumulate, if necessary, the value of y_adj_jac into the
-   * adjoint of the vari pointed to by the appropriate element
-   * of x_vis_. Recursively calls accumulate_adjoints on the rest of the
-   * arguments.
-   *
-   * @tparam Pargs Types of the rest of adjoints to accumulate
-   * @param y_adj_jac next set of adjoints to be accumulated
-   * @param args the rest of the arguments (that will be iterated through
-   * recursively)
-   */
-  template <typename... Pargs>
-  inline void accumulate_adjoints(const double& y_adj_jac,
-                                  const Pargs&... args) {
-    static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
-    if (is_var_[t]) {
-      x_vis_[offsets_[t]]->adj_ += y_adj_jac;
-    }
-    accumulate_adjoints(args...);
-  }
-
-  /**
-   * Recursively call accumulate_adjoints with args. There are no adjoints to
-   * accumulate for int arguments.
-   *
-   * @tparam Pargs Types of the rest of adjoints to accumulate
-   * @param y_adj_jac ignored
-   * @param args the rest of the arguments (that will be iterated through
-   * recursively)
-   */
-  template <typename... Pargs>
-  inline void accumulate_adjoints(const int& y_adj_jac, const Pargs&... args) {
-    accumulate_adjoints(args...);
-  }
-
-  inline void accumulate_adjoints() {}
+  template <typename... Args>
+  adj_jac_vari(Args&&... args)
+      : vari(NOT_A_NUMBER),
+        f_(args...),
+        x_vis_(prepare_x_vis(args...)),
+        y_vi_(collect_forward_pass(f_(is_var_, value_of(args)...))) {}
 
   /**
    * Propagate the adjoints at the output varis (y_vi_) back to the input
@@ -505,15 +435,13 @@ struct adj_jac_vari : public vari {
    * This operation may be called multiple times during the life of the vari
    */
   inline void chain() {
-    FReturnType y_adj;
-
-    internal::build_y_adj(y_vi_, M_, y_adj);
-    auto y_adj_jacs = f_.multiply_adjoint_jacobian(is_var_, y_adj);
-
-    apply([this](auto&&... args) { this->accumulate_adjoints(args...); },
-          y_adj_jacs);
+    apply([this](auto&&... args) { this->accumulate_adjoints(std::forward<decltype(args)>(args)...); },
+          f_.multiply_adjoint_jacobian(is_var_, this->y_adj()));
   }
 };
+
+template <typename F, typename... Targs>
+constexpr std::array<bool, sizeof...(Targs)> adj_jac_vari<F, Targs...>::is_var_;
 
 /**
  * Return the result of applying the function defined by a nullary
@@ -592,9 +520,9 @@ struct adj_jac_vari : public vari {
  */
 template <typename F, typename... Targs>
 inline auto adj_jac_apply(const Targs&... args) {
-  auto vi = new adj_jac_vari<F, Targs...>();
+  auto* vi = new adj_jac_vari<F, Targs...>(args...);
 
-  return (*vi)(args...);
+  return vi->y_var();
 }
 
 }  // namespace math

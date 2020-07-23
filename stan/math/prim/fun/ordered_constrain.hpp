@@ -19,7 +19,8 @@ namespace math {
  * @return Positive, increasing ordered vector.
  * @tparam T Type of scalar.
  */
-template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
+template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr,
+ require_not_var_t<value_type_t<EigVec>>* = nullptr>
 plain_type_t<EigVec> ordered_constrain(const EigVec& x) {
   using Eigen::Dynamic;
   using Eigen::Matrix;

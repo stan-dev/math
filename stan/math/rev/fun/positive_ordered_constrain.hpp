@@ -12,11 +12,14 @@ namespace stan {
 namespace math {
 
 namespace internal {
+template <typename T>
 class positive_ordered_constrain_op {
-  int N_;
-  double* exp_x_;
+public:
+  adj_op<T> exp_x_;
+//  int N_;
+//  double* exp_x_;
 
- public:
+   explicit positive_ordered_constrain_op(const T& x) : exp_x_(x.size()) {}
   /**
    * Return an increasing positive ordered vector derived from the specified
    * free vector.  The returned constrained vector will have the
@@ -31,20 +34,16 @@ class positive_ordered_constrain_op {
   template <std::size_t size>
   Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
                              const Eigen::VectorXd& x) {
-    N_ = x.size();
     using std::exp;
-    Eigen::Matrix<double, Eigen::Dynamic, 1> y(N_);
-    if (N_ == 0) {
+    Eigen::Matrix<double, Eigen::Dynamic, 1> y(x.size());
+    if (x.size() == 0) {
       return y;
     }
-
-    exp_x_ = ChainableStack::instance_->memalloc_.alloc_array<double>(N_);
-
-    exp_x_[0] = exp(x[0]);
-    y[0] = exp_x_[0];
-    for (int n = 1; n < N_; ++n) {
-      exp_x_[n] = exp(x[n]);
-      y[n] = y[n - 1] + exp_x_[n];
+    exp_x_(0) = exp(x[0]);
+    y[0] = exp_x_(0);
+    for (int n = 1; n < x.size(); ++n) {
+      exp_x_(n) = exp(x[n]);
+      y[n] = y[n - 1] + exp_x_(n);
     }
     return y;
   }
@@ -62,12 +61,13 @@ class positive_ordered_constrain_op {
   template <std::size_t size>
   auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
                                  const Eigen::VectorXd& adj) const {
-    Eigen::VectorXd adj_times_jac(N_);
+    const auto x_size = exp_x_.size();
+    Eigen::VectorXd adj_times_jac(x_size);
     double rolling_adjoint_sum = 0.0;
 
-    for (int n = N_; --n >= 0;) {
+    for (int n = x_size; --n >= 0;) {
       rolling_adjoint_sum += adj(n);
-      adj_times_jac(n) = exp_x_[n] * rolling_adjoint_sum;
+      adj_times_jac(n) = exp_x_(n) * rolling_adjoint_sum;
     }
 
     return std::make_tuple(adj_times_jac);
@@ -83,9 +83,10 @@ class positive_ordered_constrain_op {
  * @param x Free vector of scalars
  * @return Positive, increasing ordered vector
  */
-inline Eigen::Matrix<var, Eigen::Dynamic, 1> positive_ordered_constrain(
-    const Eigen::Matrix<var, Eigen::Dynamic, 1>& x) {
-  return adj_jac_apply<internal::positive_ordered_constrain_op>(x);
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+inline auto positive_ordered_constrain(
+    const T& x) {
+  return adj_jac_apply<internal::positive_ordered_constrain_op<T>>(x);
 }
 
 }  // namespace math

@@ -18,7 +18,8 @@ namespace math {
  * @param x Free vector of scalars.
  * @return Positive, increasing ordered vector.
  */
-template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
+template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr,
+ require_not_var_t<value_type_t<EigVec>>* = nullptr>
 Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, 1>
 positive_ordered_constrain(const EigVec& x) {
   using Eigen::Dynamic;

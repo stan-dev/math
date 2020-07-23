@@ -9,19 +9,22 @@
 /*
  * Check scalar return type
  */
+template <typename T>
 struct ScalarSinFunctor {
-  double x_;
+  adj_op<T> x_;
+  explicit ScalarSinFunctor(const T& x) : x_(1);
+
   template <std::size_t size>
   double operator()(const std::array<bool, size>& needs_adj, const double& x) {
-    x_ = x;
+    x_.map() = x;
 
-    return sin(x_);
+    return sin(x_.map());
   }
 
   template <std::size_t size>
   auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
                                  const double& adj) {
-    return std::make_tuple(cos(x_) * adj);
+    return std::make_tuple(cos(x_.map()) * adj);
   }
 };
 
@@ -29,7 +32,7 @@ TEST(AgradRev, test_scalar_sin_stack) {
   stan::math::var x1, y1;
   x1 = 1.0;
 
-  y1 = stan::math::adj_jac_apply<ScalarSinFunctor>(x1);
+  y1 = stan::math::adj_jac_apply<ScalarSinFunctor<var>>(x1);
 
   test::check_varis_on_stack(y1);
 }
@@ -38,7 +41,7 @@ TEST(AgradRev, test_scalar_sin_values) {
   stan::math::var x1, y1;
   x1 = 1.0;
 
-  y1 = stan::math::adj_jac_apply<ScalarSinFunctor>(x1);
+  y1 = stan::math::adj_jac_apply<ScalarSinFunctor<var>>(x1);
 
   EXPECT_NEAR(y1.val(), 0.841470984807897, 1e-10);
 }
@@ -47,7 +50,7 @@ TEST(AgradRev, test_scalar_sin_jac) {
   stan::math::var x1, y1;
   x1 = 1.0;
 
-  y1 = stan::math::adj_jac_apply<ScalarSinFunctor>(x1);
+  y1 = stan::math::adj_jac_apply<ScalarSinFunctor<var>>(x1);
 
   y1.grad();
   EXPECT_NEAR(x1.adj(), 0.5403023058681398, 1e-10);
@@ -56,9 +59,11 @@ TEST(AgradRev, test_scalar_sin_jac) {
 /*
  * Check std::vector return type
  */
+template <typename T>
 struct StdVectorSinFunctor {
-  double* x_;
-  int N_;
+  adj_op<T> x_;
+  //double* x_;
+  //int N_;
 
   template <std::size_t size>
   std::vector<double> operator()(const std::array<bool, size>& needs_adj,
@@ -455,10 +460,7 @@ struct WeirdArgumentListFunctor1 {
 
 template <typename F, typename... Targs>
 auto make_vari_for_test(const Targs&... args) {
-  auto vi = new stan::math::adj_jac_vari<F, Targs...>();
-
-  (*vi)(args...);
-
+  auto vi = new stan::math::adj_jac_vari<F, Targs...>(args...);
   return vi;
 }
 
@@ -497,9 +499,6 @@ TEST(AgradRev,
                 {{false, false, false, false, false, false, false, false, false,
                   false, false, false, false, false, false, false}})));
 
-  EXPECT_EQ(vi1->offsets_, (std::array<int, 16>({{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                                  0, 0, 0, 0, 0, 0}})));
-
   stan::math::var(vi1).grad();
 
   auto vi2 = make_vari_for_test<WeirdArgumentListFunctor1>(
@@ -509,9 +508,6 @@ TEST(AgradRev,
             (std::array<bool, 16>(
                 {{true, false, false, false, true, false, false, false, true,
                   false, true, false, true, false, true, false}})));
-
-  EXPECT_EQ(vi2->offsets_, (std::array<int, 16>({{0, 1, 1, 1, 1, 3, 3, 3, 3, 6,
-                                                  6, 16, 16, 19, 19, 29}})));
 
   stan::math::var(vi2).grad();
 
@@ -523,9 +519,6 @@ TEST(AgradRev,
                 {{false, false, true, false, false, false, true, false, false,
                   true, false, true, false, true, false, true}})));
 
-  EXPECT_EQ(vi3->offsets_, (std::array<int, 16>({{0, 0, 0, 1, 1, 1, 1, 3, 3, 3,
-                                                  11, 11, 16, 16, 24, 24}})));
-
   stan::math::var(vi3).grad();
 
   auto vi4 = make_vari_for_test<WeirdArgumentListFunctor1>(
@@ -535,9 +528,6 @@ TEST(AgradRev,
             (std::array<bool, 16>(
                 {{true, false, false, false, false, false, true, false, true,
                   false, false, true, true, false, false, true}})));
-
-  EXPECT_EQ(vi4->offsets_, (std::array<int, 16>({{0, 1, 1, 1, 1, 1, 1, 3, 3, 6,
-                                                  6, 6, 11, 14, 14, 14}})));
 
   stan::math::var(vi4).grad();
 }
