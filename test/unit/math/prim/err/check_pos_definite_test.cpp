@@ -147,7 +147,7 @@ TEST_F(ErrorHandlingMatrixPosDef, checkPosDefinite_nan) {
   y << nan;
 
   std::stringstream expected_msg;
-  expected_msg << "function: y[row=1, col=1] is nan, but must not be nan!";
+  expected_msg << "function: y[1] is nan, but must not be nan!";
   EXPECT_THROW_MSG(check_pos_definite(function, "y", y), std::domain_error,
                    expected_msg.str());
 
@@ -167,7 +167,20 @@ TEST_F(ErrorHandlingMatrixPosDef, checkPosDefinite_nan) {
       y << 2, -1, 0, -1, 2, -1, 0, -1, 2;
       y(i, j) = nan;
       if (i >= j) {
-        EXPECT_THROW(check_pos_definite(function, "y", y), std::domain_error);
+        // expected_msg.str("");
+        // if (i == j)
+        //   expected_msg << "function: y["
+        //                << j*y.cols() + i + 1
+        //                << "] is " << nan
+        //                << ", but must not be nan!";
+        // else
+        //   expected_msg << "function: y is not symmetric. "
+        //                << "y[" << j+1 << ", " << i+1 << "] = " << y(j, i)
+        //                << ", but y[" << i+1 << ", " << j+1 << "] = "
+        //                << y(i, j);
+        EXPECT_THROW(check_pos_definite(function, "y", y),
+                     // , expected_msg.str());
+                     std::domain_error);
       }
     }
 
