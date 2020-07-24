@@ -15,11 +15,25 @@
 namespace stan {
 namespace math {
 namespace internal {
+/**
+ * Return true if y is finite
+ *
+ * @tparam T_y type of y
+ * @param y parameter to check
+ * @return boolean
+ */
 template <typename T_y>
 bool is_finite(const T_y& y) {
   return is_scal_finite(y);
 }
 
+/**
+ * Return true if every element of the matrix y is finite
+ *
+ * @tparam T_y type of elements y
+ * @param y matrix to check
+ * @return boolean
+ */
 template <typename T_y, int R, int C>
 bool is_finite(const Eigen::Matrix<T_y, R, C>& y) {
   bool all = true;
@@ -29,6 +43,13 @@ bool is_finite(const Eigen::Matrix<T_y, R, C>& y) {
   return all;
 }
 
+/**
+ * Return true if every element of the vector y is finite
+ *
+ * @tparam T_y type of elements y
+ * @param y vector to check
+ * @return boolean
+ */
 template <typename T_y>
 bool is_finite(const std::vector<T_y>& y) {
   bool all = true;
