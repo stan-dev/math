@@ -15,10 +15,10 @@ namespace internal {
 template <typename T>
 class ordered_constrain_op {
 public:
-  adj_op<T> exp_x_tmp_;
-  int N_;
-  double* exp_x_;
-  explicit ordered_constrain_op(const T& x) : exp_x_(x.size() > 0 ? x.size() - 1 : 0) {}
+  adj_op<T> exp_x_;
+  const size_t x_size_;
+  explicit ordered_constrain_op(const T& x) :
+    exp_x_(x.size() > 0 ? x.size() - 1 : 0), x_size_(x.size()) {}
   /**
    * Return an increasing ordered vector derived from the specified
    * free vector.  The returned constrained vector will have the
@@ -33,20 +33,15 @@ public:
   template <std::size_t size>
   Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
                              const Eigen::VectorXd& x) {
-    N_ = x.size();
     using std::exp;
-
-    Eigen::Matrix<double, Eigen::Dynamic, 1> y(N_);
-    if (N_ == 0) {
+    Eigen::Matrix<double, Eigen::Dynamic, 1> y(x_size_);
+    if (x_size_ == 0) {
       return y;
     }
-
-    exp_x_ = ChainableStack::instance_->memalloc_.alloc_array<double>(N_ - 1);
-
     y[0] = x[0];
-    for (int n = 1; n < N_; ++n) {
-      exp_x_[n - 1] = exp(x[n]);
-      y[n] = y[n - 1] + exp_x_[n - 1];
+    for (int n = 1; n < x_size_; ++n) {
+      exp_x_(n - 1) = exp(x[n]);
+      y[n] = y[n - 1] + exp_x_(n - 1);
     }
     return y;
   }
@@ -64,17 +59,15 @@ public:
   template <std::size_t size>
   auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
                                  const Eigen::VectorXd& adj) const {
-    Eigen::VectorXd adj_times_jac(N_);
+    Eigen::VectorXd adj_times_jac(x_size_);
     double rolling_adjoint_sum = 0.0;
-
-    if (N_ > 0) {
-      for (int n = N_ - 1; n > 0; --n) {
+    if (x_size_ > 0) {
+      for (int n = x_size_ - 1; n > 0; --n) {
         rolling_adjoint_sum += adj(n);
-        adj_times_jac(n) = exp_x_[n - 1] * rolling_adjoint_sum;
+        adj_times_jac(n) = exp_x_(n - 1) * rolling_adjoint_sum;
       }
       adj_times_jac(0) = rolling_adjoint_sum + adj(0);
     }
-
     return std::make_tuple(adj_times_jac);
   }
 };
@@ -88,9 +81,9 @@ public:
  * @param x Free vector of scalars
  * @return Increasing ordered vector
  */
-inline Eigen::Matrix<var, Eigen::Dynamic, 1> ordered_constrain(
-    const Eigen::Matrix<var, Eigen::Dynamic, 1>& x) {
-  return adj_jac_apply<internal::ordered_constrain_op<Eigen::Matrix<var, Eigen::Dynamic, 1>>(x);
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+inline auto ordered_constrain(const T& x) {
+  return adj_jac_apply<internal::ordered_constrain_op<T>>(x);
 }
 
 }  // namespace math
