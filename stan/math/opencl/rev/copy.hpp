@@ -60,7 +60,7 @@ class op_copy_from_cl_vari final
  public:
   explicit op_copy_from_cl_vari(vari_value<T>& a)
       : vari_value<Eigen::Matrix<value_type_t<T>, Rows, Cols>>(
-            from_matrix_cl<Rows, Cols>(a.val_)),
+          from_matrix_cl<Rows, Cols>(a.val_)),
         a_(a) {}
 
   virtual void chain() { a_.adj_ = a_.adj_ + to_matrix_cl(this->adj_); }
@@ -97,8 +97,14 @@ inline var_value<Eigen::Matrix<value_type_t<T>, Rows, Cols>> from_matrix_cl(
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
 inline var_value<matrix_cl<value_type_t<value_type_t<T>>>> to_matrix_cl(
     T& src) {
-  return new internal::op_copy_to_cl_vari<decltype(src.adj())>(src.val(),
-                                                               src.adj());
+  // the matrix can go out of scope before chain() is called. So we store a map
+  // to the data
+  var* src_array
+      = ChainableStack::instance_->memalloc_.alloc_array<var>(src.size());
+  Eigen::Map<plain_type_t<T>> src_stacked(src_array, src.rows(), src.cols());
+  src_stacked = src;
+  return new internal::op_copy_to_cl_vari<decltype(src_stacked.adj())>(
+      src_stacked.val(), src_stacked.adj());
 }
 
 /** \ingroup opencl
