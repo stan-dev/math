@@ -79,10 +79,10 @@ TEST(ErrorHandlingMat, CheckFinite_std_vector_Matrix) {
   x.resize(3);
   x << -1, 0, 1;
 
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> xv = { x };
-  std::vector<Eigen::Array<double, Eigen::Dynamic, 1>> xva = { x.array() };
-  std::vector<Eigen::Matrix<double, 1, Eigen::Dynamic>> xvt = { x.transpose() };
-  
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> xv = {x};
+  std::vector<Eigen::Array<double, Eigen::Dynamic, 1>> xva = {x.array()};
+  std::vector<Eigen::Matrix<double, 1, Eigen::Dynamic>> xvt = {x.transpose()};
+
   ASSERT_NO_THROW(check_finite(function, "x", xv))
       << "check_finite should be true with finite x";
 
@@ -95,7 +95,7 @@ TEST(ErrorHandlingMat, CheckFinite_std_vector_Matrix) {
   x.resize(3);
   x << -1, 0, std::numeric_limits<double>::infinity();
 
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> xvi = { x };
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> xvi = {x};
 
   EXPECT_THROW(check_finite(function, "x", xvi), std::domain_error)
       << "check_finite should throw exception on Inf";
@@ -103,7 +103,7 @@ TEST(ErrorHandlingMat, CheckFinite_std_vector_Matrix) {
   x.resize(3);
   x << -1, 0, -std::numeric_limits<double>::infinity();
 
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> nxvi = { x };
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> nxvi = {x};
 
   EXPECT_THROW(check_finite(function, "x", nxvi), std::domain_error)
       << "check_finite should throw exception on -Inf";
@@ -111,10 +111,10 @@ TEST(ErrorHandlingMat, CheckFinite_std_vector_Matrix) {
   x.resize(3);
   x << -1, 0, std::numeric_limits<double>::quiet_NaN();
 
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> xvn = { x };
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> xvn = {x};
 
   EXPECT_THROW(check_finite(function, "x", xvn), std::domain_error)
-  << "check_finite should throw exception on NaN";
+      << "check_finite should throw exception on NaN";
 }
 
 TEST(ErrorHandlingMat, CheckFinite_Matrix_one_indexed_message) {
