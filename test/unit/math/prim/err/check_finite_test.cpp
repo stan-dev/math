@@ -104,10 +104,10 @@ TEST(ErrorHandlingMat, CheckFinite_std_vector_Matrix) {
   x.resize(3);
   x << -1, 0, 1;
 
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> xv = { x };
-  std::vector<Eigen::Array<double, Eigen::Dynamic, 1>> xva = { x.array() };
-  std::vector<Eigen::Matrix<double, 1, Eigen::Dynamic>> xvt = { x.transpose() };
-  
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> xv = {x};
+  std::vector<Eigen::Array<double, Eigen::Dynamic, 1>> xva = {x.array()};
+  std::vector<Eigen::Matrix<double, 1, Eigen::Dynamic>> xvt = {x.transpose()};
+
   ASSERT_NO_THROW(check_finite(function, "x", xv))
       << "check_finite should be true with finite x";
 
