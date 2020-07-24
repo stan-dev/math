@@ -54,6 +54,7 @@ void ctor_overloads_float() {
   ctor_overloads_float_impl<T, unsigned char>();
   ctor_overloads_float_impl<T, unsigned int>();
   ctor_overloads_float_impl<T, uint32_t>();
+  ctor_overloads_float_impl<T, uint16_t>();
   ctor_overloads_float_impl<T, size_t>();
   ctor_overloads_float_impl<T, ptrdiff_t>();
 }
@@ -67,7 +68,7 @@ void ctor_overloads_matrix(EigenMat&& xx) {
 
   eigen_plain x = xx;
   // standard constructor
-  EXPECT_MATRIX_FLOAT_EQ((x * x).eval(), var_value<eigen_plain>(x * x).val());
+  EXPECT_MATRIX_FLOAT_EQ((x + x).eval(), var_value<eigen_plain>(x + x).val());
   // make sure copy ctor is used rather than casting vari* to unsigned int
   EXPECT_MATRIX_FLOAT_EQ(
       x, var_value<eigen_plain>(new vari_value<eigen_plain>(x)).val());
@@ -151,6 +152,10 @@ TEST_F(AgradRev, ctormatrixOverloads) {
   using dense_mat = Eigen::Matrix<double, -1, -1>;
   using sparse_mat = Eigen::SparseMatrix<double>;
   stan::test::ctor_overloads_matrix(dense_mat::Random(10, 10));
+  using dense_vec = Eigen::Matrix<double, -1, 1>;
+  stan::test::ctor_overloads_matrix(dense_vec::Random(10));
+  using dense_row_vec = Eigen::Matrix<double, 1, -1>;
+  stan::test::ctor_overloads_matrix(dense_row_vec::Random(10));
   sparse_mat sparse_x = stan::test::make_sparse_matrix_random(10, 10);
   stan::test::ctor_overloads_sparse_matrix(sparse_x);
 }
