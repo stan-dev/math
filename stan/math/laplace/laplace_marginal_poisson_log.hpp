@@ -36,7 +36,7 @@ namespace math {
    *            breaks and returns an error.
    */
   template <typename T0, typename T1, typename K>
-  T1 laplace_marginal_poisson_log
+  T1 laplace_marginal_poisson_log_lpmf
                (const std::vector<int>& y,
                 const std::vector<int>& n_samples,
                 const K& covariance_function,
@@ -55,7 +55,7 @@ namespace math {
   }
 
   template <typename T0, typename T1, typename K>
-  T1 laplace_marginal_poisson_log
+  T1 laplace_marginal_poisson_log_lpmf
                (const std::vector<int>& y,
                 const std::vector<int>& n_samples,
                 const Eigen::VectorXd& ye,

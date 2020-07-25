@@ -67,7 +67,7 @@ TEST(laplace, likelihood_differentiation2) {
 }
 
 TEST(laplace, poisson_lgm_dim2) {
-  using stan::math::laplace_marginal_poisson_log;
+  using stan::math::laplace_marginal_poisson_log_lpmf;
   using stan::math::var;
   using stan::math::to_vector;
   using stan::math::value_of;
@@ -96,13 +96,13 @@ TEST(laplace, poisson_lgm_dim2) {
   std::vector<int> sums = {1, 0};
 
   squared_kernel_functor K;
-  var target = laplace_marginal_poisson_log(sums, n_samples, K, phi, x, delta,
+  var target = laplace_marginal_poisson_log_lpmf(sums, n_samples, K, phi, x, delta,
                                             delta_int, theta_0);
 
   // Test with exposure argument
   Eigen::VectorXd ye(2);
   ye << 1, 1;
-  target = laplace_marginal_poisson_log(sums, n_samples, ye, K, phi, x, delta,
+  target = laplace_marginal_poisson_log_lpmf(sums, n_samples, ye, K, phi, x, delta,
                                         delta_int, theta_0);
 
   // How to test this? The best way would be to generate a few
@@ -121,13 +121,13 @@ TEST(laplace, poisson_lgm_dim2) {
   phi_2l(1) -= diff;
   phi_2u(1) += diff;
 
-  double target_1u = laplace_marginal_poisson_log(sums, n_samples, K, phi_1u, x,
+  double target_1u = laplace_marginal_poisson_log_lpmf(sums, n_samples, K, phi_1u, x,
                                                   delta, delta_int, theta_0),
-         target_1l = laplace_marginal_poisson_log(sums, n_samples, K, phi_1l, x,
+         target_1l = laplace_marginal_poisson_log_lpmf(sums, n_samples, K, phi_1l, x,
                                               delta, delta_int, theta_0),
-         target_2u = laplace_marginal_poisson_log(sums, n_samples, K, phi_2u, x,
+         target_2u = laplace_marginal_poisson_log_lpmf(sums, n_samples, K, phi_2u, x,
                                               delta, delta_int, theta_0),
-         target_2l = laplace_marginal_poisson_log(sums, n_samples, K, phi_2l, x,
+         target_2l = laplace_marginal_poisson_log_lpmf(sums, n_samples, K, phi_2l, x,
                                               delta, delta_int, theta_0);
 
   VEC g_finite(dim_phi);

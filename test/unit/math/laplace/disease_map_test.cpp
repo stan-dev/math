@@ -15,6 +15,7 @@
 #include <fstream>
 #include <vector>
 
+// TODO(charlesm93): update using new function signatures.
 
 TEST(laplace, disease_map_dim_911) {
   // Based on (Vanhatalo, Pietilainen and Vethari, 2010). See
