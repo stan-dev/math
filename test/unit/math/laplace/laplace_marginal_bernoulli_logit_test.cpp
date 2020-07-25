@@ -167,18 +167,18 @@ TEST(laplace, logistic_lgm_dim500) {
   // TO DO -- get total time from GPStuff and do more comparisons.
 
   // CASE 3: use wrapper function and compare result.
-  using stan::math::laplace_marginal_bernoulli_logit;
+  using stan::math::laplace_marginal_bernoulli_logit_lpmf;
   using stan::math::value_of;
 
   double marginal_density_v2
-    = laplace_marginal_bernoulli_logit(y, n_samples,
+    = laplace_marginal_bernoulli_logit_lpmf(y, n_samples,
                                        phi, x, delta, delta_int,
                                        theta_0, 0, 1e-3, 100);
 
   EXPECT_FLOAT_EQ(marginal_density, marginal_density_v2);
 
   marginal_density_v2
-    = laplace_marginal_bernoulli_logit(y, n_samples,
+    = laplace_marginal_bernoulli_logit_lpmf(y, n_samples,
                                        sqr_exp_kernel_functor(),
                                        phi, x, delta, delta_int,
                                        theta_0, 0, 1e-3, 100);

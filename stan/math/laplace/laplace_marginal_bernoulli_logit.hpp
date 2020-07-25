@@ -34,7 +34,7 @@ namespace math {
    */
   // TODO: deprecate the below function. No default functor.
   template <typename T0, typename T1>
-  T1 laplace_marginal_bernoulli_logit
+  T1 laplace_marginal_bernoulli_logit_lpmf
                (const std::vector<int>& y,
                 const std::vector<int>& n_samples,
                 // const K& covariance function,
@@ -55,7 +55,7 @@ namespace math {
 
   // Add signature that takes in a Kernel functor specified by the user.
   template <typename T0, typename T1, typename K>
-  T1 laplace_marginal_bernoulli_logit
+  T1 laplace_marginal_bernoulli_logit_lpmf
     (const std::vector<int>& y,
      const std::vector<int>& n_samples,
      const K& covariance_function,
@@ -76,7 +76,7 @@ namespace math {
 
   // Add signature that takes x as a matrix instead of a vector.
   template <typename T0, typename T1, typename K>
-  T1 laplace_marginal_bernoulli_logit
+  T1 laplace_marginal_bernoulli_logit_lpmf
     (const std::vector<int>& y,
      const std::vector<int>& n_samples,
      const K& covariance_function,
