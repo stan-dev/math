@@ -135,10 +135,12 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
 
     auto container_operands = std::tuple_cat(
         edge1_.container_operands(), edge2_.container_operands(),
-        edge3_.container_operands(), edge4_.container_operands());
+        edge3_.container_operands(), edge4_.container_operands(),
+        edge5_.container_operands());
     auto container_partials = std::tuple_cat(
         edge1_.container_partials(), edge2_.container_partials(),
-        edge3_.container_partials(), edge4_.container_partials());
+        edge3_.container_partials(), edge4_.container_partials(),
+        edge5_.container_partials());
 
     return var(
         new precomputed_gradients_vari_template<decltype(container_operands),
