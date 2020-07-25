@@ -17,9 +17,6 @@ namespace internal {
 template <typename T>
 class softmax_op {
   adj_op<T> y_;
-//  int N_;
-//  double* y_;  // Holds the results of the softmax
-
  public:
   softmax_op(const T& x) : y_(softmax(x.val())) {}
 

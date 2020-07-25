@@ -63,8 +63,8 @@ TEST(AgradRev, test_scalar_sin_jac) {
 template <typename T>
 struct StdVectorSinFunctor {
   stan::math::adj_op<T> x_;
-  //double* x_;
-  //int N_;
+  // double* x_;
+  // int N_;
   explicit StdVectorSinFunctor(const T& x) : x_(x) {}
 
   template <std::size_t size>
@@ -93,7 +93,8 @@ TEST(AgradRev, test_std_vector_sin_stack) {
   x1[0] = 1.0;
   x1[1] = 2.0;
 
-  y1 = stan::math::adj_jac_apply<StdVectorSinFunctor<std::vector<stan::math::var>>>(x1);
+  y1 = stan::math::adj_jac_apply<
+      StdVectorSinFunctor<std::vector<stan::math::var>>>(x1);
 
   test::check_varis_on_stack(y1);
 }
@@ -103,7 +104,8 @@ TEST(AgradRev, test_std_vector_sin_values) {
   x1[0] = 1.0;
   x1[1] = 2.0;
 
-  y1 = stan::math::adj_jac_apply<StdVectorSinFunctor<std::vector<stan::math::var>>>(x1);
+  y1 = stan::math::adj_jac_apply<
+      StdVectorSinFunctor<std::vector<stan::math::var>>>(x1);
 
   EXPECT_NEAR(y1[0].val(), 0.841470984807897, 1e-10);
   EXPECT_NEAR(y1[1].val(), 0.909297426825682, 1e-10);
@@ -114,7 +116,8 @@ TEST(AgradRev, test_std_vector_sin_jac) {
   x1[0] = 1.0;
   x1[1] = 2.0;
 
-  y1 = stan::math::adj_jac_apply<StdVectorSinFunctor<std::vector<stan::math::var>>>(x1);
+  y1 = stan::math::adj_jac_apply<
+      StdVectorSinFunctor<std::vector<stan::math::var>>>(x1);
 
   y1[0].grad();
   EXPECT_NEAR(x1[0].adj(), 0.5403023058681398, 1e-10);
@@ -224,8 +227,8 @@ TEST(AgradRev, test_vector_sin_multiple_jac) {
 template <typename T>
 struct RowVectorSinFunctor {
   stan::math::adj_op<T> x_;
-//  int N_;
-//  double* x_mem_;
+  //  int N_;
+  //  double* x_mem_;
   explicit RowVectorSinFunctor(const T& x) : x_(x) {}
   template <std::size_t size>
   Eigen::RowVectorXd operator()(const std::array<bool, size>& needs_adj,
@@ -343,16 +346,17 @@ struct MatrixSinFunctor {
 };
 
 TEST(AgradRev, test_matrix_sin_stack) {
-  using eig_mat = Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>;
-  eig_mat x(2, 2),
-      y(2, 2);
+  using eig_mat
+      = Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>;
+  eig_mat x(2, 2), y(2, 2);
   x << 2.0, 1.0, 0.0, -1.0;
   y = stan::math::adj_jac_apply<MatrixSinFunctor<eig_mat>>(x);
   test::check_varis_on_stack(y);
 }
 
 TEST(AgradRev, test_matrix_sin_values) {
-  using eig_mat = Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>;
+  using eig_mat
+      = Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>;
   eig_mat x(2, 2), y(2, 2);
   x << 2.0, 1.0, 0.0, -1.0;
   y = stan::math::adj_jac_apply<MatrixSinFunctor<eig_mat>>(x);
@@ -363,7 +367,8 @@ TEST(AgradRev, test_matrix_sin_values) {
 }
 
 TEST(AgradRev, test_matrix_sin_multiple_jac) {
-  using eig_mat = Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>;
+  using eig_mat
+      = Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>;
   eig_mat x(2, 2), y(2, 2);
   x << 2.0, 1.0, 0.0, -1.0;
   y = stan::math::adj_jac_apply<MatrixSinFunctor<eig_mat>>(x);
@@ -1605,8 +1610,8 @@ struct SinCosFunctor {
   stan::math::adj_op<T2> x2_;
   stan::math::adj_op<T3> x3_;
   stan::math::adj_op<T4> x4_;
-  SinCosFunctor(const T1& x1, const T2& x2, const T3& x3, const T4& x4) :
-  x1_(x1), x2_(x2), x3_(x3), x4_(x4) {}
+  SinCosFunctor(const T1& x1, const T2& x2, const T3& x3, const T4& x4)
+      : x1_(x1), x2_(x2), x3_(x3), x4_(x4) {}
   template <std::size_t size>
   Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
                              const Eigen::VectorXd& x1, const int& x2,
@@ -1655,8 +1660,12 @@ TEST(AgradRev, test_sincos_stack) {
   x21 << 2.0, 1.0;
   x22[0] = 5.0;
   x22[1] = 3.0;
-  y1 = stan::math::adj_jac_apply<SinCosFunctor<eig_vec, int, std::vector<int>, std_vec>>(x11, 0, std::vector<int>(5, 0), x12);
-  y2 = stan::math::adj_jac_apply<SinCosFunctor<eig_vec, int, std::vector<int>, std_vec>>(x21, 0, std::vector<int>(5, 0), x22);
+  y1 = stan::math::adj_jac_apply<
+      SinCosFunctor<eig_vec, int, std::vector<int>, std_vec>>(
+      x11, 0, std::vector<int>(5, 0), x12);
+  y2 = stan::math::adj_jac_apply<
+      SinCosFunctor<eig_vec, int, std::vector<int>, std_vec>>(
+      x21, 0, std::vector<int>(5, 0), x22);
 
   test::check_varis_on_stack(y1);
   test::check_varis_on_stack(y2);
@@ -1674,9 +1683,9 @@ TEST(AgradRev, test_sincos_values) {
   x22[1] = 3.0;
   using sin_cos_func = SinCosFunctor<eig_vec, int, std::vector<int>, std_vec>;
   y1 = stan::math::adj_jac_apply<sin_cos_func>(x11, 0, std::vector<int>(5, 0),
-                                                x12);
+                                               x12);
   y2 = stan::math::adj_jac_apply<sin_cos_func>(x21, 0, std::vector<int>(5, 0),
-                                                x22);
+                                               x22);
 
   EXPECT_FLOAT_EQ(y1(0).val(), 1.125133170271123);
   EXPECT_FLOAT_EQ(y2(0).val(), 1.192959612288908);
@@ -1695,9 +1704,9 @@ TEST(AgradRev, test_sincos_multiple_jac_vv) {
   x22[1] = 3.0;
   using sin_cos_func = SinCosFunctor<eig_vec, int, std::vector<int>, std_vec>;
   y1 = stan::math::adj_jac_apply<sin_cos_func>(x11, 0, std::vector<int>(5, 0),
-                                                x12);
+                                               x12);
   y2 = stan::math::adj_jac_apply<sin_cos_func>(x21, 0, std::vector<int>(5, 0),
-                                                x22);
+                                               x22);
 
   y1(0).grad();
   EXPECT_FLOAT_EQ(x11(0).adj(), 0.5403023058681398);
@@ -1751,11 +1760,12 @@ TEST(AgradRev, test_sincos_multiple_jac_dv) {
   x21 << 2.0, 1.0;
   x22[0] = 5.0;
   x22[1] = 3.0;
-  using sin_cos_func = SinCosFunctor<eig_vec_d, int, std::vector<int>, std_vec_v>;
+  using sin_cos_func
+      = SinCosFunctor<eig_vec_d, int, std::vector<int>, std_vec_v>;
   y1 = stan::math::adj_jac_apply<sin_cos_func>(x11, 0, std::vector<int>(5, 0),
-                                                x12);
+                                               x12);
   y2 = stan::math::adj_jac_apply<sin_cos_func>(x21, 0, std::vector<int>(5, 0),
-                                                x22);
+                                               x22);
 
   y1(0).grad();
   EXPECT_FLOAT_EQ(x12[0].adj(), 0.958924274663139);
@@ -1783,7 +1793,6 @@ TEST(AgradRev, test_sincos_multiple_jac_dv) {
   EXPECT_FLOAT_EQ(x12[0].adj(), 0.0);
   EXPECT_FLOAT_EQ(x22[0].adj(), 1.73 * 0.958924274663139);
   EXPECT_FLOAT_EQ(x22[1].adj(), 1.57 * -0.1411200080598672);
-
 }
 
 TEST(AgradRev, test_sincos_multiple_jac_vd) {
@@ -1796,11 +1805,12 @@ TEST(AgradRev, test_sincos_multiple_jac_vd) {
   x21 << 2.0, 1.0;
   x22[0] = 5.0;
   x22[1] = 3.0;
-  using sin_cos_func = SinCosFunctor<eig_vec_v, int, std::vector<int>, std_vec_d>;
+  using sin_cos_func
+      = SinCosFunctor<eig_vec_v, int, std::vector<int>, std_vec_d>;
   y1 = stan::math::adj_jac_apply<sin_cos_func>(x11, 0, std::vector<int>(5, 0),
-                                                x12);
+                                               x12);
   y2 = stan::math::adj_jac_apply<sin_cos_func>(x21, 0, std::vector<int>(5, 0),
-                                                x22);
+                                               x22);
 
   y1(0).grad();
   EXPECT_FLOAT_EQ(x11(0).adj(), 0.5403023058681398);
@@ -2089,7 +2099,6 @@ struct SinCosFunctor3 {
   }
 };
 
-
 TEST(AgradRev, test_sincos_scalar_eigen_vector_stack) {
   using eig_vec = Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1>;
   using stan::math::var;
@@ -2125,43 +2134,46 @@ TEST(AgradRev, test_sincos_scalar_eigen_vector_values) {
 }
 
 TEST(AgradRev, test_sincos_scalar_eigen_vector_multiple_jac_vv) {
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x11(1), x21(2), y1(1), y2(2);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x11(1), x21(2), y1(1),
+      y2(2);
   stan::math::var x12, x22;
   x11 << 1.0;
   x12 = 5.0;
   x21 << 2.0, 1.0;
   x22 = 3.0;
-  using sin_cos_func = SinCosFunctor3<stan::math::var, Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1>>;
+  using sin_cos_func
+      = SinCosFunctor3<stan::math::var,
+                       Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1>>;
   y1 = stan::math::adj_jac_apply<sin_cos_func>(x12, x11);
   y2 = stan::math::adj_jac_apply<sin_cos_func>(x22, x21);
-/*
-  y1(0).grad();
-  EXPECT_FLOAT_EQ(x11(0).adj(), 0.5403023058681398);
-  EXPECT_FLOAT_EQ(x12.adj(), 0.958924274663139);
-  EXPECT_FLOAT_EQ(x21(0).adj(), 0.0);
-  EXPECT_FLOAT_EQ(x21(1).adj(), 0.0);
-  EXPECT_FLOAT_EQ(x22.adj(), 0.0);
+  /*
+    y1(0).grad();
+    EXPECT_FLOAT_EQ(x11(0).adj(), 0.5403023058681398);
+    EXPECT_FLOAT_EQ(x12.adj(), 0.958924274663139);
+    EXPECT_FLOAT_EQ(x21(0).adj(), 0.0);
+    EXPECT_FLOAT_EQ(x21(1).adj(), 0.0);
+    EXPECT_FLOAT_EQ(x22.adj(), 0.0);
 
-  stan::math::set_zero_all_adjoints();
+    stan::math::set_zero_all_adjoints();
 
-  y2(0).grad();
-  EXPECT_FLOAT_EQ(x11(0).adj(), 0.0);
-  EXPECT_FLOAT_EQ(x12.adj(), 0.0);
-  EXPECT_FLOAT_EQ(x21(0).adj(), -0.4161468365471424);
-  EXPECT_FLOAT_EQ(x21(1).adj(), 0.0);
-  EXPECT_FLOAT_EQ(x22.adj(), -0.1411200080598672);
+    y2(0).grad();
+    EXPECT_FLOAT_EQ(x11(0).adj(), 0.0);
+    EXPECT_FLOAT_EQ(x12.adj(), 0.0);
+    EXPECT_FLOAT_EQ(x21(0).adj(), -0.4161468365471424);
+    EXPECT_FLOAT_EQ(x21(1).adj(), 0.0);
+    EXPECT_FLOAT_EQ(x22.adj(), -0.1411200080598672);
 
-  stan::math::set_zero_all_adjoints();
+    stan::math::set_zero_all_adjoints();
 
-  y2(1).grad();
-  EXPECT_FLOAT_EQ(x11(0).adj(), 0.0);
-  EXPECT_FLOAT_EQ(x12.adj(), 0.0);
-  EXPECT_FLOAT_EQ(x21(0).adj(), 0.0);
-  EXPECT_FLOAT_EQ(x21(1).adj(), 0.5403023058681398);
-  EXPECT_FLOAT_EQ(x22.adj(), -0.1411200080598672);
+    y2(1).grad();
+    EXPECT_FLOAT_EQ(x11(0).adj(), 0.0);
+    EXPECT_FLOAT_EQ(x12.adj(), 0.0);
+    EXPECT_FLOAT_EQ(x21(0).adj(), 0.0);
+    EXPECT_FLOAT_EQ(x21(1).adj(), 0.5403023058681398);
+    EXPECT_FLOAT_EQ(x22.adj(), -0.1411200080598672);
 
-  stan::math::set_zero_all_adjoints();
-*/
+    stan::math::set_zero_all_adjoints();
+  */
   stan::math::var sum_y2 = (1.73 * y2(0) + 1.57 * y2(1));
   sum_y2.grad();
   EXPECT_FLOAT_EQ(x11(0).adj(), 0.0);

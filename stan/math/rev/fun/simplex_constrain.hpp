@@ -18,9 +18,6 @@ class simplex_constrain_op {
 public:
   adj_op<T> diag_;
   adj_op<T> z_;
-//  int N_;
-//  double* diag_;  // diagonal of the Jacobian of the operator
-//  double* z_;
   explicit simplex_constrain_op(const T& x) : diag_(x.size()), z_(x.size()) {}
   /**
    * Return the simplex corresponding to the specified free vector.

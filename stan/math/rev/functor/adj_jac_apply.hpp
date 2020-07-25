@@ -14,6 +14,9 @@ namespace stan {
 namespace math {
 
 namespace internal {
+/**
+ * Based on the container type return either a vari* or vari**
+ */
 template <typename T, typename = void>
 struct var_return_type;
 template <typename T>
@@ -31,76 +34,124 @@ struct var_return_type<T, require_eigen_t<T>> {
 
 }  // namespace internal
 
-
-template <typename T, bool IsVar = is_var<value_type_t<T>>::value, typename = void>
+/**
+ * Stores the values for the functors passed to adj_jac_vari. Passing a var or
+ *  or container of vars will store a pointer to the val. If a non-var
+ *  type is passed this class will be empty.
+ * @tparam T Type to store, for var stores a double and containers stores
+ * a pointer to doubles.
+ * @tparam IsVar A boolean that the user can pass to override the default
+ *  behavior of storing data for var types and having an empty class for
+ *  non-var types.
+ */
+template <typename T, bool IsVar = is_var<value_type_t<T>>::value,
+          typename = void>
 class adj_op;
 
 template <typename T>
 class adj_op<T, true, require_container_t<T>> {
  public:
-  double* mem_;
-  using FReturnType = plain_type_t<decltype(value_of(plain_type_t<T>()))>;
-  using RetType = std::conditional_t<is_std_vector<FReturnType>::value, Eigen::Matrix<double, -1, 1>, FReturnType>;
+  double* mem_;  // values to store
+  using FReturnType = plain_type_t<decltype(value_of(T()))>;
+  // Is the type is an `std::vector` this stores an `Eigen::VectorXd`
+  using RetType = std::conditional_t<is_std_vector<FReturnType>::value,
+                                     Eigen::Matrix<double, -1, 1>, FReturnType>;
+  // The Eigen map type used for storage
   using eigen_map = Eigen::Map<RetType>;
   eigen_map map_;
-  explicit adj_op(size_t n) :
-    mem_(ChainableStack::instance_->memalloc_.alloc_array<double>(n)),
-    map_(mem_, n) {}
-  explicit adj_op(size_t n, size_t m) :
-    mem_(ChainableStack::instance_->memalloc_.alloc_array<double>(n * m)),
-    map_(mem_, n, m) {}
+  /**
+   * Allocate unitialized memory of size `n` for a vector
+   */
+  explicit adj_op(size_t n)
+      : mem_(ChainableStack::instance_->memalloc_.alloc_array<double>(n)),
+        map_(mem_, n) {}
+  /**
+   * Allocate unitialized memory of size `n * m` for a matrix
+   */
+  explicit adj_op(size_t n, size_t m)
+      : mem_(ChainableStack::instance_->memalloc_.alloc_array<double>(n * m)),
+        map_(mem_, n, m) {}
+  /**
+   * Allocate and initialize memory from a Eigen matrix of vars.
+   */
   template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
-  explicit adj_op(const EigMat& x) :
-  mem_(ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
-  map_(eigen_map(mem_, x.rows(), x.cols()) = value_of(x)) {}
+  explicit adj_op(const EigMat& x)
+      : mem_(
+          ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
+        map_(eigen_map(mem_, x.rows(), x.cols()) = value_of(x)) {}
 
+  /**
+   * Allocate and initialize memory from a standard vector of vars.
+   */
   template <typename StdVec, require_std_vector_vt<is_var, StdVec>* = nullptr>
-  explicit adj_op(const StdVec& x) :
-  mem_(ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
-  map_(eigen_map(mem_, x.size()) = eigen_map(value_of(x).data(), x.size())) {}
+  explicit adj_op(const StdVec& x)
+      : mem_(
+          ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
+        map_(eigen_map(mem_, x.size())
+             = eigen_map(value_of(x).data(), x.size())) {}
 
-  template <typename EigMat, require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
-  explicit adj_op(const EigMat& x) :
-  mem_(ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
-  map_(eigen_map(mem_, x.rows(), x.cols()) = x) {}
+  /**
+   * Allocate and initialize memory from a Eigen matrix of doubles.
+   */
+  template <typename EigMat,
+            require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
+  explicit adj_op(const EigMat& x)
+      : mem_(
+          ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
+        map_(eigen_map(mem_, x.rows(), x.cols()) = x) {}
 
-  template <typename StdVec, require_std_vector_vt<std::is_arithmetic, StdVec>* = nullptr>
-  explicit adj_op(const StdVec& x) :
-  mem_(ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
-  map_(eigen_map(mem_, x.size()) = eigen_map(x.data(), x.size())) {}
+  /**
+   * Allocate and initialize memory from a standard vector of doubles.
+   */
+  template <typename StdVec,
+            require_std_vector_vt<std::is_arithmetic, StdVec>* = nullptr>
+  explicit adj_op(const StdVec& x)
+      : mem_(
+          ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
+        map_(eigen_map(mem_, x.size()) = eigen_map(x.data(), x.size())) {}
 
-  inline auto rows() const {
-    return map_.rows();
-  }
+  /**
+   * Query number of rows
+   */
+  inline auto rows() const { return map_.rows(); }
 
-  inline auto cols() const {
-    return map_.cols();
-  }
+  /**
+   * Query number of columns
+   */
+  inline auto cols() const { return map_.cols(); }
 
-  inline auto size() const {
-    return map_.size();
-  }
+  /**
+   * Query size of container
+   */
+  inline auto size() const { return map_.size(); }
 
-  inline auto& map() {
-    return map_;
-  }
+  /**
+   * Setter for map of the stack allocated data
+   */
+  inline auto& map() { return map_; }
 
-  inline const auto& map() const {
-    return map_;
-  }
+  /**
+   * Getter for map of the stack allocated data
+   */
+  inline const auto& map() const { return map_; }
+  /**
+   * Setter for the ith element from the map.
+   */
+  inline double& operator()(size_t i) { return map_(i); }
 
-  inline double& operator()(size_t i) {
-    return map_(i);
-  }
+  /**
+   * Getter for the element in the ith row and jth from the map.
+   */
+  inline const double& operator()(size_t i) const { return map_(i); }
 
-  inline const double& operator()(size_t i) const {
-    return map_(i);
-  }
+  /**
+   * Setter for the element in the ith row and jth column from the map.
+   */
+  inline double& operator()(size_t i, size_t j) { return map_(i, j); }
 
-  inline double& operator()(size_t i, size_t j) {
-    return map_(i, j);
-  }
-
+  /**
+   * Getter for the element in the ith row and jth column from the map.
+   */
   inline const double& operator()(size_t i, size_t j) const {
     return map_(i, j);
   }
@@ -118,39 +169,21 @@ class adj_op<T, false, require_container_t<T>> {
   template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
   explicit adj_op(const StdVec& x) {}
 
-  inline auto rows() const {
-    return 0;
-  }
+  inline auto rows() const { return 0; }
 
-  inline auto cols() const {
-    return 0;
-  }
+  inline auto cols() const { return 0; }
 
-  inline auto size() const {
-    return 0;
-  }
+  inline auto size() const { return 0; }
 
-  inline auto& map() {
-    return map_;
-  }
-  inline const auto& map() const {
-    return map_;
-  }
-  inline double operator()(size_t i) {
-    return 0.0;
-  }
+  inline auto& map() { return map_; }
+  inline const auto& map() const { return map_; }
+  inline double operator()(size_t i) { return 0.0; }
 
-  inline const double operator()(size_t i) const {
-    return 0.0;
-  }
+  inline const double operator()(size_t i) const { return 0.0; }
 
-  inline double operator()(size_t i, size_t j) {
-    return 0.0;
-  }
+  inline double operator()(size_t i, size_t j) { return 0.0; }
 
-  inline const double operator()(size_t i, size_t j) const {
-    return 0.0;
-  }
+  inline const double operator()(size_t i, size_t j) const { return 0.0; }
 };
 
 template <typename T>
@@ -160,28 +193,22 @@ class adj_op<T, true, require_stan_scalar_t<T>> {
   explicit adj_op(size_t n) {}
   explicit adj_op(size_t n, size_t m) {}
   template <typename S, require_var_t<S>* = nullptr>
-  explicit adj_op(const S& x) { *mem_ = x.val();}
+  explicit adj_op(const S& x) {
+    *mem_ = x.val();
+  }
   template <typename S, require_floating_point_t<S>* = nullptr>
-  explicit adj_op(const S& x) { *mem_ = x;}
-
-  inline auto rows() const {
-    return 0;
+  explicit adj_op(const S& x) {
+    *mem_ = x;
   }
 
-  inline auto cols() const {
-    return 0;
-  }
+  inline auto rows() const { return 0; }
 
-  inline auto size() const {
-    return 1;
-  }
+  inline auto cols() const { return 0; }
 
-  inline auto& map() {
-    return *mem_;
-  }
-  inline const auto& map() const {
-    return *mem_;
-  }
+  inline auto size() const { return 1; }
+
+  inline auto& map() { return *mem_; }
+  inline const auto& map() const { return *mem_; }
 };
 
 template <typename T>
@@ -195,24 +222,14 @@ class adj_op<T, false, require_stan_scalar_t<T>> {
   template <typename S, require_floating_point_t<S>* = nullptr>
   explicit adj_op(const S& x) {}
 
-  inline auto rows() const {
-    return 0;
-  }
+  inline auto rows() const { return 0; }
 
-  inline auto cols() const {
-    return 0;
-  }
+  inline auto cols() const { return 0; }
 
-  inline auto size() const {
-    return 0;
-  }
+  inline auto size() const { return 0; }
 
-  inline auto& map() {
-    return map_;
-  }
-  inline const auto& map() const {
-    return map_;
-  }
+  inline auto& map() { return map_; }
+  inline const auto& map() const { return map_; }
 };
 
 /**
@@ -231,36 +248,42 @@ template <typename F, typename... Targs>
 struct adj_jac_vari : public vari {
   static constexpr std::array<bool, sizeof...(Targs)> is_var_{
       is_var<scalar_type_t<Targs>>::value...};
-  using FReturnType
-      = std::result_of_t<F(decltype(is_var_), plain_type_t<decltype(value_of(plain_type_t<Targs>()))>...)>;
+  using FReturnType = std::result_of_t<F(
+      decltype(is_var_),
+      plain_type_t<decltype(value_of(plain_type_t<Targs>()))>...)>;
   using x_vis_tuple_ = var_to_vari_filter_t<std::decay_t<Targs>...>;
   F f_;
   x_vis_tuple_ x_vis_;
   typename internal::var_return_type<FReturnType>::type y_vi_;
   std::array<size_t, 2> dims_;
 
-  template <typename RetType = FReturnType, require_arithmetic_t<RetType>* = nullptr>
-  inline auto y_adj() { return y_vi_->adj_; }
-
-  template <typename RetType = FReturnType, require_std_vector_t<RetType>* = nullptr>
+  template <typename RetType = FReturnType,
+            require_arithmetic_t<RetType>* = nullptr>
   inline auto y_adj() {
-     std::vector<double> var_y(dims_[0]);
-     for (size_t i = 0; i < dims_[0]; ++i) {
-       var_y[i] = y_vi_[i]->adj_;
-     }
-     return var_y;
-   }
+    return y_vi_->adj_;
+  }
+
+  template <typename RetType = FReturnType,
+            require_std_vector_t<RetType>* = nullptr>
+  inline auto y_adj() {
+    std::vector<double> var_y(dims_[0]);
+    for (size_t i = 0; i < dims_[0]; ++i) {
+      var_y[i] = y_vi_[i]->adj_;
+    }
+    return var_y;
+  }
 
   template <typename RetType = FReturnType, require_eigen_t<RetType>* = nullptr>
   inline auto y_adj() {
-    Eigen::Matrix<double, FReturnType::RowsAtCompileTime, FReturnType::ColsAtCompileTime> var_y(dims_[0], dims_[1]);
+    Eigen::Matrix<double, FReturnType::RowsAtCompileTime,
+                  FReturnType::ColsAtCompileTime>
+        var_y(dims_[0], dims_[1]);
     const size_t iter_size{dims_[0] * dims_[1]};
     for (size_t i = 0; i < iter_size; ++i) {
       var_y(i) = y_vi_[i]->adj_;
     }
     return var_y;
   }
-
 
   /**
    * prepare_x_vis populates x_vis_ with the varis from each of its
@@ -282,7 +305,8 @@ struct adj_jac_vari : public vari {
    */
   template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
   inline auto prepare_x_vis_impl(const EigMat& x) {
-    vari** y = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
+    vari** y
+        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
     for (int i = 0; i < x.size(); ++i) {
       y[i] = x(i).vi_;
     }
@@ -290,7 +314,8 @@ struct adj_jac_vari : public vari {
   }
 
   inline auto prepare_x_vis_impl(const std::vector<var>& x) {
-    vari** y = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
+    vari** y
+        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
     for (size_t i = 0; i < x.size(); ++i) {
       y[i] = x[i].vi_;
     }
@@ -304,9 +329,11 @@ struct adj_jac_vari : public vari {
   }
 
   template <typename Arith, require_st_arithmetic<Arith>* = nullptr>
-  inline auto prepare_x_vis_impl(Arith&& x) { return nullptr; }
+  inline auto prepare_x_vis_impl(Arith&& x) {
+    return nullptr;
+  }
 
-  auto prepare_x_vis() { return x_vis_tuple_{};}
+  auto prepare_x_vis() { return x_vis_tuple_{}; }
 
   template <typename... Args>
   inline x_vis_tuple_ prepare_x_vis(Args&&... args) {
@@ -319,7 +346,8 @@ struct adj_jac_vari : public vari {
   }
   template <typename Vec, require_std_vector_t<Vec>* = nullptr>
   inline auto& collect_forward_pass(Vec&& val_y) {
-    y_vi_ = ChainableStack::instance_->memalloc_.alloc_array<vari*>(val_y.size());
+    y_vi_
+        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(val_y.size());
     this->dims_[0] = val_y.size();
     for (size_t i = 0; i < val_y.size(); ++i) {
       y_vi_[i] = new vari(val_y[i], false);
@@ -332,7 +360,8 @@ struct adj_jac_vari : public vari {
     using eig_mat = std::decay_t<EigMat>;
     using ret_mat = Eigen::Matrix<var, eig_mat::RowsAtCompileTime,
                                   eig_mat::ColsAtCompileTime>;
-    y_vi_ = ChainableStack::instance_->memalloc_.alloc_array<vari*>(val_y.size());
+    y_vi_
+        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(val_y.size());
     this->dims_[0] = val_y.rows();
     this->dims_[1] = val_y.cols();
     for (size_t i = 0; i < val_y.size(); ++i) {
@@ -418,37 +447,41 @@ struct adj_jac_vari : public vari {
    */
   template <typename... Pargs, bool is_var = is_var_check_<Pargs...>::value,
             std::enable_if_t<is_var>* = nullptr>
-  inline void accumulate_adjoints(const double& y_adj_jac,
-                                  Pargs&&... args) {
-  static constexpr size_t t = var_idx_<Pargs...>::value;
+  inline void accumulate_adjoints(const double& y_adj_jac, Pargs&&... args) {
+    static constexpr size_t t = var_idx_<Pargs...>::value;
     std::get<t>(x_vis_)->adj_ += y_adj_jac;
     accumulate_adjoints(std::forward<Pargs>(args)...);
   }
 
   inline void accumulate_adjoints() {}
 
-  template <typename RetType = FReturnType, require_arithmetic_t<RetType>* = nullptr>
-  inline auto y_var() { return var(y_vi_); }
-
-  template <typename RetType = FReturnType, require_std_vector_t<RetType>* = nullptr>
+  template <typename RetType = FReturnType,
+            require_arithmetic_t<RetType>* = nullptr>
   inline auto y_var() {
-     std::vector<var> var_y(dims_[0]);
-     for (size_t i = 0; i < dims_[0]; ++i) {
-       var_y[i] = y_vi_[i];
-     }
-     return var_y;
-   }
+    return var(y_vi_);
+  }
+
+  template <typename RetType = FReturnType,
+            require_std_vector_t<RetType>* = nullptr>
+  inline auto y_var() {
+    std::vector<var> var_y(dims_[0]);
+    for (size_t i = 0; i < dims_[0]; ++i) {
+      var_y[i] = y_vi_[i];
+    }
+    return var_y;
+  }
 
   template <typename RetType = FReturnType, require_eigen_t<RetType>* = nullptr>
   inline auto y_var() {
-    Eigen::Matrix<var, FReturnType::RowsAtCompileTime, FReturnType::ColsAtCompileTime> var_y(dims_[0], dims_[1]);
+    Eigen::Matrix<var, FReturnType::RowsAtCompileTime,
+                  FReturnType::ColsAtCompileTime>
+        var_y(dims_[0], dims_[1]);
     const size_t iter_size{dims_[0] * dims_[1]};
     for (size_t i = 0; i < iter_size; ++i) {
       var_y(i) = y_vi_[i];
     }
     return var_y;
   }
-
 
   /**
    * The adj_jac_vari constructor
@@ -486,8 +519,11 @@ struct adj_jac_vari : public vari {
    * This operation may be called multiple times during the life of the vari
    */
   inline void chain() {
-    apply([this](auto&&... args) { this->accumulate_adjoints(std::forward<decltype(args)>(args)...); },
-          f_.multiply_adjoint_jacobian(is_var_, this->y_adj()));
+    apply(
+        [this](auto&&... args) {
+          this->accumulate_adjoints(std::forward<decltype(args)>(args)...);
+        },
+        f_.multiply_adjoint_jacobian(is_var_, this->y_adj()));
   }
 };
 
