@@ -117,7 +117,7 @@ CXXFLAGS_SUNDIALS ?= -pipe
 # Update compiler flags with operating system specific modifications
 ##
 ifeq ($(OS),Windows_NT)
-  CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-variable -Wno-sign-compare -Wno-unused-local-typedefs
+  CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-variable -Wno-sign-compare -Wno-unused-local-typedefs -Wno-int-in-bool-context -Wno-attributes
   CPPFLAGS_GTEST ?= -DGTEST_HAS_PTHREAD=0
   CPPFLAGS_OS ?= -D_USE_MATH_DEFINES
   ## Detecting Process Bitness:
@@ -162,9 +162,8 @@ endif
 ## makes reentrant version lgamma_r available from cmath
 CXXFLAGS_OS += -D_REENTRANT
 
-ifeq (gcc,$(CXX_TYPE))
-CXXFLAGS_WARNINGS += -Wno-int-in-bool-context -Wno-attributes
-endif
+## silence warnings occuring due to the TBB and Eigen libraries
+CXXFLAGS_WARNINGS += -Wno-ignored-attributes
 
 ################################################################################
 # Setup OpenCL
