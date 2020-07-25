@@ -40,13 +40,34 @@ class adj_op<T, true, require_container_t<T>> {
  public:
   double* mem_;
   using FReturnType = plain_type_t<decltype(value_of(plain_type_t<T>()))>;
-  Eigen::Map<FReturnType> map_;
+  using RetType = std::conditional_t<is_std_vector<FReturnType>::value, Eigen::Matrix<double, -1, 1>, FReturnType>;
+  using eigen_map = Eigen::Map<RetType>;
+  eigen_map map_;
   explicit adj_op(size_t n) :
     mem_(ChainableStack::instance_->memalloc_.alloc_array<double>(n)),
     map_(mem_, n) {}
   explicit adj_op(size_t n, size_t m) :
     mem_(ChainableStack::instance_->memalloc_.alloc_array<double>(n * m)),
     map_(mem_, n, m) {}
+  template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
+  explicit adj_op(const EigMat& x) :
+  mem_(ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
+  map_(eigen_map(mem_, x.rows(), x.cols()) = value_of(x)) {}
+
+  template <typename StdVec, require_std_vector_vt<is_var, StdVec>* = nullptr>
+  explicit adj_op(const StdVec& x) :
+  mem_(ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
+  map_(eigen_map(mem_, x.size()) = eigen_map(value_of(x).data(), x.size())) {}
+
+  template <typename EigMat, require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
+  explicit adj_op(const EigMat& x) :
+  mem_(ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
+  map_(eigen_map(mem_, x.rows(), x.cols()) = x) {}
+
+  template <typename StdVec, require_std_vector_vt<std::is_arithmetic, StdVec>* = nullptr>
+  explicit adj_op(const StdVec& x) :
+  mem_(ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
+  map_(eigen_map(mem_, x.size()) = eigen_map(x.data(), x.size())) {}
 
   inline auto rows() const {
     return map_.rows();
@@ -88,35 +109,14 @@ class adj_op<T, true, require_container_t<T>> {
 template <typename T>
 class adj_op<T, false, require_container_t<T>> {
  public:
+  Eigen::Matrix<double, -1, -1> map_{0, 0};
   explicit adj_op(size_t n) {}
-  explicit adj_op(size_t n, size_t m) {}
+  adj_op(size_t n, size_t m) {}
+  template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+  explicit adj_op(const EigMat& x) {}
 
-  inline auto rows() const {
-    return 0;
-  }
-
-  inline auto cols() const {
-    return 0;
-  }
-
-  inline auto size() const {
-    return 0;
-  }
-
-  inline auto map() {
-    return Eigen::Matrix<double, -1, -1>(0, 0);
-  }
-  inline const auto map() const {
-    return Eigen::Matrix<double, -1, -1>(0, 0);
-  }
-};
-
-template <typename T>
-class adj_op<T, true, require_stan_scalar_t<T>> {
- public:
-  double* mem_{ChainableStack::instance_->memalloc_.alloc_array<double>(1)};
-  explicit adj_op(size_t n) {}
-  explicit adj_op(size_t n, size_t m) {}
+  template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
+  explicit adj_op(const StdVec& x) {}
 
   inline auto rows() const {
     return 0;
@@ -131,6 +131,52 @@ class adj_op<T, true, require_stan_scalar_t<T>> {
   }
 
   inline auto& map() {
+    return map_;
+  }
+  inline const auto& map() const {
+    return map_;
+  }
+  inline double operator()(size_t i) {
+    return 0.0;
+  }
+
+  inline const double operator()(size_t i) const {
+    return 0.0;
+  }
+
+  inline double operator()(size_t i, size_t j) {
+    return 0.0;
+  }
+
+  inline const double operator()(size_t i, size_t j) const {
+    return 0.0;
+  }
+};
+
+template <typename T>
+class adj_op<T, true, require_stan_scalar_t<T>> {
+ public:
+  double* mem_{ChainableStack::instance_->memalloc_.alloc_array<double>(1)};
+  explicit adj_op(size_t n) {}
+  explicit adj_op(size_t n, size_t m) {}
+  template <typename S, require_var_t<S>* = nullptr>
+  explicit adj_op(const S& x) { *mem_ = x.val();}
+  template <typename S, require_floating_point_t<S>* = nullptr>
+  explicit adj_op(const S& x) { *mem_ = x;}
+
+  inline auto rows() const {
+    return 0;
+  }
+
+  inline auto cols() const {
+    return 0;
+  }
+
+  inline auto size() const {
+    return 1;
+  }
+
+  inline auto& map() {
     return *mem_;
   }
   inline const auto& map() const {
@@ -141,8 +187,13 @@ class adj_op<T, true, require_stan_scalar_t<T>> {
 template <typename T>
 class adj_op<T, false, require_stan_scalar_t<T>> {
  public:
+  double map_{0.0};
   explicit adj_op(size_t n) {}
   explicit adj_op(size_t n, size_t m) {}
+  template <typename S, require_var_t<S>* = nullptr>
+  explicit adj_op(const S& x) {}
+  template <typename S, require_floating_point_t<S>* = nullptr>
+  explicit adj_op(const S& x) {}
 
   inline auto rows() const {
     return 0;
@@ -156,11 +207,11 @@ class adj_op<T, false, require_stan_scalar_t<T>> {
     return 0;
   }
 
-  inline auto map() {
-    return 0;
+  inline auto& map() {
+    return map_;
   }
-  inline const auto map() const {
-    return 0;
+  inline const auto& map() const {
+    return map_;
   }
 };
 

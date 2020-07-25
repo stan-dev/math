@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_REV_FUN_POSITIVE_ORDERED_CONSTRAIN_HPP
 #define STAN_MATH_REV_FUN_POSITIVE_ORDERED_CONSTRAIN_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/functor/adj_jac_apply.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <cmath>
 #include <tuple>
 #include <vector>
@@ -19,7 +19,7 @@ public:
 //  int N_;
 //  double* exp_x_;
 
-   explicit positive_ordered_constrain_op(const T& x) : exp_x_(x.size()) {}
+   explicit positive_ordered_constrain_op(const T& x) : exp_x_(exp(x.val())) {}
   /**
    * Return an increasing positive ordered vector derived from the specified
    * free vector.  The returned constrained vector will have the
@@ -39,10 +39,8 @@ public:
     if (x.size() == 0) {
       return y;
     }
-    exp_x_(0) = exp(x[0]);
     y[0] = exp_x_(0);
     for (int n = 1; n < x.size(); ++n) {
-      exp_x_(n) = exp(x[n]);
       y[n] = y[n - 1] + exp_x_(n);
     }
     return y;

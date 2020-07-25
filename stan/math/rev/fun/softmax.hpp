@@ -21,7 +21,7 @@ class softmax_op {
 //  double* y_;  // Holds the results of the softmax
 
  public:
-  softmax_op(const T& x) : y_(x.size()) {}
+  softmax_op(const T& x) : y_(softmax(x.val())) {}
 
   /**
    * Compute the softmax of the unconstrained input vector
@@ -32,11 +32,7 @@ class softmax_op {
   template <std::size_t size>
   Eigen::VectorXd operator()(const std::array<bool, size>& /* needs_adj */,
                              const Eigen::VectorXd& alpha) {
-    auto y = softmax(alpha);
-    for (int n = 0; n < y_.size(); ++n) {
-      y_(n) = y(n);
-    }
-    return y;
+    return y_.map();
   }
 
   /**

@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_REV_FUN_ORDERED_CONSTRAIN_HPP
 #define STAN_MATH_REV_FUN_ORDERED_CONSTRAIN_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/functor/adj_jac_apply.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <cmath>
 #include <tuple>
 #include <vector>
