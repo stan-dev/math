@@ -26,9 +26,7 @@ class softmax_op {
    * @param alpha Unconstrained input vector.
    * @return Softmax of the input.
    */
-  template <std::size_t size>
-  Eigen::VectorXd operator()(const std::array<bool, size>& /* needs_adj */,
-                             const Eigen::VectorXd& alpha) {
+  Eigen::VectorXd operator()(const Eigen::VectorXd& alpha) {
     return y_.map();
   }
 
@@ -41,10 +39,7 @@ class softmax_op {
    * @param adj Eigen::VectorXd of adjoints at the output of the softmax
    * @return Eigen::VectorXd of adjoints propagated through softmax operation
    */
-   template <std::size_t size>
-   std::tuple<Eigen::VectorXd> multiply_adjoint_jacobian(
-       const std::array<bool, size>& /* needs_adj */,
-       const Eigen::VectorXd& adj) const {
+   auto multiply_adjoint_jacobian(const Eigen::VectorXd& adj) const {
      vector_d adj_times_jac(y_.size());
      adj_times_jac = -y_.map() * adj.dot(y_.map()) + y_.map().cwiseProduct(adj);
 

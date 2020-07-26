@@ -33,9 +33,7 @@ public:
    * @param y Free vector input of dimensionality K - 1
    * @return Simplex of dimensionality K
    */
-  template <std::size_t size>
-  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
-                             const Eigen::VectorXd& y) {
+  Eigen::VectorXd operator()(const Eigen::VectorXd& y) {
     Eigen::Matrix<double, Eigen::Dynamic, 1> x(y.size() + 1);
     double stick_len(1.0);
     for (int k = 0; k < y.size(); ++k) {
@@ -59,9 +57,7 @@ public:
    * @param adj Eigen::VectorXd of adjoints at the output of the softmax
    * @return Eigen::VectorXd of adjoints propagated through softmax operation
    */
-  template <std::size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const Eigen::VectorXd& adj) const {
+  auto multiply_adjoint_jacobian(const Eigen::VectorXd& adj) const {
     const auto z_size = z_.size();
     Eigen::VectorXd adj_times_jac(z_size);
     double acc = adj(z_size);

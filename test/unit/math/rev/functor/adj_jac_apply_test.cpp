@@ -14,14 +14,11 @@ struct ScalarSinFunctor {
   stan::math::adj_op<T> x_;
   explicit ScalarSinFunctor(const T& x) : x_(x) {}
 
-  template <std::size_t size>
-  double operator()(const std::array<bool, size>& needs_adj, const double& x) {
+  double operator()(const double& x) {
     return sin(x_.map());
   }
 
-  template <std::size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const double& adj) {
+  auto multiply_adjoint_jacobian(const double& adj) {
     return std::make_tuple(cos(x_.map()) * adj);
   }
 };
@@ -67,9 +64,7 @@ struct StdVectorSinFunctor {
   // int N_;
   explicit StdVectorSinFunctor(const T& x) : x_(x) {}
 
-  template <std::size_t size>
-  std::vector<double> operator()(const std::array<bool, size>& needs_adj,
-                                 const std::vector<double>& x) {
+  std::vector<double> operator()(const std::vector<double>& x) {
     std::vector<double> out(x_.size());
     for (int i = 0; i < x_.size(); ++i) {
       out[i] = sin(x[i]);
@@ -77,9 +72,7 @@ struct StdVectorSinFunctor {
     return out;
   }
 
-  template <std::size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const std::vector<double>& adj) {
+  auto multiply_adjoint_jacobian(const std::vector<double>& adj) {
     std::vector<double> adj_jac(x_.size());
     for (int i = 0; i < x_.size(); ++i) {
       adj_jac[i] = cos(x_(i)) * adj[i];
@@ -136,9 +129,7 @@ template <typename T>
 struct SinFunctor {
   stan::math::adj_op<T> x_;
   explicit SinFunctor(const T& x) : x_(x) {}
-  template <std::size_t size>
-  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
-                             const Eigen::VectorXd& x) {
+  Eigen::VectorXd operator()(const Eigen::VectorXd& x) {
     Eigen::VectorXd out(x_.size());
     for (int n = 0; n < x_.size(); ++n) {
       out(n) = sin(x(n));
@@ -146,9 +137,7 @@ struct SinFunctor {
     return out;
   }
 
-  template <std::size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const Eigen::VectorXd& adj) {
+  auto multiply_adjoint_jacobian(const Eigen::VectorXd& adj) {
     Eigen::VectorXd out(x_.size());
     for (int n = 0; n < x_.size(); ++n) {
       out(n) = cos(x_(n)) * adj(n);
@@ -230,9 +219,7 @@ struct RowVectorSinFunctor {
   //  int N_;
   //  double* x_mem_;
   explicit RowVectorSinFunctor(const T& x) : x_(x) {}
-  template <std::size_t size>
-  Eigen::RowVectorXd operator()(const std::array<bool, size>& needs_adj,
-                                const Eigen::RowVectorXd& x) {
+  Eigen::RowVectorXd operator()(const Eigen::RowVectorXd& x) {
     Eigen::RowVectorXd out(x_.size());
     for (int n = 0; n < x_.size(); ++n) {
       out(n) = sin(x(n));
@@ -241,9 +228,7 @@ struct RowVectorSinFunctor {
     return out;
   }
 
-  template <std::size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const Eigen::RowVectorXd& adj) {
+  auto multiply_adjoint_jacobian(const Eigen::RowVectorXd& adj) {
     Eigen::RowVectorXd out(x_.size());
     for (int n = 0; n < x_.size(); ++n) {
       out(n) = cos(x_(n)) * adj(n);
@@ -323,9 +308,7 @@ template <typename T>
 struct MatrixSinFunctor {
   stan::math::adj_op<T> x_;
   explicit MatrixSinFunctor(const T& x) : x_(x) {}
-  template <std::size_t size>
-  Eigen::MatrixXd operator()(const std::array<bool, size>& needs_adj,
-                             const Eigen::MatrixXd& x) {
+  Eigen::MatrixXd operator()(const Eigen::MatrixXd& x) {
     Eigen::MatrixXd out(x_.rows(), x_.cols());
     for (int n = 0; n < x_.size(); ++n) {
       out(n) = sin(x(n));
@@ -334,9 +317,7 @@ struct MatrixSinFunctor {
     return out;
   }
 
-  template <std::size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const Eigen::MatrixXd& adj) {
+  auto multiply_adjoint_jacobian(const Eigen::MatrixXd& adj) {
     Eigen::MatrixXd out(x_.rows(), x_.cols());
     for (int n = 0; n < x_.size(); ++n) {
       out(n) = cos(x_(n)) * adj(n);
@@ -408,9 +389,7 @@ TEST(AgradRev, test_matrix_sin_multiple_jac) {
 struct WeirdArgumentListFunctor1 {
   template <typename... Args>
   WeirdArgumentListFunctor1(const Args&... args) {}
-  template <size_t size>
-  Eigen::VectorXd operator()(
-      std::array<bool, size> needs_adj, double, int, const double&, const int&,
+  Eigen::VectorXd operator()(double, int, const double&, const int&,
       std::vector<double>, std::vector<int>, const std::vector<double>&,
       const std::vector<int>&, Eigen::Matrix<double, Eigen::Dynamic, 1>,
       Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>,
@@ -422,9 +401,7 @@ struct WeirdArgumentListFunctor1 {
     return Eigen::VectorXd(1);
   }
 
-  template <size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const Eigen::VectorXd& y_adj) {
+  auto multiply_adjoint_jacobian(const Eigen::VectorXd& y_adj) {
     return std::make_tuple(
         double(), int(), double(), int(), std::vector<double>(),
         std::vector<int>(), std::vector<double>(), std::vector<int>(),
@@ -527,9 +504,7 @@ struct CheckAdjointsPassingThrough {
   int cols_ed3;
   template <typename... Args>
   CheckAdjointsPassingThrough(const Args&... args) {}
-  template <size_t size>
-  Eigen::VectorXd operator()(
-      std::array<bool, size> needs_adj, const double& d,
+  Eigen::VectorXd operator()(const double& d,
       const std::vector<double>& vd, const int&,
       const Eigen::Matrix<double, Eigen::Dynamic, 1>& ed1,
       const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& ed2,
@@ -558,9 +533,7 @@ struct CheckAdjointsPassingThrough {
     return out;
   }
 
-  template <size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const Eigen::VectorXd& y_adj) {
+  auto multiply_adjoint_jacobian(const Eigen::VectorXd& y_adj) {
     double d;
     std::vector<double> vd(size_vd);
     Eigen::Matrix<double, Eigen::Dynamic, 1> ed1(rows_ed1);
@@ -1612,35 +1585,27 @@ struct SinCosFunctor {
   stan::math::adj_op<T4> x4_;
   SinCosFunctor(const T1& x1, const T2& x2, const T3& x3, const T4& x4)
       : x1_(x1), x2_(x2), x3_(x3), x4_(x4) {}
-  template <std::size_t size>
-  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
-                             const Eigen::VectorXd& x1, const int& x2,
+  Eigen::VectorXd operator()(const Eigen::VectorXd& x1, const int& x2,
                              const std::vector<int>& x3,
                              const std::vector<double>& x4) {
     stan::math::check_matching_sizes("SinCosFunctor", "x1", x1, "x4", x4);
     Eigen::VectorXd out(x1.size());
-    EXPECT_FALSE(needs_adj[1]);
-    EXPECT_FALSE(needs_adj[2]);
     for (int n = 0; n < x1.size(); ++n) {
       out(n) = sin(x1(n)) + cos(x4[n]);
     }
     return out;
   }
 
-  template <std::size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const Eigen::VectorXd& adj) {
+  auto multiply_adjoint_jacobian(const Eigen::VectorXd& adj) {
     Eigen::VectorXd out1;
     std::vector<double> out4;
-    if (needs_adj[0]) {
+    if (stan::is_var<stan::scalar_type_t<T1>>::value) {
       out1.resize(x1_.size());
       for (int n = 0; n < x1_.size(); ++n) {
         out1(n) = cos(x1_(n)) * adj(n);
       }
     }
-    EXPECT_FALSE(needs_adj[1]);
-    EXPECT_FALSE(needs_adj[2]);
-    if (needs_adj[3]) {
+    if (stan::is_var<stan::scalar_type_t<T4>>::value) {
       out4.resize(x4_.size());
       for (int n = 0; n < x4_.size(); ++n) {
         out4[n] = -sin(x4_(n)) * adj(n);
@@ -1849,9 +1814,7 @@ struct SinCosFunctor2 {
   stan::math::adj_op<T2> x2_;
   SinCosFunctor2(const T1& x1, const T2& x2) : x1_(x1), x2_(x2) {}
 
-  template <std::size_t size>
-  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
-                             const Eigen::VectorXd& x1, const double& x2) {
+  Eigen::VectorXd operator()(const Eigen::VectorXd& x1, const double& x2) {
     Eigen::VectorXd out(x1.size());
     for (int n = 0; n < x1.size(); ++n) {
       out(n) = sin(x1(n)) + cos(x2);
@@ -1859,18 +1822,16 @@ struct SinCosFunctor2 {
     return out;
   }
 
-  template <std::size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const Eigen::VectorXd& adj) {
+  auto multiply_adjoint_jacobian(const Eigen::VectorXd& adj) {
     Eigen::VectorXd out1;
     double out2 = 0.0;
-    if (needs_adj[0]) {
+    if (x1_.needs_adj) {
       out1.resize(x1_.size());
       for (int n = 0; n < x1_.size(); ++n) {
         out1(n) = cos(x1_(n)) * adj(n);
       }
     }
-    if (needs_adj[1]) {
+    if (x2_.needs_adj) {
       for (int n = 0; n < x1_.size(); ++n) {
         out2 += -sin(x2_.map()) * adj(n);
       }
@@ -2049,53 +2010,35 @@ TEST(AgradRev, test_eigen_vector_scalar_multiple_jac_vd) {
 template <typename T1, typename T2>
 struct SinCosFunctor3 {
   int N_;
-  double* x1_mem_;
-  double x2_;
-  template <typename... Args>
-  SinCosFunctor3(const Args&... args) {}
-  template <std::size_t size>
-  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
-                             const double& x2, const Eigen::VectorXd& x1) {
-    N_ = x1.size();
+  stan::math::adj_op<T1> x1_;
+  stan::math::adj_op<T2> x2_;
+  template <typename S1, typename S2>
+  SinCosFunctor3(const S1& x1, const S2& x2) : x1_(x1), x2_(x2) {}
+  Eigen::VectorXd operator()(const double& x1, const Eigen::VectorXd& x2) {
+    N_ = x2.size();
     Eigen::VectorXd out(N_);
-
-    if (needs_adj[1]) {
-      x1_mem_ = stan::math::ChainableStack::instance_->memalloc_
-                    .alloc_array<double>(N_);
-      std::copy(x1.data(), x1.data() + N_, x1_mem_);
-    }
-
-    if (needs_adj[0]) {
-      x2_ = x2;
-    }
-
     for (int n = 0; n < N_; ++n) {
-      out(n) = sin(x1(n)) + cos(x2);
+      out(n) = sin(x2(n)) + cos(x1);
     }
 
     return out;
   }
 
-  template <std::size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const Eigen::VectorXd& adj) {
-    Eigen::VectorXd out1;
-    double out2 = 0.0;
-
-    if (needs_adj[1]) {
-      out1.resize(N_);
+  auto multiply_adjoint_jacobian(const Eigen::VectorXd& adj) {
+    Eigen::VectorXd out2;
+    double out1 = 0.0;
+    if (x1_.needs_adj) {
       for (int n = 0; n < N_; ++n) {
-        out1(n) = cos(x1_mem_[n]) * adj(n);
+        out1 += -sin(x1_.map()) * adj(n);
       }
     }
-
-    if (needs_adj[0]) {
+    if (x2_.needs_adj) {
+      out2.resize(N_);
       for (int n = 0; n < N_; ++n) {
-        out2 += -sin(x2_) * adj(n);
+        out2(n) = cos(x2_(n)) * adj(n);
       }
     }
-
-    return std::make_tuple(out2, out1);
+    return std::make_tuple(out1, out2);
   }
 };
 

@@ -34,13 +34,14 @@ template <typename T>
 class adj_op<T, true, require_container_t<T>> {
  public:
   double* mem_;  // values to store
-  using FReturnType = plain_type_t<decltype(value_of(T()))>;
+  using FReturnType = plain_type_t<decltype(value_of(plain_type_t<T>()))>;
   // If the type is an `std::vector` this stores an `Eigen::VectorXd`
   using RetType = std::conditional_t<is_std_vector<FReturnType>::value,
                                      Eigen::Matrix<double, -1, 1>, FReturnType>;
   // The Eigen map type used for storage
   using eigen_map = Eigen::Map<RetType>;
   eigen_map map_;
+  static constexpr bool needs_adj{true};
   /**
    * Allocate unitialized memory of size `n` for a vector
    * @param n The size of memory to allocate on the stack.
@@ -53,7 +54,7 @@ class adj_op<T, true, require_container_t<T>> {
    * @param n Number of rows
    * @param m Number of columns
    */
-  explicit adj_op(size_t n, size_t m)
+  adj_op(size_t n, size_t m)
       : mem_(ChainableStack::instance_->memalloc_.alloc_array<double>(n * m)),
         map_(mem_, n, m) {}
   /**
@@ -164,6 +165,7 @@ template <typename T>
 class adj_op<T, false, require_container_t<T>> {
  public:
   Eigen::Matrix<double, -1, -1> map_{0, 0};
+  static constexpr bool needs_adj{false};
   explicit adj_op(size_t n) {}
   adj_op(size_t n, size_t m) {}
   template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
@@ -172,32 +174,52 @@ class adj_op<T, false, require_container_t<T>> {
   template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
   explicit adj_op(const StdVec& x) {}
 
-  inline auto rows() const { return 0; }
+  inline static constexpr auto rows() { return 0; }
 
-  inline auto cols() const { return 0; }
+  inline static constexpr auto cols() { return 0; }
 
-  inline auto size() const { return 0; }
-
+  inline static constexpr auto size() { return 0; }
+  /**
+   * Accessing data for the no-op class throws a domain error.
+   * @throw domain error
+   */
   inline auto& map() {
     throw_domain_error("adj_op", "", "Attempting to Access Empty adj_op!", "");
     return map_;
   }
+
+  /**
+   * Accessing data for the no-op class throws a domain error.
+   * @throw domain error
+   */
   inline const auto& map() const { return map_; }
   inline double& operator()(size_t i) {
     throw_domain_error("adj_op", "", "Attempting to Access Empty adj_op!", "");
     return map_(0, 0);
   }
 
+  /**
+   * Accessing data for the no-op class throws a domain error.
+   * @throw domain error
+   */
   inline const double& operator()(size_t i) const {
     throw_domain_error("adj_op", "", "Attempting to Access Empty adj_op!", "");
     return map_(0);
   }
 
+  /**
+   * Accessing data for the no-op class throws a domain error.
+   * @throw domain error
+   */
   inline double& operator()(size_t i, size_t j) {
     throw_domain_error("adj_op", "", "Attempting to Access Empty adj_op!", "");
     return map_(0, 0);
   }
 
+  /**
+   * Accessing data for the no-op class throws a domain error.
+   * @throw domain error
+   */
   inline const double& operator()(size_t i, size_t j) const {
     throw_domain_error("adj_op", "", "Attempting to Access Empty adj_op!", "");
     return map_(0, 0);
@@ -212,8 +234,9 @@ template <typename T>
 class adj_op<T, true, require_stan_scalar_t<T>> {
  public:
   double* mem_{ChainableStack::instance_->memalloc_.alloc_array<double>(1)};
+  static constexpr bool needs_adj{true};
   explicit adj_op(size_t n) {}
-  explicit adj_op(size_t n, size_t m) {}
+  adj_op(size_t n, size_t m) {}
   template <typename S, require_var_t<S>* = nullptr>
   explicit adj_op(const S& x) {
     *mem_ = x.val();
@@ -223,11 +246,11 @@ class adj_op<T, true, require_stan_scalar_t<T>> {
     *mem_ = x;
   }
 
-  inline auto rows() const { return 0; }
+  inline static constexpr auto rows() { return 0; }
 
-  inline auto cols() const { return 0; }
+  inline static constexpr auto cols() { return 0; }
 
-  inline auto size() const { return 1; }
+  inline static constexpr auto size() { return 1; }
 
   inline auto& map() { return *mem_; }
   inline const auto& map() const { return *mem_; }
@@ -240,6 +263,7 @@ template <typename T>
 class adj_op<T, false, require_stan_scalar_t<T>> {
  public:
   double map_{0.0};
+  static constexpr bool needs_adj{false};
   explicit adj_op(size_t n) {}
   adj_op(size_t n, size_t m) {}
   template <typename S, require_var_t<S>* = nullptr>
@@ -247,16 +271,24 @@ class adj_op<T, false, require_stan_scalar_t<T>> {
   template <typename S, require_floating_point_t<S>* = nullptr>
   explicit adj_op(const S& x) {}
 
-  inline auto rows() const { return 0; }
+  inline static constexpr auto rows() { return 0; }
 
-  inline auto cols() const { return 0; }
+  inline static constexpr auto cols() { return 0; }
 
-  inline auto size() const { return 0; }
+  inline static constexpr auto size() { return 0; }
 
+  /**
+   * Accessing data for the no-op class throws a domain error.
+   * @throw domain error
+   */
   inline auto& map() {
     throw_domain_error("adj_op", "", "Attempting to Access Empty adj_op!", "");
     return map_;
   }
+  /**
+   * Accessing data for the no-op class throws a domain error.
+   * @throw domain error
+   */
   inline const auto& map() const {
     throw_domain_error("adj_op", "", "Attempting to Access Empty adj_op!", "");
     return map_;

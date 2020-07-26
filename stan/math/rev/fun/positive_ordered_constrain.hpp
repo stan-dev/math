@@ -22,15 +22,12 @@ public:
    * free vector.  The returned constrained vector will have the
    * same dimensionality as the specified free vector.
    *
-   * @tparam size Number of arguments
    * @param needs_adj Boolean indicators of if adjoints of arguments will be
    * needed
    * @param x Free vector of scalars
    * @return Positive, increasing ordered vector
    */
-  template <std::size_t size>
-  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
-                             const Eigen::VectorXd& x) {
+  Eigen::VectorXd operator()(const Eigen::VectorXd& x) {
     using std::exp;
     Eigen::Matrix<double, Eigen::Dynamic, 1> y(x.size());
     if (x.size() == 0) {
@@ -47,15 +44,12 @@ public:
    * Compute the result of multiply the transpose of the adjoint vector times
    * the Jacobian of the positive_ordered_constrain operator.
    *
-   * @tparam size Number of adjoints to return
    * @param needs_adj Boolean indicators of if adjoints of arguments will be
    * needed
    * @param adj Eigen::VectorXd of adjoints at the output of the softmax
    * @return Eigen::VectorXd of adjoints propagated through softmax operation
    */
-  template <std::size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const Eigen::VectorXd& adj) const {
+  auto multiply_adjoint_jacobian(const Eigen::VectorXd& adj) const {
     const auto x_size = exp_x_.size();
     Eigen::VectorXd adj_times_jac(x_size);
     double rolling_adjoint_sum = 0.0;
