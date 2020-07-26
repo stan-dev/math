@@ -197,8 +197,3 @@ TEST(AgradRev, adj_op_assign_scalar) {
   adj_op<double, true> adj_d(3.0);
   EXPECT_EQ(adj_d.map(), 3.0);
 }
-
-TEST(AgradRev, adj_op_assign_scalars) {
-  using stan::math::var;
-  using stan::math::adj_op;
-}
