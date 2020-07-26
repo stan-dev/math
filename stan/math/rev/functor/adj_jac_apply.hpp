@@ -51,10 +51,11 @@ template <typename F, typename... Targs>
 struct adj_jac_vari : public vari {
   static constexpr std::array<bool, sizeof...(Targs)> is_var_{
       is_var<scalar_type_t<Targs>>::value...};
-  using FReturnType = std::result_of_t<F(plain_type_t<decltype(value_of(plain_type_t<Targs>()))>...)>;
+  using FReturnType = std::result_of_t<F(
+      plain_type_t<decltype(value_of(plain_type_t<Targs>()))>...)>;
   using x_vis_tuple_ = var_to_vari_filter_t<std::decay_t<Targs>...>;
-  F f_; // Struct that with methods for computing forward and reverse pass.
-  x_vis_tuple_ x_vis_; // tuple holding pointers to vari
+  F f_;  // Struct that with methods for computing forward and reverse pass.
+  x_vis_tuple_ x_vis_;  // tuple holding pointers to vari
   /**
    * Will be either vari* or vari**
    */
@@ -174,11 +175,12 @@ struct adj_jac_vari : public vari {
     return y_vi_;
   }
   /**
-   * Specialization for std::vector<var>, stores the values of the forward pass in
-   * `adj_jac_vari` `y_vi_`.
+   * Specialization for std::vector<var>, stores the values of the forward pass
+   * in `adj_jac_vari` `y_vi_`.
    * @param val_y Return value of `F()` stored as the value in `y_vi_`.
    */
-  template <typename Vec, require_std_vector_vt<std::is_arithmetic, Vec>* = nullptr>
+  template <typename Vec,
+            require_std_vector_vt<std::is_arithmetic, Vec>* = nullptr>
   inline auto& collect_forward_pass(Vec&& val_y) {
     y_vi_
         = ChainableStack::instance_->memalloc_.alloc_array<vari*>(val_y.size());
@@ -190,8 +192,8 @@ struct adj_jac_vari : public vari {
   }
 
   /**
-   * Specialization for Eigen matrices of vars, stores the values of the forward pass in
-   * `adj_jac_vari` `y_vi_`.
+   * Specialization for Eigen matrices of vars, stores the values of the forward
+   * pass in `adj_jac_vari` `y_vi_`.
    * @param val_y Return value of `F()` stored as the value in `y_vi_`.
    */
   template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
@@ -235,9 +237,14 @@ struct adj_jac_vari : public vari {
    *  and is used to suppress unused value warnings from the compiler.
    */
   template <typename FF, typename T1, typename T2, size_t... Is>
-  constexpr inline auto for_each_adj_impl(FF&& f, T1&& x, T2&& t, std::index_sequence<Is...>) {
+  constexpr inline auto for_each_adj_impl(FF&& f, T1&& x, T2&& t,
+                                          std::index_sequence<Is...>) {
     using Swallow = int[];
-    static_cast<void>(Swallow{(static_cast<void>(f(std::get<Is>(std::forward<T1>(x)), std::get<Is>(std::forward<T2>(t)), bool_constant<is_var_[Is]>())),0)...});
+    static_cast<void>(Swallow{(
+        static_cast<void>(std::forward<FF>(f)(std::get<Is>(std::forward<T1>(x)),
+                                              std::get<Is>(std::forward<T2>(t)),
+                                              bool_constant<is_var_[Is]>())),
+        0)...});
   }
   /**
    * Apply a function and object to each element of a tuple
@@ -270,13 +277,15 @@ struct adj_jac_vari : public vari {
    * recursively)
    */
   struct accumulate_adjoint {
-    template <typename Toss, typename T, bool needs_adj, std::enable_if_t<!needs_adj>* = nullptr>
-    inline void operator()(Toss&&, T&& x_vis, bool_constant<needs_adj>) {
-    }
+    template <typename Toss, typename T, bool needs_adj,
+              std::enable_if_t<!needs_adj>* = nullptr>
+    inline void operator()(Toss&&, T&& x_vis, bool_constant<needs_adj>) {}
 
-    template <typename EigMat, typename T, bool needs_adj, std::enable_if_t<needs_adj>* = nullptr,
+    template <typename EigMat, typename T, bool needs_adj,
+              std::enable_if_t<needs_adj>* = nullptr,
               require_eigen_t<EigMat>* = nullptr>
-    inline void operator()(EigMat&& y_adj_jac, T&& x_vis, bool_constant<needs_adj>) {
+    inline void operator()(EigMat&& y_adj_jac, T&& x_vis,
+                           bool_constant<needs_adj>) {
       for (int n = 0; n < y_adj_jac.size(); ++n) {
         x_vis[n]->adj_ += y_adj_jac(n);
       }
@@ -293,9 +302,11 @@ struct adj_jac_vari : public vari {
      * @param args the rest of the arguments (that will be iterated through
      * recursively)
      */
-    template <typename Vec, typename T, bool needs_adj, std::enable_if_t<needs_adj>* = nullptr,
+    template <typename Vec, typename T, bool needs_adj,
+              std::enable_if_t<needs_adj>* = nullptr,
               require_std_vector_t<Vec>* = nullptr>
-    inline void operator()(Vec&& y_adj_jac, T&& x_vis, bool_constant<needs_adj>) {
+    inline void operator()(Vec&& y_adj_jac, T&& x_vis,
+                           bool_constant<needs_adj>) {
       for (int n = 0; n < y_adj_jac.size(); ++n) {
         x_vis[n]->adj_ += y_adj_jac[n];
       }
@@ -312,8 +323,10 @@ struct adj_jac_vari : public vari {
      * @param args the rest of the arguments (that will be iterated through
      * recursively)
      */
-    template <typename T, bool needs_adj, std::enable_if_t<needs_adj>* = nullptr>
-    inline void operator()(const double& y_adj_jac, T&& x_vis, bool_constant<needs_adj>) {
+    template <typename T, bool needs_adj,
+              std::enable_if_t<needs_adj>* = nullptr>
+    inline void operator()(const double& y_adj_jac, T&& x_vis,
+                           bool_constant<needs_adj>) {
       x_vis->adj_ += y_adj_jac;
     }
 
@@ -383,12 +396,13 @@ struct adj_jac_vari : public vari {
    * This operation may be called multiple times during the life of the vari
    */
   inline void chain() {
-    for_each_adj(accum_jac, f_.multiply_adjoint_jacobian(this->y_adj()), x_vis_);
-/*    apply(
-        [this](auto&&... args) {
-          this->accumulate_adjoints(std::forward<decltype(args)>(args)...);
-        },
-      );*/
+    for_each_adj(accum_jac, f_.multiply_adjoint_jacobian(this->y_adj()),
+                 x_vis_);
+    /*    apply(
+            [this](auto&&... args) {
+              this->accumulate_adjoints(std::forward<decltype(args)>(args)...);
+            },
+          );*/
   }
 };
 
