@@ -66,7 +66,7 @@ TEST(MathFunctions, binomial_coefficient_log_errors_edge_cases) {
   EXPECT_FLOAT_EQ(binomial_coefficient_log(5.0, 6.0), -INFTY);
 }
 
-TEST(MathFunctions, bessel_first_kind_vec) {
+TEST(MathFunctions, binomial_coefficient_log_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::binomial_coefficient_log;
     return binomial_coefficient_log(x1, x2);
