@@ -65,7 +65,7 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
   for (size_t i = 0; i < size_theta; ++i) {
     log1m_theta[i] = log1m(value_of(theta_vec[i]));
   }
-  
+
   if (include_summand<propto>::value) {
     for (size_t i = 0; i < max_size_seq_view; ++i) {
       logp += binomial_coefficient_log(N_vec[i], n_vec[i]);
@@ -73,13 +73,13 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
   }
 
   for (size_t i = 0; i < max_size_seq_view; ++i) {
-    if(n_vec[i] == 0) {
+    if (n_vec[i] == 0) {
       logp += N_vec[i] * log1m_theta[i];
-    } else if(n_vec[i] == N_vec[i]) {
+    } else if (n_vec[i] == N_vec[i]) {
       logp += n_vec[i] * log(value_of(theta_vec[i]));
     } else {
-      logp += n_vec[i] * log(value_of(theta_vec[i])) +
-	(N_vec[i] - n_vec[i]) * log1m_theta[i];
+      logp += n_vec[i] * log(value_of(theta_vec[i]))
+              + (N_vec[i] - n_vec[i]) * log1m_theta[i];
     }
   }
 
@@ -92,29 +92,26 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
         sum_N += N_vec[i];
       }
       const T_partials_return theta_dbl = value_of(theta_vec[0]);
-      if(sum_n == 0) {
-	ops_partials.edge1_.partials_[0]
-          -= sum_N / (1.0 - theta_dbl);
-      } else if(sum_n == sum_N) {
-	ops_partials.edge1_.partials_[0]
-          += sum_n / theta_dbl;
+      if (sum_n == 0) {
+        ops_partials.edge1_.partials_[0] -= sum_N / (1.0 - theta_dbl);
+      } else if (sum_n == sum_N) {
+        ops_partials.edge1_.partials_[0] += sum_n / theta_dbl;
       } else {
-	ops_partials.edge1_.partials_[0]
-	  += sum_n / theta_dbl - (sum_N - sum_n) / (1.0 - theta_dbl);
+        ops_partials.edge1_.partials_[0]
+            += sum_n / theta_dbl - (sum_N - sum_n) / (1.0 - theta_dbl);
       }
     } else {
       for (size_t i = 0; i < max_size_seq_view; ++i) {
         const T_partials_return theta_dbl = value_of(theta_vec[i]);
-	if(n_vec[i] == 0) {
-	  ops_partials.edge1_.partials_[i]
-            -= N_vec[i] / (1.0 - theta_dbl);
-	} else if(n_vec[i] == N_vec[i]) {
-	  ops_partials.edge1_.partials_[i]
-            += n_vec[i] / theta_dbl;
-	} else {
-	  ops_partials.edge1_.partials_[i]
-            += n_vec[i] / theta_dbl - (N_vec[i] - n_vec[i]) / (1.0 - theta_dbl);
-	}
+        if (n_vec[i] == 0) {
+          ops_partials.edge1_.partials_[i] -= N_vec[i] / (1.0 - theta_dbl);
+        } else if (n_vec[i] == N_vec[i]) {
+          ops_partials.edge1_.partials_[i] += n_vec[i] / theta_dbl;
+        } else {
+          ops_partials.edge1_.partials_[i]
+              += n_vec[i] / theta_dbl
+                 - (N_vec[i] - n_vec[i]) / (1.0 - theta_dbl);
+        }
       }
     }
   }
