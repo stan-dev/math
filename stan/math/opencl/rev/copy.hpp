@@ -46,8 +46,10 @@ class op_copy_to_cl_vari final
  * @return var with a copy of the data on the OpenCL device
  */
 template <typename T>
-inline var_value<matrix_cl<value_type_t<T>>> to_matrix_cl(const var_value<T>& a) {
-  return new internal::op_copy_to_cl_vari<decltype(a.vi_->adj_)>(a.val(), a.vi_->adj_);
+inline var_value<matrix_cl<value_type_t<T>>> to_matrix_cl(
+    const var_value<T>& a) {
+  return new internal::op_copy_to_cl_vari<decltype(a.vi_->adj_)>(a.val(),
+                                                                 a.vi_->adj_);
 }
 
 namespace internal {
