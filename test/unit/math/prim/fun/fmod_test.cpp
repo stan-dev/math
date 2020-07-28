@@ -6,6 +6,7 @@
 
 TEST(MathFunctions, fmodValues) {
   using stan::math::fmod;
+  using std::fmod;
   EXPECT_FLOAT_EQ(0.1, fmod(2.1, 2));
   EXPECT_FLOAT_EQ(1.9, fmod(10.0, 2.7));
   EXPECT_FLOAT_EQ(1.7, fmod(6, 4.3));
@@ -19,23 +20,26 @@ TEST(MathFunctions, fmodValues) {
 
 TEST(MathFunctions, fmodNaN) {
   using stan::math::fmod;
+  using std::fmod;
   double nan = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_TRUE(std::isnan(stan::math::fmod(1, nan)));
-  EXPECT_TRUE(std::isnan(stan::math::fmod(nan, 1)));
-  EXPECT_TRUE(std::isnan(stan::math::fmod(nan, nan)));
+  EXPECT_TRUE(std::isnan(fmod(1, nan)));
+  EXPECT_TRUE(std::isnan(fmod(nan, 1)));
+  EXPECT_TRUE(std::isnan(fmod(nan, nan)));
 }
 
 TEST(MathFunctions, fmodInf) {
   using stan::math::fmod;
+  using std::fmod;
   double inf = std::numeric_limits<double>::infinity();
   EXPECT_FLOAT_EQ(1, fmod(1, inf));
-  EXPECT_TRUE(std::isnan(stan::math::fmod(inf, 1)));
-  EXPECT_TRUE(std::isnan(stan::math::fmod(inf, inf)));
+  EXPECT_TRUE(std::isnan(fmod(inf, 1)));
+  EXPECT_TRUE(std::isnan(fmod(inf, inf)));
 }
 
 TEST(MathFunctions, fmod_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::fmod;
+    using std::fmod;
     return fmod(x1, x2);
   };
 
