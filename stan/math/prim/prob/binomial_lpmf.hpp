@@ -65,7 +65,7 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
   for (size_t i = 0; i < size_theta; ++i) {
     log1m_theta[i] = log1m(value_of(theta_vec[i]));
   }
-  
+
   if (include_summand<propto>::value) {
     for (size_t i = 0; i < max_size_seq_view; ++i) {
       logp += binomial_coefficient_log(N_vec[i], n_vec[i]);
@@ -73,7 +73,7 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
   }
 
   for (size_t i = 0; i < max_size_seq_view; ++i) {
-    if(N_vec[i] == 0) {
+    if(N_vec[i] != 0) {
       if(n_vec[i] == 0) {
 	logp += N_vec[i] * log1m_theta[i];
       } else if(n_vec[i] == N_vec[i]) {

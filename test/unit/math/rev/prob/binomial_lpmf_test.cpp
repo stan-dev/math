@@ -99,8 +99,8 @@ TEST(ProbBinomial, n_equals_N) {
 TEST(ProbBinomial, n_equals_N_vec) {
   using stan::math::var;
   var theta = 1.0;
-  std::vector<int> n = { 2, 3 };
-  std::vector<int> N = { 2, 3 };
+  std::vector<int> n = {2, 3};
+  std::vector<int> N = {2, 3};
 
   var logp = stan::math::binomial_lpmf(n, N, theta);
   logp.grad();
@@ -125,8 +125,8 @@ TEST(ProbBinomial, n_equals_zero) {
 TEST(ProbBinomial, n_equals_0_vec) {
   using stan::math::var;
   var theta = 0.0;
-  std::vector<int> n = { 0, 0 };
-  std::vector<int> N = { 2, 3 };
+  std::vector<int> n = {0, 0};
+  std::vector<int> N = {2, 3};
 
   var logp = stan::math::binomial_lpmf(n, N, theta);
   logp.grad();
