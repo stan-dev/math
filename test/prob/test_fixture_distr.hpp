@@ -632,9 +632,12 @@ class AgradDistributionTestFixture : public ::testing::Test {
       vector<var> vector_vars;
       add_vars(vector_vars, p0, p1, p2, p3, p4, p5);
 
-      calculate_gradients_1storder(multiple_gradients1, multiple_lp, vector_vars);
-      calculate_gradients_2ndorder(multiple_gradients2, multiple_lp, vector_vars);
-      calculate_gradients_3rdorder(multiple_gradients3, multiple_lp, vector_vars);
+      calculate_gradients_1storder(multiple_gradients1, multiple_lp,
+                                   vector_vars);
+      calculate_gradients_2ndorder(multiple_gradients2, multiple_lp,
+                                   vector_vars);
+      calculate_gradients_3rdorder(multiple_gradients3, multiple_lp,
+                                   vector_vars);
 
       EXPECT_NEAR(stan::math::value_of_rec(N_REPEAT * single_lp),
                   stan::math::value_of_rec(multiple_lp), 1e-8)
@@ -786,67 +789,76 @@ class AgradDistributionTestFixture : public ::testing::Test {
     T4 p4 = get_params<T4>(parameters, 4);
     T5 p5 = get_params<T5>(parameters, 5);
 
-    vector<Scalar0> p0s = { get_param<Scalar0>(parameters[0], 0) };
-    vector<Scalar1> p1s = { get_param<Scalar1>(parameters[0], 1) };
-    vector<Scalar2> p2s = { get_param<Scalar2>(parameters[0], 2) };
-    vector<Scalar3> p3s = { get_param<Scalar3>(parameters[0], 3) };
-    vector<Scalar4> p4s = { get_param<Scalar4>(parameters[0], 4) };
-    vector<Scalar5> p5s = { get_param<Scalar5>(parameters[0], 5) };
+    vector<Scalar0> p0s = {get_param<Scalar0>(parameters[0], 0)};
+    vector<Scalar1> p1s = {get_param<Scalar1>(parameters[0], 1)};
+    vector<Scalar2> p2s = {get_param<Scalar2>(parameters[0], 2)};
+    vector<Scalar3> p3s = {get_param<Scalar3>(parameters[0], 3)};
+    vector<Scalar4> p4s = {get_param<Scalar4>(parameters[0], 4)};
+    vector<Scalar5> p5s = {get_param<Scalar5>(parameters[0], 5)};
 
-    T_return_type single_lp = TestClass.template log_prob
-	<false, Scalar0, Scalar1, Scalar2, Scalar3, Scalar4, Scalar5>
-	(p0s.back(), p1s.back(), p2s.back(), p3s.back(), p4s.back(), p5s.back());
+    T_return_type single_lp
+        = TestClass.template log_prob<false, Scalar0, Scalar1, Scalar2, Scalar3,
+                                      Scalar4, Scalar5>(p0s.back(), p1s.back(),
+                                                        p2s.back(), p3s.back(),
+                                                        p4s.back(), p5s.back());
     for (size_t n = 1; n < parameters.size(); n++) {
-      p0s.push_back((is_vector<T0>::value) ?
-		    get_param<Scalar0>(parameters[n], 0) : p0s.front());
-      p1s.push_back((is_vector<T1>::value) ?
-		    get_param<Scalar1>(parameters[n], 1) : p1s.front());
-      p2s.push_back((is_vector<T2>::value) ?
-		    get_param<Scalar2>(parameters[n], 2) : p2s.front());
-      p3s.push_back((is_vector<T3>::value) ?
-		    get_param<Scalar3>(parameters[n], 3) : p3s.front());
-      p4s.push_back((is_vector<T4>::value) ?
-		    get_param<Scalar4>(parameters[n], 4) : p4s.front());
-      p5s.push_back((is_vector<T5>::value) ?
-		    get_param<Scalar5>(parameters[n], 5) : p5s.front());
+      p0s.push_back((is_vector<T0>::value)
+                        ? get_param<Scalar0>(parameters[n], 0)
+                        : p0s.front());
+      p1s.push_back((is_vector<T1>::value)
+                        ? get_param<Scalar1>(parameters[n], 1)
+                        : p1s.front());
+      p2s.push_back((is_vector<T2>::value)
+                        ? get_param<Scalar2>(parameters[n], 2)
+                        : p2s.front());
+      p3s.push_back((is_vector<T3>::value)
+                        ? get_param<Scalar3>(parameters[n], 3)
+                        : p3s.front());
+      p4s.push_back((is_vector<T4>::value)
+                        ? get_param<Scalar4>(parameters[n], 4)
+                        : p4s.front());
+      p5s.push_back((is_vector<T5>::value)
+                        ? get_param<Scalar5>(parameters[n], 5)
+                        : p5s.front());
 
-      single_lp += TestClass.template log_prob
-	<false, Scalar0, Scalar1, Scalar2, Scalar3, Scalar4, Scalar5>
-	(p0s.back(), p1s.back(), p2s.back(), p3s.back(), p4s.back(), p5s.back());
+      single_lp += TestClass.template log_prob<false, Scalar0, Scalar1, Scalar2,
+                                               Scalar3, Scalar4, Scalar5>(
+          p0s.back(), p1s.back(), p2s.back(), p3s.back(), p4s.back(),
+          p5s.back());
     }
 
     add_var(vector_vars, p0);
-    if(is_vector<T0>::value)
+    if (is_vector<T0>::value)
       add_var(scalar_vars, p0s);
     else
       add_var(scalar_vars, p0s.front());
 
     add_var(vector_vars, p1);
-    if(is_vector<T1>::value)
+    if (is_vector<T1>::value)
       add_var(scalar_vars, p1s);
     else
       add_var(scalar_vars, p1s.front());
 
     add_var(vector_vars, p2);
-    if(is_vector<T2>::value)
+    if (is_vector<T2>::value)
       add_var(scalar_vars, p2s);
     else
       add_var(scalar_vars, p2s.front());
 
     add_var(vector_vars, p3);
-    if(is_vector<T3>::value)
+    if (is_vector<T3>::value)
       add_var(scalar_vars, p3s);
     else
       add_var(scalar_vars, p3s.front());
 
     add_var(vector_vars, p4);
-    if(is_vector<T4>::value)
+    if (is_vector<T4>::value)
       add_var(scalar_vars, p4s);
     else
       add_var(scalar_vars, p4s.front());
 
     add_var(vector_vars, p5);
-    if(is_vector<T5>::value)
+    if (is_vector<T5>::value)
       add_var(scalar_vars, p5s);
     else
       add_var(scalar_vars, p5s.front());
@@ -855,10 +867,10 @@ class AgradDistributionTestFixture : public ::testing::Test {
     calculate_gradients_2ndorder(single_gradients2, single_lp, scalar_vars);
     calculate_gradients_3rdorder(single_gradients3, single_lp, scalar_vars);
 
-    T_return_type multiple_lp =
-      TestClass.template log_prob<false, T0, T1, T2, T3, T4, T5>
-      (p0, p1, p2, p3, p4, p5);
-    
+    T_return_type multiple_lp
+        = TestClass.template log_prob<false, T0, T1, T2, T3, T4, T5>(
+            p0, p1, p2, p3, p4, p5);
+
     calculate_gradients_1storder(multiple_gradients1, multiple_lp, vector_vars);
     calculate_gradients_2ndorder(multiple_gradients2, multiple_lp, vector_vars);
     calculate_gradients_3rdorder(multiple_gradients3, multiple_lp, vector_vars);
