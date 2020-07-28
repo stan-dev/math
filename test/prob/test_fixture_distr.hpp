@@ -843,113 +843,113 @@ class AgradDistributionTestFixture : public ::testing::Test {
     size_t pos_single = 0;
     size_t pos_multiple = 0;
     if (!is_constant_all<T0>::value && !is_empty<T0>::value
-          && !std::is_same<Scalar0, fvar<double>>::value
-          && !std::is_same<Scalar0, fvar<fvar<double>>>::value)
-        test_multiple_gradient_values(is_vector<T0>::value, single_gradients1,
-                                      pos_single, multiple_gradients1,
-                                      pos_multiple, 1);
-      if (!is_constant_all<T1>::value && !is_empty<T1>::value
-          && !std::is_same<Scalar1, fvar<double>>::value
-          && !std::is_same<Scalar1, fvar<fvar<double>>>::value)
-        test_multiple_gradient_values(is_vector<T1>::value, single_gradients1,
-                                      pos_single, multiple_gradients1,
-                                      pos_multiple, 1);
-      if (!is_constant_all<T2>::value && !is_empty<T2>::value
-          && !std::is_same<Scalar2, fvar<double>>::value
-          && !std::is_same<Scalar2, fvar<fvar<double>>>::value)
-        test_multiple_gradient_values(is_vector<T2>::value, single_gradients1,
-                                      pos_single, multiple_gradients1,
-                                      pos_multiple, 1);
-      if (!is_constant_all<T3>::value && !is_empty<T3>::value
-          && !std::is_same<Scalar3, fvar<double>>::value
-          && !std::is_same<Scalar3, fvar<fvar<double>>>::value)
-        test_multiple_gradient_values(is_vector<T3>::value, single_gradients1,
-                                      pos_single, multiple_gradients1,
-                                      pos_multiple, 1);
-      if (!is_constant_all<T4>::value && !is_empty<T4>::value
-          && !std::is_same<Scalar4, fvar<double>>::value
-          && !std::is_same<Scalar4, fvar<fvar<double>>>::value)
-        test_multiple_gradient_values(is_vector<T4>::value, single_gradients1,
-                                      pos_single, multiple_gradients1,
-                                      pos_multiple, 1);
-      if (!is_constant_all<T5>::value && !is_empty<T5>::value
-          && !std::is_same<Scalar5, fvar<double>>::value
-          && !std::is_same<Scalar5, fvar<fvar<double>>>::value)
-        test_multiple_gradient_values(is_vector<T5>::value, single_gradients1,
-                                      pos_single, multiple_gradients1,
-                                      pos_multiple, 1);
+	&& !std::is_same<Scalar0, fvar<double>>::value
+	&& !std::is_same<Scalar0, fvar<fvar<double>>>::value)
+      test_multiple_gradient_values(is_vector<T0>::value, single_gradients1,
+				    pos_single, multiple_gradients1,
+				    pos_multiple, 1);
+    if (!is_constant_all<T1>::value && !is_empty<T1>::value
+	&& !std::is_same<Scalar1, fvar<double>>::value
+	&& !std::is_same<Scalar1, fvar<fvar<double>>>::value)
+      test_multiple_gradient_values(is_vector<T1>::value, single_gradients1,
+				    pos_single, multiple_gradients1,
+				    pos_multiple, 1);
+    if (!is_constant_all<T2>::value && !is_empty<T2>::value
+	&& !std::is_same<Scalar2, fvar<double>>::value
+	&& !std::is_same<Scalar2, fvar<fvar<double>>>::value)
+      test_multiple_gradient_values(is_vector<T2>::value, single_gradients1,
+				    pos_single, multiple_gradients1,
+				    pos_multiple, 1);
+    if (!is_constant_all<T3>::value && !is_empty<T3>::value
+	&& !std::is_same<Scalar3, fvar<double>>::value
+	&& !std::is_same<Scalar3, fvar<fvar<double>>>::value)
+      test_multiple_gradient_values(is_vector<T3>::value, single_gradients1,
+				    pos_single, multiple_gradients1,
+				    pos_multiple, 1);
+    if (!is_constant_all<T4>::value && !is_empty<T4>::value
+	&& !std::is_same<Scalar4, fvar<double>>::value
+	&& !std::is_same<Scalar4, fvar<fvar<double>>>::value)
+      test_multiple_gradient_values(is_vector<T4>::value, single_gradients1,
+				    pos_single, multiple_gradients1,
+				    pos_multiple, 1);
+    if (!is_constant_all<T5>::value && !is_empty<T5>::value
+	&& !std::is_same<Scalar5, fvar<double>>::value
+	&& !std::is_same<Scalar5, fvar<fvar<double>>>::value)
+      test_multiple_gradient_values(is_vector<T5>::value, single_gradients1,
+				    pos_single, multiple_gradients1,
+				    pos_multiple, 1);
 
-      pos_single = 0;
-      pos_multiple = 0;
-      if (!is_constant_all<T0>::value && !is_empty<T0>::value
-          && (std::is_same<Scalar0, fvar<var>>::value
-              || std::is_same<Scalar0, fvar<fvar<var>>>::value))
-        test_multiple_gradient_values(is_vector<T0>::value, single_gradients2,
-                                      pos_single, multiple_gradients2,
-                                      pos_multiple, 1);
-      if (!is_constant_all<T1>::value && !is_empty<T1>::value
-          && (std::is_same<Scalar1, fvar<var>>::value
-              || std::is_same<Scalar1, fvar<fvar<var>>>::value))
-        test_multiple_gradient_values(is_vector<T1>::value, single_gradients2,
-                                      pos_single, multiple_gradients2,
-                                      pos_multiple, 1);
-      if (!is_constant_all<T2>::value && !is_empty<T2>::value
-          && (std::is_same<Scalar2, fvar<var>>::value
-              || std::is_same<Scalar2, fvar<fvar<var>>>::value))
-        test_multiple_gradient_values(is_vector<T2>::value, single_gradients2,
-                                      pos_single, multiple_gradients2,
-                                      pos_multiple, 1);
-      if (!is_constant_all<T3>::value && !is_empty<T3>::value
-          && (std::is_same<Scalar3, fvar<var>>::value
-              || std::is_same<Scalar3, fvar<fvar<var>>>::value))
-        test_multiple_gradient_values(is_vector<T3>::value, single_gradients2,
-                                      pos_single, multiple_gradients2,
-                                      pos_multiple, 1);
-      if (!is_constant_all<T4>::value && !is_empty<T4>::value
-          && (std::is_same<Scalar4, fvar<var>>::value
-              || std::is_same<Scalar4, fvar<fvar<var>>>::value))
-        test_multiple_gradient_values(is_vector<T4>::value, single_gradients2,
-                                      pos_single, multiple_gradients2,
-                                      pos_multiple, 1);
-      if (!is_constant_all<T5>::value && !is_empty<T5>::value
-          && (std::is_same<Scalar5, fvar<var>>::value
-              || std::is_same<Scalar5, fvar<fvar<var>>>::value))
-        test_multiple_gradient_values(is_vector<T5>::value, single_gradients2,
-                                      pos_single, multiple_gradients2,
-                                      pos_multiple, 1);
+    pos_single = 0;
+    pos_multiple = 0;
+    if (!is_constant_all<T0>::value && !is_empty<T0>::value
+	&& (std::is_same<Scalar0, fvar<var>>::value
+	    || std::is_same<Scalar0, fvar<fvar<var>>>::value))
+      test_multiple_gradient_values(is_vector<T0>::value, single_gradients2,
+				    pos_single, multiple_gradients2,
+				    pos_multiple, 1);
+    if (!is_constant_all<T1>::value && !is_empty<T1>::value
+	&& (std::is_same<Scalar1, fvar<var>>::value
+	    || std::is_same<Scalar1, fvar<fvar<var>>>::value))
+      test_multiple_gradient_values(is_vector<T1>::value, single_gradients2,
+				    pos_single, multiple_gradients2,
+				    pos_multiple, 1);
+    if (!is_constant_all<T2>::value && !is_empty<T2>::value
+	&& (std::is_same<Scalar2, fvar<var>>::value
+	    || std::is_same<Scalar2, fvar<fvar<var>>>::value))
+      test_multiple_gradient_values(is_vector<T2>::value, single_gradients2,
+				    pos_single, multiple_gradients2,
+				    pos_multiple, 1);
+    if (!is_constant_all<T3>::value && !is_empty<T3>::value
+	&& (std::is_same<Scalar3, fvar<var>>::value
+	    || std::is_same<Scalar3, fvar<fvar<var>>>::value))
+      test_multiple_gradient_values(is_vector<T3>::value, single_gradients2,
+				    pos_single, multiple_gradients2,
+				    pos_multiple, 1);
+    if (!is_constant_all<T4>::value && !is_empty<T4>::value
+	&& (std::is_same<Scalar4, fvar<var>>::value
+	    || std::is_same<Scalar4, fvar<fvar<var>>>::value))
+      test_multiple_gradient_values(is_vector<T4>::value, single_gradients2,
+				    pos_single, multiple_gradients2,
+				    pos_multiple, 1);
+    if (!is_constant_all<T5>::value && !is_empty<T5>::value
+	&& (std::is_same<Scalar5, fvar<var>>::value
+	    || std::is_same<Scalar5, fvar<fvar<var>>>::value))
+      test_multiple_gradient_values(is_vector<T5>::value, single_gradients2,
+				    pos_single, multiple_gradients2,
+				    pos_multiple, 1);
 
-      pos_single = 0;
-      pos_multiple = 0;
-      if (!is_constant_all<T0>::value && !is_empty<T0>::value
-          && std::is_same<Scalar0, fvar<fvar<var>>>::value)
-        test_multiple_gradient_values(is_vector<T0>::value, single_gradients3,
-                                      pos_single, multiple_gradients3,
-                                      pos_multiple, 1);
-      if (!is_constant_all<T1>::value && !is_empty<T1>::value
-          && std::is_same<Scalar1, fvar<fvar<var>>>::value)
-        test_multiple_gradient_values(is_vector<T1>::value, single_gradients3,
-                                      pos_single, multiple_gradients3,
-                                      pos_multiple, 1);
-      if (!is_constant_all<T2>::value && !is_empty<T2>::value
-          && std::is_same<Scalar2, fvar<fvar<var>>>::value)
-        test_multiple_gradient_values(is_vector<T2>::value, single_gradients3,
-                                      pos_single, multiple_gradients3,
-                                      pos_multiple, 1);
-      if (!is_constant_all<T3>::value && !is_empty<T3>::value
-          && std::is_same<Scalar3, fvar<fvar<var>>>::value)
-        test_multiple_gradient_values(is_vector<T3>::value, single_gradients3,
-                                      pos_single, multiple_gradients3,
-                                      pos_multiple, 1);
-      if (!is_constant_all<T4>::value && !is_empty<T4>::value
-          && std::is_same<Scalar4, fvar<fvar<var>>>::value)
-        test_multiple_gradient_values(is_vector<T4>::value, single_gradients3,
-                                      pos_single, multiple_gradients3,
-                                      pos_multiple, 1);
-      if (!is_constant_all<T5>::value && !is_empty<T5>::value
-          && std::is_same<Scalar5, fvar<fvar<var>>>::value)
-        test_multiple_gradient_values(is_vector<T5>::value, single_gradients3,
-                                      pos_single, multiple_gradients3,
-                                      pos_multiple, 1);
+    pos_single = 0;
+    pos_multiple = 0;
+    if (!is_constant_all<T0>::value && !is_empty<T0>::value
+	&& std::is_same<Scalar0, fvar<fvar<var>>>::value)
+      test_multiple_gradient_values(is_vector<T0>::value, single_gradients3,
+				    pos_single, multiple_gradients3,
+				    pos_multiple, 1);
+    if (!is_constant_all<T1>::value && !is_empty<T1>::value
+	&& std::is_same<Scalar1, fvar<fvar<var>>>::value)
+      test_multiple_gradient_values(is_vector<T1>::value, single_gradients3,
+				    pos_single, multiple_gradients3,
+				    pos_multiple, 1);
+    if (!is_constant_all<T2>::value && !is_empty<T2>::value
+	&& std::is_same<Scalar2, fvar<fvar<var>>>::value)
+      test_multiple_gradient_values(is_vector<T2>::value, single_gradients3,
+				    pos_single, multiple_gradients3,
+				    pos_multiple, 1);
+    if (!is_constant_all<T3>::value && !is_empty<T3>::value
+	&& std::is_same<Scalar3, fvar<fvar<var>>>::value)
+      test_multiple_gradient_values(is_vector<T3>::value, single_gradients3,
+				    pos_single, multiple_gradients3,
+				    pos_multiple, 1);
+    if (!is_constant_all<T4>::value && !is_empty<T4>::value
+	&& std::is_same<Scalar4, fvar<fvar<var>>>::value)
+      test_multiple_gradient_values(is_vector<T4>::value, single_gradients3,
+				    pos_single, multiple_gradients3,
+				    pos_multiple, 1);
+    if (!is_constant_all<T5>::value && !is_empty<T5>::value
+	&& std::is_same<Scalar5, fvar<fvar<var>>>::value)
+      test_multiple_gradient_values(is_vector<T5>::value, single_gradients3,
+				    pos_single, multiple_gradients3,
+				    pos_multiple, 1);
   }
 
   void test_length_0_vector() {
