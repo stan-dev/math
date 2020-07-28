@@ -46,8 +46,8 @@ class op_copy_to_cl_vari final
  * @return var with a copy of the data on the OpenCL device
  */
 template <typename T>
-inline var_value<matrix_cl<value_type_t<T>>> to_matrix_cl(var_value<T>& a) {
-  return new internal::op_copy_to_cl_vari<decltype(a.adj())>(a.val(), a.adj());
+inline var_value<matrix_cl<value_type_t<T>>> to_matrix_cl(const var_value<T>& a) {
+  return new internal::op_copy_to_cl_vari<decltype(a.vi_->adj_)>(a.val(), a.vi_->adj_);
 }
 
 namespace internal {
@@ -80,7 +80,7 @@ class op_copy_from_cl_vari final
 template <int Rows = Eigen::Dynamic, int Cols = Eigen::Dynamic, typename T,
           require_all_kernel_expressions_t<T>* = nullptr>
 inline var_value<Eigen::Matrix<value_type_t<T>, Rows, Cols>> from_matrix_cl(
-    var_value<T>& a) {
+    const var_value<T>& a) {
   return new internal::op_copy_from_cl_vari<T, Rows, Cols>(*a.vi_);
 }
 
@@ -96,7 +96,7 @@ inline var_value<Eigen::Matrix<value_type_t<T>, Rows, Cols>> from_matrix_cl(
  */
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
 inline var_value<matrix_cl<value_type_t<value_type_t<T>>>> to_matrix_cl(
-    T& src) {
+    const T& src) {
   // the matrix can go out of scope before chain() is called. So we store a map
   // to the data
   var* src_array
