@@ -135,3 +135,17 @@ TEST(ProbBinomial, n_equals_0_vec) {
 
   stan::math::recover_memory();
 }
+
+TEST(ProbBinomial, N_equals_0_vec) {
+  using stan::math::var;
+  var theta = 0.0;
+  std::vector<int> n = {0, 0};
+  std::vector<int> N = {0, 0};
+
+  var logp = stan::math::binomial_lpmf(n, N, theta);
+  logp.grad();
+  EXPECT_FLOAT_EQ(logp.val(), 0.0);
+  EXPECT_FLOAT_EQ(theta.adj(), 0.0);
+
+  stan::math::recover_memory();
+}
