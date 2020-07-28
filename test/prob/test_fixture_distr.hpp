@@ -976,15 +976,10 @@ class AgradDistributionTestFixture : public ::testing::Test {
     if (!is_constant_all<T5>::value && !is_empty<T5>::value
         && std::is_same<Scalar5, fvar<fvar<var>>>::value)
       test_multiple_gradient_values(is_vector<T5>::value, single_gradients3,
-<<<<<<< HEAD
 				    pos_single, multiple_gradients3,
 				    pos_multiple, 1);
 
     stan::math::recover_memory();
-=======
-                                    pos_single, multiple_gradients3,
-                                    pos_multiple, 1);
->>>>>>> ea07b9e4e4d9e1b731a4faeeeffd63505af14675
   }
 
   void test_length_0_vector() {
