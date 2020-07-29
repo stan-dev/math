@@ -999,7 +999,6 @@ class AgradDistributionTestFixture : public ::testing::Test {
       test_multiple_gradient_values(is_vector<T5>::value, single_gradients3,
 				    pos_single, multiple_gradients3,
 				    pos_multiple, 1);
-    
   }
 
   void test_length_0_vector() {
