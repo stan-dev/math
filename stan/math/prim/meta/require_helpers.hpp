@@ -308,7 +308,7 @@ using container_type_check_base
   template <template <class...> class TypeCheck, class... Check>               \
   using require_##check_type##_vt = require_t<                                 \
       container_type_check_base<checker, value_type_t, TypeCheck, Check...>>;  \
-  /*! \brief Require type does not satisfy checker and */                      \
+  /*! \brief Require type does not satisfy checker or */                      \
   /*! value type satisfies `TypeCheck` */                                      \
   /*! @tparam TypeCheck The type trait to check the value type against*/       \
   template <template <class...> class TypeCheck, class... Check>               \
@@ -345,7 +345,7 @@ using container_type_check_base
   using require_##check_type##_st = require_t<                                 \
       container_type_check_base<checker, scalar_type_t, TypeCheck, Check...>>; \
   /*! \brief Require type does not satisfy checker */                          \
-  /*! and scalar type does not satisfy `TypeCheck` */                          \
+  /*! or scalar type does not satisfy `TypeCheck` */                          \
   /*! @tparam TypeCheck The type trait to check the scalar type against*/      \
   template <template <class...> class TypeCheck, class... Check>               \
   using require_not_##check_type##_st = require_not_t<                         \
