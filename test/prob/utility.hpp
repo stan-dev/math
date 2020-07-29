@@ -53,7 +53,6 @@ std::ostream& operator<<(std::ostream& os, const vector<var>& param) {
 
 }  // namespace std
 
-
 // ------------------------------------------------------------
 
 template <typename T>
