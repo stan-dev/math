@@ -108,8 +108,8 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
-	+= -(alpha_dbl + 1.0) * inv_y[n]
-	+ alpha_dbl * sigma_div_y_pow_alpha[n] * inv_y[n];
+          += -(alpha_dbl + 1.0) * inv_y[n]
+             + alpha_dbl * sigma_div_y_pow_alpha[n] * inv_y[n];
     }
     if (!is_constant_all<T_shape>::value) {
       ops_partials.edge2_.partials_[n]
