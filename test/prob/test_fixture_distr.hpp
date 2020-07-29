@@ -625,8 +625,8 @@ class AgradDistributionTestFixture : public ::testing::Test {
       T5 p5 = get_repeated_params<T5>(parameters[n], 5, N_REPEAT);
 
       T_return_type multiple_lp
-	= TestClass.template log_prob<T0, T1, T2, T3, T4, T5>(p0, p1, p2, p3,
-							      p4, p5);
+          = TestClass.template log_prob<T0, T1, T2, T3, T4, T5>(p0, p1, p2, p3,
+                                                                p4, p5);
       vector<double> multiple_gradients1;
       vector<double> multiple_gradients2;
       vector<double> multiple_gradients3;
@@ -755,7 +755,7 @@ class AgradDistributionTestFixture : public ::testing::Test {
         test_multiple_gradient_values(is_vector<T5>::value, single_gradients3,
                                       pos_single, multiple_gradients3,
                                       pos_multiple, N_REPEAT);
-      
+
       stan::math::recover_memory();
     }
   }
@@ -879,11 +879,12 @@ class AgradDistributionTestFixture : public ::testing::Test {
 
     stan::math::recover_memory();
 
-    if(stan::math::is_inf(stan::math::value_of_rec(single_lp)) &&
-       stan::math::value_of_rec(single_lp) == stan::math::value_of_rec(multiple_lp)) {
+    if (stan::math::is_inf(stan::math::value_of_rec(single_lp))
+        && stan::math::value_of_rec(single_lp)
+               == stan::math::value_of_rec(multiple_lp)) {
       return;
     }
-    
+
     EXPECT_NEAR(stan::math::value_of_rec(single_lp),
                 stan::math::value_of_rec(multiple_lp), 1e-8)
         << "log prob evaluated in loop should match "
@@ -997,8 +998,8 @@ class AgradDistributionTestFixture : public ::testing::Test {
     if (!is_constant_all<T5>::value && !is_empty<T5>::value
         && std::is_same<Scalar5, fvar<fvar<var>>>::value)
       test_multiple_gradient_values(is_vector<T5>::value, single_gradients3,
-				    pos_single, multiple_gradients3,
-				    pos_multiple, 1);
+                                    pos_single, multiple_gradients3,
+                                    pos_multiple, 1);
   }
 
   void test_length_0_vector() {
