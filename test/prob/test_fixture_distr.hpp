@@ -3,6 +3,7 @@
 
 #include <stan/math/mix.hpp>
 #include <test/prob/utility.hpp>
+#include <test/unit/math/expect_near_rel.hpp>
 #include <type_traits>
 #include <stdexcept>
 
@@ -483,8 +484,8 @@ class AgradDistributionTestFixture : public ::testing::Test {
         << "Number of expected gradients and calculated gradients must match "
            "-- error in test fixture";
     for (size_t i = 0; i < expected_gradients.size(); i++) {
-      EXPECT_FLOAT_EQ(expected_gradients[i], gradients[i])
-          << "Comparison of expected gradient to calculated gradient failed";
+      stan::test::expect_near_rel("Comparison of expected gradient to calculated gradient failed",
+		      expected_gradients[i], gradients[i]);
     }
   }
 
@@ -563,18 +564,16 @@ class AgradDistributionTestFixture : public ::testing::Test {
                                      const size_t N_REPEAT) {
     if (is_vec) {
       for (size_t i = 0; i < N_REPEAT; i++) {
-        EXPECT_FLOAT_EQ(single_gradients[pos_single],
-                        multiple_gradients[pos_multiple])
-            << "Comparison of single_gradient value to vectorized gradient "
-               "failed";
+	stan::test::expect_near_rel("Comparison of single_gradient value to vectorized gradient failed",
+				    single_gradients[pos_single],
+				    multiple_gradients[pos_multiple]);
         pos_multiple++;
       }
       pos_single++;
     } else {
-      EXPECT_FLOAT_EQ(single_gradients[pos_single] * double(N_REPEAT),
-                      multiple_gradients[pos_multiple])
-          << "Comparison of single_gradient value to vectorized gradient "
-             "failed";
+      stan::test::expect_near_rel("Comparison of single_gradient value to vectorized gradient failed",
+				  single_gradients[pos_single] * double(N_REPEAT),
+				  multiple_gradients[pos_multiple]);
       pos_single++;
       pos_multiple++;
     }
