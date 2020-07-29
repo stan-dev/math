@@ -335,7 +335,7 @@ class AgradDistributionTestFixture : public ::testing::Test {
   // works for fvar<double>
   double calculate_gradients_1storder(vector<double>& grad,
                                       fvar<double>& logprob, vector<var>& x) {
-    x.push_back(logprob.d_);
+    grad.push_back(logprob.d_);
     return logprob.val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad,
@@ -351,12 +351,13 @@ class AgradDistributionTestFixture : public ::testing::Test {
   double calculate_gradients_1storder(vector<double>& grad,
                                       fvar<fvar<double>>& logprob,
                                       vector<var>& x) {
-    x.push_back(logprob.d_.val_);
+    grad.push_back(logprob.d_.val_);
     return logprob.val().val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad,
                                       fvar<fvar<double>>& logprob,
                                       vector<var>& x) {
+    grad.push_back(logprob.d_.d_);
     return logprob.val().val();
   }
   double calculate_gradients_3rdorder(vector<double>& grad,
@@ -624,8 +625,8 @@ class AgradDistributionTestFixture : public ::testing::Test {
       T5 p5 = get_repeated_params<T5>(parameters[n], 5, N_REPEAT);
 
       T_return_type multiple_lp
-          = TestClass.template log_prob<T0, T1, T2, T3, T4, T5>(p0, p1, p2, p3,
-                                                                p4, p5);
+	= TestClass.template log_prob<T0, T1, T2, T3, T4, T5>(p0, p1, p2, p3,
+							      p4, p5);
       vector<double> multiple_gradients1;
       vector<double> multiple_gradients2;
       vector<double> multiple_gradients3;
@@ -754,9 +755,9 @@ class AgradDistributionTestFixture : public ::testing::Test {
         test_multiple_gradient_values(is_vector<T5>::value, single_gradients3,
                                       pos_single, multiple_gradients3,
                                       pos_multiple, N_REPEAT);
+      
+      stan::math::recover_memory();
     }
-
-    stan::math::recover_memory();
   }
 
   void test_as_scalars_vs_as_vector() {
@@ -801,6 +802,7 @@ class AgradDistributionTestFixture : public ::testing::Test {
                                       Scalar4, Scalar5>(p0s.back(), p1s.back(),
                                                         p2s.back(), p3s.back(),
                                                         p4s.back(), p5s.back());
+
     for (size_t n = 1; n < parameters.size(); n++) {
       p0s.push_back((is_vector<T0>::value)
                         ? get_param<Scalar0>(parameters[n], 0)
@@ -875,6 +877,13 @@ class AgradDistributionTestFixture : public ::testing::Test {
     calculate_gradients_2ndorder(multiple_gradients2, multiple_lp, vector_vars);
     calculate_gradients_3rdorder(multiple_gradients3, multiple_lp, vector_vars);
 
+    stan::math::recover_memory();
+
+    if(stan::math::is_inf(stan::math::value_of_rec(single_lp)) &&
+       stan::math::value_of_rec(single_lp) == stan::math::value_of_rec(multiple_lp)) {
+      return;
+    }
+    
     EXPECT_NEAR(stan::math::value_of_rec(single_lp),
                 stan::math::value_of_rec(multiple_lp), 1e-8)
         << "log prob evaluated in loop should match "
@@ -990,8 +999,7 @@ class AgradDistributionTestFixture : public ::testing::Test {
       test_multiple_gradient_values(is_vector<T5>::value, single_gradients3,
 				    pos_single, multiple_gradients3,
 				    pos_multiple, 1);
-
-    stan::math::recover_memory();
+    
   }
 
   void test_length_0_vector() {
