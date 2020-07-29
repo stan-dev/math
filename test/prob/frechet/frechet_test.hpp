@@ -75,7 +75,6 @@ class AgradDistributionsFrechet : public AgradDistributionTest {
       const T4&, const T5&) {
     using stan::math::include_summand;
     using stan::math::multiply_log;
-    using stan::math::value_of;
     using std::log;
     using std::pow;
 

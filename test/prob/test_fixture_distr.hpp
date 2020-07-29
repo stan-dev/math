@@ -550,9 +550,9 @@ class AgradDistributionTestFixture : public ::testing::Test {
       test_gradients_equal(expected_gradients1, gradients1);
       test_gradients_equal(expected_gradients2, gradients2);
       test_gradients_equal(expected_gradients3, gradients3);
-    }
 
-    stan::math::recover_memory();
+      stan::math::recover_memory();
+    }
   }
 
   void test_multiple_gradient_values(const bool is_vec,

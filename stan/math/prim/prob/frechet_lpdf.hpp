@@ -81,7 +81,7 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
                 T_partials_return, T_y>
       inv_y(size(y));
   for (size_t i = 0; i < stan::math::size(y); i++) {
-    inv_y[i] = 1.0 / value_of(y_vec[i]);
+    inv_y[i] = inv(value_of(y_vec[i]));
   }
 
   VectorBuilder<include_summand<propto, T_y, T_shape, T_scale>::value,
@@ -107,10 +107,9 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
     logp -= sigma_div_y_pow_alpha[n];
 
     if (!is_constant_all<T_y>::value) {
-      const T_partials_return inv_y_dbl = value_of(inv_y[n]);
       ops_partials.edge1_.partials_[n]
-          += -(alpha_dbl + 1.0) * inv_y_dbl
-             + alpha_dbl * sigma_div_y_pow_alpha[n] * inv_y_dbl;
+	+= -(alpha_dbl + 1.0) * inv_y[n]
+	+ alpha_dbl * sigma_div_y_pow_alpha[n] * inv_y[n];
     }
     if (!is_constant_all<T_shape>::value) {
       ops_partials.edge2_.partials_[n]
