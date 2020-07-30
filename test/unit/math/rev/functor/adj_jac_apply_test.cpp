@@ -388,7 +388,7 @@ TEST(AgradRev, test_matrix_sin_multiple_jac) {
  */
 struct WeirdArgumentListFunctor1 {
   template <typename... Args>
-  WeirdArgumentListFunctor1(const Args&... args) {}
+  explicit WeirdArgumentListFunctor1(const Args&... args) {}
   Eigen::VectorXd operator()(double, int, const double&, const int&,
       std::vector<double>, std::vector<int>, const std::vector<double>&,
       const std::vector<int>&, Eigen::Matrix<double, Eigen::Dynamic, 1>,
@@ -503,7 +503,7 @@ struct CheckAdjointsPassingThrough {
   int cols_ed2;
   int cols_ed3;
   template <typename... Args>
-  CheckAdjointsPassingThrough(const Args&... args) {}
+  explicit CheckAdjointsPassingThrough(const Args&... args) {}
   Eigen::VectorXd operator()(const double& d,
       const std::vector<double>& vd, const int&,
       const Eigen::Matrix<double, Eigen::Dynamic, 1>& ed1,

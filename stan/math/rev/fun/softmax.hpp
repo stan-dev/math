@@ -17,8 +17,9 @@ namespace internal {
 template <typename T>
 class softmax_op {
   adj_op<T> y_;
+
  public:
-  softmax_op(const T& x) : y_(x.size()) {}
+  explicit softmax_op(const T& x) : y_(x.size()) {}
 
   /**
    * Compute the softmax of the unconstrained input vector
@@ -41,11 +42,11 @@ class softmax_op {
    * @param adj Eigen::VectorXd of adjoints at the output of the softmax
    * @return Eigen::VectorXd of adjoints propagated through softmax operation
    */
-   auto multiply_adjoint_jacobian(const Eigen::VectorXd& adj) const {
-     vector_d adj_times_jac = -y_.map() * adj.dot(y_.map()) + y_.map().cwiseProduct(adj);
-     return std::make_tuple(adj_times_jac);
-   }
-
+  auto multiply_adjoint_jacobian(const Eigen::VectorXd& adj) const {
+    vector_d adj_times_jac
+        = -y_.map() * adj.dot(y_.map()) + y_.map().cwiseProduct(adj);
+    return std::make_tuple(adj_times_jac);
+  }
 };
 }  // namespace internal
 

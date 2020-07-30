@@ -49,10 +49,11 @@ struct var_return_type<T, require_eigen_t<T>> {
  */
 template <typename F, typename... Targs>
 class adj_jac_vari : public vari {
-public:
+ public:
   static constexpr std::array<bool, sizeof...(Targs)> is_var_{
       is_var<scalar_type_t<Targs>>::value...};
-protected:
+
+ protected:
   using FReturnType = std::decay_t<std::result_of_t<F(
       plain_type_t<decltype(value_of(plain_type_t<Targs>()))>...)>>;
   using x_vis_tuple_ = var_to_vari_filter_t<std::decay_t<Targs>...>;
@@ -75,7 +76,7 @@ protected:
    */
   template <typename RetType = FReturnType,
             require_arithmetic_t<RetType>* = nullptr>
-  inline auto& y_adj() {
+  inline auto& y_adj() const {
     return y_vi_->adj_;
   }
 
@@ -87,7 +88,7 @@ protected:
    */
   template <typename RetType = FReturnType,
             require_std_vector_t<RetType>* = nullptr>
-  inline auto y_adj() {
+  inline auto y_adj() const {
     std::vector<double> var_y(dims_[0]);
     for (size_t i = 0; i < dims_[0]; ++i) {
       var_y[i] = y_vi_[i]->adj_;
@@ -102,7 +103,7 @@ protected:
    * specialization given the required output type.
    */
   template <typename RetType = FReturnType, require_eigen_t<RetType>* = nullptr>
-  inline auto y_adj() {
+  inline auto y_adj() const {
     Eigen::Matrix<double, FReturnType::RowsAtCompileTime,
                   FReturnType::ColsAtCompileTime>
         var_y(dims_[0], dims_[1]);
@@ -112,6 +113,58 @@ protected:
     }
     return var_y;
   }
+  /**
+   * Copy the vari memory from the input argument
+   * @tparam EigMat A type inheriting from `EigenBase` with a scalar type of
+   * vari.
+   * @param x An eigen input argument
+   */
+  template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
+  inline auto prepare_x_vis_impl(EigMat&& x) const {
+    ref_type_t<EigMat> x_ref(std::forward<EigMat>(x));
+    vari** y
+        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
+    for (int i = 0; i < x_ref.size(); ++i) {
+      y[i] = x_ref.coeffRef(i).vi_;
+    }
+    return y;
+  }
+  /**
+   * Copy the vari memory from the input argument
+   * @param x An std vector of var types
+   */
+  inline auto prepare_x_vis_impl(const std::vector<var>& x) const {
+    vari** y
+        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
+    for (size_t i = 0; i < x.size(); ++i) {
+      y[i] = x[i].vi_;
+    }
+    return y;
+  }
+
+  /**
+   * Copy the vari memory from the input argument
+   * @param x An var
+   */
+  inline auto prepare_x_vis_impl(const var& x) const {
+    vari* y = ChainableStack::instance_->memalloc_.alloc_array<vari>(1);
+    y = x.vi_;
+    return y;
+  }
+
+  /**
+   * no-op when an argument is arithmetic
+   * @param x An object whose type or underlying type is arithmetic.
+   */
+  template <typename Arith, require_st_arithmetic<Arith>* = nullptr>
+  constexpr inline auto prepare_x_vis_impl(Arith&& x) const {
+    return nullptr;
+  }
+
+  /**
+   * For an empty argument list
+   */
+  constexpr inline auto prepare_x_vis() { return x_vis_tuple_{}; }
 
   /**
    * prepare_x_vis populates x_vis_ with the varis from each of its
@@ -131,43 +184,11 @@ protected:
    * @param args the rest of the arguments (that will be iterated through
    * recursively)
    */
-  template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
-  inline auto prepare_x_vis_impl(EigMat&& x) {
-    ref_type_t<EigMat> x_ref(std::forward<EigMat>(x));
-    vari** y
-        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
-    for (int i = 0; i < x_ref.size(); ++i) {
-      y[i] = x_ref.coeffRef(i).vi_;
-    }
-    return y;
-  }
-
-  inline auto prepare_x_vis_impl(const std::vector<var>& x) {
-    vari** y
-        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
-    for (size_t i = 0; i < x.size(); ++i) {
-      y[i] = x[i].vi_;
-    }
-    return y;
-  }
-
-  inline auto prepare_x_vis_impl(const var& x) {
-    vari* y = ChainableStack::instance_->memalloc_.alloc_array<vari>(1);
-    y = x.vi_;
-    return y;
-  }
-
-  template <typename Arith, require_st_arithmetic<Arith>* = nullptr>
-  inline auto prepare_x_vis_impl(Arith&& x) {
-    return nullptr;
-  }
-
-  auto prepare_x_vis() { return x_vis_tuple_{}; }
-
   template <typename... Args>
-  inline auto prepare_x_vis(Args&&... args) {
+  inline auto prepare_x_vis(Args&&... args) const {
     return x_vis_tuple_{prepare_x_vis_impl(args)...};
   }
+
   /**
    * Specialization for var, stores the values of the forward pass in
    * `adj_jac_vari` `y_vi_`.
@@ -205,8 +226,8 @@ protected:
     using ret_mat = Eigen::Matrix<var, eig_mat::RowsAtCompileTime,
                                   eig_mat::ColsAtCompileTime>;
     ref_type_t<EigMat> val_ref(std::forward<EigMat>(val_y));
-    y_vi_
-        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(val_ref.size());
+    y_vi_ = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+        val_ref.size());
     this->dims_[0] = val_ref.rows();
     this->dims_[1] = val_ref.cols();
     for (size_t i = 0; i < val_ref.size(); ++i) {
@@ -217,8 +238,9 @@ protected:
 
   /**
    * Implimentation of for_each for applying adjoints.
-   * The `bool_constant` passed to the function is used to deduce whether
-   * @note The static cast to void is used in boost::hana's for_each impl
+   * @note The `bool_constant` passed to the function is used to deduce whether
+   *  the input argument needs to be added to an associated `x_vis_`.
+   * the static cast to void is used in boost::hana's for_each impl
    *  and is used to suppress unused value warnings from the compiler.
    */
   template <typename FF, typename T1, typename T2, size_t... Is>
@@ -250,28 +272,37 @@ protected:
   /**
    * Accumulate, if necessary, the values of y_adj_jac into the
    * adjoints of the varis pointed to by the appropriate elements
-   * of x_vis_. Recursively calls accumulate_adjoints on the rest of the
-   * arguments.
+   * of x_vis_.
    *
-   * @tparam R number of rows, can be Eigen::Dynamic
-   * @tparam C number of columns, can be Eigen::Dynamic
-   * @tparam Pargs Types of the rest of adjoints to accumulate
-   *
-   * @param y_adj_jac set of values to be accumulated in adjoints
-   * @param args the rest of the arguments (that will be iterated through
-   * recursively)
    */
   struct accumulate_adjoint {
-    template <typename Toss, typename T, bool needs_adj,
+    /**
+     * No-op for when an element of `x_vis_` does not need the adjoint added.
+     * @tparam Toss Any type
+     * @tparam V Any type
+     * @tparam needs_adj bool for deducing when an adjoint does not need
+     * accumulated.
+     */
+    template <typename Toss, typename V, bool needs_adj,
               std::enable_if_t<!needs_adj>* = nullptr>
-    inline void operator()(Toss&&, T&& x_vis, bool_constant<needs_adj>) {}
+    constexpr inline void operator()(Toss&& /* y_adj_jac */, V&& /* x_vis */,
+                           bool_constant<needs_adj> /* needs_adj */) {}
 
-    template <typename EigMat, typename T, bool needs_adj,
+    /**
+     * Accumulate values from reverse mode pass into `x_vis`
+     * @tparam EigMat An type inheriting from `EigenBase`
+     * @tparam V A type holding pointers to vari accesible with `operator[]`
+     * @tparam needs_adj boolean to deduce at compile time whether the adjoint
+     *  needs accumulated for this `x_vis`.
+     * @param y_adj_jac The adjoint jacobian calculation from the reverse pass.
+     * @param x_vis An element of the tuple `x_vis_` that contains `vari**`.
+     */
+    template <typename EigMat, typename V, bool needs_adj,
               std::enable_if_t<needs_adj>* = nullptr,
               require_eigen_t<EigMat>* = nullptr>
-    inline void operator()(EigMat&& y_adj_jac, T&& x_vis,
+    inline void operator()(EigMat&& y_adj_jac, V&& x_vis,
                            bool_constant<needs_adj>) {
-     ref_type_t<EigMat> y_adj_ref(std::forward<EigMat>(y_adj_jac));
+      ref_type_t<EigMat> y_adj_ref(std::forward<EigMat>(y_adj_jac));
       for (int n = 0; n < y_adj_ref.size(); ++n) {
         x_vis[n]->adj_ += y_adj_ref.coeffRef(n);
       }
@@ -282,16 +313,17 @@ protected:
      * adjoints of the varis pointed to by the appropriate elements
      * of x_vis_. Recursively calls accumulate_adjoints on the rest of the
      * arguments.
-     *
-     * @tparam Pargs Types of the rest of adjoints to accumulate
-     * @param y_adj_jac set of values to be accumulated in adjoints
-     * @param args the rest of the arguments (that will be iterated through
-     * recursively)
+     * @tparam Vec A standard vector
+     * @tparam V A type holding pointers to vari accesible with `operator[]`
+     * @tparam needs_adj boolean to deduce at compile time whether the adjoint
+     *  needs accumulated for this `x_vis`.
+     * @param y_adj_jac The adjoint jacobian calculation from the reverse pass.
+     * @param x_vis An element of the tuple `x_vis_` that contains `vari**`.
      */
-    template <typename Vec, typename T, bool needs_adj,
+    template <typename Vec, typename V, bool needs_adj,
               std::enable_if_t<needs_adj>* = nullptr,
               require_std_vector_t<Vec>* = nullptr>
-    inline void operator()(Vec&& y_adj_jac, T&& x_vis,
+    inline void operator()(Vec&& y_adj_jac, V&& x_vis,
                            bool_constant<needs_adj>) {
       for (int n = 0; n < y_adj_jac.size(); ++n) {
         x_vis[n]->adj_ += y_adj_jac[n];
@@ -299,26 +331,27 @@ protected:
     }
 
     /**
-     * Accumulate, if necessary, the value of y_adj_jac into the
-     * adjoint of the vari pointed to by the appropriate element
+     * Accumulate, if necessary, the values of y_adj_jac into the
+     * adjoints of the varis pointed to by the appropriate elements
      * of x_vis_. Recursively calls accumulate_adjoints on the rest of the
      * arguments.
-     *
-     * @tparam Pargs Types of the rest of adjoints to accumulate
-     * @param y_adj_jac next set of adjoints to be accumulated
-     * @param args the rest of the arguments (that will be iterated through
-     * recursively)
+     * @tparam T A floating point type
+     * @tparam V A vari pointer
+     * @param y_adj_jac The adjoint jacobian calculation from the reverse pass.
+     * @param x_vis An element of the tuple `x_vis_` that contains `vari*`.
      */
-    template <typename T, bool needs_adj,
-              std::enable_if_t<needs_adj>* = nullptr>
-    inline void operator()(const double& y_adj_jac, T&& x_vis,
+    template <typename T, typename V, bool needs_adj,
+              std::enable_if_t<needs_adj>* = nullptr,
+              require_floating_point_t<T>* = nullptr>
+    inline void operator()(T&& y_adj_jac, V&& x_vis,
                            bool_constant<needs_adj>) {
       x_vis->adj_ += y_adj_jac;
     }
 
     inline void operator()() {}
   };
-public:
+
+ public:
   /**
    * Return a var from the internal vari value
    * @tparam RetType Not called by user. Default of the return type of
@@ -327,7 +360,7 @@ public:
    */
   template <typename RetType = FReturnType,
             require_arithmetic_t<RetType>* = nullptr>
-  inline auto y_var() {
+  inline auto y_var() const {
     return var(y_vi_);
   }
 
@@ -339,7 +372,7 @@ public:
    */
   template <typename RetType = FReturnType,
             require_std_vector_t<RetType>* = nullptr>
-  inline auto y_var() {
+  inline auto y_var() const {
     std::vector<var> var_y(dims_[0]);
     for (size_t i = 0; i < dims_[0]; ++i) {
       var_y[i] = y_vi_[i];
@@ -354,7 +387,7 @@ public:
    * specialization given the required output type.
    */
   template <typename RetType = FReturnType, require_eigen_t<RetType>* = nullptr>
-  inline auto y_var() {
+  inline auto y_var() const {
     Eigen::Matrix<var, FReturnType::RowsAtCompileTime,
                   FReturnType::ColsAtCompileTime>
         var_y(dims_[0], dims_[1]);
@@ -383,9 +416,12 @@ public:
    * @return Output of f_ as vars
    */
   template <typename... Args>
-  adj_jac_vari(Args&&... args)
-      : vari(NOT_A_NUMBER), f_(args...), x_vis_(prepare_x_vis(args...)),
-        y_vi_(collect_forward_pass(f_(value_of(std::forward<Args>(args))...))) {}
+  explicit adj_jac_vari(Args&&... args)
+      : vari(NOT_A_NUMBER),
+        f_(args...),
+        x_vis_(prepare_x_vis(args...)),
+        y_vi_(collect_forward_pass(f_(value_of(std::forward<Args>(args))...))) {
+  }
 
   /**
    * Propagate the adjoints at the output varis (y_vi_) back to the input
@@ -400,7 +436,7 @@ public:
    */
   inline void chain() {
     for_each_adj(accumulate_adjoint(),
-      f_.multiply_adjoint_jacobian(this->y_adj()), x_vis_);
+                 f_.multiply_adjoint_jacobian(this->y_adj()), x_vis_);
   }
 };
 

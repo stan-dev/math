@@ -128,7 +128,6 @@ TEST(AgradRev, adj_op_assign_sizes) {
   EXPECT_EQ(adj_d.cols(), 0);
   EXPECT_EQ(adj_d.size(), 0);
   EXPECT_THROW((adj_d.map() = 1), std::domain_error);
-
 }
 
 namespace stan {
