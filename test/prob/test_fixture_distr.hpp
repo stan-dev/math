@@ -118,23 +118,31 @@ class AgradDistributionTestFixture : public ::testing::Test {
       if (all_scalar<T0, T1, T2, T3, T4, T5>::value) {
         lp = TestClass.template log_prob<false, T0, T1, T2, T3, T4, T5>(
             p0, p1, p2, p3, p4, p5);
-        EXPECT_TRUE(stan::math::abs(lp - log_prob[n]) < 1e-8)
-            << "For all scalar inputs, when propto is false, log_prob should "
-               "match the provided value. Failed at index: "
-            << n << std::endl
-            << "expected: " << log_prob[n] << std::endl
-            << "actual:   " << lp;
+	std::stringstream stream;
+	stream << "For all scalar inputs, when propto is false, log_prob should "
+	       << "match the provided value. Failed at index: "
+	       << n << std::endl
+	       << "expected: " << log_prob[n] << std::endl
+	       << "actual:   " << lp;
+
+	stan::test::expect_near_rel(stream.str(),
+				    value_of_rec(lp),
+				    value_of_rec(log_prob[n]));
       }
       if (all_constant<T0, T1, T2, T3, T4, T5>::value
           && all_scalar<T0, T1, T2, T3, T4, T5>::value) {
         lp = TestClass.template log_prob<T0, T1, T2, T3, T4, T5>(p0, p1, p2, p3,
                                                                  p4, p5);
-        EXPECT_TRUE(stan::math::abs(lp - log_prob[n]) < 1e-8)
-            << "For all scalar and all constant inputs log_prob should match "
-               "the provided value. Failed at index: "
-            << n << std::endl
-            << "expected: " << log_prob[n] << std::endl
-            << "actual:   " << lp;
+	std::stringstream stream;
+	stream << "For all scalar and all constant inputs log_prob should match "
+	       << "the provided value. Failed at index: "
+	       << n << std::endl
+	       << "expected: " << log_prob[n] << std::endl
+	       << "actual:   " << lp;
+
+	stan::test::expect_near_rel(stream.str(),
+				    value_of_rec(lp),
+				    value_of_rec(log_prob[n]));
       }
     }
   }
@@ -253,15 +261,18 @@ class AgradDistributionTestFixture : public ::testing::Test {
                                         Scalar3, Scalar4, Scalar5>(p0, p1, p2,
                                                                    p3, p4, p5);
 
-      EXPECT_NEAR(value_of_rec(reference_logprob_false - logprob_false),
-                  value_of_rec(reference_logprob_true - logprob_true), 1e-12)
-          << "Proportional test failed at index: " << n << std::endl
-          << "  reference params: " << parameters[0] << std::endl
-          << "  current params:   " << parameters[n] << std::endl
-          << "  ref<true> = " << reference_logprob_true << std::endl
-          << "  cur<true> = " << logprob_true << std::endl
-          << "  ref<false> = " << reference_logprob_false << std::endl
-          << "  cur<false> = " << logprob_false;
+      std::stringstream stream;
+      stream << "Proportional test failed at index: " << n << std::endl
+	     << "  reference params: " << parameters[0] << std::endl
+	     << "  current params:   " << parameters[n] << std::endl
+	     << "  ref<true> = " << reference_logprob_true << std::endl
+	     << "  cur<true> = " << logprob_true << std::endl
+	     << "  ref<false> = " << reference_logprob_false << std::endl
+	     << "  cur<false> = " << logprob_false;
+      
+      stan::test::expect_near_rel(stream.str(),
+				  value_of_rec(reference_logprob_false - logprob_false),
+				  value_of_rec(reference_logprob_true - logprob_true));
     }
   }
 
@@ -415,12 +426,12 @@ class AgradDistributionTestFixture : public ::testing::Test {
         << "Number of first order finite diff gradients and calculated "
            "gradients must match -- error in test fixture";
     for (size_t i = 0; i < finite_diffs.size(); i++) {
-      EXPECT_NEAR(finite_diffs[i], gradients[i], 1e-4)
-          << "Comparison of first order finite diff to calculated gradient "
-             "failed for i="
-          << i << ": " << parameters << std::endl
-          << "  finite diffs: " << finite_diffs << std::endl
-          << "  grads:        " << gradients;
+      std::stringstream stream;
+      stream << "Comparison of first order finite diff to calculated gradient failed for i="
+	     << i << ": " << parameters << std::endl
+	     << "  finite diffs: " << finite_diffs << std::endl
+	     << "  grads:        " << gradients;
+      stan::test::expect_near_rel(stream.str(), finite_diffs[i], gradients[i], 1e-4);
     }
   }
 
@@ -641,10 +652,13 @@ class AgradDistributionTestFixture : public ::testing::Test {
       calculate_gradients_3rdorder(multiple_gradients3, multiple_lp,
                                    vector_vars);
 
-      EXPECT_NEAR(stan::math::value_of_rec(N_REPEAT * single_lp),
-                  stan::math::value_of_rec(multiple_lp), 1e-8)
-          << "log prob with repeated vector input should match "
-          << "a multiple of log prob of single input";
+      std::stringstream stream;
+      stream << "log prob with repeated vector input should match "
+	     << "a multiple of log prob of single input";
+
+      stan::test::expect_near_rel(stream.str(),
+				  stan::math::value_of_rec(N_REPEAT * single_lp),
+				  stan::math::value_of_rec(multiple_lp));
 
       size_t pos_single = 0;
       size_t pos_multiple = 0;
@@ -886,10 +900,9 @@ class AgradDistributionTestFixture : public ::testing::Test {
       return;
     }
 
-    EXPECT_NEAR(stan::math::value_of_rec(single_lp),
-                stan::math::value_of_rec(multiple_lp), 1e-8)
-        << "log prob evaluated in loop should match "
-        << "vectorized equivalent";
+    stan::test::expect_near_rel("log prob evaluated in loop should match vectorized equivalent",
+				stan::math::value_of_rec(single_lp),
+				stan::math::value_of_rec(multiple_lp));
 
     size_t pos_single = 0;
     size_t pos_multiple = 0;
