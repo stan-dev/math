@@ -168,3 +168,5 @@ ifndef BUILDING_PHASE
 #   4. gmake v3.80 doesn't support exporting of target-specific variables using
 #   the "export" keyword
 MAKEOVERRIDES =
+
+WARNING_SUPPRESS = -Wno-missing-attributes -Wno-class-memaccess -Wno-sized-deallocation
