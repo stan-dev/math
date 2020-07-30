@@ -163,7 +163,11 @@ endif
 CXXFLAGS_OS += -D_REENTRANT
 
 ## silence warnings occuring due to the TBB and Eigen libraries
-CXXFLAGS_WARNINGS += -Wno-ignored-attributes -Wno-missing-attributes
+CXXFLAGS_WARNINGS += -Wno-ignored-attributes
+# for g++ specific warnings
+ifneq (gcc,$(CXX_TYPE))
+CXXFLAGS_WARNINGS += -Wno-missing-attributes
+endif
 
 ################################################################################
 # Setup OpenCL
