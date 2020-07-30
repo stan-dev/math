@@ -118,31 +118,29 @@ class AgradDistributionTestFixture : public ::testing::Test {
       if (all_scalar<T0, T1, T2, T3, T4, T5>::value) {
         lp = TestClass.template log_prob<false, T0, T1, T2, T3, T4, T5>(
             p0, p1, p2, p3, p4, p5);
-	std::stringstream stream;
-	stream << "For all scalar inputs, when propto is false, log_prob should "
-	       << "match the provided value. Failed at index: "
-	       << n << std::endl
-	       << "expected: " << log_prob[n] << std::endl
-	       << "actual:   " << lp;
+        std::stringstream stream;
+        stream
+            << "For all scalar inputs, when propto is false, log_prob should "
+            << "match the provided value. Failed at index: " << n << std::endl
+            << "expected: " << log_prob[n] << std::endl
+            << "actual:   " << lp;
 
-	stan::test::expect_near_rel(stream.str(),
-				    value_of_rec(lp),
-				    value_of_rec(log_prob[n]));
+        stan::test::expect_near_rel(stream.str(), value_of_rec(lp),
+                                    value_of_rec(log_prob[n]));
       }
       if (all_constant<T0, T1, T2, T3, T4, T5>::value
           && all_scalar<T0, T1, T2, T3, T4, T5>::value) {
         lp = TestClass.template log_prob<T0, T1, T2, T3, T4, T5>(p0, p1, p2, p3,
                                                                  p4, p5);
-	std::stringstream stream;
-	stream << "For all scalar and all constant inputs log_prob should match "
-	       << "the provided value. Failed at index: "
-	       << n << std::endl
-	       << "expected: " << log_prob[n] << std::endl
-	       << "actual:   " << lp;
+        std::stringstream stream;
+        stream
+            << "For all scalar and all constant inputs log_prob should match "
+            << "the provided value. Failed at index: " << n << std::endl
+            << "expected: " << log_prob[n] << std::endl
+            << "actual:   " << lp;
 
-	stan::test::expect_near_rel(stream.str(),
-				    value_of_rec(lp),
-				    value_of_rec(log_prob[n]));
+        stan::test::expect_near_rel(stream.str(), value_of_rec(lp),
+                                    value_of_rec(log_prob[n]));
       }
     }
   }
@@ -263,16 +261,16 @@ class AgradDistributionTestFixture : public ::testing::Test {
 
       std::stringstream stream;
       stream << "Proportional test failed at index: " << n << std::endl
-	     << "  reference params: " << parameters[0] << std::endl
-	     << "  current params:   " << parameters[n] << std::endl
-	     << "  ref<true> = " << reference_logprob_true << std::endl
-	     << "  cur<true> = " << logprob_true << std::endl
-	     << "  ref<false> = " << reference_logprob_false << std::endl
-	     << "  cur<false> = " << logprob_false;
-      
-      stan::test::expect_near_rel(stream.str(),
-				  value_of_rec(reference_logprob_false - logprob_false),
-				  value_of_rec(reference_logprob_true - logprob_true));
+             << "  reference params: " << parameters[0] << std::endl
+             << "  current params:   " << parameters[n] << std::endl
+             << "  ref<true> = " << reference_logprob_true << std::endl
+             << "  cur<true> = " << logprob_true << std::endl
+             << "  ref<false> = " << reference_logprob_false << std::endl
+             << "  cur<false> = " << logprob_false;
+
+      stan::test::expect_near_rel(
+          stream.str(), value_of_rec(reference_logprob_false - logprob_false),
+          value_of_rec(reference_logprob_true - logprob_true));
     }
   }
 
@@ -431,7 +429,8 @@ class AgradDistributionTestFixture : public ::testing::Test {
 	     << i << ": " << parameters << std::endl
 	     << "  finite diffs: " << finite_diffs << std::endl
 	     << "  grads:        " << gradients;
-      stan::test::expect_near_rel(stream.str(), finite_diffs[i], gradients[i], stan::test::relative_tolerance(1e-4, 1e-7));
+      stan::test::expect_near_rel(stream.str(), finite_diffs[i], gradients[i],
+				  stan::test::relative_tolerance(1e-4, 1e-7));
     }
   }
 
@@ -654,11 +653,11 @@ class AgradDistributionTestFixture : public ::testing::Test {
 
       std::stringstream stream;
       stream << "log prob with repeated vector input should match "
-	     << "a multiple of log prob of single input";
+             << "a multiple of log prob of single input";
 
-      stan::test::expect_near_rel(stream.str(),
-				  stan::math::value_of_rec(N_REPEAT * single_lp),
-				  stan::math::value_of_rec(multiple_lp));
+      stan::test::expect_near_rel(
+          stream.str(), stan::math::value_of_rec(N_REPEAT * single_lp),
+          stan::math::value_of_rec(multiple_lp));
 
       size_t pos_single = 0;
       size_t pos_multiple = 0;
@@ -900,9 +899,10 @@ class AgradDistributionTestFixture : public ::testing::Test {
       return;
     }
 
-    stan::test::expect_near_rel("log prob evaluated in loop should match vectorized equivalent",
-				stan::math::value_of_rec(single_lp),
-				stan::math::value_of_rec(multiple_lp));
+    stan::test::expect_near_rel(
+        "log prob evaluated in loop should match vectorized equivalent",
+        stan::math::value_of_rec(single_lp),
+        stan::math::value_of_rec(multiple_lp));
 
     size_t pos_single = 0;
     size_t pos_multiple = 0;
