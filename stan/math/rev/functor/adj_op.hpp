@@ -11,7 +11,6 @@
 namespace stan {
 namespace math {
 
-
 /**
  * Stores the values for the functors passed to adj_jac_vari. Passing a var or
  *  or container of vars will store a pointer to the val. If a non-var
@@ -65,7 +64,7 @@ class adj_op<T, true, require_container_t<T>> {
   template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
   explicit adj_op(EigMat&& x)
       : mem_(
-          ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
+            ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
         map_(eigen_map(mem_, x.rows(), x.cols()) = value_of(x)) {}
 
   /**
@@ -76,7 +75,7 @@ class adj_op<T, true, require_container_t<T>> {
   template <typename StdVec, require_std_vector_vt<is_var, StdVec>* = nullptr>
   explicit adj_op(StdVec&& x)
       : mem_(
-          ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
+            ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
         map_(eigen_map(mem_, x.size())
              = eigen_map(value_of(x).data(), x.size())) {}
 
@@ -89,7 +88,7 @@ class adj_op<T, true, require_container_t<T>> {
             require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
   explicit adj_op(EigMat&& x)
       : mem_(
-          ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
+            ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
         map_(eigen_map(mem_, x.rows(), x.cols()) = x) {}
 
   /**
@@ -101,7 +100,7 @@ class adj_op<T, true, require_container_t<T>> {
             require_std_vector_vt<std::is_arithmetic, StdVec>* = nullptr>
   explicit adj_op(StdVec&& x)
       : mem_(
-          ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
+            ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
         map_(eigen_map(mem_, x.size()) = eigen_map(x.data(), x.size())) {}
 
   /**
@@ -295,6 +294,6 @@ class adj_op<T, false, require_stan_scalar_t<T>> {
   }
 };
 
-}
-}
+}  // namespace math
+}  // namespace stan
 #endif

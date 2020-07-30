@@ -25,7 +25,7 @@ namespace math {
  * @return Simplex of dimensionality K.
  */
 template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr,
-  require_not_var_t<value_type_t<ColVec>>* = nullptr>
+          require_not_var_t<value_type_t<ColVec>>* = nullptr>
 auto simplex_constrain(const ColVec& y) {
   // cut & paste simplex_constrain(Eigen::Matrix, T) w/o Jacobian
   using Eigen::Dynamic;

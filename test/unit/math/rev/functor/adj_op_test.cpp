@@ -18,14 +18,14 @@ void test_adj_op_assign_accessors_v(T&& x) {
   }
   for (int i = 0; i < x.size(); ++i) {
     EXPECT_EQ(x.map()(i), static_cast<double>(i))
-     << "Failed for type:" << type_name<T>();
+        << "Failed for type:" << type_name<T>();
   }
   for (int i = 0; i < x.size(); ++i) {
     x(i) = x.size() - i;
   }
   for (int i = 0; i < x.size(); ++i) {
     EXPECT_EQ(x.map()(i), static_cast<double>(x.size() - i))
-     << "Failed for type:" << type_name<T>();
+        << "Failed for type:" << type_name<T>();
   }
 }
 
@@ -86,14 +86,14 @@ void test_adj_op_sizes_d(size_t n, size_t m) {
   test_adj_op_assign_accessors_d(x_v);
 }
 
-}
-}
-}
+}  // namespace test
+}  // namespace math
+}  // namespace stan
 TEST(AgradRev, adj_op_assign_sizes) {
-  using stan::math::test::test_adj_op_sizes_v;
-  using stan::math::test::test_adj_op_sizes_d;
   using stan::math::adj_op;
   using stan::math::var;
+  using stan::math::test::test_adj_op_sizes_d;
+  using stan::math::test::test_adj_op_sizes_v;
   using eig_mat_v = Eigen::Matrix<var, -1, -1>;
   test_adj_op_sizes_v<eig_mat_v>(5, 10);
 
@@ -105,7 +105,6 @@ TEST(AgradRev, adj_op_assign_sizes) {
   test_adj_op_sizes_v<eig_vec_v>(5);
   using eig_vec_d = Eigen::Matrix<double, -1, 1>;
   test_adj_op_sizes_d<eig_vec_d>(5);
-
 
   using eig_rowvec_v = Eigen::Matrix<var, 1, -1>;
   test_adj_op_sizes_v<eig_rowvec_v>(5);
@@ -165,12 +164,12 @@ void test_adj_op_assign_containers(size_t n, size_t m) {
     EXPECT_EQ(adj_d(i), static_cast<double>(i));
   }
 }
-}
-}
-}
+}  // namespace test
+}  // namespace math
+}  // namespace stan
 TEST(AgradRev, adj_op_assign_containers) {
-  using stan::math::var;
   using stan::math::adj_op;
+  using stan::math::var;
   using stan::math::test::test_adj_op_assign_containers;
   using eig_mat_v = Eigen::Matrix<var, -1, -1>;
   using eig_mat_d = Eigen::Matrix<double, -1, -1>;

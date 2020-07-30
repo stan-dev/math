@@ -286,7 +286,8 @@ class adj_jac_vari : public vari {
     template <typename Toss, typename V, bool needs_adj,
               std::enable_if_t<!needs_adj>* = nullptr>
     constexpr inline void operator()(Toss&& /* y_adj_jac */, V&& /* x_vis */,
-                           bool_constant<needs_adj> /* needs_adj */) {}
+                                     bool_constant<needs_adj> /* needs_adj */) {
+    }
 
     /**
      * Accumulate values from reverse mode pass into `x_vis`
@@ -343,8 +344,7 @@ class adj_jac_vari : public vari {
     template <typename T, typename V, bool needs_adj,
               std::enable_if_t<needs_adj>* = nullptr,
               require_floating_point_t<T>* = nullptr>
-    inline void operator()(T&& y_adj_jac, V&& x_vis,
-                           bool_constant<needs_adj>) {
+    inline void operator()(T&& y_adj_jac, V&& x_vis, bool_constant<needs_adj>) {
       x_vis->adj_ += y_adj_jac;
     }
 

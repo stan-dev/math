@@ -15,7 +15,7 @@ namespace math {
 namespace internal {
 template <typename T>
 class simplex_constrain_op {
-public:
+ public:
   adj_op<T> diag_;
   adj_op<T> z_;
   explicit simplex_constrain_op(const T& x) : diag_(x.size()), z_(x.size()) {}

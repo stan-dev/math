@@ -14,7 +14,7 @@ namespace math {
 namespace internal {
 template <typename T>
 class positive_ordered_constrain_op {
-public:
+ public:
   adj_op<T> exp_x_;
   explicit positive_ordered_constrain_op(const T& x) : exp_x_(x.size()) {}
   /**
@@ -75,8 +75,7 @@ public:
  * @return Positive, increasing ordered vector
  */
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
-inline auto positive_ordered_constrain(
-    const T& x) {
+inline auto positive_ordered_constrain(const T& x) {
   return adj_jac_apply<internal::positive_ordered_constrain_op<T>>(x);
 }
 

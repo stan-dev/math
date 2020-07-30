@@ -26,12 +26,12 @@ using container_var_vari_value_t
 
 template <typename T>
 using contains_var_value = is_var<scalar_type_t<T>>;
-}
+}  // namespace internal
 
 template <typename... Ts>
 using var_to_vari_filter_t = std::result_of_t<internal::tuple_cat_caller(
     internal::var_filter_helper<internal::contains_var_value,
-     internal::container_var_vari_value_t, Ts>...)>;
+                                internal::container_var_vari_value_t, Ts>...)>;
 
 }  // namespace math
 }  // namespace stan

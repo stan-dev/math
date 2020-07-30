@@ -14,9 +14,7 @@ struct ScalarSinFunctor {
   stan::math::adj_op<T> x_;
   explicit ScalarSinFunctor(const T& x) : x_(x) {}
 
-  double operator()(const double& x) {
-    return sin(x_.map());
-  }
+  double operator()(const double& x) { return sin(x_.map()); }
 
   auto multiply_adjoint_jacobian(const double& adj) {
     return std::make_tuple(cos(x_.map()) * adj);
@@ -389,9 +387,10 @@ TEST(AgradRev, test_matrix_sin_multiple_jac) {
 struct WeirdArgumentListFunctor1 {
   template <typename... Args>
   explicit WeirdArgumentListFunctor1(const Args&... args) {}
-  Eigen::VectorXd operator()(double, int, const double&, const int&,
-      std::vector<double>, std::vector<int>, const std::vector<double>&,
-      const std::vector<int>&, Eigen::Matrix<double, Eigen::Dynamic, 1>,
+  Eigen::VectorXd operator()(
+      double, int, const double&, const int&, std::vector<double>,
+      std::vector<int>, const std::vector<double>&, const std::vector<int>&,
+      Eigen::Matrix<double, Eigen::Dynamic, 1>,
       Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>,
       Eigen::Matrix<double, 2, Eigen::Dynamic>, Eigen::Matrix<double, 5, 1>,
       const Eigen::Matrix<double, Eigen::Dynamic, 1>&,
@@ -504,8 +503,8 @@ struct CheckAdjointsPassingThrough {
   int cols_ed3;
   template <typename... Args>
   explicit CheckAdjointsPassingThrough(const Args&... args) {}
-  Eigen::VectorXd operator()(const double& d,
-      const std::vector<double>& vd, const int&,
+  Eigen::VectorXd operator()(
+      const double& d, const std::vector<double>& vd, const int&,
       const Eigen::Matrix<double, Eigen::Dynamic, 1>& ed1,
       const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& ed2,
       const std::vector<int>&,
