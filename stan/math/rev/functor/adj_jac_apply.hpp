@@ -144,7 +144,7 @@ class adj_jac_vari : public vari {
 
   /**
    * Copy the vari memory from the input argument
-   * @param x An var
+   * @param x A var
    */
   inline auto prepare_x_vis_impl(const var& x) const {
     vari* y = ChainableStack::instance_->memalloc_.alloc_array<vari>(1);
@@ -168,21 +168,18 @@ class adj_jac_vari : public vari {
 
   /**
    * prepare_x_vis populates x_vis_ with the varis from each of its
-   * input arguments. The vari pointers for argument n are copied into x_vis_ at
-   * the index starting at offsets_[n]. For Eigen::Matrix types, this copying is
-   * done in with column major ordering.
+   * input arguments. The vari pointers for argument n are copied into x_vis_.
+   * For Eigen::Matrix types, this copying is done in with column major
+   * ordering.
    *
    * Each of the arguments can be an Eigen::Matrix with var or double scalar
    * types, a std::vector with var, double, or int scalar types, or a var, a
    * double, or an int.
    *
-   * @tparam R number of rows, can be Eigen::Dynamic
-   * @tparam C number of columns, can be Eigen::Dynamic
-   * @tparam Pargs Types of the rest of the arguments to be processed
+   * @tparam Args Types of arguments to be processed
    *
-   * @param x next argument to have its vari pointers copied if necessary
-   * @param args the rest of the arguments (that will be iterated through
-   * recursively)
+   * @param args arguments each expanded into a `prepare_x_vis_impl_` and
+   *  combined into a tuple.
    */
   template <typename... Args>
   inline auto prepare_x_vis(Args&&... args) const {
@@ -201,6 +198,7 @@ class adj_jac_vari : public vari {
   /**
    * Specialization for std::vector<var>, stores the values of the forward pass
    * in `adj_jac_vari` `y_vi_`.
+   * @tparam Vec A standard vector of arithmetic types
    * @param val_y Return value of `F()` stored as the value in `y_vi_`.
    */
   template <typename Vec,
@@ -218,6 +216,7 @@ class adj_jac_vari : public vari {
   /**
    * Specialization for Eigen matrices of vars, stores the values of the forward
    * pass in `adj_jac_vari` `y_vi_`.
+   * @tparam EigMat A type inheriting from `EigenBase`.
    * @param val_y Return value of `F()` stored as the value in `y_vi_`.
    */
   template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
@@ -242,6 +241,14 @@ class adj_jac_vari : public vari {
    *  the input argument needs to be added to an associated `x_vis_`.
    * the static cast to void is used in boost::hana's for_each impl
    *  and is used to suppress unused value warnings from the compiler.
+   * @tparam FF a functor with an `operator()`
+   * @tparam T1 Type with a method available for `std::get`
+   * @tparam T2 Type with a method available for `std::get`
+   * @tparam Is A paramater pack of unsigned integers to expand and extract
+   *  the elements from `T1` and `T2`.
+   * @param f a functor with an `operator()`
+   * @param x passed as first argument to `f`,
+   * @param t pass as second argument to `f`
    */
   template <typename FF, typename T1, typename T2, size_t... Is>
   constexpr inline auto for_each_adj_impl(FF&& f, T1&& x, T2&& t,
@@ -412,6 +419,7 @@ class adj_jac_vari : public vari {
    * types, a std::vector with var, double, or int scalar types, or a var, a
    * double, or an int.
    *
+   * @tparam Args A list of types, usually the same as `TArgs`.
    * @param args Input arguments
    * @return Output of f_ as vars
    */
