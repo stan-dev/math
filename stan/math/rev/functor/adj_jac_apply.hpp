@@ -48,11 +48,13 @@ struct var_return_type<T, require_eigen_t<T>> {
  * Eigen::Matrices with double or var scalar components
  */
 template <typename F, typename... Targs>
-struct adj_jac_vari : public vari {
+class adj_jac_vari : public vari {
+public:
   static constexpr std::array<bool, sizeof...(Targs)> is_var_{
       is_var<scalar_type_t<Targs>>::value...};
-  using FReturnType = std::result_of_t<F(
-      plain_type_t<decltype(value_of(plain_type_t<Targs>()))>...)>;
+protected:
+  using FReturnType = std::decay_t<std::result_of_t<F(
+      plain_type_t<decltype(value_of(plain_type_t<Targs>()))>...)>>;
   using x_vis_tuple_ = var_to_vari_filter_t<std::decay_t<Targs>...>;
   F f_;  // Struct that with methods for computing forward and reverse pass.
   x_vis_tuple_ x_vis_;  // tuple holding pointers to vari
@@ -73,7 +75,7 @@ struct adj_jac_vari : public vari {
    */
   template <typename RetType = FReturnType,
             require_arithmetic_t<RetType>* = nullptr>
-  inline auto y_adj() {
+  inline auto& y_adj() {
     return y_vi_->adj_;
   }
 
@@ -130,11 +132,12 @@ struct adj_jac_vari : public vari {
    * recursively)
    */
   template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
-  inline auto prepare_x_vis_impl(const EigMat& x) {
+  inline auto prepare_x_vis_impl(EigMat&& x) {
+    ref_type_t<EigMat> x_ref(std::forward<EigMat>(x));
     vari** y
         = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
-    for (int i = 0; i < x.size(); ++i) {
-      y[i] = x(i).vi_;
+    for (int i = 0; i < x_ref.size(); ++i) {
+      y[i] = x_ref.coeffRef(i).vi_;
     }
     return y;
   }
@@ -162,7 +165,7 @@ struct adj_jac_vari : public vari {
   auto prepare_x_vis() { return x_vis_tuple_{}; }
 
   template <typename... Args>
-  inline x_vis_tuple_ prepare_x_vis(Args&&... args) {
+  inline auto prepare_x_vis(Args&&... args) {
     return x_vis_tuple_{prepare_x_vis_impl(args)...};
   }
   /**
@@ -201,38 +204,20 @@ struct adj_jac_vari : public vari {
     using eig_mat = std::decay_t<EigMat>;
     using ret_mat = Eigen::Matrix<var, eig_mat::RowsAtCompileTime,
                                   eig_mat::ColsAtCompileTime>;
+    ref_type_t<EigMat> val_ref(std::forward<EigMat>(val_y));
     y_vi_
-        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(val_y.size());
-    this->dims_[0] = val_y.rows();
-    this->dims_[1] = val_y.cols();
-    for (size_t i = 0; i < val_y.size(); ++i) {
-      y_vi_[i] = new vari(val_y(i), false);
+        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(val_ref.size());
+    this->dims_[0] = val_ref.rows();
+    this->dims_[1] = val_ref.cols();
+    for (size_t i = 0; i < val_ref.size(); ++i) {
+      y_vi_[i] = new vari(val_ref.coeffRef(i), false);
     }
     return y_vi_;
   }
-  /**
-   * Given a parameter pack used in a recursive function, deduce the position
-   *  of the corresponding value in the `is_var_` array.
-   */
-  template <typename... Pargs>
-  struct var_idx_ {
-    static constexpr size_t value{sizeof...(Targs) - sizeof...(Pargs) - 1};
-  };
-
-  /**
-   * Given a parameter pack used in a recursive function, deduce the value
-   *  for the corresponding type in the `is_var_` array.
-   */
-  template <typename... Pargs>
-  struct is_var_check_ {
-    /**
-     * If true, the corresponding type is a var or container of vars.
-     */
-    static constexpr bool value{is_var_[var_idx_<Pargs...>::value]};
-  };
 
   /**
    * Implimentation of for_each for applying adjoints.
+   * The `bool_constant` passed to the function is used to deduce whether
    * @note The static cast to void is used in boost::hana's for_each impl
    *  and is used to suppress unused value warnings from the compiler.
    */
@@ -286,8 +271,9 @@ struct adj_jac_vari : public vari {
               require_eigen_t<EigMat>* = nullptr>
     inline void operator()(EigMat&& y_adj_jac, T&& x_vis,
                            bool_constant<needs_adj>) {
-      for (int n = 0; n < y_adj_jac.size(); ++n) {
-        x_vis[n]->adj_ += y_adj_jac(n);
+     ref_type_t<EigMat> y_adj_ref(std::forward<EigMat>(y_adj_jac));
+      for (int n = 0; n < y_adj_ref.size(); ++n) {
+        x_vis[n]->adj_ += y_adj_ref.coeffRef(n);
       }
     }
 
@@ -331,13 +317,26 @@ struct adj_jac_vari : public vari {
     }
 
     inline void operator()() {}
-  } accum_jac;
+  };
+public:
+  /**
+   * Return a var from the internal vari value
+   * @tparam RetType Not called by user. Default of the return type of
+   * operator() of the functor F allows for SFINAE to choose the correct
+   * specialization given the required output type.
+   */
   template <typename RetType = FReturnType,
             require_arithmetic_t<RetType>* = nullptr>
   inline auto y_var() {
     return var(y_vi_);
   }
 
+  /**
+   * Construct standard vector of vars from the internal vari values
+   * @tparam RetType Not called by user. Default of the return type of
+   * operator() of the functor F allows for SFINAE to choose the correct
+   * specialization given the required output type.
+   */
   template <typename RetType = FReturnType,
             require_std_vector_t<RetType>* = nullptr>
   inline auto y_var() {
@@ -348,6 +347,12 @@ struct adj_jac_vari : public vari {
     return var_y;
   }
 
+  /**
+   * Construct an eigen matrix of vars from the internal vari values
+   * @tparam RetType Not called by user. Default of the return type of
+   * operator() of the functor F allows for SFINAE to choose the correct
+   * specialization given the required output type.
+   */
   template <typename RetType = FReturnType, require_eigen_t<RetType>* = nullptr>
   inline auto y_var() {
     Eigen::Matrix<var, FReturnType::RowsAtCompileTime,
@@ -379,10 +384,8 @@ struct adj_jac_vari : public vari {
    */
   template <typename... Args>
   adj_jac_vari(Args&&... args)
-      : vari(NOT_A_NUMBER),
-        f_(args...),
-        x_vis_(prepare_x_vis(args...)),
-        y_vi_(collect_forward_pass(f_(value_of(args)...))) {}
+      : vari(NOT_A_NUMBER), f_(args...), x_vis_(prepare_x_vis(args...)),
+        y_vi_(collect_forward_pass(f_(value_of(std::forward<Args>(args))...))) {}
 
   /**
    * Propagate the adjoints at the output varis (y_vi_) back to the input
@@ -396,13 +399,8 @@ struct adj_jac_vari : public vari {
    * This operation may be called multiple times during the life of the vari
    */
   inline void chain() {
-    for_each_adj(accum_jac, f_.multiply_adjoint_jacobian(this->y_adj()),
-                 x_vis_);
-    /*    apply(
-            [this](auto&&... args) {
-              this->accumulate_adjoints(std::forward<decltype(args)>(args)...);
-            },
-          );*/
+    for_each_adj(accumulate_adjoint(),
+      f_.multiply_adjoint_jacobian(this->y_adj()), x_vis_);
   }
 };
 
@@ -485,9 +483,8 @@ constexpr std::array<bool, sizeof...(Targs)> adj_jac_vari<F, Targs...>::is_var_;
  * @return the result of the specified operation wrapped up in vars
  */
 template <typename F, typename... Targs>
-inline auto adj_jac_apply(const Targs&... args) {
-  auto* vi = new adj_jac_vari<F, Targs...>(args...);
-
+inline auto adj_jac_apply(Targs&&... args) {
+  auto* vi = new adj_jac_vari<F, Targs...>(std::forward<Targs>(args)...);
   return vi->y_var();
 }
 

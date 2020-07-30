@@ -16,7 +16,7 @@ template <typename T>
 class positive_ordered_constrain_op {
 public:
   adj_op<T> exp_x_;
-  explicit positive_ordered_constrain_op(const T& x) : exp_x_(exp(x.val())) {}
+  explicit positive_ordered_constrain_op(const T& x) : exp_x_(x.size()) {}
   /**
    * Return an increasing positive ordered vector derived from the specified
    * free vector.  The returned constrained vector will have the
@@ -27,12 +27,14 @@ public:
    * @param x Free vector of scalars
    * @return Positive, increasing ordered vector
    */
-  Eigen::VectorXd operator()(const Eigen::VectorXd& x) {
+  template <typename S>
+  Eigen::VectorXd operator()(S&& x) {
     using std::exp;
     Eigen::Matrix<double, Eigen::Dynamic, 1> y(x.size());
     if (x.size() == 0) {
       return y;
     }
+    exp_x_.map() = exp(std::forward<S>(x));
     y[0] = exp_x_(0);
     for (int n = 1; n < x.size(); ++n) {
       y[n] = y[n - 1] + exp_x_(n);
