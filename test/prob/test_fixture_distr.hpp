@@ -431,7 +431,7 @@ class AgradDistributionTestFixture : public ::testing::Test {
 	     << i << ": " << parameters << std::endl
 	     << "  finite diffs: " << finite_diffs << std::endl
 	     << "  grads:        " << gradients;
-      stan::test::expect_near_rel(stream.str(), finite_diffs[i], gradients[i], 1e-4);
+      stan::test::expect_near_rel(stream.str(), finite_diffs[i], gradients[i], stan::test::relative_tolerance(1e-4, 1e-7));
     }
   }
 
