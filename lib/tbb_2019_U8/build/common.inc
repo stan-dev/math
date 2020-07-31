@@ -169,4 +169,8 @@ ifndef BUILDING_PHASE
 #   the "export" keyword
 MAKEOVERRIDES =
 
+ifeq (gcc,$(CC))
 WARNING_SUPPRESS = -Wno-missing-attributes -Wno-class-memaccess -Wno-sized-deallocation
+else
+WARNING_SUPPRESS = -Wno-deprecated-copy
+endif
