@@ -417,12 +417,13 @@ class AgradDistributionTestFixture : public ::testing::Test {
            "gradients must match -- error in test fixture";
     for (size_t i = 0; i < finite_diffs.size(); i++) {
       std::stringstream stream;
-      stream << "Comparison of first order finite diff to calculated gradient failed for i="
-	     << i << ": " << parameters << std::endl
-	     << "  finite diffs: " << finite_diffs << std::endl
-	     << "  grads:        " << gradients;
+      stream << "Comparison of first order finite diff to calculated gradient "
+                "failed for i="
+             << i << ": " << parameters << std::endl
+             << "  finite diffs: " << finite_diffs << std::endl
+             << "  grads:        " << gradients;
       stan::test::expect_near_rel(stream.str(), finite_diffs[i], gradients[i],
-				  stan::test::relative_tolerance(1e-4, 1e-7));
+                                  stan::test::relative_tolerance(1e-4, 1e-7));
     }
   }
 
