@@ -170,7 +170,7 @@ ifndef BUILDING_PHASE
 MAKEOVERRIDES =
 
 ifeq (gcc,$(CC))
-WARNING_SUPPRESS = -Wno-missing-attributes -Wno-class-memaccess -Wno-sized-deallocation
+WARNING_SUPPRESS = -Wno-unknown-warning-option -Wno-missing-attributes -Wno-class-memaccess -Wno-sized-deallocation
 else
-WARNING_SUPPRESS = -Wno-deprecated-copy
+WARNING_SUPPRESS = -Wno-unknown-warning-option -Wno-deprecated-copy
 endif

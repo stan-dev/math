@@ -4,7 +4,7 @@ This file documents changes done for the stan-math project
 - added logic to supress warnings on building with recent versions of g++ and clang++ to build/common.inc
 
 ifeq (gcc,$(CC))
-WARNING_SUPPRESS = -Wno-missing-attributes -Wno-class-memaccess -Wno-sized-deallocation
+WARNING_SUPPRESS = -Wno-unknown-warning-option -Wno-missing-attributes -Wno-class-memaccess -Wno-sized-deallocation
 else
-WARNING_SUPPRESS = -Wno-deprecated-copy
+WARNING_SUPPRESS = -Wno-unknown-warning-option -Wno-deprecated-copy
 endif
