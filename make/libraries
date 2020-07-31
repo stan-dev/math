@@ -7,7 +7,8 @@ EIGEN ?= $(MATH)lib/eigen_3.3.7
 OPENCL ?= $(MATH)lib/opencl_2.2.0
 TBB ?= $(MATH)lib/tbb_2019_U8
 SUNDIALS ?= $(MATH)lib/sundials_5.2.0
-GTEST ?= $(MATH)lib/gtest_1.8.1
+BENCHMARK ?= $(MATH)lib/benchmark_
+GTEST ?= $(BENCHMARK)/googletest/googletest
 CPPLINT ?= $(MATH)lib/cpplint_1.4.5
 
 ################################################################################
