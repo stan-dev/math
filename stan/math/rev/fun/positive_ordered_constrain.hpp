@@ -74,9 +74,11 @@ class positive_ordered_constrain_op {
  * @param x Free vector of scalars
  * @return Positive, increasing ordered vector
  */
-template <typename ColVec, require_eigen_col_vector_vt<is_var, ColVec>* = nullptr>
+template <typename ColVec,
+          require_eigen_col_vector_vt<is_var, ColVec>* = nullptr>
 inline auto positive_ordered_constrain(ColVec&& x) {
-  return adj_jac_apply<internal::positive_ordered_constrain_op<ColVec>>(std::forward<ColVec>(x));
+  return adj_jac_apply<internal::positive_ordered_constrain_op<ColVec>>(
+      std::forward<ColVec>(x));
 }
 
 }  // namespace math

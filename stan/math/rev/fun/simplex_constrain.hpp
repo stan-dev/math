@@ -63,7 +63,8 @@ class simplex_constrain_op {
     double acc = adj_ref(z_size);
 
     if (z_size > 0) {
-      adj_times_jac(z_size - 1) = diag_(z_size - 1) * (adj_ref(z_size - 1) - acc);
+      adj_times_jac(z_size - 1)
+          = diag_(z_size - 1) * (adj_ref(z_size - 1) - acc);
       for (int n = z_size - 1; --n >= 0;) {
         acc = adj_ref(n + 1) * z_(n + 1) + (1 - z_(n + 1)) * acc;
         adj_times_jac(n) = diag_(n) * (adj_ref(n) - acc);
@@ -85,9 +86,11 @@ class simplex_constrain_op {
  * @param y Free vector input of dimensionality K - 1.
  * @return Simplex of dimensionality K
  */
-template <typename ColVec, require_eigen_col_vector_vt<is_var, ColVec>* = nullptr>
+template <typename ColVec,
+          require_eigen_col_vector_vt<is_var, ColVec>* = nullptr>
 inline auto simplex_constrain(ColVec&& y) {
-  return adj_jac_apply<internal::simplex_constrain_op<ColVec>>(std::forward<ColVec>(y));
+  return adj_jac_apply<internal::simplex_constrain_op<ColVec>>(
+      std::forward<ColVec>(y));
 }
 
 }  // namespace math

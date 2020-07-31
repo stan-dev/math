@@ -24,7 +24,8 @@ class softmax_op {
   /**
    * Compute the softmax of the unconstrained input vector
    *
-   * @tparam ColVec An eigen type with dynamic rows and 1 column at compile time.
+   * @tparam ColVec An eigen type with dynamic rows and 1 column at compile
+   * time.
    * @param alpha Unconstrained input vector.
    * @return Softmax of the input.
    */
@@ -40,14 +41,16 @@ class softmax_op {
    * without actually computing the Jacobian and doing the vector-matrix
    * product.
    *
-   * @tparam ColVec An eigen type with dynamic rows and 1 column at compile time.
+   * @tparam ColVec An eigen type with dynamic rows and 1 column at compile
+   * time.
    * @param adj Eigen::VectorXd of adjoints at the output of the softmax
    * @return Eigen::VectorXd of adjoints propagated through softmax operation
    */
- template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
+  template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
   auto multiply_adjoint_jacobian(ColVec&& adj) const {
     ref_type_t<ColVec> adj_ref(std::forward<ColVec>(adj));
-    return std::make_tuple(-y_.map() * adj_ref.dot(y_.map()) + y_.map().cwiseProduct(adj_ref));
+    return std::make_tuple(-y_.map() * adj_ref.dot(y_.map())
+                           + y_.map().cwiseProduct(adj_ref));
   }
 };
 }  // namespace internal
@@ -61,10 +64,12 @@ class softmax_op {
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
-template <typename ColVec, require_eigen_col_vector_vt<is_var, ColVec>* = nullptr>
+template <typename ColVec,
+          require_eigen_col_vector_vt<is_var, ColVec>* = nullptr>
 inline auto softmax(ColVec&& alpha) {
   check_nonzero_size("softmax", "alpha", alpha);
-  return adj_jac_apply<internal::softmax_op<ColVec>>(std::forward<ColVec>(alpha));
+  return adj_jac_apply<internal::softmax_op<ColVec>>(
+      std::forward<ColVec>(alpha));
 }
 
 }  // namespace math

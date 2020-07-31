@@ -26,8 +26,8 @@ template <typename T, bool SaveValues = is_var<value_type_t<T>>::value,
 class adj_arg;
 
 /**
- * For cases where `SaveValues` is true `adj_arg` is allocates memory on the stack
- *  allocator and
+ * For cases where `SaveValues` is true `adj_arg` is allocates memory on the
+ * stack allocator and
  */
 template <typename T>
 class adj_arg<T, true, require_container_t<T>> {
@@ -183,7 +183,8 @@ class adj_arg<T, false, require_container_t<T>> {
    * @throw domain error
    */
   inline auto& map() {
-    throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!", "");
+    throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!",
+                       "");
     return map_;
   }
 
@@ -193,7 +194,8 @@ class adj_arg<T, false, require_container_t<T>> {
    */
   inline const auto& map() const { return map_; }
   inline double& operator()(size_t i) {
-    throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!", "");
+    throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!",
+                       "");
     return map_(0, 0);
   }
 
@@ -202,7 +204,8 @@ class adj_arg<T, false, require_container_t<T>> {
    * @throw domain error
    */
   inline const double& operator()(size_t i) const {
-    throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!", "");
+    throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!",
+                       "");
     return map_(0);
   }
 
@@ -211,7 +214,8 @@ class adj_arg<T, false, require_container_t<T>> {
    * @throw domain error
    */
   inline double& operator()(size_t i, size_t j) {
-    throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!", "");
+    throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!",
+                       "");
     return map_(0, 0);
   }
 
@@ -220,14 +224,15 @@ class adj_arg<T, false, require_container_t<T>> {
    * @throw domain error
    */
   inline const double& operator()(size_t i, size_t j) const {
-    throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!", "");
+    throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!",
+                       "");
     return map_(0, 0);
   }
 };
 
 /**
- * When `SaveValues` is `true` `adj_arg` allocates a double on the stack allocator
- *  for scalar types.
+ * When `SaveValues` is `true` `adj_arg` allocates a double on the stack
+ * allocator for scalar types.
  */
 template <typename T>
 class adj_arg<T, true, require_stan_scalar_t<T>> {
@@ -281,7 +286,8 @@ class adj_arg<T, false, require_stan_scalar_t<T>> {
    * @throw domain error
    */
   inline auto& map() {
-    throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!", "");
+    throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!",
+                       "");
     return map_;
   }
   /**
@@ -289,7 +295,8 @@ class adj_arg<T, false, require_stan_scalar_t<T>> {
    * @throw domain error
    */
   inline const auto& map() const {
-    throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!", "");
+    throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!",
+                       "");
     return map_;
   }
 };

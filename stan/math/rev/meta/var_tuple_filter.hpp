@@ -22,10 +22,11 @@ using contains_var_value = is_var<scalar_type_t<T>>;
  * tparam Ts Any set of types.
  */
 template <typename... Ts>
-using var_to_vari_filter_t = decltype(std::tuple_cat(std::declval<
-    std::conditional_t<internal::contains_var_value<Ts>::value,
-      std::tuple<internal::container_var_vari_value_t<Ts>>,
-      std::tuple<std::nullptr_t>>>()...));
+using var_to_vari_filter_t = decltype(std::tuple_cat(
+    std::declval<
+        std::conditional_t<internal::contains_var_value<Ts>::value,
+                           std::tuple<internal::container_var_vari_value_t<Ts>>,
+                           std::tuple<std::nullptr_t>>>()...));
 
 }  // namespace math
 }  // namespace stan

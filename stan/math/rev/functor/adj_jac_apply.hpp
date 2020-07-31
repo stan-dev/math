@@ -54,8 +54,8 @@ class adj_jac_vari : public vari {
       is_var<scalar_type_t<Targs>>::value...};
 
  protected:
-  using FReturnType = plain_type_t<std::result_of_t<F(
-      decltype(value_of(std::declval<Targs>()))...)>>;
+  using FReturnType = plain_type_t<
+      std::result_of_t<F(decltype(value_of(std::declval<Targs>()))...)>>;
   using x_vis_tuple_ = var_to_vari_filter_t<std::decay_t<Targs>...>;
   F f_;  // Struct that with methods for computing forward and reverse pass.
   x_vis_tuple_ x_vis_;  // tuple holding pointers to vari
@@ -146,9 +146,7 @@ class adj_jac_vari : public vari {
    * Copy the vari memory from the input argument
    * @param x A var
    */
-  inline auto& prepare_x_vis_impl(const var& x) const {
-    return x.vi_;
-  }
+  inline auto& prepare_x_vis_impl(const var& x) const { return x.vi_; }
 
   /**
    * no-op when an argument is arithmetic

@@ -54,8 +54,8 @@ class ordered_constrain_op {
    */
   template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
   auto multiply_adjoint_jacobian(ColVec&& adj) const {
-  ref_type_t<ColVec> adj_ref(std::forward<ColVec>(adj));
-  Eigen::VectorXd adj_times_jac(x_size_);
+    ref_type_t<ColVec> adj_ref(std::forward<ColVec>(adj));
+    Eigen::VectorXd adj_times_jac(x_size_);
     double rolling_adjoint_sum = 0.0;
     if (x_size_ > 0) {
       for (int n = x_size_ - 1; n > 0; --n) {
@@ -78,9 +78,11 @@ class ordered_constrain_op {
  * @param x Free vector of scalars
  * @return Increasing ordered vector
  */
-template <typename ColVec, require_eigen_col_vector_vt<is_var, ColVec>* = nullptr>
+template <typename ColVec,
+          require_eigen_col_vector_vt<is_var, ColVec>* = nullptr>
 inline auto ordered_constrain(ColVec&& x) {
-  return adj_jac_apply<internal::ordered_constrain_op<ColVec>>(std::forward<ColVec>(x));
+  return adj_jac_apply<internal::ordered_constrain_op<ColVec>>(
+      std::forward<ColVec>(x));
 }
 
 }  // namespace math
