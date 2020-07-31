@@ -125,7 +125,7 @@ endif
 
 # Set shell in order to use string matching for tbb-make-check
 ifeq (Linux, $(OS))
-  SHELL = /bin/bash
+  SHELL = /usr/bin/env bash
 endif
 
 $(TBB_BIN)/tbb-make-check:
