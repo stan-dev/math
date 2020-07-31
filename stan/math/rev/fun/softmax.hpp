@@ -16,7 +16,7 @@ namespace internal {
 
 template <typename T>
 class softmax_op {
-  adj_op<T> y_;
+  adj_arg<T> y_;
 
  public:
   explicit softmax_op(const T& x) : y_(x.size()) {}
@@ -24,13 +24,14 @@ class softmax_op {
   /**
    * Compute the softmax of the unconstrained input vector
    *
+   * @tparam ColVec An eigen type with dynamic rows and 1 column at compile time.
    * @param alpha Unconstrained input vector.
    * @return Softmax of the input.
    */
-  template <typename S>
-  auto& operator()(S&& alpha) {
-    y_.map() = softmax(std::forward<S>(alpha));
-    return y_.map();
+  template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
+  auto operator()(ColVec&& alpha) {
+    y_.map() = softmax(std::forward<ColVec>(alpha));
+    return y_.map().eval();
   }
 
   /**
@@ -39,13 +40,14 @@ class softmax_op {
    * without actually computing the Jacobian and doing the vector-matrix
    * product.
    *
+   * @tparam ColVec An eigen type with dynamic rows and 1 column at compile time.
    * @param adj Eigen::VectorXd of adjoints at the output of the softmax
    * @return Eigen::VectorXd of adjoints propagated through softmax operation
    */
-  auto multiply_adjoint_jacobian(const Eigen::VectorXd& adj) const {
-    vector_d adj_times_jac
-        = -y_.map() * adj.dot(y_.map()) + y_.map().cwiseProduct(adj);
-    return std::make_tuple(adj_times_jac);
+ template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
+  auto multiply_adjoint_jacobian(ColVec&& adj) const {
+    ref_type_t<ColVec> adj_ref(std::forward<ColVec>(adj));
+    return std::make_tuple(-y_.map() * adj_ref.dot(y_.map()) + y_.map().cwiseProduct(adj_ref));
   }
 };
 }  // namespace internal
@@ -54,14 +56,15 @@ class softmax_op {
  * Return the softmax of the specified Eigen vector.  Softmax is
  * guaranteed to return a simplex.
  *
+ * @tparam ColVec An eigen type with dynamic rows and 1 column at compile time.
  * @param alpha Unconstrained input vector.
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
-template <typename T, require_eigen_vt<is_var, T>* = nullptr>
-inline auto softmax(const T& alpha) {
+template <typename ColVec, require_eigen_col_vector_vt<is_var, ColVec>* = nullptr>
+inline auto softmax(ColVec&& alpha) {
   check_nonzero_size("softmax", "alpha", alpha);
-  return adj_jac_apply<internal::softmax_op<T>>(alpha);
+  return adj_jac_apply<internal::softmax_op<ColVec>>(std::forward<ColVec>(alpha));
 }
 
 }  // namespace math

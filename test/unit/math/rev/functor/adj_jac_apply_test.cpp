@@ -11,7 +11,7 @@
  */
 template <typename T>
 struct ScalarSinFunctor {
-  stan::math::adj_op<T> x_;
+  stan::math::adj_arg<T> x_;
   explicit ScalarSinFunctor(const T& x) : x_(x) {}
 
   double operator()(const double& x) { return sin(x_.map()); }
@@ -57,7 +57,7 @@ TEST(AgradRev, test_scalar_sin_jac) {
  */
 template <typename T>
 struct StdVectorSinFunctor {
-  stan::math::adj_op<T> x_;
+  stan::math::adj_arg<T> x_;
   // double* x_;
   // int N_;
   explicit StdVectorSinFunctor(const T& x) : x_(x) {}
@@ -125,7 +125,7 @@ TEST(AgradRev, test_std_vector_sin_jac) {
  */
 template <typename T>
 struct SinFunctor {
-  stan::math::adj_op<T> x_;
+  stan::math::adj_arg<T> x_;
   explicit SinFunctor(const T& x) : x_(x) {}
   Eigen::VectorXd operator()(const Eigen::VectorXd& x) {
     Eigen::VectorXd out(x_.size());
@@ -213,7 +213,7 @@ TEST(AgradRev, test_vector_sin_multiple_jac) {
  */
 template <typename T>
 struct RowVectorSinFunctor {
-  stan::math::adj_op<T> x_;
+  stan::math::adj_arg<T> x_;
   //  int N_;
   //  double* x_mem_;
   explicit RowVectorSinFunctor(const T& x) : x_(x) {}
@@ -304,7 +304,7 @@ TEST(AgradRev, test_row_vector_sin_multiple_jac) {
  */
 template <typename T>
 struct MatrixSinFunctor {
-  stan::math::adj_op<T> x_;
+  stan::math::adj_arg<T> x_;
   explicit MatrixSinFunctor(const T& x) : x_(x) {}
   Eigen::MatrixXd operator()(const Eigen::MatrixXd& x) {
     Eigen::MatrixXd out(x_.rows(), x_.cols());
@@ -1578,10 +1578,10 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_6) {
 
 template <typename T1, typename T2, typename T3, typename T4>
 struct SinCosFunctor {
-  stan::math::adj_op<T1> x1_;
-  stan::math::adj_op<T2> x2_;
-  stan::math::adj_op<T3> x3_;
-  stan::math::adj_op<T4> x4_;
+  stan::math::adj_arg<T1> x1_;
+  stan::math::adj_arg<T2> x2_;
+  stan::math::adj_arg<T3> x3_;
+  stan::math::adj_arg<T4> x4_;
   SinCosFunctor(const T1& x1, const T2& x2, const T3& x3, const T4& x4)
       : x1_(x1), x2_(x2), x3_(x3), x4_(x4) {}
   Eigen::VectorXd operator()(const Eigen::VectorXd& x1, const int& x2,
@@ -1809,8 +1809,8 @@ TEST(AgradRev, test_sincos_multiple_jac_vd) {
  */
 template <typename T1, typename T2>
 struct SinCosFunctor2 {
-  stan::math::adj_op<T1> x1_;
-  stan::math::adj_op<T2> x2_;
+  stan::math::adj_arg<T1> x1_;
+  stan::math::adj_arg<T2> x2_;
   SinCosFunctor2(const T1& x1, const T2& x2) : x1_(x1), x2_(x2) {}
 
   Eigen::VectorXd operator()(const Eigen::VectorXd& x1, const double& x2) {
@@ -2009,8 +2009,8 @@ TEST(AgradRev, test_eigen_vector_scalar_multiple_jac_vd) {
 template <typename T1, typename T2>
 struct SinCosFunctor3 {
   int N_;
-  stan::math::adj_op<T1> x1_;
-  stan::math::adj_op<T2> x2_;
+  stan::math::adj_arg<T1> x1_;
+  stan::math::adj_arg<T2> x2_;
   template <typename S1, typename S2>
   SinCosFunctor3(const S1& x1, const S2& x2) : x1_(x1), x2_(x2) {}
   Eigen::VectorXd operator()(const double& x1, const Eigen::VectorXd& x2) {
@@ -2088,34 +2088,34 @@ TEST(AgradRev, test_sincos_scalar_eigen_vector_multiple_jac_vv) {
                        Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1>>;
   y1 = stan::math::adj_jac_apply<sin_cos_func>(x12, x11);
   y2 = stan::math::adj_jac_apply<sin_cos_func>(x22, x21);
-  /*
-    y1(0).grad();
-    EXPECT_FLOAT_EQ(x11(0).adj(), 0.5403023058681398);
-    EXPECT_FLOAT_EQ(x12.adj(), 0.958924274663139);
-    EXPECT_FLOAT_EQ(x21(0).adj(), 0.0);
-    EXPECT_FLOAT_EQ(x21(1).adj(), 0.0);
-    EXPECT_FLOAT_EQ(x22.adj(), 0.0);
 
-    stan::math::set_zero_all_adjoints();
+  y1(0).grad();
+  EXPECT_FLOAT_EQ(x11(0).adj(), 0.5403023058681398);
+  EXPECT_FLOAT_EQ(x12.adj(), 0.958924274663139);
+  EXPECT_FLOAT_EQ(x21(0).adj(), 0.0);
+  EXPECT_FLOAT_EQ(x21(1).adj(), 0.0);
+  EXPECT_FLOAT_EQ(x22.adj(), 0.0);
 
-    y2(0).grad();
-    EXPECT_FLOAT_EQ(x11(0).adj(), 0.0);
-    EXPECT_FLOAT_EQ(x12.adj(), 0.0);
-    EXPECT_FLOAT_EQ(x21(0).adj(), -0.4161468365471424);
-    EXPECT_FLOAT_EQ(x21(1).adj(), 0.0);
-    EXPECT_FLOAT_EQ(x22.adj(), -0.1411200080598672);
+  stan::math::set_zero_all_adjoints();
 
-    stan::math::set_zero_all_adjoints();
+  y2(0).grad();
+  EXPECT_FLOAT_EQ(x11(0).adj(), 0.0);
+  EXPECT_FLOAT_EQ(x12.adj(), 0.0);
+  EXPECT_FLOAT_EQ(x21(0).adj(), -0.4161468365471424);
+  EXPECT_FLOAT_EQ(x21(1).adj(), 0.0);
+  EXPECT_FLOAT_EQ(x22.adj(), -0.1411200080598672);
 
-    y2(1).grad();
-    EXPECT_FLOAT_EQ(x11(0).adj(), 0.0);
-    EXPECT_FLOAT_EQ(x12.adj(), 0.0);
-    EXPECT_FLOAT_EQ(x21(0).adj(), 0.0);
-    EXPECT_FLOAT_EQ(x21(1).adj(), 0.5403023058681398);
-    EXPECT_FLOAT_EQ(x22.adj(), -0.1411200080598672);
+  stan::math::set_zero_all_adjoints();
 
-    stan::math::set_zero_all_adjoints();
-  */
+  y2(1).grad();
+  EXPECT_FLOAT_EQ(x11(0).adj(), 0.0);
+  EXPECT_FLOAT_EQ(x12.adj(), 0.0);
+  EXPECT_FLOAT_EQ(x21(0).adj(), 0.0);
+  EXPECT_FLOAT_EQ(x21(1).adj(), 0.5403023058681398);
+  EXPECT_FLOAT_EQ(x22.adj(), -0.1411200080598672);
+
+  stan::math::set_zero_all_adjoints();
+
   stan::math::var sum_y2 = (1.73 * y2(0) + 1.57 * y2(1));
   sum_y2.grad();
   EXPECT_FLOAT_EQ(x11(0).adj(), 0.0);

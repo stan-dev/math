@@ -14,21 +14,21 @@ namespace math {
  * free vector.  The returned constrained vector will have the
  * same dimensionality as the specified free vector.
  *
- * @tparam T type of the vector
+ * @tparam ColVec type of the vector
  * @param x Free vector of scalars.
  * @return Positive, increasing ordered vector.
  * @tparam T Type of scalar.
  */
-template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr,
-          require_not_var_t<value_type_t<EigVec>>* = nullptr>
-plain_type_t<EigVec> ordered_constrain(const EigVec& x) {
+template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr,
+          require_not_var_t<value_type_t<ColVec>>* = nullptr>
+plain_type_t<ColVec> ordered_constrain(const ColVec& x) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
   using size_type = Eigen::Index;
 
   size_type k = x.size();
-  plain_type_t<EigVec> y(k);
+  plain_type_t<ColVec> y(k);
   if (k == 0) {
     return y;
   }
@@ -51,9 +51,9 @@ plain_type_t<EigVec> ordered_constrain(const EigVec& x) {
  * @param lp Log probability reference.
  * @return Positive, increasing ordered vector.
  */
-template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
-Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, 1> ordered_constrain(
-    const EigVec& x, value_type_t<EigVec>& lp) {
+template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
+Eigen::Matrix<value_type_t<ColVec>, Eigen::Dynamic, 1> ordered_constrain(
+    const ColVec& x, value_type_t<ColVec>& lp) {
   if (x.size() > 1) {
     lp += x.tail(x.size() - 1).sum();
   }

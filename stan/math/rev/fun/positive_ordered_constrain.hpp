@@ -4,6 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/functor/adj_jac_apply.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <cmath>
 #include <tuple>
 #include <vector>
@@ -15,26 +16,25 @@ namespace internal {
 template <typename T>
 class positive_ordered_constrain_op {
  public:
-  adj_op<T> exp_x_;
+  adj_arg<T> exp_x_;
   explicit positive_ordered_constrain_op(const T& x) : exp_x_(x.size()) {}
   /**
    * Return an increasing positive ordered vector derived from the specified
    * free vector.  The returned constrained vector will have the
    * same dimensionality as the specified free vector.
-   *
-   * @param needs_adj Boolean indicators of if adjoints of arguments will be
-   * needed
+   * @tparam ColVec An eigen type with compile time dynamic rows and 1 column
    * @param x Free vector of scalars
    * @return Positive, increasing ordered vector
    */
-  template <typename S>
-  Eigen::VectorXd operator()(S&& x) {
+  template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
+  Eigen::VectorXd operator()(ColVec&& x) {
+    ref_type_t<ColVec> x_ref(std::forward<ColVec>(x));
     using std::exp;
-    Eigen::Matrix<double, Eigen::Dynamic, 1> y(x.size());
-    if (x.size() == 0) {
+    Eigen::Matrix<double, Eigen::Dynamic, 1> y(x_ref.size());
+    if (x_ref.size() == 0) {
       return y;
     }
-    exp_x_.map() = exp(std::forward<S>(x));
+    exp_x_.map() = exp(x_ref.array());
     y[0] = exp_x_(0);
     for (int n = 1; n < x.size(); ++n) {
       y[n] = y[n - 1] + exp_x_(n);
@@ -46,21 +46,20 @@ class positive_ordered_constrain_op {
    * Compute the result of multiply the transpose of the adjoint vector times
    * the Jacobian of the positive_ordered_constrain operator.
    *
-   * @param needs_adj Boolean indicators of if adjoints of arguments will be
-   * needed
+   * @tparam ColVec An eigen type with compile time dynamic rows and 1 column
    * @param adj Eigen::VectorXd of adjoints at the output of the softmax
    * @return Eigen::VectorXd of adjoints propagated through softmax operation
    */
-  auto multiply_adjoint_jacobian(const Eigen::VectorXd& adj) const {
+  template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
+  auto multiply_adjoint_jacobian(ColVec&& adj) const {
+    ref_type_t<ColVec> adj_ref(std::forward<ColVec>(adj));
     const auto x_size = exp_x_.size();
     Eigen::VectorXd adj_times_jac(x_size);
     double rolling_adjoint_sum = 0.0;
-
     for (int n = x_size; --n >= 0;) {
-      rolling_adjoint_sum += adj(n);
+      rolling_adjoint_sum += adj_ref(n);
       adj_times_jac(n) = exp_x_(n) * rolling_adjoint_sum;
     }
-
     return std::make_tuple(adj_times_jac);
   }
 };
@@ -71,12 +70,13 @@ class positive_ordered_constrain_op {
  * free vector.  The returned constrained vector will have the
  * same dimensionality as the specified free vector.
  *
+ * @tparam ColVec An eigen type with compile time dynamic rows and 1 column
  * @param x Free vector of scalars
  * @return Positive, increasing ordered vector
  */
-template <typename T, require_eigen_vt<is_var, T>* = nullptr>
-inline auto positive_ordered_constrain(const T& x) {
-  return adj_jac_apply<internal::positive_ordered_constrain_op<T>>(x);
+template <typename ColVec, require_eigen_col_vector_vt<is_var, ColVec>* = nullptr>
+inline auto positive_ordered_constrain(ColVec&& x) {
+  return adj_jac_apply<internal::positive_ordered_constrain_op<ColVec>>(std::forward<ColVec>(x));
 }
 
 }  // namespace math

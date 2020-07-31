@@ -4,7 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
-#include <stan/math/rev/functor/adj_op.hpp>
+#include <stan/math/rev/functor/adj_arg.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/constants.hpp>
@@ -54,8 +54,8 @@ class adj_jac_vari : public vari {
       is_var<scalar_type_t<Targs>>::value...};
 
  protected:
-  using FReturnType = std::decay_t<std::result_of_t<F(
-      plain_type_t<decltype(value_of(plain_type_t<Targs>()))>...)>>;
+  using FReturnType = plain_type_t<std::result_of_t<F(
+      decltype(value_of(std::declval<Targs>()))...)>>;
   using x_vis_tuple_ = var_to_vari_filter_t<std::decay_t<Targs>...>;
   F f_;  // Struct that with methods for computing forward and reverse pass.
   x_vis_tuple_ x_vis_;  // tuple holding pointers to vari
@@ -146,10 +146,8 @@ class adj_jac_vari : public vari {
    * Copy the vari memory from the input argument
    * @param x A var
    */
-  inline auto prepare_x_vis_impl(const var& x) const {
-    vari* y = ChainableStack::instance_->memalloc_.alloc_array<vari>(1);
-    y = x.vi_;
-    return y;
+  inline auto& prepare_x_vis_impl(const var& x) const {
+    return x.vi_;
   }
 
   /**
@@ -236,7 +234,7 @@ class adj_jac_vari : public vari {
   }
 
   /**
-   * Implimentation of for_each for applying adjoints.
+   * Implementation of for_each for applying adjoints.
    * @note The `bool_constant` passed to the function is used to deduce whether
    *  the input argument needs to be added to an associated `x_vis_`.
    * the static cast to void is used in boost::hana's for_each impl

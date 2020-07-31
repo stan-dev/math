@@ -38,7 +38,7 @@ namespace math {
  * \end{array}
  * \f$
  *
- * @tparam ColVec type of elements in the vector
+ * @tparam ColVec An eigen type with dynamic rows and 1 column at compile time.
  * @param[in] v Vector to transform.
  * @return Unit simplex result of the softmax transform of the vector.
  */

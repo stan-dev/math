@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_FUNCTOR_ADJ_OP_HPP
-#define STAN_MATH_REV_FUNCTOR_ADJ_OP_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_ADJ_ARG_HPP
+#define STAN_MATH_REV_FUNCTOR_ADJ_ARG_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/meta.hpp>
@@ -17,23 +17,23 @@ namespace math {
  *  type is passed this class will be empty.
  * @tparam T Type to store, for `var` stores a double and containers stores
  * a pointer to doubles.
- * @tparam IsVar A boolean that the user can pass to override the default
+ * @tparam SaveValues A boolean that the user can pass to override the default
  *  behavior of storing data for var types and having an empty class for
  *  non-var types.
  */
-template <typename T, bool IsVar = is_var<value_type_t<T>>::value,
+template <typename T, bool SaveValues = is_var<value_type_t<T>>::value,
           typename = void>
-class adj_op;
+class adj_arg;
 
 /**
- * For cases where `IsVar` is true `adj_op` is allocates memory on the stack
+ * For cases where `SaveValues` is true `adj_arg` is allocates memory on the stack
  *  allocator and
  */
 template <typename T>
-class adj_op<T, true, require_container_t<T>> {
+class adj_arg<T, true, require_container_t<T>> {
  public:
   double* mem_;  // values to store
-  using FReturnType = plain_type_t<decltype(value_of(plain_type_t<T>()))>;
+  using FReturnType = plain_type_t<decltype(value_of(std::declval<T>()))>;
   // If the type is an `std::vector` this stores an `Eigen::VectorXd`
   using RetType = std::conditional_t<is_std_vector<FReturnType>::value,
                                      Eigen::Matrix<double, -1, 1>, FReturnType>;
@@ -45,7 +45,7 @@ class adj_op<T, true, require_container_t<T>> {
    * Allocate unitialized memory of size `n` for a vector
    * @param n The size of memory to allocate on the stack.
    */
-  explicit adj_op(size_t n)
+  explicit adj_arg(size_t n)
       : mem_(ChainableStack::instance_->memalloc_.alloc_array<double>(n)),
         map_(mem_, n) {}
   /**
@@ -53,7 +53,7 @@ class adj_op<T, true, require_container_t<T>> {
    * @param n Number of rows
    * @param m Number of columns
    */
-  adj_op(size_t n, size_t m)
+  adj_arg(size_t n, size_t m)
       : mem_(ChainableStack::instance_->memalloc_.alloc_array<double>(n * m)),
         map_(mem_, n, m) {}
   /**
@@ -62,7 +62,7 @@ class adj_op<T, true, require_container_t<T>> {
    * @param x An Eigen object whose val portion of the `var` will be stored
    */
   template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
-  explicit adj_op(EigMat&& x)
+  explicit adj_arg(EigMat&& x)
       : mem_(
             ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
         map_(eigen_map(mem_, x.rows(), x.cols()) = value_of(x)) {}
@@ -73,7 +73,7 @@ class adj_op<T, true, require_container_t<T>> {
    * @param x Vector of `var` types whose `val_`'s will be stored
    */
   template <typename StdVec, require_std_vector_vt<is_var, StdVec>* = nullptr>
-  explicit adj_op(StdVec&& x)
+  explicit adj_arg(StdVec&& x)
       : mem_(
             ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
         map_(eigen_map(mem_, x.size())
@@ -86,7 +86,7 @@ class adj_op<T, true, require_container_t<T>> {
    */
   template <typename EigMat,
             require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
-  explicit adj_op(EigMat&& x)
+  explicit adj_arg(EigMat&& x)
       : mem_(
             ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
         map_(eigen_map(mem_, x.rows(), x.cols()) = x) {}
@@ -98,7 +98,7 @@ class adj_op<T, true, require_container_t<T>> {
    */
   template <typename StdVec,
             require_std_vector_vt<std::is_arithmetic, StdVec>* = nullptr>
-  explicit adj_op(StdVec&& x)
+  explicit adj_arg(StdVec&& x)
       : mem_(
             ChainableStack::instance_->memalloc_.alloc_array<double>(x.size())),
         map_(eigen_map(mem_, x.size()) = eigen_map(x.data(), x.size())) {}
@@ -157,21 +157,21 @@ class adj_op<T, true, require_container_t<T>> {
 };
 
 /**
- * When `IsVar` is `false` `adj_op` holds an empty map of size `(0,0)` for
+ * When `SaveValues` is `false` `adj_arg` holds an empty map of size `(0,0)` for
  *  containers.
  */
 template <typename T>
-class adj_op<T, false, require_container_t<T>> {
+class adj_arg<T, false, require_container_t<T>> {
  public:
   Eigen::Matrix<double, -1, -1> map_{0, 0};
   static constexpr bool needs_adj{false};
-  explicit adj_op(size_t n) {}
-  adj_op(size_t n, size_t m) {}
+  explicit adj_arg(size_t n) {}
+  adj_arg(size_t n, size_t m) {}
   template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
-  explicit adj_op(const EigMat& x) {}
+  explicit adj_arg(const EigMat& x) {}
 
   template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
-  explicit adj_op(const StdVec& x) {}
+  explicit adj_arg(const StdVec& x) {}
 
   inline static constexpr auto rows() { return 0; }
 
@@ -183,7 +183,7 @@ class adj_op<T, false, require_container_t<T>> {
    * @throw domain error
    */
   inline auto& map() {
-    throw_domain_error("adj_op", "", "Attempting to Access Empty adj_op!", "");
+    throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!", "");
     return map_;
   }
 
@@ -193,7 +193,7 @@ class adj_op<T, false, require_container_t<T>> {
    */
   inline const auto& map() const { return map_; }
   inline double& operator()(size_t i) {
-    throw_domain_error("adj_op", "", "Attempting to Access Empty adj_op!", "");
+    throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!", "");
     return map_(0, 0);
   }
 
@@ -202,7 +202,7 @@ class adj_op<T, false, require_container_t<T>> {
    * @throw domain error
    */
   inline const double& operator()(size_t i) const {
-    throw_domain_error("adj_op", "", "Attempting to Access Empty adj_op!", "");
+    throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!", "");
     return map_(0);
   }
 
@@ -211,7 +211,7 @@ class adj_op<T, false, require_container_t<T>> {
    * @throw domain error
    */
   inline double& operator()(size_t i, size_t j) {
-    throw_domain_error("adj_op", "", "Attempting to Access Empty adj_op!", "");
+    throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!", "");
     return map_(0, 0);
   }
 
@@ -220,28 +220,28 @@ class adj_op<T, false, require_container_t<T>> {
    * @throw domain error
    */
   inline const double& operator()(size_t i, size_t j) const {
-    throw_domain_error("adj_op", "", "Attempting to Access Empty adj_op!", "");
+    throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!", "");
     return map_(0, 0);
   }
 };
 
 /**
- * When `IsVar` is `true` `adj_op` allocates a double on the stack allocator
+ * When `SaveValues` is `true` `adj_arg` allocates a double on the stack allocator
  *  for scalar types.
  */
 template <typename T>
-class adj_op<T, true, require_stan_scalar_t<T>> {
+class adj_arg<T, true, require_stan_scalar_t<T>> {
  public:
   double* mem_{ChainableStack::instance_->memalloc_.alloc_array<double>(1)};
   static constexpr bool needs_adj{true};
-  explicit adj_op(size_t n) {}
-  adj_op(size_t n, size_t m) {}
+  explicit adj_arg(size_t n) {}
+  adj_arg(size_t n, size_t m) {}
   template <typename S, require_var_t<S>* = nullptr>
-  explicit adj_op(const S& x) {
+  explicit adj_arg(const S& x) {
     *mem_ = x.val();
   }
   template <typename S, require_floating_point_t<S>* = nullptr>
-  explicit adj_op(const S& x) {
+  explicit adj_arg(const S& x) {
     *mem_ = x;
   }
 
@@ -256,19 +256,19 @@ class adj_op<T, true, require_stan_scalar_t<T>> {
 };
 
 /**
- * When `IsVar` is `false` `adj_op` holds a double with a value of zero.
+ * When `SaveValues` is `false` `adj_arg` holds a double with a value of zero.
  */
 template <typename T>
-class adj_op<T, false, require_stan_scalar_t<T>> {
+class adj_arg<T, false, require_stan_scalar_t<T>> {
  public:
   double map_{0.0};
   static constexpr bool needs_adj{false};
-  explicit adj_op(size_t n) {}
-  adj_op(size_t n, size_t m) {}
+  explicit adj_arg(size_t n) {}
+  adj_arg(size_t n, size_t m) {}
   template <typename S, require_var_t<S>* = nullptr>
-  explicit adj_op(const S& x) {}
+  explicit adj_arg(const S& x) {}
   template <typename S, require_floating_point_t<S>* = nullptr>
-  explicit adj_op(const S& x) {}
+  explicit adj_arg(const S& x) {}
 
   inline static constexpr auto rows() { return 0; }
 
@@ -281,7 +281,7 @@ class adj_op<T, false, require_stan_scalar_t<T>> {
    * @throw domain error
    */
   inline auto& map() {
-    throw_domain_error("adj_op", "", "Attempting to Access Empty adj_op!", "");
+    throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!", "");
     return map_;
   }
   /**
@@ -289,7 +289,7 @@ class adj_op<T, false, require_stan_scalar_t<T>> {
    * @throw domain error
    */
   inline const auto& map() const {
-    throw_domain_error("adj_op", "", "Attempting to Access Empty adj_op!", "");
+    throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!", "");
     return map_;
   }
 };

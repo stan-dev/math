@@ -14,7 +14,7 @@ namespace math {
  * free vector.  The returned constrained vector will have the
  * same dimensionality as the specified free vector.
  *
- * @tparam T type of elements in the vector
+ * @tparam EigVec type of elements in the vector
  * @param x Free vector of scalars.
  * @return Positive, increasing ordered vector.
  */
@@ -46,7 +46,7 @@ positive_ordered_constrain(const EigVec& x) {
  * of the transform.  The returned constrained vector
  * will have the same dimensionality as the specified free vector.
  *
- * @tparam T type of elements in the vector
+ * @tparam EigVec type of elements in the vector
  * @param x Free vector of scalars.
  * @param lp Log probability reference.
  * @return Positive, increasing ordered vector.
