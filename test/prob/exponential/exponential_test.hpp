@@ -21,10 +21,10 @@ class AgradDistributionsExponential : public AgradDistributionTest {
     parameters.push_back(param);
     log_prob.push_back(-57.13902344686439249699);  // expected log_prob
 
-    param[0] = 1e-08;
+    param[0] = 1e-2;
     param[1] = 3.9;
     parameters.push_back(param);
-    log_prob.push_back(1.3609765141356007);
+    log_prob.push_back(1.3219765531356007);
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {
