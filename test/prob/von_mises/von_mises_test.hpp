@@ -37,9 +37,9 @@ class AgradDistributionVonMises : public AgradDistributionTest {
 
     param[0] = boost::math::constants::third_pi<double>();
     param[1] = boost::math::constants::sixth_pi<double>();
-    param[2] = 1e-8;
+    param[2] = 1e-2;
     parameters.push_back(param);
-    log_prob.push_back(-1.837877066409345339082);
+    log_prob.push_back(-1.8292418122152527);
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {
