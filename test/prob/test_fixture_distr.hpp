@@ -274,34 +274,45 @@ class AgradDistributionTestFixture : public ::testing::Test {
     }
   }
 
-  void calculate_finite_diff(const vector<double>& params,
-                             vector<double>& finite_diff) {
-    Eigen::VectorXd x(6);
-    double fx;
-    Eigen::VectorXd grad_fx;
+  void add_finite_diff_1storder(const vector<double>& params,
+                                vector<double>& finite_diff,
+				const size_t n) {
+    auto f_wrap = [&](const Eigen::VectorXd& e) {
+      Eigen::VectorXd x(6);
 
-    for (size_t i = 0; i < 6; i++) {
-      x(i) = get_param<double>(params, i);
-    }
+      x << get_param<double>(params, 0), get_param<double>(params, 1),
+      get_param<double>(params, 2), get_param<double>(params, 3),
+      get_param<double>(params, 4), get_param<double>(params, 5);
 
-    auto f_wrap = [&](const Eigen::VectorXd& x) {
+      x(n) = e(0);
+
       return TestClass.log_prob(x(0), x(1), x(2), x(3), x(4), x(5));
     };
 
+    Eigen::VectorXd x(1);
+    x << get_param<double>(params, n);
+    double fx;
+    Eigen::VectorXd grad_fx;
+
     stan::math::finite_diff_gradient_auto(f_wrap, x, fx, grad_fx);
 
+    finite_diff.push_back(grad_fx(0));
+  }
+  
+  void calculate_finite_diff(const vector<double>& params,
+                             vector<double>& finite_diff) {
     if (!is_constant_all<Scalar0>::value && !is_empty<Scalar0>::value)
-      finite_diff.push_back(grad_fx[0]);
+      add_finite_diff_1storder(params, finite_diff, 0);
     if (!is_constant_all<Scalar1>::value && !is_empty<Scalar1>::value)
-      finite_diff.push_back(grad_fx[1]);
+      add_finite_diff_1storder(params, finite_diff, 1);
     if (!is_constant_all<Scalar2>::value && !is_empty<Scalar2>::value)
-      finite_diff.push_back(grad_fx[2]);
+      add_finite_diff_1storder(params, finite_diff, 2);
     if (!is_constant_all<Scalar3>::value && !is_empty<Scalar3>::value)
-      finite_diff.push_back(grad_fx[3]);
+      add_finite_diff_1storder(params, finite_diff, 3);
     if (!is_constant_all<Scalar4>::value && !is_empty<Scalar4>::value)
-      finite_diff.push_back(grad_fx[4]);
+      add_finite_diff_1storder(params, finite_diff, 4);
     if (!is_constant_all<Scalar5>::value && !is_empty<Scalar5>::value)
-      finite_diff.push_back(grad_fx[5]);
+      add_finite_diff_1storder(params, finite_diff, 5);
   }
 
   // works for <double>
