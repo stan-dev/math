@@ -275,14 +275,13 @@ class AgradDistributionTestFixture : public ::testing::Test {
   }
 
   void add_finite_diff_1storder(const vector<double>& params,
-                                vector<double>& finite_diff,
-				const size_t n) {
+                                vector<double>& finite_diff, const size_t n) {
     auto f_wrap = [&](const Eigen::VectorXd& e) {
       Eigen::VectorXd x(6);
 
       x << get_param<double>(params, 0), get_param<double>(params, 1),
-      get_param<double>(params, 2), get_param<double>(params, 3),
-      get_param<double>(params, 4), get_param<double>(params, 5);
+          get_param<double>(params, 2), get_param<double>(params, 3),
+          get_param<double>(params, 4), get_param<double>(params, 5);
 
       x(n) = e(0);
 
@@ -298,7 +297,7 @@ class AgradDistributionTestFixture : public ::testing::Test {
 
     finite_diff.push_back(grad_fx(0));
   }
-  
+
   void calculate_finite_diff(const vector<double>& params,
                              vector<double>& finite_diff) {
     if (!is_constant_all<Scalar0>::value && !is_empty<Scalar0>::value)
