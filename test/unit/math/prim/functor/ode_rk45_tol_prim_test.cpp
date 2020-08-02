@@ -472,7 +472,7 @@ TEST(ode_rk45_tol_prim, rhs_wrong_size_errors) {
                                            a));
 
   EXPECT_THROW(
-      stan::math::ode_rk45_tol(ode_rk45_tol_prim_test::CosArgWrongSize()(), y0,
+      stan::math::ode_rk45_tol(ode_rk45_tol_prim_test::CosArgWrongSize(), y0,
                                t0, ts, 1e-6, 1e-6, 100, nullptr, a),
       std::invalid_argument);
 }
