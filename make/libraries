@@ -186,19 +186,17 @@ $(BOOST)/user-config.jam:
 	echo "#using mpi : /path/to/mpicxx ;" >> $(BOOST)/user-config.jam
 	echo "using mpi ;" >> $(BOOST)/user-config.jam
 
-$(BOOST)/stage/lib/mpi.so: $(BOOST)/user-config.jam
+$(BOOST)/stage/lib/libboost_serialization.so $(BOOST)/stage/lib/libboost_mpi.so: $(BOOST)/user-config.jam
 	@mkdir -p $(dir $@)
 	cd $(BOOST); ./bootstrap.sh
 	cd $(BOOST); ./b2 --user-config=user-config.jam --layout=system --with-mpi --with-serialization -j$(BOOST_PARALLEL_JOBS) variant=release link=shared threading=multi runtime-link=shared hardcode-dll-paths=true dll-path="$(BOOST_LIBRARY_ABSOLUTE_PATH)" cxxstd=11
 
-$(BOOST)/stage/lib/libboost_serialization.so: $(BOOST)/stage/lib/mpi.so
-$(BOOST)/stage/lib/libboost_mpi.so: $(BOOST)/stage/lib/mpi.so
-
-
-$(BOOST)/stage/lib/libboost_serialization.dylib: $(BOOST)/stage/lib/mpi.so
+$(BOOST)/stage/lib/libboost_serialization.dylib $(BOOST)/stage/lib/libboost_mpi.dylib: $(BOOST)/user-config.jam
+	@mkdir -p $(dir $@)
+	cd $(BOOST); ./bootstrap.sh
+	cd $(BOOST); ./b2 --user-config=user-config.jam --layout=system --with-mpi --with-serialization -j$(BOOST_PARALLEL_JOBS) variant=release link=shared threading=multi runtime-link=shared hardcode-dll-paths=true dll-path="$(BOOST_LIBRARY_ABSOLUTE_PATH)" cxxstd=11
 	install_name_tool -add_rpath "$(BOOST_LIBRARY_ABSOLUTE_PATH)" "$(BOOST)/stage/lib/libboost_serialization.dylib"
 	install_name_tool -id @rpath/libboost_serialization.dylib "$(BOOST)/stage/lib/libboost_serialization.dylib"
-$(BOOST)/stage/lib/libboost_mpi.dylib: $(BOOST)/stage/lib/mpi.so $(BOOST)/stage/lib/libboost_serialization.dylib
 	install_name_tool -add_rpath "$(BOOST_LIBRARY_ABSOLUTE_PATH)" "$(BOOST)/stage/lib/libboost_mpi.dylib"
 	install_name_tool -change libboost_serialization.dylib @rpath/libboost_serialization.dylib "$(BOOST)/stage/lib/libboost_mpi.dylib"
 	install_name_tool -id @rpath/libboost_mpi.dylib "$(BOOST)/stage/lib/libboost_mpi.dylib"
