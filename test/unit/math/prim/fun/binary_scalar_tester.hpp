@@ -317,6 +317,24 @@ void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
 /**
  * Testing framework for checking that the vectorisation of binary
  * functions returns the same results as the binary function with
+ * scalar inputs. This specialization takes two std::vector of integers.
+ *
+ * @tparam F Type of functor to apply.
+ * @tparam T1 Type of first input.
+ * @tparam T2 Type of second input.
+ * @param x First std::vector input to which operation is applied.
+ * @param y Second Eigen input to which operation is applied.
+ * @param f functor to apply to inputs.
+ */
+template <typename F, typename T1, typename T2,
+          require_all_std_vector_vt<std::is_integral, T1, T2>* = nullptr>
+void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
+  binary_scalar_tester_impl(f, x, y);
+}
+
+/**
+ * Testing framework for checking that the vectorisation of binary
+ * functions returns the same results as the binary function with
  * scalar inputs. This specialization takes an std::vector of integers
  * and an Eigen vector. The Eigen vector is then transformed to a row-vector
  * and an Eigen Array to also be tested.
