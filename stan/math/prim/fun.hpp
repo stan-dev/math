@@ -98,6 +98,7 @@
 #include <stan/math/prim/fun/fma.hpp>
 #include <stan/math/prim/fun/fmax.hpp>
 #include <stan/math/prim/fun/fmin.hpp>
+#include <stan/math/prim/fun/fmod.hpp>
 #include <stan/math/prim/fun/gamma_p.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
 #include <stan/math/prim/fun/get.hpp>
