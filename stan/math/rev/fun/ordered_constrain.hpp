@@ -15,10 +15,10 @@ namespace internal {
 template <typename T>
 class ordered_constrain_op {
  public:
-  adj_arg<T> exp_x_;
+  adj_arg_t<T> exp_x_;
   const size_t x_size_;
   explicit ordered_constrain_op(const T& x)
-      : exp_x_(x.size() > 0 ? x.size() - 1 : 0), x_size_(x.size()) {}
+      : exp_x_(setup_adj_arg<T>(x.size() > 0 ? x.size() - 1 : 0)), x_size_(x.size()) {}
   /**
    * Return an increasing ordered vector derived from the specified
    * free vector.  The returned constrained vector will have the

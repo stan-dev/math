@@ -16,8 +16,8 @@ namespace internal {
 template <typename T>
 class positive_ordered_constrain_op {
  public:
-  adj_arg<T> exp_x_;
-  explicit positive_ordered_constrain_op(const T& x) : exp_x_(x.size()) {}
+  adj_arg_t<T> exp_x_;
+  explicit positive_ordered_constrain_op(const T& x) : exp_x_(setup_adj_arg<T>(x.size())) {}
   /**
    * Return an increasing positive ordered vector derived from the specified
    * free vector.  The returned constrained vector will have the
@@ -34,7 +34,7 @@ class positive_ordered_constrain_op {
     if (x_ref.size() == 0) {
       return y;
     }
-    exp_x_.map() = exp(x_ref.array());
+    exp_x_ = exp(x_ref.array());
     y[0] = exp_x_(0);
     for (int n = 1; n < x.size(); ++n) {
       y[n] = y[n - 1] + exp_x_(n);

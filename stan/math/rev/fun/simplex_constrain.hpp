@@ -16,9 +16,10 @@ namespace internal {
 template <typename T>
 class simplex_constrain_op {
  public:
-  adj_arg<T> diag_;
-  adj_arg<T> z_;
-  explicit simplex_constrain_op(const T& x) : diag_(x.size()), z_(x.size()) {}
+  adj_arg_t<T> diag_;
+  adj_arg_t<T> z_;
+  explicit simplex_constrain_op(const T& x) :
+   diag_(setup_adj_arg<T>(x.size())), z_(setup_adj_arg<T>(x.size())) {}
   /**
    * Return the simplex corresponding to the specified free vector.
    * A simplex is a vector containing values greater than or equal

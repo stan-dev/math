@@ -14,17 +14,17 @@ namespace test {
 template <typename T>
 void test_adj_arg_assign_accessors_v(T&& x) {
   for (int i = 0; i < x.size(); ++i) {
-    x.map()(i) = i;
+    x.arg()(i) = i;
   }
   for (int i = 0; i < x.size(); ++i) {
-    EXPECT_EQ(x.map()(i), static_cast<double>(i))
+    EXPECT_EQ(x.arg()(i), static_cast<double>(i))
         << "Failed for type:" << type_name<T>();
   }
   for (int i = 0; i < x.size(); ++i) {
     x(i) = x.size() - i;
   }
   for (int i = 0; i < x.size(); ++i) {
-    EXPECT_EQ(x.map()(i), static_cast<double>(x.size() - i))
+    EXPECT_EQ(x.arg()(i), static_cast<double>(x.size() - i))
         << "Failed for type:" << type_name<T>();
   }
 }
@@ -59,7 +59,7 @@ void test_adj_arg_sizes_v(size_t n, size_t m) {
 template <typename T>
 void test_adj_arg_assign_accessors_d(T&& x) {
   for (int i = 0; i < x.size(); ++i) {
-    EXPECT_THROW((x.map()(i) = i), std::domain_error);
+    EXPECT_THROW((x.arg()(i) = i), std::domain_error);
   }
   for (int i = 0; i < x.size(); ++i) {
     EXPECT_THROW((x(i) = x.size() - i), std::domain_error);
@@ -120,13 +120,13 @@ TEST(AgradRev, adj_arg_assign_sizes) {
   EXPECT_EQ(adj_v.rows(), 0);
   EXPECT_EQ(adj_v.cols(), 0);
   EXPECT_EQ(adj_v.size(), 1);
-  adj_v.map() = 2.0;
-  EXPECT_EQ(adj_v.map(), 2.0);
+  adj_v.arg() = 2.0;
+  EXPECT_EQ(adj_v.arg(), 2.0);
   adj_arg<double> adj_d(5);
   EXPECT_EQ(adj_d.rows(), 0);
   EXPECT_EQ(adj_d.cols(), 0);
   EXPECT_EQ(adj_d.size(), 0);
-  EXPECT_THROW((adj_d.map() = 1), std::domain_error);
+  EXPECT_THROW((adj_d.arg() = 1), std::domain_error);
 }
 
 namespace stan {
@@ -189,9 +189,9 @@ TEST(AgradRev, adj_arg_assign_scalar) {
   using stan::math::adj_arg;
   using stan::math::var;
   adj_arg<var> adj_vd(3.0);
-  EXPECT_EQ(adj_vd.map(), 3.0);
+  EXPECT_EQ(adj_vd.arg(), 3.0);
   adj_arg<var> adj_v(var(3.0));
-  EXPECT_EQ(adj_v.map(), 3.0);
+  EXPECT_EQ(adj_v.arg(), 3.0);
   adj_arg<double, true> adj_d(3.0);
-  EXPECT_EQ(adj_d.map(), 3.0);
+  EXPECT_EQ(adj_d.arg(), 3.0);
 }

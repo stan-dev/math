@@ -14,10 +14,10 @@ struct ScalarSinFunctor {
   stan::math::adj_arg<T> x_;
   explicit ScalarSinFunctor(const T& x) : x_(x) {}
 
-  double operator()(const double& x) { return sin(x_.map()); }
+  double operator()(const double& x) { return sin(x_.arg()); }
 
   auto multiply_adjoint_jacobian(const double& adj) {
-    return std::make_tuple(cos(x_.map()) * adj);
+    return std::make_tuple(cos(x_.arg()) * adj);
   }
 };
 
@@ -1832,7 +1832,7 @@ struct SinCosFunctor2 {
     }
     if (x2_.needs_adj) {
       for (int n = 0; n < x1_.size(); ++n) {
-        out2 += -sin(x2_.map()) * adj(n);
+        out2 += -sin(x2_.arg()) * adj(n);
       }
     }
     return std::make_tuple(out1, out2);
@@ -2028,7 +2028,7 @@ struct SinCosFunctor3 {
     double out1 = 0.0;
     if (x1_.needs_adj) {
       for (int n = 0; n < N_; ++n) {
-        out1 += -sin(x1_.map()) * adj(n);
+        out1 += -sin(x1_.arg()) * adj(n);
       }
     }
     if (x2_.needs_adj) {

@@ -16,10 +16,10 @@ namespace internal {
 
 template <typename T>
 class softmax_op {
-  adj_arg<T> y_;
+  adj_arg_t<T> y_;
 
  public:
-  explicit softmax_op(const T& x) : y_(x.size()) {}
+  explicit softmax_op(const T& x) : y_(setup_adj_arg<T>(x.size())) {}
 
   /**
    * Compute the softmax of the unconstrained input vector
@@ -31,8 +31,8 @@ class softmax_op {
    */
   template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
   auto operator()(ColVec&& alpha) {
-    y_.map() = softmax(std::forward<ColVec>(alpha));
-    return y_.map().eval();
+    y_ = softmax(std::forward<ColVec>(alpha));
+    return y_.eval();
   }
 
   /**
@@ -49,8 +49,7 @@ class softmax_op {
   template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
   auto multiply_adjoint_jacobian(ColVec&& adj) const {
     ref_type_t<ColVec> adj_ref(std::forward<ColVec>(adj));
-    return std::make_tuple(-y_.map() * adj_ref.dot(y_.map())
-                           + y_.map().cwiseProduct(adj_ref));
+    return std::make_tuple(-y_ * adj_ref.dot(y_) + y_.cwiseProduct(adj_ref));
   }
 };
 }  // namespace internal

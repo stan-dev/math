@@ -11,6 +11,56 @@
 namespace stan {
 namespace math {
 
+template <typename T, typename = void>
+struct adj_argr;
+
+template <typename T>
+struct adj_argr<T, require_container_t<T>> {
+  using FReturnType = plain_type_t<decltype(value_of(std::declval<T>()))>;
+  // If the type is an `std::vector` this stores an `Eigen::VectorXd`
+  using RetType = std::conditional_t<is_std_vector<FReturnType>::value,
+                                     Eigen::Matrix<double, -1, 1>, FReturnType>;
+  // The Eigen map type used for storage
+  using type = Eigen::Map<RetType>;
+};
+
+template <typename T>
+struct adj_argr<T, require_stan_scalar_t<T>> {
+  using type = double;
+};
+
+template <typename T>
+using adj_arg_t = typename adj_argr<std::decay_t<T>>::type;
+
+
+template <typename T, bool SaveValue = true>
+auto setup_adj_arg(size_t n) {
+  double* mem = ChainableStack::instance_->memalloc_.alloc_array<double>(n);
+  return adj_arg_t<T>(mem, n);
+}
+
+template <typename T, bool SaveValue, require_t<bool_constant<!SaveValue>>* = nullptr>
+auto setup_adj_arg(size_t n) {
+  return adj_arg_t<T>(nullptr, 0);
+}
+
+template <typename T, bool SaveValue = true>
+auto setup_adj_arg(size_t n, size_t m) {
+  double* mem = ChainableStack::instance_->memalloc_.alloc_array<double>(n * m);
+  return adj_arg_t<T>(mem, n, m);
+}
+
+template <typename T, bool SaveValue, require_t<bool_constant<!SaveValue>>* = nullptr>
+auto setup_adj_arg(size_t n, size_t m) {
+  return adj_arg_t<T>(nullptr, 0, 0);
+}
+
+template <typename T, bool SaveValue = true>
+auto setup_adj_arg() {
+  return adj_arg_t<T>();
+}
+
+
 /**
  * Stores the values for the functors passed to adj_jac_vari. Passing a var or
  *  or container of vars will store a pointer to the val. If a non-var
@@ -26,8 +76,8 @@ template <typename T, bool SaveValues = is_var<value_type_t<T>>::value,
 class adj_arg;
 
 /**
- * For cases where `SaveValues` is true `adj_arg` is allocates memory on the
- * stack allocator and
+ * For cases where `SaveValues` is true `adj_arg` allocates memory on the
+ * stack allocator whose data can be accessed through an `Eigen::Map`
  */
 template <typename T>
 class adj_arg<T, true, require_container_t<T>> {
@@ -121,30 +171,30 @@ class adj_arg<T, true, require_container_t<T>> {
   /**
    * Setter for map of the stack allocated data
    */
-  inline auto& map() { return map_; }
+  inline auto& arg() { return map_; }
 
   /**
    * Getter for map of the stack allocated data
    */
-  inline const auto& map() const { return map_; }
+  inline const auto& arg() const { return map_; }
   /**
    * Setter for the ith element from the map.
    * @param i Access the ith element.
    */
-  inline double& operator()(size_t i) { return map_(i); }
+  inline double& operator()(size_t i) { return map_.coeffRef(i); }
 
   /**
    * Getter for the element in the ith row and jth from the map.
    * @param i Access the ith element.
    */
-  inline const double& operator()(size_t i) const { return map_(i); }
+  inline const double& operator()(size_t i) const { return map_.coeffRef(i); }
 
   /**
    * Setter for the element in the ith row and jth column from the map.
    * @param i Row to access.
    * @param j Column to access.
    */
-  inline double& operator()(size_t i, size_t j) { return map_(i, j); }
+  inline double& operator()(size_t i, size_t j) { return map_.coeffRef(i, j); }
 
   /**
    * Getter for the element in the ith row and jth column from the map.
@@ -152,7 +202,7 @@ class adj_arg<T, true, require_container_t<T>> {
    * @param j Column to access.
    */
   inline const double& operator()(size_t i, size_t j) const {
-    return map_(i, j);
+    return map_.coeffRef(i, j);
   }
 };
 
@@ -182,7 +232,7 @@ class adj_arg<T, false, require_container_t<T>> {
    * Accessing data for the no-op class throws a domain error.
    * @throw domain error
    */
-  inline auto& map() {
+  inline auto& arg() {
     throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!",
                        "");
     return map_;
@@ -192,7 +242,7 @@ class adj_arg<T, false, require_container_t<T>> {
    * Accessing data for the no-op class throws a domain error.
    * @throw domain error
    */
-  inline const auto& map() const { return map_; }
+  inline const auto& arg() const { return map_; }
   inline double& operator()(size_t i) {
     throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!",
                        "");
@@ -256,8 +306,8 @@ class adj_arg<T, true, require_stan_scalar_t<T>> {
 
   inline static constexpr auto size() { return 1; }
 
-  inline auto& map() { return *mem_; }
-  inline const auto& map() const { return *mem_; }
+  inline auto& arg() { return *mem_; }
+  inline const auto& arg() const { return *mem_; }
 };
 
 /**
@@ -285,7 +335,7 @@ class adj_arg<T, false, require_stan_scalar_t<T>> {
    * Accessing data for the no-op class throws a domain error.
    * @throw domain error
    */
-  inline auto& map() {
+  inline auto& arg() {
     throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!",
                        "");
     return map_;
@@ -294,7 +344,7 @@ class adj_arg<T, false, require_stan_scalar_t<T>> {
    * Accessing data for the no-op class throws a domain error.
    * @throw domain error
    */
-  inline const auto& map() const {
+  inline const auto& arg() const {
     throw_domain_error("adj_arg", "", "Attempting to Access Empty adj_arg!",
                        "");
     return map_;
