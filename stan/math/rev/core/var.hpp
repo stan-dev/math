@@ -8,6 +8,9 @@
 #include <stan/math/rev/meta/is_vari.hpp>
 #include <ostream>
 #include <vector>
+#ifdef STAN_OPENCL
+#include <stan/math/opencl/rev/vari.hpp>
+#endif
 
 namespace stan {
 namespace math {
