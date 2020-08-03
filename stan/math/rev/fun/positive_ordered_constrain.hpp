@@ -17,7 +17,8 @@ template <typename T>
 class positive_ordered_constrain_op {
  public:
   adj_arg_t<T> exp_x_;
-  explicit positive_ordered_constrain_op(const T& x) : exp_x_(setup_adj_arg<T>(x.size())) {}
+  explicit positive_ordered_constrain_op(const T& x)
+      : exp_x_(setup_adj_arg<T>(x.size())) {}
   /**
    * Return an increasing positive ordered vector derived from the specified
    * free vector.  The returned constrained vector will have the
