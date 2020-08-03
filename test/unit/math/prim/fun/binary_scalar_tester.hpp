@@ -1,3 +1,6 @@
+#ifndef TEST_UNIT_MATH_PRIM_FUN_BINARY_SCALAR_TESTER_HPP
+#define TEST_UNIT_MATH_PRIM_FUN_BINARY_SCALAR_TESTER_HPP
+
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 
@@ -359,3 +362,4 @@ void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
 
 }  // namespace test
 }  // namespace stan
+#endif
