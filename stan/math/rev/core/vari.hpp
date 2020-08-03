@@ -195,7 +195,7 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
    * `PlainObject` represents a user constructible type such as Matrix or Array
    */
   using PlainObject = plain_type_t<T>;
-  using value_type = PlainObject;    // The underlying type for this class
+  using value_type = PlainObject;  // The underlying type for this class
   using eigen_scalar = value_type_t<PlainObject>;  // A floating point type
   /**
    * Maps for adj_ and val_
@@ -373,7 +373,7 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
                                                       chainable_alloc {
  public:
   using PlainObject = plain_type_t<T>;  // Base type of Eigen class
-  using value_type = PlainObject;    // vari's adj_ and val_ member type
+  using value_type = PlainObject;       // vari's adj_ and val_ member type
   /**
    * Rows at compile time
    */
