@@ -49,17 +49,16 @@ class vari_value;
 template <typename T>
 class vari_value<T, require_floating_point_t<T>> : public vari_base {
  public:
-  using Scalar = T;
-  using value_type = Scalar;
+  using value_type = std::decay_t<T>;
   /**
    * The value of this variable.
    */
-  const Scalar val_;
+  const value_type val_;
   /**
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
    */
-  Scalar adj_;
+  value_type adj_;
 
   /**
    * Construct a variable implementation from a value.  The
@@ -196,8 +195,6 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
    * `PlainObject` represents a user constructible type such as Matrix or Array
    */
   using PlainObject = plain_type_t<T>;
-  using Scalar =
-      typename PlainObject::Scalar;  // The underlying type for this class
   using value_type = PlainObject;    // The underlying type for this class
   using eigen_scalar = value_type_t<PlainObject>;  // A floating point type
   /**
@@ -376,8 +373,6 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
                                                       chainable_alloc {
  public:
   using PlainObject = plain_type_t<T>;  // Base type of Eigen class
-  using Scalar =
-      typename PlainObject::Scalar;  // vari's adj_ and val_ member type
   using value_type = PlainObject;    // vari's adj_ and val_ member type
   /**
    * Rows at compile time
