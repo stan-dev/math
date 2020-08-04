@@ -1,17 +1,30 @@
 #ifndef STAN_MATH_PRIM_FUN_CONV_GAUS_LINE
 #define STAN_MATH_PRIM_FUN_CONV_GAUS_LINE
 
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/prob/normal_cdf.hpp>
 #include <cmath>
 #include <vector>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/prob/normal_cdf.hpp>
 
 namespace stan {
 namespace math {
 
-/*
-evaluate the derivative of conv_gaus_line with respect to x
-*/
+
+/** \ingroup prob_dists
+ * Evaluates the derivative of the convolution of a line with a Gaussian
+ * kernel.
+ *
+ * \f$\frac{\partial}{\partial x} \int_{t_0}^{t_1} (at + b) \f$
+ * \f$e^{\frac{-(t-x)^2}{2\sigma^2} dt \f$
+ *
+ * @param t_0 lower integration bound
+ * @param t_1 upper integration bound
+ * @param a coefficient of t in line
+ * @param b constant in line
+ * @param x0 point at which convolution is evaluated 
+ * @param sig2 variance of the Gaussian kernel
+ * @return The value of the derivative
+ */
 double der_conv_gaus_line(double t0, double t1, double a, double b, double x0,
                           double sig2) {
   using stan::math::normal_cdf;
@@ -33,15 +46,20 @@ double der_conv_gaus_line(double t0, double t1, double a, double b, double x0,
   return y;
 }
 
-/*
-evaluate the integral
 
-                    | t1
-(2*pi*sig2)**-(1/2) |   (a*t + b) * exp(-(t - x0)^2 / (2*sig2)) dt
-                    | t0
-
-*/
-template <typename Tx>
+/** \ingroup prob_dists
+ * Evaluate the convolution of a line with a Gaussian kernel.
+ *
+ * \f$\int_{t_0}^{t_1} (at + b) e^{\frac{-(t-x)^2}{2\sigma^2} dt \f$
+ *
+ * @param t_0 lower integration bound
+ * @param t_1 upper integration bound
+ * @param a coefficient of t in line
+ * @param b constant in line
+ * @param x0 point at which convolution is evaluated 
+ * @param sig2 variance of the Gaussian kernel
+ * @return The value of the derivative
+ */
 double conv_gaus_line(double t0, double t1, double a, double b, Tx const& x,
                       double sig2) {
   using stan::math::normal_cdf;
@@ -57,7 +75,6 @@ double conv_gaus_line(double t0, double t1, double a, double b, Tx const& x,
   y += -a * sig2 / sqrt(2 * pi * sig2)
        * (exp(-pow(t1 - value_of(x), 2) / (2 * sig2))
           - exp(-pow(t0 - value_of(x), 2) / (2 * sig2)));
-
   return y;
 }
 
