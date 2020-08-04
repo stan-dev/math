@@ -115,11 +115,45 @@ TEST(StanAgradRevInternal, precomputed_gradients_containers) {
   Eigen::MatrixXd grad_a = Eigen::MatrixXd::Constant(3, 3, -1);
   std::vector<Eigen::MatrixXd> grad_b{Eigen::MatrixXd::Constant(3, 3, -2),
                                       Eigen::MatrixXd::Constant(3, 3, -3)};
-  std::tuple<Eigen::MatrixXd&, std::vector<Eigen::MatrixXd>&> grads(grad_a,
+  std::tuple<Eigen::MatrixXd&&, std::vector<Eigen::MatrixXd>&> grads(std::move(grad_a),
                                                                     grad_b);
 
   stan::math::var lp
       = stan::math::precomputed_gradients(value, vars, gradients, ops, grads);
+  (2 * lp).grad();
+  EXPECT_MATRIX_EQ(a.adj(), Eigen::MatrixXd::Constant(3, 3, -2));
+  EXPECT_MATRIX_EQ(b[0].adj(), Eigen::MatrixXd::Constant(3, 3, -4));
+  EXPECT_MATRIX_EQ(b[1].adj(), Eigen::MatrixXd::Constant(3, 3, -6));
+
+  stan::math::recover_memory();
+}
+
+TEST(StanAgradRevInternal, precomputed_gradients_containers_direct_construction) {
+  double value = 1;
+  std::vector<stan::math::var> vars;
+  std::vector<double> gradients;
+  stan::math::var_value<Eigen::MatrixXd> a(Eigen::MatrixXd::Constant(3, 3, 2));
+  std::vector<stan::math::var_value<Eigen::MatrixXd>> b{
+      Eigen::MatrixXd::Constant(3, 3, 4), Eigen::MatrixXd::Constant(3, 3, 5)};
+  std::tuple<stan::math::var_value<Eigen::MatrixXd>&,
+             std::vector<stan::math::var_value<Eigen::MatrixXd>>&>
+      ops{a, b};
+  Eigen::MatrixXd grad_a = Eigen::MatrixXd::Constant(3, 3, -1);
+  std::vector<Eigen::MatrixXd> grad_b{Eigen::MatrixXd::Constant(3, 3, -2),
+                                      Eigen::MatrixXd::Constant(3, 3, -3)};
+  std::tuple<Eigen::MatrixXd&&, std::vector<Eigen::MatrixXd>&> grads(std::move(grad_a),
+                                                                    grad_b);
+
+  stan::math::var lp
+      = new stan::math::precomputed_gradients_vari_template<
+          std::tuple<
+            stan::math::var_value<Eigen::MatrixXd>&,
+            std::vector<stan::math::var_value<Eigen::MatrixXd>>&
+          >,
+          std::tuple<
+            Eigen::MatrixXd,
+            std::vector<Eigen::MatrixXd>
+          >>(value, 0, nullptr, nullptr, ops, grads);
   (2 * lp).grad();
   EXPECT_MATRIX_EQ(a.adj(), Eigen::MatrixXd::Constant(3, 3, -2));
   EXPECT_MATRIX_EQ(b[0].adj(), Eigen::MatrixXd::Constant(3, 3, -4));

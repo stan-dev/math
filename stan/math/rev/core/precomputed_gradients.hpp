@@ -18,9 +18,9 @@ namespace math {
  * Stan users should use function precomputed_gradients()
  * directly.
  *
- * @tparam ContainerOperands tuple of any container operands (var_value
+ * @tparam ContainerOperands tuple of any container operands (lvalue references to var_value
  * containing Eigen types)
- * @tparam ContainerGradients tupleof any container gradients (Eigen types)
+ * @tparam ContainerGradients tuple of any container gradients (Eigen types)
  */
 template <typename ContainerOperands = std::tuple<>,
           typename ContainerGradients = std::tuple<>>
@@ -69,21 +69,22 @@ class precomputed_gradients_vari_template : public vari {
    * @param container_operands any container operands
    * @param container_gradients any container gradients
    */
-  template <typename ContainerOps = std::tuple<>,
-            typename ContainerGrads = std::tuple<>>
+  template <typename... ContainerOps,
+            typename... ContainerGrads>
   precomputed_gradients_vari_template(double val, size_t size, vari** varis,
                                       double* gradients,
-                                      ContainerOps&& container_operands
+                                      const std::tuple<ContainerOps&...>& container_operands
                                       = std::tuple<>(),
-                                      ContainerGrads&& container_gradients
+                                      const std::tuple<ContainerGrads...>& container_gradients
                                       = std::tuple<>())
       : vari(val),
         size_(size),
         varis_(varis),
         gradients_(gradients),
-        container_operands_(std::forward<ContainerOps>(container_operands)),
-        container_gradients_(
-            std::forward<ContainerGrads>(container_gradients)) {
+  container_operands_(container_operands){
+      index_apply<N_containers>([&, this](auto... Is){
+          this->container_gradients_ = {std::forward<ContainerGrads>(std::get<Is>(container_gradients))...};
+      });
     check_sizes(std::make_index_sequence<N_containers>());
   }
 
@@ -108,14 +109,14 @@ class precomputed_gradients_vari_template : public vari {
    * don't match.
    */
   template <typename Arith, typename VecVar, typename VecArith,
-            typename ContainerOps = std::tuple<>,
-            typename ContainerGrads = std::tuple<>,
+            typename... ContainerOps,
+            typename... ContainerGrads,
             require_all_vector_t<VecVar, VecArith>* = nullptr>
   precomputed_gradients_vari_template(Arith val, const VecVar& vars,
                                       const VecArith& gradients,
-                                      ContainerOps&& container_operands
+                                      const std::tuple<ContainerOps&...>& container_operands
                                       = std::tuple<>(),
-                                      ContainerGrads&& container_gradients
+                                      const std::tuple<ContainerGrads...>& container_gradients
                                       = std::tuple<>())
       : vari(val),
         size_(vars.size()),
@@ -123,9 +124,10 @@ class precomputed_gradients_vari_template : public vari {
             vars.size())),
         gradients_(ChainableStack::instance_->memalloc_.alloc_array<double>(
             vars.size())),
-        container_operands_(std::forward<ContainerOps>(container_operands)),
-        container_gradients_(
-            std::forward<ContainerGrads>(container_gradients)) {
+        container_operands_(container_operands){
+      index_apply<N_containers>([&, this](auto... Is){
+          this->container_gradients_ = {std::forward<ContainerGrads>(std::get<Is>(container_gradients))...};
+      });
     check_consistent_sizes("precomputed_gradients_vari", "vars", vars,
                            "gradients", gradients);
     check_sizes(std::make_index_sequence<N_containers>());
@@ -162,7 +164,7 @@ class precomputed_gradients_vari_template : public vari {
   template <typename Op, typename Grad,
             require_all_not_std_vector_t<Op, Grad>* = nullptr>
   void chain_one(Op& op, const Grad& grad) {
-    op.adj() += this->adj_ * grad;
+    op.vi_->adj_ += this->adj_ * grad;
   }
 
   /**
@@ -173,7 +175,7 @@ class precomputed_gradients_vari_template : public vari {
    * @param grad gradient
    */
   template <typename Op, typename Grad>
-  void chain_one(std::vector<Op>& op, const std::vector<Grad>& grad) {
+  void chain_one(const std::vector<Op>& op, const std::vector<Grad>& grad) {
     for (int i = 0; i < op.size(); i++) {
       chain_one(op[i], grad[i]);
     }
@@ -204,20 +206,20 @@ using precomputed_gradients_vari
  * gradients provided.
  */
 template <typename Arith, typename VecVar, typename VecArith,
-          typename ContainerOperands = std::tuple<>,
-          typename ContainerGradients = std::tuple<>>
+          typename... ContainerOperands,
+          typename... ContainerGradients>
 inline var precomputed_gradients(Arith value, const VecVar& operands,
                                  const VecArith& gradients,
-                                 ContainerOperands&& container_operands
+                                 const std::tuple<ContainerOperands...>& container_operands
                                  = std::tuple<>(),
-                                 ContainerGradients&& container_gradients
+                                 const std::tuple<ContainerGradients...>& container_gradients
                                  = std::tuple<>()) {
   return {
-      new precomputed_gradients_vari_template<std::decay_t<ContainerOperands>,
-                                              std::decay_t<ContainerGradients>>(
+      new precomputed_gradients_vari_template<std::tuple<ContainerOperands...>,
+              std::tuple<std::decay_t<ContainerGradients>...>>(
           value, operands, gradients,
-          std::forward<ContainerOperands>(container_operands),
-          std::forward<ContainerGradients>(container_gradients))};
+          container_operands,
+          container_gradients)};
 }
 
 }  // namespace math

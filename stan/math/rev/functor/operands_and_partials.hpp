@@ -142,11 +142,27 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
         edge3_.container_partials(), edge4_.container_partials(),
         edge5_.container_partials());
 
-    return var(
-        new precomputed_gradients_vari_template<decltype(container_operands),
-                                                decltype(container_partials)>(
-            value, edges_size, varis, partials, std::move(container_operands),
-            std::move(container_partials)));
+    return var(return_vari(value, edges_size, varis, partials, container_operands, container_partials));
+  }
+
+private:
+  /**
+   * Deduces types and constructs the vari to return from `build()`.
+   * @param value the value
+   * @param edges_size number of elements in all non-var_value of container edges
+   * @param varis pointer to varis from non-var_value of container edges
+   * @param partials pointer to values for partials from non-var_value of container edges
+   * @param container_operands operands from var_value of container edges
+   * @param container_partials partial derivatives from var_value of container edges
+   */
+  template<typename... Ops, typename... Partials>
+  auto* return_vari(double value, size_t edges_size, vari** varis, double* partials,
+                    const std::tuple<Ops...>& container_operands,
+                    const std::tuple<Partials...>& container_partials){
+      //Partials are decayed, so precomputed_gradients_vari_template always stores values, not references
+      return new precomputed_gradients_vari_template<std::tuple<Ops...>,
+              std::tuple<std::decay_t<Partials>...>>(
+        value, edges_size, varis, partials, container_operands, container_partials);
   }
 };
 
@@ -234,11 +250,11 @@ class ops_partials_edge<double, var_value<Op>, require_eigen_t<Op>> {
   void dump_operands(vari** varis) {}
   void dump_partials(double* partials) {}
   int size() { return 0; }
-  std::tuple<var_value<Op>> container_operands() {
-    return std::make_tuple(operands_);
+  std::tuple<const var_value<Op>&> container_operands() {
+    return std::forward_as_tuple(operands_);
   }
-  std::tuple<partials_t> container_partials() {
-    return std::make_tuple(partials_);
+  std::tuple<partials_t&&> container_partials() {
+    return std::forward_as_tuple(std::move(partials_));
   }
 };
 
@@ -354,11 +370,11 @@ class ops_partials_edge<double, std::vector<var_value<Op>>,
   void dump_operands(vari** varis) {}
   void dump_partials(double* partials) {}
   int size() { return 0; }
-  std::tuple<std::vector<var_value<Op>>> container_operands() {
-    return std::make_tuple(operands_);
+  std::tuple<const std::vector<var_value<Op>>&> container_operands() {
+    return std::forward_as_tuple(operands_);
   }
-  std::tuple<partials_t> container_partials() {
-    return std::make_tuple(partials_vec_);
+  std::tuple<partials_t&&> container_partials() {
+    return std::forward_as_tuple(std::move(partials_vec_));
   }
 };
 }  // namespace internal
