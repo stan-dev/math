@@ -38,7 +38,6 @@ class var_value<T, require_floating_point_t<T>> {
  public:
   using value_type = std::decay_t<T>;        // Numeric type in vari_value.
   using vari_type = vari_value<value_type>;  // Type of underlying vari impl.
-  using vari_pointer = vari_type*;  // pointer type for underlying vari.
 
   /**
    * Pointer to the implementation of this variable.
