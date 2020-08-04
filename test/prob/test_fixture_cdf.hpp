@@ -498,9 +498,8 @@ class AgradCdfTestFixture : public ::testing::Test {
                                      const size_t N_REPEAT) {
     if (is_vec) {
       for (size_t i = 0; i < N_REPEAT; i++) {
-        EXPECT_FLOAT_EQ(
-			single_gradients[pos_single] / N_REPEAT,
-			multiple_gradients[pos_multiple])
+        EXPECT_FLOAT_EQ(single_gradients[pos_single] / N_REPEAT,
+                        multiple_gradients[pos_multiple])
             << "Comparison of single_gradient value to vectorized gradient "
                "failed";
         pos_multiple++;
@@ -541,10 +540,11 @@ class AgradCdfTestFixture : public ::testing::Test {
       vector<var> scalar_vars;
       add_vars(scalar_vars, p0_, p1_, p2_, p3_, p4_, p5_);
 
-      T_return_type single_cdf
-	= pow(TestClass.template cdf<Scalar0, Scalar1, Scalar2, Scalar3, Scalar4,
-	      Scalar5>(p0_, p1_, p2_, p3_, p4_, p5_), N_REPEAT);
-      
+      T_return_type single_cdf = pow(
+          TestClass.template cdf<Scalar0, Scalar1, Scalar2, Scalar3, Scalar4,
+                                 Scalar5>(p0_, p1_, p2_, p3_, p4_, p5_),
+          N_REPEAT);
+
       calculate_gradients_1storder(single_gradients1, single_cdf, scalar_vars);
       calculate_gradients_2ndorder(single_gradients2, single_cdf, scalar_vars);
       calculate_gradients_3rdorder(single_gradients3, single_cdf, scalar_vars);
@@ -577,8 +577,8 @@ class AgradCdfTestFixture : public ::testing::Test {
              << "a multiple of cdf of single input";
 
       stan::test::expect_near_rel(stream.str(),
-				  stan::math::value_of_rec(single_cdf),
-				  stan::math::value_of_rec(multiple_cdf));
+                                  stan::math::value_of_rec(single_cdf),
+                                  stan::math::value_of_rec(multiple_cdf));
 
       size_t pos_single = 0;
       size_t pos_multiple = 0;
