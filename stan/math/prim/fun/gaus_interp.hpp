@@ -122,10 +122,8 @@ inline return_type_t<Tx> gaus_interp(std::vector<double> xs,
 given a set of pairs (x_i, y_i), do a gaussian interpolation through those
 points and evaluate the interpolation at the points xs_new
 */
-template <typename Tx>
 gaus_interp_params gaus_interp_precomp(std::vector<double> xs,
-				       std::vector<double> ys,
-				       std::vector<Tx> xs_new) {
+				       std::vector<double> ys) {
   using internal::min_diff;
   using internal::lin_interp_coefs;
   using internal::SIG2_SCALE;
@@ -133,7 +131,6 @@ gaus_interp_params gaus_interp_precomp(std::vector<double> xs,
   gaus_interp_params params;
   internal::asbs coefs;
   int n = xs.size();
-  int n_new = xs_new.size();
 
   // find minimum distance between points for std of gaussian kernel
   params.sig2 = square(min_diff(n, xs) * SIG2_SCALE);
@@ -164,6 +161,20 @@ gaus_interp_params gaus_interp_precomp(std::vector<double> xs,
   }
 
   return params;
+}
+template <typename Tx>
+inline vector<Tx> gaus_interp_vect(std::vector<double> xs,
+				   std::vector<double> ys,
+				   std::vector<Tx> xs_new) {
+  int n_interp = xs_new.size();
+  std::vector<Tx> ys_new(n_interp);
+
+  // create interpolation
+  gaus_interp_params params = gaus_interp_precomp(xs, ys);
+  for (int i=0; i<n_interp; i++) {
+    ys_new[i] = gaus_interp(xs, ys, params, xs_new[i]);
+  }
+  return ys_new;
 }
 
 }  // namespace math

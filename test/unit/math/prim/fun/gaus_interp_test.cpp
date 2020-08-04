@@ -9,6 +9,7 @@ TEST(mathPrimGausInterp, interp_line) {
   using stan::math::gaus_interp;
   using stan::math::gaus_interp_params;
   using stan::math::gaus_interp_precomp;
+  using stan::math::gaus_interp_vect;
 
   // check that interpolation of line returns the same function
   // generate function tabulation
@@ -29,12 +30,15 @@ TEST(mathPrimGausInterp, interp_line) {
     xs_new.push_back(t);
   }
 
-  // create interpolation
+  // create interpolation using precomp
   vector<double> ys_new_gaus(n_interp);
-  gaus_interp_params params = gaus_interp_precomp(xs, ys, xs_new);
+  gaus_interp_params params = gaus_interp_precomp(xs, ys);
   for (int i=0; i<n_interp; i++) {
     ys_new_gaus[i] = gaus_interp(xs, ys, params, xs_new[i]);
   }
+
+  // create interpolation without precomp
+  vector<double> ys_new_gaus2 = gaus_interp_vect(xs, ys, xs_new);
 
   // test points
   double tmp, y;
@@ -42,6 +46,7 @@ TEST(mathPrimGausInterp, interp_line) {
     tmp = (ys[1] - ys[0]) / (xs[1] - xs[0]);
     y = tmp * xs_new[i] + ys[0] - tmp * xs[0];
     ASSERT_NEAR(ys_new_gaus[i], y, ABS_TOL);
+    ASSERT_NEAR(ys_new_gaus2[i], y, ABS_TOL);
   }
 }
 
@@ -86,7 +91,7 @@ TEST(mathPrimGausInterp, gaus_and_lin_interp) {
   }
 
   // gaus interpolation
-  gaus_interp_params params = gaus_interp_precomp(xs, ys, xs_new);
+  gaus_interp_params params = gaus_interp_precomp(xs, ys);
   for (int i=0; i<n_interp; i++) {
     ys_new_gaus[i] = gaus_interp(xs, ys, params, xs_new[i]);
   }

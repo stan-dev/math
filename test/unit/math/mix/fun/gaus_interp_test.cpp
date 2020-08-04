@@ -3,7 +3,7 @@
 #include <vector>
 
 TEST(mathMixGausInterp, derivs) {
-  using stan::math::gaus_interp;
+  using stan::math::gaus_interp_vect;
   using stan::math::var;
   std::vector<double> xs, ys, x2s, y2s, ts, as, bs, y3s, t3s;
   double xmin, xmax, x, y, x2, y2, t, t0, t1, dd, dder, dder2;
@@ -26,8 +26,10 @@ TEST(mathMixGausInterp, derivs) {
   std::vector<stan::math::var> xs_new_v;
   std::vector<double> xs_new;
   int n_interp = 100;
-  t0 = xs[0];
-  t1 = xmax;
+
+  // add a cushion to each endpoint so that we don't leave interval
+  t0 = xs[0] + 0.01;
+  t1 = xmax - 0.01;
   for (int i = 0; i < n_interp; i++) {
     t = t0 + i * (t1 - t0) / (n_interp - 1);
     xs_new.push_back(t);
@@ -36,11 +38,11 @@ TEST(mathMixGausInterp, derivs) {
   }
 
   std::vector<double> ys_new, ys_new_p, ys_new_n, xs_new_p, xs_new_n;
-  ys_new = gaus_interp(n, xs, ys, n_interp, xs_new);
+  ys_new = gaus_interp_vect(xs, ys, xs_new);
 
   // autodiff at each interpolation pt
   std::vector<stan::math::var> ys_new_v;
-  ys_new_v = gaus_interp(n, xs, ys, n_interp, xs_new_v);
+  ys_new_v = gaus_interp_vect(xs, ys, xs_new_v);
 
   std::vector<double> ys_new_dder;
   std::vector<var> ys_new_v2;
@@ -57,8 +59,8 @@ TEST(mathMixGausInterp, derivs) {
   for (int i = 0; i < n_interp; i++) {
     xs_new_p[i] += -h;
     xs_new_n[i] += h;
-    ys_new_p = gaus_interp(n, xs, ys, n_interp, xs_new_p);
-    ys_new_n = gaus_interp(n, xs, ys, n_interp, xs_new_n);
+    ys_new_p = gaus_interp_vect(xs, ys, xs_new_p);
+    ys_new_n = gaus_interp_vect(xs, ys, xs_new_n);
     dder2 = (ys_new_n[i] - ys_new_p[i]) / (2 * h);
     ASSERT_NEAR(ys_new_dder[i], dder2, 1e-5);
   }

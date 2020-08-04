@@ -12,10 +12,10 @@ namespace math {
 
 /** \ingroup prob_dists
  * Evaluates the derivative of the convolution of a line with a Gaussian
- * kernel.
+ * kernel on an interval.
  *
  * \f$\frac{\partial}{\partial x} \int_{t_0}^{t_1} (at + b) \f$
- * \f$e^{\frac{-(t-x)^2}{2\sigma^2} dt \f$
+ * \f$ e^{\frac{-(t-x)^2}{2\sigma^2}} dt \f$
  *
  * @param t_0 lower integration bound
  * @param t_1 upper integration bound
@@ -28,15 +28,14 @@ namespace math {
 double der_conv_gaus_line(double t0, double t1, double a, double b, double x0,
                           double sig2) {
   using stan::math::normal_cdf;
-  double pi = stan::math::pi();
   using std::exp;
   using std::pow;
   using std::sqrt;
-  double sig = sqrt(sig2);
-  double y;
+  const double pi = stan::math::pi();
+  const double sig = sqrt(sig2);
+  const double alpha = sqrt(2 * pi * sig2);
 
-  double alpha = sqrt(2 * pi * sig2);
-  y = (a * x0 + b) / alpha
+  double y = (a * x0 + b) / alpha
       * (-exp(-pow(t1 - x0, 2) / (2 * sig2))
          + exp(-pow(t0 - x0, 2) / (2 * sig2)));
   y += a * (normal_cdf(t1, x0, sig) - normal_cdf(t0, x0, sig));
@@ -48,9 +47,9 @@ double der_conv_gaus_line(double t0, double t1, double a, double b, double x0,
 
 
 /** \ingroup prob_dists
- * Evaluate the convolution of a line with a Gaussian kernel.
+ * Evaluate the convolution of a line with a Gaussian kernel on an interval.
  *
- * \f$\int_{t_0}^{t_1} (at + b) e^{\frac{-(t-x)^2}{2\sigma^2} dt \f$
+ * \f$\int_{t_0}^{t_1} (at + b) e^{\frac{-(t-x)^2}{2\sigma^2}} dt \f$
  *
  * @param t_0 lower integration bound
  * @param t_1 upper integration bound
@@ -60,14 +59,15 @@ double der_conv_gaus_line(double t0, double t1, double a, double b, double x0,
  * @param sig2 variance of the Gaussian kernel
  * @return The value of the derivative
  */
+template <typename Tx>
 double conv_gaus_line(double t0, double t1, double a, double b, Tx const& x,
                       double sig2) {
   using stan::math::normal_cdf;
-  double pi = stan::math::pi();
   using std::exp;
   using std::pow;
   using std::sqrt;
-  double sig = sqrt(sig2);
+  const double pi = stan::math::pi();
+  const double sig = sqrt(sig2);
 
   double y
       = (a * value_of(x) + b)
