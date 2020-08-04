@@ -14,9 +14,9 @@ struct ScalarSinFunctor {
   stan::math::adj_arg<T> x_;
   explicit ScalarSinFunctor(const T& x) : x_(x) {}
 
-  double operator()(const double& x) { return sin(x_.arg()); }
+  double forward_pass(const double& x) { return sin(x_.arg()); }
 
-  auto multiply_adjoint_jacobian(const double& adj) {
+  auto reverse_pass(const double& adj) {
     return std::make_tuple(cos(x_.arg()) * adj);
   }
 };
@@ -62,7 +62,7 @@ struct StdVectorSinFunctor {
   // int N_;
   explicit StdVectorSinFunctor(const T& x) : x_(x) {}
 
-  std::vector<double> operator()(const std::vector<double>& x) {
+  std::vector<double> forward_pass(const std::vector<double>& x) {
     std::vector<double> out(x_.size());
     for (int i = 0; i < x_.size(); ++i) {
       out[i] = sin(x[i]);
@@ -70,7 +70,7 @@ struct StdVectorSinFunctor {
     return out;
   }
 
-  auto multiply_adjoint_jacobian(const std::vector<double>& adj) {
+  auto reverse_pass(const std::vector<double>& adj) {
     std::vector<double> adj_jac(x_.size());
     for (int i = 0; i < x_.size(); ++i) {
       adj_jac[i] = cos(x_(i)) * adj[i];
@@ -127,7 +127,7 @@ template <typename T>
 struct SinFunctor {
   stan::math::adj_arg<T> x_;
   explicit SinFunctor(const T& x) : x_(x) {}
-  Eigen::VectorXd operator()(const Eigen::VectorXd& x) {
+  Eigen::VectorXd forward_pass(const Eigen::VectorXd& x) {
     Eigen::VectorXd out(x_.size());
     for (int n = 0; n < x_.size(); ++n) {
       out(n) = sin(x(n));
@@ -135,7 +135,7 @@ struct SinFunctor {
     return out;
   }
 
-  auto multiply_adjoint_jacobian(const Eigen::VectorXd& adj) {
+  auto reverse_pass(const Eigen::VectorXd& adj) {
     Eigen::VectorXd out(x_.size());
     for (int n = 0; n < x_.size(); ++n) {
       out(n) = cos(x_(n)) * adj(n);
@@ -217,7 +217,7 @@ struct RowVectorSinFunctor {
   //  int N_;
   //  double* x_mem_;
   explicit RowVectorSinFunctor(const T& x) : x_(x) {}
-  Eigen::RowVectorXd operator()(const Eigen::RowVectorXd& x) {
+  Eigen::RowVectorXd forward_pass(const Eigen::RowVectorXd& x) {
     Eigen::RowVectorXd out(x_.size());
     for (int n = 0; n < x_.size(); ++n) {
       out(n) = sin(x(n));
@@ -226,7 +226,7 @@ struct RowVectorSinFunctor {
     return out;
   }
 
-  auto multiply_adjoint_jacobian(const Eigen::RowVectorXd& adj) {
+  auto reverse_pass(const Eigen::RowVectorXd& adj) {
     Eigen::RowVectorXd out(x_.size());
     for (int n = 0; n < x_.size(); ++n) {
       out(n) = cos(x_(n)) * adj(n);
@@ -306,7 +306,7 @@ template <typename T>
 struct MatrixSinFunctor {
   stan::math::adj_arg<T> x_;
   explicit MatrixSinFunctor(const T& x) : x_(x) {}
-  Eigen::MatrixXd operator()(const Eigen::MatrixXd& x) {
+  Eigen::MatrixXd forward_pass(const Eigen::MatrixXd& x) {
     Eigen::MatrixXd out(x_.rows(), x_.cols());
     for (int n = 0; n < x_.size(); ++n) {
       out(n) = sin(x(n));
@@ -315,7 +315,7 @@ struct MatrixSinFunctor {
     return out;
   }
 
-  auto multiply_adjoint_jacobian(const Eigen::MatrixXd& adj) {
+  auto reverse_pass(const Eigen::MatrixXd& adj) {
     Eigen::MatrixXd out(x_.rows(), x_.cols());
     for (int n = 0; n < x_.size(); ++n) {
       out(n) = cos(x_(n)) * adj(n);
@@ -387,7 +387,7 @@ TEST(AgradRev, test_matrix_sin_multiple_jac) {
 struct WeirdArgumentListFunctor1 {
   template <typename... Args>
   explicit WeirdArgumentListFunctor1(const Args&... args) {}
-  Eigen::VectorXd operator()(
+  Eigen::VectorXd forward_pass(
       double, int, const double&, const int&, std::vector<double>,
       std::vector<int>, const std::vector<double>&, const std::vector<int>&,
       Eigen::Matrix<double, Eigen::Dynamic, 1>,
@@ -400,7 +400,7 @@ struct WeirdArgumentListFunctor1 {
     return Eigen::VectorXd(1);
   }
 
-  auto multiply_adjoint_jacobian(const Eigen::VectorXd& y_adj) {
+  auto reverse_pass(const Eigen::VectorXd& y_adj) {
     return std::make_tuple(
         double(), int(), double(), int(), std::vector<double>(),
         std::vector<int>(), std::vector<double>(), std::vector<int>(),
@@ -503,7 +503,7 @@ struct CheckAdjointsPassingThrough {
   int cols_ed3;
   template <typename... Args>
   explicit CheckAdjointsPassingThrough(const Args&... args) {}
-  Eigen::VectorXd operator()(
+  Eigen::VectorXd forward_pass(
       const double& d, const std::vector<double>& vd, const int&,
       const Eigen::Matrix<double, Eigen::Dynamic, 1>& ed1,
       const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& ed2,
@@ -532,7 +532,7 @@ struct CheckAdjointsPassingThrough {
     return out;
   }
 
-  auto multiply_adjoint_jacobian(const Eigen::VectorXd& y_adj) {
+  auto reverse_pass(const Eigen::VectorXd& y_adj) {
     double d;
     std::vector<double> vd(size_vd);
     Eigen::Matrix<double, Eigen::Dynamic, 1> ed1(rows_ed1);
@@ -1584,7 +1584,7 @@ struct SinCosFunctor {
   stan::math::adj_arg<T4> x4_;
   SinCosFunctor(const T1& x1, const T2& x2, const T3& x3, const T4& x4)
       : x1_(x1), x2_(x2), x3_(x3), x4_(x4) {}
-  Eigen::VectorXd operator()(const Eigen::VectorXd& x1, const int& x2,
+  Eigen::VectorXd forward_pass(const Eigen::VectorXd& x1, const int& x2,
                              const std::vector<int>& x3,
                              const std::vector<double>& x4) {
     stan::math::check_matching_sizes("SinCosFunctor", "x1", x1, "x4", x4);
@@ -1595,7 +1595,7 @@ struct SinCosFunctor {
     return out;
   }
 
-  auto multiply_adjoint_jacobian(const Eigen::VectorXd& adj) {
+  auto reverse_pass(const Eigen::VectorXd& adj) {
     Eigen::VectorXd out1;
     std::vector<double> out4;
     if (stan::is_var<stan::scalar_type_t<T1>>::value) {
@@ -1813,7 +1813,7 @@ struct SinCosFunctor2 {
   stan::math::adj_arg<T2> x2_;
   SinCosFunctor2(const T1& x1, const T2& x2) : x1_(x1), x2_(x2) {}
 
-  Eigen::VectorXd operator()(const Eigen::VectorXd& x1, const double& x2) {
+  Eigen::VectorXd forward_pass(const Eigen::VectorXd& x1, const double& x2) {
     Eigen::VectorXd out(x1.size());
     for (int n = 0; n < x1.size(); ++n) {
       out(n) = sin(x1(n)) + cos(x2);
@@ -1821,7 +1821,7 @@ struct SinCosFunctor2 {
     return out;
   }
 
-  auto multiply_adjoint_jacobian(const Eigen::VectorXd& adj) {
+  auto reverse_pass(const Eigen::VectorXd& adj) {
     Eigen::VectorXd out1;
     double out2 = 0.0;
     if (x1_.needs_adj) {
@@ -2013,7 +2013,7 @@ struct SinCosFunctor3 {
   stan::math::adj_arg<T2> x2_;
   template <typename S1, typename S2>
   SinCosFunctor3(const S1& x1, const S2& x2) : x1_(x1), x2_(x2) {}
-  Eigen::VectorXd operator()(const double& x1, const Eigen::VectorXd& x2) {
+  Eigen::VectorXd forward_pass(const double& x1, const Eigen::VectorXd& x2) {
     N_ = x2.size();
     Eigen::VectorXd out(N_);
     for (int n = 0; n < N_; ++n) {
@@ -2023,7 +2023,7 @@ struct SinCosFunctor3 {
     return out;
   }
 
-  auto multiply_adjoint_jacobian(const Eigen::VectorXd& adj) {
+  auto reverse_pass(const Eigen::VectorXd& adj) {
     Eigen::VectorXd out2;
     double out1 = 0.0;
     if (x1_.needs_adj) {

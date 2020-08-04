@@ -29,7 +29,7 @@ class ordered_constrain_op {
    * @return Increasing ordered vector
    */
   template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
-  Eigen::VectorXd operator()(ColVec&& x) {
+  Eigen::VectorXd forward_pass(ColVec&& x) {
     using std::exp;
     ref_type_t<ColVec> x_ref(std::forward<ColVec>(x));
     Eigen::Matrix<double, Eigen::Dynamic, 1> y(x_size_);
@@ -53,7 +53,7 @@ class ordered_constrain_op {
    * @return Eigen::VectorXd of adjoints propagated through softmax operation
    */
   template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
-  auto multiply_adjoint_jacobian(ColVec&& adj) const {
+  auto reverse_pass(ColVec&& adj) const {
     ref_type_t<ColVec> adj_ref(std::forward<ColVec>(adj));
     Eigen::VectorXd adj_times_jac(x_size_);
     double rolling_adjoint_sum = 0.0;

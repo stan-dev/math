@@ -30,7 +30,7 @@ class softmax_op {
    * @return Softmax of the input.
    */
   template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
-  auto operator()(ColVec&& alpha) {
+  auto forward_pass(ColVec&& alpha) {
     y_ = softmax(std::forward<ColVec>(alpha));
     return y_.eval();
   }
@@ -47,7 +47,7 @@ class softmax_op {
    * @return Eigen::VectorXd of adjoints propagated through softmax operation
    */
   template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
-  auto multiply_adjoint_jacobian(ColVec&& adj) const {
+  auto reverse_pass(ColVec&& adj) const {
     ref_type_t<ColVec> adj_ref(std::forward<ColVec>(adj));
     return std::make_tuple(-y_ * adj_ref.dot(y_) + y_.cwiseProduct(adj_ref));
   }

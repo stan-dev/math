@@ -19,17 +19,13 @@ namespace internal {
  * Based on the container type return either a vari* or vari**
  */
 template <typename T, typename = void>
-struct var_return_type;
+struct vari_return_type;
 template <typename T>
-struct var_return_type<T, require_arithmetic_t<T>> {
+struct vari_return_type<T, require_arithmetic_t<T>> {
   using type = vari*;
 };
 template <typename T>
-struct var_return_type<T, require_std_vector_t<T>> {
-  using type = vari**;
-};
-template <typename T>
-struct var_return_type<T, require_eigen_t<T>> {
+struct vari_return_type<T, require_container_t<T>> {
   using type = vari**;
 };
 
@@ -54,15 +50,15 @@ class adj_jac_vari : public vari {
       is_var<scalar_type_t<Targs>>::value...};
 
  protected:
-  using FReturnType = plain_type_t<
-      std::result_of_t<F(decltype(value_of(std::declval<Targs>()))...)>>;
+  using FunctorReturnType = plain_type_t<decltype((std::declval<F>()).forward_pass(value_of(std::declval<Targs>())...))>;
   using x_vis_tuple_ = var_to_vari_filter_t<std::decay_t<Targs>...>;
-  F f_;  // Struct that with methods for computing forward and reverse pass.
+  F f_;  // Functor with methods for computing forward and reverse pass.
   x_vis_tuple_ x_vis_;  // tuple holding pointers to vari
   /**
-   * Will be either vari* or vari**
+   * Is a vari* when the return type of `forward_pass` is a scalar and for
+   *  containers will be a vari**
    */
-  typename internal::var_return_type<FReturnType>::type y_vi_;
+  typename internal::vari_return_type<FunctorReturnType>::type y_vi_;
   /**
    * Stores the dimensions of return value of forward pass to reconstruct
    * container for reverse pass.
@@ -71,10 +67,10 @@ class adj_jac_vari : public vari {
   /**
    * Return the adjoint
    * @tparam RetType Not called by user. Default of the return type of
-   * operator() of the functor F allows for SFINAE to choose the correct
+   * `forward_pass()` of the functor F allows for SFINAE to choose the correct
    * specialization given the required output type.
    */
-  template <typename RetType = FReturnType,
+  template <typename RetType = FunctorReturnType,
             require_arithmetic_t<RetType>* = nullptr>
   inline auto& y_adj() const {
     return y_vi_->adj_;
@@ -83,10 +79,10 @@ class adj_jac_vari : public vari {
   /**
    * Return a standard vector of the adjoints
    * @tparam RetType Not called by user. Default of the return type of
-   * operator() of the functor F allows for SFINAE to choose the correct
+   * `forward_pass()` of the functor F allows for SFINAE to choose the correct
    * specialization given the required output type.
    */
-  template <typename RetType = FReturnType,
+  template <typename RetType = FunctorReturnType,
             require_std_vector_t<RetType>* = nullptr>
   inline auto y_adj() const {
     std::vector<double> var_y(dims_[0]);
@@ -99,19 +95,12 @@ class adj_jac_vari : public vari {
   /**
    * Return an eigen matrix of the adjoints
    * @tparam RetType Not called by user. Default of the return type of
-   * operator() of the functor F allows for SFINAE to choose the correct
+   * `forward_pass()` of the functor F allows for SFINAE to choose the correct
    * specialization given the required output type.
    */
-  template <typename RetType = FReturnType, require_eigen_t<RetType>* = nullptr>
+  template <typename RetType = FunctorReturnType, require_eigen_t<RetType>* = nullptr>
   inline auto y_adj() const {
-    Eigen::Matrix<double, FReturnType::RowsAtCompileTime,
-                  FReturnType::ColsAtCompileTime>
-        var_y(dims_[0], dims_[1]);
-    const size_t iter_size{dims_[0] * dims_[1]};
-    for (size_t i = 0; i < iter_size; ++i) {
-      var_y(i) = y_vi_[i]->adj_;
-    }
-    return var_y;
+    return Eigen::Map<Eigen::Matrix<vari*, FunctorReturnType::RowsAtCompileTime, FunctorReturnType::ColsAtCompileTime>>(y_vi_, dims_[0], dims_[1]).adj().eval();
   }
   /**
    * Copy the vari memory from the input argument
@@ -120,8 +109,8 @@ class adj_jac_vari : public vari {
    * @param x An eigen input argument
    */
   template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
-  inline auto prepare_x_vis_impl(EigMat&& x) const {
-    ref_type_t<EigMat> x_ref(std::forward<EigMat>(x));
+  inline auto prepare_x_vis_impl(const EigMat& x) const {
+    ref_type_t<EigMat> x_ref(x);
     vari** y
         = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
     for (int i = 0; i < x_ref.size(); ++i) {
@@ -153,7 +142,7 @@ class adj_jac_vari : public vari {
    * @param x An object whose type or underlying type is arithmetic.
    */
   template <typename Arith, require_st_arithmetic<Arith>* = nullptr>
-  constexpr inline auto prepare_x_vis_impl(Arith&& x) const {
+  constexpr inline auto prepare_x_vis_impl(Arith /* x */) const {
     return nullptr;
   }
 
@@ -183,8 +172,7 @@ class adj_jac_vari : public vari {
   }
 
   /**
-   * Specialization for var, stores the values of the forward pass in
-   * `adj_jac_vari` `y_vi_`.
+   * Overload for var, stores the values of the forward pass in `y_vi_`.
    * @param val_y Return value of `F()` stored as the value in `y_vi_`.
    */
   inline auto& collect_forward_pass(const double& val_y) {
@@ -192,14 +180,14 @@ class adj_jac_vari : public vari {
     return y_vi_;
   }
   /**
-   * Specialization for std::vector<var>, stores the values of the forward pass
-   * in `adj_jac_vari` `y_vi_`.
+   * Overload for standard vectors, stores the values of the forward pass
+   * in `y_vi_`.
    * @tparam Vec A standard vector of arithmetic types
    * @param val_y Return value of `F()` stored as the value in `y_vi_`.
    */
-  template <typename Vec,
-            require_std_vector_vt<std::is_arithmetic, Vec>* = nullptr>
-  inline auto& collect_forward_pass(Vec&& val_y) {
+  template <typename Scal,
+            require_arithmetic_t<Scal>* = nullptr>
+  inline auto& collect_forward_pass(const std::vector<Scal>& val_y) {
     y_vi_
         = ChainableStack::instance_->memalloc_.alloc_array<vari*>(val_y.size());
     this->dims_[0] = val_y.size();
@@ -210,17 +198,16 @@ class adj_jac_vari : public vari {
   }
 
   /**
-   * Specialization for Eigen matrices of vars, stores the values of the forward
-   * pass in `adj_jac_vari` `y_vi_`.
+   * Overload for Eigen matrices of vars, stores the values of the forward
+   * pass in `y_vi_`.
    * @tparam EigMat A type inheriting from `EigenBase`.
    * @param val_y Return value of `F()` stored as the value in `y_vi_`.
    */
   template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
-  inline auto& collect_forward_pass(EigMat&& val_y) {
+  inline auto& collect_forward_pass(const EigMat& val_y) {
     using eig_mat = std::decay_t<EigMat>;
-    using ret_mat = Eigen::Matrix<var, eig_mat::RowsAtCompileTime,
-                                  eig_mat::ColsAtCompileTime>;
-    ref_type_t<EigMat> val_ref(std::forward<EigMat>(val_y));
+    using ret_mat = promote_scalar_t<var, EigMat>;
+    ref_type_t<EigMat> val_ref(val_y);
     y_vi_ = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
         val_ref.size());
     this->dims_[0] = val_ref.rows();
@@ -304,9 +291,9 @@ class adj_jac_vari : public vari {
     template <typename EigMat, typename V, bool needs_adj,
               std::enable_if_t<needs_adj>* = nullptr,
               require_eigen_t<EigMat>* = nullptr>
-    inline void operator()(EigMat&& y_adj_jac, V&& x_vis,
+    inline void operator()(const EigMat& y_adj_jac, V&& x_vis,
                            bool_constant<needs_adj>) {
-      ref_type_t<EigMat> y_adj_ref(std::forward<EigMat>(y_adj_jac));
+      ref_type_t<EigMat> y_adj_ref(y_adj_jac);
       for (int n = 0; n < y_adj_ref.size(); ++n) {
         x_vis[n]->adj_ += y_adj_ref.coeffRef(n);
       }
@@ -324,10 +311,10 @@ class adj_jac_vari : public vari {
      * @param y_adj_jac The adjoint jacobian calculation from the reverse pass.
      * @param x_vis An element of the tuple `x_vis_` that contains `vari**`.
      */
-    template <typename Vec, typename V, bool needs_adj,
+    template <typename Scal, typename V, bool needs_adj,
               std::enable_if_t<needs_adj>* = nullptr,
-              require_std_vector_t<Vec>* = nullptr>
-    inline void operator()(Vec&& y_adj_jac, V&& x_vis,
+              require_arithmetic_t<Scal>* = nullptr>
+    inline void operator()(const std::vector<Scal>& y_adj_jac, V&& x_vis,
                            bool_constant<needs_adj>) {
       for (int n = 0; n < y_adj_jac.size(); ++n) {
         x_vis[n]->adj_ += y_adj_jac[n];
@@ -347,7 +334,7 @@ class adj_jac_vari : public vari {
     template <typename T, typename V, bool needs_adj,
               std::enable_if_t<needs_adj>* = nullptr,
               require_floating_point_t<T>* = nullptr>
-    inline void operator()(T&& y_adj_jac, V&& x_vis, bool_constant<needs_adj>) {
+    inline void operator()(T y_adj_jac, V&& x_vis, bool_constant<needs_adj>) {
       x_vis->adj_ += y_adj_jac;
     }
 
@@ -358,10 +345,10 @@ class adj_jac_vari : public vari {
   /**
    * Return a var from the internal vari value
    * @tparam RetType Not called by user. Default of the return type of
-   * operator() of the functor F allows for SFINAE to choose the correct
+   * `forward_pass()` of the functor F allows for SFINAE to choose the correct
    * specialization given the required output type.
    */
-  template <typename RetType = FReturnType,
+  template <typename RetType = FunctorReturnType,
             require_arithmetic_t<RetType>* = nullptr>
   inline auto y_var() const {
     return var(y_vi_);
@@ -370,10 +357,10 @@ class adj_jac_vari : public vari {
   /**
    * Construct standard vector of vars from the internal vari values
    * @tparam RetType Not called by user. Default of the return type of
-   * operator() of the functor F allows for SFINAE to choose the correct
+   * `forward_pass()` of the functor F allows for SFINAE to choose the correct
    * specialization given the required output type.
    */
-  template <typename RetType = FReturnType,
+  template <typename RetType = FunctorReturnType,
             require_std_vector_t<RetType>* = nullptr>
   inline auto y_var() const {
     std::vector<var> var_y(dims_[0]);
@@ -386,14 +373,12 @@ class adj_jac_vari : public vari {
   /**
    * Construct an eigen matrix of vars from the internal vari values
    * @tparam RetType Not called by user. Default of the return type of
-   * operator() of the functor F allows for SFINAE to choose the correct
+   * `forward_pass()` of the functor F allows for SFINAE to choose the correct
    * specialization given the required output type.
    */
-  template <typename RetType = FReturnType, require_eigen_t<RetType>* = nullptr>
+  template <typename RetType = FunctorReturnType, require_eigen_t<RetType>* = nullptr>
   inline auto y_var() const {
-    Eigen::Matrix<var, FReturnType::RowsAtCompileTime,
-                  FReturnType::ColsAtCompileTime>
-        var_y(dims_[0], dims_[1]);
+    promote_scalar_t<var, FunctorReturnType> var_y(dims_[0], dims_[1]);
     const size_t iter_size{dims_[0] * dims_[1]};
     for (size_t i = 0; i < iter_size; ++i) {
       var_y(i) = y_vi_[i];
@@ -404,7 +389,7 @@ class adj_jac_vari : public vari {
   /**
    * The adj_jac_vari constructor
    *  1. Initializes an instance of the user defined functor F
-   *  2. Calls operator() on the F instance with the double values from the
+   *  2. Calls `forward_pass()` on the F instance with the double values from the
    * input args
    *  3. Saves copies of the varis pointed to by the input vars for subsequent
    * calls to chain
@@ -424,14 +409,14 @@ class adj_jac_vari : public vari {
       : vari(NOT_A_NUMBER),
         f_(args...),
         x_vis_(prepare_x_vis(args...)),
-        y_vi_(collect_forward_pass(f_(value_of(std::forward<Args>(args))...))) {
+        y_vi_(collect_forward_pass(f_.forward_pass(value_of(std::forward<Args>(args))...))) {
   }
 
   /**
    * Propagate the adjoints at the output varis (y_vi_) back to the input
    * varis (x_vis_) by:
    * 1. packing the adjoints in an appropriate container using build_y_adj
-   * 2. using the multiply_adjoint_jacobian function of the user defined
+   * 2. using the reverse_pass function of the user defined
    * functor to compute what the adjoints on x_vis_ should be
    * 3. accumulating the adjoints into the varis pointed to by elements of
    * x_vis_ using accumulate_adjoints
@@ -440,7 +425,7 @@ class adj_jac_vari : public vari {
    */
   inline void chain() {
     for_each_adj(accumulate_adjoint(),
-                 f_.multiply_adjoint_jacobian(this->y_adj()), x_vis_);
+                 f_.reverse_pass(this->y_adj()), x_vis_);
   }
 };
 
@@ -448,11 +433,7 @@ template <typename F, typename... Targs>
 constexpr std::array<bool, sizeof...(Targs)> adj_jac_vari<F, Targs...>::is_var_;
 
 /**
- * Return the result of applying the function defined by a nullary
- * construction of F to the specified input argument
- *
- * adj_jac_apply makes it possible to write efficient reverse-mode
- * autodiff code without ever touching Stan's autodiff internals
+ * Return the result of applying the functor F to the specified input argument
  *
  * Mathematically, to use a function in reverse mode autodiff, you need to be
  * able to evaluate the function (y = f(x)) and multiply the Jacobian of that
@@ -479,43 +460,60 @@ constexpr std::array<bool, sizeof...(Targs)> adj_jac_vari<F, Targs...>::is_var_;
  * So implementing f(x1, x2) and the products above are all that is required
  * mathematically to implement reverse-mode autodiff for a function.
  *
- * adj_jac_apply takes as a template argument a functor F that supplies the
- * non-static member functions (leaving exact template arguments off):
+ * adj_jac_apply takes as a template argument a functor F of the form
+ * ```
+ * template <typename T1, typename T2> // Any number of templates
+ * class my_functor {
+ *  // Helper type trait that is an eigen map for containers or scalar
+ *  // for scalars
+ *  adj_arg_t<T1> A_;
+ *  adj_arg_t<T2> B_;
+ *  // etc.
  *
- * (required) Eigen::VectorXd operator()(const std::array<bool, size>&
- * needs_adj, const T1& x1..., const T2& x2, ...)
+ *  // Constructor to allocate memory
+ *  // Must accept same types as T1 and T2
+ *  my_functor(const T1& A, const T2& B) :
+ *    A_(setup_adj_arg<T1>(A.rows(), A.cols()))
+ *    B_(setup_adj_arg<T2>(B.rows(), B.cols())) {}
+ *  // Member function to calculate forward pass values
+ *  // Must accept same types as the result of calling value_of() on
+ *  //  T1 and T2 types
+ *  template <typename S1, typename S2>
+ *  auto forward_pass(S1&& A, S2&& B) {
+ *    // Calculate forward pass value
+ *  }
+ *  // Calculate adjoint values in reverse pass
+ *  // Argument type must be the same as result of forward_pass() and
+ *  // is the result of dL/dy
+ *  template <typename S1>
+ *  auto reverse_pass(S1&& adj) {
+ *  // Calculate adjoints
+ *  // Must return a tuple of the adjoints for the inputs
+ *  return std::make_tuple(adjoint_a, adjoint_b);
+ *  // If one adjoint does not need calculated return back a nullptr
+ *  // in it's position such as
+ *  return std::make_tuple(adjoint_a, nullptr); // Don't compute adjoint of B
+ *  }
+ * };
+ * ```
+ * The template parameters can be any type besides containers of containers.
  *
- * where there can be any number of input arguments x1, x2, ... and T1, T2,
- * ... can be either doubles or any Eigen::Matrix type with double scalar
- * values. needs_adj is an array of size equal to the number of input
- * arguments indicating whether or not the adjoint^T Jacobian product must be
- * computed for each input argument. This argument is passed to operator() so
- * that any unnecessary preparatory calculations for multiply_adjoint_jacobian
- * can be avoided if possible.
- *
- * (required) std::tuple<T1, T2, ...> multiply_adjoint_jacobian(const
- * std::array<bool, size>& needs_adj, const Eigen::VectorXd& adj)
- *
- * where T1, T2, etc. are the same types as in operator(), needs_adj is the
- * same as in operator(), and adj is the vector dL/dy.
- *
- * operator() is responsible for computing f(x) and multiply_adjoint_jacobian
+ * `forward_pass()`` is responsible for computing f(x) and `reverse_pass()`
  * is responsible for computing the necessary adjoint transpose Jacobian
  * products (which frequently does not require the calculation of the full
  * Jacobian).
  *
- * operator() will be called before multiply_adjoint_jacobian is called, and
+ * `forward_pass()`` will be called before `reverse_pass()` is called, and
  * is only called once in the lifetime of the functor
- * multiply_adjoint_jacobian is called after operator() and may be called
+ * `reverse_pass()` is called after `forward_pass()` and may be called
  * multiple times for any single functor
  *
  * The functor supplied to adj_jac_apply must be careful to allocate any
  * variables it defines in the autodiff arena because its destructor will
  * never be called and memory will leak if allocated anywhere else.
  *
- * Targs (the input argument types) can be any mix of doubles, vars, ints,
- * std::vectors with double, var, or int scalar components, or
- * Eigen::Matrix s of any shape with var or double scalar components
+ * `Targs` (the input argument types) can be any mix of `double`, `var`, `int`,
+ * `std::vector` or a type that inherits from `EigenBase`
  *
  * @tparam F functor to be connected to the autodiff stack
  * @tparam Targs types of arguments to pass to functor

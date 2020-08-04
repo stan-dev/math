@@ -16,10 +16,10 @@ struct adj_argr;
 
 template <typename T>
 struct adj_argr<T, require_container_t<T>> {
-  using FReturnType = plain_type_t<decltype(value_of(std::declval<T>()))>;
+  using FunctorReturnType = plain_type_t<decltype(value_of(std::declval<T>()))>;
   // If the type is an `std::vector` this stores an `Eigen::VectorXd`
-  using RetType = std::conditional_t<is_std_vector<FReturnType>::value,
-                                     Eigen::Matrix<double, -1, 1>, FReturnType>;
+  using RetType = std::conditional_t<is_std_vector<FunctorReturnType>::value,
+                                     Eigen::Matrix<double, -1, 1>, FunctorReturnType>;
   // The Eigen map type used for storage
   using type = Eigen::Map<RetType>;
 };
@@ -83,10 +83,10 @@ template <typename T>
 class adj_arg<T, true, require_container_t<T>> {
  public:
   double* mem_;  // values to store
-  using FReturnType = plain_type_t<decltype(value_of(std::declval<T>()))>;
+  using FunctorReturnType = plain_type_t<decltype(value_of(std::declval<T>()))>;
   // If the type is an `std::vector` this stores an `Eigen::VectorXd`
-  using RetType = std::conditional_t<is_std_vector<FReturnType>::value,
-                                     Eigen::Matrix<double, -1, 1>, FReturnType>;
+  using RetType = std::conditional_t<is_std_vector<FunctorReturnType>::value,
+                                     Eigen::Matrix<double, -1, 1>, FunctorReturnType>;
   // The Eigen map type used for storage
   using eigen_map = Eigen::Map<RetType>;
   eigen_map map_;

@@ -33,7 +33,7 @@ class simplex_constrain_op {
    * @return Simplex of dimensionality K
    */
   template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
-  auto operator()(ColVec&& y) {
+  auto forward_pass(ColVec&& y) {
     ref_type_t<ColVec> y_ref(std::forward<ColVec>(y));
     Eigen::Matrix<double, Eigen::Dynamic, 1> x(y_ref.size() + 1);
     double stick_len(1.0);
@@ -57,7 +57,7 @@ class simplex_constrain_op {
    * @return Eigen::VectorXd of adjoints propagated through softmax operation
    */
   template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
-  auto multiply_adjoint_jacobian(ColVec&& adj) const {
+  auto reverse_pass(ColVec&& adj) const {
     ref_type_t<ColVec> adj_ref(std::forward<ColVec>(adj));
     const auto z_size = z_.size();
     Eigen::VectorXd adj_times_jac(z_size);
