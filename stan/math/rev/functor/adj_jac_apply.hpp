@@ -139,7 +139,6 @@ class adj_jac_vari : public vari {
 
   /**
    * no-op when an argument is arithmetic
-   * @param x An object whose type or underlying type is arithmetic.
    */
   template <typename Arith, require_st_arithmetic<Arith>* = nullptr>
   constexpr inline auto prepare_x_vis_impl(Arith /* x */) const {
