@@ -50,7 +50,8 @@ class adj_jac_vari : public vari {
       is_var<scalar_type_t<Targs>>::value...};
 
  protected:
-  using FunctorReturnType = plain_type_t<decltype((std::declval<F>()).forward_pass(value_of(std::declval<Targs>())...))>;
+  using FunctorReturnType = plain_type_t<decltype(
+      (std::declval<F>()).forward_pass(value_of(std::declval<Targs>())...))>;
   using x_vis_tuple_ = var_to_vari_filter_t<std::decay_t<Targs>...>;
   F f_;  // Functor with methods for computing forward and reverse pass.
   x_vis_tuple_ x_vis_;  // tuple holding pointers to vari
@@ -98,9 +99,14 @@ class adj_jac_vari : public vari {
    * `forward_pass()` of the functor F allows for SFINAE to choose the correct
    * specialization given the required output type.
    */
-  template <typename RetType = FunctorReturnType, require_eigen_t<RetType>* = nullptr>
+  template <typename RetType = FunctorReturnType,
+            require_eigen_t<RetType>* = nullptr>
   inline auto y_adj() const {
-    return Eigen::Map<Eigen::Matrix<vari*, FunctorReturnType::RowsAtCompileTime, FunctorReturnType::ColsAtCompileTime>>(y_vi_, dims_[0], dims_[1]).adj().eval();
+    return Eigen::Map<Eigen::Matrix<vari*, FunctorReturnType::RowsAtCompileTime,
+                                    FunctorReturnType::ColsAtCompileTime>>(
+               y_vi_, dims_[0], dims_[1])
+        .adj()
+        .eval();
   }
   /**
    * Copy the vari memory from the input argument
@@ -184,8 +190,7 @@ class adj_jac_vari : public vari {
    * @tparam Vec A standard vector of arithmetic types
    * @param val_y Return value of `F()` stored as the value in `y_vi_`.
    */
-  template <typename Scal,
-            require_arithmetic_t<Scal>* = nullptr>
+  template <typename Scal, require_arithmetic_t<Scal>* = nullptr>
   inline auto& collect_forward_pass(const std::vector<Scal>& val_y) {
     y_vi_
         = ChainableStack::instance_->memalloc_.alloc_array<vari*>(val_y.size());
@@ -375,7 +380,8 @@ class adj_jac_vari : public vari {
    * `forward_pass()` of the functor F allows for SFINAE to choose the correct
    * specialization given the required output type.
    */
-  template <typename RetType = FunctorReturnType, require_eigen_t<RetType>* = nullptr>
+  template <typename RetType = FunctorReturnType,
+            require_eigen_t<RetType>* = nullptr>
   inline auto y_var() const {
     promote_scalar_t<var, FunctorReturnType> var_y(dims_[0], dims_[1]);
     const size_t iter_size{dims_[0] * dims_[1]};
@@ -388,8 +394,8 @@ class adj_jac_vari : public vari {
   /**
    * The adj_jac_vari constructor
    *  1. Initializes an instance of the user defined functor F
-   *  2. Calls `forward_pass()` on the F instance with the double values from the
-   * input args
+   *  2. Calls `forward_pass()` on the F instance with the double values from
+   * the input args
    *  3. Saves copies of the varis pointed to by the input vars for subsequent
    * calls to chain
    *  4. Calls build_return_varis_and_vars to construct the appropriate output
@@ -408,8 +414,8 @@ class adj_jac_vari : public vari {
       : vari(NOT_A_NUMBER),
         f_(args...),
         x_vis_(prepare_x_vis(args...)),
-        y_vi_(collect_forward_pass(f_.forward_pass(value_of(std::forward<Args>(args))...))) {
-  }
+        y_vi_(collect_forward_pass(
+            f_.forward_pass(value_of(std::forward<Args>(args))...))) {}
 
   /**
    * Propagate the adjoints at the output varis (y_vi_) back to the input
@@ -423,8 +429,7 @@ class adj_jac_vari : public vari {
    * This operation may be called multiple times during the life of the vari
    */
   inline void chain() {
-    for_each_adj(accumulate_adjoint(),
-                 f_.reverse_pass(this->y_adj()), x_vis_);
+    for_each_adj(accumulate_adjoint(), f_.reverse_pass(this->y_adj()), x_vis_);
   }
 };
 
