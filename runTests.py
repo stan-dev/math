@@ -82,6 +82,13 @@ def processCLIArgs():
                         action="store_true", help="Don't run tests, just try to make them.")
     parser.add_argument("--run-all", dest="run_all", action="store_true",
                         help="Don't stop at the first test failure, run all of them.")
+    parser.add_argument(
+        "--only-functions",
+        nargs="+",
+        type=str,
+        default=[],
+        help="Function names to run expression tests for. Default: all functions",
+    )
     parser.add_argument("--jumbo-test", dest="do_jumbo", action="store_true",	
                             help="Build/run jumbo tests.")
     # And parse the command line against those rules
@@ -227,6 +234,27 @@ def findTests(base_path, filter_names, do_jumbo = False):
 def batched(tests):
     return [tests[i:i + batchSize] for i in range(0, len(tests), batchSize)]
 
+def handleExpressionTests(tests, only_functions, j):
+    # for debugging we want single file, otherwise a large number to
+    # better distribute the compiling workload
+    n_test_files = 1 if j==1 else 2*j
+    expression_tests = False
+    for n, i in list(enumerate(tests))[::-1]:
+        if "test/expressions" in i or "test\\expressions" in i:
+            del tests[n]
+            expression_tests = True
+    if expression_tests:
+        sys.path.append("test/expressions")
+        import generateExpressionTests
+
+        generateExpressionTests.main(only_functions, n_test_files)
+        for i in range(n_test_files):
+            tests.append("test/expressions/tests%d_test.cpp" % i)
+    elif only_functions:
+        stopErr(
+            "--only-functions can only be specified if running expression tests (test/expressions)",
+            -1,
+        )
 
 def main():
     inputs = processCLIArgs()
@@ -240,12 +268,16 @@ def main():
     # pass 0: generate all auto-generated tests
     if any(['test/prob' in arg for arg in inputs.tests]):
         generateTests(inputs.j)
-
-    if inputs.do_jumbo:	
-        jumboFiles = generateJumboTests(inputs.tests)	
-
+    tests = inputs.tests
+  
     jumboFiles = []
+    if inputs.do_jumbo:	
+        jumboFiles = generateJumboTests(tests)	
+    
+    handleExpressionTests(tests, inputs.only_functions, inputs.j)
+    
     tests = findTests(inputs.tests, inputs.f, inputs.do_jumbo)
+
     if not tests:
         stopErr("No matching tests found.", -1)
     if inputs.debug:
