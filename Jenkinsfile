@@ -2,20 +2,30 @@
 @Library('StanUtils')
 import org.stan.Utils
 
-def runTests(String testPath) {
-    sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only"
-    try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" }
-    finally { junit 'test/**/*.xml' }
+def runTests(String testPath, boolean jumbo = false) {
+    try {
+        if (jumbo) {
+            sh "./runTests.py -j${env.PARALLEL} ${testPath} --jumbo"
+        } else {
+            sh "./runTests.py -j${env.PARALLEL} ${testPath}"
+        }
+    }
+    finally { junit 'test/**/*.xml' }    
 }
 
-def runTestsWin(String testPath, boolean buildLibs = true) {
+def runTestsWin(String testPath, boolean buildLibs = true, boolean jumbo = false) {
     withEnv(['PATH+TBB=./lib/tbb']) {
        bat "echo $PATH"
        if (buildLibs){
            bat "mingw32-make.exe -f make/standalone math-libs"
        }
-       bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
-       try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
+       try { 
+           if (jumbo) {
+               bat "runTests.py -j${env.PARALLEL} ${testPath} --jumbo" 
+            } else {
+                bat "runTests.py -j${env.PARALLEL} ${testPath}" 
+            }
+       }
        finally { junit 'test/**/*.xml' }
     }
 }
@@ -194,15 +204,15 @@ pipeline {
                     if (isUnix()) {
                         deleteDir()
                         unstash 'MathSetup'
-                        runTests("test/unit/math/prim")
-                        runTests("test/unit/math/rev")
-                        runTests("test/unit")
+                        runTests("test/unit/math/prim", true)
+                        runTests("test/unit/math/rev", true)
+                        runTests("test/unit", true)
                     } else {
                         deleteDirWin()
                         unstash 'MathSetup'
-                        runTestsWin("test/unit/math/prim")
-                        runTestsWin("test/unit/math/rev")
-                        runTestsWin("test/unit")
+                        runTestsWin("test/unit/math/prim", true)
+                        runTestsWin("test/unit/math/rev", true)
+                        runTestsWin("test/unit", true)
                     }
                 }
             }
@@ -335,7 +345,7 @@ pipeline {
                         unstash 'MathSetup'
                         bat "mingw32-make.exe -f make/standalone math-libs"
                         bat "mingw32-make -j${env.PARALLEL} test-headers"
-                        runTestsWin("test/unit", false)
+                        runTestsWin("test/unit", false, true)
                     }
                 }
             }

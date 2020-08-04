@@ -32,14 +32,14 @@ struct adj_argr<T, require_stan_scalar_t<T>> {
 template <typename T>
 using adj_arg_t = typename adj_argr<std::decay_t<T>>::type;
 
-
 template <typename T, bool SaveValue = true>
 auto setup_adj_arg(size_t n) {
   double* mem = ChainableStack::instance_->memalloc_.alloc_array<double>(n);
   return adj_arg_t<T>(mem, n);
 }
 
-template <typename T, bool SaveValue, require_t<bool_constant<!SaveValue>>* = nullptr>
+template <typename T, bool SaveValue,
+          require_t<bool_constant<!SaveValue>>* = nullptr>
 auto setup_adj_arg(size_t n) {
   return adj_arg_t<T>(nullptr, 0);
 }
@@ -50,7 +50,8 @@ auto setup_adj_arg(size_t n, size_t m) {
   return adj_arg_t<T>(mem, n, m);
 }
 
-template <typename T, bool SaveValue, require_t<bool_constant<!SaveValue>>* = nullptr>
+template <typename T, bool SaveValue,
+          require_t<bool_constant<!SaveValue>>* = nullptr>
 auto setup_adj_arg(size_t n, size_t m) {
   return adj_arg_t<T>(nullptr, 0, 0);
 }
@@ -59,7 +60,6 @@ template <typename T, bool SaveValue = true>
 auto setup_adj_arg() {
   return adj_arg_t<T>();
 }
-
 
 /**
  * Stores the values for the functors passed to adj_jac_vari. Passing a var or
