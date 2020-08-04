@@ -26,18 +26,13 @@ struct asbs {
   std::vector<double> bs;
 };
 
-// set tolerance for how close interpolated values need to be to
-// the specified function values
-const double INTERP_TOL = 1e-8;
-const double SIG2_SCALE = 0.1;
-const double NSTDS = 10;
-
 /*
 given a set of points (x_i, y_i) with x_i's in increasing order, find
 a_i, b_i such that the line between (x_i, y_i) and (x_{i+1}, y_{i+1}) is
 f(t) = a_i*t + b_i, store the a_i's and b_i's in as and bs.
 */
-asbs lin_interp_coefs(std::vector<double> xs, std::vector<double> ys) {
+asbs lin_interp_coefs(std::vector<double> const& xs, 
+		      std::vector<double> const& ys) {
   
   int n = xs.size();
 
@@ -61,7 +56,7 @@ asbs lin_interp_coefs(std::vector<double> xs, std::vector<double> ys) {
 find the smallest difference between successive elements in a sorted vector
 */
 template <typename Tx>
-double min_diff(int n, std::vector<Tx> xs) {
+double min_diff(int n, std::vector<Tx> const& xs) {
   double dmin = value_of(xs[1]) - value_of(xs[0]);
   for (int i = 1; i < n - 1; i++) {
     if (value_of(xs[i + 1]) - value_of(xs[i]) < dmin) {
@@ -78,11 +73,11 @@ given a set of points and a width for the gaussian kernel, do a convolution
 and evaluate at one point, x
 */
 template <typename Tx>
-inline return_type_t<Tx> gaus_interp(std::vector<double> xs,
-				     std::vector<double> ys,
+inline return_type_t<Tx> gaus_interp(std::vector<double> const& xs,
+				     std::vector<double> const& ys,
 				     gaus_interp_params params,
 				     Tx const& x) {
-  using internal::NSTDS;
+  const double NSTDS = 10;
 
   // enforce that interpolation point is between smallest and largest 
   // reference point
@@ -92,10 +87,13 @@ inline return_type_t<Tx> gaus_interp(std::vector<double> xs,
 
   int n = xs.size();
 
+  // create copy of xs so that endpoints can be extended
+  std::vector<double> xs2 = xs;
+
   // extend out first and last lines for convolution
   double sig = std::sqrt(params.sig2);
-  xs[0] += -NSTDS * sig;
-  xs[n - 1] += NSTDS * sig;
+  xs2[0] = xs[0] - NSTDS * sig;
+  xs2[n - 1] = xs[n-1] + NSTDS * sig;
 
   // no need to convolve far from center of gaussian, so
   // get lower and upper indexes for integration bounds
@@ -111,7 +109,7 @@ inline return_type_t<Tx> gaus_interp(std::vector<double> xs,
   using return_t = return_type_t<Tx>;
   return_t y = 0;
   for (int i = ind_start; i < ind_end; i++) {
-    y += conv_gaus_line(xs[i], xs[i+1], params.as[i], params.bs[i], x, 
+    y += conv_gaus_line(xs2[i], xs2[i+1], params.as[i], params.bs[i], x, 
 			params.sig2);
   }
 
@@ -126,14 +124,16 @@ gaus_interp_params gaus_interp_precomp(std::vector<double> xs,
 				       std::vector<double> ys) {
   using internal::min_diff;
   using internal::lin_interp_coefs;
-  using internal::SIG2_SCALE;
-  using internal::INTERP_TOL;
   gaus_interp_params params;
   internal::asbs coefs;
+  const double INTERP_TOL = 1e-8;
+  const double SIG2_SCALE = 0.1;
   int n = xs.size();
 
   // find minimum distance between points for std of gaussian kernel
   params.sig2 = square(min_diff(n, xs) * SIG2_SCALE);
+  params.as.resize(n-1);
+  params.bs.resize(n-1);
 
   // copy ys into a new vector
   std::vector<double> y2s;
@@ -147,9 +147,16 @@ gaus_interp_params gaus_interp_precomp(std::vector<double> xs,
   double dmax, dd;
   for (int j = 0; j < max_iters; j++) {
     // linear interpolation for new ys
-    coefs = lin_interp_coefs(xs, y2s);
-    params.as = coefs.as;
-    params.bs = coefs.bs;
+    //coefs = lin_interp_coefs(xs, y2s);
+    //params.as = coefs.as;
+    //params.bs = coefs.bs;
+
+    // find slope and intercept of line between each point
+    for (int i = 0; i < n - 1; i++) {
+      params.as[i] = (y2s[i + 1] - y2s[i]) / (xs[i + 1] - xs[i]);
+      params.bs[i] = -xs[i] * params.as[i] + y2s[i];
+    }
+
     dmax = 0;
     for (int i = 0; i < n; i++) {
       dd = ys[i] - gaus_interp(xs, y2s, params, xs[i]);
