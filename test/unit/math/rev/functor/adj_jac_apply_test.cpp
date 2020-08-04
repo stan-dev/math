@@ -1585,8 +1585,8 @@ struct SinCosFunctor {
   SinCosFunctor(const T1& x1, const T2& x2, const T3& x3, const T4& x4)
       : x1_(x1), x2_(x2), x3_(x3), x4_(x4) {}
   Eigen::VectorXd forward_pass(const Eigen::VectorXd& x1, const int& x2,
-                             const std::vector<int>& x3,
-                             const std::vector<double>& x4) {
+                               const std::vector<int>& x3,
+                               const std::vector<double>& x4) {
     stan::math::check_matching_sizes("SinCosFunctor", "x1", x1, "x4", x4);
     Eigen::VectorXd out(x1.size());
     for (int n = 0; n < x1.size(); ++n) {
