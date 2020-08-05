@@ -121,8 +121,6 @@ inline return_type_t<Tx> gaus_interp(std::vector<double> const& xs,
  *
  * @param xs vector of independent variable of reference points
  * @param ys vector of dependent variable of reference points
- * @param params a struct created by gaus_interp_precomp that
- * @param x the point at which to evaluate the interpolation
  * @return struct containing slopes, intercepts, and width of kernel
  */
 gaus_interp_params gaus_interp_precomp(std::vector<double> const& xs,
