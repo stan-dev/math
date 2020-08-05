@@ -40,36 +40,36 @@ double min_diff(int n, std::vector<Tx> const& xs) {
   return dmin;
 }
 
-} // namespace internal
+}  // namespace internal
 
 /**
  * Given a set of reference points \f$(xs_i, ys_i)\f$, create a mollifier
  * that intersects the reference points. This function requires as input
  * a struct created by the function gaus_interp_precomp. The algorithm
- * used to create the mollifier is an iterative algorithm that works 
- * as follows. First a linear 
- * interpolation is created through the reference points. Then, the 
- * linear interpolation is convolved with a Gaussian whose width is 
- * proportional the smallest distance between successive points 
- * \f$xs_i\f$ and \f$xs_{i+1}\f$. Since the convolution is unlikely to 
+ * used to create the mollifier is an iterative algorithm that works
+ * as follows. First a linear
+ * interpolation is created through the reference points. Then, the
+ * linear interpolation is convolved with a Gaussian whose width is
+ * proportional the smallest distance between successive points
+ * \f$xs_i\f$ and \f$xs_{i+1}\f$. Since the convolution is unlikely to
  * intersect the reference points, the y-values of the reference points
- * are shifted and the process repeats itself until the interpolation 
- * intersects all reference points. 
+ * are shifted and the process repeats itself until the interpolation
+ * intersects all reference points.
  *
  * @param xs vector of independent variable of reference points
  * @param ys vector of dependent variable of reference points
- * @param params a struct created by gaus_interp_precomp that 
+ * @param params a struct created by gaus_interp_precomp that
  * @param x the point at which to evaluate the interpolation
  * @return value of the interpolation at x
  */
 template <typename Tx>
 inline return_type_t<Tx> gaus_interp(std::vector<double> const& xs,
-				     std::vector<double> const& ys,
-				     gaus_interp_params const& params,
-				     Tx const& x) {
+                                     std::vector<double> const& ys,
+                                     gaus_interp_params const& params,
+                                     Tx const& x) {
   const double NSTDS = 10;
 
-  // enforce that interpolation point is between smallest and largest 
+  // enforce that interpolation point is between smallest and largest
   // reference point
   static char const* function = "interp_gaus_pt";
   check_less_or_equal(function, "Interpolation point", x, xs.back());
@@ -83,7 +83,7 @@ inline return_type_t<Tx> gaus_interp(std::vector<double> const& xs,
   // extend out first and last lines for convolution
   double sig = std::sqrt(params.sig2);
   xs2[0] = xs[0] - NSTDS * sig;
-  xs2[n - 1] = xs[n-1] + NSTDS * sig;
+  xs2[n - 1] = xs[n - 1] + NSTDS * sig;
 
   // no need to convolve far from center of gaussian, so
   // get lower and upper indexes for integration bounds
@@ -99,8 +99,8 @@ inline return_type_t<Tx> gaus_interp(std::vector<double> const& xs,
   using return_t = return_type_t<Tx>;
   return_t y = 0;
   for (int i = ind_start; i < ind_end; i++) {
-    y += conv_gaus_line(xs2[i], xs2[i+1], params.as[i], params.bs[i], x, 
-			params.sig2);
+    y += conv_gaus_line(xs2[i], xs2[i + 1], params.as[i], params.bs[i], x,
+                        params.sig2);
   }
 
   return y;
@@ -109,24 +109,24 @@ inline return_type_t<Tx> gaus_interp(std::vector<double> const& xs,
 /**
  * This function was written to be used with gaus_interp. This function
  * computes the shifted y-values of the reference points of an interpolation
- * in such a way that when that piecewise linear function is convolved 
- * with a Gaussian kernel, the resulting function coincides with the 
+ * in such a way that when that piecewise linear function is convolved
+ * with a Gaussian kernel, the resulting function coincides with the
  * points \f$(xs_i, ys_i)\f$ inputted into this function. The output of this
- * function depends heavily on the choice of width of the Gaussian 
- * kernel, which at the time of writing, is set to one tenth the 
- * minimum distance between successive elements of the vector xs. 
- * A tolerance for the maximum distance between the interpolation and 
- * all reference points is also set manually and is not an input. 
+ * function depends heavily on the choice of width of the Gaussian
+ * kernel, which at the time of writing, is set to one tenth the
+ * minimum distance between successive elements of the vector xs.
+ * A tolerance for the maximum distance between the interpolation and
+ * all reference points is also set manually and is not an input.
  *
  *
  * @param xs vector of independent variable of reference points
  * @param ys vector of dependent variable of reference points
- * @param params a struct created by gaus_interp_precomp that 
+ * @param params a struct created by gaus_interp_precomp that
  * @param x the point at which to evaluate the interpolation
- * @return struct containing slopes, intercepts, and width of kernel 
+ * @return struct containing slopes, intercepts, and width of kernel
  */
 gaus_interp_params gaus_interp_precomp(std::vector<double> const& xs,
-				       std::vector<double> const& ys) {
+                                       std::vector<double> const& ys) {
   using internal::min_diff;
   gaus_interp_params params;
   internal::asbs coefs;
@@ -136,8 +136,8 @@ gaus_interp_params gaus_interp_precomp(std::vector<double> const& xs,
 
   // find minimum distance between points for std of gaussian kernel
   params.sig2 = square(min_diff(n, xs) * SIG2_SCALE);
-  params.as.resize(n-1);
-  params.bs.resize(n-1);
+  params.as.resize(n - 1);
+  params.bs.resize(n - 1);
 
   // copy ys into a new vector that will be changed
   std::vector<double> y2s = ys;
@@ -168,8 +168,8 @@ gaus_interp_params gaus_interp_precomp(std::vector<double> const& xs,
 /**
  * This function combines gaus_interp_precomp and gaus_interp.
  * It takes as input two vectors of reference points (xs and ys)
- * in addition to a vector, xs_new, of points at which the 
- * function will evaluate the interpolation through those reference 
+ * in addition to a vector, xs_new, of points at which the
+ * function will evaluate the interpolation through those reference
  * points.
  *
  * @param xs vector of independent variable of reference points
@@ -180,14 +180,14 @@ gaus_interp_params gaus_interp_precomp(std::vector<double> const& xs,
 
 template <typename Tx>
 inline vector<Tx> gaus_interp_vect(std::vector<double> const& xs,
-				   std::vector<double> const& ys,
-				   std::vector<Tx> const& xs_new) {
+                                   std::vector<double> const& ys,
+                                   std::vector<Tx> const& xs_new) {
   int n_interp = xs_new.size();
   std::vector<Tx> ys_new(n_interp);
 
   // create interpolation
   gaus_interp_params params = gaus_interp_precomp(xs, ys);
-  for (int i=0; i<n_interp; i++) {
+  for (int i = 0; i < n_interp; i++) {
     ys_new[i] = gaus_interp(xs, ys, params, xs_new[i]);
   }
   return ys_new;

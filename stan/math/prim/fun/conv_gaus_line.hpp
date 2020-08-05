@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-/** 
+/**
  * Evaluate the convolution of a line with a Gaussian kernel on an interval.
  *
  * \f$\int_{t_0}^{t_1} (at + b) e^{\frac{-(t-x)^2}{2\sigma^2}} dt \f$
@@ -18,7 +18,7 @@ namespace math {
  * @param t_1 upper integration bound
  * @param a coefficient of t in line
  * @param b constant in line
- * @param x0 point at which convolution is evaluated 
+ * @param x0 point at which convolution is evaluated
  * @param sig2 variance of the Gaussian kernel
  * @return The value of the derivative
  */

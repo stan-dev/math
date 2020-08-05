@@ -33,7 +33,7 @@ TEST(mathPrimGausInterp, interp_line) {
   // create interpolation using precomp
   vector<double> ys_new_gaus(n_interp);
   gaus_interp_params params = gaus_interp_precomp(xs, ys);
-  for (int i=0; i<n_interp; i++) {
+  for (int i = 0; i < n_interp; i++) {
     ys_new_gaus[i] = gaus_interp(xs, ys, params, xs_new[i]);
   }
 
@@ -52,8 +52,8 @@ TEST(mathPrimGausInterp, interp_line) {
 
 TEST(mathPrimGausInterp, gaus_and_lin_interp) {
   using stan::math::gaus_interp;
-  using stan::math::gaus_interp_precomp;
   using stan::math::gaus_interp_params;
+  using stan::math::gaus_interp_precomp;
   using stan::math::lin_interp;
 
   // check that interpolation of line returns the same function
@@ -86,13 +86,13 @@ TEST(mathPrimGausInterp, gaus_and_lin_interp) {
 
   // linear interpolation
   ys_new_lin.resize(n_interp);
-  for (int i=0; i<n_interp; i++) {
+  for (int i = 0; i < n_interp; i++) {
     ys_new_lin[i] = lin_interp(xs, ys, xs_new[i]);
   }
 
   // gaus interpolation
   gaus_interp_params params = gaus_interp_precomp(xs, ys);
-  for (int i=0; i<n_interp; i++) {
+  for (int i = 0; i < n_interp; i++) {
     ys_new_gaus[i] = gaus_interp(xs, ys, params, xs_new[i]);
   }
 

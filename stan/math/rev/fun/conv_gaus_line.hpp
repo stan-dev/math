@@ -21,7 +21,7 @@ namespace internal {
  * @param t_1 upper integration bound
  * @param a coefficient of t in line
  * @param b constant in line
- * @param x0 point at which convolution is evaluated 
+ * @param x0 point at which convolution is evaluated
  * @param sig2 variance of the Gaussian kernel
  * @return The value of the derivative
  */
@@ -36,16 +36,14 @@ double der_conv_gaus_line(double t0, double t1, double a, double b, double x0,
   const double alpha = sqrt(2 * pi * sig2);
 
   double y = (a * x0 + b) / alpha
-      * (-exp(-pow(t1 - x0, 2) / (2 * sig2))
-         + exp(-pow(t0 - x0, 2) / (2 * sig2)));
+             * (-exp(-pow(t1 - x0, 2) / (2 * sig2))
+                + exp(-pow(t0 - x0, 2) / (2 * sig2)));
   y += a * (normal_cdf(t1, x0, sig) - normal_cdf(t0, x0, sig));
   y -= a / alpha
        * ((t1 - x0) * exp(-pow(t1 - x0, 2) / (2 * sig2))
           - (t0 - x0) * exp(-pow(t0 - x0, 2) / (2 * sig2)));
   return y;
 }
-
-
 
 class conv_gaus_line_vari : public op_v_vari {
   double t0_;
