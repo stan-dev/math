@@ -1,4 +1,5 @@
 #include <stan/math/rev/functor/adj_arg.hpp>
+#include <test/unit/util.hpp>
 #include <test/unit/pretty_print_types.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
@@ -6,192 +7,154 @@
 #include <tuple>
 #include <vector>
 
-namespace stan {
-namespace math {
-namespace test {
-
-// Test we can do assignment to the map in the var op for matrices
-template <typename T>
-void test_adj_arg_assign_accessors_v(T&& x) {
-  for (int i = 0; i < x.size(); ++i) {
-    x.arg()(i) = i;
-  }
-  for (int i = 0; i < x.size(); ++i) {
-    EXPECT_EQ(x.arg()(i), static_cast<double>(i))
-        << "Failed for type:" << type_name<T>();
-  }
-  for (int i = 0; i < x.size(); ++i) {
-    x(i) = x.size() - i;
-  }
-  for (int i = 0; i < x.size(); ++i) {
-    EXPECT_EQ(x.arg()(i), static_cast<double>(x.size() - i))
-        << "Failed for type:" << type_name<T>();
-  }
-}
-
-// Test for correct sizes in var op for vectors
-template <typename T>
-void test_adj_arg_sizes_v(size_t n) {
-  stan::math::adj_arg<T> x_v(n);
-  if (stan::is_eigen_row_vector<T>::value) {
-    EXPECT_EQ(x_v.rows(), 1) << "Failed for type:" << type_name<T>();
-    EXPECT_EQ(x_v.cols(), n) << "Failed for type:" << type_name<T>();
-    EXPECT_EQ(x_v.size(), n) << "Failed for type:" << type_name<T>();
-  } else {
-    EXPECT_EQ(x_v.rows(), n) << "Failed for type:" << type_name<T>();
-    EXPECT_EQ(x_v.cols(), 1) << "Failed for type:" << type_name<T>();
-    EXPECT_EQ(x_v.size(), n) << "Failed for type:" << type_name<T>();
-  }
-  test_adj_arg_assign_accessors_v(x_v);
-}
-
-// Test sizes in var op
-template <typename T>
-void test_adj_arg_sizes_v(size_t n, size_t m) {
-  stan::math::adj_arg<T> x_v(n, m);
-  EXPECT_EQ(x_v.rows(), n);
-  EXPECT_EQ(x_v.cols(), m);
-  EXPECT_EQ(x_v.size(), n * m);
-  test_adj_arg_assign_accessors_v(x_v);
-}
-
-// Test we throw for non-var op assignment.
-template <typename T>
-void test_adj_arg_assign_accessors_d(T&& x) {
-  for (int i = 0; i < x.size(); ++i) {
-    EXPECT_THROW((x.arg()(i) = i), std::domain_error);
-  }
-  for (int i = 0; i < x.size(); ++i) {
-    EXPECT_THROW((x(i) = x.size() - i), std::domain_error);
-  }
-}
-
-// Test for 0 sizes in non-var op matrices
-template <typename T>
-void test_adj_arg_sizes_d(size_t n) {
-  stan::math::adj_arg<T> x_v(n);
-  EXPECT_EQ(x_v.rows(), 0) << "Failed for type:" << type_name<T>();
-  EXPECT_EQ(x_v.cols(), 0) << "Failed for type:" << type_name<T>();
-  EXPECT_EQ(x_v.size(), 0) << "Failed for type:" << type_name<T>();
-  test_adj_arg_assign_accessors_d(x_v);
-}
-
-// Test for 0 sizes in non-var op vectors
-template <typename T>
-void test_adj_arg_sizes_d(size_t n, size_t m) {
-  stan::math::adj_arg<T> x_v(n, m);
-  EXPECT_EQ(x_v.rows(), 0) << "Failed for type:" << type_name<T>();
-  EXPECT_EQ(x_v.cols(), 0) << "Failed for type:" << type_name<T>();
-  EXPECT_EQ(x_v.size(), 0) << "Failed for type:" << type_name<T>();
-  test_adj_arg_assign_accessors_d(x_v);
-}
-
-}  // namespace test
-}  // namespace math
-}  // namespace stan
-TEST(AgradRev, adj_arg_assign_sizes) {
-  using stan::math::adj_arg;
+TEST(AgradRev, adj_arg_types) {
+  using stan::math::adj_arg_t;
   using stan::math::var;
-  using stan::math::test::test_adj_arg_sizes_d;
-  using stan::math::test::test_adj_arg_sizes_v;
-  using eig_mat_v = Eigen::Matrix<var, -1, -1>;
-  test_adj_arg_sizes_v<eig_mat_v>(5, 10);
-
-  using eig_mat_d = Eigen::Matrix<double, -1, -1>;
-  adj_arg<eig_mat_d> adj_mat_d(5, 10);
-  test_adj_arg_sizes_d<eig_mat_d>(5, 10);
-
-  using eig_vec_v = Eigen::Matrix<var, -1, 1>;
-  test_adj_arg_sizes_v<eig_vec_v>(5);
-  using eig_vec_d = Eigen::Matrix<double, -1, 1>;
-  test_adj_arg_sizes_d<eig_vec_d>(5);
-
-  using eig_rowvec_v = Eigen::Matrix<var, 1, -1>;
-  test_adj_arg_sizes_v<eig_rowvec_v>(5);
-  using eig_rowvec_d = Eigen::Matrix<double, 1, -1>;
-  test_adj_arg_sizes_d<eig_rowvec_d>(5);
-
-  using std_vec_v = std::vector<var>;
-  test_adj_arg_sizes_v<std_vec_v>(5);
-  using std_vec_d = std::vector<double>;
-  test_adj_arg_sizes_d<std_vec_d>(5);
-
-  adj_arg<var> adj_v(5);
-  EXPECT_EQ(adj_v.rows(), 0);
-  EXPECT_EQ(adj_v.cols(), 0);
-  EXPECT_EQ(adj_v.size(), 1);
-  adj_v.arg() = 2.0;
-  EXPECT_EQ(adj_v.arg(), 2.0);
-  adj_arg<double> adj_d(5);
-  EXPECT_EQ(adj_d.rows(), 0);
-  EXPECT_EQ(adj_d.cols(), 0);
-  EXPECT_EQ(adj_d.size(), 0);
-  EXPECT_THROW((adj_d.arg() = 1), std::domain_error);
+  using std::is_same;
+  using eig_mat = Eigen::Matrix<double, -1, -1>;
+  using eig_vec = Eigen::Matrix<double, -1, 1>;
+  using eig_row_vec = Eigen::Matrix<double, 1, -1>;
+  using std_vec = std::vector<double>;
+  using map_eig_mat = Eigen::Map<eig_mat>;
+  using map_eig_vec = Eigen::Map<eig_vec>;;
+  using map_eig_row_vec = Eigen::Map<eig_row_vec>;;
+  EXPECT_TRUE((is_same<map_eig_mat, adj_arg_t<eig_mat>>::value));
+  EXPECT_TRUE((is_same<map_eig_vec, adj_arg_t<eig_vec>>::value));
+  EXPECT_TRUE((is_same<map_eig_vec, adj_arg_t<std_vec>>::value));
+  EXPECT_TRUE((is_same<map_eig_row_vec, adj_arg_t<eig_row_vec>>::value));
 }
 
-namespace stan {
-namespace math {
-namespace test {
-template <typename T1, typename T2>
-void test_adj_arg_assign_containers(size_t n) {
-  T1 x_d = T1(n);
-  for (int i = 0; i < x_d.size(); ++i) {
-    x_d[i] = i;
-  }
-  T2 x_var(n);
-  for (int i = 0; i < x_d.size(); ++i) {
-    x_var[i] = x_d[i];
-  }
-  stan::math::adj_arg<T2> adj_v(x_var);
-  stan::math::adj_arg<T1, true> adj_d(x_d);
-  for (int i = 0; i < x_d.size(); ++i) {
-    EXPECT_EQ(adj_v(i), static_cast<double>(i));
-    EXPECT_EQ(adj_d(i), static_cast<double>(i));
-  }
-}
-
-template <typename T1, typename T2>
-void test_adj_arg_assign_containers(size_t n, size_t m) {
-  T1 x_d = T1(n, m);
-  for (int i = 0; i < x_d.size(); ++i) {
-    x_d(i) = i;
-  }
-  T2 x_var(x_d);
-  stan::math::adj_arg<T2> adj_v(x_var);
-  stan::math::adj_arg<T1, true> adj_d(x_d);
-  for (int i = 0; i < x_d.size(); ++i) {
-    EXPECT_EQ(adj_v(i), static_cast<double>(i));
-    EXPECT_EQ(adj_d(i), static_cast<double>(i));
-  }
-}
-}  // namespace test
-}  // namespace math
-}  // namespace stan
-TEST(AgradRev, adj_arg_assign_containers) {
-  using stan::math::adj_arg;
+TEST(AgradRev, setup_adj_arg_types_fill) {
+  using stan::math::adj_arg_t;
   using stan::math::var;
-  using stan::math::test::test_adj_arg_assign_containers;
-  using eig_mat_v = Eigen::Matrix<var, -1, -1>;
-  using eig_mat_d = Eigen::Matrix<double, -1, -1>;
-  test_adj_arg_assign_containers<eig_mat_d, eig_mat_v>(5, 5);
-  using eig_vec_v = Eigen::Matrix<var, -1, 1>;
-  using eig_vec_d = Eigen::Matrix<double, -1, 1>;
-  test_adj_arg_assign_containers<eig_vec_d, eig_vec_v>(5);
-  using eig_rowvec_v = Eigen::Matrix<var, 1, -1>;
-  using eig_rowvec_d = Eigen::Matrix<double, 1, -1>;
-  test_adj_arg_assign_containers<eig_rowvec_d, eig_rowvec_v>(5);
-  using std_vec_v = std::vector<var>;
-  using std_vec_d = std::vector<double>;
-  test_adj_arg_assign_containers<std_vec_d, std_vec_v>(5);
+  using stan::math::setup_adj_arg;
+  using stan::math::value_of;
+  using eig_mat = Eigen::Matrix<var, -1, -1>;
+  using eig_vec = Eigen::Matrix<var, -1, 1>;
+  using eig_row_vec = Eigen::Matrix<var, 1, -1>;
+  using std_vec = std::vector<var>;
+  using arg_eig_mat = adj_arg_t<eig_mat>;
+  using arg_eig_vec = adj_arg_t<eig_vec>;
+  using arg_std_vec = adj_arg_t<std_vec>;
+  using arg_eig_row_vec = adj_arg_t<eig_row_vec>;
+
+  var A(1);
+  adj_arg_t<var> A_arg = setup_adj_arg<var>(value_of(A));
+  A_arg = A.val();
+  EXPECT_EQ(A_arg, A.val());
+
+  eig_mat eig_mat_v = eig_mat::Random(10, 10);
+  arg_eig_mat arg_eig_mat_d = setup_adj_arg<eig_mat>(eig_mat_v.rows(), eig_mat_v.cols());
+  arg_eig_mat_d = value_of(eig_mat_v);
+  EXPECT_MATRIX_EQ(arg_eig_mat_d, value_of(eig_mat_v));
+
+  eig_vec eig_vec_v = eig_vec::Random(10);
+  arg_eig_vec arg_eig_vec_d = setup_adj_arg<eig_vec>(eig_vec_v.size());
+  arg_eig_vec_d = value_of(eig_vec_v);
+  EXPECT_MATRIX_EQ(arg_eig_vec_d, value_of(eig_vec_v));
+
+
+  std_vec std_vec_v;
+  for (int i = 0; i < 10; i++) {
+    std_vec_v.push_back(var(i));
+  }
+  arg_std_vec arg_std_vec_d = setup_adj_arg<std_vec>(std_vec_v.size());
+  arg_std_vec_d = adj_arg_t<std_vec>(value_of(std_vec_v).data(), std_vec_v.size());
+  for (int i = 0; i < 10; i++) {
+    EXPECT_FLOAT_EQ(arg_std_vec_d(i), std_vec_v[i].val());
+  }
+
+  eig_row_vec eig_row_vec_v = eig_row_vec::Random(10);
+  arg_eig_row_vec arg_eig_row_vec_d = setup_adj_arg<eig_row_vec>(eig_row_vec_v.size());
+  arg_eig_row_vec_d = value_of(eig_row_vec_v);
+  EXPECT_MATRIX_EQ(arg_eig_row_vec_d, value_of(eig_row_vec_v));
+
 }
 
-TEST(AgradRev, adj_arg_assign_scalar) {
-  using stan::math::adj_arg;
+TEST(AgradRev, setup_adj_arg_types_fill_override) {
+  using stan::math::adj_arg_t;
   using stan::math::var;
-  adj_arg<var> adj_vd(3.0);
-  EXPECT_EQ(adj_vd.arg(), 3.0);
-  adj_arg<var> adj_v(var(3.0));
-  EXPECT_EQ(adj_v.arg(), 3.0);
-  adj_arg<double, true> adj_d(3.0);
-  EXPECT_EQ(adj_d.arg(), 3.0);
+  using stan::math::setup_adj_arg;
+  using stan::math::value_of;
+  using eig_mat = Eigen::Matrix<double, -1, -1>;
+  using eig_vec = Eigen::Matrix<double, -1, 1>;
+  using eig_row_vec = Eigen::Matrix<double, 1, -1>;
+  using std_vec = std::vector<double>;
+  using arg_eig_mat = adj_arg_t<eig_mat>;
+  using arg_eig_vec = adj_arg_t<eig_vec>;
+  using arg_std_vec = adj_arg_t<std_vec>;
+  using arg_eig_row_vec = adj_arg_t<eig_row_vec>;
+
+  double A(1);
+  adj_arg_t<double> A_arg = setup_adj_arg<double, true>(value_of(A));
+  A_arg = A;
+  EXPECT_EQ(A_arg, A);
+
+  eig_mat eig_mat_v = eig_mat::Random(10, 10);
+  arg_eig_mat arg_eig_mat_d = setup_adj_arg<eig_mat, true>(eig_mat_v.rows(), eig_mat_v.cols());
+  arg_eig_mat_d = value_of(eig_mat_v);
+  EXPECT_MATRIX_EQ(arg_eig_mat_d, value_of(eig_mat_v));
+
+  eig_vec eig_vec_v = eig_vec::Random(10);
+  arg_eig_vec arg_eig_vec_d = setup_adj_arg<eig_vec, true>(eig_vec_v.size());
+  arg_eig_vec_d = value_of(eig_vec_v);
+  EXPECT_MATRIX_EQ(arg_eig_vec_d, value_of(eig_vec_v));
+
+  std_vec std_vec_v;
+  for (int i = 0; i < 10; i++) {
+    std_vec_v.push_back(i);
+  }
+  arg_std_vec arg_std_vec_d = setup_adj_arg<std_vec, true>(std_vec_v.size());
+  arg_std_vec_d = adj_arg_t<std_vec>(value_of(std_vec_v).data(), std_vec_v.size());
+  for (int i = 0; i < 10; i++) {
+    EXPECT_FLOAT_EQ(arg_std_vec_d(i), std_vec_v[i]);
+  }
+
+
+  eig_row_vec eig_row_vec_v = eig_row_vec::Random(10);
+  arg_eig_row_vec arg_eig_row_vec_d = setup_adj_arg<eig_row_vec, true>(eig_row_vec_v.size());
+  arg_eig_row_vec_d = value_of(eig_row_vec_v);
+  EXPECT_MATRIX_EQ(arg_eig_row_vec_d, value_of(eig_row_vec_v));
+
+}
+
+TEST(AgradRev, setup_adj_arg_types_empty) {
+  using stan::math::adj_arg_t;
+  using stan::math::var;
+  using stan::math::setup_adj_arg;
+  using stan::math::value_of;
+  using eig_mat = Eigen::Matrix<var, -1, -1>;
+  using eig_vec = Eigen::Matrix<var, -1, 1>;
+  using eig_row_vec = Eigen::Matrix<var, 1, -1>;
+  using std_vec = std::vector<var>;
+  using arg_eig_mat = adj_arg_t<eig_mat>;
+  using arg_eig_vec = adj_arg_t<eig_vec>;
+  using arg_std_vec = adj_arg_t<std_vec>;
+  using arg_eig_row_vec = adj_arg_t<eig_row_vec>;
+
+  double A(1);
+  adj_arg_t<double> A_arg = setup_adj_arg<double, false>(value_of(A));
+  EXPECT_EQ(A_arg, 0);
+
+  eig_mat eig_mat_v = eig_mat::Random(10, 10);
+  arg_eig_mat arg_eig_mat_d = setup_adj_arg<eig_mat, false>(eig_mat_v.rows(), eig_mat_v.cols());
+  EXPECT_EQ(nullptr, arg_eig_mat_d.data());
+
+  eig_vec eig_vec_v = eig_vec::Random(10);
+  arg_eig_vec arg_eig_vec_d = setup_adj_arg<eig_vec, false>(eig_vec_v.size());
+  EXPECT_EQ(nullptr, arg_eig_vec_d.data());
+
+
+  std_vec std_vec_v;
+  for (int i = 0; i < 10; i++) {
+    std_vec_v.push_back(var(i));
+  }
+  arg_std_vec arg_std_vec_d = setup_adj_arg<std_vec, false>(std_vec_v.size());
+  EXPECT_EQ(nullptr, arg_std_vec_d.data());
+
+
+  eig_row_vec eig_row_vec_v = eig_row_vec::Random(10);
+  arg_eig_row_vec arg_eig_row_vec_d = setup_adj_arg<eig_row_vec, false>(eig_row_vec_v.size());
+  EXPECT_EQ(nullptr, arg_eig_row_vec_d.data());
+
 }
