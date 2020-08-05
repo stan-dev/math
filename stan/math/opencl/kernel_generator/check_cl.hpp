@@ -43,17 +43,17 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
   /**
    * Constructor.
    * @param function function name (for error messages)
-   * @param err_variabhle variable name (for error messages)
+   * @param err_variable variable name (for error messages)
    * @param y variable to check (for error messages)
    * @param must_be description of what the value must be (for error messages)
    */
-  check_cl_(const char* function, const char* err_variabhle, T&& y,
+  check_cl_(const char* function, const char* err_variable, T&& y,
             const char* must_be)
       : buffer_(3, 1),
         value_(1, 1),
         arg_(std::forward<T>(y)),
         function_(function),
-        err_variable_(err_variabhle),
+        err_variable_(err_variable),
         must_be_(must_be) {
     buffer_.zeros();
   }
