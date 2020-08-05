@@ -18,7 +18,7 @@ namespace math {
  * @param t1 upper integration bound
  * @param a coefficient of t in line
  * @param b constant in line
- * @param x0 point at which convolution is evaluated
+ * @param x point at which convolution is evaluated
  * @param sig2 variance of the Gaussian kernel
  * @return The value of the derivative
  */
