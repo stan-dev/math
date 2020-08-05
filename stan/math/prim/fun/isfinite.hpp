@@ -17,7 +17,7 @@ namespace math {
  * @param[in] v argument
  * @return true if argument is finite
  */
-template <typename ADType, require_autodiff_t<ADType>...>
+template <typename ADType, require_autodiff_t<ADType>* = nullptr>
 inline bool isfinite(ADType&& v) {
   using std::isfinite;
   return isfinite(v.val());

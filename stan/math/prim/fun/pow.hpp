@@ -3,29 +3,12 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <cmath>
 #include <complex>
 
 namespace stan {
 namespace math {
-
-// This overload is required becuase MINGW32 does not include the
-// specialization std::pow(double, int) as required by the C++11
-// standard library interface specification.  Use with other compilers
-// than MINGW32 would introduce an ambiguity with the standard library.
-#if __MINGW32__
-/**
- * Return the first argument raised to the power of the second
- * argument.
- *
- * @param x base
- * @param y exponent
- * @return base raised to the power of the exponent
- */
-inline double pow(double x, int y) {
-  return std::pow(x, static_cast<double>(y));
-}
-#endif
 
 namespace internal {
 
@@ -44,6 +27,24 @@ inline complex_return_t<U, V> complex_pow(const U& x, const V& y) {
   return exp(y * log(x));
 }
 }  // namespace internal
+
+/**
+ * Enables the vectorised application of the pow function, when
+ * the first and/or second arguments are containers.
+ *
+ * @tparam T1 type of first input
+ * @tparam T2 type of second input
+ * @param a First input
+ * @param b Second input
+ * @return pow function applied to the two inputs.
+ */
+template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
+inline auto pow(const T1& a, const T2& b) {
+  return apply_scalar_binary(a, b, [&](const auto& c, const auto& d) {
+    using std::pow;
+    return pow(c, d);
+  });
+}
 }  // namespace math
 }  // namespace stan
 #endif

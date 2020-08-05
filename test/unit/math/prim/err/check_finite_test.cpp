@@ -4,10 +4,8 @@
 #include <string>
 #include <vector>
 
-using stan::math::check_finite;
-
-// ---------- check_finite: vector tests ----------
 TEST(ErrorHandlingArr, CheckFinite_Vector) {
+  using stan::math::check_finite;
   const char* function = "check_finite";
   std::vector<double> x = {-1, 0, 1};
   ASSERT_NO_THROW(check_finite(function, "x", x))
@@ -26,7 +24,32 @@ TEST(ErrorHandlingArr, CheckFinite_Vector) {
       << "check_finite should throw exception on NaN";
 }
 
+TEST(ErrorHandlingArr, CheckFinite_std_vector_std_vector) {
+  using stan::math::check_finite;
+  const char* function = "check_finite";
+  std::vector<double> x = {-1, 0, 1};
+  std::vector<std::vector<double>> xx = {x};
+  ASSERT_NO_THROW(check_finite(function, "x", xx))
+      << "check_finite should be true with finite x";
+
+  x = {-1, 0, std::numeric_limits<double>::infinity()};
+  xx = {x};
+  EXPECT_THROW(check_finite(function, "x", xx), std::domain_error)
+      << "check_finite should throw exception on Inf";
+
+  x = {-1, 0, -std::numeric_limits<double>::infinity()};
+  xx = {x};
+  EXPECT_THROW(check_finite(function, "x", xx), std::domain_error)
+      << "check_finite should throw exception on -Inf";
+
+  x = {-1, 0, std::numeric_limits<double>::quiet_NaN()};
+  xx = {x};
+  EXPECT_THROW(check_finite(function, "x", xx), std::domain_error)
+      << "check_finite should throw exception on NaN";
+}
+
 TEST(ErrorHandlingArr, CheckFinite_nan) {
+  using stan::math::check_finite;
   const char* function = "check_finite";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
@@ -40,14 +63,20 @@ TEST(ErrorHandlingArr, CheckFinite_nan) {
   EXPECT_THROW(check_finite(function, "x", x), std::domain_error);
 }
 
-// ---------- check_finite: matrix tests ----------
 TEST(ErrorHandlingMat, CheckFinite_Matrix) {
+  using stan::math::check_finite;
   const char* function = "check_finite";
   Eigen::Matrix<double, Eigen::Dynamic, 1> x;
 
   x.resize(3);
   x << -1, 0, 1;
   ASSERT_NO_THROW(check_finite(function, "x", x))
+      << "check_finite should be true with finite x";
+
+  ASSERT_NO_THROW(check_finite(function, "x", x.array()))
+      << "check_finite should be true with finite x";
+
+  ASSERT_NO_THROW(check_finite(function, "x", x.transpose()))
       << "check_finite should be true with finite x";
 
   x.resize(3);
@@ -66,7 +95,48 @@ TEST(ErrorHandlingMat, CheckFinite_Matrix) {
       << "check_finite should throw exception on NaN";
 }
 
+TEST(ErrorHandlingMat, CheckFinite_std_vector_Matrix) {
+  using stan::math::check_finite;
+  const char* function = "check_finite";
+  Eigen::Matrix<double, Eigen::Dynamic, 1> x;
+
+  x.resize(3);
+  x << -1, 0, 1;
+
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> xv = {x};
+  std::vector<Eigen::Array<double, Eigen::Dynamic, 1>> xva = {x.array()};
+  std::vector<Eigen::Matrix<double, 1, Eigen::Dynamic>> xvt = {x.transpose()};
+
+  ASSERT_NO_THROW(check_finite(function, "x", xv))
+      << "check_finite should be true with finite x";
+
+  ASSERT_NO_THROW(check_finite(function, "x", xva))
+      << "check_finite should be true with finite x";
+
+  ASSERT_NO_THROW(check_finite(function, "x", xvt))
+      << "check_finite should be true with finite x";
+
+  x.resize(3);
+  x << -1, 0, std::numeric_limits<double>::infinity();
+  xv = {x};
+  EXPECT_THROW(check_finite(function, "x", xv), std::domain_error)
+      << "check_finite should throw exception on Inf";
+
+  x.resize(3);
+  x << -1, 0, -std::numeric_limits<double>::infinity();
+  xv = {x};
+  EXPECT_THROW(check_finite(function, "x", xv), std::domain_error)
+      << "check_finite should throw exception on -Inf";
+
+  x.resize(3);
+  x << -1, 0, std::numeric_limits<double>::quiet_NaN();
+  xv = {x};
+  EXPECT_THROW(check_finite(function, "x", xv), std::domain_error)
+      << "check_finite should throw exception on NaN";
+}
+
 TEST(ErrorHandlingMat, CheckFinite_Matrix_one_indexed_message) {
+  using stan::math::check_finite;
   const char* function = "check_finite";
   Eigen::Matrix<double, Eigen::Dynamic, 1> x;
   std::string message;
@@ -86,6 +156,7 @@ TEST(ErrorHandlingMat, CheckFinite_Matrix_one_indexed_message) {
 }
 
 TEST(ErrorHandlingMat, CheckFinite_nan) {
+  using stan::math::check_finite;
   const char* function = "check_finite";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
@@ -101,6 +172,7 @@ TEST(ErrorHandlingMat, CheckFinite_nan) {
 }
 
 TEST(ErrorHandlingScalar, CheckFinite) {
+  using stan::math::check_finite;
   const char* function = "check_finite";
   double x = 0;
 
@@ -119,6 +191,7 @@ TEST(ErrorHandlingScalar, CheckFinite) {
 }
 
 TEST(ErrorHandlingScalar, CheckFinite_nan) {
+  using stan::math::check_finite;
   const char* function = "check_finite";
   double nan = std::numeric_limits<double>::quiet_NaN();
 

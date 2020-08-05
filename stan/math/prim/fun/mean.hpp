@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <vector>
 
 namespace stan {
@@ -10,36 +11,18 @@ namespace math {
 
 /**
  * Returns the sample mean (i.e., average) of the coefficients
- * in the specified standard vector.
+ * in the specified std vector, vector, row vector, or matrix.
  *
- * @tparam T type of elements in the vector
- * @param v Specified vector.
- * @return Sample mean of vector coefficients.
- * @throws std::domain_error if the size of the vector is less
- * than 1.
+ * @tparam T type of the matrix
+ *
+ * @param m Specified std vector, vector, row vector, or matrix.
+ * @return Sample mean of container coefficients.
  */
-template <typename T>
-inline return_type_t<T> mean(const std::vector<T>& v) {
-  check_nonzero_size("mean", "v", v);
-  Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>> m(&v[0], v.size());
-  return m.mean();
-}
-
-/**
- * Returns the sample mean (i.e., average) of the coefficients
- * in the specified vector, row vector, or matrix.
- *
- * @tparam T type of elements in the matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
- *
- * @param m Specified vector, row vector, or matrix.
- * @return Sample mean of vector coefficients.
- */
-template <typename T, int R, int C>
-inline return_type_t<T> mean(const Eigen::Matrix<T, R, C>& m) {
+template <typename T, require_container_t<T>* = nullptr>
+inline return_type_t<T> mean(const T& m) {
   check_nonzero_size("mean", "m", m);
-  return m.mean();
+  return apply_vector_unary<T>::reduce(m,
+                                       [](const auto& a) { return a.mean(); });
 }
 
 }  // namespace math

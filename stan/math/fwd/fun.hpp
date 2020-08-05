@@ -1,6 +1,9 @@
 #ifndef STAN_MATH_FWD_FUN_HPP
 #define STAN_MATH_FWD_FUN_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/fwd/fun/Eigen_NumTraits.hpp>
+
 #include <stan/math/fwd/fun/abs.hpp>
 #include <stan/math/fwd/fun/acos.hpp>
 #include <stan/math/fwd/fun/acosh.hpp>
@@ -21,7 +24,6 @@
 #include <stan/math/fwd/fun/cosh.hpp>
 #include <stan/math/fwd/fun/determinant.hpp>
 #include <stan/math/fwd/fun/digamma.hpp>
-#include <stan/math/fwd/fun/Eigen_NumTraits.hpp>
 #include <stan/math/fwd/fun/erf.hpp>
 #include <stan/math/fwd/fun/erfc.hpp>
 #include <stan/math/fwd/fun/exp.hpp>
@@ -49,6 +51,7 @@
 #include <stan/math/fwd/fun/inverse.hpp>
 #include <stan/math/fwd/fun/is_inf.hpp>
 #include <stan/math/fwd/fun/is_nan.hpp>
+#include <stan/math/fwd/fun/lambert_w.hpp>
 #include <stan/math/fwd/fun/lbeta.hpp>
 #include <stan/math/fwd/fun/ldexp.hpp>
 #include <stan/math/fwd/fun/lgamma.hpp>
@@ -91,6 +94,7 @@
 #include <stan/math/fwd/fun/proj.hpp>
 #include <stan/math/fwd/fun/quad_form.hpp>
 #include <stan/math/fwd/fun/quad_form_sym.hpp>
+#include <stan/math/fwd/fun/read_fvar.hpp>
 #include <stan/math/fwd/fun/rising_factorial.hpp>
 #include <stan/math/fwd/fun/round.hpp>
 #include <stan/math/fwd/fun/sin.hpp>

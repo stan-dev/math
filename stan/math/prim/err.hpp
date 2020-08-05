@@ -8,7 +8,6 @@
 #include <stan/math/prim/err/check_cholesky_factor_corr.hpp>
 #include <stan/math/prim/err/check_column_index.hpp>
 #include <stan/math/prim/err/check_consistent_size.hpp>
-#include <stan/math/prim/err/check_consistent_size_mvt.hpp>
 #include <stan/math/prim/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/err/check_consistent_sizes_mvt.hpp>
 #include <stan/math/prim/err/check_corr_matrix.hpp>
@@ -29,6 +28,7 @@
 #include <stan/math/prim/err/check_nonzero_size.hpp>
 #include <stan/math/prim/err/check_not_nan.hpp>
 #include <stan/math/prim/err/check_ordered.hpp>
+#include <stan/math/prim/err/check_sorted.hpp>
 #include <stan/math/prim/err/check_pos_definite.hpp>
 #include <stan/math/prim/err/check_pos_semidefinite.hpp>
 #include <stan/math/prim/err/check_positive.hpp>
@@ -48,6 +48,7 @@
 #include <stan/math/prim/err/domain_error.hpp>
 #include <stan/math/prim/err/domain_error_vec.hpp>
 #include <stan/math/prim/err/elementwise_check.hpp>
+#include <stan/math/prim/err/hmm_check.hpp>
 #include <stan/math/prim/err/invalid_argument.hpp>
 #include <stan/math/prim/err/invalid_argument_vec.hpp>
 #include <stan/math/prim/err/is_cholesky_factor.hpp>

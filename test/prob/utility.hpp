@@ -5,9 +5,9 @@
 
 using stan::is_constant_all;
 using stan::is_vector;
+using stan::scalar_type;
 using stan::math::fvar;
 using stan::math::var;
-using stan::scalar_type;
 using std::vector;
 
 using size_type = stan::math::index_type_t<Eigen::Matrix<double, 1, 1>>;
@@ -596,7 +596,7 @@ typename scalar_type<T>::type select_var_param(
     const vector<vector<double>>& parameters, const size_t n, const size_t p) {
   typename scalar_type<T>::type param(0);
   if (p < parameters[0].size()) {
-    if (is_vector<T>::value && !is_constant_all<T>::value)
+    if (!is_constant_all<T>::value)
       param = parameters[n][p];
     else
       param = parameters[0][p];

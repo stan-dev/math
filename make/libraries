@@ -3,12 +3,12 @@
 
 MATH ?=
 BOOST ?= $(MATH)lib/boost_1.72.0
-EIGEN ?= $(MATH)lib/eigen_3.3.3
+EIGEN ?= $(MATH)lib/eigen_3.3.7
 OPENCL ?= $(MATH)lib/opencl_2.2.0
 TBB ?= $(MATH)lib/tbb_2019_U8
-SUNDIALS ?= $(MATH)lib/sundials_5.1.0
+SUNDIALS ?= $(MATH)lib/sundials_5.2.0
 GTEST ?= $(MATH)lib/gtest_1.8.1
-CPPLINT ?= $(MATH)lib/cpplint_4.45
+CPPLINT ?= $(MATH)lib/cpplint_1.4.5
 
 ################################################################################
 # SUNDIALS build rules
@@ -93,7 +93,7 @@ clean-sundials:
 # variable is used if defined.
 #
 # Note that the tbb targets must not be build in parallel (so no concurrent
-# build of tbb and tbbmalloc, for example). This is ensured here with proper 
+# build of tbb and tbbmalloc, for example). This is ensured here with proper
 # dependencies.
 #
 # On windows the mingw32-make (part of RTools, for example) is required to build
@@ -113,14 +113,21 @@ TBB_CXX_TYPE ?= $(CXX_TYPE)
 # Set c compiler used for the TBB
 ifeq (clang,$(CXX_TYPE))
   TBB_CC ?= $(subst clang++,clang,$(CXX))
+  TBB_CXXFLAGS ?= -Wno-unknown-warning-option -Wno-deprecated-copy
 endif
 ifeq (gcc,$(CXX_TYPE))
   TBB_CC ?= $(subst g++,gcc,$(CXX))
+  TBB_CXXFLAGS ?= -Wno-unknown-warning-option -Wno-missing-attributes -Wno-class-memaccess -Wno-sized-deallocation
 endif
 TBB_CC ?= $(CC)
 
 ifeq (,$(TBB_CC))
   $(error "Need to set TBB_CC to C compiler command for non-standard compiler other than gcc or clang.")
+endif
+
+# Set shell in order to use string matching for tbb-make-check
+ifeq (Linux, $(OS))
+  SHELL = /usr/bin/env bash
 endif
 
 $(TBB_BIN)/tbb-make-check:
@@ -137,11 +144,11 @@ $(TBB_BIN)/tbb-make-check:
 $(TBB_BIN)/tbb.def: $(TBB_BIN)/tbb-make-check $(TBB_BIN)/tbbmalloc.def
 	@mkdir -p $(TBB_BIN)
 	touch $(TBB_BIN)/version_$(notdir $(TBB))
-	tbb_root="$(TBB_RELATIVE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS='$(LDFLAGS_TBB)' $(MAKE) -C "$(TBB_BIN)" -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbb" compiler=$(TBB_CXX_TYPE) cfg=release stdver=c++1y
+	tbb_root="$(TBB_RELATIVE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS='$(LDFLAGS_TBB)' $(MAKE) -C "$(TBB_BIN)" -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbb" compiler=$(TBB_CXX_TYPE) cfg=release stdver=c++1y  CXXFLAGS="$(TBB_CXXFLAGS)"
 
 $(TBB_BIN)/tbbmalloc.def: $(TBB_BIN)/tbb-make-check
 	@mkdir -p $(TBB_BIN)
-	tbb_root="$(TBB_RELATIVE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS='$(LDFLAGS_TBB)' $(MAKE) -C "$(TBB_BIN)" -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" compiler=$(TBB_CXX_TYPE) cfg=release stdver=c++1y malloc
+	tbb_root="$(TBB_RELATIVE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS='$(LDFLAGS_TBB)' $(MAKE) -C "$(TBB_BIN)" -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" compiler=$(TBB_CXX_TYPE) cfg=release stdver=c++1y malloc CXXFLAGS="$(TBB_CXXFLAGS)"
 
 $(TBB_BIN)/libtbb.dylib: $(TBB_BIN)/tbb.def
 $(TBB_BIN)/libtbbmalloc.dylib: $(TBB_BIN)/tbbmalloc.def

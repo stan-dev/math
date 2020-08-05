@@ -59,8 +59,8 @@ class AgradCdfUniform : public AgradCdfTest {
                                                        const T_high& beta,
                                                        const T3&, const T4&,
                                                        const T5&) {
-    using stan::math::LOG_ZERO;
     using stan::math::include_summand;
+    using stan::math::LOG_ZERO;
 
     if (y < alpha || y > beta)
       return 0.0;

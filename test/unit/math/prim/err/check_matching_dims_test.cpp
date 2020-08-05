@@ -27,6 +27,50 @@ TEST(ErrorHandlingMatrix, checkMatchingDimsMatrix) {
       std::invalid_argument);
 }
 
+TEST(ErrorHandlingMatrix, checkMatchingDimsArray) {
+  std::vector<double> y(3);
+  std::vector<double> x(3);
+
+  EXPECT_NO_THROW(
+      stan::math::check_matching_dims("checkMatchingDims", "x", x, "y", y));
+  x.resize(0);
+  y.resize(0);
+  EXPECT_NO_THROW(
+      stan::math::check_matching_dims("checkMatchingDims", "x", x, "y", y));
+
+  y.resize(1);
+  EXPECT_THROW(
+      stan::math::check_matching_dims("checkMatchingDims", "x", x, "y", y),
+      std::invalid_argument);
+
+  x.resize(2);
+  EXPECT_THROW(
+      stan::math::check_matching_dims("checkMatchingDims", "x", x, "y", y),
+      std::invalid_argument);
+}
+
+TEST(ErrorHandlingMatrix, checkMatchingDimsVectorArray) {
+  std::vector<Eigen::VectorXd> y(3, Eigen::VectorXd(3));
+  std::vector<Eigen::VectorXd> x(3, Eigen::VectorXd(3));
+
+  EXPECT_NO_THROW(
+      stan::math::check_matching_dims("checkMatchingDims", "x", x, "y", y));
+  x.resize(0);
+  y.resize(0);
+  EXPECT_NO_THROW(
+      stan::math::check_matching_dims("checkMatchingDims", "x", x, "y", y));
+
+  y.resize(1, Eigen::VectorXd(3));
+  EXPECT_THROW(
+      stan::math::check_matching_dims("checkMatchingDims", "x", x, "y", y),
+      std::invalid_argument);
+
+  x.resize(1, Eigen::VectorXd(2));
+  EXPECT_THROW(
+      stan::math::check_matching_dims("checkMatchingDims", "x", x, "y", y),
+      std::invalid_argument);
+}
+
 TEST(ErrorHandlingMatrix, checkMatchingDimsMatrix_nan) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x;

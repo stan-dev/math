@@ -1,4 +1,5 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/math/prim/fun/binary_scalar_tester.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
@@ -48,8 +49,8 @@ TEST(MathFunctions, binomial_coefficient_log_nan) {
 }
 
 TEST(MathFunctions, binomial_coefficient_log_errors_edge_cases) {
-  using stan::math::INFTY;
   using stan::math::binomial_coefficient_log;
+  using stan::math::INFTY;
 
   EXPECT_NO_THROW(binomial_coefficient_log(10, 11));
   EXPECT_THROW(binomial_coefficient_log(10, 11.01), std::domain_error);
@@ -63,4 +64,17 @@ TEST(MathFunctions, binomial_coefficient_log_errors_edge_cases) {
   EXPECT_FLOAT_EQ(binomial_coefficient_log(-1, -0.3), INFTY);
   EXPECT_FLOAT_EQ(binomial_coefficient_log(0.3, -1), -INFTY);
   EXPECT_FLOAT_EQ(binomial_coefficient_log(5.0, 6.0), -INFTY);
+}
+
+TEST(MathFunctions, binomial_coefficient_log_vec) {
+  auto f = [](const auto& x1, const auto& x2) {
+    using stan::math::binomial_coefficient_log;
+    return binomial_coefficient_log(x1, x2);
+  };
+
+  Eigen::VectorXd in1(3);
+  in1 << 6.5, 13, 15;
+  Eigen::VectorXd in2(3);
+  in2 << 0.2, 0.7, 2.8;
+  stan::test::binary_scalar_tester(f, in1, in2);
 }

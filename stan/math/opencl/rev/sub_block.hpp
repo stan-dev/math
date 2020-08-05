@@ -11,7 +11,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup matrix_cl_group
  * Write the contents of A into
  * \c this starting at the top left of \c this
  * @param A input matrix

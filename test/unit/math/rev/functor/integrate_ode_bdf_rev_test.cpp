@@ -26,6 +26,8 @@ void sho_value_test(F harm_osc, std::vector<double>& y0, double t0,
 
   EXPECT_NEAR(-0.421907, ode_res_vd[99][0].val(), 1e-5);
   EXPECT_NEAR(0.246407, ode_res_vd[99][1].val(), 1e-5);
+
+  stan::math::recover_memory();
 }
 
 void sho_finite_diff_test(double t0) {
@@ -129,7 +131,7 @@ TEST(StanAgradRevOde_integrate_ode_bdf, harmonic_oscillator_error) {
 
   // aligned error handling with non-stiff case
   std::string error_msg
-      = "cvodes_ode_data: dz_dt (3) and states (2) must match in size";
+      = "cvodes_integrator: dy_dt (3) and states (2) must match in size";
 
   sho_error_test<double, var>(harm_osc, y0, t0, ts, theta, x, x_int, error_msg);
   sho_error_test<var, double>(harm_osc, y0, t0, ts, theta, x, x_int, error_msg);
@@ -159,7 +161,7 @@ TEST(StanAgradRevOde_integrate_ode_bdf, lorenz_finite_diff) {
   for (int i = 0; i < 100; i++)
     ts.push_back(0.1 * (i + 1));
 
-  test_ode_cvode(lorenz, t0, ts, y0, theta, x, x_int, 1e-8, 1e-1);
+  test_ode_cvode(lorenz, t0, ts, y0, theta, x, x_int, 1e-6, 1e-1);
 }
 
 TEST(StanAgradRevOde_integrate_ode_bdf, time_steps_as_param) {
@@ -202,6 +204,8 @@ TEST(StanAgradRevOde_integrate_ode_bdf, time_steps_as_param) {
   test_val();
   res = integrate_ode_bdf(ode, y0v, t0v, ts, thetav, x, x_int);
   test_val();
+
+  stan::math::recover_memory();
 }
 
 TEST(StanAgradRevOde_integrate_ode_bdf, time_steps_as_param_AD) {
@@ -234,13 +238,13 @@ TEST(StanAgradRevOde_integrate_ode_bdf, time_steps_as_param_AD) {
       std::vector<double> res_d = value_of(res[i]);
       for (auto j = 0; j < ns; ++j) {
         g.clear();
-        res[i][j].grad(ts, g);
+        res[i][j].grad();
         for (auto k = 0; k < nt; ++k) {
           if (k != i) {
-            EXPECT_FLOAT_EQ(g[k], 0.0);
+            EXPECT_FLOAT_EQ(ts[k].adj(), 0.0);
           } else {
             std::vector<double> y0(res_d.begin(), res_d.begin() + ns);
-            EXPECT_FLOAT_EQ(g[k],
+            EXPECT_FLOAT_EQ(ts[k].adj(),
                             ode(ts[i].val(), y0, theta, x, x_int, msgs)[j]);
           }
         }
@@ -264,43 +268,46 @@ TEST(StanAgradRevOde_integrate_ode_bdf, t0_as_param_AD) {
   using stan::math::value_of;
   using stan::math::var;
   const double t0 = 0.0;
-  const int nt = 100;  // nb. of time steps
-  const int ns = 2;    // nb. of states
   std::ostream* msgs = NULL;
 
-  forced_harm_osc_ode_fun ode;
+  harm_osc_ode_fun ode;
 
-  std::vector<double> theta{0.15, 0.25};
+  std::vector<double> theta{0.15};
   std::vector<double> y0{1.0, 0.0};
-  std::vector<double> ts;
-  for (int i = 0; i < nt; i++)
-    ts.push_back(t0 + 0.1 * (i + 1));
+  std::vector<double> ts = {5.0, 10.0};
 
   std::vector<double> x;
   std::vector<int> x_int;
   std::vector<stan::math::var> y0v = to_var(y0);
   std::vector<stan::math::var> thetav = to_var(theta);
-  stan::math::var t0v = 0.0;
+  stan::math::var t0v = to_var(t0);
 
   std::vector<std::vector<stan::math::var> > res;
-  auto test_ad = [&res, &t0v, &ode, &nt, &ns, &theta, &x, &x_int, &msgs]() {
-    for (auto i = 0; i < nt; ++i) {
-      std::vector<double> res_d = value_of(res[i]);
-      for (auto j = 0; j < ns; ++j) {
-        res[i][j].grad();
-        for (auto k = 0; k < nt; ++k) {
-          EXPECT_FLOAT_EQ(t0v.adj(), 0.0);
-        }
-        stan::math::set_zero_all_adjoints();
-      }
-    }
+  auto test_ad = [&res, &t0v, &ode, &theta, &x, &x_int, &msgs]() {
+    res[0][0].grad();
+    EXPECT_FLOAT_EQ(t0v.adj(), -0.66360742442816977871);
+    stan::math::set_zero_all_adjoints();
+    res[0][1].grad();
+    EXPECT_FLOAT_EQ(t0v.adj(), 0.23542843380353062344);
+    stan::math::set_zero_all_adjoints();
+    res[1][0].grad();
+    EXPECT_FLOAT_EQ(t0v.adj(), -0.2464078910913158893);
+    stan::math::set_zero_all_adjoints();
+    res[1][1].grad();
+    EXPECT_FLOAT_EQ(t0v.adj(), -0.38494826636037426937);
+    stan::math::set_zero_all_adjoints();
   };
-  res = integrate_ode_bdf(ode, y0, t0v, ts, theta, x, x_int);
+  res = integrate_ode_bdf(ode, y0, t0v, ts, theta, x, x_int, nullptr, 1e-10,
+                          1e-10, 1e6);
   test_ad();
-  res = integrate_ode_bdf(ode, y0v, t0v, ts, theta, x, x_int);
+  res = integrate_ode_bdf(ode, y0v, t0v, ts, theta, x, x_int, nullptr, 1e-10,
+                          1e-10, 1e6);
   test_ad();
-  res = integrate_ode_bdf(ode, y0, t0v, ts, thetav, x, x_int);
+  res = integrate_ode_bdf(ode, y0, t0v, ts, thetav, x, x_int, nullptr, 1e-10,
+                          1e-10, 1e6);
   test_ad();
-  res = integrate_ode_bdf(ode, y0v, t0v, ts, thetav, x, x_int);
+  res = integrate_ode_bdf(ode, y0v, t0v, ts, thetav, x, x_int, nullptr, 1e-10,
+                          1e-10, 1e6);
   test_ad();
+  stan::math::recover_memory();
 }

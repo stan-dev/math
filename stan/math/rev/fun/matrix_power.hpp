@@ -6,6 +6,7 @@
 #include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <vector>
 
@@ -129,31 +130,34 @@ class matrix_product_vari : public vari {
  * @throw std::invalid_argument if the exponent is negative or the matrix is not
  * square.
  */
-template <int R, int C>
-inline Eigen::Matrix<var, R, C> matrix_power(const Eigen::Matrix<var, R, C>& M,
-                                             const int n) {
+template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
+                     EigMat::ColsAtCompileTime>
+matrix_power(const EigMat& M, const int n) {
+  using T = value_type_t<EigMat>;
+  constexpr int R = EigMat::RowsAtCompileTime;
+  constexpr int C = EigMat::ColsAtCompileTime;
+
   check_square("matrix_power", "M", M);
   if (n < 0)
     invalid_argument("matrix_power", "n", n, "is ", ", but must be >= 0!");
   if (M.rows() == 0)
     invalid_argument("matrix_power", "M.rows()", M.rows(), "is ",
                      ", but must be > 0!");
-  check_finite("matrix_power", "M", M);
+  const auto& M_ref = to_ref(M);
+  check_finite("matrix_power", "M", M_ref);
   if (n == 0) {
-    internal::matrix_product_vari_n0<R, C>* baseVari
-        = new internal::matrix_product_vari_n0<R, C>(M);
+    auto* baseVari = new internal::matrix_product_vari_n0<R, C>(M_ref);
     Eigen::Matrix<var, R, C> Mn(M.rows(), M.cols());
     Mn.vi() = Eigen::Map<matrix_vi>(baseVari->adjMnRef_, M.rows(), M.cols());
     return Mn;
   } else if (n == 1) {
-    internal::matrix_product_vari_n1<R, C>* baseVari
-        = new internal::matrix_product_vari_n1<R, C>(M);
+    auto* baseVari = new internal::matrix_product_vari_n1<R, C>(M_ref);
     Eigen::Matrix<var, R, C> Mn(M.rows(), M.cols());
     Mn.vi() = Eigen::Map<matrix_vi>(baseVari->adjMnRef_, M.rows(), M.cols());
     return Mn;
   } else {
-    internal::matrix_product_vari<R, C>* baseVari
-        = new internal::matrix_product_vari<R, C>(M, n);
+    auto* baseVari = new internal::matrix_product_vari<R, C>(M_ref, n);
     Eigen::Matrix<var, R, C> Mn(M.rows(), M.cols());
     Mn.vi() = Eigen::Map<matrix_vi>(baseVari->adjMnRef_, M.rows(), M.cols());
     return Mn;
