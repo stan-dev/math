@@ -147,12 +147,12 @@ TEST(StanAgradRevInternal, precomputed_gradients_containers_direct_construction)
   stan::math::var lp
       = new stan::math::precomputed_gradients_vari_template<
           std::tuple<
-            stan::math::var_value<Eigen::MatrixXd>&,
-            std::vector<stan::math::var_value<Eigen::MatrixXd>>&
+            stan::AD_stack_t<stan::math::var_value<Eigen::MatrixXd>>,
+            stan::AD_stack_t<std::vector<stan::math::var_value<Eigen::MatrixXd>>>
           >,
           std::tuple<
-            Eigen::MatrixXd,
-            std::vector<Eigen::MatrixXd>
+            stan::AD_stack_t<Eigen::MatrixXd>,
+            stan::AD_stack_t<std::vector<Eigen::MatrixXd>>
           >>(value, 0, nullptr, nullptr, ops, grads);
   (2 * lp).grad();
   EXPECT_MATRIX_EQ(a.adj(), Eigen::MatrixXd::Constant(3, 3, -2));

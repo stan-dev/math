@@ -4,6 +4,7 @@
 #include <stan/math/prim/err/check_matching_dims.hpp>
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/var.hpp>
+#include <stan/math/rev/fun/to_ad_stack.hpp>
 #include <algorithm>
 #include <vector>
 #include <tuple>
@@ -18,7 +19,7 @@ namespace math {
  * Stan users should use function precomputed_gradients()
  * directly.
  *
- * @tparam ContainerOperands tuple of any container operands (lvalue references to var_value
+ * @tparam ContainerOperands tuple of any container operands ((optionally std vector of) var_value
  * containing Eigen types)
  * @tparam ContainerGradients tuple of any container gradients (Eigen types)
  */
@@ -73,17 +74,17 @@ class precomputed_gradients_vari_template : public vari {
             typename... ContainerGrads>
   precomputed_gradients_vari_template(double val, size_t size, vari** varis,
                                       double* gradients,
-                                      const std::tuple<ContainerOps&...>& container_operands
+                                      const std::tuple<ContainerOps...>& container_operands
                                       = std::tuple<>(),
                                       const std::tuple<ContainerGrads...>& container_gradients
                                       = std::tuple<>())
       : vari(val),
         size_(size),
         varis_(varis),
-        gradients_(gradients),
-  container_operands_(container_operands){
+        gradients_(gradients){
       index_apply<N_containers>([&, this](auto... Is){
-          this->container_gradients_ = {std::forward<ContainerGrads>(std::get<Is>(container_gradients))...};
+          this->container_operands_ = std::make_tuple(to_AD_stack(std::get<Is>(container_operands))...);
+          this->container_gradients_ = std::make_tuple(to_AD_stack(std::get<Is>(container_gradients))...);
       });
     check_sizes(std::make_index_sequence<N_containers>());
   }
@@ -114,7 +115,7 @@ class precomputed_gradients_vari_template : public vari {
             require_all_vector_t<VecVar, VecArith>* = nullptr>
   precomputed_gradients_vari_template(Arith val, const VecVar& vars,
                                       const VecArith& gradients,
-                                      const std::tuple<ContainerOps&...>& container_operands
+                                      const std::tuple<ContainerOps...>& container_operands
                                       = std::tuple<>(),
                                       const std::tuple<ContainerGrads...>& container_gradients
                                       = std::tuple<>())
@@ -123,10 +124,10 @@ class precomputed_gradients_vari_template : public vari {
         varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             vars.size())),
         gradients_(ChainableStack::instance_->memalloc_.alloc_array<double>(
-            vars.size())),
-        container_operands_(container_operands){
+            vars.size())){
       index_apply<N_containers>([&, this](auto... Is){
-          this->container_gradients_ = {std::forward<ContainerGrads>(std::get<Is>(container_gradients))...};
+          this->container_operands_ = std::make_tuple(to_AD_stack(std::get<Is>(container_operands))...);
+          this->container_gradients_ = std::make_tuple(to_AD_stack(std::get<Is>(container_gradients))...);
       });
     check_consistent_sizes("precomputed_gradients_vari", "vars", vars,
                            "gradients", gradients);
@@ -174,8 +175,8 @@ class precomputed_gradients_vari_template : public vari {
    * @param op operand
    * @param grad gradient
    */
-  template <typename Op, typename Grad>
-  void chain_one(const std::vector<Op>& op, const std::vector<Grad>& grad) {
+  template <typename Op, typename OpAlloc, typename Grad, typename GradAlloc>
+  void chain_one(const std::vector<Op, OpAlloc>& op, const std::vector<Grad, GradAlloc>& grad) {
     for (int i = 0; i < op.size(); i++) {
       chain_one(op[i], grad[i]);
     }
@@ -215,8 +216,8 @@ inline var precomputed_gradients(Arith value, const VecVar& operands,
                                  const std::tuple<ContainerGradients...>& container_gradients
                                  = std::tuple<>()) {
   return {
-      new precomputed_gradients_vari_template<std::tuple<ContainerOperands...>,
-              std::tuple<std::decay_t<ContainerGradients>...>>(
+      new precomputed_gradients_vari_template<std::tuple<AD_stack_t<ContainerOperands>...>,
+              std::tuple<AD_stack_t<ContainerGradients>...>>(
           value, operands, gradients,
           container_operands,
           container_gradients)};

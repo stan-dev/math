@@ -139,6 +139,7 @@
 #include <stan/math/rev/fun/tcrossprod.hpp>
 #include <stan/math/rev/fun/tgamma.hpp>
 #include <stan/math/rev/fun/to_var.hpp>
+#include <stan/math/rev/fun/to_ad_stack.hpp>
 #include <stan/math/rev/fun/trace_gen_inv_quad_form_ldlt.hpp>
 #include <stan/math/rev/fun/trace_gen_quad_form.hpp>
 #include <stan/math/rev/fun/trace_inv_quad_form_ldlt.hpp>

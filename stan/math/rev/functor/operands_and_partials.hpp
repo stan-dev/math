@@ -160,8 +160,8 @@ private:
                     const std::tuple<Ops...>& container_operands,
                     const std::tuple<Partials...>& container_partials){
       //Partials are decayed, so precomputed_gradients_vari_template always stores values, not references
-      return new precomputed_gradients_vari_template<std::tuple<Ops...>,
-              std::tuple<std::decay_t<Partials>...>>(
+      return new precomputed_gradients_vari_template<std::tuple<AD_stack_t<Ops>...>,
+              std::tuple<AD_stack_t<Partials>...>>(
         value, edges_size, varis, partials, container_operands, container_partials);
   }
 };

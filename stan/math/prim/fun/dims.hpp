@@ -37,11 +37,12 @@ inline void dims(const T& x, std::vector<int>& result) {
  *
  * For a `std::vector` that is its size and dimensions of its elements.
  * @tparam type of scalar
+ * @tparam Alloc type of allocator
  * @param x argument
  * @param result result
  */
-template <typename T>
-inline void dims(const std::vector<T>& x, std::vector<int>& result) {
+template <typename T, typename Alloc>
+inline void dims(const std::vector<T, Alloc>& x, std::vector<int>& result) {
   result.push_back(x.size());
   if (x.size() > 0) {
     dims(x[0], result);
