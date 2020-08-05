@@ -274,9 +274,9 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
         val_(eigen_map(val_mem_, x.rows(), x.cols()) = x),
         adj_(eigen_map(adj_mem_, x.rows(), x.cols()).setZero()) {
     if (stacked) {
-      ChainableStack::instance_->var_stack_.push_back(this);
+      ChainableStack::instance_->var_stack_.emplace_back(this);
     } else {
-      ChainableStack::instance_->var_nochain_stack_.push_back(this);
+      ChainableStack::instance_->var_nochain_stack_.emplace_back(this);
     }
   }
 
@@ -503,7 +503,7 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
    * @param nbytes Number of bytes to allocate.
    * @return Pointer to allocated bytes.
    */
-  static inline void* operator new(size_t nbytes) {
+  static inline void* operator new(size_t nbytes) noexcept {
     return ChainableStack::instance_->memalloc_.alloc(nbytes);
   }
 
@@ -518,7 +518,8 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
    * See the discussion of "plugging the memory leak" in:
    *   http://www.parashift.com/c++-faq/memory-pools.html
    */
-  static inline void operator delete(void* /* ignore arg */) { /* no op */
+  static inline void operator delete(
+      void* /* ignore arg */) noexcept { /* no op */
   }
 
  private:
@@ -527,6 +528,9 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
   template <typename, typename>
   friend class vari_value;
 };
+
+// For backwards compatability the default is double
+using vari = vari_value<double>;
 
 }  // namespace math
 }  // namespace stan
