@@ -136,7 +136,8 @@ class var_value {
    * @param g Gradient vector of partial derivatives of this
    * variable with respect to x.
    */
-  template <typename CheckContainer = value_type, require_not_container_t<CheckContainer>* = nullptr>
+  template <typename CheckContainer = value_type,
+            require_not_container_t<CheckContainer>* = nullptr>
   inline void grad(std::vector<var_value<T>>& x, std::vector<value_type>& g) {
     stan::math::grad(vi_);
     g.resize(x.size());
@@ -154,8 +155,11 @@ class var_value {
    *  types.
    * The grad() function does <i>not</i> recover memory.
    */
-  template <typename CheckContainer = value_type, require_not_container_t<CheckContainer>* = nullptr>
-  void grad() { stan::math::grad(vi_); }
+  template <typename CheckContainer = value_type,
+            require_not_container_t<CheckContainer>* = nullptr>
+  void grad() {
+    stan::math::grad(vi_);
+  }
 
   // POINTER OVERRIDES
 
