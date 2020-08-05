@@ -11,7 +11,7 @@ namespace stan {
 namespace math {
 
 namespace internal {
-class decrement_vari : public op_v_vari {
+class decrement_vari final : public op_v_vari {
  public:
   explicit decrement_vari(vari* avi) : op_v_vari(avi->val_ - 1.0, avi) {}
   void chain() {

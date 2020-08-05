@@ -8,3 +8,10 @@ TEST(AgradRev, insertion_operator) {
   ss << &v;
   EXPECT_EQ("5:0", ss.str());
 }
+
+TEST(AgradRev, long_double_test) {
+  stan::math::vari_value<long double> v(5);
+  std::stringstream ss;
+  ss << &v;
+  EXPECT_EQ("5:0", ss.str());
+}

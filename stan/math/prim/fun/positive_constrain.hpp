@@ -40,8 +40,8 @@ inline auto positive_constrain(const T& x) {
  * @param lp log density reference.
  * @return positive constrained version of unconstrained value(s)
  */
-template <typename T>
-inline auto positive_constrain(const T& x, value_type_t<T>& lp) {
+template <typename T, typename S>
+inline auto positive_constrain(const T& x, S& lp) {
   lp += sum(x);
   return exp(x);
 }
