@@ -49,7 +49,7 @@ class AD_stack_matrix : public Eigen::Map<MatrixType> {
    * @param other expression
    */
   template <typename T, require_eigen_t<T>* = nullptr>
-  AD_stack_matrix(const T& other) // NOLINT
+  AD_stack_matrix(const T& other)  // NOLINT
       : Eigen::Map<MatrixType>::Map(
             ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
                 other.size()),
