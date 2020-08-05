@@ -4,6 +4,54 @@
 
 double ABS_TOL = 1e-12;
 
+TEST(mathPrimGausInterp, throwing) {
+  using stan::math::gaus_interp;
+  using stan::math::gaus_interp_precomp;
+  using stan::math::gaus_interp_params;
+  double nan = std::numeric_limits<double>::quiet_NaN();
+  double x;
+  vector<double> xs, ys;
+
+  // check that when xs are not increasing, an error throws
+  int n = 2;
+  xs = {1, 1};
+  ys = {0, 2};
+  EXPECT_THROW(gaus_interp_precomp(xs, ys), std::domain_error);
+
+  // check that when xs contain a nan
+  xs = {nan, 1};
+  ys = {0, 2};
+  EXPECT_THROW(gaus_interp_precomp(xs, ys), std::domain_error);
+
+  // check that error throws when trying to interpolate out of range or nan
+  xs = {0, 1};
+  ys = {0, 2};
+  gaus_interp_params params = gaus_interp_precomp(xs, ys);
+  x = 1.1;
+  EXPECT_THROW(gaus_interp(xs, ys, params, x), std::domain_error);
+  x = -0.1;
+  EXPECT_THROW(gaus_interp(xs, ys, params, x), std::domain_error);
+  x = nan;
+  EXPECT_THROW(gaus_interp(xs, ys, params, x), std::domain_error);
+
+  // ys can't contain nan
+  xs = {0, 1};
+  ys = {0, nan};
+  x = 0.5;
+  EXPECT_THROW(gaus_interp(xs, ys, params, x), std::domain_error);
+
+  // xs can't contain nan
+  xs = {0, nan};
+  ys = {0, 2};
+  x = 0.5;
+  EXPECT_THROW(gaus_interp(xs, ys, params, x), std::domain_error);
+
+  // xs must be increasing
+  xs = {1, 1};
+  ys = {0, 2};
+  EXPECT_THROW(gaus_interp(xs, ys, params, x), std::domain_error);
+}
+
 TEST(mathPrimGausInterp, interp_line) {
   using stan::math::gaus_interp;
   using stan::math::gaus_interp_params;

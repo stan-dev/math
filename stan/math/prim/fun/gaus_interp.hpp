@@ -20,12 +20,6 @@ struct gaus_interp_params {
 
 namespace internal {
 
-// struct for passing precomputation data
-struct asbs {
-  std::vector<double> as;
-  std::vector<double> bs;
-};
-
 /*
 find the smallest difference between successive elements in a sorted vector
 */
@@ -67,14 +61,17 @@ inline return_type_t<Tx> gaus_interp(std::vector<double> const& xs,
                                      std::vector<double> const& ys,
                                      gaus_interp_params const& params,
                                      Tx const& x) {
-  const double NSTDS = 10;
-
   // enforce that interpolation point is between smallest and largest
   // reference point
-  static char const* function = "interp_gaus_pt";
+  static char const* function = "gaus_interp";
   check_less_or_equal(function, "Interpolation point", x, xs.back());
   check_greater_or_equal(function, "Interpolation point", x, xs.front());
+  check_ordered(function, "xs", xs);
+  check_not_nan(function, "xs", xs);
+  check_not_nan(function, "ys", ys);
+  check_not_nan(function, "x", x);
 
+  const double NSTDS = 10;
   int n = xs.size();
 
   // create copy of xs so that endpoints can be extended
@@ -125,9 +122,13 @@ inline return_type_t<Tx> gaus_interp(std::vector<double> const& xs,
  */
 gaus_interp_params gaus_interp_precomp(std::vector<double> const& xs,
                                        std::vector<double> const& ys) {
+  static char const* function = "gaus_interp_precomp";
+  check_not_nan(function, "xs", xs);
+  check_not_nan(function, "ys", ys);
+  check_ordered(function, "xs", xs);
+
   using internal::min_diff;
   gaus_interp_params params;
-  internal::asbs coefs;
   const double INTERP_TOL = 1e-8;
   const double SIG2_SCALE = 0.1;
   int n = xs.size();
