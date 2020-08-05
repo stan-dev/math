@@ -28,6 +28,18 @@ struct AD_allocator {
    * No-op. Memory is dealocated by caling `recover_memory()`.
    */
   void deallocate(T* /*p*/, std::size_t /*n*/) noexcept {}
+
+  /**
+   * Equality comparison operator.
+   * @return true
+   */
+  bool operator==(const AD_allocator&){ return true; }
+
+  /**
+   * Inequality comparison operator.
+   * @return false
+   */
+  bool operator!=(const AD_allocator&){ return false; }
 };
 
 }  // namespace math
