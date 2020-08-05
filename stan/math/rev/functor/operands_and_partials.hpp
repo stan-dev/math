@@ -142,27 +142,34 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
         edge3_.container_partials(), edge4_.container_partials(),
         edge5_.container_partials());
 
-    return var(return_vari(value, edges_size, varis, partials, container_operands, container_partials));
+    return var(return_vari(value, edges_size, varis, partials,
+                           container_operands, container_partials));
   }
 
-private:
+ private:
   /**
    * Deduces types and constructs the vari to return from `build()`.
    * @param value the value
-   * @param edges_size number of elements in all non-var_value of container edges
+   * @param edges_size number of elements in all non-var_value of container
+   * edges
    * @param varis pointer to varis from non-var_value of container edges
-   * @param partials pointer to values for partials from non-var_value of container edges
+   * @param partials pointer to values for partials from non-var_value of
+   * container edges
    * @param container_operands operands from var_value of container edges
-   * @param container_partials partial derivatives from var_value of container edges
+   * @param container_partials partial derivatives from var_value of container
+   * edges
    */
-  template<typename... Ops, typename... Partials>
-  auto* return_vari(double value, size_t edges_size, vari** varis, double* partials,
+  template <typename... Ops, typename... Partials>
+  auto* return_vari(double value, size_t edges_size, vari** varis,
+                    double* partials,
                     const std::tuple<Ops...>& container_operands,
-                    const std::tuple<Partials...>& container_partials){
-      //Partials are decayed, so precomputed_gradients_vari_template always stores values, not references
-      return new precomputed_gradients_vari_template<std::tuple<AD_stack_t<Ops>...>,
-              std::tuple<AD_stack_t<Partials>...>>(
-        value, edges_size, varis, partials, container_operands, container_partials);
+                    const std::tuple<Partials...>& container_partials) {
+    // Partials are decayed, so precomputed_gradients_vari_template always
+    // stores values, not references
+    return new precomputed_gradients_vari_template<
+        std::tuple<AD_stack_t<Ops>...>, std::tuple<AD_stack_t<Partials>...>>(
+        value, edges_size, varis, partials, container_operands,
+        container_partials);
   }
 };
 
