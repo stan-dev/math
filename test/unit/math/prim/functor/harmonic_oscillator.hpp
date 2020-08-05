@@ -28,6 +28,25 @@ struct harm_osc_ode_fun {
   }
 };
 
+struct harm_osc_ode_fun_eigen {
+  template <typename T0, typename T1, typename T2>
+  inline auto operator()(const T0& t_in,
+                         const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y_in,
+                         std::ostream* msgs, const std::vector<T2>& theta,
+                         const std::vector<double>& x,
+                         const std::vector<int>& x_int) const {
+    if (y_in.size() != 2)
+      throw std::domain_error(
+          "this function was called with inconsistent state");
+
+    Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1> res(2);
+    res(0) = y_in(1);
+    res(1) = -y_in(0) - theta[0] * y_in(1);
+
+    return res;
+  }
+};
+
 struct harm_osc_ode_data_fun {
   template <typename T0, typename T1, typename T2>
   inline std::vector<stan::return_type_t<T1, T2>>

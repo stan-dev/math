@@ -29,7 +29,9 @@ namespace math {
  * @throw std::domain_error if m is not a symmetric matrix or
  *   if m is not positive definite (if m has more than 0 elements)
  */
-template <typename EigMat, require_eigen_vt<is_fvar, EigMat>* = nullptr>
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
+          require_not_vt_same<double, EigMat>* = nullptr,
+          require_not_eigen_vt<is_var, EigMat>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
                      EigMat::ColsAtCompileTime>
 cholesky_decompose(const EigMat& m) {
@@ -60,8 +62,8 @@ cholesky_decompose(const EigMat& m) {
  *   if m is not positive definite (if m has more than 0 elements)
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
-          require_same_t<double, value_type_t<EigMat>>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
+          require_vt_same<double, EigMat>* = nullptr>
+inline Eigen::Matrix<double, EigMat::RowsAtCompileTime,
                      EigMat::ColsAtCompileTime>
 cholesky_decompose(const EigMat& m) {
   const eval_return_type_t<EigMat>& m_eval = m.eval();
