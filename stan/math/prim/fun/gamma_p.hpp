@@ -64,8 +64,7 @@ namespace math {
    * @throws std::domain_error if either argument is not positive or
    * if z is at a pole of the function
  */
-template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
-inline double gamma_p(T1 z, T2 a) {
+inline double gamma_p(double z, double a) {
   if (is_nan(z)) {
     return not_a_number();
   }
