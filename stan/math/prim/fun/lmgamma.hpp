@@ -4,6 +4,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/functor/apply_scalar_binary.hpp>
 
 namespace stan {
 namespace math {
@@ -49,14 +51,28 @@ namespace math {
  * @param x Function argument.
  * @return Natural log of the multivariate gamma function.
  */
-template <typename T>
+template <typename T, require_arithmetic_t<T>* = nullptr>
 inline return_type_t<T> lmgamma(int k, T x) {
   return_type_t<T> result = k * (k - 1) * LOG_PI_OVER_FOUR;
 
-  for (int j = 1; j <= k; ++j) {
-    result += lgamma(x + (1.0 - j) / 2.0);
-  }
-  return result;
+  return result + sum(lgamma(x + (1 - Eigen::ArrayXd::LinSpaced(k, 1, k)) / 2));
+}
+
+/**
+ * Enables the vectorised application of the natural log of the multivariate gamma
+ * function, when the first and/or second arguments are containers.
+ *
+ * @tparam T1 type of first input
+ * @tparam T2 type of second input
+ * @param a First input
+ * @param b Second input
+ * @return Natural log of the multivariate gamma function applied to the two inputs.
+ */
+template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
+inline auto lmgamma(const T1& a, const T2& b) {
+  return apply_scalar_binary(a, b, [&](const auto& c, const auto& d) {
+    return lmgamma(c, d);
+  });
 }
 
 }  // namespace math

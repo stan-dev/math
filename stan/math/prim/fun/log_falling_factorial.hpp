@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/is_any_nan.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/functor/apply_scalar_binary.hpp>
 
 namespace stan {
 namespace math {
@@ -50,7 +51,7 @@ namespace math {
  * @throw std::domain_error if the first argument is not
  * positive
  */
-template <typename T1, typename T2>
+template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
 inline return_type_t<T1, T2> log_falling_factorial(const T1 x, const T2 n) {
   if (is_any_nan(x, n)) {
     return NOT_A_NUMBER;
@@ -58,6 +59,23 @@ inline return_type_t<T1, T2> log_falling_factorial(const T1 x, const T2 n) {
   static const char* function = "log_falling_factorial";
   check_positive(function, "first argument", x);
   return lgamma(x + 1) - lgamma(x - n + 1);
+}
+
+/**
+ * Enables the vectorised application of the log_falling_factorial function,
+ * when the first and/or second arguments are containers.
+ *
+ * @tparam T1 type of first input
+ * @tparam T2 type of second input
+ * @param a First input
+ * @param b Second input
+ * @return log_falling_factorial function applied to the two inputs.
+ */
+template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
+inline auto log_falling_factorial(const T1& a, const T2& b) {
+  return apply_scalar_binary(
+      a, b, [&](const auto& c, const auto& d) {
+        return log_falling_factorial(c, d); });
 }
 
 }  // namespace math

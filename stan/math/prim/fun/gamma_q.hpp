@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_GAMMA_Q_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 
 namespace stan {
@@ -51,7 +52,24 @@ namespace math {
    \f]
    * @throws domain_error if x is at pole
  */
-inline double gamma_q(double x, double a) { return boost::math::gamma_q(x, a); }
+template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
+inline double gamma_q(T1 x, T2 a) { return boost::math::gamma_q(x, a); }
+
+/**
+ * Enables the vectorised application of the gamma_q function,
+ * when the first and/or second arguments are containers.
+ *
+ * @tparam T1 type of first input
+ * @tparam T2 type of second input
+ * @param a First input
+ * @param b Second input
+ * @return gamma_q function applied to the two inputs.
+ */
+template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
+inline auto gamma_q(const T1& a, const T2& b) {
+  return apply_scalar_binary(
+      a, b, [&](const auto& c, const auto& d) { return gamma_q(c, d); });
+}
 
 }  // namespace math
 }  // namespace stan

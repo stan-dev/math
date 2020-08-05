@@ -5,6 +5,7 @@
 #include <stan/math/prim/fun/boost_policy.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
+#include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 
 namespace stan {
@@ -63,7 +64,8 @@ namespace math {
    * @throws std::domain_error if either argument is not positive or
    * if z is at a pole of the function
  */
-inline double gamma_p(double z, double a) {
+template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
+inline double gamma_p(T1 z, T2 a) {
   if (is_nan(z)) {
     return not_a_number();
   }
@@ -73,6 +75,22 @@ inline double gamma_p(double z, double a) {
   check_positive("gamma_p", "first argument (z)", z);
   check_nonnegative("gamma_p", "second argument (a)", a);
   return boost::math::gamma_p(z, a, boost_policy_t<>());
+}
+
+/**
+ * Enables the vectorised application of the gamma_p function,
+ * when the first and/or second arguments are containers.
+ *
+ * @tparam T1 type of first input
+ * @tparam T2 type of second input
+ * @param a First input
+ * @param b Second input
+ * @return gamma_p function applied to the two inputs.
+ */
+template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
+inline auto gamma_p(const T1& a, const T2& b) {
+  return apply_scalar_binary(
+      a, b, [&](const auto& c, const auto& d) { return gamma_p(c, d); });
 }
 
 }  // namespace math
