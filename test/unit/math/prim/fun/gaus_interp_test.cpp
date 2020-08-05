@@ -1,7 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
 #include <vector>
-////#include <stan/math/prim/fun.hpp>
 
 double ABS_TOL = 1e-12;
 
