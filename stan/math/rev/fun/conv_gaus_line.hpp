@@ -17,8 +17,8 @@ namespace internal {
  * \f$\frac{\partial}{\partial x} \int_{t_0}^{t_1} (at + b) \f$
  * \f$ e^{\frac{-(t-x)^2}{2\sigma^2}} dt \f$
  *
- * @param t_0 lower integration bound
- * @param t_1 upper integration bound
+ * @param t0 lower integration bound
+ * @param t1 upper integration bound
  * @param a coefficient of t in line
  * @param b constant in line
  * @param x0 point at which convolution is evaluated
