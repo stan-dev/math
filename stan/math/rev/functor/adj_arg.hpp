@@ -63,8 +63,8 @@ using adj_arg_t = typename adj_arg<std::decay_t<T>>::type;
 /**
  * Deduces type for writing to data members for functors used by `adj_jac_apply`
  * @tparam Type used to deduce this traits `type`. For a scalar this will be
- * a `const double` and for containers this will be an `Eigen::Map` of either the
- * const plain type for Eigen types or an `const Eigen::VectorXd` for
+ * a `const double` and for containers this will be an `Eigen::Map` of either
+ * the const plain type for Eigen types or an `const Eigen::VectorXd` for
  * `std::vector`.
  */
 template <typename T>
@@ -80,8 +80,8 @@ using adj_arg_reader_t = typename adj_arg<std::decay_t<T>>::const_type;
  * @param n Size of allocation
  */
 template <typename T, bool SaveValue = is_var<scalar_type_t<T>>::value,
- require_container_t<T>* = nullptr,
- require_t<bool_constant<SaveValue>>* = nullptr>
+          require_container_t<T>* = nullptr,
+          require_t<bool_constant<SaveValue>>* = nullptr>
 inline adj_arg_t<T> setup_adj_arg(Eigen::Index n) {
   double* mem = ChainableStack::instance_->memalloc_.alloc_array<double>(n);
   return {mem, n};
@@ -94,9 +94,8 @@ inline adj_arg_t<T> setup_adj_arg(Eigen::Index n) {
  *  needs to allocate memory. When true will allocate memory and when false will
  *  pass either a zero size `Eigen::Map` or a default initilized scalar.
  */
-template <typename T, bool SaveValue,
-  require_container_t<T>* = nullptr,
-  require_t<bool_constant<!SaveValue>>* = nullptr>
+template <typename T, bool SaveValue, require_container_t<T>* = nullptr,
+          require_t<bool_constant<!SaveValue>>* = nullptr>
 inline adj_arg_t<T> setup_adj_arg(Eigen::Index /* n */) {
   return {nullptr, 0};
 }
@@ -109,7 +108,7 @@ inline adj_arg_t<T> setup_adj_arg(Eigen::Index /* n */) {
  *  pass either a zero size `Eigen::Map` or a default initilized scalar.
  */
 template <typename T, bool SaveValue = is_var<scalar_type_t<T>>::value,
- require_stan_scalar_t<T>* = nullptr>
+          require_stan_scalar_t<T>* = nullptr>
 inline adj_arg_t<T> setup_adj_arg(Eigen::Index /* n */) {
   return {};
 }
@@ -124,8 +123,8 @@ inline adj_arg_t<T> setup_adj_arg(Eigen::Index /* n */) {
  * @param n Size of allocation
  */
 template <typename T, bool SaveValue = is_var<scalar_type_t<T>>::value,
-  require_container_t<T>* = nullptr,
-  require_t<bool_constant<SaveValue>>* = nullptr>
+          require_container_t<T>* = nullptr,
+          require_t<bool_constant<SaveValue>>* = nullptr>
 inline adj_arg_t<T> setup_adj_arg(Eigen::Index n, Eigen::Index m) {
   double* mem = ChainableStack::instance_->memalloc_.alloc_array<double>(n * m);
   return {mem, n, m};
@@ -145,7 +144,6 @@ inline adj_arg_t<T> setup_adj_arg(Eigen::Index /* n */, Eigen::Index /* m */) {
   return {nullptr, 0, 0};
 }
 
-
 /**
  * Overload of `setup_adj_arg` for scalars
  * @tparam T User provided type for deducing the return from `adj_arg_t`.
@@ -154,7 +152,7 @@ inline adj_arg_t<T> setup_adj_arg(Eigen::Index /* n */, Eigen::Index /* m */) {
  *  pass either a zero size `Eigen::Map` or a default initilized scalar.
  */
 template <typename T, bool SaveValue = is_var<scalar_type_t<T>>::value,
-  require_stan_scalar_t<T>* = nullptr>
+          require_stan_scalar_t<T>* = nullptr>
 inline adj_arg_t<T> setup_adj_arg(Eigen::Index /* n */, Eigen::Index /* m */) {
   return {};
 }

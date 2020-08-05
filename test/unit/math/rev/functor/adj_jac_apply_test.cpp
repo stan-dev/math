@@ -61,7 +61,8 @@ TEST(AgradRev, test_scalar_sin_jac) {
 template <typename T>
 struct StdVectorSinFunctor {
   stan::math::adj_arg_t<T> x_;
-  explicit StdVectorSinFunctor(const T& x) : x_(stan::math::setup_adj_arg<T>(x.size())) {}
+  explicit StdVectorSinFunctor(const T& x)
+      : x_(stan::math::setup_adj_arg<T>(x.size())) {}
 
   std::vector<double> forward_pass(const std::vector<double>& x) {
     x_ = stan::math::adj_arg_reader_t<T>(x.data(), x.size());
@@ -128,7 +129,8 @@ TEST(AgradRev, test_std_vector_sin_jac) {
 template <typename T>
 struct SinFunctor {
   stan::math::adj_arg_t<T> x_;
-  explicit SinFunctor(const T& x) : x_(stan::math::setup_adj_arg<T>(x.size())) {}
+  explicit SinFunctor(const T& x)
+      : x_(stan::math::setup_adj_arg<T>(x.size())) {}
   Eigen::VectorXd forward_pass(const Eigen::VectorXd& x) {
     x_ = x;
     Eigen::VectorXd out(x_.size());
@@ -217,7 +219,8 @@ TEST(AgradRev, test_vector_sin_multiple_jac) {
 template <typename T>
 struct RowVectorSinFunctor {
   stan::math::adj_arg_t<T> x_;
-  explicit RowVectorSinFunctor(const T& x) : x_(stan::math::setup_adj_arg<T>(x.size())) {}
+  explicit RowVectorSinFunctor(const T& x)
+      : x_(stan::math::setup_adj_arg<T>(x.size())) {}
   Eigen::RowVectorXd forward_pass(const Eigen::RowVectorXd& x) {
     x_ = x;
     Eigen::RowVectorXd out(x_.size());
@@ -307,7 +310,8 @@ TEST(AgradRev, test_row_vector_sin_multiple_jac) {
 template <typename T>
 struct MatrixSinFunctor {
   stan::math::adj_arg_t<T> x_;
-  explicit MatrixSinFunctor(const T& x) : x_(stan::math::setup_adj_arg<T>(x.rows(), x.cols())) {}
+  explicit MatrixSinFunctor(const T& x)
+      : x_(stan::math::setup_adj_arg<T>(x.rows(), x.cols())) {}
   Eigen::MatrixXd forward_pass(const Eigen::MatrixXd& x) {
     x_ = x;
     Eigen::MatrixXd out(x_.rows(), x_.cols());
@@ -1593,12 +1597,12 @@ struct SinCosFunctor {
   Eigen::VectorXd forward_pass(const Eigen::VectorXd& x1, const int& x2,
                                const std::vector<int>& x3,
                                const std::vector<double>& x4) {
-     if (stan::is_var<stan::scalar_type_t<T1>>::value) {
-       x1_ = x1;
-     }
-     if (stan::is_var<stan::scalar_type_t<T4>>::value) {
-       x4_ = stan::math::adj_arg_reader_t<T4>(x4.data(), x4.size());
-     }
+    if (stan::is_var<stan::scalar_type_t<T1>>::value) {
+      x1_ = x1;
+    }
+    if (stan::is_var<stan::scalar_type_t<T4>>::value) {
+      x4_ = stan::math::adj_arg_reader_t<T4>(x4.data(), x4.size());
+    }
     stan::math::check_matching_sizes("SinCosFunctor", "x1", x1, "x4", x4);
     Eigen::VectorXd out(x1.size());
     for (int n = 0; n < x1.size(); ++n) {
@@ -1824,9 +1828,8 @@ struct SinCosFunctor2 {
   stan::math::adj_arg_t<T1> x1_;
   stan::math::adj_arg_t<T2> x2_;
   SinCosFunctor2(const T1& x1, const T2& x2)
-  : x1_(stan::math::setup_adj_arg<T1>(x1.size())),
-    x2_(stan::math::setup_adj_arg<T2>()) {}
-
+      : x1_(stan::math::setup_adj_arg<T1>(x1.size())),
+        x2_(stan::math::setup_adj_arg<T2>()) {}
 
   Eigen::VectorXd forward_pass(const Eigen::VectorXd& x1, const double& x2) {
     if (stan::is_var<stan::scalar_type_t<T1>>::value) {
@@ -2033,9 +2036,9 @@ struct SinCosFunctor3 {
   stan::math::adj_arg_t<T1> x1_;
   stan::math::adj_arg_t<T2> x2_;
   template <typename S1, typename S2>
-  SinCosFunctor3(const S1& x1, const S2& x2) :
-   x1_(stan::math::setup_adj_arg<T1>()),
-   x2_(stan::math::setup_adj_arg<T2>(x2.size())) {}
+  SinCosFunctor3(const S1& x1, const S2& x2)
+      : x1_(stan::math::setup_adj_arg<T1>()),
+        x2_(stan::math::setup_adj_arg<T2>(x2.size())) {}
   Eigen::VectorXd forward_pass(const double& x1, const Eigen::VectorXd& x2) {
     N_ = x2.size();
     if (stan::is_var<stan::scalar_type_t<T1>>::value) {
