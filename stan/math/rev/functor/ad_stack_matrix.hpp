@@ -58,47 +58,22 @@ class AD_stack_matrix : public Eigen::Map<MatrixType> {
   }
 
   /**
-   * Copy constructor. Copies values, not the whole object (same as Eigen
-   * types).
+   * Copy constructor.
    * @param other matrix to copy from
    */
   AD_stack_matrix(const AD_stack_matrix<MatrixType>& other)
-      : Eigen::Map<MatrixType>::Map(
-            ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
-                other.size()),
-            other.rows(), other.cols()) {
-    *this = other;
-  }
-
-  /**
-   * Move constructor.
-   * @param other matrix to move from
-   */
-  AD_stack_matrix(AD_stack_matrix<MatrixType>&& other)
-      : Eigen::Map<MatrixType>::Map(other.data(), other.rows(), other.cols()) {}
+    : Eigen::Map<MatrixType>::Map(const_cast<Scalar*>(other.data()), other.rows(), other.cols()) {}
 
   using Eigen::Map<MatrixType>::operator=;
 
   /**
-   * Copy assignment operator. Copies values, not the whole object (same as
-   * Eigen types).
+   * Copy assignment operator.
    * @param other matrix to copy from
    * @return `*this`
    */
   AD_stack_matrix& operator=(const AD_stack_matrix<MatrixType>& other) {
-    resize(other.rows(), other.cols());
-    Eigen::Map<MatrixType>::operator=(other);
-    return *this;
-  }
-
-  /**
-   * Move assignment operator.
-   * @param other matrix to move from
-   * @return `*this`
-   */
-  AD_stack_matrix& operator=(AD_stack_matrix<MatrixType>&& other) {
     // placement new changes what data map points to - there is no allocation
-    new (this) Eigen::Map<MatrixType>(other.data(), other.rows(), other.cols());
+    new (this) Eigen::Map<MatrixType>(const_cast<Scalar*>(other.data()), other.rows(), other.cols());
     return *this;
   }
 
