@@ -27,7 +27,7 @@ namespace math {
  */
 template <typename T>
 class scalar_ : public operation_cl<scalar_<T>, T> {
- private:
+ protected:
   T a_;
 
  public:
