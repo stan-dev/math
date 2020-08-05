@@ -49,7 +49,7 @@ class AD_stack_matrix : public Eigen::Map<MatrixType> {
    * @param other expression
    */
   template <typename T, require_eigen_t<T>* = nullptr>
-  AD_stack_matrix(const T& other) // NOLINT
+  AD_stack_matrix(const T& other)  // NOLINT
       : Eigen::Map<MatrixType>::Map(
             ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
                 other.size()),
@@ -62,7 +62,8 @@ class AD_stack_matrix : public Eigen::Map<MatrixType> {
    * @param other matrix to copy from
    */
   AD_stack_matrix(const AD_stack_matrix<MatrixType>& other)
-    : Eigen::Map<MatrixType>::Map(const_cast<Scalar*>(other.data()), other.rows(), other.cols()) {}
+      : Eigen::Map<MatrixType>::Map(const_cast<Scalar*>(other.data()),
+                                    other.rows(), other.cols()) {}
 
   using Eigen::Map<MatrixType>::operator=;
 
@@ -73,7 +74,8 @@ class AD_stack_matrix : public Eigen::Map<MatrixType> {
    */
   AD_stack_matrix& operator=(const AD_stack_matrix<MatrixType>& other) {
     // placement new changes what data map points to - there is no allocation
-    new (this) Eigen::Map<MatrixType>(const_cast<Scalar*>(other.data()), other.rows(), other.cols());
+    new (this) Eigen::Map<MatrixType>(const_cast<Scalar*>(other.data()),
+                                      other.rows(), other.cols());
     return *this;
   }
 
