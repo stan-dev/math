@@ -73,9 +73,9 @@ inline return_type_t<T1, T2> log_falling_factorial(const T1 x, const T2 n) {
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto log_falling_factorial(const T1& a, const T2& b) {
-  return apply_scalar_binary(
-      a, b, [&](const auto& c, const auto& d) {
-        return log_falling_factorial(c, d); });
+  return apply_scalar_binary(a, b, [&](const auto& c, const auto& d) {
+    return log_falling_factorial(c, d);
+  });
 }
 
 }  // namespace math

@@ -53,7 +53,9 @@ namespace math {
    * @throws domain_error if x is at pole
  */
 template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
-inline double gamma_q(T1 x, T2 a) { return boost::math::gamma_q(x, a); }
+inline double gamma_q(T1 x, T2 a) {
+  return boost::math::gamma_q(x, a);
+}
 
 /**
  * Enables the vectorised application of the gamma_q function,

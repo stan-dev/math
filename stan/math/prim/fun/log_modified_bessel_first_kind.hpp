@@ -231,9 +231,9 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto log_modified_bessel_first_kind(const T1& a, const T2& b) {
-  return apply_scalar_binary(
-      a, b, [&](const auto& c, const auto& d) {
-        return log_modified_bessel_first_kind(c, d); });
+  return apply_scalar_binary(a, b, [&](const auto& c, const auto& d) {
+    return log_modified_bessel_first_kind(c, d);
+  });
 }
 
 }  // namespace math
