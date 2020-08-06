@@ -207,13 +207,11 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
   /**
    * Number of rows known at compile time
    */
-  static constexpr int RowsAtCompileTime
-      = PlainObject::RowsAtCompileTime;
+  static constexpr int RowsAtCompileTime = PlainObject::RowsAtCompileTime;
   /**
    * Number of columns known at compile time
    */
-  static constexpr int ColsAtCompileTime
-      = PlainObject::ColsAtCompileTime;
+  static constexpr int ColsAtCompileTime = PlainObject::ColsAtCompileTime;
 
   /**
    * The value of this variable.
