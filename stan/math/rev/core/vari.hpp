@@ -207,12 +207,12 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
   /**
    * Number of rows known at compile time
    */
-  static constexpr Eigen::Index RowsAtCompileTime
+  static constexpr int RowsAtCompileTime
       = PlainObject::RowsAtCompileTime;
   /**
    * Number of columns known at compile time
    */
-  static constexpr Eigen::Index ColsAtCompileTime
+  static constexpr int ColsAtCompileTime
       = PlainObject::ColsAtCompileTime;
 
   /**
@@ -240,7 +240,7 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
    * @param x Value of the constructed variable.
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
-  explicit vari_value(S&& x)
+  explicit vari_value(const S& x)
       : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
         adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
@@ -266,7 +266,7 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
    * that its `chain()` method is not called.
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
-  vari_value(S&& x, bool stacked)
+  vari_value(const S& x, bool stacked)
       : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
         adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
@@ -377,11 +377,11 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
   /**
    * Rows at compile time
    */
-  static constexpr Eigen::Index RowsAtCompileTime = T::RowsAtCompileTime;
+  static constexpr int RowsAtCompileTime = T::RowsAtCompileTime;
   /**
    * Columns at compile time
    */
-  static constexpr Eigen::Index ColsAtCompileTime = T::ColsAtCompileTime;
+  static constexpr int ColsAtCompileTime = T::ColsAtCompileTime;
   /**
    * The value of this variable.
    */
@@ -408,7 +408,7 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
    * @param x Value of the constructed variable.
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
-  explicit vari_value(S&& x) : val_(x), adj_(x), chainable_alloc() {
+  explicit vari_value(const S& x) : val_(x), adj_(x), chainable_alloc() {
     this->set_zero_adjoint();
     ChainableStack::instance_->var_stack_.push_back(this);
   }
@@ -430,7 +430,7 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
    * that its `chain()` method is not called.
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
-  vari_value(S&& x, bool stacked) : val_(x), adj_(x), chainable_alloc() {
+  vari_value(const S& x, bool stacked) : val_(x), adj_(x), chainable_alloc() {
     this->set_zero_adjoint();
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
