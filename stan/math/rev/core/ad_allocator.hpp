@@ -33,13 +33,13 @@ struct AD_allocator {
    * Equality comparison operator.
    * @return true
    */
-  bool operator==(const AD_allocator&){ return true; }
+  bool operator==(const AD_allocator&) { return true; }
 
   /**
    * Inequality comparison operator.
    * @return false
    */
-  bool operator!=(const AD_allocator&){ return false; }
+  bool operator!=(const AD_allocator&) { return false; }
 };
 
 }  // namespace math
