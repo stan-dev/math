@@ -164,8 +164,6 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
                     double* partials,
                     const std::tuple<Ops...>& container_operands,
                     const std::tuple<Partials...>& container_partials) {
-    // Partials are decayed, so precomputed_gradients_vari_template always
-    // stores values, not references
     return new precomputed_gradients_vari_template<
         std::tuple<AD_stack_t<Ops>...>, std::tuple<AD_stack_t<Partials>...>>(
         value, edges_size, varis, partials, container_operands,
@@ -241,11 +239,11 @@ class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
 template <typename Op>
 class ops_partials_edge<double, var_value<Op>, require_eigen_t<Op>> {
  public:
-  using partials_t = plain_type_t<Op>;
+  using partials_t = AD_stack_t<Op>;
   partials_t partials_;                       // For univariate use-cases
   broadcast_array<partials_t> partials_vec_;  // For multivariate
   explicit ops_partials_edge(const var_value<Op>& ops)
-      : partials_(partials_t::Zero(ops.vi_->rows(), ops.vi_->cols())),
+      : partials_(plain_type_t<partials_t>::Zero(ops.vi_->rows(), ops.vi_->cols())),
         partials_vec_(partials_),
         operands_(ops) {}
 
@@ -260,8 +258,8 @@ class ops_partials_edge<double, var_value<Op>, require_eigen_t<Op>> {
   std::tuple<const var_value<Op>&> container_operands() {
     return std::forward_as_tuple(operands_);
   }
-  std::tuple<partials_t&&> container_partials() {
-    return std::forward_as_tuple(std::move(partials_));
+  std::tuple<partials_t&> container_partials() {
+    return std::forward_as_tuple(partials_);
   }
 };
 
@@ -359,7 +357,7 @@ template <typename Op>
 class ops_partials_edge<double, std::vector<var_value<Op>>,
                         require_eigen_t<Op>> {
  public:
-  using partials_t = std::vector<plain_type_t<Op>>;
+  using partials_t = AD_stack_t<std::vector<Op>>;
   partials_t partials_vec_;
   explicit ops_partials_edge(const std::vector<var_value<Op>>& ops)
       : partials_vec_(ops.size()), operands_(ops) {
@@ -380,8 +378,8 @@ class ops_partials_edge<double, std::vector<var_value<Op>>,
   std::tuple<const std::vector<var_value<Op>>&> container_operands() {
     return std::forward_as_tuple(operands_);
   }
-  std::tuple<partials_t&&> container_partials() {
-    return std::forward_as_tuple(std::move(partials_vec_));
+  std::tuple<partials_t&> container_partials() {
+    return std::forward_as_tuple(partials_vec_);
   }
 };
 }  // namespace internal

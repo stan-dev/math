@@ -9,21 +9,27 @@ TEST(AgradRev, AD_stack_matrix_matrix_test) {
   // construction
   AD_stack_matrix<MatrixXd> a;
   AD_stack_matrix<MatrixXd> a2;
+  AD_stack_matrix<MatrixXd> a3;
   AD_stack_matrix<MatrixXd> b(3, 2);
-  AD_stack_matrix<MatrixXd> b2(3, 2);
+  AD_stack_matrix<MatrixXd> b2(4, 5);
   AD_stack_matrix<MatrixXd> c(MatrixXd::Ones(3, 2));
   AD_stack_matrix<MatrixXd> d(c);
   AD_stack_matrix<MatrixXd> e(2 * d);
 
+  // resize
+  a2.resize(4, 5);
+  b2.resize(3, 2);
+
   // assignment
   a = c;
   a2 = std::move(d);
+  a3 = 2 * a;
   b = d;
   b2 = std::move(c);
   e = e + a;
   a = MatrixXd::Ones(3, 2);
 
-  EXPECT_MATRIX_EQ(a + a2 + b + b2 + e, MatrixXd::Ones(3, 2) * 7);
+  EXPECT_MATRIX_EQ(a + a2 + a3 + b + b2 + e, MatrixXd::Ones(3, 2) * 9);
 }
 
 TEST(AgradRev, AD_stack_matrix_vector_test) {
@@ -33,21 +39,27 @@ TEST(AgradRev, AD_stack_matrix_vector_test) {
   // construction
   AD_stack_matrix<VectorXd> a;
   AD_stack_matrix<VectorXd> a2;
+  AD_stack_matrix<VectorXd> a3;
   AD_stack_matrix<VectorXd> b(3);
-  AD_stack_matrix<VectorXd> b2(3);
+  AD_stack_matrix<VectorXd> b2(4);
   AD_stack_matrix<VectorXd> c(VectorXd::Ones(3));
   AD_stack_matrix<VectorXd> d(c);
   AD_stack_matrix<VectorXd> e(2 * d);
 
+  // resize
+  a2.resize(4);
+  b2.resize(3);
+
   // assignment
   a = c;
   a2 = std::move(d);
+  a3 = 2 * a;
   b = d;
   b2 = std::move(c);
   e = e + a;
   a = VectorXd::Ones(3);
 
-  EXPECT_MATRIX_EQ(a + a2 + b + b2 + e, VectorXd::Ones(3) * 7);
+  EXPECT_MATRIX_EQ(a + a2 + a3 + b + b2 + e, VectorXd::Ones(3) * 9);
 }
 
 TEST(AgradRev, AD_stack_matrix_row_vector_test) {
@@ -57,19 +69,25 @@ TEST(AgradRev, AD_stack_matrix_row_vector_test) {
   // construction
   AD_stack_matrix<RowVectorXd> a;
   AD_stack_matrix<RowVectorXd> a2;
+  AD_stack_matrix<RowVectorXd> a3;
   AD_stack_matrix<RowVectorXd> b(3);
-  AD_stack_matrix<RowVectorXd> b2(3);
+  AD_stack_matrix<RowVectorXd> b2(4);
   AD_stack_matrix<RowVectorXd> c(RowVectorXd::Ones(3));
   AD_stack_matrix<RowVectorXd> d(c);
   AD_stack_matrix<RowVectorXd> e(2 * d);
 
+  // resize
+  a2.resize(4);
+  b2.resize(3);
+
   // assignment
   a = c;
   a2 = std::move(d);
+  a3 = 2 * a;
   b = d;
   b2 = std::move(c);
   e = e + a;
   a = RowVectorXd::Ones(3);
 
-  EXPECT_MATRIX_EQ(a + a2 + b + b2 + e, RowVectorXd::Ones(3) * 7);
+  EXPECT_MATRIX_EQ(a + a2 + a3 + b + b2 + e, RowVectorXd::Ones(3) * 9);
 }

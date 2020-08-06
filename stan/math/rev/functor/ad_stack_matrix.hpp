@@ -7,6 +7,13 @@
 namespace stan {
 namespace math {
 
+/**
+ * Equivalent to `Eigen::Matrix`, except that the data is stored on AD stack.
+ * That makes these objects triviali destructible and usable in `vari`s.
+ *
+ * @tparam MatrixType Eigen matrix type this works as (`MatrixXd`, `VectorXd`
+ * ...)
+ */
 template <typename MatrixType>
 class AD_stack_matrix : public Eigen::Map<MatrixType> {
  public:
@@ -19,9 +26,8 @@ class AD_stack_matrix : public Eigen::Map<MatrixType> {
    */
   AD_stack_matrix()
       : Eigen::Map<MatrixType>::Map(
-            nullptr,
-            RowsAtCompileTime == Eigen::Dynamic ? 0 : RowsAtCompileTime,
-            ColsAtCompileTime == Eigen::Dynamic ? 0 : ColsAtCompileTime) {}
+          nullptr, RowsAtCompileTime == Eigen::Dynamic ? 0 : RowsAtCompileTime,
+          ColsAtCompileTime == Eigen::Dynamic ? 0 : ColsAtCompileTime) {}
 
   /**
    * Constructs `AD_stack_matrix` with given number of rows and columns.
@@ -30,9 +36,8 @@ class AD_stack_matrix : public Eigen::Map<MatrixType> {
    */
   AD_stack_matrix(Eigen::Index rows, Eigen::Index cols)
       : Eigen::Map<MatrixType>::Map(
-            ChainableStack::instance_->memalloc_.alloc_array<Scalar>(rows
-                                                                     * cols),
-            rows, cols) {}
+          ChainableStack::instance_->memalloc_.alloc_array<Scalar>(rows * cols),
+          rows, cols) {}
 
   /**
    * Constructs `AD_stack_matrix` with given size. This only works if
@@ -41,19 +46,19 @@ class AD_stack_matrix : public Eigen::Map<MatrixType> {
    */
   explicit AD_stack_matrix(Eigen::Index size)
       : Eigen::Map<MatrixType>::Map(
-            ChainableStack::instance_->memalloc_.alloc_array<Scalar>(size),
-            size) {}
+          ChainableStack::instance_->memalloc_.alloc_array<Scalar>(size),
+          size) {}
 
   /**
-   * Constructs `AD_stack_matrix` form an expression.
+   * Constructs `AD_stack_matrix` from an expression.
    * @param other expression
    */
   template <typename T, require_eigen_t<T>* = nullptr>
-  AD_stack_matrix(const T& other) // NOLINT
+  AD_stack_matrix(const T& other)  // NOLINT
       : Eigen::Map<MatrixType>::Map(
-            ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
-                other.size()),
-            other.rows(), other.cols()) {
+          ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
+              other.size()),
+          other.rows(), other.cols()) {
     *this = other;
   }
 
@@ -62,7 +67,8 @@ class AD_stack_matrix : public Eigen::Map<MatrixType> {
    * @param other matrix to copy from
    */
   AD_stack_matrix(const AD_stack_matrix<MatrixType>& other)
-    : Eigen::Map<MatrixType>::Map(const_cast<Scalar*>(other.data()), other.rows(), other.cols()) {}
+      : Eigen::Map<MatrixType>::Map(const_cast<Scalar*>(other.data()),
+                                    other.rows(), other.cols()) {}
 
   using Eigen::Map<MatrixType>::operator=;
 
@@ -73,7 +79,23 @@ class AD_stack_matrix : public Eigen::Map<MatrixType> {
    */
   AD_stack_matrix& operator=(const AD_stack_matrix<MatrixType>& other) {
     // placement new changes what data map points to - there is no allocation
-    new (this) Eigen::Map<MatrixType>(const_cast<Scalar*>(other.data()), other.rows(), other.cols());
+    new (this) Eigen::Map<MatrixType>(const_cast<Scalar*>(other.data()),
+                                      other.rows(), other.cols());
+    return *this;
+  }
+
+  /**
+   * Assignment operator for assigning an expression.
+   * @param other expression to evaluate into this
+   * @return `*this`
+   */
+  template <typename T>
+  AD_stack_matrix& operator=(const T& a) {
+    // placement new changes what data map points to - there is no allocation
+    new (this) Eigen::Map<MatrixType>(
+        ChainableStack::instance_->memalloc_.alloc_array<Scalar>(a.size()),
+        a.rows(), a.cols());
+    Eigen::Map<MatrixType>::operator=(a);
     return *this;
   }
 
