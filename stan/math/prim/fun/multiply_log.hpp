@@ -72,8 +72,7 @@ inline return_type_t<T_a, T_b> multiply_log(const T_a a, const T_b b) {
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto multiply_log(const T1& a, const T2& b) {
   return apply_scalar_binary(
-      a, b, [&](const auto& c, const auto& d) {
-        return multiply_log(c, d); });
+      a, b, [&](const auto& c, const auto& d) { return multiply_log(c, d); });
 }
 
 }  // namespace math

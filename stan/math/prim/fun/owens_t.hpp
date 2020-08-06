@@ -70,8 +70,7 @@ inline double owens_t(double h, double a) { return boost::math::owens_t(h, a); }
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto owens_t(const T1& a, const T2& b) {
   return apply_scalar_binary(
-      a, b, [&](const auto& c, const auto& d) {
-        return owens_t(c, d); });
+      a, b, [&](const auto& c, const auto& d) { return owens_t(c, d); });
 }
 
 }  // namespace math
