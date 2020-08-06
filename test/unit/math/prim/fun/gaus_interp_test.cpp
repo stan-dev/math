@@ -6,8 +6,8 @@ double ABS_TOL = 1e-12;
 
 TEST(mathPrimGausInterp, throwing) {
   using stan::math::gaus_interp;
-  using stan::math::gaus_interp_precomp;
   using stan::math::gaus_interp_params;
+  using stan::math::gaus_interp_precomp;
   double nan = std::numeric_limits<double>::quiet_NaN();
   double x;
   vector<double> xs, ys;
