@@ -380,16 +380,17 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
    * Columns at compile time
    */
   static constexpr int ColsAtCompileTime = T::ColsAtCompileTime;
-  /**
-   * The value of this variable.
-   */
-  const PlainObject val_;
 
   /**
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
    */
   PlainObject adj_;
+
+  /**
+   * The value of this variable.
+   */
+  const PlainObject val_;
 
   /**
    * Construct a variable implementation from a value. The
@@ -406,7 +407,7 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
    * @param x Value of the constructed variable.
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
-  explicit vari_value(const S& x) : val_(x), adj_(x), chainable_alloc() {
+  explicit vari_value(S&& x) : adj_(x), val_(std::forward<S>(x)), chainable_alloc() {
     this->set_zero_adjoint();
     ChainableStack::instance_->var_stack_.push_back(this);
   }
@@ -428,7 +429,7 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
    * that its `chain()` method is not called.
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
-  vari_value(const S& x, bool stacked) : val_(x), adj_(x), chainable_alloc() {
+  vari_value(S&& x, bool stacked) : adj_(x), val_(std::forward<S>(x)), chainable_alloc() {
     this->set_zero_adjoint();
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
