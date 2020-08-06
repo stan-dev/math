@@ -501,22 +501,23 @@ class AgradCdfTestFixture : public ::testing::Test {
                                      const size_t N_REPEAT) {
     if (is_vec) {
       for (size_t i = 0; i < N_REPEAT; i++) {
-	std::stringstream stream;
-	stream << "Comparison of single_gradient value to vectorized gradient failed";
+        std::stringstream stream;
+        stream << "Comparison of single_gradient value to vectorized gradient "
+                  "failed";
 
-	stan::test::expect_near_rel(stream.str(),
-				    single_gradients[pos_single] / N_REPEAT,
-				    multiple_gradients[pos_multiple]);
+        stan::test::expect_near_rel(stream.str(),
+                                    single_gradients[pos_single] / N_REPEAT,
+                                    multiple_gradients[pos_multiple]);
         pos_multiple++;
       }
       pos_single++;
     } else {
       std::stringstream stream;
-      stream << "Comparison of single_gradient value to vectorized gradient failed";
+      stream << "Comparison of single_gradient value to vectorized gradient "
+                "failed";
 
-      stan::test::expect_near_rel(stream.str(),
-				  single_gradients[pos_single],
-				  multiple_gradients[pos_multiple]);
+      stan::test::expect_near_rel(stream.str(), single_gradients[pos_single],
+                                  multiple_gradients[pos_multiple]);
       pos_single++;
       pos_multiple++;
     }
