@@ -128,14 +128,13 @@ gaus_interp_params gaus_interp_precomp(std::vector<double> const& xs,
   check_ordered(function, "xs", xs);
 
   using internal::min_diff;
-  using stan::math::square;
   gaus_interp_params params;
   const double INTERP_TOL = 1e-8;
   const double SIG2_SCALE = 0.1;
   int n = xs.size();
 
   // find minimum distance between points for std of gaussian kernel
-  params.sig2 = square(min_diff(n, xs) * SIG2_SCALE);
+  params.sig2 = stan::math::square(min_diff(n, xs) * SIG2_SCALE);
   params.as.resize(n - 1);
   params.bs.resize(n - 1);
 
