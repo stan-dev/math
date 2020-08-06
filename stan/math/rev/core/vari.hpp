@@ -287,7 +287,7 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
   /**
    * Return the number of columns for this class's `val_` member
    */
-  const Eigen::Index cols() const { return val_.rows(); }
+  const Eigen::Index cols() const { return val_.cols(); }
   /**
    * Return the size of this class's `val_` member
    */

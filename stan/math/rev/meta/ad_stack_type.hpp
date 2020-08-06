@@ -1,5 +1,5 @@
-#ifndef AD_STACK_TYPE_HPP
-#define AD_STACK_TYPE_HPP
+#ifndef STAN_MATH_REV_META_AD_STACK_TYPE_HPP
+#define STAN_MATH_REV_META_AD_STACK_TYPE_HPP
 
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/plain_type.hpp>
@@ -41,4 +41,4 @@ using AD_stack_t = typename internal::AD_stack_type_impl<std::decay_t<T>>::type;
 
 }  // namespace stan
 
-#endif  // AD_STACK_TYPE_HPP
+#endif
