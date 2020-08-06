@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_LIN_INTERP
 #define STAN_MATH_PRIM_FUN_LIN_INTERP
 
+#include <stan/math/prim/err.hpp>
 #include <cmath>
 #include <vector>
 #include <algorithm>
