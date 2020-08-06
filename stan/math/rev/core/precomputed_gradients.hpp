@@ -80,10 +80,12 @@ class precomputed_gradients_vari_template : public vari {
         varis_(varis),
         gradients_(gradients),
         container_operands_(index_apply<N_containers>([&, this](auto... Is) {
-          return std::make_tuple(to_AD_stack(std::get<Is>(container_operands))...);
+          return std::make_tuple(
+              to_AD_stack(std::get<Is>(container_operands))...);
         })),
         container_gradients_(index_apply<N_containers>([&, this](auto... Is) {
-          return std::make_tuple(to_AD_stack(std::get<Is>(container_gradients))...);
+          return std::make_tuple(
+              to_AD_stack(std::get<Is>(container_gradients))...);
         })) {
     check_sizes(std::make_index_sequence<N_containers>());
   }
@@ -122,10 +124,12 @@ class precomputed_gradients_vari_template : public vari {
         gradients_(ChainableStack::instance_->memalloc_.alloc_array<double>(
             vars.size())),
         container_operands_(index_apply<N_containers>([&, this](auto... Is) {
-          return std::make_tuple(to_AD_stack(std::get<Is>(container_operands))...);
+          return std::make_tuple(
+              to_AD_stack(std::get<Is>(container_operands))...);
         })),
         container_gradients_(index_apply<N_containers>([&, this](auto... Is) {
-          return std::make_tuple(to_AD_stack(std::get<Is>(container_gradients))...);
+          return std::make_tuple(
+              to_AD_stack(std::get<Is>(container_gradients))...);
         })) {
     check_consistent_sizes("precomputed_gradients_vari", "vars", vars,
                            "gradients", gradients);
