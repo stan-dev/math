@@ -26,8 +26,9 @@ class AD_stack_matrix : public Eigen::Map<MatrixType> {
    */
   AD_stack_matrix()
       : Eigen::Map<MatrixType>::Map(
-          nullptr, RowsAtCompileTime == Eigen::Dynamic ? 0 : RowsAtCompileTime,
-          ColsAtCompileTime == Eigen::Dynamic ? 0 : ColsAtCompileTime) {}
+            nullptr,
+            RowsAtCompileTime == Eigen::Dynamic ? 0 : RowsAtCompileTime,
+            ColsAtCompileTime == Eigen::Dynamic ? 0 : ColsAtCompileTime) {}
 
   /**
    * Constructs `AD_stack_matrix` with given number of rows and columns.
@@ -36,8 +37,9 @@ class AD_stack_matrix : public Eigen::Map<MatrixType> {
    */
   AD_stack_matrix(Eigen::Index rows, Eigen::Index cols)
       : Eigen::Map<MatrixType>::Map(
-          ChainableStack::instance_->memalloc_.alloc_array<Scalar>(rows * cols),
-          rows, cols) {}
+            ChainableStack::instance_->memalloc_.alloc_array<Scalar>(rows
+                                                                     * cols),
+            rows, cols) {}
 
   /**
    * Constructs `AD_stack_matrix` with given size. This only works if
@@ -46,8 +48,8 @@ class AD_stack_matrix : public Eigen::Map<MatrixType> {
    */
   explicit AD_stack_matrix(Eigen::Index size)
       : Eigen::Map<MatrixType>::Map(
-          ChainableStack::instance_->memalloc_.alloc_array<Scalar>(size),
-          size) {}
+            ChainableStack::instance_->memalloc_.alloc_array<Scalar>(size),
+            size) {}
 
   /**
    * Constructs `AD_stack_matrix` from an expression.
@@ -56,9 +58,9 @@ class AD_stack_matrix : public Eigen::Map<MatrixType> {
   template <typename T, require_eigen_t<T>* = nullptr>
   AD_stack_matrix(const T& other)  // NOLINT
       : Eigen::Map<MatrixType>::Map(
-          ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
-              other.size()),
-          other.rows(), other.cols()) {
+            ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
+                other.size()),
+            other.rows(), other.cols()) {
     *this = other;
   }
 
