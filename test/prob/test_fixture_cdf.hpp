@@ -415,7 +415,8 @@ class AgradCdfTestFixture : public ::testing::Test {
   }
 
   void test_gradients_equal(const vector<double>& expected_gradients,
-                            const vector<double>& gradients) {
+                            const vector<double>& gradients,
+			    double tol) {
     ASSERT_EQ(expected_gradients.size(), gradients.size())
         << "Number of expected gradients and calculated gradients must match "
            "-- error in test fixture";
@@ -423,7 +424,7 @@ class AgradCdfTestFixture : public ::testing::Test {
       std::stringstream stream;
       stream << "Comparison of expected gradient to calculated gradient failed";
       
-      stan::test::expect_near_rel(stream.str(), expected_gradients[i], gradients[i]);
+      stan::test::expect_near_rel(stream.str(), expected_gradients[i], gradients[i], tol);
     }
   }
 
@@ -484,9 +485,9 @@ class AgradCdfTestFixture : public ::testing::Test {
       calculate_gradients_3rdorder(expected_gradients3, cdf_funct, x3);
       calculate_gradients_3rdorder(gradients3, cdf, y3);
 
-      test_gradients_equal(expected_gradients1, gradients1);
-      test_gradients_equal(expected_gradients2, gradients2);
-      test_gradients_equal(expected_gradients3, gradients3);
+      test_gradients_equal(expected_gradients1, gradients1, 1e-3);
+      test_gradients_equal(expected_gradients2, gradients2, 1e-3);
+      test_gradients_equal(expected_gradients3, gradients3, 1e-3);
 
       stan::math::recover_memory();
     }
@@ -822,9 +823,9 @@ class AgradCdfTestFixture : public ::testing::Test {
                == stan::math::value_of_rec(multiple_cdf)) {
       return;
     }
-
+    
     stan::test::expect_near_rel(
-        "cdf prob evaluated in loop should match vectorized equivalent",
+        "cdf evaluated in loop should match vectorized equivalent",
         stan::math::value_of_rec(single_cdf),
         stan::math::value_of_rec(multiple_cdf));
 

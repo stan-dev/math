@@ -56,6 +56,6 @@ class AgradCcdfLogInvChiSquare : public AgradCcdfLogTest {
                                                     const T5&) {
     using stan::math::gamma_p;
 
-    return log(1.0 - gamma_p(0.5 * nu, 0.5 / y));
+    return log(gamma_p(0.5 * nu, 0.5 / y));
   }
 };

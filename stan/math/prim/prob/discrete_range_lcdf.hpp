@@ -55,17 +55,16 @@ double discrete_range_lcdf(const T_y& y, const T_lower& lower,
     if (y_dbl < lower_vec[n]) {
       return LOG_ZERO;
     }
-    if (y_dbl > upper_vec[n]) {
-      return 0;
-    }
   }
 
   double cdf(0.0);
   for (size_t n = 0; n < N; n++) {
     const int y_dbl = y_vec[n];
-    const int lower_dbl = lower_vec[n];
-    const int upper_dbl = upper_vec[n];
-    cdf += log(y_dbl - lower_dbl + 1) - log(upper_dbl - lower_dbl + 1);
+    if (y_dbl < upper_vec[n]) {
+      const int lower_dbl = lower_vec[n];
+      const int upper_dbl = upper_vec[n];
+      cdf += log(y_dbl - lower_dbl + 1) - log(upper_dbl - lower_dbl + 1);
+    }
   }
   return cdf;
 }

@@ -52,10 +52,10 @@ class AgradCdfBinomial : public AgradCdfTest {
     using std::exp;
     using std::log;
 
-    stan::return_type_t<T_prob> cdf(1);
+    stan::return_type_t<T_prob> cdf(0);
 
     for (int i = 0; i <= n; i++) {
-      cdf *= binomial_coefficient<double>(N, i)
+      cdf += binomial_coefficient<double>(N, i)
              * exp(i * log(theta) + (N - i) * log(1 - theta));
     }
 
