@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_FUN_CONV_GAUS_LINE
 #define STAN_MATH_PRIM_FUN_CONV_GAUS_LINE
 
-#include <cmath>
-#include <vector>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/prob/normal_cdf.hpp>
+#include <cmath>
+#include <vector>
 
 namespace stan {
 namespace math {

@@ -1,11 +1,12 @@
 #ifndef STAN_MATH_PRIM_FUN_GAUS_INTERP
 #define STAN_MATH_PRIM_FUN_GAUS_INTERP
 
+#include <stan/math/prim/fun/conv_gaus_line.hpp>
+#include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/err.hpp>
 #include <cmath>
 #include <vector>
 #include <algorithm>
-#include <stan/math/prim/fun/conv_gaus_line.hpp>
-#include <stan/math/prim/fun/square.hpp>
 
 using namespace std;
 
