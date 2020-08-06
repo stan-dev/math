@@ -23,7 +23,7 @@ inline fvar<T> log_diff_exp(const fvar<T>& x1, const fvar<T>& x2) {
       -(x1.d_ / expm1(x2.val_ - x1.val_) + x2.d_ / expm1(x1.val_ - x2.val_)));
 }
 
-template <typename T1, typename T2>
+template <typename T1, typename T2, require_arithmetic_t<T1>* = nullptr>
 inline fvar<T2> log_diff_exp(const T1& x1, const fvar<T2>& x2) {
   if (x1 <= x2.val_) {
     if (x1 < INFTY && x1 == x2.val_) {
@@ -34,7 +34,7 @@ inline fvar<T2> log_diff_exp(const T1& x1, const fvar<T2>& x2) {
   return fvar<T2>(log_diff_exp(x1, x2.val_), -x2.d_ / expm1(x1 - x2.val_));
 }
 
-template <typename T1, typename T2>
+template <typename T1, typename T2, require_arithmetic_t<T2>* = nullptr>
 inline fvar<T1> log_diff_exp(const fvar<T1>& x1, const T2& x2) {
   if (x1.val_ <= x2) {
     if (x1.val_ < INFTY && x1.val_ == x2) {

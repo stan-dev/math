@@ -314,23 +314,23 @@ void write_test(vector<std::ostream*>& outs, const string& test_name,
   for (size_t n = 0; n < N; n++) {
     std::ostream* out = outs[int(n / N_TESTS)];
     if (index == 1)
-      *out << "INSTANTIATE_TYPED_TEST_CASE_P(" << test_name << "_v_" << n
+      *out << "INSTANTIATE_TYPED_TEST_SUITE_P(" << test_name << "_v_" << n
            << ", " << fixture_name << ", " << test_name << "_v_" << n << ");"
            << endl;
     else if (index == 2)
-      *out << "INSTANTIATE_TYPED_TEST_CASE_P(" << test_name << "_fd_" << n
+      *out << "INSTANTIATE_TYPED_TEST_SUITE_P(" << test_name << "_fd_" << n
            << ", " << fixture_name << ", " << test_name << "_fd_" << n << ");"
            << endl;
     else if (index == 3)
-      *out << "INSTANTIATE_TYPED_TEST_CASE_P(" << test_name << "_fv_" << n
+      *out << "INSTANTIATE_TYPED_TEST_SUITE_P(" << test_name << "_fv_" << n
            << ", " << fixture_name << ", " << test_name << "_fv_" << n << ");"
            << endl;
     else if (index == 4)
-      *out << "INSTANTIATE_TYPED_TEST_CASE_P(" << test_name << "_ffd_" << n
+      *out << "INSTANTIATE_TYPED_TEST_SUITE_P(" << test_name << "_ffd_" << n
            << ", " << fixture_name << ", " << test_name << "_ffd_" << n << ");"
            << endl;
     else if (index == 5)
-      *out << "INSTANTIATE_TYPED_TEST_CASE_P(" << test_name << "_ffv_" << n
+      *out << "INSTANTIATE_TYPED_TEST_SUITE_P(" << test_name << "_ffv_" << n
            << ", " << fixture_name << ", " << test_name << "_ffv_" << n << ");"
            << endl;
   }

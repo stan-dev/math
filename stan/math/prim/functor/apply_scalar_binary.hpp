@@ -6,6 +6,8 @@
 #include <stan/math/prim/meta/is_container.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
+#include <stan/math/prim/err/check_matching_dims.hpp>
+#include <stan/math/prim/err/check_matching_sizes.hpp>
 #include <stan/math/prim/fun/num_elements.hpp>
 #include <vector>
 
