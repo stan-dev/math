@@ -92,6 +92,7 @@ class AgradCcdfLogGamma : public AgradCcdfLogTest {
       const T4&, const T5&) {
     using boost::math::gamma_p;
     using stan::math::gamma_p;
+    using stan::math::log1m;
 
     return log1m(gamma_p(alpha, beta * y));
   }
