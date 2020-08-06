@@ -3,13 +3,35 @@
 
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <ostream>
+#include <type_traits>
 
 namespace stan {
 namespace math {
 
 // forward declaration of var
-class var;
+template <typename T, typename>
+class var_value;
+/**
+ * Abstract base class that all `vari_value` and it's derived classes inherit.
+ *
+ * The chain() method applies the chain rule. Concrete extensions
+ * of this class will represent base variables or the result
+ * of operations such as addition or subtraction. These extended
+ * classes will store operand variables and propagate derivative
+ * information via an implementation of chain().
+ */
+class vari_base {
+ public:
+  /**
+   * Apply the chain rule to this variable based on the variables
+   * on which it depends.
+   */
+  virtual void chain() = 0;
+  virtual void set_zero_adjoint() = 0;
+  virtual ~vari_base() noexcept {}
+};
 
 /**
  * The variable implementation base class.
@@ -21,27 +43,26 @@ class var;
  * value. It also stores the adjoint for storing the partial
  * derivative with respect to the root of the derivative tree.
  *
- * The chain() method applies the chain rule. Concrete extensions
- * of this class will represent base variables or the result
- * of operations such as addition or subtraction. These extended
- * classes will store operand variables and propagate derivative
- * information via an implementation of chain().
  */
-class vari {
+template <typename T>
+class vari_value<T, std::enable_if_t<std::is_floating_point<T>::value>>
+    : public vari_base {
  private:
-  friend class var;
+  template <typename, typename>
+  friend class var_value;
 
  public:
+  using Scalar = T;
+  using value_type = Scalar;
   /**
    * The value of this variable.
    */
-  const double val_;
-
+  const Scalar val_;
   /**
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
    */
-  double adj_;
+  Scalar adj_;
 
   /**
    * Construct a variable implementation from a value.  The
@@ -53,37 +74,54 @@ class vari {
    * derivative propagation, the chain() method of each variable
    * will be called in the reverse order of construction.
    *
+   * @tparam S a floating point type.
    * @param x Value of the constructed variable.
    */
-  explicit vari(double x) : val_(x), adj_(0.0) {
-    ChainableStack::instance_->var_stack_.push_back(this);
+  template <typename S,
+            std::enable_if_t<std::is_convertible<S&, Scalar>::value>* = nullptr>
+  vari_value(S x) noexcept : val_(x), adj_(0.0) {  // NOLINT
+    ChainableStack::instance_->var_stack_.emplace_back(this);
   }
 
-  vari(double x, bool stacked) : val_(x), adj_(0.0) {
+  /**
+   * Construct a variable implementation from a value.  The
+   *  adjoint is initialized to zero and if `stacked` is `false` this vari
+   *  will be not be put on the var_stack. Instead it will only be put on
+   *  a stack to keep track of whether the adjoint needs to be set to zero.
+   *
+   * All constructed variables are added to a stack.  Variables
+   *  should be constructed before variables on which they depend
+   *  to insure proper partial derivative propagation.  During
+   *  derivative propagation, the chain() method of each variable
+   *  will be called in the reverse order of construction.
+   *
+   * @tparam S n floating point type.
+   * @param x Value of the constructed variable.
+   * @param stacked If false will put this this vari on the nochain stack so
+   * that its `chain()` method is not called.
+   */
+  template <typename S,
+            std::enable_if_t<std::is_convertible<S&, Scalar>::value>* = nullptr>
+  vari_value(S x, bool stacked) noexcept : val_(x), adj_(0.0) {
     if (stacked) {
-      ChainableStack::instance_->var_stack_.push_back(this);
+      ChainableStack::instance_->var_stack_.emplace_back(this);
     } else {
-      ChainableStack::instance_->var_nochain_stack_.push_back(this);
+      ChainableStack::instance_->var_nochain_stack_.emplace_back(this);
     }
   }
 
   /**
-   * Throw an illegal argument exception.
-   *
-   * <i>Warning</i>: Destructors should never called for var objects.
-   *
-   * @throw Logic exception always.
+   * Constructor from vari_value
+   * @tparam S A floating point type
+   * @param x A vari_value
    */
-  virtual ~vari() {
-    // this will never get called
+  vari_value(const vari_value<T>& x) noexcept : val_(x.val_), adj_(x.adj_) {
+    ChainableStack::instance_->var_stack_.emplace_back(this);
   }
 
-  /**
-   * Apply the chain rule to this variable based on the variables
-   * on which it depends.  The base implementation in this class
-   * is a no-op.
-   */
-  virtual void chain() {}
+  ~vari_value() = default;
+
+  inline void chain() {}
 
   /**
    * Initialize the adjoint for this (dependent) variable to 1.
@@ -91,14 +129,14 @@ class vari {
    * propagating derivatives, setting the derivative of the
    * result with respect to itself to be 1.
    */
-  void init_dependent() { adj_ = 1.0; }
+  inline void init_dependent() noexcept { adj_ = 1.0; }
 
   /**
    * Set the adjoint value of this variable to 0.  This is used to
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  void set_zero_adjoint() { adj_ = 0.0; }
+  inline void set_zero_adjoint() noexcept final { adj_ = 0.0; }
 
   /**
    * Insertion operator for vari. Prints the current value and
@@ -109,7 +147,7 @@ class vari {
    *
    * @return The modified ostream.
    */
-  friend std::ostream& operator<<(std::ostream& os, const vari* v) {
+  friend std::ostream& operator<<(std::ostream& os, const vari_value<T>* v) {
     return os << v->val_ << ":" << v->adj_;
   }
 
@@ -123,7 +161,7 @@ class vari {
    * @param nbytes Number of bytes to allocate.
    * @return Pointer to allocated bytes.
    */
-  static inline void* operator new(size_t nbytes) {
+  static inline void* operator new(size_t nbytes) noexcept {
     return ChainableStack::instance_->memalloc_.alloc(nbytes);
   }
 
@@ -138,9 +176,13 @@ class vari {
    * See the discussion of "plugging the memory leak" in:
    *   http://www.parashift.com/c++-faq/memory-pools.html
    */
-  static inline void operator delete(void* /* ignore arg */) { /* no op */
+  static inline void operator delete(
+      void* /* ignore arg */) noexcept { /* no op */
   }
 };
+
+// For backwards compatability the default is double
+using vari = vari_value<double>;
 
 }  // namespace math
 }  // namespace stan

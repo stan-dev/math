@@ -74,7 +74,7 @@ inline std::ostream& operator<<(std::ostream& os, static_string const& s) {
  * Prints out an input type.
  * @tparam T The type to print out.
  */
-template <class T>
+template <class Arg>
 CONSTEXPR14_TN static_string type_name() {
 #ifdef __clang__
   static_string p = __PRETTY_FUNCTION__;
@@ -84,7 +84,7 @@ CONSTEXPR14_TN static_string type_name() {
 #if __cplusplus < 201402
   return static_string(p.data() + 36, p.size() - 36 - 1);
 #else
-  return static_string(p.data() + 46, p.size() - 46 - 1);
+  return static_string(p.data() + 83, p.size() - 83 - 1);
 #endif
 #elif defined(_MSC_VER)
   static_string p = __FUNCSIG__;
