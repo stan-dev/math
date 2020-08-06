@@ -32,11 +32,11 @@ class AgradCcdfLogGamma : public AgradCcdfLogTest {
     ccdf_log.push_back(
         std::log(1.0 - 0.6321205588285576659757));  // expected ccdf_log
 
-    param[0] = 16.0;  // y
-    param[1] = 3.0;   // alpha
-    param[2] = 3.0;   // beta
+    param[0] = 9.0;  // y
+    param[1] = 1.2;   // alpha
+    param[2] = 1.2;   // beta
     parameters.push_back(param);
-    ccdf_log.push_back(std::log(1.7116220633718619e-18));  // expected ccdf_log
+    ccdf_log.push_back(-10.221534317077268);  // expected ccdf_log
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {
