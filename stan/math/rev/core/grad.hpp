@@ -12,6 +12,26 @@ namespace stan {
 namespace math {
 
 /**
+ * Compute the gradient for all variables starting from the end of the AD tape.
+ * This function does not recover memory.  The chain
+ * rule is applied working down the stack from the last vari created on the
+ * AD tape and then calling each vari's `chain()` method in turn.
+ *
+ * <p>This function computes a nested gradient only going back as far
+ * as the last nesting.
+ *
+ * <p>This function does not recover any memory from the computation.
+ *
+ */
+static void grad() {
+  size_t end = ChainableStack::instance_->var_stack_.size();
+  size_t beginning = empty_nested() ? 0 : end - nested_size();
+  for (size_t i = end; i-- > beginning;) {
+    ChainableStack::instance_->var_stack_[i]->chain();
+  }
+}
+
+/**
  * Compute the gradient for all variables starting from the
  * specified root variable implementation.  Does not recover
  * memory.  This chainable variable's adjoint is initialized using
@@ -31,26 +51,6 @@ template <typename Vari>
 static void grad(Vari* vi) {
   vi->init_dependent();
   grad();
-}
-
-/**
- * Compute the gradient for all variables starting from the end of the AD tape.
- * This function does not recover memory.  The chain
- * rule is applied working down the stack from the last vari created on the
- * AD tape and then calling each vari's `chain()` method in turn.
- *
- * <p>This function computes a nested gradient only going back as far
- * as the last nesting.
- *
- * <p>This function does not recover any memory from the computation.
- *
- */
-static void grad() {
-  size_t end = ChainableStack::instance_->var_stack_.size();
-  size_t beginning = empty_nested() ? 0 : end - nested_size();
-  for (size_t i = end; i-- > beginning;) {
-    ChainableStack::instance_->var_stack_[i]->chain();
-  }
 }
 
 }  // namespace math
