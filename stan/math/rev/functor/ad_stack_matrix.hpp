@@ -86,7 +86,7 @@ class AD_stack_matrix : public Eigen::Map<MatrixType> {
 
   /**
    * Assignment operator for assigning an expression.
-   * @param other expression to evaluate into this
+   * @param a expression to evaluate into this
    * @return `*this`
    */
   template <typename T>
