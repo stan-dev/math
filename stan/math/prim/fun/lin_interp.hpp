@@ -5,8 +5,6 @@
 #include <vector>
 #include <algorithm>
 
-using namespace std;
-
 namespace stan {
 namespace math {
 
@@ -24,8 +22,14 @@ namespace math {
  * @param x the point at which to evaluate the interpolation
  * @return value of linear interpolation at x
  */
-double lin_interp(std::vector<double> const& xs, std::vector<double> const& ys,
+double lin_interp(const std::vector<double>& xs, const std::vector<double>& ys,
                   double x) {
+  static char const* function = "lin_interp";
+  check_ordered(function, "xs", xs);
+  check_not_nan(function, "xs", xs);
+  check_not_nan(function, "ys", ys);
+  check_not_nan(function, "x", x);
+  check_greater(function, "xs", xs.size(), 1);
   int n = xs.size();
 
   // if x is less than left endpoint or greater than right, return endpoint

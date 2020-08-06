@@ -23,6 +23,11 @@ TEST(mathPrimGausInterp, throwing) {
   ys = {0, 2};
   EXPECT_THROW(gaus_interp_precomp(xs, ys), std::domain_error);
 
+  // xs must contain at least two elements
+  xs = {1};
+  ys = {0, 2};
+  EXPECT_THROW(gaus_interp_precomp(xs, ys), std::domain_error);
+
   // check that error throws when trying to interpolate out of range or nan
   xs = {0, 1};
   ys = {0, 2};
@@ -48,6 +53,11 @@ TEST(mathPrimGausInterp, throwing) {
 
   // xs must be increasing
   xs = {1, 1};
+  ys = {0, 2};
+  EXPECT_THROW(gaus_interp(xs, ys, params, x), std::domain_error);
+
+  // xs must contain at least two elements
+  xs = {1};
   ys = {0, 2};
   EXPECT_THROW(gaus_interp(xs, ys, params, x), std::domain_error);
 }

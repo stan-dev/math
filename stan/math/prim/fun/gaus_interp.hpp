@@ -5,6 +5,7 @@
 #include <vector>
 #include <algorithm>
 #include <stan/math/prim/fun/conv_gaus_line.hpp>
+#include <stan/math/prim/fun/square.hpp>
 
 using namespace std;
 
@@ -24,7 +25,7 @@ namespace internal {
 find the smallest difference between successive elements in a sorted vector
 */
 template <typename Tx>
-double min_diff(int n, std::vector<Tx> const& xs) {
+double min_diff(int n, const std::vector<Tx>& xs) {
   double dmin = value_of(xs[1]) - value_of(xs[0]);
   for (int i = 1; i < n - 1; i++) {
     if (value_of(xs[i + 1]) - value_of(xs[i]) < dmin) {
@@ -57,10 +58,10 @@ double min_diff(int n, std::vector<Tx> const& xs) {
  * @return value of the interpolation at x
  */
 template <typename Tx>
-inline return_type_t<Tx> gaus_interp(std::vector<double> const& xs,
-                                     std::vector<double> const& ys,
-                                     gaus_interp_params const& params,
-                                     Tx const& x) {
+inline return_type_t<Tx> gaus_interp(const std::vector<double>& xs,
+                                     const std::vector<double>& ys,
+                                     const gaus_interp_params& params,
+                                     const Tx& x) {
   // enforce that interpolation point is between smallest and largest
   // reference point
   static char const* function = "gaus_interp";
@@ -70,6 +71,7 @@ inline return_type_t<Tx> gaus_interp(std::vector<double> const& xs,
   check_not_nan(function, "xs", xs);
   check_not_nan(function, "ys", ys);
   check_not_nan(function, "x", x);
+  check_greater(function, "xs", xs.size(), 1);
 
   const double NSTDS = 10;
   int n = xs.size();
@@ -120,12 +122,13 @@ inline return_type_t<Tx> gaus_interp(std::vector<double> const& xs,
  * @param ys vector of dependent variable of reference points
  * @return struct containing slopes, intercepts, and width of kernel
  */
-gaus_interp_params gaus_interp_precomp(std::vector<double> const& xs,
-                                       std::vector<double> const& ys) {
+gaus_interp_params gaus_interp_precomp(const std::vector<double>& xs,
+                                       const std::vector<double>& ys) {
   static char const* function = "gaus_interp_precomp";
   check_not_nan(function, "xs", xs);
   check_not_nan(function, "ys", ys);
   check_ordered(function, "xs", xs);
+  check_greater(function, "xs", xs.size(), 1);
 
   using internal::min_diff;
   gaus_interp_params params;
@@ -134,7 +137,7 @@ gaus_interp_params gaus_interp_precomp(std::vector<double> const& xs,
   int n = xs.size();
 
   // find minimum distance between points for std of gaussian kernel
-  params.sig2 = stan::math::square(min_diff(n, xs) * SIG2_SCALE);
+  params.sig2 = square(min_diff(n, xs) * SIG2_SCALE);
   params.as.resize(n - 1);
   params.bs.resize(n - 1);
 
@@ -160,7 +163,6 @@ gaus_interp_params gaus_interp_precomp(std::vector<double> const& xs,
     if (dmax < INTERP_TOL)
       break;
   }
-
   return params;
 }
 
@@ -178,9 +180,9 @@ gaus_interp_params gaus_interp_precomp(std::vector<double> const& xs,
  */
 
 template <typename Tx>
-inline vector<Tx> gaus_interp_vect(std::vector<double> const& xs,
-                                   std::vector<double> const& ys,
-                                   std::vector<Tx> const& xs_new) {
+inline vector<Tx> gaus_interp_vect(const std::vector<double>& xs,
+                                   const std::vector<double>& ys,
+                                   const std::vector<Tx>& xs_new) {
   int n_interp = xs_new.size();
   std::vector<Tx> ys_new(n_interp);
 
