@@ -1,5 +1,6 @@
 #include <stan/math.hpp>
 #include <stan/math/prim.hpp>
+#include <test/unit/util.hpp>
 #include <test/unit/pretty_print_types.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/rev/core/gradable.hpp>
@@ -14,8 +15,10 @@ struct AgradRev : public testing::Test {
   }
 };
 
+namespace stan {
+namespace test {
 template <typename T, typename S>
-void ctor_overloads_impl() {
+void ctor_overloads_float_impl() {
   using stan::math::var_value;
   using stan::math::vari_value;
   using stan::math::test::type_name;
@@ -39,27 +42,122 @@ void ctor_overloads_impl() {
 }
 
 template <typename T>
-void ctor_overloads() {
-  ctor_overloads_impl<T, double>();
-  ctor_overloads_impl<T, long double>();
-  ctor_overloads_impl<T, float>();
-  ctor_overloads_impl<T, bool>();
-  ctor_overloads_impl<T, char>();
-  ctor_overloads_impl<T, int>();
-  ctor_overloads_impl<T, int16_t>();
-  ctor_overloads_impl<T, int32_t>();
-  ctor_overloads_impl<T, unsigned char>();
-  ctor_overloads_impl<T, unsigned int>();
-  ctor_overloads_impl<T, uint32_t>();
-  ctor_overloads_impl<T, uint16_t>();
-  ctor_overloads_impl<T, size_t>();
-  ctor_overloads_impl<T, ptrdiff_t>();
+void ctor_overloads_float() {
+  ctor_overloads_float_impl<T, double>();
+  ctor_overloads_float_impl<T, long double>();
+  ctor_overloads_float_impl<T, float>();
+  ctor_overloads_float_impl<T, bool>();
+  ctor_overloads_float_impl<T, char>();
+  ctor_overloads_float_impl<T, int>();
+  ctor_overloads_float_impl<T, int16_t>();
+  ctor_overloads_float_impl<T, int32_t>();
+  ctor_overloads_float_impl<T, unsigned char>();
+  ctor_overloads_float_impl<T, unsigned int>();
+  ctor_overloads_float_impl<T, uint32_t>();
+  ctor_overloads_float_impl<T, uint16_t>();
+  ctor_overloads_float_impl<T, size_t>();
+  ctor_overloads_float_impl<T, ptrdiff_t>();
 }
 
-TEST_F(AgradRev, ctorOverloads) {
-  ctor_overloads<float>();
-  ctor_overloads<double>();
-  ctor_overloads<long double>();
+template <typename EigenMat>
+void ctor_overloads_matrix(EigenMat&& xx) {
+  using stan::math::var_value;
+  using stan::math::vari_value;
+  using stan::math::test::type_name;
+  using eigen_plain = std::decay_t<stan::plain_type_t<EigenMat>>;
+
+  eigen_plain x = xx;
+  // standard constructor
+  EXPECT_MATRIX_FLOAT_EQ((x + x).eval(), var_value<eigen_plain>(x + x).val());
+  // make sure copy ctor is used rather than casting vari* to unsigned int
+  EXPECT_MATRIX_FLOAT_EQ(
+      x, var_value<eigen_plain>(new vari_value<eigen_plain>(x)).val());
+  // make sure rvalue var_value can be accepted
+  EXPECT_MATRIX_FLOAT_EQ(
+      x, var_value<eigen_plain>(var_value<eigen_plain>(x)).val());
+  // test init_dependent for adj
+  auto test_var_x = var_value<eigen_plain>(var_value<eigen_plain>(x));
+  test_var_x.vi_->init_dependent();
+  EXPECT_MATRIX_FLOAT_EQ(eigen_plain::Ones(x.rows(), x.cols()),
+                         test_var_x.adj());
+}
+
+template <typename EigenMat>
+void ctor_overloads_sparse_matrix(EigenMat&& x) {
+  using stan::math::var_value;
+  using stan::math::vari_value;
+  using stan::math::test::type_name;
+  using eigen_plain = std::decay_t<stan::plain_type_t<EigenMat>>;
+  using inner_iterator = typename eigen_plain::InnerIterator;
+  // standard constructor with eigen expression
+  eigen_plain matmul_x = x * x;
+  eigen_plain matmul_xx = var_value<eigen_plain>(x * x).val();
+  for (int k = 0; k < matmul_x.outerSize(); ++k) {
+    for (inner_iterator it(matmul_x, k), iz(matmul_xx, k); it; ++it, ++iz) {
+      EXPECT_FLOAT_EQ(iz.value(), it.value());
+    }
+  }
+  const eigen_plain const_matmul_x = x * x;
+  eigen_plain const_matmul_xx = var_value<eigen_plain>(const_matmul_x).val();
+  for (int k = 0; k < matmul_x.outerSize(); ++k) {
+    for (inner_iterator it(const_matmul_x, k), iz(const_matmul_xx, k); it;
+         ++it, ++iz) {
+      EXPECT_FLOAT_EQ(iz.value(), it.value());
+    }
+  }
+
+  // make sure rvalue var_value can be accepted
+  eigen_plain x_rv = var_value<eigen_plain>(var_value<eigen_plain>(x)).val();
+  for (int k = 0; k < x.outerSize(); ++k) {
+    for (inner_iterator it(x, k), iz(x_rv, k); it; ++it, ++iz) {
+      EXPECT_FLOAT_EQ(iz.value(), it.value());
+    }
+  }
+
+  // from a vari_value with sparse eigen expression
+  eigen_plain x_from_vari
+      = var_value<eigen_plain>(new vari_value<eigen_plain>(x * x)).val();
+  for (int k = 0; k < matmul_x.outerSize(); ++k) {
+    for (inner_iterator it(matmul_x, k), iz(x_from_vari, k); it; ++it, ++iz) {
+      EXPECT_FLOAT_EQ(iz.value(), it.value());
+    }
+  }
+  // test inplace addition works
+  auto inplace_add_var = var_value<eigen_plain>(new vari_value<eigen_plain>(x));
+  eigen_plain test_y = make_sparse_matrix_random(10, 10);
+  inplace_add_var.vi_->init_dependent();
+  inplace_add_var.adj() += test_y;
+  // adjoints sparsity pattern will be pattern of x and test_y for addition
+  for (int k = 0; k < x.outerSize(); ++k) {
+    for (inner_iterator it(test_y, k), iz(inplace_add_var.adj(), k); iz; ++iz) {
+      if (iz.row() == it.row() && iz.col() == it.col()) {
+        EXPECT_FLOAT_EQ(iz.value() - 1, it.value());
+        ++it;
+      } else {
+        EXPECT_FLOAT_EQ(iz.value(), 1.0);
+      }
+    }
+  }
+}
+
+}  // namespace test
+}  // namespace stan
+TEST_F(AgradRev, ctorfloatOverloads) {
+  stan::test::ctor_overloads_float<float>();
+  stan::test::ctor_overloads_float<double>();
+  stan::test::ctor_overloads_float<long double>();
+}
+
+TEST_F(AgradRev, ctormatrixOverloads) {
+  using dense_mat = Eigen::Matrix<double, -1, -1>;
+  using sparse_mat = Eigen::SparseMatrix<double>;
+  stan::test::ctor_overloads_matrix(dense_mat::Random(10, 10));
+  using dense_vec = Eigen::Matrix<double, -1, 1>;
+  stan::test::ctor_overloads_matrix(dense_vec::Random(10));
+  using dense_row_vec = Eigen::Matrix<double, 1, -1>;
+  stan::test::ctor_overloads_matrix(dense_row_vec::Random(10));
+  sparse_mat sparse_x = stan::test::make_sparse_matrix_random(10, 10);
+  stan::test::ctor_overloads_sparse_matrix(sparse_x);
 }
 
 TEST_F(AgradRev, a_eq_x) {
