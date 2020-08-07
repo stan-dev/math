@@ -86,7 +86,7 @@ class var_value {
    * @param x Value of the variable.
    */
   template <typename S, require_convertible_t<S&, value_type>* = nullptr>
-  var_value(S&& x) : vi_(new vari_type(x, false)) {}  // NOLINT
+  var_value(S&& x) : vi_(new vari_type(std::forward<S>(x), false)) {}  // NOLINT
 
   /**
    * Construct a variable from a pointer to a variable implementation.
