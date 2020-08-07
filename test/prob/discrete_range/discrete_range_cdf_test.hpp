@@ -56,7 +56,7 @@ class AgradCdfDiscreteRange : public AgradCdfTest {
       return 0;
     }
 
-    if (y >= upper) {
+    if (y > upper) {
       return 1;
     }
 

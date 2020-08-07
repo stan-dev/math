@@ -60,7 +60,7 @@ double discrete_range_cdf(const T_y& y, const T_lower& lower,
   double cdf(1.0);
   for (size_t n = 0; n < N; n++) {
     const double y_dbl = y_vec[n];
-    if (y_dbl <= upper_vec[n]) {
+    if (y_dbl < upper_vec[n]) {
       const double lower_dbl = lower_vec[n];
       const double upper_dbl = upper_vec[n];
       cdf *= (y_dbl - lower_dbl + 1) / (upper_dbl - lower_dbl + 1);
