@@ -1126,4 +1126,6 @@ REGISTER_TYPED_TEST_CASE_P(AgradCdfLogTestFixture, CallAllVersions, ValidValues,
                            AsScalarsVsAsVector, LowerBound, UpperBound,
                            Length0Vector);
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AgradCdfLogTestFixture);
+
 #endif

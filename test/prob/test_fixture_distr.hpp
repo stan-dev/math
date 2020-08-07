@@ -1089,4 +1089,6 @@ REGISTER_TYPED_TEST_CASE_P(AgradDistributionTestFixture, CallAllVersions,
                            Function, RepeatAsVector, AsScalarsVsAsVector,
                            Length0Vector);
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AgradDistributionTestFixture);
+
 #endif

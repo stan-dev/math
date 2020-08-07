@@ -1,4 +1,5 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/math/prim/fun/binary_scalar_tester.hpp>
 #include <boost/math/special_functions/bessel.hpp>
 #include <gtest/gtest.h>
 #include <limits>
@@ -76,4 +77,17 @@ TEST(MathFunctions, log_modified_bessel_first_kind_throw) {
   EXPECT_THROW(log_modified_bessel_first_kind(nan, 1), std::domain_error);
   EXPECT_THROW(log_modified_bessel_first_kind(.5, -2), std::domain_error);
   EXPECT_THROW(log_modified_bessel_first_kind(-2, 1), std::domain_error);
+}
+
+TEST(MathFunctions, log_modified_bessel_first_kind_vec) {
+  auto f = [](const auto& x1, const auto& x2) {
+    using stan::math::log_modified_bessel_first_kind;
+    return log_modified_bessel_first_kind(x1, x2);
+  };
+
+  Eigen::VectorXd in1(3);
+  in1 << 1.8, 3.24, 1.8;
+  Eigen::VectorXd in2(3);
+  in2 << 7.3, 0.7, 2.8;
+  stan::test::binary_scalar_tester(f, in1, in2);
 }
