@@ -20,9 +20,7 @@ inline Eigen::Matrix<var, Mat1::RowsAtCompileTime, 1> rows_dot_product(
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
   Eigen::Matrix<var, Mat1::RowsAtCompileTime, 1> ret(v1.rows(), 1);
   for (size_type j = 0; j < v1.rows(); ++j) {
-    ret(j) = var(
-        new internal::dot_product_vari<value_type_t<Mat1>, value_type_t<Mat2>>(
-            v1.row(j), v2.row(j)));
+    ret(j) = dot_product(v1.row(j), v2.row(j));
   }
   return ret;
 }

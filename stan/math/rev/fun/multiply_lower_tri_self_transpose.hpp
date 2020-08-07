@@ -42,8 +42,9 @@ inline matrix_v multiply_lower_tri_self_transpose(const matrix_v& L) {
     LLt(m, m) = var(
         new internal::dot_self_vari(vs + mpos, (J < (m + 1)) ? J : (m + 1)));
     for (int n = 0, npos = 0; n < m; ++n, npos += (J < n) ? J : n) {
-      LLt(m, n) = LLt(n, m) = var(new internal::dot_product_vari<var, var>(
-          vs + mpos, vs + npos, (J < (n + 1)) ? J : (n + 1)));
+      LLt(m, n) = LLt(n, m)
+          = dot_product(L.row(m).head((J < (n + 1)) ? J : (n + 1)),
+                        L.row(n).head((J < (n + 1)) ? J : (n + 1)));
     }
   }
   return LLt;
