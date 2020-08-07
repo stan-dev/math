@@ -15,12 +15,12 @@ namespace math {
  *
  * For types that already have this property (including scalars and
  * `var_value`s) this is a no-op.
- * @tparam type of scalar
+ * @tparam T type of scalar
  * @param a argument
  * @return argument
  */
 template <typename T, require_same_t<T, AD_stack_t<T>>* = nullptr>
-T to_AD_stack(const T& a) {
+inline T to_AD_stack(const T& a) {
   // intentionally making a copy (not using forwarding or returning references)
   // as these types are cheap to copy and any object referenced by an input
   // reference might go out of scope before the returned value is used
@@ -32,12 +32,12 @@ T to_AD_stack(const T& a) {
  * stack.
  *
  * For std vectors that have data already on AD stack this is a shallow copy.
- * @tparam type of scalar
+ * @tparam T type of scalar
  * @param a argument
  * @return argument
  */
 template <typename T>
-std::vector<T, AD_stack_allocator<T>> to_AD_stack(
+inline std::vector<T, AD_stack_allocator<T>> to_AD_stack(
     const std::vector<T, AD_stack_allocator<T>>& a) {
   // What we want to do here is the same as moving input into output, except
   // that we want input to be left unchanged. With any normal allocator that
@@ -54,13 +54,13 @@ std::vector<T, AD_stack_allocator<T>> to_AD_stack(
  * stack.
  *
  * Converts eigen types to `AD_stack_matrix`.
- * @tparam type of argument
+ * @tparam T type of argument
  * @param a argument
  * @return argument copied/evaluated on AD stack
  */
 template <typename T, require_eigen_t<T>* = nullptr,
           require_not_same_t<T, AD_stack_t<T>>* = nullptr>
-AD_stack_t<T> to_AD_stack(const T& a) {
+inline AD_stack_t<T> to_AD_stack(const T& a) {
   return {a};
 }
 
@@ -74,12 +74,12 @@ AD_stack_t<T> to_AD_stack(const T& a) {
  * This overload works on vectors with simple scalars that don't need to be
  * converthed themselves.
  *
- * @tparam type of argument
+ * @tparam T type of argument
  * @param a argument
  * @return argument copied on AD stack
  */
 template <typename T, require_same_t<T, AD_stack_t<T>>* = nullptr>
-AD_stack_t<std::vector<T>> to_AD_stack(const std::vector<T>& a) {
+inline AD_stack_t<std::vector<T>> to_AD_stack(const std::vector<T>& a) {
   return {a.begin(), a.end()};
 }
 
@@ -92,18 +92,36 @@ AD_stack_t<std::vector<T>> to_AD_stack(const std::vector<T>& a) {
  *
  * This overload works on vectors with scalars that also need conversion.
  *
- * @tparam type of argument
+ * @tparam T type of argument
  * @param a argument
  * @return argument copied on AD stack
  */
 template <typename T, require_not_same_t<T, AD_stack_t<T>>* = nullptr>
-AD_stack_t<std::vector<T>> to_AD_stack(const std::vector<T>& a) {
+inline AD_stack_t<std::vector<T>> to_AD_stack(const std::vector<T>& a) {
   AD_stack_t<std::vector<T>> res;
   res.reserve(a.size());
   for (const T& i : a) {
     res.push_back(to_AD_stack(i));
   }
   return res;
+}
+
+/**
+ * If the condition is true, converts given argument into a type that has any
+ * dynamic allocation on AD stack. Otherwise this is a no-op.
+ *
+ * @tparam T type of argument
+ * @param a argument
+ * @return argument copied/evaluated on AD stack
+ */
+template <bool Condition, typename T, std::enable_if_t<!Condition>* = nullptr>
+inline T to_AD_stack_if(T&& a) {
+  return std::forward<T>(a);
+}
+
+template <bool Condition, typename T, std::enable_if_t<Condition>* = nullptr>
+inline AD_stack_t<T> to_AD_stack_if(const T& a) {
+  return to_AD_stack(a);
 }
 
 }  // namespace math
