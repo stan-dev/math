@@ -105,26 +105,6 @@ struct compute_dims<Eigen::Matrix<T, R, C>> {
 };
 }  // namespace internal
 
-
-
-template<typename F>
-struct adjac_vari : public vari {
-  F rev_functor_;
-
-  adjac_vari(F&& rev_functor) : vari(NOT_A_NUMBER), rev_functor_(rev_functor){}
-
-  inline void chain() {
-    rev_functor_();
-  }
-};
-
-template<typename F>
-inline void adjac_apply(F&& rev_functor){
-  new adjac_vari<F>(std::forward<F>(rev_functor));
-}
-
-
-
 /**
  * adj_jac_vari interfaces a user supplied functor  with the reverse mode
  * autodiff. It allows someone to implement functions with custom reverse mode

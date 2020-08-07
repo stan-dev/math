@@ -6,7 +6,7 @@
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/fun/to_ad_stack.hpp>
 #include <stan/math/rev/functor/ad_stack_matrix.hpp>
-#include <stan/math/rev/functor/adj_jac_apply.hpp>
+#include <stan/math/rev/functor/reverse_pass_callback.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
@@ -53,7 +53,7 @@ inline return_type_t<T1, T2> dot_product(const T1& v1, const T2& v2) {
     v2_ad_stack = v2_col;
   }
 
-  adjac_apply([=]() mutable {
+  reverse_pass_callback([=]() mutable {
     if (!is_constant<T1>::value) {
       v1_ad_stack.adj() += res.adj() * v2_val;
     }

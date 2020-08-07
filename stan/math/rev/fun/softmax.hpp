@@ -2,7 +2,7 @@
 #define STAN_MATH_REV_FUN_SOFTMAX_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/functor/adj_jac_apply.hpp>
+#include <stan/math/rev/functor/reverse_pass_callback.hpp>
 #include <stan/math/rev/functor/ad_stack_matrix.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
@@ -30,7 +30,7 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
   AD_stack_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> res = res_val;
   AD_stack_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> alpha_ad_stack = alpha;
 
-  adjac_apply([=]() mutable {
+  reverse_pass_callback([=]() mutable {
     Eigen::VectorXd res_adj = res.adj();
     alpha_ad_stack.adj() = -res_val * res_adj.dot(res_val) + res_val.cwiseProduct(res_adj);
   });
