@@ -20,4 +20,6 @@ void ad_stack_allocator_test() {
   }
 }
 
-TEST(AgradRev, AD_stack_allocator_test) { EXPECT_NO_THROW(ad_stack_allocator_test()); }
+TEST(AgradRev, AD_stack_allocator_test) {
+  EXPECT_NO_THROW(ad_stack_allocator_test());
+}
