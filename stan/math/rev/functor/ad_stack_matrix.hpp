@@ -72,6 +72,8 @@ class AD_stack_matrix : public Eigen::Map<MatrixType> {
       : Eigen::Map<MatrixType>::Map(const_cast<Scalar*>(other.data()),
                                     other.rows(), other.cols()) {}
 
+  // without this using, compiler prefers combination of implicit construction
+  // and copy assignment to the inherited operator when assigned an expression
   using Eigen::Map<MatrixType>::operator=;
 
   /**
@@ -99,31 +101,6 @@ class AD_stack_matrix : public Eigen::Map<MatrixType> {
         a.rows(), a.cols());
     Eigen::Map<MatrixType>::operator=(a);
     return *this;
-  }
-
-  /**
-   * Resizes this object to given number of rows and columns.
-   * @param rows number of rows
-   * @param cols number of columns
-   */
-  void resize(Eigen::Index rows, Eigen::Index cols) {
-    // placement new changes what data map points to - this new is not an
-    // allocation
-    new (this) Eigen::Map<MatrixType>(
-        ChainableStack::instance_->memalloc_.alloc_array<Scalar>(rows * cols),
-        rows, cols);
-  }
-
-  /**
-   * Resizes this object to given size. This only works if `MatrixType` is row
-   * or col vector.
-   * @param size number of elements
-   */
-  void resize(Eigen::Index size) {
-    // placement new changes what data map points to - this new is not an
-    // allocation
-    new (this) Eigen::Map<MatrixType>(
-        ChainableStack::instance_->memalloc_.alloc_array<Scalar>(size), size);
   }
 };
 

@@ -37,15 +37,15 @@ T to_AD_stack(const T& a) {
  * @return argument
  */
 template <typename T>
-std::vector<T, AD_allocator<T>> to_AD_stack(
-    const std::vector<T, AD_allocator<T>>& a) {
+std::vector<T, AD_stack_allocator<T>> to_AD_stack(
+    const std::vector<T, AD_stack_allocator<T>>& a) {
   // What we want to do here is the same as moving input into output, except
   // that we want input to be left unchanged. With any normal allocator that
   // lead to deallocating memory twice (probably segfaulting). However,
-  // dealocation with `AD_allocator` is a no-op, so we can do that.
-  std::vector<T, AD_allocator<T>> res;
+  // dealocation with `AD_stack_allocator` is a no-op, so we can do that.
+  std::vector<T, AD_stack_allocator<T>> res;
   std::memcpy(static_cast<void*>(&res), static_cast<const void*>(&a),
-              sizeof(std::vector<T, AD_allocator<T>>));
+              sizeof(std::vector<T, AD_stack_allocator<T>>));
   return res;
 }
 

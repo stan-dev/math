@@ -16,10 +16,6 @@ TEST(AgradRev, AD_stack_matrix_matrix_test) {
   AD_stack_matrix<MatrixXd> d(c);
   AD_stack_matrix<MatrixXd> e(2 * d);
 
-  // resize
-  a2.resize(4, 5);
-  b2.resize(3, 2);
-
   // assignment
   a = c;
   a2 = std::move(d);
@@ -46,10 +42,6 @@ TEST(AgradRev, AD_stack_matrix_vector_test) {
   AD_stack_matrix<VectorXd> d(c);
   AD_stack_matrix<VectorXd> e(2 * d);
 
-  // resize
-  a2.resize(4);
-  b2.resize(3);
-
   // assignment
   a = c;
   a2 = std::move(d);
@@ -75,10 +67,6 @@ TEST(AgradRev, AD_stack_matrix_row_vector_test) {
   AD_stack_matrix<RowVectorXd> c(RowVectorXd::Ones(3));
   AD_stack_matrix<RowVectorXd> d(c);
   AD_stack_matrix<RowVectorXd> e(2 * d);
-
-  // resize
-  a2.resize(4);
-  b2.resize(3);
 
   // assignment
   a = c;
