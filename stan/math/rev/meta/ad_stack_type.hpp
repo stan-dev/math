@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/plain_type.hpp>
-#include <stan/math/rev/core/ad_allocator.hpp>
+#include <stan/math/rev/core/ad_stack_allocator.hpp>
 
 namespace stan {
 namespace math {
@@ -21,7 +21,7 @@ struct AD_stack_type_impl {
 template <typename T>
 struct AD_stack_type_impl<std::vector<T>> {
   using T_ad = typename AD_stack_type_impl<std::decay_t<T>>::type;
-  using type = std::vector<T_ad, math::AD_allocator<T_ad>>;
+  using type = std::vector<T_ad, math::AD_stack_allocator<T_ad>>;
 };
 
 template <typename T>

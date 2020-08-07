@@ -824,4 +824,6 @@ REGISTER_TYPED_TEST_CASE_P(AgradDistributionTestFixture, CallAllVersions,
                            ValidValues, InvalidValues, Propto, FiniteDiff,
                            Function, RepeatAsVector, Length0Vector);
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AgradDistributionTestFixture);
+
 #endif
