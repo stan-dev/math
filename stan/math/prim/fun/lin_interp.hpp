@@ -23,8 +23,9 @@ namespace math {
  * @param x the point at which to evaluate the interpolation
  * @return value of linear interpolation at x
  */
-double lin_interp(const std::vector<double>& xs, const std::vector<double>& ys,
-                  double x) {
+inline double lin_interp(const std::vector<double>& xs, 
+			 const std::vector<double>& ys,
+			 double x) {
   static char const* function = "lin_interp";
   check_ordered(function, "xs", xs);
   check_not_nan(function, "xs", xs);

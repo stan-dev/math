@@ -23,8 +23,8 @@ namespace math {
  * @return The value of the derivative
  */
 template <typename Tx>
-double conv_gaus_line(double t0, double t1, double a, double b, const Tx& x,
-                      double sig2) {
+inline double conv_gaus_line(double t0, double t1, double a, double b, 
+			     const Tx& x, double sig2) {
   using stan::math::normal_cdf;
   using std::exp;
   using std::pow;
