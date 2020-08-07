@@ -31,6 +31,35 @@ class vari_base {
   virtual void chain() = 0;
   virtual void set_zero_adjoint() = 0;
   virtual ~vari_base() noexcept {}
+
+  /**
+   * Allocate memory from the underlying memory pool.  This memory is
+   * is managed as a whole externally.
+   *
+   * Warning: Classes should not be allocated with this operator
+   * if they have non-trivial destructors.
+   *
+   * @param nbytes Number of bytes to allocate.
+   * @return Pointer to allocated bytes.
+   */
+  static inline void* operator new(size_t nbytes) noexcept {
+    return ChainableStack::instance_->memalloc_.alloc(nbytes);
+  }
+
+  /**
+   * Delete a pointer from the underlying memory pool.
+   *
+   * This no-op implementation enables a subclass to throw
+   * exceptions in its constructor.  An exception thrown in the
+   * constructor of a subclass will result in an error being
+   * raised, which is in turn caught and calls delete().
+   *
+   * See the discussion of "plugging the memory leak" in:
+   *   http://www.parashift.com/c++-faq/memory-pools.html
+   */
+  static inline void operator delete(
+      void* /* ignore arg */) noexcept { /* no op */
+  }
 };
 
 template <typename T, typename = void>
@@ -132,35 +161,6 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
    */
   friend std::ostream& operator<<(std::ostream& os, const vari_value<T>* v) {
     return os << v->val_ << ":" << v->adj_;
-  }
-
-  /**
-   * Allocate memory from the underlying memory pool.  This memory is
-   * is managed as a whole externally.
-   *
-   * Warning: Classes should not be allocated with this operator
-   * if they have non-trivial destructors.
-   *
-   * @param nbytes Number of bytes to allocate.
-   * @return Pointer to allocated bytes.
-   */
-  static inline void* operator new(size_t nbytes) noexcept {
-    return ChainableStack::instance_->memalloc_.alloc(nbytes);
-  }
-
-  /**
-   * Delete a pointer from the underlying memory pool.
-   *
-   * This no-op implementation enables a subclass to throw
-   * exceptions in its constructor.  An exception thrown in the
-   * constructor of a subclass will result in an error being
-   * raised, which is in turn caught and calls delete().
-   *
-   * See the discussion of "plugging the memory leak" in:
-   *   http://www.parashift.com/c++-faq/memory-pools.html
-   */
-  static inline void operator delete(
-      void* /* ignore arg */) noexcept { /* no op */
   }
 
  private:
@@ -320,34 +320,6 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
     return os << "val: \n" << v->val_ << " \nadj: \n" << v->adj_;
   }
 
-  /**
-   * Allocate memory from the underlying memory pool.  This memory is
-   * is managed as a whole externally.
-   *
-   * Warning: Classes should not be allocated with this operator
-   * if they have non-trivial destructors.
-   *
-   * @param nbytes Number of bytes to allocate.
-   * @return Pointer to allocated bytes.
-   */
-  static inline void* operator new(size_t nbytes) {
-    return ChainableStack::instance_->memalloc_.alloc(nbytes);
-  }
-
-  /**
-   * Delete a pointer from the underlying memory pool.
-   *
-   * This no-op implementation enables a subclass to throw
-   * exceptions in its constructor.  An exception thrown in the
-   * constructor of a subclass will result in an error being
-   * raised, which is in turn caught and calls delete().
-   *
-   * See the discussion of "plugging the memory leak" in:
-   *   http://www.parashift.com/c++-faq/memory-pools.html
-   */
-  static inline void operator delete(void* /* ignore arg */) { /* no op */
-  }
-
  private:
   template <typename>
   friend class var_value;
@@ -492,35 +464,6 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
    */
   friend std::ostream& operator<<(std::ostream& os, const vari_value<T>* v) {
     return os << "val: \n" << v->val_ << " \nadj: \n" << v->adj_;
-  }
-
-  /**
-   * Allocate memory from the underlying memory pool.  This memory is
-   * is managed as a whole externally.
-   *
-   * Warning: Classes should not be allocated with this operator
-   * if they have non-trivial destructors.
-   *
-   * @param nbytes Number of bytes to allocate.
-   * @return Pointer to allocated bytes.
-   */
-  static inline void* operator new(size_t nbytes) noexcept {
-    return ChainableStack::instance_->memalloc_.alloc(nbytes);
-  }
-
-  /**
-   * Delete a pointer from the underlying memory pool.
-   *
-   * This no-op implementation enables a subclass to throw
-   * exceptions in its constructor.  An exception thrown in the
-   * constructor of a subclass will result in an error being
-   * raised, which is in turn caught and calls delete().
-   *
-   * See the discussion of "plugging the memory leak" in:
-   *   http://www.parashift.com/c++-faq/memory-pools.html
-   */
-  static inline void operator delete(
-      void* /* ignore arg */) noexcept { /* no op */
   }
 
  private:
