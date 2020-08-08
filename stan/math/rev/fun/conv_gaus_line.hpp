@@ -25,8 +25,8 @@ namespace internal {
  * @param sig2 variance of the Gaussian kernel
  * @return The value of the derivative
  */
-double der_conv_gaus_line(double t0, double t1, double a, double b, double x0,
-                          double sig2) {
+inline double der_conv_gaus_line(double t0, double t1, double a, double b, double x0,
+				 double sig2) {
   using stan::math::normal_cdf;
   using std::exp;
   using std::pow;
