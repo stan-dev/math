@@ -5,7 +5,7 @@
 
 namespace stan {
 namespace math {
-  
+
 /**
  * Check if each element of the eigen variable <code>y</code> is finite.
  *
@@ -17,7 +17,7 @@ namespace math {
  */
 template <typename T_y, require_eigen_t<T_y>* = nullptr>
 inline void check_finite(const char* function, const char* name, const T_y& y) {
-  if(!value_of_rec(y).allFinite()) {
+  if (!value_of_rec(y).allFinite()) {
     auto is_good = [](const auto& y) { return std::isfinite(y); };
     elementwise_check(is_good, function, name, y, ", but must be finite!");
   }
