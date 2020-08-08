@@ -124,7 +124,7 @@ inline return_type_t<Tx> gaus_interp(const std::vector<double>& xs,
  * @return struct containing slopes, intercepts, and width of kernel
  */
 inline gaus_interp_params gaus_interp_precomp(const std::vector<double>& xs,
-					      const std::vector<double>& ys) {
+                                              const std::vector<double>& ys) {
   static char const* function = "gaus_interp_precomp";
   check_not_nan(function, "xs", xs);
   check_not_nan(function, "ys", ys);
