@@ -8,6 +8,9 @@
 #include <stan/math/rev/meta/is_vari.hpp>
 #include <ostream>
 #include <vector>
+#ifdef STAN_OPENCL
+#include <stan/math/opencl/rev/vari.hpp>
+#endif
 
 namespace stan {
 namespace math {
@@ -30,13 +33,20 @@ static void grad(Vari* vi);
  * var values objects.
  * @tparam T An Floating point type.
  */
-template <typename T, typename = void>
-class var_value {};
-
 template <typename T>
-class var_value<T, require_floating_point_t<T>> {
+class var_value {
+  static_assert(
+      is_plain_type<T>::value,
+      "The template for this var is an"
+      " expression but a var_value's inner type must be assignable such as"
+      " a double, Eigen::Matrix, or Eigen::Array");
+  static_assert(
+      std::is_floating_point<value_type_t<T>>::value,
+      "The template for must be a floating point or a container holding"
+      " floating point types");
+
  public:
-  using value_type = std::decay_t<T>;        // Numeric type in vari_value.
+  using value_type = std::decay_t<T>;        // type in vari_value.
   using vari_type = vari_value<value_type>;  // Type of underlying vari impl.
 
   /**
@@ -57,7 +67,7 @@ class var_value<T, require_floating_point_t<T>> {
    * @return <code>true</code> if this variable does not yet have
    * a defined variable.
    */
-  bool is_uninitialized() { return (vi_ == nullptr); }
+  inline bool is_uninitialized() { return (vi_ == nullptr); }
 
   /**
    * Construct a variable for later assignment.
@@ -76,14 +86,13 @@ class var_value<T, require_floating_point_t<T>> {
    * @param x Value of the variable.
    */
   template <typename S, require_convertible_t<S&, value_type>* = nullptr>
-  var_value(const S& x) : vi_(new vari_type(x, false)) {}  // NOLINT
+  var_value(S&& x) : vi_(new vari_type(std::forward<S>(x), false)) {}  // NOLINT
 
   /**
    * Construct a variable from a pointer to a variable implementation.
    * @param vi A vari_value pointer.
    */
-  var_value(vari_value<T>* vi)  // NOLINT
-      : vi_(vi) {}
+  var_value(vari_type* vi) : vi_(vi) {}  // NOLINT
 
   /**
    * Return a constant reference to the value of this variable.
@@ -120,10 +129,15 @@ class var_value<T, require_floating_point_t<T>> {
    * The grad() function does <i>not</i> recover memory.  In Stan
    * 2.4 and earlier, this function did recover memory.
    *
+   * @tparam CheckContainer Not set by user. The default value of value_type
+   *  is used to require that grad is only available for scalar `var_value`
+   *  types.
    * @param x Vector of independent variables.
    * @param g Gradient vector of partial derivatives of this
    * variable with respect to x.
    */
+  template <typename CheckContainer = value_type,
+            require_not_container_t<CheckContainer>* = nullptr>
   inline void grad(std::vector<var_value<T>>& x, std::vector<value_type>& g) {
     stan::math::grad(vi_);
     g.resize(x.size());
@@ -136,9 +150,16 @@ class var_value<T, require_floating_point_t<T>> {
    * Compute the gradient of this (dependent) variable with respect
    * to all (independent) variables.
    *
+   * @tparam CheckContainer Not set by user. The default value of value_type
+   *  is used to require that grad is only available for scalar `var_value`
+   *  types.
    * The grad() function does <i>not</i> recover memory.
    */
-  void grad() { stan::math::grad(vi_); }
+  template <typename CheckContainer = value_type,
+            require_not_container_t<CheckContainer>* = nullptr>
+  void grad() {
+    stan::math::grad(vi_);
+  }
 
   // POINTER OVERRIDES
 

@@ -73,12 +73,13 @@ struct ref_type_for_opencl {
       = std::conditional_t<std::is_rvalue_reference<T>::value, T_val, const T&>;
   // Setting Outer stride of Ref to 0 (default) won't actually check that
   // expression has contiguous outer stride. Instead we need to check that
-  // evaluator flags contain LinearAccessBit.
+  // evaluator flags contain LinearAccessBit and PacketAccessBit.
   using type = std::conditional_t<
       Eigen::internal::traits<Eigen::Ref<std::decay_t<T_plain_col_major>>>::
               template match<T_val>::MatchAtCompileTime
+          && (Eigen::internal::evaluator<T_val>::Flags & Eigen::LinearAccessBit)
           && (Eigen::internal::evaluator<T_val>::Flags
-              & Eigen::LinearAccessBit),
+              & Eigen::PacketAccessBit),
       T_optionally_ref, T_plain_col_major>;
 };
 
