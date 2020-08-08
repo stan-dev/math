@@ -24,7 +24,8 @@ namespace math {
  * @tparam Args types of arguments to this operation
  */
 template <typename Derived, typename Scalar, typename... Args>
-class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
+class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...>,
+                         public operation_cl_lhs_base {
  protected:
   using base = operation_cl<Derived, Scalar, Args...>;
   static constexpr int N = sizeof...(Args);

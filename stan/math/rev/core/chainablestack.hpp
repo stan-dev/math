@@ -4,11 +4,8 @@
 #include <stan/math/rev/core/autodiffstackstorage.hpp>
 namespace stan {
 namespace math {
-
-template <typename T, typename = void>
-class vari_value;
-class vari_base;
 class chainable_alloc;
+class vari_base;
 using ChainableStack = AutodiffStackSingleton<vari_base, chainable_alloc>;
 
 }  // namespace math
