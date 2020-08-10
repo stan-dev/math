@@ -37,22 +37,13 @@ class ad_tape_observer final : public tbb::task_scheduler_observer {
 
   void on_scheduler_entry(bool worker) {
     std::lock_guard<std::mutex> thread_tape_map_lock(thread_tape_map_mutex_);
-    const std::thread::id thread_id = std::this_thread::get_id();
-    if (thread_tape_map_.find(thread_id) == thread_tape_map_.end()) {
-      ad_map::iterator insert_elem;
-      bool status = false;
-      std::tie(insert_elem, status)
-          = thread_tape_map_.emplace(ad_map::value_type{thread_id, nullptr});
-      insert_elem->second = std::make_unique<ChainableStack>();
-    }
+    thread_tape_map_.emplace(std::piecewise_construct,
+      std::forward_as_tuple(std::this_thread::get_id()), std::forward_as_tuple(std::make_unique<ChainableStack>()));
   }
 
   void on_scheduler_exit(bool worker) {
     std::lock_guard<std::mutex> thread_tape_map_lock(thread_tape_map_mutex_);
-    auto elem = thread_tape_map_.find(std::this_thread::get_id());
-    if (elem != thread_tape_map_.end()) {
-      thread_tape_map_.erase(elem);
-    }
+    thread_tape_map_.erase(std::this_thread::get_id());
   }
 
  private:
