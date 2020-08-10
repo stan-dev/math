@@ -11,12 +11,13 @@ template <typename F>
 struct callback_vari : public vari_base {
   F rev_functor_;
 
-  callback_vari(F&& rev_functor) : rev_functor_(rev_functor) {
+  callback_vari(F&& rev_functor) : rev_functor_(std::forward<F>(rev_functor)) {
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
   inline void chain() final { rev_functor_(); }
   inline void set_zero_adjoint() final {}
+  inline void init_dependent() final {}
 };
 
 }  // namespace internal
