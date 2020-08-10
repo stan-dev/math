@@ -11,35 +11,40 @@
 namespace stan {
 
 /**
- * Determines appropriate type for assigning expression of given type to,
- * to evaluate expensive expressions, but not make a copy if T involves no
- * calculations. This works similarly as `Eigen::Ref`. It also handles
- * rvalue references, so it can be used with perfect forwarding.
+ * If the condition is true determines appropriate type for assigning expression
+ * of given type to, to evaluate expensive expressions, but not make a copy if T
+ * involves no calculations. This works similarly as `Eigen::Ref`. It also
+ * handles rvalue references, so it can be used with perfect forwarding. If the
+ * condition is false the expression will never be evaluated.
  *
  * Warning: if a variable of this type could be assigned a rvalue, make sure
  * template parameter `T` is of correct reference type (rvalue).
  * @tparam T type to determine reference for
  */
-template <typename T, typename = void>
-struct ref_type {
+template <bool Condition, typename T, typename = void>
+struct ref_type_if {
   using T_plain = plain_type_t<T>;
   using T_optionally_ref
       = std::conditional_t<std::is_rvalue_reference<T>::value,
                            std::remove_reference_t<T>, const T&>;
   using type = std::conditional_t<
       Eigen::internal::traits<Eigen::Ref<std::decay_t<T_plain>>>::
-          template match<std::decay_t<T>>::MatchAtCompileTime,
+              template match<std::decay_t<T>>::MatchAtCompileTime
+          || !Condition,
       T_optionally_ref, T_plain>;
 };
 
-template <typename T>
-struct ref_type<T, require_not_eigen_t<T>> {
+template <bool Condition, typename T>
+struct ref_type_if<Condition, T, require_not_eigen_t<T>> {
   using type = std::conditional_t<std::is_rvalue_reference<T>::value,
                                   std::remove_reference_t<T>, const T&>;
 };
 
 template <typename T>
-using ref_type_t = typename ref_type<T>::type;
+using ref_type_t = typename ref_type_if<true, T>::type;
+
+template <bool Condition, typename T>
+using ref_type_if_t = typename ref_type_if<Condition, T>::type;
 
 /**
  * Determines appropriate type for assigning expression of given type to, so
@@ -68,12 +73,13 @@ struct ref_type_for_opencl {
       = std::conditional_t<std::is_rvalue_reference<T>::value, T_val, const T&>;
   // Setting Outer stride of Ref to 0 (default) won't actually check that
   // expression has contiguous outer stride. Instead we need to check that
-  // evaluator flags contain LinearAccessBit.
+  // evaluator flags contain LinearAccessBit and PacketAccessBit.
   using type = std::conditional_t<
       Eigen::internal::traits<Eigen::Ref<std::decay_t<T_plain_col_major>>>::
               template match<T_val>::MatchAtCompileTime
+          && (Eigen::internal::evaluator<T_val>::Flags & Eigen::LinearAccessBit)
           && (Eigen::internal::evaluator<T_val>::Flags
-              & Eigen::LinearAccessBit),
+              & Eigen::PacketAccessBit),
       T_optionally_ref, T_plain_col_major>;
 };
 

@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <algorithm>
 #include <vector>
 
@@ -68,7 +69,7 @@ std::vector<int> sort_indices(const C& xs) {
   for (idx_t i = 0; i < xs_size; ++i) {
     idxs[i] = i + 1;
   }
-  internal::index_comparator<ascending, C> comparator(xs);
+  internal::index_comparator<ascending, ref_type_t<C>> comparator(to_ref(xs));
   std::sort(idxs.begin(), idxs.end(), comparator);
   return idxs;
 }

@@ -114,7 +114,7 @@ inline fvar<T> log_mix(const fvar<T>& theta, const fvar<T>& lambda1,
   }
 }
 
-template <typename T, typename P, require_all_arithmetic_t<P>...>
+template <typename T, typename P, require_all_arithmetic_t<P>* = nullptr>
 inline fvar<T> log_mix(const fvar<T>& theta, const fvar<T>& lambda1,
                        P lambda2) {
   if (lambda1.val_ > lambda2) {
@@ -132,7 +132,7 @@ inline fvar<T> log_mix(const fvar<T>& theta, const fvar<T>& lambda1,
   }
 }
 
-template <typename T, typename P, require_all_arithmetic_t<P>...>
+template <typename T, typename P, require_all_arithmetic_t<P>* = nullptr>
 inline fvar<T> log_mix(const fvar<T>& theta, P lambda1,
                        const fvar<T>& lambda2) {
   if (lambda1 > lambda2.val_) {
@@ -150,7 +150,7 @@ inline fvar<T> log_mix(const fvar<T>& theta, P lambda1,
   }
 }
 
-template <typename T, typename P, require_all_arithmetic_t<P>...>
+template <typename T, typename P, require_all_arithmetic_t<P>* = nullptr>
 inline fvar<T> log_mix(P theta, const fvar<T>& lambda1,
                        const fvar<T>& lambda2) {
   if (lambda1.val_ > lambda2.val_) {
@@ -169,7 +169,7 @@ inline fvar<T> log_mix(P theta, const fvar<T>& lambda1,
 }
 
 template <typename T, typename P1, typename P2,
-          require_all_arithmetic_t<P1, P2>...>
+          require_all_arithmetic_t<P1, P2>* = nullptr>
 inline fvar<T> log_mix(const fvar<T>& theta, P1 lambda1, P2 lambda2) {
   if (lambda1 > lambda2) {
     fvar<T> partial_deriv_array[1];
@@ -185,7 +185,7 @@ inline fvar<T> log_mix(const fvar<T>& theta, P1 lambda1, P2 lambda2) {
 }
 
 template <typename T, typename P1, typename P2,
-          require_all_arithmetic_t<P1, P2>...>
+          require_all_arithmetic_t<P1, P2>* = nullptr>
 inline fvar<T> log_mix(P1 theta, const fvar<T>& lambda1, P2 lambda2) {
   if (lambda1.val_ > lambda2) {
     fvar<T> partial_deriv_array[1];
@@ -201,7 +201,7 @@ inline fvar<T> log_mix(P1 theta, const fvar<T>& lambda1, P2 lambda2) {
 }
 
 template <typename T, typename P1, typename P2,
-          require_all_arithmetic_t<P1, P2>...>
+          require_all_arithmetic_t<P1, P2>* = nullptr>
 inline fvar<T> log_mix(P1 theta, P2 lambda1, const fvar<T>& lambda2) {
   if (lambda1 > lambda2.val_) {
     fvar<T> partial_deriv_array[1];

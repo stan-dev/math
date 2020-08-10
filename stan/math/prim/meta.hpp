@@ -167,9 +167,6 @@
 
 #include <stan/math/prim/meta/ad_promotable.hpp>
 #include <stan/math/prim/meta/append_return_type.hpp>
-#include <stan/math/prim/meta/apply_scalar_unary.hpp>
-#include <stan/math/prim/meta/apply_scalar_binary.hpp>
-#include <stan/math/prim/meta/apply_vector_unary.hpp>
 #include <stan/math/prim/meta/as_array_or_scalar.hpp>
 #include <stan/math/prim/meta/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/meta/base_type.hpp>
@@ -179,6 +176,7 @@
 #include <stan/math/prim/meta/contains_vector.hpp>
 #include <stan/math/prim/meta/error_index.hpp>
 #include <stan/math/prim/meta/forward_as.hpp>
+#include <stan/math/prim/meta/holder.hpp>
 #include <stan/math/prim/meta/include_summand.hpp>
 #include <stan/math/prim/meta/index_type.hpp>
 #include <stan/math/prim/meta/index_apply.hpp>
@@ -189,17 +187,20 @@
 #include <stan/math/prim/meta/is_constant.hpp>
 #include <stan/math/prim/meta/is_container.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_eigen_dense_base.hpp>
 #include <stan/math/prim/meta/is_eigen_matrix.hpp>
 #include <stan/math/prim/meta/is_eigen_matrix_base.hpp>
+#include <stan/math/prim/meta/is_eigen_sparse_base.hpp>
 #include <stan/math/prim/meta/is_fvar.hpp>
+#include <stan/math/prim/meta/is_plain_type.hpp>
 #include <stan/math/prim/meta/is_string_convertible.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
+#include <stan/math/prim/meta/is_vari.hpp>
 #include <stan/math/prim/meta/is_var_or_arithmetic.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
 #include <stan/math/prim/meta/is_stan_scalar.hpp>
 #include <stan/math/prim/meta/likely.hpp>
-#include <stan/math/prim/meta/operands_and_partials.hpp>
 #include <stan/math/prim/meta/partials_return_type.hpp>
 #include <stan/math/prim/meta/partials_type.hpp>
 #include <stan/math/prim/meta/plain_type.hpp>

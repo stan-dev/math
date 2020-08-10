@@ -1,4 +1,5 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/math/prim/fun/binary_scalar_tester.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <limits>
@@ -50,4 +51,17 @@ TEST(MathFunctions, log_diff_exp_nan) {
   EXPECT_TRUE(std::isnan(stan::math::log_diff_exp(nan, 2.0)));
 
   EXPECT_TRUE(std::isnan(stan::math::log_diff_exp(nan, nan)));
+}
+
+TEST(MathFunctions, log_diff_exp_vec) {
+  auto f = [](const auto& x1, const auto& x2) {
+    using stan::math::log_diff_exp;
+    return log_diff_exp(x1, x2);
+  };
+
+  Eigen::VectorXd in1(3);
+  in1 << 4.1, 3.24, 6.8;
+  Eigen::VectorXd in2(3);
+  in2 << 2.8, 1.7, 3.1;
+  stan::test::binary_scalar_tester(f, in1, in2);
 }
