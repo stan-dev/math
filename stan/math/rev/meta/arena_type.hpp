@@ -14,11 +14,11 @@ class arena_matrix;
 
 namespace internal {
 template <typename T, typename = void>
-struct arena_type_impl {
-};
+struct arena_type_impl {};
 
 template <typename T>
-struct arena_type_impl<T, require_all_t<std::is_trivially_destructible<T>, bool_constant<!is_eigen<T>::value>>> {
+struct arena_type_impl<T, require_all_t<std::is_trivially_destructible<T>,
+                                        bool_constant<!is_eigen<T>::value>>> {
   using type = T;
 };
 

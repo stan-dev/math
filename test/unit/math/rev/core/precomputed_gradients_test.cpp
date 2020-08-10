@@ -146,9 +146,9 @@ TEST(StanAgradRevInternal,
       std::move(grad_a), grad_b);
 
   stan::math::var lp = new stan::math::precomputed_gradients_vari_template<
-      std::tuple<stan::arena_t<stan::math::var_value<Eigen::MatrixXd>>,
-                 stan::arena_t<
-                     std::vector<stan::math::var_value<Eigen::MatrixXd>>>>,
+      std::tuple<
+          stan::arena_t<stan::math::var_value<Eigen::MatrixXd>>,
+          stan::arena_t<std::vector<stan::math::var_value<Eigen::MatrixXd>>>>,
       std::tuple<stan::arena_t<Eigen::MatrixXd>,
                  stan::arena_t<std::vector<Eigen::MatrixXd>>>>(
       value, 0, nullptr, nullptr, ops, grads);
