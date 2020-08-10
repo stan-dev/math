@@ -3,9 +3,8 @@
 #include <limits>
 #include <string>
 
-using stan::math::check_greater;
-
 TEST(ErrorHandlingMat, CheckGreater_Matrix) {
+  using stan::math::check_greater;
   const char* function = "check_greater";
   double x;
   double low;
@@ -110,6 +109,7 @@ TEST(ErrorHandlingMat, CheckGreater_Matrix) {
 }
 
 TEST(ErrorHandlingMat, CheckGreater_Matrix_one_indexed_message) {
+  using stan::math::check_greater;
   const char* function = "check_greater";
   double x;
   double low;
@@ -168,6 +168,7 @@ TEST(ErrorHandlingMat, CheckGreater_Matrix_one_indexed_message) {
 }
 
 TEST(ErrorHandlingMat, CheckGreater_nan) {
+  using stan::math::check_greater;
   const char* function = "check_greater";
   double x = 10.0;
   double lb = 0.0;
@@ -179,6 +180,7 @@ TEST(ErrorHandlingMat, CheckGreater_nan) {
 }
 
 TEST(ErrorHandlingScalar, CheckGreater) {
+  using stan::math::check_greater;
   const char* function = "check_greater";
   double x = 10.0;
   double lb = 0.0;
@@ -210,6 +212,7 @@ TEST(ErrorHandlingScalar, CheckGreater) {
 }
 
 TEST(ErrorHandlingScalar, CheckGreater_nan) {
+  using stan::math::check_greater;
   const char* function = "check_greater";
   double x = 10.0;
   double lb = 0.0;

@@ -5,6 +5,7 @@
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/fun/log_mix.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
 
 namespace stan {
