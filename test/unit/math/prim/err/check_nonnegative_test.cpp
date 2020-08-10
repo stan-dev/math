@@ -4,9 +4,8 @@
 #include <limits>
 #include <string>
 
-using stan::math::check_nonnegative;
-
 TEST(ErrorHandlingArr, CheckNonnegativeVectorized) {
+  using stan::math::check_nonnegative;
   int N = 5;
   const char* function = "check_nonnegative";
   std::vector<double> x(N);
@@ -34,6 +33,7 @@ TEST(ErrorHandlingArr, CheckNonnegativeVectorized) {
 }
 
 TEST(ErrorHandlingArr, CheckNonnegativeVectorized_one_indexed_message) {
+  using stan::math::check_nonnegative;
   int N = 5;
   const char* function = "check_nonnegative";
   std::vector<double> x(N);
@@ -54,6 +54,7 @@ TEST(ErrorHandlingArr, CheckNonnegativeVectorized_one_indexed_message) {
 }
 
 TEST(ErrorHandlingArr, CheckNonnegative_nan) {
+  using stan::math::check_nonnegative;
   const char* function = "check_nonnegative";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
@@ -67,6 +68,7 @@ TEST(ErrorHandlingArr, CheckNonnegative_nan) {
 }
 
 TEST(ErrorHandlingScalar, CheckNonnegative) {
+  using stan::math::check_nonnegative;
   const char* function = "check_nonnegative";
   double x = 0;
 
@@ -91,6 +93,7 @@ TEST(ErrorHandlingScalar, CheckNonnegative) {
 }
 
 TEST(ErrorHandlingScalar, CheckNonnegative_nan) {
+  using stan::math::check_nonnegative;
   const char* function = "check_nonnegative";
   double nan = std::numeric_limits<double>::quiet_NaN();
 

@@ -1,20 +1,17 @@
 #include <stan/math/prim.hpp>
-#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
 
-void expect_linspaced_array(int K, double low, double high,
-                            const std::vector<double>& expected) {
-  std::vector<double> found = stan::math::linspaced_array(K, low, high);
-  expect_std_vector_eq(expected, found);
-}
-
 TEST(MathFunctions, linspaced_array) {
-  expect_linspaced_array(0, 1, 5, {});
-  expect_linspaced_array(1, 1, 5, {5});
-  expect_linspaced_array(5, 1, 5, {1, 2, 3, 4, 5});
-  expect_linspaced_array(5, -2, 2, {-2, -1, 0, 1, 2});
+  using stan::math::linspaced_array;
+  EXPECT_STD_VECTOR_FLOAT_EQ(linspaced_array(0, 1, 5), std::vector<int>({}));
+  EXPECT_STD_VECTOR_FLOAT_EQ(linspaced_array(1, 1, 5), std::vector<int>({5}));
+  EXPECT_STD_VECTOR_FLOAT_EQ(linspaced_array(5, 1, 5),
+                             std::vector<int>({1, 2, 3, 4, 5}));
+  EXPECT_STD_VECTOR_FLOAT_EQ(linspaced_array(5, -2, 2),
+                             std::vector<int>({-2, -1, 0, 1, 2}));
 }
 
 TEST(MathFunctions, linspaced_array_throw) {

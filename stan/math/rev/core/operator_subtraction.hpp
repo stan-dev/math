@@ -13,7 +13,7 @@ namespace stan {
 namespace math {
 
 namespace internal {
-class subtract_vv_vari : public op_vv_vari {
+class subtract_vv_vari final : public op_vv_vari {
  public:
   subtract_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(avi->val_ - bvi->val_, avi, bvi) {}
@@ -28,7 +28,7 @@ class subtract_vv_vari : public op_vv_vari {
   }
 };
 
-class subtract_vd_vari : public op_vd_vari {
+class subtract_vd_vari final : public op_vd_vari {
  public:
   subtract_vd_vari(vari* avi, double b) : op_vd_vari(avi->val_ - b, avi, b) {}
   void chain() {
@@ -40,7 +40,7 @@ class subtract_vd_vari : public op_vd_vari {
   }
 };
 
-class subtract_dv_vari : public op_dv_vari {
+class subtract_dv_vari final : public op_dv_vari {
  public:
   subtract_dv_vari(double a, vari* bvi) : op_dv_vari(a - bvi->val_, a, bvi) {}
   void chain() {
@@ -93,7 +93,7 @@ class subtract_dv_vari : public op_dv_vari {
  * @return Variable result of subtracting the second variable from
  * the first.
  */
-inline var operator-(var a, var b) {
+inline var operator-(const var& a, const var& b) {
   return {new internal::subtract_vv_vari(a.vi_, b.vi_)};
 }
 
@@ -110,8 +110,8 @@ inline var operator-(var a, var b) {
  * @param b Second scalar operand.
  * @return Result of subtracting the scalar from the variable.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
-inline var operator-(var a, Arith b) {
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
+inline var operator-(const var& a, Arith b) {
   if (b == 0.0) {
     return a;
   }
@@ -131,8 +131,8 @@ inline var operator-(var a, Arith b) {
  * @param b Second variable operand.
  * @return Result of subtracting a variable from a scalar.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
-inline var operator-(Arith a, var b) {
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
+inline var operator-(Arith a, const var& b) {
   return {new internal::subtract_dv_vari(a, b.vi_)};
 }
 

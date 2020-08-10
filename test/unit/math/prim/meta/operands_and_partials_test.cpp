@@ -1,4 +1,4 @@
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathMetaPrim, OperandsAndPartials) {
