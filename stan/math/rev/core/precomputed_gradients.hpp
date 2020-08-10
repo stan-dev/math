@@ -4,7 +4,7 @@
 #include <stan/math/prim/err/check_matching_dims.hpp>
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/var.hpp>
-#include <stan/math/rev/fun/to_ad_stack.hpp>
+#include <stan/math/rev/fun/to_arena.hpp>
 #include <algorithm>
 #include <vector>
 #include <tuple>
@@ -80,12 +80,11 @@ class precomputed_gradients_vari_template : public vari {
         varis_(varis),
         gradients_(gradients),
         container_operands_(index_apply<N_containers>([&, this](auto... Is) {
-          return std::make_tuple(
-              to_AD_stack(std::get<Is>(container_operands))...);
+          return std::make_tuple(to_arena(std::get<Is>(container_operands))...);
         })),
         container_gradients_(index_apply<N_containers>([&, this](auto... Is) {
           return std::make_tuple(
-              to_AD_stack(std::get<Is>(container_gradients))...);
+              to_arena(std::get<Is>(container_gradients))...);
         })) {
     check_sizes(std::make_index_sequence<N_containers>());
   }
@@ -124,12 +123,11 @@ class precomputed_gradients_vari_template : public vari {
         gradients_(ChainableStack::instance_->memalloc_.alloc_array<double>(
             vars.size())),
         container_operands_(index_apply<N_containers>([&, this](auto... Is) {
-          return std::make_tuple(
-              to_AD_stack(std::get<Is>(container_operands))...);
+          return std::make_tuple(to_arena(std::get<Is>(container_operands))...);
         })),
         container_gradients_(index_apply<N_containers>([&, this](auto... Is) {
           return std::make_tuple(
-              to_AD_stack(std::get<Is>(container_gradients))...);
+              to_arena(std::get<Is>(container_gradients))...);
         })) {
     check_consistent_sizes("precomputed_gradients_vari", "vars", vars,
                            "gradients", gradients);
@@ -217,8 +215,8 @@ inline var precomputed_gradients(
     const std::tuple<ContainerGradients...>& container_gradients
     = std::tuple<>()) {
   return {new precomputed_gradients_vari_template<
-      std::tuple<AD_stack_t<ContainerOperands>...>,
-      std::tuple<AD_stack_t<ContainerGradients>...>>(
+      std::tuple<arena_t<ContainerOperands>...>,
+      std::tuple<arena_t<ContainerGradients>...>>(
       value, operands, gradients, container_operands, container_gradients)};
 }
 

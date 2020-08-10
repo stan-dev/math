@@ -3,7 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/functor/reverse_pass_callback.hpp>
-#include <stan/math/rev/functor/ad_stack_matrix.hpp>
+#include <stan/math/rev/functor/arena_matrix.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/fun/softmax.hpp>
@@ -26,13 +26,13 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
     const Eigen::Matrix<var, Eigen::Dynamic, 1>& alpha) {
   check_nonzero_size("softmax", "alpha", alpha);
 
-  AD_stack_matrix<Eigen::VectorXd> res_val = softmax(value_of(alpha));
-  AD_stack_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> res = res_val;
-  AD_stack_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> alpha_ad_stack = alpha;
+  arena_matrix<Eigen::VectorXd> res_val = softmax(value_of(alpha));
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> res = res_val;
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> alpha_arena = alpha;
 
   reverse_pass_callback([=]() mutable {
     Eigen::VectorXd res_adj = res.adj();
-    alpha_ad_stack.adj() = -res_val * res_adj.dot(res_val) + res_val.cwiseProduct(res_adj);
+    alpha_arena.adj() = -res_val * res_adj.dot(res_val) + res_val.cwiseProduct(res_adj);
   });
 
   return res;

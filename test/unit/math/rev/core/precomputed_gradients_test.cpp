@@ -146,11 +146,11 @@ TEST(StanAgradRevInternal,
       std::move(grad_a), grad_b);
 
   stan::math::var lp = new stan::math::precomputed_gradients_vari_template<
-      std::tuple<stan::AD_stack_t<stan::math::var_value<Eigen::MatrixXd>>,
-                 stan::AD_stack_t<
-                     std::vector<stan::math::var_value<Eigen::MatrixXd>>>>,
-      std::tuple<stan::AD_stack_t<Eigen::MatrixXd>,
-                 stan::AD_stack_t<std::vector<Eigen::MatrixXd>>>>(
+      std::tuple<
+          stan::arena_t<stan::math::var_value<Eigen::MatrixXd>>,
+          stan::arena_t<std::vector<stan::math::var_value<Eigen::MatrixXd>>>>,
+      std::tuple<stan::arena_t<Eigen::MatrixXd>,
+                 stan::arena_t<std::vector<Eigen::MatrixXd>>>>(
       value, 0, nullptr, nullptr, ops, grads);
   (2 * lp).grad();
   EXPECT_MATRIX_EQ(a.adj(), Eigen::MatrixXd::Constant(3, 3, -2));

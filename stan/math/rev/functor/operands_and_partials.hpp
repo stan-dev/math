@@ -165,7 +165,7 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
                     const std::tuple<Ops...>& container_operands,
                     const std::tuple<Partials...>& container_partials) {
     return new precomputed_gradients_vari_template<
-        std::tuple<AD_stack_t<Ops>...>, std::tuple<AD_stack_t<Partials>...>>(
+        std::tuple<arena_t<Ops>...>, std::tuple<arena_t<Partials>...>>(
         value, edges_size, varis, partials, container_operands,
         container_partials);
   }
@@ -239,7 +239,7 @@ class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
 template <typename Op>
 class ops_partials_edge<double, var_value<Op>, require_eigen_t<Op>> {
  public:
-  using partials_t = AD_stack_t<Op>;
+  using partials_t = arena_t<Op>;
   partials_t partials_;                       // For univariate use-cases
   broadcast_array<partials_t> partials_vec_;  // For multivariate
   explicit ops_partials_edge(const var_value<Op>& ops)
@@ -358,7 +358,7 @@ template <typename Op>
 class ops_partials_edge<double, std::vector<var_value<Op>>,
                         require_eigen_t<Op>> {
  public:
-  using partials_t = AD_stack_t<std::vector<Op>>;
+  using partials_t = arena_t<std::vector<Op>>;
   partials_t partials_vec_;
   explicit ops_partials_edge(const std::vector<var_value<Op>>& ops)
       : partials_vec_(ops.size()), operands_(ops) {

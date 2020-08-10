@@ -4,8 +4,8 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
-#include <stan/math/rev/fun/to_ad_stack.hpp>
-#include <stan/math/rev/functor/ad_stack_matrix.hpp>
+#include <stan/math/rev/fun/to_arena.hpp>
+#include <stan/math/rev/functor/arena_matrix.hpp>
 #include <stan/math/rev/functor/reverse_pass_callback.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
@@ -38,27 +38,27 @@ inline return_type_t<T1, T2> dot_product(const T1& v1, const T2& v2) {
   const auto& v2_col = as_column_vector_or_scalar(v2);
 
   const auto& v1_val
-      = to_AD_stack_if<!is_constant<T2>::value>(value_of(v1_col));
+      = to_arena_if<!is_constant<T2>::value>(value_of(v1_col));
   const auto& v2_val
-      = to_AD_stack_if<!is_constant<T1>::value>(value_of(v2_col));
+      = to_arena_if<!is_constant<T1>::value>(value_of(v2_col));
 
   var res(new vari(dot_product(v1_val, v2_val)));
 
-  AD_stack_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> v1_ad_stack;
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> v1_arena;
   if (!is_constant<T1>::value) {
-    v1_ad_stack = v1_col;
+    v1_arena = v1_col;
   }
-  AD_stack_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> v2_ad_stack;
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> v2_arena;
   if (!is_constant<T2>::value) {
-    v2_ad_stack = v2_col;
+    v2_arena = v2_col;
   }
 
   reverse_pass_callback([=]() mutable {
     if (!is_constant<T1>::value) {
-      v1_ad_stack.adj() += res.adj() * v2_val;
+      v1_arena.adj() += res.adj() * v2_val;
     }
     if (!is_constant<T2>::value) {
-      v2_ad_stack.adj() += res.adj() * v1_val;
+      v2_arena.adj() += res.adj() * v1_val;
     }
   });
 
