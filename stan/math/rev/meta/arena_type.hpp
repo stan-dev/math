@@ -15,11 +15,15 @@ class arena_matrix;
 namespace internal {
 template <typename T, typename = void>
 struct arena_type_impl {
-  using type = T;
 };
 
 template <typename T>
-struct arena_type_impl<std::vector<T>> {
+struct arena_type_impl<T, require_all_t<std::is_trivially_destructible<T>, bool_constant<!is_eigen<T>::value>>> {
+  using type = T;
+};
+
+template <typename T, typename Alloc>
+struct arena_type_impl<std::vector<T, Alloc>> {
   using T_ad = typename arena_type_impl<std::decay_t<T>>::type;
   using type = std::vector<T_ad, math::arena_allocator<T_ad>>;
 };
