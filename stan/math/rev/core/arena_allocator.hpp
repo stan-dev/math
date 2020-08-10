@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_CORE_AD_STACK_ALLOCATOR_HPP
-#define STAN_MATH_REV_CORE_AD_STACK_ALLOCATOR_HPP
+#ifndef STAN_MATH_REV_CORE_ARENA_ALLOCATOR_HPP
+#define STAN_MATH_REV_CORE_ARENA_ALLOCATOR_HPP
 
 #include <stan/math/rev/core/chainablestack.hpp>
 
@@ -11,7 +11,7 @@ namespace math {
  * @tparam T type of scalar
  */
 template <typename T>
-struct AD_stack_allocator {
+struct arena_allocator {
   using value_type = T;
 
   /**
@@ -33,13 +33,13 @@ struct AD_stack_allocator {
    * Equality comparison operator.
    * @return true
    */
-  bool operator==(const AD_stack_allocator&) { return true; }
+  bool operator==(const arena_allocator&) { return true; }
 
   /**
    * Inequality comparison operator.
    * @return false
    */
-  bool operator!=(const AD_stack_allocator&) { return false; }
+  bool operator!=(const arena_allocator&) { return false; }
 };
 
 }  // namespace math

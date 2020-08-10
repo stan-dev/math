@@ -4,7 +4,7 @@
 #include <stan/math/prim/err/check_matching_dims.hpp>
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/var.hpp>
-#include <stan/math/rev/fun/to_ad_stack.hpp>
+#include <stan/math/rev/fun/to_arena.hpp>
 #include <algorithm>
 #include <vector>
 #include <tuple>
@@ -217,8 +217,8 @@ inline var precomputed_gradients(
     const std::tuple<ContainerGradients...>& container_gradients
     = std::tuple<>()) {
   return {new precomputed_gradients_vari_template<
-      std::tuple<AD_stack_t<ContainerOperands>...>,
-      std::tuple<AD_stack_t<ContainerGradients>...>>(
+      std::tuple<arena_t<ContainerOperands>...>,
+      std::tuple<arena_t<ContainerGradients>...>>(
       value, operands, gradients, container_operands, container_gradients)};
 }
 
