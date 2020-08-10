@@ -285,7 +285,7 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
   /**
    * Return the number of columns for this class's `val_` member
    */
-  const Eigen::Index cols() const { return val_.cols(); }
+  const Eigen::Index cols() const { return val_.rows(); }
   /**
    * Return the size of this class's `val_` member
    */
@@ -534,18 +534,5 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
 using vari = vari_value<double>;
 
 }  // namespace math
-
-/**
- * Template specialization defining the scalar type of
- * values stored in vari_value.
- *
- * @tparam T type to check.
- * @ingroup type_trait
- */
-template <typename T>
-struct scalar_type<math::vari_value<T>> {
-  using type = math::vari_value<scalar_type_t<T>>;
-};
-
 }  // namespace stan
 #endif
