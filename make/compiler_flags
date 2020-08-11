@@ -66,6 +66,7 @@ ifneq (,$(findstring clang,$(CXX_TYPE)))
 	CXXFLAGS_OPTIM ?= -fvectorize -ftree-vectorize -fslp-vectorize -ftree-slp-vectorize -fno-standalone-debug
 	ifeq ($(shell expr $(CXX_MAJOR) \>= 5), 1)
 		CXXFLAGS_FLTO ?= -flto=full -fwhole-program-vtables -fstrict-vtable-pointers -fforce-emit-vtables
+		AR := llvm-ar-$(CXX_MAJOR)
 	endif
 endif
 ifneq (,$(findstring mingw32-g,$(CXX_TYPE)))
