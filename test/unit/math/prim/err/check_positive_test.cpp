@@ -3,10 +3,10 @@
 #include <limits>
 #include <vector>
 
-using stan::math::check_positive;
 const char* function = "check_positive";
 
 TEST(ErrorHandlingArr, CheckPositive) {
+  using stan::math::check_positive;
   std::vector<double> x = {1, 2, 3};
 
   for (size_t i = 0; i < x.size(); i++) {
@@ -15,6 +15,7 @@ TEST(ErrorHandlingArr, CheckPositive) {
 }
 
 TEST(ErrorHandlingArr, CheckPositive_nan) {
+  using stan::math::check_positive;
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   std::vector<double> x = {1, 2, 3};
@@ -27,6 +28,7 @@ TEST(ErrorHandlingArr, CheckPositive_nan) {
 }
 
 TEST(ErrorHandlingMat, CheckPositive) {
+  using stan::math::check_positive;
   Eigen::Matrix<double, Eigen::Dynamic, 1> x_mat(3);
   x_mat << 1, 2, 3;
   for (int i = 0; i < x_mat.size(); i++) {
@@ -38,6 +40,7 @@ TEST(ErrorHandlingMat, CheckPositive) {
 }
 
 TEST(ErrorHandlingMat, CheckPositive_nan) {
+  using stan::math::check_positive;
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> x_mat(3);
@@ -50,16 +53,19 @@ TEST(ErrorHandlingMat, CheckPositive_nan) {
 }
 
 TEST(ErrorHandlingScalar, CheckPositive) {
+  using stan::math::check_positive;
   EXPECT_NO_THROW(check_positive(function, "x", 3.0));
 }
 
 TEST(ErrorHandlingScalar, CheckPositive_nan) {
+  using stan::math::check_positive;
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   EXPECT_THROW(check_positive(function, "x", nan), std::domain_error);
 }
 
 TEST(ErrorHandlingScalar, CheckPositive_0) {
+  using stan::math::check_positive;
   EXPECT_THROW(check_positive(function, "x", 0u), std::domain_error);
   EXPECT_THROW(check_positive(function, "x", (size_t)0), std::domain_error);
   EXPECT_THROW(check_positive(function, "x", 0.0), std::domain_error);
@@ -68,6 +74,7 @@ TEST(ErrorHandlingScalar, CheckPositive_0) {
 }
 
 TEST(ErrorHandlingScalar, CheckPositiveVectorization) {
+  using stan::math::check_positive;
   Eigen::MatrixXd m = Eigen::MatrixXd::Constant(3, 2, 1);
   EXPECT_NO_THROW(
       check_positive(function, "m", std::vector<Eigen::MatrixXd>{m, m, m}));

@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_ERR_IS_POSITIVE_FINITE_HPP
 
 #include <stan/math/prim/err/elementwise_check.hpp>
+#include <stan/math/prim/err/check_finite_screen.hpp>
 
 namespace stan {
 namespace math {
@@ -17,8 +18,10 @@ namespace math {
  */
 template <typename T_y>
 inline bool is_positive_finite(const T_y& y) {
-  auto is_good = [](const auto& y) { return y > 0 && std::isfinite(y); };
-  return elementwise_is(is_good, y);
+  if(check_finite_screen(y)) {
+    auto is_good = [](const auto& y) { return y > 0 && std::isfinite(y); };
+    return elementwise_is(is_good, y);
+  }
 }
 }  // namespace math
 }  // namespace stan
