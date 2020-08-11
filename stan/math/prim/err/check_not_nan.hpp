@@ -21,7 +21,7 @@ namespace math {
 template <typename T_y>
 inline void check_not_nan(const char* function, const char* name,
                           const T_y& y) {
-  if(check_not_nan_screen(y)) {
+  if (check_not_nan_screen(y)) {
     auto is_good = [](const auto& y) { return !std::isnan(y); };
     elementwise_check(is_good, function, name, y, ", but must not be nan!");
   }

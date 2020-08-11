@@ -19,7 +19,7 @@ namespace math {
  */
 template <typename T_y>
 inline void check_finite(const char* function, const char* name, const T_y& y) {
-  if(check_finite_screen(y)) {
+  if (check_finite_screen(y)) {
     auto is_good = [](const auto& y) { return std::isfinite(y); };
     elementwise_check(is_good, function, name, y, ", but must be finite!");
   }

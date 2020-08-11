@@ -27,7 +27,7 @@ inline bool check_finite_screen(const T_y& y) {
 /**
  * For input types where no quick finite check is available, return true
  *  (implying the elements in the container are not necessarily finite)
- * 
+ *
  * @tparam T_y type of y
  * @param y variable to check
  * @return true if full check is necessary

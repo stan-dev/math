@@ -22,10 +22,10 @@ namespace math {
 template <typename T_y>
 inline void check_positive_finite(const char* function, const char* name,
                                   const T_y& y) {
-  if(check_finite_screen(y)) {
+  if (check_finite_screen(y)) {
     auto is_good = [](const auto& y) { return y > 0 && std::isfinite(y); };
     elementwise_check(is_good, function, name, y,
-		      ", but must be positive and finite!");
+                      ", but must be positive and finite!");
   }
 }
 }  // namespace math

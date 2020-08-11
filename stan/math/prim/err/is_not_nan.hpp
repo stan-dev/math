@@ -18,7 +18,7 @@ namespace math {
  */
 template <typename T_y>
 inline bool is_not_nan(const T_y& y) {
-  if(check_not_nan_screen(y)) {
+  if (check_not_nan_screen(y)) {
     auto is_good = [](const auto& y) { return !std::isnan(y); };
     return elementwise_is(is_good, y);
   }

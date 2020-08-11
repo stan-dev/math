@@ -17,7 +17,7 @@ namespace math {
  */
 template <typename T_y>
 inline bool is_scal_finite(const T_y& y) {
-  if(check_finite_screen(y)) {
+  if (check_finite_screen(y)) {
     auto is_good = [](const auto& y) { return std::isfinite(y); };
     return elementwise_is(is_good, y);
   }
