@@ -17,7 +17,7 @@ struct callback_vari : public vari_base {
 
   inline void chain() final { rev_functor_(); }
   inline void set_zero_adjoint() final {}
-  inline void init_dependent() final {}
+  inline void init_dependent() {}
 };
 
 }  // namespace internal

@@ -2,7 +2,8 @@
 #define STAN_MATH_REV_FUN_ORDERED_CONSTRAIN_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/functor/adj_jac_apply.hpp>
+#include <stan/math/rev/functor/reverse_pass_callback.hpp>
+#include <stan/math/rev/functor/arena_matrix.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <cmath>
 #include <tuple>
@@ -88,7 +89,39 @@ class ordered_constrain_op {
  */
 inline Eigen::Matrix<var, Eigen::Dynamic, 1> ordered_constrain(
     const Eigen::Matrix<var, Eigen::Dynamic, 1>& x) {
-  return adj_jac_apply<internal::ordered_constrain_op>(x);
+  using std::exp;
+
+  size_t N = x.size();
+  if (N == 0) {
+    return x;
+  }
+
+  Eigen::VectorXd y_val(N);
+  arena_matrix<Eigen::VectorXd> exp_x(N - 1);
+
+  y_val.coeffRef(0) = value_of(x.coeffRef(0));
+  for (int n = 1; n < N; ++n) {
+    exp_x.coeffRef(n - 1) = exp(value_of(x.coeffRef(n)));
+    y_val.coeffRef(n) = y_val.coeffRef(n - 1) + exp_x.coeffRef(n - 1);
+  }
+
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> y = y_val;
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> arena_x = x;
+
+  reverse_pass_callback([=]() mutable {
+    const auto& adj = y.adj();
+    double rolling_adjoint_sum = 0.0;
+
+    if (N > 0) {
+      for (int n = N - 1; n > 0; --n) {
+        rolling_adjoint_sum += adj(n);
+        arena_x.adj().coeffRef(n) += exp_x.coeffRef(n - 1) * rolling_adjoint_sum;
+      }
+      arena_x.adj().coeffRef(0) += rolling_adjoint_sum + adj(0);
+    }
+  });
+
+  return y;
 }
 
 }  // namespace math
