@@ -69,8 +69,8 @@ inline T_desired forward_as(const T_actual& a) {
 template <
     typename T_desired, typename T_actual,
     typename = std::enable_if_t<
-        std::is_convertible<T_actual, T_desired>::value && static_cast<int>(
-            T_desired::RowsAtCompileTime)
+        std::is_same<value_type_t<T_actual>, value_type_t<T_desired>>::value
+        && static_cast<int>(T_desired::RowsAtCompileTime)
             == static_cast<int>(std::decay_t<T_actual>::RowsAtCompileTime)
         && static_cast<int>(T_desired::ColsAtCompileTime)
                == static_cast<int>(std::decay_t<T_actual>::ColsAtCompileTime)>,
@@ -95,14 +95,15 @@ inline T_actual&& forward_as(T_actual&& a) {  // NOLINT
  * @return nothing, this always throws
  * @throw always throws std::runtime_error
  */
-template <typename T_desired, typename T_actual,
-          typename = std::enable_if_t<
-              !std::is_convertible<T_actual, T_desired>::value
-              || static_cast<int>(T_desired::RowsAtCompileTime)
-                     != static_cast<int>(T_actual::RowsAtCompileTime)
-              || static_cast<int>(T_desired::ColsAtCompileTime)
-                     != static_cast<int>(T_actual::ColsAtCompileTime)>,
-          typename = void>
+template <
+    typename T_desired, typename T_actual,
+    typename = std::enable_if_t<
+        !std::is_same<value_type_t<T_actual>, value_type_t<T_desired>>::value
+        || static_cast<int>(T_desired::RowsAtCompileTime)
+               != static_cast<int>(T_actual::RowsAtCompileTime)
+        || static_cast<int>(T_desired::ColsAtCompileTime)
+               != static_cast<int>(T_actual::ColsAtCompileTime)>,
+    typename = void>
 inline T_desired forward_as(const T_actual& a) {
   throw std::runtime_error("Wrong type assumed! Please file a bug report.");
 }

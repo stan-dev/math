@@ -37,28 +37,20 @@ inline return_type_t<T1, T2> dot_product(const T1& v1, const T2& v2) {
   const auto& v1_col = as_column_vector_or_scalar(v1);
   const auto& v2_col = as_column_vector_or_scalar(v2);
 
-  const auto& v1_val
-      = to_arena_if<!is_constant<T2>::value>(value_of(v1_col));
-  const auto& v2_val
-      = to_arena_if<!is_constant<T1>::value>(value_of(v2_col));
+  const auto& v1_val = to_arena_if<!is_constant<T2>::value>(value_of(v1_col));
+  const auto& v2_val = to_arena_if<!is_constant<T1>::value>(value_of(v2_col));
 
   var res(new vari(dot_product(v1_val, v2_val)));
 
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> v1_arena;
-  if (!is_constant<T1>::value) {
-    v1_arena = v1_col;
-  }
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> v2_arena;
-  if (!is_constant<T2>::value) {
-    v2_arena = v2_col;
-  }
+  auto v1_arena = to_arena_if<!is_constant<T1>::value>(v1_col);
+  auto v2_arena = to_arena_if<!is_constant<T2>::value>(v2_col);
 
   reverse_pass_callback([=]() mutable {
     if (!is_constant<T1>::value) {
-      v1_arena.adj() += res.adj() * v2_val;
+      forward_as<vector_v>(v1_arena).adj() += res.adj() * v2_val;
     }
     if (!is_constant<T2>::value) {
-      v2_arena.adj() += res.adj() * v1_val;
+      forward_as<vector_v>(v2_arena).adj() += res.adj() * v1_val;
     }
   });
 
