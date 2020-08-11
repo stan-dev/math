@@ -63,9 +63,9 @@ CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
 
 
 ifneq (,$(findstring clang,$(CXX_TYPE)))
-	CXXFLAGS_OPTIM ?= -fvectorize -ftree-vectorize -fslp-vectorize -ftree-slp-vectorize -fno-standalone-debug
+	CXXFLAGS_OPTIM ?= -fvectorize -ftree-vectorize -fslp-vectorize -ftree-slp-vectorize -fno-standalone-debug -fstrict-return -ftrigraphs -funroll-loops
 	ifeq ($(shell expr $(CXX_MAJOR) \>= 5), 1)
-		CXXFLAGS_FLTO ?= -flto=full -fwhole-program-vtables -fstrict-vtable-pointers -fforce-emit-vtables
+		CXXFLAGS_FLTO ?= -flto=full -fwhole-program-vtables -fstrict-vtable-pointers -fforce-emit-vtables -fvisibility-inlines-hidden -fvisibility=hidden
 		AR := llvm-ar-$(CXX_MAJOR)
 	endif
 endif
@@ -76,7 +76,7 @@ else ifneq (,$(findstring gcc,$(CXX_TYPE)))
 		CXXFLAGS_FLTO ?= -flto=jobserver -fuse-linker-plugin
 	endif
 	ifeq ($(shell expr $(CXX_MAJOR) \>= 5), 1)
-	  CXXFLAGS_OPTIM += -fdevirtualize-speculatively -fdevirtualize-at-ltrans
+	  CXXFLAGS_OPTIM += -fdevirtualize-speculatively -fdevirtualize-at-ltrans -fvisibility-inlines-hidden -fvisibility=hidden
   endif
 endif
 
