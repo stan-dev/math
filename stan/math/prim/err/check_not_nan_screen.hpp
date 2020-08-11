@@ -27,7 +27,7 @@ inline bool check_not_nan_screen(const T_y& y) {
 /**
  * For input types where no quick NaN check is available, return true
  *  (implying the elements in the container could be NaN)
- * 
+ *
  * @tparam T_y type of y
  * @param y variable to check
  * @return true if full check is necessary

@@ -151,10 +151,8 @@ TEST(ErrorHandlingScalar, CheckFiniteScreen_nan) {
 TEST(ErrorHandlingScalar, CheckFiniteScreenVectorization) {
   using stan::math::check_finite_screen;
   Eigen::MatrixXd m = Eigen::MatrixXd::Constant(3, 2, 0);
-  EXPECT_TRUE(
-      check_finite_screen(std::vector<Eigen::MatrixXd>{m, m, m}));
+  EXPECT_TRUE(check_finite_screen(std::vector<Eigen::MatrixXd>{m, m, m}));
   Eigen::MatrixXd m2 = m;
   m2(1, 1) = stan::math::INFTY;
-  EXPECT_TRUE(
-      check_finite_screen(std::vector<Eigen::MatrixXd>{m, m2, m}));
+  EXPECT_TRUE(check_finite_screen(std::vector<Eigen::MatrixXd>{m, m2, m}));
 }
