@@ -23,7 +23,7 @@ inline void check_positive_finite(const char* function, const char* name,
                                   const T_y& y) {
   auto is_good = [](const auto& y) { return y > 0 && std::isfinite(y); };
   elementwise_check(is_good, function, name, y,
-		    ", but must be positive and finite!");
+                    ", but must be positive and finite!");
 }
 }  // namespace math
 }  // namespace stan
