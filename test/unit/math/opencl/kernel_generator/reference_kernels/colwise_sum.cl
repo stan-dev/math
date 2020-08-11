@@ -10,10 +10,10 @@ const int blocks_cols = (cols + lsize_i - 1) / lsize_i;
 const int i0 = lsize_i * wg_id_i;
 const int i = i0 + lid_i;
 const int j0 = lsize_i * wg_id_j;
+__local double var1_local[LOCAL_SIZE_];
 for(int lid_j = 0; lid_j < min(cols - j0, lsize_i); lid_j++){
 const int j = j0 + lid_j;
 double var1 = 0;
-__local double var1_local[LOCAL_SIZE_];
 if(i < rows){
 double var2 = 0; if (!((!contains_nonzero(var2_view, LOWER) && j < i) || (!contains_nonzero(var2_view, UPPER) && j > i))) {var2 = var2_global[i + var2_rows * j];}
 var1 = var2;

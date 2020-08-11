@@ -9,6 +9,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
 
 namespace stan {
@@ -53,6 +54,10 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
   using T_partials_return = partials_return_t<T_y, T_x, T_beta, T_cuts>;
   typedef typename std::conditional_t<T_x_rows == 1, double, VectorXd>
       T_location;
+  using T_y_ref = ref_type_t<T_y>;
+  using T_x_ref = ref_type_if_t<!is_constant<T_x>::value, T_x>;
+  using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
+  using T_cuts_ref = ref_type_if_t<!is_constant<T_cuts>::value, T_cuts>;
 
   const size_t N_instances = T_x_rows == 1 ? stan::math::size(y) : x.rows();
   const size_t N_attributes = x.cols();
@@ -62,15 +67,17 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
   check_consistent_size(function, "Vector of dependent variables", y,
                         N_instances);
   check_consistent_size(function, "Weight vector", beta, N_attributes);
-  const auto& y_ref = to_ref(y);
-  const auto& cuts_ref = to_ref(cuts);
+  T_y_ref y_ref = y;
+  T_cuts_ref cuts_ref = cuts;
+  const auto& cuts_val = value_of_rec(cuts_ref);
+  const auto& cuts_val_vec = to_ref(as_column_vector_or_scalar(cuts_val));
   check_bounded(function, "Vector of dependent variables", y_ref, 1, N_classes);
-  check_ordered(function, "Cut-points", cuts_ref);
+  check_ordered(function, "Cut-points", cuts_val_vec);
   if (N_classes > 1) {
     if (N_classes > 2) {
-      check_finite(function, "Final cut-point", cuts_ref[N_classes - 2]);
+      check_finite(function, "Final cut-point", cuts_val_vec[N_classes - 2]);
     }
-    check_finite(function, "First cut-point", cuts_ref[0]);
+    check_finite(function, "First cut-point", cuts_val_vec[0]);
   }
 
   if (size_zero(y, cuts)) {
@@ -80,19 +87,17 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
     return 0;
   }
 
-  const auto& x_ref = to_ref_if<!is_constant<T_x>::value>(x);
-  const auto& beta_ref = to_ref_if<!is_constant<T_beta>::value>(beta);
+  T_x_ref x_ref = x;
+  T_beta_ref beta_ref = beta;
 
   const auto& x_val
       = to_ref_if<!is_constant<T_beta>::value>(value_of_rec(x_ref));
   const auto& beta_val = value_of_rec(beta_ref);
-  const auto& cuts_val = value_of_rec(cuts_ref);
 
   const auto& beta_val_vec = to_ref_if<!is_constant<T_x>::value>(
       as_column_vector_or_scalar(beta_val));
-  const auto& cuts_val_vec = to_ref(as_column_vector_or_scalar(cuts_val));
 
-  scalar_seq_view<T_y> y_seq(y_ref);
+  scalar_seq_view<T_y_ref> y_seq(y_ref);
   Array<double, Dynamic, 1> cuts_y1(N_instances), cuts_y2(N_instances);
   for (int i = 0; i < N_instances; i++) {
     int c = y_seq[i];
@@ -146,8 +151,8 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
     }
   }
 
-  operands_and_partials<decltype(x_ref), decltype(beta_ref), decltype(cuts_ref)>
-      ops_partials(x_ref, beta_ref, cuts_ref);
+  operands_and_partials<T_x_ref, T_beta_ref, T_cuts_ref> ops_partials(
+      x_ref, beta_ref, cuts_ref);
   if (!is_constant_all<T_x, T_beta, T_cuts>::value) {
     Array<double, Dynamic, 1> exp_m_cut1 = exp(-cut1);
     Array<double, Dynamic, 1> exp_m_cut2 = exp(-cut2);

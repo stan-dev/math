@@ -2,6 +2,7 @@
 #define STAN_MATH_OPENCL_PRIM_DIMS_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/prim/fun/dims.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/rev/matrix_cl.hpp>
 #include <vector>
@@ -9,17 +10,18 @@
 namespace stan {
 namespace math {
 /** \ingroup opencl
- * Returns a vector of matrix_cl dimensions.
+ * matrix_cl overload of the dims helper function in prim/fun/dims.hpp.
+ * Pushes the rows and columns to the result vector argument.
  *
  * @tparam T_x type of input kernel generator expression a
- * @param x the input matrix_cl
- *
- * @return std::vector of the dimensions of the input kernel generato expression
+ * @param[in] x the input matrix_cl
+ * @param[out] result the output vector of dimensions
  */
 template <typename T_x,
-          typename = require_all_kernel_expressions_and_none_scalar_t<T_x>>
-inline std::vector<int> dims(const T_x& x) {
-  return {x.rows(), x.cols()};
+          require_all_kernel_expressions_and_none_scalar_t<T_x>* = nullptr>
+inline void dims(const T_x& x, std::vector<int>& result) {
+  result.push_back(x.rows());
+  result.push_back(x.cols());
 }
 }  // namespace math
 }  // namespace stan

@@ -13,7 +13,7 @@ namespace stan {
  * Checks whether type T is derived from Eigen::MatrixBase.
  * If true this will have a static member function named value with a type
  * of true, else value is false.
- * @tparam T Type to check if it is derived from `EigenBase`
+ * @tparam T Type to check if it is derived from `MatrixBase`
  * @tparam Enable used for SFINAE deduction.
  * @ingroup type_trait
  */

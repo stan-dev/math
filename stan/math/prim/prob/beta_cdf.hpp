@@ -13,6 +13,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
 
 namespace stan {
@@ -41,6 +42,9 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
   check_consistent_sizes(function, "Random variable", y,
                          "First shape parameter", alpha,
                          "Second shape parameter", beta);
+  if (size_zero(y, alpha, beta)) {
+    return 1.0;
+  }
 
   T_y_ref y_ref = y;
   T_alpha_ref alpha_ref = alpha;
@@ -48,10 +52,6 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
   check_positive_finite(function, "First shape parameter", alpha_ref);
   check_positive_finite(function, "Second shape parameter", beta_ref);
   check_bounded(function, "Random variable", y_ref, 0, 1);
-
-  if (size_zero(y, alpha, beta)) {
-    return 1.0;
-  }
 
   T_partials_return P(1.0);
   operands_and_partials<T_y_ref, T_alpha_ref, T_beta_ref> ops_partials(

@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <cmath>
 
 namespace stan {

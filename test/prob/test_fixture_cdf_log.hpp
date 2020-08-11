@@ -576,7 +576,8 @@ class AgradCdfLogTestFixture : public ::testing::Test {
       calculate_gradients_1storder(multiple_gradients2, multiple_cdf_log, x1);
       calculate_gradients_1storder(multiple_gradients3, multiple_cdf_log, x1);
 
-      EXPECT_TRUE(single_cdf_log * N_REPEAT - multiple_cdf_log < 1e-8)
+      EXPECT_NEAR(stan::math::value_of_rec(N_REPEAT * single_cdf_log),
+                  stan::math::value_of_rec(multiple_cdf_log), 1e-8)
           << "cdf_log with repeated vector input should match "
           << "a multiple of cdf_log of single input";
 
@@ -833,5 +834,7 @@ TYPED_TEST_P(AgradCdfLogTestFixture, Length0Vector) {
 REGISTER_TYPED_TEST_CASE_P(AgradCdfLogTestFixture, CallAllVersions, ValidValues,
                            InvalidValues, FiniteDiff, Function, RepeatAsVector,
                            LowerBound, UpperBound, Length0Vector);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AgradCdfLogTestFixture);
 
 #endif

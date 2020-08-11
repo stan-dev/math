@@ -3,13 +3,12 @@
 #include <vector>
 #include <string>
 
-const char* function_ = "function";
-const char* y_name_ = "y";
-const char* msg1_ = "error_message ";
-const char* msg2_ = " second message";
-
 class ErrorHandlingScalar_throw_domain_error_vec : public ::testing::Test {
  public:
+  const char* function_ = "function";
+  const char* y_name_ = "y";
+  const char* msg1_ = "error_message ";
+  const char* msg2_ = " second message";
   void SetUp() { index_ = 0; }
 
   template <class T>

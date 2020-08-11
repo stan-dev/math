@@ -1,18 +1,17 @@
 #include <stan/math/prim.hpp>
-#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using stan::math::to_array_1d;
-using stan::math::to_array_2d;
-using stan::math::to_matrix;
-using stan::math::to_row_vector;
-using stan::math::to_vector;
-using std::vector;
-
 TEST(MathMatrixPrimMat, conversions_1) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::to_array_1d;
+  using stan::math::to_array_2d;
+  using stan::math::to_matrix;
+  using stan::math::to_row_vector;
+  using stan::math::to_vector;
+  using std::vector;
   Matrix<double, Dynamic, Dynamic> a1(3, 2);
   a1 << 1.1, 2.53, 3.98, 4.1, 5.1, 6.87;
 
@@ -122,7 +121,7 @@ TEST(MathMatrixPrimMat, conversions_1) {
 
   // matrix to_matrix(vector)
   a2 = to_matrix(a1);
-  expect_matrix_eq(a1, a2);
+  EXPECT_MATRIX_FLOAT_EQ(a1, a2);
 
   // matrix to_matrix(vector)
   a2 = to_matrix(c1);
@@ -172,7 +171,7 @@ TEST(MathMatrixPrimMat, conversions_1) {
 
   // vector to_vector(vector)
   c2 = to_vector(c1);
-  expect_matrix_eq(c1, c2);
+  EXPECT_MATRIX_FLOAT_EQ(c1, c2);
 
   // vector to_vector(real[])
   c2 = to_vector(e1);
@@ -204,7 +203,7 @@ TEST(MathMatrixPrimMat, conversions_1) {
 
   // row_vector to_row_vector(row_vector)
   d2 = to_row_vector(d1);
-  expect_matrix_eq(d1, d2);
+  EXPECT_MATRIX_FLOAT_EQ(d1, d2);
 
   // row_vector to_row_vector(real[])
   d2 = to_row_vector(e1);
@@ -253,15 +252,23 @@ TEST(MathMatrixPrimMat, conversions_1) {
   EXPECT_EQ(c1(2), e2[2]);
 
   // Now we play with some lossless operations
-  expect_matrix_eq(a1, to_matrix(to_array_2d(a1)));
-  expect_matrix_eq(c1, to_vector(to_array_1d(c1)));
-  expect_matrix_eq(c1, to_vector(to_matrix(c1)));
-  expect_matrix_eq(c1, to_vector(to_row_vector(c1)));
-  expect_matrix_eq(d1, to_row_vector(to_array_1d(d1)));
-  expect_matrix_eq(d1, to_row_vector(to_matrix(d1)));
-  expect_matrix_eq(d1, to_row_vector(to_vector(d1)));
+  EXPECT_MATRIX_FLOAT_EQ(a1, to_matrix(to_array_2d(a1)));
+  EXPECT_MATRIX_FLOAT_EQ(c1, to_vector(to_array_1d(c1)));
+  EXPECT_MATRIX_FLOAT_EQ(c1, to_vector(to_matrix(c1)));
+  EXPECT_MATRIX_FLOAT_EQ(c1, to_vector(to_row_vector(c1)));
+  EXPECT_MATRIX_FLOAT_EQ(d1, to_row_vector(to_array_1d(d1)));
+  EXPECT_MATRIX_FLOAT_EQ(d1, to_row_vector(to_matrix(d1)));
+  EXPECT_MATRIX_FLOAT_EQ(d1, to_row_vector(to_vector(d1)));
 }
 TEST(MathMatrixPrimMat, conversions_2) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::to_array_1d;
+  using stan::math::to_array_2d;
+  using stan::math::to_matrix;
+  using stan::math::to_row_vector;
+  using stan::math::to_vector;
+  using std::vector;
   vector<vector<vector<double> > > a1(
       3, vector<vector<double> >(2, vector<double>(4)));
   a1[0][0][0] = 11.341;

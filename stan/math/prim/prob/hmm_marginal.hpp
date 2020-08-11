@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/core.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <vector>
 
 namespace stan {
@@ -52,8 +53,8 @@ inline auto hmm_marginal_val(
  * the derivative is calculated with an adjoint method,
  * e.g (Betancourt, Margossian, & Leos-Barajas, 2020).
  * log_omegas is a matrix of observational densities, where
- * the (i, j)th entry corresponds to the density of the ith observation, y_i,
- * given x_i = j.
+ * the (i, j)th entry corresponds to the density of the jth observation, y_j,
+ * given x_j = i.
  * The transition matrix Gamma is such that the (i, j)th entry is the
  * probability that x_n = j given x_{n - 1} = i. The rows of Gamma are
  * simplexes.
