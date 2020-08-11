@@ -114,11 +114,11 @@ TBB_CXX_TYPE ?= $(CXX_TYPE)
 # Set c compiler used for the TBB
 ifeq (clang,$(CXX_TYPE))
   TBB_CC ?= $(subst clang++,clang,$(CXX))
-  TBB_CXXFLAGS ?= -Wno-unknown-warning-option -Wno-deprecated-copy
+  TBB_CXXFLAGS ?= -Wno-unknown-warning-option -Wno-deprecated-copy $(CXXFLAGS_FLTO)
 endif
 ifeq (gcc,$(CXX_TYPE))
   TBB_CC ?= $(subst g++,gcc,$(CXX))
-  TBB_CXXFLAGS ?= -Wno-unknown-warning-option -Wno-missing-attributes -Wno-class-memaccess -Wno-sized-deallocation
+  TBB_CXXFLAGS ?= -Wno-unknown-warning-option -Wno-missing-attributes -Wno-class-memaccess -Wno-sized-deallocation $(CXXFLAGS_FLTO)
 endif
 TBB_CC ?= $(CC)
 

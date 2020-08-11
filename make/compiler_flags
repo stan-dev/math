@@ -62,6 +62,22 @@ CXX_MAJOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f1)
 CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
 
 
+ifneq (,$(findstring clang,$(CXX_TYPE)))
+	CXXFLAGS_OPTIM ?= -fvectorize -ftree-vectorize -fslp-vectorize -ftree-slp-vectorize
+	ifeq ($(shell expr $(CXX_MAJOR) \>= 5), 1)
+		CXXFLAGS_FLTO ?= -flto=full -fwhole-program-vtables -fstrict-vtable-pointers
+		AR := llvm-ar
+		CXXFLAGS_OPTIOM += -fforce-emit-vtables
+	endif
+endif
+ifneq (,$(findstring mingw32-g,$(CXX_TYPE)))
+else ifneq (,$(findstring gcc,$(CXX_TYPE)))
+	#CXXFLAGS_OPTIM ?= -fweb -fivopts -ftree-loop-linear -fstrict-aliasing -funroll-loops -floop-block -floop-nest-optimize
+	ifeq ($(shell expr $(CXX_MAJOR) \>= 5), 1)
+		CXXFLAGS_FLTO ?= -flto=jobserver
+		#CXXFLAGS_OPTIM += -fdevirtualize-speculatively -fdevirtualize-at-ltrans
+	endif
+endif
 
 ################################################################################
 # Set default compiler flags
@@ -79,15 +95,15 @@ INC_SUNDIALS ?= -I $(SUNDIALS)/include
 INC_GTEST ?= -I $(GTEST)/include -I $(GTEST)
 
 ## setup precompiler options
-CPPFLAGS_BOOST ?= -DBOOST_DISABLE_ASSERTS
-CPPFLAGS_SUNDIALS ?= -DNO_FPRINTF_OUTPUT
-CPPFLAGS_GTEST ?=
+CPPFLAGS_BOOST ?= -DBOOST_DISABLE_ASSERTS $(CXXFLAGS_FLTO)
+CPPFLAGS_SUNDIALS ?= -DNO_FPRINTF_OUTPUT $(CXXFLAGS_FLTO)
+#CPPFLAGS_GTEST ?=
 
 
 ## setup compiler flags
 CXXFLAGS_LANG ?= -std=c++1y
-#CXXFLAGS_BOOST
-CXXFLAGS_SUNDIALS ?= -pipe
+CXXFLAGS_BOOST ?= $(CXXFLAGS_FLTO)
+CXXFLAGS_SUNDIALS ?= -pipe $(CXXFLAGS_FLTO) #$(CXXFLAGS_OPTIM)
 #CXXFLAGS_GTEST
 
 
@@ -224,7 +240,7 @@ endif
 
 
 CXXFLAGS_TBB ?= -I $(TBB)/include
-LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)"
+LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)" $(CXXFLAGS_FLTO)
 LDLIBS_TBB ?=
 
 ################################################################################
@@ -247,17 +263,17 @@ ifdef STAN_MPI
   endif
 
   MPI_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(BOOST)/stage/lib/libboost_serialization $(BOOST)/stage/lib/libboost_mpi) $(MPI_TEMPLATE_INSTANTIATION)
-  CPPFLAGS_MPI ?= -DSTAN_MPI
+  CPPFLAGS_MPI ?= -DSTAN_MPI $(CXXFLAGS_FLTO)
 
   BOOST_LIBRARY_ABSOLUTE_PATH = $(abspath $(BOOST)/stage/lib)
 
-  LDFLAGS_MPI ?= -Wl,-L,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" -Wl,-rpath,"$(BOOST_LIBRARY_ABSOLUTE_PATH)"
-  CXXFLAGS_MPI ?= -Wno-delete-non-virtual-dtor
+  LDFLAGS_MPI ?= -Wl,-L,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" -Wl,-rpath,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" $(CXXFLAGS_FLTO)
+  CXXFLAGS_MPI ?= -Wno-delete-non-virtual-dtor $(CXXFLAGS_FLTO)
 endif
 
-CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) $(CXXFLAGS_THREADS) $(CXXFLAGS_TBB) -O$(O) $(INC)
-CPPFLAGS += $(CPPFLAGS_LANG) $(CPPFLAGS_OS) $(CPPFLAGS_WARNINGS) $(CPPFLAGS_BOOST) $(CPPFLAGS_EIGEN) $(CPPFLAGS_OPENCL) $(CPPFLAGS_MPI) $(CPPFLAGS_TBB)
-LDFLAGS += $(LDFLAGS_LANG) $(LDFLAGS_OS) $(LDFLAGS_WARNINGS) $(LDFLAGS_BOOST) $(LDFLAGS_EIGEN) $(LDFLAGS_OPENCL) $(LDFLAGS_MPI) $(LDFLAGS_TBB)
+CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) $(CXXFLAGS_THREADS) $(CXXFLAGS_TBB) $(CXXFLAGS_FLTO) $(CXXFLAGS_OPTIM) -O$(O) $(INC)
+CPPFLAGS += $(CPPFLAGS_LANG) $(CPPFLAGS_OS) $(CPPFLAGS_WARNINGS) $(CPPFLAGS_BOOST) $(CPPFLAGS_EIGEN) $(CPPFLAGS_OPENCL) $(CPPFLAGS_MPI) $(CPPFLAGS_TBB) $(CXXFLAGS_FLTO) $(CXXFLAGS_OPTIM)
+LDFLAGS += $(LDFLAGS_LANG) $(LDFLAGS_OS) $(LDFLAGS_WARNINGS) $(LDFLAGS_BOOST) $(LDFLAGS_EIGEN) $(LDFLAGS_OPENCL) $(LDFLAGS_MPI) $(LDFLAGS_TBB) $(CXXFLAGS_FLTO)
 LDLIBS += $(LDLIBS_LANG) $(LDLIBS_OS) $(LDLIBS_WARNINGS) $(LDLIBS_BOOST) $(LDLIBS_EIGEN) $(LDLIBS_OPENCL) $(LDLIBS_MPI) $(LDLIBS_TBB)
 
 .PHONY: print-compiler-flags
