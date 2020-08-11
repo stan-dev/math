@@ -3,9 +3,8 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <vector>
 
-using stan::math::is_positive;
-
 TEST(ErrorHandlingScalar, isPositive) {
+  using stan::math::is_positive;
   EXPECT_FALSE(is_positive(stan::math::NEGATIVE_INFTY));
   EXPECT_FALSE(is_positive(-3.0));
   EXPECT_FALSE(is_positive(-3));
@@ -21,6 +20,7 @@ TEST(ErrorHandlingScalar, isPositive) {
 }
 
 TEST(ErrorHandlingScalar, isPositiveVectorization) {
+  using stan::math::is_positive;
   Eigen::MatrixXd m = Eigen::MatrixXd::Constant(3, 2, 1);
   EXPECT_TRUE(is_positive(std::vector<Eigen::MatrixXd>{m, m, m}));
   Eigen::MatrixXd m2 = m;

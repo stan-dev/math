@@ -3,8 +3,6 @@
 #include <limits>
 #include <vector>
 
-const char* function = "check_positive";
-
 TEST(ErrorHandlingArr, CheckPositive) {
   using stan::math::check_positive;
   std::vector<double> x = {1, 2, 3};
