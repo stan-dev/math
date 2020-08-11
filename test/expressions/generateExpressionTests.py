@@ -115,6 +115,14 @@ def parse_signature(signature):
     return return_type, function_name, args
 
 
+special_arg_values = {
+	"acosh" : 1.4,
+	"log1m_exp" : -0.6,
+	"categorical_log" : 1,
+	"categorical_rng" : 1,
+	"categorical_lpmf" : 1,
+}
+
 def make_arg_code(arg, scalar, var_name, function_name):
     """
     Makes code for declaration and initialization of an argument to function.
@@ -135,15 +143,10 @@ def make_arg_code(arg, scalar, var_name, function_name):
             "  %s %s = [](const auto& a, const auto&, const auto&, const auto&){return a;}"
             % (arg_type, var_name)
         )
-    elif function_name == "acosh":
+    elif function_name in special_arg_values:
         return (
-            "  %s %s = stan::math::as_array_or_scalar(stan::test::make_arg<%s>())+1"
-            % (arg_type, var_name, arg_type)
-        )
-    elif function_name == "log1m_exp":
-        return (
-            "  %s %s = stan::math::as_array_or_scalar(stan::test::make_arg<%s>())-1"
-            % (arg_type, var_name, arg_type)
+            "  %s %s = stan::test::make_arg<%s>(%d)"
+            % (arg_type, var_name, arg_type, special_arg_values[function_name])
         )
     else:
         return "  %s %s = stan::test::make_arg<%s>()" % (
