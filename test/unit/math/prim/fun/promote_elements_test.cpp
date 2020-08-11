@@ -4,11 +4,10 @@
 #include <type_traits>
 #include <vector>
 
-using Eigen::Matrix;
-using stan::math::promote_elements;
-using std::vector;
-
 TEST(MathFunctionsScalPromote_Elements, int2double) {
+  using Eigen::Matrix;
+  using stan::math::promote_elements;
+  using std::vector;
   int from;
   promote_elements<double, int> p;
   typedef BOOST_TYPEOF(p.promote(from)) result_t;
@@ -17,6 +16,9 @@ TEST(MathFunctionsScalPromote_Elements, int2double) {
 }
 
 TEST(MathFunctionsScalPromote_Elements, double2double) {
+  using Eigen::Matrix;
+  using stan::math::promote_elements;
+  using std::vector;
   double from;
   promote_elements<double, double> p;
   typedef BOOST_TYPEOF(p.promote(from)) result_t;
@@ -25,6 +27,9 @@ TEST(MathFunctionsScalPromote_Elements, double2double) {
 }
 
 TEST(MathFunctionsArrPromote_Elements, intVec2doubleVec) {
+  using Eigen::Matrix;
+  using stan::math::promote_elements;
+  using std::vector;
   vector<int> from;
   from.push_back(1);
   from.push_back(2);
@@ -36,6 +41,9 @@ TEST(MathFunctionsArrPromote_Elements, intVec2doubleVec) {
 }
 
 TEST(MathFunctionsArrPromote_Elements, doubleVec2doubleVec) {
+  using Eigen::Matrix;
+  using stan::math::promote_elements;
+  using std::vector;
   vector<double> from;
   from.push_back(1);
   from.push_back(2);
@@ -47,6 +55,9 @@ TEST(MathFunctionsArrPromote_Elements, doubleVec2doubleVec) {
 }
 
 TEST(MathFunctionsMatPromote_Elements, doubleMat2doubleMat) {
+  using Eigen::Matrix;
+  using stan::math::promote_elements;
+  using std::vector;
   stan::math::matrix_d m1(2, 3);
   m1 << 1, 2, 3, 4, 5, 6;
   promote_elements<Matrix<double, 2, 3>, Matrix<double, 2, 3> > p;

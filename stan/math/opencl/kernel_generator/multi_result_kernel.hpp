@@ -343,6 +343,7 @@ class results_cl {
           "const int i0 = lsize_i * wg_id_i;\n"
           "const int i = i0 + lid_i;\n"
           "const int j0 = lsize_i * wg_id_j;\n"
+          + parts.declarations +
           "for(int lid_j = 0; lid_j < min(cols - j0, lsize_i); lid_j++){\n"
           "const int j = j0 + lid_j;\n"
           + parts.initialization +
@@ -360,6 +361,7 @@ class results_cl {
           "){\n"
           "int i = get_global_id(0);\n"
           "int j = get_global_id(1);\n"
+          + parts.declarations
           + parts.initialization
           + parts.body
           + parts.reduction +

@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log.hpp>
@@ -21,12 +22,12 @@ namespace math {
  */
 template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
 inline var log_determinant_spd(const EigMat& m) {
-  check_symmetric("log_determinant_spd", "m", m);
   if (m.size() == 0) {
     return 0;
   }
 
   matrix_d m_d = m.val();
+  check_symmetric("log_determinant_spd", "m", m_d);
 
   Eigen::LDLT<matrix_d> ldlt(m_d);
   if (ldlt.info() != Eigen::Success) {

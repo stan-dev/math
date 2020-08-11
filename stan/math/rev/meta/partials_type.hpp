@@ -13,7 +13,7 @@ namespace stan {
  */
 template <typename T>
 struct partials_type<T, require_var_t<T>> {
-  using type = typename std::decay_t<T>::Scalar;
+  using type = typename std::decay_t<T>::value_type;
 };
 
 }  // namespace stan

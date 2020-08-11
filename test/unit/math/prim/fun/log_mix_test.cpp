@@ -5,12 +5,10 @@
 #include <stdexcept>
 #include <vector>
 
-using stan::math::log_mix;
-using stan::math::row_vector_d;
-using stan::math::vector_d;
-
 TEST(MathFunctions, log_mix_exceptions) {
   using stan::math::log_mix;
+  using stan::math::row_vector_d;
+  using stan::math::vector_d;
   EXPECT_THROW(log_mix(-1, 10, 20), std::domain_error);
   EXPECT_THROW(log_mix(std::numeric_limits<double>::quiet_NaN(), 10, 20),
                std::domain_error);
@@ -21,6 +19,8 @@ TEST(MathFunctions, log_mix_exceptions) {
 }
 void test_log_mix(double theta, double lambda1, double lambda2) {
   using stan::math::log_mix;
+  using stan::math::row_vector_d;
+  using stan::math::vector_d;
   using std::exp;
   using std::log;
   EXPECT_FLOAT_EQ(log(theta * exp(lambda1) + (1 - theta) * exp(lambda2)),
@@ -34,7 +34,8 @@ TEST(MathFunctions, log_mix_values) {
 }
 
 template <typename T_a, typename T_b>
-void val_test(T_a a, T_b b) {
+void log_mix_val_test(T_a a, T_b b) {
+  using stan::math::log_mix;
   a[0] = 0.321;
   a[1] = 0.115;
   a[2] = 0.261;
@@ -74,42 +75,43 @@ TEST(MatrixFunctions, LogMix_Combin) {
    * the same result.
    */
 
-  vector_d vecd_prob(4);
-  vector_d vecd_dens(4);
-  row_vector_d row_vecd_prob(4);
-  row_vector_d row_vecd_dens(4);
+  stan::math::vector_d vecd_prob(4);
+  stan::math::vector_d vecd_dens(4);
+  stan::math::row_vector_d row_vecd_prob(4);
+  stan::math::row_vector_d row_vecd_dens(4);
   std::vector<double> std_prob(4);
   std::vector<double> std_dens(4);
 
-  val_test(vecd_prob, vecd_dens);
-  val_test(vecd_prob, row_vecd_dens);
-  val_test(vecd_prob, std_dens);
+  log_mix_val_test(vecd_prob, vecd_dens);
+  log_mix_val_test(vecd_prob, row_vecd_dens);
+  log_mix_val_test(vecd_prob, std_dens);
 
-  val_test(row_vecd_prob, vecd_dens);
-  val_test(row_vecd_prob, row_vecd_dens);
-  val_test(row_vecd_prob, std_dens);
+  log_mix_val_test(row_vecd_prob, vecd_dens);
+  log_mix_val_test(row_vecd_prob, row_vecd_dens);
+  log_mix_val_test(row_vecd_prob, std_dens);
 
-  val_test(std_prob, vecd_dens);
-  val_test(std_prob, row_vecd_dens);
-  val_test(std_prob, std_dens);
+  log_mix_val_test(std_prob, vecd_dens);
+  log_mix_val_test(std_prob, row_vecd_dens);
+  log_mix_val_test(std_prob, std_dens);
 }
 
 TEST(MatrixFunctions, LogMix_Values) {
+  using stan::math::log_mix;
   /**
    * Test that the function is equivalent to scalar and
    * log_sum_exp implementations.
    */
 
-  vector_d prob(5, 1);
+  stan::math::vector_d prob(5, 1);
   prob << 0.1, 0.3, 0.25, 0.15, 0.2;
 
-  vector_d dens(5, 1);
+  stan::math::vector_d dens(5, 1);
   dens << -5.65, -7.62, -12.63, -55.62, -2.35;
 
-  vector_d prob_2(2, 1);
+  stan::math::vector_d prob_2(2, 1);
   prob_2 << 0.1, 0.9;
 
-  vector_d dens_2(2, 1);
+  stan::math::vector_d dens_2(2, 1);
   dens_2 << -5.65, -7.62;
 
   double log_mix_stan_1 = log_mix(prob, dens);
@@ -124,26 +126,27 @@ TEST(MatrixFunctions, LogMix_Values) {
 }
 
 TEST(MatrixFunctions, LogMix_Throws) {
+  using stan::math::log_mix;
   /**
    * Test invalid vector of probabilities
    */
 
-  vector_d prob_neg(5, 1);
+  stan::math::vector_d prob_neg(5, 1);
   prob_neg << -0.1, 0.3, 0.25, 0.15, 0.2;
 
-  vector_d prob_inf(5, 1);
+  stan::math::vector_d prob_inf(5, 1);
   prob_inf << stan::math::INFTY, 0.3, 0.25, 0.15, 0.2;
 
-  vector_d prob_neg_inf(5, 1);
+  stan::math::vector_d prob_neg_inf(5, 1);
   prob_neg_inf << stan::math::NEGATIVE_INFTY, 0.3, 0.25, 0.15, 0.2;
 
-  vector_d prob_nan(5, 1);
+  stan::math::vector_d prob_nan(5, 1);
   prob_nan << stan::math::NOT_A_NUMBER, 0.3, 0.25, 0.15, 0.2;
 
-  vector_d dens(5, 1);
+  stan::math::vector_d dens(5, 1);
   dens << -5.65, -7.62, -12.63, -55.62, -2.35;
 
-  std::vector<vector_d> std_dens{dens, dens, dens, dens};
+  std::vector<stan::math::vector_d> std_dens{dens, dens, dens, dens};
 
   EXPECT_THROW(log_mix(prob_neg, dens), std::domain_error);
   EXPECT_THROW(log_mix(prob_neg, std_dens), std::domain_error);
@@ -157,20 +160,20 @@ TEST(MatrixFunctions, LogMix_Throws) {
   /**
    * Test invalid vector of densities
    */
-  vector_d dens_inf(5, 1);
+  stan::math::vector_d dens_inf(5, 1);
   dens_inf << stan::math::INFTY, -7.62, -12.63, -55.62, -2.35;
-  std::vector<vector_d> std_dens_inf{dens_inf, dens_inf, dens_inf};
+  std::vector<stan::math::vector_d> std_dens_inf{dens_inf, dens_inf, dens_inf};
 
-  vector_d dens_neg_inf(5, 1);
+  stan::math::vector_d dens_neg_inf(5, 1);
   dens_neg_inf << -5.65, -7.62, stan::math::NEGATIVE_INFTY, -55.62, -2.35;
-  std::vector<vector_d> std_dens_neg_inf{dens_neg_inf, dens_neg_inf,
-                                         dens_neg_inf};
+  std::vector<stan::math::vector_d> std_dens_neg_inf{dens_neg_inf, dens_neg_inf,
+                                                     dens_neg_inf};
 
-  vector_d dens_nan(5, 1);
+  stan::math::vector_d dens_nan(5, 1);
   dens_nan << -5.65, -7.62, -12.63, stan::math::NOT_A_NUMBER, -2.35;
-  std::vector<vector_d> std_dens_nan{dens_nan, dens_nan, dens_nan};
+  std::vector<stan::math::vector_d> std_dens_nan{dens_nan, dens_nan, dens_nan};
 
-  vector_d prob(5, 1);
+  stan::math::vector_d prob(5, 1);
   prob << 0.1, 0.3, 0.25, 0.15, 0.2;
 
   EXPECT_THROW(log_mix(prob, dens_inf), std::domain_error);
@@ -183,12 +186,13 @@ TEST(MatrixFunctions, LogMix_Throws) {
   /**
    * Test inconsistent vector sizes
    */
-  vector_d prob_small(2, 1);
+  stan::math::vector_d prob_small(2, 1);
   prob_small << 0.5, 0.5;
 
-  vector_d dens_large(7, 1);
+  stan::math::vector_d dens_large(7, 1);
   dens_large << -5.65, -7.62, -12.63, -55.62, -2.35, -9.6, -0.7;
-  std::vector<vector_d> std_dens_large{dens_large, dens_large, dens_large};
+  std::vector<stan::math::vector_d> std_dens_large{dens_large, dens_large,
+                                                   dens_large};
 
   EXPECT_THROW(log_mix(prob_small, dens), std::invalid_argument);
   EXPECT_THROW(log_mix(prob_small, std_dens), std::invalid_argument);

@@ -64,7 +64,8 @@ TEST(MathMatrixRevCL, sub_block_triangular) {
   stan::math::matrix_cl<var> b_cl(b);
   Eigen::Matrix<var, -1, -1> c;
 
-  a_cl = stan::math::to_matrix_cl(a);
+  a_cl.val() = stan::math::to_matrix_cl(a.val());
+  a_cl.adj() = stan::math::to_matrix_cl(a.adj());
   a_cl.view(stan::math::matrix_cl_view::Lower);
   b_cl.view(stan::math::matrix_cl_view::Lower);
   a_cl.sub_block(b_cl, 0, 1, 0, 1, 2, 2);
@@ -80,7 +81,8 @@ TEST(MathMatrixRevCL, sub_block_triangular) {
   EXPECT_EQ(c(2, 1), 0);
   EXPECT_EQ(c(2, 2), 0);
 
-  a_cl = stan::math::to_matrix_cl(a);
+  a_cl.val() = stan::math::to_matrix_cl(a.val());
+  a_cl.adj() = stan::math::to_matrix_cl(a.adj());
   a_cl.view(stan::math::matrix_cl_view::Lower);
   b_cl.view(stan::math::matrix_cl_view::Lower);
   a_cl.sub_block(b_cl, 1, 0, 1, 1, 2, 2);
@@ -96,7 +98,8 @@ TEST(MathMatrixRevCL, sub_block_triangular) {
   EXPECT_EQ(c(2, 1), 1);
   EXPECT_EQ(c(2, 2), 1);
 
-  a_cl = stan::math::to_matrix_cl(a);
+  a_cl.val() = stan::math::to_matrix_cl(a.val());
+  a_cl.adj() = stan::math::to_matrix_cl(a.adj());
   a_cl.view(stan::math::matrix_cl_view::Lower);
   b_cl.view(stan::math::matrix_cl_view::Upper);
   a_cl.sub_block(b_cl, 0, 0, 1, 0, 2, 2);
@@ -112,7 +115,8 @@ TEST(MathMatrixRevCL, sub_block_triangular) {
   EXPECT_EQ(c(2, 1), 1);
   EXPECT_EQ(c(2, 2), 0);
 
-  a_cl = stan::math::to_matrix_cl(a);
+  a_cl.val() = stan::math::to_matrix_cl(a.val());
+  a_cl.adj() = stan::math::to_matrix_cl(a.adj());
   a_cl.view(stan::math::matrix_cl_view::Lower);
   b_cl.view(stan::math::matrix_cl_view::Upper);
   a_cl.sub_block(b_cl, 0, 0, 0, 0, 2, 2);
@@ -128,7 +132,8 @@ TEST(MathMatrixRevCL, sub_block_triangular) {
   EXPECT_EQ(c(2, 1), 0);
   EXPECT_EQ(c(2, 2), 0);
 
-  a_cl = stan::math::to_matrix_cl(a);
+  a_cl.val() = stan::math::to_matrix_cl(a.val());
+  a_cl.adj() = stan::math::to_matrix_cl(a.adj());
   a_cl.view(stan::math::matrix_cl_view::Lower);
   b_cl.view(stan::math::matrix_cl_view::Upper);
   a_cl.sub_block(b_cl, 1, 0, 1, 0, 2, 2);
@@ -144,7 +149,8 @@ TEST(MathMatrixRevCL, sub_block_triangular) {
   EXPECT_EQ(c(2, 1), 0);
   EXPECT_EQ(c(2, 2), 0);
 
-  a_cl = stan::math::to_matrix_cl(a);
+  a_cl.val() = stan::math::to_matrix_cl(a.val());
+  a_cl.adj() = stan::math::to_matrix_cl(a.adj());
   a_cl.view(stan::math::matrix_cl_view::Lower);
   b_cl.view(stan::math::matrix_cl_view::Upper);
   a_cl.sub_block(b_cl, 1, 0, 1, 0, 2, 3);
@@ -160,7 +166,8 @@ TEST(MathMatrixRevCL, sub_block_triangular) {
   EXPECT_EQ(c(2, 1), 0);
   EXPECT_EQ(c(2, 2), 1);
 
-  a_cl = stan::math::to_matrix_cl(a);
+  a_cl.val() = stan::math::to_matrix_cl(a.val());
+  a_cl.adj() = stan::math::to_matrix_cl(a.adj());
   a_cl.view(stan::math::matrix_cl_view::Upper);
   b_cl.view(stan::math::matrix_cl_view::Upper);
   a_cl.sub_block(b_cl, 1, 0, 1, 0, 2, 2);
@@ -176,7 +183,8 @@ TEST(MathMatrixRevCL, sub_block_triangular) {
   EXPECT_EQ(c(2, 1), 0);
   EXPECT_EQ(c(2, 2), 0);
 
-  a_cl = stan::math::to_matrix_cl(a);
+  a_cl.val() = stan::math::to_matrix_cl(a.val());
+  a_cl.adj() = stan::math::to_matrix_cl(a.adj());
   a_cl.view(stan::math::matrix_cl_view::Upper);
   b_cl.view(stan::math::matrix_cl_view::Upper);
   a_cl.sub_block(b_cl, 0, 1, 1, 1, 2, 2);
@@ -192,7 +200,8 @@ TEST(MathMatrixRevCL, sub_block_triangular) {
   EXPECT_EQ(c(2, 1), 1);
   EXPECT_EQ(c(2, 2), 1);
 
-  a_cl = stan::math::to_matrix_cl(a);
+  a_cl.val() = stan::math::to_matrix_cl(a.val());
+  a_cl.adj() = stan::math::to_matrix_cl(a.adj());
   a_cl.view(stan::math::matrix_cl_view::Upper);
   b_cl.view(stan::math::matrix_cl_view::Lower);
   a_cl.sub_block(b_cl, 0, 0, 0, 1, 2, 2);
@@ -208,7 +217,8 @@ TEST(MathMatrixRevCL, sub_block_triangular) {
   EXPECT_EQ(c(2, 1), 0);
   EXPECT_EQ(c(2, 2), 0);
 
-  a_cl = stan::math::to_matrix_cl(a);
+  a_cl.val() = stan::math::to_matrix_cl(a.val());
+  a_cl.adj() = stan::math::to_matrix_cl(a.adj());
   a_cl.view(stan::math::matrix_cl_view::Upper);
   b_cl.view(stan::math::matrix_cl_view::Lower);
   a_cl.sub_block(b_cl, 0, 0, 0, 0, 2, 2);
@@ -224,7 +234,8 @@ TEST(MathMatrixRevCL, sub_block_triangular) {
   EXPECT_EQ(c(2, 1), 0);
   EXPECT_EQ(c(2, 2), 0);
 
-  a_cl = stan::math::to_matrix_cl(a);
+  a_cl.val() = stan::math::to_matrix_cl(a.val());
+  a_cl.adj() = stan::math::to_matrix_cl(a.adj());
   a_cl.view(stan::math::matrix_cl_view::Upper);
   b_cl.view(stan::math::matrix_cl_view::Lower);
   a_cl.sub_block(b_cl, 0, 1, 0, 1, 2, 2);
@@ -240,7 +251,8 @@ TEST(MathMatrixRevCL, sub_block_triangular) {
   EXPECT_EQ(c(2, 1), 0);
   EXPECT_EQ(c(2, 2), 0);
 
-  a_cl = stan::math::to_matrix_cl(a);
+  a_cl.val() = stan::math::to_matrix_cl(a.val());
+  a_cl.adj() = stan::math::to_matrix_cl(a.adj());
   a_cl.view(stan::math::matrix_cl_view::Upper);
   b_cl.view(stan::math::matrix_cl_view::Lower);
   a_cl.sub_block(b_cl, 0, 1, 0, 1, 3, 2);
@@ -256,7 +268,8 @@ TEST(MathMatrixRevCL, sub_block_triangular) {
   EXPECT_EQ(c(2, 1), 1);
   EXPECT_EQ(c(2, 2), 1);
 
-  a_cl = stan::math::to_matrix_cl(a);
+  a_cl.val() = stan::math::to_matrix_cl(a.val());
+  a_cl.adj() = stan::math::to_matrix_cl(a.adj());
   a_cl.view(stan::math::matrix_cl_view::Upper);
   b_cl.view(stan::math::matrix_cl_view::Lower);
   a_cl.sub_block(b_cl, 0, 0, 0, 0, 3, 3);
