@@ -51,8 +51,8 @@ SUNDIALS_KINSOL := $(patsubst %.c,%.o, \
 SUNDIALS_NVECSERIAL := $(patsubst %.c,%.o,\
   $(addprefix $(SUNDIALS)/src/, nvector/serial/nvector_serial.c sundials/sundials_math.c))
 
-$(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL)) : CXXFLAGS = $(CXXFLAGS_SUNDIALS) $(CXXFLAGS_OS) -O$(O) $(INC_SUNDIALS)
-$(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL)) : CPPFLAGS = $(CPPFLAGS_SUNDIALS) $(CPPFLAGS_OS) -O$(O)
+$(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL)) : CXXFLAGS = $(CXXFLAGS_SUNDIALS) $(CXXFLAGS_OS) $(CXXFLAGS_FLTO) $(CXXFLAGS_OPTIM) -O$(O) $(INC_SUNDIALS)
+$(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL)) : CPPFLAGS = $(CPPFLAGS_SUNDIALS) $(CPPFLAGS_OS) $(CXXFLAGS_FLTO) $(CXXFLAGS_OPTIM) -O$(O)
 $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL)) : %.o : %.c
 	@mkdir -p $(dir $@)
 	$(COMPILE.cpp) -x c -include $(SUNDIALS)/include/stan_sundials_printf_override.hpp $< $(OUTPUT_OPTION)
@@ -114,11 +114,11 @@ TBB_CXX_TYPE ?= $(CXX_TYPE)
 # Set c compiler used for the TBB
 ifeq (clang,$(CXX_TYPE))
   TBB_CC ?= $(subst clang++,clang,$(CXX))
-  TBB_CXXFLAGS ?= -Wno-unknown-warning-option -Wno-deprecated-copy $(CXXFLAGS_OPTIM) -O$(O)
+  TBB_CXXFLAGS ?= -Wno-unknown-warning-option -Wno-deprecated-copy $(CXXFLAGS_FLTO) $(CXXFLAGS_OPTIM) -O$(O)
 endif
 ifeq (gcc,$(CXX_TYPE))
   TBB_CC ?= $(subst g++,gcc,$(CXX))
-  TBB_CXXFLAGS ?= -Wno-unknown-warning-option -Wno-missing-attributes -Wno-class-memaccess -Wno-sized-deallocation $(CXXFLAGS_OPTIM) -O$(O)
+  TBB_CXXFLAGS ?= -Wno-unknown-warning-option -Wno-missing-attributes -Wno-class-memaccess -Wno-sized-deallocation $(CXXFLAGS_FLTO) $(CXXFLAGS_OPTIM) -O$(O)
 endif
 TBB_CC ?= $(CC)
 
