@@ -123,11 +123,15 @@ struct AutodiffStackSingleton {
     if (!is_initialized) {
       is_initialized = true;
       instance_ = new AutodiffStackStorage();
+      instance_->var_stack_.reserve(1000);
+      instance_->var_nochain_stack_.reserve(1000);
       return true;
     }
     if (!instance_) {
       is_initialized = true;
       instance_ = new AutodiffStackStorage();
+      instance_->var_stack_.reserve(1000);
+      instance_->var_nochain_stack_.reserve(1000);
       return true;
     }
     return false;
