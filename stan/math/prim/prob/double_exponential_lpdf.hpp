@@ -37,9 +37,9 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
-  using T_y_ref = ref_type_if_t<is_constant<T_y>::value, T_y>;
-  using T_mu_ref = ref_type_if_t<is_constant<T_loc>::value, T_loc>;
-  using T_sigma_ref = ref_type_if_t<is_constant<T_scale>::value, T_scale>;
+  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
+  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
+  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
   static const char* function = "double_exponential_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Shape parameter", sigma);
@@ -77,8 +77,9 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
   const auto& inv_sigma = to_ref(inv(sigma_val));
   const auto& y_m_mu
       = to_ref_if<!is_constant_all<T_y, T_loc>::value>(y_val - mu_val);
+  const auto& abs_diff_y_mu = fabs(y_m_mu);
   const auto& scaled_diff
-      = to_ref_if<!is_constant_all<T_scale>::value>(fabs(y_m_mu) * inv_sigma);
+      = to_ref_if<!is_constant_all<T_scale>::value>(abs_diff_y_mu * inv_sigma);
 
   size_t N = max_size(y, mu, sigma);
   if (include_summand<propto>::value) {
@@ -90,9 +91,10 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
   logp -= sum(scaled_diff);
 
   if (!is_constant_all<T_y, T_loc>::value) {
+    const auto& diff_sign = sign(y_m_mu);
     const auto& rep_deriv
-        = to_ref_if < !is_constant_all<T_y>::value
-          && !is_constant_all<T_loc>::value > (sign(y_m_mu) * inv_sigma);
+        = to_ref_if<(!is_constant_all<T_y>::value
+                     && !is_constant_all<T_loc>::value)>(diff_sign * inv_sigma);
     if (!is_constant_all<T_y>::value) {
       if (is_vector<T_y>::value) {
         ops_partials.edge1_.partials_
