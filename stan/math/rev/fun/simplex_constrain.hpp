@@ -36,9 +36,9 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> simplex_constrain(
   double stick_len(1.0);
   for (int k = 0; k < N; ++k) {
     double log_N_minus_k = std::log(N - k);
-    z.coeffRef(k) = inv_logit(value_of(y.coeffRef(k)) - log_N_minus_k);
-    diag.coeffRef(k) = stick_len * z.coeffRef(k) * inv_logit(log_N_minus_k - value_of(y.coeffRef(k)));
-    x_val.coeffRef(k) = stick_len * z.coeffRef(k);
+    z.coeffRef(k) = inv_logit(value_of(y.coeff(k)) - log_N_minus_k);
+    diag.coeffRef(k) = stick_len * z.coeff(k) * inv_logit(log_N_minus_k - value_of(y.coeff(k)));
+    x_val.coeffRef(k) = stick_len * z.coeff(k);
     stick_len -= x_val(k);
   }
   x_val.coeffRef(N) = stick_len;
@@ -47,14 +47,13 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> simplex_constrain(
   arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> arena_y = y;
 
   reverse_pass_callback([=]() mutable {
-    const auto& adj = x.adj();
-    double acc = adj(N);
+    double acc = x.adj().coeff(N);
 
     if (N > 0) {
-      arena_y.adj().coeffRef(N - 1) += diag.coeffRef(N - 1) * (adj(N - 1) - acc);
+      arena_y.adj().coeffRef(N - 1) += diag.coeff(N - 1) * (x.adj().coeff(N - 1) - acc);
       for (int n = N - 1; --n >= 0;) {
-	acc = adj(n + 1) * z.coeffRef(n + 1) + (1 - z.coeffRef(n + 1)) * acc;
-	arena_y.adj().coeffRef(n) += diag.coeffRef(n) * (adj(n) - acc);
+	acc = x.adj().coeff(n + 1) * z.coeff(n + 1) + (1 - z.coeff(n + 1)) * acc;
+	arena_y.adj().coeffRef(n) += diag.coeff(n) * (x.adj().coeff(n) - acc);
       }
     }
   });

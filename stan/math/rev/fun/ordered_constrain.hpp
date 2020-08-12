@@ -32,25 +32,24 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> ordered_constrain(
   Eigen::VectorXd y_val(N);
   arena_matrix<Eigen::VectorXd> exp_x(N - 1);
 
-  y_val.coeffRef(0) = value_of(x.coeffRef(0));
+  y_val.coeffRef(0) = value_of(x.coeff(0));
   for (int n = 1; n < N; ++n) {
-    exp_x.coeffRef(n - 1) = exp(value_of(x.coeffRef(n)));
-    y_val.coeffRef(n) = y_val.coeffRef(n - 1) + exp_x.coeffRef(n - 1);
+    exp_x.coeffRef(n - 1) = exp(value_of(x.coeff(n)));
+    y_val.coeffRef(n) = y_val.coeff(n - 1) + exp_x.coeff(n - 1);
   }
 
   arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> y = y_val;
   arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> arena_x = x;
 
   reverse_pass_callback([=]() mutable {
-    const auto& adj = y.adj();
     double rolling_adjoint_sum = 0.0;
 
     if (N > 0) {
       for (int n = N - 1; n > 0; --n) {
-        rolling_adjoint_sum += adj(n);
-        arena_x.adj().coeffRef(n) += exp_x.coeffRef(n - 1) * rolling_adjoint_sum;
+        rolling_adjoint_sum += y.adj().coeff(n);
+        arena_x.adj().coeffRef(n) += exp_x.coeff(n - 1) * rolling_adjoint_sum;
       }
-      arena_x.adj().coeffRef(0) += rolling_adjoint_sum + adj(0);
+      arena_x.adj().coeffRef(0) += rolling_adjoint_sum + y.adj().coeff(0);
     }
   });
 
