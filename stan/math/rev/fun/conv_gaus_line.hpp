@@ -55,12 +55,13 @@ class conv_gaus_line_vari : public op_v_vari {
  public:
   explicit conv_gaus_line_vari(double t0, double t1, double a, double b,
                                vari* avi, double sig2)
-      : t0_(t0),
+    :   op_v_vari(conv_gaus_line(t0, t1, a, b, avi->val_, sig2), avi),
+	t0_(t0),
         t1_(t1),
         a_(a),
         b_(b),
-        sig2_(sig2),
-        op_v_vari(conv_gaus_line(t0, t1, a, b, avi->val_, sig2), avi) {}
+        sig2_(sig2) {}
+
 
   void chain() {
     avi_->adj_
