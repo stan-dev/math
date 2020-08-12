@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
 #include <vector>
+#include <stdlib.h>
 
 TEST(mathMixGausInterp, derivs) {
   using stan::math::gaus_interp_vect;
