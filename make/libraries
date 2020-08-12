@@ -131,9 +131,14 @@ ifeq (Linux, $(OS))
   SHELL = /usr/bin/env bash
 endif
 
+# escaping in case make is installed in a folder with spaces
+# and if the folder includes brackets. 
+# Example: "C:/Program Files(x86)/Rtools/bin/mingw32-make"
+MAKE_ESCAPED := ${subst ),,${subst (,,$(lastword $(MAKE))}}
+
 $(TBB_BIN)/tbb-make-check:
 	@if [[ $(OS) == Windows_NT ]]; then \
-		if ! [[ $(MAKE) =~ mingw32 ]]; then \
+		if ! [[ $(MAKE_ESCAPED) =~ mingw32 ]]; then \
 			echo "ERROR: Please use mingw32-make on Windows to build the Intel TBB library."; \
 			echo "This is packaged with RTools, for example."; \
 			exit 1; \
@@ -145,11 +150,11 @@ $(TBB_BIN)/tbb-make-check:
 $(TBB_BIN)/tbb.def: $(TBB_BIN)/tbb-make-check $(TBB_BIN)/tbbmalloc.def
 	@mkdir -p $(TBB_BIN)
 	touch $(TBB_BIN)/version_$(notdir $(TBB))
-	tbb_root="$(TBB_RELATIVE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS='$(LDFLAGS_TBB)' $(MAKE) -C "$(TBB_BIN)" -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbb" compiler=$(TBB_CXX_TYPE) cfg=release stdver=c++1y  CXXFLAGS="$(TBB_CXXFLAGS)"
+	tbb_root="$(TBB_RELATIVE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS='$(LDFLAGS_TBB)' '$(MAKE)' -C "$(TBB_BIN)" -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbb" compiler=$(TBB_CXX_TYPE) cfg=release stdver=c++1y  CXXFLAGS="$(TBB_CXXFLAGS)"
 
 $(TBB_BIN)/tbbmalloc.def: $(TBB_BIN)/tbb-make-check
 	@mkdir -p $(TBB_BIN)
-	tbb_root="$(TBB_RELATIVE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS='$(LDFLAGS_TBB)' $(MAKE) -C "$(TBB_BIN)" -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" compiler=$(TBB_CXX_TYPE) cfg=release stdver=c++1y malloc CXXFLAGS="$(TBB_CXXFLAGS)"
+	tbb_root="$(TBB_RELATIVE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS='$(LDFLAGS_TBB)' '$(MAKE)' -C "$(TBB_BIN)" -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" compiler=$(TBB_CXX_TYPE) cfg=release stdver=c++1y malloc CXXFLAGS="$(TBB_CXXFLAGS)"
 
 $(TBB_BIN)/libtbb.dylib: $(TBB_BIN)/tbb.def
 $(TBB_BIN)/libtbbmalloc.dylib: $(TBB_BIN)/tbbmalloc.def
