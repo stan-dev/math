@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <stdlib.h>
 #include <limits>
 #include <vector>
 
