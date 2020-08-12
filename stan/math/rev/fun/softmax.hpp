@@ -32,7 +32,8 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
 
   reverse_pass_callback([=]() mutable {
     Eigen::VectorXd res_adj = res.adj();
-    alpha_arena.adj() = -res_val * res_adj.dot(res_val) + res_val.cwiseProduct(res_adj);
+    alpha_arena.adj()
+        = -res_val * res_adj.dot(res_val) + res_val.cwiseProduct(res_adj);
   });
 
   return res;
