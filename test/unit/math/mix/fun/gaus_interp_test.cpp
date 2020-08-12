@@ -1,7 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
 #include <vector>
-#include <stdlib.h>
 
 TEST(mathMixGausInterp, derivs) {
   using stan::math::gaus_interp_vect;
@@ -19,7 +18,7 @@ TEST(mathMixGausInterp, derivs) {
   for (int i = 0; i < n; i++) {
     x = xmin + i * (xmax - xmin) / (n - 1);
     xs.push_back(x);
-    y = rand_r(&seed) % 100;
+    y = rand(&seed) % 100;
     ys.push_back(y);
   }
 
