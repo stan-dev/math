@@ -145,7 +145,7 @@ def make_arg_code(arg, scalar, var_name, function_name):
         )
     elif function_name in special_arg_values:
         return (
-            "  %s %s = stan::test::make_arg<%s>(%d)"
+            "  %s %s = stan::test::make_arg<%s>(%f)"
             % (arg_type, var_name, arg_type, special_arg_values[function_name])
         )
     else:
