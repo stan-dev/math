@@ -52,8 +52,8 @@ inline double min_diff(int n, const std::vector<Tx>& xs) {
  * are shifted and the process repeats itself until the interpolation
  * intersects all reference points.
  *
- * Note: This interpolation scheme should be used when the function 
- * to be interpolated is well-resolved by the reference points. 
+ * Note: This interpolation scheme should be used when the function
+ * to be interpolated is well-resolved by the reference points.
  *
  * @param xs vector of independent variable of reference points
  * @param ys vector of dependent variable of reference points
