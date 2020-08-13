@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/fun/softmax.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <tuple>
 #include <vector>
@@ -33,7 +34,7 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
   arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> alpha_arena = alpha;
 
   reverse_pass_callback([=]() mutable {
-    Eigen::VectorXd res_adj = res.adj();
+    const auto& res_adj = to_ref(res.adj());
     alpha_arena.adj()
         = -res_val * res_adj.dot(res_val) + res_val.cwiseProduct(res_adj);
   });
