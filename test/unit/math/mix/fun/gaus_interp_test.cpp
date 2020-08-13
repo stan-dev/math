@@ -1,5 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <stdlib.h>
 #include <limits>
 #include <vector>
 
@@ -19,7 +18,7 @@ TEST(mathMixGausInterp, derivs) {
   for (int i = 0; i < n; i++) {
     x = xmin + i * (xmax - xmin) / (n - 1);
     xs.push_back(x);
-    y = rand(&seed) % 100;
+    y = rand() % 100;
     ys.push_back(y);
   }
 
