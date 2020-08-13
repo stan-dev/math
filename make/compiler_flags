@@ -76,7 +76,7 @@ else ifneq (,$(findstring gcc,$(CXX_TYPE)))
 	  #CXXFLAGS_OPTIM += -fdevirtualize-speculatively -fdevirtualize-at-ltrans
   endif
 	ifeq ($(shell expr $(CXX_MAJOR) \> 9), 1)
-		CXXFLAGS_FLTO ?= -flto=jobserver -fuse-linker-plugin
+#		CXXFLAGS_FLTO ?= -flto=jobserver -fuse-linker-plugin
 	endif
 endif
 

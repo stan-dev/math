@@ -130,8 +130,6 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
     }
   }
 
-  ~vari_value() = default;
-
   inline void chain() {}
 
   /**
