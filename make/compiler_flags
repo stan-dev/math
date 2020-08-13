@@ -241,7 +241,7 @@ endif
 
 
 CXXFLAGS_TBB ?= -I $(TBB)/include
-LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)" $(CXXFLAGS_FLTO) $(CXXFLAGS_OPTIM)
+LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)" $(CXXFLAGS_FLTO) $(TBB_OPTIM)
 LDLIBS_TBB ?=
 
 ################################################################################
@@ -268,7 +268,7 @@ ifdef STAN_MPI
 
   BOOST_LIBRARY_ABSOLUTE_PATH = $(abspath $(BOOST)/stage/lib)
 
-  LDFLAGS_MPI ?= -Wl,-L,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" -Wl,-rpath,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" $(CXXFLAGS_FLTO) $(CXXFLAGS_OPTIM)
+  LDFLAGS_MPI ?= -Wl,-L,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" -Wl,-rpath,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" $(CXXFLAGS_FLTO) $(MPI_OPTIM)
   CXXFLAGS_MPI ?= -Wno-delete-non-virtual-dtor
 endif
 
