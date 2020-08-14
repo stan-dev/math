@@ -31,12 +31,15 @@ namespace math {
  *  @{
  */
 
+template<typename, typename=void>
+class matrix_cl;
+
 /**
  * Represents an arithmetic matrix on the OpenCL device.
  * @tparam T an arithmetic type for the type stored in the OpenCL buffer.
  */
 template <typename T>
-class matrix_cl<T, require_arithmetic_t<T>> {
+class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base  {
  private:
   cl::Buffer buffer_cl_;  // Holds the allocated memory on the device
   int rows_{0};           // Number of rows.

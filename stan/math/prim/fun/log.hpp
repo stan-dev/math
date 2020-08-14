@@ -43,7 +43,8 @@ struct log_fun {
  * @return Elementwise application of natural log to the argument.
  */
 template <typename Container,
-          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr,
+          require_any_t<is_stan_scalar<Container>, is_container<Container>>* = nullptr>
 inline auto log(const Container& x) {
   return apply_scalar_unary<log_fun, Container>::apply(x);
 }

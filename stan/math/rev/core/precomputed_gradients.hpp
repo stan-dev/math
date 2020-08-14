@@ -4,6 +4,7 @@
 #include <stan/math/prim/err/check_matching_dims.hpp>
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/var.hpp>
+#include <stan/math/rev/fun/dims.hpp>
 #include <stan/math/rev/fun/to_arena.hpp>
 #include <algorithm>
 #include <vector>
@@ -165,7 +166,7 @@ class precomputed_gradients_vari_template : public vari {
   template <typename Op, typename Grad,
             require_all_not_std_vector_t<Op, Grad>* = nullptr>
   void chain_one(Op& op, const Grad& grad) {
-    op.vi_->adj_ += this->adj_ * grad;
+    op.vi_->adj_ = op.vi_->adj_ + this->adj_ * grad;
   }
 
   /**

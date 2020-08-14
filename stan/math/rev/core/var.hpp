@@ -306,6 +306,24 @@ class var_value {
     }
     return os << v.val();
   }
+
+  /**
+   * Returns number of rows. Only available if `T` is a matrix.
+   * @return number of rows.
+   */
+  template<typename U = T>
+  auto rows() const {
+    return vi_->rows();
+  }
+
+  /**
+   * Returns number of columns. Only available if `T` is a matrix.
+   * @return number of columns.
+   */
+  template<typename U = T>
+  auto cols() const {
+    return vi_->cols();
+  }
 };
 
 // For backwards compatability the default value is double

@@ -59,6 +59,11 @@ auto elt_divide(Scal s, const Mat& m) {
   return (s / m.array()).matrix().eval();
 }
 
+template <typename Scal1, typename Scal2, require_all_stan_scalar_t<Scal1, Scal2>* = nullptr>
+auto elt_divide(Scal1 s1, Scal2 s2) {
+  return s1 / s2;
+}
+
 }  // namespace math
 }  // namespace stan
 

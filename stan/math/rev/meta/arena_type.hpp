@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/plain_type.hpp>
 #include <stan/math/rev/core/arena_allocator.hpp>
+#include <stan/math/rev/core/chainable_alloc.hpp>
 
 namespace stan {
 namespace math {
@@ -13,8 +14,20 @@ class arena_matrix;
 }  // namespace math
 
 namespace internal {
+// default is used for non-std::vector, non-Eigen, non-trivially destructible
+// types
 template <typename T, typename = void>
-struct arena_type_impl {};
+struct arena_type_impl {
+  struct type : public stan::math::chainable_alloc, public T{
+    template <typename... Args>
+    type(Args&&... args) : stan::math::chainable_alloc(), T(std::forward<Args>(args)...) {}
+  };
+};
+
+template <typename T>
+struct arena_type_impl<T, require_t<std::is_base_of<stan::math::chainable_alloc, T>>> {
+  using type = T;
+};
 
 template <typename T>
 struct arena_type_impl<T, require_all_t<std::is_trivially_destructible<T>,
@@ -37,8 +50,7 @@ struct arena_type_impl<T, require_eigen_t<T>> {
 /**
  * Determines a type that can be used in place of `T` that does any dynamic
  * allocations on the AD stack. This way resulting types are trivially
- * destructible and can be used in vari classes. (only works for POD types,
- * `std::vector`s and Eigen types)
+ * destructible and can be used in vari classes.
  */
 template <typename T>
 using arena_t = typename internal::arena_type_impl<std::decay_t<T>>::type;

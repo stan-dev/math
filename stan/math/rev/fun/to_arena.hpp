@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REF_FUN_TO_ARENA_HPP
-#define STAN_MATH_REF_FUN_TO_ARENA_HPP
+#ifndef STAN_MATH_REV_FUN_TO_ARENA_HPP
+#define STAN_MATH_REV_FUN_TO_ARENA_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/functor/arena_matrix.hpp>
@@ -11,26 +11,60 @@ namespace stan {
 namespace math {
 
 /**
- * Converts given argument into a type that has any dynamic allocation on AD
- * stack.
+ * Converts given argument into a type that either has any dynamic allocation on AD
+ * stack or schedules its destructor to be called when AD stack memory is recovered.
+ *
+ * This overload is used for kernel generator expressions. It also handles any
+ * other types that do not have a special overload for them.
+ *
+ * @tparam T type of scalar
+ * @param a argument
+ * @return argument
+ */
+template <typename T, require_not_same_t<T, arena_t<T>>* = nullptr,
+          require_not_container_t<T>* = nullptr>
+inline arena_t<T> to_arena(T&& a) {
+  return std::forward<T>(a);
+}
+
+/**
+ * Converts given argument into a type that either has any dynamic allocation on AD
+ * stack or schedules its destructor to be called when AD stack memory is recovered.
  *
  * For types that already have this property (including scalars and
  * `var_value`s) this is a no-op.
+ *
+ * Passing in a lvalue reference to objects not using AD stack, such as a
+ * `matrix_cl` is inefficient as they need to be copied in this case.
  * @tparam T type of scalar
  * @param a argument
  * @return argument
  */
 template <typename T, require_same_t<T, arena_t<T>>* = nullptr>
-inline T to_arena(const T& a) {
-  // intentionally making a copy (not using forwarding or returning references)
-  // as these types are cheap to copy and any object referenced by an input
-  // reference might go out of scope before the returned value is used
-  return a;
+inline std::remove_reference_t<T> to_arena(T&& a) {
+  // intentionally never returning a reference. If an object is just
+  // referenced it will likely go out of scope before it is used.
+  return std::forward<T>(a);
 }
 
 /**
- * Converts given argument into a type that has any dynamic allocation on AD
- * stack.
+ * Converts given argument into a type that either has any dynamic allocation on AD
+ * stack or schedules its destructor to be called when AD stack memory is recovered.
+ *
+ * Converts eigen types to `arena_matrix`.
+ * @tparam T type of argument
+ * @param a argument
+ * @return argument copied/evaluated on AD stack
+ */
+template <typename T, require_eigen_t<T>* = nullptr,
+          require_not_same_t<T, arena_t<T>>* = nullptr>
+inline arena_t<T> to_arena(const T& a) {
+  return {a};
+}
+
+/**
+ * Converts given argument into a type that either has any dynamic allocation on AD
+ * stack or schedules its destructor to be called when AD stack memory is recovered.
  *
  * For std vectors that have data already on AD stack this is a shallow copy.
  * @tparam T type of scalar
@@ -48,21 +82,6 @@ inline std::vector<T, arena_allocator<T>> to_arena(
   std::memcpy(static_cast<void*>(&res), static_cast<const void*>(&a),
               sizeof(std::vector<T, arena_allocator<T>>));
   return res;
-}
-
-/**
- * Converts given argument into a type that has any dynamic allocation on AD
- * stack.
- *
- * Converts eigen types to `arena_matrix`.
- * @tparam T type of argument
- * @param a argument
- * @return argument copied/evaluated on AD stack
- */
-template <typename T, require_eigen_t<T>* = nullptr,
-          require_not_same_t<T, arena_t<T>>* = nullptr>
-inline arena_t<T> to_arena(const T& a) {
-  return {a};
 }
 
 /**

@@ -6,6 +6,10 @@
 #include <cstdlib>
 #include <vector>
 
+#ifdef STAN_OPENCL
+#include <stan/math/opencl/prim/size.hpp>
+#endif
+
 namespace stan {
 namespace math {
 
@@ -13,7 +17,7 @@ namespace math {
  * Returns the length of primitive scalar types
  * that are always of length 1.
  */
-template <typename T, typename = require_stan_scalar_t<T>>
+template <typename T, require_stan_scalar_t<T>* = nullptr>
 inline size_t size(const T& /*x*/) {
   return 1U;
 }
@@ -24,7 +28,7 @@ inline size_t size(const T& /*x*/) {
  * @param m input  \c Eigen \c Matrix, expression or std::vector
  * @tparam T type of m
  */
-template <typename T, typename = require_not_stan_scalar_t<T>, typename = void>
+template <typename T, require_container_t<T>* = nullptr>
 inline size_t size(const T& m) {
   return m.size();
 }
