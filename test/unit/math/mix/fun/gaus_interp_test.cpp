@@ -1,10 +1,13 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
 #include <vector>
+#include <random>
 
 TEST(mathMixGausInterp, derivs) {
   using stan::math::gaus_interp_vect;
   using stan::math::var;
+  std::default_random_engine generator;
+  std::uniform_real_distribution<double> unif(0.0, 100.0);
   std::vector<double> xs, ys, x2s, y2s, ts, as, bs, y3s, t3s;
   double xmin, xmax, x, y, x2, y2, t, t0, t1, dd, dder, dder2;
   double x0, x1, y0, y1, tmp;
@@ -18,7 +21,7 @@ TEST(mathMixGausInterp, derivs) {
   for (int i = 0; i < n; i++) {
     x = xmin + i * (xmax - xmin) / (n - 1);
     xs.push_back(x);
-    y = rand() % 100;
+    y = unif(generator);
     ys.push_back(y);
   }
 
