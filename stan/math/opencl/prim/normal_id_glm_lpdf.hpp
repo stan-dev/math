@@ -30,16 +30,17 @@ namespace math {
  * This is an overload of the GLM in prim/prob/normal_id_glm_lpdf.hpp
  * that is implemented in OpenCL.
  * @tparam T_alpha type of the intercept(s);
- * this can be a vector (of the same length as y) of intercepts or a single
- * value (for models with constant intercept);
+ * this can be a (optionally `var_value` containing) `matrix_cl` column vector
+ * (of the same length as y) of intercepts or a scalar (for models with
+ * constant intercept)
  * @tparam T_beta type of the weight vector;
- * this can also be a single value;
+ * (optionally `var_value` containing) `matrix_cl` column vector
  * @tparam T_scale type of the (positive) scale(s);
- * this can be a vector (of the same length as y, for heteroskedasticity)
- * or a scalar.
- * @param y_cl scalar or vector parameter on OpenCL device. If it is a scalar it
+ * (optionally `var_value` containing) `matrix_cl` column vector (of the same
+ * length as y, for heteroskedasticity) or a scalar.
+ * @param y scalar or vector parameter on OpenCL device. If it is a scalar it
  * will be broadcast - used for all instances.
- * @param x_cl design matrix on OpenCL device. This overload does not support
+ * @param x design matrix on OpenCL device. This overload does not support
  * broadcasting of a row vector x!
  * @param alpha intercept (in log odds)
  * @param beta weight vector
