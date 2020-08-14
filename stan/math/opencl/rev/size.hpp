@@ -8,8 +8,8 @@
 namespace stan {
 namespace math {
 
-//forward declaration
-template<typename>
+// forward declaration
+template <typename>
 struct var_value;
 
 /**
