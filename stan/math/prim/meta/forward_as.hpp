@@ -10,9 +10,8 @@ namespace math {
 namespace internal {
 template <typename T1, typename T2>
 constexpr bool eigen_static_size_match(T1 desired, T2 actual) {
-  int desired_int = static_cast<int>(desired);
-  int actual_int = static_cast<int>(actual);
-  return desired_int == Eigen::Dynamic || desired_int == actual_int;
+  return static_cast<int>(desired) == Eigen::Dynamic
+         || static_cast<int>(desired) == static_cast<int>(actual);
 }
 }  // namespace internal
 
@@ -80,11 +79,11 @@ template <
     typename = std::enable_if_t<
         std::is_same<value_type_t<T_actual>, value_type_t<T_desired>>::value
         && internal::eigen_static_size_match(
-               T_desired::RowsAtCompileTime,
-               std::decay_t<T_actual>::RowsAtCompileTime)
+            T_desired::RowsAtCompileTime,
+            std::decay_t<T_actual>::RowsAtCompileTime)
         && internal::eigen_static_size_match(
-               T_desired::ColsAtCompileTime,
-               std::decay_t<T_actual>::ColsAtCompileTime)>,
+            T_desired::ColsAtCompileTime,
+            std::decay_t<T_actual>::ColsAtCompileTime)>,
     typename = void>
 inline T_actual&& forward_as(T_actual&& a) {  // NOLINT
   return std::forward<T_actual>(a);
@@ -111,11 +110,11 @@ template <
     typename = std::enable_if_t<
         !std::is_same<value_type_t<T_actual>, value_type_t<T_desired>>::value
         || !internal::eigen_static_size_match(
-               T_desired::RowsAtCompileTime,
-               std::decay_t<T_actual>::RowsAtCompileTime)
+            T_desired::RowsAtCompileTime,
+            std::decay_t<T_actual>::RowsAtCompileTime)
         || !internal::eigen_static_size_match(
-               T_desired::ColsAtCompileTime,
-               std::decay_t<T_actual>::ColsAtCompileTime)>,
+            T_desired::ColsAtCompileTime,
+            std::decay_t<T_actual>::ColsAtCompileTime)>,
     typename = void>
 inline T_desired forward_as(const T_actual& a) {
   throw std::runtime_error("Wrong type assumed! Please file a bug report.");
