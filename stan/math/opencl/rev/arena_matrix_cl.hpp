@@ -41,9 +41,8 @@ class arena_matrix_cl : public chainable_alloc, public matrix_cl<T> {
    */
   template <typename Expr,
             require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr>
-  arena_matrix_cl(const Expr& expression)
-      : chainable_alloc(),
-        matrix_cl<T>(expression) {}  // NOLINT(runtime/explicit)
+  arena_matrix_cl(const Expr& expression)  // NOLINT(runtime/explicit)
+      : chainable_alloc(), matrix_cl<T>(expression) {}
 };
 
 }  // namespace math
