@@ -6,10 +6,6 @@
 #include <cstdlib>
 #include <vector>
 
-#ifdef STAN_OPENCL
-#include <stan/math/opencl/prim/size.hpp>
-#endif
-
 namespace stan {
 namespace math {
 

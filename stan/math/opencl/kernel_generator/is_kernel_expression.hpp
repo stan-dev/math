@@ -2,10 +2,10 @@
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_IS_KERNEL_EXPRESSION_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/is_matrix_cl.hpp>
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/conjunction.hpp>
 #include <stan/math/prim/meta/disjunction.hpp>
+#include <stan/math/prim/meta/is_matrix_cl.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
 #include <stan/math/prim/meta/require_helpers.hpp>
 #include <type_traits>

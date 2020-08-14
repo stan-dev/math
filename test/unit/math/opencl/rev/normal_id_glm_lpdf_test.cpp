@@ -1,6 +1,6 @@
 #ifdef STAN_OPENCL
+#include <stan/math/opencl/rev/opencl.hpp>
 #include <stan/math.hpp>
-#include <stan/math/opencl/opencl.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/expect_near_rel.hpp>
 

@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_PRIM_SIZE_HPP
-#define STAN_MATH_OPENCL_PRIM_SIZE_HPP
+#ifndef STAN_MATH_OPENCL_REV_SIZE_HPP
+#define STAN_MATH_OPENCL_REV_SIZE_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
@@ -8,15 +8,19 @@
 namespace stan {
 namespace math {
 
+//forward declaration
+template<typename>
+struct var_value;
+
 /**
- * Returns the size (number of the elements) of a `matrix_cl`.
- * @param a `matric_cl` to determine size of
+ * Returns the size (number of the elements) of a `var_vlaue<matrix_cl>`.
+ * @param a `var_value` to determine size of
  * @return number of elements in a
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
-int size(const T& a) {
-  return a.rows() * a.cols();
+int size(const var_value<T>& a) {
+  return a.vi_->rows() * a.vi_->cols();
 }
 
 }  // namespace math

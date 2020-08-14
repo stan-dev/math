@@ -14,16 +14,8 @@ class arena_matrix;
 }  // namespace math
 
 namespace internal {
-// default is used for non-std::vector, non-Eigen, non-trivially destructible
-// types
 template <typename T, typename = void>
-struct arena_type_impl {
-  struct type : public stan::math::chainable_alloc, public T {
-    template <typename... Args>
-    type(Args&&... args)
-        : stan::math::chainable_alloc(), T(std::forward<Args>(args)...) {}
-  };
-};
+struct arena_type_impl {};
 
 template <typename T>
 struct arena_type_impl<

@@ -3,7 +3,6 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/opencl/is_matrix_cl.hpp>
 #include <type_traits>
 
 namespace stan {

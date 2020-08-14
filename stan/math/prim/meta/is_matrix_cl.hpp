@@ -1,9 +1,7 @@
-#ifndef STAN_MATH_OPENCL_IS_MATRIX_CL_HPP
-#define STAN_MATH_OPENCL_IS_MATRIX_CL_HPP
-#ifdef STAN_OPENCL
+#ifndef STAN_MATH_PRIM_META_IS_MATRIX_CL_HPP
+#define STAN_MATH_PRIM_META_IS_MATRIX_CL_HPP
 
 #include <stan/math/prim/meta/require_helpers.hpp>
-#include <stan/math/rev/meta/arena_type.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -28,5 +26,4 @@ STAN_ADD_REQUIRE_UNARY(matrix_cl, is_matrix_cl, matrix_cl_group);
 STAN_ADD_REQUIRE_CONTAINER(matrix_cl, is_matrix_cl, matrix_cl_group);
 
 }  // namespace stan
-#endif
 #endif
