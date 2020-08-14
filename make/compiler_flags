@@ -71,7 +71,8 @@ ifneq (,$(findstring clang,$(CXX_TYPE)))
 endif
 ifneq (,$(findstring mingw32-g,$(CXX_TYPE)))
 else ifneq (,$(findstring gcc,$(CXX_TYPE)))
-	#CXXFLAGS_OPTIM ?= -fweb -fivopts -ftree-loop-linear -floop-block -floop-nest-optimize -ftracer
+	CXXFLAGS_OPTIM ?= -fweb -fivopts -ftree-loop-linear -fstrict-aliasing -funroll-loops -floop-block -floop-nest-optimize
+	SUNDIALS_OPTIM ?= -O3 -fweb -fivopts -ftree-loop-linear
 	ifeq ($(shell expr $(CXX_MAJOR) \>= 5), 1)
 	  #CXXFLAGS_OPTIM += -fdevirtualize-speculatively -fdevirtualize-at-ltrans
   endif
