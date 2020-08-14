@@ -18,14 +18,16 @@ namespace internal {
 // types
 template <typename T, typename = void>
 struct arena_type_impl {
-  struct type : public stan::math::chainable_alloc, public T{
+  struct type : public stan::math::chainable_alloc, public T {
     template <typename... Args>
-    type(Args&&... args) : stan::math::chainable_alloc(), T(std::forward<Args>(args)...) {}
+    type(Args&&... args)
+        : stan::math::chainable_alloc(), T(std::forward<Args>(args)...) {}
   };
 };
 
 template <typename T>
-struct arena_type_impl<T, require_t<std::is_base_of<stan::math::chainable_alloc, T>>> {
+struct arena_type_impl<
+    T, require_t<std::is_base_of<stan::math::chainable_alloc, T>>> {
   using type = T;
 };
 

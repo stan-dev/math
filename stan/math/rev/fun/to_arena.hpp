@@ -11,8 +11,9 @@ namespace stan {
 namespace math {
 
 /**
- * Converts given argument into a type that either has any dynamic allocation on AD
- * stack or schedules its destructor to be called when AD stack memory is recovered.
+ * Converts given argument into a type that either has any dynamic allocation on
+ * AD stack or schedules its destructor to be called when AD stack memory is
+ * recovered.
  *
  * This overload is used for kernel generator expressions. It also handles any
  * other types that do not have a special overload for them.
@@ -28,8 +29,9 @@ inline arena_t<T> to_arena(T&& a) {
 }
 
 /**
- * Converts given argument into a type that either has any dynamic allocation on AD
- * stack or schedules its destructor to be called when AD stack memory is recovered.
+ * Converts given argument into a type that either has any dynamic allocation on
+ * AD stack or schedules its destructor to be called when AD stack memory is
+ * recovered.
  *
  * For types that already have this property (including scalars and
  * `var_value`s) this is a no-op.
@@ -48,8 +50,9 @@ inline std::remove_reference_t<T> to_arena(T&& a) {
 }
 
 /**
- * Converts given argument into a type that either has any dynamic allocation on AD
- * stack or schedules its destructor to be called when AD stack memory is recovered.
+ * Converts given argument into a type that either has any dynamic allocation on
+ * AD stack or schedules its destructor to be called when AD stack memory is
+ * recovered.
  *
  * Converts eigen types to `arena_matrix`.
  * @tparam T type of argument
@@ -63,8 +66,9 @@ inline arena_t<T> to_arena(const T& a) {
 }
 
 /**
- * Converts given argument into a type that either has any dynamic allocation on AD
- * stack or schedules its destructor to be called when AD stack memory is recovered.
+ * Converts given argument into a type that either has any dynamic allocation on
+ * AD stack or schedules its destructor to be called when AD stack memory is
+ * recovered.
  *
  * For std vectors that have data already on AD stack this is a shallow copy.
  * @tparam T type of scalar

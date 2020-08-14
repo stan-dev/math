@@ -169,8 +169,7 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
  * @param y variable to check (for error messages)
  * @param must_be description of what the value must be (for error messages)
  */
-template <typename T,
-          typename = require_all_kernel_expressions_t<T>>
+template <typename T, typename = require_all_kernel_expressions_t<T>>
 inline auto check_cl(const char* function, const char* var_name, T&& y,
                      const char* must_be) {
   return check_cl_<as_operation_cl_t<T>>(

@@ -311,7 +311,7 @@ class var_value {
    * Returns number of rows. Only available if `T` is a matrix.
    * @return number of rows.
    */
-  template<typename U = T>
+  template <typename U = T>
   auto rows() const {
     return vi_->rows();
   }
@@ -320,7 +320,7 @@ class var_value {
    * Returns number of columns. Only available if `T` is a matrix.
    * @return number of columns.
    */
-  template<typename U = T>
+  template <typename U = T>
   auto cols() const {
     return vi_->cols();
   }

@@ -79,7 +79,9 @@ struct is_kernel_expression_lhs<T, require_matrix_cl_t<T>> : std::true_type {};
 
 template <typename T>
 struct is_prim_or_rev_kernel_expression
-    : math::disjunction<is_kernel_expression<T>, math::conjunction<is_var<T>, is_kernel_expression<value_type_t<T>>>> {
+    : math::disjunction<
+          is_kernel_expression<T>,
+          math::conjunction<is_var<T>, is_kernel_expression<value_type_t<T>>>> {
 };
 
 /** @}*/

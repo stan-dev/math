@@ -24,7 +24,7 @@ template <typename T>
 struct is_stan_scalar
     : bool_constant<math::disjunction<
           math::conjunction<is_var<std::decay_t<T>>,
-                      std::is_arithmetic<value_type_t<T>>>,
+                            std::is_arithmetic<value_type_t<T>>>,
           is_fvar<std::decay_t<T>>, std::is_arithmetic<std::decay_t<T>>,
           is_complex<std::decay_t<T>>>::value> {};
 
