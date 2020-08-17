@@ -25,8 +25,8 @@ TEST(requires, matrix_cl_test) {
       (require_matrix_cl_tester<std::is_arithmetic, matrix_cl<double>>::value));
   EXPECT_TRUE((require_matrix_cl_tester<std::is_floating_point,
                                         matrix_cl<double>>::value));
-  EXPECT_FALSE((require_matrix_cl_tester<std::is_floating_point,
-                                         matrix_cl<int>>::value));
+  EXPECT_FALSE((
+      require_matrix_cl_tester<std::is_floating_point, matrix_cl<int>>::value));
 }
 
 /**
@@ -76,9 +76,9 @@ TEST(requires, any_matrix_cl_test) {
                                             matrix_cl<double>>::value));
   EXPECT_TRUE((require_any_matrix_cl_tester<std::is_floating_point,
                                             matrix_cl<double>, double>::value));
-  EXPECT_TRUE((require_any_matrix_cl_tester<std::is_floating_point,
-                                            matrix_cl<int>,
-                                            matrix_cl<double>>::value));
+  EXPECT_TRUE(
+      (require_any_matrix_cl_tester<std::is_floating_point, matrix_cl<int>,
+                                    matrix_cl<double>>::value));
   EXPECT_FALSE((require_any_matrix_cl_tester<std::is_floating_point, int,
                                              std::string>::value));
   EXPECT_FALSE((
@@ -110,9 +110,9 @@ TEST(requires, any_not_matrix_cl_test) {
   EXPECT_TRUE(
       (require_any_not_matrix_cl_tester<std::is_floating_point,
                                         matrix_cl<double>, double>::value));
-  EXPECT_TRUE((require_any_not_matrix_cl_tester<std::is_floating_point,
-                                                matrix_cl<int>,
-                                                matrix_cl<double>>::value));
+  EXPECT_TRUE(
+      (require_any_not_matrix_cl_tester<std::is_floating_point, matrix_cl<int>,
+                                        matrix_cl<double>>::value));
   EXPECT_TRUE((require_any_not_matrix_cl_tester<std::is_floating_point, int,
                                                 std::string>::value));
   EXPECT_TRUE((require_any_not_matrix_cl_tester<std::is_arithmetic, double,
@@ -144,9 +144,9 @@ TEST(requires, all_matrix_cl_test) {
   EXPECT_FALSE(
       (require_all_matrix_cl_tester<std::is_floating_point, matrix_cl<double>,
                                     double>::value));
-  EXPECT_FALSE((require_all_matrix_cl_tester<std::is_floating_point,
-                                             matrix_cl<int>,
-                                             matrix_cl<double>>::value));
+  EXPECT_FALSE(
+      (require_all_matrix_cl_tester<std::is_floating_point, matrix_cl<int>,
+                                    matrix_cl<double>>::value));
   EXPECT_FALSE((require_all_matrix_cl_tester<std::is_floating_point, int,
                                              std::string>::value));
   EXPECT_FALSE((
@@ -176,9 +176,9 @@ TEST(requires, all_not_matrix_cl_test) {
   EXPECT_FALSE(
       (require_all_not_matrix_cl_tester<std::is_floating_point,
                                         matrix_cl<double>, double>::value));
-  EXPECT_FALSE((require_all_not_matrix_cl_tester<std::is_floating_point,
-                                                 matrix_cl<int>,
-                                                 matrix_cl<double>>::value));
+  EXPECT_FALSE(
+      (require_all_not_matrix_cl_tester<std::is_floating_point, matrix_cl<int>,
+                                        matrix_cl<double>>::value));
   EXPECT_TRUE((require_all_not_matrix_cl_tester<std::is_floating_point, int,
                                                 std::string>::value));
   EXPECT_TRUE((require_all_not_matrix_cl_tester<std::is_arithmetic, double,
