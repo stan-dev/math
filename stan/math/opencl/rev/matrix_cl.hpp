@@ -28,7 +28,7 @@ namespace math {
  * @tparam T an arithmetic type for the type stored in the OpenCL buffer.
  */
 template <typename T>
-class matrix_cl<T, require_var_t<T>> {
+class matrix_cl<T, require_var_t<T>> : public matrix_cl_base {
  private:
   const int rows_{0};            // Number of rows
   const int cols_{0};            // Number of columns
