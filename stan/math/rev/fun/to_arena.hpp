@@ -44,7 +44,8 @@ inline arena_t<T> to_arena(T&& a) {
  * @return argument
  */
 template <typename T, require_same_t<T, arena_t<T>>* = nullptr,
-          require_not_matrix_cl_t<T>* = nullptr>
+          require_not_matrix_cl_t<T>* = nullptr,
+          require_not_std_vector_t<T>* = nullptr>
 inline std::remove_reference_t<T> to_arena(T&& a) {
   // intentionally never returning a reference. If an object is just
   // referenced it will likely go out of scope before it is used.
