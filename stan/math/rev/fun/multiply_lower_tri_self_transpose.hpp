@@ -30,17 +30,8 @@ inline matrix_v multiply_lower_tri_self_transpose(const matrix_v& L) {
   } else {  // if (K < J)
     Knz = (K * (K + 1)) / 2;
   }
-  vari** vs = reinterpret_cast<vari**>(
-      ChainableStack::instance_->memalloc_.alloc(Knz * sizeof(vari*)));
-  int pos = 0;
-  for (int m = 0; m < K; ++m) {
-    for (int n = 0; n < ((J < (m + 1)) ? J : (m + 1)); ++n) {
-      vs[pos++] = L(m, n).vi_;
-    }
-  }
   for (int m = 0, mpos = 0; m < K; ++m, mpos += (J < m) ? J : m) {
-    LLt.coeffRef(m, m) = var(
-        new internal::dot_self_vari(vs + mpos, (J < (m + 1)) ? J : (m + 1)));
+    LLt.coeffRef(m, m) = dot_self(L.row(m).head((J < (m + 1)) ? J : (m + 1)));
     for (int n = 0, npos = 0; n < m; ++n, npos += (J < n) ? J : n) {
       LLt.coeffRef(m, n) = LLt.coeffRef(n, m)
           = dot_product(L.row(m).head((J < (n + 1)) ? J : (n + 1)),

@@ -169,12 +169,13 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <typename T_x, typename T_sigma, typename T_l>
+template <typename T_x, typename T_sigma, typename T_l,
+	  require_all_not_st_var<T_x, T_sigma, T_l>* = nullptr>
 inline typename Eigen::Matrix<return_type_t<T_x, T_sigma, T_l>, Eigen::Dynamic,
                               Eigen::Dynamic>
 gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma,
                 const T_l &length_scale) {
-  check_positive("gp_exp_quad_cov", "magnitude", sigma);
+  check_positive("gp_exp_quad_cov", "marginal standard deviation", sigma);
   check_positive("gp_exp_quad_cov", "length scale", length_scale);
 
   const size_t x_size = x.size();
@@ -214,7 +215,7 @@ inline typename Eigen::Matrix<return_type_t<T_x, T_sigma, T_l>, Eigen::Dynamic,
                               Eigen::Dynamic>
 gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
                 const T_sigma &sigma, const std::vector<T_l> &length_scale) {
-  check_positive_finite("gp_exp_quad_cov", "magnitude", sigma);
+  check_positive_finite("gp_exp_quad_cov", "marginal standard deviation", sigma);
   check_positive_finite("gp_exp_quad_cov", "length scale", length_scale);
 
   size_t x_size = x.size();
@@ -258,7 +259,7 @@ inline typename Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma, T_l>,
 gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 const T_sigma &sigma, const T_l &length_scale) {
   const char *function_name = "gp_exp_quad_cov";
-  check_positive(function_name, "magnitude", sigma);
+  check_positive(function_name, "marginal standard deviation", sigma);
   check_positive(function_name, "length scale", length_scale);
 
   const size_t x1_size = x1.size();
@@ -326,7 +327,7 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
   for (size_t i = 0; i < x2_size; ++i) {
     check_not_nan(function_name, "x2", x2[i]);
   }
-  check_positive_finite(function_name, "magnitude", sigma);
+  check_positive_finite(function_name, "marginal standard deviation", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
   check_size_match(function_name, "x dimension", x1[0].size(),
                    "number of length scales", l_size);
@@ -354,7 +355,7 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x,
                                        const double &sigma,
                                        const double &length_scale) {
   const char *function_name = "gp_exp_quad_cov";
-  check_positive(function_name, "magnitude", sigma);
+  check_positive(function_name, "marginal standard deviation", sigma);
   check_positive(function_name, "length scale", length_scale);
 
   const auto x_size = x.size();
@@ -397,7 +398,7 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
                                        const double &sigma,
                                        const double &length_scale) {
   const char *function_name = "gp_exp_quad_cov";
-  check_positive(function_name, "magnitude", sigma);
+  check_positive(function_name, "marginal standard deviation", sigma);
   check_positive(function_name, "length scale", length_scale);
 
   const size_t x_size = x.size();
@@ -441,7 +442,7 @@ inline Eigen::MatrixXd gp_exp_quad_cov(
     const std::vector<Eigen::VectorXd> &x, const double &sigma,
     const std::vector<double> &length_scale) {
   const char *function_name = "gp_exp_quad_cov";
-  check_positive_finite(function_name, "magnitude", sigma);
+  check_positive_finite(function_name, "marginal standard deviation", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
 
   const size_t x_size = x.size();
@@ -489,7 +490,7 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
                                                 const double &sigma,
                                                 const double &length_scale) {
   const char *function_name = "gp_exp_quad_cov";
-  check_positive_finite(function_name, "magnitude", sigma);
+  check_positive_finite(function_name, "marginal standard deviation", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
 
   Eigen::MatrixXd cov(x1.size(), x2.size());
@@ -542,7 +543,7 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
   const char *function_name = "gp_exp_quad_cov";
   const int x1_size = x1.size();
   const int x2_size = x2.size();
-  check_positive_finite(function_name, "magnitude", sigma);
+  check_positive_finite(function_name, "marginal standard deviation", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
 
   Eigen::MatrixXd cov(x1.size(), x2.size());
@@ -607,7 +608,7 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
   const int x1_inner_size = x1[0].size();
   const int x2_inner_size = x1[0].size();
   const char *function_name = "gp_exp_quad_cov";
-  check_positive_finite(function_name, "magnitude", sigma);
+  check_positive_finite(function_name, "marginal standard deviation", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
   check_size_match(function_name, "x dimension", x1[0].size(),
                    "number of length scales", l_size);

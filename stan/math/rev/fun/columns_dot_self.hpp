@@ -21,7 +21,7 @@ inline Eigen::Matrix<var, 1, Mat::ColsAtCompileTime> columns_dot_self(
     const Mat& x) {
   Eigen::Matrix<var, 1, Mat::ColsAtCompileTime> ret(1, x.cols());
   for (size_type i = 0; i < x.cols(); i++) {
-    ret(i) = var(new internal::dot_self_vari(x.col(i)));
+    ret(i) = dot_self(x.col(i));
   }
   return ret;
 }
