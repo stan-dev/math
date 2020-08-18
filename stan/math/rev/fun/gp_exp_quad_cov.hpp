@@ -28,13 +28,12 @@ namespace math {
  *   x is nan or infinite
  */
 template <typename T_x, typename T_sigma, typename T_l,
-	  require_stan_scalar_t<T_sigma>* = nullptr,
-	  require_stan_scalar_t<T_l>* = nullptr,
-	  require_any_st_var<T_x, T_sigma, T_l>* = nullptr>
-inline Eigen::Matrix<var, -1, -1>
-gp_exp_quad_cov(const std::vector<T_x>& x,
-		T_sigma sigma,
-		T_l length_scale) {
+          require_stan_scalar_t<T_sigma>* = nullptr,
+          require_stan_scalar_t<T_l>* = nullptr,
+          require_any_st_var<T_x, T_sigma, T_l>* = nullptr>
+inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x>& x,
+                                                  T_sigma sigma,
+                                                  T_l length_scale) {
   check_positive("gp_exp_quad_cov", "marginal standard deviation", sigma);
   check_positive("gp_exp_quad_cov", "length scale", length_scale);
   for (size_t i = 0; i < x.size(); ++i) {
@@ -54,7 +53,8 @@ gp_exp_quad_cov(const std::vector<T_x>& x,
 
   auto arena_x = to_arena_if<!is_constant<T_x>::value>(x);
 
-  double inv_half_sq_l_d = 0.5 / (value_of(length_scale) * value_of(length_scale));
+  double inv_half_sq_l_d
+      = 0.5 / (value_of(length_scale) * value_of(length_scale));
   for (size_t j = 0; j < x.size(); ++j) {
     for (size_t i = 0; i < j; ++i) {
       double dist_sq = squared_distance(value_of(x[i]), value_of(x[j]));
@@ -69,9 +69,8 @@ gp_exp_quad_cov(const std::vector<T_x>& x,
     res_val(i, i) = sigma_sq_d;
   }
 
-  arena_matrix<Eigen::Matrix<var,
-			     Eigen::Dynamic,
-			     Eigen::Dynamic>> res = res_val;
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> res
+      = res_val;
 
   reverse_pass_callback([=]() mutable {
     Eigen::ArrayXXd adj_times_val = res.adj().array() * res.val().array();
@@ -80,27 +79,28 @@ gp_exp_quad_cov(const std::vector<T_x>& x,
     std::cout << res.val() << std::endl << "----" << std::endl;
     std::cout << adj_times_val << std::endl << "----" << std::endl;
     std::cout << dist.array() << std::endl << "----" << std::endl;*/
-    
-    if(!is_constant<T_x>::value)
-      for(size_t i = 0; i < arena_x.size(); ++i) {
-	for(size_t j = 0; j < arena_x.size(); ++j) {
-	  auto adj = eval(-(value_of(arena_x[i]) - value_of(arena_x[j])) *
-			  adj_times_val(i, j) / (l_d * l_d));
-	  //std::cout << "(" << i << ", " << j << ") : " << adj << std::endl;
-	  accumulate_adjoints(arena_x[i], adj);
-	  accumulate_adjoints(arena_x[j], -adj);
-	}
+
+    if (!is_constant<T_x>::value)
+      for (size_t i = 0; i < arena_x.size(); ++i) {
+        for (size_t j = 0; j < arena_x.size(); ++j) {
+          auto adj = eval(-(value_of(arena_x[i]) - value_of(arena_x[j]))
+                          * adj_times_val(i, j) / (l_d * l_d));
+          // std::cout << "(" << i << ", " << j << ") : " << adj << std::endl;
+          accumulate_adjoints(arena_x[i], adj);
+          accumulate_adjoints(arena_x[j], -adj);
+        }
       }
-    
-    if(!is_constant<T_sigma>::value) {
+
+    if (!is_constant<T_sigma>::value) {
       accumulate_adjoints(sigma, 2.0 * adj_times_val.sum() / sigma_d);
       /*for(size_t i = 0; i < arena_x.size(); ++i) {
-	sigma
-	}*/
+        sigma
+        }*/
     }
 
-    if(!is_constant<T_l>::value)
-      accumulate_adjoints(length_scale, (dist.array() * adj_times_val).sum() / (l_d * l_d * l_d));
+    if (!is_constant<T_l>::value)
+      accumulate_adjoints(length_scale, (dist.array() * adj_times_val).sum()
+                                            / (l_d * l_d * l_d));
   });
 
   return res;

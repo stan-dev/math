@@ -27,9 +27,8 @@ inline var dot_self(const T& v) {
 
   var res = v_val.dot(v_val);
 
-  reverse_pass_callback([=]() mutable {
-      arena_v.adj() += 2.0 * res.adj() * v_val;
-  });
+  reverse_pass_callback(
+      [=]() mutable { arena_v.adj() += 2.0 * res.adj() * v_val; });
 
   return res;
 }

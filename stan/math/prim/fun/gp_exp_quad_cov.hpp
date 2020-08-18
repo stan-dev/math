@@ -170,7 +170,7 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
  *   x is nan or infinite
  */
 template <typename T_x, typename T_sigma, typename T_l,
-	  require_all_not_st_var<T_x, T_sigma, T_l>* = nullptr>
+          require_all_not_st_var<T_x, T_sigma, T_l> * = nullptr>
 inline typename Eigen::Matrix<return_type_t<T_x, T_sigma, T_l>, Eigen::Dynamic,
                               Eigen::Dynamic>
 gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma,
@@ -215,7 +215,8 @@ inline typename Eigen::Matrix<return_type_t<T_x, T_sigma, T_l>, Eigen::Dynamic,
                               Eigen::Dynamic>
 gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
                 const T_sigma &sigma, const std::vector<T_l> &length_scale) {
-  check_positive_finite("gp_exp_quad_cov", "marginal standard deviation", sigma);
+  check_positive_finite("gp_exp_quad_cov", "marginal standard deviation",
+                        sigma);
   check_positive_finite("gp_exp_quad_cov", "length scale", length_scale);
 
   size_t x_size = x.size();

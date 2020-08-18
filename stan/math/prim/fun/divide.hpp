@@ -40,8 +40,7 @@ inline int divide(int x, int y) {
  * @param[in] c specified scalar
  * @return matrix divided by the scalar
  */
-template <typename Mat, typename Scal,
-	  require_eigen_t<Mat>* = nullptr,
+template <typename Mat, typename Scal, require_eigen_t<Mat>* = nullptr,
           require_stan_scalar_t<Scal>* = nullptr,
           require_all_not_st_var<Mat, Scal>* = nullptr>
 inline auto divide(const Mat& m, Scal c) {
