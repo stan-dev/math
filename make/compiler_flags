@@ -62,20 +62,48 @@ CXX_MAJOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f1)
 CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
 
 
+################################################################################
+# Set optional compiler flags for performance
+#
+# These flags are compiler and compiler version specific optimization flags.
+#
+# Because clang-6 and clang-7's -dumpversion reports version 4.2.1
+# and clang-6 needs either the llvm-ar or ar gold plugin to use full link time
+# optimization (flto), flto is only turned on for clang versions greater than 8.
+# For gcc all versions after 4.9 can use the system `ar` and other utilities
+# when compiling with flto.
+#
+# FLAGS:
+# CXXFLAGS_OPTIM: Additional flags to CXXFLAGS
+# CXXFLAGS_OPTIM_TBB: Additional flags to TBB_CXXFLAGS
+# CXXFLAGS_OPTIM_SUNDIALS: Additional flags to CXXFLAGS_SUNDIALS
+# CPPFLAGS_OPTIM_SUNDIALS: Additional flags to CPPFLAGS_SUNDIALS
+# CXXFLAGS_FLTO: Additional flags for compiling with FLTO
+# CXXFLAGS_FLTO_TBB: Additional flags for compiling tbb with flto
+# CXXFLAGS_FLTO_SUNDIALS: Additional flags for compiling c++ sundials with flto
+# CPPFLAGS_FLTO_SUNDIALS: Additional flags for compiling c sundials with flto
+##
 ifneq (,$(findstring clang,$(CXX_TYPE)))
 	CXXFLAGS_OPTIM ?= -fvectorize -ftree-vectorize -fslp-vectorize -ftree-slp-vectorize -fno-standalone-debug -fstrict-return -ftrigraphs -fvisibility=hidden -fvisibility-inlines-hidden
 	ifeq ($(shell expr $(CXX_MAJOR) \>= 5), 1)
 		CXXFLAGS_FLTO ?= -flto=full -fwhole-program-vtables -fstrict-vtable-pointers -fforce-emit-vtables
-		LDFLAGS_FLTO?= -fuse-ld=gold
 	endif
 endif
 ifneq (,$(findstring mingw32-g,$(CXX_TYPE)))
 else ifneq (,$(findstring gcc,$(CXX_TYPE)))
-	CXXFLAGS_OPTIM ?= -fweb -fivopts -ftree-loop-linear -fstrict-aliasing -funroll-loops -floop-strip-mine -floop-block -floop-nest-optimize -floop-unroll-and-jam -fsplit-loops -funswitch-loops -ftree-vectorize -fvect-cost-model='unlimited' -fivopts -ftree-loop-linear 	 -fvisibility=hidden -fvisibility-inlines-hidden
-	SUNDIALS_OPTIM ?= -O3 -fweb -fivopts -ftree-loop-linear
+	CXXFLAGS_OPTIM_SUNDIALS ?= -fweb -fivopts -ftree-loop-linear
+	CPPFLAGS_OPTIM_SUNDIALS ?= $(CXXFLAGS_OPTIM_SUNDIALS)
+	# temp to contro for compiler versions while letting user override
+	# CXXFLAGS_OPTIM
+	CXXFLAGS_VERSION_OPTIM ?= -fweb -fivopts -ftree-loop-linear -funroll-loops -floop-strip-mine -floop-block -floop-nest-optimize -ftree-vectorize -ftree-loop-distribution -fvect-cost-model='unlimited' -fivopts -fvisibility=hidden -fvisibility-inlines-hidden
 	ifeq ($(shell expr $(CXX_MAJOR) \>= 5), 1)
-		CXXFLAGS_FLTO?=-flto=jobserver -fuse-linker-plugin
+	  CXXFLAGS_VERSION_OPTIM += -floop-unroll-and-jam
+		CXXFLAGS_FLTO ?= -flto=jobserver -fuse-linker-plugin -fdevirtualize-at-ltrans
   endif
+	ifeq ($(shell expr $(CXX_MAJOR) \>= 7), 1)
+	  CXXFLAGS_VERSION_OPTIM += -fsplit-loops
+  endif
+	CXXFLAGS_OPTIM ?= $(CXXFLAGS_VERSION_OPTIM)
 endif
 
 ################################################################################
@@ -95,14 +123,14 @@ INC_GTEST ?= -I $(GTEST)/include -I $(GTEST)
 
 ## setup precompiler options
 CPPFLAGS_BOOST ?= -DBOOST_DISABLE_ASSERTS
-CPPFLAGS_SUNDIALS ?= -DNO_FPRINTF_OUTPUT
+CPPFLAGS_SUNDIALS ?= -DNO_FPRINTF_OUTPUT $(CPPFLAGS_OPTIM_SUNDIALS) $(CXXFLAGS_FLTO_SUNDIALS)
 #CPPFLAGS_GTEST ?=
 
 
 ## setup compiler flags
 CXXFLAGS_LANG ?= -std=c++1y
 #CXXFLAGS_BOOST ?=
-CXXFLAGS_SUNDIALS ?= -pipe
+CXXFLAGS_SUNDIALS ?= -pipe $(CXXFLAGS_OPTIM_SUNDIALS) $(CPPFLAGS_FLTO_SUNDIALS)
 #CXXFLAGS_GTEST
 
 
@@ -239,7 +267,7 @@ endif
 
 
 CXXFLAGS_TBB ?= -I $(TBB)/include
-LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)" $(CXXFLAGS_FLTO) $(TBB_OPTIM)
+LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)" $(CXXFLAGS_FLTO) $(CXXFLAGS_OPTIM_TBB)
 LDLIBS_TBB ?=
 
 ################################################################################
@@ -272,7 +300,7 @@ endif
 
 CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) $(CXXFLAGS_THREADS) $(CXXFLAGS_TBB) $(CXXFLAGS_FLTO) $(CXXFLAGS_OPTIM) -O$(O) $(INC)
 CPPFLAGS += $(CPPFLAGS_LANG) $(CPPFLAGS_OS) $(CPPFLAGS_WARNINGS) $(CPPFLAGS_BOOST) $(CPPFLAGS_EIGEN) $(CPPFLAGS_OPENCL) $(CPPFLAGS_MPI) $(CPPFLAGS_TBB) $(CXXFLAGS_FLTO) $(CXXFLAGS_OPTIM)
-LDFLAGS += $(LDFLAGS_LANG) $(LDFLAGS_OS) $(LDFLAGS_WARNINGS) $(LDFLAGS_BOOST) $(LDFLAGS_EIGEN) $(LDFLAGS_OPENCL) $(LDFLAGS_MPI) $(LDFLAGS_TBB) $(CXXFLAGS_FLTO) $(CXXFLAGS_OPTIM) $(LDFLAGS_FLTO)
+LDFLAGS += $(LDFLAGS_LANG) $(LDFLAGS_OS) $(LDFLAGS_WARNINGS) $(LDFLAGS_BOOST) $(LDFLAGS_EIGEN) $(LDFLAGS_OPENCL) $(LDFLAGS_MPI) $(LDFLAGS_TBB) $(CXXFLAGS_FLTO) $(CXXFLAGS_OPTIM)
 LDLIBS += $(LDLIBS_LANG) $(LDLIBS_OS) $(LDLIBS_WARNINGS) $(LDLIBS_BOOST) $(LDLIBS_EIGEN) $(LDLIBS_OPENCL) $(LDLIBS_MPI) $(LDLIBS_TBB)
 
 .PHONY: print-compiler-flags
@@ -295,6 +323,8 @@ print-compiler-flags:
 	@echo '  Compiler flags (each can be overriden separately):'
 	@echo '  - CXXFLAGS_LANG               ' $(CXXFLAGS_LANG)
 	@echo '  - CXXFLAGS_WARNINGS           ' $(CXXFLAGS_WARNINGS)
+	@echo '  - CXXFLAGS_OPTIM              ' $(CXXFLAGS_OPTIM)
+	@echo '  - CXXFLAGS_FLTO               ' $(CXXFLAGS_FLTO)
 	@echo '  - CXXFLAGS_BOOST              ' $(CXXFLAGS_BOOST)
 	@echo '  - CXXFLAGS_EIGEN              ' $(CXXFLAGS_EIGEN)
 	@echo '  - CXXFLAGS_OS                 ' $(CXXFLAGS_OS)
@@ -302,8 +332,11 @@ print-compiler-flags:
 	@echo '  - CXXFLAGS_THREADS            ' $(CXXFLAGS_THREADS)
 	@echo '  - CXXFLAGS_OPENCL             ' $(CXXFLAGS_OPENCL)
 	@echo '  - CXXFLAGS_TBB                ' $(CXXFLAGS_TBB)
+	@echo '  - CXXFLAGS_OPTIM_TBB          ' $(CXXFLAGS_OPTIM_TBB)
 	@echo '  - CXXFLAGS_MPI                ' $(CXXFLAGS_MPI)
 	@echo '  - CFLAGS_SUNDIALS             ' $(CFLAGS_SUNDIALS)
+	@echo '  - CXXFLAGS_SUNDIALS           ' $(CXXFLAGS_SUNDIALS)
+	@echo '  - CXXFLAGS_OPTIM_SUNDIALS     ' $(CXXFLAGS_OPTIM_SUNDIALS)
 	@echo '  LDLIBS:'
 	@echo '  - LDLIBS_LANG                 ' $(LDLIBS_LANG)
 	@echo '  - LDLIBS_WARNINGS             ' $(LDLIBS_WARNINGS)
