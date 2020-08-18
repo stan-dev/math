@@ -30,6 +30,7 @@ class vari_base {
    */
   virtual void chain() = 0;
   virtual void set_zero_adjoint() = 0;
+
   /**
    * Allocate memory from the underlying memory pool.  This memory is
    * is managed as a whole externally.
@@ -58,7 +59,6 @@ class vari_base {
   static inline void operator delete(
       void* /* ignore arg */) noexcept { /* no op */
   }
-
 };
 
 template <typename T, typename = void>
