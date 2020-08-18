@@ -1,13 +1,10 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
 #include <vector>
-#include <random>
 
 TEST(mathMixGausInterp, derivs) {
   using stan::math::gaus_interp_vect;
   using stan::math::var;
-  std::default_random_engine generator;
-  std::uniform_real_distribution<double> unif(0.0, 100.0);
   std::vector<double> xs, ys, x2s, y2s, ts, as, bs, y3s, t3s;
   double xmin, xmax, x, y, x2, y2, t, t0, t1, dd, dder, dder2;
   double x0, x1, y0, y1, tmp;
@@ -15,15 +12,20 @@ TEST(mathMixGausInterp, derivs) {
   unsigned int seed = 1;
 
   // generate function tabulation
-  n = 10;
+  n = 5;
   xmin = 0;
   xmax = 1;
+  xs.resize(n);
+  ys.resize(n);
   for (int i = 0; i < n; i++) {
     x = xmin + i * (xmax - xmin) / (n - 1);
-    xs.push_back(x);
-    y = unif(generator);
-    ys.push_back(y);
+    xs[i] = x;
   }
+  ys[0] = 0;
+  ys[1] = 0;
+  ys[2] = 1;
+  ys[3] = 0;
+  ys[4] = 0.01;
 
   // create vector of interpolation pts
   std::vector<stan::math::var> xs_new_v;
