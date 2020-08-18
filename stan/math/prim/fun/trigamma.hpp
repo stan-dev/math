@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/inv_square.hpp>
 #include <stan/math/prim/fun/sin.hpp>
 #include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
 
 // Reference:

@@ -26,6 +26,7 @@ constexpr decltype(auto) apply_impl(F&& f, Tuple&& t,
   return f(std::forward<decltype(std::get<I>(t))>(std::get<I>(t))...);
 }
 }  // namespace internal
+
 /*
  * Call the functor f with the tuple of arguments t, like:
  *

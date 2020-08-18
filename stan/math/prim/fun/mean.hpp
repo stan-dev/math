@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <vector>
 
 namespace stan {

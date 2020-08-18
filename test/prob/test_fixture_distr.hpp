@@ -13,6 +13,7 @@ using stan::is_vector;
 using stan::scalar_type;
 using stan::math::fvar;
 using stan::math::value_of;
+using stan::math::value_of_rec;
 using stan::math::var;
 using std::vector;
 
@@ -251,8 +252,8 @@ class AgradDistributionTestFixture : public ::testing::Test {
                                         Scalar3, Scalar4, Scalar5>(p0, p1, p2,
                                                                    p3, p4, p5);
 
-      EXPECT_TRUE(reference_logprob_false - logprob_false
-                  == reference_logprob_true - logprob_true)
+      EXPECT_NEAR(value_of_rec(reference_logprob_false - logprob_false),
+                  value_of_rec(reference_logprob_true - logprob_true), 1e-12)
           << "Proportional test failed at index: " << n << std::endl
           << "  reference params: " << parameters[0] << std::endl
           << "  current params:   " << parameters[n] << std::endl
@@ -822,5 +823,7 @@ TYPED_TEST_P(AgradDistributionTestFixture, Length0Vector) {
 REGISTER_TYPED_TEST_CASE_P(AgradDistributionTestFixture, CallAllVersions,
                            ValidValues, InvalidValues, Propto, FiniteDiff,
                            Function, RepeatAsVector, Length0Vector);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AgradDistributionTestFixture);
 
 #endif
