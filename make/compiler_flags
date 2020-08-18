@@ -68,7 +68,7 @@ CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
 # These flags are compiler and compiler version specific optimization flags.
 #
 # Because clang-6 and clang-7's -dumpversion reports version 4.2.1
-# and clang-6 needs either the llvm-ar or ar gold plugin to use full link time
+# and clang-6 needs either the llvm-ar or ar gold plugin to use link time
 # optimization (flto), flto is only turned on for clang versions greater than 8.
 # For gcc all versions after 4.9 can use the system `ar` and other utilities
 # when compiling with flto.
@@ -83,14 +83,14 @@ CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
 # CXXFLAGS_FLTO_SUNDIALS: Additional flags for compiling c++ sundials with flto
 # CPPFLAGS_FLTO_SUNDIALS: Additional flags for compiling c sundials with flto
 ##
-ifneq (,$(findstring clang,$(CXX_TYPE)))
+ifeq (clang,$(CXX_TYPE))
 	CXXFLAGS_OPTIM ?= -fvectorize -ftree-vectorize -fslp-vectorize -ftree-slp-vectorize -fno-standalone-debug -fstrict-return -ftrigraphs -fvisibility=hidden -fvisibility-inlines-hidden
 	ifeq ($(shell expr $(CXX_MAJOR) \>= 5), 1)
 		CXXFLAGS_FLTO ?= -flto=full -fwhole-program-vtables -fstrict-vtable-pointers -fforce-emit-vtables
 	endif
 endif
-ifneq (,$(findstring mingw32-g,$(CXX_TYPE)))
-else ifneq (,$(findstring gcc,$(CXX_TYPE)))
+ifeq (mingw32-g,$(CXX_TYPE))
+else ifeq (gcc,$(CXX_TYPE))
 	CXXFLAGS_OPTIM_SUNDIALS ?= -fweb -fivopts -ftree-loop-linear
 	CPPFLAGS_OPTIM_SUNDIALS ?= $(CXXFLAGS_OPTIM_SUNDIALS)
 	# temp to contro for compiler versions while letting user override
