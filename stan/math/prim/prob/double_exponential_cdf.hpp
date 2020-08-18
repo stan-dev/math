@@ -86,7 +86,8 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
     rep_deriv = forward_as<T_rep_deriv>(
         forward_as<array_bool>(y_val < mu_val)
             .select((cdf * inv_sigma),
-                    forward_as<T_partials_array>(cdf * inv_sigma / (2 * exp_scaled_diff - 1))));
+                    forward_as<T_partials_array>(cdf * inv_sigma
+                                                 / (2 * exp_scaled_diff - 1))));
   } else {
     if (is_vector<T_scale>::value) {
       cdf = forward_as<bool>(y_val < mu_val)
