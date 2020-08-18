@@ -82,7 +82,8 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
           scaled_diff - v * INV_SQRT_TWO);
   const auto& erf_calc = to_ref(0.5 * (1 + erf(scaled_diff_diff)));
 
-  //we can not have this call as a rvalue in next expression until square is returning expressions.
+  // we can not have this call as a rvalue in next expression until square is
+  // returning expressions.
   const auto& v2 = square(v);
   const auto& exp_term
       = to_ref_if<!is_constant_all<T_y, T_loc, T_scale, T_inv_scale>::value>(
