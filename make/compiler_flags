@@ -71,13 +71,12 @@ ifneq (,$(findstring clang,$(CXX_TYPE)))
 endif
 ifneq (,$(findstring mingw32-g,$(CXX_TYPE)))
 else ifneq (,$(findstring gcc,$(CXX_TYPE)))
-	CXXFLAGS_OPTIM ?= -fweb -fivopts -ftree-loop-linear -fstrict-aliasing -funroll-loops -floop-block -floop-nest-optimize
+	CXXFLAGS_OPTIM ?= -fweb -fivopts -ftree-loop-linear -fstrict-aliasing -funroll-loops -floop-strip-mine -floop-block -floop-nest-optimize -floop-unroll-and-jam -fsplit-loops -funswitch-loops -ftree-vectorize -fvect-cost-model='unlimited' -fivopts -ftree-loop-linear 	 -fvisibility=hidden -fvisibility-inlines-hidden
 	SUNDIALS_OPTIM ?= -O3 -fweb -fivopts -ftree-loop-linear
 	ifeq ($(shell expr $(CXX_MAJOR) \>= 5), 1)
-	  #CXXFLAGS_OPTIM += -fdevirtualize-speculatively -fdevirtualize-at-ltrans
+		CXXFLAGS_FLTO?=-flto=jobserver -fuse-linker-plugin
   endif
 	ifeq ($(shell expr $(CXX_MAJOR) \> 9), 1)
-#		CXXFLAGS_FLTO ?= -flto=jobserver -fuse-linker-plugin
 	endif
 endif
 
