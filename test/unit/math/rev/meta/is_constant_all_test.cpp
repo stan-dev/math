@@ -34,8 +34,6 @@ TEST(MetaTraitsRevArr, isConstantStruct) {
                    vector<stan::math::var> >();
 }
 
-using stan::math::size;
-
 using var_t1 = Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>;
 using var_t2 = std::vector<var_t1>;
 using var_t3 = std::vector<var_t2>;
