@@ -98,10 +98,5 @@ TEST(mathMixMatFun, dotProduct) {
   auto g = [](const auto& x, const auto& y) {
     return stan::math::dot_product(x, y);
   };
-  auto h = [](const auto& x, const auto& y) {
-    return stan::math::dot_product(x.size() > 0 ? &x[0] : nullptr,
-                                   y.size() > 0 ? &y[0] : nullptr, x.size());
-  };
   test_dot_product(g);  // standard data type args
-  test_dot_product(h);  // pointer args with size
 }
