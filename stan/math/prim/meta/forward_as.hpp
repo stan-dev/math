@@ -10,9 +10,8 @@ namespace math {
 namespace internal {
 template <typename T1, typename T2>
 constexpr bool eigen_static_size_match(T1 desired, T2 actual) {
-  int desired_int = static_cast<int>(desired);
-  int actual_int = static_cast<int>(actual);
-  return desired_int == Eigen::Dynamic || desired_int == actual_int;
+  return static_cast<int>(desired) == Eigen::Dynamic
+         || static_cast<int>(desired) == static_cast<int>(actual);
 }
 }  // namespace internal
 

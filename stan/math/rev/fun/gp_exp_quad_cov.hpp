@@ -53,7 +53,8 @@ gp_exp_quad_cov(const std::vector<T_x>& x,
 
   auto arena_x = to_arena_if<!is_constant<T_x>::value>(x);
 
-  double inv_half_sq_l_d = 0.5 / (value_of(length_scale) * value_of(length_scale));
+  double inv_half_sq_l_d
+      = 0.5 / (value_of(length_scale) * value_of(length_scale));
   for (size_t j = 0; j < x.size(); ++j) {
     for (size_t i = 0; i < j; ++i) {
       double dist_sq = squared_distance(value_of(x[i]), value_of(x[j]));
@@ -66,9 +67,8 @@ gp_exp_quad_cov(const std::vector<T_x>& x,
     res_val(i, i) = sigma_sq_d;
   }
 
-  arena_matrix<Eigen::Matrix<var,
-			     Eigen::Dynamic,
-			     Eigen::Dynamic>> res = res_val;
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> res
+      = res_val;
 
   reverse_pass_callback([=]() mutable {
     Eigen::ArrayXXd adj_times_val = res.adj().array() * res.val().array();

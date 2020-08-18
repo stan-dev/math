@@ -20,20 +20,18 @@ namespace math {
  * @param[in] c specified scalar
  * @return matrix divided by the scalar
  */
-template <typename Mat, typename Scal,
-	  require_eigen_t<Mat>* = nullptr,
-	  require_stan_scalar_t<Scal>* = nullptr,
-	  require_any_st_var<Mat, Scal>* = nullptr>
+template <typename Mat, typename Scal, require_eigen_t<Mat>* = nullptr,
+          require_stan_scalar_t<Scal>* = nullptr,
+          require_any_st_var<Mat, Scal>* = nullptr>
 inline Eigen::Matrix<var, Mat::RowsAtCompileTime, Mat::ColsAtCompileTime>
 divide(const Mat& m, const Scal& c) {
   auto arena_m = to_arena_if<!is_constant<Mat>::value>(m);
 
   double invc = 1.0 / value_of(c);
 
-  using Mat_v = Eigen::Matrix<var,
-			      Mat::RowsAtCompileTime,
-			      Mat::ColsAtCompileTime>;
-  
+  using Mat_v
+      = Eigen::Matrix<var, Mat::RowsAtCompileTime, Mat::ColsAtCompileTime>;
+
   arena_matrix<Mat_v> res = invc * value_of(m);
 
   reverse_pass_callback([=]() mutable {

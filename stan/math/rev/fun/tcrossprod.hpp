@@ -38,8 +38,7 @@ tcrossprod(const T& M) {
                                                                      M.rows());
 
   for (int m = 0; m < M.rows(); ++m) {
-    MMt.coeffRef(m, m)
-      = dot_self(M.row(m));
+    MMt.coeffRef(m, m) = dot_self(M.row(m));
   }
   for (int m = 0; m < M.rows(); ++m) {
     for (int n = 0; n < m; ++n) {

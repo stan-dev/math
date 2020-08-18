@@ -1350,4 +1350,3 @@ TEST(AgradRevMatrix, gp_exp_quad_cov_check_varis_on_stack) {
   test::check_varis_on_stack(stan::math::gp_exp_quad_cov(x, to_var(sigma), l));
   test::check_varis_on_stack(stan::math::gp_exp_quad_cov(x, sigma, to_var(l)));
 }
-
