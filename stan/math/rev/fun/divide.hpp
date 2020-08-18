@@ -25,7 +25,7 @@ template <typename Mat, typename Scal,
 	  require_stan_scalar_t<Scal>* = nullptr,
 	  require_any_st_var<Mat, Scal>* = nullptr>
 inline Eigen::Matrix<var, Mat::RowsAtCompileTime, Mat::ColsAtCompileTime>
-divide(const Mat& m, Scal c) {
+divide(const Mat& m, const Scal& c) {
   auto arena_m = to_arena_if<!is_constant<Mat>::value>(m);
 
   double invc = 1.0 / value_of(c);
@@ -38,11 +38,11 @@ divide(const Mat& m, Scal c) {
 
   reverse_pass_callback([=]() mutable {
     if (!is_constant<Mat>::value) {
-      accumulate_adjoints(arena_m, invc * res.adj());
+      forward_as<Mat_v>(arena_m).adj() += invc * res.adj();
     }
     if (!is_constant<Scal>::value) {
-      accumulate_adjoints(c, -invc *
-			  (res.adj().array() * res.val().array()).sum());
+      forward_as<var>(c).adj() += -invc *
+	(res.adj().array() * res.val().array()).sum();
     }
   });
 

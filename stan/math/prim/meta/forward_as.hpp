@@ -32,7 +32,8 @@ constexpr bool eigen_static_size_match(T1 desired, T2 actual) {
  */
 template <typename T_desired, typename T_actual,
           typename
-          = std::enable_if_t<std::is_convertible<T_actual, T_desired>::value
+          = std::enable_if_t<std::is_same<std::decay_t<T_actual>,
+					  std::decay_t<T_desired>>::value
                              && !is_eigen<T_desired>::value>>
 inline T_actual&& forward_as(T_actual&& a) {  // NOLINT
   return std::forward<T_actual>(a);
@@ -56,7 +57,9 @@ inline T_actual&& forward_as(T_actual&& a) {  // NOLINT
  */
 template <typename T_desired, typename T_actual,
           typename
-          = std::enable_if_t<!std::is_convertible<T_actual, T_desired>::value>>
+          = std::enable_if_t<!std::is_same<std::decay<T_actual>,
+					   std::decay<T_desired>>::value
+                             && !is_eigen<T_desired>::value>>
 inline T_desired forward_as(const T_actual& a) {
   throw std::runtime_error("Wrong type assumed! Please file a bug report.");
 }
@@ -79,6 +82,8 @@ template <
     typename T_desired, typename T_actual,
     typename = std::enable_if_t<
         std::is_same<value_type_t<T_actual>, value_type_t<T_desired>>::value
+        && is_eigen<T_desired>::value
+        && is_eigen<T_actual>::value
         && internal::eigen_static_size_match(
                T_desired::RowsAtCompileTime,
                std::decay_t<T_actual>::RowsAtCompileTime)
@@ -109,13 +114,15 @@ inline T_actual&& forward_as(T_actual&& a) {  // NOLINT
 template <
     typename T_desired, typename T_actual,
     typename = std::enable_if_t<
-        !std::is_same<value_type_t<T_actual>, value_type_t<T_desired>>::value
+        is_eigen<T_desired>::value
+        && is_eigen<T_actual>::value
+      && (!std::is_same<value_type_t<T_actual>, value_type_t<T_desired>>::value
         || !internal::eigen_static_size_match(
                T_desired::RowsAtCompileTime,
                std::decay_t<T_actual>::RowsAtCompileTime)
         || !internal::eigen_static_size_match(
                T_desired::ColsAtCompileTime,
-               std::decay_t<T_actual>::ColsAtCompileTime)>,
+               std::decay_t<T_actual>::ColsAtCompileTime))>,
     typename = void>
 inline T_desired forward_as(const T_actual& a) {
   throw std::runtime_error("Wrong type assumed! Please file a bug report.");

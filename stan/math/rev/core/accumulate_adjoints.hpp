@@ -146,22 +146,6 @@ inline double* accumulate_adjoints(double* dest, Arith&& x, Pargs&&... args) {
  * @param dest Pointer
  */
 inline double* accumulate_adjoints(double* dest) { return dest; }
-
-template <typename T1, typename T2,
-	  require_st_var<T1>* = nullptr>
-inline void accumulate_adjoints(const arena_matrix<T1>& sum, const T2& summand) {
-  sum.adj() += summand;
-}
-
-template <typename T1, typename T2,
-	  require_st_var<T1>* = nullptr>
-inline void accumulate_adjoints(T1& sum, const T2& summand) {
-  sum.adj() += summand;
-}
-
-template <typename T1, typename T2,
-	  require_not_st_var<T1>* = nullptr>
-inline void accumulate_adjoints(T1& sum, const T2& summand) {}
   
 }  // namespace math
 }  // namespace stan

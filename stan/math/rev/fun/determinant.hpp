@@ -17,9 +17,10 @@ inline var determinant(const T& m) {
     return 1;
   }
 
-  double det_val = m.val().determinant();
+  arena_matrix<Eigen::MatrixXd> m_val = m.val();
+  double det_val = m_val.determinant();
   arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arena_m = m;
-  arena_matrix<Eigen::MatrixXd> arena_m_inv_t = m.val().inverse().transpose();
+  arena_matrix<Eigen::MatrixXd> arena_m_inv_t = m_val.inverse().transpose();
   
   var det = det_val;
 

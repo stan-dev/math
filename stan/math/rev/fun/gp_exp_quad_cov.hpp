@@ -28,8 +28,7 @@ namespace math {
  *   x is nan or infinite
  */
 template <typename T_x, typename T_sigma, typename T_l,
-	  require_stan_scalar_t<T_sigma>* = nullptr,
-	  require_stan_scalar_t<T_l>* = nullptr,
+	  require_all_stan_scalar_t<T_sigma, T_l>* = nullptr,
 	  require_any_st_var<T_x, T_sigma, T_l>* = nullptr>
 inline Eigen::Matrix<var, -1, -1>
 gp_exp_quad_cov(const std::vector<T_x>& x,
@@ -58,10 +57,8 @@ gp_exp_quad_cov(const std::vector<T_x>& x,
   for (size_t j = 0; j < x.size(); ++j) {
     for (size_t i = 0; i < j; ++i) {
       double dist_sq = squared_distance(value_of(x[i]), value_of(x[j]));
-      dist(i, j) = dist_sq;
-      res_val(i, j) = sigma_sq_d * std::exp(-dist_sq * inv_half_sq_l_d);
-      res_val(j, i) = res_val(i, j);
-      dist(j, i) = dist(i, j);
+      dist.coeffRef(i, j) = dist.coeffRef(j, i) = dist_sq;
+      res_val.coeffRef(i, j) = res_val.coeffRef(j, i) = sigma_sq_d * std::exp(-dist_sq * inv_half_sq_l_d);
     }
   }
   for (size_t i = 0; i < x.size(); ++i) {
@@ -76,31 +73,23 @@ gp_exp_quad_cov(const std::vector<T_x>& x,
   reverse_pass_callback([=]() mutable {
     Eigen::ArrayXXd adj_times_val = res.adj().array() * res.val().array();
 
-    /*std::cout << res.adj() << std::endl << "----" << std::endl;
-    std::cout << res.val() << std::endl << "----" << std::endl;
-    std::cout << adj_times_val << std::endl << "----" << std::endl;
-    std::cout << dist.array() << std::endl << "----" << std::endl;*/
-    
     if(!is_constant<T_x>::value)
       for(size_t i = 0; i < arena_x.size(); ++i) {
 	for(size_t j = 0; j < arena_x.size(); ++j) {
 	  auto adj = eval(-(value_of(arena_x[i]) - value_of(arena_x[j])) *
 			  adj_times_val(i, j) / (l_d * l_d));
-	  //std::cout << "(" << i << ", " << j << ") : " << adj << std::endl;
-	  accumulate_adjoints(arena_x[i], adj);
-	  accumulate_adjoints(arena_x[j], -adj);
+	  using T_x_var = promote_scalar_t<var, T_x>;
+	  forward_as<T_x_var>(arena_x[i]).adj() += adj;
+	  forward_as<T_x_var>(arena_x[j]).adj() -= adj;
 	}
       }
-    
-    if(!is_constant<T_sigma>::value) {
-      accumulate_adjoints(sigma, 2.0 * adj_times_val.sum() / sigma_d);
-      /*for(size_t i = 0; i < arena_x.size(); ++i) {
-	sigma
-	}*/
-    }
+
+    if(!is_constant<T_sigma>::value)
+      forward_as<var>(sigma).adj() += 2.0 * adj_times_val.sum() / sigma_d;
 
     if(!is_constant<T_l>::value)
-      accumulate_adjoints(length_scale, (dist.array() * adj_times_val).sum() / (l_d * l_d * l_d));
+      forward_as<var>(length_scale).adj() +=
+	(dist.array() * adj_times_val).sum() / (l_d * l_d * l_d);
   });
 
   return res;
