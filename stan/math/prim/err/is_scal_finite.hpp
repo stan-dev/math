@@ -21,6 +21,8 @@ inline bool is_scal_finite(const T_y& y) {
     auto is_good = [](const auto& y) { return std::isfinite(y); };
     return elementwise_is(is_good, y);
   }
+
+  return true;
 }
 
 }  // namespace math

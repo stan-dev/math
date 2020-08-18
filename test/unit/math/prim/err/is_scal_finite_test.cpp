@@ -20,6 +20,15 @@ TEST(ErrorHandlingScalar, isScalFinite) {
   EXPECT_FALSE(is_scal_finite(stan::math::NOT_A_NUMBER));
 }
 
+TEST(ErrorHandlingScalar, isScalFiniteEigen) {
+  using stan::math::is_scal_finite;
+  Eigen::MatrixXd m = Eigen::MatrixXd::Constant(3, 2, 1);
+  EXPECT_TRUE(is_scal_finite(m));
+  Eigen::MatrixXd m2 = m;
+  m2(1, 1) = stan::math::NOT_A_NUMBER;
+  EXPECT_FALSE(is_scal_finite(m2));
+}
+
 TEST(ErrorHandlingScalar, isScalFiniteVectorization) {
   using stan::math::is_scal_finite;
   Eigen::MatrixXd m = Eigen::MatrixXd::Constant(3, 2, 1);

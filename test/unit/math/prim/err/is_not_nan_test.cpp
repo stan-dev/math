@@ -21,6 +21,16 @@ TEST(ErrorHandlingScalar, isNotNan) {
   EXPECT_FALSE(is_not_nan(stan::math::NOT_A_NUMBER));
 }
 
+TEST(ErrorHandlingScalar, isNotNanEigen) {
+  using stan::math::is_not_nan;
+
+  Eigen::MatrixXd m = Eigen::MatrixXd::Constant(3, 2, 1);
+  EXPECT_TRUE(is_not_nan(m));
+  Eigen::MatrixXd m2 = m;
+  m2(1, 1) = stan::math::NOT_A_NUMBER;
+  EXPECT_FALSE(is_not_nan(m2));
+}
+
 TEST(ErrorHandlingScalar, isNotNanVectorization) {
   using stan::math::is_not_nan;
 
