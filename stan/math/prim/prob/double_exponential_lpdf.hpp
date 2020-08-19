@@ -96,29 +96,14 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
         = to_ref_if<(!is_constant_all<T_y>::value
                      && !is_constant_all<T_loc>::value)>(diff_sign * inv_sigma);
     if (!is_constant_all<T_y>::value) {
-      if (is_vector<T_y>::value) {
-        ops_partials.edge1_.partials_
-            = forward_as<T_partials_array>(-rep_deriv);
-      } else {
-        ops_partials.edge1_.partials_[0] = -sum(rep_deriv);
-      }
+      ops_partials.edge1_.partials_ = -rep_deriv;
     }
     if (!is_constant_all<T_loc>::value) {
-      if (is_vector<T_loc>::value) {
-        ops_partials.edge2_.partials_
-            = std::move(forward_as<T_partials_array>(rep_deriv));
-      } else {
-        ops_partials.edge2_.partials_[0] = sum(rep_deriv);
-      }
+      ops_partials.edge2_.partials_ = std::move(rep_deriv);
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    if (is_vector<T_scale>::value) {
-      ops_partials.edge3_.partials_
-          = forward_as<T_partials_array>(inv_sigma * (scaled_diff - 1));
-    } else {
-      ops_partials.edge3_.partials_[0] = sum(inv_sigma * (scaled_diff - 1));
-    }
+    ops_partials.edge3_.partials_ = inv_sigma * (scaled_diff - 1);
   }
 
   return ops_partials.build(logp);

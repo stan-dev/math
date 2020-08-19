@@ -86,7 +86,8 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
     rep_deriv = forward_as<T_rep_deriv>(
         forward_as<array_bool>(y_val < mu_val)
             .select((cdf * inv_sigma),
-                    forward_as<T_partials_array>(cdf * inv_sigma / (2 * exp_scaled_diff - 1))));
+                    forward_as<T_partials_array>(cdf * inv_sigma
+                                                 / (2 * exp_scaled_diff - 1))));
   } else {
     if (is_vector<T_scale>::value) {
       cdf = forward_as<bool>(y_val < mu_val)
@@ -106,27 +107,13 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
   }
 
   if (!is_constant_all<T_loc>::value) {
-    if (is_vector<T_loc>::value) {
-      ops_partials.edge2_.partials_ = -forward_as<T_partials_array>(rep_deriv);
-    } else {
-      ops_partials.edge2_.partials_[0] = -sum(rep_deriv);
-    }
+    ops_partials.edge2_.partials_ = -rep_deriv;
   }
   if (!is_constant_all<T_scale>::value) {
-    if (is_vector<T_scale>::value) {
-      ops_partials.edge3_.partials_
-          = -forward_as<T_partials_array>(rep_deriv * scaled_diff);
-    } else {
-      ops_partials.edge3_.partials_[0] = -sum(rep_deriv * scaled_diff);
-    }
+    ops_partials.edge3_.partials_ = -rep_deriv * scaled_diff;
   }
   if (!is_constant_all<T_y>::value) {
-    if (is_vector<T_y>::value) {
-      ops_partials.edge1_.partials_
-          = std::move(forward_as<T_partials_array>(rep_deriv));
-    } else {
-      ops_partials.edge1_.partials_[0] = sum(rep_deriv);
-    }
+    ops_partials.edge1_.partials_ = std::move(rep_deriv);
   }
   return ops_partials.build(cdf);
 }
