@@ -357,9 +357,9 @@ class cholesky_opencl : public vari {
       block(L_adj, j, j, k_j_ind, k_j_ind) = D_adj;
     }
     L_adj.view(matrix_cl_view::Lower);
-    std::vector<double> L_adj_cpu2 = packed_copy(L_adj);
+    std::vector<double> L_adj_cpu_res = packed_copy(L_adj);
     for (size_type j = 0; j < packed_size; ++j) {
-      vari_ref_A_[j]->adj_ += L_adj_cpu2[j];
+      vari_ref_A_[j]->adj_ += L_adj_cpu_res[j];
     }
   }
 };
