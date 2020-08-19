@@ -8,14 +8,14 @@
 namespace stan {
 namespace math {
 
-template <typename T>
-inline var_value<T>& var_value<T>::operator+=(const var_value<T>& b) {
+template <typename T, typename VariType>
+inline var_value<T, VariType>& var_value<T, VariType>::operator+=(const var_value<T, VariType>& b) {
   vi_ = new internal::add_vv_vari(vi_, b.vi_);
   return *this;
 }
 
-template <typename T>
-inline var_value<T>& var_value<T>::operator+=(T b) {
+template <typename T, typename VariType>
+inline var_value<T, VariType>& var_value<T, VariType>::operator+=(T b) {
   if (b == 0.0) {
     return *this;
   }

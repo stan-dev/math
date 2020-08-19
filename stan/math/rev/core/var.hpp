@@ -33,7 +33,7 @@ static void grad(Vari* vi);
  * var values objects.
  * @tparam T An Floating point type.
  */
-template <typename T>
+template <typename T, typename VariType>
 class var_value {
   static_assert(
       is_plain_type<T>::value,
@@ -47,7 +47,7 @@ class var_value {
 
  public:
   using value_type = std::decay_t<T>;        // type in vari_value.
-  using vari_type = vari_value<value_type>;  // Type of underlying vari impl.
+  using vari_type = VariType;  // Type of underlying vari impl.
 
   /**
    * Pointer to the implementation of this variable.
@@ -201,7 +201,7 @@ class var_value {
    * @param b The variable to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
-  inline var_value<T>& operator+=(const var_value<T>& b);
+  inline var_value<T, VariType>& operator+=(const var_value<T, VariType>& b);
 
   /**
    * The compound add/assignment operator for scalars (C++).
@@ -213,7 +213,7 @@ class var_value {
    * @param b The scalar to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
-  inline var_value<T>& operator+=(T b);
+  inline var_value<T, VariType>& operator+=(T b);
 
   /**
    * The compound subtract/assignment operator for variables (C++).
@@ -226,7 +226,7 @@ class var_value {
    * @return The result of subtracting the specified variable from
    * this variable.
    */
-  inline var_value<T>& operator-=(const var_value<T>& b);
+  inline var_value<T, VariType>& operator-=(const var_value<T, VariType>& b);
 
   /**
    * The compound subtract/assignment operator for scalars (C++).
@@ -239,7 +239,7 @@ class var_value {
    * @return The result of subtracting the specified variable from this
    * variable.
    */
-  inline var_value<T>& operator-=(T b);
+  inline var_value<T, VariType>& operator-=(T b);
 
   /**
    * The compound multiply/assignment operator for variables (C++).
@@ -252,7 +252,7 @@ class var_value {
    * @return The result of multiplying this variable by the
    * specified variable.
    */
-  inline var_value<T>& operator*=(const var_value<T>& b);
+  inline var_value<T, VariType>& operator*=(const var_value<T, VariType>& b);
 
   /**
    * The compound multiply/assignment operator for scalars (C++).
@@ -265,7 +265,7 @@ class var_value {
    * @return The result of multiplying this variable by the specified
    * variable.
    */
-  inline var_value<T>& operator*=(T b);
+  inline var_value<T, VariType>& operator*=(T b);
 
   /**
    * The compound divide/assignment operator for variables (C++).  If this
@@ -277,7 +277,7 @@ class var_value {
    * @return The result of dividing this variable by the
    * specified variable.
    */
-  inline var_value<T>& operator/=(const var_value<T>& b);
+  inline var_value<T, VariType>& operator/=(const var_value<T, VariType>& b);
 
   /**
    * The compound divide/assignment operator for scalars (C++).
@@ -290,7 +290,102 @@ class var_value {
    * @return The result of dividing this variable by the specified
    * variable.
    */
-  inline var_value<T>& operator/=(T b);
+  inline var_value<T, VariType>& operator/=(T b);
+
+  /**
+   * A block view of the underlying Eigen matrices.
+   * @param i Starting row of block.
+   * @param j Starting columns of block.
+   * @param p Number of rows to return.
+   * @param q Number of columns to return.
+   */
+  inline auto block(Eigen::Index i, Eigen::Index j, Eigen::Index p, Eigen::Index q) const {
+    using vari_sub = decltype(vi_->block(1, 1, 3, 3));
+    using var_sub = var_value<const typename vari_sub::PlainObject, const typename vari_sub::vari_type>;
+    return var_sub(new vari_sub(vi_->block(i, j, p, q)));
+  }
+
+  /**
+   * View of the head of Eigen vector types.
+   * @param n Number of elements to return from top of vector.
+   */
+  inline auto head(Eigen::Index i) const {
+    using vari_sub = decltype(vi_->head(2));
+    using var_sub = var_value<const typename vari_sub::PlainObject, const typename vari_sub::vari_type>;
+    return var_sub(new vari_sub(vi_->head(i)));
+  }
+  //FIXXXX
+
+  /**
+   * View of the tail of the Eigen vector types.
+   * @param n Number of elements to return from bottom of vector.
+   */
+  const auto tail(Eigen::Index n) const {
+    using vari_sub = decltype(vi_->tail(2));
+    using var_sub = var_value<const typename vari_sub::PlainObject, const typename vari_sub::vari_type>;
+    return var_sub(new vari_sub(vi_->tail(n)));
+  }
+
+  /**
+   * View block of N elements starting at position `i`
+   * @param i Starting position of block.
+   * @param n Number of elements in block
+   */
+  const auto segment(Eigen::Index i, Eigen::Index n) const {
+    using vari_sub = decltype(vi_->segment(2, 3));
+    using var_sub = var_value<const typename vari_sub::PlainObject, const typename vari_sub::vari_type>;
+    return var_sub(new vari_sub(vi_->segment(i, n)));
+  }
+
+  /**
+   * View row of eigen matrices.
+   * @param i Row index to slice.
+   */
+  const auto row(Eigen::Index i) const {
+    using vari_sub = decltype(vi_->row(2));
+    using var_sub = var_value<const typename vari_sub::PlainObject, const typename vari_sub::vari_type>;
+    return var_sub(new vari_sub(vi_->row(i)));
+  }
+
+  /**
+   * View column of eigen matrices
+   * @param i Column index to slice
+   */
+  const auto col(Eigen::Index i) const {
+    using vari_sub = decltype(vi_->col(2));
+    using var_sub = var_value<const typename vari_sub::PlainObject, const typename vari_sub::vari_type>;
+    return var_sub(new vari_sub(vi_->col(i)));
+  }
+
+  /**
+   * View element of eigen matrices
+   * @param i Element to access
+   */
+  const auto operator()(Eigen::Index i) const {
+    using vari_coeff = decltype((*vi_)(2));
+    using var_coeff = var_value<double, const vari_value<double>>;
+    return var_coeff(new vari_coeff((*vi_)(i)));
+  }
+
+  /**
+   * View element of eigen matrices
+   * @param i Row to access
+   * @param j Column to access
+   */
+  const auto coeff(Eigen::Index i, Eigen::Index j) const {
+    using vari_coeff = decltype(vi_->coeff(2, 2));
+    using var_coeff = var_value<double, const vari_value<double>>;
+    return var_coeff(new vari_coeff((*vi_)(i, j)));
+  }
+
+  /**
+   * View element of eigen matrices
+   * @param i Row to access
+   * @param j Column to access
+   */
+  const auto operator()(Eigen::Index i, Eigen::Index j) const {
+    return this->coeff(i, j);
+  }
 
   /**
    * Write the value of this autodiff variable and its adjoint to
@@ -300,7 +395,7 @@ class var_value {
    * @param v Variable to write.
    * @return Reference to the specified output stream.
    */
-  friend std::ostream& operator<<(std::ostream& os, const var_value<T>& v) {
+  friend std::ostream& operator<<(std::ostream& os, const var_value<T, VariType>& v) {
     if (v.vi_ == nullptr) {
       return os << "uninitialized";
     }

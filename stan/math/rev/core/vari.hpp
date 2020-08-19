@@ -10,9 +10,15 @@
 namespace stan {
 namespace math {
 
+// forward decleration of vari_value
+template <typename T, typename StrideType = Eigen::Stride<0, 0>, typename = void>
+class vari_value;
+
 // forward declaration of var
-template <typename T>
+template <typename T,
+          typename VariType = vari_value<std::remove_reference_t<T>>>
 class var_value;
+
 /**
  * Abstract base class that all `vari_value` and it's derived classes inherit.
  *
@@ -30,7 +36,6 @@ class vari_base {
    */
   virtual void chain() = 0;
   virtual void set_zero_adjoint() = 0;
-  virtual ~vari_base() noexcept {}
 
   /**
    * Allocate memory from the underlying memory pool.  This memory is
@@ -62,8 +67,6 @@ class vari_base {
   }
 };
 
-template <typename T, typename = void>
-class vari_value;
 /**
  * The variable implementation for floating point types.
  *
@@ -75,8 +78,8 @@ class vari_value;
  * derivative with respect to the root of the derivative tree.
  *
  */
-template <typename T>
-class vari_value<T, require_floating_point_t<T>> : public vari_base {
+template <typename T, typename StrideType>
+class vari_value<T, StrideType, require_floating_point_t<T>> : public vari_base {
  public:
   using value_type = std::decay_t<T>;
   /**
@@ -104,7 +107,7 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(S x) noexcept : val_(x), adj_(0.0) {  // NOLINT
-    ChainableStack::instance_->var_stack_.emplace_back(this);
+    ChainableStack::instance_->var_stack_.push_back(this);
   }
 
   /**
@@ -125,13 +128,11 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(S x, bool stacked) noexcept : val_(x), adj_(0.0) {
     if (stacked) {
-      ChainableStack::instance_->var_stack_.emplace_back(this);
+      ChainableStack::instance_->var_stack_.push_back(this);
     } else {
-      ChainableStack::instance_->var_nochain_stack_.emplace_back(this);
+      ChainableStack::instance_->var_nochain_stack_.push_back(this);
     }
   }
-
-  ~vari_value() = default;
 
   inline void chain() {}
 
@@ -159,13 +160,19 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
    *
    * @return The modified ostream.
    */
-  friend std::ostream& operator<<(std::ostream& os, const vari_value<T>* v) {
+  friend std::ostream& operator<<(std::ostream& os, const vari_value<T, StrideType>* v) {
     return os << v->val_ << ":" << v->adj_;
   }
+protected:
+  template <typename S, typename K, require_all_floating_point_t<S, K>* = nullptr>
+  vari_value(S val, K adj) : val_(val), adj_(adj) {}
 
  private:
-  template <typename>
+  template <typename, typename>
   friend class var_value;
+  template <typename, typename, typename>
+  friend class vari_value;
+
 };
 
 // For backwards compatability the default is double
@@ -182,28 +189,26 @@ using vari = vari_value<double>;
  * derivative with respect to the root of the derivative tree.
  *
  */
-template <typename T>
-class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
+template <typename T, typename StrideType>
+class vari_value<T, StrideType, require_eigen_dense_base_t<T>> : public vari_base {
  public:
+   /*
   static_assert(
       is_plain_type<T>::value,
       "The template for this var is an"
       " expression but a var_value's inner type must be assignable such as"
       " a double, Eigen::Matrix, or Eigen::Array");
-
+*/
   /**
    * `PlainObject` represents a user constructible type such as Matrix or Array
    */
   using PlainObject = plain_type_t<T>;
   using value_type = PlainObject;  // The underlying type for this class
   using eigen_scalar = value_type_t<PlainObject>;  // A floating point type
-  /**
-   * Maps for adj_ and val_
-   */
-  using eigen_map = Eigen::Map<PlainObject, Eigen::Aligned8>;
-  using vari_type = vari_value<T, require_eigen_dense_base_t<T>>;
-  eigen_scalar* val_mem_;  // Pointer to memory allocated on the stack for val_
-  eigen_scalar* adj_mem_;  // Pointer to memory allocated on the stack for adj_
+  using eigen_map
+    = Eigen::Map<T, Eigen::Aligned8, StrideType>;  // Maps for adj_ and val_
+  using Stride = StrideType;
+  using vari_type = vari_value<T, StrideType>;
   /**
    * Number of rows known at compile time
    */
@@ -212,6 +217,11 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
    * Number of columns known at compile time
    */
   static constexpr int ColsAtCompileTime = PlainObject::ColsAtCompileTime;
+  /**
+   * Maps for adj_ and val_
+   */
+  eigen_scalar* val_mem_;  // Pointer to memory allocated on the stack for val_
+  eigen_scalar* adj_mem_;  // Pointer to memory allocated on the stack for adj_
 
   /**
    * The value of this variable.
@@ -272,9 +282,9 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
         val_(eigen_map(val_mem_, x.rows(), x.cols()) = x),
         adj_(eigen_map(adj_mem_, x.rows(), x.cols()).setZero()) {
     if (stacked) {
-      ChainableStack::instance_->var_stack_.emplace_back(this);
+      ChainableStack::instance_->var_stack_.push_back(this);
     } else {
-      ChainableStack::instance_->var_nochain_stack_.emplace_back(this);
+      ChainableStack::instance_->var_nochain_stack_.push_back(this);
     }
   }
 
@@ -300,12 +310,112 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
    */
   inline void init_dependent() { adj_.setOnes(); }
 
+
+  /**
+   * Implimentation for assignable objects that sets the adjoint values to zero.
+   */
+  template <typename Checker = T, require_t<bool_constant<!std::is_const<Checker>::value>>* = nullptr>
+  inline void set_zero_adjoint_impl() {
+    adj_.setZero();
+  }
+  /**
+   * Implimentation for views which performs a no-op
+   */
+  template <typename Checker = T, require_t<std::is_const<Checker>>* = nullptr>
+  inline void set_zero_adjoint_impl() {}
+
   /**
    * Set the adjoint value of this variable to 0.  This is used to
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  inline void set_zero_adjoint() final { adj_.setZero(); }
+  inline void set_zero_adjoint() final { set_zero_adjoint_impl(); }
+
+    /**
+     * A block view of the underlying Eigen matrices.
+     * @param i Starting row of block.
+     * @param j Starting columns of block.
+     * @param p Number of rows to return.
+     * @param q Number of columns to return.
+     */
+    const auto block(Eigen::Index i, Eigen::Index j, Eigen::Index p,
+                     Eigen::Index q) const {
+       const auto& val_block = val_.block(i, j, p, q);
+       const auto& adj_block = adj_.block(i, j, p, q);
+      return vari_value<const PlainObject, Eigen::OuterStride<>>(
+        val_block, adj_block, val_block.outerStride(), adj_block.outerStride());
+    }
+
+    /**
+     * View of the head of Eigen vector types.
+     * @param n Number of elements to return from top of vector.
+     */
+    auto head(Eigen::Index n) const {
+      return vari_value<const PlainObject>(val_.head(n), adj_.head(n));
+    }
+
+    /**
+     * View of the tail of the Eigen vector types.
+     * @param n Number of elements to return from bottom of vector.
+     */
+    const auto tail(Eigen::Index n) const {
+      return vari_value<const PlainObject>(val_.tail(n), adj_.tail(n));
+    }
+
+    /**
+     * View block of N elements starting at position `i`
+     * @param i Starting position of block.
+     * @param n Number of elements in block
+     */
+    const auto segment(Eigen::Index i, Eigen::Index n) const {
+      return vari_value<const PlainObject>(val_.segment(i, n), adj_.segment(i, n));
+    }
+
+    /**
+     * View row of eigen matrices.
+     * @param i Row index to slice.
+     */
+    const auto row(Eigen::Index i) const {
+      const auto& val_row = val_.row(i);
+      const auto& adj_row = adj_.row(i);
+      return vari_value<const PlainObject, Eigen::InnerStride<>>(
+          val_row, adj_row, val_row.innerStride(), adj_row.innerStride());
+    }
+
+    /**
+     * View column of eigen matrices
+     * @param i Column index to slice
+     */
+    const auto col(Eigen::Index i) const {
+      return vari_value<const PlainObject, Eigen::OuterStride<>>(val_.col(i), adj_.col(i),
+    val_.col(i).outerStride(), adj_.col(i).outerStride());
+    }
+
+    /**
+     * Get coefficient of eigen matrices
+     * @param i Row index
+     * @param j Column index
+     */
+    const auto coeff(Eigen::Index i, Eigen::Index j) const {
+      return vari_value<double>(val_(i, j), adj_(i, j));
+    }
+
+    /**
+     * Get coefficient of eigen matrices
+     * @param i Column index to slice
+     */
+    const auto operator()(Eigen::Index i) const {
+      return vari_value<double>(val_(i), adj_(i));
+    }
+
+    /**
+     * Get coefficient of eigen matrices
+     * @param i Row index
+     * @param j Column index
+     */
+    const auto operator()(Eigen::Index i, Eigen::Index j) const {
+      return this->coeff(i, j);
+    }
 
   /**
    * Insertion operator for vari. Prints the current value and
@@ -316,14 +426,25 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
    *
    * @return The modified ostream.
    */
-  friend std::ostream& operator<<(std::ostream& os, const vari_value<T>* v) {
+  friend std::ostream& operator<<(std::ostream& os,
+     const vari_value<T, StrideType>* v) {
     return os << "val: \n" << v->val_ << " \nadj: \n" << v->adj_;
   }
+ protected:
+   template <typename S, typename K, typename StrideS = Eigen::Stride<0, 0>,
+    typename StrideK = Eigen::Stride<0, 0>,
+             require_convertible_t<S&, value_type>* = nullptr,
+             require_convertible_t<K&, value_type>* = nullptr>
+   explicit vari_value(S&& val, K&& adj,
+      StrideS val_stride = Eigen::Stride<0, 0>(),
+      StrideK adj_stride = Eigen::Stride<0, 0>())
+       : val_(val.data(), val.rows(), val.cols(), val_stride),
+         adj_(adj.data(), adj.rows(), adj.cols(), adj_stride) {}
 
  private:
-  template <typename>
-  friend class var_value;
   template <typename, typename>
+  friend class var_value;
+  template <typename, typename, typename>
   friend class vari_value;
 };
 
@@ -338,8 +459,8 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
  * derivative with respect to the root of the derivative tree.
  *
  */
-template <typename T>
-class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
+template <typename T, typename StrideType>
+class vari_value<T, StrideType, require_eigen_sparse_base_t<T>> : public vari_base,
                                                       chainable_alloc {
  public:
   using PlainObject = plain_type_t<T>;  // Base type of Eigen class
@@ -462,14 +583,14 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
    *
    * @return The modified ostream.
    */
-  friend std::ostream& operator<<(std::ostream& os, const vari_value<T>* v) {
+  friend std::ostream& operator<<(std::ostream& os, const vari_value<T, StrideType>* v) {
     return os << "val: \n" << v->val_ << " \nadj: \n" << v->adj_;
   }
 
  private:
-  template <typename>
-  friend class var_value;
   template <typename, typename>
+  friend class var_value;
+  template <typename, typename, typename>
   friend class vari_value;
 };
 
