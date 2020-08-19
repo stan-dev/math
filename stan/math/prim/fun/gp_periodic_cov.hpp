@@ -41,7 +41,8 @@ namespace math {
  * @throw std::domain_error if sigma <= 0, l <= 0, p <= 0 or
  *   x is nan or infinite
  */
-template <typename T_x, typename T_sigma, typename T_l, typename T_p>
+template <typename T_x, typename T_sigma, typename T_l, typename T_p,
+	  require_all_not_st_var<T_x, T_sigma, T_l, T_p>>
 inline typename Eigen::Matrix<return_type_t<T_x, T_sigma, T_l, T_p>,
                               Eigen::Dynamic, Eigen::Dynamic>
 gp_periodic_cov(const std::vector<T_x> &x, const T_sigma &sigma, const T_l &l,

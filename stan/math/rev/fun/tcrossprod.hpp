@@ -27,25 +27,19 @@ tcrossprod(const T& M) {
   if (M.rows() == 0) {
     return {};
   }
-  // if (M.rows() == 1)
-  //   return M * M.transpose();
 
-  // WAS JUST THIS
-  // matrix_v result(M.rows(), M.rows());
-  // return result.setZero().selfadjointView<Eigen::Upper>().rankUpdate(M);
+  arena_matrix<promote_scalar_t<var, T>> arena_M = M;
+  arena_matrix<promote_scalar_t<double, T>> arena_M_val = value_of(arena_M);
 
-  Eigen::Matrix<var, T::RowsAtCompileTime, T::RowsAtCompileTime> MMt(M.rows(),
-                                                                     M.rows());
+  Eigen::MatrixXd res_val(M.rows(), M.rows());
+  arena_matrix<promote_scalar_t<var, T>> res = arena_M_val * arena_M_val.transpose();
 
-  for (int m = 0; m < M.rows(); ++m) {
-    MMt.coeffRef(m, m) = dot_self(M.row(m));
-  }
-  for (int m = 0; m < M.rows(); ++m) {
-    for (int n = 0; n < m; ++n) {
-      MMt.coeffRef(n, m) = MMt.coeffRef(m, n) = dot_product(M.row(m), M.row(n));
-    }
-  }
-  return MMt;
+  reverse_pass_callback([res, arena_M, arena_M_val]() mutable {
+    ref_type_t<decltype(res.adj())> adj = res.adj();
+    arena_M.adj() += (adj.transpose() + adj) * arena_M_val;
+  });
+  
+  return res;
 }
 
 }  // namespace math

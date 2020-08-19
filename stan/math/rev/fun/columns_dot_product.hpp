@@ -25,17 +25,11 @@ columns_dot_product(const Mat1& v1, const Mat2& v2) {
   ref_type_t<Mat1> v1_ref = v1;
   ref_type_t<Mat2> v2_ref = v2;
 
-  using Mat1_double = plain_type_t<decltype(value_of(v1_ref))>;
-  using Mat1_var = promote_scalar_t<var, Mat1_double>;
+  arena_matrix<promote_scalar_t<double, Mat1>> arena_v1_val = value_of(v1_ref);
+  arena_matrix<promote_scalar_t<double, Mat2>> arena_v2_val = value_of(v2_ref);
 
-  using Mat2_double = plain_type_t<decltype(value_of(v2_ref))>;
-  using Mat2_var = promote_scalar_t<var, Mat2_double>;
-
-  arena_matrix<Mat1_double> arena_v1_val = value_of(v1_ref);
-  arena_matrix<Mat2_double> arena_v2_val = value_of(v2_ref);
-
-  arena_matrix<Mat1_var> arena_v1;
-  arena_matrix<Mat2_var> arena_v2;
+  arena_matrix<promote_scalar_t<var, Mat1>> arena_v1;
+  arena_matrix<promote_scalar_t<var, Mat2>> arena_v2;
 
   if (!is_constant<Mat1>::value) {
     arena_v1 = v1_ref;
