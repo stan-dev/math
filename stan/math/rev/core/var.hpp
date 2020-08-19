@@ -314,7 +314,6 @@ class var_value {
     using var_sub = var_value<const typename vari_sub::PlainObject, const typename vari_sub::vari_type>;
     return var_sub(new vari_sub(vi_->head(i)));
   }
-  //FIXXXX
 
   /**
    * View of the tail of the Eigen vector types.
