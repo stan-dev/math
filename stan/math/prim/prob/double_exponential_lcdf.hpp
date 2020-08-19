@@ -54,7 +54,8 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lcdf(
   }
 
   T_partials_return cdf_log(0.0);
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(y_ref, mu_ref, sigma_ref);
+  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
+      y_ref, mu_ref, sigma_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
