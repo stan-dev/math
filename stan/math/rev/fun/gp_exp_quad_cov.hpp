@@ -30,12 +30,11 @@ namespace math {
  *   x is nan or infinite
  */
 template <typename T_x, typename T_sigma, typename T_l,
-	  require_all_stan_scalar_t<T_sigma, T_l>* = nullptr,
-	  require_any_st_var<T_x, T_sigma, T_l>* = nullptr>
-inline Eigen::Matrix<var, -1, -1>
-gp_exp_quad_cov(const std::vector<T_x>& x,
-		T_sigma sigma,
-		T_l length_scale) {
+          require_all_stan_scalar_t<T_sigma, T_l>* = nullptr,
+          require_any_st_var<T_x, T_sigma, T_l>* = nullptr>
+inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x>& x,
+                                                  T_sigma sigma,
+                                                  T_l length_scale) {
   check_positive("gp_exp_quad_cov", "marginal standard deviation", sigma);
   check_positive("gp_exp_quad_cov", "length scale", length_scale);
   for (size_t i = 0; i < x.size(); ++i) {
@@ -61,7 +60,8 @@ gp_exp_quad_cov(const std::vector<T_x>& x,
     for (size_t i = 0; i < j; ++i) {
       double dist_sq = squared_distance(value_of(x[i]), value_of(x[j]));
       dist.coeffRef(i, j) = dist.coeffRef(j, i) = dist_sq;
-      res_val.coeffRef(i, j) = res_val.coeffRef(j, i) = sigma_sq_d * std::exp(-dist_sq * inv_half_sq_l_d);
+      res_val.coeffRef(i, j) = res_val.coeffRef(j, i)
+          = sigma_sq_d * std::exp(-dist_sq * inv_half_sq_l_d);
     }
   }
   for (size_t i = 0; i < x.size(); ++i) {
@@ -75,23 +75,23 @@ gp_exp_quad_cov(const std::vector<T_x>& x,
   reverse_pass_callback([=]() mutable {
     Eigen::ArrayXXd adj_times_val = res.adj().array() * res.val().array();
 
-    if(!is_constant<T_x>::value)
-      for(size_t i = 0; i < arena_x.size(); ++i) {
-	for(size_t j = 0; j < arena_x.size(); ++j) {
-	  auto adj = eval(-(value_of(arena_x[i]) - value_of(arena_x[j])) *
-			  adj_times_val(i, j) / (l_d * l_d));
-	  using T_x_var = promote_scalar_t<var, T_x>;
-	  forward_as<T_x_var>(arena_x[i]).adj() += adj;
-	  forward_as<T_x_var>(arena_x[j]).adj() -= adj;
-	}
+    if (!is_constant<T_x>::value)
+      for (size_t i = 0; i < arena_x.size(); ++i) {
+        for (size_t j = 0; j < arena_x.size(); ++j) {
+          auto adj = eval(-(value_of(arena_x[i]) - value_of(arena_x[j]))
+                          * adj_times_val(i, j) / (l_d * l_d));
+          using T_x_var = promote_scalar_t<var, T_x>;
+          forward_as<T_x_var>(arena_x[i]).adj() += adj;
+          forward_as<T_x_var>(arena_x[j]).adj() -= adj;
+        }
       }
 
-    if(!is_constant<T_sigma>::value)
+    if (!is_constant<T_sigma>::value)
       forward_as<var>(sigma).adj() += 2.0 * adj_times_val.sum() / sigma_d;
 
-    if(!is_constant<T_l>::value)
-      forward_as<var>(length_scale).adj() +=
-	(dist.array() * adj_times_val).sum() / (l_d * l_d * l_d);
+    if (!is_constant<T_l>::value)
+      forward_as<var>(length_scale).adj()
+          += (dist.array() * adj_times_val).sum() / (l_d * l_d * l_d);
   });
 
   return res;

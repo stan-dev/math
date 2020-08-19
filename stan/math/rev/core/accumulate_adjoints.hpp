@@ -146,7 +146,7 @@ inline double* accumulate_adjoints(double* dest, Arith&& x, Pargs&&... args) {
  * @param dest Pointer
  */
 inline double* accumulate_adjoints(double* dest) { return dest; }
-  
+
 }  // namespace math
 }  // namespace stan
 

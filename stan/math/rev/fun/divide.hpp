@@ -39,8 +39,8 @@ divide(const Mat& m, const Scal& c) {
       forward_as<Mat_v>(arena_m).adj() += invc * res.adj();
     }
     if (!is_constant<Scal>::value) {
-      forward_as<var>(c).adj() += -invc *
-	(res.adj().array() * res.val().array()).sum();
+      forward_as<var>(c).adj()
+          += -invc * (res.adj().array() * res.val().array()).sum();
     }
   });
 
