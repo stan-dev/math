@@ -41,10 +41,9 @@ namespace math {
 template <typename T_x, typename T_sigma, typename T_l, typename T_p,
           require_all_stan_scalar_t<T_sigma, T_l, T_p>* = nullptr,
           require_any_st_var<T_x, T_sigma, T_l, T_p>* = nullptr>
-Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
-gp_periodic_cov(const std::vector<T_x> &x,
-		T_sigma sigma, T_l l, T_p p) {
-  const char *fun = "gp_periodic_cov";
+Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
+    const std::vector<T_x>& x, T_sigma sigma, T_l l, T_p p) {
+  const char* fun = "gp_periodic_cov";
 
   check_positive(fun, "signal standard deviation", sigma);
   check_positive(fun, "length-scale", l);
@@ -65,28 +64,30 @@ gp_periodic_cov(const std::vector<T_x> &x,
   double sigma_squared = sigma_d * sigma_d;
   double pi_over_p = pi() / p_d;
   double negative_two_over_l_squared = -2.0 / (l_d * l_d);
-  
+
   arena_matrix<Eigen::MatrixXd> arena_dist(x.size(), x.size());
   arena_matrix<Eigen::MatrixXd> arena_sin_squared(x.size(), x.size());
-  arena_matrix<Eigen::MatrixXd> arena_sin_squared_derivative(x.size(), x.size());
+  arena_matrix<Eigen::MatrixXd> arena_sin_squared_derivative(x.size(),
+                                                             x.size());
   arena_matrix<Eigen::MatrixXd> res_val(x.size(), x.size());
 
   auto arena_x = to_arena_if<!is_constant<T_x>::value>(x);
 
-  double inv_half_sq_l_d
-      = 0.5 / (value_of(l) * value_of(l));
+  double inv_half_sq_l_d = 0.5 / (value_of(l) * value_of(l));
   for (size_t j = 0; j < x.size(); ++j) {
     for (size_t i = 0; i < j; ++i) {
-      arena_dist.coeffRef(i, j) = arena_dist.coeffRef(j, i) =
-	distance(value_of(x[i]), value_of(x[j]));
-      arena_sin_squared.coeffRef(i, j) = arena_sin_squared.coeffRef(j, i) =
-	square(sin(pi_over_p * arena_dist.coeff(i, j)));
-      arena_sin_squared_derivative.coeffRef(i, j) =
-	arena_sin_squared_derivative.coeffRef(j, i) = sin(2 * pi_over_p * arena_dist(i, j));
+      arena_dist.coeffRef(i, j) = arena_dist.coeffRef(j, i)
+          = distance(value_of(x[i]), value_of(x[j]));
+      arena_sin_squared.coeffRef(i, j) = arena_sin_squared.coeffRef(j, i)
+          = square(sin(pi_over_p * arena_dist.coeff(i, j)));
+      arena_sin_squared_derivative.coeffRef(i, j)
+          = arena_sin_squared_derivative.coeffRef(j, i)
+          = sin(2 * pi_over_p * arena_dist(i, j));
 
-      res_val.coeffRef(i, j) = res_val.coeffRef(j, i) =
-	sigma_squared * std::exp(arena_sin_squared.coeff(i, j) *
-				 negative_two_over_l_squared);
+      res_val.coeffRef(i, j) = res_val.coeffRef(j, i)
+          = sigma_squared
+            * std::exp(arena_sin_squared.coeff(i, j)
+                       * negative_two_over_l_squared);
     }
   }
 
@@ -99,28 +100,23 @@ gp_periodic_cov(const std::vector<T_x> &x,
   arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> res
       = res_val;
 
-  reverse_pass_callback([res, res_val, arena_x,
-			 sigma, l, p,
-			 sigma_d, l_d, p_d,
-			 pi_over_p,
-			 arena_dist,
-			 arena_sin_squared,
-			 arena_sin_squared_derivative]() mutable {
+  reverse_pass_callback([res, res_val, arena_x, sigma, l, p, sigma_d, l_d, p_d,
+                         pi_over_p, arena_dist, arena_sin_squared,
+                         arena_sin_squared_derivative]() mutable {
     Eigen::ArrayXXd adj_times_val = res.adj().array() * res_val.array();
 
     if (!is_constant<T_x>::value)
       for (size_t i = 0; i < arena_x.size(); ++i) {
         for (size_t j = 0; j < arena_x.size(); ++j) {
-	  if(arena_dist.coeff(i, j) != 0.0) {
-	    auto adj = eval(-2 * pi_over_p *
-			    (value_of(arena_x[i]) - value_of(arena_x[j])) *
-			    arena_sin_squared_derivative(i, j) *
-			    adj_times_val(i, j) /
-			    (arena_dist.coeff(i, j) * l_d * l_d));
-	    using T_x_var = promote_scalar_t<var, T_x>;
-	    forward_as<T_x_var>(arena_x[i]).adj() += adj;
-	    forward_as<T_x_var>(arena_x[j]).adj() -= adj;
-	  }
+          if (arena_dist.coeff(i, j) != 0.0) {
+            auto adj = eval(
+                -2 * pi_over_p * (value_of(arena_x[i]) - value_of(arena_x[j]))
+                * arena_sin_squared_derivative(i, j) * adj_times_val(i, j)
+                / (arena_dist.coeff(i, j) * l_d * l_d));
+            using T_x_var = promote_scalar_t<var, T_x>;
+            forward_as<T_x_var>(arena_x[i]).adj() += adj;
+            forward_as<T_x_var>(arena_x[j]).adj() -= adj;
+          }
         }
       }
 
@@ -129,11 +125,16 @@ gp_periodic_cov(const std::vector<T_x> &x,
 
     if (!is_constant<T_l>::value)
       forward_as<var>(l).adj()
-	+= 4 * (arena_sin_squared.array() * adj_times_val).sum() / (l_d * l_d * l_d);
+          += 4 * (arena_sin_squared.array() * adj_times_val).sum()
+             / (l_d * l_d * l_d);
 
     if (!is_constant<T_p>::value)
       forward_as<var>(p).adj()
-	+= 2 * pi() * (arena_dist.array() * arena_sin_squared_derivative.array() * adj_times_val).sum() / (p_d * p_d * l_d * l_d);
+          += 2 * pi()
+             * (arena_dist.array() * arena_sin_squared_derivative.array()
+                * adj_times_val)
+                   .sum()
+             / (p_d * p_d * l_d * l_d);
   });
 
   return res;

@@ -32,13 +32,14 @@ tcrossprod(const T& M) {
   arena_matrix<promote_scalar_t<double, T>> arena_M_val = value_of(arena_M);
 
   Eigen::MatrixXd res_val(M.rows(), M.rows());
-  arena_matrix<promote_scalar_t<var, T>> res = arena_M_val * arena_M_val.transpose();
+  arena_matrix<promote_scalar_t<var, T>> res
+      = arena_M_val * arena_M_val.transpose();
 
   reverse_pass_callback([res, arena_M, arena_M_val]() mutable {
     ref_type_t<decltype(res.adj())> adj = res.adj();
     arena_M.adj() += (adj.transpose() + adj) * arena_M_val;
   });
-  
+
   return res;
 }
 
