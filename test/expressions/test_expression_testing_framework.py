@@ -24,25 +24,25 @@ class TestExpressionTestingFramework(unittest.TestCase):
         self.assertTrue(content in stdout, msg = error_template.format(content, stdout, stderr))
 
     def testExpressionNotAcceptedFailure(self):
-        return_code, stdout, stderr = self.runCommand((sys.executable, "./runTests.py", "./test/expressions", "--make-only", "--only-functions", "bad_no_expressions"))
+        return_code, stdout, stderr = self.runCommand((sys.executable, "./runTests.py", "./test/expressions", "--make-only", "--only-functions", "matrix bad_no_expressions(matrix)"))
         self.assertNotEqual(return_code, 0)
 
     def testMultipleEvaluationsFailure(self):
-        return_code, stdout, stderr = self.runCommand((sys.executable, "./runTests.py", "./test/expressions", "--only-functions", "bad_multiple_evaluations"))
+        return_code, stdout, stderr = self.runCommand((sys.executable, "./runTests.py", "./test/expressions", "--only-functions", "matrix bad_multiple_evaluations(matrix)"))
         self.assertNotEqual(return_code, 0)
         self.assertStdoutContains("[  FAILED  ] ExpressionTestPrim.bad_multiple_evaluations0", stdout, stderr)
         self.assertStdoutContains("[  FAILED  ] ExpressionTestRev.bad_multiple_evaluations0", stdout, stderr)
         self.assertStdoutContains("[  FAILED  ] ExpressionTestFwd.bad_multiple_evaluations0", stdout, stderr)
 
     def testWrongResultFailure(self):
-        return_code, stdout, stderr = self.runCommand((sys.executable, "./runTests.py", "./test/expressions", "--only-functions", "bad_wrong_value"))
+        return_code, stdout, stderr = self.runCommand((sys.executable, "./runTests.py", "./test/expressions", "--only-functions", "real bad_wrong_value(matrix)"))
         self.assertNotEqual(return_code, 0)
         self.assertStdoutContains("[  FAILED  ] ExpressionTestPrim.bad_wrong_value0", stdout, stderr)
         self.assertStdoutContains("[  FAILED  ] ExpressionTestRev.bad_wrong_value0", stdout, stderr)
         self.assertStdoutContains("[  FAILED  ] ExpressionTestFwd.bad_wrong_value0", stdout, stderr)
 
     def testWrongDerivativeFailure(self):
-        return_code, stdout, stderr = self.runCommand((sys.executable, "./runTests.py", "./test/expressions", "--only-functions", "bad_wrong_derivatives"))
+        return_code, stdout, stderr = self.runCommand((sys.executable, "./runTests.py", "./test/expressions", "--only-functions", "real bad_wrong_derivatives(vector)"))
         self.assertNotEqual(return_code, 0)
         self.assertStdoutContains("[       OK ] ExpressionTestPrim.bad_wrong_derivatives0", stdout, stderr)
         self.assertStdoutContains("[  FAILED  ] ExpressionTestRev.bad_wrong_derivatives0", stdout, stderr)
