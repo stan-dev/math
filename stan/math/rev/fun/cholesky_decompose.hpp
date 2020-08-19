@@ -296,7 +296,8 @@ class cholesky_opencl : public vari {
   /**
    * Symbolic adjoint calculation for Cholesky factor A
    *
-   * @param L Cholesky factor
+   * @param L_val value of Cholesky factor
+   * @param L_adj adjoint of Cholesky factor
    */
   inline void symbolic_rev(matrix_cl<double>& L_val, matrix_cl<double>& L_adj) {
     L_adj = transpose(L_val) * L_adj;
