@@ -394,8 +394,8 @@ class vari_value<T, StrideType, require_eigen_dense_base_t<T>>
   inline const auto col(Eigen::Index i) const {
     const auto& val_col = val_.col(i);
     const auto& adj_col = adj_.col(i);
-    return vari_value<const PlainObject, Eigen::OuterStride<>>(val_col, adj_col,
-       val_col.outerStride(), adj_col.outerStride());
+    return vari_value<const PlainObject, Eigen::OuterStride<>>(
+        val_col, adj_col, val_col.outerStride(), adj_col.outerStride());
   }
 
   /**
