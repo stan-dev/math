@@ -98,10 +98,12 @@ else ifeq (gcc,$(CXX_TYPE))
 	CXXFLAGS_VERSION_OPTIM ?= -fweb -fivopts -ftree-loop-linear -funroll-loops -floop-strip-mine -floop-block -floop-nest-optimize -ftree-vectorize -ftree-loop-distribution -fvect-cost-model='unlimited' -fivopts -fvisibility=hidden -fvisibility-inlines-hidden
 	ifeq ($(shell expr $(CXX_MAJOR) \>= 5), 1)
 	  CXXFLAGS_VERSION_OPTIM += -floop-unroll-and-jam
-		CXXFLAGS_FLTO ?= -flto -fuse-linker-plugin -fdevirtualize-at-ltrans
   endif
 	ifeq ($(shell expr $(CXX_MAJOR) \>= 7), 1)
 	  CXXFLAGS_VERSION_OPTIM += -fsplit-loops
+  endif
+  ifeq ($(shell expr $(CXX_MAJOR) \>= 7), 1)
+    CXXFLAGS_FLTO ?= -flto -fuse-linker-plugin -fdevirtualize-at-ltrans
   endif
 	CXXFLAGS_OPTIM ?= $(CXXFLAGS_VERSION_OPTIM)
 endif
