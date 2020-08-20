@@ -178,7 +178,6 @@ TEST_F(AgradRev, var_matrix_views) {
   auto A_coeff2 = A_v(3, 3);
   EXPECT_FLOAT_EQ(A(3, 3), A_coeff2.vi_->val_);
   EXPECT_MATRIX_FLOAT_EQ(A, A_v.vi_->val_);
-
 }
 
 TEST_F(AgradRev, var_vector_views) {
