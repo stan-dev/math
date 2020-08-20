@@ -300,7 +300,7 @@ class var_value {
    * @param q Number of columns to return.
    */
   inline const auto block(Eigen::Index i, Eigen::Index j, Eigen::Index p,
-                    Eigen::Index q) const {
+                          Eigen::Index q) const {
     using vari_sub = decltype(vi_->block(1, 1, 3, 3));
     using var_sub = var_value<const typename vari_sub::PlainObject,
                               const typename vari_sub::vari_type>;

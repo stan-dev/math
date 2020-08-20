@@ -197,7 +197,6 @@ template <typename T, typename StrideType>
 class vari_value<T, StrideType, require_eigen_dense_base_t<T>>
     : public vari_base {
  public:
-
   static_assert(
       is_plain_type<T>::value,
       "The template for this var is an"
@@ -344,7 +343,7 @@ class vari_value<T, StrideType, require_eigen_dense_base_t<T>>
    * @param q Number of columns to return.
    */
   inline const auto block(Eigen::Index i, Eigen::Index j, Eigen::Index p,
-                   Eigen::Index q) const {
+                          Eigen::Index q) const {
     const auto& val_block = val_.block(i, j, p, q);
     const auto& adj_block = adj_.block(i, j, p, q);
     return vari_value<const PlainObject, Eigen::OuterStride<>>(
