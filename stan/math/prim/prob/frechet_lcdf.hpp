@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <boost/random/weibull_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
