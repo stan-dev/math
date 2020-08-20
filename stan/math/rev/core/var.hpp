@@ -311,11 +311,11 @@ class var_value {
    * View of the head of Eigen vector types.
    * @param n Number of elements to return from top of vector.
    */
-  inline const auto head(Eigen::Index i) const {
+  inline const auto head(Eigen::Index n) const {
     using vari_sub = decltype(vi_->head(2));
     using var_sub = var_value<const typename vari_sub::PlainObject,
                               const typename vari_sub::vari_type>;
-    return var_sub(new vari_sub(vi_->head(i)));
+    return var_sub(new vari_sub(vi_->head(n)));
   }
 
   /**
