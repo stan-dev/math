@@ -2,15 +2,15 @@
 #define STAN_MATH_OPENCL_MATRIX_CL_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/opencl/prim/size.hpp>
+#include <stan/math/opencl/err/check_opencl.hpp>
+#include <stan/math/opencl/opencl_context.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/vec_concat.hpp>
-#include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/matrix_cl_view.hpp>
-#include <stan/math/opencl/is_matrix_cl.hpp>
-#include <stan/math/opencl/err/check_opencl.hpp>
-#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <CL/cl2.hpp>
 #include <algorithm>
 #include <iostream>
@@ -31,12 +31,15 @@ namespace math {
  *  @{
  */
 
+template <typename, typename = void>
+class matrix_cl;
+
 /**
  * Represents an arithmetic matrix on the OpenCL device.
  * @tparam T an arithmetic type for the type stored in the OpenCL buffer.
  */
 template <typename T>
-class matrix_cl<T, require_arithmetic_t<T>> {
+class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
  private:
   cl::Buffer buffer_cl_;  // Holds the allocated memory on the device
   int rows_{0};           // Number of rows.
