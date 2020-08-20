@@ -45,8 +45,8 @@ return_type_t<T_alpha, T_beta> categorical_logit_glm_lpmf(
     const matrix_cl<int>& y_cl, const matrix_cl<double>& x_cl,
     const T_alpha& alpha, const T_beta& beta) {
   using T_partials_return = partials_return_t<T_alpha, T_beta>;
-  static const char* function = "categorical_logit_glm_lpmf";
-
+  using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
+  using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -55,6 +55,7 @@ return_type_t<T_alpha, T_beta> categorical_logit_glm_lpmf(
   const size_t N_attributes = x_cl.cols();
   const size_t N_classes = beta.cols();
 
+  static const char* function = "categorical_logit_glm_lpmf";
   if (y_cl.size() != 1) {
     check_size_match(function, "x.rows()", N_instances, "y.size()",
                      y_cl.size());
@@ -66,13 +67,12 @@ return_type_t<T_alpha, T_beta> categorical_logit_glm_lpmf(
   if (N_instances == 0 || N_classes <= 1) {
     return 0;
   }
-
   if (!include_summand<propto, T_alpha, T_beta>::value) {
     return 0;
   }
 
-  const auto& alpha_ref = to_ref_if<!is_constant<T_alpha>::value>(alpha);
-  const auto& beta_ref = to_ref_if<!is_constant<T_beta>::value>(beta);
+  T_alpha_ref alpha_ref = alpha;
+  T_beta_ref beta_ref = beta;
 
   const auto& alpha_val = value_of_rec(alpha_ref);
   const auto& beta_val = value_of_rec(beta_ref);
@@ -118,8 +118,8 @@ return_type_t<T_alpha, T_beta> categorical_logit_glm_lpmf(
                  from_matrix_cl(x_cl));
   }
 
-  operands_and_partials<decltype(alpha_ref), decltype(beta_ref)> ops_partials(
-      alpha_ref, beta_ref);
+  operands_and_partials<T_alpha_ref, T_beta_ref> ops_partials(alpha_ref,
+                                                              beta_ref);
   if (!is_constant_all<T_alpha>::value) {
     ops_partials.edge1_.partials_
         = from_matrix_cl(alpha_derivative_cl).colwise().sum();

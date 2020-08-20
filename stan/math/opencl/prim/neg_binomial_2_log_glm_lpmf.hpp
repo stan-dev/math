@@ -59,7 +59,10 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
     const T_alpha& alpha, const T_beta& beta, const T_precision& phi) {
   static const char* function = "neg_binomial_2_log_glm_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_alpha, T_beta, T_precision>;
-
+  using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
+  using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
+  using T_phi_ref
+      = ref_type_if_t<!is_constant<T_precision>::value, T_precision>;
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -83,26 +86,27 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
     check_size_match(function, "Rows of ", "x_cl", N, "size of ", "alpha",
                      stan::math::size(alpha));
   }
-  const auto& phi_ref = to_ref(phi);
-  check_positive_finite(function, "Precision parameter", phi_ref);
-
   if (N == 0) {
     return 0;
   }
+  T_phi_ref phi_ref = phi;
+  const auto& phi_val = value_of_rec(phi_ref);
+  const auto& phi_val_vec
+      = to_ref_for_opencl(as_column_vector_or_scalar(phi_val));
+  check_positive_finite(function, "Precision parameter", phi_val_vec);
+
   if (!include_summand<propto, T_alpha, T_beta, T_precision>::value) {
     return 0;
   }
 
-  const auto& alpha_ref = to_ref_if<!is_constant<T_alpha>::value>(alpha);
-  const auto& beta_ref = to_ref_if<!is_constant<T_beta>::value>(beta);
+  T_alpha_ref alpha_ref = alpha;
+  T_beta_ref beta_ref = beta;
 
   const auto& beta_val = value_of_rec(beta_ref);
   const auto& alpha_val = value_of_rec(alpha_ref);
-  const auto& phi_val = value_of_rec(phi_ref);
 
   const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
-  const auto& phi_val_vec = as_column_vector_or_scalar(phi_val);
 
   const int local_size
       = opencl_kernels::neg_binomial_2_log_glm.get_option("LOCAL_SIZE_");
@@ -166,8 +170,8 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
                - lgamma(forward_as<double>(phi_val)));
   }
 
-  operands_and_partials<T_alpha, T_beta, T_precision> ops_partials(alpha, beta,
-                                                                   phi);
+  operands_and_partials<T_alpha_ref, T_beta_ref, T_phi_ref> ops_partials(
+      alpha, beta, phi);
   // Compute the necessary derivatives.
   if (!is_constant_all<T_alpha>::value) {
     if (is_vector<T_alpha>::value) {

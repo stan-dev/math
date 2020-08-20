@@ -2,20 +2,30 @@
 @Library('StanUtils')
 import org.stan.Utils
 
-def runTests(String testPath) {
-    sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only"
-    try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" }
-    finally { junit 'test/**/*.xml' }
+def runTests(String testPath, boolean jumbo = false) {
+    try {
+        if (jumbo) {
+            sh "./runTests.py -j${env.PARALLEL} ${testPath} --jumbo"
+        } else {
+            sh "./runTests.py -j${env.PARALLEL} ${testPath}"
+        }
+    }
+    finally { junit 'test/**/*.xml' }    
 }
 
-def runTestsWin(String testPath, boolean buildLibs = true) {
+def runTestsWin(String testPath, boolean buildLibs = true, boolean jumbo = false) {
     withEnv(['PATH+TBB=./lib/tbb']) {
        bat "echo $PATH"
        if (buildLibs){
            bat "mingw32-make.exe -f make/standalone math-libs"
        }
-       bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
-       try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
+       try { 
+           if (jumbo) {
+               bat "runTests.py -j${env.PARALLEL} ${testPath} --jumbo" 
+            } else {
+                bat "runTests.py -j${env.PARALLEL} ${testPath}" 
+            }
+       }
        finally { junit 'test/**/*.xml' }
     }
 }
@@ -26,6 +36,8 @@ def deleteDirWin() {
 }
 
 def skipRemainingStages = false
+def runGpuAsync = false
+def openClGpuLabel = "gpu"
 
 def utils = new org.stan.Utils()
 
@@ -45,13 +57,10 @@ String stan_pr() { params.stan_pr ?: ( env.CHANGE_TARGET == "master" ? "downstre
 pipeline {
     agent none
     parameters {
-        string(defaultValue: '', name: 'cmdstan_pr',
-          description: 'PR to test CmdStan upstream against e.g. PR-630')
-        string(defaultValue: '', name: 'stan_pr',
-          description: 'PR to test Stan upstream against e.g. PR-630')
-        booleanParam(defaultValue: false, description:
-        'Run additional distribution tests on RowVectors (takes 5x as long)',
-        name: 'withRowVector')
+        string(defaultValue: '', name: 'cmdstan_pr', description: 'PR to test CmdStan upstream against e.g. PR-630')
+        string(defaultValue: '', name: 'stan_pr', description: 'PR to test Stan upstream against e.g. PR-630')
+        booleanParam(defaultValue: false, name: 'withRowVector', description: 'Run additional distribution tests on RowVectors (takes 5x as long)')
+        booleanParam(defaultValue: false, name: 'gpu_async', description: 'Run the OpenCL tests on both a sync (AMD) GPU and an async (NVIDIA) one.')
     }
     options {
         skipDefaultCheckout()
@@ -157,6 +166,14 @@ pipeline {
 
                     def paths = ['stan', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format'].join(" ")
                     skipRemainingStages = utils.verifyChanges(paths)
+
+                    if(!utils.verifyChanges(["stan/math/opencl", "test/unit/math/opencl"].join(" ")) || params.gpu_async){
+                        runGpuAsync = true
+                        openClGpuLabel = "gpu-no-async"
+                    }
+                    else{
+                        runGpuAsync = false
+                    }
                 }
             }
         }
@@ -187,15 +204,15 @@ pipeline {
                     if (isUnix()) {
                         deleteDir()
                         unstash 'MathSetup'
-                        runTests("test/unit/math/prim")
-                        runTests("test/unit/math/rev")
-                        runTests("test/unit")
+                        runTests("test/unit/math/prim", true)
+                        runTests("test/unit/math/rev", true)
+                        runTests("test/unit", true)
                     } else {
                         deleteDirWin()
                         unstash 'MathSetup'
-                        runTestsWin("test/unit/math/prim")
-                        runTestsWin("test/unit/math/rev")
-                        runTestsWin("test/unit")
+                        runTestsWin("test/unit/math/prim", true)
+                        runTestsWin("test/unit/math/rev", true)
+                        runTestsWin("test/unit", true)
                     }
                 }
             }
@@ -222,7 +239,32 @@ pipeline {
                     post { always { retry(3) { deleteDir() } } }
                 }
                 stage('OpenCL tests') {
-                    agent { label "gpu" }
+                    agent { label openClGpuLabel }
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        sh "echo CXX=${env.CXX} -Werror > make/local"
+                        sh "echo STAN_OPENCL=true>> make/local"
+                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
+                        sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
+                        sh "make -j${env.PARALLEL} test-headers"
+                        runTests("test/unit/math/opencl")
+                        runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test")
+                        runTests("test/unit/math/prim/fun/mdivide_left_tri_test")
+                        runTests("test/unit/math/prim/fun/mdivide_right_tri_test")
+                        runTests("test/unit/math/prim/fun/multiply_test")
+                        runTests("test/unit/math/rev/fun/mdivide_left_tri_test")
+                        runTests("test/unit/math/rev/fun/multiply_test")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('OpenCL tests async') {
+                    agent { label "gpu-async" }
+                    when {
+                        expression {
+                            runGpuAsync
+                        }
+                    }
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
@@ -303,7 +345,7 @@ pipeline {
                         unstash 'MathSetup'
                         bat "mingw32-make.exe -f make/standalone math-libs"
                         bat "mingw32-make -j${env.PARALLEL} test-headers"
-                        runTestsWin("test/unit", false)
+                        runTestsWin("test/unit", false, true)
                     }
                 }
             }

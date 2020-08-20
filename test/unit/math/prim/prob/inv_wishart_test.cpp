@@ -4,12 +4,11 @@
 #include <boost/math/distributions.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-
-using stan::math::inv_wishart_log;
-
 TEST(ProbDistributionsInvWishart, LowerTriangular) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+
+  using stan::math::inv_wishart_log;
   // Tests if only of the lower triangular portion of
   // outcome and scale matrices are taken
   using Eigen::MatrixXd;
@@ -44,6 +43,10 @@ TEST(ProbDistributionsInvWishart, LowerTriangular) {
             inv_wishart_log(Y_sym, dof, Sigma_sym));
 }
 TEST(ProbDistributionsInvWishart, InvWishart) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+
+  using stan::math::inv_wishart_log;
   Matrix<double, Dynamic, Dynamic> Y(3, 3);
   Y << 12.147233, -11.9036079, 1.0910458, -11.903608, 16.7585782, 0.8530256,
       1.091046, 0.8530256, 2.5786609;
@@ -58,6 +61,10 @@ TEST(ProbDistributionsInvWishart, InvWishart) {
   EXPECT_NEAR(log_p, stan::math::inv_wishart_log(Y, dof, Sigma), 0.01);
 }
 TEST(ProbDistributionsInvWishart, Propto) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+
+  using stan::math::inv_wishart_log;
   Matrix<double, Dynamic, Dynamic> Y(3, 3);
   Y << 12.147233, -11.9036079, 1.0910458, -11.903608, 16.7585782, 0.8530256,
       1.091046, 0.8530256, 2.5786609;
@@ -71,6 +78,10 @@ TEST(ProbDistributionsInvWishart, Propto) {
   EXPECT_FLOAT_EQ(0.0, stan::math::inv_wishart_log<true>(Y, dof, Sigma));
 }
 TEST(ProbDistributionsInvWishart, Error) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+
+  using stan::math::inv_wishart_log;
   Matrix<double, Dynamic, Dynamic> Sigma;
   Matrix<double, Dynamic, Dynamic> Y;
   double nu;

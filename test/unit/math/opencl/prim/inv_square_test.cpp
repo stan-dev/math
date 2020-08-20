@@ -3,11 +3,8 @@
 #include <stan/math/prim/fun/inv_square.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(MathMatrixCL, inv_square) {
   stan::math::matrix_d y(1, 4);

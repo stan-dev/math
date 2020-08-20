@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/multiply.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
 #include <stan/math/prim/fun/trace.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/fwd/core.hpp>
 
 namespace stan {
@@ -18,7 +19,8 @@ inline return_type_t<EigMat1, EigMat2> trace_quad_form(const EigMat1& A,
                                                        const EigMat2& B) {
   check_square("trace_quad_form", "A", A);
   check_multiplicable("trace_quad_form", "A", A, "B", B);
-  return B.cwiseProduct(multiply(A, B)).sum();
+  const auto& B_ref = to_ref(B);
+  return B_ref.cwiseProduct(multiply(A, B_ref)).sum();
 }
 
 }  // namespace math

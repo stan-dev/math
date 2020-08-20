@@ -33,6 +33,7 @@ namespace math {
 struct kernel_parts {
   std::string includes;  // any function definitions - as if they were includet
                          // at the start of kernel source
+  std::string declarations;    // declarations of any local variables
   std::string initialization;  // the code for initializations done by all
                                // threads, even if they have no work
   std::string body_prefix;     // the code that should be placed at the start of
@@ -43,14 +44,18 @@ struct kernel_parts {
   std::string args;       // kernel arguments
 
   kernel_parts operator+(const kernel_parts& other) {
-    return {
-        includes + other.includes,       initialization + other.initialization,
-        body_prefix + other.body_prefix, body + other.body,
-        reduction + other.reduction,     args + other.args};
+    return {includes + other.includes,
+            declarations += other.declarations,
+            initialization + other.initialization,
+            body_prefix + other.body_prefix,
+            body + other.body,
+            reduction + other.reduction,
+            args + other.args};
   }
 
   kernel_parts operator+=(const kernel_parts& other) {
     includes += other.includes;
+    declarations += other.declarations;
     initialization += other.initialization;
     body_prefix += other.body_prefix;
     body += other.body;
@@ -309,6 +314,8 @@ class operation_cl : public operation_cl_base {
    * @return number of rows
    */
   inline int rows() const {
+    static_assert(
+        N > 0, "default rows does not work on expressions with no arguments!");
     return index_apply<N>([&](auto... Is) {
       // assuming all non-dynamic sizes match
       return std::max({this->get_arg<Is>().rows()...});
@@ -321,6 +328,8 @@ class operation_cl : public operation_cl_base {
    * @return number of columns
    */
   inline int cols() const {
+    static_assert(
+        N > 0, "default cols does not work on expressions with no arguments!");
     return index_apply<N>([&](auto... Is) {
       // assuming all non-dynamic sizes match
       return std::max({this->get_arg<Is>().cols()...});
@@ -347,6 +356,9 @@ class operation_cl : public operation_cl_base {
    * @return pair of indices - bottom and top diagonal
    */
   inline std::pair<int, int> extreme_diagonals() const {
+    static_assert(N > 0,
+                  "default extreme_diagonals does not work on expressions with "
+                  "no arguments!");
     return index_apply<N>([&](auto... Is) {
       auto arg_diags
           = std::make_tuple(this->get_arg<Is>().extreme_diagonals()...);

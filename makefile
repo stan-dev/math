@@ -107,6 +107,7 @@ clean:
 	@echo '  removing generated test files'
 	@$(RM) $(wildcard test/prob/generate_tests$(EXE))
 	@$(RM) $(call findfiles,test/prob,*_generated_*_test.cpp)
+	@$(RM) $(TEST_STANC)
 
 clean-doxygen:
 	@echo '  removing doxygen'

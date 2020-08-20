@@ -41,7 +41,7 @@ class sho_functor {
       const std::vector<T2>& theta,   // parameters
       const std::vector<double>& x,   // double data
       const std::vector<int>& x_int,  // integer data
-      std::ostream* msgs) const {
+      std::ostream* msgs) const {     // error stream
     if (y_in.size() != 2)
       throw std::domain_error("Functor called with inconsistent state");
 

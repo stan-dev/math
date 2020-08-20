@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/trace.hpp>
 #include <stan/math/prim/fun/multiply.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
 #include <exception>
 
@@ -37,7 +38,8 @@ inline auto trace_gen_quad_form(const TD &D, const TA &A, const TB &B) {
   check_square("trace_gen_quad_form", "D", D);
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
   check_multiplicable("trace_gen_quad_form", "B", B, "D", D);
-  return multiply(B, D.transpose()).cwiseProduct(multiply(A, B)).sum();
+  const auto &B_ref = to_ref(B);
+  return multiply(B_ref, D.transpose()).cwiseProduct(multiply(A, B_ref)).sum();
 }
 
 /**
@@ -65,7 +67,8 @@ inline double trace_gen_quad_form(const TD &D, const TA &A, const TB &B) {
   check_square("trace_gen_quad_form", "D", D);
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
   check_multiplicable("trace_gen_quad_form", "B", B, "D", D);
-  return (B * D.transpose()).cwiseProduct(A * B).sum();
+  const auto &B_ref = to_ref(B);
+  return (B_ref * D.transpose()).cwiseProduct(A * B_ref).sum();
 }
 
 }  // namespace math
