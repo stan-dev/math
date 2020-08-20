@@ -1,3 +1,9 @@
+# used to create breaks in error messages
+define n
+
+
+endef
+
 ###############################################################################
 # Library locations
 
@@ -131,14 +137,20 @@ ifeq (Linux, $(OS))
   SHELL = /usr/bin/env bash
 endif
 
-# escaping in case make is installed in a folder with spaces
-# and if the folder includes brackets. 
-# Example: "C:/Program Files(x86)/Rtools/bin/mingw32-make"
+# If brackets or spaces are found in MAKE on Windows
+# we error, as those characters cause issues when building.
+ifeq (Windows_NT, $(OS))
 MAKE_ESCAPED := ${subst ),,${subst (,,$(lastword $(MAKE))}}
+else
+MAKE_ESCAPED := $(MAKE)
+endif
 
 $(TBB_BIN)/tbb-make-check:
+ifneq ($(MAKE),$(MAKE_ESCAPED))
+$(error '$nError:$n$nThe toolchain is installed in a path with spaces or brackets.$nPlease reinstall the toolchain.$n$n')
+else
 	@if [[ $(OS) == Windows_NT ]]; then \
-		if ! [[ $(MAKE_ESCAPED) =~ mingw32 ]]; then \
+		if ! [[ $(MAKE) =~ mingw32 ]]; then \
 			echo "ERROR: Please use mingw32-make on Windows to build the Intel TBB library."; \
 			echo "This is packaged with RTools, for example."; \
 			exit 1; \
@@ -146,6 +158,7 @@ $(TBB_BIN)/tbb-make-check:
 	fi
 	@mkdir -p $(TBB_BIN)
 	touch $(TBB_BIN)/tbb-make-check
+endif
 
 $(TBB_BIN)/tbb.def: $(TBB_BIN)/tbb-make-check $(TBB_BIN)/tbbmalloc.def
 	@mkdir -p $(TBB_BIN)
