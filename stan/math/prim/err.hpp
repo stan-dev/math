@@ -13,6 +13,7 @@
 #include <stan/math/prim/err/check_corr_matrix.hpp>
 #include <stan/math/prim/err/check_cov_matrix.hpp>
 #include <stan/math/prim/err/check_finite.hpp>
+#include <stan/math/prim/err/check_finite_screen.hpp>
 #include <stan/math/prim/err/check_flag_sundials.hpp>
 #include <stan/math/prim/err/check_greater.hpp>
 #include <stan/math/prim/err/check_greater_or_equal.hpp>
@@ -27,6 +28,7 @@
 #include <stan/math/prim/err/check_nonnegative.hpp>
 #include <stan/math/prim/err/check_nonzero_size.hpp>
 #include <stan/math/prim/err/check_not_nan.hpp>
+#include <stan/math/prim/err/check_not_nan_screen.hpp>
 #include <stan/math/prim/err/check_ordered.hpp>
 #include <stan/math/prim/err/check_sorted.hpp>
 #include <stan/math/prim/err/check_pos_definite.hpp>
