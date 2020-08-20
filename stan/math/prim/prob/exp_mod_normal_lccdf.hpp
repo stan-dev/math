@@ -91,7 +91,8 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lccdf(
   const auto& exp_term
       = to_ref_if<!is_constant_all<T_y, T_loc, T_scale, T_inv_scale>::value>(
           exp(0.5 * v2 - lambda_val * diff));
-  const auto& ccdf_n = to_ref(0.5 - 0.5 * erf(scaled_diff) + exp_term * erf_calc);
+  const auto& ccdf_n
+      = to_ref(0.5 - 0.5 * erf(scaled_diff) + exp_term * erf_calc);
 
   T_partials_return ccdf_log = sum(log(ccdf_n));
 

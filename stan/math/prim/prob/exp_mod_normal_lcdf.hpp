@@ -107,7 +107,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
           = to_ref_if<need_deriv_refs>(lambda_val * exp_term * erf_calc);
       const auto& deriv_2 = to_ref_if<need_deriv_refs>(
           INV_SQRT_TWO_PI * exp_term * exp_term_2 * inv_sigma);
-      //another case where we need a variable instead of a rvalue
+      // another case where we need a variable instead of a rvalue
       const auto& exp_sq_scaled_diff = exp(-square(scaled_diff));
       const auto& deriv_3 = to_ref_if<need_deriv_refs>(
           INV_SQRT_TWO_PI * exp_sq_scaled_diff * inv_sigma);
@@ -123,32 +123,48 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
         }
       }
       if (!is_constant_all<T_scale>::value) {
-//        std::cout << "inv_sigma: " << std::endl << inv_sigma << std::endl << std::endl;
-//        std::cout << "exp_term: " << std::endl << exp_term << std::endl << std::endl;
-//        std::cout << "exp_term_2: " << std::endl << exp_term_2 << std::endl << std::endl;
-//        std::cout << "scaled_diff_diff: " << std::endl << scaled_diff_diff << std::endl << std::endl;
-//        std::cout << "scaled_diff: " << std::endl << scaled_diff << std::endl << std::endl;
-//        std::cout << "deriv_1: " << std::endl << deriv_1 << std::endl << std::endl;
-//        std::cout << "deriv_2: " << std::endl << deriv_2 << std::endl << std::endl;
-//        std::cout << "exp_sq_scaled_diff: " << std::endl << exp_sq_scaled_diff << std::endl << std::endl;
-//        std::cout << "deriv_3: " << std::endl << deriv_3 << std::endl << std::endl;
-//        std::cout << "v: " << std::endl << v << std::endl << std::endl;
-//        std::cout << "scaled_diff: " << std::endl << scaled_diff << std::endl << std::endl;
-//        std::cout << "cdf_n: " << std::endl << cdf_n << std::endl << std::endl;
-//        std::cout << "edge3_.partials_: " << std::endl << (-((deriv_1 - deriv_2) * v
-//                                                            + (deriv_3 - deriv_2) * scaled_diff * SQRT_TWO)
-//                                                          / cdf_n) << std::endl << std::endl;
+        //        std::cout << "inv_sigma: " << std::endl << inv_sigma <<
+        //        std::endl << std::endl; std::cout << "exp_term: " << std::endl
+        //        << exp_term << std::endl << std::endl; std::cout <<
+        //        "exp_term_2: " << std::endl << exp_term_2 << std::endl <<
+        //        std::endl; std::cout << "scaled_diff_diff: " << std::endl <<
+        //        scaled_diff_diff << std::endl << std::endl; std::cout <<
+        //        "scaled_diff: " << std::endl << scaled_diff << std::endl <<
+        //        std::endl; std::cout << "deriv_1: " << std::endl << deriv_1 <<
+        //        std::endl << std::endl; std::cout << "deriv_2: " << std::endl
+        //        << deriv_2 << std::endl << std::endl; std::cout <<
+        //        "exp_sq_scaled_diff: " << std::endl << exp_sq_scaled_diff <<
+        //        std::endl << std::endl; std::cout << "deriv_3: " << std::endl
+        //        << deriv_3 << std::endl << std::endl; std::cout << "v: " <<
+        //        std::endl << v << std::endl << std::endl; std::cout <<
+        //        "scaled_diff: " << std::endl << scaled_diff << std::endl <<
+        //        std::endl; std::cout << "cdf_n: " << std::endl << cdf_n <<
+        //        std::endl << std::endl; std::cout << "edge3_.partials_: " <<
+        //        std::endl << (-((deriv_1 - deriv_2) * v
+        //                                                            + (deriv_3
+        //                                                            - deriv_2)
+        //                                                            *
+        //                                                            scaled_diff
+        //                                                            *
+        //                                                            SQRT_TWO)
+        //                                                          / cdf_n) <<
+        //                                                          std::endl <<
+        //                                                          std::endl;
         ops_partials.edge3_.partials_
             = -((deriv_1 - deriv_2) * v
                 + (deriv_3 - deriv_2) * scaled_diff * SQRT_TWO)
               / cdf_n;
-//        std::cout << "edge3_.partials_: " << std::endl << ops_partials.edge3_.partials_[0] << std::endl << std::endl;
-//        std::cout << "inv_sigma: " << std::endl << inv_sigma << std::endl << std::endl;
-//        std::cout << "exp_term: " << std::endl << exp_term << std::endl << std::endl;
-//        std::cout << "exp_term_2: " << std::endl << exp_term_2 << std::endl << std::endl;
-//        std::cout << "scaled_diff_diff: " << std::endl << scaled_diff_diff << std::endl << std::endl;
-//        std::cout << "scaled_diff: " << std::endl << scaled_diff << std::endl << std::endl;
-//        std::cout << "#############################################################################################################################"<<std::endl;
+        //        std::cout << "edge3_.partials_: " << std::endl <<
+        //        ops_partials.edge3_.partials_[0] << std::endl << std::endl;
+        //        std::cout << "inv_sigma: " << std::endl << inv_sigma <<
+        //        std::endl << std::endl; std::cout << "exp_term: " << std::endl
+        //        << exp_term << std::endl << std::endl; std::cout <<
+        //        "exp_term_2: " << std::endl << exp_term_2 << std::endl <<
+        //        std::endl; std::cout << "scaled_diff_diff: " << std::endl <<
+        //        scaled_diff_diff << std::endl << std::endl; std::cout <<
+        //        "scaled_diff: " << std::endl << scaled_diff << std::endl <<
+        //        std::endl; std::cout <<
+        //        "#############################################################################################################################"<<std::endl;
       }
     }
     if (!is_constant_all<T_inv_scale>::value) {
@@ -160,67 +176,70 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
     }
   }
 
-//  operands_and_partials<T_y, T_loc, T_scale, T_inv_scale> ops_partials(
-//      y, mu, sigma, lambda);
+  //  operands_and_partials<T_y, T_loc, T_scale, T_inv_scale> ops_partials(
+  //      y, mu, sigma, lambda);
 
-//  scalar_seq_view<T_y> y_vec(y);
-//  scalar_seq_view<T_loc> mu_vec(mu);
-//  scalar_seq_view<T_scale> sigma_vec(sigma);
-//  scalar_seq_view<T_inv_scale> lambda_vec(lambda);
-//  size_t N = max_size(y, mu, sigma, lambda);
+  //  scalar_seq_view<T_y> y_vec(y);
+  //  scalar_seq_view<T_loc> mu_vec(mu);
+  //  scalar_seq_view<T_scale> sigma_vec(sigma);
+  //  scalar_seq_view<T_inv_scale> lambda_vec(lambda);
+  //  size_t N = max_size(y, mu, sigma, lambda);
 
-//  for (size_t n = 0, size_y = stan::math::size(y); n < size_y; n++) {
-//    if (is_inf(y_vec[n])) {
-//      return ops_partials.build(y_vec[n] < 0 ? negative_infinity() : 0);
-//    }
-//  }
+  //  for (size_t n = 0, size_y = stan::math::size(y); n < size_y; n++) {
+  //    if (is_inf(y_vec[n])) {
+  //      return ops_partials.build(y_vec[n] < 0 ? negative_infinity() : 0);
+  //    }
+  //  }
 
-//  for (size_t n = 0; n < N; n++) {
-//    const T_partials_return y_dbl = value_of(y_vec[n]);
-//    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-//    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
-//    const T_partials_return lambda_dbl = value_of(lambda_vec[n]);
-//    const T_partials_return inv_sigma = inv(sigma_dbl);
-//    const T_partials_return diff = y_dbl - mu_dbl;
-//    const T_partials_return u = lambda_dbl * diff;
-//    const T_partials_return v = lambda_dbl * sigma_dbl;
-//    const T_partials_return scaled_diff = diff * INV_SQRT_TWO * inv_sigma;
-//    const T_partials_return scaled_diff_diff = scaled_diff - v * INV_SQRT_TWO;
-//    const T_partials_return erf_calc = 0.5 * (1 + erf(scaled_diff_diff));
-//    const T_partials_return exp_term = exp(0.5 * square(v) - u);
-//    const T_partials_return exp_term_2 = exp(-square(scaled_diff_diff));
+  //  for (size_t n = 0; n < N; n++) {
+  //    const T_partials_return y_dbl = value_of(y_vec[n]);
+  //    const T_partials_return mu_dbl = value_of(mu_vec[n]);
+  //    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
+  //    const T_partials_return lambda_dbl = value_of(lambda_vec[n]);
+  //    const T_partials_return inv_sigma = inv(sigma_dbl);
+  //    const T_partials_return diff = y_dbl - mu_dbl;
+  //    const T_partials_return u = lambda_dbl * diff;
+  //    const T_partials_return v = lambda_dbl * sigma_dbl;
+  //    const T_partials_return scaled_diff = diff * INV_SQRT_TWO * inv_sigma;
+  //    const T_partials_return scaled_diff_diff = scaled_diff - v *
+  //    INV_SQRT_TWO; const T_partials_return erf_calc = 0.5 * (1 +
+  //    erf(scaled_diff_diff)); const T_partials_return exp_term = exp(0.5 *
+  //    square(v) - u); const T_partials_return exp_term_2 =
+  //    exp(-square(scaled_diff_diff));
 
-//    const T_partials_return deriv_1 = lambda_dbl * exp_term * erf_calc;
-//    const T_partials_return deriv_2
-//        = INV_SQRT_TWO_PI * exp_term * exp_term_2 * inv_sigma;
-//    const T_partials_return deriv_3
-//        = INV_SQRT_TWO_PI * exp(-square(scaled_diff)) * inv_sigma;
+  //    const T_partials_return deriv_1 = lambda_dbl * exp_term * erf_calc;
+  //    const T_partials_return deriv_2
+  //        = INV_SQRT_TWO_PI * exp_term * exp_term_2 * inv_sigma;
+  //    const T_partials_return deriv_3
+  //        = INV_SQRT_TWO_PI * exp(-square(scaled_diff)) * inv_sigma;
 
-//    const T_partials_return cdf_n
-//        = 0.5 + 0.5 * erf(scaled_diff) - exp_term * erf_calc;
+  //    const T_partials_return cdf_n
+  //        = 0.5 + 0.5 * erf(scaled_diff) - exp_term * erf_calc;
 
-//    cdf_log += log(cdf_n);
+  //    cdf_log += log(cdf_n);
 
-//    if (!is_constant_all<T_y>::value) {
-//      ops_partials.edge1_.partials_[n] += (deriv_1 - deriv_2 + deriv_3) / cdf_n;
-//    }
-//    if (!is_constant_all<T_loc>::value) {
-//      ops_partials.edge2_.partials_[n] -= (deriv_1 - deriv_2 + deriv_3) / cdf_n;
-//    }
-//    if (!is_constant_all<T_scale>::value) {
-//      ops_partials.edge3_.partials_[n]
-//          -= ((deriv_1 - deriv_2) * v
-//              + (deriv_3 - deriv_2) * scaled_diff * SQRT_TWO)
-//             / cdf_n;
-//    }
-//    if (!is_constant_all<T_inv_scale>::value) {
-//      ops_partials.edge4_.partials_[n]
-//          += exp_term
-//             * (INV_SQRT_TWO_PI * sigma_dbl * exp_term_2
-//                - (v * sigma_dbl - diff) * erf_calc)
-//             / cdf_n;
-//    }
-//  }
+  //    if (!is_constant_all<T_y>::value) {
+  //      ops_partials.edge1_.partials_[n] += (deriv_1 - deriv_2 + deriv_3) /
+  //      cdf_n;
+  //    }
+  //    if (!is_constant_all<T_loc>::value) {
+  //      ops_partials.edge2_.partials_[n] -= (deriv_1 - deriv_2 + deriv_3) /
+  //      cdf_n;
+  //    }
+  //    if (!is_constant_all<T_scale>::value) {
+  //      ops_partials.edge3_.partials_[n]
+  //          -= ((deriv_1 - deriv_2) * v
+  //              + (deriv_3 - deriv_2) * scaled_diff * SQRT_TWO)
+  //             / cdf_n;
+  //    }
+  //    if (!is_constant_all<T_inv_scale>::value) {
+  //      ops_partials.edge4_.partials_[n]
+  //          += exp_term
+  //             * (INV_SQRT_TWO_PI * sigma_dbl * exp_term_2
+  //                - (v * sigma_dbl - diff) * erf_calc)
+  //             / cdf_n;
+  //    }
+  //  }
   return ops_partials.build(cdf_log);
 }
 
