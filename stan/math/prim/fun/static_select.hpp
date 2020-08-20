@@ -7,7 +7,8 @@ namespace stan {
 namespace math {
 
 /**
- * If the condition is true returns the first value. Otherwise returns the second value.
+ * If the condition is true returns the first value. Otherwise returns the
+ * second value.
  * @tparam Condition the condition
  * @tparam T1 type of the first value
  * @tparam T2 type of the second value
