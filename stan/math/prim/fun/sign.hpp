@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_FUN_SIGN_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/functor/apply_vector_unary.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 
 namespace stan {
 namespace math {
