@@ -1,4 +1,5 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/math/prim/fun/binary_scalar_tester.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <limits>
@@ -41,4 +42,17 @@ TEST(MathFunctions, hypotNaN) {
   EXPECT_TRUE(std::isnan(stan::math::hypot(nan, 3.0)));
 
   EXPECT_TRUE(std::isnan(stan::math::hypot(nan, nan)));
+}
+
+TEST(MathFunctions, hypot_vec) {
+  auto f = [](const auto& x1, const auto& x2) {
+    using stan::math::hypot;
+    return hypot(x1, x2);
+  };
+
+  Eigen::VectorXd in1(3);
+  in1 << 1.8, 3.24, 1.8;
+  Eigen::VectorXd in2(3);
+  in2 << -1.3, 0.7, 2.8;
+  stan::test::binary_scalar_tester(f, in1, in2);
 }

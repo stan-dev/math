@@ -3,7 +3,6 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/rev/matrix_cl.hpp>
 
 namespace stan {
 namespace math {

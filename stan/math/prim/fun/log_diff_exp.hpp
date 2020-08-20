@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/log1m_exp.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/functor/apply_scalar_binary.hpp>
 
 namespace stan {
 namespace math {
@@ -46,12 +47,28 @@ namespace math {
  * @param x first argument
  * @param y second argument
  */
-template <typename T1, typename T2>
+template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
 inline return_type_t<T1, T2> log_diff_exp(const T1 x, const T2 y) {
   if (x <= y) {
     return (x < INFTY && x == y) ? NEGATIVE_INFTY : NOT_A_NUMBER;
   }
   return x + log1m_exp(y - x);
+}
+
+/**
+ * Enables the vectorised application of the log_diff_exp function,
+ * when the first and/or second arguments are containers.
+ *
+ * @tparam T1 type of first input
+ * @tparam T2 type of second input
+ * @param a First input
+ * @param b Second input
+ * @return log_diff_exp function applied to the two inputs.
+ */
+template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
+inline auto log_diff_exp(const T1& a, const T2& b) {
+  return apply_scalar_binary(
+      a, b, [&](const auto& c, const auto& d) { return log_diff_exp(c, d); });
 }
 
 }  // namespace math

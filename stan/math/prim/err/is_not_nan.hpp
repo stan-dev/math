@@ -1,11 +1,8 @@
 #ifndef STAN_MATH_PRIM_ERR_IS_NOT_NAN_HPP
 #define STAN_MATH_PRIM_ERR_IS_NOT_NAN_HPP
 
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/get.hpp>
-#include <stan/math/prim/fun/is_nan.hpp>
-#include <stan/math/prim/fun/size.hpp>
-#include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/err/elementwise_check.hpp>
+#include <stan/math/prim/err/check_not_nan_screen.hpp>
 
 namespace stan {
 namespace math {
@@ -15,17 +12,17 @@ namespace math {
  * This function is vectorized and will check each element of
  * <code>y</code>. If no element is <code>NaN</code>, this
  * function will return <code>true</code>.
- * @tparam T_y Type of y
- * @param y Variable to check
+ * @tparam T_y type of y
+ * @param y variable to check
  * @return <code>true</code> if no element of y is NaN
  */
 template <typename T_y>
 inline bool is_not_nan(const T_y& y) {
-  for (size_t n = 0; n < stan::math::size(y); ++n) {
-    if (is_nan(value_of_rec(stan::get(y, n)))) {
-      return false;
-    }
+  if (check_not_nan_screen(y)) {
+    auto is_good = [](const auto& y) { return !std::isnan(y); };
+    return elementwise_is(is_good, y);
   }
+
   return true;
 }
 

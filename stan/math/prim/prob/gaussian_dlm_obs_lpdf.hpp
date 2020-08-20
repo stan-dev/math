@@ -213,6 +213,7 @@ gaussian_dlm_obs_lpdf(
   using T_lp
       = return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>;
   using std::log;
+  using std::pow;
 
   int r = y.rows();  // number of variables
   int T = y.cols();  // number of observations

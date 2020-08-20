@@ -8,6 +8,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/cholesky_decompose.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 
@@ -295,14 +296,15 @@ class cholesky_opencl : public vari {
   /**
    * Symbolic adjoint calculation for Cholesky factor A
    *
-   * @param L Cholesky factor
+   * @param L_val value of Cholesky factor
+   * @param L_adj adjoint of Cholesky factor
    */
-  inline void symbolic_rev(matrix_cl<var>& L) {
-    L.adj() = transpose(L.val()) * L.adj();
-    L.adj().triangular_transpose<TriangularMapCL::LowerToUpper>();
-    L.val() = transpose(tri_inverse(L.val()));
-    L.adj() = L.val() * transpose(L.val() * L.adj());
-    L.adj().triangular_transpose<TriangularMapCL::LowerToUpper>();
+  inline void symbolic_rev(matrix_cl<double>& L_val, matrix_cl<double>& L_adj) {
+    L_adj = transpose(L_val) * L_adj;
+    L_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
+    L_val = transpose(tri_inverse(L_val));
+    L_adj = L_val * transpose(L_val * L_adj);
+    L_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
   }
 
   /**
@@ -315,8 +317,12 @@ class cholesky_opencl : public vari {
    */
   virtual void chain() {
     const int packed_size = M_ * (M_ + 1) / 2;
-    std::vector<double> L_adj_cpu(packed_size);
-    matrix_cl<var> L = packed_copy<matrix_cl_view::Lower>(vari_ref_L_, M_);
+    Eigen::Map<Eigen::Matrix<vari*, Eigen::Dynamic, 1>> L_cpu(
+        vari_ref_L_, M_ * (M_ + 1) / 2);
+    Eigen::VectorXd L_val_cpu = L_cpu.val();
+    Eigen::VectorXd L_adj_cpu = L_cpu.adj();
+    matrix_cl<double> L_val = packed_copy<matrix_cl_view::Lower>(L_val_cpu, M_);
+    matrix_cl<double> L_adj = packed_copy<matrix_cl_view::Lower>(L_adj_cpu, M_);
     int block_size
         = M_ / opencl_context.tuning_opts().cholesky_rev_block_partition;
     block_size = std::max(block_size, 8);
@@ -330,34 +336,30 @@ class cholesky_opencl : public vari {
       const int k_j_ind = k - j;
       const int m_k_ind = M_ - k;
 
-      matrix_cl<var> R(k_j_ind, j, matrix_cl_view::Lower);
-      matrix_cl<var> D(k_j_ind, k_j_ind, matrix_cl_view::Lower);
-      matrix_cl<var> B(m_k_ind, j);
-      matrix_cl<var> C(m_k_ind, k_j_ind, matrix_cl_view::Lower);
+      auto&& R_val = block(L_val, j, 0, k_j_ind, j);
+      auto&& R_adj = block(L_adj, j, 0, k_j_ind, j);
+      matrix_cl<double> D_val = block(L_val, j, j, k_j_ind, k_j_ind);
+      matrix_cl<double> D_adj = block(L_adj, j, j, k_j_ind, k_j_ind);
+      auto&& B_val = block(L_val, k, 0, m_k_ind, j);
+      auto&& B_adj = block(L_adj, k, 0, m_k_ind, j);
+      auto&& C_val = block(L_val, k, j, m_k_ind, k_j_ind);
+      auto&& C_adj = block(L_adj, k, j, m_k_ind, k_j_ind);
 
-      R.sub_block(L, j, 0, 0, 0, k_j_ind, j);
-      D.sub_block(L, j, j, 0, 0, k_j_ind, k_j_ind);
-      B.sub_block(L, k, 0, 0, 0, m_k_ind, j);
-      C.sub_block(L, k, j, 0, 0, m_k_ind, k_j_ind);
+      C_adj = C_adj * tri_inverse(D_val);
+      B_adj = B_adj - C_adj * R_val;
+      D_adj = D_adj - transpose(C_adj) * C_val;
 
-      C.adj() = C.adj() * tri_inverse(D.val());
-      B.adj() = B.adj() - C.adj() * R.val();
-      D.adj() = D.adj() - transpose(C.adj()) * C.val();
+      symbolic_rev(D_val, D_adj);
 
-      symbolic_rev(D);
+      R_adj = R_adj - transpose(C_adj) * B_val - D_adj * R_val;
+      D_adj = diagonal_multiply(D_adj, 0.5);
 
-      R.adj() = R.adj() - transpose(C.adj()) * B.val() - D.adj() * R.val();
-      D.adj() = diagonal_multiply(D.adj(), 0.5);
-
-      L.adj().sub_block(R.adj(), 0, 0, j, 0, k_j_ind, j);
-      L.adj().sub_block(D.adj(), 0, 0, j, j, k_j_ind, k_j_ind);
-      L.adj().sub_block(B.adj(), 0, 0, k, 0, m_k_ind, j);
-      L.adj().sub_block(C.adj(), 0, 0, k, j, m_k_ind, k_j_ind);
+      block(L_adj, j, j, k_j_ind, k_j_ind) = D_adj;
     }
-    L.view(matrix_cl_view::Lower);
-    L_adj_cpu = packed_copy(L);
+    L_adj.view(matrix_cl_view::Lower);
+    std::vector<double> L_adj_cpu_res = packed_copy(L_adj);
     for (size_type j = 0; j < packed_size; ++j) {
-      vari_ref_A_[j]->adj_ += L_adj_cpu[j];
+      vari_ref_A_[j]->adj_ += L_adj_cpu_res[j];
     }
   }
 };
@@ -377,8 +379,9 @@ class cholesky_opencl : public vari {
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
 inline Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime>
 cholesky_decompose(const T& A) {
+  const auto& A_ref = to_ref(A);
   Eigen::Matrix<double, T::RowsAtCompileTime, T::ColsAtCompileTime> L_A(
-      value_of_rec(A));
+      value_of_rec(A_ref));
   check_not_nan("cholesky_decompose", "A", L_A);
 #ifdef STAN_OPENCL
   L_A = cholesky_decompose(L_A);
@@ -394,7 +397,7 @@ cholesky_decompose(const T& A) {
   Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime> L(A.rows(),
                                                                    A.cols());
   if (L_A.rows() <= 35) {
-    cholesky_scalar* baseVari = new cholesky_scalar(A, L_A);
+    cholesky_scalar* baseVari = new cholesky_scalar(A_ref, L_A);
     size_t accum = 0;
     size_t accum_i = accum;
     for (size_type j = 0; j < L.cols(); ++j) {
@@ -413,14 +416,14 @@ cholesky_decompose(const T& A) {
 #ifdef STAN_OPENCL
     if (L_A.rows()
         > opencl_context.tuning_opts().cholesky_size_worth_transfer) {
-      cholesky_opencl* baseVari = new cholesky_opencl(A, L_A);
+      cholesky_opencl* baseVari = new cholesky_opencl(A_ref, L_A);
       internal::set_lower_tri_coeff_ref(L, baseVari->vari_ref_L_);
     } else {
-      cholesky_block* baseVari = new cholesky_block(A, L_A);
+      cholesky_block* baseVari = new cholesky_block(A_ref, L_A);
       internal::set_lower_tri_coeff_ref(L, baseVari->vari_ref_L_);
     }
 #else
-    cholesky_block* baseVari = new cholesky_block(A, L_A);
+    cholesky_block* baseVari = new cholesky_block(A_ref, L_A);
     internal::set_lower_tri_coeff_ref(L, baseVari->vari_ref_L_);
 #endif
   }
