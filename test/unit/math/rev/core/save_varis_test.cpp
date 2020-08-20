@@ -344,7 +344,7 @@ TEST(AgradRev_save_varis, sum) {
 
   var arg10(new vari(5.0));
   arg10.vi_->adj_ = 1.0;
-  std::vector<var> arg11(5, new vari(5.0, 1.0));
+  std::vector<var> arg11(5, new vari(5.0, true));
   for (size_t i = 0; i < arg11.size(); ++i)
     arg11[i].vi_->adj_ = 1.0;
   Eigen::Matrix<var, Eigen::Dynamic, 1> arg12(3);
