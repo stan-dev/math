@@ -149,7 +149,7 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   if (need_mu_derivative_sum) {
     mu_derivative_sum = sum(from_matrix_cl(mu_derivative_sum_cl));
   }
-  if (!is_constant_all<T_y>::value) {
+  if (!is_constant<T_y>::value) {
     if (is_y_vector) {
       ops_partials.edge1_.partials_ = -mu_derivative_cl;
     } else {
@@ -158,11 +158,11 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
           = -mu_derivative_sum;
     }
   }
-  if (!is_constant_all<T_x>::value) {
+  if (!is_constant<T_x>::value) {
     ops_partials.edge2_.partials_
         = transpose(beta_val * transpose(mu_derivative_cl));
   }
-  if (!is_constant_all<T_alpha>::value) {
+  if (!is_constant<T_alpha>::value) {
     if (is_alpha_vector) {
       ops_partials.edge3_.partials_ = mu_derivative_cl;
     } else {
@@ -171,7 +171,7 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
           = mu_derivative_sum;
     }
   }
-  if (!is_constant_all<T_beta>::value) {
+  if (!is_constant<T_beta>::value) {
     // transposition of a vector can be done without copying
     const matrix_cl<double> mu_derivative_transpose_cl(
         mu_derivative_cl.buffer(), 1, mu_derivative_cl.rows());
@@ -186,7 +186,7 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
           edge4_partials_transpose_cl.write_events().back());
     }
   }
-  if (!is_constant_all<T_scale>::value) {
+  if (!is_constant<T_scale>::value) {
     ops_partials.edge5_.partials_ = sigma_derivative_cl;
   }
 
