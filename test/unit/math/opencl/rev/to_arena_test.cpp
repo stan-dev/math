@@ -1,7 +1,5 @@
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/opencl.hpp>
-#include <stan/math/opencl/rev/to_arena.hpp>
-#include <stan/math/opencl/rev/vari.hpp>
+#include <stan/math/opencl/rev/opencl.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
