@@ -5,11 +5,9 @@
 TEST(mathMixGausInterp, derivs) {
   using stan::math::gaus_interp_vect;
   using stan::math::var;
-  std::vector<double> xs, ys, x2s, y2s, ts, as, bs, y3s, t3s;
-  double xmin, xmax, x, y, x2, y2, t, t0, t1, dd, dder, dder2;
-  double x0, x1, y0, y1, tmp;
+  std::vector<double> xs, ys, ts;
+  double xmin, xmax, x, y, t, t0, t1, dder, dder2, x0, x1;
   int n;
-  unsigned int seed = 1;
 
   // generate function tabulation
   n = 5;
