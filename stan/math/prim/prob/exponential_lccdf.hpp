@@ -46,8 +46,8 @@ return_type_t<T_y, T_inv_scale> exponential_lccdf(const T_y& y,
 
   if (!is_constant_all<T_y>::value) {
     if (is_vector<T_y>::value && !is_vector<T_inv_scale>::value) {
-      ops_partials.edge1_.partials_ = T_partials_array::Constant(
-          size(y), -forward_as<double>(beta_val));
+      ops_partials.edge1_.partials_
+          = T_partials_array::Constant(size(y), -forward_as<double>(beta_val));
     } else {
       ops_partials.edge1_.partials_
           = -forward_as<decltype(to_ref(y_val * beta_val))>(beta_val);
