@@ -9,7 +9,8 @@ namespace stan {
 namespace math {
 
 template <typename T, typename VariType>
-inline var_value<T, VariType>& var_value<T, VariType>::operator-=(const var_value<T, VariType>& b) {
+inline var_value<T, VariType>& var_value<T, VariType>::operator-=(
+    const var_value<T, VariType>& b) {
   vi_ = new internal::subtract_vv_vari(vi_, b.vi_);
   return *this;
 }

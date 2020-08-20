@@ -58,7 +58,6 @@ TEST(AgradRev, sparse_matrix_vari) {
   }
 }
 
-
 TEST(AgradRev, dense_vari_matrix_views) {
   using stan::math::vari_value;
   using eig_mat = Eigen::MatrixXd;
@@ -90,7 +89,6 @@ TEST(AgradRev, dense_vari_matrix_views) {
   auto A_op_coeff = A_v.coeff(3, 3);
   EXPECT_FLOAT_EQ(A_op_par2.val_, A_v.val_.coeff(3, 3));
   EXPECT_MATRIX_FLOAT_EQ(A, A_v.val_);
-
 }
 
 TEST(AgradRev, dense_vari_vector_views) {
@@ -108,7 +106,6 @@ TEST(AgradRev, dense_vari_vector_views) {
   auto A_sub_tail = A_v.tail(3);
   EXPECT_MATRIX_FLOAT_EQ(A_sub_tail.val_, A_v.val_.tail(3));
   EXPECT_MATRIX_FLOAT_EQ(A, A_v.val_);
-
 
   auto A_segment = A_v.segment(3, 5);
   EXPECT_MATRIX_FLOAT_EQ(A_segment.val_, A_v.val_.segment(3, 5));

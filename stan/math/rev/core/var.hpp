@@ -46,8 +46,8 @@ class var_value {
       " floating point types");
 
  public:
-  using value_type = std::decay_t<T>;        // type in vari_value.
-  using vari_type = VariType;  // Type of underlying vari impl.
+  using value_type = std::decay_t<T>;  // type in vari_value.
+  using vari_type = VariType;          // Type of underlying vari impl.
 
   /**
    * Pointer to the implementation of this variable.
@@ -299,9 +299,11 @@ class var_value {
    * @param p Number of rows to return.
    * @param q Number of columns to return.
    */
-  inline const auto block(Eigen::Index i, Eigen::Index j, Eigen::Index p, Eigen::Index q) const {
+  inline const auto block(Eigen::Index i, Eigen::Index j, Eigen::Index p,
+                    Eigen::Index q) const {
     using vari_sub = decltype(vi_->block(1, 1, 3, 3));
-    using var_sub = var_value<const typename vari_sub::PlainObject, const typename vari_sub::vari_type>;
+    using var_sub = var_value<const typename vari_sub::PlainObject,
+                              const typename vari_sub::vari_type>;
     return var_sub(new vari_sub(vi_->block(i, j, p, q)));
   }
 
@@ -311,7 +313,8 @@ class var_value {
    */
   inline const auto head(Eigen::Index i) const {
     using vari_sub = decltype(vi_->head(2));
-    using var_sub = var_value<const typename vari_sub::PlainObject, const typename vari_sub::vari_type>;
+    using var_sub = var_value<const typename vari_sub::PlainObject,
+                              const typename vari_sub::vari_type>;
     return var_sub(new vari_sub(vi_->head(i)));
   }
 
@@ -321,7 +324,8 @@ class var_value {
    */
   inline const auto tail(Eigen::Index n) const {
     using vari_sub = decltype(vi_->tail(2));
-    using var_sub = var_value<const typename vari_sub::PlainObject, const typename vari_sub::vari_type>;
+    using var_sub = var_value<const typename vari_sub::PlainObject,
+                              const typename vari_sub::vari_type>;
     return var_sub(new vari_sub(vi_->tail(n)));
   }
 
@@ -332,7 +336,8 @@ class var_value {
    */
   inline const auto segment(Eigen::Index i, Eigen::Index n) const {
     using vari_sub = decltype(vi_->segment(2, 3));
-    using var_sub = var_value<const typename vari_sub::PlainObject, const typename vari_sub::vari_type>;
+    using var_sub = var_value<const typename vari_sub::PlainObject,
+                              const typename vari_sub::vari_type>;
     return var_sub(new vari_sub(vi_->segment(i, n)));
   }
 
@@ -342,7 +347,8 @@ class var_value {
    */
   inline const auto row(Eigen::Index i) const {
     using vari_sub = decltype(vi_->row(2));
-    using var_sub = var_value<const typename vari_sub::PlainObject, const typename vari_sub::vari_type>;
+    using var_sub = var_value<const typename vari_sub::PlainObject,
+                              const typename vari_sub::vari_type>;
     return var_sub(new vari_sub(vi_->row(i)));
   }
 
@@ -352,7 +358,8 @@ class var_value {
    */
   inline const auto col(Eigen::Index i) const {
     using vari_sub = decltype(vi_->col(2));
-    using var_sub = var_value<const typename vari_sub::PlainObject, const typename vari_sub::vari_type>;
+    using var_sub = var_value<const typename vari_sub::PlainObject,
+                              const typename vari_sub::vari_type>;
     return var_sub(new vari_sub(vi_->col(i)));
   }
 
@@ -394,7 +401,8 @@ class var_value {
    * @param v Variable to write.
    * @return Reference to the specified output stream.
    */
-  friend std::ostream& operator<<(std::ostream& os, const var_value<T, VariType>& v) {
+  friend std::ostream& operator<<(std::ostream& os,
+                                  const var_value<T, VariType>& v) {
     if (v.vi_ == nullptr) {
       return os << "uninitialized";
     }
