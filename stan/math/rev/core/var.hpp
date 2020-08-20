@@ -299,7 +299,7 @@ class var_value {
    * @param p Number of rows to return.
    * @param q Number of columns to return.
    */
-  inline auto block(Eigen::Index i, Eigen::Index j, Eigen::Index p, Eigen::Index q) const {
+  inline const auto block(Eigen::Index i, Eigen::Index j, Eigen::Index p, Eigen::Index q) const {
     using vari_sub = decltype(vi_->block(1, 1, 3, 3));
     using var_sub = var_value<const typename vari_sub::PlainObject, const typename vari_sub::vari_type>;
     return var_sub(new vari_sub(vi_->block(i, j, p, q)));
@@ -309,7 +309,7 @@ class var_value {
    * View of the head of Eigen vector types.
    * @param n Number of elements to return from top of vector.
    */
-  inline auto head(Eigen::Index i) const {
+  inline const auto head(Eigen::Index i) const {
     using vari_sub = decltype(vi_->head(2));
     using var_sub = var_value<const typename vari_sub::PlainObject, const typename vari_sub::vari_type>;
     return var_sub(new vari_sub(vi_->head(i)));
@@ -319,7 +319,7 @@ class var_value {
    * View of the tail of the Eigen vector types.
    * @param n Number of elements to return from bottom of vector.
    */
-  const auto tail(Eigen::Index n) const {
+  inline const auto tail(Eigen::Index n) const {
     using vari_sub = decltype(vi_->tail(2));
     using var_sub = var_value<const typename vari_sub::PlainObject, const typename vari_sub::vari_type>;
     return var_sub(new vari_sub(vi_->tail(n)));
@@ -330,7 +330,7 @@ class var_value {
    * @param i Starting position of block.
    * @param n Number of elements in block
    */
-  const auto segment(Eigen::Index i, Eigen::Index n) const {
+  inline const auto segment(Eigen::Index i, Eigen::Index n) const {
     using vari_sub = decltype(vi_->segment(2, 3));
     using var_sub = var_value<const typename vari_sub::PlainObject, const typename vari_sub::vari_type>;
     return var_sub(new vari_sub(vi_->segment(i, n)));
@@ -340,7 +340,7 @@ class var_value {
    * View row of eigen matrices.
    * @param i Row index to slice.
    */
-  const auto row(Eigen::Index i) const {
+  inline const auto row(Eigen::Index i) const {
     using vari_sub = decltype(vi_->row(2));
     using var_sub = var_value<const typename vari_sub::PlainObject, const typename vari_sub::vari_type>;
     return var_sub(new vari_sub(vi_->row(i)));
@@ -350,7 +350,7 @@ class var_value {
    * View column of eigen matrices
    * @param i Column index to slice
    */
-  const auto col(Eigen::Index i) const {
+  inline const auto col(Eigen::Index i) const {
     using vari_sub = decltype(vi_->col(2));
     using var_sub = var_value<const typename vari_sub::PlainObject, const typename vari_sub::vari_type>;
     return var_sub(new vari_sub(vi_->col(i)));
@@ -360,7 +360,7 @@ class var_value {
    * View element of eigen matrices
    * @param i Element to access
    */
-  const auto operator()(Eigen::Index i) const {
+  inline const auto operator()(Eigen::Index i) const {
     using vari_coeff = decltype((*vi_)(2));
     using var_coeff = var_value<double, const vari_value<double>>;
     return var_coeff(new vari_coeff((*vi_)(i)));
@@ -371,7 +371,7 @@ class var_value {
    * @param i Row to access
    * @param j Column to access
    */
-  const auto coeff(Eigen::Index i, Eigen::Index j) const {
+  inline const auto coeff(Eigen::Index i, Eigen::Index j) const {
     using vari_coeff = decltype(vi_->coeff(2, 2));
     using var_coeff = var_value<double, const vari_value<double>>;
     return var_coeff(new vari_coeff((*vi_)(i, j)));

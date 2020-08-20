@@ -192,13 +192,13 @@ using vari = vari_value<double>;
 template <typename T, typename StrideType>
 class vari_value<T, StrideType, require_eigen_dense_base_t<T>> : public vari_base {
  public:
-   /*
+
   static_assert(
       is_plain_type<T>::value,
       "The template for this var is an"
       " expression but a var_value's inner type must be assignable such as"
       " a double, Eigen::Matrix, or Eigen::Array");
-*/
+
   /**
    * `PlainObject` represents a user constructible type such as Matrix or Array
    */
@@ -338,7 +338,7 @@ class vari_value<T, StrideType, require_eigen_dense_base_t<T>> : public vari_bas
      * @param p Number of rows to return.
      * @param q Number of columns to return.
      */
-    const auto block(Eigen::Index i, Eigen::Index j, Eigen::Index p,
+  inline const auto block(Eigen::Index i, Eigen::Index j, Eigen::Index p,
                      Eigen::Index q) const {
        const auto& val_block = val_.block(i, j, p, q);
        const auto& adj_block = adj_.block(i, j, p, q);
@@ -350,7 +350,7 @@ class vari_value<T, StrideType, require_eigen_dense_base_t<T>> : public vari_bas
      * View of the head of Eigen vector types.
      * @param n Number of elements to return from top of vector.
      */
-    auto head(Eigen::Index n) const {
+    inline const auto head(Eigen::Index n) const {
       return vari_value<const PlainObject>(val_.head(n), adj_.head(n));
     }
 
@@ -358,7 +358,7 @@ class vari_value<T, StrideType, require_eigen_dense_base_t<T>> : public vari_bas
      * View of the tail of the Eigen vector types.
      * @param n Number of elements to return from bottom of vector.
      */
-    const auto tail(Eigen::Index n) const {
+    inline const auto tail(Eigen::Index n) const {
       return vari_value<const PlainObject>(val_.tail(n), adj_.tail(n));
     }
 
@@ -375,7 +375,7 @@ class vari_value<T, StrideType, require_eigen_dense_base_t<T>> : public vari_bas
      * View row of eigen matrices.
      * @param i Row index to slice.
      */
-    const auto row(Eigen::Index i) const {
+    inline const auto row(Eigen::Index i) const {
       const auto& val_row = val_.row(i);
       const auto& adj_row = adj_.row(i);
       return vari_value<const PlainObject, Eigen::InnerStride<>>(
@@ -386,7 +386,7 @@ class vari_value<T, StrideType, require_eigen_dense_base_t<T>> : public vari_bas
      * View column of eigen matrices
      * @param i Column index to slice
      */
-    const auto col(Eigen::Index i) const {
+    inline const auto col(Eigen::Index i) const {
       return vari_value<const PlainObject, Eigen::OuterStride<>>(val_.col(i), adj_.col(i),
     val_.col(i).outerStride(), adj_.col(i).outerStride());
     }
@@ -396,7 +396,7 @@ class vari_value<T, StrideType, require_eigen_dense_base_t<T>> : public vari_bas
      * @param i Row index
      * @param j Column index
      */
-    const auto coeff(Eigen::Index i, Eigen::Index j) const {
+    inline const auto coeff(Eigen::Index i, Eigen::Index j) const {
       return vari_value<double>(val_(i, j), adj_(i, j));
     }
 
@@ -404,7 +404,7 @@ class vari_value<T, StrideType, require_eigen_dense_base_t<T>> : public vari_bas
      * Get coefficient of eigen matrices
      * @param i Column index to slice
      */
-    const auto operator()(Eigen::Index i) const {
+    inline const auto operator()(Eigen::Index i) const {
       return vari_value<double>(val_(i), adj_(i));
     }
 
@@ -413,7 +413,7 @@ class vari_value<T, StrideType, require_eigen_dense_base_t<T>> : public vari_bas
      * @param i Row index
      * @param j Column index
      */
-    const auto operator()(Eigen::Index i, Eigen::Index j) const {
+    inline const auto operator()(Eigen::Index i, Eigen::Index j) const {
       return this->coeff(i, j);
     }
 
