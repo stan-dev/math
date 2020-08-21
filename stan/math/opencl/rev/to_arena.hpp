@@ -23,8 +23,7 @@ namespace math {
  */
 template <typename T>
 arena_t<matrix_cl<T>> to_arena(const matrix_cl<T>& a) {
-  return arena_t<matrix_cl<T>>(const_cast<cl::Buffer&>(a.buffer()), a.rows(),
-                               a.cols(), a.view());
+  return arena_t<matrix_cl<T>>(a.buffer(), a.rows(), a.cols(), a.view());
 }
 
 }  // namespace math
