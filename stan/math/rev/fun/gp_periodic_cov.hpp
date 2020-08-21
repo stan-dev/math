@@ -65,64 +65,78 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
   double pi_over_p = pi() / p_d;
   double negative_two_over_l_squared = -2.0 / (l_d * l_d);
 
-  arena_matrix<Eigen::MatrixXd> arena_dist(x.size(), x.size());
-  arena_matrix<Eigen::MatrixXd> arena_sin_squared(x.size(), x.size());
-  arena_matrix<Eigen::MatrixXd> arena_sin_squared_derivative(x.size(),
-                                                             x.size());
-  arena_matrix<Eigen::MatrixXd> res_val(x.size(), x.size());
+  size_t P = (x.size() * x.size() - x.size()) / 2 + x.size();
+  arena_matrix<Eigen::VectorXd> arena_dist(P);
+  arena_matrix<Eigen::VectorXd> arena_sin_squared(P);
+  arena_matrix<Eigen::VectorXd> arena_sin_squared_derivative(P);
+  arena_matrix<Eigen::VectorXd> res_val(P);
 
   auto arena_x = to_arena_if<!is_constant<T_x>::value>(x);
 
+  size_t pos = 0;
   double inv_half_sq_l_d = 0.5 / (value_of(l) * value_of(l));
   for (size_t j = 0; j < x.size(); ++j) {
-    for (size_t i = 0; i < j; ++i) {
-      arena_dist.coeffRef(i, j) = arena_dist.coeffRef(j, i)
+    for (size_t i = 0; i <= j; ++i) {
+      if(i != j) {
+	arena_dist.coeffRef(pos)
           = distance(value_of(x[i]), value_of(x[j]));
+	
+	double sine = sin(pi_over_p * arena_dist.coeff(pos));
+	double cosine = cos(pi_over_p * arena_dist.coeff(pos));
+	double sine_squared = sine * sine;
+	
+	arena_sin_squared.coeffRef(pos) = sine_squared;
+	
+	arena_sin_squared_derivative.coeffRef(pos)
+	  = 2.0 * sine * cosine;
+	
+	res_val.coeffRef(pos) = sigma_squared *
+	  std::exp(sine_squared * negative_two_over_l_squared);
+      } else {
+	arena_dist(pos) = 0.0;
+	arena_sin_squared(pos) = 0.0;
+	arena_sin_squared_derivative(pos) = 0.0;
+	res_val(pos) = sigma_squared;
+      }
 
-      double sine = sin(pi_over_p * arena_dist.coeff(i, j));
-      double cosine = cos(pi_over_p * arena_dist.coeff(i, j));
-      double sine_squared = sine * sine;
-      
-      arena_sin_squared.coeffRef(i, j) = arena_sin_squared.coeffRef(j, i)
-          = sine_squared;
-
-      arena_sin_squared_derivative.coeffRef(i, j)
-	= arena_sin_squared_derivative.coeffRef(j, i)
-	= 2.0 * sine * cosine;
-
-      res_val.coeffRef(i, j) = res_val.coeffRef(j, i)
-          = sigma_squared
-	* std::exp(sine_squared
-	* negative_two_over_l_squared);
+      pos++;
     }
   }
 
-  for (size_t i = 0; i < x.size(); ++i) {
-    arena_dist(i, i) = 0.0;
-    arena_sin_squared(i, i) = 0.0;
-    arena_sin_squared_derivative(i, i) = 0.0;
-    res_val(i, i) = sigma_squared;
-  }
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> res(x.size(), x.size());
 
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> res
-      = res_val;
+  pos = 0;
+  for(size_t j = 0; j < res.cols(); ++j)
+    for(size_t i = 0; i <= j; ++i) {
+      res.coeffRef(j, i) = res.coeffRef(i, j) = res_val.coeff(pos);
+      pos++;
+    }
 
   reverse_pass_callback([res, res_val, arena_x, sigma, l, p, sigma_d, l_d, p_d,
                          pi_over_p, arena_dist, arena_sin_squared,
                          arena_sin_squared_derivative]() mutable {
-    Eigen::ArrayXXd adj_times_val = res.adj().array() * res_val.array();
+    Eigen::ArrayXd adj_times_val = res_val;
 
+    size_t pos = 0;
+    for(size_t j = 0; j < res.cols(); ++j)
+      for(size_t i = 0; i <= j; ++i) {
+	adj_times_val.coeffRef(pos) *= res.adj().coeff(i, j);
+	pos++;
+      }
+
+    pos = 0;
     if (!is_constant<T_x>::value)
       for (size_t i = 0; i < arena_x.size(); ++i) {
-        for (size_t j = 0; j < arena_x.size(); ++j) {
-          if (arena_dist.coeff(i, j) != 0.0) {
+        for (size_t j = 0; j <= i; ++j) {
+          if (i != j && arena_dist.coeff(pos) != 0.0) {
             auto adj = eval(
                 -2 * pi_over_p * (value_of(arena_x[i]) - value_of(arena_x[j]))
-                * arena_sin_squared_derivative(i, j) * adj_times_val(i, j) /
-                (arena_dist.coeff(i, j) * l_d * l_d));
+                * arena_sin_squared_derivative(pos) * adj_times_val(pos) /
+                (arena_dist.coeff(pos) * l_d * l_d));
 	    forward_as<promote_scalar_t<var, T_x>>(arena_x[i]).adj() += adj;
 	    forward_as<promote_scalar_t<var, T_x>>(arena_x[j]).adj() -= adj;
           }
+	  pos++;
         }
       }
 
