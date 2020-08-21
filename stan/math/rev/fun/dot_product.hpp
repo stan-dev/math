@@ -11,7 +11,6 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/dot_product.hpp>
-#include <stan/math/prim/fun/static_select.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <type_traits>
@@ -39,17 +38,30 @@ inline return_type_t<T1, T2> dot_product(const T1& v1, const T2& v2) {
   const auto& v1_col = as_column_vector_or_scalar(v1);
   const auto& v2_col = as_column_vector_or_scalar(v2);
 
-  const auto& v1_val_arena
+  arena_t<Eigen::VectorXd> v1_val_arena
       = to_arena_if<!is_constant<T2>::value>(value_of(v1_col));
-  const auto& v2_val_arena
+  arena_t<Eigen::VectorXd> v2_val_arena
       = to_arena_if<!is_constant<T1>::value>(value_of(v2_col));
 
-  var res(new vari(dot_product(
-      static_select<is_constant<T2>::value>(value_of(v1_col), v1_val_arena),
-      static_select<is_constant<T1>::value>(value_of(v2_col), v2_val_arena))));
+  double res_val;
+  if (is_constant<T2>::value) {
+    if (is_constant<T1>::value) {
+      res_val = dot_product(value_of(v1_col), value_of(v2_col));
+    } else{
+      res_val = dot_product(value_of(v1_col), v2_val_arena);
+    }
+  } else{
+    if (is_constant<T1>::value) {
+      res_val = dot_product(v1_val_arena, value_of(v2_col));
+    } else{
+      res_val = dot_product(v1_val_arena, v2_val_arena);
+    }
+  }
+  var res(res_val);
 
-  auto v1_arena = to_arena_if<!is_constant<T1>::value>(v1_col);
-  auto v2_arena = to_arena_if<!is_constant<T2>::value>(v2_col);
+
+  arena_t<Eigen::Matrix<value_type_t<T1>, Eigen::Dynamic, Eigen::Dynamic>> v1_arena = to_arena_if<!is_constant<T1>::value>(v1_col);
+  arena_t<Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, Eigen::Dynamic>> v2_arena = to_arena_if<!is_constant<T2>::value>(v2_col);
 
   reverse_pass_callback(
       [v1_arena, v2_arena, res, v1_val_arena, v2_val_arena]() mutable {
