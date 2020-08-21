@@ -58,23 +58,18 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...>,
           this->template get_arg<Is>().get_kernel_parts_lhs(
               generated, name_gen, row_index_name_arg, col_index_name_arg)...};
     });
-    kernel_parts res{};
-    res.body = std::accumulate(
-        args_parts.begin(), args_parts.end(), std::string(),
-        [](const std::string& a, const kernel_parts& b) { return a + b.body; });
+    kernel_parts res
+        = std::accumulate(args_parts.begin(), args_parts.end(), kernel_parts{});
+    kernel_parts my_part = index_apply<N>([&](auto... Is) {
+      return this->derived().generate_lhs(
+          row_index_name, col_index_name,
+          this->template get_arg<Is>().var_name_...);
+    });
+    res += my_part;
     if (generated.count(this) == 0) {
       generated.insert(this);
-      res.args
-          = std::accumulate(args_parts.begin(), args_parts.end(), std::string(),
-                            [](const std::string& a, const kernel_parts& b) {
-                              return a + b.args;
-                            });
-      kernel_parts my_part = index_apply<N>([&](auto... Is) {
-        return this->derived().generate_lhs(
-            row_index_name, col_index_name,
-            this->template get_arg<Is>().var_name_...);
-      });
-      res += my_part;
+    } else {
+      res.args = "";
     }
     return res;
   }
