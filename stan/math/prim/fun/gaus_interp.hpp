@@ -8,8 +8,6 @@
 #include <vector>
 #include <algorithm>
 
-using namespace std;
-
 namespace stan {
 namespace math {
 
@@ -184,9 +182,9 @@ inline gaus_interp_params gaus_interp_precomp(const std::vector<double>& xs,
  */
 
 template <typename Tx>
-inline vector<Tx> gaus_interp_vect(const std::vector<double>& xs,
-                                   const std::vector<double>& ys,
-                                   const std::vector<Tx>& xs_new) {
+inline std::vector<Tx> gaus_interp_vect(const std::vector<double>& xs,
+					const std::vector<double>& ys,
+					const std::vector<Tx>& xs_new) {
   int n_interp = xs_new.size();
   std::vector<Tx> ys_new(n_interp);
 

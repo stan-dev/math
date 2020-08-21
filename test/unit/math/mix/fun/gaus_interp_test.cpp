@@ -1,6 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <limits>
-#include <vector>
 
 TEST(mathMixGausInterp, derivs) {
   using stan::math::gaus_interp_vect;
@@ -48,7 +46,6 @@ TEST(mathMixGausInterp, derivs) {
   ys_new_v = gaus_interp_vect(xs, ys, xs_new_v);
 
   std::vector<double> ys_new_dder;
-  std::vector<var> ys_new_v2;
   for (int i = 0; i < n_interp; i++) {
     ys_new_v[i].grad();
     dder = xs_new_v[i].adj();
