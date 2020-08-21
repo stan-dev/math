@@ -10,7 +10,7 @@ TEST(mathPrimGausInterp, throwing) {
   using stan::math::gaus_interp_precomp;
   double nan = std::numeric_limits<double>::quiet_NaN();
   double x;
-  vector<double> xs, ys;
+  std::vector<double> xs, ys;
 
   // check that when xs are not increasing, an error throws
   int n = 2;
@@ -73,11 +73,11 @@ TEST(mathPrimGausInterp, interp_line) {
   int n = 2;
   double xmin = 0;
   double xmax = 1;
-  vector<double> xs = {0, 1};
-  vector<double> ys = {0, 2};
+  std::vector<double> xs = {0, 1};
+  std::vector<double> ys = {0, 2};
 
   // vector of pts at which to compute interpolation
-  vector<double> xs_new;
+  std::vector<double> xs_new;
   int n_interp = 100;
   double t0 = xmin;
   double t1 = xmax;
@@ -88,14 +88,14 @@ TEST(mathPrimGausInterp, interp_line) {
   }
 
   // create interpolation using precomp
-  vector<double> ys_new_gaus(n_interp);
+  std::vector<double> ys_new_gaus(n_interp);
   gaus_interp_params params = gaus_interp_precomp(xs, ys);
   for (int i = 0; i < n_interp; i++) {
     ys_new_gaus[i] = gaus_interp(xs, ys, params, xs_new[i]);
   }
 
   // create interpolation without precomp
-  vector<double> ys_new_gaus2 = gaus_interp_vect(xs, ys, xs_new);
+  std::vector<double> ys_new_gaus2 = gaus_interp_vect(xs, ys, xs_new);
 
   // test points
   double tmp, y;
@@ -119,7 +119,7 @@ TEST(mathPrimGausInterp, gaus_and_lin_interp) {
   double xmin = 0;
   double xmax = 1;
   double x;
-  vector<double> xs, ys;
+  std::vector<double> xs, ys;
   for (int i = 0; i < n; i++) {
     x = xmin + i * (xmax - xmin) / (n - 1);
     xs.push_back(x);
@@ -127,7 +127,7 @@ TEST(mathPrimGausInterp, gaus_and_lin_interp) {
   }
 
   // vector of pts at which to compute interpolation
-  vector<double> xs_new;
+  std::vector<double> xs_new;
   int n_interp = 100;
   double t0 = xmin;
   double t1 = xmax;
@@ -138,8 +138,8 @@ TEST(mathPrimGausInterp, gaus_and_lin_interp) {
   }
 
   // create interpolation
-  vector<double> ys_new_gaus(n_interp);
-  vector<double> ys_new_lin(n_interp);
+  std::vector<double> ys_new_gaus(n_interp);
+  std::vector<double> ys_new_lin(n_interp);
 
   // linear interpolation
   ys_new_lin.resize(n_interp);
