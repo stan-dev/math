@@ -75,38 +75,19 @@ CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
 #
 # FLAGS:
 # CXXFLAGS_OPTIM: Additional flags to CXXFLAGS
+# CPPFLAGS_OPTIM: Additional flags to CXXFLAGS
 # CXXFLAGS_OPTIM_TBB: Additional flags to TBB_CXXFLAGS
 # CXXFLAGS_OPTIM_SUNDIALS: Additional flags to CXXFLAGS_SUNDIALS
 # CPPFLAGS_OPTIM_SUNDIALS: Additional flags to CPPFLAGS_SUNDIALS
 # CXXFLAGS_FLTO: Additional flags for compiling with FLTO
+# CPPFLAGS_FLTO: Additional flags for compiling with FLTO
 # CXXFLAGS_FLTO_TBB: Additional flags for compiling tbb with flto
 # CXXFLAGS_FLTO_SUNDIALS: Additional flags for compiling c++ sundials with flto
 # CPPFLAGS_FLTO_SUNDIALS: Additional flags for compiling c sundials with flto
+# LDFLAGS_OPTIM: Adding optimization flags to LDFLAGS
+# LDFLAGS_FLTO: Adding flto options to LDFLAGS
+# LDFLAGS_MPI_FLTO: For adding flto options to MPI build
 ##
-ifeq (clang,$(CXX_TYPE))
-	CXXFLAGS_OPTIM ?= -fvectorize -ftree-vectorize -fslp-vectorize -ftree-slp-vectorize -fno-standalone-debug -fstrict-return -ftrigraphs -fvisibility=hidden -fvisibility-inlines-hidden
-	ifeq ($(shell expr $(CXX_MAJOR) \>= 5), 1)
-		CXXFLAGS_FLTO ?= -flto=full -fwhole-program-vtables -fstrict-vtable-pointers -fforce-emit-vtables
-	endif
-endif
-ifeq (mingw32-g,$(CXX_TYPE))
-else ifeq (gcc,$(CXX_TYPE))
-	CXXFLAGS_OPTIM_SUNDIALS ?= -fweb -fivopts -ftree-loop-linear
-	CPPFLAGS_OPTIM_SUNDIALS ?= $(CXXFLAGS_OPTIM_SUNDIALS)
-	# temp to contro for compiler versions while letting user override
-	# CXXFLAGS_OPTIM
-	CXXFLAGS_VERSION_OPTIM ?= -fweb -fivopts -ftree-loop-linear -funroll-loops -floop-strip-mine -floop-block -floop-nest-optimize -ftree-vectorize -ftree-loop-distribution -fvect-cost-model='unlimited' -fivopts -fvisibility=hidden -fvisibility-inlines-hidden
-	ifeq ($(shell expr $(CXX_MAJOR) \>= 5), 1)
-	  CXXFLAGS_VERSION_OPTIM += -floop-unroll-and-jam
-  endif
-	ifeq ($(shell expr $(CXX_MAJOR) \>= 7), 1)
-	  CXXFLAGS_VERSION_OPTIM += -fsplit-loops
-  endif
-  ifeq ($(shell expr $(CXX_MAJOR) \>= 7), 1)
-    CXXFLAGS_FLTO ?= -flto -fuse-linker-plugin -fdevirtualize-at-ltrans
-  endif
-	CXXFLAGS_OPTIM ?= $(CXXFLAGS_VERSION_OPTIM)
-endif
 
 ################################################################################
 # Set default compiler flags
@@ -269,7 +250,7 @@ endif
 
 
 CXXFLAGS_TBB ?= -I $(TBB)/include
-LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)" $(CXXFLAGS_FLTO) $(CXXFLAGS_OPTIM_TBB)
+LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)" $(LDFLAGS_FLTO_FLTO) $(LDFLAGS_OPTIM_TBB)
 LDLIBS_TBB ?=
 
 ################################################################################
@@ -296,13 +277,13 @@ ifdef STAN_MPI
 
   BOOST_LIBRARY_ABSOLUTE_PATH = $(abspath $(BOOST)/stage/lib)
 
-  LDFLAGS_MPI ?= -Wl,-L,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" -Wl,-rpath,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" $(CXXFLAGS_FLTO) $(MPI_OPTIM)
+  LDFLAGS_MPI ?= -Wl,-L,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" -Wl,-rpath,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" $(LDFLAGS_MPI_FLTO) $(MPI_OPTIM)
   CXXFLAGS_MPI ?= -Wno-delete-non-virtual-dtor
 endif
 
 CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) $(CXXFLAGS_THREADS) $(CXXFLAGS_TBB) $(CXXFLAGS_FLTO) $(CXXFLAGS_OPTIM) -O$(O) $(INC)
-CPPFLAGS += $(CPPFLAGS_LANG) $(CPPFLAGS_OS) $(CPPFLAGS_WARNINGS) $(CPPFLAGS_BOOST) $(CPPFLAGS_EIGEN) $(CPPFLAGS_OPENCL) $(CPPFLAGS_MPI) $(CPPFLAGS_TBB) $(CXXFLAGS_FLTO) $(CXXFLAGS_OPTIM)
-LDFLAGS += $(LDFLAGS_LANG) $(LDFLAGS_OS) $(LDFLAGS_WARNINGS) $(LDFLAGS_BOOST) $(LDFLAGS_EIGEN) $(LDFLAGS_OPENCL) $(LDFLAGS_MPI) $(LDFLAGS_TBB) $(CXXFLAGS_FLTO) $(CXXFLAGS_OPTIM)
+CPPFLAGS += $(CPPFLAGS_LANG) $(CPPFLAGS_OS) $(CPPFLAGS_WARNINGS) $(CPPFLAGS_BOOST) $(CPPFLAGS_EIGEN) $(CPPFLAGS_OPENCL) $(CPPFLAGS_MPI) $(CPPFLAGS_TBB) $(CPPFLAGS_FLTO) $(CPPFLAGS_OPTIM)
+LDFLAGS += $(LDFLAGS_LANG) $(LDFLAGS_OS) $(LDFLAGS_WARNINGS) $(LDFLAGS_BOOST) $(LDFLAGS_EIGEN) $(LDFLAGS_OPENCL) $(LDFLAGS_MPI) $(LDFLAGS_TBB) $(LDFLAGS_FLTO) $(LDFLAGS_OPTIM)
 LDLIBS += $(LDLIBS_LANG) $(LDLIBS_OS) $(LDLIBS_WARNINGS) $(LDLIBS_BOOST) $(LDLIBS_EIGEN) $(LDLIBS_OPENCL) $(LDLIBS_MPI) $(LDLIBS_TBB)
 
 .PHONY: print-compiler-flags
