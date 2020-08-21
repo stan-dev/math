@@ -115,46 +115,45 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
   reverse_pass_callback([res, res_val, arena_x, sigma, l, p, sigma_d, l_d, p_d,
                          pi_over_p, arena_dist, arena_sin_squared,
                          arena_sin_squared_derivative]() mutable {
-    Eigen::ArrayXd adj_times_val = res_val;
+    double sigma_adj = 0.0;
+    double l_adj = 0.0;
+    double p_adj = 0.0;
 
     size_t pos = 0;
-    for(size_t j = 0; j < res.cols(); ++j)
-      for(size_t i = 0; i <= j; ++i) {
-	adj_times_val.coeffRef(pos) *= res.adj().coeff(i, j);
+    for (size_t i = 0; i < arena_x.size(); ++i) {
+      for (size_t j = 0; j <= i; ++j) {
+	double adj_times_val = res_val.coeffRef(pos) * res.adj().coeff(i, j);
+
+	if (!is_constant<T_sigma>::value)
+	  sigma_adj += adj_times_val;
+
+	if (!is_constant<T_l>::value)
+	  l_adj += arena_sin_squared.coeff(pos) * adj_times_val;
+
+	if (!is_constant<T_p>::value)
+	  p_adj += arena_dist.coeff(pos) * arena_sin_squared_derivative.coeff(pos) * adj_times_val;
+
+	if (!is_constant<T_x>::value && i != j && arena_dist.coeff(pos) != 0.0) {
+	  auto adj = eval(-2 * pi_over_p * (value_of(arena_x[i]) - value_of(arena_x[j]))
+			  * arena_sin_squared_derivative(pos) * adj_times_val /
+			  (arena_dist.coeff(pos) * l_d * l_d));
+	  forward_as<promote_scalar_t<var, T_x>>(arena_x[i]).adj() += adj;
+	  forward_as<promote_scalar_t<var, T_x>>(arena_x[j]).adj() -= adj;
+	}
 	pos++;
       }
-
-    pos = 0;
-    if (!is_constant<T_x>::value)
-      for (size_t i = 0; i < arena_x.size(); ++i) {
-        for (size_t j = 0; j <= i; ++j) {
-          if (i != j && arena_dist.coeff(pos) != 0.0) {
-            auto adj = eval(
-                -2 * pi_over_p * (value_of(arena_x[i]) - value_of(arena_x[j]))
-                * arena_sin_squared_derivative(pos) * adj_times_val(pos) /
-                (arena_dist.coeff(pos) * l_d * l_d));
-	    forward_as<promote_scalar_t<var, T_x>>(arena_x[i]).adj() += adj;
-	    forward_as<promote_scalar_t<var, T_x>>(arena_x[j]).adj() -= adj;
-          }
-	  pos++;
-        }
-      }
+    }
 
     if (!is_constant<T_sigma>::value)
-      forward_as<var>(sigma).adj() += 2.0 * adj_times_val.sum() / sigma_d;
+      forward_as<var>(sigma).adj() += 2.0 * sigma_adj / sigma_d;
 
     if (!is_constant<T_l>::value)
       forward_as<var>(l).adj()
-          += 4 * (arena_sin_squared.array() * adj_times_val).sum()
-             / (l_d * l_d * l_d);
+          += 4 * l_adj / (l_d * l_d * l_d);
 
     if (!is_constant<T_p>::value)
       forward_as<var>(p).adj()
-          += 2 * pi()
-             * (arena_dist.array() * arena_sin_squared_derivative.array()
-                * adj_times_val)
-                   .sum()
-             / (p_d * p_d * l_d * l_d);
+          += 2 * pi() * p_adj / (p_d * p_d * l_d * l_d);
   });
 
   return res;
