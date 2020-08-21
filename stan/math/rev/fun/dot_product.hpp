@@ -47,21 +47,22 @@ inline return_type_t<T1, T2> dot_product(const T1& v1, const T2& v2) {
   if (is_constant<T2>::value) {
     if (is_constant<T1>::value) {
       res_val = dot_product(value_of(v1_col), value_of(v2_col));
-    } else{
+    } else {
       res_val = dot_product(value_of(v1_col), v2_val_arena);
     }
-  } else{
+  } else {
     if (is_constant<T1>::value) {
       res_val = dot_product(v1_val_arena, value_of(v2_col));
-    } else{
+    } else {
       res_val = dot_product(v1_val_arena, v2_val_arena);
     }
   }
   var res(res_val);
 
-
-  arena_t<Eigen::Matrix<value_type_t<T1>, Eigen::Dynamic, Eigen::Dynamic>> v1_arena = to_arena_if<!is_constant<T1>::value>(v1_col);
-  arena_t<Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, Eigen::Dynamic>> v2_arena = to_arena_if<!is_constant<T2>::value>(v2_col);
+  arena_t<Eigen::Matrix<value_type_t<T1>, Eigen::Dynamic, Eigen::Dynamic>>
+      v1_arena = to_arena_if<!is_constant<T1>::value>(v1_col);
+  arena_t<Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, Eigen::Dynamic>>
+      v2_arena = to_arena_if<!is_constant<T2>::value>(v2_col);
 
   reverse_pass_callback(
       [v1_arena, v2_arena, res, v1_val_arena, v2_val_arena]() mutable {
