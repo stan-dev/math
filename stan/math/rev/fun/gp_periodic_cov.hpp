@@ -78,20 +78,27 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
     for (size_t i = 0; i < j; ++i) {
       arena_dist.coeffRef(i, j) = arena_dist.coeffRef(j, i)
           = distance(value_of(x[i]), value_of(x[j]));
+
+      double sine = sin(pi_over_p * arena_dist.coeff(i, j));
+      double cosine = cos(pi_over_p * arena_dist.coeff(i, j));
+      double sine_squared = sine * sine;
+      
       arena_sin_squared.coeffRef(i, j) = arena_sin_squared.coeffRef(j, i)
-          = square(sin(pi_over_p * arena_dist.coeff(i, j)));
+          = sine_squared;
+
       arena_sin_squared_derivative.coeffRef(i, j)
-          = arena_sin_squared_derivative.coeffRef(j, i)
-          = sin(2 * pi_over_p * arena_dist(i, j));
+	= arena_sin_squared_derivative.coeffRef(j, i)
+	= 2.0 * sine * cosine;
 
       res_val.coeffRef(i, j) = res_val.coeffRef(j, i)
           = sigma_squared
-            * std::exp(arena_sin_squared.coeff(i, j)
-                       * negative_two_over_l_squared);
+	* std::exp(sine_squared
+	* negative_two_over_l_squared);
     }
   }
 
   for (size_t i = 0; i < x.size(); ++i) {
+    arena_dist(i, i) = 0.0;
     arena_sin_squared(i, i) = 0.0;
     arena_sin_squared_derivative(i, i) = 0.0;
     res_val(i, i) = sigma_squared;
@@ -111,11 +118,10 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
           if (arena_dist.coeff(i, j) != 0.0) {
             auto adj = eval(
                 -2 * pi_over_p * (value_of(arena_x[i]) - value_of(arena_x[j]))
-                * arena_sin_squared_derivative(i, j) * adj_times_val(i, j)
-                / (arena_dist.coeff(i, j) * l_d * l_d));
-            using T_x_var = promote_scalar_t<var, T_x>;
-            forward_as<T_x_var>(arena_x[i]).adj() += adj;
-            forward_as<T_x_var>(arena_x[j]).adj() -= adj;
+                * arena_sin_squared_derivative(i, j) * adj_times_val(i, j) /
+                (arena_dist.coeff(i, j) * l_d * l_d));
+	    forward_as<promote_scalar_t<var, T_x>>(arena_x[i]).adj() += adj;
+	    forward_as<promote_scalar_t<var, T_x>>(arena_x[j]).adj() -= adj;
           }
         }
       }
