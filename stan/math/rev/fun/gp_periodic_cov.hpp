@@ -82,18 +82,16 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
       double sine = sin(pi_over_p * arena_dist.coeff(i, j));
       double cosine = cos(pi_over_p * arena_dist.coeff(i, j));
       double sine_squared = sine * sine;
-      
+
       arena_sin_squared.coeffRef(i, j) = arena_sin_squared.coeffRef(j, i)
           = sine_squared;
 
       arena_sin_squared_derivative.coeffRef(i, j)
-	= arena_sin_squared_derivative.coeffRef(j, i)
-	= 2.0 * sine * cosine;
+          = arena_sin_squared_derivative.coeffRef(j, i) = 2.0 * sine * cosine;
 
       res_val.coeffRef(i, j) = res_val.coeffRef(j, i)
           = sigma_squared
-	* std::exp(sine_squared
-	* negative_two_over_l_squared);
+            * std::exp(sine_squared * negative_two_over_l_squared);
     }
   }
 
@@ -118,10 +116,10 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
           if (arena_dist.coeff(i, j) != 0.0) {
             auto adj = eval(
                 -2 * pi_over_p * (value_of(arena_x[i]) - value_of(arena_x[j]))
-                * arena_sin_squared_derivative(i, j) * adj_times_val(i, j) /
-                (arena_dist.coeff(i, j) * l_d * l_d));
-	    forward_as<promote_scalar_t<var, T_x>>(arena_x[i]).adj() += adj;
-	    forward_as<promote_scalar_t<var, T_x>>(arena_x[j]).adj() -= adj;
+                * arena_sin_squared_derivative(i, j) * adj_times_val(i, j)
+                / (arena_dist.coeff(i, j) * l_d * l_d));
+            forward_as<promote_scalar_t<var, T_x>>(arena_x[i]).adj() += adj;
+            forward_as<promote_scalar_t<var, T_x>>(arena_x[j]).adj() -= adj;
           }
         }
       }

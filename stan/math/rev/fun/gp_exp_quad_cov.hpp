@@ -80,7 +80,7 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x>& x,
         for (size_t j = 0; j < arena_x.size(); ++j) {
           auto adj = eval(-(value_of(arena_x[i]) - value_of(arena_x[j]))
                           * adj_times_val(i, j) / (l_d * l_d));
-	  using T_x_var = promote_scalar_t<var, T_x>;
+          using T_x_var = promote_scalar_t<var, T_x>;
           forward_as<T_x_var>(arena_x[i]).adj() += adj;
           forward_as<T_x_var>(arena_x[j]).adj() -= adj;
         }
