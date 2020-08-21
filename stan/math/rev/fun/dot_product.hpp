@@ -44,18 +44,12 @@ inline return_type_t<T1, T2> dot_product(const T1& v1, const T2& v2) {
       = to_arena_if<!is_constant<T1>::value>(value_of(v2_col));
 
   double res_val;
-  if (is_constant<T2>::value) {
-    if (is_constant<T1>::value) {
-      res_val = dot_product(value_of(v1_col), value_of(v2_col));
-    } else {
-      res_val = dot_product(value_of(v1_col), v2_val_arena);
-    }
+  if(is_constant<T1>::value) {
+    res_val = dot_product(v1_val_arena, value_of(v2_col));
+  } else if(is_constant<T2>::value) {
+    res_val = dot_product(value_of(v1_col), v2_val_arena);
   } else {
-    if (is_constant<T1>::value) {
-      res_val = dot_product(v1_val_arena, value_of(v2_col));
-    } else {
-      res_val = dot_product(v1_val_arena, v2_val_arena);
-    }
+    res_val = dot_product(v1_val_arena, v2_val_arena);
   }
   var res(res_val);
 
