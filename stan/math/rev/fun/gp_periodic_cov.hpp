@@ -77,37 +77,37 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
   double inv_half_sq_l_d = 0.5 / (value_of(l) * value_of(l));
   for (size_t j = 0; j < x.size(); ++j) {
     for (size_t i = 0; i <= j; ++i) {
-      if(i != j) {
-	arena_dist.coeffRef(pos)
-          = distance(value_of(x[i]), value_of(x[j]));
-	
-	double sine = sin(pi_over_p * arena_dist.coeff(pos));
-	double cosine = cos(pi_over_p * arena_dist.coeff(pos));
-	double sine_squared = sine * sine;
-	
-	arena_sin_squared.coeffRef(pos) = sine_squared;
-	
-	arena_sin_squared_derivative.coeffRef(pos)
-	  = 2.0 * sine * cosine;
-	
-	res_val.coeffRef(pos) = sigma_squared *
-	  std::exp(sine_squared * negative_two_over_l_squared);
+      if (i != j) {
+        arena_dist.coeffRef(pos) = distance(value_of(x[i]), value_of(x[j]));
+
+        double sine = sin(pi_over_p * arena_dist.coeff(pos));
+        double cosine = cos(pi_over_p * arena_dist.coeff(pos));
+        double sine_squared = sine * sine;
+
+        arena_sin_squared.coeffRef(pos) = sine_squared;
+
+        arena_sin_squared_derivative.coeffRef(pos) = 2.0 * sine * cosine;
+
+        res_val.coeffRef(pos)
+            = sigma_squared
+              * std::exp(sine_squared * negative_two_over_l_squared);
       } else {
-	arena_dist(pos) = 0.0;
-	arena_sin_squared(pos) = 0.0;
-	arena_sin_squared_derivative(pos) = 0.0;
-	res_val(pos) = sigma_squared;
+        arena_dist(pos) = 0.0;
+        arena_sin_squared(pos) = 0.0;
+        arena_sin_squared_derivative(pos) = 0.0;
+        res_val(pos) = sigma_squared;
       }
 
       pos++;
     }
   }
 
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> res(x.size(), x.size());
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> res(
+      x.size(), x.size());
 
   pos = 0;
-  for(size_t j = 0; j < res.cols(); ++j)
-    for(size_t i = 0; i <= j; ++i) {
+  for (size_t j = 0; j < res.cols(); ++j)
+    for (size_t i = 0; i <= j; ++i) {
       res.coeffRef(j, i) = res.coeffRef(i, j) = res_val.coeff(pos);
       pos++;
     }
@@ -122,25 +122,28 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
     size_t pos = 0;
     for (size_t i = 0; i < arena_x.size(); ++i) {
       for (size_t j = 0; j <= i; ++j) {
-	double adj_times_val = res_val.coeffRef(pos) * res.adj().coeff(i, j);
+        double adj_times_val = res_val.coeffRef(pos) * res.adj().coeff(i, j);
 
-	if (!is_constant<T_sigma>::value)
-	  sigma_adj += adj_times_val;
+        if (!is_constant<T_sigma>::value)
+          sigma_adj += adj_times_val;
 
-	if (!is_constant<T_l>::value)
-	  l_adj += arena_sin_squared.coeff(pos) * adj_times_val;
+        if (!is_constant<T_l>::value)
+          l_adj += arena_sin_squared.coeff(pos) * adj_times_val;
 
-	if (!is_constant<T_p>::value)
-	  p_adj += arena_dist.coeff(pos) * arena_sin_squared_derivative.coeff(pos) * adj_times_val;
+        if (!is_constant<T_p>::value)
+          p_adj += arena_dist.coeff(pos)
+                   * arena_sin_squared_derivative.coeff(pos) * adj_times_val;
 
-	if (!is_constant<T_x>::value && i != j && arena_dist.coeff(pos) != 0.0) {
-	  auto adj = eval(-2 * pi_over_p * (value_of(arena_x[i]) - value_of(arena_x[j]))
-			  * arena_sin_squared_derivative(pos) * adj_times_val /
-			  (arena_dist.coeff(pos) * l_d * l_d));
-	  forward_as<promote_scalar_t<var, T_x>>(arena_x[i]).adj() += adj;
-	  forward_as<promote_scalar_t<var, T_x>>(arena_x[j]).adj() -= adj;
-	}
-	pos++;
+        if (!is_constant<T_x>::value && i != j
+            && arena_dist.coeff(pos) != 0.0) {
+          auto adj = eval(-2 * pi_over_p
+                          * (value_of(arena_x[i]) - value_of(arena_x[j]))
+                          * arena_sin_squared_derivative(pos) * adj_times_val
+                          / (arena_dist.coeff(pos) * l_d * l_d));
+          forward_as<promote_scalar_t<var, T_x>>(arena_x[i]).adj() += adj;
+          forward_as<promote_scalar_t<var, T_x>>(arena_x[j]).adj() -= adj;
+        }
+        pos++;
       }
     }
 
@@ -148,12 +151,10 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
       forward_as<var>(sigma).adj() += 2.0 * sigma_adj / sigma_d;
 
     if (!is_constant<T_l>::value)
-      forward_as<var>(l).adj()
-          += 4 * l_adj / (l_d * l_d * l_d);
+      forward_as<var>(l).adj() += 4 * l_adj / (l_d * l_d * l_d);
 
     if (!is_constant<T_p>::value)
-      forward_as<var>(p).adj()
-          += 2 * pi() * p_adj / (p_d * p_d * l_d * l_d);
+      forward_as<var>(p).adj() += 2 * pi() * p_adj / (p_d * p_d * l_d * l_d);
   });
 
   return res;
