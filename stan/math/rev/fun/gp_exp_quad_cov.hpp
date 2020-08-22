@@ -73,7 +73,7 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x>& x,
     double sigma_adj = 0.0;
     double l_adj = 0.0;
     double inv_l_d_squared = 1.0 / (l_d * l_d);
-    res_val.array() *= res.adj().array();
+    res_val.triangularView<Eigen::Lower>() = (res_val.array() * res.adj().array()).matrix();
     if (!is_constant<T_l>::value)
       l_adj += (dist.transpose() * res_val).diagonal().sum();
 
