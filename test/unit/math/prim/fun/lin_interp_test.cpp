@@ -8,7 +8,7 @@ TEST(mathPrimLinInterp, throwing) {
   using stan::math::lin_interp;
   double nan = std::numeric_limits<double>::quiet_NaN();
   double x = 0.5;
-  vector<double> xs, ys;
+  std::vector<double> xs, ys;
 
   // check that when xs are not increasing, an error throws
   int n = 2;
@@ -47,11 +47,11 @@ TEST(mathPrimLinInterp, interp_line) {
   int n = 2;
   double xmin = 0;
   double xmax = 1;
-  vector<double> xs = {0, 1};
-  vector<double> ys = {0, 2};
+  std::vector<double> xs = {0, 1};
+  std::vector<double> ys = {0, 2};
 
   // vector of pts at which to compute interpolation
-  vector<double> xs_new;
+  std::vector<double> xs_new;
   int n_interp = 100;
   double t0 = xmin;
   double t1 = xmax;
@@ -62,7 +62,7 @@ TEST(mathPrimLinInterp, interp_line) {
   }
 
   // interpolate
-  vector<double> ys_new(n_interp);
+  std::vector<double> ys_new(n_interp);
   for (int i = 0; i < n_interp; i++) {
     ys_new[i] = lin_interp(xs, ys, xs_new[i]);
   }
@@ -80,8 +80,8 @@ TEST(mathPrimLinInterp, interp_line) {
   ASSERT_NEAR(lin_interp(xs, ys, 100), ys[1], ABS_TOL);
 
   // xs with more than 2 elements
-  vector<double> xs2 = {0, 1, 2, 3, 4, 5, 6};
-  vector<double> ys2 = {0, 2, 5, 2, 3, 2, 2};
+  std::vector<double> xs2 = {0, 1, 2, 3, 4, 5, 6};
+  std::vector<double> ys2 = {0, 2, 5, 2, 3, 2, 2};
   double x = 0.5;
   ASSERT_NEAR(lin_interp(xs, ys, x), lin_interp(xs2, ys2, x), ABS_TOL);
 }
