@@ -168,28 +168,7 @@ TEST_F(AgradRev, var_matrix_views) {
   }
   stan::math::var_value<dense_mat> A_v(A);
   auto A_block = A_v.block(1, 1, 3, 3);
-  puts("\nA_block:");
-  std::cout << "Rows: " << A_block.vi_->val_.rows() << "\n";
-  std::cout << "Cols: " << A_block.vi_->val_.cols() << "\n";
-  std::cout << A_block.vi_->val_ << "\n";
-  puts(" A Real Block");
-  std::cout << "Rows: " << A.block(1, 1, 3, 3).rows() << "\n";
-  std::cout << "Cols: " << A.block(1, 1, 3, 3).cols() << "\n";
-  std::cout << A.block(1, 1, 3, 3) << "\n";
-  const auto& A_block_val = A_block.val();
-  {
-    Eigen::Ref<const stan::plain_type_t<decltype(A.block(1, 1, 3, 3))>> A_eval = A.block(1, 1, 3, 3);
-    Eigen::Ref<const stan::plain_type_t<decltype(A_block_val)>> B_eval = A_block_val;
-    EXPECT_EQ(A_eval.rows(), B_eval.rows());
-    EXPECT_EQ(A_eval.cols(), B_eval.cols());
-    for (int j = 0; j < A_eval.cols(); j++) {
-      for (int i = 0; i < A_eval.rows(); i++) {
-      EXPECT_FLOAT_EQ(A_eval(i, j), B_eval(i, j));
-    }
-  }
-  }
-
-/**
+  EXPECT_MATRIX_FLOAT_EQ(A_block.val(), A.block(1, 1, 3, 3))
   auto A_row = A_v.row(3);
   EXPECT_MATRIX_FLOAT_EQ(A.row(3), A_row.vi_->val_);
   auto A_col = A_v.col(3);
@@ -199,9 +178,8 @@ TEST_F(AgradRev, var_matrix_views) {
   auto A_coeff2 = A_v(3, 3);
   EXPECT_FLOAT_EQ(A(3, 3), A_coeff2.vi_->val_);
   EXPECT_MATRIX_FLOAT_EQ(A, A_v.vi_->val_);
-*/
 }
-/*
+
 TEST_F(AgradRev, var_vector_views) {
   using dense_vec = Eigen::Matrix<double, -1, 1>;
   dense_vec A(10);
@@ -219,7 +197,7 @@ TEST_F(AgradRev, var_vector_views) {
   EXPECT_FLOAT_EQ(A(3), A_coeff1.vi_->val_);
   EXPECT_MATRIX_FLOAT_EQ(A, A_v.vi_->val_);
 }
-*/
+
 TEST_F(AgradRev, a_eq_x) {
   AVAR a = 5.0;
   EXPECT_FLOAT_EQ(5.0, a.val());

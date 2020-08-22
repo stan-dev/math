@@ -180,8 +180,8 @@ public:
   using PlainObject = plain_type_t<T>;
   using value_type = std::decay_t<T>;  // The underlying type for this class
   using eigen_scalar = value_type_t<PlainObject>;  // A floating point type
-  const T& val_;
-  const T& adj_;
+  const T val_;
+  const T adj_;
   template <typename S, typename K,
             require_convertible_t<S&, value_type>* = nullptr,
             require_convertible_t<K&, value_type>* = nullptr>
@@ -353,7 +353,7 @@ class vari_value<T, require_eigen_dense_plain_type_t<T>>
    * View of the head of Eigen vector types.
    * @param n Number of elements to return from top of vector.
    */
-  inline const auto head(Eigen::Index n) const {
+  inline auto head(Eigen::Index n) const {
     return vari_view<decltype(val_.head(n))>(val_.head(n), adj_.head(n));
   }
 
@@ -361,7 +361,7 @@ class vari_value<T, require_eigen_dense_plain_type_t<T>>
    * View of the tail of the Eigen vector types.
    * @param n Number of elements to return from bottom of vector.
    */
-  inline const auto tail(Eigen::Index n) const {
+  inline auto tail(Eigen::Index n) const {
     return vari_view<decltype(val_.tail(n))>(val_.tail(n), adj_.tail(n));
   }
 
@@ -370,7 +370,7 @@ class vari_value<T, require_eigen_dense_plain_type_t<T>>
    * @param i Starting position of block.
    * @param n Number of elements in block
    */
-  inline const auto segment(Eigen::Index i, Eigen::Index n) const {
+  inline auto segment(Eigen::Index i, Eigen::Index n) const {
     return vari_view<decltype(val_.segment(i, n))>(val_.segment(i, n),
                                          adj_.segment(i, n));
   }
@@ -379,7 +379,7 @@ class vari_value<T, require_eigen_dense_plain_type_t<T>>
    * View row of eigen matrices.
    * @param i Row index to slice.
    */
-  inline const auto row(Eigen::Index i) const {
+  inline auto row(Eigen::Index i) const {
     return vari_view<decltype(val_.row(i))>(val_.row(i), adj_.row(i));
   }
 
@@ -387,7 +387,7 @@ class vari_value<T, require_eigen_dense_plain_type_t<T>>
    * View column of eigen matrices
    * @param i Column index to slice
    */
-  inline const auto col(Eigen::Index i) const {
+  inline auto col(Eigen::Index i) const {
     return vari_view<decltype(val_.col(i))>(val_.col(i), adj_.col(i));
   }
 
@@ -396,16 +396,16 @@ class vari_value<T, require_eigen_dense_plain_type_t<T>>
    * @param i Row index
    * @param j Column index
    */
-  inline const auto coeff(Eigen::Index i, Eigen::Index j) const {
-    return vari_view<double>(val_(i, j), adj_(i, j));
+  inline auto coeff(Eigen::Index i, Eigen::Index j) const {
+    return vari_value<double>(val_(i, j), adj_(i, j));
   }
 
   /**
    * Get coefficient of eigen matrices
    * @param i Column index to slice
    */
-  inline const auto operator()(Eigen::Index i) const {
-    return vari_view<double>(val_(i), adj_(i));
+  inline auto operator()(Eigen::Index i) const {
+    return vari_value<double>(val_(i), adj_(i));
   }
 
   /**
