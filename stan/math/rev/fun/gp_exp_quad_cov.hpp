@@ -73,26 +73,21 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x>& x,
     double sigma_adj = 0.0;
     double l_adj = 0.0;
     double inv_l_d_squared = 1.0 / (l_d * l_d);
+    res_val.array() *= res.adj().array();
+    if (!is_constant<T_l>::value)
+      l_adj += (dist.transpose() * res_val).diagonal().sum();
 
-    size_t pos = 0;
     for (size_t j = 0; j < arena_x.size(); ++j) {
-      for (size_t i = j; i < arena_x.size(); ++i) {
-        double adj_times_val = res_val.coeffRef(i, j) * res.coeff(i, j).adj();
-
         if (!is_constant<T_sigma>::value)
-          sigma_adj += adj_times_val;
-
-        if (!is_constant<T_l>::value)
-          l_adj += dist.coeff(i, j) * adj_times_val;
-
-        if (!is_constant<T_x>::value && i != j) {
-          auto adj = eval(-(value_of(arena_x[i]) - value_of(arena_x[j]))
-                          * adj_times_val * inv_l_d_squared);
+          sigma_adj += res_val.col(j).segment(j, arena_x.size() - j).sum();
+        if (!is_constant<T_x>::value) {
+          for (size_t i = j + 1; i < arena_x.size(); ++i) {
+            auto adj = eval(-(value_of(arena_x[i]) - value_of(arena_x[j]))
+                          * res_val.coeff(i, j) * inv_l_d_squared);
           using T_x_var = promote_scalar_t<var, T_x>;
           forward_as<T_x_var>(arena_x[i]).adj() += adj;
           forward_as<T_x_var>(arena_x[j]).adj() -= adj;
         }
-        pos++;
       }
     }
 
