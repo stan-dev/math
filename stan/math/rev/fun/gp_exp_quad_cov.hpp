@@ -51,12 +51,12 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x>& x,
 
   size_t P = (x.size() * x.size() - x.size()) / 2 + x.size();
   arena_matrix<Eigen::VectorXd> dist(P);
-  arena_matrix<Eigen::VectorXd> res_val(P);
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> arena_res(P);
 
   auto arena_x = to_arena_if<!is_constant<T_x>::value>(x);
 
   double inv_half_sq_l_d
-      = 0.5 / (value_of(length_scale) * value_of(length_scale));
+      = 0.5 / (l_d * l_d);
 
   size_t pos = 0;
   for (size_t j = 0; j < x.size(); ++j) {
@@ -64,51 +64,52 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x>& x,
       if (i != j) {
         double dist_sq = squared_distance(value_of(x[i]), value_of(x[j]));
         dist.coeffRef(pos) = dist_sq;
-        res_val.coeffRef(pos)
+        arena_res.coeffRef(pos)
             = sigma_sq_d * std::exp(-dist_sq * inv_half_sq_l_d);
       } else {
         dist.coeffRef(pos) = 0.0;
-        res_val.coeffRef(pos) = sigma_sq_d;
+        arena_res.coeffRef(pos) = sigma_sq_d;
       }
       pos++;
     }
   }
 
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> res(
-      x.size(), x.size());
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> res(x.size(), x.size());
 
   pos = 0;
   for (size_t j = 0; j < res.cols(); ++j)
     for (size_t i = 0; i <= j; ++i) {
-      res.coeffRef(j, i) = res.coeffRef(i, j) = res_val.coeff(pos);
+      res.coeffRef(j, i) = res.coeffRef(i, j) = arena_res.coeff(pos);
       pos++;
     }
 
-  reverse_pass_callback([res, res_val, arena_x, dist, sigma, length_scale,
+  reverse_pass_callback([arena_res, arena_x, dist, sigma, length_scale,
                          sigma_d, l_d]() mutable {
+    size_t pos = 0;
+
     double sigma_adj = 0.0;
     double l_adj = 0.0;
     double inv_l_d_squared = 1.0 / (l_d * l_d);
 
-    size_t pos = 0;
+    pos = 0;
     for (size_t j = 0; j < arena_x.size(); ++j) {
       for (size_t i = 0; i <= j; ++i) {
-        double adj_times_val = res_val.coeffRef(pos) * res.adj().coeff(i, j);
+	double adj_times_val = arena_res.coeff(pos).val() * arena_res.coeff(pos).adj();
 
-        if (!is_constant<T_sigma>::value)
-          sigma_adj += adj_times_val;
+	if (!is_constant<T_sigma>::value)
+	  sigma_adj += adj_times_val;
+      
+	if (!is_constant<T_l>::value)
+	  l_adj += dist.coeff(pos) * adj_times_val;
 
-        if (!is_constant<T_l>::value)
-          l_adj += dist.coeff(pos) * adj_times_val;
-
-        if (!is_constant<T_x>::value && i != j) {
-          auto adj = eval(-(value_of(arena_x[i]) - value_of(arena_x[j]))
-                          * adj_times_val * inv_l_d_squared);
-          using T_x_var = promote_scalar_t<var, T_x>;
-          forward_as<T_x_var>(arena_x[i]).adj() += adj;
-          forward_as<T_x_var>(arena_x[j]).adj() -= adj;
-        }
-        pos++;
+	if (!is_constant<T_x>::value && i != j) {
+	  auto adj = eval(-(value_of(arena_x[i]) - value_of(arena_x[j]))
+			  * adj_times_val * inv_l_d_squared);
+	  using T_x_var = promote_scalar_t<var, T_x>;
+	  forward_as<T_x_var>(arena_x[i]).adj() += adj;
+	  forward_as<T_x_var>(arena_x[j]).adj() -= adj;
+	}
+	pos++;
       }
     }
 
