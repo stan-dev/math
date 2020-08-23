@@ -69,7 +69,7 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
   arena_matrix<Eigen::VectorXd> arena_dist(P);
   arena_matrix<Eigen::VectorXd> arena_sin_squared(P);
   arena_matrix<Eigen::VectorXd> arena_sin_squared_derivative(P);
-  arena_matrix<Eigen::VectorXd> res_val(P);
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> arena_res(P);
 
   auto arena_x = to_arena_if<!is_constant<T_x>::value>(x);
 
@@ -88,31 +88,30 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
 
         arena_sin_squared_derivative.coeffRef(pos) = 2.0 * sine * cosine;
 
-        res_val.coeffRef(pos)
+        arena_res.coeffRef(pos)
             = sigma_squared
               * std::exp(sine_squared * negative_two_over_l_squared);
       } else {
-        arena_dist(pos) = 0.0;
-        arena_sin_squared(pos) = 0.0;
-        arena_sin_squared_derivative(pos) = 0.0;
-        res_val(pos) = sigma_squared;
+        arena_dist.coeffRef(pos) = 0.0;
+        arena_sin_squared.coeffRef(pos) = 0.0;
+        arena_sin_squared_derivative.coeffRef(pos) = 0.0;
+        arena_res.coeffRef(pos) = sigma_squared;
       }
 
       pos++;
     }
   }
 
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> res(
-      x.size(), x.size());
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> res(x.size(), x.size());
 
   pos = 0;
   for (size_t j = 0; j < res.cols(); ++j)
     for (size_t i = 0; i <= j; ++i) {
-      res.coeffRef(j, i) = res.coeffRef(i, j) = res_val.coeff(pos);
+      res.coeffRef(j, i) = res.coeffRef(i, j) = arena_res.coeff(pos);
       pos++;
     }
 
-  reverse_pass_callback([res, res_val, arena_x, sigma, l, p, sigma_d, l_d, p_d,
+  reverse_pass_callback([arena_res, arena_x, sigma, l, p, sigma_d, l_d, p_d,
                          pi_over_p, arena_dist, arena_sin_squared,
                          arena_sin_squared_derivative]() mutable {
     double sigma_adj = 0.0;
@@ -122,7 +121,8 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
     size_t pos = 0;
     for (size_t i = 0; i < arena_x.size(); ++i) {
       for (size_t j = 0; j <= i; ++j) {
-        double adj_times_val = res_val.coeffRef(pos) * res.adj().coeff(i, j);
+        double adj_times_val = arena_res.coeff(pos).val() *
+	  arena_res.coeff(pos).adj();
 
         if (!is_constant<T_sigma>::value)
           sigma_adj += adj_times_val;
