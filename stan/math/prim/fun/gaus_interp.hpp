@@ -13,9 +13,11 @@ namespace math {
 
 // struct for passing precomputation data
 struct gaus_interp_params {
-  std::vector<double> as;
-  std::vector<double> bs;
-  double sig2;
+  std::vector<double> as_;
+  std::vector<double> bs_;
+  double sig2_;
+  gaus_interp_params(const std::vector<double>& as, const std::vector<double>& bs, double sig2) : as_(as), bs_(bs), sig2_(sig2) {}
+  gaus_interp_params(size_t as_size, size_t bs_size, double sig2) : as_(as_size), bs_(bs_size), sig2_(sig2) {}
 };
 
 namespace internal {
@@ -24,11 +26,12 @@ namespace internal {
 find the smallest difference between successive elements in a sorted vector
 */
 template <typename Tx>
-inline double min_diff(int n, const std::vector<Tx>& xs) {
+inline double min_diff(const int n, const std::vector<Tx>& xs) {
   double dmin = value_of(xs[1]) - value_of(xs[0]);
+  auto xs_val = value_of(xs);
   for (int i = 1; i < n - 1; i++) {
-    if (value_of(xs[i + 1]) - value_of(xs[i]) < dmin) {
-      dmin = value_of(xs[i + 1]) - value_of(xs[i]);
+    if (xs_val[i + 1] - xs_val[i] < dmin) {
+      dmin = xs_val[i + 1] - xs_val[i];
     }
   }
   return dmin;
@@ -82,26 +85,26 @@ inline return_type_t<Tx> gaus_interp(const std::vector<double>& xs,
   std::vector<double> xs2 = xs;
 
   // extend out first and last lines for convolution
-  double sig = std::sqrt(params.sig2);
+  double sig = std::sqrt(params.sig2_);
   xs2[0] = xs[0] - NSTDS * sig;
   xs2[n - 1] = xs[n - 1] + NSTDS * sig;
 
   // no need to convolve far from center of gaussian, so
   // get lower and upper indexes for integration bounds
-  auto lb = upper_bound(xs.begin(), xs.end(), x - NSTDS * sig);
-  int ind_start = distance(xs.begin(), lb) - 1;
+  auto lb = std::upper_bound(xs.begin(), xs.end(), x - NSTDS * sig);
+  int ind_start = std::distance(xs.begin(), lb) - 1;
   ind_start = std::max(0, ind_start);
 
-  auto ub = upper_bound(xs.begin(), xs.end(), x + NSTDS * sig);
-  int ind_end = distance(xs.begin(), ub);
+  auto ub = std::upper_bound(xs.begin(), xs.end(), x + NSTDS * sig);
+  int ind_end = std::distance(xs.begin(), ub);
   ind_end = std::min(n - 1, ind_end);
 
   // sum convolutions over intervals
   using return_t = return_type_t<Tx>;
   return_t y = 0;
   for (int i = ind_start; i < ind_end; i++) {
-    y += conv_gaus_line(xs2[i], xs2[i + 1], params.as[i], params.bs[i], x,
-                        params.sig2);
+    y += conv_gaus_line(xs2[i], xs2[i + 1], params.as_[i], params.bs_[i], x,
+                        params.sig2_);
   }
 
   return y;
@@ -133,27 +136,24 @@ inline gaus_interp_params gaus_interp_precomp(const std::vector<double>& xs,
   check_greater(function, "xs", xs.size(), 1);
 
   using internal::min_diff;
-  gaus_interp_params params;
   const double INTERP_TOL = 1e-8;
   const double SIG2_SCALE = 0.1;
-  int n = xs.size();
+  const size_t n = xs.size();
 
   // find minimum distance between points for std of gaussian kernel
-  params.sig2 = square(min_diff(n, xs) * SIG2_SCALE);
-  params.as.resize(n - 1);
-  params.bs.resize(n - 1);
+  gaus_interp_params params(n - 1, n - 1, square(min_diff(n, xs) * SIG2_SCALE));
 
   // copy ys into a new vector that will be changed
   std::vector<double> y2s = ys;
 
   // interatively find interpolation that coincides with ys at xs
-  int max_iters = 50;
+  const int max_iters = 50;
   double dmax, dd;
   for (int j = 0; j < max_iters; j++) {
     // find slope and intercept of line between each point
     for (int i = 0; i < n - 1; i++) {
-      params.as[i] = (y2s[i + 1] - y2s[i]) / (xs[i + 1] - xs[i]);
-      params.bs[i] = -xs[i] * params.as[i] + y2s[i];
+      params.as_[i] = (y2s[i + 1] - y2s[i]) / (xs[i + 1] - xs[i]);
+      params.bs_[i] = -xs[i] * params.as_[i] + y2s[i];
     }
 
     dmax = 0;
