@@ -121,8 +121,8 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
     size_t pos = 0;
     for (size_t i = 0; i < arena_x.size(); ++i) {
       for (size_t j = 0; j <= i; ++j) {
-        double adj_times_val = arena_res.coeff(pos).val() *
-	  arena_res.coeff(pos).adj();
+        double adj_times_val
+            = arena_res.coeff(pos).val() * arena_res.coeff(pos).adj();
 
         if (!is_constant<T_sigma>::value)
           sigma_adj += adj_times_val;
