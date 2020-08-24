@@ -11,8 +11,7 @@ namespace stan {
 namespace math {
 
 // forward decleration of vari_value
-template <typename T,
-          typename = void>
+template <typename T, typename = void>
 class vari_value;
 
 // forward declaration of var
@@ -79,8 +78,7 @@ class vari_base {
  *
  */
 template <typename T>
-class vari_value<T, require_floating_point_t<T>>
-    : public vari_base {
+class vari_value<T, require_floating_point_t<T>> : public vari_base {
  public:
   using value_type = std::decay_t<T>;
   /**
@@ -161,8 +159,7 @@ class vari_value<T, require_floating_point_t<T>>
    *
    * @return The modified ostream.
    */
-  friend std::ostream& operator<<(std::ostream& os,
-                                  const vari_value<T>* v) {
+  friend std::ostream& operator<<(std::ostream& os, const vari_value<T>* v) {
     return os << v->val_ << ":" << v->adj_;
   }
 
@@ -211,8 +208,7 @@ public:
  *
  */
 template <typename T>
-class vari_value<T, require_eigen_dense_plain_type_t<T>>
-    : public vari_base {
+class vari_value<T, require_eigen_dense_plain_type_t<T>> : public vari_base {
  public:
   static_assert(
       is_plain_type<T>::value,
@@ -225,9 +221,10 @@ class vari_value<T, require_eigen_dense_plain_type_t<T>>
   using PlainObject = plain_type_t<T>;
   using value_type = PlainObject;  // The underlying type for this class
   using eigen_scalar = value_type_t<PlainObject>;  // A floating point type
-//  using check_const = std::conditional_t<std::is_const<T>::value, const PlainObject, PlainObject>;
-  using eigen_map
-      = Eigen::Map<PlainObject, Eigen::Aligned8, Eigen::Stride<0, 0>>;  // Maps for adj_ and val_
+  //  using check_const = std::conditional_t<std::is_const<T>::value, const
+  //  PlainObject, PlainObject>;
+  using eigen_map = Eigen::Map<PlainObject, Eigen::Aligned8,
+                               Eigen::Stride<0, 0>>;  // Maps for adj_ and val_
   using vari_type = vari_value<T>;
   /**
    * Number of rows known at compile time
@@ -335,7 +332,7 @@ class vari_value<T, require_eigen_dense_plain_type_t<T>>
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  inline void set_zero_adjoint() final { adj_.setZero();}
+  inline void set_zero_adjoint() final { adj_.setZero(); }
 
   /**
    * A block view of the underlying Eigen matrices.
@@ -375,7 +372,7 @@ class vari_value<T, require_eigen_dense_plain_type_t<T>>
    */
   inline auto segment(Eigen::Index i, Eigen::Index n) const {
     return vari_view<decltype(val_.segment(i, n))>(val_.segment(i, n),
-                                         adj_.segment(i, n));
+                                                   adj_.segment(i, n));
   }
 
   /**
@@ -429,8 +426,7 @@ class vari_value<T, require_eigen_dense_plain_type_t<T>>
    *
    * @return The modified ostream.
    */
-  friend std::ostream& operator<<(std::ostream& os,
-                                  const vari_value<T>* v) {
+  friend std::ostream& operator<<(std::ostream& os, const vari_value<T>* v) {
     return os << "val: \n" << v->val_ << " \nadj: \n" << v->adj_;
   }
 
@@ -451,8 +447,8 @@ class vari_value<T, require_eigen_dense_plain_type_t<T>>
  *
  */
 template <typename T>
-class vari_value<T, require_eigen_sparse_base_t<T>>
-    : public vari_base, chainable_alloc {
+class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
+                                                      chainable_alloc {
  public:
   using PlainObject = plain_type_t<T>;  // Base type of Eigen class
   using value_type = PlainObject;       // vari's adj_ and val_ member type
@@ -574,8 +570,7 @@ class vari_value<T, require_eigen_sparse_base_t<T>>
    *
    * @return The modified ostream.
    */
-  friend std::ostream& operator<<(std::ostream& os,
-                                  const vari_value<T>* v) {
+  friend std::ostream& operator<<(std::ostream& os, const vari_value<T>* v) {
     return os << "val: \n" << v->val_ << " \nadj: \n" << v->adj_;
   }
 
