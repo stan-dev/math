@@ -177,12 +177,14 @@ using vari = vari_value<double>;
  * memory.
  * @tparam T An eigen expression referencing memory allocated in a `vari_value`.
  */
- template <typename T, typename = void>
- class vari_view;
+template <typename T, typename = void>
+class vari_view;
 
 template <typename T>
-class vari_view<T, require_t<bool_constant<!is_plain_type<T>::value && is_eigen_dense_base<T>::value>>> final : public vari_base {
-public:
+class vari_view<T, require_t<bool_constant<!is_plain_type<T>::value
+                                           && is_eigen_dense_base<T>::value>>>
+    final : public vari_base {
+ public:
   using PlainObject = plain_type_t<T>;
   using value_type = std::decay_t<T>;  // The underlying type for this class
   using eigen_scalar = value_type_t<PlainObject>;  // A floating point type
@@ -342,8 +344,9 @@ class vari_value<T, require_eigen_dense_plain_type_t<T>> : public vari_base {
    * @param num_cols Number of columns to return.
    */
   inline auto block(Eigen::Index start_row, Eigen::Index start_col,
-     Eigen::Index num_rows, Eigen::Index num_cols) const {
-    using inner_type = decltype(val_.block(start_row, start_col, num_rows, num_cols));
+                    Eigen::Index num_rows, Eigen::Index num_cols) const {
+    using inner_type
+        = decltype(val_.block(start_row, start_col, num_rows, num_cols));
     return vari_view<inner_type>(
         val_.block(start_row, start_col, num_rows, num_cols),
         adj_.block(start_row, start_col, num_rows, num_cols));

@@ -302,10 +302,12 @@ class var_value {
    * @param num_cols Number of columns to return.
    */
   inline const auto block(Eigen::Index start_row, Eigen::Index start_col,
-     Eigen::Index num_rows, Eigen::Index num_cols) const {
-    using vari_sub = decltype(vi_->block(start_row, start_col, num_rows, num_cols));
+                          Eigen::Index num_rows, Eigen::Index num_cols) const {
+    using vari_sub
+        = decltype(vi_->block(start_row, start_col, num_rows, num_cols));
     using var_sub = var_value<const typename vari_sub::value_type>;
-    return var_sub(new vari_sub(vi_->block(start_row, start_col, num_rows, num_cols)));
+    return var_sub(
+        new vari_sub(vi_->block(start_row, start_col, num_rows, num_cols)));
   }
 
   /**

@@ -50,7 +50,6 @@ template <typename T>
 using plain_type_check_t = typename std::decay_t<T>::PlainObject;
 }  // namespace internal
 
-
 /**
  * Determines plain (non expression) type associated with \c T. For \c Eigen
  * expression it is a type the expression can be evaluated into.

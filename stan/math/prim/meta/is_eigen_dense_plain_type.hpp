@@ -20,7 +20,8 @@ namespace stan {
  */
 template <typename T>
 struct is_eigen_dense_plain_type
-    : bool_constant<is_eigen_dense_base<T>::value && is_plain_type<T>::value> {};
+    : bool_constant<is_eigen_dense_base<T>::value && is_plain_type<T>::value> {
+};
 
 STAN_ADD_REQUIRE_UNARY(eigen_dense_plain_type, is_eigen_dense_plain_type,
                        require_eigens_types);
