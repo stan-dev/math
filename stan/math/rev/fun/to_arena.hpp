@@ -62,7 +62,7 @@ inline std::vector<T, arena_allocator<T>> to_arena(
 template <typename T, require_eigen_t<T>* = nullptr,
           require_not_same_t<T, arena_t<T>>* = nullptr>
 inline arena_t<T> to_arena(const T& a) {
-  return {a};
+  return arena_t<T>(a);
 }
 
 /**
