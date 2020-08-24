@@ -14,8 +14,8 @@ namespace math {
  * @return result of unary plus of the input.
  */
 template <typename T>
-inline plain_type_t<T> plus(const T& x) {
-  return x;
+inline T plus(T&& x) {
+  return std::forward(x);
 }
 
 }  // namespace math
