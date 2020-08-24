@@ -295,16 +295,16 @@ class var_value {
 
   /**
    * A block view of the underlying Eigen matrices.
-   * @param i Starting row of block.
-   * @param j Starting columns of block.
-   * @param p Number of rows to return.
-   * @param q Number of columns to return.
+   * @param start_row Starting row of block.
+   * @param start_col Starting columns of block.
+   * @param num_rows Number of rows to return.
+   * @param num_cols Number of columns to return.
    */
-  inline const auto block(Eigen::Index i, Eigen::Index j, Eigen::Index p,
-                          Eigen::Index q) const {
-    using vari_sub = decltype(vi_->block(i, j, p, q));
+  inline const auto block(Eigen::Index start_row, Eigen::Index start_col,
+     Eigen::Index num_rows, Eigen::Index num_cols) const {
+    using vari_sub = decltype(vi_->block(start_row, start_col, num_rows, num_cols));
     using var_sub = var_value<const typename vari_sub::value_type>;
-    return var_sub(new vari_sub(vi_->block(i, j, p, q)));
+    return var_sub(new vari_sub(vi_->block(start_row, start_col, num_rows, num_cols)));
   }
 
 

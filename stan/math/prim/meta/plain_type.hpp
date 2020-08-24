@@ -2,6 +2,8 @@
 #define STAN_MATH_PRIM_META_PLAIN_TYPE_HPP
 
 #include <stan/math/prim/meta/plain_type.hpp>
+#include <stan/math/prim/meta/bool_constant.hpp>
+#include <stan/math/prim/meta/is_detected.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <type_traits>
 
@@ -40,13 +42,22 @@ struct eval_return_type {
 template <typename T>
 using eval_return_type_t = typename eval_return_type<T>::type;
 
+namespace internal {
+/**
+ * @brief Used to detect if object has PlainObject
+ */
+template <typename T>
+using plain_type_check_t = typename std::decay_t<T>::PlainObject;
+}  // namespace internal
+
+
 /**
  * Determines plain (non expression) type associated with \c T. For \c Eigen
  * expression it is a type the expression can be evaluated into.
  * @tparam T type to determine plain type of
  */
 template <typename T>
-struct plain_type<T, require_eigen_t<T>> {
+struct plain_type<T, require_t<is_detected<T, internal::plain_type_check_t>>> {
   using type = typename std::decay_t<T>::PlainObject;
 };
 

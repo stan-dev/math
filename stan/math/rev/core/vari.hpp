@@ -174,8 +174,17 @@ class vari_value<T, require_floating_point_t<T>>
 // For backwards compatability the default is double
 using vari = vari_value<double>;
 
+/**
+ * A `vari_view` is used to read from a slice of a `vari_value` with an inner
+ * eigen type. It can only accept expressions which do not allocate dynamic
+ * memory.
+ * @tparam T An eigen expression referencing memory allocated in a `vari_value`.
+ */
+ template <typename T, typename = void>
+ class vari_view;
+
 template <typename T>
-class vari_view final : public vari_base {
+class vari_view<T, require_t<bool_constant<!is_plain_type<T>::value && is_eigen_dense_base<T>::value>>> final : public vari_base {
 public:
   using PlainObject = plain_type_t<T>;
   using value_type = std::decay_t<T>;  // The underlying type for this class
@@ -190,10 +199,6 @@ public:
   void chain() {}
 };
 
-template <typename T>
-using require_eigen_dense_plain_type_t =
-  require_t<bool_constant<is_plain_type<std::decay_t<T>>::value &&
-    is_eigen_dense_base<std::decay_t<T>>::value>>;
 /**
  * The variable implementation for Eigen dense matrix types.
  *
@@ -209,13 +214,11 @@ template <typename T>
 class vari_value<T, require_eigen_dense_plain_type_t<T>>
     : public vari_base {
  public:
-   /*
   static_assert(
       is_plain_type<T>::value,
       "The template for this var is an"
       " expression but a var_value's inner type must be assignable such as"
       " a double, Eigen::Matrix, or Eigen::Array");
-  */
   /**
    * `PlainObject` represents a user constructible type such as Matrix or Array
    */
@@ -336,17 +339,17 @@ class vari_value<T, require_eigen_dense_plain_type_t<T>>
 
   /**
    * A block view of the underlying Eigen matrices.
-   * @param i Starting row of block.
-   * @param j Starting columns of block.
-   * @param p Number of rows to return.
-   * @param q Number of columns to return.
+   * @param start_row Starting row of block.
+   * @param start_col Starting columns of block.
+   * @param num_rows Number of rows to return.
+   * @param num_cols Number of columns to return.
    */
-  inline auto block(Eigen::Index i, Eigen::Index j, Eigen::Index p,
-                          Eigen::Index q) const {
-    const auto& val_block = val_.block(i, j, p, q);
-    const auto& adj_block = adj_.block(i, j, p, q);
-    return vari_view<decltype(val_.block(i, j, p, q))>(
-        val_block, adj_block);
+  inline auto block(Eigen::Index start_row, Eigen::Index start_col,
+     Eigen::Index num_rows, Eigen::Index num_cols) const {
+    using inner_type = decltype(val_.block(start_row, start_col, num_rows, num_cols));
+    return vari_view<inner_type>(
+        val_.block(start_row, start_col, num_rows, num_cols),
+        adj_.block(start_row, start_col, num_rows, num_cols));
   }
 
   /**
