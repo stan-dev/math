@@ -8,12 +8,29 @@
 namespace stan {
 namespace math {
 
-template <typename T_a, typename T_b,
-          require_any_eigen_vt<is_autodiff, T_a, T_b>* = nullptr,
-          require_not_vt_same<T_a, T_b>* = nullptr>
-auto operator<(const T_a& a, const T_b& b) {
-  return operator<(value_of(a), value_of(b));
-}
+/**
+ * Add support for comparisons involving Eigen types with different scalars,
+ * where one of the scalars is an autodiff type. This includes comparisons of
+ * an Eigen type and a scalar.
+ * @param OP operator to add support for
+ **/
+#define ADD_MIXED_AUTODIFF_SCALAR_COMPARISON(OPERATOR, OP) \
+  template <typename T_a, typename T_b,                           \
+            require_any_eigen_t<T_a, T_b>* = nullptr,             \
+            require_any_st_autodiff<T_a, T_b>* = nullptr,         \
+            require_not_st_same<T_a, T_b>* = nullptr>             \
+  auto OPERATOR(const T_a& a, const T_b& b) {                     \
+    return value_of(a) OP value_of(b);                            \
+  }
+
+ADD_MIXED_AUTODIFF_SCALAR_COMPARISON(operator<, <);
+ADD_MIXED_AUTODIFF_SCALAR_COMPARISON(operator<=, <=);
+ADD_MIXED_AUTODIFF_SCALAR_COMPARISON(operator>, >);
+ADD_MIXED_AUTODIFF_SCALAR_COMPARISON(operator>=, >=);
+ADD_MIXED_AUTODIFF_SCALAR_COMPARISON(operator==, ==);
+ADD_MIXED_AUTODIFF_SCALAR_COMPARISON(operator!=, !=);
+
+#undef ADD_MIXED_AUTODIFF_SCALAR_COMPARISON
 
 }  // namespace math
 }  // namespace stan
