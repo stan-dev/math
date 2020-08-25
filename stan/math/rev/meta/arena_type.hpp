@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/plain_type.hpp>
 #include <stan/math/rev/core/arena_allocator.hpp>
+#include <stan/math/rev/core/var.hpp>
 
 namespace stan {
 namespace math {
@@ -42,6 +43,11 @@ struct arena_type_impl<
     std::enable_if_t<T::RowsAtCompileTime != Eigen::Dynamic
                      && T::ColsAtCompileTime != Eigen::Dynamic>> {
   using type = plain_type_t<T>;
+};
+
+template <typename T>
+struct arena_type_impl<T, require_var_t<T>, require_eigen_t<typename T::value_type>> {
+  using type = math::var_value<std::decay_t<T>>;
 };
 }  // namespace internal
 

@@ -3,9 +3,26 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/functor/reverse_pass_callback.hpp>
 
 namespace stan {
 namespace math {
+
+template <typename MatrixType>
+class arena_matrix<var_value<MatrixType>> : public var_value<MatrixType> {
+public:
+  template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+  arena_matrix(const arena_matrix<T>& x) : var_value<MatrixType>(x.val()) {
+    this->vi_->adj_ = x.adj();
+    reverse_pass_callback([x, this]() mutable {
+      for (Eigen::Index i = 0; i < x.size(); ++i) {
+        x(i).vi_->adj_ = this->vi_->adj_(i);
+      }
+    });
+  }
+    template <typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
+    arena_matrix(const arena_matrix<T>& x) : var_value<MatrixType>(x) {}
+};
 
 /**
  * Equivalent to `Eigen::Matrix`, except that the data is stored on AD stack.

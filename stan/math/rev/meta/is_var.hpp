@@ -6,7 +6,10 @@
 #include <type_traits>
 
 namespace stan {
-
+namespace math {
+  template <typename T>
+  class var_value;
+}
 namespace internal {
 template <typename T>
 struct is_var_impl : std::false_type {};
