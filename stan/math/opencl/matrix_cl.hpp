@@ -189,7 +189,7 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
    * @param C number of columns
    * @param partial_view view of the matrix
    */
-  matrix_cl(cl::Buffer& A, const int R, const int C,
+  matrix_cl(const cl::Buffer& A, const int R, const int C,
             matrix_cl_view partial_view = matrix_cl_view::Entire)
       : buffer_cl_(A), rows_(R), cols_(C), view_(partial_view) {}
 
