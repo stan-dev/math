@@ -25,25 +25,22 @@ columns_dot_product(const Mat1& v1, const Mat2& v2) {
   ref_type_t<Mat1> v1_ref = v1;
   ref_type_t<Mat2> v2_ref = v2;
 
-  arena_matrix<promote_scalar_t<double, Mat1>> arena_v1_val = value_of(v1_ref);
-  arena_matrix<promote_scalar_t<double, Mat2>> arena_v2_val = value_of(v2_ref);
+  arena_matrix<var_matrix_converter_t<Mat1>> arena_v1 = to_arena(v1_ref);
+  arena_matrix<var_matrix_converter_t<Mat2>> arena_v2 = to_arena(v2_ref);
 
-  arena_matrix<var_matrix_converter_t<Mat1>> arena_v1 = to_arena_if<!is_constant<Mat1>::value>(v1_ref);
-  arena_matrix<var_matrix_converter_t<Mat2>> arena_v2 = to_arena_if<!is_constant<Mat2>::value>(v2_ref);
-
-  Eigen::RowVectorXd out_val = (arena_v1_val.cwiseProduct(arena_v2_val)).colwise().sum();
+  Eigen::RowVectorXd out_val = (arena_v1.val().cwiseProduct(arena_v2.val())).colwise().sum();
 
   arena_matrix<Eigen::Matrix<var, 1, Eigen::Dynamic>> out = out_val;
 
   reverse_pass_callback(
-      [out, arena_v1, arena_v2, arena_v1_val, arena_v2_val]() mutable {
+      [out, arena_v1, arena_v2]() mutable {
         Eigen::RowVectorXd adj = out.adj();
 
         if (!is_constant<Mat1>::value)
-          arena_v1.adj() += arena_v2_val * adj.asDiagonal();
+          arena_v1.adj() += arena_v2.val() * adj.asDiagonal();
 
         if (!is_constant<Mat2>::value)
-          arena_v2.adj() += arena_v1_val * adj.asDiagonal();
+          arena_v2.adj() += arena_v1.val() * adj.asDiagonal();
       });
 
   return out;
