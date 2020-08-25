@@ -32,8 +32,8 @@ namespace math {
  * value (wich will be broadcast - used for all instances);
  * @tparam T_x type of the design matrix
  * @tparam T_alpha type of the intercept(s);
- * this can be a `matrix_cl` vector (of the same length as y) of intercepts or a single
- * value (for models with constant intercept);
+ * this can be a `matrix_cl` vector (of the same length as y) of intercepts or a
+ * single value (for models with constant intercept);
  * @tparam T_beta type of the weight vector;
  * this can also be a single value;
  * @param y positive integer scalar or vector parameter on OpenCL device. If

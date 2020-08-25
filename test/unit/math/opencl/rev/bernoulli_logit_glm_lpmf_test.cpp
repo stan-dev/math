@@ -108,9 +108,10 @@ TEST(ProbDistributionsBernoulliLogitGLM, gpu_matches_cpu_small_simple) {
   matrix_cl<int> y_cl(y);
   matrix_cl<double> beta_cl(beta);
 
-  expect_near_rel("bernoulli_logit_glm_lpmf (OpenCL)",
-                  stan::math::bernoulli_logit_glm_lpmf(y_cl, x_cl, alpha, beta_cl),
-                  stan::math::bernoulli_logit_glm_lpmf(y, x, alpha, beta));
+  expect_near_rel(
+      "bernoulli_logit_glm_lpmf (OpenCL)",
+      stan::math::bernoulli_logit_glm_lpmf(y_cl, x_cl, alpha, beta_cl),
+      stan::math::bernoulli_logit_glm_lpmf(y, x, alpha, beta));
   expect_near_rel(
       "bernoulli_logit_glm_lpmf (OpenCL)",
       stan::math::bernoulli_logit_glm_lpmf<true>(y_cl, x_cl, alpha, beta_cl),
@@ -122,8 +123,8 @@ TEST(ProbDistributionsBernoulliLogitGLM, gpu_matches_cpu_small_simple) {
   var alpha_var1 = alpha;
   var alpha_var2 = alpha;
 
-  var res1
-      = stan::math::bernoulli_logit_glm_lpmf(y_cl, x_cl, alpha_var1, beta_var1_cl);
+  var res1 = stan::math::bernoulli_logit_glm_lpmf(y_cl, x_cl, alpha_var1,
+                                                  beta_var1_cl);
   var res2 = stan::math::bernoulli_logit_glm_lpmf(y, x, alpha_var2, beta_var2);
 
   (res1 + res2).grad();
@@ -160,7 +161,8 @@ TEST(ProbDistributionsBernoulliLogitGLM, gpu_broadcast_y) {
   expect_near_rel(
       "poisson_log_glm_lpmf (OpenCL)",
       stan::math::bernoulli_logit_glm_lpmf<true>(y, x_cl, alpha, beta_cl),
-      stan::math::bernoulli_logit_glm_lpmf<true>(y_vec_cl, x_cl, alpha, beta_cl));
+      stan::math::bernoulli_logit_glm_lpmf<true>(y_vec_cl, x_cl, alpha,
+                                                 beta_cl));
 
   Matrix<var, Dynamic, 1> beta_var1 = beta;
   Matrix<var, Dynamic, 1> beta_var2 = beta;
@@ -199,9 +201,10 @@ TEST(ProbDistributionsBernoulliLogitGLM, gpu_matches_cpu_zero_instances) {
   matrix_cl<int> y_cl(y);
   matrix_cl<double> beta_cl(beta);
 
-  expect_near_rel("bernoulli_logit_glm_lpmf (OpenCL)",
-                  stan::math::bernoulli_logit_glm_lpmf(y_cl, x_cl, alpha, beta_cl),
-                  stan::math::bernoulli_logit_glm_lpmf(y, x, alpha, beta));
+  expect_near_rel(
+      "bernoulli_logit_glm_lpmf (OpenCL)",
+      stan::math::bernoulli_logit_glm_lpmf(y_cl, x_cl, alpha, beta_cl),
+      stan::math::bernoulli_logit_glm_lpmf(y, x, alpha, beta));
   expect_near_rel(
       "bernoulli_logit_glm_lpmf (OpenCL)",
       stan::math::bernoulli_logit_glm_lpmf<true>(y_cl, x_cl, alpha, beta_cl),
@@ -213,8 +216,8 @@ TEST(ProbDistributionsBernoulliLogitGLM, gpu_matches_cpu_zero_instances) {
   var alpha_var1 = alpha;
   var alpha_var2 = alpha;
 
-  var res1
-      = stan::math::bernoulli_logit_glm_lpmf(y_cl, x_cl, alpha_var1, beta_var1_cl);
+  var res1 = stan::math::bernoulli_logit_glm_lpmf(y_cl, x_cl, alpha_var1,
+                                                  beta_var1_cl);
   var res2 = stan::math::bernoulli_logit_glm_lpmf(y, x, alpha_var2, beta_var2);
 
   (res1 + res2).grad();
@@ -241,9 +244,10 @@ TEST(ProbDistributionsBernoulliLogitGLM, gpu_matches_cpu_zero_attributes) {
   matrix_cl<int> y_cl(y);
   matrix_cl<double> beta_cl(beta);
 
-  expect_near_rel("bernoulli_logit_glm_lpmf (OpenCL)",
-                  stan::math::bernoulli_logit_glm_lpmf(y_cl, x_cl, alpha, beta_cl),
-                  stan::math::bernoulli_logit_glm_lpmf(y, x, alpha, beta));
+  expect_near_rel(
+      "bernoulli_logit_glm_lpmf (OpenCL)",
+      stan::math::bernoulli_logit_glm_lpmf(y_cl, x_cl, alpha, beta_cl),
+      stan::math::bernoulli_logit_glm_lpmf(y, x, alpha, beta));
   expect_near_rel(
       "bernoulli_logit_glm_lpmf (OpenCL)",
       stan::math::bernoulli_logit_glm_lpmf<true>(y_cl, x_cl, alpha, beta_cl),
@@ -255,8 +259,8 @@ TEST(ProbDistributionsBernoulliLogitGLM, gpu_matches_cpu_zero_attributes) {
   var alpha_var1 = alpha;
   var alpha_var2 = alpha;
 
-  var res1
-      = stan::math::bernoulli_logit_glm_lpmf(y_cl, x_cl, alpha_var1, beta_var1_cl);
+  var res1 = stan::math::bernoulli_logit_glm_lpmf(y_cl, x_cl, alpha_var1,
+                                                  beta_var1_cl);
   var res2 = stan::math::bernoulli_logit_glm_lpmf(y, x, alpha_var2, beta_var2);
 
   (res1 + res2).grad();
@@ -287,9 +291,10 @@ TEST(ProbDistributionsBernoulliLogitGLM, gpu_matches_cpu_small_vector_alpha) {
   matrix_cl<double> alpha_cl(alpha);
   matrix_cl<double> beta_cl(beta);
 
-  expect_near_rel("bernoulli_logit_glm_lpmf (OpenCL)",
-                  stan::math::bernoulli_logit_glm_lpmf(y_cl, x_cl, alpha_cl, beta_cl),
-                  stan::math::bernoulli_logit_glm_lpmf(y, x, alpha, beta));
+  expect_near_rel(
+      "bernoulli_logit_glm_lpmf (OpenCL)",
+      stan::math::bernoulli_logit_glm_lpmf(y_cl, x_cl, alpha_cl, beta_cl),
+      stan::math::bernoulli_logit_glm_lpmf(y, x, alpha, beta));
   expect_near_rel(
       "bernoulli_logit_glm_lpmf (OpenCL)",
       stan::math::bernoulli_logit_glm_lpmf<true>(y_cl, x_cl, alpha_cl, beta_cl),
@@ -305,9 +310,10 @@ TEST(ProbDistributionsBernoulliLogitGLM, gpu_matches_cpu_small_vector_alpha) {
   auto alpha_var1_cl = to_matrix_cl(alpha_var1);
   auto beta_var1_cl = to_matrix_cl(beta_var1);
 
-  var res1
-      = stan::math::bernoulli_logit_glm_lpmf(y_cl, x_var1_cl, alpha_var1_cl, beta_var1_cl);
-  var res2 = stan::math::bernoulli_logit_glm_lpmf(y, x_var2, alpha_var2, beta_var2);
+  var res1 = stan::math::bernoulli_logit_glm_lpmf(y_cl, x_var1_cl,
+                                                  alpha_var1_cl, beta_var1_cl);
+  var res2
+      = stan::math::bernoulli_logit_glm_lpmf(y, x_var2, alpha_var2, beta_var2);
 
   (res1 + res2).grad();
 
@@ -340,12 +346,14 @@ TEST(ProbDistributionsBernoulliLogitGLM, gpu_matches_cpu_big) {
   matrix_cl<double> alpha_cl(alpha);
   matrix_cl<double> beta_cl(beta);
 
-  expect_near_rel("bernoulli_logit_glm_lpmf (OpenCL)",
-                  stan::math::bernoulli_logit_glm_lpmf(y_cl, x_cl, alpha_cl, beta_cl),
-                  stan::math::bernoulli_logit_glm_lpmf(y, x, alpha, beta));
-  expect_near_rel("bernoulli_logit_glm_lpmf (OpenCL)",
-                  stan::math::bernoulli_logit_glm_lpmf(y_cl, x_cl, alpha_cl, beta_cl),
-                  stan::math::bernoulli_logit_glm_lpmf(y, x, alpha, beta));
+  expect_near_rel(
+      "bernoulli_logit_glm_lpmf (OpenCL)",
+      stan::math::bernoulli_logit_glm_lpmf(y_cl, x_cl, alpha_cl, beta_cl),
+      stan::math::bernoulli_logit_glm_lpmf(y, x, alpha, beta));
+  expect_near_rel(
+      "bernoulli_logit_glm_lpmf (OpenCL)",
+      stan::math::bernoulli_logit_glm_lpmf(y_cl, x_cl, alpha_cl, beta_cl),
+      stan::math::bernoulli_logit_glm_lpmf(y, x, alpha, beta));
 
   Matrix<var, Dynamic, Dynamic> x_var1 = x;
   Matrix<var, Dynamic, Dynamic> x_var2 = x;
@@ -357,10 +365,10 @@ TEST(ProbDistributionsBernoulliLogitGLM, gpu_matches_cpu_big) {
   auto alpha_var1_cl = to_matrix_cl(alpha_var1);
   auto beta_var1_cl = to_matrix_cl(beta_var1);
 
-  var res1 = stan::math::bernoulli_logit_glm_lpmf<true>(y_cl, x_var1_cl, alpha_var1_cl,
-                                                        beta_var1_cl);
-  var res2
-      = stan::math::bernoulli_logit_glm_lpmf<true>(y, x_var2, alpha_var2, beta_var2);
+  var res1 = stan::math::bernoulli_logit_glm_lpmf<true>(
+      y_cl, x_var1_cl, alpha_var1_cl, beta_var1_cl);
+  var res2 = stan::math::bernoulli_logit_glm_lpmf<true>(y, x_var2, alpha_var2,
+                                                        beta_var2);
 
   (res1 + res2).grad();
 

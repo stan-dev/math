@@ -56,29 +56,40 @@ TEST(ProbDistributionsPoissonLogGLM, error_checking) {
   matrix_cl<double> alpha_size_cl(alpha_size);
   matrix_cl<double> alpha_value_cl(alpha_value);
 
-  EXPECT_NO_THROW(stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha_cl, beta_cl));
+  EXPECT_NO_THROW(
+      stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha_cl, beta_cl));
 
-  EXPECT_THROW(stan::math::poisson_log_glm_lpmf(y_size_cl, x_cl, alpha_cl, beta_cl),
-               std::invalid_argument);
-  EXPECT_THROW(stan::math::poisson_log_glm_lpmf(y_cl, x_size1_cl, alpha_cl, beta_cl),
-               std::invalid_argument);
-  EXPECT_THROW(stan::math::poisson_log_glm_lpmf(y_cl, x_size2_cl, alpha_cl, beta_cl),
-               std::invalid_argument);
-  EXPECT_THROW(stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha_size_cl, beta_cl),
-               std::invalid_argument);
-  EXPECT_THROW(stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha_cl, beta_size_cl),
-               std::invalid_argument);
-  EXPECT_THROW(stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha_cl, beta_size_cl),
-               std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::poisson_log_glm_lpmf(y_size_cl, x_cl, alpha_cl, beta_cl),
+      std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::poisson_log_glm_lpmf(y_cl, x_size1_cl, alpha_cl, beta_cl),
+      std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::poisson_log_glm_lpmf(y_cl, x_size2_cl, alpha_cl, beta_cl),
+      std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha_size_cl, beta_cl),
+      std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha_cl, beta_size_cl),
+      std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha_cl, beta_size_cl),
+      std::invalid_argument);
 
-  EXPECT_THROW(stan::math::poisson_log_glm_lpmf(y_value_cl, x_cl, alpha_cl, beta_cl),
-               std::domain_error);
-  EXPECT_THROW(stan::math::poisson_log_glm_lpmf(y_cl, x_value_cl, alpha_cl, beta_cl),
-               std::domain_error);
-  EXPECT_THROW(stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha_value_cl, beta_cl),
-               std::domain_error);
-  EXPECT_THROW(stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha_cl, beta_value_cl),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::poisson_log_glm_lpmf(y_value_cl, x_cl, alpha_cl, beta_cl),
+      std::domain_error);
+  EXPECT_THROW(
+      stan::math::poisson_log_glm_lpmf(y_cl, x_value_cl, alpha_cl, beta_cl),
+      std::domain_error);
+  EXPECT_THROW(
+      stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha_value_cl, beta_cl),
+      std::domain_error);
+  EXPECT_THROW(
+      stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha_cl, beta_value_cl),
+      std::domain_error);
 }
 
 TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_small_simple) {
@@ -160,8 +171,8 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_broadcast_y) {
 
   var res1
       = stan::math::poisson_log_glm_lpmf(y, x_cl, alpha_var1, beta_var1_cl);
-  var res2
-      = stan::math::poisson_log_glm_lpmf(y_vec_cl, x_cl, alpha_var2, beta_var2_cl);
+  var res2 = stan::math::poisson_log_glm_lpmf(y_vec_cl, x_cl, alpha_var2,
+                                              beta_var2_cl);
 
   (res1 + res2).grad();
 
@@ -276,9 +287,10 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_small_vector_alpha) {
   matrix_cl<double> alpha_cl(alpha);
   matrix_cl<double> beta_cl(beta);
 
-  expect_near_rel("poisson_log_glm_lpmf (OpenCL)",
-                  stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha_cl, beta_cl),
-                  stan::math::poisson_log_glm_lpmf(y, x, alpha, beta));
+  expect_near_rel(
+      "poisson_log_glm_lpmf (OpenCL)",
+      stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha_cl, beta_cl),
+      stan::math::poisson_log_glm_lpmf(y, x, alpha, beta));
   expect_near_rel(
       "poisson_log_glm_lpmf (OpenCL)",
       stan::math::poisson_log_glm_lpmf<true>(y_cl, x_cl, alpha_cl, beta_cl),
@@ -294,8 +306,8 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_small_vector_alpha) {
   auto alpha_var1_cl = to_matrix_cl(alpha_var1);
   auto beta_var1_cl = to_matrix_cl(beta_var1);
 
-  var res1
-      = stan::math::poisson_log_glm_lpmf(y_cl, x_var1_cl, alpha_var1_cl, beta_var1_cl);
+  var res1 = stan::math::poisson_log_glm_lpmf(y_cl, x_var1_cl, alpha_var1_cl,
+                                              beta_var1_cl);
   var res2 = stan::math::poisson_log_glm_lpmf(y, x_var2, alpha_var2, beta_var2);
 
   (res1 + res2).grad();
@@ -329,12 +341,14 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_big) {
   matrix_cl<double> alpha_cl(alpha);
   matrix_cl<double> beta_cl(beta);
 
-  expect_near_rel("poisson_log_glm_lpmf (OpenCL)",
-                  stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha_cl, beta_cl),
-                  stan::math::poisson_log_glm_lpmf(y, x, alpha, beta));
-  expect_near_rel("poisson_log_glm_lpmf (OpenCL)",
-                  stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha_cl, beta_cl),
-                  stan::math::poisson_log_glm_lpmf(y, x, alpha, beta));
+  expect_near_rel(
+      "poisson_log_glm_lpmf (OpenCL)",
+      stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha_cl, beta_cl),
+      stan::math::poisson_log_glm_lpmf(y, x, alpha, beta));
+  expect_near_rel(
+      "poisson_log_glm_lpmf (OpenCL)",
+      stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha_cl, beta_cl),
+      stan::math::poisson_log_glm_lpmf(y, x, alpha, beta));
 
   Matrix<var, Dynamic, Dynamic> x_var1 = x;
   Matrix<var, Dynamic, Dynamic> x_var2 = x;
@@ -346,10 +360,10 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_big) {
   auto alpha_var1_cl = to_matrix_cl(alpha_var1);
   auto beta_var1_cl = to_matrix_cl(beta_var1);
 
-  var res1 = stan::math::poisson_log_glm_lpmf<true>(y_cl, x_var1_cl, alpha_var1_cl,
-                                                    beta_var1_cl);
-  var res2
-      = stan::math::poisson_log_glm_lpmf<true>(y, x_var2, alpha_var2, beta_var2);
+  var res1 = stan::math::poisson_log_glm_lpmf<true>(
+      y_cl, x_var1_cl, alpha_var1_cl, beta_var1_cl);
+  var res2 = stan::math::poisson_log_glm_lpmf<true>(y, x_var2, alpha_var2,
+                                                    beta_var2);
 
   (res1 + res2).grad();
 
