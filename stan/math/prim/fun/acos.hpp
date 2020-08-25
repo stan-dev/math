@@ -22,7 +22,7 @@ namespace math {
  * Structure to wrap `acos()` so it can be vectorized.
  *
  * @tparam T type of variable
- * @param[in] x argument
+ * @param x argument
  * @return Arc cosine of variable in radians.
  */
 struct acos_fun {
@@ -38,7 +38,7 @@ struct acos_fun {
  * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam Container type of container
- * @param[in] x argument
+ * @param x argument
  * @return Arc cosine of each variable in the container, in radians.
  */
 template <typename Container,
@@ -52,7 +52,7 @@ inline auto acos(const Container& x) {
  *  or expressions, and containers of these.
  *
  * @tparam Container Type of x
- * @param[in] x argument
+ * @param x argument
  * @return Arc cosine of each variable in the container, in radians.
  */
 template <typename Container,

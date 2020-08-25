@@ -22,7 +22,7 @@ inline fvar<T> acos(const fvar<T>& x) {
  * Return the arc cosine of the complex argument.
  *
  * @tparam T autodiff value type
- * @param[in] x argument
+ * @param x argument
  * @return arc cosine of the argument
  */
 template <typename T>
