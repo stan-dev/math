@@ -38,7 +38,7 @@ struct acos_fun {
  * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam Container type of container
- * @param[in] x container
+ * @param[in] x argument
  * @return Arc cosine of each variable in the container, in radians.
  */
 template <typename Container,
@@ -52,7 +52,7 @@ inline auto acos(const Container& x) {
  *  or expressions, and containers of these.
  *
  * @tparam Container Type of x
- * @param[in] x Container
+ * @param[in] x argument
  * @return Arc cosine of each variable in the container, in radians.
  */
 template <typename Container,
