@@ -28,6 +28,10 @@ namespace math {
  * with Bernoulli distribution and logit link function.
  * This is an overload of the GLM in prim/prob/bernoulli_logit_glm_lpmf.hpp
  * that is implemented in OpenCL.
+ * @tparam T_y type of independent variable;
+ * this can be a `matrix_cl` vector of intercepts or a single
+ * value (wich will be broadcast - used for all instances);
+ * @tparam T_x type of the design matrix
  * @tparam T_alpha type of the intercept(s);
  * this can be a vector (of the same length as y) of intercepts or a single
  * value (for models with constant intercept);

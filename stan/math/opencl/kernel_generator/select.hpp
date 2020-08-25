@@ -150,6 +150,23 @@ select(T_condition&& condition, T_then&& then, T_else&& els) {  // NOLINT
           as_operation_cl(std::forward<T_then>(then)),
           as_operation_cl(std::forward<T_else>(els))};
 }
+
+/**
+ * Scalar overload of the selection operation.
+ * @tparam T_then type of then scalar
+ * @tparam T_else type of else scalar
+ * @param condition condition
+ * @param then then result
+ * @param els else result
+ * @return `condition ? then : els`
+ */
+template <typename T_then, typename T_else,
+          require_all_arithmetic_t<T_then, T_else>* = nullptr>
+inline std::common_type_t<T_then, T_else> select(bool condition, T_then then,
+                                              T_else els) {
+  return condition ? then : els;
+}
+
 /** @}*/
 }  // namespace math
 }  // namespace stan
