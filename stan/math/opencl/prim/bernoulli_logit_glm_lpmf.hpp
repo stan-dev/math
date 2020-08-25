@@ -2,6 +2,11 @@
 #define STAN_MATH_OPENCL_PRIM_BERNOULLI_LOGIT_GLM_LPMF_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/opencl/rev/size.hpp>
+#include <stan/math/opencl/rev/operands_and_partials.hpp>
+#include <stan/math/opencl/copy.hpp>
+#include <stan/math/opencl/multiply.hpp>
+#include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
@@ -12,9 +17,6 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
-#include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/multiply.hpp>
-#include <stan/math/opencl/kernel_generator.hpp>
 
 #include <cmath>
 
@@ -31,9 +33,9 @@ namespace math {
  * value (for models with constant intercept);
  * @tparam T_beta type of the weight vector;
  * this can also be a single value;
- * @param y_cl binary scalar or vector parameter on OpenCL device. If it is a
+ * @param y binary scalar or vector parameter on OpenCL device. If it is a
  * scalar it will be broadcast - used for all instances.
- * @param x_cl design matrix on OpenCL device. This overload does not support
+ * @param x design matrix on OpenCL device. This overload does not support
  * broadcasting of a row vector x!
  * @param alpha intercept (in log odds)
  * @param beta weight vector
@@ -43,30 +45,33 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 
-template <bool propto, typename T_alpha, typename T_beta>
-return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
-    const matrix_cl<int>& y_cl, const matrix_cl<double>& x_cl,
-    const T_alpha& alpha, const T_beta& beta) {
+template <bool propto, typename T_y, typename T_x, typename T_alpha,
+          typename T_beta,
+          require_all_prim_or_rev_kernel_expression_t<T_y, T_x, T_alpha,
+                                                      T_beta>* = nullptr>
+return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
+    const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
   static const char* function = "bernoulli_logit_glm_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_alpha, T_beta>;
+  constexpr bool is_y_vector = is_matrix_cl<decltype(value_of(y))>::value;
+  constexpr bool is_alpha_vector
+      = is_matrix_cl<decltype(value_of(alpha))>::value;
   using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
   using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using std::isfinite;
 
-  constexpr int is_alpha_vector = is_vector<T_alpha>::value;
+  const size_t N = x.rows();
+  const size_t M = x.cols();
 
-  const size_t N = x_cl.rows();
-  const size_t M = x_cl.cols();
-
-  if (y_cl.size() != 1) {
-    check_size_match(function, "Rows of ", "x_cl", N, "rows of ", "y_cl",
-                     y_cl.rows());
+  if (is_y_vector) {
+    check_size_match(function, "Rows of ", "x", N, "rows of ", "y", size(y));
   }
   check_consistent_size(function, "Weight vector", beta, M);
   if (is_alpha_vector) {
-    check_size_match(function, "Rows of ", "x_cl", N, "size of ", "alpha",
-                     stan::math::size(alpha));
+    check_size_match(function, "Rows of ", "x", N, "size of ", "alpha",
+                     size(alpha));
   }
 
   if (N == 0) {
@@ -76,28 +81,19 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
     return 0;
   }
 
-  T_beta_ref beta_ref = beta;
-  T_alpha_ref alpha_ref = alpha;
+  const auto& y_val = value_of(y);
+  const auto& x_val = value_of(x);
+  const auto& alpha_val = value_of(alpha);
+  const auto& beta_val = value_of(beta);
 
-  const auto& beta_val = value_of_rec(beta_ref);
-  const auto& alpha_val = value_of_rec(alpha_ref);
-
-  const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
-  const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
-
-  matrix_cl<double> beta_cl(beta_val_vec);
-  matrix_cl<double> alpha_cl(alpha_val_vec);
-
-  auto ytheta_expr = matrix_vector_multiply(x_cl, beta_cl)
-                     + broadcast<!is_alpha_vector, false>(alpha_cl);
-  auto y_bc_expr = colwise_optional_broadcast(y_cl);
-  auto signs_expr = 2 * y_bc_expr - 1;
+  auto ytheta_expr = matrix_vector_multiply(x_val, beta_val) + alpha_val;
+  auto signs_expr = 2 * y_val - 1;
   auto ytheta_signs_expr = elt_multiply(ytheta_expr, signs_expr);
   auto exp_m_ytheta_expr = exp(-ytheta_signs_expr);
   const double cutoff = 20.0;
   auto high_bound_expr = ytheta_signs_expr > cutoff;
   auto low_bound_expr = ytheta_signs_expr < -cutoff;
-  auto err_cond_expr = y_bc_expr < 0 || y_bc_expr > 1;
+  auto err_cond_expr = y_val < 0 || y_val > 1;
   auto logp_expr
       = colwise_sum(select(err_cond_expr, NOT_A_NUMBER,
                            select(high_bound_expr, -exp_m_ytheta_expr,
@@ -125,33 +121,46 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
 
   T_partials_return logp = sum(from_matrix_cl<Eigen::Dynamic, 1>(logp_cl));
   if (!std::isfinite(logp)) {
-    check_bounded(function, "Vector of dependent variables",
-                  from_matrix_cl(y_cl), 0, 1);
-    check_finite(function, "Weight vector", beta);
-    check_finite(function, "Intercept", alpha);
-    check_finite(function, "Matrix of independent variables",
-                 from_matrix_cl(x_cl));
+    results(check_cl(function, "Vector of dependent variables", y_val,
+                     "in the interval [0, 1]"),
+            check_cl(function, "Intercept", alpha_val, "finite"))
+        = expressions(0 <= y_val && y_val <= 1, isfinite(alpha_val));
+    check_cl(function, "Weight vector", beta_val, "finite")
+        = isfinite(beta_val);
+    check_cl(function, "Matrix of independent variables", x_val, "finite")
+        = isfinite(x_val);
   }
 
-  operands_and_partials<T_alpha_ref, T_beta_ref> ops_partials(alpha_ref,
-                                                              beta_ref);
+  operands_and_partials<T_x, T_alpha_ref, T_beta_ref> ops_partials(x, alpha,
+                                                                   beta);
   // Compute the necessary derivatives.
+  if (!is_constant_all<T_x>::value) {
+    ops_partials.edge1_.partials_
+        = transpose(beta_val * transpose(theta_derivative_cl));
+  }
   if (!is_constant_all<T_alpha>::value) {
     if (is_alpha_vector) {
-      ops_partials.edge1_.partials_
-          = std::move(from_matrix_cl<Dynamic, 1>(theta_derivative_cl));
+      ops_partials.edge2_.partials_ = theta_derivative_cl;
     } else {
-      ops_partials.edge1_.partials_[0]
+      forward_as<internal::broadcast_array<double>>(
+          ops_partials.edge2_.partials_)[0]
           = sum(from_matrix_cl(theta_derivative_sum_cl));
     }
   }
   if (!is_constant_all<T_beta>::value) {
-    matrix_cl<double> theta_derivative_transpose_cl(
-        theta_derivative_cl.buffer(), 1,
-        theta_derivative_cl
-            .rows());  // transposition of a vector can be done without copying
-    ops_partials.edge2_.partials_
-        = from_matrix_cl<1, Dynamic>(theta_derivative_transpose_cl * x_cl);
+    // transposition of a vector can be done without copying
+    const matrix_cl<double> theta_derivative_transpose_cl(
+        theta_derivative_cl.buffer(), 1, theta_derivative_cl.rows());
+    matrix_cl<double>& edge3_partials
+        = forward_as<matrix_cl<double>&>(ops_partials.edge3_.partials_);
+    matrix_cl<double> edge3_partials_transpose_cl
+        = theta_derivative_transpose_cl * x_val;
+    edge3_partials = matrix_cl<double>(edge3_partials_transpose_cl.buffer(),
+                                       edge3_partials_transpose_cl.cols(), 1);
+    if (beta_val.rows() != 0) {
+      edge3_partials.add_write_event(
+          edge3_partials_transpose_cl.write_events().back());
+    }
   }
   return ops_partials.build(logp);
 }

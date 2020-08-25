@@ -78,17 +78,17 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   const size_t N = x.rows();
   const size_t M = x.cols();
 
-  if (size(y) != 1) {
-    check_size_match(function, "Rows of ", "x_cl", N, "rows of ", "y_cl",
+  if (is_y_vector) {
+    check_size_match(function, "Rows of ", "x", N, "rows of ", "y",
                      size(y));
   }
   check_consistent_size(function, "Weight vector", beta, M);
   if (is_sigma_vector) {
-    check_size_match(function, "Rows of ", "x_cl", N, "size of ", "sigma",
+    check_size_match(function, "Rows of ", "x", N, "size of ", "sigma",
                      size(sigma));
   }
   if (is_alpha_vector) {
-    check_size_match(function, "Rows of ", "x_cl", N, "size of ", "alpha",
+    check_size_match(function, "Rows of ", "x", N, "size of ", "alpha",
                      size(alpha));
   }
   if (!include_summand<propto, T_alpha, T_beta, T_scale>::value) {
