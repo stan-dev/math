@@ -59,7 +59,7 @@ class acos_vari : public op_v_vari {
    \frac{\partial \, \arccos(x)}{\partial x} = -\frac{1}{\sqrt{1-x^2}}
    \f]
  *
- * @param x Variable in range [-1, 1].
+ * @param[in] x argument
  * @return Arc cosine of variable, in radians.
  */
 inline var acos(const var& x) { return var(new internal::acos_vari(x.vi_)); }

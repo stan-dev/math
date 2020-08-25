@@ -22,7 +22,7 @@ namespace math {
  * Structure to wrap `acos()` so it can be vectorized.
  *
  * @tparam T type of variable
- * @param x variable
+ * @param[in] x argument
  * @return Arc cosine of variable in radians.
  */
 struct acos_fun {
@@ -38,7 +38,7 @@ struct acos_fun {
  * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam Container type of container
- * @param x container
+ * @param[in] x container
  * @return Arc cosine of each variable in the container, in radians.
  */
 template <typename Container,
@@ -52,7 +52,7 @@ inline auto acos(const Container& x) {
  *  or expressions, and containers of these.
  *
  * @tparam Container Type of x
- * @param x Container
+ * @param[in] x Container
  * @return Arc cosine of each variable in the container, in radians.
  */
 template <typename Container,
@@ -67,12 +67,12 @@ namespace internal {
  * Return the arc cosine of the complex argument.
  *
  * @tparam V value type of argument
- * @param[in] z argument
+ * @param[in] x argument
  * @return arc cosine of the argument
  */
 template <typename V>
-inline std::complex<V> complex_acos(const std::complex<V>& z) {
-  return 0.5 * pi() - asin(z);
+inline std::complex<V> complex_acos(const std::complex<V>& x) {
+  return 0.5 * pi() - asin(x);
 }
 }  // namespace internal
 
