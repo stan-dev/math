@@ -15,7 +15,7 @@ namespace math {
  */
 template <typename T>
 inline T plus(T&& x) {
-  return std::forward(x);
+  return std::forward<T>(x);
 }
 
 }  // namespace math
