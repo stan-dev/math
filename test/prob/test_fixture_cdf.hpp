@@ -820,8 +820,8 @@ TYPED_TEST_P(AgradCdfTestFixture, Length0Vector) {
 }
 
 REGISTER_TYPED_TEST_SUITE_P(AgradCdfTestFixture, CallAllVersions, ValidValues,
-                           InvalidValues, FiniteDiff, Function, RepeatAsVector,
-                           LowerBound, UpperBound, Length0Vector);
+                            InvalidValues, FiniteDiff, Function, RepeatAsVector,
+                            LowerBound, UpperBound, Length0Vector);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AgradCdfTestFixture);
 

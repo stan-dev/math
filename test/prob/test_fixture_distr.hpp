@@ -821,8 +821,8 @@ TYPED_TEST_P(AgradDistributionTestFixture, Length0Vector) {
 }
 
 REGISTER_TYPED_TEST_SUITE_P(AgradDistributionTestFixture, CallAllVersions,
-                           ValidValues, InvalidValues, Propto, FiniteDiff,
-                           Function, RepeatAsVector, Length0Vector);
+                            ValidValues, InvalidValues, Propto, FiniteDiff,
+                            Function, RepeatAsVector, Length0Vector);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AgradDistributionTestFixture);
 
