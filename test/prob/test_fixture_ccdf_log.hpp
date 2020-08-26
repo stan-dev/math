@@ -273,7 +273,7 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
   // works for fvar<double>
   double calculate_gradients_1storder(vector<double>& grad,
                                       fvar<double>& ccdf_log, vector<var>& x) {
-    x.push_back(ccdf_log.d_);
+    grad.push_back(ccdf_log.d_);
     return ccdf_log.val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad,
@@ -289,12 +289,13 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
   double calculate_gradients_1storder(vector<double>& grad,
                                       fvar<fvar<double>>& ccdf_log,
                                       vector<var>& x) {
-    x.push_back(ccdf_log.d_.val_);
+    grad.push_back(ccdf_log.d_.val_);
     return ccdf_log.val().val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad,
                                       fvar<fvar<double>>& ccdf_log,
                                       vector<var>& x) {
+    grad.push_back(ccdf_log.d_.d_);
     return ccdf_log.val().val();
   }
   double calculate_gradients_3rdorder(vector<double>& grad,
@@ -576,8 +577,8 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
       add_vars(x3, p0, p1, p2, p3, p4, p5);
 
       calculate_gradients_1storder(multiple_gradients1, multiple_ccdf_log, x1);
-      calculate_gradients_1storder(multiple_gradients2, multiple_ccdf_log, x1);
-      calculate_gradients_1storder(multiple_gradients3, multiple_ccdf_log, x1);
+      calculate_gradients_2ndorder(multiple_gradients2, multiple_ccdf_log, x1);
+      calculate_gradients_3rdorder(multiple_gradients3, multiple_ccdf_log, x1);
 
       stan::math::recover_memory();
 

@@ -275,7 +275,7 @@ class AgradCdfLogTestFixture : public ::testing::Test {
   // works for fvar<double>
   double calculate_gradients_1storder(vector<double>& grad,
                                       fvar<double>& cdf_log, vector<var>& x) {
-    x.push_back(cdf_log.d_);
+    grad.push_back(cdf_log.d_);
     return cdf_log.val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad,
@@ -291,12 +291,13 @@ class AgradCdfLogTestFixture : public ::testing::Test {
   double calculate_gradients_1storder(vector<double>& grad,
                                       fvar<fvar<double>>& cdf_log,
                                       vector<var>& x) {
-    x.push_back(cdf_log.d_.val_);
+    grad.push_back(cdf_log.d_.val_);
     return cdf_log.val().val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad,
                                       fvar<fvar<double>>& cdf_log,
                                       vector<var>& x) {
+    grad.push_back(cdf_log.d_.d_);
     return cdf_log.val().val();
   }
   double calculate_gradients_3rdorder(vector<double>& grad,

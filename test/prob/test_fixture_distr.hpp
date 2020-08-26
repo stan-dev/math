@@ -335,7 +335,7 @@ class AgradDistributionTestFixture : public ::testing::Test {
   // works for fvar<double>
   double calculate_gradients_1storder(vector<double>& grad,
                                       fvar<double>& logprob, vector<var>& x) {
-    x.push_back(logprob.d_);
+    grad.push_back(logprob.d_);
     return logprob.val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad,
@@ -351,12 +351,13 @@ class AgradDistributionTestFixture : public ::testing::Test {
   double calculate_gradients_1storder(vector<double>& grad,
                                       fvar<fvar<double>>& logprob,
                                       vector<var>& x) {
-    x.push_back(logprob.d_.val_);
+    grad.push_back(logprob.d_.val_);
     return logprob.val().val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad,
                                       fvar<fvar<double>>& logprob,
                                       vector<var>& x) {
+    grad.push_back(logprob.d_.d_);
     return logprob.val().val();
   }
   double calculate_gradients_3rdorder(vector<double>& grad,
