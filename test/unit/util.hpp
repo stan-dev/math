@@ -224,9 +224,7 @@ struct AgradRev : public testing::Test {
     // make sure memory's clean before starting each test
     stan::math::recover_memory();
   }
-  void TearDown() {
-    stan::math::recover_memory();
-  }
+  void TearDown() { stan::math::recover_memory(); }
 };
 
 #endif
