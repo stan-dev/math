@@ -112,7 +112,7 @@ TEST_F(AgradRev, Matrix_mdivide_left_tri_val_cl) {
       = temp;
 }
 
-TEST_F(AgradRev, Matrix_mdivide_left_tri_val_cl) {
+TEST_F(AgradRev, Matrix_mdivide_left_tri_lower_grad_vv_cl) {
   int temp = stan::math::opencl_context.tuning_opts()
                  .tri_inverse_size_worth_transfer;
 
@@ -153,7 +153,7 @@ TEST_F(AgradRev, Matrix_mdivide_left_tri_val_cl) {
       = temp;
 }
 
-TEST_F(AgradRev, Matrix_mdivide_left_tri_val_cl) {
+TEST_F(AgradRev, Matrix_mdivide_left_tri_lower_grad_dv_cl) {
   int temp = stan::math::opencl_context.tuning_opts()
                  .tri_inverse_size_worth_transfer;
 
@@ -194,7 +194,7 @@ TEST_F(AgradRev, Matrix_mdivide_left_tri_val_cl) {
       = temp;
 }
 
-TEST_F(AgradRev, Matrix_mdivide_left_tri_val_cl) {
+TEST_F(AgradRev, Matrix_mdivide_left_tri_lower_grad_vd_cl) {
   int temp = stan::math::opencl_context.tuning_opts()
                  .tri_inverse_size_worth_transfer;
 
@@ -235,7 +235,7 @@ TEST_F(AgradRev, Matrix_mdivide_left_tri_val_cl) {
       = temp;
 }
 
-TEST_F(AgradRev, Matrix_mdivide_left_tri_val_cl) {
+TEST_F(AgradRev, Matrix_mdivide_left_tri_upper_grad_vv_cl) {
   int temp = stan::math::opencl_context.tuning_opts()
                  .tri_inverse_size_worth_transfer;
 
@@ -276,7 +276,7 @@ TEST_F(AgradRev, Matrix_mdivide_left_tri_val_cl) {
       = temp;
 }
 
-TEST_F(AgradRev, Matrix_mdivide_left_tri_val_cl) {
+TEST_F(AgradRev, Matrix_mdivide_left_tri_upper_grad_dv_cl) {
   int temp = stan::math::opencl_context.tuning_opts()
                  .tri_inverse_size_worth_transfer;
 
@@ -317,7 +317,7 @@ TEST_F(AgradRev, Matrix_mdivide_left_tri_val_cl) {
       = temp;
 }
 
-TEST_F(AgradRev, Matrix_mdivide_left_tri_val_cl) {
+TEST_F(AgradRev, Matrix_mdivide_left_tri_upper_grad_vd_cl) {
   int temp = stan::math::opencl_context.tuning_opts()
                  .tri_inverse_size_worth_transfer;
 

@@ -41,7 +41,7 @@ TEST_F(AgradRev, Matrix_multiply_val_vv_cl) {
       = temp;
 }
 
-TEST_F(AgradRev, Matrix_multiply_val_vv_cl) {
+TEST_F(AgradRev, Matrix_multiply_val_vd_cl) {
   int temp = stan::math::opencl_context.tuning_opts()
                  .multiply_dim_prod_worth_transfer;
   using stan::math::matrix_d;
@@ -73,7 +73,7 @@ TEST_F(AgradRev, Matrix_multiply_val_vv_cl) {
       = temp;
 }
 
-TEST_F(AgradRev, Matrix_multiply_val_vv_cl) {
+TEST_F(AgradRev, Matrix_multiply_val_dv_cl) {
   int temp = stan::math::opencl_context.tuning_opts()
                  .multiply_dim_prod_worth_transfer;
   using stan::math::matrix_d;

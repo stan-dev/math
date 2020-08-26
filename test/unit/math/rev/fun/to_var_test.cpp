@@ -13,7 +13,7 @@ TEST_F(AgradRev, Matrix_to_var_scalar) {
   var_x = stan::math::to_var(v);
   EXPECT_FLOAT_EQ(5.0, var_x.val());
 }
-TEST_F(AgradRev, Matrix_to_var_scalar) {
+TEST_F(AgradRev, Matrix_to_var_matrix) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
   matrix_d m_d(2, 3);
@@ -26,7 +26,7 @@ TEST_F(AgradRev, Matrix_to_var_scalar) {
     for (int jj = 0; jj < 3; jj++)
       EXPECT_FLOAT_EQ(ii * 3 + jj, m_v(ii, jj).val());
 }
-TEST_F(AgradRev, Matrix_to_var_scalar) {
+TEST_F(AgradRev, Matrix_to_var_vector) {
   using stan::math::vector_d;
   using stan::math::vector_v;
 
@@ -50,7 +50,7 @@ TEST_F(AgradRev, Matrix_to_var_scalar) {
   EXPECT_FLOAT_EQ(4, out(3).val());
   EXPECT_FLOAT_EQ(5, out(4).val());
 }
-TEST_F(AgradRev, Matrix_to_var_scalar) {
+TEST_F(AgradRev, Matrix_to_var_rowvector) {
   using stan::math::row_vector_d;
   using stan::math::row_vector_v;
 
@@ -76,7 +76,7 @@ TEST_F(AgradRev, Matrix_to_var_scalar) {
   EXPECT_FLOAT_EQ(5, output(4).val());
 }
 
-TEST_F(AgradRev, Matrix_to_var_scalar) {
+TEST_F(AgradRev, Matrix_to_var_check_varis_on_stack) {
   stan::math::matrix_v m(2, 2);
   m << 1, 2, 3, 4;
 

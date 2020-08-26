@@ -21,7 +21,7 @@ TEST_F(AgradRev, Matrix_mv_squaredNorm) {
   EXPECT_FLOAT_EQ(10.0, g[2]);
   EXPECT_FLOAT_EQ(20.0, g[3]);
 }
-TEST_F(AgradRev, Matrix_mv_squaredNorm) {
+TEST_F(AgradRev, Matrix_mv_norm) {
   using stan::math::matrix_v;
 
   matrix_v a(2, 1);
@@ -37,7 +37,7 @@ TEST_F(AgradRev, Matrix_mv_squaredNorm) {
   EXPECT_FLOAT_EQ(-3.0 / 5.0, g[0]);
   EXPECT_FLOAT_EQ(4.0 / 5.0, g[1]);
 }
-TEST_F(AgradRev, Matrix_mv_squaredNorm) {
+TEST_F(AgradRev, Matrix_mv_lp_norm) {
   using stan::math::matrix_v;
 
   matrix_v a(2, 2);
@@ -55,7 +55,7 @@ TEST_F(AgradRev, Matrix_mv_squaredNorm) {
   // ? depends on impl here, could be -1 or 1
   EXPECT_FLOAT_EQ(0.0, g[3]);
 }
-TEST_F(AgradRev, Matrix_mv_squaredNorm) {
+TEST_F(AgradRev, Matrix_mv_lp_norm_inf) {
   using stan::math::matrix_v;
 
   matrix_v a(2, 2);
@@ -73,7 +73,7 @@ TEST_F(AgradRev, Matrix_mv_squaredNorm) {
   EXPECT_FLOAT_EQ(0.0, g[3]);
 }
 
-TEST_F(AgradRev, Matrix_mv_squaredNorm) {
+TEST_F(AgradRev, Matrix_UserCase1) {
   using stan::math::assign;
   using stan::math::dot_product;
   using stan::math::get_base1;
