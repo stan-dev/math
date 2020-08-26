@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/core/accumulate_adjoints.hpp>
 #include <stan/math/rev/core/arena_allocator.hpp>
+#include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/rev/core/autodiffstackstorage.hpp>
 #include <stan/math/rev/core/build_vari_array.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
@@ -49,6 +50,7 @@
 #include <stan/math/rev/core/print_stack.hpp>
 #include <stan/math/rev/core/recover_memory.hpp>
 #include <stan/math/rev/core/recover_memory_nested.hpp>
+#include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/rev/core/set_zero_all_adjoints.hpp>
 #include <stan/math/rev/core/set_zero_all_adjoints_nested.hpp>
 #include <stan/math/rev/core/start_nested.hpp>

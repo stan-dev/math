@@ -6,8 +6,8 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/typedefs.hpp>
-#include <stan/math/rev/functor/reverse_pass_callback.hpp>
-#include <stan/math/rev/functor/arena_matrix.hpp>
+#include <stan/math/rev/core/reverse_pass_callback.hpp>
+#include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/prim/meta.hpp>
 
 #include <type_traits>
@@ -28,16 +28,9 @@ columns_dot_product(const Mat1& v1, const Mat2& v2) {
   arena_matrix<promote_scalar_t<double, Mat1>> arena_v1_val = value_of(v1_ref);
   arena_matrix<promote_scalar_t<double, Mat2>> arena_v2_val = value_of(v2_ref);
 
-  arena_matrix<promote_scalar_t<var, Mat1>> arena_v1;
-  arena_matrix<promote_scalar_t<var, Mat2>> arena_v2;
+  arena_matrix<promote_scalar_t<var, Mat1>> arena_v1 = to_arena_if<!is_constant<Mat1>::value>(v1_ref);
+  arena_matrix<promote_scalar_t<var, Mat2>> arena_v2 = to_arena_if<!is_constant<Mat2>::value>(v2_ref);
 
-  if (!is_constant<Mat1>::value) {
-    arena_v1 = v1_ref;
-  }
-
-  if (!is_constant<Mat2>::value) {
-    arena_v2 = v2_ref;
-  }
   Eigen::RowVectorXd out_val = (arena_v1_val.cwiseProduct(arena_v2_val)).colwise().sum();
   arena_matrix<Eigen::Matrix<var, 1, Eigen::Dynamic>> out = out_val;
 

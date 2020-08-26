@@ -4,8 +4,11 @@
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/grad.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
+#include <stan/math/rev/core/arena_matrix.hpp>
+#include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/meta/is_vari.hpp>
+#include <stan/math/rev/meta/arena_type.hpp>
 #include <ostream>
 #include <vector>
 #ifdef STAN_OPENCL
@@ -331,10 +334,54 @@ class var_value {
     }
     return os << v.val();
   }
+
+  template <typename S, require_eigen_vt<is_var, S>* = nullptr, require_not_same_t<S, arena_t<S>>* = nullptr>
+  var_value(const S& x)
+      : vi_(new vari_value<T>(x.val(), false)) {  // NOLINT
+   const auto& x_ref = to_ref(x);
+   auto x_size = x_ref.size();
+   vari** x_arena
+        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x_ref.size());
+   for (Eigen::Index i = 0; i < x_size; ++i) {
+     x_arena[i] = x_ref(i).vi_;
+   }
+   auto* vi_p = this->vi_;
+   reverse_pass_callback([x_arena, vi_p, x_size]() mutable {
+     for (Eigen::Index i = 0; i < x_size; ++i) {
+       x_arena[i]->adj_ = vi_p->adj_(i);
+     }
+   });
+  }
+  
+  template <typename S, require_eigen_vt<is_var, S>* = nullptr, require_same_t<S, arena_t<S>>* = nullptr>
+  var_value(const S& x_ref)
+      : vi_(new vari_value<T>(x_ref.val(), false)) {  // NOLINT
+   auto x_size = x_ref.size();
+   auto* vi_p = this->vi_;
+   reverse_pass_callback([x_ref, vi_p, x_size]() mutable {
+     for (Eigen::Index i = 0; i < x_size; ++i) {
+       x_ref(i).vi_->adj_ = vi_p->adj_(i);
+     }
+   });
+  }
 };
 
 // For backwards compatability the default value is double
 using var = var_value<double>;
+
+template <typename MatrixType>
+class arena_matrix<var_value<MatrixType>> : public var_value<MatrixType> {
+public:
+  template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+  arena_matrix(const arena_matrix<T>& x) : var_value<MatrixType>(x) {}
+    template <typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
+    arena_matrix(const arena_matrix<T>& x) : var_value<MatrixType>(x) {}
+
+    template <typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
+    arena_matrix(const var_value<T>& x) : var_value<MatrixType>(x) {}
+    template <typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
+    arena_matrix(const T& x) : var_value<MatrixType>(x) {}
+};
 
 }  // namespace math
 

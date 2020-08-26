@@ -79,7 +79,7 @@ TEST(MathMixMatFun, columnsDotProductVarMatrixDblMatrix) {
   using stan::math::var_value;
   using stan::math::columns_dot_product;
   var_value<Eigen::MatrixXd> A(Eigen::MatrixXd::Random(10, 10));
-  Eigen::MatrixXd B(Eigen::MatrixXd::Random(10, 10));
+  Eigen::Matrix<var_value<double>, -1, -1> B(Eigen::MatrixXd::Random(10, 10));
   auto C = columns_dot_product(A, B);
   stan::math::var D = stan::math::sum(C);
   D.grad();

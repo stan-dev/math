@@ -4,7 +4,6 @@
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/plain_type.hpp>
 #include <stan/math/rev/core/arena_allocator.hpp>
-#include <stan/math/rev/core/var.hpp>
 
 namespace stan {
 namespace math {
@@ -18,7 +17,7 @@ template <typename T, typename = void, typename = void>
 struct arena_type_impl {};
 
 template <typename T>
-struct arena_type_impl<T, require_all_t<std::is_trivially_destructible<T>, 
+struct arena_type_impl<T, require_all_t<std::is_trivially_destructible<T>,
                                         bool_constant<!is_eigen<T>::value>>> {
   using type = T;
 };

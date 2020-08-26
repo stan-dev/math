@@ -5,8 +5,8 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/fun/to_arena.hpp>
-#include <stan/math/rev/functor/arena_matrix.hpp>
-#include <stan/math/rev/functor/reverse_pass_callback.hpp>
+#include <stan/math/rev/core/arena_matrix.hpp>
+#include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
