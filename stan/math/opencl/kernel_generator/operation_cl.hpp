@@ -4,7 +4,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/opencl/kernel_generator/wrapper.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
@@ -79,7 +78,7 @@ class operation_cl : public operation_cl_base {
       "operation_cl: all arguments to operation must be operations!");
 
  protected:
-  std::tuple<internal::wrapper<Args>...> arguments_;
+  std::tuple<Args...> arguments_;
   mutable std::string var_name_;  // name of the variable that holds result of
                                   // this operation in the kernel
 
@@ -113,7 +112,7 @@ class operation_cl : public operation_cl_base {
     */
   template <size_t N>
   const auto& get_arg() const {
-    return std::get<N>(arguments_).x;
+    return std::get<N>(arguments_);
   }
 
   /**
@@ -122,7 +121,7 @@ class operation_cl : public operation_cl_base {
    * expressions
    */
   explicit operation_cl(Args&&... arguments)
-      : arguments_(internal::wrapper<Args>(std::forward<Args>(arguments))...) {}
+      : arguments_(std::forward<Args>(arguments)...) {}
 
   /**
    * Evaluates the expression.
