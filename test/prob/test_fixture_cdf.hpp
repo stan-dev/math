@@ -401,7 +401,7 @@ class AgradCdfTestFixture : public ::testing::Test {
 
         test_finite_diffs_equal(parameters[n], finite_diffs, gradients);
 
-	stan::math::recover_memory();
+        stan::math::recover_memory();
       }
     }
   }
