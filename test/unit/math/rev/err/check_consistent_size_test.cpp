@@ -1,9 +1,10 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
 
-TEST(AgradRevErrorHandlingScalar, CheckConsistentSizeVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckConsistentSizeVarCheckVectorized) {
   using stan::math::check_consistent_size;
   using stan::math::var;
   using std::vector;
@@ -29,7 +30,7 @@ TEST(AgradRevErrorHandlingScalar, CheckConsistentSizeVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingMatrix, checkConsistentSize) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckConsistentSizeVarCheckVectorized) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::check_consistent_size;
@@ -48,7 +49,7 @@ TEST(AgradRevErrorHandlingMatrix, checkConsistentSize) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingMatrix, checkConsistentSize_nan) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckConsistentSizeVarCheckVectorized) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::check_consistent_size;

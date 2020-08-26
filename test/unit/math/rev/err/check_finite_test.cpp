@@ -1,9 +1,10 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
 
-TEST(AgradRevErrorHandlingScalar, CheckFiniteVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckFiniteVarCheckVectorized) {
   using stan::math::check_finite;
   using stan::math::var;
   using std::vector;
@@ -37,7 +38,7 @@ TEST(AgradRevErrorHandlingScalar, CheckFiniteVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingScalar, CheckFinite) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckFiniteVarCheckVectorized) {
   using stan::math::check_finite;
   using stan::math::var;
 
@@ -62,7 +63,7 @@ TEST(AgradRevErrorHandlingScalar, CheckFinite) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingScalar, CheckFiniteVarCheckUnivariate) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckFiniteVarCheckVectorized) {
   using stan::math::check_finite;
   using stan::math::var;
 

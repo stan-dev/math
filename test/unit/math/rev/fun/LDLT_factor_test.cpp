@@ -1,7 +1,8 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradRevMatrix, LDLT_factor_default_constructor) {
+TEST_F(AgradRev, Matrix_LDLT_factor_default_constructor) {
   using stan::math::LDLT_factor;
   using stan::math::var;
 
@@ -16,7 +17,7 @@ TEST(AgradRevMatrix, LDLT_factor_default_constructor) {
   EXPECT_NO_THROW(ldlt_A.compute(A));
 }
 
-TEST(AgradRevMatrix, LDLT_factor_constructor_matrix) {
+TEST_F(AgradRev, Matrix_LDLT_factor_default_constructor) {
   using stan::math::LDLT_factor;
   using stan::math::var;
 
@@ -35,7 +36,7 @@ TEST(AgradRevMatrix, LDLT_factor_constructor_matrix) {
   EXPECT_NO_THROW(ldlt_A.compute(A));
 }
 
-TEST(AgradRevMatrix, success) {
+TEST_F(AgradRev, Matrix_LDLT_factor_default_constructor) {
   using stan::math::LDLT_factor;
   using stan::math::var;
 
@@ -50,7 +51,7 @@ TEST(AgradRevMatrix, success) {
   EXPECT_TRUE(ldlt_A2.success());
 }
 
-TEST(AgradRevMatrix, solve) {
+TEST_F(AgradRev, Matrix_LDLT_factor_default_constructor) {
   using stan::math::LDLT_factor;
   using stan::math::var;
 
@@ -78,7 +79,7 @@ TEST(AgradRevMatrix, solve) {
       EXPECT_FLOAT_EQ(expected_solve(i, j), solve(i, j));
 }
 
-TEST(AgradRevMatrix, vectorD) {
+TEST_F(AgradRev, Matrix_LDLT_factor_default_constructor) {
   using stan::math::LDLT_factor;
   using stan::math::var;
 
@@ -99,7 +100,7 @@ TEST(AgradRevMatrix, vectorD) {
     EXPECT_FLOAT_EQ(expected_vectorD(i), vectorD(i));
 }
 
-TEST(AgradRevMatrix, rows) {
+TEST_F(AgradRev, Matrix_LDLT_factor_default_constructor) {
   using stan::math::LDLT_factor;
   using stan::math::var;
 
@@ -111,7 +112,7 @@ TEST(AgradRevMatrix, rows) {
   EXPECT_EQ(2U, ldlt_A.rows());
 }
 
-TEST(AgradRevMatrix, cols) {
+TEST_F(AgradRev, Matrix_LDLT_factor_default_constructor) {
   using stan::math::LDLT_factor;
   using stan::math::var;
 
@@ -123,7 +124,7 @@ TEST(AgradRevMatrix, cols) {
   EXPECT_EQ(2U, ldlt_A.cols());
 }
 
-TEST(AgradRevMatrix, compute) {
+TEST_F(AgradRev, Matrix_LDLT_factor_default_constructor) {
   using stan::math::LDLT_factor;
   using stan::math::var;
 

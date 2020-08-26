@@ -1,6 +1,7 @@
 #include <stan/math/rev.hpp>
-#include <gtest/gtest.h>
+#include <test/unit/util.hpp>
 #include <test/unit/math/rev/util.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 TEST(StoredGradientVari, propagate3) {
@@ -65,7 +66,7 @@ TEST(StoredGradientVari, propagate0) {
   for (int i = 0; i < 3; ++i)
     EXPECT_FLOAT_EQ(0, g[i]);
 }
-TEST(AgradRevMatrix, stored_gradient_vari_check_varis_on_stack) {
+TEST_F(AgradRev, Matrix_stored_gradient_vari_check_varis_on_stack) {
   using stan::math::var;
   using stan::math::vari;
   vari** xs = reinterpret_cast<vari**>(

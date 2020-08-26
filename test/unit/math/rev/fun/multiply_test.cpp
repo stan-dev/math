@@ -1,8 +1,8 @@
 #include <stan/math/rev.hpp>
-#include <gtest/gtest.h>
+#include <test/unit/util.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/rev/util.hpp>
-#include <test/unit/util.hpp>
+#include <gtest/gtest.h>
 
 #ifdef STAN_OPENCL
 #include <boost/random/mersenne_twister.hpp>
@@ -10,7 +10,7 @@
 boost::random::mt19937 rng;
 #define MULTIPLY_OPENCL_OVERRIDE 0
 #define MULTIPLY_CPU_OVERRIDE INT_MAX
-TEST(AgradRevMatrix, multiply_val_vv_cl) {
+TEST_F(AgradRev, Matrix_multiply_val_vv_cl) {
   int temp = stan::math::opencl_context.tuning_opts()
                  .multiply_dim_prod_worth_transfer;
   using stan::math::matrix_d;
@@ -41,7 +41,7 @@ TEST(AgradRevMatrix, multiply_val_vv_cl) {
       = temp;
 }
 
-TEST(AgradRevMatrix, multiply_val_vd_cl) {
+TEST_F(AgradRev, Matrix_multiply_val_vv_cl) {
   int temp = stan::math::opencl_context.tuning_opts()
                  .multiply_dim_prod_worth_transfer;
   using stan::math::matrix_d;
@@ -73,7 +73,7 @@ TEST(AgradRevMatrix, multiply_val_vd_cl) {
       = temp;
 }
 
-TEST(AgradRevMatrix, multiply_val_dv_cl) {
+TEST_F(AgradRev, Matrix_multiply_val_vv_cl) {
   int temp = stan::math::opencl_context.tuning_opts()
                  .multiply_dim_prod_worth_transfer;
   using stan::math::matrix_d;

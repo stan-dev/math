@@ -1,7 +1,8 @@
 #include <stan/math/rev.hpp>
-#include <gtest/gtest.h>
+#include <test/unit/util.hpp>
 #include <test/unit/math/rev/util.hpp>
 #include <boost/random/mersenne_twister.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 #ifdef STAN_OPENCL
@@ -238,7 +239,7 @@ double test_gradient(int size, double prec) {
 }
 
 #ifdef STAN_OPENCL
-TEST(AgradRevMatrix, mat_cholesky_1st_deriv_large_gradients_opencl) {
+TEST_F(AgradRev, Matrix_mat_cholesky_1st_deriv_large_gradients_opencl) {
   stan::math::opencl_context.tuning_opts().cholesky_size_worth_transfer = 25;
   test_gradient(51, 1e-08);
   test_gp_grad(1300, 1e-08);
@@ -250,7 +251,7 @@ TEST(AgradRevMatrix, mat_cholesky_1st_deriv_large_gradients_opencl) {
   test_gp_grad(10, 1e-08);
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack_large_opencl) {
+TEST_F(AgradRev, Matrix_mat_cholesky_1st_deriv_large_gradients_opencl) {
   stan::math::opencl_context.tuning_opts().cholesky_size_worth_transfer = 25;
   stan::math::matrix_v m1 = stan::math::matrix_v::Random(50, 50);
   stan::math::matrix_v m1_pos_def

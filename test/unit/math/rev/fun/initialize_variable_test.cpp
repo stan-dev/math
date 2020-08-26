@@ -1,9 +1,10 @@
 #include <stan/math/rev.hpp>
-#include <gtest/gtest.h>
+#include <test/unit/util.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
-TEST(AgradRevMatrix, initializeVariable) {
+TEST_F(AgradRev, Matrix_initializeVariable) {
   using stan::math::initialize_variable;
   using std::vector;
 

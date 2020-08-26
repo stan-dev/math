@@ -1,4 +1,5 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
@@ -6,7 +7,7 @@
 using stan::math::check_nonnegative;
 using stan::math::var;
 
-TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckNonnegativeVectorized) {
   int N = 5;
   const char* function = "check_nonnegative";
   std::vector<var> x(N);
@@ -34,7 +35,7 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVectorized) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckNonnegativeVectorized) {
   using stan::math::check_nonnegative;
   using stan::math::var;
   using std::vector;
@@ -82,7 +83,7 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingScalar, CheckNonnegative) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckNonnegativeVectorized) {
   const char* function = "check_nonnegative";
   var x = 0;
 
@@ -107,7 +108,7 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegative) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckUnivariate) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckNonnegativeVectorized) {
   using stan::math::check_nonnegative;
   using stan::math::var;
 

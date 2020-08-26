@@ -1,9 +1,10 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
 
-TEST(AgradRevErrorHandlingScalar, CheckNotNanVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckNotNanVarCheckVectorized) {
   using stan::math::check_not_nan;
   using stan::math::var;
 
@@ -53,7 +54,7 @@ TEST(ErrorHandlingScalar, CheckNotNanVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingScalar, CheckNotNan) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckNotNanVarCheckVectorized) {
   using stan::math::check_not_nan;
   using stan::math::var;
   const char* function = "check_not_nan";
@@ -89,7 +90,7 @@ TEST(AgradRevErrorHandlingScalar, CheckNotNan) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingScalar, CheckNotNanVarCheckUnivariate) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckNotNanVarCheckVectorized) {
   using stan::math::check_not_nan;
   using stan::math::var;
 

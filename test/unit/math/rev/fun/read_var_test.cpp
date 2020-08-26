@@ -2,7 +2,7 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradRevMatrix, read_var_mat) {
+TEST_F(AgradRev, Matrix_read_var_mat) {
   using Eigen::MatrixXd;
   using stan::math::matrix_v;
   using stan::math::matrix_vi;
@@ -48,7 +48,7 @@ TEST(AgradRevMatrix, read_var_mat) {
   EXPECT_MATRIX_FLOAT_EQ(matrix_var.adj(), matrix_vi3.adj());
 }
 
-TEST(AgradRevMatrix, read_var_vec) {
+TEST_F(AgradRev, Matrix_read_var_vec) {
   using Eigen::VectorXd;
   using stan::math::read_val_adj;
   using stan::math::read_vi_adj;
@@ -88,7 +88,7 @@ TEST(AgradRevMatrix, read_var_vec) {
   EXPECT_MATRIX_FLOAT_EQ(vector_var.adj(), vector_vi3.adj());
 }
 
-TEST(AgradRevMatrix, read_var_rowvec) {
+TEST_F(AgradRev, Matrix_read_var_rowvec) {
   using Eigen::RowVectorXd;
   using stan::math::read_val_adj;
   using stan::math::read_vi_adj;
@@ -129,7 +129,7 @@ TEST(AgradRevMatrix, read_var_rowvec) {
   EXPECT_MATRIX_FLOAT_EQ(row_vector_var.adj(), row_vector_vi3.adj());
 }
 
-TEST(AgradRevMatrix, read_var_expr) {
+TEST_F(AgradRev, Matrix_read_var_expr) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   using stan::math::matrix_v;

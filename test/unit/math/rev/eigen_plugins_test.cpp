@@ -2,7 +2,7 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradRevMatrixAddons, var_matrix) {
+TEST_F(AgradRev, MatrixAddons_var_matrix) {
   using Eigen::MatrixXd;
   using stan::math::matrix_v;
   using stan::math::matrix_vi;
@@ -49,7 +49,7 @@ TEST(AgradRevMatrixAddons, var_matrix) {
   EXPECT_EQ(mat_vi.adj().cols(), derivs.cols());
 }
 
-TEST(AgradRevMatrixAddons, var_vector) {
+TEST_F(AgradRev, MatrixAddons_var_vector) {
   using Eigen::VectorXd;
   using stan::math::vector_v;
   using stan::math::vector_vi;
@@ -89,7 +89,7 @@ TEST(AgradRevMatrixAddons, var_vector) {
   EXPECT_EQ(vec_vi.adj().cols(), derivs.cols());
 }
 
-TEST(AgradRevMatrixAddons, var_row_vector) {
+TEST_F(AgradRev, MatrixAddons_var_row_vector) {
   using Eigen::RowVectorXd;
   using stan::math::row_vector_v;
   using stan::math::row_vector_vi;

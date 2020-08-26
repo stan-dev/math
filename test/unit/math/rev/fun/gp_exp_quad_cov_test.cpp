@@ -1,7 +1,7 @@
 #include <stan/math/rev.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/rev/util.hpp>
 #include <test/unit/util.hpp>
+#include <test/unit/math/rev/util.hpp>
+#include <gtest/gtest.h>
 #include <limits>
 #include <string>
 #include <vector>
@@ -1329,7 +1329,7 @@ TEST(RevMath, gp_exp_quad_cov2_dim_mismatch_vec_eigen_mixed) {
   EXPECT_THROW(stan::math::gp_exp_quad_cov(x_vec_2, x_rvec_2, sigma, l),
                std::invalid_argument);
 }
-TEST(AgradRevMatrix, gp_exp_quad_cov_check_varis_on_stack) {
+TEST_F(AgradRev, Matrix_gp_exp_quad_cov_check_varis_on_stack) {
   using stan::math::to_var;
   std::vector<double> x(3);
   double sigma = 0.2;

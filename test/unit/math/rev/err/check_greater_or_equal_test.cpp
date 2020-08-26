@@ -1,9 +1,10 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
 
-TEST(AgradRevErrorHandlingScalar, CheckGreateOrEqualVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckGreateOrEqualVarCheckVectorized) {
   using stan::math::check_greater_or_equal;
   using stan::math::var;
   using std::vector;
@@ -37,7 +38,7 @@ TEST(AgradRevErrorHandlingScalar, CheckGreateOrEqualVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingMatrix, CheckGreaterOrEqualMatrix) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckGreateOrEqualVarCheckVectorized) {
   using stan::math::check_greater_or_equal;
   using stan::math::var;
   const char* function = "check_greater_or_equal";
@@ -154,7 +155,7 @@ TEST(AgradRevErrorHandlingMatrix, CheckGreaterOrEqualMatrix) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingScalar, CheckGreaterOrEqual) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckGreateOrEqualVarCheckVectorized) {
   using stan::math::check_greater_or_equal;
   using stan::math::var;
   const char* function = "check_greater_or_equal";
@@ -189,7 +190,7 @@ TEST(AgradRevErrorHandlingScalar, CheckGreaterOrEqual) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingScalar, CheckGreaterOrEqualVarCheckUnivariate) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckGreateOrEqualVarCheckVectorized) {
   using stan::math::check_greater_or_equal;
   using stan::math::var;
 

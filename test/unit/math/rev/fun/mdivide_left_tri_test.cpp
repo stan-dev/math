@@ -1,8 +1,8 @@
 #include <stan/math/rev.hpp>
-#include <gtest/gtest.h>
+#include <test/unit/util.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/rev/util.hpp>
-#include <test/unit/util.hpp>
+#include <gtest/gtest.h>
 
 // TODO(carpenter): move this to test framework;  should be able to put
 // all this GPU config into the functor
@@ -14,7 +14,7 @@
 boost::random::mt19937 rng;
 #define MDIVIDE_OPENCL_OVERRIDE 0
 #define MDIVIDE_CPU_OVERRIDE INT_MAX
-TEST(AgradRevMatrix, mdivide_left_tri_val_cl) {
+TEST_F(AgradRev, Matrix_mdivide_left_tri_val_cl) {
   int temp = stan::math::opencl_context.tuning_opts()
                  .tri_inverse_size_worth_transfer;
   using stan::math::matrix_d;
@@ -112,7 +112,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_val_cl) {
       = temp;
 }
 
-TEST(AgradRevMatrix, mdivide_left_tri_lower_grad_vv_cl) {
+TEST_F(AgradRev, Matrix_mdivide_left_tri_val_cl) {
   int temp = stan::math::opencl_context.tuning_opts()
                  .tri_inverse_size_worth_transfer;
 
@@ -153,7 +153,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_lower_grad_vv_cl) {
       = temp;
 }
 
-TEST(AgradRevMatrix, mdivide_left_tri_lower_grad_dv_cl) {
+TEST_F(AgradRev, Matrix_mdivide_left_tri_val_cl) {
   int temp = stan::math::opencl_context.tuning_opts()
                  .tri_inverse_size_worth_transfer;
 
@@ -194,7 +194,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_lower_grad_dv_cl) {
       = temp;
 }
 
-TEST(AgradRevMatrix, mdivide_left_tri_lower_grad_vd_cl) {
+TEST_F(AgradRev, Matrix_mdivide_left_tri_val_cl) {
   int temp = stan::math::opencl_context.tuning_opts()
                  .tri_inverse_size_worth_transfer;
 
@@ -235,7 +235,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_lower_grad_vd_cl) {
       = temp;
 }
 
-TEST(AgradRevMatrix, mdivide_left_tri_upper_grad_vv_cl) {
+TEST_F(AgradRev, Matrix_mdivide_left_tri_val_cl) {
   int temp = stan::math::opencl_context.tuning_opts()
                  .tri_inverse_size_worth_transfer;
 
@@ -276,7 +276,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_upper_grad_vv_cl) {
       = temp;
 }
 
-TEST(AgradRevMatrix, mdivide_left_tri_upper_grad_dv_cl) {
+TEST_F(AgradRev, Matrix_mdivide_left_tri_val_cl) {
   int temp = stan::math::opencl_context.tuning_opts()
                  .tri_inverse_size_worth_transfer;
 
@@ -317,7 +317,7 @@ TEST(AgradRevMatrix, mdivide_left_tri_upper_grad_dv_cl) {
       = temp;
 }
 
-TEST(AgradRevMatrix, mdivide_left_tri_upper_grad_vd_cl) {
+TEST_F(AgradRev, Matrix_mdivide_left_tri_val_cl) {
   int temp = stan::math::opencl_context.tuning_opts()
                  .tri_inverse_size_worth_transfer;
 

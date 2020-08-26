@@ -1,7 +1,8 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradRevMatrix, LDLT_alloc_default_constructor) {
+TEST_F(AgradRev, Matrix_LDLT_alloc_default_constructor) {
   using stan::math::LDLT_alloc;
   using stan::math::var;
 
@@ -27,7 +28,7 @@ TEST(AgradRevMatrix, LDLT_alloc_default_constructor) {
 #endif
 }
 
-TEST(AgradRevMatrix, LDLT_alloc_constructor) {
+TEST_F(AgradRev, Matrix_LDLT_alloc_default_constructor) {
   using stan::math::LDLT_alloc;
   using stan::math::var;
 
@@ -53,7 +54,7 @@ TEST(AgradRevMatrix, LDLT_alloc_constructor) {
       EXPECT_FLOAT_EQ(expectedL(i, j), L(i, j));
 }
 
-TEST(AgradRevMatrix, LDLT_alloc_compute) {
+TEST_F(AgradRev, Matrix_LDLT_alloc_default_constructor) {
   using stan::math::LDLT_alloc;
   using stan::math::var;
 
