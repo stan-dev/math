@@ -219,4 +219,11 @@ auto make_sparse_matrix_random(int rows, int cols) {
 }  // namespace test
 }  // namespace stan
 
+struct AgradRev : public testing::Test {
+  void SetUp() {
+    // make sure memory's clean before starting each test
+    stan::math::recover_memory();
+  }
+};
+
 #endif

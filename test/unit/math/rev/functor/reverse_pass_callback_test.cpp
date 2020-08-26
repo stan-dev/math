@@ -1,7 +1,8 @@
 #include <stan/math.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradRev, reverse_pass_callback_test) {
+TEST_F(AgradRev, reverse_pass_callback_test) {
   stan::math::var a = 1;
   stan::math::var b = 1;
 

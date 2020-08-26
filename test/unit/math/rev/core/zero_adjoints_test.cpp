@@ -1,10 +1,11 @@
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/fun/util.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/sin.hpp>
+#include <test/unit/util.hpp>
+#include <test/unit/math/rev/fun/util.hpp>
 #include <vector>
 
-TEST(AgradRev, zero_arithmetic) {
+TEST_F(AgradRev, zero_arithmetic) {
   int a = 1.0;
   double b = 2;
   std::vector<int> va(5, a);
@@ -34,7 +35,7 @@ TEST(AgradRev, zero_arithmetic) {
   stan::math::zero_adjoints(a, b, va, vb, c, d, e, vva, vvb, vc, vd, ve);
 }
 
-TEST(AgradRev, zero_var) {
+TEST_F(AgradRev, zero_var) {
   using stan::math::var;
   using stan::math::vari;
 
@@ -47,7 +48,7 @@ TEST(AgradRev, zero_var) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRev, zero_std_vector_var) {
+TEST_F(AgradRev, zero_std_vector_var) {
   using stan::math::var;
   using stan::math::vari;
 
@@ -62,7 +63,7 @@ TEST(AgradRev, zero_std_vector_var) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRev, zero_vector_var) {
+TEST_F(AgradRev, zero_vector_var) {
   using stan::math::var;
   using stan::math::vari;
 
@@ -78,7 +79,7 @@ TEST(AgradRev, zero_vector_var) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRev, zero_row_vector_var) {
+TEST_F(AgradRev, zero_row_vector_var) {
   using stan::math::var;
   using stan::math::vari;
 
@@ -94,7 +95,7 @@ TEST(AgradRev, zero_row_vector_var) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRev, zero_matrix_var) {
+TEST_F(AgradRev, zero_matrix_var) {
   using stan::math::var;
   using stan::math::vari;
 
@@ -110,7 +111,7 @@ TEST(AgradRev, zero_matrix_var) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRev, zero_std_vector_std_vector_var) {
+TEST_F(AgradRev, zero_std_vector_std_vector_var) {
   using stan::math::var;
   using stan::math::vari;
 
@@ -130,7 +131,7 @@ TEST(AgradRev, zero_std_vector_std_vector_var) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRev, zero_std_vector_vector_var) {
+TEST_F(AgradRev, zero_std_vector_vector_var) {
   using stan::math::var;
   using stan::math::vari;
 
@@ -153,7 +154,7 @@ TEST(AgradRev, zero_std_vector_vector_var) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRev, zero_std_vector_row_vector_var) {
+TEST_F(AgradRev, zero_std_vector_row_vector_var) {
   using stan::math::var;
   using stan::math::vari;
 
@@ -176,7 +177,7 @@ TEST(AgradRev, zero_std_vector_row_vector_var) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRev, zero_std_vector_matrix_var) {
+TEST_F(AgradRev, zero_std_vector_matrix_var) {
   using stan::math::var;
   using stan::math::vari;
 
@@ -200,7 +201,7 @@ TEST(AgradRev, zero_std_vector_matrix_var) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRev, zero_multi) {
+TEST_F(AgradRev, zero_multi) {
   using stan::math::var;
   using stan::math::vari;
 

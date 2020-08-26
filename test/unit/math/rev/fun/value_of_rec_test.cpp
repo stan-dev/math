@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(AgradRev, value_of_rec) {
+TEST_F(AgradRev, value_of_rec) {
   using stan::math::value_of_rec;
   using stan::math::var;
 

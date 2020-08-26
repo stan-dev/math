@@ -1,4 +1,5 @@
 #include <stan/math/rev/core.hpp>
+#include <test/unit/util.hpp>
 #include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
@@ -25,7 +26,7 @@ struct ScalarSinFunctor {
   }
 };
 
-TEST(AgradRev, test_scalar_sin_stack) {
+TEST_F(AgradRev, test_scalar_sin_stack) {
   stan::math::var x1, y1;
   x1 = 1.0;
 
@@ -34,7 +35,7 @@ TEST(AgradRev, test_scalar_sin_stack) {
   test::check_varis_on_stack(y1);
 }
 
-TEST(AgradRev, test_scalar_sin_values) {
+TEST_F(AgradRev, test_scalar_sin_values) {
   stan::math::var x1, y1;
   x1 = 1.0;
 
@@ -43,7 +44,7 @@ TEST(AgradRev, test_scalar_sin_values) {
   EXPECT_NEAR(y1.val(), 0.841470984807897, 1e-10);
 }
 
-TEST(AgradRev, test_scalar_sin_jac) {
+TEST_F(AgradRev, test_scalar_sin_jac) {
   stan::math::var x1, y1;
   x1 = 1.0;
 
@@ -88,7 +89,7 @@ struct StdVectorSinFunctor {
   }
 };
 
-TEST(AgradRev, test_std_vector_sin_stack) {
+TEST_F(AgradRev, test_std_vector_sin_stack) {
   std::vector<stan::math::var> x1(2), y1;
   x1[0] = 1.0;
   x1[1] = 2.0;
@@ -98,7 +99,7 @@ TEST(AgradRev, test_std_vector_sin_stack) {
   test::check_varis_on_stack(y1);
 }
 
-TEST(AgradRev, test_std_vector_sin_values) {
+TEST_F(AgradRev, test_std_vector_sin_values) {
   std::vector<stan::math::var> x1(2), y1;
   x1[0] = 1.0;
   x1[1] = 2.0;
@@ -109,7 +110,7 @@ TEST(AgradRev, test_std_vector_sin_values) {
   EXPECT_NEAR(y1[1].val(), 0.909297426825682, 1e-10);
 }
 
-TEST(AgradRev, test_std_vector_sin_jac) {
+TEST_F(AgradRev, test_std_vector_sin_jac) {
   std::vector<stan::math::var> x1(2), y1;
   x1[0] = 1.0;
   x1[1] = 2.0;
@@ -162,7 +163,7 @@ struct SinFunctor {
   }
 };
 
-TEST(AgradRev, test_vector_sin_stack) {
+TEST_F(AgradRev, test_vector_sin_stack) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x1(1), x2(2), y1(1), y2(2);
   x1 << 1.0;
   x2 << 2.0, 1.0;
@@ -174,7 +175,7 @@ TEST(AgradRev, test_vector_sin_stack) {
   test::check_varis_on_stack(y2);
 }
 
-TEST(AgradRev, test_vector_sin_values) {
+TEST_F(AgradRev, test_vector_sin_values) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x1(1), x2(2), y1(1), y2(2);
   x1 << 1.0;
   x2 << 2.0, 1.0;
@@ -187,7 +188,7 @@ TEST(AgradRev, test_vector_sin_values) {
   EXPECT_FLOAT_EQ(y2(1).val(), 0.841470984807897);
 }
 
-TEST(AgradRev, test_vector_sin_multiple_jac) {
+TEST_F(AgradRev, test_vector_sin_multiple_jac) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x1(1), x2(2), y1(1), y2(2);
   x1 << 1.0;
   x2 << 2.0, 1.0;
@@ -259,7 +260,7 @@ struct RowVectorSinFunctor {
   }
 };
 
-TEST(AgradRev, test_row_vector_sin_stack) {
+TEST_F(AgradRev, test_row_vector_sin_stack) {
   Eigen::Matrix<stan::math::var, 1, Eigen::Dynamic> x1(1), x2(2), y1(1), y2(2);
   x1 << 1.0;
   x2 << 2.0, 1.0;
@@ -271,7 +272,7 @@ TEST(AgradRev, test_row_vector_sin_stack) {
   test::check_varis_on_stack(y2);
 }
 
-TEST(AgradRev, test_row_vector_sin_values) {
+TEST_F(AgradRev, test_row_vector_sin_values) {
   Eigen::Matrix<stan::math::var, 1, Eigen::Dynamic> x1(1), x2(2), y1(1), y2(2);
   x1 << 1.0;
   x2 << 2.0, 1.0;
@@ -284,7 +285,7 @@ TEST(AgradRev, test_row_vector_sin_values) {
   EXPECT_FLOAT_EQ(y2(1).val(), 0.841470984807897);
 }
 
-TEST(AgradRev, test_row_vector_sin_multiple_jac) {
+TEST_F(AgradRev, test_row_vector_sin_multiple_jac) {
   Eigen::Matrix<stan::math::var, 1, Eigen::Dynamic> x1(1), x2(2), y1(1), y2(2);
   x1 << 1.0;
   x2 << 2.0, 1.0;
@@ -358,7 +359,7 @@ struct MatrixSinFunctor {
   }
 };
 
-TEST(AgradRev, test_matrix_sin_stack) {
+TEST_F(AgradRev, test_matrix_sin_stack) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> x(2, 2),
       y(2, 2);
   x << 2.0, 1.0, 0.0, -1.0;
@@ -368,7 +369,7 @@ TEST(AgradRev, test_matrix_sin_stack) {
   test::check_varis_on_stack(y);
 }
 
-TEST(AgradRev, test_matrix_sin_values) {
+TEST_F(AgradRev, test_matrix_sin_values) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> x(2, 2),
       y(2, 2);
   x << 2.0, 1.0, 0.0, -1.0;
@@ -381,7 +382,7 @@ TEST(AgradRev, test_matrix_sin_values) {
   EXPECT_FLOAT_EQ(y(1, 1).val(), -0.841470984807897);
 }
 
-TEST(AgradRev, test_matrix_sin_multiple_jac) {
+TEST_F(AgradRev, test_matrix_sin_multiple_jac) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> x(2, 2),
       y(2, 2);
   x << 2.0, 1.0, 0.0, -1.0;
@@ -462,7 +463,7 @@ auto make_vari_for_test(const Targs&... args) {
   return vi;
 }
 
-TEST(AgradRev,
+TEST_F(AgradRev,
      test_weird_argument_list_functor_compiles_and_sets_is_var_and_offsets_) {
   int i;
   double d;
@@ -611,7 +612,7 @@ struct CheckAdjointsPassingThrough {
   }
 };
 
-TEST(AgradRev, test_pass_through_working_all_var_types) {
+TEST_F(AgradRev, test_pass_through_working_all_var_types) {
   int size_vd = 5, rows_ed1 = 3, rows_ed2 = 2, cols_ed2 = 3, cols_ed3 = 4;
   stan::math::var d = 1.0;
   std::vector<stan::math::var> vd(size_vd, 1.0);
@@ -748,7 +749,7 @@ TEST(AgradRev, test_pass_through_working_all_var_types) {
   stan::math::set_zero_all_adjoints();
 }
 
-TEST(AgradRev, test_pass_through_working_all_var_types_different_shapes) {
+TEST_F(AgradRev, test_pass_through_working_all_var_types_different_shapes) {
   int size_vd = 3, rows_ed1 = 7, rows_ed2 = 3, cols_ed2 = 5, cols_ed3 = 1;
   stan::math::var d = 1.0;
   std::vector<stan::math::var> vd(size_vd, 1.0);
@@ -885,7 +886,7 @@ TEST(AgradRev, test_pass_through_working_all_var_types_different_shapes) {
   stan::math::set_zero_all_adjoints();
 }
 
-TEST(AgradRev, test_pass_through_working_all_var_types_double_test_1) {
+TEST_F(AgradRev, test_pass_through_working_all_var_types_double_test_1) {
   int size_vd = 3, rows_ed1 = 7, rows_ed2 = 3, cols_ed2 = 5, cols_ed3 = 1;
   double d = 1.0;
   std::vector<stan::math::var> vd(size_vd, 1.0);
@@ -1016,7 +1017,7 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_1) {
   stan::math::set_zero_all_adjoints();
 }
 
-TEST(AgradRev, test_pass_through_working_all_var_types_double_test_2) {
+TEST_F(AgradRev, test_pass_through_working_all_var_types_double_test_2) {
   int size_vd = 3, rows_ed1 = 7, rows_ed2 = 3, cols_ed2 = 5, cols_ed3 = 1;
   stan::math::var d = 1.0;
   std::vector<double> vd(size_vd, 1.0);
@@ -1133,7 +1134,7 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_2) {
   stan::math::set_zero_all_adjoints();
 }
 
-TEST(AgradRev, test_pass_through_working_all_var_types_double_test_3) {
+TEST_F(AgradRev, test_pass_through_working_all_var_types_double_test_3) {
   int size_vd = 3, rows_ed1 = 7, rows_ed2 = 3, cols_ed2 = 5, cols_ed3 = 1;
   stan::math::var d = 1.0;
   std::vector<stan::math::var> vd(size_vd, 1.0);
@@ -1255,7 +1256,7 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_3) {
   stan::math::set_zero_all_adjoints();
 }
 
-TEST(AgradRev, test_pass_through_working_all_var_types_double_test_4) {
+TEST_F(AgradRev, test_pass_through_working_all_var_types_double_test_4) {
   int size_vd = 3, rows_ed1 = 7, rows_ed2 = 3, cols_ed2 = 5, cols_ed3 = 1;
   stan::math::var d = 1.0;
   std::vector<stan::math::var> vd(size_vd, 1.0);
@@ -1376,7 +1377,7 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_4) {
   stan::math::set_zero_all_adjoints();
 }
 
-TEST(AgradRev, test_pass_through_working_all_var_types_double_test_5) {
+TEST_F(AgradRev, test_pass_through_working_all_var_types_double_test_5) {
   int size_vd = 3, rows_ed1 = 7, rows_ed2 = 3, cols_ed2 = 5, cols_ed3 = 1;
   stan::math::var d = 1.0;
   std::vector<stan::math::var> vd(size_vd, 1.0);
@@ -1498,7 +1499,7 @@ TEST(AgradRev, test_pass_through_working_all_var_types_double_test_5) {
   stan::math::set_zero_all_adjoints();
 }
 
-TEST(AgradRev, test_pass_through_working_all_var_types_double_test_6) {
+TEST_F(AgradRev, test_pass_through_working_all_var_types_double_test_6) {
   int size_vd = 3, rows_ed1 = 7, rows_ed2 = 3, cols_ed2 = 5, cols_ed3 = 1;
   stan::math::var d = 1.0;
   std::vector<stan::math::var> vd(size_vd, 1.0);
@@ -1695,7 +1696,7 @@ struct SinCosFunctor {
   }
 };
 
-TEST(AgradRev, test_sincos_stack) {
+TEST_F(AgradRev, test_sincos_stack) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x11(1), x21(2), y1(1),
       y2(2);
   std::vector<stan::math::var> x12(1), x22(2);
@@ -1714,7 +1715,7 @@ TEST(AgradRev, test_sincos_stack) {
   test::check_varis_on_stack(y2);
 }
 
-TEST(AgradRev, test_sincos_values) {
+TEST_F(AgradRev, test_sincos_values) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x11(1), x21(2), y1(1),
       y2(2);
   std::vector<stan::math::var> x12(1), x22(2);
@@ -1734,7 +1735,7 @@ TEST(AgradRev, test_sincos_values) {
   EXPECT_FLOAT_EQ(y2(1).val(), -0.1485215117925489);
 }
 
-TEST(AgradRev, test_sincos_multiple_jac_vv) {
+TEST_F(AgradRev, test_sincos_multiple_jac_vv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x11(1), x21(2), y1(1),
       y2(2);
   std::vector<stan::math::var> x12(1), x22(2);
@@ -1789,7 +1790,7 @@ TEST(AgradRev, test_sincos_multiple_jac_vv) {
   EXPECT_FLOAT_EQ(x22[1].adj(), 1.57 * -0.1411200080598672);
 }
 
-TEST(AgradRev, test_sincos_multiple_jac_dv) {
+TEST_F(AgradRev, test_sincos_multiple_jac_dv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y1(1), y2(2);
   std::vector<stan::math::var> x12(1), x22(2);
   Eigen::Matrix<double, Eigen::Dynamic, 1> x11(1), x21(2);
@@ -1832,7 +1833,7 @@ TEST(AgradRev, test_sincos_multiple_jac_dv) {
   EXPECT_FLOAT_EQ(x22[1].adj(), 1.57 * -0.1411200080598672);
 }
 
-TEST(AgradRev, test_sincos_multiple_jac_vd) {
+TEST_F(AgradRev, test_sincos_multiple_jac_vd) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x11(1), x21(2), y1(1),
       y2(2);
   std::vector<double> x12(1), x22(2);
@@ -1929,7 +1930,7 @@ struct SinCosFunctor2 {
   }
 };
 
-TEST(AgradRev, test_eigen_vector_scalar_stack) {
+TEST_F(AgradRev, test_eigen_vector_scalar_stack) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x11(1), x21(2), y1(1),
       y2(2);
   stan::math::var x12, x22;
@@ -1945,7 +1946,7 @@ TEST(AgradRev, test_eigen_vector_scalar_stack) {
   test::check_varis_on_stack(y2);
 }
 
-TEST(AgradRev, test_eigen_vector_scalar_values) {
+TEST_F(AgradRev, test_eigen_vector_scalar_values) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x11(1), x21(2), y1(1),
       y2(2);
   stan::math::var x12, x22;
@@ -1962,7 +1963,7 @@ TEST(AgradRev, test_eigen_vector_scalar_values) {
   EXPECT_FLOAT_EQ(y2(1).val(), -0.1485215117925489);
 }
 
-TEST(AgradRev, test_eigen_vector_scalar_multiple_jac_vv) {
+TEST_F(AgradRev, test_eigen_vector_scalar_multiple_jac_vv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x11(1), x21(2), y1(1),
       y2(2);
   stan::math::var x12, x22;
@@ -2010,7 +2011,7 @@ TEST(AgradRev, test_eigen_vector_scalar_multiple_jac_vv) {
   EXPECT_FLOAT_EQ(x22.adj(), (1.73 + 1.57) * -0.1411200080598672);
 }
 
-TEST(AgradRev, test_eigen_vector_scalar_multiple_jac_dv) {
+TEST_F(AgradRev, test_eigen_vector_scalar_multiple_jac_dv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y1(1), y2(2);
   Eigen::Matrix<double, Eigen::Dynamic, 1> x11(1), x21(2);
   stan::math::var x12, x22;
@@ -2046,7 +2047,7 @@ TEST(AgradRev, test_eigen_vector_scalar_multiple_jac_dv) {
   EXPECT_FLOAT_EQ(x22.adj(), (1.73 + 1.57) * -0.1411200080598672);
 }
 
-TEST(AgradRev, test_eigen_vector_scalar_multiple_jac_vd) {
+TEST_F(AgradRev, test_eigen_vector_scalar_multiple_jac_vd) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x11(1), x21(2), y1(1),
       y2(2);
   double x12, x22;
@@ -2140,7 +2141,7 @@ struct SinCosFunctor3 {
   }
 };
 
-TEST(AgradRev, test_sincos_scalar_eigen_vector_stack) {
+TEST_F(AgradRev, test_sincos_scalar_eigen_vector_stack) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x11(1), x21(2), y1(1),
       y2(2);
   stan::math::var x12, x22;
@@ -2156,7 +2157,7 @@ TEST(AgradRev, test_sincos_scalar_eigen_vector_stack) {
   test::check_varis_on_stack(y2);
 }
 
-TEST(AgradRev, test_sincos_scalar_eigen_vector_values) {
+TEST_F(AgradRev, test_sincos_scalar_eigen_vector_values) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x11(1), x21(2), y1(1),
       y2(2);
   stan::math::var x12, x22;
@@ -2173,7 +2174,7 @@ TEST(AgradRev, test_sincos_scalar_eigen_vector_values) {
   EXPECT_FLOAT_EQ(y2(1).val(), -0.1485215117925489);
 }
 
-TEST(AgradRev, test_sincos_scalar_eigen_vector_multiple_jac_vv) {
+TEST_F(AgradRev, test_sincos_scalar_eigen_vector_multiple_jac_vv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x11(1), x21(2), y1(1),
       y2(2);
   stan::math::var x12, x22;
@@ -2221,7 +2222,7 @@ TEST(AgradRev, test_sincos_scalar_eigen_vector_multiple_jac_vv) {
   EXPECT_FLOAT_EQ(x22.adj(), (1.73 + 1.57) * -0.1411200080598672);
 }
 
-TEST(AgradRev, test_sincos_scalar_eigen_vector_multiple_jac_vd) {
+TEST_F(AgradRev, test_sincos_scalar_eigen_vector_multiple_jac_vd) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y1(1), y2(2);
   Eigen::Matrix<double, Eigen::Dynamic, 1> x11(1), x21(2);
   stan::math::var x12, x22;
@@ -2257,7 +2258,7 @@ TEST(AgradRev, test_sincos_scalar_eigen_vector_multiple_jac_vd) {
   EXPECT_FLOAT_EQ(x22.adj(), (1.73 + 1.57) * -0.1411200080598672);
 }
 
-TEST(AgradRev, test_sincos_scalar_eigen_vector_multiple_jac_dv) {
+TEST_F(AgradRev, test_sincos_scalar_eigen_vector_multiple_jac_dv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x11(1), x21(2), y1(1),
       y2(2);
   double x12, x22;

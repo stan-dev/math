@@ -1,8 +1,9 @@
 #include <stan/math/rev.hpp>
-#include <gtest/gtest.h>
+#include <test/unit/util.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
+#include <gtest/gtest.h>
 
-TEST(AgradRev, int_step) {
+TEST_F(AgradRev, int_step) {
   using stan::math::int_step;
 
   AVAR a(5.0);

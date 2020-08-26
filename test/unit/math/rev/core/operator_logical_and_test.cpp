@@ -1,4 +1,5 @@
 #include <stan/math/rev/core.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <limits>
@@ -10,7 +11,7 @@ void test_logical_and(double x, double y) {
   EXPECT_EQ(x && y, var(x) && y);
 }
 
-TEST(AgradRev, logical_and) {
+TEST_F(AgradRev, logical_and) {
   std::vector<double> xs;
   xs.push_back(6.1);
   xs.push_back(6.1);

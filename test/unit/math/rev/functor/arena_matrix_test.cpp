@@ -2,7 +2,7 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradRev, arena_matrix_matrix_test) {
+TEST_F(AgradRev, arena_matrix_matrix_test) {
   using Eigen::MatrixXd;
   using stan::math::arena_matrix;
 
@@ -28,7 +28,7 @@ TEST(AgradRev, arena_matrix_matrix_test) {
   EXPECT_MATRIX_EQ(a + a2 + a3 + b + b2 + e, MatrixXd::Ones(3, 2) * 9);
 }
 
-TEST(AgradRev, arena_matrix_vector_test) {
+TEST_F(AgradRev, arena_matrix_vector_test) {
   using Eigen::VectorXd;
   using stan::math::arena_matrix;
 
@@ -54,7 +54,7 @@ TEST(AgradRev, arena_matrix_vector_test) {
   EXPECT_MATRIX_EQ(a + a2 + a3 + b + b2 + e, VectorXd::Ones(3) * 9);
 }
 
-TEST(AgradRev, arena_matrix_row_vector_test) {
+TEST_F(AgradRev, arena_matrix_row_vector_test) {
   using Eigen::RowVectorXd;
   using stan::math::arena_matrix;
 

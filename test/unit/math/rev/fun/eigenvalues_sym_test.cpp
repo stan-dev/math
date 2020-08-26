@@ -2,9 +2,10 @@
 #include <stan/math/rev/fun/eigenvalues_sym.hpp>
 #include <stan/math/rev/fun/sum.hpp>
 #include <stan/math/rev/fun/log.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradRev, eigenvaluesSymLogDet) {
+TEST_F(AgradRev, eigenvaluesSymLogDet) {
   // logdet(A) can be calculated using eigenvalues of matrix A
   // the derivative of logdet(A) should be inverse(A)
   // See stan-dev/math/issues/1803

@@ -1,4 +1,5 @@
 #include <stan/math/rev/core.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -32,6 +33,6 @@ void arena_allocator_test() {
       v3.data() + v3.size()));
 }
 
-TEST(AgradRev, arena_allocator_test) {
+TEST_F(AgradRev, arena_allocator_test) {
   EXPECT_NO_THROW(arena_allocator_test());
 }

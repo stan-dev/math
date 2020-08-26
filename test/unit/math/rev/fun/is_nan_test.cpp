@@ -1,9 +1,10 @@
 #include <stan/math/rev.hpp>
-#include <gtest/gtest.h>
+#include <test/unit/util.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
+#include <gtest/gtest.h>
 #include <limits>
 
-TEST(AgradRev, is_nan) {
+TEST_F(AgradRev, is_nan) {
   using stan::math::is_nan;
 
   double infinity = std::numeric_limits<double>::infinity();

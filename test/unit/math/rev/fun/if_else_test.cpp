@@ -1,10 +1,11 @@
 #include <stan/math/rev.hpp>
-#include <gtest/gtest.h>
+#include <test/unit/util.hpp>
 #include <test/unit/math/rev/util.hpp>
+#include <gtest/gtest.h>
 #include <cmath>
 #include <limits>
 
-TEST(AgradRev, if_else) {
+TEST_F(AgradRev, if_else) {
   using stan::math::if_else;
   using stan::math::var;
 
@@ -18,7 +19,7 @@ TEST(AgradRev, if_else) {
   EXPECT_FLOAT_EQ(2.0, if_else(false, var(1.0), 2.0).val());
 }
 
-TEST(AgradRev, if_else_nan) {
+TEST_F(AgradRev, if_else_nan) {
   using stan::math::if_else;
 
   double nan = std::numeric_limits<double>::quiet_NaN();
@@ -49,7 +50,7 @@ TEST(AgradRev, if_else_nan) {
   EXPECT_TRUE(std::isnan(if_else(false, nan_v, nan_v).val()));
 }
 
-TEST(AgradRev, if_else_check_varis_on_stack) {
+TEST_F(AgradRev, if_else_check_varis_on_stack) {
   stan::math::var x = 1.0;
   stan::math::var y = 2.0;
   test::check_varis_on_stack(stan::math::if_else(true, x, y));

@@ -8,13 +8,6 @@
 #include <string>
 #include <vector>
 
-struct AgradRev : public testing::Test {
-  void SetUp() {
-    // make sure memory's clean before starting each test
-    stan::math::recover_memory();
-  }
-};
-
 namespace stan {
 namespace test {
 template <typename T, typename S>
