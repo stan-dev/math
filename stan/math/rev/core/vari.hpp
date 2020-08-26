@@ -316,7 +316,12 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
   friend std::ostream& operator<<(std::ostream& os, const vari_value<T>* v) {
     return os << "val: \n" << v->val_ << " \nadj: \n" << v->adj_;
   }
-
+  inline auto& adj() {
+    return adj_;
+  }
+  inline const auto& val() const {
+    return val_;
+  }
  private:
   template <typename>
   friend class var_value;

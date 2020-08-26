@@ -98,6 +98,23 @@ inline var sum(const EigMat& m) {
   return var(new sum_eigen_v_vari(m_ref));
 }
 
+
+template <typename T>
+class sum_vari : public vari {
+  vari_value<std::decay_t<T>>* v_;
+
+ public:
+  template <typename S>
+  sum_vari(vari_value<S>* avi)  // NOLINT
+      : vari(avi->val_.sum()), v_(avi) {}
+  virtual void chain() { v_->adj_.array() += this->adj_; }
+};
+
+template <typename T, require_eigen_t<T>* = nullptr>
+inline var sum(const var_value<T>& x) {
+  return {new sum_vari<T>(x.vi_) };
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

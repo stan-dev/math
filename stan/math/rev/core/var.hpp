@@ -19,6 +19,31 @@ namespace math {
 template <typename Vari>
 static void grad(Vari* vi);
 
+namespace internal {
+  template <typename T, typename = void>
+  struct get_rows_at_compile_time;
+
+  template <typename T>
+  struct get_rows_at_compile_time<T, require_eigen_t<T>> {
+    static constexpr int value{T::RowsAtCompileTime};
+  };
+  template <typename T>
+  struct get_rows_at_compile_time<T, require_not_eigen_t<T>> {
+    static constexpr int value{0};
+  };
+  template <typename T, typename = void>
+  struct get_cols_at_compile_time;
+
+  template <typename T>
+  struct get_cols_at_compile_time<T, require_eigen_t<T>> {
+    static constexpr int value{T::ColsAtCompileTime};
+  };
+  template <typename T>
+  struct get_cols_at_compile_time<T, require_not_eigen_t<T>> {
+    static constexpr int value{0};
+  };
+
+}
 /**
  * Independent (input) and dependent (output) variables for gradients.
  *
@@ -48,7 +73,8 @@ class var_value {
  public:
   using value_type = std::decay_t<T>;        // type in vari_value.
   using vari_type = vari_value<value_type>;  // Type of underlying vari impl.
-
+  static constexpr int RowsAtCompileTime{internal::get_rows_at_compile_time<T>::value};
+  static constexpr int ColsAtCompileTime{internal::get_cols_at_compile_time<T>::value};
   /**
    * Pointer to the implementation of this variable.
    *
@@ -94,6 +120,15 @@ class var_value {
    */
   var_value(vari_type* vi) : vi_(vi) {}  // NOLINT
 
+  inline Eigen::Index rows() const {
+    return vi_->val_.rows();
+  }
+  inline Eigen::Index cols() const {
+    return vi_->val_.cols();
+  }
+  inline Eigen::Index size() const {
+    return vi_->val_.size();
+  }
   /**
    * Return a constant reference to the value of this variable.
    *

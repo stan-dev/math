@@ -18,7 +18,7 @@ template <typename T, typename = void, typename = void>
 struct arena_type_impl {};
 
 template <typename T>
-struct arena_type_impl<T, require_all_t<std::is_trivially_destructible<T>,
+struct arena_type_impl<T, require_all_t<std::is_trivially_destructible<T>, 
                                         bool_constant<!is_eigen<T>::value>>> {
   using type = T;
 };
@@ -43,11 +43,6 @@ struct arena_type_impl<
     std::enable_if_t<T::RowsAtCompileTime != Eigen::Dynamic
                      && T::ColsAtCompileTime != Eigen::Dynamic>> {
   using type = plain_type_t<T>;
-};
-
-template <typename T>
-struct arena_type_impl<T, require_var_t<T>, require_eigen_t<typename T::value_type>> {
-  using type = math::var_value<std::decay_t<T>>;
 };
 }  // namespace internal
 

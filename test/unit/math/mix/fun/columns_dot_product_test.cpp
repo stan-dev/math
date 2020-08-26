@@ -54,3 +54,33 @@ TEST(MathMixMatFun, columnsDotProduct) {
   stan::test::expect_ad(f, em33, em23);
   stan::test::expect_ad(f, em23, em33);
 }
+
+TEST(MathMixMatFun, columnsDotProductVarMatrix) {
+  using stan::math::var_value;
+  using stan::math::columns_dot_product;
+  var_value<Eigen::MatrixXd> A(Eigen::MatrixXd::Random(10, 10));
+  var_value<Eigen::MatrixXd> B(Eigen::MatrixXd::Random(10, 10));
+  auto C = columns_dot_product(A, B);
+  stan::math::var D = stan::math::sum(C);
+  D.grad();
+}
+
+TEST(MathMixMatFun, columnsDotProductDblMatrixVarMatrix) {
+  using stan::math::var_value;
+  using stan::math::columns_dot_product;
+  Eigen::MatrixXd A(Eigen::MatrixXd::Random(10, 10));
+  var_value<Eigen::MatrixXd> B(Eigen::MatrixXd::Random(10, 10));
+  auto C = columns_dot_product(A, B);
+  stan::math::var D = stan::math::sum(C);
+  D.grad();
+}
+
+TEST(MathMixMatFun, columnsDotProductVarMatrixDblMatrix) {
+  using stan::math::var_value;
+  using stan::math::columns_dot_product;
+  var_value<Eigen::MatrixXd> A(Eigen::MatrixXd::Random(10, 10));
+  Eigen::MatrixXd B(Eigen::MatrixXd::Random(10, 10));
+  auto C = columns_dot_product(A, B);
+  stan::math::var D = stan::math::sum(C);
+  D.grad();
+}

@@ -21,9 +21,9 @@ namespace stan {
 template <typename T>
 struct is_stan_scalar
     : bool_constant<
-          math::disjunction<is_var<std::decay_t<T>>, is_fvar<std::decay_t<T>>,
+          math::conjunction<math::disjunction<is_var<std::decay_t<T>>, is_fvar<std::decay_t<T>>,
                             std::is_arithmetic<std::decay_t<T>>,
-                            is_complex<std::decay_t<T>>>::value> {};
+                            is_complex<std::decay_t<T>>>, bool_constant<!is_eigen<value_type_t<T>>::value>>::value> {};
 
 STAN_ADD_REQUIRE_UNARY(stan_scalar, is_stan_scalar, require_stan_scalar_real);
 STAN_ADD_REQUIRE_UNARY_INNER(stan_scalar, is_stan_scalar,
