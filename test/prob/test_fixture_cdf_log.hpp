@@ -259,8 +259,8 @@ class AgradCdfLogTestFixture : public ::testing::Test {
   // works for <var>
   double calculate_gradients_1storder(vector<double>& grad, var& cdf_log,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     cdf_log.grad(x, grad);
-    stan::math::recover_memory();
     return cdf_log.val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad, var& cdf_log,
@@ -308,14 +308,14 @@ class AgradCdfLogTestFixture : public ::testing::Test {
   // works for fvar<var>
   double calculate_gradients_1storder(vector<double>& grad, fvar<var>& cdf_log,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     cdf_log.val_.grad(x, grad);
-    stan::math::recover_memory();
     return cdf_log.val_.val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad, fvar<var>& cdf_log,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     cdf_log.d_.grad(x, grad);
-    stan::math::recover_memory();
     return cdf_log.val_.val();
   }
   double calculate_gradients_3rdorder(vector<double>& grad, fvar<var>& cdf_log,
@@ -327,22 +327,22 @@ class AgradCdfLogTestFixture : public ::testing::Test {
   double calculate_gradients_1storder(vector<double>& grad,
                                       fvar<fvar<var>>& cdf_log,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     cdf_log.val_.val_.grad(x, grad);
-    stan::math::recover_memory();
     return cdf_log.val_.val_.val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad,
                                       fvar<fvar<var>>& cdf_log,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     cdf_log.d_.val_.grad(x, grad);
-    stan::math::recover_memory();
     return cdf_log.val_.val_.val();
   }
   double calculate_gradients_3rdorder(vector<double>& grad,
                                       fvar<fvar<var>>& cdf_log,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     cdf_log.d_.d_.grad(x, grad);
-    stan::math::recover_memory();
     return cdf_log.val_.val_.val();
   }
 
@@ -409,6 +409,8 @@ class AgradCdfLogTestFixture : public ::testing::Test {
         calculate_gradients_1storder(gradients, cdf_log, x1);
 
         test_finite_diffs_equal(parameters[n], finite_diffs, gradients);
+
+        stan::math::recover_memory();
       }
     }
   }
@@ -485,6 +487,8 @@ class AgradCdfLogTestFixture : public ::testing::Test {
       test_gradients_equal(expected_gradients1, gradients1);
       test_gradients_equal(expected_gradients2, gradients2);
       test_gradients_equal(expected_gradients3, gradients3);
+
+      stan::math::recover_memory();
     }
   }
 
@@ -575,6 +579,8 @@ class AgradCdfLogTestFixture : public ::testing::Test {
       calculate_gradients_1storder(multiple_gradients1, multiple_cdf_log, x1);
       calculate_gradients_1storder(multiple_gradients2, multiple_cdf_log, x1);
       calculate_gradients_1storder(multiple_gradients3, multiple_cdf_log, x1);
+
+      stan::math::recover_memory();
 
       EXPECT_NEAR(stan::math::value_of_rec(N_REPEAT * single_cdf_log),
                   stan::math::value_of_rec(multiple_cdf_log), 1e-8)

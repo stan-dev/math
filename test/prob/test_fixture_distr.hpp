@@ -319,8 +319,8 @@ class AgradDistributionTestFixture : public ::testing::Test {
   // works for <var>
   double calculate_gradients_1storder(vector<double>& grad, var& logprob,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     logprob.grad(x, grad);
-    stan::math::recover_memory();
     return logprob.val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad, var& logprob,
@@ -368,14 +368,14 @@ class AgradDistributionTestFixture : public ::testing::Test {
   // works for fvar<var>
   double calculate_gradients_1storder(vector<double>& grad, fvar<var>& logprob,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     logprob.val_.grad(x, grad);
-    stan::math::recover_memory();
     return logprob.val_.val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad, fvar<var>& logprob,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     logprob.d_.grad(x, grad);
-    stan::math::recover_memory();
     return logprob.val_.val();
   }
   double calculate_gradients_3rdorder(vector<double>& grad, fvar<var>& logprob,
@@ -387,22 +387,22 @@ class AgradDistributionTestFixture : public ::testing::Test {
   double calculate_gradients_1storder(vector<double>& grad,
                                       fvar<fvar<var>>& logprob,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     logprob.val_.val_.grad(x, grad);
-    stan::math::recover_memory();
     return logprob.val_.val_.val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad,
                                       fvar<fvar<var>>& logprob,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     logprob.d_.val_.grad(x, grad);
-    stan::math::recover_memory();
     return logprob.val_.val_.val();
   }
   double calculate_gradients_3rdorder(vector<double>& grad,
                                       fvar<fvar<var>>& logprob,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     logprob.d_.d_.grad(x, grad);
-    stan::math::recover_memory();
     return logprob.val_.val_.val();
   }
 
@@ -472,6 +472,8 @@ class AgradDistributionTestFixture : public ::testing::Test {
         test_finite_diffs_equal(parameters[n], finite_diffs, gradients);
       }
     }
+
+    stan::math::recover_memory();
   }
 
   void test_gradients_equal(const vector<double>& expected_gradients,
@@ -547,6 +549,8 @@ class AgradDistributionTestFixture : public ::testing::Test {
       test_gradients_equal(expected_gradients1, gradients1);
       test_gradients_equal(expected_gradients2, gradients2);
       test_gradients_equal(expected_gradients3, gradients3);
+
+      stan::math::recover_memory();
     }
   }
 
@@ -640,6 +644,8 @@ class AgradDistributionTestFixture : public ::testing::Test {
       calculate_gradients_1storder(multiple_gradients1, multiple_lp, x1);
       calculate_gradients_1storder(multiple_gradients2, multiple_lp, x1);
       calculate_gradients_1storder(multiple_gradients3, multiple_lp, x1);
+
+      stan::math::recover_memory();
 
       EXPECT_NEAR(stan::math::value_of_rec(N_REPEAT * single_lp),
                   stan::math::value_of_rec(multiple_lp), 1e-8)
