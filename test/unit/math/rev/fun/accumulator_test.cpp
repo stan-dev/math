@@ -6,12 +6,12 @@
 
 namespace stan {
 namespace test {
-  // test sum of first n numbers for sum of a
-  void test_sum(stan::math::accumulator<stan::math::var>& a, int n) {
-    EXPECT_FLOAT_EQ((n * (n + 1)) / 2, a.sum().val());
-  }
+// test sum of first n numbers for sum of a
+void test_sum(stan::math::accumulator<stan::math::var>& a, int n) {
+  EXPECT_FLOAT_EQ((n * (n + 1)) / 2, a.sum().val());
 }
-}
+}  // namespace test
+}  // namespace stan
 
 TEST_F(AgradRev, Matrix_accumulateDouble) {
   using stan::math::accumulator;
@@ -39,8 +39,8 @@ TEST_F(AgradRev, Matrix_accumulateCollection) {
   using Eigen::VectorXd;
   using stan::math::accumulator;
   using stan::math::var;
-  using std::vector;
   using stan::test::test_sum;
+  using std::vector;
 
   accumulator<var> a;
 
