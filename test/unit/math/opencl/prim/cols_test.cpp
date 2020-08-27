@@ -1,12 +1,10 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/prim/cols.hpp>
-#include <stan/math/rev/core/var.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
 using stan::math::cols;
 using stan::math::matrix_cl;
-using stan::math::var;
 
 TEST(MathMatrixCL, cols) {
   matrix_cl<double> m0;
@@ -23,12 +21,6 @@ TEST(MathMatrixCL, cols) {
 
   matrix_cl<double> m4(3, 2);
   EXPECT_EQ(2, cols(m4));
-
-  matrix_cl<var> m5(5, 4);
-  EXPECT_EQ(4, cols(m5));
-
-  matrix_cl<var> m6(3, 2);
-  EXPECT_EQ(2, cols(m6));
 }
 
 #endif

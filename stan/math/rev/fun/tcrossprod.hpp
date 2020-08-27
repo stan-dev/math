@@ -47,13 +47,12 @@ tcrossprod(const T& M) {
     }
   }
   for (int m = 0; m < M.rows(); ++m) {
-    MMt(m, m) = var(new internal::dot_self_vari(vs + m * M.cols(), M.cols()));
+    MMt.coeffRef(m, m)
+        = var(new internal::dot_self_vari(vs + m * M.cols(), M.cols()));
   }
   for (int m = 0; m < M.rows(); ++m) {
     for (int n = 0; n < m; ++n) {
-      MMt(m, n) = var(new internal::dot_product_vari<var, var>(
-          vs + m * M.cols(), vs + n * M.cols(), M.cols()));
-      MMt(n, m) = MMt(m, n);
+      MMt.coeffRef(n, m) = MMt.coeffRef(m, n) = dot_product(M.row(m), M.row(n));
     }
   }
   return MMt;
