@@ -309,7 +309,7 @@ pipeline {
                             echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
                             }
                     }
-                }
+                
                 // stage('Threading tests') {
                 //     agent any
                 //     steps {
