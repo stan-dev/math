@@ -90,7 +90,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckNotNanVarCheckUnivariate) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckNotNanVarCheckVectorizedStackSize) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckNotNanVarCheckStackSize) {
   using stan::math::check_not_nan;
   using stan::math::var;
 
