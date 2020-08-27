@@ -219,7 +219,7 @@ class expressions_cl {
    */
   explicit expressions_cl(T_expressions&&... expressions)
       : expressions_(
-          T_expressions(std::forward<T_expressions>(expressions))...) {}
+            T_expressions(std::forward<T_expressions>(expressions))...) {}
 
  private:
   std::tuple<T_expressions...> expressions_;
@@ -372,7 +372,8 @@ class results_cl {
    */
   template <typename... T_expressions, size_t... Is>
   void assignment(const expressions_cl<T_expressions...>& exprs,
-                  std::index_sequence<Is...>) {;
+                  std::index_sequence<Is...>) {
+    ;
     assignment_impl(std::tuple_cat(make_assignment_pair(
         as_operation_cl(std::get<Is>(results_)),
         as_operation_cl(std::get<Is>(exprs.expressions_)))...));
@@ -486,8 +487,8 @@ class results_cl {
    * @return an empty tuple
    */
   template <typename Scal>
-  static std::tuple<> make_assignment_pair(
-      check_cl_<scalar_<Scal>>& result, scalar_<char> expression) {
+  static std::tuple<> make_assignment_pair(check_cl_<scalar_<Scal>>& result,
+                                           scalar_<char> expression) {
     if (!expression.a_) {
       std::stringstream s;
       s << result.function_ << ": " << result.err_variable_ << " = "

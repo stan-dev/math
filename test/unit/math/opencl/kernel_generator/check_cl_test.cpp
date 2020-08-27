@@ -21,14 +21,12 @@ TEST(KernelGenerator, check_cl_error) {
 }
 
 TEST(KernelGenerator, check_cl_scalar_check_only_pass) {
-  EXPECT_NO_THROW(
-      stan::math::check_cl("test", "m1", 3, "positive") = 3 > 0);
+  EXPECT_NO_THROW(stan::math::check_cl("test", "m1", 3, "positive") = 3 > 0);
 }
 
 TEST(KernelGenerator, check_cl_scalar_check_only_throw) {
-  EXPECT_THROW(
-      stan::math::check_cl("test", "m1", 0, "positive") = 0 > 0,
-      std::domain_error);
+  EXPECT_THROW(stan::math::check_cl("test", "m1", 0, "positive") = 0 > 0,
+               std::domain_error);
 }
 
 TEST(KernelGenerator, check_cl_check_only_pass) {
