@@ -218,13 +218,13 @@ pipeline {
         //     }
         //     post { always { retry(3) { deleteDir() } } }
         // }
-        stage('Always-run tests') {
-            when {
-                expression {
-                    !skipRemainingStages
-                }
-            }
-            parallel {
+        // stage('Always-run tests') {
+        //     when {
+        //         expression {
+        //             !skipRemainingStages
+        //         }
+        //     }
+        //     parallel {
                 // stage('MPI tests') {
                 //     agent { label 'linux && mpi' }
                 //     steps {
@@ -283,33 +283,33 @@ pipeline {
                 //     }
                 //     post { always { retry(3) { deleteDir() } } }
                 // }
-                stage('Distribution tests') {
-                    agent { label "distribution-tests" }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh """
-                            echo CXX=${env.CXX} > make/local
-                            echo O=0 >> make/local
-                            echo N_TESTS=${env.N_TESTS} >> make/local
-                            """
-                        script {
-                            if (params.withRowVector || isBranch('develop') || isBranch('master')) {
-                                sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
-                            }
-                        }
-                        sh "./runTests.py -j18 test/prob > dist.log 2>&1"
-                    }
-                    post {
-                        always {
-                            script { zip zipFile: "dist.log.zip", archive: true, glob: 'dist.log' }
-                            retry(3) { deleteDir() }
-                        }
-                        failure {
-                            echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
-                            }
-                    }
-                
+                // stage('Distribution tests') {
+                //     agent { label "distribution-tests" }
+                //     steps {
+                //         deleteDir()
+                //         unstash 'MathSetup'
+                //         sh """
+                //             echo CXX=${env.CXX} > make/local
+                //             echo O=0 >> make/local
+                //             echo N_TESTS=${env.N_TESTS} >> make/local
+                //             """
+                //         script {
+                //             if (params.withRowVector || isBranch('develop') || isBranch('master')) {
+                //                 sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
+                //             }
+                //         }
+                //         sh "./runTests.py -j18 test/prob > dist.log 2>&1"
+                //     }
+                //     post {
+                //         always {
+                //             script { zip zipFile: "dist.log.zip", archive: true, glob: 'dist.log' }
+                //             retry(3) { deleteDir() }
+                //         }
+                //         failure {
+                //             echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
+                //             }
+                //     }
+                // }
                 // stage('Threading tests') {
                 //     agent any
                 //     steps {
@@ -348,8 +348,8 @@ pipeline {
                 //         runTestsWin("test/unit", false, true)
                 //     }
                 // }
-            }
-        }
+        //     }
+        // }
         stage('Additional merge tests') {
             when {
                 allOf {
