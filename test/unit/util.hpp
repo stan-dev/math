@@ -5,6 +5,7 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/typeof/typeof.hpp>
+#include <test/unit/pretty_print_types.hpp>
 #include <gtest/gtest.h>
 #include <type_traits>
 #include <string>
@@ -146,6 +147,17 @@
  */
 #define EXPECT_THROW_MSG(expr, T_e, msg) \
   EXPECT_THROW_MSG_WITH_COUNT(expr, T_e, msg, 1)
+
+/**
+  * Tests if given types are the same type.
+  *
+  * @param a first type
+  * @param b second type
+  **/
+#define EXPECT_SAME_TYPE(a, b)                                             \
+  EXPECT_TRUE((std::is_same<a, b>::value))                                 \
+      << "Type a is" << stan::math::test::type_name<a>() << ". Type b is " \
+      << stan::math::test::type_name<b>();
 
 /**
  * Count the number of times a substring is found in
