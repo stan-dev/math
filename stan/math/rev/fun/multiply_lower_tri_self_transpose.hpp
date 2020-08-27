@@ -39,10 +39,10 @@ inline matrix_v multiply_lower_tri_self_transpose(const matrix_v& L) {
     }
   }
   for (int m = 0, mpos = 0; m < K; ++m, mpos += (J < m) ? J : m) {
-    LLt(m, m) = var(
+    LLt.coeffRef(m, m) = var(
         new internal::dot_self_vari(vs + mpos, (J < (m + 1)) ? J : (m + 1)));
     for (int n = 0, npos = 0; n < m; ++n, npos += (J < n) ? J : n) {
-      LLt(m, n) = LLt(n, m)
+      LLt.coeffRef(m, n) = LLt.coeffRef(n, m)
           = dot_product(L.row(m).head((J < (n + 1)) ? J : (n + 1)),
                         L.row(n).head((J < (n + 1)) ? J : (n + 1)));
     }

@@ -43,7 +43,7 @@ inline std::vector<T, arena_allocator<T>> to_arena(
   // What we want to do here is the same as moving input into output, except
   // that we want input to be left unchanged. With any normal allocator that
   // lead to deallocating memory twice (probably segfaulting). However,
-  // dealocation with `AD_stack_allocator` is a no-op, so we can do that.
+  // dealocation with `arena_allocator` is a no-op, so we can do that.
   std::vector<T, arena_allocator<T>> res;
   std::memcpy(static_cast<void*>(&res), static_cast<const void*>(&a),
               sizeof(std::vector<T, arena_allocator<T>>));

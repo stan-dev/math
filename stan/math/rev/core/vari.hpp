@@ -30,7 +30,6 @@ class vari_base {
    */
   virtual void chain() = 0;
   virtual void set_zero_adjoint() = 0;
-  virtual ~vari_base() noexcept {}
 
   /**
    * Allocate memory from the underlying memory pool.  This memory is
@@ -104,7 +103,7 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(S x) noexcept : val_(x), adj_(0.0) {  // NOLINT
-    ChainableStack::instance_->var_stack_.emplace_back(this);
+    ChainableStack::instance_->var_stack_.push_back(this);
   }
 
   /**
@@ -125,13 +124,11 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(S x, bool stacked) noexcept : val_(x), adj_(0.0) {
     if (stacked) {
-      ChainableStack::instance_->var_stack_.emplace_back(this);
+      ChainableStack::instance_->var_stack_.push_back(this);
     } else {
-      ChainableStack::instance_->var_nochain_stack_.emplace_back(this);
+      ChainableStack::instance_->var_nochain_stack_.push_back(this);
     }
   }
-
-  ~vari_value() = default;
 
   inline void chain() {}
 
@@ -272,9 +269,9 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
         val_(eigen_map(val_mem_, x.rows(), x.cols()) = x),
         adj_(eigen_map(adj_mem_, x.rows(), x.cols()).setZero()) {
     if (stacked) {
-      ChainableStack::instance_->var_stack_.emplace_back(this);
+      ChainableStack::instance_->var_stack_.push_back(this);
     } else {
-      ChainableStack::instance_->var_nochain_stack_.emplace_back(this);
+      ChainableStack::instance_->var_nochain_stack_.push_back(this);
     }
   }
 
