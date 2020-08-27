@@ -7,6 +7,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/calc_if.hpp>
+#include <stan/math/opencl/kernel_generator/check_cl.hpp>
 #include <stan/math/opencl/kernel_generator/load.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <algorithm>
@@ -45,11 +46,12 @@ struct multi_result_kernel_internal {
      * @param expressions expressions
      */
     static void get_clear_events(
-        std::vector<cl::Event>& events, const std::tuple<T_results...>& results,
-        const std::tuple<T_expressions...>& expressions) {
-      next::get_clear_events(events, results, expressions);
-      std::get<N>(expressions).get_clear_write_events(events);
-      std::get<N>(results).get_clear_read_write_events(events);
+        std::vector<cl::Event>& events,
+        const std::tuple<std::pair<T_results, T_expressions>...>&
+            assignment_pairs) {
+      next::get_clear_events(events, assignment_pairs);
+      std::get<N>(assignment_pairs).second.get_clear_write_events(events);
+      std::get<N>(assignment_pairs).first.get_clear_read_write_events(events);
     }
     /**
      * Assigns the dimensions of expressions to matching results if possible.
@@ -63,11 +65,12 @@ struct multi_result_kernel_internal {
      * @param expressions expressions
      */
     static void check_assign_dimensions(
-        int n_rows, int n_cols, const std::tuple<T_results...>& results,
-        const std::tuple<T_expressions...>& expressions) {
-      next::check_assign_dimensions(n_rows, n_cols, results, expressions);
-      const auto& expression = std::get<N>(expressions);
-      const auto& result = std::get<N>(results);
+        int n_rows, int n_cols,
+        const std::tuple<std::pair<T_results, T_expressions>...>&
+            assignment_pairs) {
+      next::check_assign_dimensions(n_rows, n_cols, assignment_pairs);
+      const auto& expression = std::get<N>(assignment_pairs).second;
+      const auto& result = std::get<N>(assignment_pairs).first;
       const char* function = "results.operator=";
       if (!is_without_output<T_current_expression>::value) {
         check_size_match(function, "Rows of ", "expression",
@@ -99,17 +102,18 @@ struct multi_result_kernel_internal {
     static kernel_parts generate(
         std::set<const operation_cl_base*>& generated, name_generator& ng,
         const std::string& row_index_name, const std::string& col_index_name,
-        const std::tuple<T_results...>& results,
-        const std::tuple<T_expressions...>& expressions) {
+        const std::tuple<std::pair<T_results, T_expressions>...>&
+            assignment_pairs) {
       kernel_parts parts = next::generate(generated, ng, row_index_name,
-                                          col_index_name, results, expressions);
+                                          col_index_name, assignment_pairs);
       if (is_without_output<T_current_expression>::value) {
         return parts;
       }
       kernel_parts parts0
-          = std::get<N>(expressions)
-                .get_whole_kernel_parts(generated, ng, row_index_name,
-                                        col_index_name, std::get<N>(results));
+          = std::get<N>(assignment_pairs)
+                .second.get_whole_kernel_parts(
+                    generated, ng, row_index_name, col_index_name,
+                    std::get<N>(assignment_pairs).first);
       parts += parts0;
       return parts;
     }
@@ -122,18 +126,19 @@ struct multi_result_kernel_internal {
      * @param results results
      * @param expressions expressions
      */
-    static void set_args(std::set<const operation_cl_base*>& generated,
-                         cl::Kernel& kernel, int& arg_num,
-                         const std::tuple<T_results...>& results,
-                         const std::tuple<T_expressions...>& expressions) {
-      next::set_args(generated, kernel, arg_num, results, expressions);
+    static void set_args(
+        std::set<const operation_cl_base*>& generated, cl::Kernel& kernel,
+        int& arg_num,
+        const std::tuple<std::pair<T_results, T_expressions>...>&
+            assignment_pairs) {
+      next::set_args(generated, kernel, arg_num, assignment_pairs);
 
       if (is_without_output<T_current_expression>::value) {
         return;
       }
 
-      std::get<N>(expressions).set_args(generated, kernel, arg_num);
-      std::get<N>(results).set_args(generated, kernel, arg_num);
+      std::get<N>(assignment_pairs).second.set_args(generated, kernel, arg_num);
+      std::get<N>(assignment_pairs).first.set_args(generated, kernel, arg_num);
     }
 
     /**
@@ -142,12 +147,13 @@ struct multi_result_kernel_internal {
      * @param results results
      * @param expressions expressions
      */
-    static void add_event(cl::Event e, const std::tuple<T_results...>& results,
-                          const std::tuple<T_expressions...>& expressions) {
-      next::add_event(e, results, expressions);
+    static void add_event(
+        cl::Event e, const std::tuple<std::pair<T_results, T_expressions>...>&
+                         assignment_pairs) {
+      next::add_event(e, assignment_pairs);
 
-      std::get<N>(expressions).add_read_event(e);
-      std::get<N>(results).add_write_event(e);
+      std::get<N>(assignment_pairs).second.add_read_event(e);
+      std::get<N>(assignment_pairs).first.add_write_event(e);
     }
   };
 };
@@ -158,32 +164,36 @@ struct multi_result_kernel_internal<-1, T_results...> {
   template <typename... T_expressions>
   struct inner {
     static void get_clear_events(
-        std::vector<cl::Event>& events, const std::tuple<T_results...>& results,
-        const std::tuple<T_expressions...>& expressions) {}
+        std::vector<cl::Event>& events,
+        const std::tuple<std::pair<T_results, T_expressions>...>&
+            assignment_pairs) {}
 
     static void check_assign_dimensions(
-        int n_rows, int n_cols, const std::tuple<T_results...>& results,
-        const std::tuple<T_expressions...>& expressions) {
+        int n_rows, int n_cols,
+        const std::tuple<std::pair<T_results, T_expressions>...>&
+            assignment_pairs) {
       return;
     }
 
     static kernel_parts generate(
         std::set<const operation_cl_base*>& generated, name_generator& ng,
         const std::string& row_index_name, const std::string& col_index_name,
-        const std::tuple<T_results...>& results,
-        const std::tuple<T_expressions...>& expressions) {
+        const std::tuple<std::pair<T_results, T_expressions>...>&
+            assignment_pairs) {
       return {};
     }
 
-    static void set_args(std::set<const operation_cl_base*>& generated,
-                         cl::Kernel& kernel, int& arg_num,
-                         const std::tuple<T_results...>& results,
-                         const std::tuple<T_expressions...>& expressions) {
+    static void set_args(
+        std::set<const operation_cl_base*>& generated, cl::Kernel& kernel,
+        int& arg_num,
+        const std::tuple<std::pair<T_results, T_expressions>...>&
+            assignment_pairs) {
       return;
     }
 
-    static void add_event(cl::Event e, const std::tuple<T_results...>& results,
-                          const std::tuple<T_expressions...>& expressions) {
+    static void add_event(
+        cl::Event e, const std::tuple<std::pair<T_results, T_expressions>...>&
+                         assignment_pairs) {
       return;
     }
   };
@@ -286,10 +296,9 @@ class results_cl {
   std::string get_kernel_source_for_evaluating_impl(
       const expressions_cl<T_expressions...>& exprs,
       std::index_sequence<Is...>) {
-    return get_kernel_source_impl(
-        std::forward_as_tuple(as_operation_cl(std::get<Is>(results_))...),
-        std::forward_as_tuple(
-            as_operation_cl(std::get<Is>(exprs.expressions_))...));
+    return get_kernel_source_impl(std::tuple_cat(make_assignment_pair(
+        as_operation_cl(std::get<Is>(results_)),
+        as_operation_cl(std::get<Is>(exprs.expressions_)))...));
   }
 
   /**
@@ -301,8 +310,7 @@ class results_cl {
    */
   template <typename... T_res, typename... T_expressions>
   static std::string get_kernel_source_impl(
-      const std::tuple<T_res...>& results,
-      const std::tuple<T_expressions...>& expressions) {
+      const std::tuple<std::pair<T_res, T_expressions>...>& assignment_pairs) {
     using impl = typename internal::multi_result_kernel_internal<
         std::tuple_size<std::tuple<T_expressions...>>::value - 1,
         T_res...>::template inner<T_expressions...>;
@@ -312,7 +320,7 @@ class results_cl {
     name_generator ng;
     std::set<const operation_cl_base*> generated;
     kernel_parts parts
-        = impl::generate(generated, ng, "i", "j", results, expressions);
+        = impl::generate(generated, ng, "i", "j", assignment_pairs);
     std::string src;
     if (require_specific_local_size) {
       src =
@@ -364,11 +372,10 @@ class results_cl {
    */
   template <typename... T_expressions, size_t... Is>
   void assignment(const expressions_cl<T_expressions...>& exprs,
-                  std::index_sequence<Is...>) {
-    assignment_impl(
-        std::forward_as_tuple(as_operation_cl(std::get<Is>(results_))...),
-        std::forward_as_tuple(
-            as_operation_cl(std::get<Is>(exprs.expressions_))...));
+                  std::index_sequence<Is...>) {;
+    assignment_impl(std::tuple_cat(make_assignment_pair(
+        as_operation_cl(std::get<Is>(results_)),
+        as_operation_cl(std::get<Is>(exprs.expressions_)))...));
   }
 
   /**
@@ -379,8 +386,8 @@ class results_cl {
    * @param expressions expressions
    */
   template <typename... T_res, typename... T_expressions>
-  static void assignment_impl(const std::tuple<T_res...>& results,
-                              const std::tuple<T_expressions...>& expressions) {
+  static void assignment_impl(
+      const std::tuple<std::pair<T_res, T_expressions>...>& assignment_pairs) {
     using T_First_Expr = typename std::remove_reference_t<
         std::tuple_element_t<0, std::tuple<T_expressions...>>>;
     using impl = typename internal::multi_result_kernel_internal<
@@ -396,19 +403,27 @@ class results_cl {
     static const bool require_specific_local_size = std::max(
         {std::decay_t<T_expressions>::Deriv::require_specific_local_size...});
 
-    int n_rows = std::get<0>(expressions).thread_rows();
-    int n_cols = std::get<0>(expressions).thread_cols();
+    int n_rows = std::get<0>(assignment_pairs).second.thread_rows();
+    int n_cols = std::get<0>(assignment_pairs).second.thread_cols();
     const char* function = "results_cl.assignment";
-    impl::check_assign_dimensions(n_rows, n_cols, results, expressions);
+    impl::check_assign_dimensions(n_rows, n_cols, assignment_pairs);
     if (n_rows * n_cols == 0) {
       return;
     }
-    check_nonnegative(function, "expr.rows()", n_rows);
-    check_nonnegative(function, "expr.cols()", n_cols);
+    if (n_rows < 0) {
+      invalid_argument(function, "Number of rows of expression", n_rows,
+                       " must be nonnegative, but is ",
+                       " (broadcasted expressions can not be evaluated)");
+    }
+    if (n_cols < 0) {
+      invalid_argument(function, "Number of columns of expression", n_cols,
+                       " must be nonnegative, but is ",
+                       " (broadcasted expressions can not be evaluated)");
+    }
 
     try {
       if (impl::kernel_() == NULL) {
-        std::string src = get_kernel_source_impl(results, expressions);
+        std::string src = get_kernel_source_impl(assignment_pairs);
         auto opts = opencl_context.base_opts();
         impl::kernel_ = opencl_kernels::compile_kernel(
             "calculate", {view_kernel_helpers, src}, opts);
@@ -417,10 +432,10 @@ class results_cl {
       int arg_num = 0;
 
       std::set<const operation_cl_base*> generated;
-      impl::set_args(generated, kernel, arg_num, results, expressions);
+      impl::set_args(generated, kernel, arg_num, assignment_pairs);
 
       std::vector<cl::Event> events;
-      impl::get_clear_events(events, results, expressions);
+      impl::get_clear_events(events, assignment_pairs);
       cl::Event e;
       if (require_specific_local_size) {
         kernel.setArg(arg_num++, n_rows);
@@ -437,16 +452,50 @@ class results_cl {
                                                     cl::NDRange(n_rows, n_cols),
                                                     cl::NullRange, &events, &e);
       }
-      impl::add_event(e, results, expressions);
+      impl::add_event(e, assignment_pairs);
     } catch (const cl::Error& e) {
       check_opencl_error(function, e);
     }
   }
+
   /**
    * Implementation of assignments of no expressions to no results
    */
-  static void assignment_impl(const std::tuple<>& /*results*/,
-                              const std::tuple<>& /*expressions*/) {}
+  static void assignment_impl(const std::tuple<>& /*assignment_pairs*/) {}
+
+  /**
+   * Makes a std::pair of one result and one expression and wraps it into a
+   * tuple.
+   * @param result result
+   * @param expression expression
+   * @return a tuple of pair of result and expression
+   */
+  template <typename T_result, typename T_expression>
+  static auto make_assignment_pair(T_result&& result,
+                                   T_expression&& expression) {
+    return std::make_tuple(std::pair<T_result&&, T_expression&&>(
+        std::forward<T_result>(result),
+        std::forward<T_expression>(expression)));
+  }
+
+  /**
+   * Checks on scalars are done separately in this overload instead of in
+   * kernel.
+   * @param result result - check
+   * @param expression expression - bool scalar
+   * @return an empty tuple
+   */
+  template <typename Scal>
+  static std::tuple<> make_assignment_pair(
+      check_cl_<scalar_<Scal>>& result, scalar_<char> expression) {
+    if (!expression.a_) {
+      std::stringstream s;
+      s << result.function_ << ": " << result.err_variable_ << " = "
+        << result.arg_.a_ << ", but it must be " << result.must_be_ << "!";
+      throw std::domain_error(s.str());
+    }
+    return std::make_tuple();
+  }
 };
 
 /**

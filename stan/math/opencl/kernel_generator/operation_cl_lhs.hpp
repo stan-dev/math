@@ -82,8 +82,8 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...>,
   template <typename T_expression,
             typename
             = require_all_kernel_expressions_and_none_scalar_t<T_expression>>
-  const operation_cl_lhs<Derived, Scalar, Args...>& operator=(
-      T_expression&& rhs) const {
+  operation_cl_lhs<Derived, Scalar, Args...>& operator=(
+      T_expression&& rhs) {
     auto expression
         = as_operation_cl(std::forward<T_expression>(rhs)).derived();
     int this_rows = derived().rows();

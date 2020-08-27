@@ -20,6 +20,17 @@ TEST(KernelGenerator, check_cl_error) {
       std::invalid_argument);
 }
 
+TEST(KernelGenerator, check_cl_scalar_check_only_pass) {
+  EXPECT_NO_THROW(
+      stan::math::check_cl("test", "m1", 3, "positive") = 3 > 0);
+}
+
+TEST(KernelGenerator, check_cl_scalar_check_only_throw) {
+  EXPECT_THROW(
+      stan::math::check_cl("test", "m1", 0, "positive") = 0 > 0,
+      std::domain_error);
+}
+
 TEST(KernelGenerator, check_cl_check_only_pass) {
   std::string kernel_filename = "check_cl_positive.cl";
   Eigen::MatrixXd m1(1, 3);
@@ -52,8 +63,9 @@ TEST(KernelGenerator, check_cl_in_kernel_pass) {
   stan::math::matrix_cl<double> m2_cl;
   EXPECT_NO_THROW(
       stan::math::results(m2_cl,
-                          stan::math::check_cl("test", "m1", m1_cl, "positive"))
-      = stan::math::expressions(m1_cl * 2 + 1, m1_cl > 0));
+                          stan::math::check_cl("test", "m1", m1_cl, "positive"),
+                          stan::math::check_cl("test", "scal", 3, "positive"))
+      = stan::math::expressions(m1_cl * 2 + 1, m1_cl > 0, 3 > 0));
 }
 
 TEST(KernelGenerator, check_cl_in_kernel_throw) {
