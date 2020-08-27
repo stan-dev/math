@@ -491,7 +491,7 @@ class AgradCdfTestFixture : public ::testing::Test {
     if (is_vec) {
       for (size_t i = 0; i < N_REPEAT; i++) {
         EXPECT_FLOAT_EQ(
-            single_gradients[pos_single] * pow(single_cdf, N_REPEAT - 1),
+            single_gradients[pos_single] / N_REPEAT,
             multiple_gradients[pos_multiple])
             << "Comparison of single_gradient value to vectorized gradient "
                "failed";
@@ -499,8 +499,7 @@ class AgradCdfTestFixture : public ::testing::Test {
       }
       pos_single++;
     } else {
-      EXPECT_FLOAT_EQ(N_REPEAT * single_gradients[pos_single]
-                          * pow(single_cdf, N_REPEAT - 1),
+      EXPECT_FLOAT_EQ(single_gradients[pos_single],
                       multiple_gradients[pos_multiple])
           << "Comparison of single_gradient value to vectorized gradient "
              "failed";
@@ -539,8 +538,8 @@ class AgradCdfTestFixture : public ::testing::Test {
       add_vars(s3, p0_, p1_, p2_, p3_, p4_, p5_);
 
       T_return_type cdf
-          = TestClass.template cdf<Scalar0, Scalar1, Scalar2, Scalar3, Scalar4,
-                                   Scalar5>(p0_, p1_, p2_, p3_, p4_, p5_);
+	= stan::math::pow(TestClass.template cdf<Scalar0, Scalar1, Scalar2, Scalar3, Scalar4,
+			  Scalar5>(p0_, p1_, p2_, p3_, p4_, p5_), N_REPEAT);
 
       double single_cdf
           = calculate_gradients_1storder(single_gradients1, cdf, s1);
@@ -568,12 +567,12 @@ class AgradCdfTestFixture : public ::testing::Test {
       add_vars(x3, p0, p1, p2, p3, p4, p5);
 
       calculate_gradients_1storder(multiple_gradients1, multiple_cdf, x1);
-      calculate_gradients_1storder(multiple_gradients2, multiple_cdf, x1);
-      calculate_gradients_1storder(multiple_gradients3, multiple_cdf, x1);
+      calculate_gradients_2ndorder(multiple_gradients2, multiple_cdf, x2);
+      calculate_gradients_3rdorder(multiple_gradients3, multiple_cdf, x3);
 
       stan::math::recover_memory();
 
-      EXPECT_NEAR(stan::math::value_of_rec(pow(single_cdf, N_REPEAT)),
+      EXPECT_NEAR(stan::math::value_of_rec(single_cdf),
                   stan::math::value_of_rec(multiple_cdf), 1e-8)
           << "cdf with repeated vector input should match "
           << "a multiple of cdf of single input";

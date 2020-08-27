@@ -577,8 +577,8 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
       add_vars(x3, p0, p1, p2, p3, p4, p5);
 
       calculate_gradients_1storder(multiple_gradients1, multiple_ccdf_log, x1);
-      calculate_gradients_2ndorder(multiple_gradients2, multiple_ccdf_log, x1);
-      calculate_gradients_3rdorder(multiple_gradients3, multiple_ccdf_log, x1);
+      calculate_gradients_2ndorder(multiple_gradients2, multiple_ccdf_log, x2);
+      calculate_gradients_3rdorder(multiple_gradients3, multiple_ccdf_log, x3);
 
       stan::math::recover_memory();
 
