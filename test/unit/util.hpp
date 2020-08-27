@@ -149,11 +149,11 @@
   EXPECT_THROW_MSG_WITH_COUNT(expr, T_e, msg, 1)
 
 /**
-  * Tests if given types are the same type.
-  *
-  * @param a first type
-  * @param b second type
-  **/
+ * Tests if given types are the same type.
+ *
+ * @param a first type
+ * @param b second type
+ **/
 #define EXPECT_SAME_TYPE(a, b)                                             \
   EXPECT_TRUE((std::is_same<a, b>::value))                                 \
       << "Type a is" << stan::math::test::type_name<a>() << ". Type b is " \
