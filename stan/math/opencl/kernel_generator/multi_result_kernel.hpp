@@ -42,8 +42,7 @@ struct multi_result_kernel_internal {
      * Generates list of all events kernel assigning expressions to results must
      * wait on. Also clears those events from matrices.
      * @param[out] events list of events
-     * @param results results
-     * @param expressions expressions
+     * @param assignment_pairs pairs if result and expression
      */
     static void get_clear_events(
         std::vector<cl::Event>& events,
@@ -61,8 +60,7 @@ struct multi_result_kernel_internal {
      * expression
      * @param n_cols number of threads in rows dimension of the first
      * expression
-     * @param results results
-     * @param expressions expressions
+     * @param assignment_pairs pairs if result and expression
      */
     static void check_assign_dimensions(
         int n_rows, int n_cols,
@@ -95,8 +93,7 @@ struct multi_result_kernel_internal {
      * @param ng name generator
      * @param row_index_name variable name of the row index
      * @param col_index_name variable name of the column index
-     * @param results results
-     * @param expressions expressions
+     * @param assignment_pairs pairs if result and expression
      * @return kernel parts for the kernel
      */
     static kernel_parts generate(
@@ -123,8 +120,7 @@ struct multi_result_kernel_internal {
      * @param generated Set of operations that already set their arguments
      * @param kernel kernel to set arguments to
      * @param arg_num number of the next argument to set
-     * @param results results
-     * @param expressions expressions
+     * @param assignment_pairs pairs if result and expression
      */
     static void set_args(
         std::set<const operation_cl_base*>& generated, cl::Kernel& kernel,
@@ -144,8 +140,7 @@ struct multi_result_kernel_internal {
     /**
      * Adds event to matrices used in kernel.
      * @param e event to add
-     * @param results results
-     * @param expressions expressions
+     * @param assignment_pairs pairs if result and expression
      */
     static void add_event(
         cl::Event e, const std::tuple<std::pair<T_results, T_expressions>...>&
@@ -219,7 +214,7 @@ class expressions_cl {
    */
   explicit expressions_cl(T_expressions&&... expressions)
       : expressions_(
-            T_expressions(std::forward<T_expressions>(expressions))...) {}
+          T_expressions(std::forward<T_expressions>(expressions))...) {}
 
  private:
   std::tuple<T_expressions...> expressions_;
@@ -305,8 +300,7 @@ class results_cl {
    * Implementation of kernel source generation.
    * @tparam T_res types of results
    * @tparam T_expressions types of expressions
-   * @param results results
-   * @param expressions expressions
+   * @param assignment_pairs pairs if result and expression
    */
   template <typename... T_res, typename... T_expressions>
   static std::string get_kernel_source_impl(
@@ -373,7 +367,6 @@ class results_cl {
   template <typename... T_expressions, size_t... Is>
   void assignment(const expressions_cl<T_expressions...>& exprs,
                   std::index_sequence<Is...>) {
-    ;
     assignment_impl(std::tuple_cat(make_assignment_pair(
         as_operation_cl(std::get<Is>(results_)),
         as_operation_cl(std::get<Is>(exprs.expressions_)))...));
@@ -383,8 +376,7 @@ class results_cl {
    * Implementation of assignments of expressions to results
    * @tparam T_res types of results
    * @tparam T_expressions types of expressions
-   * @param results results
-   * @param expressions expressions
+   * @param assignment_pairs pairs if result and expression
    */
   template <typename... T_res, typename... T_expressions>
   static void assignment_impl(
