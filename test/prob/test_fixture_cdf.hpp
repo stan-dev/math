@@ -490,9 +490,8 @@ class AgradCdfTestFixture : public ::testing::Test {
                                      const size_t N_REPEAT) {
     if (is_vec) {
       for (size_t i = 0; i < N_REPEAT; i++) {
-        EXPECT_FLOAT_EQ(
-            single_gradients[pos_single] / N_REPEAT,
-            multiple_gradients[pos_multiple])
+        EXPECT_FLOAT_EQ(single_gradients[pos_single] / N_REPEAT,
+                        multiple_gradients[pos_multiple])
             << "Comparison of single_gradient value to vectorized gradient "
                "failed";
         pos_multiple++;
@@ -537,9 +536,10 @@ class AgradCdfTestFixture : public ::testing::Test {
       add_vars(s2, p0_, p1_, p2_, p3_, p4_, p5_);
       add_vars(s3, p0_, p1_, p2_, p3_, p4_, p5_);
 
-      T_return_type cdf
-	= stan::math::pow(TestClass.template cdf<Scalar0, Scalar1, Scalar2, Scalar3, Scalar4,
-			  Scalar5>(p0_, p1_, p2_, p3_, p4_, p5_), N_REPEAT);
+      T_return_type cdf = stan::math::pow(
+          TestClass.template cdf<Scalar0, Scalar1, Scalar2, Scalar3, Scalar4,
+                                 Scalar5>(p0_, p1_, p2_, p3_, p4_, p5_),
+          N_REPEAT);
 
       double single_cdf
           = calculate_gradients_1storder(single_gradients1, cdf, s1);
