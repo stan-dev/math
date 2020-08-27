@@ -298,7 +298,7 @@ pipeline {
                                 sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
                             }
                         }
-                        sh "./runTests.py -j${env.PARALLEL} test/prob > dist.log 2>&1"
+                        sh "./runTests.py -j12 test/prob > dist.log 2>&1"
                     }
                     post {
                         always {
