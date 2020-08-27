@@ -38,7 +38,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckGreateOrEqualVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckGreateOrEqualVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckGreateOrEqualMatrix) {
   using stan::math::check_greater_or_equal;
   using stan::math::var;
   const char* function = "check_greater_or_equal";
@@ -155,7 +155,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckGreateOrEqualVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckGreateOrEqualVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckGreateOrEqual) {
   using stan::math::check_greater_or_equal;
   using stan::math::var;
   const char* function = "check_greater_or_equal";
@@ -190,7 +190,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckGreateOrEqualVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckGreateOrEqualVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckGreaterOrEqualVarCheckUnivariate) {
   using stan::math::check_greater_or_equal;
   using stan::math::var;
 

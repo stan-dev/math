@@ -35,7 +35,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckNonnegativeVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckNonnegativeVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckNonnegativeVarCheckVectorized) {
   using stan::math::check_nonnegative;
   using stan::math::var;
   using std::vector;
@@ -83,7 +83,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckNonnegativeVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckNonnegativeVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckNonnegative) {
   const char* function = "check_nonnegative";
   var x = 0;
 
@@ -108,7 +108,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckNonnegativeVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckNonnegativeVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckNonnegativeVarCheckUnivariate) {
   using stan::math::check_nonnegative;
   using stan::math::var;
 

@@ -36,7 +36,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckLessOrEqualVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckLessOrEqualVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckLessOrEqual_matrix) {
   using stan::math::check_less_or_equal;
   using stan::math::var;
   const char* function = "check_less_or_equal";
@@ -117,7 +117,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckLessOrEqualVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckLessOrEqualVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckLessOrEqual) {
   using stan::math::check_less_or_equal;
   using stan::math::var;
 
@@ -153,7 +153,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckLessOrEqualVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckLessOrEqualVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckLessOrEqualVarCheckUnivariate) {
   using stan::math::check_less_or_equal;
   using stan::math::var;
 

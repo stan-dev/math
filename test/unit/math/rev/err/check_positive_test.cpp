@@ -21,7 +21,7 @@ TEST_F(AgradRev, ErrorHandlingArray_CheckPositive) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingArray_CheckPositive) {
+TEST_F(AgradRev, ErrorHandlingMatrix_CheckPositive) {
   using stan::math::check_positive;
   using stan::math::var;
 
@@ -40,7 +40,7 @@ TEST_F(AgradRev, ErrorHandlingArray_CheckPositive) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingArray_CheckPositive) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckPositive) {
   using stan::math::check_positive;
   using stan::math::var;
 
@@ -52,7 +52,7 @@ TEST_F(AgradRev, ErrorHandlingArray_CheckPositive) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingArray_CheckPositive) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckPositiveCheckUnivariate) {
   using stan::math::check_positive;
   using stan::math::var;
 

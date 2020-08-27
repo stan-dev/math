@@ -55,7 +55,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckPositiveFinite_Vector) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckPositiveFinite_Vector) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckPositiveFiniteVarCheckVectorized) {
   using stan::math::check_positive_finite;
   using stan::math::var;
 
@@ -88,7 +88,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckPositiveFinite_Vector) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckPositiveFinite_Vector) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckPositiveFinite_matrix) {
   using stan::math::check_positive_finite;
   using stan::math::var;
 
@@ -127,7 +127,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckPositiveFinite_Vector) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckPositiveFinite_Vector) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckPositiveFinite) {
   using stan::math::check_positive_finite;
   using stan::math::var;
 
@@ -155,7 +155,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckPositiveFinite_Vector) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckPositiveFinite_Vector) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckPositiveFiniteVarCheckVariate) {
   using stan::math::check_positive_finite;
   using stan::math::var;
 

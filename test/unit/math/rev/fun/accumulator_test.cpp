@@ -4,15 +4,19 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-// test sum of first n numbers for sum of a
-void test_sum(stan::math::accumulator<stan::math::var>& a, int n) {
-  EXPECT_FLOAT_EQ((n * (n + 1)) / 2, a.sum().val());
+namespace stan {
+namespace test {
+  // test sum of first n numbers for sum of a
+  void test_sum(stan::math::accumulator<stan::math::var>& a, int n) {
+    EXPECT_FLOAT_EQ((n * (n + 1)) / 2, a.sum().val());
+  }
+}
 }
 
 TEST_F(AgradRev, Matrix_accumulateDouble) {
   using stan::math::accumulator;
   using stan::math::var;
-
+  using stan::test::test_sum;
   accumulator<var> a;
   test_sum(a, 0);
 
@@ -23,7 +27,7 @@ TEST_F(AgradRev, Matrix_accumulateDouble) {
     a.add(var(i));
   test_sum(a, 1000);
 }
-TEST_F(AgradRev, Matrix_accumulateDouble) {
+TEST_F(AgradRev, Matrix_accumulateCollection) {
   // tests int, double, vector<double>, vector<int>,
   // Matrix<double, ...>,
   // var, vector<var>, Matrix<var, ...>,
@@ -36,6 +40,7 @@ TEST_F(AgradRev, Matrix_accumulateDouble) {
   using stan::math::accumulator;
   using stan::math::var;
   using std::vector;
+  using stan::test::test_sum;
 
   accumulator<var> a;
 
@@ -128,7 +133,7 @@ TEST_F(AgradRev, Matrix_accumulateDouble) {
   test_sum(a, pos - 1);
 }
 
-TEST_F(AgradRev, Matrix_accumulateDouble) {
+TEST_F(AgradRev, Matrix_accumulate_check_vari_on_stack) {
   stan::math::accumulator<stan::math::var> a;
   test::check_varis_on_stack(a.sum());
   a.add(1);

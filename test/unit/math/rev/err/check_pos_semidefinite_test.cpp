@@ -37,7 +37,7 @@ TEST_F(AgradRev, ErrorHandlingMatrix_checkPosSemiDefiniteMatrix_nan) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingMatrix_checkPosSemiDefiniteMatrix_nan) {
+TEST_F(AgradRev, ErrorHandlingMatrix_checkPosSemiDefiniteMatrixVarCheck) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;

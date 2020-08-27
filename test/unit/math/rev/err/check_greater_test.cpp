@@ -36,7 +36,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckGreaterVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckGreaterVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckGreaterMatrix) {
   using stan::math::check_greater;
   using stan::math::var;
 
@@ -145,7 +145,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckGreaterVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckGreaterVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckGreater) {
   using stan::math::check_greater;
   using stan::math::var;
 
@@ -180,7 +180,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckGreaterVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckGreaterVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckGreaterVarCheckUnivariate) {
   using stan::math::check_greater;
   using stan::math::var;
 

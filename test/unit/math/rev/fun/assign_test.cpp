@@ -88,7 +88,7 @@ TEST_F(AgradRev, Matrix_assign) {
   EXPECT_FLOAT_EQ(100, m_var(1, 0).val());
   EXPECT_FLOAT_EQ(300, m_var(1, 2).val());
 }
-TEST_F(AgradRev, Matrix_assign) {
+TEST_F(AgradRev, Matrix_assign_error) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;

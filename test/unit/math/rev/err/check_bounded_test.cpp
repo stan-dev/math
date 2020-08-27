@@ -30,7 +30,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckBoundedVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckBoundedVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckBounded_x) {
   using stan::math::check_bounded;
   using stan::math::var;
 
@@ -81,7 +81,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckBoundedVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckBoundedVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckBounded_Low) {
   using stan::math::check_bounded;
   using stan::math::var;
 
@@ -111,7 +111,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckBoundedVarCheckVectorized) {
       << ", " << high;
   stan::math::recover_memory();
 }
-TEST_F(AgradRev, ErrorHandlingScalar_CheckBoundedVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckBounded_High) {
   using stan::math::check_bounded;
   using stan::math::var;
 
@@ -142,7 +142,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckBoundedVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckBoundedVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckBoundedVarCheckUnivariate) {
   using stan::math::check_bounded;
   using stan::math::var;
 

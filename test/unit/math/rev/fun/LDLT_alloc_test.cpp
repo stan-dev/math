@@ -28,7 +28,7 @@ TEST_F(AgradRev, Matrix_LDLT_alloc_default_constructor) {
 #endif
 }
 
-TEST_F(AgradRev, Matrix_LDLT_alloc_default_constructor) {
+TEST_F(AgradRev, Matrix_LDLT_alloc_constructor) {
   using stan::math::LDLT_alloc;
   using stan::math::var;
 
@@ -54,7 +54,7 @@ TEST_F(AgradRev, Matrix_LDLT_alloc_default_constructor) {
       EXPECT_FLOAT_EQ(expectedL(i, j), L(i, j));
 }
 
-TEST_F(AgradRev, Matrix_LDLT_alloc_default_constructor) {
+TEST_F(AgradRev, Matrix_LDLT_alloc_compute) {
   using stan::math::LDLT_alloc;
   using stan::math::var;
 

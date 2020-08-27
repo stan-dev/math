@@ -251,7 +251,7 @@ TEST_F(AgradRev, Matrix_mat_cholesky_1st_deriv_large_gradients_opencl) {
   test_gp_grad(10, 1e-08);
 }
 
-TEST_F(AgradRev, Matrix_mat_cholesky_1st_deriv_large_gradients_opencl) {
+TEST_F(AgradRev, Matrix_mat_cholesky_check_varis_on_stack_large_opencl) {
   stan::math::opencl_context.tuning_opts().cholesky_size_worth_transfer = 25;
   stan::math::matrix_v m1 = stan::math::matrix_v::Random(50, 50);
   stan::math::matrix_v m1_pos_def

@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST_F(AgradRev, Matrix_fill) {
+TEST_F(AgradRev, Matrixfill) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;
@@ -44,7 +44,7 @@ TEST_F(AgradRev, Matrix_fill) {
     for (size_t j = 0; j < 2; ++j)
       EXPECT_FLOAT_EQ(54, d[i][j].val());
 }
-TEST_F(AgradRev, Matrix_fill) {
+TEST_F(AgradRev, MatrixfillDouble) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;

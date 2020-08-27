@@ -38,7 +38,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckFiniteVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckFiniteVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckFinite) {
   using stan::math::check_finite;
   using stan::math::var;
 
@@ -63,7 +63,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckFiniteVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckFiniteVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckFiniteUnivariate) {
   using stan::math::check_finite;
   using stan::math::var;
 

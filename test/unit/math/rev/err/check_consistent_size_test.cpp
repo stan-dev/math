@@ -30,7 +30,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckConsistentSizeVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckConsistentSizeVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckConsistentSize) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::check_consistent_size;
@@ -49,7 +49,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckConsistentSizeVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckConsistentSizeVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckConsistentSize_nan) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::check_consistent_size;

@@ -17,7 +17,7 @@ TEST_F(AgradRev, Matrix_LDLT_factor_default_constructor) {
   EXPECT_NO_THROW(ldlt_A.compute(A));
 }
 
-TEST_F(AgradRev, Matrix_LDLT_factor_default_constructor) {
+TEST_F(AgradRev, Matrix_LDLT_factor_constructor) {
   using stan::math::LDLT_factor;
   using stan::math::var;
 
@@ -36,7 +36,7 @@ TEST_F(AgradRev, Matrix_LDLT_factor_default_constructor) {
   EXPECT_NO_THROW(ldlt_A.compute(A));
 }
 
-TEST_F(AgradRev, Matrix_LDLT_factor_default_constructor) {
+TEST_F(AgradRev, Matrix_LDLT_factor_success) {
   using stan::math::LDLT_factor;
   using stan::math::var;
 
@@ -51,7 +51,7 @@ TEST_F(AgradRev, Matrix_LDLT_factor_default_constructor) {
   EXPECT_TRUE(ldlt_A2.success());
 }
 
-TEST_F(AgradRev, Matrix_LDLT_factor_default_constructor) {
+TEST_F(AgradRev, Matrix_LDLT_factor_solve) {
   using stan::math::LDLT_factor;
   using stan::math::var;
 
@@ -79,7 +79,7 @@ TEST_F(AgradRev, Matrix_LDLT_factor_default_constructor) {
       EXPECT_FLOAT_EQ(expected_solve(i, j), solve(i, j));
 }
 
-TEST_F(AgradRev, Matrix_LDLT_factor_default_constructor) {
+TEST_F(AgradRev, Matrix_LDLT_factor_vectorD) {
   using stan::math::LDLT_factor;
   using stan::math::var;
 
@@ -100,7 +100,7 @@ TEST_F(AgradRev, Matrix_LDLT_factor_default_constructor) {
     EXPECT_FLOAT_EQ(expected_vectorD(i), vectorD(i));
 }
 
-TEST_F(AgradRev, Matrix_LDLT_factor_default_constructor) {
+TEST_F(AgradRev, Matrix_LDLT_factor_rows) {
   using stan::math::LDLT_factor;
   using stan::math::var;
 
@@ -112,7 +112,7 @@ TEST_F(AgradRev, Matrix_LDLT_factor_default_constructor) {
   EXPECT_EQ(2U, ldlt_A.rows());
 }
 
-TEST_F(AgradRev, Matrix_LDLT_factor_default_constructor) {
+TEST_F(AgradRev, Matrix_LDLT_factor_cols) {
   using stan::math::LDLT_factor;
   using stan::math::var;
 
@@ -124,7 +124,7 @@ TEST_F(AgradRev, Matrix_LDLT_factor_default_constructor) {
   EXPECT_EQ(2U, ldlt_A.cols());
 }
 
-TEST_F(AgradRev, Matrix_LDLT_factor_default_constructor) {
+TEST_F(AgradRev, Matrix_LDLT_factor_compute) {
   using stan::math::LDLT_factor;
   using stan::math::var;
 

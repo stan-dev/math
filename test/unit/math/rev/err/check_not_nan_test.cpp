@@ -29,7 +29,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckNotNanVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST(ErrorHandlingScalar, CheckNotNanVarCheckVectorized) {
+TEST(ErrorHandlingScalar, CheckNotNan) {
   using stan::math::check_not_nan;
   using stan::math::var;
 
@@ -54,7 +54,7 @@ TEST(ErrorHandlingScalar, CheckNotNanVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckNotNanVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckNotNanVarCheckUnivariate) {
   using stan::math::check_not_nan;
   using stan::math::var;
   const char* function = "check_not_nan";
