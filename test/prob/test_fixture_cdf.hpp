@@ -509,6 +509,9 @@ class AgradCdfTestFixture : public ::testing::Test {
   }
 
   void test_repeat_as_vector() {
+    using std::pow;
+    using stan::math::pow;
+
     if (!any_vector<T0, T1, T2, T3, T4, T5>::value) {
       SUCCEED() << "No test for non-vector arguments";
       return;
@@ -538,8 +541,8 @@ class AgradCdfTestFixture : public ::testing::Test {
       add_vars(s3, p0_, p1_, p2_, p3_, p4_, p5_);
 
       T_return_type cdf
-	= stan::math::pow(TestClass.template cdf<Scalar0, Scalar1, Scalar2, Scalar3, Scalar4,
-			  Scalar5>(p0_, p1_, p2_, p3_, p4_, p5_), N_REPEAT);
+	= pow(TestClass.template cdf<Scalar0, Scalar1, Scalar2, Scalar3, Scalar4,
+	      Scalar5>(p0_, p1_, p2_, p3_, p4_, p5_), N_REPEAT);
 
       double single_cdf
           = calculate_gradients_1storder(single_gradients1, cdf, s1);
