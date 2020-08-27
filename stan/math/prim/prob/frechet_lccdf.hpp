@@ -33,6 +33,7 @@ return_type_t<T_y, T_shape, T_scale> frechet_lccdf(const T_y& y,
   T_y_ref y_ref = y;
   T_alpha_ref alpha_ref = alpha;
   T_sigma_ref sigma_ref = sigma;
+  using std::pow;
 
   const auto& y_col = as_column_vector_or_scalar(y_ref);
   const auto& alpha_col = as_column_vector_or_scalar(alpha_ref);
