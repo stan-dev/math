@@ -490,9 +490,8 @@ class AgradCdfTestFixture : public ::testing::Test {
                                      const size_t N_REPEAT) {
     if (is_vec) {
       for (size_t i = 0; i < N_REPEAT; i++) {
-        EXPECT_FLOAT_EQ(
-            single_gradients[pos_single] / N_REPEAT,
-            multiple_gradients[pos_multiple])
+        EXPECT_FLOAT_EQ(single_gradients[pos_single] / N_REPEAT,
+                        multiple_gradients[pos_multiple])
             << "Comparison of single_gradient value to vectorized gradient "
                "failed";
         pos_multiple++;
