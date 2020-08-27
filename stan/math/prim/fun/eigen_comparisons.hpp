@@ -12,7 +12,8 @@ namespace math {
  * Add support for comparisons involving Eigen types with different scalars,
  * where one of the scalars is an autodiff type. This includes comparisons of
  * an Eigen type and a scalar.
- * @param OP operator to add support for
+ * @param OPERATOR name of the operator function to implement
+ * @param OP operator to use for comparison of values
  **/
 #define ADD_MIXED_AUTODIFF_SCALAR_COMPARISON(OPERATOR, OP) \
   template <typename T_a, typename T_b,                           \
