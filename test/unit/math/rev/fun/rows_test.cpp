@@ -15,7 +15,7 @@ TEST_F(AgradRev, Matrix_rows_vector) {
   v.resize(0);
   EXPECT_EQ(0U, rows(v));
 }
-TEST_F(AgradRev, Matrix_rows_vector) {
+TEST_F(AgradRev, Matrix_rows_rowvector) {
   using stan::math::row_vector_v;
   using stan::math::rows;
 
@@ -26,7 +26,7 @@ TEST_F(AgradRev, Matrix_rows_vector) {
   rv.resize(0);
   EXPECT_EQ(1U, rows(rv));
 }
-TEST_F(AgradRev, Matrix_rows_vector) {
+TEST_F(AgradRev, Matrix_rows_matrix) {
   using stan::math::matrix_v;
   using stan::math::rows;
 

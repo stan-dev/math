@@ -29,7 +29,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckNotNanVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST(ErrorHandlingScalar, CheckNotNan) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckNotNanVarCheckVectorizedStackSize) {
   using stan::math::check_not_nan;
   using stan::math::var;
 
@@ -90,7 +90,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckNotNanVarCheckUnivariate) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ErrorHandlingScalar_CheckNotNanVarCheckVectorized) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckNotNanVarCheckVectorizedStackSize) {
   using stan::math::check_not_nan;
   using stan::math::var;
 
@@ -112,7 +112,7 @@ TEST_F(AgradRev, ErrorHandlingScalar_CheckNotNanVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST(ErrorHandlingScalar, CheckNotNanVarCheckUnivariate) {
+TEST_F(AgradRev, ErrorHandlingScalar_CheckNotNanVarCheckUnivariateStackSizes) {
   using stan::math::check_not_nan;
   using stan::math::var;
 

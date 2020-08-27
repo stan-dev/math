@@ -35,7 +35,7 @@ TEST_F(AgradRev, ErrorHandlingMatrix_checkNonzeroSizeMatrix) {
                    std::invalid_argument, "a has size 0");
 }
 
-TEST_F(AgradRev, ErrorHandlingMatrix_checkNonzeroSizeMatrix) {
+TEST_F(AgradRev, ErrorHandlingMatrix_checkNonzeroSizeMatrix_nan) {
   using stan::math::var;
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> y;
   var result;
