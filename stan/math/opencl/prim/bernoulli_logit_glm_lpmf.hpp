@@ -112,7 +112,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   const int wgs = logp_expr.rows();
   matrix_cl<double> logp_cl(wgs, 1);
   constexpr bool need_theta_derivative
-      = !is_constant_all<T_beta, T_alpha>::value;
+      = !is_constant_all<T_x, T_beta, T_alpha>::value;
   matrix_cl<double> theta_derivative_cl(need_theta_derivative ? N : 0, 1);
   constexpr bool need_theta_derivative_sum
       = need_theta_derivative && !is_alpha_vector;

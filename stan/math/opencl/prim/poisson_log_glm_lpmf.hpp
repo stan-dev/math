@@ -134,12 +134,13 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
         = transpose(beta_val * transpose(theta_derivative_cl));
   }
   if (!is_constant_all<T_alpha>::value) {
-    if (is_alpha_vector)
+    if (is_alpha_vector) {
       ops_partials.edge2_.partials_ = theta_derivative_cl;
-    else
+    } else {
       forward_as<internal::broadcast_array<double>>(
           ops_partials.edge2_.partials_)[0]
           = theta_derivative_sum;
+    }
   }
   if (!is_constant_all<T_beta>::value) {
     // transposition of a vector can be done without copying
