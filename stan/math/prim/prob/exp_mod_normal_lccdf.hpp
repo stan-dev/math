@@ -107,8 +107,10 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lccdf(
           = to_ref_if<need_deriv_refs>(lambda_val * exp_term * erf_calc);
       const auto& deriv_2 = to_ref_if<need_deriv_refs>(
           INV_SQRT_TWO_PI * exp_term * exp_term_2 * inv_sigma);
+      const auto& sq_scaled_diff = square(scaled_diff);
+      const auto& exp_m_sq_scaled_diff = exp(-sq_scaled_diff);
       const auto& deriv_3 = to_ref_if<need_deriv_refs>(
-          INV_SQRT_TWO_PI * exp(-square(scaled_diff)) * inv_sigma);
+          INV_SQRT_TWO_PI * exp_m_sq_scaled_diff * inv_sigma);
       if (!is_constant_all<T_y, T_loc>::value) {
         const auto& deriv = to_ref_if<(!is_constant_all<T_loc>::value
                                        && !is_constant_all<T_y>::value)>(
