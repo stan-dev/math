@@ -163,7 +163,7 @@ select(T_condition&& condition, T_then&& then, T_else&& els) {  // NOLINT
 template <typename T_then, typename T_else,
           require_all_arithmetic_t<T_then, T_else>* = nullptr>
 inline std::common_type_t<T_then, T_else> select(bool condition, T_then then,
-                                              T_else els) {
+                                                 T_else els) {
   return condition ? then : els;
 }
 
