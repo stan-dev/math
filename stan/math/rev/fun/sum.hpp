@@ -98,17 +98,15 @@ inline var sum(const EigMat& m) {
   return var(new sum_eigen_v_vari(m_ref));
 }
 
-template <typename T>
-class sum_vari : public vari {
-  vari_value<std::decay_t<T>>* v_;
-
- public:
-  template <typename S>
-  sum_vari(vari_value<S>* avi)  // NOLINT
-      : vari(avi->val_.sum()), v_(avi) {}
-  void chain() final { v_->adj_.array() += this->adj_; }
-};
-
+/**
+ * Returns the sum of the coefficients of the specified
+ * `var_value` matrix, column vector or row vector.
+ *
+ * @tparam T type of the matrix of vector (Must be derived from \c
+ * Eigen::MatrixBase and contain \c var scalars)
+ * @param m Specified var_value containing a matrix or vector.
+ * @return Sum of coefficients of matrix.
+ */
 template <typename T, require_eigen_t<T>* = nullptr>
 inline var sum(const var_value<T>& x) {
   var res(x.val().sum());
