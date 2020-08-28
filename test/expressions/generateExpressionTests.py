@@ -64,6 +64,24 @@ def get_ignored_signatures():
     return ignored
 
 
+def parse_signature_file(sig_file):
+    """
+    Parses signatures from a file of signatures
+    :param sig_file: file-like object to pares
+    :return: list of signatures
+    """
+    res = []
+    part_sig = ""
+    for signature in sig_file:
+        signature = part_sig + signature
+        part_sig = ""
+        if not signature.endswith(")\n"):
+            part_sig = signature
+            continue
+        res.append(signature)
+    return res
+
+
 def get_signatures():
     """
     Retrieves function signatures from stanc3
@@ -85,15 +103,7 @@ def get_signatures():
         shell=True,
     )
 
-    res = []
-    part_sig = ""
-    for signature in p.stdout:
-        signature = part_sig + signature
-        part_sig = ""
-        if not signature.endswith(")\n"):
-            part_sig = signature
-            continue
-        res.append(signature)
+    res = parse_signature_file(p.stdout)
 
     if p.wait() != 0:
         sys.stderr.write("Error in getting signatures from stanc3!\n")
@@ -168,6 +178,28 @@ def save_tests_in_files(N_files, tests):
                 out.write(test)
 
 
+def handle_function_list(functions_input, signatures):
+    """
+    Handles list of functions, splitting elements between functions and signatures.  
+    :param functions_input: This can contain names of functions
+    already supported by stanc3, full function signatures or file names of files containing
+    any of the previous two.
+    :param signatures: 
+    :return: 
+    """
+    function_names = []
+    function_signatures = []
+    for f in functions_input:
+        if "." in f or "/" in f or "\\" in f:
+            functions_input.extend(parse_signature_file(open(f)))
+        elif " " in f:
+            function_signatures.append(f)
+            signatures.append(f)
+        else:
+            function_names.append(f)
+    return function_names, function_signatures
+
+
 def main(functions=(), j=1):
     """
     Generates expression tests. Functions that do not support expressions yet are listed
@@ -180,33 +212,37 @@ def main(functions=(), j=1):
        (including derivatives)
      - functions evaluate expressions at most once
 
-    :param functions: functions to generate tests for. Default: all
+    :param functions: functions to generate tests for. This can contain names of functions
+    already supported by stanc3, full function signatures or file names of files containing 
+    any of the previous two. Default: all signatures supported by stanc3
     :param j: number of files to split tests in
     """
-    remaining_functions = set(functions)
     ignored = get_ignored_signatures()
 
     test_n = {}
     tests = []
     signatures = get_signatures()
-    if functions:
-        signatures.append("matrix bad_no_expressions(matrix)")
-        signatures.append("matrix bad_multiple_evaluations(matrix)")
-        signatures.append("real bad_wrong_value(matrix)")
-        signatures.append("real bad_wrong_derivatives(vector)")
+    functions, extra_signatures = handle_function_list(functions, signatures)
+    remaining_functions = set(functions)
     for signature in signatures:
         return_type, function_name, function_args = parse_signature(signature)
-        if signature in ignored and not functions:
+        # skip ignored signatures
+        if signature in ignored and not functions and signature not in extra_signatures:
             continue
+        # skip default if we have list of function names/signatures to test
+        if ((functions or extra_signatures) and
+                function_name not in functions and
+                signature not in extra_signatures):
+            continue
+        # skip signatures without eigen inputs
         for arg2test in eigen_types:
             if arg2test in function_args:
                 break
         else:
             continue
+
         if function_name in remaining_functions:
             remaining_functions.remove(function_name)
-        if functions and function_name not in functions:
-            continue
         func_test_n = test_n.get(function_name, 0)
         test_n[function_name] = func_test_n + 1
 
