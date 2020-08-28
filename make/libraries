@@ -146,19 +146,20 @@ MAKE_ESCAPED := $(MAKE)
 endif
 
 $(TBB_BIN)/tbb-make-check:
+ifeq ($(OS),Windows_NT)
 ifneq ($(MAKE),$(MAKE_ESCAPED))
-$(error '$nError:$n$nThe toolchain is installed in a path with spaces or brackets.$nPlease reinstall the toolchain.$n$n')
+$(error '$nError:$n$nThe RTools toolchain is installed in a path with spaces or brackets.$nPlease reinstall the toolchain.$n$n')
 else
-	@if [[ $(OS) == Windows_NT ]]; then \
-		if ! [[ $(MAKE) =~ mingw32 ]]; then \
-			echo "ERROR: Please use mingw32-make on Windows to build the Intel TBB library."; \
-			echo "This is packaged with RTools, for example."; \
-			exit 1; \
-		fi \
+	if ! [[ $(MAKE) =~ mingw32 ]]; then \
+		echo "ERROR: Please use mingw32-make on Windows to build the Intel TBB library."; \
+		echo "This is packaged with RTools, for example."; \
+		exit 1; \
 	fi
+endif
+endif
 	@mkdir -p $(TBB_BIN)
 	touch $(TBB_BIN)/tbb-make-check
-endif
+
 
 $(TBB_BIN)/tbb.def: $(TBB_BIN)/tbb-make-check $(TBB_BIN)/tbbmalloc.def
 	@mkdir -p $(TBB_BIN)
