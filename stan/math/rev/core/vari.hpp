@@ -209,7 +209,7 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
   using eigen_map = Eigen::Map<PlainObject, Eigen::Aligned8>;
   using vari_type = vari_value<T, require_eigen_dense_base_t<T>>;
   eigen_scalar* val_mem_;  // Pointer to memory allocated on the stack for val_
-  eigen_scalar* adj_mem_;  // Pointer to memory allocated on the stack for adj_
+  mutable eigen_scalar* adj_mem_;  // Pointer to memory allocated on the stack for adj_
   /**
    * Number of rows known at compile time
    */
@@ -228,7 +228,7 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
    */
-  eigen_map adj_;
+  mutable eigen_map adj_;
 
   /**
    * Construct a dense Eigen variable implementation from a value. The

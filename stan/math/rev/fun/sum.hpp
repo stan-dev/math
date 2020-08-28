@@ -111,7 +111,11 @@ class sum_vari : public vari {
 
 template <typename T, require_eigen_t<T>* = nullptr>
 inline var sum(const var_value<T>& x) {
-  return {new sum_vari<T>(x.vi_) };
+  var res(x.val().sum());
+  reverse_pass_callback([res, x]() mutable {
+   x.adj().array() += res.adj();
+  });
+  return res;
 }
 
 }  // namespace math

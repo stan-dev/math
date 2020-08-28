@@ -103,14 +103,14 @@ class var_value {
   inline const auto& val() const { return vi_->val_; }
 
   /**
-   * Return a const reference of the derivative of the root expression with
+   * Return a reference of the derivative of the root expression with
    * respect to this expression.  This method only works
    * after one of the `grad()` methods has been
    * called.
    *
    * @return Adjoint for this variable.
    */
-  inline const auto& adj() const { return vi_->adj_; }
+  inline auto& adj() const { return vi_->adj_; }
 
   /**
    * Return a reference to the derivative of the root expression with

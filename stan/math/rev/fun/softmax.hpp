@@ -27,7 +27,9 @@ namespace math {
 
 inline Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
     const Eigen::Matrix<var, Eigen::Dynamic, 1>& alpha) {
-  check_nonzero_size("softmax", "alpha", alpha);
+  if (alpha.size() == 0) {
+    return alpha;
+  }
 
   arena_matrix<Eigen::VectorXd> res_val = softmax(value_of(alpha));
   arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> res = res_val;
@@ -36,12 +38,23 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
   reverse_pass_callback([res_val, res, alpha_arena]() mutable {
     const auto& res_adj = to_ref(res.adj());
     alpha_arena.adj()
-        = -res_val * res_adj.dot(res_val) + res_val.cwiseProduct(res_adj);
+      += -res_val * res_adj.dot(res_val) + res_val.cwiseProduct(res_adj);
   });
 
   return res;
 }
 
+template <typename Mat, require_var_vt<is_eigen, Mat>* = nullptr>
+inline auto softmax(const Mat& alpha) {
+  if (alpha.size() == 0) {
+    return alpha;
+  }
+  Mat res(softmax(value_of(alpha)));
+  reverse_pass_callback([alpha, res]() mutable {
+    alpha.adj() += alpha.adj() -res.val() * res.adj().dot(res.val()) + res.val().cwiseProduct(res.adj());
+  });
+  return res;
+}
 
 }  // namespace math
 }  // namespace stan

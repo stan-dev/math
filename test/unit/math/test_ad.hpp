@@ -1,11 +1,12 @@
 #ifndef TEST_UNIT_MATH_TEST_AD_HPP
 #define TEST_UNIT_MATH_TEST_AD_HPP
 
+#include <stan/math/mix.hpp>
 #include <test/unit/math/ad_tolerances.hpp>
 #include <test/unit/math/is_finite.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <test/unit/math/serializer.hpp>
-#include <stan/math/mix.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <string>
@@ -1431,6 +1432,52 @@ void expect_ad_vectorized_binary(const F& f, const T1& x, const T2& y) {
   ad_tolerances tols;
   expect_ad_vectorized_binary(tols, f, x, y);
 }
+
+template <typename T1, typename T2, require_all_stan_scalar_t<T1, T2>* = nullptr>
+void expect_float_equal(const T1& x, const T2& y) {
+  EXPECT_FLOAT_EQ(x.val(), y.val());
+  EXPECT_FLOAT_EQ(x.adj(), y.adj());
+}
+template <typename T1, typename T2, require_any_eigen_t<T1, value_type_t<T1>, T2, value_type_t<T2>>* = nullptr>
+void expect_float_equal(const T1& x, const T2& y) {
+  EXPECT_MATRIX_FLOAT_EQ(x.val(), y.val());
+  EXPECT_MATRIX_FLOAT_EQ(x.adj(), y.adj());
+}
+
+/**
+ * For an unary function check that an Eigen matrix of vars and a var with an
+ * inner eigen type return the same values and adjoints. This is done by
+ * calling the function on both types, summing the results, then taking the
+ * gradient of the sum which will propogate the adjoints upwards.
+ *
+ * @tparam F A lambda or functor type that calls the unary function.
+ * @tparam T An Eigen matrix type
+ * @param f a lambda
+ * @param x An Eigen matrix.
+ *
+ */
+template <typename F, typename T>
+void expect_ad_matvar(F&& f, const T& x) {
+  using stan::math::var;
+  using stan::math::var_value;
+  using stan::math::promote_scalar_t;
+  using stan::math::sum;
+  using stan::plain_type_t;
+  using mat_var = promote_scalar_t<var, T>;
+  mat_var A_mv = x;
+  decltype(f(A_mv)) A_mv_f= f(A_mv);
+  using var_mat = var_value<plain_type_t<T>>;
+  var_mat A_vm = x;
+  decltype(f(A_vm)) A_vm_f = f(A_vm);
+  var b_mv = sum(A_mv_f);
+  var b_vm = sum(A_vm_f);
+  var final_var = b_mv + b_vm;
+  stan::math::grad(final_var.vi_);
+  EXPECT_MATRIX_FLOAT_EQ(A_vm.val(), A_mv.val());
+  EXPECT_MATRIX_FLOAT_EQ(A_vm.adj(), A_mv.adj());
+  expect_float_equal(A_vm, A_mv);
+}
+
 
 /**
  * Test that the specified polymorphic unary function produces the
