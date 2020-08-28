@@ -24,7 +24,6 @@ namespace math {
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
-
 inline Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
     const Eigen::Matrix<var, Eigen::Dynamic, 1>& alpha) {
   if (alpha.size() == 0) {
@@ -44,6 +43,14 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
   return res;
 }
 
+/**
+ * Return the softmax of the specified `var_value<vector>`. Softmax is
+ * guaranteed to return a simplex.
+ *
+ * @param alpha Unconstrained input vector.
+ * @return Softmax of the input.
+ * @throw std::domain_error If the input vector is size 0.
+ */
 template <typename Mat, require_var_vt<is_eigen, Mat>* = nullptr>
 inline auto softmax(const Mat& alpha) {
   if (alpha.size() == 0) {

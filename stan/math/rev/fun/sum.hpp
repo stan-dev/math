@@ -100,11 +100,11 @@ inline var sum(const EigMat& m) {
 
 /**
  * Returns the sum of the coefficients of the specified
- * `var_value` matrix, column vector or row vector.
+ * `var_value<matrix/column_vector/row vector>`.
  *
  * @tparam T type of the matrix of vector (Must be derived from \c
  * Eigen::MatrixBase and contain \c var scalars)
- * @param m Specified var_value containing a matrix or vector.
+ * @param x Specified var_value containing a matrix or vector.
  * @return Sum of coefficients of matrix.
  */
 template <typename T, require_eigen_t<T>* = nullptr>
