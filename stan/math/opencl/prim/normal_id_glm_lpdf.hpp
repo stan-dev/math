@@ -56,26 +56,17 @@ namespace math {
  * @throw std::domain_error if the scale is not positive.
  * @throw std::invalid_argument if container sizes mismatch.
  */
-template <bool propto, typename T_x, typename T_y, typename T_alpha,
+template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta, typename T_scale,
           require_all_prim_or_rev_kernel_expression_t<T_x, T_y, T_alpha, T_beta,
                                                       T_scale>* = nullptr>
-return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
+return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta,
     const T_scale& sigma) {
-  using T_partials_return = partials_return_t<T_alpha, T_beta, T_scale>;
-  constexpr bool is_y_vector = is_matrix_cl<decltype(value_of(y))>::value;
-  constexpr bool is_sigma_vector
-      = is_matrix_cl<decltype(value_of(sigma))>::value;
-  constexpr bool is_alpha_vector
-      = is_matrix_cl<decltype(value_of(alpha))>::value;
-  using T_scale_val = typename std::conditional_t<
-      is_sigma_vector, Eigen::Array<partials_return_t<T_scale>, -1, 1>,
-      partials_return_t<T_scale>>;
-  using Eigen::Array;
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-  using Eigen::VectorXd;
+  using T_partials_return = partials_return_t<T_y, T_x, T_alpha, T_beta, T_scale>;
+  constexpr bool is_y_vector = !is_stan_scalar<T_y>::value;
+  constexpr bool is_sigma_vector = !is_stan_scalar<T_scale>::value;
+  constexpr bool is_alpha_vector = !is_stan_scalar<T_alpha>::value;
   using std::isfinite;
   static const char* function = "normal_id_glm_lpdf(OpenCL)";
 
@@ -122,7 +113,7 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   const int wgs = y_scaled_sq_sum_expr.rows();
 
   constexpr bool need_mu_derivative
-      = !is_constant<T_beta>::value
+      = !is_constant_all<T_x, T_beta>::value
         || (!is_constant<T_alpha>::value && is_alpha_vector)
         || (!is_constant<T_y>::value && is_y_vector);
   matrix_cl<double> mu_derivative_cl(need_mu_derivative ? N : 0, 1);

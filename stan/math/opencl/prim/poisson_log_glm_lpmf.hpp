@@ -56,14 +56,10 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
                                                          const T_alpha& alpha,
                                                          const T_beta& beta) {
   static const char* function = "poisson_log_glm_lpmf(OpenCL)";
-  using T_partials_return = partials_return_t<T_alpha, T_beta>;
-  constexpr bool is_y_vector = is_matrix_cl<decltype(value_of(y))>::value;
-  constexpr bool is_alpha_vector
-      = is_matrix_cl<decltype(value_of(alpha))>::value;
-  using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
-  using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
+  using T_partials_return = partials_return_t<T_x, T_alpha, T_beta>;
+  constexpr bool is_y_vector = !is_stan_scalar<T_y>::value;
+  constexpr bool is_alpha_vector = !is_stan_scalar<T_alpha>::value;
   using Eigen::Dynamic;
-  using Eigen::Matrix;
   using std::exp;
   using std::isfinite;
 
@@ -126,7 +122,7 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
         = isfinite(x_val);
   }
 
-  operands_and_partials<T_x, T_alpha_ref, T_beta_ref> ops_partials(x, alpha,
+  operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha,
                                                                    beta);
   // Compute the necessary derivatives.
   if (!is_constant_all<T_x>::value) {

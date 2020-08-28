@@ -49,21 +49,16 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 
-template <bool propto, typename T_y, typename T_x, typename T_alpha,
+template <bool propto, typename T_x, typename T_y, typename T_alpha,
           typename T_beta,
           require_all_prim_or_rev_kernel_expression_t<T_y, T_x, T_alpha,
                                                       T_beta>* = nullptr>
 return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
   static const char* function = "bernoulli_logit_glm_lpmf(OpenCL)";
-  using T_partials_return = partials_return_t<T_alpha, T_beta>;
-  constexpr bool is_y_vector = is_matrix_cl<decltype(value_of(y))>::value;
-  constexpr bool is_alpha_vector
-      = is_matrix_cl<decltype(value_of(alpha))>::value;
-  using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
-  using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
+  using T_partials_return = partials_return_t<T_x, T_alpha, T_beta>;
+  constexpr bool is_y_vector = !is_stan_scalar<T_y>::value;
+  constexpr bool is_alpha_vector = !is_stan_scalar<T_alpha>::value;
   using std::isfinite;
 
   const size_t N = x.rows();
@@ -135,8 +130,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
         = isfinite(x_val);
   }
 
-  operands_and_partials<T_x, T_alpha_ref, T_beta_ref> ops_partials(x, alpha,
-                                                                   beta);
+  operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
   // Compute the necessary derivatives.
   if (!is_constant_all<T_x>::value) {
     ops_partials.edge1_.partials_
