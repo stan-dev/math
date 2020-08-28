@@ -51,7 +51,7 @@ inline auto softmax(const Mat& alpha) {
   }
   Mat res(softmax(value_of(alpha)));
   reverse_pass_callback([alpha, res]() mutable {
-    alpha.adj() += alpha.adj() -res.val() * res.adj().dot(res.val()) + res.val().cwiseProduct(res.adj());
+    alpha.adj() += -res.val() * res.adj().dot(res.val()) + res.val().cwiseProduct(res.adj());
   });
   return res;
 }
