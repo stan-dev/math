@@ -24,8 +24,8 @@ namespace stan {
 template <int Rows, int Cols, typename... Inputs>
 struct rev_matrix_type {
   using type = std::conditional_t<
-      math::disjunction<math::conjunction<is_var<Inputs>,
-                              is_eigen<value_type_t<Inputs>>>...>::value,
+      math::disjunction<math::conjunction<
+          is_var<Inputs>, is_eigen<value_type_t<Inputs>>>...>::value,
       math::var_value<Eigen::Matrix<double, Rows, Cols>>,
       Eigen::Matrix<return_type_t<Inputs...>, Rows, Cols>>;
 };
