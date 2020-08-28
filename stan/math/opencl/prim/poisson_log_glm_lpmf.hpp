@@ -123,8 +123,7 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
         = isfinite(x_val);
   }
 
-  operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha,
-                                                                   beta);
+  operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
   // Compute the necessary derivatives.
   if (!is_constant_all<T_x>::value) {
     ops_partials.edge1_.partials_

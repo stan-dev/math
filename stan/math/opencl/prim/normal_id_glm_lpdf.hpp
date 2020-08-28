@@ -63,7 +63,8 @@ template <bool propto, typename T_y, typename T_x, typename T_alpha,
 return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta,
     const T_scale& sigma) {
-  using T_partials_return = partials_return_t<T_y, T_x, T_alpha, T_beta, T_scale>;
+  using T_partials_return
+      = partials_return_t<T_y, T_x, T_alpha, T_beta, T_scale>;
   constexpr bool is_y_vector = !is_stan_scalar<T_y>::value;
   constexpr bool is_sigma_vector = !is_stan_scalar<T_scale>::value;
   constexpr bool is_alpha_vector = !is_stan_scalar<T_alpha>::value;
