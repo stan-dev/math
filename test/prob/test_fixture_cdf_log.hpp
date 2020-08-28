@@ -503,7 +503,7 @@ class AgradCdfLogTestFixture : public ::testing::Test {
     if (is_vec) {
       for (size_t i = 0; i < N_REPEAT; i++) {
         EXPECT_NEAR(single_gradients[pos_single],
-                        multiple_gradients[pos_multiple], 1e-7)
+                    multiple_gradients[pos_multiple], 1e-7)
             << "Comparison of single_gradient value to vectorized gradient "
                "failed";
         pos_multiple++;
@@ -511,7 +511,7 @@ class AgradCdfLogTestFixture : public ::testing::Test {
       pos_single++;
     } else {
       EXPECT_NEAR(N_REPEAT * single_gradients[pos_single],
-		  multiple_gradients[pos_multiple], 1e-7)
+                  multiple_gradients[pos_multiple], 1e-7)
           << "Comparison of single_gradient value to vectorized gradient "
              "failed";
       pos_single++;
