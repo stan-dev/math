@@ -70,7 +70,7 @@ struct ayt {
   }
 };
 
-}
-}
+}  // namespace test
+}  // namespace stan
 
 #endif
