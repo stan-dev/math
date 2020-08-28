@@ -1,6 +1,5 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/prim/dims.hpp>
-#include <stan/math/rev/core/var.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -41,26 +40,6 @@ TEST(MathMatrixCL, dimsNonZero) {
   EXPECT_EQ(1, dims2[1]);
 
   matrix_cl<double> m3(1, 5);
-  std::vector<int> dims3 = dims(m3);
-  EXPECT_EQ(2, dims3.size());
-  EXPECT_EQ(1, dims3[0]);
-  EXPECT_EQ(5, dims3[1]);
-}
-
-TEST(MathMatrixCL, dimsVar) {
-  matrix_cl<stan::math::var> m1(5, 4);
-  std::vector<int> dims1 = dims(m1);
-  EXPECT_EQ(2, dims1.size());
-  EXPECT_EQ(5, dims1[0]);
-  EXPECT_EQ(4, dims1[1]);
-
-  matrix_cl<stan::math::var> m2(5, 1);
-  std::vector<int> dims2 = dims(m2);
-  EXPECT_EQ(2, dims2.size());
-  EXPECT_EQ(5, dims2[0]);
-  EXPECT_EQ(1, dims2[1]);
-
-  matrix_cl<stan::math::var> m3(1, 5);
   std::vector<int> dims3 = dims(m3);
   EXPECT_EQ(2, dims3.size());
   EXPECT_EQ(1, dims3[0]);
