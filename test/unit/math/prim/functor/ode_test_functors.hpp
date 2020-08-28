@@ -3,6 +3,9 @@
 
 #include <stan/math/prim.hpp>
 
+namespace stan {
+namespace test {
+
 template <typename T, stan::require_stan_scalar_t<T>* = nullptr>
 T sum_(T arg) {
   return arg;
@@ -66,5 +69,8 @@ struct ayt {
     return -a * y * t;
   }
 };
+
+}
+}
 
 #endif
