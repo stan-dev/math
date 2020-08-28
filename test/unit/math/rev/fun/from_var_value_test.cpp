@@ -8,10 +8,10 @@ TEST(AgradRevMatrix, from_var_value_matrix_test) {
   Eigen::MatrixXd adj(2, 3);
   val << 4, 5, 6, 7, 8, 9;
   stan::math::var_value<Eigen::MatrixXd> var_value(val);
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> var
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> mat_var
       = stan::math::from_var_value(var_value);
-  EXPECT_MATRIX_EQ(var.val(), val);
-  var.adj() = adj;
+  EXPECT_MATRIX_EQ(mat_var.val(), val);
+  mat_var.adj() = adj;
   stan::math::grad();
   EXPECT_MATRIX_EQ(var_value.adj(), adj);
 }
@@ -22,10 +22,10 @@ TEST(AgradRevMatrix, from_var_value_vector_test) {
   Eigen::VectorXd adj(3);
   val << 4, 5, 6;
   stan::math::var_value<Eigen::VectorXd> var_value(val);
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> var
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> mat_var
       = stan::math::from_var_value(var_value);
-  EXPECT_MATRIX_EQ(var.val(), val);
-  var.adj() = adj;
+  EXPECT_MATRIX_EQ(mat_var.val(), val);
+  mat_var.adj() = adj;
   stan::math::grad();
   EXPECT_MATRIX_EQ(var_value.adj(), adj);
 }
@@ -36,10 +36,10 @@ TEST(AgradRevMatrix, from_var_value_row_vector_test) {
   Eigen::RowVectorXd adj(3);
   val << 7, 8, 9;
   stan::math::var_value<Eigen::RowVectorXd> var_value(val);
-  Eigen::Matrix<stan::math::var, 1, Eigen::Dynamic> var
+  Eigen::Matrix<stan::math::var, 1, Eigen::Dynamic> mat_var
       = stan::math::from_var_value(var_value);
-  EXPECT_MATRIX_EQ(var.val(), val);
-  var.adj() = adj;
+  EXPECT_MATRIX_EQ(mat_var.val(), val);
+  mat_var.adj() = adj;
   stan::math::grad();
   EXPECT_MATRIX_EQ(var_value.adj(), adj);
 }

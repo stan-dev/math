@@ -11,17 +11,15 @@ namespace math {
 
 /**
  * Converts `var_value` into an Eigen Matrix. Adjoint is propagated back to
- * arguument in the reverse pass.
+ * argument in the reverse pass.
  *
  * @tparam T type of the input
  * @param a matrix to convert
  */
 template <typename T, require_var_vt<is_eigen, T>* = nullptr>
-Eigen::Matrix<var, value_type_t<T>::RowsAtCompileTime,
-              value_type_t<T>::ColsAtCompileTime>
-from_var_value(const T& a) {
-  arena_matrix<Eigen::Matrix<var, value_type_t<T>::RowsAtCompileTime,
-                             value_type_t<T>::ColsAtCompileTime>>
+Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime> from_var_value(
+    const T& a) {
+  arena_matrix<Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime>>
       res(a.val());
   reverse_pass_callback([res, a]() mutable { a.vi_->adj_ += res.adj(); });
   return res;

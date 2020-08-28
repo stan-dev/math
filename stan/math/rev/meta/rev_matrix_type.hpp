@@ -11,11 +11,11 @@
 namespace stan {
 
 /**
- * Determines a return type for a function that addepts given inputs and wants
- * to return a matrix(or vector or row vector) with given compile time number of
+ * Determines a return type for a function that accepts given inputs and wants
+ * to return a matrix (or vector or row vector) with given compile time number of
  * rows and columns.
  *
- * Returns `var_value` if any of the inputs is `var_value`, otherwise a matrix
+ * Returns `var_value` if any of the inputs are `var_value`, otherwise an Eigen matrix
  * of `var` or `double`.
  * @tparam Rows number of compile time rows
  * @tparam Cols number of compile time columns

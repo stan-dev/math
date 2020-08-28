@@ -11,7 +11,7 @@ namespace math {
 
 /**
  * Converts an Eigen matrix (or vector or row_vector) or expression of `var`s
- * into `var_value`. Adjoint is propagated back to arguument in the reverse
+ * into `var_value`. Adjoint is propagated back to argument in the reverse
  * pass.
  *
  * @tparam T type of the input
@@ -21,8 +21,7 @@ template <typename T, require_eigen_vt<is_var, T>* = nullptr>
 var_value<Eigen::Matrix<double, T::RowsAtCompileTime, T::ColsAtCompileTime>>
 to_var_value(const T& a) {
   arena_matrix<plain_type_t<T>> a_arena = a;
-  var_value<Eigen::Matrix<double, T::RowsAtCompileTime, T::ColsAtCompileTime>>
-      res(a_arena.val());
+  var_value<promote_scalar_t<double, T>> res(a_arena.val());
   reverse_pass_callback(
       [res, a_arena]() mutable { a_arena.adj() += res.adj(); });
   return res;
