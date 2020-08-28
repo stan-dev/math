@@ -412,7 +412,7 @@ class AgradCdfTestFixture : public ::testing::Test {
         << "Number of expected gradients and calculated gradients must match "
            "-- error in test fixture";
     for (size_t i = 0; i < expected_gradients.size(); i++) {
-      EXPECT_FLOAT_EQ(expected_gradients[i], gradients[i])
+      EXPECT_NEAR(expected_gradients[i], gradients[i], 1e-7)
           << "Comparison of expected gradient to calculated gradient failed";
     }
   }
@@ -490,16 +490,16 @@ class AgradCdfTestFixture : public ::testing::Test {
                                      const size_t N_REPEAT) {
     if (is_vec) {
       for (size_t i = 0; i < N_REPEAT; i++) {
-        EXPECT_FLOAT_EQ(single_gradients[pos_single] / N_REPEAT,
-                        multiple_gradients[pos_multiple])
+        EXPECT_NEAR(single_gradients[pos_single] / N_REPEAT,
+		    multiple_gradients[pos_multiple], 1e-7)
             << "Comparison of single_gradient value to vectorized gradient "
                "failed";
         pos_multiple++;
       }
       pos_single++;
     } else {
-      EXPECT_FLOAT_EQ(single_gradients[pos_single],
-                      multiple_gradients[pos_multiple])
+      EXPECT_NEAR(single_gradients[pos_single],
+		  multiple_gradients[pos_multiple], 1e-7)
           << "Comparison of single_gradient value to vectorized gradient "
              "failed";
       pos_single++;
