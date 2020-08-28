@@ -790,7 +790,7 @@ class AgradDistributionTestFixture : public ::testing::Test {
     return params[0];
   }
 };
-TYPED_TEST_CASE_P(AgradDistributionTestFixture);
+TYPED_TEST_SUITE_P(AgradDistributionTestFixture);
 
 TYPED_TEST_P(AgradDistributionTestFixture, CallAllVersions) {
   this->call_all_versions();
@@ -820,9 +820,9 @@ TYPED_TEST_P(AgradDistributionTestFixture, Length0Vector) {
   this->test_length_0_vector();
 }
 
-REGISTER_TYPED_TEST_CASE_P(AgradDistributionTestFixture, CallAllVersions,
-                           ValidValues, InvalidValues, Propto, FiniteDiff,
-                           Function, RepeatAsVector, Length0Vector);
+REGISTER_TYPED_TEST_SUITE_P(AgradDistributionTestFixture, CallAllVersions,
+                            ValidValues, InvalidValues, Propto, FiniteDiff,
+                            Function, RepeatAsVector, Length0Vector);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AgradDistributionTestFixture);
 
