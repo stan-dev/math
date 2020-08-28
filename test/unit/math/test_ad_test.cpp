@@ -17,6 +17,15 @@ TEST(test_unit_math_test_ad, test_ad_unary) {
   //   stan::test::expect_ad(inverse, x);
 }
 
+TEST(test_unit_math_test_ad, test_ad_compound) {
+  Eigen::VectorXd x(4);
+  x << 1.9, 0.3, 0.3, 1.7;
+
+  auto g = [](const auto& u) { return stan::math::softmax(u) + stan::math::softmax(u); };
+  stan::test::expect_ad(g, x);
+}
+
+
 TEST(test_unit_math_test_ad, test_ad_binary) {
   auto g
       = [](const auto& u, const auto& v) { return stan::math::multiply(u, v); };

@@ -92,10 +92,10 @@ auto eval(const Eigen::EigenBase<Derived>& x) {
  */
 template <typename T>
 auto eval(const std::vector<T>& x) {
-  using T_res = decltype(eval(std::declval<T>()));
+  using T_res = decltype(stan::test::internal::eval(std::declval<T>()));
   std::vector<T_res> res;
   for (auto& i : x) {
-    res.push_back(eval(i));
+    res.push_back(stan::test::internal::eval(i));
   }
   return res;
 }
@@ -391,7 +391,7 @@ void expect_all_throw(const F& f, const Eigen::VectorXd& x) {
  */
 template <typename F>
 void expect_all_throw(const F& f, double x1) {
-  auto h = [&](auto v) { return serialize_return(eval(f(v(0)))); };
+  auto h = [&](auto v) { return serialize_return(stan::test::internal::eval(f(v(0)))); };
   Eigen::VectorXd x(1);
   x << x1;
   expect_all_throw(h, x);
@@ -408,7 +408,7 @@ void expect_all_throw(const F& f, double x1) {
  */
 template <typename F>
 void expect_all_throw(const F& f, double x1, double x2) {
-  auto h = [&](auto v) { return serialize_return(eval(f(v(0), v(1)))); };
+  auto h = [&](auto v) { return serialize_return(stan::test::internal::eval(f(v(0), v(1)))); };
   Eigen::VectorXd x(2);
   x << x1, x2;
   expect_all_throw(h, x);
@@ -426,7 +426,7 @@ void expect_all_throw(const F& f, double x1, double x2) {
  */
 template <typename F>
 void expect_all_throw(const F& f, double x1, double x2, double x3) {
-  auto h = [&](auto v) { return serialize_return(eval(f(v(0), v(1), v(2)))); };
+  auto h = [&](auto v) { return serialize_return(stan::test::internal::eval(f(v(0), v(1), v(2)))); };
   Eigen::VectorXd x(3);
   x << x1, x2, x3;
   expect_all_throw(h, x);
@@ -460,8 +460,8 @@ void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
       = [&](const int i) { return [&g, i](const auto& v) { return g(v)[i]; }; };
   size_t result_size = 0;
   try {
-    auto y1 = eval(f(xs...));  // original types, including int
-    auto y2 = eval(g(x));      // all int cast to double
+    auto y1 = stan::test::internal::eval(f(xs...));  // original types, including int
+    auto y2 = stan::test::internal::eval(g(x));      // all int cast to double
     auto y1_serial = serialize<double>(y1);
     expect_near_rel("expect_ad_helper", y1_serial, y2, 1e-10);
     result_size = y1_serial.size();
@@ -490,7 +490,7 @@ void expect_ad_v(const ad_tolerances& tols, const F& f, const T& x) {
   auto g = [&](const auto& v) {
     auto ds = to_deserializer(v);
     auto xds = ds.read(x);
-    return serialize_return(eval(f(xds)));
+    return serialize_return(stan::test::internal::eval(f(xds)));
   };
   internal::expect_ad_helper(tols, f, g, serialize_args(x), x);
 }
@@ -552,7 +552,7 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
   auto g1 = [&](const auto& v) {
     auto ds = to_deserializer(v);
     auto x1ds = ds.read(x1);
-    return serialize_return(eval(f(x1ds, x2)));
+    return serialize_return(stan::test::internal::eval(f(x1ds, x2)));
   };
   internal::expect_ad_helper(tols, f, g1, serialize_args(x1), x1, x2);
 
@@ -560,7 +560,7 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
   auto g2 = [&](const auto& v) {
     auto ds = to_deserializer(v);
     auto x2ds = ds.read(x2);
-    return serialize_return(eval(f(x1, x2ds)));
+    return serialize_return(stan::test::internal::eval(f(x1, x2ds)));
   };
   internal::expect_ad_helper(tols, f, g2, serialize_args(x2), x1, x2);
 
@@ -569,7 +569,7 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
     auto ds = to_deserializer(v);
     auto x1ds = ds.read(x1);
     auto x2ds = ds.read(x2);
-    return serialize_return(eval(f(x1ds, x2ds)));
+    return serialize_return(stan::test::internal::eval(f(x1ds, x2ds)));
   };
   internal::expect_ad_helper(tols, f, g12, serialize_args(x1, x2), x1, x2);
 }
@@ -664,7 +664,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
   auto g1 = [&](const auto& v) {
     auto ds = to_deserializer(v);
     auto x1ds = ds.read(x1);
-    return serialize_return(eval(f(x1ds, x2, x3)));
+    return serialize_return(stan::test::internal::eval(f(x1ds, x2, x3)));
   };
   internal::expect_ad_helper(tols, f, g1, serialize_args(x1), x1, x2, x3);
 
@@ -672,7 +672,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
   auto g2 = [&](const auto& v) {
     auto ds = to_deserializer(v);
     auto x2ds = ds.read(x2);
-    return serialize_return(eval(f(x1, x2ds, x3)));
+    return serialize_return(stan::test::internal::eval(f(x1, x2ds, x3)));
   };
   internal::expect_ad_helper(tols, f, g2, serialize_args(x2), x1, x2, x3);
 
@@ -680,7 +680,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
   auto g3 = [&](const auto& v) {
     auto ds = to_deserializer(v);
     auto x3ds = ds.read(x3);
-    return serialize_return(eval(f(x1, x2, x3ds)));
+    return serialize_return(stan::test::internal::eval(f(x1, x2, x3ds)));
   };
   internal::expect_ad_helper(tols, f, g3, serialize_args(x3), x1, x2, x3);
 
@@ -689,7 +689,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
     auto ds = to_deserializer(v);
     auto x1ds = ds.read(x1);
     auto x2ds = ds.read(x2);
-    return serialize_return(eval(f(x1ds, x2ds, x3)));
+    return serialize_return(stan::test::internal::eval(f(x1ds, x2ds, x3)));
   };
   internal::expect_ad_helper(tols, f, g12, serialize_args(x1, x2), x1, x2, x3);
 
@@ -698,7 +698,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
     auto ds = to_deserializer(v);
     auto x1ds = ds.read(x1);
     auto x3ds = ds.read(x3);
-    return serialize_return(eval(f(x1ds, x2, x3ds)));
+    return serialize_return(stan::test::internal::eval(f(x1ds, x2, x3ds)));
   };
   internal::expect_ad_helper(tols, f, g13, serialize_args(x1, x3), x1, x2, x3);
 
@@ -707,7 +707,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
     auto ds = to_deserializer(v);
     auto x2ds = ds.read(x2);
     auto x3ds = ds.read(x3);
-    return serialize_return(eval(f(x1, x2ds, x3ds)));
+    return serialize_return(stan::test::internal::eval(f(x1, x2ds, x3ds)));
   };
   internal::expect_ad_helper(tols, f, g23, serialize_args(x2, x3), x1, x2, x3);
 
@@ -717,7 +717,7 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
     auto x1ds = ds.read(x1);
     auto x2ds = ds.read(x2);
     auto x3ds = ds.read(x3);
-    return serialize_return(eval(f(x1ds, x2ds, x3ds)));
+    return serialize_return(stan::test::internal::eval(f(x1ds, x2ds, x3ds)));
   };
   internal::expect_ad_helper(tols, f, g123, serialize_args(x1, x2, x3), x1, x2,
                              x3);
