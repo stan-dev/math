@@ -7,6 +7,7 @@
 #include <stan/math/opencl/value_type.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl_lhs.hpp>
+#include <stan/math/opencl/kernel_generator/scalar.hpp>
 
 namespace stan {
 namespace math {
@@ -34,12 +35,13 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
   // buffer[1,2] are problematic indices
   matrix_cl<int> buffer_;
   matrix_cl<value_type_t<T>> value_;
+
+ public:
   T arg_;
   const char* function_;
   const char* err_variable_;
   const char* must_be_;
 
- public:
   /**
    * Constructor.
    * @param function function name (for error messages)
@@ -157,6 +159,13 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
    * @return number of columns
    */
   inline int cols() const { return arg_.cols(); }
+
+  /**
+   * Assignment of a scalar bool triggers the scalar check.
+   * @param condition whether the state is ok.
+   * @throws std::domain_error condition is false (chack failed).
+   */
+  void operator=(bool condition) { *this = as_operation_cl(condition); }
 };
 
 /**
@@ -169,8 +178,7 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
  * @param y variable to check (for error messages)
  * @param must_be description of what the value must be (for error messages)
  */
-template <typename T,
-          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
+template <typename T, typename = require_all_kernel_expressions_t<T>>
 inline auto check_cl(const char* function, const char* var_name, T&& y,
                      const char* must_be) {
   return check_cl_<as_operation_cl_t<T>>(
