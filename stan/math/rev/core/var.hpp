@@ -122,15 +122,9 @@ class var_value {
    */
   inline auto& adj() { return vi_->adj_; }
 
-  inline Eigen::Index rows() const {
-    return vi_->val_.rows();
-  }
-  inline Eigen::Index cols() const {
-    return vi_->val_.cols();
-  }
-  inline Eigen::Index size() const {
-    return vi_->val_.size();
-  }
+  inline Eigen::Index rows() const { return vi_->val_.rows(); }
+  inline Eigen::Index cols() const { return vi_->val_.cols(); }
+  inline Eigen::Index size() const { return vi_->val_.size(); }
   /**
    * Compute the gradient of this (dependent) variable with respect to
    * the specified vector of (independent) variables, assigning the

@@ -42,7 +42,4 @@ TEST(MathMixMatFun, sum) {
   expect_sum(v32);
 }
 
-
-TEST(MathMixMatFun, sum_matvar) {
-
-}
+TEST(MathMixMatFun, sum_matvar) {}

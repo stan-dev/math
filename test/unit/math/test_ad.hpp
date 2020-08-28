@@ -1433,12 +1433,15 @@ void expect_ad_vectorized_binary(const F& f, const T1& x, const T2& y) {
   expect_ad_vectorized_binary(tols, f, x, y);
 }
 
-template <typename T1, typename T2, require_all_stan_scalar_t<T1, T2>* = nullptr>
+template <typename T1, typename T2,
+          require_all_stan_scalar_t<T1, T2>* = nullptr>
 void expect_float_equal(const T1& x, const T2& y) {
   EXPECT_FLOAT_EQ(x.val(), y.val());
   EXPECT_FLOAT_EQ(x.adj(), y.adj());
 }
-template <typename T1, typename T2, require_any_eigen_t<T1, value_type_t<T1>, T2, value_type_t<T2>>* = nullptr>
+template <
+    typename T1, typename T2,
+    require_any_eigen_t<T1, value_type_t<T1>, T2, value_type_t<T2>>* = nullptr>
 void expect_float_equal(const T1& x, const T2& y) {
   EXPECT_MATRIX_FLOAT_EQ(x.val(), y.val());
   EXPECT_MATRIX_FLOAT_EQ(x.adj(), y.adj());
@@ -1458,14 +1461,14 @@ void expect_float_equal(const T1& x, const T2& y) {
  */
 template <typename F, typename T>
 void expect_ad_matvar(F&& f, const T& x) {
-  using stan::math::var;
-  using stan::math::var_value;
+  using stan::plain_type_t;
   using stan::math::promote_scalar_t;
   using stan::math::sum;
-  using stan::plain_type_t;
+  using stan::math::var;
+  using stan::math::var_value;
   using mat_var = promote_scalar_t<var, T>;
   mat_var A_mv = x;
-  decltype(f(A_mv)) A_mv_f= f(A_mv);
+  decltype(f(A_mv)) A_mv_f = f(A_mv);
   using var_mat = var_value<plain_type_t<T>>;
   var_mat A_vm = x;
   decltype(f(A_vm)) A_vm_f = f(A_vm);
@@ -1477,7 +1480,6 @@ void expect_ad_matvar(F&& f, const T& x) {
   EXPECT_MATRIX_FLOAT_EQ(A_vm.adj(), A_mv.adj());
   expect_float_equal(A_vm, A_mv);
 }
-
 
 /**
  * Test that the specified polymorphic unary function produces the
