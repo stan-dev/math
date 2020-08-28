@@ -48,7 +48,8 @@ class var_value {
  public:
   using value_type = std::decay_t<T>;        // type in vari_value.
   using vari_type = vari_value<value_type>;  // Type of underlying vari impl.
-
+  static constexpr int RowsAtCompileTime{vari_type::RowsAtCompileTime};
+  static constexpr int ColsAtCompileTime{vari_type::ColsAtCompileTime};
   /**
    * Pointer to the implementation of this variable.
    *
@@ -121,6 +122,15 @@ class var_value {
    */
   inline auto& adj() { return vi_->adj_; }
 
+  inline Eigen::Index rows() const {
+    return vi_->val_.rows();
+  }
+  inline Eigen::Index cols() const {
+    return vi_->val_.cols();
+  }
+  inline Eigen::Index size() const {
+    return vi_->val_.size();
+  }
   /**
    * Compute the gradient of this (dependent) variable with respect to
    * the specified vector of (independent) variables, assigning the

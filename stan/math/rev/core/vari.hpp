@@ -89,6 +89,15 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
   value_type adj_;
 
   /**
+   * Rows at compile time
+   */
+  static constexpr int RowsAtCompileTime{0};
+  /**
+   * Columns at compile time
+   */
+  static constexpr int ColsAtCompileTime{0};
+
+  /**
    * Construct a variable implementation from a value.  The
    * adjoint is initialized to zero.
    *

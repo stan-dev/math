@@ -33,7 +33,7 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
   arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> res = res_val;
   arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> alpha_arena = alpha;
 
-  reverse_pass_callback([=]() mutable {
+  reverse_pass_callback([res_val, res, alpha_arena]() mutable {
     const auto& res_adj = to_ref(res.adj());
     alpha_arena.adj()
         = -res_val * res_adj.dot(res_val) + res_val.cwiseProduct(res_adj);
@@ -41,6 +41,7 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
 
   return res;
 }
+
 
 }  // namespace math
 }  // namespace stan
