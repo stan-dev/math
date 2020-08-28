@@ -17,8 +17,6 @@
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
 
-#include <test/unit/pretty_print_types.hpp>
-
 namespace stan {
 namespace math {
 
