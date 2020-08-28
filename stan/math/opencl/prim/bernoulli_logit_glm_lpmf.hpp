@@ -67,7 +67,8 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   if (is_y_vector) {
     check_size_match(function, "Rows of ", "x", N, "rows of ", "y", size(y));
   }
-  check_consistent_size(function, "Weight vector", beta, M);
+  check_size_match(function, "Columns of ", "x_cl", M, "size of ", "beta",
+                   size(sigma));
   if (is_alpha_vector) {
     check_size_match(function, "Rows of ", "x", N, "size of ", "alpha",
                      size(alpha));

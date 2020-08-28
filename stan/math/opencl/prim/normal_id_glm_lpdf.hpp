@@ -76,7 +76,8 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   if (is_y_vector) {
     check_size_match(function, "Rows of ", "x", N, "rows of ", "y", size(y));
   }
-  check_consistent_size(function, "Weight vector", beta, M);
+  check_size_match(function, "Columns of ", "x_cl", M, "size of ", "beta",
+                   size(sigma));
   if (is_sigma_vector) {
     check_size_match(function, "Rows of ", "x", N, "size of ", "sigma",
                      size(sigma));
