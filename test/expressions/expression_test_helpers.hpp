@@ -33,43 +33,37 @@ auto recursive_sum(const std::vector<T>& a) {
 }
 
 template <typename T, require_integral_t<T>* = nullptr>
-T make_arg() {
+T make_arg(double value = 0.4) {
   return 1;
 }
 template <typename T, require_floating_point_t<T>* = nullptr>
-T make_arg() {
-  return 0.4;
+T make_arg(double value = 0.4) {
+  return value;
 }
 template <typename T, require_var_t<T>* = nullptr>
-T make_arg() {
-  return 0.4;
+T make_arg(double value = 0.4) {
+  return value;
 }
 template <typename T, require_fvar_t<T>* = nullptr>
-T make_arg() {
-  return {0.4, 0.5};
+T make_arg(double value = 0.4) {
+  return {value, 0.5};
 }
-template <typename T, require_eigen_vector_t<T>* = nullptr>
-T make_arg() {
-  T res(1);
-  res << make_arg<value_type_t<T>>();
-  return res;
-}
-template <typename T, require_eigen_matrix_t<T>* = nullptr>
-T make_arg() {
+template <typename T, require_eigen_t<T>* = nullptr>
+T make_arg(double value = 0.4) {
   T res(1, 1);
-  res << make_arg<value_type_t<T>>();
+  res << make_arg<value_type_t<T>>(value);
   return res;
 }
 template <typename T, require_std_vector_t<T>* = nullptr>
-T make_arg() {
+T make_arg(double value = 0.4) {
   using V = value_type_t<T>;
-  V tmp = make_arg<V>();
+  V tmp = make_arg<V>(value);
   T res;
   res.push_back(tmp);
   return res;
 }
 template <typename T, require_same_t<T, std::minstd_rand>* = nullptr>
-T make_arg() {
+T make_arg(double value = 0.4) {
   return std::minstd_rand(0);
 }
 
