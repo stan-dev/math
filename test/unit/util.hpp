@@ -217,6 +217,11 @@ auto make_sparse_matrix_random(int rows, int cols) {
 }
 
 }  // namespace test
+
+namespace math {
+  // forward decl recover_memory
+  void recover_memory();
+}
 }  // namespace stan
 
 struct AgradRev : public testing::Test {
