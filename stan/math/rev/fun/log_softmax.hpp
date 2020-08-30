@@ -3,6 +3,8 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/typedefs.hpp>
+#include <stan/math/rev/functor/reverse_pass_callback.hpp>
+#include <stan/math/rev/functor/arena_matrix.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
@@ -10,41 +12,12 @@
 #include <stan/math/prim/fun/softmax.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
+#include <test/unit/pretty_print_types.hpp>
 #include <cmath>
 #include <vector>
 
 namespace stan {
 namespace math {
-
-namespace internal {
-
-class log_softmax_elt_vari : public vari {
- private:
-  vari** alpha_;
-  const double* softmax_alpha_;
-  const int size_;  // array sizes
-  const int idx_;   // in in softmax output
-
- public:
-  log_softmax_elt_vari(double val, vari** alpha, const double* softmax_alpha,
-                       int size, int idx)
-      : vari(val),
-        alpha_(alpha),
-        softmax_alpha_(softmax_alpha),
-        size_(size),
-        idx_(idx) {}
-  void chain() {
-    for (int m = 0; m < size_; ++m) {
-      if (m == idx_) {
-        alpha_[m]->adj_ += adj_ * (1 - softmax_alpha_[m]);
-      } else {
-        alpha_[m]->adj_ -= adj_ * softmax_alpha_[m];
-      }
-    }
-  }
-};
-
-}  // namespace internal
 
 /**
  * Return the log softmax of the specified vector or container of vectors.
@@ -59,39 +32,25 @@ class log_softmax_elt_vari : public vari {
 template <typename T, require_container_st<is_var, T>* = nullptr>
 inline auto log_softmax(const T& x) {
   return apply_vector_unary<ref_type_t<T>>::apply(
-      to_ref(x), [&](const auto& alpha) {
-        const int a_size = alpha.size();
+    to_ref(x), [](const auto& alpha) {
+      check_nonzero_size("log_softmax", "alpha", alpha);
 
-        check_nonzero_size("log_softmax", "alpha", alpha);
+      const auto& alpha_col = as_column_vector_or_scalar(alpha);
+      const auto& alpha_val = to_ref(value_of(alpha_col));
+      const auto& theta = to_ref(alpha_val.array() - alpha_val.maxCoeff());
+      arena_matrix<Eigen::VectorXd> res_val = theta.array() - log(theta.exp().sum());
 
-        vari** alpha_vi_array
-            = ChainableStack::instance_->memalloc_.alloc_array<vari*>(a_size);
-        Eigen::Map<vector_vi>(alpha_vi_array, a_size) = alpha.vi();
+      arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> res = res_val;
+      auto alpha_arena = to_arena(alpha_col);
 
-        vector_d alpha_d = alpha.val();
-
-        // fold logic of math::softmax() and math::log_softmax()
-        // to save computations
-
-        vector_d diff = (alpha_d.array() - alpha_d.maxCoeff());
-        vector_d softmax_alpha_d = diff.array().exp();
-        double sum = softmax_alpha_d.sum();
-        vector_d log_softmax_alpha_d = diff.array() - std::log(sum);
-
-        // end fold
-        double* softmax_alpha_d_array
-            = ChainableStack::instance_->memalloc_.alloc_array<double>(a_size);
-        Eigen::Map<vector_d>(softmax_alpha_d_array, a_size)
-            = softmax_alpha_d.array() / sum;
-
-        vector_v log_softmax_alpha(a_size);
-        for (int k = 0; k < a_size; ++k) {
-          log_softmax_alpha(k) = var(new internal::log_softmax_elt_vari(
-              log_softmax_alpha_d[k], alpha_vi_array, softmax_alpha_d_array,
-              a_size, k));
-        }
-        return log_softmax_alpha;
+      reverse_pass_callback([alpha_arena, res, res_val]() mutable {
+	const auto& res_adj = to_ref(res.adj());
+	alpha_arena.adj()
+	  += res_adj - (res_adj.sum() * res_val.array().exp()).matrix();
       });
+
+      return plain_type_t<decltype(alpha)>(res);
+  });
 }
 
 }  // namespace math

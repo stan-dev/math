@@ -47,8 +47,10 @@ namespace math {
  * @param a the first variable
  * @param b the second variable
  */
-template <typename T1, typename T2>
-inline return_type_t<T1, T2> log_sum_exp(const T2& a, const T1& b) {
+template <typename T1, typename T2,
+	  require_all_stan_scalar_t<T1, T2>* = nullptr,
+	  require_all_not_var_t<T1, T2>* = nullptr>
+inline return_type_t<T1, T2> log_sum_exp(const T1& a, const T2& b) {
   if (a == NEGATIVE_INFTY) {
     return b;
   }

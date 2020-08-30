@@ -19,15 +19,15 @@ inline var determinant(const T& m) {
     return 1;
   }
 
-  arena_matrix<Eigen::MatrixXd> m_val = m.val();
+  const auto& m_val = to_ref(m.val());
   double det_val = m_val.determinant();
   arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arena_m = m;
   arena_matrix<Eigen::MatrixXd> arena_m_inv_t = m_val.inverse().transpose();
 
   var det = det_val;
 
-  reverse_pass_callback([=]() mutable {
-    arena_m.adj() += (det.adj() * det_val) * arena_m_inv_t;
+  reverse_pass_callback([arena_m, det, arena_m_inv_t]() mutable {
+    arena_m.adj() += (det.adj() * det.val()) * arena_m_inv_t;
   });
 
   return det;
