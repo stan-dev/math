@@ -25,17 +25,19 @@ namespace math {
  * @return log of e^a + e^b
  */
 template <typename T1, typename T2,
-	  require_all_stan_scalar_t<T1, T2>* = nullptr,
-	  require_any_var_t<T1, T2>* = nullptr>
+          require_all_stan_scalar_t<T1, T2>* = nullptr,
+          require_any_var_t<T1, T2>* = nullptr>
 inline var log_sum_exp(const T1& a, const T2& b) {
   var res = log_sum_exp(value_of(a), value_of(b));
 
   reverse_pass_callback([a, b, res]() mutable {
-    if(!is_constant<T1>::value)
-      forward_as<var>(a).adj() += res.adj() * inv_logit(value_of(a) - value_of(b));
+    if (!is_constant<T1>::value)
+      forward_as<var>(a).adj()
+          += res.adj() * inv_logit(value_of(a) - value_of(b));
 
-    if(!is_constant<T2>::value)
-      forward_as<var>(b).adj() += res.adj() * inv_logit(value_of(b) - value_of(a));
+    if (!is_constant<T2>::value)
+      forward_as<var>(b).adj()
+          += res.adj() * inv_logit(value_of(b) - value_of(a));
   });
 
   return res;
@@ -56,7 +58,8 @@ inline auto log_sum_exp(const T& x) {
     auto arena_v = to_arena(v);
 
     reverse_pass_callback([arena_v, res]() mutable {
-	arena_v.adj() += res.adj() * (arena_v.array().val() - res.val()).exp().matrix();
+      arena_v.adj()
+          += res.adj() * (arena_v.array().val() - res.val()).exp().matrix();
     });
 
     return res;

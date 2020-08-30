@@ -22,18 +22,15 @@ namespace internal {
  * @param[in] B second matrix
  * @return A * B
  */
-template <typename T1, typename T2,
-          require_all_eigen_t<T1, T2>* = nullptr,
+template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
           require_any_vt_var<T1, T2>* = nullptr>
-inline Eigen::Matrix<var,
-		     T1::RowsAtCompileTime,
-		     T2::ColsAtCompileTime>
+inline Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
 multiply_impl(const T1& A, const T2& B) {
   check_multiplicable("multiply", "A", A, "B", B);
 
   using A_ref_t = ref_type_t<T1>;
   using B_ref_t = ref_type_t<T2>;
-  
+
   A_ref_t A_ref = A;
   B_ref_t B_ref = B;
 
@@ -56,34 +53,32 @@ multiply_impl(const T1& A, const T2& B) {
     arena_A_val = value_of(A_ref);
   }
 
-  arena_matrix<Eigen::Matrix<var,
-			     T1::RowsAtCompileTime,
-			     T2::ColsAtCompileTime>> res;
+  arena_matrix<Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>>
+      res;
 
-  if(!is_constant<T1, T2>::value) {
+  if (!is_constant<T1, T2>::value) {
     res = arena_A_val * arena_B_val;
-  } else if(!is_constant<T1>::value) {
+  } else if (!is_constant<T1>::value) {
     res = value_of(A_ref) * arena_B_val;
-  } else if(!is_constant<T2>::value) {
+  } else if (!is_constant<T2>::value) {
     res = arena_A_val * value_of(B_ref);
   }
 
-  reverse_pass_callback([arena_A, arena_B,
-			 arena_A_val, arena_B_val,
-			 res]() mutable {
-    auto res_adj = res.adj().eval();
+  reverse_pass_callback(
+      [arena_A, arena_B, arena_A_val, arena_B_val, res]() mutable {
+        auto res_adj = res.adj().eval();
 
-    if (!is_constant<T1>::value)
-      arena_A.adj() += res_adj * arena_B_val.transpose();
+        if (!is_constant<T1>::value)
+          arena_A.adj() += res_adj * arena_B_val.transpose();
 
-    if (!is_constant<T2>::value)
-      arena_B.adj() += arena_A_val.transpose() * res_adj;
-  });
+        if (!is_constant<T2>::value)
+          arena_B.adj() += arena_A_val.transpose() * res_adj;
+      });
 
   return res;
 }
 
-}
+}  // namespace internal
 
 /**
  * Return the product of two matrices.
@@ -97,13 +92,10 @@ multiply_impl(const T1& A, const T2& B) {
  * @param[in] B second matrix
  * @return A * B
  */
-template <typename T1, typename T2,
-          require_all_eigen_t<T1, T2>* = nullptr,
+template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
           require_any_vt_var<T1, T2>* = nullptr,
-	  require_not_eigen_row_and_col_t<T1, T2>* = nullptr>
-inline Eigen::Matrix<var,
-		     T1::RowsAtCompileTime,
-		     T2::ColsAtCompileTime>
+          require_not_eigen_row_and_col_t<T1, T2>* = nullptr>
+inline Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
 multiply(const T1& A, const T2& B) {
   return internal::multiply_impl(A, B);
 }
@@ -118,10 +110,9 @@ multiply(const T1& A, const T2& B) {
  * @param[in] B column vector
  * @return A * B as a scalar
  */
-template <typename T1, typename T2,
-          require_all_eigen_t<T1, T2>* = nullptr,
+template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
           require_any_vt_var<T1, T2>* = nullptr,
-	  require_eigen_row_and_col_t<T1, T2>* = nullptr>
+          require_eigen_row_and_col_t<T1, T2>* = nullptr>
 inline var multiply(const T1& A, const T2& B) {
   return internal::multiply_impl(A, B)(0, 0);
 }
