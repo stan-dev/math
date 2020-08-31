@@ -35,6 +35,16 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
   T val_;
 
   /**
+   * Rows at compile time
+   */
+  static constexpr int RowsAtCompileTime{-1};
+  /**
+   * Columns at compile time
+   */
+  static constexpr int ColsAtCompileTime{-1};
+
+
+  /**
    * Construct a matrix_cl variable implementation from a value. The
    * adjoint is initialized to zero.
    *

@@ -24,15 +24,14 @@ namespace math {
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
-inline Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
-    const Eigen::Matrix<var, Eigen::Dynamic, 1>& alpha) {
+template <typename Mat, require_var_matrix_t<Mat>* = nullptr>
+inline plain_type_t<Mat> softmax(const Mat& alpha) {
   if (alpha.size() == 0) {
     return alpha;
   }
-
   arena_matrix<Eigen::VectorXd> res_val = softmax(value_of(alpha));
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> res = res_val;
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> alpha_arena = alpha;
+  arena_matrix<plain_type_t<Mat>> res = res_val;
+  arena_matrix<plain_type_t<Mat>> alpha_arena = alpha;
 
   reverse_pass_callback([res_val, res, alpha_arena]() mutable {
     const auto& res_adj = to_ref(res.adj());
@@ -40,27 +39,6 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
         += -res_val * res_adj.dot(res_val) + res_val.cwiseProduct(res_adj);
   });
 
-  return res;
-}
-
-/**
- * Return the softmax of the specified `var_value<vector>`. Softmax is
- * guaranteed to return a simplex.
- *
- * @param alpha Unconstrained input vector.
- * @return Softmax of the input.
- * @throw std::domain_error If the input vector is size 0.
- */
-template <typename Mat, require_var_vt<is_eigen, Mat>* = nullptr>
-inline auto softmax(const Mat& alpha) {
-  if (alpha.size() == 0) {
-    return alpha;
-  }
-  Mat res(softmax(value_of(alpha)));
-  reverse_pass_callback([alpha, res]() mutable {
-    alpha.adj() += -res.val() * res.adj().dot(res.val())
-                   + res.val().cwiseProduct(res.adj());
-  });
   return res;
 }
 

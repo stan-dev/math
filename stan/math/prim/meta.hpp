@@ -181,6 +181,7 @@
 #include <stan/math/prim/meta/index_type.hpp>
 #include <stan/math/prim/meta/index_apply.hpp>
 #include <stan/math/prim/meta/is_autodiff.hpp>
+#include <stan/math/prim/meta/is_arena_matrix.hpp>
 #include <stan/math/prim/meta/is_base_pointer_convertible.hpp>
 #include <stan/math/prim/meta/is_double_or_int.hpp>
 #include <stan/math/prim/meta/is_complex.hpp>
@@ -195,6 +196,7 @@
 #include <stan/math/prim/meta/is_plain_type.hpp>
 #include <stan/math/prim/meta/is_string_convertible.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
+#include <stan/math/prim/meta/is_var_matrix.hpp>
 #include <stan/math/prim/meta/is_vari.hpp>
 #include <stan/math/prim/meta/is_var_or_arithmetic.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
