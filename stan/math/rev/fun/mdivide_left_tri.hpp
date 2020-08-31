@@ -286,7 +286,7 @@ class mdivide_left_tri_vd_vari : public vari {
 #endif
       adjA.noalias()
           = -Map<Matrix<double, R1, C1> >(A_, M_, M_)
-                 .template triangularView<TriView>()
+	.template triangularView<TriView>()
                  .transpose()
                  .solve(adjC
                         * Map<Matrix<double, R1, C2> >(C_, M_, N_).transpose());
@@ -312,79 +312,52 @@ class mdivide_left_tri_vd_vari : public vari {
 }  // namespace internal
 
 template <Eigen::UpLoType TriView, typename T1, typename T2,
-          require_all_eigen_vt<is_var, T1, T2> * = nullptr>
+	  require_all_eigen_t<T1, T2>* = nullptr,
+          require_any_vt_var<T1, T2>* = nullptr>
 inline Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
-mdivide_left_tri(const T1 &A, const T2 &b) {
+mdivide_left_tri(const T1& A, const T2& B) {
   check_square("mdivide_left_tri", "A", A);
-  check_multiplicable("mdivide_left_tri", "A", A, "b", b);
-  if (A.rows() == 0) {
-    return {0, b.cols()};
+  check_multiplicable("mdivide_left_tri", "A", A, "B", B);
+  if (A.size() == 0) {
+    return {0, B.cols()};
   }
 
-  // NOTE: this is not a memory leak, this vari is used in the
-  // expression graph to evaluate the adjoint, but is not needed
-  // for the returned matrix.  Memory will be cleaned up with the
-  // arena allocator.
-  auto *baseVari = new internal::mdivide_left_tri_vv_vari<
-      TriView, T1::RowsAtCompileTime, T1::ColsAtCompileTime,
-      T2::RowsAtCompileTime, T2::ColsAtCompileTime>(A, b);
+  using A_ref_t = ref_type_t<T1>;
+  using B_ref_t = ref_type_t<T2>;
 
-  Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime> res(
-      b.rows(), b.cols());
-  res.vi()
-      = Eigen::Map<matrix_vi>(&(baseVari->variRefC_[0]), b.rows(), b.cols());
+  A_ref_t A_ref = A;
+  B_ref_t B_ref = B;
 
-  return res;
-}
-template <Eigen::UpLoType TriView, typename T1, typename T2,
-          require_eigen_vt<std::is_arithmetic, T1> * = nullptr,
-          require_eigen_vt<is_var, T2> * = nullptr>
-inline Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
-mdivide_left_tri(const T1 &A, const T2 &b) {
-  check_square("mdivide_left_tri", "A", A);
-  check_multiplicable("mdivide_left_tri", "A", A, "b", b);
-  if (A.rows() == 0) {
-    return {0, b.cols()};
+  arena_matrix<promote_scalar_t<var, T1>> arena_A;
+  arena_matrix<promote_scalar_t<var, T2>> arena_B;
+
+  if (!is_constant<T1>::value) {
+    arena_A = A_ref;
   }
 
-  // NOTE: this is not a memory leak, this vari is used in the
-  // expression graph to evaluate the adjoint, but is not needed
-  // for the returned matrix.  Memory will be cleaned up with the
-  // arena allocator.
-  auto *baseVari = new internal::mdivide_left_tri_dv_vari<
-      TriView, T1::RowsAtCompileTime, T1::ColsAtCompileTime,
-      T2::RowsAtCompileTime, T2::ColsAtCompileTime>(A, b);
-
-  Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime> res(
-      b.rows(), b.cols());
-  res.vi()
-      = Eigen::Map<matrix_vi>(&(baseVari->variRefC_[0]), b.rows(), b.cols());
-
-  return res;
-}
-template <Eigen::UpLoType TriView, typename T1, typename T2,
-          require_eigen_vt<is_var, T1> * = nullptr,
-          require_eigen_vt<std::is_arithmetic, T2> * = nullptr>
-inline Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
-mdivide_left_tri(const T1 &A, const T2 &b) {
-  check_square("mdivide_left_tri", "A", A);
-  check_multiplicable("mdivide_left_tri", "A", A, "b", b);
-  if (A.rows() == 0) {
-    return {0, b.cols()};
+  if (!is_constant<T2>::value) {
+    arena_B = B_ref;
   }
 
-  // NOTE: this is not a memory leak, this vari is used in the
-  // expression graph to evaluate the adjoint, but is not needed
-  // for the returned matrix.  Memory will be cleaned up with the
-  // arena allocator.
-  auto *baseVari = new internal::mdivide_left_tri_vd_vari<
-      TriView, T1::RowsAtCompileTime, T1::ColsAtCompileTime,
-      T2::RowsAtCompileTime, T2::ColsAtCompileTime>(A, b);
+  arena_matrix<Eigen::MatrixXd> arena_A_val =
+    value_of(A_ref).template triangularView<TriView>();
+  arena_matrix<Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>>
+    res = arena_A_val.template triangularView<TriView>()
+    .solve(value_of(B_ref));
 
-  Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime> res(
-      b.rows(), b.cols());
-  res.vi()
-      = Eigen::Map<matrix_vi>(&(baseVari->variRefC_[0]), b.rows(), b.cols());
+  reverse_pass_callback([arena_A, arena_B, arena_A_val, res]() mutable {
+    Eigen::Matrix<double, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
+      adjB = arena_A_val.template triangularView<TriView>()
+      .transpose()
+      .solve(res.adj());
+
+    if (!is_constant<T2>::value)
+      forward_as<promote_scalar_t<var, T2>>(arena_B).adj() += adjB;
+    
+    if(!is_constant<T1>::value)
+      forward_as<promote_scalar_t<var, T1>>(arena_A).adj() +=
+	(-adjB * res.val().transpose().eval()).template triangularView<TriView>();
+  });
 
   return res;
 }
