@@ -102,7 +102,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
                           && !is_constant_all<T_loc>::value
                                  > (lambda_val + deriv_logerfc * inv_sigma);
       if (!is_constant_all<T_y>::value) {
-        ops_partials.edge1_.partials_ = deriv;
+        ops_partials.edge1_.partials_ = -deriv;
       }
       if (!is_constant_all<T_loc>::value) {
         ops_partials.edge2_.partials_ = std::move(deriv);
