@@ -35,12 +35,16 @@ namespace math {
  * If containers are supplied, returns the log sum of the probabilities.
  * This is an overload of the GLM in
  * prim/prob/neg_binomial_2_log_glm_lpdf.hpp that is implemented in OpenCL.
- * @tparam T_alpha type of the intercept(s);
+ * @tparam T_y_cl type of independent variable;
+ * this can be a `matrix_cl` vector of intercepts or a single
+ * value (wich will be broadcast - used for all instances);
+ * @tparam T_x_cl type of the design matrix
+ * @tparam T_alpha_cl type of the intercept(s);
  * this can be a vector (of the same length as y) of intercepts or a single
  * value (for models with constant intercept);
- * @tparam T_beta type of the weight vector;
+ * @tparam T_beta_cl type of the weight vector;
  * this can also be a scalar;
- * @tparam T_precision type of the (positive) precision(s);
+ * @tparam T_phi_cl type of the (positive) precision(s);
  * this can be a vector (of the same length as y, for heteroskedasticity)
  * or a scalar.
  * @param y failures count scalar or vector parameter on OpenCL device. If it
@@ -56,30 +60,20 @@ namespace math {
  * @throw std::domain_error if phi is infinite or non-positive.
  * @throw std::domain_error if y is negative.
  */
-template <bool propto, typename T_y, typename T_x, typename T_alpha,
-          typename T_beta, typename T_precision,
-          require_all_prim_or_rev_kernel_expression_t<T_x, T_y, T_alpha, T_beta,
-                                                      T_precision>* = nullptr>
-return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
-    const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta,
-    const T_precision& phi) {
+template <bool propto, typename T_y_cl, typename T_x_cl, typename T_alpha_cl,
+          typename T_beta_cl, typename T_phi_cl,
+          require_all_prim_or_rev_kernel_expression_t<T_x_cl, T_y_cl, T_alpha_cl, T_beta_cl,
+                                                      T_phi_cl>* = nullptr>
+return_type_t<T_x_cl, T_alpha_cl, T_beta_cl, T_phi_cl> neg_binomial_2_log_glm_lpmf(
+    const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha, const T_beta_cl& beta,
+    const T_phi_cl& phi) {
   static const char* function = "neg_binomial_2_log_glm_lpmf(OpenCL)";
-  using T_partials_return = partials_return_t<T_alpha, T_beta, T_precision>;
-  constexpr bool is_y_vector = is_matrix_cl<decltype(value_of(y))>::value;
-  constexpr bool is_phi_vector = is_matrix_cl<decltype(value_of(phi))>::value;
-  constexpr bool is_alpha_vector
-      = is_matrix_cl<decltype(value_of(alpha))>::value;
-  using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
-  using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
-  using T_phi_ref
-      = ref_type_if_t<!is_constant<T_precision>::value, T_precision>;
-  using Eigen::Array;
+  using T_partials_return = partials_return_t<T_x_cl, T_alpha_cl, T_beta_cl, T_phi_cl>;
+  constexpr bool is_y_vector = !is_stan_scalar<T_y_cl>::value;
+  constexpr bool is_phi_vector = !is_stan_scalar<T_phi_cl>::value;
+  constexpr bool is_alpha_vector = !is_stan_scalar<T_alpha_cl>::value;
   using Eigen::Dynamic;
-  using Eigen::Matrix;
-  using Eigen::VectorXd;
   using std::isfinite;
-
-  T_partials_return logp(0.0);
 
   const size_t N = x.rows();
   const size_t M = x.cols();
@@ -87,7 +81,8 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   if (is_y_vector) {
     check_size_match(function, "Rows of ", "x", N, "rows of ", "y", size(y));
   }
-  check_consistent_size(function, "Weight vector", beta, M);
+  check_size_match(function, "Columns of ", "x", M, "size of ", "beta",
+                   size(beta));
   if (is_phi_vector) {
     check_size_match(function, "Rows of ", "x", N, "size of ", "phi",
                      size(phi));
@@ -99,7 +94,7 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   if (N == 0) {
     return 0;
   }
-  if (!include_summand<propto, T_alpha, T_beta, T_precision>::value) {
+  if (!include_summand<propto, T_alpha_cl, T_beta_cl, T_phi_cl>::value) {
     return 0;
   }
 
@@ -119,26 +114,23 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   const int wgs = (N + local_size - 1) / local_size;
 
   const bool need_theta_derivative
-      = !is_constant_all<T_x, T_beta, T_alpha>::value;
+      = !is_constant_all<T_x_cl, T_beta_cl, T_alpha_cl>::value;
   matrix_cl<double> theta_derivative_cl(need_theta_derivative ? N : 0, 1);
   const bool need_theta_derivative_sum
-      = need_theta_derivative && !is_vector<T_alpha>::value;
+      = need_theta_derivative && !is_alpha_vector;
   matrix_cl<double> theta_derivative_sum_cl(wgs, 1);
-  const bool need_phi_derivative_sum = !is_vector<T_alpha>::value;
+  const bool need_phi_derivative_sum = !is_alpha_vector;
   const bool need_phi_derivative
-      = !is_constant_all<T_precision>::value || need_phi_derivative_sum;
+      = !is_constant_all<T_phi_cl>::value || need_phi_derivative_sum;
   matrix_cl<double> phi_derivative_cl(
       need_phi_derivative ? (need_phi_derivative_sum ? wgs : N) : 0, 1);
   const bool need_logp1 = include_summand<propto>::value;
-  const bool need_logp2 = include_summand<propto, T_precision>::value
-                          && is_vector<T_precision>::value;
-  const bool need_logp3
-      = include_summand<propto, T_alpha, T_beta, T_precision>::value;
-  const bool need_logp4 = include_summand<propto, T_alpha, T_beta>::value;
-  const bool need_logp5 = include_summand<propto, T_precision>::value;
-  const bool need_logp
-      = need_logp1 || need_logp2 || need_logp3 || need_logp4 || need_logp5;
-  matrix_cl<double> logp_cl(need_logp ? wgs : 0, 1);
+  const bool need_logp2
+      = include_summand<propto, T_phi_cl>::value && is_phi_vector;
+  const bool need_logp3 = include_summand<propto, T_x_cl, T_alpha_cl, T_beta_cl>::value;
+  const bool need_logp4 = include_summand<propto, T_phi_cl>::value
+                          && (is_y_vector || is_phi_vector);
+  matrix_cl<double> logp_cl(wgs, 1);
 
   try {
     opencl_kernels::neg_binomial_2_log_glm(
@@ -147,13 +139,13 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
         y_val_cl, x_val, alpha_val_cl, beta_val, phi_val_cl, N, M, is_y_vector,
         is_alpha_vector, is_phi_vector, need_theta_derivative,
         need_theta_derivative_sum, need_phi_derivative, need_phi_derivative_sum,
-        need_logp1, need_logp2, need_logp3, need_logp4, need_logp5);
+        need_logp1, need_logp2, need_logp3, need_logp4);
   } catch (const cl::Error& e) {
     check_opencl_error(function, e);
   }
 
-  double logp_sum = sum(from_matrix_cl<Eigen::Dynamic, 1>(logp_cl));
-  if (!std::isfinite(logp_sum)) {
+  T_partials_return logp = sum(from_matrix_cl<Dynamic, 1>(logp_cl));
+  if (!std::isfinite(logp)) {
     results(
         check_cl(function, "Vector of dependent variables", y_val,
                  "nonnegative"),
@@ -161,33 +153,33 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
         check_cl(function, "Precision parameter", phi_val, "positive finite"))
         = expressions(y_val >= 0, isfinite(alpha_val),
                       isfinite(phi_val) && phi_val > 0);
-    check_cl(function, "Weight vector", x_val, "finite") = isfinite(x_val);
+    check_cl(function, "Design matrix", x_val, "finite") = isfinite(x_val);
     check_cl(function, "Weight vector", beta_val, "finite")
         = isfinite(beta_val);
   } else {
     check_cl(function, "Precision parameter", phi_val, "positive finite")
         = isfinite(phi_val) && phi_val > 0;
   }
-  if (need_logp) {
-    logp += logp_sum;
-  }
 
-  if (include_summand<propto, T_precision>::value
-      && !is_vector<T_precision>::value) {
+  if (include_summand<propto, T_phi_cl>::value && !is_phi_vector) {
     logp += N
             * (multiply_log(forward_as<double>(phi_val),
                             forward_as<double>(phi_val))
                - lgamma(forward_as<double>(phi_val)));
   }
+  if (include_summand<propto, T_phi_cl>::value && !is_y_vector
+      && !is_phi_vector) {
+    logp += forward_as<double>(lgamma(y_val + phi_val)) * N;
+  }
 
-  operands_and_partials<T_x, T_alpha, T_beta, T_precision> ops_partials(
+  operands_and_partials<T_x_cl, T_alpha_cl, T_beta_cl, T_phi_cl> ops_partials(
       x, alpha, beta, phi);
   // Compute the necessary derivatives.
-  if (!is_constant<T_x>::value) {
+  if (!is_constant<T_x_cl>::value) {
     ops_partials.edge1_.partials_
         = transpose(beta_val * transpose(theta_derivative_cl));
   }
-  if (!is_constant_all<T_beta>::value) {
+  if (!is_constant_all<T_beta_cl>::value) {
     // transposition of a vector can be done without copying
     const matrix_cl<double> theta_derivative_transpose_cl(
         theta_derivative_cl.buffer(), 1, theta_derivative_cl.rows());
@@ -202,8 +194,8 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
           edge3_partials_transpose_cl.write_events().back());
     }
   }
-  if (!is_constant_all<T_alpha>::value) {
-    if (is_vector<T_alpha>::value) {
+  if (!is_constant_all<T_alpha_cl>::value) {
+    if (is_alpha_vector) {
       ops_partials.edge2_.partials_ = std::move(theta_derivative_cl);
     } else {
       forward_as<internal::broadcast_array<double>>(
@@ -211,8 +203,8 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
           = sum(from_matrix_cl<Dynamic, 1>(theta_derivative_sum_cl));
     }
   }
-  if (!is_constant_all<T_precision>::value) {
-    if (is_vector<T_precision>::value) {
+  if (!is_constant_all<T_phi_cl>::value) {
+    if (is_phi_vector) {
       ops_partials.edge4_.partials_ = std::move(phi_derivative_cl);
     } else {
       forward_as<internal::broadcast_array<double>>(
