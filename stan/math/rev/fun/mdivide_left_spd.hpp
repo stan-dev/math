@@ -13,8 +13,7 @@
 namespace stan {
 namespace math {
 
-template <typename T1, typename T2,
-	  require_all_eigen_t<T1, T2>* = nullptr,
+template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
           require_any_vt_var<T1, T2>* = nullptr>
 inline Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
 mdivide_left_spd(const T1& A, const T2& B) {
@@ -26,7 +25,7 @@ mdivide_left_spd(const T1& A, const T2& B) {
 
   A_ref_t A_ref = A;
   B_ref_t B_ref = B;
-  
+
   check_not_nan("mdivide_left_spd", "A", A_ref);
 
   if (A.size() == 0) {
@@ -49,21 +48,21 @@ mdivide_left_spd(const T1& A, const T2& B) {
 
   arena_matrix<Eigen::MatrixXd> arena_A_llt(A.rows(), A.cols());
   arena_A_llt.template triangularView<Eigen::Lower>() = A_llt.matrixL();
-  arena_A_llt.template triangularView<Eigen::Upper>() = arena_A_llt.transpose();  
+  arena_A_llt.template triangularView<Eigen::Upper>() = arena_A_llt.transpose();
 
   arena_matrix<Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>>
-    res = A_llt.solve(value_of(B_ref));
+      res = A_llt.solve(value_of(B_ref));
 
   reverse_pass_callback([arena_A, arena_B, arena_A_llt, res]() mutable {
-    Eigen::Matrix<double, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
-      adjB = res.adj();
+    Eigen::Matrix<double, T1::RowsAtCompileTime, T2::ColsAtCompileTime> adjB
+        = res.adj();
 
     arena_A_llt.template triangularView<Eigen::Lower>().solveInPlace(adjB);
     arena_A_llt.template triangularView<Eigen::Upper>().solveInPlace(adjB);
 
-    if(!is_constant<T1>::value)
-      forward_as<promote_scalar_t<var, T1>>(arena_A).adj() +=
-	-adjB * res.val().transpose().eval();
+    if (!is_constant<T1>::value)
+      forward_as<promote_scalar_t<var, T1>>(arena_A).adj()
+          += -adjB * res.val().transpose().eval();
 
     if (!is_constant<T2>::value)
       forward_as<promote_scalar_t<var, T2>>(arena_B).adj() += adjB;

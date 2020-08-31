@@ -7,12 +7,10 @@ TEST(AgradRev, mdivide_left_rev) {
   using stan::math::var;
 
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> A(2, 2);
-  A << 1.5, 0.7,
-    0.3, 1.2;
+  A << 1.5, 0.7, 0.3, 1.2;
   Eigen::Matrix<var, Eigen::Dynamic, 1> B(2);
-  B << 1.1,
-    -1.2;
-  
+  B << 1.1, -1.2;
+
   stan::math::set_zero_all_adjoints();
   var y = sum(mdivide_left(A, B));
   y.grad();

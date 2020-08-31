@@ -26,41 +26,42 @@ namespace math {
  * square.
  */
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
-inline Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
-matrix_power(const T& M, const int n) {
+inline Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> matrix_power(
+    const T& M, const int n) {
   const auto& M_ref = to_ref(M);
   check_square("matrix_power", "M", M);
   check_nonnegative("matrix_power", "n", n);
   check_finite("matrix_power", "M", M_ref);
 
-  if(M.size() == 0)
+  if (M.size() == 0)
     return {};
 
   size_t N = M.rows();
 
-  if(n == 0)
+  if (n == 0)
     return Eigen::MatrixXd::Identity(N, N);
 
-  if(n == 1)
+  if (n == 1)
     return M_ref;
-  
+
   arena_t<std::vector<Eigen::MatrixXd>> powers(n + 1);
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arena_M = M_ref;
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arena_M
+      = M_ref;
 
   powers[0] = Eigen::MatrixXd::Identity(N, N);
   powers[1] = value_of(M_ref);
-  for(size_t i = 2; i <= n; ++i) {
+  for (size_t i = 2; i <= n; ++i) {
     powers[i] = powers[1] * powers[i - 1];
   }
 
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> res =
-    powers[powers.size() - 1];
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> res
+      = powers[powers.size() - 1];
 
   reverse_pass_callback([arena_M, n, N, res, powers]() mutable {
     const auto& M_val = powers[1];
     Eigen::MatrixXd adj_C = res.adj();
     Eigen::MatrixXd adj_M = Eigen::MatrixXd::Zero(N, N);
-    for(size_t i = n; i > 1; --i) {
+    for (size_t i = n; i > 1; --i) {
       adj_M += adj_C * powers[i - 1].transpose();
       adj_C = (M_val.transpose() * adj_C).eval();
     }

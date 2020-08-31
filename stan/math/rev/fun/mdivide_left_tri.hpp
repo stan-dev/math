@@ -285,11 +285,11 @@ class mdivide_left_tri_vd_vari : public vari {
     } else {
 #endif
       adjA.noalias()
-          = -Map<Matrix<double, R1, C1> >(A_, M_, M_)
-	.template triangularView<TriView>()
+          = -Map<Matrix<double, R1, C1>>(A_, M_, M_)
+                 .template triangularView<TriView>()
                  .transpose()
                  .solve(adjC
-                        * Map<Matrix<double, R1, C2> >(C_, M_, N_).transpose());
+                        * Map<Matrix<double, R1, C2>>(C_, M_, N_).transpose());
 #ifdef STAN_OPENCL
     }
 #endif
@@ -312,10 +312,10 @@ class mdivide_left_tri_vd_vari : public vari {
 }  // namespace internal
 
 template <Eigen::UpLoType TriView, typename T1, typename T2,
-	  require_all_eigen_t<T1, T2>* = nullptr,
-          require_any_vt_var<T1, T2>* = nullptr>
+          require_all_eigen_t<T1, T2> * = nullptr,
+          require_any_vt_var<T1, T2> * = nullptr>
 inline Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
-mdivide_left_tri(const T1& A, const T2& B) {
+mdivide_left_tri(const T1 &A, const T2 &B) {
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "B", B);
   if (A.size() == 0) {
@@ -339,24 +339,24 @@ mdivide_left_tri(const T1& A, const T2& B) {
     arena_B = B_ref;
   }
 
-  arena_matrix<Eigen::MatrixXd> arena_A_val =
-    value_of(A_ref).template triangularView<TriView>();
+  arena_matrix<Eigen::MatrixXd> arena_A_val
+      = value_of(A_ref).template triangularView<TriView>();
   arena_matrix<Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>>
-    res = arena_A_val.template triangularView<TriView>()
-    .solve(value_of(B_ref));
+      res
+      = arena_A_val.template triangularView<TriView>().solve(value_of(B_ref));
 
   reverse_pass_callback([arena_A, arena_B, arena_A_val, res]() mutable {
-    Eigen::Matrix<double, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
-      adjB = arena_A_val.template triangularView<TriView>()
-      .transpose()
-      .solve(res.adj());
+    Eigen::Matrix<double, T1::RowsAtCompileTime, T2::ColsAtCompileTime> adjB
+        = arena_A_val.template triangularView<TriView>().transpose().solve(
+            res.adj());
 
     if (!is_constant<T2>::value)
       forward_as<promote_scalar_t<var, T2>>(arena_B).adj() += adjB;
-    
-    if(!is_constant<T1>::value)
-      forward_as<promote_scalar_t<var, T1>>(arena_A).adj() +=
-	(-adjB * res.val().transpose().eval()).template triangularView<TriView>();
+
+    if (!is_constant<T1>::value)
+      forward_as<promote_scalar_t<var, T1>>(arena_A).adj()
+          += (-adjB * res.val().transpose().eval())
+                 .template triangularView<TriView>();
   });
 
   return res;

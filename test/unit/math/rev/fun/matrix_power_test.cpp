@@ -6,7 +6,8 @@
 TEST(AgradRev, matrix_power_rev) {
   using stan::math::var;
 
-  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> x = Eigen::MatrixXd::Random(1, 1);
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> x
+      = Eigen::MatrixXd::Random(1, 1);
 
   stan::math::set_zero_all_adjoints();
   auto y = stan::math::matrix_power(x, 2);

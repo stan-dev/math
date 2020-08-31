@@ -12,8 +12,7 @@
 namespace stan {
 namespace math {
 
-template <typename T1, typename T2,
-	  require_all_eigen_t<T1, T2>* = nullptr,
+template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
           require_any_vt_var<T1, T2>* = nullptr>
 inline Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
 mdivide_left(const T1& A, const T2& B) {
@@ -42,17 +41,15 @@ mdivide_left(const T1& A, const T2& B) {
 
   arena_matrix<Eigen::MatrixXd> arena_A_val = value_of(A_ref);
   arena_matrix<Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>>
-    res = arena_A_val.colPivHouseholderQr().solve(value_of(B_ref));
+      res = arena_A_val.colPivHouseholderQr().solve(value_of(B_ref));
 
   reverse_pass_callback([arena_A, arena_B, arena_A_val, res]() mutable {
-    Eigen::Matrix<double, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
-      adjB = arena_A_val.transpose()
-      .colPivHouseholderQr()
-      .solve(res.adj());
+    Eigen::Matrix<double, T1::RowsAtCompileTime, T2::ColsAtCompileTime> adjB
+        = arena_A_val.transpose().colPivHouseholderQr().solve(res.adj());
 
-    if(!is_constant<T1>::value)
-      forward_as<promote_scalar_t<var, T1>>(arena_A).adj() +=
-	-adjB * res.val().transpose().eval();
+    if (!is_constant<T1>::value)
+      forward_as<promote_scalar_t<var, T1>>(arena_A).adj()
+          += -adjB * res.val().transpose().eval();
 
     if (!is_constant<T2>::value)
       forward_as<promote_scalar_t<var, T2>>(arena_B).adj() += adjB;
