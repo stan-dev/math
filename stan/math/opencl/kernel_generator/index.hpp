@@ -47,8 +47,7 @@ class row_index : public operation_cl<row_index, int> {
                                const std::string& col_index_name,
                                const bool view_handled) const {
     kernel_parts res{};
-    res.body
-        = "int " + var_name_ + " = " + row_index_name + ";\n";
+    res.body = "int " + var_name_ + " = " + row_index_name + ";\n";
     return res;
   }
 
@@ -111,8 +110,7 @@ class col_index : public operation_cl<col_index, int> {
                                const std::string& col_index_name,
                                const bool view_handled) const {
     kernel_parts res{};
-    res.body
-        = "int " + var_name_ + " = " + col_index_name + ";\n";
+    res.body = "int " + var_name_ + " = " + col_index_name + ";\n";
     return res;
   }
 
