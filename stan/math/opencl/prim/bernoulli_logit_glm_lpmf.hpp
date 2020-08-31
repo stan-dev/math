@@ -28,14 +28,14 @@ namespace math {
  * with Bernoulli distribution and logit link function.
  * This is an overload of the GLM in prim/prob/bernoulli_logit_glm_lpmf.hpp
  * that is implemented in OpenCL.
- * @tparam T_y type of independent variable;
+ * @tparam T_y_cl type of independent variable;
  * this can be a `matrix_cl` vector of intercepts or a single
  * value (wich will be broadcast - used for all instances);
- * @tparam T_x type of the design matrix
- * @tparam T_alpha type of the intercept(s);
+ * @tparam T_x_cl type of the design matrix
+ * @tparam T_alpha_cl type of the intercept(s);
  * this can be a vector (of the same length as y) of intercepts or a single
  * value (for models with constant intercept);
- * @tparam T_beta type of the weight vector;
+ * @tparam T_beta_cl type of the weight vector;
  * this can also be a single value;
  * @param y binary scalar or vector parameter on OpenCL device. If it is a
  * scalar it will be broadcast - used for all instances.
@@ -49,16 +49,17 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 
-template <bool propto, typename T_x, typename T_y, typename T_alpha,
-          typename T_beta,
-          require_all_prim_or_rev_kernel_expression_t<T_y, T_x, T_alpha,
-                                                      T_beta>* = nullptr>
-return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
-    const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
+template <bool propto, typename T_x_cl, typename T_y_cl, typename T_alpha_cl,
+          typename T_beta_cl,
+          require_all_prim_or_rev_kernel_expression_t<
+              T_y_cl, T_x_cl, T_alpha_cl, T_beta_cl>* = nullptr>
+return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
+    const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
+    const T_beta_cl& beta) {
   static const char* function = "bernoulli_logit_glm_lpmf(OpenCL)";
-  using T_partials_return = partials_return_t<T_x, T_alpha, T_beta>;
-  constexpr bool is_y_vector = !is_stan_scalar<T_y>::value;
-  constexpr bool is_alpha_vector = !is_stan_scalar<T_alpha>::value;
+  using T_partials_return = partials_return_t<T_x_cl, T_alpha_cl, T_beta_cl>;
+  constexpr bool is_y_vector = !is_stan_scalar<T_y_cl>::value;
+  constexpr bool is_alpha_vector = !is_stan_scalar<T_alpha_cl>::value;
   using std::isfinite;
 
   const size_t N = x.rows();
@@ -77,7 +78,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   if (N == 0) {
     return 0;
   }
-  if (!include_summand<propto, T_alpha, T_beta>::value) {
+  if (!include_summand<propto, T_alpha_cl, T_beta_cl>::value) {
     return 0;
   }
 
@@ -108,7 +109,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   const int wgs = logp_expr.rows();
   matrix_cl<double> logp_cl(wgs, 1);
   constexpr bool need_theta_derivative
-      = !is_constant_all<T_x, T_beta, T_alpha>::value;
+      = !is_constant_all<T_x_cl, T_beta_cl, T_alpha_cl>::value;
   matrix_cl<double> theta_derivative_cl(need_theta_derivative ? N : 0, 1);
   constexpr bool need_theta_derivative_sum
       = need_theta_derivative && !is_alpha_vector;
@@ -131,13 +132,14 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
         = isfinite(x_val);
   }
 
-  operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
+  operands_and_partials<T_x_cl, T_alpha_cl, T_beta_cl> ops_partials(x, alpha,
+                                                                    beta);
   // Compute the necessary derivatives.
-  if (!is_constant_all<T_x>::value) {
+  if (!is_constant_all<T_x_cl>::value) {
     ops_partials.edge1_.partials_
         = transpose(beta_val * transpose(theta_derivative_cl));
   }
-  if (!is_constant_all<T_alpha>::value) {
+  if (!is_constant_all<T_alpha_cl>::value) {
     if (is_alpha_vector) {
       ops_partials.edge2_.partials_ = theta_derivative_cl;
     } else {
@@ -146,7 +148,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
           = sum(from_matrix_cl(theta_derivative_sum_cl));
     }
   }
-  if (!is_constant_all<T_beta>::value) {
+  if (!is_constant_all<T_beta_cl>::value) {
     // transposition of a vector can be done without copying
     const matrix_cl<double> theta_derivative_transpose_cl(
         theta_derivative_cl.buffer(), 1, theta_derivative_cl.rows());
