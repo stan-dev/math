@@ -7,8 +7,8 @@
 namespace stan {
 
 namespace math {
-  template <typename T>
-  class var_value;
+template <typename T>
+class var_value;
 }
 namespace internal {
 template <typename T>

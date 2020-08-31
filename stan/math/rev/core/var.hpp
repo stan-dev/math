@@ -320,13 +320,12 @@ class arena_matrix;
 
 template <typename MatrixType>
 class arena_matrix<var_value<MatrixType>> : public var_value<MatrixType> {
-public:
+ public:
   template <typename T>
   arena_matrix(T&& x) : var_value<MatrixType>(std::forward<T>(x)) {}
 };
 
 }  // namespace math
-
 
 /**
  * Template specialization defining the scalar type of

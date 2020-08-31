@@ -14,7 +14,8 @@ struct is_arena_matrix : std::false_type {};
 
 STAN_ADD_REQUIRE_UNARY(arena_matrix, is_arena_matrix, require_eigens_types);
 STAN_ADD_REQUIRE_CONTAINER(arena_matrix, is_arena_matrix, require_eigens_types);
-STAN_ADD_REQUIRE_UNARY_INNER(arena_matrix, is_arena_matrix, require_eigens_types);
+STAN_ADD_REQUIRE_UNARY_INNER(arena_matrix, is_arena_matrix,
+                             require_eigens_types);
 
 }  // namespace stan
 #endif

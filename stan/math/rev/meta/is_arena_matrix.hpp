@@ -6,17 +6,19 @@
 
 namespace stan {
 namespace internal {
-  template <typename T>
-  struct is_arena_matrix_impl : std::false_type {};
-  template <typename T>
-  struct is_arena_matrix_impl<math::arena_matrix<T>> : std::true_type {};
-}
-  /** \ingroup type_trait
-   * Defines a static member named value which is defined to be true
-   * if the type is `arena_matrix<T>`
-   */
 template <typename T>
-struct is_arena_matrix<T, require_t<internal::is_arena_matrix_impl<std::decay_t<T>>>> : std::true_type {};
+struct is_arena_matrix_impl : std::false_type {};
+template <typename T>
+struct is_arena_matrix_impl<math::arena_matrix<T>> : std::true_type {};
+}  // namespace internal
+/** \ingroup type_trait
+ * Defines a static member named value which is defined to be true
+ * if the type is `arena_matrix<T>`
+ */
+template <typename T>
+struct is_arena_matrix<
+    T, require_t<internal::is_arena_matrix_impl<std::decay_t<T>>>>
+    : std::true_type {};
 
 }  // namespace stan
 #endif
