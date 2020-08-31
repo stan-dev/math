@@ -8,8 +8,8 @@ TEST(MetaTraitsRev, rev_matrix_type_test) {
   using v_matrix = stan::math::var_value<Eigen::MatrixXd>;
   using v_vector = stan::math::var_value<Eigen::VectorXd>;
   using stan::math::matrix_d;
-  using stan::math::vector_d;
   using stan::math::matrix_v;
+  using stan::math::vector_d;
   using stan::math::vector_v;
   using t1 = stan::rev_matrix_t<-1, -1, v_vector>;
   EXPECT_SAME_TYPE(t1, v_matrix);
