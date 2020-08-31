@@ -49,12 +49,11 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
   check_positive(fun, "length-scale", l);
   check_positive(fun, "period", p);
 
-  size_t x_size = x.size();
-  for (size_t i = 0; i < x_size; ++i) {
+  for (size_t i = 0; i < x.size(); ++i) {
     check_not_nan(fun, "element of x", x[i]);
   }
 
-  if (x_size == 0) {
+  if (x.size() == 0) {
     return Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>();
   }
 
@@ -65,7 +64,8 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
   double pi_over_p = pi() / p_d;
   double negative_two_over_l_squared = -2.0 / (l_d * l_d);
 
-  size_t P = (x.size() * x.size() - x.size()) / 2 + x.size();
+  size_t N = x.size();
+  size_t P = (N * N - N) / 2 + N;
   arena_matrix<Eigen::VectorXd> arena_dist(P);
   arena_matrix<Eigen::VectorXd> arena_sin_squared(P);
   arena_matrix<Eigen::VectorXd> arena_sin_squared_derivative(P);
@@ -75,7 +75,7 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
 
   size_t pos = 0;
   double inv_half_sq_l_d = 0.5 / (value_of(l) * value_of(l));
-  for (size_t j = 0; j < x.size(); ++j) {
+  for (size_t j = 0; j < N; ++j) {
     for (size_t i = 0; i <= j; ++i) {
       if (i != j) {
         arena_dist.coeffRef(pos) = distance(value_of(x[i]), value_of(x[j]));
@@ -102,16 +102,16 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
     }
   }
 
-  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> res(x.size(), x.size());
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> res(N, N);
 
   pos = 0;
-  for (size_t j = 0; j < res.cols(); ++j)
+  for (size_t j = 0; j < N; ++j)
     for (size_t i = 0; i <= j; ++i) {
       res.coeffRef(j, i) = res.coeffRef(i, j) = arena_res.coeff(pos);
       pos++;
     }
 
-  reverse_pass_callback([arena_res, arena_x, sigma, l, p, sigma_d, l_d, p_d,
+  reverse_pass_callback([arena_res, arena_x, sigma, l, p, sigma_d, l_d, p_d, N,
                          pi_over_p, arena_dist, arena_sin_squared,
                          arena_sin_squared_derivative]() mutable {
     double sigma_adj = 0.0;
@@ -119,7 +119,7 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
     double p_adj = 0.0;
 
     size_t pos = 0;
-    for (size_t i = 0; i < arena_x.size(); ++i) {
+    for (size_t i = 0; i < N; ++i) {
       for (size_t j = 0; j <= i; ++j) {
         double adj_times_val
             = arena_res.coeff(pos).val() * arena_res.coeff(pos).adj();

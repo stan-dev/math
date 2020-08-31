@@ -49,7 +49,8 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x>& x,
   double sigma_d = value_of(sigma);
   double sigma_sq_d = sigma_d * sigma_d;
 
-  size_t P = (x.size() * x.size() - x.size()) / 2 + x.size();
+  size_t N = x.size();
+  size_t P = (N * N - N) / 2 + N;
   arena_matrix<Eigen::VectorXd> dist(P);
   arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> arena_res(P);
 
@@ -58,7 +59,7 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x>& x,
   double inv_half_sq_l_d = 0.5 / (l_d * l_d);
 
   size_t pos = 0;
-  for (size_t j = 0; j < x.size(); ++j) {
+  for (size_t j = 0; j < N; ++j) {
     for (size_t i = 0; i <= j; ++i) {
       if (i != j) {
         double dist_sq = squared_distance(value_of(x[i]), value_of(x[j]));
@@ -73,25 +74,25 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x>& x,
     }
   }
 
-  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> res(x.size(), x.size());
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> res(N, N);
 
   pos = 0;
-  for (size_t j = 0; j < res.cols(); ++j)
+  for (size_t j = 0; j < N; ++j)
     for (size_t i = 0; i <= j; ++i) {
       res.coeffRef(j, i) = res.coeffRef(i, j) = arena_res.coeff(pos);
       pos++;
     }
 
   reverse_pass_callback(
-      [arena_res, arena_x, dist, sigma, length_scale, sigma_d, l_d]() mutable {
+    [arena_res, arena_x, dist, sigma, length_scale, sigma_d, l_d, N]() mutable {
         size_t pos = 0;
 
         double sigma_adj = 0.0;
         double l_adj = 0.0;
         double inv_l_d_squared = 1.0 / (l_d * l_d);
-
+	
         pos = 0;
-        for (size_t j = 0; j < arena_x.size(); ++j) {
+        for (size_t j = 0; j < N; ++j) {
           for (size_t i = 0; i <= j; ++i) {
             double adj_times_val
                 = arena_res.coeff(pos).val() * arena_res.coeff(pos).adj();
