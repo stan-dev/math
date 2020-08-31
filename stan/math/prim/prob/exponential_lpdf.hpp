@@ -84,12 +84,20 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
   }
 
   if (!is_constant_all<T_y>::value) {
+    using beta_val_scalar = scalar_type_t<decltype(beta_val)>;
+    using beta_val_array = Eigen::Array<beta_val_scalar, Eigen::Dynamic, 1>;
     if (is_vector<T_y>::value && !is_vector<T_inv_scale>::value) {
-      ops_partials.edge1_.partials_
-          = T_partials_array::Constant(size(y), -forward_as<double>(beta_val));
+      ops_partials.edge1_.partials_ = T_partials_array::Constant(
+          size(y), -static_cast<T_partials_return>(
+                       forward_as<beta_val_scalar>(beta_val)));
+    } else if (is_vector<T_inv_scale>::value) {
+      ops_partials.edge1_.partials_ = -forward_as<beta_val_array>(beta_val)
+                                           .template cast<T_partials_return>();
     } else {
-      ops_partials.edge1_.partials_
-          = -forward_as<decltype(to_ref(y_val * beta_val))>(beta_val);
+      forward_as<internal::broadcast_array<T_partials_return>>(
+          ops_partials.edge1_.partials_)
+          = static_cast<T_partials_return>(
+              -forward_as<beta_val_scalar>(beta_val));
     }
   }
   if (!is_constant_all<T_inv_scale>::value) {
