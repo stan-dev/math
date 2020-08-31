@@ -31,7 +31,8 @@ TEST(mathPrimGausInterp, throwing) {
   // check that error throws when trying to interpolate out of range or nan
   xs = {0, 1};
   ys = {0, 2};
-  gaus_interp_params params = gaus_interp_precomp(xs, ys);
+  //gaus_interp_params params = gaus_interp_precomp(xs, ys);
+  std::vector<double> params = gaus_interp_precomp(xs, ys);
   x = 1.1;
   EXPECT_THROW(gaus_interp(xs, ys, params, x), std::domain_error);
   x = -0.1;
@@ -89,7 +90,8 @@ TEST(mathPrimGausInterp, interp_line) {
 
   // create interpolation using precomp
   std::vector<double> ys_new_gaus(n_interp);
-  gaus_interp_params params = gaus_interp_precomp(xs, ys);
+  //gaus_interp_params params = gaus_interp_precomp(xs, ys);
+  std::vector<double> params = gaus_interp_precomp(xs, ys);
   for (int i = 0; i < n_interp; i++) {
     ys_new_gaus[i] = gaus_interp(xs, ys, params, xs_new[i]);
   }
@@ -148,7 +150,8 @@ TEST(mathPrimGausInterp, gaus_and_lin_interp) {
   }
 
   // gaus interpolation
-  gaus_interp_params params = gaus_interp_precomp(xs, ys);
+  //gaus_interp_params params = gaus_interp_precomp(xs, ys);
+  std::vector<double> params = gaus_interp_precomp(xs, ys);
   for (int i = 0; i < n_interp; i++) {
     ys_new_gaus[i] = gaus_interp(xs, ys, params, xs_new[i]);
   }
