@@ -30,9 +30,8 @@ constexpr bool eigen_static_size_match(T1 desired, T2 actual) {
  * @return the input value a
  */
 template <typename T_desired, typename T_actual,
-          typename
-          = std::enable_if_t<std::is_convertible<T_actual, T_desired>::value
-                             && !is_eigen<T_desired>::value>>
+          std::enable_if_t<std::is_convertible<T_actual, T_desired>::value
+                           && !is_eigen<T_desired>::value>* = nullptr>
 inline T_actual&& forward_as(T_actual&& a) {  // NOLINT
   return std::forward<T_actual>(a);
 }
@@ -54,8 +53,8 @@ inline T_actual&& forward_as(T_actual&& a) {  // NOLINT
  * @throw always throws std::runtime_error
  */
 template <typename T_desired, typename T_actual,
-          typename
-          = std::enable_if_t<!std::is_convertible<T_actual, T_desired>::value>>
+          std::enable_if_t<
+              !std::is_convertible<T_actual, T_desired>::value>* = nullptr>
 inline T_desired forward_as(const T_actual& a) {
   throw std::runtime_error("Wrong type assumed! Please file a bug report.");
 }
@@ -76,15 +75,14 @@ inline T_desired forward_as(const T_actual& a) {
  */
 template <
     typename T_desired, typename T_actual,
-    typename = std::enable_if_t<
+    std::enable_if_t<
         std::is_same<value_type_t<T_actual>, value_type_t<T_desired>>::value
         && internal::eigen_static_size_match(
-               T_desired::RowsAtCompileTime,
-               std::decay_t<T_actual>::RowsAtCompileTime)
+            T_desired::RowsAtCompileTime,
+            std::decay_t<T_actual>::RowsAtCompileTime)
         && internal::eigen_static_size_match(
-               T_desired::ColsAtCompileTime,
-               std::decay_t<T_actual>::ColsAtCompileTime)>,
-    typename = void>
+            T_desired::ColsAtCompileTime,
+            std::decay_t<T_actual>::ColsAtCompileTime)>* = nullptr>
 inline T_actual&& forward_as(T_actual&& a) {  // NOLINT
   return std::forward<T_actual>(a);
 }
@@ -107,15 +105,15 @@ inline T_actual&& forward_as(T_actual&& a) {  // NOLINT
  */
 template <
     typename T_desired, typename T_actual,
-    typename = std::enable_if_t<
+    require_all_eigen_t<T_desired, T_actual>* = nullptr,
+    std::enable_if_t<
         !std::is_same<value_type_t<T_actual>, value_type_t<T_desired>>::value
         || !internal::eigen_static_size_match(
-               T_desired::RowsAtCompileTime,
-               std::decay_t<T_actual>::RowsAtCompileTime)
+            T_desired::RowsAtCompileTime,
+            std::decay_t<T_actual>::RowsAtCompileTime)
         || !internal::eigen_static_size_match(
-               T_desired::ColsAtCompileTime,
-               std::decay_t<T_actual>::ColsAtCompileTime)>,
-    typename = void>
+            T_desired::ColsAtCompileTime,
+            std::decay_t<T_actual>::ColsAtCompileTime)>* = nullptr>
 inline T_desired forward_as(const T_actual& a) {
   throw std::runtime_error("Wrong type assumed! Please file a bug report.");
 }
