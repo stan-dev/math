@@ -129,7 +129,7 @@ TEST_F(AgradRev, count_vars_std_vector_eigen_matrix_var_arg) {
   EXPECT_EQ(30, stan::math::count_vars(arg));
 }
 
-TEST_F(AgradRev, count_vars, zero_args) {
+TEST_F(AgradRev, count_vars_zero_args) {
   EXPECT_EQ(0_stan ::math::count_vars());
 }
 
