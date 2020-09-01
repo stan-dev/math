@@ -66,16 +66,15 @@ return_type_t<T_y, T_inv_scale> exponential_lccdf(const T_y& y,
     using y_val_array = Eigen::Array<y_val_scalar, Eigen::Dynamic, 1>;
     if (is_vector<T_inv_scale>::value && !is_vector<T_y>::value) {
       ops_partials.edge2_.partials_ = T_partials_array::Constant(
-          size(beta), -static_cast<T_partials_return>(
-                       forward_as<y_val_scalar>(y_val)));
+          size(beta),
+          -static_cast<T_partials_return>(forward_as<y_val_scalar>(y_val)));
     } else if (is_vector<T_y>::value) {
-      ops_partials.edge2_.partials_ = -forward_as<y_val_array>(y_val)
-                                           .template cast<T_partials_return>();
+      ops_partials.edge2_.partials_
+          = -forward_as<y_val_array>(y_val).template cast<T_partials_return>();
     } else {
       forward_as<internal::broadcast_array<T_partials_return>>(
           ops_partials.edge2_.partials_)
-          = static_cast<T_partials_return>(
-              -forward_as<y_val_scalar>(y_val));
+          = static_cast<T_partials_return>(-forward_as<y_val_scalar>(y_val));
     }
   }
   return ops_partials.build(ccdf_log);
