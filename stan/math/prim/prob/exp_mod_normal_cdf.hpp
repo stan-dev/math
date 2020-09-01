@@ -66,7 +66,10 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
 
   operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_lambda_ref>
       ops_partials(y_ref, mu_ref, sigma_ref, lambda_ref);
-  if (sum(y_val == NEGATIVE_INFTY)) {  // here sum works as "any"
+  // Here + 0 works to "typecast" y_val to int (summing bools is deprecated) and
+  // sum works as "any". Both are chosen as they work on both scalars and Eigen
+  // types.
+  if (sum((y_val == NEGATIVE_INFTY) + 0)) {
     return ops_partials.build(0.0);
   }
 
