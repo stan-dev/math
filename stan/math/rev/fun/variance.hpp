@@ -11,59 +11,39 @@
 
 namespace stan {
 namespace math {
-namespace internal {
-
-inline var calc_variance(size_t size, const var* dtrs) {
-  vari** varis = ChainableStack::instance_->memalloc_.alloc_array<vari*>(size);
-  double* partials
-      = ChainableStack::instance_->memalloc_.alloc_array<double>(size);
-
-  Eigen::Map<const vector_v> dtrs_map(dtrs, size);
-  Eigen::Map<vector_vi>(varis, size) = dtrs_map.vi();
-  vector_d dtrs_vals = dtrs_map.val();
-
-  vector_d diff = dtrs_vals.array() - dtrs_vals.mean();
-  double size_m1 = size - 1;
-  Eigen::Map<vector_d>(partials, size) = 2 * diff.array() / size_m1;
-  double variance = diff.squaredNorm() / size_m1;
-
-  return var(new stored_gradient_vari(variance, size, varis, partials));
-}
-
-}  // namespace internal
 
 /**
  * Return the sample variance of the specified standard
- * vector.  Raise domain error if size is not greater than zero.
+ * vector, Eigen vector, Eigen row vector, or Eigen matrix
+ * Raise domain error if size is not greater than zero.
  *
- * @param[in] v a vector
- * @return sample variance of specified vector
+ * @param[in] x a input
+ * @return sample variance of input
  */
-inline var variance(const std::vector<var>& v) {
-  check_nonzero_size("variance", "v", v);
-  if (v.size() == 1) {
+template <typename T, require_container_vt<is_var, T>* = nullptr>
+inline var variance(const T& x) {
+  check_nonzero_size("variance", "x", x);
+  if (x.size() == 1) {
     return 0;
   }
-  return internal::calc_variance(v.size(), &v[0]);
-}
 
-/**
- * Return the sample variance of the specified vector, row vector,
- * or matrix.  Raise domain error if size is not greater than
- * zero.
- *
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
- * @param[in] m input matrix
- * @return sample variance of specified matrix
- */
-template <int R, int C>
-var variance(const Eigen::Matrix<var, R, C>& m) {
-  check_nonzero_size("variance", "m", m);
-  if (m.size() == 1) {
-    return 0;
-  }
-  return internal::calc_variance(m.size(), &m(0));
+  const auto& x_ref = to_ref(x);
+  const auto& x_array = as_array_or_scalar(x_ref);
+  arena_t<decltype(x_array)> arena_x = x_array;
+  
+  const auto& x_val = to_ref(value_of(x_array));
+  double mean = x_val.mean();
+  arena_matrix<plain_type_t<decltype(x_val)>>
+    arena_diff = x_val.array() - mean;
+
+  var res = arena_diff.matrix().squaredNorm() / (x_array.size() - 1);
+
+  reverse_pass_callback([arena_x, res, arena_diff]() mutable {
+    arena_x.adj() += (2.0 * res.adj() / (arena_x.size() - 1)) *
+      arena_diff;
+  });
+
+  return res;
 }
 
 }  // namespace math

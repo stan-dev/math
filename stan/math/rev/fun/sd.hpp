@@ -3,6 +3,8 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/functor/reverse_pass_callback.hpp>
+#include <stan/math/rev/functor/arena_matrix.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
@@ -30,32 +32,23 @@ var sd(const T& m) {
     return 0;
   }
 
-  return apply_vector_unary<T>::reduce(m, [](const auto& dtrs_map) {
-    using std::sqrt;
-    using T_map = std::decay_t<decltype(dtrs_map)>;
-    using T_vi = promote_scalar_t<vari*, T_map>;
-    using T_d = promote_scalar_t<double, T_map>;
-    vari** varis = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-        dtrs_map.size());
-    double* partials = ChainableStack::instance_->memalloc_.alloc_array<double>(
-        dtrs_map.size());
-    Eigen::Map<T_vi> varis_map(varis, dtrs_map.rows(), dtrs_map.cols());
-    Eigen::Map<T_d> partials_map(partials, dtrs_map.rows(), dtrs_map.cols());
+  return apply_vector_unary<T>::reduce(m, [](const auto& x) {
+    const auto& x_ref = to_ref(x);
+    arena_t<decltype(x_ref)> arena_x = x_ref;
+    const auto& x_val = to_ref(value_of(x));
+    double mean = x_val.mean();
+    arena_matrix<plain_type_t<decltype(x_val)>>
+      arena_diff = x_val.array() - mean;
+    double sum_of_squares = arena_diff.squaredNorm();
+    double sd = sqrt(sum_of_squares / (x.size() - 1));
 
-    varis_map = dtrs_map.vi();
-    T_d dtrs_val = dtrs_map.val();
-    double mean = dtrs_val.mean();
-    T_d diff = dtrs_val.array() - mean;
-    double sum_of_squares = diff.squaredNorm();
-    double size_m1 = dtrs_map.size() - 1;
-    double sd = sqrt(sum_of_squares / size_m1);
+    var res = sd;
 
-    if (sum_of_squares < 1e-20) {
-      partials_map.fill(inv_sqrt(static_cast<double>(dtrs_map.size())));
-    } else {
-      partials_map = diff.array() / (sd * size_m1);
-    }
-    return var(new stored_gradient_vari(sd, dtrs_map.size(), varis, partials));
+    reverse_pass_callback([arena_x, res, arena_diff]() mutable {
+	arena_x.adj() += (res.adj() / (res.val() * (arena_x.size() - 1))) * arena_diff;
+    });
+
+    return res;
   });
 }
 

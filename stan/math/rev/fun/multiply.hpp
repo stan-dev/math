@@ -37,8 +37,8 @@ multiply_impl(const T1& A, const T2& B) {
   check_not_nan("multiply", "A", A_ref);
   check_not_nan("multiply", "B", B_ref);
 
-  arena_matrix<promote_scalar_t<double, T1>> arena_A_val = value_of(A_ref);
-  arena_matrix<promote_scalar_t<double, T2>> arena_B_val = value_of(B_ref);
+  arena_matrix<promote_scalar_t<double, T1>> arena_A_val;
+  arena_matrix<promote_scalar_t<double, T2>> arena_B_val;
 
   arena_matrix<promote_scalar_t<var, T1>> arena_A;
   arena_matrix<promote_scalar_t<var, T2>> arena_B;
@@ -56,12 +56,12 @@ multiply_impl(const T1& A, const T2& B) {
   arena_matrix<Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>>
       res;
 
-  if (!is_constant<T1, T2>::value) {
-    res = arena_A_val * arena_B_val;
-  } else if (!is_constant<T1>::value) {
-    res = value_of(A_ref) * arena_B_val;
-  } else if (!is_constant<T2>::value) {
+  if(is_constant<T1>::value) {
     res = arena_A_val * value_of(B_ref);
+  } else if(is_constant<T2>::value) {
+    res = value_of(A_ref) * arena_B_val;
+  } else {
+    res = arena_A_val * arena_B_val;
   }
 
   reverse_pass_callback(
