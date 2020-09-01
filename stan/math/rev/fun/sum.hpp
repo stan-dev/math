@@ -1,11 +1,14 @@
 #ifndef STAN_MATH_REV_FUN_SUM_HPP
 #define STAN_MATH_REV_FUN_SUM_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/functor/arena_matrix.hpp>
+#include <stan/math/rev/functor/reverse_pass_callback.hpp>
 #include <stan/math/rev/fun/sum.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/fun/typedefs.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <vector>
 
 namespace stan {
