@@ -34,8 +34,8 @@ class sum_v_vari : public vari {
 
   explicit sum_v_vari(const std::vector<var>& v1)
       : vari(sum_of_val(v1)),
-      v_(reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
-          v1.size() * sizeof(vari*)))),
+        v_(reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
+            v1.size() * sizeof(vari*)))),
         length_(v1.size()) {
     for (size_t i = 0; i < length_; i++) {
       v_[i] = v1[i].vi_;
@@ -71,15 +71,14 @@ inline var sum(const std::vector<var>& m) {
  * @param x Specified var_value containing a matrix or vector.
  * @return Sum of coefficients of matrix.
  */
- template <typename T, require_var_matrix_t<T>* = nullptr>
- inline var sum(const T& x) {
-   var res(sum(value_of(x)));
-   arena_t<T> x_arena = x;
-   reverse_pass_callback([res, x_arena]() mutable {
-     x_arena.adj().array() += res.adj();
-   });
-   return res;
- }
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline var sum(const T& x) {
+  var res(sum(value_of(x)));
+  arena_t<T> x_arena = x;
+  reverse_pass_callback(
+      [res, x_arena]() mutable { x_arena.adj().array() += res.adj(); });
+  return res;
+}
 
 }  // namespace math
 }  // namespace stan
