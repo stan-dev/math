@@ -34,8 +34,8 @@ class sum_v_vari : public vari {
 
   explicit sum_v_vari(const std::vector<var>& v1)
       : vari(sum_of_val(v1)),
-        v_(reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
-            v1.size() * sizeof(vari*)))),
+      v_(reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
+          v1.size() * sizeof(vari*)))),
         length_(v1.size()) {
     for (size_t i = 0; i < length_; i++) {
       v_[i] = v1[i].vi_;
@@ -63,56 +63,23 @@ inline var sum(const std::vector<var>& m) {
 }
 
 /**
- * Class for representing sums with constructors for Eigen.
- * The <code>chain()</code> method and member variables are
- * managed by the superclass <code>sum_v_vari</code>.
- */
-class sum_eigen_v_vari : public sum_v_vari {
- public:
-  template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
-  explicit sum_eigen_v_vari(const EigMat& v1)
-      : sum_v_vari(
-            v1.val().sum(),
-            reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
-                v1.size() * sizeof(vari*))),
-            v1.size()) {
-    Eigen::Map<matrix_vi>(v_, v1.rows(), v1.cols()) = v1.vi();
-  }
-};
-
-/**
  * Returns the sum of the coefficients of the specified
- * matrix, column vector or row vector.
+ * matrix.
  *
- * @tparam T type of the matrix of vector (Must be derived from \c
- * Eigen::MatrixBase and contain \c var scalars)
- * @param m Specified matrix or vector.
- * @return Sum of coefficients of matrix.
- */
-template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
-inline var sum(const EigMat& m) {
-  if (m.size() == 0) {
-    return 0.0;
-  }
-  const Eigen::Ref<const plain_type_t<EigMat>>& m_ref = m;
-  return var(new sum_eigen_v_vari(m_ref));
-}
-
-/**
- * Returns the sum of the coefficients of the specified
- * `var_value<matrix/column_vector/row vector>`.
- *
- * @tparam T type of the matrix of vector (Must be derived from \c
- * Eigen::MatrixBase and contain \c var scalars)
+ * @tparam T type of the matrix of vector. Can be either a var matrix or
+ *  matrix of vars.
  * @param x Specified var_value containing a matrix or vector.
  * @return Sum of coefficients of matrix.
  */
-template <typename T, require_eigen_t<T>* = nullptr>
-inline var sum(const var_value<T>& x) {
-  var res(x.val().sum());
-  reverse_pass_callback([res, x]() mutable { x.adj().array() += res.adj(); });
-  return res;
-}
+ template <typename T, require_var_matrix_t<T>* = nullptr>
+ inline var sum(const T& x) {
+   var res(sum(value_of(x)));
+   arena_t<T> x_arena = x;
+   reverse_pass_callback([res, x_arena]() mutable {
+     x_arena.adj().array() += res.adj();
+   });
+   return res;
+ }
 
 }  // namespace math
 }  // namespace stan
