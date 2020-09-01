@@ -11,19 +11,6 @@
 namespace stan {
 namespace math {
 
-
-// struct for passing precomputation data
-struct gaus_interp_params {
-  std::vector<double> as_;
-  std::vector<double> bs_;
-  double sig2_;
-  gaus_interp_params(size_t as_size, size_t bs_size, double sig2) : 
-    as_(as_size), bs_(bs_size), sig2_(sig2) {}
-//  std::vector<double> as;
-//  std::vector<double> bs;
-//  double sig2;
-};
-
 namespace internal {
 /*
  * find the smallest difference between successive elements in a sorted vector
@@ -60,14 +47,14 @@ inline double min_diff(int n, const std::vector<Tx>& xs) {
  *
  * @param xs vector of independent variable of reference points
  * @param ys vector of dependent variable of reference points
- * @param params a struct created by gaus_interp_precomp that
+ * @param params a vector created by gaus_interp_precomp
  * @param x the point at which to evaluate the interpolation
  * @return value of the interpolation at x
  */
 template <typename Tx>
 inline return_type_t<Tx> gaus_interp(const std::vector<double>& xs,
                                      const std::vector<double>& ys,
-                                     const std::vector<double>& params2,
+                                     const std::vector<double>& params,
                                      const Tx& x) {
   // enforce that interpolation point is between smallest and largest
   // reference point
@@ -80,37 +67,39 @@ inline return_type_t<Tx> gaus_interp(const std::vector<double>& xs,
   check_not_nan(function, "x", x);
   check_greater(function, "xs", xs.size(), 1);
 
+  // number of standard deviations to extend endpoints for convolution
   const double NSTDS = 10;
   int n = xs.size();
 
-  // params2 is of the form (as, bs, sig2)
+  // params is vector of the form (as, bs, sig2)
 
   // create copy of xs so that endpoints can be extended
   std::vector<double> xs2 = xs;
 
   // extend out first and last lines for convolution
-  double sig = std::sqrt(params2.back());
-  std::cout << "sig: " << sig << std::endl;
+  double sig = std::sqrt(params[2*n-2]);
   xs2[0] = xs[0] - NSTDS * sig;
   xs2[n - 1] = xs[n - 1] + NSTDS * sig;
 
   // no need to convolve far from center of gaussian, so
   // get lower and upper indexes for integration bounds
-  auto lb = upper_bound(xs.begin(), xs.end(), x - NSTDS * sig);
-  int ind_start = distance(xs.begin(), lb) - 1;
+  auto lb = std::lower_bound(xs.begin(), xs.end(), x - NSTDS * sig);
+  int ind_start = &(*lb) - &xs[0] - 1;
   ind_start = std::max(0, ind_start);
 
-  auto ub = upper_bound(xs.begin(), xs.end(), x + NSTDS * sig);
-  int ind_end = distance(xs.begin(), ub);
+  auto ub = std::upper_bound(xs.begin(), xs.end(), x + NSTDS * sig);
+  int ind_end = &(*ub) - &xs[0];
   ind_end = std::min(n - 1, ind_end);
 
   // sum convolutions over intervals
-  using return_t = return_type_t<Tx>;
-  return_t y = 0;
+  /*
+  return_type_t<Tx> y = 0;
   for (int i = ind_start; i < ind_end; i++) {
-    y += conv_gaus_line(xs2[i], xs2[i + 1], params2[i], params2[(n-1) + i], x,
-                        params2.back());
+    y += conv_gaus_line(xs2[i], xs2[i + 1], params[i], params[(n-1) + i], x,
+                        params[2*n-2]);
   }
+  */
+  return_type_t<Tx> y = conv_gaus_line_sum(x, xs2, params, ind_start, ind_end);
 
   return y;
 }
@@ -141,42 +130,38 @@ inline std::vector<double> gaus_interp_precomp(const std::vector<double>& xs,
   check_greater(function, "xs", xs.size(), 1);
 
   using internal::min_diff;
-  const double INTERP_TOL = 1e-8;
-  const double SIG2_SCALE = 0.1;
+  static const double max_diff = 1e-8;
+  static const double sig2_scale = 0.1;
   int n = xs.size();
-  gaus_interp_params params(n-1, n-1, square(min_diff(n, xs) * SIG2_SCALE));
-  std::vector<double> params2;
-  params2.resize(2*n-1);
-  params2[2*n-2] = square(min_diff(n, xs) * SIG2_SCALE);
-  std::cout << "sig2: " << square(min_diff(n, xs) * SIG2_SCALE) << std::endl; 
-  std::cout << "n: " << n << std::endl; 
-  std::cout << "params2.size(): " << params2.size() << std::endl; 
-  std::cout << "params2.back(): " << params2.back() << std::endl;
-  std::cout << "params2[2*n-2]: " << params2[2*n-2] << std::endl;
-  std::cout << "min_diff(n, xs): " << min_diff(n, xs) << std::endl; 
+
+  // create the vector to be returned that consists of as, bs, sig2
+  std::vector<double> params;
+  params.resize(2*n-1);
+  params[2*n-2] = square(min_diff(n, xs) * sig2_scale);
+
   // copy ys into a new vector that will be changed
   std::vector<double> y2s = ys;
 
   // interatively find interpolation that coincides with ys at xs
   int max_iters = 50;
-  double dmax, dd;
+  double dd;
   for (int j = 0; j < max_iters; j++) {
     // find slope and intercept of line between each point
-    for (int i = 0; i < n - 1; i++) {
-      params2[i] = (y2s[i + 1] - y2s[i]) / (xs[i + 1] - xs[i]);
-      params2[(n - 1) + i] = -xs[i] * params2[i] + y2s[i];
+    for (size_t i = 0; i < n - 1; i++) {
+      params[i] = (y2s[i + 1] - y2s[i]) / (xs[i + 1] - xs[i]);
+      params[(n - 1) + i] = -xs[i] * params[i] + y2s[i];
     }
 
-    dmax = 0;
-    for (int i = 0; i < n; i++) {
-      dd = ys[i] - gaus_interp(xs, y2s, params2, xs[i]);
+    double dmax = 0;
+    for (size_t i = 0; i < n; i++) {
+      dd = ys[i] - gaus_interp(xs, y2s, params, xs[i]);
       y2s[i] += dd;
       dmax = std::max(std::abs(dd), dmax);
     }
-    if (dmax < INTERP_TOL)
+    if (dmax < max_diff)
       break;
   }
-  return params2;
+  return params;
 }
 
 /**
@@ -193,16 +178,16 @@ inline std::vector<double> gaus_interp_precomp(const std::vector<double>& xs,
  */
 
 template <typename Tx>
-inline std::vector<Tx> gaus_interp_vect(const std::vector<double>& xs,
-                                        const std::vector<double>& ys,
-                                        const std::vector<Tx>& xs_new) {
+inline std::vector<Tx> gaus_interp(const std::vector<double>& xs,
+				   const std::vector<double>& ys,
+				   const std::vector<Tx>& xs_new) {
   int n_interp = xs_new.size();
   std::vector<Tx> ys_new(n_interp);
 
   // create interpolation
-  std::vector<double> params2 = gaus_interp_precomp(xs, ys);
+  std::vector<double> params = gaus_interp_precomp(xs, ys);
   for (int i = 0; i < n_interp; i++) {
-    ys_new[i] = gaus_interp(xs, ys, params2, xs_new[i]);
+    ys_new[i] = gaus_interp(xs, ys, params, xs_new[i]);
   }
   return ys_new;
 }

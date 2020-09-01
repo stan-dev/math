@@ -6,7 +6,6 @@ double ABS_TOL = 1e-12;
 
 TEST(mathPrimGausInterp, throwing) {
   using stan::math::gaus_interp;
-  using stan::math::gaus_interp_params;
   using stan::math::gaus_interp_precomp;
   double nan = std::numeric_limits<double>::quiet_NaN();
   double x;
@@ -31,7 +30,6 @@ TEST(mathPrimGausInterp, throwing) {
   // check that error throws when trying to interpolate out of range or nan
   xs = {0, 1};
   ys = {0, 2};
-  //gaus_interp_params params = gaus_interp_precomp(xs, ys);
   std::vector<double> params = gaus_interp_precomp(xs, ys);
   x = 1.1;
   EXPECT_THROW(gaus_interp(xs, ys, params, x), std::domain_error);
@@ -65,9 +63,7 @@ TEST(mathPrimGausInterp, throwing) {
 
 TEST(mathPrimGausInterp, interp_line) {
   using stan::math::gaus_interp;
-  using stan::math::gaus_interp_params;
   using stan::math::gaus_interp_precomp;
-  using stan::math::gaus_interp_vect;
 
   // check that interpolation of line returns the same function
   // generate function tabulation
@@ -90,14 +86,13 @@ TEST(mathPrimGausInterp, interp_line) {
 
   // create interpolation using precomp
   std::vector<double> ys_new_gaus(n_interp);
-  //gaus_interp_params params = gaus_interp_precomp(xs, ys);
   std::vector<double> params = gaus_interp_precomp(xs, ys);
   for (int i = 0; i < n_interp; i++) {
     ys_new_gaus[i] = gaus_interp(xs, ys, params, xs_new[i]);
   }
 
   // create interpolation without precomp
-  std::vector<double> ys_new_gaus2 = gaus_interp_vect(xs, ys, xs_new);
+  std::vector<double> ys_new_gaus2 = gaus_interp(xs, ys, xs_new);
 
   // test points
   double tmp, y;
@@ -109,9 +104,31 @@ TEST(mathPrimGausInterp, interp_line) {
   }
 }
 
+TEST(mathPrimGausInterp, matching_reference_interp_pts) {
+  using stan::math::gaus_interp;
+
+  // check that interpolation returns the same function
+  // when interpolation points are the same as reference points
+
+  // generate function tabulation
+  int n = 3;
+  std::vector<double> xs = {0, 1, 2};
+  std::vector<double> ys = {0, 2, 1};
+
+  // create interpolation points
+  std::vector<double> xs_new = xs;
+
+  // create interpolation
+  std::vector<double> ys_new = gaus_interp(xs, ys, xs_new);
+
+  // test points
+  for (int i = 0; i < n; i++) {
+    ASSERT_NEAR(ys_new[i], ys[i], 1e-8);
+  }
+}
+
 TEST(mathPrimGausInterp, gaus_and_lin_interp) {
   using stan::math::gaus_interp;
-  using stan::math::gaus_interp_params;
   using stan::math::gaus_interp_precomp;
   using stan::math::lin_interp;
 
@@ -150,7 +167,6 @@ TEST(mathPrimGausInterp, gaus_and_lin_interp) {
   }
 
   // gaus interpolation
-  //gaus_interp_params params = gaus_interp_precomp(xs, ys);
   std::vector<double> params = gaus_interp_precomp(xs, ys);
   for (int i = 0; i < n_interp; i++) {
     ys_new_gaus[i] = gaus_interp(xs, ys, params, xs_new[i]);
