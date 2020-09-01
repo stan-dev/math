@@ -422,7 +422,7 @@ class AgradCdfLogTestFixture : public ::testing::Test {
         << "Number of expected gradients and calculated gradients must match "
            "-- error in test fixture";
     for (size_t i = 0; i < expected_gradients.size(); i++) {
-      EXPECT_NEAR(expected_gradients[i], gradients[i], 1e-7)
+      EXPECT_NEAR(expected_gradients[i], gradients[i], 1e-4)
           << "Comparison of expected gradient to calculated gradient failed";
     }
   }
