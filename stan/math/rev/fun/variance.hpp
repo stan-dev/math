@@ -30,17 +30,15 @@ inline var variance(const T& x) {
   const auto& x_ref = to_ref(x);
   const auto& x_array = as_array_or_scalar(x_ref);
   arena_t<decltype(x_array)> arena_x = x_array;
-  
+
   const auto& x_val = to_ref(value_of(x_array));
   double mean = x_val.mean();
-  arena_matrix<plain_type_t<decltype(x_val)>>
-    arena_diff = x_val.array() - mean;
+  arena_matrix<plain_type_t<decltype(x_val)>> arena_diff = x_val.array() - mean;
 
   var res = arena_diff.matrix().squaredNorm() / (x_array.size() - 1);
 
   reverse_pass_callback([arena_x, res, arena_diff]() mutable {
-    arena_x.adj() += (2.0 * res.adj() / (arena_x.size() - 1)) *
-      arena_diff;
+    arena_x.adj() += (2.0 * res.adj() / (arena_x.size() - 1)) * arena_diff;
   });
 
   return res;

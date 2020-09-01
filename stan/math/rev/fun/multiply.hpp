@@ -56,9 +56,9 @@ multiply_impl(const T1& A, const T2& B) {
   arena_matrix<Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>>
       res;
 
-  if(is_constant<T1>::value) {
+  if (is_constant<T1>::value) {
     res = arena_A_val * value_of(B_ref);
-  } else if(is_constant<T2>::value) {
+  } else if (is_constant<T2>::value) {
     res = value_of(A_ref) * arena_B_val;
   } else {
     res = arena_A_val * arena_B_val;
