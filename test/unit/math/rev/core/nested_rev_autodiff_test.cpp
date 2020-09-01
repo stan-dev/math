@@ -1,16 +1,10 @@
 #include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/core/gradable.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-struct AgradLocalNested : public testing::Test {
-  void SetUp() {
-    // make sure memory's clean before starting each test
-    stan::math::recover_memory();
-  }
-};
-
-TEST_F(AgradLocalNested, nested_rev_autodiff_base) {
+TEST_F(AgradRev, nested_rev_autodiff_base) {
   {
     stan::math::nested_rev_autodiff nested;
     EXPECT_THROW(stan::math::recover_memory(), std::logic_error);
@@ -28,7 +22,7 @@ TEST_F(AgradLocalNested, nested_rev_autodiff_base) {
   g_out.test();
 }
 
-TEST_F(AgradLocalNested, nested_rev_autodiff_Gradient1) {
+TEST_F(AgradRev, nested_rev_autodiff_Gradient1) {
   using stan::math::nested_rev_autodiff;
 
   gradable g0 = setup_simple();
@@ -49,7 +43,7 @@ TEST_F(AgradLocalNested, nested_rev_autodiff_Gradient1) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradLocalNested, nested_rev_autodiff_Gradient2) {
+TEST_F(AgradRev, nested_rev_autodiff_Gradient2) {
   using stan::math::nested_rev_autodiff;
 
   gradable g0 = setup_quad_form();
@@ -70,7 +64,7 @@ TEST_F(AgradLocalNested, nested_rev_autodiff_Gradient2) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradLocalNested, nested_rev_autodiff_Gradient3) {
+TEST_F(AgradRev, nested_rev_autodiff_Gradient3) {
   using stan::math::nested_rev_autodiff;
 
   {

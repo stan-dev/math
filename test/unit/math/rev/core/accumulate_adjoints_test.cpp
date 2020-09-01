@@ -1,6 +1,7 @@
-#include <gtest/gtest.h>
-#include <stan/math/rev/core.hpp>
 #include <stan/math.hpp>
+#include <stan/math/rev/core.hpp>
+#include <test/unit/util.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 TEST_F(AgradRev, accumulate_adjoints_zero_args) {

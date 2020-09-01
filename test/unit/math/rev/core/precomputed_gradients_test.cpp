@@ -1,9 +1,9 @@
 #include <stan/math/rev.hpp>
-#include <gtest/gtest.h>
 #include <test/unit/util.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
-TEST(StanAgradRevInternal, precomputed_gradients) {
+TEST_F(AgradRev, precomputed_gradients) {
   double value;
   std::vector<stan::math::var> vars;
   std::vector<double> gradients;
@@ -31,7 +31,7 @@ TEST(StanAgradRevInternal, precomputed_gradients) {
   stan::math::recover_memory();
 }
 
-TEST(StanAgradRevInternal, precomputed_gradients_vari_no_independent_vars) {
+TEST_F(AgradRev, precomputed_gradients_vari_no_independent_vars) {
   double value = 1;
   std::vector<stan::math::var> vars;
   std::vector<double> gradients;
@@ -42,7 +42,7 @@ TEST(StanAgradRevInternal, precomputed_gradients_vari_no_independent_vars) {
   EXPECT_NO_THROW(vi.chain());
 }
 
-TEST(StanAgradRevInternal, precomputed_gradients_vari_mismatched_sizes) {
+TEST_F(AgradRev, precomputed_gradients_vari_mismatched_sizes) {
   double value;
   std::vector<stan::math::var> vars;
   std::vector<double> gradients;
@@ -54,7 +54,7 @@ TEST(StanAgradRevInternal, precomputed_gradients_vari_mismatched_sizes) {
                std::invalid_argument);
 }
 
-TEST(StanAgradRevInternal, precomputed_gradients_vari) {
+TEST_F(AgradRev, precomputed_gradients_vari) {
   double value = 1;
   std::vector<stan::math::var> vars;
   stan::math::var x1(2), x2(3);
@@ -85,7 +85,7 @@ TEST(StanAgradRevInternal, precomputed_gradients_vari) {
   EXPECT_FLOAT_EQ(gradients[1], x2.vi_->adj_);
 }
 
-TEST(StanAgradRevInternal, precomputed_gradients_mismatched_sizes) {
+TEST_F(AgradRev, precomputed_gradients_mismatched_sizes) {
   double value;
   std::vector<stan::math::var> vars;
   std::vector<double> gradients;
@@ -102,7 +102,7 @@ TEST(StanAgradRevInternal, precomputed_gradients_mismatched_sizes) {
   stan::math::recover_memory();
 }
 
-TEST(StanAgradRevInternal, precomputed_gradients_containers) {
+TEST_F(AgradRev, precomputed_gradients_containers) {
   double value = 1;
   std::vector<stan::math::var> vars;
   std::vector<double> gradients;
@@ -128,7 +128,7 @@ TEST(StanAgradRevInternal, precomputed_gradients_containers) {
   stan::math::recover_memory();
 }
 
-TEST(StanAgradRevInternal,
+TEST_F(AgradRev,
      precomputed_gradients_containers_direct_construction) {
   double value = 1;
   std::vector<stan::math::var> vars;
@@ -160,7 +160,7 @@ TEST(StanAgradRevInternal,
   stan::math::recover_memory();
 }
 
-TEST(StanAgradRevInternal, precomputed_gradients_mismatched_containers) {
+TEST_F(AgradRev, precomputed_gradients_mismatched_containers) {
   double value = 1;
   std::vector<stan::math::var> vars;
   std::vector<double> gradients;
