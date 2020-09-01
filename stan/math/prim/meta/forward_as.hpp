@@ -75,6 +75,7 @@ inline T_desired forward_as(const T_actual& a) {
  */
 template <
     typename T_desired, typename T_actual,
+    require_eigen_t<T_desired>* = nullptr,
     std::enable_if_t<
         std::is_same<value_type_t<T_actual>, value_type_t<T_desired>>::value
         && internal::eigen_static_size_match(
