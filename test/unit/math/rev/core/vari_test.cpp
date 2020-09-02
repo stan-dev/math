@@ -43,7 +43,7 @@ TEST_F(AgradRev, dense_row_vector_vari) {
   EXPECT_MATRIX_FLOAT_EQ(B, B_vari.val_);
 }
 
-TEST_F(AgradRev, sparse_matrix_vari) {
+TEST(SparseRev, sparse_matrix_vari) {
   using stan::math::vari_value;
   using eig_mat = Eigen::SparseMatrix<double>;
   using inner_iterator = typename eig_mat::InnerIterator;
@@ -53,6 +53,22 @@ TEST_F(AgradRev, sparse_matrix_vari) {
   vari_value<eig_mat> B_vari(B);
   for (int k = 0; k < B.outerSize(); ++k) {
     for (inner_iterator it(B, k), iz(B_vari.val_, k); it; ++it, ++iz) {
+      EXPECT_FLOAT_EQ(iz.value(), it.value());
+    }
+  }
+}
+
+
+TEST_F(AgradRev, sparse_matrix_vari_free) {
+  using stan::math::vari_value;
+  using eig_mat = Eigen::SparseMatrix<double>;
+  using inner_iterator = typename eig_mat::InnerIterator;
+  using stan::test::make_sparse_matrix_random;
+  auto* A_vari = new vari_value<eig_mat>(make_sparse_matrix_random(10, 10));
+  eig_mat B = make_sparse_matrix_random(10, 10);
+  auto* B_vari = new vari_value<eig_mat>(B);
+  for (int k = 0; k < B.outerSize(); ++k) {
+    for (inner_iterator it(B, k), iz(B_vari->val_, k); it; ++it, ++iz) {
       EXPECT_FLOAT_EQ(iz.value(), it.value());
     }
   }

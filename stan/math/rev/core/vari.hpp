@@ -337,7 +337,7 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
  */
 template <typename T>
 class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
-                                                      chainable_alloc {
+                                                      public chainable_alloc {
  public:
   using PlainObject = plain_type_t<T>;  // Base type of Eigen class
   using value_type = PlainObject;       // vari's adj_ and val_ member type
@@ -377,7 +377,7 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   explicit vari_value(S&& x)
-      : adj_(x), val_(std::forward<S>(x)), chainable_alloc() {
+      : chainable_alloc(), adj_(x), val_(std::forward<S>(x)) {
     this->set_zero_adjoint();
     ChainableStack::instance_->var_stack_.push_back(this);
   }
@@ -400,13 +400,9 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(S&& x, bool stacked)
-      : adj_(x), val_(std::forward<S>(x)), chainable_alloc() {
+      : chainable_alloc(), adj_(x), val_(std::forward<S>(x)) {
     this->set_zero_adjoint();
-    if (stacked) {
-      ChainableStack::instance_->var_stack_.push_back(this);
-    } else {
-      ChainableStack::instance_->var_nochain_stack_.push_back(this);
-    }
+    ChainableStack::instance_->var_stack_.push_back(this);
   }
 
   /**
