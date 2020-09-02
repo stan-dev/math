@@ -26,11 +26,11 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
     const T_inv_scale& lambda) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
   using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
-  using T_y_ref = ref_type_if_t<is_constant<T_y>::value, T_y>;
-  using T_mu_ref = ref_type_if_t<is_constant<T_loc>::value, T_loc>;
-  using T_sigma_ref = ref_type_if_t<is_constant<T_scale>::value, T_scale>;
+  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
+  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
+  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
   using T_lambda_ref
-      = ref_type_if_t<is_constant<T_inv_scale>::value, T_inv_scale>;
+      = ref_type_if_t<!is_constant<T_inv_scale>::value, T_inv_scale>;
   static const char* function = "exp_mod_normal_cdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma, "Inv_scale paramter",
@@ -66,8 +66,18 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
 
   operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_lambda_ref>
       ops_partials(y_ref, mu_ref, sigma_ref, lambda_ref);
-  if (sum(y_val == NEGATIVE_INFTY)) {  // here sum works as "any"
-    return ops_partials.build(0.0);
+
+  using T_y_val_scalar = scalar_type_t<decltype(y_val)>;
+  if (is_vector<T_y>::value) {
+    if ((forward_as<Eigen::Array<T_y_val_scalar, Eigen::Dynamic, 1>>(y_val)
+         == NEGATIVE_INFTY)
+            .any()) {
+      return ops_partials.build(0.0);
+    }
+  } else {
+    if (forward_as<T_y_val_scalar>(y_val) == NEGATIVE_INFTY) {
+      return ops_partials.build(0.0);
+    }
   }
 
   const auto& inv_sigma
