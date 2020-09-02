@@ -213,7 +213,8 @@ class vari_view<T, require_t<bool_constant<!is_plain_type<T>::value
  */
 template <typename T>
 class vari_value<T, require_t<bool_constant<is_plain_type<T>::value
-                                           && is_eigen_dense_base<T>::value>>> : public vari_base {
+                                            && is_eigen_dense_base<T>::value>>>
+    : public vari_base {
  public:
   /**
    * `PlainObject` represents a user constructible type such as Matrix or Array
