@@ -82,8 +82,6 @@ template <typename T>
 class vari_value<T, require_floating_point_t<T>> : public vari_base {
  public:
   using value_type = std::decay_t<T>;
-  static constexpr int RowsAtCompileTime{1};
-  static constexpr int ColsAtCompileTime{1};
   /**
    * The value of this variable.
    */
