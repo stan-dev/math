@@ -25,7 +25,7 @@ namespace math {
  * prim/prob/categorical_logit_glm_lpmf.hpp that is implemented in OpenCL.
  *
  * @tparam T_alpha type of the intercept vector
- * @tparam T_beta type of a scalar in the matrix of weights
+ * @tparam T_beta type of the matrix of weights
  * @param y a scalar or vector of classes. If it is a scalar it will be
  * broadcast - used for all instances. Values should be between 1 and number of
  * classes, including endpoints.
@@ -93,8 +93,8 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   matrix_cl<double> neg_softmax_lin_cl(
       need_alpha_derivative || need_beta_derivative ? N_instances : 0,
       N_classes);
-  matrix_cl<double> alpha_derivative_cl(need_alpha_derivative ? wgs : 0,
-                                        N_classes);
+  matrix_cl<double> alpha_derivative_cl(N_classes,
+                                        need_alpha_derivative ? wgs : 0);
 
   try {
     opencl_kernels::categorical_logit_glm(
@@ -111,32 +111,39 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
     results(check_cl(function, "Vector of dependent variables", y_val,
                      "between 0 and cols of beta"),
             check_cl(function, "Intercept", alpha_val, "finite"))
-        = expressions(y_val >= 0 && y_val <= N_classes, isfinite(alpha_val));
+        = expressions(y_val >= 0 && y_val <= static_cast<int>(N_classes),
+                      isfinite(alpha_val));
     check_cl(function, "Design matrix", x_val, "finite") = isfinite(x_val);
     check_cl(function, "Weight vector", beta_val, "finite")
         = isfinite(beta_val);
   }
 
-  operands_and_partials<T_x, T_alpha, T_beta> ops_partials(alpha, beta);
+  operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
   if (!is_constant_all<T_x>::value) {
-    //todo new kernel
+    ops_partials.edge1_.partials_
+        = transpose(indexing(beta_val, transpose(rowwise_broadcast(y_val)),
+                             constant(0, x.cols(), x.rows())))
+          - elt_multiply(exp_lin_cl * transpose(beta_val),
+                         rowwise_broadcast(inv_sum_exp_lin_cl));
   }
   if (!is_constant_all<T_alpha>::value) {
-    ops_partials.edge2_.partials_
-        = from_matrix_cl(alpha_derivative_cl).colwise().sum();
+    if (wgs == 1) {
+      ops_partials.edge2_.partials_ = std::move(alpha_derivative_cl);
+    } else {
+      ops_partials.edge2_.partials_ = rowwise_sum(alpha_derivative_cl);
+    }
   }
   if (!is_constant_all<T_beta>::value && N_attributes != 0) {
-    matrix_cl<double> beta_derivative_cl = transpose(x) * neg_softmax_lin_cl;
+    ops_partials.edge3_.partials_ = transpose(x_val) * neg_softmax_lin_cl;
     matrix_cl<double> temp(N_classes, local_size * N_attributes);
     try {
       opencl_kernels::categorical_logit_glm_beta_derivative(
           cl::NDRange(local_size * N_attributes), cl::NDRange(local_size),
-          beta_derivative_cl, temp, y, x, N_instances, N_attributes, N_classes,
-          is_y_vector);
+          forward_as<matrix_cl<double>>(ops_partials.edge3_.partials_), temp,
+          y_val_cl, x_val, N_instances, N_attributes, N_classes, is_y_vector);
     } catch (const cl::Error& e) {
       check_opencl_error(function, e);
     }
-    ops_partials.edge3_.partials_ = from_matrix_cl(beta_derivative_cl);
   }
   return ops_partials.build(logp);
 }
