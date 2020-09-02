@@ -43,7 +43,7 @@ inline double lin_interp(const std::vector<double>& xs,
 
   // find in between which points the input, x, lives
   auto ub = std::upper_bound(xs.begin(), xs.end(), x);
-  auto ind = std::distance(xs.begin(), ub);
+  int ind = &(*ub) - &(xs[0]);
 
   // check if the interpolation point falls on a reference point
   if (x == xs[ind - 1]) {
