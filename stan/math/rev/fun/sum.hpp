@@ -76,8 +76,8 @@ inline var sum(const std::vector<var>& m) {
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline var sum(const T& x) {
-  var res(sum(value_of(x)));
   arena_t<T> x_arena = x;
+  var res(sum(value_of(x_arena)));
   reverse_pass_callback(
       [res, x_arena]() mutable { x_arena.adj().array() += res.adj(); });
   return res;
