@@ -6,6 +6,7 @@
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/meta/is_vari.hpp>
+#include <stan/math/rev/functor/reverse_pass_callback.hpp>
 #include <ostream>
 #include <vector>
 #ifdef STAN_OPENCL
@@ -47,9 +48,12 @@ class var_value {
       " floating point types");
 
  public:
-  using value_type = std::decay_t<T>;  // type in vari_value.
+  using value_type = std::decay_t<T>;        // type in vari_value.
   using vari_type = std::conditional_t<is_plain_type<value_type>::value,
                                        vari_value<value_type>, vari_view<T>>;
+
+  static constexpr int RowsAtCompileTime{vari_type::RowsAtCompileTime};
+  static constexpr int ColsAtCompileTime{vari_type::ColsAtCompileTime};
 
   /**
    * Pointer to the implementation of this variable.
@@ -365,35 +369,41 @@ class var_value {
    * View element of eigen matrices
    * @param i Element to access
    */
-  inline const auto coeff(Eigen::Index i) const {
-    using vari_coeff = decltype((*vi_)(i));
-    using var_coeff = var_value<double>;
-    return var_coeff(new vari_coeff((*vi_)(i)));
+  inline auto coeff(Eigen::Index i) const {
+    using vari_coeff_type = decltype(vi_->coeff(i));
+    auto* vari_coeff = new vari_coeff_type(vi_->coeff(i));
+    reverse_pass_callback([vari_coeff, this, i]() mutable {
+      this->vi_->adj_(i) += vari_coeff->adj_;
+    });
+    return var_value<double>(vari_coeff);
   }
+
+  /**
+   * View element of eigen matrices
+   * @param i Row to access
+   * @param j Column to access
+   */
+   inline auto coeff(Eigen::Index i, Eigen::Index j) const {
+     using vari_coeff_type = decltype(vi_->coeff(i, j));
+     auto* vari_coeff = new vari_coeff_type(vi_->coeff(i, j));
+     reverse_pass_callback([vari_coeff, this, i, j]() mutable {
+       this->vi_->adj_(i, j) += vari_coeff->adj_;
+     });
+     return var_value<double>(vari_coeff);
+   }
 
   /**
    * View element of eigen matrices
    * @param i Element to access
    */
-  inline const auto operator()(Eigen::Index i) const { return this->coeff(i); }
+  inline auto operator()(Eigen::Index i) const { return this->coeff(i); }
 
   /**
    * View element of eigen matrices
    * @param i Row to access
    * @param j Column to access
    */
-  inline const auto coeff(Eigen::Index i, Eigen::Index j) const {
-    using vari_coeff = decltype(vi_->coeff(i, j));
-    using var_coeff = var_value<double>;
-    return var_coeff(new vari_coeff((*vi_)(i, j)));
-  }
-
-  /**
-   * View element of eigen matrices
-   * @param i Row to access
-   * @param j Column to access
-   */
-  inline const auto operator()(Eigen::Index i, Eigen::Index j) const {
+  inline auto operator()(Eigen::Index i, Eigen::Index j) const {
     return this->coeff(i, j);
   }
 

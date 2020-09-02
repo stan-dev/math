@@ -81,6 +81,8 @@ template <typename T>
 class vari_value<T, require_floating_point_t<T>> : public vari_base {
  public:
   using value_type = std::decay_t<T>;
+  static constexpr int RowsAtCompileTime{1};
+  static constexpr int ColsAtCompileTime{1};
   /**
    * The value of this variable.
    */
@@ -400,7 +402,15 @@ class vari_value<T, require_eigen_dense_plain_type_t<T>> : public vari_base {
    * @param j Column index
    */
   inline auto coeff(Eigen::Index i, Eigen::Index j) const {
-    return vari_value<double>(val_(i, j), adj_(i, j));
+    return vari_value<double>(val_.coeffRef(i, j), adj_.coeffRef(i, j));
+  }
+
+  /**
+   * Get coefficient of eigen matrices
+   * @param i Column index to slice
+   */
+  inline auto coeff(Eigen::Index i) const {
+    return vari_value<double>(val_.coeffRef(i), adj_.coeffRef(i));
   }
 
   /**
@@ -408,7 +418,7 @@ class vari_value<T, require_eigen_dense_plain_type_t<T>> : public vari_base {
    * @param i Column index to slice
    */
   inline auto operator()(Eigen::Index i) const {
-    return vari_value<double>(val_(i), adj_(i));
+    return this->coeff(i);
   }
 
   /**

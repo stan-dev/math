@@ -168,7 +168,7 @@ TEST_F(AgradRev, var_matrix_views) {
   }
   stan::math::var_value<dense_mat> A_v(A);
   auto A_block = A_v.block(1, 1, 3, 3);
-  EXPECT_MATRIX_FLOAT_EQ(A_block.val(), A.block(1, 1, 3, 3))
+  EXPECT_MATRIX_FLOAT_EQ(A_block.val(), A.block(1, 1, 3, 3));
   auto A_row = A_v.row(3);
   EXPECT_MATRIX_FLOAT_EQ(A.row(3), A_row.vi_->val_);
   auto A_col = A_v.col(3);
@@ -178,6 +178,18 @@ TEST_F(AgradRev, var_matrix_views) {
   auto A_coeff2 = A_v(3, 3);
   EXPECT_FLOAT_EQ(A(3, 3), A_coeff2.vi_->val_);
   EXPECT_MATRIX_FLOAT_EQ(A, A_v.vi_->val_);
+  for (int i = 0; i < A.size(); ++i) {
+    A_v.vi_->adj_(i) = i;
+  }
+  EXPECT_MATRIX_FLOAT_EQ(A_v.adj().block(1, 1, 3, 3), A_block.adj());
+  EXPECT_MATRIX_FLOAT_EQ(A_v.adj().row(3), A_row.adj());
+  EXPECT_MATRIX_FLOAT_EQ(A_v.adj().col(3), A_col.adj());
+  A_coeff1.adj() = 3;
+  A_coeff2.adj() = 3;
+  stan::math::grad();
+  // since new var is made and values propogate back
+  EXPECT_FLOAT_EQ(A_v.adj()(3) - 3, A_coeff1.adj());
+  EXPECT_FLOAT_EQ(A_v.adj()(3, 3) - 33, A_coeff2.adj());
 }
 
 TEST_F(AgradRev, var_vector_views) {
@@ -196,6 +208,16 @@ TEST_F(AgradRev, var_vector_views) {
   auto A_coeff1 = A_v(3);
   EXPECT_FLOAT_EQ(A(3), A_coeff1.vi_->val_);
   EXPECT_MATRIX_FLOAT_EQ(A, A_v.vi_->val_);
+  for (Eigen::Index i = 0; i < A.size(); ++i) {
+    A_v.vi_->adj_(i) = i;
+  }
+  EXPECT_MATRIX_FLOAT_EQ(A_v.adj().head(3), A_head.adj());
+  EXPECT_MATRIX_FLOAT_EQ(A_v.adj().tail(3), A_tail.adj());
+  EXPECT_MATRIX_FLOAT_EQ(A_v.adj().segment(3, 5), A_segment.adj());
+  A_coeff1.adj() = 3;
+  stan::math::grad();
+  // since new var is made and values propogate back
+  EXPECT_FLOAT_EQ(A_v.adj()(3) - 3, A_coeff1.adj());
 }
 
 TEST_F(AgradRev, a_eq_x) {
