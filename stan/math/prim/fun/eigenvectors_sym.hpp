@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
-	  require_not_vt_var<EigMat>* = nullptr>
+          require_not_vt_var<EigMat>* = nullptr>
 Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>
 eigenvectors_sym(const EigMat& m) {
   using PlainMat = plain_type_t<EigMat>;

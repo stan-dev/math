@@ -40,7 +40,7 @@ inline Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime>
 cholesky_decompose(const T& A) {
   const auto& A_ref = to_ref(A);
   Eigen::MatrixXd L_A_val = value_of(A_ref);
-  
+
   check_not_nan("cholesky_decompose", "A", L_A_val);
   check_symmetric("cholesky_decompose", "A", L_A_val);
   Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A_val);
@@ -63,11 +63,11 @@ cholesky_decompose(const T& A) {
     size_t pos = 0;
     for (size_type j = 0; j < M; ++j) {
       for (size_type i = j; i < M; ++i) {
-	res_vars.coeffRef(pos) = L_A_val.coeff(i, j);
-	res.coeffRef(i, j) = res_vars.coeff(pos);
-	if(i != j)
-	  res.coeffRef(j, i) = zero;
-	pos++;
+        res_vars.coeffRef(pos) = L_A_val.coeff(i, j);
+        res.coeffRef(i, j) = res_vars.coeff(pos);
+        if (i != j)
+          res.coeffRef(j, i) = zero;
+        pos++;
       }
     }
 
@@ -88,58 +88,58 @@ cholesky_decompose(const T& A) {
        * @param L_adj matrix of adjoints of L
        */
       auto symbolic_rev = [](auto& L, auto& L_adj) {
-	using Eigen::Upper;
-	using Eigen::Lower;
-	using Eigen::StrictlyUpper;
-	L.transposeInPlace();
-	L_adj = (L * L_adj.template triangularView<Lower>()).eval();
-	L_adj.template triangularView<StrictlyUpper>()
-          = L_adj.adjoint().template triangularView<StrictlyUpper>();
-	L.template triangularView<Upper>().solveInPlace(L_adj);
-	L.template triangularView<Upper>().solveInPlace(L_adj.transpose());
+        using Eigen::Upper;
+        using Eigen::Lower;
+        using Eigen::StrictlyUpper;
+        L.transposeInPlace();
+        L_adj = (L * L_adj.template triangularView<Lower>()).eval();
+        L_adj.template triangularView<StrictlyUpper>()
+            = L_adj.adjoint().template triangularView<StrictlyUpper>();
+        L.template triangularView<Upper>().solveInPlace(L_adj);
+        L.template triangularView<Upper>().solveInPlace(L_adj.transpose());
       };
 
       Eigen::MatrixXd L_adj = Eigen::MatrixXd::Zero(M, M);
       Eigen::MatrixXd L = Eigen::MatrixXd::Zero(M, M);
       size_t pos = 0;
       for (size_type j = 0; j < M; ++j) {
-	for (size_type i = j; i < M; ++i) {
-	  L_adj.coeffRef(i, j) = res_vars.coeff(pos).adj();
-	  L.coeffRef(i, j) = res_vars.coeff(pos).val();
-	  ++pos;
-	}
+        for (size_type i = j; i < M; ++i) {
+          L_adj.coeffRef(i, j) = res_vars.coeff(pos).adj();
+          L.coeffRef(i, j) = res_vars.coeff(pos).val();
+          ++pos;
+        }
       }
 
       for (int k = M; k > 0; k -= block_size) {
-	int j = std::max(0, k - block_size);
-	Block_ R = L.block(j, 0, k - j, j);
-	Block_ D = L.block(j, j, k - j, k - j);
-	Block_ B = L.block(k, 0, M - k, j);
-	Block_ C = L.block(k, j, M - k, k - j);
-	Block_ R_adj = L_adj.block(j, 0, k - j, j);
-	Block_ D_adj = L_adj.block(j, j, k - j, k - j);
-	Block_ B_adj = L_adj.block(k, 0, M - k, j);
-	Block_ C_adj = L_adj.block(k, j, M - k, k - j);
-	if (C_adj.size() > 0) {
-	  C_adj = D.transpose()
-	    .triangularView<Upper>()
-	    .solve(C_adj.transpose())
-	    .transpose();
-	  B_adj.noalias() -= C_adj * R;
-	  D_adj.noalias() -= C_adj.transpose() * C;
-	}
-	symbolic_rev(D, D_adj);
-	R_adj.noalias() -= C_adj.transpose() * B;
-	R_adj.noalias() -= D_adj.selfadjointView<Lower>() * R;
-	D_adj.diagonal() *= 0.5;
-	D_adj.triangularView<StrictlyUpper>().setZero();
+        int j = std::max(0, k - block_size);
+        Block_ R = L.block(j, 0, k - j, j);
+        Block_ D = L.block(j, j, k - j, k - j);
+        Block_ B = L.block(k, 0, M - k, j);
+        Block_ C = L.block(k, j, M - k, k - j);
+        Block_ R_adj = L_adj.block(j, 0, k - j, j);
+        Block_ D_adj = L_adj.block(j, j, k - j, k - j);
+        Block_ B_adj = L_adj.block(k, 0, M - k, j);
+        Block_ C_adj = L_adj.block(k, j, M - k, k - j);
+        if (C_adj.size() > 0) {
+          C_adj = D.transpose()
+                      .triangularView<Upper>()
+                      .solve(C_adj.transpose())
+                      .transpose();
+          B_adj.noalias() -= C_adj * R;
+          D_adj.noalias() -= C_adj.transpose() * C;
+        }
+        symbolic_rev(D, D_adj);
+        R_adj.noalias() -= C_adj.transpose() * B;
+        R_adj.noalias() -= D_adj.selfadjointView<Lower>() * R;
+        D_adj.diagonal() *= 0.5;
+        D_adj.triangularView<StrictlyUpper>().setZero();
       }
       pos = 0;
 
       for (size_type j = 0; j < M; ++j) {
-	for (size_type i = j; i < M; ++i) {
-	  arena_A(i, j).adj() += L_adj.coeffRef(i, j);
-	}
+        for (size_type i = j; i < M; ++i) {
+          arena_A(i, j).adj() += L_adj.coeffRef(i, j);
+        }
       }
     });
   } else {
@@ -158,44 +158,44 @@ cholesky_decompose(const T& A) {
     size_t pos = 0;
     for (int i = 0; i < M; ++i) {
       for (int j = 0; j <= i; ++j) {
-	res_vars.coeffRef(pos) = L_A_val.coeff(i, j);
-	res.coeffRef(i, j) = res_vars.coeff(pos);
-	if(i != j)
-	  res.coeffRef(j, i) = zero;
-	pos++;
+        res_vars.coeffRef(pos) = L_A_val.coeff(i, j);
+        res.coeffRef(i, j) = res_vars.coeff(pos);
+        if (i != j)
+          res.coeffRef(j, i) = zero;
+        pos++;
       }
     }
 
     reverse_pass_callback([arena_A, M, res_vars]() mutable {
-      using RowMajorMatrixXd
-	= Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+      using RowMajorMatrixXd = Eigen::Matrix<double, Eigen::Dynamic,
+                                             Eigen::Dynamic, Eigen::RowMajor>;
       RowMajorMatrixXd adjL(M, M);
       RowMajorMatrixXd LA(M, M);
       RowMajorMatrixXd adjA(M, M);
       size_t pos = 0;
       for (size_t i = 0; i < M; ++i)
-	for (size_t j = 0; j <= i; ++j) {
-	  adjL.coeffRef(i, j) = res_vars.coeff(pos).adj();
-	  LA.coeffRef(i, j) = res_vars.coeff(pos).val();
-	  pos++;
-	}
+        for (size_t j = 0; j <= i; ++j) {
+          adjL.coeffRef(i, j) = res_vars.coeff(pos).adj();
+          LA.coeffRef(i, j) = res_vars.coeff(pos).val();
+          pos++;
+        }
 
       for (int i = M - 1; i >= 0; --i) {
-	for (int j = i; j >= 0; --j) {
-	  if (i == j) {
-	    adjA.coeffRef(i, j) = 0.5 * adjL.coeff(i, j) / LA.coeff(i, j);
-	  } else {
-	    adjA.coeffRef(i, j) = adjL.coeff(i, j) / LA.coeff(j, j);
-	    adjL.coeffRef(j, j)
-              -= adjL.coeff(i, j) * LA.coeff(i, j) / LA.coeff(j, j);
-	  }
-	  for (int k = j - 1; k >= 0; --k) {
-	    adjL.coeffRef(i, k) -= adjA.coeff(i, j) * LA.coeff(j, k);
-	    adjL.coeffRef(j, k) -= adjA.coeff(i, j) * LA.coeff(i, k);
-	  }
-	  
-	  arena_A.coeff(i, j).adj() += adjA.coeffRef(i, j);
-	}
+        for (int j = i; j >= 0; --j) {
+          if (i == j) {
+            adjA.coeffRef(i, j) = 0.5 * adjL.coeff(i, j) / LA.coeff(i, j);
+          } else {
+            adjA.coeffRef(i, j) = adjL.coeff(i, j) / LA.coeff(j, j);
+            adjL.coeffRef(j, j)
+                -= adjL.coeff(i, j) * LA.coeff(i, j) / LA.coeff(j, j);
+          }
+          for (int k = j - 1; k >= 0; --k) {
+            adjL.coeffRef(i, k) -= adjA.coeff(i, j) * LA.coeff(j, k);
+            adjL.coeffRef(j, k) -= adjA.coeff(i, j) * LA.coeff(i, k);
+          }
+
+          arena_A.coeff(i, j).adj() += adjA.coeffRef(i, j);
+        }
       }
     });
   }

@@ -23,11 +23,11 @@ namespace math {
  * @return Eigenvectors of matrix
  */
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
-inline Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
-eigenvectors_sym(const T &m) {
+inline Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> eigenvectors_sym(
+    const T& m) {
   const auto& m_ref = to_ref(m);
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>>
-    arena_m = m_ref;
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arena_m
+      = m_ref;
   check_square("eigenvalues_sym", "m", m_ref);
   Eigen::MatrixXd m_val = value_of(m_ref);
   check_nonzero_size("eigenvalues_sym", "m", m_val);
@@ -35,23 +35,25 @@ eigenvectors_sym(const T &m) {
 
   Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> solver(m_val);
   arena_matrix<Eigen::MatrixXd> arena_eigenvectors_val = solver.eigenvectors();
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>>
-    res = arena_eigenvectors_val;
-  
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> res
+      = arena_eigenvectors_val;
+
   int M = m_val.rows();
   arena_matrix<Eigen::MatrixXd> arena_f(M, M);
   for (int i = 0; i < M; i++)
     for (int j = 0; j < M; j++)
-      arena_f.coeffRef(j, i) = (i != j ? 1 /
-				(solver.eigenvalues().coeff(i) - solver.eigenvalues().coeff(j)) : 0);
+      arena_f.coeffRef(j, i) = (i != j ? 1
+                                             / (solver.eigenvalues().coeff(i)
+                                                - solver.eigenvalues().coeff(j))
+                                       : 0);
 
-  reverse_pass_callback([arena_m, arena_eigenvectors_val,
-			 arena_f, res]() mutable {
+  reverse_pass_callback([arena_m, arena_eigenvectors_val, arena_f,
+                         res]() mutable {
     Eigen::MatrixXd adj = res.adj();
     Eigen::MatrixXd adj2 = arena_eigenvectors_val.transpose() * adj;
     Eigen::MatrixXd tmp = arena_f.cwiseProduct(adj2);
-    arena_m.adj() += arena_eigenvectors_val * tmp *
-      arena_eigenvectors_val.transpose();
+    arena_m.adj()
+        += arena_eigenvectors_val * tmp * arena_eigenvectors_val.transpose();
   });
 
   return res;
