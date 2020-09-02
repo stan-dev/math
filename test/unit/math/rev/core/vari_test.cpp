@@ -58,7 +58,6 @@ TEST(SparseRev, sparse_matrix_vari) {
   }
 }
 
-
 TEST_F(AgradRev, sparse_matrix_vari_free) {
   using stan::math::vari_value;
   using eig_mat = Eigen::SparseMatrix<double>;
