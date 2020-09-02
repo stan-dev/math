@@ -14,85 +14,78 @@ namespace stan {
 namespace math {
 
 namespace internal {
-template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
-class quad_form_vari_alloc : public chainable_alloc {
- private:
-  inline void compute(const Eigen::Matrix<double, Ra, Ca>& A,
-                      const Eigen::Matrix<double, Rb, Cb>& B) {
-    matrix_d Cd = B.transpose() * A * B;
-    for (int j = 0; j < C_.cols(); j++) {
-      for (int i = 0; i < C_.rows(); i++) {
-        if (sym_) {
-          C_(i, j) = var(new vari(0.5 * (Cd(i, j) + Cd(j, i)), false));
-        } else {
-          C_(i, j) = var(new vari(Cd(i, j), false));
-        }
-      }
-    }
+/**
+ * Return the quadratic form \f$ B^T A B \f$.
+ *
+ * Symmetry of the resulting matrix is not guaranteed due to numerical
+ * precision.
+ *
+ * @tparam T1 type of the first (square) matrix
+ * @tparam T2 type of the second matrix
+ *
+ * @param A square matrix
+ * @param B second matrix
+ * @return The quadratic form, which is a symmetric matrix.
+ * @throws std::invalid_argument if A is not square, or if A cannot be
+ * multiplied by B
+ */
+template <typename T1, typename T2,
+          require_all_eigen_t<T1, T2>* = nullptr,
+          require_any_vt_var<T1, T2>* = nullptr>
+inline Eigen::Matrix<var, T2::ColsAtCompileTime, T2::ColsAtCompileTime>
+quad_form_impl(const T1& A, const T2& B) {
+  check_square("quad_form", "A", A);
+  check_multiplicable("quad_form", "A", A, "B", B);
+
+  using A_ref_t = ref_type_t<T1>;
+  using B_ref_t = ref_type_t<T2>;
+
+  A_ref_t A_ref = A;
+  B_ref_t B_ref = B;
+
+  check_not_nan("multiply", "A", A_ref);
+  check_not_nan("multiply", "B", B_ref);
+
+  arena_matrix<promote_scalar_t<double, T1>> arena_A_val;
+  arena_matrix<promote_scalar_t<double, T2>> arena_B_val = value_of(B_ref);
+
+  arena_matrix<promote_scalar_t<var, T1>> arena_A;
+  arena_matrix<promote_scalar_t<var, T2>> arena_B;
+
+  if (!is_constant<T1>::value) {
+    arena_A = A_ref;
   }
 
- public:
-  quad_form_vari_alloc(const Eigen::Matrix<Ta, Ra, Ca>& A,
-                       const Eigen::Matrix<Tb, Rb, Cb>& B,
-                       bool symmetric = false)
-      : A_(A), B_(B), C_(B_.cols(), B_.cols()), sym_(symmetric) {
-    compute(value_of(A), value_of(B));
+  if (!is_constant<T2>::value) {
+    arena_B = B_ref;
+    arena_A_val = value_of(A_ref);
   }
 
-  Eigen::Matrix<Ta, Ra, Ca> A_;
-  Eigen::Matrix<Tb, Rb, Cb> B_;
-  Eigen::Matrix<var, Cb, Cb> C_;
-  bool sym_;
-};
+  arena_matrix<Eigen::Matrix<var, T2::ColsAtCompileTime, T2::ColsAtCompileTime>>
+      res;
 
-template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
-class quad_form_vari : public vari {
- protected:
-  inline void chainA(Eigen::Matrix<double, Ra, Ca>& A,
-                     const Eigen::Matrix<double, Rb, Cb>& Bd,
-                     const Eigen::Matrix<double, Cb, Cb>& adjC) {}
-  inline void chainB(Eigen::Matrix<double, Rb, Cb>& B,
-                     const Eigen::Matrix<double, Ra, Ca>& Ad,
-                     const Eigen::Matrix<double, Rb, Cb>& Bd,
-                     const Eigen::Matrix<double, Cb, Cb>& adjC) {}
-
-  inline void chainA(Eigen::Matrix<var, Ra, Ca>& A,
-                     const Eigen::Matrix<double, Rb, Cb>& Bd,
-                     const Eigen::Matrix<double, Cb, Cb>& adjC) {
-    A.adj() += Bd * adjC * Bd.transpose();
-  }
-  inline void chainB(Eigen::Matrix<var, Rb, Cb>& B,
-                     const Eigen::Matrix<double, Ra, Ca>& Ad,
-                     const Eigen::Matrix<double, Rb, Cb>& Bd,
-                     const Eigen::Matrix<double, Cb, Cb>& adjC) {
-    B.adj() += Ad * Bd * adjC.transpose() + Ad.transpose() * Bd * adjC;
+  if(is_constant<T2>::value) {
+    res = arena_B_val.transpose() * value_of(A_ref) * arena_B_val;
+  } else {
+    res = arena_B_val.transpose() * arena_A_val * arena_B_val;
   }
 
-  inline void chainAB(Eigen::Matrix<Ta, Ra, Ca>& A,
-                      Eigen::Matrix<Tb, Rb, Cb>& B,
-                      const Eigen::Matrix<double, Ra, Ca>& Ad,
-                      const Eigen::Matrix<double, Rb, Cb>& Bd,
-                      const Eigen::Matrix<double, Cb, Cb>& adjC) {
-    chainA(A, Bd, adjC);
-    chainB(B, Ad, Bd, adjC);
-  }
+  reverse_pass_callback(
+      [arena_A, arena_B, arena_A_val, arena_B_val, res]() mutable {
+        auto C_adj = res.adj().eval();
+	auto C_adj_B_t = (C_adj * arena_B_val.transpose()).eval();
+	
+        if (!is_constant<T1>::value)
+          arena_A.adj() += arena_B_val * C_adj_B_t;
 
- public:
-  quad_form_vari(const Eigen::Matrix<Ta, Ra, Ca>& A,
-                 const Eigen::Matrix<Tb, Rb, Cb>& B, bool symmetric = false)
-      : vari(0.0) {
-    impl_ = new quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>(A, B, symmetric);
-  }
+        if (!is_constant<T2>::value)
+          arena_B.adj() += arena_A_val * C_adj_B_t.transpose() +
+	    arena_A_val.transpose() * arena_B_val * C_adj;
+      });
 
-  virtual void chain() {
-    matrix_d adjC = impl_->C_.adj();
+  return res;
+}
 
-    chainAB(impl_->A_, impl_->B_, value_of(impl_->A_), value_of(impl_->B_),
-            adjC);
-  }
-
-  quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>* impl_;
-};
 }  // namespace internal
 
 /**
@@ -114,17 +107,8 @@ template <typename EigMat1, typename EigMat2,
           require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
           require_not_eigen_col_vector_t<EigMat2>* = nullptr,
           require_any_vt_var<EigMat1, EigMat2>* = nullptr>
-inline promote_scalar_t<var, EigMat2> quad_form(const EigMat1& A,
-                                                const EigMat2& B) {
-  check_square("quad_form", "A", A);
-  check_multiplicable("quad_form", "A", A, "B", B);
-
-  auto* baseVari = new internal::quad_form_vari<
-      value_type_t<EigMat1>, EigMat1::RowsAtCompileTime,
-      EigMat1::ColsAtCompileTime, value_type_t<EigMat2>,
-      EigMat2::RowsAtCompileTime, EigMat2::ColsAtCompileTime>(A, B);
-
-  return baseVari->impl_->C_;
+inline auto quad_form(const EigMat1& A, const EigMat2& B) {
+  return internal::quad_form_impl(A, B);
 }
 
 /**
@@ -139,19 +123,12 @@ inline promote_scalar_t<var, EigMat2> quad_form(const EigMat1& A,
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
  */
-template <typename EigMat, typename ColVec, require_eigen_t<EigMat>* = nullptr,
+template <typename EigMat, typename ColVec,
+	  require_eigen_t<EigMat>* = nullptr,
           require_eigen_col_vector_t<ColVec>* = nullptr,
           require_any_vt_var<EigMat, ColVec>* = nullptr>
 inline var quad_form(const EigMat& A, const ColVec& B) {
-  check_square("quad_form", "A", A);
-  check_multiplicable("quad_form", "A", A, "B", B);
-
-  auto* baseVari = new internal::quad_form_vari<
-      value_type_t<EigMat>, EigMat::RowsAtCompileTime,
-      EigMat::ColsAtCompileTime, value_type_t<ColVec>,
-      ColVec::RowsAtCompileTime, 1>(A, B);
-
-  return baseVari->impl_->C_(0, 0);
+  return internal::quad_form_impl(A, B)(0, 0);
 }
 
 }  // namespace math

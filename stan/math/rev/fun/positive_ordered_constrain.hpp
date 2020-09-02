@@ -42,7 +42,7 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> positive_ordered_constrain(
   arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> y = y_val;
   arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> arena_x = x;
 
-  reverse_pass_callback([=]() mutable {
+  reverse_pass_callback([arena_x, exp_x, N, y]() mutable {
     double rolling_adjoint_sum = 0.0;
 
     for (int n = N; --n >= 0;) {

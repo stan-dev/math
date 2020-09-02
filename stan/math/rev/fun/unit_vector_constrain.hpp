@@ -52,30 +52,27 @@ class unit_vector_elt_vari : public vari {
  * @param y vector of K unrestricted variables
  * @return Unit length vector of dimension K
  **/
-template <int R, int C>
-Eigen::Matrix<var, R, C> unit_vector_constrain(
-    const Eigen::Matrix<var, R, C>& y) {
+template <typename T,
+	  require_eigen_vt<is_var, T>* = nullptr>
+plain_type_t<T> unit_vector_constrain(const T& y) {
   check_vector("unit_vector", "y", y);
   check_nonzero_size("unit_vector", "y", y);
-  vector_d y_d = y.val();
 
-  vari** y_vi_array = reinterpret_cast<vari**>(
-      ChainableStack::instance_->memalloc_.alloc(sizeof(vari*) * y.size()));
-  double* unit_vector_y_d_array = reinterpret_cast<double*>(
-      ChainableStack::instance_->memalloc_.alloc(sizeof(double) * y_d.size()));
+  const auto& y_ref = to_ref(y);
+  arena_matrix<promote_scalar_t<double, T>> y_val = value_of(y_ref);
+  arena_matrix<plain_type_t<T>> arena_y = y_ref;
 
-  Eigen::Map<vector_vi>(y_vi_array, y.size()) = y.vi();
-  const double norm = y_d.norm();
+  const double r = y_val.norm();
+  const double r_cubed = r * r * r;
+  arena_matrix<plain_type_t<T>> res = y_val / r;
 
-  check_positive_finite("unit_vector", "norm", norm);
-  Eigen::Map<vector_d> unit_vecd(unit_vector_y_d_array, y.size());
-  unit_vecd = y_d / norm;
+  reverse_pass_callback([arena_y, res, r, r_cubed]() mutable {
+    const auto& adj = to_ref(res.adj());
 
-  Eigen::Matrix<var, R, C> unit_vector_y(y.size());
-  for (int k = 0; k < y.size(); ++k)
-    unit_vector_y.coeffRef(k) = var(new internal::unit_vector_elt_vari(
-        unit_vecd[k], y_vi_array, unit_vector_y_d_array, y.size(), k, norm));
-  return unit_vector_y;
+    arena_y.adj() += adj / r - y_val * (y_val.array() * adj.array()).sum() / r_cubed;
+  });
+
+  return res;
 }
 
 /**

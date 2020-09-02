@@ -31,13 +31,23 @@ tcrossprod(const T& M) {
   arena_matrix<promote_scalar_t<var, T>> arena_M = M;
   arena_matrix<promote_scalar_t<double, T>> arena_M_val = value_of(arena_M);
 
-  Eigen::MatrixXd res_val(M.rows(), M.rows());
-  arena_matrix<promote_scalar_t<var, T>> res
-      = arena_M_val * arena_M_val.transpose();
+  Eigen::Matrix<double, T::RowsAtCompileTime, T::RowsAtCompileTime> res_val(M.rows(), M.rows());
+  res_val.setZero().template selfadjointView<Eigen::Upper>().rankUpdate(arena_M_val);
+
+  arena_matrix<Eigen::Matrix<var, T::RowsAtCompileTime, T::RowsAtCompileTime>> res(M.rows(), M.rows());
+
+  for(size_t j = 0; j < res.cols(); ++j) {
+    for(size_t i = 0; i < j; ++i) {
+      res.coeffRef(i, j) = res.coeffRef(j, i) = res_val.coeff(i, j);
+    }
+    res.coeffRef(j, j) = res_val.coeff(j, j);
+  }
 
   reverse_pass_callback([res, arena_M, arena_M_val]() mutable {
-    ref_type_t<decltype(res.adj())> adj = res.adj();
-    arena_M.adj() += (adj.transpose() + adj) * arena_M_val;
+    Eigen::MatrixXd adj = res.adj();
+    for(size_t i = 0; i < adj.cols(); ++i)
+      adj(i, i) *= 2.0;
+    arena_M.adj() += adj * arena_M_val;
   });
 
   return res;
