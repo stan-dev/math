@@ -17,31 +17,30 @@ namespace math {
  * Returns the squared distance.
  */
 template <typename T1, typename T2,
-	  require_all_stan_scalar_t<T1, T2>* = nullptr,
-	  require_any_var_t<T1, T2>* = nullptr>
+          require_all_stan_scalar_t<T1, T2>* = nullptr,
+          require_any_var_t<T1, T2>* = nullptr>
 inline var squared_distance(const T1& a, const T2& b) {
   double diff = value_of(a) - value_of(b);
   var res = squared_distance(value_of(a), value_of(b));
-  reverse_pass_callback(
-    [a, b, diff, res]() mutable {
-      if (!is_constant<T1>::value)
-	forward_as<var>(a).adj() += 2.0 * res.adj() * diff;
+  reverse_pass_callback([a, b, diff, res]() mutable {
+    if (!is_constant<T1>::value)
+      forward_as<var>(a).adj() += 2.0 * res.adj() * diff;
 
-      if (!is_constant<T2>::value)
-	forward_as<var>(b).adj() += -2.0 * res.adj() * diff;
-    });
+    if (!is_constant<T2>::value)
+      forward_as<var>(b).adj() += -2.0 * res.adj() * diff;
+  });
   return res;
 }
 
 template <typename T1, typename T2,
-	  require_all_eigen_vector_t<T1, T2>* = nullptr,
-	  require_any_vt_var<T1, T2>* = nullptr>
+          require_all_eigen_vector_t<T1, T2>* = nullptr,
+          require_any_vt_var<T1, T2>* = nullptr>
 inline var squared_distance(const T1& A, const T2& B) {
   check_matching_sizes("squared_distance", "A", A, "B", B);
 
-  if(A.size() == 0)
+  if (A.size() == 0)
     return 0.0;
-  
+
   using A_ref_t = ref_type_t<T1>;
   using B_ref_t = ref_type_t<T2>;
 
@@ -66,14 +65,13 @@ inline var squared_distance(const T1& A, const T2& B) {
 
   var res = arena_diff_val.squaredNorm();
 
-  reverse_pass_callback(
-    [arena_A, arena_B, arena_diff_val, res]() mutable {
-      if (!is_constant<T1>::value)
-	arena_A.adj() += 2.0 * res.adj() * arena_diff_val;
+  reverse_pass_callback([arena_A, arena_B, arena_diff_val, res]() mutable {
+    if (!is_constant<T1>::value)
+      arena_A.adj() += 2.0 * res.adj() * arena_diff_val;
 
-      if (!is_constant<T2>::value)
-	arena_B.adj() += -2.0 * res.adj() * arena_diff_val;
-    });
+    if (!is_constant<T2>::value)
+      arena_B.adj() += -2.0 * res.adj() * arena_diff_val;
+  });
 
   return res;
 }

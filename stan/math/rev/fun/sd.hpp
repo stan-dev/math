@@ -37,15 +37,16 @@ var sd(const T& m) {
     arena_t<decltype(x_ref)> arena_x = x_ref;
     const auto& x_val = to_ref(value_of(x));
     double mean = x_val.mean();
-    arena_matrix<plain_type_t<decltype(x_val)>>
-      arena_diff = x_val.array() - mean;
+    arena_matrix<plain_type_t<decltype(x_val)>> arena_diff
+        = x_val.array() - mean;
     double sum_of_squares = arena_diff.squaredNorm();
     double sd = sqrt(sum_of_squares / (x.size() - 1));
 
     var res = sd;
 
     reverse_pass_callback([arena_x, res, arena_diff]() mutable {
-	arena_x.adj() += (res.adj() / (res.val() * (arena_x.size() - 1))) * arena_diff;
+      arena_x.adj()
+          += (res.adj() / (res.val() * (arena_x.size() - 1))) * arena_diff;
     });
 
     return res;
