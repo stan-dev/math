@@ -16,7 +16,7 @@ namespace stan {
 namespace math {
 
 template <typename EigMat1, typename EigMat2,
-	  require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
+          require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
           require_any_vt_var<EigMat1, EigMat2>* = nullptr>
 inline var trace_quad_form(const EigMat1& A, const EigMat2& B) {
   check_square("trace_quad_form", "A", A);
@@ -45,7 +45,7 @@ inline var trace_quad_form(const EigMat1& A, const EigMat2& B) {
 
   var res;
 
-  if(is_constant<EigMat2>::value) {
+  if (is_constant<EigMat2>::value) {
     res = (arena_B_val.transpose() * value_of(A_ref) * arena_B_val).trace();
   } else {
     res = (arena_B_val.transpose() * arena_A_val * arena_B_val).trace();
@@ -54,13 +54,14 @@ inline var trace_quad_form(const EigMat1& A, const EigMat2& B) {
   reverse_pass_callback(
       [arena_A, arena_B, arena_A_val, arena_B_val, res]() mutable {
         double C_adj = res.adj();
-	
+
         if (!is_constant<EigMat1>::value)
           arena_A.adj() += C_adj * arena_B_val * arena_B_val.transpose();
 
         if (!is_constant<EigMat2>::value)
-          arena_B.adj() += C_adj * (arena_A_val * arena_B_val +
-	    arena_A_val.transpose() * arena_B_val);
+          arena_B.adj() += C_adj
+                           * (arena_A_val * arena_B_val
+                              + arena_A_val.transpose() * arena_B_val);
       });
 
   return res;

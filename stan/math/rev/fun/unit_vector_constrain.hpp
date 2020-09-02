@@ -52,8 +52,7 @@ class unit_vector_elt_vari : public vari {
  * @param y vector of K unrestricted variables
  * @return Unit length vector of dimension K
  **/
-template <typename T,
-	  require_eigen_vt<is_var, T>* = nullptr>
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
 plain_type_t<T> unit_vector_constrain(const T& y) {
   check_vector("unit_vector", "y", y);
   check_nonzero_size("unit_vector", "y", y);
@@ -69,7 +68,8 @@ plain_type_t<T> unit_vector_constrain(const T& y) {
   reverse_pass_callback([arena_y, res, r, r_cubed]() mutable {
     const auto& adj = to_ref(res.adj());
 
-    arena_y.adj() += adj / r - y_val * (y_val.array() * adj.array()).sum() / r_cubed;
+    arena_y.adj()
+        += adj / r - y_val * (y_val.array() * adj.array()).sum() / r_cubed;
   });
 
   return res;

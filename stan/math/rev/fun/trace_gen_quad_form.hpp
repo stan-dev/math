@@ -62,35 +62,38 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
 
   var res;
 
-  if(!is_constant<Ta>::value &&
-     !is_constant<Tb>::value &&
-     is_constant<Td>::value) {
-    res = (value_of(D) * arena_B_val.transpose() * arena_A_val * arena_B_val).trace();
-  } else if(is_constant<Ta>::value &&
-	    !is_constant<Tb>::value &&
-	    !is_constant<Td>::value) {
-    res = (arena_D_val * arena_B_val.transpose() * value_of(A) * arena_B_val).trace();
+  if (!is_constant<Ta>::value && !is_constant<Tb>::value
+      && is_constant<Td>::value) {
+    res = (value_of(D) * arena_B_val.transpose() * arena_A_val * arena_B_val)
+              .trace();
+  } else if (is_constant<Ta>::value && !is_constant<Tb>::value
+             && !is_constant<Td>::value) {
+    res = (arena_D_val * arena_B_val.transpose() * value_of(A) * arena_B_val)
+              .trace();
   } else {
-    res = (arena_D_val * arena_B_val.transpose() * arena_A_val * arena_B_val).trace();
+    res = (arena_D_val * arena_B_val.transpose() * arena_A_val * arena_B_val)
+              .trace();
   }
 
-  reverse_pass_callback(
-    [arena_A, arena_B, arena_D,
-     arena_A_val, arena_B_val, arena_D_val, res]() mutable {
-      double C_adj = res.adj();
-	
-      if (!is_constant<Ta>::value)
-	arena_A.adj() += C_adj * arena_B_val *
-	  arena_D_val.transpose() * arena_B_val.transpose();
+  reverse_pass_callback([arena_A, arena_B, arena_D, arena_A_val, arena_B_val,
+                         arena_D_val, res]() mutable {
+    double C_adj = res.adj();
 
-      if (!is_constant<Tb>::value)
-	arena_B.adj() += C_adj * (arena_A_val * arena_B_val * arena_D_val +
-				  arena_A_val.transpose() * arena_B_val * arena_D_val.transpose());
+    if (!is_constant<Ta>::value)
+      arena_A.adj() += C_adj * arena_B_val * arena_D_val.transpose()
+                       * arena_B_val.transpose();
 
-      if (!is_constant<Td>::value)
-	arena_D.adj() += C_adj * ((arena_A_val * arena_B_val).transpose() * arena_B_val);
-    });
-  
+    if (!is_constant<Tb>::value)
+      arena_B.adj() += C_adj
+                       * (arena_A_val * arena_B_val * arena_D_val
+                          + arena_A_val.transpose() * arena_B_val
+                                * arena_D_val.transpose());
+
+    if (!is_constant<Td>::value)
+      arena_D.adj()
+          += C_adj * ((arena_A_val * arena_B_val).transpose() * arena_B_val);
+  });
+
   return res;
 }
 

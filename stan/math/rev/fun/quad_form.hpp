@@ -29,8 +29,7 @@ namespace internal {
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
  */
-template <typename T1, typename T2,
-          require_all_eigen_t<T1, T2>* = nullptr,
+template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
           require_any_vt_var<T1, T2>* = nullptr>
 inline Eigen::Matrix<var, T2::ColsAtCompileTime, T2::ColsAtCompileTime>
 quad_form_impl(const T1& A, const T2& B) {
@@ -64,7 +63,7 @@ quad_form_impl(const T1& A, const T2& B) {
   arena_matrix<Eigen::Matrix<var, T2::ColsAtCompileTime, T2::ColsAtCompileTime>>
       res;
 
-  if(is_constant<T2>::value) {
+  if (is_constant<T2>::value) {
     res = arena_B_val.transpose() * value_of(A_ref) * arena_B_val;
   } else {
     res = arena_B_val.transpose() * arena_A_val * arena_B_val;
@@ -73,14 +72,14 @@ quad_form_impl(const T1& A, const T2& B) {
   reverse_pass_callback(
       [arena_A, arena_B, arena_A_val, arena_B_val, res]() mutable {
         auto C_adj = res.adj().eval();
-	auto C_adj_B_t = (C_adj * arena_B_val.transpose()).eval();
-	
+        auto C_adj_B_t = (C_adj * arena_B_val.transpose()).eval();
+
         if (!is_constant<T1>::value)
           arena_A.adj() += arena_B_val * C_adj_B_t;
 
         if (!is_constant<T2>::value)
-          arena_B.adj() += arena_A_val * C_adj_B_t.transpose() +
-	    arena_A_val.transpose() * arena_B_val * C_adj;
+          arena_B.adj() += arena_A_val * C_adj_B_t.transpose()
+                           + arena_A_val.transpose() * arena_B_val * C_adj;
       });
 
   return res;
@@ -123,8 +122,7 @@ inline auto quad_form(const EigMat1& A, const EigMat2& B) {
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
  */
-template <typename EigMat, typename ColVec,
-	  require_eigen_t<EigMat>* = nullptr,
+template <typename EigMat, typename ColVec, require_eigen_t<EigMat>* = nullptr,
           require_eigen_col_vector_t<ColVec>* = nullptr,
           require_any_vt_var<EigMat, ColVec>* = nullptr>
 inline var quad_form(const EigMat& A, const ColVec& B) {
