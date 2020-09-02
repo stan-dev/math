@@ -42,20 +42,47 @@ inline double lin_interp(const std::vector<double>& xs,
   }
 
   // find in between which points the input, x, lives
-  auto ub = upper_bound(xs.begin(), xs.end(), x);
-  int ind = distance(xs.begin(), ub);
+  auto ub = std::upper_bound(xs.begin(), xs.end(), x);
+  auto ind = std::distance(xs.begin(), ub);
 
   // check if the interpolation point falls on a reference point
-  if (x == *(ub - 1))
+  if (x == xs[ind - 1]) {
     return ys[ind - 1];
+  }
 
   // do linear interpolation
-  double x1 = *(ub - 1);
-  double x2 = *ub;
+  double x1 = xs[ind-1];
+  double x2 = xs[ind];
   double y1 = ys[ind - 1];
   double y2 = ys[ind];
 
   return y1 + (x - x1) * (y2 - y1) / (x2 - x1);
+}
+
+/**
+ * This function takes as input two vectors of reference points (xs and ys)
+ * in addition to a vector, xs_new, of points at which this
+ * function will evaluate a linear interpolation through those reference
+ * points.
+ *
+ * @param xs vector of independent variable of reference points
+ * @param ys vector of dependent variable of reference points
+ * @param xs_new vector of point at which to evaluate interpolation
+ * @return vector of interpolation values
+ */
+
+template <typename Tx>
+inline std::vector<Tx> lin_interp(const std::vector<double>& xs,
+				  const std::vector<double>& ys,
+				  const std::vector<Tx>& xs_new) {
+  int n_interp = xs_new.size();
+  std::vector<Tx> ys_new(n_interp);
+
+  // create interpolation
+  for (int i = 0; i < n_interp; i++) {
+    ys_new[i] = lin_interp(xs, ys, xs_new[i]);
+  }
+  return ys_new;
 }
 
 }  // namespace math

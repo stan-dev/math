@@ -29,6 +29,7 @@ TEST(mathMixGausInterp, derivs) {
   int n_interp = 100;
 
   // add a cushion to each endpoint so that we don't leave interval
+  // when taking finite differences
   t0 = xs[0] + 0.01;
   t1 = xmax - 0.01;
   for (int i = 0; i < n_interp; i++) {

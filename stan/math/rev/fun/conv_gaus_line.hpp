@@ -31,9 +31,8 @@ inline double der_conv_gaus_line(double t0, double t1, double a, double b,
   using std::exp;
   using std::pow;
   using std::sqrt;
-  const double pi = stan::math::pi();
   const double sig = sqrt(sig2);
-  const double alpha = sqrt(2 * pi * sig2);
+  const double alpha = sqrt(2 * pi() * sig2);
 
   double y = (a * x0 + b) / alpha
              * (-exp(-pow(t1 - x0, 2) / (2 * sig2))

@@ -167,7 +167,7 @@ inline std::vector<double> gaus_interp_precomp(const std::vector<double>& xs,
 /**
  * This function combines gaus_interp_precomp and gaus_interp.
  * It takes as input two vectors of reference points (xs and ys)
- * in addition to a vector, xs_new, of points at which the
+ * in addition to a vector, xs_new, of points at which this
  * function will evaluate the interpolation through those reference
  * points.
  *

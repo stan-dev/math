@@ -85,3 +85,27 @@ TEST(mathPrimLinInterp, interp_line) {
   double x = 0.5;
   ASSERT_NEAR(lin_interp(xs, ys, x), lin_interp(xs2, ys2, x), ABS_TOL);
 }
+
+TEST(mathPrimLinInterp, matching_reference_interp_pts) {
+  using stan::math::lin_interp;
+
+  // check that interpolation returns the same function
+  // when interpolation points are the same as reference points
+
+  // generate function tabulation
+  int n = 3;
+  std::vector<double> xs = {0, 1, 2};
+  std::vector<double> ys = {0, 2, 1};
+
+  // create interpolation points, same as reference points
+  std::vector<double> xs_new = xs;
+
+  // create interpolation
+  std::vector<double> ys_new = lin_interp(xs, ys, xs_new);
+
+  // test points
+  for (int i = 0; i < n; i++) {
+    ASSERT_NEAR(ys_new[i], ys[i], ABS_TOL);
+  }
+}
+
