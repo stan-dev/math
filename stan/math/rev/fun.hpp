@@ -54,6 +54,7 @@
 #include <stan/math/rev/fun/fmax.hpp>
 #include <stan/math/rev/fun/fmin.hpp>
 #include <stan/math/rev/fun/fmod.hpp>
+#include <stan/math/rev/fun/from_var_value.hpp>
 #include <stan/math/rev/fun/gamma_p.hpp>
 #include <stan/math/rev/fun/gamma_q.hpp>
 #include <stan/math/rev/fun/gp_periodic_cov.hpp>
@@ -140,6 +141,7 @@
 #include <stan/math/rev/fun/tgamma.hpp>
 #include <stan/math/rev/fun/to_var.hpp>
 #include <stan/math/rev/fun/to_arena.hpp>
+#include <stan/math/rev/fun/to_var_value.hpp>
 #include <stan/math/rev/fun/trace_gen_inv_quad_form_ldlt.hpp>
 #include <stan/math/rev/fun/trace_gen_quad_form.hpp>
 #include <stan/math/rev/fun/trace_inv_quad_form_ldlt.hpp>

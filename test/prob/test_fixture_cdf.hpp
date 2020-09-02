@@ -800,7 +800,7 @@ class AgradCdfTestFixture : public ::testing::Test {
   }
 };
 
-TYPED_TEST_CASE_P(AgradCdfTestFixture);
+TYPED_TEST_SUITE_P(AgradCdfTestFixture);
 
 TYPED_TEST_P(AgradCdfTestFixture, CallAllVersions) {
   this->call_all_versions();
@@ -828,9 +828,9 @@ TYPED_TEST_P(AgradCdfTestFixture, Length0Vector) {
   this->test_length_0_vector();
 }
 
-REGISTER_TYPED_TEST_CASE_P(AgradCdfTestFixture, CallAllVersions, ValidValues,
-                           InvalidValues, FiniteDiff, Function, RepeatAsVector,
-                           LowerBound, UpperBound, Length0Vector);
+REGISTER_TYPED_TEST_SUITE_P(AgradCdfTestFixture, CallAllVersions, ValidValues,
+                            InvalidValues, FiniteDiff, Function, RepeatAsVector,
+                            LowerBound, UpperBound, Length0Vector);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AgradCdfTestFixture);
 
