@@ -247,7 +247,8 @@ class indexing_
  * `indexing(a, b, c) = indexing(a, d, e);`), the result can be wrong due to
  * aliasing. In this case the expression should be evaluated in a temporary by
  * doing `indexing(a, b, c) = indexing(a, d, e).eval();`. This is not necessary
- * if both indexings use the same indices or index no common elements of the matrix.
+ * if both indexings use the same indices or index no common elements of the
+ * matrix.
  *
  * If indexing is assigned to and some element is indexed multiple times it can
  * end with either of the assigned values due to a data race.
