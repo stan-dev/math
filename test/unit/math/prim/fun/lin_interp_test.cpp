@@ -108,4 +108,3 @@ TEST(mathPrimLinInterp, matching_reference_interp_pts) {
     ASSERT_NEAR(ys_new[i], ys[i], ABS_TOL);
   }
 }
-
