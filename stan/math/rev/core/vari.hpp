@@ -417,9 +417,7 @@ class vari_value<T, require_eigen_dense_plain_type_t<T>> : public vari_base {
    * Get coefficient of eigen matrices
    * @param i Column index to slice
    */
-  inline auto operator()(Eigen::Index i) const {
-    return this->coeff(i);
-  }
+  inline auto operator()(Eigen::Index i) const { return this->coeff(i); }
 
   /**
    * Get coefficient of eigen matrices
