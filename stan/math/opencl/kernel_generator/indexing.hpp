@@ -22,8 +22,8 @@ namespace math {
  * Represents indexing of a matrix with two matrices of indices. `indexing(mat,
  * col_index, row_index)[i,j] = mat[col_index[i,j], row_index[i,j]]`
  * @tparam T_mat expression type of the matrix to index
- * @tparam T_col_index expression type of the column index
  * @tparam T_row_index expression type of the row index
+ * @tparam T_col_index expression type of the column index
  */
 template <typename T_mat, typename T_row_index, typename T_col_index>
 class indexing_
@@ -45,8 +45,8 @@ class indexing_
   /**
    * Constructor
    * @param mat expression to index
-   * @param col_index column index expression
    * @param row_index row index expression
+   * @param col_index column index expression
    */
   indexing_(T_mat&& mat, T_row_index&& row_index, T_col_index&& col_index)
       : base(std::forward<T_mat>(mat), std::forward<T_row_index>(row_index),
@@ -243,11 +243,11 @@ class indexing_
  * type as indexed expression. `indexing(mat, col_index, row_index)[i,j] =
  * mat[col_index[i,j], row_index[i,j]]`
  *
- * If a matrix is both indexed and a the result of the kernel (such as in
+ * If a matrix is both indexed and the result of the kernel (such as in
  * `indexing(a, b, c) = indexing(a, d, e);`), the result can be wrong due to
- * aliasing. In such case the expression should be evaluated in a temporary by
- * doing <indexing(a, b, c) = indexing(a, d, e).eval();`. This is not necessary
- * if both indexings use same indices or index no common elements of the marix.
+ * aliasing. In this case the expression should be evaluated in a temporary by
+ * doing `indexing(a, b, c) = indexing(a, d, e).eval();`. This is not necessary
+ * if both indexings use the same indices or index no common elements of the matrix.
  *
  * If indexing is assigned to and some element is indexed multiple times it can
  * end with either of the assigned values due to a data race.
