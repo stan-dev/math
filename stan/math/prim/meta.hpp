@@ -196,7 +196,7 @@
 #include <stan/math/prim/meta/is_plain_type.hpp>
 #include <stan/math/prim/meta/is_string_convertible.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
-#include <stan/math/prim/meta/is_var_matrix.hpp>
+#include <stan/math/prim/meta/is_rev_matrix.hpp>
 #include <stan/math/prim/meta/is_vari.hpp>
 #include <stan/math/prim/meta/is_var_or_arithmetic.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>

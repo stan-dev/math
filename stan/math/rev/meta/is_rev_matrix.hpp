@@ -1,11 +1,11 @@
-#ifndef STAN_MATH_REV_META_IS_VAR_MATRIX_HPP
-#define STAN_MATH_REV_META_IS_VAR_MATRIX_HPP
+#ifndef STAN_MATH_REV_META_IS_REV_MATRIX_HPP
+#define STAN_MATH_REV_META_IS_REV_MATRIX_HPP
 
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/meta/is_var.hpp>
 #include <stan/math/prim/meta/conjunction.hpp>
 #include <stan/math/prim/meta/disjunction.hpp>
-#include <stan/math/prim/meta/is_var_matrix.hpp>
+#include <stan/math/prim/meta/is_rev_matrix.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <type_traits>
 
@@ -17,7 +17,7 @@ namespace stan {
  * `Eigen::EigenBase`
  */
 template <typename T>
-struct is_var_matrix<
+struct is_rev_matrix<
     T, require_all_t<is_var<scalar_type_t<T>>,
                      math::disjunction<is_eigen<T>, is_eigen<value_type_t<T>>>>>
     : std::true_type {};

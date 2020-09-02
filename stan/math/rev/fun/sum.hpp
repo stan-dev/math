@@ -74,7 +74,7 @@ inline var sum(const std::vector<var>& m) {
  * @param x Specified var_value containing a matrix or vector.
  * @return Sum of coefficients of matrix.
  */
-template <typename T, require_var_matrix_t<T>* = nullptr>
+template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline var sum(const T& x) {
   arena_t<T> x_arena = x;
   var res(sum(value_of(x_arena)));
