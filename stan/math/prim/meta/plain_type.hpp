@@ -48,6 +48,9 @@ namespace internal {
  */
 template <typename T>
 using plain_type_check_t = typename std::decay_t<T>::PlainObject;
+template <typename T>
+using derived_check_t = decltype(std::declval<T>().derived());
+
 }  // namespace internal
 
 /**
@@ -58,6 +61,16 @@ using plain_type_check_t = typename std::decay_t<T>::PlainObject;
 template <typename T>
 struct plain_type<T, require_t<is_detected<T, internal::plain_type_check_t>>> {
   using type = typename std::decay_t<T>::PlainObject;
+};
+
+/**
+ * Determines plain (non expression) type associated with \c T. For \c Eigen
+ * expression it is a type the expression can be evaluated into.
+ * @tparam T type to determine plain type of
+ */
+template <typename T>
+struct plain_type<T, require_t<bool_constant<!is_detected<T, internal::plain_type_check_t>::value && is_detected<T, internal::derived_check_t>::value>>> {
+  using type = plain_type_t<decltype(std::declval<T>().derived())>;
 };
 
 }  // namespace stan

@@ -212,13 +212,9 @@ class vari_view<T, require_t<bool_constant<!is_plain_type<T>::value
  *
  */
 template <typename T>
-class vari_value<T, require_eigen_dense_plain_type_t<T>> : public vari_base {
+class vari_value<T, require_t<bool_constant<is_plain_type<T>::value
+                                           && is_eigen_dense_base<T>::value>>> : public vari_base {
  public:
-  static_assert(
-      is_plain_type<T>::value,
-      "The template for this var is an"
-      " expression but a var_value's inner type must be assignable such as"
-      " a double, Eigen::Matrix, or Eigen::Array");
   /**
    * `PlainObject` represents a user constructible type such as Matrix or Array
    */
