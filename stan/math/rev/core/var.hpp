@@ -50,6 +50,7 @@ class var_value {
   using vari_type = vari_value<value_type>;  // Type of underlying vari impl.
   static constexpr int RowsAtCompileTime{vari_type::RowsAtCompileTime};
   static constexpr int ColsAtCompileTime{vari_type::ColsAtCompileTime};
+
   /**
    * Pointer to the implementation of this variable.
    *

@@ -130,6 +130,7 @@
 #include <stan/math/opencl/kernel_generator/holder_cl.hpp>
 #include <stan/math/opencl/kernel_generator/check_cl.hpp>
 #include <stan/math/opencl/kernel_generator/index.hpp>
+#include <stan/math/opencl/kernel_generator/indexing.hpp>
 
 #include <stan/math/opencl/kernel_generator/multi_result_kernel.hpp>
 #include <stan/math/opencl/kernel_generator/get_kernel_source_for_evaluating_into.hpp>
