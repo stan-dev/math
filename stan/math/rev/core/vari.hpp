@@ -189,7 +189,15 @@ class vari_view<T, require_t<bool_constant<!is_plain_type<T>::value
  public:
   using PlainObject = plain_type_t<T>;
   using value_type = std::decay_t<T>;  // The underlying type for this class
-  using eigen_scalar = value_type_t<PlainObject>;  // A floating point type
+  /**
+   * Number of rows known at compile time
+   */
+  static constexpr int RowsAtCompileTime = PlainObject::RowsAtCompileTime;
+  /**
+   * Number of columns known at compile time
+   */
+  static constexpr int ColsAtCompileTime = PlainObject::ColsAtCompileTime;
+
   const T val_;
   const T adj_;
   template <typename S, typename K,
