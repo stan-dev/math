@@ -70,8 +70,9 @@ struct plain_type<T, require_t<is_detected<T, internal::plain_type_check_t>>> {
  */
 template <typename T>
 struct plain_type<T,
-                  require_t<bool_constant<is_eigen<T>::value &&
-                      !is_detected<T, internal::plain_type_check_t>::value
+                  require_t<bool_constant<
+                      is_eigen<T>::value
+                      && !is_detected<T, internal::plain_type_check_t>::value
                       && is_detected<T, internal::derived_check_t>::value>>> {
   using type = plain_type_t<decltype(std::declval<T>().derived())>;
 };
