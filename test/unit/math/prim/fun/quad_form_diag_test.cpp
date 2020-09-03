@@ -1,10 +1,9 @@
 #include <stan/math/prim.hpp>
-#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-using stan::math::quad_form_diag;
-
 TEST(MathMatrixPrim, quadFormDiag) {
+  using stan::math::quad_form_diag;
   Eigen::MatrixXd m(1, 1);
   m << 3;
 
@@ -13,10 +12,11 @@ TEST(MathMatrixPrim, quadFormDiag) {
 
   Eigen::MatrixXd v_m = v.asDiagonal();
 
-  expect_matrix_eq(v_m * m * v_m, quad_form_diag(m, v));
+  EXPECT_MATRIX_FLOAT_EQ(v_m * m * v_m, quad_form_diag(m, v));
 }
 
 TEST(MathMatrixPrim, quadFormDiag2) {
+  using stan::math::quad_form_diag;
   Eigen::MatrixXd m(3, 3);
   m << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
@@ -25,14 +25,15 @@ TEST(MathMatrixPrim, quadFormDiag2) {
 
   Eigen::MatrixXd v_m = v.asDiagonal();
 
-  expect_matrix_eq(v_m * m * v_m, quad_form_diag(m, v));
+  EXPECT_MATRIX_FLOAT_EQ(v_m * m * v_m, quad_form_diag(m, v));
 
   Eigen::RowVectorXd rv(3);
   rv << 1, 2, 3;
-  expect_matrix_eq(v_m * m * v_m, quad_form_diag(m, rv));
+  EXPECT_MATRIX_FLOAT_EQ(v_m * m * v_m, quad_form_diag(m, rv));
 }
 
 TEST(MathMatrixPrim, quadFormDiagException) {
+  using stan::math::quad_form_diag;
   Eigen::MatrixXd m(2, 2);
   m << 2, 3, 4, 5;
   Eigen::VectorXd v(3);

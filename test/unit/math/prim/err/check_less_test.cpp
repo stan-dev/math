@@ -3,9 +3,8 @@
 #include <limits>
 #include <string>
 
-using stan::math::check_less;
-
 TEST(ErrorHandlingMat, CheckLess_Matrix) {
+  using stan::math::check_less;
   const char* function = "check_less";
   double x;
   double high;
@@ -81,6 +80,7 @@ TEST(ErrorHandlingMat, CheckLess_Matrix) {
 }
 
 TEST(ErrorHandlingMat, CheckLess_Matrix_one_indexed_message) {
+  using stan::math::check_less;
   const char* function = "check_less";
   double x;
   double high;
@@ -139,6 +139,7 @@ TEST(ErrorHandlingMat, CheckLess_Matrix_one_indexed_message) {
 }
 
 TEST(ErrorHandlingMat, CheckLess_nan) {
+  using stan::math::check_less;
   const char* function = "check_less";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
@@ -176,6 +177,7 @@ TEST(ErrorHandlingMat, CheckLess_nan) {
 }
 
 TEST(ErrorHandlingScalar, CheckLess) {
+  using stan::math::check_less;
   const char* function = "check_less";
   double x = -10.0;
   double lb = 0.0;
@@ -207,6 +209,7 @@ TEST(ErrorHandlingScalar, CheckLess) {
 }
 
 TEST(ErrorHandlingScalar, CheckLess_nan) {
+  using stan::math::check_less;
   const char* function = "check_less";
   double x = 10.0;
   double lb = 0.0;

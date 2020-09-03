@@ -53,8 +53,8 @@ inline auto hmm_marginal_val(
  * the derivative is calculated with an adjoint method,
  * e.g (Betancourt, Margossian, & Leos-Barajas, 2020).
  * log_omegas is a matrix of observational densities, where
- * the (i, j)th entry corresponds to the density of the ith observation, y_i,
- * given x_i = j.
+ * the (i, j)th entry corresponds to the density of the jth observation, y_j,
+ * given x_j = i.
  * The transition matrix Gamma is such that the (i, j)th entry is the
  * probability that x_n = j given x_{n - 1} = i. The rows of Gamma are
  * simplexes.

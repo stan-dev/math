@@ -1,5 +1,5 @@
 #include <stan/math/prim.hpp>
-#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, identity_matrix) {
@@ -12,7 +12,7 @@ TEST(MathFunctions, identity_matrix) {
 
   for (int K = 1; K < 5; K++) {
     MatrixXd m = Eigen::MatrixXd::Identity(K, K);
-    expect_matrix_eq(m, identity_matrix(K));
+    EXPECT_MATRIX_FLOAT_EQ(m, identity_matrix(K));
   }
 }
 

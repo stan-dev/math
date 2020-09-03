@@ -110,3 +110,60 @@ LIST_OF_GENERATED_TESTS := $(shell find test/prob -type f -name '*_test.hpp' | s
 .PHONY: generate-tests
 generate-tests: $(LIST_OF_GENERATED_TESTS)
 endif
+
+
+##
+# Building stanc3 binary used for expressions tests
+##
+
+STANC_DL_RETRY = 5
+STANC_DL_DELAY = 10
+
+ifeq ($(OS),Windows_NT)
+ OS_TAG := windows
+else ifeq ($(OS),Darwin)
+ OS_TAG := mac
+else ifeq ($(OS),Linux)
+ OS_TAG := linux
+endif
+
+ifeq ($(OS),Windows_NT)
+TEST_STANC = test/expressions/stanc$(EXE) test\expressions\stanc$(EXE)
+else
+TEST_STANC = test/expressions/stanc$(EXE)
+endif
+
+ifneq ($(STANC3),)
+  
+  # build stanc3 from local installation
+  $(TEST_STANC) : $(call findfiles,$(STANC3)/src/,*.ml*) $(STANC#)
+	@mkdir -p $(dir $@)
+	cd $(STANC3) && echo "--- Rebuilding stanc ---\n" && dune build @install
+	cp $(STANC3)/_build/default/src/stanc/stanc.exe $@
+	
+else ifneq ($(STANC3_TEST_BIN_URL),)
+
+# download stanc3 build from specific branch
+ifeq ($(OS_TAG),windows)
+    $(TEST_STANC) :
+	@mkdir -p $(dir $@)
+	$(shell echo "curl -L $(STANC3_TEST_BIN_URL)/bin/$(OS_TAG)-stanc -o $@ --retry $(STANC_DL_RETRY) --retry-delay $(STANC_DL_DELAY)")
+else
+    $(TEST_STANC) :
+	@mkdir -p $(dir $@)
+	curl -L $(STANC3_TEST_BIN_URL)/bin/$(OS_TAG)-stanc -o $@ --retry $(STANC_DL_RETRY) --retry-delay $(STANC_DL_DELAY)
+	chmod +x $@
+endif # end download if/else
+
+else ifeq ($(OS_TAG),windows)
+# get latest stanc3 - Windows
+    $(TEST_STANC) :
+	@mkdir -p $(dir $@)
+	$(shell echo "curl -L https://github.com/stan-dev/stanc3/releases/download/nightly/$(OS_TAG)-stanc -o $@ --retry $(STANC_DL_RETRY) --retry-delay $(STANC_DL_DELAY)")
+else
+# get latest stanc3 - Linux & MacOS
+    $(TEST_STANC) :
+	@mkdir -p $(dir $@)
+	curl -L https://github.com/stan-dev/stanc3/releases/download/nightly/$(OS_TAG)-stanc -o $@ --retry $(STANC_DL_RETRY) --retry-delay $(STANC_DL_DELAY)
+	chmod +x $@
+endif

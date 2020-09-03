@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
+#include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -25,10 +26,27 @@ namespace math {
  * @param[in] y_hat response value in [0, 1]
  * @return Log loss for response given reference value
  */
-template <typename T>
+template <typename T, require_arithmetic_t<T>* = nullptr>
 inline T binary_log_loss(int y, const T& y_hat) {
   using std::log;
   return y ? -log(y_hat) : -log1m(y_hat);
+}
+
+/**
+ * Enables the vectorised application of the binary log loss function, when
+ * the first and/or second arguments are containers.
+ *
+ * @tparam T1 type of first input
+ * @tparam T2 type of second input
+ * @param a First input
+ * @param b Second input
+ * @return Binary log loss function applied to the two inputs.
+ */
+template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
+inline auto binary_log_loss(const T1& a, const T2& b) {
+  return apply_scalar_binary(a, b, [&](const auto& c, const auto& d) {
+    return binary_log_loss(c, d);
+  });
 }
 
 }  // namespace math

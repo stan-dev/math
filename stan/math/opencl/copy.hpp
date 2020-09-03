@@ -11,6 +11,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
+#include <stan/math/opencl/value_type.hpp>
 #include <stan/math/opencl/kernels/copy.hpp>
 #include <stan/math/opencl/kernels/pack.hpp>
 #include <stan/math/opencl/kernels/unpack.hpp>
@@ -41,7 +42,7 @@ namespace math {
  * @return matrix_cl with a copy of the data in the source matrix
  */
 template <typename Mat, typename Mat_scalar = scalar_type_t<Mat>,
-          require_eigen_vt<std::is_arithmetic, Mat>...>
+          require_eigen_vt<std::is_arithmetic, Mat>* = nullptr>
 inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
   return matrix_cl<Mat_scalar>(std::forward<Mat>(src));
 }
@@ -60,7 +61,7 @@ inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
  * @return matrix_cl with a copy of the data in the source matrix
  */
 template <typename Vec, typename Vec_scalar = scalar_type_t<Vec>,
-          require_std_vector_vt<std::is_arithmetic, Vec>...>
+          require_std_vector_vt<std::is_arithmetic, Vec>* = nullptr>
 inline matrix_cl<Vec_scalar> to_matrix_cl(Vec&& src) {
   return matrix_cl<Vec_scalar>(std::forward<Vec>(src));
 }
@@ -99,6 +100,23 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
     check_opencl_error("copy (OpenCL)->Eigen", e);
   }
   return dst;
+}
+
+/** \ingroup opencl
+ * Copies result of a kernel generator expression to the
+ * destination Eigen matrix.
+ *
+ * @tparam R rows type of the destination
+ * @tparam C cols type of the destination
+ * @tparam T type of expression
+ * @param src source expression
+ * @return Eigen matrix with a copy of the data in the source matrix
+ */
+template <int R = Eigen::Dynamic, int C = Eigen::Dynamic, typename T,
+          require_all_kernel_expressions_t<T>* = nullptr,
+          require_not_matrix_cl_t<T>* = nullptr>
+inline Eigen::Matrix<value_type_t<T>, R, C> from_matrix_cl(const T& src) {
+  return from_matrix_cl<R, C>(src.eval());
 }
 
 /** \ingroup opencl
@@ -158,7 +176,7 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
  */
 template <matrix_cl_view matrix_view, typename Vec,
           typename Vec_scalar = scalar_type_t<Vec>,
-          require_vector_vt<std::is_arithmetic, Vec>...>
+          require_vector_vt<std::is_arithmetic, Vec>* = nullptr>
 inline matrix_cl<Vec_scalar> packed_copy(Vec&& src, int rows) {
   const int packed_size = rows * (rows + 1) / 2;
   check_size_match("copy (packed std::vector -> OpenCL)", "src.size()",
