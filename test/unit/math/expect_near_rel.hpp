@@ -218,6 +218,4 @@ void expect_near_rel(const std::string& msg, const std::complex<T1>& z1,
   stan::test::expect_near_rel( \
       "Error in file: " __FILE__ ", on line: " TO_STRING(__LINE__), a, b);
 
-//#undef TO_STRING
-//#undef TO_STRING_
 #endif
