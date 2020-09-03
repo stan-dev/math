@@ -2,9 +2,8 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-using stan::math::fvar;
-
 TEST(AgradFwdMatrixGetBase1LHS, failing_pre_20_fd) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1_lhs;
@@ -14,6 +13,7 @@ TEST(AgradFwdMatrixGetBase1LHS, failing_pre_20_fd) {
   EXPECT_FLOAT_EQ(1, z.val_);
 }
 TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_vec1_fd) {
+  using stan::math::fvar;
   using stan::math::get_base1_lhs;
   std::vector<fvar<double> > x(2);
   x[0] = 10.0;
@@ -28,6 +28,7 @@ TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_vec1_fd) {
   EXPECT_THROW(get_base1_lhs(x, 3, "x[3]", 0), std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_vec2_fd) {
+  using stan::math::fvar;
   using stan::math::get_base1_lhs;
   using std::vector;
   size_t M = 3;
@@ -58,6 +59,7 @@ TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_vec2_fd) {
                std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_matrix_fd) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1_lhs;
@@ -89,6 +91,7 @@ TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_matrix_fd) {
   EXPECT_THROW(get_base1_lhs(x, 1, 0, "x", 1), std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_vector_fd) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1_lhs;
@@ -101,6 +104,7 @@ TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_vector_fd) {
   EXPECT_THROW(get_base1_lhs(x, 100, "x", 1), std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_row_vector_fd) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1_lhs;
@@ -113,6 +117,7 @@ TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_row_vector_fd) {
   EXPECT_THROW(get_base1_lhs(x, 100, "x", 1), std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_8_fd) {
+  using stan::math::fvar;
   using stan::math::get_base1_lhs;
   using std::vector;
   fvar<double> x0(42.0);
@@ -158,6 +163,7 @@ TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_8_fd) {
 }
 
 TEST(AgradFwdMatrixGetBase1LHS, failing_pre_20_ffd) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1_lhs;
@@ -167,6 +173,7 @@ TEST(AgradFwdMatrixGetBase1LHS, failing_pre_20_ffd) {
   EXPECT_FLOAT_EQ(1, z.val_.val_);
 }
 TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_vec1_ffd) {
+  using stan::math::fvar;
   using stan::math::get_base1_lhs;
   std::vector<fvar<fvar<double> > > x(2);
   x[0] = 10.0;
@@ -181,6 +188,7 @@ TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_vec1_ffd) {
   EXPECT_THROW(get_base1_lhs(x, 3, "x[3]", 0), std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_vec2_ffd) {
+  using stan::math::fvar;
   using stan::math::get_base1_lhs;
   using std::vector;
   size_t M = 3;
@@ -213,6 +221,7 @@ TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_vec2_ffd) {
 }
 
 TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_matrix_ffd) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1_lhs;
@@ -247,6 +256,7 @@ TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_matrix_ffd) {
 }
 
 TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_vector_ffd) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1_lhs;
@@ -260,6 +270,7 @@ TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_vector_ffd) {
 }
 
 TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_row_vector_ffd) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1_lhs;
@@ -273,6 +284,7 @@ TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_row_vector_ffd) {
 }
 
 TEST(AgradFwdMatrixGetBase1LHS, get_base1_lhs_8_ffd) {
+  using stan::math::fvar;
   using stan::math::get_base1_lhs;
   using std::vector;
   fvar<fvar<double> > x0(42.0);

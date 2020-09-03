@@ -2,9 +2,8 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-using stan::math::fvar;
-
 TEST(AgradFwdMatrixArrayBuilder, fvar_double) {
+  using stan::math::fvar;
   using stan::math::array_builder;
   using std::vector;
 
@@ -58,6 +57,7 @@ TEST(AgradFwdMatrixArrayBuilder, fvar_double) {
 }
 
 TEST(AgradFwdMatrixArrayBuilder, fvar_fvar_double) {
+  using stan::math::fvar;
   using stan::math::array_builder;
   using std::vector;
 

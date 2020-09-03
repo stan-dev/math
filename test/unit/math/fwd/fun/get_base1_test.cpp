@@ -2,9 +2,8 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-using stan::math::fvar;
-
 TEST(AgradFwdMatrixGetBase1, failing_pre_20_fd) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1;
@@ -13,6 +12,7 @@ TEST(AgradFwdMatrixGetBase1, failing_pre_20_fd) {
   EXPECT_FLOAT_EQ(1, get_base1(y, 1, "y", 1).val_);
 }
 TEST(AgradFwdMatrixGetBase1, get_base1_vec1_fd) {
+  using stan::math::fvar;
   using stan::math::get_base1;
   std::vector<fvar<double> > x(2);
   x[0] = 10.0;
@@ -28,6 +28,7 @@ TEST(AgradFwdMatrixGetBase1, get_base1_vec1_fd) {
   EXPECT_THROW(get_base1(x, 3, "x[3]", 0), std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1, get_base1_vec2_fd) {
+  using stan::math::fvar;
   using stan::math::get_base1;
   using std::vector;
   size_t M = 3;
@@ -59,6 +60,7 @@ TEST(AgradFwdMatrixGetBase1, get_base1_vec2_fd) {
                std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1, get_base1_matrix_fd) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1;
@@ -83,6 +85,7 @@ TEST(AgradFwdMatrixGetBase1, get_base1_matrix_fd) {
   EXPECT_THROW(get_base1(x, 1, 0, "x", 1), std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1, get_base1_vector_fd) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1;
@@ -95,6 +98,7 @@ TEST(AgradFwdMatrixGetBase1, get_base1_vector_fd) {
   EXPECT_THROW(get_base1(x, 100, "x", 1), std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1, get_base1_row_vector_fd) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1;
@@ -107,6 +111,7 @@ TEST(AgradFwdMatrixGetBase1, get_base1_row_vector_fd) {
   EXPECT_THROW(get_base1(x, 100, "x", 1), std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1, get_base1_8_fd) {
+  using stan::math::fvar;
   using stan::math::get_base1;
   using std::vector;
   fvar<double> x0(42.0);
@@ -152,6 +157,7 @@ TEST(AgradFwdMatrixGetBase1, get_base1_8_fd) {
 }
 
 TEST(AgradFwdMatrixGetBase1, failing_pre_20_ffd) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1;
@@ -160,6 +166,7 @@ TEST(AgradFwdMatrixGetBase1, failing_pre_20_ffd) {
   EXPECT_FLOAT_EQ(1, get_base1(y, 1, "y", 1).val_.val_);
 }
 TEST(AgradFwdMatrixGetBase1, get_base1_vec1_ffd) {
+  using stan::math::fvar;
   using stan::math::get_base1;
   std::vector<fvar<fvar<double> > > x(2);
   x[0] = 10.0;
@@ -175,6 +182,7 @@ TEST(AgradFwdMatrixGetBase1, get_base1_vec1_ffd) {
   EXPECT_THROW(get_base1(x, 3, "x[3]", 0), std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1, get_base1_vec2_ffd) {
+  using stan::math::fvar;
   using stan::math::get_base1;
   using std::vector;
   size_t M = 3;
@@ -207,6 +215,7 @@ TEST(AgradFwdMatrixGetBase1, get_base1_vec2_ffd) {
                std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1, get_base1_matrix_ffd) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1;
@@ -234,6 +243,7 @@ TEST(AgradFwdMatrixGetBase1, get_base1_matrix_ffd) {
   EXPECT_THROW(get_base1(x, 1, 0, "x", 1), std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1, get_base1_vector_ffd) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1;
@@ -246,6 +256,7 @@ TEST(AgradFwdMatrixGetBase1, get_base1_vector_ffd) {
   EXPECT_THROW(get_base1(x, 100, "x", 1), std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1, get_base1_row_vector_ffd) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1;
@@ -258,6 +269,7 @@ TEST(AgradFwdMatrixGetBase1, get_base1_row_vector_ffd) {
   EXPECT_THROW(get_base1(x, 100, "x", 1), std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1, get_base1_8_ffd) {
+  using stan::math::fvar;
   using stan::math::get_base1;
   using std::vector;
   fvar<fvar<double> > x0(42.0);

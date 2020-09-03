@@ -3,9 +3,8 @@
 #include <stdexcept>
 #include <vector>
 
-using stan::math::fvar;
-
 TEST(AgradFwdMatrixAssign, vector_fvar_double) {
+  using stan::math::fvar;
   using stan::math::assign;
   using std::vector;
 
@@ -31,6 +30,7 @@ TEST(AgradFwdMatrixAssign, vector_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, eigen_row_vector_fvar_double_to_fvar_double) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -54,6 +54,7 @@ TEST(AgradFwdMatrixAssign, eigen_row_vector_fvar_double_to_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, eigen_row_vector_fvar_double_shape_mismatch) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -76,6 +77,7 @@ TEST(AgradFwdMatrixAssign, eigen_row_vector_fvar_double_shape_mismatch) {
 }
 
 TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_double_to_fvar_double) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -104,6 +106,7 @@ TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_double_to_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_double_shape_mismatch) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -128,6 +131,7 @@ TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_double_shape_mismatch) {
 }
 
 TEST(AgradFwdMatrixAssign, block) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -146,6 +150,7 @@ TEST(AgradFwdMatrixAssign, block) {
 }
 
 TEST(AgradFwdMatrixAssign, vector_vector_fvar_double) {
+  using stan::math::fvar;
   using stan::math::assign;
   using std::vector;
   vector<vector<fvar<double> > > x(3, vector<fvar<double> >(2));
@@ -169,6 +174,7 @@ TEST(AgradFwdMatrixAssign, vector_vector_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, vector_vector_vector_fvar_double) {
+  using stan::math::fvar;
   using stan::math::assign;
   using std::vector;
   vector<vector<vector<fvar<double> > > > x(
@@ -198,6 +204,7 @@ TEST(AgradFwdMatrixAssign, vector_vector_vector_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, vector_eigen_vector_fvar_double) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -227,6 +234,7 @@ TEST(AgradFwdMatrixAssign, vector_eigen_vector_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, get_assign_row_fvar_double) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -245,6 +253,7 @@ TEST(AgradFwdMatrixAssign, get_assign_row_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, vector_fvar_fvar_double) {
+  using stan::math::fvar;
   using stan::math::assign;
   using std::vector;
 
@@ -279,6 +288,7 @@ TEST(AgradFwdMatrixAssign, vector_fvar_fvar_double) {
 
 TEST(AgradFwdMatrixAssign,
      eigen_row_vector_fvar_fvar_double_to_fvar_fvar_double) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -310,6 +320,7 @@ TEST(AgradFwdMatrixAssign,
 }
 
 TEST(AgradFwdMatrixAssign, eigen_row_vector_fvar_fvar_double_shape_mismatch) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -332,6 +343,7 @@ TEST(AgradFwdMatrixAssign, eigen_row_vector_fvar_fvar_double_shape_mismatch) {
 }
 
 TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_fvar_double_to_fvar_fvar_double) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -374,6 +386,7 @@ TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_fvar_double_to_fvar_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_fvar_double_shape_mismatch) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -398,6 +411,7 @@ TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_fvar_double_shape_mismatch) {
 }
 
 TEST(AgradFwdMatrixAssign, block_fvar_fvar_double) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -416,6 +430,7 @@ TEST(AgradFwdMatrixAssign, block_fvar_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, vector_vector_fvar_fvar_double) {
+  using stan::math::fvar;
   using stan::math::assign;
   using std::vector;
   vector<vector<fvar<fvar<double> > > > x(3, vector<fvar<fvar<double> > >(2));
@@ -443,6 +458,7 @@ TEST(AgradFwdMatrixAssign, vector_vector_fvar_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, vector_vector_vector_fvar_fvar_double) {
+  using stan::math::fvar;
   using stan::math::assign;
   using std::vector;
   vector<vector<vector<fvar<fvar<double> > > > > x(
@@ -478,6 +494,7 @@ TEST(AgradFwdMatrixAssign, vector_vector_vector_fvar_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, vector_eigen_vector_fvar_fvar_double) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -510,6 +527,7 @@ TEST(AgradFwdMatrixAssign, vector_eigen_vector_fvar_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, get_assign_row_fvar_fvar_double) {
+  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
