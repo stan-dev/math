@@ -2,10 +2,9 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-
 TEST(ProbDistributionsMultiGPCholesky, MultiGPCholesky) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, 1> mu(5, 1);
   mu.setZero();
 
@@ -32,6 +31,8 @@ TEST(ProbDistributionsMultiGPCholesky, MultiGPCholesky) {
 }
 
 TEST(ProbDistributionsMultiGPCholesky, ErrorL) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, Dynamic> y(3, 5);
   y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
       -2.0, -11.0;
@@ -47,6 +48,8 @@ TEST(ProbDistributionsMultiGPCholesky, ErrorL) {
 }
 
 TEST(ProbDistributionsMultiGPCholesky, ErrorW) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, Dynamic> y(3, 5);
   y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
       -2.0, -11.0;
@@ -74,6 +77,8 @@ TEST(ProbDistributionsMultiGPCholesky, ErrorW) {
 }
 
 TEST(ProbDistributionsMultiGPCholesky, ErrorY) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, Dynamic> y(3, 5);
   y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
       -2.0, -11.0;

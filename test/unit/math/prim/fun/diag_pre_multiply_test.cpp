@@ -1,12 +1,11 @@
 #include <stan/math/prim.hpp>
-#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using stan::math::diag_pre_multiply;
-
 TEST(MathMatrixPrimMat, diagPreMultiply) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::diag_pre_multiply;
   Matrix<double, Dynamic, Dynamic> m(1, 1);
   m << 3;
 
@@ -16,10 +15,13 @@ TEST(MathMatrixPrimMat, diagPreMultiply) {
   Matrix<double, Dynamic, Dynamic> v_m(1, 1);
   v_m << 9;
 
-  expect_matrix_eq(v_m * m, diag_pre_multiply(v, m));
+  EXPECT_MATRIX_FLOAT_EQ(v_m * m, diag_pre_multiply(v, m));
 }
 
 TEST(MathMatrixPrimMat, diagPreMultiply2) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::diag_pre_multiply;
   Matrix<double, Dynamic, Dynamic> m(3, 3);
   m << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
@@ -29,14 +31,17 @@ TEST(MathMatrixPrimMat, diagPreMultiply2) {
   Matrix<double, Dynamic, Dynamic> v_m(3, 3);
   v_m << 1, 0, 0, 0, 2, 0, 0, 0, 3;
 
-  expect_matrix_eq(v_m * m, diag_pre_multiply(v, m));
+  EXPECT_MATRIX_FLOAT_EQ(v_m * m, diag_pre_multiply(v, m));
 
   Matrix<double, 1, Dynamic> rv(3);
   rv << 1, 2, 3;
-  expect_matrix_eq(v_m * m, diag_pre_multiply(rv, m));
+  EXPECT_MATRIX_FLOAT_EQ(v_m * m, diag_pre_multiply(rv, m));
 }
 
 TEST(MathMatrixPrimMat, diagPreMultiplyException) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::diag_pre_multiply;
   Matrix<double, Dynamic, Dynamic> m(2, 2);
   m << 2, 3, 4, 5;
   Matrix<double, Dynamic, 1> v(3);

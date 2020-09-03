@@ -3,12 +3,9 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
+#include <test/unit/util.hpp>
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
-
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(MathMatrixCL, broadcast_errors) {
   using Eigen::MatrixXd;
@@ -66,11 +63,11 @@ TEST(MathMatrixCL, broadcast_errors) {
 
   EXPECT_NO_THROW((stan::math::broadcast<false, false>(scal_cl).eval()));
   EXPECT_THROW((stan::math::broadcast<true, false>(scal_cl).eval()),
-               std::domain_error);
+               std::invalid_argument);
   EXPECT_THROW((stan::math::broadcast<false, true>(scal_cl).eval()),
-               std::domain_error);
+               std::invalid_argument);
   EXPECT_THROW((stan::math::broadcast<true, true>(scal_cl).eval()),
-               std::domain_error);
+               std::invalid_argument);
 }
 
 TEST(MathMatrixCL, broadcast_rows_test) {
