@@ -36,8 +36,3 @@ TEST(MetaTraitsPrimMat, plain_type_eigen) {
   test::expect_same_type<stan::math::matrix_v,
                          stan::plain_type_t<decltype(mv1 * mv2)>>();
 }
-
-TEST(MetaTraitsPrimMat, plain_type_eigenbase) {
-  test::expect_same_type<
-      Eigen::MatrixXd, stan::plain_type_t<Eigen::EigenBase<Eigen::MatrixXd>>>();
-}
