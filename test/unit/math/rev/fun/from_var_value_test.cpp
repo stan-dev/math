@@ -1,5 +1,5 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 
 TEST(AgradRevMatrix, from_var_value_matrix_test) {

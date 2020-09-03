@@ -1,6 +1,6 @@
 #include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <test/unit/math/prim/functor/ode_test_functors.hpp>
 #include <iostream>
 #include <vector>

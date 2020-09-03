@@ -3,7 +3,7 @@
 #include <stan/math/rev/functor/algebra_solver_newton.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/rev/functor/util_algebra_solver.hpp>
-#include <test/unit/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
 #include <fstream>

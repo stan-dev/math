@@ -3,7 +3,7 @@
 #include <boost/numeric/odeint.hpp>
 // very small michaelis menten example
 #include <test/unit/math/rev/functor/coupled_mm.hpp>
-#include <test/unit/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <vector>
 
 // test which triggers the too much work exception from odeint

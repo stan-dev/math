@@ -1,7 +1,6 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/util.hpp>
-#include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/rev/util.hpp>
+#include <test/unit/math/rev/fun/util.hpp>
 #include <gtest/gtest.h>
 
 #ifdef STAN_OPENCL

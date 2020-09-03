@@ -5,7 +5,7 @@
 
 #include <nvector/nvector_serial.h>
 
-#include <test/unit/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 
 #include <stdio.h>

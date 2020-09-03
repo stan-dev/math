@@ -1,7 +1,7 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
-#include <test/unit/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 
 TEST(MetaTraitsRev, rev_matrix_type_test) {

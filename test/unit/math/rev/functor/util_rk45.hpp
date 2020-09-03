@@ -1,6 +1,6 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim.hpp>
-#include <test/unit/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <sstream>

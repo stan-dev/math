@@ -1,5 +1,5 @@
 #include <stan/math/rev/meta.hpp>
-#include <test/unit/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 

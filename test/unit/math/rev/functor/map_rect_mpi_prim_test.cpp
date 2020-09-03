@@ -4,7 +4,7 @@
 
 #include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 
 #include <test/unit/math/prim/functor/hard_work.hpp>
 #include <test/unit/math/prim/functor/faulty_functor.hpp>

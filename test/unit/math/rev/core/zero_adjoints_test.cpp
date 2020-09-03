@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/sin.hpp>
-#include <test/unit/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <vector>
 

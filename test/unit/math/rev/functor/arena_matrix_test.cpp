@@ -1,5 +1,5 @@
 #include <stan/math.hpp>
-#include <test/unit/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 
 TEST_F(AgradRev, arena_matrix_matrix_test) {
