@@ -51,7 +51,7 @@ inline double lin_interp(const std::vector<double>& xs,
   }
 
   // do linear interpolation
-  double x1 = xs[ind-1];
+  double x1 = xs[ind - 1];
   double x2 = xs[ind];
   double y1 = ys[ind - 1];
   double y2 = ys[ind];
@@ -73,8 +73,8 @@ inline double lin_interp(const std::vector<double>& xs,
 
 template <typename Tx>
 inline std::vector<Tx> lin_interp(const std::vector<double>& xs,
-				  const std::vector<double>& ys,
-				  const std::vector<Tx>& xs_new) {
+                                  const std::vector<double>& ys,
+                                  const std::vector<Tx>& xs_new) {
   int n_interp = xs_new.size();
   std::vector<Tx> ys_new(n_interp);
 

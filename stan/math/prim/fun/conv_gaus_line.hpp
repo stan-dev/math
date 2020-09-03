@@ -38,6 +38,7 @@ inline return_type_t<Tx> conv_gaus_line(double t0, double t1, double a, double b
   y += -a * sig2 / sqrt(2 * pi * sig2)
        * (exp(-pow(t1 - x, 2) / (2 * sig2))
           - exp(-pow(t0 - x, 2) / (2 * sig2)));
+
   return y;
 }
 

@@ -77,7 +77,7 @@ inline return_type_t<Tx> gaus_interp(const std::vector<double>& xs,
   std::vector<double> xs2 = xs;
 
   // extend out first and last lines for convolution
-  double sig = std::sqrt(params[2*n-2]);
+  double sig = std::sqrt(params[2 * n - 2]);
   xs2[0] = xs[0] - NSTDS * sig;
   xs2[n - 1] = xs[n - 1] + NSTDS * sig;
 
@@ -118,7 +118,7 @@ inline return_type_t<Tx> gaus_interp(const std::vector<double>& xs,
  * @return struct containing slopes, intercepts, and width of kernel
  */
 inline std::vector<double> gaus_interp_precomp(const std::vector<double>& xs,
-					       const std::vector<double>& ys) {
+                                               const std::vector<double>& ys) {
   static char const* function = "gaus_interp_precomp";
   check_not_nan(function, "xs", xs);
   check_not_nan(function, "ys", ys);
@@ -134,8 +134,8 @@ inline std::vector<double> gaus_interp_precomp(const std::vector<double>& xs,
 
   // create the vector to be returned that consists of as, bs, sig2
   std::vector<double> params;
-  params.resize(2*n-1);
-  params[2*n-2] = square(min_diff(n, xs) * sig2_scale);
+  params.resize(2 * n - 1);
+  params[2 * n - 2] = square(min_diff(n, xs) * sig2_scale);
 
   // copy ys into a new vector that will be changed
   std::vector<double> y2s = ys;
@@ -177,8 +177,8 @@ inline std::vector<double> gaus_interp_precomp(const std::vector<double>& xs,
 
 template <typename Tx>
 inline std::vector<Tx> gaus_interp(const std::vector<double>& xs,
-				   const std::vector<double>& ys,
-				   const std::vector<Tx>& xs_new) {
+                                   const std::vector<double>& ys,
+                                   const std::vector<Tx>& xs_new) {
   int n_interp = xs_new.size();
   std::vector<Tx> ys_new(n_interp);
 
