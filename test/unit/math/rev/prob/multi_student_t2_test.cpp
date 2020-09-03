@@ -1,5 +1,6 @@
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/util.hpp>
+#include <test/unit/util.hpp>
 #include <test/unit/math/rev/prob/expect_eq_diffs.hpp>
 #include <test/unit/math/rev/prob/test_gradients.hpp>
 #include <test/unit/math/rev/prob/test_gradients_multi_student_t.hpp>

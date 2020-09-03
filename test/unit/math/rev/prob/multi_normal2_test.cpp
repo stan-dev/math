@@ -5,6 +5,7 @@
 #include <test/unit/math/rev/prob/test_gradients_multi_normal.hpp>
 #include <test/unit/math/prim/prob/agrad_distributions_multi_normal_multi_row.hpp>
 #include <test/unit/math/prim/prob/agrad_distributions_multi_normal.hpp>
+#include <test/unit/math/util.hpp>
 #include <vector>
 #include <string>
 
