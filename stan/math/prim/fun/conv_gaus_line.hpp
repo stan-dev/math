@@ -23,8 +23,8 @@ namespace math {
  * @return The value of the derivative
  */
 template <typename Tx>
-inline return_type_t<Tx> conv_gaus_line(double t0, double t1, double a, double b,
-					const Tx& x, double sig2) {
+inline return_type_t<Tx> conv_gaus_line(double t0, double t1, double a,
+                                        double b, const Tx& x, double sig2) {
   using stan::math::normal_cdf;
   using std::exp;
   using std::pow;
@@ -33,8 +33,7 @@ inline return_type_t<Tx> conv_gaus_line(double t0, double t1, double a, double b
   const double pi = stan::math::pi();
 
   return_type_t<Tx> y
-      = (a * x + b)
-        * (normal_cdf(t1, x, sig) - normal_cdf(t0, x, sig));
+      = (a * x + b) * (normal_cdf(t1, x, sig) - normal_cdf(t0, x, sig));
   y += -a * sig2 / sqrt(2 * pi * sig2)
        * (exp(-pow(t1 - x, 2) / (2 * sig2))
           - exp(-pow(t0 - x, 2) / (2 * sig2)));
