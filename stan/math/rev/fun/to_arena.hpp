@@ -65,7 +65,7 @@ inline std::remove_reference_t<T> to_arena(T&& a) {
 template <typename T, require_eigen_t<T>* = nullptr,
           require_not_same_t<T, arena_t<T>>* = nullptr>
 inline arena_t<T> to_arena(const T& a) {
-  return {a};
+  return arena_t<T>(a);
 }
 
 /**
