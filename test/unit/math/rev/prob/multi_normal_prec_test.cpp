@@ -2,11 +2,10 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/util.hpp>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using std::vector;
-
 TEST(ProbDistributionsMultiNormalPrec, MultiNormalVar) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   using stan::math::var;
   Matrix<var, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
@@ -19,6 +18,9 @@ TEST(ProbDistributionsMultiNormalPrec, MultiNormalVar) {
 }
 
 TEST(ProbDistributionsMultiNormalPrec, check_varis_on_stack) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   using stan::math::to_var;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;

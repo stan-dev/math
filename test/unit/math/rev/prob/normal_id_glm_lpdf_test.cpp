@@ -4,13 +4,12 @@
 #include <vector>
 #include <cmath>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using stan::math::var;
-
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 51, 32, 12;
   Matrix<double, Dynamic, Dynamic> x(3, 2);
@@ -31,6 +30,9 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles) {
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles_rand) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
   for (size_t ii = 0; ii < 200; ii++) {
     Matrix<double, Dynamic, 1> y(3, 1);
     for (size_t i = 0; i < 3; i++) {
@@ -59,6 +61,9 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles_rand) {
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
   Matrix<var, Dynamic, 1> y(3, 1);
   y << 14, 32, 21;
   Matrix<var, Dynamic, Dynamic> x(3, 2);
@@ -116,6 +121,9 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars) {
 }
 
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_simple) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
   double eps = 1e-9;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 14, 32, 21;
@@ -144,6 +152,9 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_simple) {
 }
 
 TEST(ProbDistributionsNormalIdGLM, broadcast_x) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 14, 32, 21;
   Matrix<var, Dynamic, 1> y1 = y;
@@ -181,6 +192,9 @@ TEST(ProbDistributionsNormalIdGLM, broadcast_x) {
 }
 
 TEST(ProbDistributionsNormalIdGLM, broadcast_y) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
   double y = 13;
   var y1 = y;
   Matrix<var, Dynamic, 1> y_vec = Matrix<double, Dynamic, 1>::Constant(3, 1, y);
@@ -217,6 +231,9 @@ TEST(ProbDistributionsNormalIdGLM, broadcast_y) {
 }
 
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_zero_instances) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
   Matrix<var, Dynamic, 1> y(0, 1);
   Matrix<var, Dynamic, Dynamic> x(0, 2);
   Matrix<var, Dynamic, 1> beta(2, 1);
@@ -254,6 +271,9 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_zero_instances) {
 }
 
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_zero_attributes) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
   Matrix<var, Dynamic, 1> y(3, 1);
   y << 14, 32, 21;
   Matrix<var, Dynamic, Dynamic> x(3, 0);
@@ -295,6 +315,9 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_zero_attributes) {
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
     Matrix<double, Dynamic, Dynamic> xreal
@@ -357,6 +380,9 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand) {
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives, in case beta is a scalar.
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand_scal_beta) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
     Matrix<double, Dynamic, Dynamic> xreal
@@ -411,6 +437,9 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand_scal_beta) {
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_varying_intercept) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
     Matrix<double, Dynamic, Dynamic> xreal
@@ -475,6 +504,9 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_varying_intercept) {
 //  from existing primitives.
 TEST(ProbDistributionsNormalIdGLM,
      glm_matches_normal_id_varying_intercept_and_scale) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
     Matrix<double, Dynamic, Dynamic> xreal
@@ -540,6 +572,9 @@ TEST(ProbDistributionsNormalIdGLM,
 
 //  We check that we can instantiate all different interface types.
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_interface_types) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
   double value = 0;
   double value2 = 0;
 
@@ -580,6 +615,9 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_interface_types) {
 
 //  We check that the right errors are thrown.
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_error_checking) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
   int N = 3;
   int M = 2;
   int W = 4;

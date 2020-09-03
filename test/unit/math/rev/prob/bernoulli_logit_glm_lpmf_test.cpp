@@ -3,17 +3,14 @@
 #include <gtest/gtest.h>
 #include <vector>
 #include <cmath>
-// For speed comparisons
-// #include <chrono>
-
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using stan::math::var;
-using std::vector;
 
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_doubles) {
+TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_doubles) {  
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   vector<int> y{1, 0, 1};
   Matrix<double, Dynamic, Dynamic> x(3, 2);
   x << -12, 46, -42, 24, 25, 27;
@@ -35,6 +32,10 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_doubles) {
 //  from existing primitives.
 TEST(ProbDistributionsBernoulliLogitGLM,
      glm_matches_bernoulli_logit_doubles_rand) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   for (size_t ii = 0; ii < 200; ii++) {
     vector<int> y(3);
     for (size_t i = 0; i < 3; i++) {
@@ -61,6 +62,10 @@ TEST(ProbDistributionsBernoulliLogitGLM,
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   vector<int> y{1, 0, 1};
   Matrix<var, Dynamic, Dynamic> x(3, 2);
   x << -1234, 46, -42, 24, 25, 27;
@@ -108,6 +113,10 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars) {
 }
 
 TEST(ProbDistributionsBernoulliLogitGLM, broadcast_x) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   vector<int> y{1, 0, 1};
   Matrix<double, 1, Dynamic> x(1, 2);
   x << -12, 46;
@@ -135,6 +144,10 @@ TEST(ProbDistributionsBernoulliLogitGLM, broadcast_x) {
 }
 
 TEST(ProbDistributionsBernoulliLogitGLM, broadcast_y) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   int y = 1;
   Matrix<int, Dynamic, 1> y_vec = Matrix<int, Dynamic, 1>::Constant(3, 1, y);
   Matrix<double, Dynamic, Dynamic> x(3, 2);
@@ -166,6 +179,10 @@ TEST(ProbDistributionsBernoulliLogitGLM, broadcast_y) {
 
 TEST(ProbDistributionsBernoulliLogitGLM,
      glm_matches_bernoulli_logit_vars_zero_instances) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   vector<int> y{};
   Matrix<var, Dynamic, Dynamic> x(0, 2);
   Matrix<var, Dynamic, 1> beta(2, 1);
@@ -203,6 +220,10 @@ TEST(ProbDistributionsBernoulliLogitGLM,
 
 TEST(ProbDistributionsBernoulliLogitGLM,
      glm_matches_bernoulli_logit_vars_zero_attributes) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   vector<int> y{1, 0, 1};
   Matrix<var, Dynamic, Dynamic> x(3, 0);
   Matrix<var, Dynamic, 1> beta(0, 1);
@@ -235,6 +256,10 @@ TEST(ProbDistributionsBernoulliLogitGLM,
 //  from existing primitives.
 TEST(ProbDistributionsBernoulliLogitGLM,
      glm_matches_bernoulli_logit_vars_rand) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   for (size_t ii = 0; ii < 42; ii++) {
     vector<int> y(3);
     for (size_t i = 0; i < 3; i++) {
@@ -292,6 +317,10 @@ TEST(ProbDistributionsBernoulliLogitGLM,
 //  from existing primitives, in case beta is a scalar.
 TEST(ProbDistributionsBernoulliLogitGLM,
      glm_matches_bernoulli_logit_vars_rand_scal_beta) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   for (size_t ii = 0; ii < 42; ii++) {
     vector<int> y(3);
     for (size_t i = 0; i < 3; i++) {
@@ -338,6 +367,10 @@ TEST(ProbDistributionsBernoulliLogitGLM,
 //  from existing primitives, for the GLM with varying intercept.
 TEST(ProbDistributionsBernoulliLogitGLM,
      glm_matches_bernoulli_varying_intercept) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   for (size_t ii = 0; ii < 42; ii++) {
     vector<int> y(3);
     for (size_t i = 0; i < 3; i++) {
@@ -398,6 +431,10 @@ TEST(ProbDistributionsBernoulliLogitGLM,
 //  We check that we can instantiate all different interface types.
 TEST(ProbDistributionsBernoulliLogitGLM,
      glm_matches_bernoulli_logit_interface_types) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   double value = 0;
   double value2 = 0;
 
@@ -441,6 +478,10 @@ TEST(ProbDistributionsBernoulliLogitGLM,
 //  We check that the right errors are thrown.
 TEST(ProbDistributionsBernoulliLogitGLM,
      glm_matches_bernoulli_logit_error_checking) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   int N = 3;
   int M = 2;
   int W = 4;

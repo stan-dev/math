@@ -1,3 +1,5 @@
+#ifndef TEST_UNIT_MATH_REV_PROB_TEST_GRADIENTS_MULTI_STUDENT_T
+#define TEST_UNIT_MATH_REV_PROB_TEST_GRADIENTS_MULTI_STUDENT_T
 #include <cmath>
 #include <vector>
 #include <iomanip>
@@ -145,3 +147,4 @@ void test_grad_multi_student_t(const F& fun, const std::vector<T_y>& vec_y,
     EXPECT_NEAR(diffs_finite[i], diffs_var[i], tolerance);
   }
 }
+#endif
