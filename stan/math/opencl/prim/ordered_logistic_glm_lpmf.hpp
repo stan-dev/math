@@ -124,12 +124,6 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
     check_cl(function, "Design matrix", x_val, "finite") = isfinite(x_val);
     check_cl(function, "Weight vector", beta_val, "finite")
         = isfinite(beta_val);
-
-    //    check_finite(function, "Weight vector", beta);
-    //    check_bounded(function, "Vector of dependent variables",
-    //                  from_matrix_cl(y), 1, N_classes);
-    //    check_finite(function, "Matrix of independent variables",
-    //                 from_matrix_cl(x));
   }
 
   operands_and_partials<T_x, T_beta, T_cuts> ops_partials(x, beta, cuts);
