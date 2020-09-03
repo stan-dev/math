@@ -2,9 +2,6 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-using stan::math::fvar;
-using stan::math::var;
-
 // test sum of first n numbers for sum of a
 template <typename T>
 void test_sum(stan::math::accumulator<T>& a, int n) {
@@ -12,6 +9,8 @@ void test_sum(stan::math::accumulator<T>& a, int n) {
 }
 
 TEST(AgradMixMatrixAccumulate, fvar_var) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::accumulator;
 
   accumulator<fvar<var> > a;
@@ -26,6 +25,8 @@ TEST(AgradMixMatrixAccumulate, fvar_var) {
 }
 
 TEST(AgradMixMatrixAccumulate, collection_fvar_var) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::accumulator;
   using stan::math::matrix_fv;
   using stan::math::vector_fv;
@@ -84,6 +85,8 @@ TEST(AgradMixMatrixAccumulate, collection_fvar_var) {
 }
 
 TEST(AgradMixMatrixAccumulate, fvar_fvar_var) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::accumulator;
 
   accumulator<fvar<fvar<var> > > a;
@@ -98,6 +101,8 @@ TEST(AgradMixMatrixAccumulate, fvar_fvar_var) {
 }
 
 TEST(AgradMixMatrixAccumulate, collection_fvar_fvar_var) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::accumulator;
   using stan::math::matrix_ffv;
   using stan::math::vector_ffv;

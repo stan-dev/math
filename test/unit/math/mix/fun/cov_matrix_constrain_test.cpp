@@ -1,5 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 
+namespace cov_matrix_constrain_test {
 // easier than fiddling the quadratic equation
 template <typename T>
 int inv_size(const T& x) {
@@ -45,30 +46,31 @@ void expect_cov_matrix_transform(const T& x) {
   stan::test::expect_ad(f2, x);
   stan::test::expect_ad(tols, f3, x);
 }
+}
 
 TEST(MathMixMatFun, cov_matrixTransform) {
   // sizes must be n + (n choose 2)
 
   Eigen::VectorXd v0(0);
-  expect_cov_matrix_transform(v0);
+  cov_matrix_constrain_test::expect_cov_matrix_transform(v0);
 
   // 1 x 1
   Eigen::VectorXd v1(1);
   v1 << -1.7;
-  expect_cov_matrix_transform(v1);
+  cov_matrix_constrain_test::expect_cov_matrix_transform(v1);
 
   // 2 x 2
   Eigen::VectorXd v3(3);
   v3 << -1.7, 2.9, 0.01;
-  expect_cov_matrix_transform(v3);
+  cov_matrix_constrain_test::expect_cov_matrix_transform(v3);
 
   // 3 x 3
   Eigen::VectorXd v6(6);
   v6 << 1, 2, -3, 1.5, 0.2, 2;
-  expect_cov_matrix_transform(v6);
+  cov_matrix_constrain_test::expect_cov_matrix_transform(v6);
 
   // 4 x 4
   Eigen::VectorXd v10(10);
   v10 << 1, 2, -3, 1.7, 9.8, -12.2, 0.4, 0.2, 1.2, 2.7;
-  expect_cov_matrix_transform(v10);
+  cov_matrix_constrain_test::expect_cov_matrix_transform(v10);
 }

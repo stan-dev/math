@@ -2,6 +2,7 @@
 #include <cmath>
 #include <vector>
 
+namespace cholesky_decompose_test {
 // can't autodiff directly through Cholesky due to symmetry test;
 // use unconstrained input and constrain to test Cholesky derivs;
 // dof must be (n choose 2) + n
@@ -16,27 +17,28 @@ void expect_cholesky(const Eigen::MatrixXd& Sigma) {
   Eigen::VectorXd yy = stan::math::cov_matrix_free(Sigma);
   stan::test::expect_ad(f(10), yy);
 }
+}
 
 TEST(MathMixMatFun, choleskyDecompose) {
   // 1 x 1 matrix;  (1 choose 2) + 1 = 1
   Eigen::VectorXd x1(1);
   x1 << 1;
-  stan::test::expect_ad(f(1), x1);
+  stan::test::expect_ad(cholesky_decompose_test::f(1), x1);
 
   // 2 x 2 matrix;  (2 choose 2) + 2 = 3
   Eigen::VectorXd x3(3);
   x3 << 1, 2, -1;
-  stan::test::expect_ad(f(2), x3);
+  stan::test::expect_ad(cholesky_decompose_test::f(2), x3);
 
   // 3 x 3 matrix;  (3 choose 2) + 3 = 6
   Eigen::VectorXd x6(6);
   x6 << 1, -1, 1.1, 1.4, 2.1, 0.7;
-  stan::test::expect_ad(f(3), x6);
+  stan::test::expect_ad(cholesky_decompose_test::f(3), x6);
 
   // 4 x 4 matrix;  (4 choose 2) + 4 = 10
   Eigen::VectorXd x10(10);
   x10 << 1, -0.1, 1.1, 1.4, -1.1, 0.7, 1.0, 1.3, -0.5, 0.3;
-  stan::test::expect_ad(f(4), x10);
+  stan::test::expect_ad(cholesky_decompose_test::f(4), x10);
 
   // 2 x 3 matrix will throw; test directly
   auto g = [](const auto& x) { return stan::math::cholesky_decompose(x); };
@@ -55,7 +57,7 @@ TEST(MathMixMatFun, choleskyDecompose) {
     Eigen::VectorXd y(dof);
     for (int i = 0; i < dof; ++i)
       y(i) = (i * 10) / 100.0;
-    stan::test::expect_ad(f(dof), y);
+    stan::test::expect_ad(cholesky_decompose_test::f(dof), y);
   }
 
   // GP covar
@@ -69,7 +71,7 @@ TEST(MathMixMatFun, choleskyDecompose) {
     double jitter = 0.1;
     Eigen::MatrixXd Sigma = stan::math::add_diag(
         stan::math::cov_exp_quad(xx, alpha, length_scale), jitter);
-    expect_cholesky(Sigma);
+    cholesky_decompose_test::expect_cholesky(Sigma);
   }
 
   // time-series correlation
@@ -83,7 +85,7 @@ TEST(MathMixMatFun, choleskyDecompose) {
           Sigma(j, i) = Sigma(i, j);
         }
       }
-      expect_cholesky(Sigma);
+      cholesky_decompose_test::expect_cholesky(Sigma);
     }
   }
 }

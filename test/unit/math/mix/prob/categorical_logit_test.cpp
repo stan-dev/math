@@ -3,11 +3,10 @@
 #include <limits>
 #include <vector>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using stan::math::log_softmax;
-
 TEST(ProbDistributionsCategoricalLogit, fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::log_softmax;
   using stan::math::fvar;
   using stan::math::var;
   Matrix<fvar<var>, Dynamic, 1> theta(3, 1);
@@ -30,6 +29,9 @@ TEST(ProbDistributionsCategoricalLogit, fvar_var) {
 }
 
 TEST(ProbDistributionsCategoricalLogit, fvar_var_vectorized) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::log_softmax;
   using stan::math::fvar;
   using stan::math::var;
   Matrix<fvar<var>, Dynamic, 1> theta(3);
@@ -56,6 +58,9 @@ TEST(ProbDistributionsCategoricalLogit, fvar_var_vectorized) {
 }
 
 TEST(ProbDistributionsCategoricalLogit, fvar_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::log_softmax;
   using stan::math::fvar;
   using stan::math::var;
   Matrix<fvar<fvar<var> >, Dynamic, 1> theta(3, 1);
@@ -78,6 +83,9 @@ TEST(ProbDistributionsCategoricalLogit, fvar_fvar_var) {
 }
 
 TEST(ProbDistributionsCategoricalLogit, fvar_fvar_var_vectorized) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::log_softmax;
   using stan::math::fvar;
   using stan::math::var;
   Matrix<fvar<fvar<var> >, Dynamic, 1> theta(3);

@@ -3,12 +3,11 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using stan::math::multi_student_t_log;
-using std::vector;
-
 TEST(ProbDistributionsMultiStudentT, fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::multi_student_t_log;
+  using std::vector;
   using stan::math::fvar;
   using stan::math::var;
   Matrix<fvar<var>, Dynamic, 1> y(3, 1);
@@ -32,6 +31,10 @@ TEST(ProbDistributionsMultiStudentT, fvar_var) {
 }
 
 TEST(ProbDistributionsMultiStudentT, fvar_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::multi_student_t_log;
+  using std::vector;
   using stan::math::fvar;
   using stan::math::var;
   Matrix<fvar<fvar<var> >, Dynamic, 1> y(3, 1);

@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
 
+namespace ub_constrain_test {
 template <typename T, typename U>
 stan::return_type_t<T, U> g1(const T& x, const U& ub) {
   return stan::math::ub_constrain(x, ub);
@@ -25,8 +26,9 @@ void expect_ub_constrain(double x, double ub) {
   stan::test::expect_ad(f2, x, ub);
   stan::test::expect_ad(f3, x, ub);
 }
+}
 
 TEST(mathMixScalFun, ub_constrain) {
-  expect_ub_constrain(-1, 2);
-  expect_ub_constrain(2, 4);
+  ub_constrain_test::expect_ub_constrain(-1, 2);
+  ub_constrain_test::expect_ub_constrain(2, 4);
 }

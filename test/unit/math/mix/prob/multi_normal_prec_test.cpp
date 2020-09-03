@@ -1,11 +1,10 @@
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using std::vector;
-
 TEST(ProbDistributionsMultiNormalPrec, fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   using stan::math::fvar;
   using stan::math::var;
   Matrix<fvar<var>, Dynamic, 1> y(3, 1);
@@ -31,6 +30,9 @@ TEST(ProbDistributionsMultiNormalPrec, fvar_var) {
 }
 
 TEST(ProbDistributionsMultiNormalPrec, fvar_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   using stan::math::fvar;
   using stan::math::var;
   Matrix<fvar<fvar<var> >, Dynamic, 1> y(3, 1);

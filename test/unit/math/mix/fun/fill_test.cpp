@@ -2,10 +2,9 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-using stan::math::fvar;
-using stan::math::var;
-
 TEST(AgradMixMatrixFill, fv) {
+  using stan::math::fvar;
+  using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;
@@ -46,6 +45,8 @@ TEST(AgradMixMatrixFill, fv) {
       EXPECT_FLOAT_EQ(54, d[i][j].val_.val());
 }
 TEST(AgradMixMatrixFill, fv2) {
+  using stan::math::fvar;
+  using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;
@@ -56,6 +57,8 @@ TEST(AgradMixMatrixFill, fv2) {
 }
 
 TEST(AgradMixMatrixFill, ffv) {
+  using stan::math::fvar;
+  using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;
@@ -96,6 +99,8 @@ TEST(AgradMixMatrixFill, ffv) {
       EXPECT_FLOAT_EQ(54, d[i][j].val_.val_.val());
 }
 TEST(AgradMixMatrixFill, ffv2) {
+  using stan::math::fvar;
+  using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;

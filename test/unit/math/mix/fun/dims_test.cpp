@@ -2,10 +2,9 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-using stan::math::fvar;
-using stan::math::var;
-
 TEST(AgradMixMatrixDims, matrix_fv) {
+  using stan::math::fvar;
+  using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::dims;
@@ -61,6 +60,8 @@ TEST(AgradMixMatrixDims, matrix_fv) {
 }
 
 TEST(AgradMixMatrixDims, matrix_ffv) {
+  using stan::math::fvar;
+  using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::dims;

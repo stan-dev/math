@@ -1,5 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 
+namespace ordered_constrain_test {
 template <typename T>
 T g1(const T& x) {
   return stan::math::ordered_constrain(x);
@@ -25,28 +26,29 @@ void expect_ordered_transform(const T& x) {
   stan::test::expect_ad(f2, x);
   stan::test::expect_ad(f3, x);
 }
+}
 
 TEST(MathMixMatFun, orderedTransform) {
   Eigen::VectorXd v0(0);
-  expect_ordered_transform(v0);
+  ordered_constrain_test::expect_ordered_transform(v0);
 
   Eigen::VectorXd v1(1);
   v1 << -1;
-  expect_ordered_transform(v1);
+  ordered_constrain_test::expect_ordered_transform(v1);
 
   Eigen::VectorXd v2(2);
   v2 << 3, -1;
-  expect_ordered_transform(v2);
+  ordered_constrain_test::expect_ordered_transform(v2);
 
   Eigen::VectorXd v3(3);
   v3 << -12, 3, -1.9;
-  expect_ordered_transform(v3);
+  ordered_constrain_test::expect_ordered_transform(v3);
 
   Eigen::VectorXd v4(4);
   v4 << -1, 0, -1.1, 0.5;
-  expect_ordered_transform(v4);
+  ordered_constrain_test::expect_ordered_transform(v4);
 
   Eigen::VectorXd v5(5);
   v5 << 1, -3, 2, 0, -1;
-  expect_ordered_transform(v5);
+  ordered_constrain_test::expect_ordered_transform(v5);
 }

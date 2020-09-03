@@ -3,9 +3,9 @@
 #include <test/unit/math/rev/fun/util.hpp>
 #include <limits>
 
-using stan::math::fvar;
-using stan::math::var;
 TEST(AgradMixMatrixOperatorDivision, fv_scalar_1stDeriv) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   double d1, d2;
   fvar<var> v1, v2;
@@ -61,6 +61,8 @@ TEST(AgradMixMatrixOperatorDivision, fv_scalar_1stDeriv) {
 }
 
 TEST(AgradMixMatrixOperatorDivision, fv_scalar_2ndDeriv) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   double d2;
   fvar<var> v1, v2;
@@ -75,6 +77,8 @@ TEST(AgradMixMatrixOperatorDivision, fv_scalar_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[0]);
 }
 TEST(AgradMixMatrixOperatorDivision, fv_vector_1stDeriv) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   using stan::math::vector_d;
   using stan::math::vector_fv;
@@ -176,6 +180,8 @@ TEST(AgradMixMatrixOperatorDivision, fv_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixOperatorDivision, fv_vector_2ndDeriv) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   using stan::math::vector_d;
   using stan::math::vector_fv;
@@ -200,6 +206,8 @@ TEST(AgradMixMatrixOperatorDivision, fv_vector_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixOperatorDivision, fv_rowvector_1stDeriv) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
@@ -300,6 +308,8 @@ TEST(AgradMixMatrixOperatorDivision, fv_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixOperatorDivision, fv_rowvector_2ndDeriv) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
@@ -325,6 +335,8 @@ TEST(AgradMixMatrixOperatorDivision, fv_rowvector_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixOperatorDivision, fv_matrix_1stDeriv) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
@@ -449,6 +461,8 @@ TEST(AgradMixMatrixOperatorDivision, fv_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorDivision, fv_matrix_2ndDeriv) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
@@ -477,6 +491,8 @@ TEST(AgradMixMatrixOperatorDivision, fv_matrix_2ndDeriv) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_scalar_1stDeriv) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   double d1, d2;
   fvar<fvar<var> > v1, v2;
@@ -531,6 +547,8 @@ TEST(AgradMixMatrixOperatorDivision, ffv_scalar_1stDeriv) {
   EXPECT_FLOAT_EQ(-0.5, h[0]);
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_scalar_2ndDeriv_1) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   double d2;
   fvar<fvar<var> > v1, v2;
@@ -545,6 +563,8 @@ TEST(AgradMixMatrixOperatorDivision, ffv_scalar_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[0]);
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_scalar_2ndDeriv_2) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   double d2;
   fvar<fvar<var> > v1, v2;
@@ -559,6 +579,8 @@ TEST(AgradMixMatrixOperatorDivision, ffv_scalar_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[0]);
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_scalar_3rdDeriv) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   double d2;
   fvar<fvar<var> > v1, v2;
@@ -574,6 +596,8 @@ TEST(AgradMixMatrixOperatorDivision, ffv_scalar_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[0]);
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_vector_1stDeriv) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
@@ -677,6 +701,8 @@ TEST(AgradMixMatrixOperatorDivision, ffv_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_vector_2ndDeriv_1) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
@@ -701,6 +727,8 @@ TEST(AgradMixMatrixOperatorDivision, ffv_vector_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_vector_2ndDeriv_2) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
@@ -725,6 +753,8 @@ TEST(AgradMixMatrixOperatorDivision, ffv_vector_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_vector_3rdDeriv) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
@@ -753,6 +783,8 @@ TEST(AgradMixMatrixOperatorDivision, ffv_vector_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_1stDeriv) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
@@ -855,6 +887,8 @@ TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_2ndDeriv_1) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
@@ -880,6 +914,8 @@ TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_2ndDeriv_1) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_2ndDeriv_2) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
@@ -905,6 +941,8 @@ TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_2ndDeriv_2) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_3rdDeriv) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
@@ -934,6 +972,8 @@ TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_3rdDeriv) {
   EXPECT_FLOAT_EQ(0, h[2]);
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_matrix_1stDeriv) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
@@ -1058,6 +1098,8 @@ TEST(AgradMixMatrixOperatorDivision, ffv_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(0, h[3]);
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_matrix_2ndDeriv_1) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
@@ -1087,6 +1129,8 @@ TEST(AgradMixMatrixOperatorDivision, ffv_matrix_2ndDeriv_1) {
 }
 
 TEST(AgradMixMatrixOperatorDivision, ffv_matrix_2ndDeriv_2) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
@@ -1116,6 +1160,8 @@ TEST(AgradMixMatrixOperatorDivision, ffv_matrix_2ndDeriv_2) {
 }
 
 TEST(AgradMixMatrixOperatorDivision, ffv_matrix_3rdDeriv) {
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::divide;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
