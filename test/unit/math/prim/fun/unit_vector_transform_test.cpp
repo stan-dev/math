@@ -3,10 +3,10 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-
 TEST(prob_transform, unit_vector_rt0) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+
   Matrix<double, Dynamic, 1> x(4);
   x << sqrt(0.1), -sqrt(0.2), -sqrt(0.3), sqrt(0.4);
   using stan::math::unit_vector_constrain;
@@ -24,6 +24,8 @@ TEST(prob_transform, unit_vector_rt0) {
   }
 }
 TEST(prob_transform, unit_vector_rt) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, 1> x(3);
   x << 1.0, -1.0, 1.0;
   using stan::math::unit_vector_constrain;
@@ -36,6 +38,8 @@ TEST(prob_transform, unit_vector_rt) {
   }
 }
 TEST(prob_transform, unit_vector_match) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, 1> x(3);
   x << 1.0, -1.0, 2.0;
   double lp = 0;
@@ -49,6 +53,8 @@ TEST(prob_transform, unit_vector_match) {
     EXPECT_FLOAT_EQ(y[i], y2[i]) << "error in component " << i;
 }
 TEST(prob_transform, unit_vector_f_exception) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, 1> y(2);
   y << 0.5, 0.55;
   EXPECT_THROW(stan::math::unit_vector_free(y), std::domain_error);

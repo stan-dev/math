@@ -139,7 +139,7 @@ gaussian_dlm_obs_lpdf(const T_y& y, const T_F& F, const T_G& G, const T_V& V,
       Q_inv = inverse_spd(Q);
       // // filtered state
       // e_t = y_t - f_t
-      e = y.col(i) - f;
+      e = y_ref.col(i) - f;
       // A_t = R_t F_t Q^{-1}_t
       A = multiply(multiply(R, F_ref), Q_inv);
       // m_t = a_t + A_t e_t
@@ -265,7 +265,7 @@ gaussian_dlm_obs_lpdf(const T_y& y, const T_F& F, const T_G& G, const T_V& V,
         Q_inv = 1.0 / Q;
         // filtered observation
         // e_{t, i} = y_{t, i} - f_{t, i}
-        e = y.coeff(j, i) - f;
+        e = y_ref.coeff(j, i) - f;
         // A_{t, i} = C_{t, i-1} F_{t, i} Q_{t, i}^{-1}
         A = multiply(multiply(C, Fj), Q_inv);
         // m_{t, i} = m_{t, i-1} + A_{t, i} e_{t, i}

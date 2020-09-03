@@ -1,4 +1,5 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathMatrixPrim, multiply_c_v) {
@@ -157,9 +158,6 @@ TEST(MathMatrixPrim, multiply_vector_int) {
 }
 
 #ifdef STAN_OPENCL
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(MathMatrixPrim, multiply_opencl) {
   int multiply_dim_prod_worth_transfer

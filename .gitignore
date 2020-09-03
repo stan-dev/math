@@ -21,6 +21,7 @@
 /test/**/*.xml
 /test/dummy.cpp
 /test/**/*.so
+/test/expressions/*.cpp
 
 # other binary
 *.o
@@ -76,6 +77,8 @@ lib/boost_*/project-config.jam.1
 lib/boost_*/stage/
 lib/boost_*/tools/build/*
 !lib/boost_*/tools/build/src*
+lib/boost_*/tools/build/src/engine/b2
+lib/boost_*/tools/build/src/engine/bjam
 lib/boost_*/user-config.jam
 
 # clang-tidy output
@@ -92,3 +95,4 @@ lib/tbb/**
 
 # gdb debug history
 .gdb_history
+

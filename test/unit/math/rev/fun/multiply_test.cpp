@@ -2,12 +2,10 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/rev/util.hpp>
+#include <test/unit/util.hpp>
 
 #ifdef STAN_OPENCL
 #include <boost/random/mersenne_twister.hpp>
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(stan::math::value_of(A(i)), stan::math::value_of(B(i)), DELTA);
 
 boost::random::mt19937 rng;
 #define MULTIPLY_OPENCL_OVERRIDE 0
@@ -36,7 +34,7 @@ TEST(AgradRevMatrix, multiply_val_vv_cl) {
       = MULTIPLY_CPU_OVERRIDE;
   C = multiply(Av, Bv);
   C(0, 0).grad();
-  EXPECT_MATRIX_NEAR(C, C_cl, 1.0E-12);
+  EXPECT_MATRIX_NEAR(C.val(), C_cl.val(), 1.0E-12);
   EXPECT_MATRIX_NEAR(C.adj(), C_cl.adj(), 1.0E-12);
   stan::math::recover_memory();
   stan::math::opencl_context.tuning_opts().multiply_dim_prod_worth_transfer
@@ -68,7 +66,7 @@ TEST(AgradRevMatrix, multiply_val_vd_cl) {
       = MULTIPLY_CPU_OVERRIDE;
   C = multiply(Av, Bd);
   C(0, 0).grad();
-  EXPECT_MATRIX_NEAR(C, C_cl, 1.0E-12);
+  EXPECT_MATRIX_NEAR(C.val(), C_cl.val(), 1.0E-12);
   EXPECT_MATRIX_NEAR(C.adj(), C_cl.adj(), 1.0E-12);
   stan::math::recover_memory();
   stan::math::opencl_context.tuning_opts().multiply_dim_prod_worth_transfer
@@ -99,7 +97,7 @@ TEST(AgradRevMatrix, multiply_val_dv_cl) {
       = MULTIPLY_CPU_OVERRIDE;
   C = multiply(Ad, Bv);
   C(0, 0).grad();
-  EXPECT_MATRIX_NEAR(C, C_cl, 1.0E-12);
+  EXPECT_MATRIX_NEAR(C.val(), C_cl.val(), 1.0E-12);
   EXPECT_MATRIX_NEAR(C.adj(), C_cl.adj(), 1.0E-12);
   stan::math::recover_memory();
   stan::math::opencl_context.tuning_opts().multiply_dim_prod_worth_transfer
