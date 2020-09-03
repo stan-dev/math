@@ -4,8 +4,8 @@
 #include <vector>
 
 TEST(AgradFwdMatrixAssign, vector_fvar_double) {
-  using stan::math::fvar;
   using stan::math::assign;
+  using stan::math::fvar;
   using std::vector;
 
   vector<fvar<double> > y(3);
@@ -30,10 +30,10 @@ TEST(AgradFwdMatrixAssign, vector_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, eigen_row_vector_fvar_double_to_fvar_double) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
+  using stan::math::fvar;
 
   Matrix<fvar<double>, 1, Dynamic> y(3);
   y[0] = 1.2;
@@ -54,10 +54,10 @@ TEST(AgradFwdMatrixAssign, eigen_row_vector_fvar_double_to_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, eigen_row_vector_fvar_double_shape_mismatch) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
+  using stan::math::fvar;
 
   Matrix<fvar<double>, 1, Dynamic> x(3);
   x[0] = 1.2;
@@ -77,10 +77,10 @@ TEST(AgradFwdMatrixAssign, eigen_row_vector_fvar_double_shape_mismatch) {
 }
 
 TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_double_to_fvar_double) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
+  using stan::math::fvar;
 
   Matrix<fvar<double>, Dynamic, Dynamic> y(3, 2);
   y << 1.2, 100, -5.1, 12, 1000, -5100;
@@ -106,10 +106,10 @@ TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_double_to_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_double_shape_mismatch) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
+  using stan::math::fvar;
 
   Matrix<fvar<double>, Dynamic, Dynamic> x(2, 3);
   x << 1, 2, 3, 4, 5, 6;
@@ -131,10 +131,10 @@ TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_double_shape_mismatch) {
 }
 
 TEST(AgradFwdMatrixAssign, block) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
+  using stan::math::fvar;
   using stan::math::get_base1_lhs;
 
   Matrix<fvar<double>, Dynamic, Dynamic> m(2, 3);
@@ -150,8 +150,8 @@ TEST(AgradFwdMatrixAssign, block) {
 }
 
 TEST(AgradFwdMatrixAssign, vector_vector_fvar_double) {
-  using stan::math::fvar;
   using stan::math::assign;
+  using stan::math::fvar;
   using std::vector;
   vector<vector<fvar<double> > > x(3, vector<fvar<double> >(2));
   for (size_t i = 0; i < 3; ++i)
@@ -174,8 +174,8 @@ TEST(AgradFwdMatrixAssign, vector_vector_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, vector_vector_vector_fvar_double) {
-  using stan::math::fvar;
   using stan::math::assign;
+  using stan::math::fvar;
   using std::vector;
   vector<vector<vector<fvar<double> > > > x(
       4, vector<vector<fvar<double> > >(3, vector<fvar<double> >(2)));
@@ -204,10 +204,10 @@ TEST(AgradFwdMatrixAssign, vector_vector_vector_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, vector_eigen_vector_fvar_double) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
+  using stan::math::fvar;
   using std::vector;
 
   vector<Matrix<fvar<double>, Dynamic, 1> > x(
@@ -234,10 +234,10 @@ TEST(AgradFwdMatrixAssign, vector_eigen_vector_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, get_assign_row_fvar_double) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
+  using stan::math::fvar;
   using stan::math::get_base1_lhs;
 
   Matrix<fvar<double>, Dynamic, Dynamic> m(2, 3);
@@ -253,8 +253,8 @@ TEST(AgradFwdMatrixAssign, get_assign_row_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, vector_fvar_fvar_double) {
-  using stan::math::fvar;
   using stan::math::assign;
+  using stan::math::fvar;
   using std::vector;
 
   vector<fvar<fvar<double> > > y(3);
@@ -288,10 +288,10 @@ TEST(AgradFwdMatrixAssign, vector_fvar_fvar_double) {
 
 TEST(AgradFwdMatrixAssign,
      eigen_row_vector_fvar_fvar_double_to_fvar_fvar_double) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
+  using stan::math::fvar;
 
   Matrix<fvar<fvar<double> >, 1, Dynamic> y(3);
   y[0] = 1.2;
@@ -320,10 +320,10 @@ TEST(AgradFwdMatrixAssign,
 }
 
 TEST(AgradFwdMatrixAssign, eigen_row_vector_fvar_fvar_double_shape_mismatch) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
+  using stan::math::fvar;
 
   Matrix<fvar<fvar<double> >, 1, Dynamic> x(3);
   x[0] = 1.2;
@@ -343,10 +343,10 @@ TEST(AgradFwdMatrixAssign, eigen_row_vector_fvar_fvar_double_shape_mismatch) {
 }
 
 TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_fvar_double_to_fvar_fvar_double) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
+  using stan::math::fvar;
 
   Matrix<fvar<fvar<double> >, Dynamic, Dynamic> y(3, 2);
   y << 1.2, 100, -5.1, 12, 1000, -5100;
@@ -386,10 +386,10 @@ TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_fvar_double_to_fvar_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_fvar_double_shape_mismatch) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
+  using stan::math::fvar;
 
   Matrix<fvar<fvar<double> >, Dynamic, Dynamic> x(2, 3);
   x << 1, 2, 3, 4, 5, 6;
@@ -411,10 +411,10 @@ TEST(AgradFwdMatrixAssign, eigen_matrix_fvar_fvar_double_shape_mismatch) {
 }
 
 TEST(AgradFwdMatrixAssign, block_fvar_fvar_double) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
+  using stan::math::fvar;
   using stan::math::get_base1_lhs;
 
   Matrix<fvar<fvar<double> >, Dynamic, Dynamic> m(2, 3);
@@ -430,8 +430,8 @@ TEST(AgradFwdMatrixAssign, block_fvar_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, vector_vector_fvar_fvar_double) {
-  using stan::math::fvar;
   using stan::math::assign;
+  using stan::math::fvar;
   using std::vector;
   vector<vector<fvar<fvar<double> > > > x(3, vector<fvar<fvar<double> > >(2));
   for (size_t i = 0; i < 3; ++i)
@@ -458,8 +458,8 @@ TEST(AgradFwdMatrixAssign, vector_vector_fvar_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, vector_vector_vector_fvar_fvar_double) {
-  using stan::math::fvar;
   using stan::math::assign;
+  using stan::math::fvar;
   using std::vector;
   vector<vector<vector<fvar<fvar<double> > > > > x(
       4, vector<vector<fvar<fvar<double> > > >(
@@ -494,10 +494,10 @@ TEST(AgradFwdMatrixAssign, vector_vector_vector_fvar_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, vector_eigen_vector_fvar_fvar_double) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
+  using stan::math::fvar;
   using std::vector;
 
   vector<Matrix<fvar<fvar<double> >, Dynamic, 1> > x(
@@ -527,10 +527,10 @@ TEST(AgradFwdMatrixAssign, vector_eigen_vector_fvar_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAssign, get_assign_row_fvar_fvar_double) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
+  using stan::math::fvar;
   using stan::math::get_base1_lhs;
 
   Matrix<fvar<fvar<double> >, Dynamic, Dynamic> m(2, 3);

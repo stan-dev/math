@@ -17,7 +17,7 @@ void expect_cholesky(const Eigen::MatrixXd& Sigma) {
   Eigen::VectorXd yy = stan::math::cov_matrix_free(Sigma);
   stan::test::expect_ad(f(10), yy);
 }
-}
+}  // namespace cholesky_decompose_test
 
 TEST(MathMixMatFun, choleskyDecompose) {
   // 1 x 1 matrix;  (1 choose 2) + 1 = 1

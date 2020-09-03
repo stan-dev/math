@@ -5,7 +5,8 @@
 
 template <bool propto, typename T_x, typename T_beta, typename T_cuts>
 stan::return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_simple_lpmf(
-    const std::vector<int>& y, const Eigen::Matrix<T_x, Eigen::Dynamic, Eigen::Dynamic>& x,
+    const std::vector<int>& y,
+    const Eigen::Matrix<T_x, Eigen::Dynamic, Eigen::Dynamic>& x,
     const T_beta& beta, const T_cuts& cuts) {
   using T_x_beta = stan::return_type_t<T_x, T_beta>;
   using stan::math::as_column_vector_or_scalar;
@@ -20,9 +21,9 @@ stan::return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_simple_lpmf(
 
 TEST(ProbDistributionsOrderedLogisticGLM,
      glm_matches_ordered_logistic_doubles) {
-  using std::vector;
+  using Eigen::MatrixXd;
   using Eigen::VectorXd;
-  using Eigen::MatrixXd;  
+  using std::vector;
   double eps = 1e-13;
   int N = 5;
   int M = 2;
@@ -40,9 +41,9 @@ TEST(ProbDistributionsOrderedLogisticGLM,
 
 TEST(ProbDistributionsOrderedLogisticGLM,
      glm_matches_ordered_logistic_doubles_broadcast_y) {
-  using std::vector;
+  using Eigen::MatrixXd;
   using Eigen::VectorXd;
-  using Eigen::MatrixXd;  
+  using std::vector;
   double eps = 1e-13;
   int N = 5;
   int M = 2;
@@ -55,19 +56,20 @@ TEST(ProbDistributionsOrderedLogisticGLM,
   x << 1, 2, 3, 4, 5, 6, 7, 8, 9, 0;
   for (int y_scal = 1; y_scal <= C; y_scal++) {
     vector<int> y(N, y_scal);
-    EXPECT_FLOAT_EQ(stan::math::ordered_logistic_glm_lpmf(y_scal, x, beta, cuts),
-                    stan::math::ordered_logistic_glm_lpmf(y, x, beta, cuts));
+    EXPECT_FLOAT_EQ(
+        stan::math::ordered_logistic_glm_lpmf(y_scal, x, beta, cuts),
+        stan::math::ordered_logistic_glm_lpmf(y, x, beta, cuts));
   }
 }
 
 TEST(ProbDistributionsOrderedLogisticGLM, glm_matches_ordered_logistic_vars) {
-  using std::vector;
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
-  using Eigen::Matrix;
-  using Eigen::RowVectorXd;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
   using stan::math::var;
+  using std::vector;
   double eps = 1e-13;
   int N = 5;
   int M = 2;
@@ -102,13 +104,13 @@ TEST(ProbDistributionsOrderedLogisticGLM, glm_matches_ordered_logistic_vars) {
 
 TEST(ProbDistributionsOrderedLogisticGLM,
      glm_matches_ordered_logistic_vars_broadcast_y) {
-  using std::vector;
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
-  using Eigen::Matrix;
-  using Eigen::RowVectorXd;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
   using stan::math::var;
+  using std::vector;
   double eps = 1e-13;
   int N = 5;
   int M = 2;
@@ -149,13 +151,13 @@ TEST(ProbDistributionsOrderedLogisticGLM,
 
 TEST(ProbDistributionsOrderedLogisticGLM,
      glm_matches_ordered_logistic_vars_broadcast_x) {
-  using std::vector;
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
-  using Eigen::Matrix;
-  using Eigen::RowVectorXd;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
   using stan::math::var;
+  using std::vector;
   double eps = 1e-13;
   int N = 5;
   int M = 2;
@@ -194,13 +196,13 @@ TEST(ProbDistributionsOrderedLogisticGLM,
 
 TEST(ProbDistributionsOrderedLogisticGLM,
      glm_matches_ordered_logistic_single_instance) {
-  using std::vector;
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
-  using Eigen::Matrix;
-  using Eigen::RowVectorXd;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
   using stan::math::var;
+  using std::vector;
   double eps = 1e-13;
   int N = 1;
   int M = 2;
@@ -233,13 +235,13 @@ TEST(ProbDistributionsOrderedLogisticGLM,
 
 TEST(ProbDistributionsOrderedLogisticGLM,
      glm_matches_ordered_logistic_zero_instances) {
-  using std::vector;
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
-  using Eigen::Matrix;
-  using Eigen::RowVectorXd;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
   using stan::math::var;
+  using std::vector;
   double eps = 1e-13;
   int N = 0;
   int M = 2;
@@ -267,13 +269,13 @@ TEST(ProbDistributionsOrderedLogisticGLM,
 
 TEST(ProbDistributionsOrderedLogisticGLM,
      glm_matches_ordered_logistic_zero_attributes) {
-  using std::vector;
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
-  using Eigen::Matrix;
-  using Eigen::RowVectorXd;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
   using stan::math::var;
+  using std::vector;
   double eps = 1e-13;
   int N = 5;
   int M = 0;
@@ -296,13 +298,13 @@ TEST(ProbDistributionsOrderedLogisticGLM,
 
 TEST(ProbDistributionsOrderedLogisticGLM,
      glm_matches_ordered_logistic_single_class) {
-  using std::vector;
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
-  using Eigen::Matrix;
-  using Eigen::RowVectorXd;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
   using stan::math::var;
+  using std::vector;
   double eps = 1e-13;
   int N = 5;
   int M = 2;
@@ -335,13 +337,13 @@ TEST(ProbDistributionsOrderedLogisticGLM,
 
 TEST(ProbDistributionsOrderedLogisticGLM,
      glm_matches_ordered_logistic_vars_big) {
-  using std::vector;
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
-  using Eigen::Matrix;
-  using Eigen::RowVectorXd;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
   using stan::math::var;
+  using std::vector;
   double eps = 1e-7;
   int N = 155;
   int M = 15;
@@ -381,13 +383,13 @@ TEST(ProbDistributionsOrderedLogisticGLM,
 }
 
 TEST(ProbDistributionsOrderedLogisticGLM, glm_interfaces) {
-  using std::vector;
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
-  using Eigen::Matrix;
-  using Eigen::RowVectorXd;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
   using stan::math::var;
+  using std::vector;
   int N = 5;
   int M = 2;
   int C = 3;
@@ -406,72 +408,75 @@ TEST(ProbDistributionsOrderedLogisticGLM, glm_interfaces) {
   x_row_double << 1, 2;
   Matrix<var, 1, Dynamic> x_row_var = x_row_double;
 
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(
+      y, x_double, beta_double, cuts_double));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(y, x_var, beta_double,
+                                                        cuts_double));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(y, x_double, beta_var,
+                                                        cuts_double));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(y, x_double,
+                                                        beta_double, cuts_var));
   EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y, x_double, beta_double, cuts_double));
+      stan::math::ordered_logistic_glm_lpmf(y, x_double, beta_var, cuts_var));
   EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y, x_var, beta_double, cuts_double));
+      stan::math::ordered_logistic_glm_lpmf(y, x_var, beta_double, cuts_var));
   EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y, x_double, beta_var, cuts_double));
-  EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y, x_double, beta_double, cuts_var));
-  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(y, x_double, beta_var, cuts_var));
-  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(y, x_var, beta_double, cuts_var));
-  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(y, x_var, beta_var, cuts_double));
+      stan::math::ordered_logistic_glm_lpmf(y, x_var, beta_var, cuts_double));
 
-  EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_scal, x_double, beta_double, cuts_double));
-  EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_scal, x_var, beta_double, cuts_double));
-  EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_scal, x_double, beta_var, cuts_double));
-  EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_scal, x_double, beta_double, cuts_var));
-  EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_scal, x_double, beta_var, cuts_var));
-  EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_scal, x_var, beta_double, cuts_var));
-  EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_scal, x_var, beta_var, cuts_double));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(
+      y_scal, x_double, beta_double, cuts_double));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(
+      y_scal, x_var, beta_double, cuts_double));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(y_scal, x_double,
+                                                        beta_var, cuts_double));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(y_scal, x_double,
+                                                        beta_double, cuts_var));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(y_scal, x_double,
+                                                        beta_var, cuts_var));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(y_scal, x_var,
+                                                        beta_double, cuts_var));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(y_scal, x_var, beta_var,
+                                                        cuts_double));
 
-  EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y, x_row_double, beta_double, cuts_double));
-  EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y, x_row_var, beta_double, cuts_double));
-  EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y, x_row_double, beta_var, cuts_double));
-  EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y, x_row_double, beta_double, cuts_var));
-  EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y, x_row_double, beta_var, cuts_var));
-  EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y, x_row_var, beta_double, cuts_var));
-  EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y, x_row_var, beta_var, cuts_double));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(
+      y, x_row_double, beta_double, cuts_double));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(
+      y, x_row_var, beta_double, cuts_double));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(y, x_row_double,
+                                                        beta_var, cuts_double));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(y, x_row_double,
+                                                        beta_double, cuts_var));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(y, x_row_double,
+                                                        beta_var, cuts_var));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(y, x_row_var,
+                                                        beta_double, cuts_var));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(y, x_row_var, beta_var,
+                                                        cuts_double));
 
-  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(y_scal, x_row_double, beta_double,
-                                            cuts_double));
-  EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_scal, x_row_var, beta_double, cuts_double));
-  EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_scal, x_row_double, beta_var, cuts_double));
-  EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_scal, x_row_double, beta_double, cuts_var));
-  EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_scal, x_row_double, beta_var, cuts_var));
-  EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_scal, x_row_var, beta_double, cuts_var));
-  EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_scal, x_row_var, beta_var, cuts_double));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(
+      y_scal, x_row_double, beta_double, cuts_double));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(
+      y_scal, x_row_var, beta_double, cuts_double));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(y_scal, x_row_double,
+                                                        beta_var, cuts_double));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(y_scal, x_row_double,
+                                                        beta_double, cuts_var));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(y_scal, x_row_double,
+                                                        beta_var, cuts_var));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(y_scal, x_row_var,
+                                                        beta_double, cuts_var));
+  EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(y_scal, x_row_var,
+                                                        beta_var, cuts_double));
 }
 
 TEST(ProbDistributionsOrderedLogisticGLM, glm_errors) {
-  using std::vector;
-  using Eigen::VectorXd;
-  using Eigen::MatrixXd;
-  using Eigen::Matrix;
-  using Eigen::RowVectorXd;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
   using stan::math::var;
+  using std::vector;
   int N = 5;
   int M = 2;
   int C = 3;

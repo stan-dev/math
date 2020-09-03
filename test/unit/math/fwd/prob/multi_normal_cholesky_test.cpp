@@ -6,8 +6,8 @@
 TEST(ProbDistributionsMultiNormalCholesky, fvar_double) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using std::vector;
   using stan::math::fvar;
+  using std::vector;
   Matrix<fvar<double>, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
   Matrix<fvar<double>, Dynamic, 1> mu(3, 1);
@@ -33,8 +33,8 @@ TEST(ProbDistributionsMultiNormalCholesky, fvar_double) {
 TEST(ProbDistributionsMultiNormalCholesky, fvar_fvar_double) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using std::vector;
   using stan::math::fvar;
+  using std::vector;
   Matrix<fvar<fvar<double> >, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
   Matrix<fvar<fvar<double> >, Dynamic, 1> mu(3, 1);

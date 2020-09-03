@@ -3,11 +3,11 @@
 #include <vector>
 
 TEST(AgradMixMatrixGetBase1LHS, failing_pre_20_fv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1_lhs;
+  using stan::math::var;
   Matrix<fvar<var>, Dynamic, 1> y(3);
   y << 1, 2, 3;
   fvar<var> z = get_base1_lhs(y, 1, "y", 1);
@@ -15,8 +15,8 @@ TEST(AgradMixMatrixGetBase1LHS, failing_pre_20_fv) {
 }
 TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vec1_fv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::get_base1_lhs;
+  using stan::math::var;
   std::vector<fvar<var> > x(2);
   x[0] = 10.0;
   x[1] = 20.0;
@@ -31,8 +31,8 @@ TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vec1_fv) {
 }
 TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vec2_fv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::get_base1_lhs;
+  using stan::math::var;
   using std::vector;
   size_t M = 3;
   size_t N = 4;
@@ -62,11 +62,11 @@ TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vec2_fv) {
                std::out_of_range);
 }
 TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_matrix_fv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1_lhs;
+  using stan::math::var;
   Matrix<fvar<var>, Dynamic, Dynamic> x(4, 3);
   for (size_t i = 0; i < 4; ++i)
     for (size_t j = 0; j < 3; ++j)
@@ -97,11 +97,11 @@ TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_matrix_fv) {
   EXPECT_THROW(get_base1_lhs(x, 1, 0, "x", 1), std::out_of_range);
 }
 TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vector_fv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1_lhs;
+  using stan::math::var;
   Matrix<fvar<var>, 1, Dynamic> x(3);
   x << 1, 2, 3;
 
@@ -112,11 +112,11 @@ TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vector_fv) {
   EXPECT_THROW(get_base1_lhs(x, 100, "x", 1), std::out_of_range);
 }
 TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_row_vector_fv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1_lhs;
+  using stan::math::var;
   Matrix<fvar<var>, Dynamic, 1> x(3);
   x << 1, 2, 3;
 
@@ -128,8 +128,8 @@ TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_row_vector_fv) {
 }
 TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_8_fv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::get_base1_lhs;
+  using stan::math::var;
   using std::vector;
   fvar<var> x0(42.0);
   // ~ 4m entries ~ 32MB memory + sizes
@@ -173,11 +173,11 @@ TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_8_fv) {
                           .val_.val());
 }
 TEST(AgradMixMatrixGetBase1LHS, failing_pre_20_ffv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1_lhs;
+  using stan::math::var;
   Matrix<fvar<fvar<var> >, Dynamic, 1> y(3);
   y << 1, 2, 3;
   fvar<fvar<var> > z = get_base1_lhs(y, 1, "y", 1);
@@ -185,8 +185,8 @@ TEST(AgradMixMatrixGetBase1LHS, failing_pre_20_ffv) {
 }
 TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vec1_ffv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::get_base1_lhs;
+  using stan::math::var;
   std::vector<fvar<fvar<var> > > x(2);
   x[0] = 10.0;
   x[1] = 20.0;
@@ -201,8 +201,8 @@ TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vec1_ffv) {
 }
 TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vec2_ffv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::get_base1_lhs;
+  using stan::math::var;
   using std::vector;
   size_t M = 3;
   size_t N = 4;
@@ -232,11 +232,11 @@ TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vec2_ffv) {
                std::out_of_range);
 }
 TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_matrix_ffv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1_lhs;
+  using stan::math::var;
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> x(4, 3);
   for (size_t i = 0; i < 4; ++i)
     for (size_t j = 0; j < 3; ++j)
@@ -268,11 +268,11 @@ TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_matrix_ffv) {
   EXPECT_THROW(get_base1_lhs(x, 1, 0, "x", 1), std::out_of_range);
 }
 TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vector_ffv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1_lhs;
+  using stan::math::var;
   Matrix<fvar<fvar<var> >, 1, Dynamic> x(3);
   x << 1, 2, 3;
 
@@ -283,11 +283,11 @@ TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_vector_ffv) {
   EXPECT_THROW(get_base1_lhs(x, 100, "x", 1), std::out_of_range);
 }
 TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_row_vector_ffv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1_lhs;
+  using stan::math::var;
   Matrix<fvar<fvar<var> >, Dynamic, 1> x(3);
   x << 1, 2, 3;
 
@@ -299,8 +299,8 @@ TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_row_vector_ffv) {
 }
 TEST(AgradMixMatrixGetBase1LHS, get_base1_lhs_8_ffv) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::get_base1_lhs;
+  using stan::math::var;
   using std::vector;
   fvar<fvar<var> > x0(42.0);
   // ~ 4m entries ~ 32MB memory + sizes

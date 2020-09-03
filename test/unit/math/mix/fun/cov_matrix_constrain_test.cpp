@@ -46,7 +46,7 @@ void expect_cov_matrix_transform(const T& x) {
   stan::test::expect_ad(f2, x);
   stan::test::expect_ad(tols, f3, x);
 }
-}
+}  // namespace cov_matrix_constrain_test
 
 TEST(MathMixMatFun, cov_matrixTransform) {
   // sizes must be n + (n choose 2)

@@ -3,9 +3,9 @@
 #include <vector>
 
 TEST(AgradMixMatrixArrayBuilder, fvar_var) {
+  using stan::math::array_builder;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::array_builder;
   using std::vector;
 
   EXPECT_EQ(0U, array_builder<fvar<var> >().array().size());
@@ -56,9 +56,9 @@ TEST(AgradMixMatrixArrayBuilder, fvar_var) {
 }
 
 TEST(AgradMixMatrixArrayBuilder, fvar_fvar_var) {
+  using stan::math::array_builder;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::array_builder;
   using std::vector;
 
   EXPECT_EQ(0U, array_builder<fvar<fvar<var> > >().array().size());

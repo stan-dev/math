@@ -26,7 +26,7 @@ void expect_ub_constrain(double x, double ub) {
   stan::test::expect_ad(f2, x, ub);
   stan::test::expect_ad(f3, x, ub);
 }
-}
+}  // namespace ub_constrain_test
 
 TEST(mathMixScalFun, ub_constrain) {
   ub_constrain_test::expect_ub_constrain(-1, 2);

@@ -10,8 +10,9 @@
 #include <string>
 
 template <typename T_y, typename T_loc, typename T_scale>
-void expect_propto_multi_normal_prec_log(T_y y1, T_loc mu1, T_scale sigma1, T_y y2, T_loc mu2,
-                   T_scale sigma2, std::string message = "") {
+void expect_propto_multi_normal_prec_log(T_y y1, T_loc mu1, T_scale sigma1,
+                                         T_y y2, T_loc mu2, T_scale sigma2,
+                                         std::string message = "") {
   expect_eq_diffs(stan::math::multi_normal_prec_log<false>(y1, mu1, sigma1),
                   stan::math::multi_normal_prec_log<false>(y2, mu2, sigma2),
                   stan::math::multi_normal_prec_log<true>(y1, mu1, sigma1),
@@ -21,68 +22,78 @@ void expect_propto_multi_normal_prec_log(T_y y1, T_loc mu1, T_scale sigma1, T_y 
 
 TEST_F(agrad_distributions_multi_normal, Propto_prec2) {
   using stan::math::to_var;
-  expect_propto_multi_normal_prec_log(to_var(y), to_var(mu), to_var(Sigma), to_var(y2), to_var(mu2),
-                to_var(Sigma2), "All vars: y, mu, sigma");
+  expect_propto_multi_normal_prec_log(to_var(y), to_var(mu), to_var(Sigma),
+                                      to_var(y2), to_var(mu2), to_var(Sigma2),
+                                      "All vars: y, mu, sigma");
 }
 TEST_F(agrad_distributions_multi_normal, ProptoY_prec2) {
   using stan::math::to_var;
-  expect_propto_multi_normal_prec_log(to_var(y), mu, Sigma, to_var(y2), mu, Sigma, "var: y");
+  expect_propto_multi_normal_prec_log(to_var(y), mu, Sigma, to_var(y2), mu,
+                                      Sigma, "var: y");
 }
 TEST_F(agrad_distributions_multi_normal, ProptoYMu_prec2) {
   using stan::math::to_var;
-  expect_propto_multi_normal_prec_log(to_var(y), to_var(mu), Sigma, to_var(y2), to_var(mu2), Sigma,
-                "var: y and mu");
+  expect_propto_multi_normal_prec_log(to_var(y), to_var(mu), Sigma, to_var(y2),
+                                      to_var(mu2), Sigma, "var: y and mu");
 }
 TEST_F(agrad_distributions_multi_normal, ProptoYSigma_prec2) {
   using stan::math::to_var;
-  expect_propto_multi_normal_prec_log(to_var(y), mu, to_var(Sigma), to_var(y2), mu, to_var(Sigma2),
-                "var: y and sigma");
+  expect_propto_multi_normal_prec_log(to_var(y), mu, to_var(Sigma), to_var(y2),
+                                      mu, to_var(Sigma2), "var: y and sigma");
 }
 TEST_F(agrad_distributions_multi_normal, ProptoMu_prec2) {
   using stan::math::to_var;
-  expect_propto_multi_normal_prec_log(y, to_var(mu), Sigma, y, to_var(mu2), Sigma, "var: mu");
+  expect_propto_multi_normal_prec_log(y, to_var(mu), Sigma, y, to_var(mu2),
+                                      Sigma, "var: mu");
 }
 TEST_F(agrad_distributions_multi_normal, ProptoMuSigma_prec2) {
   using stan::math::to_var;
-  expect_propto_multi_normal_prec_log(y, to_var(mu), to_var(Sigma), y, to_var(mu2), to_var(Sigma2),
-                "var: mu and sigma");
+  expect_propto_multi_normal_prec_log(y, to_var(mu), to_var(Sigma), y,
+                                      to_var(mu2), to_var(Sigma2),
+                                      "var: mu and sigma");
 }
 TEST_F(agrad_distributions_multi_normal, ProptoSigma_prec2) {
   using stan::math::to_var;
-  expect_propto_multi_normal_prec_log(y, mu, to_var(Sigma), y, mu, to_var(Sigma2), "var: sigma");
+  expect_propto_multi_normal_prec_log(y, mu, to_var(Sigma), y, mu,
+                                      to_var(Sigma2), "var: sigma");
 }
 
 TEST_F(agrad_distributions_multi_normal_multi_row, Propto_prec2) {
   using stan::math::to_var;
-  expect_propto_multi_normal_prec_log(to_var(y), to_var(mu), to_var(Sigma), to_var(y2), to_var(mu2),
-                to_var(Sigma2), "All vars: y, mu, sigma");
+  expect_propto_multi_normal_prec_log(to_var(y), to_var(mu), to_var(Sigma),
+                                      to_var(y2), to_var(mu2), to_var(Sigma2),
+                                      "All vars: y, mu, sigma");
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoY_prec2) {
   using stan::math::to_var;
-  expect_propto_multi_normal_prec_log(to_var(y), mu, Sigma, to_var(y2), mu, Sigma, "var: y");
+  expect_propto_multi_normal_prec_log(to_var(y), mu, Sigma, to_var(y2), mu,
+                                      Sigma, "var: y");
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoYMu_prec2) {
   using stan::math::to_var;
-  expect_propto_multi_normal_prec_log(to_var(y), to_var(mu), Sigma, to_var(y2), to_var(mu2), Sigma,
-                "var: y and mu");
+  expect_propto_multi_normal_prec_log(to_var(y), to_var(mu), Sigma, to_var(y2),
+                                      to_var(mu2), Sigma, "var: y and mu");
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoYSigma_prec2) {
   using stan::math::to_var;
-  expect_propto_multi_normal_prec_log(to_var(y), mu, to_var(Sigma), to_var(y2), mu, to_var(Sigma2),
-                "var: y and sigma");
+  expect_propto_multi_normal_prec_log(to_var(y), mu, to_var(Sigma), to_var(y2),
+                                      mu, to_var(Sigma2), "var: y and sigma");
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoMu_prec2) {
   using stan::math::to_var;
-  expect_propto_multi_normal_prec_log(y, to_var(mu), Sigma, y, to_var(mu2), Sigma, "var: mu");
+  expect_propto_multi_normal_prec_log(y, to_var(mu), Sigma, y, to_var(mu2),
+                                      Sigma, "var: mu");
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoMuSigma_prec2) {
   using stan::math::to_var;
-  expect_propto_multi_normal_prec_log(y, to_var(mu), to_var(Sigma), y, to_var(mu2), to_var(Sigma2),
-                "var: mu and sigma");
+  expect_propto_multi_normal_prec_log(y, to_var(mu), to_var(Sigma), y,
+                                      to_var(mu2), to_var(Sigma2),
+                                      "var: mu and sigma");
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoSigma_prec2) {
   using stan::math::to_var;
-  expect_propto_multi_normal_prec_log(y, mu, to_var(Sigma), y, mu, to_var(Sigma2), "var: sigma");
+  expect_propto_multi_normal_prec_log(y, mu, to_var(Sigma), y, mu,
+                                      to_var(Sigma2), "var: sigma");
 }
 
 struct multi_normal_prec_fun {
@@ -165,7 +176,7 @@ struct vectorized_multi_normal_prec_fun {
   template <typename T_y, typename T_mu, typename T_sigma>
   stan::return_type_t<T_y, T_mu, T_sigma> operator()(
       const std::vector<T_y>& y_vec, const std::vector<T_mu>& mu_vec,
-      const std::vector<T_sigma>& sigma_vec) const {    
+      const std::vector<T_sigma>& sigma_vec) const {
     using Eigen::Dynamic;
     using Eigen::Matrix;
     using std::vector;

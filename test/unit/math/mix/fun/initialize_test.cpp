@@ -3,11 +3,11 @@
 #include <vector>
 
 TEST(AgradMixMatrixInitialize, fv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::initialize;
+  using stan::math::var;
   using std::vector;
 
   fvar<var> x;
@@ -45,11 +45,11 @@ TEST(AgradMixMatrixInitialize, fv) {
       EXPECT_FLOAT_EQ(54, d[i][j].val_.val());
 }
 TEST(AgradMixMatrixInitialize, fv2) {
-  using stan::math::fvar;
-  using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::initialize;
+  using stan::math::var;
   Matrix<fvar<var>, Dynamic, 1> y(3);
   initialize(y, 3.0);
   EXPECT_EQ(3, y.size());
@@ -57,11 +57,11 @@ TEST(AgradMixMatrixInitialize, fv2) {
 }
 
 TEST(AgradMixMatrixInitialize, ffv) {
-  using stan::math::fvar;
-  using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::initialize;
+  using stan::math::var;
   using std::vector;
 
   fvar<fvar<var> > x;
@@ -99,11 +99,11 @@ TEST(AgradMixMatrixInitialize, ffv) {
       EXPECT_FLOAT_EQ(54, d[i][j].val_.val_.val());
 }
 TEST(AgradMixMatrixInitialize, ffv2) {
-  using stan::math::fvar;
-  using stan::math::var;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::initialize;
+  using stan::math::var;
   Matrix<fvar<fvar<var> >, Dynamic, 1> y(3);
   initialize(y, 3.0);
   EXPECT_EQ(3, y.size());

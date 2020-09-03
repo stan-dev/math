@@ -6,7 +6,7 @@
 
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_doubles) {  
+TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_doubles) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;

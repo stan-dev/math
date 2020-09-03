@@ -45,7 +45,7 @@ void expect_corr_matrix_transform(const T& x) {
   stan::test::expect_ad(f2, x);
   stan::test::expect_ad(tols, f3, x);
 }
-}
+}  // namespace corr_matrix_constrain_test
 
 TEST(MathMixMatFun, corr_matrixTransform) {
   // sizes must be (n choose 2)

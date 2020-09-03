@@ -45,7 +45,7 @@ void expect_cholesky_corr_transform(const T& x) {
   stan::test::expect_ad(f2, x);
   stan::test::expect_ad(tols, f3, x);
 }
-}
+}  // namespace cholesky_corr_constrain_test
 
 TEST(MathMixMatFun, cholesky_corrTransform) {
   // sizes must be (n choose 2)

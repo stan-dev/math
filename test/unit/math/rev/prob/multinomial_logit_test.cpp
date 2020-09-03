@@ -6,12 +6,14 @@
 #include <vector>
 
 template <typename T_prob>
-void expect_propto_multinomial_logit_lpmf(std::vector<int>& ns1, T_prob beta1, std::vector<int>& ns2,
-                   T_prob beta2, std::string message) {
+void expect_propto_multinomial_logit_lpmf(std::vector<int>& ns1, T_prob beta1,
+                                          std::vector<int>& ns2, T_prob beta2,
+                                          std::string message) {
   expect_eq_diffs(stan::math::multinomial_logit_lpmf<false>(ns1, beta1),
                   stan::math::multinomial_logit_lpmf<false>(ns2, beta2),
                   stan::math::multinomial_logit_lpmf<true>(ns1, beta1),
-                  stan::math::multinomial_logit_lpmf<true>(ns2, beta2), message);
+                  stan::math::multinomial_logit_lpmf<true>(ns2, beta2),
+                  message);
 }
 
 TEST(AgradDistributionsMultinomialLogit, Propto) {
@@ -41,6 +43,8 @@ TEST(AgradDistributionsMultinomialLogit, check_varis_on_stack) {
   Matrix<var, Dynamic, 1> beta(3, 1);
   beta << log(0.3), log(0.5), log(0.2);
 
-  test::check_varis_on_stack(stan::math::multinomial_logit_lpmf<false>(ns, beta));
-  test::check_varis_on_stack(stan::math::multinomial_logit_lpmf<true>(ns, beta));
+  test::check_varis_on_stack(
+      stan::math::multinomial_logit_lpmf<false>(ns, beta));
+  test::check_varis_on_stack(
+      stan::math::multinomial_logit_lpmf<true>(ns, beta));
 }

@@ -2,7 +2,6 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-
 TEST(AgradFwdMatrixResize, fvar_double) {
   using stan::math::fvar;
   fvar<double> x = 5;
@@ -24,9 +23,9 @@ TEST(AgradFwdMatrixResize, svec_fvar_double) {
   EXPECT_EQ(2U, y.size());
 }
 TEST(AgradFwdMatrixResize, vec_fvar_double) {
-  using stan::math::fvar;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
   Matrix<fvar<double>, Dynamic, 1> v(2);
   std::vector<int> dims;
   EXPECT_EQ(2, v.size());
@@ -41,9 +40,9 @@ TEST(AgradFwdMatrixResize, vec_fvar_double) {
   EXPECT_EQ(3, v.size());
 }
 TEST(AgradFwdMatrixResize, rvec_fvar_double) {
-  using stan::math::fvar;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
   Matrix<fvar<double>, 1, Dynamic> rv(2);
   std::vector<int> dims;
   EXPECT_EQ(2, rv.size());
@@ -58,9 +57,9 @@ TEST(AgradFwdMatrixResize, rvec_fvar_double) {
   EXPECT_EQ(3, rv.size());
 }
 TEST(AgradFwdMatrixResize, mat_fvar_double) {
-  using stan::math::fvar;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
   Matrix<fvar<double>, Dynamic, Dynamic> m(2, 3);
   std::vector<int> dims;
   EXPECT_EQ(2, m.rows());
@@ -90,9 +89,9 @@ TEST(AgradFwdMatrixResize, svec_svec_fvar_double) {
   EXPECT_EQ(7U, xx[1].size());
 }
 TEST(AgradFwdMatrixResize, svec_v_fvar_double) {
-  using stan::math::fvar;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
   std::vector<Matrix<fvar<double>, Dynamic, 1> > xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
@@ -110,9 +109,9 @@ TEST(AgradFwdMatrixResize, svec_v_fvar_double) {
   EXPECT_EQ(7, xx[1].size());
 }
 TEST(AgradFwdMatrixResize, svec_rv_fvar_double) {
-  using stan::math::fvar;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
   std::vector<Matrix<fvar<double>, 1, Dynamic> > xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
@@ -130,9 +129,9 @@ TEST(AgradFwdMatrixResize, svec_rv_fvar_double) {
   EXPECT_EQ(7, xx[1].size());
 }
 TEST(AgradFwdMatrixResize, svec_svec_matrix_fvar_double) {
-  using stan::math::fvar;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
   std::vector<std::vector<Matrix<fvar<double>, Dynamic, Dynamic> > > mm;
   std::vector<int> dims;
   dims.push_back(4U);
@@ -166,9 +165,9 @@ TEST(AgradFwdMatrixResize, svec_fvar_fvar_double) {
   EXPECT_EQ(2U, y.size());
 }
 TEST(AgradFwdMatrixResize, vec_fvar_fvar_double) {
-  using stan::math::fvar;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
   Matrix<fvar<fvar<double> >, Dynamic, 1> v(2);
   std::vector<int> dims;
   EXPECT_EQ(2, v.size());
@@ -183,9 +182,9 @@ TEST(AgradFwdMatrixResize, vec_fvar_fvar_double) {
   EXPECT_EQ(3, v.size());
 }
 TEST(AgradFwdMatrixResize, rvec_fvar_fvar_double) {
-  using stan::math::fvar;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
   Matrix<fvar<fvar<double> >, 1, Dynamic> rv(2);
   std::vector<int> dims;
   EXPECT_EQ(2, rv.size());
@@ -200,9 +199,9 @@ TEST(AgradFwdMatrixResize, rvec_fvar_fvar_double) {
   EXPECT_EQ(3, rv.size());
 }
 TEST(AgradFwdMatrixResize, mat_fvar_fvar_double) {
-  using stan::math::fvar;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
   Matrix<fvar<fvar<double> >, Dynamic, Dynamic> m(2, 3);
   std::vector<int> dims;
   EXPECT_EQ(2, m.rows());
@@ -232,9 +231,9 @@ TEST(AgradFwdMatrixResize, svec_svec_fvar_fvar_double) {
   EXPECT_EQ(7U, xx[1].size());
 }
 TEST(AgradFwdMatrixResize, svec_v_fvar_fvar_double) {
-  using stan::math::fvar;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
   std::vector<Matrix<fvar<fvar<double> >, Dynamic, 1> > xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
@@ -252,9 +251,9 @@ TEST(AgradFwdMatrixResize, svec_v_fvar_fvar_double) {
   EXPECT_EQ(7, xx[1].size());
 }
 TEST(AgradFwdMatrixResize, svec_rv_fvar_fvar_double) {
-  using stan::math::fvar;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
   std::vector<Matrix<fvar<fvar<double> >, 1, Dynamic> > xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
@@ -272,9 +271,9 @@ TEST(AgradFwdMatrixResize, svec_rv_fvar_fvar_double) {
   EXPECT_EQ(7, xx[1].size());
 }
 TEST(AgradFwdMatrixResize, svec_svec_matrix_fvar_fvar_double) {
-  using stan::math::fvar;
-  using Eigen::Matrix;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
   std::vector<std::vector<Matrix<fvar<fvar<double> >, Dynamic, Dynamic> > > mm;
   std::vector<int> dims;
   dims.push_back(4U);

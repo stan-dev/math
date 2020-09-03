@@ -3,10 +3,10 @@
 #include <vector>
 
 TEST(AgradFwdMatrixFill, fd) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;
+  using stan::math::fvar;
   using std::vector;
 
   fvar<double> x;
@@ -44,10 +44,10 @@ TEST(AgradFwdMatrixFill, fd) {
       EXPECT_FLOAT_EQ(54, d[i][j].val_);
 }
 TEST(AgradFwdMatrixFill, fd2) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;
+  using stan::math::fvar;
   Matrix<fvar<double>, Dynamic, 1> y(3);
   fill(y, 3.0);
   EXPECT_EQ(3, y.size());
@@ -55,10 +55,10 @@ TEST(AgradFwdMatrixFill, fd2) {
 }
 
 TEST(AgradFwdMatrixFill, ffd) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;
+  using stan::math::fvar;
   using std::vector;
 
   fvar<fvar<double> > x;
@@ -96,10 +96,10 @@ TEST(AgradFwdMatrixFill, ffd) {
       EXPECT_FLOAT_EQ(54, d[i][j].val_.val_);
 }
 TEST(AgradFwdMatrixFill, ffd2) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;
+  using stan::math::fvar;
   Matrix<fvar<fvar<double> >, Dynamic, 1> y(3);
   fill(y, 3.0);
   EXPECT_EQ(3, y.size());

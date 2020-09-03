@@ -9,8 +9,8 @@ void test_sum(stan::math::accumulator<T>& a, int n) {
 }
 
 TEST(AgradFwdMatrixAccumulate, fvar_double) {
-  using stan::math::fvar;
   using stan::math::accumulator;
+  using stan::math::fvar;
 
   accumulator<fvar<double>> a;
   test_sum(a, 0);
@@ -24,8 +24,8 @@ TEST(AgradFwdMatrixAccumulate, fvar_double) {
 }
 
 TEST(AgradFwdMatrixAccumulate, collection_fvar_double) {
-  using stan::math::fvar;
   using stan::math::accumulator;
+  using stan::math::fvar;
   using stan::math::matrix_fd;
   using stan::math::vector_fd;
   using std::vector;
@@ -85,8 +85,8 @@ TEST(AgradFwdMatrixAccumulate, collection_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAccumulate, fvar_fvar_double) {
-  using stan::math::fvar;
   using stan::math::accumulator;
+  using stan::math::fvar;
 
   accumulator<fvar<fvar<double>>> a;
   test_sum(a, 0);
@@ -100,8 +100,8 @@ TEST(AgradFwdMatrixAccumulate, fvar_fvar_double) {
 }
 
 TEST(AgradFwdMatrixAccumulate, collection_fvar_fvar_double) {
-  using stan::math::fvar;
   using stan::math::accumulator;
+  using stan::math::fvar;
   using stan::math::matrix_ffd;
   using stan::math::vector_ffd;
   using std::vector;

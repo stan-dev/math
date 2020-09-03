@@ -8,8 +8,8 @@
 TEST(ProbDistributionsInvWishart, fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::math::inv_wishart_log;
   using stan::math::fvar;
+  using stan::math::inv_wishart_log;
   using stan::math::var;
 
   Matrix<fvar<var>, Dynamic, Dynamic> Y(3, 3);
@@ -38,8 +38,8 @@ TEST(ProbDistributionsInvWishart, fvar_var) {
 TEST(ProbDistributionsInvWishart, fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::math::inv_wishart_log;
   using stan::math::fvar;
+  using stan::math::inv_wishart_log;
   using stan::math::var;
 
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> Y(3, 3);

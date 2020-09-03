@@ -38,7 +38,7 @@ void expect_unit_vector_constrain(const T& x) {
   stan::test::expect_ad(tols, f2, x);
   stan::test::expect_ad(tols, f3, x);
 }
-}
+}  // namespace unit_vector_constrain_test
 
 TEST(MathMixMatFun, unitVectorConstrain) {
   Eigen::VectorXd v0;

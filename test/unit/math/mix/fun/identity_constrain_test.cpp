@@ -17,7 +17,7 @@ T g3(const T& x) {
   stan::math::identity_constrain(x, lp);
   return lp;
 }
-}
+}  // namespace identity_constrain_test
 
 void expect_identity_constrain(double x) {
   auto f1 = [](const auto& x) { return identity_constrain_test::g1(x); };

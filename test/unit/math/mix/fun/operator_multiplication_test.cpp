@@ -111,9 +111,9 @@ TEST(AgradMixMatrixOperatorMultiplication, fv_vector_scalar_2ndDeriv) {
 TEST(AgradMixMatrixOperatorMultiplication, fv_rowvector_scalar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::multiply;
-  using stan::math::var;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
+  using stan::math::var;
 
   row_vector_d d1(3);
   row_vector_fv v1(3);
@@ -188,9 +188,9 @@ TEST(AgradMixMatrixOperatorMultiplication, fv_rowvector_scalar_1stDeriv) {
 TEST(AgradMixMatrixOperatorMultiplication, fv_rowvector_scalar_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::multiply;
-  using stan::math::var;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
+  using stan::math::var;
 
   row_vector_fv v1(3);
   fvar<var> v2;
@@ -215,10 +215,10 @@ TEST(AgradMixMatrixOperatorMultiplication, fv_rowvector_scalar_2ndDeriv) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, fv_matrix_scalar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
+  using stan::math::multiply;
+  using stan::math::var;
 
   matrix_d d1(2, 2);
   matrix_fv v1(2, 2);
@@ -307,10 +307,10 @@ TEST(AgradMixMatrixOperatorMultiplication, fv_matrix_scalar_1stDeriv) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, fv_matrix_scalar_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
+  using stan::math::multiply;
+  using stan::math::var;
 
   matrix_fv v1(2, 2);
   fvar<var> v2;
@@ -338,9 +338,9 @@ TEST(AgradMixMatrixOperatorMultiplication, fv_matrix_scalar_2ndDeriv) {
 TEST(AgradMixMatrixOperatorMultiplication, fv_rowvector_vector_1stDeriv) {
   using stan::math::fvar;
   using stan::math::multiply;
-  using stan::math::var;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_fv;
 
@@ -383,9 +383,9 @@ TEST(AgradMixMatrixOperatorMultiplication, fv_rowvector_vector_1stDeriv) {
 TEST(AgradMixMatrixOperatorMultiplication, fv_rowvector_vector_2ndDeriv) {
   using stan::math::fvar;
   using stan::math::multiply;
-  using stan::math::var;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_fv;
 
@@ -414,11 +414,11 @@ TEST(AgradMixMatrixOperatorMultiplication, fv_rowvector_vector_2ndDeriv) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, fv_vector_rowvector_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_fv;
+  using stan::math::multiply;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_fv;
 
@@ -513,11 +513,11 @@ TEST(AgradMixMatrixOperatorMultiplication, fv_vector_rowvector_1stDeriv) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, fv_vector_rowvector_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_fv;
+  using stan::math::multiply;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_fv;
 
@@ -549,10 +549,10 @@ TEST(AgradMixMatrixOperatorMultiplication, fv_vector_rowvector_2ndDeriv) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, fv_matrix_vector_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
+  using stan::math::multiply;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_fv;
 
@@ -613,10 +613,10 @@ TEST(AgradMixMatrixOperatorMultiplication, fv_matrix_vector_1stDeriv) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, fv_matrix_vector_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
+  using stan::math::multiply;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_fv;
 
@@ -652,10 +652,10 @@ TEST(AgradMixMatrixOperatorMultiplication, fv_matrix_vector_2ndDeriv) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, fv_matrix_vector_exception) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
+  using stan::math::multiply;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_fv;
 
@@ -669,12 +669,12 @@ TEST(AgradMixMatrixOperatorMultiplication, fv_matrix_vector_exception) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, fv_rowvector_matrix_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
+  using stan::math::multiply;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
+  using stan::math::var;
   using stan::math::vector_fv;
 
   row_vector_d d1(3);
@@ -728,12 +728,12 @@ TEST(AgradMixMatrixOperatorMultiplication, fv_rowvector_matrix_1stDeriv) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, fv_rowvector_matrix_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
+  using stan::math::multiply;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
+  using stan::math::var;
   using stan::math::vector_fv;
 
   row_vector_d d1(3);
@@ -769,12 +769,12 @@ TEST(AgradMixMatrixOperatorMultiplication, fv_rowvector_matrix_2ndDeriv) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, fv_rowvector_matrix_exception) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
+  using stan::math::multiply;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
+  using stan::math::var;
 
   row_vector_d d1(4);
   row_vector_fv v1(4);
@@ -786,10 +786,10 @@ TEST(AgradMixMatrixOperatorMultiplication, fv_rowvector_matrix_exception) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, fv_matrix_matrix_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
+  using stan::math::multiply;
+  using stan::math::var;
 
   matrix_d d1(2, 3);
   matrix_fv v1(2, 3);
@@ -856,10 +856,10 @@ TEST(AgradMixMatrixOperatorMultiplication, fv_matrix_matrix_1stDeriv) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, fv_matrix_matrix_2ndDeriv) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
+  using stan::math::multiply;
+  using stan::math::var;
 
   matrix_d d1(2, 3);
   matrix_fv v1(2, 3);
@@ -896,10 +896,10 @@ TEST(AgradMixMatrixOperatorMultiplication, fv_matrix_matrix_2ndDeriv) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, fv_matrix_matrix_exception) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
+  using stan::math::multiply;
+  using stan::math::var;
 
   matrix_d d1(2, 2);
   matrix_fv v1(2, 2);
@@ -1079,9 +1079,9 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_vector_scalar_3rdDeriv) {
 TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_scalar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::multiply;
-  using stan::math::var;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::var;
 
   row_vector_d d1(3);
   row_vector_ffv v1(3);
@@ -1156,9 +1156,9 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_scalar_1stDeriv) {
 TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_scalar_2ndDeriv_1) {
   using stan::math::fvar;
   using stan::math::multiply;
-  using stan::math::var;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::var;
 
   row_vector_ffv v1(3);
   fvar<fvar<var> > v2;
@@ -1184,9 +1184,9 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_scalar_2ndDeriv_1) {
 TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_scalar_2ndDeriv_2) {
   using stan::math::fvar;
   using stan::math::multiply;
-  using stan::math::var;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::var;
 
   row_vector_ffv v1(3);
   fvar<fvar<var> > v2;
@@ -1212,9 +1212,9 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_scalar_2ndDeriv_2) {
 TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_scalar_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::multiply;
-  using stan::math::var;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::var;
 
   row_vector_ffv v1(3);
   fvar<fvar<var> > v2;
@@ -1243,10 +1243,10 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_scalar_3rdDeriv) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_scalar_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
+  using stan::math::var;
 
   matrix_d d1(2, 2);
   matrix_ffv v1(2, 2);
@@ -1335,10 +1335,10 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_scalar_1stDeriv) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_scalar_2ndDeriv_1) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
+  using stan::math::var;
 
   matrix_ffv v1(2, 2);
   fvar<fvar<var> > v2;
@@ -1365,10 +1365,10 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_scalar_2ndDeriv_1) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_scalar_2ndDeriv_2) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
+  using stan::math::var;
 
   matrix_ffv v1(2, 2);
   fvar<fvar<var> > v2;
@@ -1395,10 +1395,10 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_scalar_2ndDeriv_2) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_scalar_3rdDeriv) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
+  using stan::math::var;
 
   matrix_ffv v1(2, 2);
   fvar<fvar<var> > v2;
@@ -1431,9 +1431,9 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_scalar_3rdDeriv) {
 TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_vector_1stDeriv) {
   using stan::math::fvar;
   using stan::math::multiply;
-  using stan::math::var;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
@@ -1476,9 +1476,9 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_vector_1stDeriv) {
 TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_vector_2ndDeriv_1) {
   using stan::math::fvar;
   using stan::math::multiply;
-  using stan::math::var;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
@@ -1508,9 +1508,9 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_vector_2ndDeriv_1) {
 TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_vector_2ndDeriv_2) {
   using stan::math::fvar;
   using stan::math::multiply;
-  using stan::math::var;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
@@ -1540,9 +1540,9 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_vector_2ndDeriv_2) {
 TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_vector_3rdDeriv) {
   using stan::math::fvar;
   using stan::math::multiply;
-  using stan::math::var;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
@@ -1577,11 +1577,11 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_vector_3rdDeriv) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_vector_rowvector_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
@@ -1676,11 +1676,11 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_vector_rowvector_1stDeriv) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_vector_rowvector_2ndDeriv_1) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
@@ -1712,11 +1712,11 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_vector_rowvector_2ndDeriv_1) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_vector_rowvector_2ndDeriv_2) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
@@ -1748,11 +1748,11 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_vector_rowvector_2ndDeriv_2) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_vector_rowvector_3rdDeriv) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
@@ -1790,10 +1790,10 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_vector_rowvector_3rdDeriv) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_vector_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
@@ -1854,10 +1854,10 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_vector_1stDeriv) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_vector_2ndDeriv_1) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
@@ -1893,10 +1893,10 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_vector_2ndDeriv_1) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_vector_2ndDeriv_2) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
@@ -1932,10 +1932,10 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_vector_2ndDeriv_2) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_vector_3rdDeriv) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
@@ -1979,10 +1979,10 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_vector_3rdDeriv) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_vector_exception) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
@@ -1996,12 +1996,12 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_vector_exception) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_matrix_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::var;
   using stan::math::vector_ffv;
 
   row_vector_d d1(3);
@@ -2055,12 +2055,12 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_matrix_1stDeriv) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_matrix_2ndDeriv_1) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::var;
   using stan::math::vector_ffv;
 
   row_vector_d d1(3);
@@ -2096,12 +2096,12 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_matrix_2ndDeriv_1) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_matrix_2ndDeriv_2) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::var;
   using stan::math::vector_ffv;
 
   row_vector_d d1(3);
@@ -2137,12 +2137,12 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_matrix_2ndDeriv_2) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_matrix_3rdDeriv) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::var;
   using stan::math::vector_ffv;
 
   row_vector_d d1(3);
@@ -2187,12 +2187,12 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_matrix_3rdDeriv) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_matrix_exception) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::var;
 
   row_vector_d d1(4);
   row_vector_ffv v1(4);
@@ -2204,10 +2204,10 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_rowvector_matrix_exception) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_matrix_1stDeriv) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
+  using stan::math::var;
 
   matrix_d d1(2, 3);
   matrix_ffv v1(2, 3);
@@ -2274,10 +2274,10 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_matrix_1stDeriv) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_matrix_2ndDeriv_1) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
+  using stan::math::var;
 
   matrix_d d1(2, 3);
   matrix_ffv v1(2, 3);
@@ -2314,10 +2314,10 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_matrix_2ndDeriv_1) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_matrix_2ndDeriv_2) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
+  using stan::math::var;
 
   matrix_d d1(2, 3);
   matrix_ffv v1(2, 3);
@@ -2354,10 +2354,10 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_matrix_2ndDeriv_2) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_matrix_3rdDeriv) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
+  using stan::math::var;
 
   matrix_d d1(2, 3);
   matrix_ffv v1(2, 3);
@@ -2406,10 +2406,10 @@ TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_matrix_3rdDeriv) {
 }
 TEST(AgradMixMatrixOperatorMultiplication, ffv_matrix_matrix_exception) {
   using stan::math::fvar;
-  using stan::math::multiply;
-  using stan::math::var;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::multiply;
+  using stan::math::var;
 
   matrix_d d1(2, 2);
   matrix_ffv v1(2, 2);

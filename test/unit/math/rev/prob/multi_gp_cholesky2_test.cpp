@@ -7,10 +7,10 @@
 #include <string>
 #include <vector>
 
-
 template <typename T_y, typename T_scale, typename T_w>
-void expect_propto_multi_gp_cholesky_log(T_y y1, T_scale L1, T_w w1, T_y y2, T_scale L2, T_w w2,
-                   std::string message = "") {
+void expect_propto_multi_gp_cholesky_log(T_y y1, T_scale L1, T_w w1, T_y y2,
+                                         T_scale L2, T_w w2,
+                                         std::string message = "") {
   expect_eq_diffs(stan::math::multi_gp_cholesky_log<false>(y1, L1, w1),
                   stan::math::multi_gp_cholesky_log<false>(y2, L2, w2),
                   stan::math::multi_gp_cholesky_log<true>(y1, L1, w1),
@@ -19,35 +19,39 @@ void expect_propto_multi_gp_cholesky_log(T_y y1, T_scale L1, T_w w1, T_y y2, T_s
 
 TEST_F(agrad_distributions_multi_gp_cholesky, Propto) {
   using stan::math::to_var;
-  expect_propto_multi_gp_cholesky_log(to_var(y), to_var(L), to_var(w), to_var(y2), to_var(L2),
-                to_var(w2), "All vars: y, w, sigma");
+  expect_propto_multi_gp_cholesky_log(to_var(y), to_var(L), to_var(w),
+                                      to_var(y2), to_var(L2), to_var(w2),
+                                      "All vars: y, w, sigma");
 }
 TEST_F(agrad_distributions_multi_gp_cholesky, ProptoY) {
   using stan::math::to_var;
-  expect_propto_multi_gp_cholesky_log(to_var(y), L, w, to_var(y2), L, w, "var: y");
+  expect_propto_multi_gp_cholesky_log(to_var(y), L, w, to_var(y2), L, w,
+                                      "var: y");
 }
 TEST_F(agrad_distributions_multi_gp_cholesky, ProptoYMu) {
   using stan::math::to_var;
-  expect_propto_multi_gp_cholesky_log(to_var(y), L, to_var(w), to_var(y2), L, to_var(w2),
-                "var: y and w");
+  expect_propto_multi_gp_cholesky_log(to_var(y), L, to_var(w), to_var(y2), L,
+                                      to_var(w2), "var: y and w");
 }
 TEST_F(agrad_distributions_multi_gp_cholesky, ProptoYSigma) {
   using stan::math::to_var;
-  expect_propto_multi_gp_cholesky_log(to_var(y), to_var(L), w, to_var(y2), to_var(L2), w,
-                "var: y and sigma");
+  expect_propto_multi_gp_cholesky_log(to_var(y), to_var(L), w, to_var(y2),
+                                      to_var(L2), w, "var: y and sigma");
 }
 TEST_F(agrad_distributions_multi_gp_cholesky, ProptoMu) {
   using stan::math::to_var;
-  expect_propto_multi_gp_cholesky_log(y, L, to_var(w), y, L, to_var(w2), "var: w");
+  expect_propto_multi_gp_cholesky_log(y, L, to_var(w), y, L, to_var(w2),
+                                      "var: w");
 }
 TEST_F(agrad_distributions_multi_gp_cholesky, ProptoMuSigma) {
   using stan::math::to_var;
-  expect_propto_multi_gp_cholesky_log(y, to_var(L), to_var(w), y, to_var(L2), to_var(w2),
-                "var: w and sigma");
+  expect_propto_multi_gp_cholesky_log(y, to_var(L), to_var(w), y, to_var(L2),
+                                      to_var(w2), "var: w and sigma");
 }
 TEST_F(agrad_distributions_multi_gp_cholesky, ProptoSigma) {
   using stan::math::to_var;
-  expect_propto_multi_gp_cholesky_log(y, to_var(L), w, y, to_var(L2), w, "var: sigma");
+  expect_propto_multi_gp_cholesky_log(y, to_var(L), w, y, to_var(L2), w,
+                                      "var: sigma");
 }
 
 TEST(ProbDistributionsMultiGPCholesky, MultiGPCholeskyVar) {

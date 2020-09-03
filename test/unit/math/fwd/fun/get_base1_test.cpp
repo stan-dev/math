@@ -3,9 +3,9 @@
 #include <vector>
 
 TEST(AgradFwdMatrixGetBase1, failing_pre_20_fd) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1;
   Matrix<fvar<double>, Dynamic, 1> y(3);
   y << 1, 2, 3;
@@ -60,9 +60,9 @@ TEST(AgradFwdMatrixGetBase1, get_base1_vec2_fd) {
                std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1, get_base1_matrix_fd) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1;
   Matrix<fvar<double>, Dynamic, Dynamic> x(4, 3);
   for (size_t i = 0; i < 4; ++i)
@@ -85,9 +85,9 @@ TEST(AgradFwdMatrixGetBase1, get_base1_matrix_fd) {
   EXPECT_THROW(get_base1(x, 1, 0, "x", 1), std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1, get_base1_vector_fd) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1;
   Matrix<fvar<double>, 1, Dynamic> x(3);
   x << 1, 2, 3;
@@ -98,9 +98,9 @@ TEST(AgradFwdMatrixGetBase1, get_base1_vector_fd) {
   EXPECT_THROW(get_base1(x, 100, "x", 1), std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1, get_base1_row_vector_fd) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1;
   Matrix<fvar<double>, Dynamic, 1> x(3);
   x << 1, 2, 3;
@@ -157,9 +157,9 @@ TEST(AgradFwdMatrixGetBase1, get_base1_8_fd) {
 }
 
 TEST(AgradFwdMatrixGetBase1, failing_pre_20_ffd) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1;
   Matrix<fvar<fvar<double> >, Dynamic, 1> y(3);
   y << 1, 2, 3;
@@ -215,9 +215,9 @@ TEST(AgradFwdMatrixGetBase1, get_base1_vec2_ffd) {
                std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1, get_base1_matrix_ffd) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1;
   Matrix<fvar<fvar<double> >, Dynamic, Dynamic> x(4, 3);
   for (size_t i = 0; i < 4; ++i)
@@ -243,9 +243,9 @@ TEST(AgradFwdMatrixGetBase1, get_base1_matrix_ffd) {
   EXPECT_THROW(get_base1(x, 1, 0, "x", 1), std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1, get_base1_vector_ffd) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1;
   Matrix<fvar<fvar<double> >, 1, Dynamic> x(3);
   x << 1, 2, 3;
@@ -256,9 +256,9 @@ TEST(AgradFwdMatrixGetBase1, get_base1_vector_ffd) {
   EXPECT_THROW(get_base1(x, 100, "x", 1), std::out_of_range);
 }
 TEST(AgradFwdMatrixGetBase1, get_base1_row_vector_ffd) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1;
   Matrix<fvar<fvar<double> >, Dynamic, 1> x(3);
   x << 1, 2, 3;

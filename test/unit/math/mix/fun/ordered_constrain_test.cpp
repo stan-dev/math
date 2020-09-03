@@ -26,7 +26,7 @@ void expect_ordered_transform(const T& x) {
   stan::test::expect_ad(f2, x);
   stan::test::expect_ad(f3, x);
 }
-}
+}  // namespace ordered_constrain_test
 
 TEST(MathMixMatFun, orderedTransform) {
   Eigen::VectorXd v0(0);

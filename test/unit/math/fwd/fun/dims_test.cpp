@@ -3,10 +3,10 @@
 #include <vector>
 
 TEST(AgradFwdMatrixDims, matrix_fd) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::dims;
+  using stan::math::fvar;
   using stan::math::matrix_fd;
   using std::vector;
 
@@ -59,10 +59,10 @@ TEST(AgradFwdMatrixDims, matrix_fd) {
 }
 
 TEST(AgradFwdMatrixDims, matrix_ffd) {
-  using stan::math::fvar;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::dims;
+  using stan::math::fvar;
   using stan::math::matrix_ffd;
   using std::vector;
 

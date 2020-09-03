@@ -6,9 +6,9 @@
 TEST(ProbDistributionsMultiNormal, fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using std::vector;
   using stan::math::fvar;
   using stan::math::var;
+  using std::vector;
 
   Matrix<fvar<var>, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
@@ -31,9 +31,9 @@ TEST(ProbDistributionsMultiNormal, fvar_var) {
 TEST(ProbDistributionsMultiNormal, fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using std::vector;
   using stan::math::fvar;
   using stan::math::var;
+  using std::vector;
 
   Matrix<fvar<fvar<var> >, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;

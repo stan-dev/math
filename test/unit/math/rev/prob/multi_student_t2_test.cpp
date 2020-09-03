@@ -9,11 +9,11 @@
 #include <vector>
 #include <string>
 
-
 template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
-void expect_propto_multi_student_t_log(T_y y1, T_dof nu1, T_loc mu1, T_scale sigma1, T_y y2,
-                   T_dof nu2, T_loc mu2, T_scale sigma2,
-                   std::string message = "") {
+void expect_propto_multi_student_t_log(T_y y1, T_dof nu1, T_loc mu1,
+                                       T_scale sigma1, T_y y2, T_dof nu2,
+                                       T_loc mu2, T_scale sigma2,
+                                       std::string message = "") {
   expect_eq_diffs(stan::math::multi_student_t_log<false>(y1, nu1, mu1, sigma1),
                   stan::math::multi_student_t_log<false>(y2, nu2, mu2, sigma2),
                   stan::math::multi_student_t_log<true>(y1, nu1, mu1, sigma1),
@@ -23,44 +23,49 @@ void expect_propto_multi_student_t_log(T_y y1, T_dof nu1, T_loc mu1, T_scale sig
 
 TEST_F(agrad_distributions_multi_student_t, Propto) {
   using stan::math::to_var;
-  expect_propto_multi_student_t_log(to_var(y), to_var(nu), to_var(mu), to_var(Sigma), to_var(y2),
-                to_var(nu), to_var(mu2), to_var(Sigma2),
-                "All vars: y, nu, mu, sigma");
+  expect_propto_multi_student_t_log(
+      to_var(y), to_var(nu), to_var(mu), to_var(Sigma), to_var(y2), to_var(nu),
+      to_var(mu2), to_var(Sigma2), "All vars: y, nu, mu, sigma");
 }
 TEST_F(agrad_distributions_multi_student_t, ProptoY) {
   using stan::math::to_var;
-  expect_propto_multi_student_t_log(to_var(y), nu, mu, Sigma, to_var(y2), nu, mu, Sigma, "var: y");
+  expect_propto_multi_student_t_log(to_var(y), nu, mu, Sigma, to_var(y2), nu,
+                                    mu, Sigma, "var: y");
 }
 TEST_F(agrad_distributions_multi_student_t, ProptoYMu) {
   using stan::math::to_var;
-  expect_propto_multi_student_t_log(to_var(y), nu, to_var(mu), Sigma, to_var(y2), nu, to_var(mu2),
-                Sigma, "var: y and mu");
+  expect_propto_multi_student_t_log(to_var(y), nu, to_var(mu), Sigma,
+                                    to_var(y2), nu, to_var(mu2), Sigma,
+                                    "var: y and mu");
 }
 TEST_F(agrad_distributions_multi_student_t, ProptoYSigma) {
   using stan::math::to_var;
-  expect_propto_multi_student_t_log(to_var(y), nu, mu, to_var(Sigma), to_var(y2), nu, mu,
-                to_var(Sigma2), "var: y and sigma");
+  expect_propto_multi_student_t_log(to_var(y), nu, mu, to_var(Sigma),
+                                    to_var(y2), nu, mu, to_var(Sigma2),
+                                    "var: y and sigma");
 }
 TEST_F(agrad_distributions_multi_student_t, ProptoMu) {
   using stan::math::to_var;
-  expect_propto_multi_student_t_log(y, nu, to_var(mu), Sigma, y, nu, to_var(mu2), Sigma, "var: mu");
+  expect_propto_multi_student_t_log(y, nu, to_var(mu), Sigma, y, nu,
+                                    to_var(mu2), Sigma, "var: mu");
 }
 TEST_F(agrad_distributions_multi_student_t, ProptoMuSigma) {
   using stan::math::to_var;
-  expect_propto_multi_student_t_log(y, nu, to_var(mu), to_var(Sigma), y, nu, to_var(mu2),
-                to_var(Sigma2), "var: mu and sigma");
+  expect_propto_multi_student_t_log(y, nu, to_var(mu), to_var(Sigma), y, nu,
+                                    to_var(mu2), to_var(Sigma2),
+                                    "var: mu and sigma");
 }
 TEST_F(agrad_distributions_multi_student_t, ProptoSigma) {
   using stan::math::to_var;
-  expect_propto_multi_student_t_log(y, nu, mu, to_var(Sigma), y, nu, mu, to_var(Sigma2),
-                "var: sigma");
+  expect_propto_multi_student_t_log(y, nu, mu, to_var(Sigma), y, nu, mu,
+                                    to_var(Sigma2), "var: sigma");
 }
 
 TEST(ProbDistributionsMultiStudentT, MultiStudentTVar) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using std::vector;
   using stan::math::var;
+  using std::vector;
   var nu(5);
   Matrix<var, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
@@ -74,7 +79,6 @@ TEST(ProbDistributionsMultiStudentT, MultiStudentTVar) {
 TEST(ProbDistributionsMultiStudentT, MultiStudentTGradientUnivariate) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using std::vector;
   using Eigen::VectorXd;
   using stan::math::multi_student_t_log;
   using stan::math::var;
@@ -444,7 +448,7 @@ void test_all_multi_student_t2() {
         vectorized_multi_student_t_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
         get_vvar(y_), get_vvar(mu_), get_vvar(sigma_), var(5));
   }
-  { 
+  {
     using stan::math::var;
     std::vector<double> y_(1), mu_(1), sigma_(1);
     y_[0] = 1.9;

@@ -4,7 +4,6 @@
 #include <vector>
 #include <cmath>
 
-
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsNegBinomial2LogGLM,

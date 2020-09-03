@@ -9,9 +9,9 @@ void test_sum(stan::math::accumulator<T>& a, int n) {
 }
 
 TEST(AgradMixMatrixAccumulate, fvar_var) {
+  using stan::math::accumulator;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::accumulator;
 
   accumulator<fvar<var> > a;
   test_sum(a, 0);
@@ -25,10 +25,10 @@ TEST(AgradMixMatrixAccumulate, fvar_var) {
 }
 
 TEST(AgradMixMatrixAccumulate, collection_fvar_var) {
-  using stan::math::fvar;
-  using stan::math::var;
   using stan::math::accumulator;
+  using stan::math::fvar;
   using stan::math::matrix_fv;
+  using stan::math::var;
   using stan::math::vector_fv;
   using std::vector;
 
@@ -85,9 +85,9 @@ TEST(AgradMixMatrixAccumulate, collection_fvar_var) {
 }
 
 TEST(AgradMixMatrixAccumulate, fvar_fvar_var) {
+  using stan::math::accumulator;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::accumulator;
 
   accumulator<fvar<fvar<var> > > a;
   test_sum(a, 0);
@@ -101,10 +101,10 @@ TEST(AgradMixMatrixAccumulate, fvar_fvar_var) {
 }
 
 TEST(AgradMixMatrixAccumulate, collection_fvar_fvar_var) {
-  using stan::math::fvar;
-  using stan::math::var;
   using stan::math::accumulator;
+  using stan::math::fvar;
   using stan::math::matrix_ffv;
+  using stan::math::var;
   using stan::math::vector_ffv;
   using std::vector;
 

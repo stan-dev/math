@@ -16,7 +16,8 @@ void test_return() {
   expect_return<T, T>();
   expect_return<T, T, int>();
   expect_return<T, int, T>();
-  expect_return<T, double, T, double, int, double, float, float, float, T, int>();
+  expect_return<T, double, T, double, int, double, float, float, float, T,
+                int>();
 
   // array types
   expect_return<T, std::vector<T>>();
@@ -56,8 +57,8 @@ void test_return() {
 }
 
 TEST(mathMetaMix, returnType) {
-  using stan::math::var;
   using stan::math::fvar;
+  using stan::math::var;
   // no-arg case
   expect_return<double>();
 

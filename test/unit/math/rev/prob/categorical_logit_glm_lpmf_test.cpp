@@ -6,8 +6,10 @@
 
 template <bool propto, typename T_x, typename T_alpha, typename T_beta>
 stan::return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_simple_lpmf(
-    const std::vector<int>& y, const Eigen::Matrix<T_x, Eigen::Dynamic, Eigen::Dynamic>& x,
-    const T_alpha& alpha, const Eigen::Matrix<T_beta, Eigen::Dynamic, Eigen::Dynamic>& beta) {
+    const std::vector<int>& y,
+    const Eigen::Matrix<T_x, Eigen::Dynamic, Eigen::Dynamic>& x,
+    const T_alpha& alpha,
+    const Eigen::Matrix<T_beta, Eigen::Dynamic, Eigen::Dynamic>& beta) {
   using T_x_beta = stan::return_type_t<T_x, T_beta>;
   using T_return = stan::return_type_t<T_x, T_beta, T_alpha>;
 
