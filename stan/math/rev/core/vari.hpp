@@ -232,7 +232,7 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
    */
-  mutable eigen_map adj_;
+  eigen_map adj_;
 
   /**
    * Construct a dense Eigen variable implementation from a value. The
