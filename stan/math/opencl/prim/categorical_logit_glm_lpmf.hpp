@@ -38,9 +38,9 @@ namespace math {
  * bounds
  * @throw std::invalid_argument if container sizes mismatch.
  */
-template <bool propto, typename T_x, typename T_y, typename T_alpha,
+template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta,
-          require_all_prim_or_rev_kernel_expression_t<T_x, T_y, T_alpha,
+          require_all_prim_or_rev_kernel_expression_t<T_y, T_x, T_alpha,
                                                       T_beta>* = nullptr>
 return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
@@ -121,8 +121,8 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
   if (!is_constant_all<T_x>::value) {
     ops_partials.edge1_.partials_
-        = transpose(indexing(beta_val, transpose(rowwise_broadcast(y_val)),
-                             constant(0, x.cols(), x.rows())))
+        = indexing(beta_val, col_index(x.rows(), x.cols()),
+                             rowwise_broadcast(y_val - 1))
           - elt_multiply(exp_lin_cl * transpose(beta_val),
                          rowwise_broadcast(inv_sum_exp_lin_cl));
   }
