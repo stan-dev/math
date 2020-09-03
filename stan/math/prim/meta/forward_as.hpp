@@ -54,8 +54,8 @@ inline T_actual&& forward_as(T_actual&& a) {  // NOLINT
  * @throw always throws std::runtime_error
  */
 template <typename T_desired, typename T_actual,
-          typename = std::enable_if_t<
-              !std::is_same<std::decay<T_actual>, std::decay<T_desired>>::value>>
+          typename = std::enable_if_t<!std::is_same<
+              std::decay<T_actual>, std::decay<T_desired>>::value>>
 inline T_desired forward_as(const T_actual& a) {
   throw std::runtime_error("Wrong type assumed! Please file a bug report.");
 }
