@@ -1,8 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
 
 TEST(mathMixGausInterp, derivs) {
-  using stan::math::gaus_interp_vect;
   using stan::math::var;
+  using stan::math::gaus_interp;
   std::vector<double> xs, ys, ts;
   double xmin, xmax, x, y, t, t0, t1, dder, dder2, x0, x1;
   int n;
@@ -40,11 +40,11 @@ TEST(mathMixGausInterp, derivs) {
   }
 
   std::vector<double> ys_new, ys_new_p, ys_new_n, xs_new_p, xs_new_n;
-  ys_new = gaus_interp_vect(xs, ys, xs_new);
+  ys_new = gaus_interp(xs, ys, xs_new);
 
   // autodiff at each interpolation pt
   std::vector<stan::math::var> ys_new_v;
-  ys_new_v = gaus_interp_vect(xs, ys, xs_new_v);
+  ys_new_v = gaus_interp(xs, ys, xs_new_v);
 
   std::vector<double> ys_new_dder;
   for (int i = 0; i < n_interp; i++) {
@@ -54,14 +54,14 @@ TEST(mathMixGausInterp, derivs) {
   }
 
   // take derivative of interpolation using finite differencing
-  double h = 1e-8;
+  double h = 1e-6;
   xs_new_p = xs_new;
   xs_new_n = xs_new;
   for (int i = 0; i < n_interp; i++) {
     xs_new_p[i] += -h;
     xs_new_n[i] += h;
-    ys_new_p = gaus_interp_vect(xs, ys, xs_new_p);
-    ys_new_n = gaus_interp_vect(xs, ys, xs_new_n);
+    ys_new_p = gaus_interp(xs, ys, xs_new_p);
+    ys_new_n = gaus_interp(xs, ys, xs_new_n);
     dder2 = (ys_new_n[i] - ys_new_p[i]) / (2 * h);
     ASSERT_NEAR(ys_new_dder[i], dder2, 1e-5);
   }
