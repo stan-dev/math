@@ -51,8 +51,8 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
      * logp_global needs to be computed
      * @param need_logp3 interpreted as boolean - whether third part logp_global
      * needs to be computed
-     * @param need_logp4 interpreted as boolean - whether fourth part logp_global
-     * needs to be computed
+     * @param need_logp4 interpreted as boolean - whether fourth part
+     * logp_global needs to be computed
      */
     __kernel void neg_binomial_2_log_glm(
         __global double* logp_global, __global double* theta_derivative_global,

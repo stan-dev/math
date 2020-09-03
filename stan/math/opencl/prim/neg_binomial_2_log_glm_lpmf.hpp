@@ -62,13 +62,15 @@ namespace math {
  */
 template <bool propto, typename T_y_cl, typename T_x_cl, typename T_alpha_cl,
           typename T_beta_cl, typename T_phi_cl,
-          require_all_prim_or_rev_kernel_expression_t<T_x_cl, T_y_cl, T_alpha_cl, T_beta_cl,
-                                                      T_phi_cl>* = nullptr>
-return_type_t<T_x_cl, T_alpha_cl, T_beta_cl, T_phi_cl> neg_binomial_2_log_glm_lpmf(
-    const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha, const T_beta_cl& beta,
-    const T_phi_cl& phi) {
+          require_all_prim_or_rev_kernel_expression_t<
+              T_x_cl, T_y_cl, T_alpha_cl, T_beta_cl, T_phi_cl>* = nullptr>
+return_type_t<T_x_cl, T_alpha_cl, T_beta_cl, T_phi_cl>
+neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
+                            const T_alpha_cl& alpha, const T_beta_cl& beta,
+                            const T_phi_cl& phi) {
   static const char* function = "neg_binomial_2_log_glm_lpmf(OpenCL)";
-  using T_partials_return = partials_return_t<T_x_cl, T_alpha_cl, T_beta_cl, T_phi_cl>;
+  using T_partials_return
+      = partials_return_t<T_x_cl, T_alpha_cl, T_beta_cl, T_phi_cl>;
   constexpr bool is_y_vector = !is_stan_scalar<T_y_cl>::value;
   constexpr bool is_phi_vector = !is_stan_scalar<T_phi_cl>::value;
   constexpr bool is_alpha_vector = !is_stan_scalar<T_alpha_cl>::value;
@@ -127,7 +129,8 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl, T_phi_cl> neg_binomial_2_log_glm_lp
   const bool need_logp1 = include_summand<propto>::value;
   const bool need_logp2
       = include_summand<propto, T_phi_cl>::value && is_phi_vector;
-  const bool need_logp3 = include_summand<propto, T_x_cl, T_alpha_cl, T_beta_cl>::value;
+  const bool need_logp3
+      = include_summand<propto, T_x_cl, T_alpha_cl, T_beta_cl>::value;
   const bool need_logp4 = include_summand<propto, T_phi_cl>::value
                           && (is_y_vector || is_phi_vector);
   matrix_cl<double> logp_cl(wgs, 1);

@@ -122,7 +122,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   if (!is_constant_all<T_x>::value) {
     ops_partials.edge1_.partials_
         = indexing(beta_val, col_index(x.rows(), x.cols()),
-                             rowwise_broadcast(y_val - 1))
+                   rowwise_broadcast(y_val - 1))
           - elt_multiply(exp_lin_cl * transpose(beta_val),
                          rowwise_broadcast(inv_sum_exp_lin_cl));
   }

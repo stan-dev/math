@@ -339,10 +339,12 @@ TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_big) {
   matrix_cl<double> beta_cl(beta);
   matrix_cl<double> cuts_cl(cuts);
 
-  EXPECT_NEAR_REL(stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta_cl, cuts_cl),
-                  stan::math::ordered_logistic_glm_lpmf(y, x, beta, cuts));
-  EXPECT_NEAR_REL(stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta_cl, cuts_cl),
-                  stan::math::ordered_logistic_glm_lpmf(y, x, beta, cuts));
+  EXPECT_NEAR_REL(
+      stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta_cl, cuts_cl),
+      stan::math::ordered_logistic_glm_lpmf(y, x, beta, cuts));
+  EXPECT_NEAR_REL(
+      stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta_cl, cuts_cl),
+      stan::math::ordered_logistic_glm_lpmf(y, x, beta, cuts));
 
   Matrix<var, Dynamic, Dynamic> x_var1 = x;
   Matrix<var, Dynamic, Dynamic> x_var2 = x;
