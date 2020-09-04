@@ -1,7 +1,7 @@
 #ifdef STAN_OPENCL
 #include <stan/math/rev/core.hpp>
 #include <stan/math/opencl/rev/vari.hpp>
-#include <test/unit/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 
 TEST_F(AgradRev, matrix_cl_vari_block) {
