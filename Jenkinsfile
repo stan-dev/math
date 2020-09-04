@@ -23,7 +23,7 @@ def runTestsWin(String testPath, boolean buildLibs = true, boolean jumbo = false
            if (jumbo) {
                bat "runTests.py -j${env.PARALLEL} ${testPath} --jumbo" 
             } else {
-                bat "runTests.py -j${env.PARALLEL} ${testPath}" 
+               bat "runTests.py -j${env.PARALLEL} ${testPath}" 
             }
        }
        finally { junit 'test/**/*.xml' }
@@ -204,14 +204,10 @@ pipeline {
                     if (isUnix()) {
                         deleteDir()
                         unstash 'MathSetup'
-                        runTests("test/unit/math/prim", true)
-                        runTests("test/unit/math/rev", true)
                         runTests("test/unit", true)
                     } else {
                         deleteDirWin()
                         unstash 'MathSetup'
-                        runTestsWin("test/unit/math/prim", true)
-                        runTestsWin("test/unit/math/rev", true)
                         runTestsWin("test/unit", true)
                     }
                 }
