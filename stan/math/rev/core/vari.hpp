@@ -183,7 +183,8 @@ template <typename T, typename = void>
 class vari_view;
 
 template <typename T>
-class vari_view<T, require_all_t<bool_constant<!is_plain_type<T>::value>, is_eigen_dense_base<T>>>
+class vari_view<T, require_all_t<bool_constant<!is_plain_type<T>::value>,
+                                 is_eigen_dense_base<T>>>
     final : public vari_base {
  public:
   using PlainObject = plain_type_t<T>;
