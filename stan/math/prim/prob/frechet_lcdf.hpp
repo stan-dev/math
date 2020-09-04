@@ -64,7 +64,7 @@ return_type_t<T_y, T_shape, T_scale> frechet_lcdf(const T_y& y,
     ops_partials.edge1_.partials_ = pow_n * alpha_val / y_val;
   }
   if (!is_constant_all<T_shape>::value) {
-    ops_partials.edge2_.partials_ = pow_n * log(y_val / sigma_val);
+    ops_partials.edge2_.partials_ = pow_n * (log(y_val) - log(sigma_val));
   }
   if (!is_constant_all<T_scale>::value) {
     ops_partials.edge3_.partials_ = -pow_n * alpha_val / sigma_val;
