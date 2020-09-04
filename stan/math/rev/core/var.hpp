@@ -316,16 +316,6 @@ class var_value {
 // For backwards compatability the default value is double
 using var = var_value<double>;
 
-template <typename MatrixType>
-class arena_matrix;
-
-template <typename MatrixType>
-class arena_matrix<var_value<MatrixType>> : public var_value<MatrixType> {
- public:
-  template <typename T>
-  arena_matrix(T&& x) : var_value<MatrixType>(std::forward<T>(x)) {}  // NOLINT
-};
-
 }  // namespace math
 
 /**

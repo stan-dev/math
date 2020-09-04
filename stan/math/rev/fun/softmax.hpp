@@ -30,9 +30,9 @@ inline plain_type_t<Mat> softmax(const Mat& alpha) {
   if (alpha.size() == 0) {
     return alpha;
   }
-  arena_matrix<mat_plain> alpha_arena = alpha;
-  arena_matrix<Eigen::VectorXd> res_val = softmax(value_of(alpha_arena));
-  arena_matrix<mat_plain> res = res_val;
+  arena_t<mat_plain> alpha_arena = alpha;
+  arena_t<Eigen::VectorXd> res_val = softmax(value_of(alpha_arena));
+  arena_t<mat_plain> res = res_val;
 
   reverse_pass_callback([res_val, res, alpha_arena]() mutable {
     const auto& res_adj = to_ref(res.adj());
