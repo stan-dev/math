@@ -37,8 +37,8 @@
  */
 #define EXPECT_MATRIX_EQ(A, B)               \
   {                                          \
-    const auto& A_eval = (A).eval();       \
-    const auto& B_eval = (B).eval();       \
+    const auto& A_eval = (A).eval();         \
+    const auto& B_eval = (B).eval();         \
     EXPECT_EQ(A_eval.rows(), B_eval.rows()); \
     EXPECT_EQ(A_eval.cols(), B_eval.cols()); \
     for (int i = 0; i < A_eval.size(); i++)  \
