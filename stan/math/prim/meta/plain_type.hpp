@@ -2,8 +2,6 @@
 #define STAN_MATH_PRIM_META_PLAIN_TYPE_HPP
 
 #include <stan/math/prim/meta/plain_type.hpp>
-#include <stan/math/prim/meta/bool_constant.hpp>
-#include <stan/math/prim/meta/is_detected.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <type_traits>
 

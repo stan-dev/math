@@ -36,12 +36,6 @@ static void grad(Vari* vi);
  */
 template <typename T>
 class var_value {
-  /*  static_assert(
-        is_plain_type<T>::value,
-        "The template for this var is an"
-        " expression but a var_value's inner type must be assignable such as"
-        " a double, Eigen::Matrix, or Eigen::Array");
-  */
   static_assert(
       std::is_floating_point<value_type_t<T>>::value,
       "The template for must be a floating point or a container holding"

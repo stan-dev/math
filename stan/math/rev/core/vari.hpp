@@ -183,8 +183,7 @@ template <typename T, typename = void>
 class vari_view;
 
 template <typename T>
-class vari_view<T, require_t<bool_constant<!is_plain_type<T>::value
-                                           && is_eigen_dense_base<T>::value>>>
+class vari_view<T, require_all_t<bool_constant<!is_plain_type<T>::value>, is_eigen_dense_base<T>>>
     final : public vari_base {
  public:
   using PlainObject = plain_type_t<T>;
@@ -220,8 +219,7 @@ class vari_view<T, require_t<bool_constant<!is_plain_type<T>::value
  *
  */
 template <typename T>
-class vari_value<T, require_t<bool_constant<is_plain_type<T>::value
-                                            && is_eigen_dense_base<T>::value>>>
+class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
     : public vari_base {
  public:
   /**
@@ -230,8 +228,6 @@ class vari_value<T, require_t<bool_constant<is_plain_type<T>::value
   using PlainObject = plain_type_t<T>;
   using value_type = PlainObject;  // The underlying type for this class
   using eigen_scalar = value_type_t<PlainObject>;  // A floating point type
-  //  using check_const = std::conditional_t<std::is_const<T>::value, const
-  //  PlainObject, PlainObject>;
   using eigen_map = Eigen::Map<PlainObject, Eigen::Aligned8,
                                Eigen::Stride<0, 0>>;  // Maps for adj_ and val_
   using vari_type = vari_value<T>;
