@@ -105,7 +105,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
         ops_partials.edge1_.partials_ = -deriv;
       }
       if (!is_constant_all<T_loc>::value) {
-        ops_partials.edge2_.partials_ = std::move(deriv);
+        ops_partials.edge2_.partials_ = deriv;
       }
     }
     if (!is_constant_all<T_scale>::value) {
