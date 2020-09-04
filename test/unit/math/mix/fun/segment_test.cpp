@@ -1,10 +1,10 @@
 #include <test/unit/math/test_ad.hpp>
 
-auto f(int i, int n) {
-  return [=](const auto& y) { return stan::math::segment(y, i, n); };
-}
-
 TEST(MathMixMatFun, segment) {
+  auto f = [](int i, int n) {
+    return [=](const auto& y) { return stan::math::segment(y, i, n); };
+  };
+
   Eigen::VectorXd a(0);
   stan::test::expect_ad(f(1, 0), a);  // out of bounds
   stan::test::expect_ad(f(1, 2), a);  // out of bounds

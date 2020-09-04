@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
 
+namespace lb_constrain_test {
 template <typename T, typename U>
 stan::return_type_t<T, U> g1(const T& x, const U& lb) {
   return stan::math::lb_constrain(x, lb);
@@ -17,11 +18,18 @@ stan::return_type_t<T, U> g3(const T& x, const U& lb) {
   stan::math::lb_constrain(x, lb, lp);
   return lp;
 }
+}  // namespace lb_constrain_test
 
 void expect_lb_constrain(double x, double lb) {
-  auto f1 = [](const auto& x, const auto& lb) { return g1(x, lb); };
-  auto f2 = [](const auto& x, const auto& lb) { return g2(x, lb); };
-  auto f3 = [](const auto& x, const auto& lb) { return g3(x, lb); };
+  auto f1 = [](const auto& x, const auto& lb) {
+    return lb_constrain_test::g1(x, lb);
+  };
+  auto f2 = [](const auto& x, const auto& lb) {
+    return lb_constrain_test::g2(x, lb);
+  };
+  auto f3 = [](const auto& x, const auto& lb) {
+    return lb_constrain_test::g3(x, lb);
+  };
   stan::test::expect_ad(f1, x, lb);
   stan::test::expect_ad(f2, x, lb);
   stan::test::expect_ad(f3, x, lb);
