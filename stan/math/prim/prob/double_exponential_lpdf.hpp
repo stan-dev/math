@@ -100,7 +100,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
       ops_partials.edge1_.partials_ = -rep_deriv;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_ = std::move(rep_deriv);
+      ops_partials.edge2_.partials_ = rep_deriv;
     }
   }
   if (!is_constant_all<T_scale>::value) {

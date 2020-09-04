@@ -12,8 +12,6 @@
 /**
  * Tests for exact elementwise equality of input matrices of
  * the supplied type with he EXPECT_EQ macro from GTest.
- * This EXPECT test should be used when the elements
- * of the supplied matrices are not doubles.
  *
  * @param A first input matrix to compare
  * @param B second input matrix to compare
@@ -31,15 +29,15 @@
 
 /**
  * Tests for  exact elementwise equality of the input matrices
- * of doubles with he EXPECT_EQ macro from GTest.
+ * with he EXPECT_EQ macro from GTest.
  *
  * @param A first input matrix to compare
  * @param B second input matrix to compare
  */
 #define EXPECT_MATRIX_EQ(A, B)               \
   {                                          \
-    const Eigen::MatrixXd& A_eval = A;       \
-    const Eigen::MatrixXd& B_eval = B;       \
+    const auto& A_eval = (A).eval();       \
+    const auto& B_eval = (B).eval();       \
     EXPECT_EQ(A_eval.rows(), B_eval.rows()); \
     EXPECT_EQ(A_eval.cols(), B_eval.cols()); \
     for (int i = 0; i < A_eval.size(); i++)  \
