@@ -395,7 +395,6 @@ class var_value {
     return this->coeff(i, j);
   }
 
-
   /**
    * View element of eigen matrices
    * @param i Element to access

@@ -181,7 +181,9 @@ using vari = vari_value<double>;
  *
  */
 template <typename T>
-class vari_value<T, require_all_t<std::is_floating_point<std::decay_t<T>>, std::is_reference<T>>> final : public vari_base {
+class vari_value<T, require_all_t<std::is_floating_point<std::decay_t<T>>,
+                                  std::is_reference<T>>>
+    final : public vari_base {
  public:
   using value_type = T;
   static constexpr int RowsAtCompileTime{1};
@@ -203,7 +205,7 @@ class vari_value<T, require_all_t<std::is_floating_point<std::decay_t<T>>, std::
    * @param y The value of `adj_`.
    */
   template <typename S1, typename S2, require_convertible_t<S1&, T>* = nullptr,
-   require_convertible_t<S2&, T>* = nullptr>
+            require_convertible_t<S2&, T>* = nullptr>
   vari_value(S1&& x, S2&& y) noexcept : val_(x), adj_(y) {  // NOLINT
     ChainableStack::instance_->var_nochain_stack_.push_back(this);
   }
@@ -237,7 +239,6 @@ class vari_value<T, require_all_t<std::is_floating_point<std::decay_t<T>>, std::
   friend class var_value;
 };
 
-
 /**
  * A `vari_view` is used to read from a slice of a `vari_value` with an inner
  * eigen type. It can only accept expressions which do not allocate dynamic
@@ -248,8 +249,8 @@ template <typename T, typename = void>
 class vari_view;
 
 template <typename T>
-class vari_view<T, require_all_t<bool_constant<!is_plain_type<T>::value>,
-                                 is_eigen<T>>>
+class vari_view<
+    T, require_all_t<bool_constant<!is_plain_type<T>::value>, is_eigen<T>>>
     final : public vari_base {
  public:
   using PlainObject = plain_type_t<T>;
@@ -383,7 +384,6 @@ class vari_view<T, require_all_t<bool_constant<!is_plain_type<T>::value>,
   inline auto reverse() const {
     return vari_view<decltype(val_.reverse())>(val_.reverse(), adj_.reverse());
   }
-
 };
 
 /**
@@ -582,7 +582,8 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @param j Column index
    */
   inline auto coeff(Eigen::Index i, Eigen::Index j) const {
-    return vari_value<decltype(val_.coeffRef(i, j))>(val_.coeffRef(i, j), adj_.coeffRef(i, j));
+    return vari_value<decltype(val_.coeffRef(i, j))>(val_.coeffRef(i, j),
+                                                     adj_.coeffRef(i, j));
   }
 
   /**
@@ -590,7 +591,8 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @param i Column index to slice
    */
   inline auto coeff(Eigen::Index i) const {
-    return vari_value<decltype(val_.coeffRef(i))>(val_.coeffRef(i), adj_.coeffRef(i));
+    return vari_value<decltype(val_.coeffRef(i))>(val_.coeffRef(i),
+                                                  adj_.coeffRef(i));
   }
 
   /**
