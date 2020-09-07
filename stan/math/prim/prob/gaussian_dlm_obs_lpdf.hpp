@@ -106,12 +106,11 @@ gaussian_dlm_obs_lpdf(const T_y& y, const T_F& F, const T_G& G, const T_V& V,
   }
 
   int r = y.rows();  // number of variables
-  int T = y.cols();  // number of observations
   int n = G.rows();  // number of states
 
   T_lp lp(0);
   if (include_summand<propto>::value) {
-    lp -= HALF_LOG_TWO_PI * r * T;
+    lp -= HALF_LOG_TWO_PI * r * y.cols();
   }
 
   if (include_summand<propto, T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>::value) {
@@ -232,12 +231,11 @@ gaussian_dlm_obs_lpdf(const T_y& y, const T_F& F, const T_G& G, const T_V& V,
   }
 
   int r = y.rows();  // number of variables
-  int T = y.cols();  // number of observations
   int n = G.rows();  // number of states
 
   T_lp lp(0);
   if (include_summand<propto>::value) {
-    lp -= HALF_LOG_TWO_PI * r * T;
+    lp -= HALF_LOG_TWO_PI * r * y.cols();
   }
 
   if (include_summand<propto, T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>::value) {
