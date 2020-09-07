@@ -19,8 +19,7 @@ namespace math {
 template <typename T_omega, typename T_Gamma, typename T_rho, typename T_alpha>
 inline auto hmm_marginal_val(
     const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& omegas,
-    const T_Gamma& Gamma_val,
-    const T_rho& rho_val,
+    const T_Gamma& Gamma_val, const T_rho& rho_val,
     Eigen::Matrix<T_alpha, Eigen::Dynamic, Eigen::Dynamic>& alphas,
     Eigen::Matrix<T_alpha, Eigen::Dynamic, 1>& alpha_log_norms,
     T_alpha& norm_norm) {
@@ -131,9 +130,10 @@ inline auto hmm_marginal(const T_omega& log_omegas, const T_Gamma& Gamma,
 
   if (!is_constant_all<T_Gamma>::value) {
     for (int n = n_transitions - 1; n >= 0; --n) {
-      ops_partials.edge2_.partials_ += grad_corr[n] * alphas.col(n)
-                     * kappa[n].cwiseProduct(omegas.col(n + 1)).transpose()
-                     / unnormed_marginal;
+      ops_partials.edge2_.partials_
+          += grad_corr[n] * alphas.col(n)
+             * kappa[n].cwiseProduct(omegas.col(n + 1)).transpose()
+             / unnormed_marginal;
     }
   }
 
@@ -141,7 +141,8 @@ inline auto hmm_marginal(const T_omega& log_omegas, const T_Gamma& Gamma,
     // Boundary terms
     if (n_transitions == 0) {
       if (!is_constant_all<T_omega>::value) {
-        ops_partials.edge1_.partials_ = omegas.cwiseProduct(rho_val) / exp(log_marginal_density);
+        ops_partials.edge1_.partials_
+            = omegas.cwiseProduct(rho_val) / exp(log_marginal_density);
       }
 
       if (!is_constant_all<T_rho>::value) {
@@ -157,7 +158,7 @@ inline auto hmm_marginal(const T_omega& log_omegas, const T_Gamma& Gamma,
         eig_matrix_partial log_omega_jacad
             = Eigen::MatrixXd::Zero(n_states, n_transitions + 1);
 
-        for (int n = n_transitions - 1; n >= 0; --n){
+        for (int n = n_transitions - 1; n >= 0; --n) {
           log_omega_jacad.col(n + 1)
               = grad_corr[n]
                 * kappa[n].cwiseProduct(Gamma_val.transpose() * alphas.col(n));
