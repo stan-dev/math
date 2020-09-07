@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 
 namespace stan {
 namespace math {
@@ -32,7 +33,8 @@ inline Eigen::Matrix<value_type_t<EigMat2>, EigMat2::ColsAtCompileTime,
 quad_form(const EigMat1& A, const EigMat2& B) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
-  return B.transpose() * A * B;
+  const auto& B_ref = to_ref(B);
+  return B_ref.transpose() * A * B_ref;
 }
 
 /**
@@ -54,7 +56,8 @@ template <typename EigMat, typename ColVec, require_eigen_t<EigMat>* = nullptr,
 inline value_type_t<EigMat> quad_form(const EigMat& A, const ColVec& B) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
-  return B.dot(A * B);
+  const auto& B_ref = to_ref(B);
+  return B_ref.dot(A * B_ref);
 }
 
 }  // namespace math

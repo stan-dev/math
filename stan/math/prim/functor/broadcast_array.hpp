@@ -23,8 +23,9 @@ class broadcast_array {
   T& operator[](int /*i*/) { return prim_; }
 
   /** \ingroup type_trait
-   * We can assign any right hand side which allows for indexing to a
-   * broadcast_array. The idea is that the argument is summed.
+   * Broadcast array can be assigned a scalar or a vector. If assigned a scalar,
+   * it will be used directly. If assigned a vector, the argument will be summed
+   * first.
    */
   template <typename Y>
   void operator=(const Y& m) {

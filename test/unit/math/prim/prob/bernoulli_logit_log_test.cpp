@@ -1,10 +1,9 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-
 TEST(ProbBernoulliLogitMat, log_matches_lpmf) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<int, Dynamic, 1> n(3, 1);
   n << 0, 1, 0;
   Matrix<double, Dynamic, 1> theta(3, 1);

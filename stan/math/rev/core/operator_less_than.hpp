@@ -22,7 +22,7 @@ namespace math {
  * @param b Second variable.
  * @return True if first variable's value is less than second's.
  */
-inline bool operator<(var a, var b) { return a.val() < b.val(); }
+inline bool operator<(const var& a, const var& b) { return a.val() < b.val(); }
 
 /**
  * Less than operator comparing variable's value and a double
@@ -33,8 +33,8 @@ inline bool operator<(var a, var b) { return a.val() < b.val(); }
  * @param b Second value.
  * @return True if first variable's value is less than second value.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
-inline bool operator<(var a, Arith b) {
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
+inline bool operator<(const var& a, Arith b) {
   return a.val() < b;
 }
 
@@ -47,8 +47,8 @@ inline bool operator<(var a, Arith b) {
  * @param b Second variable.
  * @return True if first value is less than second variable's value.
  */
-template <typename Arith, require_arithmetic_t<Arith>...>
-inline bool operator<(Arith a, var b) {
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
+inline bool operator<(Arith a, const var& b) {
   return a < b.val();
 }
 

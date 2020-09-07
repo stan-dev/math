@@ -4,6 +4,7 @@
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/fun/multiply.hpp>
 #include <stan/math/prim/fun/dot_product.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 
 namespace stan {
 namespace math {
@@ -31,7 +32,9 @@ inline promote_scalar_t<return_type_t<EigMat1, EigMat2>, EigMat2> quad_form_sym(
   using T_ret = return_type_t<EigMat1, EigMat2>;
   check_multiplicable("quad_form_sym", "A", A, "B", B);
   check_symmetric("quad_form_sym", "A", A);
-  promote_scalar_t<T_ret, EigMat2> ret(multiply(B.transpose(), multiply(A, B)));
+  const auto& B_ref = to_ref(B);
+  promote_scalar_t<T_ret, EigMat2> ret(
+      multiply(B_ref.transpose(), multiply(A, B_ref)));
   return T_ret(0.5) * (ret + ret.transpose());
 }
 
@@ -54,7 +57,8 @@ inline return_type_t<EigMat, ColVec> quad_form_sym(const EigMat& A,
                                                    const ColVec& B) {
   check_multiplicable("quad_form_sym", "A", A, "B", B);
   check_symmetric("quad_form_sym", "A", A);
-  return dot_product(B, multiply(A, B));
+  const auto& B_ref = to_ref(B);
+  return dot_product(B_ref, multiply(A, B_ref));
 }
 
 }  // namespace math

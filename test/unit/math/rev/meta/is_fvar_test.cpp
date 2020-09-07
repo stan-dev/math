@@ -1,4 +1,5 @@
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/core.hpp>
 #include <gtest/gtest.h>
 
 TEST(MetaTraitsRevScal, is_fvar) {

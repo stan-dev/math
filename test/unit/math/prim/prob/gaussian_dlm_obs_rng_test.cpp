@@ -7,36 +7,35 @@
 #include <limits>
 #include <vector>
 
-using Eigen::MatrixXd;
-using Eigen::VectorXd;
-using stan::math::gaussian_dlm_obs_rng;
-
 class ProbDistributionsGaussianDLMInputsRng : public ::testing::Test {
  protected:
   virtual void SetUp() {
-    FF = MatrixXd::Random(2, 3);
-    GG = MatrixXd::Random(2, 2);
-    V = MatrixXd::Identity(3, 3);
-    V_vec = VectorXd::Constant(3, 1.0);
-    W = MatrixXd::Identity(2, 2);
-    y = MatrixXd::Random(3, 5);
-    m0 = VectorXd::Random(2);
-    C0 = MatrixXd::Identity(2, 2);
+    FF = Eigen::MatrixXd::Random(2, 3);
+    GG = Eigen::MatrixXd::Random(2, 2);
+    V = Eigen::MatrixXd::Identity(3, 3);
+    V_vec = Eigen::VectorXd::Constant(3, 1.0);
+    W = Eigen::MatrixXd::Identity(2, 2);
+    y = Eigen::MatrixXd::Random(3, 5);
+    m0 = Eigen::VectorXd::Random(2);
+    C0 = Eigen::MatrixXd::Identity(2, 2);
     T = 5;
   }
 
-  MatrixXd FF;
-  MatrixXd GG;
-  MatrixXd V;
-  VectorXd V_vec;
-  MatrixXd W;
-  MatrixXd y;
-  VectorXd m0;
-  MatrixXd C0;
+  Eigen::MatrixXd FF;
+  Eigen::MatrixXd GG;
+  Eigen::MatrixXd V;
+  Eigen::VectorXd V_vec;
+  Eigen::MatrixXd W;
+  Eigen::MatrixXd y;
+  Eigen::VectorXd m0;
+  Eigen::MatrixXd C0;
   int T;
 };
 
 TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesF) {
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
+  using stan::math::gaussian_dlm_obs_rng;
   boost::random::mt19937 rng;
   MatrixXd FF_sz1 = MatrixXd::Random(4, 3);
   EXPECT_THROW(gaussian_dlm_obs_rng(FF_sz1, GG, V, W, m0, C0, T, rng),
@@ -64,6 +63,9 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesF) {
 }
 
 TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesG) {
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
+  using stan::math::gaussian_dlm_obs_rng;
   boost::random::mt19937 rng;
   // size
   MatrixXd GG_sz1 = MatrixXd::Random(3, 3);
@@ -92,6 +94,9 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesG) {
 }
 
 TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesW) {
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
+  using stan::math::gaussian_dlm_obs_rng;
   boost::random::mt19937 rng;
   // Not symmetric
   MatrixXd W_asym = W;
@@ -147,6 +152,9 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesW) {
 }
 
 TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesVMatrix) {
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
+  using stan::math::gaussian_dlm_obs_rng;
   boost::random::mt19937 rng;
   // Not symmetric
   MatrixXd V_asym = V;
@@ -187,6 +195,9 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesVMatrix) {
 }
 
 TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesVVector) {
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
+  using stan::math::gaussian_dlm_obs_rng;
   boost::random::mt19937 rng;
   // negative
   MatrixXd V_neg = V_vec;
@@ -216,6 +227,9 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesVVector) {
 }
 
 TEST_F(ProbDistributionsGaussianDLMInputsRng, Policiesm0) {
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
+  using stan::math::gaussian_dlm_obs_rng;
   boost::random::mt19937 rng;
   // size
   VectorXd m0_sz = VectorXd::Zero(4, 1);
@@ -239,6 +253,9 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, Policiesm0) {
 }
 
 TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesC0) {
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
+  using stan::math::gaussian_dlm_obs_rng;
   boost::random::mt19937 rng;
   // size
   MatrixXd C0_sz = MatrixXd::Identity(3, 3);
@@ -274,6 +291,9 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesC0) {
 }
 
 TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesT) {
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
+  using stan::math::gaussian_dlm_obs_rng;
   boost::random::mt19937 rng;
   // Must be positive.
   EXPECT_THROW(gaussian_dlm_obs_rng(FF, GG, V, W, m0, C0, 0, rng),
@@ -283,6 +303,9 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesT) {
 }
 
 TEST_F(ProbDistributionsGaussianDLMInputsRng, chiSquaredGoodnessOfFit) {
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
+  using stan::math::gaussian_dlm_obs_rng;
   boost::random::mt19937 rng;
 
   // With identity state transition and initial mean 0 and identity

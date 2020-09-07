@@ -7,7 +7,15 @@ TEST(MathUtoZ, sizeZeroInput) {
   using stan::math::csr_u_to_z;
   std::vector<int> u(0);
   for (int n = -1; n < 2; ++n)
-    EXPECT_THROW(csr_u_to_z(u, n), std::out_of_range);
+    EXPECT_THROW(csr_u_to_z(u, n), std::domain_error);
+  u.push_back(1);
+  for (int n = -1; n < 2; ++n)
+    EXPECT_THROW(csr_u_to_z(u, n), std::domain_error);
+  u.push_back(1);
+  EXPECT_THROW(csr_u_to_z(u, -1), std::out_of_range);
+  EXPECT_NO_THROW(csr_u_to_z(u, 0));
+  EXPECT_THROW(csr_u_to_z(u, 1), std::out_of_range);
+  EXPECT_THROW(csr_u_to_z(u, 2), std::out_of_range);
 }
 TEST(MathUtoZ, nonemptyInput) {
   using stan::math::csr_u_to_z;

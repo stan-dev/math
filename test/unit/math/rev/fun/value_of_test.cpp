@@ -1,11 +1,8 @@
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
-
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(AgradRev, value_of) {
   using stan::math::value_of;
@@ -88,6 +85,68 @@ TEST(AgradMatrix, value_of) {
       EXPECT_FLOAT_EQ(a(i, j), d_a(i, j));
       EXPECT_FLOAT_EQ(a(i, j), d_v_a(i, j));
     }
+}
+
+TEST(AgradMatrix, value_of_vector_of_vectors) {
+  using stan::math::var;
+  std::vector<var> a(5, 0);
+  const std::vector<var> b(5, 0);
+  std::vector<std::vector<var>> va(5, a);
+  const std::vector<std::vector<var>> vb(5, b);
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(va)),
+                            std::vector<std::vector<double>>>::value));
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(vb)),
+                            std::vector<std::vector<double>>>::value));
+
+  auto vva = stan::math::value_of(va);
+  auto vvb = stan::math::value_of(va);
+
+  for (size_t i = 0; i < va.size(); ++i) {
+    for (size_t j = 0; j < va[i].size(); ++j) {
+      EXPECT_FLOAT_EQ(vva[i][j], a[j].val());
+    }
+  }
+
+  for (size_t i = 0; i < vb.size(); ++i) {
+    for (size_t j = 0; j < vb[i].size(); ++j) {
+      EXPECT_FLOAT_EQ(vvb[i][j], b[j].val());
+    }
+  }
+}
+
+TEST(AgradMatrix, value_of_vector_of_eigen) {
+  using stan::math::var;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> a
+      = Eigen::VectorXd::Random(5).template cast<var>();
+  Eigen::Matrix<var, 1, Eigen::Dynamic> b
+      = Eigen::RowVectorXd::Random(5).template cast<var>();
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> c
+      = Eigen::MatrixXd::Random(5, 5).template cast<var>();
+  std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> va(5, a);
+  std::vector<Eigen::Matrix<var, 1, Eigen::Dynamic>> vb(5, b);
+  std::vector<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> vc(5, c);
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(va)),
+                            std::vector<Eigen::VectorXd>>::value));
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(vb)),
+                            std::vector<Eigen::RowVectorXd>>::value));
+  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(vc)),
+                            std::vector<Eigen::MatrixXd>>::value));
+
+  auto vva = stan::math::value_of(va);
+  auto vvb = stan::math::value_of(vb);
+  auto vvc = stan::math::value_of(vc);
+
+  for (size_t i = 0; i < vva.size(); ++i)
+    for (size_t j = 0; j < vva[i].size(); ++j)
+      EXPECT_FLOAT_EQ(vva[i](j), a(j).val());
+
+  for (size_t i = 0; i < vvb.size(); ++i)
+    for (size_t j = 0; j < vva[i].size(); ++j)
+      EXPECT_FLOAT_EQ(vvb[i](j), b(j).val());
+
+  for (size_t i = 0; i < vvc.size(); ++i)
+    for (size_t j = 0; j < vva[i].size(); ++j)
+      EXPECT_FLOAT_EQ(vvc[i](j), c(j).val());
 }
 
 TEST(AgradMatrix, value_of_expression) {
