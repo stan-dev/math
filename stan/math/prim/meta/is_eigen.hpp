@@ -3,12 +3,18 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/is_eigen_matrix.hpp>
+#include <stan/math/prim/meta/is_detected.hpp>
 #include <stan/math/prim/meta/disjunction.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <stan/math/prim/meta/value_type.hpp>
 #include <type_traits>
 
 namespace stan {
+
+namespace internal {
+template <typename T>
+using has_nested_expression_t = typename std::decay_t<T>::ExpressionTypeNestedCleaned;
+}
 
 /**
  * Check if type derives from `EigenBase`
@@ -18,7 +24,8 @@ namespace stan {
  **/
 template <typename T>
 struct is_eigen
-    : bool_constant<is_base_pointer_convertible<Eigen::EigenBase, T>::value> {};
+    : bool_constant<is_base_pointer_convertible<Eigen::EigenBase, T>::value ||
+      is_detected<T, internal::has_nested_expression_t>::value> {};
 
 /**
  * Template metaprogram defining the base scalar type of

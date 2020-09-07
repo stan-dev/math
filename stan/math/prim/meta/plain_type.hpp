@@ -40,14 +40,24 @@ struct eval_return_type {
 template <typename T>
 using eval_return_type_t = typename eval_return_type<T>::type;
 
+namespace internal {
+  template <typename T>
+  using has_plain_object_t = typename std::decay_t<T>::PlainObject;
+}
+
 /**
  * Determines plain (non expression) type associated with \c T. For \c Eigen
  * expression it is a type the expression can be evaluated into.
  * @tparam T type to determine plain type of
  */
 template <typename T>
-struct plain_type<T, require_eigen_t<T>> {
+struct plain_type<T, require_t<is_detected<T, internal::has_plain_object_t>>> {
   using type = typename std::decay_t<T>::PlainObject;
+};
+
+template <typename T>
+struct plain_type<T, require_t<is_detected<T, internal::has_nested_expression_t>>> {
+  using type = typename std::decay_t<T>::ExpressionTypeNestedCleaned;
 };
 
 }  // namespace stan

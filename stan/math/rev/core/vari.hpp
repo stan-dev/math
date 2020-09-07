@@ -184,7 +184,7 @@ class vari_view;
 
 template <typename T>
 class vari_view<T, require_all_t<bool_constant<!is_plain_type<T>::value>,
-                                 is_eigen_dense_base<T>>>
+                                 is_eigen<T>>>
     final : public vari_base {
  public:
   using PlainObject = plain_type_t<T>;
@@ -204,8 +204,121 @@ class vari_view<T, require_all_t<bool_constant<!is_plain_type<T>::value>,
             require_convertible_t<S&, value_type>* = nullptr,
             require_convertible_t<K&, value_type>* = nullptr>
   vari_view(const S& val, const K& adj) : val_(val), adj_(adj) {}
+
   void set_zero_adjoint() {}
   void chain() {}
+  /**
+   * A block view of the underlying Eigen matrices.
+   * @param start_row Starting row of block.
+   * @param start_col Starting columns of block.
+   * @param num_rows Number of rows to return.
+   * @param num_cols Number of columns to return.
+   */
+  inline auto block(Eigen::Index start_row, Eigen::Index start_col,
+                    Eigen::Index num_rows, Eigen::Index num_cols) const {
+    using inner_type
+        = decltype(val_.block(start_row, start_col, num_rows, num_cols));
+    return vari_view<inner_type>(
+        val_.block(start_row, start_col, num_rows, num_cols),
+        adj_.block(start_row, start_col, num_rows, num_cols));
+  }
+
+  /**
+   * View of the head of Eigen vector types.
+   * @param n Number of elements to return from top of vector.
+   */
+  inline auto head(Eigen::Index n) const {
+    return vari_view<decltype(val_.head(n))>(val_.head(n), adj_.head(n));
+  }
+
+  /**
+   * View of the tail of the Eigen vector types.
+   * @param n Number of elements to return from bottom of vector.
+   */
+  inline auto tail(Eigen::Index n) const {
+    return vari_view<decltype(val_.tail(n))>(val_.tail(n), adj_.tail(n));
+  }
+
+  /**
+   * View block of N elements starting at position `i`
+   * @param i Starting position of block.
+   * @param n Number of elements in block
+   */
+  inline auto segment(Eigen::Index i, Eigen::Index n) const {
+    return vari_view<decltype(val_.segment(i, n))>(val_.segment(i, n),
+                                                   adj_.segment(i, n));
+  }
+
+  /**
+   * View row of eigen matrices.
+   * @param i Row index to slice.
+   */
+  inline auto row(Eigen::Index i) const {
+    return vari_view<decltype(val_.row(i))>(val_.row(i), adj_.row(i));
+  }
+
+  /**
+   * View column of eigen matrices
+   * @param i Column index to slice
+   */
+  inline auto col(Eigen::Index i) const {
+    return vari_view<decltype(val_.col(i))>(val_.col(i), adj_.col(i));
+  }
+
+  /**
+   * Get coefficient of eigen matrices
+   * @param i Row index
+   * @param j Column index
+   */
+  inline auto coeff(Eigen::Index i, Eigen::Index j) const {
+    return vari_value<double>(val_.coeffRef(i, j), adj_.coeffRef(i, j));
+  }
+
+  /**
+   * Get coefficient of eigen matrices
+   * @param i Column index to slice
+   */
+  inline auto coeff(Eigen::Index i) const {
+    return vari_value<double>(val_.coeffRef(i), adj_.coeffRef(i));
+  }
+
+  /**
+   * Get coefficient of eigen matrices
+   * @param i Column index to slice
+   */
+  inline auto operator()(Eigen::Index i) const { return this->coeff(i); }
+
+  /**
+   * Get coefficient of eigen matrices
+   * @param i Row index
+   * @param j Column index
+   */
+  inline const auto operator()(Eigen::Index i, Eigen::Index j) const {
+    return this->coeff(i, j);
+  }
+
+  /**
+   * Return an expression that operates on the rows of the matrix `vari`
+   */
+  inline auto rowwise() const {
+    return vari_view<decltype(val_.rowwise())>(val_.rowwise(), adj_.rowwise());
+  }
+
+  /**
+   * Return an expression that operates on the columns of the matrix `vari`
+   */
+  inline auto colwise() const {
+    return vari_view<decltype(val_.colwise())>(val_.colwise(), adj_.colwise());
+  }
+
+  /**
+   * Return an expression an expression to reverse the order of the coefficients
+   * inside of a `vari` matrix
+   */
+  inline auto reverse() const {
+    return vari_view<decltype(val_.reverse())>(val_.reverse(), adj_.reverse());
+  }
+
 };
 
 /**
@@ -426,8 +539,30 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @param i Row index
    * @param j Column index
    */
-  inline const auto operator()(Eigen::Index i, Eigen::Index j) const {
+  inline auto operator()(Eigen::Index i, Eigen::Index j) const {
     return this->coeff(i, j);
+  }
+
+  /**
+   * Return an expression that operates on the rows of the matrix `vari`
+   */
+  inline auto rowwise() const {
+    return vari_view<decltype(val_.rowwise())>(val_.rowwise(), adj_.rowwise());
+  }
+
+  /**
+   * Return an expression that operates on the columns of the matrix `vari`
+   */
+  inline auto colwise() const {
+    return vari_view<decltype(val_.colwise())>(val_.colwise(), adj_.colwise());
+  }
+
+  /**
+   * Return an expression an expression to reverse the order of the coefficients
+   * inside of a `vari` matrix
+   */
+  inline auto reverse() const {
+    return vari_view<decltype(val_.reverse())>(val_.reverse(), adj_.reverse());
   }
 
   /**

@@ -170,9 +170,17 @@ TEST_F(AgradRev, var_matrix_views) {
   auto A_block = A_v.block(1, 1, 3, 3);
   EXPECT_MATRIX_FLOAT_EQ(A_block.val(), A.block(1, 1, 3, 3));
   auto A_row = A_v.row(3);
-  EXPECT_MATRIX_FLOAT_EQ(A.row(3), A_row.vi_->val_);
+  EXPECT_MATRIX_FLOAT_EQ(A_row.val(), A.row(3));
   auto A_col = A_v.col(3);
-  EXPECT_MATRIX_FLOAT_EQ(A.col(3), A_col.vi_->val_);
+  EXPECT_MATRIX_FLOAT_EQ(A_col.val(), A.col(3));
+  auto A_block_row = A_v.block(1, 1, 3, 3).row(1);
+  EXPECT_MATRIX_FLOAT_EQ(A_block_row.val(), A.block(1, 1, 3, 3).row(1));
+  auto A_rowwise_reverse = A_v.rowwise().reverse();
+  EXPECT_MATRIX_FLOAT_EQ(A_rowwise_reverse.val(), A.rowwise().reverse());
+  auto A_colwise_reverse = A_v.colwise().reverse();
+  EXPECT_MATRIX_FLOAT_EQ(A_colwise_reverse.val(), A.colwise().reverse());
+  auto A_rowwise_colwise_reverse = A_v.rowwise().reverse().colwise().reverse();
+  EXPECT_MATRIX_FLOAT_EQ(A_rowwise_colwise_reverse.val(), A.rowwise().reverse().colwise().reverse());
   auto A_coeff1 = A_v(3);
   EXPECT_FLOAT_EQ(A(3), A_coeff1.vi_->val_);
   auto A_coeff2 = A_v(3, 3);
@@ -181,9 +189,13 @@ TEST_F(AgradRev, var_matrix_views) {
   for (int i = 0; i < A.size(); ++i) {
     A_v.vi_->adj_(i) = i;
   }
-  EXPECT_MATRIX_FLOAT_EQ(A_v.adj().block(1, 1, 3, 3), A_block.adj());
-  EXPECT_MATRIX_FLOAT_EQ(A_v.adj().row(3), A_row.adj());
-  EXPECT_MATRIX_FLOAT_EQ(A_v.adj().col(3), A_col.adj());
+  EXPECT_MATRIX_FLOAT_EQ( A_block.adj(), A_v.adj().block(1, 1, 3, 3));
+  EXPECT_MATRIX_FLOAT_EQ(A_row.adj(), A_v.adj().row(3));
+  EXPECT_MATRIX_FLOAT_EQ(A_col.adj(), A_v.adj().col(3));
+  EXPECT_MATRIX_FLOAT_EQ(A_block_row.adj(), A_v.adj().block(1, 1, 3, 3).row(1));
+  EXPECT_MATRIX_FLOAT_EQ(A_rowwise_reverse.adj(), A_v.adj().rowwise().reverse());
+  EXPECT_MATRIX_FLOAT_EQ(A_colwise_reverse.adj(), A_v.adj().colwise().reverse());
+  EXPECT_MATRIX_FLOAT_EQ(A_rowwise_colwise_reverse.adj(), A_v.adj().rowwise().reverse().colwise().reverse());
   A_coeff1.adj() = 3;
   A_coeff2.adj() = 3;
   stan::math::grad();

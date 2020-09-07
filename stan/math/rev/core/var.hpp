@@ -401,6 +401,50 @@ class var_value {
     return this->coeff(i, j);
   }
 
+
+  /**
+   * View element of eigen matrices
+   * @param i Element to access
+   */
+  inline auto coeffRef(Eigen::Index i) const { return this->coeff(i); }
+
+  /**
+   * View element of eigen matrices
+   * @param i Row to access
+   * @param j Column to access
+   */
+  inline auto coeffRef(Eigen::Index i, Eigen::Index j) const {
+    return this->coeff(i, j);
+  }
+
+  /**
+   * Return an expression that operates on the rows of the matrix `vari`
+   */
+  inline auto rowwise() const {
+    using vari_sub = decltype(vi_->rowwise());
+    using var_sub = var_value<const typename vari_sub::value_type>;
+    return var_sub(new vari_sub(vi_->rowwise()));
+  }
+
+  /**
+   * Return an expression that operates on the columns of the matrix `vari`
+   */
+  inline auto colwise() const {
+    using vari_sub = decltype(vi_->colwise());
+    using var_sub = var_value<const typename vari_sub::value_type>;
+    return var_sub(new vari_sub(vi_->colwise()));
+  }
+
+  /**
+   * Return an expression an expression to reverse the order of the coefficients
+   * inside of a `vari` matrix
+   */
+  inline auto reverse() const {
+    using vari_sub = decltype(vi_->reverse());
+    using var_sub = var_value<const typename vari_sub::value_type>;
+    return var_sub(new vari_sub(vi_->reverse()));
+  }
+
   /**
    * Write the value of this autodiff variable and its adjoint to
    * the specified output stream.
