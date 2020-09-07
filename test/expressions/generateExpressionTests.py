@@ -202,6 +202,13 @@ def handle_function_list(functions_input, signatures):
             function_names.append(f)
     return function_names, function_signatures
 
+# lists of functions that do not support fwd or rev autodiff
+no_rev_overload = [
+    "hmm_hidden_state_prob"
+]
+no_fwd_overload = [
+    "hmm_hidden_state_prob"
+]
 
 def main(functions=(), j=1):
     """
@@ -258,6 +265,10 @@ def main(functions=(), j=1):
             ("Fwd", "stan::math::fvar<double>"),
         ):
             if function_name.endswith("_rng") and overload != "Prim":
+                continue
+            if function_name in no_fwd_overload and overload == "Fwd":
+                continue
+            if function_name in no_rev_overload and overload == "Rev":
                 continue
 
             mat_declarations = ""
