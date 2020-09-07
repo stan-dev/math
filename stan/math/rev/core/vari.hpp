@@ -78,7 +78,7 @@ class vari_base {
  *
  */
 template <typename T>
-class vari_value<T, require_floating_point_t<T>> : public vari_base {
+class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
  public:
   using value_type = std::decay_t<T>;
   static constexpr int RowsAtCompileTime{1};
@@ -86,12 +86,12 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
   /**
    * The value of this variable.
    */
-  const value_type val_;
+  const value_type val_{0.0};
   /**
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
    */
-  value_type adj_;
+  value_type adj_{0.0};
 
   /**
    * Construct a variable implementation from a value.  The
@@ -107,7 +107,7 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
    * @param x Value of the constructed variable.
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
-  vari_value(S x) noexcept : val_(x), adj_(0.0) {  // NOLINT
+  vari_value(S x) noexcept : val_(x) {  // NOLINT
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
@@ -127,7 +127,7 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
    * that its `chain()` method is not called.
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
-  vari_value(S x, bool stacked) noexcept : val_(x), adj_(0.0) {
+  vari_value(S x, bool stacked) noexcept : val_(x) {
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
     } else {
@@ -172,6 +172,71 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
 
 // For backwards compatability the default is double
 using vari = vari_value<double>;
+
+/**
+ * The variable implementation for references to slices of a vari matrix.
+ *
+ * This class is complete (not abstract) and may be used for
+ * sub slicing references from a `vari_value` with an inner Eigen type.
+ *
+ */
+template <typename T>
+class vari_value<T, require_all_t<std::is_floating_point<std::decay_t<T>>, std::is_reference<T>>> final : public vari_base {
+ public:
+  using value_type = T;
+  static constexpr int RowsAtCompileTime{1};
+  static constexpr int ColsAtCompileTime{1};
+  /**
+   * The value of this variable.
+   */
+  const T val_;
+  /**
+   * The adjoint of this variable, which is the partial derivative
+   * of this variable with respect to the root variable.
+   */
+  T adj_;
+  /**
+   * Constructor for creating a coefficient slice.
+   * @tparam S1 the type of the value.
+   * @tparam S2 the type of the adjoint.
+   * @param x The value of `val_`.
+   * @param y The value of `adj_`.
+   */
+  template <typename S1, typename S2, require_convertible_t<S1&, T>* = nullptr,
+   require_convertible_t<S2&, T>* = nullptr>
+  vari_value(S1&& x, S2&& y) noexcept : val_(x), adj_(y) {  // NOLINT
+    ChainableStack::instance_->var_nochain_stack_.push_back(this);
+  }
+  inline void chain() {}
+
+  /**
+   * No-op
+   */
+  inline void init_dependent() noexcept {}
+
+  /**
+   * No-op
+   */
+  inline void set_zero_adjoint() noexcept final {}
+
+  /**
+   * Insertion operator for vari. Prints the current value and
+   * the adjoint value.
+   *
+   * @param os [in, out] ostream to modify
+   * @param v [in] vari object to print.
+   *
+   * @return The modified ostream.
+   */
+  friend std::ostream& operator<<(std::ostream& os, const vari_value<T>* v) {
+    return os << v->val_ << ":" << v->adj_;
+  }
+
+ private:
+  template <typename>
+  friend class var_value;
+};
+
 
 /**
  * A `vari_view` is used to read from a slice of a `vari_value` with an inner
@@ -271,7 +336,7 @@ class vari_view<T, require_all_t<bool_constant<!is_plain_type<T>::value>,
    * @param j Column index
    */
   inline auto coeff(Eigen::Index i, Eigen::Index j) const {
-    return vari_value<double>(val_.coeffRef(i, j), adj_.coeffRef(i, j));
+    return vari_value<double&>(val_.coeffRef(i, j), adj_.coeffRef(i, j));
   }
 
   /**
@@ -279,7 +344,7 @@ class vari_view<T, require_all_t<bool_constant<!is_plain_type<T>::value>,
    * @param i Column index to slice
    */
   inline auto coeff(Eigen::Index i) const {
-    return vari_value<double>(val_.coeffRef(i), adj_.coeffRef(i));
+    return vari_value<double&>(val_.coeffRef(i), adj_.coeffRef(i));
   }
 
   /**
@@ -517,7 +582,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @param j Column index
    */
   inline auto coeff(Eigen::Index i, Eigen::Index j) const {
-    return vari_value<double>(val_.coeffRef(i, j), adj_.coeffRef(i, j));
+    return vari_value<decltype(val_.coeffRef(i, j))>(val_.coeffRef(i, j), adj_.coeffRef(i, j));
   }
 
   /**
@@ -525,7 +590,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @param i Column index to slice
    */
   inline auto coeff(Eigen::Index i) const {
-    return vari_value<double>(val_.coeffRef(i), adj_.coeffRef(i));
+    return vari_value<decltype(val_.coeffRef(i))>(val_.coeffRef(i), adj_.coeffRef(i));
   }
 
   /**

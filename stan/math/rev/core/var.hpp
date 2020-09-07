@@ -42,7 +42,7 @@ class var_value {
       " floating point types");
 
  public:
-  using value_type = std::decay_t<T>;  // type in vari_value.
+  using value_type = T;  // type in vari_value.
   using vari_type = std::conditional_t<is_plain_type<value_type>::value,
                                        vari_value<value_type>, vari_view<T>>;
 
@@ -364,12 +364,9 @@ class var_value {
    * @param i Element to access
    */
   inline auto coeff(Eigen::Index i) const {
-    using vari_coeff_type = decltype(vi_->coeff(i));
-    auto* vari_coeff = new vari_coeff_type(vi_->coeff(i));
-    reverse_pass_callback([vari_coeff, this, i]() mutable {
-      this->vi_->adj_(i) += vari_coeff->adj_;
-    });
-    return var_value<double>(vari_coeff);
+    using vari_sub = decltype(vi_->coeff(i));
+    vari_sub* vari_coeff = new vari_sub(vi_->coeff(i));
+    return var_value<typename vari_sub::value_type>(vari_coeff);
   }
 
   /**
@@ -378,12 +375,9 @@ class var_value {
    * @param j Column to access
    */
   inline auto coeff(Eigen::Index i, Eigen::Index j) const {
-    using vari_coeff_type = decltype(vi_->coeff(i, j));
-    auto* vari_coeff = new vari_coeff_type(vi_->coeff(i, j));
-    reverse_pass_callback([vari_coeff, this, i, j]() mutable {
-      this->vi_->adj_(i, j) += vari_coeff->adj_;
-    });
-    return var_value<double>(vari_coeff);
+    using vari_sub = decltype(vi_->coeff(i, j));
+    vari_sub* vari_coeff = new vari_sub(vi_->coeff(i, j));
+    return var_value<typename vari_sub::value_type>(vari_coeff);
   }
 
   /**
