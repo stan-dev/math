@@ -66,9 +66,9 @@ template <bool propto, typename T_y, typename T_F, typename T_G, typename T_V,
           typename T_W, typename T_m0, typename T_C0,
           require_all_eigen_matrix_t<T_y, T_F, T_G, T_V, T_W, T_C0>* = nullptr,
           require_eigen_col_vector_t<T_m0>* = nullptr>
-inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>
-gaussian_dlm_obs_lpdf(const T_y& y, const T_F& F, const T_G& G, const T_V& V,
-                      const T_W& W, const T_m0& m0, const T_C0& C0) {
+inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0> gaussian_dlm_obs_lpdf(
+    const T_y& y, const T_F& F, const T_G& G, const T_V& V, const T_W& W,
+    const T_m0& m0, const T_C0& C0) {
   using T_lp = return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>;
   using std::pow;
   static const char* function = "gaussian_dlm_obs_lpdf";
@@ -190,11 +190,10 @@ template <bool propto, typename T_y, typename T_F, typename T_G, typename T_V,
           typename T_W, typename T_m0, typename T_C0,
           require_all_eigen_matrix_t<T_y, T_F, T_G, T_W, T_C0>* = nullptr,
           require_all_eigen_col_vector_t<T_V, T_m0>* = nullptr>
-inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>
-gaussian_dlm_obs_lpdf(const T_y& y, const T_F& F, const T_G& G, const T_V& V,
-                      const T_W& W, const T_m0& m0, const T_C0& C0) {
-  using T_lp
-      = return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>;
+inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0> gaussian_dlm_obs_lpdf(
+    const T_y& y, const T_F& F, const T_G& G, const T_V& V, const T_W& W,
+    const T_m0& m0, const T_C0& C0) {
+  using T_lp = return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>;
   using std::log;
   static const char* function = "gaussian_dlm_obs_lpdf";
   check_size_match(function, "columns of F", F.cols(), "rows of y", y.rows());
@@ -282,9 +281,9 @@ gaussian_dlm_obs_lpdf(const T_y& y, const T_F& F, const T_G& G, const T_V& V,
 
 template <typename T_y, typename T_F, typename T_G, typename T_V, typename T_W,
           typename T_m0, typename T_C0>
-inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>
-gaussian_dlm_obs_lpdf(const T_y& y, const T_F& F, const T_G& G, const T_V& V,
-                      const T_W& W, const T_m0& m0, const T_C0& C0) {
+inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0> gaussian_dlm_obs_lpdf(
+    const T_y& y, const T_F& F, const T_G& G, const T_V& V, const T_W& W,
+    const T_m0& m0, const T_C0& C0) {
   return gaussian_dlm_obs_lpdf<false>(y, F, G, V, W, m0, C0);
 }
 
