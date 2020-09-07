@@ -34,14 +34,20 @@
  * @param A first input matrix to compare
  * @param B second input matrix to compare
  */
-#define EXPECT_MATRIX_EQ(A, B)               \
-  {                                          \
-    const auto& A_eval = (A).eval();       \
-    const auto& B_eval = (B).eval();       \
-    EXPECT_EQ(A_eval.rows(), B_eval.rows()); \
-    EXPECT_EQ(A_eval.cols(), B_eval.cols()); \
-    for (int i = 0; i < A_eval.size(); i++)  \
-      EXPECT_EQ(A_eval(i), B_eval(i));       \
+#define EXPECT_MATRIX_EQ(A, B)                                        \
+  {                                                                   \
+    using T_A = std::decay_t<decltype(A)>;                            \
+    using T_B = std::decay_t<decltype(B)>;                            \
+    const Eigen::Matrix<typename T_A::Scalar, T_A::RowsAtCompileTime, \
+                        T_A::ColsAtCompileTime>                       \
+        A_eval = A;                                                   \
+    const Eigen::Matrix<typename T_B::Scalar, T_B::RowsAtCompileTime, \
+                        T_B::ColsAtCompileTime>                       \
+        B_eval = B;                                                   \
+    EXPECT_EQ(A_eval.rows(), B_eval.rows());                          \
+    EXPECT_EQ(A_eval.cols(), B_eval.cols());                          \
+    for (int i = 0; i < A_eval.size(); i++)                           \
+      EXPECT_EQ(A_eval(i), B_eval(i));                                \
   }
 
 /**
