@@ -31,17 +31,17 @@
     using T_m = Eigen::Array<SCALAR_TYPE, Eigen::Dynamic, Eigen::Dynamic>;     \
     TEST_COMPARISON_COMBINATIONS(SCALAR_TYPE, T_m, Eigen::ArrayXXd, m1, m2,    \
                                  OP);                                          \
-    Eigen::ArrayXd v1(6);                                                   \
+    Eigen::ArrayXd v1(6);                                                      \
     v1 << -1, 2, 0.0, 0.5, 1, 1.5;                                             \
-    Eigen::ArrayXd v2(6);                                                   \
+    Eigen::ArrayXd v2(6);                                                      \
     v2 << 2, 1, 0.0, -0.5, -1, 1.5;                                            \
     using T_v = Eigen::Array<SCALAR_TYPE, Eigen::Dynamic, 1>;                  \
     TEST_COMPARISON_COMBINATIONS(SCALAR_TYPE, T_v, Eigen::ArrayXd, v1, v2,     \
                                  OP);                                          \
     using T_rv_plain = Eigen::Array<double, 1, Eigen::Dynamic>;                \
-    T_rv_plain rv1(6);                                                      \
+    T_rv_plain rv1(6);                                                         \
     rv1 << -1, 2, 0.0, 0.5, 1, 1.5;                                            \
-    T_rv_plain rv2(6);                                                      \
+    T_rv_plain rv2(6);                                                         \
     rv2 << 2, 1, 0.0, -0.5, -1, 1.5;                                           \
     using T_rv = Eigen::Array<SCALAR_TYPE, 1, Eigen::Dynamic>;                 \
     TEST_COMPARISON_COMBINATIONS(SCALAR_TYPE, T_rv, T_rv_plain, rv1, rv2, OP); \

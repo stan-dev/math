@@ -3,10 +3,9 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-
 TEST(ProbDistributions, fvar_double) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::fvar;
 
   Matrix<fvar<double>, Dynamic, 1> theta(3, 1);
@@ -35,6 +34,8 @@ TEST(ProbDistributions, fvar_double) {
 }
 
 TEST(ProbDistributions, fvar_fvar_double) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::fvar;
 
   Matrix<fvar<fvar<double> >, Dynamic, 1> theta(3, 1);
