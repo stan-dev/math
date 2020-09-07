@@ -2,12 +2,11 @@
 #include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using std::vector;
-
 TEST(ProbDistributionsMultiNormalCholesky, MultiNormalVar) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::var;
+  using std::vector;
   Matrix<var, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
   Matrix<var, Dynamic, 1> mu(3, 1);
@@ -20,7 +19,10 @@ TEST(ProbDistributionsMultiNormalCholesky, MultiNormalVar) {
 }
 
 TEST(ProbDistributionsMultiNormalCholesky, check_varis_on_stack) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::to_var;
+  using std::vector;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
   Matrix<double, Dynamic, 1> mu(3, 1);
