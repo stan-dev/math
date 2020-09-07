@@ -90,6 +90,9 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
                         + !is_constant_all<T_scale>::value
                         + !is_constant_all<T_y>::value
                     >= 2>(inv_beta * exp_y_m_mu_over_beta - inv_beta);
+    if (!is_constant_all<T_y>::value) {
+      ops_partials.edge1_.partials_ = scaled_diff;
+    }
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_ = -scaled_diff;
     }
@@ -97,57 +100,7 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
       ops_partials.edge3_.partials_
           = -y_minus_mu_over_beta * scaled_diff - inv_beta;
     }
-    if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_ = std::move(scaled_diff);
-    }
   }
-
-  //  T_partials_return logp(0);
-  //  scalar_seq_view<T_y> y_vec(y);
-  //  scalar_seq_view<T_loc> mu_vec(mu);
-  //  scalar_seq_view<T_scale> beta_vec(beta);
-  //  size_t N = max_size(y, mu, beta);
-
-  //  VectorBuilder<true, T_partials_return, T_scale> inv_beta(size(beta));
-  //  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
-  //                T_scale>
-  //      log_beta(size(beta));
-  //  for (size_t i = 0; i < stan::math::size(beta); i++) {
-  //    inv_beta[i] = 1.0 / value_of(beta_vec[i]);
-  //    if (include_summand<propto, T_scale>::value) {
-  //      log_beta[i] = log(value_of(beta_vec[i]));
-  //    }
-  //  }
-
-  //  for (size_t n = 0; n < N; n++) {
-  //    const T_partials_return y_dbl = value_of(y_vec[n]);
-  //    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-
-  //    const T_partials_return y_minus_mu_over_beta
-  //        = (y_dbl - mu_dbl) * inv_beta[n];
-
-  //    if (include_summand<propto, T_scale>::value) {
-  //      logp -= log_beta[n];
-  //    }
-  //    std::cout << "1: " << logp << std::endl;
-  //    logp += -y_minus_mu_over_beta - exp(-y_minus_mu_over_beta);
-  //    std::cout << "2: " << logp << std::endl;
-
-  //    T_partials_return scaled_diff = inv_beta[n] *
-  //    exp(-y_minus_mu_over_beta); if (!is_constant_all<T_y>::value) {
-  //      ops_partials.edge1_.partials_[n] -= inv_beta[n] - scaled_diff;
-  //    }
-  //    if (!is_constant_all<T_loc>::value) {
-  //      ops_partials.edge2_.partials_[n] += inv_beta[n] - scaled_diff;
-  //    }
-  //    if (!is_constant_all<T_scale>::value) {
-  //      ops_partials.edge3_.partials_[n] += -inv_beta[n]
-  //                                          + y_minus_mu_over_beta *
-  //                                          inv_beta[n]
-  //                                          - scaled_diff *
-  //                                          y_minus_mu_over_beta;
-  //    }
-  //  }
   return ops_partials.build(logp);
 }
 

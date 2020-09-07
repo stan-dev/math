@@ -80,40 +80,16 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lcdf(const T_y& y, const T_loc& mu,
                                           + !is_constant_all<T_scale>::value
                                           + !is_constant_all<T_y>::value
                                       >= 2>(exp_scaled_diff / beta_val);
+    if (!is_constant_all<T_y>::value) {
+      ops_partials.edge1_.partials_ = rep_deriv;
+    }
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_ = -rep_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_ = rep_deriv * scaled_diff;
     }
-    if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_ = std::move(rep_deriv);
-    }
   }
-
-//  scalar_seq_view<T_y> y_vec(y);
-//  scalar_seq_view<T_loc> mu_vec(mu);
-//  scalar_seq_view<T_scale> beta_vec(beta);
-//  size_t N = max_size(y, mu, beta);
-
-//  for (size_t n = 0; n < N; n++) {
-//    const T_partials_return y_dbl = value_of(y_vec[n]);
-//    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-//    const T_partials_return beta_dbl = value_of(beta_vec[n]);
-//    const T_partials_return scaled_diff = (y_dbl - mu_dbl) / beta_dbl;
-//    const T_partials_return rep_deriv = exp(-scaled_diff) / beta_dbl;
-//    cdf_log -= exp(-scaled_diff);
-
-//    if (!is_constant_all<T_y>::value) {
-//      ops_partials.edge1_.partials_[n] += rep_deriv;
-//    }
-//    if (!is_constant_all<T_loc>::value) {
-//      ops_partials.edge2_.partials_[n] -= rep_deriv;
-//    }
-//    if (!is_constant_all<T_scale>::value) {
-//      ops_partials.edge3_.partials_[n] -= rep_deriv * scaled_diff;
-//    }
-//  }
   return ops_partials.build(cdf_log);
 }
 
