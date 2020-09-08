@@ -62,34 +62,37 @@ class opencl_context_base {
    *
    * This constructor does the following:
    * 1. Gets the available platforms and selects the platform
-   *  with id OPENCL_PLATFORM_ID.
-   * 2. Gets the available devices and selects the device with id
-   *  OPENCL_DEVICE_ID.
+   *  with given id.
+   * 2. Gets the available devices and selects the device with given id.
    * 3. Creates the OpenCL context with the device.
    * 4. Creates the OpenCL command queue for the selected device.
    * 5. Sets OpenCL device dependent kernel parameters
+   *
+   * @param platfrom_id id of the OpenCL platform to use
+   * @param device_id id of the OpenCL device to use
    * @throw std::system_error if an OpenCL error occurs.
    */
-  opencl_context_base() {
+  opencl_context_base(int platform_id = OPENCL_PLATFORM_ID,
+                      int device_id = OPENCL_DEVICE_ID) {
     try {
       // platform
       cl::Platform::get(&platforms_);
-      if (OPENCL_PLATFORM_ID >= platforms_.size()) {
+      if (platform_id >= platforms_.size()) {
         system_error("OpenCL Initialization", "[Platform]", -1,
                      "CL_INVALID_PLATFORM");
       }
-      platform_.push_back(platforms_[OPENCL_PLATFORM_ID]);
+      platform_.push_back(platforms_[platform_id]);
       platform_name_ = platform_[0].getInfo<CL_PLATFORM_NAME>();
       platform_[0].getDevices(DEVICE_FILTER, &devices_);
       if (devices_.size() == 0) {
         system_error("OpenCL Initialization", "[Device]", -1,
                      "CL_DEVICE_NOT_FOUND");
       }
-      if (OPENCL_DEVICE_ID >= devices_.size()) {
+      if (device_id >= devices_.size()) {
         system_error("OpenCL Initialization", "[Device]", -1,
                      "CL_INVALID_DEVICE");
       }
-      device_.push_back(devices_[OPENCL_DEVICE_ID]);
+      device_.push_back(devices_[device_id]);
       // context and queue
       cl_command_queue_properties device_properties;
       device_[0].getInfo<cl_command_queue_properties>(
@@ -183,14 +186,17 @@ class opencl_context_base {
     int tri_inverse_size_worth_transfer = 100;
   } tuning_opts_;
 
-  static opencl_context_base& getInstance() {
-    static opencl_context_base instance_;
-    return instance_;
-  }
+ private:
+  static opencl_context_base instance_;
 
-  opencl_context_base(opencl_context_base const&) = delete;
-  void operator=(opencl_context_base const&) = delete;
+ protected:
+  static opencl_context_base& getInstance() { return instance_; }
+
+  static void select_device(int platform_id, int device_id){
+    instance_ = opencl_context_base(platform_id, device_id);
+  }
 };
+opencl_context_base opencl_context_base::instance_;
 
 /** \ingroup opencl_context_group
  * The API to access the methods and values in opencl_context_base
@@ -392,6 +398,10 @@ class opencl_context {
    */
   inline bool& in_order() {
     return opencl_context_base::getInstance().in_order_;
+  }
+
+  inline void select_device(int platform_id, int instance_id){
+    opencl_context_base::select_device(platform_id, instance_id);
   }
 };
 static opencl_context opencl_context;

@@ -214,9 +214,15 @@ inline const std::vector<cl::Event> select_events(
  */
 inline auto compile_kernel(const char* name,
                            const std::vector<std::string>& sources,
-                           std::map<std::string, int>& options) {
+                           const std::map<std::string, int>& options) {
+  auto base_opts = opencl_context.base_opts();
+  for (auto& it : options) {
+    if (base_opts[it.first] > it.second) {
+      base_opts[it.first] = it.second;
+    }
+  }
   std::string kernel_opts = "";
-  for (auto&& comp_opts : options) {
+  for (auto&& comp_opts : base_opts) {
     kernel_opts += std::string(" -D") + comp_opts.first + "="
                    + std::to_string(comp_opts.second);
   }
@@ -239,52 +245,20 @@ inline auto compile_kernel(const char* name,
 }
 
 /** \ingroup kernel_executor_opencl
- * Functor used for compiling kernels.
- *
- * @tparam Args Parameter pack of all kernel argument types.
- */
-template <typename... Args>
-class kernel_functor {
- private:
-  cl::Kernel kernel_;
-  std::map<std::string, int> opts_;
-
- public:
-  /** \ingroup kernel_executor_opencl
-   * functor to access the kernel compiler.
-   * @param name The name for the kernel.
-   * @param sources A std::vector of strings containing the code for the kernel.
-   * @param options The values of macros to be passed at compile time.
-   */
-  kernel_functor(const char* name, const std::vector<std::string>& sources,
-                 const std::map<std::string, int>& options) {
-    auto base_opts = opencl_context.base_opts();
-    for (auto& it : options) {
-      if (base_opts[it.first] > it.second) {
-        base_opts[it.first] = it.second;
-      }
-    }
-    kernel_ = compile_kernel(name, sources, base_opts);
-    opts_ = base_opts;
-  }
-
-  auto operator()() const { return cl::KernelFunctor<Args...>(kernel_); }
-
-  /** \ingroup kernel_executor_opencl
-   * @return The options that the kernel was compiled with.
-   */
-  inline const std::map<std::string, int>& get_opts() const { return opts_; }
-};
-
-/** \ingroup kernel_executor_opencl
  * Creates functor for kernels
  *
  * @tparam Args Parameter pack of all kernel argument types.
  */
 template <typename... Args>
 struct kernel_cl {
-  const kernel_functor<internal::to_const_buffer_t<Args>&...> make_functor;
+ private:
+  const char* name_;
+  std::vector<std::string> sources_;
+  std::map<std::string, int> opts_;
+  mutable cl::KernelFunctor<internal::to_const_buffer_t<Args>&...>
+      kernel_functor_;
 
+ public:
   /** \ingroup kernel_executor_opencl
    * Creates functor for kernels that only need access to defining
    *  the global work size.
@@ -292,9 +266,13 @@ struct kernel_cl {
    * @param sources A std::vector of strings containing the code for the kernel.
    * @param options The values of macros to be passed at compile time.
    */
-  kernel_cl(const char* name, const std::vector<std::string>& sources,
-            const std::map<std::string, int>& options = {})
-      : make_functor(name, sources, options) {}
+  kernel_cl(const char* name, std::vector<std::string> sources,
+            std::map<std::string, int> options = {})
+      : name_(name),
+        sources_(std::move(sources)),
+        opts_(std::move(options)),
+        kernel_functor_(cl::Kernel()) {}
+
   /** \ingroup kernel_executor_opencl
    * Executes a kernel
    * @tparam CallArgs The types of the callee arguments.
@@ -306,12 +284,14 @@ struct kernel_cl {
   template <typename... CallArgs>
   auto operator()(cl::NDRange global_thread_size,
                   const CallArgs&... args) const {
-    auto f = make_functor();
-    const std::vector<cl::Event> kernel_events
-        = vec_concat(internal::select_events<Args>(args)...);
-    cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
+    if (kernel_functor_.getKernel()() == NULL) {
+      kernel_functor_ = compile_kernel(name_, sources_, opts_);
+    }
+    cl::EnqueueArgs eargs(opencl_context.queue(),
+                          vec_concat(internal::select_events<Args>(args)...),
                           global_thread_size);
-    cl::Event kern_event = f(eargs, internal::get_kernel_args(args)...);
+    cl::Event kern_event
+        = kernel_functor_(eargs, internal::get_kernel_args(args)...);
     internal::assign_events<Args...>(kern_event, args...);
     return kern_event;
   }
@@ -328,12 +308,14 @@ struct kernel_cl {
   template <typename... CallArgs>
   auto operator()(cl::NDRange global_thread_size, cl::NDRange thread_block_size,
                   const CallArgs&... args) const {
-    auto f = make_functor();
-    const std::vector<cl::Event> kernel_events
-        = vec_concat(internal::select_events<Args>(args)...);
-    cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
+    if (kernel_functor_.getKernel()() == NULL) {
+      kernel_functor_ = compile_kernel(name_, sources_, opts_);
+    }
+    cl::EnqueueArgs eargs(opencl_context.queue(),
+                          vec_concat(internal::select_events<Args>(args)...),
                           global_thread_size, thread_block_size);
-    cl::Event kern_event = f(eargs, internal::get_kernel_args(args)...);
+    cl::Event kern_event
+        = kernel_functor_(eargs, internal::get_kernel_args(args)...);
     internal::assign_events<Args...>(kern_event, args...);
     return kern_event;
   }
@@ -344,7 +326,7 @@ struct kernel_cl {
    * @return option value
    */
   int get_option(const std::string option_name) const {
-    return make_functor.get_opts().at(option_name);
+    return opts_.at(option_name);
   }
 };
 
