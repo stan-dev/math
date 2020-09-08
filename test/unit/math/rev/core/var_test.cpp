@@ -201,13 +201,45 @@ TEST_F(AgradRev, var_matrix_views) {
   EXPECT_FLOAT_EQ(A_v.adj()(3, 3), A_coeff2.adj());
 }
 
+TEST_F(AgradRev, var_matrix_views_assignment) {
+  using dense_mat = Eigen::Matrix<double, -1, -1>;
+  using dense_vec = Eigen::Matrix<double, -1, 1>;
+  using dense_rowvec = Eigen::Matrix<double, 1, -1>;
+  using stan::math::var_value;
+  dense_mat A(10, 10);
+  for (Eigen::Index i = 0; i < A.size(); ++i) {
+    A(i) = i;
+  }
+  var_value<dense_mat> A_v(A);
+  var_value<dense_mat> A_block = A_v.block(1, 1, 3, 3);
+  EXPECT_MATRIX_FLOAT_EQ(A_block.val(), A.block(1, 1, 3, 3));
+  var_value<dense_rowvec> A_row = A_v.row(3);
+//  EXPECT_MATRIX_FLOAT_EQ(A_row.val(), A.row(3));
+/*  var_value<dense_vec> A_col = A_v.col(3);
+  EXPECT_MATRIX_FLOAT_EQ(A_col.val(), A.col(3));
+
+  var_value<dense_rowvec> A_block_row = A_v.block(1, 1, 3, 3).row(1);
+  EXPECT_MATRIX_FLOAT_EQ(A_block_row.val(), A.block(1, 1, 3, 3).row(1));
+  var_value<dense_mat> A_rowwise_reverse = A_v.rowwise().reverse();
+  EXPECT_MATRIX_FLOAT_EQ(A_rowwise_reverse.val(), A.rowwise().reverse());
+  var_value<dense_mat> A_colwise_reverse = A_v.colwise().reverse();
+  EXPECT_MATRIX_FLOAT_EQ(A_colwise_reverse.val(), A.colwise().reverse());
+  var_value<dense_mat> A_rowwise_colwise_reverse = A_v.rowwise().reverse().colwise().reverse();
+  EXPECT_MATRIX_FLOAT_EQ(A_rowwise_colwise_reverse.val(), A.rowwise().reverse().colwise().reverse());
+  var_value<double> A_coeff1 = A_v(3);
+  EXPECT_FLOAT_EQ(A(3), A_coeff1.val());
+  var_value<double> A_coeff2 = A_v(3, 3);
+  EXPECT_FLOAT_EQ(A(3, 3), A_coeff2.val());
+*/}
+
 TEST_F(AgradRev, var_vector_views) {
   using dense_vec = Eigen::Matrix<double, -1, 1>;
+  using stan::math::var_value;
   dense_vec A(10);
   for (Eigen::Index i = 0; i < A.size(); ++i) {
     A(i) = i;
   }
-  stan::math::var_value<dense_vec> A_v(A);
+  var_value<dense_vec> A_v(A);
   auto A_head = A_v.head(3);
   EXPECT_MATRIX_FLOAT_EQ(A.head(3), A_head.val());
   auto A_tail = A_v.tail(3);

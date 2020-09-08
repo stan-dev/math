@@ -94,6 +94,9 @@ class var_value {
    */
   var_value(vari_type* vi) : vi_(vi) {}  // NOLINT
 
+  template <typename S, typename TT = T, require_not_plain_type_t<S>* = nullptr,
+    require_plain_type_t<TT>* = nullptr>
+  var_value(const var_value<S>& x) : vi_(new vari_type(*(x.vi_))) {}
   /**
    * Return a constant reference to the value of this variable.
    *
@@ -299,11 +302,11 @@ class var_value {
    * @param num_rows Number of rows to return.
    * @param num_cols Number of columns to return.
    */
-  inline const auto block(Eigen::Index start_row, Eigen::Index start_col,
+  inline auto block(Eigen::Index start_row, Eigen::Index start_col,
                           Eigen::Index num_rows, Eigen::Index num_cols) const {
     using vari_sub
         = decltype(vi_->block(start_row, start_col, num_rows, num_cols));
-    using var_sub = var_value<const typename vari_sub::value_type>;
+    using var_sub = var_value<typename vari_sub::value_type>;
     return var_sub(
         new vari_sub(vi_->block(start_row, start_col, num_rows, num_cols)));
   }
@@ -312,9 +315,9 @@ class var_value {
    * View of the head of Eigen vector types.
    * @param n Number of elements to return from top of vector.
    */
-  inline const auto head(Eigen::Index n) const {
+  inline auto head(Eigen::Index n) const {
     using vari_sub = decltype(vi_->head(n));
-    using var_sub = var_value<const typename vari_sub::value_type>;
+    using var_sub = var_value<typename vari_sub::value_type>;
     return var_sub(new vari_sub(vi_->head(n)));
   }
 
@@ -322,9 +325,9 @@ class var_value {
    * View of the tail of the Eigen vector types.
    * @param n Number of elements to return from bottom of vector.
    */
-  inline const auto tail(Eigen::Index n) const {
+  inline auto tail(Eigen::Index n) const {
     using vari_sub = decltype(vi_->tail(n));
-    using var_sub = var_value<const typename vari_sub::value_type>;
+    using var_sub = var_value<typename vari_sub::value_type>;
     return var_sub(new vari_sub(vi_->tail(n)));
   }
 
@@ -333,9 +336,9 @@ class var_value {
    * @param i Starting position of block.
    * @param n Number of elements in block
    */
-  inline const auto segment(Eigen::Index i, Eigen::Index n) const {
+  inline auto segment(Eigen::Index i, Eigen::Index n) const {
     using vari_sub = decltype(vi_->segment(i, n));
-    using var_sub = var_value<const typename vari_sub::value_type>;
+    using var_sub = var_value<typename vari_sub::value_type>;
     return var_sub(new vari_sub(vi_->segment(i, n)));
   }
 
@@ -343,9 +346,9 @@ class var_value {
    * View row of eigen matrices.
    * @param i Row index to slice.
    */
-  inline const auto row(Eigen::Index i) const {
+  inline auto row(Eigen::Index i) const {
     using vari_sub = decltype(vi_->row(i));
-    using var_sub = var_value<const typename vari_sub::value_type>;
+    using var_sub = var_value<typename vari_sub::value_type>;
     return var_sub(new vari_sub(vi_->row(i)));
   }
 
@@ -353,9 +356,9 @@ class var_value {
    * View column of eigen matrices
    * @param i Column index to slice
    */
-  inline const auto col(Eigen::Index i) const {
+  inline auto col(Eigen::Index i) const {
     using vari_sub = decltype(vi_->col(i));
-    using var_sub = var_value<const typename vari_sub::value_type>;
+    using var_sub = var_value<typename vari_sub::value_type>;
     return var_sub(new vari_sub(vi_->col(i)));
   }
 
