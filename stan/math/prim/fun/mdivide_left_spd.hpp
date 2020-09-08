@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 
 namespace stan {
 namespace math {
@@ -22,21 +23,24 @@ namespace math {
  * match the size of A.
  */
 template <typename EigMat1, typename EigMat2,
-          require_all_eigen_t<EigMat1, EigMat2>* = nullptr>
+          require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
+          require_all_not_vt_var<EigMat1, EigMat2>* = nullptr>
 inline Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
                      EigMat1::RowsAtCompileTime, EigMat2::ColsAtCompileTime>
 mdivide_left_spd(const EigMat1& A, const EigMat2& b) {
   static const char* function = "mdivide_left_spd";
   check_multiplicable(function, "A", A, "b", b);
-  check_symmetric(function, "A", A);
-  check_not_nan(function, "A", A);
+  const auto& A_ref = to_ref(A);
+  check_symmetric(function, "A", A_ref);
+  check_not_nan(function, "A", A_ref);
   if (A.size() == 0) {
     return {0, b.cols()};
   }
 
   auto llt
       = Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
-                      EigMat1::RowsAtCompileTime, EigMat1::ColsAtCompileTime>(A)
+                      EigMat1::RowsAtCompileTime, EigMat1::ColsAtCompileTime>(
+            A_ref)
             .llt();
   check_pos_definite(function, "A", llt);
   return llt.solve(

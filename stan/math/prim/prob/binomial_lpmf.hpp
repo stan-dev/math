@@ -22,7 +22,7 @@ namespace math {
  *
  * @tparam T_n type of successes parameter
  * @tparam T_N type of population size parameter
- * @tparam theta type of chance of success parameter
+ * @tparam T_prob type of chance of success parameter
  * @param n successes parameter
  * @param N population size parameter
  * @param theta chance of success parameter
@@ -61,20 +61,28 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
   size_t size_theta = stan::math::size(theta);
   size_t max_size_seq_view = max_size(n, N, theta);
 
+  VectorBuilder<true, T_partials_return, T_prob> log1m_theta(size_theta);
+  for (size_t i = 0; i < size_theta; ++i) {
+    log1m_theta[i] = log1m(value_of(theta_vec[i]));
+  }
+
   if (include_summand<propto>::value) {
     for (size_t i = 0; i < max_size_seq_view; ++i) {
       logp += binomial_coefficient_log(N_vec[i], n_vec[i]);
     }
   }
 
-  VectorBuilder<true, T_partials_return, T_prob> log1m_theta(size_theta);
-  for (size_t i = 0; i < size_theta; ++i) {
-    log1m_theta[i] = log1m(value_of(theta_vec[i]));
-  }
-
   for (size_t i = 0; i < max_size_seq_view; ++i) {
-    logp += multiply_log(n_vec[i], value_of(theta_vec[i]))
-            + (N_vec[i] - n_vec[i]) * log1m_theta[i];
+    if (N_vec[i] != 0) {
+      if (n_vec[i] == 0) {
+        logp += N_vec[i] * log1m_theta[i];
+      } else if (n_vec[i] == N_vec[i]) {
+        logp += n_vec[i] * log(value_of(theta_vec[i]));
+      } else {
+        logp += n_vec[i] * log(value_of(theta_vec[i]))
+                + (N_vec[i] - n_vec[i]) * log1m_theta[i];
+      }
+    }
   }
 
   if (!is_constant_all<T_prob>::value) {
@@ -86,13 +94,30 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
         sum_N += N_vec[i];
       }
       const T_partials_return theta_dbl = value_of(theta_vec[0]);
-      ops_partials.edge1_.partials_[0]
-          += sum_n / theta_dbl - (sum_N - sum_n) / (1.0 - theta_dbl);
+      if (sum_N != 0) {
+        if (sum_n == 0) {
+          ops_partials.edge1_.partials_[0] -= sum_N / (1.0 - theta_dbl);
+        } else if (sum_n == sum_N) {
+          ops_partials.edge1_.partials_[0] += sum_n / theta_dbl;
+        } else {
+          ops_partials.edge1_.partials_[0]
+              += sum_n / theta_dbl - (sum_N - sum_n) / (1.0 - theta_dbl);
+        }
+      }
     } else {
       for (size_t i = 0; i < max_size_seq_view; ++i) {
         const T_partials_return theta_dbl = value_of(theta_vec[i]);
-        ops_partials.edge1_.partials_[i]
-            += n_vec[i] / theta_dbl - (N_vec[i] - n_vec[i]) / (1.0 - theta_dbl);
+        if (N_vec[i] != 0) {
+          if (n_vec[i] == 0) {
+            ops_partials.edge1_.partials_[i] -= N_vec[i] / (1.0 - theta_dbl);
+          } else if (n_vec[i] == N_vec[i]) {
+            ops_partials.edge1_.partials_[i] += n_vec[i] / theta_dbl;
+          } else {
+            ops_partials.edge1_.partials_[i]
+                += n_vec[i] / theta_dbl
+                   - (N_vec[i] - n_vec[i]) / (1.0 - theta_dbl);
+          }
+        }
       }
     }
   }

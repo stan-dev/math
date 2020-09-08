@@ -5,10 +5,9 @@
 #include <limits>
 #include <vector>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-
 TEST(ProbDistributionsMultinomial, RNGSize) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, 1> theta(5);
   // error in 2.1.0 due to overflow in binomial call due to division
@@ -19,6 +18,8 @@ TEST(ProbDistributionsMultinomial, RNGSize) {
 }
 
 TEST(ProbDistributionsMultinomial, Multinomial) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   std::vector<int> ns;
   ns.push_back(1);
   ns.push_back(2);
@@ -28,6 +29,8 @@ TEST(ProbDistributionsMultinomial, Multinomial) {
   EXPECT_FLOAT_EQ(-2.002481, stan::math::multinomial_log(ns, theta));
 }
 TEST(ProbDistributionsMultinomial, Propto) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   std::vector<int> ns;
   ns.push_back(1);
   ns.push_back(2);
@@ -40,6 +43,8 @@ TEST(ProbDistributionsMultinomial, Propto) {
 using stan::math::multinomial_log;
 
 TEST(ProbDistributionsMultinomial, error) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   double nan = std::numeric_limits<double>::quiet_NaN();
   double inf = std::numeric_limits<double>::infinity();
 
@@ -79,6 +84,8 @@ TEST(ProbDistributionsMultinomial, error) {
 }
 
 TEST(ProbDistributionsMultinomial, zeros) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   double result;
   std::vector<int> ns;
   ns.push_back(0);
@@ -100,6 +107,8 @@ TEST(ProbDistributionsMultinomial, zeros) {
 }
 
 TEST(ProbDistributionsMultinomial, error_check) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   boost::random::mt19937 rng;
 
   Matrix<double, Dynamic, 1> theta(3);
@@ -112,6 +121,8 @@ TEST(ProbDistributionsMultinomial, error_check) {
 }
 
 TEST(ProbDistributionsMultinomial, chiSquareGoodnessFitTest) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   boost::random::mt19937 rng;
   int M = 10;
   int trials = 1000;

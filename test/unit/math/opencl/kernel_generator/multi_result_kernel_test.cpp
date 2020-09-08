@@ -5,16 +5,13 @@
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <test/unit/math/opencl/kernel_generator/reference_kernel.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <string>
 
 using Eigen::MatrixXd;
 using Eigen::MatrixXi;
 using stan::math::matrix_cl;
-
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(KernelGenerator, multi_result_kernel_errors) {
   matrix_cl<double> m1_cl(3, 3);

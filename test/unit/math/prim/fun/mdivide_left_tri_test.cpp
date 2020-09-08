@@ -1,5 +1,5 @@
 #include <stan/math/prim.hpp>
-#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
 #ifdef STAN_OPENCL
@@ -7,23 +7,19 @@
 #include <boost/random/mersenne_twister.hpp>
 #endif
 
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
-
 TEST(MathMatrixPrim, mdivide_left_tri_val) {
   using stan::math::mdivide_left_tri;
   stan::math::matrix_d I = Eigen::MatrixXd::Identity(2, 2);
 
   stan::math::matrix_d Ad(2, 2);
   Ad << 2.0, 0.0, 5.0, 7.0;
-  expect_matrix_eq(I, mdivide_left_tri<Eigen::Lower>(Ad, Ad));
+  EXPECT_MATRIX_FLOAT_EQ(I, mdivide_left_tri<Eigen::Lower>(Ad, Ad));
 
   stan::math::matrix_d A_Ainv = Ad * mdivide_left_tri<Eigen::Lower>(Ad);
   EXPECT_MATRIX_NEAR(I, A_Ainv, 1e-15);
 
   Ad << 2.0, 3.0, 0.0, 7.0;
-  expect_matrix_eq(I, mdivide_left_tri<Eigen::Upper>(Ad, Ad));
+  EXPECT_MATRIX_FLOAT_EQ(I, mdivide_left_tri<Eigen::Upper>(Ad, Ad));
 }
 
 TEST(MathMatrixPrim, mdivide_left_tri_size_zero) {
