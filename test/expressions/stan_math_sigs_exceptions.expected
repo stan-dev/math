@@ -2930,14 +2930,6 @@ real[] gamma_rng(int[], vector)
 real[] gamma_rng(int[], row_vector)
 real[] gamma_rng(real[], vector)
 real[] gamma_rng(real[], row_vector)
-real gaussian_dlm_obs_log(matrix, matrix, matrix, vector, matrix, vector,
-                            matrix)
-real gaussian_dlm_obs_log(matrix, matrix, matrix, matrix, matrix, vector,
-                            matrix)
-real gaussian_dlm_obs_lpdf(matrix, matrix, matrix, vector, matrix, vector,
-                             matrix)
-real gaussian_dlm_obs_lpdf(matrix, matrix, matrix, matrix, matrix, vector,
-                             matrix)
 real gumbel_ccdf_log(real, real, vector)
 real gumbel_ccdf_log(real, real, row_vector)
 real gumbel_ccdf_log(real, vector, real)
