@@ -503,14 +503,6 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
     }
   }
 
-  template <typename S>
-  vari_value(const vari_view<S>& x)
-      : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-            x.size())),
-        adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-            x.size())),
-        val_(eigen_map(val_mem_, x.rows(), x.cols()) = x.val_),
-        adj_(eigen_map(adj_mem_, x.rows(), x.cols()) = x.adj_) {}
   /**
    * Return the number of rows for this class's `val_` member
    */

@@ -94,9 +94,6 @@ class var_value {
    */
   var_value(vari_type* vi) : vi_(vi) {}  // NOLINT
 
-  template <typename S, typename TT = T, require_not_plain_type_t<S>* = nullptr,
-            require_plain_type_t<TT>* = nullptr>
-  var_value(const var_value<S>& x) : vi_(new vari_type(*(x.vi_))) {}
   /**
    * Return a constant reference to the value of this variable.
    *
