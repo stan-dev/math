@@ -273,7 +273,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   explicit vari_value(const S& x)
       : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-          x.size())),
+            x.size())),
         adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
         val_(eigen_map(val_mem_, x.rows(), x.cols()) = x),
@@ -299,7 +299,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(const S& x, bool stacked)
       : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-          x.size())),
+            x.size())),
         adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
         val_(eigen_map(val_mem_, x.rows(), x.cols()) = x),
