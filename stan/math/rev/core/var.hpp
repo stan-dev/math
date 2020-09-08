@@ -299,11 +299,11 @@ class var_value {
    * @param num_rows Number of rows to return.
    * @param num_cols Number of columns to return.
    */
-  inline const auto block(Eigen::Index start_row, Eigen::Index start_col,
-                          Eigen::Index num_rows, Eigen::Index num_cols) const {
+  inline auto block(Eigen::Index start_row, Eigen::Index start_col,
+                    Eigen::Index num_rows, Eigen::Index num_cols) const {
     using vari_sub
         = decltype(vi_->block(start_row, start_col, num_rows, num_cols));
-    using var_sub = var_value<const typename vari_sub::value_type>;
+    using var_sub = var_value<typename vari_sub::value_type>;
     return var_sub(
         new vari_sub(vi_->block(start_row, start_col, num_rows, num_cols)));
   }
@@ -312,9 +312,9 @@ class var_value {
    * View of the head of Eigen vector types.
    * @param n Number of elements to return from top of vector.
    */
-  inline const auto head(Eigen::Index n) const {
+  inline auto head(Eigen::Index n) const {
     using vari_sub = decltype(vi_->head(n));
-    using var_sub = var_value<const typename vari_sub::value_type>;
+    using var_sub = var_value<typename vari_sub::value_type>;
     return var_sub(new vari_sub(vi_->head(n)));
   }
 
@@ -322,9 +322,9 @@ class var_value {
    * View of the tail of the Eigen vector types.
    * @param n Number of elements to return from bottom of vector.
    */
-  inline const auto tail(Eigen::Index n) const {
+  inline auto tail(Eigen::Index n) const {
     using vari_sub = decltype(vi_->tail(n));
-    using var_sub = var_value<const typename vari_sub::value_type>;
+    using var_sub = var_value<typename vari_sub::value_type>;
     return var_sub(new vari_sub(vi_->tail(n)));
   }
 
@@ -333,9 +333,9 @@ class var_value {
    * @param i Starting position of block.
    * @param n Number of elements in block
    */
-  inline const auto segment(Eigen::Index i, Eigen::Index n) const {
+  inline auto segment(Eigen::Index i, Eigen::Index n) const {
     using vari_sub = decltype(vi_->segment(i, n));
-    using var_sub = var_value<const typename vari_sub::value_type>;
+    using var_sub = var_value<typename vari_sub::value_type>;
     return var_sub(new vari_sub(vi_->segment(i, n)));
   }
 
@@ -343,9 +343,9 @@ class var_value {
    * View row of eigen matrices.
    * @param i Row index to slice.
    */
-  inline const auto row(Eigen::Index i) const {
+  inline auto row(Eigen::Index i) const {
     using vari_sub = decltype(vi_->row(i));
-    using var_sub = var_value<const typename vari_sub::value_type>;
+    using var_sub = var_value<typename vari_sub::value_type>;
     return var_sub(new vari_sub(vi_->row(i)));
   }
 
@@ -353,9 +353,9 @@ class var_value {
    * View column of eigen matrices
    * @param i Column index to slice
    */
-  inline const auto col(Eigen::Index i) const {
+  inline auto col(Eigen::Index i) const {
     using vari_sub = decltype(vi_->col(i));
-    using var_sub = var_value<const typename vari_sub::value_type>;
+    using var_sub = var_value<typename vari_sub::value_type>;
     return var_sub(new vari_sub(vi_->col(i)));
   }
 
@@ -414,6 +414,51 @@ class var_value {
       return os << "uninitialized";
     }
     return os << v.val();
+  }
+
+  /**
+   * Assignment of another var value.
+   * @tparam S type of the value in the `var_value` to assing
+   * @param other the value to assign
+   * @return this
+   */
+  template <typename S, require_convertible_t<S&, value_type>* = nullptr,
+            require_all_plain_type_t<T, S>* = nullptr>
+  var_value<T> operator=(const var_value<S>& other) {
+    vi_ = other.vi_;
+    return *this;
+  }
+
+  template <typename S, require_convertible_t<S&, value_type>* = nullptr,
+            require_any_not_plain_type_t<T, S>* = nullptr>
+  var_value<T> operator=(const var_value<S>& other) {
+    arena_t<plain_type_t<T>> prev_val = vi_->val_;
+    vi_->val_ = other.val();
+    // no need to change any adjoints - these are just zeros before the reverse
+    // pass
+
+    reverse_pass_callback(
+        [this_vi = this->vi_, other_vi = other.vi_, prev_val]() mutable {
+          this_vi->val_ = prev_val;
+
+          // we have no way of detecting aliasing between this->vi_->adj_ and
+          // other.vi_->adj_, so we must copy adjoint before reseting to zero
+
+          // we can reuse prev_val instead of allocating a new matrix
+          prev_val = this_vi->adj_;
+          this_vi->adj_.setZero();
+          other_vi->adj_ += prev_val;
+        });
+    return *this;
+  }
+
+  /**
+   * Copy assignment operator delegates to general assignment operator.
+   * @param other the value to assing
+   * @return this
+   */
+  var_value<T> operator=(const var_value<T>& other) {
+    return operator=<T>(other);
   }
 };
 

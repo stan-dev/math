@@ -198,8 +198,8 @@ class vari_view<T, require_all_t<bool_constant<!is_plain_type<T>::value>,
    */
   static constexpr int ColsAtCompileTime = PlainObject::ColsAtCompileTime;
 
-  const T val_;
-  const T adj_;
+  T val_;
+  T adj_;
   template <typename S, typename K,
             require_convertible_t<S&, value_type>* = nullptr,
             require_convertible_t<K&, value_type>* = nullptr>
@@ -249,7 +249,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   /**
    * The value of this variable.
    */
-  const eigen_map val_;
+  eigen_map val_;
 
   /**
    * The adjoint of this variable, which is the partial derivative
@@ -273,7 +273,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   explicit vari_value(const S& x)
       : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-            x.size())),
+          x.size())),
         adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
         val_(eigen_map(val_mem_, x.rows(), x.cols()) = x),
@@ -299,7 +299,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(const S& x, bool stacked)
       : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-            x.size())),
+          x.size())),
         adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
         val_(eigen_map(val_mem_, x.rows(), x.cols()) = x),
@@ -348,7 +348,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @param num_cols Number of columns to return.
    */
   inline auto block(Eigen::Index start_row, Eigen::Index start_col,
-                    Eigen::Index num_rows, Eigen::Index num_cols) const {
+                    Eigen::Index num_rows, Eigen::Index num_cols) {
     using inner_type
         = decltype(val_.block(start_row, start_col, num_rows, num_cols));
     return vari_view<inner_type>(
@@ -360,7 +360,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * View of the head of Eigen vector types.
    * @param n Number of elements to return from top of vector.
    */
-  inline auto head(Eigen::Index n) const {
+  inline auto head(Eigen::Index n) {
     return vari_view<decltype(val_.head(n))>(val_.head(n), adj_.head(n));
   }
 
@@ -368,7 +368,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * View of the tail of the Eigen vector types.
    * @param n Number of elements to return from bottom of vector.
    */
-  inline auto tail(Eigen::Index n) const {
+  inline auto tail(Eigen::Index n) {
     return vari_view<decltype(val_.tail(n))>(val_.tail(n), adj_.tail(n));
   }
 
@@ -377,7 +377,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @param i Starting position of block.
    * @param n Number of elements in block
    */
-  inline auto segment(Eigen::Index i, Eigen::Index n) const {
+  inline auto segment(Eigen::Index i, Eigen::Index n) {
     return vari_view<decltype(val_.segment(i, n))>(val_.segment(i, n),
                                                    adj_.segment(i, n));
   }
@@ -386,7 +386,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * View row of eigen matrices.
    * @param i Row index to slice.
    */
-  inline auto row(Eigen::Index i) const {
+  inline auto row(Eigen::Index i) {
     return vari_view<decltype(val_.row(i))>(val_.row(i), adj_.row(i));
   }
 
@@ -394,7 +394,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * View column of eigen matrices
    * @param i Column index to slice
    */
-  inline auto col(Eigen::Index i) const {
+  inline auto col(Eigen::Index i) {
     return vari_view<decltype(val_.col(i))>(val_.col(i), adj_.col(i));
   }
 
