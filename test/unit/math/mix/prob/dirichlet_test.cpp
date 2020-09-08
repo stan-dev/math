@@ -4,10 +4,9 @@
 #include <boost/math/distributions.hpp>
 #include <vector>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-
 TEST(ProbDistributions, fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -40,6 +39,8 @@ TEST(ProbDistributions, fvar_var) {
 }
 
 TEST(ProbDistributions, fvar_varVectorised) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::dirichlet_log;
   using stan::math::fvar;
   using stan::math::var;
@@ -94,6 +95,8 @@ TEST(ProbDistributions, fvar_varVectorised) {
 }
 
 TEST(ProbDistributions, fvar_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -127,6 +130,8 @@ TEST(ProbDistributions, fvar_fvar_var) {
 }
 
 TEST(ProbDistributions, fvar_fvar_varVectorised) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::dirichlet_log;
   using stan::math::fvar;
   using stan::math::var;
