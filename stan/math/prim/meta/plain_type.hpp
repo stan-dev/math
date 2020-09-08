@@ -41,8 +41,8 @@ template <typename T>
 using eval_return_type_t = typename eval_return_type<T>::type;
 
 namespace internal {
-  template <typename T>
-  using has_plain_object_t = typename std::decay_t<T>::PlainObject;
+template <typename T>
+using has_plain_object_t = typename std::decay_t<T>::PlainObject;
 }
 
 /**
@@ -56,7 +56,8 @@ struct plain_type<T, require_t<is_detected<T, internal::has_plain_object_t>>> {
 };
 
 template <typename T>
-struct plain_type<T, require_t<is_detected<T, internal::has_nested_expression_t>>> {
+struct plain_type<
+    T, require_t<is_detected<T, internal::has_nested_expression_t>>> {
   using type = typename std::decay_t<T>::ExpressionTypeNestedCleaned;
 };
 

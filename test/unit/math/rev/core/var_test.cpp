@@ -180,7 +180,8 @@ TEST_F(AgradRev, var_matrix_views) {
   auto A_colwise_reverse = A_v.colwise().reverse();
   EXPECT_MATRIX_FLOAT_EQ(A_colwise_reverse.val(), A.colwise().reverse());
   auto A_rowwise_colwise_reverse = A_v.rowwise().reverse().colwise().reverse();
-  EXPECT_MATRIX_FLOAT_EQ(A_rowwise_colwise_reverse.val(), A.rowwise().reverse().colwise().reverse());
+  EXPECT_MATRIX_FLOAT_EQ(A_rowwise_colwise_reverse.val(),
+                         A.rowwise().reverse().colwise().reverse());
   auto A_coeff1 = A_v(3);
   EXPECT_FLOAT_EQ(A(3), A_coeff1.val());
   auto A_coeff2 = A_v(3, 3);
@@ -193,9 +194,12 @@ TEST_F(AgradRev, var_matrix_views) {
   EXPECT_MATRIX_FLOAT_EQ(A_row.adj(), A_v.adj().row(3));
   EXPECT_MATRIX_FLOAT_EQ(A_col.adj(), A_v.adj().col(3));
   EXPECT_MATRIX_FLOAT_EQ(A_block_row.adj(), A_v.adj().block(1, 1, 3, 3).row(1));
-  EXPECT_MATRIX_FLOAT_EQ(A_rowwise_reverse.adj(), A_v.adj().rowwise().reverse());
-  EXPECT_MATRIX_FLOAT_EQ(A_colwise_reverse.adj(), A_v.adj().colwise().reverse());
-  EXPECT_MATRIX_FLOAT_EQ(A_rowwise_colwise_reverse.adj(), A_v.adj().rowwise().reverse().colwise().reverse());
+  EXPECT_MATRIX_FLOAT_EQ(A_rowwise_reverse.adj(),
+                         A_v.adj().rowwise().reverse());
+  EXPECT_MATRIX_FLOAT_EQ(A_colwise_reverse.adj(),
+                         A_v.adj().colwise().reverse());
+  EXPECT_MATRIX_FLOAT_EQ(A_rowwise_colwise_reverse.adj(),
+                         A_v.adj().rowwise().reverse().colwise().reverse());
   // since new var is made and values propogate back
   EXPECT_FLOAT_EQ(A_v.adj()(3), A_coeff1.adj());
   EXPECT_FLOAT_EQ(A_v.adj()(3, 3), A_coeff2.adj());
