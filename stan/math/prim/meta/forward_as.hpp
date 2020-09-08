@@ -56,9 +56,8 @@ inline T_actual&& forward_as(T_actual&& a) {  // NOLINT
  */
 template <typename T_desired, typename T_actual,
           typename = std::enable_if_t<
-	    !std::is_same<std::decay<T_actual>, std::decay<T_desired>>::value
-	    && (!is_eigen<T_desired>::value ||
-		!is_eigen<T_actual>::value)>>
+              !std::is_same<std::decay<T_actual>, std::decay<T_desired>>::value
+              && (!is_eigen<T_desired>::value || !is_eigen<T_actual>::value)>>
 inline T_desired forward_as(const T_actual& a) {
   throw std::runtime_error("Wrong type assumed! Please file a bug report.");
 }
