@@ -192,7 +192,7 @@ class opencl_context_base {
  protected:
   static opencl_context_base& getInstance() { return instance_; }
 
-  static void select_device(int platform_id, int device_id){
+  static void select_device(int platform_id, int device_id) {
     instance_ = opencl_context_base(platform_id, device_id);
   }
 };
@@ -202,6 +202,8 @@ opencl_context_base opencl_context_base::instance_;
  * The API to access the methods and values in opencl_context_base
  */
 class opencl_context {
+  std::vector<cl::Kernel*> kernel_caches_;
+
  public:
   opencl_context() = default;
 
@@ -400,8 +402,29 @@ class opencl_context {
     return opencl_context_base::getInstance().in_order_;
   }
 
-  inline void select_device(int platform_id, int instance_id){
+  /**
+   * Selects the OpenCL device to use from now on.
+   *
+   * No `matrix_cl` objects or created before this call should be used after the
+   * call (including any that might be on the AD stack)!
+   * @param platform_id id of the platform the device is part of
+   * @param instance_id if of the device
+   */
+  inline void select_device(int platform_id, int instance_id) {
+    for (cl::Kernel* cache : kernel_caches_) {
+      *cache = cl::Kernel();
+    }
+    kernel_caches_.clear();
     opencl_context_base::select_device(platform_id, instance_id);
+  }
+
+  /**
+   * Registers a cached kernel. The cache will be invalidated if a new OpenCL
+   * device is selected.
+   * @param cache pointer to a cached kernel.
+   */
+  inline void register_kernel_cache(cl::Kernel* cache) {
+    kernel_caches_.push_back(cache);
   }
 };
 static opencl_context opencl_context;

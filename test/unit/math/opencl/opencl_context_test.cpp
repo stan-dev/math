@@ -1,5 +1,6 @@
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/opencl_context.hpp>
+#include <stan/math/opencl/opencl.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <fstream>
@@ -74,4 +75,38 @@ TEST(opencl_context, compile_kernel_rawcode) {
   program_.build({stan::math::opencl_context.device()});
   cl::Kernel dummy_kernel = cl::Kernel(program_, "dummy");
 }
+
+TEST(opencl_context, switch_devices_errors) {
+  EXPECT_NO_THROW(stan::math::opencl_context.select_device(0, 0));
+  EXPECT_THROW(stan::math::opencl_context.select_device(-1, 0),
+               std::system_error);
+  EXPECT_THROW(stan::math::opencl_context.select_device(0, -1),
+               std::system_error);
+  EXPECT_THROW(stan::math::opencl_context.select_device(99999, 0),
+               std::system_error);
+  EXPECT_THROW(stan::math::opencl_context.select_device(0, 99999),
+               std::system_error);
+}
+
+// this test only checks anything if there are multiple devices installed
+TEST(opencl_context, switch_devices) {
+  std::vector<cl::Platform> platforms;
+  cl::Platform::get(&platforms);
+  for (int i = 0; i < platforms.size(); i++) {
+    std::vector<cl::Device> devices;
+    platforms[i].getDevices(DEVICE_FILTER, &devices);
+    for (int j = 0; j < devices.size(); j++) {
+      stan::math::opencl_context.select_device(i, j);
+      Eigen::MatrixXd m(2, 2);
+      m << 1, 2, 3, 4;
+      stan::math::matrix_cl<double> m_cl(m);
+      m_cl = 2 * m_cl;
+      m_cl = m_cl * m_cl;
+      Eigen::MatrixXd res = stan::math::from_matrix_cl(m_cl);
+      Eigen::MatrixXd correct = (2 * m) * (2 * m);
+      EXPECT_MATRIX_EQ(res, correct);
+    }
+  }
+}
+
 #endif

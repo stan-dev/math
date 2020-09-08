@@ -255,8 +255,7 @@ struct kernel_cl {
   const char* name_;
   std::vector<std::string> sources_;
   std::map<std::string, int> opts_;
-  mutable cl::KernelFunctor<internal::to_const_buffer_t<Args>&...>
-      kernel_functor_;
+  mutable cl::Kernel kernel_;
 
  public:
   /** \ingroup kernel_executor_opencl
@@ -268,10 +267,7 @@ struct kernel_cl {
    */
   kernel_cl(const char* name, std::vector<std::string> sources,
             std::map<std::string, int> options = {})
-      : name_(name),
-        sources_(std::move(sources)),
-        opts_(std::move(options)),
-        kernel_functor_(cl::Kernel()) {}
+      : name_(name), sources_(std::move(sources)), opts_(std::move(options)) {}
 
   /** \ingroup kernel_executor_opencl
    * Executes a kernel
@@ -284,14 +280,17 @@ struct kernel_cl {
   template <typename... CallArgs>
   auto operator()(cl::NDRange global_thread_size,
                   const CallArgs&... args) const {
-    if (kernel_functor_.getKernel()() == NULL) {
-      kernel_functor_ = compile_kernel(name_, sources_, opts_);
+    if (kernel_() == NULL) {
+      kernel_ = compile_kernel(name_, sources_, opts_);
+      opencl_context.register_kernel_cache(&kernel_);
     }
     cl::EnqueueArgs eargs(opencl_context.queue(),
                           vec_concat(internal::select_events<Args>(args)...),
                           global_thread_size);
+    cl::KernelFunctor<internal::to_const_buffer_t<Args>&...> kernel_functor(
+        kernel_);
     cl::Event kern_event
-        = kernel_functor_(eargs, internal::get_kernel_args(args)...);
+        = kernel_functor(eargs, internal::get_kernel_args(args)...);
     internal::assign_events<Args...>(kern_event, args...);
     return kern_event;
   }
@@ -308,14 +307,17 @@ struct kernel_cl {
   template <typename... CallArgs>
   auto operator()(cl::NDRange global_thread_size, cl::NDRange thread_block_size,
                   const CallArgs&... args) const {
-    if (kernel_functor_.getKernel()() == NULL) {
-      kernel_functor_ = compile_kernel(name_, sources_, opts_);
+    if (kernel_() == NULL) {
+      kernel_ = compile_kernel(name_, sources_, opts_);
+      opencl_context.register_kernel_cache(&kernel_);
     }
     cl::EnqueueArgs eargs(opencl_context.queue(),
                           vec_concat(internal::select_events<Args>(args)...),
                           global_thread_size, thread_block_size);
+    cl::KernelFunctor<internal::to_const_buffer_t<Args>&...> kernel_functor(
+        kernel_);
     cl::Event kern_event
-        = kernel_functor_(eargs, internal::get_kernel_args(args)...);
+        = kernel_functor(eargs, internal::get_kernel_args(args)...);
     internal::assign_events<Args...>(kern_event, args...);
     return kern_event;
   }

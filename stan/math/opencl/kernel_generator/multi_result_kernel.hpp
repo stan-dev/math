@@ -420,6 +420,7 @@ class results_cl {
         auto opts = opencl_context.base_opts();
         impl::kernel_ = opencl_kernels::compile_kernel(
             "calculate", {view_kernel_helpers, src}, opts);
+        opencl_context.register_kernel_cache(&impl::kernel_);
       }
       cl::Kernel& kernel = impl::kernel_;
       int arg_num = 0;
