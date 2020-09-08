@@ -70,7 +70,7 @@ return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
     return 0;
   }
 
-  if(sum(promote_scalar<int>(y_val<=0))){
+  if (sum(promote_scalar<int>(y_val <= 0))) {
     return LOG_ZERO;
   }
 
