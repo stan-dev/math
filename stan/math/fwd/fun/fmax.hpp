@@ -76,7 +76,7 @@ inline fvar<T> fmax(const fvar<T>& x1, double x2) {
   if (unlikely(is_nan(x2))) {
     return x1;
   }
-  return x1 > x2 ? x1 : fvar<T>(x2, 0);
+  return x1 >= x2 ? x1 : fvar<T>(x2, 0);
 }
 
 }  // namespace math
