@@ -95,7 +95,7 @@ class var_value {
   var_value(vari_type* vi) : vi_(vi) {}  // NOLINT
 
   template <typename S, typename TT = T, require_not_plain_type_t<S>* = nullptr,
-    require_plain_type_t<TT>* = nullptr>
+            require_plain_type_t<TT>* = nullptr>
   var_value(const var_value<S>& x) : vi_(new vari_type(*(x.vi_))) {}
   /**
    * Return a constant reference to the value of this variable.
@@ -303,7 +303,7 @@ class var_value {
    * @param num_cols Number of columns to return.
    */
   inline auto block(Eigen::Index start_row, Eigen::Index start_col,
-                          Eigen::Index num_rows, Eigen::Index num_cols) const {
+                    Eigen::Index num_rows, Eigen::Index num_cols) const {
     using vari_sub
         = decltype(vi_->block(start_row, start_col, num_rows, num_cols));
     using var_sub = var_value<typename vari_sub::value_type>;

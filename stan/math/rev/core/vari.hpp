@@ -254,7 +254,8 @@ class vari_view<
     final : public vari_base {
  public:
   using PlainObject = plain_type_t<T>;
-  using value_type = const std::decay_t<T>;  // The underlying type for this class
+  using value_type
+      = const std::decay_t<T>;  // The underlying type for this class
   /**
    * Number of rows known at compile time
    */
@@ -397,7 +398,6 @@ class vari_view<
    * Return the size of this class's `val_` member
    */
   const Eigen::Index size() const { return val_.size(); }
-
 };
 
 /**
@@ -504,13 +504,13 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   }
 
   template <typename S>
-  vari_value(const vari_view<S>& x) :
-  val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-        x.size())),
-    adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-          x.size())),
-   val_(eigen_map(val_mem_, x.rows(), x.cols()) = x.val_),
-   adj_(eigen_map(adj_mem_, x.rows(), x.cols()) = x.adj_) {}
+  vari_value(const vari_view<S>& x)
+      : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
+            x.size())),
+        adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
+            x.size())),
+        val_(eigen_map(val_mem_, x.rows(), x.cols()) = x.val_),
+        adj_(eigen_map(adj_mem_, x.rows(), x.cols()) = x.adj_) {}
   /**
    * Return the number of rows for this class's `val_` member
    */
