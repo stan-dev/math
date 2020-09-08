@@ -1,3 +1,5 @@
+#ifndef TEST_UNIT_MATH_REV_PROB_TEST_GRADIENTS
+#define TEST_UNIT_MATH_REV_PROB_TEST_GRADIENTS
 #include <gtest/gtest.h>
 #include <cmath>
 #include <vector>
@@ -51,3 +53,4 @@ void test_grad(const F& fun, const std::vector<double>& args) {
     EXPECT_NEAR(diffs_finite[i], diffs_var[i], tolerance);
   }
 }
+#endif
