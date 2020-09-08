@@ -1468,14 +1468,38 @@ void expect_ad_matvar(F&& f, const T& x) {
   using stan::math::var_value;
   using mat_var = promote_scalar_t<var, T>;
   mat_var A_mv = x;
-  decltype(f(A_mv)) A_mv_f = f(A_mv);
+  decltype(f(A_mv)) A_mv_f;
   using var_mat = var_value<plain_type_t<T>>;
   var_mat A_vm = x;
-  decltype(f(A_vm)) A_vm_f = f(A_vm);
+  decltype(f(A_vm)) A_vm_f;
+  // If one throws, the other should throw as well
+  try {
+    A_mv_f = f(A_mv);
+  } catch (...) {
+    try {
+      f(A_vm);
+      FAIL() << "matrix<var> throws, expect var<matrix> version to throw";
+    } catch (...) {
+      SUCCEED();
+    }
+  }
+  try {
+    A_vm_f = f(A_vm);
+  } catch (...) {
+    try {
+      f(A_mv);
+      FAIL() << "var<matrix> throws, expect matrix<var> version to throw";
+    } catch (...) {
+      SUCCEED();
+    }
+  }
   var b_mv = sum(A_mv_f);
   var b_vm = sum(A_vm_f);
   var final_var = b_mv + b_vm;
   stan::math::grad(final_var.vi_);
+  if (!is_finite(x) || !stan::math::isfinite(final_var)) {
+    return;
+  }
   EXPECT_MATRIX_FLOAT_EQ(A_vm.val(), A_mv.val());
   EXPECT_MATRIX_FLOAT_EQ(A_vm.adj(), A_mv.adj());
   expect_float_equal(A_vm, A_mv);
