@@ -14,10 +14,7 @@ namespace math {
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_shape>
 inline return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_log(
-    const T_y& y,
-    const T_loc& mu,
-    const T_scale& sigma,
-    const T_shape& eta) {
+    const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& eta) {
   return lkj_cov_lpdf<propto>(y, mu, sigma, eta);
 }
 
@@ -26,10 +23,7 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_log(
  */
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
 inline return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_log(
-    const T_y& y,
-    const T_loc& mu,
-    const T_scale& sigma,
-    const T_shape& eta) {
+    const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& eta) {
   return lkj_cov_lpdf<>(y, mu, sigma, eta);
 }
 
