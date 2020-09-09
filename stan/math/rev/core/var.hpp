@@ -96,6 +96,22 @@ class var_value {
   var_value(vari_type* vi) : vi_(vi) {}  // NOLINT
 
   /**
+   * Construct a `var_value` with an inner plain matrix type from a `var_value`
+   *  holding an expression.
+   * @tparam S a non-plain eigen expression type
+   * @param other an eigen expression
+   */
+  template <typename S, require_convertible_t<S&, value_type>* = nullptr,
+            require_plain_type_t<T>* = nullptr,
+            require_not_same_t<T, S>* = nullptr>
+  var_value(const var_value<S>& other) : vi_(new vari_type(other.vi_->val_)) {
+    reverse_pass_callback(
+        [this_vi = this->vi_, other_vi = other.vi_]() mutable {
+          other_vi->adj_ += this_vi->adj_;
+        });
+  }
+
+  /**
    * Return a constant reference to the value of this variable.
    *
    * @return The value of this variable.
@@ -418,7 +434,8 @@ class var_value {
   }
 
   /**
-   * Assignment of another var value.
+   * Assignment of another plain var value, when this also contains a plain
+   * type.
    * @tparam S type of the value in the `var_value` to assing
    * @param other the value to assign
    * @return this
@@ -430,6 +447,13 @@ class var_value {
     return *this;
   }
 
+  /**
+   * Assignment of another var value, when either this or the other one does not
+   * contain a plain type.
+   * @tparam S type of the value in the `var_value` to assing
+   * @param other the value to assign
+   * @return this
+   */
   template <typename S, require_convertible_t<S&, value_type>* = nullptr,
             require_any_not_plain_type_t<T, S>* = nullptr>
   var_value<T> operator=(const var_value<S>& other) {

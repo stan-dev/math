@@ -231,6 +231,17 @@ TEST_F(AgradRev, var_matrix_view_assignment) {
   EXPECT_MATRIX_FLOAT_EQ(A_v.adj(), deriv);
 }
 
+TEST_F(AgradRev, var_matrix_view_plain_assignment) {
+  Eigen::MatrixXd A(4, 4);
+  A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;
+  stan::math::var_value<Eigen::MatrixXd> A_v(A);
+  stan::math::var_value<Eigen::MatrixXd> B_v = A_v.block(1, 1, 3, 3);
+  stan::math::sum(stan::math::from_var_value(B_v)).grad();
+  Eigen::MatrixXd deriv(4, 4);
+  deriv << 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1;
+  EXPECT_MATRIX_FLOAT_EQ(A_v.adj(), deriv);
+}
+
 TEST_F(AgradRev, a_eq_x) {
   AVAR a = 5.0;
   EXPECT_FLOAT_EQ(5.0, a.val());
