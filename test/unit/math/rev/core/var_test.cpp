@@ -232,6 +232,41 @@ TEST_F(AgradRev, var_vector_views) {
   EXPECT_FLOAT_EQ(A_v.adj()(3), A_coeff1.adj());
 }
 
+TEST_F(AgradRev, var_matrix_view_assignment) {
+  using stan::math::var_value;
+  Eigen::MatrixXd A(4, 4);
+  A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;
+  var_value<Eigen::MatrixXd> A_v(A);
+  var_value<Eigen::MatrixXd> A_v_block = A_v.block(1, 1, 3, 3);
+  EXPECT_MATRIX_FLOAT_EQ(A_v_block.val(), A_v.val().block(1, 1, 3, 3));
+  var_value<Eigen::RowVectorXd> A_v_row = A_v.row(3);
+  EXPECT_MATRIX_FLOAT_EQ(A_v_row.val(), A_v.val().row(3));
+  var_value<Eigen::VectorXd> A_v_col = A_v.col(3);
+  EXPECT_MATRIX_FLOAT_EQ(A_v_col.val(), A_v.val().col(3));
+  var_value<Eigen::RowVectorXd> A_v_block_row = A_v.block(1, 1, 3, 3).row(1);
+  EXPECT_MATRIX_FLOAT_EQ(A_v_block_row.val(), A_v.val().block(1, 1, 3, 3).row(1));
+  var_value<Eigen::MatrixXd> A_v_rowwise_reverse = A_v.rowwise().reverse();
+  EXPECT_MATRIX_FLOAT_EQ(A_v_rowwise_reverse.val(), A_v.val().rowwise().reverse());
+  var_value<Eigen::MatrixXd> A_v_colwise_reverse = A_v.colwise().reverse();
+  EXPECT_MATRIX_FLOAT_EQ(A_v_colwise_reverse.val(), A_v.val().colwise().reverse());
+  var_value<Eigen::MatrixXd> A_v_rowwise_colwise_reverse = A_v.rowwise().reverse().colwise().reverse();
+  EXPECT_MATRIX_FLOAT_EQ(A_v_rowwise_colwise_reverse.val(),
+                         A_v.val().rowwise().reverse().colwise().reverse());
+  var_value<double> A_v_coeff1 = A_v.coeff(5);
+  EXPECT_FLOAT_EQ(A_v_coeff1.val(), A_v.val().coeff(5));
+  A_v.block(0, 0, 3, 3) = A_v.block(1, 1, 3, 3);
+  stan::math::sum(stan::math::from_var_value(A_v)).grad();
+  Eigen::MatrixXd deriv(4, 4);
+  deriv << 0, 0, 0, 1, 0, 1, 1, 2, 0, 1, 1, 2, 1, 2, 2, 2;
+  EXPECT_MATRIX_FLOAT_EQ(A_v.adj(), deriv);
+  EXPECT_MATRIX_FLOAT_EQ(A_v_row.adj(), deriv.row(3));
+  EXPECT_MATRIX_FLOAT_EQ(A_v.col(3).adj(), deriv.col(3));
+  EXPECT_MATRIX_FLOAT_EQ(A_v_block_row.adj(), deriv.block(1, 1, 3, 3).row(1));
+  EXPECT_MATRIX_FLOAT_EQ(A_v_rowwise_reverse.adj(), deriv.rowwise().reverse());
+  EXPECT_MATRIX_FLOAT_EQ(A_v_colwise_reverse.adj(), deriv.colwise().reverse());
+  EXPECT_MATRIX_FLOAT_EQ(A_v_rowwise_colwise_reverse.adj(), deriv.rowwise().reverse().colwise().reverse());
+}
+
 TEST_F(AgradRev, a_eq_x) {
   AVAR a = 5.0;
   EXPECT_FLOAT_EQ(5.0, a.val());

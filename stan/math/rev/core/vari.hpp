@@ -234,8 +234,8 @@ class vari_value<T, require_all_t<std::is_floating_point<std::decay_t<T>>,
              require_convertible_t<S2&, T>* = nullptr>
    vari_value(S1&& x, S2&& y) noexcept : val_(x), adj_(y) {}  // NOLINT
    vari_value() = default;
-   vari_value(const vari_value<T>& other) : val_(other.val_), adj_(other.adj_) {}
-   inline vari_value<T>& operator=(const vari_value<T>& other) {
+   vari_value(const vari_value<T>& other) noexcept : val_(other.val_), adj_(other.adj_) {}
+   inline vari_value<T>& operator=(const vari_value<T>& other) noexcept {
      val_ = other.val_;
      adj_ = other.adj_;
     return *this;
@@ -261,8 +261,7 @@ class vari_view<T, require_not_plain_type_t<T>>
     final : public vari_base {
  public:
   using PlainObject = plain_type_t<T>;
-  using value_type
-      = const std::decay_t<T>;  // The underlying type for this class
+  using value_type = std::decay_t<T>;  // The underlying type for this class
   /**
    * Number of rows known at compile time
    */
@@ -273,11 +272,11 @@ class vari_view<T, require_not_plain_type_t<T>>
   static constexpr int ColsAtCompileTime = PlainObject::ColsAtCompileTime;
 
   T val_;
-  std::decay_t<T> adj_;
+  T adj_;
   template <typename S, typename K,
             require_convertible_t<S&, value_type>* = nullptr,
             require_convertible_t<K&, value_type>* = nullptr>
-  vari_view(S&& val, K&& adj) : val_(val), adj_(adj) {}
+  vari_view(S&& val, K&& adj) noexcept : val_(val), adj_(adj) {}
 
   void set_zero_adjoint() {}
   void chain() {}
@@ -289,7 +288,7 @@ class vari_view<T, require_not_plain_type_t<T>>
    * @param num_cols Number of columns to return.
    */
   inline auto block(Eigen::Index start_row, Eigen::Index start_col,
-                    Eigen::Index num_rows, Eigen::Index num_cols) const {
+                    Eigen::Index num_rows, Eigen::Index num_cols) {
     using inner_type
         = decltype(val_.block(start_row, start_col, num_rows, num_cols));
     return vari_view<inner_type>(
@@ -301,7 +300,7 @@ class vari_view<T, require_not_plain_type_t<T>>
    * View of the head of Eigen vector types.
    * @param n Number of elements to return from top of vector.
    */
-  inline auto head(Eigen::Index n) const {
+  inline auto head(Eigen::Index n) {
     return vari_view<decltype(val_.head(n))>(val_.head(n), adj_.head(n));
   }
 
@@ -309,7 +308,7 @@ class vari_view<T, require_not_plain_type_t<T>>
    * View of the tail of the Eigen vector types.
    * @param n Number of elements to return from bottom of vector.
    */
-  inline auto tail(Eigen::Index n) const {
+  inline auto tail(Eigen::Index n) {
     return vari_view<decltype(val_.tail(n))>(val_.tail(n), adj_.tail(n));
   }
 
@@ -318,7 +317,7 @@ class vari_view<T, require_not_plain_type_t<T>>
    * @param i Starting position of block.
    * @param n Number of elements in block
    */
-  inline auto segment(Eigen::Index i, Eigen::Index n) const {
+  inline auto segment(Eigen::Index i, Eigen::Index n) {
     return vari_view<decltype(val_.segment(i, n))>(val_.segment(i, n),
                                                    adj_.segment(i, n));
   }
@@ -327,7 +326,7 @@ class vari_view<T, require_not_plain_type_t<T>>
    * View row of eigen matrices.
    * @param i Row index to slice.
    */
-  inline auto row(Eigen::Index i) const {
+  inline auto row(Eigen::Index i) {
     return vari_view<decltype(val_.row(i))>(val_.row(i), adj_.row(i));
   }
 
@@ -335,7 +334,7 @@ class vari_view<T, require_not_plain_type_t<T>>
    * View column of eigen matrices
    * @param i Column index to slice
    */
-  inline auto col(Eigen::Index i) const {
+  inline auto col(Eigen::Index i) {
     return vari_view<decltype(val_.col(i))>(val_.col(i), adj_.col(i));
   }
 
@@ -344,7 +343,7 @@ class vari_view<T, require_not_plain_type_t<T>>
    * @param i Row index
    * @param j Column index
    */
-  inline auto coeff(Eigen::Index i, Eigen::Index j) const {
+  inline auto coeff(Eigen::Index i, Eigen::Index j) {
     return vari_value<double&>(val_.coeffRef(i, j), adj_.coeffRef(i, j));
   }
 
@@ -352,7 +351,7 @@ class vari_view<T, require_not_plain_type_t<T>>
    * Get coefficient of eigen matrices
    * @param i Column index to slice
    */
-  inline auto coeff(Eigen::Index i) const {
+  inline auto coeff(Eigen::Index i) {
     return vari_value<double&>(val_.coeffRef(i), adj_.coeffRef(i));
   }
 
@@ -360,28 +359,28 @@ class vari_view<T, require_not_plain_type_t<T>>
    * Get coefficient of eigen matrices
    * @param i Column index to slice
    */
-  inline auto operator()(Eigen::Index i) const { return this->coeff(i); }
+  inline auto operator()(Eigen::Index i) { return this->coeff(i); }
 
   /**
    * Get coefficient of eigen matrices
    * @param i Row index
    * @param j Column index
    */
-  inline const auto operator()(Eigen::Index i, Eigen::Index j) const {
+  inline auto operator()(Eigen::Index i, Eigen::Index j) {
     return this->coeff(i, j);
   }
 
   /**
    * Return an expression that operates on the rows of the matrix `vari`
    */
-  inline auto rowwise() const {
+  inline auto rowwise() {
     return vari_view<decltype(val_.rowwise())>(val_.rowwise(), adj_.rowwise());
   }
 
   /**
    * Return an expression that operates on the columns of the matrix `vari`
    */
-  inline auto colwise() const {
+  inline auto colwise() {
     return vari_view<decltype(val_.colwise())>(val_.colwise(), adj_.colwise());
   }
 
@@ -389,22 +388,22 @@ class vari_view<T, require_not_plain_type_t<T>>
    * Return an expression an expression to reverse the order of the coefficients
    * inside of a `vari` matrix
    */
-  inline auto reverse() const {
+  inline auto reverse() {
     return vari_view<decltype(val_.reverse())>(val_.reverse(), adj_.reverse());
   }
 
   /**
    * Return the number of rows for this class's `val_` member
    */
-  const Eigen::Index rows() const { return val_.rows(); }
+  Eigen::Index rows() const { return val_.rows(); }
   /**
    * Return the number of columns for this class's `val_` member
    */
-  const Eigen::Index cols() const { return val_.rows(); }
+  Eigen::Index cols() const { return val_.rows(); }
   /**
    * Return the size of this class's `val_` member
    */
-  const Eigen::Index size() const { return val_.size(); }
+  Eigen::Index size() const { return val_.size(); }
 };
 
 /**
@@ -448,7 +447,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   /**
    * The value of this variable.
    */
-  const eigen_map val_;
+  eigen_map val_;
 
   /**
    * The adjoint of this variable, which is the partial derivative
@@ -470,7 +469,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @param x Value of the constructed variable.
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
-  explicit vari_value(const S& x)
+  explicit vari_value(const S& x) noexcept 
       : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
         adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
@@ -513,15 +512,15 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   /**
    * Return the number of rows for this class's `val_` member
    */
-  const Eigen::Index rows() const { return val_.rows(); }
+  Eigen::Index rows() const { return val_.rows(); }
   /**
    * Return the number of columns for this class's `val_` member
    */
-  const Eigen::Index cols() const { return val_.rows(); }
+  Eigen::Index cols() const { return val_.rows(); }
   /**
    * Return the size of this class's `val_` member
    */
-  const Eigen::Index size() const { return val_.size(); }
+  Eigen::Index size() const { return val_.size(); }
 
   virtual void chain() {}
   /**
@@ -547,7 +546,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @param num_cols Number of columns to return.
    */
   inline auto block(Eigen::Index start_row, Eigen::Index start_col,
-                    Eigen::Index num_rows, Eigen::Index num_cols) const {
+                    Eigen::Index num_rows, Eigen::Index num_cols) {
     using inner_type
         = decltype(val_.block(start_row, start_col, num_rows, num_cols));
     return vari_view<inner_type>(
@@ -559,7 +558,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * View of the head of Eigen vector types.
    * @param n Number of elements to return from top of vector.
    */
-  inline auto head(Eigen::Index n) const {
+  inline auto head(Eigen::Index n) {
     return vari_view<decltype(val_.head(n))>(val_.head(n), adj_.head(n));
   }
 
@@ -567,7 +566,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * View of the tail of the Eigen vector types.
    * @param n Number of elements to return from bottom of vector.
    */
-  inline auto tail(Eigen::Index n) const {
+  inline auto tail(Eigen::Index n) {
     return vari_view<decltype(val_.tail(n))>(val_.tail(n), adj_.tail(n));
   }
 
@@ -576,7 +575,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @param i Starting position of block.
    * @param n Number of elements in block
    */
-  inline auto segment(Eigen::Index i, Eigen::Index n) const {
+  inline auto segment(Eigen::Index i, Eigen::Index n) {
     return vari_view<decltype(val_.segment(i, n))>(val_.segment(i, n),
                                                    adj_.segment(i, n));
   }
@@ -585,7 +584,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * View row of eigen matrices.
    * @param i Row index to slice.
    */
-  inline auto row(Eigen::Index i) const {
+  inline auto row(Eigen::Index i) {
     return vari_view<decltype(val_.row(i))>(val_.row(i), adj_.row(i));
   }
 
@@ -593,7 +592,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * View column of eigen matrices
    * @param i Column index to slice
    */
-  inline auto col(Eigen::Index i) const {
+  inline auto col(Eigen::Index i) {
     return vari_view<decltype(val_.col(i))>(val_.col(i), adj_.col(i));
   }
 
@@ -602,7 +601,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @param i Row index
    * @param j Column index
    */
-  inline auto coeff(Eigen::Index i, Eigen::Index j) const {
+  inline auto coeff(Eigen::Index i, Eigen::Index j) {
     return vari_value<decltype(val_.coeffRef(i, j))>(val_.coeffRef(i, j),
                                                      adj_.coeffRef(i, j));
   }
@@ -611,7 +610,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * Get coefficient of eigen matrices
    * @param i Column index to slice
    */
-  inline auto coeff(Eigen::Index i) const {
+  inline auto coeff(Eigen::Index i) {
     return vari_value<decltype(val_.coeffRef(i))>(val_.coeffRef(i),
                                                   adj_.coeffRef(i));
   }
@@ -620,28 +619,28 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * Get coefficient of eigen matrices
    * @param i Column index to slice
    */
-  inline auto operator()(Eigen::Index i) const { return this->coeff(i); }
+  inline auto operator()(Eigen::Index i) { return this->coeff(i); }
 
   /**
    * Get coefficient of eigen matrices
    * @param i Row index
    * @param j Column index
    */
-  inline auto operator()(Eigen::Index i, Eigen::Index j) const {
+  inline auto operator()(Eigen::Index i, Eigen::Index j) {
     return this->coeff(i, j);
   }
 
   /**
    * Return an expression that operates on the rows of the matrix `vari`
    */
-  inline auto rowwise() const {
+  inline auto rowwise() {
     return vari_view<decltype(val_.rowwise())>(val_.rowwise(), adj_.rowwise());
   }
 
   /**
    * Return an expression that operates on the columns of the matrix `vari`
    */
-  inline auto colwise() const {
+  inline auto colwise() {
     return vari_view<decltype(val_.colwise())>(val_.colwise(), adj_.colwise());
   }
 
@@ -649,7 +648,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * Return an expression an expression to reverse the order of the coefficients
    * inside of a `vari` matrix
    */
-  inline auto reverse() const {
+  inline auto reverse() {
     return vari_view<decltype(val_.reverse())>(val_.reverse(), adj_.reverse());
   }
 
@@ -759,15 +758,15 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
   /**
    * Return the number of rows for this class's `val_` member
    */
-  const Eigen::Index rows() const { return val_.rows(); }
+  Eigen::Index rows() const { return val_.rows(); }
   /**
    * Return the number of columns for this class's `val_` member
    */
-  const Eigen::Index cols() const { return val_.cols(); }
+  Eigen::Index cols() const { return val_.cols(); }
   /**
    * Return the size of this class's `val_` member
    */
-  const Eigen::Index size() const { return val_.size(); }
+  Eigen::Index size() const { return val_.size(); }
 
   void chain() {}
   /**
