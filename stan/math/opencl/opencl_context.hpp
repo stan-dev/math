@@ -68,7 +68,7 @@ class opencl_context_base {
    * 4. Creates the OpenCL command queue for the selected device.
    * 5. Sets OpenCL device dependent kernel parameters
    *
-   * @param platfrom_id id of the OpenCL platform to use
+   * @param platform_id id of the OpenCL platform to use
    * @param device_id id of the OpenCL device to use
    * @throw std::system_error if an OpenCL error occurs.
    */
