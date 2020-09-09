@@ -101,8 +101,8 @@ class var_value {
    * @tparam S a non-plain eigen expression type
    * @param other an eigen expression
    */
-  template <typename S, require_convertible_t<S&, value_type>* = nullptr,
-            require_plain_type_t<T>* = nullptr,
+  template <typename S, typename T_ = T, require_convertible_t<S&, value_type>* = nullptr,
+            require_plain_type_t<T_>* = nullptr,
             require_not_same_t<T, S>* = nullptr>
   var_value(const var_value<S>& other) : vi_(new vari_type(other.vi_->val_)) {
     reverse_pass_callback(
