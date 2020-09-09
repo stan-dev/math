@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_ERR_HMM_CHECK_HPP
 
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/row.hpp>
 
 namespace stan {
 namespace math {
@@ -24,21 +23,22 @@ namespace math {
  * @throw `std::domain_error` if rho is not a simplex or the rows
  *         of Gamma are not a simplex.
  */
-template <typename T_omega, typename T_Gamma, typename T_rho>
-inline void hmm_check(
-    const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
-    const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma,
-    const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho, const char* function) {
+template <typename T_omega, typename T_Gamma, typename T_rho,
+          require_all_eigen_t<T_omega, T_Gamma>* = nullptr,
+          require_eigen_col_vector_t<T_rho>* = nullptr>
+inline void hmm_check(const T_omega& log_omegas, const T_Gamma& Gamma,
+                      const T_rho& rho, const char* function) {
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 
   check_consistent_size(function, "rho", rho, n_states);
-  check_simplex(function, "rho", rho);
   check_square(function, "Gamma", Gamma);
   check_nonzero_size(function, "Gamma", Gamma);
   check_multiplicable(function, "Gamma", Gamma, "log_omegas", log_omegas);
+
+  check_simplex(function, "rho", rho);
   for (int i = 0; i < Gamma.rows(); ++i) {
-    check_simplex(function, "Gamma[i, ]", row(Gamma, i + 1));
+    check_simplex(function, "Gamma[i, ]", Gamma.row(i));
   }
 }
 

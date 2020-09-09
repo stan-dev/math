@@ -2,12 +2,11 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-using stan::math::fvar;
-
 TEST(AgradFwdMatrixDims, matrix_fd) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::dims;
+  using stan::math::fvar;
   using stan::math::matrix_fd;
   using std::vector;
 
@@ -63,6 +62,7 @@ TEST(AgradFwdMatrixDims, matrix_ffd) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::dims;
+  using stan::math::fvar;
   using stan::math::matrix_ffd;
   using std::vector;
 
