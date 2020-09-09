@@ -109,7 +109,7 @@ class var_value {
    *
    * @return Adjoint for this variable.
    */
-  inline const auto& adj() const { return vi_->adj_; }
+  inline auto& adj() const { return vi_->adj_; }
 
   /**
    * Return a reference to the derivative of the root expression with
