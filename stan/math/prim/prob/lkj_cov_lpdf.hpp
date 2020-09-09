@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/prob/lognormal_lpdf.hpp>
 #include <stan/math/prim/prob/lkj_corr_lpdf.hpp>
 
@@ -29,7 +30,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(const T_y& y,
   const auto& sigma_ref = to_ref(sigma);
   check_positive(function, "Shape parameter", eta);
   check_finite(function, "Location parameter", mu_ref);
-  check_finite(function, "Scale parameter", sigma);
+  check_finite(function, "Scale parameter", sigma_ref);
   check_finite(function, "Covariance matrix", y_ref);
 
   return_type_t<T_y, T_loc, T_scale, T_shape> lp(0.0);

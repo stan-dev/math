@@ -55,7 +55,7 @@ return_type_t<T_covar, T_shape> lkj_corr_cholesky_lpdf(
 
 template <typename T_covar, typename T_shape>
 inline return_type_t<T_covar, T_shape> lkj_corr_cholesky_lpdf(
-    const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,
+    const T_covar& L,
     const T_shape& eta) {
   return lkj_corr_cholesky_lpdf<false>(L, eta);
 }
