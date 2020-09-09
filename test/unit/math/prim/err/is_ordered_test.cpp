@@ -4,9 +4,8 @@
 #include <string>
 #include <vector>
 
-using stan::math::is_ordered;
-
 TEST(ErrorHandling, isOrdered) {
+  using stan::math::is_ordered;
   std::vector<double> y = {0, 1, 2};
   EXPECT_TRUE(is_ordered(y));
 
@@ -29,6 +28,7 @@ TEST(ErrorHandling, isOrdered) {
 }
 
 TEST(ErrorHandling, isOrdered_nan) {
+  using stan::math::is_ordered;
   double nan = std::numeric_limits<double>::quiet_NaN();
   std::vector<double> y = {0, 1, 2};
 

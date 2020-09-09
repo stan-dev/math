@@ -1,3 +1,5 @@
+#ifndef TEST_UNIT_MATH_PRIM_PROB_AGRAD_DISTRIBUTIONS_MULTI_NORMAL_MULTI_ROW
+#define TEST_UNIT_MATH_PRIM_PROB_AGRAD_DISTRIBUTIONS_MULTI_NORMAL_MULTI_ROW
 class agrad_distributions_multi_normal_multi_row : public ::testing::Test {
  protected:
   virtual void SetUp() {
@@ -24,3 +26,4 @@ class agrad_distributions_multi_normal_multi_row : public ::testing::Test {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Sigma;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Sigma2;
 };
+#endif
