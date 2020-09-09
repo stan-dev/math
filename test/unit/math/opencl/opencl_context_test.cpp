@@ -88,7 +88,7 @@ TEST(opencl_context, switch_devices_errors) {
                std::system_error);
 }
 
-// this test only checks anything if there are multiple devices installed
+// Checks that select_device() works for all devices found on the system. If there are multiple devices, this also tests that select_device() calls work after another device was already in use.
 TEST(opencl_context, switch_devices) {
   std::vector<cl::Platform> platforms;
   cl::Platform::get(&platforms);
