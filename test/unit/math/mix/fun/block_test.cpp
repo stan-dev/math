@@ -1,10 +1,9 @@
 #include <test/unit/math/test_ad.hpp>
 
-auto f(int i, int j, int m, int n) {
-  return [=](const auto& y) { return stan::math::block(y, i, j, m, n); };
-}
-
 TEST(MathMixMatFun, block) {
+  auto f = [](int i, int j, int m, int n) {
+    return [=](const auto& y) { return stan::math::block(y, i, j, m, n); };
+  };
   Eigen::MatrixXd b(1, 1);
   b << 3.2;
   stan::test::expect_ad(f(1, 1, 1, 1), b);

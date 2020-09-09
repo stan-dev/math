@@ -3,19 +3,24 @@
 #include <limits>
 #include <vector>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-
-using stan::math::matrix_d;
-using stan::math::row_vector_d;
-using stan::math::vector_d;
-
 TEST(MathMatrixPrimMat, resize_double) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+
+  using stan::math::matrix_d;
+  using stan::math::row_vector_d;
+  using stan::math::vector_d;
   double x = 5;
   std::vector<int> dims;
   stan::math::resize(x, dims);
 }
 TEST(MathMatrixPrimMat, resize_svec_double) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+
+  using stan::math::matrix_d;
+  using stan::math::row_vector_d;
+  using stan::math::vector_d;
   std::vector<double> y;
   std::vector<int> dims;
   EXPECT_EQ(0U, y.size());
@@ -29,6 +34,12 @@ TEST(MathMatrixPrimMat, resize_svec_double) {
   EXPECT_EQ(2U, y.size());
 }
 TEST(MathMatrixPrimMat, resize_vec_double) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+
+  using stan::math::matrix_d;
+  using stan::math::row_vector_d;
+  using stan::math::vector_d;
   Matrix<double, Dynamic, 1> v(2);
   std::vector<int> dims;
   EXPECT_EQ(2, v.size());
@@ -43,6 +54,12 @@ TEST(MathMatrixPrimMat, resize_vec_double) {
   EXPECT_EQ(3, v.size());
 }
 TEST(MathMatrixPrimMat, resize_rvec_double) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+
+  using stan::math::matrix_d;
+  using stan::math::row_vector_d;
+  using stan::math::vector_d;
   Matrix<double, 1, Dynamic> rv(2);
   std::vector<int> dims;
   EXPECT_EQ(2, rv.size());
@@ -57,6 +74,12 @@ TEST(MathMatrixPrimMat, resize_rvec_double) {
   EXPECT_EQ(3, rv.size());
 }
 TEST(MathMatrixPrimMat, resize_mat_double) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+
+  using stan::math::matrix_d;
+  using stan::math::row_vector_d;
+  using stan::math::vector_d;
   Matrix<double, Dynamic, Dynamic> m(2, 3);
   std::vector<int> dims;
   EXPECT_EQ(2, m.rows());
@@ -69,6 +92,12 @@ TEST(MathMatrixPrimMat, resize_mat_double) {
   EXPECT_EQ(17, m.cols());
 }
 TEST(MathMatrixPrimMat, resize_svec_svec_double) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+
+  using stan::math::matrix_d;
+  using stan::math::row_vector_d;
+  using stan::math::vector_d;
   std::vector<std::vector<double> > xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
@@ -85,6 +114,12 @@ TEST(MathMatrixPrimMat, resize_svec_svec_double) {
   EXPECT_EQ(7U, xx[1].size());
 }
 TEST(MathMatrixPrimMat, resize_svec_v_double) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+
+  using stan::math::matrix_d;
+  using stan::math::row_vector_d;
+  using stan::math::vector_d;
   std::vector<Matrix<double, Dynamic, 1> > xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
@@ -102,6 +137,12 @@ TEST(MathMatrixPrimMat, resize_svec_v_double) {
   EXPECT_EQ(7, xx[1].size());
 }
 TEST(MathMatrixPrimMat, resize_svec_rv_double) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+
+  using stan::math::matrix_d;
+  using stan::math::row_vector_d;
+  using stan::math::vector_d;
   std::vector<Matrix<double, 1, Dynamic> > xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
@@ -119,6 +160,12 @@ TEST(MathMatrixPrimMat, resize_svec_rv_double) {
   EXPECT_EQ(7, xx[1].size());
 }
 TEST(MathMatrixPrimMat, resize_svec_svec_matrix_double) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+
+  using stan::math::matrix_d;
+  using stan::math::row_vector_d;
+  using stan::math::vector_d;
   std::vector<std::vector<Matrix<double, Dynamic, Dynamic> > > mm;
   std::vector<int> dims;
   dims.push_back(4U);

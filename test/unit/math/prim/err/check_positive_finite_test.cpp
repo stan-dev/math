@@ -4,9 +4,8 @@
 #include <string>
 #include <vector>
 
-using stan::math::check_positive_finite;
-
 TEST(ErrorHandlingArr, CheckPositiveFinite_Vector) {
+  using stan::math::check_positive_finite;
   const char* function = "check_positive_finite";
   std::vector<double> x = {1.5, 0.1, 1};
   ASSERT_NO_THROW(check_positive_finite(function, "x", x))
@@ -16,11 +15,11 @@ TEST(ErrorHandlingArr, CheckPositiveFinite_Vector) {
   EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error)
       << "check_positive_finite should throw exception on Inf";
 
-  x = {-1, 2, std::numeric_limits<double>::infinity()};
+  x = {-1, 2, 1};
   EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error)
       << "check_positive_finite should throw exception on negative x";
 
-  x = {0, 2, std::numeric_limits<double>::infinity()};
+  x = {0, 2, 1};
   EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error)
       << "check_positive_finite should throw exception on x=0";
 
@@ -34,6 +33,7 @@ TEST(ErrorHandlingArr, CheckPositiveFinite_Vector) {
 }
 
 TEST(ErrorHandlingArr, CheckPositiveFinite_nan) {
+  using stan::math::check_positive_finite;
   const char* function = "check_positive_finite";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
@@ -47,6 +47,7 @@ TEST(ErrorHandlingArr, CheckPositiveFinite_nan) {
 }
 
 TEST(ErrorHandlingMat, CheckPositiveFinite_Matrix) {
+  using stan::math::check_positive_finite;
   const char* function = "check_positive_finite";
   Eigen::Matrix<double, Eigen::Dynamic, 1> x;
 
@@ -61,12 +62,12 @@ TEST(ErrorHandlingMat, CheckPositiveFinite_Matrix) {
       << "check_positive_finite should throw exception on Inf";
 
   x.resize(3);
-  x << 0, 1, std::numeric_limits<double>::infinity();
+  x << 0, 1, 2;
   EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error)
       << "check_positive_finite should throw exception on x=0";
 
   x.resize(3);
-  x << -1, 1, std::numeric_limits<double>::infinity();
+  x << -1, 1, 2;
   EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error)
       << "check_positive_finite should throw exception on x=-1";
 
@@ -82,6 +83,7 @@ TEST(ErrorHandlingMat, CheckPositiveFinite_Matrix) {
 }
 
 TEST(ErrorHandlingMat, CheckPositiveFinite_Matrix_one_indexed_message) {
+  using stan::math::check_positive_finite;
   const char* function = "check_positive_finite";
   Eigen::Matrix<double, Eigen::Dynamic, 1> x;
   std::string message;
@@ -100,6 +102,7 @@ TEST(ErrorHandlingMat, CheckPositiveFinite_Matrix_one_indexed_message) {
   EXPECT_NE(std::string::npos, message.find("[3]")) << message;
 }
 TEST(ErrorHandlingMat, CheckPositiveFinite_Matrix_one_indexed_message_2) {
+  using stan::math::check_positive_finite;
   const char* function = "check_positive_finite";
   Eigen::Matrix<double, Eigen::Dynamic, 1> x;
   std::string message;
@@ -119,6 +122,7 @@ TEST(ErrorHandlingMat, CheckPositiveFinite_Matrix_one_indexed_message_2) {
 }
 
 TEST(ErrorHandlingMat, CheckPositiveFinite_Matrix_one_indexed_message_3) {
+  using stan::math::check_positive_finite;
   const char* function = "check_positive_finite";
   Eigen::Matrix<double, Eigen::Dynamic, 1> x;
   std::string message;
@@ -138,6 +142,7 @@ TEST(ErrorHandlingMat, CheckPositiveFinite_Matrix_one_indexed_message_3) {
 }
 
 TEST(ErrorHandlingMat, CheckPositiveFinite_nan) {
+  using stan::math::check_positive_finite;
   const char* function = "check_positive_finite";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
@@ -152,6 +157,7 @@ TEST(ErrorHandlingMat, CheckPositiveFinite_nan) {
 }
 
 TEST(ErrorHandlingScalar, CheckPositiveFinite) {
+  using stan::math::check_positive_finite;
   const char* function = "check_positive_finite";
   double x = 1;
 
@@ -176,8 +182,26 @@ TEST(ErrorHandlingScalar, CheckPositiveFinite) {
 }
 
 TEST(ErrorHandlingScalar, CheckPositiveFinite_nan) {
+  using stan::math::check_positive_finite;
   const char* function = "check_positive_finite";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   EXPECT_THROW(check_positive_finite(function, "x", nan), std::domain_error);
+}
+
+TEST(ErrorHandlingScalar, CheckPositiveFiniteVectorization) {
+  using stan::math::check_positive_finite;
+  const char* function = "check_positive_finite";
+  Eigen::MatrixXd m = Eigen::MatrixXd::Constant(3, 2, 1);
+  EXPECT_NO_THROW(check_positive_finite(function, "m",
+                                        std::vector<Eigen::MatrixXd>{m, m, m}));
+  Eigen::MatrixXd m2 = m;
+  m2(1, 1) = -1;
+  EXPECT_THROW(check_positive_finite(function, "m",
+                                     std::vector<Eigen::MatrixXd>{m, m2, m}),
+               std::domain_error);
+  m2(1, 1) = stan::math::NOT_A_NUMBER;
+  EXPECT_THROW(check_positive_finite(function, "m",
+                                     std::vector<Eigen::MatrixXd>{m, m2, m}),
+               std::domain_error);
 }

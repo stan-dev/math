@@ -2,9 +2,8 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-using stan::math::is_less_or_equal;
-
 TEST(ErrorHandlingScalar, isLessOrEqual) {
+  using stan::math::is_less_or_equal;
   double x = -10.0;
   double lb = 0.0;
 
@@ -29,6 +28,7 @@ TEST(ErrorHandlingScalar, isLessOrEqual) {
 }
 
 TEST(ErrorHandlingScalar, isLessOrEqual_nan) {
+  using stan::math::is_less_or_equal;
   double x = 10.0;
   double lb = 0.0;
   double nan = std::numeric_limits<double>::quiet_NaN();

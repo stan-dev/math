@@ -17,7 +17,7 @@ namespace math {
  * @param[in] v argument
  * @return true if argument is normal
  */
-template <typename ADType, require_autodiff_t<ADType>...>
+template <typename ADType, require_autodiff_t<ADType>* = nullptr>
 inline bool isnormal(ADType&& v) {
   using std::isnormal;
   return isnormal(v.val());

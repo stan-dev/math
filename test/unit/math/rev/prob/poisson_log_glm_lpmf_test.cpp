@@ -4,14 +4,13 @@
 #include <vector>
 #include <cmath>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using stan::math::var;
-using std::vector;
-
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_doubles) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   vector<int> y{15, 3, 5};
   Matrix<double, Dynamic, Dynamic> x(3, 2);
   x << -12, 46, -42, 24, 25, 27;
@@ -29,6 +28,10 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_doubles) {
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_doubles_rand) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   for (size_t ii = 0; ii < 42; ii++) {
     vector<int> y(3);
     for (size_t i = 0; i < 3; i++) {
@@ -53,6 +56,10 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_doubles_rand) {
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_vars) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   vector<int> y{14, 2, 5};
   Matrix<var, Dynamic, Dynamic> x(3, 2);
   x << -12, 46, -42, 24, 25, 27;
@@ -97,6 +104,10 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_vars) {
 }
 
 TEST(ProbDistributionsPoissonLogGLM, broadcast_x) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   vector<int> y{1, 0, 5};
   Matrix<double, 1, Dynamic> x(1, 2);
   x << -12, 46;
@@ -124,6 +135,10 @@ TEST(ProbDistributionsPoissonLogGLM, broadcast_x) {
 }
 
 TEST(ProbDistributionsPoissonLogGLM, broadcast_y) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   int y = 13;
   Matrix<int, Dynamic, 1> y_vec = Matrix<int, Dynamic, 1>::Constant(3, 1, y);
   Matrix<double, Dynamic, Dynamic> x(3, 2);
@@ -155,6 +170,10 @@ TEST(ProbDistributionsPoissonLogGLM, broadcast_y) {
 
 TEST(ProbDistributionsPoissonLogGLM,
      glm_matches_poisson_log_vars_zero_instances) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   vector<int> y{};
   Matrix<var, Dynamic, Dynamic> x(0, 2);
   Matrix<var, Dynamic, 1> beta(2, 1);
@@ -189,6 +208,10 @@ TEST(ProbDistributionsPoissonLogGLM,
 
 TEST(ProbDistributionsPoissonLogGLM,
      glm_matches_poisson_log_vars_zero_attributes) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   vector<int> y{14, 2, 5};
   Matrix<var, Dynamic, Dynamic> x(3, 0);
   Matrix<var, Dynamic, 1> beta(0, 1);
@@ -217,6 +240,10 @@ TEST(ProbDistributionsPoissonLogGLM,
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_vars_rand) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   for (size_t ii = 0; ii < 200; ii++) {
     vector<int> y(3);
     for (size_t i = 0; i < 3; i++) {
@@ -269,6 +296,10 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_vars_rand) {
 //  from existing primitives, in case beta is a scalar.
 TEST(ProbDistributionsPoissonLogGLM,
      glm_matches_poisson_log_vars_rand_scal_beta) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   for (size_t ii = 0; ii < 42; ii++) {
     vector<int> y(3);
     for (size_t i = 0; i < 3; i++) {
@@ -314,6 +345,10 @@ TEST(ProbDistributionsPoissonLogGLM,
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives, for the GLM with varying intercept.
 TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_varying_intercept) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   for (size_t ii = 0; ii < 42; ii++) {
     vector<int> y(3);
     for (size_t i = 0; i < 3; i++) {
@@ -373,6 +408,10 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_varying_intercept) {
 
 //  We check that we can instantiate all different interface types.
 TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_interface_types) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   double value = 0;
   double value2 = 0;
 
@@ -472,6 +511,10 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_error_checking) {
 }
 
 TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_vars_propto) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   vector<int> y{2, 0, 1, 2, 1, 0, 0, 1, 3, 0};
   Matrix<double, Dynamic, Dynamic> x(10, 3);
   x << -1.87936, 0.55093, -2.50689, 4.78584, 0.988523, -2.46141, 1.46229,

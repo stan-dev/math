@@ -22,9 +22,7 @@ columns_dot_product(const Mat1& v1, const Mat2& v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
   Eigen::Matrix<var, 1, Mat1::ColsAtCompileTime> ret(1, v1.cols());
   for (size_type j = 0; j < v1.cols(); ++j) {
-    ret(j) = var(
-        new internal::dot_product_vari<value_type_t<Mat1>, value_type_t<Mat2>>(
-            v1.col(j), v2.col(j)));
+    ret.coeffRef(j) = dot_product(v1.col(j), v2.col(j));
   }
   return ret;
 }

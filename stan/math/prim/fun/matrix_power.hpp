@@ -19,7 +19,8 @@ namespace math {
  * @throw std::invalid_argument if the exponent is negative or the matrix is not
  * square.
  */
-template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
+          require_not_vt_var<EigMat>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
                      EigMat::ColsAtCompileTime>
 matrix_power(const EigMat& M, const int n) {
@@ -33,11 +34,11 @@ matrix_power(const EigMat& M, const int n) {
   if (M.rows() == 0)
     invalid_argument("matrix_power", "M.rows()", M.rows(), "is ",
                      ", but must be > 0!");
-  check_finite("matrix_power", "M", M);
+  Eigen::Matrix<T, R, C> MM = M;
+  check_finite("matrix_power", "M", MM);
   if (n == 0)
     return Eigen::Matrix<T, R, C>::Identity(M.rows(), M.cols());
-  Eigen::Matrix<T, R, C> result = M;
-  Eigen::Matrix<T, R, C> MM = result;
+  Eigen::Matrix<T, R, C> result = MM;
   for (int nn = n - 1; nn > 0; nn /= 2) {
     if (nn % 2 == 1) {
       result = result * MM;

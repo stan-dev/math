@@ -1,11 +1,11 @@
 #include <stan/math/prim.hpp>
-#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, zeros_vector) {
   for (int K = 0; K < 5; K++) {
     Eigen::VectorXd v = Eigen::VectorXd::Zero(K);
-    expect_matrix_eq(v, stan::math::zeros_vector(K));
+    EXPECT_MATRIX_FLOAT_EQ(v, stan::math::zeros_vector(K));
   }
 }
 

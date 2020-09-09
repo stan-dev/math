@@ -3,9 +3,8 @@
 #include <limits>
 #include <string>
 
-using stan::math::check_less_or_equal;
-
 TEST(ErrorHandlingMat, CheckLessOrEqual_Matrix) {
+  using stan::math::check_less_or_equal;
   const char* function = "check_less_or_equal";
   double x;
   double high;
@@ -84,6 +83,7 @@ TEST(ErrorHandlingMat, CheckLessOrEqual_Matrix) {
 }
 
 TEST(ErrorHandlingMat, CheckLessOrEqual_Matrix_one_indexed_message) {
+  using stan::math::check_less_or_equal;
   const char* function = "check_less";
   double x;
   double high;
@@ -142,6 +142,7 @@ TEST(ErrorHandlingMat, CheckLessOrEqual_Matrix_one_indexed_message) {
 }
 
 TEST(ErrorHandlingMat, CheckLessOrEqual_nan) {
+  using stan::math::check_less_or_equal;
   const char* function = "check_less_or_equal";
   double nan = std::numeric_limits<double>::quiet_NaN();
   Eigen::Matrix<double, Eigen::Dynamic, 1> x_vec(3);
@@ -181,6 +182,7 @@ TEST(ErrorHandlingMat, CheckLessOrEqual_nan) {
 }
 
 TEST(ErrorHandlingScalar, CheckLessOrEqual) {
+  using stan::math::check_less_or_equal;
   const char* function = "check_less_or_equal";
   double x = -10.0;
   double lb = 0.0;
@@ -213,6 +215,7 @@ TEST(ErrorHandlingScalar, CheckLessOrEqual) {
 }
 
 TEST(ErrorHandlingScalar, CheckLessOrEqual_nan) {
+  using stan::math::check_less_or_equal;
   const char* function = "check_less_or_equal";
   double x = 10.0;
   double lb = 0.0;

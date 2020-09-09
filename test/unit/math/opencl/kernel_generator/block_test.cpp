@@ -1,9 +1,10 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <test/unit/math/opencl/kernel_generator/reference_kernel.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
+#include <test/unit/math/opencl/kernel_generator/reference_kernel.hpp>
+#include <test/unit/util.hpp>
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
 #include <string>
@@ -12,12 +13,6 @@ using Eigen::Matrix;
 using Eigen::MatrixXd;
 using Eigen::MatrixXi;
 using stan::math::matrix_cl;
-
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  EXPECT_EQ(A.rows(), B.rows());        \
-  EXPECT_EQ(A.cols(), B.cols());        \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(KernelGenerator, block_errors) {
   using stan::math::block;
@@ -128,6 +123,24 @@ TEST(KernelGenerator, block_to_lhs_block_test) {
 
   MatrixXd correct = m2;
   correct.block(1, 1, 2, 3) = m1;
+  EXPECT_MATRIX_NEAR(res, correct, 1e-9);
+}
+
+TEST(KernelGenerator, block_repeat_lhs_rhs_test) {
+  using stan::math::block;
+  MatrixXd m1(2, 3);
+  m1 << 1, 2, 3, 4, 5, 6;
+
+  matrix_cl<double> m1_cl(m1);
+
+  auto b = block(m1_cl, 0, 1, 2, 2);
+
+  b = b + 1;
+
+  MatrixXd res = stan::math::from_matrix_cl(m1_cl);
+
+  MatrixXd correct = m1;
+  correct.block(0, 1, 2, 2).array() += 1;
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
