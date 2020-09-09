@@ -110,7 +110,8 @@ class var_value {
    * vari owns it's own memory. This is normally used for `double&` to assign
    * to an owning value.
    * @tparam A type that is referenced in the constructee's `vari_value`.
-   * @param other The object holding the references to assign the new memory from.
+   * @param other The object holding the references to assign the new memory
+   * from.
    */
   template <typename S>
   var_value(const var_value<S&>& other) : vi_(new vari_type(other.vi_->val_)) {

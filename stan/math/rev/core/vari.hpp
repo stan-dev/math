@@ -223,23 +223,24 @@ class vari_value<T, require_all_t<std::is_floating_point<std::decay_t<T>>,
   }
 
  private:
-   /**
-    * Constructor for creating a coefficient slice.
-    * @tparam S1 the type of the value.
-    * @tparam S2 the type of the adjoint.
-    * @param x The value of `val_`.
-    * @param y The value of `adj_`.
-    */
-   template <typename S1, typename S2, require_convertible_t<S1&, T>* = nullptr,
-             require_convertible_t<S2&, T>* = nullptr>
-   vari_value(S1&& x, S2&& y) noexcept : val_(x), adj_(y) {}  // NOLINT
-   vari_value() = default;
-   vari_value(const vari_value<T>& other) noexcept : val_(other.val_), adj_(other.adj_) {}
-   inline vari_value<T>& operator=(const vari_value<T>& other) noexcept {
-     val_ = other.val_;
-     adj_ = other.adj_;
+  /**
+   * Constructor for creating a coefficient slice.
+   * @tparam S1 the type of the value.
+   * @tparam S2 the type of the adjoint.
+   * @param x The value of `val_`.
+   * @param y The value of `adj_`.
+   */
+  template <typename S1, typename S2, require_convertible_t<S1&, T>* = nullptr,
+            require_convertible_t<S2&, T>* = nullptr>
+  vari_value(S1&& x, S2&& y) noexcept : val_(x), adj_(y) {}  // NOLINT
+  vari_value() = default;
+  vari_value(const vari_value<T>& other) noexcept
+      : val_(other.val_), adj_(other.adj_) {}
+  inline vari_value<T>& operator=(const vari_value<T>& other) noexcept {
+    val_ = other.val_;
+    adj_ = other.adj_;
     return *this;
-   };
+  };
 
   template <typename>
   friend class var_value;
@@ -257,8 +258,7 @@ template <typename T, typename = void>
 class vari_view;
 
 template <typename T>
-class vari_view<T, require_not_plain_type_t<T>>
-    final : public vari_base {
+class vari_view<T, require_not_plain_type_t<T>> final : public vari_base {
  public:
   using PlainObject = plain_type_t<T>;
   using value_type = std::decay_t<T>;  // The underlying type for this class
@@ -469,7 +469,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @param x Value of the constructed variable.
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
-  explicit vari_value(const S& x) noexcept 
+  explicit vari_value(const S& x) noexcept
       : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
         adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(

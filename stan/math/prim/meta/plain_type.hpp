@@ -46,7 +46,7 @@ using has_plain_object_t = typename std::decay_t<T>::PlainObject;
 template <typename T>
 using has_nested_expression_t =
     typename std::decay_t<T>::ExpressionTypeNestedCleaned;
-}
+}  // namespace internal
 
 /**
  * Template metaprogram defining the base scalar type of
@@ -56,7 +56,8 @@ using has_nested_expression_t =
  * @ingroup type_trait
  */
 template <typename T>
-struct scalar_type<T, require_t<is_detected<T, internal::has_nested_expression_t>>> {
+struct scalar_type<
+    T, require_t<is_detected<T, internal::has_nested_expression_t>>> {
   using type = scalar_type_t<typename std::decay_t<T>::Scalar>;
 };
 
@@ -68,10 +69,10 @@ struct scalar_type<T, require_t<is_detected<T, internal::has_nested_expression_t
  * @ingroup type_trait
  */
 template <typename T>
-struct value_type<T, require_t<is_detected<T, internal::has_nested_expression_t>>> {
+struct value_type<
+    T, require_t<is_detected<T, internal::has_nested_expression_t>>> {
   using type = typename std::decay_t<T>::Scalar;
 };
-
 
 /**
  * Determines plain (non expression) type associated with \c T. For \c Eigen

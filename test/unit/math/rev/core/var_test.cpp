@@ -244,12 +244,16 @@ TEST_F(AgradRev, var_matrix_view_assignment) {
   var_value<Eigen::VectorXd> A_v_col = A_v.col(3);
   EXPECT_MATRIX_FLOAT_EQ(A_v_col.val(), A_v.val().col(3));
   var_value<Eigen::RowVectorXd> A_v_block_row = A_v.block(1, 1, 3, 3).row(1);
-  EXPECT_MATRIX_FLOAT_EQ(A_v_block_row.val(), A_v.val().block(1, 1, 3, 3).row(1));
+  EXPECT_MATRIX_FLOAT_EQ(A_v_block_row.val(),
+                         A_v.val().block(1, 1, 3, 3).row(1));
   var_value<Eigen::MatrixXd> A_v_rowwise_reverse = A_v.rowwise().reverse();
-  EXPECT_MATRIX_FLOAT_EQ(A_v_rowwise_reverse.val(), A_v.val().rowwise().reverse());
+  EXPECT_MATRIX_FLOAT_EQ(A_v_rowwise_reverse.val(),
+                         A_v.val().rowwise().reverse());
   var_value<Eigen::MatrixXd> A_v_colwise_reverse = A_v.colwise().reverse();
-  EXPECT_MATRIX_FLOAT_EQ(A_v_colwise_reverse.val(), A_v.val().colwise().reverse());
-  var_value<Eigen::MatrixXd> A_v_rowwise_colwise_reverse = A_v.rowwise().reverse().colwise().reverse();
+  EXPECT_MATRIX_FLOAT_EQ(A_v_colwise_reverse.val(),
+                         A_v.val().colwise().reverse());
+  var_value<Eigen::MatrixXd> A_v_rowwise_colwise_reverse
+      = A_v.rowwise().reverse().colwise().reverse();
   EXPECT_MATRIX_FLOAT_EQ(A_v_rowwise_colwise_reverse.val(),
                          A_v.val().rowwise().reverse().colwise().reverse());
   var_value<double> A_v_coeff1 = A_v.coeff(5);
@@ -264,7 +268,8 @@ TEST_F(AgradRev, var_matrix_view_assignment) {
   EXPECT_MATRIX_FLOAT_EQ(A_v_block_row.adj(), deriv.block(1, 1, 3, 3).row(1));
   EXPECT_MATRIX_FLOAT_EQ(A_v_rowwise_reverse.adj(), deriv.rowwise().reverse());
   EXPECT_MATRIX_FLOAT_EQ(A_v_colwise_reverse.adj(), deriv.colwise().reverse());
-  EXPECT_MATRIX_FLOAT_EQ(A_v_rowwise_colwise_reverse.adj(), deriv.rowwise().reverse().colwise().reverse());
+  EXPECT_MATRIX_FLOAT_EQ(A_v_rowwise_colwise_reverse.adj(),
+                         deriv.rowwise().reverse().colwise().reverse());
 }
 
 TEST_F(AgradRev, a_eq_x) {
