@@ -191,24 +191,12 @@ class vari_value<T, require_all_t<std::is_floating_point<std::decay_t<T>>,
   /**
    * The value of this variable.
    */
-  const T val_;
+  T val_;
   /**
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
    */
   T adj_;
-  /**
-   * Constructor for creating a coefficient slice.
-   * @tparam S1 the type of the value.
-   * @tparam S2 the type of the adjoint.
-   * @param x The value of `val_`.
-   * @param y The value of `adj_`.
-   */
-  template <typename S1, typename S2, require_convertible_t<S1&, T>* = nullptr,
-            require_convertible_t<S2&, T>* = nullptr>
-  vari_value(S1&& x, S2&& y) noexcept : val_(x), adj_(y) {  // NOLINT
-    ChainableStack::instance_->var_nochain_stack_.push_back(this);
-  }
   inline void chain() {}
 
   /**
@@ -235,8 +223,28 @@ class vari_value<T, require_all_t<std::is_floating_point<std::decay_t<T>>,
   }
 
  private:
+   /**
+    * Constructor for creating a coefficient slice.
+    * @tparam S1 the type of the value.
+    * @tparam S2 the type of the adjoint.
+    * @param x The value of `val_`.
+    * @param y The value of `adj_`.
+    */
+   template <typename S1, typename S2, require_convertible_t<S1&, T>* = nullptr,
+             require_convertible_t<S2&, T>* = nullptr>
+   vari_value(S1&& x, S2&& y) noexcept : val_(x), adj_(y) {}  // NOLINT
+   vari_value() = default;
+   vari_value(const vari_value<T>& other) : val_(other.val_), adj_(other.adj_) {}
+   inline vari_value<T>& operator=(const vari_value<T>& other) {
+     val_ = other.val_;
+     adj_ = other.adj_;
+    return *this;
+   };
+
   template <typename>
   friend class var_value;
+  template <typename, typename>
+  friend class vari_value;
 };
 
 /**
@@ -249,8 +257,7 @@ template <typename T, typename = void>
 class vari_view;
 
 template <typename T>
-class vari_view<
-    T, require_all_t<bool_constant<!is_plain_type<T>::value>, is_eigen<T>>>
+class vari_view<T, require_not_plain_type_t<T>>
     final : public vari_base {
  public:
   using PlainObject = plain_type_t<T>;

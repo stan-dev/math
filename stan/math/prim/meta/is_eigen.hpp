@@ -11,12 +11,6 @@
 
 namespace stan {
 
-namespace internal {
-template <typename T>
-using has_nested_expression_t =
-    typename std::decay_t<T>::ExpressionTypeNestedCleaned;
-}
-
 /**
  * Check if type derives from `EigenBase`
  * @tparam T Type to check if it is derived from `EigenBase`
@@ -25,9 +19,7 @@ using has_nested_expression_t =
  **/
 template <typename T>
 struct is_eigen
-    : bool_constant<
-          is_base_pointer_convertible<Eigen::EigenBase, T>::value
-          || is_detected<T, internal::has_nested_expression_t>::value> {};
+    : bool_constant<is_base_pointer_convertible<Eigen::EigenBase, T>::value> {};
 
 /**
  * Template metaprogram defining the base scalar type of
