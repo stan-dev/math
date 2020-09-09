@@ -118,6 +118,8 @@ void test_ode_finite_diff_dv(const F& f, const double& t_in,
       stan::math::set_zero_all_adjoints();
     }
   }
+
+  stan::math::recover_memory();
 }
 
 // test integrate_ode with initial positions as vars and parameters as doubles
@@ -161,6 +163,8 @@ void test_ode_finite_diff_vd(const F& f, const double& t_in,
       stan::math::set_zero_all_adjoints();
     }
   }
+
+  stan::math::recover_memory();
 }
 
 // test integrate_ode with initial positions as vars and parameters as vars
@@ -227,6 +231,8 @@ void test_ode_finite_diff_vv(const F& f, const double& t_in,
       stan::math::set_zero_all_adjoints();
     }
   }
+
+  stan::math::recover_memory();
 }
 
 template <typename F, typename T1, typename T2>
@@ -272,7 +278,7 @@ void test_ode_error_conditions(F& f, const double& t0,
   ts_bad.push_back(1);
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts_bad, theta, x, x_int, &msgs,
                                      1e-8, 1e-10, 1e6),
-                   std::domain_error, "times is not a valid ordered vector");
+                   std::domain_error, "times is not a valid sorted vector");
   EXPECT_EQ("", msgs.str());
 
   msgs.clear();
@@ -355,7 +361,7 @@ void test_ode_error_conditions_nan(F& f, const double& t0,
   theta_bad[0] = nan;
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts, theta_bad, x, x_int, &msgs,
                                      1e-8, 1e-10, 1e6),
-                   std::domain_error, "parameter vector");
+                   std::domain_error, "ode parameters and data");
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts, theta_bad, x, x_int, &msgs,
                                      1e-8, 1e-10, 1e6),
                    std::domain_error, expected_is_nan.str());
@@ -367,7 +373,7 @@ void test_ode_error_conditions_nan(F& f, const double& t0,
     x_bad[0] = nan;
     EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts, theta, x_bad, x_int,
                                        &msgs, 1e-8, 1e-10, 1e6),
-                     std::domain_error, "continuous data");
+                     std::domain_error, "ode parameters and data");
     EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts, theta, x_bad, x_int,
                                        &msgs, 1e-8, 1e-10, 1e6),
                      std::domain_error, expected_is_nan.str());
@@ -451,12 +457,12 @@ void test_ode_error_conditions_inf(F& f, const double& t0,
   std::vector<T2> theta_bad = theta;
   theta_bad[0] = inf;
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts, theta_bad, x, x_int),
-                   std::domain_error, "parameter vector");
+                   std::domain_error, "ode parameters and data");
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts, theta_bad, x, x_int),
                    std::domain_error, expected_is_inf.str());
   theta_bad[0] = -inf;
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts, theta_bad, x, x_int),
-                   std::domain_error, "parameter vector");
+                   std::domain_error, "ode parameters and data");
   EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts, theta_bad, x, x_int),
                    std::domain_error, expected_is_neg_inf.str());
   EXPECT_EQ("", msgs.str());
@@ -466,12 +472,12 @@ void test_ode_error_conditions_inf(F& f, const double& t0,
     std::vector<double> x_bad = x;
     x_bad[0] = inf;
     EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts, theta, x_bad, x_int),
-                     std::domain_error, "continuous data");
+                     std::domain_error, "ode parameters and data");
     EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts, theta, x_bad, x_int),
                      std::domain_error, expected_is_inf.str());
     x_bad[0] = -inf;
     EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts, theta, x_bad, x_int),
-                     std::domain_error, "continuous data");
+                     std::domain_error, "ode parameters and data");
     EXPECT_THROW_MSG(integrate_ode_bdf(f, y0, t0, ts, theta, x_bad, x_int),
                      std::domain_error, expected_is_neg_inf.str());
     EXPECT_EQ("", msgs.str());

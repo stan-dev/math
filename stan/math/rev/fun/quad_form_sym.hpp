@@ -5,6 +5,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/rev/fun/quad_form.hpp>
 #include <type_traits>
 
@@ -31,8 +32,9 @@ template <typename EigMat1, typename EigMat2,
           require_any_vt_var<EigMat1, EigMat2>* = nullptr>
 inline auto quad_form_sym(const EigMat1& A, const EigMat2& B) {
   check_multiplicable("quad_form_sym", "A", A, "B", B);
-  check_symmetric("quad_form_sym", "A", A);
-  return quad_form(A, B);
+  const auto& A_ref = to_ref(A);
+  check_symmetric("quad_form_sym", "A", A_ref);
+  return quad_form(A_ref, B);
 }
 
 }  // namespace math

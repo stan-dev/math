@@ -3,10 +3,8 @@
 #include <limits>
 #include <string>
 
-using stan::math::is_mat_finite;
-
-// ---------- is_mat_finite: matrix tests ----------
 TEST(ErrorHandlingMat, isMatFinite_Matrix) {
+  using stan::math::is_mat_finite;
   Eigen::Matrix<double, Eigen::Dynamic, 1> x;
 
   x.resize(3);
@@ -27,6 +25,7 @@ TEST(ErrorHandlingMat, isMatFinite_Matrix) {
 }
 
 TEST(ErrorHandlingMat, isMatFinite_nan) {
+  using stan::math::is_mat_finite;
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> x_mat(3);
