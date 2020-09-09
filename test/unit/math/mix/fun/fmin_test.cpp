@@ -31,3 +31,15 @@ TEST(mathMixScalFun, fmin_vec) {
   in2 << 0.5, 3.4;
   stan::test::expect_ad_vectorized_binary(f, in1, in2);
 }
+
+TEST(mathMixScalFun, fmin_equal) {
+  using stan::math::fmin;
+  using stan::math::fvar;
+  using stan::math::var;
+
+  var a = 1, b = 1, c = fmin(a, b);
+  c.grad();
+
+  fvar<double> d = {1, 1}, e = {1, 1}, f = fmin(d, e);
+  EXPECT_FLOAT_EQ(a.adj() + b.adj(), f.d_);
+}

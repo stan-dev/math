@@ -2,12 +2,11 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-using stan::math::fvar;
-
 TEST(AgradFwdMatrixFill, fd) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;
+  using stan::math::fvar;
   using std::vector;
 
   fvar<double> x;
@@ -48,6 +47,7 @@ TEST(AgradFwdMatrixFill, fd2) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;
+  using stan::math::fvar;
   Matrix<fvar<double>, Dynamic, 1> y(3);
   fill(y, 3.0);
   EXPECT_EQ(3, y.size());
@@ -58,6 +58,7 @@ TEST(AgradFwdMatrixFill, ffd) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;
+  using stan::math::fvar;
   using std::vector;
 
   fvar<fvar<double> > x;
@@ -98,6 +99,7 @@ TEST(AgradFwdMatrixFill, ffd2) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fill;
+  using stan::math::fvar;
   Matrix<fvar<fvar<double> >, Dynamic, 1> y(3);
   fill(y, 3.0);
   EXPECT_EQ(3, y.size());
