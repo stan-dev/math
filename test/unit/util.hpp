@@ -30,7 +30,7 @@
 
 /**
  * Tests for  exact elementwise equality of the input matrices
- * with he EXPECT_EQ macro from GTest.
+ * with the EXPECT_EQ macro from GTest.
  *
  * @param A first input matrix to compare
  * @param B second input matrix to compare
