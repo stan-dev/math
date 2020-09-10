@@ -1,5 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 
+namespace cholesky_corr_constrain_test {
 // easier than fiddling the quadratic equation
 template <typename T>
 int inv_size(const T& x) {
@@ -37,29 +38,30 @@ void expect_cholesky_corr_transform(const T& x) {
   tols.hessian_hessian_ = 1e-2;
   tols.hessian_fvar_hessian_ = 1e-2;
 
-  auto f1 = [](const auto& x) { return g1(x); };
-  auto f2 = [](const auto& x) { return g2(x); };
-  auto f3 = [](const auto& x) { return g3(x); };
+  auto f1 = [](const auto& x) { return cholesky_corr_constrain_test::g1(x); };
+  auto f2 = [](const auto& x) { return cholesky_corr_constrain_test::g2(x); };
+  auto f3 = [](const auto& x) { return cholesky_corr_constrain_test::g3(x); };
   stan::test::expect_ad(f1, x);
   stan::test::expect_ad(f2, x);
   stan::test::expect_ad(tols, f3, x);
 }
+}  // namespace cholesky_corr_constrain_test
 
 TEST(MathMixMatFun, cholesky_corrTransform) {
   // sizes must be (n choose 2)
 
   Eigen::VectorXd v0(0);
-  expect_cholesky_corr_transform(v0);
+  cholesky_corr_constrain_test::expect_cholesky_corr_transform(v0);
 
   Eigen::VectorXd v1(1);
   v1 << -1.7;
-  expect_cholesky_corr_transform(v1);
+  cholesky_corr_constrain_test::expect_cholesky_corr_transform(v1);
 
   Eigen::VectorXd v3(3);
   v3 << -1.7, 2.9, 0.01;
-  expect_cholesky_corr_transform(v3);
+  cholesky_corr_constrain_test::expect_cholesky_corr_transform(v3);
 
   Eigen::VectorXd v6(6);
   v6 << 1, 2, -3, 1.5, 0.2, 2;
-  expect_cholesky_corr_transform(v6);
+  cholesky_corr_constrain_test::expect_cholesky_corr_transform(v6);
 }

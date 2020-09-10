@@ -107,6 +107,30 @@ struct ScalarBinaryOpTraits<double, stan::math::var, BinaryOp> {
 
 /**
  * Traits specialization for Eigen binary operations for reverse-mode
+ * autodiff and `int` arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
+ */
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<stan::math::var, int, BinaryOp> {
+  using ReturnType = stan::math::var;
+};
+
+/**
+ * Traits specialization for Eigen binary operations for `int` and
+ * reverse-mode autodiff arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
+ */
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<int, stan::math::var, BinaryOp> {
+  using ReturnType = stan::math::var;
+};
+
+/**
+ * Traits specialization for Eigen binary operations for reverse-mode
  autodiff
  * arguments.
  *
@@ -139,6 +163,30 @@ struct ScalarBinaryOpTraits<double, std::complex<stan::math::var>, BinaryOp> {
  */
 template <typename BinaryOp>
 struct ScalarBinaryOpTraits<std::complex<stan::math::var>, double, BinaryOp> {
+  using ReturnType = std::complex<stan::math::var>;
+};
+
+/**
+ * Traits specialization for Eigen binary operations for `int` and
+ * complex autodiff arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
+ */
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<int, std::complex<stan::math::var>, BinaryOp> {
+  using ReturnType = std::complex<stan::math::var>;
+};
+
+/**
+ * Traits specialization for Eigen binary operations for complex
+ * autodiff and `int` arguments.
+ *
+ * @tparam BinaryOp type of binary operation for which traits are
+ * defined
+ */
+template <typename BinaryOp>
+struct ScalarBinaryOpTraits<std::complex<stan::math::var>, int, BinaryOp> {
   using ReturnType = std::complex<stan::math::var>;
 };
 

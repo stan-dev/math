@@ -11,6 +11,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
+#include <stan/math/opencl/value_type.hpp>
 #include <stan/math/opencl/kernels/copy.hpp>
 #include <stan/math/opencl/kernels/pack.hpp>
 #include <stan/math/opencl/kernels/unpack.hpp>
@@ -99,6 +100,23 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
     check_opencl_error("copy (OpenCL)->Eigen", e);
   }
   return dst;
+}
+
+/** \ingroup opencl
+ * Copies result of a kernel generator expression to the
+ * destination Eigen matrix.
+ *
+ * @tparam R rows type of the destination
+ * @tparam C cols type of the destination
+ * @tparam T type of expression
+ * @param src source expression
+ * @return Eigen matrix with a copy of the data in the source matrix
+ */
+template <int R = Eigen::Dynamic, int C = Eigen::Dynamic, typename T,
+          require_all_kernel_expressions_t<T>* = nullptr,
+          require_not_matrix_cl_t<T>* = nullptr>
+inline Eigen::Matrix<value_type_t<T>, R, C> from_matrix_cl(const T& src) {
+  return from_matrix_cl<R, C>(src.eval());
 }
 
 /** \ingroup opencl
