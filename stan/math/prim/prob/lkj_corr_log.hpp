@@ -12,9 +12,7 @@ namespace math {
  * @deprecated use <code>lkj_corr_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_shape>
-return_type_t<T_y, T_shape> lkj_corr_log(
-    const T_y& y,
-    const T_shape& eta) {
+return_type_t<T_y, T_shape> lkj_corr_log(const T_y& y, const T_shape& eta) {
   return lkj_corr_lpdf<propto>(y, eta);
 }
 
@@ -22,9 +20,8 @@ return_type_t<T_y, T_shape> lkj_corr_log(
  * @deprecated use <code>lkj_corr_lpdf</code>
  */
 template <typename T_y, typename T_shape>
-inline return_type_t<T_y, T_shape> lkj_corr_log(
-    const T_y& y,
-    const T_shape& eta) {
+inline return_type_t<T_y, T_shape> lkj_corr_log(const T_y& y,
+                                                const T_shape& eta) {
   return lkj_corr_lpdf<>(y, eta);
 }
 

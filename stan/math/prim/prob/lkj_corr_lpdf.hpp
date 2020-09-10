@@ -46,9 +46,7 @@ return_type_t<double, T_shape> do_lkj_constant(const T_shape& eta,
 // LKJ_Corr(y|eta) [ y correlation matrix (not covariance matrix)
 //                  eta > 0; eta == 1 <-> uniform]
 template <bool propto, typename T_y, typename T_shape>
-return_type_t<T_y, T_shape> lkj_corr_lpdf(
-    const T_y& y,
-    const T_shape& eta) {
+return_type_t<T_y, T_shape> lkj_corr_lpdf(const T_y& y, const T_shape& eta) {
   static const char* function = "lkj_corr_lpdf";
 
   return_type_t<T_y, T_shape> lp(0.0);
@@ -79,9 +77,8 @@ return_type_t<T_y, T_shape> lkj_corr_lpdf(
 }
 
 template <typename T_y, typename T_shape>
-inline return_type_t<T_y, T_shape> lkj_corr_lpdf(
-    const T_y& y,
-    const T_shape& eta) {
+inline return_type_t<T_y, T_shape> lkj_corr_lpdf(const T_y& y,
+                                                 const T_shape& eta) {
   return lkj_corr_lpdf<false>(y, eta);
 }
 
