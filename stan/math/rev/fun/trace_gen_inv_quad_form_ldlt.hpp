@@ -80,7 +80,7 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D,
     double C_adj = res.adj();
 
     if (!is_constant<Ta>::value) {
-      forward_as<const LDLT_factor<var, R, C>>(A).alloc_->arena_A_.adj()
+      forward_as<LDLT_factor<var, R, C>>(A).alloc_->arena_A_.adj()
           += -C_adj * AsolveB * arena_D_val.transpose() * AsolveB.transpose();
     }
 
