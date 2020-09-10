@@ -57,12 +57,11 @@ multi_normal_prec_rng(const T_loc &mu, const Eigen::MatrixXd &S, RNG &rng) {
   for (size_t i = 0; i < N; i++) {
     check_finite(function, "Location parameter", mu_vec[i]);
   }
-  const auto& S_ref = to_ref(S);
+  const auto &S_ref = to_ref(S);
   check_finite(function, "Precision matrix", S_ref);
   check_symmetric(function, "Precision matrix", S_ref);
   Eigen::LLT<Eigen::MatrixXd> llt_of_S = S_ref.llt();
   check_pos_definite(function, "precision matrix argument", llt_of_S);
-
 
   StdVectorBuilder<true, Eigen::VectorXd, T_loc> output(N);
 
@@ -75,7 +74,8 @@ multi_normal_prec_rng(const T_loc &mu, const Eigen::MatrixXd &S, RNG &rng) {
       z(i) = std_normal_rng();
     }
 
-    output[n] = as_column_vector_or_scalar(mu_vec[n]) + llt_of_S.matrixU().solve(z);
+    output[n]
+        = as_column_vector_or_scalar(mu_vec[n]) + llt_of_S.matrixU().solve(z);
   }
 
   return output.data();

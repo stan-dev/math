@@ -21,7 +21,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   using lp_type = return_type_t<T_y, T_loc, T_covar>;
   using Eigen::Dynamic;
   static const char* function = "multi_normal_lpdf";
-  check_positive(function, "Covariance matrix rows", Sigma.rows());;
+  check_positive(function, "Covariance matrix rows", Sigma.rows());
+  ;
 
   check_consistent_sizes_mvt(function, "y", y, "mu", mu);
   size_t number_of_y = size_mvt(y);
