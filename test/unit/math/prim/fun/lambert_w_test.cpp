@@ -20,19 +20,3 @@ TEST(MathFunctions, lambert_w) {
 TEST(MathFunctions, lambert_wn1_at_0) {
   EXPECT_TRUE(std::isinf(stan::math::lambert_wm1(0)));
 }
-
-TEST(MathFunctions, lambert_w0_works_with_other_functions) {
-  Eigen::VectorXd a(5);
-  a << 1.1, 1.2, 1.3, 1.4, 1.5;
-  Eigen::RowVectorXd b(5);
-  b << -0.2, 0, 42, 66, 1024.512;
-  stan::math::multiply(a, stan::math::lambert_w0(b));
-}
-
-TEST(MathFunctions, lambert_wn1_works_with_other_functions) {
-  Eigen::VectorXd a(5);
-  a << 1.1, 1.2, 1.3, 1.4, 1.5;
-  Eigen::RowVectorXd b(5);
-  b << -0.2, -0.15, -0.1, -0.05, -0.001;
-  stan::math::multiply(a, stan::math::lambert_wm1(b));
-}

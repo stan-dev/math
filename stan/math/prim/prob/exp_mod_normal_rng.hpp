@@ -39,15 +39,22 @@ inline typename VectorBuilder<true, double, T_loc, T_scale, T_inv_scale>::type
 exp_mod_normal_rng(const T_loc& mu, const T_scale& sigma,
                    const T_inv_scale& lambda, RNG& rng) {
   static const char* function = "exp_mod_normal_rng";
-  check_finite(function, "Location parameter", mu);
-  check_positive_finite(function, "Scale parameter", sigma);
-  check_positive_finite(function, "Inv_scale parameter", lambda);
+  using T_mu_ref = ref_type_t<T_loc>;
+  using T_sigma_ref = ref_type_t<T_scale>;
+  using T_lambda_ref = ref_type_t<T_inv_scale>;
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",
                          sigma, "Inv_scale Parameter", lambda);
 
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
-  scalar_seq_view<T_inv_scale> lambda_vec(lambda);
+  T_mu_ref mu_ref = mu;
+  T_sigma_ref sigma_ref = sigma;
+  T_lambda_ref lambda_ref = lambda;
+  check_finite(function, "Location parameter", mu_ref);
+  check_positive_finite(function, "Scale parameter", sigma_ref);
+  check_positive_finite(function, "Inv_scale parameter", lambda_ref);
+
+  scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
+  scalar_seq_view<T_sigma_ref> sigma_vec(sigma_ref);
+  scalar_seq_view<T_lambda_ref> lambda_vec(lambda_ref);
   size_t N = max_size(mu, sigma, lambda);
   VectorBuilder<true, double, T_loc, T_scale, T_inv_scale> output(N);
 
