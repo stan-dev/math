@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_REV_FUNCTOR_INTEGRATE_ODE_CVODES_HPP
 #define STAN_MATH_REV_FUNCTOR_INTEGRATE_ODE_CVODES_HPP
 
-
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/functor/cvodes_utils.hpp>
 #include <stan/math/rev/functor/coupled_ode_system.hpp>
