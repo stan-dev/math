@@ -1,10 +1,10 @@
 #include <test/unit/math/test_ad.hpp>
 
-auto f(int i, int j, int k) {
-  return [=](const auto& y) { return stan::math::sub_col(y, i, j, k); };
-}
-
 TEST(MathMixMatFun, subCol) {
+  auto f = [](int i, int j, int k) {
+    return [=](const auto& y) { return stan::math::sub_col(y, i, j, k); };
+  };
+
   Eigen::MatrixXd a(1, 1);
   a << 3.2;
   stan::test::expect_ad(f(1, 1, 0), a);
