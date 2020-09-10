@@ -46,7 +46,7 @@ class LDLT_alloc : public chainable_alloc {
   }
 
   size_t N_;
-  Eigen::LDLT<Eigen::Matrix<double, R, C> > ldlt_;
+  Eigen::LDLT<Eigen::Matrix<double, R, C>> ldlt_;
   arena_matrix<Eigen::Matrix<var, R, C>> arena_A_;
 };
 

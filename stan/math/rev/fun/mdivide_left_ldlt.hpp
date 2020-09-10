@@ -25,12 +25,10 @@ namespace math {
  * @return x = A^-1 b, solution of the linear system.
  * @throws std::domain_error if rows of b don't match the size of A.
  */
-template <int R, int C,
-	  typename T1, typename T2,
-	  require_eigen_t<T2>* = nullptr,
-	  require_any_st_var<T1, T2>* = nullptr>
-inline Eigen::Matrix<var, R, T2::ColsAtCompileTime>
-  mdivide_left_ldlt(const LDLT_factor<T1, R, C> &A, const T2& B) {
+template <int R, int C, typename T1, typename T2,
+          require_eigen_t<T2>* = nullptr, require_any_st_var<T1, T2>* = nullptr>
+inline Eigen::Matrix<var, R, T2::ColsAtCompileTime> mdivide_left_ldlt(
+    const LDLT_factor<T1, R, C>& A, const T2& B) {
   check_multiplicable("mdivide_left_ldlt", "A", A, "B", B);
 
   using B_ref_t = ref_type_t<T2>;
@@ -47,21 +45,20 @@ inline Eigen::Matrix<var, R, T2::ColsAtCompileTime>
     arena_B = B_ref;
   }
 
-  arena_matrix<Eigen::Matrix<var, R, T2::ColsAtCompileTime>>
-      res = A.solve(value_of(B_ref));
+  arena_matrix<Eigen::Matrix<var, R, T2::ColsAtCompileTime>> res
+      = A.solve(value_of(B_ref));
 
   reverse_pass_callback([A, arena_B, res]() mutable {
-    Eigen::Matrix<double, R, T2::ColsAtCompileTime> adjB
-      = A.solve(res.adj());
+    Eigen::Matrix<double, R, T2::ColsAtCompileTime> adjB = A.solve(res.adj());
 
     if (!is_constant<T1>::value)
       forward_as<const LDLT_factor<var, R, C>>(A).alloc_->arena_A_.adj()
-	+= -adjB * res.val().transpose().eval();
+          += -adjB * res.val().transpose().eval();
 
     if (!is_constant<T2>::value)
       forward_as<promote_scalar_t<var, T2>>(arena_B).adj() += adjB;
   });
-  
+
   return res;
 }
 

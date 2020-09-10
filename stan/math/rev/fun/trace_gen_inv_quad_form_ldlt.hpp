@@ -28,8 +28,7 @@ namespace math {
  * @param B a matrix
  * @return The trace of the inverse quadratic form.
  */
-template <typename Td, typename Ta, typename Tb,
-	  int R, int C,
+template <typename Td, typename Ta, typename Tb, int R, int C,
           require_all_eigen_t<Td, Tb>* = nullptr,
           require_any_st_var<Td, Ta, Tb>* = nullptr>
 inline var trace_gen_inv_quad_form_ldlt(const Td& D,
@@ -51,7 +50,7 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D,
   arena_matrix<promote_scalar_t<double, Tb>> arena_B_val = value_of(B_ref);
   arena_matrix<promote_scalar_t<double, Td>> arena_D_val;
   arena_matrix<Eigen::Matrix<double, R, Tb::ColsAtCompileTime>> AsolveB
-    = A.solve(arena_B_val);
+      = A.solve(arena_B_val);
 
   arena_matrix<promote_scalar_t<var, Tb>> arena_B;
   arena_matrix<promote_scalar_t<var, Td>> arena_D;
@@ -71,31 +70,26 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D,
   var res;
 
   if (!is_constant_all<Ta, Tb>::value) {
-    res = (arena_D_val * arena_B_val.transpose() * AsolveB)
-              .trace();
+    res = (arena_D_val * arena_B_val.transpose() * AsolveB).trace();
   } else {
-    res = (value_of(D) * arena_B_val.transpose() * AsolveB)
-              .trace();
+    res = (value_of(D) * arena_B_val.transpose() * AsolveB).trace();
   }
 
-  reverse_pass_callback([A, AsolveB,
-			 arena_B, arena_D,
-			 arena_B_val, arena_D_val,
-			 res]() mutable {
-    double C_adj = res.adj();    
+  reverse_pass_callback([A, AsolveB, arena_B, arena_D, arena_B_val, arena_D_val,
+                         res]() mutable {
+    double C_adj = res.adj();
 
     if (!is_constant<Ta>::value) {
-      forward_as<const LDLT_factor<var, R, C>>(A).alloc_->arena_A_.adj() +=
-	-C_adj * AsolveB * arena_D_val.transpose() * AsolveB.transpose();
+      forward_as<const LDLT_factor<var, R, C>>(A).alloc_->arena_A_.adj()
+          += -C_adj * AsolveB * arena_D_val.transpose() * AsolveB.transpose();
     }
 
     if (!is_constant<Tb>::value)
-      arena_B.adj() += C_adj * AsolveB
-	* (arena_D_val + arena_D_val.transpose());
+      arena_B.adj()
+          += C_adj * AsolveB * (arena_D_val + arena_D_val.transpose());
 
     if (!is_constant<Td>::value)
-      arena_D.adj()
-          += C_adj * arena_B_val.transpose() * AsolveB;
+      arena_D.adj() += C_adj * arena_B_val.transpose() * AsolveB;
   });
 
   return res;

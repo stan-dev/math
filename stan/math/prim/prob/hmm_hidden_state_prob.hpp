@@ -42,28 +42,27 @@ namespace math {
  * @throw `std::domain_error` if rho is not a simplex and of the rows
  *         of Gamma are not a simplex
  */
-template <typename T_omega, typename T_Gamma, typename T_rho>
-inline Eigen::MatrixXd hmm_hidden_state_prob(
-    const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
-    const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma,
-    const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho) {
+template <typename T_omega, typename T_Gamma, typename T_rho,
+          require_all_eigen_t<T_omega, T_Gamma>* = nullptr,
+          require_eigen_col_vector_t<T_rho>* = nullptr>
+inline Eigen::MatrixXd hmm_hidden_state_prob(const T_omega& log_omegas,
+                                             const T_Gamma& Gamma,
+                                             const T_rho& rho) {
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 
-  hmm_check(log_omegas, Gamma, rho, "hmm_hidden_state_prob");
-
   Eigen::MatrixXd omegas = value_of(log_omegas).array().exp();
-  Eigen::VectorXd rho_dbl = value_of(rho);
-  Eigen::MatrixXd Gamma_dbl = value_of(Gamma);
+  ref_type_t<decltype(value_of(rho))> rho_dbl = value_of(rho);
+  ref_type_t<decltype(value_of(Gamma))> Gamma_dbl = value_of(Gamma);
+  hmm_check(log_omegas, Gamma_dbl, rho_dbl, "hmm_hidden_state_prob");
 
   Eigen::MatrixXd alphas(n_states, n_transitions + 1);
   alphas.col(0) = omegas.col(0).cwiseProduct(rho_dbl);
   alphas.col(0) /= alphas.col(0).maxCoeff();
 
-  Eigen::MatrixXd Gamma_dbl_transpose = Gamma_dbl.transpose();
   for (int n = 0; n < n_transitions; ++n)
     alphas.col(n + 1)
-        = omegas.col(n + 1).cwiseProduct(Gamma_dbl_transpose * alphas.col(n));
+        = omegas.col(n + 1).cwiseProduct(Gamma_dbl.transpose() * alphas.col(n));
 
   // Backward pass with running normalization
   Eigen::VectorXd beta = Eigen::VectorXd::Ones(n_states);

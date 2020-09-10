@@ -37,7 +37,7 @@ var log_determinant_ldlt(const LDLT_factor<var, R, C> &A) {
   reverse_pass_callback([A, log_det, arena_A_inv]() mutable {
     A.alloc_->arena_A_.adj() += log_det.adj() * arena_A_inv;
   });
-  
+
   return log_det;
 }
 
