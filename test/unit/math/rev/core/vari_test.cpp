@@ -43,7 +43,7 @@ TEST_F(AgradRev, dense_row_vector_vari) {
   EXPECT_MATRIX_FLOAT_EQ(B, B_vari.val_);
 }
 
-TEST(SparseRev, sparse_matrix_vari) {
+TEST_F(SparseRev, sparse_matrix_vari) {
   using stan::math::vari_value;
   using eig_mat = Eigen::SparseMatrix<double>;
   using inner_iterator = typename eig_mat::InnerIterator;
@@ -72,7 +72,7 @@ TEST_F(AgradRev, sparse_matrix_vari_free) {
     }
   }
 
-TEST(AgradRev, dense_vari_matrix_views) {
+TEST_F(AgradRev, dense_vari_matrix_views) {
   using stan::math::vari_value;
   using eig_mat = Eigen::MatrixXd;
   eig_mat A(5, 5);
@@ -105,7 +105,7 @@ TEST(AgradRev, dense_vari_matrix_views) {
   EXPECT_MATRIX_FLOAT_EQ(A, A_v.val_);
 }
 
-TEST(AgradRev, dense_vari_vector_views) {
+TEST_F(AgradRev, dense_vari_vector_views) {
   using stan::math::vari_value;
   using eig_vec = Eigen::VectorXd;
   eig_vec A(10);
