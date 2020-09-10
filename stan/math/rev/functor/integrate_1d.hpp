@@ -7,7 +7,7 @@
 #include <stan/math/rev/core/precomputed_gradients.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/functor/integrate_1d.hpp>
 #include <cmath>
 #include <functional>
