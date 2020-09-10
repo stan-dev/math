@@ -61,8 +61,12 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
   if (number_of_y == 0 || number_of_mu == 0) {
     return 0;
   }
-  vector_seq_view<T_y> y_vec(y);
-  vector_seq_view<T_loc> mu_vec(mu);
+
+  T_y_ref y_ref = y;
+  T_mu_ref mu_ref = mu;
+  T_L_ref L_ref = L;
+  vector_seq_view<T_y_ref> y_vec(y_ref);
+  vector_seq_view<T_mu_ref> mu_vec(mu_ref);
   const size_t size_vec = max_size_mvt(y, mu);
 
   const int size_y = y_vec[0].size();
@@ -97,15 +101,9 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
   check_size_match(function, "Size of random variable", size_y,
                    "columns of covariance parameter", L.cols());
 
-  T_y_ref y_ref = y;
-  T_mu_ref mu_ref = mu;
-  T_L_ref L_ref = L;
-
-  vector_seq_view<T_y_ref> y_ref_vec(y_ref);
-  vector_seq_view<T_mu_ref> mu_ref_vec(mu_ref);
   for (size_t i = 0; i < size_vec; i++) {
-    check_finite(function, "Location parameter", mu_ref_vec[i]);
-    check_not_nan(function, "Random variable", y_ref_vec[i]);
+    check_finite(function, "Location parameter", mu_vec[i]);
+    check_not_nan(function, "Random variable", y_vec[i]);
   }
 
   if (unlikely(size_y == 0)) {
@@ -125,8 +123,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
 
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     for (size_t i = 0; i < size_vec; i++) {
-      const auto& y_col = as_column_vector_or_scalar(y_ref_vec[i]);
-      const auto& mu_col = as_column_vector_or_scalar(mu_ref_vec[i]);
+      const auto& y_col = as_column_vector_or_scalar(y_vec[i]);
+      const auto& mu_col = as_column_vector_or_scalar(mu_vec[i]);
 
       const row_vector_partials_t half
           = (inv_L_dbl.template triangularView<Eigen::Lower>()
@@ -141,11 +139,11 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
       if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_vec_[i] = -scaled_diff;
       }
+      if (!is_constant_all<T_loc>::value) {
+        ops_partials.edge2_.partials_vec_[i] = scaled_diff;
+      }
       if (!is_constant_all<T_covar>::value) {
         ops_partials.edge3_.partials_ = scaled_diff * half;
-      }
-      if (!is_constant_all<T_loc>::value) {
-        ops_partials.edge2_.partials_vec_[i] = std::move(scaled_diff);
       }
     }
   }
