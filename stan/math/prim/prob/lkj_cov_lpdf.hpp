@@ -10,6 +10,9 @@
 namespace stan {
 namespace math {
 
+/**
+  @deprecated
+  */
 // LKJ_cov(y|mu, sigma, eta) [ y covariance matrix (not correlation matrix)
 //                         mu vector, sigma > 0 vector, eta > 0 ]
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
@@ -52,6 +55,9 @@ return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(const T_y& y,
   return lp;
 }
 
+/**
+  @deprecated
+  */
 // LKJ_Cov(y|mu, sigma, eta) [ y covariance matrix (not correlation matrix)
 //                         mu scalar, sigma > 0 scalar, eta > 0 ]
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
@@ -87,6 +93,9 @@ return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(const T_y& y,
   return lp;
 }
 
+/**
+  @deprecated
+  */
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
 inline return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& eta) {
