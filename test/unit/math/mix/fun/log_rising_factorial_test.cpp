@@ -25,3 +25,16 @@ TEST(mathMixScalFun, logRisingFactorial) {
   stan::test::expect_ad(f, nan, 4.0);
   stan::test::expect_ad(f, nan, nan);
 }
+
+TEST(mathMixScalFun, logRisingFactorial_vec) {
+  auto f = [](const auto& x1, const auto& x2) {
+    using stan::math::log_rising_factorial;
+    return log_rising_factorial(x1, x2);
+  };
+
+  Eigen::VectorXd in1(2);
+  in1 << 3, 1;
+  Eigen::VectorXd in2(2);
+  in2 << 0.5, 3.4;
+  stan::test::expect_ad_vectorized_binary(f, in1, in2);
+}

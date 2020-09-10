@@ -36,6 +36,7 @@ inline var calc_variance(size_t size, const var* dtrs) {
  * Return the sample variance of the specified standard
  * vector.  Raise domain error if size is not greater than zero.
  *
+ * @tparam StdVec A standard vector with a `var` value type
  * @param[in] v a vector
  * @return sample variance of specified vector
  */
@@ -53,8 +54,8 @@ inline var variance(StdVec&& v) {
  * or matrix.  Raise domain error if size is not greater than
  * zero.
  *
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam EigMat type inheriting from `EigenBase` that has a `var`
+ *  scalar type.
  * @param[in] m input matrix
  * @return sample variance of specified matrix
  */

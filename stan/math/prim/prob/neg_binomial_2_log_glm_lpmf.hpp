@@ -108,7 +108,7 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   check_finite(function, "Intercept", alpha_val_vec);
 
   if (size_zero(y, phi)) {
-    return 0.0;
+    return 0;
   }
 
   const auto& y_ref = to_ref(y);

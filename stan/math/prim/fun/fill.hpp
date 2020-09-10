@@ -13,9 +13,7 @@ namespace math {
  *
  * The specified matrix is filled by element.
  *
- * @tparam T type of elements in the matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam EigMat Type inheriting from `EigenBase`
  * @tparam S Type of value.
  *
  * @param x Container.
@@ -50,15 +48,15 @@ inline void fill(T& x, S&& y) {
  * Each container in the specified standard vector is filled
  * recursively by calling <code>fill</code>.
  *
- * @tparam T type of elements in the vector
+ * @tparam Vec A standard vector
  * @tparam S type of value
  * @param[in] x Container.
  * @param[in, out] y Value.
  */
 template <typename Vec, typename S, require_std_vector_t<Vec>* = nullptr>
-inline void fill(Vec& x, const S& y) {
-  for (typename std::decay_t<Vec>::size_type i = 0; i < x.size(); ++i) {
-    fill(x[i], y);
+inline void fill(Vec& x, S&& y) {
+  for (auto& x_val : x) {
+    fill(x_val, std::forward<S>(y));
   }
 }
 

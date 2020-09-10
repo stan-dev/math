@@ -59,19 +59,19 @@ class acos_vari : public op_v_vari {
    \frac{\partial \, \arccos(x)}{\partial x} = -\frac{1}{\sqrt{1-x^2}}
    \f]
  *
- * @param a Variable in range [-1, 1].
+ * @param x argument
  * @return Arc cosine of variable, in radians.
  */
-inline var acos(const var& a) { return var(new internal::acos_vari(a.vi_)); }
+inline var acos(const var& x) { return var(new internal::acos_vari(x.vi_)); }
 
 /**
  * Return the arc cosine of the complex argument.
  *
- * @param[in] z argument
+ * @param x argument
  * @return arc cosine of the argument
  */
-inline std::complex<var> acos(const std::complex<var>& z) {
-  return stan::math::internal::complex_acos(z);
+inline std::complex<var> acos(const std::complex<var>& x) {
+  return stan::math::internal::complex_acos(x);
 }
 
 }  // namespace math

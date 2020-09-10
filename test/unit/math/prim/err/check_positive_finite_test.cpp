@@ -15,11 +15,11 @@ TEST(ErrorHandlingArr, CheckPositiveFinite_Vector) {
   EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error)
       << "check_positive_finite should throw exception on Inf";
 
-  x = {-1, 2, std::numeric_limits<double>::infinity()};
+  x = {-1, 2, 1};
   EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error)
       << "check_positive_finite should throw exception on negative x";
 
-  x = {0, 2, std::numeric_limits<double>::infinity()};
+  x = {0, 2, 1};
   EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error)
       << "check_positive_finite should throw exception on x=0";
 
@@ -62,12 +62,12 @@ TEST(ErrorHandlingMat, CheckPositiveFinite_Matrix) {
       << "check_positive_finite should throw exception on Inf";
 
   x.resize(3);
-  x << 0, 1, std::numeric_limits<double>::infinity();
+  x << 0, 1, 2;
   EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error)
       << "check_positive_finite should throw exception on x=0";
 
   x.resize(3);
-  x << -1, 1, std::numeric_limits<double>::infinity();
+  x << -1, 1, 2;
   EXPECT_THROW(check_positive_finite(function, "x", x), std::domain_error)
       << "check_positive_finite should throw exception on x=-1";
 

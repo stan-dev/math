@@ -15,11 +15,9 @@ namespace math {
  * @param v Variable.
  * @return Value of variable.
  */
-inline auto value_of_rec(const var& v) { return v.vi_->val_; }
-
-template <typename Vec, require_std_vector_vt<is_var, Vec>* = nullptr>
-inline auto value_of_rec(Vec&& x) {
-  return value_of(std::forward<Vec>(x));
+template <typename T>
+inline auto value_of_rec(const var_value<T>& v) {
+  return v.vi_->val_;
 }
 
 }  // namespace math

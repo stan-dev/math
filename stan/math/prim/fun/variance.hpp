@@ -13,7 +13,7 @@ namespace math {
  * Returns the sample variance (divide by length - 1) of the
  * coefficients in the specified standard vector.
  *
- * @tparam T type of elements in the vector
+ * @tparam StdVec A standard library vector that does not contain a var.
  * @param v specified vector
  * @return sample variance of vector
  * @throw <code>std::invalid_argument</code> if the vector has size zero
@@ -39,9 +39,8 @@ inline value_type_t<StdVec> variance(StdVec&& v) {
  * Returns the sample variance (divide by length - 1) of the
  * coefficients in the specified matrix
  *
- * @tparam T type of elements in the vector
- * @tparam R number of rows in the matrix, can be Eigen::Dynamic
- * @tparam C number of columns in the matrix, can be Eigen::Dynamic
+ * @tparam EigMat type inheriting from `EigenBase` that does not have an `var`
+ *  scalar type.
  *
  * @param m matrix
  * @return sample variance of coefficients

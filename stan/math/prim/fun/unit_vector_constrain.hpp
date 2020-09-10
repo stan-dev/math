@@ -17,9 +17,8 @@ namespace math {
  * href="https://en.wikipedia.org/wiki/N-sphere#Generating_random_points">the
  * Wikipedia page on generating random points on an N-sphere</a>.
  *
- * @tparam T type of elements in the vector
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam EigMat type inheriting from `EigenBase` that does not have an fvar
+ *  scalar type.
  * @param y vector of K unrestricted variables
  * @return Unit length vector of dimension K
  */
@@ -38,9 +37,8 @@ auto unit_vector_constrain(const EigMat& y) {
  * Return the unit length vector corresponding to the free vector y.
  * See https://en.wikipedia.org/wiki/N-sphere#Generating_random_points
  *
- * @tparam T type of elements in the vector
- * @tparam R number of rows in the matrix, can be Eigen::Dynamic
- * @tparam C number of columns in the matrix, can be Eigen::Dynamic
+ * @tparam EigMat type inheriting from `EigenBase` that does not have an fvar
+ *  scalar type.
  *
  * @param y vector of K unrestricted variables
  * @return Unit length vector of dimension K
