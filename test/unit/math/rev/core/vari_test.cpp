@@ -43,7 +43,7 @@ TEST_F(AgradRev, dense_row_vector_vari) {
   EXPECT_MATRIX_FLOAT_EQ(B, B_vari.val_);
 }
 
-TEST_F(SparseRev, sparse_matrix_vari) {
+TEST(SparseRev, sparse_matrix_vari) {
   using stan::math::vari_value;
   using eig_mat = Eigen::SparseMatrix<double>;
   using inner_iterator = typename eig_mat::InnerIterator;
