@@ -1,5 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 
+namespace unit_vector_constrain_test {
 template <typename T>
 typename Eigen::Matrix<typename stan::scalar_type<T>::type, -1, -1> g1(
     const T& x) {
@@ -37,24 +38,25 @@ void expect_unit_vector_constrain(const T& x) {
   stan::test::expect_ad(tols, f2, x);
   stan::test::expect_ad(tols, f3, x);
 }
+}  // namespace unit_vector_constrain_test
 
 TEST(MathMixMatFun, unitVectorConstrain) {
   Eigen::VectorXd v0;
-  expect_unit_vector_constrain(v0);
+  unit_vector_constrain_test::expect_unit_vector_constrain(v0);
 
   Eigen::VectorXd v1(1);
   v1 << 0.7;
-  expect_unit_vector_constrain(v1);
+  unit_vector_constrain_test::expect_unit_vector_constrain(v1);
 
   Eigen::VectorXd v3(3);
   v3 << 2, 3, -1;
-  expect_unit_vector_constrain(v3);
+  unit_vector_constrain_test::expect_unit_vector_constrain(v3);
 
   Eigen::VectorXd v3b(3);
   v3b << 0.6, 3, -1;
-  expect_unit_vector_constrain(v3b);
+  unit_vector_constrain_test::expect_unit_vector_constrain(v3b);
 
   Eigen::VectorXd v6(6);
   v6 << 1, 2, -3, 1.5, 0.2, 2;
-  expect_unit_vector_constrain(v6);
+  unit_vector_constrain_test::expect_unit_vector_constrain(v6);
 }
