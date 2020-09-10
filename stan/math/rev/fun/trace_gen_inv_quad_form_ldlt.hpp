@@ -28,15 +28,13 @@ namespace math {
  * @param B a matrix
  * @return The trace of the inverse quadratic form.
  */
-template <typename EigMat1, typename T2, int R2, int C2, typename EigMat3,
-          require_all_eigen_t<EigMat1, EigMat3>* = nullptr,
-          require_any_vt_var<EigMat1, T2, EigMat3>* = nullptr>
-inline var trace_gen_inv_quad_form_ldlt(const EigMat1& D,
-                                        const LDLT_factor<T2, R2, C2>& A,
-                                        const EigMat3& B) {
-  using T3 = value_type_t<EigMat3>;
-  constexpr int R3 = EigMat3::RowsAtCompileTime;
-  constexpr int C3 = EigMat3::ColsAtCompileTime;
+template <typename Td, typename Ta, typename Tb,
+	  int R, int C,
+          require_all_eigen_t<Td, Tb>* = nullptr,
+          require_any_st_var<Td, Ta, Tb>* = nullptr>
+inline var trace_gen_inv_quad_form_ldlt(const Td& D,
+                                        const LDLT_factor<Ta, R, C>& A,
+                                        const Tb& B) {
   check_square("trace_gen_inv_quad_form_ldlt", "D", D);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "A", A, "B", B);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "B", B, "D", D);
@@ -44,13 +42,63 @@ inline var trace_gen_inv_quad_form_ldlt(const EigMat1& D,
     return 0;
   }
 
-  auto* _impl
-      = new internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3>(
-          D, A, B);
+  using B_ref_t = ref_type_t<Tb>;
+  using D_ref_t = ref_type_t<Td>;
 
-  return var(
-      new internal::trace_inv_quad_form_ldlt_vari<T2, R2, C2, T3, R3, C3>(
-          _impl));
+  B_ref_t B_ref = B;
+  D_ref_t D_ref = D;
+
+  arena_matrix<promote_scalar_t<double, Tb>> arena_B_val = value_of(B_ref);
+  arena_matrix<promote_scalar_t<double, Td>> arena_D_val;
+  arena_matrix<Eigen::Matrix<double, R, Tb::ColsAtCompileTime>> AsolveB
+    = A.solve(arena_B_val);
+
+  arena_matrix<promote_scalar_t<var, Tb>> arena_B;
+  arena_matrix<promote_scalar_t<var, Td>> arena_D;
+
+  if (!is_constant<Tb>::value) {
+    arena_B = B_ref;
+  }
+
+  if (!is_constant<Td>::value) {
+    arena_D = D_ref;
+  }
+
+  if (!is_constant_all<Ta, Tb>::value) {
+    arena_D_val = value_of(D_ref);
+  }
+
+  var res;
+
+  if (!is_constant_all<Ta, Tb>::value) {
+    res = (arena_D_val * arena_B_val.transpose() * AsolveB)
+              .trace();
+  } else {
+    res = (value_of(D) * arena_B_val.transpose() * AsolveB)
+              .trace();
+  }
+
+  reverse_pass_callback([A, AsolveB,
+			 arena_B, arena_D,
+			 arena_B_val, arena_D_val,
+			 res]() mutable {
+    double C_adj = res.adj();    
+
+    if (!is_constant<Ta>::value) {
+      forward_as<const LDLT_factor<var, R, C>>(A).alloc_->arena_A_.adj() +=
+	-C_adj * AsolveB * arena_D_val.transpose() * AsolveB.transpose();
+    }
+
+    if (!is_constant<Tb>::value)
+      arena_B.adj() += C_adj * AsolveB
+	* (arena_D_val + arena_D_val.transpose());
+
+    if (!is_constant<Td>::value)
+      arena_D.adj()
+          += C_adj * arena_B_val.transpose() * AsolveB;
+  });
+
+  return res;
 }
 
 }  // namespace math

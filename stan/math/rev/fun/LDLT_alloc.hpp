@@ -36,7 +36,7 @@ class LDLT_alloc : public chainable_alloc {
    **/
   inline void compute(const Eigen::Matrix<var, R, C> &A) {
     N_ = A.rows();
-    variA_ = A.vi();
+    arena_A_ = A;
     ldlt_.compute(A.val());
   }
 
@@ -47,7 +47,7 @@ class LDLT_alloc : public chainable_alloc {
 
   size_t N_;
   Eigen::LDLT<Eigen::Matrix<double, R, C> > ldlt_;
-  Eigen::Matrix<vari *, R, C> variA_;
+  arena_matrix<Eigen::Matrix<var, R, C>> arena_A_;
 };
 
 }  // namespace math
