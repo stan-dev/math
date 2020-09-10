@@ -1493,6 +1493,14 @@ void expect_ad_matvar(F&& f, const T& x) {
       SUCCEED();
     }
   }
+  for (Eigen::Index i = 0; i < A_vm.size(); ++i) {
+    A_vm_f.adj()(i) = 1;
+    A_mv_f.adj()(i) = 1;
+    stan::math::grad();
+    EXPECT_FLOAT_EQ(A_vm.adj()(i), A_mv.adj()(i));
+    EXPECT_FLOAT_EQ(A_vm_f.adj()(i), A_mv_f.adj()(i));
+    stan::math::set_zero_all_adjoints();
+  }
   var b_mv = sum(A_mv_f);
   var b_vm = sum(A_vm_f);
   var final_var = b_mv + b_vm;
@@ -1502,7 +1510,7 @@ void expect_ad_matvar(F&& f, const T& x) {
   }
   EXPECT_MATRIX_FLOAT_EQ(A_vm.val(), A_mv.val());
   EXPECT_MATRIX_FLOAT_EQ(A_vm.adj(), A_mv.adj());
-  expect_float_equal(A_vm, A_mv);
+  expect_float_equal(A_vm_f, A_mv_f);
 }
 
 /**
