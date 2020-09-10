@@ -30,10 +30,9 @@ namespace math {
  * @tparam T_w Type of weight.
  */
 template <bool propto, typename T_y, typename T_covar, typename T_w>
-return_type_t<T_y, T_covar, T_w> multi_gp_log(
-    const T_y& y,
-    const T_covar& Sigma,
-    const T_w& w) {
+return_type_t<T_y, T_covar, T_w> multi_gp_log(const T_y& y,
+                                              const T_covar& Sigma,
+                                              const T_w& w) {
   return multi_gp_lpdf<propto>(y, Sigma, w);
 }
 
@@ -41,10 +40,9 @@ return_type_t<T_y, T_covar, T_w> multi_gp_log(
  * @deprecated use <code>multi_gp_lpdf</code>
  */
 template <typename T_y, typename T_covar, typename T_w>
-inline return_type_t<T_y, T_covar, T_w> multi_gp_log(
-    const T_y& y,
-    const T_covar& Sigma,
-    const T_w& w) {
+inline return_type_t<T_y, T_covar, T_w> multi_gp_log(const T_y& y,
+                                                     const T_covar& Sigma,
+                                                     const T_w& w) {
   return multi_gp_lpdf<>(y, Sigma, w);
 }
 
