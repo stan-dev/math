@@ -43,4 +43,29 @@ std::vector<T> to_std_vector(const Eigen::Matrix<T, R, C>& x) {
 
 }  // namespace test
 }  // namespace stan
+
+std::vector<stan::math::var> get_vvar(std::vector<double> vd) {
+  size_t vd_size = vd.size();
+  std::vector<stan::math::var> vv;
+  vv.reserve(vd_size);
+  for (size_t i = 0; i < vd_size; i++)
+    vv.push_back(vd[i]);
+  return vv;
+}
+
+std::vector<double> vdouble_from_vvar(std::vector<stan::math::var> vv) {
+  size_t vv_size = vv.size();
+  std::vector<double> vd;
+  vd.reserve(vv_size);
+  for (size_t i = 0; i < vv_size; i++)
+    vd.push_back(vv[i].val());
+  return vd;
+}
+
+double double_from_var(stan::math::var var_) { return var_.val(); }
+
+double double_from_var(double var_) { return var_; }
+
+std::vector<double> vdouble_from_vvar(std::vector<double> vv) { return vv; }
+
 #endif

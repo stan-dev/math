@@ -33,14 +33,18 @@ inline typename VectorBuilder<true, double, T_shape, T_scale>::type
 inv_gamma_rng(const T_shape& alpha, const T_scale& beta, RNG& rng) {
   using boost::variate_generator;
   using boost::random::gamma_distribution;
+  using T_alpha_ref = ref_type_t<T_shape>;
+  using T_beta_ref = ref_type_t<T_scale>;
   static const char* function = "inv_gamma_rng";
-  check_positive_finite(function, "Shape parameter", alpha);
-  check_positive_finite(function, "Scale parameter", beta);
   check_consistent_sizes(function, "Shape parameter", alpha, "Scale Parameter",
                          beta);
+  T_alpha_ref alpha_ref = alpha;
+  T_beta_ref beta_ref = beta;
+  check_positive_finite(function, "Shape parameter", alpha_ref);
+  check_positive_finite(function, "Scale parameter", beta_ref);
 
-  scalar_seq_view<T_shape> alpha_vec(alpha);
-  scalar_seq_view<T_scale> beta_vec(beta);
+  scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
+  scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
   size_t N = max_size(alpha, beta);
   VectorBuilder<true, double, T_shape, T_scale> output(N);
 

@@ -6,6 +6,7 @@
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/meta/is_vari.hpp>
+#include <stan/math/rev/functor/reverse_pass_callback.hpp>
 #include <ostream>
 #include <vector>
 #ifdef STAN_OPENCL
@@ -36,18 +37,15 @@ static void grad(Vari* vi);
 template <typename T>
 class var_value {
   static_assert(
-      is_plain_type<T>::value,
-      "The template for this var is an"
-      " expression but a var_value's inner type must be assignable such as"
-      " a double, Eigen::Matrix, or Eigen::Array");
-  static_assert(
       std::is_floating_point<value_type_t<T>>::value,
       "The template for must be a floating point or a container holding"
       " floating point types");
 
  public:
-  using value_type = std::decay_t<T>;        // type in vari_value.
-  using vari_type = vari_value<value_type>;  // Type of underlying vari impl.
+  using value_type = std::decay_t<T>;  // type in vari_value.
+  using vari_type = std::conditional_t<is_plain_type<value_type>::value,
+                                       vari_value<value_type>, vari_view<T>>;
+
   static constexpr int RowsAtCompileTime{vari_type::RowsAtCompileTime};
   static constexpr int ColsAtCompileTime{vari_type::ColsAtCompileTime};
 
@@ -283,6 +281,115 @@ class var_value {
    * variable.
    */
   inline var_value<T>& operator/=(T b);
+
+  /**
+   * A block view of the underlying Eigen matrices.
+   * @param start_row Starting row of block.
+   * @param start_col Starting columns of block.
+   * @param num_rows Number of rows to return.
+   * @param num_cols Number of columns to return.
+   */
+  inline const auto block(Eigen::Index start_row, Eigen::Index start_col,
+                          Eigen::Index num_rows, Eigen::Index num_cols) const {
+    using vari_sub
+        = decltype(vi_->block(start_row, start_col, num_rows, num_cols));
+    using var_sub = var_value<const typename vari_sub::value_type>;
+    return var_sub(
+        new vari_sub(vi_->block(start_row, start_col, num_rows, num_cols)));
+  }
+
+  /**
+   * View of the head of Eigen vector types.
+   * @param n Number of elements to return from top of vector.
+   */
+  inline const auto head(Eigen::Index n) const {
+    using vari_sub = decltype(vi_->head(n));
+    using var_sub = var_value<const typename vari_sub::value_type>;
+    return var_sub(new vari_sub(vi_->head(n)));
+  }
+
+  /**
+   * View of the tail of the Eigen vector types.
+   * @param n Number of elements to return from bottom of vector.
+   */
+  inline const auto tail(Eigen::Index n) const {
+    using vari_sub = decltype(vi_->tail(n));
+    using var_sub = var_value<const typename vari_sub::value_type>;
+    return var_sub(new vari_sub(vi_->tail(n)));
+  }
+
+  /**
+   * View block of N elements starting at position `i`
+   * @param i Starting position of block.
+   * @param n Number of elements in block
+   */
+  inline const auto segment(Eigen::Index i, Eigen::Index n) const {
+    using vari_sub = decltype(vi_->segment(i, n));
+    using var_sub = var_value<const typename vari_sub::value_type>;
+    return var_sub(new vari_sub(vi_->segment(i, n)));
+  }
+
+  /**
+   * View row of eigen matrices.
+   * @param i Row index to slice.
+   */
+  inline const auto row(Eigen::Index i) const {
+    using vari_sub = decltype(vi_->row(i));
+    using var_sub = var_value<const typename vari_sub::value_type>;
+    return var_sub(new vari_sub(vi_->row(i)));
+  }
+
+  /**
+   * View column of eigen matrices
+   * @param i Column index to slice
+   */
+  inline const auto col(Eigen::Index i) const {
+    using vari_sub = decltype(vi_->col(i));
+    using var_sub = var_value<const typename vari_sub::value_type>;
+    return var_sub(new vari_sub(vi_->col(i)));
+  }
+
+  /**
+   * View element of eigen matrices
+   * @param i Element to access
+   */
+  inline auto coeff(Eigen::Index i) const {
+    using vari_coeff_type = decltype(vi_->coeff(i));
+    auto* vari_coeff = new vari_coeff_type(vi_->coeff(i));
+    reverse_pass_callback([vari_coeff, this, i]() mutable {
+      this->vi_->adj_(i) += vari_coeff->adj_;
+    });
+    return var_value<double>(vari_coeff);
+  }
+
+  /**
+   * View element of eigen matrices
+   * @param i Row to access
+   * @param j Column to access
+   */
+  inline auto coeff(Eigen::Index i, Eigen::Index j) const {
+    using vari_coeff_type = decltype(vi_->coeff(i, j));
+    auto* vari_coeff = new vari_coeff_type(vi_->coeff(i, j));
+    reverse_pass_callback([vari_coeff, this, i, j]() mutable {
+      this->vi_->adj_(i, j) += vari_coeff->adj_;
+    });
+    return var_value<double>(vari_coeff);
+  }
+
+  /**
+   * View element of eigen matrices
+   * @param i Element to access
+   */
+  inline auto operator()(Eigen::Index i) const { return this->coeff(i); }
+
+  /**
+   * View element of eigen matrices
+   * @param i Row to access
+   * @param j Column to access
+   */
+  inline auto operator()(Eigen::Index i, Eigen::Index j) const {
+    return this->coeff(i, j);
+  }
 
   /**
    * Write the value of this autodiff variable and its adjoint to

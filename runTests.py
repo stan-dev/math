@@ -36,21 +36,21 @@ jumbo_folders = [
     "test/unit/math/prim/meta",
     "test/unit/math/prim/prob",
     # "test/unit/math/rev/core",
-    # "test/unit/math/rev/err",
-    # "test/unit/math/rev/fun",
-    # "test/unit/math/rev/functor",
-    # "test/unit/math/rev/meta",
-    # "test/unit/math/rev/prob",
+    "test/unit/math/rev/err",
+    "test/unit/math/rev/fun",
+    #"test/unit/math/rev/functor",
+    "test/unit/math/rev/meta",
+    "test/unit/math/rev/prob",
     # "test/unit/math/fwd/core",
-    # "test/unit/math/fwd/fun",
-    # "test/unit/math/fwd/functor",
-    # "test/unit/math/fwd/meta",
-    # "test/unit/math/fwd/prob",
+    "test/unit/math/fwd/fun",
+    #"test/unit/math/fwd/functor",
+    "test/unit/math/fwd/meta",
+    "test/unit/math/fwd/prob",
     # "test/unit/math/mix/core",
-    # "test/unit/math/mix/fun",
-    # "test/unit/math/mix/functor",
-    # "test/unit/math/mix/meta",
-    # "test/unit/math/mix/prob"
+    "test/unit/math/mix/fun",
+    #"test/unit/math/mix/functor",
+    "test/unit/math/mix/meta",
+    "test/unit/math/mix/prob"
 ]
 
 
@@ -180,7 +180,7 @@ def generateJumboTests(paths):
             stopErr("The --jumbo flag is only allowed with top level folders.", 10)
     for jf in jumbo_files_to_create:
         tests_in_subfolder = sorted([x for x in os.listdir(jf) if x.endswith(testsfx)])
-        chunked_tests = divide_chunks(tests_in_subfolder, 30)
+        chunked_tests = divide_chunks(tests_in_subfolder, 15)
         i = 0
         for tests in chunked_tests:
             i = i + 1

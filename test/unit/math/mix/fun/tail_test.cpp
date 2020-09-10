@@ -1,12 +1,11 @@
 #include <test/unit/math/test_ad.hpp>
 #include <vector>
 
-auto f(int i) {
-  return [=](const auto& y) { return stan::math::tail(y, i); };
-}
-
 template <typename T>
 void expect_tail(const T& x, int n) {
+  auto f = [](int i) {
+    return [=](const auto& y) { return stan::math::tail(y, i); };
+  };
   Eigen::VectorXd v = stan::test::to_vector(x);
   Eigen::RowVectorXd rv = stan::test::to_row_vector(x);
   stan::test::expect_ad(f(n), x);
