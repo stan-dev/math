@@ -15,8 +15,8 @@ namespace math {
  * @param v specified scalar
  * @return the scalar
  */
-template<typename T, require_stan_scalar_t<T>* = nullptr>
-T prod(const T& a){
+template <typename T, require_stan_scalar_t<T>* = nullptr>
+T prod(const T& a) {
   return a;
 }
 
