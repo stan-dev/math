@@ -22,7 +22,7 @@ namespace math {
  * @return ln(det(A))
  */
 template <int R, int C>
-var log_determinant_ldlt(LDLT_factor<var, R, C> &A) {
+var log_determinant_ldlt(const LDLT_factor<var, R, C> &A) {
   if (A.rows() == 0) {
     return 0;
   }
