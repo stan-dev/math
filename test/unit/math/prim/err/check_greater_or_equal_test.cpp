@@ -3,9 +3,8 @@
 #include <limits>
 #include <string>
 
-using stan::math::check_greater_or_equal;
-
 TEST(ErrorHandlingMat, CheckGreaterOrEqualMatrix) {
+  using stan::math::check_greater_or_equal;
   const char* function = "check_greater_or_equal";
   double x;
   double low;
@@ -120,6 +119,7 @@ TEST(ErrorHandlingMat, CheckGreaterOrEqualMatrix) {
 }
 
 TEST(ErrorHandlingMat, CheckGreaterOrEqual_Matrix_one_indexed_message) {
+  using stan::math::check_greater_or_equal;
   const char* function = "check_greater_or_equal";
   double x;
   double low;
@@ -178,6 +178,7 @@ TEST(ErrorHandlingMat, CheckGreaterOrEqual_Matrix_one_indexed_message) {
 }
 
 TEST(ErrorHandlingMat, CheckGreaterOrEqual_nan) {
+  using stan::math::check_greater_or_equal;
   const char* function = "check_greater_or_equal";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
@@ -218,6 +219,7 @@ TEST(ErrorHandlingMat, CheckGreaterOrEqual_nan) {
 }
 
 TEST(ErrorHandlingScalar, CheckGreaterOrEqual) {
+  using stan::math::check_greater_or_equal;
   const char* function = "check_greater_or_equal";
   double x = 10.0;
   double lb = 0.0;
@@ -250,6 +252,7 @@ TEST(ErrorHandlingScalar, CheckGreaterOrEqual) {
 }
 
 TEST(ErrorHandlingScalar, CheckGreaterOrEqual_nan) {
+  using stan::math::check_greater_or_equal;
   const char* function = "check_greater_or_equal";
   double x = 10.0;
   double lb = 0.0;

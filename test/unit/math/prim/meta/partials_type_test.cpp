@@ -2,16 +2,14 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-using stan::partials_type;
-
 TEST(MathMetaPrim, PartialsTypeDouble) {
-  test::expect_same_type<double, partials_type<double>::type>();
+  test::expect_same_type<double, stan::partials_type<double>::type>();
 }
 
 TEST(MathMetaPrim, PartialsTypeFloat) {
-  test::expect_same_type<float, partials_type<float>::type>();
+  test::expect_same_type<float, stan::partials_type<float>::type>();
 }
 
 TEST(MathMetaPrim, PartialsTypeInt) {
-  test::expect_same_type<int, partials_type<int>::type>();
+  test::expect_same_type<int, stan::partials_type<int>::type>();
 }

@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_ERR_IS_POSITIVE_HPP
 #define STAN_MATH_PRIM_ERR_IS_POSITIVE_HPP
 
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/get.hpp>
-#include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/err/elementwise_check.hpp>
 
 namespace stan {
 namespace math {
@@ -14,16 +12,12 @@ namespace math {
  * <code>y</code>.
  * @tparam T_y Type of y
  * @param y Variable to check
- * @return <code>true</code> if vector contains only positive elements
+ * @return <code>true</code> if y contains only positive elements
  */
 template <typename T_y>
 inline bool is_positive(const T_y& y) {
-  for (size_t n = 0; n < stan::math::size(y); ++n) {
-    if (!(stan::get(y, n) > 0)) {
-      return false;
-    }
-  }
-  return true;
+  auto is_good = [](const auto& y) { return y > 0; };
+  return elementwise_is(is_good, y);
 }
 
 /**

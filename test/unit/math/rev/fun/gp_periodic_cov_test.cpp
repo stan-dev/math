@@ -1,37 +1,10 @@
 #include <gtest/gtest.h>
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/util.hpp>
+#include <test/unit/util.hpp>
 #include <limits>
 #include <string>
 #include <vector>
-
-template <typename T_x1, typename T_x2, typename T_sigma, typename T_l,
-          typename T_p>
-std::string pull_msg(std::vector<T_x1> x1, std::vector<T_x2> x2, T_sigma sigma,
-                     T_l l, T_p p) {
-  std::string message;
-  try {
-    stan::math::gp_periodic_cov(x1, x2, sigma, l, p);
-  } catch (std::domain_error &e) {
-    message = e.what();
-  } catch (...) {
-    message = "Threw the wrong exception";
-  }
-  return message;
-}
-
-template <typename T_x1, typename T_sigma, typename T_l, typename T_p>
-std::string pull_msg(std::vector<T_x1> x1, T_sigma sigma, T_l l, T_p p) {
-  std::string message;
-  try {
-    stan::math::gp_periodic_cov(x1, sigma, l, p);
-  } catch (std::domain_error &e) {
-    message = e.what();
-  } catch (...) {
-    message = "Threw the wrong exception";
-  }
-  return message;
-}
 
 TEST(RevMath, gp_periodic_cov_vvvv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
@@ -2108,40 +2081,20 @@ TEST(RevMath, gp_periodic_cov_domain_error_training) {
   var l_bad = -1;
   var p_bad = -1;
 
-  std::string msg1, msg2, msg3, msg4, msg5, msg6, msg7;
-  msg1 = pull_msg(x, sigma, l, p_bad);
-  msg2 = pull_msg(x, sigma, l_bad, p);
-  msg3 = pull_msg(x, sigma_bad, l, p);
-  msg4 = pull_msg(x, sigma, l_bad, p_bad);
-  msg5 = pull_msg(x, sigma_bad, l, p_bad);
-  msg6 = pull_msg(x, sigma_bad, l_bad, p);
-  msg7 = pull_msg(x, sigma_bad, l_bad, p_bad);
-  EXPECT_TRUE(std::string::npos != msg1.find(" period")) << msg1;
-  EXPECT_TRUE(std::string::npos != msg2.find(" length-scale")) << msg2;
-  EXPECT_TRUE(std::string::npos != msg3.find(" signal standard deviation"))
-      << msg3;
-  EXPECT_TRUE(std::string::npos != msg4.find(" length-scale")) << msg4;
-  EXPECT_TRUE(std::string::npos != msg5.find(" signal standard deviation"))
-      << msg5;
-  EXPECT_TRUE(std::string::npos != msg6.find(" signal standard deviation"))
-      << msg6;
-  EXPECT_TRUE(std::string::npos != msg7.find(" signal standard deviation"))
-      << msg7;
-
-  EXPECT_THROW(stan::math::gp_periodic_cov(x, sigma, l, p_bad),
-               std::domain_error);
-  EXPECT_THROW(stan::math::gp_periodic_cov(x, sigma, l_bad, p),
-               std::domain_error);
-  EXPECT_THROW(stan::math::gp_periodic_cov(x, sigma_bad, l, p),
-               std::domain_error);
-  EXPECT_THROW(stan::math::gp_periodic_cov(x, sigma, l_bad, p_bad),
-               std::domain_error);
-  EXPECT_THROW(stan::math::gp_periodic_cov(x, sigma_bad, l, p_bad),
-               std::domain_error);
-  EXPECT_THROW(stan::math::gp_periodic_cov(x, sigma_bad, l_bad, p),
-               std::domain_error);
-  EXPECT_THROW(stan::math::gp_periodic_cov(x, sigma_bad, l_bad, p_bad),
-               std::domain_error);
+  EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x, sigma, l, p_bad),
+                   std::domain_error, " period");
+  EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x, sigma, l_bad, p),
+                   std::domain_error, " length-scale");
+  EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x, sigma_bad, l, p),
+                   std::domain_error, " signal standard deviation");
+  EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x, sigma, l_bad, p_bad),
+                   std::domain_error, " length-scale");
+  EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x, sigma_bad, l, p_bad),
+                   std::domain_error, " signal standard deviation");
+  EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x, sigma_bad, l_bad, p),
+                   std::domain_error, " signal standard deviation");
+  EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x, sigma_bad, l_bad, p_bad),
+                   std::domain_error, " signal standard deviation");
 
   EXPECT_THROW(stan::math::gp_periodic_cov(x_2, sigma, l, p_bad),
                std::domain_error);
@@ -2210,40 +2163,21 @@ TEST(RevMath, gp_periodic_cov_nan_error_training) {
   var l_bad = std::numeric_limits<var>::quiet_NaN();
   var p_bad = std::numeric_limits<var>::quiet_NaN();
 
-  std::string msg1, msg2, msg3, msg4, msg5, msg6, msg7;
-  msg1 = pull_msg(x, sigma, l, p_bad);
-  msg2 = pull_msg(x, sigma, l_bad, p);
-  msg3 = pull_msg(x, sigma_bad, l, p);
-  msg4 = pull_msg(x, sigma, l_bad, p_bad);
-  msg5 = pull_msg(x, sigma_bad, l, p_bad);
-  msg6 = pull_msg(x, sigma_bad, l_bad, p);
-  msg7 = pull_msg(x, sigma_bad, l_bad, p_bad);
-  EXPECT_TRUE(std::string::npos != msg1.find(" period")) << msg1;
-  EXPECT_TRUE(std::string::npos != msg2.find(" length-scale")) << msg2;
-  EXPECT_TRUE(std::string::npos != msg3.find(" signal standard deviation"))
-      << msg3;
-  EXPECT_TRUE(std::string::npos != msg4.find(" length-scale")) << msg4;
-  EXPECT_TRUE(std::string::npos != msg5.find(" signal standard deviation"))
-      << msg5;
-  EXPECT_TRUE(std::string::npos != msg6.find(" signal standard deviation"))
-      << msg6;
-  EXPECT_TRUE(std::string::npos != msg7.find(" signal standard deviation"))
-      << msg7;
+  EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x, sigma, l, p_bad),
+                   std::domain_error, " period");
+  EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x, sigma, l_bad, p),
+                   std::domain_error, " length-scale");
+  EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x, sigma_bad, l, p),
+                   std::domain_error, " signal standard deviation");
+  EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x, sigma, l_bad, p_bad),
+                   std::domain_error, " length-scale");
+  EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x, sigma_bad, l, p_bad),
+                   std::domain_error, " signal standard deviation");
+  EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x, sigma_bad, l_bad, p),
+                   std::domain_error, " signal standard deviation");
+  EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x, sigma_bad, l_bad, p_bad),
+                   std::domain_error, " signal standard deviation");
 
-  EXPECT_THROW(stan::math::gp_periodic_cov(x, sigma, l, p_bad),
-               std::domain_error);
-  EXPECT_THROW(stan::math::gp_periodic_cov(x, sigma, l_bad, p),
-               std::domain_error);
-  EXPECT_THROW(stan::math::gp_periodic_cov(x, sigma_bad, l, p),
-               std::domain_error);
-  EXPECT_THROW(stan::math::gp_periodic_cov(x, sigma, l_bad, p_bad),
-               std::domain_error);
-  EXPECT_THROW(stan::math::gp_periodic_cov(x, sigma_bad, l, p_bad),
-               std::domain_error);
-  EXPECT_THROW(stan::math::gp_periodic_cov(x, sigma_bad, l_bad, p),
-               std::domain_error);
-  EXPECT_THROW(stan::math::gp_periodic_cov(x, sigma_bad, l_bad, p_bad),
-               std::domain_error);
   EXPECT_THROW(stan::math::gp_periodic_cov(x_bad, sigma, l, p),
                std::domain_error);
   EXPECT_THROW(stan::math::gp_periodic_cov(x_bad, sigma, l, p_bad),
@@ -2345,40 +2279,20 @@ TEST(RevMath, gp_periodic_cov_domain_error) {
   var l_bad = -1;
   var p_bad = -1;
 
-  std::string msg1, msg2, msg3, msg4, msg5, msg6, msg7;
-  msg1 = pull_msg(x1, x2, sigma, l, p_bad);
-  msg2 = pull_msg(x1, x2, sigma, l_bad, p);
-  msg3 = pull_msg(x1, x2, sigma_bad, l, p);
-  msg4 = pull_msg(x1, x2, sigma, l_bad, p_bad);
-  msg5 = pull_msg(x1, x2, sigma_bad, l, p_bad);
-  msg6 = pull_msg(x1, x2, sigma_bad, l_bad, p);
-  msg7 = pull_msg(x1, x2, sigma_bad, l_bad, p_bad);
-  EXPECT_TRUE(std::string::npos != msg1.find(" period")) << msg1;
-  EXPECT_TRUE(std::string::npos != msg2.find(" length-scale")) << msg2;
-  EXPECT_TRUE(std::string::npos != msg3.find(" signal standard deviation"))
-      << msg3;
-  EXPECT_TRUE(std::string::npos != msg4.find(" length-scale")) << msg4;
-  EXPECT_TRUE(std::string::npos != msg5.find(" signal standard deviation"))
-      << msg5;
-  EXPECT_TRUE(std::string::npos != msg6.find(" signal standard deviation"))
-      << msg6;
-  EXPECT_TRUE(std::string::npos != msg7.find(" signal standard deviation"))
-      << msg7;
-
-  EXPECT_THROW(stan::math::gp_periodic_cov(x1, x2, sigma, l, p_bad),
-               std::domain_error);
-  EXPECT_THROW(stan::math::gp_periodic_cov(x1, x2, sigma, l_bad, p),
-               std::domain_error);
-  EXPECT_THROW(stan::math::gp_periodic_cov(x1, x2, sigma_bad, l, p),
-               std::domain_error);
-  EXPECT_THROW(stan::math::gp_periodic_cov(x1, x2, sigma, l_bad, p_bad),
-               std::domain_error);
-  EXPECT_THROW(stan::math::gp_periodic_cov(x1, x2, sigma_bad, l, p_bad),
-               std::domain_error);
-  EXPECT_THROW(stan::math::gp_periodic_cov(x1, x2, sigma_bad, l_bad, p),
-               std::domain_error);
-  EXPECT_THROW(stan::math::gp_periodic_cov(x1, x2, sigma_bad, l_bad, p_bad),
-               std::domain_error);
+  EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x1, x2, sigma, l, p_bad),
+                   std::domain_error, " period");
+  EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x1, x2, sigma, l_bad, p),
+                   std::domain_error, " length-scale");
+  EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x1, x2, sigma_bad, l, p),
+                   std::domain_error, " signal standard deviation");
+  EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x1, x2, sigma, l_bad, p_bad),
+                   std::domain_error, " length-scale");
+  EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x1, x2, sigma_bad, l, p_bad),
+                   std::domain_error, " signal standard deviation");
+  EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x1, x2, sigma_bad, l_bad, p),
+                   std::domain_error, " signal standard deviation");
+  EXPECT_THROW_MSG(stan::math::gp_periodic_cov(x1, x2, sigma_bad, l_bad, p_bad),
+                   std::domain_error, " signal standard deviation");
 
   std::vector<Eigen::Matrix<var, -1, 1>> x_vec_1(3);
   for (size_t i = 0; i < x_vec_1.size(); ++i) {

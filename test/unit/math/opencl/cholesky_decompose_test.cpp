@@ -1,13 +1,10 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim.hpp>
 #include <stan/math/opencl/opencl.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <vector>
-
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(MathMatrixOpenCL, cholesky_decompose_cpu_vs_cl_small) {
   stan::math::matrix_d m0(3, 3);

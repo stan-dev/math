@@ -4,6 +4,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/zeros.hpp>
 #include <stan/math/opencl/copy.hpp>
+#include <test/unit/util.hpp>
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
 #include <CL/cl2.hpp>
@@ -13,14 +14,10 @@ using Eigen::MatrixXd;
 using Eigen::MatrixXi;
 using stan::math::matrix_cl;
 
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
-
 TEST(KernelGenerator, operation_cl_errors) {
   EXPECT_THROW(matrix_cl<double> a = stan::math::as_operation_cl(3.5),
-               std::domain_error);
-  EXPECT_THROW(stan::math::as_operation_cl(3.5).eval(), std::domain_error);
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::as_operation_cl(3.5).eval(), std::invalid_argument);
 }
 
 TEST(KernelGenerator, kernel_caching) {
@@ -33,9 +30,9 @@ TEST(KernelGenerator, kernel_caching) {
   matrix_cl<double> m2_cl(m2);
   auto tmp = m1_cl + 0.1234 * m2_cl;
   using cache = stan::math::internal::multi_result_kernel_internal<
-      0, stan::math::load_<matrix_cl<double>&>>::inner<const decltype(tmp)&>;
+      0, stan::math::load_<matrix_cl<double>&>&&>::inner<const decltype(tmp)&>;
   using unused_cache = stan::math::internal::multi_result_kernel_internal<
-      0, stan::math::load_<matrix_cl<int>&>>::inner<const decltype(tmp)&>;
+      0, stan::math::load_<matrix_cl<int>&>&&>::inner<const decltype(tmp)&>;
   EXPECT_EQ(cache::kernel_(), nullptr);
   matrix_cl<double> res_cl = tmp;
   cl_kernel cached_kernel = cache::kernel_();

@@ -27,15 +27,13 @@ namespace math {
  */
 template <typename T>
 class scalar_ : public operation_cl<scalar_<T>, T> {
- private:
-  T a_;
-
  public:
   static_assert(std::is_arithmetic<T>::value,
                 "class scalar_<T>: std::is_arithmetic<T> must be true!");
   using Scalar = T;
   using base = operation_cl<scalar_<T>, T>;
   using base::var_name_;
+  T a_;
 
   /**
    * Constructor for an arithmetic type

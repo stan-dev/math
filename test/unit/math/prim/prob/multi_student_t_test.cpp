@@ -5,13 +5,12 @@
 #include <vector>
 #include <limits>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using stan::math::multi_student_t_log;
-using stan::math::multi_student_t_rng;
-using std::vector;
-
 TEST(ProbDistributionsMultiStudentT, NotVectorized) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::multi_student_t_log;
+  using stan::math::multi_student_t_rng;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
@@ -26,6 +25,11 @@ TEST(ProbDistributionsMultiStudentT, NotVectorized) {
   EXPECT_NEAR(-10.1246, lp, 0.0001);
 }
 TEST(ProbDistributionsMultiStudentT, Vectorized) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::multi_student_t_log;
+  using stan::math::multi_student_t_rng;
+  using std::vector;
   boost::random::mt19937 rng;
   vector<Matrix<double, Dynamic, 1> > vec_y(2);
   vector<Matrix<double, 1, Dynamic> > vec_y_t(2);
@@ -89,6 +93,11 @@ TEST(ProbDistributionsMultiStudentT, Vectorized) {
   EXPECT_NO_THROW(stan::math::multi_student_t_rng(nu, vec_mu_t, Sigma, rng));
 }
 TEST(ProbDistributionsMultiStudentT, Sigma) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::multi_student_t_log;
+  using stan::math::multi_student_t_rng;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
@@ -107,6 +116,11 @@ TEST(ProbDistributionsMultiStudentT, Sigma) {
 }
 
 TEST(ProbDistributionsMultiStudentT, Mu) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::multi_student_t_log;
+  using stan::math::multi_student_t_rng;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
@@ -132,6 +146,11 @@ TEST(ProbDistributionsMultiStudentT, Mu) {
 }
 
 TEST(ProbDistributionsMultiStudentT, Y) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::multi_student_t_log;
+  using stan::math::multi_student_t_rng;
+  using std::vector;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
   Matrix<double, Dynamic, 1> mu(3, 1);
@@ -152,6 +171,11 @@ TEST(ProbDistributionsMultiStudentT, Y) {
 }
 
 TEST(ProbDistributionsMultiStudentT, Nu) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::multi_student_t_log;
+  using stan::math::multi_student_t_rng;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
@@ -186,6 +210,11 @@ TEST(ProbDistributionsMultiStudentT, Nu) {
 }
 
 TEST(ProbDistributionsMultiStudentT, ErrorSize1) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::multi_student_t_log;
+  using stan::math::multi_student_t_rng;
+  using std::vector;
   Matrix<double, Dynamic, 1> y(2, 1);
   y << 2.0, -2.0;
   Matrix<double, Dynamic, 1> mu(3, 1);
@@ -198,6 +227,11 @@ TEST(ProbDistributionsMultiStudentT, ErrorSize1) {
 }
 
 TEST(ProbDistributionsMultiStudentT, ErrorSize2) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::multi_student_t_log;
+  using stan::math::multi_student_t_rng;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
@@ -212,6 +246,11 @@ TEST(ProbDistributionsMultiStudentT, ErrorSize2) {
 }
 
 TEST(ProbDistributionsMultiStudentT, ErrorSize3) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::multi_student_t_log;
+  using stan::math::multi_student_t_rng;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
@@ -226,6 +265,11 @@ TEST(ProbDistributionsMultiStudentT, ErrorSize3) {
 }
 
 TEST(ProbDistributionsMultiStudentT, ProptoAllDoublesZero) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::multi_student_t_log;
+  using stan::math::multi_student_t_rng;
+  using std::vector;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
   Matrix<double, Dynamic, 1> mu(3, 1);
@@ -238,6 +282,11 @@ TEST(ProbDistributionsMultiStudentT, ProptoAllDoublesZero) {
 }
 
 TEST(ProbDistributionsMultiStudentT, marginalOneChiSquareGoodnessFitTest) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::multi_student_t_log;
+  using stan::math::multi_student_t_rng;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 2.0, 3.0, 11.0;
@@ -280,6 +329,11 @@ TEST(ProbDistributionsMultiStudentT, marginalOneChiSquareGoodnessFitTest) {
 }
 
 TEST(ProbDistributionsMultiStudentT, marginalTwoChiSquareGoodnessFitTest) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::multi_student_t_log;
+  using stan::math::multi_student_t_rng;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 2.0, 3.0, 11.0;
@@ -322,6 +376,11 @@ TEST(ProbDistributionsMultiStudentT, marginalTwoChiSquareGoodnessFitTest) {
 }
 
 TEST(ProbDistributionsMultiStudentT, WrongSize) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::multi_student_t_log;
+  using stan::math::multi_student_t_rng;
+  using std::vector;
   vector<Matrix<double, Dynamic, 1> > y_3_3(3);
   vector<Matrix<double, Dynamic, 1> > y_3_1(3);
   vector<Matrix<double, Dynamic, 1> > y_3_2(3);
