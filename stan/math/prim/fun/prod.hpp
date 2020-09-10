@@ -16,8 +16,8 @@ namespace math {
  * @return the scalar
  */
 template<typename T, require_stan_scalar_t<T>* = nullptr>
-T prod(const T& a){
-  return a;
+T prod(const T& v){
+  return v;
 }
 
 /**
