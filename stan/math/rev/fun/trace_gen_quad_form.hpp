@@ -52,22 +52,22 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
     arena_D = D_ref;
   }
 
-  if (!is_constant<Tb, Td>::value) {
+  if (!is_constant_all<Tb, Td>::value) {
     arena_A_val = value_of(A_ref);
   }
 
-  if (!is_constant<Ta, Tb>::value) {
+  if (!is_constant_all<Ta, Tb>::value) {
     arena_D_val = value_of(D_ref);
   }
 
   var res;
 
-  if (!is_constant<Ta>::value && !is_constant<Tb>::value
-      && is_constant<Td>::value) {
+  if (is_constant<Ta>::value && is_constant<Tb>::value
+      && !is_constant<Td>::value) {
     res = (value_of(D) * arena_B_val.transpose() * arena_A_val * arena_B_val)
               .trace();
-  } else if (is_constant<Ta>::value && !is_constant<Tb>::value
-             && !is_constant<Td>::value) {
+  } else if (!is_constant<Ta>::value && is_constant<Tb>::value
+             && is_constant<Td>::value) {
     res = (arena_D_val * arena_B_val.transpose() * value_of(A) * arena_B_val)
               .trace();
   } else {
