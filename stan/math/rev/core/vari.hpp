@@ -527,8 +527,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @param j Column index
    */
   inline auto coeff(Eigen::Index i, Eigen::Index j) {
-    return vari_value<eigen_scalar>(val_.coeffRef(i, j),
-                                                     adj_.coeffRef(i, j));
+    return vari_value<eigen_scalar>(val_.coeffRef(i, j), adj_.coeffRef(i, j));
   }
 
   /**
