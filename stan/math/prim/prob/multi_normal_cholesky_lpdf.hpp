@@ -143,7 +143,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
         ops_partials.edge2_.partials_vec_[i] = scaled_diff;
       }
       if (!is_constant_all<T_covar>::value) {
-        ops_partials.edge3_.partials_ = scaled_diff * half;
+        ops_partials.edge3_.partials_ += scaled_diff * half;
       }
     }
   }
