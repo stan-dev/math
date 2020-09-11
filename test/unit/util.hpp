@@ -13,8 +13,6 @@
 /**
  * Tests for exact elementwise equality of input matrices of
  * the supplied type with he EXPECT_EQ macro from GTest.
- * This EXPECT test should be used when the elements
- * of the supplied matrices are not doubles.
  *
  * @param A first input matrix to compare
  * @param B second input matrix to compare
@@ -32,19 +30,25 @@
 
 /**
  * Tests for  exact elementwise equality of the input matrices
- * of doubles with he EXPECT_EQ macro from GTest.
+ * with the EXPECT_EQ macro from GTest.
  *
  * @param A first input matrix to compare
  * @param B second input matrix to compare
  */
-#define EXPECT_MATRIX_EQ(A, B)               \
-  {                                          \
-    const Eigen::MatrixXd& A_eval = A;       \
-    const Eigen::MatrixXd& B_eval = B;       \
-    EXPECT_EQ(A_eval.rows(), B_eval.rows()); \
-    EXPECT_EQ(A_eval.cols(), B_eval.cols()); \
-    for (int i = 0; i < A_eval.size(); i++)  \
-      EXPECT_EQ(A_eval(i), B_eval(i));       \
+#define EXPECT_MATRIX_EQ(A, B)                                        \
+  {                                                                   \
+    using T_A = std::decay_t<decltype(A)>;                            \
+    using T_B = std::decay_t<decltype(B)>;                            \
+    const Eigen::Matrix<typename T_A::Scalar, T_A::RowsAtCompileTime, \
+                        T_A::ColsAtCompileTime>                       \
+        A_eval = A;                                                   \
+    const Eigen::Matrix<typename T_B::Scalar, T_B::RowsAtCompileTime, \
+                        T_B::ColsAtCompileTime>                       \
+        B_eval = B;                                                   \
+    EXPECT_EQ(A_eval.rows(), B_eval.rows());                          \
+    EXPECT_EQ(A_eval.cols(), B_eval.cols());                          \
+    for (int i = 0; i < A_eval.size(); i++)                           \
+      EXPECT_EQ(A_eval(i), B_eval(i));                                \
   }
 
 /**
