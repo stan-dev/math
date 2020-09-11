@@ -52,7 +52,7 @@ inline Eigen::Matrix<var, R, T2::ColsAtCompileTime> mdivide_left_ldlt(
     Eigen::Matrix<double, R, T2::ColsAtCompileTime> adjB = A.solve(res.adj());
 
     if (!is_constant<T1>::value)
-      forward_as<const LDLT_factor<var, R, C>>(A).alloc_->arena_A_.adj()
+      forward_as<LDLT_factor<var, R, C>>(A).alloc_->arena_A_.adj()
           += -adjB * res.val().transpose().eval();
 
     if (!is_constant<T2>::value)
