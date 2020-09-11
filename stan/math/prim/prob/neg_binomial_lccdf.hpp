@@ -46,7 +46,8 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
   }
 
   T_partials_return P(0.0);
-  operands_and_partials<T_alpha_ref, T_beta_ref> ops_partials(alpha_ref, beta_ref);
+  operands_and_partials<T_alpha_ref, T_beta_ref> ops_partials(alpha_ref,
+                                                              beta_ref);
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
