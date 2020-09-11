@@ -19,12 +19,13 @@ namespace math {
  * is within the tolerance specified by <code>CONSTRAINT_TOLERANCE</code>.
  * This function only accepts <code>Eigen::Matrix</code> vectors, statically
  * typed vectors, not general matrices with 1 column.
- * @tparam EigMat A type derived from `EigenBase` with 1 compile time row or column
+ * @tparam EigMat A type derived from `EigenBase` with 1 compile time row or
+ * column
  * @param theta Eigen vector to test
  * @return <code>true</code> if the vector is not a unit
  *   vector or if any element is <code>NaN</code>
  */
- template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
 inline bool is_unit_vector(const EigVec& theta) {
   using std::fabs;
   const auto& theta_ref = to_ref(theta);

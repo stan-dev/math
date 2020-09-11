@@ -14,7 +14,8 @@ namespace math {
  * However, we are just fixing the unidentified radius to 1.
  * Thus, the transformation is just the identity
  *
- * @tparam EigVec A type derived from `EigenBase` with 1 compile time row or column.
+ * @tparam EigVec A type derived from `EigenBase` with 1 compile time row or
+ * column.
  * @param x unit vector of dimension K
  * @return Unit vector of dimension K considered "free"
  */

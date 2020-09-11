@@ -20,7 +20,8 @@ namespace math {
  * be square, but require at least as many rows M as columns N
  * (i.e., M &gt;= N).
  * Tolerance is specified by <code>math::CONSTRAINT_TOLERANCE</code>.
- * @tparam EigMat Type inheriting from `MatrixBase` with dynamic rows and columns.
+ * @tparam EigMat Type inheriting from `MatrixBase` with dynamic rows and
+ * columns.
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Matrix to test
@@ -29,7 +30,8 @@ namespace math {
  *   if there are 0 columns, or if any element in matrix is NaN
  */
 template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr>
-void check_cholesky_factor_corr(const char* function, const char* name,const EigMat& y) {
+void check_cholesky_factor_corr(const char* function, const char* name,
+                                const EigMat& y) {
   const auto& y_ref = to_ref(y);
   check_square(function, name, y_ref);
   check_lower_triangular(function, name, y_ref);

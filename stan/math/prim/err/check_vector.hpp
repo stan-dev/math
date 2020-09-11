@@ -51,8 +51,8 @@ inline void check_vector(const char* function, const char* name,
  */
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
 constexpr inline void check_vector(const char* function, const char* name,
-                         const EigVec& x) {
-   return;
+                                   const EigVec& x) {
+  return;
 }
 }  // namespace math
 }  // namespace stan

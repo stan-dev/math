@@ -12,14 +12,15 @@ namespace math {
 /**
  * Check if the specified matrix is not empty. This check does not allow 0x0
  * matrices.
- * @tparam EigMat A type derived from `EigenBase` 
+ * @tparam EigMat A type derived from `EigenBase`
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Matrix to test
  * @throw <code>std::invalid_argument</code> if the matrix is empty
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
-inline void check_nonempty(const char* function, const char* name, const EigMat& y) {
+inline void check_nonempty(const char* function, const char* name,
+                           const EigMat& y) {
   if (y.rows() > 0 && y.cols() > 0) {
     return;
   }

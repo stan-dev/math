@@ -35,7 +35,8 @@ inline void append_vectors(VecInOut& x) {}
  * @param args Pack of other vectors to fill in the in/out vector.
  */
 template <typename VecInOut, typename VecIn, typename... VecArgs>
-inline void append_vectors(VecInOut& x, const VecIn& y, const VecArgs&... args) {
+inline void append_vectors(VecInOut& x, const VecIn& y,
+                           const VecArgs&... args) {
   x.insert(x.end(), y.begin(), y.end());
   append_vectors(x, args...);
 }

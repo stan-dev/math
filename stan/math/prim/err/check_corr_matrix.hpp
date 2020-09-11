@@ -21,7 +21,8 @@ namespace math {
  * (inclusive).
  * This function throws exceptions if the variable is not a valid
  * correlation matrix.
- * @tparam EigMat Type inheriting from `MatrixBase` with dynamic rows and columns.
+ * @tparam EigMat Type inheriting from `MatrixBase` with dynamic rows and
+ * columns.
  * @param function Name of the function this was called from
  * @param name Name of the variable
  * @param y Matrix to test
@@ -30,8 +31,9 @@ namespace math {
  *   diagonals not near 1, not positive definite, or any of the
  *   elements nan
  */
- template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr>
-inline void check_corr_matrix(const char* function, const char* name, const EigMat& y) {
+template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr>
+inline void check_corr_matrix(const char* function, const char* name,
+                              const EigMat& y) {
   const auto& y_ref = to_ref(y);
   check_square(function, name, y_ref);
   using std::fabs;

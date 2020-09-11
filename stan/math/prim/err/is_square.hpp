@@ -15,7 +15,7 @@ namespace math {
  * @param y Matrix to test
  * @return <code>true</code> if matrix is square
  */
- template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
 inline bool is_square(const EigMat& y) {
   return is_size_match(y.rows(), y.cols());
 }

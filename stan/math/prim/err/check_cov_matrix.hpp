@@ -11,7 +11,8 @@ namespace math {
  * Check if the specified matrix is a valid covariance matrix.
  * A valid covariance matrix is a square, symmetric matrix that is
  * positive definite.
- * @tparam EigMat Type inheriting from `MatrixBase` with dynamic rows and columns.
+ * @tparam EigMat Type inheriting from `MatrixBase` with dynamic rows and
+ * columns.
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Matrix to test
@@ -22,7 +23,8 @@ namespace math {
  *   or if any element of the matrix is nan
  */
 template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr>
-inline void check_cov_matrix(const char* function, const char* name, const EigMat& y) {
+inline void check_cov_matrix(const char* function, const char* name,
+                             const EigMat& y) {
   check_pos_definite(function, name, y);
 }
 

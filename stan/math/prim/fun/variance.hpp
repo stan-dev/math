@@ -29,8 +29,7 @@ inline value_type_t<EigMat> variance(const EigMat& m) {
   if (mat.size() == 1) {
     return value_t{0.0};
   }
-  return (mat.array() - mat.mean()).square().sum()
-         / value_t(mat.size() - 1.0);
+  return (mat.array() - mat.mean()).square().sum() / value_t(mat.size() - 1.0);
 }
 
 /**

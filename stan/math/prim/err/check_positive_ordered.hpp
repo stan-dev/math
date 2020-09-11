@@ -15,7 +15,8 @@ namespace math {
 /**
  * Check if the specified vector contains non-negative values and is sorted into
  * strictly increasing order.
- * @tparam EigVec A type derived from `EigenBase` with 1 compile time row or column
+ * @tparam EigVec A type derived from `EigenBase` with 1 compile time row or
+ * column
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Vector to test
@@ -24,7 +25,8 @@ namespace math {
  *   values, or if any element is <code>NaN</code>.
  */
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
-void check_positive_ordered(const char* function, const char* name, const EigVec& y) {
+void check_positive_ordered(const char* function, const char* name,
+                            const EigVec& y) {
   const auto& y_ref = to_ref(y);
   if (y_ref.size() == 0) {
     return;

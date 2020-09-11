@@ -23,7 +23,7 @@ namespace math {
  *   size, or if the matrix is symmetric, or if it is positive definite, or if
  *   no element is <code>NaN</code>
  */
- template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr>
+template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr>
 inline bool is_pos_definite(const EigMat& y) {
   const auto& y_ref = to_ref(y);
   if (!is_symmetric(y_ref)) {

@@ -22,8 +22,6 @@ inline bool is_column_index(const EigMat& y, size_t i) {
          && i < static_cast<size_t>(y.cols()) + stan::error_index::value;
 }
 
-
-
 }  // namespace math
 }  // namespace stan
 #endif

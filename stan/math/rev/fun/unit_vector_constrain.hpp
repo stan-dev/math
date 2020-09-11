@@ -73,7 +73,8 @@ auto unit_vector_constrain(const EigMat& y) {
   plain_type_t<EigMat> unit_vector_y(y_mat.size());
   for (int k = 0; k < y_mat.size(); ++k) {
     unit_vector_y.coeffRef(k) = var(new internal::unit_vector_elt_vari(
-        unit_vecd[k], y_vi_array, unit_vector_y_d_array, y_mat.size(), k, norm));
+        unit_vecd[k], y_vi_array, unit_vector_y_d_array, y_mat.size(), k,
+        norm));
   }
   return unit_vector_y;
 }

@@ -27,8 +27,8 @@ namespace math {
  *   or if any element of the matrix is <code>NaN</code>.
  */
 template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr>
-inline void check_pos_semidefinite(
-    const char* function, const char* name, const EigMat& y) {
+inline void check_pos_semidefinite(const char* function, const char* name,
+                                   const EigMat& y) {
   const auto& y_ref = to_ref(y);
   check_symmetric(function, name, y_ref);
   check_positive(function, name, "rows", y_ref.rows());

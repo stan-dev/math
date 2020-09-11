@@ -21,7 +21,8 @@ namespace math {
  * tolerance specified by <code>CONSTRAINT_TOLERANCE</code>. This
  * function only accepts Eigen vectors, statically typed vectors,
  * not general matrices with 1 column.
- * @tparam EigVec A type derived from `EigenBase` with either dynamic rows or columns
+ * @tparam EigVec A type derived from `EigenBase` with either dynamic rows or
+ * columns
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param theta Vector to test
@@ -30,8 +31,9 @@ namespace math {
  * @throw <code>std::domain_error</code> if the vector is not a unit
  *   vector or if any element is <code>NaN</code>
  */
- template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
-void check_unit_vector(const char* function, const char* name, const EigVec& theta) {
+template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+void check_unit_vector(const char* function, const char* name,
+                       const EigVec& theta) {
   check_nonzero_size(function, name, theta);
   using std::fabs;
   value_type_t<EigVec> ssq = theta.squaredNorm();
