@@ -13,6 +13,7 @@ using stan::is_vector;
 using stan::scalar_type;
 using stan::math::fvar;
 using stan::math::value_of;
+using stan::math::value_of_rec;
 using stan::math::var;
 using std::vector;
 
@@ -251,8 +252,8 @@ class AgradDistributionTestFixture : public ::testing::Test {
                                         Scalar3, Scalar4, Scalar5>(p0, p1, p2,
                                                                    p3, p4, p5);
 
-      EXPECT_TRUE(reference_logprob_false - logprob_false
-                  == reference_logprob_true - logprob_true)
+      EXPECT_NEAR(value_of_rec(reference_logprob_false - logprob_false),
+                  value_of_rec(reference_logprob_true - logprob_true), 1e-12)
           << "Proportional test failed at index: " << n << std::endl
           << "  reference params: " << parameters[0] << std::endl
           << "  current params:   " << parameters[n] << std::endl
@@ -318,8 +319,8 @@ class AgradDistributionTestFixture : public ::testing::Test {
   // works for <var>
   double calculate_gradients_1storder(vector<double>& grad, var& logprob,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     logprob.grad(x, grad);
-    stan::math::recover_memory();
     return logprob.val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad, var& logprob,
@@ -334,7 +335,7 @@ class AgradDistributionTestFixture : public ::testing::Test {
   // works for fvar<double>
   double calculate_gradients_1storder(vector<double>& grad,
                                       fvar<double>& logprob, vector<var>& x) {
-    x.push_back(logprob.d_);
+    grad.push_back(logprob.d_);
     return logprob.val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad,
@@ -350,12 +351,13 @@ class AgradDistributionTestFixture : public ::testing::Test {
   double calculate_gradients_1storder(vector<double>& grad,
                                       fvar<fvar<double>>& logprob,
                                       vector<var>& x) {
-    x.push_back(logprob.d_.val_);
+    grad.push_back(logprob.d_.val_);
     return logprob.val().val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad,
                                       fvar<fvar<double>>& logprob,
                                       vector<var>& x) {
+    grad.push_back(logprob.d_.d_);
     return logprob.val().val();
   }
   double calculate_gradients_3rdorder(vector<double>& grad,
@@ -367,14 +369,14 @@ class AgradDistributionTestFixture : public ::testing::Test {
   // works for fvar<var>
   double calculate_gradients_1storder(vector<double>& grad, fvar<var>& logprob,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     logprob.val_.grad(x, grad);
-    stan::math::recover_memory();
     return logprob.val_.val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad, fvar<var>& logprob,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     logprob.d_.grad(x, grad);
-    stan::math::recover_memory();
     return logprob.val_.val();
   }
   double calculate_gradients_3rdorder(vector<double>& grad, fvar<var>& logprob,
@@ -386,22 +388,22 @@ class AgradDistributionTestFixture : public ::testing::Test {
   double calculate_gradients_1storder(vector<double>& grad,
                                       fvar<fvar<var>>& logprob,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     logprob.val_.val_.grad(x, grad);
-    stan::math::recover_memory();
     return logprob.val_.val_.val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad,
                                       fvar<fvar<var>>& logprob,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     logprob.d_.val_.grad(x, grad);
-    stan::math::recover_memory();
     return logprob.val_.val_.val();
   }
   double calculate_gradients_3rdorder(vector<double>& grad,
                                       fvar<fvar<var>>& logprob,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     logprob.d_.d_.grad(x, grad);
-    stan::math::recover_memory();
     return logprob.val_.val_.val();
   }
 
@@ -471,6 +473,8 @@ class AgradDistributionTestFixture : public ::testing::Test {
         test_finite_diffs_equal(parameters[n], finite_diffs, gradients);
       }
     }
+
+    stan::math::recover_memory();
   }
 
   void test_gradients_equal(const vector<double>& expected_gradients,
@@ -479,7 +483,7 @@ class AgradDistributionTestFixture : public ::testing::Test {
         << "Number of expected gradients and calculated gradients must match "
            "-- error in test fixture";
     for (size_t i = 0; i < expected_gradients.size(); i++) {
-      EXPECT_FLOAT_EQ(expected_gradients[i], gradients[i])
+      EXPECT_NEAR(expected_gradients[i], gradients[i], 1e-7)
           << "Comparison of expected gradient to calculated gradient failed";
     }
   }
@@ -546,6 +550,8 @@ class AgradDistributionTestFixture : public ::testing::Test {
       test_gradients_equal(expected_gradients1, gradients1);
       test_gradients_equal(expected_gradients2, gradients2);
       test_gradients_equal(expected_gradients3, gradients3);
+
+      stan::math::recover_memory();
     }
   }
 
@@ -557,16 +563,16 @@ class AgradDistributionTestFixture : public ::testing::Test {
                                      const size_t N_REPEAT) {
     if (is_vec) {
       for (size_t i = 0; i < N_REPEAT; i++) {
-        EXPECT_FLOAT_EQ(single_gradients[pos_single],
-                        multiple_gradients[pos_multiple])
+        EXPECT_NEAR(single_gradients[pos_single],
+                    multiple_gradients[pos_multiple], 1e-7)
             << "Comparison of single_gradient value to vectorized gradient "
                "failed";
         pos_multiple++;
       }
       pos_single++;
     } else {
-      EXPECT_FLOAT_EQ(single_gradients[pos_single] * double(N_REPEAT),
-                      multiple_gradients[pos_multiple])
+      EXPECT_NEAR(single_gradients[pos_single] * double(N_REPEAT),
+                  multiple_gradients[pos_multiple], 1e-7)
           << "Comparison of single_gradient value to vectorized gradient "
              "failed";
       pos_single++;
@@ -637,8 +643,10 @@ class AgradDistributionTestFixture : public ::testing::Test {
       add_vars(x3, p0, p1, p2, p3, p4, p5);
 
       calculate_gradients_1storder(multiple_gradients1, multiple_lp, x1);
-      calculate_gradients_1storder(multiple_gradients2, multiple_lp, x1);
-      calculate_gradients_1storder(multiple_gradients3, multiple_lp, x1);
+      calculate_gradients_2ndorder(multiple_gradients2, multiple_lp, x2);
+      calculate_gradients_3rdorder(multiple_gradients3, multiple_lp, x3);
+
+      stan::math::recover_memory();
 
       EXPECT_NEAR(stan::math::value_of_rec(N_REPEAT * single_lp),
                   stan::math::value_of_rec(multiple_lp), 1e-8)
@@ -789,7 +797,7 @@ class AgradDistributionTestFixture : public ::testing::Test {
     return params[0];
   }
 };
-TYPED_TEST_CASE_P(AgradDistributionTestFixture);
+TYPED_TEST_SUITE_P(AgradDistributionTestFixture);
 
 TYPED_TEST_P(AgradDistributionTestFixture, CallAllVersions) {
   this->call_all_versions();
@@ -819,8 +827,10 @@ TYPED_TEST_P(AgradDistributionTestFixture, Length0Vector) {
   this->test_length_0_vector();
 }
 
-REGISTER_TYPED_TEST_CASE_P(AgradDistributionTestFixture, CallAllVersions,
-                           ValidValues, InvalidValues, Propto, FiniteDiff,
-                           Function, RepeatAsVector, Length0Vector);
+REGISTER_TYPED_TEST_SUITE_P(AgradDistributionTestFixture, CallAllVersions,
+                            ValidValues, InvalidValues, Propto, FiniteDiff,
+                            Function, RepeatAsVector, Length0Vector);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AgradDistributionTestFixture);
 
 #endif

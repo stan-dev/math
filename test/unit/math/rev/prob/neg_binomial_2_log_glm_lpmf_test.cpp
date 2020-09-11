@@ -4,15 +4,14 @@
 #include <vector>
 #include <cmath>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using stan::math::var;
-using std::vector;
-
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsNegBinomial2LogGLM,
      glm_matches_neg_binomial_2_log_doubles) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   vector<int> y{1, 0, 1};
   Matrix<double, Dynamic, Dynamic> x(3, 2);
   x << -12, 46, -42, 24, 25, 27;
@@ -34,6 +33,10 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
 //  from existing primitives.
 TEST(ProbDistributionsNegBinomial2LogGLM,
      glm_matches_neg_binomial_2_log_doubles_rand) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   for (size_t ii = 0; ii < 42; ii++) {
     vector<int> y(3);
     for (size_t i = 0; i < 3; i++) {
@@ -60,6 +63,10 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_vars) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   vector<int> y{1, 0, 1};
   Matrix<var, Dynamic, Dynamic> x(3, 2);
   x << -12, 46, -42, 24, 25, 27;
@@ -111,6 +118,10 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_vars) {
 }
 
 TEST(ProbDistributionsNegBinomial2LogGLM, broadcast_x) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   vector<int> y{1, 0, 5};
   Matrix<double, 1, Dynamic> x(1, 2);
   x << -12, 46;
@@ -142,6 +153,10 @@ TEST(ProbDistributionsNegBinomial2LogGLM, broadcast_x) {
 }
 
 TEST(ProbDistributionsNegBinomial2LogGLM, broadcast_y) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   int y = 13;
   Matrix<int, Dynamic, 1> y_vec = Matrix<int, Dynamic, 1>::Constant(3, 1, y);
   Matrix<double, Dynamic, Dynamic> x(3, 2);
@@ -177,6 +192,10 @@ TEST(ProbDistributionsNegBinomial2LogGLM, broadcast_y) {
 
 TEST(ProbDistributionsNegBinomial2LogGLM,
      glm_matches_neg_binomial_2_log_vars_zero_instances) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   vector<int> y{};
   Matrix<var, Dynamic, Dynamic> x(0, 2);
   Matrix<var, Dynamic, 1> beta(2, 1);
@@ -216,6 +235,10 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
 
 TEST(ProbDistributionsNegBinomial2LogGLM,
      glm_matches_neg_binomial_2_log_vars_zero_attributes) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   vector<int> y{1, 0, 1};
   Matrix<var, Dynamic, Dynamic> x(3, 0);
   Matrix<var, Dynamic, 1> beta(0, 1);
@@ -250,6 +273,10 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
 //  from existing primitives.
 TEST(ProbDistributionsNegBinomial2LogGLM,
      glm_matches_neg_binomial_2_log_vars_rand) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   for (size_t ii = 0; ii < 200; ii++) {
     vector<int> y(3);
     for (size_t i = 0; i < 3; i++) {
@@ -309,6 +336,10 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
 //  from existing primitives, in case beta is a scalar.
 TEST(ProbDistributionsNegBinomial2LogGLM,
      glm_matches_neg_binomial_2_log_vars_rand_scal_beta) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   for (size_t ii = 0; ii < 42; ii++) {
     vector<int> y(3);
     for (size_t i = 0; i < 3; i++) {
@@ -361,6 +392,10 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
 //  from existing primitives.
 TEST(ProbDistributionsNegBinomial2LogGLM,
      glm_matches_neg_binomial_2_log_varying_intercept) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   for (size_t ii = 0; ii < 200; ii++) {
     vector<int> y(3);
     for (size_t i = 0; i < 3; i++) {
@@ -425,6 +460,10 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
 //  We check that we can instantiate all different interface types.
 TEST(ProbDistributionsNegBinomial2LogGLM,
      glm_matches_neg_binomial_2_log_interface_types) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   double value = 0;
   double value2 = 0;
 
@@ -470,6 +509,10 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
 //  We check that the right errors are thrown.
 TEST(ProbDistributionsNegBinomial2LogGLM,
      glm_matches_neg_binomial_2_log_error_checking) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using std::vector;
   int N = 3;
   int M = 2;
   int W = 4;

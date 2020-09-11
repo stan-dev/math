@@ -88,6 +88,6 @@ class AgradDistributionGumbel : public AgradDistributionTest {
   stan::return_type_t<T_y, T_loc, T_scale> log_prob_function(
       const T_y& y, const T_loc& mu, const T_scale& beta, const T3&, const T4&,
       const T5&) {
-    return -log(beta) - (y - mu) / beta + exp((mu - y) / beta);
+    return -log(beta) - (y - mu) / beta - exp((mu - y) / beta);
   }
 };

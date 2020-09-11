@@ -1,0 +1,19 @@
+#ifndef STAN_MATH_PRIM_META_IS_VARI_HPP
+#define STAN_MATH_PRIM_META_IS_VARI_HPP
+
+#include <stan/math/prim/meta/require_helpers.hpp>
+#include <type_traits>
+
+namespace stan {
+/** \ingroup type_trait
+ * Specialization for checking if value of T minus cv qualifier and pointer is a
+ * vari.
+ */
+template <typename T, typename = void>
+struct is_vari : std::false_type {};
+
+STAN_ADD_REQUIRE_UNARY(vari, is_vari, require_stan_scalar_real);
+STAN_ADD_REQUIRE_CONTAINER(vari, is_vari, require_stan_scalar_real);
+
+}  // namespace stan
+#endif

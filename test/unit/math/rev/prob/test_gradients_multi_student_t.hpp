@@ -1,31 +1,10 @@
+#ifndef TEST_UNIT_MATH_REV_PROB_TEST_GRADIENTS_MULTI_STUDENT_T
+#define TEST_UNIT_MATH_REV_PROB_TEST_GRADIENTS_MULTI_STUDENT_T
 #include <cmath>
 #include <vector>
 #include <iomanip>
 #include <stdexcept>
-
-std::vector<stan::math::var> get_vvar(std::vector<double> vd) {
-  size_t vd_size = vd.size();
-  std::vector<stan::math::var> vv;
-  vv.reserve(vd_size);
-  for (size_t i = 0; i < vd_size; i++)
-    vv.push_back(vd[i]);
-  return vv;
-}
-
-std::vector<double> vdouble_from_vvar(std::vector<stan::math::var> vv) {
-  size_t vv_size = vv.size();
-  std::vector<double> vd;
-  vd.reserve(vv_size);
-  for (size_t i = 0; i < vv_size; i++)
-    vd.push_back(vv[i].val());
-  return vd;
-}
-
-double double_from_var(stan::math::var var_) { return var_.val(); }
-
-double double_from_var(double var_) { return var_; }
-
-std::vector<double> vdouble_from_vvar(std::vector<double> vv) { return vv; }
+#include <test/unit/math/util.hpp>
 
 template <typename F, typename T_y, typename T_mu, typename T_sigma,
           typename T_nu>
@@ -145,3 +124,4 @@ void test_grad_multi_student_t(const F& fun, const std::vector<T_y>& vec_y,
     EXPECT_NEAR(diffs_finite[i], diffs_var[i], tolerance);
   }
 }
+#endif

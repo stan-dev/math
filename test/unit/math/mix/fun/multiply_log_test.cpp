@@ -17,3 +17,16 @@ TEST(mathMixScalFun, multiplyLog) {
   stan::test::expect_ad(f, nan, 1.0);
   stan::test::expect_ad(f, nan, nan);
 }
+
+TEST(mathMixScalFun, multiplyLog_vec) {
+  auto f = [](const auto& x1, const auto& x2) {
+    using stan::math::multiply_log;
+    return multiply_log(x1, x2);
+  };
+
+  Eigen::VectorXd in1(2);
+  in1 << 3, 1;
+  Eigen::VectorXd in2(2);
+  in2 << 0.5, 3.4;
+  stan::test::expect_ad_vectorized_binary(f, in1, in2);
+}

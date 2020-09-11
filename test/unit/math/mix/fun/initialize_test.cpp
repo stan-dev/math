@@ -2,13 +2,12 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-using stan::math::fvar;
-using stan::math::var;
-
 TEST(AgradMixMatrixInitialize, fv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::initialize;
+  using stan::math::var;
   using std::vector;
 
   fvar<var> x;
@@ -48,7 +47,9 @@ TEST(AgradMixMatrixInitialize, fv) {
 TEST(AgradMixMatrixInitialize, fv2) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::initialize;
+  using stan::math::var;
   Matrix<fvar<var>, Dynamic, 1> y(3);
   initialize(y, 3.0);
   EXPECT_EQ(3, y.size());
@@ -58,7 +59,9 @@ TEST(AgradMixMatrixInitialize, fv2) {
 TEST(AgradMixMatrixInitialize, ffv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::initialize;
+  using stan::math::var;
   using std::vector;
 
   fvar<fvar<var> > x;
@@ -98,7 +101,9 @@ TEST(AgradMixMatrixInitialize, ffv) {
 TEST(AgradMixMatrixInitialize, ffv2) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::initialize;
+  using stan::math::var;
   Matrix<fvar<fvar<var> >, Dynamic, 1> y(3);
   initialize(y, 3.0);
   EXPECT_EQ(3, y.size());
