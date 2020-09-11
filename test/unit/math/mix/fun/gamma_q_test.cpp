@@ -17,3 +17,16 @@ TEST(mathMixScalFun, gammaQ) {
   // this still fails forward mode; left regression test in rev/fun
   // stan::test::expect_value(f, 8.01006, 2.47579e+215);
 }
+
+TEST(MathFunctions, gammaQ_vec) {
+  auto f = [](const auto& x1, const auto& x2) {
+    using stan::math::gamma_q;
+    return gamma_q(x1, x2);
+  };
+
+  Eigen::VectorXd in1(2);
+  in1 << 3, 1;
+  Eigen::VectorXd in2(2);
+  in2 << 0.5, 3.4;
+  stan::test::expect_ad_vectorized_binary(f, in1, in2);
+}
