@@ -478,12 +478,21 @@ class var_value {
     return *this;
   }
 
+  // this is a bit ugly workarount to allow var_value<double> to have default
+  // assignment operator, which avoids warnings when used in Eigen matrices.
+ private:
+  struct not_var_value {};
+
+ public:
   /**
-   * Copy assignment operator delegates to general assignment operator.
+   * Copy assignment operator delegates to general assignment operator if the
+   * var_value contains eigen type.
    * @param other the value to assing
    * @return this
    */
-  var_value<T> operator=(const var_value<T>& other) {
+  var_value<T> operator=(std::conditional_t<is_eigen<value_type>::value,
+                                            const var_value<T>&, not_var_value>
+                             other) {
     return operator=<T>(other);
   }
 };
