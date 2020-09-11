@@ -9,6 +9,7 @@
 #include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/prob/normal_lpdf.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
