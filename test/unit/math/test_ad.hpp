@@ -1523,8 +1523,8 @@ inline void test_matvar_sum_gradient(MatVar&& A_mv, VarMat&& A_vm,
                   A_mv.adj(), 1e-12);
   expect_near_rel("var<Matrix> vs Matrix<var> sum result value", A_vm_f.val(),
                   A_mv_f.val(), 1e-12);
-  expect_near_rel("var<Matrix> vs Matrix<var> sum result adjoints", A_vm_f.adj(),
-                  A_mv_f.adj(), 1e-12);
+  expect_near_rel("var<Matrix> vs Matrix<var> sum result adjoints",
+                  A_vm_f.adj(), A_mv_f.adj(), 1e-12);
 }
 /**
  * For an unary function check that an Eigen matrix of vars and a var with an
