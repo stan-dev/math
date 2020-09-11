@@ -25,6 +25,9 @@ TEST(ErrorHandling, checkOrdered) {
   y = {0, std::numeric_limits<double>::infinity(),
        std::numeric_limits<double>::infinity()};
   EXPECT_THROW(check_ordered("check_ordered", "y", y), std::domain_error);
+
+  y = {-1, 3, 2};
+  EXPECT_THROW(check_ordered("check_ordered", "y", y), std::domain_error);
 }
 
 TEST(ErrorHandling, checkOrdered_one_indexed_message) {
