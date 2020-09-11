@@ -7,9 +7,6 @@
 #include <vector>
 #include <string>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-
 template <typename T_y, typename T_scale, typename T_w>
 void expect_propto(T_y y1, T_scale sigma1, T_w w1, T_y y2, T_scale sigma2,
                    T_w w2, std::string message = "") {
@@ -19,36 +16,42 @@ void expect_propto(T_y y1, T_scale sigma1, T_w w1, T_y y2, T_scale sigma2,
                   stan::math::multi_gp_log<true>(y2, sigma2, w2), message);
 }
 
-using stan::math::to_var;
-using stan::math::var;
-
 TEST_F(agrad_distributions_multi_gp, Propto) {
+  using stan::math::to_var;
   expect_propto(to_var(y), to_var(Sigma), to_var(w), to_var(y2), to_var(Sigma2),
                 to_var(w2), "All vars: y, w, sigma");
 }
 TEST_F(agrad_distributions_multi_gp, ProptoY) {
+  using stan::math::to_var;
   expect_propto(to_var(y), Sigma, w, to_var(y2), Sigma, w, "var: y");
 }
 TEST_F(agrad_distributions_multi_gp, ProptoYMu) {
+  using stan::math::to_var;
   expect_propto(to_var(y), Sigma, to_var(w), to_var(y2), Sigma, to_var(w2),
                 "var: y and w");
 }
 TEST_F(agrad_distributions_multi_gp, ProptoYSigma) {
+  using stan::math::to_var;
   expect_propto(to_var(y), to_var(Sigma), w, to_var(y2), to_var(Sigma2), w,
                 "var: y and sigma");
 }
 TEST_F(agrad_distributions_multi_gp, ProptoMu) {
+  using stan::math::to_var;
   expect_propto(y, Sigma, to_var(w), y, Sigma, to_var(w2), "var: w");
 }
 TEST_F(agrad_distributions_multi_gp, ProptoMuSigma) {
+  using stan::math::to_var;
   expect_propto(y, to_var(Sigma), to_var(w), y, to_var(Sigma2), to_var(w2),
                 "var: w and sigma");
 }
 TEST_F(agrad_distributions_multi_gp, ProptoSigma) {
+  using stan::math::to_var;
   expect_propto(y, to_var(Sigma), w, y, to_var(Sigma2), w, "var: sigma");
 }
 
 TEST(ProbDistributionsMultiGP, MultiGPVar) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::var;
   Matrix<var, Dynamic, Dynamic> y(3, 3);
   y << 2.0, -2.0, 11.0, -4.0, 0.0, 2.0, 1.0, 5.0, 3.3;
@@ -60,6 +63,8 @@ TEST(ProbDistributionsMultiGP, MultiGPVar) {
 }
 
 TEST(ProbDistributionsMultiGP, MultiGPGradientUnivariate) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using Eigen::VectorXd;
   using stan::math::multi_gp_log;
   using stan::math::var;
@@ -183,6 +188,8 @@ TEST(MultiGP, TestGradFunctional) {
 }
 
 TEST(MultiGP, check_varis_on_stack) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::to_var;
   Matrix<double, Dynamic, Dynamic> y(3, 3);
   y << 2.0, -2.0, 11.0, -4.0, 0.0, 2.0, 1.0, 5.0, 3.3;

@@ -1,10 +1,9 @@
 #include <stan/math/fwd.hpp>
 #include <gtest/gtest.h>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-
 TEST(ProbDistributionsMultiGPCholesky, fvar_double) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::fvar;
   Matrix<fvar<double>, Dynamic, 1> mu(5, 1);
   mu.setZero();
@@ -45,6 +44,8 @@ TEST(ProbDistributionsMultiGPCholesky, fvar_double) {
 }
 
 TEST(ProbDistributionsMultiGPCholesky, fvar_fvar_double) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::fvar;
   Matrix<fvar<fvar<double> >, Dynamic, 1> mu(5, 1);
   mu.setZero();
