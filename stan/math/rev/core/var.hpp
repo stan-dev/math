@@ -399,6 +399,11 @@ class var_value {
   inline auto coeff(Eigen::Index i) {
     using vari_sub = decltype(vi_->coeff(i));
     vari_sub* vari_coeff = new vari_sub(vi_->coeff(i));
+    reverse_pass_callback([this_vi = this->vi_, vari_coeff, i]() {
+      auto tmp_adj = vari_coeff->adj_;
+      vari_coeff->adj_ += this_vi->adj_.coeffRef(i);
+      this_vi->adj_.coeffRef(i) += tmp_adj;
+    });
     return var_value<typename vari_sub::value_type>(vari_coeff);
   }
 
@@ -410,6 +415,11 @@ class var_value {
   inline auto coeff(Eigen::Index i, Eigen::Index j) {
     using vari_sub = decltype(vi_->coeff(i, j));
     vari_sub* vari_coeff = new vari_sub(vi_->coeff(i, j));
+    reverse_pass_callback([this_vi = this->vi_, vari_coeff, i, j]() {
+      auto tmp_adj = vari_coeff->adj_;
+      vari_coeff->adj_ += this_vi->adj_.coeffRef(i, j);
+      this_vi->adj_.coeffRef(i, j) += tmp_adj;
+    });
     return var_value<typename vari_sub::value_type>(vari_coeff);
   }
 

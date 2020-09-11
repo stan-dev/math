@@ -201,6 +201,7 @@ TEST_F(AgradRev, var_matrix_views) {
   EXPECT_MATRIX_FLOAT_EQ(A_rowwise_colwise_reverse.adj(),
                          A_v.adj().rowwise().reverse().colwise().reverse());
   // since new var is made and values propogate back
+  stan::math::grad();
   EXPECT_FLOAT_EQ(A_v.adj()(3), A_coeff1.adj());
   EXPECT_FLOAT_EQ(A_v.adj()(3, 3), A_coeff2.adj());
 }
@@ -229,6 +230,7 @@ TEST_F(AgradRev, var_vector_views) {
   EXPECT_MATRIX_FLOAT_EQ(A_v.adj().tail(3), A_tail.adj());
   EXPECT_MATRIX_FLOAT_EQ(A_v.adj().segment(3, 5), A_segment.adj());
   // since new var is made and values propogate back
+  stan::math::grad();
   EXPECT_FLOAT_EQ(A_v.adj()(3), A_coeff1.adj());
 }
 
@@ -270,6 +272,7 @@ TEST_F(AgradRev, var_matrix_view_assignment) {
   EXPECT_MATRIX_FLOAT_EQ(A_v_colwise_reverse.adj(), deriv.colwise().reverse());
   EXPECT_MATRIX_FLOAT_EQ(A_v_rowwise_colwise_reverse.adj(),
                          deriv.rowwise().reverse().colwise().reverse());
+  EXPECT_FLOAT_EQ(A_v_coeff1.adj(), A_v.adj().coeffRef(5));
 }
 
 TEST_F(AgradRev, a_eq_x) {

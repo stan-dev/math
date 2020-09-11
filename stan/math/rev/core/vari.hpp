@@ -174,81 +174,6 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
 using vari = vari_value<double>;
 
 /**
- * The variable implementation for references to slices of a vari matrix.
- *
- * This class is complete (not abstract) and may be used for
- * sub slicing references from a `vari_value` with an inner Eigen type.
- *
- */
-template <typename T>
-class vari_value<T, require_all_t<std::is_floating_point<std::decay_t<T>>,
-                                  std::is_reference<T>>>
-    final : public vari_base {
- public:
-  using value_type = T;
-  static constexpr int RowsAtCompileTime{1};
-  static constexpr int ColsAtCompileTime{1};
-  /**
-   * The value of this variable.
-   */
-  T val_;
-  /**
-   * The adjoint of this variable, which is the partial derivative
-   * of this variable with respect to the root variable.
-   */
-  T adj_;
-  inline void chain() {}
-
-  /**
-   * No-op
-   */
-  inline void init_dependent() noexcept {}
-
-  /**
-   * No-op
-   */
-  inline void set_zero_adjoint() noexcept final {}
-
-  /**
-   * Insertion operator for vari. Prints the current value and
-   * the adjoint value.
-   *
-   * @param os [in, out] ostream to modify
-   * @param v [in] vari object to print.
-   *
-   * @return The modified ostream.
-   */
-  friend std::ostream& operator<<(std::ostream& os, const vari_value<T>* v) {
-    return os << v->val_ << ":" << v->adj_;
-  }
-
- private:
-  /**
-   * Constructor for creating a coefficient slice.
-   * @tparam S1 the type of the value.
-   * @tparam S2 the type of the adjoint.
-   * @param x The value of `val_`.
-   * @param y The value of `adj_`.
-   */
-  template <typename S1, typename S2, require_convertible_t<S1&, T>* = nullptr,
-            require_convertible_t<S2&, T>* = nullptr>
-  vari_value(S1&& x, S2&& y) noexcept : val_(x), adj_(y) {}  // NOLINT
-  vari_value() = default;
-  vari_value(const vari_value<T>& other) noexcept
-      : val_(other.val_), adj_(other.adj_) {}
-  inline vari_value<T>& operator=(const vari_value<T>& other) noexcept {
-    val_ = other.val_;
-    adj_ = other.adj_;
-    return *this;
-  };
-
-  template <typename>
-  friend class var_value;
-  template <typename, typename>
-  friend class vari_value;
-};
-
-/**
  * A `vari_view` is used to read from a slice of a `vari_value` with an inner
  * eigen type. It can only accept expressions which do not allocate dynamic
  * memory.
@@ -602,7 +527,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @param j Column index
    */
   inline auto coeff(Eigen::Index i, Eigen::Index j) {
-    return vari_value<decltype(val_.coeffRef(i, j))>(val_.coeffRef(i, j),
+    return vari_value<eigen_scalar>(val_.coeffRef(i, j),
                                                      adj_.coeffRef(i, j));
   }
 
@@ -611,8 +536,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @param i Column index to slice
    */
   inline auto coeff(Eigen::Index i) {
-    return vari_value<decltype(val_.coeffRef(i))>(val_.coeffRef(i),
-                                                  adj_.coeffRef(i));
+    return vari_value<eigen_scalar>(val_.coeffRef(i), adj_.coeffRef(i));
   }
 
   /**
