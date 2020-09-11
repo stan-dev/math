@@ -24,13 +24,14 @@ namespace math {
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
           require_not_vt_fvar<EigMat>* = nullptr>
-auto unit_vector_constrain(const EigMat& y) {
+inline auto unit_vector_constrain(const EigMat& y) {
   using std::sqrt;
-  check_vector("unit_vector_constrain", "y", y);
-  check_nonzero_size("unit_vector_constrain", "y", y);
-  value_type_t<EigMat> SN = dot_self(y);
+  const auto& y_ref = to_ref(y);
+  check_vector("unit_vector_constrain", "y", y_ref);
+  check_nonzero_size("unit_vector_constrain", "y", y_ref);
+  value_type_t<EigMat> SN = dot_self(y_ref);
   check_positive_finite("unit_vector_constrain", "norm", SN);
-  return (y / sqrt(SN)).eval();
+  return (y_ref / sqrt(SN)).eval();
 }
 
 /**
@@ -46,14 +47,15 @@ auto unit_vector_constrain(const EigMat& y) {
  */
 template <typename EigMat, typename LP, require_eigen_t<EigMat>* = nullptr,
           require_not_vt_fvar<EigMat>* = nullptr>
-auto unit_vector_constrain(const EigMat& y, LP& lp) {
+inline auto unit_vector_constrain(const EigMat& y, LP& lp) {
+  const auto& y_ref = to_ref(y);
   using std::sqrt;
-  check_vector("unit_vector_constrain", "y", y);
-  check_nonzero_size("unit_vector_constrain", "y", y);
-  value_type_t<EigMat> SN = dot_self(y);
+  check_vector("unit_vector_constrain", "y", y_ref);
+  check_nonzero_size("unit_vector_constrain", "y", y_ref);
+  value_type_t<EigMat> SN = dot_self(y_ref);
   check_positive_finite("unit_vector_constrain", "norm", SN);
   lp -= 0.5 * SN;
-  return (y / sqrt(SN)).eval();
+  return (y_ref / sqrt(SN)).eval();
 }
 
 }  // namespace math

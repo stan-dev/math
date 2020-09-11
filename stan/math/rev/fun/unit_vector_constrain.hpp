@@ -53,31 +53,27 @@ class unit_vector_elt_vari : public vari {
  * @return Unit length vector of dimension K
  **/
 template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
-auto unit_vector_constrain(EigMat&& y) {
-  using ref_inner = const typename std::decay_t<EigMat>::PlainObject;
+auto unit_vector_constrain(const EigMat& y) {
   check_vector("unit_vector", "y", y);
   check_nonzero_size("unit_vector", "y", y);
-  const Eigen::Ref<ref_inner, Eigen::Aligned16, Eigen::Stride<0, 0>>& y_mat = y;
-
+  const auto& y_mat = to_ref(y);
   auto y_d = y_mat.val();
 
   vari** y_vi_array = reinterpret_cast<vari**>(
-      ChainableStack::instance_->memalloc_.alloc(sizeof(vari*) * y.size()));
+      ChainableStack::instance_->memalloc_.alloc(sizeof(vari*) * y_mat.size()));
   double* unit_vector_y_d_array = reinterpret_cast<double*>(
       ChainableStack::instance_->memalloc_.alloc(sizeof(double) * y_d.size()));
 
-  Eigen::Map<vector_vi>(y_vi_array, y.size()) = y_mat.vi();
+  Eigen::Map<vector_vi>(y_vi_array, y_mat.size()) = y_mat.vi();
   const double norm = y_d.norm();
   check_positive_finite("unit_vector", "norm", norm);
-  Eigen::Map<vector_d> unit_vecd(unit_vector_y_d_array, y.size());
+  Eigen::Map<vector_d> unit_vecd(unit_vector_y_d_array, y_mat.size());
   unit_vecd = y_d / norm;
 
-  Eigen::Matrix<var, std::decay_t<EigMat>::RowsAtCompileTime,
-                std::decay_t<EigMat>::ColsAtCompileTime>
-      unit_vector_y(y.size());
-  for (int k = 0; k < y.size(); ++k) {
+  plain_type_t<EigMat> unit_vector_y(y_mat.size());
+  for (int k = 0; k < y_mat.size(); ++k) {
     unit_vector_y.coeffRef(k) = var(new internal::unit_vector_elt_vari(
-        unit_vecd[k], y_vi_array, unit_vector_y_d_array, y.size(), k, norm));
+        unit_vecd[k], y_vi_array, unit_vector_y_d_array, y_mat.size(), k, norm));
   }
   return unit_vector_y;
 }
@@ -93,9 +89,10 @@ auto unit_vector_constrain(EigMat&& y) {
  * @param lp Log probability reference to increment.
  **/
 template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
-auto unit_vector_constrain(EigMat&& y, var& lp) {
-  auto x = unit_vector_constrain(y);
-  lp -= 0.5 * dot_self(y);
+auto unit_vector_constrain(const EigMat& y, var& lp) {
+  const auto& y_ref = to_ref(y);
+  auto x = unit_vector_constrain(y_ref);
+  lp -= 0.5 * dot_self(y_ref);
   return x;
 }
 

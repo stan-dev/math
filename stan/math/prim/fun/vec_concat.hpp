@@ -17,8 +17,8 @@ inline auto sum_vector_sizes() { return 0; }
  * @param args pack of vectors to accumulate sizes for.
  */
 template <typename Vec, typename... VecArgs>
-inline auto sum_vector_sizes(Vec&& x, VecArgs&&... args) {
-  return x.size() + sum_vector_sizes(std::forward<VecArgs>(args)...);
+inline auto sum_vector_sizes(const Vec& x, const VecArgs&... args) {
+  return x.size() + sum_vector_sizes(args...);
 }
 /**
  * End of recursion for appending to vector.
@@ -35,9 +35,9 @@ inline void append_vectors(VecInOut& x) {}
  * @param args Pack of other vectors to fill in the in/out vector.
  */
 template <typename VecInOut, typename VecIn, typename... VecArgs>
-inline void append_vectors(VecInOut& x, VecIn&& y, VecArgs&&... args) {
+inline void append_vectors(VecInOut& x, const VecIn& y, const VecArgs&... args) {
   x.insert(x.end(), y.begin(), y.end());
-  append_vectors(x, std::forward<VecArgs>(args)...);
+  append_vectors(x, args...);
 }
 }  // namespace internal
 
@@ -51,11 +51,10 @@ inline void append_vectors(VecInOut& x, VecIn&& y, VecArgs&&... args) {
  * @return Vector of OpenCL events
  */
 template <typename Vec, typename... Args>
-inline auto vec_concat(Vec&& v1, Args&&... args) {
+inline auto vec_concat(const Vec& v1, const Args&... args) {
   std::vector<value_type_t<Vec>> vec;
   vec.reserve(internal::sum_vector_sizes(v1, args...));
-  internal::append_vectors(vec, std::forward<Vec>(v1),
-                           std::forward<Args>(args)...);
+  internal::append_vectors(vec, v1, args...);
   return vec;
 }
 

@@ -14,12 +14,12 @@ namespace math {
  * However, we are just fixing the unidentified radius to 1.
  * Thus, the transformation is just the identity
  *
- * @tparam T type of elements in the vector
+ * @tparam EigVec A type derived from `EigenBase` with 1 compile time row or column.
  * @param x unit vector of dimension K
  * @return Unit vector of dimension K considered "free"
  */
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
-decltype(auto) unit_vector_free(EigVec&& x) {
+inline decltype(auto) unit_vector_free(EigVec&& x) {
   check_unit_vector("stan::math::unit_vector_free", "Unit vector variable", x);
   return std::forward<EigVec>(x);
 }

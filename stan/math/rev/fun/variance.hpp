@@ -36,12 +36,10 @@ inline var calc_variance(size_t size, const var* dtrs) {
  * Return the sample variance of the specified standard
  * vector.  Raise domain error if size is not greater than zero.
  *
- * @tparam StdVec A standard vector with a `var` value type
  * @param[in] v a vector
  * @return sample variance of specified vector
  */
-template <typename StdVec, require_std_vector_vt<is_var, StdVec>* = nullptr>
-inline var variance(StdVec&& v) {
+inline var variance(const std::vector<var>& v) {
   check_nonzero_size("variance", "v", v);
   if (v.size() == 1) {
     return var{0.0};
@@ -60,15 +58,13 @@ inline var variance(StdVec&& v) {
  * @return sample variance of specified matrix
  */
 template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
-var variance(EigMat&& m) {
-  using ref_inner = const typename std::decay_t<EigMat>::PlainObject;
-  check_nonzero_size("variance", "m", m);
-  if (m.size() == 1) {
+var variance(const EigMat& m) {
+  const auto& mat = to_ref(m);
+  check_nonzero_size("variance", "m", mat);
+  if (mat.size() == 1) {
     return var{0.0};
   }
-
-  const Eigen::Ref<ref_inner, Eigen::Aligned16, Eigen::Stride<0, 0>>& mat = m;
-  return {internal::calc_variance(m.size(), mat.data())};
+  return {internal::calc_variance(mat.size(), mat.data())};
 }
 
 }  // namespace math

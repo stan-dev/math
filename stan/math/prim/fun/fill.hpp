@@ -56,7 +56,7 @@ inline void fill(T& x, S&& y) {
 template <typename Vec, typename S, require_std_vector_t<Vec>* = nullptr>
 inline void fill(Vec& x, S&& y) {
   for (auto& x_val : x) {
-    fill(x_val, std::forward<S>(y));
+    fill(x_val, y);
   }
 }
 

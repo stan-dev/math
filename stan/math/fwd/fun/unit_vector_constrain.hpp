@@ -17,13 +17,9 @@ namespace math {
 
 template <typename EigMat, require_eigen_vt<is_fvar, EigMat>* = nullptr>
 inline auto unit_vector_constrain(const EigMat& y) {
-  using eig_mat = std::decay_t<EigMat>;
-  using eigen_type = typename eig_mat::PlainObject;
   using eig_partial = partials_type_t<value_type_t<EigMat>>;
-  using partial_mat = Eigen::Matrix<eig_partial, eig_mat::RowsAtCompileTime,
-                                    eig_mat::ColsAtCompileTime>;
-  partial_mat y_val(value_of(y));
-  eigen_type unit_vector_y(y.size());
+  promote_scalar_t<eig_partial, EigMat> y_val(value_of(y));
+  plain_type_t<EigMat> unit_vector_y(y.size());
   unit_vector_y.val() = unit_vector_constrain(y_val);
 
   eig_partial squared_norm = dot_self(y_val);
