@@ -16,7 +16,6 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <Eigen/Core>
 
-
 namespace stan {
 namespace math {
 
