@@ -71,6 +71,7 @@ TEST_F(AgradRev, sparse_matrix_vari_free) {
       EXPECT_FLOAT_EQ(iz.value(), it.value());
     }
   }
+}
 
   TEST_F(AgradRev, dense_vari_matrix_views) {
     using stan::math::vari_value;
