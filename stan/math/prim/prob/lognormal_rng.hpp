@@ -33,8 +33,8 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type lognormal_rng(
     const T_loc& mu, const T_scale& sigma, RNG& rng) {
   using boost::variate_generator;
   using boost::random::lognormal_distribution;
-  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
-  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
+  using T_mu_ref = ref_type_t<T_loc>;
+  using T_sigma_ref = ref_type_t<T_scale>;
   static const char* function = "lognormal_rng";
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",
                          sigma);
