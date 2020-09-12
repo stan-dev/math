@@ -9,20 +9,26 @@
 namespace stan {
 namespace math {
 namespace opencl_kernels {
-
-// An in_buffer signifies a cl::Buffer argument used as input.
+/** \ingroup kernel_executor_opencl
+ * An in_buffer signifies a cl::Buffer argument used as input.
+ */
 struct in_buffer {};
 
-// An out_buffer signifies a cl::Buffer argument used as output.
+/** \ingroup kernel_executor_opencl
+ * An out_buffer signifies a cl::Buffer argument used as output.
+ */
 struct out_buffer {};
 
-// An in_out_buffer signifies a cl::Buffer argument used as both input and
-// output.
+/** \ingroup kernel_executor_opencl
+ * An in_out_buffer signifies a cl::Buffer argument used as both input and
+ * output.
+ */
 struct in_out_buffer {};
 
 namespace internal {
 
-/** \ingroup opencl
+/**  kernel_executor_opencl
+ * @internal
  * meta template struct for changing read/write buffer argument types to
  * cl::Buffer types.
  * @tparam T A template typename that for cases of non-read/write buffers
@@ -49,7 +55,9 @@ struct to_buffer<in_out_buffer> {
   using type = cl::Buffer;
 };
 
-// Alias for making const cl::Buffer argument types
+/**  kernel_executor_opencl
+ * Alias for making const cl::Buffer argument types
+ */
 template <typename T>
 using to_const_buffer_t = const typename internal::to_buffer<T>::type;
 }  // namespace internal

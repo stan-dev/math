@@ -12,53 +12,25 @@ namespace math {
 
 /**
  * Returns the minimum coefficient in the specified
- * column vector.
+ * matrix, vector, row vector or std vector.
  *
- * @param x specified vector
- * @return minimum coefficient value in the vector
- * @throws <code>std::invalid_argument</code> if the vector is size zero
+ * @tparam T type of elements in the container
+ * @param m specified matrix, vector, row vector or std vector
+ * @return mainimum coefficient value in the container, or infinity if the
+ * container is size zero and the scalar type in container is floating point
+ * number
+ * @throws <code>std::invalid_argument</code> if the vector is size zero and the
+ * scalar type in the container is integer
  */
-inline int min(const std::vector<int>& x) {
-  check_nonzero_size("min", "int vector", x);
-  Eigen::Map<const Eigen::Matrix<int, Eigen::Dynamic, 1>> m(&x[0], x.size());
-  return m.minCoeff();
-}
-
-/**
- * Returns the minimum coefficient in the specified
- * column vector.
- *
- * @tparam T type of elements in the vector
- * @param x specified vector
- * @return minimum coefficient value in the vector, or infinity if the vector is
- * size zero
- */
-template <typename T>
-inline T min(const std::vector<T>& x) {
-  if (x.size() == 0) {
+template <typename T, require_container_t<T>* = nullptr>
+inline value_type_t<T> min(const T& m) {
+  if (std::is_integral<value_type_t<T>>::value) {
+    check_nonzero_size("min", "int vector", m);
+  } else if (m.size() == 0) {
     return INFTY;
   }
-  Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>> m(&x[0], x.size());
-  return m.minCoeff();
-}
-
-/**
- * Returns the minimum coefficient in the specified
- * matrix, vector, or row vector.
- *
- * @tparam T type of elements in the matrix, vector or row vector
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
- * @param m specified matrix, vector, or row vector
- * @return minimum coefficient value in the vector, or infinity if the vector is
- * size zero
- */
-template <typename T, int R, int C>
-inline T min(const Eigen::Matrix<T, R, C>& m) {
-  if (m.size() == 0) {
-    return INFTY;
-  }
-  return m.minCoeff();
+  return apply_vector_unary<T>::reduce(
+      m, [](const auto& x) { return x.minCoeff(); });
 }
 
 }  // namespace math

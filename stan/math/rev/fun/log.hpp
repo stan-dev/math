@@ -1,8 +1,6 @@
 #ifndef STAN_MATH_REV_FUN_LOG_HPP
 #define STAN_MATH_REV_FUN_LOG_HPP
 
-#include <stan/math/prim/fun/isinf.hpp>
-#include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
@@ -19,7 +17,7 @@ namespace stan {
 namespace math {
 
 namespace internal {
-class log_vari : public op_v_vari {
+class log_vari final : public op_v_vari {
  public:
   explicit log_vari(vari* avi) : op_v_vari(std::log(avi->val_), avi) {}
   void chain() { avi_->adj_ += adj_ / avi_->val_; }

@@ -1,10 +1,10 @@
-#include <stan/math/mix.hpp>
-#include <gtest/gtest.h>
+#include <test/unit/math/test_ad.hpp>
 #include <limits>
 
 template <typename T>
 void expect_isinf() {
-  using stan::math::isinf;
+  // C++ idiom for clients of the math lib
+  // std::isnan explicit using; stan::math::nan by ADL
   using std::isinf;
   using std::numeric_limits;
   T inf = numeric_limits<double>::infinity();
@@ -21,12 +21,10 @@ void expect_isinf() {
 }
 
 TEST(mixFun, isinf) {
-  using stan::math::fvar;
-  using stan::math::var;
-  expect_isinf<double>();
-  expect_isinf<var>();
-  expect_isinf<fvar<double>>();
-  expect_isinf<fvar<fvar<double>>>();
-  expect_isinf<fvar<var>>();
-  expect_isinf<fvar<fvar<var>>>();
+  expect_isinf<d_t>();
+  expect_isinf<v_t>();
+  expect_isinf<fd_t>();
+  expect_isinf<ffd_t>();
+  expect_isinf<fv_t>();
+  expect_isinf<ffv_t>();
 }

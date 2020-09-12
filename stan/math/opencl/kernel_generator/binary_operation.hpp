@@ -4,22 +4,27 @@
 
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/err.hpp>
-#include <stan/math/opencl/multiply.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/scalar.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <stan/math/opencl/kernel_generator/common_return_scalar.hpp>
+#include <algorithm>
 #include <string>
+#include <tuple>
 #include <type_traits>
 #include <set>
 #include <utility>
 
 namespace stan {
 namespace math {
+
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 
 /**
  * Represents a binary operation in kernel generator expressions.
@@ -33,7 +38,7 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
  public:
   using Scalar = T_res;
   using base = operation_cl<Derived, Scalar, T_a, T_b>;
-  using base::var_name;
+  using base::var_name_;
 
  protected:
   std::string op_;
@@ -60,29 +65,23 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
   }
 
   /**
-   * generates kernel code for this expression.
-   * @param i row index variable name
-   * @param j column index variable name
+   * Generates kernel code for this expression.
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
+   * @param view_handled whether whether caller already handled matrix view
    * @param var_name_a variable name of the first nested expression
    * @param var_name_b variable name of the second nested expression
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& i, const std::string& j,
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
+                               const bool view_handled,
                                const std::string& var_name_a,
                                const std::string& var_name_b) const {
     kernel_parts res{};
-    res.body = type_str<Scalar>() + " " + var_name + " = " + var_name_a + " "
+    res.body = type_str<Scalar>() + " " + var_name_ + " = " + var_name_a + " "
                + op_ + " " + var_name_b + ";\n";
     return res;
-  }
-
-  /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
-   */
-  inline matrix_cl_view view() const {
-    return either(this->template get_arg<0>().view(),
-                  this->template get_arg<1>().view());
   }
 };
 
@@ -114,6 +113,8 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
     using base::arguments_;                                                   \
                                                                               \
    public:                                                                    \
+    using base::rows;                                                         \
+    using base::cols;                                                         \
     class_name(T_a&& a, T_b&& b) /* NOLINT */                                 \
         : base(std::forward<T_a>(a), std::forward<T_b>(b), operation) {}      \
     inline auto deep_copy() const {                                           \
@@ -126,7 +127,8 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
   };                                                                          \
                                                                               \
   template <typename T_a, typename T_b,                                       \
-            typename = require_all_valid_expressions_t<T_a, T_b>>             \
+            require_all_kernel_expressions_t<T_a, T_b>* = nullptr,            \
+            require_any_not_arithmetic_t<T_a, T_b>* = nullptr>                \
   inline class_name<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>           \
   function_name(T_a&& a, T_b&& b) { /* NOLINT */                              \
     return {as_operation_cl(std::forward<T_a>(a)),                            \
@@ -151,7 +153,7 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
   expression. This is a variadic argument to allow commas in code with no
   special handling.
   */
-#define ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(                                \
+#define ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(                                \
     class_name, function_name, scalar_type_expr, operation, ...)              \
   template <typename T_a, typename T_b>                                       \
   class class_name : public binary_operation<class_name<T_a, T_b>,            \
@@ -161,6 +163,8 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
     using base::arguments_;                                                   \
                                                                               \
    public:                                                                    \
+    using base::rows;                                                         \
+    using base::cols;                                                         \
     class_name(T_a&& a, T_b&& b) /* NOLINT */                                 \
         : base(std::forward<T_a>(a), std::forward<T_b>(b), operation) {}      \
     inline auto deep_copy() const {                                           \
@@ -170,11 +174,12 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
                         std::remove_reference_t<decltype(b_copy)>>(           \
           std::move(a_copy), std::move(b_copy));                              \
     }                                                                         \
-    inline matrix_cl_view view() const { __VA_ARGS__; }                       \
+    __VA_ARGS__                                                               \
   };                                                                          \
                                                                               \
   template <typename T_a, typename T_b,                                       \
-            typename = require_all_valid_expressions_t<T_a, T_b>>             \
+            require_all_kernel_expressions_t<T_a, T_b>* = nullptr,            \
+            require_any_not_arithmetic_t<T_a, T_b>* = nullptr>                \
   inline class_name<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>           \
   function_name(T_a&& a, T_b&& b) { /* NOLINT */                              \
     return {as_operation_cl(std::forward<T_a>(a)),                            \
@@ -184,31 +189,54 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
 ADD_BINARY_OPERATION(addition_, operator+, common_scalar_t<T_a COMMA T_b>, "+");
 ADD_BINARY_OPERATION(subtraction_, operator-, common_scalar_t<T_a COMMA T_b>,
                      "-");
-ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(
-    elewise_multiplication_, elewise_multiplication,
-    common_scalar_t<T_a COMMA T_b>, "*",
-    using base = binary_operation<elewise_multiplication_<T_a, T_b>,
-                                  common_scalar_t<T_a, T_b>, T_a, T_b>;
-    return both(this->template get_arg<0>().view(),
-                this->template get_arg<1>().view()););
-ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(
-    elewise_division_, elewise_division, common_scalar_t<T_a COMMA T_b>, "/",
-    using base = binary_operation<elewise_division_<T_a, T_b>,
-                                  common_scalar_t<T_a, T_b>, T_a, T_b>;
-    return either(this->template get_arg<0>().view(),
-                  invert(this->template get_arg<1>().view())););
+ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
+    elt_multiply_, elt_multiply, common_scalar_t<T_a COMMA T_b>, "*",
+    using view_transitivity = std::tuple<std::true_type, std::true_type>;
+    inline std::pair<int, int> extreme_diagonals() const {
+      std::pair<int, int> diags0
+          = this->template get_arg<0>().extreme_diagonals();
+      std::pair<int, int> diags1
+          = this->template get_arg<1>().extreme_diagonals();
+      return {std::max(diags0.first, diags1.first),
+              std::min(diags0.second, diags1.second)};
+    });
+
+ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
+    elt_divide_, elt_divide, common_scalar_t<T_a COMMA T_b>, "/",
+    inline std::pair<int, int> extreme_diagonals() const {
+      return {-rows() + 1, cols() - 1};
+    });
 ADD_BINARY_OPERATION(less_than_, operator<, bool, "<");
-ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(less_than_or_equal_, operator<=, bool,
-                                      "<=", return matrix_cl_view::Entire);
+ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
+    less_than_or_equal_, operator<=, bool,
+    "<=", inline std::pair<int, int> extreme_diagonals() const {
+      return {-rows() + 1, cols() - 1};
+    });
 ADD_BINARY_OPERATION(greater_than_, operator>, bool, ">");
-ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(greater_than_or_equal_, operator>=, bool,
-                                      ">=", return matrix_cl_view::Entire);
-ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(equals_, operator==, bool,
-                                      "==", return matrix_cl_view::Entire);
+ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
+    greater_than_or_equal_, operator>=, bool,
+    ">=", inline std::pair<int, int> extreme_diagonals() const {
+      return {-rows() + 1, cols() - 1};
+    });
+ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
+    equals_, operator==, bool,
+    "==", inline std::pair<int, int> extreme_diagonals() const {
+      return {-rows() + 1, cols() - 1};
+    });
 ADD_BINARY_OPERATION(not_equals_, operator!=, bool, "!=");
 
 ADD_BINARY_OPERATION(logical_or_, operator||, bool, "||");
-ADD_BINARY_OPERATION(logical_and_, operator&&, bool, "&&");
+ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
+    logical_and_, operator&&, bool, "&&",
+    using view_transitivity = std::tuple<std::true_type, std::true_type>;
+    inline std::pair<int, int> extreme_diagonals() const {
+      std::pair<int, int> diags0
+          = this->template get_arg<0>().extreme_diagonals();
+      std::pair<int, int> diags1
+          = this->template get_arg<1>().extreme_diagonals();
+      return {std::max(diags0.first, diags1.first),
+              std::min(diags0.second, diags1.second)};
+    });
 
 /**
  * Multiplication of a scalar and a kernel generator expression.
@@ -219,8 +247,8 @@ ADD_BINARY_OPERATION(logical_and_, operator&&, bool, "&&");
  * @return Multiplication of given arguments
  */
 template <typename T_a, typename T_b, typename = require_arithmetic_t<T_a>,
-          typename = require_all_valid_expressions_t<T_b>>
-inline elewise_multiplication_<scalar_<T_a>, as_operation_cl_t<T_b>> operator*(
+          typename = require_all_kernel_expressions_t<T_b>>
+inline elt_multiply_<scalar_<T_a>, as_operation_cl_t<T_b>> operator*(
     T_a&& a, T_b&& b) {  // NOLINT
   return {as_operation_cl(std::forward<T_a>(a)),
           as_operation_cl(std::forward<T_b>(b))};
@@ -235,34 +263,17 @@ inline elewise_multiplication_<scalar_<T_a>, as_operation_cl_t<T_b>> operator*(
  * @return Multiplication of given arguments
  */
 template <typename T_a, typename T_b,
-          typename = require_all_valid_expressions_t<T_a>,
+          typename = require_all_kernel_expressions_t<T_a>,
           typename = require_arithmetic_t<T_b>>
-inline elewise_multiplication_<as_operation_cl_t<T_a>, scalar_<T_b>> operator*(
+inline elt_multiply_<as_operation_cl_t<T_a>, scalar_<T_b>> operator*(
     T_a&& a, const T_b b) {  // NOLINT
   return {as_operation_cl(std::forward<T_a>(a)), as_operation_cl(b)};
 }
 
-/**
- * Matrix multiplication of two kernel generator expressions. Evaluates both
- * expressions before calculating the matrix product.
- * @tparam T_a type of first expression
- * @tparam T_b type of second expression
- * @param a first expression
- * @param b second expression
- * @return Matrix product of given arguments
- */
-template <typename T_a, typename T_b,
-          typename = require_all_valid_expressions_and_none_scalar_t<T_a, T_b>>
-inline matrix_cl<double> operator*(const T_a& a, const T_b& b) {
-  // no need for perfect forwarding as operations are evaluated
-  return stan::math::opencl::multiply(as_operation_cl(a).eval(),
-                                      as_operation_cl(b).eval());
-}
-
 #undef COMMA
 #undef ADD_BINARY_OPERATION
-#undef ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW
-
+#undef ADD_BINARY_OPERATION_WITH_CUSTOM_CODE
+/** @}*/
 }  // namespace math
 }  // namespace stan
 #endif

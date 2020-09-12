@@ -16,16 +16,18 @@ namespace math {
  *
  * Specialized for double values for efficiency.
  *
- * @tparam Cb number of columns in matrix B, can be Eigen::Dynamic
+ * @tparam EigMat1 type of the first matrix
+ * @tparam EigMat2 type of the second matrix
+ *
  * @param[in] A Matrix
  * @param[in] B Matrix
  * @param[in] t double
- * @return exponential of At multiplies B
+ * @return exponential of At multiplied by B
  */
-template <int Cb>
-inline Eigen::Matrix<double, -1, Cb> scale_matrix_exp_multiply(
-    const double& t, const Eigen::MatrixXd& A,
-    const Eigen::Matrix<double, -1, Cb>& B) {
+template <typename EigMat1, typename EigMat2,
+          require_all_eigen_vt<std::is_arithmetic, EigMat1, EigMat2>* = nullptr>
+inline Eigen::Matrix<double, Eigen::Dynamic, EigMat2::ColsAtCompileTime>
+scale_matrix_exp_multiply(const double& t, const EigMat1& A, const EigMat2& B) {
   check_square("scale_matrix_exp_multiply", "input matrix", A);
   check_multiplicable("scale_matrix_exp_multiply", "A", A, "B", B);
   if (A.size() == 0) {
@@ -39,20 +41,23 @@ inline Eigen::Matrix<double, -1, Cb> scale_matrix_exp_multiply(
  * Return product of exp(At) and B, where A is a NxN matrix,
  * B is a NxCb matrix and t is a scalar.
  *
- * Generic implementation when arguments are not double.
+ * Generic implementation when arguments are not all double.
  *
- * @tparam Ta scalar type matrix A
- * @tparam Tb scalar type matrix B
- * @tparam Cb number of columns in matrix B, can be Eigen::Dynamic
+ * @tparam Tt type of \c t
+ * @tparam EigMat1 type of the first matrix
+ * @tparam EigMat2 type of the second matrix
  * @param[in] A Matrix
  * @param[in] B Matrix
  * @param[in] t double
- * @return exponential of At multiplies B
+ * @return exponential of At multiplied by B
  */
-template <typename Tt, typename Ta, typename Tb, int Cb>
-inline Eigen::Matrix<return_type_t<Tt, Ta, Tb>, -1, Cb>
-scale_matrix_exp_multiply(const Tt& t, const Eigen::Matrix<Ta, -1, -1>& A,
-                          const Eigen::Matrix<Tb, -1, Cb>& B) {
+template <typename Tt, typename EigMat1, typename EigMat2,
+          require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
+          require_any_autodiff_t<Tt, value_type_t<EigMat1>,
+                                 value_type_t<EigMat2>>* = nullptr>
+inline Eigen::Matrix<return_type_t<Tt, EigMat1, EigMat2>, Eigen::Dynamic,
+                     EigMat2::ColsAtCompileTime>
+scale_matrix_exp_multiply(const Tt& t, const EigMat1& A, const EigMat2& B) {
   check_square("scale_matrix_exp_multiply", "input matrix", A);
   check_multiplicable("scale_matrix_exp_multiply", "A", A, "B", B);
   if (A.size() == 0) {

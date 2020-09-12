@@ -3,8 +3,11 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/isinf.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
 #include <complex>
 #include <limits>

@@ -11,6 +11,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_mvt.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <vector>
 
 namespace stan {

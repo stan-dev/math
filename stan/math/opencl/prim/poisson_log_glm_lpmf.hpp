@@ -8,13 +8,13 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/multiply.hpp>
-#include <stan/math/opencl/kernels/poisson_log_glm_lpmf.hpp>
 #include <cmath>
 
 namespace stan {
@@ -47,10 +47,13 @@ return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(
     const T_alpha& alpha, const T_beta& beta) {
   static const char* function = "poisson_log_glm_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_alpha, T_beta>;
-
+  using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
+  using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
+
+  constexpr int is_alpha_vector = is_vector<T_alpha>::value;
 
   const size_t N = x_cl.rows();
   const size_t M = x_cl.cols();
@@ -74,39 +77,42 @@ return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(
 
   T_partials_return logp(0);
 
-  const auto& beta_val = value_of_rec(beta);
-  const auto& alpha_val = value_of_rec(alpha);
+  T_alpha_ref alpha_ref = alpha;
+  T_beta_ref beta_ref = beta;
 
-  const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
+  const auto& alpha_val = value_of_rec(alpha_ref);
+  const auto& beta_val = value_of_rec(beta_ref);
+
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
-
-  const int local_size
-      = opencl_kernels::poisson_log_glm.get_option("LOCAL_SIZE_");
-  const int wgs = (N + local_size - 1) / local_size;
+  const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
 
   matrix_cl<double> beta_cl(beta_val_vec);
   matrix_cl<double> alpha_cl(alpha_val_vec);
 
+  const bool need_logp = include_summand<propto>::value;
+
+  auto theta_expr = matrix_vector_multiply(x_cl, beta_cl)
+                    + broadcast<!is_alpha_vector, false>(alpha_cl);
+  auto y_bc_expr = colwise_optional_broadcast(y_cl);
+  auto exp_theta_expr = exp(theta_expr);
+  auto theta_derivative_expr = select(y_bc_expr < 0 || !isfinite(theta_expr),
+                                      NOT_A_NUMBER, y_bc_expr - exp_theta_expr);
+  auto logp_expr
+      = colwise_sum(select(need_logp, -lgamma(y_bc_expr + 1.0), 0.0)
+                    + elt_multiply(y_bc_expr, theta_expr) - exp_theta_expr);
+
+  const int wgs = logp_expr.rows();
+
   matrix_cl<double> theta_derivative_cl(N, 1);
   matrix_cl<double> theta_derivative_sum_cl(wgs, 1);
-  const bool need_logp = include_summand<propto>::value;
   matrix_cl<double> logp_cl(wgs, 1);
 
-  try {
-    opencl_kernels::poisson_log_glm(
-        cl::NDRange(local_size * wgs), cl::NDRange(local_size),
-        theta_derivative_cl, theta_derivative_sum_cl, logp_cl, y_cl, x_cl,
-        alpha_cl, beta_cl, N, M, y_cl.size() != 1, stan::math::size(alpha) != 1,
-        need_logp);
-  } catch (const cl::Error& e) {
-    check_opencl_error(function, e);
-  }
-  Matrix<T_partials_return, Dynamic, 1> theta_derivative_partial_sum(wgs);
-  theta_derivative_partial_sum = from_matrix_cl(theta_derivative_sum_cl);
-  double theta_derivative_sum = sum(theta_derivative_partial_sum);
-  Eigen::VectorXd logp_partial_sum(wgs);
-  logp_partial_sum = from_matrix_cl(logp_cl);
-  logp += sum(logp_partial_sum);
+  results(theta_derivative_cl, theta_derivative_sum_cl, logp_cl) = expressions(
+      theta_derivative_expr, colwise_sum(theta_derivative_expr), logp_expr);
+
+  double theta_derivative_sum
+      = sum(from_matrix_cl<Dynamic, 1>(theta_derivative_sum_cl));
+  logp += sum(from_matrix_cl<Dynamic, 1>(logp_cl));
   if (!std::isfinite(theta_derivative_sum)) {
     check_nonnegative(function, "Vector of dependent variables",
                       from_matrix_cl(y_cl));
@@ -116,7 +122,8 @@ return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(
                  from_matrix_cl(x_cl));
   }
 
-  operands_and_partials<T_alpha, T_beta> ops_partials(alpha, beta);
+  operands_and_partials<T_alpha_ref, T_beta_ref> ops_partials(alpha_ref,
+                                                              beta_ref);
   // Compute the necessary derivatives.
   if (!is_constant_all<T_alpha>::value) {
     if (is_vector<T_alpha>::value)
@@ -136,12 +143,6 @@ return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(
   return ops_partials.build(logp);
 }
 
-template <typename T_alpha, typename T_beta>
-inline return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(
-    const matrix_cl<int>& y, const matrix_cl<double>& x, const T_alpha& alpha,
-    const T_beta& beta) {
-  return poisson_log_glm_lpmf<false>(y, x, alpha, beta);
-}
 }  // namespace math
 }  // namespace stan
 

@@ -6,6 +6,7 @@
 #include <stan/math/opencl/copy.hpp>
 #include <test/unit/math/opencl/kernel_generator/reference_kernel.hpp>
 #include <stan/math.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <string>
 
@@ -21,10 +22,6 @@ MatrixXd rsqrt(const MatrixXd& a) { return stan::math::inv_sqrt(a); }
 
 }  // namespace math
 }  // namespace stan
-
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
 
 #define TEST_FUNCTION(fun)                             \
   TEST(KernelGenerator, fun##_test) {                  \
@@ -97,10 +94,12 @@ TEST_FUNCTION(erfc)
 TEST_FUNCTION(floor)
 TEST_FUNCTION(round)
 TEST_FUNCTION(ceil)
+TEST_FUNCTION(fabs)
+TEST_FUNCTION(trunc)
 
 TEST_FUNCTION(digamma)
 TEST_FUNCTION(log1p_exp)
-TEST(KernelGenerator, log1m_exp) {
+TEST(KernelGenerator, log1m_exp_test) {
   MatrixXd m1(3, 3);
   m1 << -0.1, -0.2, -0.3, -0.4, -0.5, -0.6, -0.7, -0.8, -0.9;
 
@@ -112,6 +111,25 @@ TEST(KernelGenerator, log1m_exp) {
   MatrixXd correct = stan::math::log1m_exp(m1);
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
+
+#define TEST_CLASSIFICATION_FUNCTION(fun)                                 \
+  TEST(KernelGenerator, fun##_test) {                                     \
+    using stan::math::fun;                                                \
+    MatrixXd m1(3, 3);                                                    \
+    m1 << 0.0, 0.2, 0.3, 0.4, 0.5, 0.6, -INFINITY, INFINITY, NAN;         \
+                                                                          \
+    matrix_cl<double> m1_cl(m1);                                          \
+    auto tmp = fun(m1_cl);                                                \
+    matrix_cl<bool> res_cl = tmp;                                         \
+                                                                          \
+    Eigen::Matrix<bool, -1, -1> res = stan::math::from_matrix_cl(res_cl); \
+    Eigen::Matrix<bool, -1, -1> correct = fun(m1.array());                \
+    EXPECT_TYPED_MATRIX_EQ(correct, res, bool);                           \
+  }
+
+TEST_CLASSIFICATION_FUNCTION(isfinite)
+TEST_CLASSIFICATION_FUNCTION(isinf)
+TEST_CLASSIFICATION_FUNCTION(isnan)
 
 TEST(KernelGenerator, multiple_operations_test) {
   MatrixXd m1(3, 3);

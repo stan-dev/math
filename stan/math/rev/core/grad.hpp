@@ -12,6 +12,26 @@ namespace stan {
 namespace math {
 
 /**
+ * Compute the gradient for all variables starting from the end of the AD tape.
+ * This function does not recover memory.  The chain
+ * rule is applied working down the stack from the last vari created on the
+ * AD tape and then calling each vari's `chain()` method in turn.
+ *
+ * <p>This function computes a nested gradient only going back as far
+ * as the last nesting.
+ *
+ * <p>This function does not recover any memory from the computation.
+ *
+ */
+static void grad() {
+  size_t end = ChainableStack::instance_->var_stack_.size();
+  size_t beginning = empty_nested() ? 0 : end - nested_size();
+  for (size_t i = end; i-- > beginning;) {
+    ChainableStack::instance_->var_stack_[i]->chain();
+  }
+}
+
+/**
  * Compute the gradient for all variables starting from the
  * specified root variable implementation.  Does not recover
  * memory.  This chainable variable's adjoint is initialized using
@@ -27,22 +47,10 @@ namespace math {
  * @param vi Variable implementation for root of partial
  * derivative propagation.
  */
-static void grad(vari* vi) {
-  // simple reference implementation (intended as doc):
-  //   vi->init_dependent();
-  //   size_t end = var_stack_.size();
-  //   size_t begin = empty_nested() ? 0 : end - nested_size();
-  //   for (size_t i = end; --i > begin; )
-  //     var_stack_[i]->chain();
-
-  using it_t = std::vector<vari*>::reverse_iterator;
+template <typename Vari>
+static void grad(Vari* vi) {
   vi->init_dependent();
-  it_t begin = ChainableStack::instance_->var_stack_.rbegin();
-  it_t end = empty_nested() ? ChainableStack::instance_->var_stack_.rend()
-                            : begin + nested_size();
-  for (it_t it = begin; it < end; ++it) {
-    (*it)->chain();
-  }
+  grad();
 }
 
 }  // namespace math

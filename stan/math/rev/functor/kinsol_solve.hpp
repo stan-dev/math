@@ -50,8 +50,10 @@ namespace math {
  * @return x_solution Vector of solutions to the system of equations.
  * @throw <code>std::invalid_argument</code> if Kinsol returns a negative
  *        flag when setting up the solver.
- * @throw <code>boost::math::evaluation_error</code> if Kinsol returns a
- *        negative flag after attempting to solve the equation.
+ * @throw <code>std::domain_error</code> if Kinsol fails to solve
+ *        equation in max_num_steps iterations.
+ * @throw <code>std::runtime_error</code> if Kinsol returns a
+ *        negative flag that is not due to hitting max_num_steps.
  */
 template <typename F1, typename F2 = kinsol_J_f>
 Eigen::VectorXd kinsol_solve(

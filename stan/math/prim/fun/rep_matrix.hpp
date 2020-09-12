@@ -1,13 +1,14 @@
 #ifndef STAN_MATH_PRIM_FUN_REP_MATRIX_HPP
 #define STAN_MATH_PRIM_FUN_REP_MATRIX_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 
 namespace stan {
 namespace math {
 
-template <typename T>
+template <typename T, require_stan_scalar_t<T>* = nullptr>
 inline Eigen::Matrix<return_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
 rep_matrix(const T& x, int m, int n) {
   check_nonnegative("rep_matrix", "rows", m);
@@ -16,22 +17,18 @@ rep_matrix(const T& x, int m, int n) {
                        Eigen::Dynamic>::Constant(m, n, x);
 }
 
-template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> rep_matrix(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& v, int n) {
+template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
+inline Eigen::Matrix<value_type_t<ColVec>, Eigen::Dynamic, Eigen::Dynamic>
+rep_matrix(const ColVec& v, int n) {
   check_nonnegative("rep_matrix", "rows", n);
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> result(v.size(), n);
-  result.colwise() = v;
-  return result;
+  return v.replicate(1, n);
 }
 
-template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> rep_matrix(
-    const Eigen::Matrix<T, 1, Eigen::Dynamic>& rv, int m) {
+template <typename RowVec, require_eigen_row_vector_t<RowVec>* = nullptr>
+inline Eigen::Matrix<value_type_t<RowVec>, Eigen::Dynamic, Eigen::Dynamic>
+rep_matrix(const RowVec& rv, int m) {
   check_nonnegative("rep_matrix", "cols", m);
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> result(m, rv.size());
-  result.rowwise() = rv;
-  return result;
+  return rv.replicate(m, 1);
 }
 }  // namespace math
 }  // namespace stan

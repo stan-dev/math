@@ -4,11 +4,10 @@
 #include <boost/math/distributions.hpp>
 #include <vector>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using std::vector;
-
 TEST(ProbDistributionsMultiNormalCholesky, NotVectorized) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
@@ -21,6 +20,9 @@ TEST(ProbDistributionsMultiNormalCholesky, NotVectorized) {
   EXPECT_NO_THROW(stan::math::multi_normal_cholesky_rng(mu, L, rng));
 }
 TEST(ProbDistributionsMultiNormalCholesky, Vectorized) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   boost::random::mt19937 rng;
   vector<Matrix<double, Dynamic, 1> > vec_y(2);
   vector<Matrix<double, 1, Dynamic> > vec_y_t(2);
@@ -84,6 +86,9 @@ TEST(ProbDistributionsMultiNormalCholesky, Vectorized) {
 }
 
 TEST(ProbDistributionsMultiNormalCholesky, MultiNormalOneRow) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, 1, Dynamic> y(3);
   y << 2.0, -2.0, 11.0;
@@ -97,6 +102,9 @@ TEST(ProbDistributionsMultiNormalCholesky, MultiNormalOneRow) {
 }
 
 TEST(ProbDistributionsMultiNormalCholesky, error_check) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 2.0, -2.0, 11.0;
@@ -113,6 +121,9 @@ TEST(ProbDistributionsMultiNormalCholesky, error_check) {
 
 TEST(ProbDistributionsMultiNormalCholesky,
      marginalOneChiSquareGoodnessFitTest) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, Dynamic> sigma(3, 3);
   sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 1.0, 0.0, 1.0, 3.0;
@@ -159,6 +170,9 @@ TEST(ProbDistributionsMultiNormalCholesky,
 
 TEST(ProbDistributionsMultiNormalCholesky,
      marginalTwoChiSquareGoodnessFitTest) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, Dynamic> sigma(3, 3);
   sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 1.0, 0.0, 1.0, 3.0;
@@ -205,6 +219,9 @@ TEST(ProbDistributionsMultiNormalCholesky,
 
 TEST(ProbDistributionsMultiNormalCholesky,
      marginalThreeChiSquareGoodnessFitTest) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, Dynamic> sigma(3, 3);
   sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 1.0, 0.0, 1.0, 16.0;
@@ -245,6 +262,9 @@ TEST(ProbDistributionsMultiNormalCholesky,
 }
 
 TEST(ProbDistributionsMultiNormalCholesky, WrongSize) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using std::vector;
   vector<Matrix<double, Dynamic, 1> > y_3_3(3);
   vector<Matrix<double, Dynamic, 1> > y_3_1(3);
   vector<Matrix<double, Dynamic, 1> > y_3_2(3);

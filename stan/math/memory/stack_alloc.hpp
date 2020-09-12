@@ -88,7 +88,7 @@ class stack_alloc {
    * if necessary, and allocates len bytes of memory within that
    * block.
    *
-   * @param size_t $len Number of bytes to allocate.
+   * @param len Number of bytes to allocate.
    * @return A pointer to the allocated memory.
    */
   char* move_to_next_block(size_t len) {

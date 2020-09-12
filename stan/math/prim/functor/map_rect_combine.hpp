@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 
 #include <vector>
 

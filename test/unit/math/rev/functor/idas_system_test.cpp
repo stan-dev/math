@@ -296,8 +296,8 @@ TEST(IDAS_DAE_SYSTEM, constructor_errors) {
 
   bad_double[0] = 0.0;
   bad_double.pop_back();
-  EXPECT_THROW_MSG(build_double(eq_id, bad_double, yp0, theta, x_r),
-                   std::invalid_argument, "initial state");
+  EXPECT_THROW_MSG_WITH_COUNT(build_double(eq_id, bad_double, yp0, theta, x_r),
+                              std::invalid_argument, "initial state", 2);
 
   std::vector<var> bad_var{std::numeric_limits<double>::infinity(), 1.0, 0.1};
   std::vector<var> empty_var;

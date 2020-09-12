@@ -3,16 +3,15 @@
 #include <test/unit/util.hpp>
 #include <limits>
 
-using stan::math::is_pos_definite;
-
-class ErrorHandlingMatrix : public ::testing::Test {
+class ErrorHandlingMatrixIsPosDef : public ::testing::Test {
  public:
   void SetUp() {}
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
 };
 
-TEST_F(ErrorHandlingMatrix, isPosDefinite) {
+TEST_F(ErrorHandlingMatrixIsPosDef, isPosDefinite) {
+  using stan::math::is_pos_definite;
   y.resize(1, 1);
   y << 1;
   EXPECT_TRUE(is_pos_definite(y));
@@ -36,12 +35,14 @@ TEST_F(ErrorHandlingMatrix, isPosDefinite) {
   EXPECT_TRUE(is_pos_definite(ldlt_2));
 }
 
-TEST_F(ErrorHandlingMatrix, isPosDefinite_not_square) {
+TEST_F(ErrorHandlingMatrixIsPosDef, isPosDefinite_not_square) {
+  using stan::math::is_pos_definite;
   y.resize(3, 4);
   EXPECT_FALSE(is_pos_definite(y));
 }
 
-TEST_F(ErrorHandlingMatrix, isPosDefinite_0_size) {
+TEST_F(ErrorHandlingMatrixIsPosDef, isPosDefinite_0_size) {
+  using stan::math::is_pos_definite;
   EXPECT_FALSE(is_pos_definite(y));
 
   Eigen::MatrixXd x;
@@ -52,7 +53,8 @@ TEST_F(ErrorHandlingMatrix, isPosDefinite_0_size) {
   EXPECT_TRUE(is_pos_definite(llt));
 }
 
-TEST_F(ErrorHandlingMatrix, isPosDefinite_non_symmetric) {
+TEST_F(ErrorHandlingMatrixIsPosDef, isPosDefinite_non_symmetric) {
+  using stan::math::is_pos_definite;
   y.resize(3, 3);
   y << 1, 0, 0, 0, 1, 0.5, 0, 0, 1;
   EXPECT_FALSE(is_pos_definite(y));
@@ -65,7 +67,8 @@ TEST_F(ErrorHandlingMatrix, isPosDefinite_non_symmetric) {
   EXPECT_TRUE(is_pos_definite(ldlt));
 }
 
-TEST_F(ErrorHandlingMatrix, isPosDefinite_non_pos_definite) {
+TEST_F(ErrorHandlingMatrixIsPosDef, isPosDefinite_non_pos_definite) {
+  using stan::math::is_pos_definite;
   y.resize(3, 3);
   y << -1, 0, 0, 0, -1, 0, 0, 0, -1;
   EXPECT_FALSE(is_pos_definite(y));
@@ -102,7 +105,8 @@ TEST_F(ErrorHandlingMatrix, isPosDefinite_non_pos_definite) {
   EXPECT_FALSE(is_pos_definite(ldlt_err3));
 }
 
-TEST_F(ErrorHandlingMatrix, isPosDefinite_nan) {
+TEST_F(ErrorHandlingMatrixIsPosDef, isPosDefinite_nan) {
+  using stan::math::is_pos_definite;
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   y.resize(1, 1);

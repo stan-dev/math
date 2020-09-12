@@ -33,13 +33,10 @@ namespace math {
  * @throw std::invalid_argument if size of the input and
  *    output vectors differ.
  */
-template <typename Vector>
+template <typename Vector, require_vector_t<Vector>* = nullptr>
 void inverse_softmax(const Vector& simplex, Vector& y) {
-  using std::log;
   check_matching_sizes("inverse_softmax", "simplex", simplex, "y", y);
-  for (size_t i = 0; i < simplex.size(); ++i) {
-    y[i] = log(simplex[i]);
-  }
+  y = log(simplex);
 }
 
 }  // namespace math

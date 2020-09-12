@@ -11,14 +11,15 @@ namespace math {
 /**
  * Returns the orthogonal factor of the thin QR decomposition
  *
- * @tparam T type of elements in the matrix
+ * @tparam EigMat type of the matrix
  * @param m Matrix.
  * @return Orthogonal matrix with minimal columns
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> qr_thin_Q(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
-  using matrix_t = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> qr_thin_Q(
+    const EigMat& m) {
+  using matrix_t
+      = Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>;
   check_nonzero_size("qr_thin_Q", "m", m);
   Eigen::HouseholderQR<matrix_t> qr(m.rows(), m.cols());
   qr.compute(m);

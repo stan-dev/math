@@ -6,10 +6,12 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <Eigen/Core>
 
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
+#include <stan/math/opencl/multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/kernels/categorical_logit_glm_lpmf.hpp>
 
@@ -22,8 +24,8 @@ namespace math {
  * This is an overload of the GLM in
  * prim/prob/categorical_logit_glm_lpmf.hpp that is implemented in OpenCL.
  *
- * @tparam T_alpha_scalar type of scalar in the intercept vector
- * @tparam T_beta_scalar type of a scalar in the matrix of weights
+ * @tparam T_alpha type of the intercept vector
+ * @tparam T_beta type of a scalar in the matrix of weights
  * @param y_cl a scalar or vector of classes. If it is a scalar it will be
  * broadcast - used for all instances. Values should be between 1 and number of
  * classes, including endpoints.
@@ -36,14 +38,15 @@ namespace math {
  * bounds
  * @throw std::invalid_argument if container sizes mismatch.
  */
-template <bool propto, typename T_alpha_scalar, typename T_beta_scalar>
-return_type_t<T_alpha_scalar, T_beta_scalar> categorical_logit_glm_lpmf(
+template <bool propto, typename T_alpha, typename T_beta,
+          require_eigen_col_vector_t<T_alpha>* = nullptr,
+          require_eigen_matrix_t<T_beta>* = nullptr>
+return_type_t<T_alpha, T_beta> categorical_logit_glm_lpmf(
     const matrix_cl<int>& y_cl, const matrix_cl<double>& x_cl,
-    const Eigen::Matrix<T_alpha_scalar, Eigen::Dynamic, 1>& alpha,
-    const Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, Eigen::Dynamic>& beta) {
-  using T_partials_return = partials_return_t<T_alpha_scalar, T_beta_scalar>;
-  static const char* function = "categorical_logit_glm_lpmf";
-
+    const T_alpha& alpha, const T_beta& beta) {
+  using T_partials_return = partials_return_t<T_alpha, T_beta>;
+  using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
+  using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -52,6 +55,7 @@ return_type_t<T_alpha_scalar, T_beta_scalar> categorical_logit_glm_lpmf(
   const size_t N_attributes = x_cl.cols();
   const size_t N_classes = beta.cols();
 
+  static const char* function = "categorical_logit_glm_lpmf";
   if (y_cl.size() != 1) {
     check_size_match(function, "x.rows()", N_instances, "y.size()",
                      y_cl.size());
@@ -63,15 +67,15 @@ return_type_t<T_alpha_scalar, T_beta_scalar> categorical_logit_glm_lpmf(
   if (N_instances == 0 || N_classes <= 1) {
     return 0;
   }
-
-  if (!include_summand<propto, T_alpha_scalar, T_beta_scalar>::value) {
+  if (!include_summand<propto, T_alpha, T_beta>::value) {
     return 0;
   }
 
-  const auto& beta_val = value_of_rec(beta);
-  const auto& alpha_val = value_of_rec(alpha);
+  T_alpha_ref alpha_ref = alpha;
+  T_beta_ref beta_ref = beta;
 
-  const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val).transpose();
+  const auto& alpha_val = value_of_rec(alpha_ref);
+  const auto& beta_val = value_of_rec(beta_ref);
 
   const int local_size
       = opencl_kernels::categorical_logit_glm.get_option("LOCAL_SIZE_");
@@ -82,8 +86,8 @@ return_type_t<T_alpha_scalar, T_beta_scalar> categorical_logit_glm_lpmf(
 
   matrix_cl<double> x_beta_cl = x_cl * beta_cl;
 
-  bool need_alpha_derivative = !is_constant_all<T_alpha_scalar>::value;
-  bool need_beta_derivative = !is_constant_all<T_beta_scalar>::value;
+  bool need_alpha_derivative = !is_constant_all<T_alpha>::value;
+  bool need_beta_derivative = !is_constant_all<T_beta>::value;
 
   matrix_cl<double> logp_cl(wgs, 1);
   matrix_cl<double> exp_lin_cl(N_instances, N_classes);
@@ -114,14 +118,13 @@ return_type_t<T_alpha_scalar, T_beta_scalar> categorical_logit_glm_lpmf(
                  from_matrix_cl(x_cl));
   }
 
-  operands_and_partials<Matrix<T_alpha_scalar, Dynamic, 1>,
-                        Matrix<T_beta_scalar, Dynamic, Dynamic>>
-      ops_partials(alpha, beta);
-  if (!is_constant_all<T_alpha_scalar>::value) {
+  operands_and_partials<T_alpha_ref, T_beta_ref> ops_partials(alpha_ref,
+                                                              beta_ref);
+  if (!is_constant_all<T_alpha>::value) {
     ops_partials.edge1_.partials_
         = from_matrix_cl(alpha_derivative_cl).colwise().sum();
   }
-  if (!is_constant_all<T_beta_scalar>::value && N_attributes != 0) {
+  if (!is_constant_all<T_beta>::value && N_attributes != 0) {
     matrix_cl<double> beta_derivative_cl = transpose(x_cl) * neg_softmax_lin_cl;
     matrix_cl<double> temp(N_classes, local_size * N_attributes);
     try {
@@ -135,14 +138,6 @@ return_type_t<T_alpha_scalar, T_beta_scalar> categorical_logit_glm_lpmf(
     ops_partials.edge2_.partials_ = from_matrix_cl(beta_derivative_cl);
   }
   return ops_partials.build(logp);
-}
-
-template <typename T_alpha_scalar, typename T_beta_scalar>
-return_type_t<T_alpha_scalar, T_beta_scalar> categorical_logit_glm_lpmf(
-    const matrix_cl<int>& y, const matrix_cl<double>& x,
-    const Eigen::Matrix<T_alpha_scalar, Eigen::Dynamic, 1>& alpha,
-    const Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, Eigen::Dynamic>& beta) {
-  return categorical_logit_glm_lpmf<false>(y, x, alpha, beta);
 }
 
 }  // namespace math

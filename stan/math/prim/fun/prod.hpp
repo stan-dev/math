@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_PROD_HPP
 #define STAN_MATH_PRIM_FUN_PROD_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <vector>
 
@@ -32,8 +33,8 @@ inline T prod(const std::vector<T>& v) {
  * @param v Specified vector.
  * @return Product of coefficients of vector.
  */
-template <typename T, int R, int C>
-inline T prod(const Eigen::Matrix<T, R, C>& v) {
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+inline value_type_t<EigMat> prod(const EigMat& v) {
   if (v.size() == 0) {
     return 1.0;
   }

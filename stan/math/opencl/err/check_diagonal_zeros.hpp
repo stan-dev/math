@@ -13,7 +13,7 @@
 
 namespace stan {
 namespace math {
-/** \ingroup opencl
+/** \ingroup error_checks_opencl
  * Check if the <code>matrix_cl</code> has zeros on the diagonal
  *
  * @param function Function name (for error messages)

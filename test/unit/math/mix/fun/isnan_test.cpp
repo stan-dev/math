@@ -1,10 +1,10 @@
-#include <stan/math/mix.hpp>
-#include <gtest/gtest.h>
+#include <test/unit/math/test_ad.hpp>
 #include <limits>
 
 template <typename T>
 void expect_isnan() {
-  using stan::math::isnan;
+  // C++ idiom for clients of the math library
+  // std::isnan explicit using; stan::math::nan by ADL
   using std::isnan;
   using std::numeric_limits;
   T inf = numeric_limits<double>::infinity();
@@ -21,12 +21,10 @@ void expect_isnan() {
 }
 
 TEST(mixFun, isnan) {
-  using stan::math::fvar;
-  using stan::math::var;
-  expect_isnan<double>();
-  expect_isnan<var>();
-  expect_isnan<fvar<double>>();
-  expect_isnan<fvar<fvar<double>>>();
-  expect_isnan<fvar<var>>();
-  expect_isnan<fvar<fvar<var>>>();
+  expect_isnan<d_t>();
+  expect_isnan<v_t>();
+  expect_isnan<fd_t>();
+  expect_isnan<ffd_t>();
+  expect_isnan<fv_t>();
+  expect_isnan<ffv_t>();
 }

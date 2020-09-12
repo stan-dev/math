@@ -9,6 +9,21 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the sum of the specified scalars.
+ *
+ * @tparam ScalarA type of the first scalar
+ * @tparam ScalarB type of the second scalar
+ * @param a first scalar
+ * @param b second scalar
+ * @return the sum of the scalars
+ */
+template <typename ScalarA, typename ScalarB,
+          typename = require_all_stan_scalar_t<ScalarA, ScalarB>>
+inline return_type_t<ScalarA, ScalarB> add(const ScalarA& a, const ScalarB& b) {
+  return a + b;
+}
+
+/**
  * Return the sum of the specified matrices.  The two matrices
  * must have the same dimensions.
  *

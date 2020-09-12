@@ -19,26 +19,25 @@ namespace math {
  * <p>The simplex transform is defined through a centered
  * stick-breaking process.
  *
- * @tparam T type of elements in the simplex
+ * @tparam ColVec type of the simplex (must be a column vector)
  * @param x Simplex of dimensionality K.
  * @return Free vector of dimensionality (K-1) that transforms to
  * the simplex.
  * @throw std::domain_error if x is not a valid simplex
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_free(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x) {
+template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
+auto simplex_free(const ColVec& x) {
   using std::log;
-  using size_type = index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>>;
+  using T = value_type_t<ColVec>;
 
   check_simplex("stan::math::simplex_free", "Simplex variable", x);
   int Km1 = x.size() - 1;
   Eigen::Matrix<T, Eigen::Dynamic, 1> y(Km1);
-  T stick_len(x(Km1));
-  for (size_type k = Km1; --k >= 0;) {
-    stick_len += x(k);
-    T z_k(x(k) / stick_len);
-    y(k) = logit(z_k) + log(Km1 - k);
+  T stick_len = x.coeff(Km1);
+  for (Eigen::Index k = Km1; --k >= 0;) {
+    stick_len += x.coeff(k);
+    T z_k = x.coeff(k) / stick_len;
+    y.coeffRef(k) = logit(z_k) + log(Km1 - k);
     // note: log(Km1 - k) = logit(1.0 / (Km1 + 1 - k));
   }
   return y;

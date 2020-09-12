@@ -2,19 +2,20 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-using stan::math::fvar;
-using stan::math::var;
-
 TEST(AgradMixMatrixGetBase1, failing_pre_20_fv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1;
+  using stan::math::var;
   Matrix<fvar<var>, Dynamic, 1> y(3);
   y << 1, 2, 3;
   EXPECT_FLOAT_EQ(1, get_base1(y, 1, "y", 1).val_.val());
 }
 TEST(AgradMixMatrixGetBase1, get_base1_vec1_fv) {
+  using stan::math::fvar;
   using stan::math::get_base1;
+  using stan::math::var;
   std::vector<fvar<var> > x(2);
   x[0] = 10.0;
   x[1] = 20.0;
@@ -29,7 +30,9 @@ TEST(AgradMixMatrixGetBase1, get_base1_vec1_fv) {
   EXPECT_THROW(get_base1(x, 3, "x[3]", 0), std::out_of_range);
 }
 TEST(AgradMixMatrixGetBase1, get_base1_vec2_fv) {
+  using stan::math::fvar;
   using stan::math::get_base1;
+  using stan::math::var;
   using std::vector;
   size_t M = 3;
   size_t N = 4;
@@ -61,7 +64,9 @@ TEST(AgradMixMatrixGetBase1, get_base1_vec2_fv) {
 TEST(AgradMixMatrixGetBase1, get_base1_matrix_fv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1;
+  using stan::math::var;
   Matrix<fvar<var>, Dynamic, Dynamic> x(4, 3);
   for (size_t i = 0; i < 4; ++i)
     for (size_t j = 0; j < 3; ++j)
@@ -72,8 +77,7 @@ TEST(AgradMixMatrixGetBase1, get_base1_matrix_fv) {
                       get_base1(x, i + 1, j + 1, "x", 1).val_.val());
       EXPECT_FLOAT_EQ(x(i, j).val_.val(),
                       get_base1(x, i + 1, "x", 1)(0, j).val_.val());
-      Matrix<fvar<var>, 1, Dynamic> xi
-          = get_base1<fvar<var> >(x, i + 1, "x", 1);
+      Matrix<fvar<var>, 1, Dynamic> xi = get_base1(x, i + 1, "x", 1);
       EXPECT_FLOAT_EQ(x(i, j).val_.val(), xi[j].val_.val());
       EXPECT_FLOAT_EQ(x(i, j).val_.val(),
                       get_base1(xi, j + 1, "xi", 2).val_.val());
@@ -89,7 +93,9 @@ TEST(AgradMixMatrixGetBase1, get_base1_matrix_fv) {
 TEST(AgradMixMatrixGetBase1, get_base1_vector_fv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1;
+  using stan::math::var;
   Matrix<fvar<var>, 1, Dynamic> x(3);
   x << 1, 2, 3;
 
@@ -101,7 +107,9 @@ TEST(AgradMixMatrixGetBase1, get_base1_vector_fv) {
 TEST(AgradMixMatrixGetBase1, get_base1_row_vector_fv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1;
+  using stan::math::var;
   Matrix<fvar<var>, Dynamic, 1> x(3);
   x << 1, 2, 3;
 
@@ -111,7 +119,9 @@ TEST(AgradMixMatrixGetBase1, get_base1_row_vector_fv) {
   EXPECT_THROW(get_base1(x, 100, "x", 1), std::out_of_range);
 }
 TEST(AgradMixMatrixGetBase1, get_base1_8_fv) {
+  using stan::math::fvar;
   using stan::math::get_base1;
+  using stan::math::var;
   using std::vector;
   fvar<var> x0(42.0);
   // ~ 4m entries ~ 32MB memory + sizes
@@ -158,13 +168,17 @@ TEST(AgradMixMatrixGetBase1, get_base1_8_fv) {
 TEST(AgradMixMatrixGetBase1, failing_pre_20_ffv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1;
+  using stan::math::var;
   Matrix<fvar<fvar<var> >, Dynamic, 1> y(3);
   y << 1, 2, 3;
   EXPECT_FLOAT_EQ(1, get_base1(y, 1, "y", 1).val_.val_.val());
 }
 TEST(AgradMixMatrixGetBase1, get_base1_vec1_ffv) {
+  using stan::math::fvar;
   using stan::math::get_base1;
+  using stan::math::var;
   std::vector<fvar<fvar<var> > > x(2);
   x[0] = 10.0;
   x[1] = 20.0;
@@ -179,7 +193,9 @@ TEST(AgradMixMatrixGetBase1, get_base1_vec1_ffv) {
   EXPECT_THROW(get_base1(x, 3, "x[3]", 0), std::out_of_range);
 }
 TEST(AgradMixMatrixGetBase1, get_base1_vec2_ffv) {
+  using stan::math::fvar;
   using stan::math::get_base1;
+  using stan::math::var;
   using std::vector;
   size_t M = 3;
   size_t N = 4;
@@ -212,7 +228,9 @@ TEST(AgradMixMatrixGetBase1, get_base1_vec2_ffv) {
 TEST(AgradMixMatrixGetBase1, get_base1_matrix_ffv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1;
+  using stan::math::var;
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> x(4, 3);
   for (size_t i = 0; i < 4; ++i)
     for (size_t j = 0; j < 3; ++j)
@@ -223,8 +241,7 @@ TEST(AgradMixMatrixGetBase1, get_base1_matrix_ffv) {
                       get_base1(x, i + 1, j + 1, "x", 1).val_.val_.val());
       EXPECT_FLOAT_EQ(x(i, j).val_.val_.val(),
                       get_base1(x, i + 1, "x", 1)(0, j).val_.val_.val());
-      Matrix<fvar<fvar<var> >, 1, Dynamic> xi
-          = get_base1<fvar<fvar<var> > >(x, i + 1, "x", 1);
+      Matrix<fvar<fvar<var> >, 1, Dynamic> xi = get_base1(x, i + 1, "x", 1);
       EXPECT_FLOAT_EQ(x(i, j).val_.val_.val(), xi[j].val_.val_.val());
       EXPECT_FLOAT_EQ(x(i, j).val_.val_.val(),
                       get_base1(xi, j + 1, "xi", 2).val_.val_.val());
@@ -240,7 +257,9 @@ TEST(AgradMixMatrixGetBase1, get_base1_matrix_ffv) {
 TEST(AgradMixMatrixGetBase1, get_base1_vector_ffv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1;
+  using stan::math::var;
   Matrix<fvar<fvar<var> >, 1, Dynamic> x(3);
   x << 1, 2, 3;
 
@@ -253,7 +272,9 @@ TEST(AgradMixMatrixGetBase1, get_base1_vector_ffv) {
 TEST(AgradMixMatrixGetBase1, get_base1_row_vector_ffv) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::fvar;
   using stan::math::get_base1;
+  using stan::math::var;
   Matrix<fvar<fvar<var> >, Dynamic, 1> x(3);
   x << 1, 2, 3;
 
@@ -264,7 +285,9 @@ TEST(AgradMixMatrixGetBase1, get_base1_row_vector_ffv) {
   EXPECT_THROW(get_base1(x, 100, "x", 1), std::out_of_range);
 }
 TEST(AgradMixMatrixGetBase1, get_base1_8_ffv) {
+  using stan::math::fvar;
   using stan::math::get_base1;
+  using stan::math::var;
   using std::vector;
   fvar<fvar<var> > x0(42.0);
   // ~ 4m entries ~ 32MB memory + sizes

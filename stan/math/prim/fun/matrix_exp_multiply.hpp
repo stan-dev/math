@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_MATRIX_EXP_MULTIPLY_HPP
 #define STAN_MATH_PRIM_FUN_MATRIX_EXP_MULTIPLY_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/matrix_exp_action_handler.hpp>
 
@@ -16,9 +17,11 @@ namespace math {
  * @param[in] B Matrix
  * @return exponential of A multiplies B
  */
-template <int Cb>
-inline Eigen::Matrix<double, -1, Cb> matrix_exp_multiply(
-    const Eigen::MatrixXd& A, const Eigen::Matrix<double, -1, Cb>& B) {
+template <typename EigMat1, typename EigMat2,
+          require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
+          require_all_st_same<double, EigMat1, EigMat2>* = nullptr>
+inline Eigen::Matrix<double, Eigen::Dynamic, EigMat2::ColsAtCompileTime>
+matrix_exp_multiply(const EigMat1& A, const EigMat2& B) {
   check_square("matrix_exp_multiply", "input matrix", A);
   check_multiplicable("matrix_exp_multiply", "A", A, "B", B);
   if (A.size() == 0) {

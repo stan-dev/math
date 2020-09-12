@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup opencl
+/** \ingroup error_checks_opencl
  * Check if the <code>matrix_cl</code> is either upper triangular or lower
  * triangular.
  *

@@ -11,6 +11,13 @@
 #include <string>
 #include <vector>
 
+using d_t = double;
+using v_t = stan::math::var;
+using fd_t = stan::math::fvar<d_t>;
+using ffd_t = stan::math::fvar<fd_t>;
+using fv_t = stan::math::fvar<stan::math::var>;
+using ffv_t = stan::math::fvar<fv_t>;
+
 namespace stan {
 namespace test {
 namespace internal {
@@ -1276,6 +1283,156 @@ void expect_ad_vectorized(const F& f, const T& x) {
 }
 
 /**
+ * Implementation function for testing that binary functions with vector inputs
+ * (both Eigen and std::vector types) return 1st-, 2nd-, and 3rd-order
+ * derivatives consistent with finite differences of double inputs.
+ *
+ * @tparam F type of function
+ * @tparam T1 type of first argument
+ * @tparam T2 type of second argument
+ * @param f function to test
+ * @param x argument to test
+ * @param y argument to test
+ */
+template <typename F, typename T1, typename T2,
+          require_all_not_st_integral<T1, T2>* = nullptr>
+void expect_ad_vectorized_binary_impl(const ad_tolerances& tols, const F& f,
+                                      const T1& x, const T2& y) {
+  std::vector<T1> nest_x{x, x};
+  std::vector<T2> nest_y{y, y};
+  std::vector<std::vector<T1>> nest_nest_x{nest_x, nest_x};
+  std::vector<std::vector<T2>> nest_nest_y{nest_y, nest_y};
+  expect_ad(tols, f, x, y);
+  expect_ad(tols, f, x, y[0]);
+  expect_ad(tols, f, x[0], y);
+  expect_ad(tols, f, nest_x, nest_y);
+  expect_ad(tols, f, nest_x, y[0]);
+  expect_ad(tols, f, x[0], nest_y);
+  expect_ad(tols, f, nest_nest_x, nest_nest_y);
+  expect_ad(tols, f, nest_nest_x, y[0]);
+  expect_ad(tols, f, x[0], nest_nest_y);
+}
+
+/**
+ * Implementation function for testing that binary functions with vector inputs
+ * (both Eigen and std::vector types) return 1st-, 2nd-, and 3rd-order
+ * derivatives consistent with finite differences of double inputs.
+ *
+ * This is a specialisation for use when the first input is an integer type
+ *
+ * @tparam F type of function
+ * @tparam T1 type of first argument
+ * @tparam T2 type of second argument
+ * @param f function to test
+ * @param x argument to test
+ * @param y argument to test
+ */
+template <typename F, typename T1, typename T2,
+          require_st_integral<T1>* = nullptr>
+void expect_ad_vectorized_binary_impl(const ad_tolerances& tols, const F& f,
+                                      const T1& x, const T2& y) {
+  auto f_bind
+      = [&](const auto& x) { return [=](const auto& y) { return f(x, y); }; };
+  std::vector<T1> nest_x{x, x};
+  std::vector<T2> nest_y{y, y};
+  std::vector<std::vector<T1>> nest_nest_x{nest_x, nest_x};
+  std::vector<std::vector<T2>> nest_nest_y{nest_y, nest_y};
+  expect_ad(tols, f_bind(x), y);
+  expect_ad(tols, f_bind(nest_x), nest_y);
+  expect_ad(tols, f_bind(nest_nest_x), nest_nest_y);
+}
+
+/**
+ * Implementation function for testing that binary functions with vector inputs
+ * (both Eigen and std::vector types) return 1st-, 2nd-, and 3rd-order
+ * derivatives consistent with finite differences of double inputs.
+ *
+ * This is a specialisation for use when the second input is an integer type
+ *
+ * @tparam F type of function
+ * @tparam T1 type of first argument
+ * @tparam T2 type of second argument
+ * @param f function to test
+ * @param x argument to test
+ * @param y argument to test
+ */
+template <typename F, typename T1, typename T2,
+          require_st_integral<T2>* = nullptr>
+void expect_ad_vectorized_binary_impl(const ad_tolerances& tols, const F& f,
+                                      const T1& x, const T2& y) {
+  auto f_bind
+      = [&](const auto& y) { return [=](const auto& x) { return f(x, y); }; };
+  std::vector<T1> nest_x{x, x};
+  std::vector<T2> nest_y{y, y};
+  std::vector<std::vector<T1>> nest_nest_x{nest_x, nest_x};
+  std::vector<std::vector<T2>> nest_nest_y{nest_y, nest_y};
+  expect_ad(tols, f_bind(y), x);
+  expect_ad(tols, f_bind(nest_y), nest_x);
+  expect_ad(tols, f_bind(nest_nest_y), nest_nest_x);
+}
+
+/**
+ * Test that the specified vectorized polymorphic binary function
+ * produces autodiff results consistent with values determined by
+ * double and integer inputs and 1st-, 2nd-, and 3rd-order derivatives
+ * consistent with finite differences of double inputs.
+ *
+ * @tparam F type of polymorphic, vectorized functor to test
+ * @tparam T1 type of first argument
+ * @tparam T1 type of second argument
+ * @param tols tolerances for test
+ * @param f functor to test
+ * @param x value to test
+ * @param y value to test
+ */
+template <typename F, typename T1, typename T2,
+          require_all_eigen_col_vector_t<T1, T2>* = nullptr>
+void expect_ad_vectorized_binary(const ad_tolerances& tols, const F& f,
+                                 const T1& x, const T2& y) {
+  expect_ad_vectorized_binary_impl(tols, f, x, y);
+  expect_ad_vectorized_binary_impl(tols, f, to_std_vector(x), to_std_vector(y));
+}
+
+/**
+ * Test that the specified vectorized polymorphic binary function
+ * produces autodiff results consistent with values determined by
+ * double and integer inputs and 1st-, 2nd-, and 3rd-order derivatives
+ * consistent with finite differences of double inputs.
+ *
+ * @tparam F type of polymorphic, vectorized functor to test
+ * @tparam T1 type of first argument
+ * @tparam T1 type of second argument
+ * @param tols tolerances for test
+ * @param f functor to test
+ * @param x value to test
+ * @param y value to test
+ */
+template <typename F, typename T1, typename T2,
+          require_any_std_vector_t<T1, T2>* = nullptr>
+void expect_ad_vectorized_binary(const ad_tolerances& tols, const F& f,
+                                 const T1& x, const T2& y) {
+  expect_ad_vectorized_binary_impl(tols, f, x, y);
+}
+
+/**
+ * Test that the specified binary function has value and 1st-, 2nd-, and
+ * 3rd-order derivatives consistent with primitive values and finite
+ * differences using default tolerances.
+ *
+ * @tparam F type of function
+ * @tparam T1 type of first argument
+ * @tparam T2 type of second argument
+ * @param f function to test
+ * @param x argument to test
+ * @param y argument to test
+ */
+template <typename F, typename T1, typename T2>
+void expect_ad_vectorized_binary(const F& f, const T1& x, const T2& y) {
+  ad_tolerances tols;
+  expect_ad_vectorized_binary(tols, f, x, y);
+}
+
+/**
  * Test that the specified polymorphic unary function produces the
  * same results, exceptions, and has 1st-, 2nd-, and 3rd-order
  * derivatives consistent with finite differences as returned by the
@@ -1813,6 +1970,38 @@ void expect_complex_common_comparison(const F& f) {
       expect_complex_comparison(f, z1, z2);
     }
   }
+}
+
+/**
+ * Return square test matrices (not symmetric) of dimensionality
+ * within the specified range (inclusive).
+ *
+ * @param min minimum matrix dimensionality to include
+ * @param max maximum matrix dimensionality to include
+ * @return square matrices within given dimensionality range (inclusive)
+ */
+std::vector<Eigen::MatrixXd> square_test_matrices(int low, int high) {
+  std::vector<Eigen::MatrixXd> xs;
+  Eigen::MatrixXd a00(0, 0);
+  if (0 >= low && 0 <= high)
+    xs.push_back(a00);
+
+  Eigen::MatrixXd a11(1, 1);
+  a11 << -1.3;
+  if (1 >= low && 1 <= high)
+    xs.push_back(a11);
+
+  Eigen::MatrixXd a22(2, 2);
+  a22 << 1, 2, 3, 0.7;
+  if (2 >= low && 2 <= high)
+    xs.push_back(a22);
+
+  Eigen::MatrixXd a33(3, 3);
+  a33 << 3, -5, 7, -7.2, 9.1, -6.3, 7, 12, -3;
+  if (3 >= low && 3 <= high)
+    xs.push_back(a33);
+
+  return xs;
 }
 
 }  // namespace test

@@ -17,26 +17,26 @@ namespace math {
  *       trace(D B^T A^-1 B)
  * where D is a square matrix and the LDLT_factor of A is provided.
  *
- * @tparam T1 type of elements in the first matrix
- * @tparam R1 number of rows, can be Eigen::Dynamic
- * @tparam C1 number of columns, can be Eigen::Dynamic
+ * @tparam EigMat1 type of the first matrix
  * @tparam T2 type of elements in the LDLT_factor
  * @tparam R2 number of rows in the LDLT_factor, can be Eigen::Dynamic
  * @tparam C2 number of columns in the LDLT_factor, can be Eigen::Dynamic
- * @tparam T3 type of elements in the second matrix
- * @tparam R3 number of rows, can be Eigen::Dynamic
- * @tparam C3 number of columns, can be Eigen::Dynamic
+ * @tparam EigMat3 type of the second matrix
  *
  * @param D a square matrix
  * @param A an LDLT_factor
  * @param B a matrix
  * @return The trace of the inverse quadratic form.
  */
-template <typename T1, int R1, int C1, typename T2, int R2, int C2, typename T3,
-          int R3, int C3, require_any_var_t<T1, T2, T3>...>
-inline var trace_gen_inv_quad_form_ldlt(const Eigen::Matrix<T1, R1, C1> &D,
-                                        const LDLT_factor<T2, R2, C2> &A,
-                                        const Eigen::Matrix<T3, R3, C3> &B) {
+template <typename EigMat1, typename T2, int R2, int C2, typename EigMat3,
+          require_all_eigen_t<EigMat1, EigMat3>* = nullptr,
+          require_any_vt_var<EigMat1, T2, EigMat3>* = nullptr>
+inline var trace_gen_inv_quad_form_ldlt(const EigMat1& D,
+                                        const LDLT_factor<T2, R2, C2>& A,
+                                        const EigMat3& B) {
+  using T3 = value_type_t<EigMat3>;
+  constexpr int R3 = EigMat3::RowsAtCompileTime;
+  constexpr int C3 = EigMat3::ColsAtCompileTime;
   check_square("trace_gen_inv_quad_form_ldlt", "D", D);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "A", A, "B", B);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "B", B, "D", D);
@@ -44,7 +44,7 @@ inline var trace_gen_inv_quad_form_ldlt(const Eigen::Matrix<T1, R1, C1> &D,
     return 0;
   }
 
-  internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3> *_impl
+  auto* _impl
       = new internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3>(
           D, A, B);
 

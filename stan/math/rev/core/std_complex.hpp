@@ -11,13 +11,13 @@ namespace std {
 
 /**
  * Specialization of the standard library complex number type for
- * reverse-mode autodiff type `stan::math::var`.
+ * reverse-mode autodiff type `stan::math::var_value<double>`.
  */
 template <>
-class complex<stan::math::var>
-    : public stan::math::complex_base<stan::math::var> {
+class complex<stan::math::var_value<double>>
+    : public stan::math::complex_base<stan::math::var_value<double>> {
  public:
-  using base_t = stan::math::complex_base<stan::math::var>;
+  using base_t = stan::math::complex_base<stan::math::var_value<double>>;
 
   /**
    * Construct a complex number with zero real and imaginary parts.
@@ -42,7 +42,7 @@ class complex<stan::math::var>
    * @tparam U type of real part (assignable to `value_type`)
    * @param[in] re real part
    */
-  template <typename U>  // , typename = stan::require_stan_scalar_t<U>>
+  template <typename U, typename = stan::require_stan_scalar_t<U>>
   complex(const U& re) : base_t(re) {}  // NOLINT(runtime/explicit)
 
   template <typename U>

@@ -4,17 +4,16 @@
 #include <limits>
 #include <string>
 
-using stan::math::check_pos_definite;
-
-const char* function = "function";
-class ErrorHandlingMatrix : public ::testing::Test {
+class ErrorHandlingMatrixPosDef : public ::testing::Test {
  public:
+  const char* function = "function";
   void SetUp() {}
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
 };
 
-TEST_F(ErrorHandlingMatrix, checkPosDefinite) {
+TEST_F(ErrorHandlingMatrixPosDef, checkPosDefinite) {
+  using stan::math::check_pos_definite;
   y.resize(1, 1);
   y << 1;
   EXPECT_NO_THROW(check_pos_definite(function, "y", y));
@@ -38,7 +37,8 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite) {
   EXPECT_NO_THROW(check_pos_definite(function, "y", ldlt_2));
 }
 
-TEST_F(ErrorHandlingMatrix, checkPosDefinite_not_square) {
+TEST_F(ErrorHandlingMatrixPosDef, checkPosDefinite_not_square) {
+  using stan::math::check_pos_definite;
   std::stringstream expected_msg;
 
   y.resize(3, 4);
@@ -48,7 +48,8 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_not_square) {
                    expected_msg.str());
 }
 
-TEST_F(ErrorHandlingMatrix, checkPosDefinite_0_size) {
+TEST_F(ErrorHandlingMatrixPosDef, checkPosDefinite_0_size) {
+  using stan::math::check_pos_definite;
   std::string expected_msg;
 
   expected_msg
@@ -64,7 +65,8 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_0_size) {
   EXPECT_NO_THROW(check_pos_definite(function, "x", llt));
 }
 
-TEST_F(ErrorHandlingMatrix, checkPosDefinite_non_symmetric) {
+TEST_F(ErrorHandlingMatrixPosDef, checkPosDefinite_non_symmetric) {
+  using stan::math::check_pos_definite;
   std::string expected_msg;
 
   y.resize(3, 3);
@@ -82,7 +84,8 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_non_symmetric) {
   EXPECT_NO_THROW(check_pos_definite(function, "y", ldlt));
 }
 
-TEST_F(ErrorHandlingMatrix, checkPosDefinite_non_pos_definite) {
+TEST_F(ErrorHandlingMatrixPosDef, checkPosDefinite_non_pos_definite) {
+  using stan::math::check_pos_definite;
   std::stringstream expected_msg1_mat;
   std::stringstream expected_msg1_llt;
   std::stringstream expected_msg1_ldlt;
@@ -136,14 +139,15 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_non_pos_definite) {
                    std::domain_error, expected_msg1_ldlt.str());
 }
 
-TEST_F(ErrorHandlingMatrix, checkPosDefinite_nan) {
+TEST_F(ErrorHandlingMatrixPosDef, checkPosDefinite_nan) {
+  using stan::math::check_pos_definite;
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   y.resize(1, 1);
   y << nan;
 
   std::stringstream expected_msg;
-  expected_msg << "function: y[1] is nan, but must not be nan!";
+  expected_msg << "function: y[row=1, col=1] is nan, but must not be nan!";
   EXPECT_THROW_MSG(check_pos_definite(function, "y", y), std::domain_error,
                    expected_msg.str());
 
@@ -163,20 +167,7 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_nan) {
       y << 2, -1, 0, -1, 2, -1, 0, -1, 2;
       y(i, j) = nan;
       if (i >= j) {
-        // expected_msg.str("");
-        // if (i == j)
-        //   expected_msg << "function: y["
-        //                << j*y.cols() + i + 1
-        //                << "] is " << nan
-        //                << ", but must not be nan!";
-        // else
-        //   expected_msg << "function: y is not symmetric. "
-        //                << "y[" << j+1 << ", " << i+1 << "] = " << y(j, i)
-        //                << ", but y[" << i+1 << ", " << j+1 << "] = "
-        //                << y(i, j);
-        EXPECT_THROW(check_pos_definite(function, "y", y),
-                     // , expected_msg.str());
-                     std::domain_error);
+        EXPECT_THROW(check_pos_definite(function, "y", y), std::domain_error);
       }
     }
 

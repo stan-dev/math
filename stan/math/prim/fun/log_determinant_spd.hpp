@@ -5,6 +5,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <cmath>
 
 namespace stan {
@@ -13,22 +14,21 @@ namespace math {
 /**
  * Returns the log absolute determinant of the specified square matrix.
  *
- * @tparam T type of elements in the matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam T type of the matrix
  *
  * @param m specified matrix
  * @return log absolute determinant of the matrix
  * @throw std::domain_error if matrix is not square and symmetric
  */
-template <typename T, int R, int C>
-inline T log_determinant_spd(const Eigen::Matrix<T, R, C>& m) {
-  using std::log;
-  check_symmetric("log_determinant_spd", "m", m);
-  if (m.size() == 0)
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
+          require_not_vt_var<EigMat>* = nullptr>
+inline value_type_t<EigMat> log_determinant_spd(const EigMat& m) {
+  const auto& m_ref = to_ref(m);
+  check_symmetric("log_determinant_spd", "m", m_ref);
+  if (m.size() == 0) {
     return 0;
-
-  return sum(log(m.ldlt().vectorD().array()));
+  }
+  return sum(log(m_ref.ldlt().vectorD().array()));
 }
 
 }  // namespace math

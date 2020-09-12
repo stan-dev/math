@@ -12,7 +12,9 @@
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
 
 namespace stan {
@@ -41,141 +43,100 @@ template <bool propto, typename T_y, typename T_scale_succ,
 return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
   using T_partials_return = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
-  using std::log;
+  using T_partials_matrix = Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1>;
+  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
+  using T_alpha_ref
+      = ref_type_if_t<!is_constant<T_scale_succ>::value, T_scale_succ>;
+  using T_beta_ref
+      = ref_type_if_t<!is_constant<T_scale_fail>::value, T_scale_fail>;
   static const char* function = "beta_lpdf";
-  check_positive_finite(function, "First shape parameter", alpha);
-  check_positive_finite(function, "Second shape parameter", beta);
-  check_not_nan(function, "Random variable", y);
   check_consistent_sizes(function, "Random variable", y,
                          "First shape parameter", alpha,
                          "Second shape parameter", beta);
-  check_nonnegative(function, "Random variable", y);
-  check_less_or_equal(function, "Random variable", y, 1);
-
   if (size_zero(y, alpha, beta)) {
     return 0;
   }
+
+  T_y_ref y_ref = y;
+  T_alpha_ref alpha_ref = alpha;
+  T_beta_ref beta_ref = beta;
+
+  const auto& y_col = as_column_vector_or_scalar(y_ref);
+  const auto& alpha_col = as_column_vector_or_scalar(alpha_ref);
+  const auto& beta_col = as_column_vector_or_scalar(beta_ref);
+
+  const auto& y_arr = as_array_or_scalar(y_col);
+  const auto& alpha_arr = as_array_or_scalar(alpha_col);
+  const auto& beta_arr = as_array_or_scalar(beta_col);
+
+  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
+  ref_type_t<decltype(value_of(alpha_arr))> alpha_val = value_of(alpha_arr);
+  ref_type_t<decltype(value_of(beta_arr))> beta_val = value_of(beta_arr);
+
+  check_positive_finite(function, "First shape parameter", alpha_val);
+  check_positive_finite(function, "Second shape parameter", beta_val);
+  check_bounded(function, "Random variable", y_val, 0, 1);
   if (!include_summand<propto, T_y, T_scale_succ, T_scale_fail>::value) {
     return 0;
   }
 
-  T_partials_return logp(0);
-  operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(y, alpha,
-                                                                      beta);
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_scale_succ> alpha_vec(alpha);
-  scalar_seq_view<T_scale_fail> beta_vec(beta);
-  size_t size_y = stan::math::size(y);
-  size_t size_alpha = stan::math::size(alpha);
-  size_t size_beta = stan::math::size(beta);
+  const auto& log_y = to_ref(log(y_val));
+  const auto& log1m_y = to_ref(log1m(y_val));
+
   size_t N = max_size(y, alpha, beta);
-
-  for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    if (y_dbl < 0 || y_dbl > 1) {
-      return LOG_ZERO;
-    }
-  }
-
-  VectorBuilder<include_summand<propto, T_y, T_scale_succ>::value,
-                T_partials_return, T_y>
-      log_y(size_y);
-  VectorBuilder<include_summand<propto, T_y, T_scale_fail>::value,
-                T_partials_return, T_y>
-      log1m_y(size_y);
-
-  for (size_t n = 0; n < size_y; n++) {
-    if (include_summand<propto, T_y, T_scale_succ>::value) {
-      log_y[n] = log(value_of(y_vec[n]));
-    }
-    if (include_summand<propto, T_y, T_scale_fail>::value) {
-      log1m_y[n] = log1m(value_of(y_vec[n]));
-    }
-  }
-
-  VectorBuilder<include_summand<propto, T_scale_succ>::value, T_partials_return,
-                T_scale_succ>
-      lgamma_alpha(size_alpha);
-  VectorBuilder<!is_constant_all<T_scale_succ>::value, T_partials_return,
-                T_scale_succ>
-      digamma_alpha(size_alpha);
+  T_partials_return logp(0);
   if (include_summand<propto, T_scale_succ>::value) {
-    for (size_t n = 0; n < size_alpha; n++) {
-      const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-      lgamma_alpha[n] = lgamma(alpha_dbl);
-      if (!is_constant_all<T_scale_succ>::value) {
-        digamma_alpha[n] = digamma(alpha_dbl);
-      }
-    }
+    logp -= sum(lgamma(alpha_val)) * N / max_size(alpha);
   }
-
-  VectorBuilder<include_summand<propto, T_scale_fail>::value, T_partials_return,
-                T_scale_fail>
-      lgamma_beta(size_beta);
-  VectorBuilder<!is_constant_all<T_scale_fail>::value, T_partials_return,
-                T_scale_fail>
-      digamma_beta(size_beta);
-
   if (include_summand<propto, T_scale_fail>::value) {
-    for (size_t n = 0; n < size_beta; n++) {
-      const T_partials_return beta_dbl = value_of(beta_vec[n]);
-      lgamma_beta[n] = lgamma(beta_dbl);
-      if (!is_constant_all<T_scale_fail>::value) {
-        digamma_beta[n] = digamma(beta_dbl);
-      }
-    }
+    logp -= sum(lgamma(beta_val)) * N / max_size(beta);
+  }
+  if (include_summand<propto, T_y, T_scale_succ>::value) {
+    logp += sum((alpha_val - 1.0) * log_y) * N / max_size(y, alpha);
+  }
+  if (include_summand<propto, T_y, T_scale_fail>::value) {
+    logp += sum((beta_val - 1.0) * log1m_y) * N / max_size(y, beta);
   }
 
-  VectorBuilder<include_summand<propto, T_scale_succ, T_scale_fail>::value,
-                T_partials_return, T_scale_succ, T_scale_fail>
-      lgamma_alpha_beta(max_size(alpha, beta));
-  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
-                T_partials_return, T_scale_succ, T_scale_fail>
-      digamma_alpha_beta(max_size(alpha, beta));
+  operands_and_partials<T_y_ref, T_alpha_ref, T_beta_ref> ops_partials(
+      y_ref, alpha_ref, beta_ref);
+  if (!is_constant_all<T_y>::value) {
+    if (is_vector<T_y>::value) {
+      ops_partials.edge1_.partials_ = forward_as<T_partials_matrix>(
+          (alpha_val - 1) / y_val + (beta_val - 1) / (y_val - 1));
+    } else {
+      ops_partials.edge1_.partials_[0]
+          = sum((alpha_val - 1) / y_val + (beta_val - 1) / (y_val - 1));
+    }
+  }
 
   if (include_summand<propto, T_scale_succ, T_scale_fail>::value) {
-    for (size_t n = 0; n < max_size(alpha, beta); n++) {
-      const T_partials_return alpha_beta
-          = value_of(alpha_vec[n]) + value_of(beta_vec[n]);
-      lgamma_alpha_beta[n] = lgamma(alpha_beta);
-      if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
-        digamma_alpha_beta[n] = digamma(alpha_beta);
+    const auto& alpha_beta
+        = to_ref_if<!is_constant_all<T_scale_succ, T_scale_fail>::value>(
+            alpha_val + beta_val);
+    logp += sum(lgamma(alpha_beta)) * N / max_size(alpha, beta);
+    if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
+      const auto& digamma_alpha_beta
+          = to_ref_if < !is_constant_all<T_scale_succ>::value
+            && !is_constant_all<T_scale_fail>::value > (digamma(alpha_beta));
+      if (!is_constant_all<T_scale_succ>::value) {
+        if (is_vector<T_scale_succ>::value) {
+          ops_partials.edge2_.partials_ = forward_as<T_partials_matrix>(
+              log_y + digamma_alpha_beta - digamma(alpha_val));
+        } else {
+          ops_partials.edge2_.partials_[0]
+              = sum(log_y + digamma_alpha_beta - digamma(alpha_val));
+        }
       }
-    }
-  }
-
-  for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-    const T_partials_return beta_dbl = value_of(beta_vec[n]);
-
-    if (include_summand<propto, T_scale_succ, T_scale_fail>::value) {
-      logp += lgamma_alpha_beta[n];
-    }
-    if (include_summand<propto, T_scale_succ>::value) {
-      logp -= lgamma_alpha[n];
-    }
-    if (include_summand<propto, T_scale_fail>::value) {
-      logp -= lgamma_beta[n];
-    }
-    if (include_summand<propto, T_y, T_scale_succ>::value) {
-      logp += (alpha_dbl - 1.0) * log_y[n];
-    }
-    if (include_summand<propto, T_y, T_scale_fail>::value) {
-      logp += (beta_dbl - 1.0) * log1m_y[n];
-    }
-
-    if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
-          += (alpha_dbl - 1) / y_dbl + (beta_dbl - 1) / (y_dbl - 1);
-    }
-    if (!is_constant_all<T_scale_succ>::value) {
-      ops_partials.edge2_.partials_[n]
-          += log_y[n] + digamma_alpha_beta[n] - digamma_alpha[n];
-    }
-    if (!is_constant_all<T_scale_fail>::value) {
-      ops_partials.edge3_.partials_[n]
-          += log1m_y[n] + digamma_alpha_beta[n] - digamma_beta[n];
+      if (!is_constant_all<T_scale_fail>::value) {
+        if (is_vector<T_scale_fail>::value) {
+          ops_partials.edge3_.partials_ = forward_as<T_partials_matrix>(
+              log1m_y + digamma_alpha_beta - digamma(beta_val));
+        } else {
+          ops_partials.edge3_.partials_[0]
+              = sum(log1m_y + digamma_alpha_beta - digamma(beta_val));
+        }
+      }
     }
   }
   return ops_partials.build(logp);

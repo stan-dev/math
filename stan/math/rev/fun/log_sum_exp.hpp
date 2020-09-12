@@ -80,10 +80,10 @@ class log_sum_exp_matrix_vari : public op_matrix_vari {
  * @tparam T Type of input vector or matrix.
  * @param x matrix
  */
-template <typename T, require_t<is_var<scalar_type_t<T>>>...>
+template <typename T, require_container_st<is_var, T>* = nullptr>
 inline auto log_sum_exp(const T& x) {
   return apply_vector_unary<T>::reduce(x, [&](const auto& v) {
-    return var(new internal::log_sum_exp_matrix_vari(v));
+    return var(new internal::log_sum_exp_matrix_vari(v.eval()));
   });
 }
 

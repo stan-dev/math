@@ -11,14 +11,14 @@ namespace math {
 // real[] to_array_1d(matrix)
 // real[] to_array_1d(row_vector)
 // real[] to_array_1d(vector)
-template <typename T, int R, int C>
-inline std::vector<T> to_array_1d(const Eigen::Matrix<T, R, C>& matrix) {
-  const T* datap = matrix.data();
-  int matrix_size = matrix.size();
-  std::vector<T> result(matrix_size);
-  for (int i = 0; i < matrix_size; i++) {
-    result[i] = datap[i];
-  }
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+inline std::vector<value_type_t<EigMat>> to_array_1d(const EigMat& matrix) {
+  using T_val = value_type_t<EigMat>;
+  std::vector<T_val> result(matrix.size());
+  Eigen::Map<Eigen::Matrix<T_val, EigMat::RowsAtCompileTime,
+                           EigMat::ColsAtCompileTime>>(
+      result.data(), matrix.rows(), matrix.cols())
+      = matrix;
   return result;
 }
 
@@ -31,7 +31,7 @@ inline std::vector<T> to_array_1d(const std::vector<T>& x) {
 // real[] to_array_1d(...)
 template <typename T>
 inline std::vector<typename scalar_type<T>::type> to_array_1d(
-    const std::vector<std::vector<T> >& x) {
+    const std::vector<std::vector<T>>& x) {
   size_t size1 = x.size();
   size_t size2 = 0;
   if (size1 != 0) {

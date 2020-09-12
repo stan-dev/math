@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_MATRIX_EXP_PADE_HPP
 #define STAN_MATH_PRIM_FUN_MATRIX_EXP_PADE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/MatrixExponential.h>
 
@@ -12,12 +13,17 @@ namespace math {
  * approximation, coupled with scaling and
  * squaring.
  *
- * @tparam MatrixType type of elements in the matrix
+ * @tparam MatrixType type of the matrix
  * @param[in] arg matrix to exponentiate.
  * @return Matrix exponential of input matrix.
  */
-template <typename MatrixType>
-MatrixType matrix_exp_pade(const MatrixType& arg) {
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
+              EigMat::ColsAtCompileTime>
+matrix_exp_pade(const EigMat& arg) {
+  using MatrixType
+      = Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
+                      EigMat::ColsAtCompileTime>;
   check_square("matrix_exp_pade", "arg", arg);
   if (arg.size() == 0) {
     return {};

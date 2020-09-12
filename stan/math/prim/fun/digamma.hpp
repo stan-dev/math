@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/boost_policy.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 
 namespace stan {
@@ -44,7 +45,7 @@ namespace math {
  * @return derivative of log gamma function at argument
  */
 inline double digamma(double x) {
-  return boost::math::digamma(x, boost_policy_t());
+  return boost::math::digamma(x, boost_policy_t<>());
 }
 
 /**

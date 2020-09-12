@@ -20,28 +20,27 @@ namespace math {
  *
  * The transform is based on a centered stick-breaking process.
  *
- * @tparam T type of elements in the vector
+ * @tparam ColVec type of the vector
  * @param y Free vector input of dimensionality K - 1.
  * @return Simplex of dimensionality K.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& y) {
+template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
+auto simplex_constrain(const ColVec& y) {
   // cut & paste simplex_constrain(Eigen::Matrix, T) w/o Jacobian
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
-  using size_type = index_type_t<Matrix<T, Dynamic, 1>>;
+  using T = value_type_t<ColVec>;
 
   int Km1 = y.size();
   Matrix<T, Dynamic, 1> x(Km1 + 1);
   T stick_len(1.0);
-  for (size_type k = 0; k < Km1; ++k) {
-    T z_k(inv_logit(y(k) - log(Km1 - k)));
-    x(k) = stick_len * z_k;
-    stick_len -= x(k);
+  for (Eigen::Index k = 0; k < Km1; ++k) {
+    T z_k = inv_logit(y.coeff(k) - log(Km1 - k));
+    x.coeffRef(k) = stick_len * z_k;
+    stick_len -= x.coeff(k);
   }
-  x(Km1) = stick_len;
+  x.coeffRef(Km1) = stick_len;
   return x;
 }
 
@@ -53,34 +52,32 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_constrain(
  * The simplex transform is defined through a centered
  * stick-breaking process.
  *
- * @tparam T type of elements in the vector
+ * @tparam ColVec type of the vector
  * @param y Free vector input of dimensionality K - 1.
  * @param lp Log probability reference to increment.
  * @return Simplex of dimensionality K.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& y, T& lp) {
+template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
+auto simplex_constrain(const ColVec& y, value_type_t<ColVec>& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
-
-  using size_type = index_type_t<Matrix<T, Dynamic, 1>>;
+  using T = value_type_t<ColVec>;
 
   int Km1 = y.size();  // K = Km1 + 1
   Matrix<T, Dynamic, 1> x(Km1 + 1);
   T stick_len(1.0);
-  for (size_type k = 0; k < Km1; ++k) {
+  for (Eigen::Index k = 0; k < Km1; ++k) {
     double eq_share = -log(Km1 - k);  // = logit(1.0/(Km1 + 1 - k));
-    T adj_y_k(y(k) + eq_share);
-    T z_k(inv_logit(adj_y_k));
-    x(k) = stick_len * z_k;
+    T adj_y_k = y.coeff(k) + eq_share;
+    T z_k = inv_logit(adj_y_k);
+    x.coeffRef(k) = stick_len * z_k;
     lp += log(stick_len);
     lp -= log1p_exp(-adj_y_k);
     lp -= log1p_exp(adj_y_k);
-    stick_len -= x(k);  // equivalently *= (1 - z_k);
+    stick_len -= x.coeff(k);  // equivalently *= (1 - z_k);
   }
-  x(Km1) = stick_len;  // no Jacobian contrib for last dim
+  x.coeffRef(Km1) = stick_len;  // no Jacobian contrib for last dim
   return x;
 }
 

@@ -54,13 +54,69 @@ std::ostream& operator<<(std::ostream& os, const vector<var>& param) {
 }  // namespace std
 
 // ------------------------------------------------------------
+
+template <typename T>
+T get_param(const vector<double>& params, const size_t n) {
+  T param = 0;
+  if (n < params.size())
+    param = params[n];
+  return param;
+}
+
+template <>
+empty get_param<empty>(const vector<double>& /*params*/, const size_t /*n*/) {
+  return empty();
+}
+
+template <>
+fvar<double> get_param<fvar<double>>(const vector<double>& params,
+                                     const size_t n) {
+  fvar<double> param = 0;
+  if (n < params.size()) {
+    param = params[n];
+    param.d_ = 1.0;
+  }
+  return param;
+}
+template <>
+fvar<var> get_param<fvar<var>>(const vector<double>& params, const size_t n) {
+  fvar<var> param = 0;
+  if (n < params.size()) {
+    param = params[n];
+    param.d_ = 1.0;
+  }
+  return param;
+}
+template <>
+fvar<fvar<double>> get_param<fvar<fvar<double>>>(const vector<double>& params,
+                                                 const size_t n) {
+  fvar<fvar<double>> param = 0;
+  if (n < params.size()) {
+    param = params[n];
+    param.d_ = 1.0;
+  }
+  return param;
+}
+template <>
+fvar<fvar<var>> get_param<fvar<fvar<var>>>(const vector<double>& params,
+                                           const size_t n) {
+  fvar<fvar<var>> param = 0;
+  if (n < params.size()) {
+    param = params[n];
+    param.d_ = 1.0;
+  }
+  return param;
+}
+
+// ------------------------------------------------------------
+
 // default template handles Eigen::Matrix
 template <typename T>
 T get_params(const vector<vector<double>>& parameters, const size_t p) {
   T param(parameters.size());
   for (size_t n = 0; n < parameters.size(); n++)
     if (p < parameters[0].size())
-      param(n) = parameters[n][p];
+      param(n) = get_param<stan::scalar_type_t<T>>(parameters[n], p);
   return param;
 }
 
@@ -215,7 +271,7 @@ T get_params(const vector<vector<double>>& parameters, const size_t /*n*/,
   T param(parameters.size());
   for (size_t i = 0; i < parameters.size(); i++)
     if (p < parameters[0].size())
-      param(i) = parameters[i][p];
+      param(i) = get_param<stan::scalar_type_t<T>>(parameters[i], p);
   return param;
 }
 
@@ -376,9 +432,9 @@ T get_repeated_params(const vector<double>& parameters, const size_t p,
   T param(N_REPEAT);
   for (size_t n = 0; n < N_REPEAT; n++) {
     if (p < parameters.size())
-      param(n) = parameters[p];
+      param(n) = get_param<stan::scalar_type_t<T>>(parameters, p);
     else
-      param(0) = 0;
+      param(n) = 0;
   }
   return param;
 }
@@ -538,65 +594,11 @@ vector<fvar<fvar<var>>> get_repeated_params<vector<fvar<fvar<var>>>>(
 // ------------------------------------------------------------
 
 template <typename T>
-T get_param(const vector<double>& params, const size_t n) {
-  T param = 0;
-  if (n < params.size())
-    param = params[n];
-  return param;
-}
-
-template <>
-empty get_param<empty>(const vector<double>& /*params*/, const size_t /*n*/) {
-  return empty();
-}
-template <>
-fvar<double> get_param<fvar<double>>(const vector<double>& params,
-                                     const size_t n) {
-  fvar<double> param = 0;
-  if (n < params.size()) {
-    param = params[n];
-    param.d_ = 1.0;
-  }
-  return param;
-}
-template <>
-fvar<var> get_param<fvar<var>>(const vector<double>& params, const size_t n) {
-  fvar<var> param = 0;
-  if (n < params.size()) {
-    param = params[n];
-    param.d_ = 1.0;
-  }
-  return param;
-}
-template <>
-fvar<fvar<double>> get_param<fvar<fvar<double>>>(const vector<double>& params,
-                                                 const size_t n) {
-  fvar<fvar<double>> param = 0;
-  if (n < params.size()) {
-    param = params[n];
-    param.d_ = 1.0;
-  }
-  return param;
-}
-template <>
-fvar<fvar<var>> get_param<fvar<fvar<var>>>(const vector<double>& params,
-                                           const size_t n) {
-  fvar<fvar<var>> param = 0;
-  if (n < params.size()) {
-    param = params[n];
-    param.d_ = 1.0;
-  }
-  return param;
-}
-
-// ------------------------------------------------------------
-
-template <typename T>
 typename scalar_type<T>::type select_var_param(
     const vector<vector<double>>& parameters, const size_t n, const size_t p) {
   typename scalar_type<T>::type param(0);
   if (p < parameters[0].size()) {
-    if (is_vector<T>::value && !is_constant_all<T>::value)
+    if (!is_constant_all<T>::value)
       param = parameters[n][p];
     else
       param = parameters[0][p];

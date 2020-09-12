@@ -34,8 +34,8 @@ TEST(MathMatrixCL, sub_block_exception) {
   d2.resize(4, 4);
   stan::math::matrix_cl<double> d11(d1);
   stan::math::matrix_cl<double> d22(d2);
-  EXPECT_THROW(d22.sub_block(d11, 1, 1, 0, 0, 4, 4), std::domain_error);
-  EXPECT_THROW(d22.sub_block(d11, 4, 4, 0, 0, 2, 2), std::domain_error);
+  EXPECT_THROW(d22.sub_block(d11, 1, 1, 0, 0, 4, 4), std::invalid_argument);
+  EXPECT_THROW(d22.sub_block(d11, 4, 4, 0, 0, 2, 2), std::invalid_argument);
 }
 
 TEST(MathMatrixCL, sub_block_triangular) {

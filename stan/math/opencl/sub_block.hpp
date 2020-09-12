@@ -16,9 +16,9 @@
 namespace stan {
 namespace math {
 
-/** \ingroup opencl
+/** \ingroup matrix_cl_group
  * Write the contents of A into
- * <code>this</code> starting at the top left of <code>this</code>
+ * `this` starting at the top left of `this`
  * @param A input matrix
  * @param A_i the offset row in A
  * @param A_j the offset column in A

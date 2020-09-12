@@ -134,6 +134,9 @@
 #include <stan/math/prim/prob/gumbel_log.hpp>
 #include <stan/math/prim/prob/gumbel_lpdf.hpp>
 #include <stan/math/prim/prob/gumbel_rng.hpp>
+#include <stan/math/prim/prob/hmm_hidden_state_prob.hpp>
+#include <stan/math/prim/prob/hmm_latent_rng.hpp>
+#include <stan/math/prim/prob/hmm_marginal.hpp>
 #include <stan/math/prim/prob/hypergeometric_log.hpp>
 #include <stan/math/prim/prob/hypergeometric_lpmf.hpp>
 #include <stan/math/prim/prob/hypergeometric_rng.hpp>
@@ -199,6 +202,9 @@
 #include <stan/math/prim/prob/multi_student_t_log.hpp>
 #include <stan/math/prim/prob/multi_student_t_lpdf.hpp>
 #include <stan/math/prim/prob/multi_student_t_rng.hpp>
+#include <stan/math/prim/prob/multinomial_logit_log.hpp>
+#include <stan/math/prim/prob/multinomial_logit_lpmf.hpp>
+#include <stan/math/prim/prob/multinomial_logit_rng.hpp>
 #include <stan/math/prim/prob/multinomial_log.hpp>
 #include <stan/math/prim/prob/multinomial_lpmf.hpp>
 #include <stan/math/prim/prob/multinomial_rng.hpp>
@@ -258,6 +264,10 @@
 #include <stan/math/prim/prob/pareto_type_2_log.hpp>
 #include <stan/math/prim/prob/pareto_type_2_lpdf.hpp>
 #include <stan/math/prim/prob/pareto_type_2_rng.hpp>
+#include <stan/math/prim/prob/poisson_binomial_lccdf.hpp>
+#include <stan/math/prim/prob/poisson_binomial_lcdf.hpp>
+#include <stan/math/prim/prob/poisson_binomial_lpmf.hpp>
+#include <stan/math/prim/prob/poisson_binomial_rng.hpp>
 #include <stan/math/prim/prob/poisson_ccdf_log.hpp>
 #include <stan/math/prim/prob/poisson_cdf.hpp>
 #include <stan/math/prim/prob/poisson_cdf_log.hpp>

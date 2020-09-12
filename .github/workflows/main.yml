@@ -1,0 +1,60 @@
+name: Windows RTools 3.5
+
+on:
+  push:
+    branches: [ develop ]
+    paths-ignore:
+      - 'doygen/**'
+      - 'hooks/**'
+      - 'licenses/**'
+      - 'LICENSE.md'
+      - 'README.md'
+      - 'RELEASE-NOTES.txt'
+jobs:
+  full:
+    name: Full unit tests
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '2.x'
+    - name: Download RTools
+      run: Invoke-WebRequest -Uri https://cran.rstudio.com/bin/windows/Rtools/Rtools35.exe -OutFile ./R35.exe
+    - name: Install RTools
+      shell: powershell
+      run: Start-Process -FilePath ./R35.exe -ArgumentList /VERYSILENT -NoNewWindow -Wait
+    - name: PATH Setup
+      shell: powershell
+      run: echo "::add-path::C:/Rtools/bin"
+    - name: PATH Setup
+      shell: powershell
+      run: echo "::add-path::C:/Rtools/mingw_64/bin"
+    - name: Print g++ version
+      shell: powershell
+      run: g++ --version
+    - name: Print g++ path
+      shell: powershell
+      run: Get-Command g++ | Select-Object -ExpandProperty Definition
+    - name: Print mingw32-make version
+      shell: powershell
+      run: mingw32-make --version
+    - name: Print mingw32-make path
+      shell: powershell
+      run: Get-Command mingw32-make | Select-Object -ExpandProperty Definition
+    - name: Build Math libs
+      shell: powershell
+      run: mingw32-make -f make/standalone math-libs
+    - name: Add TBB to PATH
+      shell: powershell
+      run: echo "::add-path::D:/a/math/math/lib/tbb"
+    - name: Run full unit tests
+      shell: powershell
+      run: python.exe runTests.py -j2 test/unit -f test/unit/
+    - name: Upload gtest_output xml
+      uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: gtest_outputs_xml
+        path: '**/*_test.xml'

@@ -38,35 +38,42 @@ namespace math {
  */
 template <typename T_x, typename T_alpha, typename T_beta, class RNG>
 inline typename VectorBuilder<true, int, T_alpha>::type bernoulli_logit_glm_rng(
-    const T_x &x, const T_alpha &alpha, const T_beta &beta, RNG &rng) {
+    const T_x& x, const T_alpha& alpha, const T_beta& beta, RNG& rng) {
   using boost::bernoulli_distribution;
   using boost::variate_generator;
+  using T_x_ref = ref_type_t<T_x>;
+  using T_alpha_ref = ref_type_t<T_alpha>;
+  using T_beta_ref = ref_type_t<T_beta>;
 
-  const size_t N = x.row(0).size();
-  const size_t M = x.col(0).size();
+  const size_t N = x.cols();
+  const size_t M = x.rows();
 
-  static const char *function = "bernoulli_logit_glm_rng";
-  check_finite(function, "Matrix of independent variables", x);
-  check_finite(function, "Weight vector", beta);
-  check_finite(function, "Intercept", alpha);
+  static const char* function = "bernoulli_logit_glm_rng";
   check_consistent_size(function, "Weight vector", beta, N);
   check_consistent_size(function, "Vector of intercepts", alpha, M);
+  T_x_ref x_ref = x;
+  T_alpha_ref alpha_ref = alpha;
+  T_beta_ref beta_ref = beta;
+  check_finite(function, "Matrix of independent variables", x_ref);
+  check_finite(function, "Weight vector", beta_ref);
+  check_finite(function, "Intercept", alpha_ref);
 
-  scalar_seq_view<T_beta> beta_vec(beta);
-  Eigen::VectorXd beta_vector(N);
-  for (int i = 0; i < N; ++i) {
-    beta_vector[i] = beta_vec[i];
+  const auto& beta_vector = as_column_vector_or_scalar(beta_ref);
+
+  Eigen::VectorXd x_beta;
+  if (is_vector<T_beta>::value) {
+    x_beta = x_ref * beta_vector;
+  } else {
+    x_beta = (x_ref.array() * forward_as<double>(beta_vector)).rowwise().sum();
   }
 
-  Eigen::VectorXd x_beta = x * beta_vector;
-
-  scalar_seq_view<T_alpha> alpha_vec(alpha);
+  scalar_seq_view<T_alpha> alpha_vec(alpha_ref);
 
   VectorBuilder<true, int, T_alpha> output(M);
 
   for (size_t m = 0; m < M; ++m) {
     double theta_m = alpha_vec[m] + x_beta(m);
-    variate_generator<RNG &, bernoulli_distribution<>> bernoulli_rng(
+    variate_generator<RNG&, bernoulli_distribution<>> bernoulli_rng(
         rng, bernoulli_distribution<>(inv_logit(theta_m)));
     output[m] = bernoulli_rng();
   }

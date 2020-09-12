@@ -1,7 +1,9 @@
 #ifndef STAN_MATH_REV_CORE_HPP
 #define STAN_MATH_REV_CORE_HPP
 
+#include <stan/math/rev/core/std_complex.hpp>
 #include <stan/math/rev/core/accumulate_adjoints.hpp>
+#include <stan/math/rev/core/arena_allocator.hpp>
 #include <stan/math/rev/core/autodiffstackstorage.hpp>
 #include <stan/math/rev/core/build_vari_array.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
@@ -51,7 +53,6 @@
 #include <stan/math/rev/core/set_zero_all_adjoints.hpp>
 #include <stan/math/rev/core/set_zero_all_adjoints_nested.hpp>
 #include <stan/math/rev/core/start_nested.hpp>
-#include <stan/math/rev/core/std_complex.hpp>
 #include <stan/math/rev/core/std_isinf.hpp>
 #include <stan/math/rev/core/std_isnan.hpp>
 #include <stan/math/rev/core/std_numeric_limits.hpp>
@@ -67,5 +68,6 @@
 #include <stan/math/rev/core/vvd_vari.hpp>
 #include <stan/math/rev/core/vvv_vari.hpp>
 #include <stan/math/rev/core/save_varis.hpp>
+#include <stan/math/rev/core/zero_adjoints.hpp>
 
 #endif

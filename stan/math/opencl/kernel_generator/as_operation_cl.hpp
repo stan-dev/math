@@ -13,6 +13,10 @@
 namespace stan {
 namespace math {
 
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
+
 /**
  * Converts any valid kernel generator expression into an operation. This is an
  * overload for operations - a no-op
@@ -34,10 +38,20 @@ inline T_operation&& as_operation_cl(T_operation&& a) {
  * @param a scalar
  * @return \c scalar_ wrapping the input
  */
-template <typename T_scalar, typename = require_arithmetic_t<T_scalar>>
+template <typename T_scalar, typename = require_arithmetic_t<T_scalar>,
+          require_not_same_t<T_scalar, bool>* = nullptr>
 inline scalar_<T_scalar> as_operation_cl(const T_scalar a) {
   return scalar_<T_scalar>(a);
 }
+
+/**
+ * Converts any valid kernel generator expression into an operation. This is an
+ * overload for bool scalars. It wraps them into \c scalar_<char> as \c bool can
+ * not be used as a type of a kernel argument.
+ * @param a scalar
+ * @return \c scalar_<char> wrapping the input
+ */
+inline scalar_<char> as_operation_cl(const bool a) { return scalar_<char>(a); }
 
 /**
  * Converts any valid kernel generator expression into an operation. This is an
@@ -65,6 +79,7 @@ using as_operation_cl_t = std::conditional_t<
     decltype(as_operation_cl(std::declval<T>())),
     std::remove_reference_t<decltype(as_operation_cl(std::declval<T>()))>>;
 
+/** @}*/
 }  // namespace math
 }  // namespace stan
 

@@ -8,15 +8,20 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <algorithm>
 #include <string>
 #include <set>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 
 namespace stan {
 namespace math {
+
+/** \addtogroup opencl_kernel_generator
+ *  @{
+ */
 
 /**
  * Represents a transpose in kernel generator expressions.
@@ -31,7 +36,8 @@ class transpose_
  public:
   using Scalar = typename std::remove_reference_t<Arg>::Scalar;
   using base = operation_cl<transpose_<Arg>, Scalar, Arg>;
-  using base::var_name;
+  using base::var_name_;
+  using view_transitivity = std::tuple<std::true_type>;
 
   /**
    * Constructor
@@ -49,25 +55,14 @@ class transpose_
   }
 
   /**
-   * generates kernel code for this and nested expressions.
-   * @param i row index variable name.
-   * @param j column index variable name.
-   * @param var_name_arg The name of this variable.
-   * @return part of kernel with code for this and nested expressions
+   * Swaps indices \c row_index_name and \c col_index_name for the argument
+   * expression.
+   * @param[in, out] row_index_name row index
+   * @param[in, out] col_index_name column index
    */
-  inline kernel_parts generate(const std::string& i, const std::string& j,
-                               const std::string& var_name_arg) const {
-    var_name = var_name_arg;
-    return {};
-  }
-
-  /**
-   * Swaps indices \c i and \c j for the argument expression.
-   * @param[in, out] i row index
-   * @param[in, out] j column index
-   */
-  inline void modify_argument_indices(std::string& i, std::string& j) const {
-    std::swap(i, j);
+  inline void modify_argument_indices(std::string& row_index_name,
+                                      std::string& col_index_name) const {
+    std::swap(row_index_name, col_index_name);
   }
 
   /**
@@ -85,27 +80,13 @@ class transpose_
   inline int cols() const { return this->template get_arg<0>().rows(); }
 
   /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
+   * Determine indices of extreme sub- and superdiagonals written.
+   * @return pair of indices - bottom and top diagonal
    */
-  inline matrix_cl_view view() const {
-    return transpose(this->template get_arg<0>().view());
-  }
-
-  /**
-   * Determine index of bottom diagonal written.
-   * @return index of bottom diagonal
-   */
-  inline int bottom_diagonal() const {
-    return -this->template get_arg<0>().top_diagonal();
-  }
-
-  /**
-   * Determine index of top diagonal written.
-   * @return index of top diagonal
-   */
-  inline int top_diagonal() const {
-    return -this->template get_arg<0>().bottom_diagonal();
+  inline std::pair<int, int> extreme_diagonals() const {
+    std::pair<int, int> arg_diags
+        = this->template get_arg<0>().extreme_diagonals();
+    return {-arg_diags.second, -arg_diags.first};
   }
 };
 
@@ -121,13 +102,13 @@ class transpose_
  * @param a argument to transposition
  */
 template <typename Arg,
-          typename = require_all_valid_expressions_and_none_scalar_t<Arg>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<Arg>>
 inline auto transpose(Arg&& a) {
   auto&& a_operation = as_operation_cl(std::forward<Arg>(a)).deep_copy();
   return transpose_<std::remove_reference_t<decltype(a_operation)>>{
       std::move(a_operation)};
 }
-
+/** @}*/
 }  // namespace math
 }  // namespace stan
 

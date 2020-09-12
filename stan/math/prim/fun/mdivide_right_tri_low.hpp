@@ -12,14 +12,8 @@ namespace math {
  * Returns the solution of the system x tri(A) = b when tri(A) is a
  * lower triangular view of the matrix A.
  *
- * @tparam T1 type of elements in the right-hand side matrix or vector
- * @tparam T2 type of elements in the second matrix
- * @tparam R1 number of rows in the right-hand side matrix, can be
- *         Eigen::Dynamic
- * @tparam C1 number of columns in the right-hand side matrix, can be
- *         Eigen::Dynamic
- * @tparam R2 number of rows in the second matrix, can be Eigen::Dynamic
- * @tparam C2 number of columns in the second matrix, can be Eigen::Dynamic
+ * @tparam EigMat1 type of the right-hand side matrix or vector
+ * @tparam EigMat2 type of the second matrix
  *
  * @param b right-hand side matrix or vector
  * @param A matrix
@@ -27,12 +21,13 @@ namespace math {
  * @throws std::domain_error if A is not square or the rows of b don't
  * match the size of A.
  */
-template <typename T1, typename T2, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_tri_low(
-    const Eigen::Matrix<T1, R1, C1> &b, const Eigen::Matrix<T2, R2, C2> &A) {
-  return mdivide_right_tri<Eigen::Lower>(
-      Eigen::Matrix<return_type_t<T1, T2>, R1, C1>(b),
-      Eigen::Matrix<return_type_t<T1, T2>, R2, C2>(A));
+template <typename EigMat1, typename EigMat2,
+          require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
+          require_all_not_vt_fvar<EigMat1, EigMat2>* = nullptr>
+inline Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
+                     EigMat1::RowsAtCompileTime, EigMat2::ColsAtCompileTime>
+mdivide_right_tri_low(const EigMat1& b, const EigMat2& A) {
+  return mdivide_right_tri<Eigen::Lower>(b, A);
 }
 
 }  // namespace math
