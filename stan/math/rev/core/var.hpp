@@ -549,9 +549,7 @@ class var_value {
     return *this;
   }
   // No-op to match with Eigen methods which call eval
-  inline var_value<T>& eval() noexcept {
-    return *this;
-  }
+  inline var_value<T>& eval() noexcept { return *this; }
 
   /**
    * Copy assignment operator delegates to general assignment operator.
