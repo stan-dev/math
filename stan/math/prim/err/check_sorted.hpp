@@ -14,7 +14,8 @@ namespace math {
 /**
  * Check if the specified vector is sorted into increasing order (repeated
  * values are okay).
- * @tparam EigVec A type derived from `EigenBase` with 1 compile time row or column.
+ * @tparam EigVec A type derived from `EigenBase` with 1 compile time row or
+ * column.
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Vector to test
