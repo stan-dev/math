@@ -154,17 +154,11 @@ class var_value {
    */
   inline auto& adj() { return vi_->adj_; }
 
-  inline auto rows() const {
-    return vi_->rows();
-  }
+  inline auto rows() const { return vi_->rows(); }
 
-  inline auto cols() const {
-    return vi_->cols();
-  }
+  inline auto cols() const { return vi_->cols(); }
 
-  inline auto size() const {
-    return vi_->size();
-  }
+  inline auto size() const { return vi_->size(); }
 
   /**
    * Compute the gradient of this (dependent) variable with respect to
