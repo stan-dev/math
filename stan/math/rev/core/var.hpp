@@ -154,15 +154,15 @@ class var_value {
    */
   inline auto& adj() { return vi_->adj_; }
 
-  inline auto rows() noexcept {
+  inline auto rows() const {
     return vi_->rows();
   }
 
-  inline auto cols() noexcept {
+  inline auto cols() const {
     return vi_->cols();
   }
 
-  inline auto size() noexcept {
+  inline auto size() const {
     return vi_->size();
   }
 
