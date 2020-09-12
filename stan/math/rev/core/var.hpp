@@ -154,6 +154,18 @@ class var_value {
    */
   inline auto& adj() { return vi_->adj_; }
 
+  inline auto rows() noexcept {
+    return vi_->rows();
+  }
+
+  inline auto cols() noexcept {
+    return vi_->cols();
+  }
+
+  inline auto size() noexcept {
+    return vi_->size();
+  }
+
   /**
    * Compute the gradient of this (dependent) variable with respect to
    * the specified vector of (independent) variables, assigning the
