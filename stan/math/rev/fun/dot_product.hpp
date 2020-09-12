@@ -31,7 +31,8 @@ namespace math {
  * @throw std::domain_error if sizes of v1 and v2 do not match.
  */
 template <typename T1, typename T2, require_all_container_t<T1, T2>* = nullptr,
-          require_any_vt_var<T1, T2>* = nullptr>
+          require_any_vt_var<T1, T2>* = nullptr,
+          require_not_complex_t<return_type_t<T1, T2>>* = nullptr>
 inline return_type_t<T1, T2> dot_product(const T1& v1, const T2& v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
 

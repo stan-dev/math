@@ -554,7 +554,7 @@ class multiply_mat_vari<Ta, 1, Ca, double, 1> : public vari {
  * @return Product of scalar and matrix.
  */
 template <typename Mat1, typename Mat2,
-          require_all_eigen_t<Mat1, Mat2>* = nullptr,
+          require_all_eigen_vt<is_var_or_arithmetic, Mat1, Mat2>* = nullptr,
           require_any_eigen_vt<is_var, Mat1, Mat2>* = nullptr,
           require_not_eigen_row_and_col_t<Mat1, Mat2>* = nullptr>
 inline auto multiply(const Mat1& m1, const Mat2& m2) {
@@ -592,6 +592,8 @@ inline auto multiply(const Mat1& m1, const Mat2& m2) {
  */
 template <
     typename RowVec, typename ColVec,
+    require_all_eigen_vt<is_var_or_arithmetic, RowVec, ColVec>* = nullptr,
+    require_any_eigen_vt<is_var, RowVec, ColVec>* = nullptr,
     require_any_var_t<value_type_t<RowVec>, value_type_t<ColVec>>* = nullptr,
     require_eigen_row_and_col_t<RowVec, ColVec>* = nullptr>
 inline var multiply(const RowVec& m1, const ColVec& m2) {

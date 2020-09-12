@@ -85,34 +85,114 @@ TEST(mathMixMatFun, multiply) {
 
 template <typename T>
 void instantiate_multiply() {
-  Eigen::Matrix<double, -1, -1> d(2, 2);
-  d << 1, 2, 3, 4;
-  Eigen::Matrix<T, -1, -1> v(2, 2);
-  v << 1, 2, 3, 4;
-  Eigen::Matrix<std::complex<double>, -1, -1> cd(2, 2);
-  cd << 1, 2, 3, 4;
-  Eigen::Matrix<std::complex<T>, -1, -1> cv(2, 2);
-  cv << 1, 2, 3, 4;
+  using stan::math::multiply;
+  Eigen::Matrix<double, -1, -1> d_mat(2, 2);
+  d_mat << 1, 2, 3, 4;
+  Eigen::Matrix<T, -1, -1> v_mat(2, 2);
+  v_mat << 1, 2, 3, 4;
+  Eigen::Matrix<std::complex<double>, -1, -1> cd_mat(2, 2);
+  cd_mat << 1, 2, 3, 4;
+  Eigen::Matrix<std::complex<T>, -1, -1> cv_mat(2, 2);
+  cv_mat << 1, 2, 3, 4;
 
-  auto d_d = d * d;
-  auto d_v = d * v;
-  auto d_cd = d * cd;
-  auto d_cv = d * cv;
+  auto d_d_mat = multiply(d_mat, d_mat);
+  auto d_v_mat = multiply(d_mat, v_mat);
+  auto d_cd_mat = multiply(d_mat, cd_mat);
+  auto d_cv_mat = multiply(d_mat, cv_mat);
 
-  auto v_d = v * d;
-  auto v_v = v * v;
-  auto v_cd = v * cd;
-  auto v_cv = v * cv;
+  auto v_d_mat = multiply(v_mat, d_mat);
+  auto v_v_mat = multiply(v_mat, v_mat);
+  auto v_cd_mat = multiply(v_mat, cd_mat);
+  auto v_cv_mat = multiply(v_mat, cv_mat);
 
-  auto cd_d = cd * d;
-  auto cd_v = cd * v;
-  auto cd_cd = cd * cd;
-  auto cd_cv = cd * cv;
+  auto cd_d_mat = multiply(cd_mat, d_mat);
+  auto cd_v_mat = multiply(cd_mat, v_mat);
+  auto cd_cd_mat = multiply(cd_mat, cd_mat);
+  auto cd_cv_mat = multiply(cd_mat, cv_mat);
 
-  auto cv_d = cv * d;
-  auto cv_v = cv * v;
-  auto cv_cd = cv * cd;
-  auto cv_cv = cv * cv;
+  auto cv_d_mat = multiply(cv_mat, d_mat);
+  auto cv_v_mat = multiply(cv_mat, v_mat);
+  auto cv_cd_mat = multiply(cv_mat, cd_mat);
+  auto cv_cv_mat = multiply(cv_mat, cv_mat);
+
+  Eigen::Matrix<double, -1, 1> d_vec(2);
+  d_vec << 1, 2;
+  Eigen::Matrix<T, -1, 1> v_vec(2);
+  v_vec << 1, 2;
+  Eigen::Matrix<std::complex<double>, -1, 1> cd_vec(2);
+  cd_vec << 1, 2;
+  Eigen::Matrix<std::complex<T>, -1, 1> cv_vec(2);
+  cv_vec << 1, 2;
+
+  auto d_d_vec_mat = multiply(d_mat, d_vec);
+  auto d_v_vec_mat = multiply(d_mat, v_vec);
+  auto d_cd_vec_mat = multiply(d_mat, cd_vec);
+  auto d_cv_vec_mat = multiply(d_mat, cv_vec);
+
+  auto v_d_vec_mat = multiply(v_mat, d_vec);
+  auto v_v_vec_mat = multiply(v_mat, v_vec);
+  auto v_cd_vec_mat = multiply(v_mat, cd_vec);
+  auto v_cv_vec_mat = multiply(v_mat, cv_vec);
+
+  auto cd_d_vec_mat = multiply(cd_mat, d_vec);
+  auto cd_v_vec_mat = multiply(cd_mat, v_vec);
+  auto cd_cd_vec_mat = multiply(cd_mat, cd_vec);
+  auto cd_cv_vec_mat = multiply(cd_mat, cv_vec);
+
+  auto cv_d_vec_mat = multiply(cv_mat, d_vec);
+  auto cv_v_vec_mat = multiply(cv_mat, v_vec);
+  auto cv_cd_vec_mat = multiply(cv_mat, cd_vec);
+  auto cv_cv_vec_mat = multiply(cv_mat, cv_vec);
+
+  Eigen::Matrix<double, 1, -1> d_rowvec(2);
+  d_rowvec << 1, 2;
+  Eigen::Matrix<T, 1, -1> v_rowvec(2);
+  v_rowvec << 1, 2;
+  Eigen::Matrix<std::complex<double>, 1, -1> cd_rowvec(2);
+  cd_rowvec << 1, 2;
+  Eigen::Matrix<std::complex<T>, 1, -1> cv_rowvec(2);
+  cv_rowvec << 1, 2;
+
+  auto d_d_dot_prod = multiply(d_vec, d_rowvec);
+  auto d_v_dot_prod = multiply(d_vec, v_rowvec);
+  auto d_cd_dot_prod = multiply(d_vec, cd_rowvec);
+  auto d_cv_dot_prod = multiply(d_vec, cv_rowvec);
+
+  auto v_d_dot_prod = multiply(v_vec, d_rowvec);
+  auto v_v_dot_prod = multiply(v_vec, v_rowvec);
+  auto v_cd_dot_prod = multiply(v_vec, cd_rowvec);
+  auto v_cv_dot_prod = multiply(v_vec, cv_rowvec);
+
+  auto cd_d_dot_prod = multiply(cd_vec, d_rowvec);
+  auto cd_v_dot_prod = multiply(cd_vec, v_rowvec);
+  auto cd_cd_dot_prod = multiply(cd_vec, cd_rowvec);
+  auto cd_cv_dot_prod = multiply(cd_vec, cv_rowvec);
+
+  auto cv_d_dot_prod = multiply(cv_vec, d_rowvec);
+  auto cv_v_dot_prod = multiply(cv_vec, v_rowvec);
+  auto cv_cd_dot_prod = multiply(cv_vec, cd_rowvec);
+  auto cv_cv_dot_prod = multiply(cv_vec, cv_rowvec);
+
+
+  auto d_d_outer_prod = multiply(d_rowvec, d_vec);
+  auto d_v_outer_prod = multiply(d_rowvec, v_vec);
+  auto d_cd_outer_prod = multiply(d_rowvec, cd_vec);
+  auto d_cv_outer_prod = multiply(d_rowvec, cv_vec);
+
+  auto v_d_outer_prod = multiply(v_rowvec, d_vec);
+  auto v_v_outer_prod = multiply(v_rowvec, v_vec);
+  auto v_cd_outer_prod = multiply(v_rowvec, cd_vec);
+  auto v_cv_outer_prod = multiply(v_rowvec, cv_vec);
+
+  auto cd_d_outer_prod = multiply(cd_rowvec, d_vec);
+  auto cd_v_outer_prod = multiply(cd_rowvec, v_vec);
+  auto cd_cd_outer_prod = multiply(cd_rowvec, cd_vec);
+  auto cd_cv_outer_prod = multiply(cd_rowvec, cv_vec);
+
+  auto cv_d_outer_prod = multiply(cv_rowvec, d_vec);
+  auto cv_v_outer_prod = multiply(cv_rowvec, v_vec);
+  auto cv_cd_outer_prod = multiply(cv_rowvec, cd_vec);
+  auto cv_cv_outer_prod = multiply(cv_rowvec, cv_vec);
 }
 
 TEST(mathMix, multiplicationPatterns) {
