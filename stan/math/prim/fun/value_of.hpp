@@ -23,7 +23,8 @@ inline decltype(auto) value_of(T&& x) {
 }
 
 template <typename T, require_complex_t<T>* = nullptr,
- require_t<std::is_arithmetic<typename std::decay_t<T>::value_type>>* = nullptr>
+          require_t<std::is_arithmetic<
+              typename std::decay_t<T>::value_type>>* = nullptr>
 inline decltype(auto) value_of(T&& x) {
   return std::forward<T>(x);
 }

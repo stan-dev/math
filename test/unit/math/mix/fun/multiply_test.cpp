@@ -173,7 +173,6 @@ void instantiate_multiply() {
   auto cv_cd_dot_prod = multiply(cv_vec, cd_rowvec);
   auto cv_cv_dot_prod = multiply(cv_vec, cv_rowvec);
 
-
   auto d_d_outer_prod = multiply(d_rowvec, d_vec);
   auto d_v_outer_prod = multiply(d_rowvec, v_vec);
   auto d_cd_outer_prod = multiply(d_rowvec, cd_vec);

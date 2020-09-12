@@ -41,9 +41,7 @@ struct NumTraits<stan::math::var> : GenericNumTraits<stan::math::var> {
   static inline stan::math::var highest() {
     return NumTraits<double>::highest();
   }
-  static inline stan::math::var lowest() {
-    return NumTraits<double>::lowest();
-  }
+  static inline stan::math::var lowest() { return NumTraits<double>::lowest(); }
 
   enum {
     /**

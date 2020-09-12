@@ -155,7 +155,6 @@ inline auto multiply(const RowVec& rv, const ColVec& v) {
   return dot_product(rv, v);
 }
 
-
 /**
  * Return product of scalars.
  *
