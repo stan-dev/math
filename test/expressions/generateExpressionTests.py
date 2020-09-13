@@ -138,6 +138,7 @@ special_arg_values = {
 	"hmm_marginal" : [None, 1, 1],
 	"lkj_corr_lpdf" : [1, None],
 	"lkj_corr_log" : [1, None],
+  "log_diff_exp" : [3, None],
 }
 def make_arg_code(arg, scalar, var_name, var_number, function_name):
     """
