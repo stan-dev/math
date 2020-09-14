@@ -3,7 +3,10 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/functor/reverse_pass_callback.hpp>
+#include <stan/math/rev/functor/arena_matrix.hpp>
 #include <stan/math/rev/fun/dot_self.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
@@ -12,36 +15,6 @@
 
 namespace stan {
 namespace math {
-namespace internal {
-
-class unit_vector_elt_vari : public vari {
- private:
-  vari** y_;
-  const double* unit_vector_y_;
-  const int size_;
-  const int idx_;
-  const double norm_;
-
- public:
-  unit_vector_elt_vari(double val, vari** y, const double* unit_vector_y,
-                       int size, int idx, double norm)
-      : vari(val),
-        y_(y),
-        unit_vector_y_(unit_vector_y),
-        size_(size),
-        idx_(idx),
-        norm_(norm) {}
-  void chain() {
-    const double cubed_norm = std::pow(norm_, 3);
-    for (int m = 0; m < size_; ++m) {
-      y_[m]->adj_
-          -= adj_ * unit_vector_y_[m] * unit_vector_y_[idx_] / cubed_norm;
-      if (m == idx_)
-        y_[m]->adj_ += adj_ / norm_;
-    }
-  }
-};
-}  // namespace internal
 
 /**
  * Return the unit length vector corresponding to the free vector y.
