@@ -34,8 +34,8 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(const T_n& n,
   T_n_ref n_ref = n;
   T_alpha_ref alpha_ref = alpha;
   T_beta_ref beta_ref = beta;
-  check_positive_finite(function, "Shape parameter", alpha);
-  check_positive_finite(function, "Inverse scale parameter", beta);
+  check_positive_finite(function, "Shape parameter", alpha_ref);
+  check_positive_finite(function, "Inverse scale parameter", beta_ref);
 
   if (size_zero(n, alpha, beta)) {
     return 1.0;
