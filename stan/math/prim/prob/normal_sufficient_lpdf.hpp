@@ -147,7 +147,9 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
             size(sigma),
             -0.5 / forward_as<T_sigma_value_scalar>(sigma_squared));
       } else {
-        ops_partials.edge2_.partials_ = -0.5 / sigma_squared;
+        forward_as<internal::broadcast_array<T_partials_return>>(
+            ops_partials.edge2_.partials_)
+            = -0.5 / sigma_squared;
       }
     }
   }
