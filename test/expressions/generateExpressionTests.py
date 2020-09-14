@@ -125,15 +125,20 @@ def parse_signature(signature):
     return return_type, function_name, args
 
 
+# list of function arguments that need special scalar values.
+# None means to use the default argument value.
 special_arg_values = {
-	"acosh" : 1.4,
-	"log1m_exp" : -0.6,
-	"categorical_log" : 1,
-	"categorical_rng" : 1,
-	"categorical_lpmf" : 1,
+	"acosh" : [1.4],
+	"log1m_exp" : [-0.6],
+	"categorical_log" : [None, 1],
+	"categorical_rng" : [1, None],
+	"categorical_lpmf" : [None, 1],
+	"hmm_hidden_state_prob" : [None, 1, 1],
+	"hmm_latent_rng" : [None, 1, 1, None],
+	"hmm_marginal" : [None, 1, 1],
+    "log_diff_exp" : [3, None],
 }
-
-def make_arg_code(arg, scalar, var_name, function_name):
+def make_arg_code(arg, scalar, var_name, var_number, function_name):
     """
     Makes code for declaration and initialization of an argument to function.
 
@@ -144,6 +149,7 @@ def make_arg_code(arg, scalar, var_name, function_name):
     :param arg: stan lang type of the argument
     :param scalar: scalar type used in argument
     :param var_name: name of the variable to create
+    :param var_number: number of variable in the function call
     :param function_name: name of the function that will be tested using this argument
     :return: code for declaration and initialization of an argument
     """
@@ -153,10 +159,10 @@ def make_arg_code(arg, scalar, var_name, function_name):
             "  %s %s = [](const auto& a, const auto&, const auto&, const auto&){return a;}"
             % (arg_type, var_name)
         )
-    elif function_name in special_arg_values:
+    elif function_name in special_arg_values and special_arg_values[function_name][var_number] is not None:
         return (
             "  %s %s = stan::test::make_arg<%s>(%f)"
-            % (arg_type, var_name, arg_type, special_arg_values[function_name])
+            % (arg_type, var_name, arg_type, special_arg_values[function_name][var_number])
         )
     else:
         return "  %s %s = stan::test::make_arg<%s>()" % (
@@ -202,6 +208,13 @@ def handle_function_list(functions_input, signatures):
             function_names.append(f)
     return function_names, function_signatures
 
+# lists of functions that do not support fwd or rev autodiff
+no_rev_overload = [
+    "hmm_hidden_state_prob"
+]
+no_fwd_overload = [
+    "hmm_hidden_state_prob"
+]
 
 def main(functions=(), j=1):
     """
@@ -259,16 +272,20 @@ def main(functions=(), j=1):
         ):
             if function_name.endswith("_rng") and overload != "Prim":
                 continue
+            if function_name in no_fwd_overload and overload == "Fwd":
+                continue
+            if function_name in no_rev_overload and overload == "Rev":
+                continue
 
             mat_declarations = ""
             for n, arg in enumerate(function_args):
-                mat_declarations += make_arg_code(arg, scalar, "arg_mat%d" % n, function_name) + ";\n"
+                mat_declarations += make_arg_code(arg, scalar, "arg_mat%d" % n, n, function_name) + ";\n"
 
             mat_arg_list = ", ".join("arg_mat%d" % n for n in range(len(function_args)))
 
             expression_declarations = ""
             for n, arg in enumerate(function_args):
-                expression_declarations += make_arg_code(arg, scalar, "arg_expr%d" % n, function_name) + ";\n"
+                expression_declarations += make_arg_code(arg, scalar, "arg_expr%d" % n, n, function_name) + ";\n"
                 if arg in eigen_types:
                     expression_declarations += "  int counter%d = 0;\n" % n
                     expression_declarations += (

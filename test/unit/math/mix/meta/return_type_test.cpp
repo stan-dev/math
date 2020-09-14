@@ -4,19 +4,6 @@
 #include <complex>
 #include <vector>
 
-using stan::return_type;
-using stan::math::fvar;
-using stan::math::var;
-using d_t = double;
-using v_t = var;
-using fd_t = fvar<double>;
-using ffd_t = fvar<fd_t>;
-using fv_t = fvar<var>;
-using ffv_t = fvar<fv_t>;
-using md_t = Eigen::MatrixXd;
-using vd_t = Eigen::VectorXd;
-using rvd_t = Eigen::RowVectorXd;
-
 template <typename R, typename... Ts>
 void expect_return() {
   test::expect_same_type<R, typename stan::return_type<Ts...>::type>();
@@ -29,7 +16,8 @@ void test_return() {
   expect_return<T, T>();
   expect_return<T, T, int>();
   expect_return<T, int, T>();
-  expect_return<T, d_t, T, d_t, int, d_t, float, float, float, T, int>();
+  expect_return<T, double, T, double, int, double, float, float, float, T,
+                int>();
 
   // array types
   expect_return<T, std::vector<T>>();
@@ -69,6 +57,8 @@ void test_return() {
 }
 
 TEST(mathMetaMix, returnType) {
+  using stan::math::fvar;
+  using stan::math::var;
   // no-arg case
   expect_return<double>();
 
@@ -79,10 +69,10 @@ TEST(mathMetaMix, returnType) {
   expect_return<double, Eigen::Matrix<float, -1, 1>>();
 
   // cases where result is given real type
-  test_return<d_t>();
-  test_return<v_t>();
-  test_return<fd_t>();
-  test_return<ffd_t>();
-  test_return<fv_t>();
-  test_return<ffv_t>();
+  test_return<double>();
+  test_return<var>();
+  test_return<fvar<double>>();
+  test_return<fvar<fvar<double>>>();
+  test_return<fvar<var>>();
+  test_return<fvar<fvar<var>>>();
 }
