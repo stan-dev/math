@@ -3,7 +3,7 @@
 #include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/rev/util.hpp>
 
-TEST(log_sum_exp_tests, large_values) {
+TEST(AgradRev, log_sum_exp_tests) {
   using stan::math::var;
 
   // check autodiffing works with var types with large values

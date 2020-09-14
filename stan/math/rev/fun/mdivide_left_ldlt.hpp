@@ -21,9 +21,9 @@ namespace math {
  * @tparam C1 number of columns in the LDLT_factor, can be Eigen::Dynamic
  *
  * @param A LDLT_factor
- * @param b Right hand side matrix or vector.
- * @return x = A^-1 b, solution of the linear system.
- * @throws std::domain_error if rows of b don't match the size of A.
+ * @param B Right hand side matrix or vector.
+ * @return x = A^-1 B, solution of the linear system.
+ * @throws std::domain_error if rows of B don't match the size of A.
  */
 template <int R, int C, typename T1, typename T2,
           require_eigen_t<T2>* = nullptr, require_any_st_var<T1, T2>* = nullptr>

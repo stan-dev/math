@@ -23,7 +23,7 @@
 
 namespace stan {
 namespace math {
-
+  
 /**
  * Reverse mode specialization of Cholesky decomposition
  *
@@ -33,7 +33,8 @@ namespace math {
  * Note chainable stack varis are created below in Matrix<var, -1, -1>
  *
  * @param A Matrix
- * @return L Cholesky factor of A
+ *
+ * @return Cholesky factor of A
  */
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
 inline Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime>
@@ -58,7 +59,6 @@ cholesky_decompose(const T& A) {
      * Reverse mode differentiation algorithm reference:
      *
      * Iain Murray: Differentiation of the Cholesky decomposition, 2016.
-     *
      */
     size_t pos = 0;
     for (size_type j = 0; j < M; ++j) {
@@ -80,24 +80,6 @@ cholesky_decompose(const T& A) {
       using Block_ = Eigen::Block<Eigen::MatrixXd>;
 
       int block_size = std::min(std::max(M / 8, 8), 128);
-
-      /**
-       * Symbolic adjoint calculation for Cholesky factor A
-       *
-       * @param L Cholesky factor
-       * @param L_adj matrix of adjoints of L
-       */
-      auto symbolic_rev = [](auto& L, auto& L_adj) {
-        using Eigen::Upper;
-        using Eigen::Lower;
-        using Eigen::StrictlyUpper;
-        L.transposeInPlace();
-        L_adj = (L * L_adj.template triangularView<Lower>()).eval();
-        L_adj.template triangularView<StrictlyUpper>()
-            = L_adj.adjoint().template triangularView<StrictlyUpper>();
-        L.template triangularView<Upper>().solveInPlace(L_adj);
-        L.template triangularView<Upper>().solveInPlace(L_adj.transpose());
-      };
 
       Eigen::MatrixXd L_adj = Eigen::MatrixXd::Zero(M, M);
       Eigen::MatrixXd L = Eigen::MatrixXd::Zero(M, M);
@@ -128,7 +110,15 @@ cholesky_decompose(const T& A) {
           B_adj.noalias() -= C_adj * R;
           D_adj.noalias() -= C_adj.transpose() * C;
         }
-        symbolic_rev(D, D_adj);
+
+	// Symbolic adjoint calculation for Cholesky factor A
+	D.transposeInPlace();
+	D_adj = (D * D_adj.template triangularView<Lower>()).eval();
+	D_adj.template triangularView<StrictlyUpper>()
+	  = D_adj.adjoint().template triangularView<StrictlyUpper>();
+	D.template triangularView<Upper>().solveInPlace(D_adj);
+	D.template triangularView<Upper>().solveInPlace(D_adj.transpose());
+
         R_adj.noalias() -= C_adj.transpose() * B;
         R_adj.noalias() -= D_adj.selfadjointView<Lower>() * R;
         D_adj.diagonal() *= 0.5;

@@ -3,7 +3,7 @@
 #include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/rev/util.hpp>
 
-TEST(log_sum_exp_tests, large_values) {
+TEST(AgradRev, log_softmax_test) {
   using stan::math::var;
 
   Eigen::VectorXd x = Eigen::VectorXd::Random(5);
@@ -12,7 +12,7 @@ TEST(log_sum_exp_tests, large_values) {
   auto y = stan::math::log_softmax(xv);
   auto y_ref = stan::math::log(stan::math::softmax(xv));
 
-  for (size_t i = 0; i < 1 /*y.size()*/; ++i) {
+  for (size_t i = 0; i < y.size(); ++i) {
     stan::math::set_zero_all_adjoints();
     y(i).grad();
     auto xadj1 = xv.adj().eval();
