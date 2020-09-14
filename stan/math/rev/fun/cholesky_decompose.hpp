@@ -23,7 +23,7 @@
 
 namespace stan {
 namespace math {
-  
+
 /**
  * Reverse mode specialization of Cholesky decomposition
  *
@@ -111,13 +111,13 @@ cholesky_decompose(const T& A) {
           D_adj.noalias() -= C_adj.transpose() * C;
         }
 
-	// Symbolic adjoint calculation for Cholesky factor A
-	D.transposeInPlace();
-	D_adj = (D * D_adj.template triangularView<Lower>()).eval();
-	D_adj.template triangularView<StrictlyUpper>()
-	  = D_adj.adjoint().template triangularView<StrictlyUpper>();
-	D.template triangularView<Upper>().solveInPlace(D_adj);
-	D.template triangularView<Upper>().solveInPlace(D_adj.transpose());
+        // Symbolic adjoint calculation for Cholesky factor A
+        D.transposeInPlace();
+        D_adj = (D * D_adj.template triangularView<Lower>()).eval();
+        D_adj.template triangularView<StrictlyUpper>()
+            = D_adj.adjoint().template triangularView<StrictlyUpper>();
+        D.template triangularView<Upper>().solveInPlace(D_adj);
+        D.template triangularView<Upper>().solveInPlace(D_adj.transpose());
 
         R_adj.noalias() -= C_adj.transpose() * B;
         R_adj.noalias() -= D_adj.selfadjointView<Lower>() * R;

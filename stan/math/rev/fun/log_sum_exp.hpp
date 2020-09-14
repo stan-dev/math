@@ -35,12 +35,10 @@ inline var log_sum_exp(const T1& a, const T2& b) {
 
   reverse_pass_callback([a, b, diff, res]() mutable {
     if (!is_constant<T1>::value)
-      forward_as<var>(a).adj()
-          += res.adj() * inv_logit(diff);
+      forward_as<var>(a).adj() += res.adj() * inv_logit(diff);
 
     if (!is_constant<T2>::value)
-      forward_as<var>(b).adj()
-          += res.adj() * inv_logit(-diff);
+      forward_as<var>(b).adj() += res.adj() * inv_logit(-diff);
   });
 
   return res;
@@ -63,7 +61,7 @@ inline auto log_sum_exp(const T& x) {
 
     reverse_pass_callback([arena_v, arena_v_val, res]() mutable {
       arena_v.adj()
-	+= res.adj() * (arena_v_val.array() - res.val()).exp().matrix();
+          += res.adj() * (arena_v_val.array() - res.val()).exp().matrix();
     });
 
     return res;
