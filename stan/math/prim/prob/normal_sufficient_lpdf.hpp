@@ -135,7 +135,21 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
     }
   }
   if (!is_constant_all<T_s>::value) {
-    ops_partials.edge2_.partials_ = -0.5 / sigma_squared;
+    using T_sigma_value_scalar = scalar_type_t<decltype(sigma_val)>;
+    using T_sigma_value_vector
+        = Eigen::Array<T_sigma_value_scalar, Eigen::Dynamic, 1>;
+    if (is_vector<T_scale>::value) {
+      ops_partials.edge2_.partials_
+          = -0.5 / forward_as<T_sigma_value_vector>(sigma_squared);
+    } else {
+      if (is_vector<T_s>::value) {
+        ops_partials.edge2_.partials_ = T_sigma_value_vector::Constant(
+            size(sigma),
+            -0.5 / forward_as<T_sigma_value_scalar>(sigma_squared));
+      } else {
+        ops_partials.edge2_.partials_ = -0.5 / sigma_squared;
+      }
+    }
   }
   if (!is_constant_all<T_scale>::value) {
     ops_partials.edge4_.partials_
