@@ -52,10 +52,12 @@ inline var log_sum_exp(const T1& a, const T2& b) {
 template <typename T, require_container_st<is_var, T>* = nullptr>
 inline auto log_sum_exp(const T& x) {
   return apply_vector_unary<T>::reduce(x, [](const auto& v) {
-    const auto& v_val = to_ref(value_of(v));
+    const auto& v_ref = to_ref(v);
+    const auto& v_val = value_of(v_ref);
 
     var res = log_sum_exp(v_val);
-    auto arena_v = to_arena(v);
+    auto arena_v = to_arena(v_ref);
+>>>>>>> origin/develop
 
     reverse_pass_callback([arena_v, res]() mutable {
       arena_v.adj()

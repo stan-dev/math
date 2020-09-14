@@ -112,6 +112,16 @@ class var_value {
   inline auto& adj() const { return vi_->adj_; }
 
   /**
+   * Return a reference to the derivative of the root expression with
+   * respect to this expression.  This method only works
+   * after one of the `grad()` methods has been
+   * called.
+   *
+   * @return Adjoint for this variable.
+   */
+  inline auto& adj() { return vi_->adj_; }
+
+  /**
    * Compute the gradient of this (dependent) variable with respect to
    * the specified vector of (independent) variables, assigning the
    * specified vector to the gradient.
