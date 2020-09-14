@@ -143,17 +143,20 @@ TEST(ProbDistributionsNegBinomial2LogGLM, gpu_matches_cpu_small_simple) {
                                                     phi),
       stan::math::neg_binomial_2_log_glm_lpmf<true>(y, x, alpha, beta, phi));
 
+  Matrix<var, Dynamic, Dynamic> x_var1 = x;
+  Matrix<var, Dynamic, Dynamic> x_var2 = x;
   Matrix<var, Dynamic, 1> beta_var1 = beta;
   Matrix<var, Dynamic, 1> beta_var2 = beta;
+  auto x_var1_cl = to_matrix_cl(x_var1);
   auto beta_var1_cl = stan::math::to_matrix_cl(beta_var1);
   var alpha_var1 = alpha;
   var alpha_var2 = alpha;
   var phi_var1 = phi;
   var phi_var2 = phi;
 
-  var res1 = stan::math::neg_binomial_2_log_glm_lpmf(y_cl, x_cl, alpha_var1,
+  var res1 = stan::math::neg_binomial_2_log_glm_lpmf(y_cl, x_var1_cl, alpha_var1,
                                                      beta_var1_cl, phi_var1);
-  var res2 = stan::math::neg_binomial_2_log_glm_lpmf(y, x, alpha_var2,
+  var res2 = stan::math::neg_binomial_2_log_glm_lpmf(y, x_var2, alpha_var2,
                                                      beta_var2, phi_var2);
 
   (res1 + res2).grad();
@@ -161,6 +164,8 @@ TEST(ProbDistributionsNegBinomial2LogGLM, gpu_matches_cpu_small_simple) {
   expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)", res1.val(),
                   res2.val());
 
+  expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)", x_var1.adj().eval(),
+                  x_var2.adj().eval());
   expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)", alpha_var1.adj(),
                   alpha_var2.adj());
   expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)",
@@ -198,8 +203,12 @@ TEST(ProbDistributionsNegBinomial2LogGLM, gpu_broadcast_y) {
                   stan::math::neg_binomial_2_log_glm_lpmf<true>(
                       y_vec_cl, x_cl, alpha, beta_cl, phi));
 
+  Matrix<var, Dynamic, Dynamic> x_var1 = x;
+  Matrix<var, Dynamic, Dynamic> x_var2 = x;
   Matrix<var, Dynamic, 1> beta_var1 = beta;
   Matrix<var, Dynamic, 1> beta_var2 = beta;
+  auto x_var1_cl = to_matrix_cl(x_var1);
+  auto x_var2_cl = to_matrix_cl(x_var2);
   auto beta_var1_cl = to_matrix_cl(beta_var1);
   auto beta_var2_cl = to_matrix_cl(beta_var2);
   var alpha_var1 = alpha;
@@ -207,9 +216,9 @@ TEST(ProbDistributionsNegBinomial2LogGLM, gpu_broadcast_y) {
   var phi_var1 = phi;
   var phi_var2 = phi;
 
-  var res1 = stan::math::neg_binomial_2_log_glm_lpmf(y, x_cl, alpha_var1,
+  var res1 = stan::math::neg_binomial_2_log_glm_lpmf(y, x_var1_cl, alpha_var1,
                                                      beta_var1_cl, phi_var1);
-  var res2 = stan::math::neg_binomial_2_log_glm_lpmf(y_vec_cl, x_cl, alpha_var2,
+  var res2 = stan::math::neg_binomial_2_log_glm_lpmf(y_vec_cl, x_var2_cl, alpha_var2,
                                                      beta_var2_cl, phi_var2);
 
   (res1 + res2).grad();
@@ -217,6 +226,8 @@ TEST(ProbDistributionsNegBinomial2LogGLM, gpu_broadcast_y) {
   expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)", res1.val(),
                   res2.val());
 
+  expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)", x_var1.adj().eval(),
+                  x_var2.adj().eval());
   expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)", alpha_var1.adj(),
                   alpha_var2.adj());
   expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)",
@@ -251,17 +262,20 @@ TEST(ProbDistributionsNegBinomial2LogGLM, gpu_matches_cpu_zero_instances) {
                                                     phi),
       stan::math::neg_binomial_2_log_glm_lpmf<true>(y, x, alpha, beta, phi));
 
+  Matrix<var, Dynamic, Dynamic> x_var1 = x;
+  Matrix<var, Dynamic, Dynamic> x_var2 = x;
   Matrix<var, Dynamic, 1> beta_var1 = beta;
   Matrix<var, Dynamic, 1> beta_var2 = beta;
+  auto x_var1_cl = to_matrix_cl(x_var1);
   auto beta_var1_cl = to_matrix_cl(beta_var1);
   var alpha_var1 = alpha;
   var alpha_var2 = alpha;
   var phi_var1 = phi;
   var phi_var2 = phi;
 
-  var res1 = stan::math::neg_binomial_2_log_glm_lpmf(y_cl, x_cl, alpha_var1,
+  var res1 = stan::math::neg_binomial_2_log_glm_lpmf(y_cl, x_var1_cl, alpha_var1,
                                                      beta_var1_cl, phi_var1);
-  var res2 = stan::math::neg_binomial_2_log_glm_lpmf(y, x, alpha_var2,
+  var res2 = stan::math::neg_binomial_2_log_glm_lpmf(y, x_var2, alpha_var2,
                                                      beta_var2, phi_var2);
 
   (res1 + res2).grad();
@@ -269,6 +283,8 @@ TEST(ProbDistributionsNegBinomial2LogGLM, gpu_matches_cpu_zero_instances) {
   expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)", res1.val(),
                   res2.val());
 
+  expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)", x_var1.adj().eval(),
+                  x_var2.adj().eval());
   expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)", alpha_var1.adj(),
                   alpha_var2.adj());
   expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)",
@@ -302,17 +318,20 @@ TEST(ProbDistributionsNegBinomial2LogGLM, gpu_matches_cpu_zero_attributes) {
                                                     phi),
       stan::math::neg_binomial_2_log_glm_lpmf<true>(y, x, alpha, beta, phi));
 
+  Matrix<var, Dynamic, Dynamic> x_var1 = x;
+  Matrix<var, Dynamic, Dynamic> x_var2 = x;
   Matrix<var, Dynamic, 1> beta_var1 = beta;
   Matrix<var, Dynamic, 1> beta_var2 = beta;
+  auto x_var1_cl = to_matrix_cl(x_var1);
   auto beta_var1_cl = to_matrix_cl(beta_var1);
   var alpha_var1 = alpha;
   var alpha_var2 = alpha;
   var phi_var1 = phi;
   var phi_var2 = phi;
 
-  var res1 = stan::math::neg_binomial_2_log_glm_lpmf(y_cl, x_cl, alpha_var1,
+  var res1 = stan::math::neg_binomial_2_log_glm_lpmf(y_cl, x_var1_cl, alpha_var1,
                                                      beta_var1_cl, phi_var1);
-  var res2 = stan::math::neg_binomial_2_log_glm_lpmf(y, x, alpha_var2,
+  var res2 = stan::math::neg_binomial_2_log_glm_lpmf(y, x_var2, alpha_var2,
                                                      beta_var2, phi_var2);
 
   (res1 + res2).grad();
@@ -320,6 +339,8 @@ TEST(ProbDistributionsNegBinomial2LogGLM, gpu_matches_cpu_zero_attributes) {
   expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)", res1.val(),
                   res2.val());
 
+  expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)", x_var1.adj().eval(),
+                  x_var2.adj().eval());
   expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)", alpha_var1.adj(),
                   alpha_var2.adj());
   expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)",
@@ -381,7 +402,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
 
   (res1 + res2).grad();
 
-  expect_near_rel("normal_id_glm_lpdf (OpenCL)", x_var1.adj().eval(),
+  expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)", x_var1.adj().eval(),
                   x_var2.adj().eval());
   expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)", res1.val(),
                   res2.val());
@@ -449,7 +470,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM, gpu_matches_cpu_big) {
   expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)", res1.val(),
                   res2.val());
 
-  expect_near_rel("normal_id_glm_lpdf (OpenCL)", x_var1.adj().eval(),
+  expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)", x_var1.adj().eval(),
                   x_var2.adj().eval());
   expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)",
                   beta_var1.adj().eval(), beta_var2.adj().eval());

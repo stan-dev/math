@@ -16,7 +16,6 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <Eigen/Core>
 
-
 namespace stan {
 namespace math {
 
@@ -122,11 +121,19 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
 
   operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
   if (!is_constant_all<T_x>::value) {
-    ops_partials.edge1_.partials_
-        = indexing(beta_val, col_index(x.rows(), x.cols()),
-                   rowwise_broadcast(y_val - 1))
-          - elt_multiply(exp_lin_cl * transpose(beta_val),
-                         rowwise_broadcast(inv_sum_exp_lin_cl));
+    if (is_y_vector) {
+      ops_partials.edge1_.partials_
+          = indexing(beta_val, col_index(x.rows(), x.cols()),
+                     rowwise_broadcast(forward_as<matrix_cl<int>>(y_val) - 1))
+            - elt_multiply(exp_lin_cl * transpose(beta_val),
+                           rowwise_broadcast(inv_sum_exp_lin_cl));
+    } else {
+      ops_partials.edge1_.partials_
+          = indexing(beta_val, col_index(x.rows(), x.cols()),
+                     forward_as<int>(y_val) - 1)
+            - elt_multiply(exp_lin_cl * transpose(beta_val),
+                           rowwise_broadcast(inv_sum_exp_lin_cl));
+    }
   }
   if (!is_constant_all<T_alpha>::value) {
     if (wgs == 1) {

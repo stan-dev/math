@@ -262,7 +262,7 @@ class indexing_
  * @return indexing expression
  */
 template <typename T_mat, typename T_row_index, typename T_col_index,
-          require_all_kernel_expressions_and_none_scalar_t<
+          require_all_kernel_expressions_t<
               T_mat, T_row_index, T_col_index>* = nullptr>
 inline auto indexing(T_mat&& mat, T_row_index&& row_index,
                      T_col_index&& col_index) {

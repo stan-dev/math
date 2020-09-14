@@ -122,22 +122,82 @@ TEST(ProbDistributionsCategoricalLogitGLM, gpu_matches_cpu_small_simple) {
                                                    beta_cl),
       stan::math::categorical_logit_glm_lpmf<true>(y, x, alpha, beta));
 
+  Matrix<var, Dynamic, Dynamic> x_var1 = x;
+  Matrix<var, Dynamic, Dynamic> x_var2 = x;
   Matrix<var, Dynamic, Dynamic> beta_var1 = beta;
   Matrix<var, Dynamic, Dynamic> beta_var2 = beta;
   Matrix<var, Dynamic, 1> alpha_var1 = alpha;
   Matrix<var, Dynamic, 1> alpha_var2 = alpha;
+  auto x_var1_cl = to_matrix_cl(x_var1);
   auto beta_var1_cl = stan::math::to_matrix_cl(beta_var1);
   auto alpha_var1_cl = stan::math::to_matrix_cl(alpha_var1);
 
-  var res1 = stan::math::categorical_logit_glm_lpmf(y_cl, x_cl, alpha_var1_cl,
-                                                    beta_var1_cl);
-  var res2
-      = stan::math::categorical_logit_glm_lpmf(y, x, alpha_var2, beta_var2);
+  var res1 = stan::math::categorical_logit_glm_lpmf(
+      y_cl, x_var1_cl, alpha_var1_cl, beta_var1_cl);
+  var res2 = stan::math::categorical_logit_glm_lpmf(y, x_var2, alpha_var2,
+                                                    beta_var2);
 
   (res1 + res2).grad();
 
   EXPECT_NEAR_REL(res1.val(), res2.val());
 
+  EXPECT_NEAR_REL(x_var1.adj().eval(), x_var2.adj().eval());
+  EXPECT_NEAR_REL(alpha_var1.adj().eval(), alpha_var2.adj().eval());
+  EXPECT_NEAR_REL(beta_var1.adj().eval(), beta_var2.adj().eval());
+}
+
+TEST(ProbDistributionsCategoricalLogitGLM, gpu_broadcast_y) {
+  double eps = 1e-9;
+  int N = 3;
+  int M = 2;
+  int C = 3;
+
+  int y_scalar = 1;
+  vector<int> y_vec{1, 1, 1};
+  Matrix<double, Dynamic, Dynamic> x(N, M);
+  x << -12, 46, -42, 24, 25, 27;
+  Matrix<double, Dynamic, Dynamic> beta(M, C);
+  beta << 0.3, 2, 0.4, -0.1, -1.3, 1;
+  Matrix<double, Dynamic, 1> alpha(C);
+  alpha << 0.3, -2, 0.8;
+
+  matrix_cl<double> x_cl(x);
+  matrix_cl<int> y_vec_cl(y_vec);
+  matrix_cl<double> beta_cl(beta);
+  matrix_cl<double> alpha_cl(alpha);
+
+  EXPECT_NEAR_REL(
+      stan::math::categorical_logit_glm_lpmf(y_scalar, x_cl, alpha_cl, beta_cl),
+        stan::math::categorical_logit_glm_lpmf(y_vec_cl, x_cl, alpha_cl, beta_cl))
+  EXPECT_NEAR_REL(
+      stan::math::categorical_logit_glm_lpmf<true>(y_scalar, x_cl, alpha_cl,
+                                                   beta_cl),
+          stan::math::categorical_logit_glm_lpmf<true>(y_vec_cl, x_cl, alpha_cl,
+                                                       beta_cl));
+
+  Matrix<var, Dynamic, Dynamic> x_var1 = x;
+  Matrix<var, Dynamic, Dynamic> x_var2 = x;
+  Matrix<var, Dynamic, Dynamic> beta_var1 = beta;
+  Matrix<var, Dynamic, Dynamic> beta_var2 = beta;
+  Matrix<var, Dynamic, 1> alpha_var1 = alpha;
+  Matrix<var, Dynamic, 1> alpha_var2 = alpha;
+  auto x_var1_cl = to_matrix_cl(x_var1);
+  auto x_var2_cl = to_matrix_cl(x_var2);
+  auto beta_var1_cl = stan::math::to_matrix_cl(beta_var1);
+  auto beta_var2_cl = stan::math::to_matrix_cl(beta_var2);
+  auto alpha_var1_cl = stan::math::to_matrix_cl(alpha_var1);
+  auto alpha_var2_cl = stan::math::to_matrix_cl(alpha_var2);
+
+  var res1 = stan::math::categorical_logit_glm_lpmf(y_scalar, x_var1_cl, alpha_var1_cl,
+                                                    beta_var1_cl);
+  var res2
+      = stan::math::categorical_logit_glm_lpmf(y_vec_cl, x_var2_cl, alpha_var2_cl, beta_var2_cl);
+
+  (res1 + res2).grad();
+
+  EXPECT_NEAR_REL(res1.val(), res2.val());
+
+  EXPECT_NEAR_REL(x_var1.adj().eval(), x_var2.adj().eval());
   EXPECT_NEAR_REL(alpha_var1.adj().eval(), alpha_var2.adj().eval());
   EXPECT_NEAR_REL(beta_var1.adj().eval(), beta_var2.adj().eval());
 }
@@ -169,22 +229,26 @@ TEST(ProbDistributionsCategoricalLogitGLM, gpu_matches_cpu_zero_instances) {
                                                    beta_cl),
       stan::math::categorical_logit_glm_lpmf<true>(y, x, alpha, beta));
 
+  Matrix<var, Dynamic, Dynamic> x_var1 = x;
+  Matrix<var, Dynamic, Dynamic> x_var2 = x;
   Matrix<var, Dynamic, Dynamic> beta_var1 = beta;
   Matrix<var, Dynamic, Dynamic> beta_var2 = beta;
   Matrix<var, Dynamic, 1> alpha_var1 = alpha;
   Matrix<var, Dynamic, 1> alpha_var2 = alpha;
+  auto x_var1_cl = to_matrix_cl(x_var1);
   auto beta_var1_cl = stan::math::to_matrix_cl(beta_var1);
   auto alpha_var1_cl = stan::math::to_matrix_cl(alpha_var1);
 
-  var res1 = stan::math::categorical_logit_glm_lpmf(y_cl, x_cl, alpha_var1_cl,
-                                                    beta_var1_cl);
-  var res2
-      = stan::math::categorical_logit_glm_lpmf(y, x, alpha_var2, beta_var2);
+  var res1 = stan::math::categorical_logit_glm_lpmf(
+      y_cl, x_var1_cl, alpha_var1_cl, beta_var1_cl);
+  var res2 = stan::math::categorical_logit_glm_lpmf(y, x_var2, alpha_var2,
+                                                    beta_var2);
 
   (res1 + res2).grad();
 
   EXPECT_NEAR_REL(res1.val(), res2.val());
 
+  EXPECT_NEAR_REL(x_var1.adj().eval(), x_var2.adj().eval());
   EXPECT_NEAR_REL(alpha_var1.adj().eval(), alpha_var2.adj().eval());
   EXPECT_NEAR_REL(beta_var1.adj().eval(), beta_var2.adj().eval());
 }
@@ -215,22 +279,26 @@ TEST(ProbDistributionsCategoricalLogitGLM, gpu_matches_cpu_zero_attributes) {
                                                    beta_cl),
       stan::math::categorical_logit_glm_lpmf<true>(y, x, alpha, beta));
 
+  Matrix<var, Dynamic, Dynamic> x_var1 = x;
+  Matrix<var, Dynamic, Dynamic> x_var2 = x;
   Matrix<var, Dynamic, Dynamic> beta_var1 = beta;
   Matrix<var, Dynamic, Dynamic> beta_var2 = beta;
   Matrix<var, Dynamic, 1> alpha_var1 = alpha;
   Matrix<var, Dynamic, 1> alpha_var2 = alpha;
+  auto x_var1_cl = to_matrix_cl(x_var1);
   auto beta_var1_cl = stan::math::to_matrix_cl(beta_var1);
   auto alpha_var1_cl = stan::math::to_matrix_cl(alpha_var1);
 
-  var res1 = stan::math::categorical_logit_glm_lpmf(y_cl, x_cl, alpha_var1_cl,
-                                                    beta_var1_cl);
-  var res2
-      = stan::math::categorical_logit_glm_lpmf(y, x, alpha_var2, beta_var2);
+  var res1 = stan::math::categorical_logit_glm_lpmf(
+      y_cl, x_var1_cl, alpha_var1_cl, beta_var1_cl);
+  var res2 = stan::math::categorical_logit_glm_lpmf(y, x_var2, alpha_var2,
+                                                    beta_var2);
 
   (res1 + res2).grad();
 
   EXPECT_NEAR_REL(res1.val(), res2.val());
 
+  EXPECT_NEAR_REL(x_var1.adj().eval(), x_var2.adj().eval());
   EXPECT_NEAR_REL(alpha_var1.adj().eval(), alpha_var2.adj().eval());
   EXPECT_NEAR_REL(beta_var1.adj().eval(), beta_var2.adj().eval());
 }
@@ -262,22 +330,26 @@ TEST(ProbDistributionsCategoricalLogitGLM, gpu_matches_cpu_single_class) {
                                                    beta_cl),
       stan::math::categorical_logit_glm_lpmf<true>(y, x, alpha, beta));
 
+  Matrix<var, Dynamic, Dynamic> x_var1 = x;
+  Matrix<var, Dynamic, Dynamic> x_var2 = x;
   Matrix<var, Dynamic, Dynamic> beta_var1 = beta;
   Matrix<var, Dynamic, Dynamic> beta_var2 = beta;
   Matrix<var, Dynamic, 1> alpha_var1 = alpha;
   Matrix<var, Dynamic, 1> alpha_var2 = alpha;
+  auto x_var1_cl = to_matrix_cl(x_var1);
   auto beta_var1_cl = stan::math::to_matrix_cl(beta_var1);
   auto alpha_var1_cl = stan::math::to_matrix_cl(alpha_var1);
 
-  var res1 = stan::math::categorical_logit_glm_lpmf(y_cl, x_cl, alpha_var1_cl,
-                                                    beta_var1_cl);
-  var res2
-      = stan::math::categorical_logit_glm_lpmf(y, x, alpha_var2, beta_var2);
+  var res1 = stan::math::categorical_logit_glm_lpmf(
+      y_cl, x_var1_cl, alpha_var1_cl, beta_var1_cl);
+  var res2 = stan::math::categorical_logit_glm_lpmf(y, x_var2, alpha_var2,
+                                                    beta_var2);
 
   (res1 + res2).grad();
 
   EXPECT_NEAR_REL(res1.val(), res2.val());
 
+  EXPECT_NEAR_REL(x_var1.adj().eval(), x_var2.adj().eval());
   EXPECT_NEAR_REL(alpha_var1.adj().eval(), alpha_var2.adj().eval());
   EXPECT_NEAR_REL(beta_var1.adj().eval(), beta_var2.adj().eval());
 }

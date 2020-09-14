@@ -132,15 +132,21 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_small_simple) {
       stan::math::normal_id_glm_lpdf<true>(y_cl, x_cl, alpha, beta_cl, sigma),
       stan::math::normal_id_glm_lpdf<true>(y, x, alpha, beta, sigma));
 
+  Matrix<var, Dynamic, 1> y_var1 = y;
+  Matrix<var, Dynamic, 1> y_var2 = y;
+  Matrix<var, Dynamic, Dynamic> x_var1 = x;
+  Matrix<var, Dynamic, Dynamic> x_var2 = x;
   Matrix<var, Dynamic, 1> beta_var1 = beta;
   Matrix<var, Dynamic, 1> beta_var2 = beta;
+  auto y_var1_cl = to_matrix_cl(y_var1);
+  auto x_var1_cl = to_matrix_cl(x_var1);
   auto beta_var1_cl = stan::math::to_matrix_cl(beta_var1);
   var alpha_var1 = alpha;
   var alpha_var2 = alpha;
 
-  var res1 = stan::math::normal_id_glm_lpdf(y_cl, x_cl, alpha_var1,
+  var res1 = stan::math::normal_id_glm_lpdf(y_var1_cl, x_var1_cl, alpha_var1,
                                             beta_var1_cl, sigma);
-  var res2 = stan::math::normal_id_glm_lpdf(y, x, alpha_var2, beta_var2, sigma);
+  var res2 = stan::math::normal_id_glm_lpdf(y_var2, x_var2, alpha_var2, beta_var2, sigma);
 
   (res1 + res2).grad();
 
@@ -165,6 +171,10 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_small_simple) {
 
   expect_near_rel("normal_id_glm_lpdf (OpenCL)", res1.val(), res2.val());
 
+  expect_near_rel("normal_id_glm_lpdf (OpenCL)", y_var1.adj().eval(),
+                  y_var2.adj().eval());
+  expect_near_rel("normal_id_glm_lpdf (OpenCL)", x_var1.adj().eval(),
+                  x_var2.adj().eval());
   expect_near_rel("normal_id_glm_lpdf (OpenCL)", alpha_var1.adj(),
                   alpha_var2.adj());
   expect_near_rel("normal_id_glm_lpdf (OpenCL)", sigma_var1.adj(),
@@ -202,8 +212,15 @@ TEST(ProbDistributionsNormalIdGLM, gpu_broadcast_y) {
       stan::math::normal_id_glm_lpdf<true>(y_vec_cl, x_cl, alpha, beta_cl,
                                            sigma));
 
+  var y_var1 = y;
+  Matrix<var, Dynamic, 1> y_var2 = y_vec;
+  Matrix<var, Dynamic, Dynamic> x_var1 = x;
+  Matrix<var, Dynamic, Dynamic> x_var2 = x;
   Matrix<var, Dynamic, 1> beta_var1 = beta;
   Matrix<var, Dynamic, 1> beta_var2 = beta;
+  auto x_var1_cl = to_matrix_cl(x_var1);
+  auto x_var2_cl = to_matrix_cl(x_var2);
+  auto y_var2_cl = to_matrix_cl(y_var2);
   auto beta_var1_cl = to_matrix_cl(beta_var1);
   auto beta_var2_cl = to_matrix_cl(beta_var2);
   var alpha_var1 = alpha;
@@ -211,15 +228,17 @@ TEST(ProbDistributionsNormalIdGLM, gpu_broadcast_y) {
   var sigma_var1 = sigma;
   var sigma_var2 = sigma;
 
-  var res1 = stan::math::normal_id_glm_lpdf(y, x_cl, alpha_var1, beta_var1_cl,
+  var res1 = stan::math::normal_id_glm_lpdf(y_var1, x_var1_cl, alpha_var1, beta_var1_cl,
                                             sigma_var1);
-  var res2 = stan::math::normal_id_glm_lpdf(y_vec_cl, x_cl, alpha_var2,
+  var res2 = stan::math::normal_id_glm_lpdf(y_var2_cl, x_var2_cl, alpha_var2,
                                             beta_var2_cl, sigma_var2);
 
   (res1 + res2).grad();
 
   expect_near_rel("normal_id_glm_lpdf (OpenCL)", res1.val(), res2.val());
 
+  expect_near_rel("normal_id_glm_lpdf (OpenCL)", x_var1.adj().eval(),
+                  x_var2.adj().eval());
   expect_near_rel("normal_id_glm_lpdf (OpenCL)", alpha_var1.adj(),
                   alpha_var2.adj());
   expect_near_rel("normal_id_glm_lpdf (OpenCL)", sigma_var1.adj(),
@@ -253,23 +272,33 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_zero_instances) {
       stan::math::normal_id_glm_lpdf<true>(y_cl, x_cl, alpha, beta_cl, sigma),
       stan::math::normal_id_glm_lpdf<true>(y, x, alpha, beta, sigma));
 
+  Matrix<var, Dynamic, 1> y_var1 = y;
+  Matrix<var, Dynamic, 1> y_var2 = y;
+  Matrix<var, Dynamic, Dynamic> x_var1 = x;
+  Matrix<var, Dynamic, Dynamic> x_var2 = x;
   Matrix<var, Dynamic, 1> beta_var1 = beta;
   Matrix<var, Dynamic, 1> beta_var2 = beta;
+  auto y_var1_cl = to_matrix_cl(y_var1);
+  auto x_var1_cl = to_matrix_cl(x_var1);
   auto beta_var1_cl = to_matrix_cl(beta_var1);
   var alpha_var1 = alpha;
   var alpha_var2 = alpha;
   var sigma_var1 = sigma;
   var sigma_var2 = sigma;
 
-  var res1 = stan::math::normal_id_glm_lpdf(y_cl, x_cl, alpha_var1,
+  var res1 = stan::math::normal_id_glm_lpdf(y_var1_cl, x_var1_cl, alpha_var1,
                                             beta_var1_cl, sigma_var1);
   var res2
-      = stan::math::normal_id_glm_lpdf(y, x, alpha_var2, beta_var2, sigma_var2);
+      = stan::math::normal_id_glm_lpdf(y_var2, x_var2, alpha_var2, beta_var2, sigma_var2);
 
   (res1 + res2).grad();
 
   expect_near_rel("normal_id_glm_lpdf (OpenCL)", res1.val(), res2.val());
 
+  expect_near_rel("normal_id_glm_lpdf (OpenCL)", y_var1.adj().eval(),
+                  y_var2.adj().eval());
+  expect_near_rel("normal_id_glm_lpdf (OpenCL)", x_var1.adj().eval(),
+                  x_var2.adj().eval());
   expect_near_rel("normal_id_glm_lpdf (OpenCL)", alpha_var1.adj(),
                   alpha_var2.adj());
   expect_near_rel("normal_id_glm_lpdf (OpenCL)", sigma_var1.adj(),
@@ -303,23 +332,33 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_zero_attributes) {
       stan::math::normal_id_glm_lpdf<true>(y_cl, x_cl, alpha, beta_cl, sigma),
       stan::math::normal_id_glm_lpdf<true>(y, x, alpha, beta, sigma));
 
+  Matrix<var, Dynamic, 1> y_var1 = y;
+  Matrix<var, Dynamic, 1> y_var2 = y;
+  Matrix<var, Dynamic, Dynamic> x_var1 = x;
+  Matrix<var, Dynamic, Dynamic> x_var2 = x;
   Matrix<var, Dynamic, 1> beta_var1 = beta;
   Matrix<var, Dynamic, 1> beta_var2 = beta;
+  auto y_var1_cl = to_matrix_cl(y_var1);
+  auto x_var1_cl = to_matrix_cl(x_var1);
   auto beta_var1_cl = to_matrix_cl(beta_var1);
   var alpha_var1 = alpha;
   var alpha_var2 = alpha;
   var sigma_var1 = sigma;
   var sigma_var2 = sigma;
 
-  var res1 = stan::math::normal_id_glm_lpdf(y_cl, x_cl, alpha_var1,
+  var res1 = stan::math::normal_id_glm_lpdf(y_var1_cl, x_var1_cl, alpha_var1,
                                             beta_var1_cl, sigma_var1);
   var res2
-      = stan::math::normal_id_glm_lpdf(y, x, alpha_var2, beta_var2, sigma_var2);
+      = stan::math::normal_id_glm_lpdf(y_var2, x_var2, alpha_var2, beta_var2, sigma_var2);
 
   (res1 + res2).grad();
 
   expect_near_rel("normal_id_glm_lpdf (OpenCL)", res1.val(), res2.val());
 
+  expect_near_rel("normal_id_glm_lpdf (OpenCL)", y_var1.adj().eval(),
+                  y_var2.adj().eval());
+  expect_near_rel("normal_id_glm_lpdf (OpenCL)", x_var1.adj().eval(),
+                  x_var2.adj().eval());
   expect_near_rel("normal_id_glm_lpdf (OpenCL)", alpha_var1.adj(),
                   alpha_var2.adj());
   expect_near_rel("normal_id_glm_lpdf (OpenCL)", sigma_var1.adj(),
