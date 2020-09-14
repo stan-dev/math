@@ -12,6 +12,9 @@
 #include <stan/math/rev/fun/sin.hpp>
 #include <cmath>
 #include <complex>
+#include <tbb/task_arena.h>
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
 
 namespace stan {
 namespace math {
@@ -47,6 +50,40 @@ class exp_vari : public op_v_vari {
  * @return Exponentiated variable.
  */
 inline var exp(const var& a) { return var(new internal::exp_vari(a.vi_)); }
+
+template <typename F, typename T>
+inline auto app_func(const F& f, const T& x) {
+    // Run nested autodiff in this scope
+    nested_rev_autodiff nested;
+    Eigen::MatrixXd res(x.rows(), 2);
+
+    //tbb::task_scheduler_init init;
+    tbb::parallel_for(
+      tbb::blocked_range<size_t>(0, x.size()), 
+      [&x,&res,&f](const tbb::blocked_range<size_t>& r) {
+        for (size_t i = r.begin(); i < r.end(); ++i) {
+          var in = deep_copy_vars(x[i]);
+          var out = f(in);
+          out.grad();
+          res(i, 0) = out.val();
+          res(i, 1) = in.adj();
+        }
+      });
+  return res;
+}
+
+template <typename Container,
+          require_eigen_col_vector_st<is_var, Container>* = nullptr>
+inline auto exp(const Container& x) {
+  Eigen::Matrix<var,-1,1> result(x.rows());
+  auto f = [&](const auto& xi) { return stan::math::exp(xi); };
+  auto out = app_func(f, x);
+  for(int i = 0; i < x.rows(); ++i) {
+    result[i] = var(new precomp_v_vari(out(i,0), x[i].vi_, out(i, 1)));
+  }
+
+  return result;
+}
 
 /**
  * Return the exponentiation (base e) of the specified complex number.
