@@ -51,21 +51,21 @@ class exp_vari : public op_v_vari {
  */
 inline var exp(const var& a) { return var(new internal::exp_vari(a.vi_)); }
 
-template <typename F, typename F2, typename T>
-inline auto app_func(const F& f, const F2& f2, T&& x) {
+template <typename F, typename T>
+inline auto app_func(const F& f, T&& x) {
     // Run nested autodiff in this scope
-    nested_rev_autodiff nested;
-    Eigen::MatrixXd res(x.rows(), 2);
+    Eigen::MatrixXd res(2, x.rows());
 
     tbb::parallel_for(
       tbb::blocked_range<size_t>(0, x.size()), 
-      [&x,&res,&f,&f2](const tbb::blocked_range<size_t>& r) {
+      [&x,&res,&f](const tbb::blocked_range<size_t>& r) {
         for (size_t i = r.begin(); i < r.end(); ++i) {
+          nested_rev_autodiff nested;
           var in = deep_copy_vars(x[i]);
           var out = f(in);
-          //out.grad();
-          res(i, 0) = out.val();
-          res(i, 1) = f2(out.val(), in.adj());
+          out.grad();
+          res(0, i) = out.val();
+          res(1, i) = in.adj();
         }
       });
   return res;
@@ -76,11 +76,10 @@ template <typename Container,
 inline auto exp(Container&& x) {
   Eigen::Matrix<var,-1,1> result(x.rows());
   auto f = [&](const auto& xi) { return stan::math::exp(xi); };
-  auto f_adj = [&](const auto& val, const auto& adj) { return val * adj; };
-  auto out = app_func(f, f_adj, std::forward<Container>(x));
+  auto out = app_func(f, std::forward<Container>(x));
 
   for(int i = 0; i < x.rows(); ++i) {
-    result[i] = var(new precomp_v_vari(out(i,0), x[i].vi_, out(i, 1)));
+    result[i] = var(new precomp_v_vari(out(0, i), x[i].vi_, out(1, i)));
   }
 
   return result;
