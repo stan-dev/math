@@ -910,7 +910,7 @@ class AgradCdfTestFixture : public ::testing::Test {
           is_vector<T5>::value,
           single_gradients3, pos_single, multiple_gradients3, pos_multiple, 1);
   }
-  
+
   void test_lower_bound() {
     using stan::math::value_of;
     const size_t N_REPEAT = 3;
@@ -1053,7 +1053,7 @@ TYPED_TEST_P(AgradCdfTestFixture, Length0Vector) {
 REGISTER_TYPED_TEST_SUITE_P(AgradCdfTestFixture, CallAllVersions, ValidValues,
                             InvalidValues, FiniteDiff, Function, RepeatAsVector,
                             LowerBound, UpperBound, AsScalarsVsAsVector,
-			    Length0Vector);
+                            Length0Vector);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AgradCdfTestFixture);
 
