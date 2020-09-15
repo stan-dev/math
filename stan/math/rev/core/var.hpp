@@ -102,7 +102,7 @@ class var_value {
   inline const auto& val() const { return vi_->val_; }
 
   /**
-   * Return a const reference of the derivative of the root expression with
+   * Return a reference of the derivative of the root expression with
    * respect to this expression.  This method only works
    * after one of the `grad()` methods has been
    * called.
@@ -121,6 +121,9 @@ class var_value {
    */
   inline auto& adj() { return vi_->adj_; }
 
+  inline Eigen::Index rows() const { return vi_->val_.rows(); }
+  inline Eigen::Index cols() const { return vi_->val_.cols(); }
+  inline Eigen::Index size() const { return vi_->val_.size(); }
   /**
    * Compute the gradient of this (dependent) variable with respect to
    * the specified vector of (independent) variables, assigning the

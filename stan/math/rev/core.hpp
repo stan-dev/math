@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/core/accumulate_adjoints.hpp>
 #include <stan/math/rev/core/arena_allocator.hpp>
+#include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/rev/core/autodiffstackstorage.hpp>
 #include <stan/math/rev/core/build_vari_array.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
