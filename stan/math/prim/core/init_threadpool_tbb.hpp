@@ -84,7 +84,7 @@ inline tbb::task_scheduler_init& init_threadpool_tbb(
     tbb::stack_size_type stack_size = 0) {
   int tbb_max_threads = internal::get_num_threads();
 
-  static tbb::task_scheduler_init tbb_scheduler(8, 0);
+  static tbb::task_scheduler_init tbb_scheduler(4, stack_size);
 
   return tbb_scheduler;
 }
