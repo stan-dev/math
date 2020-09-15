@@ -892,8 +892,8 @@ class AgradDistributionTestFixture : public ::testing::Test {
     }
 
     EXPECT_NEAR(stan::math::value_of_rec(single_lp),
-		stan::math::value_of_rec(multiple_lp), 1e-7)
-      << "log prob evaluated in loop should match vectorized equivalent";
+                stan::math::value_of_rec(multiple_lp), 1e-7)
+        << "log prob evaluated in loop should match vectorized equivalent";
 
     size_t pos_single = 0;
     size_t pos_multiple = 0;
@@ -1074,7 +1074,8 @@ TYPED_TEST_P(AgradDistributionTestFixture, Length0Vector) {
 
 REGISTER_TYPED_TEST_SUITE_P(AgradDistributionTestFixture, CallAllVersions,
                             ValidValues, InvalidValues, Propto, FiniteDiff,
-                            Function, RepeatAsVector, AsScalarsVsAsVector, Length0Vector);
+                            Function, RepeatAsVector, AsScalarsVsAsVector,
+                            Length0Vector);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AgradDistributionTestFixture);
 

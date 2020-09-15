@@ -829,8 +829,8 @@ class AgradCdfLogTestFixture : public ::testing::Test {
     }
 
     EXPECT_NEAR(stan::math::value_of_rec(single_cdf_log),
-		stan::math::value_of_rec(multiple_cdf_log), 1e-7)
-      << "cdf_log evaluated in loop should match vectorized equivalent";
+                stan::math::value_of_rec(multiple_cdf_log), 1e-7)
+        << "cdf_log evaluated in loop should match vectorized equivalent";
 
     size_t pos_single = 0;
     size_t pos_multiple = 0;

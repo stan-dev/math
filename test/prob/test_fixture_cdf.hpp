@@ -816,8 +816,8 @@ class AgradCdfTestFixture : public ::testing::Test {
     }
 
     EXPECT_NEAR(stan::math::value_of_rec(single_cdf),
-        stan::math::value_of_rec(multiple_cdf), 1e-7)
-      << "cdf evaluated in loop should match vectorized equivalent";
+                stan::math::value_of_rec(multiple_cdf), 1e-7)
+        << "cdf evaluated in loop should match vectorized equivalent";
 
     size_t pos_single = 0;
     size_t pos_multiple = 0;
@@ -930,7 +930,7 @@ class AgradCdfTestFixture : public ::testing::Test {
           is_vector<T5>::value, value_of_rec(single_cdf), single_gradients3,
           pos_single, multiple_gradients3, pos_multiple, 1);
   }
-  
+
   void test_lower_bound() {
     using stan::math::value_of;
     const size_t N_REPEAT = 3;
@@ -1073,7 +1073,7 @@ TYPED_TEST_P(AgradCdfTestFixture, Length0Vector) {
 REGISTER_TYPED_TEST_SUITE_P(AgradCdfTestFixture, CallAllVersions, ValidValues,
                             InvalidValues, FiniteDiff, Function, RepeatAsVector,
                             LowerBound, UpperBound, AsScalarsVsAsVector,
-			    Length0Vector);
+                            Length0Vector);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AgradCdfTestFixture);
 
