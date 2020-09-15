@@ -144,7 +144,7 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
     } else {
       if (is_vector<T_s>::value) {
         ops_partials.edge2_.partials_ = T_sigma_value_vector::Constant(
-            size(sigma),
+            size(s_squared),
             -0.5 / forward_as<T_sigma_value_scalar>(sigma_squared));
       } else {
         forward_as<internal::broadcast_array<T_partials_return>>(
