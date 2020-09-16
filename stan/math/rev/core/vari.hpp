@@ -81,8 +81,6 @@ template <typename T>
 class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
  public:
   using value_type = std::decay_t<T>;
-  static constexpr int RowsAtCompileTime{1};
-  static constexpr int ColsAtCompileTime{1};
   /**
    * The value of this variable.
    */
@@ -92,6 +90,15 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
    * of this variable with respect to the root variable.
    */
   value_type adj_{0.0};
+
+  /**
+   * Rows at compile time
+   */
+  static constexpr int RowsAtCompileTime{1};
+  /**
+   * Columns at compile time
+   */
+  static constexpr int ColsAtCompileTime{1};
 
   /**
    * Construct a variable implementation from a value.  The
@@ -324,7 +331,7 @@ class vari_view<T, require_not_plain_type_t<T>> final : public vari_base {
   /**
    * Return the number of columns for this class's `val_` member
    */
-  Eigen::Index cols() const { return val_.rows(); }
+  Eigen::Index cols() const { return val_.cols(); }
   /**
    * Return the size of this class's `val_` member
    */
@@ -393,13 +400,25 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @tparam S A dense Eigen type that is convertible to `value_type`
    * @param x Value of the constructed variable.
    */
-  template <typename S, require_convertible_t<S&, T>* = nullptr>
-  explicit vari_value(const S& x) noexcept
+  template <typename S, require_convertible_t<S&, T>* = nullptr,
+            require_not_arena_matrix_t<S>* = nullptr>
+  explicit vari_value(const S& x)
       : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
         adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
         val_(eigen_map(val_mem_, x.rows(), x.cols()) = x),
+        adj_(eigen_map(adj_mem_, x.rows(), x.cols()).setZero()) {
+    ChainableStack::instance_->var_stack_.push_back(this);
+  }
+
+  template <typename S, require_convertible_t<S&, T>* = nullptr,
+            require_arena_matrix_vt<std::is_arithmetic, S>* = nullptr>
+  explicit vari_value(const S& x)
+      : val_mem_(x.data()),
+        adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
+            x.size())),
+        val_(eigen_map(val_mem_, x.rows(), x.cols())),
         adj_(eigen_map(adj_mem_, x.rows(), x.cols()).setZero()) {
     ChainableStack::instance_->var_stack_.push_back(this);
   }
@@ -441,7 +460,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   /**
    * Return the number of columns for this class's `val_` member
    */
-  Eigen::Index cols() const { return val_.rows(); }
+  Eigen::Index cols() const { return val_.cols(); }
   /**
    * Return the size of this class's `val_` member
    */

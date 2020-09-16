@@ -136,7 +136,9 @@ special_arg_values = {
 	"hmm_hidden_state_prob" : [None, 1, 1],
 	"hmm_latent_rng" : [None, 1, 1, None],
 	"hmm_marginal" : [None, 1, 1],
-    "log_diff_exp" : [3, None],
+	"lkj_corr_lpdf" : [1, None],
+	"lkj_corr_log" : [1, None],
+  "log_diff_exp" : [3, None],
 }
 def make_arg_code(arg, scalar, var_name, var_number, function_name):
     """

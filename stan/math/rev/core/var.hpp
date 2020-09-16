@@ -101,23 +101,7 @@ class var_value {
   var_value(const var_value<S>& other) : vi_(new vari_type(other.vi_->val_)) {
     reverse_pass_callback(
         [this_vi = this->vi_, other_vi = other.vi_]() mutable {
-          this_vi->adj_ += other_vi->adj_;
-        });
-  }
-
-  /**
-   * Convert a var_value that does not own it's own memory to one whose
-   * vari owns it's own memory. This is normally used for `double&` to assign
-   * to an owning value.
-   * @tparam A type that is referenced in the constructee's `vari_value`.
-   * @param other The object holding the references to assign the new memory
-   * from.
-   */
-  template <typename S>
-  var_value(const var_value<S&>& other) : vi_(new vari_type(other.vi_->val_)) {
-    reverse_pass_callback(
-        [this_vi = this->vi_, other_vi = other.vi_]() mutable {
-          this_vi->adj_ += other_vi->adj_;
+          other_vi->adj_ += this_vi->adj_;
         });
   }
 
@@ -135,14 +119,14 @@ class var_value {
   inline const auto& val() const { return vi_->val_; }
 
   /**
-   * Return a const reference of the derivative of the root expression with
+   * Return a reference of the derivative of the root expression with
    * respect to this expression.  This method only works
    * after one of the `grad()` methods has been
    * called.
    *
    * @return Adjoint for this variable.
    */
-  inline const auto& adj() const { return vi_->adj_; }
+  inline auto& adj() const { return vi_->adj_; }
 
   /**
    * Return a reference to the derivative of the root expression with
@@ -154,12 +138,9 @@ class var_value {
    */
   inline auto& adj() { return vi_->adj_; }
 
-  inline auto rows() const { return vi_->rows(); }
-
-  inline auto cols() const { return vi_->cols(); }
-
-  inline auto size() const { return vi_->size(); }
-
+  inline Eigen::Index rows() const { return vi_->val_.rows(); }
+  inline Eigen::Index cols() const { return vi_->val_.cols(); }
+  inline Eigen::Index size() const { return vi_->val_.size(); }
   /**
    * Compute the gradient of this (dependent) variable with respect to
    * the specified vector of (independent) variables, assigning the

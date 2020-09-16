@@ -28,9 +28,3 @@ TEST(MathMatrixPrimMat, softmax) {
   EXPECT_FLOAT_EQ(exp(1) / (exp(-1) + exp(1) + exp(10.0)), theta3[1]);
   EXPECT_FLOAT_EQ(exp(10) / (exp(-1) + exp(1) + exp(10.0)), theta3[2]);
 }
-TEST(MathMatrixPrimMat, softmax_exception) {
-  using stan::math::softmax;
-  stan::math::vector_d v0;
-
-  EXPECT_THROW(softmax(v0), std::invalid_argument);
-}
