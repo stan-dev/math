@@ -234,10 +234,9 @@ TEST_F(AgradRev, var_vector_views) {
   EXPECT_FLOAT_EQ(A_v.adj()(3), A_coeff1.adj());
 }
 
-
 TEST_F(AgradRev, var_matrix_view_assignment) {
-  using stan::math::var_value;
   using stan::math::sum;
+  using stan::math::var_value;
   Eigen::MatrixXd A(4, 4);
   A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;
   var_value<Eigen::MatrixXd> A_v(A);
@@ -264,7 +263,6 @@ TEST_F(AgradRev, var_matrix_view_assignment) {
   puts("A_alt_row: ");
   std::cout << A_alt_row.adj() << "\n";
 }
-
 
 /*
 TEST_F(AgradRev, var_matrix_view_assignment) {
@@ -306,17 +304,11 @@ TEST_F(AgradRev, var_matrix_view_assignment) {
   Eigen::Matrix<stan::math::var, -1, 1> A_alt_row = A_alt.row(3);
   A_alt.block(0, 0, 3, 3) = A_alt.block(1, 1, 3, 3);
   stan::math::var blah1 = stan::math::sum(A_alt_row);
-  stan::math::var blah = stan::math::sum(A_v_row); //+ stan::math::sum(A_v_col) + stan::math::sum(A_v_block_row);
-  blah1.vi_->adj_ = 1;
-  blah.grad();
-  puts("A_v: ");
-  std::cout << A_v.adj() << "\n";
-  puts("A_alt: ");
-  std::cout << A_alt.adj() << "\n";
-  puts("A_v_row: ");
-  std::cout << A_v_row.adj() << "\n";
-  puts("A_alt_row: ");
-  std::cout << A_alt_row.adj() << "\n";
+  stan::math::var blah = stan::math::sum(A_v_row); //+ stan::math::sum(A_v_col)
++ stan::math::sum(A_v_block_row); blah1.vi_->adj_ = 1; blah.grad(); puts("A_v:
+"); std::cout << A_v.adj() << "\n"; puts("A_alt: "); std::cout << A_alt.adj() <<
+"\n"; puts("A_v_row: "); std::cout << A_v_row.adj() << "\n"; puts("A_alt_row:
+"); std::cout << A_alt_row.adj() << "\n";
 
 
   puts("A_v_col: ");
