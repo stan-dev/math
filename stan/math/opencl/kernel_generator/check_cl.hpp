@@ -133,7 +133,8 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
    * Ignores read events anc clears no events.
    * @param[out] events List of all events.
    */
-  inline void get_clear_read_write_events(std::vector<cl::Event>& events) const {
+  inline void get_clear_read_write_events(
+      std::vector<cl::Event>& events) const {
     arg_.get_write_events(events);
     events.insert(events.end(), buffer_.read_events().begin(),
                   buffer_.read_events().end());
