@@ -90,20 +90,32 @@ class var_value {
   var_value(S&& x) : vi_(new vari_type(std::forward<S>(x), false)) {}  // NOLINT
 
   /**
-   * Construct a `var_value` with an inner plain matrix type from a `var_value`
-   *  holding an expression of another matrix.
-   * @tparam S A type representing an eigen expression
-   * @param other An eigen expression.
+   * Copy constructor for var_val.
+   * @tparam S type of the value in the `var_value` to assing
+   * @param other the value to assign
+   * @return this
    */
   template <typename S, require_convertible_t<S&, value_type>* = nullptr,
+            require_all_plain_type_t<T, S>* = nullptr>
+  var_value<T>(const var_value<S>& other) : vi_(other.vi_) {}
+
+  /**
+   * Construct a `var_value` with a plain type
+   *  from another `var_value` containing an expression.
+   * @tparam S type of the value in the `var_value` to assing
+   * @param other the value to assign
+   * @return this
+   */
+  template <typename S, typename T_ = T, require_convertible_t<S&, value_type>* = nullptr,
             require_not_plain_type_t<S>* = nullptr,
-            require_not_same_t<T, S>* = nullptr>
-  var_value(const var_value<S>& other) : vi_(new vari_type(other.vi_->val_)) {
+            require_plain_type_t<T_>* = nullptr>
+  var_value<T>(const var_value<S>& other) : vi_(new vari_type(other.vi_->val_)) {
     reverse_pass_callback(
         [this_vi = this->vi_, other_vi = other.vi_]() mutable {
           other_vi->adj_ += this_vi->adj_;
         });
   }
+
 
   /**
    * Construct a variable from a pointer to a variable implementation.
@@ -119,16 +131,6 @@ class var_value {
   inline const auto& val() const { return vi_->val_; }
 
   /**
-   * Return a reference of the derivative of the root expression with
-   * respect to this expression.  This method only works
-   * after one of the `grad()` methods has been
-   * called.
-   *
-   * @return Adjoint for this variable.
-   */
-  inline auto& adj() const { return vi_->adj_; }
-
-  /**
    * Return a reference to the derivative of the root expression with
    * respect to this expression.  This method only works
    * after one of the `grad()` methods has been
@@ -141,6 +143,7 @@ class var_value {
   inline Eigen::Index rows() const { return vi_->val_.rows(); }
   inline Eigen::Index cols() const { return vi_->val_.cols(); }
   inline Eigen::Index size() const { return vi_->val_.size(); }
+  
   /**
    * Compute the gradient of this (dependent) variable with respect to
    * the specified vector of (independent) variables, assigning the
@@ -177,7 +180,7 @@ class var_value {
    */
   template <typename CheckContainer = value_type,
             require_not_container_t<CheckContainer>* = nullptr>
-  void grad() {
+  inline void grad() {
     stan::math::grad(vi_);
   }
 
@@ -387,9 +390,9 @@ class var_value {
     using vari_sub = decltype(vi_->coeff(i));
     vari_sub* vari_coeff = new vari_sub(vi_->coeff(i));
     reverse_pass_callback([this_vi = this->vi_, vari_coeff, i]() {
-      auto tmp_adj = vari_coeff->adj_;
-      vari_coeff->adj_ += this_vi->adj_.coeffRef(i);
-      this_vi->adj_.coeffRef(i) += tmp_adj;
+      auto tmp_adj = this_vi->adj_.coeffRef(i);
+      this_vi->adj_.coeffRef(i) += vari_coeff->adj_;
+      vari_coeff->adj_ += tmp_adj;
     });
     return var_value<typename vari_sub::value_type>(vari_coeff);
   }
@@ -403,9 +406,9 @@ class var_value {
     using vari_sub = decltype(vi_->coeff(i, j));
     vari_sub* vari_coeff = new vari_sub(vi_->coeff(i, j));
     reverse_pass_callback([this_vi = this->vi_, vari_coeff, i, j]() {
-      auto tmp_adj = vari_coeff->adj_;
-      vari_coeff->adj_ += this_vi->adj_.coeffRef(i, j);
-      this_vi->adj_.coeffRef(i, j) += tmp_adj;
+      auto tmp_adj = this_vi->adj_.coeffRef(i, j);
+      this_vi->adj_.coeffRef(i, j) += vari_coeff->adj_;
+      vari_coeff->adj_ += tmp_adj;
     });
     return var_value<typename vari_sub::value_type>(vari_coeff);
   }
@@ -484,26 +487,29 @@ class var_value {
   }
 
   /**
-   * Assignment of another var value.
+   * Assignment of another plain var value, when this also contains a plain
+   * type.
    * @tparam S type of the value in the `var_value` to assing
    * @param other the value to assign
    * @return this
    */
   template <typename S, require_convertible_t<S&, value_type>* = nullptr,
             require_all_plain_type_t<T, S>* = nullptr>
-  var_value<T> operator=(const var_value<S>& other) {
+  inline var_value<T> operator=(const var_value<S>& other) {
     vi_ = other.vi_;
     return *this;
   }
 
   /**
-   * Assign a `var_value` with a plain type to a non-plain type and vice versa
-   * @tparam S A type whose plain type differs from it's expression type.
-   * @param other The `var_value` holding either an expression or plain type.
+   * Assignment of another var value, when either this or the other one does not
+   * contain a plain type.
+   * @tparam S type of the value in the `var_value` to assing
+   * @param other the value to assign
+   * @return this
    */
   template <typename S, require_convertible_t<S&, value_type>* = nullptr,
             require_any_not_plain_type_t<T, S>* = nullptr>
-  var_value<T> operator=(const var_value<S>& other) {
+  inline var_value<T> operator=(const var_value<S>& other) {
     arena_t<plain_type_t<T>> prev_val = vi_->val_;
     vi_->val_ = other.val();
     // no need to change any adjoints - these are just zeros before the reverse
@@ -524,14 +530,28 @@ class var_value {
     return *this;
   }
   // No-op to match with Eigen methods which call eval
-  inline var_value<T>& eval() noexcept { return *this; }
+  template <typename T_ = T, require_plain_type_t<T_>* = nullptr>
+  inline auto& eval() noexcept { return *this; }
 
+  // No-op to match with Eigen methods which call eval
+  template <typename T_ = T, require_not_plain_type_t<T_>* = nullptr>
+  inline auto eval() noexcept { return var_value<plain_type_t<T>>(*this); }
+
+  // this is a bit ugly workarount to allow var_value<double> to have default
+  // assignment operator, which avoids warnings when used in Eigen matrices.
+ private:
+  struct not_var_value {};
+
+ public:
   /**
-   * Copy assignment operator delegates to general assignment operator.
+   * Copy assignment operator delegates to general assignment operator if the
+   * var_value contains eigen type.
    * @param other the value to assing
    * @return this
    */
-  var_value<T> operator=(const var_value<T>& other) {
+  var_value<T> operator=(std::conditional_t<is_eigen<value_type>::value,
+                                            const var_value<T>&, not_var_value>
+                             other) {
     return operator=<T>(other);
   }
 };
