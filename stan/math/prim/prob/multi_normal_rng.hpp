@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/size_mvt.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -35,32 +36,30 @@ multi_normal_rng(const T_loc& mu,
   using boost::variate_generator;
   static const char* function = "multi_normal_rng";
   check_positive(function, "Covariance matrix rows", S.rows());
-  check_not_nan(function, "Covariance matrix", S);
-  check_symmetric(function, "Covariance matrix", S);
-  Eigen::LLT<Eigen::MatrixXd> llt_of_S = S.llt();
-  check_pos_definite("multi_normal_rng", "covariance matrix argument",
-                     llt_of_S);
 
   vector_seq_view<T_loc> mu_vec(mu);
   size_t size_mu = mu_vec[0].size();
 
   size_t N = size_mvt(mu);
-  int size_mu_old = size_mu;
   for (size_t i = 1; i < N; i++) {
-    int size_mu_new = mu_vec[i].size();
     check_size_match(function,
                      "Size of one of the vectors of "
                      "the location variable",
-                     size_mu_new,
-                     "Size of another vector of the "
+                     mu_vec[i].size(),
+                     "Size of the first vector of the "
                      "location variable",
-                     size_mu_old);
-    size_mu_old = size_mu_new;
+                     size_mu);
   }
 
   for (size_t i = 0; i < N; i++) {
     check_finite(function, "Location parameter", mu_vec[i]);
   }
+  const auto& S_ref = to_ref(S);
+  check_not_nan(function, "Covariance matrix", S_ref);
+  check_symmetric(function, "Covariance matrix", S_ref);
+  Eigen::LLT<Eigen::MatrixXd> llt_of_S = S_ref.llt();
+  check_pos_definite("multi_normal_rng", "covariance matrix argument",
+                     llt_of_S);
 
   StdVectorBuilder<true, Eigen::VectorXd, T_loc> output(N);
 
@@ -73,7 +72,7 @@ multi_normal_rng(const T_loc& mu,
       z(i) = std_normal_rng();
     }
 
-    output[n] = Eigen::VectorXd(mu_vec[n]) + llt_of_S.matrixL() * z;
+    output[n] = as_column_vector_or_scalar(mu_vec[n]) + llt_of_S.matrixL() * z;
   }
 
   return output.data();

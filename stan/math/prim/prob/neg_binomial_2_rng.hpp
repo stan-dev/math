@@ -36,14 +36,18 @@ neg_binomial_2_rng(const T_loc& mu, const T_prec& phi, RNG& rng) {
   using boost::gamma_distribution;
   using boost::variate_generator;
   using boost::random::poisson_distribution;
+  using T_mu_ref = ref_type_t<T_loc>;
+  using T_phi_ref = ref_type_t<T_prec>;
   static const char* function = "neg_binomial_2_rng";
-  check_positive_finite(function, "Location parameter", mu);
-  check_positive_finite(function, "Precision parameter", phi);
   check_consistent_sizes(function, "Location parameter", mu,
                          "Precision parameter", phi);
+  T_mu_ref mu_ref = mu;
+  T_phi_ref phi_ref = phi;
+  check_positive_finite(function, "Location parameter", mu_ref);
+  check_positive_finite(function, "Precision parameter", phi_ref);
 
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_prec> phi_vec(phi);
+  scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
+  scalar_seq_view<T_phi_ref> phi_vec(phi_ref);
   size_t N = max_size(mu, phi);
   VectorBuilder<true, int, T_loc, T_prec> output(N);
 
