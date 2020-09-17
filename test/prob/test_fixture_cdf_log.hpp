@@ -521,12 +521,12 @@ class AgradCdfLogTestFixture : public ::testing::Test {
       vector<var> s1;
       vector<var> s2;
       vector<var> s3;
-      std::vector<Scalar0> p0s_(N_REPEAT, p0_);
-      std::vector<Scalar1> p1s_(N_REPEAT, p1_);
-      std::vector<Scalar2> p2s_(N_REPEAT, p2_);
-      std::vector<Scalar3> p3s_(N_REPEAT, p3_);
-      std::vector<Scalar4> p4s_(N_REPEAT, p4_);
-      std::vector<Scalar5> p5s_(N_REPEAT, p5_);
+      std::vector<Scalar0> p0s_((is_vector<T0>::value) ? N_REPEAT : 1, p0_);
+      std::vector<Scalar1> p1s_((is_vector<T1>::value) ? N_REPEAT : 1, p1_);
+      std::vector<Scalar2> p2s_((is_vector<T2>::value) ? N_REPEAT : 1, p2_);
+      std::vector<Scalar3> p3s_((is_vector<T3>::value) ? N_REPEAT : 1, p3_);
+      std::vector<Scalar4> p4s_((is_vector<T4>::value) ? N_REPEAT : 1, p4_);
+      std::vector<Scalar5> p5s_((is_vector<T5>::value) ? N_REPEAT : 1, p5_);
       add_vars(s1, p0s_, p1s_, p2s_, p3s_, p4s_, p5s_);
       add_vars(s2, p0s_, p1s_, p2s_, p3s_, p4s_, p5s_);
       add_vars(s3, p0s_, p1s_, p2s_, p3s_, p4s_, p5s_);
