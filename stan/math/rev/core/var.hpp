@@ -140,6 +140,7 @@ class var_value {
    * @return Adjoint for this variable.
    */
   inline auto& adj() { return vi_->adj_; }
+  inline auto& adj() const { return vi_->adj_; }
 
   inline Eigen::Index rows() const { return vi_->val_.rows(); }
   inline Eigen::Index cols() const { return vi_->val_.cols(); }
