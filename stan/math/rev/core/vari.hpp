@@ -359,7 +359,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   using PlainObject = plain_type_t<T>;
   using value_type = PlainObject;  // The underlying type for this class
   using eigen_scalar = value_type_t<PlainObject>;  // A floating point type
-  using eigen_map = Eigen::Map<PlainObject, Eigen::Aligned8,
+  using eigen_map = Eigen::Map<PlainObject, Eigen::Unaligned,
                                Eigen::Stride<0, 0>>;  // Maps for adj_ and val_
   using vari_type = vari_value<T>;
   /**
