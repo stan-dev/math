@@ -426,8 +426,7 @@ vector<fvar<fvar<var>>> get_params<vector<fvar<fvar<var>>>>(
 
 // ------------------------------------------------------------
 // default template handles Eigen::Matrix
-template <typename T,
-	  stan::require_eigen_t<T>* = nullptr>
+template <typename T, stan::require_eigen_t<T>* = nullptr>
 T get_repeated_params(const vector<double>& parameters, const size_t p,
                       const size_t N_REPEAT) {
   T params(N_REPEAT);
@@ -437,7 +436,7 @@ T get_repeated_params(const vector<double>& parameters, const size_t p,
     param = get_param<stan::scalar_type_t<T>>(parameters, p);
   else
     param = 0;
-  
+
   for (size_t n = 0; n < N_REPEAT; n++) {
     params(n) = param;
   }
@@ -445,10 +444,9 @@ T get_repeated_params(const vector<double>& parameters, const size_t p,
   return params;
 }
 
-template <typename T,
-	  stan::require_std_vector_t<T>* = nullptr>
-T get_repeated_params(const vector<double>& parameters,
-		      const size_t p, const size_t N_REPEAT) {
+template <typename T, stan::require_std_vector_t<T>* = nullptr>
+T get_repeated_params(const vector<double>& parameters, const size_t p,
+                      const size_t N_REPEAT) {
   T params(N_REPEAT);
   stan::value_type_t<T> param;
 
@@ -456,7 +454,7 @@ T get_repeated_params(const vector<double>& parameters,
     param = get_param<stan::scalar_type_t<T>>(parameters, p);
   else
     param = 0;
-  
+
   for (size_t n = 0; n < N_REPEAT; n++) {
     params[n] = param;
   }
@@ -466,18 +464,15 @@ T get_repeated_params(const vector<double>& parameters,
 
 // handle empty
 template <typename T,
-	  std::enable_if_t<std::is_same<T, empty>::value>* = nullptr>
-T get_repeated_params(const vector<double>&,
-			  const size_t,
-			  const size_t) {
+          std::enable_if_t<std::is_same<T, empty>::value>* = nullptr>
+T get_repeated_params(const vector<double>&, const size_t, const size_t) {
   return T();
 }
 
 // handle scalars
-template <typename T,
-	  stan::require_stan_scalar_t<T>* = nullptr>
-T get_repeated_params(const vector<double>& parameters,
-		      const size_t p, const size_t /*N_REPEAT*/) {
+template <typename T, stan::require_stan_scalar_t<T>* = nullptr>
+T get_repeated_params(const vector<double>& parameters, const size_t p,
+                      const size_t /*N_REPEAT*/) {
   if (p < parameters.size())
     return get_param<T>(parameters, p);
   else

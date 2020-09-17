@@ -524,8 +524,8 @@ class AgradCdfTestFixture : public ::testing::Test {
       add_vars(s2, p0s_, p1s_, p2s_, p3s_, p4s_, p5s_);
       add_vars(s3, p0s_, p1s_, p2s_, p3s_, p4s_, p5s_);
 
-      T_return_type cdf =
-	pow(TestClass.cdf(p0_, p1_, p2_, p3_, p4_, p5_), N_REPEAT);
+      T_return_type cdf
+          = pow(TestClass.cdf(p0_, p1_, p2_, p3_, p4_, p5_), N_REPEAT);
 
       double single_cdf
           = calculate_gradients_1storder(single_gradients1, cdf, s1);
@@ -539,8 +539,7 @@ class AgradCdfTestFixture : public ::testing::Test {
       T4 p4 = get_repeated_params<T4>(parameters[n], 4, N_REPEAT);
       T5 p5 = get_repeated_params<T5>(parameters[n], 5, N_REPEAT);
 
-      T_return_type multiple_cdf
-          = TestClass.cdf(p0, p1, p2, p3, p4, p5);
+      T_return_type multiple_cdf = TestClass.cdf(p0, p1, p2, p3, p4, p5);
       vector<double> multiple_gradients1;
       vector<double> multiple_gradients2;
       vector<double> multiple_gradients3;
@@ -562,22 +561,28 @@ class AgradCdfTestFixture : public ::testing::Test {
           << "cdf with repeated vector input should match "
           << "a multiple of cdf of single input";
 
-      EXPECT_EQ(single_gradients1.size(), multiple_gradients1.size()) <<
-	"scalar and vectorized results should produce the same number of first order gradients";
-      EXPECT_EQ(single_gradients2.size(), multiple_gradients2.size()) <<
-	"scalar and vectorized results should produce the same number of second order gradients";
-      EXPECT_EQ(single_gradients3.size(), multiple_gradients3.size()) <<
-	"scalar and vectorized results should produce the same number of third order gradients";
+      EXPECT_EQ(single_gradients1.size(), multiple_gradients1.size())
+          << "scalar and vectorized results should produce the same number of "
+             "first order gradients";
+      EXPECT_EQ(single_gradients2.size(), multiple_gradients2.size())
+          << "scalar and vectorized results should produce the same number of "
+             "second order gradients";
+      EXPECT_EQ(single_gradients3.size(), multiple_gradients3.size())
+          << "scalar and vectorized results should produce the same number of "
+             "third order gradients";
 
-      for(size_t i = 0; i < single_gradients1.size(); ++i)
-	EXPECT_NEAR(single_gradients1[i], multiple_gradients1[i], 1e-7)
-	  << "scalar and vectorized results should have the same first order gradients";
-      for(size_t i = 0; i < single_gradients2.size(); ++i)
-	EXPECT_NEAR(single_gradients2[i], multiple_gradients2[i], 1e-7)
-	  << "scalar and vectorized results should have the same first order gradients";
-      for(size_t i = 0; i < single_gradients3.size(); ++i)
-	EXPECT_NEAR(single_gradients3[i], multiple_gradients3[i], 1e-7)
-	  << "scalar and vectorized results should have the same first order gradients";
+      for (size_t i = 0; i < single_gradients1.size(); ++i)
+        EXPECT_NEAR(single_gradients1[i], multiple_gradients1[i], 1e-7)
+            << "scalar and vectorized results should have the same first order "
+               "gradients";
+      for (size_t i = 0; i < single_gradients2.size(); ++i)
+        EXPECT_NEAR(single_gradients2[i], multiple_gradients2[i], 1e-7)
+            << "scalar and vectorized results should have the same first order "
+               "gradients";
+      for (size_t i = 0; i < single_gradients3.size(); ++i)
+        EXPECT_NEAR(single_gradients3[i], multiple_gradients3[i], 1e-7)
+            << "scalar and vectorized results should have the same first order "
+               "gradients";
     }
   }
 
@@ -687,22 +692,28 @@ class AgradCdfTestFixture : public ::testing::Test {
                 stan::math::value_of_rec(multiple_cdf), 1e-7)
         << "product of scalar cdfs should match vectorized result";
 
-    EXPECT_EQ(single_gradients1.size(), multiple_gradients1.size()) <<
-      "scalar and vectorized results should produce the same number of first order gradients";
-    EXPECT_EQ(single_gradients2.size(), multiple_gradients2.size()) <<
-      "scalar and vectorized results should produce the same number of second order gradients";
-    EXPECT_EQ(single_gradients3.size(), multiple_gradients3.size()) <<
-      "scalar and vectorized results should produce the same number of third order gradients";
+    EXPECT_EQ(single_gradients1.size(), multiple_gradients1.size())
+        << "scalar and vectorized results should produce the same number of "
+           "first order gradients";
+    EXPECT_EQ(single_gradients2.size(), multiple_gradients2.size())
+        << "scalar and vectorized results should produce the same number of "
+           "second order gradients";
+    EXPECT_EQ(single_gradients3.size(), multiple_gradients3.size())
+        << "scalar and vectorized results should produce the same number of "
+           "third order gradients";
 
-    for(size_t i = 0; i < single_gradients1.size(); ++i)
+    for (size_t i = 0; i < single_gradients1.size(); ++i)
       EXPECT_NEAR(single_gradients1[i], multiple_gradients1[i], 1e-7)
-	<< "scalar and vectorized results should have the same first order gradients";
-    for(size_t i = 0; i < single_gradients2.size(); ++i)
+          << "scalar and vectorized results should have the same first order "
+             "gradients";
+    for (size_t i = 0; i < single_gradients2.size(); ++i)
       EXPECT_NEAR(single_gradients2[i], multiple_gradients2[i], 1e-7)
-	<< "scalar and vectorized results should have the same first order gradients";
-    for(size_t i = 0; i < single_gradients3.size(); ++i)
+          << "scalar and vectorized results should have the same first order "
+             "gradients";
+    for (size_t i = 0; i < single_gradients3.size(); ++i)
       EXPECT_NEAR(single_gradients3[i], multiple_gradients3[i], 1e-7)
-	<< "scalar and vectorized results should have the same first order gradients";
+          << "scalar and vectorized results should have the same first order "
+             "gradients";
   }
 
   void test_lower_bound() {
