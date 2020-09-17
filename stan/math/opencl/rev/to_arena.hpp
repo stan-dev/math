@@ -24,10 +24,10 @@ namespace math {
 template <typename T>
 arena_t<matrix_cl<T>> to_arena(const matrix_cl<T>& a) {
   arena_t<matrix_cl<T>> res(a.buffer(), a.rows(), a.cols(), a.view());
-  for(cl::Event e : a.read_events()){
+  for (cl::Event e : a.read_events()) {
     res.add_read_event(e);
   }
-  for(cl::Event e : a.write_events()){
+  for (cl::Event e : a.write_events()) {
     res.add_write_event(e);
   }
   return res;
