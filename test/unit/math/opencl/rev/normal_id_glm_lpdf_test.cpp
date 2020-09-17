@@ -146,7 +146,8 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_small_simple) {
 
   var res1 = stan::math::normal_id_glm_lpdf(y_var1_cl, x_var1_cl, alpha_var1,
                                             beta_var1_cl, sigma);
-  var res2 = stan::math::normal_id_glm_lpdf(y_var2, x_var2, alpha_var2, beta_var2, sigma);
+  var res2 = stan::math::normal_id_glm_lpdf(y_var2, x_var2, alpha_var2,
+                                            beta_var2, sigma);
 
   (res1 + res2).grad();
 
@@ -228,8 +229,8 @@ TEST(ProbDistributionsNormalIdGLM, gpu_broadcast_y) {
   var sigma_var1 = sigma;
   var sigma_var2 = sigma;
 
-  var res1 = stan::math::normal_id_glm_lpdf(y_var1, x_var1_cl, alpha_var1, beta_var1_cl,
-                                            sigma_var1);
+  var res1 = stan::math::normal_id_glm_lpdf(y_var1, x_var1_cl, alpha_var1,
+                                            beta_var1_cl, sigma_var1);
   var res2 = stan::math::normal_id_glm_lpdf(y_var2_cl, x_var2_cl, alpha_var2,
                                             beta_var2_cl, sigma_var2);
 
@@ -288,8 +289,8 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_zero_instances) {
 
   var res1 = stan::math::normal_id_glm_lpdf(y_var1_cl, x_var1_cl, alpha_var1,
                                             beta_var1_cl, sigma_var1);
-  var res2
-      = stan::math::normal_id_glm_lpdf(y_var2, x_var2, alpha_var2, beta_var2, sigma_var2);
+  var res2 = stan::math::normal_id_glm_lpdf(y_var2, x_var2, alpha_var2,
+                                            beta_var2, sigma_var2);
 
   (res1 + res2).grad();
 
@@ -348,8 +349,8 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_zero_attributes) {
 
   var res1 = stan::math::normal_id_glm_lpdf(y_var1_cl, x_var1_cl, alpha_var1,
                                             beta_var1_cl, sigma_var1);
-  var res2
-      = stan::math::normal_id_glm_lpdf(y_var2, x_var2, alpha_var2, beta_var2, sigma_var2);
+  var res2 = stan::math::normal_id_glm_lpdf(y_var2, x_var2, alpha_var2,
+                                            beta_var2, sigma_var2);
 
   (res1 + res2).grad();
 

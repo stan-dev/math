@@ -130,9 +130,10 @@ TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_small_simple) {
   auto beta_var1_cl = stan::math::to_matrix_cl(beta_var1);
   auto cuts_var1_cl = stan::math::to_matrix_cl(cuts_var1);
 
-  var res1 = stan::math::ordered_logistic_glm_lpmf(y_cl, x_var1_cl, beta_var1_cl,
-                                                   cuts_var1_cl);
-  var res2 = stan::math::ordered_logistic_glm_lpmf(y, x_var2, beta_var2, cuts_var2);
+  var res1 = stan::math::ordered_logistic_glm_lpmf(y_cl, x_var1_cl,
+                                                   beta_var1_cl, cuts_var1_cl);
+  var res2
+      = stan::math::ordered_logistic_glm_lpmf(y, x_var2, beta_var2, cuts_var2);
 
   (res1 + res2).grad();
 
@@ -180,7 +181,8 @@ TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_broadcast_y) {
 
   var res1 = stan::math::ordered_logistic_glm_lpmf(y, x_var1_cl, beta_var1_cl,
                                                    cuts_var1_cl);
-  var res2 = stan::math::ordered_logistic_glm_lpmf(y, x_var2, beta_var2, cuts_var2);
+  var res2
+      = stan::math::ordered_logistic_glm_lpmf(y, x_var2, beta_var2, cuts_var2);
 
   (res1 + res2).grad();
 
@@ -226,9 +228,10 @@ TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_zero_instances) {
   auto beta_var1_cl = stan::math::to_matrix_cl(beta_var1);
   auto cuts_var1_cl = stan::math::to_matrix_cl(cuts_var1);
 
-  var res1 = stan::math::ordered_logistic_glm_lpmf(y_cl, x_var1_cl, beta_var1_cl,
-                                                   cuts_var1_cl);
-  var res2 = stan::math::ordered_logistic_glm_lpmf(y, x_var2, beta_var2, cuts_var2);
+  var res1 = stan::math::ordered_logistic_glm_lpmf(y_cl, x_var1_cl,
+                                                   beta_var1_cl, cuts_var1_cl);
+  var res2
+      = stan::math::ordered_logistic_glm_lpmf(y, x_var2, beta_var2, cuts_var2);
 
   (res1 + res2).grad();
 
@@ -273,9 +276,10 @@ TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_zero_attributes) {
   auto beta_var1_cl = stan::math::to_matrix_cl(beta_var1);
   auto cuts_var1_cl = stan::math::to_matrix_cl(cuts_var1);
 
-  var res1 = stan::math::ordered_logistic_glm_lpmf(y_cl, x_var1_cl, beta_var1_cl,
-                                                   cuts_var1_cl);
-  var res2 = stan::math::ordered_logistic_glm_lpmf(y, x_var2, beta_var2, cuts_var2);
+  var res1 = stan::math::ordered_logistic_glm_lpmf(y_cl, x_var1_cl,
+                                                   beta_var1_cl, cuts_var1_cl);
+  var res2
+      = stan::math::ordered_logistic_glm_lpmf(y, x_var2, beta_var2, cuts_var2);
 
   (res1 + res2).grad();
 

@@ -125,8 +125,8 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_small_simple) {
   var alpha_var1 = alpha;
   var alpha_var2 = alpha;
 
-  var res1
-      = stan::math::poisson_log_glm_lpmf(y_cl, x_var1_cl, alpha_var1, beta_var1_cl);
+  var res1 = stan::math::poisson_log_glm_lpmf(y_cl, x_var1_cl, alpha_var1,
+                                              beta_var1_cl);
   var res2 = stan::math::poisson_log_glm_lpmf(y, x_var2, alpha_var2, beta_var2);
 
   (res1 + res2).grad();
@@ -178,8 +178,8 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_broadcast_y) {
   var alpha_var1 = alpha;
   var alpha_var2 = alpha;
 
-  var res1
-      = stan::math::poisson_log_glm_lpmf(y, x_var1_cl, alpha_var1, beta_var1_cl);
+  var res1 = stan::math::poisson_log_glm_lpmf(y, x_var1_cl, alpha_var1,
+                                              beta_var1_cl);
   var res2 = stan::math::poisson_log_glm_lpmf(y_vec_cl, x_var2_cl, alpha_var2,
                                               beta_var2_cl);
 
@@ -227,8 +227,8 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_zero_instances) {
   var alpha_var1 = alpha;
   var alpha_var2 = alpha;
 
-  var res1
-      = stan::math::poisson_log_glm_lpmf(y_cl, x_var1_cl, alpha_var1, beta_var1_cl);
+  var res1 = stan::math::poisson_log_glm_lpmf(y_cl, x_var1_cl, alpha_var1,
+                                              beta_var1_cl);
   var res2 = stan::math::poisson_log_glm_lpmf(y, x_var2, alpha_var2, beta_var2);
 
   (res1 + res2).grad();
@@ -274,8 +274,8 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_zero_attributes) {
   var alpha_var1 = alpha;
   var alpha_var2 = alpha;
 
-  var res1
-      = stan::math::poisson_log_glm_lpmf(y_cl, x_var1_cl, alpha_var1, beta_var1_cl);
+  var res1 = stan::math::poisson_log_glm_lpmf(y_cl, x_var1_cl, alpha_var1,
+                                              beta_var1_cl);
   var res2 = stan::math::poisson_log_glm_lpmf(y, x_var2, alpha_var2, beta_var2);
 
   (res1 + res2).grad();

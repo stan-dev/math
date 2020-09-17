@@ -154,8 +154,8 @@ TEST(ProbDistributionsNegBinomial2LogGLM, gpu_matches_cpu_small_simple) {
   var phi_var1 = phi;
   var phi_var2 = phi;
 
-  var res1 = stan::math::neg_binomial_2_log_glm_lpmf(y_cl, x_var1_cl, alpha_var1,
-                                                     beta_var1_cl, phi_var1);
+  var res1 = stan::math::neg_binomial_2_log_glm_lpmf(
+      y_cl, x_var1_cl, alpha_var1, beta_var1_cl, phi_var1);
   var res2 = stan::math::neg_binomial_2_log_glm_lpmf(y, x_var2, alpha_var2,
                                                      beta_var2, phi_var2);
 
@@ -218,8 +218,8 @@ TEST(ProbDistributionsNegBinomial2LogGLM, gpu_broadcast_y) {
 
   var res1 = stan::math::neg_binomial_2_log_glm_lpmf(y, x_var1_cl, alpha_var1,
                                                      beta_var1_cl, phi_var1);
-  var res2 = stan::math::neg_binomial_2_log_glm_lpmf(y_vec_cl, x_var2_cl, alpha_var2,
-                                                     beta_var2_cl, phi_var2);
+  var res2 = stan::math::neg_binomial_2_log_glm_lpmf(
+      y_vec_cl, x_var2_cl, alpha_var2, beta_var2_cl, phi_var2);
 
   (res1 + res2).grad();
 
@@ -273,8 +273,8 @@ TEST(ProbDistributionsNegBinomial2LogGLM, gpu_matches_cpu_zero_instances) {
   var phi_var1 = phi;
   var phi_var2 = phi;
 
-  var res1 = stan::math::neg_binomial_2_log_glm_lpmf(y_cl, x_var1_cl, alpha_var1,
-                                                     beta_var1_cl, phi_var1);
+  var res1 = stan::math::neg_binomial_2_log_glm_lpmf(
+      y_cl, x_var1_cl, alpha_var1, beta_var1_cl, phi_var1);
   var res2 = stan::math::neg_binomial_2_log_glm_lpmf(y, x_var2, alpha_var2,
                                                      beta_var2, phi_var2);
 
@@ -329,8 +329,8 @@ TEST(ProbDistributionsNegBinomial2LogGLM, gpu_matches_cpu_zero_attributes) {
   var phi_var1 = phi;
   var phi_var2 = phi;
 
-  var res1 = stan::math::neg_binomial_2_log_glm_lpmf(y_cl, x_var1_cl, alpha_var1,
-                                                     beta_var1_cl, phi_var1);
+  var res1 = stan::math::neg_binomial_2_log_glm_lpmf(
+      y_cl, x_var1_cl, alpha_var1, beta_var1_cl, phi_var1);
   var res2 = stan::math::neg_binomial_2_log_glm_lpmf(y, x_var2, alpha_var2,
                                                      beta_var2, phi_var2);
 
