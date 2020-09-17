@@ -106,16 +106,17 @@ class var_value {
    * @param other the value to assign
    * @return this
    */
-  template <typename S, typename T_ = T, require_convertible_t<S&, value_type>* = nullptr,
+  template <typename S, typename T_ = T,
+            require_convertible_t<S&, value_type>* = nullptr,
             require_not_plain_type_t<S>* = nullptr,
             require_plain_type_t<T_>* = nullptr>
-  var_value<T>(const var_value<S>& other) : vi_(new vari_type(other.vi_->val_)) {
+  var_value<T>(const var_value<S>& other)
+      : vi_(new vari_type(other.vi_->val_)) {
     reverse_pass_callback(
         [this_vi = this->vi_, other_vi = other.vi_]() mutable {
           other_vi->adj_ += this_vi->adj_;
         });
   }
-
 
   /**
    * Construct a variable from a pointer to a variable implementation.
@@ -143,7 +144,7 @@ class var_value {
   inline Eigen::Index rows() const { return vi_->val_.rows(); }
   inline Eigen::Index cols() const { return vi_->val_.cols(); }
   inline Eigen::Index size() const { return vi_->val_.size(); }
-  
+
   /**
    * Compute the gradient of this (dependent) variable with respect to
    * the specified vector of (independent) variables, assigning the
@@ -531,11 +532,15 @@ class var_value {
   }
   // No-op to match with Eigen methods which call eval
   template <typename T_ = T, require_plain_type_t<T_>* = nullptr>
-  inline auto& eval() noexcept { return *this; }
+  inline auto& eval() noexcept {
+    return *this;
+  }
 
   // No-op to match with Eigen methods which call eval
   template <typename T_ = T, require_not_plain_type_t<T_>* = nullptr>
-  inline auto eval() noexcept { return var_value<plain_type_t<T>>(*this); }
+  inline auto eval() noexcept {
+    return var_value<plain_type_t<T>>(*this);
+  }
 
   // this is a bit ugly workarount to allow var_value<double> to have default
   // assignment operator, which avoids warnings when used in Eigen matrices.
