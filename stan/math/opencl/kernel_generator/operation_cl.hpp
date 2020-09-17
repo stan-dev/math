@@ -305,14 +305,13 @@ class operation_cl : public operation_cl_base {
   }
 
   /**
-   * Adds all write events on any matrices used by nested expressions to a list
-   * and clears them from those matrices.
+   * Adds all write events on any matrices used by nested expressions to a list.
    * @param[out] events List of all events.
    */
-  inline void get_clear_write_events(std::vector<cl::Event>& events) const {
+  inline void get_write_events(std::vector<cl::Event>& events) const {
     index_apply<N>([&](auto... Is) {
       static_cast<void>(std::initializer_list<int>{
-          (this->template get_arg<Is>().get_clear_write_events(events), 0)...});
+          (this->template get_arg<Is>().get_write_events(events), 0)...});
     });
   }
 

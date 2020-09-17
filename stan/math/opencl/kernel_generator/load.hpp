@@ -149,14 +149,12 @@ class load_
   }
 
   /**
-   * Adds all write events on the matrix used by this expression to a list and
-   * clears them from the matrix.
+   * Adds all write events on the matrix used by this expression to a list.
    * @param[out] events List of all events.
    */
-  inline void get_clear_write_events(std::vector<cl::Event>& events) const {
+  inline void get_write_events(std::vector<cl::Event>& events) const {
     events.insert(events.end(), a_.write_events().begin(),
                   a_.write_events().end());
-    a_.clear_write_events();
   }
 
   /**
