@@ -492,31 +492,6 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
     }
   }
 
-  void test_multiple_gradient_values(const bool is_vec,
-                                     const vector<double>& single_gradients,
-                                     size_t& pos_single,
-                                     const vector<double>& multiple_gradients,
-                                     size_t& pos_multiple,
-                                     const size_t N_REPEAT) {
-    if (is_vec) {
-      for (size_t i = 0; i < N_REPEAT; i++) {
-        EXPECT_NEAR(single_gradients[pos_single],
-                    multiple_gradients[pos_multiple], 1e-7)
-            << "Comparison of single_gradient value to vectorized gradient "
-               "failed";
-        pos_multiple++;
-      }
-      pos_single++;
-    } else {
-      EXPECT_NEAR(N_REPEAT * single_gradients[pos_single],
-                  multiple_gradients[pos_multiple], 1e-7)
-          << "Comparison of single_gradient value to vectorized gradient "
-             "failed";
-      pos_single++;
-      pos_multiple++;
-    }
-  }
-
   /**
    * Test that the vectorized functions work as expected when the elements
    * of the vector are the same
@@ -545,14 +520,18 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
       vector<var> s1;
       vector<var> s2;
       vector<var> s3;
-      add_vars(s1, p0_, p1_, p2_, p3_, p4_, p5_);
-      add_vars(s2, p0_, p1_, p2_, p3_, p4_, p5_);
-      add_vars(s3, p0_, p1_, p2_, p3_, p4_, p5_);
+      std::vector<Scalar0> p0s_(N_REPEAT, p0_);
+      std::vector<Scalar1> p1s_(N_REPEAT, p1_);
+      std::vector<Scalar2> p2s_(N_REPEAT, p2_);
+      std::vector<Scalar3> p3s_(N_REPEAT, p3_);
+      std::vector<Scalar4> p4s_(N_REPEAT, p4_);
+      std::vector<Scalar5> p5s_(N_REPEAT, p5_);
+      add_vars(s1, p0s_, p1s_, p2s_, p3s_, p4s_, p5s_);
+      add_vars(s2, p0s_, p1s_, p2s_, p3s_, p4s_, p5s_);
+      add_vars(s3, p0s_, p1s_, p2s_, p3s_, p4s_, p5s_);
 
       T_return_type ccdf_log
-          = TestClass.template ccdf_log<Scalar0, Scalar1, Scalar2, Scalar3,
-                                        Scalar4, Scalar5>(p0_, p1_, p2_, p3_,
-                                                          p4_, p5_);
+          = N_REPEAT * TestClass.ccdf_log(p0_, p1_, p2_, p3_, p4_, p5_);
 
       double single_ccdf_log
           = calculate_gradients_1storder(single_gradients1, ccdf_log, s1);
@@ -567,8 +546,7 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
       T5 p5 = get_repeated_params<T5>(parameters[n], 5, N_REPEAT);
 
       T_return_type multiple_ccdf_log
-          = TestClass.template ccdf_log<T0, T1, T2, T3, T4, T5>(p0, p1, p2, p3,
-                                                                p4, p5);
+          = TestClass.ccdf_log(p0, p1, p2, p3, p4, p5);
       vector<double> multiple_gradients1;
       vector<double> multiple_gradients2;
       vector<double> multiple_gradients3;
@@ -585,121 +563,27 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
 
       stan::math::recover_memory();
 
-      EXPECT_NEAR(stan::math::value_of_rec(single_ccdf_log * N_REPEAT),
+      EXPECT_NEAR(stan::math::value_of_rec(single_ccdf_log),
                   stan::math::value_of_rec(multiple_ccdf_log), 1e-8)
           << "ccdf_log with repeated vector input should match "
           << "a multiple of ccdf_log of single input";
 
-      size_t pos_single = 0;
-      size_t pos_multiple = 0;
-      if (!is_constant_all<T0>::value && !is_empty<T0>::value
-          && !std::is_same<Scalar0, fvar<double>>::value
-          && !std::is_same<Scalar0, fvar<fvar<double>>>::value)
-        test_multiple_gradient_values(is_vector<T0>::value, single_gradients1,
-                                      pos_single, multiple_gradients1,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T1>::value && !is_empty<T1>::value
-          && !std::is_same<Scalar1, fvar<double>>::value
-          && !std::is_same<Scalar1, fvar<fvar<double>>>::value)
-        test_multiple_gradient_values(is_vector<T1>::value, single_gradients1,
-                                      pos_single, multiple_gradients1,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T2>::value && !is_empty<T2>::value
-          && !std::is_same<Scalar2, fvar<double>>::value
-          && !std::is_same<Scalar2, fvar<fvar<double>>>::value)
-        test_multiple_gradient_values(is_vector<T2>::value, single_gradients1,
-                                      pos_single, multiple_gradients1,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T3>::value && !is_empty<T3>::value
-          && !std::is_same<Scalar3, fvar<double>>::value
-          && !std::is_same<Scalar3, fvar<fvar<double>>>::value)
-        test_multiple_gradient_values(is_vector<T3>::value, single_gradients1,
-                                      pos_single, multiple_gradients1,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T4>::value && !is_empty<T4>::value
-          && !std::is_same<Scalar4, fvar<double>>::value
-          && !std::is_same<Scalar4, fvar<fvar<double>>>::value)
-        test_multiple_gradient_values(is_vector<T4>::value, single_gradients1,
-                                      pos_single, multiple_gradients1,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T5>::value && !is_empty<T5>::value
-          && !std::is_same<Scalar5, fvar<double>>::value
-          && !std::is_same<Scalar5, fvar<fvar<double>>>::value)
-        test_multiple_gradient_values(is_vector<T5>::value, single_gradients1,
-                                      pos_single, multiple_gradients1,
-                                      pos_multiple, N_REPEAT);
+      EXPECT_EQ(single_gradients1.size(), multiple_gradients1.size()) <<
+	"scalar and vectorized results should produce the same number of first order gradients";
+      EXPECT_EQ(single_gradients2.size(), multiple_gradients2.size()) <<
+	"scalar and vectorized results should produce the same number of second order gradients";
+      EXPECT_EQ(single_gradients3.size(), multiple_gradients3.size()) <<
+	"scalar and vectorized results should produce the same number of third order gradients";
 
-      pos_single = 0;
-      pos_multiple = 0;
-      if (!is_constant_all<T0>::value && !is_empty<T0>::value
-          && (std::is_same<Scalar0, fvar<var>>::value
-              || std::is_same<Scalar0, fvar<fvar<var>>>::value))
-        test_multiple_gradient_values(is_vector<T0>::value, single_gradients2,
-                                      pos_single, multiple_gradients2,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T1>::value && !is_empty<T1>::value
-          && (std::is_same<Scalar1, fvar<var>>::value
-              || std::is_same<Scalar1, fvar<fvar<var>>>::value))
-        test_multiple_gradient_values(is_vector<T1>::value, single_gradients2,
-                                      pos_single, multiple_gradients2,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T2>::value && !is_empty<T2>::value
-          && (std::is_same<Scalar2, fvar<var>>::value
-              || std::is_same<Scalar2, fvar<fvar<var>>>::value))
-        test_multiple_gradient_values(is_vector<T2>::value, single_gradients2,
-                                      pos_single, multiple_gradients2,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T3>::value && !is_empty<T3>::value
-          && (std::is_same<Scalar3, fvar<var>>::value
-              || std::is_same<Scalar3, fvar<fvar<var>>>::value))
-        test_multiple_gradient_values(is_vector<T3>::value, single_gradients2,
-                                      pos_single, multiple_gradients2,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T4>::value && !is_empty<T4>::value
-          && (std::is_same<Scalar4, fvar<var>>::value
-              || std::is_same<Scalar4, fvar<fvar<var>>>::value))
-        test_multiple_gradient_values(is_vector<T4>::value, single_gradients2,
-                                      pos_single, multiple_gradients2,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T5>::value && !is_empty<T5>::value
-          && (std::is_same<Scalar5, fvar<var>>::value
-              || std::is_same<Scalar5, fvar<fvar<var>>>::value))
-        test_multiple_gradient_values(is_vector<T5>::value, single_gradients2,
-                                      pos_single, multiple_gradients2,
-                                      pos_multiple, N_REPEAT);
-
-      pos_single = 0;
-      pos_multiple = 0;
-      if (!is_constant_all<T0>::value && !is_empty<T0>::value
-          && std::is_same<Scalar0, fvar<fvar<var>>>::value)
-        test_multiple_gradient_values(is_vector<T0>::value, single_gradients3,
-                                      pos_single, multiple_gradients3,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T1>::value && !is_empty<T1>::value
-          && std::is_same<Scalar1, fvar<fvar<var>>>::value)
-        test_multiple_gradient_values(is_vector<T1>::value, single_gradients3,
-                                      pos_single, multiple_gradients3,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T2>::value && !is_empty<T2>::value
-          && std::is_same<Scalar2, fvar<fvar<var>>>::value)
-        test_multiple_gradient_values(is_vector<T2>::value, single_gradients3,
-                                      pos_single, multiple_gradients3,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T3>::value && !is_empty<T3>::value
-          && std::is_same<Scalar3, fvar<fvar<var>>>::value)
-        test_multiple_gradient_values(is_vector<T3>::value, single_gradients3,
-                                      pos_single, multiple_gradients3,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T4>::value && !is_empty<T4>::value
-          && std::is_same<Scalar4, fvar<fvar<var>>>::value)
-        test_multiple_gradient_values(is_vector<T4>::value, single_gradients3,
-                                      pos_single, multiple_gradients3,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T5>::value && !is_empty<T5>::value
-          && std::is_same<Scalar5, fvar<fvar<var>>>::value)
-        test_multiple_gradient_values(is_vector<T5>::value, single_gradients3,
-                                      pos_single, multiple_gradients3,
-                                      pos_multiple, N_REPEAT);
+      for(size_t i = 0; i < single_gradients1.size(); ++i)
+	EXPECT_NEAR(single_gradients1[i], multiple_gradients1[i], 1e-7)
+	  << "scalar and vectorized results should have the same first order gradients";
+      for(size_t i = 0; i < single_gradients2.size(); ++i)
+	EXPECT_NEAR(single_gradients2[i], multiple_gradients2[i], 1e-7)
+	  << "scalar and vectorized results should have the same first order gradients";
+      for(size_t i = 0; i < single_gradients3.size(); ++i)
+	EXPECT_NEAR(single_gradients3[i], multiple_gradients3[i], 1e-7)
+	  << "scalar and vectorized results should have the same first order gradients";
     }
   }
 
@@ -813,110 +697,22 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
                 stan::math::value_of_rec(multiple_ccdf_log), 1e-7)
         << "sum of scalar ccdf_logs should match vectorized result";
 
-    size_t pos_single = 0;
-    size_t pos_multiple = 0;
-    if (!is_constant_all<T0>::value && !is_empty<T0>::value)
-      test_multiple_gradient_values(is_vector<T0>::value, single_gradients1,
-                                    pos_single, multiple_gradients1,
-                                    pos_multiple, 1);
-    if (!is_constant_all<T1>::value && !is_empty<T1>::value)
-      test_multiple_gradient_values(is_vector<T1>::value, single_gradients1,
-                                    pos_single, multiple_gradients1,
-                                    pos_multiple, 1);
-    if (!is_constant_all<T2>::value && !is_empty<T2>::value)
-      test_multiple_gradient_values(is_vector<T2>::value, single_gradients1,
-                                    pos_single, multiple_gradients1,
-                                    pos_multiple, 1);
-    if (!is_constant_all<T3>::value && !is_empty<T3>::value)
-      test_multiple_gradient_values(is_vector<T3>::value, single_gradients1,
-                                    pos_single, multiple_gradients1,
-                                    pos_multiple, 1);
-    if (!is_constant_all<T4>::value && !is_empty<T4>::value)
-      test_multiple_gradient_values(is_vector<T4>::value, single_gradients1,
-                                    pos_single, multiple_gradients1,
-                                    pos_multiple, 1);
-    if (!is_constant_all<T5>::value && !is_empty<T5>::value)
-      test_multiple_gradient_values(is_vector<T5>::value, single_gradients1,
-                                    pos_single, multiple_gradients1,
-                                    pos_multiple, 1);
+    EXPECT_EQ(single_gradients1.size(), multiple_gradients1.size()) <<
+      "scalar and vectorized results should produce the same number of first order gradients";
+    EXPECT_EQ(single_gradients2.size(), multiple_gradients2.size()) <<
+      "scalar and vectorized results should produce the same number of second order gradients";
+    EXPECT_EQ(single_gradients3.size(), multiple_gradients3.size()) <<
+      "scalar and vectorized results should produce the same number of third order gradients";
 
-    pos_single = 0;
-    pos_multiple = 0;
-    if (!is_constant_all<T0>::value && !is_empty<T0>::value
-        && (std::is_same<Scalar0, fvar<fvar<double>>>::value
-            || std::is_same<Scalar0, fvar<var>>::value
-            || std::is_same<Scalar0, fvar<fvar<var>>>::value))
-      test_multiple_gradient_values(is_vector<T0>::value, single_gradients2,
-                                    pos_single, multiple_gradients2,
-                                    pos_multiple, 1);
-    if (!is_constant_all<T1>::value && !is_empty<T1>::value
-        && (std::is_same<Scalar1, fvar<fvar<double>>>::value
-            || std::is_same<Scalar1, fvar<var>>::value
-            || std::is_same<Scalar1, fvar<fvar<var>>>::value))
-      test_multiple_gradient_values(is_vector<T1>::value, single_gradients2,
-                                    pos_single, multiple_gradients2,
-                                    pos_multiple, 1);
-    if (!is_constant_all<T2>::value && !is_empty<T2>::value
-        && (std::is_same<Scalar2, fvar<fvar<double>>>::value
-            || std::is_same<Scalar2, fvar<var>>::value
-            || std::is_same<Scalar2, fvar<fvar<var>>>::value))
-      test_multiple_gradient_values(is_vector<T2>::value, single_gradients2,
-                                    pos_single, multiple_gradients2,
-                                    pos_multiple, 1);
-    if (!is_constant_all<T3>::value && !is_empty<T3>::value
-        && (std::is_same<Scalar3, fvar<fvar<double>>>::value
-            || std::is_same<Scalar3, fvar<var>>::value
-            || std::is_same<Scalar3, fvar<fvar<var>>>::value))
-      test_multiple_gradient_values(is_vector<T3>::value, single_gradients2,
-                                    pos_single, multiple_gradients2,
-                                    pos_multiple, 1);
-    if (!is_constant_all<T4>::value && !is_empty<T4>::value
-        && (std::is_same<Scalar4, fvar<fvar<double>>>::value
-            || std::is_same<Scalar4, fvar<var>>::value
-            || std::is_same<Scalar4, fvar<fvar<var>>>::value))
-      test_multiple_gradient_values(is_vector<T4>::value, single_gradients2,
-                                    pos_single, multiple_gradients2,
-                                    pos_multiple, 1);
-    if (!is_constant_all<T5>::value && !is_empty<T5>::value
-        && (std::is_same<Scalar5, fvar<fvar<double>>>::value
-            || std::is_same<Scalar5, fvar<var>>::value
-            || std::is_same<Scalar5, fvar<fvar<var>>>::value))
-      test_multiple_gradient_values(is_vector<T5>::value, single_gradients2,
-                                    pos_single, multiple_gradients2,
-                                    pos_multiple, 1);
-
-    pos_single = 0;
-    pos_multiple = 0;
-    if (!is_constant_all<T0>::value && !is_empty<T0>::value
-        && std::is_same<Scalar0, fvar<fvar<var>>>::value)
-      test_multiple_gradient_values(is_vector<T0>::value, single_gradients3,
-                                    pos_single, multiple_gradients3,
-                                    pos_multiple, 1);
-    if (!is_constant_all<T1>::value && !is_empty<T1>::value
-        && std::is_same<Scalar1, fvar<fvar<var>>>::value)
-      test_multiple_gradient_values(is_vector<T1>::value, single_gradients3,
-                                    pos_single, multiple_gradients3,
-                                    pos_multiple, 1);
-    if (!is_constant_all<T2>::value && !is_empty<T2>::value
-        && std::is_same<Scalar2, fvar<fvar<var>>>::value)
-      test_multiple_gradient_values(is_vector<T2>::value, single_gradients3,
-                                    pos_single, multiple_gradients3,
-                                    pos_multiple, 1);
-    if (!is_constant_all<T3>::value && !is_empty<T3>::value
-        && std::is_same<Scalar3, fvar<fvar<var>>>::value)
-      test_multiple_gradient_values(is_vector<T3>::value, single_gradients3,
-                                    pos_single, multiple_gradients3,
-                                    pos_multiple, 1);
-    if (!is_constant_all<T4>::value && !is_empty<T4>::value
-        && std::is_same<Scalar4, fvar<fvar<var>>>::value)
-      test_multiple_gradient_values(is_vector<T4>::value, single_gradients3,
-                                    pos_single, multiple_gradients3,
-                                    pos_multiple, 1);
-    if (!is_constant_all<T5>::value && !is_empty<T5>::value
-        && std::is_same<Scalar5, fvar<fvar<var>>>::value)
-      test_multiple_gradient_values(is_vector<T5>::value, single_gradients3,
-                                    pos_single, multiple_gradients3,
-                                    pos_multiple, 1);
+    for(size_t i = 0; i < single_gradients1.size(); ++i)
+      EXPECT_NEAR(single_gradients1[i], multiple_gradients1[i], 1e-7)
+	<< "scalar and vectorized results should have the same first order gradients";
+    for(size_t i = 0; i < single_gradients2.size(); ++i)
+      EXPECT_NEAR(single_gradients2[i], multiple_gradients2[i], 1e-7)
+	<< "scalar and vectorized results should have the same first order gradients";
+    for(size_t i = 0; i < single_gradients3.size(); ++i)
+      EXPECT_NEAR(single_gradients3[i], multiple_gradients3[i], 1e-7)
+	<< "scalar and vectorized results should have the same first order gradients";
   }
 
   void test_lower_bound() {
