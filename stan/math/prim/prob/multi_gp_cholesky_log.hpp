@@ -31,22 +31,20 @@ namespace math {
  * @tparam T_w Type of weight.
  */
 template <bool propto, typename T_y, typename T_covar, typename T_w>
-return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_log(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
-    const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,
-    const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
-  return multi_gp_cholesky_lpdf<propto, T_y, T_covar, T_w>(y, L, w);
+return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_log(const T_y& y,
+                                                       const T_covar& L,
+                                                       const T_w& w) {
+  return multi_gp_cholesky_lpdf<propto>(y, L, w);
 }
 
 /** \ingroup multivar_dists
  * @deprecated use <code>multi_gp_cholesky_lpdf</code>
  */
 template <typename T_y, typename T_covar, typename T_w>
-inline return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_log(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
-    const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,
-    const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
-  return multi_gp_cholesky_lpdf<T_y, T_covar, T_w>(y, L, w);
+inline return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_log(const T_y& y,
+                                                              const T_covar& L,
+                                                              const T_w& w) {
+  return multi_gp_cholesky_lpdf<>(y, L, w);
 }
 
 }  // namespace math

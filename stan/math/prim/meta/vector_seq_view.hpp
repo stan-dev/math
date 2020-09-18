@@ -13,7 +13,7 @@ namespace stan {
  * agnostic between those two options. This is similar to scalar_seq_view but
  * instead of being a sequence-like view over a scalar or seq of scalars, it's
  * a sequence-like view over a Vector or seq of Vectors. Notably this version
- * only allows std::vectors as the container type, since we would have
+ * only allows std::vectors as the outer container type, since we would have
  * difficulty figuring out which contained type was the container otherwise.
  *
  * @tparam T the wrapped type, either a Vector or std::vector of them.
@@ -27,7 +27,7 @@ class vector_seq_view {};
  * agnostic between those two options. This is similar to scalar_seq_view but
  * instead of being a sequence-like view over a scalar or seq of scalars, it's
  * a sequence-like view over a Vector or seq of Vectors. Notably this version
- * only allows std::vectors as the container type, since we would have
+ * only allows std::vectors as the outer container type, since we would have
  * difficulty figuring out which contained type was the container otherwise.
  *
  * @tparam T the type of the underlying Vector
@@ -49,7 +49,7 @@ class vector_seq_view<T, require_eigen_t<T>> {
  * agnostic between those two options. This is similar to scalar_seq_view but
  * instead of being a sequence-like view over a scalar or seq of scalars, it's
  * a sequence-like view over a Vector or seq of Vectors. Notably this version
- * only allows std::vectors as the container type, since we would have
+ * only allows std::vectors as the outer container type, since we would have
  * difficulty figuring out which contained type was the container otherwise.
  *
  * @tparam S the type inside of the std::vector

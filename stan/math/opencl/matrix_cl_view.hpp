@@ -3,7 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/stringify.hpp>
-#include <Eigen/Core>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <type_traits>
 
 namespace stan {

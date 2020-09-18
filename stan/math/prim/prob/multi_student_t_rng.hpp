@@ -67,7 +67,6 @@ multi_student_t_rng(
   Eigen::LLT<Eigen::MatrixXd> llt_of_S = S_ref.llt();
   check_pos_definite(function, "covariance matrix argument", llt_of_S);
 
-
   StdVectorBuilder<true, Eigen::VectorXd, T_loc> output(N);
 
   variate_generator<RNG&, normal_distribution<> > std_normal_rng(
