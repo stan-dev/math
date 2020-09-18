@@ -52,10 +52,19 @@ inline var exp(const var& a) { return var(new internal::exp_vari(a.vi_)); }
 template <typename Container,
           require_eigen_st<is_var, Container>* = nullptr>
 inline auto exp(Container&& x) {
+  // Declare result container
   plain_type_t<Container> result(x.rows(), x.cols());
-  auto ind_f = [&](int i, const auto& fun, const auto& x) { return fun(x.coeffRef(i)); };
+
+  // Functor defining how inputs should be indexed
+  auto ind_f = [&](int i, const auto& fun, const auto& x) {
+    return fun(x.coeffRef(i));
+  };
+
+  // Functor defining function to be applied to indexed arguments
   auto f = [&](const auto& x) { return stan::math::exp(x); };
-  return parallel_map(f, ind_f, std::forward<plain_type_t<Container>>(result), std::forward_as_tuple(x));
+
+  return parallel_map(f, ind_f, std::forward<plain_type_t<Container>>(result),
+                      std::forward_as_tuple(x));
 }
 
 /**
