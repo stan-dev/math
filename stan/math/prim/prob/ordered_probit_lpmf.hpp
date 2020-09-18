@@ -52,7 +52,8 @@ return_type_t<T_loc, T_cut> ordered_probit_lpmf(const T_y& y,
   check_nonzero_size(function, "Cut-points", c);
   int N = size(lambda);
   int C_l = size_mvt(c);
-  int K = vector_seq_view<T_cut>(c)[0].size() + 1;
+  vector_seq_view<T_cut> c_vec(c);
+  int K = c_vec[0].size() + 1;
 
   check_consistent_sizes(function, "Integers", y, "Locations", lambda);
   if (C_l > 1) {
@@ -62,7 +63,6 @@ return_type_t<T_loc, T_cut> ordered_probit_lpmf(const T_y& y,
 
   check_bounded(function, "Random variable", y, 1, K);
   scalar_seq_view<T_y> y_vec(y);
-  vector_seq_view<T_cut> c_vec(c);
   check_nonzero_size(function, "First cutpoint set", c_vec[0]);
   for (int i = 0; i < size_mvt(c); ++i) {
     check_size_match(function, "One cutpoint set", K - 1, "First cutpoint set",

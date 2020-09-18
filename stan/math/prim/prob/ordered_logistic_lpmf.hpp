@@ -80,7 +80,9 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
   static const char* function = "ordered_logistic";
 
   check_nonzero_size(function, "Cut-points", c);
-  int K = vector_seq_view<T_cut>(c)[0].size() + 1;
+  T_cut_ref c_ref = c;
+  vector_seq_view<T_cut_ref> c_vec(c_ref);
+  int K = c_vec[0].size() + 1;
   int N = size(lambda);
   int C_l = size_mvt(c);
 
@@ -92,10 +94,8 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
 
   T_y_ref y_ref = y;
   T_lambda_ref lambda_ref = lambda;
-  T_cut_ref c_ref = c;
 
   scalar_seq_view<T_y_ref> y_seq(y_ref);
-  vector_seq_view<T_cut_ref> c_vec(c_ref);
 
   const auto& lambda_arr = as_array_or_scalar(lambda_ref);
   ref_type_t<decltype(value_of(lambda_arr))> lambda_val = value_of(lambda_arr);
@@ -163,7 +163,7 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
     }
   }
 
-  operands_and_partials<T_loc, T_cut> ops_partials(lambda, c);
+  operands_and_partials<T_lambda_ref, T_cut_ref> ops_partials(lambda_ref, c_ref);
   if (!is_constant_all<T_loc, T_cut>::value) {
     Array<T_partials_return, Dynamic, 1> exp_m_cut1 = exp(-cut1);
     Array<T_partials_return, Dynamic, 1> exp_m_cut2 = exp(-cut2);
@@ -182,10 +182,10 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
       for (int i = 0; i < N; i++) {
         int c = y_seq[i];
         if (c != K) {
-          ops_partials.edge3_.partials_[c - 1] += d2.coeff(i);
+          ops_partials.edge2_.partials_vec_[i][c - 1] += d2.coeff(i);
         }
         if (c != 1) {
-          ops_partials.edge3_.partials_[c - 2] -= d1.coeff(i);
+          ops_partials.edge2_.partials_vec_[i][c - 2] -= d1.coeff(i);
         }
       }
     }
