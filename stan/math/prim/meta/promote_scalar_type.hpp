@@ -47,7 +47,8 @@ struct promote_scalar_type<T, std::vector<S>> {
  *  This specialization holds type `S`.
  */
 template <typename T, typename S>
-struct promote_scalar_type<T, S, require_all_t<is_var<T>, is_var<S>, is_eigen<value_type_t<S>>>> {
+struct promote_scalar_type<
+    T, S, require_all_t<is_var<T>, is_var<S>, is_eigen<value_type_t<S>>>> {
   /**
    * The promoted type.
    */
@@ -61,7 +62,9 @@ struct promote_scalar_type<T, S, require_all_t<is_var<T>, is_var<S>, is_eigen<va
  *  This specialization the promoted value type of `S`.
  */
 template <typename T, typename S>
-struct promote_scalar_type<T, S, require_all_t<std::is_arithmetic<T>, is_var<S>, is_eigen<value_type_t<S>>>> {
+struct promote_scalar_type<T, S,
+                           require_all_t<std::is_arithmetic<T>, is_var<S>,
+                                         is_eigen<value_type_t<S>>>> {
   /**
    * The promoted type.
    */

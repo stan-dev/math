@@ -49,7 +49,9 @@ struct is_eigen_row_vector_impl<T, false> : std::false_type {};
 /** \ingroup type_trait
  * Underlying implementation for detecting if a Matrix is a column vector.
  */
-template <typename T, bool = bool_constant<is_eigen<T>::value || (is_eigen<value_type_t<T>>::value && is_var<T>::value)>::value>
+template <typename T, bool = bool_constant<is_eigen<T>::value
+                                           || (is_eigen<value_type_t<T>>::value
+                                               && is_var<T>::value)>::value>
 struct is_col_vector_impl
     : bool_constant<std::decay_t<T>::ColsAtCompileTime == 1> {};
 
@@ -62,7 +64,9 @@ struct is_col_vector_impl<T, false> : std::false_type {};
 /** \ingroup type_trait
  * Underlying implementation for detecting if a Matrix is a row vector.
  */
-template <typename T, bool = bool_constant<is_eigen<T>::value || (is_eigen<value_type_t<T>>::value && is_var<T>::value)>::value>
+template <typename T, bool = bool_constant<is_eigen<T>::value
+                                           || (is_eigen<value_type_t<T>>::value
+                                               && is_var<T>::value)>::value>
 struct is_row_vector_impl
     : std::integral_constant<bool, std::decay_t<T>::RowsAtCompileTime == 1> {};
 
@@ -88,14 +92,13 @@ STAN_ADD_REQUIRE_CONTAINER(eigen_col_vector, is_eigen_col_vector,
                            require_eigens_types);
 
 /** \ingroup type_trait
-* If the input type T has a static comple time constant type
-* `ColsAtCompileTime` equal to 1 this
-* has a static member with a value of true. Else this has a static
-* member with a value of false.
-*/
+ * If the input type T has a static comple time constant type
+ * `ColsAtCompileTime` equal to 1 this
+ * has a static member with a value of true. Else this has a static
+ * member with a value of false.
+ */
 template <typename T>
 struct is_col_vector : internal::is_col_vector_impl<T> {};
-
 
 /** \ingroup type_trait
  * If the input type T is an eigen matrix with 1 column at compile time this
@@ -111,14 +114,13 @@ STAN_ADD_REQUIRE_CONTAINER(eigen_row_vector, is_eigen_row_vector,
                            require_eigens_types);
 
 /** \ingroup type_trait
-* If the input type T has a static comple time constant type
-* `RowsAtCompileTime` equal to 1 this
-* has a static member with a value of true. Else this has a static
-* member with a value of false.
-*/
+ * If the input type T has a static comple time constant type
+ * `RowsAtCompileTime` equal to 1 this
+ * has a static member with a value of true. Else this has a static
+ * member with a value of false.
+ */
 template <typename T>
 struct is_row_vector : internal::is_row_vector_impl<T> {};
-
 
 /** \ingroup type_trait
  * If the input type T is an eigen matrix with 1 column or 1 row at compile time
@@ -153,16 +155,16 @@ using require_not_eigen_row_and_col_t = require_not_t<
  * @ingroup require_eigen_types
  */
 template <typename Row, typename Col>
-using require_row_and_col_vector_t = require_t<
-    math::conjunction<is_row_vector<Row>, is_col_vector<Col>>>;
+using require_row_and_col_vector_t
+    = require_t<math::conjunction<is_row_vector<Row>, is_col_vector<Col>>>;
 
 /**
  * Require `Row` is not a row vector and `Col` is not a column vector.
  * @ingroup require_eigen_types
  */
 template <typename Row, typename Col>
-using require_not_row_and_col_vector_t = require_not_t<
-    math::conjunction<is_row_vector<Row>, is_col_vector<Col>>>;
+using require_not_row_and_col_vector_t
+    = require_not_t<math::conjunction<is_row_vector<Row>, is_col_vector<Col>>>;
 
 /** \ingroup type_trait
  * If the input type T is either an eigen matrix with 1 column or 1 row at
