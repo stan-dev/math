@@ -14,6 +14,10 @@ build_folder = "./test/expressions/"
 exceptions_list_location = (
     "./test/expressions/stan_math_sigs_exceptions.expected"
 )
+exception_functions_list = (
+    "lmultiply",
+    "lchoose"
+)
 
 eigen_types = ["matrix", "vector", "row_vector"]
 arg_types = {
@@ -246,6 +250,9 @@ def main(functions=(), j=1):
         return_type, function_name, function_args = parse_signature(signature)
         # skip ignored signatures
         if signature in ignored and not functions and signature not in extra_signatures:
+            continue
+        # skip ignored functions
+        if function_name in exception_functions_list:
             continue
         # skip default if we have list of function names/signatures to test
         if ((functions or extra_signatures) and
