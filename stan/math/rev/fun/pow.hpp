@@ -181,7 +181,7 @@ inline var pow(T base, const var& exponent) {
   return {new internal::pow_dv_vari(base, exponent.vi_)};
 }
 
-template <typename T1, typename T2, int R, int C>
+template <int R, int C>
 inline auto pow(const Eigen::Matrix<var, R, C>& x,
                 const Eigen::Matrix<var, R, C>& y) {
   // Declare result container
@@ -195,7 +195,7 @@ inline auto pow(const Eigen::Matrix<var, R, C>& x,
   // Functor defining function to be applied to indexed arguments
   auto f = [&](const auto& x, const auto& y) { return stan::math::pow(x, y); };
 
-  return parallel_map(f, ind_f, std::forward<plain_type_t<T1>>(result),
+  return parallel_map(f, ind_f, std::forward<Eigen::Matrix<var, R, C>>(result),
                       std::forward_as_tuple(x,y));
 }
 
