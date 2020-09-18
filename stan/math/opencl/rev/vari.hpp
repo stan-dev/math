@@ -35,6 +35,15 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
   T val_;
 
   /**
+   * Rows at compile time
+   */
+  static constexpr int RowsAtCompileTime{-1};
+  /**
+   * Columns at compile time
+   */
+  static constexpr int ColsAtCompileTime{-1};
+
+  /**
    * Construct a matrix_cl variable implementation from a value. The
    * adjoint is initialized to zero.
    *
@@ -142,34 +151,6 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
    * example in a Jacobian calculation).
    */
   inline void set_zero_adjoint() final { adj_ = constant(0, rows(), cols()); }
-
-  /**
-   * Allocate memory from the underlying memory pool.  This memory is
-   * is managed as a whole externally.
-   *
-   * Warning: Classes should not be allocated with this operator
-   * if they have non-trivial destructors.
-   *
-   * @param nbytes Number of bytes to allocate.
-   * @return Pointer to allocated bytes.
-   */
-  static inline void* operator new(size_t nbytes) {
-    return ChainableStack::instance_->memalloc_.alloc(nbytes);
-  }
-
-  /**
-   * Delete a pointer from the underlying memory pool.
-   *
-   * This no-op implementation enables a subclass to throw
-   * exceptions in its constructor.  An exception thrown in the
-   * constructor of a subclass will result in an error being
-   * raised, which is in turn caught and calls delete().
-   *
-   * See the discussion of "plugging the memory leak" in:
-   *   http://www.parashift.com/c++-faq/memory-pools.html
-   */
-  static inline void operator delete(void* /* ignore arg */) { /* no op */
-  }
 
  protected:
   // to allow access to this constructor from instantinations with different

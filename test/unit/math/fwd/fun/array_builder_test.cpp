@@ -2,10 +2,9 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-using stan::math::fvar;
-
 TEST(AgradFwdMatrixArrayBuilder, fvar_double) {
   using stan::math::array_builder;
+  using stan::math::fvar;
   using std::vector;
 
   EXPECT_EQ(0U, array_builder<fvar<double> >().array().size());
@@ -59,6 +58,7 @@ TEST(AgradFwdMatrixArrayBuilder, fvar_double) {
 
 TEST(AgradFwdMatrixArrayBuilder, fvar_fvar_double) {
   using stan::math::array_builder;
+  using stan::math::fvar;
   using std::vector;
 
   EXPECT_EQ(0U, array_builder<fvar<fvar<double> > >().array().size());

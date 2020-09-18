@@ -13,13 +13,13 @@ namespace stan {
  * agnostic between those two options. This is similar to scalar_seq_view but
  * instead of being a sequence-like view over a scalar or seq of scalars, it's
  * a sequence-like view over a Vector or seq of Vectors. Notably this version
- * only allows std::vectors as the container type, since we would have
+ * only allows std::vectors as the outer container type, since we would have
  * difficulty figuring out which contained type was the container otherwise.
  *
  * @tparam T the wrapped type, either a Vector or std::vector of them.
  */
 template <typename T, typename = void>
-class vector_seq_view;
+class vector_seq_view {};
 
 /** \ingroup type_trait
  * This class provides a low-cost wrapper for situations where you either need
@@ -27,20 +27,20 @@ class vector_seq_view;
  * agnostic between those two options. This is similar to scalar_seq_view but
  * instead of being a sequence-like view over a scalar or seq of scalars, it's
  * a sequence-like view over a Vector or seq of Vectors. Notably this version
- * only allows std::vectors as the container type, since we would have
+ * only allows std::vectors as the outer container type, since we would have
  * difficulty figuring out which contained type was the container otherwise.
  *
- * @tparam T the underlying Vector or expression type
+ * @tparam T the type of the underlying Vector
  */
 template <typename T>
 class vector_seq_view<T, require_eigen_t<T>> {
  public:
-  explicit vector_seq_view(T& m) : m_(m) {}
+  explicit vector_seq_view(const T& m) : m_(m) {}
   int size() const { return 1; }
-  T& operator[](int /* i */) const { return m_; }
+  const ref_type_t<T>& operator[](int /* i */) const { return m_; }
 
  private:
-  T& m_;
+  const ref_type_t<T> m_;
 };
 
 /** \ingroup type_trait
@@ -49,23 +49,20 @@ class vector_seq_view<T, require_eigen_t<T>> {
  * agnostic between those two options. This is similar to scalar_seq_view but
  * instead of being a sequence-like view over a scalar or seq of scalars, it's
  * a sequence-like view over a Vector or seq of Vectors. Notably this version
- * only allows std::vectors as the container type, since we would have
+ * only allows std::vectors as the outer container type, since we would have
  * difficulty figuring out which contained type was the container otherwise.
  *
- * @tparam T std vector of eigen types
+ * @tparam S the type inside of the std::vector
  */
 template <typename T>
-class vector_seq_view<T, require_std_vector_vt<is_eigen, T>> {
-  using inner = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
-                                   const value_type_t<T>, value_type_t<T>>;
-
+class vector_seq_view<T, require_std_vector_vt<is_container, T>> {
  public:
-  explicit vector_seq_view(T& v) : v_(v) {}
+  explicit vector_seq_view(const T& v) : v_(v) {}
   int size() const { return v_.size(); }
-  inner& operator[](int i) const { return v_[i]; }
+  const value_type_t<T>& operator[](int i) const { return v_[i]; }
 
  private:
-  T& v_;
+  const T& v_;
 };
 
 }  // namespace stan

@@ -74,6 +74,7 @@
 #include <stan/math/prim/fun/dot.hpp>
 #include <stan/math/prim/fun/dot_product.hpp>
 #include <stan/math/prim/fun/dot_self.hpp>
+#include <stan/math/prim/fun/eigen_comparisons.hpp>
 #include <stan/math/prim/fun/eigenvalues.hpp>
 #include <stan/math/prim/fun/eigenvalues_sym.hpp>
 #include <stan/math/prim/fun/eigenvectors.hpp>
@@ -231,6 +232,7 @@
 #include <stan/math/prim/fun/owens_t.hpp>
 #include <stan/math/prim/fun/Phi.hpp>
 #include <stan/math/prim/fun/Phi_approx.hpp>
+#include <stan/math/prim/fun/plus.hpp>
 #include <stan/math/prim/fun/poisson_binomial_log_probs.hpp>
 #include <stan/math/prim/fun/polar.hpp>
 #include <stan/math/prim/fun/positive_constrain.hpp>

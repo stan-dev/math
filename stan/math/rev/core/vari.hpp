@@ -10,9 +10,14 @@
 namespace stan {
 namespace math {
 
+// forward decleration of vari_value
+template <typename T, typename = void>
+class vari_value;
+
 // forward declaration of var
 template <typename T>
 class var_value;
+
 /**
  * Abstract base class that all `vari_value` and it's derived classes inherit.
  *
@@ -30,11 +35,37 @@ class vari_base {
    */
   virtual void chain() = 0;
   virtual void set_zero_adjoint() = 0;
-  virtual ~vari_base() noexcept {}
+
+  /**
+   * Allocate memory from the underlying memory pool.  This memory is
+   * is managed as a whole externally.
+   *
+   * Warning: Classes should not be allocated with this operator
+   * if they have non-trivial destructors.
+   *
+   * @param nbytes Number of bytes to allocate.
+   * @return Pointer to allocated bytes.
+   */
+  static inline void* operator new(size_t nbytes) noexcept {
+    return ChainableStack::instance_->memalloc_.alloc(nbytes);
+  }
+
+  /**
+   * Delete a pointer from the underlying memory pool.
+   *
+   * This no-op implementation enables a subclass to throw
+   * exceptions in its constructor.  An exception thrown in the
+   * constructor of a subclass will result in an error being
+   * raised, which is in turn caught and calls delete().
+   *
+   * See the discussion of "plugging the memory leak" in:
+   *   http://www.parashift.com/c++-faq/memory-pools.html
+   */
+  static inline void operator delete(
+      void* /* ignore arg */) noexcept { /* no op */
+  }
 };
 
-template <typename T, typename = void>
-class vari_value;
 /**
  * The variable implementation for floating point types.
  *
@@ -61,6 +92,15 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
   value_type adj_;
 
   /**
+   * Rows at compile time
+   */
+  static constexpr int RowsAtCompileTime{1};
+  /**
+   * Columns at compile time
+   */
+  static constexpr int ColsAtCompileTime{1};
+
+  /**
    * Construct a variable implementation from a value.  The
    * adjoint is initialized to zero.
    *
@@ -75,7 +115,7 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(S x) noexcept : val_(x), adj_(0.0) {  // NOLINT
-    ChainableStack::instance_->var_stack_.emplace_back(this);
+    ChainableStack::instance_->var_stack_.push_back(this);
   }
 
   /**
@@ -96,13 +136,11 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(S x, bool stacked) noexcept : val_(x), adj_(0.0) {
     if (stacked) {
-      ChainableStack::instance_->var_stack_.emplace_back(this);
+      ChainableStack::instance_->var_stack_.push_back(this);
     } else {
-      ChainableStack::instance_->var_nochain_stack_.emplace_back(this);
+      ChainableStack::instance_->var_nochain_stack_.push_back(this);
     }
   }
-
-  ~vari_value() = default;
 
   inline void chain() {}
 
@@ -134,35 +172,6 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
     return os << v->val_ << ":" << v->adj_;
   }
 
-  /**
-   * Allocate memory from the underlying memory pool.  This memory is
-   * is managed as a whole externally.
-   *
-   * Warning: Classes should not be allocated with this operator
-   * if they have non-trivial destructors.
-   *
-   * @param nbytes Number of bytes to allocate.
-   * @return Pointer to allocated bytes.
-   */
-  static inline void* operator new(size_t nbytes) noexcept {
-    return ChainableStack::instance_->memalloc_.alloc(nbytes);
-  }
-
-  /**
-   * Delete a pointer from the underlying memory pool.
-   *
-   * This no-op implementation enables a subclass to throw
-   * exceptions in its constructor.  An exception thrown in the
-   * constructor of a subclass will result in an error being
-   * raised, which is in turn caught and calls delete().
-   *
-   * See the discussion of "plugging the memory leak" in:
-   *   http://www.parashift.com/c++-faq/memory-pools.html
-   */
-  static inline void operator delete(
-      void* /* ignore arg */) noexcept { /* no op */
-  }
-
  private:
   template <typename>
   friend class var_value;
@@ -170,6 +179,41 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
 
 // For backwards compatability the default is double
 using vari = vari_value<double>;
+
+/**
+ * A `vari_view` is used to read from a slice of a `vari_value` with an inner
+ * eigen type. It can only accept expressions which do not allocate dynamic
+ * memory.
+ * @tparam T An eigen expression referencing memory allocated in a `vari_value`.
+ */
+template <typename T, typename = void>
+class vari_view;
+
+template <typename T>
+class vari_view<T, require_all_t<bool_constant<!is_plain_type<T>::value>,
+                                 is_eigen_dense_base<T>>>
+    final : public vari_base {
+ public:
+  using PlainObject = plain_type_t<T>;
+  using value_type = std::decay_t<T>;  // The underlying type for this class
+  /**
+   * Number of rows known at compile time
+   */
+  static constexpr int RowsAtCompileTime = PlainObject::RowsAtCompileTime;
+  /**
+   * Number of columns known at compile time
+   */
+  static constexpr int ColsAtCompileTime = PlainObject::ColsAtCompileTime;
+
+  T val_;
+  T adj_;
+  template <typename S, typename K,
+            require_convertible_t<S&, value_type>* = nullptr,
+            require_convertible_t<K&, value_type>* = nullptr>
+  vari_view(const S& val, const K& adj) : val_(val), adj_(adj) {}
+  void set_zero_adjoint() {}
+  void chain() {}
+};
 
 /**
  * The variable implementation for Eigen dense matrix types.
@@ -183,27 +227,18 @@ using vari = vari_value<double>;
  *
  */
 template <typename T>
-class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
+class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
+    : public vari_base {
  public:
-  static_assert(
-      is_plain_type<T>::value,
-      "The template for this var is an"
-      " expression but a var_value's inner type must be assignable such as"
-      " a double, Eigen::Matrix, or Eigen::Array");
-
   /**
    * `PlainObject` represents a user constructible type such as Matrix or Array
    */
   using PlainObject = plain_type_t<T>;
   using value_type = PlainObject;  // The underlying type for this class
   using eigen_scalar = value_type_t<PlainObject>;  // A floating point type
-  /**
-   * Maps for adj_ and val_
-   */
-  using eigen_map = Eigen::Map<PlainObject, Eigen::Aligned8>;
-  using vari_type = vari_value<T, require_eigen_dense_base_t<T>>;
-  eigen_scalar* val_mem_;  // Pointer to memory allocated on the stack for val_
-  eigen_scalar* adj_mem_;  // Pointer to memory allocated on the stack for adj_
+  using eigen_map = Eigen::Map<PlainObject, Eigen::Aligned8,
+                               Eigen::Stride<0, 0>>;  // Maps for adj_ and val_
+  using vari_type = vari_value<T>;
   /**
    * Number of rows known at compile time
    */
@@ -212,11 +247,16 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
    * Number of columns known at compile time
    */
   static constexpr int ColsAtCompileTime = PlainObject::ColsAtCompileTime;
+  /**
+   * Maps for adj_ and val_
+   */
+  eigen_scalar* val_mem_;  // Pointer to memory allocated on the stack for val_
+  eigen_scalar* adj_mem_;  // Pointer to memory allocated on the stack for adj_
 
   /**
    * The value of this variable.
    */
-  const eigen_map val_;
+  eigen_map val_;
 
   /**
    * The adjoint of this variable, which is the partial derivative
@@ -237,13 +277,25 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
    * @tparam S A dense Eigen type that is convertible to `value_type`
    * @param x Value of the constructed variable.
    */
-  template <typename S, require_convertible_t<S&, T>* = nullptr>
+  template <typename S, require_convertible_t<S&, T>* = nullptr,
+            require_not_arena_matrix_t<S>* = nullptr>
   explicit vari_value(const S& x)
       : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
         adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
         val_(eigen_map(val_mem_, x.rows(), x.cols()) = x),
+        adj_(eigen_map(adj_mem_, x.rows(), x.cols()).setZero()) {
+    ChainableStack::instance_->var_stack_.push_back(this);
+  }
+
+  template <typename S, require_convertible_t<S&, T>* = nullptr,
+            require_arena_matrix_vt<std::is_arithmetic, S>* = nullptr>
+  explicit vari_value(const S& x)
+      : val_mem_(x.data()),
+        adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
+            x.size())),
+        val_(eigen_map(val_mem_, x.rows(), x.cols())),
         adj_(eigen_map(adj_mem_, x.rows(), x.cols()).setZero()) {
     ChainableStack::instance_->var_stack_.push_back(this);
   }
@@ -272,9 +324,9 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
         val_(eigen_map(val_mem_, x.rows(), x.cols()) = x),
         adj_(eigen_map(adj_mem_, x.rows(), x.cols()).setZero()) {
     if (stacked) {
-      ChainableStack::instance_->var_stack_.emplace_back(this);
+      ChainableStack::instance_->var_stack_.push_back(this);
     } else {
-      ChainableStack::instance_->var_nochain_stack_.emplace_back(this);
+      ChainableStack::instance_->var_nochain_stack_.push_back(this);
     }
   }
 
@@ -308,6 +360,96 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
   inline void set_zero_adjoint() final { adj_.setZero(); }
 
   /**
+   * A block view of the underlying Eigen matrices.
+   * @param start_row Starting row of block.
+   * @param start_col Starting columns of block.
+   * @param num_rows Number of rows to return.
+   * @param num_cols Number of columns to return.
+   */
+  inline auto block(Eigen::Index start_row, Eigen::Index start_col,
+                    Eigen::Index num_rows, Eigen::Index num_cols) {
+    using inner_type
+        = decltype(val_.block(start_row, start_col, num_rows, num_cols));
+    return vari_view<inner_type>(
+        val_.block(start_row, start_col, num_rows, num_cols),
+        adj_.block(start_row, start_col, num_rows, num_cols));
+  }
+
+  /**
+   * View of the head of Eigen vector types.
+   * @param n Number of elements to return from top of vector.
+   */
+  inline auto head(Eigen::Index n) {
+    return vari_view<decltype(val_.head(n))>(val_.head(n), adj_.head(n));
+  }
+
+  /**
+   * View of the tail of the Eigen vector types.
+   * @param n Number of elements to return from bottom of vector.
+   */
+  inline auto tail(Eigen::Index n) {
+    return vari_view<decltype(val_.tail(n))>(val_.tail(n), adj_.tail(n));
+  }
+
+  /**
+   * View block of N elements starting at position `i`
+   * @param i Starting position of block.
+   * @param n Number of elements in block
+   */
+  inline auto segment(Eigen::Index i, Eigen::Index n) {
+    return vari_view<decltype(val_.segment(i, n))>(val_.segment(i, n),
+                                                   adj_.segment(i, n));
+  }
+
+  /**
+   * View row of eigen matrices.
+   * @param i Row index to slice.
+   */
+  inline auto row(Eigen::Index i) {
+    return vari_view<decltype(val_.row(i))>(val_.row(i), adj_.row(i));
+  }
+
+  /**
+   * View column of eigen matrices
+   * @param i Column index to slice
+   */
+  inline auto col(Eigen::Index i) {
+    return vari_view<decltype(val_.col(i))>(val_.col(i), adj_.col(i));
+  }
+
+  /**
+   * Get coefficient of eigen matrices
+   * @param i Row index
+   * @param j Column index
+   */
+  inline auto coeff(Eigen::Index i, Eigen::Index j) const {
+    return vari_value<double>(val_.coeffRef(i, j), adj_.coeffRef(i, j));
+  }
+
+  /**
+   * Get coefficient of eigen matrices
+   * @param i Column index to slice
+   */
+  inline auto coeff(Eigen::Index i) const {
+    return vari_value<double>(val_.coeffRef(i), adj_.coeffRef(i));
+  }
+
+  /**
+   * Get coefficient of eigen matrices
+   * @param i Column index to slice
+   */
+  inline auto operator()(Eigen::Index i) const { return this->coeff(i); }
+
+  /**
+   * Get coefficient of eigen matrices
+   * @param i Row index
+   * @param j Column index
+   */
+  inline const auto operator()(Eigen::Index i, Eigen::Index j) const {
+    return this->coeff(i, j);
+  }
+
+  /**
    * Insertion operator for vari. Prints the current value and
    * the adjoint value.
    *
@@ -320,39 +462,9 @@ class vari_value<T, require_eigen_dense_base_t<T>> : public vari_base {
     return os << "val: \n" << v->val_ << " \nadj: \n" << v->adj_;
   }
 
-  /**
-   * Allocate memory from the underlying memory pool.  This memory is
-   * is managed as a whole externally.
-   *
-   * Warning: Classes should not be allocated with this operator
-   * if they have non-trivial destructors.
-   *
-   * @param nbytes Number of bytes to allocate.
-   * @return Pointer to allocated bytes.
-   */
-  static inline void* operator new(size_t nbytes) {
-    return ChainableStack::instance_->memalloc_.alloc(nbytes);
-  }
-
-  /**
-   * Delete a pointer from the underlying memory pool.
-   *
-   * This no-op implementation enables a subclass to throw
-   * exceptions in its constructor.  An exception thrown in the
-   * constructor of a subclass will result in an error being
-   * raised, which is in turn caught and calls delete().
-   *
-   * See the discussion of "plugging the memory leak" in:
-   *   http://www.parashift.com/c++-faq/memory-pools.html
-   */
-  static inline void operator delete(void* /* ignore arg */) { /* no op */
-  }
-
  private:
   template <typename>
   friend class var_value;
-  template <typename, typename>
-  friend class vari_value;
 };
 
 /**
@@ -494,40 +606,9 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
     return os << "val: \n" << v->val_ << " \nadj: \n" << v->adj_;
   }
 
-  /**
-   * Allocate memory from the underlying memory pool.  This memory is
-   * is managed as a whole externally.
-   *
-   * Warning: Classes should not be allocated with this operator
-   * if they have non-trivial destructors.
-   *
-   * @param nbytes Number of bytes to allocate.
-   * @return Pointer to allocated bytes.
-   */
-  static inline void* operator new(size_t nbytes) noexcept {
-    return ChainableStack::instance_->memalloc_.alloc(nbytes);
-  }
-
-  /**
-   * Delete a pointer from the underlying memory pool.
-   *
-   * This no-op implementation enables a subclass to throw
-   * exceptions in its constructor.  An exception thrown in the
-   * constructor of a subclass will result in an error being
-   * raised, which is in turn caught and calls delete().
-   *
-   * See the discussion of "plugging the memory leak" in:
-   *   http://www.parashift.com/c++-faq/memory-pools.html
-   */
-  static inline void operator delete(
-      void* /* ignore arg */) noexcept { /* no op */
-  }
-
  private:
   template <typename>
   friend class var_value;
-  template <typename, typename>
-  friend class vari_value;
 };
 
 // For backwards compatability the default is double

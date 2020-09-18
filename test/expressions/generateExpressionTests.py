@@ -64,6 +64,24 @@ def get_ignored_signatures():
     return ignored
 
 
+def parse_signature_file(sig_file):
+    """
+    Parses signatures from a file of signatures
+    :param sig_file: file-like object to pares
+    :return: list of signatures
+    """
+    res = []
+    part_sig = ""
+    for signature in sig_file:
+        signature = part_sig + signature
+        part_sig = ""
+        if not signature.endswith(")\n"):
+            part_sig = signature
+            continue
+        res.append(signature)
+    return res
+
+
 def get_signatures():
     """
     Retrieves function signatures from stanc3
@@ -85,15 +103,7 @@ def get_signatures():
         shell=True,
     )
 
-    res = []
-    part_sig = ""
-    for signature in p.stdout:
-        signature = part_sig + signature
-        part_sig = ""
-        if not signature.endswith(")\n"):
-            part_sig = signature
-            continue
-        res.append(signature)
+    res = parse_signature_file(p.stdout)
 
     if p.wait() != 0:
         sys.stderr.write("Error in getting signatures from stanc3!\n")
@@ -115,7 +125,22 @@ def parse_signature(signature):
     return return_type, function_name, args
 
 
-def make_arg_code(arg, scalar, var_name, function_name):
+# list of function arguments that need special scalar values.
+# None means to use the default argument value.
+special_arg_values = {
+	"acosh" : [1.4],
+	"log1m_exp" : [-0.6],
+	"categorical_log" : [None, 1],
+	"categorical_rng" : [1, None],
+	"categorical_lpmf" : [None, 1],
+	"hmm_hidden_state_prob" : [None, 1, 1],
+	"hmm_latent_rng" : [None, 1, 1, None],
+	"hmm_marginal" : [None, 1, 1],
+	"lkj_corr_lpdf" : [1, None],
+	"lkj_corr_log" : [1, None],
+  "log_diff_exp" : [3, None],
+}
+def make_arg_code(arg, scalar, var_name, var_number, function_name):
     """
     Makes code for declaration and initialization of an argument to function.
 
@@ -126,6 +151,7 @@ def make_arg_code(arg, scalar, var_name, function_name):
     :param arg: stan lang type of the argument
     :param scalar: scalar type used in argument
     :param var_name: name of the variable to create
+    :param var_number: number of variable in the function call
     :param function_name: name of the function that will be tested using this argument
     :return: code for declaration and initialization of an argument
     """
@@ -135,15 +161,10 @@ def make_arg_code(arg, scalar, var_name, function_name):
             "  %s %s = [](const auto& a, const auto&, const auto&, const auto&){return a;}"
             % (arg_type, var_name)
         )
-    elif function_name == "acosh":
+    elif function_name in special_arg_values and special_arg_values[function_name][var_number] is not None:
         return (
-            "  %s %s = stan::math::as_array_or_scalar(stan::test::make_arg<%s>())+1"
-            % (arg_type, var_name, arg_type)
-        )
-    elif function_name == "log1m_exp":
-        return (
-            "  %s %s = stan::math::as_array_or_scalar(stan::test::make_arg<%s>())-1"
-            % (arg_type, var_name, arg_type)
+            "  %s %s = stan::test::make_arg<%s>(%f)"
+            % (arg_type, var_name, arg_type, special_arg_values[function_name][var_number])
         )
     else:
         return "  %s %s = stan::test::make_arg<%s>()" % (
@@ -168,6 +189,35 @@ def save_tests_in_files(N_files, tests):
                 out.write(test)
 
 
+def handle_function_list(functions_input, signatures):
+    """
+    Handles list of functions, splitting elements between functions and signatures.  
+    :param functions_input: This can contain names of functions
+    already supported by stanc3, full function signatures or file names of files containing
+    any of the previous two.
+    :param signatures: 
+    :return: 
+    """
+    function_names = []
+    function_signatures = []
+    for f in functions_input:
+        if "." in f or "/" in f or "\\" in f:
+            functions_input.extend(parse_signature_file(open(f)))
+        elif " " in f:
+            function_signatures.append(f)
+            signatures.append(f)
+        else:
+            function_names.append(f)
+    return function_names, function_signatures
+
+# lists of functions that do not support fwd or rev autodiff
+no_rev_overload = [
+    "hmm_hidden_state_prob"
+]
+no_fwd_overload = [
+    "hmm_hidden_state_prob"
+]
+
 def main(functions=(), j=1):
     """
     Generates expression tests. Functions that do not support expressions yet are listed
@@ -180,33 +230,37 @@ def main(functions=(), j=1):
        (including derivatives)
      - functions evaluate expressions at most once
 
-    :param functions: functions to generate tests for. Default: all
+    :param functions: functions to generate tests for. This can contain names of functions
+    already supported by stanc3, full function signatures or file names of files containing 
+    any of the previous two. Default: all signatures supported by stanc3
     :param j: number of files to split tests in
     """
-    remaining_functions = set(functions)
     ignored = get_ignored_signatures()
 
     test_n = {}
     tests = []
     signatures = get_signatures()
-    if functions:
-        signatures.append("matrix bad_no_expressions(matrix)")
-        signatures.append("matrix bad_multiple_evaluations(matrix)")
-        signatures.append("real bad_wrong_value(matrix)")
-        signatures.append("real bad_wrong_derivatives(vector)")
+    functions, extra_signatures = handle_function_list(functions, signatures)
+    remaining_functions = set(functions)
     for signature in signatures:
         return_type, function_name, function_args = parse_signature(signature)
-        if signature in ignored and not functions:
+        # skip ignored signatures
+        if signature in ignored and not functions and signature not in extra_signatures:
             continue
+        # skip default if we have list of function names/signatures to test
+        if ((functions or extra_signatures) and
+                function_name not in functions and
+                signature not in extra_signatures):
+            continue
+        # skip signatures without eigen inputs
         for arg2test in eigen_types:
             if arg2test in function_args:
                 break
         else:
             continue
+
         if function_name in remaining_functions:
             remaining_functions.remove(function_name)
-        if functions and function_name not in functions:
-            continue
         func_test_n = test_n.get(function_name, 0)
         test_n[function_name] = func_test_n + 1
 
@@ -220,16 +274,20 @@ def main(functions=(), j=1):
         ):
             if function_name.endswith("_rng") and overload != "Prim":
                 continue
+            if function_name in no_fwd_overload and overload == "Fwd":
+                continue
+            if function_name in no_rev_overload and overload == "Rev":
+                continue
 
             mat_declarations = ""
             for n, arg in enumerate(function_args):
-                mat_declarations += make_arg_code(arg, scalar, "arg_mat%d" % n, function_name) + ";\n"
+                mat_declarations += make_arg_code(arg, scalar, "arg_mat%d" % n, n, function_name) + ";\n"
 
             mat_arg_list = ", ".join("arg_mat%d" % n for n in range(len(function_args)))
 
             expression_declarations = ""
             for n, arg in enumerate(function_args):
-                expression_declarations += make_arg_code(arg, scalar, "arg_expr%d" % n, function_name) + ";\n"
+                expression_declarations += make_arg_code(arg, scalar, "arg_expr%d" % n, n, function_name) + ";\n"
                 if arg in eigen_types:
                     expression_declarations += "  int counter%d = 0;\n" % n
                     expression_declarations += (

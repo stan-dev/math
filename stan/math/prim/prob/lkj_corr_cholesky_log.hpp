@@ -12,10 +12,9 @@ namespace math {
  * @deprecated use <code>lkj_corr_cholesky_lpdf</code>
  */
 template <bool propto, typename T_covar, typename T_shape>
-return_type_t<T_covar, T_shape> lkj_corr_cholesky_log(
-    const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,
-    const T_shape& eta) {
-  return lkj_corr_cholesky_lpdf<propto, T_covar, T_shape>(L, eta);
+return_type_t<T_covar, T_shape> lkj_corr_cholesky_log(const T_covar& L,
+                                                      const T_shape& eta) {
+  return lkj_corr_cholesky_lpdf<propto>(L, eta);
 }
 
 /** \ingroup multivar_dists
@@ -23,9 +22,8 @@ return_type_t<T_covar, T_shape> lkj_corr_cholesky_log(
  */
 template <typename T_covar, typename T_shape>
 inline return_type_t<T_covar, T_shape> lkj_corr_cholesky_log(
-    const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,
-    const T_shape& eta) {
-  return lkj_corr_cholesky_lpdf<T_covar, T_shape>(L, eta);
+    const T_covar& L, const T_shape& eta) {
+  return lkj_corr_cholesky_lpdf<>(L, eta);
 }
 
 }  // namespace math
