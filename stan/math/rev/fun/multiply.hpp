@@ -122,10 +122,10 @@ inline var multiply_impl(const T1& A, const T2& B) {
         auto res_adj = res.adj();
 
         if (!is_constant<T1>::value)
-          arena_A.adj().array() += res_adj * arena_B_val.array();
+          arena_A.adj().array() += res_adj * arena_B_val.transpose().array();
 
         if (!is_constant<T2>::value)
-          arena_B.adj().array() += arena_A_val.array() * res_adj;
+          arena_B.adj().array() += arena_A_val.transpose().array() * res_adj;
       });
 
   return res;

@@ -94,11 +94,11 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
   /**
    * Rows at compile time
    */
-  static constexpr int RowsAtCompileTime{1};
+  static constexpr int RowsAtCompileTime{0};
   /**
    * Columns at compile time
    */
-  static constexpr int ColsAtCompileTime{1};
+  static constexpr int ColsAtCompileTime{0};
 
   /**
    * Construct a variable implementation from a value.  The

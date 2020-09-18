@@ -135,7 +135,7 @@ void instantiate_multiply() {
   Eigen::Matrix<std::complex<T>, -1, -1> cv(2, 2);
   cv << 1, 2, 3, 4;
 
-  auto d_d = d * d;
+  auto d_d = (d * d).eval();
   auto d_v = d * v;
   auto d_cd = d * cd;
   auto d_cv = d * cv;
@@ -165,64 +165,4 @@ TEST(mathMix, multiplicationPatterns) {
   instantiate_multiply<fvar<fvar<double>>>();
   instantiate_multiply<fvar<var>>();
   instantiate_multiply<fvar<fvar<var>>>();
-}
-
-TEST(mathMix, varMatrix) {
-  using stan::math::var_value;
-  using stan::math::var;
-  using stan::math::multiply;
-  Eigen::MatrixXd X(5, 5);
-  Eigen::MatrixXd Y(5, 5);
-  for (int i = 0; i < X.size(); ++i) {
-    X(i) = static_cast<double>(i);
-    Y(i) = static_cast<double>(i);
-  }
-  var_value<Eigen::MatrixXd> Xv(X);
-  var_value<Eigen::MatrixXd> Yv(Y);
-  var_value<Eigen::MatrixXd> Zv = multiply(Xv, Yv);
-  stan::math::sum(Zv).grad();
-}
-
-TEST(mathMix, varDot) {
-  using stan::math::var_value;
-  using stan::math::var;
-  using stan::math::multiply;
-  Eigen::VectorXd X(5);
-  Eigen::RowVectorXd Y(5);
-  for (int i = 0; i < X.size(); ++i) {
-    X(i) = static_cast<double>(i);
-    Y(i) = static_cast<double>(i);
-  }
-  var_value<Eigen::VectorXd> Xv(X);
-  var_value<Eigen::RowVectorXd> Yv(Y);
-  var Zv = multiply(Yv, Xv);
-  stan::math::sum(Zv).grad();
-}
-
-TEST(mathMix, varmatvar) {
-  using stan::math::var_value;
-  using stan::math::var;
-  using stan::math::multiply;
-  Eigen::MatrixXd X(5, 5);
-  var y(5);
-  for (int i = 0; i < X.size(); ++i) {
-    X(i) = static_cast<double>(i);
-  }
-  var_value<Eigen::MatrixXd> Xv(X);
-  var_value<Eigen::MatrixXd> Zv = multiply(Xv, y);
-  stan::math::sum(Zv).grad();
-}
-
-TEST(mathMix, varvarmat) {
-  using stan::math::var_value;
-  using stan::math::var;
-  using stan::math::multiply;
-  Eigen::MatrixXd X(5, 5);
-  var y(5);
-  for (int i = 0; i < X.size(); ++i) {
-    X(i) = static_cast<double>(i);
-  }
-  var_value<Eigen::MatrixXd> Xv(X);
-  var_value<Eigen::MatrixXd> Zv = multiply(y, Xv);
-  stan::math::sum(Zv).grad();
 }
