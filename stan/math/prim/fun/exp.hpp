@@ -41,7 +41,7 @@ struct exp_fun {
  */
 template <typename Container,
           require_not_container_st<std::is_arithmetic, Container>* = nullptr,
-          require_not_eigen_col_vector_st<is_var, Container>* = nullptr>
+          require_not_eigen_st<is_var, Container>* = nullptr>
 inline auto exp(const Container& x) {
   return apply_scalar_unary<exp_fun, Container>::apply(x);
 }
