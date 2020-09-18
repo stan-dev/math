@@ -21,7 +21,7 @@ TEST(MathFunctions, parall_map) {
   // Functor defining how inputs should be indexed
   auto ind_f = [&](int i, const auto& fun,
                     const auto& x, const auto& y, const auto& z) {
-    return fun(x.coeffRef(i), y, z.coeffRef(i));
+    return fun(x(i), y, z(i));
   };
 
   // Functor defining function to be applied to indexed arguments
@@ -62,7 +62,7 @@ TEST(MathFunctions, parall_map_vec) {
   // Functor defining how inputs should be indexed
   auto ind_f = [&](int i, const auto& fun,
                     const auto& x, const auto& y, const auto& z) {
-    return fun(x.coeffRef(i), y, z.coeffRef(i));
+    return fun(x(i), y, z(i));
   };
 
   // Functor defining function to be applied to indexed arguments
