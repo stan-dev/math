@@ -47,28 +47,27 @@ template <typename T>
 struct is_eigen_row_vector_impl<T, false> : std::false_type {};
 
 /** \ingroup type_trait
- * Underlying implementation for detecting if an Eigen Matrix is a column
- * vector.
+ * Underlying implementation for detecting if a Matrix is a column vector.
  */
 template <typename T, bool = bool_constant<is_eigen<T>::value || (is_eigen<value_type_t<T>>::value && is_var<T>::value)>::value>
 struct is_col_vector_impl
     : bool_constant<std::decay_t<T>::ColsAtCompileTime == 1> {};
 
 /** \ingroup type_trait
- * Specialization for when type is not an eigen vector.
+ * Specialization for when type is not a vector.
  */
 template <typename T>
 struct is_col_vector_impl<T, false> : std::false_type {};
 
 /** \ingroup type_trait
- * Underlying implementation for detecting if an Eigen Matrix is a row vector.
+ * Underlying implementation for detecting if a Matrix is a row vector.
  */
 template <typename T, bool = bool_constant<is_eigen<T>::value || (is_eigen<value_type_t<T>>::value && is_var<T>::value)>::value>
 struct is_row_vector_impl
     : std::integral_constant<bool, std::decay_t<T>::RowsAtCompileTime == 1> {};
 
 /** \ingroup type_trait
- * Specialization for when type is not an eigen vector.
+ * Specialization for when type is not an vector.
  */
 template <typename T>
 struct is_row_vector_impl<T, false> : std::false_type {};
@@ -149,6 +148,10 @@ template <typename Row, typename Col>
 using require_not_eigen_row_and_col_t = require_not_t<
     math::conjunction<is_eigen_row_vector<Row>, is_eigen_col_vector<Col>>>;
 
+/**
+ * Require `Row` is a row vector and `Col` is a column vector.
+ * @ingroup require_eigen_types
+ */
 template <typename Row, typename Col>
 using require_row_and_col_vector_t = require_t<
     math::conjunction<is_row_vector<Row>, is_col_vector<Col>>>;
