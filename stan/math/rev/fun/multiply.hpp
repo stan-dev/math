@@ -10,33 +10,10 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-  template <typename T, typename = void>
-  struct is_var_matrix : std::false_type {};
-  template <typename T>
-  struct is_var_matrix<T, require_all_t<is_var<T>, is_eigen<value_type_t<T>>>> : std::true_type {};
-
-  template <typename T1, typename T2, typename = void>
-  struct is_rev_matrix_return : std::false_type {};
-
-  template <typename T1, typename T2>
-  struct is_rev_matrix_return<T1, T2, require_any_t<is_var_matrix<T1>, is_var_matrix<T2>>> : std::true_type {};
-
-}
-
-template <typename T, typename... Types>
-using rev_matrix_return_t = std::conditional_t<internal::is_rev_matrix_return<Types...>::value,
-  var_value<promote_scalar_t<double, plain_type_t<T>>>, promote_scalar_t<var, plain_type_t<T>>>;
-
-template <typename T>
-struct is_matrix : bool_constant<is_rev_matrix<T>::value || is_eigen<T>::value> {};
-
-
-namespace internal {
-
-
 /**
  * Return the product of two matrices.
+ *
+ * This version does not handle row vector times column vector
  *
  * @tparam T1 type of first matrix
  * @tparam T2 type of second matrix
@@ -45,11 +22,10 @@ namespace internal {
  * @param[in] B second matrix
  * @return A * B
  */
- template <typename T1, typename T2, require_all_t<is_matrix<T1>, is_matrix<T2>>* = nullptr,
-           require_any_rev_matrix_t<T1, T2>* = nullptr,
-           require_t<is_var<return_type_t<T1, T2>>>* = nullptr,
-           require_not_row_and_col_vector_t<T1, T2>* = nullptr>
-inline auto multiply_impl(const T1& A, const T2& B) {
+template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
+         require_return_type_t<is_var, T1, T2>* = nullptr,
+         require_not_row_and_col_vector_t<T1, T2>* = nullptr>
+inline auto multiply(const T1& A, const T2& B) {
   check_multiplicable("multiply", "A", A, "B", B);
 
   const auto& A_ref = to_ref(A);
@@ -64,7 +40,7 @@ inline auto multiply_impl(const T1& A, const T2& B) {
   // TODO: Why can't I put value_of(arena_A/B) here??
   arena_t<promote_scalar_t<double, T1>> arena_A_val = to_arena_if<!is_constant<T2>::value>(value_of(A_ref));
   arena_t<promote_scalar_t<double, T2>> arena_B_val = to_arena_if<!is_constant<T1>::value>(value_of(B_ref));
-  using return_t = rev_matrix_return_t<decltype(arena_A_val * arena_B_val), T1, T2>;
+  using return_t = promote_var_matrix_t<decltype(arena_A_val * arena_B_val), T1, T2>;
   arena_t<return_t> res;
 
   if (!is_constant<T1>::value) {
@@ -89,11 +65,20 @@ inline auto multiply_impl(const T1& A, const T2& B) {
   return return_t(res);
 }
 
-template <typename T1, typename T2, require_all_t<is_matrix<T1>, is_matrix<T2>>* = nullptr,
-          require_any_rev_matrix_t<T1, T2>* = nullptr,
-          require_t<is_var<return_type_t<T1, T2>>>* = nullptr,
-          require_row_and_col_vector_t<T1, T2>* = nullptr>
-inline var multiply_impl(const T1& A, const T2& B) {
+/**
+ * Return the product of a row vector times a column vector as a scalar
+ *
+ * @tparam T1 type of row vector
+ * @tparam T2 type of column vector
+ *
+ * @param[in] A row vector
+ * @param[in] B column vector
+ * @return A * B as a scalar
+ */
+ template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
+           require_return_type_t<is_var, T1, T2>* = nullptr,
+           require_row_and_col_vector_t<T1, T2>* = nullptr>
+inline var multiply(const T1& A, const T2& B) {
   check_multiplicable("multiply", "A", A, "B", B);
 
   const auto& A_ref = to_ref(A);
@@ -131,11 +116,22 @@ inline var multiply_impl(const T1& A, const T2& B) {
   return res;
 }
 
-template <typename T1, typename T2, require_t<is_matrix<T2>>* = nullptr,
-          require_not_t<is_matrix<T1>>* = nullptr,
-          require_t<is_var<return_type_t<T1, T2>>>* = nullptr,
+/**
+ * Return specified matrix multiplied by specified scalar where at least one
+ * input has a scalar type of a `var_value`.
+ *
+ * @tparam T1 type of the scalar
+ * @tparam T2 type of the matrix or expression
+ *
+ * @param A scalar
+ * @param B matrix
+ * @return product of matrix and scalar
+ */
+template <typename T1, typename T2, require_not_matrix_t<T1>* = nullptr,
+          require_matrix_t<T2>* = nullptr,
+          require_return_type_t<is_var, T1, T2>* = nullptr,
           require_not_row_and_col_vector_t<T1, T2>* = nullptr>
-inline auto multiply_impl(const T1& A, const T2& B) {
+inline auto multiply(const T1& A, const T2& B) {
   const auto& B_ref = to_ref(B);
 
   check_not_nan("multiply", "A", A);
@@ -144,7 +140,7 @@ inline auto multiply_impl(const T1& A, const T2& B) {
 
   arena_t<promote_scalar_t<var, T2>> arena_B = to_arena_if<!is_constant<T2>::value>(B_ref);
   arena_t<promote_scalar_t<double, T2>> arena_B_val = to_arena_if<!is_constant<T1>::value>(value_of(B_ref));
-  using return_t = rev_matrix_return_t<T2, T1, T2>;
+  using return_t = promote_var_matrix_t<T2, T1, T2>;
   arena_t<return_t> res;
 
   if (!is_constant<T1>::value) {
@@ -167,102 +163,56 @@ inline auto multiply_impl(const T1& A, const T2& B) {
       });
 
   return return_t(res);
-}
-
-template <typename T1, typename T2, require_t<is_matrix<T1>>* = nullptr,
-          require_not_t<is_matrix<T2>>* = nullptr,
-          require_t<is_var<return_type_t<T1, T2>>>* = nullptr,
-          require_not_row_and_col_vector_t<T1, T2>* = nullptr>
-inline auto multiply_impl(const T1& A, const T2& B) {
-  const auto& A_ref = to_ref(A);
-
-  check_not_nan("multiply", "A", A_ref);
-  check_not_nan("multiply", "B", B);
-
-
-  arena_t<promote_scalar_t<var, T1>> arena_A = to_arena_if<!is_constant<T1>::value>(A_ref);
-  arena_t<promote_scalar_t<double, T1>> arena_A_val = to_arena_if<!is_constant<T2>::value>(value_of(A_ref));
-  using return_t = rev_matrix_return_t<T1, T1, T2>;
-  arena_t<return_t> res;
-
-  if (!is_constant<T1>::value) {
-    res = value_of(A_ref).array() * value_of(B);
-  } else if (!is_constant<T2>::value) {
-    res = arena_A_val.array() * value_of(B);
-  } else {
-    res = arena_A_val.array() * value_of(B);
-  }
-
-  reverse_pass_callback(
-      [arena_A, B, arena_A_val, res]() mutable {
-        auto res_adj = res.adj().eval();
-
-        if (!is_constant<T1>::value)
-          arena_A.adj().array() += value_of(B) * res_adj.array();
-
-        if (!is_constant<T2>::value)
-          forward_as<var>(B).adj() += (res_adj.array() * arena_A_val.array()).sum();
-      });
-
-  return return_t(res);
-}
-
-}  // namespace internal
-
-
-/**
- * Return the product of two matrices.
- *
- * This version does not handle row vector times column vector
- *
- * @tparam T1 type of first matrix
- * @tparam T2 type of second matrix
- *
- * @param[in] A first matrix
- * @param[in] B second matrix
- * @return A * B
- */
-template <typename T1, typename T2, require_all_t<is_matrix<T1>, is_matrix<T2>>* = nullptr,
-          require_any_rev_matrix_t<T1, T2>* = nullptr,
-          require_t<is_var<return_type_t<T1, T2>>>* = nullptr,
-          require_not_row_and_col_vector_t<T1, T2>* = nullptr>
-inline auto multiply(const T1& A, const T2& B) {
-  return internal::multiply_impl(A, B);
-}
-
-/**
- * Return the product of a row vector times a column vector as a scalar
- *
- * @tparam T1 type of row vector
- * @tparam T2 type of column vector
- *
- * @param[in] A row vector
- * @param[in] B column vector
- * @return A * B as a scalar
- */
-template <typename T1, typename T2, require_all_t<is_matrix<T1>, is_matrix<T2>>* = nullptr,
-          require_any_rev_matrix_t<T1, T2>* = nullptr,
-          require_t<is_var<return_type_t<T1, T2>>>* = nullptr,
-          require_row_and_col_vector_t<T1, T2>* = nullptr>
-inline var multiply(const T1& A, const T2& B) {
-  return internal::multiply_impl(A, B);
-}
-
-template <typename T1, typename T2, require_t<is_matrix<T2>>* = nullptr,
-          require_not_t<is_matrix<T1>>* = nullptr,
-          require_t<is_var<return_type_t<T1, T2>>>* = nullptr,
-          require_not_row_and_col_vector_t<T1, T2>* = nullptr>
-inline auto multiply(const T1& A, const T2& B) {
-   return internal::multiply_impl(A, B);
  }
 
 
- template <typename T1, typename T2, require_t<is_matrix<T1>>* = nullptr,
-           require_not_t<is_matrix<T2>>* = nullptr,
-           require_t<is_var<return_type_t<T1, T2>>>* = nullptr,
+ /**
+  * Return specified matrix multiplied by specified scalar where at least one
+  * input has a scalar type of a `var_value`.
+  *
+  * @tparam T1 type of the matrix or expression
+  * @tparam T2 type of the scalar
+  *
+  * @param A matrix
+  * @param B scalar
+  * @return product of matrix and scalar
+  */
+ template <typename T1, typename T2, require_matrix_t<T1>* = nullptr,
+           require_not_matrix_t<T2>* = nullptr,
+           require_return_type_t<is_var, T1, T2>* = nullptr,
            require_not_row_and_col_vector_t<T1, T2>* = nullptr>
  inline auto multiply(const T1& A, const T2& B) {
-    return internal::multiply_impl(A, B);
+   const auto& A_ref = to_ref(A);
+
+   check_not_nan("multiply", "A", A_ref);
+   check_not_nan("multiply", "B", B);
+
+
+   arena_t<promote_scalar_t<var, T1>> arena_A = to_arena_if<!is_constant<T1>::value>(A_ref);
+   arena_t<promote_scalar_t<double, T1>> arena_A_val = to_arena_if<!is_constant<T2>::value>(value_of(A_ref));
+   using return_t = promote_var_matrix_t<T1, T1, T2>;
+   arena_t<return_t> res;
+
+   if (!is_constant<T1>::value) {
+     res = value_of(A_ref).array() * value_of(B);
+   } else if (!is_constant<T2>::value) {
+     res = arena_A_val.array() * value_of(B);
+   } else {
+     res = arena_A_val.array() * value_of(B);
+   }
+
+   reverse_pass_callback(
+       [arena_A, B, arena_A_val, res]() mutable {
+         auto res_adj = res.adj().eval();
+
+         if (!is_constant<T1>::value)
+           arena_A.adj().array() += value_of(B) * res_adj.array();
+
+         if (!is_constant<T2>::value)
+           forward_as<var>(B).adj() += (res_adj.array() * arena_A_val.array()).sum();
+       });
+
+   return return_t(res);
   }
 
 }  // namespace math

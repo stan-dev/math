@@ -1434,6 +1434,13 @@ void expect_ad_vectorized_binary(const F& f, const T1& x, const T2& y) {
   expect_ad_vectorized_binary(tols, f, x, y);
 }
 
+/**
+ * Runs `expect_near_rel` over the values and adjoints of `var_value` types.
+ * @tparam T1 A `var_value` with any template parameter
+ * @tparam T2 A `var_value` with any template parameter
+ * @param x A `var_value` whose values and adjoints are compared against `y`s
+ * @param y A `var_value` whose values and adjoints are compared against `x`s
+ */
 template <typename T1, typename T2,
           require_all_var_t<scalar_type_t<T1>, scalar_type_t<T2>>* = nullptr>
 void expect_near_rel_var(const std::string& message, T1&& x, T2&& y) {
@@ -1441,6 +1448,13 @@ void expect_near_rel_var(const std::string& message, T1&& x, T2&& y) {
   expect_near_rel(message + std::string(" adjoints"), x.adj(), y.adj(), 1e-12);
 }
 
+/**
+ * Runs `expect_near_rel` over arithmetic input values.
+ * @tparam T1 A `var_value` with any template parameter
+ * @tparam T2 A `var_value` with any template parameter
+ * @param x A `var_value` whose values and adjoints are compared against `y`s
+ * @param y A `var_value` whose values and adjoints are compared against `x`s
+ */
 template <
     typename T1, typename T2,
     require_all_arithmetic_t<scalar_type_t<T1>, scalar_type_t<T2>>* = nullptr>
@@ -1452,7 +1466,7 @@ void expect_near_rel_var(const std::string& message, T1&& x, T2&& y) {
  * Test that the jacobian for matrices of vars is equal for the
  *  var matrix when the result is an `var` type.
  * @tparam MatVar An Eigen type inheriting from `EigenBase` that has
- * Scalar vars.
+ *  Scalar vars.
  * @tparam VarMat A `var_value` with an inner type inheriting from `EigenBase`.
  * @tparam ResultMatVar The resulting type of applying a function to `A_mv`.
  * @tparam ResultVarMat The result type of applying a function to `A_vm`.
@@ -1474,6 +1488,26 @@ inline void test_matvar_gradient(ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
   stan::math::set_zero_all_adjoints();
 }
 
+/**
+ * Test that the jacobian for matrices of vars is equal for the
+ *  var matrix when the result is an `var` type.
+ * @tparam MatVar1 An Eigen type inheriting from `EigenBase` that has
+ *  Scalar vars.
+ * @tparam MatVar2 An Eigen type inheriting from `EigenBase` that has
+ *  Scalar vars.
+ * @tparam VarMat1 A `var_value` with an inner type inheriting from `EigenBase`.
+ * @tparam VarMat2 A `var_value` with an inner type inheriting from `EigenBase`.
+ * @tparam ResultMatVar The resulting type of applying a function to `A_mv1`
+ * and `A_mv2`.
+ * @tparam ResultVarMat The result type of applying a function to `A_vm1` and
+ *  `A_vm2`.
+ * @param A_mv1 A eigen type of vars.
+ * @param A_mv2 A eigen type of vars.
+ * @param A_vm1 A eigen type of vars.
+ * @param A_vm2 A eigen type of vars.
+ * @param A_mv_f The result of a function from applying `A_mv1` and `A_mv2`.
+ * @param A_vm_f The result of a function from applying `A_vm1` and `A_vm2`
+ */
 template <typename ResultMatVar, typename ResultVarMat, typename MatVar1,
           typename MatVar2, typename VarMat1, typename VarMat2,
           require_all_var_vt<std::is_arithmetic, ResultMatVar,
@@ -1520,6 +1554,27 @@ inline void test_matvar_gradient(ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
   }
 }
 
+/**
+ * Test that the jacobian for matrices of vars is equal for the
+ *  var matrix when the result is an either a `var_value` with inner Eigen type
+ * or an Eigen matrix with a scalar `var` type.
+ * @tparam MatVar1 An Eigen type inheriting from `EigenBase` that has
+ *  Scalar vars.
+ * @tparam MatVar2 An Eigen type inheriting from `EigenBase` that has
+ *  Scalar vars.
+ * @tparam VarMat1 A `var_value` with an inner type inheriting from `EigenBase`.
+ * @tparam VarMat2 A `var_value` with an inner type inheriting from `EigenBase`.
+ * @tparam ResultMatVar The resulting type of applying a function to `A_mv1`
+ * and `A_mv2`.
+ * @tparam ResultVarMat The result type of applying a function to `A_vm1` and
+ *  `A_vm2`.
+ * @param A_mv1 A eigen type of vars.
+ * @param A_mv2 A eigen type of vars.
+ * @param A_vm1 A eigen type of vars.
+ * @param A_vm2 A eigen type of vars.
+ * @param A_mv_f The result of a function from applying `A_mv1` and `A_mv2`.
+ * @param A_vm_f The result of a function from applying `A_vm1` and `A_vm2`
+ */
 template <typename ResultMatVar, typename ResultVarMat, typename MatVar1,
           typename MatVar2, typename VarMat1, typename VarMat2,
           require_eigen_t<ResultMatVar>* = nullptr>
@@ -1576,19 +1631,26 @@ inline void test_matvar_sum_gradient(ResultMatVar& A_mv_f,
                   A_vm_f.adj(), A_mv_f.adj(), 1e-12);
 }
 
-/**
- * Test that the sum of the jacobian for matrices of vars is equal for the
- *  var matrix.
- * @tparam MatVar An Eigen type inheriting from `EigenBase` that has
- * Scalar vars.
- * @tparam VarMat A `var_value` with an inner type inheriting from `EigenBase`.
- * @tparam ResultMatVar The resulting type of applying a function to `A_mv`.
- * @tparam ResultVarMat The result type of applying a function to `A_vm`.
- * @param A_mv A eigen type of vars.
- * @param A_vm A eigen type of vars.
- * @param A_mv_f The result of a function from applying `A_mv`.
- * @param A_vm_f The result of a function from applying `A_vm`
- */
+ /**
+  * Test that the sum of the jacobian for matrices of vars is equal for the
+  *  var matrix.
+  * @tparam MatVar1 An Eigen type inheriting from `EigenBase` that has
+  *  Scalar vars.
+  * @tparam MatVar2 An Eigen type inheriting from `EigenBase` that has
+  *  Scalar vars.
+  * @tparam VarMat1 A `var_value` with an inner type inheriting from `EigenBase`.
+  * @tparam VarMat2 A `var_value` with an inner type inheriting from `EigenBase`.
+  * @tparam ResultMatVar The resulting type of applying a function to `A_mv1`
+  * and `A_mv2`.
+  * @tparam ResultVarMat The result type of applying a function to `A_vm1` and
+  *  `A_vm2`.
+  * @param A_mv1 A eigen type of vars.
+  * @param A_mv2 A eigen type of vars.
+  * @param A_vm1 A eigen type of vars.
+  * @param A_vm2 A eigen type of vars.
+  * @param A_mv_f The result of a function from applying `A_mv1` and `A_mv2`.
+  * @param A_vm_f The result of a function from applying `A_vm1` and `A_vm2`
+  */
 template <typename ResultVarMat, typename ResultMatVar, typename MatVar1,
           typename MatVar2, typename VarMat1, typename VarMat2>
 inline void test_matvar_sum_gradient(ResultMatVar& A_mv_f,
@@ -1670,13 +1732,36 @@ void expect_ad_matvar(F&& f, const EigMat& x) {
   test_matvar_sum_gradient(A_mv_f, A_vm_f, A_mv, A_vm);
 }
 
+/**
+ * For any input types being arithmetic this function is a no-op
+ */
 template <typename F, typename MatVar1, typename MatVar2, typename VarMat1, typename VarMat2,
  require_any_floating_point_t<scalar_type_t<MatVar1>, scalar_type_t<MatVar2>, scalar_type_t<VarMat1>, scalar_type_t<VarMat2>>* = nullptr>
 void test_matvar_mixture_impl(F&& f, const MatVar1& A_mv1, const MatVar2& A_mv2, const VarMat1& A_vm1, const VarMat2& A_vm2) {}
+
+/**
+ * Test that binary functions are able to take in mixtures of Eigen matrices
+ * of vars and vars with inner Eigen types.
+ * @tparam F A functor to apply the combinations of types to.
+ * @tparam MatVar1 An Eigen type inheriting from `EigenBase` that has
+ *  Scalar vars.
+ * @tparam MatVar2 An Eigen type inheriting from `EigenBase` that has
+ *  Scalar vars.
+ * @tparam VarMat1 A `var_value` with an inner type inheriting from `EigenBase`.
+ * @tparam VarMat2 A `var_value` with an inner type inheriting from `EigenBase`.
+ * @tparam ResultMatVar The resulting type of applying a function to `A_mv1`
+ * and `A_mv2`.
+ * @tparam ResultVarMat The result type of applying a function to `A_vm1` and
+ *  `A_vm2`.
+ * @param A_mv1 A eigen type of vars.
+ * @param A_mv2 A eigen type of vars.
+ * @param A_vm1 A eigen type of vars.
+ * @param A_vm2 A eigen type of vars.
+ */
 template <typename F, typename MatVar1, typename MatVar2, typename VarMat1, typename VarMat2,
  require_all_var_t<scalar_type_t<MatVar1>, scalar_type_t<MatVar2>, scalar_type_t<VarMat1>, scalar_type_t<VarMat2>>* = nullptr>
 void test_matvar_mixture_impl(F&& f, const MatVar1& A_mv1, const MatVar2& A_mv2, const VarMat1& A_vm1, const VarMat2& A_vm2) {
-  // make copies of vars so mixing does not happen.
+  // make copies of vars so mixing across function calls does not happen.
   MatVar1 base_mv1(A_mv1.val());
   MatVar2 base_mv2(A_mv2.val());
   plain_type_t<decltype(f(base_mv1, base_mv2))> base_result = f(base_mv1, base_mv2);
@@ -1701,9 +1786,17 @@ void test_matvar_mixture_impl(F&& f, const MatVar1& A_mv1, const MatVar2& A_mv2,
  * gradient of the sum which will propogate the adjoints upwards.
  *
  * @tparam F A lambda or functor type that calls the unary function.
- * @tparam T An Eigen matrix type
+ * @tparam Type1 Either arithmetic or `var`. If arithmetic This will make the LHS of the
+ * function invocation be arithmetic, if `var` this will make the LHS be an
+ * Eigen matrix of vars and a var with an inner matrix type.
+ * @tparam Type2 Either arithmetic or `var`. If arithmetic This will make the RHS of the
+ * function invocation be arithmetic, if `var` this will make the RHS be an
+ * Eigen matrix of vars and a var with an inner matrix type.
+ * @tparam EigMat1 An eigen type
+ * @tparam EigMat2 An eigen type
  * @param f a lambda
  * @param x An Eigen matrix.
+ * @param y An Eigen matrix.
  *
  */
 template <typename Type1, typename Type2, typename F, typename EigMat1,
@@ -1762,6 +1855,21 @@ void expect_ad_matvar_impl(F&& f, const EigMat1& x, const EigMat2& y) {
   test_matvar_gradient(A_mv_f, A_vm_f, A_mv1, A_mv2, A_vm1, A_vm2);
   test_matvar_sum_gradient(A_mv_f, A_vm_f, A_mv1, A_mv2, A_vm1, A_vm2);
 }
+
+/**
+ * For binary function check that an Eigen matrix of vars and a var with an
+ * inner eigen type return the same values and adjoints. This is done by
+ * calling the function on both types, summing the results, then taking the
+ * gradient of the sum which will propogate the adjoints upwards.
+ *
+ * @tparam F A lambda or functor type that calls the unary function.
+ * @tparam EigMat1 An eigen type
+ * @tparam EigMat2 An eigen type
+ * @param f a lambda
+ * @param x An Eigen matrix.
+ * @param y An Eigen matrix.
+ *
+ */
 template <typename F, typename EigMat1, typename EigMat2>
 void expect_ad_matvar(F&& f, const EigMat1& x, const EigMat2& y) {
   using stan::math::var;

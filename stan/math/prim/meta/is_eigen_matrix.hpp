@@ -33,7 +33,7 @@ struct is_eigen_matrix_impl<T, true>
 /**
  * Checks whether type T is derived from Eigen::MatrixBase and has columns and
  * rows not equal to 1. If true this will have a
- * static member function named value with a type of true, else value is false.
+ * static member named value with a type of true, else value is false.
  * @tparam T Type to check if it is derived from `MatrixBase` and has more than
  * 1 compile time row and column.
  * @ingroup type_trait

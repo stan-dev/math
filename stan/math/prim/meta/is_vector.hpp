@@ -83,13 +83,20 @@ struct is_row_vector_impl<T, false> : std::false_type {};
 template <typename T>
 struct is_eigen_col_vector : internal::is_eigen_col_vector_impl<T> {};
 
-template <typename T>
-struct is_col_vector : internal::is_col_vector_impl<T> {};
-
 STAN_ADD_REQUIRE_UNARY(eigen_col_vector, is_eigen_col_vector,
                        require_eigens_types);
 STAN_ADD_REQUIRE_CONTAINER(eigen_col_vector, is_eigen_col_vector,
                            require_eigens_types);
+
+/** \ingroup type_trait
+* If the input type T has a static comple time constant type
+* `ColsAtCompileTime` equal to 1 this
+* has a static member with a value of true. Else this has a static
+* member with a value of false.
+*/
+template <typename T>
+struct is_col_vector : internal::is_col_vector_impl<T> {};
+
 
 /** \ingroup type_trait
  * If the input type T is an eigen matrix with 1 column at compile time this
@@ -99,13 +106,21 @@ STAN_ADD_REQUIRE_CONTAINER(eigen_col_vector, is_eigen_col_vector,
 template <typename T>
 struct is_eigen_row_vector : internal::is_eigen_row_vector_impl<T> {};
 
-template <typename T>
-struct is_row_vector : internal::is_row_vector_impl<T> {};
-
 STAN_ADD_REQUIRE_UNARY(eigen_row_vector, is_eigen_row_vector,
                        require_eigens_types);
 STAN_ADD_REQUIRE_CONTAINER(eigen_row_vector, is_eigen_row_vector,
                            require_eigens_types);
+
+/** \ingroup type_trait
+* If the input type T has a static comple time constant type
+* `RowsAtCompileTime` equal to 1 this
+* has a static member with a value of true. Else this has a static
+* member with a value of false.
+*/
+template <typename T>
+struct is_row_vector : internal::is_row_vector_impl<T> {};
+
+
 /** \ingroup type_trait
  * If the input type T is an eigen matrix with 1 column or 1 row at compile time
  * this has a static member with a value of true. Else this has a static
@@ -150,6 +165,7 @@ using require_not_row_and_col_vector_t = require_not_t<
  * If the input type T is either an eigen matrix with 1 column or 1 row at
  * compile time or a standard vector, this has a static member with a value
  * of true. Else this has a static member with a value of false.
+ *
  */
 template <typename T>
 struct is_vector
