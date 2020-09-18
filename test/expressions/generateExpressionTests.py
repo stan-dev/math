@@ -130,12 +130,15 @@ def parse_signature(signature):
 special_arg_values = {
 	"acosh" : [1.4],
 	"log1m_exp" : [-0.6],
-	"categorical_log" : [None, 1],
-	"categorical_rng" : [1, None],
+  "categorical_log" : [None, 1],
 	"categorical_lpmf" : [None, 1],
+  "categorical_rng" : [1, None],
 	"hmm_hidden_state_prob" : [None, 1, 1],
-	"hmm_latent_rng" : [None, 1, 1, None],
-	"hmm_marginal" : [None, 1, 1],
+  "hmm_latent_rng" : [None, 1, 1, None],
+  "hmm_marginal" : [None, 1, 1],
+  "multinomial_log" : [None, 1],
+  "multinomial_lpmf" : [None, 1],
+  "multinomial_rng" : [1, None, None],
 }
 def make_arg_code(arg, scalar, var_name, var_number, function_name):
     """
