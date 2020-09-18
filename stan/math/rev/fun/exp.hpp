@@ -57,14 +57,14 @@ inline auto exp(Container&& x) {
 
   // Functor defining how inputs should be indexed
   auto ind_f = [&](int i, const auto& fun, const auto& x) {
-    return fun(x.coeffRef(i));
+    return fun(x(i));
   };
 
   // Functor defining function to be applied to indexed arguments
   auto f = [&](const auto& x) { return stan::math::exp(x); };
 
   return parallel_map(f, ind_f, std::forward<plain_type_t<Container>>(result),
-                      std::forward_as_tuple(x));
+                      std::forward_as_tuple(to_ref(x)));
 }
 
 /**

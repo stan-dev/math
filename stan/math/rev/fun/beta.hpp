@@ -115,6 +115,25 @@ inline var beta(double a, const var& b) {
   return var(new internal::beta_dv_vari(a, b.vi_));
 }
 
+
+template <typename T1, typename T2,
+          require_all_eigen_st<is_var, T1, T2>* = nullptr>
+inline auto beta(const T1& x, const T2& y) {
+  // Declare result container
+  plain_type_t<T1> result(x.rows(), x.cols());
+
+  // Functor defining how inputs should be indexed
+  auto ind_f = [&](int i, const auto& fun, const auto& x, const auto& y) {
+    return fun(x(i), y(i));
+  };
+
+  // Functor defining function to be applied to indexed arguments
+  auto f = [&](const auto& x, const auto& y) { return stan::math::beta(x, y); };
+
+  return parallel_map(f, ind_f, std::forward<plain_type_t<T1>>(result),
+                      std::forward_as_tuple(to_ref(x), to_ref(y)));
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

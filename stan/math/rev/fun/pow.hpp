@@ -11,7 +11,6 @@
 #include <stan/math/prim/fun/pow.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/functor/parallel_map.hpp>
 #include <stan/math/rev/fun/inv.hpp>
 #include <stan/math/rev/fun/inv_sqrt.hpp>
 #include <stan/math/rev/fun/inv_square.hpp>
@@ -180,24 +179,6 @@ inline var pow(const var& base, T exponent) {
 template <typename T, typename = require_arithmetic_t<T>>
 inline var pow(T base, const var& exponent) {
   return {new internal::pow_dv_vari(base, exponent.vi_)};
-}
-
-template <int R, int C>
-inline auto pow(const Eigen::Matrix<var, R, C>& x,
-                const Eigen::Matrix<var, R, C>& y) {
-  // Declare result container
-  Eigen::Matrix<var, R, C> result(x.rows(), x.cols());
-
-  // Functor defining how inputs should be indexed
-  auto ind_f = [&](int i, const auto& fun, const auto& x, const auto& y) {
-    return fun(x.coeffRef(i), y.coeffRef(i));
-  };
-
-  // Functor defining function to be applied to indexed arguments
-  auto f = [&](const auto& x, const auto& y) { return stan::math::pow(x, y); };
-
-  return parallel_map(f, ind_f, std::forward<Eigen::Matrix<var, R, C>>(result),
-                      std::forward_as_tuple(x,y));
 }
 
 // must uniquely match all pairs of { complex<var>, complex<T>, var, T }
