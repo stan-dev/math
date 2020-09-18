@@ -181,6 +181,15 @@ inline var pow(T base, const var& exponent) {
   return {new internal::pow_dv_vari(base, exponent.vi_)};
 }
 
+template <typename T1, typename T2, int R, int C>
+inline auto pow(const Eigen::Matrix<var, R, C>& x,
+                const Eigen::Matrix<var, R, C>& y) {
+  Eigen::Matrix<var, R, C> result(x.rows(), x.cols());
+  auto ind_f = [&](int i, const auto& fun, const auto& x, const auto& y) { return fun(x.coeffRef(i), y.coeffRef(i)); };
+  auto f = [&](const auto& x, const auto& y) { return stan::math::pow(x, y); };
+  return parallel_map(f, ind_f, std::forward<plain_type_t<T1>>(result), std::forward_as_tuple(x,y));
+}
+
 // must uniquely match all pairs of { complex<var>, complex<T>, var, T }
 // with at least one var and at least one complex, where T is arithmetic:
 // 1) complex<var>, complex<var>

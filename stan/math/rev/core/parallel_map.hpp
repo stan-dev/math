@@ -18,11 +18,11 @@ inline decltype(auto) parallel_map(const ApplyFunction& app_fun,
     auto var_counter = [&](auto&... xargs) {
       return count_vars(xargs...);
     };
-    auto make_tuple_refs = [&](const auto& x, const auto... xargs){
-      return std::forward_as_tuple(x, xargs...);
+    auto make_tuple_refs = [&](const auto... xargs){
+      return std::make_tuple(xargs...);
     };
-    auto var_copier = [&](const auto& x1, const auto&... xargs) {
-      return deep_copy_vars(x1, xargs...);
+    auto var_copier = [&](const auto&... xargs) {
+      return deep_copy_vars(xargs...);
     };
 
 
@@ -50,7 +50,7 @@ inline decltype(auto) parallel_map(const ApplyFunction& app_fun,
         nested_rev_autodiff nested;
 
         for (size_t i = r.begin(); i < r.end(); ++i) {
-          // Create tuple of forwarding references to vars at current iteration
+          // Create tuple of args at current iteration
           auto local_vars = apply(
             [&](auto&&... args) {
               return index_fun(i, make_tuple_refs, args...);
@@ -64,9 +64,9 @@ inline decltype(auto) parallel_map(const ApplyFunction& app_fun,
           // that do not point back to main autodiff stack
           auto args_tuple_local_copy = apply(
           [&](auto&&... args) {
-            return std::tuple<decltype(index_fun(i, var_copier, args))...>(
-                index_fun(i, var_copier, args...));
-          }, x);
+            return std::tuple<decltype(deep_copy_vars(args))...>(
+                deep_copy_vars(args)...);
+          }, local_vars);
 
           // Apply specified function to arguments at current iteration
           var out = apply(
@@ -95,7 +95,7 @@ inline decltype(auto) parallel_map(const ApplyFunction& app_fun,
       partials + nvars*i));
   }
 
-  return result;
+  return std::forward<Res>(result);
 }
 
 }  // namespace math
