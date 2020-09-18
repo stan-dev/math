@@ -11,6 +11,7 @@
 #include <stan/math/prim/fun/pow.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/functor/parallel_map.hpp>
 #include <stan/math/rev/fun/inv.hpp>
 #include <stan/math/rev/fun/inv_sqrt.hpp>
 #include <stan/math/rev/fun/inv_square.hpp>

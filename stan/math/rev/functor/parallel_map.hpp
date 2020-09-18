@@ -1,7 +1,7 @@
-#ifndef STAN_MATH_REV_CORE_PARALLEL_MAP_HPP
-#define STAN_MATH_REV_CORE_PARALLEL_MAP_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_PARALLEL_MAP_HPP
+#define STAN_MATH_REV_FUNCTOR_PARALLEL_MAP_HPP
 
-#include <stan/math/rev/fun/typedefs.hpp>
+#include <stan/math/rev/core.hpp>
 #include <tbb/task_arena.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
@@ -23,7 +23,6 @@ inline decltype(auto) parallel_map(const ApplyFunction& app_fun,
       return std::tuple<decltype(deep_copy_vars(xargs))...>(
         deep_copy_vars(xargs)...);
     };
-
     auto vari_saver = [&](int i, int nvars, vari** varis) {
       return [=](const auto&... xargs) {
         save_varis(varis + nvars*i, xargs...);
@@ -35,8 +34,9 @@ inline decltype(auto) parallel_map(const ApplyFunction& app_fun,
     // Assuming that the number of the vars at each iteration of the loop is
     // the same (as the operations at each iteration should be the same), we can
     // just count vars at the first iteration.
-    int nvars = apply(
-      [&](auto&&... args) { return index_fun(0, var_counter, args...); }, x);
+    int nvars = apply([&](auto&&... args) {
+      return index_fun(0, var_counter, args...);
+    }, x);
 
     vari** varis = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
       S * nvars);
@@ -60,8 +60,8 @@ inline decltype(auto) parallel_map(const ApplyFunction& app_fun,
               // Save varis from arguments at current iteration
               index_fun(i, vari_saver(i, nvars, varis), args...);
 
-              // Create nested autodiff copies of all arguments at current iteration
-              // that do not point back to main autodiff stack
+              // Create nested autodiff copies of all arguments at current
+              // iteration that do not point back to main autodiff stack
               return index_fun(i, var_copier, args...);
             }, x);
 
@@ -78,11 +78,10 @@ inline decltype(auto) parallel_map(const ApplyFunction& app_fun,
           values[i] = std::move(out.vi_->val_);
           apply([&](auto&&... args) {
             accumulate_adjoints(partials + nvars*i,
-                          std::forward<decltype(args)>(args)...); },
+                                std::forward<decltype(args)>(args)...); },
             std::move(args_tuple_local_copy));
         }
       });
-
   // Pack values and adjoints into new vars on main autodiff stack
   for(int i = 0; i < S; ++i) {
     result.coeffRef(i) = var(new precomputed_gradients_vari(
@@ -91,7 +90,6 @@ inline decltype(auto) parallel_map(const ApplyFunction& app_fun,
       varis + nvars*i,
       partials + nvars*i));
   }
-
   return std::forward<Res>(result);
 }
 
