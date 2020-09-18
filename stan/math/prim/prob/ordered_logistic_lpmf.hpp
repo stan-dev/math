@@ -146,10 +146,10 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
     auto log1m_exp_cuts_diff = log1m_exp(cut1 - cut2);
     logp = y_vec.cwiseEqual(1)
                .select(m_log_1p_exp_cut1,
-                       y_vec.cwiseEqual(K).select(
-                           m_log_1p_exp_m_cut2, m_log_1p_exp_m_cut2
-                                                    + log1m_exp_cuts_diff
-                                                    + m_log_1p_exp_cut1))
+                       y_vec.cwiseEqual(K).select(m_log_1p_exp_m_cut2,
+                                                  m_log_1p_exp_m_cut2
+                                                      + log1m_exp_cuts_diff
+                                                      + m_log_1p_exp_cut1))
                .sum();
   } else {
     if (y_seq[0] == 1) {
