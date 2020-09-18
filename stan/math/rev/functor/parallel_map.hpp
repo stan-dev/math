@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_FUNCTOR_PARALLEL_MAP_HPP
 
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <tbb/task_arena.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
@@ -10,7 +11,8 @@ namespace stan {
 namespace math {
 
 template <typename ApplyFunction, typename IndexFunction,
-          typename Res, typename ArgsTuple>
+          typename Res, typename ArgsTuple,
+          require_st_var<Res>* = nullptr>
 inline decltype(auto) parallel_map(const ApplyFunction& app_fun,
                                    const IndexFunction& index_fun,
                                    Res&& result, ArgsTuple&& x) {
@@ -63,7 +65,7 @@ inline decltype(auto) parallel_map(const ApplyFunction& app_fun,
               // Create nested autodiff copies of all arguments at current
               // iteration that do not point back to main autodiff stack
               return index_fun(i, var_copier, args...);
-            }, x);
+            }, std::forward<ArgsTuple>(x));
 
           // Apply specified function to arguments at current iteration
           var out = apply(

@@ -47,7 +47,7 @@ TEST(MathFunctions, parall_map_vec) {
   using stan::math::var;
   using stan::math::vector_v;
   vector_v in1_par = vector_v::Random(1000);
-  vector_v in2_par = vector_v::Random(1000);
+  vector_v in2_par = vector_v::Random(10);
   vector_v in3_par = vector_v::Random(1000);
   vector_v in1_ser = in1_par;
   vector_v in2_ser = in2_par;
