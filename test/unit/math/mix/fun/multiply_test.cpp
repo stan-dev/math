@@ -27,6 +27,18 @@ TEST(mathMixMatFun, multiply) {
   stan::test::expect_ad(tols, f, rv1, m11);
   stan::test::expect_ad(tols, f, m11, m11);
 
+  stan::test::expect_ad_matvar(f, a, v1);
+  stan::test::expect_ad_matvar(f, v1, a);
+  stan::test::expect_ad_matvar(f, a, rv1);
+  stan::test::expect_ad_matvar(f, rv1, a);
+  stan::test::expect_ad_matvar(f, rv1, v1);
+  stan::test::expect_ad_matvar(f, v1, rv1);
+  stan::test::expect_ad_matvar(f, a, m11);
+  stan::test::expect_ad_matvar(f, m11, a);
+  stan::test::expect_ad_matvar(f, m11, v1);
+  stan::test::expect_ad_matvar(f, rv1, m11);
+  stan::test::expect_ad_matvar(f, m11, m11);
+
   Eigen::VectorXd v0(0);
   Eigen::RowVectorXd rv0(0);
   Eigen::MatrixXd m00(0, 0);
@@ -41,6 +53,18 @@ TEST(mathMixMatFun, multiply) {
   stan::test::expect_ad(f, v0, rv0);
   stan::test::expect_ad(f, rv0, m00);
   stan::test::expect_ad(f, m00, m00);
+
+  stan::test::expect_ad_matvar(f, a, v0);
+  stan::test::expect_ad_matvar(f, v0, a);
+  stan::test::expect_ad_matvar(f, a, rv0);
+  stan::test::expect_ad_matvar(f, rv0, a);
+  stan::test::expect_ad_matvar(f, a, m00);
+  stan::test::expect_ad_matvar(f, m00, a);
+  stan::test::expect_ad_matvar(f, m00, v0);
+  stan::test::expect_ad_matvar(f, rv0, v0);
+  stan::test::expect_ad_matvar(f, v0, rv0);
+  stan::test::expect_ad_matvar(f, rv0, m00);
+  stan::test::expect_ad_matvar(f, m00, m00);
 
   Eigen::VectorXd v(2);
   v << 100, -3;
@@ -60,6 +84,18 @@ TEST(mathMixMatFun, multiply) {
   stan::test::expect_ad(tols, f, rv, m);
   stan::test::expect_ad(tols, f, m, m);
 
+  stan::test::expect_ad_matvar(f, a, v);
+  stan::test::expect_ad_matvar(f, v, a);
+  stan::test::expect_ad_matvar(f, a, rv);
+  stan::test::expect_ad_matvar(f, rv, a);
+  stan::test::expect_ad_matvar(f, rv, v);
+  stan::test::expect_ad_matvar(f, v, rv);
+  stan::test::expect_ad_matvar(f, a, m);
+  stan::test::expect_ad_matvar(f, m, a);
+  stan::test::expect_ad_matvar(f, m, v);
+  stan::test::expect_ad_matvar(f, rv, m);
+  stan::test::expect_ad_matvar(f, m, m);
+
   Eigen::RowVectorXd d1(3);
   d1 << 1, 3, -5;
   Eigen::VectorXd d2(3);
@@ -78,6 +114,11 @@ TEST(mathMixMatFun, multiply) {
   stan::test::expect_ad(tols, f, u_tr, u);
   stan::test::expect_ad(tols, f, u, vv);
   stan::test::expect_ad(tols, f, rvv, u);
+
+  stan::test::expect_ad_matvar(f, u, u_tr);
+  stan::test::expect_ad_matvar(f, u_tr, u);
+  stan::test::expect_ad_matvar(f, u, vv);
+  stan::test::expect_ad_matvar(f, rvv, u);
 
   // exception cases
   // can't compile mismatched dimensions, so no tests
@@ -124,4 +165,64 @@ TEST(mathMix, multiplicationPatterns) {
   instantiate_multiply<fvar<fvar<double>>>();
   instantiate_multiply<fvar<var>>();
   instantiate_multiply<fvar<fvar<var>>>();
+}
+
+TEST(mathMix, varMatrix) {
+  using stan::math::var_value;
+  using stan::math::var;
+  using stan::math::multiply;
+  Eigen::MatrixXd X(5, 5);
+  Eigen::MatrixXd Y(5, 5);
+  for (int i = 0; i < X.size(); ++i) {
+    X(i) = static_cast<double>(i);
+    Y(i) = static_cast<double>(i);
+  }
+  var_value<Eigen::MatrixXd> Xv(X);
+  var_value<Eigen::MatrixXd> Yv(Y);
+  var_value<Eigen::MatrixXd> Zv = multiply(Xv, Yv);
+  stan::math::sum(Zv).grad();
+}
+
+TEST(mathMix, varDot) {
+  using stan::math::var_value;
+  using stan::math::var;
+  using stan::math::multiply;
+  Eigen::VectorXd X(5);
+  Eigen::RowVectorXd Y(5);
+  for (int i = 0; i < X.size(); ++i) {
+    X(i) = static_cast<double>(i);
+    Y(i) = static_cast<double>(i);
+  }
+  var_value<Eigen::VectorXd> Xv(X);
+  var_value<Eigen::RowVectorXd> Yv(Y);
+  var Zv = multiply(Yv, Xv);
+  stan::math::sum(Zv).grad();
+}
+
+TEST(mathMix, varmatvar) {
+  using stan::math::var_value;
+  using stan::math::var;
+  using stan::math::multiply;
+  Eigen::MatrixXd X(5, 5);
+  var y(5);
+  for (int i = 0; i < X.size(); ++i) {
+    X(i) = static_cast<double>(i);
+  }
+  var_value<Eigen::MatrixXd> Xv(X);
+  var_value<Eigen::MatrixXd> Zv = multiply(Xv, y);
+  stan::math::sum(Zv).grad();
+}
+
+TEST(mathMix, varvarmat) {
+  using stan::math::var_value;
+  using stan::math::var;
+  using stan::math::multiply;
+  Eigen::MatrixXd X(5, 5);
+  var y(5);
+  for (int i = 0; i < X.size(); ++i) {
+    X(i) = static_cast<double>(i);
+  }
+  var_value<Eigen::MatrixXd> Xv(X);
+  var_value<Eigen::MatrixXd> Zv = multiply(y, Xv);
+  stan::math::sum(Zv).grad();
 }

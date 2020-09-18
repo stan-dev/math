@@ -1433,6 +1433,17 @@ void expect_ad_vectorized_binary(const F& f, const T1& x, const T2& y) {
   expect_ad_vectorized_binary(tols, f, x, y);
 }
 
+template <typename T1, typename T2, require_all_var_t<scalar_type_t<T1>, scalar_type_t<T2>>* = nullptr>
+void expect_near_rel_var(T1&& x, T2&& y) {
+  expect_near_rel("var<Matrix> vs Matrix<var> input adjoints", x.val(), y.val(), 1e-12);
+  expect_near_rel("var<Matrix> vs Matrix<var> input adjoints", x.adj(), y.adj(), 1e-12);
+}
+
+template <typename T1, typename T2, require_all_arithmetic_t<scalar_type_t<T1>, scalar_type_t<T2>>* = nullptr>
+void expect_near_rel_var(T1&& x, T2&& y) {
+  expect_near_rel("var<Matrix> vs Matrix<var> input doubles", x, y, 1e-12);
+}
+
 /**
  * Test that the jacobian for matrices of vars is equal for the
  *  var matrix when the result is an `var` type.
@@ -1446,15 +1457,28 @@ void expect_ad_vectorized_binary(const F& f, const T1& x, const T2& y) {
  * @param A_mv_f The result of a function from applying `A_mv`.
  * @param A_vm_f The result of a function from applying `A_vm`
  */
-template <typename MatVar, typename VarMat, typename ResultMatVar,
-          typename ResultVarMat, require_var_t<ResultMatVar>* = nullptr>
-inline void test_matvar_gradient(MatVar&& A_mv, VarMat&& A_vm,
-                                 ResultMatVar&& A_mv_f, ResultVarMat&& A_vm_f) {
+template <typename ResultMatVar, typename ResultVarMat, typename MatVar,
+ typename VarMat, require_var_t<ResultMatVar>* = nullptr>
+inline void test_matvar_gradient(ResultMatVar&& A_mv_f, ResultVarMat&& A_vm_f,
+ MatVar&& A_mv, VarMat&& A_vm) {
   A_vm_f.adj() = 1;
   A_mv_f.adj() = 1;
   stan::math::grad();
-  expect_near_rel("var<Matrix> vs Matrix<var> input adjoints", A_vm.adj(),
-                  A_mv.adj(), 1e-12);
+  expect_near_rel(A_vm, A_mv);
+  expect_near_rel("var<Matrix> vs Matrix<var> result value", A_vm_f.val(), A_mv_f.val(), 1e-12);
+  stan::math::set_zero_all_adjoints();
+}
+
+template <typename ResultMatVar, typename ResultVarMat, typename MatVar1, typename MatVar2,
+          typename VarMat1, typename VarMat2,
+          require_all_var_vt<std::is_arithmetic, ResultMatVar, ResultVarMat>* = nullptr>
+inline void test_matvar_gradient(ResultMatVar&& A_mv_f, ResultVarMat&& A_vm_f,
+ MatVar1&& A_mv1, MatVar2&& A_mv2, VarMat1&& A_vm1, VarMat2&& A_vm2) {
+  A_vm_f.adj() = 1;
+  A_mv_f.adj() = 1;
+  stan::math::grad();
+  expect_near_rel_var(A_vm1, A_mv1);
+  expect_near_rel_var(A_vm2, A_mv2);
   expect_near_rel("var<Matrix> vs Matrix<var> result value", A_vm_f.val(),
                   A_mv_f.val(), 1e-12);
   stan::math::set_zero_all_adjoints();
@@ -1473,16 +1497,33 @@ inline void test_matvar_gradient(MatVar&& A_mv, VarMat&& A_vm,
  * @param A_mv_f The result of a function from applying `A_mv`.
  * @param A_vm_f The result of a function from applying `A_vm`
  */
-template <typename MatVar, typename VarMat, typename ResultMatVar,
-          typename ResultVarMat, require_eigen_t<ResultMatVar>* = nullptr>
-inline void test_matvar_gradient(MatVar&& A_mv, VarMat&& A_vm,
-                                 ResultMatVar&& A_mv_f, ResultVarMat&& A_vm_f) {
+template <typename ResultMatVar, typename ResultVarMat,
+           typename MatVar, typename VarMat, require_eigen_t<ResultMatVar>* = nullptr>
+inline void test_matvar_gradient(ResultMatVar&& A_mv_f, ResultVarMat&& A_vm_f,
+  MatVar&& A_mv, VarMat&& A_vm) {
   for (Eigen::Index i = 0; i < A_vm.size(); ++i) {
     A_vm_f.adj()(i) = 1;
     A_mv_f.adj()(i) = 1;
     stan::math::grad();
     expect_near_rel("var<Matrix> vs Matrix<var> input adjoints", A_vm.adj(),
                     A_mv.adj(), 1e-12);
+    expect_near_rel("var<Matrix> vs Matrix<var> result value", A_vm_f.val(),
+                    A_mv_f.val(), 1e-12);
+    stan::math::set_zero_all_adjoints();
+  }
+}
+
+template <typename ResultMatVar, typename ResultVarMat, typename MatVar1,
+ typename MatVar2, typename VarMat1, typename VarMat2,
+ require_eigen_t<ResultMatVar>* = nullptr>
+inline void test_matvar_gradient(ResultMatVar&& A_mv_f, ResultVarMat&& A_vm_f,
+  MatVar1&& A_mv1, MatVar2&& A_mv2, VarMat1&& A_vm1, VarMat2&& A_vm2) {
+  for (Eigen::Index i = 0; i < A_mv_f.size(); ++i) {
+    A_vm_f.adj()(i) = 1;
+    A_mv_f.adj()(i) = 1;
+    stan::math::grad();
+    expect_near_rel_var(A_vm1, A_mv1);
+    expect_near_rel_var(A_vm2, A_mv2);
     expect_near_rel("var<Matrix> vs Matrix<var> result value", A_vm_f.val(),
                     A_mv_f.val(), 1e-12);
     stan::math::set_zero_all_adjoints();
@@ -1502,11 +1543,44 @@ inline void test_matvar_gradient(MatVar&& A_mv, VarMat&& A_vm,
  * @param A_mv_f The result of a function from applying `A_mv`.
  * @param A_vm_f The result of a function from applying `A_vm`
  */
-template <typename MatVar, typename VarMat, typename ResultMatVar,
-          typename ResultVarMat>
-inline void test_matvar_sum_gradient(MatVar&& A_mv, VarMat&& A_vm,
-                                     ResultMatVar&& A_mv_f,
-                                     ResultVarMat&& A_vm_f) {
+ template <typename ResultVarMat, typename ResultMatVar, typename MatVar, typename VarMat>
+ inline void test_matvar_sum_gradient(ResultMatVar&& A_vm_f, ResultVarMat&& A_mv_f, MatVar&& A_mv, VarMat&& A_vm) {
+   using stan::math::var;
+   var b_mv = sum(A_mv_f);
+   var b_vm = sum(A_vm_f);
+   var final_var = b_mv + b_vm;
+   stan::math::grad(final_var.vi_);
+   if (!stan::math::isfinite(final_var)) {
+     return;
+   }
+   expect_near_rel("var<Matrix> vs Matrix<var> sum intermediate value",
+                   b_vm.val(), b_mv.val(), 1e-12);
+   expect_near_rel("var<Matrix> vs Matrix<var> sum intermediate adjoints",
+                   b_vm.adj(), b_mv.adj(), 1e-12);
+   expect_near_rel("var<Matrix> vs Matrix<var> sum input adjoints", A_vm.adj(),
+                   A_mv.adj(), 1e-12);
+   expect_near_rel("var<Matrix> vs Matrix<var> sum result value", A_vm_f.val(),
+                   A_mv_f.val(), 1e-12);
+   expect_near_rel("var<Matrix> vs Matrix<var> sum result adjoints",
+                   A_vm_f.adj(), A_mv_f.adj(), 1e-12);
+ }
+
+/**
+ * Test that the sum of the jacobian for matrices of vars is equal for the
+ *  var matrix.
+ * @tparam MatVar An Eigen type inheriting from `EigenBase` that has
+ * Scalar vars.
+ * @tparam VarMat A `var_value` with an inner type inheriting from `EigenBase`.
+ * @tparam ResultMatVar The resulting type of applying a function to `A_mv`.
+ * @tparam ResultVarMat The result type of applying a function to `A_vm`.
+ * @param A_mv A eigen type of vars.
+ * @param A_vm A eigen type of vars.
+ * @param A_mv_f The result of a function from applying `A_mv`.
+ * @param A_vm_f The result of a function from applying `A_vm`
+ */
+template <typename ResultVarMat, typename ResultMatVar, typename MatVar1, typename MatVar2, typename VarMat1, typename VarMat2>
+inline void test_matvar_sum_gradient(ResultMatVar&& A_mv_f,
+   ResultVarMat&& A_vm_f, MatVar1&& A_mv1, MatVar2&& A_mv2, VarMat1&& A_vm1, VarMat2&& A_vm2) {
   using stan::math::var;
   var b_mv = sum(A_mv_f);
   var b_vm = sum(A_vm_f);
@@ -1519,13 +1593,15 @@ inline void test_matvar_sum_gradient(MatVar&& A_mv, VarMat&& A_vm,
                   b_vm.val(), b_mv.val(), 1e-12);
   expect_near_rel("var<Matrix> vs Matrix<var> sum intermediate adjoints",
                   b_vm.adj(), b_mv.adj(), 1e-12);
-  expect_near_rel("var<Matrix> vs Matrix<var> sum input adjoints", A_vm.adj(),
-                  A_mv.adj(), 1e-12);
+  expect_near_rel_var(A_vm1, A_mv1);
+  expect_near_rel_var(A_vm2, A_mv2);
   expect_near_rel("var<Matrix> vs Matrix<var> sum result value", A_vm_f.val(),
                   A_mv_f.val(), 1e-12);
   expect_near_rel("var<Matrix> vs Matrix<var> sum result adjoints",
                   A_vm_f.adj(), A_mv_f.adj(), 1e-12);
 }
+
+
 /**
  * For an unary function check that an Eigen matrix of vars and a var with an
  * inner eigen type return the same values and adjoints. This is done by
@@ -1575,8 +1651,65 @@ void expect_ad_matvar(F&& f, const EigMat& x) {
   if (!x.allFinite()) {
     return;
   }
-  test_matvar_gradient(A_mv, A_vm, A_mv_f, A_vm_f);
-  test_matvar_sum_gradient(A_mv, A_vm, A_mv_f, A_vm_f);
+  test_matvar_gradient(A_mv_f, A_vm_f, A_mv, A_vm);
+  test_matvar_sum_gradient(A_mv_f, A_vm_f, A_mv, A_vm);
+}
+
+template <typename Type1, typename Type2, typename F, typename EigMat1, typename EigMat2>
+void expect_ad_matvar_impl(F&& f, const EigMat1& x, const EigMat2& y) {
+  using stan::plain_type_t;
+  using stan::math::promote_scalar_t;
+  using stan::math::sum;
+  using stan::math::var;
+  using stan::math::var_value;
+  using stan::is_var;
+  using mat_var1 = promote_scalar_t<Type1, EigMat1>;
+  using mat_var2 = promote_scalar_t<Type2, EigMat2>;
+  mat_var1 A_mv1 = x;
+  mat_var2 A_mv2 = y;
+  plain_type_t<decltype(f(A_mv1, A_mv2))> A_mv_f;
+  using var_mat1 = std::conditional_t<is_var<Type1>::value,
+   var_value<plain_type_t<EigMat1>>,
+   plain_type_t<EigMat1>>;
+  using var_mat2 = std::conditional_t<is_var<Type2>::value,
+    var_value<plain_type_t<EigMat2>>,
+    plain_type_t<EigMat2>>;
+  var_mat1 A_vm1 = x;
+  var_mat2 A_vm2 = y;
+  plain_type_t<decltype(f(A_vm1, A_vm2))> A_vm_f;
+  // If one throws, the other should throw as well
+  try {
+    A_mv_f = f(A_mv1, A_mv2);
+  } catch (...) {
+    try {
+      f(A_vm1, A_vm2);
+      FAIL() << "matrix<var> throws, expect var<matrix> version to throw";
+    } catch (...) {
+      SUCCEED();
+    }
+  }
+  try {
+    A_vm_f = f(A_vm1, A_vm2);
+  } catch (...) {
+    try {
+      f(A_mv1, A_mv2);
+      FAIL() << "var<matrix> throws, expect matrix<var> version to throw";
+    } catch (...) {
+      SUCCEED();
+    }
+  }
+  if (!stan::math::is_scal_finite(x)) {
+    return;
+  }
+  test_matvar_gradient(A_mv_f, A_vm_f, A_mv1, A_mv2, A_vm1, A_vm2);
+  test_matvar_sum_gradient(A_mv_f, A_vm_f, A_mv1, A_mv2, A_vm1, A_vm2);
+}
+template <typename F, typename EigMat1, typename EigMat2>
+void expect_ad_matvar(F&& f, EigMat1&& x, EigMat2&& y) {
+  using stan::math::var;
+  expect_ad_matvar_impl<double, var>(f, x, y);
+  expect_ad_matvar_impl<var, double>(f, x, y);
+  expect_ad_matvar_impl<var, var>(f, x, y);
 }
 
 /**

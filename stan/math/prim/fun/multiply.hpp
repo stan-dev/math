@@ -23,8 +23,9 @@ namespace math {
  * @param c scalar
  * @return product of matrix and scalar
  */
-template <typename Mat, typename Scal, require_eigen_t<Mat>* = nullptr,
-          require_stan_scalar_t<Scal>* = nullptr>
+ template <typename Mat, typename Scal, require_stan_scalar_t<Scal>* = nullptr,
+           require_eigen_t<Mat>* = nullptr,
+           require_not_t<is_var<return_type_t<Scal, Mat>>>* = nullptr>
 inline auto multiply(const Mat& m, Scal c) {
   return (c * m).eval();
 }
@@ -40,7 +41,8 @@ inline auto multiply(const Mat& m, Scal c) {
  * @return product of scalar and matrix
  */
 template <typename Scal, typename Mat, require_stan_scalar_t<Scal>* = nullptr,
-          require_eigen_t<Mat>* = nullptr>
+          require_eigen_t<Mat>* = nullptr,
+          require_not_t<is_var<return_type_t<Scal, Mat>>>* = nullptr>
 inline auto multiply(Scal c, const Mat& m) {
   return (c * m).eval();
 }

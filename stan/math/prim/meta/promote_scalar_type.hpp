@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_var.hpp>
 #include <vector>
 
 namespace stan {
@@ -37,6 +38,22 @@ struct promote_scalar_type<T, std::vector<S>> {
    * The promoted type.
    */
   using type = std::vector<typename promote_scalar_type<T, S>::type>;
+};
+
+template <typename T, typename S>
+struct promote_scalar_type<T, S, require_all_t<is_var<T>, is_var<S>, is_eigen<value_type_t<S>>>> {
+  /**
+   * The promoted type.
+   */
+  using type = S;
+};
+
+template <typename T, typename S>
+struct promote_scalar_type<T, S, require_all_t<std::is_arithmetic<T>, is_var<S>, is_eigen<value_type_t<S>>>> {
+  /**
+   * The promoted type.
+   */
+  using type = typename promote_scalar_type<T, value_type_t<S>>::type;
 };
 
 /**
