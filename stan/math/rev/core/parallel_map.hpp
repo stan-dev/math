@@ -14,21 +14,26 @@ template <typename ApplyFunction, typename IndexFunction,
 inline decltype(auto) parallel_map(const ApplyFunction& app_fun,
                                    const IndexFunction& index_fun,
                                    Res&& result, ArgsTuple&& x) {
+
     // Functors for manipulating vars at a given iteration of the loop
     auto var_counter = [&](auto&... xargs) {
       return count_vars(xargs...);
     };
-    auto make_tuple_refs = [&](const auto... xargs){
-      return std::make_tuple(xargs...);
-    };
     auto var_copier = [&](const auto&... xargs) {
-      return deep_copy_vars(xargs...);
+      return std::tuple<decltype(deep_copy_vars(xargs))...>(
+        deep_copy_vars(xargs)...);
     };
 
+    auto vari_saver = [&](int i, int nvars, vari** varis) {
+      return [=](const auto&... xargs) {
+        save_varis(varis + nvars*i, xargs...);
+      };
+    };
 
     int S = result.size();
+
     // Assuming that the number of the vars at each iteration of the loop is
-    // the same, as the operations at each iteration should be the same, can
+    // the same (as the operations at each iteration should be the same), we can
     // just count vars at the first iteration.
     int nvars = apply(
       [&](auto&&... args) { return index_fun(0, var_counter, args...); }, x);
@@ -43,30 +48,27 @@ inline decltype(auto) parallel_map(const ApplyFunction& app_fun,
 
     tbb::parallel_for(
       tbb::blocked_range<size_t>(0, S), 
-      [&x,&partials,&values,&app_fun,
-       &var_copier,&index_fun,&varis,&nvars,&make_tuple_refs](
+      [&x,&partials,&values,&app_fun,&vari_saver,
+       &var_copier,&index_fun,&varis,&nvars](
        const tbb::blocked_range<size_t>& r) {
         // Run nested autodiff in this scope
         nested_rev_autodiff nested;
 
         for (size_t i = r.begin(); i < r.end(); ++i) {
-          // Create tuple of args at current iteration
-          auto local_vars = apply(
-            [&](auto&&... args) {
-              return index_fun(i, make_tuple_refs, args...);
-            }, x);
 
-          // Save varis for vars at current iteration
-          apply([&](auto&&... args) { save_varis(varis + nvars*i, args...); },
-                local_vars);
+          // Save varis from arguments at current iteration
+          apply(
+            [&](auto&&... args) {
+             index_fun(i, vari_saver(i, nvars, varis), args...);
+            },
+          x);
 
           // Create nested autodiff copies of all arguments at current iteration
           // that do not point back to main autodiff stack
           auto args_tuple_local_copy = apply(
-          [&](auto&&... args) {
-            return std::tuple<decltype(deep_copy_vars(args))...>(
-                deep_copy_vars(args)...);
-          }, local_vars);
+            [&](auto&&... args) {
+              return index_fun(i, var_copier, args...);
+            }, x);
 
           // Apply specified function to arguments at current iteration
           var out = apply(
@@ -76,9 +78,9 @@ inline decltype(auto) parallel_map(const ApplyFunction& app_fun,
 
           out.grad();
 
-          // Extract values and adjoints to be put into vars on main
+          // Extract value and adjoints to be put into vars on main
           // autodiff stack
-          values[i] = out.val();
+          values[i] = std::move(out.vi_->val_);
           apply([&](auto&&... args) {
             accumulate_adjoints(partials + nvars*i,
                           std::forward<decltype(args)>(args)...); },
@@ -87,6 +89,7 @@ inline decltype(auto) parallel_map(const ApplyFunction& app_fun,
         }
       });
 
+  // Pack values and adjoints into new vars on main autodiff stack
   for(int i = 0; i < S; ++i) {
     result.coeffRef(i) = var(new precomputed_gradients_vari(
       values[i],
