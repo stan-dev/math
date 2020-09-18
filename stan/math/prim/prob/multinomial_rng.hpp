@@ -10,9 +10,9 @@
 namespace stan {
 namespace math {
 
-template <class T_theta, class RNG, require_eigen_col_vector_t<T_theta>* = nullptr>
-inline std::vector<int> multinomial_rng(
-    const T_theta& theta, int N, RNG& rng) {
+template <class T_theta, class RNG,
+          require_eigen_col_vector_t<T_theta>* = nullptr>
+inline std::vector<int> multinomial_rng(const T_theta& theta, int N, RNG& rng) {
   static const char* function = "multinomial_rng";
   const auto& theta_ref = to_ref(theta);
   check_simplex(function, "Probabilities parameter", theta_ref);

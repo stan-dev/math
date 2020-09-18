@@ -41,7 +41,7 @@ return_type_t<T_prob> multinomial_logit_lpmf(const std::vector<int>& ns,
   if (include_summand<propto, T_prob>::value) {
     T_prob alpha = log_sum_exp(beta_ref);
     for (unsigned int i = 0; i < ns.size(); ++i) {
-      if (ns[i] != 0){
+      if (ns[i] != 0) {
         lp += ns[i] * (beta_ref.coeff(i) - alpha);
       }
     }
@@ -50,8 +50,7 @@ return_type_t<T_prob> multinomial_logit_lpmf(const std::vector<int>& ns,
   return lp;
 }
 
-template <typename T_beta,
-          require_eigen_col_vector_t<T_beta>* = nullptr>
+template <typename T_beta, require_eigen_col_vector_t<T_beta>* = nullptr>
 return_type_t<T_beta> multinomial_logit_lpmf(const std::vector<int>& ns,
                                              const T_beta& beta) {
   return multinomial_logit_lpmf<false>(ns, beta);
