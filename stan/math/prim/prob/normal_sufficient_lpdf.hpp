@@ -126,7 +126,7 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
   if (!is_constant_all<T_y, T_loc>::value) {
     const auto& common_derivative = to_ref_if<(
         !is_constant_all<T_loc>::value && !is_constant_all<T_y>::value)>(
-        n_obs_val / sigma_squared * diff);
+         N / max_size(y_bar, mu, n_obs, sigma) * n_obs_val / sigma_squared * diff);
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge3_.partials_ = -common_derivative;
     }
@@ -144,12 +144,11 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
     } else {
       if (is_vector<T_s>::value) {
         ops_partials.edge2_.partials_ = T_sigma_value_vector::Constant(
-            size(s_squared),
-            -0.5 / forward_as<T_sigma_value_scalar>(sigma_squared));
+            N, -0.5 / forward_as<T_sigma_value_scalar>(sigma_squared));
       } else {
         forward_as<internal::broadcast_array<T_partials_return>>(
             ops_partials.edge2_.partials_)
-            = -0.5 / sigma_squared;
+            = -0.5 / sigma_squared * N / size(sigma);
       }
     }
   }
