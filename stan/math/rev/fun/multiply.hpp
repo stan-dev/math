@@ -37,7 +37,6 @@ inline auto multiply(const T1& A, const T2& B) {
 
   arena_t<promote_scalar_t<var, T1>> arena_A = to_arena_if<!is_constant<T1>::value>(A_ref);
   arena_t<promote_scalar_t<var, T2>> arena_B = to_arena_if<!is_constant<T2>::value>(B_ref);
-  // TODO: Why can't I put value_of(arena_A/B) here??
   arena_t<promote_scalar_t<double, T1>> arena_A_val = to_arena_if<!is_constant<T2>::value>(value_of(A_ref));
   arena_t<promote_scalar_t<double, T2>> arena_B_val = to_arena_if<!is_constant<T1>::value>(value_of(B_ref));
   using return_t = promote_var_matrix_t<decltype(arena_A_val * arena_B_val), T1, T2>;
@@ -89,7 +88,6 @@ inline var multiply(const T1& A, const T2& B) {
 
   arena_t<promote_scalar_t<var, T1>> arena_A = to_arena_if<!is_constant<T1>::value>(A_ref);
   arena_t<promote_scalar_t<var, T2>> arena_B = to_arena_if<!is_constant<T2>::value>(B_ref);
-  // TODO: Why can't I put value_of(arena_A/B) here??
   arena_t<promote_scalar_t<double, T1>> arena_A_val = to_arena_if<!is_constant<T2>::value>(value_of(A_ref));
   arena_t<promote_scalar_t<double, T2>> arena_B_val = to_arena_if<!is_constant<T1>::value>(value_of(B_ref));
   arena_t<var> res;
