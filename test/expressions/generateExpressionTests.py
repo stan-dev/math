@@ -133,6 +133,8 @@ special_arg_values = {
 	"categorical_log" : [None, 1],
 	"categorical_rng" : [1, None],
 	"categorical_lpmf" : [None, 1],
+  "dirichlet_log" : [1, None],
+  "dirichlet_lpdf" : [1, None],
 	"hmm_hidden_state_prob" : [None, 1, 1],
 	"hmm_latent_rng" : [None, 1, 1, None],
 	"hmm_marginal" : [None, 1, 1],
