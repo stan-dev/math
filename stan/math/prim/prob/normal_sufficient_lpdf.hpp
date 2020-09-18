@@ -126,7 +126,8 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
   if (!is_constant_all<T_y, T_loc>::value) {
     const auto& common_derivative = to_ref_if<(
         !is_constant_all<T_loc>::value && !is_constant_all<T_y>::value)>(
-         N / max_size(y_bar, mu, n_obs, sigma) * n_obs_val / sigma_squared * diff);
+        N / max_size(y_bar, mu, n_obs, sigma) * n_obs_val / sigma_squared
+        * diff);
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge3_.partials_ = -common_derivative;
     }

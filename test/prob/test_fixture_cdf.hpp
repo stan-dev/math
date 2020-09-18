@@ -494,7 +494,8 @@ class AgradCdfTestFixture : public ::testing::Test {
         EXPECT_NEAR(single_gradients[pos_single] / N_REPEAT,
                     multiple_gradients[pos_multiple], 1e-7)
             << "Comparison of single_gradient value to vectorized gradient "
-               "failed for argument number " << argument_number;
+               "failed for argument number "
+            << argument_number;
         pos_multiple++;
       }
       pos_single++;
@@ -502,7 +503,8 @@ class AgradCdfTestFixture : public ::testing::Test {
       EXPECT_NEAR(single_gradients[pos_single],
                   multiple_gradients[pos_multiple], 1e-7)
           << "Comparison of single_gradient value to vectorized gradient "
-             "failed for argument number " << argument_number;
+             "failed for argument number "
+          << argument_number;
       pos_single++;
       pos_multiple++;
     }

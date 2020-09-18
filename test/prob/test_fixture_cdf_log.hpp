@@ -493,20 +493,18 @@ class AgradCdfLogTestFixture : public ::testing::Test {
     }
   }
 
-  void test_multiple_gradient_values(const bool is_vec,
-                                     const double single_cdf_log,
-                                     const vector<double>& single_gradients,
-                                     size_t& pos_single,
-                                     const vector<double>& multiple_gradients,
-                                     size_t& pos_multiple,
-                                     const size_t N_REPEAT,
-                                     const int argument_number) {
+  void test_multiple_gradient_values(
+      const bool is_vec, const double single_cdf_log,
+      const vector<double>& single_gradients, size_t& pos_single,
+      const vector<double>& multiple_gradients, size_t& pos_multiple,
+      const size_t N_REPEAT, const int argument_number) {
     if (is_vec) {
       for (size_t i = 0; i < N_REPEAT; i++) {
         EXPECT_NEAR(single_gradients[pos_single],
                     multiple_gradients[pos_multiple], 1e-7)
             << "Comparison of single_gradient value to vectorized gradient "
-               "failed for argument number " << argument_number;
+               "failed for argument number "
+            << argument_number;
         pos_multiple++;
       }
       pos_single++;
@@ -514,7 +512,8 @@ class AgradCdfLogTestFixture : public ::testing::Test {
       EXPECT_NEAR(N_REPEAT * single_gradients[pos_single],
                   multiple_gradients[pos_multiple], 1e-7)
           << "Comparison of single_gradient value to vectorized gradient "
-             "failed for argument number " << argument_number;
+             "failed for argument number "
+          << argument_number;
       pos_single++;
       pos_multiple++;
     }
