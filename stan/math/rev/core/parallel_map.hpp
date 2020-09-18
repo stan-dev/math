@@ -55,18 +55,13 @@ inline decltype(auto) parallel_map(const ApplyFunction& app_fun,
         nested_rev_autodiff nested;
 
         for (size_t i = r.begin(); i < r.end(); ++i) {
-
-          // Save varis from arguments at current iteration
-          apply(
-            [&](auto&&... args) {
-             index_fun(i, vari_saver(i, nvars, varis), args...);
-            },
-          x);
-
-          // Create nested autodiff copies of all arguments at current iteration
-          // that do not point back to main autodiff stack
           auto args_tuple_local_copy = apply(
             [&](auto&&... args) {
+              // Save varis from arguments at current iteration
+              index_fun(i, vari_saver(i, nvars, varis), args...);
+
+              // Create nested autodiff copies of all arguments at current iteration
+              // that do not point back to main autodiff stack
               return index_fun(i, var_copier, args...);
             }, x);
 
@@ -85,7 +80,6 @@ inline decltype(auto) parallel_map(const ApplyFunction& app_fun,
             accumulate_adjoints(partials + nvars*i,
                           std::forward<decltype(args)>(args)...); },
             std::move(args_tuple_local_copy));
-
         }
       });
 
