@@ -108,7 +108,8 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
                                                                alpha_ref);
   if (!is_constant_all<T_prob>::value) {
     for (size_t t = 0; t < t_length; t++) {
-      ops_partials.edge1_.partials_vec_[t] = alpha_m_1.col(t) / theta_dbl.col(t);
+      ops_partials.edge1_.partials_vec_[t]
+          = alpha_m_1.col(t) / theta_dbl.col(t);
     }
   }
 
