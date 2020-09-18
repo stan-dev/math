@@ -115,12 +115,14 @@ class Checker {
    * @param messages a list of messages to append to the error message
    * @throws `E` if any of the scalars fail the error check
    */
-  template <typename T, require_all_t<is_var<T>, is_eigen<value_type_t<T>>>* = nullptr, typename = void,
-            typename... Ms>
+  template <typename T,
+            require_all_t<is_var<T>, is_eigen<value_type_t<T>>>* = nullptr,
+            typename = void, typename... Ms>
   void check(const T& x, Ms... messages) {
     for (size_t n = 0; n < x.cols(); ++n)
       for (size_t m = 0; m < x.rows(); ++m)
-        check(x.val().coeffRef(m, n), messages..., "[row=", m + 1, ", col=", n + 1, "]");
+        check(x.val().coeffRef(m, n), messages..., "[row=", m + 1,
+              ", col=", n + 1, "]");
   }
 
   /**

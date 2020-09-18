@@ -5,12 +5,13 @@
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/prim/meta.hpp>
 
-
 namespace stan {
-  template <typename ReturnType, typename... Types>
-  using promote_var_matrix_t = std::conditional_t<is_any_var_matrix<Types...>::value,
-    stan::math::var_value<stan::math::promote_scalar_t<double, plain_type_t<ReturnType>>>,
-     stan::math::promote_scalar_t<stan::math::var, plain_type_t<ReturnType>>>;
+template <typename ReturnType, typename... Types>
+using promote_var_matrix_t = std::conditional_t<
+    is_any_var_matrix<Types...>::value,
+    stan::math::var_value<
+        stan::math::promote_scalar_t<double, plain_type_t<ReturnType>>>,
+    stan::math::promote_scalar_t<stan::math::var, plain_type_t<ReturnType>>>;
 }
 
 #endif
