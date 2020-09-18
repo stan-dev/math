@@ -4,13 +4,11 @@
 #include <boost/math/distributions.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 
-TEST(ProbDistributionsInvWishart, LowerTriangular) {
+TEST(ProbDistributionsInvWishart, SymmetricCheck) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
   using stan::math::inv_wishart_log;
-  // Tests if only of the lower triangular portion of
-  // outcome and scale matrices are taken
   using Eigen::MatrixXd;
   using stan::math::inv_wishart_log;
 
@@ -37,23 +35,26 @@ TEST(ProbDistributionsInvWishart, LowerTriangular) {
 
   unsigned int dof = 5;
 
-  EXPECT_EQ(inv_wishart_log(Y, dof, Sigma), inv_wishart_log(Y_sym, dof, Sigma));
-  EXPECT_EQ(inv_wishart_log(Y, dof, Sigma), inv_wishart_log(Y, dof, Sigma_sym));
-  EXPECT_EQ(inv_wishart_log(Y, dof, Sigma),
-            inv_wishart_log(Y_sym, dof, Sigma_sym));
+  EXPECT_NO_THROW(inv_wishart_log(Y_sym, dof, Sigma_sym));
+  EXPECT_THROW(inv_wishart_log(Y_sym, dof, Sigma), std::domain_error);
+  EXPECT_THROW(inv_wishart_log(Y, dof, Sigma_sym), std::domain_error);
+  EXPECT_THROW(inv_wishart_log(Y, dof, Sigma), std::domain_error);
 }
+
 TEST(ProbDistributionsInvWishart, InvWishart) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
   using stan::math::inv_wishart_log;
   Matrix<double, Dynamic, Dynamic> Y(3, 3);
-  Y << 12.147233, -11.9036079, 1.0910458, -11.903608, 16.7585782, 0.8530256,
-      1.091046, 0.8530256, 2.5786609;
+  Y << 12.147233, -11.903608, 1.091046,
+    -11.903608, 16.7585782, 0.8530256,
+    1.091046, 0.8530256, 2.5786609;
 
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
-  Sigma << 7.785215, 3.0597878, 1.1071663, 3.059788, 10.3515035, -0.1232598,
-      1.107166, -0.1232598, 7.7623386;
+  Sigma << 7.785215, 3.059788, 1.107166,
+    3.059788, 10.3515035, -0.1232598,
+    1.107166, -0.1232598, 7.7623386;
 
   double dof = 4.0;
   double log_p = log(2.008407e-08);
@@ -66,12 +67,14 @@ TEST(ProbDistributionsInvWishart, Propto) {
 
   using stan::math::inv_wishart_log;
   Matrix<double, Dynamic, Dynamic> Y(3, 3);
-  Y << 12.147233, -11.9036079, 1.0910458, -11.903608, 16.7585782, 0.8530256,
-      1.091046, 0.8530256, 2.5786609;
+  Y << 12.147233, -11.903608, 1.091046,
+    -11.903608, 16.7585782, 0.8530256,
+    1.091046, 0.8530256, 2.5786609;
 
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
-  Sigma << 7.785215, 3.0597878, 1.1071663, 3.059788, 10.3515035, -0.1232598,
-      1.107166, -0.1232598, 7.7623386;
+  Sigma << 7.785215, 3.059788, 1.107166,
+    3.059788, 10.3515035, -0.1232598,
+    1.107166, -0.1232598, 7.7623386;
 
   double dof = 4.0;
 
