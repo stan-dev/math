@@ -345,7 +345,7 @@ TEST(MathPrimMat, domain_error_training_sig_l_cov_exp_quad) {
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x, sigma, l_bad), std::domain_error,
                    " length scale");
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x, sigma_bad, l), std::domain_error,
-                   " magnitude");
+                   " marginal standard deviation");
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma_bad, l_bad),
                std::domain_error);
 
@@ -396,7 +396,7 @@ TEST(MathPrimMat, nan_error_training_sig_l_cov_exp_quad) {
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x, sigma, l_bad), std::domain_error,
                    " length scale");
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x, sigma_bad, l), std::domain_error,
-                   " magnitude");
+                   " marginal standard deviation");
   EXPECT_THROW(stan::math::cov_exp_quad(x, sigma_bad, l_bad),
                std::domain_error);
 
@@ -454,7 +454,7 @@ TEST(MathPrimMat, domain_error_cov_exp_quad2) {
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x1, x2, sigma, l_bad),
                    std::domain_error, " length scale");
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x1, x2, sigma_bad, l),
-                   std::domain_error, " magnitude");
+                   std::domain_error, " marginal standard deviation");
   EXPECT_THROW(stan::math::cov_exp_quad(x1, x2, sigma_bad, l_bad),
                std::domain_error);
 
@@ -532,7 +532,7 @@ TEST(MathPrimMat, nan_domain_error_cov_exp_quad2) {
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x1, x2, sigma, l_bad),
                    std::domain_error, " length scale");
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x1, x2, sigma_bad, l),
-                   std::domain_error, " magnitude");
+                   std::domain_error, " marginal standard deviation");
   EXPECT_THROW(stan::math::cov_exp_quad(x1, x2, sigma_bad, l_bad),
                std::domain_error);
 
