@@ -33,9 +33,6 @@ TEST(MathFunctions, parall_map) {
   EXPECT_MATRIX_EQ(out_par.val(), out_ser.val());
   EXPECT_MATRIX_EQ(out_par.adj(), out_ser.adj());
 
-  out_par[5].grad();
-  out_ser[5].grad();
-
   for(int i = 0; i < 1000; ++i) {
     out_par[i].grad();
     out_ser[i].grad();
