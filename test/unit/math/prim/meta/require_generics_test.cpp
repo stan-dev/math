@@ -1010,7 +1010,7 @@ TEST(requires_prim_mat, eigen_row_and_col) {
   using stan::math::var;
   using stan::math::var_value;
   using stan::test::require_variadic_checker;
-  EXPECT_FALSE((require_variadic_checker<require_not_eigen_row_and_col_t,
+  EXPECT_TRUE((require_variadic_checker<require_not_eigen_row_and_col_t,
                                          var_value<double>, VectorXd>::value));
   EXPECT_TRUE((require_variadic_checker<require_eigen_row_and_col_t,
                                         RowVectorXd, VectorXd>::value));
