@@ -3,10 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/prim/functor/parallel_map.hpp>
-#include <stan/math/fwd/functor/parallel_map.hpp>
-#include <stan/math/rev/functor/parallel_map.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
@@ -44,8 +40,7 @@ struct exp_fun {
  * @return Elementwise application of exponentiation to the argument.
  */
 template <typename Container,
-          require_not_container_st<std::is_arithmetic, Container>* = nullptr,
-          require_not_eigen_t<Container>* = nullptr>
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto exp(const Container& x) {
   return apply_scalar_unary<exp_fun, Container>::apply(x);
 }
@@ -59,29 +54,10 @@ inline auto exp(const Container& x) {
  * @return Elementwise application of exponentiation to the argument.
  */
 template <typename Container,
-          require_container_st<std::is_arithmetic, Container>* = nullptr,
-          require_not_eigen_t<Container>* = nullptr>
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto exp(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().exp(); });
-}
-
-template <typename Container,
-          require_eigen_t<Container>* = nullptr>
-inline auto exp(const Container& x) {
-  // Declare result container
-  plain_type_t<Container> result(x.rows(), x.cols());
-
-  // Functor defining how inputs should be indexed
-  auto ind_f = [&](int i, const auto& fun, const auto& x) {
-    return fun(x(i));
-  };
-
-  // Functor defining function to be applied to indexed arguments
-  auto f = [&](const auto& x) { return stan::math::exp(x); };
-
-  return parallel_map(f, ind_f, std::forward<plain_type_t<Container>>(result),
-                      std::forward_as_tuple(x));
 }
 
 namespace internal {

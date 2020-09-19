@@ -28,7 +28,7 @@ TEST(MathFunctions, parall_map) {
   auto f = [&](const auto& x, const auto& y, const auto& z) {
     return x * y + exp(z); };
 
-  out_par = parallel_map(f, ind_f, std::forward<vector_v>(out_par),
+  parallel_map(f, ind_f, std::forward<vector_v>(out_par),
                          std::forward_as_tuple(in1_par,0.5,in2_par));
   EXPECT_MATRIX_EQ(out_par.val(), out_ser.val());
   EXPECT_MATRIX_EQ(out_par.adj(), out_ser.adj());
@@ -69,7 +69,7 @@ TEST(MathFunctions, parall_map_vec) {
   auto f = [&](const auto& x, const auto& y, const auto& z) {
     return x * sum(y) + exp(z); };
 
-  out_par = parallel_map(f, ind_f, std::forward<vector_v>(out_par),
+  parallel_map(f, ind_f, std::forward<vector_v>(out_par),
                          std::forward_as_tuple(in1_par,in2_par,in3_par));
   EXPECT_MATRIX_EQ(out_par.val(), out_ser.val());
   EXPECT_MATRIX_EQ(out_par.adj(), out_ser.adj());

@@ -13,7 +13,7 @@ namespace math {
 template <typename ApplyFunction, typename IndexFunction,
           typename Res, typename ArgsTuple,
           require_st_var<Res>* = nullptr>
-inline decltype(auto) parallel_map(const ApplyFunction& app_fun,
+inline void parallel_map(const ApplyFunction& app_fun,
                                    const IndexFunction& index_fun,
                                    Res&& result, ArgsTuple&& x) {
 
@@ -92,7 +92,6 @@ inline decltype(auto) parallel_map(const ApplyFunction& app_fun,
       varis + nvars*i,
       partials + nvars*i));
   }
-  return std::forward<Res>(result);
 }
 
 }  // namespace math
