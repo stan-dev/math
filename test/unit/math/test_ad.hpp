@@ -1482,7 +1482,7 @@ inline void test_matvar_gradient(ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
   A_vm_f.adj() = 1;
   A_mv_f.adj() = 1;
   stan::math::grad();
-  expect_near_rel("var<Matrix> vs Matrix<var> result", A_vm, A_mv);
+  expect_near_rel_var("var<Matrix> vs Matrix<var> result", A_vm, A_mv);
   expect_near_rel("var<Matrix> vs Matrix<var> result value", A_vm_f.val(),
                   A_mv_f.val(), 1e-12);
   stan::math::set_zero_all_adjoints();
