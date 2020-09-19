@@ -14,7 +14,7 @@ template <typename ApplyFunction, typename IndexFunction,
           typename Res, typename ArgsTuple,
           require_not_st_arithmetic<Res>* = nullptr,
           require_not_st_var<Res>* = nullptr>
-inline decltype(auto) parallel_map(const ApplyFunction& app_fun,
+inline void parallel_map(const ApplyFunction& app_fun,
                                    const IndexFunction& index_fun,
                                    Res&& result, ArgsTuple&& x) {
   for (size_t i = 0; i < result.size(); ++i) {
@@ -24,8 +24,6 @@ inline decltype(auto) parallel_map(const ApplyFunction& app_fun,
           return index_fun(i, app_fun, args...);
         }, x);
   }
-
-  return std::forward<Res>(result);
 }
 
 }  // namespace math
