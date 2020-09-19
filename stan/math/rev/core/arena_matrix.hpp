@@ -63,6 +63,15 @@ class arena_matrix : public Eigen::Map<MatrixType, Eigen::Aligned8> {
             other.rows(), other.cols()) {
     *this = other;
   }
+  /**
+   * Constructs `arena_matrix` from an expression.
+   * @param other expression
+   */
+  template <typename T, require_eigen_vt<std::is_floating_point, T>* = nullptr>
+  arena_matrix(const Eigen::Map<T, Eigen::Aligned8, Eigen::Stride<0,0>>& other)  // NOLINT
+      : Eigen::Map<MatrixType, Eigen::Aligned8>::Map(const_cast<Scalar*>(other.data()), other.rows(), other.cols()) {
+  }
+
 
   /**
    * Copy constructor.

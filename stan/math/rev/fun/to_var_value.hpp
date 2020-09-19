@@ -27,16 +27,6 @@ to_var_value(const T& a) {
   return res;
 }
 
-template <typename T, require_eigen_vt<std::is_floating_point, T>* = nullptr>
-auto to_var_value(const var_value<T>& a) {
-  return a;
-}
-
-template <typename T, require_eigen_vt<std::is_floating_point, T>* = nullptr>
-auto to_var_value(const T& a) {
-  return var_value<T>(a);
-}
-
 }  // namespace math
 }  // namespace stan
 
