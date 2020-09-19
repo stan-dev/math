@@ -30,10 +30,6 @@ inline auto multiply(const T1& A, const T2& B) {
 
   const auto& A_ref = to_ref(A);
   const auto& B_ref = to_ref(B);
-
-  check_not_nan("multiply", "A", A_ref);
-  check_not_nan("multiply", "B", B_ref);
-
   arena_t<promote_scalar_t<var, T1>> arena_A
       = to_arena_if<!is_constant<T1>::value>(A_ref);
   arena_t<promote_scalar_t<var, T2>> arena_B
@@ -86,10 +82,6 @@ inline var multiply(const T1& A, const T2& B) {
 
   const auto& A_ref = to_ref(A);
   const auto& B_ref = to_ref(B);
-
-  check_not_nan("multiply", "A", A_ref);
-  check_not_nan("multiply", "B", B_ref);
-
   arena_t<promote_scalar_t<var, T1>> arena_A
       = to_arena_if<!is_constant<T1>::value>(A_ref);
   arena_t<promote_scalar_t<var, T2>> arena_B
@@ -139,10 +131,6 @@ template <typename T1, typename T2, require_not_matrix_t<T1>* = nullptr,
           require_not_row_and_col_vector_t<T1, T2>* = nullptr>
 inline auto multiply(const T1& A, const T2& B) {
   const auto& B_ref = to_ref(B);
-
-  check_not_nan("multiply", "A", A);
-  check_not_nan("multiply", "B", B_ref);
-
   arena_t<promote_scalar_t<var, T2>> arena_B
       = to_arena_if<!is_constant<T2>::value>(B_ref);
   arena_t<promote_scalar_t<double, T2>> arena_B_val
@@ -188,10 +176,6 @@ template <typename T1, typename T2, require_matrix_t<T1>* = nullptr,
           require_not_row_and_col_vector_t<T1, T2>* = nullptr>
 inline auto multiply(const T1& A, const T2& B) {
   const auto& A_ref = to_ref(A);
-
-  check_not_nan("multiply", "A", A_ref);
-  check_not_nan("multiply", "B", B);
-
   arena_t<promote_scalar_t<var, T1>> arena_A
       = to_arena_if<!is_constant<T1>::value>(A_ref);
   arena_t<promote_scalar_t<double, T1>> arena_A_val
