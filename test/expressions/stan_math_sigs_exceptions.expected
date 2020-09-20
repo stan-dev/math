@@ -1,3 +1,18 @@
+vector lmultiply(int, vector)
+vector lmultiply(real, vector)
+vector lmultiply(vector, int)
+vector lmultiply(vector, real)
+vector lmultiply(vector, vector)
+row_vector lmultiply(int, row_vector)
+row_vector lmultiply(real, row_vector)
+row_vector lmultiply(row_vector, int)
+row_vector lmultiply(row_vector, real)
+row_vector lmultiply(row_vector, row_vector)
+matrix lmultiply(int, matrix)
+matrix lmultiply(real, matrix)
+matrix lmultiply(matrix, int)
+matrix lmultiply(matrix, real)
+matrix lmultiply(matrix, matrix)
 vector algebra_solver((vector, vector, data real[], data int[]) => vector,
                         vector, vector, real[], int[])
 vector algebra_solver((vector, vector, data real[], data int[]) => vector,
