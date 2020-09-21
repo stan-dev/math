@@ -10,9 +10,10 @@
 namespace stan {
 namespace math {
 
-template <typename ApplyFunction, typename IndexFunction,
+template <bool Ranged, typename ApplyFunction, typename IndexFunction,
           typename Res, typename ArgsTuple,
-          require_st_arithmetic<Res>* = nullptr>
+          require_st_arithmetic<Res>* = nullptr,
+          std::enable_if_t<!Ranged>* = nullptr>
 inline void parallel_map(const ApplyFunction& app_fun,
                                    const IndexFunction& index_fun,
                                    Res&& result, ArgsTuple&& x) {
@@ -30,6 +31,35 @@ inline void parallel_map(const ApplyFunction& app_fun,
     });
 }
 
+template <bool Ranged, typename ApplyFunction, typename IndexFunction,
+          typename Res, typename ArgsTuple,
+          require_st_arithmetic<Res>* = nullptr,
+          std::enable_if_t<Ranged>* = nullptr>
+inline void parallel_map(const ApplyFunction& app_fun,
+                                   const IndexFunction& index_fun,
+                                   Res&& result, ArgsTuple&& x) {
+  tbb::parallel_for(
+    tbb::blocked_range<size_t>(0, result.size()), 
+    [&x,&app_fun,&index_fun,&result](
+     const tbb::blocked_range<size_t>& r) {
+
+      result.segment(r.begin(), r.end()-r.begin()) = apply(
+            [&](auto&&... args) {
+              return index_fun(r.begin(), r.end(), app_fun, args...);
+            }, std::forward<ArgsTuple>(x));
+    });
+}
+
+
+template <typename ApplyFunction, typename IndexFunction,
+          typename Res, typename ArgsTuple,
+          require_st_arithmetic<Res>* = nullptr>
+inline void parallel_map(const ApplyFunction& app_fun,
+                                   const IndexFunction& index_fun,
+                                   Res&& result, ArgsTuple&& x) {
+parallel_map<false>(app_fun, index_fun, std::forward<Res>(result),
+                    std::forward<ArgsTuple>(x));
+}
 }  // namespace math
 }  // namespace stan
 #endif
