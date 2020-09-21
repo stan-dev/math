@@ -18,7 +18,7 @@ namespace math {
  * @return Forwarded input argument
  **/
 template <typename T, require_st_arithmetic<T>* = nullptr>
-inline decltype(auto) value_of(T&& x) {
+inline auto value_of(T&& x) {
   return std::forward<T>(x);
 }
 

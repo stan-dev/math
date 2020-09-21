@@ -17,7 +17,7 @@ namespace math {
  **/
 template <typename T,
           require_same_t<std::decay_t<T>, plain_type_t<T>>* = nullptr>
-inline decltype(auto) eval(T&& arg) {
+inline auto eval(T&& arg) {
   return std::forward<T>(arg);
 }
 
