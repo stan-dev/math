@@ -1676,17 +1676,22 @@ inline void test_matvar_sum_gradient(ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
                   A_vm_f.adj(), A_mv_f.adj(), 1e-12);
 }
 
-
 template <typename ReturnType, typename Type>
 void check_return_type(const ReturnType& ret, const Type& x) {
   using stan::is_eigen;
   using stan::is_var_matrix;
   using stan::math::var_value;
   using stan::math::test::type_name;
-  if (is_eigen<Type>::value && !(is_eigen<ReturnType>::value || std::is_same<ReturnType, var_value<double>>::value)) {
-    FAIL() << type_name<Type>() << " returns a " << type_name<ReturnType>() << " but should return either an Matrix<var> or a var_value<double>";
-  } else if (is_var_matrix<Type>::value && !(is_var_matrix<ReturnType>::value || std::is_same<ReturnType, var_value<double>>::value)) {
-    FAIL() << type_name<Type>() << " returns a " << type_name<ReturnType>() << " but should return either an var<Matrix> or a var_value<double>";
+  if (is_eigen<Type>::value
+      && !(is_eigen<ReturnType>::value
+           || std::is_same<ReturnType, var_value<double>>::value)) {
+    FAIL() << type_name<Type>() << " returns a " << type_name<ReturnType>()
+           << " but should return either an Matrix<var> or a var_value<double>";
+  } else if (is_var_matrix<Type>::value
+             && !(is_var_matrix<ReturnType>::value
+                  || std::is_same<ReturnType, var_value<double>>::value)) {
+    FAIL() << type_name<Type>() << " returns a " << type_name<ReturnType>()
+           << " but should return either an var<Matrix> or a var_value<double>";
   }
 }
 
@@ -1696,10 +1701,18 @@ void check_return_type(const ReturnType& ret, const Type1& x, const Type2& y) {
   using stan::is_var_matrix;
   using stan::math::var_value;
   using stan::math::test::type_name;
-  if ((is_eigen<Type1>::value && is_eigen<Type2>::value) && !(is_eigen<ReturnType>::value || std::is_same<ReturnType, var_value<double>>::value)) {
-    FAIL() << type_name<Type1>() << " and " << type_name<Type2>() << " returns a " << type_name<ReturnType>() << " but should return either an Matrix<var> or a var_value<double>";
-  } else if ((is_var_matrix<Type1>::value || is_var_matrix<Type2>::value) && !(is_var_matrix<ReturnType>::value || std::is_same<ReturnType, var_value<double>>::value)) {
-    FAIL() << type_name<Type1>() << " and " << type_name<Type2>() << " returns a " << type_name<ReturnType>() << " but should return either an var<Matrix> or a var_value<double>";
+  if ((is_eigen<Type1>::value && is_eigen<Type2>::value)
+      && !(is_eigen<ReturnType>::value
+           || std::is_same<ReturnType, var_value<double>>::value)) {
+    FAIL() << type_name<Type1>() << " and " << type_name<Type2>()
+           << " returns a " << type_name<ReturnType>()
+           << " but should return either an Matrix<var> or a var_value<double>";
+  } else if ((is_var_matrix<Type1>::value || is_var_matrix<Type2>::value)
+             && !(is_var_matrix<ReturnType>::value
+                  || std::is_same<ReturnType, var_value<double>>::value)) {
+    FAIL() << type_name<Type1>() << " and " << type_name<Type2>()
+           << " returns a " << type_name<ReturnType>()
+           << " but should return either an var<Matrix> or a var_value<double>";
   }
 }
 
