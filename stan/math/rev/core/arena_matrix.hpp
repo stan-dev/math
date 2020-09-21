@@ -68,18 +68,18 @@ class arena_matrix : public Eigen::Map<MatrixType, Eigen::Aligned8> {
    * @param other expression
    */
   template <typename T, require_eigen_vt<std::is_floating_point, T>* = nullptr>
-  arena_matrix(const Eigen::Map<T, Eigen::Aligned8, Eigen::Stride<0,0>>& other)  // NOLINT
-      : Eigen::Map<MatrixType, Eigen::Aligned8>::Map(const_cast<Scalar*>(other.data()), other.rows(), other.cols()) {
-  }
-
+  arena_matrix(const Eigen::Map<T, Eigen::Aligned8, Eigen::Stride<0, 0>>&
+                   other)  // NOLINT
+      : Eigen::Map<MatrixType, Eigen::Aligned8>::Map(
+            const_cast<Scalar*>(other.data()), other.rows(), other.cols()) {}
 
   /**
    * Copy constructor.
    * @param other matrix to copy from
    */
   arena_matrix(const arena_matrix<MatrixType>& other)
-      : Eigen::Map<MatrixType, Eigen::Aligned8>::Map(const_cast<Scalar*>(other.data()),
-                                    other.rows(), other.cols()) {}
+      : Eigen::Map<MatrixType, Eigen::Aligned8>::Map(
+            const_cast<Scalar*>(other.data()), other.rows(), other.cols()) {}
 
   // without this using, compiler prefers combination of implicit construction
   // and copy assignment to the inherited operator when assigned an expression
@@ -92,8 +92,8 @@ class arena_matrix : public Eigen::Map<MatrixType, Eigen::Aligned8> {
    */
   arena_matrix& operator=(const arena_matrix<MatrixType>& other) {
     // placement new changes what data map points to - there is no allocation
-    new (this) Eigen::Map<MatrixType, Eigen::Aligned8>(const_cast<Scalar*>(other.data()),
-                                      other.rows(), other.cols());
+    new (this) Eigen::Map<MatrixType, Eigen::Aligned8>(
+        const_cast<Scalar*>(other.data()), other.rows(), other.cols());
     return *this;
   }
 
