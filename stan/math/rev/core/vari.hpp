@@ -15,7 +15,7 @@ template <typename T, typename = void>
 class vari_value;
 
 // forward declaration of var
-template <typename T>
+template <typename T, typename = void>
 class var_value;
 
 /**
@@ -173,7 +173,7 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
   }
 
  private:
-  template <typename>
+  template <typename, typename>
   friend class var_value;
 };
 
@@ -608,7 +608,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   }
 
  private:
-  template <typename>
+  template <typename, typename>
   friend class var_value;
 };
 
@@ -752,7 +752,7 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
   }
 
  private:
-  template <typename>
+  template <typename, typename>
   friend class var_value;
 };
 
