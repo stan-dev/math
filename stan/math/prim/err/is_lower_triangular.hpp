@@ -20,7 +20,8 @@ namespace math {
  */
 template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr>
 inline bool is_lower_triangular(const EigMat& y) {
-  return to_ref(y).unaryExpr([](auto&& x) { return is_not_nan(x) ? x : 1.0; })
+  return to_ref(y)
+      .unaryExpr([](auto&& x) { return is_not_nan(x) ? x : 1.0; })
       .transpose()
       .isUpperTriangular();
 }

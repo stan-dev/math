@@ -28,8 +28,9 @@ namespace math {
 template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr>
 inline bool is_cholesky_factor(const EigMat& y) {
   const auto& y_ref = to_ref(y);
-  return is_less_or_equal(y_ref.cols(), y_ref.rows()) && is_positive(y_ref.cols())
-         && is_lower_triangular(y_ref) && is_positive(y_ref.diagonal());
+  return is_less_or_equal(y_ref.cols(), y_ref.rows())
+         && is_positive(y_ref.cols()) && is_lower_triangular(y_ref)
+         && is_positive(y_ref.diagonal());
 }
 
 }  // namespace math
