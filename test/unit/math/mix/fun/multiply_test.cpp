@@ -27,17 +27,17 @@ TEST(mathMixMatFun, multiply) {
   stan::test::expect_ad(tols, f, rv1, m11);
   stan::test::expect_ad(tols, f, m11, m11);
 
-  stan::test::expect_ad_matvar(f, a, v1);
-  stan::test::expect_ad_matvar(f, v1, a);
-  stan::test::expect_ad_matvar(f, a, rv1);
-  stan::test::expect_ad_matvar(f, rv1, a);
-  stan::test::expect_ad_matvar(f, rv1, v1);
-  stan::test::expect_ad_matvar(f, v1, rv1);
-  stan::test::expect_ad_matvar(f, a, m11);
-  stan::test::expect_ad_matvar(f, m11, a);
-  stan::test::expect_ad_matvar(f, m11, v1);
-  stan::test::expect_ad_matvar(f, rv1, m11);
-  stan::test::expect_ad_matvar(f, m11, m11);
+  stan::test::expect_ad_matvar(tols, f, a, v1);
+  stan::test::expect_ad_matvar(tols, f, v1, a);
+  stan::test::expect_ad_matvar(tols, f, a, rv1);
+  stan::test::expect_ad_matvar(tols, f, rv1, a);
+  stan::test::expect_ad_matvar(tols, f, rv1, v1);
+  stan::test::expect_ad_matvar(tols, f, v1, rv1);
+  stan::test::expect_ad_matvar(tols, f, a, m11);
+  stan::test::expect_ad_matvar(tols, f, m11, a);
+  stan::test::expect_ad_matvar(tols, f, m11, v1);
+  stan::test::expect_ad_matvar(tols, f, rv1, m11);
+  stan::test::expect_ad_matvar(tols, f, m11, m11);
 
   Eigen::VectorXd v0(0);
   Eigen::RowVectorXd rv0(0);
@@ -84,17 +84,17 @@ TEST(mathMixMatFun, multiply) {
   stan::test::expect_ad(tols, f, rv, m);
   stan::test::expect_ad(tols, f, m, m);
 
-  stan::test::expect_ad_matvar(f, a, v);
-  stan::test::expect_ad_matvar(f, v, a);
-  stan::test::expect_ad_matvar(f, a, rv);
-  stan::test::expect_ad_matvar(f, rv, a);
-  stan::test::expect_ad_matvar(f, rv, v);
-  stan::test::expect_ad_matvar(f, v, rv);
-  stan::test::expect_ad_matvar(f, a, m);
-  stan::test::expect_ad_matvar(f, m, a);
-  stan::test::expect_ad_matvar(f, m, v);
-  stan::test::expect_ad_matvar(f, rv, m);
-  stan::test::expect_ad_matvar(f, m, m);
+  stan::test::expect_ad_matvar(tols, f, a, v);
+  stan::test::expect_ad_matvar(tols, f, v, a);
+  stan::test::expect_ad_matvar(tols, f, a, rv);
+  stan::test::expect_ad_matvar(tols, f, rv, a);
+  stan::test::expect_ad_matvar(tols, f, rv, v);
+  stan::test::expect_ad_matvar(tols, f, v, rv);
+  stan::test::expect_ad_matvar(tols, f, a, m);
+  stan::test::expect_ad_matvar(tols, f, m, a);
+  stan::test::expect_ad_matvar(tols, f, m, v);
+  stan::test::expect_ad_matvar(tols, f, rv, m);
+  stan::test::expect_ad_matvar(tols, f, m, m);
 
   Eigen::RowVectorXd d1(3);
   d1 << 1, 3, -5;
@@ -103,8 +103,8 @@ TEST(mathMixMatFun, multiply) {
   stan::test::expect_ad(tols, f, d1, d2);
   stan::test::expect_ad(tols, f, d2, d1);
 
-  stan::test::expect_ad_matvar(f, d1, d2);
-  stan::test::expect_ad_matvar(f, d2, d1);
+  stan::test::expect_ad_matvar(tols, f, d1, d2);
+  stan::test::expect_ad_matvar(tols, f, d2, d1);
 
   Eigen::MatrixXd u(3, 2);
   u << 1, 3, -5, 4, -2, -1;
@@ -118,10 +118,10 @@ TEST(mathMixMatFun, multiply) {
   stan::test::expect_ad(tols, f, u, vv);
   stan::test::expect_ad(tols, f, rvv, u);
 
-  stan::test::expect_ad_matvar(f, u, u_tr);
-  stan::test::expect_ad_matvar(f, u_tr, u);
-  stan::test::expect_ad_matvar(f, u, vv);
-  stan::test::expect_ad_matvar(f, rvv, u);
+  stan::test::expect_ad_matvar(tols, f, u, u_tr);
+  stan::test::expect_ad_matvar(tols, f, u_tr, u);
+  stan::test::expect_ad_matvar(tols, f, u, vv);
+  stan::test::expect_ad_matvar(tols, f, rvv, u);
 
   // exception cases
   // can't compile mismatched dimensions, so no tests
