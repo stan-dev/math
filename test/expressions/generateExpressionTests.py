@@ -79,6 +79,42 @@ def parse_signature_file(sig_file):
         res.append(signature)
     return res
 
+def add_extra_signatures(res):
+    """
+    """
+    res.append("vector unit_vector_constrain(vector)")
+    res.append("vector unit_vector_constrain(row_vector)")
+    res.append("vector unit_vector_constrain(vector, real)")
+    res.append("vector unit_vector_constrain(row_vector, real)")
+    res.append("vector unit_vector_free(vector)")
+    res.append("vector unit_vector_free(row_vector)")
+    res.append("int is_cholesky_factor(matrix)")
+    res.append("int is_cholesky_factor_corr(matrix)")
+    res.append("int is_column_index(matrix, int)")
+    res.append("int is_column_index(vector, int)")
+    res.append("int is_corr_matrix(matrix)")
+    res.append("int is_cholesky_factor(matrix)")
+    res.append("int is_lower_triangular(matrix)")
+    res.append("int is_mat_finite(matrix)")
+    res.append("int is_mat_finite(vector)")
+    res.append("int is_matching_dims(matrix, matrix)")
+    res.append("int is_matching_dims(vector, matrix)")
+    res.append("int is_matching_dims(matrix, vector)")
+    res.append("int is_matching_dims(row_vector, matrix)")
+    res.append("int is_matching_dims(matrix, row_vector)")
+    res.append("int is_matching_dims(matrix, matrix)")
+    res.append("int is_matching_dims(row_vector, row_vector)")
+    res.append("int is_matching_dims(vector, row_vector)")
+    res.append("int is_matching_dims(row_vector, vector)")
+    res.append("int is_matching_dims(vector, vector)")
+    res.append("int is_pos_definite(matrix)")
+    res.append("int is_square(matrix)")
+    res.append("int is_square(vector)")
+    res.append("int is_square(row_vector)")
+    res.append("int is_symmetric(matrix)")
+    res.append("int is_unit_vector(vector)")
+    res.append("int is_unit_vector(row_matrix)")
+    return res
 
 def get_signatures():
     """
@@ -100,14 +136,14 @@ def get_signatures():
         universal_newlines=True,
         shell=True,
     )
-
+    #import pdb; pdb.set_trace()
     res = parse_signature_file(p.stdout)
-
     if p.wait() != 0:
         sys.stderr.write("Error in getting signatures from stanc3!\n")
         sys.exit(-1)
 
-    return res
+    res_full = add_extra_signatures(res)
+    return res_full
 
 
 def parse_signature(signature):
@@ -138,6 +174,7 @@ special_arg_values = {
     "lkj_corr_log": [1, None],
     "log_diff_exp": [3, None],
     "log_inv_logit_diff": [1.2, 0.4],
+    "unit_vector_free" : [1.0],
 }
 
 
@@ -193,12 +230,12 @@ def save_tests_in_files(N_files, tests):
 
 def handle_function_list(functions_input, signatures):
     """
-    Handles list of functions, splitting elements between functions and signatures.  
+    Handles list of functions, splitting elements between functions and signatures.
     :param functions_input: This can contain names of functions
     already supported by stanc3, full function signatures or file names of files containing
     any of the previous two.
-    :param signatures: 
-    :return: 
+    :param signatures:
+    :return:
     """
     function_names = []
     function_signatures = []
@@ -231,7 +268,7 @@ def main(functions=(), j=1):
      - functions evaluate expressions at most once
 
     :param functions: functions to generate tests for. This can contain names of functions
-    already supported by stanc3, full function signatures or file names of files containing 
+    already supported by stanc3, full function signatures or file names of files containing
     any of the previous two. Default: all signatures supported by stanc3
     :param j: number of files to split tests in
     """

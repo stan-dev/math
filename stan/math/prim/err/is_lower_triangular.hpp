@@ -2,6 +2,8 @@
 #define STAN_MATH_PRIM_ERR_IS_LOWER_TRIANGULAR_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/err/is_not_nan.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/meta.hpp>
 
 namespace stan {
@@ -18,7 +20,7 @@ namespace math {
  */
 template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr>
 inline bool is_lower_triangular(const EigMat& y) {
-  return y.unaryExpr([](auto&& x) { return std::isnan(x) ? 1.0 : x; })
+  return to_ref(y).unaryExpr([](auto&& x) { return is_not_nan(x) ? x : 1.0; })
       .transpose()
       .isUpperTriangular();
 }

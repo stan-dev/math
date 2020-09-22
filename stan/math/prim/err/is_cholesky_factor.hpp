@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_ERR_IS_CHOLESKY_FACTOR_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/is_positive.hpp>
 #include <stan/math/prim/err/is_lower_triangular.hpp>
@@ -26,8 +27,9 @@ namespace math {
  */
 template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr>
 inline bool is_cholesky_factor(const EigMat& y) {
-  return is_less_or_equal(y.cols(), y.rows()) && is_positive(y.cols())
-         && is_lower_triangular(y) && is_positive(y.diagonal());
+  const auto& y_ref = to_ref(y);
+  return is_less_or_equal(y_ref.cols(), y_ref.rows()) && is_positive(y_ref.cols())
+         && is_lower_triangular(y_ref) && is_positive(y_ref.diagonal());
 }
 
 }  // namespace math

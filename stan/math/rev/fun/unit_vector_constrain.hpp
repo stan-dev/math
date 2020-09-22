@@ -54,9 +54,9 @@ class unit_vector_elt_vari : public vari {
  **/
 template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
 auto unit_vector_constrain(const EigMat& y) {
-  check_vector("unit_vector", "y", y);
-  check_nonzero_size("unit_vector", "y", y);
   const auto& y_mat = to_ref(y);
+  check_vector("unit_vector", "y", y_mat);
+  check_nonzero_size("unit_vector", "y", y_mat);
   auto y_d = y_mat.val();
 
   vari** y_vi_array = reinterpret_cast<vari**>(

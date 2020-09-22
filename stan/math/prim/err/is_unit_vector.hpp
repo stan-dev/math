@@ -29,8 +29,8 @@ template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
 inline bool is_unit_vector(const EigVec& theta) {
   using std::fabs;
   const auto& theta_ref = to_ref(theta);
-  if (is_nonzero_size(theta)) {
-    value_type_t<EigVec> seq = theta.squaredNorm();
+  if (is_nonzero_size(theta_ref)) {
+    value_type_t<EigVec> seq = theta_ref.squaredNorm();
     return fabs(1.0 - seq) <= CONSTRAINT_TOLERANCE;
   }
   return false;

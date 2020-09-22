@@ -19,7 +19,7 @@ template <typename EigMat, require_eigen_vt<is_fvar, EigMat>* = nullptr>
 inline auto unit_vector_constrain(const EigMat& y) {
   using eig_partial = partials_type_t<value_type_t<EigMat>>;
   promote_scalar_t<eig_partial, EigMat> y_val(value_of(y));
-  plain_type_t<EigMat> unit_vector_y(y.size());
+  plain_type_t<EigMat> unit_vector_y(y_val.size());
   unit_vector_y.val() = unit_vector_constrain(y_val);
 
   eig_partial squared_norm = dot_self(y_val);
@@ -41,9 +41,10 @@ template <typename EigMat, typename T,
           require_eigen_vt<is_fvar, EigMat>* = nullptr,
           require_stan_scalar_t<T>* = nullptr>
 inline auto unit_vector_constrain(const EigMat& y, T& lp) {
-  const value_type_t<EigMat> squared_norm = dot_self(y);
+  const auto& y_ref = to_ref(y);
+  const value_type_t<EigMat> squared_norm = dot_self(y_ref);
   lp -= 0.5 * squared_norm;
-  return unit_vector_constrain(y);
+  return unit_vector_constrain(y_ref);
 }
 
 }  // namespace math

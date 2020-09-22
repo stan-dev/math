@@ -17,7 +17,8 @@ namespace math {
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
 inline bool is_square(const EigMat& y) {
-  return is_size_match(y.rows(), y.cols());
+  const auto& y_ref = to_ref(y);
+  return is_size_match(y_ref.rows(), y_ref.cols());
 }
 
 }  // namespace math

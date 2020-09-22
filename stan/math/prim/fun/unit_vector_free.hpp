@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <cmath>
 
 namespace stan {
@@ -20,9 +21,10 @@ namespace math {
  * @return Unit vector of dimension K considered "free"
  */
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
-inline EigVec unit_vector_free(EigVec&& x) {
-  check_unit_vector("stan::math::unit_vector_free", "Unit vector variable", x);
-  return std::forward<EigVec>(x);
+inline auto unit_vector_free(EigVec&& x) {
+  const auto& x_ref = to_ref(x);
+  check_unit_vector("stan::math::unit_vector_free", "Unit vector variable", x_ref);
+  return x_ref;
 }
 
 }  // namespace math

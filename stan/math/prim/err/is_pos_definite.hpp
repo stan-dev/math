@@ -40,7 +40,7 @@ inline bool is_pos_definite(const EigMat& y) {
       || (cholesky.vectorD().array() <= 0.0).any()) {
     return false;
   }
-  return is_not_nan(y);
+  return is_not_nan(y_ref);
 }
 
 /**
