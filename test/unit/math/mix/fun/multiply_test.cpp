@@ -103,6 +103,9 @@ TEST(mathMixMatFun, multiply) {
   stan::test::expect_ad(tols, f, d1, d2);
   stan::test::expect_ad(tols, f, d2, d1);
 
+  stan::test::expect_ad_matvar(f, d1, d2);
+  stan::test::expect_ad_matvar(f, d2, d1);
+
   Eigen::MatrixXd u(3, 2);
   u << 1, 3, -5, 4, -2, -1;
   Eigen::MatrixXd u_tr = u.transpose();
@@ -135,7 +138,7 @@ void instantiate_multiply() {
   Eigen::Matrix<std::complex<T>, -1, -1> cv(2, 2);
   cv << 1, 2, 3, 4;
 
-  auto d_d = (d * d).eval();
+  auto d_d = d * d;
   auto d_v = d * v;
   auto d_cd = d * cd;
   auto d_cv = d * cv;

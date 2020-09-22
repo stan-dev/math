@@ -102,3 +102,33 @@ TEST(requires_rev_scal, stan_scalar_any_not_test) {
   require_scal_checker<stan::require_any_not_stan_scalar_t, var,
                        var>::any_not();
 }
+
+template <typename... Types>
+using require_test_var_return_t = stan::require_return_type_t<stan::is_var, Types...>;
+
+template <typename... Types>
+using require_test_arithmetic_return_t = stan::require_return_type_t<std::is_arithmetic, Types...>;
+
+template <typename... Types>
+using require_test_not_var_return_t = stan::require_not_return_type_t<stan::is_var, Types...>;
+
+template <typename... Types>
+using require_test_not_arithmetic_return_t = stan::require_not_return_type_t<std::is_arithmetic, Types...>;
+
+TEST(requires_rev_scal, return_type_t_test) {
+  using stan::math::var;
+  using stan::math::var_value;
+  using stan::require_return_type_t;
+  using stan::test::require_variadic_checker;
+
+  EXPECT_TRUE((require_variadic_checker<require_test_var_return_t, var, double>::value));
+  EXPECT_TRUE((require_variadic_checker<require_test_var_return_t, var, double, Eigen::Matrix<var, -1, -1>>::value));
+  EXPECT_FALSE((require_variadic_checker<require_test_arithmetic_return_t, var, double>::value));
+  EXPECT_FALSE((require_variadic_checker<require_test_arithmetic_return_t, var, double, Eigen::Matrix<var, -1, -1>>::value));
+
+  EXPECT_FALSE((require_variadic_checker<require_test_not_var_return_t, var, double>::value));
+  EXPECT_FALSE((require_variadic_checker<require_test_not_var_return_t, var, double, Eigen::Matrix<var, -1, -1>>::value));
+  EXPECT_TRUE((require_variadic_checker<require_test_not_arithmetic_return_t, var, double>::value));
+  EXPECT_TRUE((require_variadic_checker<require_test_not_arithmetic_return_t, var, double, Eigen::Matrix<var, -1, -1>>::value));
+
+}

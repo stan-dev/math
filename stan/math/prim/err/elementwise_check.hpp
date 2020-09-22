@@ -93,36 +93,45 @@ class Checker {
   }
 
   /**
-   * Check all the scalars inside the vector.
+   * Check all the scalars inside the standard vector.
    * @tparam T type of vector
    * @tparam Ms types of messages
    * @param x vector
    * @param messages a list of messages to append to the error message
    * @throws `E` if any of the scalars fail the error check
    */
-  template <typename T, require_vector_t<T>* = nullptr, typename = void,
-            typename... Ms>
+  template <typename T, require_std_vector_t<T>* = nullptr, typename... Ms>
   void check(const T& x, Ms... messages) {
     for (size_t i = 0; i < stan::math::size(x); ++i)
       check(x[i], messages..., "[", i + 1, "]");
   }
 
+
   /**
-   * Check all the scalars inside the vector.
+   * Check all the scalars inside an eigen vector.
    * @tparam T type of vector
    * @tparam Ms types of messages
    * @param x vector
    * @param messages a list of messages to append to the error message
    * @throws `E` if any of the scalars fail the error check
    */
-  template <typename T,
-            require_all_t<is_var<T>, is_eigen<value_type_t<T>>>* = nullptr,
-            typename = void, typename... Ms>
+  template <typename T, require_eigen_vector_t<T>* = nullptr, typename... Ms>
   void check(const T& x, Ms... messages) {
-    for (size_t n = 0; n < x.cols(); ++n)
-      for (size_t m = 0; m < x.rows(); ++m)
-        check(x.val().coeffRef(m, n), messages..., "[row=", m + 1,
-              ", col=", n + 1, "]");
+    for (size_t i = 0; i < stan::math::size(x); ++i)
+      check(x.coeff(i), messages..., "[", i + 1, "]");
+  }
+
+  /**
+   * Check all the scalars inside the `var_value<Matrix>`.
+   * @tparam T type of vector
+   * @tparam Ms types of messages
+   * @param x vector
+   * @param messages a list of messages to append to the error message
+   * @throws `E` if any of the scalars fail the error check
+   */
+  template <typename T, require_var_matrix_t<T>* = nullptr, typename... Ms>
+  void check(const T& x, Ms... messages) {
+        check(x.val(), messages...);
   }
 
   /**
@@ -133,11 +142,11 @@ class Checker {
    * @param messages a list of messages to append to the error message
    * @throws `E` if any of the scalars fail the error check
    */
-  template <typename Derived, typename... Ms>
-  void check(const Eigen::DenseBase<Derived>& x, Ms... messages) {
+  template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr, typename... Ms>
+  void check(const EigMat& x, Ms... messages) {
     for (size_t n = 0; n < x.cols(); ++n)
       for (size_t m = 0; m < x.rows(); ++m)
-        check(x(m, n), messages..., "[row=", m + 1, ", col=", n + 1, "]");
+        check(x.coeff(m, n), messages..., "[row=", m + 1, ", col=", n + 1, "]");
   }
 };  // namespace internal
 

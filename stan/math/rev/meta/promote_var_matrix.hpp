@@ -6,6 +6,16 @@
 #include <stan/math/prim/meta.hpp>
 
 namespace stan {
+
+  /**
+   * Given an Eigen type and several inputs, determine if a matrix should be
+   * `var<Matrix>` or `Matrix<var>`.
+   * @tparam ReturnType An Eigen matrix used for composing the `var<Matrix>` or
+   *  `Matrix<var>` type.
+   * @Types Parameter pack holding any mix of types. If any of `Types`
+   *  are a `var<Matrix>` this holds a `var<Matrix>` type.
+   *  Else the type will be `Matrix<var>`
+   */
 template <typename ReturnType, typename... Types>
 using promote_var_matrix_t = std::conditional_t<
     is_any_var_matrix<Types...>::value,
