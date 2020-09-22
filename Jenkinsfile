@@ -287,7 +287,7 @@ pipeline {
                         sh """
                             echo CXX=${env.CXX} > make/local
                             echo O=0 >> make/local
-                            echo N_TESTS=1500 >> make/local
+                            echo N_TESTS=100 >> make/local
                             """
                         script {
                             if (params.withRowVector || isBranch('develop') || isBranch('master')) {
