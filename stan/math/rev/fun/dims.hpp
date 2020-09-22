@@ -17,7 +17,7 @@ namespace math {
  * @param x argument
  * @param result result
  */
-template <typename T, require_eigen_t<T>* = nullptr>
+template <typename T>
 inline void dims(const var_value<T>& x, std::vector<int>& result) {
   dims(*x.vi_, result);
 }
@@ -30,10 +30,9 @@ inline void dims(const var_value<T>& x, std::vector<int>& result) {
  * @param x argument
  * @param result result
  */
-template <typename T, require_eigen_t<T>* = nullptr>
+template <typename T>
 inline void dims(const vari_value<T>& x, std::vector<int>& result) {
-  result.push_back(x.rows());
-  result.push_back(x.cols());
+  dims(x.val_, result);
 }
 
 }  // namespace math

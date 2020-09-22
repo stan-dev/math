@@ -12,7 +12,7 @@ namespace stan {
  * `var<Matrix>` or `Matrix<var>`.
  * @tparam ReturnType An Eigen matrix used for composing the `var<Matrix>` or
  *  `Matrix<var>` type.
- * @Types Parameter pack holding any mix of types. If any of `Types`
+ * @tparam Types Parameter pack holding any mix of types. If any of `Types`
  *  are a `var<Matrix>` this holds a `var<Matrix>` type.
  *  Else the type will be `Matrix<var>`
  */

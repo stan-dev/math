@@ -165,6 +165,12 @@
  * These macros are used on type traits to define the set of `requires`
  */
 
+/**
+ * \ingroup require_meta
+ * \defgroup require_opencl_types OpenCL
+ * `require` type traits to detect types used with OpenCL.
+ */
+
 #include <stan/math/prim/meta/ad_promotable.hpp>
 #include <stan/math/prim/meta/append_return_type.hpp>
 #include <stan/math/prim/meta/as_array_or_scalar.hpp>
@@ -193,6 +199,7 @@
 #include <stan/math/prim/meta/is_eigen_matrix_base.hpp>
 #include <stan/math/prim/meta/is_eigen_sparse_base.hpp>
 #include <stan/math/prim/meta/is_fvar.hpp>
+#include <stan/math/prim/meta/is_matrix_cl.hpp>
 #include <stan/math/prim/meta/is_matrix_like.hpp>
 #include <stan/math/prim/meta/is_plain_type.hpp>
 #include <stan/math/prim/meta/is_string_convertible.hpp>
