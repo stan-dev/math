@@ -24,8 +24,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
   using T_partials_return = partials_return_t<T_y, T_scale, T_shape>;
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
   using T_y_min_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
-  using T_alpha_ref
-      = ref_type_if_t<!is_constant<T_shape>::value, T_shape>;
+  using T_alpha_ref = ref_type_if_t<!is_constant<T_shape>::value, T_shape>;
   static const char* function = "pareto_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          y_min, "Shape parameter", alpha);
@@ -76,10 +75,12 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
       y_ref, y_min_ref, alpha_ref);
   if (!is_constant_all<T_y>::value) {
     const auto& inv_y = inv(y_val);
-    ops_partials.edge1_.partials_ = -(alpha_val * inv_y + inv_y) * N / max_size(alpha, y);
+    ops_partials.edge1_.partials_
+        = -(alpha_val * inv_y + inv_y) * N / max_size(alpha, y);
   }
   if (!is_constant_all<T_scale>::value) {
-    ops_partials.edge2_.partials_ = alpha_val / y_min_val * N / max_size(alpha, y_min);
+    ops_partials.edge2_.partials_
+        = alpha_val / y_min_val * N / max_size(alpha, y_min);
   }
   if (include_summand<propto, T_scale, T_shape>::value) {
     const auto& log_y_min

@@ -86,13 +86,12 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lccdf(
     if (is_vector<T_shape>::value) {
       using Log_temp_scalar = partials_return_t<T_y, T_loc, T_scale>;
       using Log_temp_array = Eigen::Array<Log_temp_scalar, Eigen::Dynamic, 1>;
-      if (is_vector<T_y>::value || is_vector<T_loc>::value || is_vector<T_scale>::value) {
-        ops_partials.edge4_.partials_
-            = -forward_as<Log_temp_array>(log_temp);
+      if (is_vector<T_y>::value || is_vector<T_loc>::value
+          || is_vector<T_scale>::value) {
+        ops_partials.edge4_.partials_ = -forward_as<Log_temp_array>(log_temp);
       } else {
-        ops_partials.edge4_.partials_
-            = Log_temp_array::Constant(N, 1,
-                                       -forward_as<Log_temp_scalar>(log_temp));
+        ops_partials.edge4_.partials_ = Log_temp_array::Constant(
+            N, 1, -forward_as<Log_temp_scalar>(log_temp));
       }
     } else {
       forward_as<internal::broadcast_array<T_partials_return>>(
