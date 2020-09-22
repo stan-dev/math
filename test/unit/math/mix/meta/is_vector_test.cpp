@@ -2,11 +2,10 @@
 #include <test/unit/math/mix/meta/eigen_utils.hpp>
 #include <gtest/gtest.h>
 
-
 TEST(MathMetaMix, is_row_vector_test) {
   using stan::is_row_vector;
-  using stan::math::var_value;
   using stan::math::var;
+  using stan::math::var_value;
   EXPECT_TRUE((is_row_vector<Eigen::RowVectorXd>::value));
   EXPECT_TRUE((is_row_vector<Eigen::Matrix<var, 1, -1>>::value));
   EXPECT_TRUE((is_row_vector<var_value<Eigen::RowVectorXd>>::value));
@@ -26,8 +25,8 @@ TEST(MathMetaMix, is_row_vector_test) {
 
 TEST(MathMetaMix, is_col_vector_test) {
   using stan::is_col_vector;
-  using stan::math::var_value;
   using stan::math::var;
+  using stan::math::var_value;
   EXPECT_TRUE((is_col_vector<Eigen::Matrix<var, -1, 1>>::value));
   EXPECT_TRUE((is_col_vector<Eigen::VectorXd>::value));
   EXPECT_TRUE((is_col_vector<var_value<Eigen::VectorXd>>::value));

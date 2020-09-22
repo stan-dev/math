@@ -1518,8 +1518,10 @@ inline void test_matvar_gradient(ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
   A_vm_f.adj() = 1;
   A_mv_f.adj() = 1;
   stan::math::grad();
-  expect_near_rel_var("first argument var<Matrix> vs Matrix<var> result", A_vm1, A_mv1);
-  expect_near_rel_var("second argument var<Matrix> vs Matrix<var> result", A_vm2, A_mv2);
+  expect_near_rel_var("first argument var<Matrix> vs Matrix<var> result", A_vm1,
+                      A_mv1);
+  expect_near_rel_var("second argument var<Matrix> vs Matrix<var> result",
+                      A_vm2, A_mv2);
   expect_near_rel("var<Matrix> vs Matrix<var> result value", A_vm_f.val(),
                   A_mv_f.val(), 1e-12);
   stan::math::set_zero_all_adjoints();
@@ -1585,8 +1587,10 @@ inline void test_matvar_gradient(ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
     A_vm_f.adj()(i) = 1;
     A_mv_f.adj()(i) = 1;
     stan::math::grad();
-    expect_near_rel_var("first argument var<Matrix> vs Matrix<var> result", A_vm1, A_mv1);
-    expect_near_rel_var("second argument var<Matrix> vs Matrix<var> result", A_vm2, A_mv2);
+    expect_near_rel_var("first argument var<Matrix> vs Matrix<var> result",
+                        A_vm1, A_mv1);
+    expect_near_rel_var("second argument var<Matrix> vs Matrix<var> result",
+                        A_vm2, A_mv2);
     expect_near_rel("var<Matrix> vs Matrix<var> result value", A_vm_f.val(),
                     A_mv_f.val(), 1e-12);
     stan::math::set_zero_all_adjoints();
@@ -1757,11 +1761,13 @@ void test_matvar_mixture_impl(F&& f, const MatVar1& A_mv1, const MatVar2& A_mv2,
  *
  * @tparam F A lambda or functor type that calls the unary function.
  * @tparam Type1 Either arithmetic or `var`. If arithmetic This will make the
- * first argument of the function invocation be arithmetic, if `var` this will make the first argument
- * be an Eigen matrix of vars and a var with an inner matrix type.
+ * first argument of the function invocation be arithmetic, if `var` this will
+ * make the first argument be an Eigen matrix of vars and a var with an inner
+ * matrix type.
  * @tparam Type2 Either arithmetic or `var`. If arithmetic This will make the
- * second argument of the function invocation be arithmetic, if `var` this will make the second argument
- * be an Eigen matrix of vars and a var with an inner matrix type.
+ * second argument of the function invocation be arithmetic, if `var` this will
+ * make the second argument be an Eigen matrix of vars and a var with an inner
+ * matrix type.
  * @tparam EigMat1 An eigen type
  * @tparam EigMat2 An eigen type
  * @param f a lambda

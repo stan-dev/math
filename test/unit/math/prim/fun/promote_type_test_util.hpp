@@ -27,9 +27,10 @@ void expect_promote_type() {
   using stan::math::promote_scalar_type;
   using stan::math::test::type_name;
   using promoted_S = typename promote_scalar_type<T, S>::type;
-  EXPECT_TRUE((std::is_same<E, promoted_S>::value)) << "Expected Result: " <<
-   type_name<E>() << " from promoting " << type_name<S>() << " to " << type_name<T>() << " and instead got " <<
-   type_name<promoted_S>();
+  EXPECT_TRUE((std::is_same<E, promoted_S>::value))
+      << "Expected Result: " << type_name<E>() << " from promoting "
+      << type_name<S>() << " to " << type_name<T>() << " and instead got "
+      << type_name<promoted_S>();
 }
 
 #endif

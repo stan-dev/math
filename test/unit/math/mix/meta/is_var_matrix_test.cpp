@@ -2,11 +2,10 @@
 #include <test/unit/math/mix/meta/eigen_utils.hpp>
 #include <gtest/gtest.h>
 
-
 TEST(MathMetaMix, is_var_matrix_test) {
   using stan::is_var_matrix;
-  using stan::math::var_value;
   using stan::math::var;
+  using stan::math::var_value;
   EXPECT_TRUE((is_var_matrix<var_value<Eigen::MatrixXd>>::value));
   EXPECT_TRUE((is_var_matrix<var_value<Eigen::VectorXd>>::value));
   EXPECT_TRUE((is_var_matrix<var_value<Eigen::RowVectorXd>>::value));

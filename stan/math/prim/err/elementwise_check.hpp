@@ -106,7 +106,6 @@ class Checker {
       check(x[i], messages..., "[", i + 1, "]");
   }
 
-
   /**
    * Check all the scalars inside an eigen vector.
    * @tparam T type of vector
@@ -131,7 +130,7 @@ class Checker {
    */
   template <typename T, require_var_matrix_t<T>* = nullptr, typename... Ms>
   void check(const T& x, Ms... messages) {
-        check(x.val(), messages...);
+    check(x.val(), messages...);
   }
 
   /**
@@ -142,7 +141,8 @@ class Checker {
    * @param messages a list of messages to append to the error message
    * @throws `E` if any of the scalars fail the error check
    */
-  template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr, typename... Ms>
+  template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr,
+            typename... Ms>
   void check(const EigMat& x, Ms... messages) {
     for (size_t n = 0; n < x.cols(); ++n)
       for (size_t m = 0; m < x.rows(); ++m)
