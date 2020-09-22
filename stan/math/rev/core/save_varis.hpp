@@ -30,8 +30,7 @@ template <typename EigT, require_eigen_vt<is_var, EigT>* = nullptr,
 inline vari** save_varis(vari** dest, EigT&& x, Pargs&&... args);
 
 template <typename F, require_stan_closure_t<F>* = nullptr,
-          require_not_st_arithmetic<F>* = nullptr,
-          typename... Pargs>
+          require_not_st_arithmetic<F>* = nullptr, typename... Pargs>
 inline vari** save_varis(vari** dest, F& f, Pargs&&... args);
 
 template <typename Arith, require_st_arithmetic<Arith>* = nullptr,
@@ -136,8 +135,7 @@ inline vari** save_varis(vari** dest, EigT&& x, Pargs&&... args) {
  * @param[in] args Additional arguments to have their varis saved
  * @return Final position of dest pointer
  */
-template <typename F, require_stan_closure_t<F>*,
-          require_not_st_arithmetic<F>*,
+template <typename F, require_stan_closure_t<F>*, require_not_st_arithmetic<F>*,
           typename... Pargs>
 inline vari** save_varis(vari** dest, F& f, Pargs&&... args) {
   return save_varis(f.save_varis__(dest), std::forward<Pargs>(args)...);

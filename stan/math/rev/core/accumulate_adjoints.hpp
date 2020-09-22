@@ -30,8 +30,7 @@ template <typename EigT, require_eigen_vt<is_var, EigT>* = nullptr,
 inline double* accumulate_adjoints(double* dest, EigT&& x, Pargs&&... args);
 
 template <typename F, require_stan_closure_t<F>* = nullptr,
-          require_not_st_arithmetic<F>* = nullptr,
-          typename... Pargs>
+          require_not_st_arithmetic<F>* = nullptr, typename... Pargs>
 inline double* accumulate_adjoints(double* dest, F& f, Pargs&&... args);
 
 template <typename Arith, require_st_arithmetic<Arith>* = nullptr,
@@ -140,8 +139,7 @@ inline double* accumulate_adjoints(double* dest, EigT&& x, Pargs&&... args) {
  * @param args Further args to accumulate over
  * @return Final position of adjoint storage pointer
  */
-template <typename F, require_stan_closure_t<F>*,
-          require_not_st_arithmetic<F>*,
+template <typename F, require_stan_closure_t<F>*, require_not_st_arithmetic<F>*,
           typename... Pargs>
 inline double* accumulate_adjoints(double* dest, F& f, Pargs&&... args) {
   return accumulate_adjoints(f.accumulate_adjoints__(dest),
