@@ -6,7 +6,7 @@
 #include <string>
 
 TEST(MathPrim, ode_store_sensitivities) {
-  mock_ode_functor base_ode;
+  stan::math::closure_adapter<mock_ode_functor> base_ode{mock_ode_functor()};
 
   size_t N = 5;
 

@@ -31,7 +31,7 @@ namespace math {
  */
 template <typename F, typename T_y0_t0, typename T_t0, typename T_t,
           typename... Args,
-          require_any_autodiff_t<T_y0_t0, T_t0, T_t,
+          require_any_autodiff_t<scalar_type_t<F>, T_y0_t0, T_t0, T_t,
                                  scalar_type_t<Args>...>* = nullptr>
 Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
     const F& f, const std::vector<double>& coupled_state,
@@ -39,7 +39,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
     const T_t& t, std::ostream* msgs, const Args&... args) {
   const size_t N = y0.size();
   const size_t num_y0_vars = count_vars(y0);
-  const size_t num_args_vars = count_vars(args...);
+  const size_t num_args_vars = count_vars(f, args...);
   const size_t num_t0_vars = count_vars(t0);
   const size_t num_t_vars = count_vars(t);
   Eigen::Matrix<var, Eigen::Dynamic, 1> yt(N);
@@ -51,12 +51,12 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
 
   Eigen::VectorXd f_y_t;
   if (is_var<T_t>::value)
-    f_y_t = f(value_of(t), y, msgs, eval(value_of(args))...);
+    f_y_t = value_of(f)(msgs, value_of(t), y, eval(value_of(args))...);
 
   Eigen::VectorXd f_y0_t0;
   if (is_var<T_t0>::value)
-    f_y0_t0
-        = f(value_of(t0), eval(value_of(y0)), msgs, eval(value_of(args))...);
+    f_y0_t0 = value_of(f)(msgs, value_of(t0), eval(value_of(y0)),
+                          eval(value_of(args))...);
 
   const size_t total_vars
       = num_y0_vars + num_args_vars + num_t0_vars + num_t_vars;
@@ -64,7 +64,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
   vari** varis
       = ChainableStack::instance_->memalloc_.alloc_array<vari*>(total_vars);
 
-  save_varis(varis, y0, args..., t0, t);
+  save_varis(varis, y0, f, args..., t0, t);
 
   // memory for a column major jacobian
   double* jacobian_mem

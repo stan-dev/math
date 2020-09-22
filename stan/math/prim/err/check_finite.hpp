@@ -17,13 +17,16 @@ namespace math {
  * @param y variable to check
  * @throw <code>domain_error</code> if y is infinity, -infinity, or NaN
  */
-template <typename T_y>
+template <typename T_y, require_not_stan_closure_t<T_y>* = nullptr>
 inline void check_finite(const char* function, const char* name, const T_y& y) {
   if (check_finite_screen(y)) {
     auto is_good = [](const auto& y) { return std::isfinite(y); };
     elementwise_check(is_good, function, name, y, ", but must be finite!");
   }
 }
+
+template <typename T, require_stan_closure_t<T>* = nullptr>
+inline void check_finite(const char* function, const char* name, const T& y) {}
 
 }  // namespace math
 }  // namespace stan

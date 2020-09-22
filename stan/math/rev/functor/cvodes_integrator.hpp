@@ -31,11 +31,12 @@ namespace math {
 template <int Lmm, typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... T_Args>
 class cvodes_integrator {
-  using T_Return = return_type_t<T_y0, T_t0, T_ts, T_Args...>;
+  using T_Return = return_type_t<F, T_y0, T_t0, T_ts, T_Args...>;
   using T_y0_t0 = return_type_t<T_y0, T_t0>;
 
   const char* function_name_;
   const F& f_;
+  typename F::ValueOf__ value_of_f_;
   const Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1> y0_;
   const T_t0 t0_;
   const std::vector<T_ts>& ts_;
@@ -102,9 +103,9 @@ class cvodes_integrator {
   inline void rhs(double t, const double y[], double dy_dt[]) const {
     const Eigen::VectorXd y_vec = Eigen::Map<const Eigen::VectorXd>(y, N_);
 
-    Eigen::VectorXd dy_dt_vec
-        = apply([&](auto&&... args) { return f_(t, y_vec, msgs_, args...); },
-                value_of_args_tuple_);
+    Eigen::VectorXd dy_dt_vec = apply(
+        [&](auto&&... args) { return value_of_f_(msgs_, t, y_vec, args...); },
+        value_of_args_tuple_);
 
     check_size_match("cvodes_integrator", "dy_dt", dy_dt_vec.size(), "states",
                      N_);
@@ -121,8 +122,9 @@ class cvodes_integrator {
     Eigen::MatrixXd Jfy;
 
     auto f_wrapped = [&](const Eigen::Matrix<var, Eigen::Dynamic, 1>& y) {
-      return apply([&](auto&&... args) { return f_(t, y, msgs_, args...); },
-                   value_of_args_tuple_);
+      return apply(
+          [&](auto&&... args) { return value_of_f_(msgs_, t, y, args...); },
+          value_of_args_tuple_);
     };
 
     jacobian(f_wrapped, Eigen::Map<const Eigen::VectorXd>(y, N_), fy, Jfy);
@@ -191,6 +193,7 @@ class cvodes_integrator {
                     std::ostream* msgs, const T_Args&... args)
       : function_name_(function_name),
         f_(f),
+        value_of_f_(value_of(f)),
         y0_(y0.template cast<T_y0_t0>()),
         t0_(t0),
         ts_(ts),
@@ -202,7 +205,7 @@ class cvodes_integrator {
         absolute_tolerance_(absolute_tolerance),
         max_num_steps_(max_num_steps),
         num_y0_vars_(count_vars(y0_)),
-        num_args_vars_(count_vars(args...)),
+        num_args_vars_(count_vars(f, args...)),
         coupled_ode_(f, y0_, msgs, args...),
         coupled_state_(coupled_ode_.initial_state()) {
     check_finite(function_name, "initial state", y0_);

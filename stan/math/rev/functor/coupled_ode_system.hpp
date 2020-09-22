@@ -65,7 +65,7 @@ namespace math {
  */
 template <typename F, typename T_y0, typename... Args>
 struct coupled_ode_system_impl<false, F, T_y0, Args...> {
-  const F& f_;
+  F f_;
   const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0_;
   std::tuple<decltype(deep_copy_vars(std::declval<const Args&>()))...>
       local_args_tuple_;
@@ -89,11 +89,11 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
   coupled_ode_system_impl(const F& f,
                           const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
                           std::ostream* msgs, const Args&... args)
-      : f_(f),
+      : f_(deep_copy_vars(f)),
         y0_(y0),
         local_args_tuple_(deep_copy_vars(args)...),
         num_y0_vars_(count_vars(y0_)),
-        num_args_vars(count_vars(args...)),
+        num_args_vars(count_vars(f, args...)),
         N_(y0.size()),
         args_adjoints_(num_args_vars),
         y_adjoints_(N_),
@@ -125,7 +125,7 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
       y_vars.coeffRef(n) = z[n];
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
-        = apply([&](auto&&... args) { return f_(t, y_vars, msgs_, args...); },
+        = apply([&](auto&&... args) { return f_(msgs_, t, y_vars, args...); },
                 local_args_tuple_);
 
     check_size_match("coupled_ode_system", "dy_dt", f_y_t_vars.size(), "states",
@@ -142,13 +142,14 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
 
       apply(
           [&](auto&&... args) {
-            accumulate_adjoints(args_adjoints_.data(), args...);
+            accumulate_adjoints(args_adjoints_.data(), f_, args...);
           },
           local_args_tuple_);
 
       // The vars here do not live on the nested stack so must be zero'd
       // separately
-      apply([&](auto&&... args) { zero_adjoints(args...); }, local_args_tuple_);
+      apply([&](auto&&... args) { zero_adjoints(f_, args...); },
+            local_args_tuple_);
 
       // No need to zero adjoints after last sweep
       if (i + 1 < N_) {

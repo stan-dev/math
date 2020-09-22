@@ -17,11 +17,13 @@ struct StanAgradRevOde : public ::testing::Test {
 // ******************** DV ****************************
 TEST_F(StanAgradRevOde, coupled_ode_system_dv) {
   using stan::math::coupled_ode_system;
+  using stan::math::internal::ode_closure_adapter;
 
   // Run nested autodiff in this scope
   stan::math::nested_rev_autodiff nested;
 
-  harm_osc_ode_fun_eigen harm_osc;
+  ode_closure_adapter<harm_osc_ode_fun_eigen> harm_osc{
+      harm_osc_ode_fun_eigen()};
 
   std::vector<stan::math::var> theta;
   std::vector<double> z0;
@@ -61,7 +63,8 @@ TEST_F(StanAgradRevOde, coupled_ode_system_dv) {
 TEST_F(StanAgradRevOde, initial_state_dv) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
-  mock_ode_functor base_ode;
+  using stan::math::internal::ode_closure_adapter;
+  ode_closure_adapter<mock_ode_functor> base_ode{mock_ode_functor()};
 
   const size_t N = 3;
   const size_t M = 4;
@@ -91,7 +94,8 @@ TEST_F(StanAgradRevOde, initial_state_dv) {
 TEST_F(StanAgradRevOde, size_dv) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
-  mock_ode_functor base_ode;
+  using stan::math::internal::ode_closure_adapter;
+  ode_closure_adapter<mock_ode_functor> base_ode{mock_ode_functor()};
 
   const size_t N = 3;
   const size_t M = 4;
@@ -110,7 +114,8 @@ TEST_F(StanAgradRevOde, size_dv) {
 TEST_F(StanAgradRevOde, memory_recovery_dv) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
-  mock_ode_functor base_ode;
+  using stan::math::internal::ode_closure_adapter;
+  ode_closure_adapter<mock_ode_functor> base_ode{mock_ode_functor()};
 
   const size_t N = 3;
   const size_t M = 4;
@@ -135,6 +140,7 @@ TEST_F(StanAgradRevOde, memory_recovery_dv) {
 TEST_F(StanAgradRevOde, memory_recovery_exception_dv) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
+  using stan::math::internal::ode_closure_adapter;
   std::string message = "ode throws";
 
   const size_t N = 3;
@@ -145,7 +151,8 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_dv) {
     std::stringstream scoped_message;
     scoped_message << "iteration " << n;
     SCOPED_TRACE(scoped_message.str());
-    mock_throwing_ode_functor<std::logic_error> throwing_ode(message, 1);
+    ode_closure_adapter<mock_throwing_ode_functor<std::logic_error>>
+        throwing_ode{mock_throwing_ode_functor<std::logic_error>(message, 1)};
 
     Eigen::VectorXd y0_d = Eigen::VectorXd::Zero(N);
     std::vector<var> theta_v(M, 0.0);
@@ -169,11 +176,13 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_dv) {
 
 TEST_F(StanAgradRevOde, coupled_ode_system_vd) {
   using stan::math::coupled_ode_system;
+  using stan::math::internal::ode_closure_adapter;
 
   // Run nested autodiff in this scope
   stan::math::nested_rev_autodiff nested;
 
-  harm_osc_ode_fun_eigen harm_osc;
+  ode_closure_adapter<harm_osc_ode_fun_eigen> harm_osc{
+      harm_osc_ode_fun_eigen()};
 
   std::vector<double> theta;
   std::vector<double> z0;
@@ -220,7 +229,8 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vd) {
 TEST_F(StanAgradRevOde, initial_state_vd) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
-  mock_ode_functor base_ode;
+  using stan::math::internal::ode_closure_adapter;
+  ode_closure_adapter<mock_ode_functor> base_ode{mock_ode_functor()};
 
   const size_t N = 3;
   const size_t M = 4;
@@ -251,7 +261,8 @@ TEST_F(StanAgradRevOde, initial_state_vd) {
 TEST_F(StanAgradRevOde, size_vd) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
-  mock_ode_functor base_ode;
+  using stan::math::internal::ode_closure_adapter;
+  ode_closure_adapter<mock_ode_functor> base_ode{mock_ode_functor()};
 
   const size_t N = 3;
   const size_t M = 4;
@@ -271,7 +282,8 @@ TEST_F(StanAgradRevOde, size_vd) {
 TEST_F(StanAgradRevOde, memory_recovery_vd) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
-  mock_ode_functor base_ode;
+  using stan::math::internal::ode_closure_adapter;
+  ode_closure_adapter<mock_ode_functor> base_ode{mock_ode_functor()};
 
   const size_t N = 3;
   const size_t M = 4;
@@ -297,6 +309,7 @@ TEST_F(StanAgradRevOde, memory_recovery_vd) {
 TEST_F(StanAgradRevOde, memory_recovery_exception_vd) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
+  using stan::math::internal::ode_closure_adapter;
   std::string message = "ode throws";
 
   const size_t N = 3;
@@ -307,7 +320,8 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_vd) {
     std::stringstream scoped_message;
     scoped_message << "iteration " << n;
     SCOPED_TRACE(scoped_message.str());
-    mock_throwing_ode_functor<std::logic_error> throwing_ode(message, 1);
+    ode_closure_adapter<mock_throwing_ode_functor<std::logic_error>>
+        throwing_ode{mock_throwing_ode_functor<std::logic_error>(message, 1)};
 
     Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y0_v
         = Eigen::VectorXd::Zero(N).template cast<var>();
@@ -332,6 +346,7 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_vd) {
 
 TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
   using stan::math::coupled_ode_system;
+  using stan::math::internal::ode_closure_adapter;
 
   // Run nested autodiff in this scope
   stan::math::nested_rev_autodiff nested;
@@ -346,7 +361,8 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
   std::vector<stan::math::var> theta_var(1);
   theta_var[0] = 0.15;
 
-  harm_osc_ode_fun_eigen harm_osc;
+  ode_closure_adapter<harm_osc_ode_fun_eigen> harm_osc{
+      harm_osc_ode_fun_eigen()};
 
   std::size_t stack_size = stan::math::nested_size();
 
@@ -377,7 +393,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
   theta_double[0] = 0.15;
 
   Eigen::VectorXd dy_dt_base
-      = harm_osc(0.0, y0_double, &msgs, theta_double, x, x_int);
+      = harm_osc(&msgs, 0.0, y0_double, theta_double, x, x_int);
 
   EXPECT_FLOAT_EQ(dy_dt_base[0], dz_dt[0]);
   EXPECT_FLOAT_EQ(dy_dt_base[1], dz_dt[1]);
@@ -392,7 +408,8 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
 TEST_F(StanAgradRevOde, initial_state_vv) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
-  mock_ode_functor base_ode;
+  using stan::math::internal::ode_closure_adapter;
+  ode_closure_adapter<mock_ode_functor> base_ode{mock_ode_functor()};
 
   const size_t N = 3;
   const size_t M = 4;
@@ -424,7 +441,8 @@ TEST_F(StanAgradRevOde, initial_state_vv) {
 TEST_F(StanAgradRevOde, size_vv) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
-  mock_ode_functor base_ode;
+  using stan::math::internal::ode_closure_adapter;
+  ode_closure_adapter<mock_ode_functor> base_ode{mock_ode_functor()};
 
   const size_t N = 3;
   const size_t M = 4;
@@ -445,7 +463,8 @@ TEST_F(StanAgradRevOde, size_vv) {
 TEST_F(StanAgradRevOde, memory_recovery_vv) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
-  mock_ode_functor base_ode;
+  using stan::math::internal::ode_closure_adapter;
+  ode_closure_adapter<mock_ode_functor> base_ode{mock_ode_functor()};
 
   const size_t N = 3;
   const size_t M = 4;
@@ -472,6 +491,7 @@ TEST_F(StanAgradRevOde, memory_recovery_vv) {
 TEST_F(StanAgradRevOde, memory_recovery_exception_vv) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
+  using stan::math::internal::ode_closure_adapter;
   std::string message = "ode throws";
 
   const size_t N = 3;
@@ -482,7 +502,8 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_vv) {
     std::stringstream scoped_message;
     scoped_message << "iteration " << n;
     SCOPED_TRACE(scoped_message.str());
-    mock_throwing_ode_functor<std::logic_error> throwing_ode(message, 1);
+    ode_closure_adapter<mock_throwing_ode_functor<std::logic_error>>
+        throwing_ode{mock_throwing_ode_functor<std::logic_error>(message, 1)};
 
     Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y0_v
         = Eigen::VectorXd::Zero(N).template cast<var>();
@@ -539,6 +560,7 @@ struct ayt {
 TEST_F(StanAgradRevOde, coupled_ode_system_var) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
+  using stan::math::internal::ode_closure_adapter;
 
   Eigen::VectorXd y0(2);
   y0 << 0.1, 0.2;
@@ -547,10 +569,10 @@ TEST_F(StanAgradRevOde, coupled_ode_system_var) {
   double a = 1.3;
   var av = a;
 
-  ayt func;
+  ode_closure_adapter<ayt> func{ayt()};
 
-  coupled_ode_system<ayt, stan::math::var, decltype(av)> system(func, y0v,
-                                                                &msgs, av);
+  coupled_ode_system<decltype(func), stan::math::var, decltype(av)> system(
+      func, y0v, &msgs, av);
 
   std::vector<double> z = {y0(0), y0(1), 3.2, 3.3, 4.4, 4.5, 2.1, 2.2};
 
@@ -572,6 +594,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_var) {
 TEST_F(StanAgradRevOde, coupled_ode_system_std_vector) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
+  using stan::math::internal::ode_closure_adapter;
 
   Eigen::VectorXd y0(2);
   y0 << 0.1, 0.2;
@@ -579,10 +602,10 @@ TEST_F(StanAgradRevOde, coupled_ode_system_std_vector) {
 
   std::vector<var> av = {1.3};
 
-  ayt func;
+  ode_closure_adapter<ayt> func{ayt()};
 
-  coupled_ode_system<ayt, stan::math::var, decltype(av)> system(func, y0v,
-                                                                &msgs, av);
+  coupled_ode_system<decltype(func), stan::math::var, decltype(av)> system(
+      func, y0v, &msgs, av);
 
   std::vector<double> z = {y0(0), y0(1), 3.2, 3.3, 4.4, 4.5, 2.1, 2.2};
 
@@ -604,6 +627,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_std_vector) {
 TEST_F(StanAgradRevOde, coupled_ode_system_vector) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
+  using stan::math::internal::ode_closure_adapter;
 
   Eigen::VectorXd y0(2);
   y0 << 0.1, 0.2;
@@ -612,10 +636,10 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vector) {
   Eigen::Matrix<var, Eigen::Dynamic, 1> av(1);
   av << 1.3;
 
-  ayt func;
+  ode_closure_adapter<ayt> func{ayt()};
 
-  coupled_ode_system<ayt, stan::math::var, decltype(av)> system(func, y0v,
-                                                                &msgs, av);
+  coupled_ode_system<decltype(func), stan::math::var, decltype(av)> system(
+      func, y0v, &msgs, av);
 
   std::vector<double> z = {y0(0), y0(1), 3.2, 3.3, 4.4, 4.5, 2.1, 2.2};
 
@@ -637,6 +661,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vector) {
 TEST_F(StanAgradRevOde, coupled_ode_system_row_vector) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
+  using stan::math::internal::ode_closure_adapter;
 
   Eigen::VectorXd y0(2);
   y0 << 0.1, 0.2;
@@ -645,10 +670,10 @@ TEST_F(StanAgradRevOde, coupled_ode_system_row_vector) {
   Eigen::Matrix<var, 1, Eigen::Dynamic> av(1);
   av << 1.3;
 
-  ayt func;
+  ode_closure_adapter<ayt> func{ayt()};
 
-  coupled_ode_system<ayt, stan::math::var, decltype(av)> system(func, y0v,
-                                                                &msgs, av);
+  coupled_ode_system<decltype(func), stan::math::var, decltype(av)> system(
+      func, y0v, &msgs, av);
 
   std::vector<double> z = {y0(0), y0(1), 3.2, 3.3, 4.4, 4.5, 2.1, 2.2};
 
@@ -670,6 +695,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_row_vector) {
 TEST_F(StanAgradRevOde, coupled_ode_system_matrix) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
+  using stan::math::internal::ode_closure_adapter;
 
   Eigen::VectorXd y0(2);
   y0 << 0.1, 0.2;
@@ -678,10 +704,10 @@ TEST_F(StanAgradRevOde, coupled_ode_system_matrix) {
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> av(1, 1);
   av << 1.3;
 
-  ayt func;
+  ode_closure_adapter<ayt> func{ayt()};
 
-  coupled_ode_system<ayt, stan::math::var, decltype(av)> system(func, y0v,
-                                                                &msgs, av);
+  coupled_ode_system<decltype(func), stan::math::var, decltype(av)> system(
+      func, y0v, &msgs, av);
 
   std::vector<double> z = {y0(0), y0(1), 3.2, 3.3, 4.4, 4.5, 2.1, 2.2};
 
@@ -703,6 +729,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_matrix) {
 TEST_F(StanAgradRevOde, coupled_ode_system_extra_args) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
+  using stan::math::internal::ode_closure_adapter;
 
   Eigen::VectorXd y0(2);
   y0 << 0.1, 0.2;
@@ -720,11 +747,11 @@ TEST_F(StanAgradRevOde, coupled_ode_system_extra_args) {
   Eigen::MatrixXd e6(1, 1);
   e6 << 0.1;
 
-  ayt func;
+  ode_closure_adapter<ayt> func{ayt()};
 
-  coupled_ode_system<ayt, stan::math::var, decltype(av), decltype(e1),
-                     decltype(e2), decltype(e3), decltype(e4), decltype(e5),
-                     decltype(e6)>
+  coupled_ode_system<decltype(func), stan::math::var, decltype(av),
+                     decltype(e1), decltype(e2), decltype(e3), decltype(e4),
+                     decltype(e5), decltype(e6)>
       system(func, y0v, &msgs, av, e1, e2, e3, e4, e5, e6);
 
   std::vector<double> z = {y0(0), y0(1), 3.2, 3.3, 4.4, 4.5, 2.1, 2.2};

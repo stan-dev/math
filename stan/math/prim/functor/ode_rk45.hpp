@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUNCTOR_ODE_RK45_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/closure_adapter.hpp>
 #include <stan/math/prim/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/functor/ode_store_sensitivities.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
@@ -51,8 +52,8 @@ namespace math {
  * @return Solution to ODE at times \p ts
  */
 template <typename F, typename T_y0, typename T_t0, typename T_ts,
-          typename... Args>
-std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,
+          typename... Args, require_stan_closure_t<F>* = nullptr>
+std::vector<Eigen::Matrix<stan::return_type_t<F, T_y0, T_t0, T_ts, Args...>,
                           Eigen::Dynamic, 1>>
 ode_rk45_tol_impl(const char* function_name, const F& f,
                   const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0_arg, T_t0 t0,
@@ -91,7 +92,7 @@ ode_rk45_tol_impl(const char* function_name, const F& f,
                         absolute_tolerance);
   check_positive(function_name, "max_num_steps", max_num_steps);
 
-  using return_t = return_type_t<T_y0, T_t0, T_ts, Args...>;
+  using return_t = return_type_t<F, T_y0, T_t0, T_ts, Args...>;
   // creates basic or coupled system by template specializations
   coupled_ode_system<F, T_y0_t0, Args...> coupled_system(f, y0, msgs, args...);
 
@@ -140,6 +141,22 @@ ode_rk45_tol_impl(const char* function_name, const F& f,
   return y;
 }
 
+template <typename F, typename T_y0, typename T_t0, typename T_ts,
+          typename... Args, require_not_stan_closure_t<F>* = nullptr>
+std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,
+                          Eigen::Dynamic, 1>>
+ode_rk45_tol_impl(const char* function_name, const F& f,
+                  const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0_arg, T_t0 t0,
+                  const std::vector<T_ts>& ts, double relative_tolerance,
+                  double absolute_tolerance,
+                  long int max_num_steps,  // NOLINT(runtime/int)
+                  std::ostream* msgs, const Args&... args) {
+  internal::ode_closure_adapter<F> cl(f);
+  return ode_rk45_tol_impl(function_name, cl, y0_arg, t0, ts,
+                           relative_tolerance, absolute_tolerance,
+                           max_num_steps, msgs, args...);
+}
+
 /**
  * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
  * times, { t1, t2, t3, ... } using the non-stiff Runge-Kutta 45 solver in
@@ -178,7 +195,7 @@ ode_rk45_tol_impl(const char* function_name, const F& f,
  */
 template <typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... Args>
-std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,
+std::vector<Eigen::Matrix<stan::fn_return_type_t<F, T_y0, T_t0, T_ts, Args...>,
                           Eigen::Dynamic, 1>>
 ode_rk45_tol(const F& f, const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0_arg,
              T_t0 t0, const std::vector<T_ts>& ts, double relative_tolerance,
@@ -224,7 +241,7 @@ ode_rk45_tol(const F& f, const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0_arg,
  */
 template <typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... Args>
-std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,
+std::vector<Eigen::Matrix<stan::fn_return_type_t<F, T_y0, T_t0, T_ts, Args...>,
                           Eigen::Dynamic, 1>>
 ode_rk45(const F& f, const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0, T_t0 t0,
          const std::vector<T_ts>& ts, std::ostream* msgs, const Args&... args) {

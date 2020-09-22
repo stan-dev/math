@@ -61,7 +61,7 @@ TEST(AgradRev, ode_store_sensitivities) {
   double a = 1.3;
   var av = a;
 
-  ayt func;
+  stan::math::internal::ode_closure_adapter<ayt> func{ayt()};
 
   double t0 = 0.5;
   double t = 0.75;
@@ -110,7 +110,7 @@ TEST(AgradRev, ode_store_sensitivities_matrix) {
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> av(1, 1);
   av(0, 0) = a;
 
-  aytm func;
+  stan::math::internal::ode_closure_adapter<aytm> func{aytm()};
 
   double t0 = 0.5;
   double t = 0.75;

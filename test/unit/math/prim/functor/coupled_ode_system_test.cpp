@@ -15,7 +15,9 @@ struct StanMathCoupledOdeSystem : public ::testing::Test {
 
 TEST_F(StanMathCoupledOdeSystem, initial_state_dd) {
   using stan::math::coupled_ode_system;
-  mock_ode_functor base_ode;
+  using adapted_ode_functor
+      = stan::math::internal::ode_closure_adapter<mock_ode_functor>;
+  adapted_ode_functor base_ode{mock_ode_functor()};
 
   const int N = 3;
   const int M = 4;
@@ -28,7 +30,7 @@ TEST_F(StanMathCoupledOdeSystem, initial_state_dd) {
   for (int m = 0; m < M; m++)
     theta_d[m] = 10 * (m + 1);
 
-  coupled_ode_system<mock_ode_functor, double, std::vector<double>,
+  coupled_ode_system<adapted_ode_functor, double, std::vector<double>,
                      std::vector<double>, std::vector<int>>
       coupled_system_dd(base_ode, y0_d, &msgs, theta_d, x, x_int);
 
@@ -43,7 +45,9 @@ TEST_F(StanMathCoupledOdeSystem, initial_state_dd) {
 
 TEST_F(StanMathCoupledOdeSystem, size) {
   using stan::math::coupled_ode_system;
-  mock_ode_functor base_ode;
+  using adapted_ode_functor
+      = stan::math::internal::ode_closure_adapter<mock_ode_functor>;
+  adapted_ode_functor base_ode{mock_ode_functor()};
 
   const int N = 3;
   const int M = 4;
@@ -51,7 +55,7 @@ TEST_F(StanMathCoupledOdeSystem, size) {
   Eigen::VectorXd y0_d(N);
   std::vector<double> theta_d(M, 0.0);
 
-  coupled_ode_system<mock_ode_functor, double, int, double, Eigen::MatrixXd>
+  coupled_ode_system<adapted_ode_functor, double, int, double, Eigen::MatrixXd>
       coupled_system_dd(base_ode, y0_d, &msgs, 1, 1.0, y0_d);
 
   EXPECT_EQ(N, coupled_system_dd.size());
@@ -59,18 +63,21 @@ TEST_F(StanMathCoupledOdeSystem, size) {
 
 TEST_F(StanMathCoupledOdeSystem, recover_exception) {
   using stan::math::coupled_ode_system;
+  using adapted_ode_functor = stan::math::internal::ode_closure_adapter<
+      mock_throwing_ode_functor<std::logic_error>>;
   std::string message = "ode throws";
 
   const int N = 3;
   const int M = 4;
 
-  mock_throwing_ode_functor<std::logic_error> throwing_ode(message);
+  adapted_ode_functor throwing_ode{
+      mock_throwing_ode_functor<std::logic_error>(message)};
 
   Eigen::VectorXd y0_d(N);
   std::vector<double> theta_v(M);
 
-  coupled_ode_system<mock_throwing_ode_functor<std::logic_error>, double,
-                     std::vector<double>, std::vector<double>, std::vector<int>>
+  coupled_ode_system<adapted_ode_functor, double, std::vector<double>,
+                     std::vector<double>, std::vector<int>>
       coupled_system_dd(throwing_ode, y0_d, &msgs, theta_v, x, x_int);
 
   std::vector<double> y(3);

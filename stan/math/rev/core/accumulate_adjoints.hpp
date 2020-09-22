@@ -29,6 +29,11 @@ template <typename EigT, require_eigen_vt<is_var, EigT>* = nullptr,
           typename... Pargs>
 inline double* accumulate_adjoints(double* dest, EigT&& x, Pargs&&... args);
 
+template <typename F, require_stan_closure_t<F>* = nullptr,
+          require_not_st_arithmetic<F>* = nullptr,
+          typename... Pargs>
+inline double* accumulate_adjoints(double* dest, F& f, Pargs&&... args);
+
 template <typename Arith, require_st_arithmetic<Arith>* = nullptr,
           typename... Pargs>
 inline double* accumulate_adjoints(double* dest, Arith&& x, Pargs&&... args);
@@ -119,6 +124,28 @@ template <typename EigT, require_eigen_vt<is_var, EigT>*, typename... Pargs>
 inline double* accumulate_adjoints(double* dest, EigT&& x, Pargs&&... args) {
   Eigen::Map<Eigen::MatrixXd>(dest, x.rows(), x.cols()) += x.adj();
   return accumulate_adjoints(dest + x.size(), std::forward<Pargs>(args)...);
+}
+
+/**
+ * Accumulate adjoints from f (a closure type containing vars)
+ *   into storage pointed to by dest,
+ *   increment the adjoint storage pointer,
+ *   recursively accumulate the adjoints of the rest of the arguments,
+ *   and return final position of storage pointer.
+ *
+ * @tparam F A closure type capturing vars.
+ * @tparam Pargs Types of remaining arguments
+ * @param dest Pointer to where adjoints are to be accumulated
+ * @param f A closure holding vars to accumulate over
+ * @param args Further args to accumulate over
+ * @return Final position of adjoint storage pointer
+ */
+template <typename F, require_stan_closure_t<F>*,
+          require_not_st_arithmetic<F>*,
+          typename... Pargs>
+inline double* accumulate_adjoints(double* dest, F& f, Pargs&&... args) {
+  return accumulate_adjoints(f.accumulate_adjoints__(dest),
+                             std::forward<Pargs>(args)...);
 }
 
 /**

@@ -202,6 +202,7 @@
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
 #include <stan/math/prim/meta/is_stan_scalar.hpp>
+#include <stan/math/prim/meta/is_stan_closure.hpp>
 #include <stan/math/prim/meta/likely.hpp>
 #include <stan/math/prim/meta/partials_return_type.hpp>
 #include <stan/math/prim/meta/partials_type.hpp>

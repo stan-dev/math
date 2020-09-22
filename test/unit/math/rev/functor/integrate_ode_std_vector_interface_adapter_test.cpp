@@ -8,8 +8,8 @@ TEST(StanMathRev, vd) {
   using stan::math::var;
   harm_osc_ode_data_fun harm_osc;
   stan::math::internal::integrate_ode_std_vector_interface_adapter<
-      harm_osc_ode_data_fun>
-      harm_osc_adapted(harm_osc);
+      stan::math::closure_adapter<harm_osc_ode_data_fun>>
+      harm_osc_adapted{stan::math::from_lambda(harm_osc)};
 
   std::vector<var> theta = {0.15};
   std::vector<double> y = {1.0, 0.5};
@@ -22,7 +22,7 @@ TEST(StanMathRev, vd) {
   Eigen::Matrix<var, Eigen::Dynamic, 1> out1
       = stan::math::to_vector(harm_osc(t, y, theta, x, x_int, nullptr));
   Eigen::Matrix<var, Eigen::Dynamic, 1> out2
-      = harm_osc_adapted(t, stan::math::to_vector(y), nullptr, theta, x, x_int);
+      = harm_osc_adapted(nullptr, t, stan::math::to_vector(y), theta, x, x_int);
 
   stan::math::sum(out1).grad();
   Eigen::VectorXd adjs1(theta.size());
@@ -44,8 +44,8 @@ TEST(StanMathRev, dv) {
   using stan::math::var;
   harm_osc_ode_data_fun harm_osc;
   stan::math::internal::integrate_ode_std_vector_interface_adapter<
-      harm_osc_ode_data_fun>
-      harm_osc_adapted(harm_osc);
+      stan::math::closure_adapter<harm_osc_ode_data_fun>>
+      harm_osc_adapted{stan::math::from_lambda(harm_osc)};
 
   std::vector<double> theta = {0.15};
   std::vector<var> y = {1.0, 0.5};
@@ -58,7 +58,7 @@ TEST(StanMathRev, dv) {
   Eigen::Matrix<var, Eigen::Dynamic, 1> out1
       = stan::math::to_vector(harm_osc(t, y, theta, x, x_int, nullptr));
   Eigen::Matrix<var, Eigen::Dynamic, 1> out2
-      = harm_osc_adapted(t, stan::math::to_vector(y), nullptr, theta, x, x_int);
+      = harm_osc_adapted(nullptr, t, stan::math::to_vector(y), theta, x, x_int);
 
   stan::math::sum(out1).grad();
   Eigen::VectorXd adjs1(y.size());
@@ -80,8 +80,8 @@ TEST(StanMathRev, vv) {
   using stan::math::var;
   harm_osc_ode_data_fun harm_osc;
   stan::math::internal::integrate_ode_std_vector_interface_adapter<
-      harm_osc_ode_data_fun>
-      harm_osc_adapted(harm_osc);
+      stan::math::closure_adapter<harm_osc_ode_data_fun>>
+      harm_osc_adapted{stan::math::from_lambda(harm_osc)};
 
   std::vector<var> theta = {0.15};
   std::vector<var> y = {1.0, 0.5};
@@ -94,7 +94,7 @@ TEST(StanMathRev, vv) {
   Eigen::Matrix<var, Eigen::Dynamic, 1> out1
       = stan::math::to_vector(harm_osc(t, y, theta, x, x_int, nullptr));
   Eigen::Matrix<var, Eigen::Dynamic, 1> out2
-      = harm_osc_adapted(t, stan::math::to_vector(y), nullptr, theta, x, x_int);
+      = harm_osc_adapted(nullptr, t, stan::math::to_vector(y), theta, x, x_int);
 
   stan::math::sum(out1).grad();
   Eigen::VectorXd adjs_theta_1(theta.size());

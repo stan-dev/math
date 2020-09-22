@@ -5,9 +5,10 @@
 #include <vector>
 
 TEST(StanMath, check_values) {
-  harm_osc_ode_data_fun harm_osc;
-  stan::math::internal::integrate_ode_std_vector_interface_adapter<
-      harm_osc_ode_data_fun>
+  stan::math::closure_adapter<harm_osc_ode_data_fun> harm_osc{
+      harm_osc_ode_data_fun()};
+  stan::math::internal::integrate_ode_std_vector_interface_adapter<decltype(
+      harm_osc)>
       harm_osc_adapted(harm_osc);
 
   std::vector<double> theta = {0.15};
@@ -19,9 +20,9 @@ TEST(StanMath, check_values) {
   double t = 1.0;
 
   Eigen::VectorXd out1
-      = stan::math::to_vector(harm_osc(t, y, theta, x, x_int, nullptr));
+      = stan::math::to_vector(harm_osc(nullptr, t, y, theta, x, x_int));
   Eigen::VectorXd out2
-      = harm_osc_adapted(t, stan::math::to_vector(y), nullptr, theta, x, x_int);
+      = harm_osc_adapted(nullptr, t, stan::math::to_vector(y), theta, x, x_int);
 
   EXPECT_MATRIX_FLOAT_EQ(out1, out2);
 }
