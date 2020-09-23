@@ -115,8 +115,8 @@ TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_small_simple) {
   Matrix<double, Dynamic, 1> cuts(C - 1, 1);
   cuts << -0.4, 0.1, 0.3, 4.5;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(ordered_logistic_glm_lpmf_functor,
-                                             y, x, beta, cuts);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      ordered_logistic_glm_lpmf_functor, y, x, beta, cuts);
   stan::math::test::compare_cpu_opencl_prim_rev(
       ordered_logistic_glm_lpmf_functor_propto, y, x, beta, cuts);
 }
@@ -186,8 +186,8 @@ TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_zero_instances) {
   matrix_cl<double> beta_cl(beta);
   matrix_cl<double> cuts_cl(cuts);
 
-  stan::math::test::compare_cpu_opencl_prim_rev(ordered_logistic_glm_lpmf_functor,
-                                             y, x, beta, cuts);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      ordered_logistic_glm_lpmf_functor, y, x, beta, cuts);
   stan::math::test::compare_cpu_opencl_prim_rev(
       ordered_logistic_glm_lpmf_functor_propto, y, x, beta, cuts);
 }
@@ -203,8 +203,8 @@ TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_zero_attributes) {
   Matrix<double, Dynamic, 1> cuts(C - 1, 1);
   cuts << -0.4, 0.1, 0.3, 4.5;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(ordered_logistic_glm_lpmf_functor,
-                                             y, x, beta, cuts);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      ordered_logistic_glm_lpmf_functor, y, x, beta, cuts);
   stan::math::test::compare_cpu_opencl_prim_rev(
       ordered_logistic_glm_lpmf_functor_propto, y, x, beta, cuts);
 }
@@ -221,8 +221,8 @@ TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_single_class) {
   beta << 0.3, 2;
   Matrix<double, Dynamic, 1> cuts(C - 1, 1);
 
-  stan::math::test::compare_cpu_opencl_prim_rev(ordered_logistic_glm_lpmf_functor,
-                                             y, x, beta, cuts);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      ordered_logistic_glm_lpmf_functor, y, x, beta, cuts);
   stan::math::test::compare_cpu_opencl_prim_rev(
       ordered_logistic_glm_lpmf_functor_propto, y, x, beta, cuts);
 }
@@ -245,8 +245,8 @@ TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_big) {
     cuts[i] += cuts[i - 1];
   }
 
-  stan::math::test::compare_cpu_opencl_prim_rev(ordered_logistic_glm_lpmf_functor,
-                                             y, x, beta, cuts);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      ordered_logistic_glm_lpmf_functor, y, x, beta, cuts);
   stan::math::test::compare_cpu_opencl_prim_rev(
       ordered_logistic_glm_lpmf_functor_propto, y, x, beta, cuts);
 }

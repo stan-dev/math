@@ -107,23 +107,27 @@ void expect_adj_near(const std::vector<T>& a, const std::vector<T>& b,
 }
 
 template <typename Functor, std::size_t... Is, typename... Args>
-void compare_cpu_opencl_prim_rev_impl(Functor functor, std::index_sequence<Is...>,
-                                   Args... args) {
+void compare_cpu_opencl_prim_rev_impl(Functor functor,
+                                      std::index_sequence<Is...>,
+                                      Args... args) {
   expect_eq(functor(opencl_argument(args)...), functor(args...),
             "CPU and OpenCL return values for prim do not match!");
 
   auto var_args_for_cpu = std::make_tuple(var_argument(args)...);
   auto var_args_for_opencl = std::make_tuple(var_argument(args)...);
   auto res_cpu = functor(std::get<Is>(var_args_for_cpu)...);
-  auto res_opencl = functor(opencl_argument(std::get<Is>(var_args_for_opencl))...);
-  expect_eq(res_opencl, res_cpu, "CPU and OpenCL return values for rev do not match!");
+  auto res_opencl
+      = functor(opencl_argument(std::get<Is>(var_args_for_opencl))...);
+  expect_eq(res_opencl, res_cpu,
+            "CPU and OpenCL return values for rev do not match!");
 
   (recursive_sum(res_cpu) + recursive_sum(res_opencl)).grad();
 
   static_cast<void>(std::initializer_list<int>{
-      (expect_adj_near(std::get<Is>(var_args_for_opencl),
-                       std::get<Is>(var_args_for_cpu),
-                       "CPU and OpenCL adjoints do not match for argument " TO_STRING(Is) "!"),
+      (expect_adj_near(
+           std::get<Is>(var_args_for_opencl), std::get<Is>(var_args_for_cpu),
+           "CPU and OpenCL adjoints do not match for argument " TO_STRING(
+               Is) "!"),
        0)...});
 }
 

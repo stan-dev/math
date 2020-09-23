@@ -116,8 +116,8 @@ TEST(ProbDistributionsCategoricalLogitGLM, opencl_matches_cpu_small_simple) {
   Matrix<double, Dynamic, 1> alpha(C);
   alpha << 0.3, -2, 0.8;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(categorical_logit_glm_lpmf_functor,
-                                             y, x, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      categorical_logit_glm_lpmf_functor, y, x, alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       categorical_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
@@ -188,8 +188,8 @@ TEST(ProbDistributionsCategoricalLogitGLM, opencl_matches_cpu_zero_instances) {
   Matrix<double, Dynamic, 1> alpha(C);
   alpha << 0.3, -2, 0.8;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(categorical_logit_glm_lpmf_functor,
-                                             y, x, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      categorical_logit_glm_lpmf_functor, y, x, alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       categorical_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
@@ -205,8 +205,8 @@ TEST(ProbDistributionsCategoricalLogitGLM, opencl_matches_cpu_zero_attributes) {
   Matrix<double, Dynamic, 1> alpha(C);
   alpha << 0.3, -2, 0.8;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(categorical_logit_glm_lpmf_functor,
-                                             y, x, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      categorical_logit_glm_lpmf_functor, y, x, alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       categorical_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
@@ -224,8 +224,8 @@ TEST(ProbDistributionsCategoricalLogitGLM, opencl_matches_cpu_single_class) {
   Matrix<double, Dynamic, 1> alpha(C);
   alpha << 100000.3;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(categorical_logit_glm_lpmf_functor,
-                                             y, x, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      categorical_logit_glm_lpmf_functor, y, x, alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       categorical_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
@@ -245,8 +245,8 @@ TEST(ProbDistributionsCategoricalLogitGLM, opencl_matches_cpu_all_vars) {
       = Matrix<double, Dynamic, Dynamic>::Random(M, C);
   Matrix<double, Dynamic, 1> alpha = Matrix<double, Dynamic, 1>::Random(C, 1);
 
-  stan::math::test::compare_cpu_opencl_prim_rev(categorical_logit_glm_lpmf_functor,
-                                             y, x, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      categorical_logit_glm_lpmf_functor, y, x, alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       categorical_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
@@ -266,8 +266,8 @@ TEST(ProbDistributionsCategoricalLogitGLM, opencl_matches_cpu_big) {
       = Matrix<double, Dynamic, Dynamic>::Random(M, C);
   Matrix<double, Dynamic, 1> alpha = Matrix<double, Dynamic, 1>::Random(C, 1);
 
-  stan::math::test::compare_cpu_opencl_prim_rev(categorical_logit_glm_lpmf_functor,
-                                             y, x, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      categorical_logit_glm_lpmf_functor, y, x, alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       categorical_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
