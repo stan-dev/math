@@ -23,8 +23,9 @@ namespace math {
  * @param c scalar
  * @return product of matrix and scalar
  */
-template <typename Mat, typename Scal, require_eigen_t<Mat>* = nullptr,
-          require_stan_scalar_t<Scal>* = nullptr>
+template <typename Mat, typename Scal, require_stan_scalar_t<Scal>* = nullptr,
+          require_eigen_t<Mat>* = nullptr,
+          require_not_return_type_t<is_var, Scal, Mat>* = nullptr>
 inline auto multiply(const Mat& m, Scal c) {
   return (c * m).eval();
 }
@@ -40,7 +41,8 @@ inline auto multiply(const Mat& m, Scal c) {
  * @return product of scalar and matrix
  */
 template <typename Scal, typename Mat, require_stan_scalar_t<Scal>* = nullptr,
-          require_eigen_t<Mat>* = nullptr>
+          require_eigen_t<Mat>* = nullptr,
+          require_not_return_type_t<is_var, Scal, Mat>* = nullptr>
 inline auto multiply(Scal c, const Mat& m) {
   return (c * m).eval();
 }
@@ -124,8 +126,7 @@ inline auto multiply(const Mat1& m1, const Mat2& m2)
  * @throw <code>std::invalid_argument</code> if rv and v are not the same size
  */
 template <typename RowVec, typename ColVec,
-          require_all_not_var_t<scalar_type_t<RowVec>,
-                                scalar_type_t<ColVec>>* = nullptr,
+          require_not_return_type_t<is_var, RowVec, ColVec>* = nullptr,
           require_eigen_row_and_col_t<RowVec, ColVec>* = nullptr>
 inline auto multiply(const RowVec& rv, const ColVec& v) {
   check_multiplicable("multiply", "rv", rv, "v", v);
