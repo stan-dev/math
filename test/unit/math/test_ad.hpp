@@ -1676,8 +1676,7 @@ void check_return_type(const ReturnType& ret, const Type1& x, const Type2& y) {
  * @param f a lambda
  * @param x An Eigen matrix.
  */
-template <typename F, typename EigMat,
-	  require_eigen_t<EigMat>* = nullptr>
+template <typename F, typename EigMat, require_eigen_t<EigMat>* = nullptr>
 void expect_ad_matvar_v(const ad_tolerances& tols, const F& f,
                         const EigMat& x) {
   using stan::plain_type_t;
@@ -1806,8 +1805,8 @@ void test_matvar_mixture_impl(const ad_tolerances& tols, const F& f,
  * @param x An Eigen matrix.
  * @param y An Eigen matrix.
  */
-template <typename Type1, typename Type2, typename F,
-	  typename EigMat1, typename EigMat2>
+template <typename Type1, typename Type2, typename F, typename EigMat1,
+          typename EigMat2>
 void expect_ad_matvar_vv(const ad_tolerances& tols, const F& f,
                          const EigMat1& x, const EigMat2& y) {
   using stan::is_var;
