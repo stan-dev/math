@@ -37,8 +37,6 @@ inline auto parallel_map(ApplyFunction&& app_fun, IndexFunction&& index_fun,
 
   vari** varis = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
    S * nvars);
-  double* values = ChainableStack::instance_->memalloc_.alloc_array<double>(
-   S);
   double* partials = ChainableStack::instance_->memalloc_.alloc_array<double>(
    S * nvars);
   Eigen::Map<Eigen::VectorXd>(partials, S * nvars).setZero();
@@ -48,8 +46,9 @@ inline auto parallel_map(ApplyFunction&& app_fun, IndexFunction&& index_fun,
    [&](
     const tbb::blocked_range<size_t>& r) {
      // Run nested autodiff in this scope
-
      for (size_t i = r.begin(); i < r.end(); ++i) {
+       double tmp_val;
+       {
        nested_rev_autodiff nested;
        // Save varis from arguments at current iteration
        index_fun(i, vari_saver(i, nvars, varis), args...);
@@ -67,21 +66,20 @@ inline auto parallel_map(ApplyFunction&& app_fun, IndexFunction&& index_fun,
 
        // Extract value and adjoints to be put into vars on main
        // autodiff stack
-       values[i] = out.vi_->val_;
+       tmp_val = out.vi_->val_;
        apply([&](auto&&... args) {
          accumulate_adjoints(partials + nvars*i,
                              std::forward<decltype(args)>(args)...); },
          args_tuple_local_copy);
+         result.coeffRef(i) = var(new precomputed_gradients_vari(
+          tmp_val,
+          nvars,
+          varis + nvars*i,
+          partials + nvars*i));
+       }
      }
    });
   // Pack values and adjoints into new vars on main autodiff stack
-  for(int i = 0; i < S; ++i) {
-  result.coeffRef(i) = var(new precomputed_gradients_vari(
-   values[i],
-   nvars,
-   varis + nvars*i,
-   partials + nvars*i));
-  }
   return result;
   }
 
