@@ -3,7 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err/check_nonnegative.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
@@ -305,14 +305,13 @@ class operation_cl : public operation_cl_base {
   }
 
   /**
-   * Adds all write events on any matrices used by nested expressions to a list
-   * and clears them from those matrices.
+   * Adds all write events on any matrices used by nested expressions to a list.
    * @param[out] events List of all events.
    */
-  inline void get_clear_write_events(std::vector<cl::Event>& events) const {
+  inline void get_write_events(std::vector<cl::Event>& events) const {
     index_apply<N>([&](auto... Is) {
       static_cast<void>(std::initializer_list<int>{
-          (this->template get_arg<Is>().get_clear_write_events(events), 0)...});
+          (this->template get_arg<Is>().get_write_events(events), 0)...});
     });
   }
 

@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_META_IS_STAN_SCALAR_HPP
 #define STAN_MATH_PRIM_META_IS_STAN_SCALAR_HPP
 
+#include <stan/math/prim/meta/conjunction.hpp>
+#include <stan/math/prim/meta/disjunction.hpp>
 #include <stan/math/prim/meta/is_complex.hpp>
 #include <stan/math/prim/meta/is_fvar.hpp>
 #include <stan/math/prim/meta/is_var.hpp>

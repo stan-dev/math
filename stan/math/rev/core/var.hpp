@@ -731,6 +731,26 @@ class var_value<
   }
 
   /**
+   * Returns number of rows. Only available if `T` is a matrix.
+   * @return number of rows.
+   */
+  template <typename U = T,
+            require_any_t<is_eigen_matrix<U>, is_matrix_cl<U>>* = nullptr>
+  auto rows() const {
+    return vi_->rows();
+  }
+
+  /**
+   * Returns number of columns. Only available if `T` is a matrix.
+   * @return number of columns.
+   */
+  template <typename U = T,
+            require_any_t<is_eigen_matrix<U>, is_matrix_cl<U>>* = nullptr>
+  auto cols() const {
+    return vi_->cols();
+  }
+
+  /**
    * Assignment of another plain var value, when this also contains a plain
    * type.
    * @tparam S type of the value in the `var_value` to assing
