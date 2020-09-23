@@ -100,7 +100,7 @@ auto poisson_log_glm_lpmf_functor_propto
         return stan::math::poisson_log_glm_lpmf<true>(y, x, alpha, beta);
       };
 
-TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_small_simple) {
+TEST(ProbDistributionsPoissonLogGLM, opencl_matches_cpu_small_simple) {
   int N = 3;
   int M = 2;
 
@@ -111,13 +111,13 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_small_simple) {
   beta << 0.3, 2;
   double alpha = 0.3;
 
-  stan::math::test::compare_cpu_gpu_prim_rev(poisson_log_glm_lpmf_functor,
+  stan::math::test::compare_cpu_opencl_prim_rev(poisson_log_glm_lpmf_functor,
                                              y, x, alpha, beta);
-  stan::math::test::compare_cpu_gpu_prim_rev(
+  stan::math::test::compare_cpu_opencl_prim_rev(
       poisson_log_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
-TEST(ProbDistributionsPoissonLogGLM, gpu_broadcast_y) {
+TEST(ProbDistributionsPoissonLogGLM, opencl_broadcast_y) {
   int N = 3;
   int M = 2;
 
@@ -170,7 +170,7 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_broadcast_y) {
                   beta_var2.adj().eval());
 }
 
-TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_zero_instances) {
+TEST(ProbDistributionsPoissonLogGLM, opencl_matches_cpu_zero_instances) {
   int N = 0;
   int M = 2;
 
@@ -180,13 +180,13 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_zero_instances) {
   beta << 0.3, 2;
   double alpha = 0.3;
 
-  stan::math::test::compare_cpu_gpu_prim_rev(poisson_log_glm_lpmf_functor,
+  stan::math::test::compare_cpu_opencl_prim_rev(poisson_log_glm_lpmf_functor,
                                              y, x, alpha, beta);
-  stan::math::test::compare_cpu_gpu_prim_rev(
+  stan::math::test::compare_cpu_opencl_prim_rev(
       poisson_log_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
-TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_zero_attributes) {
+TEST(ProbDistributionsPoissonLogGLM, opencl_matches_cpu_zero_attributes) {
   int N = 3;
   int M = 0;
 
@@ -195,13 +195,13 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_zero_attributes) {
   Matrix<double, Dynamic, 1> beta(M, 1);
   double alpha = 0.3;
 
-  stan::math::test::compare_cpu_gpu_prim_rev(poisson_log_glm_lpmf_functor,
+  stan::math::test::compare_cpu_opencl_prim_rev(poisson_log_glm_lpmf_functor,
                                              y, x, alpha, beta);
-  stan::math::test::compare_cpu_gpu_prim_rev(
+  stan::math::test::compare_cpu_opencl_prim_rev(
       poisson_log_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
-TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_small_vector_alpha) {
+TEST(ProbDistributionsPoissonLogGLM, opencl_matches_cpu_small_vector_alpha) {
   int N = 3;
   int M = 2;
 
@@ -213,13 +213,13 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_small_vector_alpha) {
   Matrix<double, Dynamic, 1> alpha(N, 1);
   alpha << 0.3, -0.8, 1.8;
 
-  stan::math::test::compare_cpu_gpu_prim_rev(poisson_log_glm_lpmf_functor,
+  stan::math::test::compare_cpu_opencl_prim_rev(poisson_log_glm_lpmf_functor,
                                              y, x, alpha, beta);
-  stan::math::test::compare_cpu_gpu_prim_rev(
+  stan::math::test::compare_cpu_opencl_prim_rev(
       poisson_log_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
-TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_big) {
+TEST(ProbDistributionsPoissonLogGLM, opencl_matches_cpu_big) {
   int N = 153;
   int M = 71;
 
@@ -232,9 +232,9 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_big) {
   Matrix<double, Dynamic, 1> beta = Matrix<double, Dynamic, 1>::Random(M, 1);
   Matrix<double, Dynamic, 1> alpha = Matrix<double, Dynamic, 1>::Random(N, 1);
 
-  stan::math::test::compare_cpu_gpu_prim_rev(poisson_log_glm_lpmf_functor,
+  stan::math::test::compare_cpu_opencl_prim_rev(poisson_log_glm_lpmf_functor,
                                              y, x, alpha, beta);
-  stan::math::test::compare_cpu_gpu_prim_rev(
+  stan::math::test::compare_cpu_opencl_prim_rev(
       poisson_log_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 

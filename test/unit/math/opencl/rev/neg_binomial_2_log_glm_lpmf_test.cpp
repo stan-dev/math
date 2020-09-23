@@ -124,7 +124,7 @@ auto neg_binomial_2_log_glm_lpmf_functor_propto
         return stan::math::neg_binomial_2_log_glm_lpmf<true>(y, x, alpha, beta, phi);
       };
 
-TEST(ProbDistributionsNegBinomial2LogGLM, gpu_matches_cpu_small_simple) {
+TEST(ProbDistributionsNegBinomial2LogGLM, opencl_matches_cpu_small_simple) {
   int N = 3;
   int M = 2;
 
@@ -136,13 +136,13 @@ TEST(ProbDistributionsNegBinomial2LogGLM, gpu_matches_cpu_small_simple) {
   double alpha = 0.3;
   double phi = 13.2;
 
-  stan::math::test::compare_cpu_gpu_prim_rev(neg_binomial_2_log_glm_lpmf_functor,
+  stan::math::test::compare_cpu_opencl_prim_rev(neg_binomial_2_log_glm_lpmf_functor,
                                              y, x, alpha, beta, phi);
-  stan::math::test::compare_cpu_gpu_prim_rev(
+  stan::math::test::compare_cpu_opencl_prim_rev(
       neg_binomial_2_log_glm_lpmf_functor_propto, y, x, alpha, beta, phi);
 }
 
-TEST(ProbDistributionsNegBinomial2LogGLM, gpu_broadcast_y) {
+TEST(ProbDistributionsNegBinomial2LogGLM, opencl_broadcast_y) {
   int N = 3;
   int M = 2;
 
@@ -203,7 +203,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM, gpu_broadcast_y) {
                   phi_var2.adj());
 }
 
-TEST(ProbDistributionsNegBinomial2LogGLM, gpu_matches_cpu_zero_instances) {
+TEST(ProbDistributionsNegBinomial2LogGLM, opencl_matches_cpu_zero_instances) {
   int N = 0;
   int M = 2;
 
@@ -214,13 +214,13 @@ TEST(ProbDistributionsNegBinomial2LogGLM, gpu_matches_cpu_zero_instances) {
   double alpha = 0.3;
   double phi = 13.2;
 
-  stan::math::test::compare_cpu_gpu_prim_rev(neg_binomial_2_log_glm_lpmf_functor,
+  stan::math::test::compare_cpu_opencl_prim_rev(neg_binomial_2_log_glm_lpmf_functor,
                                              y, x, alpha, beta, phi);
-  stan::math::test::compare_cpu_gpu_prim_rev(
+  stan::math::test::compare_cpu_opencl_prim_rev(
       neg_binomial_2_log_glm_lpmf_functor_propto, y, x, alpha, beta, phi);
 }
 
-TEST(ProbDistributionsNegBinomial2LogGLM, gpu_matches_cpu_zero_attributes) {
+TEST(ProbDistributionsNegBinomial2LogGLM, opencl_matches_cpu_zero_attributes) {
   int N = 3;
   int M = 0;
 
@@ -230,14 +230,14 @@ TEST(ProbDistributionsNegBinomial2LogGLM, gpu_matches_cpu_zero_attributes) {
   double alpha = 0.3;
   double phi = 13.2;
 
-  stan::math::test::compare_cpu_gpu_prim_rev(neg_binomial_2_log_glm_lpmf_functor,
+  stan::math::test::compare_cpu_opencl_prim_rev(neg_binomial_2_log_glm_lpmf_functor,
                                              y, x, alpha, beta, phi);
-  stan::math::test::compare_cpu_gpu_prim_rev(
+  stan::math::test::compare_cpu_opencl_prim_rev(
       neg_binomial_2_log_glm_lpmf_functor_propto, y, x, alpha, beta, phi);
 }
 
 TEST(ProbDistributionsNegBinomial2LogGLM,
-     gpu_matches_cpu_small_vector_alpha_phi) {
+     opencl_matches_cpu_small_vector_alpha_phi) {
   int N = 3;
   int M = 2;
 
@@ -251,13 +251,13 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
   Matrix<double, Dynamic, 1> phi(N, 1);
   phi << 0.1, 0.5, 1.2;
 
-  stan::math::test::compare_cpu_gpu_prim_rev(neg_binomial_2_log_glm_lpmf_functor,
+  stan::math::test::compare_cpu_opencl_prim_rev(neg_binomial_2_log_glm_lpmf_functor,
                                              y, x, alpha, beta, phi);
-  stan::math::test::compare_cpu_gpu_prim_rev(
+  stan::math::test::compare_cpu_opencl_prim_rev(
       neg_binomial_2_log_glm_lpmf_functor_propto, y, x, alpha, beta, phi);
 }
 
-TEST(ProbDistributionsNegBinomial2LogGLM, gpu_matches_cpu_big) {
+TEST(ProbDistributionsNegBinomial2LogGLM, opencl_matches_cpu_big) {
   int N = 153;
   int M = 71;
 
@@ -272,9 +272,9 @@ TEST(ProbDistributionsNegBinomial2LogGLM, gpu_matches_cpu_big) {
   Matrix<double, Dynamic, 1> phi
       = Array<double, Dynamic, 1>::Random(N, 1).abs();
 
-  stan::math::test::compare_cpu_gpu_prim_rev(neg_binomial_2_log_glm_lpmf_functor,
+  stan::math::test::compare_cpu_opencl_prim_rev(neg_binomial_2_log_glm_lpmf_functor,
                                              y, x, alpha, beta, phi);
-  stan::math::test::compare_cpu_gpu_prim_rev(
+  stan::math::test::compare_cpu_opencl_prim_rev(
       neg_binomial_2_log_glm_lpmf_functor_propto, y, x, alpha, beta, phi);
 }
 #endif

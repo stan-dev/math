@@ -102,7 +102,7 @@ auto ordered_logistic_glm_lpmf_functor_propto
         return stan::math::ordered_logistic_glm_lpmf<true>(y, x, beta, cuts);
       };
 
-TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_small_simple) {
+TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_small_simple) {
   int N = 3;
   int M = 2;
   int C = 5;
@@ -115,13 +115,13 @@ TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_small_simple) {
   Matrix<double, Dynamic, 1> cuts(C - 1, 1);
   cuts << -0.4, 0.1, 0.3, 4.5;
 
-  stan::math::test::compare_cpu_gpu_prim_rev(ordered_logistic_glm_lpmf_functor,
+  stan::math::test::compare_cpu_opencl_prim_rev(ordered_logistic_glm_lpmf_functor,
                                              y, x, beta, cuts);
-  stan::math::test::compare_cpu_gpu_prim_rev(
+  stan::math::test::compare_cpu_opencl_prim_rev(
       ordered_logistic_glm_lpmf_functor_propto, y, x, beta, cuts);
 }
 
-TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_broadcast_y) {
+TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_broadcast_y) {
   int N = 3;
   int M = 2;
   int C = 5;
@@ -169,7 +169,7 @@ TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_broadcast_y) {
   EXPECT_NEAR_REL(cuts_var1.adj().eval(), cuts_var2.adj().eval());
 }
 
-TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_zero_instances) {
+TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_zero_instances) {
   int N = 0;
   int M = 2;
   int C = 5;
@@ -186,13 +186,13 @@ TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_zero_instances) {
   matrix_cl<double> beta_cl(beta);
   matrix_cl<double> cuts_cl(cuts);
 
-  stan::math::test::compare_cpu_gpu_prim_rev(ordered_logistic_glm_lpmf_functor,
+  stan::math::test::compare_cpu_opencl_prim_rev(ordered_logistic_glm_lpmf_functor,
                                              y, x, beta, cuts);
-  stan::math::test::compare_cpu_gpu_prim_rev(
+  stan::math::test::compare_cpu_opencl_prim_rev(
       ordered_logistic_glm_lpmf_functor_propto, y, x, beta, cuts);
 }
 
-TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_zero_attributes) {
+TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_zero_attributes) {
   int N = 3;
   int M = 0;
   int C = 5;
@@ -203,13 +203,13 @@ TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_zero_attributes) {
   Matrix<double, Dynamic, 1> cuts(C - 1, 1);
   cuts << -0.4, 0.1, 0.3, 4.5;
 
-  stan::math::test::compare_cpu_gpu_prim_rev(ordered_logistic_glm_lpmf_functor,
+  stan::math::test::compare_cpu_opencl_prim_rev(ordered_logistic_glm_lpmf_functor,
                                              y, x, beta, cuts);
-  stan::math::test::compare_cpu_gpu_prim_rev(
+  stan::math::test::compare_cpu_opencl_prim_rev(
       ordered_logistic_glm_lpmf_functor_propto, y, x, beta, cuts);
 }
 
-TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_single_class) {
+TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_single_class) {
   int N = 3;
   int M = 2;
   int C = 1;
@@ -221,13 +221,13 @@ TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_single_class) {
   beta << 0.3, 2;
   Matrix<double, Dynamic, 1> cuts(C - 1, 1);
 
-  stan::math::test::compare_cpu_gpu_prim_rev(ordered_logistic_glm_lpmf_functor,
+  stan::math::test::compare_cpu_opencl_prim_rev(ordered_logistic_glm_lpmf_functor,
                                              y, x, beta, cuts);
-  stan::math::test::compare_cpu_gpu_prim_rev(
+  stan::math::test::compare_cpu_opencl_prim_rev(
       ordered_logistic_glm_lpmf_functor_propto, y, x, beta, cuts);
 }
 
-TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_big) {
+TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_big) {
   int N = 153;
   int M = 71;
   int C = 43;
@@ -245,9 +245,9 @@ TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_big) {
     cuts[i] += cuts[i - 1];
   }
 
-  stan::math::test::compare_cpu_gpu_prim_rev(ordered_logistic_glm_lpmf_functor,
+  stan::math::test::compare_cpu_opencl_prim_rev(ordered_logistic_glm_lpmf_functor,
                                              y, x, beta, cuts);
-  stan::math::test::compare_cpu_gpu_prim_rev(
+  stan::math::test::compare_cpu_opencl_prim_rev(
       ordered_logistic_glm_lpmf_functor_propto, y, x, beta, cuts);
 }
 

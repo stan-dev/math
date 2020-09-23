@@ -115,7 +115,7 @@ auto normal_id_glm_lpdf_functor_propto
         return stan::math::normal_id_glm_lpdf<true>(y, x, alpha, beta, sigma);
       };
 
-TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_small_simple) {
+TEST(ProbDistributionsNormalIdGLM, opencl_matches_cpu_small_simple) {
   int N = 3;
   int M = 2;
 
@@ -128,13 +128,13 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_small_simple) {
   double alpha = 0.3;
   double sigma = 11;
 
-  stan::math::test::compare_cpu_gpu_prim_rev(normal_id_glm_lpdf_functor, y, x,
+  stan::math::test::compare_cpu_opencl_prim_rev(normal_id_glm_lpdf_functor, y, x,
                                              alpha, beta, sigma);
-  stan::math::test::compare_cpu_gpu_prim_rev(normal_id_glm_lpdf_functor_propto,
+  stan::math::test::compare_cpu_opencl_prim_rev(normal_id_glm_lpdf_functor_propto,
                                              y, x, alpha, beta, sigma);
 }
 
-TEST(ProbDistributionsNormalIdGLM, gpu_broadcast_y) {
+TEST(ProbDistributionsNormalIdGLM, opencl_broadcast_y) {
   int N = 3;
   int M = 2;
 
@@ -197,7 +197,7 @@ TEST(ProbDistributionsNormalIdGLM, gpu_broadcast_y) {
                   beta_var2.adj().eval());
 }
 
-TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_zero_instances) {
+TEST(ProbDistributionsNormalIdGLM, opencl_matches_cpu_zero_instances) {
   int N = 0;
   int M = 2;
 
@@ -208,13 +208,13 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_zero_instances) {
   double alpha = 0.3;
   double sigma = 11;
 
-  stan::math::test::compare_cpu_gpu_prim_rev(normal_id_glm_lpdf_functor, y, x,
+  stan::math::test::compare_cpu_opencl_prim_rev(normal_id_glm_lpdf_functor, y, x,
                                              alpha, beta, sigma);
-  stan::math::test::compare_cpu_gpu_prim_rev(normal_id_glm_lpdf_functor_propto,
+  stan::math::test::compare_cpu_opencl_prim_rev(normal_id_glm_lpdf_functor_propto,
                                              y, x, alpha, beta, sigma);
 }
 
-TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_zero_attributes) {
+TEST(ProbDistributionsNormalIdGLM, opencl_matches_cpu_zero_attributes) {
   int N = 3;
   int M = 0;
 
@@ -225,13 +225,13 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_zero_attributes) {
   double alpha = 0.3;
   double sigma = 11;
 
-  stan::math::test::compare_cpu_gpu_prim_rev(normal_id_glm_lpdf_functor, y, x,
+  stan::math::test::compare_cpu_opencl_prim_rev(normal_id_glm_lpdf_functor, y, x,
                                              alpha, beta, sigma);
-  stan::math::test::compare_cpu_gpu_prim_rev(normal_id_glm_lpdf_functor_propto,
+  stan::math::test::compare_cpu_opencl_prim_rev(normal_id_glm_lpdf_functor_propto,
                                              y, x, alpha, beta, sigma);
 }
 
-TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_small_vector_alpha_sigma) {
+TEST(ProbDistributionsNormalIdGLM, opencl_matches_cpu_small_vector_alpha_sigma) {
   int N = 3;
   int M = 2;
 
@@ -246,13 +246,13 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_small_vector_alpha_sigma) {
   Matrix<double, Dynamic, 1> sigma(N, 1);
   sigma << 5, 2, 3.4;
 
-  stan::math::test::compare_cpu_gpu_prim_rev(normal_id_glm_lpdf_functor, y, x,
+  stan::math::test::compare_cpu_opencl_prim_rev(normal_id_glm_lpdf_functor, y, x,
                                              alpha, beta, sigma);
-  stan::math::test::compare_cpu_gpu_prim_rev(normal_id_glm_lpdf_functor_propto,
+  stan::math::test::compare_cpu_opencl_prim_rev(normal_id_glm_lpdf_functor_propto,
                                              y, x, alpha, beta, sigma);
 }
 
-TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_big) {
+TEST(ProbDistributionsNormalIdGLM, opencl_matches_cpu_big) {
   int N = 153;
   int M = 71;
 
@@ -264,9 +264,9 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_big) {
   Matrix<double, Dynamic, 1> sigma
       = Array<double, Dynamic, 1>::Random(N, 1) + 1.1;
 
-  stan::math::test::compare_cpu_gpu_prim_rev(normal_id_glm_lpdf_functor, y, x,
+  stan::math::test::compare_cpu_opencl_prim_rev(normal_id_glm_lpdf_functor, y, x,
                                              alpha, beta, sigma);
-  stan::math::test::compare_cpu_gpu_prim_rev(normal_id_glm_lpdf_functor_propto,
+  stan::math::test::compare_cpu_opencl_prim_rev(normal_id_glm_lpdf_functor_propto,
                                              y, x, alpha, beta, sigma);
 }
 

@@ -15,12 +15,12 @@ namespace test {
 namespace internal {
 
 template <typename T, require_stan_scalar_t<T>* = nullptr>
-T gpu_argument(T&& x) {
+T opencl_argument(T&& x) {
   return x;
 }
 
 template <typename T, require_not_stan_scalar_t<T>* = nullptr>
-auto gpu_argument(const T& x) {
+auto opencl_argument(const T& x) {
   return to_matrix_cl(x);
 }
 
@@ -107,21 +107,21 @@ void expect_adj_near(const std::vector<T>& a, const std::vector<T>& b,
 }
 
 template <typename Functor, std::size_t... Is, typename... Args>
-void compare_cpu_gpu_prim_rev_impl(Functor functor, std::index_sequence<Is...>,
+void compare_cpu_opencl_prim_rev_impl(Functor functor, std::index_sequence<Is...>,
                                    Args... args) {
-  expect_eq(functor(gpu_argument(args)...), functor(args...),
+  expect_eq(functor(opencl_argument(args)...), functor(args...),
             "Wrong prim return value!");
 
   auto var_args_for_cpu = std::make_tuple(var_argument(args)...);
-  auto var_args_for_gpu = std::make_tuple(var_argument(args)...);
+  auto var_args_for_opencl = std::make_tuple(var_argument(args)...);
   auto res_cpu = functor(std::get<Is>(var_args_for_cpu)...);
-  auto res_gpu = functor(gpu_argument(std::get<Is>(var_args_for_gpu))...);
-  expect_eq(res_gpu, res_cpu, "Wrong rev return value!");
+  auto res_opencl = functor(opencl_argument(std::get<Is>(var_args_for_opencl))...);
+  expect_eq(res_opencl, res_cpu, "Wrong rev return value!");
 
-  (recursive_sum(res_cpu) + recursive_sum(res_gpu)).grad();
+  (recursive_sum(res_cpu) + recursive_sum(res_opencl)).grad();
 
   static_cast<void>(std::initializer_list<int>{
-      (expect_adj_near(std::get<Is>(var_args_for_gpu),
+      (expect_adj_near(std::get<Is>(var_args_for_opencl),
                        std::get<Is>(var_args_for_cpu),
                        "Wrong adjoint for argument " TO_STRING(Is) "!"),
        0)...});
@@ -131,17 +131,17 @@ void compare_cpu_gpu_prim_rev_impl(Functor functor, std::index_sequence<Is...>,
 
 /**
  * Tests that given functor calculates same values and adjoints when given
- * arguments on CPU and GPU.
+ * arguments on CPU and opencl.
  *
  * @tparam Functor type of the functor
  * @tparam Args types of the arguments
  * @param fucntor functor to test
  * @param args arguments to test the functor with. These should be just values
- * on CPU (no vars, no arguments on GPU).
+ * on CPU (no vars, no arguments on opencl).
  */
 template <typename Functor, typename... Args>
-void compare_cpu_gpu_prim_rev(Functor functor, Args... args) {
-  internal::compare_cpu_gpu_prim_rev_impl(
+void compare_cpu_opencl_prim_rev(Functor functor, Args... args) {
+  internal::compare_cpu_opencl_prim_rev_impl(
       functor, std::make_index_sequence<sizeof...(args)>{}, args...);
 }
 
