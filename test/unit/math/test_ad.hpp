@@ -1448,7 +1448,7 @@ void expect_near_rel_var(const std::string& message, T1&& x, T2&& y,
   expect_near_rel(message + std::string(" values"), x.val(), y.val(),
                   tols.gradient_val_);
   expect_near_rel(message + std::string(" adjoints"), x.adj(), y.adj(),
-                  tols.gradient_grad_);
+                  tols.gradient_grad_varmat_matvar_);
 }
 
 /**
@@ -1676,7 +1676,8 @@ void check_return_type(const ReturnType& ret, const Type1& x, const Type2& y) {
  * @param f a lambda
  * @param x An Eigen matrix.
  */
-template <typename F, typename EigMat>
+template <typename F, typename EigMat,
+	  require_eigen_t<EigMat>* = nullptr>
 void expect_ad_matvar_v(const ad_tolerances& tols, const F& f,
                         const EigMat& x) {
   using stan::plain_type_t;
@@ -1805,8 +1806,8 @@ void test_matvar_mixture_impl(const ad_tolerances& tols, const F& f,
  * @param x An Eigen matrix.
  * @param y An Eigen matrix.
  */
-template <typename Type1, typename Type2, typename F, typename EigMat1,
-          typename EigMat2>
+template <typename Type1, typename Type2, typename F,
+	  typename EigMat1, typename EigMat2>
 void expect_ad_matvar_vv(const ad_tolerances& tols, const F& f,
                          const EigMat1& x, const EigMat2& y) {
   using stan::is_var;
@@ -1880,7 +1881,6 @@ void expect_ad_matvar_vv(const ad_tolerances& tols, const F& f,
 template <typename F, typename EigMat>
 void expect_ad_matvar(const F& f, const EigMat& x) {
   ad_tolerances tols;
-  tols.gradient_val_ = 1e-12;
   expect_ad_matvar_v(tols, f, x);
 }
 
@@ -1927,7 +1927,6 @@ void expect_ad_matvar(const ad_tolerances& tols, const F& f, const EigMat1& x,
 template <typename F, typename EigMat1, typename EigMat2>
 void expect_ad_matvar(const F& f, const EigMat1& x, const EigMat2& y) {
   ad_tolerances tols;
-  tols.gradient_val_ = 1e-12;
   expect_ad_matvar(tols, f, x, y);
 }
 

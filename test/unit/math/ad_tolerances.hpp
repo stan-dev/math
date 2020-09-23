@@ -18,7 +18,9 @@ namespace test {
  * function using forward-mode autodiff. Those get interpreted as
  * relative tolerances, see `relative_tolerance` class more details.
  *
- * `gradient_val_`: 1e-8;  `gradient_grad_`: 1e-4
+ * `gradient_val_`: 1e-8;  `gradient_grad_`: 1e-4,
+ *
+ * `gradient_grad_varmat_matvar_` : 1e-8,
  *
  * `gradient_fvar_val_`: 1e-8;  `gradient_fvar_grad_`: 1e-4
  *
@@ -33,6 +35,7 @@ namespace test {
 struct ad_tolerances {
   relative_tolerance gradient_val_;
   relative_tolerance gradient_grad_;
+  relative_tolerance gradient_grad_varmat_matvar_;
   relative_tolerance gradient_fvar_val_;
   relative_tolerance gradient_fvar_grad_;
   relative_tolerance hessian_val_;
@@ -47,6 +50,8 @@ struct ad_tolerances {
   ad_tolerances()
       : gradient_val_(1e-8),
         gradient_grad_(1e-4),
+
+	gradient_grad_varmat_matvar_(1e-8),
 
         gradient_fvar_val_(1e-8),
         gradient_fvar_grad_(1e-4),
