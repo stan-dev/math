@@ -24,6 +24,173 @@
 namespace stan {
 namespace math {
 
+#ifdef STAN_OPENCL
+class cholesky_opencl : public vari {
+ public:
+  int M_;
+  vari** vari_ref_A_;
+  vari** vari_ref_L_;
+
+  /**
+   * Constructor for OpenCL Cholesky function.
+   *
+   * Stores varis for A.  Instantiates and stores varis for L.
+   * Instantiates and stores dummy vari for upper triangular part of var
+   * result returned in cholesky_decompose function call
+   *
+   * variRefL aren't on the chainable autodiff stack, only used for storage
+   * and computation. Note that varis for L are constructed externally in
+   * cholesky_decompose.
+   *
+   * @param A matrix
+   * @param L_A Cholesky factor of A
+   */
+  cholesky_opencl(const Eigen::Matrix<var, -1, -1>& A,
+                  const Eigen::Matrix<double, -1, -1>& L_A)
+      : vari(0.0),
+        M_(A.rows()),
+        vari_ref_A_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+            A.rows() * (A.rows() + 1) / 2)),
+        vari_ref_L_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+            A.rows() * (A.rows() + 1) / 2)) {
+    size_t pos = 0;
+    for (size_type j = 0; j < M_; ++j) {
+      for (size_type i = j; i < M_; ++i) {
+        vari_ref_A_[pos] = A.coeffRef(i, j).vi_;
+        vari_ref_L_[pos] = new vari(L_A.coeffRef(i, j), false);
+        ++pos;
+      }
+    }
+  }
+
+  /**
+   * Symbolic adjoint calculation for Cholesky factor A
+   *
+   * @param L_val value of Cholesky factor
+   * @param L_adj adjoint of Cholesky factor
+   */
+  inline void symbolic_rev(matrix_cl<double>& L_val, matrix_cl<double>& L_adj) {
+    L_adj = transpose(L_val) * L_adj;
+    L_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
+    L_val = transpose(tri_inverse(L_val));
+    L_adj = L_val * transpose(L_val * L_adj);
+    L_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
+  }
+
+  /**
+   * Reverse mode differentiation algorithm using OpenCL
+   *
+   * Reference:
+   *
+   * Iain Murray: Differentiation of the Cholesky decomposition, 2016.
+   *
+   */
+  virtual void chain() {
+    const int packed_size = M_ * (M_ + 1) / 2;
+    Eigen::Map<Eigen::Matrix<vari*, Eigen::Dynamic, 1>> L_cpu(
+        vari_ref_L_, M_ * (M_ + 1) / 2);
+    Eigen::VectorXd L_val_cpu = L_cpu.val();
+    Eigen::VectorXd L_adj_cpu = L_cpu.adj();
+    matrix_cl<double> L_val = packed_copy<matrix_cl_view::Lower>(L_val_cpu, M_);
+    matrix_cl<double> L_adj = packed_copy<matrix_cl_view::Lower>(L_adj_cpu, M_);
+    int block_size
+        = M_ / opencl_context.tuning_opts().cholesky_rev_block_partition;
+    block_size = std::max(block_size, 8);
+    block_size = std::min(
+        block_size, opencl_context.tuning_opts().cholesky_rev_min_block_size);
+    // The following is an OpenCL implementation of
+    // the chain() function from the cholesky_block
+    // vari class implementation
+    for (int k = M_; k > 0; k -= block_size) {
+      const int j = std::max(0, k - block_size);
+      const int k_j_ind = k - j;
+      const int m_k_ind = M_ - k;
+
+      auto&& R_val = block(L_val, j, 0, k_j_ind, j);
+      auto&& R_adj = block(L_adj, j, 0, k_j_ind, j);
+      matrix_cl<double> D_val = block(L_val, j, j, k_j_ind, k_j_ind);
+      matrix_cl<double> D_adj = block(L_adj, j, j, k_j_ind, k_j_ind);
+      auto&& B_val = block(L_val, k, 0, m_k_ind, j);
+      auto&& B_adj = block(L_adj, k, 0, m_k_ind, j);
+      auto&& C_val = block(L_val, k, j, m_k_ind, k_j_ind);
+      auto&& C_adj = block(L_adj, k, j, m_k_ind, k_j_ind);
+
+      C_adj = C_adj * tri_inverse(D_val);
+      B_adj = B_adj - C_adj * R_val;
+      D_adj = D_adj - transpose(C_adj) * C_val;
+
+      symbolic_rev(D_val, D_adj);
+
+      R_adj = R_adj - transpose(C_adj) * B_val - D_adj * R_val;
+      D_adj = diagonal_multiply(D_adj, 0.5);
+
+      block(L_adj, j, j, k_j_ind, k_j_ind) = D_adj;
+    }
+    L_adj.view(matrix_cl_view::Lower);
+    std::vector<double> L_adj_cpu_res = packed_copy(L_adj);
+    for (size_type j = 0; j < packed_size; ++j) {
+      vari_ref_A_[j]->adj_ += L_adj_cpu_res[j];
+    }
+  }
+};
+
+/**
+ * Reverse mode specialization of Cholesky decomposition
+ *
+ * Internally calls Eigen::LLT rather than using
+ * stan::math::cholesky_decompose in order to use an inplace decomposition.
+ *
+ * Note chainable stack varis are created below in Matrix<var, -1, -1>
+ *
+ * @param A Matrix
+ * @return L Cholesky factor of A
+ */
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+inline Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime>
+cholesky_decompose(const T& A) {
+  const auto& A_ref = to_ref(A);
+  Eigen::Matrix<double, T::RowsAtCompileTime, T::ColsAtCompileTime> L_A(
+      value_of_rec(A_ref));
+  check_not_nan("cholesky_decompose", "A", L_A);
+  L_A = cholesky_decompose(L_A);
+  // Memory allocated in arena.
+  // cholesky_scalar gradient faster for small matrices compared to
+  // cholesky_block
+  vari* dummy = new vari(0.0, false);
+  Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime> L(A.rows(),
+                                                                   A.cols());
+  if (L_A.rows() <= 35) {
+    cholesky_scalar* baseVari = new cholesky_scalar(A_ref, L_A);
+    size_t accum = 0;
+    size_t accum_i = accum;
+    for (size_type j = 0; j < L.cols(); ++j) {
+      for (size_type i = j; i < L.cols(); ++i) {
+        accum_i += i;
+        size_t pos = j + accum_i;
+        L.coeffRef(i, j).vi_ = baseVari->vari_ref_L_[pos];
+      }
+      for (size_type k = 0; k < j; ++k) {
+        L.coeffRef(k, j).vi_ = dummy;
+      }
+      accum += j;
+      accum_i = accum;
+    }
+  } else {
+    if (L_A.rows()
+        > opencl_context.tuning_opts().cholesky_size_worth_transfer) {
+      cholesky_opencl* baseVari = new cholesky_opencl(A_ref, L_A);
+      internal::set_lower_tri_coeff_ref(L, baseVari->vari_ref_L_);
+    } else {
+      cholesky_block* baseVari = new cholesky_block(A_ref, L_A);
+      internal::set_lower_tri_coeff_ref(L, baseVari->vari_ref_L_);
+    }
+    cholesky_block* baseVari = new cholesky_block(A_ref, L_A);
+    internal::set_lower_tri_coeff_ref(L, baseVari->vari_ref_L_);
+  }
+
+  return L;
+}
+#else  
 /**
  * Reverse mode specialization of Cholesky decomposition
  *
@@ -192,6 +359,7 @@ cholesky_decompose(const T& A) {
 
   return res;
 }
+#endif
 
 }  // namespace math
 }  // namespace stan
