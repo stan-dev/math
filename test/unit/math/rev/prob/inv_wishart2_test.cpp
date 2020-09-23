@@ -5,18 +5,13 @@
 #include <string>
 
 template <typename T_y, typename T_dof, typename T_scale>
-void expect_propto(T_y W1, T_dof nu1, T_scale S1, T_y W2, T_dof nu2, T_scale S2,
-                   std::string message) {
+void expect_propto_inv_wishart_log(T_y W1, T_dof nu1, T_scale S1, T_y W2,
+                                   T_dof nu2, T_scale S2, std::string message) {
   expect_eq_diffs(stan::math::inv_wishart_log<false>(W1, nu1, S1),
                   stan::math::inv_wishart_log<false>(W2, nu2, S2),
                   stan::math::inv_wishart_log<true>(W1, nu1, S1),
                   stan::math::inv_wishart_log<true>(W2, nu2, S2), message);
 }
-
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using stan::math::to_var;
-using stan::math::var;
 
 class AgradDistributionsInvWishart : public ::testing::Test {
  protected:
@@ -34,41 +29,54 @@ class AgradDistributionsInvWishart : public ::testing::Test {
     S2.resize(2, 2);
     S2 << 3.0, 1.4, 1.4, 7.0;
   }
-  Matrix<double, Dynamic, Dynamic> Y1;
-  Matrix<double, Dynamic, Dynamic> Y2;
+
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Y1;
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Y2;
   double nu1;
   double nu2;
-  Matrix<double, Dynamic, Dynamic> S1;
-  Matrix<double, Dynamic, Dynamic> S2;
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> S1;
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> S2;
 };
 
 TEST_F(AgradDistributionsInvWishart, Propto) {
-  expect_propto(to_var(Y1), to_var(nu1), to_var(S1), to_var(Y2), to_var(nu2),
-                to_var(S2), "var: y, nu, and sigma");
+  using stan::math::to_var;
+  expect_propto_inv_wishart_log(to_var(Y1), to_var(nu1), to_var(S1), to_var(Y2),
+                                to_var(nu2), to_var(S2),
+                                "var: y, nu, and sigma");
 }
 TEST_F(AgradDistributionsInvWishart, ProptoY) {
-  expect_propto(to_var(Y1), nu1, S1, to_var(Y2), nu1, S1, "var: y");
+  using stan::math::to_var;
+  expect_propto_inv_wishart_log(to_var(Y1), nu1, S1, to_var(Y2), nu1, S1,
+                                "var: y");
 }
 TEST_F(AgradDistributionsInvWishart, ProptoYNu) {
-  expect_propto(to_var(Y1), to_var(nu1), S1, to_var(Y2), to_var(nu2), S1,
-                "var: y, and nu");
+  using stan::math::to_var;
+  expect_propto_inv_wishart_log(to_var(Y1), to_var(nu1), S1, to_var(Y2),
+                                to_var(nu2), S1, "var: y, and nu");
 }
 TEST_F(AgradDistributionsInvWishart, ProptoYSigma) {
-  expect_propto(to_var(Y1), nu1, to_var(S1), to_var(Y2), nu1, to_var(S2),
-                "var: y and sigma");
+  using stan::math::to_var;
+  expect_propto_inv_wishart_log(to_var(Y1), nu1, to_var(S1), to_var(Y2), nu1,
+                                to_var(S2), "var: y and sigma");
 }
 TEST_F(AgradDistributionsInvWishart, ProptoNu) {
-  expect_propto(Y1, to_var(nu1), S1, Y1, to_var(nu2), S1, "var: nu");
+  using stan::math::to_var;
+  expect_propto_inv_wishart_log(Y1, to_var(nu1), S1, Y1, to_var(nu2), S1,
+                                "var: nu");
 }
 TEST_F(AgradDistributionsInvWishart, ProptoNuSigma) {
-  expect_propto(Y1, to_var(nu1), to_var(S1), Y1, to_var(nu2), to_var(S2),
-                "var: nu and sigma");
+  using stan::math::to_var;
+  expect_propto_inv_wishart_log(Y1, to_var(nu1), to_var(S1), Y1, to_var(nu2),
+                                to_var(S2), "var: nu and sigma");
 }
 TEST_F(AgradDistributionsInvWishart, ProptoSigma) {
-  expect_propto(Y1, nu1, to_var(S1), Y1, nu1, to_var(S2), "var: sigma");
+  using stan::math::to_var;
+  expect_propto_inv_wishart_log(Y1, nu1, to_var(S1), Y1, nu1, to_var(S2),
+                                "var: sigma");
 }
 
 TEST(InvWishart, check_varis_on_stack) {
+  using stan::math::to_var;
   Eigen::MatrixXd W(2, 2);
   W << 2.011108, -11.20661, -11.206611, 112.94139;
 

@@ -4,16 +4,6 @@
 #include <complex>
 #include <vector>
 
-using stan::base_type;
-using stan::math::fvar;
-using stan::math::var;
-using d_t = double;
-using v_t = var;
-using fd_t = fvar<double>;
-using ffd_t = fvar<fd_t>;
-using fv_t = fvar<var>;
-using ffv_t = fvar<fv_t>;
-
 template <typename R, typename T>
 void expect_base() {
   test::expect_same_type<R, typename stan::base_type<T>::type>();
@@ -51,6 +41,8 @@ void test_base() {
 }
 
 TEST(mathMetaMix, baseType) {
+  using stan::math::fvar;
+  using stan::math::var;
   // 1-arg special cases where result is min double
   expect_base<float, float>();
   expect_base<int, int>();
@@ -59,10 +51,10 @@ TEST(mathMetaMix, baseType) {
 
   // cases where result is given real type
   test_base<float>();
-  test_base<d_t>();
-  test_base<v_t>();
-  test_base<fd_t>();
-  test_base<ffd_t>();
-  test_base<fv_t>();
-  test_base<ffv_t>();
+  test_base<double>();
+  test_base<var>();
+  test_base<fvar<double>>();
+  test_base<fvar<fvar<double>>>();
+  test_base<fvar<var>>();
+  test_base<fvar<fvar<var>>>();
 }

@@ -10,7 +10,7 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
-#include <Eigen/Core>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <cmath>
 
 namespace stan {

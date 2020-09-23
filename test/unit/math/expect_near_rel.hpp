@@ -211,4 +211,11 @@ void expect_near_rel(const std::string& msg, const std::complex<T1>& z1,
 
 }  // namespace test
 }  // namespace stan
+
+#define TO_STRING_(x) #x
+#define TO_STRING(x) TO_STRING_(x)
+#define EXPECT_NEAR_REL(a, b)  \
+  stan::test::expect_near_rel( \
+      "Error in file: " __FILE__ ", on line: " TO_STRING(__LINE__), a, b);
+
 #endif

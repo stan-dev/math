@@ -6,6 +6,8 @@
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/meta/is_vari.hpp>
+#include <stan/math/rev/meta/arena_type.hpp>
+#include <stan/math/rev/functor/reverse_pass_callback.hpp>
 #include <ostream>
 #include <vector>
 #ifdef STAN_OPENCL
@@ -36,18 +38,17 @@ static void grad(Vari* vi);
 template <typename T>
 class var_value {
   static_assert(
-      is_plain_type<T>::value,
-      "The template for this var is an"
-      " expression but a var_value's inner type must be assignable such as"
-      " a double, Eigen::Matrix, or Eigen::Array");
-  static_assert(
       std::is_floating_point<value_type_t<T>>::value,
       "The template for must be a floating point or a container holding"
       " floating point types");
 
  public:
-  using value_type = std::decay_t<T>;        // type in vari_value.
-  using vari_type = vari_value<value_type>;  // Type of underlying vari impl.
+  using value_type = std::decay_t<T>;  // type in vari_value.
+  using vari_type = std::conditional_t<is_plain_type<value_type>::value,
+                                       vari_value<value_type>, vari_view<T>>;
+
+  static constexpr int RowsAtCompileTime{vari_type::RowsAtCompileTime};
+  static constexpr int ColsAtCompileTime{vari_type::ColsAtCompileTime};
 
   /**
    * Pointer to the implementation of this variable.
@@ -95,6 +96,23 @@ class var_value {
   var_value(vari_type* vi) : vi_(vi) {}  // NOLINT
 
   /**
+   * Construct a `var_value` with an inner plain matrix type from a `var_value`
+   *  holding an expression.
+   * @tparam S a non-plain eigen expression type
+   * @param other an eigen expression
+   */
+  template <typename S, typename T_ = T,
+            require_convertible_t<S&, value_type>* = nullptr,
+            require_plain_type_t<T_>* = nullptr,
+            require_not_same_t<T, S>* = nullptr>
+  var_value(const var_value<S>& other) : vi_(new vari_type(other.vi_->val_)) {
+    reverse_pass_callback(
+        [this_vi = this->vi_, other_vi = other.vi_]() mutable {
+          other_vi->adj_ += this_vi->adj_;
+        });
+  }
+
+  /**
    * Return a constant reference to the value of this variable.
    *
    * @return The value of this variable.
@@ -102,14 +120,14 @@ class var_value {
   inline const auto& val() const { return vi_->val_; }
 
   /**
-   * Return a const reference of the derivative of the root expression with
+   * Return a reference of the derivative of the root expression with
    * respect to this expression.  This method only works
    * after one of the `grad()` methods has been
    * called.
    *
    * @return Adjoint for this variable.
    */
-  inline const auto& adj() const { return vi_->adj_; }
+  inline auto& adj() const { return vi_->adj_; }
 
   /**
    * Return a reference to the derivative of the root expression with
@@ -121,6 +139,9 @@ class var_value {
    */
   inline auto& adj() { return vi_->adj_; }
 
+  inline Eigen::Index rows() const { return vi_->val_.rows(); }
+  inline Eigen::Index cols() const { return vi_->val_.cols(); }
+  inline Eigen::Index size() const { return vi_->val_.size(); }
   /**
    * Compute the gradient of this (dependent) variable with respect to
    * the specified vector of (independent) variables, assigning the
@@ -293,6 +314,115 @@ class var_value {
   inline var_value<T>& operator/=(T b);
 
   /**
+   * A block view of the underlying Eigen matrices.
+   * @param start_row Starting row of block.
+   * @param start_col Starting columns of block.
+   * @param num_rows Number of rows to return.
+   * @param num_cols Number of columns to return.
+   */
+  inline auto block(Eigen::Index start_row, Eigen::Index start_col,
+                    Eigen::Index num_rows, Eigen::Index num_cols) const {
+    using vari_sub
+        = decltype(vi_->block(start_row, start_col, num_rows, num_cols));
+    using var_sub = var_value<typename vari_sub::value_type>;
+    return var_sub(
+        new vari_sub(vi_->block(start_row, start_col, num_rows, num_cols)));
+  }
+
+  /**
+   * View of the head of Eigen vector types.
+   * @param n Number of elements to return from top of vector.
+   */
+  inline auto head(Eigen::Index n) const {
+    using vari_sub = decltype(vi_->head(n));
+    using var_sub = var_value<typename vari_sub::value_type>;
+    return var_sub(new vari_sub(vi_->head(n)));
+  }
+
+  /**
+   * View of the tail of the Eigen vector types.
+   * @param n Number of elements to return from bottom of vector.
+   */
+  inline auto tail(Eigen::Index n) const {
+    using vari_sub = decltype(vi_->tail(n));
+    using var_sub = var_value<typename vari_sub::value_type>;
+    return var_sub(new vari_sub(vi_->tail(n)));
+  }
+
+  /**
+   * View block of N elements starting at position `i`
+   * @param i Starting position of block.
+   * @param n Number of elements in block
+   */
+  inline auto segment(Eigen::Index i, Eigen::Index n) const {
+    using vari_sub = decltype(vi_->segment(i, n));
+    using var_sub = var_value<typename vari_sub::value_type>;
+    return var_sub(new vari_sub(vi_->segment(i, n)));
+  }
+
+  /**
+   * View row of eigen matrices.
+   * @param i Row index to slice.
+   */
+  inline auto row(Eigen::Index i) const {
+    using vari_sub = decltype(vi_->row(i));
+    using var_sub = var_value<typename vari_sub::value_type>;
+    return var_sub(new vari_sub(vi_->row(i)));
+  }
+
+  /**
+   * View column of eigen matrices
+   * @param i Column index to slice
+   */
+  inline auto col(Eigen::Index i) const {
+    using vari_sub = decltype(vi_->col(i));
+    using var_sub = var_value<typename vari_sub::value_type>;
+    return var_sub(new vari_sub(vi_->col(i)));
+  }
+
+  /**
+   * View element of eigen matrices
+   * @param i Element to access
+   */
+  inline auto coeff(Eigen::Index i) const {
+    using vari_coeff_type = decltype(vi_->coeff(i));
+    auto* vari_coeff = new vari_coeff_type(vi_->coeff(i));
+    reverse_pass_callback([vari_coeff, this, i]() mutable {
+      this->vi_->adj_(i) += vari_coeff->adj_;
+    });
+    return var_value<double>(vari_coeff);
+  }
+
+  /**
+   * View element of eigen matrices
+   * @param i Row to access
+   * @param j Column to access
+   */
+  inline auto coeff(Eigen::Index i, Eigen::Index j) const {
+    using vari_coeff_type = decltype(vi_->coeff(i, j));
+    auto* vari_coeff = new vari_coeff_type(vi_->coeff(i, j));
+    reverse_pass_callback([vari_coeff, this, i, j]() mutable {
+      this->vi_->adj_(i, j) += vari_coeff->adj_;
+    });
+    return var_value<double>(vari_coeff);
+  }
+
+  /**
+   * View element of eigen matrices
+   * @param i Element to access
+   */
+  inline auto operator()(Eigen::Index i) const { return this->coeff(i); }
+
+  /**
+   * View element of eigen matrices
+   * @param i Row to access
+   * @param j Column to access
+   */
+  inline auto operator()(Eigen::Index i, Eigen::Index j) const {
+    return this->coeff(i, j);
+  }
+
+  /**
    * Write the value of this autodiff variable and its adjoint to
    * the specified output stream.
    *
@@ -305,6 +435,88 @@ class var_value {
       return os << "uninitialized";
     }
     return os << v.val();
+  }
+
+  /**
+   * Returns number of rows. Only available if `T` is a matrix.
+   * @return number of rows.
+   */
+  template <typename U = T,
+            require_any_t<is_eigen_matrix<U>, is_matrix_cl<U>>* = nullptr>
+  auto rows() const {
+    return vi_->rows();
+  }
+
+  /**
+   * Returns number of columns. Only available if `T` is a matrix.
+   * @return number of columns.
+   */
+  template <typename U = T,
+            require_any_t<is_eigen_matrix<U>, is_matrix_cl<U>>* = nullptr>
+  auto cols() const {
+    return vi_->cols();
+  }
+
+  /**
+   * Assignment of another plain var value, when this also contains a plain
+   * type.
+   * @tparam S type of the value in the `var_value` to assing
+   * @param other the value to assign
+   * @return this
+   */
+  template <typename S, require_convertible_t<S&, value_type>* = nullptr,
+            require_all_plain_type_t<T, S>* = nullptr>
+  var_value<T> operator=(const var_value<S>& other) {
+    vi_ = other.vi_;
+    return *this;
+  }
+
+  /**
+   * Assignment of another var value, when either this or the other one does not
+   * contain a plain type.
+   * @tparam S type of the value in the `var_value` to assing
+   * @param other the value to assign
+   * @return this
+   */
+  template <typename S, require_convertible_t<S&, value_type>* = nullptr,
+            require_any_not_plain_type_t<T, S>* = nullptr>
+  var_value<T> operator=(const var_value<S>& other) {
+    arena_t<plain_type_t<T>> prev_val = vi_->val_;
+    vi_->val_ = other.val();
+    // no need to change any adjoints - these are just zeros before the reverse
+    // pass
+
+    reverse_pass_callback(
+        [this_vi = this->vi_, other_vi = other.vi_, prev_val]() mutable {
+          this_vi->val_ = prev_val;
+
+          // we have no way of detecting aliasing between this->vi_->adj_ and
+          // other.vi_->adj_, so we must copy adjoint before reseting to zero
+
+          // we can reuse prev_val instead of allocating a new matrix
+          prev_val = this_vi->adj_;
+          this_vi->adj_.setZero();
+          other_vi->adj_ += prev_val;
+        });
+    return *this;
+  }
+
+  // this is a bit ugly workarount to allow var_value<double> to have default
+  // assignment operator, which avoids warnings when used in Eigen matrices.
+ private:
+  struct not_var_value {};
+
+ public:
+  /**
+   * Copy assignment operator delegates to general assignment operator if the
+   * var_value contains eigen type.
+   * @param other the value to assing
+   * @return this
+   */
+  var_value<T> operator=(std::conditional_t<is_eigen<value_type>::value,
+                                            const var_value<T>&, not_var_value>
+                             other) {
+    return operator=<T>(other);
   }
 };
 

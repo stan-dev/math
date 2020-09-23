@@ -1,3 +1,5 @@
+#ifndef TEST_UNIT_MATH_PRIM_PROB_AGRAD_DISTRIBUTIONS_MULTI_GP_CHOLESKY
+#define TEST_UNIT_MATH_PRIM_PROB_AGRAD_DISTRIBUTIONS_MULTI_GP_CHOLESKY
 class agrad_distributions_multi_gp_cholesky : public ::testing::Test {
  protected:
   virtual void SetUp() {
@@ -27,3 +29,4 @@ class agrad_distributions_multi_gp_cholesky : public ::testing::Test {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> L;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> L2;
 };
+#endif

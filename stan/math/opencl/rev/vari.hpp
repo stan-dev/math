@@ -3,7 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/rev/core/vari.hpp>
-#include <stan/math/opencl/is_matrix_cl.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 
 namespace stan {
@@ -33,6 +33,15 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
    * The value of this variable.
    */
   T val_;
+
+  /**
+   * Rows at compile time
+   */
+  static constexpr int RowsAtCompileTime{-1};
+  /**
+   * Columns at compile time
+   */
+  static constexpr int ColsAtCompileTime{-1};
 
   /**
    * Construct a matrix_cl variable implementation from a value. The

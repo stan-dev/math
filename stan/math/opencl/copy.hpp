@@ -28,10 +28,11 @@ namespace stan {
 namespace math {
 
 /** \ingroup opencl
- * Copies the source Eigen matrix to the destination matrix that is stored on
- * the OpenCL device. If a lvalue matrix is passed to this function the caller
- * must make sure that the matrix does not go out of scope before copying is
- * complete.
+ * Copies the source Eigen matrix, `std::vector` or scalar to the destination
+ * matrix that is stored on the OpenCL device. The function also accepts
+ * `matrix_cl`s in which case it just returns the argument. If a lvalue matrix
+ * is passed to this function the caller must make sure that the matrix does not
+ * go out of scope before copying is complete.
  *
  * That means `.wait()` must be called on the event associated on copying or
  * any other event that requires completion of this event. This can be done by
@@ -41,29 +42,9 @@ namespace math {
  * @param src source Eigen matrix
  * @return matrix_cl with a copy of the data in the source matrix
  */
-template <typename Mat, typename Mat_scalar = scalar_type_t<Mat>,
-          require_eigen_vt<std::is_arithmetic, Mat>* = nullptr>
-inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
-  return matrix_cl<Mat_scalar>(std::forward<Mat>(src));
-}
-
-/** \ingroup opencl
- * Copies the source `std::vector` to the destination matrix that is stored on
- * the OpenCL device. If a lvalue is passed to this constructor the caller must
- * make sure that it does not go out of scope before copying is complete.
- *
- * That means `.wait()` must be called on the event associated on copying or
- * any other event that requires completion of this event. This can be done by
- * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
- * returned matrix or any matrix that is calculated from that one.
- *
- * @param src source std::vector
- * @return matrix_cl with a copy of the data in the source matrix
- */
-template <typename Vec, typename Vec_scalar = scalar_type_t<Vec>,
-          require_std_vector_vt<std::is_arithmetic, Vec>* = nullptr>
-inline matrix_cl<Vec_scalar> to_matrix_cl(Vec&& src) {
-  return matrix_cl<Vec_scalar>(std::forward<Vec>(src));
+template <typename T, require_vt_arithmetic<T>* = nullptr>
+inline matrix_cl<value_type_t<T>> to_matrix_cl(T&& src) {
+  return matrix_cl<value_type_t<T>>(std::forward<T>(src));
 }
 
 /** \ingroup opencl
@@ -243,25 +224,6 @@ inline T from_matrix_cl_error_code(const matrix_cl<T>& src) {
     check_opencl_error("copy_error_code (OpenCL)->(OpenCL)", e);
   }
   return dst;
-}
-
-/** \ingroup opencl
- * Copy an arithmetic type to the device. If a lvalue is passed to this
- * constructor the caller must make sure that it does not go out of scope before
- * copying is complete.
- *
- * That means `.wait()` must be called on the event associated on copying or
- * any other event that requires completion of this event. This can be done by
- * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
- * returned matrix or any matrix that is calculated from that one.
- *
- * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
- * @param src Arithmetic to receive the matrix_cl value.
- * @return A 1x1 matrix on the device.
- */
-template <typename T, typename = require_arithmetic_t<std::decay_t<T>>>
-inline matrix_cl<std::decay_t<T>> to_matrix_cl(T&& src) {
-  return matrix_cl<std::decay_t<T>>(std::forward<T>(src));
 }
 
 }  // namespace math

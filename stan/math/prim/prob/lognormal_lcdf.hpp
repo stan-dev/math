@@ -8,8 +8,10 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
@@ -21,53 +23,68 @@ template <typename T_y, typename T_loc, typename T_scale>
 return_type_t<T_y, T_loc, T_scale> lognormal_lcdf(const T_y& y, const T_loc& mu,
                                                   const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
-  using std::exp;
-  using std::log;
+  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
+  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
+  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
   static const char* function = "lognormal_lcdf";
-  check_not_nan(function, "Random variable", y);
-  check_nonnegative(function, "Random variable", y);
-  check_finite(function, "Location parameter", mu);
-  check_positive_finite(function, "Scale parameter", sigma);
+
+  T_y_ref y_ref = y;
+  T_mu_ref mu_ref = mu;
+  T_sigma_ref sigma_ref = sigma;
+
+  const auto& y_col = as_column_vector_or_scalar(y_ref);
+  const auto& mu_col = as_column_vector_or_scalar(mu_ref);
+  const auto& sigma_col = as_column_vector_or_scalar(sigma_ref);
+
+  const auto& y_arr = as_array_or_scalar(y_col);
+  const auto& mu_arr = as_array_or_scalar(mu_col);
+  const auto& sigma_arr = as_array_or_scalar(sigma_col);
+
+  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
+  ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
+  ref_type_t<decltype(value_of(sigma_arr))> sigma_val = value_of(sigma_arr);
+
+  check_not_nan(function, "Random variable", y_val);
+  check_nonnegative(function, "Random variable", y_val);
+  check_finite(function, "Location parameter", mu_val);
+  check_positive_finite(function, "Scale parameter", sigma_val);
 
   if (size_zero(y, mu, sigma)) {
     return 0;
   }
 
-  T_partials_return cdf_log = 0.0;
-  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
+  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
+      y_ref, mu_ref, sigma_ref);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
-  size_t N = max_size(y, mu, sigma);
-
-  for (size_t i = 0; i < stan::math::size(y); i++) {
-    if (value_of(y_vec[i]) == 0.0) {
-      return ops_partials.build(negative_infinity());
-    }
+  if (sum(promote_scalar<int>(y_val == 0))) {
+    return ops_partials.build(NEGATIVE_INFTY);
   }
 
-  for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials_return scaled_diff
-        = (log(y_dbl) - mu_dbl) / (sigma_dbl * SQRT_TWO);
-    const T_partials_return rep_deriv
-        = SQRT_TWO_OVER_SQRT_PI * exp(-scaled_diff * scaled_diff) / sigma_dbl;
+  const auto& log_y = log(y_val);
+  const auto& scaled_diff
+      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(
+          (log_y - mu_val) / (sigma_val * SQRT_TWO));
+  const auto& erfc_calc
+      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(
+          erfc(-scaled_diff));
+  size_t N = max_size(y, mu, sigma);
+  T_partials_return cdf_log = N * LOG_HALF + sum(log(erfc_calc));
 
-    const T_partials_return erfc_calc = erfc(-scaled_diff);
-    cdf_log += LOG_HALF + log(erfc_calc);
-
+  if (!is_constant_all<T_y, T_loc, T_scale>::value) {
+    const auto& exp_m_sq_diff = exp(-scaled_diff * scaled_diff);
+    const auto& rep_deriv = to_ref_if<!is_constant_all<T_y>::value
+                                          + !is_constant_all<T_scale>::value
+                                          + !is_constant_all<T_loc>::value
+                                      >= 2>(
+        -SQRT_TWO_OVER_SQRT_PI * exp_m_sq_diff / (sigma_val * erfc_calc));
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += rep_deriv / erfc_calc / y_dbl;
+      ops_partials.edge1_.partials_ = -rep_deriv / y_val;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n] -= rep_deriv / erfc_calc;
+      ops_partials.edge2_.partials_ = rep_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
-          -= rep_deriv * scaled_diff * SQRT_TWO / erfc_calc;
+      ops_partials.edge3_.partials_ = rep_deriv * scaled_diff * SQRT_TWO;
     }
   }
   return ops_partials.build(cdf_log);

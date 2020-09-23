@@ -53,8 +53,6 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
      * needs to be computed
      * @param need_logp4 interpreted as boolean - whether fourth part
      * logp_global needs to be computed
-     * @param need_logp5 interpreted as boolean - whether fifth part logp_global
-     * needs to be computed
      */
     __kernel void neg_binomial_2_log_glm(
         __global double* logp_global, __global double* theta_derivative_global,
@@ -67,7 +65,7 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
         const int need_theta_derivative, const int need_theta_derivative_sum,
         const int need_phi_derivative, const int need_phi_derivative_sum,
         const int need_logp1, const int need_logp2, const int need_logp3,
-        const int need_logp4, const int need_logp5) {
+        const int need_logp4) {
       const int gid = get_global_id(0);
       const int lid = get_local_id(0);
       const int lsize = get_local_size(0);
@@ -108,13 +106,11 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
             logp += phi * log(phi);
           }
         }
+        logp -= y_plus_phi * logsumexp_theta_logphi;
         if (need_logp3) {
-          logp -= y_plus_phi * logsumexp_theta_logphi;
-        }
-        if (need_logp4) {
           logp += y * theta;
         }
-        if (need_logp5) {
+        if (need_logp4) {
           logp += lgamma(y_plus_phi);
         }
         double theta_exp = exp(theta);
@@ -198,7 +194,7 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
  */
 const kernel_cl<out_buffer, out_buffer, out_buffer, out_buffer, in_buffer,
                 in_buffer, in_buffer, in_buffer, in_buffer, int, int, int, int,
-                int, int, int, int, int, int, int, int, int, int>
+                int, int, int, int, int, int, int, int, int>
     neg_binomial_2_log_glm("neg_binomial_2_log_glm",
                            {digamma_device_function,
                             neg_binomial_2_log_glm_kernel_code},
