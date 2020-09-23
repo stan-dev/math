@@ -16,24 +16,12 @@ template <bool Ranged, typename Res, typename ApplyFunction, typename IndexFunct
 inline auto parallel_map(ApplyFunction&& app_fun, IndexFunction&& index_fun,
    int grainsize, Args&&... args) {
   // Functors for manipulating vars at a given iteration of the loop
-  auto var_counter = [&](auto&... xargs) {
-   return count_vars(xargs...);
-  };
-  auto var_copier = [&](auto&&... xargs) {
-   return std::tuple<decltype(deep_copy_vars(xargs))...>(
-     deep_copy_vars(xargs)...);
-  };
-  auto vari_saver = [&](int i, int nvars, vari** varis) {
-   return [=](const auto&... xargs) {
-     save_varis(varis + nvars*i, xargs...);
-   };
-  };
   std::decay_t<decltype(app_fun(args...))> result(max_size(args...));
   int S = result.size();
   // Assuming that the number of the vars at each iteration of the loop is
   // the same (as the operations at each iteration should be the same), we can
   // just count vars at the first iteration.
-  int nvars = index_fun(0, var_counter, args...);
+  int nvars = count_vars(index_fun(0, args)...);
 
   vari** varis = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
    S * nvars);
@@ -47,36 +35,28 @@ inline auto parallel_map(ApplyFunction&& app_fun, IndexFunction&& index_fun,
     const tbb::blocked_range<size_t>& r) {
      // Run nested autodiff in this scope
      for (size_t i = r.begin(); i < r.end(); ++i) {
-       double tmp_val;
-       {
        nested_rev_autodiff nested;
        // Save varis from arguments at current iteration
-       index_fun(i, vari_saver(i, nvars, varis), args...);
+       save_varis(varis + nvars * i, index_fun(i, args)...);
        // Create nested autodiff copies of all arguments at current
        // iteration that do not point back to main autodiff stack
-       auto args_tuple_local_copy = index_fun(i, var_copier, args...);
-
+       auto args_tuple_local_copy = std::make_tuple(deep_copy_vars(index_fun(i, args)...));
        // Apply specified function to arguments at current iteration
        var out = apply(
            [&](auto&&... args) {
              return app_fun(args...);
            }, args_tuple_local_copy);
-
        out.grad();
-
        // Extract value and adjoints to be put into vars on main
        // autodiff stack
-       tmp_val = out.vi_->val_;
        apply([&](auto&&... args) {
-         accumulate_adjoints(partials + nvars*i,
-                             std::forward<decltype(args)>(args)...); },
+         accumulate_adjoints(partials + nvars*i, args...); },
          args_tuple_local_copy);
          result.coeffRef(i) = var(new precomputed_gradients_vari(
-          tmp_val,
+          out.vi_->val_,
           nvars,
           varis + nvars*i,
           partials + nvars*i));
-       }
      }
    });
   // Pack values and adjoints into new vars on main autodiff stack
