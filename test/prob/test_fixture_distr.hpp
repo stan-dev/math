@@ -656,7 +656,8 @@ class AgradDistributionTestFixture : public ::testing::Test {
                "gradients";
       for (size_t i = 0; i < single_gradients2.size(); ++i)
         EXPECT_NEAR(single_gradients2[i], multiple_gradients2[i], 1e-7)
-            << "scalar and vectorized results should have the same second order "
+            << "scalar and vectorized results should have the same second "
+               "order "
                "gradients";
       for (size_t i = 0; i < single_gradients3.size(); ++i)
         EXPECT_NEAR(single_gradients3[i], multiple_gradients3[i], 1e-7)
