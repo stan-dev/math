@@ -57,7 +57,7 @@ class AgradCcdfLogDiscreteRange : public AgradCcdfLogTest {
       const T_y& y, const T_lower& lower, const T_upper& upper, const T3&,
       const T4&, const T5&) {
     if (y < lower) {
-      return 1.0;
+      return 0.0;
     }
 
     if (y >= upper) {

@@ -496,6 +496,8 @@ class AgradCdfLogTestFixture : public ::testing::Test {
   /**
    * Test that the vectorized functions work as expected when the elements
    * of the vector are the same
+   *
+   * For log cdf this means lcdf([a, a, a]) == lcdf(a) + lcdf(a) + lcdf(a)
    */
   void test_repeat_as_vector() {
     if (!any_vector<T0, T1, T2, T3, T4, T5>::value) {
@@ -585,11 +587,11 @@ class AgradCdfLogTestFixture : public ::testing::Test {
                "gradients";
       for (size_t i = 0; i < single_gradients2.size(); ++i)
         EXPECT_NEAR(single_gradients2[i], multiple_gradients2[i], 1e-7)
-            << "scalar and vectorized results should have the same first order "
+            << "scalar and vectorized results should have the same second order "
                "gradients";
       for (size_t i = 0; i < single_gradients3.size(); ++i)
         EXPECT_NEAR(single_gradients3[i], multiple_gradients3[i], 1e-7)
-            << "scalar and vectorized results should have the same first order "
+            << "scalar and vectorized results should have the same third order "
                "gradients";
     }
   }
@@ -597,6 +599,8 @@ class AgradCdfLogTestFixture : public ::testing::Test {
   /**
    * Test that the vectorized functions work as expected when the elements
    * of the vector are different
+   *
+   * For log cdf this means lcdf([a, b, c]) == lcdf(a) + lcdf(b) + lcdf(c)
    */
   void test_as_scalars_vs_as_vector() {
     if (!any_vector<T0, T1, T2, T3, T4, T5>::value) {
