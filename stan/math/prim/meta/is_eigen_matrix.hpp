@@ -44,8 +44,10 @@ struct is_eigen_matrix_dynamic
           std::decay_t<T>,
           is_base_pointer_convertible<Eigen::MatrixBase, T>::value>::value> {};
 
-STAN_ADD_REQUIRE_UNARY(eigen_matrix_dynamic, is_eigen_matrix_dynamic, require_eigens_types);
-STAN_ADD_REQUIRE_CONTAINER(eigen_matrix_dynamic, is_eigen_matrix_dynamic, require_eigens_types);
+STAN_ADD_REQUIRE_UNARY(eigen_matrix_dynamic, is_eigen_matrix_dynamic,
+                       require_eigens_types);
+STAN_ADD_REQUIRE_CONTAINER(eigen_matrix_dynamic, is_eigen_matrix_dynamic,
+                           require_eigens_types);
 
 }  // namespace stan
 

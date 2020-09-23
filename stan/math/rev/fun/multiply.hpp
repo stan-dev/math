@@ -22,8 +22,7 @@ namespace math {
  * @param[in] B second matrix
  * @return A * B
  */
-template <typename T1, typename T2,
-          require_all_matrix_t<T1, T2>* = nullptr,
+template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
           require_any_st_var<T1, T2>* = nullptr,
           require_return_type_t<is_var, T1, T2>* = nullptr,
           require_not_row_and_col_vector_t<T1, T2>* = nullptr>
@@ -81,8 +80,7 @@ inline auto multiply(const T1& A, const T2& B) {
  * @param[in] B column vector
  * @return A * B as a scalar
  */
-template <typename T1, typename T2,
-          require_all_matrix_t<T1, T2>* = nullptr,
+template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
           require_any_st_var<T1, T2>* = nullptr,
           require_row_and_col_vector_t<T1, T2>* = nullptr>
 inline var multiply(const T1& A, const T2& B) {

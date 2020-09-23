@@ -158,9 +158,10 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
  * @param y Second vector input to which operation is applied.
  * @param f functor to apply to inputs.
  */
-template <
-    typename F, typename T1, typename T2, typename T1_plain = plain_type_t<T1>,
-    require_eigen_matrix_dynamic_t<T1>* = nullptr, require_std_vector_t<T2>* = nullptr>
+template <typename F, typename T1, typename T2,
+          typename T1_plain = plain_type_t<T1>,
+          require_eigen_matrix_dynamic_t<T1>* = nullptr,
+          require_std_vector_t<T2>* = nullptr>
 void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   auto vec_vec = f(x, y);
   for (int r = 0; r < x.rows(); ++r) {
@@ -210,9 +211,10 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   EXPECT_THROW(f(nest_nest_x_small, nest_nest_y), std::invalid_argument);
 }
 
-template <
-    typename F, typename T1, typename T2, typename T2_plain = plain_type_t<T2>,
-    require_std_vector_t<T1>* = nullptr, require_eigen_matrix_dynamic_t<T2>* = nullptr>
+template <typename F, typename T1, typename T2,
+          typename T2_plain = plain_type_t<T2>,
+          require_std_vector_t<T1>* = nullptr,
+          require_eigen_matrix_dynamic_t<T2>* = nullptr>
 void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   auto vec_vec = f(x, y);
   for (int r = 0; r < y.rows(); ++r) {

@@ -64,7 +64,8 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_F, typename T_G, typename T_V,
           typename T_W, typename T_m0, typename T_C0,
-          require_all_eigen_matrix_dynamic_t<T_y, T_F, T_G, T_V, T_W, T_C0>* = nullptr,
+          require_all_eigen_matrix_dynamic_t<T_y, T_F, T_G, T_V, T_W,
+                                             T_C0>* = nullptr,
           require_eigen_col_vector_t<T_m0>* = nullptr>
 inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0> gaussian_dlm_obs_lpdf(
     const T_y& y, const T_F& F, const T_G& G, const T_V& V, const T_W& W,
@@ -186,10 +187,11 @@ inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0> gaussian_dlm_obs_lpdf(
  * @tparam T_m0 Type of initial state mean vector.
  * @tparam T_C0 Type of initial state covariance matrix.
  */
-template <bool propto, typename T_y, typename T_F, typename T_G, typename T_V,
-          typename T_W, typename T_m0, typename T_C0,
-          require_all_eigen_matrix_dynamic_t<T_y, T_F, T_G, T_W, T_C0>* = nullptr,
-          require_all_eigen_col_vector_t<T_V, T_m0>* = nullptr>
+template <
+    bool propto, typename T_y, typename T_F, typename T_G, typename T_V,
+    typename T_W, typename T_m0, typename T_C0,
+    require_all_eigen_matrix_dynamic_t<T_y, T_F, T_G, T_W, T_C0>* = nullptr,
+    require_all_eigen_col_vector_t<T_V, T_m0>* = nullptr>
 inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0> gaussian_dlm_obs_lpdf(
     const T_y& y, const T_F& F, const T_G& G, const T_V& V, const T_W& W,
     const T_m0& m0, const T_C0& C0) {
