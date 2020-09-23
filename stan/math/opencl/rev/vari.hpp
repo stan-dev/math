@@ -3,7 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/rev/core/vari.hpp>
-#include <stan/math/opencl/is_matrix_cl.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 
 namespace stan {

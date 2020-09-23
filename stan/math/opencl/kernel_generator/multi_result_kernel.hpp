@@ -42,14 +42,14 @@ struct multi_result_kernel_internal {
      * Generates list of all events kernel assigning expressions to results must
      * wait on. Also clears those events from matrices.
      * @param[out] events list of events
-     * @param assignment_pairs pairs if result and expression
+     * @param assignment_pairs pairs of result and expression
      */
     static void get_clear_events(
         std::vector<cl::Event>& events,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {
       next::get_clear_events(events, assignment_pairs);
-      std::get<N>(assignment_pairs).second.get_clear_write_events(events);
+      std::get<N>(assignment_pairs).second.get_write_events(events);
       std::get<N>(assignment_pairs).first.get_clear_read_write_events(events);
     }
     /**
