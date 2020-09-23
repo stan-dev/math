@@ -26,7 +26,7 @@ class quad_form_vari_alloc : public chainable_alloc {
     }
     for (int j = 0; j < C_.cols(); j++) {
       for (int i = 0; i < C_.rows(); i++) {
-	C_(i, j) = var(new vari(Cd(i, j), false));
+        C_(i, j) = var(new vari(Cd(i, j), false));
       }
     }
   }
@@ -117,14 +117,14 @@ template <typename EigMat1, typename EigMat2,
           require_any_vt_var<EigMat1, EigMat2>* = nullptr>
 inline promote_scalar_t<var, EigMat2> quad_form(const EigMat1& A,
                                                 const EigMat2& B,
-						bool symmetric = false) {
+                                                bool symmetric = false) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
 
   auto* baseVari = new internal::quad_form_vari<
-    value_type_t<EigMat1>, EigMat1::RowsAtCompileTime,
-    EigMat1::ColsAtCompileTime, value_type_t<EigMat2>,
-    EigMat2::RowsAtCompileTime, EigMat2::ColsAtCompileTime>(A, B, symmetric);
+      value_type_t<EigMat1>, EigMat1::RowsAtCompileTime,
+      EigMat1::ColsAtCompileTime, value_type_t<EigMat2>,
+      EigMat2::RowsAtCompileTime, EigMat2::ColsAtCompileTime>(A, B, symmetric);
 
   return baseVari->impl_->C_;
 }
@@ -150,9 +150,9 @@ inline var quad_form(const EigMat& A, const ColVec& B, bool symmetric = false) {
   check_multiplicable("quad_form", "A", A, "B", B);
 
   auto* baseVari = new internal::quad_form_vari<
-    value_type_t<EigMat>, EigMat::RowsAtCompileTime,
-    EigMat::ColsAtCompileTime, value_type_t<ColVec>,
-    ColVec::RowsAtCompileTime, 1>(A, B, symmetric);
+      value_type_t<EigMat>, EigMat::RowsAtCompileTime,
+      EigMat::ColsAtCompileTime, value_type_t<ColVec>,
+      ColVec::RowsAtCompileTime, 1>(A, B, symmetric);
 
   return baseVari->impl_->C_(0, 0);
 }
