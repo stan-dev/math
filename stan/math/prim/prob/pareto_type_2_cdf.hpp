@@ -60,7 +60,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
   check_greater_or_equal(function, "Random variable", y_val, mu_val);
 
   const auto& summed = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(
-      lambda_val + y_val + mu_val);
+      lambda_val + y_val - mu_val);
   const auto& temp
       = to_ref_if<!is_constant_all<T_shape>::value>(summed / lambda_val);
   const auto& p1_pow_alpha
