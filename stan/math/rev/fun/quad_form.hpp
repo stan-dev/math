@@ -106,6 +106,7 @@ class quad_form_vari : public vari {
  *
  * @param A square matrix
  * @param B second matrix
+ * @param symmetric indicates whether the output should be made symmetric
  * @return The quadratic form, which is a symmetric matrix.
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
@@ -136,6 +137,7 @@ inline promote_scalar_t<var, EigMat2> quad_form(const EigMat1& A,
  *
  * @param A square matrix
  * @param B vector
+ * @param symmetric indicates whether the output should be made symmetric
  * @return The quadratic form (a scalar).
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
