@@ -110,20 +110,20 @@ template <typename Functor, std::size_t... Is, typename... Args>
 void compare_cpu_opencl_prim_rev_impl(Functor functor, std::index_sequence<Is...>,
                                    Args... args) {
   expect_eq(functor(opencl_argument(args)...), functor(args...),
-            "Wrong prim return value!");
+            "CPU and OpenCL return values for prim do not match!");
 
   auto var_args_for_cpu = std::make_tuple(var_argument(args)...);
   auto var_args_for_opencl = std::make_tuple(var_argument(args)...);
   auto res_cpu = functor(std::get<Is>(var_args_for_cpu)...);
   auto res_opencl = functor(opencl_argument(std::get<Is>(var_args_for_opencl))...);
-  expect_eq(res_opencl, res_cpu, "Wrong rev return value!");
+  expect_eq(res_opencl, res_cpu, "CPU and OpenCL return values for rev do not match!");
 
   (recursive_sum(res_cpu) + recursive_sum(res_opencl)).grad();
 
   static_cast<void>(std::initializer_list<int>{
       (expect_adj_near(std::get<Is>(var_args_for_opencl),
                        std::get<Is>(var_args_for_cpu),
-                       "Wrong adjoint for argument " TO_STRING(Is) "!"),
+                       "CPU and OpenCL adjoints do not match for argument " TO_STRING(Is) "!"),
        0)...});
 }
 
@@ -131,13 +131,13 @@ void compare_cpu_opencl_prim_rev_impl(Functor functor, std::index_sequence<Is...
 
 /**
  * Tests that given functor calculates same values and adjoints when given
- * arguments on CPU and opencl.
+ * arguments on CPU and OpenCL device.
  *
  * @tparam Functor type of the functor
  * @tparam Args types of the arguments
  * @param fucntor functor to test
  * @param args arguments to test the functor with. These should be just values
- * on CPU (no vars, no arguments on opencl).
+ * in CPU memory (no vars, no arguments on the OpenCL device).
  */
 template <typename Functor, typename... Args>
 void compare_cpu_opencl_prim_rev(Functor functor, Args... args) {
