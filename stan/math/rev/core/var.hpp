@@ -319,7 +319,7 @@ class var_value<T, require_floating_point_t<T>> {
 template <typename T>
 class var_value<
     T,
-    require_t<bool_constant<is_eigen<T>::value || !is_plain_type<T>::value>>> {
+    require_t<bool_constant<is_eigen<T>::value || !is_plain_type<T>::value || is_matrix_cl<T>::value>>> {
   static_assert(
       std::is_floating_point<value_type_t<T>>::value,
       "The template for must be a floating point or a container holding"
