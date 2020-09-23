@@ -61,6 +61,7 @@ pipeline {
         string(defaultValue: '', name: 'stan_pr', description: 'PR to test Stan upstream against e.g. PR-630')
         booleanParam(defaultValue: false, name: 'withRowVector', description: 'Run additional distribution tests on RowVectors (takes 5x as long)')
         booleanParam(defaultValue: false, name: 'gpu_async', description: 'Run the OpenCL tests on both a sync (AMD) GPU and an async (NVIDIA) one.')
+        booleanParam(defaultValue: false, name: 'run_win_tests', description: 'Run full unit tests on Windows.')
     }
     options {
         skipDefaultCheckout()
@@ -138,6 +139,7 @@ pipeline {
                     stash 'MathSetup'
                     sh "echo CXX=${env.CXX} -Werror > make/local"
                     sh "echo BOOST_PARALLEL_JOBS=${env.PARALLEL} >> make/local"
+                    failFast true
                     parallel(
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh """#!/bin/bash
@@ -220,6 +222,7 @@ pipeline {
                     !skipRemainingStages
                 }
             }
+            failFast true
             parallel {
                 stage('MPI tests') {
                     agent { label 'linux && mpi' }
@@ -310,31 +313,38 @@ pipeline {
                     agent any
                     steps {
                         script {
-                            if (isUnix()) {
-                                deleteDir()
-                                unstash 'MathSetup'
-                                sh "echo CXX=${env.CXX} -Werror > make/local"
-                                sh "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
-                                sh "export STAN_NUM_THREADS=4"
+                            deleteDir()
+                            unstash 'MathSetup'
+                            sh "echo CXX=${env.CXX} -Werror > make/local"
+                            sh "echo STAN_THREADS=true >> make/local"
+                            sh "export STAN_NUM_THREADS=4"
+                            if (isBranch('develop') || isBranch('master')) {
+                                runTests("test/unit")
+                                sh "find . -name *_test.xml | xargs rm"
+                            } else {
                                 runTests("test/unit -f thread")
                                 sh "find . -name *_test.xml | xargs rm"
                                 runTests("test/unit -f map_rect")
                                 sh "find . -name *_test.xml | xargs rm"
-                                runTests("test/unit -f reduce_sum")                            
-                            } else {
-                                deleteDirWin()
-                                unstash 'MathSetup'
-                                bat "echo CXX=${env.CXX} -Werror > make/local"
-                                bat "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
-                                runTestsWin("test/unit -f thread", false)
-                                runTestsWin("test/unit -f map_rect", false)
-                                runTestsWin("test/unit -f reduce_sum", false)
+                                runTests("test/unit -f reduce_sum")
                             }
                         }                      
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
                 stage('Windows Headers & Unit') {
+                    when {
+                        allOf {
+                            anyOf {
+                                branch 'develop'
+                                branch 'master'
+                                expression { params.run_win_tests }
+                            }
+                            expression {
+                                !skipRemainingStages
+                            }
+                        }
+                    }
                     agent { label 'windows' }
                     steps {
                         deleteDirWin()
@@ -343,43 +353,6 @@ pipeline {
                         bat "mingw32-make -j${env.PARALLEL} test-headers"
                         runTestsWin("test/unit", false, true)
                     }
-                }
-            }
-        }
-        stage('Additional merge tests') {
-            when {
-                allOf {
-                    anyOf {
-                        branch 'develop'
-                        branch 'master'
-                    }
-                    expression {
-                        !skipRemainingStages
-                    }
-                }
-            }
-            parallel {
-                stage('Linux Unit with Threading') {
-                    agent { label 'linux' }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CXX=${GCC} >> make/local"
-                        sh "echo CXXFLAGS=-DSTAN_THREADS >> make/local"
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Mac Unit with Threading') {
-                    agent  { label 'osx' }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CC=${env.CXX} -Werror > make/local"
-                        sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
                 }
             }
         }
