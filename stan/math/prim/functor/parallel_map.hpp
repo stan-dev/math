@@ -10,55 +10,50 @@
 namespace stan {
 namespace math {
 
-template <bool Ranged, typename ApplyFunction, typename IndexFunction,
-          typename Res, typename ArgsTuple,
-          require_st_arithmetic<Res>* = nullptr,
-          std::enable_if_t<!Ranged>* = nullptr>
-inline void parallel_map(const ApplyFunction& app_fun,
-                                   const IndexFunction& index_fun,
-                                   Res&& result, ArgsTuple&& x) {
+template <bool Ranged, typename Res, typename ApplyFunction, typename IndexFunction,
+          require_arithmetic_t<return_type_t<Res>>* = nullptr,
+          std::enable_if_t<!Ranged>* = nullptr,
+          typename... Args>
+inline auto parallel_map(ApplyFunction&& app_fun,
+                                   IndexFunction&& index_fun, int grainsize,
+                                   Args&&... args) {
+  std::decay_t<decltype(app_fun(args...))> result(max_size(args...));
   tbb::parallel_for(
-    tbb::blocked_range<size_t>(0, result.size()), 
-    [&x,&app_fun,&index_fun,&result](
-     const tbb::blocked_range<size_t>& r) {
+    tbb::blocked_range<size_t>(0, result.size(), grainsize),
+    [&](const tbb::blocked_range<size_t>& r) {
       for (size_t i = r.begin(); i < r.end(); ++i) {
         // Apply specified function to arguments at current iteration
-        result(i) = apply(
-            [&](auto&&... args) {
-              return index_fun(i, app_fun, args...);
-            }, std::forward<ArgsTuple>(x));
+        result(i) =  index_fun(i, app_fun, args...);
       }
     });
+    return result;
 }
 
-template <bool Ranged, typename ApplyFunction, typename IndexFunction,
-          typename Res, typename ArgsTuple,
-          require_st_arithmetic<Res>* = nullptr,
-          std::enable_if_t<Ranged>* = nullptr>
-inline void parallel_map(const ApplyFunction& app_fun,
-                                   const IndexFunction& index_fun,
-                                   Res&& result, ArgsTuple&& x) {
+template <bool Ranged, typename Res, typename ApplyFunction, typename IndexFunction,
+          require_arithmetic_t<return_type_t<Res>>* = nullptr,
+          std::enable_if_t<Ranged>* = nullptr,
+          typename... Args>
+inline auto parallel_map(ApplyFunction&& app_fun,
+                                   IndexFunction&& index_fun, int grainsize,
+                                   Args&&... args) {
+  std::decay_t<decltype(app_fun(args...))> result(max_size(args...));
   tbb::parallel_for(
-    tbb::blocked_range<size_t>(0, result.size()), 
-    [&x,&app_fun,&index_fun,&result](
-     const tbb::blocked_range<size_t>& r) {
-
-      result.segment(r.begin(), r.end()-r.begin()) = apply(
-            [&](auto&&... args) {
-              return index_fun(r.begin(), r.end(), app_fun, args...);
-            }, std::forward<ArgsTuple>(x));
+    tbb::blocked_range<size_t>(0, result.size(), grainsize),
+    [&](const tbb::blocked_range<size_t>& r) {
+      result.segment(r.begin(), r.size()) =  index_fun(r.begin(), r.size(), app_fun, args...);
     });
+    return result;
 }
 
 
 template <typename ApplyFunction, typename IndexFunction,
-          typename Res, typename ArgsTuple,
-          require_st_arithmetic<Res>* = nullptr>
-inline void parallel_map(const ApplyFunction& app_fun,
-                                   const IndexFunction& index_fun,
-                                   Res&& result, ArgsTuple&& x) {
-parallel_map<false>(app_fun, index_fun, std::forward<Res>(result),
-                    std::forward<ArgsTuple>(x));
+          typename... Args>
+inline auto parallel_map(ApplyFunction&& app_fun,
+                                   IndexFunction&& index_fun, int grainsize,
+                                   Args&&... x) {
+using ret_type = std::decay_t<decltype(app_fun(x...))>;
+return parallel_map<true, ret_type>(std::forward<ApplyFunction>(app_fun), std::forward<IndexFunction>(index_fun),
+                    grainsize, std::forward<Args>(x)...);
 }
 }  // namespace math
 }  // namespace stan
