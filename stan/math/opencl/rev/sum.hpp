@@ -17,16 +17,14 @@ namespace math {
  * @param x Specified var_value containing a matrix.
  * @return Sum of coefficients of matrix.
  */
-inline var sum(const var_value<matrix_cl<double>>& x){
+inline var sum(const var_value<matrix_cl<double>>& x) {
   var res = sum(value_of(x));
-  reverse_pass_callback([res, x] () mutable {
-    x.adj() = x.adj() + res.adj();
-  });
+  reverse_pass_callback([res, x]() mutable { x.adj() = x.adj() + res.adj(); });
   return res;
 }
 
-}
-}
+}  // namespace math
+}  // namespace stan
 
 #endif
 #endif

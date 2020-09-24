@@ -43,8 +43,7 @@ void expect_eq(math::var a, math::var b, const char* msg) {
   stan::test::expect_near_rel(msg, a.val(), b.val());
 }
 
-template <typename T1, typename T2,
-          require_all_eigen_t<T1, T2>* = nullptr,
+template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
           require_all_not_st_var<T1, T2>* = nullptr>
 void expect_eq(const T1& a, const T2& b, const char* msg) {
   EXPECT_EQ(a.rows(), b.rows()) << msg;
@@ -58,12 +57,10 @@ void expect_eq(const T1& a, const T2& b, const char* msg) {
   }
 }
 
-template <typename T1, typename T2,
-          require_all_rev_matrix_t<T1, T2>* = nullptr>
+template <typename T1, typename T2, require_all_rev_matrix_t<T1, T2>* = nullptr>
 void expect_eq(const T1& a, const T2& b, const char* msg) {
   expect_eq(a.val(), b.val(), msg);
 }
-
 
 template <typename T>
 void expect_eq(const std::vector<T>& a, const std::vector<T>& b,

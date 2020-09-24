@@ -88,7 +88,6 @@ struct is_prim_or_rev_kernel_expression
           math::conjunction<is_var<T>, is_kernel_expression<value_type_t<T>>>> {
 };
 
-
 /**
  * Determines whether a type is either a non-scalar kernel generator
  * expression or a var containing a non-scalar kernel generator expression.
@@ -97,8 +96,8 @@ template <typename T>
 struct is_nonscalar_prim_or_rev_kernel_expression
     : math::disjunction<
           is_kernel_expression_and_not_scalar<T>,
-          math::conjunction<is_var<T>, is_kernel_expression_and_not_scalar<value_type_t<T>>>> {
-};
+          math::conjunction<is_var<T>, is_kernel_expression_and_not_scalar<
+                                           value_type_t<T>>>> {};
 
 /** @}*/
 STAN_ADD_REQUIRE_UNARY(kernel_expression_lhs, is_kernel_expression_lhs,
