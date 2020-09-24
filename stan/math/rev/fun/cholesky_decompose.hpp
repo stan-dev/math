@@ -255,7 +255,7 @@ class cholesky_scalar : public vari {
     }
   }
 };
-  
+
 #ifdef STAN_OPENCL
 class cholesky_opencl : public vari {
  public:
