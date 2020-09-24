@@ -43,8 +43,9 @@ void expect_eq(math::var a, math::var b, const char* msg) {
   stan::test::expect_near_rel(msg, a.val(), b.val());
 }
 
-template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
-          require_vt_same<T1, T2>* = nullptr>
+template <typename T1, typename T2,
+          require_all_eigen_t<T1, T2>* = nullptr,
+          require_all_not_st_var<T1, T2>* = nullptr>
 void expect_eq(const T1& a, const T2& b, const char* msg) {
   EXPECT_EQ(a.rows(), b.rows()) << msg;
   EXPECT_EQ(a.cols(), b.cols()) << msg;
@@ -57,6 +58,13 @@ void expect_eq(const T1& a, const T2& b, const char* msg) {
   }
 }
 
+template <typename T1, typename T2,
+          require_all_rev_matrix_t<T1, T2>* = nullptr>
+void expect_eq(const T1& a, const T2& b, const char* msg) {
+  expect_eq(a.val(), b.val(), msg);
+}
+
+
 template <typename T>
 void expect_eq(const std::vector<T>& a, const std::vector<T>& b,
                const char* msg) {
@@ -64,6 +72,18 @@ void expect_eq(const std::vector<T>& a, const std::vector<T>& b,
   for (int i = 0; i < a.size(); i++) {
     expect_eq(a[i], b[i], msg);
   }
+}
+
+template <typename T1, typename T2,
+          require_nonscalar_prim_or_rev_kernel_expression_t<T1>* = nullptr>
+void expect_eq(const T1& a, const T2& b, const char* msg) {
+  expect_eq(from_matrix_cl(a), b, msg);
+}
+
+template <typename T1, typename T2,
+          require_nonscalar_prim_or_rev_kernel_expression_t<T2>* = nullptr>
+void expect_eq(const T1& a, const T2& b, const char* msg) {
+  expect_eq(a, from_matrix_cl(b), msg);
 }
 
 template <typename T>
@@ -107,23 +127,27 @@ void expect_adj_near(const std::vector<T>& a, const std::vector<T>& b,
 }
 
 template <typename Functor, std::size_t... Is, typename... Args>
-void compare_cpu_opencl_prim_rev_impl(Functor functor, std::index_sequence<Is...>,
-                                   Args... args) {
+void compare_cpu_opencl_prim_rev_impl(Functor functor,
+                                      std::index_sequence<Is...>,
+                                      const Args&... args) {
   expect_eq(functor(opencl_argument(args)...), functor(args...),
             "CPU and OpenCL return values for prim do not match!");
 
   auto var_args_for_cpu = std::make_tuple(var_argument(args)...);
   auto var_args_for_opencl = std::make_tuple(var_argument(args)...);
   auto res_cpu = functor(std::get<Is>(var_args_for_cpu)...);
-  auto res_opencl = functor(opencl_argument(std::get<Is>(var_args_for_opencl))...);
-  expect_eq(res_opencl, res_cpu, "CPU and OpenCL return values for rev do not match!");
+  auto res_opencl
+      = functor(opencl_argument(std::get<Is>(var_args_for_opencl))...);
+  expect_eq(res_opencl, res_cpu,
+            "CPU and OpenCL return values for rev do not match!");
 
   (recursive_sum(res_cpu) + recursive_sum(res_opencl)).grad();
 
   static_cast<void>(std::initializer_list<int>{
-      (expect_adj_near(std::get<Is>(var_args_for_opencl),
-                       std::get<Is>(var_args_for_cpu),
-                       "CPU and OpenCL adjoints do not match for argument " TO_STRING(Is) "!"),
+      (expect_adj_near(
+           std::get<Is>(var_args_for_opencl), std::get<Is>(var_args_for_cpu),
+           "CPU and OpenCL adjoints do not match for argument " TO_STRING(
+               Is) "!"),
        0)...});
 }
 
@@ -140,7 +164,7 @@ void compare_cpu_opencl_prim_rev_impl(Functor functor, std::index_sequence<Is...
  * in CPU memory (no vars, no arguments on the OpenCL device).
  */
 template <typename Functor, typename... Args>
-void compare_cpu_opencl_prim_rev(Functor functor, Args... args) {
+void compare_cpu_opencl_prim_rev(Functor functor, const Args&... args) {
   internal::compare_cpu_opencl_prim_rev_impl(
       functor, std::make_index_sequence<sizeof...(args)>{}, args...);
 }

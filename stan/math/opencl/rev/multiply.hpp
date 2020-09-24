@@ -6,34 +6,49 @@
 #include <stan/math/opencl/multiply.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/functor/reverse_pass_callback.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 
 namespace stan {
 namespace math {
 
-template <typename T1, typename T2,
-          require_all_prim_or_rev_kernel_expressions<T1, T2>* = nullptr>
-auto multiply(const T1& a, const T2& b) {
-  check_size_match("multiply ((OpenCL))", "A.cols()", A.cols(), "B.rows()",
-                   B.rows());
-  const auto& a_eval = eval(a);  // TODO check eval, arena types
-  const auto& b_eval = eval(b);
+/**
+ * Matrix multiplication of two reverse mode matrices and/or kernel generator
+ * expressions.
+ * @tparam T_a type of first expression
+ * @tparam T_b type of second expression
+ * @param a first expression
+ * @param b second expression
+ * @return Matrix product of given arguments
+ */
+template <
+    typename T_a, typename T_b,
+    require_all_nonscalar_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr,
+    require_any_var_t<T_a, T_b>* = nullptr>
+inline auto operator*(const T_a& a, const T_b& b) {
+  check_size_match("multiply ((OpenCL))", "A.cols()", a.cols(), "B.rows()",
+                   b.rows());
+  const arena_t<T_a>& a_arena = a;
+  const arena_t<T_b>& b_arena = b;
 
-  var_value<matrix_cl<double>> res;
-  res.val() = value_of(a_eval) * value_of(b_eval);
+  var_value<matrix_cl<double>> res = value_of(a_arena) * value_of(b_arena);
 
-  reverse_pass_callback([a_eval, b_eval, res]() mutable {
+  reverse_pass_callback([a_arena, b_arena, res]() mutable {
     if (!is_constant<T_a>::value) {
-      a_eval.adj() = a_eval.adj() + res.adj() * transpose(value_of(b_eval));
+      auto& a_adj = forward_as<var_value<matrix_cl<double>>>(a_arena).adj();
+      a_adj = a_adj + res.adj() * transpose(value_of(b_arena));
     }
     if (!is_constant<T_b>::value) {
-      b_eval.adj() = b_eval.adj() + transpose(value_of(a_eval)) * res.adj();
+      auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();
+      b_adj = b_adj + transpose(value_of(a_arena)) * res.adj();
     }
   });
   return res;
 }
 
 }  // namespace math
+}  // namespace stan
 
 #endif
 #endif
