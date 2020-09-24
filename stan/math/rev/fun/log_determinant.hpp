@@ -26,7 +26,7 @@ inline var log_determinant(const T& m) {
   arena_t<plain_type_t<T>> arena_m = m;
 
   Eigen::FullPivHouseholderQR<Eigen::MatrixXd> hh
-    = arena_m.val().fullPivHouseholderQr();
+      = arena_m.val().fullPivHouseholderQr();
 
   arena_t<Eigen::MatrixXd> arena_hh_inv_t = hh.inverse().transpose();
 

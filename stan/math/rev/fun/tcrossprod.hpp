@@ -37,7 +37,8 @@ inline plain_type_t<T> tcrossprod(const T& M) {
 
   /*
   Eigen::MatrixXd res_val(M.rows(), M.rows());
-  res_val.setZero().template selfadjointView<Eigen::Upper>().rankUpdate(arena_M_val);
+  res_val.setZero().template
+  selfadjointView<Eigen::Upper>().rankUpdate(arena_M_val);
 
   for (size_t j = 0; j < res.cols(); ++j) {
     for (size_t i = 0; i < j; ++i) {

@@ -24,7 +24,7 @@ inline plain_type_t<T> multiply_lower_tri_self_transpose(const T& L) {
       = value_of(arena_L).template triangularView<Eigen::Lower>();
 
   arena_t<T_var> res = arena_L_val.template triangularView<Eigen::Lower>()
-    * arena_L_val.transpose();
+                       * arena_L_val.transpose();
 
   reverse_pass_callback([res, arena_L, arena_L_val]() mutable {
     const auto& adj = to_ref(res.adj());

@@ -22,7 +22,7 @@ inline var determinant(const T& m) {
 
   const auto& m_ref = to_ref(m);
   const auto& m_val = value_of(m_ref);
-  
+
   double det_val = m_val.determinant();
   arena_t<plain_type_t<T>> arena_m = m_ref;
   arena_t<Eigen::MatrixXd> arena_m_inv_t = m_val.inverse().transpose();
