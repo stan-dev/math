@@ -41,9 +41,6 @@ class var_value<T, require_floating_point_t<T>> {
   using value_type = std::decay_t<T>;  // type in vari_value.
   using vari_type = vari_value<value_type>;
 
-  static constexpr int RowsAtCompileTime{vari_type::RowsAtCompileTime};
-  static constexpr int ColsAtCompileTime{vari_type::ColsAtCompileTime};
-
   /**
    * Pointer to the implementation of this variable.
    *
@@ -115,6 +112,7 @@ class var_value<T, require_floating_point_t<T>> {
    * @return Adjoint for this variable.
    */
   inline auto& adj() { return vi_->adj_; }
+  inline auto& adj_op() { return vi_->adj_; }
 
   inline Eigen::Index rows() const { return 0; }
   inline Eigen::Index cols() const { return 0; }
@@ -735,7 +733,7 @@ class var_value<
    * @return number of rows.
    */
   template <typename U = T,
-            require_any_t<is_eigen_matrix<U>, is_matrix_cl<U>>* = nullptr>
+            require_any_t<is_eigen<U>, is_matrix_cl<U>>* = nullptr>
   auto rows() const {
     return vi_->rows();
   }
@@ -745,7 +743,7 @@ class var_value<
    * @return number of columns.
    */
   template <typename U = T,
-            require_any_t<is_eigen_matrix<U>, is_matrix_cl<U>>* = nullptr>
+            require_any_t<is_eigen<U>, is_matrix_cl<U>>* = nullptr>
   auto cols() const {
     return vi_->cols();
   }
@@ -793,13 +791,16 @@ class var_value<
         });
     return *this;
   }
+
   // No-op to match with Eigen methods which call eval
   template <typename T_ = T, require_plain_type_t<T_>* = nullptr>
   inline auto& eval() noexcept {
     return *this;
   }
 
-  // No-op to match with Eigen methods which call eval
+  /**
+   * For non-plain types evaluate to the plain type
+   */
   template <typename T_ = T, require_not_plain_type_t<T_>* = nullptr>
   inline auto eval() noexcept {
     return var_value<plain_type_t<T>>(*this);
