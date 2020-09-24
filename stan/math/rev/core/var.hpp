@@ -129,6 +129,17 @@ class var_value {
    */
   inline auto& adj() const { return vi_->adj_; }
 
+  /**
+   * Return a reference to the derivative of the root expression with
+   * respect to this expression.  This method only works
+   * after one of the `grad()` methods has been
+   * called.
+   *
+   * @return Adjoint for this variable.
+   */
+  inline auto& adj() { return vi_->adj_; }
+  inline auto& adj_op() { return vi_->adj_; }
+
   inline Eigen::Index rows() const { return vi_->val_.rows(); }
   inline Eigen::Index cols() const { return vi_->val_.cols(); }
   inline Eigen::Index size() const { return vi_->val_.size(); }
@@ -432,7 +443,7 @@ class var_value {
    * @return number of rows.
    */
   template <typename U = T,
-            require_any_t<is_eigen_matrix<U>, is_matrix_cl<U>>* = nullptr>
+            require_any_t<is_eigen<U>, is_matrix_cl<U>>* = nullptr>
   auto rows() const {
     return vi_->rows();
   }
@@ -442,7 +453,7 @@ class var_value {
    * @return number of columns.
    */
   template <typename U = T,
-            require_any_t<is_eigen_matrix<U>, is_matrix_cl<U>>* = nullptr>
+            require_any_t<is_eigen<U>, is_matrix_cl<U>>* = nullptr>
   auto cols() const {
     return vi_->cols();
   }

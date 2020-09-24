@@ -205,5 +205,21 @@ struct return_type<T, Ts...> {
 template <typename... Ts>
 using return_type_t = typename return_type<Ts...>::type;
 
+/**
+ * \ingroup require_stan_scalar_real
+ * \addtogroup autodiff_types
+ * \brief Require return type from parameter pack satisfies `Check`
+ */
+template <template <class...> class Check, typename... Ts>
+using require_return_type_t = require_t<Check<return_type_t<Ts...>>>;
+
+/**
+ * \ingroup require_stan_scalar_real
+ * \addtogroup autodiff_types
+ * \brief Require return type from parameter pack does not satisfy `Check`
+ */
+template <template <class...> class Check, typename... Ts>
+using require_not_return_type_t = require_not_t<Check<return_type_t<Ts...>>>;
+
 }  // namespace stan
 #endif
