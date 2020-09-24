@@ -138,6 +138,8 @@ special_arg_values = {
     "lkj_corr_log": [1, None],
     "log_diff_exp": [3, None],
     "log_inv_logit_diff": [1.2, 0.4],
+    "pareto_type_2_cdf_log": [1.5, 0.7, None, 2.2],
+    "pareto_type_2_lcdf": [1.5, 0.7, None, 2.2],
 }
 
 
