@@ -931,9 +931,9 @@ TEST(RevMath, cov_exp_quad_domain_error_training) {
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x, sigma, l_bad), std::domain_error,
                    " length scale");
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x, sigma_bad, l), std::domain_error,
-                   " magnitude");
+                   " marginal standard deviation");
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x, sigma_bad, l_bad),
-                   std::domain_error, " magnitude");
+                   std::domain_error, " marginal standard deviation");
 
   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma, l_bad), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_2, sigma_bad, l), std::domain_error);
@@ -983,9 +983,9 @@ TEST(RevMath, cov_exp_quad_nan_error_training) {
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x, sigma, l_bad), std::domain_error,
                    " length scale");
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x, sigma_bad, l), std::domain_error,
-                   " magnitude");
+                   " marginal standard deviation");
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x, sigma_bad, l_bad),
-                   std::domain_error, " magnitude");
+                   std::domain_error, " marginal standard deviation");
 
   EXPECT_THROW(stan::math::cov_exp_quad(x_bad, sigma, l), std::domain_error);
   EXPECT_THROW(stan::math::cov_exp_quad(x_bad, sigma_bad, l),
@@ -1042,9 +1042,9 @@ TEST(RevMath, cov_exp_quad_domain_error) {
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x1, x2, sigma, l_bad),
                    std::domain_error, " length scale");
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x1, x2, sigma_bad, l),
-                   std::domain_error, " magnitude");
+                   std::domain_error, " marginal standard deviation");
   EXPECT_THROW_MSG(stan::math::cov_exp_quad(x1, x2, sigma_bad, l_bad),
-                   std::domain_error, " magnitude");
+                   std::domain_error, " marginal standard deviation");
 
   std::vector<Eigen::Matrix<var, -1, 1> > x_vec_1(3);
   for (size_t i = 0; i < x_vec_1.size(); ++i) {
