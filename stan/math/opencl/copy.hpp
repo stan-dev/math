@@ -61,24 +61,42 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
   if (src.size() == 0) {
     return dst;
   }
-  try {
-    /** \ingroup opencl
-     * Reads the contents of the OpenCL buffer
-     * starting at the offset 0 to the Eigen
-     * matrix
-     * CL_TRUE denotes that the call is blocking
-     * We do not want to pass data back to the CPU until all of the jobs
-     * called on the source matrix are finished.
-     */
-    cl::Event copy_event;
-    const cl::CommandQueue queue = opencl_context.queue();
-    queue.enqueueReadBuffer(src.buffer(), opencl_context.in_order(), 0,
-                            sizeof(T) * dst.size(), dst.data(),
-                            &src.write_events(), &copy_event);
-    copy_event.wait();
-    src.clear_write_events();
-  } catch (const cl::Error& e) {
-    check_opencl_error("copy (OpenCL)->Eigen", e);
+  if (src.view() == matrix_cl_view::Lower
+      || src.view() == matrix_cl_view::Upper) {
+    std::vector<T> packed = packed_copy(src);
+
+    size_t pos = 0;
+    if (src.view() == matrix_cl_view::Lower) {
+      for (int j = 0; j < src.cols(); ++j) {
+        for (int k = 0; k < j; ++k) {
+          dst.coeffRef(k, j) = 0;
+        }
+        for (int i = j; i < src.cols(); ++i) {
+          dst.coeffRef(i, j) = packed[pos++];
+        }
+      }
+    } else {
+      for (int j = 0; j < src.cols(); ++j) {
+        for (int i = 0; i <= j ; ++i) {
+          dst.coeffRef(i, j) = packed[pos++];
+        }
+        for (int k = j+1; k < src.cols(); ++k) {
+          dst.coeffRef(k, j) = 0;
+        }
+      }
+    }
+  } else {
+    try {
+      cl::Event copy_event;
+      const cl::CommandQueue queue = opencl_context.queue();
+      queue.enqueueReadBuffer(src.buffer(), opencl_context.in_order(), 0,
+                              sizeof(T) * dst.size(), dst.data(),
+                              &src.write_events(), &copy_event);
+      copy_event.wait();
+      src.clear_write_events();
+    } catch (const cl::Error& e) {
+      check_opencl_error("copy (OpenCL)->Eigen", e);
+    }
   }
   return dst;
 }
