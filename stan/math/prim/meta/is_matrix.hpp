@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_META_IS_MATRIX_LIKE_HPP
-#define STAN_MATH_PRIM_META_IS_MATRIX_LIKE_HPP
+#ifndef STAN_MATH_PRIM_META_IS_MATRIX_HPP
+#define STAN_MATH_PRIM_META_IS_MATRIX_HPP
 
 #include <stan/math/prim/meta/disjunction.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
@@ -14,10 +14,10 @@ namespace stan {
  * @ingroup type_trait
  */
 template <typename T>
-struct is_matrix_like
+struct is_matrix
     : bool_constant<math::disjunction<is_rev_matrix<T>, is_eigen<T>>::value> {};
-STAN_ADD_REQUIRE_UNARY(matrix_like, is_matrix_like, require_eigens_types);
-STAN_ADD_REQUIRE_UNARY_INNER(matrix_like, is_matrix_like, require_eigens_types);
+STAN_ADD_REQUIRE_UNARY(matrix, is_matrix, require_eigens_types);
+STAN_ADD_REQUIRE_UNARY_INNER(matrix, is_matrix, require_eigens_types);
 }  // namespace stan
 
 #endif

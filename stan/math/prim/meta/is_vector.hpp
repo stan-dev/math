@@ -174,7 +174,9 @@ using require_not_row_and_col_vector_t
  */
 template <typename T>
 struct is_vector
-    : bool_constant<is_eigen_vector<T>::value || is_std_vector<T>::value> {};
+    : bool_constant<is_eigen_vector<T>::value || is_std_vector<T>::value
+                    || (is_var<T>::value
+                        && is_eigen_vector<value_type_t<T>>::value)> {};
 
 STAN_ADD_REQUIRE_UNARY(vector, is_vector, require_std);
 STAN_ADD_REQUIRE_CONTAINER(vector, is_vector, require_std);

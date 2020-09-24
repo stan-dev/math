@@ -22,8 +22,8 @@ namespace math {
  * @param[in] B second matrix
  * @return A * B
  */
-template <typename T1, typename T2,
-          require_all_matrix_like_t<T1, T2>* = nullptr,
+template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
+          require_any_st_var<T1, T2>* = nullptr,
           require_return_type_t<is_var, T1, T2>* = nullptr,
           require_not_row_and_col_vector_t<T1, T2>* = nullptr>
 inline auto multiply(const T1& A, const T2& B) {
@@ -52,7 +52,7 @@ inline auto multiply(const T1& A, const T2& B) {
                                T2>;
     arena_t<return_t> res = arena_A_val * value_of(arena_B);
     reverse_pass_callback([arena_B, arena_A_val, res]() mutable {
-      arena_B.adj() += arena_A_val.transpose() * res.adj().eval();
+      arena_B.adj() += arena_A_val.transpose() * res.adj_op();
     });
     return return_t(res);
   } else {
@@ -63,7 +63,7 @@ inline auto multiply(const T1& A, const T2& B) {
                                T1, T2>;
     arena_t<return_t> res = value_of(arena_A) * arena_B_val;
     reverse_pass_callback([arena_A, arena_B_val, res]() mutable {
-      arena_A.adj() += res.adj().eval() * arena_B_val.transpose();
+      arena_A.adj() += res.adj_op() * arena_B_val.transpose();
     });
 
     return return_t(res);
@@ -80,9 +80,8 @@ inline auto multiply(const T1& A, const T2& B) {
  * @param[in] B column vector
  * @return A * B as a scalar
  */
-template <typename T1, typename T2,
-          require_all_matrix_like_t<T1, T2>* = nullptr,
-          require_return_type_t<is_var, T1, T2>* = nullptr,
+template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
+          require_any_st_var<T1, T2>* = nullptr,
           require_row_and_col_vector_t<T1, T2>* = nullptr>
 inline var multiply(const T1& A, const T2& B) {
   check_multiplicable("multiply", "A", A, "B", B);
@@ -130,9 +129,9 @@ inline var multiply(const T1& A, const T2& B) {
  * @param B matrix
  * @return product of matrix and scalar
  */
-template <typename T1, typename T2, require_not_matrix_like_t<T1>* = nullptr,
-          require_matrix_like_t<T2>* = nullptr,
-          require_return_type_t<is_var, T1, T2>* = nullptr,
+template <typename T1, typename T2, require_not_matrix_t<T1>* = nullptr,
+          require_matrix_t<T2>* = nullptr,
+          require_any_st_var<T1, T2>* = nullptr,
           require_not_row_and_col_vector_t<T1, T2>* = nullptr>
 inline auto multiply(const T1& A, const T2& B) {
   if (!is_constant<T2>::value && !is_constant<T1>::value) {
@@ -177,9 +176,9 @@ inline auto multiply(const T1& A, const T2& B) {
  * @param B scalar
  * @return product of matrix and scalar
  */
-template <typename T1, typename T2, require_matrix_like_t<T1>* = nullptr,
-          require_not_matrix_like_t<T2>* = nullptr,
-          require_return_type_t<is_var, T1, T2>* = nullptr,
+template <typename T1, typename T2, require_matrix_t<T1>* = nullptr,
+          require_not_matrix_t<T2>* = nullptr,
+          require_any_st_var<T1, T2>* = nullptr,
           require_not_row_and_col_vector_t<T1, T2>* = nullptr>
 inline auto multiply(const T1& A, const T2& B) {
   return multiply(B, A);

@@ -141,7 +141,7 @@ class Checker {
    * @param messages a list of messages to append to the error message
    * @throws `E` if any of the scalars fail the error check
    */
-  template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr,
+  template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
             typename... Ms>
   void check(const EigMat& x, Ms... messages) {
     for (size_t n = 0; n < x.cols(); ++n)
