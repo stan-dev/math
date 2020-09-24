@@ -139,7 +139,6 @@ pipeline {
                     stash 'MathSetup'
                     sh "echo CXX=${env.CXX} -Werror > make/local"
                     sh "echo BOOST_PARALLEL_JOBS=${env.PARALLEL} >> make/local"
-                    failFast true
                     parallel(
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh """#!/bin/bash
