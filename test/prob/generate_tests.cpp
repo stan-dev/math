@@ -30,7 +30,7 @@ void push_args(vector<string>& args, const string& type) {
   args.push_back("Eigen::Matrix<" + type + ", Eigen::Dynamic, 1>");
   if (ROW_VECTORS == 1) {
     args.push_back("Eigen::Matrix<" + type + ", 1, Eigen::Dynamic>");
-  }    
+  }
 }
 
 vector<string> lookup_argument(const string& argument, const int& ind) {
@@ -182,7 +182,7 @@ vector<vector<string> > build_argument_sequence(const string& arguments,
   vector<vector<string> > argument_sequence;
   for (size_t n = 0; n < argument_list.size(); n++) {
     argument_sequence.push_back(lookup_argument(argument_list[n], ind));
-  }    
+  }
   return argument_sequence;
 }
 
@@ -200,7 +200,7 @@ bool check_all_double(string base, string arg) {
   for (size_t i = 0; i < tokens.size(); i++) {
     if (tokens[i] == "1" || tokens[i] == "Eigen::Dynamic>" || tokens[i] == "1>"
         || tokens[i] == "Eigen::Dynamic") {
-          result = result && true;
+      result = result && true;
     } else {
       temp = (tokens[i] == "double") || (tokens[i] == "std::vector<double>")
              || (tokens[i] == "Eigen::Matrix<double") || (tokens[i] == "int")
@@ -222,7 +222,7 @@ int num_doubles(string arguments) {
   for (size_t i = 0; i < tokens.size(); i++) {
     if (tokens[i] == "Doubles") {
       ++num;
-    }      
+    }
   }
   return num;
 }
@@ -263,7 +263,7 @@ void write_types_typedef(vector<std::ostream*>& outs, string base, size_t& N,
         *out << "typedef boost::mpl::vector<" << base << args[n] << extra_args;
         if (extra_args.size() == 0) {
           *out << " ";
-        }          
+        }
         *out << "> type_v_" << N << ";" << endl;
         N++;
       } else {
@@ -272,17 +272,13 @@ void write_types_typedef(vector<std::ostream*>& outs, string base, size_t& N,
                << extra_args;
           if (extra_args.size() == 0) {
             *out << " ";
-          }
-          else if (index == 2) {
+          } else if (index == 2) {
             *out << "> type_fd_" << N << ";" << endl;
-          }
-          else if (index == 3) {
+          } else if (index == 3) {
             *out << "> type_fv_" << N << ";" << endl;
-          }
-          else if (index == 4) {
+          } else if (index == 4) {
             *out << "> type_ffd_" << N << ";" << endl;
-          }
-          else if (index == 5) {
+          } else if (index == 5) {
             *out << "> type_ffv_" << N << ";" << endl;
           }
           N++;
@@ -312,20 +308,16 @@ void write_test(vector<std::ostream*>& outs, const string& test_name,
     if (index == 1) {
       *out << "typedef boost::mpl::vector<" << test_name << ", type_v_" << n
            << "> " << test_name << "_v_" << n << ";" << endl;
-    }
-    else if (index == 2) {
+    } else if (index == 2) {
       *out << "typedef boost::mpl::vector<" << test_name << ", type_fd_" << n
            << "> " << test_name << "_fd_" << n << ";" << endl;
-    }
-    else if (index == 3) {
+    } else if (index == 3) {
       *out << "typedef boost::mpl::vector<" << test_name << ", type_fv_" << n
            << "> " << test_name << "_fv_" << n << ";" << endl;
-    }
-    else if (index == 4) {
+    } else if (index == 4) {
       *out << "typedef boost::mpl::vector<" << test_name << ", type_ffd_" << n
            << "> " << test_name << "_ffd_" << n << ";" << endl;
-    }
-    else if (index == 5) {
+    } else if (index == 5) {
       *out << "typedef boost::mpl::vector<" << test_name << ", type_ffv_" << n
            << "> " << test_name << "_ffv_" << n << ";" << endl;
     }
@@ -335,28 +327,23 @@ void write_test(vector<std::ostream*>& outs, const string& test_name,
   }
   for (size_t n = 0; n < N; n++) {
     std::ostream* out = outs[int(n / N_TESTS)];
-    if (index == 1)
-    {
+    if (index == 1) {
       *out << "INSTANTIATE_TYPED_TEST_SUITE_P(" << test_name << "_v_" << n
            << ", " << fixture_name << ", " << test_name << "_v_" << n << ");"
            << endl;
-    }      
-    else if (index == 2) {
+    } else if (index == 2) {
       *out << "INSTANTIATE_TYPED_TEST_SUITE_P(" << test_name << "_fd_" << n
            << ", " << fixture_name << ", " << test_name << "_fd_" << n << ");"
            << endl;
-    }
-    else if (index == 3) {
+    } else if (index == 3) {
       *out << "INSTANTIATE_TYPED_TEST_SUITE_P(" << test_name << "_fv_" << n
            << ", " << fixture_name << ", " << test_name << "_fv_" << n << ");"
            << endl;
-    }
-    else if (index == 4) {
+    } else if (index == 4) {
       *out << "INSTANTIATE_TYPED_TEST_SUITE_P(" << test_name << "_ffd_" << n
            << ", " << fixture_name << ", " << test_name << "_ffd_" << n << ");"
            << endl;
-    }
-    else if (index == 5) {
+    } else if (index == 5) {
       *out << "INSTANTIATE_TYPED_TEST_SUITE_P(" << test_name << "_ffv_" << n
            << ", " << fixture_name << ", " << test_name << "_ffv_" << n << ");"
            << endl;
@@ -409,7 +396,8 @@ int create_files(const int& argc, const char* argv[], const int& index,
   for (int n = start + 1; n < start + 1 + BATCHES + 1; n++) {
     stringstream out_name;
     out_name << out_name_base;
-    out_name << "_" << std::setw(5) << std::setfill('0') << n << "_generated_test.cpp";
+    out_name << "_" << std::setw(5) << std::setfill('0') << n
+             << "_generated_test.cpp";
     std::string tmp(out_name.str());
     outs.push_back(new std::ofstream(tmp.c_str(), std::ios_base::app));
   }
@@ -420,8 +408,7 @@ int create_files(const int& argc, const char* argv[], const int& index,
   }
   if (N_TESTS > 0) {
     write_test_cases(outs, file, argument_sequence, index, N_TESTS);
-  }
-  else if (num_tests > 0) {
+  } else if (num_tests > 0) {
     write_test_cases(outs, file, argument_sequence, index,
                      ceil(num_tests / BATCHES));
   }
