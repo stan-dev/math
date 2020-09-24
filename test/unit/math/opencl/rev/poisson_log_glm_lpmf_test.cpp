@@ -111,8 +111,8 @@ TEST(ProbDistributionsPoissonLogGLM, opencl_matches_cpu_small_simple) {
   beta << 0.3, 2;
   double alpha = 0.3;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(poisson_log_glm_lpmf_functor,
-                                             y, x, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(poisson_log_glm_lpmf_functor, y,
+                                                x, alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       poisson_log_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
@@ -180,8 +180,8 @@ TEST(ProbDistributionsPoissonLogGLM, opencl_matches_cpu_zero_instances) {
   beta << 0.3, 2;
   double alpha = 0.3;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(poisson_log_glm_lpmf_functor,
-                                             y, x, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(poisson_log_glm_lpmf_functor, y,
+                                                x, alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       poisson_log_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
@@ -195,8 +195,8 @@ TEST(ProbDistributionsPoissonLogGLM, opencl_matches_cpu_zero_attributes) {
   Matrix<double, Dynamic, 1> beta(M, 1);
   double alpha = 0.3;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(poisson_log_glm_lpmf_functor,
-                                             y, x, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(poisson_log_glm_lpmf_functor, y,
+                                                x, alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       poisson_log_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
@@ -213,8 +213,8 @@ TEST(ProbDistributionsPoissonLogGLM, opencl_matches_cpu_small_vector_alpha) {
   Matrix<double, Dynamic, 1> alpha(N, 1);
   alpha << 0.3, -0.8, 1.8;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(poisson_log_glm_lpmf_functor,
-                                             y, x, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(poisson_log_glm_lpmf_functor, y,
+                                                x, alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       poisson_log_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
@@ -232,8 +232,8 @@ TEST(ProbDistributionsPoissonLogGLM, opencl_matches_cpu_big) {
   Matrix<double, Dynamic, 1> beta = Matrix<double, Dynamic, 1>::Random(M, 1);
   Matrix<double, Dynamic, 1> alpha = Matrix<double, Dynamic, 1>::Random(N, 1);
 
-  stan::math::test::compare_cpu_opencl_prim_rev(poisson_log_glm_lpmf_functor,
-                                             y, x, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(poisson_log_glm_lpmf_functor, y,
+                                                x, alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       poisson_log_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
