@@ -15,6 +15,21 @@ TEST(OpenCLCholeskyDecompose, prim_rev_values_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(cholesky_decompose_functor, a);
 }
 
+TEST(OpenCLCholeskyDecompose, prim_rev_size_1) {
+  int N = 1;
+
+  Eigen::MatrixXd a(N, N);
+  a << 9;
+  stan::math::test::compare_cpu_opencl_prim_rev(cholesky_decompose_functor, a);
+}
+
+TEST(OpenCLCholeskyDecompose, prim_rev_size_0) {
+  int N = 0;
+
+  Eigen::MatrixXd a(N, N);
+  stan::math::test::compare_cpu_opencl_prim_rev(cholesky_decompose_functor, a);
+}
+
 TEST(OpenCLCholeskyDecompose, prim_rev_values_large) {
   int N = 71;
 
