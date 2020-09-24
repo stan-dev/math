@@ -94,7 +94,10 @@ TEST(MathMixMatFun, quad_form_sym_2095) {
   stan::math::quad_form_sym(ad, bd);
 
   auto f = [](const auto& x, const auto& y) {
-    return stan::math::quad_form_sym(x, y);
+     // symmetrize the input matrix;
+     // expect_ad will perturb elements and cause it not to be symmetric
+     auto x_sym = ((x + x.transpose()) * 0.5).eval();
+     return stan::math::quad_form_sym(x_sym, y);
   };
   stan::test::expect_ad(f, ad, bd);
 }
