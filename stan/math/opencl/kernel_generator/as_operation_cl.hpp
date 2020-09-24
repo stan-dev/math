@@ -6,7 +6,6 @@
 #include <stan/math/opencl/kernel_generator/load.hpp>
 #include <stan/math/opencl/kernel_generator/scalar.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/is_matrix_cl.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <type_traits>
 
