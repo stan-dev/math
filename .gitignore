@@ -17,7 +17,7 @@
 !/test/*/*/*.*
 !/test/*/*.*
 !/test/*.*
-/test/**/*_generated_*_test.cpp
+/test/**/*_generated_test.cpp
 /test/**/*.xml
 /test/dummy.cpp
 /test/**/*.so
