@@ -249,9 +249,8 @@ ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
 template <typename T_a, typename T_b, typename = require_arithmetic_t<T_a>,
           typename = require_all_kernel_expressions_t<T_b>>
 inline elt_multiply_<scalar_<T_a>, as_operation_cl_t<T_b>> operator*(
-    T_a&& a, T_b&& b) {  // NOLINT
-  return {as_operation_cl(std::forward<T_a>(a)),
-          as_operation_cl(std::forward<T_b>(b))};
+    T_a a, T_b&& b) {  // NOLINT
+  return {as_operation_cl(a), as_operation_cl(std::forward<T_b>(b))};
 }
 
 /**
