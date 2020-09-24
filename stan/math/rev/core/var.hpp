@@ -129,7 +129,10 @@ class var_value {
    */
   inline auto& adj() const { return vi_->adj_; }
 
+<<<<<<< HEAD
 <<<<<<< .merge_file_dBYcVC
+=======
+>>>>>>> feature/convert_to_tadj1
   /**
    * Return a reference to the derivative of the root expression with
    * respect to this expression.  This method only works
@@ -141,8 +144,11 @@ class var_value {
   inline auto& adj() { return vi_->adj_; }
   inline auto& adj_op() { return vi_->adj_; }
 
+<<<<<<< HEAD
 =======
 >>>>>>> .merge_file_tLgdjG
+=======
+>>>>>>> feature/convert_to_tadj1
   inline Eigen::Index rows() const { return vi_->val_.rows(); }
   inline Eigen::Index cols() const { return vi_->val_.cols(); }
   inline Eigen::Index size() const { return vi_->val_.size(); }
