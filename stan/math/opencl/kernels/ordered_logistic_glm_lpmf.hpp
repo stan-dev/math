@@ -133,7 +133,7 @@ static const char* ordered_logistic_glm_kernel_code = STRINGIFY(
             barrier(CLK_LOCAL_MEM_FENCE);
           }
           if (lid == 0) {
-            cuts_derivative[wg_id + i * ngroups] = local_storage[0];
+            cuts_derivative[(N_classes - 1) * wg_id + i] = local_storage[0];
           }
           barrier(CLK_LOCAL_MEM_FENCE);
         }

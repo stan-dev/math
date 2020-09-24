@@ -420,7 +420,7 @@ cholesky_decompose(const T& A) {
 
   return L;
 }
-#else  
+#else
 /**
  * Reverse mode specialization of Cholesky decomposition
  *
