@@ -2,6 +2,7 @@
 #define TEST_UNIT_MATH_TEST_AD_HPP
 
 #include <stan/math/mix.hpp>
+#include <test/unit/pretty_print_types.hpp>
 #include <test/unit/math/ad_tolerances.hpp>
 #include <test/unit/math/is_finite.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
@@ -1434,29 +1435,103 @@ void expect_ad_vectorized_binary(const F& f, const T1& x, const T2& y) {
 }
 
 /**
+ * Runs `expect_near_rel` over the values and adjoints of `var_value` types.
+ * @tparam T1 A `var_value` with any template parameter
+ * @tparam T2 A `var_value` with any template parameter
+ * @param x A `var_value` whose values and adjoints are compared against `y`s
+ * @param y A `var_value` whose values and adjoints are compared against `x`s
+ */
+template <typename T1, typename T2,
+          require_all_var_t<scalar_type_t<T1>, scalar_type_t<T2>>* = nullptr>
+void expect_near_rel_var(const std::string& message, T1&& x, T2&& y,
+                         const ad_tolerances& tols) {
+  expect_near_rel(message + std::string(" values"), x.val(), y.val(),
+                  tols.gradient_val_);
+  expect_near_rel(message + std::string(" adjoints"), x.adj(), y.adj(),
+                  tols.gradient_grad_varmat_matvar_);
+}
+
+/**
+ * Runs `expect_near_rel` over arithmetic input values.
+ * @tparam T1 A type with an arithmetic scalar type.
+ * @tparam T2 A type with an arithmetic scalar type.
+ * @param x A `var_value` whose values and adjoints are compared against `y`s
+ * @param y A `var_value` whose values and adjoints are compared against `x`s
+ */
+template <
+    typename T1, typename T2,
+    require_all_arithmetic_t<scalar_type_t<T1>, scalar_type_t<T2>>* = nullptr>
+void expect_near_rel_var(const std::string& message, T1&& x, T2&& y,
+                         const ad_tolerances& tols) {
+  expect_near_rel(message + std::string(" doubles"), x, y, tols.gradient_val_);
+}
+
+/**
  * Test that the jacobian for matrices of vars is equal for the
  *  var matrix when the result is an `var` type.
  * @tparam MatVar An Eigen type inheriting from `EigenBase` that has
- * Scalar vars.
+ *  Scalar vars.
  * @tparam VarMat A `var_value` with an inner type inheriting from `EigenBase`.
  * @tparam ResultMatVar The resulting type of applying a function to `A_mv`.
  * @tparam ResultVarMat The result type of applying a function to `A_vm`.
+ * @param tols The relative tolerances between the two. Uses `gradient_val_`.
  * @param A_mv A eigen type of vars.
  * @param A_vm A eigen type of vars.
  * @param A_mv_f The result of a function from applying `A_mv`.
  * @param A_vm_f The result of a function from applying `A_vm`
  */
-template <typename MatVar, typename VarMat, typename ResultMatVar,
-          typename ResultVarMat, require_var_t<ResultMatVar>* = nullptr>
-inline void test_matvar_gradient(MatVar&& A_mv, VarMat&& A_vm,
-                                 ResultMatVar&& A_mv_f, ResultVarMat&& A_vm_f) {
+template <typename ResultMatVar, typename ResultVarMat, typename MatVar,
+          typename VarMat, require_var_t<ResultMatVar>* = nullptr>
+inline void test_matvar_gradient(const ad_tolerances& tols,
+                                 ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
+                                 const MatVar& A_mv, const VarMat& A_vm) {
   A_vm_f.adj() = 1;
   A_mv_f.adj() = 1;
   stan::math::grad();
-  expect_near_rel("var<Matrix> vs Matrix<var> input adjoints", A_vm.adj(),
-                  A_mv.adj(), 1e-12);
+  expect_near_rel_var("var<Matrix> vs Matrix<var> result", A_vm, A_mv, tols);
   expect_near_rel("var<Matrix> vs Matrix<var> result value", A_vm_f.val(),
-                  A_mv_f.val(), 1e-12);
+                  A_mv_f.val(), tols.gradient_val_);
+  stan::math::set_zero_all_adjoints();
+}
+
+/**
+ * Test that the jacobian for matrices of vars is equal for the
+ *  var matrix when the result is a `var` type.
+ * @tparam MatVar1 An Eigen type inheriting from `EigenBase` that has
+ *  Scalar vars.
+ * @tparam MatVar2 An Eigen type inheriting from `EigenBase` that has
+ *  Scalar vars.
+ * @tparam VarMat1 A `var_value` with an inner type inheriting from `EigenBase`.
+ * @tparam VarMat2 A `var_value` with an inner type inheriting from `EigenBase`.
+ * @tparam ResultMatVar The resulting type of applying a function to `A_mv1`
+ * and `A_mv2`.
+ * @tparam ResultVarMat The result type of applying a function to `A_vm1` and
+ *  `A_vm2`.
+ * @param tols The relative tolerances between the two. Uses `gradient_val_`.
+ * @param A_mv1 A eigen type of vars.
+ * @param A_mv2 A eigen type of vars.
+ * @param A_vm1 A eigen type of vars.
+ * @param A_vm2 A eigen type of vars.
+ * @param A_mv_f The result of a function from applying `A_mv1` and `A_mv2`.
+ * @param A_vm_f The result of a function from applying `A_vm1` and `A_vm2`
+ */
+template <typename ResultMatVar, typename ResultVarMat, typename MatVar1,
+          typename MatVar2, typename VarMat1, typename VarMat2,
+          require_all_var_vt<std::is_arithmetic, ResultMatVar,
+                             ResultVarMat>* = nullptr>
+inline void test_matvar_gradient(const ad_tolerances& tols,
+                                 ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
+                                 const MatVar1& A_mv1, const MatVar2& A_mv2,
+                                 const VarMat1& A_vm1, const VarMat2& A_vm2) {
+  A_vm_f.adj() = 1;
+  A_mv_f.adj() = 1;
+  stan::math::grad();
+  expect_near_rel_var("first argument var<Matrix> vs Matrix<var> result", A_vm1,
+                      A_mv1, tols);
+  expect_near_rel_var("second argument var<Matrix> vs Matrix<var> result",
+                      A_vm2, A_mv2, tols);
+  expect_near_rel("var<Matrix> vs Matrix<var> result value", A_vm_f.val(),
+                  A_mv_f.val(), tols.gradient_val_);
   stan::math::set_zero_all_adjoints();
 }
 
@@ -1465,6 +1540,7 @@ inline void test_matvar_gradient(MatVar&& A_mv, VarMat&& A_vm,
  *  var matrix when the result is an eigen type.
  * @tparam MatVar An Eigen type inheriting from `EigenBase` that has
  * Scalar vars.
+ * @param tols The relative tolerances between the two. Uses `gradient_val_`.
  * @tparam VarMat A `var_value` with an inner type inheriting from `EigenBase`.
  * @tparam ResultMatVar The resulting type of applying a function to `A_mv`.
  * @tparam ResultVarMat The result type of applying a function to `A_vm`.
@@ -1473,59 +1549,323 @@ inline void test_matvar_gradient(MatVar&& A_mv, VarMat&& A_vm,
  * @param A_mv_f The result of a function from applying `A_mv`.
  * @param A_vm_f The result of a function from applying `A_vm`
  */
-template <typename MatVar, typename VarMat, typename ResultMatVar,
-          typename ResultVarMat, require_eigen_t<ResultMatVar>* = nullptr>
-inline void test_matvar_gradient(MatVar&& A_mv, VarMat&& A_vm,
-                                 ResultMatVar&& A_mv_f, ResultVarMat&& A_vm_f) {
-  for (Eigen::Index i = 0; i < A_vm.size(); ++i) {
+template <typename ResultMatVar, typename ResultVarMat, typename MatVar,
+          typename VarMat, require_eigen_t<ResultMatVar>* = nullptr>
+inline void test_matvar_gradient(const ad_tolerances& tols,
+                                 ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
+                                 const MatVar& A_mv, const VarMat& A_vm) {
+  for (Eigen::Index i = 0; i < A_vm_f.size(); ++i) {
     A_vm_f.adj()(i) = 1;
     A_mv_f.adj()(i) = 1;
     stan::math::grad();
-    expect_near_rel("var<Matrix> vs Matrix<var> input adjoints", A_vm.adj(),
-                    A_mv.adj(), 1e-12);
-    expect_near_rel("var<Matrix> vs Matrix<var> result value", A_vm_f.val(),
-                    A_mv_f.val(), 1e-12);
+    expect_near_rel_var("var<Matrix> vs Matrix<var> input", A_vm, A_mv, tols);
     stan::math::set_zero_all_adjoints();
   }
 }
 
 /**
- * Test that the sum of the jacobian for matrices of vars is equal for the
- *  var matrix.
- * @tparam MatVar An Eigen type inheriting from `EigenBase` that has
- * Scalar vars.
- * @tparam VarMat A `var_value` with an inner type inheriting from `EigenBase`.
- * @tparam ResultMatVar The resulting type of applying a function to `A_mv`.
- * @tparam ResultVarMat The result type of applying a function to `A_vm`.
- * @param A_mv A eigen type of vars.
- * @param A_vm A eigen type of vars.
- * @param A_mv_f The result of a function from applying `A_mv`.
- * @param A_vm_f The result of a function from applying `A_vm`
+ * Test that the jacobian for matrices of vars is equal for the
+ *  var matrix when the result is an either a `var_value` with inner Eigen type
+ * or an Eigen matrix with a scalar `var` type.
+ * @tparam MatVar1 An Eigen type inheriting from `EigenBase` that has
+ *  Scalar vars.
+ * @tparam MatVar2 An Eigen type inheriting from `EigenBase` that has
+ *  Scalar vars.
+ * @tparam VarMat1 A `var_value` with an inner type inheriting from `EigenBase`.
+ * @tparam VarMat2 A `var_value` with an inner type inheriting from `EigenBase`.
+ * @tparam ResultMatVar The resulting type of applying a function to `A_mv1`
+ * and `A_mv2`.
+ * @tparam ResultVarMat The result type of applying a function to `A_vm1` and
+ *  `A_vm2`.
+ * @param A_mv1 A eigen type of vars.
+ * @param A_mv2 A eigen type of vars.
+ * @param A_vm1 A eigen type of vars.
+ * @param A_vm2 A eigen type of vars.
+ * @param A_mv_f The result of a function from applying `A_mv1` and `A_mv2`.
+ * @param A_vm_f The result of a function from applying `A_vm1` and `A_vm2`
  */
-template <typename MatVar, typename VarMat, typename ResultMatVar,
-          typename ResultVarMat>
-inline void test_matvar_sum_gradient(MatVar&& A_mv, VarMat&& A_vm,
-                                     ResultMatVar&& A_mv_f,
-                                     ResultVarMat&& A_vm_f) {
+template <typename ResultMatVar, typename ResultVarMat, typename MatVar1,
+          typename MatVar2, typename VarMat1, typename VarMat2,
+          require_eigen_t<ResultMatVar>* = nullptr>
+inline void test_matvar_gradient(const ad_tolerances& tols,
+                                 ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
+                                 const MatVar1& A_mv1, const MatVar2& A_mv2,
+                                 const VarMat1& A_vm1, const VarMat2& A_vm2) {
+  for (Eigen::Index i = 0; i < A_mv_f.size(); ++i) {
+    A_vm_f.adj()(i) = 1;
+    A_mv_f.adj()(i) = 1;
+    stan::math::grad();
+    expect_near_rel_var("first argument var<Matrix> vs Matrix<var> result",
+                        A_vm1, A_mv1, tols);
+    expect_near_rel_var("second argument var<Matrix> vs Matrix<var> result",
+                        A_vm2, A_mv2, tols);
+    expect_near_rel("var<Matrix> vs Matrix<var> result value", A_vm_f.val(),
+                    A_mv_f.val(), tols.gradient_val_);
+    stan::math::set_zero_all_adjoints();
+  }
+}
+
+/**
+ * Given a var<matrix> input expect a `var<matrix>` output and same for
+ * `matrix<var>`.
+ * @tparam ReturnType The result of applying `x` to a function `f()`
+ * @tparam Type the type of the input to the function `f()`.
+ * @param ret not used, only types are used.
+ * @param x not used, only types are used.
+ */
+template <typename ReturnType, typename Type>
+void check_return_type(const ReturnType& ret, const Type& x) {
+  using stan::is_eigen;
+  using stan::is_var_matrix;
+  using stan::math::var_value;
+  using stan::math::test::type_name;
+  if (is_eigen<Type>::value
+      && !(is_eigen<ReturnType>::value
+           || std::is_same<ReturnType, var_value<double>>::value)) {
+    FAIL() << type_name<Type>() << " returns a " << type_name<ReturnType>()
+           << " but should return either an Matrix<var> or a var_value<double>";
+  } else if (is_var_matrix<Type>::value
+             && !(is_var_matrix<ReturnType>::value
+                  || std::is_same<ReturnType, var_value<double>>::value)) {
+    FAIL() << type_name<Type>() << " returns a " << type_name<ReturnType>()
+           << " but should return either an var<Matrix> or a var_value<double>";
+  }
+}
+
+/**
+ * Given at least one var<matrix> input expect a `var<matrix>` output and
+ * `matrix<var>` when both inputs to a function are `matrix<var>`.
+ * @tparam ReturnType The result of applying a `x` and `y` to a function `f()`
+ * @tparam Type1 the type of the first argument to the function `f()`.
+ * @tparam Type1 the type of the second argument to the function `f()`.
+ * @param ret not used, only types are used.
+ * @param x not used, only types are used.
+ * @param y not used, only types are used.
+ */
+template <typename ReturnType, typename Type1, typename Type2>
+void check_return_type(const ReturnType& ret, const Type1& x, const Type2& y) {
+  using stan::is_eigen;
+  using stan::is_var_matrix;
+  using stan::math::var_value;
+  using stan::math::test::type_name;
+  if ((is_eigen<Type1>::value && is_eigen<Type2>::value)
+      && !(is_eigen<ReturnType>::value
+           || std::is_same<ReturnType, var_value<double>>::value)) {
+    FAIL() << type_name<Type1>() << " and " << type_name<Type2>()
+           << " returns a " << type_name<ReturnType>()
+           << " but should return either an Matrix<var> or a var_value<double>";
+  } else if ((is_var_matrix<Type1>::value || is_var_matrix<Type2>::value)
+             && !(is_var_matrix<ReturnType>::value
+                  || std::is_same<ReturnType, var_value<double>>::value)) {
+    FAIL() << type_name<Type1>() << " and " << type_name<Type2>()
+           << " returns a " << type_name<ReturnType>()
+           << " but should return either an var<Matrix> or a var_value<double>";
+  }
+}
+
+/**
+ * For an unary function check that an Eigen matrix of vars and a var with an
+ * inner eigen type return the same values and adjoints to within
+ * the given tolerances. This is done by calling the function on both types,
+ * summing the results, then taking the gradient of the sum which will
+ * propogate the adjoints upwards.
+ *
+ * @tparam F A lambda or functor type that calls the unary function.
+ * @tparam T An Eigen matrix type
+ * @param tols tolerances for test
+ * @param f a lambda
+ * @param x An Eigen matrix.
+ */
+template <typename F, typename EigMat, require_eigen_t<EigMat>* = nullptr>
+void expect_ad_matvar_v(const ad_tolerances& tols, const F& f,
+                        const EigMat& x) {
+  using stan::plain_type_t;
+  using stan::math::promote_scalar_t;
   using stan::math::var;
-  var b_mv = sum(A_mv_f);
-  var b_vm = sum(A_vm_f);
-  var final_var = b_mv + b_vm;
-  stan::math::grad(final_var.vi_);
-  if (!stan::math::isfinite(final_var)) {
+  using stan::math::var_value;
+  using stan::math::test::type_name;
+  using mat_var = promote_scalar_t<var, EigMat>;
+  using var_mat = var_value<plain_type_t<EigMat>>;
+  mat_var A_mv = x;
+  plain_type_t<decltype(f(A_mv))> A_mv_f;
+  var_mat A_vm = x;
+  plain_type_t<decltype(f(A_vm))> A_vm_f;
+  // Check return type is correct
+  check_return_type(A_mv_f, A_mv);
+  check_return_type(A_vm_f, A_vm);
+  // If one throws, the other should throw as well
+  try {
+    A_mv_f = f(A_mv);
+  } catch (...) {
+    try {
+      f(A_vm);
+      FAIL() << type_name<mat_var>() << " throws, expected "
+             << type_name<var_mat>() << " version to throw";
+    } catch (...) {
+      SUCCEED();
+      return;
+    }
+  }
+  try {
+    A_vm_f = f(A_vm);
+  } catch (...) {
+    try {
+      f(A_mv);
+      FAIL() << type_name<var_mat>() << " throws, expected "
+             << type_name<mat_var>() << " version to throw";
+    } catch (...) {
+      SUCCEED();
+      return;
+    }
+  }
+  if (!x.allFinite()) {
     return;
   }
-  expect_near_rel("var<Matrix> vs Matrix<var> sum intermediate value",
-                  b_vm.val(), b_mv.val(), 1e-12);
-  expect_near_rel("var<Matrix> vs Matrix<var> sum intermediate adjoints",
-                  b_vm.adj(), b_mv.adj(), 1e-12);
-  expect_near_rel("var<Matrix> vs Matrix<var> sum input adjoints", A_vm.adj(),
-                  A_mv.adj(), 1e-12);
-  expect_near_rel("var<Matrix> vs Matrix<var> sum result value", A_vm_f.val(),
-                  A_mv_f.val(), 1e-12);
-  expect_near_rel("var<Matrix> vs Matrix<var> sum result adjoints",
-                  A_vm_f.adj(), A_mv_f.adj(), 1e-12);
+  test_matvar_gradient(tols, A_mv_f, A_vm_f, A_mv, A_vm);
 }
+
+/**
+ * For any input types being arithmetic this function is a no-op
+ */
+template <typename F, typename MatVar1, typename MatVar2, typename VarMat1,
+          typename VarMat2,
+          require_any_floating_point_t<
+              scalar_type_t<MatVar1>, scalar_type_t<MatVar2>,
+              scalar_type_t<VarMat1>, scalar_type_t<VarMat2>>* = nullptr>
+void test_matvar_mixture_impl(const ad_tolerances& tols, const F& f,
+                              const MatVar1& A_mv1, const MatVar2& A_mv2,
+                              const VarMat1& A_vm1, const VarMat2& A_vm2) {}
+
+/**
+ * Test that binary functions are able to take in mixtures of Eigen matrices
+ * of vars and vars with inner Eigen types.
+ * @tparam F A functor to apply the combinations of types to.
+ * @tparam MatVar1 An Eigen type inheriting from `EigenBase` that has
+ *  Scalar vars.
+ * @tparam MatVar2 An Eigen type inheriting from `EigenBase` that has
+ *  Scalar vars.
+ * @tparam VarMat1 A `var_value` with an inner type inheriting from `EigenBase`.
+ * @tparam VarMat2 A `var_value` with an inner type inheriting from `EigenBase`.
+ * @tparam ResultMatVar The resulting type of applying a function to `A_mv1`
+ * and `A_mv2`.
+ * @tparam ResultVarMat The result type of applying a function to `A_vm1` and
+ *  `A_vm2`.
+ * @param A_mv1 A eigen type of vars.
+ * @param A_mv2 A eigen type of vars.
+ * @param A_vm1 A eigen type of vars.
+ * @param A_vm2 A eigen type of vars.
+ */
+template <typename F, typename MatVar1, typename MatVar2, typename VarMat1,
+          typename VarMat2,
+          require_all_var_t<scalar_type_t<MatVar1>, scalar_type_t<MatVar2>,
+                            scalar_type_t<VarMat1>,
+                            scalar_type_t<VarMat2>>* = nullptr>
+void test_matvar_mixture_impl(const ad_tolerances& tols, const F& f,
+                              const MatVar1& A_mv1, const MatVar2& A_mv2,
+                              const VarMat1& A_vm1, const VarMat2& A_vm2) {
+  // make copies of vars so mixing across function calls does not happen.
+  MatVar1 base_mv1(A_mv1.val());
+  MatVar2 base_mv2(A_mv2.val());
+  plain_type_t<decltype(f(base_mv1, base_mv2))> base_result
+      = f(base_mv1, base_mv2);
+  MatVar1 mix_mv1(A_mv1.val());
+  VarMat2 mix_vm2(A_vm2.val());
+  plain_type_t<decltype(f(mix_mv1, mix_vm2))> mix_result = f(mix_mv1, mix_vm2);
+  check_return_type(mix_result, mix_mv1, mix_vm2);
+  VarMat1 mix_vm1(A_vm1.val());
+  MatVar2 mix_mv2(A_mv2.val());
+  plain_type_t<decltype(f(mix_vm1, mix_mv2))> mix_result2 = f(mix_vm1, mix_mv2);
+  check_return_type(mix_result2, mix_vm1, mix_mv2);
+  test_matvar_gradient(tols, base_result, mix_result, base_mv1, base_mv2,
+                       mix_mv1, mix_vm2);
+  stan::math::set_zero_all_adjoints();
+  test_matvar_gradient(tols, base_result, mix_result2, base_mv1, base_mv2,
+                       mix_vm1, mix_mv2);
+  stan::math::set_zero_all_adjoints();
+}
+
+/**
+ * For binary function check that an Eigen matrix of vars and a var with an
+ * inner eigen type return the same values and adjoints. This is done by
+ * calling the function on both types, summing the results, then taking the
+ * gradient of the sum which will propogate the adjoints upwards.
+ *
+ * @tparam F A lambda or functor type that calls the unary function.
+ * @tparam Type1 Either arithmetic or `var`. If arithmetic This will make the
+ * first argument of the function invocation be arithmetic, if `var` this will
+ * make the first argument be an Eigen matrix of vars and a var with an inner
+ * matrix type.
+ * @tparam Type2 Either arithmetic or `var`. If arithmetic This will make the
+ * second argument of the function invocation be arithmetic, if `var` this will
+ * make the second argument be an Eigen matrix of vars and a var with an inner
+ * matrix type.
+ * @tparam EigMat1 An eigen type
+ * @tparam EigMat2 An eigen type
+ * @param f a lambda
+ * @param x An Eigen matrix.
+ * @param y An Eigen matrix.
+ */
+template <typename Type1, typename Type2, typename F, typename EigMat1,
+          typename EigMat2>
+void expect_ad_matvar_vv(const ad_tolerances& tols, const F& f,
+                         const EigMat1& x, const EigMat2& y) {
+  using stan::is_var;
+  using stan::plain_type_t;
+  using stan::math::promote_scalar_t;
+  using stan::math::var;
+  using stan::math::var_value;
+  using stan::math::test::type_name;
+  using mat_var1 = promote_scalar_t<Type1, EigMat1>;
+  using mat_var2 = promote_scalar_t<Type2, EigMat2>;
+  using var_mat1 = std::conditional_t<is_var<Type1>::value,
+                                      var_value<plain_type_t<EigMat1>>,
+                                      plain_type_t<EigMat1>>;
+  using var_mat2 = std::conditional_t<is_var<Type2>::value,
+                                      var_value<plain_type_t<EigMat2>>,
+                                      plain_type_t<EigMat2>>;
+  mat_var1 A_mv1 = x;
+  mat_var2 A_mv2 = y;
+  plain_type_t<decltype(f(A_mv1, A_mv2))> A_mv_f;
+  var_mat1 A_vm1 = x;
+  var_mat2 A_vm2 = y;
+  plain_type_t<decltype(f(A_vm1, A_vm2))> A_vm_f;
+  check_return_type(A_mv_f, A_mv1, A_mv2);
+  check_return_type(A_vm_f, A_vm1, A_vm2);
+  // If one throws, the other should throw as well
+  try {
+    A_mv_f = f(A_mv1, A_mv2);
+  } catch (...) {
+    try {
+      f(A_vm1, A_vm2);
+      FAIL() << type_name<mat_var1>() << " and " << type_name<mat_var2>()
+             << " throws, expected " << type_name<var_mat1>() << " and "
+             << type_name<var_mat2>() << " version to throw";
+    } catch (...) {
+      SUCCEED();
+      return;
+    }
+  }
+  try {
+    A_vm_f = f(A_vm1, A_vm2);
+  } catch (...) {
+    try {
+      f(A_mv1, A_mv2);
+      FAIL() << type_name<var_mat1>() << " and " << type_name<var_mat2>()
+             << " throws, expected " << type_name<mat_var1>() << " and "
+             << type_name<mat_var2>() << " version to throw";
+    } catch (...) {
+      SUCCEED();
+      return;
+    }
+  }
+  if (!stan::math::is_scal_finite(x)) {
+    return;
+  }
+  // check that combinations work
+  test_matvar_mixture_impl(tols, f, A_mv1, A_mv2, A_vm1, A_vm2);
+  test_matvar_gradient(tols, A_mv_f, A_vm_f, A_mv1, A_mv2, A_vm1, A_vm2);
+}
+
 /**
  * For an unary function check that an Eigen matrix of vars and a var with an
  * inner eigen type return the same values and adjoints. This is done by
@@ -1536,47 +1876,57 @@ inline void test_matvar_sum_gradient(MatVar&& A_mv, VarMat&& A_vm,
  * @tparam T An Eigen matrix type
  * @param f a lambda
  * @param x An Eigen matrix.
- *
  */
 template <typename F, typename EigMat>
-void expect_ad_matvar(F&& f, const EigMat& x) {
-  using stan::plain_type_t;
-  using stan::math::promote_scalar_t;
-  using stan::math::sum;
+void expect_ad_matvar(const F& f, const EigMat& x) {
+  ad_tolerances tols;
+  expect_ad_matvar_v(tols, f, x);
+}
+
+template <typename F, typename EigMat>
+void expect_ad_matvar(const ad_tolerances& tols, const F& f, const EigMat& x) {
+  expect_ad_matvar_v(tols, f, x);
+}
+
+/**
+ * For binary function check that an Eigen matrix of vars and a var with an
+ * inner eigen type return the same values and adjoints. This is done by
+ * calling the function on both types, summing the results, then taking the
+ * gradient of the sum which will propogate the adjoints upwards.
+ *
+ * @tparam F A lambda or functor type that calls the unary function.
+ * @tparam EigMat1 An eigen type
+ * @tparam EigMat2 An eigen type
+ * @param f a lambda
+ * @param x An Eigen matrix.
+ * @param y An Eigen matrix.
+ */
+template <typename F, typename EigMat1, typename EigMat2>
+void expect_ad_matvar(const ad_tolerances& tols, const F& f, const EigMat1& x,
+                      const EigMat2& y) {
   using stan::math::var;
-  using stan::math::var_value;
-  using mat_var = promote_scalar_t<var, EigMat>;
-  mat_var A_mv = x;
-  plain_type_t<decltype(f(A_mv))> A_mv_f;
-  using var_mat = var_value<plain_type_t<EigMat>>;
-  var_mat A_vm = x;
-  plain_type_t<decltype(f(A_vm))> A_vm_f;
-  // If one throws, the other should throw as well
-  try {
-    A_mv_f = f(A_mv);
-  } catch (...) {
-    try {
-      f(A_vm);
-      FAIL() << "matrix<var> throws, expect var<matrix> version to throw";
-    } catch (...) {
-      SUCCEED();
-    }
-  }
-  try {
-    A_vm_f = f(A_vm);
-  } catch (...) {
-    try {
-      f(A_mv);
-      FAIL() << "var<matrix> throws, expect matrix<var> version to throw";
-    } catch (...) {
-      SUCCEED();
-    }
-  }
-  if (!x.allFinite()) {
-    return;
-  }
-  test_matvar_gradient(A_mv, A_vm, A_mv_f, A_vm_f);
-  test_matvar_sum_gradient(A_mv, A_vm, A_mv_f, A_vm_f);
+  expect_ad_matvar_vv<double, var>(tols, f, x, y);
+  expect_ad_matvar_vv<var, double>(tols, f, x, y);
+  expect_ad_matvar_vv<var, var>(tols, f, x, y);
+}
+
+/**
+ * For binary function check that an Eigen matrix of vars and a var with an
+ * inner eigen type return the same values and adjoints. This is done by
+ * calling the function on both types, summing the results, then taking the
+ * gradient of the sum which will propogate the adjoints upwards.
+ *
+ * @tparam F A lambda or functor type that calls the unary function.
+ * @tparam EigMat1 An eigen type
+ * @tparam EigMat2 An eigen type
+ * @param f a lambda
+ * @param x An Eigen matrix.
+ * @param y An Eigen matrix.
+ */
+template <typename F, typename EigMat1, typename EigMat2>
+void expect_ad_matvar(const F& f, const EigMat1& x, const EigMat2& y) {
+  ad_tolerances tols;
+  expect_ad_matvar(tols, f, x, y);
 }
 
 /**
