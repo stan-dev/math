@@ -13,18 +13,22 @@
 namespace stan {
 namespace math {
 
-template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline var log_determinant(const T& m) {
   check_square("determinant", "m", m);
+
   if (m.size() == 0) {
     return 0.0;
   }
 
-  Eigen::FullPivHouseholderQR<promote_scalar_t<double, plain_type_t<T>>> hh
-      = m.val().fullPivHouseholderQr();
+  const auto& m_ref = to_ref(m);
 
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arena_m = m;
-  arena_matrix<Eigen::MatrixXd> arena_hh_inv_t = hh.inverse().transpose();
+  arena_t<plain_type_t<T>> arena_m = m;
+
+  Eigen::FullPivHouseholderQR<Eigen::MatrixXd> hh
+    = arena_m.val().fullPivHouseholderQr();
+
+  arena_t<Eigen::MatrixXd> arena_hh_inv_t = hh.inverse().transpose();
 
   var log_det = hh.logAbsDeterminant();
 

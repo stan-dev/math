@@ -25,16 +25,15 @@ namespace math {
  * @throw std::invalid_argument if the exponent is negative or the matrix is not
  * square.
  */
-template <typename T, require_eigen_vt<is_var, T>* = nullptr>
-inline Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> matrix_power(
-    const T& M, const int n) {
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline plain_type_t<T> matrix_power(const T& M, const int n) {
   const auto& M_ref = to_ref(M);
   check_square("matrix_power", "M", M);
   check_nonnegative("matrix_power", "n", n);
   check_finite("matrix_power", "M", M_ref);
 
   if (M.size() == 0)
-    return {};
+    return M;
 
   size_t N = M.rows();
 
@@ -45,17 +44,16 @@ inline Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> matrix_power(
     return M_ref;
 
   arena_t<std::vector<Eigen::MatrixXd>> powers(n + 1);
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arena_M
-      = M_ref;
+  arena_t<plain_type_t<T>> arena_M = M_ref;
 
   powers[0] = Eigen::MatrixXd::Identity(N, N);
-  powers[1] = value_of(M_ref);
+  // This fails to compile without the eval and I think it's a problem
+  powers[1] = value_of(M_ref).eval();
   for (size_t i = 2; i <= n; ++i) {
     powers[i] = powers[1] * powers[i - 1];
   }
 
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> res
-      = powers[powers.size() - 1];
+  arena_t<plain_type_t<T>> res = powers[powers.size() - 1];
 
   reverse_pass_callback([arena_M, n, N, res, powers]() mutable {
     const auto& M_val = powers[1];

@@ -20,10 +20,10 @@ namespace math {
  * @param[in] v Vector.
  * @return Dot product of the vector with itself.
  */
-template <typename T, require_eigen_vector_vt<is_var, T>* = nullptr>
+template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline var dot_self(const T& v) {
-  arena_matrix<plain_type_t<decltype(value_of(v))>> v_val = value_of(v);
-  arena_matrix<plain_type_t<T>> arena_v = v;
+  arena_t<plain_type_t<decltype(value_of(v))>> v_val = value_of(v);
+  arena_t<plain_type_t<T>> arena_v = v;
 
   var res = v_val.dot(v_val);
 

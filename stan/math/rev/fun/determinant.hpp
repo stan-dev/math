@@ -12,17 +12,20 @@
 namespace stan {
 namespace math {
 
-template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline var determinant(const T& m) {
   check_square("determinant", "m", m);
+
   if (m.size() == 0) {
     return 1;
   }
 
-  const auto& m_val = to_ref(m.val());
+  const auto& m_ref = to_ref(m);
+  const auto& m_val = value_of(m_ref);
+  
   double det_val = m_val.determinant();
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arena_m = m;
-  arena_matrix<Eigen::MatrixXd> arena_m_inv_t = m_val.inverse().transpose();
+  arena_t<plain_type_t<T>> arena_m = m_ref;
+  arena_t<Eigen::MatrixXd> arena_m_inv_t = m_val.inverse().transpose();
 
   var det = det_val;
 

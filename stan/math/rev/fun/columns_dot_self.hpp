@@ -16,7 +16,7 @@ namespace math {
  * @tparam Mat Type of the matrix.
  * @param x Matrix.
  */
-template <typename Mat, require_eigen_vt<is_var, Mat>* = nullptr>
+template <typename Mat, require_rev_matrix_t<Mat>* = nullptr>
 inline Eigen::Matrix<var, 1, Mat::ColsAtCompileTime> columns_dot_self(
     const Mat& x) {
   Eigen::Matrix<var, 1, Mat::ColsAtCompileTime> ret(1, x.cols());
