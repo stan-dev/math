@@ -285,9 +285,9 @@ pipeline {
                         deleteDir()
                         unstash 'MathSetup'
                         sh """
-                            echo CXX=${env.CXX} > make/local
+                            echo CXX=g++ > make/local
                             echo O=0 >> make/local
-                            echo N_TESTS=50 >> make/local
+                            echo N_TESTS=100 >> make/local
                             """
                         script {
                             if (params.withRowVector || isBranch('develop') || isBranch('master')) {
