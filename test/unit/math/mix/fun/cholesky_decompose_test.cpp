@@ -92,7 +92,23 @@ TEST(MathMixMatFun, choleskyDecomposeGeneral) {
     stan::test::expect_ad(tol, cholesky_decompose_test::f(n), y);
     Eigen::MatrixXd y_mat = stan::math::cov_matrix_constrain(y, n);
     stan::test::expect_ad_matvar(cholesky_decompose_test::f_matvar, y_mat);
-}
+  }
+  // one big one to check multiple blocks
+  /*
+  int n = 18;
+  int dof = (n * (n + 1)) / 2;
+  Eigen::VectorXd y(dof);
+  for (int i = 0; i < dof; ++i)
+    y(i) = (i * 10) / 100.0;
+  stan::test::ad_tolerances tol;
+  using stan::test::relative_tolerance;
+  std::cout << "\n on: " << n << "\n";
+  tol.hessian_hessian_ = relative_tolerance(2e-4, 2e-3);
+  tol.hessian_fvar_hessian_ = relative_tolerance(2e-4, 2e-3);
+  stan::test::expect_ad(tol, cholesky_decompose_test::f(n), y);
+  Eigen::MatrixXd y_mat = stan::math::cov_matrix_constrain(y, n);
+  stan::test::expect_ad_matvar(cholesky_decompose_test::f_matvar, y_mat);
+  */
 }
   // GP covar
 TEST(MathMixMatFun, choleskyDecomposeGP) {
