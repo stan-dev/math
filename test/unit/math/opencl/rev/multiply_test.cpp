@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 
 auto matrix_multiply_functor
-    = [](const auto& a, const auto& b) { return a * b; };
+    = [](const auto& a, const auto& b) { return stan::math::multiply(a, b); };
 
 TEST(OpenCLMatrixMultiply, prim_rev_values_small) {
   int N = 2;
@@ -16,6 +16,38 @@ TEST(OpenCLMatrixMultiply, prim_rev_values_small) {
   a << 1, 2, 3, 4, 5, 6;
   Eigen::MatrixXd b(M, K);
   b << 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1;
+  stan::math::test::compare_cpu_opencl_prim_rev(matrix_multiply_functor, a, b);
+}
+
+TEST(OpenCLMatrixMultiply, prim_rev_values_N_0) {
+  int N = 0;
+  int M = 3;
+  int K = 4;
+
+  Eigen::MatrixXd a(N, M);
+  Eigen::MatrixXd b(M, K);
+  b << 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1;
+  stan::math::test::compare_cpu_opencl_prim_rev(matrix_multiply_functor, a, b);
+}
+
+TEST(OpenCLMatrixMultiply, prim_rev_values_M_0) {
+  int N = 2;
+  int M = 0;
+  int K = 4;
+
+  Eigen::MatrixXd a(N, M);
+  Eigen::MatrixXd b(M, K);
+  stan::math::test::compare_cpu_opencl_prim_rev(matrix_multiply_functor, a, b);
+}
+
+TEST(OpenCLMatrixMultiply, prim_rev_values_K_0) {
+  int N = 2;
+  int M = 3;
+  int K = 0;
+
+  Eigen::MatrixXd a(N, M);
+  a << 1, 2, 3, 4, 5, 6;
+  Eigen::MatrixXd b(M, K);
   stan::math::test::compare_cpu_opencl_prim_rev(matrix_multiply_functor, a, b);
 }
 
