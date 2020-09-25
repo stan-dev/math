@@ -277,52 +277,73 @@ cholesky_decompose(const T& A) {
   check_symmetric("cholesky_decompose", "A", A.val());
   check_not_nan("cholesky_decompose", "A", A.val());
   arena_t<T> L = A.val().llt().matrixL();
-  reverse_pass_callback([L, A]() mutable {
-    using Eigen::Block;
-    using Eigen::Lower;
-    using Eigen::MatrixXd;
-    using Eigen::StrictlyUpper;
-    using Eigen::Upper;
-    using Block_ = Eigen::Block<Eigen::MatrixXd>;
-
-    auto L_adj = L.adj().eval();
-    auto L_val = L.val().eval();
-    const int M_ = L_val.rows();
-    int block_size_ = std::max(M_ / 8, 8);
-    block_size_ = std::min(block_size_, 128);
-    size_t pos = 0;
-    for (int k = M_; k > 0; k -= block_size_) {
-      int j = std::max(0, k - block_size_);
-      auto R = L_val.block(j, 0, k - j, j);
-      auto D = L_val.block(j, j, k - j, k - j);
-      auto B = L_val.block(k, 0, M_ - k, j);
-      auto C = L_val.block(k, j, M_ - k, k - j);
-      auto R_adj = L_adj.block(j, 0, k - j, j);
-      auto D_adj = L_adj.block(j, j, k - j, k - j);
-      auto B_adj = L_adj.block(k, 0, M_ - k, j);
-      auto C_adj = L_adj.block(k, j, M_ - k, k - j);
-      if (C_adj.size() > 0) {
-        C_adj = D.transpose()
-                    .template triangularView<Upper>()
-                    .solve(C_adj.transpose())
-                    .transpose();
-        B_adj.noalias() -= C_adj * R;
-        D_adj.noalias() -= C_adj.transpose() * C;
+  if (A.rows() <= 35) {
+    reverse_pass_callback([L, A]() mutable {
+      const size_t N = A.rows();
+      auto adjL = L.adj().eval();
+      // TODO(Steve): Write this in column major order
+      for (int i = N - 1; i >= 0; --i) {
+        for (int j = i; j >= 0; --j) {
+          if (i == j) {
+            A.adj().coeffRef(i, j) = 0.5 * adjL.coeff(i, j) / L.val().coeff(i, j);
+          } else {
+            A.adj().coeffRef(i, j) = adjL.coeff(i, j) / L.val().coeffRef(j, j);
+            adjL.coeffRef(j, j)
+                -= adjL.coeffRef(i, j) * L.val().coeffRef(i, j) / L.val().coeffRef(j, j);
+          }
+          for (int k = j - 1; k >= 0; --k) {
+            adjL.coeffRef(i, k) -= A.adj().coeff(i, j) * L.val().coeffRef(j, k);
+            adjL.coeffRef(j, k) -= A.adj().coeff(i, j) * L.val().coeffRef(i, k);
+          }
+        }
       }
-      D.transposeInPlace();
-      D_adj = (D * D_adj.template triangularView<Lower>()).eval();
-      D_adj.template triangularView<StrictlyUpper>()
-          = D_adj.adjoint().template triangularView<StrictlyUpper>();
-      D.template triangularView<Upper>().solveInPlace(D_adj);
-      D.template triangularView<Upper>().solveInPlace(D_adj.transpose());
-      R_adj.noalias() -= C_adj.transpose() * B;
-      R_adj.noalias() -= D_adj.template selfadjointView<Lower>() * R;
-      D_adj.diagonal() *= 0.5;
-      D_adj.template triangularView<StrictlyUpper>().setZero();
-    }
-    A.adj().template triangularView<Eigen::Lower>() = L_adj;
-  });
+    });
+  } else {
+    reverse_pass_callback([L, A]() mutable {
+      using Eigen::Block;
+      using Eigen::Lower;
+      using Eigen::MatrixXd;
+      using Eigen::StrictlyUpper;
+      using Eigen::Upper;
+      using Block_ = Eigen::Block<Eigen::MatrixXd>;
 
+      auto L_adj = L.adj().eval();
+      auto L_val = L.val().eval();
+      const int M_ = L_val.rows();
+      int block_size_ = std::max(M_ / 8, 8);
+      block_size_ = std::min(block_size_, 128);
+      for (int k = M_; k > 0; k -= block_size_) {
+        int j = std::max(0, k - block_size_);
+        auto R = L_val.block(j, 0, k - j, j);
+        auto D = L_val.block(j, j, k - j, k - j);
+        auto B = L_val.block(k, 0, M_ - k, j);
+        auto C = L_val.block(k, j, M_ - k, k - j);
+        auto R_adj = L_adj.block(j, 0, k - j, j);
+        auto D_adj = L_adj.block(j, j, k - j, k - j);
+        auto B_adj = L_adj.block(k, 0, M_ - k, j);
+        auto C_adj = L_adj.block(k, j, M_ - k, k - j);
+        if (C_adj.size() > 0) {
+          C_adj = D.transpose()
+                      .template triangularView<Upper>()
+                      .solve(C_adj.transpose())
+                      .transpose();
+          B_adj.noalias() -= C_adj * R;
+          D_adj.noalias() -= C_adj.transpose() * C;
+        }
+        D.transposeInPlace();
+        D_adj = (D * D_adj.template triangularView<Lower>()).eval();
+        D_adj.template triangularView<StrictlyUpper>()
+            = D_adj.adjoint().template triangularView<StrictlyUpper>();
+        D.template triangularView<Upper>().solveInPlace(D_adj);
+        D.template triangularView<Upper>().solveInPlace(D_adj.transpose());
+        R_adj.noalias() -= C_adj.transpose() * B;
+        R_adj.noalias() -= D_adj.template selfadjointView<Lower>() * R;
+        D_adj.diagonal() *= 0.5;
+        D_adj.template triangularView<StrictlyUpper>().setZero();
+      }
+      A.adj().template triangularView<Eigen::Lower>() = L_adj;
+    });
+  }
   return L;
 }
 
