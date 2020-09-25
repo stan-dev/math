@@ -36,7 +36,7 @@ namespace math {
  * or not semi-positive definite.
  */
 template <bool propto, typename T_y, typename T_covar, typename T_w,
-          require_all_eigen_matrix_t<T_y, T_covar>* = nullptr,
+          require_all_eigen_matrix_dynamic_t<T_y, T_covar>* = nullptr,
           require_eigen_col_vector_t<T_w>* = nullptr>
 return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_lpdf(const T_y& y,
                                                         const T_covar& L,
