@@ -8,7 +8,9 @@ namespace cholesky_decompose_test {
 // dof must be (n choose 2) + n
 auto f(int dof) {
   return [=](const auto& x) {
-    stan::math::promote_scalar_t<stan::value_type_t<decltype(x)>, Eigen::Matrix<double, -1, -1>> y;
+    stan::math::promote_scalar_t<stan::value_type_t<decltype(x)>,
+                                 Eigen::Matrix<double, -1, -1>>
+        y;
     try {
       y = stan::math::cov_matrix_constrain(x, dof);
     } catch (...) {
@@ -19,10 +21,7 @@ auto f(int dof) {
   };
 }
 
-auto f_matvar = [](const auto& x) {
-    return stan::math::cholesky_decompose(x);
-  };
-
+auto f_matvar = [](const auto& x) { return stan::math::cholesky_decompose(x); };
 
 void expect_cholesky(const Eigen::MatrixXd& Sigma) {
   Eigen::VectorXd yy = stan::math::cov_matrix_free(Sigma);
@@ -109,7 +108,7 @@ TEST(MathMixMatFun, choleskyDecomposeGeneral) {
   stan::test::expect_ad_matvar(cholesky_decompose_test::f_matvar, y_mat);
   */
 }
-  // GP covar
+// GP covar
 TEST(MathMixMatFun, choleskyDecomposeGP) {
   for (size_t n = 1; n < 5; ++n) {
     std::vector<double> xx(n);

@@ -22,7 +22,6 @@
 namespace stan {
 namespace math {
 
-
 #ifdef STAN_OPENCL
 class cholesky_opencl : public vari {
  public:
@@ -134,7 +133,6 @@ class cholesky_opencl : public vari {
 };
 #endif
 
-
 namespace internal {
 
 /**
@@ -184,7 +182,7 @@ auto cholesky_lambda(T1 L_A, T2 L, T3 A_ref) {
     A_ref.adj().template triangularView<Eigen::Lower>() = L_adj;
   };
 }
-}
+}  // namespace internal
 
 /**
  * Reverse mode specialization of Cholesky decomposition
@@ -247,23 +245,23 @@ cholesky_decompose(const T& A) {
       }
     });
   } else {
-    #ifdef STAN_OPENCL
-        if (L_A.rows()
-            > opencl_context.tuning_opts().cholesky_size_worth_transfer) {
-          auto* baseVari = new cholesky_opencl(A_ref, L_A);
-          internal::set_lower_tri_coeff_ref(L, baseVari->vari_ref_L_);
-          size_t pos = 0;
-          for (size_type j = 0; j < L.cols(); ++j) {
-            for (size_type i = j; i < L.cols(); ++i) {
-              L.coeffRef(i, j).vi_ = baseVari->vari_ref_L_[pos++];
-            }
-          }
-        } else {
-          reverse_pass_callback(internal::cholesky_lambda(L_A, L, A_ref));
+#ifdef STAN_OPENCL
+    if (L_A.rows()
+        > opencl_context.tuning_opts().cholesky_size_worth_transfer) {
+      auto* baseVari = new cholesky_opencl(A_ref, L_A);
+      internal::set_lower_tri_coeff_ref(L, baseVari->vari_ref_L_);
+      size_t pos = 0;
+      for (size_type j = 0; j < L.cols(); ++j) {
+        for (size_type i = j; i < L.cols(); ++i) {
+          L.coeffRef(i, j).vi_ = baseVari->vari_ref_L_[pos++];
         }
-    #else
+      }
+    } else {
+      reverse_pass_callback(internal::cholesky_lambda(L_A, L, A_ref));
+    }
+#else
     reverse_pass_callback(internal::cholesky_lambda(L_A, L, A_ref));
-    #endif
+#endif
   }
 
   return L;
@@ -281,8 +279,7 @@ cholesky_decompose(const T& A) {
  * @return L Cholesky factor of A
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
-inline auto
-cholesky_decompose(const T& A) {
+inline auto cholesky_decompose(const T& A) {
   check_symmetric("cholesky_decompose", "A", A.val());
   check_not_nan("cholesky_decompose", "A", A.val());
   T L = A.val().llt().matrixL();
@@ -295,11 +292,12 @@ cholesky_decompose(const T& A) {
       for (int i = N - 1; i >= 0; --i) {
         for (int j = i; j >= 0; --j) {
           if (i == j) {
-            A.adj().coeffRef(i, j) = 0.5 * adjL.coeff(i, j) / L.val().coeff(i, j);
+            A.adj().coeffRef(i, j)
+                = 0.5 * adjL.coeff(i, j) / L.val().coeff(i, j);
           } else {
             A.adj().coeffRef(i, j) = adjL.coeff(i, j) / L.val().coeffRef(j, j);
-            adjL.coeffRef(j, j)
-                -= adjL.coeffRef(i, j) * L.val().coeffRef(i, j) / L.val().coeffRef(j, j);
+            adjL.coeffRef(j, j) -= adjL.coeffRef(i, j) * L.val().coeffRef(i, j)
+                                   / L.val().coeffRef(j, j);
           }
           for (int k = j - 1; k >= 0; --k) {
             adjL.coeffRef(i, k) -= A.adj().coeff(i, j) * L.val().coeffRef(j, k);
