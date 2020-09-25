@@ -35,18 +35,6 @@ inline plain_type_t<T> tcrossprod(const T& M) {
 
   arena_t<T_var> res = arena_M_val * arena_M_val.transpose();
 
-  /*
-  Eigen::MatrixXd res_val(M.rows(), M.rows());
-  res_val.setZero().template
-  selfadjointView<Eigen::Upper>().rankUpdate(arena_M_val);
-
-  for (size_t j = 0; j < res.cols(); ++j) {
-    for (size_t i = 0; i < j; ++i) {
-      res.coeffRef(i, j) = res.coeffRef(j, i) = res_val.coeff(i, j);
-    }
-    res.coeffRef(j, j) = res_val.coeff(j, j);
-    }*/
-
   reverse_pass_callback([res, arena_M, arena_M_val]() mutable {
     Eigen::MatrixXd adj = res.adj();
     arena_M.adj() += (adj + adj.transpose()) * arena_M_val;
