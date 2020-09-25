@@ -84,7 +84,6 @@ TEST(MathMixMatFun, choleskyDecomposeGeneral) {
       y(i) = (i * 10) / 100.0;
     stan::test::ad_tolerances tol;
     using stan::test::relative_tolerance;
-    std::cout << "\n on: " << n << "\n";
     if (n == 9) {
       tol.hessian_hessian_ = relative_tolerance(2e-4, 2e-3);
       tol.hessian_fvar_hessian_ = relative_tolerance(2e-4, 2e-3);
@@ -93,7 +92,7 @@ TEST(MathMixMatFun, choleskyDecomposeGeneral) {
     Eigen::MatrixXd y_mat = stan::math::cov_matrix_constrain(y, n);
     stan::test::expect_ad_matvar(cholesky_decompose_test::f_matvar, y_mat);
   }
-  // one big one to check multiple blocks
+  // one big one to check multiple blocks?? Takes a looong time
   /*
   int n = 18;
   int dof = (n * (n + 1)) / 2;

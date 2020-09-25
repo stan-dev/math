@@ -136,6 +136,7 @@ class cholesky_opencl : public vari {
 
 
 namespace internal {
+
 /**
  * Reverse mode differentiation algorithm reference:
  *
@@ -156,14 +157,14 @@ auto cholesky_lambda(T1 L_A, T2 L, T3 A_ref) {
     for (int k = M_; k > 0; k -= block_size_) {
       int j = std::max(0, k - block_size_);
       auto R = L_A.block(j, 0, k - j, j);
-      auto D = L_A.block(j, j, k - j, k - j);
+      // eval() is on purpose, we want to transpose one
+      auto D = L_A.block(j, j, k - j, k - j).transpose().eval();
       auto B = L_A.block(k, 0, M_ - k, j);
       auto C = L_A.block(k, j, M_ - k, k - j);
       auto R_adj = L_adj.block(j, 0, k - j, j);
       auto D_adj = L_adj.block(j, j, k - j, k - j);
       auto B_adj = L_adj.block(k, 0, M_ - k, j);
       auto C_adj = L_adj.block(k, j, M_ - k, k - j);
-      D.transposeInPlace();
       if (C_adj.size() > 0) {
         C_adj = D.template triangularView<Upper>()
                     .solve(C_adj.transpose())
@@ -179,7 +180,6 @@ auto cholesky_lambda(T1 L_A, T2 L, T3 A_ref) {
       R_adj.noalias() -= C_adj.transpose() * B;
       R_adj.noalias() -= D_adj.template selfadjointView<Lower>() * R;
       D_adj.diagonal() *= 0.5;
-      D_adj.template triangularView<StrictlyUpper>().setZero();
     }
     A_ref.adj().template triangularView<Eigen::Lower>() = L_adj;
   };
@@ -193,8 +193,8 @@ auto cholesky_lambda(T1 L_A, T2 L, T3 A_ref) {
  * stan::math::cholesky_decompose in order to use an inplace decomposition.
  *
  * Note chainable stack varis are created below in Matrix<var, -1, -1>
- *
- * @param A Matrix
+ * @tparam T An eigen matrix with  a scalar var type.
+ * @param A A square positive definite matrix with no nan values.
  * @return L Cholesky factor of A
  */
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
@@ -250,8 +250,14 @@ cholesky_decompose(const T& A) {
     #ifdef STAN_OPENCL
         if (L_A.rows()
             > opencl_context.tuning_opts().cholesky_size_worth_transfer) {
-          cholesky_opencl* baseVari = new cholesky_opencl(A_ref, L_A);
+          auto* baseVari = new cholesky_opencl(A_ref, L_A);
           internal::set_lower_tri_coeff_ref(L, baseVari->vari_ref_L_);
+          size_t pos = 0;
+          for (size_type j = 0; j < L.cols(); ++j) {
+            for (size_type i = j; i < L.cols(); ++i) {
+              L.coeffRef(i, j).vi_ = baseVari->vari_ref_L_[pos++];
+            }
+          }
         } else {
           reverse_pass_callback(internal::cholesky_lambda(L_A, L, A_ref));
         }
@@ -264,20 +270,26 @@ cholesky_decompose(const T& A) {
 }
 
 /**
- * Reverse mode differentiation algorithm reference:
+ * Reverse mode specialization of Cholesky decomposition
  *
- * Iain Murray: Differentiation of the Cholesky decomposition, 2016.
+ * Internally calls Eigen::LLT rather than using
+ * stan::math::cholesky_decompose in order to use an inplace decomposition.
  *
+ * Note chainable stack varis are created below in Matrix<var, -1, -1>
+ * @tparam T A `var_value` holding an inner eigen type.
+ * @param A A square positive definite matrix with no nan values.
+ * @return L Cholesky factor of A
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto
 cholesky_decompose(const T& A) {
   check_symmetric("cholesky_decompose", "A", A.val());
   check_not_nan("cholesky_decompose", "A", A.val());
-  arena_t<T> L = A.val().llt().matrixL();
+  T L = A.val().llt().matrixL();
   if (A.rows() <= 35) {
     reverse_pass_callback([L, A]() mutable {
       const size_t N = A.rows();
+      // need to copy here since we write to L's adjoint iterativly
       auto adjL = L.adj().eval();
       // TODO(Steve): Write this in column major order
       for (int i = N - 1; i >= 0; --i) {
@@ -312,7 +324,8 @@ cholesky_decompose(const T& A) {
       for (int k = M_; k > 0; k -= block_size_) {
         int j = std::max(0, k - block_size_);
         auto R = L.val().block(j, 0, k - j, j);
-        Eigen::MatrixXd D = L.val().block(j, j, k - j, k - j).transpose();
+        // eval() is on purpose, we want to transpose one
+        auto D = L.val().block(j, j, k - j, k - j).transpose().eval();
         auto B = L.val().block(k, 0, M_ - k, j);
         auto C = L.val().block(k, j, M_ - k, k - j);
         auto R_adj = L_adj.block(j, 0, k - j, j);
@@ -334,7 +347,6 @@ cholesky_decompose(const T& A) {
         R_adj.noalias() -= C_adj.transpose() * B;
         R_adj.noalias() -= D_adj.template selfadjointView<Lower>() * R;
         D_adj.diagonal() *= 0.5;
-        D_adj.template triangularView<StrictlyUpper>().setZero();
       }
       A.adj().template triangularView<Eigen::Lower>() = L_adj;
     });
