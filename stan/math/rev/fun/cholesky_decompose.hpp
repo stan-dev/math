@@ -304,17 +304,16 @@ cholesky_decompose(const T& A) {
       using Eigen::Upper;
       using Block_ = Eigen::Block<Eigen::MatrixXd>;
 
-      auto& L_adj = L.adj();
-      auto& L_val = L.val();
-      const int M_ = L_val.rows();
+      auto L_adj = L.adj().eval();
+      const int M_ = L.val().rows();
       int block_size_ = std::max(M_ / 8, 8);
       block_size_ = std::min(block_size_, 128);
       for (int k = M_; k > 0; k -= block_size_) {
         int j = std::max(0, k - block_size_);
-        auto R = L_val.block(j, 0, k - j, j);
-        Eigen::MatrixXd D = L_val.block(j, j, k - j, k - j).transpose();
-        auto B = L_val.block(k, 0, M_ - k, j);
-        auto C = L_val.block(k, j, M_ - k, k - j);
+        auto R = L.val().block(j, 0, k - j, j);
+        Eigen::MatrixXd D = L.val().block(j, j, k - j, k - j).transpose();
+        auto B = L.val().block(k, 0, M_ - k, j);
+        auto C = L.val().block(k, j, M_ - k, k - j);
         auto R_adj = L_adj.block(j, 0, k - j, j);
         auto D_adj = L_adj.block(j, j, k - j, k - j);
         auto B_adj = L_adj.block(k, 0, M_ - k, j);
