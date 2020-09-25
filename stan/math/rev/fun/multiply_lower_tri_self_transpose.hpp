@@ -11,43 +11,33 @@
 namespace stan {
 namespace math {
 
-inline matrix_v multiply_lower_tri_self_transpose(const matrix_v& L) {
-  // check_square("multiply_lower_tri_self_transpose",
-  // L, "L", (double*)0);
-  int K = L.rows();
-  int J = L.cols();
-  matrix_v LLt(K, K);
-  if (K == 0) {
-    return LLt;
-  }
-  // if (K == 1) {
-  //   LLt(0, 0) = L(0, 0) * L(0, 0);
-  //   return LLt;
-  // }
-  int Knz;
-  if (K >= J) {
-    Knz = (K - J) * J + (J * (J + 1)) / 2;
-  } else {  // if (K < J)
-    Knz = (K * (K + 1)) / 2;
-  }
-  vari** vs = reinterpret_cast<vari**>(
-      ChainableStack::instance_->memalloc_.alloc(Knz * sizeof(vari*)));
-  int pos = 0;
-  for (int m = 0; m < K; ++m) {
-    for (int n = 0; n < ((J < (m + 1)) ? J : (m + 1)); ++n) {
-      vs[pos++] = L(m, n).vi_;
-    }
-  }
-  for (int m = 0, mpos = 0; m < K; ++m, mpos += (J < m) ? J : m) {
-    LLt.coeffRef(m, m) = var(
-        new internal::dot_self_vari(vs + mpos, (J < (m + 1)) ? J : (m + 1)));
-    for (int n = 0, npos = 0; n < m; ++n, npos += (J < n) ? J : n) {
-      LLt.coeffRef(m, n) = LLt.coeffRef(n, m)
-          = dot_product(L.row(m).head((J < (n + 1)) ? J : (n + 1)),
-                        L.row(n).head((J < (n + 1)) ? J : (n + 1)));
-    }
-  }
-  return LLt;
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline plain_type_t<T> multiply_lower_tri_self_transpose(const T& L) {
+  using T_double = Eigen::MatrixXd;
+  using T_var = plain_type_t<T>;
+
+  if (L.size() == 0)
+    return L;
+
+  arena_t<T_var> arena_L = L;
+  arena_t<T_double> arena_L_val
+      = value_of(arena_L).template triangularView<Eigen::Lower>();
+
+  arena_t<T_var> res = arena_L_val.template triangularView<Eigen::Lower>()
+                       * arena_L_val.transpose();
+
+  reverse_pass_callback([res, arena_L, arena_L_val]() mutable {
+    const auto& adj = to_ref(res.adj());
+    Eigen::MatrixXd adjL = (adj.transpose() + adj) * arena_L_val;
+
+    for (size_t j = 1; j < adjL.cols(); ++j)
+      for (size_t i = 0; i < std::min(static_cast<size_t>(adjL.rows()), j); ++i)
+        adjL(i, j) = 0.0;
+
+    arena_L.adj() += adjL;
+  });
+
+  return res;
 }
 
 }  // namespace math

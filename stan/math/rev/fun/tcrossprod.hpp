@@ -21,41 +21,38 @@ namespace math {
  * @param M Matrix to multiply.
  * @return M times its transpose.
  */
-template <typename T, require_eigen_vt<is_var, T>* = nullptr>
-inline Eigen::Matrix<var, T::RowsAtCompileTime, T::RowsAtCompileTime>
-tcrossprod(const T& M) {
-  if (M.rows() == 0) {
-    return {};
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline plain_type_t<T> tcrossprod(const T& M) {
+  using T_double = Eigen::MatrixXd;
+  using T_var = plain_type_t<T>;
+
+  if (M.size() == 0) {
+    return M;
   }
-  // if (M.rows() == 1)
-  //   return M * M.transpose();
 
-  // WAS JUST THIS
-  // matrix_v result(M.rows(), M.rows());
-  // return result.setZero().selfadjointView<Eigen::Upper>().rankUpdate(M);
+  arena_t<plain_type_t<T>> arena_M = M;
+  arena_t<Eigen::MatrixXd> arena_M_val = value_of(arena_M);
 
-  Eigen::Matrix<var, T::RowsAtCompileTime, T::RowsAtCompileTime> MMt(M.rows(),
-                                                                     M.rows());
+  arena_t<T_var> res = arena_M_val * arena_M_val.transpose();
 
-  vari** vs
-      = reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
-          (M.rows() * M.cols()) * sizeof(vari*)));
-  int pos = 0;
-  for (int m = 0; m < M.rows(); ++m) {
-    for (int n = 0; n < M.cols(); ++n) {
-      vs[pos++] = M(m, n).vi_;
+  /*
+  Eigen::MatrixXd res_val(M.rows(), M.rows());
+  res_val.setZero().template
+  selfadjointView<Eigen::Upper>().rankUpdate(arena_M_val);
+
+  for (size_t j = 0; j < res.cols(); ++j) {
+    for (size_t i = 0; i < j; ++i) {
+      res.coeffRef(i, j) = res.coeffRef(j, i) = res_val.coeff(i, j);
     }
-  }
-  for (int m = 0; m < M.rows(); ++m) {
-    MMt.coeffRef(m, m)
-        = var(new internal::dot_self_vari(vs + m * M.cols(), M.cols()));
-  }
-  for (int m = 0; m < M.rows(); ++m) {
-    for (int n = 0; n < m; ++n) {
-      MMt.coeffRef(n, m) = MMt.coeffRef(m, n) = dot_product(M.row(m), M.row(n));
-    }
-  }
-  return MMt;
+    res.coeffRef(j, j) = res_val.coeff(j, j);
+    }*/
+
+  reverse_pass_callback([res, arena_M, arena_M_val]() mutable {
+    Eigen::MatrixXd adj = res.adj();
+    arena_M.adj() += (adj + adj.transpose()) * arena_M_val;
+  });
+
+  return res;
 }
 
 }  // namespace math
