@@ -38,7 +38,7 @@ plain_type_t<T> unit_vector_constrain(const T& y) {
   const double r_cubed = r * r * r;
   arena_matrix<plain_type_t<T>> res = y_val / r;
 
-  reverse_pass_callback([arena_y, res, r, r_cubed]() mutable {
+  reverse_pass_callback([arena_y, res, r, r_cubed, y_val]() mutable {
     const auto& adj = to_ref(res.adj());
 
     arena_y.adj()
