@@ -156,13 +156,14 @@ auto cholesky_lambda(T1 L_A, T2 L, T3 A_ref) {
     for (int k = M_; k > 0; k -= block_size_) {
       int j = std::max(0, k - block_size_);
       auto R = L_A.block(j, 0, k - j, j);
-      Eigen::MatrixXd D = L_A.block(j, j, k - j, k - j).transpose();
+      auto D = L_A.block(j, j, k - j, k - j);
       auto B = L_A.block(k, 0, M_ - k, j);
       auto C = L_A.block(k, j, M_ - k, k - j);
       auto R_adj = L_adj.block(j, 0, k - j, j);
       auto D_adj = L_adj.block(j, j, k - j, k - j);
       auto B_adj = L_adj.block(k, 0, M_ - k, j);
       auto C_adj = L_adj.block(k, j, M_ - k, k - j);
+      D.transposeInPlace();
       if (C_adj.size() > 0) {
         C_adj = D.template triangularView<Upper>()
                     .solve(C_adj.transpose())
