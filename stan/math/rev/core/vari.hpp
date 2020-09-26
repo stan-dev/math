@@ -515,14 +515,6 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   inline void set_zero_adjoint() final { adj_.setZero(); }
 
   /**
-   * A block view of the underlying Eigen matrices.
-   * @param start_row Starting row of block.
-   * @param start_col Starting columns of block.
-   * @param num_rows Number of rows to return.
-   * @param num_cols Number of columns to return.
-   */
-
-  /**
    * Insertion operator for vari. Prints the current value and
    * the adjoint value.
    *
