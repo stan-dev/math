@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_var.hpp>
 #include <vector>
 
 namespace stan {
@@ -37,6 +38,37 @@ struct promote_scalar_type<T, std::vector<S>> {
    * The promoted type.
    */
   using type = std::vector<typename promote_scalar_type<T, S>::type>;
+};
+
+/**
+ * Specialization for `var_value` when the type to convert to is a `var_value`.
+ * @tparam T a `var_value`.
+ * @tparam S A `var_value` whose template type is derived from `EigenBase`.
+ *  This specialization holds type `S`.
+ */
+template <typename T, typename S>
+struct promote_scalar_type<
+    T, S, require_all_t<is_var<T>, is_var<S>, is_eigen<value_type_t<S>>>> {
+  /**
+   * The promoted type.
+   */
+  using type = std::decay_t<S>;
+};
+
+/**
+ * Specialization for `var_value` when the type to convert to is arithmetic.
+ * @tparam T an arithmetic type.
+ * @tparam S A `var_value` whose template type is derived from `EigenBase`.
+ *  This specialization the promoted value type of `S`.
+ */
+template <typename T, typename S>
+struct promote_scalar_type<T, S,
+                           require_all_t<std::is_arithmetic<T>, is_var<S>,
+                                         is_eigen<value_type_t<S>>>> {
+  /**
+   * The promoted type.
+   */
+  using type = typename promote_scalar_type<T, value_type_t<S>>::type;
 };
 
 /**

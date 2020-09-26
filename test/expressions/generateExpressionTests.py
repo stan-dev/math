@@ -167,6 +167,8 @@ special_arg_values = {
     "categorical_log": [None, 1],
     "categorical_rng": [1, None],
     "categorical_lpmf": [None, 1],
+    "dirichlet_log" : [1, None],
+    "dirichlet_lpdf" : [1, None],
     "hmm_hidden_state_prob": [None, 1, 1],
     "hmm_latent_rng": [None, 1, 1, None],
     "hmm_marginal": [None, 1, 1],
@@ -174,7 +176,12 @@ special_arg_values = {
     "lkj_corr_log": [1, None],
     "log_diff_exp": [3, None],
     "log_inv_logit_diff": [1.2, 0.4],
+    "multinomial_log" : [None, 1],
+    "multinomial_lpmf" : [None, 1],
+    "multinomial_rng" : [1, None, None],
+    "log_inv_logit_diff": [1.2, 0.4],
     "unit_vector_free" : [1.0],
+
 }
 
 
