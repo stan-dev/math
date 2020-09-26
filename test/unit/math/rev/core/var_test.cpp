@@ -201,9 +201,13 @@ TEST_F(AgradRev, var_matrix_views) {
   EXPECT_MATRIX_FLOAT_EQ(A_rowwise_colwise_reverse.adj(),
                          A_v.adj().rowwise().reverse().colwise().reverse());
   // since new var is made and values propogate back
+  A_coeff1.vi_->adj_ = 1;
+  A_coeff2.vi_->adj_ = 10;
+  auto prev_adj_val1 = A_v.adj()(3);
+  auto prev_adj_val2 = A_v.adj()(3, 3);
   stan::math::grad();
-  EXPECT_FLOAT_EQ(A_v.adj()(3), A_coeff1.adj());
-  EXPECT_FLOAT_EQ(A_v.adj()(3, 3), A_coeff2.adj());
+  EXPECT_FLOAT_EQ(A_v.adj()(3) - prev_adj_val1, A_coeff1.adj());
+  EXPECT_FLOAT_EQ(A_v.adj()(3, 3) - prev_adj_val2, A_coeff2.adj());
 }
 
 TEST_F(AgradRev, var_vector_views) {
@@ -230,8 +234,10 @@ TEST_F(AgradRev, var_vector_views) {
   EXPECT_MATRIX_FLOAT_EQ(A_v.adj().tail(3), A_tail.adj());
   EXPECT_MATRIX_FLOAT_EQ(A_v.adj().segment(3, 5), A_segment.adj());
   // since new var is made and values propogate back
+  A_coeff1.vi_->adj_ = 1;
+  auto prev_adj_val = A_v.adj()(3);
   stan::math::grad();
-  EXPECT_FLOAT_EQ(A_v.adj()(3), A_coeff1.adj());
+  EXPECT_FLOAT_EQ(A_v.adj()(3) - prev_adj_val, A_coeff1.adj());
 }
 
 /**
@@ -291,10 +297,10 @@ TEST_F(AgradRev, var_matrix_view) {
                          A_v.adj().rowwise().reverse().colwise().reverse());
 
   EXPECT_FLOAT_EQ(A_v_coeff1.val(), A_v.val().coeff(5));
-  EXPECT_FLOAT_EQ(A_v_coeff1.adj(), A_v.adj().coeffRef(5));
+  EXPECT_FLOAT_EQ(A_v_coeff1.adj(), 0);
 
   EXPECT_FLOAT_EQ(A_v_coeff2.val(), A_v.val().coeff(1, 2));
-  EXPECT_FLOAT_EQ(A_v_coeff2.adj(), A_v.adj().coeff(1, 2));
+  EXPECT_FLOAT_EQ(A_v_coeff2.adj(), 0);
 }
 
 TEST_F(AgradRev, var_matrix_view_assignment) {
@@ -343,8 +349,8 @@ TEST_F(AgradRev, var_matrix_view_eval) {
   auto A_v_rowwise_colwise_reverse
       = A_v.rowwise().reverse().colwise().reverse().eval();
   // NOTE: Coefficient references make a new var.
-  auto A_v_coeff1 = A_v.coeff(5).eval();
-  auto A_v_coeff2 = A_v.coeff(1, 2).eval();
+  auto A_v_coeff1 = A_v.coeff(5);
+  auto A_v_coeff2 = A_v.coeff(1, 2);
   A_v.block(0, 0, 3, 3) = A_v.block(1, 1, 3, 3);
   // Checks adjoints from all assigned slices are propogated upwards
   var b_v = stan::math::sum(A_v_block) + stan::math::sum(A_v_row)

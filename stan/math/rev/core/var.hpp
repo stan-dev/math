@@ -78,7 +78,7 @@ class var_value<T, require_floating_point_t<T>> {
    * @param x Value of the variable.
    */
   template <typename S, require_convertible_t<S&, value_type>* = nullptr>
-  var_value(const S& x) : vi_(new vari_type(x, false)) {}  // NOLINT
+  var_value(S x) : vi_(new vari_type(x, false)) {}  // NOLINT
 
   /**
    * Construct a variable from a pointer to a variable implementation.
@@ -112,11 +112,6 @@ class var_value<T, require_floating_point_t<T>> {
    * @return Adjoint for this variable.
    */
   inline auto& adj() { return vi_->adj_; }
-  inline auto& adj_op() { return vi_->adj_; }
-
-  inline Eigen::Index rows() const { return 0; }
-  inline Eigen::Index cols() const { return 0; }
-  inline Eigen::Index size() const { return 1; }
   /**
    * Compute the gradient of this (dependent) variable with respect to
    * the specified vector of (independent) variables, assigning the
@@ -297,7 +292,6 @@ class var_value<T, require_floating_point_t<T>> {
     return os << v.val();
   }
 
-  inline auto& eval() noexcept { return *this; }
 };
 
 /**
@@ -569,7 +563,7 @@ class var_value<
                     Eigen::Index num_rows, Eigen::Index num_cols) {
     using vari_sub
         = decltype(vi_->block(start_row, start_col, num_rows, num_cols));
-    using var_sub = var_value<typename vari_sub::value_type>;
+    using var_sub = var_value<value_type_t<vari_sub>>;
     return var_sub(
         new vari_sub(vi_->block(start_row, start_col, num_rows, num_cols)));
   }
@@ -580,7 +574,7 @@ class var_value<
    */
   inline auto head(Eigen::Index n) {
     using vari_sub = decltype(vi_->head(n));
-    using var_sub = var_value<typename vari_sub::value_type>;
+    using var_sub = var_value<value_type_t<vari_sub>>;
     return var_sub(new vari_sub(vi_->head(n)));
   }
 
@@ -590,7 +584,7 @@ class var_value<
    */
   inline auto tail(Eigen::Index n) {
     using vari_sub = decltype(vi_->tail(n));
-    using var_sub = var_value<typename vari_sub::value_type>;
+    using var_sub = var_value<value_type_t<vari_sub>>;
     return var_sub(new vari_sub(vi_->tail(n)));
   }
 
@@ -601,7 +595,7 @@ class var_value<
    */
   inline auto segment(Eigen::Index i, Eigen::Index n) {
     using vari_sub = decltype(vi_->segment(i, n));
-    using var_sub = var_value<typename vari_sub::value_type>;
+    using var_sub = var_value<value_type_t<vari_sub>>;
     return var_sub(new vari_sub(vi_->segment(i, n)));
   }
 
@@ -611,7 +605,7 @@ class var_value<
    */
   inline auto row(Eigen::Index i) {
     using vari_sub = decltype(vi_->row(i));
-    using var_sub = var_value<typename vari_sub::value_type>;
+    using var_sub = var_value<value_type_t<vari_sub>>;
     return var_sub(new vari_sub(vi_->row(i)));
   }
 
@@ -621,27 +615,31 @@ class var_value<
    */
   inline auto col(Eigen::Index i) {
     using vari_sub = decltype(vi_->col(i));
-    using var_sub = var_value<typename vari_sub::value_type>;
+    using var_sub = var_value<value_type_t<vari_sub>>;
     return var_sub(new vari_sub(vi_->col(i)));
   }
 
   /**
-   * View element of eigen matrices
+   * View element of eigen matrices. This creates a new
+   * vari_value<double> so unlike the other views this subset will not
+   * have the same adjoints as the original matrix and must be propogated
+   * back.
    * @param i Element to access
    */
   inline auto coeff(Eigen::Index i) {
     using vari_sub = decltype(vi_->coeff(i));
     vari_sub* vari_coeff = new vari_sub(vi_->coeff(i));
     reverse_pass_callback([this_vi = this->vi_, vari_coeff, i]() {
-      auto tmp_adj = this_vi->adj_.coeffRef(i);
       this_vi->adj_.coeffRef(i) += vari_coeff->adj_;
-      vari_coeff->adj_ += tmp_adj;
     });
-    return var_value<typename vari_sub::value_type>(vari_coeff);
+    return var_value<value_type_t<vari_sub>>(vari_coeff);
   }
 
   /**
-   * View element of eigen matrices
+  * View element of eigen matrices. This creates a new
+  * vari_value<double> so unlike the other views this subset will not
+  * have the same adjoints as the original matrix and must be propogated
+  * back.
    * @param i Row to access
    * @param j Column to access
    */
@@ -649,21 +647,25 @@ class var_value<
     using vari_sub = decltype(vi_->coeff(i, j));
     vari_sub* vari_coeff = new vari_sub(vi_->coeff(i, j));
     reverse_pass_callback([this_vi = this->vi_, vari_coeff, i, j]() {
-      auto tmp_adj = this_vi->adj_.coeffRef(i, j);
       this_vi->adj_.coeffRef(i, j) += vari_coeff->adj_;
-      vari_coeff->adj_ += tmp_adj;
     });
-    return var_value<typename vari_sub::value_type>(vari_coeff);
+    return var_value<value_type_t<vari_sub>>(vari_coeff);
   }
 
   /**
-   * View element of eigen matrices
+  * View element of eigen matrices. This creates a new
+  * vari_value<double> so unlike the other views this subset will not
+  * have the same adjoints as the original matrix and must be propogated
+  * back.
    * @param i Element to access
    */
   inline auto operator()(Eigen::Index i) { return this->coeff(i); }
 
   /**
-   * View element of eigen matrices
+  * View element of eigen matrices. This creates a new
+  * vari_value<double> so unlike the other views this subset will not
+  * have the same adjoints as the original matrix and must be propogated
+  * back.
    * @param i Row to access
    * @param j Column to access
    */
@@ -672,13 +674,19 @@ class var_value<
   }
 
   /**
-   * View element of eigen matrices
+  * View element of eigen matrices. This creates a new
+  * vari_value<double> so unlike the other views this subset will not
+  * have the same adjoints as the original matrix and must be propogated
+  * back.
    * @param i Element to access
    */
   inline auto coeffRef(Eigen::Index i) { return this->coeff(i); }
 
   /**
-   * View element of eigen matrices
+  * View element of eigen matrices. This creates a new
+  * vari_value<double> so unlike the other views this subset will not
+  * have the same adjoints as the original matrix and must be propogated
+  * back.
    * @param i Row to access
    * @param j Column to access
    */
@@ -691,7 +699,7 @@ class var_value<
    */
   inline auto rowwise() {
     using vari_sub = decltype(vi_->rowwise());
-    using var_sub = var_value<typename vari_sub::value_type>;
+    using var_sub = var_value<value_type_t<vari_sub>>;
     return var_sub(new vari_sub(vi_->rowwise()));
   }
 
@@ -700,7 +708,7 @@ class var_value<
    */
   inline auto colwise() {
     using vari_sub = decltype(vi_->colwise());
-    using var_sub = var_value<typename vari_sub::value_type>;
+    using var_sub = var_value<value_type_t<vari_sub>>;
     return var_sub(new vari_sub(vi_->colwise()));
   }
 
@@ -710,7 +718,7 @@ class var_value<
    */
   inline auto reverse() {
     using vari_sub = decltype(vi_->reverse());
-    using var_sub = var_value<typename vari_sub::value_type>;
+    using var_sub = var_value<value_type_t<vari_sub>>;
     return var_sub(new vari_sub(vi_->reverse()));
   }
 
@@ -735,7 +743,7 @@ class var_value<
    */
   template <typename U = T,
             require_any_t<is_eigen<U>, is_matrix_cl<U>>* = nullptr>
-  auto rows() const {
+  inline auto rows() const {
     return vi_->rows();
   }
 
@@ -745,7 +753,7 @@ class var_value<
    */
   template <typename U = T,
             require_any_t<is_eigen<U>, is_matrix_cl<U>>* = nullptr>
-  auto cols() const {
+  inline auto cols() const {
     return vi_->cols();
   }
 
@@ -793,7 +801,9 @@ class var_value<
     return *this;
   }
 
-  // No-op to match with Eigen methods which call eval
+ /**
+  * No-op to match with Eigen methods which call eval
+  */
   template <typename T_ = T, require_plain_type_t<T_>* = nullptr>
   inline auto& eval() noexcept {
     return *this;
@@ -807,19 +817,12 @@ class var_value<
     return var_value<plain_type_t<T>>(*this);
   }
 
-  // this is a bit ugly workarount to allow var_value<double> to have default
-  // assignment operator, which avoids warnings when used in Eigen matrices.
- private:
-  struct not_var_value {};
-
- public:
   /**
-   * Copy assignment operator delegates to general assignment operator if the
-   * var_value contains eigen type.
-   * @param other the value to assing
+   * Copy assignment operator delegates to general assignment operator
+   * @param other the value to assign
    * @return this
    */
-  var_value<T>& operator=(const var_value<T>& other) {
+  inline var_value<T>& operator=(const var_value<T>& other) {
     return operator=<T>(other);
   }
 };
