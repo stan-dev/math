@@ -291,7 +291,6 @@ class var_value<T, require_floating_point_t<T>> {
     }
     return os << v.val();
   }
-
 };
 
 /**
@@ -636,10 +635,10 @@ class var_value<
   }
 
   /**
-  * View element of eigen matrices. This creates a new
-  * vari_value<double> so unlike the other views this subset will not
-  * have the same adjoints as the original matrix and must be propogated
-  * back.
+   * View element of eigen matrices. This creates a new
+   * vari_value<double> so unlike the other views this subset will not
+   * have the same adjoints as the original matrix and must be propogated
+   * back.
    * @param i Row to access
    * @param j Column to access
    */
@@ -653,19 +652,19 @@ class var_value<
   }
 
   /**
-  * View element of eigen matrices. This creates a new
-  * vari_value<double> so unlike the other views this subset will not
-  * have the same adjoints as the original matrix and must be propogated
-  * back.
+   * View element of eigen matrices. This creates a new
+   * vari_value<double> so unlike the other views this subset will not
+   * have the same adjoints as the original matrix and must be propogated
+   * back.
    * @param i Element to access
    */
   inline auto operator()(Eigen::Index i) { return this->coeff(i); }
 
   /**
-  * View element of eigen matrices. This creates a new
-  * vari_value<double> so unlike the other views this subset will not
-  * have the same adjoints as the original matrix and must be propogated
-  * back.
+   * View element of eigen matrices. This creates a new
+   * vari_value<double> so unlike the other views this subset will not
+   * have the same adjoints as the original matrix and must be propogated
+   * back.
    * @param i Row to access
    * @param j Column to access
    */
@@ -674,19 +673,19 @@ class var_value<
   }
 
   /**
-  * View element of eigen matrices. This creates a new
-  * vari_value<double> so unlike the other views this subset will not
-  * have the same adjoints as the original matrix and must be propogated
-  * back.
+   * View element of eigen matrices. This creates a new
+   * vari_value<double> so unlike the other views this subset will not
+   * have the same adjoints as the original matrix and must be propogated
+   * back.
    * @param i Element to access
    */
   inline auto coeffRef(Eigen::Index i) { return this->coeff(i); }
 
   /**
-  * View element of eigen matrices. This creates a new
-  * vari_value<double> so unlike the other views this subset will not
-  * have the same adjoints as the original matrix and must be propogated
-  * back.
+   * View element of eigen matrices. This creates a new
+   * vari_value<double> so unlike the other views this subset will not
+   * have the same adjoints as the original matrix and must be propogated
+   * back.
    * @param i Row to access
    * @param j Column to access
    */
@@ -801,9 +800,9 @@ class var_value<
     return *this;
   }
 
- /**
-  * No-op to match with Eigen methods which call eval
-  */
+  /**
+   * No-op to match with Eigen methods which call eval
+   */
   template <typename T_ = T, require_plain_type_t<T_>* = nullptr>
   inline auto& eval() noexcept {
     return *this;

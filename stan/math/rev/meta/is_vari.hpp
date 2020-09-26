@@ -26,7 +26,6 @@ template <typename T>
 struct is_vari<T, require_t<internal::is_vari_impl<std::decay_t<T>>>>
     : std::true_type {};
 
-
 template <typename T>
 struct value_type<T, require_t<is_vari<T>>> {
   using type = typename std::decay_t<T>::value_type;

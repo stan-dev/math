@@ -202,7 +202,9 @@ struct vari_view_crtp {
   /**
    * Helper function to return a constant reference to the derived type's value.
    */
-  inline auto const& derived_val() const { return static_cast<T const&>(*this).val_; }
+  inline auto const& derived_val() const {
+    return static_cast<T const&>(*this).val_;
+  }
 
   /**
    * Helper function to return a reference to the derived type's adjoint.
@@ -222,8 +224,8 @@ struct vari_view_crtp {
    */
   inline auto block(Eigen::Index start_row, Eigen::Index start_col,
                     Eigen::Index num_rows, Eigen::Index num_cols) {
-    using inner_type
-        = decltype(derived_val().block(start_row, start_col, num_rows, num_cols));
+    using inner_type = decltype(
+        derived_val().block(start_row, start_col, num_rows, num_cols));
     return vari_view<inner_type>(
         derived_val().block(start_row, start_col, num_rows, num_cols),
         derived_adj().block(start_row, start_col, num_rows, num_cols));
@@ -254,7 +256,8 @@ struct vari_view_crtp {
    */
   inline auto segment(Eigen::Index i, Eigen::Index n) {
     using inner_type = decltype(derived_val().segment(i, n));
-    return vari_view<inner_type>(derived_val().segment(i, n), derived_adj().segment(i, n));
+    return vari_view<inner_type>(derived_val().segment(i, n),
+                                 derived_adj().segment(i, n));
   }
 
   /**
@@ -281,7 +284,8 @@ struct vari_view_crtp {
    * @param j Column index
    */
   inline auto coeff(Eigen::Index i, Eigen::Index j) {
-    return vari_value<double>(derived_val().coeffRef(i, j), derived_adj().coeffRef(i, j));
+    return vari_value<double>(derived_val().coeffRef(i, j),
+                              derived_adj().coeffRef(i, j));
   }
 
   /**
@@ -289,7 +293,8 @@ struct vari_view_crtp {
    * @param i Column index to slice
    */
   inline auto coeff(Eigen::Index i) {
-    return vari_value<double>(derived_val().coeffRef(i), derived_adj().coeffRef(i));
+    return vari_value<double>(derived_val().coeffRef(i),
+                              derived_adj().coeffRef(i));
   }
 
   /**
@@ -312,7 +317,8 @@ struct vari_view_crtp {
    */
   inline auto rowwise() {
     using inner_type = decltype(derived_val().rowwise());
-    return vari_view<inner_type>(derived_val().rowwise(), derived_adj().rowwise());
+    return vari_view<inner_type>(derived_val().rowwise(),
+                                 derived_adj().rowwise());
   }
 
   /**
@@ -320,7 +326,8 @@ struct vari_view_crtp {
    */
   inline auto colwise() {
     using inner_type = decltype(derived_val().colwise());
-    return vari_view<inner_type>(derived_val().colwise(), derived_adj().colwise());
+    return vari_view<inner_type>(derived_val().colwise(),
+                                 derived_adj().colwise());
   }
 
   /**
@@ -329,7 +336,8 @@ struct vari_view_crtp {
    */
   inline auto reverse() {
     using inner_type = decltype(derived_val().reverse());
-    return vari_view<inner_type>(derived_val().reverse(), derived_adj().reverse());
+    return vari_view<inner_type>(derived_val().reverse(),
+                                 derived_adj().reverse());
   }
 
   /**
@@ -344,12 +352,12 @@ struct vari_view_crtp {
    * Return the size of this class's `val_` member
    */
   inline Eigen::Index size() const { return derived_val().size(); }
-
-
 };
 
 template <typename T>
-class vari_view<T, require_not_plain_type_t<T>> final : public vari_base, public vari_view_crtp<vari_view<T, require_not_plain_type_t<T>>> {
+class vari_view<T, require_not_plain_type_t<T>> final
+    : public vari_base,
+      public vari_view_crtp<vari_view<T, require_not_plain_type_t<T>>> {
  public:
   using PlainObject = plain_type_t<T>;
   using value_type = std::decay_t<T>;  // The underlying type for this class
@@ -371,7 +379,6 @@ class vari_view<T, require_not_plain_type_t<T>> final : public vari_base, public
 
   void set_zero_adjoint() {}
   void chain() {}
-
 };
 
 /**
@@ -387,7 +394,9 @@ class vari_view<T, require_not_plain_type_t<T>> final : public vari_base, public
  */
 template <typename T>
 class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
-    : public vari_base, public vari_view_crtp<vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>>  {
+    : public vari_base,
+      public vari_view_crtp<vari_value<
+          T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>> {
  public:
   /**
    * `PlainObject` represents a user constructible type such as Matrix or Array
@@ -512,7 +521,6 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @param num_rows Number of rows to return.
    * @param num_cols Number of columns to return.
    */
-
 
   /**
    * Insertion operator for vari. Prints the current value and
@@ -675,7 +683,6 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
   template <typename, typename>
   friend class var_value;
 };
-
 
 }  // namespace math
 }  // namespace stan
