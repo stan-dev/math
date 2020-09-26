@@ -44,84 +44,133 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x>& x,
   if (x.size() == 0) {
     return Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>();
   }
+  if (is_constant<T_x>::value && !is_constant<T_sigma>::value && !is_constant<T_l>::value) {
 
-  double l_d = value_of(length_scale);
-  double sigma_d = value_of(sigma);
-  double sigma_sq_d = sigma_d * sigma_d;
-
-  size_t N = x.size();
-  size_t P = (N * N - N) / 2 + N;
-  arena_matrix<Eigen::VectorXd> dist(P);
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> arena_res(P);
-
-  auto arena_x = to_arena_if<!is_constant<T_x>::value>(x);
-
-  double inv_half_sq_l_d = 0.5 / (l_d * l_d);
-
-  size_t pos = 0;
-  for (size_t j = 0; j < N; ++j) {
-    for (size_t i = 0; i <= j; ++i) {
-      if (i != j) {
-        double dist_sq = squared_distance(value_of(x[i]), value_of(x[j]));
-        dist.coeffRef(pos) = dist_sq;
-        arena_res.coeffRef(pos)
-            = sigma_sq_d * std::exp(-dist_sq * inv_half_sq_l_d);
-      } else {
-        dist.coeffRef(pos) = 0.0;
-        arena_res.coeffRef(pos) = sigma_sq_d;
-      }
-      pos++;
-    }
-  }
-
-  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> res(N, N);
-
-  pos = 0;
-  for (size_t j = 0; j < N; ++j)
-    for (size_t i = 0; i <= j; ++i) {
-      res.coeffRef(j, i) = res.coeffRef(i, j) = arena_res.coeff(pos);
-      pos++;
-    }
-
-  reverse_pass_callback([arena_res, arena_x, dist, sigma, length_scale, sigma_d,
-                         l_d, N]() mutable {
+    const size_t N = x.size();
+    const size_t P = (N * N - N) / 2 + N;
+    const double inv_half_sq_l_d = 0.5 / (value_of(length_scale) * value_of(length_scale));
+    const double sigma_sq_d = value_of(sigma) * value_of(sigma);
+    arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arena_res(N, N);
+    arena_matrix<Eigen::Matrix<double, Eigen::Dynamic, 1>> arena_dist(P);
     size_t pos = 0;
-
-    double sigma_adj = 0.0;
-    double l_adj = 0.0;
-    double inv_l_d_squared = 1.0 / (l_d * l_d);
-
-    pos = 0;
     for (size_t j = 0; j < N; ++j) {
       for (size_t i = 0; i <= j; ++i) {
-        double adj_times_val
-            = arena_res.coeff(pos).val() * arena_res.coeff(pos).adj();
-
-        if (!is_constant<T_sigma>::value)
-          sigma_adj += adj_times_val;
-
-        if (!is_constant<T_l>::value)
-          l_adj += dist.coeff(pos) * adj_times_val;
-
-        if (!is_constant<T_x>::value && i != j) {
-          auto adj = eval(-(value_of(arena_x[i]) - value_of(arena_x[j]))
-                          * adj_times_val * inv_l_d_squared);
-          using T_x_var = promote_scalar_t<var, T_x>;
-          forward_as<T_x_var>(arena_x[i]).adj() += adj;
-          forward_as<T_x_var>(arena_x[j]).adj() -= adj;
+        if (unlikely(i == j)) {
+          arena_dist.coeffRef(pos) = 0.0;
+          arena_res.coeffRef(i, j) = sigma_sq_d;
+        } else {
+          const double dist_sq = squared_distance(value_of(x[i]), value_of(x[j]));
+          arena_dist.coeffRef(pos) = dist_sq;
+          arena_res.coeffRef(i, j)
+              = sigma_sq_d * std::exp(-dist_sq * inv_half_sq_l_d);
         }
-        pos++;
+        ++pos;
+      }
+    }
+    // if someone does A[1, 2] * 2 wont that also change A[2, 1]?
+    for (size_t j = 0; j < N; ++j) {
+      for (size_t i = 0; i <= j; ++i) {
+        arena_res.coeffRef(j, i) = arena_res.coeff(i, j);
+      }
+    }
+    reverse_pass_callback([arena_res, arena_dist, sigma, length_scale, N]() mutable {
+
+      const double l_d = value_of(length_scale);
+      auto& sigma_adj = forward_as<var>(sigma).adj();
+      auto& l_adj = forward_as<var>(length_scale).adj();
+
+      size_t pos = 0;
+      for (size_t j = 0; j < N; ++j) {
+        for (size_t i = 0; i <= j; ++i) {
+          const double adj_times_val
+              = arena_res.coeff(i, j).val() * arena_res.coeff(i, j).adj();
+          sigma_adj += adj_times_val;
+          l_adj += arena_dist.coeff(pos) * adj_times_val;
+          ++pos;
+        }
+      }
+      sigma_adj *= 2.0;
+      sigma_adj /= value_of(sigma);
+      l_adj /= (l_d * l_d * l_d);
+    });
+    return arena_res;
+  } else {
+    double sigma_sq_d = value_of(sigma) * value_of(sigma);
+    double inv_half_sq_l_d = 0.5 / (value_of(length_scale) * value_of(length_scale));
+
+    size_t N = x.size();
+    size_t P = (N * N - N) / 2 + N;
+    arena_matrix<Eigen::VectorXd> dist(P);
+    arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arena_res(N, N);
+    auto arena_x = to_arena_if<!is_constant<T_x>::value>(x);
+
+    size_t pos = 0;
+    for (size_t j = 0; j < N; ++j) {
+      for (size_t i = 0; i <= j; ++i) {
+        if (i != j) {
+          const double dist_sq = squared_distance(value_of(x[i]), value_of(x[j]));
+          dist.coeffRef(pos) = dist_sq;
+          arena_res.coeffRef(i, j)
+              = sigma_sq_d * std::exp(-dist_sq * inv_half_sq_l_d);
+        } else {
+          dist.coeffRef(pos) = 0.0;
+          arena_res.coeffRef(i, j) = sigma_sq_d;
+        }
+        ++pos;
       }
     }
 
-    if (!is_constant<T_sigma>::value)
-      forward_as<var>(sigma).adj() += 2.0 * sigma_adj / sigma_d;
+    // if someone does A[1, 2] * 2 wont that also change A[2, 1]?
+    for (size_t j = 0; j < N; ++j) {
+      for (size_t i = 0; i <= j; ++i) {
+        arena_res.coeffRef(j, i) = arena_res.coeff(i, j);
+      }
+    }
 
-    if (!is_constant<T_l>::value)
-      forward_as<var>(length_scale).adj() += l_adj / (l_d * l_d * l_d);
-  });
+    reverse_pass_callback([arena_res, arena_x, dist, sigma, length_scale, N]() mutable {
 
-  return res;
+      const double& l_d = value_of(length_scale);
+      const double inv_l_d_squared = 1.0 / (l_d * l_d);
+
+      size_t pos = 0;
+      for (size_t j = 0; j < N; ++j) {
+        for (size_t i = 0; i <= j; ++i) {
+          const double adj_times_val
+              = arena_res.coeff(i, j).val() * arena_res.coeff(i, j).adj();
+
+          if (!is_constant<T_sigma>::value) {
+            forward_as<var>(sigma).adj() += adj_times_val;
+          }
+
+          if (!is_constant<T_l>::value) {
+            forward_as<var>(length_scale).adj() += dist.coeff(pos) * adj_times_val;
+          }
+
+          if (!is_constant<T_x>::value) {
+            if (i != j) {
+              auto adj = eval(-(value_of(arena_x[i]) - value_of(arena_x[j]))
+                              * adj_times_val * inv_l_d_squared);
+              using T_x_var = promote_scalar_t<var, T_x>;
+              forward_as<T_x_var>(arena_x[i]).adj() += adj;
+              forward_as<T_x_var>(arena_x[j]).adj() -= adj;
+            }
+          }
+          ++pos;
+        }
+      }
+
+      if (!is_constant<T_sigma>::value) {
+        forward_as<var>(sigma).adj() *= 2.0;
+        forward_as<var>(sigma).adj() /= value_of(sigma);
+      }
+
+      if (!is_constant<T_l>::value) {
+        forward_as<var>(length_scale).adj() /= (l_d * l_d * l_d);
+      }
+    });
+
+    return arena_res;
+  }
 }
 
 }  // namespace math

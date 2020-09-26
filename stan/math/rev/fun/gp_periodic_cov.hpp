@@ -1,16 +1,18 @@
 #ifndef STAN_MATH_REV_FUN_GP_PERIODIC_COV_HPP
 #define STAN_MATH_REV_FUN_GP_PERIODIC_COV_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/functor/reverse_pass_callback.hpp>
 #include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/squared_distance.hpp>
+#include <stan/math/prim/fun/sin.hpp>
+#include <stan/math/prim/fun/cos.hpp>
 #include <cmath>
 #include <type_traits>
 #include <vector>
@@ -56,7 +58,6 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
   if (x.size() == 0) {
     return Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>();
   }
-
   double l_d = value_of(l);
   double p_d = value_of(p);
   double sigma_d = value_of(sigma);
