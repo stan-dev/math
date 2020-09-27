@@ -10,8 +10,7 @@ TEST(MathFunctions, unitspaced_array) {
                              std::vector<int>({1, 2, 3, 4, 5}));
   EXPECT_STD_VECTOR_FLOAT_EQ(unitspaced_array(-2, 0),
                              std::vector<int>({-2, -1, 0}));
-  EXPECT_STD_VECTOR_FLOAT_EQ(unitspaced_array(-5, -5),
-                             std::vector<int>({-5}));
+  EXPECT_STD_VECTOR_FLOAT_EQ(unitspaced_array(-5, -5), std::vector<int>({-5}));
 }
 
 TEST(MathFunctions, unitspaced_array_throw) {

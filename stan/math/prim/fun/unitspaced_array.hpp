@@ -12,7 +12,7 @@ namespace math {
 /**
  * Return an array of integers in an ordered sequence.
  *
- * This produces an array from low to high (included). 
+ * This produces an array from low to high (included).
  *
  * @param low smallest integer
  * @param high largest integer
