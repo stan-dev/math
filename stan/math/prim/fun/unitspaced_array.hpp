@@ -26,10 +26,6 @@ inline std::vector<int> unitspaced_array(int low, int high) {
 
   int K = fabs(high - low + 1);
 
-  if (K == 0) {
-    return {};
-  }
-
   Eigen::VectorXi v = Eigen::VectorXi::LinSpaced(K, low, high);
   return {&v[0], &v[0] + K};
 }
