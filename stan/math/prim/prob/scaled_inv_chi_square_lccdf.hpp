@@ -27,25 +27,30 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lccdf(
   using std::exp;
   using std::log;
   using std::pow;
+  using T_y_ref = ref_type_t<T_y>;
+  using T_nu_ref = ref_type_t<T_dof>;
+  using T_s_ref = ref_type_t<T_scale>;
   static const char* function = "scaled_inv_chi_square_lccdf";
-  check_not_nan(function, "Random variable", y);
-  check_nonnegative(function, "Random variable", y);
-  check_positive_finite(function, "Degrees of freedom parameter", nu);
-  check_positive_finite(function, "Scale parameter", s);
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu, "Scale parameter",
                          s);
+  T_y_ref y_ref = y;
+  T_nu_ref nu_ref = nu;
+  T_s_ref s_ref = s;
+  check_nonnegative(function, "Random variable", y_ref);
+  check_positive_finite(function, "Degrees of freedom parameter", nu_ref);
+  check_positive_finite(function, "Scale parameter", s_ref);
 
   if (size_zero(y, nu, s)) {
     return 0;
   }
 
   T_partials_return P(0.0);
-  operands_and_partials<T_y, T_dof, T_scale> ops_partials(y, nu, s);
+  operands_and_partials<T_y_ref, T_nu_ref, T_s_ref> ops_partials(y_ref, nu_ref, s_ref);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_dof> nu_vec(nu);
-  scalar_seq_view<T_scale> s_vec(s);
+  scalar_seq_view<T_y_ref> y_vec(y_ref);
+  scalar_seq_view<T_nu_ref> nu_vec(nu_ref);
+  scalar_seq_view<T_s_ref> s_vec(s_ref);
   size_t N = max_size(y, nu, s);
 
   // Explicit return for extreme values
