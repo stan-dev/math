@@ -75,8 +75,8 @@ class arena_matrix : public Eigen::Map<MatrixType> {
    * @param other matrix to copy from
    */
   arena_matrix(const arena_matrix<MatrixType>& other)
-      : Eigen::Map<MatrixType>::Map(
-            const_cast<Scalar*>(other.data()), other.rows(), other.cols()) {}
+      : Eigen::Map<MatrixType>::Map(const_cast<Scalar*>(other.data()),
+                                    other.rows(), other.cols()) {}
 
   // without this using, compiler prefers combination of implicit construction
   // and copy assignment to the inherited operator when assigned an expression
@@ -89,8 +89,8 @@ class arena_matrix : public Eigen::Map<MatrixType> {
    */
   arena_matrix& operator=(const arena_matrix<MatrixType>& other) {
     // placement new changes what data map points to - there is no allocation
-    new (this) Eigen::Map<MatrixType>(
-        const_cast<Scalar*>(other.data()), other.rows(), other.cols());
+    new (this) Eigen::Map<MatrixType>(const_cast<Scalar*>(other.data()),
+                                      other.rows(), other.cols());
     return *this;
   }
 
