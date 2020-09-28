@@ -26,6 +26,5 @@ template <typename T>
 struct is_vari<T, require_t<internal::is_vari_impl<std::decay_t<T>>>>
     : std::true_type {};
 
-
 }  // namespace stan
 #endif

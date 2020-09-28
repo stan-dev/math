@@ -188,13 +188,13 @@ class vari_view;
  */
 template <typename Derived>
 class vari_view_crtp {
-private:
+ private:
   /**
    * Making the base constructor private while making the derived class a friend
    * help's catch if derived types inherit from another derived types
    * base class. See the fluentcpp article on CRTP for more information.
    */
-  vari_view_crtp() {};
+  vari_view_crtp(){};
   friend Derived;
 
   /**
@@ -204,10 +204,11 @@ private:
   /**
    * Helper function to return a constant reference to the derived type
    */
-  inline const Derived& derived() const { return static_cast<const Derived&>(*this); }
+  inline const Derived& derived() const {
+    return static_cast<const Derived&>(*this);
+  }
 
-public:
-
+ public:
   /**
    * A block view of the underlying Eigen matrices.
    * @param start_row Starting row of block.
@@ -215,14 +216,14 @@ public:
    * @param num_rows Number of rows to return.
    * @param num_cols Number of columns to return.
    */
-   inline auto block(Eigen::Index start_row, Eigen::Index start_col,
-                     Eigen::Index num_rows, Eigen::Index num_cols) const {
-     using inner_type = decltype(
-         derived().val_.block(start_row, start_col, num_rows, num_cols));
-     return vari_view<inner_type>(
-         derived().val_.block(start_row, start_col, num_rows, num_cols),
-         derived().adj_.block(start_row, start_col, num_rows, num_cols));
-   }
+  inline auto block(Eigen::Index start_row, Eigen::Index start_col,
+                    Eigen::Index num_rows, Eigen::Index num_cols) const {
+    using inner_type = decltype(
+        derived().val_.block(start_row, start_col, num_rows, num_cols));
+    return vari_view<inner_type>(
+        derived().val_.block(start_row, start_col, num_rows, num_cols),
+        derived().adj_.block(start_row, start_col, num_rows, num_cols));
+  }
   inline auto block(Eigen::Index start_row, Eigen::Index start_col,
                     Eigen::Index num_rows, Eigen::Index num_cols) {
     using inner_type = decltype(
@@ -236,13 +237,15 @@ public:
    * View of the head of Eigen vector types.
    * @param n Number of elements to return from top of vector.
    */
-   inline auto head(Eigen::Index n) const {
-     using inner_type = decltype(derived().val_.head(n));
-     return vari_view<inner_type>(derived().val_.head(n), derived().adj_.head(n));
-   }
+  inline auto head(Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.head(n));
+    return vari_view<inner_type>(derived().val_.head(n),
+                                 derived().adj_.head(n));
+  }
   inline auto head(Eigen::Index n) {
     using inner_type = decltype(derived().val_.head(n));
-    return vari_view<inner_type>(derived().val_.head(n), derived().adj_.head(n));
+    return vari_view<inner_type>(derived().val_.head(n),
+                                 derived().adj_.head(n));
   }
 
   /**
@@ -251,11 +254,13 @@ public:
    */
   inline auto tail(Eigen::Index n) const {
     using inner_type = decltype(derived().val_.tail(n));
-    return vari_view<inner_type>(derived().val_.tail(n), derived().adj_.tail(n));
+    return vari_view<inner_type>(derived().val_.tail(n),
+                                 derived().adj_.tail(n));
   }
   inline auto tail(Eigen::Index n) {
     using inner_type = decltype(derived().val_.tail(n));
-    return vari_view<inner_type>(derived().val_.tail(n), derived().adj_.tail(n));
+    return vari_view<inner_type>(derived().val_.tail(n),
+                                 derived().adj_.tail(n));
   }
 
   /**
