@@ -162,6 +162,15 @@ adj() const { return CwiseUnaryOp<adj_Op, const Derived>(derived());
 /**
  * Coefficient-wise function applying adj_Op struct to a matrix of var
  * and returning a view to a matrix of doubles of the adjoints that can
+ * be modified. This is meant to be used on the rhs of expressions.
+ */
+inline CwiseUnaryOp<adj_Op, Derived> adj_op() {
+  return CwiseUnaryOp<adj_Op, Derived>(derived());
+}
+
+/**
+ * Coefficient-wise function applying adj_Op struct to a matrix of var
+ * and returning a view to a matrix of doubles of the adjoints that can
  * be modified
  */
 inline CwiseUnaryView<adj_Op, Derived>

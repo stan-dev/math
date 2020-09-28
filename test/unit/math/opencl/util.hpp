@@ -128,10 +128,10 @@ void prim_rev_argument_combinations(const Functor& f, const Arg0 arg0,
       args...);
   prim_rev_argument_combinations(
       [&f, &arg0](auto args_for_cpu, auto args_for_opencl) {
-        return f(std::tuple_cat(std::make_tuple(var_argument(arg0)),
-                                args_for_cpu),
-                 std::tuple_cat(std::make_tuple(var_argument(arg0)),
-                                args_for_opencl));
+        return f(
+            std::tuple_cat(std::make_tuple(var_argument(arg0)), args_for_cpu),
+            std::tuple_cat(std::make_tuple(var_argument(arg0)),
+                           args_for_opencl));
       },
       args...);
 }
@@ -145,20 +145,19 @@ void compare_cpu_opencl_prim_rev_impl(const Functor& functor,
         auto res_cpu = functor(std::get<Is>(args_for_cpu)...);
         auto res_opencl
             = functor(opencl_argument(std::get<Is>(args_for_opencl))...);
-        std::string signature
-            = type_name<decltype(args_for_cpu)>().data();
+        std::string signature = type_name<decltype(args_for_cpu)>().data();
         expect_eq(res_opencl, res_cpu,
-                  ("CPU and OpenCL return values do not match for signature " + signature
-                      + "!").c_str());
+                  ("CPU and OpenCL return values do not match for signature "
+                   + signature + "!")
+                      .c_str());
         var(recursive_sum(res_cpu) + recursive_sum(res_opencl)).grad();
 
         static_cast<void>(std::initializer_list<int>{
             (expect_adj_near(
-                 std::get<Is>(args_for_opencl),
-                 std::get<Is>(args_for_cpu),
-                 ("CPU and OpenCL adjoints do not match for argument " + std::to_string(
-                     Is) + " for signature "
-                     + signature + "!").c_str()),
+                 std::get<Is>(args_for_opencl), std::get<Is>(args_for_cpu),
+                 ("CPU and OpenCL adjoints do not match for argument "
+                  + std::to_string(Is) + " for signature " + signature + "!")
+                     .c_str()),
              0)...});
 
         set_zero_all_adjoints();
