@@ -16,7 +16,8 @@ namespace math {
  * @param m expression to sum
  * @return sum of given expression
  */
-template <typename T, require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
+template <typename T,
+          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 value_type_t<T> sum(const T& m) {
   matrix_cl<value_type_t<T>> res;
   if (m.rows() == 1) {
