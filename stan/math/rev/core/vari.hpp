@@ -224,14 +224,14 @@ struct vari_view_crtp {
    * @param num_rows Number of rows to return.
    * @param num_cols Number of columns to return.
    */
-   inline auto block(Eigen::Index start_row, Eigen::Index start_col,
-                     Eigen::Index num_rows, Eigen::Index num_cols) const {
-     using inner_type = decltype(
-         derived_val().block(start_row, start_col, num_rows, num_cols));
-     return vari_view<inner_type>(
-         derived_val().block(start_row, start_col, num_rows, num_cols),
-         derived_adj().block(start_row, start_col, num_rows, num_cols));
-   }
+  inline auto block(Eigen::Index start_row, Eigen::Index start_col,
+                    Eigen::Index num_rows, Eigen::Index num_cols) const {
+    using inner_type = decltype(
+        derived_val().block(start_row, start_col, num_rows, num_cols));
+    return vari_view<inner_type>(
+        derived_val().block(start_row, start_col, num_rows, num_cols),
+        derived_adj().block(start_row, start_col, num_rows, num_cols));
+  }
   inline auto block(Eigen::Index start_row, Eigen::Index start_col,
                     Eigen::Index num_rows, Eigen::Index num_cols) {
     using inner_type = decltype(
@@ -245,10 +245,10 @@ struct vari_view_crtp {
    * View of the head of Eigen vector types.
    * @param n Number of elements to return from top of vector.
    */
-   inline auto head(Eigen::Index n) const {
-     using inner_type = decltype(derived_val().head(n));
-     return vari_view<inner_type>(derived_val().head(n), derived_adj().head(n));
-   }
+  inline auto head(Eigen::Index n) const {
+    using inner_type = decltype(derived_val().head(n));
+    return vari_view<inner_type>(derived_val().head(n), derived_adj().head(n));
+  }
   inline auto head(Eigen::Index n) {
     using inner_type = decltype(derived_val().head(n));
     return vari_view<inner_type>(derived_val().head(n), derived_adj().head(n));
