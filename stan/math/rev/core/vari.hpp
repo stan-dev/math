@@ -194,7 +194,7 @@ class vari_view_crtp {
    * help's catch if derived types inherit from another derived types
    * base class. See the fluentcpp article on CRTP for more information.
    */
-  vari_view_crtp(){};
+  vari_view_crtp() = default;
   friend Derived;
 
   /**
