@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
