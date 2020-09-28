@@ -309,8 +309,7 @@ class var_value<T, require_floating_point_t<T>> {
  */
 template <typename T>
 class var_value<
-    T, require_t<bool_constant<is_eigen<T>::value || !is_plain_type<T>::value
-                               || is_matrix_cl<T>::value>>> {
+    T, require_t<bool_constant<is_eigen<T>::value || is_matrix_cl<T>::value>>> {
   static_assert(
       std::is_floating_point<value_type_t<T>>::value,
       "The template for must be a floating point or a container holding"
@@ -559,6 +558,14 @@ class var_value<
    * @param num_cols Number of columns to return.
    */
   inline auto block(Eigen::Index start_row, Eigen::Index start_col,
+                    Eigen::Index num_rows, Eigen::Index num_cols) const {
+    using vari_sub
+        = decltype(vi_->block(start_row, start_col, num_rows, num_cols));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(
+        new vari_sub(vi_->block(start_row, start_col, num_rows, num_cols)));
+  }
+  inline auto block(Eigen::Index start_row, Eigen::Index start_col,
                     Eigen::Index num_rows, Eigen::Index num_cols) {
     using vari_sub
         = decltype(vi_->block(start_row, start_col, num_rows, num_cols));
@@ -571,6 +578,11 @@ class var_value<
    * View of the head of Eigen vector types.
    * @param n Number of elements to return from top of vector.
    */
+  inline auto head(Eigen::Index n) const {
+    using vari_sub = decltype(vi_->head(n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->head(n)));
+  }
   inline auto head(Eigen::Index n) {
     using vari_sub = decltype(vi_->head(n));
     using var_sub = var_value<value_type_t<vari_sub>>;
@@ -581,6 +593,11 @@ class var_value<
    * View of the tail of the Eigen vector types.
    * @param n Number of elements to return from bottom of vector.
    */
+  inline auto tail(Eigen::Index n) const {
+    using vari_sub = decltype(vi_->tail(n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->tail(n)));
+  }
   inline auto tail(Eigen::Index n) {
     using vari_sub = decltype(vi_->tail(n));
     using var_sub = var_value<value_type_t<vari_sub>>;
@@ -592,6 +609,11 @@ class var_value<
    * @param i Starting position of block.
    * @param n Number of elements in block
    */
+  inline auto segment(Eigen::Index i, Eigen::Index n) const {
+    using vari_sub = decltype(vi_->segment(i, n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->segment(i, n)));
+  }
   inline auto segment(Eigen::Index i, Eigen::Index n) {
     using vari_sub = decltype(vi_->segment(i, n));
     using var_sub = var_value<value_type_t<vari_sub>>;
@@ -602,6 +624,11 @@ class var_value<
    * View row of eigen matrices.
    * @param i Row index to slice.
    */
+  inline auto row(Eigen::Index i) const {
+    using vari_sub = decltype(vi_->row(i));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->row(i)));
+  }
   inline auto row(Eigen::Index i) {
     using vari_sub = decltype(vi_->row(i));
     using var_sub = var_value<value_type_t<vari_sub>>;
@@ -612,6 +639,11 @@ class var_value<
    * View column of eigen matrices
    * @param i Column index to slice
    */
+  inline auto col(Eigen::Index i) const {
+    using vari_sub = decltype(vi_->col(i));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->col(i)));
+  }
   inline auto col(Eigen::Index i) {
     using vari_sub = decltype(vi_->col(i));
     using var_sub = var_value<value_type_t<vari_sub>>;
@@ -625,6 +657,14 @@ class var_value<
    * back.
    * @param i Element to access
    */
+  inline auto coeff(Eigen::Index i) const {
+    using vari_sub = decltype(vi_->coeff(i));
+    vari_sub* vari_coeff = new vari_sub(vi_->coeff(i));
+    reverse_pass_callback([this_vi = this->vi_, vari_coeff, i]() {
+      this_vi->adj_.coeffRef(i) += vari_coeff->adj_;
+    });
+    return var_value<value_type_t<vari_sub>>(vari_coeff);
+  }
   inline auto coeff(Eigen::Index i) {
     using vari_sub = decltype(vi_->coeff(i));
     vari_sub* vari_coeff = new vari_sub(vi_->coeff(i));
@@ -642,6 +682,14 @@ class var_value<
    * @param i Row to access
    * @param j Column to access
    */
+  inline auto coeff(Eigen::Index i, Eigen::Index j) const {
+    using vari_sub = decltype(vi_->coeff(i, j));
+    vari_sub* vari_coeff = new vari_sub(vi_->coeff(i, j));
+    reverse_pass_callback([this_vi = this->vi_, vari_coeff, i, j]() {
+      this_vi->adj_.coeffRef(i, j) += vari_coeff->adj_;
+    });
+    return var_value<value_type_t<vari_sub>>(vari_coeff);
+  }
   inline auto coeff(Eigen::Index i, Eigen::Index j) {
     using vari_sub = decltype(vi_->coeff(i, j));
     vari_sub* vari_coeff = new vari_sub(vi_->coeff(i, j));
@@ -658,6 +706,7 @@ class var_value<
    * back.
    * @param i Element to access
    */
+  inline auto operator()(Eigen::Index i) const { return this->coeff(i); }
   inline auto operator()(Eigen::Index i) { return this->coeff(i); }
 
   /**
@@ -668,6 +717,9 @@ class var_value<
    * @param i Row to access
    * @param j Column to access
    */
+  inline auto operator()(Eigen::Index i, Eigen::Index j) const {
+    return this->coeff(i, j);
+  }
   inline auto operator()(Eigen::Index i, Eigen::Index j) {
     return this->coeff(i, j);
   }
@@ -679,6 +731,7 @@ class var_value<
    * back.
    * @param i Element to access
    */
+  inline auto coeffRef(Eigen::Index i) const { return this->coeff(i); }
   inline auto coeffRef(Eigen::Index i) { return this->coeff(i); }
 
   /**
@@ -689,6 +742,9 @@ class var_value<
    * @param i Row to access
    * @param j Column to access
    */
+  inline auto coeffRef(Eigen::Index i, Eigen::Index j) const {
+    return this->coeff(i, j);
+  }
   inline auto coeffRef(Eigen::Index i, Eigen::Index j) {
     return this->coeff(i, j);
   }
@@ -696,25 +752,40 @@ class var_value<
   /**
    * Return an expression that operates on the rows of the matrix `vari`
    */
-  inline auto rowwise() {
-    using vari_sub = decltype(vi_->rowwise());
+  inline auto rowwise_reverse() const {
+    using vari_sub = decltype(vi_->rowwise_reverse());
     using var_sub = var_value<value_type_t<vari_sub>>;
-    return var_sub(new vari_sub(vi_->rowwise()));
+    return var_sub(new vari_sub(vi_->rowwise_reverse()));
+  }
+  inline auto rowwise_reverse() {
+    using vari_sub = decltype(vi_->rowwise_reverse());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->rowwise_reverse()));
   }
 
   /**
    * Return an expression that operates on the columns of the matrix `vari`
    */
-  inline auto colwise() {
-    using vari_sub = decltype(vi_->colwise());
+  inline auto colwise_reverse() const {
+    using vari_sub = decltype(vi_->colwise_reverse());
     using var_sub = var_value<value_type_t<vari_sub>>;
-    return var_sub(new vari_sub(vi_->colwise()));
+    return var_sub(new vari_sub(vi_->colwise_reverse()));
+  }
+  inline auto colwise_reverse() {
+    using vari_sub = decltype(vi_->colwise_reverse());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->colwise_reverse()));
   }
 
   /**
    * Return an expression an expression to reverse the order of the coefficients
    * inside of a `vari` matrix
    */
+  inline auto reverse() const {
+    using vari_sub = decltype(vi_->reverse());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->reverse()));
+  }
   inline auto reverse() {
     using vari_sub = decltype(vi_->reverse());
     using var_sub = var_value<value_type_t<vari_sub>>;
@@ -807,12 +878,20 @@ class var_value<
   inline auto& eval() noexcept {
     return *this;
   }
+  template <typename T_ = T, require_plain_type_t<T_>* = nullptr>
+  inline const auto& eval() const {
+    return *this;
+  }
 
   /**
    * For non-plain types evaluate to the plain type
    */
   template <typename T_ = T, require_not_plain_type_t<T_>* = nullptr>
   inline auto eval() noexcept {
+    return var_value<plain_type_t<T>>(*this);
+  }
+  template <typename T_ = T, require_not_plain_type_t<T_>* = nullptr>
+  inline auto eval() const {
     return var_value<plain_type_t<T>>(*this);
   }
 

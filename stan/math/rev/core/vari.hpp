@@ -193,7 +193,7 @@ struct vari_view_crtp {
   /**
    * Helper function to return a constant reference to the derived type
    */
-  inline T const& derived() const { return static_cast<T const&>(*this); }
+  inline const T& derived() const { return static_cast<const T&>(*this); }
 
   /**
    * Helper function to return a reference to the derived type's value.
@@ -202,8 +202,8 @@ struct vari_view_crtp {
   /**
    * Helper function to return a constant reference to the derived type's value.
    */
-  inline auto const& derived_val() const {
-    return static_cast<T const&>(*this).val_;
+  inline const auto& derived_val() const {
+    return static_cast<const T&>(*this).val_;
   }
 
   /**
@@ -211,9 +211,11 @@ struct vari_view_crtp {
    */
   inline auto& derived_adj() { return static_cast<T&>(*this).adj_; }
   /**
-   * Helper function to return a reference to the derived type's adjoint.
+   * Helper function to return a const reference to the derived type's adjoint.
    */
-  inline auto& derived_adj() const { return static_cast<T&>(*this).adj_; }
+  inline const auto& derived_adj() const {
+    return static_cast<const T&>(*this).adj_;
+  }
 
   /**
    * A block view of the underlying Eigen matrices.
@@ -222,6 +224,14 @@ struct vari_view_crtp {
    * @param num_rows Number of rows to return.
    * @param num_cols Number of columns to return.
    */
+   inline auto block(Eigen::Index start_row, Eigen::Index start_col,
+                     Eigen::Index num_rows, Eigen::Index num_cols) const {
+     using inner_type = decltype(
+         derived_val().block(start_row, start_col, num_rows, num_cols));
+     return vari_view<inner_type>(
+         derived_val().block(start_row, start_col, num_rows, num_cols),
+         derived_adj().block(start_row, start_col, num_rows, num_cols));
+   }
   inline auto block(Eigen::Index start_row, Eigen::Index start_col,
                     Eigen::Index num_rows, Eigen::Index num_cols) {
     using inner_type = decltype(
@@ -235,6 +245,10 @@ struct vari_view_crtp {
    * View of the head of Eigen vector types.
    * @param n Number of elements to return from top of vector.
    */
+   inline auto head(Eigen::Index n) const {
+     using inner_type = decltype(derived_val().head(n));
+     return vari_view<inner_type>(derived_val().head(n), derived_adj().head(n));
+   }
   inline auto head(Eigen::Index n) {
     using inner_type = decltype(derived_val().head(n));
     return vari_view<inner_type>(derived_val().head(n), derived_adj().head(n));
@@ -244,6 +258,10 @@ struct vari_view_crtp {
    * View of the tail of the Eigen vector types.
    * @param n Number of elements to return from bottom of vector.
    */
+  inline auto tail(Eigen::Index n) const {
+    using inner_type = decltype(derived_val().tail(n));
+    return vari_view<inner_type>(derived_val().tail(n), derived_adj().tail(n));
+  }
   inline auto tail(Eigen::Index n) {
     using inner_type = decltype(derived_val().tail(n));
     return vari_view<inner_type>(derived_val().tail(n), derived_adj().tail(n));
@@ -254,6 +272,11 @@ struct vari_view_crtp {
    * @param i Starting position of block.
    * @param n Number of elements in block
    */
+  inline auto segment(Eigen::Index i, Eigen::Index n) const {
+    using inner_type = decltype(derived_val().segment(i, n));
+    return vari_view<inner_type>(derived_val().segment(i, n),
+                                 derived_adj().segment(i, n));
+  }
   inline auto segment(Eigen::Index i, Eigen::Index n) {
     using inner_type = decltype(derived_val().segment(i, n));
     return vari_view<inner_type>(derived_val().segment(i, n),
@@ -264,6 +287,10 @@ struct vari_view_crtp {
    * View row of eigen matrices.
    * @param i Row index to slice.
    */
+  inline auto row(Eigen::Index i) const {
+    using inner_type = decltype(derived_val().row(i));
+    return vari_view<inner_type>(derived_val().row(i), derived_adj().row(i));
+  }
   inline auto row(Eigen::Index i) {
     using inner_type = decltype(derived_val().row(i));
     return vari_view<inner_type>(derived_val().row(i), derived_adj().row(i));
@@ -273,6 +300,10 @@ struct vari_view_crtp {
    * View column of eigen matrices
    * @param i Column index to slice
    */
+  inline auto col(Eigen::Index i) const {
+    using inner_type = decltype(derived_val().col(i));
+    return vari_view<inner_type>(derived_val().col(i), derived_adj().col(i));
+  }
   inline auto col(Eigen::Index i) {
     using inner_type = decltype(derived_val().col(i));
     return vari_view<inner_type>(derived_val().col(i), derived_adj().col(i));
@@ -283,6 +314,10 @@ struct vari_view_crtp {
    * @param i Row index
    * @param j Column index
    */
+  inline auto coeff(Eigen::Index i, Eigen::Index j) const {
+    return vari_value<double>(derived_val().coeffRef(i, j),
+                              derived_adj().coeffRef(i, j));
+  }
   inline auto coeff(Eigen::Index i, Eigen::Index j) {
     return vari_value<double>(derived_val().coeffRef(i, j),
                               derived_adj().coeffRef(i, j));
@@ -292,6 +327,10 @@ struct vari_view_crtp {
    * Get coefficient of eigen matrices
    * @param i Column index to slice
    */
+  inline auto coeff(Eigen::Index i) const {
+    return vari_value<double>(derived_val().coeffRef(i),
+                              derived_adj().coeffRef(i));
+  }
   inline auto coeff(Eigen::Index i) {
     return vari_value<double>(derived_val().coeffRef(i),
                               derived_adj().coeffRef(i));
@@ -301,6 +340,7 @@ struct vari_view_crtp {
    * Get coefficient of eigen matrices
    * @param i Column index to slice
    */
+  inline auto operator()(Eigen::Index i) const { return this->coeff(i); }
   inline auto operator()(Eigen::Index i) { return this->coeff(i); }
 
   /**
@@ -308,6 +348,9 @@ struct vari_view_crtp {
    * @param i Row index
    * @param j Column index
    */
+  inline auto operator()(Eigen::Index i, Eigen::Index j) const {
+    return this->coeff(i, j);
+  }
   inline auto operator()(Eigen::Index i, Eigen::Index j) {
     return this->coeff(i, j);
   }
@@ -315,25 +358,40 @@ struct vari_view_crtp {
   /**
    * Return an expression that operates on the rows of the matrix `vari`
    */
-  inline auto rowwise() {
-    using inner_type = decltype(derived_val().rowwise());
-    return vari_view<inner_type>(derived_val().rowwise(),
-                                 derived_adj().rowwise());
+  inline auto rowwise_reverse() const {
+    using inner_type = decltype(derived_val().rowwise().reverse());
+    return vari_view<inner_type>(derived_val().rowwise().reverse(),
+                                 derived_adj().rowwise().reverse());
+  }
+  inline auto rowwise_reverse() {
+    using inner_type = decltype(derived_val().rowwise().reverse());
+    return vari_view<inner_type>(derived_val().rowwise().reverse(),
+                                 derived_adj().rowwise().reverse());
   }
 
   /**
    * Return an expression that operates on the columns of the matrix `vari`
    */
-  inline auto colwise() {
-    using inner_type = decltype(derived_val().colwise());
-    return vari_view<inner_type>(derived_val().colwise(),
-                                 derived_adj().colwise());
+  inline auto colwise_reverse() const {
+    using inner_type = decltype(derived_val().colwise().reverse());
+    return vari_view<inner_type>(derived_val().colwise().reverse(),
+                                 derived_adj().colwise().reverse());
+  }
+  inline auto colwise_reverse() {
+    using inner_type = decltype(derived_val().colwise().reverse());
+    return vari_view<inner_type>(derived_val().colwise().reverse(),
+                                 derived_adj().colwise().reverse());
   }
 
   /**
    * Return an expression an expression to reverse the order of the coefficients
    * inside of a `vari` matrix
    */
+  inline auto reverse() const {
+    using inner_type = decltype(derived_val().reverse());
+    return vari_view<inner_type>(derived_val().reverse(),
+                                 derived_adj().reverse());
+  }
   inline auto reverse() {
     using inner_type = decltype(derived_val().reverse());
     return vari_view<inner_type>(derived_val().reverse(),

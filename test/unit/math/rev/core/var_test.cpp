@@ -175,11 +175,11 @@ TEST_F(AgradRev, var_matrix_views) {
   EXPECT_MATRIX_FLOAT_EQ(A_col.val(), A.col(3));
   auto A_block_row = A_v.block(1, 1, 3, 3).row(1);
   EXPECT_MATRIX_FLOAT_EQ(A_block_row.val(), A.block(1, 1, 3, 3).row(1));
-  auto A_rowwise_reverse = A_v.rowwise().reverse();
+  auto A_rowwise_reverse = A_v.rowwise_reverse();
   EXPECT_MATRIX_FLOAT_EQ(A_rowwise_reverse.val(), A.rowwise().reverse());
-  auto A_colwise_reverse = A_v.colwise().reverse();
+  auto A_colwise_reverse = A_v.colwise_reverse();
   EXPECT_MATRIX_FLOAT_EQ(A_colwise_reverse.val(), A.colwise().reverse());
-  auto A_rowwise_colwise_reverse = A_v.rowwise().reverse().colwise().reverse();
+  auto A_rowwise_colwise_reverse = A_v.rowwise_reverse().colwise_reverse();
   EXPECT_MATRIX_FLOAT_EQ(A_rowwise_colwise_reverse.val(),
                          A.rowwise().reverse().colwise().reverse());
   auto A_coeff1 = A_v(3);
@@ -254,10 +254,10 @@ TEST_F(AgradRev, var_matrix_view) {
   auto A_v_row = A_v.row(3);
   auto A_v_col = A_v.col(3);
   auto A_v_block_row = A_v.block(1, 1, 3, 3).row(1);
-  auto A_v_rowwise_reverse = A_v.rowwise().reverse();
-  auto A_v_colwise_reverse = A_v.colwise().reverse();
+  auto A_v_rowwise_reverse = A_v.rowwise_reverse();
+  auto A_v_colwise_reverse = A_v.colwise_reverse();
   auto A_v_rowwise_colwise_reverse
-      = A_v.rowwise().reverse().colwise().reverse();
+      = A_v.rowwise_reverse().colwise_reverse();
   // NOTE: Coefficient references make a new var.
   auto A_v_coeff1 = A_v.coeff(5);
   auto A_v_coeff2 = A_v.coeff(1, 2);
@@ -314,10 +314,10 @@ TEST_F(AgradRev, var_matrix_view_assignment) {
   var_value<Eigen::RowVectorXd> A_v_row = A_v.row(3);
   var_value<Eigen::VectorXd> A_v_col = A_v.col(3);
   var_value<Eigen::RowVectorXd> A_v_block_row = A_v.block(1, 1, 3, 3).row(1);
-  var_value<Eigen::MatrixXd> A_v_rowwise_reverse = A_v.rowwise().reverse();
-  var_value<Eigen::MatrixXd> A_v_colwise_reverse = A_v.colwise().reverse();
+  var_value<Eigen::MatrixXd> A_v_rowwise_reverse = A_v.rowwise_reverse();
+  var_value<Eigen::MatrixXd> A_v_colwise_reverse = A_v.colwise_reverse();
   var_value<Eigen::MatrixXd> A_v_rowwise_colwise_reverse
-      = A_v.rowwise().reverse().colwise().reverse();
+      = A_v.rowwise_reverse().colwise_reverse();
   var A_v_coeff1 = A_v.coeff(5);
   var A_v_coeff2 = A_v.coeff(1, 2);
   A_v.block(0, 0, 3, 3) = A_v.block(1, 1, 3, 3);
@@ -344,10 +344,10 @@ TEST_F(AgradRev, var_matrix_view_eval) {
   auto A_v_row = A_v.row(3).eval();
   auto A_v_col = A_v.col(3).eval();
   auto A_v_block_row = A_v.block(1, 1, 3, 3).row(1).eval();
-  auto A_v_rowwise_reverse = A_v.rowwise().reverse().eval();
-  auto A_v_colwise_reverse = A_v.colwise().reverse().eval();
+  auto A_v_rowwise_reverse = A_v.rowwise_reverse().eval();
+  auto A_v_colwise_reverse = A_v.colwise_reverse().eval();
   auto A_v_rowwise_colwise_reverse
-      = A_v.rowwise().reverse().colwise().reverse().eval();
+      = A_v.rowwise_reverse().colwise_reverse().eval();
   // NOTE: Coefficient references make a new var.
   auto A_v_coeff1 = A_v.coeff(5);
   auto A_v_coeff2 = A_v.coeff(1, 2);
