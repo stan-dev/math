@@ -256,8 +256,7 @@ TEST_F(AgradRev, var_matrix_view) {
   auto A_v_block_row = A_v.block(1, 1, 3, 3).row(1);
   auto A_v_rowwise_reverse = A_v.rowwise_reverse();
   auto A_v_colwise_reverse = A_v.colwise_reverse();
-  auto A_v_rowwise_colwise_reverse
-      = A_v.rowwise_reverse().colwise_reverse();
+  auto A_v_rowwise_colwise_reverse = A_v.rowwise_reverse().colwise_reverse();
   // NOTE: Coefficient references make a new var.
   auto A_v_coeff1 = A_v.coeff(5);
   auto A_v_coeff2 = A_v.coeff(1, 2);
