@@ -143,6 +143,7 @@ special_arg_values = {
     "multinomial_log" : [None, 1],
     "multinomial_lpmf" : [None, 1],
     "multinomial_rng" : [1, None, None],
+    "pareto_type_2_cdf": [1.5, 0.7, None, 2.2],
     "pareto_type_2_cdf_log": [1.5, 0.7, None, 2.2],
     "pareto_type_2_lcdf": [1.5, 0.7, None, 2.2],
 }
