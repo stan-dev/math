@@ -160,6 +160,17 @@ TEST_F(AgradRev, ctormatrixOverloads) {
   stan::test::ctor_overloads_sparse_matrix(sparse_x);
 }
 
+TEST_F(AgradRev, ctorMatrixArenaOverload) {
+  using stan::math::arena_matrix;
+  using stan::math::var_value;
+  arena_matrix<Eigen::MatrixXd> x(Eigen::MatrixXd::Random(5, 5));
+  var_value<Eigen::MatrixXd> A(x);
+  EXPECT_MATRIX_FLOAT_EQ(A.val(), x);
+  const auto& x_ref = x;
+  var_value<Eigen::MatrixXd> B(x_ref);
+  EXPECT_MATRIX_FLOAT_EQ(B.val(), x);
+}
+
 TEST_F(AgradRev, var_matrix_views) {
   using dense_mat = Eigen::Matrix<double, -1, -1>;
   dense_mat A(10, 10);

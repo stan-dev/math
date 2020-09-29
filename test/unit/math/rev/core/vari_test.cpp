@@ -58,6 +58,23 @@ TEST(AgradRev, sparse_matrix_vari) {
   }
 }
 
+TEST(AgradRev, arena_matrix_matrix_vari) {
+  using stan::math::arena_matrix;
+  using stan::math::vari_value;
+  arena_matrix<Eigen::MatrixXd> x(Eigen::MatrixXd::Random(5, 5));
+  const auto& x_ref = x;
+  auto* A = new vari_value<Eigen::MatrixXd>(x);
+  EXPECT_MATRIX_FLOAT_EQ((*A).val_, x);
+  auto* B = new vari_value<Eigen::MatrixXd>(x_ref);
+  EXPECT_MATRIX_FLOAT_EQ((*B).val_, x);
+  auto* C = new vari_value<Eigen::MatrixXd>(x, true);
+  EXPECT_MATRIX_FLOAT_EQ((*C).val_, x);
+  auto* D = new vari_value<Eigen::MatrixXd>(x_ref, true);
+  EXPECT_MATRIX_FLOAT_EQ((*D).val_, x);
+
+}
+
+
 TEST(AgradRev, dense_vari_matrix_views) {
   using stan::math::vari_value;
   using eig_mat = Eigen::MatrixXd;
