@@ -23,6 +23,7 @@ namespace stan {
 namespace math {
 
 #ifdef STAN_OPENCL
+
 class cholesky_opencl : public vari {
  public:
   int M_;
@@ -249,11 +250,11 @@ cholesky_decompose(const T& A) {
     if (L_A.rows()
         > opencl_context.tuning_opts().cholesky_size_worth_transfer) {
       auto* baseVari = new cholesky_opencl(A_ref, L_A);
-      internal::set_lower_tri_coeff_ref(L, baseVari->vari_ref_L_);
       size_t pos = 0;
+      // since the dummies have been filled already only go over on side.
       for (size_type j = 0; j < L.cols(); ++j) {
         for (size_type i = j; i < L.cols(); ++i) {
-          L.coeffRef(i, j).vi_ = baseVari->vari_ref_L_[pos++];
+          L.coeffRef(i, j).vi_ = vari_ref[pos++];
         }
       }
     } else {
