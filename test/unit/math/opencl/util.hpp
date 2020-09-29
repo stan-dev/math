@@ -121,13 +121,13 @@ template <typename Functor, typename Arg0, typename... Args>
 void prim_rev_argument_combinations(const Functor& f, const Arg0 arg0,
                                     const Args&... args) {
   prim_rev_argument_combinations(
-      [&f, &arg0](auto args_for_cpu, auto args_for_opencl) {
+      [&f, &arg0](const auto& args_for_cpu, const auto& args_for_opencl) {
         return f(std::tuple_cat(std::forward_as_tuple(arg0), args_for_cpu),
                  std::tuple_cat(std::forward_as_tuple(arg0), args_for_opencl));
       },
       args...);
   prim_rev_argument_combinations(
-      [&f, &arg0](auto args_for_cpu, auto args_for_opencl) {
+      [&f, &arg0](const auto& args_for_cpu, const auto& args_for_opencl) {
         return f(
             std::tuple_cat(std::make_tuple(var_argument(arg0)), args_for_cpu),
             std::tuple_cat(std::make_tuple(var_argument(arg0)),
