@@ -327,6 +327,7 @@
 #include <stan/math/prim/fun/ub_constrain.hpp>
 #include <stan/math/prim/fun/ub_free.hpp>
 #include <stan/math/prim/fun/uniform_simplex.hpp>
+#include <stan/math/prim/fun/unitspaced_array.hpp>
 #include <stan/math/prim/fun/unit_vector_constrain.hpp>
 #include <stan/math/prim/fun/unit_vector_free.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
