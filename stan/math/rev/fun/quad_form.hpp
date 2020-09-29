@@ -29,15 +29,15 @@ namespace internal {
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
  */
-template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
-          require_any_vt_var<T1, T2>* = nullptr>
-inline Eigen::Matrix<var, T2::ColsAtCompileTime, T2::ColsAtCompileTime>
-quad_form_impl(const T1& A, const T2& B) {
+template <typename EigMat1, typename EigMat2, require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
+          require_any_vt_var<EigMat1, EigMat2>* = nullptr>
+inline Eigen::Matrix<var, EigMat2::ColsAtCompileTime, EigMat2::ColsAtCompileTime>
+quad_form_impl(const EigMat1& A, const EigMat2& B) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
 
-  using A_ref_t = ref_type_t<T1>;
-  using B_ref_t = ref_type_t<T2>;
+  using A_ref_t = ref_type_t<EigMat1>;
+  using B_ref_t = ref_type_t<EigMat2>;
 
   A_ref_t A_ref = A;
   B_ref_t B_ref = B;
@@ -45,25 +45,25 @@ quad_form_impl(const T1& A, const T2& B) {
   check_not_nan("multiply", "A", A_ref);
   check_not_nan("multiply", "B", B_ref);
 
-  arena_matrix<promote_scalar_t<double, T1>> arena_A_val;
-  arena_matrix<promote_scalar_t<double, T2>> arena_B_val = value_of(B_ref);
+  arena_matrix<promote_scalar_t<double, EigMat1>> arena_A_val;
+  arena_matrix<promote_scalar_t<double, EigMat2>> arena_B_val = value_of(B_ref);
 
-  arena_matrix<promote_scalar_t<var, T1>> arena_A;
-  arena_matrix<promote_scalar_t<var, T2>> arena_B;
+  arena_matrix<promote_scalar_t<var, EigMat1>> arena_A;
+  arena_matrix<promote_scalar_t<var, EigMat2>> arena_B;
 
-  if (!is_constant<T1>::value) {
+  if (!is_constant<EigMat1>::value) {
     arena_A = A_ref;
   }
 
-  if (!is_constant<T2>::value) {
+  if (!is_constant<EigMat2>::value) {
     arena_B = B_ref;
     arena_A_val = value_of(A_ref);
   }
 
-  arena_matrix<Eigen::Matrix<var, T2::ColsAtCompileTime, T2::ColsAtCompileTime>>
+  arena_matrix<Eigen::Matrix<var, EigMat2::ColsAtCompileTime, EigMat2::ColsAtCompileTime>>
       res;
 
-  if (is_constant<T2>::value) {
+  if (is_constant<EigMat2>::value) {
     res = arena_B_val.transpose() * value_of(A_ref) * arena_B_val;
   } else {
     res = arena_B_val.transpose() * arena_A_val * arena_B_val;
@@ -74,10 +74,10 @@ quad_form_impl(const T1& A, const T2& B) {
         auto C_adj = res.adj().eval();
         auto C_adj_B_t = (C_adj * arena_B_val.transpose()).eval();
 
-        if (!is_constant<T1>::value)
+        if (!is_constant<EigMat1>::value)
           arena_A.adj() += arena_B_val * C_adj_B_t;
 
-        if (!is_constant<T2>::value)
+        if (!is_constant<EigMat2>::value)
           arena_B.adj() += arena_A_val * C_adj_B_t.transpose()
                            + arena_A_val.transpose() * arena_B_val * C_adj;
       });
@@ -98,6 +98,7 @@ quad_form_impl(const T1& A, const T2& B) {
  *
  * @param A square matrix
  * @param B second matrix
+ * @param symmetric indicates whether the output should be made symmetric
  * @return The quadratic form, which is a symmetric matrix.
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
@@ -118,6 +119,7 @@ inline auto quad_form(const EigMat1& A, const EigMat2& B) {
  *
  * @param A square matrix
  * @param B vector
+ * @param symmetric indicates whether the output should be made symmetric
  * @return The quadratic form (a scalar).
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
