@@ -32,7 +32,9 @@ var sd(const T& m) {
     return 0;
   }
 
-  return apply_vector_unary<T>::reduce(m, [](const auto& x) {
+  const auto& m_ref = to_ref(m);
+  
+  return apply_vector_unary<decltype(m_ref)>::reduce(m_ref, [](const auto& x) {
     const auto& x_ref = to_ref(x);
     arena_t<decltype(x_ref)> arena_x = x_ref;
     const auto& x_val = to_ref(value_of(x));

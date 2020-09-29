@@ -4,6 +4,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/mean.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <vector>
 
 namespace stan {
@@ -45,20 +46,25 @@ inline return_type_t<T> variance(const std::vector<T>& v) {
  * @return sample variance of coefficients
  * @throw <code>std::invalid_argument</code> if the matrix has size zero
  */
-template <typename T, int R, int C>
-inline return_type_t<T> variance(const Eigen::Matrix<T, R, C>& m) {
+template <typename T,
+	  require_eigen_t<T>* = nullptr,
+	  require_not_st_var<T>* = nullptr>
+inline return_type_t<T> variance(const T& m) {
   check_nonzero_size("variance", "m", m);
 
   if (m.size() == 1) {
     return 0.0;
   }
-  return_type_t<T> mn(mean(m));
+
+  const auto& m_ref = to_ref(m);
+  
+  return_type_t<T> mn(mean(m_ref));
   return_type_t<T> sum_sq_diff(0);
-  for (int i = 0; i < m.size(); ++i) {
-    return_type_t<T> diff = m(i) - mn;
+  for (int i = 0; i < m_ref.size(); ++i) {
+    return_type_t<T> diff = m_ref(i) - mn;
     sum_sq_diff += diff * diff;
   }
-  return sum_sq_diff / (m.size() - 1);
+  return sum_sq_diff / (m_ref.size() - 1);
 }
 
 }  // namespace math

@@ -19,9 +19,11 @@ namespace math {
 template <typename Mat, require_eigen_vt<is_var, Mat>* = nullptr>
 inline Eigen::Matrix<var, 1, Mat::ColsAtCompileTime> columns_dot_self(
     const Mat& x) {
-  Eigen::Matrix<var, 1, Mat::ColsAtCompileTime> ret(1, x.cols());
-  for (size_type i = 0; i < x.cols(); i++) {
-    ret(i) = dot_self(x.col(i));
+  const auto& x_ref = to_ref(x);
+
+  Eigen::Matrix<var, 1, Mat::ColsAtCompileTime> ret(1, x_ref.cols());
+  for (size_type i = 0; i < x_ref.cols(); i++) {
+    ret(i) = dot_self(x_ref.col(i));
   }
   return ret;
 }

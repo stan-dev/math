@@ -22,13 +22,14 @@ namespace math {
  */
 template <typename T, require_eigen_vector_vt<is_var, T>* = nullptr>
 inline var dot_self(const T& v) {
-  arena_matrix<plain_type_t<decltype(value_of(v))>> v_val = value_of(v);
-  arena_matrix<plain_type_t<T>> arena_v = v;
+  const auto& v_ref = to_ref(v);
+
+  arena_matrix<plain_type_t<decltype(value_of(v))>> v_val = value_of(v_ref);
+  arena_matrix<plain_type_t<T>> arena_v = v_ref;
 
   var res = v_val.dot(v_val);
 
-  reverse_pass_callback(
-      [=]() mutable { arena_v.adj() += 2.0 * res.adj() * v_val; });
+  reverse_pass_callback([arena_v, res, v_val]() mutable { arena_v.adj() += 2.0 * res.adj() * v_val; });
 
   return res;
 }

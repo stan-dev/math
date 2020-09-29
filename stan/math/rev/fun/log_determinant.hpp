@@ -20,10 +20,12 @@ inline var log_determinant(const T& m) {
     return 0.0;
   }
 
-  Eigen::FullPivHouseholderQR<promote_scalar_t<double, plain_type_t<T>>> hh
-      = m.val().fullPivHouseholderQr();
+  const auto& m_ref = to_ref(m);
 
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arena_m = m;
+  Eigen::FullPivHouseholderQR<promote_scalar_t<double, plain_type_t<T>>> hh
+      = m_ref.val().fullPivHouseholderQr();
+
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arena_m = m_ref;
   arena_matrix<Eigen::MatrixXd> arena_hh_inv_t = hh.inverse().transpose();
 
   var log_det = hh.logAbsDeterminant();

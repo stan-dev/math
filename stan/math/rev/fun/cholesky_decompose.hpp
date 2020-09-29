@@ -447,8 +447,8 @@ cholesky_decompose(const T& A) {
   int M = A.rows();
   int P = (M * M - M) / 2 + M;
   Eigen::Matrix<var, Eigen::Dynamic, 1> res_vars(P);
-  arena_matrix<T> arena_A = A_ref;
-  arena_matrix<T> res(M, M);
+  arena_t<plain_type_t<T>> arena_A = A_ref;
+  arena_t<plain_type_t<T>> res(M, M);
 
   var zero = 0.0;
   if (L_A_val.rows() > 35) {

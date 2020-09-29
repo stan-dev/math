@@ -25,14 +25,17 @@ template <typename Mat, typename Scal, require_eigen_t<Mat>* = nullptr,
           require_any_st_var<Mat, Scal>* = nullptr>
 inline Eigen::Matrix<var, Mat::RowsAtCompileTime, Mat::ColsAtCompileTime>
 divide(const Mat& m, const Scal& c) {
-  auto arena_m = to_arena_if<!is_constant<Mat>::value>(m);
+  const auto& m_ref = to_ref(m);
+  const auto& c_ref = to_ref(c);
 
-  double invc = 1.0 / value_of(c);
+  auto arena_m = to_arena_if<!is_constant<Mat>::value>(m_ref);
+
+  double invc = 1.0 / value_of(c_ref);
 
   using Mat_v
       = Eigen::Matrix<var, Mat::RowsAtCompileTime, Mat::ColsAtCompileTime>;
 
-  arena_matrix<Mat_v> res = invc * value_of(m);
+  arena_matrix<Mat_v> res = invc * value_of(arena_m);
 
   reverse_pass_callback([=]() mutable {
     if (!is_constant<Mat>::value) {
