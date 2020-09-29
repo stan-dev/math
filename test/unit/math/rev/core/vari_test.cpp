@@ -71,9 +71,7 @@ TEST(AgradRev, arena_matrix_matrix_vari) {
   EXPECT_MATRIX_FLOAT_EQ((*C).val_, x);
   auto* D = new vari_value<Eigen::MatrixXd>(x_ref, true);
   EXPECT_MATRIX_FLOAT_EQ((*D).val_, x);
-
 }
-
 
 TEST(AgradRev, dense_vari_matrix_views) {
   using stan::math::vari_value;

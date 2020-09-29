@@ -514,8 +514,8 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   template <typename S, require_convertible_t<S&, T>* = nullptr,
             require_arena_matrix_vt<std::is_arithmetic, S>* = nullptr>
   explicit vari_value(const S& x)
-    : val_mem_(const_cast<value_type_t<S>*>(x.data())),
-      adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
+      : val_mem_(const_cast<value_type_t<S>*>(x.data())),
+        adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
         val_(eigen_map(val_mem_, x.rows(), x.cols())),
         adj_(eigen_map(adj_mem_, x.rows(), x.cols()).setZero()) {
@@ -537,9 +537,9 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @param stacked If false will put this this vari on the nochain stack so
    * that its `chain()` method is not called.
    */
-   template <typename S, require_convertible_t<S&, T>* = nullptr,
-             require_not_arena_matrix_t<S>* = nullptr>
-   vari_value(const S& x, bool stacked)
+  template <typename S, require_convertible_t<S&, T>* = nullptr,
+            require_not_arena_matrix_t<S>* = nullptr>
+  vari_value(const S& x, bool stacked)
       : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
             x.size())),
         adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
@@ -571,17 +571,17 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   template <typename S, require_convertible_t<S&, T>* = nullptr,
             require_arena_matrix_t<S>* = nullptr>
   vari_value(const S& x, bool stacked)
-     : val_mem_(const_cast<value_type_t<S>*>(x.data())),
-       adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-           x.size())),
-       val_(eigen_map(val_mem_, x.rows(), x.cols())),
-       adj_(eigen_map(adj_mem_, x.rows(), x.cols()).setZero()) {
-   if (stacked) {
-     ChainableStack::instance_->var_stack_.push_back(this);
-   } else {
-     ChainableStack::instance_->var_nochain_stack_.push_back(this);
-   }
- }
+      : val_mem_(const_cast<value_type_t<S>*>(x.data())),
+        adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
+            x.size())),
+        val_(eigen_map(val_mem_, x.rows(), x.cols())),
+        adj_(eigen_map(adj_mem_, x.rows(), x.cols()).setZero()) {
+    if (stacked) {
+      ChainableStack::instance_->var_stack_.push_back(this);
+    } else {
+      ChainableStack::instance_->var_nochain_stack_.push_back(this);
+    }
+  }
 
   virtual void chain() {}
   /**
