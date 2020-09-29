@@ -29,9 +29,11 @@ namespace internal {
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
  */
-template <typename EigMat1, typename EigMat2, require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
+template <typename EigMat1, typename EigMat2,
+          require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
           require_any_vt_var<EigMat1, EigMat2>* = nullptr>
-inline Eigen::Matrix<var, EigMat2::ColsAtCompileTime, EigMat2::ColsAtCompileTime>
+inline Eigen::Matrix<var, EigMat2::ColsAtCompileTime,
+                     EigMat2::ColsAtCompileTime>
 quad_form_impl(const EigMat1& A, const EigMat2& B) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
@@ -60,7 +62,8 @@ quad_form_impl(const EigMat1& A, const EigMat2& B) {
     arena_A_val = value_of(A_ref);
   }
 
-  arena_matrix<Eigen::Matrix<var, EigMat2::ColsAtCompileTime, EigMat2::ColsAtCompileTime>>
+  arena_matrix<Eigen::Matrix<var, EigMat2::ColsAtCompileTime,
+                             EigMat2::ColsAtCompileTime>>
       res;
 
   if (is_constant<EigMat2>::value) {

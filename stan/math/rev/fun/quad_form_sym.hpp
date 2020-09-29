@@ -31,7 +31,8 @@ namespace math {
 template <typename EigMat1, typename EigMat2,
           require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
           require_any_vt_var<EigMat1, EigMat2>* = nullptr>
-inline Eigen::Matrix<var, EigMat2::ColsAtCompileTime, EigMat2::ColsAtCompileTime>
+inline Eigen::Matrix<var, EigMat2::ColsAtCompileTime,
+                     EigMat2::ColsAtCompileTime>
 quad_form_sym(const EigMat1& A, const EigMat2& B) {
   check_multiplicable("quad_form_sym", "A", A, "B", B);
 
@@ -69,21 +70,22 @@ quad_form_sym(const EigMat1& A, const EigMat2& B) {
     res_val = arena_B_val.transpose() * arena_A_val * arena_B_val;
   }
 
-  arena_matrix<Eigen::Matrix<var, EigMat2::ColsAtCompileTime, EigMat2::ColsAtCompileTime>>
-    res = 0.5 * (res_val + res_val.transpose());
+  arena_matrix<Eigen::Matrix<var, EigMat2::ColsAtCompileTime,
+                             EigMat2::ColsAtCompileTime>>
+      res = 0.5 * (res_val + res_val.transpose());
 
   reverse_pass_callback(
-    [arena_A, arena_B, arena_A_val, arena_B_val, res]() mutable {
-      auto C_adj = res.adj().eval();
-      auto C_adj_B_t = (C_adj * arena_B_val.transpose()).eval();
+      [arena_A, arena_B, arena_A_val, arena_B_val, res]() mutable {
+        auto C_adj = res.adj().eval();
+        auto C_adj_B_t = (C_adj * arena_B_val.transpose()).eval();
 
-      if (!is_constant<EigMat1>::value)
-	arena_A.adj() += arena_B_val * C_adj_B_t;
+        if (!is_constant<EigMat1>::value)
+          arena_A.adj() += arena_B_val * C_adj_B_t;
 
-      if (!is_constant<EigMat2>::value)
-	arena_B.adj() += arena_A_val * C_adj_B_t.transpose()
-	  + arena_A_val.transpose() * arena_B_val * C_adj;
-  });
+        if (!is_constant<EigMat2>::value)
+          arena_B.adj() += arena_A_val * C_adj_B_t.transpose()
+                           + arena_A_val.transpose() * arena_B_val * C_adj;
+      });
 
   return res;
 }
