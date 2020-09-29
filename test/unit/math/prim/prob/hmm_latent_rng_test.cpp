@@ -2,7 +2,6 @@
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 #include <stan/math/prim/prob/hmm_latent_rng.hpp>
 #include <stan/math/prim/prob/chi_square_lcdf.hpp>
-#include <stan/math/prim/fun/subtract.hpp>
 #include <boost/math/distributions.hpp>
 #include <boost/random.hpp>
 #include <test/unit/math/test_ad.hpp>
@@ -18,7 +17,6 @@ TEST(hmm_rng_test, chiSquareGoodnessFitTest) {
   // The samples live on {1, 2}, so we need to deduct one to male the
   // samples on {0, 1}.
   using stan::math::hmm_latent_rng;
-  using stan::math::subtract;
 
   int n_states = 2;
   int n_transitions = 10;
