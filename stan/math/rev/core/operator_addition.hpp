@@ -157,15 +157,16 @@ inline var operator+(Arith a, const var& b) {
 template <typename VarMat1, typename VarMat2, require_all_rev_matrix_t<VarMat1, VarMat2>* = nullptr>
 inline auto operator+(const VarMat1& a, const VarMat2& b) {
   check_matching_dims("operator+", "a", a, "b", b);
-  using ret_type = decltype(a.val() + b.val());
-  promote_var_matrix_t<ret_type, VarMat1, VarMat2> ret((a.val() + b.val()).eval());
+  using op_ret_type = decltype(a.val() + b.val());
+  using ret_type = promote_var_matrix_t<op_ret_type, VarMat1, VarMat2>;
+  arena_t<ret_type> ret((a.val() + b.val()).eval());
   arena_t<VarMat1> arena_a = a;
   arena_t<VarMat2> arena_b = b;
   reverse_pass_callback([ret, arena_a, arena_b]() mutable {
       arena_a.adj() += ret.adj_op();
       arena_b.adj() += ret.adj_op();
     });
-  return ret;
+  return ret_type(ret);
 }
 
 /**
@@ -183,17 +184,17 @@ inline auto operator+(const VarMat& a, const Arith& b) {
   if (is_eigen<Arith>::value) {
     check_matching_dims("operator+", "a", a, "b", b);
   }
-  using ret_inner_type = plain_type_t<decltype((a.val().array() + as_array_or_scalar(b)).matrix())>;
-  using ret_type = promote_var_matrix_t<ret_inner_type, VarMat>;
+  using op_ret_type = decltype((a.val().array() + as_array_or_scalar(b)).matrix());
+  using ret_type = promote_var_matrix_t<op_ret_type, VarMat>;
   if (is_equal(b, 0.0)) {
     return ret_type(a);
   } else {
     arena_t<VarMat> arena_a = a;
-    ret_type ret(a.val().array() + as_array_or_scalar(b));
+    arena_t<ret_type> ret(a.val().array() + as_array_or_scalar(b));
     reverse_pass_callback([ret, arena_a]() mutable {
       arena_a.adj() += ret.adj_op();
     });
-    return ret;
+    return ret_type(ret);
   }
 }
 
@@ -225,11 +226,12 @@ template <typename Var, typename EigMat,
  require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr,
  require_var_vt<std::is_arithmetic, Var>* = nullptr>
 inline auto operator+(const Var& a, const EigMat& b) {
-  arena_t<promote_scalar_t<var, EigMat>>  ret(a.val() + b.array());
+  using ret_type = promote_scalar_t<var, EigMat>;
+  arena_t<ret_type>  ret(a.val() + b.array());
   reverse_pass_callback([ret, a]() mutable {
     a.adj() += ret.adj().sum();
   });
-  return ret;
+  return ret_type(ret);
 }
 
 
@@ -267,7 +269,7 @@ inline auto operator+(const Var& a, const VarMat& b) {
     a.adj() += ret.adj().sum();
     arena_b.adj() += ret.adj();
   });
-  return ret;
+  return plain_type_t<VarMat>(ret);
 }
 
 
