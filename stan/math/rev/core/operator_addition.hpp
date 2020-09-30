@@ -85,9 +85,9 @@ inline var operator+(const var& a, const var& b) {
   var ret(a.val() + b.val());
   if (unlikely(is_any_nan(a.val(), b.val()))) {
     reverse_pass_callback([a, b]() mutable {
-        a.adj() = NOT_A_NUMBER;
-        b.adj() = NOT_A_NUMBER;
-      });
+      a.adj() = NOT_A_NUMBER;
+      b.adj() = NOT_A_NUMBER;
+    });
   } else {
     reverse_pass_callback([ret, a, b]() mutable {
       a.adj() += ret.adj();
@@ -116,13 +116,9 @@ inline var operator+(const var& a, Arith b) {
   } else {
     var ret(a.val() + b);
     if (unlikely(is_any_nan(a.val(), b))) {
-      reverse_pass_callback([a]() mutable {
-          a.adj() = NOT_A_NUMBER;
-        });
+      reverse_pass_callback([a]() mutable { a.adj() = NOT_A_NUMBER; });
     } else {
-      reverse_pass_callback([ret, a]() mutable {
-        a.adj() += ret.adj();
-      });
+      reverse_pass_callback([ret, a]() mutable { a.adj() += ret.adj(); });
     }
     return ret;
   }
@@ -154,7 +150,8 @@ inline var operator+(Arith a, const var& b) {
  * @param b Second variable operand.
  * @return Variable result of adding two variables.
  */
-template <typename VarMat1, typename VarMat2, require_all_rev_matrix_t<VarMat1, VarMat2>* = nullptr>
+template <typename VarMat1, typename VarMat2,
+          require_all_rev_matrix_t<VarMat1, VarMat2>* = nullptr>
 inline auto operator+(const VarMat1& a, const VarMat2& b) {
   check_matching_dims("operator+", "a", a, "b", b);
   using op_ret_type = decltype(a.val() + b.val());
@@ -163,9 +160,9 @@ inline auto operator+(const VarMat1& a, const VarMat2& b) {
   arena_t<VarMat1> arena_a = a;
   arena_t<VarMat2> arena_b = b;
   reverse_pass_callback([ret, arena_a, arena_b]() mutable {
-      arena_a.adj() += ret.adj_op();
-      arena_b.adj() += ret.adj_op();
-    });
+    arena_a.adj() += ret.adj_op();
+    arena_b.adj() += ret.adj_op();
+  });
   return ret_type(ret);
 }
 
@@ -178,22 +175,23 @@ inline auto operator+(const VarMat1& a, const VarMat2& b) {
  * @param b Second variable operand.
  * @return Variable result of adding two variables.
  */
-template <typename Arith, typename VarMat, require_st_arithmetic<Arith>* = nullptr,
- require_rev_matrix_t<VarMat>* = nullptr>
+template <typename Arith, typename VarMat,
+          require_st_arithmetic<Arith>* = nullptr,
+          require_rev_matrix_t<VarMat>* = nullptr>
 inline auto operator+(const VarMat& a, const Arith& b) {
   if (is_eigen<Arith>::value) {
     check_matching_dims("operator+", "a", a, "b", b);
   }
-  using op_ret_type = decltype((a.val().array() + as_array_or_scalar(b)).matrix());
+  using op_ret_type
+      = decltype((a.val().array() + as_array_or_scalar(b)).matrix());
   using ret_type = promote_var_matrix_t<op_ret_type, VarMat>;
   if (is_equal(b, 0.0)) {
     return ret_type(a);
   } else {
     arena_t<VarMat> arena_a = a;
     arena_t<ret_type> ret(a.val().array() + as_array_or_scalar(b));
-    reverse_pass_callback([ret, arena_a]() mutable {
-      arena_a.adj() += ret.adj_op();
-    });
+    reverse_pass_callback(
+        [ret, arena_a]() mutable { arena_a.adj() += ret.adj_op(); });
     return ret_type(ret);
   }
 }
@@ -207,8 +205,9 @@ inline auto operator+(const VarMat& a, const Arith& b) {
  * @param b Second variable operand.
  * @return Variable result of adding two variables.
  */
- template <typename Arith, typename VarMat, require_st_arithmetic<Arith>* = nullptr,
-  require_rev_matrix_t<VarMat>* = nullptr>
+template <typename Arith, typename VarMat,
+          require_st_arithmetic<Arith>* = nullptr,
+          require_rev_matrix_t<VarMat>* = nullptr>
 inline auto operator+(const Arith& a, const VarMat& b) {
   return b + a;
 }
@@ -223,17 +222,14 @@ inline auto operator+(const Arith& a, const VarMat& b) {
  * @return Variable result of adding two variables.
  */
 template <typename Var, typename EigMat,
- require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr,
- require_var_vt<std::is_arithmetic, Var>* = nullptr>
+          require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr,
+          require_var_vt<std::is_arithmetic, Var>* = nullptr>
 inline auto operator+(const Var& a, const EigMat& b) {
   using ret_type = promote_scalar_t<var, EigMat>;
-  arena_t<ret_type>  ret(a.val() + b.array());
-  reverse_pass_callback([ret, a]() mutable {
-    a.adj() += ret.adj().sum();
-  });
+  arena_t<ret_type> ret(a.val() + b.array());
+  reverse_pass_callback([ret, a]() mutable { a.adj() += ret.adj().sum(); });
   return ret_type(ret);
 }
-
 
 /**
  * Addition operator for a variable and arithmetic matrix (C++).
@@ -244,8 +240,9 @@ inline auto operator+(const Var& a, const EigMat& b) {
  * @param b Second variable operand.
  * @return Variable result of adding two variables.
  */
-template <typename EigMat, typename Var, require_var_vt<std::is_arithmetic, Var>* = nullptr,
- require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
+template <typename EigMat, typename Var,
+          require_var_vt<std::is_arithmetic, Var>* = nullptr,
+          require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
 inline auto operator+(const EigMat& a, const Var& b) {
   return b + a;
 }
@@ -253,15 +250,16 @@ inline auto operator+(const EigMat& a, const Var& b) {
 /**
  * Addition operator for a variable and variable matrix (C++).
  *
- * @tparam VarMat An Eigen Matrix type with a variable Scalar type or a `var_value` with an underlying matrix type.
+ * @tparam VarMat An Eigen Matrix type with a variable Scalar type or a
+ * `var_value` with an underlying matrix type.
  * @tparam Var A `var_value` with an underlying arithmetic type.
  * @param a First variable operand.
  * @param b Second variable operand.
  * @return Variable result of adding two variables.
  */
 template <typename Var, typename VarMat,
- require_rev_matrix_t<VarMat>* = nullptr,
- require_var_vt<std::is_arithmetic, Var>* = nullptr>
+          require_rev_matrix_t<VarMat>* = nullptr,
+          require_var_vt<std::is_arithmetic, Var>* = nullptr>
 inline auto operator+(const Var& a, const VarMat& b) {
   arena_t<VarMat> arena_b(b);
   arena_t<VarMat> ret(a.val() + b.val().array());
@@ -272,22 +270,22 @@ inline auto operator+(const Var& a, const VarMat& b) {
   return plain_type_t<VarMat>(ret);
 }
 
-
 /**
  * Addition operator for a variable matrix and variable (C++).
  *
- * @tparam VarMat An Eigen Matrix type with a variable Scalar type or a `var_value` with an underlying matrix type.
+ * @tparam VarMat An Eigen Matrix type with a variable Scalar type or a
+ * `var_value` with an underlying matrix type.
  * @tparam Var A `var_value` with an underlying arithmetic type.
  * @param a First variable operand.
  * @param b Second variable operand.
  * @return Variable result of adding two variables.
  */
- template <typename Var, typename VarMat,
-  require_rev_matrix_t<VarMat>* = nullptr,
-  require_var_vt<std::is_arithmetic, Var>* = nullptr>
- inline auto operator+(const VarMat& a, const Var& b) {
-   return b + a;
- }
+template <typename Var, typename VarMat,
+          require_rev_matrix_t<VarMat>* = nullptr,
+          require_var_vt<std::is_arithmetic, Var>* = nullptr>
+inline auto operator+(const VarMat& a, const Var& b) {
+  return b + a;
+}
 
 }  // namespace math
 }  // namespace stan
