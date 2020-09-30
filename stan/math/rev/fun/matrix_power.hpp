@@ -61,10 +61,9 @@ inline plain_type_t<T> matrix_power(const T& M, const int n) {
       Eigen::MatrixXd adj_M = Eigen::MatrixXd::Zero(N, N);
       for (size_t i = n; i > 1; --i) {
         adj_M += adj_C * powers[i - 1].transpose();
-        adj_C = (M_val.transpose() * adj_C).eval();
+        adj_C = M_val.transpose() * adj_C;
       }
-      adj_M += adj_C;
-      arena_M.adj() += adj_M;
+      arena_M.adj() += adj_M + adj_C;
     });
   }
 

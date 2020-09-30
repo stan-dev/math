@@ -22,8 +22,9 @@ namespace math {
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline var dot_self(const T& v) {
-  arena_t<plain_type_t<decltype(value_of(v))>> v_val = value_of(v);
   arena_t<plain_type_t<T>> arena_v = v;
+
+  arena_t<decltype(value_of(arena_v))> v_val = value_of(arena_v);
 
   var res = v_val.dot(v_val);
 

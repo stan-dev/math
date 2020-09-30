@@ -36,7 +36,7 @@ inline plain_type_t<T> tcrossprod(const T& M) {
   arena_t<T_var> res = arena_M_val * arena_M_val.transpose();
 
   reverse_pass_callback([res, arena_M, arena_M_val]() mutable {
-    Eigen::MatrixXd adj = res.adj();
+    const auto& adj = to_ref(res.adj());
     arena_M.adj() += (adj + adj.transpose()) * arena_M_val;
   });
 

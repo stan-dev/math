@@ -21,8 +21,6 @@ inline var log_determinant(const T& m) {
     return 0.0;
   }
 
-  const auto& m_ref = to_ref(m);
-
   arena_t<plain_type_t<T>> arena_m = m;
 
   Eigen::FullPivHouseholderQR<Eigen::MatrixXd> hh
