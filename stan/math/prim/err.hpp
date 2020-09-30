@@ -57,6 +57,7 @@
 #include <stan/math/prim/err/is_cholesky_factor_corr.hpp>
 #include <stan/math/prim/err/is_column_index.hpp>
 #include <stan/math/prim/err/is_corr_matrix.hpp>
+#include <stan/math/prim/err/is_equal.hpp>
 #include <stan/math/prim/err/is_ldlt_factor.hpp>
 #include <stan/math/prim/err/is_less_or_equal.hpp>
 #include <stan/math/prim/err/is_lower_triangular.hpp>
