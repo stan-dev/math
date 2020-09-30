@@ -25,7 +25,7 @@ namespace math {
  *   number of rows is not less than the number of columns,
  *   if there are no 0 columns, and no element in matrix is <code>NaN</code>
  */
-template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr>
+template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr>
 inline bool is_cholesky_factor(const EigMat& y) {
   const auto& y_ref = to_ref(y);
   return is_less_or_equal(y_ref.cols(), y_ref.rows())

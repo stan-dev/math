@@ -30,7 +30,7 @@ namespace math {
  * @throw std::domain_error if the matrix is not symmetric,
  * if it is not positive definite, or if any element is NaN
  */
-template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr>
+template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr>
 inline void check_pos_definite(const char* function, const char* name,
                                const EigMat& y) {
   const auto& y_ref = to_ref(y);

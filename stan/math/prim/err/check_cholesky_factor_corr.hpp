@@ -29,7 +29,7 @@ namespace math {
  *   factor, if number of rows is less than the number of columns,
  *   if there are 0 columns, or if any element in matrix is NaN
  */
-template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr>
+template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr>
 void check_cholesky_factor_corr(const char* function, const char* name,
                                 const EigMat& y) {
   const auto& y_ref = to_ref(y);

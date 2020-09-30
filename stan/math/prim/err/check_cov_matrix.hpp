@@ -22,7 +22,7 @@ namespace math {
  *   if the matrix is not positive definite,
  *   or if any element of the matrix is nan
  */
-template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr>
+template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr>
 inline void check_cov_matrix(const char* function, const char* name,
                              const EigMat& y) {
   check_pos_definite(function, name, y);

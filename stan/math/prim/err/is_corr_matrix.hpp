@@ -26,7 +26,7 @@ namespace math {
  *   if the matrix is symmetric, diagonals are near 1, positive definite,
  *   and no elements are <code>NaN</code>
  */
-template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr>
+template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr>
 inline bool is_corr_matrix(const EigMat& y) {
   using std::fabs;
   const auto& y_ref = to_ref(y);

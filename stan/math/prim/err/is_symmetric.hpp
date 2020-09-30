@@ -20,7 +20,7 @@ namespace math {
  * @return <code>true</code> if the matrix is square, and no
  *    element not on the main diagonal is <code>NaN</code>
  */
-template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr>
+template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr>
 inline bool is_symmetric(const EigMat& y) {
   const auto& y_ref = to_ref(y);
   if (!is_square(y_ref)) {

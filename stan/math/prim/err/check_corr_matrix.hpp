@@ -31,7 +31,7 @@ namespace math {
  *   diagonals not near 1, not positive definite, or any of the
  *   elements nan
  */
-template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr>
+template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr>
 inline void check_corr_matrix(const char* function, const char* name,
                               const EigMat& y) {
   const auto& y_ref = to_ref(y);

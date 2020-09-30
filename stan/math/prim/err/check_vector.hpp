@@ -22,7 +22,7 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if x is not a row or column
  *   vector.
  */
-template <typename EigMat, require_eigen_matrix_t<EigMat>* = nullptr>
+template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr>
 inline void check_vector(const char* function, const char* name,
                          const EigMat& x) {
   if (x.rows() == 1 || x.cols() == 1) {
