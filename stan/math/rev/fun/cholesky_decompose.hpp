@@ -254,7 +254,7 @@ cholesky_decompose(const T& A) {
       // since the dummies have been filled already only go over on side.
       for (size_type j = 0; j < L.cols(); ++j) {
         for (size_type i = j; i < L.cols(); ++i) {
-          L.coeffRef(i, j).vi_ = vari_ref[pos++];
+          L.coeffRef(i, j).vi_ = baseVari->vari_ref_L_[pos++];
         }
       }
     } else {
