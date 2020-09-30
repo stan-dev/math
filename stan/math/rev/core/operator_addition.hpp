@@ -2,14 +2,14 @@
 #define STAN_MATH_REV_CORE_OPERATOR_ADDITION_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/rev/core/var.hpp>
-#include <stan/math/rev/core/vv_vari.hpp>
-#include <stan/math/rev/core/vd_vari.hpp>
 #include <stan/math/prim/err/is_equal.hpp>
 #include <stan/math/prim/err/check_matching_dims.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/fill.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
+#include <stan/math/rev/core/var.hpp>
+#include <stan/math/rev/core/vv_vari.hpp>
+#include <stan/math/rev/core/vd_vari.hpp>
 
 namespace stan {
 namespace math {
@@ -145,43 +145,11 @@ inline var operator+(Arith a, const var& b) {
   return b + a;
 }
 
-// NEWWW
-
-
 /**
- * Addition operator for variables (C++).
+ * Addition operator for matrix variables (C++).
  *
- * The partial derivatives are defined by
- *
- * \f$\frac{\partial}{\partial x} (x+y) = 1\f$, and
- *
- * \f$\frac{\partial}{\partial y} (x+y) = 1\f$.
- *
- *
-   \f[
-   \mbox{operator+}(x, y) =
-   \begin{cases}
-     x+y & \mbox{if } -\infty\leq x, y \leq \infty \\[6pt]
-     \textrm{NaN} & \mbox{if } x = \textrm{NaN or } y = \textrm{NaN}
-   \end{cases}
-   \f]
-
-   \f[
-   \frac{\partial\, \mbox{operator+}(x, y)}{\partial x} =
-   \begin{cases}
-     1 & \mbox{if } -\infty\leq x, y \leq \infty \\[6pt]
-     \textrm{NaN} & \mbox{if } x = \textrm{NaN or } y = \textrm{NaN}
-   \end{cases}
-   \f]
-
-   \f[
-   \frac{\partial\, \mbox{operator+}(x, y)}{\partial y} =
-   \begin{cases}
-     1 & \mbox{if } -\infty\leq x, y \leq \infty \\[6pt]
-     \textrm{NaN} & \mbox{if } x = \textrm{NaN or } y = \textrm{NaN}
-   \end{cases}
-   \f]
- *
+ * @tparam VarMat1 A matrix of vars or a var with an underlying matrix type.
+ * @tparam VarMat2 A matrix of vars or a var with an underlying matrix type.
  * @param a First variable operand.
  * @param b Second variable operand.
  * @return Variable result of adding two variables.
@@ -190,9 +158,9 @@ template <typename VarMat1, typename VarMat2, require_all_rev_matrix_t<VarMat1, 
 inline auto operator+(const VarMat1& a, const VarMat2& b) {
   check_matching_dims("operator+", "a", a, "b", b);
   using ret_type = decltype(a.val() + b.val());
+  promote_var_matrix_t<ret_type, VarMat1, VarMat2> ret((a.val() + b.val()).eval());
   arena_t<VarMat1> arena_a = a;
   arena_t<VarMat2> arena_b = b;
-  promote_var_matrix_t<ret_type, VarMat1, VarMat2> ret((a.val() + b.val()).eval());
   reverse_pass_callback([ret, arena_a, arena_b]() mutable {
       arena_a.adj() += ret.adj_op();
       arena_b.adj() += ret.adj_op();
@@ -201,16 +169,13 @@ inline auto operator+(const VarMat1& a, const VarMat2& b) {
 }
 
 /**
- * Addition operator for variable and scalar (C++).
+ * Addition operator for a matrix variable and arithmetic (C++).
  *
- * The derivative with respect to the variable is
- *
- * \f$\frac{d}{dx} (x + c) = 1\f$.
- *
- * @tparam Arith An arithmetic type
+ * @tparam VarMat A matrix of vars or a var with an underlying matrix type.
+ * @tparam Arith A type with an arithmetic Scalar type.
  * @param a First variable operand.
- * @param b Second scalar operand.
- * @return Result of adding variable and scalar.
+ * @param b Second variable operand.
+ * @return Variable result of adding two variables.
  */
 template <typename Arith, typename VarMat, require_st_arithmetic<Arith>* = nullptr,
  require_rev_matrix_t<VarMat>* = nullptr>
@@ -233,16 +198,13 @@ inline auto operator+(const VarMat& a, const Arith& b) {
 }
 
 /**
- * Addition operator for scalar and variable (C++).
+ * Addition operator for an arithmetic type and matrix variable (C++).
  *
- * The derivative with respect to the variable is
- *
- * \f$\frac{d}{dy} (c + y) = 1\f$.
- *
- * @tparam Arith An arithmetic type
- * @param a First scalar operand.
+ * @tparam VarMat A matrix of vars or a var with an underlying matrix type.
+ * @tparam Arith A type with an arithmetic Scalar type.
+ * @param a First variable operand.
  * @param b Second variable operand.
- * @return Result of adding variable and scalar.
+ * @return Variable result of adding two variables.
  */
  template <typename Arith, typename VarMat, require_st_arithmetic<Arith>* = nullptr,
   require_rev_matrix_t<VarMat>* = nullptr>
@@ -250,21 +212,14 @@ inline auto operator+(const Arith& a, const VarMat& b) {
   return b + a;
 }
 
-// NEW 222
-
-
-
 /**
- * Addition operator for variable and scalar (C++).
+ * Addition operator for an arithmetic matrix and variable (C++).
  *
- * The derivative with respect to the variable is
- *
- * \f$\frac{d}{dx} (x + c) = 1\f$.
- *
- * @tparam Arith An arithmetic type
+ * @tparam Var A `var_value` with an underlying arithmetic type.
+ * @tparam EigMat An Eigen Matrix type with an arithmetic Scalar type.
  * @param a First variable operand.
- * @param b Second scalar operand.
- * @return Result of adding variable and scalar.
+ * @param b Second variable operand.
+ * @return Variable result of adding two variables.
  */
 template <typename Var, typename EigMat,
  require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr,
@@ -279,16 +234,13 @@ inline auto operator+(const Var& a, const EigMat& b) {
 
 
 /**
- * Addition operator for scalar and variable (C++).
+ * Addition operator for a variable and arithmetic matrix (C++).
  *
- * The derivative with respect to the variable is
- *
- * \f$\frac{d}{dy} (c + y) = 1\f$.
- *
- * @tparam Arith An arithmetic type
- * @param a First scalar operand.
+ * @tparam EigMat An Eigen Matrix type with an arithmetic Scalar type.
+ * @tparam Var A `var_value` with an underlying arithmetic type.
+ * @param a First variable operand.
  * @param b Second variable operand.
- * @return Result of adding variable and scalar.
+ * @return Variable result of adding two variables.
  */
 template <typename EigMat, typename Var, require_var_vt<std::is_arithmetic, Var>* = nullptr,
  require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
@@ -297,23 +249,20 @@ inline auto operator+(const EigMat& a, const Var& b) {
 }
 
 /**
- * Addition operator for variable and scalar (C++).
+ * Addition operator for a variable and variable matrix (C++).
  *
- * The derivative with respect to the variable is
- *
- * \f$\frac{d}{dx} (x + c) = 1\f$.
- *
- * @tparam Arith An arithmetic type
+ * @tparam VarMat An Eigen Matrix type with a variable Scalar type or a `var_value` with an underlying matrix type.
+ * @tparam Var A `var_value` with an underlying arithmetic type.
  * @param a First variable operand.
- * @param b Second scalar operand.
- * @return Result of adding variable and scalar.
+ * @param b Second variable operand.
+ * @return Variable result of adding two variables.
  */
-template <typename Var, typename EigMat,
- require_rev_matrix_t<EigMat>* = nullptr,
+template <typename Var, typename VarMat,
+ require_rev_matrix_t<VarMat>* = nullptr,
  require_var_vt<std::is_arithmetic, Var>* = nullptr>
-inline auto operator+(const Var& a, const EigMat& b) {
-  arena_t<EigMat> arena_b(b);
-  arena_t<EigMat> ret(a.val() + b.val().array());
+inline auto operator+(const Var& a, const VarMat& b) {
+  arena_t<VarMat> arena_b(b);
+  arena_t<VarMat> ret(a.val() + b.val().array());
   reverse_pass_callback([ret, a, arena_b]() mutable {
     a.adj() += ret.adj().sum();
     arena_b.adj() += ret.adj();
@@ -323,21 +272,18 @@ inline auto operator+(const Var& a, const EigMat& b) {
 
 
 /**
- * Addition operator for scalar and variable (C++).
+ * Addition operator for a variable matrix and variable (C++).
  *
- * The derivative with respect to the variable is
- *
- * \f$\frac{d}{dy} (c + y) = 1\f$.
- *
- * @tparam Arith An arithmetic type
- * @param a First scalar operand.
+ * @tparam VarMat An Eigen Matrix type with a variable Scalar type or a `var_value` with an underlying matrix type.
+ * @tparam Var A `var_value` with an underlying arithmetic type.
+ * @param a First variable operand.
  * @param b Second variable operand.
- * @return Result of adding variable and scalar.
+ * @return Variable result of adding two variables.
  */
- template <typename Var, typename EigMat,
-  require_rev_matrix_t<EigMat>* = nullptr,
+ template <typename Var, typename VarMat,
+  require_rev_matrix_t<VarMat>* = nullptr,
   require_var_vt<std::is_arithmetic, Var>* = nullptr>
- inline auto operator+(const EigMat& a, const Var& b) {
+ inline auto operator+(const VarMat& a, const Var& b) {
    return b + a;
  }
 
