@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_arena_matrix.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
 #include <vector>
 
@@ -80,7 +81,7 @@ struct promote_scalar_type<T, S,
  * @tparam S input matrix type
  */
 template <typename T, typename S>
-struct promote_scalar_type<T, S, require_eigen_t<S>> {
+struct promote_scalar_type<T, S, require_t<bool_constant<is_eigen<S>::value && !is_arena_matrix<S>::value>>> {
   /**
    * The promoted type.
    */
@@ -93,6 +94,16 @@ struct promote_scalar_type<T, S, require_eigen_t<S>> {
                    S::RowsAtCompileTime, S::ColsAtCompileTime>>::type;
 };
 
+template <typename MatrixType>
+class arena_matrix;
+
+template <typename T, typename S>
+struct promote_scalar_type<T, S, require_t<bool_constant<is_eigen<S>::value && is_arena_matrix<S>::value>>> {
+  /**
+   * The promoted type.
+   */
+  using type = arena_matrix<typename promote_scalar_type<T, typename S::PlainObject>::type>;
+};
 template <typename T, typename S>
 using promote_scalar_t = typename promote_scalar_type<T, S>::type;
 
