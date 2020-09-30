@@ -6,6 +6,7 @@ TEST(MathFunctionsPromoteVarMatrix, VarMatrix) {
   using stan::promote_var_matrix_t;
   using stan::math::var;
   using stan::math::var_value;
+  using stan::math::arena_matrix;
   using std::is_same;
   using var_matrix = var_value<Eigen::MatrixXd>;
   using var_vector = var_value<Eigen::VectorXd>;
@@ -43,10 +44,10 @@ TEST(MathFunctionsPromoteVarMatrix, VarMatrix) {
                        promote_var_matrix_t<Eigen::RowVectorXd, var_vector,
                                             row_vector_var, double>>::value));
 
-  EXPECT_TRUE((is_same<Eigen::Matrix<var, -1, -1>,
+  EXPECT_TRUE((is_same<arena_matrix<Eigen::Matrix<var, -1, -1>>,
                        promote_var_matrix_t<Eigen::MatrixXd, vector_var,
                                             vector_var, double>>::value));
-  EXPECT_TRUE((is_same<Eigen::Matrix<var, 1, -1>,
+  EXPECT_TRUE((is_same<arena_matrix<Eigen::Matrix<var, 1, -1>>,
                        promote_var_matrix_t<Eigen::RowVectorXd, vector_var,
                                             row_vector_var, double>>::value));
 }
