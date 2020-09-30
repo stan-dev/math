@@ -19,9 +19,9 @@ class AgradDistributionsLogistic : public AgradDistributionTest {
 
     param[0] = -1.0;  // y
     param[1] = 0.2;   // mu
-    param[2] = 0.25;  // sigma
+    param[2] = 0.5;  // sigma
     parameters.push_back(param);
-    log_prob.push_back(-3.430097773556644469295);  // expected log_prob
+    log_prob.push_back(-1.8805251237479538862);  // expected log_prob
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {
