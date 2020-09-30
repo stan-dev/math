@@ -4,9 +4,9 @@
 
 TEST(MathFunctionsPromoteVarMatrix, VarMatrix) {
   using stan::promote_var_matrix_t;
+  using stan::math::arena_matrix;
   using stan::math::var;
   using stan::math::var_value;
-  using stan::math::arena_matrix;
   using std::is_same;
   using var_matrix = var_value<Eigen::MatrixXd>;
   using var_vector = var_value<Eigen::VectorXd>;
