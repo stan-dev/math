@@ -23,14 +23,15 @@ inline var determinant(const T& m) {
   const auto& m_ref = to_ref(m);
   const auto& m_val = to_ref(m_ref.val());
   double det_val = m_val.determinant();
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arena_m = m_ref;
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arena_m
+      = m_ref;
   arena_matrix<Eigen::MatrixXd> arena_m_inv_t = m_val.inverse().transpose();
 
   var det = det_val;
 
   reverse_pass_callback([arena_m, det, arena_m_inv_t]() mutable {
     arena_m.adj() += (det.adj() * det.val()) * arena_m_inv_t;
-    });
+  });
 
   return det;
 }

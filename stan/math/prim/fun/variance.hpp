@@ -46,9 +46,8 @@ inline return_type_t<T> variance(const std::vector<T>& v) {
  * @return sample variance of coefficients
  * @throw <code>std::invalid_argument</code> if the matrix has size zero
  */
-template <typename T,
-	  require_eigen_t<T>* = nullptr,
-	  require_not_st_var<T>* = nullptr>
+template <typename T, require_eigen_t<T>* = nullptr,
+          require_not_st_var<T>* = nullptr>
 inline return_type_t<T> variance(const T& m) {
   check_nonzero_size("variance", "m", m);
 
@@ -57,7 +56,7 @@ inline return_type_t<T> variance(const T& m) {
   }
 
   const auto& m_ref = to_ref(m);
-  
+
   return_type_t<T> mn(mean(m_ref));
   return_type_t<T> sum_sq_diff(0);
   for (int i = 0; i < m_ref.size(); ++i) {
