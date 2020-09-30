@@ -28,7 +28,9 @@ inline plain_type_t<T> multiply_lower_tri_self_transpose(const T& L) {
 
   reverse_pass_callback([res, arena_L, arena_L_val]() mutable {
     const auto& adj = to_ref(res.adj());
-    Eigen::MatrixXd adjL = (adj.transpose() + adj) * arena_L_val.template triangularView<Eigen::Lower>();
+    Eigen::MatrixXd adjL
+        = (adj.transpose() + adj)
+          * arena_L_val.template triangularView<Eigen::Lower>();
 
     arena_L.adj() += adjL.template triangularView<Eigen::Lower>();
   });
