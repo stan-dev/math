@@ -15,8 +15,7 @@ namespace math {
  * @param b second scalar
  * @return the sum of the scalars
  */
-template <typename T1, typename T2,
-          require_any_st_var<T1, T2>* = nullptr>
+template <typename T1, typename T2, require_any_st_var<T1, T2>* = nullptr>
 inline auto add(const T1& a, const T2& b) {
   return a + b;
 }
