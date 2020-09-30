@@ -173,7 +173,6 @@ void compare_cpu_opencl_prim_rev_impl(const Functor& functor,
       },
       args...);
 }
-
 }  // namespace internal
 
 /**
