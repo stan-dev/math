@@ -17,11 +17,12 @@ namespace stan {
  *  Else the type will be `Matrix<var>`
  */
 template <typename ReturnType, typename... Types>
-using promote_var_matrix_t = std::conditional_t<
-    is_any_var_matrix<Types...>::value,
-    stan::math::var_value<
-        stan::math::promote_scalar_t<double, plain_type_t<ReturnType>>>,
-    arena_t<stan::math::promote_scalar_t<stan::math::var, plain_type_t<ReturnType>>>>;
+using promote_var_matrix_t
+    = std::conditional_t<is_any_var_matrix<Types...>::value,
+                         stan::math::var_value<stan::math::promote_scalar_t<
+                             double, plain_type_t<ReturnType>>>,
+                         arena_t<stan::math::promote_scalar_t<
+                             stan::math::var, plain_type_t<ReturnType>>>>;
 }  // namespace stan
 
 #endif
