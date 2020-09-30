@@ -558,13 +558,24 @@ class AgradCdfTestFixture : public ::testing::Test {
 
       stan::math::recover_memory();
 
-      stan::test::expect_near_rel("cdf with repeated vector input should match a multiple of cdf of single input",
-				  stan::math::value_of_rec(single_cdf),
-				  stan::math::value_of_rec(multiple_cdf));
+      stan::test::expect_near_rel(
+          "cdf with repeated vector input should match a multiple of cdf of "
+          "single input",
+          stan::math::value_of_rec(single_cdf),
+          stan::math::value_of_rec(multiple_cdf));
 
-      stan::test::expect_near_rel("scalar and vectorized results should have the same first order gradients", single_gradients1, multiple_gradients1);
-      stan::test::expect_near_rel("scalar and vectorized results should have the same second order gradients", single_gradients2, multiple_gradients2);
-      stan::test::expect_near_rel("scalar and vectorized results should have the same third order gradients", single_gradients3, multiple_gradients3);
+      stan::test::expect_near_rel(
+          "scalar and vectorized results should have the same first order "
+          "gradients",
+          single_gradients1, multiple_gradients1);
+      stan::test::expect_near_rel(
+          "scalar and vectorized results should have the same second order "
+          "gradients",
+          single_gradients2, multiple_gradients2);
+      stan::test::expect_near_rel(
+          "scalar and vectorized results should have the same third order "
+          "gradients",
+          single_gradients3, multiple_gradients3);
     }
   }
 
@@ -672,13 +683,23 @@ class AgradCdfTestFixture : public ::testing::Test {
       return;
     }
 
-    stan::test::expect_near_rel("product of scalar cdfs should match vectorized result",
-				stan::math::value_of_rec(single_cdf),
-				stan::math::value_of_rec(multiple_cdf));
+    stan::test::expect_near_rel(
+        "product of scalar cdfs should match vectorized result",
+        stan::math::value_of_rec(single_cdf),
+        stan::math::value_of_rec(multiple_cdf));
 
-    stan::test::expect_near_rel("scalar and vectorized results should have the same first order gradients", single_gradients1, multiple_gradients1);
-    stan::test::expect_near_rel("scalar and vectorized results should have the same second order gradients", single_gradients2, multiple_gradients2);
-    stan::test::expect_near_rel("scalar and vectorized results should have the same third order gradients", single_gradients3, multiple_gradients3);
+    stan::test::expect_near_rel(
+        "scalar and vectorized results should have the same first order "
+        "gradients",
+        single_gradients1, multiple_gradients1);
+    stan::test::expect_near_rel(
+        "scalar and vectorized results should have the same second order "
+        "gradients",
+        single_gradients2, multiple_gradients2);
+    stan::test::expect_near_rel(
+        "scalar and vectorized results should have the same third order "
+        "gradients",
+        single_gradients3, multiple_gradients3);
   }
 
   void test_lower_bound() {

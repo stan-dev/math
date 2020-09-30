@@ -636,13 +636,24 @@ class AgradDistributionTestFixture : public ::testing::Test {
 
       stan::math::recover_memory();
 
-      stan::test::expect_near_rel("log prob with repeated vector input should match a multiple of log prob of single input",
-				  stan::math::value_of_rec(single_lp),
-				  stan::math::value_of_rec(multiple_lp));
+      stan::test::expect_near_rel(
+          "log prob with repeated vector input should match a multiple of log "
+          "prob of single input",
+          stan::math::value_of_rec(single_lp),
+          stan::math::value_of_rec(multiple_lp));
 
-      stan::test::expect_near_rel("scalar and vectorized results should have the same first order gradients", single_gradients1, multiple_gradients1);
-      stan::test::expect_near_rel("scalar and vectorized results should have the same second order gradients", single_gradients2, multiple_gradients2);
-      stan::test::expect_near_rel("scalar and vectorized results should have the same third order gradients", single_gradients3, multiple_gradients3);
+      stan::test::expect_near_rel(
+          "scalar and vectorized results should have the same first order "
+          "gradients",
+          single_gradients1, multiple_gradients1);
+      stan::test::expect_near_rel(
+          "scalar and vectorized results should have the same second order "
+          "gradients",
+          single_gradients2, multiple_gradients2);
+      stan::test::expect_near_rel(
+          "scalar and vectorized results should have the same third order "
+          "gradients",
+          single_gradients3, multiple_gradients3);
     }
   }
 
@@ -755,13 +766,23 @@ class AgradDistributionTestFixture : public ::testing::Test {
       return;
     }
 
-    stan::test::expect_near_rel("sum of scalar log probs should match vectorized result",
-				stan::math::value_of_rec(single_lp),
-				stan::math::value_of_rec(multiple_lp));
+    stan::test::expect_near_rel(
+        "sum of scalar log probs should match vectorized result",
+        stan::math::value_of_rec(single_lp),
+        stan::math::value_of_rec(multiple_lp));
 
-    stan::test::expect_near_rel("scalar and vectorized results should have the same first order gradients", single_gradients1, multiple_gradients1);
-    stan::test::expect_near_rel("scalar and vectorized results should have the same second order gradients", single_gradients2, multiple_gradients2);
-    stan::test::expect_near_rel("scalar and vectorized results should have the same third order gradients", single_gradients3, multiple_gradients3);
+    stan::test::expect_near_rel(
+        "scalar and vectorized results should have the same first order "
+        "gradients",
+        single_gradients1, multiple_gradients1);
+    stan::test::expect_near_rel(
+        "scalar and vectorized results should have the same second order "
+        "gradients",
+        single_gradients2, multiple_gradients2);
+    stan::test::expect_near_rel(
+        "scalar and vectorized results should have the same third order "
+        "gradients",
+        single_gradients3, multiple_gradients3);
   }
 
   void test_length_0_vector() {
