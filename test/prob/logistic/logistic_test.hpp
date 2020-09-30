@@ -19,7 +19,7 @@ class AgradDistributionsLogistic : public AgradDistributionTest {
 
     param[0] = -1.0;  // y
     param[1] = 0.2;   // mu
-    param[2] = 0.5;  // sigma
+    param[2] = 0.5;   // sigma
     parameters.push_back(param);
     log_prob.push_back(-1.8805251237479538862);  // expected log_prob
   }
