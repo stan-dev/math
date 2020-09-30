@@ -135,6 +135,7 @@
 #include <stan/math/rev/fun/squared_distance.hpp>
 #include <stan/math/rev/fun/stan_print.hpp>
 #include <stan/math/rev/fun/step.hpp>
+#include <stan/math/rev/fun/subtract.hpp>
 #include <stan/math/rev/fun/sum.hpp>
 #include <stan/math/rev/fun/tan.hpp>
 #include <stan/math/rev/fun/tanh.hpp>
