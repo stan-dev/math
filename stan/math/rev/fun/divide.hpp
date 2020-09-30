@@ -32,18 +32,21 @@ divide(const Mat& m, const Scal& c) {
 
   double invc = 1.0 / value_of(c_ref);
 
-  using Mat_v
-      = Eigen::Matrix<var, Mat::RowsAtCompileTime, Mat::ColsAtCompileTime>;
+  using Mat_d = promote_scalar_t<double, Mat>;
+  using Mat_v = promote_scalar_t<var, Mat>;
+  
+  arena_t<Mat_d> res_val = invc * value_of(m_ref);
+  arena_t<Mat_v> res = res_val;
 
-  arena_matrix<Mat_v> res = invc * value_of(arena_m);
+  reverse_pass_callback([arena_m, c, res, res_val, invc]() mutable {
+    const auto& adj = to_ref(res.adj());
 
-  reverse_pass_callback([=]() mutable {
     if (!is_constant<Mat>::value) {
-      forward_as<Mat_v>(arena_m).adj() += invc * res.adj();
+      forward_as<Mat_v>(arena_m).adj() += invc * adj;
     }
     if (!is_constant<Scal>::value) {
       forward_as<var>(c).adj()
-          += -invc * (res.adj().array() * res.val().array()).sum();
+          += -invc * (adj.array() * res_val.array()).sum();
     }
   });
 
