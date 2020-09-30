@@ -11,7 +11,8 @@ TEST(mathMixCore, operatorAddition) {
 
 TEST(mathMixCore, operatorAdditionMatrixSmall) {
   // This calls operator+ under the hood
-  auto f = [](const auto& x1, const auto& x2) { return stan::math::add(x1, x2); };
+  auto f
+      = [](const auto& x1, const auto& x2) { return stan::math::add(x1, x2); };
   stan::test::ad_tolerances tols;
   tols.hessian_hessian_ = 1e-1;
   tols.hessian_fvar_hessian_ = 1e-1;
@@ -42,11 +43,11 @@ TEST(mathMixCore, operatorAdditionMatrixSmall) {
   stan::test::expect_ad_matvar(tols, f, matrix_m11, vector_v1);
   stan::test::expect_ad_matvar(tols, f, row_vector_rv1, matrix_m11);
   stan::test::expect_ad_matvar(tols, f, matrix_m11, matrix_m11);
-
 }
 
 TEST(mathMixCore, operatorAdditionMatrixZeroSize) {
-  auto f = [](const auto& x1, const auto& x2) { return stan::math::add(x1, x2); };
+  auto f
+      = [](const auto& x1, const auto& x2) { return stan::math::add(x1, x2); };
   stan::test::ad_tolerances tols;
   tols.hessian_hessian_ = 1e-1;
   tols.hessian_fvar_hessian_ = 1e-1;
@@ -76,7 +77,8 @@ TEST(mathMixCore, operatorAdditionMatrixZeroSize) {
 }
 
 TEST(mathMixCore, operatorAdditionMatrixNormal) {
-  auto f = [](const auto& x1, const auto& x2) { return stan::math::add(x1, x2); };
+  auto f
+      = [](const auto& x1, const auto& x2) { return stan::math::add(x1, x2); };
   stan::test::ad_tolerances tols;
   tols.hessian_hessian_ = 1e-1;
   tols.hessian_fvar_hessian_ = 1e-1;
@@ -109,7 +111,8 @@ TEST(mathMixCore, operatorAdditionMatrixNormal) {
 }
 
 TEST(mathMixCore, operatorAdditionMatrixFailures) {
-  auto f = [](const auto& x1, const auto& x2) { return stan::math::add(x1, x2); };
+  auto f
+      = [](const auto& x1, const auto& x2) { return stan::math::add(x1, x2); };
   stan::test::ad_tolerances tols;
   tols.hessian_hessian_ = 1e-1;
   tols.hessian_fvar_hessian_ = 1e-1;
@@ -132,5 +135,4 @@ TEST(mathMixCore, operatorAdditionMatrixFailures) {
   stan::test::expect_ad_matvar(tols, f, u_tr, u);
   stan::test::expect_ad_matvar(tols, f, u, vv);
   stan::test::expect_ad_matvar(tols, f, rvv, u);
-
 }
