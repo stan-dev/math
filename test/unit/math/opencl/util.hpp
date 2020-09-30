@@ -118,20 +118,29 @@ void prim_rev_argument_combinations(Functor f) {
   f(std::make_tuple(), std::make_tuple());
 }
 template <typename Functor, typename Arg0, typename... Args>
-void prim_rev_argument_combinations(const Functor& f, const Arg0 arg0,
+void prim_rev_argument_combinations(const Functor& f, const Arg0& arg0,
                                     const Args&... args) {
   prim_rev_argument_combinations(
       [&f, &arg0](auto args_for_cpu, auto args_for_opencl) {
-        return f(std::tuple_cat(std::forward_as_tuple(arg0), args_for_cpu),
-                 std::tuple_cat(std::forward_as_tuple(arg0), args_for_opencl));
+        constexpr size_t Size
+            = std::tuple_size<std::decay_t<decltype(args_for_cpu)>>::value;
+        return index_apply<Size>([&](auto... Is) {
+          return f(
+              std::forward_as_tuple(arg0, std::get<Is>(args_for_cpu)...),
+              std::forward_as_tuple(arg0, std::get<Is>(args_for_opencl)...));
+        });
       },
       args...);
   prim_rev_argument_combinations(
-      [&f, &arg0](auto args_for_cpu, auto args_for_opencl) {
-        return f(
-            std::tuple_cat(std::make_tuple(var_argument(arg0)), args_for_cpu),
-            std::tuple_cat(std::make_tuple(var_argument(arg0)),
-                           args_for_opencl));
+      [&](const auto& args_for_cpu, const auto& args_for_opencl) {
+        constexpr size_t Size
+            = std::tuple_size<std::decay_t<decltype(args_for_cpu)>>::value;
+        return index_apply<Size>([&](auto... Is) {
+          return f(std::make_tuple(var_argument(arg0),
+                                   std::get<Is>(args_for_cpu)...),
+                   std::make_tuple(var_argument(arg0),
+                                   std::get<Is>(args_for_opencl)...));
+        });
       },
       args...);
 }
