@@ -267,7 +267,7 @@ template <typename Var, typename EigMat,
  require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr,
  require_var_vt<std::is_arithmetic, Var>* = nullptr>
 inline auto operator+(const Var& a, const EigMat& b) {
-  promote_scalar_t<var, EigMat>  ret(a.val() + b.array());
+  arena_t<promote_scalar_t<var, EigMat>>  ret(a.val() + b.array());
   reverse_pass_callback([ret, a]() mutable {
     a.adj() += ret.adj().sum();
   });
@@ -309,7 +309,7 @@ template <typename Var, typename EigMat,
  require_rev_matrix_t<EigMat>* = nullptr,
  require_var_vt<std::is_arithmetic, Var>* = nullptr>
 inline auto operator+(const Var& a, const EigMat& b) {
-  EigMat ret(a.val() + b.val().array());
+  arena_t<EigMat> ret(a.val() + b.val().array());
   reverse_pass_callback([ret, a, b]() mutable {
     a.adj() += ret.adj().sum();
     const_cast<EigMat&>(b).adj() += ret.adj();
