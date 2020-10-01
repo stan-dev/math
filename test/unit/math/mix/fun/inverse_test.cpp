@@ -5,9 +5,9 @@ TEST(mathMixMatFun, inverse) {
   auto f = [](const auto& x) { return stan::math::inverse(x); };
 
   Eigen::MatrixXd t(0, 0);
+  stan::test::expect_ad(f, t);
   stan::test::expect_ad_matvar(f, t);
 
-  stan::test::expect_ad(f, t);
   Eigen::MatrixXd u(1, 1);
   u << 2;
   stan::test::expect_ad(f, u);
