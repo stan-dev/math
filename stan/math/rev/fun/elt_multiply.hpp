@@ -22,7 +22,8 @@ namespace math {
  * @return Elementwise product of matrices.
  */
 template <typename Mat1, typename Mat2,
-    require_any_var_matrix_t<Mat1, Mat2>* = nullptr>
+    require_all_matrix_t<Mat1, Mat2>* = nullptr,
+    require_any_rev_matrix_t<Mat1, Mat2>* = nullptr>
 auto elt_multiply(const Mat1& m1, const Mat2& m2) {
   const auto& m1_ref = to_ref(m1);
   const auto& m2_ref = to_ref(m2);
@@ -37,8 +38,10 @@ auto elt_multiply(const Mat1& m1, const Mat2& m2) {
       decltype(auto) ret_adj = eval(ret.adj());
       using var_m1 = arena_t<promote_scalar_t<var, Mat1>>;
       using var_m2 = arena_t<promote_scalar_t<var, Mat2>>;
-      forward_as<var_m1>(arena_m1).adj().array() += value_of(arena_m2).array() * ret_adj.array();
-      forward_as<var_m2>(arena_m2).adj().array() += value_of(arena_m1).array() * ret_adj.array();
+      for (Eigen::Index i = 0; i < arena_m2.size(); ++i) {
+        forward_as<var_m1>(arena_m1).coeffRef(i).adj() += forward_as<var_m1>(arena_m2).coeffRef(i).val() * ret_adj.coeffRef(i);
+        forward_as<var_m2>(arena_m2).coeffRef(i).adj() += forward_as<var_m1>(arena_m1).coeffRef(i).val() * ret_adj.coeffRef(i);        
+      }
     });
     return ret_type(ret);
   } else if (!is_constant<Mat1>::value) {
