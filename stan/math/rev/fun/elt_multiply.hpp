@@ -43,7 +43,7 @@ auto elt_multiply(const Mat1& m1, const Mat2& m2) {
       } else {
         for (Eigen::Index i = 0; i < arena_m2.size(); ++i) {
           forward_as<var_m1>(arena_m1).coeffRef(i).adj() += forward_as<var_m1>(arena_m2).coeffRef(i).val() * ret.coeffRef(i).adj();
-          forward_as<var_m2>(arena_m2).coeffRef(i).adj() += forward_as<var_m1>(arena_m1).coeffRef(i).val() * ret_adj.coeffRef(i).adj();
+          forward_as<var_m2>(arena_m2).coeffRef(i).adj() += forward_as<var_m1>(arena_m1).coeffRef(i).val() * ret.coeffRef(i).adj();
         }
       }
     });
