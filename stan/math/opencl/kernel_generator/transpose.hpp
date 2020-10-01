@@ -49,9 +49,10 @@ class transpose_
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline transpose_<std::remove_reference_t<Arg>> deep_copy() const {
-    return transpose_<std::remove_reference_t<Arg>>{
-        this->template get_arg<0>().deep_copy()};
+  inline auto deep_copy() const {
+    auto&& arg_copy = this->template get_arg<0>().deep_copy();
+    return transpose_<std::remove_reference_t<decltype(arg_copy)>>{
+        std::move(arg_copy)};
   }
 
   /**
