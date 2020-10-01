@@ -68,7 +68,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   if (N_instances == 0 || N_classes <= 1) {
     return 0;
   }
-  if (!include_summand<propto, T_alpha, T_beta>::value) {
+  if (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
     return 0;
   }
 
