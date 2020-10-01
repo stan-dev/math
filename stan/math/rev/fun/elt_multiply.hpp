@@ -40,8 +40,8 @@ auto elt_multiply(const Mat1& m1, const Mat2& m2) {
       decltype(auto) ret_adj = eval(ret.adj());
       using var_m1 = arena_t<promote_scalar_t<var, Mat1>>;
       using var_m2 = arena_t<promote_scalar_t<var, Mat2>>;
-      forward_as<var_m1>(arena_m1).adj().array() += arena_val_m2.array() * ret_adj.array();
-      forward_as<var_m2>(arena_m2).adj().array() += arena_val_m1.array() * ret_adj.array();
+      forward_as<var_m1>(arena_m1).adj() += arena_val_m2.cwiseProduct(ret_adj);
+      forward_as<var_m2>(arena_m2).adj() += arena_val_m1.cwiseProduct(ret_adj);
     });
     return ret_type(ret);
   } else if (!is_constant<Mat1>::value) {
@@ -50,7 +50,7 @@ auto elt_multiply(const Mat1& m1, const Mat2& m2) {
     arena_t<ret_type> ret(value_of(arena_m1).cwiseProduct(arena_m2));
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
       using var_m1 = arena_t<promote_scalar_t<var, Mat1>>;
-      forward_as<var_m1>(arena_m1).adj().array() += arena_m2.array() * ret.adj().array();
+      forward_as<var_m1>(arena_m1).adj() += arena_m2.cwiseProduct(ret.adj());
     });
     return ret_type(ret);
   } else if (!is_constant<Mat2>::value) {
@@ -59,7 +59,7 @@ auto elt_multiply(const Mat1& m1, const Mat2& m2) {
     arena_t<ret_type> ret(arena_m1.cwiseProduct(value_of(arena_m2)));
     reverse_pass_callback([ret, arena_m2, arena_m1]() mutable {
       using var_m2 = arena_t<promote_scalar_t<var, Mat2>>;
-      forward_as<var_m2>(arena_m2).adj().array() += arena_m1.array() * ret.adj().array();
+      forward_as<var_m2>(arena_m2).adj() += arena_m1.cwiseProduct(ret.adj());
     });
     return ret_type(ret);
   }
