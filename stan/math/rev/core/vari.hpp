@@ -494,9 +494,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @param x Value of the constructed variable.
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
-  explicit vari_value(const S& x)
-      : val_(x),
-        adj_(x.rows(), x.cols()) {
+  explicit vari_value(const S& x) : val_(x), adj_(x.rows(), x.cols()) {
     adj_.setZero();
     ChainableStack::instance_->var_stack_.push_back(this);
   }
@@ -517,10 +515,8 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * that its `chain()` method is not called.
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
-  vari_value(const S& x, bool stacked)
-      : val_(x),
-        adj_(x.rows(), x.cols()) {
-        adj_.setZero();
+  vari_value(const S& x, bool stacked) : val_(x), adj_(x.rows(), x.cols()) {
+    adj_.setZero();
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
     } else {
