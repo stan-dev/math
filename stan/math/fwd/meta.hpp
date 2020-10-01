@@ -3,6 +3,5 @@
 
 #include <stan/math/fwd/meta/is_fvar.hpp>
 #include <stan/math/fwd/meta/partials_type.hpp>
-#include <stan/math/fwd/meta/value_type.hpp>
 
 #endif
