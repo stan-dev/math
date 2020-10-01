@@ -77,10 +77,10 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
       }
     } else {
       for (int j = 0; j < src.cols(); ++j) {
-        for (int i = 0; i <= j ; ++i) {
+        for (int i = 0; i <= j; ++i) {
           dst.coeffRef(i, j) = packed[pos++];
         }
-        for (int k = j+1; k < src.cols(); ++k) {
+        for (int k = j + 1; k < src.cols(); ++k) {
           dst.coeffRef(k, j) = 0;
         }
       }
