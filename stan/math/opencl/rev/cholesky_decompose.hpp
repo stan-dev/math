@@ -14,7 +14,7 @@ namespace math {
  * Returns the sum of the coefficients of the specified
  * matrix on the OpenCL device.
  *
- * @param x Specified var_value containing a matrix.
+ * @param A Specified var_value containing a matrix.
  * @return Sum of coefficients of matrix.
  */
 inline var_value<matrix_cl<double>> cholesky_decompose(
