@@ -81,7 +81,8 @@ TEST(MathMixMatFun, choleskyDecompose) {
       for (int i = 0; i < n; ++i) {
         Sigma(i, i) = 1;
         for (int j = 0; j < i; ++j) {
-          Sigma(i, j) = std::pow(rho, fabs(static_cast<double>(i) - static_cast<double>(j)));
+          Sigma(i, j) = std::pow(
+              rho, fabs(static_cast<double>(i) - static_cast<double>(j)));
           Sigma(j, i) = Sigma(i, j);
         }
       }
