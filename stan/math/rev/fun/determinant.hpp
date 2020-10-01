@@ -24,12 +24,12 @@ inline var determinant(const T& m) {
   const auto& m_val = to_ref(value_of(arena_m));
 
   double det_val = m_val.determinant();
-  arena_t<Eigen::MatrixXd> arena_m_inv_t = m_val.inverse().transpose();
+  arena_t<Eigen::MatrixXd> arena_m_inv_transpose = m_val.inverse().transpose();
 
   var det = det_val;
 
-  reverse_pass_callback([arena_m, det, arena_m_inv_t]() mutable {
-    arena_m.adj() += (det.adj() * det.val()) * arena_m_inv_t;
+  reverse_pass_callback([arena_m, det, arena_m_inv_transpose]() mutable {
+    arena_m.adj() += (det.adj() * det.val()) * arena_m_inv_transpose;
   });
 
   return det;

@@ -27,13 +27,14 @@ namespace math {
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline plain_type_t<T> matrix_power(const T& M, const int n) {
-  const auto& M_ref = to_ref(M);
   check_square("matrix_power", "M", M);
   check_nonnegative("matrix_power", "n", n);
-  check_finite("matrix_power", "M", M_ref);
 
   if (M.size() == 0)
     return M;
+
+  const auto& M_ref = to_ref(M);
+  check_finite("matrix_power", "M", M_ref);
 
   size_t N = M.rows();
 
@@ -43,13 +44,13 @@ inline plain_type_t<T> matrix_power(const T& M, const int n) {
   if (n == 1)
     return M_ref;
 
-  arena_t<std::vector<Eigen::MatrixXd>> powers(n + 1);
+  arena_t<std::vector<Eigen::MatrixXd>> powers;
   arena_t<plain_type_t<T>> arena_M = M_ref;
 
-  powers[0] = Eigen::MatrixXd::Identity(N, N);
-  powers[1] = value_of(M_ref).eval();
+  powers.emplace_back(Eigen::MatrixXd::Identity(N, N));
+  powers.emplace_back(value_of(M_ref));
   for (size_t i = 2; i <= n; ++i) {
-    powers[i] = powers[1] * powers[i - 1];
+    powers.emplace_back(powers[1] * powers[i - 1]);
   }
 
   arena_t<plain_type_t<T>> res = powers[powers.size() - 1];

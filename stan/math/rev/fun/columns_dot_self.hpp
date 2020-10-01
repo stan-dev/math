@@ -27,8 +27,7 @@ inline auto columns_dot_self(const Mat& x) {
 
   if (x.size() > 0) {
     reverse_pass_callback([res, arena_x, arena_x_val]() mutable {
-      Eigen::RowVectorXd rv = res.adj();
-      arena_x.adj() += 2 * arena_x_val * rv.asDiagonal();
+      arena_x.adj() += 2 * arena_x_val * res.adj().asDiagonal();
     });
   }
 
