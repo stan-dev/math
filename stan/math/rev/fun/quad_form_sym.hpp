@@ -13,6 +13,7 @@
 namespace stan {
 namespace math {
 
+namespace internal {
 /**
  * Return the quadratic form \f$ B^T A B \f$ of a symmetric matrix.
  *
@@ -23,8 +24,7 @@ namespace math {
  *
  * @param A symmetric matrix
  * @param B second matrix
- * @return The quadratic form, which is a symmetric matrix of size Cb.
- * If \c B is a column vector returns a scalar.
+ * @return the quadratic form as a matrix
  * @throws std::invalid_argument if A is not symmetric, or if A cannot be
  * multiplied by B
  */
@@ -33,7 +33,7 @@ template <typename EigMat1, typename EigMat2,
           require_any_vt_var<EigMat1, EigMat2>* = nullptr>
 inline Eigen::Matrix<var, EigMat2::ColsAtCompileTime,
                      EigMat2::ColsAtCompileTime>
-quad_form_sym(const EigMat1& A, const EigMat2& B) {
+quad_form_sym_impl(const EigMat1& A, const EigMat2& B) {
   check_multiplicable("quad_form_sym", "A", A, "B", B);
 
   using A_ref_t = ref_type_t<EigMat1>;
@@ -88,6 +88,50 @@ quad_form_sym(const EigMat1& A, const EigMat2& B) {
       });
 
   return res;
+}
+}  // namespace internal
+
+/**
+ * Return the quadratic form \f$ B^T A B \f$ of a symmetric matrix.
+ *
+ * Symmetry of the resulting matrix is guaranteed.
+ *
+ * @tparam EigMat1 type of the first (symmetric) matrix
+ * @tparam EigMat2 type of the second matrix
+ *
+ * @param A symmetric matrix
+ * @param B second matrix
+ * @return the quadratic form as a matrix
+ * @throws std::invalid_argument if A is not symmetric, or if A cannot be
+ * multiplied by B
+ */
+template <typename EigMat1, typename EigMat2,
+          require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
+          require_not_eigen_col_vector_t<EigMat2>* = nullptr,
+          require_any_vt_var<EigMat1, EigMat2>* = nullptr>
+inline auto quad_form_sym(const EigMat1& A, const EigMat2& B) {
+  return internal::quad_form_sym_impl(A, B);
+}
+
+/**
+ * Return the quadratic form \f$ b^T A b \f$ of a symmetric matrix.
+ *
+ * Symmetry of the resulting matrix is guaranteed.
+ *
+ * @tparam EigMat type of the symmetric matrix A
+ * @tparam ColVec type of the vector b
+ *
+ * @param A symmetric matrix
+ * @param b column vector
+ * @return the quadratic form as a scalar
+ * @throws std::invalid_argument if A is not symmetric, or if A cannot be
+ * multiplied by b
+ */
+template <typename EigMat, typename ColVec, require_eigen_t<EigMat>* = nullptr,
+          require_eigen_col_vector_t<ColVec>* = nullptr,
+          require_any_vt_var<EigMat, ColVec>* = nullptr>
+inline var quad_form_sym(const EigMat& A, const ColVec& B) {
+  return internal::quad_form_sym_impl(A, B)(0, 0);
 }
 
 }  // namespace math

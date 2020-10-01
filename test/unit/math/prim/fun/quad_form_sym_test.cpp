@@ -111,3 +111,21 @@ TEST(MathMatrixPrim, quad_form_sym_2095) {
   matrix_d cd = stan::math::quad_form_sym(ad, bd);
   EXPECT_FLOAT_EQ(0, cd(1, 0) - cd(0, 1));
 }
+
+TEST(AgradRev, quad_form_sym_return_types) {
+  using stan::math::quad_form_sym;
+
+  double a = 5.0;
+
+  Eigen::MatrixXd A(2, 2);
+  A << 1.0, 1.0, 1.0, 1.0;
+  
+  Eigen::VectorXd b(2);
+  b << 1.0, 1.0;
+
+  Eigen::MatrixXd B(2, 1);
+  B << 1.0, 1.0;
+
+  EXPECT_TRUE((std::is_same<double, decltype(quad_form_sym(A, b))>::value));
+  EXPECT_TRUE((std::is_same<Eigen::MatrixXd, decltype(quad_form_sym(A, B))>::value));
+}
