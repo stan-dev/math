@@ -119,7 +119,7 @@ TEST(AgradRev, quad_form_sym_return_types) {
 
   Eigen::MatrixXd A(2, 2);
   A << 1.0, 1.0, 1.0, 1.0;
-  
+
   Eigen::VectorXd b(2);
   b << 1.0, 1.0;
 
@@ -127,5 +127,6 @@ TEST(AgradRev, quad_form_sym_return_types) {
   B << 1.0, 1.0;
 
   EXPECT_TRUE((std::is_same<double, decltype(quad_form_sym(A, b))>::value));
-  EXPECT_TRUE((std::is_same<Eigen::MatrixXd, decltype(quad_form_sym(A, B))>::value));
+  EXPECT_TRUE(
+      (std::is_same<Eigen::MatrixXd, decltype(quad_form_sym(A, B))>::value));
 }
