@@ -23,7 +23,7 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the dimensions of the
  *    containers do not match
  */
-template <typename T1, typename T2>
+template <typename T1, typename T2, require_all_not_eigen_t<T1, T2>* = nullptr>
 inline void check_matching_dims(const char* function, const char* name1,
                                 const T1& y1, const char* name2, const T2& y2) {
   std::vector<int> y1_d = dims(y1);
@@ -61,6 +61,17 @@ inline void check_matching_dims(const char* function, const char* name1,
   }
 }
 
+template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr>
+inline void check_matching_dims(const char* function, const char* name1,
+                                const T1& y1, const char* name2, const T2& y2) {
+  if (y1.rows() != y2.rows() || y1.cols() != y2.cols()) {
+    std::ostringstream y1_err;
+    std::ostringstream msg_str;
+    y1_err << "(" << y1.rows() << ", " << y1.cols() << ")";
+    msg_str << y2.rows() << ", " << y2.cols() << ") must match in size";
+    invalid_argument(function, name1, y1_err.str(), "(", std::string(msg_str.str()).c_str());
+  }
+}
 /**
  * Check if the two matrices are of the same size.
  * This function checks the runtime sizes and can also check the static
