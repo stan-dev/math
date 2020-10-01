@@ -130,8 +130,8 @@ inline auto quad_form_sym(const EigMat1& A, const EigMat2& B) {
 template <typename EigMat, typename ColVec, require_eigen_t<EigMat>* = nullptr,
           require_eigen_col_vector_t<ColVec>* = nullptr,
           require_any_vt_var<EigMat, ColVec>* = nullptr>
-inline var quad_form_sym(const EigMat& A, const ColVec& B) {
-  return internal::quad_form_sym_impl(A, B)(0, 0);
+inline var quad_form_sym(const EigMat& A, const ColVec& b) {
+  return internal::quad_form_sym_impl(A, b)(0, 0);
 }
 
 }  // namespace math
