@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_META_REF_TYPE_HPP
 
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_arena_matrix.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/plain_type.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
