@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
+#include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <ostream>
 #include <type_traits>
@@ -187,14 +188,14 @@ class vari_view;
  *  defined methods for subslices of the value and adjoint.
  */
 template <typename Derived>
-class vari_view_crtp {
+class vari_view_eigen {
  private:
   /**
    * Making the base constructor private while making the derived class a friend
    * help's catch if derived types inherit from another derived types
    * base class. See the fluentcpp article on CRTP for more information.
    */
-  vari_view_crtp() = default;
+  vari_view_eigen() = default;
   friend Derived;
 
   /**
@@ -411,7 +412,7 @@ class vari_view_crtp {
 template <typename T>
 class vari_view<T, require_not_plain_type_t<T>> final
     : public vari_base,
-      public vari_view_crtp<vari_view<T, require_not_plain_type_t<T>>> {
+      public vari_view_eigen<vari_view<T, require_not_plain_type_t<T>>> {
  public:
   using PlainObject = plain_type_t<T>;
   using value_type = std::decay_t<T>;  // The underlying type for this class
@@ -449,7 +450,7 @@ class vari_view<T, require_not_plain_type_t<T>> final
 template <typename T>
 class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
     : public vari_base,
-      public vari_view_crtp<vari_value<
+      public vari_view_eigen<vari_value<
           T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>> {
  public:
   /**
@@ -458,8 +459,6 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   using PlainObject = plain_type_t<T>;
   using value_type = PlainObject;  // The underlying type for this class
   using eigen_scalar = value_type_t<PlainObject>;  // A floating point type
-  using eigen_map = Eigen::Map<PlainObject, Eigen::Unaligned,
-                               Eigen::Stride<0, 0>>;  // Maps for adj_ and val_
   using vari_type = vari_value<T>;
   /**
    * Number of rows known at compile time
@@ -469,22 +468,17 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * Number of columns known at compile time
    */
   static constexpr int ColsAtCompileTime = PlainObject::ColsAtCompileTime;
-  /**
-   * Maps for adj_ and val_
-   */
-  eigen_scalar* val_mem_;  // Pointer to memory allocated on the stack for val_
-  eigen_scalar* adj_mem_;  // Pointer to memory allocated on the stack for adj_
 
   /**
    * The value of this variable.
    */
-  eigen_map val_;
+  arena_matrix<PlainObject> val_;
 
   /**
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
    */
-  eigen_map adj_;
+  arena_matrix<PlainObject> adj_;
 
   /**
    * Construct a dense Eigen variable implementation from a value. The
@@ -499,26 +493,11 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @tparam S A dense Eigen type that is convertible to `value_type`
    * @param x Value of the constructed variable.
    */
-  template <typename S, require_convertible_t<S&, T>* = nullptr,
-            require_not_arena_matrix_t<S>* = nullptr>
+  template <typename S, require_convertible_t<S&, T>* = nullptr>
   explicit vari_value(const S& x)
-      : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-            x.size())),
-        adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-            x.size())),
-        val_(eigen_map(val_mem_, x.rows(), x.cols()) = x),
-        adj_(eigen_map(adj_mem_, x.rows(), x.cols()).setZero()) {
-    ChainableStack::instance_->var_stack_.push_back(this);
-  }
-
-  template <typename S, require_convertible_t<S&, T>* = nullptr,
-            require_arena_matrix_vt<std::is_arithmetic, S>* = nullptr>
-  explicit vari_value(const S& x)
-      : val_mem_(const_cast<value_type_t<S>*>(x.data())),
-        adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-            x.size())),
-        val_(eigen_map(val_mem_, x.rows(), x.cols())),
-        adj_(eigen_map(adj_mem_, x.rows(), x.cols()).setZero()) {
+      : val_(x),
+        adj_(x.rows(), x.cols()) {
+    adj_.setZero();
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
@@ -537,45 +516,11 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @param stacked If false will put this this vari on the nochain stack so
    * that its `chain()` method is not called.
    */
-  template <typename S, require_convertible_t<S&, T>* = nullptr,
-            require_not_arena_matrix_t<S>* = nullptr>
+  template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(const S& x, bool stacked)
-      : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-            x.size())),
-        adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-            x.size())),
-        val_(eigen_map(val_mem_, x.rows(), x.cols()) = x),
-        adj_(eigen_map(adj_mem_, x.rows(), x.cols()).setZero()) {
-    if (stacked) {
-      ChainableStack::instance_->var_stack_.push_back(this);
-    } else {
-      ChainableStack::instance_->var_nochain_stack_.push_back(this);
-    }
-  }
-
-  /**
-   * Construct a dense Eigen variable implementation from a value. The
-   *  adjoint is initialized to zero and if `stacked` is `false` this vari
-   *  will be not be put on the var_stack. Instead it will only be put on
-   *  a stack to keep track of whether the adjoint needs to be set to zero.
-   *  Variables should be constructed before variables on which they depend
-   *  to insure proper partial derivative propagation.  During
-   *  derivative propagation, the chain() method of each variable
-   *  will be called in the reverse order of construction.
-   *
-   * @tparam S A dense `arena_matrix`
-   * @param x Value of the constructed variable.
-   * @param stacked If false will put this this vari on the nochain stack so
-   * that its `chain()` method is not called.
-   */
-  template <typename S, require_convertible_t<S&, T>* = nullptr,
-            require_arena_matrix_t<S>* = nullptr>
-  vari_value(const S& x, bool stacked)
-      : val_mem_(const_cast<value_type_t<S>*>(x.data())),
-        adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-            x.size())),
-        val_(eigen_map(val_mem_, x.rows(), x.cols())),
-        adj_(eigen_map(adj_mem_, x.rows(), x.cols()).setZero()) {
+      : val_(x),
+        adj_(x.rows(), x.cols()) {
+        adj_.setZero();
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
     } else {

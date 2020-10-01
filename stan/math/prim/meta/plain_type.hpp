@@ -41,54 +41,14 @@ struct eval_return_type {
 template <typename T>
 using eval_return_type_t = typename eval_return_type<T>::type;
 
-namespace internal {
-template <typename T>
-using has_plain_object_t = typename std::decay_t<T>::PlainObject;
-template <typename T>
-using has_nested_expression_t =
-    typename std::decay_t<T>::ExpressionTypeNestedCleaned;
-}  // namespace internal
-
-/**
- * Template metaprogram defining the base scalar type of
- * values stored in an Eigen `VectorWiseOp` expression
- *
- * @tparam T type to check.
- * @ingroup type_trait
- */
-template <typename T>
-struct scalar_type<
-    T, require_t<is_detected<T, internal::has_nested_expression_t>>> {
-  using type = scalar_type_t<typename std::decay_t<T>::Scalar>;
-};
-
-/**
- * Template metaprogram defining the type of values stored in an
- * Eigen `VectorWiseOp` expression
- *
- * @tparam T type to check
- * @ingroup type_trait
- */
-template <typename T>
-struct value_type<
-    T, require_t<is_detected<T, internal::has_nested_expression_t>>> {
-  using type = typename std::decay_t<T>::Scalar;
-};
-
 /**
  * Determines plain (non expression) type associated with \c T. For \c Eigen
  * expression it is a type the expression can be evaluated into.
  * @tparam T type to determine plain type of
  */
 template <typename T>
-struct plain_type<T, require_t<is_detected<T, internal::has_plain_object_t>>> {
+struct plain_type<T, require_eigen_t<T>> {
   using type = typename std::decay_t<T>::PlainObject;
-};
-
-template <typename T>
-struct plain_type<
-    T, require_t<is_detected<T, internal::has_nested_expression_t>>> {
-  using type = typename std::decay_t<T>::ExpressionTypeNestedCleaned;
 };
 
 }  // namespace stan
