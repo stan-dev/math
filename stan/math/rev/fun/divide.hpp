@@ -34,7 +34,7 @@ divide(const Mat& m, const Scal& c) {
 
   using Mat_d = promote_scalar_t<double, Mat>;
   using Mat_v = promote_scalar_t<var, Mat>;
-  
+
   arena_t<Mat_d> res_val = invc * value_of(m_ref);
   arena_t<Mat_v> res = res_val;
 
@@ -45,8 +45,7 @@ divide(const Mat& m, const Scal& c) {
       forward_as<Mat_v>(arena_m).adj() += invc * adj;
     }
     if (!is_constant<Scal>::value) {
-      forward_as<var>(c).adj()
-          += -invc * (adj.array() * res_val.array()).sum();
+      forward_as<var>(c).adj() += -invc * (adj.array() * res_val.array()).sum();
     }
   });
 
