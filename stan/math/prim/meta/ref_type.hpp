@@ -35,7 +35,7 @@ struct ref_type_if {
 };
 
 template <bool Condition, typename T>
-struct ref_type_if<Condition, T, require_not_eigen_t<T>> {
+struct ref_type_if<Condition, T, require_t<bool_constant<!is_eigen<T>::value || is_arena_matrix<T>::value>>> {
   using type = std::conditional_t<std::is_rvalue_reference<T>::value,
                                   std::remove_reference_t<T>, const T&>;
 };
