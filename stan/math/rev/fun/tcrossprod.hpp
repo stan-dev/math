@@ -22,7 +22,7 @@ namespace math {
  * @return M times its transpose.
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
-inline plain_type_t<T> tcrossprod(const T& M) {
+inline promote_var_matrix_t<Eigen::MatrixXd, T> tcrossprod(const T& M) {
   if (M.size() == 0) {
     return M;
   }
