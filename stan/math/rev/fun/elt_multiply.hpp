@@ -33,15 +33,20 @@ auto elt_multiply(const Mat1& m1, const Mat2& m2) {
   if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
     arena_t<Mat1> arena_m1 = m1_ref;
     arena_t<Mat2> arena_m2 = m2_ref;
-    arena_t<promote_scalar_t<double, Mat1>> arena_m1_val = value_of(arena_m1);
-    arena_t<promote_scalar_t<double, Mat2>> arena_m2_val = value_of(arena_m2);
-    arena_t<ret_type> ret(arena_m1_val.cwiseProduct(arena_m2_val));
-    reverse_pass_callback([ret, arena_m1, arena_m2, arena_m1_val, arena_m2_val]() mutable {
-      const auto& ret_adj = to_ref(ret.adj());
+    arena_t<ret_type> ret(value_of(arena_m1).cwiseProduct(value_of(arena_m2)));
+    reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
+      decltype(auto) ret_adj = eval(ret.adj());
       using var_m1 = arena_t<promote_scalar_t<var, Mat1>>;
       using var_m2 = arena_t<promote_scalar_t<var, Mat2>>;
-      forward_as<var_m1>(arena_m1).adj() += arena_m2_val.cwiseProduct(ret_adj);
-      forward_as<var_m2>(arena_m2).adj() += arena_m1_val.cwiseProduct(ret_adj);
+      if (is_var_matrix<Mat1>::value && is_var_matrix<Mat2>::value) {
+        forward_as<var_m1>(arena_m1).adj().array() += forward_as<var_m1>(arena_m2).val().array() * ret_adj.array();
+        forward_as<var_m2>(arena_m2).adj().array() += forward_as<var_m1>(arena_m1).val().array() * ret_adj.array();
+      } else {
+        for (Eigen::Index i = 0; i < arena_m2.size(); ++i) {
+          forward_as<var_m1>(arena_m1).coeffRef(i).adj() += forward_as<var_m1>(arena_m2).coeffRef(i).val() * ret_adj.coeffRef(i);
+          forward_as<var_m2>(arena_m2).coeffRef(i).adj() += forward_as<var_m1>(arena_m1).coeffRef(i).val() * ret_adj.coeffRef(i);
+        }
+      }
     });
     return ret_type(ret);
   } else if (!is_constant<Mat1>::value) {
