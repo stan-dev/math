@@ -18,16 +18,14 @@ namespace math {
  */
 template <typename Mat, require_rev_matrix_t<Mat>* = nullptr>
 inline auto columns_dot_self(const Mat& x) {
-  using T_return = promote_var_matrix_t<Eigen::RowVectorXd, Mat>;
-
   arena_t<plain_type_t<Mat>> arena_x = x;
   arena_t<Eigen::MatrixXd> arena_x_val = value_of(arena_x);
-
-  T_return res = (arena_x_val.array() * arena_x_val.array()).colwise().sum();
+  arena_t<promote_var_matrix_t<Eigen::RowVectorXd, Mat>>
+    res = arena_x_val.colwise().squaredNorm();
 
   if (x.size() > 0) {
     reverse_pass_callback([res, arena_x, arena_x_val]() mutable {
-      arena_x.adj() += 2 * arena_x_val * res.adj().asDiagonal();
+      arena_x.adj() += arena_x_val * (2 * res.adj()).asDiagonal();
     });
   }
 

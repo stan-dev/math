@@ -17,15 +17,12 @@ namespace math {
  * Returns the result of post-multiplying a matrix by its
  * own transpose.
  *
- * @tparam T Type of the matrix (must be derived from \c Eigen::MatrixBase)
+ * @tparam T Type of the matrix
  * @param M Matrix to multiply.
  * @return M times its transpose.
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline plain_type_t<T> tcrossprod(const T& M) {
-  using T_double = Eigen::MatrixXd;
-  using T_var = plain_type_t<T>;
-
   if (M.size() == 0) {
     return M;
   }
@@ -33,7 +30,7 @@ inline plain_type_t<T> tcrossprod(const T& M) {
   arena_t<plain_type_t<T>> arena_M = M;
   arena_t<Eigen::MatrixXd> arena_M_val = value_of(arena_M);
 
-  arena_t<T_var> res = arena_M_val * arena_M_val.transpose();
+  arena_t<plain_type_t<T>> res = arena_M_val * arena_M_val.transpose();
 
   reverse_pass_callback([res, arena_M, arena_M_val]() mutable {
     const auto& adj = to_ref(res.adj());

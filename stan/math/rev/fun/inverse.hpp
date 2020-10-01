@@ -25,6 +25,7 @@ namespace math {
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline plain_type_t<T> inverse(const T& m) {
   check_square("inverse", "m", m);
+
   if (m.size() == 0) {
     return m;
   }

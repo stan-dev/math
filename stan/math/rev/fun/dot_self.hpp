@@ -15,8 +15,7 @@ namespace math {
 /**
  * Returns the dot product of a vector of var with itself.
  *
- * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile time dimension equal to 1)
+ * @tparam T type of the vector (must have one compile time dimension equal to 1)
  * @param[in] v Vector.
  * @return Dot product of the vector with itself.
  */
@@ -29,7 +28,7 @@ inline var dot_self(const T& v) {
   var res = v_val.dot(v_val);
 
   reverse_pass_callback([res, arena_v, v_val]() mutable {
-    arena_v.adj() += 2.0 * res.adj() * v_val;
+    arena_v.adj() += (2.0 * res.adj()) * v_val;
   });
 
   return res;

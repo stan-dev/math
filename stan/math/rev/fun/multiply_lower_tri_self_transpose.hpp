@@ -13,22 +13,20 @@ namespace math {
 
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline plain_type_t<T> multiply_lower_tri_self_transpose(const T& L) {
-  using T_double = Eigen::MatrixXd;
-  using T_var = plain_type_t<T>;
-
   if (L.size() == 0)
     return L;
 
-  arena_t<T_var> arena_L = L;
-  arena_t<T_double> arena_L_val
+  arena_t<plain_type_t<T>> arena_L = L;
+  arena_t<Eigen::MatrixXd> arena_L_val
       = value_of(arena_L).template triangularView<Eigen::Lower>();
 
-  arena_t<T_var> res = arena_L_val.template triangularView<Eigen::Lower>()
+  arena_t<plain_type_t<T>> res = arena_L_val.template triangularView<Eigen::Lower>()
                        * arena_L_val.transpose();
 
   reverse_pass_callback([res, arena_L, arena_L_val]() mutable {
     const auto& adj = to_ref(res.adj());
-    auto adjL
+
+    const auto& adjL
       = (adj.transpose() + adj)
       * arena_L_val.template triangularView<Eigen::Lower>();
 
