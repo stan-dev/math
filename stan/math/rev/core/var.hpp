@@ -138,6 +138,7 @@ class var_value {
    * @return Adjoint for this variable.
    */
   inline auto& adj() { return vi_->adj_; }
+  inline auto& adj_op() { return vi_->adj_; }
 
   inline Eigen::Index rows() const { return vi_->val_.rows(); }
   inline Eigen::Index cols() const { return vi_->val_.cols(); }
@@ -442,7 +443,7 @@ class var_value {
    * @return number of rows.
    */
   template <typename U = T,
-            require_any_t<is_eigen_matrix<U>, is_matrix_cl<U>>* = nullptr>
+            require_any_t<is_eigen<U>, is_matrix_cl<U>>* = nullptr>
   auto rows() const {
     return vi_->rows();
   }
@@ -452,7 +453,7 @@ class var_value {
    * @return number of columns.
    */
   template <typename U = T,
-            require_any_t<is_eigen_matrix<U>, is_matrix_cl<U>>* = nullptr>
+            require_any_t<is_eigen<U>, is_matrix_cl<U>>* = nullptr>
   auto cols() const {
     return vi_->cols();
   }

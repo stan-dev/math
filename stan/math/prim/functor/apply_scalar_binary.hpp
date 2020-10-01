@@ -115,7 +115,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * @return Eigen object with result of applying functor to inputs.
  */
 template <typename T1, typename T2, typename F,
-          require_eigen_matrix_vt<is_stan_scalar, T1>* = nullptr,
+          require_eigen_matrix_dynamic_vt<is_stan_scalar, T1>* = nullptr,
           require_std_vector_vt<is_std_vector, T2>* = nullptr,
           require_std_vector_st<std::is_integral, T2>* = nullptr>
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
@@ -150,7 +150,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
 template <typename T1, typename T2, typename F,
           require_std_vector_vt<is_std_vector, T1>* = nullptr,
           require_std_vector_st<std::is_integral, T1>* = nullptr,
-          require_eigen_matrix_vt<is_stan_scalar, T2>* = nullptr>
+          require_eigen_matrix_dynamic_vt<is_stan_scalar, T2>* = nullptr>
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
   if (num_elements(x) != num_elements(y)) {
     std::ostringstream msg;

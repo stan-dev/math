@@ -15,6 +15,22 @@ TEST(OpenCLSum, prim_rev_values_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(sum_functor, a);
 }
 
+TEST(OpenCLSum, prim_rev_values_zero_rows) {
+  int N = 0;
+  int M = 3;
+
+  Eigen::MatrixXd a(N, M);
+  stan::math::test::compare_cpu_opencl_prim_rev(sum_functor, a);
+}
+
+TEST(OpenCLSum, prim_rev_values_zero_cols) {
+  int N = 2;
+  int M = 0;
+
+  Eigen::MatrixXd a(N, M);
+  stan::math::test::compare_cpu_opencl_prim_rev(sum_functor, a);
+}
+
 TEST(OpenCLSum, prim_rev_values_large) {
   int N = 71;
   int M = 83;
