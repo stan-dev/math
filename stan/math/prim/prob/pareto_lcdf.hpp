@@ -51,9 +51,9 @@ return_type_t<T_y, T_scale, T_shape> pareto_lcdf(const T_y& y,
   ref_type_t<decltype(value_of(y_min_arr))> y_min_val = value_of(y_min_arr);
   ref_type_t<decltype(value_of(alpha_arr))> alpha_val = value_of(alpha_arr);
 
-  check_nonnegative(function, "Random variable", y);
-  check_positive_finite(function, "Scale parameter", y_min);
-  check_positive_finite(function, "Shape parameter", alpha);
+  check_nonnegative(function, "Random variable", y_val);
+  check_positive_finite(function, "Scale parameter", y_min_val);
+  check_positive_finite(function, "Shape parameter", alpha_val);
 
   operands_and_partials<T_y_ref, T_y_min_ref, T_alpha_ref> ops_partials(
       y_ref, y_min_ref, alpha_ref);
