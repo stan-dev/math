@@ -130,8 +130,10 @@ inline auto operator+(const VarMat1& a, const VarMat2& b) {
   arena_t<VarMat1> arena_a = a;
   arena_t<VarMat2> arena_b = b;
   reverse_pass_callback([ret, arena_a, arena_b]() mutable {
-    arena_a.adj() += ret.adj_op();
-    arena_b.adj() += ret.adj_op();
+    for (Eigen::Index i = 0; i < ret.size(); ++i) {
+      arena_a.adj().coeffRef(i) += ret.adj().coeffRef(i);
+      arena_b.adj().coeffRef(i) += ret.adj().coeffRef(i);
+    }
   });
   return ret_type(ret);
 }
@@ -230,14 +232,9 @@ inline auto operator+(const Var& a, const VarMat& b) {
   arena_t<VarMat> arena_b(b);
   arena_t<VarMat> ret(a.val() + b.val().array());
   reverse_pass_callback([ret, a, arena_b]() mutable {
-    if (is_var_matrix<VarMat>::value) {
-      a.adj() += ret.adj().sum();
-      arena_b.adj() += ret.adj();
-    } else {
-      for (Eigen::Index i = 0; i < arena_b.size(); ++i) {
-        a.adj() += ret.coeffRef(i).adj();
-        arena_b.coeffRef(i).adj() += ret.coeffRef(i).adj();
-      }
+    for (Eigen::Index i = 0; i < arena_b.size(); ++i) {
+      a.adj() += ret.adj().coeffRef(i);
+      arena_b.adj().coeffRef(i) += ret.adj().coeffRef(i);
     }
   });
   return plain_type_t<VarMat>(ret);
