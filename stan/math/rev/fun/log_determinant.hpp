@@ -18,22 +18,17 @@ inline var log_determinant(const T& m) {
   check_square("determinant", "m", m);
 
   if (m.size() == 0) {
-    return 0.0;
+    return var(0.0);
   }
 
-  arena_t<plain_type_t<T>> arena_m = m;
-
+  arena_t<T> arena_m = m;
   Eigen::FullPivHouseholderQR<Eigen::MatrixXd> hh
       = arena_m.val().fullPivHouseholderQr();
-
   arena_t<Eigen::MatrixXd> arena_hh_inv_transpose = hh.inverse().transpose();
-
   var log_det = hh.logAbsDeterminant();
-
   reverse_pass_callback([arena_m, log_det, arena_hh_inv_transpose]() mutable {
-    arena_m.adj() += log_det.adj() * arena_hh_inv_transpose;
+    arena_m.adj().noalias() += log_det.adj() * arena_hh_inv_transpose;
   });
-
   return log_det;
 }
 

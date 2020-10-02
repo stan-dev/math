@@ -12,15 +12,15 @@ namespace stan {
 namespace math {
 
 template <typename T, require_rev_matrix_t<T>* = nullptr>
-inline plain_type_t<T> multiply_lower_tri_self_transpose(const T& L) {
+inline auto multiply_lower_tri_self_transpose(const T& L) {
   if (L.size() == 0)
-    return L;
+    return plain_type_t<T>(L);
 
-  arena_t<plain_type_t<T>> arena_L = L;
+  arena_t<T> arena_L = L;
   arena_t<Eigen::MatrixXd> arena_L_val
       = value_of(arena_L).template triangularView<Eigen::Lower>();
 
-  arena_t<plain_type_t<T>> res
+  arena_t<T> res
       = arena_L_val.template triangularView<Eigen::Lower>()
         * arena_L_val.transpose();
 
@@ -33,7 +33,7 @@ inline plain_type_t<T> multiply_lower_tri_self_transpose(const T& L) {
     arena_L.adj() += adjL.template triangularView<Eigen::Lower>();
   });
 
-  return res;
+  return plain_type_t<T>(res);
 }
 
 }  // namespace math

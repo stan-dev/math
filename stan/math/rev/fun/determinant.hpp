@@ -17,21 +17,15 @@ inline var determinant(const T& m) {
   check_square("determinant", "m", m);
 
   if (m.size() == 0) {
-    return 1;
+    return var(1.0);
   }
-
-  arena_t<plain_type_t<T>> arena_m = m;
+  arena_t<T> arena_m = m;
   const auto& m_val = to_ref(value_of(arena_m));
-
-  double det_val = m_val.determinant();
+  var det = m_val.determinant();
   arena_t<Eigen::MatrixXd> arena_m_inv_transpose = m_val.inverse().transpose();
-
-  var det = det_val;
-
   reverse_pass_callback([arena_m, det, arena_m_inv_transpose]() mutable {
-    arena_m.adj() += (det.adj() * det.val()) * arena_m_inv_transpose;
+    arena_m.adj().noalias() += (det.adj() * det.val()) * arena_m_inv_transpose;
   });
-
   return det;
 }
 
