@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_CORE_OPERATOR_ADDITION_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err/is_equal.hpp>
 #include <stan/math/prim/err/check_matching_dims.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/fill.hpp>
@@ -13,35 +12,6 @@
 
 namespace stan {
 namespace math {
-
-namespace internal {
-class add_vv_vari final : public op_vv_vari {
- public:
-  add_vv_vari(vari* avi, vari* bvi)
-      : op_vv_vari(avi->val_ + bvi->val_, avi, bvi) {}
-  void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bvi_->val_))) {
-      avi_->adj_ = NOT_A_NUMBER;
-      bvi_->adj_ = NOT_A_NUMBER;
-    } else {
-      avi_->adj_ += adj_;
-      bvi_->adj_ += adj_;
-    }
-  }
-};
-
-class add_vd_vari final : public op_vd_vari {
- public:
-  add_vd_vari(vari* avi, double b) : op_vd_vari(avi->val_ + b, avi, b) {}
-  void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bd_))) {
-      avi_->adj_ = NOT_A_NUMBER;
-    } else {
-      avi_->adj_ += adj_;
-    }
-  }
-};
-}  // namespace internal
 
 /**
  * Addition operator for variables (C++).
@@ -185,15 +155,11 @@ inline auto operator+(const VarMat& a, const Arith& b) {
   using op_ret_type
       = decltype((a.val().array() + as_array_or_scalar(b)).matrix());
   using ret_type = promote_var_matrix_t<op_ret_type, VarMat>;
-  if (is_equal(b, 0.0)) {
-    return ret_type(a);
-  } else {
     arena_t<VarMat> arena_a = a;
     arena_t<ret_type> ret(a.val().array() + as_array_or_scalar(b));
     reverse_pass_callback(
         [ret, arena_a]() mutable { arena_a.adj() += ret.adj_op(); });
     return ret_type(ret);
-  }
 }
 
 /**
@@ -264,8 +230,15 @@ inline auto operator+(const Var& a, const VarMat& b) {
   arena_t<VarMat> arena_b(b);
   arena_t<VarMat> ret(a.val() + b.val().array());
   reverse_pass_callback([ret, a, arena_b]() mutable {
-    a.adj() += ret.adj().sum();
-    arena_b.adj() += ret.adj();
+    if (is_var_matrix<VarMat>::value) {
+      a.adj() += ret.adj().sum();
+      arena_b.adj() += ret.adj();
+    } else {
+      for (Eigen::Index i = 0; i < arena_b.size(); ++i) {
+        a.adj() += ret.coeffRef(i).adj();
+        arena_b.coeffRef(i).adj() += ret.coeffRef(i).adj();
+      }
+    }
   });
   return plain_type_t<VarMat>(ret);
 }
