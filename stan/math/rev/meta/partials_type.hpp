@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_REV_META_PARTIALS_TYPE_HPP
 #define STAN_MATH_REV_META_PARTIALS_TYPE_HPP
 
-#include <stan/math/rev/core.hpp>
 #include <stan/math/prim/meta/partials_type.hpp>
 #include <stan/math/rev/meta/is_var.hpp>
 #include <type_traits>

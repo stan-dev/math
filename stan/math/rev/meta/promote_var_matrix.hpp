@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_META_PROMOTE_VAR_MATRIX
 
 #include <stan/math/rev/meta/is_var.hpp>
-#include <stan/math/rev/core/var.hpp>
 #include <stan/math/prim/meta.hpp>
 
 namespace stan {
