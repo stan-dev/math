@@ -58,8 +58,8 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
   }
 
   size_t N = max_size(n, alpha);
-  scalar_seq_view<T_n_ref> n_vec(n);
-  scalar_seq_view<T_alpha_ref> alpha_vec(alpha);
+  scalar_seq_view<decltype(n_val)> n_vec(n_val);
+  scalar_seq_view<decltype(alpha_val)> alpha_vec(alpha_val);
   for (size_t i = 0; i < N; i++) {
     if (NEGATIVE_INFTY == alpha_vec[i] && n_vec[i] != 0) {
       return LOG_ZERO;

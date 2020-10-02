@@ -54,8 +54,8 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
   }
 
   size_t N = max_size(n, lambda);
-  scalar_seq_view<T_n_ref> n_vec(n);
-  scalar_seq_view<T_lambda_ref> lambda_vec(lambda);
+  scalar_seq_view<decltype(n_val)> n_vec(n_val);
+  scalar_seq_view<decltype(lambda_val)> lambda_vec(lambda_val);
   for (size_t i = 0; i < N; i++) {
     if (lambda_vec[i] == 0 && n_vec[i] != 0) {
       return LOG_ZERO;
