@@ -37,13 +37,13 @@ auto elt_multiply(const Mat1& m1, const Mat2& m2) {
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
       using var_m1 = arena_t<promote_scalar_t<var, Mat1>>;
       using var_m2 = arena_t<promote_scalar_t<var, Mat2>>;
-      if (is_var_matrix<Mat1>::value && is_var_matrix<Mat2>::value) {
-        forward_as<var_m1>(arena_m1).adj().array() += forward_as<var_m1>(arena_m2).val().array() * ret.adj().array();
-        forward_as<var_m2>(arena_m2).adj().array() += forward_as<var_m1>(arena_m1).val().array() * ret.adj().array();
+      if (is_var_matrix<Mat1>::value || is_var_matrix<Mat2>::value) {
+        forward_as<var_m1>(arena_m1).adj().array() += value_of(arena_m2).array() * ret.adj().array();
+        forward_as<var_m2>(arena_m2).adj().array() += value_of(arena_m1).array() * ret.adj().array();
       } else {
         for (Eigen::Index i = 0; i < arena_m2.size(); ++i) {
-          forward_as<var_m1>(arena_m1).coeffRef(i).adj() += forward_as<var_m1>(arena_m2).coeffRef(i).val() * ret.coeffRef(i).adj();
-          forward_as<var_m2>(arena_m2).coeffRef(i).adj() += forward_as<var_m1>(arena_m1).coeffRef(i).val() * ret.coeffRef(i).adj();
+          forward_as<var_m1>(arena_m1).coeffRef(i).adj() += forward_as<var_m2>(arena_m2).coeffRef(i).val() * ret.coeff(i).adj();
+          forward_as<var_m2>(arena_m2).coeffRef(i).adj() += forward_as<var_m1>(arena_m1).coeffRef(i).val() * ret.coeff(i).adj();
         }
       }
     });
