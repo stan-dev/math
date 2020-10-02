@@ -129,6 +129,20 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
   }
 
   /**
+   * Adds all write events on any matrices used by nested expression to a list.
+   * Ignores read events anc clears no events.
+   * @param[out] events List of all events.
+   */
+  inline void get_clear_read_write_events(
+      std::vector<cl::Event>& events) const {
+    arg_.get_write_events(events);
+    events.insert(events.end(), buffer_.read_events().begin(),
+                  buffer_.read_events().end());
+    events.insert(events.end(), buffer_.write_events().begin(),
+                  buffer_.write_events().end());
+  }
+
+  /**
    * Instead of adding event to matrices, waits on the event and throws if check
    * failed.
    * @param e the event to add

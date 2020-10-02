@@ -2,8 +2,12 @@
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_IS_KERNEL_EXPRESSION_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/is_matrix_cl.hpp>
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/meta/bool_constant.hpp>
+#include <stan/math/prim/meta/conjunction.hpp>
+#include <stan/math/prim/meta/disjunction.hpp>
+#include <stan/math/prim/meta/is_matrix_cl.hpp>
+#include <stan/math/prim/meta/is_var.hpp>
+#include <stan/math/prim/meta/require_helpers.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -73,8 +77,36 @@ struct is_kernel_expression_lhs
 template <typename T>
 struct is_kernel_expression_lhs<T, require_matrix_cl_t<T>> : std::true_type {};
 
+/**
+ * Determines whether a type is either a kernel generator
+ * expression or a var containing a kernel generator expression.
+ */
+template <typename T>
+struct is_prim_or_rev_kernel_expression
+    : math::disjunction<
+          is_kernel_expression<T>,
+          math::conjunction<is_var<T>, is_kernel_expression<value_type_t<T>>>> {
+};
+
+/**
+ * Determines whether a type is either a non-scalar kernel generator
+ * expression or a var containing a non-scalar kernel generator expression.
+ */
+template <typename T>
+struct is_nonscalar_prim_or_rev_kernel_expression
+    : math::disjunction<
+          is_kernel_expression_and_not_scalar<T>,
+          math::conjunction<is_var<T>, is_kernel_expression_and_not_scalar<
+                                           value_type_t<T>>>> {};
+
 /** @}*/
 STAN_ADD_REQUIRE_UNARY(kernel_expression_lhs, is_kernel_expression_lhs,
+                       opencl_kernel_generator);
+STAN_ADD_REQUIRE_UNARY(prim_or_rev_kernel_expression,
+                       is_prim_or_rev_kernel_expression,
+                       opencl_kernel_generator);
+STAN_ADD_REQUIRE_UNARY(nonscalar_prim_or_rev_kernel_expression,
+                       is_nonscalar_prim_or_rev_kernel_expression,
                        opencl_kernel_generator);
 }  // namespace stan
 
