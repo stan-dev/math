@@ -22,22 +22,25 @@ namespace math {
  * @return M times its transpose.
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
-inline promote_var_matrix_t<Eigen::MatrixXd, T> tcrossprod(const T& M) {
-  if (M.size() == 0) {
-    return M;
-  }
+inline auto tcrossprod(const T& M) {
+  using ret_type = promote_var_matrix_t<Eigen::Matrix<double,
+						      T::RowsAtCompileTime,
+						      T::RowsAtCompileTime>, T>;
 
   arena_t<plain_type_t<T>> arena_M = M;
-  arena_t<Eigen::MatrixXd> arena_M_val = value_of(arena_M);
+  auto arena_M_val = to_arena(value_of(arena_M));
+  
+  arena_t<ret_type>
+    res = arena_M_val * arena_M_val.transpose();
 
-  arena_t<plain_type_t<T>> res = arena_M_val * arena_M_val.transpose();
+  if (M.size() > 0) {
+    reverse_pass_callback([res, arena_M, arena_M_val]() mutable {
+      const auto& adj = to_ref(res.adj());
+      arena_M.adj() += (adj + adj.transpose()) * arena_M_val;
+    });
+  }
 
-  reverse_pass_callback([res, arena_M, arena_M_val]() mutable {
-    const auto& adj = to_ref(res.adj());
-    arena_M.adj() += (adj + adj.transpose()) * arena_M_val;
-  });
-
-  return res;
+  return ret_type(res);
 }
 
 }  // namespace math

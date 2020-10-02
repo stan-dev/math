@@ -54,4 +54,33 @@ TEST(MathMixMatFun, tcrossprod) {
   b33 << 1, 2, 3, 1, 4, 9, 1, 8, 27;
   stan::test::expect_ad(tols, f, b33);
   stan::test::expect_ad_matvar(tols, f, b33);
+
+  Eigen::VectorXd a0(0);
+  stan::test::expect_ad(f, a0);
+  stan::test::expect_ad_matvar(f, a0);
+
+  Eigen::VectorXd a1(1);
+  a1 << 1;
+  stan::test::expect_ad(f, a1);
+  stan::test::expect_ad_matvar(f, a1);
+
+  Eigen::VectorXd a3(3);
+  a3 << 1, 2, 3;
+  stan::test::expect_ad(f, a3);
+  stan::test::expect_ad_matvar(f, a3);
+
+  Eigen::RowVectorXd ra0(0);
+  stan::test::expect_ad(f, ra0);
+  stan::test::expect_ad_matvar(f, ra0);
+
+  Eigen::RowVectorXd ra1(1);
+  ra1 << 1;
+  stan::test::expect_ad(f, ra1);
+  stan::test::expect_ad_matvar(f, ra1);
+
+  Eigen::RowVectorXd ra3(3);
+  ra3 << 1, 2, 3;
+  stan::test::expect_ad(f, ra3);
+  stan::test::expect_ad_matvar(f, ra3);
 }
+
