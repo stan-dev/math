@@ -155,11 +155,11 @@ inline auto operator+(const VarMat& a, const Arith& b) {
   using op_ret_type
       = decltype((a.val().array() + as_array_or_scalar(b)).matrix());
   using ret_type = promote_var_matrix_t<op_ret_type, VarMat>;
-    arena_t<VarMat> arena_a = a;
-    arena_t<ret_type> ret(a.val().array() + as_array_or_scalar(b));
-    reverse_pass_callback(
-        [ret, arena_a]() mutable { arena_a.adj() += ret.adj_op(); });
-    return ret_type(ret);
+  arena_t<VarMat> arena_a = a;
+  arena_t<ret_type> ret(a.val().array() + as_array_or_scalar(b));
+  reverse_pass_callback(
+      [ret, arena_a]() mutable { arena_a.adj() += ret.adj_op(); });
+  return ret_type(ret);
 }
 
 /**

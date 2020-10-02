@@ -398,9 +398,7 @@ class var_value {
    * View element of eigen matrices
    * @param i Element to access
    */
-  inline auto coeffRef(Eigen::Index i) const {
-    return this->coeff(i);
-  }
+  inline auto coeffRef(Eigen::Index i) const { return this->coeff(i); }
 
   /**
    * View element of eigen matrices
