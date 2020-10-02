@@ -261,7 +261,9 @@ struct kernel_cl {
    */
   kernel_cl(const char* name, std::vector<std::string> sources,
             std::map<std::string, int> options = {})
-      : name_(name), sources_(std::move(sources)), opts_(opencl_context.base_opts()) {
+      : name_(name),
+        sources_(std::move(sources)),
+        opts_(opencl_context.base_opts()) {
     for (auto& it : options) {
       if (opts_[it.first] > it.second) {
         opts_[it.first] = it.second;
