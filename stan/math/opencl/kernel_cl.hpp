@@ -215,14 +215,8 @@ inline const std::vector<cl::Event> select_events(
 inline auto compile_kernel(const char* name,
                            const std::vector<std::string>& sources,
                            const std::map<std::string, int>& options) {
-  auto base_opts = opencl_context.base_opts();
-  for (auto& it : options) {
-    if (base_opts[it.first] > it.second) {
-      base_opts[it.first] = it.second;
-    }
-  }
   std::string kernel_opts = "";
-  for (auto&& comp_opts : base_opts) {
+  for (auto&& comp_opts : options) {
     kernel_opts += std::string(" -D") + comp_opts.first + "="
                    + std::to_string(comp_opts.second);
   }
@@ -267,7 +261,13 @@ struct kernel_cl {
    */
   kernel_cl(const char* name, std::vector<std::string> sources,
             std::map<std::string, int> options = {})
-      : name_(name), sources_(std::move(sources)), opts_(std::move(options)) {}
+      : name_(name), sources_(std::move(sources)), opts_(opencl_context.base_opts()) {
+    for (auto& it : options) {
+      if (opts_[it.first] > it.second) {
+        opts_[it.first] = it.second;
+      }
+    }
+  }
 
   /** \ingroup kernel_executor_opencl
    * Executes a kernel
