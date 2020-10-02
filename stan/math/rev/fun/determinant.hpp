@@ -24,7 +24,7 @@ inline var determinant(const T& m) {
   var det = m_val.determinant();
   arena_t<Eigen::MatrixXd> arena_m_inv_transpose = m_val.inverse().transpose();
   reverse_pass_callback([arena_m, det, arena_m_inv_transpose]() mutable {
-    arena_m.adj() += (det.adj() * det.val()) * arena_m_inv_transpose;
+    arena_m.adj().noalias() += (det.adj() * det.val()) * arena_m_inv_transpose;
   });
   return det;
 }

@@ -27,7 +27,7 @@ inline auto columns_dot_self(const Mat& x) {
     return ret_type(res);
   } else {
     reverse_pass_callback([res, arena_x, arena_x_val]() mutable {
-        arena_x.adj() += arena_x_val * (2 * res.adj()).asDiagonal();
+        arena_x.adj().noalias() += arena_x_val * (2 * res.adj()).asDiagonal();
       });
     return ret_type(res);
   }

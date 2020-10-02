@@ -26,7 +26,7 @@ inline var dot_self(const T& v) {
   arena_t<decltype(arena_v.val())> v_val = arena_v.val();
   var res = v_val.dot(v_val);
   reverse_pass_callback([res, arena_v, v_val]() mutable {
-    arena_v.adj() += (2.0 * res.adj()) * v_val;
+    arena_v.adj().noalias() += (2.0 * res.adj()) * v_val;
   });
 
   return res;
