@@ -83,4 +83,3 @@ TEST(MathMixMatFun, tcrossprod) {
   stan::test::expect_ad(f, ra3);
   stan::test::expect_ad_matvar(f, ra3);
 }
-

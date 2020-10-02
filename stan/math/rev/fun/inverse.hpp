@@ -34,7 +34,8 @@ inline auto inverse(const T& m) {
   arena_t<Eigen::MatrixXd> res_val = res.val();
 
   reverse_pass_callback([res, res_val, arena_m]() mutable {
-    arena_m.adj().noalias() -= res_val.transpose() * res.adj_op() * res_val.transpose();
+    arena_m.adj().noalias()
+        -= res_val.transpose() * res.adj_op() * res_val.transpose();
   });
 
   return plain_type_t<T>(res);

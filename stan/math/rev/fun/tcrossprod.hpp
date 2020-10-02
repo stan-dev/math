@@ -23,14 +23,12 @@ namespace math {
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto tcrossprod(const T& M) {
-  using ret_type = promote_var_matrix_t<Eigen::Matrix<double,
-						      T::RowsAtCompileTime,
-						      T::RowsAtCompileTime>, T>;
+  using ret_type = promote_var_matrix_t<
+      Eigen::Matrix<double, T::RowsAtCompileTime, T::RowsAtCompileTime>, T>;
   arena_t<plain_type_t<T>> arena_M = M;
   auto arena_M_val = to_arena(value_of(arena_M));
-  
-  arena_t<ret_type>
-    res = arena_M_val * arena_M_val.transpose();
+
+  arena_t<ret_type> res = arena_M_val * arena_M_val.transpose();
 
   if (M.size() > 0) {
     reverse_pass_callback([res, arena_M, arena_M_val]() mutable {
