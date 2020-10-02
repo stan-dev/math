@@ -69,7 +69,8 @@ inline void check_matching_dims(const char* function, const char* name1,
     std::ostringstream msg_str;
     y1_err << "(" << y1.rows() << ", " << y1.cols() << ")";
     msg_str << y2.rows() << ", " << y2.cols() << ") must match in size";
-    invalid_argument(function, name1, y1_err.str(), "(", std::string(msg_str.str()).c_str());
+    invalid_argument(function, name1, y1_err.str(), "(",
+                     std::string(msg_str.str()).c_str());
   }
 }
 /**
