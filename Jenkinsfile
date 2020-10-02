@@ -245,7 +245,6 @@ pipeline {
                         sh "echo STAN_OPENCL=true>> make/local"
                         sh "echo OPENCL_PLATFORM_ID=0>> make/local"
                         sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
-                        sh "make -j${env.PARALLEL} test-headers"
                         runTests("test/unit/math/opencl")
                         runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test")
                         runTests("test/unit/math/prim/fun/mdivide_left_tri_test")
@@ -270,7 +269,6 @@ pipeline {
                         sh "echo STAN_OPENCL=true>> make/local"
                         sh "echo OPENCL_PLATFORM_ID=0>> make/local"
                         sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
-                        sh "make -j${env.PARALLEL} test-headers"
                         runTests("test/unit/math/opencl")
                         runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test")
                         runTests("test/unit/math/prim/fun/mdivide_left_tri_test")
@@ -349,7 +347,6 @@ pipeline {
                         deleteDirWin()
                         unstash 'MathSetup'
                         bat "mingw32-make.exe -f make/standalone math-libs"
-                        bat "mingw32-make -j${env.PARALLEL} test-headers"
                         runTestsWin("test/unit", false, true)
                     }
                 }
