@@ -5,6 +5,7 @@
 #include <stan/math/prim/meta/holder.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_plain_type.hpp>
 #include <stan/math/prim/meta/is_stan_scalar.hpp>
 #include <vector>
 
@@ -18,9 +19,19 @@ namespace math {
  * @param v Specified value.
  * @return Same value.
  */
-template <typename T, typename = require_stan_scalar_t<T>>
+template <typename T, require_stan_scalar_t<T>* = nullptr>
 inline T as_array_or_scalar(T&& v) {
   return std::forward<T>(v);
+}
+
+template <typename T, require_stan_scalar_t<T>* = nullptr>
+inline const T& as_array_or_scalar(const T& v) {
+  return v;
+}
+
+template <typename T, require_stan_scalar_t<T>* = nullptr>
+inline T& as_array_or_scalar(T& v) {
+  return v;
 }
 
 /** \ingroup type_trait
@@ -30,9 +41,30 @@ inline T as_array_or_scalar(T&& v) {
  * @param v Specified \c Eigen \c Matrix or expression.
  * @return Matrix converted to an array.
  */
-template <typename T, typename = require_eigen_t<T>>
+template <typename T, require_eigen_t<T>* = nullptr, require_not_plain_type_t<T>* = nullptr>
 inline auto as_array_or_scalar(T&& v) {
   return make_holder([](auto& x) { return x.array(); }, std::forward<T>(v));
+}
+
+template <typename T, require_eigen_matrix_base_t<T>* = nullptr, require_plain_type_t<T>* = nullptr>
+inline auto as_array_or_scalar(T&& v) {
+  return std::forward<T>(v).array();
+}
+
+
+template <typename T, require_eigen_array_t<T>* = nullptr, require_plain_type_t<T>* = nullptr>
+inline auto as_array_or_scalar(T&& v) {
+  return std::forward<T>(v);
+}
+
+template <typename T, require_eigen_array_t<T>* = nullptr, require_plain_type_t<T>* = nullptr>
+inline const auto& as_array_or_scalar(const T& v) {
+  return v;
+}
+
+template <typename T, require_eigen_array_t<T>* = nullptr, require_plain_type_t<T>* = nullptr>
+inline auto& as_array_or_scalar(T& v) {
+  return v;
 }
 
 /** \ingroup type_trait

@@ -5,6 +5,7 @@
 #include <stan/math/prim/meta/holder.hpp>
 #include <stan/math/prim/meta/is_stan_scalar.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_plain_type.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <vector>
 
@@ -19,10 +20,20 @@ namespace math {
  * @param a Specified scalar.
  * @return the scalar.
  */
-template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline T as_column_vector_or_scalar(const T& a) {
-  return a;
-}
+ template <typename T, require_stan_scalar_t<T>* = nullptr>
+ inline T as_column_vector_or_scalar(T&& v) {
+   return std::forward<T>(v);
+ }
+
+ template <typename T, require_stan_scalar_t<T>* = nullptr>
+ inline const T& as_column_vector_or_scalar(const T& v) {
+   return v;
+ }
+
+ template <typename T, require_stan_scalar_t<T>* = nullptr>
+ inline T& as_column_vector_or_scalar(T& v) {
+   return v;
+ }
 
 /** \ingroup type_trait
  * Converts input argument to a column vector or a scalar. For column vector
@@ -33,8 +44,18 @@ inline T as_column_vector_or_scalar(const T& a) {
  * @return Same vector.
  */
 template <typename T, require_eigen_col_vector_t<T>* = nullptr>
-inline T&& as_column_vector_or_scalar(T&& a) {
+inline T as_column_vector_or_scalar(T&& a) {
   return std::forward<T>(a);
+}
+
+template <typename T, require_eigen_col_vector_t<T>* = nullptr>
+inline T& as_column_vector_or_scalar(T& a) {
+  return a;
+}
+
+template <typename T, require_eigen_col_vector_t<T>* = nullptr>
+inline const T& as_column_vector_or_scalar(const T& a) {
+  return a;
 }
 
 /** \ingroup type_trait
@@ -46,10 +67,19 @@ inline T&& as_column_vector_or_scalar(T&& a) {
  * @return Transposed vector.
  */
 template <typename T, require_eigen_row_vector_t<T>* = nullptr,
-          require_not_eigen_col_vector_t<T>* = nullptr>
+          require_not_eigen_col_vector_t<T>* = nullptr,
+          require_not_plain_type_t<T>* = nullptr>
 inline auto as_column_vector_or_scalar(T&& a) {
   return make_holder([](auto& x) { return x.transpose(); }, std::forward<T>(a));
 }
+
+template <typename T, require_eigen_row_vector_t<T>* = nullptr,
+          require_not_eigen_col_vector_t<T>* = nullptr,
+          require_plain_type_t<T>* = nullptr>
+inline auto as_column_vector_or_scalar(T&& a) {
+  return std::forward<T>(a).transpose();
+}
+
 
 /** \ingroup type_trait
  * Converts input argument to a column vector or a scalar. std::vector will be
