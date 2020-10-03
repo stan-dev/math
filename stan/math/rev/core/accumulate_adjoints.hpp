@@ -11,30 +11,6 @@
 namespace stan {
 namespace math {
 
-template <typename... Pargs>
-inline double* accumulate_adjoints(double* dest, const var& x, Pargs&&... args);
-
-template <typename VarVec, require_std_vector_vt<is_var, VarVec>* = nullptr,
-          typename... Pargs>
-inline double* accumulate_adjoints(double* dest, VarVec&& x, Pargs&&... args);
-
-template <typename VecContainer,
-          require_std_vector_st<is_var, VecContainer>* = nullptr,
-          require_std_vector_vt<is_container, VecContainer>* = nullptr,
-          typename... Pargs>
-inline double* accumulate_adjoints(double* dest, VecContainer&& x,
-                                   Pargs&&... args);
-
-template <typename EigT, require_eigen_vt<is_var, EigT>* = nullptr,
-          typename... Pargs>
-inline double* accumulate_adjoints(double* dest, EigT&& x, Pargs&&... args);
-
-template <typename Arith, require_st_arithmetic<Arith>* = nullptr,
-          typename... Pargs>
-inline double* accumulate_adjoints(double* dest, Arith&& x, Pargs&&... args);
-
-inline double* accumulate_adjoints(double* dest);
-
 /**
  * Accumulate adjoints from x into storage pointed to by dest,
  *   increment the adjoint storage pointer,
@@ -47,11 +23,8 @@ inline double* accumulate_adjoints(double* dest);
  * @param args Further args to accumulate over
  * @return Final position of adjoint storage pointer
  */
-template <typename... Pargs>
-inline double* accumulate_adjoints(double* dest, const var& x,
-                                   Pargs&&... args) {
-  *dest += x.adj();
-  return accumulate_adjoints(dest + 1, std::forward<Pargs>(args)...);
+inline void accumulate_adjoints(double* dest, size_t pos, const var& x) {
+  *(dest + pos) += x.adj();
 }
 
 /**
@@ -66,14 +39,13 @@ inline double* accumulate_adjoints(double* dest, const var& x,
  * @param args Further args to accumulate over
  * @return Final position of adjoint storage pointer
  */
-template <typename VarVec, require_std_vector_vt<is_var, VarVec>*,
-          typename... Pargs>
-inline double* accumulate_adjoints(double* dest, VarVec&& x, Pargs&&... args) {
+template <typename VarVec, require_std_vector_vt<is_var, VarVec>* = nullptr>
+inline void accumulate_adjoints(double* dest, size_t pos, VarVec&& x) {
+  auto* new_dest = dest + pos;
   for (auto&& x_iter : x) {
-    *dest += x_iter.adj();
-    ++dest;
+    *new_dest += x_iter.adj();
+    ++new_dest;
   }
-  return accumulate_adjoints(dest, std::forward<Pargs>(args)...);
 }
 
 /**
@@ -91,14 +63,14 @@ inline double* accumulate_adjoints(double* dest, VarVec&& x, Pargs&&... args) {
  * @param args Further args to accumulate over
  * @return Final position of adjoint storage pointer
  */
-template <typename VecContainer, require_std_vector_st<is_var, VecContainer>*,
-          require_std_vector_vt<is_container, VecContainer>*, typename... Pargs>
-inline double* accumulate_adjoints(double* dest, VecContainer&& x,
-                                   Pargs&&... args) {
+template <typename VecContainer, require_std_vector_st<is_var, VecContainer>* = nullptr,
+          require_std_vector_vt<is_container, VecContainer>* = nullptr>
+inline void accumulate_adjoints(double* dest, size_t pos, VecContainer&& x) {
+  size_t start_pos = pos;
   for (auto&& x_iter : x) {
-    dest = accumulate_adjoints(dest, x_iter);
+    accumulate_adjoints(dest, start_pos, x_iter);
+    start_pos += x_iter.size();
   }
-  return accumulate_adjoints(dest, std::forward<Pargs>(args)...);
 }
 
 /**
@@ -115,10 +87,9 @@ inline double* accumulate_adjoints(double* dest, VecContainer&& x,
  * @param args Further args to accumulate over
  * @return Final position of adjoint storage pointer
  */
-template <typename EigT, require_eigen_vt<is_var, EigT>*, typename... Pargs>
-inline double* accumulate_adjoints(double* dest, EigT&& x, Pargs&&... args) {
-  Eigen::Map<Eigen::MatrixXd>(dest, x.rows(), x.cols()) += x.adj();
-  return accumulate_adjoints(dest + x.size(), std::forward<Pargs>(args)...);
+template <typename EigT, require_eigen_vt<is_var, EigT>* = nullptr>
+inline void accumulate_adjoints(double* dest, size_t pos, EigT&& x) {
+  Eigen::Map<Eigen::MatrixXd>(dest + pos, x.rows(), x.cols()) += x.adj();
 }
 
 /**
@@ -135,17 +106,10 @@ inline double* accumulate_adjoints(double* dest, EigT&& x, Pargs&&... args) {
  * @param args Further args to accumulate over
  * @return Final position of adjoint storage pointer
  */
-template <typename Arith, require_st_arithmetic<Arith>*, typename... Pargs>
-inline double* accumulate_adjoints(double* dest, Arith&& x, Pargs&&... args) {
-  return accumulate_adjoints(dest, std::forward<Pargs>(args)...);
+template <typename Arith, require_st_arithmetic<Arith>* = nullptr>
+inline void accumulate_adjoints(double* dest, size_t pos, Arith&& x) {
 }
 
-/**
- * End accumulate_adjoints recursion and return pointer
- *
- * @param dest Pointer
- */
-inline double* accumulate_adjoints(double* dest) { return dest; }
 
 }  // namespace math
 }  // namespace stan

@@ -12,29 +12,6 @@
 namespace stan {
 namespace math {
 
-template <typename... Pargs>
-inline vari** save_varis(vari** dest, const var& x, Pargs&&... args);
-
-template <typename VarVec, require_std_vector_vt<is_var, VarVec>* = nullptr,
-          typename... Pargs>
-inline vari** save_varis(vari** dest, VarVec&& x, Pargs&&... args);
-
-template <typename VecContainer,
-          require_std_vector_st<is_var, VecContainer>* = nullptr,
-          require_std_vector_vt<is_container, VecContainer>* = nullptr,
-          typename... Pargs>
-inline vari** save_varis(vari** dest, VecContainer&& x, Pargs&&... args);
-
-template <typename EigT, require_eigen_vt<is_var, EigT>* = nullptr,
-          typename... Pargs>
-inline vari** save_varis(vari** dest, EigT&& x, Pargs&&... args);
-
-template <typename Arith, require_st_arithmetic<Arith>* = nullptr,
-          typename... Pargs>
-inline vari** save_varis(vari** dest, Arith&& x, Pargs&&... args);
-
-inline vari** save_varis(vari** dest);
-
 /**
  * Save the vari pointer in x into the memory pointed to by dest,
  *   increment the dest storage pointer,
@@ -47,10 +24,9 @@ inline vari** save_varis(vari** dest);
  * @param[in] args Additional arguments to have their varis saved
  * @return Final position of dest pointer
  */
-template <typename... Pargs>
-inline vari** save_varis(vari** dest, const var& x, Pargs&&... args) {
+inline vari** save_varis(vari** dest, const var& x) {
   *dest = x.vi_;
-  return save_varis(dest + 1, std::forward<Pargs>(args)...);
+  return dest + 1;
 }
 
 /**
@@ -66,13 +42,12 @@ inline vari** save_varis(vari** dest, const var& x, Pargs&&... args) {
  * @param[in] args Additional arguments to have their varis saved
  * @return Final position of dest pointer
  */
-template <typename VarVec, require_std_vector_vt<is_var, VarVec>*,
-          typename... Pargs>
-inline vari** save_varis(vari** dest, VarVec&& x, Pargs&&... args) {
+template <typename VarVec, require_std_vector_vt<is_var, VarVec>* = nullptr>
+inline vari** save_varis(vari** dest, VarVec&& x) {
   for (int i = 0; i < x.size(); ++i) {
     dest[i] = x[i].vi_;
   }
-  return save_varis(dest + x.size(), std::forward<Pargs>(args)...);
+  return dest + x.size();
 }
 
 /**
@@ -88,13 +63,13 @@ inline vari** save_varis(vari** dest, VarVec&& x, Pargs&&... args) {
  * @param[in] args Additional arguments to have their varis saved
  * @return Final position of dest pointer
  */
-template <typename VecContainer, require_std_vector_st<is_var, VecContainer>*,
-          require_std_vector_vt<is_container, VecContainer>*, typename... Pargs>
-inline vari** save_varis(vari** dest, VecContainer&& x, Pargs&&... args) {
+template <typename VecContainer, require_std_vector_st<is_var, VecContainer>* = nullptr,
+          require_std_vector_vt<is_container, VecContainer>* = nullptr>
+inline vari** save_varis(vari** dest, VecContainer&& x) {
   for (size_t i = 0; i < x.size(); ++i) {
     dest = save_varis(dest, x[i]);
   }
-  return save_varis(dest, std::forward<Pargs>(args)...);
+  return dest;
 }
 
 /**
@@ -110,12 +85,12 @@ inline vari** save_varis(vari** dest, VecContainer&& x, Pargs&&... args) {
  * @param[in] args Additional arguments to have their varis saved
  * @return Final position of dest pointer
  */
-template <typename EigT, require_eigen_vt<is_var, EigT>*, typename... Pargs>
-inline vari** save_varis(vari** dest, EigT&& x, Pargs&&... args) {
+template <typename EigT, require_eigen_vt<is_var, EigT>* = nullptr>
+inline vari** save_varis(vari** dest, EigT&& x) {
   for (int i = 0; i < x.size(); ++i) {
     dest[i] = x.coeffRef(i).vi_;
   }
-  return save_varis(dest + x.size(), std::forward<Pargs>(args)...);
+  return dest + x.size();
 }
 
 /**
@@ -131,9 +106,9 @@ inline vari** save_varis(vari** dest, EigT&& x, Pargs&&... args) {
  * @param[in] args Additional arguments to have their varis saved
  * @return Final position of dest pointer
  */
-template <typename Arith, require_st_arithmetic<Arith>*, typename... Pargs>
-inline vari** save_varis(vari** dest, Arith&& x, Pargs&&... args) {
-  return save_varis(dest, std::forward<Pargs>(args)...);
+template <typename Arith, require_st_arithmetic<Arith>* = nullptr>
+inline vari** save_varis(vari** dest, Arith&& x) {
+  return dest;
 }
 
 /**

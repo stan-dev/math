@@ -8,25 +8,6 @@
 namespace stan {
 namespace math {
 
-inline void zero_adjoints();
-
-template <typename T, typename... Pargs, require_st_arithmetic<T>* = nullptr>
-inline void zero_adjoints(T& x, Pargs&... args);
-
-template <typename... Pargs>
-inline void zero_adjoints(var& x, Pargs&... args);
-
-template <int R, int C, typename... Pargs>
-inline void zero_adjoints(Eigen::Matrix<var, R, C>& x, Pargs&... args);
-
-template <typename T, typename... Pargs, require_st_autodiff<T>* = nullptr>
-inline void zero_adjoints(std::vector<T>& x, Pargs&... args);
-
-/**
- * End of recursion for set_zero_adjoints
- */
-inline void zero_adjoints() {}
-
 /**
  * Do nothing for non-autodiff arguments. Recursively call zero_adjoints
  * on the rest of the arguments.
@@ -37,9 +18,8 @@ inline void zero_adjoints() {}
  * @param x current argument
  * @param args rest of arguments to zero
  */
-template <typename T, typename... Pargs, require_st_arithmetic<T>*>
-inline void zero_adjoints(T& x, Pargs&... args) {
-  zero_adjoints(args...);
+template <typename T, require_st_arithmetic<T>* = nullptr>
+inline void zero_adjoints(T& x) {
 }
 
 /**
@@ -52,10 +32,13 @@ inline void zero_adjoints(T& x, Pargs&... args) {
  * @param x current argument
  * @param args rest of arguments to zero
  */
-template <typename... Pargs>
-inline void zero_adjoints(var& x, Pargs&... args) {
-  x.vi_->set_zero_adjoint();
-  zero_adjoints(args...);
+inline void zero_adjoints(var& x) {
+  x.vi_->adj_ = 0;
+}
+
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+inline void zero_adjoints(var_value<EigMat>& x) {
+  x.vi_->adj_.setZero();
 }
 
 /**
@@ -68,11 +51,11 @@ inline void zero_adjoints(var& x, Pargs&... args) {
  * @param x current argument
  * @param args rest of arguments to zero
  */
-template <int R, int C, typename... Pargs>
-inline void zero_adjoints(Eigen::Matrix<var, R, C>& x, Pargs&... args) {
-  for (size_t i = 0; i < x.size(); ++i)
-    x.coeffRef(i).vi_->set_zero_adjoint();
-  zero_adjoints(args...);
+template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
+inline void zero_adjoints(EigMat& x) {
+  for (size_t i = 0; i < x.size(); ++i) {
+    x.coeffRef(i).vi_->adj_ = 0;
+  }
 }
 
 /**
@@ -85,11 +68,11 @@ inline void zero_adjoints(Eigen::Matrix<var, R, C>& x, Pargs&... args) {
  * @param x current argument
  * @param args rest of arguments to zero
  */
-template <typename T, typename... Pargs, require_st_autodiff<T>*>
-inline void zero_adjoints(std::vector<T>& x, Pargs&... args) {
-  for (size_t i = 0; i < x.size(); ++i)
-    zero_adjoints(x[i]);
-  zero_adjoints(args...);
+template <typename T, require_st_autodiff<T>* = nullptr>
+inline void zero_adjoints(std::vector<T>& x) {
+  for (auto& x_iter : x) {
+    zero_adjoints(x_iter);
+  }
 }
 
 }  // namespace math

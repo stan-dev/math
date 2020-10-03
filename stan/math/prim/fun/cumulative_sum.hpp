@@ -59,6 +59,19 @@ inline auto cumulative_sum(const EigVec& m) {
   return result;
 }
 
+namespace internal {
+  template <typename T>
+  inline auto cumulative_sum(size_t seed, T&& array_vals) {
+    size_t cum_sum = seed;
+    for (auto& x_iter : array_vals) {
+      size_t cum_sum2 = x_iter;
+      x_iter = cum_sum;
+      cum_sum += cum_sum2;
+    }
+    return std::forward<T>(array_vals);
+  }
+}
+
 }  // namespace math
 }  // namespace stan
 

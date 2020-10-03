@@ -7,6 +7,7 @@
 #include <stan/math/rev/functor/ode_store_sensitivities.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/for_each.hpp>
 #include <cvodes/cvodes.h>
 #include <nvector/nvector_serial.h>
 #include <sunlinsol/sunlinsol_dense.h>
@@ -209,15 +210,9 @@ class cvodes_integrator {
     check_finite(function_name, "initial time", t0_);
     check_finite(function_name, "times", ts_);
 
-    // Code from: https://stackoverflow.com/a/17340003 . Should probably do
-    // something better
-    apply(
-        [&](auto&&... args) {
-          std::vector<int> unused_temp{
-              0, (check_finite(function_name, "ode parameters and data", args),
-                  0)...};
-        },
-        args_tuple_);
+    for_each([function_name](auto&& x) {
+      check_finite(function_name, "ode parameters and data", x);
+    }, args_tuple_);
 
     check_nonzero_size(function_name, "times", ts_);
     check_nonzero_size(function_name, "initial state", y0_);

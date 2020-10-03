@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/functor/coupled_ode_system.hpp>
+#include <stan/math/prim/functor/for_each.hpp>
 #include <stan/math/rev/functor/cvodes_utils.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
@@ -69,6 +70,7 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
   const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0_;
   std::tuple<decltype(deep_copy_vars(std::declval<const Args&>()))...>
       local_args_tuple_;
+  std::array<size_t, sizeof...(Args)> num_vars_in_args_;
   const size_t num_y0_vars_;
   const size_t num_args_vars;
   const size_t N_;
@@ -92,12 +94,20 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
       : f_(f),
         y0_(y0),
         local_args_tuple_(deep_copy_vars(args)...),
+        num_vars_in_args_{count_vars(args)...},
         num_y0_vars_(count_vars(y0_)),
         num_args_vars(count_vars(args...)),
         N_(y0.size()),
         args_adjoints_(num_args_vars),
         y_adjoints_(N_),
-        msgs_(msgs) {}
+        msgs_(msgs) {
+          size_t cum_sum = 0;
+          for (auto& x_iter : num_vars_in_args_) {
+            size_t cum_sum2 = x_iter;
+            x_iter = cum_sum;
+            cum_sum += cum_sum2;
+          }
+        }
 
   /**
    * Calculates the right hand side of the coupled ode system (the regular
@@ -115,14 +125,12 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
                   double t) {
     using std::vector;
 
-    dz_dt.resize(size());
+    dz_dt.resize(this->size());
 
     // Run nested autodiff in this scope
     nested_rev_autodiff nested;
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> y_vars(N_);
-    for (size_t n = 0; n < N_; ++n)
-      y_vars.coeffRef(n) = z[n];
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y_vars(Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, 1>>(z.data(), N_));
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
         = apply([&](auto&&... args) { return f_(t, y_vars, msgs_, args...); },
@@ -140,15 +148,12 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
       // memset was faster than Eigen setZero
       memset(args_adjoints_.data(), 0, sizeof(double) * num_args_vars);
 
-      apply(
-          [&](auto&&... args) {
-            accumulate_adjoints(args_adjoints_.data(), args...);
-          },
-          local_args_tuple_);
-
-      // The vars here do not live on the nested stack so must be zero'd
-      // separately
-      apply([&](auto&&... args) { zero_adjoints(args...); }, local_args_tuple_);
+      for_each([&](auto& start, auto& x) {
+        accumulate_adjoints(args_adjoints_.data(), start, x);
+      }, num_vars_in_args_, local_args_tuple_);
+      for_each([](auto& x) {
+        zero_adjoints(x);
+      }, local_args_tuple_);
 
       // No need to zero adjoints after last sweep
       if (i + 1 < N_) {
@@ -206,9 +211,9 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
    *   parameters at the initial time-point, which is zero.
    */
   std::vector<double> initial_state() const {
-    std::vector<double> initial(size(), 0.0);
+    std::vector<double> initial(this->size(), 0.0);
     for (size_t i = 0; i < N_; i++) {
-      initial[i] = value_of(y0_(i));
+      initial[i] = value_of(y0_.coeffRef(i));
     }
     for (size_t i = 0; i < num_y0_vars_; i++) {
       initial[N_ + i * N_ + i] = 1.0;

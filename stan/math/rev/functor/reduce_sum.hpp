@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/functor.hpp>
+#include <stan/math/prim/functor/for_each.hpp>
+#include <stan/math/prim/fun/cumulative_sum.hpp>
 #include <stan/math/rev/core.hpp>
 #include <tbb/task_arena.h>
 #include <tbb/parallel_reduce.h>
@@ -37,12 +39,14 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    * @note see link [here](https://tinyurl.com/vp7xw2t) for requirements.
    */
   struct recursive_reducer {
+    using count_array = std::array<size_t, sizeof...(Args)>;
     const size_t num_vars_per_term_;
     const size_t num_vars_shared_terms_;  // Number of vars in shared arguments
     double* sliced_partials_;  // Points to adjoints of the partial calculations
     Vec vmapped_;
     std::ostream* msgs_;
     std::tuple<Args...> args_tuple_;
+    count_array num_vars_in_args_;
     double sum_{0.0};
     Eigen::VectorXd args_adjoints_{0};
 
@@ -52,6 +56,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                       std::ostream* msgs, ArgsT&&... args)
         : num_vars_per_term_(num_vars_per_term),
           num_vars_shared_terms_(num_vars_shared_terms),
+          num_vars_in_args_(cumulative_sum(0, count_array{count_vars(args)...})),
           sliced_partials_(sliced_partials),
           vmapped_(std::forward<VecT>(vmapped)),
           msgs_(msgs),
@@ -67,6 +72,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         : num_vars_per_term_(other.num_vars_per_term_),
           num_vars_shared_terms_(other.num_vars_shared_terms_),
           sliced_partials_(other.sliced_partials_),
+          num_vars_in_args_(other.num_vars_in_args_),
           vmapped_(other.vmapped_),
           msgs_(other.msgs_),
           args_tuple_(other.args_tuple_) {}
@@ -107,7 +113,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       // Create nested autodiff copies of all shared arguments that do not point
       //   back to main autodiff stack
       auto args_tuple_local_copy = apply(
-          [&](auto&&... args) {
+          [](auto&&... args) {
             return std::tuple<decltype(deep_copy_vars(args))...>(
                 deep_copy_vars(args)...);
           },
@@ -115,9 +121,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
       // Perform calculation
       var sub_sum_v = apply(
-          [&](auto&&... args) {
+          [&local_sub_slice, &r, &msgs = this->msgs_](auto&&... args) {
             return ReduceFunction()(local_sub_slice, r.begin(), r.end() - 1,
-                                    msgs_, args...);
+                                    msgs, args...);
           },
           args_tuple_local_copy);
 
@@ -128,16 +134,12 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       sum_ += sub_sum_v.val();
 
       // Accumulate adjoints of sliced_arguments
-      accumulate_adjoints(sliced_partials_ + r.begin() * num_vars_per_term_,
+      accumulate_adjoints(sliced_partials_ + r.begin() * num_vars_per_term_, 0,
                           std::move(local_sub_slice));
 
-      // Accumulate adjoints of shared_arguments
-      apply(
-          [&](auto&&... args) {
-            accumulate_adjoints(args_adjoints_.data(),
-                                std::forward<decltype(args)>(args)...);
-          },
-          std::move(args_tuple_local_copy));
+      stan::math::for_each([&](auto&& start, auto&& x) {
+        accumulate_adjoints(this->args_adjoints_.data(), start, std::forward<decltype(x)>(x));
+      }, num_vars_in_args_, std::move(args_tuple_local_copy));
     }
 
     /**
@@ -203,7 +205,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     if (vmapped.empty()) {
       return var(0.0);
     }
-
+    using cum_array = std::array<size_t, sizeof...(Args)>;
+    const cum_array cum_vars{cumulative_sum(0, cum_array{count_vars(args)...})};
     const std::size_t num_vars_per_term = count_vars(vmapped[0]);
     const std::size_t num_vars_sliced_terms = num_terms * num_vars_per_term;
     const std::size_t num_vars_shared_terms = count_vars(args...);
@@ -214,7 +217,10 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         num_vars_sliced_terms + num_vars_shared_terms);
 
     save_varis(varis, vmapped);
-    save_varis(varis + num_vars_sliced_terms, args...);
+    auto** vari_args = varis + num_vars_sliced_terms;
+    stan::math::for_each([&vari_args](auto&& size, auto&& arg) {
+      save_varis(vari_args + size, arg);
+    }, cum_vars, std::forward_as_tuple(args...));
 
     for (size_t i = 0; i < num_vars_sliced_terms; ++i) {
       partials[i] = 0.0;

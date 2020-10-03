@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_FUNCTOR_ODE_STORE_SENSITIVITIES_HPP
 
 #include <stan/math/prim/functor/ode_store_sensitivities.hpp>
+#include <stan/math/prim/fun/cumulative_sum.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <ostream>
@@ -42,6 +43,8 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
   const size_t num_args_vars = count_vars(args...);
   const size_t num_t0_vars = count_vars(t0);
   const size_t num_t_vars = count_vars(t);
+  using cum_array = std::array<size_t, sizeof...(Args) + 3>;
+  const cum_array cum_vars{internal::cumulative_sum(0, cum_array{num_y0_vars, count_vars(args)..., num_t0_vars, num_t_vars})};
   Eigen::Matrix<var, Eigen::Dynamic, 1> yt(N);
 
   Eigen::VectorXd y(N);
@@ -63,8 +66,10 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
 
   vari** varis
       = ChainableStack::instance_->memalloc_.alloc_array<vari*>(total_vars);
+  stan::math::for_each([&varis](auto&& size, auto&& arg) {
+    save_varis(varis + size, arg);
+  }, cum_vars, std::forward_as_tuple(y0, args..., t0, t));
 
-  save_varis(varis, y0, args..., t0, t);
 
   // memory for a column major jacobian
   double* jacobian_mem
@@ -80,7 +85,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
 
     for (size_t k = 0; k < num_args_vars; ++k) {
       jacobian.coeffRef(num_y0_vars + k, j)
-          = coupled_state[N + N * num_y0_vars + N * k + j];
+          = coupled_state[j + N * (k + num_y0_vars + 1)];
     }
 
     if (is_var<T_t0>::value) {
