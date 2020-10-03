@@ -12,7 +12,7 @@ TEST(AgradRev, quad_form_sym_return_types) {
 
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> A(2, 2);
   A << 1.0, 1.0, 1.0, 1.0;
-  
+
   Eigen::Matrix<var, Eigen::Dynamic, 1> b(2);
   b << 1.0, 1.0;
 
@@ -20,5 +20,6 @@ TEST(AgradRev, quad_form_sym_return_types) {
   B << 1.0, 1.0;
 
   EXPECT_TRUE((std::is_same<var, decltype(quad_form_sym(A, b))>::value));
-  EXPECT_TRUE((std::is_same<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>, decltype(quad_form_sym(A, B))>::value));
+  EXPECT_TRUE((std::is_same<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>,
+                            decltype(quad_form_sym(A, B))>::value));
 }
