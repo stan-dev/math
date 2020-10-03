@@ -87,7 +87,8 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
     check_size_match(function, "Rows of ", "x", N, "size of ", "alpha",
                      size(alpha));
   }
-  if (!include_summand<propto, T_alpha_cl, T_beta_cl, T_sigma_cl>::value) {
+  if (!include_summand<propto, T_y_cl, T_x_cl, T_alpha_cl, T_beta_cl,
+                       T_sigma_cl>::value) {
     return 0;
   }
   if (N == 0) {
