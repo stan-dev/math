@@ -39,7 +39,8 @@ inline var variance(const T& x) {
   var res = arena_diff.matrix().squaredNorm() / (x_array.size() - 1);
 
   reverse_pass_callback([arena_x, res, arena_diff]() mutable {
-    as_array_or_scalar(arena_x).adj() += (2.0 * res.adj() / (arena_x.size() - 1)) * arena_diff;
+    as_array_or_scalar(arena_x).adj()
+        += (2.0 * res.adj() / (arena_x.size() - 1)) * arena_diff;
   });
 
   return res;
