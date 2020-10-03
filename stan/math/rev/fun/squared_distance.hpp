@@ -20,15 +20,20 @@ template <typename T1, typename T2,
           require_all_stan_scalar_t<T1, T2>* = nullptr,
           require_any_var_t<T1, T2>* = nullptr>
 inline var squared_distance(const T1& a, const T2& b) {
-  double diff = value_of(a) - value_of(b);
-  var res = squared_distance(value_of(a), value_of(b));
-  reverse_pass_callback([a, b, diff, res]() mutable {
-    if (!is_constant<T1>::value)
-      forward_as<var>(a).adj() += 2.0 * res.adj() * diff;
+  check_finite("squared_distance", "a", a);
+  check_finite("squared_distance", "b", b);
 
-    if (!is_constant<T2>::value)
+  double diff = value_of(a) - value_of(b);
+  var res = diff * diff;
+
+  reverse_pass_callback([a, b, res]() mutable {
+    double diff = value_of(a) - value_of(b);
+    if(!is_constant<T1>::value)
+      forward_as<var>(a).adj() += 2.0 * res.adj() * diff;
+    if(!is_constant<T2>::value)
       forward_as<var>(b).adj() += -2.0 * res.adj() * diff;
   });
+
   return res;
 }
 
@@ -41,36 +46,29 @@ inline var squared_distance(const T1& A, const T2& B) {
   if (A.size() == 0)
     return 0.0;
 
-  using A_ref_t = ref_type_t<T1>;
-  using B_ref_t = ref_type_t<T2>;
+  const auto& A_ref = to_ref(A);
+  const auto& B_ref = to_ref(B);
 
-  A_ref_t A_ref = A;
-  B_ref_t B_ref = B;
-
-  auto A_col = as_column_vector_or_scalar(A_ref);
-  auto B_col = as_column_vector_or_scalar(B_ref);
-
-  auto arena_diff_val = to_arena(value_of(A_col) - value_of(B_col));
-
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> arena_A;
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> arena_B;
-
-  if (!is_constant<T1>::value) {
-    arena_A = A_col;
+  double res_val = 0.0;
+  for(size_t i = 0; i < A.size(); ++i) {
+    double diff = value_of(A_ref[i]) - value_of(B_ref[i]);
+    res_val += diff * diff;
   }
 
-  if (!is_constant<T2>::value) {
-    arena_B = B_col;
-  }
+  var res = res_val;
 
-  var res = arena_diff_val.squaredNorm();
+  auto arena_A = to_arena(A_ref);
+  auto arena_B = to_arena(B_ref);
 
-  reverse_pass_callback([arena_A, arena_B, arena_diff_val, res]() mutable {
-    if (!is_constant<T1>::value)
-      arena_A.adj() += 2.0 * res.adj() * arena_diff_val;
-
-    if (!is_constant<T2>::value)
-      arena_B.adj() += -2.0 * res.adj() * arena_diff_val;
+  reverse_pass_callback([arena_A, arena_B, res]() mutable {
+    for(size_t i = 0; i < arena_A.size(); ++i) {
+      double diff = value_of(arena_A[i]) -
+	value_of(arena_B[i]);
+      if(!is_constant<T1>::value)
+	forward_as<var>(arena_A[i]).adj() += 2.0 * res.adj() * diff;
+      if(!is_constant<T2>::value)
+	forward_as<var>(arena_B[i]).adj() -= 2.0 * res.adj() * diff;
+    }
   });
 
   return res;
