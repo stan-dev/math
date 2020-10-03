@@ -7,8 +7,10 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
@@ -21,12 +23,28 @@ template <bool propto, typename T_n, typename T_log_rate>
 return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
                                            const T_log_rate& alpha) {
   using T_partials_return = partials_return_t<T_n, T_log_rate>;
-  using std::exp;
+  using T_n_ref = ref_type_if_t<!is_constant<T_n>::value, T_n>;
+  using T_alpha_ref
+      = ref_type_if_t<!is_constant<T_log_rate>::value, T_log_rate>;
+  using std::isinf;
   static const char* function = "poisson_log_lpmf";
-  check_nonnegative(function, "Random variable", n);
-  check_not_nan(function, "Log rate parameter", alpha);
   check_consistent_sizes(function, "Random variable", n, "Log rate parameter",
                          alpha);
+
+  T_n_ref n_ref = n;
+  T_alpha_ref alpha_ref = alpha;
+
+  const auto& n_col = as_column_vector_or_scalar(n_ref);
+  const auto& alpha_col = as_column_vector_or_scalar(alpha_ref);
+
+  const auto& n_arr = as_array_or_scalar(n_col);
+  const auto& alpha_arr = as_array_or_scalar(alpha_col);
+
+  ref_type_t<decltype(value_of(n_arr))> n_val = value_of(n_arr);
+  ref_type_t<decltype(value_of(alpha_arr))> alpha_val = value_of(alpha_arr);
+
+  check_nonnegative(function, "Random variable", n_val);
+  check_not_nan(function, "Log rate parameter", alpha_val);
 
   if (size_zero(n, alpha)) {
     return 0.0;
@@ -35,54 +53,36 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
     return 0.0;
   }
 
-  T_partials_return logp(0.0);
-  operands_and_partials<T_log_rate> ops_partials(alpha);
-
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_log_rate> alpha_vec(alpha);
-  size_t max_size_seq_view = max_size(n, alpha);
-
-  for (size_t i = 0, size_alpha = stan::math::size(alpha); i < size_alpha;
-       i++) {
-    if (INFTY == alpha_vec[i]) {
-      return LOG_ZERO;
-    }
+  if (sum(promote_scalar<int>(INFTY == alpha_val))) {
+    return LOG_ZERO;
   }
-  for (size_t i = 0; i < max_size_seq_view; i++) {
+
+  size_t N = max_size(n, alpha);
+  scalar_seq_view<decltype(n_val)> n_vec(n_val);
+  scalar_seq_view<decltype(alpha_val)> alpha_vec(alpha_val);
+  for (size_t i = 0; i < N; i++) {
     if (NEGATIVE_INFTY == alpha_vec[i] && n_vec[i] != 0) {
       return LOG_ZERO;
     }
   }
 
-  VectorBuilder<include_summand<propto>::value, T_partials_return, T_n>
-      lgamma_n_plus_one(size(n));
+  operands_and_partials<T_alpha_ref> ops_partials(alpha_ref);
+
+  const auto& exp_alpha
+      = to_ref_if<!is_constant_all<T_log_rate>::value>(exp(alpha_val));
+
+  T_partials_return logp = sum(n_val * alpha_val);
+  if (include_summand<propto, T_log_rate>::value) {
+    logp -= sum(exp_alpha) * N / size(alpha);
+  }
   if (include_summand<propto>::value) {
-    for (size_t i = 0, size_n = stan::math::size(n); i < size_n; i++) {
-      lgamma_n_plus_one[i] = lgamma(n_vec[i] + 1.0);
-    }
+    logp -= sum(lgamma(n_val + 1.0)) * N / size(n);
   }
 
-  VectorBuilder<include_summand<propto, T_log_rate>::value, T_partials_return,
-                T_log_rate>
-      exp_alpha(size(alpha));
-  for (size_t i = 0, size_alpha = stan::math::size(alpha); i < size_alpha;
-       i++) {
-    exp_alpha[i] = exp(value_of(alpha_vec[i]));
+  if (!is_constant_all<T_log_rate>::value) {
+    ops_partials.edge1_.partials_ = n_val - exp_alpha;
   }
 
-  for (size_t i = 0; i < max_size_seq_view; i++) {
-    const auto& alpha_val = value_of(alpha_vec[i]);
-    if (!(alpha_val == NEGATIVE_INFTY && n_vec[i] == 0)) {
-      if (include_summand<propto>::value) {
-        logp -= lgamma_n_plus_one[i];
-      }
-      logp += n_vec[i] * alpha_val - exp_alpha[i];
-    }
-
-    if (!is_constant_all<T_log_rate>::value) {
-      ops_partials.edge1_.partials_[i] += n_vec[i] - exp_alpha[i];
-    }
-  }
   return ops_partials.build(logp);
 }
 

@@ -84,7 +84,7 @@ TEST(ProbDistributions, ordered_probit) {
   // init size zero
   Eigen::Matrix<double, Eigen::Dynamic, 1> c_zero;
   EXPECT_EQ(0, c_zero.size());
-  EXPECT_THROW(ordered_probit_log(1, lambda, c_zero), std::domain_error);
+  EXPECT_THROW(ordered_probit_log(1, lambda, c_zero), std::invalid_argument);
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> c_neg(1);
   c_neg << -13.7;
