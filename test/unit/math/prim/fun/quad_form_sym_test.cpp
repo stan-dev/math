@@ -112,7 +112,7 @@ TEST(MathMatrixPrim, quad_form_sym_2095) {
   EXPECT_FLOAT_EQ(0, cd(1, 0) - cd(0, 1));
 }
 
-TEST(AgradRev, quad_form_sym_return_types) {
+TEST(MathMatrixPrim, quad_form_sym_return_types) {
   using stan::math::quad_form_sym;
 
   double a = 5.0;
