@@ -27,7 +27,7 @@ inline var dot_self(const T& v) {
   var res = arena_v.val().squaredNorm();
 
   reverse_pass_callback([arena_v, res]() {
-    for(size_t i = 0; i < arena_v.size(); ++i) {
+    for (size_t i = 0; i < arena_v.size(); ++i) {
       arena_v.coeffRef(i).adj() += 2.0 * res.adj() * arena_v.coeff(i).val();
     }
   });
