@@ -22,38 +22,24 @@ namespace math {
  * @return M times its transpose.
  */
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
-inline Eigen::Matrix<var, T::RowsAtCompileTime, T::RowsAtCompileTime>
-tcrossprod(const T& M) {
-  if (M.rows() == 0) {
-    return {};
+inline auto tcrossprod(const T& M) {
+  using ret_type = promote_scalar_t<var, decltype(M * M.transpose())>;
+
+  if (M.size() == 0) {
+    return ret_type();
   }
 
-  arena_matrix<promote_scalar_t<var, T>> arena_M = M;
-  arena_matrix<promote_scalar_t<double, T>> arena_M_val = value_of(arena_M);
+  arena_t<T> arena_M = M;
+  auto arena_M_val = to_arena(value_of(arena_M));
 
-  Eigen::Matrix<double, T::RowsAtCompileTime, T::RowsAtCompileTime> res_val(
-      M.rows(), M.rows());
-  res_val.setZero().template selfadjointView<Eigen::Upper>().rankUpdate(
-      arena_M_val);
-
-  arena_matrix<Eigen::Matrix<var, T::RowsAtCompileTime, T::RowsAtCompileTime>>
-      res(M.rows(), M.rows());
-
-  for (size_t j = 0; j < res.cols(); ++j) {
-    for (size_t i = 0; i < j; ++i) {
-      res.coeffRef(i, j) = res.coeffRef(j, i) = res_val.coeff(i, j);
-    }
-    res.coeffRef(j, j) = res_val.coeff(j, j);
-  }
+  arena_t<ret_type> res = arena_M_val * arena_M_val.transpose();
 
   reverse_pass_callback([res, arena_M, arena_M_val]() mutable {
-    Eigen::MatrixXd adj = res.adj();
-    for (size_t i = 0; i < adj.cols(); ++i)
-      adj(i, i) *= 2.0;
-    arena_M.adj() += adj * arena_M_val;
+    const auto& adj = to_ref(res.adj());
+    arena_M.adj() += (adj.transpose() + adj) * arena_M_val;
   });
 
-  return res;
+  return ret_type(res);
 }
 
 }  // namespace math
