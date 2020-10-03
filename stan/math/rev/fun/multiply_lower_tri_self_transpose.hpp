@@ -20,16 +20,20 @@ inline auto multiply_lower_tri_self_transpose(const T& L) {
 
   arena_t<T> arena_U = L.transpose();
 
-  auto arena_U_val = to_arena(value_of(arena_U).template triangularView<Eigen::Upper>());
+  auto arena_U_val
+      = to_arena(value_of(arena_U).template triangularView<Eigen::Upper>());
 
-  if(L.size() > 16) {
-    arena_t<ret_type> res = arena_U_val.transpose()
-      * arena_U_val.template triangularView<Eigen::Upper>();
+  if (L.size() > 16) {
+    arena_t<ret_type> res
+        = arena_U_val.transpose()
+          * arena_U_val.template triangularView<Eigen::Upper>();
 
     reverse_pass_callback([res, arena_U, arena_U_val]() mutable {
       const auto& adj = to_ref(res.adj());
-    
-      arena_U.adj() += (arena_U_val.template triangularView<Eigen::Upper>() * (adj.transpose() + adj)).template triangularView<Eigen::Upper>();
+
+      arena_U.adj() += (arena_U_val.template triangularView<Eigen::Upper>()
+                        * (adj.transpose() + adj))
+                           .template triangularView<Eigen::Upper>();
     });
 
     return ret_type(res);
@@ -38,9 +42,10 @@ inline auto multiply_lower_tri_self_transpose(const T& L) {
 
     reverse_pass_callback([res, arena_U, arena_U_val]() mutable {
       const auto& adj = to_ref(res.adj());
-    
-      arena_U.adj() += (arena_U_val.lazyProduct(adj.transpose() + adj)).template triangularView<Eigen::Upper>();
-    });    
+
+      arena_U.adj() += (arena_U_val.lazyProduct(adj.transpose() + adj))
+                           .template triangularView<Eigen::Upper>();
+    });
 
     return ret_type(res);
   }
