@@ -89,14 +89,14 @@ TEST(hmm_rng_test, chiSquareGoodnessFitTest_symmetric) {
     ++counts_0[states[0] - stan::error_index::value];
     ++counts_1[states[1] - stan::error_index::value];
     // product += states[0] * states[1];
-    a += (states[0] == stan::error_index::value &&
-	  states[1] == stan::error_index::value);
-    b += (states[0] == stan::error_index::value &&
-	  states[1] == 1 + stan::error_index::value);
-    c += (states[0] == 1 + stan::error_index::value &&
-	  states[1] == stan::error_index::value);
-    d += (states[0] == 1 + stan::error_index::value &&
-	  states[1] == 1 + stan::error_index::value);
+    a += (states[0] == stan::error_index::value
+          && states[1] == stan::error_index::value);
+    b += (states[0] == stan::error_index::value
+          && states[1] == 1 + stan::error_index::value);
+    c += (states[0] == 1 + stan::error_index::value
+          && states[1] == stan::error_index::value);
+    d += (states[0] == 1 + stan::error_index::value
+          && states[1] == 1 + stan::error_index::value);
   }
 
   // Test the marginal probabilities of each variable
