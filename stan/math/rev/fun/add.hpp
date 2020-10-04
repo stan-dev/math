@@ -1,7 +1,12 @@
 #ifndef STAN_MATH_REV_FUN_ADD_HPP
 #define STAN_MATH_REV_FUN_ADD_HPP
 
-#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/core/var.hpp>
+#include <stan/math/rev/core/reverse_pass_callback.hpp>
+#include <stan/math/prim/err/check_matching_dims.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/is_any_nan.hpp>
 
 namespace stan {
 namespace math {
@@ -25,9 +30,14 @@ inline auto add(const VarMat1& a, const VarMat2& b) {
   arena_t<VarMat1> arena_a = a;
   arena_t<VarMat2> arena_b = b;
   reverse_pass_callback([ret, arena_a, arena_b]() mutable {
-    for (Eigen::Index i = 0; i < ret.size(); ++i) {
-      arena_a.adj().coeffRef(i) += ret.adj().coeffRef(i);
-      arena_b.adj().coeffRef(i) += ret.adj().coeffRef(i);
+    if (is_var_matrix<VarMat1>::value || is_var_matrix<VarMat2>::value) {
+      arena_a.adj() += ret.adj();
+      arena_b.adj() += ret.adj();
+    } else {
+      for (Eigen::Index i = 0; i < ret.size(); ++i) {
+        arena_a.adj().coeffRef(i) += ret.adj().coeffRef(i);
+        arena_b.adj().coeffRef(i) += ret.adj().coeffRef(i);
+      }
     }
   });
   return ret_type(ret);
