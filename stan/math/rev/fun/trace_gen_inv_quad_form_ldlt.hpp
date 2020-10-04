@@ -73,8 +73,8 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D,
     res = (value_of(D) * BTAsolveB).trace();
   }
 
-  reverse_pass_callback([A, BTAsolveB, AsolveB, arena_B, arena_D, arena_B_val, arena_D_val,
-                         res]() mutable {
+  reverse_pass_callback([A, BTAsolveB, AsolveB, arena_B, arena_D, arena_B_val,
+                         arena_D_val, res]() mutable {
     double C_adj = res.adj();
 
     if (!is_constant<Ta>::value) {

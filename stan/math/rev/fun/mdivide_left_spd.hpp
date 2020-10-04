@@ -52,7 +52,9 @@ inline auto mdivide_left_spd(const T1& A, const T2& B) {
     promote_scalar_t<double, T2> adjB = res.adj();
 
     arena_A_llt.template triangularView<Eigen::Lower>().solveInPlace(adjB);
-    arena_A_llt.template triangularView<Eigen::Lower>().transpose().solveInPlace(adjB);
+    arena_A_llt.template triangularView<Eigen::Lower>()
+        .transpose()
+        .solveInPlace(adjB);
 
     if (!is_constant<T1>::value)
       arena_A.adj() -= adjB * res.val().transpose().eval();
