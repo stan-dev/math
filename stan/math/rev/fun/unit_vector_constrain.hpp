@@ -26,26 +26,25 @@ namespace math {
  * @return Unit length vector of dimension K
  **/
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
-plain_type_t<T> unit_vector_constrain(const T& y) {
+auto unit_vector_constrain(const T& y) {
+  using ret_type = plain_type_t<T>;
+  
   check_vector("unit_vector", "y", y);
   check_nonzero_size("unit_vector", "y", y);
 
-  const auto& y_ref = to_ref(y);
-  arena_matrix<promote_scalar_t<double, T>> y_val = value_of(y_ref);
-  arena_matrix<plain_type_t<T>> arena_y = y_ref;
+  arena_t<T> arena_y = y_ref;
+  const auto& y_val = to_arena(value_of(arena_y));
 
   const double r = y_val.norm();
   const double r_cubed = r * r * r;
-  arena_matrix<plain_type_t<T>> res = y_val / r;
+  arena_t<ret_type> res = y_val / r;
 
   reverse_pass_callback([arena_y, res, r, r_cubed, y_val]() mutable {
-    const auto& adj = to_ref(res.adj());
-
     arena_y.adj()
-        += adj / r - y_val * (y_val.array() * adj.array()).sum() / r_cubed;
+      += res.adj() / r - y_val * ((y_val.array() * res.adj().array()).sum() / r_cubed);
   });
 
-  return res;
+  return ret_type(res);
 }
 
 /**
