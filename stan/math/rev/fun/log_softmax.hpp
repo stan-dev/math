@@ -33,20 +33,21 @@ template <typename T, require_container_st<is_var, T>* = nullptr>
 inline auto log_softmax(const T& x) {
   return apply_vector_unary<ref_type_t<T>>::apply(
       to_ref(x), [](const auto& alpha) {
-	using ret_type = plain_type_t<decltype(alpha)>;
-	
+        using ret_type = plain_type_t<decltype(alpha)>;
+
         check_nonzero_size("log_softmax", "alpha", alpha);
 
         auto arena_alpha = to_arena(to_ref(alpha));
-	const auto& alpha_val = to_ref(value_of(arena_alpha).array());
-	const auto& theta = to_ref(alpha_val - alpha_val.maxCoeff());
+        const auto& alpha_val = to_ref(value_of(arena_alpha).array());
+        const auto& theta = to_ref(alpha_val - alpha_val.maxCoeff());
 
         arena_t<ret_type> res = theta.array() - log(theta.exp().sum());
 
         reverse_pass_callback([arena_alpha, res]() mutable {
           arena_alpha.adj()
-	    += res.adj() - (res.adj().sum() * res.val().array().exp()).matrix();
-	});
+              += res.adj()
+                 - (res.adj().sum() * res.val().array().exp()).matrix();
+        });
 
         return ret_type(res);
       });
