@@ -37,23 +37,21 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D,
   check_square("trace_gen_inv_quad_form_ldlt", "D", D);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "A", A, "B", B);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "B", B, "D", D);
+
   if (D.size() == 0 || A.cols() == 0) {
     return 0;
   }
 
-  using B_ref_t = ref_type_t<Tb>;
-  using D_ref_t = ref_type_t<Td>;
+  const auto& B_ref = to_ref(B);
+  const auto& D_ref = to_ref(D);
 
-  B_ref_t B_ref = B;
-  D_ref_t D_ref = D;
+  auto arena_B_val = to_arena(value_of(B_ref));
+  arena_t<promote_scalar_t<double, Td>> arena_D_val;
+  auto AsolveB = to_arena(A.solve(arena_B_val));
+  auto BTAsolveB = to_arena(arena_B_val.transpose() * AsolveB);
 
-  arena_matrix<promote_scalar_t<double, Tb>> arena_B_val = value_of(B_ref);
-  arena_matrix<promote_scalar_t<double, Td>> arena_D_val;
-  arena_matrix<Eigen::Matrix<double, R, Tb::ColsAtCompileTime>> AsolveB
-      = A.solve(arena_B_val);
-
-  arena_matrix<promote_scalar_t<var, Tb>> arena_B;
-  arena_matrix<promote_scalar_t<var, Td>> arena_D;
+  arena_t<promote_scalar_t<var, Tb>> arena_B;
+  arena_t<promote_scalar_t<var, Td>> arena_D;
 
   if (!is_constant<Tb>::value) {
     arena_B = B_ref;
@@ -70,12 +68,12 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D,
   var res;
 
   if (!is_constant_all<Ta, Tb>::value) {
-    res = (arena_D_val * arena_B_val.transpose() * AsolveB).trace();
+    res = (arena_D_val * BTAsolveB).trace();
   } else {
-    res = (value_of(D) * arena_B_val.transpose() * AsolveB).trace();
+    res = (value_of(D) * BTAsolveB).trace();
   }
 
-  reverse_pass_callback([A, AsolveB, arena_B, arena_D, arena_B_val, arena_D_val,
+  reverse_pass_callback([A, BTAsolveB, AsolveB, arena_B, arena_D, arena_B_val, arena_D_val,
                          res]() mutable {
     double C_adj = res.adj();
 
@@ -89,7 +87,7 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D,
           += C_adj * AsolveB * (arena_D_val + arena_D_val.transpose());
 
     if (!is_constant<Td>::value)
-      arena_D.adj() += C_adj * arena_B_val.transpose() * AsolveB;
+      arena_D.adj() += C_adj * BTAsolveB;
   });
 
   return res;
