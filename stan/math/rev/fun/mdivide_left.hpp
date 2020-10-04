@@ -16,7 +16,7 @@ template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
           require_any_vt_var<T1, T2>* = nullptr>
 inline auto mdivide_left(const T1& A, const T2& B) {
   using ret_type = plain_type_t<decltype(A * B)>;
-  
+
   check_square("mdivide_left", "A", A);
   check_multiplicable("mdivide_left", "A", A, "B", B);
 
@@ -39,12 +39,11 @@ inline auto mdivide_left(const T1& A, const T2& B) {
   }
 
   auto arena_A_val = to_arena(value_of(A_ref));
-  arena_t<ret_type>
-      res = arena_A_val.householderQr().solve(value_of(B_ref));
+  arena_t<ret_type> res = arena_A_val.householderQr().solve(value_of(B_ref));
 
   reverse_pass_callback([arena_A, arena_B, arena_A_val, res]() mutable {
     promote_scalar_t<double, T2> adjB
-      = arena_A_val.transpose().householderQr().solve(res.adj());
+        = arena_A_val.transpose().householderQr().solve(res.adj());
 
     if (!is_constant<T1>::value)
       arena_A.adj() += -adjB * res.val().transpose().eval();
