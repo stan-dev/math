@@ -70,12 +70,12 @@ inline std::vector<int> hmm_latent_rng(const T_omega& log_omegas,
   Eigen::Map<Eigen::VectorXd> probs_vec(probs.data(), n_states);
   probs_vec = alphas.col(n_transitions) / alphas.col(n_transitions).sum();
   boost::random::discrete_distribution<> cat_hidden(probs);
-  hidden_states[n_transitions] = cat_hidden(rng) + 1;
+  hidden_states[n_transitions] = cat_hidden(rng) + stan::error_index::value;
 
   for (int n = n_transitions; n-- > 0;) {
     // Sample the nth hidden state conditional on (n + 1)st hidden state.
-    // Subtract 1 in order to use C++ index.
-    int last_hs = hidden_states[n + 1] - 1;
+    // Subtract error_index in order to use C++ index.
+    int last_hs = hidden_states[n + 1] - stan::error_index::value;
 
     probs_vec = alphas.col(n).cwiseProduct(Gamma_dbl.col(last_hs))
                 * beta(last_hs) * omegas(last_hs, n + 1);

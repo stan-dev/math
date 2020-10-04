@@ -82,7 +82,7 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
   if (N_instances == 0 || N_classes == 1) {
     return 0;
   }
-  if (!include_summand<propto, T_beta, T_cuts>::value) {
+  if (!include_summand<propto, T_x, T_beta, T_cuts>::value) {
     return 0;
   }
 
@@ -96,7 +96,7 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
       = opencl_kernels::ordered_logistic_glm.get_option("LOCAL_SIZE_");
   const int wgs = (N_instances + local_size - 1) / local_size;
 
-  bool need_location_derivative = !is_constant_all<T_beta>::value;
+  bool need_location_derivative = !is_constant_all<T_x, T_beta>::value;
   bool need_cuts_derivative = !is_constant_all<T_cuts>::value;
   matrix_cl<double> logp_cl(wgs, 1);
   matrix_cl<double> location_sum_cl(wgs, 1);
