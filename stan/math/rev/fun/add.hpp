@@ -162,6 +162,17 @@ inline auto add(const VarMat& a, const Var& b) {
   return add(b, a);
 }
 
+template <typename T1, typename T2, require_any_var_vt<std::is_arithmetic, T1, T2>* = nullptr,
+ require_any_arithmetic_t<T1, T2>* = nullptr>
+inline auto add(const T1& a, const T2& b) {
+  return a + b;
+}
+
+template <typename T1, typename T2, require_all_var_vt<std::is_arithmetic, T1, T2>* = nullptr>
+inline auto add(const T1& a, const T2& b) {
+  return a + b;
+}
+
 }  // namespace math
 }  // namespace stan
 
