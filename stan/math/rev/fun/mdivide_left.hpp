@@ -46,7 +46,7 @@ inline auto mdivide_left(const T1& A, const T2& B) {
         = arena_A_val.transpose().householderQr().solve(res.adj());
 
     if (!is_constant<T1>::value)
-      arena_A.adj() += -adjB * res.val().transpose().eval();
+      arena_A.adj() -= adjB * res.val().transpose().eval();
 
     if (!is_constant<T2>::value)
       arena_B.adj() += adjB;
