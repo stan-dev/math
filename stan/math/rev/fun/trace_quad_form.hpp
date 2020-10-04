@@ -22,47 +22,43 @@ inline var trace_quad_form(const EigMat1& A, const EigMat2& B) {
   check_square("trace_quad_form", "A", A);
   check_multiplicable("trace_quad_form", "A", A, "B", B);
 
-  using A_ref_t = ref_type_t<EigMat1>;
-  using B_ref_t = ref_type_t<EigMat2>;
+  const auto& A_ref = to_ref(A);
+  const auto& B_ref = to_ref(B);
 
-  A_ref_t A_ref = A;
-  B_ref_t B_ref = B;
-
-  arena_matrix<promote_scalar_t<double, EigMat1>> arena_A_val;
-  arena_matrix<promote_scalar_t<double, EigMat2>> arena_B_val = value_of(B_ref);
-
-  arena_matrix<promote_scalar_t<var, EigMat1>> arena_A;
-  arena_matrix<promote_scalar_t<var, EigMat2>> arena_B;
-
-  if (!is_constant<EigMat1>::value) {
-    arena_A = A_ref;
-  }
-
-  if (!is_constant<EigMat2>::value) {
-    arena_B = B_ref;
-    arena_A_val = value_of(A_ref);
-  }
-
+  auto arena_B_val = to_arena(value_of(B_ref));
   var res;
+  if(!is_constant<EigMat1>::value && !is_constant<EigMat2>::value) {
+    arena_t<promote_scalar_t<var, EigMat1>> arena_A = A_ref;
+    arena_t<promote_scalar_t<var, EigMat2>> arena_B = B_ref;
+    auto arena_A_val = to_arena(value_of(arena_A));
 
-  if (is_constant<EigMat2>::value) {
-    res = (arena_B_val.transpose() * value_of(A_ref) * arena_B_val).trace();
-  } else {
     res = (arena_B_val.transpose() * arena_A_val * arena_B_val).trace();
+
+    reverse_pass_callback([arena_A, arena_B, arena_A_val, arena_B_val, res]() mutable {
+      arena_A.adj() += res.adj() * arena_B_val * arena_B_val.transpose();
+      arena_B.adj() += res.adj()
+	* (arena_A_val + arena_A_val.transpose()) * arena_B_val;
+    });
+  } else if(!is_constant<EigMat1>::value) {
+    arena_t<promote_scalar_t<var, EigMat1>> arena_A = A_ref;
+
+    res = (arena_B_val.transpose() * value_of(A_ref) * arena_B_val).trace();
+
+    reverse_pass_callback([arena_A, arena_B_val, res]() mutable {
+      arena_A.adj() += res.adj() * arena_B_val * arena_B_val.transpose();
+    });
+  } else {
+    arena_t<promote_scalar_t<var, EigMat2>> arena_B = B_ref;
+    auto arena_A_val = to_arena(value_of(A_ref));
+
+    res = (arena_B_val.transpose() * arena_A_val * arena_B_val).trace();
+
+    reverse_pass_callback([arena_B, arena_A_val, arena_B_val, res]() mutable {
+      double C_adj = res.adj();
+
+      arena_B.adj() += res.adj() * (arena_A_val + arena_A_val.transpose()) * arena_B_val;
+    });
   }
-
-  reverse_pass_callback(
-      [arena_A, arena_B, arena_A_val, arena_B_val, res]() mutable {
-        double C_adj = res.adj();
-
-        if (!is_constant<EigMat1>::value)
-          arena_A.adj() += C_adj * arena_B_val * arena_B_val.transpose();
-
-        if (!is_constant<EigMat2>::value)
-          arena_B.adj() += C_adj
-                           * (arena_A_val * arena_B_val
-                              + arena_A_val.transpose() * arena_B_val);
-      });
 
   return res;
 }
