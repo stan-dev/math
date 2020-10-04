@@ -18,45 +18,33 @@ namespace math {
 template <typename Mat1, typename Mat2,
           require_all_eigen_t<Mat1, Mat2>* = nullptr,
           require_any_eigen_vt<is_var, Mat1, Mat2>* = nullptr>
-inline Eigen::Matrix<return_type_t<Mat1, Mat2>, 1, Mat1::ColsAtCompileTime>
-columns_dot_product(const Mat1& v1, const Mat2& v2) {
+inline auto columns_dot_product(const Mat1& v1, const Mat2& v2) {
+  using ret_type = promote_scalar_t<var, Eigen::RowVectorXd>;
+  using mat1_var_type = promote_scalar_t<var, Mat1>;
+  using mat2_var_type = promote_scalar_t<var, Mat2>;
+
   check_matching_sizes("columns_dot_product", "v1", v1, "v2", v2);
 
-  ref_type_t<Mat1> v1_ref = v1;
-  ref_type_t<Mat2> v2_ref = v2;
+  auto arena_v1 = to_arena(v1);
+  auto arena_v2 = to_arena(v2);
 
-  arena_matrix<promote_scalar_t<double, Mat1>> arena_v1_val = value_of(v1_ref);
-  arena_matrix<promote_scalar_t<double, Mat2>> arena_v2_val = value_of(v2_ref);
+  arena_t<ret_type> res =
+    (arena_v1.val().array() * arena_v2.val().array()).colwise().sum();
 
-  arena_matrix<promote_scalar_t<var, Mat1>> arena_v1;
-  arena_matrix<promote_scalar_t<var, Mat2>> arena_v2;
+  reverse_pass_callback([res, arena_v1, arena_v2]() mutable {
+    for(size_t j = 0; j < arena_v1.cols(); ++j) {
+      for(size_t i = 0; i < arena_v1.rows(); ++i) {
+	if(!is_constant<Mat1>::value)
+	  forward_as<var>(arena_v1.coeffRef(i, j)).adj() +=
+	    value_of(arena_v2.coeff(i, j)) * res.coeff(j).adj();
+	if(!is_constant<Mat2>::value)
+	  forward_as<var>(arena_v2.coeffRef(i, j)).adj() +=
+	    value_of(arena_v1.coeff(i, j)) * res.coeff(j).adj();
+      }
+    }
+  });
 
-  if (!is_constant<Mat1>::value) {
-    arena_v1 = v1_ref;
-  }
-
-  if (!is_constant<Mat2>::value) {
-    arena_v2 = v2_ref;
-  }
-
-  Eigen::RowVectorXd out_val(arena_v1_val.cols());
-  for (size_t m = 0; m < arena_v1_val.cols(); ++m)
-    out_val.coeffRef(m) = arena_v1_val.col(m).dot(arena_v2_val.col(m));
-
-  arena_matrix<Eigen::Matrix<var, 1, Eigen::Dynamic>> out = out_val;
-
-  reverse_pass_callback(
-      [out, arena_v1, arena_v2, arena_v1_val, arena_v2_val]() mutable {
-        Eigen::RowVectorXd adj = out.adj();
-
-        if (!is_constant<Mat1>::value)
-          arena_v1.adj() += arena_v2_val * adj.asDiagonal();
-
-        if (!is_constant<Mat2>::value)
-          arena_v2.adj() += arena_v1_val * adj.asDiagonal();
-      });
-
-  return out;
+  return ret_type(res);
 }
 
 }  // namespace math
