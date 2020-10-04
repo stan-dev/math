@@ -20,17 +20,15 @@ inline var determinant(const T& m) {
     return 1;
   }
 
-  const auto& m_ref = to_ref(m);
-  const auto& m_val = to_ref(m_ref.val());
-  double det_val = m_val.determinant();
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arena_m
-      = m_ref;
-  arena_matrix<Eigen::MatrixXd> arena_m_inv_t = m_val.inverse().transpose();
+  auto arena_m = to_arena(m);
+  auto m_lu = arena_m.val().partialPivLu();
+  
+  auto arena_m_inv_transpose = to_arena(m_lu.inverse().transpose());
 
-  var det = det_val;
+  var det = m_lu.determinant();
 
-  reverse_pass_callback([arena_m, det, arena_m_inv_t]() mutable {
-    arena_m.adj() += (det.adj() * det.val()) * arena_m_inv_t;
+  reverse_pass_callback([arena_m, det, arena_m_inv_transpose]() mutable {
+    arena_m.adj() += (det.adj() * det.val()) * arena_m_inv_transpose;
   });
 
   return det;
