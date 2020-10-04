@@ -324,8 +324,8 @@ inline auto mdivide_left_tri(const T1 &A, const T2 &B) {
     return ret_type(0, B.cols());
   }
 
-  const auto& A_ref = to_ref(A);
-  const auto& B_ref = to_ref(B);
+  const auto &A_ref = to_ref(A);
+  const auto &B_ref = to_ref(B);
 
   arena_matrix<promote_scalar_t<var, T1>> arena_A;
   arena_matrix<promote_scalar_t<var, T2>> arena_B;
@@ -353,7 +353,7 @@ inline auto mdivide_left_tri(const T1 &A, const T2 &B) {
 
     if (!is_constant<T1>::value)
       arena_A.adj() -= (adjB * res.val().transpose().eval())
-	.template triangularView<TriView>();
+                           .template triangularView<TriView>();
   });
 
   return ret_type(res);
