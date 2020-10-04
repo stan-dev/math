@@ -2,14 +2,47 @@
 #define STAN_MATH_REV_CORE_OPERATOR_ADDITION_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/core/var.hpp>
+#include <stan/math/rev/core/vv_vari.hpp>
+#include <stan/math/rev/core/vd_vari.hpp>
 #include <stan/math/prim/err/check_matching_dims.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
-#include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/fun/add.hpp>
 
 namespace stan {
 namespace math {
+
+namespace internal {
+class add_vv_vari final : public op_vv_vari {
+ public:
+  add_vv_vari(vari* avi, vari* bvi)
+      : op_vv_vari(avi->val_ + bvi->val_, avi, bvi) {}
+  void chain() {
+    if (unlikely(is_any_nan(avi_->val_, bvi_->val_))) {
+      avi_->adj_ = NOT_A_NUMBER;
+      bvi_->adj_ = NOT_A_NUMBER;
+    } else {
+      avi_->adj_ += adj_;
+      bvi_->adj_ += adj_;
+    }
+  }
+};
+
+class add_vd_vari final : public op_vd_vari {
+ public:
+  add_vd_vari(vari* avi, double b) : op_vd_vari(avi->val_ + b, avi, b) {}
+  void chain() {
+    if (unlikely(is_any_nan(avi_->val_, bd_))) {
+      avi_->adj_ = NOT_A_NUMBER;
+    } else {
+      avi_->adj_ += adj_;
+    }
+  }
+};
+}  // namespace internal
+
+
 
 /**
  * Addition operator for variables (C++).
@@ -50,19 +83,7 @@ namespace math {
  * @return Variable result of adding two variables.
  */
 inline var operator+(const var& a, const var& b) {
-  var ret(a.val() + b.val());
-  if (unlikely(is_any_nan(a.val(), b.val()))) {
-    reverse_pass_callback([a, b]() mutable {
-      a.adj() = NOT_A_NUMBER;
-      b.adj() = NOT_A_NUMBER;
-    });
-  } else {
-    reverse_pass_callback([ret, a, b]() mutable {
-      a.adj() += ret.adj();
-      b.adj() += ret.adj();
-    });
-  }
-  return ret;
+  return {new internal::add_vv_vari(a.vi_, b.vi_)};
 }
 
 /**
@@ -79,17 +100,7 @@ inline var operator+(const var& a, const var& b) {
  */
 template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline var operator+(const var& a, Arith b) {
-  if (b == 0.0) {
-    return a;
-  } else {
-    var ret(a.val() + b);
-    if (unlikely(is_any_nan(a.val(), b))) {
-      reverse_pass_callback([a]() mutable { a.adj() = NOT_A_NUMBER; });
-    } else {
-      reverse_pass_callback([ret, a]() mutable { a.adj() += ret.adj(); });
-    }
-    return ret;
-  }
+ return {new internal::add_vd_vari(a.vi_, b)};
 }
 
 /**
@@ -106,7 +117,7 @@ inline var operator+(const var& a, Arith b) {
  */
 template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline var operator+(Arith a, const var& b) {
-  return b + a;
+  return {new internal::add_vd_vari(b.vi_, a)};  // by symmetry
 }
 
 /**

@@ -2,9 +2,9 @@
 #define STAN_MATH_REV_FUN_ADD_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/prim/err/check_matching_dims.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
-#include <stan/math/prim/err/check_matching_dims.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
 

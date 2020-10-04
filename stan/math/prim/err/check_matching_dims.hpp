@@ -61,6 +61,18 @@ inline void check_matching_dims(const char* function, const char* name1,
   }
 }
 
+/**
+ * Check if two matrices have the same row and column dimensions.
+ * @tparam T1 Either an Eigen type or a `var_value` with underlying Eigen type.
+ * @tparam T2 Either an Eigen type or a `var_value` with underlying Eigen type.
+ * @param function name of function (for error messages)
+ * @param name1 variable name for the first container (for error messages)
+ * @param y1 first matrix to test
+ * @param name2 variable name for the second container (for error messages)
+ * @param y2 second matrix to test
+ * @throw <code>std::invalid_argument</code> if the dimensions of the
+ *    containers do not match
+ */
 template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr>
 inline void check_matching_dims(const char* function, const char* name1,
                                 const T1& y1, const char* name2, const T2& y2) {
@@ -73,6 +85,30 @@ inline void check_matching_dims(const char* function, const char* name1,
                      std::string(msg_str.str()).c_str());
   }
 }
+
+/**
+ * Check if two matrices have the same row and column dimensions.
+ * @tparam T1 Either an Eigen type, a `var_value` with underlying Eigen type, or scalar.
+ * @tparam T2 Either an Eigen type, a `var_value` with underlying Eigen type, or scalar.
+ * @param function name of function (for error messages)
+ * @param name1 variable name for the first container (for error messages)
+ * @param y1 first argument to test
+ * @param name2 variable name for the second container (for error messages)
+ * @param y2 second argument to test
+ * @throw <code>std::invalid_argument</code> if the dimensions of the
+ *    containers do not match
+ */
+template <typename T1, typename T2, require_any_matrix_t<T1, T2>* = nullptr,
+ require_any_stan_scalar_t<T1, T2>* = nullptr>
+inline void check_matching_dims(const char* function, const char* name1,
+                                const T1& y1, const char* name2, const T2& y2) {
+    std::string y1_err("");
+    std::string msg_str("Tried Checking the dimensions of a matrix vs a scalar");
+    invalid_argument(function, name1, y1_err, "",
+                     msg_str.c_str());
+}
+
+
 /**
  * Check if the two matrices are of the same size.
  * This function checks the runtime sizes and can also check the static
