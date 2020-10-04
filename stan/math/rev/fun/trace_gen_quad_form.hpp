@@ -78,20 +78,23 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
   reverse_pass_callback([arena_A, arena_B, arena_D, arena_A_val, arena_B_val,
                          arena_D_val, res]() mutable {
     double C_adj = res.adj();
+    auto BDT = to_ref_if<!is_constant_all<Ta, Tb>::value>
+      (arena_B_val * arena_D_val.transpose());
+
+    auto AB = to_ref_if<!is_constant_all<Ta, Tb>::value>
+      (arena_A_val * arena_B_val);
 
     if (!is_constant<Ta>::value)
-      arena_A.adj() += C_adj * arena_B_val * arena_D_val.transpose()
-                       * arena_B_val.transpose();
+      arena_A.adj() += C_adj * BDT * arena_B_val.transpose();
 
     if (!is_constant<Tb>::value)
       arena_B.adj() += C_adj
-                       * (arena_A_val * arena_B_val * arena_D_val
-                          + arena_A_val.transpose() * arena_B_val
-                                * arena_D_val.transpose());
+                       * (AB * arena_D_val
+                          + arena_A_val.transpose() * BDT);
 
     if (!is_constant<Td>::value)
       arena_D.adj()
-          += C_adj * ((arena_A_val * arena_B_val).transpose() * arena_B_val);
+          += C_adj * (AB.transpose() * arena_B_val);
   });
 
   return res;
