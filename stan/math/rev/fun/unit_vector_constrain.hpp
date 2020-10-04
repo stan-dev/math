@@ -28,7 +28,7 @@ namespace math {
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
 auto unit_vector_constrain(const T& y) {
   using ret_type = plain_type_t<T>;
-  
+
   check_vector("unit_vector", "y", y);
   check_nonzero_size("unit_vector", "y", y);
 
@@ -41,7 +41,8 @@ auto unit_vector_constrain(const T& y) {
 
   reverse_pass_callback([arena_y, res, r, r_cubed, y_val]() mutable {
     arena_y.adj()
-      += res.adj() / r - y_val * ((y_val.array() * res.adj().array()).sum() / r_cubed);
+        += res.adj() / r
+           - y_val * ((y_val.array() * res.adj().array()).sum() / r_cubed);
   });
 
   return ret_type(res);
