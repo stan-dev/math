@@ -33,24 +33,22 @@ template <typename T, require_container_st<is_var, T>* = nullptr>
 inline auto log_softmax(const T& x) {
   return apply_vector_unary<ref_type_t<T>>::apply(
       to_ref(x), [](const auto& alpha) {
+	using ret_type = plain_type_t<decltype(alpha)>;
+	
         check_nonzero_size("log_softmax", "alpha", alpha);
 
-        const auto& alpha_col = as_column_vector_or_scalar(alpha);
-        const auto& alpha_val = to_ref(value_of(alpha_col));
-        const auto& theta = to_ref(alpha_val.array() - alpha_val.maxCoeff());
-        arena_matrix<Eigen::VectorXd> res_val
-            = theta.array() - log(theta.exp().sum());
+        auto arena_alpha = to_arena(to_ref(alpha));
+	const auto& alpha_val = to_ref(value_of(arena_alpha).array());
+	const auto& theta = to_ref(alpha_val - alpha_val.maxCoeff());
 
-        arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> res = res_val;
-        auto alpha_arena = to_arena(alpha_col);
+        arena_t<ret_type> res = theta.array() - log(theta.exp().sum());
 
-        reverse_pass_callback([alpha_arena, res, res_val]() mutable {
-          const auto& res_adj = to_ref(res.adj());
-          alpha_arena.adj()
-              += res_adj - (res_adj.sum() * res_val.array().exp()).matrix();
-        });
+        reverse_pass_callback([arena_alpha, res]() mutable {
+          arena_alpha.adj()
+	    += res.adj() - (res.adj().sum() * res.val().array().exp()).matrix();
+	});
 
-        return plain_type_t<decltype(alpha)>(res);
+        return ret_type(res);
       });
 }
 
