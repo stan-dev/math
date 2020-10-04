@@ -42,8 +42,6 @@ class add_vd_vari final : public op_vd_vari {
 };
 }  // namespace internal
 
-
-
 /**
  * Addition operator for variables (C++).
  *
@@ -100,7 +98,7 @@ inline var operator+(const var& a, const var& b) {
  */
 template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline var operator+(const var& a, Arith b) {
- return {new internal::add_vd_vari(a.vi_, b)};
+  return {new internal::add_vd_vari(a.vi_, b)};
 }
 
 /**
