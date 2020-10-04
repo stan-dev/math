@@ -85,7 +85,7 @@ inline std::vector<int> hmm_latent_rng(const T_omega& log_omegas,
     // discrete_distribution produces samples in [0, K), so
     // we need to add 1 to generate over [1, K).
     boost::random::discrete_distribution<> cat_hidden(probs);
-    hidden_states[n] = cat_hidden(rng) + 1;
+    hidden_states[n] = cat_hidden(rng) + stan::error_index::value;
 
     // update backwards state
     beta = Gamma_dbl * (omegas.col(n + 1).cwiseProduct(beta));
