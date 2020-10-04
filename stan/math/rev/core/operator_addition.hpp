@@ -9,7 +9,6 @@
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/fun/add.hpp>
 
-
 namespace stan {
 namespace math {
 
