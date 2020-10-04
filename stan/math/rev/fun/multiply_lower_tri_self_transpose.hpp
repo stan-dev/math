@@ -12,33 +12,43 @@ namespace stan {
 namespace math {
 
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
-inline Eigen::Matrix<var, T::RowsAtCompileTime, T::RowsAtCompileTime>
-multiply_lower_tri_self_transpose(const T& L) {
-  using T_double = promote_scalar_t<double, T>;
-  using T_var = promote_scalar_t<var, T>;
+inline auto multiply_lower_tri_self_transpose(const T& L) {
+  using ret_type = promote_scalar_t<var, decltype(L * L.transpose())>;
 
-  if (L.rows() == 0)
-    return T_var();
+  if (L.size() == 0)
+    return ret_type();
 
-  arena_matrix<T_var> arena_L = L;
-  arena_matrix<T_double> arena_L_val
-      = value_of(arena_L).template triangularView<Eigen::Lower>();
+  arena_t<T> arena_U = L.transpose();
 
-  arena_matrix<T_var> res = arena_L_val.template triangularView<Eigen::Lower>()
-                            * arena_L_val.transpose();
+  auto arena_U_val
+      = to_arena(value_of(arena_U).template triangularView<Eigen::Upper>());
 
-  reverse_pass_callback([res, arena_L, arena_L_val]() mutable {
-    ref_type_t<decltype(res.adj())> adj = res.adj();
-    Eigen::MatrixXd adjL = (adj.transpose() + adj) * arena_L_val;
+  if (L.size() > 16) {
+    arena_t<ret_type> res
+        = arena_U_val.transpose()
+          * arena_U_val.template triangularView<Eigen::Upper>();
 
-    for (size_t j = 1; j < adjL.cols(); ++j)
-      for (size_t i = 0; i < std::min(static_cast<size_t>(adjL.rows()), j); ++i)
-        adjL(i, j) = 0.0;
+    reverse_pass_callback([res, arena_U, arena_U_val]() mutable {
+      const auto& adj = to_ref(res.adj());
 
-    arena_L.adj() += adjL;
-  });
+      arena_U.adj() += (arena_U_val.template triangularView<Eigen::Upper>()
+                        * (adj.transpose() + adj))
+                           .template triangularView<Eigen::Upper>();
+    });
 
-  return res;
+    return ret_type(res);
+  } else {
+    arena_t<ret_type> res = arena_U_val.transpose().lazyProduct(arena_U_val);
+
+    reverse_pass_callback([res, arena_U, arena_U_val]() mutable {
+      const auto& adj = to_ref(res.adj());
+
+      arena_U.adj() += (arena_U_val.lazyProduct(adj.transpose() + adj))
+                           .template triangularView<Eigen::Upper>();
+    });
+
+    return ret_type(res);
+  }
 }
 
 }  // namespace math
