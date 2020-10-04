@@ -48,14 +48,14 @@ inline var trace_quad_form(const EigMat1& A, const EigMat2& B) {
     res = (arena_B_val.transpose() * arena_A_val * arena_B_val).trace();
   }
 
-  reverse_pass_callback(
-    [arena_A, arena_B, arena_A_val, arena_B_val, res]() mutable {
-      if (!is_constant<EigMat1>::value)
-	arena_A.adj() += res.adj() * arena_B_val * arena_B_val.transpose();
+  reverse_pass_callback([arena_A, arena_B, arena_A_val, arena_B_val,
+                         res]() mutable {
+    if (!is_constant<EigMat1>::value)
+      arena_A.adj() += res.adj() * arena_B_val * arena_B_val.transpose();
 
-      if (!is_constant<EigMat2>::value)
-	arena_B.adj() += res.adj()
-	  * (arena_A_val + arena_A_val.transpose()) * arena_B_val;
+    if (!is_constant<EigMat2>::value)
+      arena_B.adj()
+          += res.adj() * (arena_A_val + arena_A_val.transpose()) * arena_B_val;
   });
 
   return res;
