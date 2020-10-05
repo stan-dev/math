@@ -28,19 +28,18 @@ inline var log_determinant_spd(const T& m) {
     return 0;
   }
 
-  arena_matrix<Eigen::MatrixXd> arena_m_d = m.val();
-  check_symmetric("log_determinant_spd", "m", arena_m_d);
+  arena_t<T> arena_m = m;
+  
+  auto arena_m_inv = to_arena(arena_m.val());
+  check_symmetric("log_determinant_spd", "m", arena_m_inv);
 
-  Eigen::LDLT<Eigen::MatrixXd> ldlt(arena_m_d);
+  const auto& ldlt = arena_m_inv.ldlt();
+  
   if (ldlt.info() != Eigen::Success) {
     double y = 0;
     throw_domain_error("log_determinant_spd", "matrix argument", y,
                        "failed LDLT factorization");
   }
-
-  // compute the inverse of A (needed for the derivative)
-  arena_m_d.setIdentity(m.rows(), m.cols());
-  ldlt.solveInPlace(arena_m_d);
 
   if (ldlt.isNegative() || (ldlt.vectorD().array() <= 1e-16).any()) {
     double y = 0;
@@ -48,15 +47,17 @@ inline var log_determinant_spd(const T& m) {
                        "matrix is negative definite");
   }
 
+  // compute the inverse of A (needed for the derivative)
+  arena_m_inv.setIdentity(m.rows(), m.cols());
+  ldlt.solveInPlace(arena_m_inv);
+
   var log_det = sum(log(ldlt.vectorD()));
 
   check_finite("log_determinant_spd",
                "log determininant of the matrix argument", log_det);
 
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arena_m = m;
-
-  reverse_pass_callback([arena_m, log_det, arena_m_d]() mutable {
-    arena_m.adj() += log_det.adj() * arena_m_d;
+  reverse_pass_callback([arena_m, log_det, arena_m_inv]() mutable {
+    arena_m.adj() += log_det.adj() * arena_m_inv;
   });
 
   return log_det;
