@@ -169,3 +169,38 @@ TEST(mathMix, multiplicationPatterns) {
   instantiate_multiply<fvar<var>>();
   instantiate_multiply<fvar<fvar<var>>>();
 }
+
+TEST(mathMix, thrashEigenStuff) {
+  using stan::math::var;
+  Eigen::Matrix<var, -1, -1> A;
+  Eigen::Matrix<var, -1, -1> B;
+  for (int i = 1; i < 200; ++i) {
+    A.resize(i, i);
+    B.resize(i, i);
+    Eigen::Index full_size = i * i;
+    for (int j = 0; j < full_size; ++j) {
+      A(j) = j;
+      B(j) = j;
+    }
+    Eigen::Matrix<var, -1, -1> C = multiply(A, B);
+    C(0,0).grad();
+  }
+  stan::math::recover_memory();
+}
+TEST(mathMix, thrashEigenStuffRev) {
+  using stan::math::var;
+  Eigen::Matrix<var, -1, -1> A;
+  Eigen::Matrix<var, -1, -1> B;
+  for (int i = 200; i > 0; --i) {
+    A.resize(i, i);
+    B.resize(i, i);
+    Eigen::Index full_size = i * i;
+    for (int j = 0; j < full_size; ++j) {
+      A(j) = j;
+      B(j) = j;
+    }
+    Eigen::Matrix<var, -1, -1> C = multiply(A, B);
+    C(0,0).grad();
+  }
+  stan::math::recover_memory();
+}

@@ -292,7 +292,397 @@ class var_value<T, require_floating_point_t<T>> {
     return os << v.val();
   }
 };
+}
+}
 
+namespace std {
+
+/**
+ * Specialization of numeric limits for var objects.
+ *
+ * This implementation of std::numeric_limits<stan::math::var_value<double>>
+ * is used to treat var objects like value_types.
+ */
+template <typename T>
+struct numeric_limits<stan::math::var_value<T>> {
+  typedef stan::promote_args_t<T> value_type;
+  static constexpr bool is_specialized = true;
+  static constexpr stan::math::var_value<T> min() noexcept {
+    return numeric_limits<value_type>::min();
+  }
+  static constexpr stan::math::var_value<T> max() noexcept {
+    return numeric_limits<value_type>::max();
+  }
+  static constexpr int digits = numeric_limits<value_type>::digits;
+  static constexpr int digits10 = numeric_limits<value_type>::digits10;
+  static constexpr int max_digits10 = numeric_limits<value_type>::max_digits10;
+  static constexpr bool is_signed = numeric_limits<value_type>::is_signed;
+  static constexpr bool is_integer = numeric_limits<value_type>::is_integer;
+  static constexpr bool is_exact = numeric_limits<value_type>::is_exact;
+  static constexpr int radix = numeric_limits<value_type>::radix;
+  static constexpr T epsilon() noexcept {
+    return numeric_limits<value_type>::epsilon();
+  }
+  static constexpr stan::math::var_value<T> round_error() noexcept {
+    return numeric_limits<value_type>::round_error();
+  }
+  static constexpr T lowest() noexcept {
+    return numeric_limits<value_type>::lowest();
+  };
+
+  static constexpr int min_exponent = numeric_limits<value_type>::min_exponent;
+  static constexpr int min_exponent10
+      = numeric_limits<value_type>::min_exponent10;
+  static constexpr int max_exponent = numeric_limits<value_type>::max_exponent;
+  static constexpr int max_exponent10
+      = numeric_limits<value_type>::max_exponent10;
+
+  static constexpr bool has_infinity = numeric_limits<value_type>::has_infinity;
+  static constexpr bool has_quiet_NaN
+      = numeric_limits<value_type>::has_quiet_NaN;
+  static constexpr bool has_signaling_NaN
+      = numeric_limits<value_type>::has_signaling_NaN;
+  static constexpr float_denorm_style has_denorm
+      = numeric_limits<value_type>::has_denorm;
+  static constexpr bool has_denorm_loss
+      = numeric_limits<value_type>::has_denorm_loss;
+  static constexpr stan::math::var_value<T> infinity() noexcept {
+    return numeric_limits<value_type>::infinity();
+  }
+  static constexpr stan::math::var_value<T> quiet_NaN() noexcept {
+    return numeric_limits<value_type>::quiet_NaN();
+  }
+  static constexpr stan::math::var_value<T> signaling_NaN() noexcept {
+    return numeric_limits<value_type>::signaling_NaN();
+  }
+  static constexpr stan::math::var_value<T> denorm_min() noexcept {
+    return numeric_limits<value_type>::denorm_min();
+  }
+
+  static constexpr bool is_iec559 = numeric_limits<value_type>::is_iec559;
+  static constexpr bool is_bounded = numeric_limits<value_type>::is_bounded;
+  static constexpr bool is_modulo = numeric_limits<value_type>::is_modulo;
+
+  static constexpr bool traps = numeric_limits<value_type>::traps;
+  static constexpr bool tinyness_before
+      = numeric_limits<value_type>::tinyness_before;
+  static constexpr float_round_style round_style
+      = numeric_limits<value_type>::round_style;
+};
+
+}  // namespace std
+
+namespace Eigen {
+  /**
+   * Numerical traits template override for Eigen for automatic
+   * gradient variables.
+   *
+   * Documentation here:
+   *   http://eigen.tuxfamily.org/dox/structEigen_1_1NumTraits.html
+   */
+  template <>
+  struct NumTraits<stan::math::var_value<double>> : GenericNumTraits<stan::math::var_value<double>> {
+    using Real = stan::math::var_value<double>;
+    using NonInteger = stan::math::var_value<double>;
+    using Nested = stan::math::var_value<double>;
+
+    /**
+     * Return the precision for <code>stan::math::var</code> delegates
+     * to precision for <code>double</code>.
+     *
+     * @return precision
+     */
+    static inline stan::math::var_value<double> dummy_precision() {
+      return NumTraits<double>::dummy_precision();
+    }
+
+    enum {
+      /**
+       * stan::math::var is not complex.
+       */
+      IsComplex = 0,
+
+      /**
+       * stan::math::var is not an integer.
+       */
+      IsInteger = 0,
+
+      /**
+       * stan::math::var is signed.
+       */
+      IsSigned = 1,
+
+      /**
+       * stan::math::var does not require initialization.
+       */
+      RequireInitialization = 0,
+
+      /**
+       * Twice the cost of copying a double.
+       */
+      ReadCost = 2 * NumTraits<double>::ReadCost,
+
+      /**
+       * This is just forward cost, but it's the cost of a single
+       * addition (plus memory overhead) in the forward direction.
+       */
+      AddCost = NumTraits<double>::AddCost,
+
+      /**
+       * Multiply cost is single multiply going forward, but there's
+       * also memory allocation cost.
+       */
+      MulCost = NumTraits<double>::MulCost
+    };
+
+    /**
+     * Return the number of decimal digits that can be represented
+     * without change.  Delegates to
+     * <code>std::numeric_limits<double>::digits10()</code>.
+     */
+    static int digits10() { return std::numeric_limits<double>::digits10; }
+  };
+
+namespace internal {
+  /*****************************************************************************
+  *** Construction/destruction of array elements                             ***
+  *****************************************************************************/
+
+  /** \internal Destructs the elements of an array.
+    * The \a size parameters tells on how many objects to call the destructor of T.
+    */
+EIGEN_DEVICE_FUNC inline void destruct_elements_of_array(stan::math::var_value<double>* ptr, std::size_t size)
+  {
+    using T = stan::math::var_value<double>;
+    // sits in arena so never destroyed
+  }
+
+  /** \internal Constructs the elements of an array.
+    * The \a size parameter tells on how many objects to call the constructor of T.
+    */
+EIGEN_DEVICE_FUNC inline stan::math::var_value<double>* construct_elements_of_array(stan::math::var_value<double>* ptr, std::size_t size)
+  {
+    using T = stan::math::var_value<double>;
+    std::size_t i;
+    EIGEN_TRY
+    {
+        for (i = 0; i < size; ++i) ::new (ptr + i) T;
+        return ptr;
+    }
+    EIGEN_CATCH(...)
+    {
+      EIGEN_THROW;
+    }
+    return NULL;
+  }
+
+/** \internal Allocates \a size objects of type T. The returned pointer is
+ * guaranteed to have 16 bytes alignment. On allocation error, the returned
+ * pointer is undefined, but a std::bad_alloc is thrown. The default constructor
+ * of T is called.
+ */
+EIGEN_DEVICE_FUNC inline stan::math::var_value<double> *aligned_new(
+    std::size_t size) {
+  using T = stan::math::var_value<double>;
+  check_size_for_overflow<T>(size);
+  T *result = stan::math::ChainableStack::instance_->memalloc_.alloc_array<T>(size);
+  return result;
+}
+
+template <>
+EIGEN_DEVICE_FUNC inline stan::math::var_value<double> *
+conditional_aligned_new<stan::math::var_value<double>, true>(std::size_t size) {
+  using T = stan::math::var_value<double>;
+  constexpr bool Align = true;
+  check_size_for_overflow<T>(size);
+  T* result = stan::math::ChainableStack::instance_->memalloc_.alloc_array<T>(size);
+  EIGEN_TRY { return construct_elements_of_array(result, size); }
+  EIGEN_CATCH(...) {
+    EIGEN_THROW;
+  }
+  return result;
+}
+
+template <>
+EIGEN_DEVICE_FUNC inline stan::math::var_value<double>
+    *conditional_aligned_new<stan::math::var_value<double>, false>(
+        std::size_t size) {
+  using T = stan::math::var_value<double>;
+  constexpr bool Align = false;
+  check_size_for_overflow<T>(size);
+  T* result = stan::math::ChainableStack::instance_->memalloc_.alloc_array<T>(size);
+  EIGEN_TRY { return construct_elements_of_array(result, size); }
+  EIGEN_CATCH(...) {
+    EIGEN_THROW;
+  }
+  return result;
+}
+
+/** \internal Deletes objects constructed with aligned_new
+ * The \a size parameters tells on how many objects to call the destructor of T.
+ */
+EIGEN_DEVICE_FUNC inline void aligned_delete(stan::math::var_value<double> *ptr,
+                                             std::size_t size) {
+  using T = stan::math::var_value<double>;
+  destruct_elements_of_array<T>(ptr, size);
+}
+
+/** \internal Deletes objects constructed with conditional_aligned_new
+ * The \a size parameters tells on how many objects to call the destructor of T.
+ */
+template <>
+EIGEN_DEVICE_FUNC inline void
+conditional_aligned_delete<stan::math::var_value<double>, true>(
+    stan::math::var_value<double> *ptr, std::size_t size) {
+  using T = stan::math::var_value<double>;
+  constexpr bool Align = true;
+  destruct_elements_of_array<T>(ptr, size);
+}
+
+template <>
+EIGEN_DEVICE_FUNC inline void
+conditional_aligned_delete<stan::math::var_value<double>, false>(
+    stan::math::var_value<double> *ptr, std::size_t size) {
+  using T = stan::math::var_value<double>;
+  constexpr bool Align = false;
+  destruct_elements_of_array<T>(ptr, size);
+}
+
+template <>
+EIGEN_DEVICE_FUNC inline stan::math::var_value<double>
+    *conditional_aligned_realloc_new<stan::math::var_value<double>, true>(
+        stan::math::var_value<double> *pts, std::size_t new_size,
+        std::size_t old_size) {
+  using T = stan::math::var_value<double>;
+  constexpr bool Align = true;
+  check_size_for_overflow<T>(new_size);
+  check_size_for_overflow<T>(old_size);
+  if (new_size < old_size) {
+    destruct_elements_of_array(pts + new_size, old_size - new_size);
+    return pts;
+  }
+  T *result = reinterpret_cast<T*>(stan::math::ChainableStack::instance_->memalloc_.realloc(
+      reinterpret_cast<void *>(pts), sizeof(T) * new_size,
+      sizeof(T) * old_size));
+  if (new_size > old_size) {
+    EIGEN_TRY {
+      construct_elements_of_array(result + old_size, new_size - old_size);
+    }
+    EIGEN_CATCH(...) {
+      EIGEN_THROW;
+    }
+  }
+  return result;
+}
+
+template <>
+EIGEN_DEVICE_FUNC inline stan::math::var_value<double>
+    *conditional_aligned_realloc_new<stan::math::var_value<double>, false>(
+        stan::math::var_value<double> *pts, std::size_t new_size,
+        std::size_t old_size) {
+  using T = stan::math::var_value<double>;
+  constexpr bool Align = false;
+  check_size_for_overflow<T>(new_size);
+  check_size_for_overflow<T>(old_size);
+  if (new_size < old_size) {
+    destruct_elements_of_array(pts + new_size, old_size - new_size);
+    return pts;
+  }
+  T *result = reinterpret_cast<T *>(stan::math::ChainableStack::instance_->memalloc_.realloc(
+      reinterpret_cast<void *>(pts), sizeof(T) * new_size,
+      sizeof(T) * old_size));
+  if (new_size > old_size) {
+    EIGEN_TRY {
+      construct_elements_of_array(result + old_size, new_size - old_size);
+    }
+    EIGEN_CATCH(...) {
+      EIGEN_THROW;
+    }
+  }
+  return result;
+}
+
+template <>
+EIGEN_DEVICE_FUNC inline stan::math::var_value<double>
+    *conditional_aligned_new_auto<stan::math::var_value<double>, true>(
+        std::size_t size) {
+  using T = stan::math::var_value<double>;
+  constexpr bool Align = true;
+  if (size == 0) {
+    return 0;  // short-cut. Also fixes Bug 884
+  }
+  check_size_for_overflow<T>(size);
+  T* result =  stan::math::ChainableStack::instance_->memalloc_.alloc_array<T>(size);
+  return result;
+}
+
+template <>
+EIGEN_DEVICE_FUNC inline stan::math::var_value<double>
+    *conditional_aligned_new_auto<stan::math::var_value<double>, false>(
+        std::size_t size) {
+  using T = stan::math::var_value<double>;
+  constexpr bool Align = false;
+  if (size == 0) {
+    return 0;  // short-cut. Also fixes Bug 884
+  }
+  check_size_for_overflow<T>(size);
+  T *result =  stan::math::ChainableStack::instance_->memalloc_.alloc_array<T>(size);
+  return result;
+}
+
+template <>
+inline stan::math::var_value<double>
+    *conditional_aligned_realloc_new_auto<stan::math::var_value<double>, true>(
+        stan::math::var_value<double> *pts, std::size_t new_size,
+        std::size_t old_size) {
+  using T = stan::math::var_value<double>;
+  constexpr bool Align = true;
+  check_size_for_overflow<T>(new_size);
+  check_size_for_overflow<T>(old_size);
+  if (new_size < old_size) {
+    destruct_elements_of_array(pts + new_size, old_size - new_size);
+    return pts;
+  }
+  T *result = reinterpret_cast<T *>( stan::math::ChainableStack::instance_->memalloc_.realloc(
+      reinterpret_cast<void *>(pts), sizeof(T) * new_size,
+      sizeof(T) * old_size));
+  return result;
+}
+
+template <>
+inline stan::math::var_value<double>
+    *conditional_aligned_realloc_new_auto<stan::math::var_value<double>, false>(
+        stan::math::var_value<double> *pts, std::size_t new_size,
+        std::size_t old_size) {
+  using T = stan::math::var_value<double>;
+  constexpr bool Align = false;
+  check_size_for_overflow<T>(new_size);
+  check_size_for_overflow<T>(old_size);
+  if (new_size < old_size) {
+    return pts;
+  }
+  T *result = reinterpret_cast<T *>(stan::math::ChainableStack::instance_->memalloc_.realloc(
+      reinterpret_cast<void *>(pts), sizeof(T) * new_size,
+      sizeof(T) * old_size));
+  return result;
+}
+
+template <>
+EIGEN_DEVICE_FUNC inline void conditional_aligned_delete_auto<stan::math::var_value<double>, true>(
+    stan::math::var_value<double>* ptr, std::size_t size) {
+}
+
+template <>
+EIGEN_DEVICE_FUNC inline void conditional_aligned_delete_auto<stan::math::var_value<double>, false>(
+    stan::math::var_value<double>* ptr, std::size_t size) {
+}
+
+
+}  // namespace internal
+}  // namespace Eigen
+
+namespace stan {
+namespace math {
 /**
  * Independent (input) and dependent (output) variables for gradients.
  *

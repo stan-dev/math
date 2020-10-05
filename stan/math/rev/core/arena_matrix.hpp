@@ -56,7 +56,7 @@ class arena_matrix : public Eigen::Map<MatrixType> {
    * Constructs `arena_matrix` from an expression.
    * @param other expression
    */
-  template <typename T, require_eigen_t<T>* = nullptr>
+  template <typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
   arena_matrix(const T& other)  // NOLINT
       : Eigen::Map<MatrixType>::Map(
             ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
@@ -64,6 +64,13 @@ class arena_matrix : public Eigen::Map<MatrixType> {
             other.rows(), other.cols()) {
     *this = other;
   }
+  template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+  arena_matrix(const T& other)  // NOLINT
+      : Eigen::Map<MatrixType>::Map(const_cast<Scalar*>(other.data()),
+            other.rows(), other.cols()) {
+    *this = other;
+  }
+
   /**
    * Constructs `arena_matrix` from an expression.
    * @param other expression

@@ -5,6 +5,7 @@
 //            is best we can do to get safe pointer casts to uints.
 #include <stdint.h>
 #include <stan/math/prim/meta.hpp>
+#include <Eigen/src/Core/util/Memory.h>
 #include <cstdlib>
 #include <cstddef>
 #include <sstream>
@@ -14,40 +15,9 @@
 namespace stan {
 namespace math {
 
-/**
- * Return <code>true</code> if the specified pointer is aligned
- * on the number of bytes.
- *
- * This doesn't really make sense other than for powers of 2.
- *
- * @param ptr Pointer to test.
- * @param bytes_aligned Number of bytes of alignment required.
- * @return <code>true</code> if pointer is aligned.
- * @tparam Type of object to which pointer points.
- */
-template <typename T>
-bool is_aligned(T* ptr, unsigned int bytes_aligned) {
-  return (reinterpret_cast<uintptr_t>(ptr) % bytes_aligned) == 0U;
-}
-
 namespace internal {
-const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
+constexpr size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
 
-// FIXME: enforce alignment
-// big fun to inline, but only called twice
-inline char* eight_byte_aligned_malloc(size_t size) {
-  char* ptr = static_cast<char*>(malloc(size));
-  if (!ptr) {
-    return ptr;  // malloc failed to alloc
-  }
-  if (!is_aligned(ptr, 8U)) {
-    std::stringstream s;
-    s << "invalid alignment to 8 bytes, ptr="
-      << reinterpret_cast<uintptr_t>(ptr) << std::endl;
-    throw std::runtime_error(s.str());
-  }
-  return ptr;
-}
 }  // namespace internal
 
 /**
@@ -91,7 +61,7 @@ class stack_alloc {
    * @param len Number of bytes to allocate.
    * @return A pointer to the allocated memory.
    */
-  char* move_to_next_block(size_t len) {
+  inline char* move_to_next_block(size_t len) {
     char* result;
     ++cur_block_;
     // Find the next block (if any) containing at least len bytes.
@@ -105,7 +75,8 @@ class stack_alloc {
       if (newsize < len) {
         newsize = len;
       }
-      blocks_.push_back(internal::eight_byte_aligned_malloc(newsize));
+      blocks_.push_back(
+          static_cast<char*>(Eigen::internal::aligned_malloc(newsize)));
       if (!blocks_.back()) {
         throw std::bad_alloc();
       }
@@ -129,7 +100,8 @@ class stack_alloc {
    * aligned.
    */
   explicit stack_alloc(size_t initial_nbytes = internal::DEFAULT_INITIAL_NBYTES)
-      : blocks_(1, internal::eight_byte_aligned_malloc(initial_nbytes)),
+      : blocks_(1, static_cast<char*>(
+                       Eigen::internal::aligned_malloc(initial_nbytes))),
         sizes_(1, initial_nbytes),
         cur_block_(0),
         cur_block_end_(blocks_[0] + initial_nbytes),
@@ -149,7 +121,7 @@ class stack_alloc {
     // free ALL blocks
     for (auto& block : blocks_) {
       if (block) {
-        free(block);
+        Eigen::internal::aligned_free(block);
       }
     }
   }
@@ -175,6 +147,43 @@ class stack_alloc {
       result = move_to_next_block(len);
     }
     return reinterpret_cast<void*>(result);
+  }
+  /** \internal
+    * \brief Reallocates aligned memory.
+    * amount of new memory requested exceeds our block size
+    * then we move to the next block. Otherwise, since our data comes from
+    * std::malloc we can use std::realloc to implement efficient reallocation.
+    * @param ptr pointer to the memory area to be reallocated
+    * @param len new size of the array
+    */
+  inline void* realloc(void* ptr, std::size_t len, std::size_t = 0) {
+    if (ptr == nullptr) {
+      return this->alloc(len);
+    }
+    char* result = next_loc_;
+    // Occasionally, we have to switch blocks.
+    if (unlikely(next_loc_ + len >= cur_block_end_)) {
+      result = move_to_next_block(len);
+      return reinterpret_cast<void*>(result);
+    } else {
+      void* original = *(reinterpret_cast<void**>(ptr) - 1);
+      std::ptrdiff_t previous_offset = static_cast<char *>(ptr)-static_cast<char *>(original);
+      original = std::realloc(original, len + EIGEN_DEFAULT_ALIGN_BYTES);
+      if (original == nullptr) {
+        return nullptr;
+      }
+      void* aligned = reinterpret_cast<void*>(
+          (reinterpret_cast<std::size_t>(original)
+           & ~(std::size_t(EIGEN_DEFAULT_ALIGN_BYTES - 1)))
+          + EIGEN_DEFAULT_ALIGN_BYTES);
+      void* previous_aligned = static_cast<char*>(original) + previous_offset;
+      if (aligned != previous_aligned) {
+        std::memmove(aligned, previous_aligned, len);
+      }
+
+      *(reinterpret_cast<void**>(aligned) - 1) = original;
+      return aligned;
+    }
   }
 
   /**
@@ -239,7 +248,7 @@ class stack_alloc {
     // frees all BUT the first (index 0) block
     for (size_t i = 1; i < blocks_.size(); ++i) {
       if (blocks_[i]) {
-        free(blocks_[i]);
+        Eigen::internal::aligned_free(blocks_[i]);
       }
     }
     sizes_.resize(1);
