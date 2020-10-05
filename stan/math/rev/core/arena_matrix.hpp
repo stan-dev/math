@@ -20,7 +20,7 @@ class arena_matrix : public Eigen::Map<MatrixType> {
  public:
   using Scalar = value_type_t<MatrixType>;
   using Base = Eigen::Map<MatrixType>;
-  using MatrixType = MatrixType;
+  using PlainObject = std::decay_t<MatrixType>;
   static constexpr int RowsAtCompileTime = MatrixType::RowsAtCompileTime;
   static constexpr int ColsAtCompileTime = MatrixType::ColsAtCompileTime;
 
