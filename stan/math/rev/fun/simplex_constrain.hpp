@@ -25,15 +25,14 @@ namespace math {
  * @param y Free vector input of dimensionality K - 1
  * @return Simplex of dimensionality K
  */
-template<typename T,
-	 require_eigen_col_vector_vt<is_var, T>* = nullptr>
+template <typename T, require_eigen_col_vector_vt<is_var, T>* = nullptr>
 inline auto simplex_constrain(const T& y) {
   using ret_type = plain_type_t<T>;
-  
+
   size_t N = y.size();
 
   arena_t<T> arena_y = y;
-  
+
   arena_t<Eigen::VectorXd> diag(N);
   arena_t<Eigen::VectorXd> z(N);
 
@@ -52,17 +51,17 @@ inline auto simplex_constrain(const T& y) {
 
   arena_t<ret_type> x = x_val;
 
-  if(N > 0) {
+  if (N > 0) {
     reverse_pass_callback([arena_y, x, diag, z]() mutable {
       size_t N = arena_y.size();
       double acc = x.adj().coeff(N);
 
       arena_y.adj().coeffRef(N - 1)
-	+= diag.coeff(N - 1) * (x.adj().coeff(N - 1) - acc);
+          += diag.coeff(N - 1) * (x.adj().coeff(N - 1) - acc);
       for (int n = N - 1; --n >= 0;) {
-	acc = x.adj().coeff(n + 1) * z.coeff(n + 1)
-	  + (1 - z.coeff(n + 1)) * acc;
-	arena_y.adj().coeffRef(n) += diag.coeff(n) * (x.adj().coeff(n) - acc);
+        acc = x.adj().coeff(n + 1) * z.coeff(n + 1)
+              + (1 - z.coeff(n + 1)) * acc;
+        arena_y.adj().coeffRef(n) += diag.coeff(n) * (x.adj().coeff(n) - acc);
       }
     });
   }
