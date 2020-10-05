@@ -42,8 +42,8 @@ namespace math {
 template <typename T_x, typename T_sigma, typename T_l, typename T_p,
           require_all_stan_scalar_t<T_sigma, T_l, T_p>* = nullptr,
           require_any_st_var<T_x, T_sigma, T_l, T_p>* = nullptr>
-inline auto gp_periodic_cov(
-    const std::vector<T_x>& x, T_sigma sigma, T_l l, T_p p) {
+inline auto gp_periodic_cov(const std::vector<T_x>& x, T_sigma sigma, T_l l,
+                            T_p p) {
   using ret_type = promote_scalar_t<var, Eigen::MatrixXd>;
 
   const char* fun = "gp_periodic_cov";
@@ -81,15 +81,18 @@ inline auto gp_periodic_cov(
   for (size_t j = 0; j < N; ++j) {
     for (size_t i = 0; i <= j; ++i) {
       if (i != j) {
-	if(is_stan_scalar<T_x>::value)
-	  arena_dist.coeffRef(pos) = std::abs(forward_as<double>(value_of(x[i])) -
-					      forward_as<double>(value_of(x[j])));
-	else if(is_eigen_col_vector<T_x>::value)
-	  arena_dist.coeffRef(pos) =
-	    forward_as<Eigen::VectorXd>(value_of(x[i]) - value_of(x[j])).norm();
-	else if(is_eigen_row_vector<T_x>::value)
-	  arena_dist.coeffRef(pos) =
-	    forward_as<Eigen::RowVectorXd>(value_of(x[i]) - value_of(x[j])).norm();
+        if (is_stan_scalar<T_x>::value)
+          arena_dist.coeffRef(pos)
+              = std::abs(forward_as<double>(value_of(x[i]))
+                         - forward_as<double>(value_of(x[j])));
+        else if (is_eigen_col_vector<T_x>::value)
+          arena_dist.coeffRef(pos)
+              = forward_as<Eigen::VectorXd>(value_of(x[i]) - value_of(x[j]))
+                    .norm();
+        else if (is_eigen_row_vector<T_x>::value)
+          arena_dist.coeffRef(pos)
+              = forward_as<Eigen::RowVectorXd>(value_of(x[i]) - value_of(x[j]))
+                    .norm();
 
         double sine = sin(pi_over_p * arena_dist.coeff(pos));
         double cosine = cos(pi_over_p * arena_dist.coeff(pos));
@@ -122,13 +125,13 @@ inline auto gp_periodic_cov(
       pos++;
     }
 
-  reverse_pass_callback([arena_res, arena_x, sigma, l, p, N,
-                         pi_over_p, arena_dist, arena_sin_squared,
+  reverse_pass_callback([arena_res, arena_x, sigma, l, p, N, pi_over_p,
+                         arena_dist, arena_sin_squared,
                          arena_sin_squared_derivative]() mutable {
     double sigma_d = value_of(sigma);
     double l_d = value_of(l);
     double p_d = value_of(p);
-		  
+
     double sigma_adj = 0.0;
     double l_adj = 0.0;
     double p_adj = 0.0;
