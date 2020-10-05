@@ -29,7 +29,7 @@ var log_determinant_ldlt(const LDLT_factor<var, R, C> &A) {
 
   var log_det = A.alloc_->log_abs_det();
 
-  arena_matrix<Eigen::Matrix<double, R, C>> arena_A_inv(A.rows(), A.cols());
+  arena_t<Eigen::Matrix<double, R, C>> arena_A_inv(A.rows(), A.cols());
 
   arena_A_inv.setIdentity();
   A.alloc_->ldlt_.solveInPlace(arena_A_inv);
