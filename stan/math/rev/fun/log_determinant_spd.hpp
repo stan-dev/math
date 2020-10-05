@@ -29,12 +29,12 @@ inline var log_determinant_spd(const T& m) {
   }
 
   arena_t<T> arena_m = m;
-  
+
   auto arena_m_inv = to_arena(arena_m.val());
   check_symmetric("log_determinant_spd", "m", arena_m_inv);
 
   const auto& ldlt = arena_m_inv.ldlt();
-  
+
   if (ldlt.info() != Eigen::Success) {
     double y = 0;
     throw_domain_error("log_determinant_spd", "matrix argument", y,

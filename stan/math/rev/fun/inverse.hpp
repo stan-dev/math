@@ -25,7 +25,7 @@ namespace math {
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
 inline auto inverse(const T& m) {
   using ret_type = plain_type_t<T>;
-  
+
   check_square("inverse", "m", m);
 
   if (m.size() == 0) {
@@ -37,8 +37,8 @@ inline auto inverse(const T& m) {
   arena_t<ret_type> res = arena_m_inv;
 
   reverse_pass_callback([res, arena_m_inv, arena_m]() mutable {
-    arena_m.adj() -=
-      arena_m_inv.transpose() * res.adj_op() * arena_m_inv.transpose();
+    arena_m.adj()
+        -= arena_m_inv.transpose() * res.adj_op() * arena_m_inv.transpose();
   });
 
   return ret_type(res);
