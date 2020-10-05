@@ -43,9 +43,8 @@ struct ref_type_if<Condition, T, require_not_eigen_t<T>> {
 };
 
 template <bool Condition, typename T>
-struct ref_type_if<Condition, T, require_eigen_map_base_t<T>> {
-  using type = std::conditional_t<std::is_rvalue_reference<T>::value,
-                                  std::remove_reference_t<T>, const T&>;
+struct ref_type_if<Condition, T, require_arena_matrix_t<T>> {
+  using type = typename ref_type_if<Condition, Eigen::Map<typename std::decay_t<T>::MatrixType>>::type;
 };
 
 template <typename T>
@@ -98,9 +97,8 @@ struct ref_type_for_opencl<T, require_not_eigen_t<T>> {
 };
 
 template <typename T>
-struct ref_type_for_opencl<T, require_eigen_map_base_t<T>> {
-  using type = std::conditional_t<std::is_rvalue_reference<T>::value,
-                                  std::remove_reference_t<T>, const T&>;
+struct ref_type_for_opencl<T, require_arena_matrix_t<T>> {
+  using type = typename ref_type_for_opencl<Eigen::Map<typename std::decay_t<T>::MatrixType>>::type;
 };
 
 template <typename T>
