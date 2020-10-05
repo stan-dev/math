@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_FUN_UNIT_VECTOR_CONSTRAIN_HPP
-#define STAN_MATH_PRIM_FUN_UNIT_VECTOR_CONSTRAIN_HPP
+#ifndef STAN_MATH_REV_FUN_UNIT_VECTOR_CONSTRAIN_HPP
+#define STAN_MATH_REV_FUN_UNIT_VECTOR_CONSTRAIN_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
@@ -26,13 +26,13 @@ namespace math {
  * @return Unit length vector of dimension K
  **/
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
-auto unit_vector_constrain(const T& y) {
+inline auto unit_vector_constrain(const T& y) {
   using ret_type = plain_type_t<T>;
 
   check_vector("unit_vector", "y", y);
   check_nonzero_size("unit_vector", "y", y);
 
-  arena_t<T> arena_y = y_ref;
+  arena_t<T> arena_y = y;
   const auto& y_val = to_arena(value_of(arena_y));
 
   const double r = y_val.norm();
@@ -58,10 +58,9 @@ auto unit_vector_constrain(const T& y) {
  * @return Unit length vector of dimension K
  * @param lp Log probability reference to increment.
  **/
-template <int R, int C>
-Eigen::Matrix<var, R, C> unit_vector_constrain(
-    const Eigen::Matrix<var, R, C>& y, var& lp) {
-  Eigen::Matrix<var, R, C> x = unit_vector_constrain(y);
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+inline auto unit_vector_constrain(const T& y, var& lp) {
+  auto x = unit_vector_constrain(y);
   lp -= 0.5 * dot_self(y);
   return x;
 }

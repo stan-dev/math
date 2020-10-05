@@ -23,12 +23,13 @@ namespace math {
  * @param y vector of K unrestricted variables
  * @return Unit length vector of dimension K
  */
-template <typename T, int R, int C>
-Eigen::Matrix<T, R, C> unit_vector_constrain(const Eigen::Matrix<T, R, C>& y) {
+template <typename T, require_eigen_t<T>* = nullptr,
+	  require_not_vt_var<T>* = nullptr>
+inline plain_type_t<T> unit_vector_constrain(const T& y) {
   using std::sqrt;
   check_vector("unit_vector_constrain", "y", y);
   check_nonzero_size("unit_vector_constrain", "y", y);
-  T SN = dot_self(y);
+  scalar_type_t<T> SN = dot_self(y);
   check_positive_finite("unit_vector_constrain", "norm", SN);
   return y / sqrt(SN);
 }
@@ -45,13 +46,14 @@ Eigen::Matrix<T, R, C> unit_vector_constrain(const Eigen::Matrix<T, R, C>& y) {
  * @return Unit length vector of dimension K
  * @param lp Log probability reference to increment.
  */
-template <typename T, int R, int C>
-Eigen::Matrix<T, R, C> unit_vector_constrain(const Eigen::Matrix<T, R, C>& y,
-                                             T& lp) {
+template <typename T1, typename T2,
+	  require_eigen_t<T1>* = nullptr,
+	  require_all_not_vt_var<T1, T2>* = nullptr>
+inline plain_type_t<T1> unit_vector_constrain(const T1& y, T2& lp) {
   using std::sqrt;
   check_vector("unit_vector_constrain", "y", y);
   check_nonzero_size("unit_vector_constrain", "y", y);
-  T SN = dot_self(y);
+  scalar_type_t<T1> SN = dot_self(y);
   check_positive_finite("unit_vector_constrain", "norm", SN);
   lp -= 0.5 * SN;
   return y / sqrt(SN);
