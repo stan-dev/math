@@ -256,7 +256,7 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
         pos++;
       }
     }
-    adjsigma += cov_diag_.adj().dot(cov_diag_.val());
+    adjsigma += cov_diag_.val().dot(cov_diag_.adj());
     length_scale.vi_->adj_ /= (length_scale.val() * length_scale.val() * length_scale.val());
     sigma.vi_->adj_ *= 2.0;
     sigma.vi_->adj_ /= sigma.val();
