@@ -63,8 +63,18 @@ inline auto gp_exp_quad_cov(const std::vector<T_x>& x,
           arena_dist.coeffRef(pos) = 0.0;
           res.coeffRef(i, j) = sigma_sq_d;
         } else {
-          const double dist_sq
-              = squared_distance(value_of(x[i]), value_of(x[j]));
+	  double dist_sq;
+
+	  if (is_stan_scalar<T_x>::value) {
+	    double diff = forward_as<double>(value_of(x[i]) - value_of(x[j]));
+	    dist_sq = diff * diff;
+	  } else if (is_eigen_col_vector<T_x>::value)
+	    dist_sq
+              = forward_as<Eigen::VectorXd>(value_of(x[i]) - value_of(x[j])).squaredNorm();
+	  else if (is_eigen_row_vector<T_x>::value)
+	    dist_sq
+              = forward_as<Eigen::RowVectorXd>(value_of(x[i]) - value_of(x[j])).squaredNorm();
+
           arena_dist.coeffRef(pos) = dist_sq;
           res.coeffRef(i, j)
               = sigma_sq_d * std::exp(-dist_sq * inv_half_sq_l_d);
@@ -114,8 +124,18 @@ inline auto gp_exp_quad_cov(const std::vector<T_x>& x,
     for (size_t j = 0; j < N; ++j) {
       for (size_t i = 0; i <= j; ++i) {
         if (i != j) {
-          const double dist_sq
-              = squared_distance(value_of(x[i]), value_of(x[j]));
+	  double dist_sq;
+
+	  if (is_stan_scalar<T_x>::value) {
+	    double diff = forward_as<double>(value_of(x[i]) - value_of(x[j]));
+	    dist_sq = diff * diff;
+	  } else if (is_eigen_col_vector<T_x>::value)
+	    dist_sq
+              = forward_as<Eigen::VectorXd>(value_of(x[i]) - value_of(x[j])).squaredNorm();
+	  else if (is_eigen_row_vector<T_x>::value)
+	    dist_sq
+              = forward_as<Eigen::RowVectorXd>(value_of(x[i]) - value_of(x[j])).squaredNorm();
+
           dist.coeffRef(pos) = dist_sq;
           res.coeffRef(i, j)
               = sigma_sq_d * std::exp(-dist_sq * inv_half_sq_l_d);
