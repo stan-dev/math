@@ -199,7 +199,7 @@ auto cholesky_lambda(T1 L_A, T2 L, T3 A_ref) {
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
 inline Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime>
 cholesky_decompose(const T& A) {
-  arena_t<T> A_ref = A;
+  arena_t<T> A_ref(A);
   arena_t<promote_scalar_t<double, T>> L_A(value_of(A_ref));
   check_not_nan("cholesky_decompose", "A", L_A);
 #ifdef STAN_OPENCL
@@ -213,7 +213,7 @@ cholesky_decompose(const T& A) {
   // cholesky_scalar gradient faster for small matrices compared to
   // cholesky_block
   vari* dummy = new vari(0.0, false);
-  arena_t<T> L(L_A.rows(), L_A.cols());
+  T L(L_A.rows(), L_A.cols());
   for (Eigen::Index j = 0; j < L_A.rows(); ++j) {
     for (Eigen::Index i = 0; i < L_A.rows(); ++i) {
       if (j > i) {
@@ -223,11 +223,12 @@ cholesky_decompose(const T& A) {
       }
     }
   }
+  arena_t<T> L_arena(L);
   if (L_A.rows() <= 35) {
-    reverse_pass_callback([L_A, L, A_ref]() mutable {
+    reverse_pass_callback([L_A, L_arena, A_ref]() mutable {
       size_t N = A_ref.rows();
       int pos = (N * (N + 1) / 2) - 1;
-      auto adjL = L.adj().eval();
+      auto adjL = L_arena.adj().eval();
       // TODO(Steve): Write this in column major order
       for (int i = N - 1; i >= 0; --i) {
         for (int j = i; j >= 0; --j) {
@@ -258,10 +259,10 @@ cholesky_decompose(const T& A) {
         }
       }
     } else {
-      reverse_pass_callback(internal::cholesky_lambda(L_A, L, A_ref));
+      reverse_pass_callback(internal::cholesky_lambda(L_A, L_arena, A_ref));
     }
 #else
-    reverse_pass_callback(internal::cholesky_lambda(L_A, L, A_ref));
+    reverse_pass_callback(internal::cholesky_lambda(L_A, L_arena, A_ref));
 #endif
   }
 

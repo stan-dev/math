@@ -229,6 +229,7 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
   const double inv_half_sq_l_d = 0.5 / (value_of(length_scale) * value_of(length_scale));
   const double sigma_square = value_of(sigma) * value_of(sigma);
   arena_t<Eigen::Matrix<double, -1, 1>> dist_(x_size * (x_size - 1) / 2);
+  arena_t<Eigen::Matrix<var, -1, 1>> cov_diag_(x_size);
   size_t pos = 0;
   for (size_t j = 0; j < x_size - 1; ++j) {
     for (size_t i = j + 1; i < x_size; ++i) {
@@ -238,12 +239,14 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
       cov.coeffRef(j, i).vi_ = cov.coeffRef(i, j).vi_;
       ++pos;
     }
-    cov.coeffRef(j, j) = sigma_square;
+    cov_diag_.coeffRef(j) = sigma_square;
+    cov.coeffRef(j, j).vi_ = cov_diag_.coeffRef(j).vi_;
   }
-  cov.coeffRef(x_size - 1, x_size - 1) = sigma_square;
+  cov_diag_.coeffRef(x_size - 1) = sigma_square;
+  cov.coeffRef(x_size - 1, x_size - 1).vi_ = cov_diag_.coeffRef(x_size - 1).vi_;
 
   arena_t<Eigen::Matrix<var, -1, -1>> cov_arena(cov);
-  reverse_pass_callback([cov_arena, dist_, x_size, sigma, length_scale]() mutable {
+  reverse_pass_callback([cov_arena, dist_, x_size, cov_diag_, sigma, length_scale]() mutable {
     auto& adjl = length_scale.vi_->adj_;
     auto& adjsigma = sigma.vi_->adj_;
     size_t pos = 0;
@@ -255,7 +258,7 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
         pos++;
       }
     }
-    adjsigma += cov_arena.diagonal().adj().dot(cov_arena.diagonal().val());
+    adjsigma += cov_diag_.adj().dot(cov_diag_.val());
     length_scale.vi_->adj_ /= (length_scale.val() * length_scale.val() * length_scale.val());
     sigma.vi_->adj_ *= 2.0;
     sigma.vi_->adj_ /= sigma.val();
