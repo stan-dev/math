@@ -21,29 +21,32 @@ namespace math {
  * @param x Free vector of scalars
  * @return Positive, increasing ordered vector
  */
-inline Eigen::Matrix<var, Eigen::Dynamic, 1> positive_ordered_constrain(
-    const Eigen::Matrix<var, Eigen::Dynamic, 1>& x) {
-  using std::exp;
+template <typename T,
+	  require_eigen_col_vector_vt<is_var, T>* = nullptr>
+inline auto positive_ordered_constrain(const T& x) {
+  using ret_type = plain_type_t<T>;
 
   size_t N = x.size();
+
   if (N == 0) {
-    return x;
+    return ret_type();
   }
 
+  arena_t<T> arena_x = x;
   Eigen::VectorXd y_val(N);
-  arena_matrix<Eigen::VectorXd> exp_x(N);
+  arena_t<Eigen::VectorXd> exp_x(N);
 
-  exp_x(0) = exp(value_of(x.coeff(0)));
+  exp_x(0) = std::exp(value_of(x.coeff(0)));
   y_val(0) = exp_x.coeff(0);
   for (int n = 1; n < N; ++n) {
-    exp_x(n) = exp(value_of(x.coeff(n)));
+    exp_x(n) = std::exp(value_of(x.coeff(n)));
     y_val(n) = y_val.coeff(n - 1) + exp_x.coeff(n);
   }
 
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> y = y_val;
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> arena_x = x;
+  arena_t<ret_type> y = y_val;
 
-  reverse_pass_callback([arena_x, exp_x, N, y]() mutable {
+  reverse_pass_callback([arena_x, exp_x, y]() mutable {
+    size_t N = arena_x.size();
     double rolling_adjoint_sum = 0.0;
 
     for (int n = N; --n >= 0;) {
@@ -52,7 +55,7 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> positive_ordered_constrain(
     }
   });
 
-  return y;
+  return ret_type(y);
 }
 
 }  // namespace math
