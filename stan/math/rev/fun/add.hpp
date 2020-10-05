@@ -27,8 +27,8 @@ inline auto add(const VarMat1& a, const VarMat2& b) {
   using op_ret_type = decltype(a.val() + b.val());
   using ret_type = promote_var_matrix_t<op_ret_type, VarMat1, VarMat2>;
   arena_t<ret_type> ret((a.val() + b.val()).eval());
-  arena_t<VarMat1> arena_a = a;
-  arena_t<VarMat2> arena_b = b;
+  arena_t<VarMat1> arena_a(a);
+  arena_t<VarMat2> arena_b(b);
   reverse_pass_callback([ret, arena_a, arena_b]() mutable {
     if (is_var_matrix<VarMat1>::value || is_var_matrix<VarMat2>::value) {
       arena_a.adj() += ret.adj();
@@ -40,7 +40,7 @@ inline auto add(const VarMat1& a, const VarMat2& b) {
       }
     }
   });
-  return ret_type(ret);
+  return ret_type(std::move(ret));
 }
 
 /**
@@ -66,7 +66,7 @@ inline auto add(const VarMat& a, const Arith& b) {
   arena_t<ret_type> ret(a.val().array() + as_array_or_scalar(b));
   reverse_pass_callback(
       [ret, arena_a]() mutable { arena_a.adj() += ret.adj_op(); });
-  return ret_type(ret);
+  return ret_type(std::move(ret));
 }
 
 /**
@@ -101,7 +101,7 @@ inline auto add(const Var& a, const EigMat& b) {
   using ret_type = promote_scalar_t<var, EigMat>;
   arena_t<ret_type> ret(a.val() + b.array());
   reverse_pass_callback([ret, a]() mutable { a.adj() += ret.adj().sum(); });
-  return ret_type(ret);
+  return ret_type(std::move(ret));
 }
 
 /**

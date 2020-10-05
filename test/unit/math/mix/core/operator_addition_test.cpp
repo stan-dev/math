@@ -24,6 +24,7 @@ TEST(mathMixCore, operatorAdditionMatrixSmall) {
   row_vector_rv1 << -2;
   Eigen::MatrixXd matrix_m11(1, 1);
   matrix_m11 << 1.5;
+  stan::test::expect_ad(tols, f, scalar_a, scalar_a);
   stan::test::expect_ad(tols, f, scalar_a, vector_v1);
   stan::test::expect_ad(tols, f, vector_v1, scalar_a);
   stan::test::expect_ad(tols, f, scalar_a, row_vector_rv1);
