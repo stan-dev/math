@@ -25,7 +25,7 @@ template <typename Mat, typename Scal, require_eigen_t<Mat>* = nullptr,
           require_any_st_var<Mat, Scal>* = nullptr>
 inline auto divide(const Mat& m, const Scal& c) {
   using ret_type = promote_scalar_t<var, Mat>;
-  
+
   const auto& m_ref = to_ref(m);
 
   auto arena_m = to_arena_if<!is_constant<Mat>::value>(m_ref);
@@ -34,11 +34,11 @@ inline auto divide(const Mat& m, const Scal& c) {
 
   arena_t<ret_type> res = invc * value_of(m_ref);
   reverse_pass_callback([arena_m, c, res, invc]() mutable {
-    if(!is_constant<Mat>::value)
+    if (!is_constant<Mat>::value)
       forward_as<ret_type>(arena_m).adj() += invc * res.adj();
-    if(!is_constant<Scal>::value)
-      forward_as<var>(c).adj() -=
-	invc * (res.adj().array() * res.val().array()).sum();
+    if (!is_constant<Scal>::value)
+      forward_as<var>(c).adj()
+          -= invc * (res.adj().array() * res.val().array()).sum();
   });
 
   return res;
