@@ -16,23 +16,21 @@ namespace math {
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
 inline var log_determinant(const T& m) {
   check_square("determinant", "m", m);
+
   if (m.size() == 0) {
     return 0.0;
   }
 
-  const auto& m_ref = to_ref(m);
+  arena_t<T> arena_m = m;
 
-  Eigen::FullPivHouseholderQR<promote_scalar_t<double, plain_type_t<T>>> hh
-      = m_ref.val().fullPivHouseholderQr();
+  auto m_lu = arena_m.val().partialPivLu();
 
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arena_m
-      = m_ref;
-  arena_matrix<Eigen::MatrixXd> arena_hh_inv_t = hh.inverse().transpose();
+  auto arena_m_inv_transpose = to_arena(m_lu.inverse().transpose());
 
-  var log_det = hh.logAbsDeterminant();
+  var log_det = std::log(std::abs(m_lu.determinant()));
 
-  reverse_pass_callback([arena_m, log_det, arena_hh_inv_t]() mutable {
-    arena_m.adj() += log_det.adj() * arena_hh_inv_t;
+  reverse_pass_callback([arena_m, log_det, arena_m_inv_transpose]() mutable {
+    arena_m.adj() += log_det.adj() * arena_m_inv_transpose;
   });
 
   return log_det;
