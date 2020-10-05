@@ -237,9 +237,10 @@ double test_gradient(int size, double prec) {
   return grads_ad.sum();
 }
 
+TEST(AgradRevMatrix, mat_cholesky_1st_deriv_large_gradients) {
 #ifdef STAN_OPENCL
-TEST(AgradRevMatrix, mat_cholesky_1st_deriv_large_gradients_opencl) {
   stan::math::opencl_context.tuning_opts().cholesky_size_worth_transfer = 25;
+#endif
   test_gradient(51, 1e-08);
   test_gp_grad(1300, 1e-08);
   test_gp_grad(2000, 1e-08);
@@ -248,13 +249,16 @@ TEST(AgradRevMatrix, mat_cholesky_1st_deriv_large_gradients_opencl) {
   // below the threshold
   test_gradient(10, 1e-08);
   test_gp_grad(10, 1e-08);
+  test_chol_mult(13, 1e-08);
+  test_simple_vec_mult(15, 1e-08);
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack_large_opencl) {
+TEST(AgradRevMatrix, check_varis_on_stack_large) {
+#ifdef STAN_OPENCL
   stan::math::opencl_context.tuning_opts().cholesky_size_worth_transfer = 25;
+#endif
   stan::math::matrix_v m1 = stan::math::matrix_v::Random(50, 50);
   stan::math::matrix_v m1_pos_def
       = m1 * m1.transpose() + 50 * stan::math::matrix_v::Identity(50, 50);
   test::check_varis_on_stack(stan::math::cholesky_decompose(m1_pos_def));
 }
-#endif

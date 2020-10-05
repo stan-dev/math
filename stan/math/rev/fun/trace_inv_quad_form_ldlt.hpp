@@ -14,162 +14,59 @@
 
 namespace stan {
 namespace math {
-namespace internal {
-
-template <typename T2, int R2, int C2, typename T3, int R3, int C3>
-class trace_inv_quad_form_ldlt_impl : public chainable_alloc {
- protected:
-  inline void initializeB(const Eigen::Matrix<var, R3, C3> &B, bool haveD) {
-    matrix_d Bd = B.val();
-    variB_ = B.vi();
-    AinvB_ = ldlt_.solve(Bd);
-    if (haveD) {
-      C_.noalias() = Bd.transpose() * AinvB_;
-    } else {
-      value_ = (Bd.transpose() * AinvB_).trace();
-    }
-  }
-  inline void initializeB(const Eigen::Matrix<double, R3, C3> &B, bool haveD) {
-    AinvB_ = ldlt_.solve(B);
-    if (haveD) {
-      C_.noalias() = B.transpose() * AinvB_;
-    } else {
-      value_ = (B.transpose() * AinvB_).trace();
-    }
-  }
-
-  template <int R1, int C1>
-  inline void initializeD(const Eigen::Matrix<var, R1, C1> &D) {
-    D_ = D.val();
-    variD_ = D.vi();
-  }
-  template <int R1, int C1>
-  inline void initializeD(const Eigen::Matrix<double, R1, C1> &D) {
-    D_ = D;
-  }
-
- public:
-  template <typename T1, int R1, int C1>
-  trace_inv_quad_form_ldlt_impl(const Eigen::Matrix<T1, R1, C1> &D,
-                                const LDLT_factor<T2, R2, C2> &A,
-                                const Eigen::Matrix<T3, R3, C3> &B)
-      : Dtype_(stan::is_var<T1>::value), ldlt_(A) {
-    initializeB(B, true);
-    initializeD(D);
-
-    value_ = (D_ * C_).trace();
-  }
-
-  trace_inv_quad_form_ldlt_impl(const LDLT_factor<T2, R2, C2> &A,
-                                const Eigen::Matrix<T3, R3, C3> &B)
-      : Dtype_(2), ldlt_(A) {
-    initializeB(B, false);
-  }
-
-  const int Dtype_;  // 0 = double, 1 = var, 2 = missing
-  LDLT_factor<T2, R2, C2> ldlt_;
-  matrix_d D_;
-  matrix_vi variD_;
-  matrix_vi variB_;
-  matrix_d AinvB_;
-  matrix_d C_;
-  double value_;
-};
-
-template <typename T2, int R2, int C2, typename T3, int R3, int C3>
-class trace_inv_quad_form_ldlt_vari : public vari {
- protected:
-  static inline void chainA(
-      double adj,
-      trace_inv_quad_form_ldlt_impl<double, R2, C2, T3, R3, C3> *impl) {}
-  static inline void chainB(
-      double adj,
-      trace_inv_quad_form_ldlt_impl<T2, R2, C2, double, R3, C3> *impl) {}
-
-  static inline void chainA(
-      double adj,
-      trace_inv_quad_form_ldlt_impl<var, R2, C2, T3, R3, C3> *impl) {
-    Eigen::Matrix<double, R2, C2> aA;
-
-    if (impl->Dtype_ != 2) {
-      aA.noalias()
-          = -adj
-            * (impl->AinvB_ * impl->D_.transpose() * impl->AinvB_.transpose());
-    } else {
-      aA.noalias() = -adj * (impl->AinvB_ * impl->AinvB_.transpose());
-    }
-
-    impl->ldlt_.alloc_->variA_.adj() += aA;
-  }
-  static inline void chainB(
-      double adj,
-      trace_inv_quad_form_ldlt_impl<T2, R2, C2, var, R3, C3> *impl) {
-    matrix_d aB;
-
-    if (impl->Dtype_ != 2) {
-      aB.noalias() = adj * impl->AinvB_ * (impl->D_ + impl->D_.transpose());
-    } else {
-      aB.noalias() = 2 * adj * impl->AinvB_;
-    }
-
-    impl->variB_.adj() += aB;
-  }
-
- public:
-  explicit trace_inv_quad_form_ldlt_vari(
-      trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3> *impl)
-      : vari(impl->value_), impl_(impl) {}
-
-  virtual void chain() {
-    // F = trace(D * B' * inv(A) * B)
-    // aA = -aF * inv(A') * B * D' * B' * inv(A')
-    // aB = aF*(inv(A) * B * D + inv(A') * B * D')
-    // aD = aF*(B' * inv(A) * B)
-    chainA(adj_, impl_);
-
-    chainB(adj_, impl_);
-
-    if (impl_->Dtype_ == 1) {
-      impl_->variD_.adj() += adj_ * impl_->C_;
-    }
-  }
-
-  trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3> *impl_;
-};
-
-}  // namespace internal
 
 /**
- * Compute the trace of an inverse quadratic form.  I.E., this computes
+ * Compute the trace of an inverse quadratic form premultiplied by a
+ * square matrix. This computes
  *       trace(B^T A^-1 B)
  * where the LDLT_factor of A is provided.
  *
  * @tparam T type of elements in the LDLT_factor
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
- * @tparam EigMat3 type of the second matrix
+ * @tparam R number of rows in the LDLT_factor, can be Eigen::Dynamic
+ * @tparam C number of columns in the LDLT_factor, can be Eigen::Dynamic
+ * @tparam EigMat type of the first matrix
  *
  * @param A an LDLT_factor
  * @param B a matrix
  * @return The trace of the inverse quadratic form.
  */
-template <typename T, int R, int C, typename EigMat,
-          typename = require_any_st_var<T, EigMat>>
-inline return_type_t<T, EigMat> trace_inv_quad_form_ldlt(
-    const LDLT_factor<T, R, C> &A, const EigMat &B) {
-  using T2 = value_type_t<EigMat>;
-  constexpr int R2 = EigMat::RowsAtCompileTime;
-  constexpr int C2 = EigMat::ColsAtCompileTime;
-  check_multiplicable("trace_inv_quad_form_ldlt", "A", A, "B", B);
-  if (A.cols() == 0) {
-    return 0;
+template <int R, int C, typename T, typename EigMat,
+          require_eigen_t<EigMat>* = nullptr,
+          require_any_st_var<T, EigMat>* = nullptr>
+inline var trace_inv_quad_form_ldlt(const LDLT_factor<T, R, C>& A,
+                                    const EigMat& B) {
+  check_multiplicable("trace_quad_form", "A", A, "B", B);
+
+  if (A.rows() == 0)
+    return 0.0;
+
+  using B_ref_t = ref_type_t<EigMat>;
+
+  B_ref_t B_ref = B;
+  arena_matrix<promote_scalar_t<double, EigMat>> arena_B_val = value_of(B_ref);
+  arena_matrix<promote_scalar_t<var, EigMat>> arena_B;
+  arena_matrix<Eigen::Matrix<double, R, EigMat::ColsAtCompileTime>> AsolveB
+      = A.solve(arena_B_val);
+
+  if (!is_constant<EigMat>::value) {
+    arena_B = B_ref;
   }
 
-  auto *impl_
-      = new internal::trace_inv_quad_form_ldlt_impl<T, R, C, T2, R2, C2>(A, B);
+  var res = (arena_B_val.transpose() * AsolveB).trace();
 
-  return var(
-      new internal::trace_inv_quad_form_ldlt_vari<T, R, C, T2, R2, C2>(impl_));
+  reverse_pass_callback([A, AsolveB, arena_B, arena_B_val, res]() mutable {
+    double C_adj = res.adj();
+
+    if (!is_constant<T>::value) {
+      forward_as<LDLT_factor<var, R, C>>(A).alloc_->arena_A_.adj()
+          += -C_adj * AsolveB * AsolveB.transpose();
+    }
+
+    if (!is_constant<EigMat>::value)
+      arena_B.adj() += 2 * C_adj * AsolveB;
+  });
+
+  return res;
 }
 
 }  // namespace math

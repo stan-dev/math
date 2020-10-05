@@ -13,131 +13,67 @@
 namespace stan {
 namespace math {
 
-class scal_squared_distance_vv_vari : public op_vv_vari {
- public:
-  scal_squared_distance_vv_vari(vari* avi, vari* bvi)
-      : op_vv_vari(squared_distance(avi->val_, bvi->val_), avi, bvi) {}
-  void chain() {
-    double diff = avi_->val_ - bvi_->val_;
-    avi_->adj_ += adj_ * 2.0 * diff;
-    bvi_->adj_ -= adj_ * 2.0 * diff;
-  }
-};
-class scal_squared_distance_vd_vari : public op_vd_vari {
- public:
-  scal_squared_distance_vd_vari(vari* avi, double b)
-      : op_vd_vari(squared_distance(avi->val_, b), avi, b) {}
-  void chain() { avi_->adj_ += adj_ * 2 * (avi_->val_ - bd_); }
-};
-
 /**
  * Returns the squared distance.
  */
-inline var squared_distance(const var& a, const var& b) {
-  return {new scal_squared_distance_vv_vari(a.vi_, b.vi_)};
+template <typename T1, typename T2,
+          require_all_stan_scalar_t<T1, T2>* = nullptr,
+          require_any_var_t<T1, T2>* = nullptr>
+inline var squared_distance(const T1& a, const T2& b) {
+  double diff = value_of(a) - value_of(b);
+  var res = squared_distance(value_of(a), value_of(b));
+  reverse_pass_callback([a, b, diff, res]() mutable {
+    if (!is_constant<T1>::value)
+      forward_as<var>(a).adj() += 2.0 * res.adj() * diff;
+
+    if (!is_constant<T2>::value)
+      forward_as<var>(b).adj() += -2.0 * res.adj() * diff;
+  });
+  return res;
 }
 
-/**
- * Returns the squared distance.
- */
-inline var squared_distance(const var& a, double b) {
-  return {new scal_squared_distance_vd_vari(a.vi_, b)};
-}
+template <typename T1, typename T2,
+          require_all_eigen_vector_t<T1, T2>* = nullptr,
+          require_any_vt_var<T1, T2>* = nullptr>
+inline var squared_distance(const T1& A, const T2& B) {
+  check_matching_sizes("squared_distance", "A", A, "B", B);
 
-/**
- * Returns the squared distance.
- */
-inline var squared_distance(double a, const var& b) {
-  return {new scal_squared_distance_vd_vari(b.vi_, a)};
-}
+  if (A.size() == 0)
+    return 0.0;
 
-namespace internal {
+  using A_ref_t = ref_type_t<T1>;
+  using B_ref_t = ref_type_t<T2>;
 
-class squared_distance_vv_vari : public vari {
- protected:
-  vari** v1_;
-  vari** v2_;
-  size_t length_;
+  A_ref_t A_ref = A;
+  B_ref_t B_ref = B;
 
- public:
-  template <
-      typename EigVecVar1, typename EigVecVar2,
-      require_all_eigen_vector_vt<is_var, EigVecVar1, EigVecVar2>* = nullptr>
-  squared_distance_vv_vari(const EigVecVar1& v1, const EigVecVar2& v2)
-      : vari((as_column_vector_or_scalar(v1).val()
-              - as_column_vector_or_scalar(v2).val())
-                 .squaredNorm()),
-        length_(v1.size()) {
-    v1_ = reinterpret_cast<vari**>(
-        ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
-    v2_ = reinterpret_cast<vari**>(
-        ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
-    Eigen::Map<vector_vi>(v1_, length_) = v1.vi();
-    Eigen::Map<vector_vi>(v2_, length_) = v2.vi();
+  auto A_col = as_column_vector_or_scalar(A_ref);
+  auto B_col = as_column_vector_or_scalar(B_ref);
+
+  auto arena_diff_val = to_arena(value_of(A_col) - value_of(B_col));
+
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> arena_A;
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> arena_B;
+
+  if (!is_constant<T1>::value) {
+    arena_A = A_col;
   }
 
-  virtual void chain() {
-    Eigen::Map<vector_vi> v1_map(v1_, length_);
-    Eigen::Map<vector_vi> v2_map(v2_, length_);
-    vector_d di = 2 * adj_ * (v1_map.val() - v2_map.val());
-    v1_map.adj() += di;
-    v2_map.adj() -= di;
-  }
-};
-
-class squared_distance_vd_vari : public vari {
- protected:
-  vari** v1_;
-  double* v2_;
-  size_t length_;
-
- public:
-  template <typename EigVecVar, typename EigVecArith,
-            require_eigen_vector_vt<is_var, EigVecVar>* = nullptr,
-            require_eigen_vector_vt<std::is_arithmetic, EigVecArith>* = nullptr>
-  squared_distance_vd_vari(const EigVecVar& v1, const EigVecArith& v2)
-      : vari((as_column_vector_or_scalar(v1).val()
-              - as_column_vector_or_scalar(v2))
-                 .squaredNorm()),
-        length_(v1.size()) {
-    v1_ = reinterpret_cast<vari**>(
-        ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
-    v2_ = reinterpret_cast<double*>(
-        ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(double)));
-    Eigen::Map<vector_vi>(v1_, length_) = v1.vi();
-    Eigen::Map<vector_d>(v2_, length_) = v2;
+  if (!is_constant<T2>::value) {
+    arena_B = B_col;
   }
 
-  virtual void chain() {
-    Eigen::Map<vector_vi> v1_map(v1_, length_);
-    v1_map.adj()
-        += 2 * adj_ * (v1_map.val() - Eigen::Map<vector_d>(v2_, length_));
-  }
-};
-}  // namespace internal
+  var res = arena_diff_val.squaredNorm();
 
-template <
-    typename EigVecVar1, typename EigVecVar2,
-    require_all_eigen_vector_vt<is_var, EigVecVar1, EigVecVar2>* = nullptr>
-inline var squared_distance(const EigVecVar1& v1, const EigVecVar2& v2) {
-  check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-  return {new internal::squared_distance_vv_vari(to_ref(v1), to_ref(v2))};
-}
+  reverse_pass_callback([arena_A, arena_B, arena_diff_val, res]() mutable {
+    if (!is_constant<T1>::value)
+      arena_A.adj() += 2.0 * res.adj() * arena_diff_val;
 
-template <typename EigVecVar, typename EigVecArith,
-          require_eigen_vector_vt<is_var, EigVecVar>* = nullptr,
-          require_eigen_vector_vt<std::is_arithmetic, EigVecArith>* = nullptr>
-inline var squared_distance(const EigVecVar& v1, const EigVecArith& v2) {
-  check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-  return {new internal::squared_distance_vd_vari(to_ref(v1), to_ref(v2))};
-}
+    if (!is_constant<T2>::value)
+      arena_B.adj() += -2.0 * res.adj() * arena_diff_val;
+  });
 
-template <typename EigVecArith, typename EigVecVar,
-          require_eigen_vector_vt<std::is_arithmetic, EigVecArith>* = nullptr,
-          require_eigen_vector_vt<is_var, EigVecVar>* = nullptr>
-inline var squared_distance(const EigVecArith& v1, const EigVecVar& v2) {
-  check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-  return {new internal::squared_distance_vd_vari(to_ref(v2), to_ref(v1))};
+  return res;
 }
 
 }  // namespace math

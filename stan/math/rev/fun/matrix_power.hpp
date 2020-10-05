@@ -12,111 +12,6 @@
 
 namespace stan {
 namespace math {
-namespace internal {
-
-template <int R, int C>
-class matrix_product_vari_n0 : public vari {
- public:
-  vari** adjMnRef_;
-
-  explicit matrix_product_vari_n0(const Eigen::Matrix<var, R, C>& M)
-      : vari(0.0),
-        adjMnRef_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-            M.rows() * M.cols())) {
-    matrix_d Mnd = Eigen::Matrix<double, R, C>::Identity(M.rows(), M.cols());
-    Eigen::Map<matrix_vi>(adjMnRef_, M.rows(), M.cols())
-        = Mnd.unaryExpr([](double x) { return new vari(x, false); });
-  }
-
-  virtual void chain() { return; }
-};
-
-template <int R, int C>
-class matrix_product_vari_n1 : public vari {
- public:
-  int rows_;
-  int cols_;
-  vari** adjMRef_;
-  vari** adjMnRef_;
-
-  explicit matrix_product_vari_n1(const Eigen::Matrix<var, R, C>& M)
-      : vari(0.0),
-        rows_(M.rows()),
-        cols_(M.cols()),
-        adjMRef_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-            M.rows() * M.cols())),
-        adjMnRef_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-            M.rows() * M.cols())) {
-    Eigen::Map<matrix_vi>(adjMRef_, rows_, cols_) = M.vi();
-    Eigen::Map<matrix_vi>(adjMnRef_, M.rows(), M.cols())
-        = M.val().unaryExpr([](double x) { return new vari(x, false); });
-  }
-
-  virtual void chain() {
-    Eigen::Map<matrix_vi>(adjMRef_, rows_, cols_).adj()
-        = Eigen::Map<matrix_vi>(adjMnRef_, rows_, cols_).adj();
-  }
-};
-
-template <int R, int C>
-class matrix_product_vari : public vari {
- public:
-  int rows_;
-  int cols_;
-  vari** adjMRef_;
-  vari** adjMnRef_;
-  std::vector<Eigen::Matrix<double, R, C> > Mds;  // M, M^2, ..., M^(n-1).
-  int n;
-
-  explicit matrix_product_vari(const Eigen::Matrix<var, R, C>& M, const int n)
-      : vari(0.0),
-        rows_(M.rows()),
-        cols_(M.cols()),
-        adjMRef_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-            M.rows() * M.cols())),
-        adjMnRef_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-            M.rows() * M.cols())),
-        n(n) {
-    Mds.resize(n - 1);
-    Mds[0] = M.val();
-    Eigen::Map<matrix_vi>(adjMRef_, rows_, cols_) = M.vi();
-    for (int i = 1; i < n - 1; i++) {
-      Mds[i] = Mds[i - 1] * Mds[0];
-    }
-    Eigen::Matrix<double, R, C> Mnd = Mds[n - 2] * Mds[0];
-    Eigen::Map<matrix_vi>(adjMnRef_, rows_, cols_)
-        = Mnd.unaryExpr([](double x) { return new vari(x, false); });
-  }
-
-  virtual void chain() {
-    for (int j = 0; j < cols_; j++) {
-      for (int i = 0; i < rows_; i++) {
-        double dijdkl = 0.0;
-        Eigen::Matrix<double, R, C> S
-            = Eigen::Matrix<double, R, C>::Zero(rows_, cols_);
-        for (int l = 0; l < cols_; l++) {
-          S(i, l) += Mds[n - 2](j, l);
-        }
-        for (int nn = 1; nn < n - 1; nn++) {
-          for (int l = 0; l < cols_; l++) {
-            for (int k = 0; k < rows_; k++) {
-              S(k, l) += Mds[nn - 1](k, i) * Mds[n - nn - 2](j, l);
-            }
-          }
-        }
-        for (int k = 0; k < rows_; k++) {
-          S(k, j) += Mds[n - 2](k, i);
-        }
-        Eigen::Map<matrix_vi>(adjMRef_, rows_, cols_).adj()(i, j)
-            += (S.array()
-                * Eigen::Map<matrix_vi>(adjMnRef_, rows_, cols_).adj().array())
-                   .sum();
-      }
-    }
-  }
-};
-
-}  // namespace internal
 
 /**
  * Returns the nth power of the specific matrix. M^n = M * M * ... * M.
@@ -130,38 +25,51 @@ class matrix_product_vari : public vari {
  * @throw std::invalid_argument if the exponent is negative or the matrix is not
  * square.
  */
-template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
-                     EigMat::ColsAtCompileTime>
-matrix_power(const EigMat& M, const int n) {
-  using T = value_type_t<EigMat>;
-  constexpr int R = EigMat::RowsAtCompileTime;
-  constexpr int C = EigMat::ColsAtCompileTime;
-
-  check_square("matrix_power", "M", M);
-  if (n < 0)
-    invalid_argument("matrix_power", "n", n, "is ", ", but must be >= 0!");
-  if (M.rows() == 0)
-    invalid_argument("matrix_power", "M.rows()", M.rows(), "is ",
-                     ", but must be > 0!");
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+inline Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> matrix_power(
+    const T& M, const int n) {
   const auto& M_ref = to_ref(M);
+  check_square("matrix_power", "M", M);
+  check_nonnegative("matrix_power", "n", n);
   check_finite("matrix_power", "M", M_ref);
-  if (n == 0) {
-    auto* baseVari = new internal::matrix_product_vari_n0<R, C>(M_ref);
-    Eigen::Matrix<var, R, C> Mn(M.rows(), M.cols());
-    Mn.vi() = Eigen::Map<matrix_vi>(baseVari->adjMnRef_, M.rows(), M.cols());
-    return Mn;
-  } else if (n == 1) {
-    auto* baseVari = new internal::matrix_product_vari_n1<R, C>(M_ref);
-    Eigen::Matrix<var, R, C> Mn(M.rows(), M.cols());
-    Mn.vi() = Eigen::Map<matrix_vi>(baseVari->adjMnRef_, M.rows(), M.cols());
-    return Mn;
-  } else {
-    auto* baseVari = new internal::matrix_product_vari<R, C>(M_ref, n);
-    Eigen::Matrix<var, R, C> Mn(M.rows(), M.cols());
-    Mn.vi() = Eigen::Map<matrix_vi>(baseVari->adjMnRef_, M.rows(), M.cols());
-    return Mn;
+
+  if (M.size() == 0)
+    return {};
+
+  size_t N = M.rows();
+
+  if (n == 0)
+    return Eigen::MatrixXd::Identity(N, N);
+
+  if (n == 1)
+    return M_ref;
+
+  arena_t<std::vector<Eigen::MatrixXd>> powers(n + 1);
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arena_M
+      = M_ref;
+
+  powers[0] = Eigen::MatrixXd::Identity(N, N);
+  powers[1] = value_of(M_ref);
+  for (size_t i = 2; i <= n; ++i) {
+    powers[i] = powers[1] * powers[i - 1];
   }
+
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> res
+      = powers[powers.size() - 1];
+
+  reverse_pass_callback([arena_M, n, N, res, powers]() mutable {
+    const auto& M_val = powers[1];
+    Eigen::MatrixXd adj_C = res.adj();
+    Eigen::MatrixXd adj_M = Eigen::MatrixXd::Zero(N, N);
+    for (size_t i = n; i > 1; --i) {
+      adj_M += adj_C * powers[i - 1].transpose();
+      adj_C = (M_val.transpose() * adj_C).eval();
+    }
+    adj_M += adj_C;
+    arena_M.adj() += adj_M;
+  });
+
+  return res;
 }
 
 }  // namespace math

@@ -14,104 +14,87 @@
 
 namespace stan {
 namespace math {
-namespace internal {
-
-template <typename Td, int Rd, int Cd, typename Ta, int Ra, int Ca, typename Tb,
-          int Rb, int Cb>
-class trace_gen_quad_form_vari_alloc : public chainable_alloc {
- public:
-  trace_gen_quad_form_vari_alloc(const Eigen::Matrix<Td, Rd, Cd>& D,
-                                 const Eigen::Matrix<Ta, Ra, Ca>& A,
-                                 const Eigen::Matrix<Tb, Rb, Cb>& B)
-      : D_(D), A_(A), B_(B) {}
-
-  double compute() {
-    return trace_gen_quad_form(value_of(D_), value_of(A_), value_of(B_));
-  }
-
-  Eigen::Matrix<Td, Rd, Cd> D_;
-  Eigen::Matrix<Ta, Ra, Ca> A_;
-  Eigen::Matrix<Tb, Rb, Cb> B_;
-};
-
-template <typename Td, int Rd, int Cd, typename Ta, int Ra, int Ca, typename Tb,
-          int Rb, int Cb>
-class trace_gen_quad_form_vari : public vari {
- protected:
-  static inline void computeAdjoints(double adj,
-                                     const Eigen::Matrix<double, Rd, Cd>& D,
-                                     const Eigen::Matrix<double, Ra, Ca>& A,
-                                     const Eigen::Matrix<double, Rb, Cb>& B,
-                                     Eigen::Matrix<var, Rd, Cd>* varD,
-                                     Eigen::Matrix<var, Ra, Ca>* varA,
-                                     Eigen::Matrix<var, Rb, Cb>* varB) {
-    Eigen::Matrix<double, Ca, Cb> AtB;
-    Eigen::Matrix<double, Ra, Cb> BD;
-    if (varB || varA) {
-      BD.noalias() = B * D;
-    }
-    if (varB || varD) {
-      AtB.noalias() = A.transpose() * B;
-    }
-
-    if (varB) {
-      (*varB).adj() += adj * (A * BD + AtB * D.transpose());
-    }
-    if (varA) {
-      (*varA).adj() += adj * (B * BD.transpose());
-    }
-    if (varD) {
-      (*varD).adj() += adj * (B.transpose() * AtB);
-    }
-  }
-
- public:
-  explicit trace_gen_quad_form_vari(
-      trace_gen_quad_form_vari_alloc<Td, Rd, Cd, Ta, Ra, Ca, Tb, Rb, Cb>* impl)
-      : vari(impl->compute()), impl_(impl) {}
-
-  virtual void chain() {
-    computeAdjoints(adj_, value_of(impl_->D_), value_of(impl_->A_),
-                    value_of(impl_->B_),
-                    reinterpret_cast<Eigen::Matrix<var, Rd, Cd>*>(
-                        std::is_same<Td, var>::value ? (&impl_->D_) : NULL),
-                    reinterpret_cast<Eigen::Matrix<var, Ra, Ca>*>(
-                        std::is_same<Ta, var>::value ? (&impl_->A_) : NULL),
-                    reinterpret_cast<Eigen::Matrix<var, Rb, Cb>*>(
-                        std::is_same<Tb, var>::value ? (&impl_->B_) : NULL));
-  }
-
-  trace_gen_quad_form_vari_alloc<Td, Rd, Cd, Ta, Ra, Ca, Tb, Rb, Cb>* impl_;
-};
-}  // namespace internal
 
 template <typename Td, typename Ta, typename Tb,
-          typename = require_any_var_t<value_type_t<Td>, value_type_t<Ta>,
-                                       value_type_t<Tb>>,
-          typename = require_all_eigen_t<Td, Ta, Tb>>
+          require_any_vt_var<Td, Ta, Tb>* = nullptr,
+          require_all_eigen_t<Td, Ta, Tb>* = nullptr>
 inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
-  using Td_scal = value_type_t<Td>;
-  using Ta_scal = value_type_t<Ta>;
-  using Tb_scal = value_type_t<Tb>;
-  constexpr int Rd = Td::RowsAtCompileTime;
-  constexpr int Cd = Td::ColsAtCompileTime;
-  constexpr int Ra = Ta::RowsAtCompileTime;
-  constexpr int Ca = Ta::ColsAtCompileTime;
-  constexpr int Rb = Tb::RowsAtCompileTime;
-  constexpr int Cb = Tb::ColsAtCompileTime;
   check_square("trace_gen_quad_form", "A", A);
   check_square("trace_gen_quad_form", "D", D);
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
   check_multiplicable("trace_gen_quad_form", "B", B, "D", D);
 
-  auto* baseVari
-      = new internal::trace_gen_quad_form_vari_alloc<Td_scal, Rd, Cd, Ta_scal,
-                                                     Ra, Ca, Tb_scal, Rb, Cb>(
-          D, A, B);
+  using A_ref_t = ref_type_t<Ta>;
+  using B_ref_t = ref_type_t<Tb>;
+  using D_ref_t = ref_type_t<Td>;
 
-  return var(
-      new internal::trace_gen_quad_form_vari<Td_scal, Rd, Cd, Ta_scal, Ra, Ca,
-                                             Tb_scal, Rb, Cb>(baseVari));
+  A_ref_t A_ref = A;
+  B_ref_t B_ref = B;
+  D_ref_t D_ref = D;
+
+  arena_matrix<promote_scalar_t<double, Ta>> arena_A_val;
+  arena_matrix<promote_scalar_t<double, Tb>> arena_B_val = value_of(B_ref);
+  arena_matrix<promote_scalar_t<double, Td>> arena_D_val;
+
+  arena_matrix<promote_scalar_t<var, Ta>> arena_A;
+  arena_matrix<promote_scalar_t<var, Tb>> arena_B;
+  arena_matrix<promote_scalar_t<var, Td>> arena_D;
+
+  if (!is_constant<Ta>::value) {
+    arena_A = A_ref;
+  }
+
+  if (!is_constant<Tb>::value) {
+    arena_B = B_ref;
+  }
+
+  if (!is_constant<Td>::value) {
+    arena_D = D_ref;
+  }
+
+  if (!is_constant_all<Tb, Td>::value) {
+    arena_A_val = value_of(A_ref);
+  }
+
+  if (!is_constant_all<Ta, Tb>::value) {
+    arena_D_val = value_of(D_ref);
+  }
+
+  var res;
+
+  if (is_constant<Ta>::value && is_constant<Tb>::value
+      && !is_constant<Td>::value) {
+    res = (value_of(D) * arena_B_val.transpose() * arena_A_val * arena_B_val)
+              .trace();
+  } else if (!is_constant<Ta>::value && is_constant<Tb>::value
+             && is_constant<Td>::value) {
+    res = (arena_D_val * arena_B_val.transpose() * value_of(A) * arena_B_val)
+              .trace();
+  } else {
+    res = (arena_D_val * arena_B_val.transpose() * arena_A_val * arena_B_val)
+              .trace();
+  }
+
+  reverse_pass_callback([arena_A, arena_B, arena_D, arena_A_val, arena_B_val,
+                         arena_D_val, res]() mutable {
+    double C_adj = res.adj();
+
+    if (!is_constant<Ta>::value)
+      arena_A.adj() += C_adj * arena_B_val * arena_D_val.transpose()
+                       * arena_B_val.transpose();
+
+    if (!is_constant<Tb>::value)
+      arena_B.adj() += C_adj
+                       * (arena_A_val * arena_B_val * arena_D_val
+                          + arena_A_val.transpose() * arena_B_val
+                                * arena_D_val.transpose());
+
+    if (!is_constant<Td>::value)
+      arena_D.adj()
+          += C_adj * ((arena_A_val * arena_B_val).transpose() * arena_B_val);
+  });
+
+  return res;
 }
 
 }  // namespace math

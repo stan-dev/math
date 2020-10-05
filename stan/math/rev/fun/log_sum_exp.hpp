@@ -28,16 +28,17 @@ template <typename T1, typename T2,
           require_all_stan_scalar_t<T1, T2>* = nullptr,
           require_any_var_t<T1, T2>* = nullptr>
 inline var log_sum_exp(const T1& a, const T2& b) {
-  var res = log_sum_exp(value_of(a), value_of(b));
+  double val_a = value_of(a);
+  double val_b = value_of(b);
+  double diff = val_a - val_b;
+  var res = log_sum_exp(val_a, val_b);
 
-  reverse_pass_callback([a, b, res]() mutable {
+  reverse_pass_callback([a, b, diff, res]() mutable {
     if (!is_constant<T1>::value)
-      forward_as<var>(a).adj()
-          += res.adj() * inv_logit(value_of(a) - value_of(b));
+      forward_as<var>(a).adj() += res.adj() * inv_logit(diff);
 
     if (!is_constant<T2>::value)
-      forward_as<var>(b).adj()
-          += res.adj() * inv_logit(value_of(b) - value_of(a));
+      forward_as<var>(b).adj() += res.adj() * inv_logit(-diff);
   });
 
   return res;
@@ -53,14 +54,14 @@ template <typename T, require_container_st<is_var, T>* = nullptr>
 inline auto log_sum_exp(const T& x) {
   return apply_vector_unary<T>::reduce(x, [](const auto& v) {
     const auto& v_ref = to_ref(v);
-    const auto& v_val = value_of(v_ref);
 
-    var res = log_sum_exp(v_val);
+    auto arena_v_val = to_arena(value_of(v_ref));
+    var res = log_sum_exp(arena_v_val);
     auto arena_v = to_arena(v_ref);
 
-    reverse_pass_callback([arena_v, res]() mutable {
+    reverse_pass_callback([arena_v, arena_v_val, res]() mutable {
       arena_v.adj()
-          += res.adj() * (arena_v.array().val() - res.val()).exp().matrix();
+          += res.adj() * (arena_v_val.array() - res.val()).exp().matrix();
     });
 
     return res;

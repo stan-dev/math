@@ -1,14 +1,18 @@
 #ifndef STAN_MATH_REV_FUN_GP_PERIODIC_COV_HPP
 #define STAN_MATH_REV_FUN_GP_PERIODIC_COV_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
+#include <stan/math/rev/functor/reverse_pass_callback.hpp>
+#include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/squared_distance.hpp>
+#include <stan/math/prim/fun/sin.hpp>
+#include <stan/math/prim/fun/cos.hpp>
 #include <cmath>
 #include <type_traits>
 #include <vector>
@@ -17,270 +21,6 @@ namespace stan {
 namespace math {
 
 /**
- * This is a subclass of the vari class for precomputed
- * gradients of gp_periodic_cov.
- *
- * The class stores the double values for the distance
- * matrix, sine, cosine and sine squared of the latter,
- * pointers to the varis for the covariance
- * matrix, along with a pointer to the vari for sigma,
- * the vari for l and the vari for p.
- *
- * The elements of periodic covariance matrix \f$ \mathbf{K} \f$ using the
- * input \f$ \mathbf{X} \f$ are defined as
- * \f$ \mathbf{K}_{ij} = k(\mathbf{X}_i,\mathbf{X}_j), \f$ where
- * \f$ \mathbf{X}_i \f$ is the \f$i\f$-th row of \f$ \mathbf{X} \f$ and \n
- * \f$ k(\mathbf{x},\mathbf{x}^\prime) =
- * \sigma^2 \exp\left(-\frac{2\sin^2(\pi
- * |\mathbf{x}-\mathbf{x}^\prime|/p)}{\ell^2}\right), \f$ \n where \f$ \sigma^2
- * \f$, \f$ \ell \f$ and \f$ p \f$ are the signal variance, length-scale and
- * period.
- *
- * The partial derivatives w.r.t. the parameters are the following:\n
- *
- * \f$ \frac{\partial k}{\partial \sigma} = \frac{2k}{\sigma} \f$\n
- * \f$ \frac{\partial k}{\partial \ell} = \frac{4k}{\ell^3}
- * \sin^2(\pi|\mathbf{x}-\mathbf{x}^\prime|/p) \f$\n \f$ \frac{\partial
- * k}{\partial p} = \frac{2k\pi|\mathbf{x}-\mathbf{x}^\prime|}{\ell^2p^2}
- * \sin(2\pi|\mathbf{x}-\mathbf{x}^\prime|/p) \f$\n
- *
- * @tparam T_x type of std::vector elements of x.
- *   T_x can be a scalar, an Eigen::Vector, or an Eigen::RowVector.
- * @tparam T_sigma type of sigma
- * @tparam T_l type of length-scale
- * @tparam T_p type of period
- */
-template <typename T_x, typename T_sigma, typename T_l, typename T_p>
-class gp_periodic_cov_vari : public vari {
- public:
-  const size_t size_;
-  const size_t size_ltri_;
-  const double l_d_;
-  const double sigma_d_;
-  const double p_d_;
-  const double sigma_sq_d_;
-  double *dist_;
-  double *sin_2_dist_;
-  double *sin_dist_sq_;
-  vari *l_vari_;
-  vari *sigma_vari_;
-  vari *p_vari_;
-  vari **cov_lower_;
-  vari **cov_diag_;
-
-  /**
-   * Constructor for gp_periodic_cov.
-   *
-   * All memory allocated in
-   * ChainableStack's stack_alloc arena.
-   *
-   * It is critical for the efficiency of this object
-   * that the constructor create new varis that aren't
-   * popped onto the var_stack_, but rather are
-   * popped onto the var_nochain_stack_. This is
-   * controlled by the second argument to
-   * vari's constructor.
-   *
-   * @param x std::vector of input elements.
-   *   Assumes that all elements of x have the same size.
-   * @param sigma standard deviation of the signal
-   * @param l length-scale
-   * @param p period
-   */
-  gp_periodic_cov_vari(const std::vector<T_x> &x, const T_sigma &sigma,
-                       const T_l &l, const T_p &p)
-      : vari(0.0),
-        size_(x.size()),
-        size_ltri_(size_ * (size_ - 1) / 2),
-        l_d_(value_of(l)),
-        sigma_d_(value_of(sigma)),
-        p_d_(value_of(p)),
-        sigma_sq_d_(sigma_d_ * sigma_d_),
-        dist_(ChainableStack::instance_->memalloc_.alloc_array<double>(
-            size_ltri_)),
-        sin_2_dist_(ChainableStack::instance_->memalloc_.alloc_array<double>(
-            size_ltri_)),
-        sin_dist_sq_(ChainableStack::instance_->memalloc_.alloc_array<double>(
-            size_ltri_)),
-        l_vari_(l.vi_),
-        sigma_vari_(sigma.vi_),
-        p_vari_(p.vi_),
-        cov_lower_(ChainableStack::instance_->memalloc_.alloc_array<vari *>(
-            size_ltri_)),
-        cov_diag_(
-            ChainableStack::instance_->memalloc_.alloc_array<vari *>(size_)) {
-    using std::sin;
-    double neg_two_inv_l_sq = -2.0 / (l_d_ * l_d_);
-    double pi_div_p = pi() / p_d_;
-
-    size_t pos = 0;
-    for (size_t j = 0; j < size_; ++j) {
-      for (size_t i = j + 1; i < size_; ++i) {
-        double dist = distance(x[i], x[j]);
-        double sin_dist = sin(pi_div_p * dist);
-        double sin_dist_sq = square(sin_dist);
-        dist_[pos] = dist;
-        sin_2_dist_[pos] = sin(2.0 * pi_div_p * dist);
-        sin_dist_sq_[pos] = sin_dist_sq;
-        cov_lower_[pos] = new vari(
-            sigma_sq_d_ * std::exp(sin_dist_sq * neg_two_inv_l_sq), false);
-        ++pos;
-      }
-      cov_diag_[j] = new vari(sigma_sq_d_, false);
-    }
-  }
-
-  virtual void chain() {
-    double adjl = 0;
-    double adjsigma = 0;
-    double adjp = 0;
-
-    for (size_t i = 0; i < size_ltri_; ++i) {
-      vari *el_low = cov_lower_[i];
-      double prod_add = el_low->adj_ * el_low->val_;
-      adjl += prod_add * sin_dist_sq_[i];
-      adjsigma += prod_add;
-      adjp += prod_add * sin_2_dist_[i] * dist_[i];
-    }
-    for (size_t i = 0; i < size_; ++i) {
-      vari *el = cov_diag_[i];
-      adjsigma += el->adj_ * el->val_;
-    }
-    double l_d_sq = l_d_ * l_d_;
-    l_vari_->adj_ += adjl * 4 / (l_d_sq * l_d_);
-    sigma_vari_->adj_ += adjsigma * 2 / sigma_d_;
-    p_vari_->adj_ += adjp * TWO_PI / l_d_sq / (p_d_ * p_d_);
-  }
-};
-
-/**
- * This is a subclass of the vari class for precomputed
- * gradients of gp_periodic_cov.
- *
- * The class stores the double values for the distance
- * matrix, sine, cosine and sine squared of the latter,
- * pointers to the varis for the covariance
- * matrix, along with a pointer to the vari for sigma,
- * the vari for l and the vari for p.
- *
- * The elements of periodic covariance matrix \f$ \mathbf{K} \f$ using the
- * input \f$ \mathbf{X} \f$ are defined as
- * \f$ \mathbf{K}_{ij} = k(\mathbf{X}_i,\mathbf{X}_j), \f$ where
- * \f$ \mathbf{X}_i \f$ is the \f$i\f$-th row of \f$ \mathbf{X} \f$ and \n
- * \f$ k(\mathbf{x},\mathbf{x}^\prime) =
- * \sigma^2 \exp\left(-\frac{2\sin^2(\pi
- * |\mathbf{x}-\mathbf{x}^\prime|/p)}{\ell^2}\right), \f$ \n where \f$ \sigma^2
- * \f$, \f$ \ell \f$ and \f$ p \f$ are the signal variance, length-scale and
- * period.
- *
- * The partial derivatives w.r.t. the parameters are the following:\n
- *
- * \f$ \frac{\partial k}{\partial \sigma} = \frac{2k}{\sigma} \f$\n
- * \f$ \frac{\partial k}{\partial \ell} = \frac{4k}{\ell^3}
- * \sin^2(\pi|\mathbf{x}-\mathbf{x}^\prime|/p) \f$\n \f$ \frac{\partial
- * k}{\partial p} = \frac{2k\pi|\mathbf{x}-\mathbf{x}^\prime|}{\ell^2p^2}
- * \sin(2\pi|\mathbf{x}-\mathbf{x}^\prime|/p) \f$\n
- *
- * @tparam T_x type of std::vector elements of x
- *   T_x can be a scalar, an Eigen::Vector, or an Eigen::RowVector.
- * @tparam T_l type of length-scale
- * @tparam T_p type of period
- */
-template <typename T_x, typename T_l, typename T_p>
-class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
- public:
-  const size_t size_;
-  const size_t size_ltri_;
-  const double l_d_;
-  const double sigma_d_;
-  const double p_d_;
-  const double sigma_sq_d_;
-  double *dist_;
-  double *sin_2_dist_;
-  double *sin_dist_sq_;
-  vari *l_vari_;
-  vari *p_vari_;
-  vari **cov_lower_;
-  vari **cov_diag_;
-
-  /**
-   * Constructor for gp_periodic_cov.
-   *
-   * All memory allocated in
-   * ChainableStack's stack_alloc arena.
-   *
-   * It is critical for the efficiency of this object
-   * that the constructor create new varis that aren't
-   * popped onto the var_stack_, but rather are
-   * popped onto the var_nochain_stack_. This is
-   * controlled by the second argument to
-   * vari's constructor.
-   *
-   * @param x std::vector of input elements.
-   *   Assumes that all elements of x have the same size.
-   * @param sigma standard deviation of the signal
-   * @param l length-scale
-   * @param p period
-   */
-  gp_periodic_cov_vari(const std::vector<T_x> &x, double sigma, const T_l &l,
-                       const T_p &p)
-      : vari(0.0),
-        size_(x.size()),
-        size_ltri_(size_ * (size_ - 1) / 2),
-        l_d_(value_of(l)),
-        sigma_d_(sigma),
-        p_d_(value_of(p)),
-        sigma_sq_d_(sigma_d_ * sigma_d_),
-        dist_(ChainableStack::instance_->memalloc_.alloc_array<double>(
-            size_ltri_)),
-        sin_2_dist_(ChainableStack::instance_->memalloc_.alloc_array<double>(
-            size_ltri_)),
-        sin_dist_sq_(ChainableStack::instance_->memalloc_.alloc_array<double>(
-            size_ltri_)),
-        l_vari_(l.vi_),
-        p_vari_(p.vi_),
-        cov_lower_(ChainableStack::instance_->memalloc_.alloc_array<vari *>(
-            size_ltri_)),
-        cov_diag_(
-            ChainableStack::instance_->memalloc_.alloc_array<vari *>(size_)) {
-    using std::sin;
-    double neg_two_inv_l_sq = -2.0 / (l_d_ * l_d_);
-    double pi_div_p = pi() / p_d_;
-
-    size_t pos = 0;
-    for (size_t j = 0; j < size_; ++j) {
-      for (size_t i = j + 1; i < size_; ++i) {
-        double dist = distance(x[i], x[j]);
-        double sin_dist = sin(pi_div_p * dist);
-        double sin_dist_sq = square(sin_dist);
-        dist_[pos] = dist;
-        sin_2_dist_[pos] = sin(2.0 * pi_div_p * dist);
-        sin_dist_sq_[pos] = sin_dist_sq;
-        cov_lower_[pos] = new vari(
-            sigma_sq_d_ * std::exp(sin_dist_sq * neg_two_inv_l_sq), false);
-        ++pos;
-      }
-      cov_diag_[j] = new vari(sigma_sq_d_, false);
-    }
-  }
-
-  virtual void chain() {
-    double adjl = 0;
-    double adjp = 0;
-
-    for (size_t i = 0; i < size_ltri_; ++i) {
-      vari *el_low = cov_lower_[i];
-      double prod_add = el_low->adj_ * el_low->val_;
-      adjl += prod_add * sin_dist_sq_[i];
-      adjp += prod_add * sin_2_dist_[i] * dist_[i];
-    }
-    double l_d_sq = l_d_ * l_d_;
-    l_vari_->adj_ += adjl * 4 / (l_d_sq * l_d_);
-    p_vari_->adj_ += adjp * TWO_PI / l_d_sq / (p_d_ * p_d_);
-  }
-};
-
-/**
  * Returns a periodic covariance matrix \f$ \mathbf{K} \f$ using the input \f$
  * \mathbf{X} \f$. The elements of \f$ \mathbf{K} \f$ are defined as \f$
  * \mathbf{K}_{ij} = k(\mathbf{X}_i,\mathbf{X}_j), \f$ where \f$ \mathbf{X}_i
@@ -300,95 +40,125 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
  * @throw std::domain_error if sigma <= 0, l <= 0, p <= 0, or
  *   x is nan or infinite
  */
-template <typename T_x>
-inline typename std::enable_if<
-    std::is_same<typename scalar_type<T_x>::type, double>::value,
-    Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>>::type
-gp_periodic_cov(const std::vector<T_x> &x, const var &sigma, const var &l,
-                const var &p) {
-  const char *fun = "gp_periodic_cov";
+template <typename T_x, typename T_sigma, typename T_l, typename T_p,
+          require_all_stan_scalar_t<T_sigma, T_l, T_p>* = nullptr,
+          require_any_st_var<T_x, T_sigma, T_l, T_p>* = nullptr>
+Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
+    const std::vector<T_x>& x, T_sigma sigma, T_l l, T_p p) {
+  const char* fun = "gp_periodic_cov";
+
   check_positive(fun, "signal standard deviation", sigma);
   check_positive(fun, "length-scale", l);
   check_positive(fun, "period", p);
-  size_t x_size = x.size();
-  for (size_t i = 0; i < x_size; ++i) {
+
+  for (size_t i = 0; i < x.size(); ++i) {
     check_not_nan(fun, "element of x", x[i]);
   }
 
-  Eigen::Matrix<var, -1, -1> cov(x_size, x_size);
-  if (x_size == 0) {
-    return cov;
+  if (x.size() == 0) {
+    return Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>();
   }
+  double l_d = value_of(l);
+  double p_d = value_of(p);
+  double sigma_d = value_of(sigma);
+  double sigma_squared = sigma_d * sigma_d;
+  double pi_over_p = pi() / p_d;
+  double negative_two_over_l_squared = -2.0 / (l_d * l_d);
 
-  gp_periodic_cov_vari<T_x, var, var, var> *baseVari
-      = new gp_periodic_cov_vari<T_x, var, var, var>(x, sigma, l, p);
+  size_t N = x.size();
+  size_t P = (N * N - N) / 2 + N;
+  arena_matrix<Eigen::VectorXd> arena_dist(P);
+  arena_matrix<Eigen::VectorXd> arena_sin_squared(P);
+  arena_matrix<Eigen::VectorXd> arena_sin_squared_derivative(P);
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> arena_res(P);
+
+  auto arena_x = to_arena_if<!is_constant<T_x>::value>(x);
 
   size_t pos = 0;
-  for (size_t j = 0; j < x_size; ++j) {
-    for (size_t i = (j + 1); i < x_size; ++i) {
-      cov.coeffRef(i, j).vi_ = baseVari->cov_lower_[pos];
-      cov.coeffRef(j, i).vi_ = cov.coeffRef(i, j).vi_;
-      ++pos;
+  double inv_half_sq_l_d = 0.5 / (value_of(l) * value_of(l));
+  for (size_t j = 0; j < N; ++j) {
+    for (size_t i = 0; i <= j; ++i) {
+      if (i != j) {
+        arena_dist.coeffRef(pos) = distance(value_of(x[i]), value_of(x[j]));
+
+        double sine = sin(pi_over_p * arena_dist.coeff(pos));
+        double cosine = cos(pi_over_p * arena_dist.coeff(pos));
+        double sine_squared = sine * sine;
+
+        arena_sin_squared.coeffRef(pos) = sine_squared;
+
+        arena_sin_squared_derivative.coeffRef(pos) = 2.0 * sine * cosine;
+
+        arena_res.coeffRef(pos)
+            = sigma_squared
+              * std::exp(sine_squared * negative_two_over_l_squared);
+      } else {
+        arena_dist.coeffRef(pos) = 0.0;
+        arena_sin_squared.coeffRef(pos) = 0.0;
+        arena_sin_squared_derivative.coeffRef(pos) = 0.0;
+        arena_res.coeffRef(pos) = sigma_squared;
+      }
+
+      pos++;
     }
-    cov.coeffRef(j, j).vi_ = baseVari->cov_diag_[j];
-  }
-  return cov;
-}
-
-/**
- * Returns a periodic covariance matrix \f$ \mathbf{K} \f$ using the input \f$
- * \mathbf{X} \f$. The elements of \f$ \mathbf{K} \f$ are defined as \f$
- * \mathbf{K}_{ij} = k(\mathbf{X}_i,\mathbf{X}_j), \f$ where \f$ \mathbf{X}_i
- * \f$ is the \f$i\f$-th row of \f$ \mathbf{X} \f$ and \n \f$
- * k(\mathbf{x},\mathbf{x}^\prime) = \sigma^2 \exp\left(-\frac{2\sin^2(\pi
- * |\mathbf{x}-\mathbf{x}^\prime|/p)}{\ell^2}\right), \f$ \n where \f$ \sigma^2
- * \f$, \f$ \ell \f$ and \f$ p \f$ are the signal variance, length-scale and
- * period.
- *
- * @tparam T_x type of elements in the std::vector
- * @param x std::vector of input elements.
- *   Assumes that all elements of x have the same size.
- * @param sigma standard deviation of the signal
- * @param l length-scale
- * @param p period
- * @return periodic covariance matrix
- * @throw std::domain_error if sigma <= 0, l <= 0, p <= 0, or
- *   x is nan or infinite
- */
-template <typename T_x>
-inline typename std::enable_if<
-    std::is_same<typename scalar_type<T_x>::type, double>::value,
-    Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>>::type
-gp_periodic_cov(const std::vector<T_x> &x, double sigma, const var &l,
-                const var &p) {
-  const char *fun = "gp_periodic_cov";
-  check_positive(fun, "signal standard deviation", sigma);
-  check_positive(fun, "length-scale", l);
-  check_positive(fun, "period", p);
-  size_t x_size = x.size();
-  for (size_t i = 0; i < x_size; ++i) {
-    check_not_nan(fun, "element of x", x[i]);
   }
 
-  Eigen::Matrix<var, -1, -1> cov(x_size, x_size);
-  if (x_size == 0) {
-    return cov;
-  }
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> res(N, N);
 
-  gp_periodic_cov_vari<T_x, double, var, var> *baseVari
-      = new gp_periodic_cov_vari<T_x, double, var, var>(x, sigma, l, p);
-
-  size_t pos = 0;
-  for (size_t j = 0; j < x_size - 1; ++j) {
-    for (size_t i = (j + 1); i < x_size; ++i) {
-      cov.coeffRef(i, j).vi_ = baseVari->cov_lower_[pos];
-      cov.coeffRef(j, i).vi_ = cov.coeffRef(i, j).vi_;
-      ++pos;
+  pos = 0;
+  for (size_t j = 0; j < N; ++j)
+    for (size_t i = 0; i <= j; ++i) {
+      res.coeffRef(j, i) = res.coeffRef(i, j) = arena_res.coeff(pos);
+      pos++;
     }
-    cov.coeffRef(j, j).vi_ = baseVari->cov_diag_[j];
-  }
-  cov.coeffRef(x_size - 1, x_size - 1).vi_ = baseVari->cov_diag_[x_size - 1];
-  return cov;
+
+  reverse_pass_callback([arena_res, arena_x, sigma, l, p, sigma_d, l_d, p_d, N,
+                         pi_over_p, arena_dist, arena_sin_squared,
+                         arena_sin_squared_derivative]() mutable {
+    double sigma_adj = 0.0;
+    double l_adj = 0.0;
+    double p_adj = 0.0;
+
+    size_t pos = 0;
+    for (size_t i = 0; i < N; ++i) {
+      for (size_t j = 0; j <= i; ++j) {
+        double adj_times_val
+            = arena_res.coeff(pos).val() * arena_res.coeff(pos).adj();
+
+        if (!is_constant<T_sigma>::value)
+          sigma_adj += adj_times_val;
+
+        if (!is_constant<T_l>::value)
+          l_adj += arena_sin_squared.coeff(pos) * adj_times_val;
+
+        if (!is_constant<T_p>::value)
+          p_adj += arena_dist.coeff(pos)
+                   * arena_sin_squared_derivative.coeff(pos) * adj_times_val;
+
+        if (!is_constant<T_x>::value && i != j
+            && arena_dist.coeff(pos) != 0.0) {
+          auto adj = eval(-2 * pi_over_p
+                          * (value_of(arena_x[i]) - value_of(arena_x[j]))
+                          * arena_sin_squared_derivative(pos) * adj_times_val
+                          / (arena_dist.coeff(pos) * l_d * l_d));
+          forward_as<promote_scalar_t<var, T_x>>(arena_x[i]).adj() += adj;
+          forward_as<promote_scalar_t<var, T_x>>(arena_x[j]).adj() -= adj;
+        }
+        pos++;
+      }
+    }
+
+    if (!is_constant<T_sigma>::value)
+      forward_as<var>(sigma).adj() += 2.0 * sigma_adj / sigma_d;
+
+    if (!is_constant<T_l>::value)
+      forward_as<var>(l).adj() += 4 * l_adj / (l_d * l_d * l_d);
+
+    if (!is_constant<T_p>::value)
+      forward_as<var>(p).adj() += 2 * pi() * p_adj / (p_d * p_d * l_d * l_d);
+  });
+
+  return res;
 }
 
 }  // namespace math

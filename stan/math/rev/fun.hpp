@@ -33,7 +33,6 @@
 #include <stan/math/rev/fun/conj.hpp>
 #include <stan/math/rev/fun/cos.hpp>
 #include <stan/math/rev/fun/cosh.hpp>
-#include <stan/math/rev/fun/cov_exp_quad.hpp>
 #include <stan/math/rev/fun/determinant.hpp>
 #include <stan/math/rev/fun/digamma.hpp>
 #include <stan/math/rev/fun/dims.hpp>
@@ -59,6 +58,7 @@
 #include <stan/math/rev/fun/from_var_value.hpp>
 #include <stan/math/rev/fun/gamma_p.hpp>
 #include <stan/math/rev/fun/gamma_q.hpp>
+#include <stan/math/rev/fun/gp_exp_quad_cov.hpp>
 #include <stan/math/rev/fun/gp_periodic_cov.hpp>
 #include <stan/math/rev/fun/grad.hpp>
 #include <stan/math/rev/fun/grad_inc_beta.hpp>

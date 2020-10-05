@@ -4,6 +4,8 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/typedefs.hpp>
+#include <stan/math/rev/functor/reverse_pass_callback.hpp>
+#include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log.hpp>
@@ -20,16 +22,16 @@ namespace math {
  * @param m a symmetric, positive-definite matrix
  * @return The log determinant of the specified matrix
  */
-template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
-inline var log_determinant_spd(const EigMat& m) {
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+inline var log_determinant_spd(const T& m) {
   if (m.size() == 0) {
     return 0;
   }
 
-  matrix_d m_d = m.val();
-  check_symmetric("log_determinant_spd", "m", m_d);
+  arena_matrix<Eigen::MatrixXd> arena_m_d = m.val();
+  check_symmetric("log_determinant_spd", "m", arena_m_d);
 
-  Eigen::LDLT<matrix_d> ldlt(m_d);
+  Eigen::LDLT<Eigen::MatrixXd> ldlt(arena_m_d);
   if (ldlt.info() != Eigen::Success) {
     double y = 0;
     throw_domain_error("log_determinant_spd", "matrix argument", y,
@@ -37,8 +39,8 @@ inline var log_determinant_spd(const EigMat& m) {
   }
 
   // compute the inverse of A (needed for the derivative)
-  m_d.setIdentity(m.rows(), m.cols());
-  ldlt.solveInPlace(m_d);
+  arena_m_d.setIdentity(m.rows(), m.cols());
+  ldlt.solveInPlace(arena_m_d);
 
   if (ldlt.isNegative() || (ldlt.vectorD().array() <= 1e-16).any()) {
     double y = 0;
@@ -46,21 +48,18 @@ inline var log_determinant_spd(const EigMat& m) {
                        "matrix is negative definite");
   }
 
-  double val = sum(log(ldlt.vectorD()));
+  var log_det = sum(log(ldlt.vectorD()));
 
   check_finite("log_determinant_spd",
-               "log determininant of the matrix argument", val);
+               "log determininant of the matrix argument", log_det);
 
-  vari** operands
-      = ChainableStack::instance_->memalloc_.alloc_array<vari*>(m.size());
-  Eigen::Map<matrix_vi>(operands, m.rows(), m.cols()) = m.vi();
+  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arena_m = m;
 
-  double* gradients
-      = ChainableStack::instance_->memalloc_.alloc_array<double>(m.size());
-  Eigen::Map<matrix_d>(gradients, m.rows(), m.cols()) = m_d;
+  reverse_pass_callback([arena_m, log_det, arena_m_d]() mutable {
+    arena_m.adj() += log_det.adj() * arena_m_d;
+  });
 
-  return var(
-      new precomputed_gradients_vari(val, m.size(), operands, gradients));
+  return log_det;
 }
 
 }  // namespace math

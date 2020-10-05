@@ -10,7 +10,6 @@
 
 namespace stan {
 namespace math {
-namespace internal {
 
 /**
  * Returns the log det of the matrix whose LDLT factorization is given
@@ -21,33 +20,25 @@ namespace internal {
  * @tparam C number of columns, can be Eigen::Dynamic
  * @param A an LDLT_factor
  * @return ln(det(A))
- * @throws never
  */
 template <int R, int C>
-class log_det_ldlt_vari : public vari {
- public:
-  explicit log_det_ldlt_vari(const LDLT_factor<var, R, C> &A)
-      : vari(A.alloc_->log_abs_det()), alloc_ldlt_(A.alloc_) {}
-
-  virtual void chain() {
-    Eigen::Matrix<double, R, C> invA;
-
-    // If we start computing Jacobians, this may be a bit inefficient
-    invA.setIdentity(alloc_ldlt_->N_, alloc_ldlt_->N_);
-    alloc_ldlt_->ldlt_.solveInPlace(invA);
-    const_cast<matrix_vi &>(alloc_ldlt_->variA_).adj() += adj_ * invA;
-  }
-  const LDLT_alloc<R, C> *alloc_ldlt_;
-};
-}  // namespace internal
-
-template <int R, int C>
-var log_determinant_ldlt(LDLT_factor<var, R, C> &A) {
+var log_determinant_ldlt(const LDLT_factor<var, R, C> &A) {
   if (A.rows() == 0) {
     return 0;
   }
 
-  return var(new internal::log_det_ldlt_vari<R, C>(A));
+  var log_det = A.alloc_->log_abs_det();
+
+  arena_matrix<Eigen::Matrix<double, R, C>> arena_A_inv(A.rows(), A.cols());
+
+  arena_A_inv.setIdentity();
+  A.alloc_->ldlt_.solveInPlace(arena_A_inv);
+
+  reverse_pass_callback([A, log_det, arena_A_inv]() mutable {
+    A.alloc_->arena_A_.adj() += log_det.adj() * arena_A_inv;
+  });
+
+  return log_det;
 }
 
 }  // namespace math

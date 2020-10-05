@@ -53,8 +53,8 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(const T_y& W,
   static const char* function = "inv_wishart_lpdf";
   check_size_match(function, "Rows of random variable", W.rows(),
                    "columns of scale parameter", S.rows());
-  check_square(function, "random variable", W);
-  check_square(function, "scale parameter", S);
+  check_symmetric(function, "random variable", W);
+  check_symmetric(function, "scale parameter", S);
   Eigen::Index k = S.rows();
   T_nu_ref nu_ref = nu;
   T_S_ref S_ref = S;
@@ -87,8 +87,7 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(const T_y& W,
     //      &S(0), S.size(), 1);
     //    lp -= 0.5 * dot_product(S_vec, W_inv_vec); // trace(S * W^-1)
     Eigen::Matrix<return_type_t<T_y, T_scale>, Eigen::Dynamic, Eigen::Dynamic>
-        Winv_S(mdivide_left_ldlt(
-            ldlt_W, S_ref.template selfadjointView<Eigen::Lower>()));
+        Winv_S(mdivide_left_ldlt(ldlt_W, S_ref));
     lp -= 0.5 * trace(Winv_S);
   }
   if (include_summand<propto, T_dof, T_scale>::value) {
