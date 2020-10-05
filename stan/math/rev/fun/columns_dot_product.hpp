@@ -20,8 +20,6 @@ template <typename Mat1, typename Mat2,
           require_any_eigen_vt<is_var, Mat1, Mat2>* = nullptr>
 inline auto columns_dot_product(const Mat1& v1, const Mat2& v2) {
   using ret_type = promote_scalar_t<var, Eigen::RowVectorXd>;
-  using mat1_var_type = promote_scalar_t<var, Mat1>;
-  using mat2_var_type = promote_scalar_t<var, Mat2>;
 
   check_matching_sizes("columns_dot_product", "v1", v1, "v2", v2);
 
