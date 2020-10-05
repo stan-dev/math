@@ -13,6 +13,7 @@
 #include <stan/math/rev/fun/abs.hpp>
 #include <stan/math/rev/fun/acos.hpp>
 #include <stan/math/rev/fun/acosh.hpp>
+#include <stan/math/rev/fun/add.hpp>
 #include <stan/math/rev/fun/as_bool.hpp>
 #include <stan/math/rev/fun/arg.hpp>
 #include <stan/math/rev/fun/asin.hpp>

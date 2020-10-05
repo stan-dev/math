@@ -7,7 +7,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/meta/is_vari.hpp>
 #include <stan/math/rev/meta/arena_type.hpp>
-#include <stan/math/rev/functor/reverse_pass_callback.hpp>
+#include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <ostream>
 #include <vector>
 #ifdef STAN_OPENCL

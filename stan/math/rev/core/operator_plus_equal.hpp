@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_REV_CORE_OPERATOR_PLUS_EQUAL_HPP
 #define STAN_MATH_REV_CORE_OPERATOR_PLUS_EQUAL_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/operator_addition.hpp>
-#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {

@@ -1,12 +1,14 @@
 #ifndef STAN_MATH_REV_CORE_OPERATOR_ADDITION_HPP
 #define STAN_MATH_REV_CORE_OPERATOR_ADDITION_HPP
 
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vv_vari.hpp>
 #include <stan/math/rev/core/vd_vari.hpp>
+#include <stan/math/prim/err/check_matching_dims.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
+#include <stan/math/rev/fun/add.hpp>
 
 namespace stan {
 namespace math {
@@ -96,9 +98,6 @@ inline var operator+(const var& a, const var& b) {
  */
 template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline var operator+(const var& a, Arith b) {
-  if (b == 0.0) {
-    return a;
-  }
   return {new internal::add_vd_vari(a.vi_, b)};
 }
 
@@ -116,10 +115,22 @@ inline var operator+(const var& a, Arith b) {
  */
 template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline var operator+(Arith a, const var& b) {
-  if (a == 0.0) {
-    return b;
-  }
   return {new internal::add_vd_vari(b.vi_, a)};  // by symmetry
+}
+
+/**
+ * Addition operator for matrix variables (C++).
+ *
+ * @tparam VarMat1 A matrix of vars or a var with an underlying matrix type.
+ * @tparam VarMat2 A matrix of vars or a var with an underlying matrix type.
+ * @param a First variable operand.
+ * @param b Second variable operand.
+ * @return Variable result of adding two variables.
+ */
+template <typename VarMat1, typename VarMat2,
+          require_any_var_matrix_t<VarMat1, VarMat2>* = nullptr>
+inline auto operator+(const VarMat1& a, const VarMat2& b) {
+  return add(a, b);
 }
 
 }  // namespace math

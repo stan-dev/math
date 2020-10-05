@@ -149,6 +149,19 @@ struct adj_Op {
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     std::enable_if_t<!std::is_pointer<T>::value, reverse_return_t<T>>
       operator()(T &v) const { return v.vi_->adj_; }
+
+  //Returns adjoint from a vari*
+  template<typename T = Scalar>
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+    std::enable_if_t<std::is_pointer<T>::value, reverse_return_t<T>>
+      coeffRef(T &v) { return v->adj_; }
+
+  //Returns adjoint from a var
+  template<typename T = Scalar>
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+    std::enable_if_t<!std::is_pointer<T>::value, reverse_return_t<T>>
+      coeffRef(T &v) { return v.vi_->adj_; }
+
 };
 
 /**
