@@ -30,7 +30,7 @@ inline auto eigenvalues_sym(const T& m) {
 
   check_square("eigenvalues_sym", "m", m);
   check_nonzero_size("eigenvalues_sym", "m", m);
-  
+
   auto arena_m = to_arena(m);
   Eigen::MatrixXd m_val = value_of(arena_m);
 
