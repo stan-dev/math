@@ -28,6 +28,7 @@ namespace math {
 template <typename T, require_container_vt<is_var, T>* = nullptr>
 var sd(const T& m) {
   check_nonzero_size("sd", "m", m);
+
   if (m.size() == 1) {
     return 0;
   }
@@ -35,14 +36,12 @@ var sd(const T& m) {
   const auto& m_ref = to_ref(m);
 
   return apply_vector_unary<decltype(m_ref)>::reduce(m_ref, [](const auto& x) {
-    const auto& x_ref = to_ref(x);
-    arena_t<decltype(x_ref)> arena_x = x_ref;
-    const auto& x_val = to_ref(value_of(x));
-    double mean = x_val.mean();
-    arena_matrix<plain_type_t<decltype(x_val)>> arena_diff
-        = x_val.array() - mean;
+    auto arena_x = to_arena(x);
+    const auto& x_val = to_ref(value_of(arena_x));
+
+    auto arena_diff = to_arena((x_val.array() - x_val.mean()).matrix());
     double sum_of_squares = arena_diff.squaredNorm();
-    double sd = sqrt(sum_of_squares / (x.size() - 1));
+    double sd = std::sqrt(sum_of_squares / (x.size() - 1));
 
     var res = sd;
 
