@@ -21,9 +21,9 @@ return_type_t<T_y, T_scale, T_shape> pareto_cdf(const T_y& y,
                                                 const T_scale& y_min,
                                                 const T_shape& alpha) {
   using T_partials_return = partials_return_t<T_y, T_scale, T_shape>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_y_min_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
-  using T_alpha_ref = ref_type_if_t<!is_constant<T_shape>::value, T_shape>;
+  using T_y_ref = ref_type_t<T_y>;
+  using T_y_min_ref = ref_type_t<T_scale>;
+  using T_alpha_ref = ref_type_t<T_shape>;
   using std::exp;
   using std::log;
   static const char* function = "pareto_cdf";
@@ -45,9 +45,9 @@ return_type_t<T_y, T_scale, T_shape> pareto_cdf(const T_y& y,
   operands_and_partials<T_y_ref, T_y_min_ref, T_alpha_ref> ops_partials(
       y_ref, y_min_ref, alpha_ref);
 
-  scalar_seq_view<T_y> y_vec(y_ref);
-  scalar_seq_view<T_scale> y_min_vec(y_min_ref);
-  scalar_seq_view<T_shape> alpha_vec(alpha_ref);
+  scalar_seq_view<T_y_ref> y_vec(y_ref);
+  scalar_seq_view<T_y_min_ref> y_min_vec(y_min_ref);
+  scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
   size_t N = max_size(y, y_min, alpha);
 
   // Explicit return for extreme values
