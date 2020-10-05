@@ -32,11 +32,10 @@ namespace math {
 template <typename T_x, typename T_sigma, typename T_l,
           require_all_stan_scalar_t<T_sigma, T_l>* = nullptr,
           require_any_st_var<T_x, T_sigma, T_l>* = nullptr>
-inline auto gp_exp_quad_cov(const std::vector<T_x>& x,
-			    T_sigma sigma,
-			    T_l length_scale) {
+inline auto gp_exp_quad_cov(const std::vector<T_x>& x, T_sigma sigma,
+                            T_l length_scale) {
   using ret_type = Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>;
-  
+
   check_positive("gp_exp_quad_cov", "marginal standard deviation", sigma);
   check_positive("gp_exp_quad_cov", "length scale", length_scale);
 
@@ -63,17 +62,19 @@ inline auto gp_exp_quad_cov(const std::vector<T_x>& x,
           arena_dist.coeffRef(pos) = 0.0;
           res.coeffRef(i, j) = sigma_sq_d;
         } else {
-	  double dist_sq;
+          double dist_sq;
 
-	  if (is_stan_scalar<T_x>::value) {
-	    double diff = forward_as<double>(value_of(x[i]) - value_of(x[j]));
-	    dist_sq = diff * diff;
-	  } else if (is_eigen_col_vector<T_x>::value)
-	    dist_sq
-              = forward_as<Eigen::VectorXd>(value_of(x[i]) - value_of(x[j])).squaredNorm();
-	  else if (is_eigen_row_vector<T_x>::value)
-	    dist_sq
-              = forward_as<Eigen::RowVectorXd>(value_of(x[i]) - value_of(x[j])).squaredNorm();
+          if (is_stan_scalar<T_x>::value) {
+            double diff = forward_as<double>(value_of(x[i]) - value_of(x[j]));
+            dist_sq = diff * diff;
+          } else if (is_eigen_col_vector<T_x>::value)
+            dist_sq
+                = forward_as<Eigen::VectorXd>(value_of(x[i]) - value_of(x[j]))
+                      .squaredNorm();
+          else if (is_eigen_row_vector<T_x>::value)
+            dist_sq = forward_as<Eigen::RowVectorXd>(value_of(x[i])
+                                                     - value_of(x[j]))
+                          .squaredNorm();
 
           arena_dist.coeffRef(pos) = dist_sq;
           res.coeffRef(i, j)
@@ -88,26 +89,25 @@ inline auto gp_exp_quad_cov(const std::vector<T_x>& x,
         res.coeffRef(j, i) = res.coeff(i, j);
       }
     }
-    reverse_pass_callback(
-        [res, arena_dist, sigma, length_scale, N]() mutable {
-          const double l_d = value_of(length_scale);
-          auto& sigma_adj = forward_as<var>(sigma).adj();
-          auto& l_adj = forward_as<var>(length_scale).adj();
+    reverse_pass_callback([res, arena_dist, sigma, length_scale, N]() mutable {
+      const double l_d = value_of(length_scale);
+      auto& sigma_adj = forward_as<var>(sigma).adj();
+      auto& l_adj = forward_as<var>(length_scale).adj();
 
-          size_t pos = 0;
-          for (size_t j = 0; j < N; ++j) {
-            for (size_t i = 0; i <= j; ++i) {
-              const double adj_times_val
-                  = res.coeff(i, j).val() * res.coeff(i, j).adj();
-              sigma_adj += adj_times_val;
-              l_adj += arena_dist.coeff(pos) * adj_times_val;
-              ++pos;
-            }
-          }
-          sigma_adj *= 2.0;
-          sigma_adj /= value_of(sigma);
-          l_adj /= (l_d * l_d * l_d);
-        });
+      size_t pos = 0;
+      for (size_t j = 0; j < N; ++j) {
+        for (size_t i = 0; i <= j; ++i) {
+          const double adj_times_val
+              = res.coeff(i, j).val() * res.coeff(i, j).adj();
+          sigma_adj += adj_times_val;
+          l_adj += arena_dist.coeff(pos) * adj_times_val;
+          ++pos;
+        }
+      }
+      sigma_adj *= 2.0;
+      sigma_adj /= value_of(sigma);
+      l_adj /= (l_d * l_d * l_d);
+    });
     return ret_type(res);
   } else {
     double sigma_sq_d = value_of(sigma) * value_of(sigma);
@@ -124,17 +124,19 @@ inline auto gp_exp_quad_cov(const std::vector<T_x>& x,
     for (size_t j = 0; j < N; ++j) {
       for (size_t i = 0; i <= j; ++i) {
         if (i != j) {
-	  double dist_sq;
+          double dist_sq;
 
-	  if (is_stan_scalar<T_x>::value) {
-	    double diff = forward_as<double>(value_of(x[i]) - value_of(x[j]));
-	    dist_sq = diff * diff;
-	  } else if (is_eigen_col_vector<T_x>::value)
-	    dist_sq
-              = forward_as<Eigen::VectorXd>(value_of(x[i]) - value_of(x[j])).squaredNorm();
-	  else if (is_eigen_row_vector<T_x>::value)
-	    dist_sq
-              = forward_as<Eigen::RowVectorXd>(value_of(x[i]) - value_of(x[j])).squaredNorm();
+          if (is_stan_scalar<T_x>::value) {
+            double diff = forward_as<double>(value_of(x[i]) - value_of(x[j]));
+            dist_sq = diff * diff;
+          } else if (is_eigen_col_vector<T_x>::value)
+            dist_sq
+                = forward_as<Eigen::VectorXd>(value_of(x[i]) - value_of(x[j]))
+                      .squaredNorm();
+          else if (is_eigen_row_vector<T_x>::value)
+            dist_sq = forward_as<Eigen::RowVectorXd>(value_of(x[i])
+                                                     - value_of(x[j]))
+                          .squaredNorm();
 
           dist.coeffRef(pos) = dist_sq;
           res.coeffRef(i, j)
