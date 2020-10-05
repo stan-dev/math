@@ -44,7 +44,8 @@ struct ref_type_if<Condition, T, require_not_eigen_t<T>> {
 
 template <bool Condition, typename T>
 struct ref_type_if<Condition, T, require_arena_matrix_t<T>> {
-  using type = typename ref_type_if <Condition, typename std::decay_t<T>::Base>::type;
+  using type =
+      typename ref_type_if<Condition, typename std::decay_t<T>::Base>::type;
 };
 
 template <typename T>
