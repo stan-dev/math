@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <boost/random/poisson_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
@@ -32,10 +33,11 @@ inline typename VectorBuilder<true, int, T_rate>::type poisson_log_rng(
   using boost::random::poisson_distribution;
   static const char* function = "poisson_log_rng";
   static const double POISSON_MAX_LOG_RATE = 30 * LOG_TWO;
-  check_finite(function, "Log rate parameter", alpha);
-  check_less(function, "Log rate parameter", alpha, POISSON_MAX_LOG_RATE);
+  const auto& alpha_ref = to_ref(alpha);
+  check_finite(function, "Log rate parameter", alpha_ref);
+  check_less(function, "Log rate parameter", alpha_ref, POISSON_MAX_LOG_RATE);
 
-  scalar_seq_view<T_rate> alpha_vec(alpha);
+  scalar_seq_view<T_rate> alpha_vec(alpha_ref);
   size_t N = stan::math::size(alpha);
   VectorBuilder<true, int, T_rate> output(N);
 

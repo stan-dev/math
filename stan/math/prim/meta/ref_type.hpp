@@ -1,11 +1,12 @@
 #ifndef STAN_MATH_PRIM_META_REF_TYPE_HPP
 #define STAN_MATH_PRIM_META_REF_TYPE_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_eigen_map_base.hpp>
 #include <stan/math/prim/meta/is_arena_matrix.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/plain_type.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 
 #include <type_traits>
 
@@ -36,9 +37,13 @@ struct ref_type_if {
 };
 
 template <bool Condition, typename T>
-struct ref_type_if<Condition, T,
-                   require_t<bool_constant<!is_eigen<T>::value
-                                           || is_arena_matrix<T>::value>>> {
+struct ref_type_if<Condition, T, require_not_eigen_t<T>> {
+  using type = std::conditional_t<std::is_rvalue_reference<T>::value,
+                                  std::remove_reference_t<T>, const T&>;
+};
+
+template <bool Condition, typename T>
+struct ref_type_if<Condition, T, require_eigen_map_base_t<T>> {
   using type = std::conditional_t<std::is_rvalue_reference<T>::value,
                                   std::remove_reference_t<T>, const T&>;
 };
@@ -87,9 +92,13 @@ struct ref_type_for_opencl {
 };
 
 template <typename T>
-struct ref_type_for_opencl<
-    T, require_t<
-           bool_constant<!is_eigen<T>::value || is_arena_matrix<T>::value>>> {
+struct ref_type_for_opencl<T, require_not_eigen_t<T>> {
+  using type = std::conditional_t<std::is_rvalue_reference<T>::value,
+                                  std::remove_reference_t<T>, const T&>;
+};
+
+template <typename T>
+struct ref_type_for_opencl<T, require_eigen_map_base_t<T>> {
   using type = std::conditional_t<std::is_rvalue_reference<T>::value,
                                   std::remove_reference_t<T>, const T&>;
 };
