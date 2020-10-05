@@ -23,11 +23,11 @@ inline var log_determinant(const T& m) {
 
   arena_t<T> arena_m = m;
 
-  auto m_lu = arena_m.val().partialPivLu();
+  auto m_hh = arena_m.val().fullPivHouseholderQr();
 
-  auto arena_m_inv_transpose = to_arena(m_lu.inverse().transpose());
+  auto arena_m_inv_transpose = to_arena(m_hh.inverse().transpose());
 
-  var log_det = std::log(std::abs(m_lu.determinant()));
+  var log_det = m_hh.logAbsDeterminant();
 
   reverse_pass_callback([arena_m, log_det, arena_m_inv_transpose]() mutable {
     arena_m.adj() += log_det.adj() * arena_m_inv_transpose;
