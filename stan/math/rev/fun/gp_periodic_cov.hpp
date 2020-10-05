@@ -10,7 +10,6 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/square.hpp>
-#include <stan/math/prim/fun/squared_distance.hpp>
 #include <stan/math/prim/fun/sin.hpp>
 #include <stan/math/prim/fun/cos.hpp>
 #include <cmath>
@@ -43,8 +42,10 @@ namespace math {
 template <typename T_x, typename T_sigma, typename T_l, typename T_p,
           require_all_stan_scalar_t<T_sigma, T_l, T_p>* = nullptr,
           require_any_st_var<T_x, T_sigma, T_l, T_p>* = nullptr>
-Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
+inline auto gp_periodic_cov(
     const std::vector<T_x>& x, T_sigma sigma, T_l l, T_p p) {
+  using ret_type = promote_scalar_t<var, Eigen::MatrixXd>;
+
   const char* fun = "gp_periodic_cov";
 
   check_positive(fun, "signal standard deviation", sigma);
@@ -67,10 +68,11 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
 
   size_t N = x.size();
   size_t P = (N * N - N) / 2 + N;
-  arena_matrix<Eigen::VectorXd> arena_dist(P);
-  arena_matrix<Eigen::VectorXd> arena_sin_squared(P);
-  arena_matrix<Eigen::VectorXd> arena_sin_squared_derivative(P);
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> arena_res(P);
+
+  arena_t<Eigen::VectorXd> arena_dist(P);
+  arena_t<Eigen::VectorXd> arena_sin_squared(P);
+  arena_t<Eigen::VectorXd> arena_sin_squared_derivative(P);
+  arena_t<promote_scalar_t<var, Eigen::VectorXd>> arena_res(P);
 
   auto arena_x = to_arena_if<!is_constant<T_x>::value>(x);
 
@@ -79,7 +81,15 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
   for (size_t j = 0; j < N; ++j) {
     for (size_t i = 0; i <= j; ++i) {
       if (i != j) {
-        arena_dist.coeffRef(pos) = distance(value_of(x[i]), value_of(x[j]));
+	if(is_stan_scalar<T_x>::value)
+	  arena_dist.coeffRef(pos) = std::abs(forward_as<double>(value_of(x[i])) -
+					      forward_as<double>(value_of(x[j])));
+	else if(is_eigen_col_vector<T_x>::value)
+	  arena_dist.coeffRef(pos) =
+	    forward_as<Eigen::VectorXd>(value_of(x[i]) - value_of(x[j])).norm();
+	else if(is_eigen_row_vector<T_x>::value)
+	  arena_dist.coeffRef(pos) =
+	    forward_as<Eigen::RowVectorXd>(value_of(x[i]) - value_of(x[j])).norm();
 
         double sine = sin(pi_over_p * arena_dist.coeff(pos));
         double cosine = cos(pi_over_p * arena_dist.coeff(pos));
@@ -103,7 +113,7 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
     }
   }
 
-  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> res(N, N);
+  arena_t<ret_type> res(N, N);
 
   pos = 0;
   for (size_t j = 0; j < N; ++j)
@@ -112,9 +122,13 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
       pos++;
     }
 
-  reverse_pass_callback([arena_res, arena_x, sigma, l, p, sigma_d, l_d, p_d, N,
+  reverse_pass_callback([arena_res, arena_x, sigma, l, p, N,
                          pi_over_p, arena_dist, arena_sin_squared,
                          arena_sin_squared_derivative]() mutable {
+    double sigma_d = value_of(sigma);
+    double l_d = value_of(l);
+    double p_d = value_of(p);
+		  
     double sigma_adj = 0.0;
     double l_adj = 0.0;
     double p_adj = 0.0;
@@ -158,7 +172,7 @@ Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
       forward_as<var>(p).adj() += 2 * pi() * p_adj / (p_d * p_d * l_d * l_d);
   });
 
-  return res;
+  return ret_type(res);
 }
 
 }  // namespace math
