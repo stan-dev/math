@@ -28,10 +28,10 @@ class arena_matrix : public Eigen::Map<MatrixType> {
    * Default constructor.
    */
   arena_matrix()
-      : Base::Map(
-            nullptr,
-            RowsAtCompileTime == Eigen::Dynamic ? 0 : RowsAtCompileTime,
-            ColsAtCompileTime == Eigen::Dynamic ? 0 : ColsAtCompileTime) {}
+      : Base::Map(nullptr,
+                  RowsAtCompileTime == Eigen::Dynamic ? 0 : RowsAtCompileTime,
+                  ColsAtCompileTime == Eigen::Dynamic ? 0 : ColsAtCompileTime) {
+  }
 
   /**
    * Constructs `arena_matrix` with given number of rows and columns.
@@ -39,10 +39,9 @@ class arena_matrix : public Eigen::Map<MatrixType> {
    * @param cols number of columns
    */
   arena_matrix(Eigen::Index rows, Eigen::Index cols)
-      : Base::Map(
-            ChainableStack::instance_->memalloc_.alloc_array<Scalar>(rows
-                                                                     * cols),
-            rows, cols) {}
+      : Base::Map(ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
+                      rows * cols),
+                  rows, cols) {}
 
   /**
    * Constructs `arena_matrix` with given size. This only works if
@@ -60,10 +59,9 @@ class arena_matrix : public Eigen::Map<MatrixType> {
    */
   template <typename T, require_eigen_t<T>* = nullptr>
   arena_matrix(const T& other)  // NOLINT
-      : Base::Map(
-            ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
-                other.size()),
-            other.rows(), other.cols()) {
+      : Base::Map(ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
+                      other.size()),
+                  other.rows(), other.cols()) {
     *this = other;
   }
   /**
@@ -78,8 +76,8 @@ class arena_matrix : public Eigen::Map<MatrixType> {
    * @param other matrix to copy from
    */
   arena_matrix(const arena_matrix<MatrixType>& other)
-      : Base::Map(const_cast<Scalar*>(other.data()),
-                                    other.rows(), other.cols()) {}
+      : Base::Map(const_cast<Scalar*>(other.data()), other.rows(),
+                  other.cols()) {}
 
   // without this using, compiler prefers combination of implicit construction
   // and copy assignment to the inherited operator when assigned an expression
@@ -92,8 +90,8 @@ class arena_matrix : public Eigen::Map<MatrixType> {
    */
   arena_matrix& operator=(const arena_matrix<MatrixType>& other) {
     // placement new changes what data map points to - there is no allocation
-    new (this) Base(const_cast<Scalar*>(other.data()),
-                                      other.rows(), other.cols());
+    new (this)
+        Base(const_cast<Scalar*>(other.data()), other.rows(), other.cols());
     return *this;
   }
 
@@ -105,9 +103,9 @@ class arena_matrix : public Eigen::Map<MatrixType> {
   template <typename T>
   arena_matrix& operator=(const T& a) {
     // placement new changes what data map points to - there is no allocation
-    new (this) Base(
-        ChainableStack::instance_->memalloc_.alloc_array<Scalar>(a.size()),
-        a.rows(), a.cols());
+    new (this)
+        Base(ChainableStack::instance_->memalloc_.alloc_array<Scalar>(a.size()),
+             a.rows(), a.cols());
     Base::operator=(a);
     return *this;
   }
