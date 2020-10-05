@@ -58,8 +58,9 @@ ifneq (,$(findstring g++,$(CXX)))
   CXX_TYPE ?= gcc
 endif
 CXX_TYPE ?= other
-CXX_MAJOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f1)
-CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
+CXX_VERSION :=  $(shell $(CXX) -dumpversion 2>&1)
+CXX_MAJOR := $(word 1,$(subst ., ,$(CXX_VERSION)))
+CXX_MINOR := $(word 2,$(subst ., ,$(CXX_VERSION)))
 
 
 ################################################################################

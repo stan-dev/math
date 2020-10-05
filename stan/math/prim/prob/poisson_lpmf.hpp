@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -20,12 +21,27 @@ namespace math {
 template <bool propto, typename T_n, typename T_rate>
 return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
   using T_partials_return = partials_return_t<T_n, T_rate>;
+  using T_n_ref = ref_type_if_t<!is_constant<T_n>::value, T_n>;
+  using T_lambda_ref = ref_type_if_t<!is_constant<T_rate>::value, T_rate>;
+  using std::isinf;
   static const char* function = "poisson_lpmf";
-  check_nonnegative(function, "Random variable", n);
-  check_not_nan(function, "Rate parameter", lambda);
-  check_nonnegative(function, "Rate parameter", lambda);
   check_consistent_sizes(function, "Random variable", n, "Rate parameter",
                          lambda);
+
+  T_n_ref n_ref = n;
+  T_lambda_ref lambda_ref = lambda;
+
+  const auto& n_col = as_column_vector_or_scalar(n_ref);
+  const auto& lambda_col = as_column_vector_or_scalar(lambda_ref);
+
+  const auto& n_arr = as_array_or_scalar(n_col);
+  const auto& lambda_arr = as_array_or_scalar(lambda_col);
+
+  ref_type_t<decltype(value_of(n_arr))> n_val = value_of(n_arr);
+  ref_type_t<decltype(value_of(lambda_arr))> lambda_val = value_of(lambda_arr);
+
+  check_nonnegative(function, "Random variable", n_val);
+  check_nonnegative(function, "Rate parameter", lambda_val);
 
   if (size_zero(n, lambda)) {
     return 0.0;
@@ -33,46 +49,31 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
   if (!include_summand<propto, T_rate>::value) {
     return 0.0;
   }
-
-  T_partials_return logp(0.0);
-  operands_and_partials<T_rate> ops_partials(lambda);
-
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_rate> lambda_vec(lambda);
-  size_t max_size_seq_view = max_size(n, lambda);
-
-  for (size_t i = 0, size_lambda = stan::math::size(lambda); i < size_lambda;
-       i++) {
-    if (is_inf(lambda_vec[i])) {
-      return LOG_ZERO;
-    }
+  if (sum(promote_scalar<int>(isinf(lambda_val)))) {
+    return LOG_ZERO;
   }
-  for (size_t i = 0; i < max_size_seq_view; i++) {
+
+  size_t N = max_size(n, lambda);
+  scalar_seq_view<decltype(n_val)> n_vec(n_val);
+  scalar_seq_view<decltype(lambda_val)> lambda_vec(lambda_val);
+  for (size_t i = 0; i < N; i++) {
     if (lambda_vec[i] == 0 && n_vec[i] != 0) {
       return LOG_ZERO;
     }
   }
 
-  VectorBuilder<include_summand<propto>::value, T_partials_return, T_n>
-      lgamma_n_plus_one(size(n));
+  operands_and_partials<T_lambda_ref> ops_partials(lambda_ref);
+
+  T_partials_return logp = sum(multiply_log(n_val, lambda_val));
+  if (include_summand<propto, T_rate>::value) {
+    logp -= sum(lambda_val) * N / size(lambda);
+  }
   if (include_summand<propto>::value) {
-    for (size_t i = 0, size_n = stan::math::size(n); i < size_n; i++) {
-      lgamma_n_plus_one[i] = lgamma(n_vec[i] + 1.0);
-    }
+    logp -= sum(lgamma(n_val + 1.0)) * N / size(n);
   }
 
-  for (size_t i = 0; i < max_size_seq_view; i++) {
-    const auto& lambda_val = value_of(lambda_vec[i]);
-    if (!(lambda_val == 0 && n_vec[i] == 0)) {
-      if (include_summand<propto>::value) {
-        logp -= lgamma_n_plus_one[i];
-      }
-      logp += multiply_log(n_vec[i], lambda_val) - lambda_val;
-    }
-
-    if (!is_constant_all<T_rate>::value) {
-      ops_partials.edge1_.partials_[i] += n_vec[i] / lambda_val - 1.0;
-    }
+  if (!is_constant_all<T_rate>::value) {
+    ops_partials.edge1_.partials_ = n_val / lambda_val - 1.0;
   }
 
   return ops_partials.build(logp);

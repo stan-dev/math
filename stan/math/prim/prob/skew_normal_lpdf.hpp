@@ -71,10 +71,12 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
   const auto& y_minus_mu_over_sigma
       = to_ref_if<include_summand<propto, T_y, T_loc, T_scale, T_shape>::value>(
           (y_val - mu_val) * inv_sigma);
+  const auto& log_erfc_alpha_z
+      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale, T_shape>::value>(
+          log(erfc(-alpha_val * y_minus_mu_over_sigma * INV_SQRT_TWO)));
 
   size_t N = max_size(y, mu, sigma, alpha);
-  T_partials_return logp
-      = log(erfc(-alpha_val * y_minus_mu_over_sigma * INV_SQRT_TWO));
+  T_partials_return logp = sum(log_erfc_alpha_z);
   if (include_summand<propto>::value) {
     logp -= HALF_LOG_TWO_PI * N;
   }
@@ -90,10 +92,9 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
                                              + !is_constant_all<T_scale>::value
                                              + !is_constant_all<T_shape>::value
                                          >= 2>(
-        SQRT_TWO_OVER_SQRT_PI
-        * exp(-alpha_val * y_minus_mu_over_sigma * 0.5 * alpha_val
-              * y_minus_mu_over_sigma)
-        / (1 + erf(alpha_val * y_minus_mu_over_sigma / SQRT_TWO)));
+        TWO_OVER_SQRT_PI
+        * exp(-square(alpha_val * y_minus_mu_over_sigma * INV_SQRT_TWO)
+              - log_erfc_alpha_z));
     if (!is_constant_all<T_y, T_loc>::value) {
       const auto& deriv_y_loc = to_ref_if<(!is_constant_all<T_y>::value
                                            && !is_constant_all<T_loc>::value)>(
