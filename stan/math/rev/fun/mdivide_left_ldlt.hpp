@@ -29,7 +29,7 @@ template <int R, int C, typename T1, typename T2,
           require_eigen_t<T2>* = nullptr, require_any_st_var<T1, T2>* = nullptr>
 inline auto mdivide_left_ldlt(const LDLT_factor<T1, R, C>& A, const T2& B) {
   using ret_type = Eigen::Matrix<var, R, T2::ColsAtCompileTime>;
-  
+
   check_multiplicable("mdivide_left_ldlt", "A", A, "B", B);
 
   const auto& B_ref = to_ref(B);
