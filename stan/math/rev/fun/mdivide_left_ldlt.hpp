@@ -27,39 +27,37 @@ namespace math {
  */
 template <int R, int C, typename T1, typename T2,
           require_eigen_t<T2>* = nullptr, require_any_st_var<T1, T2>* = nullptr>
-inline Eigen::Matrix<var, R, T2::ColsAtCompileTime> mdivide_left_ldlt(
-    const LDLT_factor<T1, R, C>& A, const T2& B) {
+inline auto mdivide_left_ldlt(const LDLT_factor<T1, R, C>& A, const T2& B) {
+  using ret_type = Eigen::Matrix<var, R, T2::ColsAtCompileTime>;
+  
   check_multiplicable("mdivide_left_ldlt", "A", A, "B", B);
 
-  using B_ref_t = ref_type_t<T2>;
-
-  B_ref_t B_ref = B;
+  const auto& B_ref = to_ref(B);
 
   if (A.cols() == 0) {
-    return {0, B.cols()};
+    return ret_type(0, B.cols());
   }
 
-  arena_matrix<promote_scalar_t<var, T2>> arena_B;
+  arena_t<promote_scalar_t<var, T2>> arena_B;
 
   if (!is_constant<T2>::value) {
     arena_B = B_ref;
   }
 
-  arena_matrix<Eigen::Matrix<var, R, T2::ColsAtCompileTime>> res
-      = A.solve(value_of(B_ref));
+  arena_t<ret_type> res = A.solve(value_of(B_ref));
 
   reverse_pass_callback([A, arena_B, res]() mutable {
-    Eigen::Matrix<double, R, T2::ColsAtCompileTime> adjB = A.solve(res.adj());
+    promote_scalar_t<double, T2> adjB = A.solve(res.adj());
 
     if (!is_constant<T1>::value)
       forward_as<LDLT_factor<var, R, C>>(A).alloc_->arena_A_.adj()
-          += -adjB * res.val().transpose().eval();
+          -= adjB * res.val().transpose().eval();
 
     if (!is_constant<T2>::value)
-      forward_as<promote_scalar_t<var, T2>>(arena_B).adj() += adjB;
+      arena_B.adj() += adjB;
   });
 
-  return res;
+  return ret_type(res);
 }
 
 }  // namespace math
