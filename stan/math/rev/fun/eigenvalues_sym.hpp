@@ -25,19 +25,20 @@ namespace math {
  * @return Eigenvalues of matrix.
  */
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
-inline Eigen::Matrix<var, Eigen::Dynamic, 1> eigenvalues_sym(const T& m) {
-  const auto& m_ref = to_ref(m);
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arena_m
-      = m_ref;
-  check_square("eigenvalues_sym", "m", m_ref);
-  Eigen::MatrixXd m_val = value_of(m_ref);
-  check_nonzero_size("eigenvalues_sym", "m", m_val);
+inline auto eigenvalues_sym(const T& m) {
+  using ret_type = promote_scalar_t<var, Eigen::VectorXd>;
+
+  check_square("eigenvalues_sym", "m", m);
+  check_nonzero_size("eigenvalues_sym", "m", m);
+  
+  auto arena_m = to_arena(m);
+  Eigen::MatrixXd m_val = value_of(arena_m);
+
   check_symmetric("eigenvalues_sym", "m", m_val);
 
   Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> solver(m_val);
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> eigenvalues
-      = solver.eigenvalues();
-  arena_matrix<Eigen::MatrixXd> arena_eigenvectors_val = solver.eigenvectors();
+  arena_t<ret_type> eigenvalues = solver.eigenvalues();
+  auto arena_eigenvectors_val = to_arena(solver.eigenvectors());
 
   reverse_pass_callback(
       [arena_m, arena_eigenvectors_val, eigenvalues]() mutable {
@@ -45,7 +46,7 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> eigenvalues_sym(const T& m) {
                          * arena_eigenvectors_val.transpose();
       });
 
-  return eigenvalues;
+  return ret_type(eigenvalues);
 }
 
 }  // namespace math

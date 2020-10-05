@@ -21,8 +21,11 @@ namespace math {
  * @param x Free vector of scalars
  * @return Increasing ordered vector
  */
-inline Eigen::Matrix<var, Eigen::Dynamic, 1> ordered_constrain(
-    const Eigen::Matrix<var, Eigen::Dynamic, 1>& x) {
+template <typename T,
+	  require_eigen_col_vector_vt<is_var, T>* = nullptr>
+inline auto ordered_constrain(const T& x) {
+  using ret_type = plain_type_t<T>;
+  
   using std::exp;
 
   size_t N = x.size();
@@ -31,30 +34,28 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> ordered_constrain(
   }
 
   Eigen::VectorXd y_val(N);
-  arena_matrix<Eigen::VectorXd> exp_x(N - 1);
+  arena_t<T> arena_x = x;
+  arena_t<Eigen::VectorXd> exp_x(N - 1);
 
   y_val.coeffRef(0) = value_of(x.coeff(0));
   for (int n = 1; n < N; ++n) {
-    exp_x.coeffRef(n - 1) = exp(value_of(x.coeff(n)));
+    exp_x.coeffRef(n - 1) = exp(value_of(arena_x.coeff(n)));
     y_val.coeffRef(n) = y_val.coeff(n - 1) + exp_x.coeff(n - 1);
   }
 
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> y = y_val;
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> arena_x = x;
+  arena_t<ret_type> y = y_val;
 
-  reverse_pass_callback([=]() mutable {
+  reverse_pass_callback([arena_x, y, exp_x]() mutable {
     double rolling_adjoint_sum = 0.0;
 
-    if (N > 0) {
-      for (int n = N - 1; n > 0; --n) {
-        rolling_adjoint_sum += y.adj().coeff(n);
-        arena_x.adj().coeffRef(n) += exp_x.coeff(n - 1) * rolling_adjoint_sum;
-      }
-      arena_x.adj().coeffRef(0) += rolling_adjoint_sum + y.adj().coeff(0);
+    for (int n = arena_x.size() - 1; n > 0; --n) {
+      rolling_adjoint_sum += y.adj().coeff(n);
+      arena_x.adj().coeffRef(n) += exp_x.coeff(n - 1) * rolling_adjoint_sum;
     }
+    arena_x.adj().coeffRef(0) += rolling_adjoint_sum + y.adj().coeff(0);
   });
 
-  return y;
+  return ret_type(y);
 }
 
 }  // namespace math
