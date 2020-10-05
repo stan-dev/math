@@ -84,7 +84,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     logp -= sum(log(sigma_val)) * N / size(sigma);
   }
   if (include_summand<propto, T_y, T_loc, T_scale>::value) {
-    logp -= sum(square(y_minus_mu_over_sigma)) * 0.5;
+    logp -= sum(square(y_minus_mu_over_sigma)) * 0.5 * N
+            / max_size(y, mu, sigma);
   }
 
   if (!is_constant_all<T_y, T_loc, T_scale, T_shape>::value) {
@@ -92,7 +93,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
                                              + !is_constant_all<T_scale>::value
                                              + !is_constant_all<T_shape>::value
                                          >= 2>(
-        TWO_OVER_SQRT_PI
+        SQRT_TWO_OVER_SQRT_PI
         * exp(-square(alpha_val * y_minus_mu_over_sigma * INV_SQRT_TWO)
               - log_erfc_alpha_z));
     if (!is_constant_all<T_y, T_loc>::value) {
@@ -108,8 +109,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_
-          = ((y_minus_mu_over_sigma - deriv_logerf * alpha_val * SQRT_TWO)
-                 * y_minus_mu_over_sigma * INV_SQRT_TWO
+          = ((y_minus_mu_over_sigma - deriv_logerf * alpha_val)
+                 * y_minus_mu_over_sigma
              - 1)
             * inv_sigma;
     }
