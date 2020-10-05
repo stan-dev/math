@@ -10,15 +10,15 @@
 namespace stan {
 
 namespace internal {
-  template <typename T>
-  using eigen_map_read_only = Eigen::MapBase<T, Eigen::ReadOnlyAccessors>;
-  template <typename T>
-  using eigen_map_write = Eigen::MapBase<T, Eigen::WriteAccessors>;
-  template <typename T>
-  using eigen_map_direct_read = Eigen::MapBase<T, Eigen::DirectAccessors>;
-  template <typename T>
-  using eigen_map_direct_write = Eigen::MapBase<T, Eigen::DirectWriteAccessors>;
-}
+template <typename T>
+using eigen_map_read_only = Eigen::MapBase<T, Eigen::ReadOnlyAccessors>;
+template <typename T>
+using eigen_map_write = Eigen::MapBase<T, Eigen::WriteAccessors>;
+template <typename T>
+using eigen_map_direct_read = Eigen::MapBase<T, Eigen::DirectAccessors>;
+template <typename T>
+using eigen_map_direct_write = Eigen::MapBase<T, Eigen::DirectWriteAccessors>;
+}  // namespace internal
 /**
  * Checks whether type T is derived from Eigen::MapBase.
  * If true this will have a static member function named value with a type
@@ -29,14 +29,15 @@ namespace internal {
  */
 template <typename T>
 struct is_eigen_map_base
-    : bool_constant<is_base_pointer_convertible<internal::eigen_map_read_only, T>::value ||
-     is_base_pointer_convertible<internal::eigen_map_write, T>::value ||
-     is_base_pointer_convertible<internal::eigen_map_direct_read, T>::value ||
-     is_base_pointer_convertible<internal::eigen_map_direct_write, T>::value> {
-};
+    : bool_constant<
+          is_base_pointer_convertible<internal::eigen_map_read_only, T>::value
+          || is_base_pointer_convertible<internal::eigen_map_write, T>::value
+          || is_base_pointer_convertible<internal::eigen_map_direct_read,
+                                         T>::value
+          || is_base_pointer_convertible<internal::eigen_map_direct_write,
+                                         T>::value> {};
 
-STAN_ADD_REQUIRE_UNARY(eigen_map_base, is_eigen_map_base,
-                       require_eigens_types);
+STAN_ADD_REQUIRE_UNARY(eigen_map_base, is_eigen_map_base, require_eigens_types);
 STAN_ADD_REQUIRE_CONTAINER(eigen_map_base, is_eigen_map_base,
                            require_eigens_types);
 
