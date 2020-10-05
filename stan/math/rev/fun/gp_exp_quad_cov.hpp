@@ -216,9 +216,7 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
   check_positive("gp_exp_quad_cov", "sigma", sigma);
   check_positive("gp_exp_quad_cov", "length_scale", length_scale);
   Eigen::Index x_size = x.size();
-  for (size_t i = 0; i < x_size; ++i) {
-    check_not_nan("gp_exp_quad_cov", "x", x[i]);
-  }
+  check_not_nan("gp_exp_quad_cov", "x", x);
 
   Eigen::Matrix<var, -1, -1> cov(x_size, x_size);
   if (x_size == 0) {
@@ -234,16 +232,16 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
   for (size_t j = 0; j < x_size - 1; ++j) {
     for (size_t i = j + 1; i < x_size; ++i) {
       double dist_sq = squared_distance(x[i], x[j]);
-      dist_.coeffRef(pos) = dist_sq;
       cov.coeffRef(i, j) = sigma_square * std::exp(-dist_sq * inv_half_sq_l_d);
+      dist_.coeffRef(pos) = dist_sq;
       cov.coeffRef(j, i).vi_ = cov.coeffRef(i, j).vi_;
       ++pos;
     }
+  }
+  for (size_t j = 0; j < x_size; ++j) {
     cov_diag_.coeffRef(j) = sigma_square;
     cov.coeffRef(j, j).vi_ = cov_diag_.coeffRef(j).vi_;
   }
-  cov_diag_.coeffRef(x_size - 1) = sigma_square;
-  cov.coeffRef(x_size - 1, x_size - 1).vi_ = cov_diag_.coeffRef(x_size - 1).vi_;
 
   arena_t<Eigen::Matrix<var, -1, -1>> cov_arena(cov);
   reverse_pass_callback([cov_arena, dist_, x_size, cov_diag_, sigma, length_scale]() mutable {
