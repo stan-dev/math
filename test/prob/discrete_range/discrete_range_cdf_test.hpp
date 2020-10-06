@@ -52,8 +52,12 @@ class AgradCdfDiscreteRange : public AgradCdfTest {
             typename T5>
   double cdf_function(const T_y& y, const T_lower& lower, const T_upper& upper,
                       const T3&, const T4&, const T5&) {
-    if (y < lower || y > upper) {
+    if (y < lower) {
       return 0;
+    }
+
+    if (y >= upper) {
+      return 1;
     }
 
     return (y - lower + 1.0) / (upper - lower + 1.0);

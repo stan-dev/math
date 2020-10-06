@@ -16,6 +16,7 @@ TEST(MathMixMatFun, eltMultiply) {
   Eigen::RowVectorXd d2(2);
   d2 << 10, 100;
   stan::test::expect_ad(f, c2, d2);
+  stan::test::expect_ad_matvar(f, c2, d2);
 
   stan::test::ad_tolerances tols;
   tols.hessian_hessian_ = 1e-2;
@@ -26,6 +27,7 @@ TEST(MathMixMatFun, eltMultiply) {
   Eigen::MatrixXd f23(2, 3);
   f23 << 1e1, 1e2, 1e3, 1e4, 1e5, 1e6;
   stan::test::expect_ad(tols, f, e23, f23);
+  stan::test::expect_ad_matvar(tols, f, e23, f23);
 
   Eigen::VectorXd v0(0);
   Eigen::RowVectorXd rv0(0);
@@ -33,4 +35,7 @@ TEST(MathMixMatFun, eltMultiply) {
   stan::test::expect_ad(f, v0, v0);
   stan::test::expect_ad(f, rv0, rv0);
   stan::test::expect_ad(f, m00, m00);
+  stan::test::expect_ad_matvar(f, v0, v0);
+  stan::test::expect_ad_matvar(f, rv0, rv0);
+  stan::test::expect_ad_matvar(f, m00, m00);
 }

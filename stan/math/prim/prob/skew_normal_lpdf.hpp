@@ -78,13 +78,17 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     if (include_summand<propto, T_y, T_loc, T_scale>::value) {
       logp -= y_minus_mu_over_sigma * y_minus_mu_over_sigma / 2.0;
     }
-    logp += log(erfc(-alpha_dbl * y_minus_mu_over_sigma / SQRT_TWO));
+
+    T_partials_return log_erfc_alpha_z
+        = log(erfc(-alpha_dbl * y_minus_mu_over_sigma / SQRT_TWO));
+
+    logp += log_erfc_alpha_z;
 
     T_partials_return deriv_logerf
         = TWO_OVER_SQRT_PI
-          * exp(-alpha_dbl * y_minus_mu_over_sigma / SQRT_TWO * alpha_dbl
-                * y_minus_mu_over_sigma / SQRT_TWO)
-          / (1 + erf(alpha_dbl * y_minus_mu_over_sigma / SQRT_TWO));
+          * exp(-square(alpha_dbl * y_minus_mu_over_sigma / SQRT_TWO)
+                - log_erfc_alpha_z);
+
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
           += -y_minus_mu_over_sigma / sigma_dbl
