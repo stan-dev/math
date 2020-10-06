@@ -13,6 +13,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <algorithm>
 
+#include <iostream>
+
 namespace stan {
 namespace math {
 
@@ -73,6 +75,9 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
                                   .getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>())
        + wgs - 1)
           / wgs);
+  std::cout << "multiply using global size " << Mpad << " " << Npad
+            << " " << split << ", local size " << local << " " << local
+            << std::endl;
   try {
     if (split <= 1) {
       opencl_kernels::matrix_multiply(
