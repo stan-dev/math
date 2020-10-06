@@ -20,16 +20,13 @@ namespace math {
  * @param[in] v Vector.
  * @return Dot product of the vector with itself.
  */
-template <typename T, require_eigen_vector_vt<is_var, T>* = nullptr>
+template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline var dot_self(const T& v) {
   arena_t<T> arena_v = v;
-
   var res = arena_v.val().squaredNorm();
-
   reverse_pass_callback([arena_v, res]() mutable {
-      arena_v.adj().noalias() += 2.0 * res.adj() * arena_v.val();
+      arena_v.adj().noalias() += 2.0 * res.adj_op() * arena_v.val();
   });
-
   return res;
 }
 

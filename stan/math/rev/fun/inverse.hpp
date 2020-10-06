@@ -22,23 +22,19 @@ namespace math {
  * size zero).
  * @throw std::invalid_argument if the matrix is not square.
  */
-template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto inverse(const T& m) {
-  using ret_type = plain_type_t<T>;
-
+  using ret_type = promote_var_matrix_t<decltype(value_of(m).inverse()), T>;
   check_square("inverse", "m", m);
+  arena_t<T> arena_m(m);
 
   if (m.size() == 0) {
-    return ret_type(0, 0);
+    return ret_type(arena_m);
   }
 
-  arena_t<T> arena_m = m;
-  auto arena_m_inv = to_arena(value_of(arena_m).inverse());
-  arena_t<ret_type> res = arena_m_inv;
-
-  reverse_pass_callback([res, arena_m_inv, arena_m]() mutable {
-    arena_m.adj()
-        -= arena_m_inv.transpose() * res.adj_op() * arena_m_inv.transpose();
+  arena_t<ret_type> res(value_of(arena_m).inverse().eval());
+  reverse_pass_callback([res, arena_m]() mutable {
+    arena_m.adj().noalias() -= res.val_op().transpose() * res.adj_op() * res.val_op().transpose();
   });
 
   return ret_type(res);
