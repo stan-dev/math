@@ -143,7 +143,7 @@ namespace internal {
  *
  */
 template <typename T1, typename T2, typename T3>
-auto cholesky_lambda(T1& L_A, T2& L, T3& A_ref) {
+inline auto cholesky_lambda(T1& L_A, T2& L, T3& A_ref) {
   return [=]() mutable {
     using Eigen::Lower;
     using Eigen::StrictlyUpper;
@@ -180,6 +180,43 @@ auto cholesky_lambda(T1& L_A, T2& L, T3& A_ref) {
       D_adj.diagonal() *= 0.5;
     }
     A_ref.adj().template triangularView<Eigen::Lower>() = L_adj;
+  };
+}
+
+/**
+ * Reverse mode differentiation algorithm reference:
+ *
+ * Mike Giles. An extended collection of matrix derivative results for
+ * forward and reverse mode AD.  Jan. 2008.
+ *
+ * Note algorithm  as laid out in Giles is row-major, so Eigen::Matrices
+ * are explicitly storage order RowMajor, whereas Eigen defaults to
+ * ColumnMajor. Also note algorithm starts by calculating the adjoint for
+ * A(M_ - 1, M_ - 1), hence pos on line 94 is decremented to start at pos
+ * = M_ * (M_ + 1) / 2.
+ */
+template <typename T1, typename T2, typename T3>
+inline auto unblocked_cholesky_lambda(T1& L_A, T2& L, T3& A) {
+  return [=]() mutable {
+    const size_t N = A.rows();
+    // Algorithm is in rowmajor so we make the adjoint copy rowmajor
+    Eigen::Matrix<double, -1, -1, Eigen::RowMajor> adjL(L.rows(), L.cols());
+    adjL.template triangularView<Eigen::Lower>() = L.adj();
+    for (int i = N - 1; i >= 0; --i) {
+      for (int j = i; j >= 0; --j) {
+        if (i == j) {
+          A.adj()(i, j) = 0.5 * adjL.coeff(i, j) / L_A.coeff(i, j);
+        } else {
+          A.adj()(i, j) = adjL.coeff(i, j) / L_A.coeff(j, j);
+          adjL.coeffRef(j, j)
+              -= adjL.coeff(i, j) * L_A.coeff(i, j) / L_A.coeff(j, j);
+        }
+        for (int k = j - 1; k >= 0; --k) {
+          adjL.coeffRef(i, k) -= A.adj().coeff(i, j) * L_A.coeff(j, k);
+          adjL.coeffRef(j, k) -= A.adj().coeff(i, j) * L_A.coeff(i, k);
+        }
+      }
+    }
   };
 }
 
@@ -227,27 +264,7 @@ cholesky_decompose(const T& A) {
   arena_t<T> L(L_A.rows(), L_A.cols());
   if (L_A.rows() <= 35) {
     internal::initialize_return(L, L_A, dummy);
-    reverse_pass_callback([L_A, L, A_ref]() mutable {
-      const size_t N = A_ref.rows();
-      // Algorithm is in rowmajor so we make the adjoint copy rowmajor
-      Eigen::Matrix<double, -1, -1, Eigen::RowMajor> adjL(L.rows(), L.cols());
-      adjL.template triangularView<Eigen::Lower>() = L.adj();
-      for (int i = N - 1; i >= 0; --i) {
-        for (int j = i; j >= 0; --j) {
-          if (i == j) {
-            A_ref.adj()(i, j) = 0.5 * adjL.coeff(i, j) / L_A.coeff(i, j);
-          } else {
-            A_ref.adj()(i, j) = adjL.coeff(i, j) / L_A.coeff(j, j);
-            adjL.coeffRef(j, j)
-                -= adjL.coeff(i, j) * L_A.coeff(i, j) / L_A.coeff(j, j);
-          }
-          for (int k = j - 1; k >= 0; --k) {
-            adjL.coeffRef(i, k) -= A_ref.adj().coeff(i, j) * L_A.coeff(j, k);
-            adjL.coeffRef(j, k) -= A_ref.adj().coeff(i, j) * L_A.coeff(i, k);
-          }
-        }
-      }
-    });
+    reverse_pass_callback(internal::unblocked_cholesky_lambda(L_A, L, A_ref));
   } else {
 #ifdef STAN_OPENCL
     if (L_A.rows()
@@ -290,69 +307,9 @@ inline auto cholesky_decompose(const T& A) {
   check_not_nan("cholesky_decompose", "A", A.val());
   T L = A.val().llt().matrixL();
   if (A.rows() <= 35) {
-    reverse_pass_callback([L, A]() mutable {
-      const size_t N = A.rows();
-      // Algorithm is in rowmajor so we make the adjoint copy rowmajor
-      Eigen::Matrix<double, -1, -1, Eigen::RowMajor> adjL(L.rows(), L.cols());
-      adjL.template triangularView<Eigen::Lower>() = L.adj();
-      for (int i = N - 1; i >= 0; --i) {
-        for (int j = i; j >= 0; --j) {
-          if (i == j) {
-            A.adj().coeffRef(i, j)
-                = 0.5 * adjL.coeff(i, j) / L.val().coeff(i, j);
-          } else {
-            A.adj().coeffRef(i, j) = adjL.coeff(i, j) / L.val().coeffRef(j, j);
-            adjL.coeffRef(j, j) -= adjL.coeffRef(i, j) * L.val().coeffRef(i, j)
-                                   / L.val().coeffRef(j, j);
-          }
-          for (int k = j - 1; k >= 0; --k) {
-            adjL.coeffRef(i, k) -= A.adj().coeff(i, j) * L.val().coeffRef(j, k);
-            adjL.coeffRef(j, k) -= A.adj().coeff(i, j) * L.val().coeffRef(i, k);
-          }
-        }
-      }
-    });
+    reverse_pass_callback(internal::unblocked_cholesky_lambda(L.val(), L, A));
   } else {
-    reverse_pass_callback([L, A]() mutable {
-      using Eigen::Block;
-      using Eigen::Lower;
-      using Eigen::MatrixXd;
-      using Eigen::StrictlyUpper;
-      using Eigen::Upper;
-      using Block_ = Eigen::Block<Eigen::MatrixXd>;
-
-      auto L_adj = L.adj().eval();
-      const int M_ = L.val().rows();
-      const int block_size_ = std::min(std::max(M_ / 8, 8), 128);
-      for (int k = M_; k > 0; k -= block_size_) {
-        const int j = std::max(0, k - block_size_);
-        auto&& R = L.val().block(j, 0, k - j, j);
-        // eval() is on purpose, we want to transpose one
-        auto D = L.val().block(j, j, k - j, k - j).transpose().eval();
-        auto&& B = L.val().block(k, 0, M_ - k, j);
-        auto&& C = L.val().block(k, j, M_ - k, k - j);
-        auto&& R_adj = L_adj.block(j, 0, k - j, j);
-        auto&& D_adj = L_adj.block(j, j, k - j, k - j);
-        auto&& B_adj = L_adj.block(k, 0, M_ - k, j);
-        auto&& C_adj = L_adj.block(k, j, M_ - k, k - j);
-        if (C_adj.size() > 0) {
-          C_adj = D.template triangularView<Upper>()
-                      .solve(C_adj.transpose())
-                      .transpose();
-          B_adj.noalias() -= C_adj * R;
-          D_adj.noalias() -= C_adj.transpose() * C;
-        }
-        D_adj = (D * D_adj.template triangularView<Lower>()).eval();
-        D_adj.template triangularView<StrictlyUpper>()
-            = D_adj.adjoint().template triangularView<StrictlyUpper>();
-        D.template triangularView<Upper>().solveInPlace(D_adj);
-        D.template triangularView<Upper>().solveInPlace(D_adj.transpose());
-        R_adj.noalias() -= C_adj.transpose() * B;
-        R_adj.noalias() -= D_adj.template selfadjointView<Lower>() * R;
-        D_adj.diagonal() *= 0.5;
-      }
-      A.adj().template triangularView<Eigen::Lower>() = L_adj;
-    });
+    reverse_pass_callback(internal::cholesky_lambda(L.val(), L, A));
   }
   return L;
 }

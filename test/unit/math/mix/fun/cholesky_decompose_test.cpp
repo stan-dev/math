@@ -77,7 +77,6 @@ TEST(MathMixMatFun, choleskyDecomposeSpecific) {
 TEST(MathMixMatFun, choleskyDecomposeGeneral) {
   // general sizes
   for (int n = 0; n < 9; ++n) {
-    std::cout << "\n On: " << n << "\n";
     int dof = (n * (n + 1)) / 2;
     Eigen::VectorXd y(dof);
     for (int i = 0; i < dof; ++i)
