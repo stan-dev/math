@@ -63,7 +63,7 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
   }
   if (src.view() == matrix_cl_view::Lower
       || src.view() == matrix_cl_view::Upper) {
-    using T_not_bool = std::conditional_t<std::is_same<T, bool>, char, T>;
+    using T_not_bool = std::conditional_t<std::is_same<T, bool>::value, char, T>;
     std::vector<T_not_bool> packed = packed_copy(src);
 
     size_t pos = 0;
@@ -128,11 +128,11 @@ inline Eigen::Matrix<value_type_t<T>, R, C> from_matrix_cl(const T& src) {
  * @throw <code>std::invalid_argument</code> if the matrix is not triangular
  */
 template <typename T, typename = require_arithmetic_t<T>>
-inline std::vector<std::conditional_t<std::is_same<T, bool>, char, T>>
+inline std::vector<std::conditional_t<std::is_same<T, bool>::value, char, T>>
 packed_copy(const matrix_cl<T>& src) {
   check_triangular("packed_copy", "src", src);
   const int packed_size = src.rows() * (src.rows() + 1) / 2;
-  using T_not_bool = std::conditional_t<std::is_same<T, bool>, char, T>;
+  using T_not_bool = std::conditional_t<std::is_same<T, bool>::value, char, T>;
   std::vector<T_not_bool> dst(packed_size);
   if (dst.size() == 0) {
     return dst;
