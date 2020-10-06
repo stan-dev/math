@@ -24,11 +24,11 @@ class AgradDistributionsNegBinomial : public AgradDistributionTest {
     parameters.push_back(param);
     log_prob.push_back(-142.6147368129045105434);  // expected log_prob
 
-    param[0] = 13;
-    param[1] = 1e11;
-    param[2] = 1e10;
+    param[0] = 10;
+    param[1] = 1e6;
+    param[2] = 1e5;
     parameters.push_back(param);
-    log_prob.push_back(-2.6185576442208003);  // expected log_prob
+    log_prob.push_back(-2.0785666431081630812);  // expected log_prob
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {
@@ -75,8 +75,6 @@ class AgradDistributionsNegBinomial : public AgradDistributionTest {
     using stan::math::multiply_log;
     using std::log;
 
-    if (alpha > 1e10)
-      return -lgamma(n + 1.0) + multiply_log(n, alpha / beta) - alpha / beta;
     if (n != 0)
       return binomial_coefficient_log<
                  typename stan::scalar_type<T_shape>::type>(n + alpha - 1.0, n)

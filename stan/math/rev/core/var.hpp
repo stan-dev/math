@@ -396,6 +396,12 @@ class var_value {
 
   /**
    * View element of eigen matrices
+   * @param i Element to access
+   */
+  inline auto coeffRef(Eigen::Index i) const { return this->coeff(i); }
+
+  /**
+   * View element of eigen matrices
    * @param i Row to access
    * @param j Column to access
    */
@@ -406,6 +412,15 @@ class var_value {
       this->vi_->adj_(i, j) += vari_coeff->adj_;
     });
     return var_value<double>(vari_coeff);
+  }
+
+  /**
+   * View element of eigen matrices
+   * @param i Row to access
+   * @param j Column to access
+   */
+  inline auto coeffRef(Eigen::Index i, Eigen::Index j) const {
+    return this->coeff(i, j);
   }
 
   /**
