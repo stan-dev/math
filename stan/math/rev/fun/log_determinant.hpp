@@ -23,7 +23,7 @@ inline var log_determinant(const T& m) {
 
   arena_t<T> arena_m = m;
 
-  auto m_hh = arena_m.val().fullPivHouseholderQr();
+  auto m_hh = arena_m.val().colPivHouseholderQr();
 
   auto arena_m_inv_transpose = to_arena(m_hh.inverse().transpose());
 
