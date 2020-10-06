@@ -6,7 +6,6 @@
 #include <stan/math/prim/err/is_nonzero_size.hpp>
 #include <stan/math/prim/err/constraint_tolerance.hpp>
 #include <stan/math/prim/fun/fabs.hpp>
-#include <stan/math/prim/fun/to_ref.hpp>
 #include <cmath>
 
 namespace stan {
@@ -28,9 +27,8 @@ namespace math {
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
 inline bool is_unit_vector(const EigVec& theta) {
   using std::fabs;
-  const auto& theta_ref = to_ref(theta);
-  if (is_nonzero_size(theta_ref)) {
-    value_type_t<EigVec> seq = theta_ref.squaredNorm();
+  if (is_nonzero_size(theta)) {
+    value_type_t<EigVec> seq = theta.squaredNorm();
     return fabs(1.0 - seq) <= CONSTRAINT_TOLERANCE;
   }
   return false;

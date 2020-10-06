@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/err/is_not_nan.hpp>
-#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/meta.hpp>
 
 namespace stan {
@@ -20,8 +19,7 @@ namespace math {
  */
 template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr>
 inline bool is_lower_triangular(const EigMat& y) {
-  return to_ref(y)
-      .unaryExpr([](auto&& x) { return is_not_nan(x) ? x : 1.0; })
+  return y.unaryExpr([](auto&& x) { return is_not_nan(x) ? x : 1.0; })
       .transpose()
       .isUpperTriangular();
 }

@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/to_ref.hpp>
 
 namespace stan {
 namespace math {
@@ -18,7 +17,7 @@ namespace math {
  **/
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
 inline bool is_mat_finite(const EigMat& y) {
-  return to_ref(y).allFinite();
+  return y.allFinite();
 }
 
 }  // namespace math

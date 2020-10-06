@@ -27,11 +27,11 @@ namespace math {
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
 void check_positive_ordered(const char* function, const char* name,
                             const EigVec& y) {
-  const auto& y_ref = to_ref(y);
-  if (y_ref.size() == 0) {
+  if (y.size() == 0) {
     return;
   }
 
+  const auto& y_ref = to_ref(y);
   if (y_ref[0] < 0) {
     std::ostringstream msg;
     msg << "is not a valid positive_ordered vector."
