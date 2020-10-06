@@ -13,25 +13,36 @@ template<class T>
 struct is_fvar<T, decltype((void)(T::d_))> : std::true_type
 { };
 
-//TODO(Andrew): Replace std::is_const<>::value with std::is_const_v<> after move to C++17
-template<typename T>
-using double_return_t = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
-                                         const double,
-                                         double>;
-template<typename T>
-using reverse_return_t = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
-                                         const double&,
-                                         double&>;
+/**
+ * Reimplements is_var without requiring external math headers
+ *
+ * TODO(Andrew): Replace with std::void_t after move to C++17
+ */
+template<class, class = void>
+struct is_var : std::false_type
+{ };
+template<class T>
+struct is_var<T, decltype((void)(T::vi_))> : std::true_type
+{ };
 
-template<typename T>
-using vari_return_t = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
-                                          const decltype(T::vi_)&,
-                                          decltype(T::vi_)&>;
+/**
+ * Reimplements is_vari without requiring external math headers
+ *
+ * TODO(Andrew): Replace with std::void_t after move to C++17
+ */
+template<class, class = void>
+struct is_vari : std::false_type
+{ };
+template<class T>
+struct is_vari<T, decltype((void)(std::remove_pointer_t<T>::adj_))> : std::true_type
+{ };
 
-template<typename T>
-using forward_return_t = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
-                                         const decltype(T::val_)&,
-                                         decltype(T::val_)&>;
+template <typename T>
+using match_ref_t = std::conditional_t<std::is_reference<T>::value, T&, T>;
+
+template <typename T, typename T_ref = match_ref_t<T>>
+using match_const_t = std::conditional_t<std::is_const<std::decay_t<T>>::value,
+                                             const T_ref, T_ref>;
 
 /**
  * Structure to return a view to the values in a var, vari*, and fvar<T>.
@@ -51,29 +62,31 @@ struct val_Op{
   EIGEN_EMPTY_STRUCT_CTOR(val_Op);
 
   //Returns value from a vari*
-  template<typename T = Scalar>
+  template<typename T = Scalar,
+           std::enable_if_t<is_vari<T>::value>* = nullptr>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    std::enable_if_t<std::is_pointer<T>::value, const double&>
-      operator()(T &v) const { return v->val_; }
+    match_const_t<decltype((std::remove_pointer_t<T>::val_))>
+    operator()(T &v) const { return v->val_; }
 
   //Returns value from a var
-  template<typename T = Scalar>
+  template<typename T = Scalar,
+           std::enable_if_t<is_var<T>::value>* = nullptr>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    std::enable_if_t<(!std::is_pointer<T>::value && !is_fvar<T>::value
-                      && !std::is_arithmetic<T>::value), const double&>
-      operator()(T &v) const { return v.vi_->val_; }
+    match_const_t<decltype((T::vi_->val_))>
+    operator()(T &v) const { return v.vi_->val_; }
 
   //Returns value from an fvar
-  template<typename T = Scalar>
+  template<typename T = Scalar,
+           std::enable_if_t<is_fvar<T>::value>* = nullptr>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    std::enable_if_t<is_fvar<T>::value, forward_return_t<T>>
+    match_const_t<decltype((T::val_))>
       operator()(T &v) const { return v.val_; }
 
   //Returns double unchanged from input (by value)
-  template<typename T = Scalar>
+  template<typename T = Scalar,
+           std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    std::enable_if_t<std::is_arithmetic<T>::value, double_return_t<T>>
-      operator()(T v) const { return v; }
+    match_const_t<T> operator()(T v) const { return v; }
 
   //Returns double unchanged from input (by reference)
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
@@ -110,7 +123,7 @@ struct d_Op {
   //Returns tangent from an fvar
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    forward_return_t<T> operator()(T &v) const { return v.d_; }
+    match_const_t<decltype((T::val_))> operator()(T &v) const { return v.d_; }
 };
 
 /**
@@ -139,15 +152,17 @@ struct adj_Op {
   EIGEN_EMPTY_STRUCT_CTOR(adj_Op);
 
   //Returns adjoint from a vari*
-  template<typename T = Scalar>
+  template<typename T = Scalar,
+           std::enable_if_t<is_vari<T>::value>* = nullptr>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    std::enable_if_t<std::is_pointer<T>::value, reverse_return_t<T>>
+    match_const_t<decltype((std::remove_pointer_t<T>::adj_))>
       operator()(T &v) const { return v->adj_; }
 
   //Returns adjoint from a var
-  template<typename T = Scalar>
+  template<typename T = Scalar,
+           std::enable_if_t<is_var<T>::value>* = nullptr>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    std::enable_if_t<!std::is_pointer<T>::value, reverse_return_t<T>>
+    match_const_t<decltype((T::vi_->val_))>
       operator()(T &v) const { return v.vi_->adj_; }
 };
 
@@ -185,7 +200,8 @@ struct vi_Op {
   //Returns vari* from a var
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    vari_return_t<T> operator()(T &v) const { return v.vi_; }
+    match_const_t<decltype((std::remove_pointer_t<T>::adj_))>
+    operator()(T &v) const { return v.vi_; }
 };
 
 /**
