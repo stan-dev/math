@@ -37,7 +37,7 @@ inline return_type_t<T1, T2> dot_product(const T1& v1, const T2& v2) {
 
   const auto& v1_ref = to_ref(v1);
   const auto& v2_ref = to_ref(v2);
-  
+
   const auto& v1_col = as_column_vector_or_scalar(v1_ref);
   const auto& v2_col = as_column_vector_or_scalar(v2_ref);
 
