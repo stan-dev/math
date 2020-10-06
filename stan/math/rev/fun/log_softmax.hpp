@@ -34,23 +34,29 @@ inline auto log_softmax(const T& x) {
   return apply_vector_unary<ref_type_t<T>>::apply(
       to_ref(x), [](const auto& alpha) {
         using ret_type = plain_type_t<decltype(alpha)>;
-
         check_nonzero_size("log_softmax", "alpha", alpha);
-
         auto arena_alpha = to_arena(to_ref(alpha));
-        const auto& alpha_val = to_ref(value_of(arena_alpha).array());
-        const auto& theta = to_ref(alpha_val - alpha_val.maxCoeff());
-
+        const auto& theta = to_ref(value_of(arena_alpha).array() - value_of(arena_alpha).array().maxCoeff());
         arena_t<ret_type> res = theta.array() - log(theta.exp().sum());
-
         reverse_pass_callback([arena_alpha, res]() mutable {
-          arena_alpha.adj()
+          arena_alpha.adj().noalias()
+              += res.adj() - (res.adj().sum() * res.val().array().exp()).matrix();
+        });
+        return ret_type(res);
+      });
+}
+
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline auto log_softmax(const T& x) {
+        check_nonzero_size("log_softmax", "x", x);
+        auto theta = (x.val().array() - x.val().maxCoeff()).eval();
+        T res = theta.array() - log(theta.exp().sum());
+        reverse_pass_callback([x, res]() mutable {
+          x.adj().noalias()
               += res.adj()
                  - (res.adj().sum() * res.val().array().exp()).matrix();
         });
-
-        return ret_type(res);
-      });
+        return res;
 }
 
 }  // namespace math

@@ -29,12 +29,12 @@ inline auto inverse(const T& m) {
   arena_t<T> arena_m(m);
 
   if (m.size() == 0) {
-    return ret_type(arena_m);
+    return ret_type(std::move(arena_m));
   }
 
   arena_t<ret_type> res(value_of(arena_m).inverse().eval());
   reverse_pass_callback([res, arena_m]() mutable {
-    arena_m.adj().noalias() -= res.val_op().transpose() * res.adj_op() * res.val_op().transpose();
+    arena_m.adj() -= res.val_op().transpose() * res.adj_op() * res.val().transpose();
   });
 
   return ret_type(res);
