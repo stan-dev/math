@@ -54,19 +54,30 @@ inline auto log_sum_exp(const T& x) {
   const auto& x_ref = to_ref(x);
   return apply_vector_unary<decltype(x_ref)>::reduce(x_ref, [](const auto& v) {
     auto arena_v = to_arena(v);
-
-    auto arena_v_val = to_arena(value_of(arena_v));
-    var res = log_sum_exp(arena_v_val);
-
-    reverse_pass_callback([arena_v, arena_v_val, res]() mutable {
+    var res = log_sum_exp(value_of(arena_v));
+    reverse_pass_callback([arena_v, res]() mutable {
       arena_v.adj()
-          += res.adj() * (arena_v_val.array() - res.val()).exp().matrix();
+          += res.adj() * (arena_v.val().array() - res.val()).exp().matrix();
     });
-
     return res;
   });
 }
 
+
+/**
+ * Returns the log sum of exponentials.
+ *
+ * @tparam T Type of input vector or matrix.
+ * @param x matrix
+ */
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline auto log_sum_exp(const T& x) {
+    var res = log_sum_exp(x.val());
+    reverse_pass_callback([x, res]() mutable {
+      x.adj() += res.adj() * (x.val().array() - res.val()).exp().matrix();
+    });
+    return res;
+}
 }  // namespace math
 }  // namespace stan
 #endif

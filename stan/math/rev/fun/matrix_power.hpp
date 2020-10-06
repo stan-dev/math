@@ -25,41 +25,37 @@ namespace math {
  * @throw std::invalid_argument if the exponent is negative or the matrix is not
  * square.
  */
-template <typename T, require_eigen_vt<is_var, T>* = nullptr>
-inline Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> matrix_power(
-    const T& M, const int n) {
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline auto matrix_power(const T& M, const int n) {
+  using ret_type = promote_var_matrix_t<T, T>;
   const auto& M_ref = to_ref(M);
-  check_square("matrix_power", "M", M);
+  check_square("matrix_power", "M", M_ref);
   check_nonnegative("matrix_power", "n", n);
   check_finite("matrix_power", "M", M_ref);
 
-  if (M.size() == 0)
-    return {};
+  if (M_ref.size() == 0)
+    return ret_type(Eigen::MatrixXd(0, 0));
 
   size_t N = M.rows();
 
   if (n == 0)
-    return Eigen::MatrixXd::Identity(N, N);
+    return ret_type(Eigen::MatrixXd::Identity(N, N));
 
   if (n == 1)
-    return M_ref;
+    return ret_type(M_ref);
 
-  arena_t<std::vector<Eigen::MatrixXd>> powers(n + 1);
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arena_M
-      = M_ref;
-
+  arena_t<std::vector<Eigen::MatrixXd>> powers(n + 1, Eigen::MatrixXd::Zero(N, N));
   powers[0] = Eigen::MatrixXd::Identity(N, N);
   powers[1] = value_of(M_ref);
   for (size_t i = 2; i <= n; ++i) {
     powers[i] = powers[1] * powers[i - 1];
   }
 
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> res
-      = powers[powers.size() - 1];
-
+  arena_t<ret_type> arena_M = M_ref;
+  arena_t<ret_type> res = powers[powers.size() - 1];
   reverse_pass_callback([arena_M, n, N, res, powers]() mutable {
     const auto& M_val = powers[1];
-    Eigen::MatrixXd adj_C = res.adj();
+    Eigen::MatrixXd adj_C = res.adj().eval();
     Eigen::MatrixXd adj_M = Eigen::MatrixXd::Zero(N, N);
     for (size_t i = n; i > 1; --i) {
       adj_M += adj_C * powers[i - 1].transpose();
@@ -69,8 +65,9 @@ inline Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> matrix_power(
     arena_M.adj() += adj_M;
   });
 
-  return res;
+  return ret_type(res);
 }
+
 
 }  // namespace math
 }  // namespace stan

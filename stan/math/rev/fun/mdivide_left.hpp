@@ -39,6 +39,8 @@ inline auto mdivide_left(const T1& A, const T2& B) {
   }
 
   auto arena_A_val = to_arena(value_of(A_ref));
+  // TODO(Steve): We need an arena_holder<> that generally
+  // stores things that need to have their deleter called.
   arena_t<ret_type> res = arena_A_val.householderQr().solve(value_of(B_ref));
 
   reverse_pass_callback([arena_A, arena_B, arena_A_val, res]() mutable {
