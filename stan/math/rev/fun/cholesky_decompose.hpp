@@ -150,20 +150,18 @@ auto cholesky_lambda(T1 L_A, T2 L, T3 A_ref) {
     using Eigen::Upper;
     auto L_adj = L.adj().eval();
     const int M_ = L_A.rows();
-    int block_size_ = std::max(M_ / 8, 8);
-    block_size_ = std::min(block_size_, 128);
-    size_t pos = 0;
+    const int block_size_ = std::min(std::max(M_ / 8, 8), 128);
     for (int k = M_; k > 0; k -= block_size_) {
-      int j = std::max(0, k - block_size_);
-      auto R = L_A.block(j, 0, k - j, j);
-      // eval() is on purpose, we want to transpose one
+      const int j = std::max(0, k - block_size_);
+      auto&& R = L_A.block(j, 0, k - j, j);
+      // eval() is on purpose, we want to transpose once
       auto D = L_A.block(j, j, k - j, k - j).transpose().eval();
-      auto B = L_A.block(k, 0, M_ - k, j);
-      auto C = L_A.block(k, j, M_ - k, k - j);
-      auto R_adj = L_adj.block(j, 0, k - j, j);
-      auto D_adj = L_adj.block(j, j, k - j, k - j);
-      auto B_adj = L_adj.block(k, 0, M_ - k, j);
-      auto C_adj = L_adj.block(k, j, M_ - k, k - j);
+      auto&& B = L_A.block(k, 0, M_ - k, j);
+      auto&& C = L_A.block(k, j, M_ - k, k - j);
+      auto&& R_adj = L_adj.block(j, 0, k - j, j);
+      auto&& D_adj = L_adj.block(j, j, k - j, k - j);
+      auto&& B_adj = L_adj.block(k, 0, M_ - k, j);
+      auto&& C_adj = L_adj.block(k, j, M_ - k, k - j);
       if (C_adj.size() > 0) {
         C_adj = D.template triangularView<Upper>()
                     .solve(C_adj.transpose())
@@ -171,7 +169,7 @@ auto cholesky_lambda(T1 L_A, T2 L, T3 A_ref) {
         B_adj.noalias() -= C_adj * R;
         D_adj.noalias() -= C_adj.transpose() * C;
       }
-      D_adj = (D * D_adj.template triangularView<Lower>()).eval();
+      D_adj = D * D_adj.template triangularView<Lower>();
       D_adj.template triangularView<StrictlyUpper>()
           = D_adj.adjoint().template triangularView<StrictlyUpper>();
       D.template triangularView<Upper>().solveInPlace(D_adj);
@@ -182,6 +180,19 @@ auto cholesky_lambda(T1 L_A, T2 L, T3 A_ref) {
     }
     A_ref.adj().template triangularView<Eigen::Lower>() = L_adj;
   };
+}
+
+template <typename LMat, typename LAMat>
+inline void initialize_return(LMat& L, const LAMat& L_A, vari*& dummy) {
+  for (Eigen::Index j = 0; j < L_A.rows(); ++j) {
+    for (Eigen::Index i = 0; i < L_A.rows(); ++i) {
+      if (j > i) {
+        L.coeffRef(i, j) = dummy;
+      } else {
+        L.coeffRef(i, j) = new vari(L_A.coeffRef(i, j), false);
+      }
+    }
+  }
 }
 }  // namespace internal
 
@@ -209,26 +220,15 @@ cholesky_decompose(const T& A) {
   Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);
   check_pos_definite("cholesky_decompose", "A", L_factor);
 #endif
-  // Memory allocated in arena.
   // cholesky_scalar gradient faster for small matrices compared to
   // cholesky_block
   vari* dummy = new vari(0.0, false);
   arena_t<T> L(L_A.rows(), L_A.cols());
-  for (Eigen::Index j = 0; j < L_A.rows(); ++j) {
-    for (Eigen::Index i = 0; i < L_A.rows(); ++i) {
-      if (j > i) {
-        L.coeffRef(i, j) = dummy;
-      } else {
-        L.coeffRef(i, j) = new vari(L_A.coeffRef(i, j), false);
-      }
-    }
-  }
   if (L_A.rows() <= 35) {
+    internal::initialize_return(L, L_A, dummy);
     reverse_pass_callback([L_A, L, A_ref]() mutable {
-      size_t N = A_ref.rows();
-      int pos = (N * (N + 1) / 2) - 1;
+      const size_t N = A_ref.rows();
       auto adjL = L.adj().eval();
-      // TODO(Steve): Write this in column major order
       for (int i = N - 1; i >= 0; --i) {
         for (int j = i; j >= 0; --j) {
           if (i == j) {
@@ -258,9 +258,11 @@ cholesky_decompose(const T& A) {
         }
       }
     } else {
+      internal::initialize_return(L, L_A, dummy);
       reverse_pass_callback(internal::cholesky_lambda(L_A, L, A_ref));
     }
 #else
+    internal::initialize_return(L, L_A, dummy);
     reverse_pass_callback(internal::cholesky_lambda(L_A, L, A_ref));
 #endif
   }
@@ -289,7 +291,6 @@ inline auto cholesky_decompose(const T& A) {
       const size_t N = A.rows();
       // need to copy here since we write to L's adjoint iterativly
       auto adjL = L.adj().eval();
-      // TODO(Steve): Write this in column major order
       for (int i = N - 1; i >= 0; --i) {
         for (int j = i; j >= 0; --j) {
           if (i == j) {
@@ -318,19 +319,18 @@ inline auto cholesky_decompose(const T& A) {
 
       auto L_adj = L.adj().eval();
       const int M_ = L.val().rows();
-      int block_size_ = std::max(M_ / 8, 8);
-      block_size_ = std::min(block_size_, 128);
+      const int block_size_ = std::min(std::max(M_ / 8, 8), 128);
       for (int k = M_; k > 0; k -= block_size_) {
-        int j = std::max(0, k - block_size_);
-        auto R = L.val().block(j, 0, k - j, j);
+        const int j = std::max(0, k - block_size_);
+        auto&& R = L.val().block(j, 0, k - j, j);
         // eval() is on purpose, we want to transpose one
         auto D = L.val().block(j, j, k - j, k - j).transpose().eval();
-        auto B = L.val().block(k, 0, M_ - k, j);
-        auto C = L.val().block(k, j, M_ - k, k - j);
-        auto R_adj = L_adj.block(j, 0, k - j, j);
-        auto D_adj = L_adj.block(j, j, k - j, k - j);
-        auto B_adj = L_adj.block(k, 0, M_ - k, j);
-        auto C_adj = L_adj.block(k, j, M_ - k, k - j);
+        auto&& B = L.val().block(k, 0, M_ - k, j);
+        auto&& C = L.val().block(k, j, M_ - k, k - j);
+        auto&& R_adj = L_adj.block(j, 0, k - j, j);
+        auto&& D_adj = L_adj.block(j, j, k - j, k - j);
+        auto&& B_adj = L_adj.block(k, 0, M_ - k, j);
+        auto&& C_adj = L_adj.block(k, j, M_ - k, k - j);
         if (C_adj.size() > 0) {
           C_adj = D.template triangularView<Upper>()
                       .solve(C_adj.transpose())
