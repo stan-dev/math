@@ -63,7 +63,8 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
   }
   if (src.view() == matrix_cl_view::Lower
       || src.view() == matrix_cl_view::Upper) {
-    using T_not_bool = std::conditional_t<std::is_same<T, bool>::value, char, T>;
+    using T_not_bool
+        = std::conditional_t<std::is_same<T, bool>::value, char, T>;
     std::vector<T_not_bool> packed = packed_copy(src);
 
     size_t pos = 0;
