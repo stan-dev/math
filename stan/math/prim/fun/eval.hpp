@@ -18,20 +18,9 @@ namespace math {
 template <typename T,
           require_same_t<std::decay_t<T>, plain_type_t<T>>* = nullptr>
 inline T eval(T&& arg) {
-  return std::move(arg);
+  return std::forward<T>(arg);
 }
 
-template <typename T,
-          require_same_t<std::decay_t<T>, plain_type_t<T>>* = nullptr>
-inline const T& eval(const T& arg) {
-  return arg;
-}
-
-template <typename T,
-          require_same_t<std::decay_t<T>, plain_type_t<T>>* = nullptr>
-inline T& eval(T& arg) {
-  return arg;
-}
 
 /**
  * Inputs which have a plain_type different from their own type are

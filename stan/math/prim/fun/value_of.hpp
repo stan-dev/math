@@ -19,17 +19,7 @@ namespace math {
  **/
 template <typename T, require_st_arithmetic<T>* = nullptr>
 inline T value_of(T&& x) {
-  return std::move(x);
-}
-
-template <typename T, require_st_arithmetic<T>* = nullptr>
-inline T& value_of(T& x) {
-  return x;
-}
-
-template <typename T, require_st_arithmetic<T>* = nullptr>
-inline const T& value_of(const T& x) {
-  return x;
+  return std::forward<T>(x);
 }
 
 /**

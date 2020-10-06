@@ -76,44 +76,46 @@ def parse_signature_file(sig_file):
         if not signature.endswith(")\n"):
             part_sig = signature
             continue
-        res.append(signature)
+        signature)
     return res
 
 def add_extra_signatures(res):
     """
+    Adds signatures not defined in the stan language that can still accept
+     expression types.
     """
-    res.append("vector unit_vector_constrain(vector)")
-    res.append("vector unit_vector_constrain(row_vector)")
-    res.append("vector unit_vector_constrain(vector, real)")
-    res.append("vector unit_vector_constrain(row_vector, real)")
-    res.append("vector unit_vector_free(vector)")
-    res.append("vector unit_vector_free(row_vector)")
-    res.append("int is_cholesky_factor(matrix)")
-    res.append("int is_cholesky_factor_corr(matrix)")
-    res.append("int is_column_index(matrix, int)")
-    res.append("int is_column_index(vector, int)")
-    res.append("int is_corr_matrix(matrix)")
-    res.append("int is_cholesky_factor(matrix)")
-    res.append("int is_lower_triangular(matrix)")
-    res.append("int is_mat_finite(matrix)")
-    res.append("int is_mat_finite(vector)")
-    res.append("int is_matching_dims(matrix, matrix)")
-    res.append("int is_matching_dims(vector, matrix)")
-    res.append("int is_matching_dims(matrix, vector)")
-    res.append("int is_matching_dims(row_vector, matrix)")
-    res.append("int is_matching_dims(matrix, row_vector)")
-    res.append("int is_matching_dims(matrix, matrix)")
-    res.append("int is_matching_dims(row_vector, row_vector)")
-    res.append("int is_matching_dims(vector, row_vector)")
-    res.append("int is_matching_dims(row_vector, vector)")
-    res.append("int is_matching_dims(vector, vector)")
-    res.append("int is_pos_definite(matrix)")
-    res.append("int is_square(matrix)")
-    res.append("int is_square(vector)")
-    res.append("int is_square(row_vector)")
-    res.append("int is_symmetric(matrix)")
-    res.append("int is_unit_vector(vector)")
-    res.append("int is_unit_vector(row_matrix)")
+    res.extend(["vector unit_vector_constrain(vector)",
+        "vector unit_vector_constrain(row_vector)",
+        "vector unit_vector_constrain(vector, real)",
+        "vector unit_vector_constrain(row_vector, real)",
+        "vector unit_vector_free(vector)",
+        "vector unit_vector_free(row_vector)",
+        "int is_cholesky_factor(matrix)",
+        "int is_cholesky_factor_corr(matrix)",
+        "int is_column_index(matrix, int)",
+        "int is_column_index(vector, int)",
+        "int is_corr_matrix(matrix)",
+        "int is_cholesky_factor(matrix)",
+        "int is_lower_triangular(matrix)",
+        "int is_mat_finite(matrix)",
+        "int is_mat_finite(vector)",
+        "int is_matching_dims(matrix, matrix)",
+        "int is_matching_dims(vector, matrix)",
+        "int is_matching_dims(matrix, vector)",
+        "int is_matching_dims(row_vector, matrix)",
+        "int is_matching_dims(matrix, row_vector)",
+        "int is_matching_dims(matrix, matrix)",
+        "int is_matching_dims(row_vector, row_vector)",
+        "int is_matching_dims(vector, row_vector)",
+        "int is_matching_dims(row_vector, vector)",
+        "int is_matching_dims(vector, vector)",
+        "int is_pos_definite(matrix)",
+        "int is_square(matrix)",
+        "int is_square(vector)",
+        "int is_square(row_vector)",
+        "int is_symmetric(matrix)",
+        "int is_unit_vector(vector)",
+        "int is_unit_vector(row_matrix)"])
     return res
 
 def get_signatures():
@@ -136,7 +138,6 @@ def get_signatures():
         universal_newlines=True,
         shell=True,
     )
-    #import pdb; pdb.set_trace()
     res = parse_signature_file(p.stdout)
     if p.wait() != 0:
         sys.stderr.write("Error in getting signatures from stanc3!\n")
@@ -179,7 +180,6 @@ special_arg_values = {
     "multinomial_log" : [None, 1],
     "multinomial_lpmf" : [None, 1],
     "multinomial_rng" : [1, None, None],
-    "log_inv_logit_diff": [1.2, 0.4],
     "unit_vector_free" : [1.0],
 
 }
@@ -250,8 +250,8 @@ def handle_function_list(functions_input, signatures):
         if "." in f or "/" in f or "\\" in f:
             functions_input.extend(parse_signature_file(open(f)))
         elif " " in f:
-            function_signatures.append(f)
-            signatures.append(f)
+            function_signatuf)
+            signatuf)
         else:
             function_names.append(f)
     return function_names, function_signatures
