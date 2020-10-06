@@ -19,42 +19,71 @@ inline auto rows_dot_product(const Mat1& v1, const Mat2& v2) {
 
   check_matching_sizes("rows_dot_product", "v1", v1, "v2", v2);
 
-  const auto& v1_ref = to_ref(v1);
-  const auto& v2_ref = to_ref(v2);
+  if(!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
+    arena_t<promote_scalar_t<var, Mat1>> arena_v1 = v1;
+    arena_t<promote_scalar_t<var, Mat2>> arena_v2 = v2;
 
-  auto arena_v1_val = to_arena(value_of(v1_ref));
-  auto arena_v2_val = to_arena(value_of(v2_ref));
+    auto arena_v1_val = to_arena(value_of(arena_v1));
+    auto arena_v2_val = to_arena(value_of(arena_v2));
 
-  arena_t<Mat1> arena_v1;
-  arena_t<Mat2> arena_v2;
+    arena_t<ret_type> res(arena_v1_val.rows());
+    for (size_t m = 0; m < arena_v1_val.rows(); ++m)
+      res.coeffRef(m) = arena_v1_val.row(m).dot(arena_v2_val.row(m));
 
-  if (!is_constant<Mat1>::value) {
-    arena_v1 = v1_ref;
-  }
-
-  if (!is_constant<Mat2>::value) {
-    arena_v2 = v2_ref;
-  }
-
-  arena_t<ret_type> res(arena_v1_val.rows());
-  for (size_t m = 0; m < arena_v1_val.rows(); ++m)
-    res.coeffRef(m) = arena_v1_val.row(m).dot(arena_v2_val.row(m));
-
-  reverse_pass_callback(
+    reverse_pass_callback(
       [res, arena_v1, arena_v2, arena_v1_val, arena_v2_val]() mutable {
-        for (size_t j = 0; j < arena_v1.cols(); ++j) {
-          for (size_t i = 0; i < arena_v1.rows(); ++i) {
-            if (!is_constant<Mat1>::value)
-              forward_as<var>(arena_v1.coeffRef(i, j)).adj()
-                  += value_of(arena_v2_val.coeff(i, j)) * res.coeff(i).adj();
-            if (!is_constant<Mat2>::value)
-              forward_as<var>(arena_v2.coeffRef(i, j)).adj()
-                  += value_of(arena_v1_val.coeff(i, j)) * res.coeff(i).adj();
+        for (size_t j = 0; j < arena_v1_val.cols(); ++j) {
+          for (size_t i = 0; i < arena_v1_val.rows(); ++i) {
+	      arena_v1.coeffRef(i, j).adj()
+		+= arena_v2_val.coeff(i, j) * res.coeff(i).adj();
+	      arena_v2.coeffRef(i, j).adj()
+		+= arena_v1_val.coeff(i, j) * res.coeff(i).adj();
           }
-        }
+	}
       });
 
-  return ret_type(res);
+    return ret_type(res);
+  } else if(!is_constant<Mat1>::value) {
+    arena_t<promote_scalar_t<var, Mat1>> arena_v1 = v1;
+
+    auto arena_v2_val = to_arena(value_of(v2));
+
+    arena_t<ret_type> res(arena_v2_val.rows());
+    for (size_t m = 0; m < arena_v2_val.rows(); ++m)
+      res.coeffRef(m) = arena_v1.row(m).val().dot(arena_v2_val.row(m));
+
+    reverse_pass_callback(
+      [res, arena_v1, arena_v2_val]() mutable {
+        for (size_t j = 0; j < arena_v2_val.cols(); ++j) {
+          for (size_t i = 0; i < arena_v2_val.rows(); ++i) {
+	    arena_v1.coeffRef(i, j).adj()
+	      += arena_v2_val.coeff(i, j) * res.coeff(i).adj();
+          }
+	}
+      });
+
+    return ret_type(res);
+  } else {
+    arena_t<promote_scalar_t<var, Mat2>> arena_v2 = v2;
+
+    auto arena_v1_val = to_arena(value_of(v1));
+
+    arena_t<ret_type> res(arena_v1_val.rows());
+    for (size_t m = 0; m < arena_v1_val.rows(); ++m)
+      res.coeffRef(m) = arena_v1_val.row(m).dot(arena_v2.row(m).val());
+
+    reverse_pass_callback(
+      [res, arena_v2, arena_v1_val]() mutable {
+        for (size_t j = 0; j < arena_v1_val.cols(); ++j) {
+          for (size_t i = 0; i < arena_v1_val.rows(); ++i) {
+	    arena_v2.coeffRef(i, j).adj()
+	      += arena_v1_val.coeff(i, j) * res.coeff(i).adj();
+          }
+	}
+      });
+
+    return ret_type(res);
+  }
 }
 
 }  // namespace math
