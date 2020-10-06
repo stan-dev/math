@@ -104,9 +104,10 @@ class opencl_context_base {
                                  &max_thread_block_size_);
       std::cout << "CL_DEVICE_MAX_WORK_GROUP_SIZE " << max_thread_block_size_
                 << std::endl;
-      std::vector<size_t> sizes = device_[0].getInfo<CL_DEVICE_MAX_WORK_ITEM_SIZES>();
+      std::vector<size_t> sizes
+          = device_[0].getInfo<CL_DEVICE_MAX_WORK_ITEM_SIZES>();
       std::cout << "CL_DEVICE_MAX_WORK_ITEM_SIZES ";
-      for(size_t i : sizes){
+      for (size_t i : sizes) {
         std::cout << i << ", ";
       }
       std::cout << std::endl;
