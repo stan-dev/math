@@ -32,7 +32,8 @@ void check_ordered(const char* function, const char* name, const T_y& y) {
            << " The element at " << stan::error_index::value + n << " is ";
       std::string msg1_str(msg1.str());
       std::ostringstream msg2;
-      msg2 << ", but should be greater than the previous element, " << y_ref[n - 1];
+      msg2 << ", but should be greater than the previous element, "
+           << y_ref[n - 1];
       std::string msg2_str(msg2.str());
       throw_domain_error(function, name, y_ref[n], msg1_str.c_str(),
                          msg2_str.c_str());

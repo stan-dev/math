@@ -42,7 +42,8 @@ struct less_or_equal<T_y, T_high, true> {
         msg << ", but must be less than or equal to ";
         msg << high_vec[n];
         std::string msg_str(msg.str());
-        throw_domain_error_vec(function, name, y_ref, n, "is ", msg_str.c_str());
+        throw_domain_error_vec(function, name, y_ref, n, "is ",
+                               msg_str.c_str());
       }
     }
   }

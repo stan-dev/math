@@ -42,7 +42,8 @@ struct greater<T_y, T_low, true> {
         msg << ", but must be greater than ";
         msg << low_vec[n];
         std::string msg_str(msg.str());
-        throw_domain_error_vec(function, name, y_ref, n, "is ", msg_str.c_str());
+        throw_domain_error_vec(function, name, y_ref, n, "is ",
+                               msg_str.c_str());
       }
     }
   }

@@ -21,7 +21,6 @@ inline T eval(T&& arg) {
   return std::forward<T>(arg);
 }
 
-
 /**
  * Inputs which have a plain_type different from their own type are
  * Eval'd (this catches Eigen expressions)
