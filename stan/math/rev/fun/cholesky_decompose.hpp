@@ -143,12 +143,13 @@ namespace internal {
  *
  */
 template <typename T1, typename T2, typename T3>
-auto cholesky_lambda(T1 L_A, T2 L, T3 A_ref) {
+auto cholesky_lambda(T1& L_A, T2& L, T3& A_ref) {
   return [=]() mutable {
     using Eigen::Lower;
     using Eigen::StrictlyUpper;
     using Eigen::Upper;
-    auto L_adj = L.adj().eval();
+    Eigen::MatrixXd L_adj(L.rows(), L.cols());
+    L_adj.template triangularView<Eigen::Lower>() = L.adj();
     const int M_ = L_A.rows();
     const int block_size_ = std::min(std::max(M_ / 8, 8), 128);
     for (int k = M_; k > 0; k -= block_size_) {
@@ -228,7 +229,9 @@ cholesky_decompose(const T& A) {
     internal::initialize_return(L, L_A, dummy);
     reverse_pass_callback([L_A, L, A_ref]() mutable {
       const size_t N = A_ref.rows();
-      auto adjL = L.adj().eval();
+      // Algorithm is in rowmajor so we make the adjoint copy rowmajor
+      Eigen::Matrix<double, -1, -1, Eigen::RowMajor> adjL(L.rows(), L.cols());
+      adjL.template triangularView<Eigen::Lower>() = L.adj();
       for (int i = N - 1; i >= 0; --i) {
         for (int j = i; j >= 0; --j) {
           if (i == j) {
@@ -289,8 +292,9 @@ inline auto cholesky_decompose(const T& A) {
   if (A.rows() <= 35) {
     reverse_pass_callback([L, A]() mutable {
       const size_t N = A.rows();
-      // need to copy here since we write to L's adjoint iterativly
-      auto adjL = L.adj().eval();
+      // Algorithm is in rowmajor so we make the adjoint copy rowmajor
+      Eigen::Matrix<double, -1, -1, Eigen::RowMajor> adjL(L.rows(), L.cols());
+      adjL.template triangularView<Eigen::Lower>() = L.adj();
       for (int i = N - 1; i >= 0; --i) {
         for (int j = i; j >= 0; --j) {
           if (i == j) {
