@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
@@ -30,9 +31,10 @@ inline typename VectorBuilder<true, double, T_scale>::type rayleigh_rng(
   using boost::variate_generator;
   using boost::random::uniform_real_distribution;
   static const char* function = "rayleigh_rng";
-  check_positive_finite(function, "Scale parameter", sigma);
+  const auto& sigma_ref = to_ref(sigma);
+  check_positive_finite(function, "Scale parameter", sigma_ref);
 
-  scalar_seq_view<T_scale> sigma_vec(sigma);
+  scalar_seq_view<T_scale> sigma_vec(sigma_ref);
   size_t N = stan::math::size(sigma);
   VectorBuilder<true, double, T_scale> output(N);
 

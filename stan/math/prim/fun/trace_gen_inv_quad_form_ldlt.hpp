@@ -33,7 +33,7 @@ namespace math {
  * be multiplied by D.
  */
 template <typename EigMat1, typename T2, typename EigMat3, int R2, int C2,
-          typename = require_all_not_vt_var<EigMat1, T2, EigMat3>>
+          typename = require_all_not_st_var<EigMat1, T2, EigMat3>>
 inline return_type_t<EigMat1, T2, EigMat3> trace_gen_inv_quad_form_ldlt(
     const EigMat1& D, const LDLT_factor<T2, R2, C2>& A, const EigMat3& B) {
   check_square("trace_gen_inv_quad_form_ldlt", "D", D);
