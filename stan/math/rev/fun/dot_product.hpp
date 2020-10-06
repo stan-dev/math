@@ -35,8 +35,11 @@ template <typename T1, typename T2, require_all_container_t<T1, T2>* = nullptr,
 inline return_type_t<T1, T2> dot_product(const T1& v1, const T2& v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
 
-  const auto& v1_col = as_column_vector_or_scalar(v1);
-  const auto& v2_col = as_column_vector_or_scalar(v2);
+  const auto& v1_ref = to_ref(v1);
+  const auto& v2_ref = to_ref(v2);
+  
+  const auto& v1_col = as_column_vector_or_scalar(v1_ref);
+  const auto& v2_col = as_column_vector_or_scalar(v2_ref);
 
   arena_t<Eigen::VectorXd> v1_val_arena
       = to_arena_if<!is_constant<T2>::value>(value_of(v1_col));
