@@ -22,8 +22,6 @@
 #include <cmath>
 #include <cerrno>
 
-#include <iostream>
-
 /** \ingroup opencl
  *  \defgroup opencl_context_group OpenCL Context
  *  Initialization for OpenCL Context:
