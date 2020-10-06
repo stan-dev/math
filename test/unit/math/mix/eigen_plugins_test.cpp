@@ -5,6 +5,7 @@
 TEST(AgradMixMatrixAddons, matrix_fv) {
   using Eigen::MatrixXd;
   using stan::math::matrix_fv;
+  using stan::math::matrix_v;
 
   MatrixXd vals = MatrixXd::Random(100, 100);
   MatrixXd derivs = MatrixXd::Random(100, 100);
@@ -28,11 +29,14 @@ TEST(AgradMixMatrixAddons, matrix_fv) {
 
   EXPECT_EQ(mat_in.d().val().rows(), derivs.rows());
   EXPECT_EQ(mat_in.d().val().cols(), derivs.cols());
+
+  matrix_v mat_in2 = mat_in.val_op() * mat_in.d_op();
 }
 
 TEST(AgradMixMatrixAddons, matrix_ffv) {
   using Eigen::MatrixXd;
   using stan::math::matrix_ffv;
+  using stan::math::matrix_fv;
 
   MatrixXd vals = MatrixXd::Random(100, 100);
   MatrixXd derivs = MatrixXd::Random(100, 100);
@@ -58,11 +62,14 @@ TEST(AgradMixMatrixAddons, matrix_ffv) {
 
   EXPECT_EQ(mat_in.d().val().val().rows(), derivs.rows());
   EXPECT_EQ(mat_in.d().val().val().cols(), derivs.cols());
+
+  matrix_fv mat_in2 = mat_in.val_op() * mat_in.d_op();
 }
 
 TEST(AgradMixMatrixAddons, vector_fv) {
   using Eigen::VectorXd;
   using stan::math::vector_fv;
+  using stan::math::vector_v;
 
   VectorXd vals = VectorXd::Random(100);
   VectorXd derivs = VectorXd::Random(100);
@@ -84,11 +91,14 @@ TEST(AgradMixMatrixAddons, vector_fv) {
 
   EXPECT_EQ(vec_in.d().val().rows(), derivs.rows());
   EXPECT_EQ(vec_in.d().val().cols(), derivs.cols());
+
+  vector_v vec_in2 = vec_in.val_op().cwiseProduct(vec_in.d_op());
 }
 
 TEST(AgradMixMatrixAddons, vector_ffv) {
   using Eigen::VectorXd;
   using stan::math::vector_ffv;
+  using stan::math::vector_fv;
 
   VectorXd vals = VectorXd::Random(100);
   VectorXd derivs = VectorXd::Random(100);
@@ -112,11 +122,14 @@ TEST(AgradMixMatrixAddons, vector_ffv) {
 
   EXPECT_EQ(vec_in.d().val().val().rows(), derivs.rows());
   EXPECT_EQ(vec_in.d().val().val().cols(), derivs.cols());
+
+  vector_fv vec_in2 = vec_in.val_op().cwiseProduct(vec_in.d_op());
 }
 
 TEST(AgradMixMatrixAddons, row_vector_fv) {
   using Eigen::RowVectorXd;
   using stan::math::row_vector_fv;
+  using stan::math::row_vector_v;
 
   RowVectorXd vals = RowVectorXd::Random(100);
   RowVectorXd derivs = RowVectorXd::Random(100);
@@ -140,11 +153,15 @@ TEST(AgradMixMatrixAddons, row_vector_fv) {
 
   EXPECT_EQ(row_vec_in.d().val().rows(), derivs.rows());
   EXPECT_EQ(row_vec_in.d().val().cols(), derivs.cols());
+
+  row_vector_v row_vec_in2 = row_vec_in.val_op()
+                                       .cwiseProduct(row_vec_in.d_op());
 }
 
 TEST(AgradMixMatrixAddons, row_vector_ffv) {
   using Eigen::RowVectorXd;
   using stan::math::row_vector_ffv;
+  using stan::math::row_vector_fv;
 
   RowVectorXd vals = RowVectorXd::Random(100);
   RowVectorXd derivs = RowVectorXd::Random(100);
@@ -168,4 +185,7 @@ TEST(AgradMixMatrixAddons, row_vector_ffv) {
 
   EXPECT_EQ(row_vec_in.d().val().val().rows(), derivs.rows());
   EXPECT_EQ(row_vec_in.d().val().val().cols(), derivs.cols());
+
+  row_vector_fv row_vec_in2 = row_vec_in.val_op()
+                                        .cwiseProduct(row_vec_in.d_op());
 }

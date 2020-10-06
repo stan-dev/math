@@ -29,6 +29,8 @@ TEST(AgradRevMatrixAddons, var_matrix) {
   EXPECT_EQ(mat_in.adj().rows(), derivs.rows());
   EXPECT_EQ(mat_in.adj().cols(), derivs.cols());
 
+  MatrixXd out_mat = mat_in.val_op() * mat_in.adj_op();
+
   const matrix_v const_mat_in = matrix_v::Random(100, 100);
 
   MatrixXd tri_out = const_mat_in.val().triangularView<Eigen::Upper>().solve(
@@ -74,6 +76,8 @@ TEST(AgradRevMatrixAddons, var_vector) {
   EXPECT_EQ(vec_in.adj().rows(), derivs.rows());
   EXPECT_EQ(vec_in.adj().cols(), derivs.cols());
 
+  VectorXd out_vec = vec_in.val_op().cwiseProduct(vec_in.adj_op());
+
   vector_vi vec_vi = vec_in.vi();
 
   EXPECT_MATRIX_FLOAT_EQ(vals, vec_vi.val());
@@ -113,6 +117,9 @@ TEST(AgradRevMatrixAddons, var_row_vector) {
 
   EXPECT_EQ(row_vec_in.adj().rows(), derivs.rows());
   EXPECT_EQ(row_vec_in.adj().cols(), derivs.cols());
+
+  RowVectorXd out_row_vec = row_vec_in.val_op()
+                                      .cwiseProduct(row_vec_in.adj_op());
 
   row_vector_vi row_vec_vi = row_vec_in.vi();
 
