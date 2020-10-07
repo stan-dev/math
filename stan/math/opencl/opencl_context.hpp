@@ -98,6 +98,12 @@ class opencl_context_base {
           CL_DEVICE_QUEUE_PROPERTIES, &device_properties);
       device_[0].getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
                                  &max_thread_block_size_);
+      std::vector<size_t> max_wg_sizes
+          = device_[0].getInfo<CL_DEVICE_MAX_WORK_ITEM_SIZES>();
+      if (max_wg_sizes.size() < 3) {
+        system_error("OpenCL Initialization", "[Device]", -1,
+                     "The device does not support 3D work groups!");
+      }
 
       context_ = cl::Context(device_[0]);
       if (device_properties & CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE) {
@@ -109,17 +115,20 @@ class opencl_context_base {
         command_queue_ = cl::CommandQueue(context_, device_[0], 0, nullptr);
         in_order_ = CL_TRUE;
       }
-      int thread_block_size_sqrt
-          = static_cast<int>(std::sqrt(max_thread_block_size_));
+      int max_square_block_size
+          = std::min({max_wg_sizes[0], max_wg_sizes[1],
+                      static_cast<size_t>(std::sqrt(max_thread_block_size_))});
+
       // Does a compile time check of the maximum allowed
       // dimension of a square thread block size
       // WG size of (32,32) works on all recent GPUs but would fail on some
       // older integrated GPUs or CPUs
-      if (thread_block_size_sqrt < base_opts_["THREAD_BLOCK_SIZE"]) {
-        base_opts_["THREAD_BLOCK_SIZE"] = thread_block_size_sqrt;
+      if (max_square_block_size < base_opts_["THREAD_BLOCK_SIZE"]) {
+        base_opts_["THREAD_BLOCK_SIZE"] = max_square_block_size;
         base_opts_["WORK_PER_THREAD"] = 1;
       }
-      if (max_thread_block_size_ < base_opts_["LOCAL_SIZE_"]) {
+      if (std::min(max_thread_block_size_, max_wg_sizes[0])
+          < base_opts_["LOCAL_SIZE_"]) {
         // must be a power of base_opts_["REDUCTION_STEP_SIZE"]
         const int p = std::log(max_thread_block_size_)
                       / std::log(base_opts_["REDUCTION_STEP_SIZE"]);
