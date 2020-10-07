@@ -67,7 +67,7 @@ auto elt_multiply(const Mat1& m1, const Mat2& m2) {
     return ret_type(ret);
   } else if (!is_constant<Mat2>::value) {
     arena_t<Mat2> arena_m2 = m2_ref;
-    auto arena_m1 = value_of(m1_ref);
+    auto arena_m1 = to_arena(value_of(m1_ref));
     arena_t<ret_type> ret(arena_m1.cwiseProduct(value_of(arena_m2)));
     reverse_pass_callback([ret, arena_m2, arena_m1]() mutable {
       using var_m2 = arena_t<promote_scalar_t<var, Mat2>>;
