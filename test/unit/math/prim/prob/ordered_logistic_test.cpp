@@ -4,6 +4,7 @@
 #include <boost/math/distributions.hpp>
 #include <limits>
 #include <vector>
+#include <iostream>
 
 stan::math::vector_d get_simplex_inv_logit(double lambda,
                                            const stan::math::vector_d& c) {
@@ -236,4 +237,37 @@ TEST(ProbDistributionOrderedLogistic, chiSquareGoodnessFitTest) {
   for (int j = 0; j < K; j++)
     chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
+}
+
+TEST(ProbDistributions, ordered_logistic_vecRNG) {
+  using stan::math::ordered_logistic_rng;
+  boost::random::mt19937 rng;
+  Eigen::VectorXd eta_vec(3);
+  eta_vec << -2.5, 1.2, 3.1;
+
+  Eigen::VectorXd cut1(4);
+  cut1 << -3.1, -1.5, 0.4, 1.2;
+  Eigen::VectorXd cut2(4);
+  cut2 << -1.2, -0.4, 1.6, 2.1;
+  Eigen::VectorXd cut3(4);
+  cut3 << -4.1, -3.5, 1.4, 4.2;
+
+  std::vector<Eigen::VectorXd> cuts{cut1, cut2, cut3};
+
+  std::vector<int> rng_vec_stvec = ordered_logistic_rng(eta_vec, cuts, rng);
+  for (int i = 0; i < 3; ++i) {
+    EXPECT_EQ(rng_vec_stvec[i], ordered_logistic_rng(eta_vec[i], cuts[i], rng));
+  }
+
+  boost::random::mt19937 rng2;
+  std::vector<int> rng_real_stvec = ordered_logistic_rng(eta_vec[0], cuts, rng2);
+  for (int i = 0; i < 3; ++i) {
+    EXPECT_EQ(rng_real_stvec[i], ordered_logistic_rng(eta_vec[0], cuts[i], rng2));
+  }
+
+  boost::random::mt19937 rng3;
+  std::vector<int> rng_vec_vec = ordered_logistic_rng(eta_vec, cuts[0], rng3);
+  for (int i = 0; i < 3; ++i) {
+    EXPECT_EQ(rng_vec_vec[i], ordered_logistic_rng(eta_vec[i], cuts[0], rng3));
+  }
 }

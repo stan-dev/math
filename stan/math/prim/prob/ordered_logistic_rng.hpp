@@ -31,6 +31,26 @@ inline int ordered_logistic_rng(
   return categorical_rng(cut, rng);
 }
 
+template <typename T_eta, typename T_c, class RNG,
+          require_t<disjunction<is_vector<T_eta>, 
+                                conjunction<is_std_vector<T_c>,
+                                            is_vector<value_type_t<T_c>>
+                                            >>>* = nullptr>
+inline std::vector<int> ordered_logistic_rng(
+  const T_eta& eta, const T_c& c, RNG& rng) {
+  scalar_seq_view<T_eta> eta_vec(eta);
+  vector_seq_view<T_c> cut_vec(c);
+
+  int ret_size = std::max(stan::math::size(eta), size_mvt(c));
+
+  std::vector<int> rng_return(ret_size);
+  for (int i = 0; i < ret_size; ++i) {
+    rng_return[i] = ordered_logistic_rng(eta_vec[i], cut_vec[i], rng);
+  }
+
+  return rng_return;
+}
+
 }  // namespace math
 }  // namespace stan
 #endif
