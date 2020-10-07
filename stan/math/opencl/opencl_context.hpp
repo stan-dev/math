@@ -74,8 +74,6 @@ class opencl_context_base {
   opencl_context_base(int platform_id = OPENCL_PLATFORM_ID,
                       int device_id = OPENCL_DEVICE_ID) {
     try {
-      std::cout << "setting up device " << platform_id << " " << device_id
-                << std::endl;
       // platform
       cl::Platform::get(&platforms_);
       if (platform_id >= platforms_.size()) {
@@ -100,15 +98,6 @@ class opencl_context_base {
           CL_DEVICE_QUEUE_PROPERTIES, &device_properties);
       device_[0].getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
                                  &max_thread_block_size_);
-      std::cout << "CL_DEVICE_MAX_WORK_GROUP_SIZE " << max_thread_block_size_
-                << std::endl;
-      std::vector<size_t> sizes
-          = device_[0].getInfo<CL_DEVICE_MAX_WORK_ITEM_SIZES>();
-      std::cout << "CL_DEVICE_MAX_WORK_ITEM_SIZES ";
-      for (size_t i : sizes) {
-        std::cout << i << ", ";
-      }
-      std::cout << std::endl;
 
       context_ = cl::Context(device_[0]);
       if (device_properties & CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE) {

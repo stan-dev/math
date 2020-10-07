@@ -17,8 +17,6 @@
 #include <vector>
 #include <utility>
 
-#include <iostream>
-
 namespace stan {
 namespace math {
 namespace opencl_kernels {
@@ -330,11 +328,6 @@ struct kernel_cl {
    * @return option value
    */
   int get_option(const std::string option_name) const {
-    std::cout << "getting option " << option_name << " from kernel " << name_
-              << " ,value "
-              << std::min(opts_.at(option_name),
-                          opencl_context.base_opts().at(option_name))
-              << std::endl;
     return std::min(opts_.at(option_name),
                     opencl_context.base_opts().at(option_name));
   }
