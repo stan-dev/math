@@ -76,7 +76,7 @@ def parse_signature_file(sig_file):
         if not signature.endswith(")\n"):
             part_sig = signature
             continue
-        signature)
+        res.append(signature)
     return res
 
 def add_extra_signatures(res):
@@ -250,8 +250,8 @@ def handle_function_list(functions_input, signatures):
         if "." in f or "/" in f or "\\" in f:
             functions_input.extend(parse_signature_file(open(f)))
         elif " " in f:
-            function_signatuf)
-            signatuf)
+            function_signatures.append(f)
+            signatures.append(f)
         else:
             function_names.append(f)
     return function_names, function_signatures
