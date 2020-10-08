@@ -99,7 +99,7 @@ inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0> gaussian_dlm_obs_lpdf(
   check_finite(function, "W", W_ref);
   check_pos_semidefinite(function, "W", W_ref);
   check_finite(function, "m0", m0_ref);
-  check_pos_definite(function, "C0", C0_ref);
+  check_pos_semidefinite(function, "C0", C0_ref);
   check_finite(function, "C0", C0_ref);
 
   if (size_zero(y)) {
@@ -136,6 +136,8 @@ inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0> gaussian_dlm_obs_lpdf(
       f = multiply(transpose(F_ref), a);
       // Q_t = F'_t R_t F_t + V_t
       Q = quad_form_sym(R, F_ref) + V_ref;
+      if(i == 0)
+	check_pos_definite(function, "Q", Q);
       Q_inv = inverse_spd(Q);
       // // filtered state
       // e_t = y_t - f_t
@@ -224,7 +226,7 @@ inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0> gaussian_dlm_obs_lpdf(
   // TODO(anyone): support infinite W
   check_finite(function, "W", W_ref);
   check_finite(function, "m0", m0_ref);
-  check_pos_definite(function, "C0", C0_ref);
+  check_pos_semidefinite(function, "C0", C0_ref);
   check_finite(function, "C0", C0_ref);
 
   if (y.cols() == 0 || y.rows() == 0) {
@@ -261,6 +263,8 @@ inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0> gaussian_dlm_obs_lpdf(
         // f_{t, i} = F_{t, i}' m_{t, i-1}
         f = dot_product(Fj, m);
         Q = trace_quad_form(C, Fj) + V_ref.coeff(j);
+	if(i == 0)
+	  check_positive(function, "Q0", Q);
         Q_inv = 1.0 / Q;
         // filtered observation
         // e_{t, i} = y_{t, i} - f_{t, i}
