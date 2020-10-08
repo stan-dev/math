@@ -143,6 +143,9 @@ special_arg_values = {
     "multinomial_log" : [None, 1],
     "multinomial_lpmf" : [None, 1],
     "multinomial_rng" : [1, None, None],
+    "student_t_cdf" : [0.8, None, 0.4, None],
+    "student_t_cdf_log" : [0.8, None, 0.4, None],
+    "student_t_lcdf" : [0.8, None, 0.4, None],
 }
 
 
