@@ -84,8 +84,7 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
     inv_mat = transpose(inv_mat).eval();
   }
   int work_per_thread
-      = opencl_kernels::inv_lower_tri_multiply.make_functor.get_opts().at(
-          "WORK_PER_THREAD");
+      = opencl_kernels::inv_lower_tri_multiply.get_option("WORK_PER_THREAD");
   // the number of blocks in the first step
   // each block is inverted with using the regular forward substitution
   int parts = inv_padded.rows() / thread_block_size_1D;
