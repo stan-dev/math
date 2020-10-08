@@ -58,10 +58,6 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lcdf(
   check_positive(function, "Scale parameter", sigma_val);
   check_finite(function, "Shape parameter", alpha_val);
 
-  const auto& sigma_double
-      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(
-          promote_scalar<T_partials_return>(sigma_val));
-
   if (size_zero(y, mu, sigma, alpha)) {
     return 0;
   }
@@ -69,7 +65,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lcdf(
   operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_alpha_ref>
       ops_partials(y_ref, mu_ref, sigma_ref, alpha_ref);
 
-  const auto& diff = to_ref((y_val - mu_val) / sigma_double);
+  const auto& diff = to_ref((y_val - mu_val) / sigma_val);
   const auto& scaled_diff
       = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(diff
                                                                 / SQRT_TWO);
