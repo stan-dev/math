@@ -146,9 +146,9 @@ special_arg_values = {
     "pareto_cdf": [1.5, 0.7, None],
     "pareto_cdf_log": [1.5, 0.7, None],
     "pareto_lcdf": [1.5, 0.7, None],
-    "pareto_type_2_cdf": [1.5, 0.7, None, 2.2],
-    "pareto_type_2_cdf_log": [1.5, 0.7, None, 2.2],
-    "pareto_type_2_lcdf": [1.5, 0.7, None, 2.2],
+    "pareto_type_2_cdf": [1.5, 0.7, None, None],
+    "pareto_type_2_cdf_log": [1.5, 0.7, None, None],
+    "pareto_type_2_lcdf": [1.5, 0.7, None, None],
 }
 
 
