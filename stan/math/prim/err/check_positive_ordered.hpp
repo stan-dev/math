@@ -1,10 +1,11 @@
 #ifndef STAN_MATH_PRIM_ERR_CHECK_POSITIVE_ORDERED_HPP
 #define STAN_MATH_PRIM_ERR_CHECK_POSITIVE_ORDERED_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/err/check_ordered.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <sstream>
 #include <string>
 
@@ -21,25 +22,25 @@ namespace math {
  *   values, if the values are not ordered, if there are duplicated
  *   values, or if any element is <code>NaN</code>.
  */
-template <typename T_y>
+template <typename T, require_matrix_t<T>* = nullptr>
 void check_positive_ordered(const char* function, const char* name,
-                            const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y) {
+                            const T& y) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
   if (y.size() == 0) {
     return;
   }
-
-  if (y[0] < 0) {
+  const auto& y_ref = to_ref(y);
+  if (y_ref[0] < 0) {
     std::ostringstream msg;
     msg << "is not a valid positive_ordered vector."
         << " The element at " << stan::error_index::value << " is ";
     std::string msg_str(msg.str());
-    throw_domain_error(function, name, y[0], msg_str.c_str(),
+    throw_domain_error(function, name, y_ref[0], msg_str.c_str(),
                        ", but should be postive.");
   }
-  check_ordered(function, name, y);
+  check_ordered(function, name, y_ref);
 }
 }  // namespace math
 }  // namespace stan

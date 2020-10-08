@@ -3,17 +3,22 @@
 namespace positive_ordered_constrain_test {
 template <typename T>
 T g1(const T& x) {
-  return stan::math::positive_ordered_constrain(x);
+  auto x_con = stan::math::positive_ordered_constrain(x);
+  auto x_free = stan::math::positive_ordered_free(x_con);
+  return x_free;
 }
 template <typename T>
 T g2(const T& x) {
   typename stan::scalar_type<T>::type lp = 0;
-  return stan::math::positive_ordered_constrain(x, lp);
+  auto x_con = stan::math::positive_ordered_constrain(x, lp);
+  auto x_free = stan::math::positive_ordered_free(x_con);
+  return x_free;
 }
 template <typename T>
 typename stan::scalar_type<T>::type g3(const T& x) {
   typename stan::scalar_type<T>::type lp = 0;
-  stan::math::positive_ordered_constrain(x, lp);
+  auto x_con = stan::math::positive_ordered_constrain(x, lp);
+  auto x_free = stan::math::positive_ordered_free(x_con);
   return lp;
 }
 

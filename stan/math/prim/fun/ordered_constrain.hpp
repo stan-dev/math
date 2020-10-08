@@ -19,7 +19,8 @@ namespace math {
  * @return Positive, increasing ordered vector.
  * @tparam T Type of scalar.
  */
-template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
+ template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr,
+           require_not_st_var<EigVec>* = nullptr>
 plain_type_t<EigVec> ordered_constrain(const EigVec& x) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -50,9 +51,8 @@ plain_type_t<EigVec> ordered_constrain(const EigVec& x) {
  * @param lp Log probability reference.
  * @return Positive, increasing ordered vector.
  */
-template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
-Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, 1> ordered_constrain(
-    const EigVec& x, value_type_t<EigVec>& lp) {
+template <typename Vec, require_matrix_t<Vec>* = nullptr>
+auto ordered_constrain(const Vec& x, scalar_type_t<Vec>& lp) {
   if (x.size() > 1) {
     lp += x.tail(x.size() - 1).sum();
   }

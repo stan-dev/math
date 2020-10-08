@@ -31,13 +31,13 @@ inline var log_sum_exp(const T1& a, const T2& b) {
   var res = log_sum_exp(value_of(a), value_of(b));
 
   reverse_pass_callback([a, b, res]() mutable {
+    double diff = value_of(a) - value_of(b);
+
     if (!is_constant<T1>::value)
-      forward_as<var>(a).adj()
-          += res.adj() * inv_logit(value_of(a) - value_of(b));
+      forward_as<var>(a).adj() += res.adj() * inv_logit(diff);
 
     if (!is_constant<T2>::value)
-      forward_as<var>(b).adj()
-          += res.adj() * inv_logit(value_of(b) - value_of(a));
+      forward_as<var>(b).adj() += res.adj() * inv_logit(-diff);
   });
 
   return res;
@@ -51,22 +51,33 @@ inline var log_sum_exp(const T1& a, const T2& b) {
  */
 template <typename T, require_container_st<is_var, T>* = nullptr>
 inline auto log_sum_exp(const T& x) {
-  return apply_vector_unary<T>::reduce(x, [](const auto& v) {
-    const auto& v_ref = to_ref(v);
-    const auto& v_val = value_of(v_ref);
-
-    var res = log_sum_exp(v_val);
-    auto arena_v = to_arena(v_ref);
-
+  const auto& x_ref = to_ref(x);
+  return apply_vector_unary<decltype(x_ref)>::reduce(x_ref, [](const auto& v) {
+    auto arena_v = to_arena(v);
+    var res = log_sum_exp(value_of(arena_v));
     reverse_pass_callback([arena_v, res]() mutable {
       arena_v.adj()
-          += res.adj() * (arena_v.array().val() - res.val()).exp().matrix();
+          += res.adj() * (arena_v.val().array() - res.val()).exp().matrix();
     });
-
     return res;
   });
 }
 
+
+/**
+ * Returns the log sum of exponentials.
+ *
+ * @tparam T Type of input vector or matrix.
+ * @param x matrix
+ */
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline auto log_sum_exp(const T& x) {
+    var res = log_sum_exp(x.val());
+    reverse_pass_callback([x, res]() mutable {
+      x.adj() += res.adj() * (x.val().array() - res.val()).exp().matrix();
+    });
+    return res;
+}
 }  // namespace math
 }  // namespace stan
 #endif

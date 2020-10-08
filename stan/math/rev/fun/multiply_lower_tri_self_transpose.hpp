@@ -11,43 +11,44 @@
 namespace stan {
 namespace math {
 
-inline matrix_v multiply_lower_tri_self_transpose(const matrix_v& L) {
-  // check_square("multiply_lower_tri_self_transpose",
-  // L, "L", (double*)0);
-  int K = L.rows();
-  int J = L.cols();
-  matrix_v LLt(K, K);
-  if (K == 0) {
-    return LLt;
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+inline auto multiply_lower_tri_self_transpose(const T& L) {
+  using ret_type = promote_scalar_t<var, decltype(L * L.transpose())>;
+
+  if (L.size() == 0)
+    return ret_type();
+
+  arena_t<T> arena_L = L.transpose();
+
+  auto arena_L_val
+      = to_arena(value_of(arena_L).template triangularView<Eigen::Upper>());
+
+  if (L.size() > 16) {
+    arena_t<ret_type> res
+        = arena_L_val.transpose()
+          * arena_L_val.template triangularView<Eigen::Upper>();
+
+    reverse_pass_callback([res, arena_L, arena_L_val]() mutable {
+      const auto& adj = to_ref(res.adj());
+
+      arena_L.adj() += (arena_L_val.template triangularView<Eigen::Upper>()
+                        * (adj.transpose() + adj))
+                           .template triangularView<Eigen::Upper>();
+    });
+
+    return ret_type(res);
+  } else {
+    arena_t<ret_type> res = arena_L_val.transpose().lazyProduct(arena_L_val);
+
+    reverse_pass_callback([res, arena_L, arena_L_val]() mutable {
+      const auto& adj = to_ref(res.adj());
+
+      arena_L.adj() += (arena_L_val.lazyProduct(adj.transpose() + adj))
+                           .template triangularView<Eigen::Upper>();
+    });
+
+    return ret_type(res);
   }
-  // if (K == 1) {
-  //   LLt(0, 0) = L(0, 0) * L(0, 0);
-  //   return LLt;
-  // }
-  int Knz;
-  if (K >= J) {
-    Knz = (K - J) * J + (J * (J + 1)) / 2;
-  } else {  // if (K < J)
-    Knz = (K * (K + 1)) / 2;
-  }
-  vari** vs = reinterpret_cast<vari**>(
-      ChainableStack::instance_->memalloc_.alloc(Knz * sizeof(vari*)));
-  int pos = 0;
-  for (int m = 0; m < K; ++m) {
-    for (int n = 0; n < ((J < (m + 1)) ? J : (m + 1)); ++n) {
-      vs[pos++] = L(m, n).vi_;
-    }
-  }
-  for (int m = 0, mpos = 0; m < K; ++m, mpos += (J < m) ? J : m) {
-    LLt.coeffRef(m, m) = var(
-        new internal::dot_self_vari(vs + mpos, (J < (m + 1)) ? J : (m + 1)));
-    for (int n = 0, npos = 0; n < m; ++n, npos += (J < n) ? J : n) {
-      LLt.coeffRef(m, n) = LLt.coeffRef(n, m)
-          = dot_product(L.row(m).head((J < (n + 1)) ? J : (n + 1)),
-                        L.row(n).head((J < (n + 1)) ? J : (n + 1)));
-    }
-  }
-  return LLt;
 }
 
 }  // namespace math
