@@ -38,6 +38,9 @@ template <typename T_eta, typename T_c, class RNG,
                                             >>>* = nullptr>
 inline std::vector<int> ordered_logistic_rng(
   const T_eta& eta, const T_c& c, RNG& rng) {
+  static const char* function = "ordered_logistic";
+  check_greater(function, "Size of eta parameter", stan::math::size(eta), 0);
+  check_greater(function, "Size of cut points parameter", stan::math::size(c), 0);
   scalar_seq_view<T_eta> eta_vec(eta);
   vector_seq_view<T_c> cut_vec(c);
 

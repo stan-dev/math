@@ -7,16 +7,16 @@
 
 TEST(ProbDistributionsCategorical, Categorical) {
   using Eigen::Dynamic;
-  using Eigen::Matrix;
-  Matrix<double, Dynamic, 1> theta(3, 1);
+  using Eigen::VectorXd;
+  VectorXd theta(3);
   theta << 0.3, 0.5, 0.2;
   EXPECT_FLOAT_EQ(-1.203973, stan::math::categorical_log(1, theta));
   EXPECT_FLOAT_EQ(-0.6931472, stan::math::categorical_log(2, theta));
 }
 TEST(ProbDistributionsCategorical, Propto) {
   using Eigen::Dynamic;
-  using Eigen::Matrix;
-  Matrix<double, Dynamic, 1> theta(3, 1);
+  using Eigen::VectorXd;
+  VectorXd theta(3);
   theta << 0.3, 0.5, 0.2;
   EXPECT_FLOAT_EQ(0.0, stan::math::categorical_log<true>(1, theta));
   EXPECT_FLOAT_EQ(0.0, stan::math::categorical_log<true>(2, theta));
@@ -24,8 +24,8 @@ TEST(ProbDistributionsCategorical, Propto) {
 
 TEST(ProbDistributionsCategorical, VectorInt) {
   using Eigen::Dynamic;
-  using Eigen::Matrix;
-  Matrix<double, Dynamic, 1> theta(3, 1);
+  using Eigen::VectorXd;
+  VectorXd theta(3);
   theta << 0.3, 0.5, 0.2;
   std::vector<int> xs0;
   EXPECT_FLOAT_EQ(0.0, stan::math::categorical_log(xs0, theta));
@@ -41,14 +41,14 @@ TEST(ProbDistributionsCategorical, VectorInt) {
 
 TEST(ProbDistributionsCategorical, error) {
   using Eigen::Dynamic;
-  using Eigen::Matrix;
+  using Eigen::VectorXd;
   using stan::math::categorical_log;
   double nan = std::numeric_limits<double>::quiet_NaN();
   double inf = std::numeric_limits<double>::infinity();
 
   unsigned int n = 1;
   unsigned int N = 3;
-  Matrix<double, Dynamic, 1> theta(N, 1);
+  VectorXd theta(N);
   theta << 0.3, 0.5, 0.2;
 
   EXPECT_NO_THROW(categorical_log(N, theta));
@@ -86,11 +86,11 @@ TEST(ProbDistributionsCategorical, error) {
 
 TEST(ProbDistributionsCategorical, error_check) {
   using Eigen::Dynamic;
-  using Eigen::Matrix;
+  using Eigen::VectorXd;
   using stan::math::categorical_log;
   boost::random::mt19937 rng;
 
-  Matrix<double, Dynamic, Dynamic> theta(3, 1);
+  VectorXd theta(3);
   theta << 0.15, 0.45, 0.50;
 
   EXPECT_THROW(stan::math::categorical_rng(theta, rng), std::domain_error);
@@ -98,17 +98,17 @@ TEST(ProbDistributionsCategorical, error_check) {
 
 TEST(ProbDistributionsCategorical, chiSquareGoodnessFitTest) {
   using Eigen::Dynamic;
-  using Eigen::Matrix;
+  using Eigen::VectorXd;
   using stan::math::categorical_log;
   boost::random::mt19937 rng;
 
   int N = 10000;
-  Matrix<double, Dynamic, Dynamic> theta(3, 1);
+  VectorXd theta(3);
   theta << 0.15, 0.45, 0.40;
   int K = theta.rows();
   boost::math::chi_squared mydist(K - 1);
 
-  Eigen::Matrix<double, Eigen::Dynamic, 1> loc(theta.rows(), 1);
+  VectorXd loc(theta.rows());
   for (int i = 0; i < theta.rows(); i++)
     loc(i) = 0;
 
@@ -137,4 +137,41 @@ TEST(ProbDistributionsCategorical, chiSquareGoodnessFitTest) {
     chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
 
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
+}
+
+TEST(ProbDistributionsCategorical, categorical_vecRNG) {
+  using stan::math::categorical_rng;
+  using stan::math::softmax;
+  boost::random::mt19937 rng;
+
+  Eigen::VectorXd vec1(4);
+  vec1 << softmax(Eigen::VectorXd::Random(4));
+  Eigen::VectorXd vec2(4);
+  vec2 << softmax(Eigen::VectorXd::Random(4));
+  Eigen::VectorXd vec3(4);
+  vec3 << softmax(Eigen::VectorXd::Random(4));
+
+  std::vector<Eigen::VectorXd> vecs{vec1, vec2, vec3};
+
+  std::vector<int> rng_stvec = categorical_rng(vecs, rng);
+  for (int i = 0; i < 3; ++i) {
+    EXPECT_EQ(rng_stvec[i], categorical_rng(vecs[i], rng));
+  }
+}
+
+TEST(ProbDistributionsCategorical, categorical_vecRNG_throw) {
+  using stan::math::categorical_rng;
+  using stan::math::softmax;
+  boost::random::mt19937 rng;
+
+  Eigen::VectorXd vec1(4);
+  vec1 << softmax(Eigen::VectorXd::Random(4));
+  Eigen::VectorXd vec2(4);
+  vec2 << Eigen::VectorXd::Random(4);
+  Eigen::VectorXd vec3(4);
+  vec3 << softmax(Eigen::VectorXd::Random(4));
+
+  std::vector<Eigen::VectorXd> vecs{vec1, vec2, vec3};
+
+  EXPECT_THROW(categorical_rng(vecs, rng), std::domain_error);
 }

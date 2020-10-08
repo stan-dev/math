@@ -25,23 +25,39 @@ namespace math {
  * @param rng Pseudo-random number generator.
  * @return Categorical random variate
  */
-template <class RNG>
-inline int categorical_logit_rng(const Eigen::VectorXd& beta, RNG& rng) {
+template <typename T_beta, class RNG>
+inline typename VectorBuilder<true, int, value_type_t<T_beta>>::type categorical_logit_rng(
+    const T_beta& beta, RNG& rng) {
   using boost::uniform_01;
   using boost::variate_generator;
-  static const char* function = "categorical_logit_rng";
-  check_finite(function, "Log odds parameter", beta);
 
+  vector_seq_view<T_beta> beta_vec(beta);
+  size_t N = stan::math::size_mvt(beta);
+  
+  Eigen::VectorXd index(3);
+  Eigen::VectorXd theta(3);
+  VectorBuilder<true, int, value_type_t<T_beta>> output(N);
   variate_generator<RNG&, uniform_01<> > uniform01_rng(rng, uniform_01<>());
-  Eigen::VectorXd theta = softmax(beta);
-  Eigen::VectorXd index = cumulative_sum(theta);
 
-  double c = uniform01_rng();
-  int b = 0;
-  while (c > index(b)) {
-    b++;
+  for (size_t n = 0; n < N; ++n) {
+    check_finite("categorical_logit_rng", "Probabilities parameter", beta_vec[n]);
+
+    index.setZero();
+    theta.setZero();
+
+    theta = softmax(beta_vec[n]);
+    index = cumulative_sum(theta);
+
+    double c = uniform01_rng();
+    int b = 0;
+
+    while (c > index(b)) {
+      b++;
+    }
+    output[n] = b + 1;
   }
-  return b + 1;
+
+  return output.data();
 }
 }  // namespace math
 }  // namespace stan

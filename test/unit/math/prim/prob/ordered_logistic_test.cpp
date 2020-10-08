@@ -271,3 +271,27 @@ TEST(ProbDistributions, ordered_logistic_vecRNG) {
     EXPECT_EQ(rng_vec_vec[i], ordered_logistic_rng(eta_vec[i], cuts[0], rng3));
   }
 }
+
+TEST(ProbDistributions, ordered_logistic_vecRNG_throw) {
+  using stan::math::ordered_logistic_rng;
+  boost::random::mt19937 rng;
+
+  Eigen::VectorXd eta_vec(3);
+  eta_vec << -2.5, 1.2, 3.1;
+
+
+  Eigen::VectorXd cut1(4);
+  cut1 << -3.1, -1.5, 0.4, 1.2;
+
+  std::vector<Eigen::VectorXd> cuts{cut1, cut1, cut1};
+
+  Eigen::VectorXd eig_vec_zero(0);
+  std::vector<Eigen::VectorXd> std_vec_zero(0);
+
+  EXPECT_THROW(ordered_logistic_rng(eta_vec, std_vec_zero, rng),
+               std::domain_error);
+  EXPECT_THROW(ordered_logistic_rng(eig_vec_zero, cuts, rng),
+               std::domain_error);
+  EXPECT_THROW(ordered_logistic_rng(eig_vec_zero, std_vec_zero, rng),
+               std::domain_error);
+}

@@ -55,3 +55,21 @@ TEST(ProbDistributionsCategoricalLogit, chiSquareGoodnessFitTest) {
 
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
+
+TEST(ProbDistributionsCategoricalLogit, categorical_logit_vecRNG_throw) {
+  using stan::math::categorical_logit_rng;
+  using stan::math::softmax;
+  using stan::math::INFTY;
+  boost::random::mt19937 rng;
+
+  Eigen::VectorXd vec1(4);
+  vec1 << Eigen::VectorXd::Random(4);
+  Eigen::VectorXd vec2(4);
+  vec2 << 0.5, -1.2, INFTY, 1.5;
+  Eigen::VectorXd vec3(4);
+  vec3 << Eigen::VectorXd::Random(4);
+
+  std::vector<Eigen::VectorXd> vecs{vec1, vec2, vec3};
+
+  EXPECT_THROW(categorical_logit_rng(vecs, rng), std::domain_error);
+}
