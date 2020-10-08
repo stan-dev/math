@@ -82,7 +82,11 @@ return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
     return LOG_ZERO;
   }
 
-  T_partials_return logp = -sum(log(beta_val - alpha_val));
+  T_partials_return logp = 0;
+  size_t N = max_size(y, alpha, beta);
+  if (include_summand<propto, T_low, T_high>::value) {
+    logp -= sum(log(beta_val - alpha_val)) * N / max_size(alpha, beta);
+  }
 
   operands_and_partials<T_y_ref, T_alpha_ref, T_beta_ref> ops_partials(
       y_ref, alpha_ref, beta_ref);
@@ -92,14 +96,17 @@ return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
         !is_constant_all<T_high>::value && !is_constant_all<T_low>::value)>(
         inv(beta_val - alpha_val));
     if (!is_constant_all<T_high>::value) {
-      ops_partials.edge3_.partials_ = -inv_beta_minus_alpha;
+      if (is_vector<T_y>::value && !is_vector<T_low>::value
+          && !is_vector<T_high>::value) {
+        ops_partials.edge3_.partials_ = -inv_beta_minus_alpha * size(y);
+      } else {
+        ops_partials.edge3_.partials_ = -inv_beta_minus_alpha;
+      }
     }
     if (!is_constant_all<T_low>::value) {
       if (is_vector<T_y>::value && !is_vector<T_low>::value
           && !is_vector<T_high>::value) {
-        ops_partials.edge2_.partials_ = std::move(inv_beta_minus_alpha)
-                                        * max_size(y, alpha, beta)
-                                        / max_size(alpha, beta);
+        ops_partials.edge2_.partials_ = inv_beta_minus_alpha * size(y);
       } else {
         ops_partials.edge2_.partials_ = std::move(inv_beta_minus_alpha);
       }
