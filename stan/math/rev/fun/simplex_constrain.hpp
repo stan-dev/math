@@ -66,7 +66,7 @@ inline auto simplex_constrain(const T& y) {
     });
   }
 
-  return ret_type(x);
+  return ret_type(std::move(x));
 }
 
 }  // namespace math

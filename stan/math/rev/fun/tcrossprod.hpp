@@ -37,7 +37,7 @@ inline auto tcrossprod(const T& M) {
     });
   }
 
-  return ret_type(res);
+  return ret_type(std::move(res));
 }
 
 }  // namespace math
