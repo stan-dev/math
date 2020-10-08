@@ -23,6 +23,7 @@ template <typename T>
 class vari_value<T, require_kernel_expression_lhs_t<T>>
     : public vari_base, public chainable_alloc {
  public:
+  using value_type = T;
   /**
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
@@ -174,7 +175,7 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
         val_(std::forward<T>(val)) {}
 
  private:
-  template <typename>
+  template <typename, typename>
   friend class var_value;
 };
 
