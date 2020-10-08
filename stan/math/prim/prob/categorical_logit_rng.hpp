@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/cumulative_sum.hpp>
 #include <stan/math/prim/fun/softmax.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/size_mvt.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -26,27 +27,23 @@ namespace math {
  * @return Categorical random variate
  */
 template <typename T_beta, class RNG>
-inline typename VectorBuilder<true, int, value_type_t<T_beta>>::type categorical_logit_rng(
-    const T_beta& beta, RNG& rng) {
+inline typename VectorBuilder<true, int, value_type_t<T_beta>>::type
+  categorical_logit_rng(const T_beta& beta, RNG& rng) {
   using boost::uniform_01;
   using boost::variate_generator;
 
   vector_seq_view<T_beta> beta_vec(beta);
-  size_t N = stan::math::size_mvt(beta);
-  
-  Eigen::VectorXd index(3);
-  Eigen::VectorXd theta(3);
+  size_t N = size_mvt(beta);
+
   VectorBuilder<true, int, value_type_t<T_beta>> output(N);
   variate_generator<RNG&, uniform_01<> > uniform01_rng(rng, uniform_01<>());
 
   for (size_t n = 0; n < N; ++n) {
-    check_finite("categorical_logit_rng", "Probabilities parameter", beta_vec[n]);
+    check_finite("categorical_logit_rng", "Probabilities parameter",
+                 beta_vec[n]);
 
-    index.setZero();
-    theta.setZero();
-
-    theta = softmax(beta_vec[n]);
-    index = cumulative_sum(theta);
+    const auto& theta = softmax(beta_vec[n]);
+    Eigen::VectorXd index = cumulative_sum(theta);
 
     double c = uniform01_rng();
     int b = 0;
