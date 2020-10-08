@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_ERR_IS_MAT_FINITE_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/meta.hpp>
 
 namespace stan {
@@ -17,7 +18,7 @@ namespace math {
  **/
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
 inline bool is_mat_finite(const EigMat& y) {
-  return y.allFinite();
+  return to_ref(y).allFinite();
 }
 
 }  // namespace math
