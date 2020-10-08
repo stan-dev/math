@@ -68,7 +68,8 @@ return_type_t<T_y, T_dof, T_scale> wishart_lpdf(const T_y& W, const T_dof& nu,
   LDLT_factor<value_type_t<T_y>, Eigen::Dynamic, Eigen::Dynamic> ldlt_W(W_ref);
   check_ldlt_factor(function, "LDLT_Factor of random variable", ldlt_W);
 
-  LDLT_factor<value_type_t<T_scale>, Eigen::Dynamic, Eigen::Dynamic> ldlt_S(S_ref);
+  LDLT_factor<value_type_t<T_scale>, Eigen::Dynamic, Eigen::Dynamic> ldlt_S(
+      S_ref);
   check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_S);
 
   return_type_t<T_y, T_dof, T_scale> lp(0.0);
@@ -99,9 +100,9 @@ return_type_t<T_y, T_dof, T_scale> wishart_lpdf(const T_y& W, const T_dof& nu,
 }
 
 template <typename T_y, typename T_dof, typename T_scale>
-inline return_type_t<T_y, T_dof, T_scale> wishart_lpdf(
-    const T_y& W, const T_dof& nu,
-    const T_scale& S) {
+inline return_type_t<T_y, T_dof, T_scale> wishart_lpdf(const T_y& W,
+                                                       const T_dof& nu,
+                                                       const T_scale& S) {
   return wishart_lpdf<false>(W, nu, S);
 }
 
