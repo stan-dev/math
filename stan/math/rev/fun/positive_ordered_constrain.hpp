@@ -54,7 +54,7 @@ inline auto positive_ordered_constrain(const T& x) {
     }
   });
 
-  return ret_type(std::move(y));
+  return ret_type(y);
 }
 
 }  // namespace math

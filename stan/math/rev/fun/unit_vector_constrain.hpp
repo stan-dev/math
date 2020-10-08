@@ -45,7 +45,7 @@ inline auto unit_vector_constrain(const T& y) {
            - y_val * ((y_val.array() * res.adj().array()).sum() / (r * r * r));
   });
 
-  return ret_type(std::move(res));
+  return ret_type(res);
 }
 
 /**

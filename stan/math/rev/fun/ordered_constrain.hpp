@@ -54,7 +54,7 @@ inline auto ordered_constrain(const T& x) {
     arena_x.adj().coeffRef(0) += rolling_adjoint_sum + y.adj().coeff(0);
   });
 
-  return ret_type(std::move(y));
+  return ret_type(y);
 }
 
 }  // namespace math

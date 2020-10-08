@@ -53,7 +53,7 @@ inline auto mdivide_left(const T1& A, const T2& B) {
       arena_B.adj() += adjB;
   });
 
-  return ret_type(std::move(res));
+  return ret_type(res);
 }
 
 }  // namespace math
