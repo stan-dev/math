@@ -62,7 +62,8 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
     return dst;
   }
   if ((src.view() == matrix_cl_view::Lower
-      || src.view() == matrix_cl_view::Upper) && src.rows() == src.cols()) {
+       || src.view() == matrix_cl_view::Upper)
+      && src.rows() == src.cols()) {
     using T_not_bool
         = std::conditional_t<std::is_same<T, bool>::value, char, T>;
     std::vector<T_not_bool> packed = packed_copy(src);
@@ -99,11 +100,13 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
     } catch (const cl::Error& e) {
       check_opencl_error("copy (OpenCL)->Eigen", e);
     }
-    if(!contains_nonzero(src.view(), matrix_cl_view::Lower)){
-      dst.template triangularView<Eigen::Lower>() = Eigen::Matrix<T, R, C>::Zero(dst.rows(), dst.cols());
+    if (!contains_nonzero(src.view(), matrix_cl_view::Lower)) {
+      dst.template triangularView<Eigen::Lower>()
+          = Eigen::Matrix<T, R, C>::Zero(dst.rows(), dst.cols());
     }
-    if(!contains_nonzero(src.view(), matrix_cl_view::Upper)){
-      dst.template triangularView<Eigen::Upper>() = Eigen::Matrix<T, R, C>::Zero(dst.rows(), dst.cols());
+    if (!contains_nonzero(src.view(), matrix_cl_view::Upper)) {
+      dst.template triangularView<Eigen::Upper>()
+          = Eigen::Matrix<T, R, C>::Zero(dst.rows(), dst.cols());
     }
   }
   return dst;
