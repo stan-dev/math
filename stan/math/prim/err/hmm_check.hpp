@@ -40,7 +40,7 @@ inline void hmm_check(const T_omega& log_omegas, const T_Gamma& Gamma,
   check_simplex(function, "rho", rho);
   const auto& Gamma_ref = to_ref(Gamma);
   for (int i = 0; i < Gamma.rows(); ++i) {
-    check_simplex(function, "Gamma[i, ]", Gamma.row(i));
+    check_simplex(function, "Gamma[i, ]", Gamma_ref.row(i));
   }
 }
 

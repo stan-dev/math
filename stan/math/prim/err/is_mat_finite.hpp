@@ -18,7 +18,7 @@ namespace math {
  **/
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
 inline bool is_mat_finite(const EigMat& y) {
-  return to_ref(y).allFinite();
+  return y.array().isFinite().all();
 }
 
 }  // namespace math

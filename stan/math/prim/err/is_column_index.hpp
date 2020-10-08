@@ -19,7 +19,7 @@ namespace math {
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
 inline bool is_column_index(const EigMat& y, size_t i) {
   return i >= stan::error_index::value
-         && i < static_cast<size_t>(to_ref(y).cols())
+         && i < static_cast<size_t>(y.cols())
                     + stan::error_index::value;
 }
 
