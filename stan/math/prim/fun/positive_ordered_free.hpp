@@ -31,16 +31,17 @@ Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, 1> positive_ordered_free(
   using std::log;
   using size_type = Eigen::Index;
 
+  const auto& y_ref = to_ref(y);
   check_positive_ordered("stan::math::positive_ordered_free",
-                         "Positive ordered variable", y);
-  size_type k = y.size();
+                         "Positive ordered variable", y_ref);
+  size_type k = y_ref.size();
   Matrix<value_type_t<EigVec>, Dynamic, 1> x(k);
   if (k == 0) {
     return x;
   }
-  x.coeffRef(0) = log(y.coeff(0));
+  x.coeffRef(0) = log(y_ref.coeff(0));
   for (size_type i = 1; i < k; ++i) {
-    x.coeffRef(i) = log(y.coeff(i) - y.coeff(i - 1));
+    x.coeffRef(i) = log(y_ref.coeff(i) - y_ref.coeff(i - 1));
   }
   return x;
 }

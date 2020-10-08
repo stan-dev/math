@@ -33,7 +33,7 @@ inline auto tcrossprod(const T& M) {
   if (M.size() > 0) {
     reverse_pass_callback([res, arena_M, arena_M_val]() mutable {
       const auto& adj = to_ref(res.adj());
-      arena_M.adj() += (adj + adj.transpose()) * arena_M_val;
+      arena_M.adj().noalias() += (adj + adj.transpose()) * arena_M_val;
     });
   }
 

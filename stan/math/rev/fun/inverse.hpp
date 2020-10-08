@@ -23,22 +23,22 @@ namespace math {
  * @throw std::invalid_argument if the matrix is not square.
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
-inline auto inverse(const T& m) {
+inline plain_type_t<T> inverse(const T& m) {
   check_square("inverse", "m", m);
+
   if (m.size() == 0) {
-    return plain_type_t<T>(m);
+    return m;
   }
 
-  arena_t<T> arena_m = m;
-  arena_t<T> res(value_of(arena_m).inverse().eval());
-  arena_t<Eigen::MatrixXd> res_val = res.val();
+  arena_t<plain_type_t<T>> arena_m = m;
+  arena_t<Eigen::MatrixXd> res_val = value_of(arena_m).inverse();
+  arena_t<plain_type_t<T>> res = res_val;
 
   reverse_pass_callback([res, res_val, arena_m]() mutable {
-    arena_m.adj().noalias()
-        -= res_val.transpose() * res.adj_op() * res_val.transpose();
+    arena_m.adj() -= res_val.transpose() * res.adj_op() * res_val.transpose();
   });
 
-  return plain_type_t<T>(res);
+  return res;
 }
 
 }  // namespace math
