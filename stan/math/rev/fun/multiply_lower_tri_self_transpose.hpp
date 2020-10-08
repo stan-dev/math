@@ -30,7 +30,7 @@ inline auto multiply_lower_tri_self_transpose(const T& L) {
                          .template triangularView<Eigen::Lower>();
   });
 
-  return plain_type_t<T>(std::move(res));
+  return plain_type_t<T>(res);
 }
 
 }  // namespace math
