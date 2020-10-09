@@ -4,7 +4,6 @@
 #include <boost/math/distributions.hpp>
 #include <limits>
 #include <vector>
-#include <iostream>
 
 stan::math::vector_d get_simplex_inv_logit(double lambda,
                                            const stan::math::vector_d& c) {
@@ -280,7 +279,6 @@ TEST(ProbDistributions, ordered_logistic_vecRNG_throw) {
 
   Eigen::VectorXd eta_vec(3);
   eta_vec << -2.5, 1.2, 3.1;
-
 
   Eigen::VectorXd cut1(4);
   cut1 << -3.1, -1.5, 0.4, 1.2;
