@@ -9,6 +9,7 @@
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/count_vars.hpp>
+#include <stan/math/rev/core/custom_vari.hpp>
 #include <stan/math/rev/core/init_chainablestack.hpp>
 #include <stan/math/rev/core/std_iterator_traits.hpp>
 #include <stan/math/rev/core/ddv_vari.hpp>
