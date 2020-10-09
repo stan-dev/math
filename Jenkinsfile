@@ -201,6 +201,7 @@ pipeline {
             }
             steps {
                 script {
+		    sh "mkdir -p make"
                     sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                     if (isUnix()) {
                         deleteDir()
