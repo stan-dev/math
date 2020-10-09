@@ -36,9 +36,10 @@ struct custom_vari : public vari_value<T> {
  * @param functor funtor or other callable to call in the reverse pass
  */
 template <typename T, typename F>
-internal::custom_vari<plain_type_t<T>, F>* make_custom_vari(T&& value, F&& functor) {
-  return new internal::custom_vari<plain_type_t<T>, F>(std::move(value),
-                                         std::forward<F>(functor));
+internal::custom_vari<plain_type_t<T>, F>* make_custom_vari(T&& value,
+                                                            F&& functor) {
+  return new internal::custom_vari<plain_type_t<T>, F>(
+      std::move(value), std::forward<F>(functor));
 }
 
 }  // namespace math
