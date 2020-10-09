@@ -61,40 +61,49 @@ class opencl_context_base {
    *
    * This constructor does the following:
    * 1. Gets the available platforms and selects the platform
-   *  with id OPENCL_PLATFORM_ID.
-   * 2. Gets the available devices and selects the device with id
-   *  OPENCL_DEVICE_ID.
+   *  with given id.
+   * 2. Gets the available devices and selects the device with given id.
    * 3. Creates the OpenCL context with the device.
    * 4. Creates the OpenCL command queue for the selected device.
    * 5. Sets OpenCL device dependent kernel parameters
+   *
+   * @param platform_id id of the OpenCL platform to use
+   * @param device_id id of the OpenCL device to use
    * @throw std::system_error if an OpenCL error occurs.
    */
-  opencl_context_base() {
+  opencl_context_base(int platform_id = OPENCL_PLATFORM_ID,
+                      int device_id = OPENCL_DEVICE_ID) {
     try {
       // platform
       cl::Platform::get(&platforms_);
-      if (OPENCL_PLATFORM_ID >= platforms_.size()) {
+      if (platform_id >= platforms_.size()) {
         system_error("OpenCL Initialization", "[Platform]", -1,
                      "CL_INVALID_PLATFORM");
       }
-      platform_.push_back(platforms_[OPENCL_PLATFORM_ID]);
+      platform_.push_back(platforms_[platform_id]);
       platform_name_ = platform_[0].getInfo<CL_PLATFORM_NAME>();
       platform_[0].getDevices(DEVICE_FILTER, &devices_);
       if (devices_.size() == 0) {
         system_error("OpenCL Initialization", "[Device]", -1,
                      "CL_DEVICE_NOT_FOUND");
       }
-      if (OPENCL_DEVICE_ID >= devices_.size()) {
+      if (device_id >= devices_.size()) {
         system_error("OpenCL Initialization", "[Device]", -1,
                      "CL_INVALID_DEVICE");
       }
-      device_.push_back(devices_[OPENCL_DEVICE_ID]);
+      device_.push_back(devices_[device_id]);
       // context and queue
       cl_command_queue_properties device_properties;
       device_[0].getInfo<cl_command_queue_properties>(
           CL_DEVICE_QUEUE_PROPERTIES, &device_properties);
       device_[0].getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
                                  &max_thread_block_size_);
+      std::vector<size_t> max_wg_sizes
+          = device_[0].getInfo<CL_DEVICE_MAX_WORK_ITEM_SIZES>();
+      if (max_wg_sizes.size() < 3) {
+        system_error("OpenCL Initialization", "[Device]", -1,
+                     "The device does not support 3D work groups!");
+      }
 
       context_ = cl::Context(device_[0]);
       if (device_properties & CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE) {
@@ -106,17 +115,20 @@ class opencl_context_base {
         command_queue_ = cl::CommandQueue(context_, device_[0], 0, nullptr);
         in_order_ = CL_TRUE;
       }
-      int thread_block_size_sqrt
-          = static_cast<int>(std::sqrt(max_thread_block_size_));
+      int max_square_block_size
+          = std::min({max_wg_sizes[0], max_wg_sizes[1],
+                      static_cast<size_t>(std::sqrt(max_thread_block_size_))});
+
       // Does a compile time check of the maximum allowed
       // dimension of a square thread block size
       // WG size of (32,32) works on all recent GPUs but would fail on some
       // older integrated GPUs or CPUs
-      if (thread_block_size_sqrt < base_opts_["THREAD_BLOCK_SIZE"]) {
-        base_opts_["THREAD_BLOCK_SIZE"] = thread_block_size_sqrt;
+      if (max_square_block_size < base_opts_["THREAD_BLOCK_SIZE"]) {
+        base_opts_["THREAD_BLOCK_SIZE"] = max_square_block_size;
         base_opts_["WORK_PER_THREAD"] = 1;
       }
-      if (max_thread_block_size_ < base_opts_["LOCAL_SIZE_"]) {
+      if (std::min(max_thread_block_size_, max_wg_sizes[0])
+          < base_opts_["LOCAL_SIZE_"]) {
         // must be a power of base_opts_["REDUCTION_STEP_SIZE"]
         const int p = std::log(max_thread_block_size_)
                       / std::log(base_opts_["REDUCTION_STEP_SIZE"]);
@@ -182,19 +194,24 @@ class opencl_context_base {
     int tri_inverse_size_worth_transfer = 100;
   } tuning_opts_;
 
-  static opencl_context_base& getInstance() {
-    static opencl_context_base instance_;
-    return instance_;
-  }
+ private:
+  static opencl_context_base instance_;
 
-  opencl_context_base(opencl_context_base const&) = delete;
-  void operator=(opencl_context_base const&) = delete;
+ protected:
+  static opencl_context_base& getInstance() { return instance_; }
+
+  static void select_device(int platform_id, int device_id) {
+    instance_ = opencl_context_base(platform_id, device_id);
+  }
 };
+opencl_context_base opencl_context_base::instance_;
 
 /** \ingroup opencl_context_group
  * The API to access the methods and values in opencl_context_base
  */
 class opencl_context {
+  std::vector<cl::Kernel*> kernel_caches_;
+
  public:
   opencl_context() = default;
 
@@ -391,6 +408,31 @@ class opencl_context {
    */
   inline bool& in_order() {
     return opencl_context_base::getInstance().in_order_;
+  }
+
+  /**
+   * Selects the OpenCL device to use from now on.
+   *
+   * No `matrix_cl` objects or created before this call should be used after the
+   * call (including any that might be on the AD stack)!
+   * @param platform_id id of the platform the device is part of
+   * @param instance_id if of the device
+   */
+  inline void select_device(int platform_id, int instance_id) {
+    for (cl::Kernel* cache : kernel_caches_) {
+      *cache = cl::Kernel();
+    }
+    kernel_caches_.clear();
+    opencl_context_base::select_device(platform_id, instance_id);
+  }
+
+  /**
+   * Registers a cached kernel. The cache will be invalidated if a new OpenCL
+   * device is selected.
+   * @param cache pointer to a cached kernel.
+   */
+  inline void register_kernel_cache(cl::Kernel* cache) {
+    kernel_caches_.push_back(cache);
   }
 };
 static opencl_context opencl_context;
