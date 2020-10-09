@@ -39,7 +39,7 @@ inline auto unit_vector_constrain(const T& y) {
   const double r = y_val.norm();
   arena_t<ret_type> res = y_val / r;
 
-  reverse_pass_callback([arena_y, res, r, r_cubed, y_val]() mutable {
+  reverse_pass_callback([arena_y, res, r, y_val]() mutable {
     arena_y.adj()
         += res.adj() / r
            - y_val * ((y_val.array() * res.adj().array()).sum() / (r * r * r));
