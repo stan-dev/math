@@ -200,7 +200,7 @@ pipeline {
                 }
             }
             steps {
-	        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+	        sh "echo CXXFLAGS += -fsanitize=address > make/local"
                 script {
                     if (isUnix()) {
                         deleteDir()
