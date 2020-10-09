@@ -20,13 +20,31 @@ namespace math {
  * @param[in] v Vector.
  * @return Dot product of the vector with itself.
  */
-template <typename T, require_rev_matrix_t<T>* = nullptr>
+template <typename T, require_eigen_vector_vt<is_var, T>* = nullptr>
+inline var dot_self(const T& v) {
+  const auto& v_ref = to_ref(v);
+  arena_t<T> arena_v(v_ref.size());
+  double res_val = 0;
+  for (size_t i = 0; i < arena_v.size(); ++i) {
+    arena_v.coeffRef(i) = v_ref.coeffRef(i);
+    res_val += arena_v.coeffRef(i).val() * arena_v.coeffRef(i).val();
+  }
+  var res(res_val);
+  reverse_pass_callback([res, arena_v]() mutable {
+    for (size_t i = 0; i < arena_v.size(); ++i) {
+      arena_v.coeffRef(i).adj() += 2.0 * res.adj() * arena_v.coeff(i).val();
+    }
+  });
+
+  return res;
+}
+
+template <typename T, require_var_matrix_t<T>* = nullptr>
 inline var dot_self(const T& v) {
   arena_t<T> arena_v = v;
-  arena_t<decltype(arena_v.val())> v_val = arena_v.val();
-  var res = v_val.dot(v_val);
-  reverse_pass_callback([res, arena_v, v_val]() mutable {
-    arena_v.adj() += (2.0 * res.adj()) * v_val;
+  var res = arena_v.val().dot(arena_v.val());
+  reverse_pass_callback([res, arena_v]() mutable {
+    arena_v.adj() += (2.0 * res.adj()) * arena_v.val();
   });
 
   return res;

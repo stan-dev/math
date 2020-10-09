@@ -60,7 +60,8 @@ inline auto unit_vector_constrain(const T& y) {
  **/
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
 inline auto unit_vector_constrain(const T& y, var& lp) {
-  const auto& y_ref = to_ref(y) auto x = unit_vector_constrain(y_ref);
+  const auto& y_ref = to_ref(y);
+  auto x = unit_vector_constrain(y_ref);
   lp -= 0.5 * dot_self(y_ref);
   return x;
 }
