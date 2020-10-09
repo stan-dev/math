@@ -153,11 +153,11 @@ class idas_system {
         msgs_(msgs) {
     try {
       if (nv_yy_ == NULL || nv_yp_ == NULL) {
-	throw std::runtime_error("N_VMake_Serial failed to allocate memory");
+        throw std::runtime_error("N_VMake_Serial failed to allocate memory");
       }
 
       if (mem_ == NULL) {
-	throw std::runtime_error("IDACreate failed to allocate memory");
+        throw std::runtime_error("IDACreate failed to allocate memory");
       }
 
       static const char* caller = "idas_system";
@@ -168,12 +168,12 @@ class idas_system {
       check_nonzero_size(caller, "initial state", yy0);
       check_nonzero_size(caller, "derivative initial state", yp0);
       check_consistent_sizes(caller, "initial state", yy0,
-			     "derivative initial state", yp0);
+                             "derivative initial state", yp0);
       check_consistent_sizes(caller, "initial state", yy0,
-			     "derivative-algebra id", eq_id);
+                             "derivative-algebra id", eq_id);
       check_greater_or_equal(caller, "derivative-algebra id", eq_id, 0);
       check_less_or_equal(caller, "derivative-algebra id", eq_id, 1);
-    } catch(const std::exception& e) {
+    } catch (const std::exception& e) {
       N_VDestroy_Serial(nv_yy_);
       N_VDestroy_Serial(nv_yp_);
       N_VDestroy_Serial(nv_rr_);

@@ -80,17 +80,17 @@ Eigen::VectorXd kinsol_solve(
     N_VConst_Serial(1.0, scaling);  // no scaling
 
     check_flag_sundials(
-			KINSetNumMaxIters(kinsol_data.kinsol_memory_, max_num_steps),
-			"KINSetNumMaxIters");
+        KINSetNumMaxIters(kinsol_data.kinsol_memory_, max_num_steps),
+        "KINSetNumMaxIters");
     check_flag_sundials(
-			KINSetFuncNormTol(kinsol_data.kinsol_memory_, function_tolerance),
-			"KINSetFuncNormTol");
+        KINSetFuncNormTol(kinsol_data.kinsol_memory_, function_tolerance),
+        "KINSetFuncNormTol");
     check_flag_sundials(
-			KINSetScaledStepTol(kinsol_data.kinsol_memory_, scaling_step_tol),
-			"KINSetScaledStepTol");
+        KINSetScaledStepTol(kinsol_data.kinsol_memory_, scaling_step_tol),
+        "KINSetScaledStepTol");
     check_flag_sundials(
-			KINSetMaxSetupCalls(kinsol_data.kinsol_memory_, steps_eval_jacobian),
-			"KINSetMaxSetupCalls");
+        KINSetMaxSetupCalls(kinsol_data.kinsol_memory_, steps_eval_jacobian),
+        "KINSetMaxSetupCalls");
 
     // CHECK
     // The default value is 1000 * ||u_0||_D where ||u_0|| is the initial guess.
@@ -99,28 +99,28 @@ Eigen::VectorXd kinsol_solve(
     // else use the dimension of x -- CHECK - find optimal length.
     double max_newton_step = (x.norm() == 0) ? x.size() : 0;
     check_flag_sundials(
-			KINSetMaxNewtonStep(kinsol_data.kinsol_memory_, max_newton_step),
-			"KINSetMaxNewtonStep");
+        KINSetMaxNewtonStep(kinsol_data.kinsol_memory_, max_newton_step),
+        "KINSetMaxNewtonStep");
     check_flag_sundials(KINSetUserData(kinsol_data.kinsol_memory_,
-				       static_cast<void*>(&kinsol_data)),
-			"KINSetUserData");
+                                       static_cast<void*>(&kinsol_data)),
+                        "KINSetUserData");
 
     // construct Linear solver
     check_flag_sundials(KINSetLinearSolver(kinsol_data.kinsol_memory_,
-					   kinsol_data.LS_, kinsol_data.J_),
-			"KINSetLinearSolver");
+                                           kinsol_data.LS_, kinsol_data.J_),
+                        "KINSetLinearSolver");
 
     if (custom_jacobian)
-      check_flag_sundials(
-			  KINSetJacFn(kinsol_data.kinsol_memory_, &system_data::kinsol_jacobian),
-			  "KINSetJacFn");
+      check_flag_sundials(KINSetJacFn(kinsol_data.kinsol_memory_,
+                                      &system_data::kinsol_jacobian),
+                          "KINSetJacFn");
 
     for (int i = 0; i < N; i++)
       NV_Ith_S(nv_x, i) = x(i);
 
-    check_flag_kinsol(KINSol(kinsol_data.kinsol_memory_, nv_x, global_line_search,
-			     scaling, scaling),
-		      max_num_steps);
+    check_flag_kinsol(KINSol(kinsol_data.kinsol_memory_, nv_x,
+                             global_line_search, scaling, scaling),
+                      max_num_steps);
 
     for (int i = 0; i < N; i++)
       x_solution(i) = NV_Ith_S(nv_x, i);

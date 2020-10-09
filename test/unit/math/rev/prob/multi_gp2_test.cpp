@@ -250,4 +250,3 @@ TEST(MultiGP, check_varis_on_stack) {
 
   stan::math::recover_memory();
 }
-
