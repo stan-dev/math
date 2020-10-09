@@ -13,7 +13,7 @@ namespace math {
 
 template <typename T_t, class RNG>
 inline typename VectorBuilder<true, int, value_type_t<T_t>>::type
-  categorical_rng(const T_t& t, RNG& rng) {
+categorical_rng(const T_t& t, RNG& rng) {
   using boost::uniform_01;
   using boost::variate_generator;
 
@@ -21,7 +21,7 @@ inline typename VectorBuilder<true, int, value_type_t<T_t>>::type
   size_t N = size_mvt(t);
 
   VectorBuilder<true, int, value_type_t<T_t>> output(N);
-  variate_generator<RNG&, uniform_01<> > uniform01_rng(rng, uniform_01<>());
+  variate_generator<RNG&, uniform_01<>> uniform01_rng(rng, uniform_01<>());
 
   for (size_t n = 0; n < N; ++n) {
     check_simplex("categorical_rng", "Probabilities parameter", t_vec[n]);

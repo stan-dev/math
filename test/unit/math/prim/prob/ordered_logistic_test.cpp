@@ -259,11 +259,11 @@ TEST(ProbDistributions, ordered_logistic_vecRNG) {
   }
 
   boost::random::mt19937 rng2;
-  std::vector<int> rng_real_stvec = ordered_logistic_rng(eta_vec[0],
-                                                         cuts, rng2);
+  std::vector<int> rng_real_stvec
+      = ordered_logistic_rng(eta_vec[0], cuts, rng2);
   for (int i = 0; i < 3; ++i) {
-    EXPECT_EQ(rng_real_stvec[i], ordered_logistic_rng(eta_vec[0], cuts[i],
-                                                      rng2));
+    EXPECT_EQ(rng_real_stvec[i],
+              ordered_logistic_rng(eta_vec[0], cuts[i], rng2));
   }
 
   boost::random::mt19937 rng3;

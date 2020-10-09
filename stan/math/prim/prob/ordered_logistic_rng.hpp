@@ -32,16 +32,16 @@ inline int ordered_logistic_rng(
 }
 
 template <typename T_eta, typename T_c, class RNG,
-          require_t<disjunction<is_vector<T_eta>,
-                                conjunction<is_std_vector<T_c>,
-                                            is_vector<value_type_t<T_c>>
-                                            >>>* = nullptr>
-inline std::vector<int> ordered_logistic_rng(
-  const T_eta& eta, const T_c& c, RNG& rng) {
+          require_t<disjunction<
+              is_vector<T_eta>,
+              conjunction<is_std_vector<T_c>,
+                          is_vector<value_type_t<T_c>>>>>* = nullptr>
+inline std::vector<int> ordered_logistic_rng(const T_eta& eta, const T_c& c,
+                                             RNG& rng) {
   static const char* function = "ordered_logistic";
   check_greater(function, "Size of eta parameter", stan::math::size(eta), 0);
-  check_greater(function, "Size of cut points parameter",
-                stan::math::size(c), 0);
+  check_greater(function, "Size of cut points parameter", stan::math::size(c),
+                0);
   scalar_seq_view<T_eta> eta_vec(eta);
   vector_seq_view<T_c> cut_vec(c);
 

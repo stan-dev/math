@@ -77,8 +77,8 @@ TEST(ProbDistributionsCategoricalLogit, categorical_logit_vecRNG) {
 
 TEST(ProbDistributionsCategoricalLogit, categorical_logit_vecRNG_throw) {
   using stan::math::categorical_logit_rng;
-  using stan::math::softmax;
   using stan::math::INFTY;
+  using stan::math::softmax;
   boost::random::mt19937 rng;
 
   Eigen::VectorXd vec1(4);
