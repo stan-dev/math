@@ -59,7 +59,7 @@ class matrix_product_vari_n1 : public vari {
 };
 
 template <int R, int C>
-class matrix_product_vari : public vari {
+class matrix_product_vari : public vari, public chainable_alloc {
  public:
   int rows_;
   int cols_;

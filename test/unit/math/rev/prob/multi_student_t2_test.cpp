@@ -26,39 +26,53 @@ TEST_F(agrad_distributions_multi_student_t, Propto) {
   expect_propto_multi_student_t_log(
       to_var(y), to_var(nu), to_var(mu), to_var(Sigma), to_var(y2), to_var(nu),
       to_var(mu2), to_var(Sigma2), "All vars: y, nu, mu, sigma");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_student_t, ProptoY) {
   using stan::math::to_var;
   expect_propto_multi_student_t_log(to_var(y), nu, mu, Sigma, to_var(y2), nu,
                                     mu, Sigma, "var: y");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_student_t, ProptoYMu) {
   using stan::math::to_var;
   expect_propto_multi_student_t_log(to_var(y), nu, to_var(mu), Sigma,
                                     to_var(y2), nu, to_var(mu2), Sigma,
                                     "var: y and mu");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_student_t, ProptoYSigma) {
   using stan::math::to_var;
   expect_propto_multi_student_t_log(to_var(y), nu, mu, to_var(Sigma),
                                     to_var(y2), nu, mu, to_var(Sigma2),
                                     "var: y and sigma");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_student_t, ProptoMu) {
   using stan::math::to_var;
   expect_propto_multi_student_t_log(y, nu, to_var(mu), Sigma, y, nu,
                                     to_var(mu2), Sigma, "var: mu");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_student_t, ProptoMuSigma) {
   using stan::math::to_var;
   expect_propto_multi_student_t_log(y, nu, to_var(mu), to_var(Sigma), y, nu,
                                     to_var(mu2), to_var(Sigma2),
                                     "var: mu and sigma");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_student_t, ProptoSigma) {
   using stan::math::to_var;
   expect_propto_multi_student_t_log(y, nu, mu, to_var(Sigma), y, nu, mu,
                                     to_var(Sigma2), "var: sigma");
+
+  stan::math::recover_memory();
 }
 
 TEST(ProbDistributionsMultiStudentT, MultiStudentTVar) {
@@ -75,6 +89,8 @@ TEST(ProbDistributionsMultiStudentT, MultiStudentTVar) {
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   EXPECT_FLOAT_EQ(-10.213695,
                   stan::math::multi_student_t_log(y, nu, mu, Sigma).val());
+
+  stan::math::recover_memory();
 }
 TEST(ProbDistributionsMultiStudentT, MultiStudentTGradientUnivariate) {
   using Eigen::Dynamic;
@@ -153,6 +169,8 @@ TEST(ProbDistributionsMultiStudentT, MultiStudentTGradientUnivariate) {
                - multi_student_t_log(y, nu_m, mu, Sigma))
               / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[3]);
+
+  stan::math::recover_memory();
 }
 
 struct multi_student_t_fun {
@@ -214,6 +232,8 @@ TEST(ProbDistributionsMultiStudentT, TestGradFunctional) {
   u[3] = 5;
 
   test_grad(multi_student_t_fun(1), u);
+
+  stan::math::recover_memory();
 }
 
 template <int is_row_vec_y, int is_row_vec_mu>
@@ -511,6 +531,8 @@ TEST(ProbDistributionsMultiStudentT, TestGradFunctionalVectorized) {
   test_all_multi_student_t2<1, -1>();
   test_all_multi_student_t2<-1, 1>();
   test_all_multi_student_t2<-1, -1>();
+
+  stan::math::recover_memory();
 }
 
 TEST(ProbDistributionsMultiStudentT, check_varis_on_stack) {
@@ -587,4 +609,6 @@ TEST(ProbDistributionsMultiStudentT, check_varis_on_stack) {
       multi_student_t_log<true>(y, nu, to_var(mu), Sigma));
   test::check_varis_on_stack(
       multi_student_t_log<true>(y, nu, mu, to_var(Sigma)));
+
+  stan::math::recover_memory();
 }

@@ -20,33 +20,47 @@ TEST_F(agrad_distributions_multi_gp, Propto) {
   using stan::math::to_var;
   expect_propto(to_var(y), to_var(Sigma), to_var(w), to_var(y2), to_var(Sigma2),
                 to_var(w2), "All vars: y, w, sigma");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_gp, ProptoY) {
   using stan::math::to_var;
   expect_propto(to_var(y), Sigma, w, to_var(y2), Sigma, w, "var: y");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_gp, ProptoYMu) {
   using stan::math::to_var;
   expect_propto(to_var(y), Sigma, to_var(w), to_var(y2), Sigma, to_var(w2),
                 "var: y and w");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_gp, ProptoYSigma) {
   using stan::math::to_var;
   expect_propto(to_var(y), to_var(Sigma), w, to_var(y2), to_var(Sigma2), w,
                 "var: y and sigma");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_gp, ProptoMu) {
   using stan::math::to_var;
   expect_propto(y, Sigma, to_var(w), y, Sigma, to_var(w2), "var: w");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_gp, ProptoMuSigma) {
   using stan::math::to_var;
   expect_propto(y, to_var(Sigma), to_var(w), y, to_var(Sigma2), to_var(w2),
                 "var: w and sigma");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_gp, ProptoSigma) {
   using stan::math::to_var;
   expect_propto(y, to_var(Sigma), w, y, to_var(Sigma2), w, "var: sigma");
+
+  stan::math::recover_memory();
 }
 
 TEST(ProbDistributionsMultiGP, MultiGPVar) {
@@ -60,6 +74,8 @@ TEST(ProbDistributionsMultiGP, MultiGPVar) {
   Matrix<var, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   EXPECT_FLOAT_EQ(-46.087162, stan::math::multi_gp_log(y, Sigma, w).val());
+
+  stan::math::recover_memory();
 }
 
 TEST(ProbDistributionsMultiGP, MultiGPGradientUnivariate) {
@@ -124,6 +140,8 @@ TEST(ProbDistributionsMultiGP, MultiGPGradientUnivariate) {
   grad_diff = (multi_gp_log(y, Sigma_p, w) - multi_gp_log(y, Sigma_m, w))
               / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[2]);
+
+  stan::math::recover_memory();
 }
 
 struct multi_gp_fun {
@@ -185,6 +203,8 @@ TEST(MultiGP, TestGradFunctional) {
   u[2] = 2.7;
 
   test_grad(multi_gp_fun(1, 1), u);
+
+  stan::math::recover_memory();
 }
 
 TEST(MultiGP, check_varis_on_stack) {
@@ -227,4 +247,7 @@ TEST(MultiGP, check_varis_on_stack) {
       stan::math::multi_gp_log<false>(y, to_var(Sigma), w));
   test::check_varis_on_stack(
       stan::math::multi_gp_log<false>(y, Sigma, to_var(w)));
+
+  stan::math::recover_memory();
 }
+
