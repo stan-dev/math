@@ -101,11 +101,11 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
       check_opencl_error("copy (OpenCL)->Eigen", e);
     }
     if (!contains_nonzero(src.view(), matrix_cl_view::Lower)) {
-      dst.template triangularView<Eigen::Lower>()
+      dst.template triangularView<Eigen::StrictlyLower>()
           = Eigen::Matrix<T, R, C>::Zero(dst.rows(), dst.cols());
     }
     if (!contains_nonzero(src.view(), matrix_cl_view::Upper)) {
-      dst.template triangularView<Eigen::Upper>()
+      dst.template triangularView<Eigen::StrictlyUpper>()
           = Eigen::Matrix<T, R, C>::Zero(dst.rows(), dst.cols());
     }
   }
