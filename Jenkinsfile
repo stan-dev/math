@@ -200,9 +200,8 @@ pipeline {
                 }
             }
             steps {
+	        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                 script {
-		    sh "mkdir -p make"
-                    sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                     if (isUnix()) {
                         deleteDir()
                         unstash 'MathSetup'
