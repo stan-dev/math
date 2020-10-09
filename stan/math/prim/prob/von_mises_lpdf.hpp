@@ -11,6 +11,7 @@
 #include <stan/math/prim/fun/modified_bessel_first_kind.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
@@ -22,16 +23,31 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale>
 return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
                                                   T_scale const& kappa) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
-  using std::cos;
-  using std::floor;
-  using std::sin;
+  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
+  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
+  using T_kappa_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
   static char const* const function = "von_mises_lpdf";
-  check_finite(function, "Random variable", y);
-  check_finite(function, "Location parameter", mu);
-  check_nonnegative(function, "Scale parameter", kappa);
-  check_finite(function, "Scale parameter", kappa);
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", kappa);
+  T_y_ref y_ref = y;
+  T_mu_ref mu_ref = mu;
+  T_kappa_ref kappa_ref = kappa;
+
+  const auto& y_col = as_column_vector_or_scalar(y_ref);
+  const auto& mu_col = as_column_vector_or_scalar(mu_ref);
+  const auto& kappa_col = as_column_vector_or_scalar(kappa_ref);
+
+  const auto& y_arr = as_array_or_scalar(y_col);
+  const auto& mu_arr = as_array_or_scalar(mu_col);
+  const auto& kappa_arr = as_array_or_scalar(kappa_col);
+
+  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
+  ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
+  ref_type_t<decltype(value_of(kappa_arr))> kappa_val = value_of(kappa_arr);
+  check_finite(function, "Random variable", y_val);
+  check_finite(function, "Location parameter", mu_val);
+  check_nonnegative(function, "Scale parameter", kappa_val);
+  check_finite(function, "Scale parameter", kappa_val);
 
   if (size_zero(y, mu, kappa)) {
     return 0;
@@ -40,67 +56,39 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
     return 0;
   }
 
-  T_partials_return logp = 0.0;
-  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, kappa);
+  operands_and_partials<T_y_ref, T_mu_ref, T_kappa_ref> ops_partials(
+      y_ref, mu_ref, kappa_ref);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> kappa_vec(kappa);
+  const auto& cos_mu_minus_y
+      = to_ref_if<!is_constant_all<T_scale>::value>(cos(mu_val - y_val));
+
   size_t N = max_size(y, mu, kappa);
-
-  const bool y_const = is_constant_all<T_y>::value;
-  const bool mu_const = is_constant_all<T_loc>::value;
-  const bool kappa_const = is_constant_all<T_scale>::value;
-  const bool compute_bessel0 = include_summand<propto, T_scale>::value;
-  const bool compute_bessel1 = !kappa_const;
-
-  VectorBuilder<true, T_partials_return, T_scale> kappa_dbl(size(kappa));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
-                T_scale>
-      log_bessel0(size(kappa));
-  for (size_t i = 0; i < stan::math::size(kappa); i++) {
-    kappa_dbl[i] = value_of(kappa_vec[i]);
-    if (include_summand<propto, T_scale>::value) {
-      log_bessel0[i]
-          = log_modified_bessel_first_kind(0, value_of(kappa_vec[i]));
-    }
+  T_partials_return logp = sum(kappa_val * cos_mu_minus_y);
+  if (include_summand<propto>::value) {
+    logp -= LOG_TWO_PI * N;
+  }
+  if (include_summand<propto, T_scale>::value) {
+    logp -= sum(log_modified_bessel_first_kind(0, kappa_val)) * N / size(kappa);
   }
 
-  for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_val = value_of(y_vec[n]);
-    const T_partials_return y_dbl = y_val - floor(y_val / TWO_PI) * TWO_PI;
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-
-    T_partials_return bessel0 = 0;
-    if (compute_bessel0) {
-      bessel0 = modified_bessel_first_kind(0, kappa_dbl[n]);
+  if (!is_constant_all<T_y, T_loc>::value) {
+    const auto& sin_diff = sin(y_val - mu_val);
+    const auto& kappa_sin
+        = to_ref_if<(!is_constant_all<T_y>::value
+                     && !is_constant_all<T_loc>::value)>(kappa_val * sin_diff);
+    if (!is_constant_all<T_y>::value) {
+      ops_partials.edge1_.partials_ = -kappa_sin;
     }
-    T_partials_return bessel1 = 0;
-    if (compute_bessel1) {
-      bessel1 = modified_bessel_first_kind(-1, kappa_dbl[n]);
-    }
-    const T_partials_return kappa_sin = kappa_dbl[n] * sin(mu_dbl - y_dbl);
-    const T_partials_return cos_mu_minus_y = cos(mu_dbl - y_dbl);
-    const T_partials_return kappa_cos = kappa_dbl[n] * cos_mu_minus_y;
-
-    if (include_summand<propto>::value) {
-      logp -= LOG_TWO_PI;
-    }
-    if (include_summand<propto, T_scale>::value) {
-      logp -= log_bessel0[n];
-    }
-    logp += kappa_cos;
-
-    if (!y_const) {
-      ops_partials.edge1_.partials_[n] += kappa_sin;
-    }
-    if (!mu_const) {
-      ops_partials.edge2_.partials_[n] -= kappa_sin;
-    }
-    if (!kappa_const) {
-      ops_partials.edge3_.partials_[n] += cos_mu_minus_y - bessel1 / bessel0;
+    if (!is_constant_all<T_loc>::value) {
+      ops_partials.edge2_.partials_ = std::move(kappa_sin);
     }
   }
+  if (!is_constant_all<T_scale>::value) {
+    const auto& bessel0 = modified_bessel_first_kind(0, kappa_val);
+    const auto& bessel1 = modified_bessel_first_kind(-1, kappa_val);
+    ops_partials.edge3_.partials_ = cos_mu_minus_y - bessel1 / bessel0;
+  }
+
   return ops_partials.build(logp);
 }
 
