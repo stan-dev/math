@@ -109,8 +109,7 @@ inline void check_finite(const char* function, const char* name,
  * @return <code>true</code> if the matrix is finite
  **/
 template <typename Mat, require_matrix_t<Mat>* = nullptr>
-inline void check_finite(const char* function, const char* name,
-                         const Mat& y) {
+inline void check_finite(const char* function, const char* name, const Mat& y) {
   if (!value_of(y).allFinite()) {
     for (int n = 0; n < y.size(); ++n) {
       if (!std::isfinite(value_of_rec(y(n)))) {
