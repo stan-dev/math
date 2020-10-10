@@ -200,15 +200,13 @@ pipeline {
                 }
             }
             steps {
-	        sh "echo CXXFLAGS += -fsanitize=address > make/local"
+                deleteDir()
+                unstash 'MathSetup'
+	            sh "echo CXXFLAGS += -fsanitize=address > make/local"
                 script {
                     if (isUnix()) {
-                        deleteDir()
-                        unstash 'MathSetup'
                         runTests("test/unit", true)
                     } else {
-                        deleteDirWin()
-                        unstash 'MathSetup'
                         runTestsWin("test/unit", true)
                     }
                 }
