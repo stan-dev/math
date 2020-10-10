@@ -42,8 +42,9 @@ inline auto simplex_constrain(const T& y) {
   for (int k = 0; k < N; ++k) {
     double log_N_minus_k = std::log(N - k);
     arena_z.coeffRef(k) = inv_logit(value_of(arena_y.coeff(k)) - log_N_minus_k);
-    arena_diag.coeffRef(k) = stick_len * arena_z.coeff(k)
-                       * inv_logit(log_N_minus_k - value_of(arena_y.coeff(k)));
+    arena_diag.coeffRef(k)
+        = stick_len * arena_z.coeff(k)
+          * inv_logit(log_N_minus_k - value_of(arena_y.coeff(k)));
     x_val.coeffRef(k) = stick_len * arena_z.coeff(k);
     stick_len -= x_val(k);
   }
@@ -61,7 +62,8 @@ inline auto simplex_constrain(const T& y) {
       for (int n = N - 1; --n >= 0;) {
         acc = arena_x.adj().coeff(n + 1) * arena_z.coeff(n + 1)
               + (1 - arena_z.coeff(n + 1)) * acc;
-        arena_y.adj().coeffRef(n) += arena_diag.coeff(n) * (arena_x.adj().coeff(n) - acc);
+        arena_y.adj().coeffRef(n)
+            += arena_diag.coeff(n) * (arena_x.adj().coeff(n) - acc);
       }
     });
   }

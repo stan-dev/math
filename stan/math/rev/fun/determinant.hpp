@@ -19,12 +19,12 @@ inline var determinant(const T& m) {
   if (m.size() == 0) {
     return var(1.0);
   }
-  
+
   auto arena_m = to_arena(m);
   auto m_lu = value_of(arena_m).partialPivLu();
   auto arena_m_inv_transpose = to_arena(m_lu.inverse().transpose());
   var det = m_lu.determinant();
-  
+
   reverse_pass_callback([arena_m, det, arena_m_inv_transpose]() mutable {
     arena_m.adj() += (det.adj() * det.val()) * arena_m_inv_transpose;
   });

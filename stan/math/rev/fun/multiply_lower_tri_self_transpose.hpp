@@ -14,9 +14,10 @@ namespace math {
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto multiply_lower_tri_self_transpose(const T& L) {
   if (L.size() == 0) {
-    return plain_type_t<T>(decltype(multiply_lower_tri_self_transpose(value_of(L)))());
+    return plain_type_t<T>(
+        decltype(multiply_lower_tri_self_transpose(value_of(L)))());
   }
-    
+
   arena_t<T> arena_L = L;
   arena_t<Eigen::MatrixXd> arena_L_val
       = value_of(arena_L).template triangularView<Eigen::Lower>();

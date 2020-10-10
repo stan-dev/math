@@ -40,9 +40,10 @@ inline auto unit_vector_constrain(const T& y) {
   arena_t<ret_type> res = arena_y_val / r;
 
   reverse_pass_callback([arena_y, res, r, arena_y_val]() mutable {
-    arena_y.adj()
-        += res.adj() / r
-           - arena_y_val * ((arena_y_val.array() * res.adj().array()).sum() / (r * r * r));
+    arena_y.adj() += res.adj() / r
+                     - arena_y_val
+                           * ((arena_y_val.array() * res.adj().array()).sum()
+                              / (r * r * r));
   });
 
   return ret_type(res);
