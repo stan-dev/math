@@ -19,13 +19,16 @@ inline var determinant(const T& m) {
   if (m.size() == 0) {
     return var(1.0);
   }
-  arena_t<T> arena_m = m;
-  const auto& m_val = to_ref(value_of(arena_m));
-  var det = m_val.determinant();
-  arena_t<Eigen::MatrixXd> arena_m_inv_transpose = m_val.inverse().transpose();
+  
+  auto arena_m = to_arena(m);
+  auto m_lu = value_of(arena_m).partialPivLu();
+  auto arena_m_inv_transpose = to_arena(m_lu.inverse().transpose());
+  var det = m_lu.determinant();
+  
   reverse_pass_callback([arena_m, det, arena_m_inv_transpose]() mutable {
     arena_m.adj() += (det.adj() * det.val()) * arena_m_inv_transpose;
   });
+
   return det;
 }
 

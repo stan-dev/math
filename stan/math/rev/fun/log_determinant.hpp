@@ -22,12 +22,12 @@ inline var log_determinant(const T& m) {
   }
 
   arena_t<T> arena_m = m;
-  Eigen::FullPivHouseholderQR<Eigen::MatrixXd> hh
-      = arena_m.val().fullPivHouseholderQr();
-  arena_t<Eigen::MatrixXd> arena_hh_inv_transpose = hh.inverse().transpose();
-  var log_det = hh.logAbsDeterminant();
-  reverse_pass_callback([arena_m, log_det, arena_hh_inv_transpose]() mutable {
-    arena_m.adj() += log_det.adj() * arena_hh_inv_transpose;
+  auto m_hh = value_of(arena_m).colPivHouseholderQr();
+  auto arena_m_inv_transpose = to_arena(m_hh.inverse().transpose());
+  var log_det = m_hh.logAbsDeterminant();
+
+  reverse_pass_callback([arena_m, log_det, arena_m_inv_transpose]() mutable {
+    arena_m.adj() += log_det.adj() * arena_m_inv_transpose;
   });
   return log_det;
 }

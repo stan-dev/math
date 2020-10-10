@@ -44,29 +44,27 @@ inline plain_type_t<T> matrix_power(const T& M, const int n) {
   if (n == 1)
     return M_ref;
 
-  arena_t<std::vector<Eigen::MatrixXd>> powers;
+  arena_t<std::vector<Eigen::MatrixXd>> arena_powers;
   arena_t<plain_type_t<T>> arena_M = M_ref;
 
-  powers.emplace_back(Eigen::MatrixXd::Identity(N, N));
-  powers.emplace_back(value_of(M_ref));
+  arena_powers.emplace_back(Eigen::MatrixXd::Identity(N, N));
+  arena_powers.emplace_back(value_of(M_ref));
   for (size_t i = 2; i <= n; ++i) {
-    powers.emplace_back(powers[1] * powers[i - 1]);
+    arena_powers.emplace_back(arena_powers[1] * arena_powers[i - 1]);
   }
 
-  arena_t<plain_type_t<T>> res = powers[powers.size() - 1];
+  arena_t<plain_type_t<T>> res = arena_powers[arena_powers.size() - 1];
 
-  if (M.size() > 0) {
-    reverse_pass_callback([arena_M, n, N, res, powers]() mutable {
-      const auto& M_val = powers[1];
-      Eigen::MatrixXd adj_C = res.adj();
-      Eigen::MatrixXd adj_M = Eigen::MatrixXd::Zero(N, N);
-      for (size_t i = n; i > 1; --i) {
-        adj_M += adj_C * powers[i - 1].transpose();
-        adj_C = M_val.transpose() * adj_C;
-      }
-      arena_M.adj() += adj_M + adj_C;
-    });
-  }
+  reverse_pass_callback([arena_M, n, res, arena_powers]() mutable {
+    const auto& M_val = arena_powers[1];
+    Eigen::MatrixXd adj_C = res.adj();
+    Eigen::MatrixXd adj_M = Eigen::MatrixXd::Zero(M_val.rows(), M_val.cols());
+    for (size_t i = n; i > 1; --i) {
+      adj_M += adj_C * arena_powers[i - 1].transpose();
+      adj_C = M_val.transpose() * adj_C;
+    }
+    arena_M.adj() += adj_M + adj_C;
+  });
 
   return res;
 }

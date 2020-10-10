@@ -34,15 +34,15 @@ inline auto unit_vector_constrain(const T& y) {
   check_nonzero_size("unit_vector", "y", y);
 
   arena_t<T> arena_y = y;
-  arena_t<T> y_val = arena_y.val();
+  auto arena_y_val = to_arena(value_of(arena_y));
 
-  const double r = y_val.norm();
-  arena_t<ret_type> res = y_val / r;
+  const double r = arena_y_val.norm();
+  arena_t<ret_type> res = arena_y_val / r;
 
-  reverse_pass_callback([arena_y, res, r, y_val]() mutable {
+  reverse_pass_callback([arena_y, res, r, arena_y_val]() mutable {
     arena_y.adj()
         += res.adj() / r
-           - y_val * ((y_val.array() * res.adj().array()).sum() / (r * r * r));
+           - arena_y_val * ((arena_y_val.array() * res.adj().array()).sum() / (r * r * r));
   });
 
   return ret_type(res);
