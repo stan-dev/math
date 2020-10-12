@@ -12,12 +12,16 @@
 
 namespace stan {
 namespace math {
+
 /**
- * Returns the sum of the coefficients of the specified
- * matrix on the OpenCL device.
- *
- * @param A Specified var_value containing a matrix.
- * @return Sum of coefficients of matrix.
+ * Returns the lower-triangular Cholesky factor (i.e., matrix
+ * square root) of the specified square, symmetric reverse mode matrix on the
+ * OpenCL device. The return value \f$L\f$ will be a lower-triangular matrix
+ * such that the original matrix \f$A\f$ is given by <p>\f$A = L \times L^T\f$.
+ * @param A Input square matrix
+ * @return Square root of matrix.
+ * @throw std::domain_error if m is not a symmetric matrix or
+ *   if m is not positive definite (if m has more than 0 elements)
  */
 inline var_value<matrix_cl<double>> cholesky_decompose(
     const var_value<matrix_cl<double>>& A) {
