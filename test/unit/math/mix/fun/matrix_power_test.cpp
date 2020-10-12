@@ -68,4 +68,6 @@ TEST(MathMatrixPower, ad_tests) {
   MatrixXd ninf_33 = M33;
   ninf_33(0, 0) = ninf;
   expect_ad(f2, ninf_33);
+
+  stan::math::recover_memory();
 }

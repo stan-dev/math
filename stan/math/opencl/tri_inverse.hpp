@@ -45,7 +45,7 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   if (matrix_view == matrix_cl_view::Entire) {
     tri_view = A.view();
   }
-  if(tri_view == matrix_cl_view::Diagonal){
+  if (tri_view == matrix_cl_view::Diagonal) {
     matrix_cl<T> inv_mat(A.rows(), A.cols());
     diagonal(inv_mat) = elt_divide(1.0, diagonal(A));
     return inv_mat;

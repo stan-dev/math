@@ -44,35 +44,49 @@ TEST_F(AgradDistributionsWishart, Propto) {
   using stan::math::to_var;
   expect_propto_wishart_log(to_var(Y1), to_var(nu1), to_var(S1), to_var(Y2),
                             to_var(nu2), to_var(S2), "var: y, nu, and sigma");
+
+  stan::math::recover_memory();
 }
 TEST_F(AgradDistributionsWishart, ProptoY) {
   using stan::math::to_var;
   expect_propto_wishart_log(to_var(Y1), nu1, S1, to_var(Y2), nu1, S1, "var: y");
+
+  stan::math::recover_memory();
 }
 TEST_F(AgradDistributionsWishart, ProptoYNu) {
   using stan::math::to_var;
   expect_propto_wishart_log(to_var(Y1), to_var(nu1), S1, to_var(Y2),
                             to_var(nu2), S1, "var: y, and nu");
+
+  stan::math::recover_memory();
 }
 TEST_F(AgradDistributionsWishart, ProptoYSigma) {
   using stan::math::to_var;
   expect_propto_wishart_log(to_var(Y1), nu1, to_var(S1), to_var(Y2), nu1,
                             to_var(S2), "var: y and sigma");
+
+  stan::math::recover_memory();
 }
 TEST_F(AgradDistributionsWishart, ProptoNu) {
   using stan::math::to_var;
   expect_propto_wishart_log(Y1, to_var(nu1), S1, Y1, to_var(nu2), S1,
                             "var: nu");
+
+  stan::math::recover_memory();
 }
 TEST_F(AgradDistributionsWishart, ProptoNuSigma) {
   using stan::math::to_var;
   expect_propto_wishart_log(Y1, to_var(nu1), to_var(S1), Y1, to_var(nu2),
                             to_var(S2), "var: nu and sigma");
+
+  stan::math::recover_memory();
 }
 TEST_F(AgradDistributionsWishart, ProptoSigma) {
   using stan::math::to_var;
   expect_propto_wishart_log(Y1, nu1, to_var(S1), Y1, nu1, to_var(S2),
                             "var: sigma");
+
+  stan::math::recover_memory();
 }
 
 TEST(Wishart, check_varis_on_stack) {
@@ -108,4 +122,6 @@ TEST(Wishart, check_varis_on_stack) {
       stan::math::wishart_log<true>(W, to_var(nu), to_var(S)));
   test::check_varis_on_stack(stan::math::wishart_log<true>(W, to_var(nu), S));
   test::check_varis_on_stack(stan::math::wishart_log<true>(W, nu, to_var(S)));
+
+  stan::math::recover_memory();
 }
