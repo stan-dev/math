@@ -32,8 +32,8 @@ inline auto mdivide_left(const T1& A, const T2& B) {
     reverse_pass_callback([arena_A, arena_B, arena_A_val, res]() mutable {
       promote_scalar_t<double, T2> adjB
           = arena_A_val.transpose().householderQr().solve(res.adj());
-        arena_A.adj() -= adjB * res.val_op().transpose();
-        arena_B.adj() += adjB;
+      arena_A.adj() -= adjB * res.val_op().transpose();
+      arena_B.adj() += adjB;
     });
 
     return ret_type(res);
@@ -42,14 +42,16 @@ inline auto mdivide_left(const T1& A, const T2& B) {
     arena_t<promote_scalar_t<double, T1>> arena_A_val = value_of(A);
     arena_t<ret_type> res = arena_A_val.householderQr().solve(arena_B.val());
     reverse_pass_callback([arena_B, arena_A_val, res]() mutable {
-        arena_B.adj() += arena_A_val.transpose().householderQr().solve(res.adj());
+      arena_B.adj() += arena_A_val.transpose().householderQr().solve(res.adj());
     });
     return ret_type(res);
   } else {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
     arena_t<ret_type> res = arena_A.val().householderQr().solve(value_of(B));
     reverse_pass_callback([arena_A, res]() mutable {
-        arena_A.adj() -= arena_A.val().transpose().householderQr().solve(res.adj()) * res.val_op().transpose();
+      arena_A.adj()
+          -= arena_A.val().transpose().householderQr().solve(res.adj())
+             * res.val_op().transpose();
     });
     return ret_type(res);
   }

@@ -10,16 +10,16 @@ TEST(MathMetaPrim, is_eigen_dense_dynamic_hierarchy_tests) {
   using stan::math::test::all_eigen_dense;
   all_eigen_dense<false, true, true, true, true, is_eigen_dense_dynamic, Matrix,
                   -1, -1>();
-  all_eigen_dense<false, false, false, false, false, is_eigen_dense_dynamic, Matrix,
-                  1, -1>();
-  all_eigen_dense<false, false, false, false, false, is_eigen_dense_dynamic, Matrix,
-                  -1, 1>();
+  all_eigen_dense<false, false, false, false, false, is_eigen_dense_dynamic,
+                  Matrix, 1, -1>();
+  all_eigen_dense<false, false, false, false, false, is_eigen_dense_dynamic,
+                  Matrix, -1, 1>();
   all_eigen_dense<false, true, true, true, true, is_eigen_dense_dynamic, Array,
                   -1, -1>();
-  all_eigen_dense<false, false, false, false, false, is_eigen_dense_dynamic, Array,
-                  1, -1>();
-  all_eigen_dense<false, false, false, false, false, is_eigen_dense_dynamic, Array,
-                  -1, 1>();
+  all_eigen_dense<false, false, false, false, false, is_eigen_dense_dynamic,
+                  Array, 1, -1>();
+  all_eigen_dense<false, false, false, false, false, is_eigen_dense_dynamic,
+                  Array, -1, 1>();
 }
 
 TEST(MathMetaPrim, is_eigen_dense_dynamic_sparse_tests) {
@@ -45,14 +45,14 @@ TEST(MathMetaPrim, is_eigen_dense_dynamic_expr_tests) {
   using stan::math::test::all_eigen_dense_exprs;
   all_eigen_dense_exprs<true, true, false, true, is_eigen_dense_dynamic, Matrix,
                         -1, -1>();
-  all_eigen_dense_exprs<false, false, false, true, is_eigen_dense_dynamic, Matrix, 1,
-                        -1>();
-  all_eigen_dense_exprs<false, false, false, true, is_eigen_dense_dynamic, Matrix,
-                        -1, 1>();
+  all_eigen_dense_exprs<false, false, false, true, is_eigen_dense_dynamic,
+                        Matrix, 1, -1>();
+  all_eigen_dense_exprs<false, false, false, true, is_eigen_dense_dynamic,
+                        Matrix, -1, 1>();
   all_eigen_dense_exprs<true, true, false, true, is_eigen_dense_dynamic, Array,
                         -1, -1>();
-  all_eigen_dense_exprs<false, false, false, true, is_eigen_dense_dynamic, Array,
-                        1, -1>();
-  all_eigen_dense_exprs<false, false, false, true, is_eigen_dense_dynamic, Array,
-                        -1, 1>();
+  all_eigen_dense_exprs<false, false, false, true, is_eigen_dense_dynamic,
+                        Array, 1, -1>();
+  all_eigen_dense_exprs<false, false, false, true, is_eigen_dense_dynamic,
+                        Array, -1, 1>();
 }
