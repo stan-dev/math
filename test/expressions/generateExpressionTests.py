@@ -79,6 +79,44 @@ def parse_signature_file(sig_file):
         res.append(signature)
     return res
 
+def add_extra_signatures(res):
+    """
+    Adds signatures not defined in the stan language that can still accept
+     expression types.
+    """
+    res.extend(["vector unit_vector_constrain(vector)",
+        "vector unit_vector_constrain(row_vector)",
+        "vector unit_vector_constrain(vector, real)",
+        "vector unit_vector_constrain(row_vector, real)",
+        "vector unit_vector_free(vector)",
+        "vector unit_vector_free(row_vector)",
+        "int is_cholesky_factor(matrix)",
+        "int is_cholesky_factor_corr(matrix)",
+        "int is_column_index(matrix, int)",
+        "int is_column_index(vector, int)",
+        "int is_corr_matrix(matrix)",
+        "int is_cholesky_factor(matrix)",
+        "int is_lower_triangular(matrix)",
+        "int is_mat_finite(matrix)",
+        "int is_mat_finite(vector)",
+        "int is_matching_dims(matrix, matrix)",
+        "int is_matching_dims(vector, matrix)",
+        "int is_matching_dims(matrix, vector)",
+        "int is_matching_dims(row_vector, matrix)",
+        "int is_matching_dims(matrix, row_vector)",
+        "int is_matching_dims(matrix, matrix)",
+        "int is_matching_dims(row_vector, row_vector)",
+        "int is_matching_dims(vector, row_vector)",
+        "int is_matching_dims(row_vector, vector)",
+        "int is_matching_dims(vector, vector)",
+        "int is_pos_definite(matrix)",
+        "int is_square(matrix)",
+        "int is_square(vector)",
+        "int is_square(row_vector)",
+        "int is_symmetric(matrix)",
+        "int is_unit_vector(vector)",
+        "int is_unit_vector(row_matrix)"])
+    return res
 
 def get_signatures():
     """
@@ -100,14 +138,13 @@ def get_signatures():
         universal_newlines=True,
         shell=True,
     )
-
     res = parse_signature_file(p.stdout)
-
     if p.wait() != 0:
         sys.stderr.write("Error in getting signatures from stanc3!\n")
         sys.exit(-1)
 
-    return res
+    res_full = add_extra_signatures(res)
+    return res_full
 
 
 def parse_signature(signature):
@@ -143,6 +180,7 @@ special_arg_values = {
     "multinomial_log" : [None, 1],
     "multinomial_lpmf" : [None, 1],
     "multinomial_rng" : [1, None, None],
+    "unit_vector_free" : [1.0],
     "wiener_log" : [0.8, None, 0.4, None, None],
     "wiener_lpdf" : [0.8, None, 0.4, None, None],
 }

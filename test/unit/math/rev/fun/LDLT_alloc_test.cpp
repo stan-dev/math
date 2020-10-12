@@ -25,6 +25,8 @@ TEST(AgradRevMatrix, LDLT_alloc_default_constructor) {
 #endif
 
 #endif
+
+  stan::math::recover_memory();
 }
 
 TEST(AgradRevMatrix, LDLT_alloc_constructor) {
@@ -51,6 +53,8 @@ TEST(AgradRevMatrix, LDLT_alloc_constructor) {
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 2; j++)
       EXPECT_FLOAT_EQ(expectedL(i, j), L(i, j));
+
+  stan::math::recover_memory();
 }
 
 TEST(AgradRevMatrix, LDLT_alloc_compute) {
@@ -78,4 +82,6 @@ TEST(AgradRevMatrix, LDLT_alloc_compute) {
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 2; j++)
       EXPECT_FLOAT_EQ(expectedL(i, j), L(i, j));
+
+  stan::math::recover_memory();
 }

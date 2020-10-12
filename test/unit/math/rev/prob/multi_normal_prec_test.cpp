@@ -15,6 +15,8 @@ TEST(ProbDistributionsMultiNormalPrec, MultiNormalVar) {
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   Matrix<var, Dynamic, Dynamic> L = Sigma.inverse();
   EXPECT_FLOAT_EQ(-11.73908, stan::math::multi_normal_prec_log(y, mu, L).val());
+
+  stan::math::recover_memory();
 }
 
 TEST(ProbDistributionsMultiNormalPrec, check_varis_on_stack) {
@@ -59,4 +61,6 @@ TEST(ProbDistributionsMultiNormalPrec, check_varis_on_stack) {
       stan::math::multi_normal_prec_log<false>(y, to_var(mu), L));
   test::check_varis_on_stack(
       stan::math::multi_normal_prec_log<false>(y, mu, to_var(L)));
+
+  stan::math::recover_memory();
 }
