@@ -78,4 +78,6 @@ TEST(mathMixMatFun, traceGenInvQuadForm) {
   // b, c not multiplicable
   Eigen::MatrixXd b43(4, 3);
   stan::test::expect_ad(f, c, a, b43);
+
+  stan::math::recover_memory();
 }

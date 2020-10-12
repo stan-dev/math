@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/prob/normal_rng.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -40,15 +41,18 @@ skew_normal_rng(const T_loc& mu, const T_scale& sigma, const T_shape& alpha,
   using boost::variate_generator;
   using boost::random::normal_distribution;
   static const char* function = "skew_normal_rng";
-  check_finite(function, "Location parameter", mu);
-  check_positive_finite(function, "Scale parameter", sigma);
-  check_finite(function, "Shape parameter", alpha);
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",
                          sigma, "Shape Parameter", alpha);
+  const auto& mu_ref = to_ref(mu);
+  const auto& sigma_ref = to_ref(sigma);
+  const auto& alpha_ref = to_ref(alpha);
+  check_finite(function, "Location parameter", mu_ref);
+  check_positive_finite(function, "Scale parameter", sigma_ref);
+  check_finite(function, "Shape parameter", alpha_ref);
 
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
+  scalar_seq_view<T_loc> mu_vec(mu_ref);
+  scalar_seq_view<T_scale> sigma_vec(sigma_ref);
+  scalar_seq_view<T_shape> alpha_vec(alpha_ref);
   size_t N = max_size(mu, sigma, alpha);
   VectorBuilder<true, double, T_loc, T_scale, T_shape> output(N);
 

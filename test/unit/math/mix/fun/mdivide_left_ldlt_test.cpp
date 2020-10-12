@@ -55,4 +55,6 @@ TEST(MathMixMatFun, mdivideLeftLdlt) {
   stan::test::expect_ad(f, m44, rv3);
   stan::test::expect_ad(f, m44, rv4);
   stan::test::expect_ad(f, m44, v3);
+
+  stan::math::recover_memory();
 }
