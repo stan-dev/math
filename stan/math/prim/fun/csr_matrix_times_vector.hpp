@@ -49,8 +49,8 @@ namespace math {
  * column index of each value), the integer array u (containing
  * one-based indexes of where each row starts in w).
  *
- * @tparam T1 type of elements in the sparse matrix
- * @tparam T2 type of elements in the dense vector
+ * @tparam T1 type of the sparse matrix
+ * @tparam T2 type of the dense vector
  * @param m Number of rows in matrix.
  * @param n Number of columns in matrix.
  * @param w Vector of non-zero values in matrix.
@@ -72,9 +72,9 @@ namespace math {
 template <typename T1, typename T2>
 inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1>
 csr_matrix_times_vector(int m, int n,
-                        const Eigen::Matrix<T1, Eigen::Dynamic, 1>& w,
+                        const T1& w,
                         const std::vector<int>& v, const std::vector<int>& u,
-                        const Eigen::Matrix<T2, Eigen::Dynamic, 1>& b) {
+                        const T2& b) {
   using result_t = return_type_t<T1, T2>;
 
   check_positive("csr_matrix_times_vector", "m", m);
@@ -99,9 +99,9 @@ csr_matrix_times_vector(int m, int n,
     for (int nze = u[row] - stan::error_index::value; nze < row_end_in_w;
          ++nze, ++i) {
       check_range("csr_matrix_times_vector", "j", n, v[nze]);
-      b_sub.coeffRef(i) = b.coeffRef(v[nze] - stan::error_index::value);
+      b_sub.coeffRef(i) = b.coeff(v[nze] - stan::error_index::value);
     }
-    Eigen::Matrix<T1, Eigen::Dynamic, 1> w_sub(
+    Eigen::Matrix<value_type_t<T1>, Eigen::Dynamic, 1> w_sub(
         w.segment(u[row] - stan::error_index::value, idx));
     result.coeffRef(row) = dot_product(w_sub, b_sub);
   }

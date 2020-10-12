@@ -33,11 +33,13 @@ namespace internal {
  * @tparam T_shared_param type of shared parameters
  * @tparam T_job_param type of job specific parameters
  */
-template <typename F, typename T_shared_param, typename T_job_param>
+template <typename F, typename T_shared_param, typename T_job_param,
+          typename = void>
 class map_rect_reduce {};
 
-template <typename F>
-class map_rect_reduce<F, double, double> {
+template <typename F, typename T_shared_param>
+class map_rect_reduce<F, T_shared_param, double,
+                      require_same_t<scalar_type_t<T_shared_param>, double>> {
  public:
   matrix_d operator()(const vector_d& shared_params,
                       const vector_d& job_specific_params,

@@ -66,6 +66,10 @@ template <typename T, require_same_t<T, std::minstd_rand>* = nullptr>
 T make_arg(double value = 0.4) {
   return std::minstd_rand(0);
 }
+template <typename T, require_same_t<T, std::ostream*>* = nullptr>
+T make_arg(double value = 0.4) {
+  return nullptr;
+}
 
 template <typename T, require_arithmetic_t<T>* = nullptr>
 void expect_eq(T a, T b, const char* msg) {
@@ -147,7 +151,46 @@ void expect_adj_eq(const std::vector<T>& a, const std::vector<T>& b,
 }  // namespace test
 
 namespace math {
+namespace internal {
+template <typename T1, typename T2>
+struct test_functor {
+  Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1> operator()(
+      const Eigen::Matrix<T1, Eigen::Dynamic, 1>& a,
+      const Eigen::Matrix<T2, Eigen::Dynamic, 1>&, const std::vector<double>&,
+      const std::vector<int>&, std::ostream* msg) const {
+    return a;
+  }
+};
+}  // namespace internal
 
+// map_rect in math does not match the signature reported by compiler. This
+// helper does and calls the map_rect from math
+template <typename F, typename T_shared_param, typename T_job_param,
+          typename T_x_r>
+auto map_rect(const F& functor, const T_shared_param& shared_params,
+              const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>&
+                  job_params,
+              const std::vector<std::vector<T_x_r>>& x_r,
+              const std::vector<std::vector<int>>& x_i) {
+  return map_rect<0, internal::test_functor<scalar_type_t<T_shared_param>,
+                                            scalar_type_t<T_job_param>>>(
+      shared_params, job_params, value_of(x_r), x_i);
+}
+
+template <typename F, typename T1, typename T2, typename T3, typename T4>
+auto algebra_solver_newton(const F& f, const T1& x, const T2& y,
+                           const std::vector<double>& dat,
+                           const std::vector<int>& dat_int,
+                           double scaling_step_size = 1e-3,
+                           double function_tolerance = 1e-6,
+                           long int max_num_steps = 200) {
+  return algebra_solver_newton(
+      internal::test_functor<scalar_type_t<T1>, scalar_type_t<T2>>(), x, y, dat,
+      dat_int, nullptr, value_of(scaling_step_size),
+      value_of(function_tolerance), max_num_steps);
+}
+
+// functions for testing the expression testing framework
 template <typename T>
 auto bad_no_expressions(const Eigen::Matrix<T, -1, -1>& a) {
   return a;

@@ -27,7 +27,9 @@ arg_types = {
     "row_vector[]": "std::vector<Eigen::Matrix<SCALAR, 1, Eigen::Dynamic>>",
     "matrix": "Eigen::Matrix<SCALAR, Eigen::Dynamic, Eigen::Dynamic>",
     "(vector, vector, data real[], data int[]) => vector": "auto",
+	"(real, vector) => vector": "auto",
     "rng": "std::minstd_rand",
+	"ostream_ptr": "std::ostream*"
 }
 
 test_code_template = """
@@ -115,7 +117,16 @@ def add_extra_signatures(res):
         "int is_square(row_vector)",
         "int is_symmetric(matrix)",
         "int is_unit_vector(vector)",
-        "int is_unit_vector(row_matrix)"])
+        "int is_unit_vector(row_matrix)",
+		#variadic functions
+		"real[,] ode_adams((real, vector) => vector, vector, real, real[])",
+		"real[,] ode_adams_tol((real, vector) => vector, vector, real, real[], real, real, real)",
+		"real[,] ode_bdf((real, vector) => vector, vector, real, real[])",
+		"real[,] ode_bdf_tol((real, vector) => vector, vector, real, real[], real, real, real)",
+		"real[,] ode_rk45((real, vector) => vector, vector, real, real[])",
+		"real[,] ode_rk45_tol((real, vector) => vector, vector, real, real[], real, real, real)",
+		#TODO reduce_sum
+		])
     return res
 
 def get_signatures():
@@ -168,11 +179,13 @@ special_arg_values = {
     "categorical_log": [None, 1],
     "categorical_rng": [1, None],
     "categorical_lpmf": [None, 1],
+    "distance" : [0.6, 0.4],
     "dirichlet_log" : [1, None],
     "dirichlet_lpdf" : [1, None],
     "hmm_hidden_state_prob": [None, 1, 1],
     "hmm_latent_rng": [None, 1, 1, None],
     "hmm_marginal": [None, 1, 1],
+    "lambert_wm1": [-0.3],
     "lkj_corr_lpdf": [1, None],
     "lkj_corr_log": [1, None],
     "log_diff_exp": [3, None],
@@ -180,8 +193,22 @@ special_arg_values = {
     "multinomial_log" : [None, 1],
     "multinomial_lpmf" : [None, 1],
     "multinomial_rng" : [1, None, None],
+    "ode_adams_tol": [None, None, 0.2, 0.4, None, None, 10, None],
+    "ode_adams": [None, None, 0.2, 0.4, None],
+    "ode_bdf_tol": [None, None, 0.2, 0.4, None, None, 10, None],
+    "ode_bdf": [None, None, 0.2, 0.4, None],
+    "ode_rk45_tol": [None, None, 0.2, 0.4, None, None, 10, None],
+    "ode_rk45": [None, None, 0.2, 0.4, None],
     "unit_vector_free" : [1.0],
+}
 
+# list of function argument indices, for which real valued arguments are not differentiable 
+# - they need to be double even in autodiff overloads
+non_differentiable_args = {
+    "algebra_solver_newton": [3],
+    "ode_adams_tol": [4, 5, 6],
+    "ode_bdf_tol": [4, 5, 6],
+    "ode_rk45_tol": [4, 5, 6],
 }
 
 
@@ -200,10 +227,18 @@ def make_arg_code(arg, scalar, var_name, var_number, function_name):
     :param function_name: name of the function that will be tested using this argument
     :return: code for declaration and initialization of an argument
     """
+    if function_name in non_differentiable_args and \
+	        var_number in non_differentiable_args[function_name]:
+        scalar = "double"
     arg_type = arg_types[arg].replace("SCALAR", scalar)
     if arg == "(vector, vector, data real[], data int[]) => vector":
         return (
             "  %s %s = [](const auto& a, const auto&, const auto&, const auto&){return a;}"
+            % (arg_type, var_name)
+        )
+    elif arg == "(real, vector) => vector":
+        return (
+            "  %s %s = [](const auto&, const auto& a, auto*){return a;}"
             % (arg_type, var_name)
         )
     elif (
@@ -216,6 +251,8 @@ def make_arg_code(arg, scalar, var_name, var_number, function_name):
             arg_type,
             special_arg_values[function_name][var_number],
         )
+    elif function_name in ("csr_to_dense_matrix", "csr_matrix_times_vector") and var_number == 4:
+	    return "  {} {}{{1, 2}}".format(arg_type, var_name,)
     else:
         return "  %s %s = stan::test::make_arg<%s>()" % (arg_type, var_name, arg_type,)
 
@@ -259,7 +296,17 @@ def handle_function_list(functions_input, signatures):
 
 # lists of functions that do not support fwd or rev autodiff
 no_rev_overload = ["hmm_hidden_state_prob"]
-no_fwd_overload = ["hmm_hidden_state_prob"]
+no_fwd_overload = [
+    "hmm_hidden_state_prob", 
+	"map_rect", 
+	"matrix_exp_multiply", 
+	"ode_adams", 
+	"ode_adams_tol", 
+	"ode_bdf", 
+	"ode_bdf_tol", 
+	"ode_rk45", 
+	"ode_rk45_tol"
+]
 
 
 def main(functions=(), j=1):
@@ -312,6 +359,8 @@ def main(functions=(), j=1):
 
         if function_name.endswith("_rng"):
             function_args.append("rng")
+        if function_name.startswith("ode_"):
+            function_args.append("ostream_ptr")
 
         for overload, scalar in (
             ("Prim", "double"),
@@ -382,7 +431,7 @@ def main(functions=(), j=1):
                 checks += "  (stan::test::recursive_sum(res_mat) + stan::test::recursive_sum(res_expr)).grad();\n"
                 for n, arg in enumerate(function_args):
                     # functors don't have adjoints to check
-                    if arg == "(vector, vector, data real[], data int[]) => vector":
+                    if "=>" in arg:
                         continue
                     checks += "  EXPECT_STAN_ADJ_EQ(arg_expr%d,arg_mat%d);\n" % (n, n,)
             tests.append(
