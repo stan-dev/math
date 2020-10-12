@@ -64,4 +64,6 @@ TEST(MathMixMatFun, mdivideRightLdlt) {
   stan::test::expect_ad(f, m33, m44);  // wrong size
   stan::test::expect_ad(f, rv3, m44);  // wrong size
   stan::test::expect_ad(f, v3, m33);   // wrong type
+
+  stan::math::recover_memory();
 }
