@@ -47,34 +47,35 @@ class unit_vector_elt_vari : public vari {
  * Return the unit length vector corresponding to the free vector y.
  * See https://en.wikipedia.org/wiki/N-sphere#Generating_random_points
  *
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam EigMat type inheriting from `EigenBase` that has a `var`
+ *  scalar type.
  * @param y vector of K unrestricted variables
  * @return Unit length vector of dimension K
  **/
-template <int R, int C>
-Eigen::Matrix<var, R, C> unit_vector_constrain(
-    const Eigen::Matrix<var, R, C>& y) {
-  check_vector("unit_vector", "y", y);
-  check_nonzero_size("unit_vector", "y", y);
-  vector_d y_d = y.val();
+template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
+auto unit_vector_constrain(const EigMat& y) {
+  const auto& y_mat = to_ref(y);
+  check_vector("unit_vector", "y", y_mat);
+  check_nonzero_size("unit_vector", "y", y_mat);
+  auto y_d = y_mat.val();
 
   vari** y_vi_array = reinterpret_cast<vari**>(
-      ChainableStack::instance_->memalloc_.alloc(sizeof(vari*) * y.size()));
+      ChainableStack::instance_->memalloc_.alloc(sizeof(vari*) * y_mat.size()));
   double* unit_vector_y_d_array = reinterpret_cast<double*>(
       ChainableStack::instance_->memalloc_.alloc(sizeof(double) * y_d.size()));
 
-  Eigen::Map<vector_vi>(y_vi_array, y.size()) = y.vi();
+  Eigen::Map<vector_vi>(y_vi_array, y_mat.size()) = y_mat.vi();
   const double norm = y_d.norm();
-
   check_positive_finite("unit_vector", "norm", norm);
-  Eigen::Map<vector_d> unit_vecd(unit_vector_y_d_array, y.size());
+  Eigen::Map<vector_d> unit_vecd(unit_vector_y_d_array, y_mat.size());
   unit_vecd = y_d / norm;
 
-  Eigen::Matrix<var, R, C> unit_vector_y(y.size());
-  for (int k = 0; k < y.size(); ++k)
+  plain_type_t<EigMat> unit_vector_y(y_mat.size());
+  for (int k = 0; k < y_mat.size(); ++k) {
     unit_vector_y.coeffRef(k) = var(new internal::unit_vector_elt_vari(
-        unit_vecd[k], y_vi_array, unit_vector_y_d_array, y.size(), k, norm));
+        unit_vecd[k], y_vi_array, unit_vector_y_d_array, y_mat.size(), k,
+        norm));
+  }
   return unit_vector_y;
 }
 
@@ -82,17 +83,17 @@ Eigen::Matrix<var, R, C> unit_vector_constrain(
  * Return the unit length vector corresponding to the free vector y.
  * See https://en.wikipedia.org/wiki/N-sphere#Generating_random_points
  *
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam EigMat type inheriting from `EigenBase` that has a `var`
+ *  scalar type.
  * @param y vector of K unrestricted variables
  * @return Unit length vector of dimension K
  * @param lp Log probability reference to increment.
  **/
-template <int R, int C>
-Eigen::Matrix<var, R, C> unit_vector_constrain(
-    const Eigen::Matrix<var, R, C>& y, var& lp) {
-  Eigen::Matrix<var, R, C> x = unit_vector_constrain(y);
-  lp -= 0.5 * dot_self(y);
+template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
+auto unit_vector_constrain(const EigMat& y, var& lp) {
+  const auto& y_ref = to_ref(y);
+  auto x = unit_vector_constrain(y_ref);
+  lp -= 0.5 * dot_self(y_ref);
   return x;
 }
 
