@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <stan/math.hpp>
 
 namespace unit_vector_constrain_test {
 template <typename T>

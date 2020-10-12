@@ -1,8 +1,9 @@
 #ifndef STAN_MATH_PRIM_ERR_CHECK_CHOLESKY_FACTOR_CORR_HPP
 #define STAN_MATH_PRIM_ERR_CHECK_CHOLESKY_FACTOR_CORR_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/err/check_positive.hpp>
 #include <stan/math/prim/err/check_lower_triangular.hpp>
 #include <stan/math/prim/err/check_square.hpp>
@@ -19,7 +20,8 @@ namespace math {
  * be square, but require at least as many rows M as columns N
  * (i.e., M &gt;= N).
  * Tolerance is specified by <code>math::CONSTRAINT_TOLERANCE</code>.
- * @tparam T_y Type of elements of Cholesky factor
+ * @tparam EigMat Type inheriting from `MatrixBase` with dynamic rows and
+ * columns.
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Matrix to test
@@ -27,16 +29,15 @@ namespace math {
  *   factor, if number of rows is less than the number of columns,
  *   if there are 0 columns, or if any element in matrix is NaN
  */
-template <typename T_y>
-void check_cholesky_factor_corr(
-    const char* function, const char* name,
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
-  check_square(function, name, y);
-  check_lower_triangular(function, name, y);
-  check_positive(function, name, y.diagonal());
-  for (int i = 0; i < y.rows(); ++i) {
-    Eigen::Matrix<T_y, Eigen::Dynamic, 1> y_i = y.row(i).transpose();
-    check_unit_vector(function, name, y_i);
+template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr>
+void check_cholesky_factor_corr(const char* function, const char* name,
+                                const EigMat& y) {
+  const auto& y_ref = to_ref(y);
+  check_square(function, name, y_ref);
+  check_lower_triangular(function, name, y_ref);
+  check_positive(function, name, y_ref.diagonal());
+  for (Eigen::Index i = 0; i < y_ref.rows(); ++i) {
+    check_unit_vector(function, name, y_ref.row(i));
   }
 }
 

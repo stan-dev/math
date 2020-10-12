@@ -13,16 +13,15 @@ namespace math {
  *
  * The specified matrix is filled by element.
  *
- * @tparam T type of elements in the matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam EigMat Type inheriting from `EigenBase`
  * @tparam S Type of value.
  *
  * @param x Container.
  * @param y Value.
  */
-template <typename T, int R, int C, typename S>
-void fill(Eigen::Matrix<T, R, C>& x, const S& y) {
+template <typename EigMat, typename S, require_eigen_t<EigMat>* = nullptr,
+          require_stan_scalar_t<S>* = nullptr>
+inline void fill(EigMat& x, const S& y) {
   x.fill(y);
 }
 
@@ -36,9 +35,11 @@ void fill(Eigen::Matrix<T, R, C>& x, const S& y) {
  * @param x Container.
  * @param y Value.
  */
-template <typename T, typename S>
-void fill(T& x, const S& y) {
-  x = y;
+template <
+    typename T, typename S,
+    require_t<std::is_assignable<std::decay_t<T>&, std::decay_t<S>>>* = nullptr>
+inline void fill(T& x, S&& y) {
+  x = std::forward<S>(y);
 }
 
 /**
@@ -47,15 +48,15 @@ void fill(T& x, const S& y) {
  * Each container in the specified standard vector is filled
  * recursively by calling <code>fill</code>.
  *
- * @tparam T type of elements in the vector
+ * @tparam Vec A standard vector
  * @tparam S type of value
  * @param[in] x Container.
  * @param[in, out] y Value.
  */
-template <typename T, typename S>
-void fill(std::vector<T>& x, const S& y) {
-  for (typename std::vector<T>::size_type i = 0; i < x.size(); ++i) {
-    fill(x[i], y);
+template <typename Vec, typename S, require_std_vector_t<Vec>* = nullptr>
+inline void fill(Vec& x, S&& y) {
+  for (auto& x_val : x) {
+    fill(x_val, y);
   }
 }
 
