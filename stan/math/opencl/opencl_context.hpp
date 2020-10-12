@@ -194,7 +194,6 @@ class opencl_context_base {
     int tri_inverse_size_worth_transfer = 100;
   } tuning_opts_;
 
-
  protected:
   static opencl_context_base& getInstance() {
     static opencl_context_base instance_;
