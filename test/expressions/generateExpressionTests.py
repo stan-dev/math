@@ -143,8 +143,8 @@ special_arg_values = {
     "multinomial_log" : [None, 1],
     "multinomial_lpmf" : [None, 1],
     "multinomial_rng" : [1, None, None],
-    "wiener_log" : [0.8, None, 0.4, None],
-    "wiener_lpdf" : [0.8, None, 0.4, None],
+    "wiener_log" : [0.8, None, 0.4, None, None],
+    "wiener_lpdf" : [0.8, None, 0.4, None, None],
 }
 
 
