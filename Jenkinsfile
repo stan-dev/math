@@ -244,6 +244,7 @@ pipeline {
                         sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
                         sh "make -j${env.PARALLEL} test-headers"
                         runTests("test/unit/math/opencl")
+						runTests("test/unit/multiple_translation_units_test.cpp")
                         runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test")
                         runTests("test/unit/math/prim/fun/mdivide_left_tri_test")
                         runTests("test/unit/math/prim/fun/mdivide_right_tri_test")
