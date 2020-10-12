@@ -11,14 +11,13 @@ namespace stan {
 namespace math {
 
 template <typename EigMat, require_eigen_vt<is_fvar, EigMat>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
-                     EigMat::RowsAtCompileTime>
-tcrossprod(const EigMat& m) {
+inline auto tcrossprod(const EigMat& m) {
+  using ret_type = plain_type_t<decltype(multiply(m, m.transpose()))>;
   if (m.rows() == 0) {
-    return {};
+    return ret_type{};
   }
   const auto& m_ref = to_ref(m);
-  return multiply(m_ref, m_ref.transpose());
+  return ret_type(multiply(m_ref, m_ref.transpose()));
 }
 
 }  // namespace math
