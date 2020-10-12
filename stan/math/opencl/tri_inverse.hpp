@@ -38,15 +38,19 @@ namespace math {
 template <matrix_cl_view matrix_view = matrix_cl_view::Entire, typename T,
           typename = require_floating_point_t<T>>
 inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
+  check_square("tri_inverse (OpenCL)", "A", A);
   // if the triangular view is not specified use the triangularity of
   // the input matrix
   matrix_cl_view tri_view = matrix_view;
-  if (matrix_view == matrix_cl_view::Entire
-      || matrix_view == matrix_cl_view::Diagonal) {
+  if (matrix_view == matrix_cl_view::Entire) {
     tri_view = A.view();
   }
+  if(tri_view == matrix_cl_view::Diagonal){
+    matrix_cl<T> inv_mat(A.rows(), A.cols());
+    diagonal(inv_mat) = elt_divide(1.0, diagonal(A));
+    return inv_mat;
+  }
   check_triangular("tri_inverse (OpenCL)", "A", A);
-  check_square("tri_inverse (OpenCL)", "A", A);
 
   int thread_block_2D_dim = 32;
   int max_1D_thread_block_size = opencl_context.max_thread_block_size();
