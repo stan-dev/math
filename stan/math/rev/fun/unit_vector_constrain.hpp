@@ -21,8 +21,8 @@ namespace math {
  * Return the unit length vector corresponding to the free vector y.
  * See https://en.wikipedia.org/wiki/N-sphere#Generating_random_points
  *
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam EigMat type inheriting from `EigenBase` that has a `var`
+ *  scalar type.
  * @param y vector of K unrestricted variables
  * @return Unit length vector of dimension K
  **/
@@ -53,8 +53,8 @@ inline auto unit_vector_constrain(const T& y) {
  * Return the unit length vector corresponding to the free vector y.
  * See https://en.wikipedia.org/wiki/N-sphere#Generating_random_points
  *
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam EigMat type inheriting from `EigenBase` that has a `var`
+ *  scalar type.
  * @param y vector of K unrestricted variables
  * @return Unit length vector of dimension K
  * @param lp Log probability reference to increment.

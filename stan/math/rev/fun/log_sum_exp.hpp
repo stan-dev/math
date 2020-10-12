@@ -70,7 +70,7 @@ inline auto log_sum_exp(const T& x) {
   return apply_vector_unary<T>::reduce(x, [](const auto& v) {
     auto arena_v = to_arena(v);
 
-    var res = log_sum_exp(value_of(arena_v));
+    var res = log_sum_exp(arena_v.val());
 
     reverse_pass_callback([arena_v, res]() mutable {
       arena_v.adj()

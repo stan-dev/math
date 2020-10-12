@@ -19,15 +19,14 @@ inline auto multiply_lower_tri_self_transpose(const T& L) {
   }
 
   arena_t<T> arena_L = L;
-  arena_t<Eigen::MatrixXd> arena_L_val
-      = value_of(arena_L).template triangularView<Eigen::Lower>();
+  arena_t<promote_scalar_t<double, T>> arena_L_val
+      = arena_L.val().template triangularView<Eigen::Lower>();
 
   arena_t<T> res = arena_L_val.template triangularView<Eigen::Lower>()
                    * arena_L_val.transpose();
 
   reverse_pass_callback([res, arena_L, arena_L_val]() mutable {
-    const auto& adj = to_ref(res.adj());
-    arena_L.adj() += ((adj.transpose() + adj)
+    arena_L.adj() += ((res.adj().transpose() + res.adj())
                       * arena_L_val.template triangularView<Eigen::Lower>())
                          .template triangularView<Eigen::Lower>();
   });
