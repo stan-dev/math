@@ -89,7 +89,7 @@ return_type_t<T_y, T_dof, T_scale> wishart_lpdf(const T_y& W, const T_dof& nu,
   if (include_summand<propto, T_scale, T_y>::value) {
     Matrix<return_type_t<T_y, T_scale>, Dynamic, Dynamic> Sinv_W(
         mdivide_left_ldlt(ldlt_S, static_cast<plain_type_t<T_y>>(
-                                      W.template selfadjointView<Lower>())));
+                                      W_ref.template selfadjointView<Lower>())));
     lp -= 0.5 * trace(Sinv_W);
   }
 
