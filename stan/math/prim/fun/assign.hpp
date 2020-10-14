@@ -415,7 +415,7 @@ inline void assign(Mat1&& x, const cons_index_list<Idx, nil_index_list>& idxs,
  * @tparam Mat2 Eigen type with dynamic rows and columns.
  * @param[in] x Matrix variable to be assigned.
  * @param[in] idxs An index list containing two min_max indices
- * @param[in] x Matrix variable to assign from.
+ * @param[in] y Matrix variable to assign from.
  * @param[in] name Name of variable (default "ANON").
  * @param[in] depth Indexing depth (default 0).
  * @throw std::out_of_range If any of the indices are out of bounds.
