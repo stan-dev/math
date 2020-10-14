@@ -2,22 +2,20 @@
 #include <gtest/gtest.h>
 
 namespace stan {
-    namespace test {
-      namespace indexing {
-        template <typename T1, typename I, typename T2>
-        void test_throw(T1& lhs, const I& idxs, const T2& rhs) {
-          EXPECT_THROW(stan::math::assign(lhs, idxs, rhs), std::out_of_range);
-        }
-
-        template <typename T1, typename I, typename T2>
-        void test_throw_ia(T1& lhs, const I& idxs, const T2& rhs) {
-          EXPECT_THROW(stan::math::assign(lhs, idxs, rhs), std::invalid_argument);
-        }
-      }
-  }
+namespace test {
+namespace indexing {
+template <typename T1, typename I, typename T2>
+void test_throw(T1& lhs, const I& idxs, const T2& rhs) {
+  EXPECT_THROW(stan::math::assign(lhs, idxs, rhs), std::out_of_range);
 }
 
-
+template <typename T1, typename I, typename T2>
+void test_throw_ia(T1& lhs, const I& idxs, const T2& rhs) {
+  EXPECT_THROW(stan::math::assign(lhs, idxs, rhs), std::invalid_argument);
+}
+}  // namespace indexing
+}  // namespace test
+}  // namespace stan
 
 TEST(ModelIndexing, lvalueNil) {
   using stan::math::assign;
@@ -127,10 +125,14 @@ TEST(ModelIndexing, lvalueUniUni) {
   assign(xs, index_list(index_uni(2), index_uni(3)), y);
   EXPECT_FLOAT_EQ(y, xs[1][2]);
 
-  stan::test::indexing::test_throw(xs, index_list(index_uni(0), index_uni(3)), y);
-  stan::test::indexing::test_throw(xs, index_list(index_uni(2), index_uni(0)), y);
-  stan::test::indexing::test_throw(xs, index_list(index_uni(10), index_uni(3)), y);
-  stan::test::indexing::test_throw(xs, index_list(index_uni(2), index_uni(10)), y);
+  stan::test::indexing::test_throw(xs, index_list(index_uni(0), index_uni(3)),
+                                   y);
+  stan::test::indexing::test_throw(xs, index_list(index_uni(2), index_uni(0)),
+                                   y);
+  stan::test::indexing::test_throw(xs, index_list(index_uni(10), index_uni(3)),
+                                   y);
+  stan::test::indexing::test_throw(xs, index_list(index_uni(2), index_uni(10)),
+                                   y);
 }
 
 TEST(ModelIndexing, lvalueUniUniEigen) {
@@ -151,10 +153,14 @@ TEST(ModelIndexing, lvalueUniUniEigen) {
   assign(xs, index_list(index_uni(2), index_uni(3)), y);
   EXPECT_FLOAT_EQ(y, xs[1][2]);
 
-  stan::test::indexing::test_throw(xs, index_list(index_uni(0), index_uni(3)), y);
-  stan::test::indexing::test_throw(xs, index_list(index_uni(2), index_uni(0)), y);
-  stan::test::indexing::test_throw(xs, index_list(index_uni(10), index_uni(3)), y);
-  stan::test::indexing::test_throw(xs, index_list(index_uni(2), index_uni(10)), y);
+  stan::test::indexing::test_throw(xs, index_list(index_uni(0), index_uni(3)),
+                                   y);
+  stan::test::indexing::test_throw(xs, index_list(index_uni(2), index_uni(0)),
+                                   y);
+  stan::test::indexing::test_throw(xs, index_list(index_uni(10), index_uni(3)),
+                                   y);
+  stan::test::indexing::test_throw(xs, index_list(index_uni(2), index_uni(10)),
+                                   y);
 }
 
 TEST(ModelIndexing, lvalueMulti) {
@@ -268,8 +274,10 @@ TEST(ModelIndexing, lvalueMultiMulti) {
     for (int j = 0; j < 3; ++j)
       EXPECT_FLOAT_EQ(ys[i][j], xs[8 + i][j]);
 
-  stan::test::indexing::test_throw_ia(xs, index_list(index_min(7), index_max(3)), ys);
-  stan::test::indexing::test_throw_ia(xs, index_list(index_min(9), index_max(2)), ys);
+  stan::test::indexing::test_throw_ia(
+      xs, index_list(index_min(7), index_max(3)), ys);
+  stan::test::indexing::test_throw_ia(
+      xs, index_list(index_min(9), index_max(2)), ys);
 }
 
 TEST(ModelIndexing, lvalueMultiMultiEigen) {
@@ -301,8 +309,10 @@ TEST(ModelIndexing, lvalueMultiMultiEigen) {
     for (int j = 0; j < 3; ++j)
       EXPECT_FLOAT_EQ(ys[i][j], xs[8 + i][j]);
 
-  stan::test::indexing::test_throw_ia(xs, index_list(index_min(7), index_max(3)), ys);
-  stan::test::indexing::test_throw_ia(xs, index_list(index_min(9), index_max(2)), ys);
+  stan::test::indexing::test_throw_ia(
+      xs, index_list(index_min(7), index_max(3)), ys);
+  stan::test::indexing::test_throw_ia(
+      xs, index_list(index_min(9), index_max(2)), ys);
 }
 
 TEST(ModelIndexing, lvalueUniMulti) {
@@ -327,9 +337,12 @@ TEST(ModelIndexing, lvalueUniMulti) {
   for (int j = 0; j < 3; ++j)
     EXPECT_FLOAT_EQ(ys[j], xs[3][j + 2]);
 
-  stan::test::indexing::test_throw(xs, index_list(index_uni(0), index_min_max(3, 5)), ys);
-  stan::test::indexing::test_throw(xs, index_list(index_uni(11), index_min_max(3, 5)), ys);
-  stan::test::indexing::test_throw_ia(xs, index_list(index_uni(4), index_min_max(2, 5)), ys);
+  stan::test::indexing::test_throw(
+      xs, index_list(index_uni(0), index_min_max(3, 5)), ys);
+  stan::test::indexing::test_throw(
+      xs, index_list(index_uni(11), index_min_max(3, 5)), ys);
+  stan::test::indexing::test_throw_ia(
+      xs, index_list(index_uni(4), index_min_max(2, 5)), ys);
 }
 
 TEST(ModelIndexing, lvalueMultiUni) {
@@ -354,9 +367,12 @@ TEST(ModelIndexing, lvalueMultiUni) {
   for (int j = 0; j < 3; ++j)
     EXPECT_FLOAT_EQ(ys[j], xs[j + 4][7]);
 
-  stan::test::indexing::test_throw_ia(xs, index_list(index_min_max(3, 6), index_uni(7)), ys);
-  stan::test::indexing::test_throw(xs, index_list(index_min_max(4, 6), index_uni(0)), ys);
-  stan::test::indexing::test_throw(xs, index_list(index_min_max(4, 6), index_uni(30)), ys);
+  stan::test::indexing::test_throw_ia(
+      xs, index_list(index_min_max(3, 6), index_uni(7)), ys);
+  stan::test::indexing::test_throw(
+      xs, index_list(index_min_max(4, 6), index_uni(0)), ys);
+  stan::test::indexing::test_throw(
+      xs, index_list(index_min_max(4, 6), index_uni(30)), ys);
 }
 
 TEST(ModelIndexing, lvalueVecUni) {
@@ -511,17 +527,21 @@ TEST(ModelIndexing, lvalueMatrixUniUni) {
   assign(x, index_list(index_uni(2), index_uni(3)), y);
   EXPECT_FLOAT_EQ(y, x(1, 2));
 
-  stan::test::indexing::test_throw(x, index_list(index_uni(0), index_uni(3)), y);
-  stan::test::indexing::test_throw(x, index_list(index_uni(2), index_uni(0)), y);
-  stan::test::indexing::test_throw(x, index_list(index_uni(4), index_uni(3)), y);
-  stan::test::indexing::test_throw(x, index_list(index_uni(2), index_uni(5)), y);
+  stan::test::indexing::test_throw(x, index_list(index_uni(0), index_uni(3)),
+                                   y);
+  stan::test::indexing::test_throw(x, index_list(index_uni(2), index_uni(0)),
+                                   y);
+  stan::test::indexing::test_throw(x, index_list(index_uni(4), index_uni(3)),
+                                   y);
+  stan::test::indexing::test_throw(x, index_list(index_uni(2), index_uni(5)),
+                                   y);
 }
 
 TEST(ModelIndexing, lvalueMatrixUniMulti) {
   using stan::math::assign;
   using stan::math::index_list;
-  using stan::math::index_multi;
   using stan::math::index_min_max;
+  using stan::math::index_multi;
   using stan::math::index_uni;
   Eigen::MatrixXd x(3, 4);
   x << 0.0, 0.1, 0.2, 0.3, 1.0, 1.1, 1.2, 1.3, 2.0, 2.1, 2.2, 2.3;
@@ -535,13 +555,17 @@ TEST(ModelIndexing, lvalueMatrixUniMulti) {
   EXPECT_FLOAT_EQ(y(2), x(1, 3));
 
   puts("2");
-  stan::test::indexing::test_throw(x, index_list(index_uni(0), index_min_max(2, 4)), y);
+  stan::test::indexing::test_throw(
+      x, index_list(index_uni(0), index_min_max(2, 4)), y);
   puts("3");
-  stan::test::indexing::test_throw(x, index_list(index_uni(5), index_min_max(2, 4)), y);
+  stan::test::indexing::test_throw(
+      x, index_list(index_uni(5), index_min_max(2, 4)), y);
   puts("4");
-  stan::test::indexing::test_throw(x, index_list(index_uni(2), index_min_max(0, 2)), y);
+  stan::test::indexing::test_throw(
+      x, index_list(index_uni(2), index_min_max(0, 2)), y);
   puts("5");
-  stan::test::indexing::test_throw_ia(x, index_list(index_uni(2), index_min_max(2, 5)), y);
+  stan::test::indexing::test_throw_ia(
+      x, index_list(index_uni(2), index_min_max(2, 5)), y);
 
   std::vector<int> ns;
   ns.push_back(4);
@@ -557,21 +581,24 @@ TEST(ModelIndexing, lvalueMatrixUniMulti) {
   EXPECT_FLOAT_EQ(y(2), x(2, 2));
 
   ns[ns.size() - 1] = 0;
-  stan::test::indexing::test_throw(x, index_list(index_uni(3), index_multi(ns)), y);
+  stan::test::indexing::test_throw(x, index_list(index_uni(3), index_multi(ns)),
+                                   y);
 
   ns[ns.size() - 1] = 20;
-  stan::test::indexing::test_throw(x, index_list(index_uni(3), index_multi(ns)), y);
+  stan::test::indexing::test_throw(x, index_list(index_uni(3), index_multi(ns)),
+                                   y);
 
   ns.push_back(2);
-  stan::test::indexing::test_throw_ia(x, index_list(index_uni(3), index_multi(ns)), y);
+  stan::test::indexing::test_throw_ia(
+      x, index_list(index_uni(3), index_multi(ns)), y);
 }
 
 TEST(ModelIndexing, lvalueMatrixMultiUni) {
   using stan::math::assign;
   using stan::math::index_list;
   using stan::math::index_min_max;
-  using stan::math::index_uni;
   using stan::math::index_multi;
+  using stan::math::index_uni;
   Eigen::MatrixXd x(3, 4);
   x << 0.0, 0.1, 0.2, 0.3, 1.0, 1.1, 1.2, 1.3, 2.0, 2.1, 2.2, 2.3;
 
@@ -582,10 +609,14 @@ TEST(ModelIndexing, lvalueMatrixMultiUni) {
   EXPECT_FLOAT_EQ(y(0), x(1, 3));
   EXPECT_FLOAT_EQ(y(1), x(2, 3));
 
-  stan::test::indexing::test_throw(x, index_list(index_min_max(2, 3), index_uni(0)), y);
-  stan::test::indexing::test_throw(x, index_list(index_min_max(2, 3), index_uni(5)), y);
-  stan::test::indexing::test_throw(x, index_list(index_min_max(0, 1), index_uni(4)), y);
-  stan::test::indexing::test_throw_ia(x, index_list(index_min_max(1, 3), index_uni(4)), y);
+  stan::test::indexing::test_throw(
+      x, index_list(index_min_max(2, 3), index_uni(0)), y);
+  stan::test::indexing::test_throw(
+      x, index_list(index_min_max(2, 3), index_uni(5)), y);
+  stan::test::indexing::test_throw(
+      x, index_list(index_min_max(0, 1), index_uni(4)), y);
+  stan::test::indexing::test_throw_ia(
+      x, index_list(index_min_max(1, 3), index_uni(4)), y);
 
   std::vector<int> ns;
   ns.push_back(3);
@@ -596,20 +627,23 @@ TEST(ModelIndexing, lvalueMatrixMultiUni) {
   EXPECT_FLOAT_EQ(y(1), x(0, 2));
 
   ns[ns.size() - 1] = 0;
-  stan::test::indexing::test_throw(x, index_list(index_multi(ns), index_uni(3)), y);
+  stan::test::indexing::test_throw(x, index_list(index_multi(ns), index_uni(3)),
+                                   y);
 
   ns[ns.size() - 1] = 20;
-  stan::test::indexing::test_throw(x, index_list(index_multi(ns), index_uni(3)), y);
+  stan::test::indexing::test_throw(x, index_list(index_multi(ns), index_uni(3)),
+                                   y);
 
   ns.push_back(2);
-  stan::test::indexing::test_throw_ia(x, index_list(index_multi(ns), index_uni(3)), y);
+  stan::test::indexing::test_throw_ia(
+      x, index_list(index_multi(ns), index_uni(3)), y);
 }
 
 TEST(ModelIndexing, lvalueMatrixMultiMulti) {
   using stan::math::assign;
   using stan::math::index_list;
-  using stan::math::index_min_max;
   using stan::math::index_min;
+  using stan::math::index_min_max;
   using stan::math::index_multi;
   Eigen::MatrixXd x(3, 4);
   x << 0.0, 0.1, 0.2, 0.3, 1.0, 1.1, 1.2, 1.3, 2.0, 2.1, 2.2, 2.3;
@@ -624,9 +658,12 @@ TEST(ModelIndexing, lvalueMatrixMultiMulti) {
   EXPECT_FLOAT_EQ(y(1, 1), x(2, 2));
   EXPECT_FLOAT_EQ(y(1, 2), x(2, 3));
 
-  stan::test::indexing::test_throw_ia(x, index_list(index_min_max(2, 3), index_min(0)), y);
-  stan::test::indexing::test_throw_ia(x, index_list(index_min_max(2, 3), index_min(10)), y);
-  stan::test::indexing::test_throw_ia(x, index_list(index_min_max(1, 3), index_min(2)), y);
+  stan::test::indexing::test_throw_ia(
+      x, index_list(index_min_max(2, 3), index_min(0)), y);
+  stan::test::indexing::test_throw_ia(
+      x, index_list(index_min_max(2, 3), index_min(10)), y);
+  stan::test::indexing::test_throw_ia(
+      x, index_list(index_min_max(1, 3), index_min(2)), y);
 
   x << 0.0, 0.1, 0.2, 0.3, 1.0, 1.1, 1.2, 1.3, 2.0, 2.1, 2.2, 2.3;
   std::vector<int> ms;
@@ -646,28 +683,32 @@ TEST(ModelIndexing, lvalueMatrixMultiMulti) {
   EXPECT_FLOAT_EQ(y(1, 2), x(0, 0));
 
   ms[ms.size() - 1] = 0;
-  stan::test::indexing::test_throw(x, index_list(index_multi(ms), index_multi(ns)), y);
+  stan::test::indexing::test_throw(
+      x, index_list(index_multi(ms), index_multi(ns)), y);
 
   ms[ms.size() - 1] = 10;
-  stan::test::indexing::test_throw(x, index_list(index_multi(ms), index_multi(ns)), y);
+  stan::test::indexing::test_throw(
+      x, index_list(index_multi(ms), index_multi(ns)), y);
 
   ms[ms.size() - 1] = 1;  // back to original valid value
   ns[ns.size() - 1] = 0;
-  stan::test::indexing::test_throw(x, index_list(index_multi(ms), index_multi(ns)), y);
+  stan::test::indexing::test_throw(
+      x, index_list(index_multi(ms), index_multi(ns)), y);
 
   ns[ns.size() - 1] = 10;
-  stan::test::indexing::test_throw(x, index_list(index_multi(ms), index_multi(ns)), y);
+  stan::test::indexing::test_throw(
+      x, index_list(index_multi(ms), index_multi(ns)), y);
 }
 
 TEST(ModelIndexing, doubleToVar) {
+  using Eigen::Dynamic;
   using stan::math::assign;
   using stan::math::index_list;
-  using stan::math::index_uni;
   using stan::math::index_multi;
   using stan::math::index_omni;
+  using stan::math::index_uni;
   using stan::math::nil_index_list;
   using stan::math::var;
-  using Eigen::Dynamic;
   std::vector<double> xs;
   xs.push_back(1);
   xs.push_back(2);
@@ -869,8 +910,8 @@ TEST(ModelIndexing, resultSizeNegMinMaxNegMinMaxEigenMatrix) {
 
 TEST(modelIndexing, doubleToVarSimple) {
   using stan::math::assign;
-  using stan::math::var;
   using stan::math::nil_index_list;
+  using stan::math::var;
 
   Eigen::MatrixXd a(2, 2);
   a << 1, 2, 3, 4;
@@ -931,7 +972,8 @@ TEST(model_indexing, assign_eigvec_eigvec_index_multi) {
 
   ns[ns.size() - 1] = 3;
   ns.push_back(1);
-  stan::test::indexing::test_throw_ia(lhs_x, index_list(index_multi(ns)), rhs_y);
+  stan::test::indexing::test_throw_ia(lhs_x, index_list(index_multi(ns)),
+                                      rhs_y);
 }
 
 TEST(model_indexing, assign_eigrowvec_eigrowvec_index_min) {
@@ -985,7 +1027,8 @@ TEST(model_indexing, assign_eigrowvec_eigrowvec_index_multi) {
 
   ns[ns.size() - 1] = 3;
   ns.push_back(1);
-  stan::test::indexing::test_throw_ia(lhs_x, index_list(index_multi(ns)), rhs_y);
+  stan::test::indexing::test_throw_ia(lhs_x, index_list(index_multi(ns)),
+                                      rhs_y);
 }
 
 TEST(model_indexing, assign_densemat_rowvec_uni_index) {
@@ -1047,18 +1090,22 @@ TEST(model_indexing, assign_densemat_scalar_index_uni) {
   assign(x, index_list(index_uni(2), index_uni(3)), y);
   EXPECT_FLOAT_EQ(y, x(1, 2));
 
-  stan::test::indexing::test_throw(x, index_list(index_uni(0), index_uni(3)), y);
-  stan::test::indexing::test_throw(x, index_list(index_uni(2), index_uni(0)), y);
-  stan::test::indexing::test_throw(x, index_list(index_uni(4), index_uni(3)), y);
-  stan::test::indexing::test_throw(x, index_list(index_uni(2), index_uni(5)), y);
+  stan::test::indexing::test_throw(x, index_list(index_uni(0), index_uni(3)),
+                                   y);
+  stan::test::indexing::test_throw(x, index_list(index_uni(2), index_uni(0)),
+                                   y);
+  stan::test::indexing::test_throw(x, index_list(index_uni(4), index_uni(3)),
+                                   y);
+  stan::test::indexing::test_throw(x, index_list(index_uni(2), index_uni(5)),
+                                   y);
 }
 
 TEST(model_indexing, assign_densemat_eigrowvec_uni_index_min_max_index) {
   using stan::math::assign;
   using stan::math::index_list;
-  using stan::math::index_uni;
   using stan::math::index_min_max;
   using stan::math::index_multi;
+  using stan::math::index_uni;
   Eigen::MatrixXd x(3, 4);
   x << 0.0, 0.1, 0.2, 0.3, 1.0, 1.1, 1.2, 1.3, 2.0, 2.1, 2.2, 2.3;
 
@@ -1074,10 +1121,14 @@ TEST(model_indexing, assign_densemat_eigrowvec_uni_index_min_max_index) {
   EXPECT_FLOAT_EQ(y(1) + 2, x(1, 2));
   EXPECT_FLOAT_EQ(y(2) + 2, x(1, 3));
 
-  stan::test::indexing::test_throw(x, index_list(index_uni(0), index_min_max(2, 4)), y);
-  stan::test::indexing::test_throw(x, index_list(index_uni(5), index_min_max(2, 4)), y);
-  stan::test::indexing::test_throw(x, index_list(index_uni(2), index_min_max(0, 2)), y);
-  stan::test::indexing::test_throw_ia(x, index_list(index_uni(2), index_min_max(2, 5)), y);
+  stan::test::indexing::test_throw(
+      x, index_list(index_uni(0), index_min_max(2, 4)), y);
+  stan::test::indexing::test_throw(
+      x, index_list(index_uni(5), index_min_max(2, 4)), y);
+  stan::test::indexing::test_throw(
+      x, index_list(index_uni(2), index_min_max(0, 2)), y);
+  stan::test::indexing::test_throw_ia(
+      x, index_list(index_uni(2), index_min_max(2, 5)), y);
 
   std::vector<int> ns;
   ns.push_back(4);
@@ -1094,21 +1145,24 @@ TEST(model_indexing, assign_densemat_eigrowvec_uni_index_min_max_index) {
   EXPECT_FLOAT_EQ(y(2) + 2, x(2, 2));
 
   ns[ns.size() - 1] = 0;
-  stan::test::indexing::test_throw(x, index_list(index_uni(3), index_multi(ns)), y);
+  stan::test::indexing::test_throw(x, index_list(index_uni(3), index_multi(ns)),
+                                   y);
 
   ns[ns.size() - 1] = 20;
-  stan::test::indexing::test_throw(x, index_list(index_uni(3), index_multi(ns)), y);
+  stan::test::indexing::test_throw(x, index_list(index_uni(3), index_multi(ns)),
+                                   y);
 
   ns.push_back(2);
-  stan::test::indexing::test_throw_ia(x, index_list(index_uni(3), index_multi(ns)), y);
+  stan::test::indexing::test_throw_ia(
+      x, index_list(index_uni(3), index_multi(ns)), y);
 }
 
 TEST(model_indexing, assign_densemat_eigvec_min_max_index_uni_index) {
   using stan::math::assign;
   using stan::math::index_list;
-  using stan::math::index_uni;
   using stan::math::index_min_max;
   using stan::math::index_multi;
+  using stan::math::index_uni;
   Eigen::MatrixXd x(3, 4);
   x << 0.0, 0.1, 0.2, 0.3, 1.0, 1.1, 1.2, 1.3, 2.0, 2.1, 2.2, 2.3;
 
@@ -1123,10 +1177,14 @@ TEST(model_indexing, assign_densemat_eigvec_min_max_index_uni_index) {
   EXPECT_FLOAT_EQ(y(0) + 2, x(1, 3));
   EXPECT_FLOAT_EQ(y(1) + 2, x(2, 3));
 
-  stan::test::indexing::test_throw(x, index_list(index_min_max(2, 3), index_uni(0)), y);
-  stan::test::indexing::test_throw(x, index_list(index_min_max(2, 3), index_uni(5)), y);
-  stan::test::indexing::test_throw(x, index_list(index_min_max(0, 1), index_uni(4)), y);
-  stan::test::indexing::test_throw_ia(x, index_list(index_min_max(1, 3), index_uni(4)), y);
+  stan::test::indexing::test_throw(
+      x, index_list(index_min_max(2, 3), index_uni(0)), y);
+  stan::test::indexing::test_throw(
+      x, index_list(index_min_max(2, 3), index_uni(5)), y);
+  stan::test::indexing::test_throw(
+      x, index_list(index_min_max(0, 1), index_uni(4)), y);
+  stan::test::indexing::test_throw_ia(
+      x, index_list(index_min_max(1, 3), index_uni(4)), y);
 
   std::vector<int> ns;
   ns.push_back(3);
@@ -1141,13 +1199,16 @@ TEST(model_indexing, assign_densemat_eigvec_min_max_index_uni_index) {
   EXPECT_FLOAT_EQ(y(1) + 2, x(0, 2));
 
   ns[ns.size() - 1] = 0;
-  stan::test::indexing::test_throw(x, index_list(index_multi(ns), index_uni(3)), y);
+  stan::test::indexing::test_throw(x, index_list(index_multi(ns), index_uni(3)),
+                                   y);
 
   ns[ns.size() - 1] = 20;
-  stan::test::indexing::test_throw(x, index_list(index_multi(ns), index_uni(3)), y);
+  stan::test::indexing::test_throw(x, index_list(index_multi(ns), index_uni(3)),
+                                   y);
 
   ns.push_back(2);
-  stan::test::indexing::test_throw_ia(x, index_list(index_multi(ns), index_uni(3)), y);
+  stan::test::indexing::test_throw_ia(
+      x, index_list(index_multi(ns), index_uni(3)), y);
 }
 
 TEST(model_indexing, assign_densemat_densemat_min_max_index_min_index) {
@@ -1178,9 +1239,12 @@ TEST(model_indexing, assign_densemat_densemat_min_max_index_min_index) {
   EXPECT_FLOAT_EQ(y(1, 1), x(2, 2));
   EXPECT_FLOAT_EQ(y(1, 2), x(2, 3));
 
-  stan::test::indexing::test_throw_ia(x, index_list(index_min_max(2, 3), index_min(0)), y);
-  stan::test::indexing::test_throw_ia(x, index_list(index_min_max(2, 3), index_min(10)), y);
-  stan::test::indexing::test_throw_ia(x, index_list(index_min_max(1, 3), index_min(2)), y);
+  stan::test::indexing::test_throw_ia(
+      x, index_list(index_min_max(2, 3), index_min(0)), y);
+  stan::test::indexing::test_throw_ia(
+      x, index_list(index_min_max(2, 3), index_min(10)), y);
+  stan::test::indexing::test_throw_ia(
+      x, index_list(index_min_max(1, 3), index_min(2)), y);
 }
 
 TEST(model_indexing, assign_densemat_densemat_multi_index_multi_index) {
@@ -1219,15 +1283,19 @@ TEST(model_indexing, assign_densemat_densemat_multi_index_multi_index) {
   EXPECT_FLOAT_EQ(y2(1, 2), x(0, 0));
 
   ms[ms.size() - 1] = 0;
-  stan::test::indexing::test_throw(x, index_list(index_multi(ms), index_multi(ns)), y);
+  stan::test::indexing::test_throw(
+      x, index_list(index_multi(ms), index_multi(ns)), y);
 
   ms[ms.size() - 1] = 10;
-  stan::test::indexing::test_throw(x, index_list(index_multi(ms), index_multi(ns)), y);
+  stan::test::indexing::test_throw(
+      x, index_list(index_multi(ms), index_multi(ns)), y);
 
   ms[ms.size() - 1] = 1;  // back to original valid value
   ns[ns.size() - 1] = 0;
-  stan::test::indexing::test_throw(x, index_list(index_multi(ms), index_multi(ns)), y);
+  stan::test::indexing::test_throw(
+      x, index_list(index_multi(ms), index_multi(ns)), y);
 
   ns[ns.size() - 1] = 10;
-  stan::test::indexing::test_throw(x, index_list(index_multi(ms), index_multi(ns)), y);
+  stan::test::indexing::test_throw(
+      x, index_list(index_multi(ms), index_multi(ns)), y);
 }

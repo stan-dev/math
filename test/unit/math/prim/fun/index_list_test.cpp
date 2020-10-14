@@ -2,12 +2,11 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-
 TEST(MathIndexingIndexList, cons_index_list) {
-  using stan::math::nil_index_list;
-  using stan::math::index_uni;
   using stan::math::cons_index_list;
   using stan::math::index_multi;
+  using stan::math::index_uni;
+  using stan::math::nil_index_list;
   nil_index_list empty;  // ()
 
   index_uni idx_u(7);

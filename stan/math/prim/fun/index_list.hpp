@@ -8,7 +8,6 @@
 namespace stan {
 namespace math {
 
-
 /**
  * Construct a pack of indices.
  * @tparam T1 The first index type.
@@ -41,6 +40,6 @@ inline constexpr auto index_list(T&& idx1, Types&&... idx2) {
                    index_list(std::forward<Types>(idx2)...));
 }
 
-}  // namespace model
+}  // namespace math
 }  // namespace stan
 #endif

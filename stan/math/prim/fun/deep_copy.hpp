@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_FUN_DEEP_COPY_HPP
 #define STAN_MATH_PRIM_FUN_DEEP_COPY_HPP
 
-
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <vector>
@@ -27,6 +26,6 @@ inline plain_type_t<T> deep_copy(T&& x) {
   return std::forward<T>(x);
 }
 
-}  // namespace model
+}  // namespace math
 }  // namespace stan
 #endif

@@ -36,7 +36,6 @@ struct cons_index_list {
       : head_(std::forward<Head>(head)), tail_(std::forward<Tail>(tail)) {}
 };
 
-
 /**
  * Structure for an indexing consisting of a single index.
  * Applying this index reduces the dimensionality of the container
@@ -118,9 +117,7 @@ struct index_min_max {
   /**
    * Return whether the index is positive or negative
    */
-  bool is_positive_idx() const {
-    return min_ <= max_;
-  }
+  bool is_positive_idx() const { return min_ <= max_; }
   /**
    * Construct an indexing from the specified minimum index
    * (inclusive) and maximum index (inclusive).
@@ -128,10 +125,9 @@ struct index_min_max {
    * @param min minimum index (inclusive).
    * @param max maximum index (inclusive).
    */
-  constexpr index_min_max(int min, int max) noexcept
-      : min_(min), max_(max) {}
+  constexpr index_min_max(int min, int max) noexcept : min_(min), max_(max) {}
 };
 
-}  // namespace model
+}  // namespace math
 }  // namespace stan
 #endif

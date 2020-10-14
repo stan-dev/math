@@ -70,6 +70,6 @@ inline constexpr int rvalue_at(int n, const index_min_max& idx) {
   return idx.min_ + n;
 }
 
-}  // namespace model
+}  // namespace math
 }  // namespace stan
 #endif

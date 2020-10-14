@@ -12,30 +12,25 @@ STAN_ADD_REQUIRE_BINARY_INNER(same, std::is_same, require_std);
 STAN_ADD_REQUIRE_BINARY(convertible, std::is_convertible, require_std);
 STAN_ADD_REQUIRE_BINARY_INNER(convertible, std::is_convertible, require_std);
 
-
 /*! ingroup require_std */
 /*! defgroup assignable_types check_type  */
 /*! addtogroup assignable_types */
 /*! @{ */
 /*! brief Require types `T` and `S` satisfies `std::is_assignable` */
 template <typename T, typename S>
-using require_assignable_t
-    = require_t<std::is_assignable<T, S>>;
+using require_assignable_t = require_t<std::is_assignable<T, S>>;
 
 /*! brief Require types `T` and `S` does not satisfy `std::is_assignable` */
 template <typename T, typename S>
-using require_not_assignable_t
-    = require_not_t<std::is_assignable<T, S>>;
+using require_not_assignable_t = require_not_t<std::is_assignable<T, S>>;
 
 /*! brief Require `T` and all of the `Types` satisfy `std::is_assignable` */
 template <typename T, typename... Types>
-using require_all_assignable_t
-    = require_all_t<std::is_assignable<T, Types>...>;
+using require_all_assignable_t = require_all_t<std::is_assignable<T, Types>...>;
 
 /*! brief Require any of the `Types` and `T` satisfy `std::is_assignable` */
 template <typename T, typename... Types>
-using require_any_assignable_t
-    = require_any_t<std::is_assignable<T, Types>...>;
+using require_any_assignable_t = require_any_t<std::is_assignable<T, Types>...>;
 
 /*! brief Require none of the `Types` and `T` satisfy `std::is_assignable` */
 template <typename T, typename... Types>
