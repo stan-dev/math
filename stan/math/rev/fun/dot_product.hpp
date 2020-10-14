@@ -47,7 +47,8 @@ inline var dot_product(const T1& v1, const T2& v2) {
     return res;
   } else if (!is_constant<T2>::value) {
     arena_t<vector_v> v2_arena = as_column_vector_or_scalar(v2);
-    arena_t<Eigen::VectorXd> v1_val_arena = value_of(as_column_vector_or_scalar(v1));
+    arena_t<Eigen::VectorXd> v1_val_arena
+        = value_of(as_column_vector_or_scalar(v1));
     var res(v1_val_arena.dot(v2_arena.val()));
     reverse_pass_callback([v1_val_arena, v2_arena, res]() mutable {
       v2_arena.adj() += res.adj() * v1_val_arena;
@@ -55,7 +56,8 @@ inline var dot_product(const T1& v1, const T2& v2) {
     return res;
   } else {
     arena_t<vector_v> v1_arena = as_column_vector_or_scalar(v1);
-    arena_t<Eigen::VectorXd> v2_val_arena = value_of(as_column_vector_or_scalar(v2));
+    arena_t<Eigen::VectorXd> v2_val_arena
+        = value_of(as_column_vector_or_scalar(v2));
     var res(v1_arena.val().dot(v2_val_arena));
     reverse_pass_callback([v1_arena, v2_val_arena, res]() mutable {
       v1_arena.adj() += res.adj() * v2_val_arena;
