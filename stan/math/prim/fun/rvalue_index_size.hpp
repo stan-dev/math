@@ -1,11 +1,11 @@
 #ifndef STAN_MODEL_INDEXING_RVALUE_INDEX_SIZE_HPP
 #define STAN_MODEL_INDEXING_RVALUE_INDEX_SIZE_HPP
 
-#include <stan/model/indexing/index.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 
-namespace model {
+namespace math {
 
 // no error checking
 

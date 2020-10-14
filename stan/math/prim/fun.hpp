@@ -126,6 +126,7 @@
 #include <stan/math/prim/fun/if_else.hpp>
 #include <stan/math/prim/fun/imag.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
+#include <stan/math/prim/fun/index_list.hpp>
 #include <stan/math/prim/fun/initialize.hpp>
 #include <stan/math/prim/fun/int_step.hpp>
 #include <stan/math/prim/fun/inv.hpp>
@@ -274,6 +275,8 @@
 #include <stan/math/prim/fun/rows.hpp>
 #include <stan/math/prim/fun/rows_dot_product.hpp>
 #include <stan/math/prim/fun/rows_dot_self.hpp>
+#include <stan/math/prim/fun/rvalue_at.hpp>
+#include <stan/math/prim/fun/rvalue_index_size.hpp>
 #include <stan/math/prim/fun/scalbn.hpp>
 #include <stan/math/prim/fun/scale_matrix_exp_multiply.hpp>
 #include <stan/math/prim/fun/scaled_add.hpp>

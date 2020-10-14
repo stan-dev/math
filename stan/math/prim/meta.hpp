@@ -184,6 +184,7 @@
 #include <stan/math/prim/meta/forward_as.hpp>
 #include <stan/math/prim/meta/holder.hpp>
 #include <stan/math/prim/meta/include_summand.hpp>
+#include <stan/math/prim/meta/index.hpp>
 #include <stan/math/prim/meta/index_type.hpp>
 #include <stan/math/prim/meta/index_apply.hpp>
 #include <stan/math/prim/meta/is_autodiff.hpp>
@@ -195,6 +196,7 @@
 #include <stan/math/prim/meta/is_container.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_eigen_dense_base.hpp>
+#include <stan/math/prim/meta/is_eigen_dense_dynamic.hpp>
 #include <stan/math/prim/meta/is_eigen_matrix.hpp>
 #include <stan/math/prim/meta/is_eigen_matrix_base.hpp>
 #include <stan/math/prim/meta/is_eigen_sparse_base.hpp>
