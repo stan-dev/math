@@ -194,17 +194,16 @@ class opencl_context_base {
     int tri_inverse_size_worth_transfer = 100;
   } tuning_opts_;
 
- private:
-  static opencl_context_base instance_;
-
  protected:
-  static opencl_context_base& getInstance() { return instance_; }
+  static opencl_context_base& getInstance() {
+    static opencl_context_base instance_;
+    return instance_;
+  }
 
   static void select_device(int platform_id, int device_id) {
-    instance_ = opencl_context_base(platform_id, device_id);
+    getInstance() = opencl_context_base(platform_id, device_id);
   }
 };
-opencl_context_base opencl_context_base::instance_;
 
 /** \ingroup opencl_context_group
  * The API to access the methods and values in opencl_context_base
