@@ -16,9 +16,9 @@ namespace math {
  * @param idx2 second index placed in `tail_`
  */
 template <typename T1, typename T2>
-inline constexpr auto cons_list(T1&& idx1, T2&& t) {
+inline constexpr auto cons_list(T1&& idx1, T2&& idx2) {
   return cons_index_list<std::decay_t<T1>, std::decay_t<T2>>(
-      std::forward<T1>(idx1), std::forward<T2>(t));
+      std::forward<T1>(idx1), std::forward<T2>(idx2));
 }
 
 /**
