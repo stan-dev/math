@@ -41,10 +41,9 @@ inline var dot_self(const T& v) {
 
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline var dot_self(const T& v) {
-  arena_t<T> arena_v = v;
-  var res = arena_v.val().dot(arena_v.val());
-  reverse_pass_callback([res, arena_v]() mutable {
-    arena_v.adj() += (2.0 * res.adj()) * arena_v.val();
+  var res = v.val().dot(v.val());
+  reverse_pass_callback([res, v]() mutable {
+    v.adj() += (2.0 * res.adj()) * v.val();
   });
 
   return res;

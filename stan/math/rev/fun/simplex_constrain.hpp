@@ -25,7 +25,7 @@ namespace math {
  * @param y Free vector input of dimensionality K - 1
  * @return Simplex of dimensionality K
  */
-template <typename T, require_eigen_col_vector_vt<is_var, T>* = nullptr>
+template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto simplex_constrain(const T& y) {
   using ret_type = plain_type_t<T>;
 
@@ -41,35 +41,38 @@ inline auto simplex_constrain(const T& y) {
   double stick_len(1.0);
   for (int k = 0; k < N; ++k) {
     double log_N_minus_k = std::log(N - k);
-    arena_z.coeffRef(k) = inv_logit(value_of(arena_y.coeff(k)) - log_N_minus_k);
+    arena_z.coeffRef(k) = inv_logit(arena_y.val().coeff(k) - log_N_minus_k);
     arena_diag.coeffRef(k)
         = stick_len * arena_z.coeff(k)
-          * inv_logit(log_N_minus_k - value_of(arena_y.coeff(k)));
+          * inv_logit(log_N_minus_k - arena_y.val().coeff(k));
     x_val.coeffRef(k) = stick_len * arena_z.coeff(k);
     stick_len -= x_val(k);
   }
   x_val.coeffRef(N) = stick_len;
 
   arena_t<ret_type> arena_x = x_val;
-
-  if (N > 0) {
-    reverse_pass_callback([arena_y, arena_x, arena_diag, arena_z]() mutable {
-      size_t N = arena_y.size();
-      double acc = arena_x.adj().coeff(N);
-
-      arena_y.adj().coeffRef(N - 1)
-          += arena_diag.coeff(N - 1) * (arena_x.adj().coeff(N - 1) - acc);
-      for (int n = N - 1; --n >= 0;) {
-        acc = arena_x.adj().coeff(n + 1) * arena_z.coeff(n + 1)
-              + (1 - arena_z.coeff(n + 1)) * acc;
-        arena_y.adj().coeffRef(n)
-            += arena_diag.coeff(n) * (arena_x.adj().coeff(n) - acc);
-      }
-    });
+  if (unlikely(N == 0)) {
+    return ret_type(arena_x);
   }
+
+  reverse_pass_callback([arena_y, arena_x, arena_diag, arena_z]() mutable {
+    size_t N = arena_y.size();
+    double acc = arena_x.adj().coeff(N);
+
+    arena_y.adj().coeffRef(N - 1)
+        += arena_diag.coeff(N - 1) * (arena_x.adj().coeff(N - 1) - acc);
+    for (int n = N - 1; --n >= 0;) {
+      acc = arena_x.adj().coeff(n + 1) * arena_z.coeff(n + 1)
+            + (1 - arena_z.coeff(n + 1)) * acc;
+      arena_y.adj().coeffRef(n)
+          += arena_diag.coeff(n) * (arena_x.adj().coeff(n) - acc);
+    }
+  });
 
   return ret_type(arena_x);
 }
+
+
 
 }  // namespace math
 }  // namespace stan

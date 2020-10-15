@@ -12,24 +12,35 @@ namespace math {
 /**
  * Returns the dot product of each column of a matrix with itself.
  *
- * @tparam Mat Type of the matrix.
+ * @tparam Mat An Eigen matrix with a `var` scalar type.
  * @param x Matrix.
  */
-template <typename Mat, require_rev_matrix_t<Mat>* = nullptr>
-inline auto columns_dot_self(const Mat& x) {
-  arena_t<Mat> arena_x = x;
-  auto arena_x_val = to_arena(value_of(arena_x));
-  using ret_inner_type = decltype(arena_x_val.colwise().squaredNorm());
-  using ret_type = promote_var_matrix_t<ret_inner_type, Mat>;
-  arena_t<ret_type> res = arena_x_val.colwise().squaredNorm();
-
-  if (x.size() >= 0) {
-    reverse_pass_callback([res, arena_x, arena_x_val]() mutable {
-      arena_x.adj() += arena_x_val * (2 * res.adj()).asDiagonal();
-    });
+template <typename Mat, require_eigen_vt<is_var, Mat>* = nullptr>
+inline Eigen::Matrix<var, 1, Mat::ColsAtCompileTime> columns_dot_self(
+    const Mat& x) {
+  Eigen::Matrix<var, 1, Mat::ColsAtCompileTime> ret(1, x.cols());
+  for (size_type i = 0; i < x.cols(); i++) {
+    ret(i) = dot_self(x.col(i));
   }
+  return ret;
+}
 
-  return ret_type(res);
+/**
+ * Returns the dot product of each column of a matrix with itself.
+ *
+ * @tparam Mat A `var_value<>` with an inner matrix type.
+ * @param x Matrix.
+ */
+template <typename Mat, require_var_matrix_t<Mat>* = nullptr>
+inline auto columns_dot_self(const Mat& x) {
+ using ret_type = plain_type_t<decltype(x.val().colwise().squaredNorm())>;
+ var_value<ret_type> res = x.val().colwise().squaredNorm();
+ if (x.size() >= 0) {
+   reverse_pass_callback([res, x]() mutable {
+     x.adj() += x.val() * (2 * res.adj()).asDiagonal();
+   });
+ }
+ return res;
 }
 
 }  // namespace math

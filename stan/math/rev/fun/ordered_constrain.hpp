@@ -21,14 +21,14 @@ namespace math {
  * @param x Free vector of scalars
  * @return Increasing ordered vector
  */
-template <typename T, require_eigen_col_vector_vt<is_var, T>* = nullptr>
+template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto ordered_constrain(const T& x) {
   using ret_type = plain_type_t<T>;
 
   using std::exp;
 
   size_t N = x.size();
-  if (N == 0) {
+  if (unlikely(N == 0)) {
     return ret_type(x);
   }
 
@@ -36,9 +36,9 @@ inline auto ordered_constrain(const T& x) {
   arena_t<T> arena_x = x;
   arena_t<Eigen::VectorXd> exp_x(N - 1);
 
-  y_val.coeffRef(0) = value_of(x)(0);
-  for (int n = 1; n < N; ++n) {
-    exp_x.coeffRef(n - 1) = exp(value_of(arena_x)(n));
+  y_val.coeffRef(0) = arena_x.val().coeff(0);
+  for (Eigen::Index n = 1; n < N; ++n) {
+    exp_x.coeffRef(n - 1) = exp(arena_x.val().coeff(n));
     y_val.coeffRef(n) = y_val.coeff(n - 1) + exp_x.coeff(n - 1);
   }
 
@@ -55,6 +55,26 @@ inline auto ordered_constrain(const T& x) {
   });
 
   return ret_type(y);
+}
+
+/**
+ * Return a positive valued, increasing ordered vector derived
+ * from the specified free vector and increment the specified log
+ * probability reference with the log absolute Jacobian determinant
+ * of the transform.  The returned constrained vector
+ * will have the same dimensionality as the specified free vector.
+ *
+ * @tparam T type of the vector
+ * @param x Free vector of scalars.
+ * @param lp Log probability reference.
+ * @return Positive, increasing ordered vector.
+ */
+template <typename VarVec, require_var_matrix_t<VarVec>* = nullptr>
+auto ordered_constrain(const VarVec& x, scalar_type_t<VarVec>& lp) {
+  if (x.size() > 1) {
+    lp += sum(x.tail(x.size() - 1));
+  }
+  return ordered_constrain(x);
 }
 
 }  // namespace math
