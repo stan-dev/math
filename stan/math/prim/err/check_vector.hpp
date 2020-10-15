@@ -50,7 +50,7 @@ inline void check_vector(const char* function, const char* name,
  *   vector.
  */
 template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr,
- require_eigen_matrix_dynamic_t<value_type_t<VarMat>>* = nullptr>
+          require_eigen_matrix_dynamic_t<value_type_t<VarMat>>* = nullptr>
 inline void check_vector(const char* function, const char* name,
                          const VarMat& x) {
   if (x.rows() == 1 || x.cols() == 1) {
@@ -94,8 +94,8 @@ constexpr inline void check_vector(const char* function, const char* name,
  * @throw <code>std::invalid_argument</code> if x is not a row or column
  *   vector.
  */
-template <typename VarVec, require_var_matrix_t<VarVec> * = nullptr,
- require_eigen_vector_t<value_type_t<VarVec>>* = nullptr>
+template <typename VarVec, require_var_matrix_t<VarVec>* = nullptr,
+          require_eigen_vector_t<value_type_t<VarVec>>* = nullptr>
 constexpr inline void check_vector(const char* function, const char* name,
                                    const VarVec& x) {
   return;

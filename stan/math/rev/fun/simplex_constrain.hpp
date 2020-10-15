@@ -72,8 +72,6 @@ inline auto simplex_constrain(const T& y) {
   return ret_type(arena_x);
 }
 
-
-
 }  // namespace math
 }  // namespace stan
 #endif
