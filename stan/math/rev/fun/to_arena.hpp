@@ -135,7 +135,7 @@ inline arena_t<std::vector<T>> to_arena(const std::vector<T>& a) {
 
 /**
  * If the condition is true, converts given argument into a type that has any
- * dynamic allocation on AD stack. Otherwise returns a the argument
+ * dynamic allocation on AD stack. Otherwise returns the argument
  *
  * @tparam T type of argument
  * @param a argument
