@@ -20,8 +20,7 @@ namespace math {
  */
 template <typename T, require_eigen_t<T>* = nullptr>
 inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> block(
-    const T& m, size_t i,
-    size_t j, size_t nrows, size_t ncols) {
+    const T& m, size_t i, size_t j, size_t nrows, size_t ncols) {
   check_row_index("block", "i", m, i);
   check_row_index("block", "i+nrows-1", m, i + nrows - 1);
   check_column_index("block", "j", m, j);

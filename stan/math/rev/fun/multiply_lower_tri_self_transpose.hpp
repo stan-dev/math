@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-template<typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
+template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
 inline matrix_v multiply_lower_tri_self_transpose(const EigMat& L) {
   // check_square("multiply_lower_tri_self_transpose",
   // L, "L", (double*)0);

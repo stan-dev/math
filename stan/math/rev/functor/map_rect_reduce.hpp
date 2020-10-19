@@ -51,7 +51,8 @@ struct map_rect_reduce<F, T_shared_param, var, require_st_var<T_shared_param>> {
 };
 
 template <typename F, typename T_shared_param>
-struct map_rect_reduce<F, T_shared_param, var, require_same_t<scalar_type_t<T_shared_param>, double>> {
+struct map_rect_reduce<F, T_shared_param, var,
+                       require_same_t<scalar_type_t<T_shared_param>, double>> {
   matrix_d operator()(const T_shared_param& shared_params,
                       const vector_d& job_specific_params,
                       const std::vector<double>& x_r,
@@ -84,7 +85,8 @@ struct map_rect_reduce<F, T_shared_param, var, require_same_t<scalar_type_t<T_sh
 };
 
 template <typename F, typename T_shared_param>
-struct map_rect_reduce<F, T_shared_param, double, require_st_var<T_shared_param>> {
+struct map_rect_reduce<F, T_shared_param, double,
+                       require_st_var<T_shared_param>> {
   matrix_d operator()(const T_shared_param& shared_params,
                       const vector_d& job_specific_params,
                       const std::vector<double>& x_r,

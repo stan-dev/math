@@ -16,7 +16,7 @@ namespace math {
  * transpose.
  * @throw std::domain_error If the input matrix is not square.
  */
-template<typename EigMat, require_eigen_vt<is_constant, EigMat>* = nullptr>
+template <typename EigMat, require_eigen_vt<is_constant, EigMat>* = nullptr>
 inline matrix_d multiply_lower_tri_self_transpose(const EigMat& L) {
   int K = L.rows();
   if (K == 0) {

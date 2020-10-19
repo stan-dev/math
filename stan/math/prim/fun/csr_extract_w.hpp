@@ -39,7 +39,8 @@ const Eigen::Matrix<T, Eigen::Dynamic, 1> csr_extract_w(
  * @return Vector of non-zero entries of A.
  */
 template <typename T, require_eigen_dense_base_t<T>* = nullptr>
-const Eigen::Matrix<scalar_type_t<T>, Eigen::Dynamic, 1> csr_extract_w(const T& A) {
+const Eigen::Matrix<scalar_type_t<T>, Eigen::Dynamic, 1> csr_extract_w(
+    const T& A) {
   // conversion to sparse seems to touch data twice, so we need to call to_ref
   Eigen::SparseMatrix<scalar_type_t<T>, Eigen::RowMajor> B
       = to_ref(A).sparseView();

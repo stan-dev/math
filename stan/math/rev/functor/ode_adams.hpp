@@ -56,9 +56,9 @@ ode_adams_tol_impl(const char* function_name, const F& f, const T_y0& y0,
   const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
   return apply(
       [&](const auto&... args_refs) {
-        cvodes_integrator<CV_ADAMS, F, T_y0, T_t0, T_ts, ref_type_t<T_Args>...> integrator(
-            function_name, f, y0, t0, ts, relative_tolerance,
-            absolute_tolerance, max_num_steps, msgs, args_refs...);
+        cvodes_integrator<CV_ADAMS, F, T_y0, T_t0, T_ts, ref_type_t<T_Args>...>
+        integrator(function_name, f, y0, t0, ts, relative_tolerance,
+                   absolute_tolerance, max_num_steps, msgs, args_refs...);
 
         return integrator();
       },

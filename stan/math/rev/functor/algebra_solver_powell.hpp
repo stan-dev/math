@@ -223,7 +223,8 @@ Eigen::VectorXd algebra_solver_powell(
  * the function tolerance.
  */
 template <typename F, typename T1, typename T2,
-          require_all_eigen_vector_t<T1, T2>* = nullptr, require_st_var<T2>* = nullptr>
+          require_all_eigen_vector_t<T1, T2>* = nullptr,
+          require_st_var<T2>* = nullptr>
 Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_powell(
     const F& f, const T1& x, const T2& y, const std::vector<double>& dat,
     const std::vector<int>& dat_int, std::ostream* msgs = nullptr,

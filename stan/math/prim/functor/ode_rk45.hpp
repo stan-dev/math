@@ -83,8 +83,9 @@ ode_rk45_tol_impl(const char* function_name, const F& f, const T_y0& y0_arg,
       [&](const auto&... args_ref) {
         // Code from https://stackoverflow.com/a/17340003
         std::vector<int> unused_temp{
-            0, (check_finite(function_name, "ode parameters and data", args_ref),
-                0)...};
+            0,
+            (check_finite(function_name, "ode parameters and data", args_ref),
+             0)...};
       },
       args_ref_tuple);
 

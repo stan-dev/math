@@ -152,12 +152,12 @@ void expect_adj_eq(const std::vector<T>& a, const std::vector<T>& b,
   stan::test::expect_adj_eq(     \
       a, b, "Error in file: " __FILE__ ", on line: " TO_STRING(__LINE__))
 
-template<typename T, require_st_stan_scalar<T>* = nullptr>
-scalar_type_t<T> sum_if_number(const T& a){
+template <typename T, require_st_stan_scalar<T>* = nullptr>
+scalar_type_t<T> sum_if_number(const T& a) {
   return recursive_sum(a);
 }
-template<typename T, require_not_st_stan_scalar<T>* = nullptr>
-double sum_if_number(const T& a){
+template <typename T, require_not_st_stan_scalar<T>* = nullptr>
+double sum_if_number(const T& a) {
   return 0;
 }
 
@@ -165,8 +165,7 @@ struct test_functor {
   template <typename... T>
   auto operator()(T... args) const {
     using Ret_scal = return_type_t<T...>;
-    return stan::test::make_arg<
-        Eigen::Matrix<Ret_scal, Eigen::Dynamic, 1>>(
+    return stan::test::make_arg<Eigen::Matrix<Ret_scal, Eigen::Dynamic, 1>>(
         math::sum(std::vector<Ret_scal>{sum_if_number(args)...}));
   }
 };

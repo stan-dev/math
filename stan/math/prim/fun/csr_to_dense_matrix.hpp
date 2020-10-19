@@ -30,9 +30,9 @@ namespace math {
  * @throw std::out_of_range if any of the indices are out of range.
  */
 template <typename T>
-inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> csr_to_dense_matrix(
-    int m, int n, const T& w,
-    const std::vector<int>& v, const std::vector<int>& u) {
+inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
+csr_to_dense_matrix(int m, int n, const T& w, const std::vector<int>& v,
+                    const std::vector<int>& u) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 

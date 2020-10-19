@@ -46,8 +46,9 @@ const std::vector<int> csr_extract_v(
  */
 template <typename T, require_eigen_dense_base_t<T>* = nullptr>
 const std::vector<int> csr_extract_v(const T& A) {
-  //conversion to sparse seems to touch data twice, so we need to call to_ref
-  Eigen::SparseMatrix<scalar_type_t<T>, Eigen::RowMajor> B = to_ref(A).sparseView();
+  // conversion to sparse seems to touch data twice, so we need to call to_ref
+  Eigen::SparseMatrix<scalar_type_t<T>, Eigen::RowMajor> B
+      = to_ref(A).sparseView();
   std::vector<int> v = csr_extract_v(B);
   return v;
 }

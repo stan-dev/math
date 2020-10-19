@@ -183,8 +183,7 @@ class cvodes_integrator {
    * @throw <code>std::invalid_argument</code> if arguments are the wrong
    *   size or tolerances or max_num_steps are out of range.
    */
-  cvodes_integrator(const char* function_name, const F& f,
-                    const T_y0& y0,
+  cvodes_integrator(const char* function_name, const F& f, const T_y0& y0,
                     const T_t0& t0, const std::vector<T_ts>& ts,
                     double relative_tolerance, double absolute_tolerance,
                     long int max_num_steps,  // NOLINT(runtime/int)
