@@ -13,15 +13,6 @@ matrix lmultiply(real, matrix)
 matrix lmultiply(matrix, int)
 matrix lmultiply(matrix, real)
 matrix lmultiply(matrix, matrix)
-vector algebra_solver((vector, vector, data real[], data int[]) => vector,
-                        vector, vector, real[], int[])
-vector algebra_solver((vector, vector, data real[], data int[]) => vector,
-                        vector, vector, real[], int[], real, real, real)
-vector algebra_solver_newton((vector, vector, data real[], data int[]) => vector,
-                               vector, vector, real[], int[])
-vector algebra_solver_newton((vector, vector, data real[], data int[]) => vector,
-                               vector, vector, real[], int[], real, real,
-                               real)
 void assign_add(vector, int)
 void assign_add(vector, real)
 void assign_add(vector, vector)

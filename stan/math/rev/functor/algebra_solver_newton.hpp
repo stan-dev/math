@@ -61,10 +61,10 @@ Eigen::VectorXd algebra_solver_newton(
     std::ostream* msgs = nullptr, double scaling_step_size = 1e-3,
     double function_tolerance = 1e-6,
     long int max_num_steps = 200) {  // NOLINT(runtime/int)
-  algebra_solver_check(x, y, dat, dat_int, function_tolerance, max_num_steps);
+  const auto& x_eval = x.eval();
+  algebra_solver_check(x_eval, y, dat, dat_int, function_tolerance, max_num_steps);
   check_nonnegative("algebra_solver", "scaling_step_size", scaling_step_size);
 
-  const auto& x_eval = x.eval();
   check_matching_sizes("algebra_solver", "the algebraic system's output",
                        value_of(f(x_eval, y, dat, dat_int, msgs)),
                        "the vector of unknowns, x,", x);
@@ -118,7 +118,7 @@ Eigen::VectorXd algebra_solver_newton(
  * @throw <code>std::domain_error if solver exceeds max_num_steps.
  */
 template <typename F, typename T1, typename T2,
-          require_eigen_vector_t<T1>* = nullptr>
+          require_all_eigen_vector_t<T1, T2>* = nullptr, require_st_var<T2>* = nullptr>
 Eigen::Matrix<scalar_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_newton(
     const F& f, const T1& x, const T2& y,
     const std::vector<double>& dat, const std::vector<int>& dat_int,

@@ -49,17 +49,21 @@ template <typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... T_Args, require_eigen_vector_t<T_y0>* = nullptr>
 std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
                           Eigen::Dynamic, 1>>
-ode_bdf_tol_impl(const char* function_name, const F& f,
-                 const T_y0& y0,
+ode_bdf_tol_impl(const char* function_name, const F& f, const T_y0& y0,
                  const T_t0& t0, const std::vector<T_ts>& ts,
                  double relative_tolerance, double absolute_tolerance,
                  long int max_num_steps,  // NOLINT(runtime/int)
                  std::ostream* msgs, const T_Args&... args) {
-  cvodes_integrator<CV_BDF, F, T_y0, T_t0, T_ts, T_Args...> integrator(
-      function_name, f, y0, t0, ts, relative_tolerance, absolute_tolerance,
-      max_num_steps, msgs, args...);
+  const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
+  return apply(
+      [&](const auto&... args_refs) {
+        cvodes_integrator<CV_BDF, F, T_y0, T_t0, T_ts, ref_type_t<T_Args>...>
+        integrator(function_name, f, y0, t0, ts, relative_tolerance,
+                   absolute_tolerance, max_num_steps, msgs, args_refs...);
 
-  return integrator();
+        return integrator();
+      },
+      args_ref_tuple);
 }
 
 /**
@@ -99,9 +103,9 @@ template <typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... T_Args, require_eigen_vector_t<T_y0>* = nullptr>
 std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
                           Eigen::Dynamic, 1>>
-ode_bdf_tol(const F& f, const T_y0& y0,
-            const T_t0& t0, const std::vector<T_ts>& ts,
-            double relative_tolerance, double absolute_tolerance,
+ode_bdf_tol(const F& f, const T_y0& y0, const T_t0& t0,
+            const std::vector<T_ts>& ts, double relative_tolerance,
+            double absolute_tolerance,
             long int max_num_steps,  // NOLINT(runtime/int)
             std::ostream* msgs, const T_Args&... args) {
   return ode_bdf_tol_impl("ode_bdf_tol", f, y0, t0, ts, relative_tolerance,
@@ -142,9 +146,8 @@ template <typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... T_Args, require_eigen_vector_t<T_y0>* = nullptr>
 std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
                           Eigen::Dynamic, 1>>
-ode_bdf(const F& f, const T_y0& y0,
-        const T_t0& t0, const std::vector<T_ts>& ts, std::ostream* msgs,
-        const T_Args&... args) {
+ode_bdf(const F& f, const T_y0& y0, const T_t0& t0, const std::vector<T_ts>& ts,
+        std::ostream* msgs, const T_Args&... args) {
   double relative_tolerance = 1e-10;
   double absolute_tolerance = 1e-10;
   long int max_num_steps = 1e8;  // NOLINT(runtime/int)
