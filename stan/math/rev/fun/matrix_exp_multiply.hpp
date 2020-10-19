@@ -22,7 +22,7 @@ namespace math {
  * @return exponential of A multiplies B
  */
 template <typename Ta, typename Tb, require_all_eigen_t<Ta, Tb>* = nullptr,
-          require_any_st_var<Ta, Tb>* = nullptr>
+          require_any_st_autodiff<Ta, Tb>* = nullptr>
 inline Eigen::Matrix<return_type_t<Ta, Tb>, -1, Tb::ColsAtCompileTime>
 matrix_exp_multiply(const Ta& A, const Tb& B) {
   check_square("matrix_exp_multiply", "input matrix", A);

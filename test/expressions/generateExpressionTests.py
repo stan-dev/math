@@ -299,7 +299,6 @@ no_fwd_overload = [
     "algebra_solver_newton",
     "hmm_hidden_state_prob", 
     "map_rect",
-    "matrix_exp_multiply",
     "ode_adams",
     "ode_adams_tol",
     "ode_bdf",
