@@ -41,32 +41,8 @@ class ScopedChainableStack {
   F execute(F f) {
     activate_scope active_scope(*this);
     f();
-
     return f;
   }
-
-  /*
-  template <typename F>
-  void execute(const F& f) {
-    // It's actually impossible to leave the stack in an active state
-    // behind, but if that happens, then we may not try-catch to
-    // ensure we deactivate.
-    if (local_stack_.is_active()) {
-      f();
-      //return f;
-    }
-
-    try {
-      local_stack_.activate();
-      f();
-      local_stack_.deactivate();
-    } catch (const std::exception& e) {
-      local_stack_.deactivate();
-      throw;
-    }
-    //return f;
-  }
-  */
 };
 
 }  // namespace math
