@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/abs.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <sstream>
 #include <string>
 #include <cmath>
@@ -37,9 +38,10 @@ inline void check_symmetric(const char* function, const char* name,
   if (k <= 1) {
     return;
   }
+  const auto& y_ref = to_ref(y);
   for (Eigen::Index m = 0; m < k; ++m) {
     for (Eigen::Index n = m + 1; n < k; ++n) {
-      if (!(fabs(value_of(y(m, n)) - value_of(y(n, m)))
+      if (!(fabs(value_of(y_ref(m, n)) - value_of(y_ref(n, m)))
             <= CONSTRAINT_TOLERANCE)) {
         std::ostringstream msg1;
         msg1 << "is not symmetric. " << name << "["
@@ -48,9 +50,9 @@ inline void check_symmetric(const char* function, const char* name,
         std::string msg1_str(msg1.str());
         std::ostringstream msg2;
         msg2 << ", but " << name << "[" << stan::error_index::value + n << ","
-             << stan::error_index::value + m << "] = " << y(n, m);
+             << stan::error_index::value + m << "] = " << y_ref(n, m);
         std::string msg2_str(msg2.str());
-        throw_domain_error(function, name, y(m, n), msg1_str.c_str(),
+        throw_domain_error(function, name, y_ref(m, n), msg1_str.c_str(),
                            msg2_str.c_str());
       }
     }

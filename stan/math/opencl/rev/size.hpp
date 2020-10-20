@@ -3,14 +3,10 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
+#include <stan/math/rev/core.hpp>
 #include <stan/math/prim/meta.hpp>
-
 namespace stan {
 namespace math {
-
-// forward declaration
-template <typename>
-struct var_value;
 
 /**
  * Returns the size (number of the elements) of a `var_vlaue<matrix_cl>`.

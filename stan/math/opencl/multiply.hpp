@@ -47,8 +47,7 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
   }
   if (A.rows() == 1) {
     const int local_size
-        = opencl_kernels::row_vector_matrix_multiply.make_functor.get_opts().at(
-            "LOCAL_SIZE_");
+        = opencl_kernels::row_vector_matrix_multiply.get_option("LOCAL_SIZE_");
     try {
       opencl_kernels::row_vector_matrix_multiply(
           cl::NDRange(temp.cols() * local_size), cl::NDRange(local_size), A, B,
@@ -62,12 +61,10 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
     temp = matrix_vector_multiply(A, B);
     return temp;
   }
-  int local = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
-      "THREAD_BLOCK_SIZE");
+  int local = opencl_kernels::matrix_multiply.get_option("THREAD_BLOCK_SIZE");
   const int Mpad = ((A.rows() + local - 1) / local) * local;
   const int Npad = ((B.cols() + local - 1) / local) * local;
-  const int wpt = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
-      "WORK_PER_THREAD");
+  const int wpt = opencl_kernels::matrix_multiply.get_option("WORK_PER_THREAD");
   const int wgs = Mpad / local * Npad / local;
   const int split = std::min(
       A.cols() / local,
