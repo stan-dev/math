@@ -133,7 +133,6 @@ map_rect(const T_shared_param& shared_params,
   static const char* function = "map_rect";
   using return_t = Eigen::Matrix<return_type_t<T_shared_param, T_job_param>,
                                  Eigen::Dynamic, 1>;
-  using T_shared_param_ref = ref_type_t<T_shared_param>;
 
   check_matching_sizes(function, "job parameters", job_params, "real data",
                        x_r);
@@ -172,12 +171,15 @@ map_rect(const T_shared_param& shared_params,
                      "job specific int data",
                      size_x_i);
   }
-  T_shared_param_ref shared_params_ref = shared_params;
 
 #ifdef STAN_MPI
-  return internal::map_rect_mpi<call_id, F, T_shared_param_ref, T_job_param>(
-      shared_params_ref, job_params, x_r, x_i, msgs);
+  using T_shared_param_eval = plain_type_t<T_shared_param>;
+  T_shared_param_eval shared_params_eval = shared_params;
+  return internal::map_rect_mpi<call_id, F, T_shared_param_eval, T_job_param>(
+      shared_params_eval, job_params, x_r, x_i, msgs);
 #else
+  using T_shared_param_ref = ref_type_t<T_shared_param>;
+  T_shared_param_ref shared_params_ref = shared_params;
   return internal::map_rect_concurrent<call_id, F, T_shared_param_ref,
                                        T_job_param>(shared_params_ref,
                                                     job_params, x_r, x_i, msgs);

@@ -27,7 +27,7 @@ map_rect_concurrent(
         job_params,
     const std::vector<std::vector<double>>& x_r,
     const std::vector<std::vector<int>>& x_i, std::ostream* msgs) {
-  using ReduceF = map_rect_reduce<F, T_shared_param, T_job_param>;
+  using ReduceF = map_rect_reduce<F, scalar_type_t<T_shared_param>, T_job_param>;
   using CombineF = map_rect_combine<F, T_shared_param, T_job_param>;
 
   const int num_jobs = job_params.size();

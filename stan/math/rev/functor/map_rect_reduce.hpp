@@ -12,9 +12,9 @@ namespace stan {
 namespace math {
 namespace internal {
 
-template <typename F, typename T_shared_param>
-struct map_rect_reduce<F, T_shared_param, var, require_st_var<T_shared_param>> {
-  matrix_d operator()(const T_shared_param& shared_params,
+template <typename F>
+struct map_rect_reduce<F, var, var> {
+  matrix_d operator()(const vector_d& shared_params,
                       const vector_d& job_specific_params,
                       const std::vector<double>& x_r,
                       const std::vector<int>& x_i,
@@ -50,10 +50,9 @@ struct map_rect_reduce<F, T_shared_param, var, require_st_var<T_shared_param>> {
   }
 };
 
-template <typename F, typename T_shared_param>
-struct map_rect_reduce<F, T_shared_param, var,
-                       require_same_t<scalar_type_t<T_shared_param>, double>> {
-  matrix_d operator()(const T_shared_param& shared_params,
+template <typename F>
+struct map_rect_reduce<F, double, var> {
+  matrix_d operator()(const vector_d& shared_params,
                       const vector_d& job_specific_params,
                       const std::vector<double>& x_r,
                       const std::vector<int>& x_i,
@@ -84,10 +83,9 @@ struct map_rect_reduce<F, T_shared_param, var,
   }
 };
 
-template <typename F, typename T_shared_param>
-struct map_rect_reduce<F, T_shared_param, double,
-                       require_st_var<T_shared_param>> {
-  matrix_d operator()(const T_shared_param& shared_params,
+template <typename F>
+struct map_rect_reduce<F, var, double> {
+  matrix_d operator()(const vector_d& shared_params,
                       const vector_d& job_specific_params,
                       const std::vector<double>& x_r,
                       const std::vector<int>& x_i,
