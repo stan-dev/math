@@ -20,7 +20,7 @@ class ScopedChainableStack {
   struct activate_scope {
     ScopedChainableStack& scoped_stack_;
 
-    activate_scope(ScopedChainableStack& scoped_stack)
+    explicit activate_scope(ScopedChainableStack& scoped_stack)
         : scoped_stack_(scoped_stack) {
       scoped_stack_.stack_queue_.push_back(ChainableStack::instance_);
       ChainableStack::instance_ = &scoped_stack_.local_stack_;

@@ -38,7 +38,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     std::unique_ptr<args_tuple_t> args_tuple_holder_;
 
     template <typename... ArgsT>
-    scoped_args_tuple(ArgsT&&... args_tuple)
+    explicit scoped_args_tuple(ArgsT&&... args_tuple)
         : stack_(), args_tuple_holder_(nullptr) {
       stack_.execute([&] {
         args_tuple_holder_ = std::unique_ptr<args_tuple_t>(
