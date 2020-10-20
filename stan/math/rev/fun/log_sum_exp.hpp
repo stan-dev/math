@@ -69,7 +69,7 @@ template <typename T, require_container_st<is_var, T>* = nullptr>
 inline auto log_sum_exp(const T& x) {
   return apply_vector_unary<T>::reduce(x, [](const auto& v) {
     arena_t<decltype(v)> arena_v = v;
-    arena_t<decltype(v.val())> arena_v_val = v.val();
+    arena_t<decltype(v.val())> arena_v_val = arena_v.val();
     var res = log_sum_exp(arena_v_val);
 
     reverse_pass_callback([arena_v, arena_v_val, res]() mutable {
