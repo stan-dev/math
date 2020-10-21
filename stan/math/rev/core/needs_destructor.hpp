@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_REV_CORE_NEEDS_DESTRUCTOR_HPP
 #define STAN_MATH_REV_CORE_NEEDS_DESTRUCTOR_HPP
 
+#include <stan/math/rev/core/chainablestack.hpp>
+
 namespace stan {
 namespace math {
 
