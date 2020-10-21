@@ -25,7 +25,7 @@ namespace math {
  * @throw std::domain_error if theta is not a valid probability
  * @throw std::invalid_argument if container sizes mismatch.
  */
-template <bool propto, typename T_n, typename T_prob,
+template <bool propto, typename T_prob, typename T_n,
           require_all_prim_or_rev_kernel_expression_t<T_n, T_prob>* = nullptr>
 return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   static const char* function = "bernoulli_lpmf(OpenCL)";
