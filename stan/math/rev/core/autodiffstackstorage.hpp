@@ -24,6 +24,9 @@ namespace math {
 #define STAN_THREADS_DEF
 #endif
 
+//forward declaration
+class needs_destructor;
+
 /**
  * This struct always provides access to the autodiff stack using
  * the singleton pattern. Read warnings below!
@@ -104,6 +107,7 @@ struct AutodiffStackSingleton {
     std::vector<ChainableT *> var_stack_;
     std::vector<ChainableT *> var_nochain_stack_;
     std::vector<ChainableAllocT *> var_alloc_stack_;
+    std::vector<needs_destructor *> destructor_stack_;
     stack_alloc memalloc_;
 
     // nested positions
