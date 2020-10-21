@@ -17,21 +17,21 @@ namespace math {
  * Returns the log PMF of the Bernoulli distribution. If containers are
  * supplied, returns the log sum of the probabilities.
  *
- * @tparam T_n type of integer parameters
- * @tparam T_prob type of chance of success parameters
+ * @tparam T_n_cl type of integer parameters
+ * @tparam T_prob_cl type of chance of success parameters
  * @param n integer parameter
  * @param theta chance of success parameter
  * @return log probability or log sum of probabilities
  * @throw std::domain_error if theta is not a valid probability
  * @throw std::invalid_argument if container sizes mismatch.
  */
-template <bool propto, typename T_prob, typename T_n,
-          require_all_prim_or_rev_kernel_expression_t<T_n, T_prob>* = nullptr>
-return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
+template <bool propto, typename T_n_cl, typename T_prob_cl,
+          require_all_prim_or_rev_kernel_expression_t<T_n_cl, T_prob_cl>* = nullptr>
+return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n, const T_prob_cl& theta) {
   static const char* function = "bernoulli_lpmf(OpenCL)";
-  using T_partials_return = partials_return_t<T_prob>;
-  constexpr bool is_n_vector = !is_stan_scalar<T_n>::value;
-  constexpr bool is_theta_vector = !is_stan_scalar<T_prob>::value;
+  using T_partials_return = partials_return_t<T_prob_cl>;
+  constexpr bool is_n_vector = !is_stan_scalar<T_n_cl>::value;
+  constexpr bool is_theta_vector = !is_stan_scalar<T_prob_cl>::value;
 
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
@@ -39,14 +39,14 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_prob>::value) {
+  if (!include_summand<propto, T_prob_cl>::value) {
     return 0.0;
   }
 
   const auto& theta_val = value_of(theta);
 
   T_partials_return logp(0.0);
-  operands_and_partials<T_prob> ops_partials(theta);
+  operands_and_partials<T_prob_cl> ops_partials(theta);
 
   auto check_n_bounded = check_cl(function, "n", n, "in the interval [0, 1]");
   auto n_bounded_expr = 0 <= n && n <= 1;
@@ -65,12 +65,12 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
 
     results(logp_cl, deriv_cl, check_n_bounded, check_theta_bounded)
         = expressions(logp_expr,
-                      calc_if<!is_constant_all<T_prob>::value>(deriv_expr),
+                      calc_if<!is_constant_all<T_prob_cl>::value>(deriv_expr),
                       n_bounded_expr, theta_bounded_expr);
 
     logp = sum(from_matrix_cl(logp_cl));
 
-    if (!is_constant_all<T_prob>::value) {
+    if (!is_constant_all<T_prob_cl>::value) {
       ops_partials.edge1_.partials_ = deriv_cl;
     }
   } else {
@@ -90,7 +90,7 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
     } else {
       logp = n_sum * log(theta_val_scal) + (N - n_sum) * log1m(theta_val_scal);
     }
-    if (!is_constant_all<T_prob>::value) {
+    if (!is_constant_all<T_prob_cl>::value) {
       double& edge1_partial = forward_as<internal::broadcast_array<double>>(
           ops_partials.edge1_.partials_)[0];
       if (n_sum == N) {
