@@ -24,7 +24,7 @@ namespace math {
 #define STAN_THREADS_DEF
 #endif
 
-//forward declaration
+// forward declaration
 class needs_destructor;
 
 /**
