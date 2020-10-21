@@ -278,7 +278,6 @@ inline auto add(const T1& a, const T2& b) {
   return a + b;
 }
 
-
 /**
  * Addition operator for matrix variables (C++).
  *
