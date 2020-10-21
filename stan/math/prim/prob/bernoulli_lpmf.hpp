@@ -27,7 +27,9 @@ namespace math {
  * @throw std::domain_error if theta is not a valid probability
  * @throw std::invalid_argument if container sizes mismatch.
  */
-template <bool propto, typename T_n, typename T_prob>
+template <
+    bool propto, typename T_n, typename T_prob,
+    require_all_not_prim_or_rev_kernel_expression_t<T_n, T_prob>* = nullptr>
 return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_prob>;
   using T_theta_ref = ref_type_t<T_prob>;
