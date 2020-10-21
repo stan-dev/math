@@ -39,11 +39,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
     template <typename... ArgsT>
     explicit scoped_args_tuple(ArgsT&&... args_tuple)
-        : stack_(), args_tuple_holder_(stack_.execute([&] {
-        args_tuple_holder_ = std::unique_ptr<args_tuple_t>(
-            new std::tuple<decltype(deep_copy_vars(args_tuple))...>(
-                deep_copy_vars(args_tuple)...));
-      })) {}
+        : stack_(), args_tuple_holder_(stack_.execute([&]() -> args_tuple_t* {
+            return new args_tuple_t(deep_copy_vars(args_tuple)...);
+          })) {}
   };
 
   using local_args_tuple_t = tbb::enumerable_thread_specific<scoped_args_tuple>;
@@ -129,17 +127,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         local_sub_slice.emplace_back(deep_copy_vars(vmapped_[i]));
       }
 
-      // Create nested autodiff copies of all shared arguments that do not point
+      // Obtain reference to thread local copy of all shared arguments that do
+      // not point
       //   back to main autodiff stack
-      /*
-      auto args_tuple_local_copy = apply(
-          [&](auto&&... args) {
-            return std::tuple<decltype(deep_copy_vars(args))...>(
-                deep_copy_vars(args)...);
-          },
-          args_tuple_);
-      */
-
       scoped_args_tuple& args_tuple_scope = local_args_tuple_.local();
       auto& args_tuple_local = *(args_tuple_scope.args_tuple_holder_);
 
@@ -168,7 +158,6 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                                 std::forward<decltype(args)>(args)...);
           },
           args_tuple_local);
-      // std::move(args_tuple_local_copy));
 
       // set adjoints of shared arguments back to zero
       args_tuple_scope.stack_.execute([] { set_zero_all_adjoints(); });
@@ -255,6 +244,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     }
 
     local_args_tuple_t local_args([&] { return scoped_args_tuple(args...); });
+    // @Steve: This should work, but fails to compile???
+    // local_args_tuple_t local_args(args...);
 
     recursive_reducer worker(num_vars_per_term, num_vars_shared_terms, partials,
                              std::forward<Vec>(vmapped), local_args, msgs,

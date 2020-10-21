@@ -2,8 +2,6 @@
 #define STAN_MATH_REV_CORE_SCOPED_CHAINABLESTACK_HPP
 
 #include <stan/math/rev/core/chainablestack.hpp>
-#include <stan/math/rev/core/start_nested.hpp>
-#include <stan/math/rev/core/recover_memory_nested.hpp>
 
 #include <vector>
 
@@ -13,7 +11,7 @@ namespace math {
 class ScopedChainableStack {
   ChainableStack::AutodiffStackStorage local_stack_;
 
- std::vector<ChainableStack::AutodiffStackStorage*> stack_queue_;
+  std::vector<ChainableStack::AutodiffStackStorage*> stack_queue_;
 
   struct activate_scope {
     ScopedChainableStack& scoped_stack_;
