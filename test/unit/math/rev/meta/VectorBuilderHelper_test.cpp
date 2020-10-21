@@ -1,4 +1,5 @@
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/core.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <gtest/gtest.h>
 #include <vector>
@@ -8,7 +9,7 @@ TEST(MetaTraitsRevScal, VectorBuilderHelper_false_true) {
   using stan::math::size;
   using stan::math::var;
 
-  var a_var(1);
+  var a_var(1.0);
 
   VectorBuilderHelper<double, false, true> dvv1(size(a_var));
   EXPECT_THROW(dvv1[0], std::logic_error);

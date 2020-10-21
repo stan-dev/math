@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_META_CONTAINS_VECTOR_HPP
 
 #include <stan/math/prim/meta/is_vector.hpp>
+#include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/disjunction.hpp>
 
 namespace stan {
@@ -11,7 +12,7 @@ namespace stan {
  * @tparam T Types to test
  */
 template <typename... T>
-using contains_vector = math::disjunction<is_vector<T>...>;
+using contains_vector = math::disjunction<bool_constant<is_eigen_vector<T>::value || is_std_vector<T>::value>...>;
 
 }  // namespace stan
 #endif

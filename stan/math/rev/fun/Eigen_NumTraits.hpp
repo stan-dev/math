@@ -5,7 +5,7 @@
 #include <stan/math/prim/core.hpp>
 #include <stan/math/rev/fun/read_var.hpp>
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/std_numeric_limits.hpp>
 #include <limits>
 
