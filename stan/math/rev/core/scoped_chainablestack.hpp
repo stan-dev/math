@@ -8,6 +8,24 @@
 namespace stan {
 namespace math {
 
+/**
+ * The AD tape of reverse mode AD is by default stored globally within the
+ * process (or thread). With the ScopedChainableStack class one may execute a
+ * nullary functor with reference to an AD tape which is stored with the
+ * instance of ScopedChainableStack. Example:
+ *
+ * ScopedChainableStack scoped_stack;
+ *
+ * double cgrad = scoped_stack.execute([] {
+ *   var a = 1;
+ *   var b = 4;
+ *   var c = a + b;
+ *   grad();
+ *   return c.adj();
+ * });
+ *
+ * Doing so will not interfere with the process (or thread) AD tape.
+ */
 class ScopedChainableStack {
   ChainableStack::AutodiffStackStorage local_stack_;
 
@@ -31,8 +49,9 @@ class ScopedChainableStack {
  public:
   ScopedChainableStack() = default;
 
-  // execute in the current thread a nullary function and write the AD
-  // tape to local_stack_ of this instance
+  // Execute in the current thread a nullary function and write the AD
+  // tape to local_stack_ of this instance. The function may return
+  // any type.
   template <typename F>
   auto execute(F&& f) {
     activate_scope active_scope(*this);
