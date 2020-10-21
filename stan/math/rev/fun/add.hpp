@@ -19,7 +19,7 @@ namespace math {
  * @return Variable result of adding two variables.
  */
 template <typename VarMat1, typename VarMat2,
-         require_all_rev_matrix_t<VarMat1, VarMat2>* = nullptr>
+          require_all_rev_matrix_t<VarMat1, VarMat2>* = nullptr>
 inline auto add(const VarMat1& a, const VarMat2& b) {
   check_matching_dims("add", "a", a, "b", b);
   using op_ret_type = decltype(a.val() + b.val());
@@ -28,13 +28,13 @@ inline auto add(const VarMat1& a, const VarMat2& b) {
   arena_t<VarMat2> arena_b(b);
   arena_t<ret_type> ret(arena_a.val() + arena_b.val());
   reverse_pass_callback([ret, arena_a, arena_b]() mutable {
-  for (Eigen::Index i = 0; i < ret.size(); ++i) {
-    const auto ref_adj = ret.adj().coeffRef(i);
-    arena_a.adj().coeffRef(i) += ref_adj;
-    arena_b.adj().coeffRef(i) += ref_adj;
-  }
- });
- return ret_type(ret);
+    for (Eigen::Index i = 0; i < ret.size(); ++i) {
+      const auto ref_adj = ret.adj().coeffRef(i);
+      arena_a.adj().coeffRef(i) += ref_adj;
+      arena_b.adj().coeffRef(i) += ref_adj;
+    }
+  });
+  return ret_type(ret);
 }
 
 /**
