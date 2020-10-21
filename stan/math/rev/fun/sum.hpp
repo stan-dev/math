@@ -8,7 +8,7 @@
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/rev/fun/sum.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
-#include <stan/math/rev/fun/typedefs.hpp>
+#include <stan/math/rev/core/typedefs.hpp>
 #include <vector>
 
 namespace stan {
