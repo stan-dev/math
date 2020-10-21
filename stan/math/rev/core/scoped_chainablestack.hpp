@@ -49,9 +49,15 @@ class ScopedChainableStack {
  public:
   ScopedChainableStack() = default;
 
-  // Execute in the current thread a nullary function and write the AD
-  // tape to local_stack_ of this instance. The function may return
-  // any type.
+  /**
+   * Execute in the current thread a nullary function and write the AD
+   * tape to local_stack_ of this instance. The function may return
+   * any type.
+   *
+   * @tparam F nullary functor to evaluate
+   * @param f instance of nullary functor
+   * @return Result of evaluated functor
+   */
   template <typename F>
   auto execute(F&& f) {
     activate_scope active_scope(*this);
