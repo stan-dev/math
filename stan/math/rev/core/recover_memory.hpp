@@ -28,7 +28,7 @@ static inline void recover_memory() {
     delete x;
   }
   for (auto x : ChainableStack::instance_->destructor_stack_) {
-    if(x!=nullptr){
+    if (x != nullptr) {
       x->~needs_destructor();
     }
   }
