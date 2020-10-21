@@ -33,7 +33,7 @@ class ScopedChainableStack {
   };
 
  public:
-  ScopedChainableStack() {}
+  ScopedChainableStack() = default;
 
   // execute in the current thread a nullary function and write the AD
   // tape to local_stack_ of this instance
