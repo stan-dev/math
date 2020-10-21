@@ -11,11 +11,9 @@ namespace stan {
 namespace math {
 
 class ScopedChainableStack {
-  typedef ChainableStack::AutodiffStackStorage chainablestack_t;
-  chainablestack_t local_stack_;
+  ChainableStack::AutodiffStackStorage local_stack_;
 
-  using stack_queue_t = std::vector<chainablestack_t*>;
-  stack_queue_t stack_queue_;
+ std::vector<ChainableStack::AutodiffStackStorage*> stack_queue_;
 
   struct activate_scope {
     ScopedChainableStack& scoped_stack_;
@@ -33,15 +31,14 @@ class ScopedChainableStack {
   };
 
  public:
-  ScopedChainableStack() {}
+  ScopedChainableStack() = default;
 
   // execute in the current thread a nullary function and write the AD
   // tape to local_stack_ of this instance
   template <typename F>
-  F execute(F f) {
+  auto execute(F&& f) {
     activate_scope active_scope(*this);
-    f();
-    return f;
+    return std::forward<F>(f)();
   }
 };
 
