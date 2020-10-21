@@ -12,7 +12,8 @@ namespace stan {
  * @tparam T Types to test
  */
 template <typename... T>
-using contains_vector = math::disjunction<bool_constant<is_eigen_vector<T>::value || is_std_vector<T>::value>...>;
+using contains_vector = math::disjunction<
+    bool_constant<is_eigen_vector<T>::value || is_std_vector<T>::value>...>;
 
 }  // namespace stan
 #endif
