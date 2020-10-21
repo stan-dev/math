@@ -40,10 +40,10 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     template <typename... ArgsT>
     explicit scoped_args_tuple(ArgsT&&... args_tuple)
         : stack_(), args_tuple_holder_(stack_.execute([&] {
-        args_tuple_holder_ = std::unique_ptr<args_tuple_t>(
-            new std::tuple<decltype(deep_copy_vars(args_tuple))...>(
-                deep_copy_vars(args_tuple)...));
-      })) {}
+            args_tuple_holder_ = std::unique_ptr<args_tuple_t>(
+                new std::tuple<decltype(deep_copy_vars(args_tuple))...>(
+                    deep_copy_vars(args_tuple)...));
+          })) {}
   };
 
   using local_args_tuple_t = tbb::enumerable_thread_specific<scoped_args_tuple>;

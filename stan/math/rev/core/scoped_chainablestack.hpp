@@ -13,7 +13,7 @@ namespace math {
 class ScopedChainableStack {
   ChainableStack::AutodiffStackStorage local_stack_;
 
- std::vector<ChainableStack::AutodiffStackStorage*> stack_queue_;
+  std::vector<ChainableStack::AutodiffStackStorage*> stack_queue_;
 
   struct activate_scope {
     ScopedChainableStack& scoped_stack_;
