@@ -11,11 +11,9 @@ namespace stan {
 namespace math {
 
 class ScopedChainableStack {
-  typedef ChainableStack::AutodiffStackStorage chainablestack_t;
-  chainablestack_t local_stack_;
+  ChainableStack::AutodiffStackStorage local_stack_;
 
-  using stack_queue_t = std::vector<chainablestack_t*>;
-  stack_queue_t stack_queue_;
+ std::vector<ChainableStack::AutodiffStackStorage*> stack_queue_;
 
   struct activate_scope {
     ScopedChainableStack& scoped_stack_;
