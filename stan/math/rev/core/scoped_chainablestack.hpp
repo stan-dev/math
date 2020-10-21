@@ -38,10 +38,9 @@ class ScopedChainableStack {
   // execute in the current thread a nullary function and write the AD
   // tape to local_stack_ of this instance
   template <typename F>
-  F execute(F f) {
+  auto execute(F&& f) {
     activate_scope active_scope(*this);
-    f();
-    return f;
+    return std::forward<F>(f)();
   }
 };
 
