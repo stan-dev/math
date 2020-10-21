@@ -31,10 +31,6 @@ class arena_matrix_cl : public needs_destructor, public matrix_cl<T> {
       : needs_destructor(), matrix_cl<T>(std::forward<Args>(args)...) {}
 
   arena_matrix_cl(const arena_matrix_cl& other) = default;
-//      : matrix_cl<T>(other.buffer(), other.rows(), other.cols(), other.view()) {
-//    read_events_ = other.read_events();
-//    write_events_ = other.write_events();
-//  }
   arena_matrix_cl(arena_matrix_cl&&) = default;
 
   /**
@@ -46,12 +42,6 @@ class arena_matrix_cl : public needs_destructor, public matrix_cl<T> {
             require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr>
   arena_matrix_cl(const Expr& expression)  // NOLINT(runtime/explicit)
       : needs_destructor(), matrix_cl<T>(expression) {}
-
-//  void destroy() { ~matrix_cl<T>(); }
-//  ~arena_matrix_cl() {
-//    read_events_.~vector();
-//    write_events_.~vector();
-//  }
 };
 
 }  // namespace math
