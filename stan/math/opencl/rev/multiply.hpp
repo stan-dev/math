@@ -31,7 +31,6 @@ namespace internal {
       a_(a), b_(new matrix_cl_alloc<T2>(b)), res_(c) {}
 
     void chain() {
-      puts("Got 1");
       a_.adj() = a_.adj() + res_.adj() * transpose(b_->mat_);
     }
 
@@ -46,7 +45,6 @@ namespace internal {
       a_(new matrix_cl_alloc<std::decay_t<T1>>(a)), b_(b), res_(c) {}
 
     void chain() {
-      puts("Got 2");
       b_.adj() = b_.adj() + transpose(a_->mat_) * res_.adj();
     }
 
