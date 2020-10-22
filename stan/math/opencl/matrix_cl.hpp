@@ -469,6 +469,17 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
             require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr>
   matrix_cl<T>& operator=(const Expr& expression);
 
+  /**
+    Evaluates `this`. This is a no-op.
+    @return `*this`
+    */
+  const matrix_cl<T>& eval() const& {
+    return *this;
+  }
+  matrix_cl<T> eval() && {
+    return std::move(*this);
+  }
+
  private:
   /**
    * Initializes the OpenCL buffer of this matrix by copying the data from given
