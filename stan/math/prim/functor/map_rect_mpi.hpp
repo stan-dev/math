@@ -52,7 +52,8 @@ map_rect_mpi(const T_shared_param& shared_params,
   typedef FUNCTOR mpi_mr_##CALLID##_##SHARED##_##JOB##_;                       \
   typedef map_rect_reduce<mpi_mr_##CALLID##_##SHARED##_##JOB##_, SHARED, JOB>  \
       mpi_mr_##CALLID##_##SHARED##_##JOB##_red_;                               \
-  typedef map_rect_combine<mpi_mr_##CALLID##_##SHARED##_##JOB##_, SHARED, JOB> \
+  typedef map_rect_combine<mpi_mr_##CALLID##_##SHARED##_##JOB##_,              \
+                           Eigen::Matrix<SHARED, Eigen::Dynamic, 1>, JOB>      \
       mpi_mr_##CALLID##_##SHARED##_##JOB##_comb_;                              \
   typedef mpi_parallel_call<CALLID, mpi_mr_##CALLID##_##SHARED##_##JOB##_red_, \
                             mpi_mr_##CALLID##_##SHARED##_##JOB##_comb_>        \
