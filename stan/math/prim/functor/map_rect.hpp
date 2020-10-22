@@ -122,7 +122,7 @@ namespace math {
 
 template <int call_id, typename F, typename T_shared_param,
           typename T_job_param,
-          require_eigen_vector_t<T_shared_param>* = nullptr>
+          require_eigen_col_vector_t<T_shared_param>* = nullptr>
 Eigen::Matrix<return_type_t<T_shared_param, T_job_param>, Eigen::Dynamic, 1>
 map_rect(const T_shared_param& shared_params,
          const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>&
@@ -173,9 +173,9 @@ map_rect(const T_shared_param& shared_params,
   }
 
 #ifdef STAN_MPI
-  using T_shared_param_eval = plain_type_t<T_shared_param>;
-  T_shared_param_eval shared_params_eval = shared_params;
-  return internal::map_rect_mpi<call_id, F, T_shared_param_eval, T_job_param>(
+  using T_plain_shared_param = plain_type_t<T_shared_param>;
+  T_plain_shared_param shared_params_eval = shared_params;
+  return internal::map_rect_mpi<call_id, F, T_plain_shared_param, T_job_param>(
       shared_params_eval, job_params, x_r, x_i, msgs);
 #else
   using T_shared_param_ref = ref_type_t<T_shared_param>;

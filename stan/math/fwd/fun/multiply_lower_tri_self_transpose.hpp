@@ -16,7 +16,7 @@ multiply_lower_tri_self_transpose(const EigMat& m) {
   if (m.rows() == 0) {
     return {};
   }
-  const plain_type_t<EigMat>& L = m.template triangularView<Eigen::Lower>();
+  plain_type_t<EigMat> L = m.template triangularView<Eigen::Lower>();
 
   return multiply(L, L.transpose());
 }

@@ -4,6 +4,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/csr_u_to_z.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <vector>
 
 namespace stan {
@@ -45,7 +46,7 @@ csr_to_dense_matrix(int m, int n, const T& w, const std::vector<int>& v,
   for (int i : v) {
     check_range("csr_to_dense_matrix", "v[]", n, i);
   }
-
+  const auto& w_ref = to_ref(w);
   Matrix<value_type_t<T>, Dynamic, Dynamic> result(m, n);
   result.setZero();
   for (int row = 0; row < m; ++row) {
@@ -55,7 +56,7 @@ csr_to_dense_matrix(int m, int n, const T& w, const std::vector<int>& v,
          ++nze) {
       // row is row index, v[nze] is column index. w[nze] is entry value.
       check_range("csr_to_dense_matrix", "j", n, v[nze]);
-      result(row, v[nze] - stan::error_index::value) = w.coeff(nze);
+      result(row, v[nze] - stan::error_index::value) = w_ref.coeff(nze);
     }
   }
   return result;

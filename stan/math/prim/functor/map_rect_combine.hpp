@@ -34,7 +34,8 @@ namespace internal {
  * @tparam T_shared_param type of shared parameters
  * @tparam T_job_param type of job specific parameters
  */
-template <typename F, typename T_shared_param, typename T_job_param>
+template <typename F, typename T_shared_param, typename T_job_param,
+          require_eigen_col_vector_t<T_shared_param>* = nullptr>
 class map_rect_combine {
   using ops_partials_t
       = operands_and_partials<T_shared_param,
