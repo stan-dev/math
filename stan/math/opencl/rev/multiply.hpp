@@ -72,8 +72,8 @@ inline auto multiply(const T_a& a, const T_b& b) {
   var_value<matrix_cl<double>> res = value_of(b) * value_of(a);
 
   reverse_pass_callback([a, b, res]() mutable {
-      a.adj() = a.adj() + res.adj() * transpose(b.val());
-      b.adj() = b.adj() + transpose(a.val()) * res.adj();
+    a.adj() = a.adj() + res.adj() * transpose(b.val());
+    b.adj() = b.adj() + transpose(a.val()) * res.adj();
   });
   return res;
 }
@@ -87,8 +87,9 @@ inline auto multiply(const T_a& a, const T_b& b) {
                    b.rows());
 
   var_value<matrix_cl<double>> res = a * b.val();
-  auto* do_mult = new internal::multiply_cl_vari<plain_type_t<T_a>,
-   plain_type_t<T_b>, var_value<matrix_cl<double>>>(a, b, res);
+  auto* do_mult
+      = new internal::multiply_cl_vari<plain_type_t<T_a>, plain_type_t<T_b>,
+                                       var_value<matrix_cl<double>>>(a, b, res);
   return res;
 }
 
@@ -100,8 +101,9 @@ inline auto multiply(const T_a& a, const T_b& b) {
   check_size_match("multiply ((OpenCL))", "A.cols()", a.cols(), "B.rows()",
                    b.rows());
   var_value<matrix_cl<double>> res = a.val() * b;
-  auto* do_mult = new internal::multiply_cl_vari<plain_type_t<T_a>,
-  plain_type_t<T_b>, var_value<matrix_cl<double>>>(a, b, res);
+  auto* do_mult
+      = new internal::multiply_cl_vari<plain_type_t<T_a>, plain_type_t<T_b>,
+                                       var_value<matrix_cl<double>>>(a, b, res);
   return res;
 }
 
