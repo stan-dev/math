@@ -27,7 +27,8 @@ namespace math {
  */
 template <
     bool propto, typename T_n_cl, typename T_prob_cl,
-    require_all_prim_or_rev_kernel_expression_t<T_n_cl, T_prob_cl>* = nullptr>
+    require_all_prim_or_rev_kernel_expression_t<T_n_cl, T_prob_cl>* = nullptr,
+    require_any_not_stan_scalar_t<T_n_cl, T_prob_cl>* = nullptr>
 return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n,
                                         const T_prob_cl& theta) {
   static const char* function = "bernoulli_lpmf(OpenCL)";
