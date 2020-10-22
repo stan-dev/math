@@ -69,7 +69,7 @@ inline auto multiply(const T_a& a, const T_b& b) {
   check_size_match("multiply ((OpenCL))", "A.cols()", a.cols(), "B.rows()",
                    b.rows());
 
-  var_value<matrix_cl<double>> res = value_of(b) * value_of(a);
+  var_value<matrix_cl<double>> res = a.val() * b.val();
 
   reverse_pass_callback([a, b, res]() mutable {
     a.adj() = a.adj() + res.adj() * transpose(b.val());
