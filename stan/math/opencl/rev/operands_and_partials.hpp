@@ -6,8 +6,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/opencl/rev/arena_type.hpp>
-#include <stan/math/opencl/rev/to_arena.hpp>
 
 namespace stan {
 namespace math {
