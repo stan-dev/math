@@ -17,9 +17,11 @@ TEST(OpenCLMatrixMultiply, prim_rev_values_small) {
   Eigen::MatrixXd b(M, K);
   b << 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1;
   stan::math::test::compare_cpu_opencl_prim_rev(matrix_multiply_functor, a, b);
+  stan::math::recover_memory();
 }
 
 TEST(OpenCLMatrixMultiply, prim_rev_values_N_0) {
+  stan::math::recover_memory();
   int N = 0;
   int M = 3;
   int K = 4;
@@ -28,6 +30,7 @@ TEST(OpenCLMatrixMultiply, prim_rev_values_N_0) {
   Eigen::MatrixXd b(M, K);
   b << 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1;
   stan::math::test::compare_cpu_opencl_prim_rev(matrix_multiply_functor, a, b);
+  stan::math::recover_memory();
 }
 
 TEST(OpenCLMatrixMultiply, prim_rev_values_M_0) {
@@ -38,6 +41,7 @@ TEST(OpenCLMatrixMultiply, prim_rev_values_M_0) {
   Eigen::MatrixXd a(N, M);
   Eigen::MatrixXd b(M, K);
   stan::math::test::compare_cpu_opencl_prim_rev(matrix_multiply_functor, a, b);
+  stan::math::recover_memory();
 }
 
 TEST(OpenCLMatrixMultiply, prim_rev_values_K_0) {
@@ -49,6 +53,7 @@ TEST(OpenCLMatrixMultiply, prim_rev_values_K_0) {
   a << 1, 2, 3, 4, 5, 6;
   Eigen::MatrixXd b(M, K);
   stan::math::test::compare_cpu_opencl_prim_rev(matrix_multiply_functor, a, b);
+  stan::math::recover_memory();
 }
 
 TEST(OpenCLMatrixMultiply, prim_rev_values_large) {
@@ -59,6 +64,7 @@ TEST(OpenCLMatrixMultiply, prim_rev_values_large) {
   Eigen::MatrixXd a = Eigen::MatrixXd::Random(N, M);
   Eigen::MatrixXd b = Eigen::MatrixXd::Random(M, K);
   stan::math::test::compare_cpu_opencl_prim_rev(matrix_multiply_functor, a, b);
+  stan::math::recover_memory();
 }
 
 #endif
