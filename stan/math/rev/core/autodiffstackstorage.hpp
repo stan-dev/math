@@ -114,6 +114,7 @@ struct AutodiffStackSingleton {
     std::vector<size_t> nested_var_stack_sizes_;
     std::vector<size_t> nested_var_nochain_stack_sizes_;
     std::vector<size_t> nested_var_alloc_stack_starts_;
+    std::vector<size_t> nested_destructor_stack_starts_;
   };
 
   explicit AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
