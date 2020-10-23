@@ -473,12 +473,8 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
     Evaluates `this`. This is a no-op.
     @return `*this`
     */
-  const matrix_cl<T>& eval() const& {
-    return *this;
-  }
-  matrix_cl<T> eval() && {
-    return std::move(*this);
-  }
+  const matrix_cl<T>& eval() const& { return *this; }
+  matrix_cl<T> eval() && { return std::move(*this); }
 
  private:
   /**

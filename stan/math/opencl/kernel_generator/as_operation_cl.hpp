@@ -60,8 +60,8 @@ inline scalar_<char> as_operation_cl(const bool a) { return scalar_<char>(a); }
  * @return \c load_ wrapping the input
  */
 template <typename T_matrix_cl,
-          typename
-          = require_any_t<is_matrix_cl<T_matrix_cl>, is_arena_matrix_cl<T_matrix_cl>>>
+          typename = require_any_t<is_matrix_cl<T_matrix_cl>,
+                                   is_arena_matrix_cl<T_matrix_cl>>>
 inline load_<T_matrix_cl> as_operation_cl(T_matrix_cl&& a) {
   return load_<T_matrix_cl>(std::forward<T_matrix_cl>(a));
 }

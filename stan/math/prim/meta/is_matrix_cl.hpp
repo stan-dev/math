@@ -44,7 +44,8 @@ struct is_arena_matrix_cl
     : public internal::is_arena_matrix_cl_impl<std::decay_t<T>> {};
 
 STAN_ADD_REQUIRE_UNARY(arena_matrix_cl, is_arena_matrix_cl, matrix_cl_group);
-STAN_ADD_REQUIRE_CONTAINER(arena_matrix_cl, is_arena_matrix_cl, matrix_cl_group);
+STAN_ADD_REQUIRE_CONTAINER(arena_matrix_cl, is_arena_matrix_cl,
+                           matrix_cl_group);
 
 }  // namespace stan
 #endif
