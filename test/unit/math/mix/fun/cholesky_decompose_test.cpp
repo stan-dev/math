@@ -144,7 +144,7 @@ TEST(MathMixMatFun, choleskyDecomposeGeneralBig) {
       tol.hessian_hessian_ = relative_tolerance(2e-4, 2e-3);
       tol.hessian_fvar_hessian_ = relative_tolerance(2e-4, 2e-3);
       Eigen::VectorXd yy = stan::math::cov_matrix_free(Sigma);
-      // lazy, solving for x in x = (N * (N + 1)) / 2
+      // lazy, solving for N in x = (N * (N + 1)) / 2
       int dof = .5 * (std::sqrt(8 * yy.size() + 1) - 1);
       cholesky_decompose_test::expect_cholesky_var(
           tol, cholesky_decompose_test::f(dof), yy);
