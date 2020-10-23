@@ -51,9 +51,13 @@ void expect_cholesky_var(stan::test::ad_tolerances& tols, const F& f, const T& x
     stan::test::internal::expect_all_throw(h(0), x_serial);
     return;
   }
-  for (size_t i = 0; i < result_size; ++i) {
-    double gx = h(i)(x_serial);
-    stan::test::internal::test_gradient(tols, h(i), x_serial, gx);
+  // we know the result is square and we only want to check lower half.
+  size_t len = std::sqrt(result_size);
+  for (size_t i = 0; i < len; ++i) {
+    for (size_t j = 0; j < i; ++j) {
+      double gx = h(i + len * j)(x_serial);
+      stan::test::internal::test_gradient(tols, h(i + len * j), x_serial, gx);
+    }
   }
 }
 }  // namespace cholesky_decompose_test
@@ -143,7 +147,7 @@ TEST(MathMixMatFun, choleskyDecomposeGeneralBig) {
     cholesky_decompose_test::expect_cholesky_var(tol, cholesky_decompose_test::f(dof), yy);
     puts("\nSizes: ");
     std::cout << "y rows" << Sigma.rows() << "y cols" << Sigma.cols() << "\n";
-    stan::test::expect_ad_matvar(cholesky_decompose_test::f_matvar, y_mat);
+    stan::test::expect_ad_matvar(cholesky_decompose_test::f_matvar, yy);
     stan::math::recover_memory();
     }
   }
