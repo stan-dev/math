@@ -145,8 +145,6 @@ TEST(MathMixMatFun, choleskyDecomposeGeneralBig) {
     // lazy, solving for x in x = (N * (N + 1)) / 2
     int dof = .5 * (std::sqrt(8 * yy.size() + 1) - 1);
     cholesky_decompose_test::expect_cholesky_var(tol, cholesky_decompose_test::f(dof), yy);
-    puts("\nSizes: ");
-    std::cout << "y rows" << Sigma.rows() << "y cols" << Sigma.cols() << "\n";
     stan::test::expect_ad_matvar(cholesky_decompose_test::f_matvar, yy);
     stan::math::recover_memory();
     }
