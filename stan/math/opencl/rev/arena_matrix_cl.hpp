@@ -21,9 +21,11 @@ class arena_matrix_cl_impl : public chainable_alloc, public matrix_cl<T> {
   explicit arena_matrix_cl_impl(Args&&... args)
       : chainable_alloc(), matrix_cl<T>(std::forward<Args>(args)...) {}
 
-  arena_matrix_cl_impl(const arena_matrix_cl_impl&) = default;
-  arena_matrix_cl_impl(arena_matrix_cl_impl&) = default;
-  arena_matrix_cl_impl(arena_matrix_cl_impl&&) = default;
+  arena_matrix_cl_impl(const arena_matrix_cl_impl<T>&) = default;
+  arena_matrix_cl_impl(arena_matrix_cl_impl<T>&) = default;
+  arena_matrix_cl_impl(arena_matrix_cl_impl<T>&&) = default;
+  arena_matrix_cl_impl<T>& operator=(const arena_matrix_cl_impl<T>&) = default;
+  arena_matrix_cl_impl<T>& operator=(arena_matrix_cl_impl<T>&&) = default;
 };
 
 }  // namespace internal
@@ -51,9 +53,11 @@ class arena_matrix_cl {
       : impl_(new internal::arena_matrix_cl_impl<T>(
             std::forward<Args>(args)...)) {}
 
-  arena_matrix_cl(const arena_matrix_cl&) = default;
-  arena_matrix_cl(arena_matrix_cl&) = default;
-  arena_matrix_cl(arena_matrix_cl&&) = default;
+  arena_matrix_cl(const arena_matrix_cl<T>&) = default;
+  arena_matrix_cl(arena_matrix_cl<T>&) = default;
+  arena_matrix_cl(arena_matrix_cl<T>&&) = default;
+  arena_matrix_cl<T>& operator=(const arena_matrix_cl<T>&) = default;
+  arena_matrix_cl<T>& operator=(arena_matrix_cl<T>&&) = default;
 
   /**
    * Constructor from a kernel generator expression.
