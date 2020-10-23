@@ -55,8 +55,8 @@ void expect_cholesky_var(stan::test::ad_tolerances& tols, const F& f,
   }
   // we know the result is square and we only want to check lower half.
   size_t len = std::sqrt(result_size);
-  for (size_t i = 0; i < len; ++i) {
-    for (size_t j = 0; j < i; ++j) {
+  for (size_t j = 0; j < len; ++j) {
+    for (size_t i = 0; i < j; ++i) {
       double gx = h(i + len * j)(x_serial);
       stan::test::internal::test_gradient(tols, h(i + len * j), x_serial, gx);
     }
