@@ -7,6 +7,7 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/kernels/matrix_multiply.hpp>
 #include <stan/math/opencl/kernels/add.hpp>
+#include <stan/math/opencl/scalar_type.hpp>
 #include <stan/math/opencl/sub_block.hpp>
 #include <stan/math/opencl/zeros.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
