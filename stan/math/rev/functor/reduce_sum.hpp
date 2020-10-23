@@ -177,7 +177,6 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
         // set adjoints of shared arguments back to zero
         set_zero_all_adjoints();
-
       });
     }
 
