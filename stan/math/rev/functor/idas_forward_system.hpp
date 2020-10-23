@@ -109,14 +109,14 @@ class idas_forward_system : public idas_system<F, Tyy, Typ, Tpar> {
       const size_t& N = dae->N_;
       const size_t& M = dae->M_;
 
-      Eigen::Map<VectorXd> vec_yy(N_VGetArrayPointer(yy), N);
-      Eigen::Map<VectorXd> vec_yp(N_VGetArrayPointer(yp), N);
+      Eigen::Map<VectorXd, StackAlignment> vec_yy(N_VGetArrayPointer(yy), N);
+      Eigen::Map<VectorXd, StackAlignment> vec_yp(N_VGetArrayPointer(yp), N);
       std::vector<double> vyy(vec_yy.data(), vec_yy.data() + N);
       std::vector<double> vyp(vec_yp.data(), vec_yp.data() + N);
       std::vector<double> vtheta = value_of(dae->theta());
 
       std::vector<double> vpar = value_of(dae->theta_);
-      Eigen::Map<VectorXd> vec_par(vpar.data(), vpar.size());
+      Eigen::Map<VectorXd, StackAlignment> vec_par(vpar.data(), vpar.size());
 
       auto yys_mat = matrix_d_from_NVarray(yys, ns);
       auto yps_mat = matrix_d_from_NVarray(yps, ns);
@@ -131,7 +131,7 @@ class idas_forward_system : public idas_system<F, Tyy, Typ, Tpar> {
         std::vector<var> yy(x.data(), x.data() + N);
         auto eval
             = dae->f_(t, yy, vyp, vtheta, dae->x_r_, dae->x_i_, dae->msgs_);
-        Eigen::Map<vector_v> res(eval.data(), N);
+        Eigen::Map<vector_v, StackAlignment> res(eval.data(), N);
         return res;
       };
       stan::math::jacobian(fyy, vec_yy, f_val, J);
@@ -141,7 +141,7 @@ class idas_forward_system : public idas_system<F, Tyy, Typ, Tpar> {
         std::vector<var> yp(x.data(), x.data() + N);
         auto eval
             = dae->f_(t, vyy, yp, vtheta, dae->x_r_, dae->x_i_, dae->msgs_);
-        Eigen::Map<vector_v> res(eval.data(), N);
+        Eigen::Map<vector_v, StackAlignment> res(eval.data(), N);
         return res;
       };
       stan::math::jacobian(fyp, vec_yp, f_val, J);
@@ -153,7 +153,7 @@ class idas_forward_system : public idas_system<F, Tyy, Typ, Tpar> {
           std::vector<var> par(x.data(), x.data() + M);
           auto eval
               = dae->f_(t, vyy, vyp, par, dae->x_r_, dae->x_i_, dae->msgs_);
-          Eigen::Map<vector_v> res(eval.data(), N);
+          Eigen::Map<vector_v, StackAlignment> res(eval.data(), N);
           return res;
         };
         stan::math::jacobian(fpar, vec_par, f_val, J);

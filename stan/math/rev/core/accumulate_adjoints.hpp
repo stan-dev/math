@@ -117,7 +117,7 @@ inline double* accumulate_adjoints(double* dest, VecContainer&& x,
  */
 template <typename EigT, require_eigen_vt<is_var, EigT>*, typename... Pargs>
 inline double* accumulate_adjoints(double* dest, EigT&& x, Pargs&&... args) {
-  Eigen::Map<Eigen::MatrixXd>(dest, x.rows(), x.cols()) += x.adj();
+  Eigen::Map<Eigen::MatrixXd, StackAlignment>(dest, x.rows(), x.cols()) += x.adj();
   return accumulate_adjoints(dest + x.size(), std::forward<Pargs>(args)...);
 }
 

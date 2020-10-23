@@ -317,7 +317,7 @@ class cholesky_opencl : public vari {
    */
   virtual void chain() {
     const int packed_size = M_ * (M_ + 1) / 2;
-    Eigen::Map<Eigen::Matrix<vari*, Eigen::Dynamic, 1>> L_cpu(
+    Eigen::Map<Eigen::Matrix<vari*, Eigen::Dynamic, 1>, StackAlignment> L_cpu(
         vari_ref_L_, M_ * (M_ + 1) / 2);
     Eigen::VectorXd L_val_cpu = L_cpu.val();
     Eigen::VectorXd L_adj_cpu = L_cpu.adj();

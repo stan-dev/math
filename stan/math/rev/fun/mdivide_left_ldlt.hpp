@@ -69,21 +69,21 @@ class mdivide_left_ldlt_vv_vari : public vari {
                                                        * B.cols()))),
         alloc_(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()),
         alloc_ldlt_(A.alloc_) {
-    Eigen::Map<matrix_vi>(variRefB_, M_, N_) = B.vi();
+    Eigen::Map<matrix_vi, StackAlignment>(variRefB_, M_, N_) = B.vi();
     alloc_->C_ = B.val();
     alloc_ldlt_->ldlt_.solveInPlace(alloc_->C_);
-    Eigen::Map<matrix_vi>(variRefC_, M_, N_)
+    Eigen::Map<matrix_vi, StackAlignment>(variRefC_, M_, N_)
         = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
-    matrix_d adjB = Eigen::Map<matrix_vi>(variRefC_, M_, N_).adj();
+    matrix_d adjB = Eigen::Map<matrix_vi, StackAlignment>(variRefC_, M_, N_).adj();
 
     alloc_ldlt_->ldlt_.solveInPlace(adjB);
 
     const_cast<matrix_vi &>(alloc_ldlt_->variA_).adj()
         -= adjB * alloc_->C_.transpose();
-    Eigen::Map<matrix_vi>(variRefB_, M_, N_).adj() += adjB;
+    Eigen::Map<matrix_vi, StackAlignment>(variRefB_, M_, N_).adj() += adjB;
   }
 };
 
@@ -125,18 +125,18 @@ class mdivide_left_ldlt_dv_vari : public vari {
             ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))),
         alloc_(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()) {
-    Eigen::Map<matrix_vi>(variRefB_, M_, N_) = B.vi();
+    Eigen::Map<matrix_vi, StackAlignment>(variRefB_, M_, N_) = B.vi();
     alloc_->C_ = B.val();
     alloc_->ldltP_ = A.ldltP_;
     alloc_->ldltP_->solveInPlace(alloc_->C_);
-    Eigen::Map<matrix_vi>(variRefC_, M_, N_)
+    Eigen::Map<matrix_vi, StackAlignment>(variRefC_, M_, N_)
         = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
-    matrix_d adjB = Eigen::Map<matrix_vi>(variRefC_, M_, N_).adj();
+    matrix_d adjB = Eigen::Map<matrix_vi, StackAlignment>(variRefC_, M_, N_).adj();
     alloc_->ldltP_->solveInPlace(adjB);
-    Eigen::Map<matrix_vi>(variRefB_, M_, N_).adj() += adjB;
+    Eigen::Map<matrix_vi, StackAlignment>(variRefB_, M_, N_).adj() += adjB;
   }
 };
 
@@ -178,12 +178,12 @@ class mdivide_left_ldlt_vd_vari : public vari {
         alloc_ldlt_(A.alloc_) {
     alloc_->C_ = B;
     alloc_ldlt_->ldlt_.solveInPlace(alloc_->C_);
-    Eigen::Map<matrix_vi>(variRefC_, M_, N_)
+    Eigen::Map<matrix_vi, StackAlignment>(variRefC_, M_, N_)
         = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
-    matrix_d adjC = Eigen::Map<matrix_vi>(variRefC_, M_, N_).adj();
+    matrix_d adjC = Eigen::Map<matrix_vi, StackAlignment>(variRefC_, M_, N_).adj();
 
     const_cast<matrix_vi &>(alloc_ldlt_->variA_).adj()
         -= alloc_ldlt_->ldlt_.solve(adjC * alloc_->C_.transpose());
@@ -217,7 +217,7 @@ inline Eigen::Matrix<var, R1, EigMat::ColsAtCompileTime> mdivide_left_ldlt(
       = new internal::mdivide_left_ldlt_vv_vari<R1, C1, R2, C2>(A, b);
 
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
-  res.vi() = Eigen::Map<matrix_vi>(baseVari->variRefC_, res.rows(), res.cols());
+  res.vi() = Eigen::Map<matrix_vi, StackAlignment>(baseVari->variRefC_, res.rows(), res.cols());
 
   return res;
 }
@@ -248,7 +248,7 @@ inline Eigen::Matrix<var, R1, EigMat::ColsAtCompileTime> mdivide_left_ldlt(
       = new internal::mdivide_left_ldlt_vd_vari<R1, C1, R2, C2>(A, b);
 
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
-  res.vi() = Eigen::Map<matrix_vi>(baseVari->variRefC_, res.rows(), res.cols());
+  res.vi() = Eigen::Map<matrix_vi, StackAlignment>(baseVari->variRefC_, res.rows(), res.cols());
 
   return res;
 }
@@ -279,7 +279,7 @@ inline Eigen::Matrix<var, R1, EigMat::ColsAtCompileTime> mdivide_left_ldlt(
       = new internal::mdivide_left_ldlt_dv_vari<R1, C1, R2, C2>(A, b);
 
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
-  res.vi() = Eigen::Map<matrix_vi>(baseVari->variRefC_, res.rows(), res.cols());
+  res.vi() = Eigen::Map<matrix_vi, StackAlignment>(baseVari->variRefC_, res.rows(), res.cols());
 
   return res;
 }

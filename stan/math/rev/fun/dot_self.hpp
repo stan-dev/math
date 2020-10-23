@@ -20,7 +20,7 @@ class dot_self_vari : public vari {
 
  public:
   dot_self_vari(vari** v, size_t size)
-      : vari(Eigen::Map<vector_vi>(v, size).val().squaredNorm()),
+      : vari(Eigen::Map<vector_vi, StackAlignment>(v, size).val().squaredNorm()),
         v_(v),
         size_(size) {}
   template <typename T, require_eigen_t<T>* = nullptr>
@@ -28,10 +28,10 @@ class dot_self_vari : public vari {
       : vari(v.val().squaredNorm()), size_(v.size()) {
     v_ = reinterpret_cast<vari**>(
         ChainableStack::instance_->memalloc_.alloc(size_ * sizeof(vari*)));
-    Eigen::Map<matrix_vi>(v_, v.rows(), v.cols()) = v.vi();
+    Eigen::Map<matrix_vi, StackAlignment>(v_, v.rows(), v.cols()) = v.vi();
   }
   virtual void chain() {
-    Eigen::Map<vector_vi> v_map(v_, size_);
+    Eigen::Map<vector_vi, StackAlignment> v_map(v_, size_);
     v_map.adj() += adj_ * 2.0 * v_map.val();
   }
 };

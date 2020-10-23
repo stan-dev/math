@@ -71,7 +71,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
       = ChainableStack::instance_->memalloc_.alloc_array<double>(N
                                                                  * total_vars);
 
-  Eigen::Map<Eigen::MatrixXd> jacobian(jacobian_mem, total_vars, N);
+  Eigen::Map<Eigen::MatrixXd, StackAlignment> jacobian(jacobian_mem, total_vars, N);
 
   for (size_t j = 0; j < N; ++j) {
     for (size_t k = 0; k < num_y0_vars; ++k) {

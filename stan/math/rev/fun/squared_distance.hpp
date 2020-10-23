@@ -72,13 +72,13 @@ class squared_distance_vv_vari : public vari {
         ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
     v2_ = reinterpret_cast<vari**>(
         ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
-    Eigen::Map<vector_vi>(v1_, length_) = v1.vi();
-    Eigen::Map<vector_vi>(v2_, length_) = v2.vi();
+    Eigen::Map<vector_vi, StackAlignment>(v1_, length_) = v1.vi();
+    Eigen::Map<vector_vi, StackAlignment>(v2_, length_) = v2.vi();
   }
 
   virtual void chain() {
-    Eigen::Map<vector_vi> v1_map(v1_, length_);
-    Eigen::Map<vector_vi> v2_map(v2_, length_);
+    Eigen::Map<vector_vi, StackAlignment> v1_map(v1_, length_);
+    Eigen::Map<vector_vi, StackAlignment> v2_map(v2_, length_);
     vector_d di = 2 * adj_ * (v1_map.val() - v2_map.val());
     v1_map.adj() += di;
     v2_map.adj() -= di;
@@ -104,14 +104,14 @@ class squared_distance_vd_vari : public vari {
         ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
     v2_ = reinterpret_cast<double*>(
         ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(double)));
-    Eigen::Map<vector_vi>(v1_, length_) = v1.vi();
-    Eigen::Map<vector_d>(v2_, length_) = v2;
+    Eigen::Map<vector_vi, StackAlignment>(v1_, length_) = v1.vi();
+    Eigen::Map<vector_d, StackAlignment>(v2_, length_) = v2;
   }
 
   virtual void chain() {
-    Eigen::Map<vector_vi> v1_map(v1_, length_);
+    Eigen::Map<vector_vi, StackAlignment> v1_map(v1_, length_);
     v1_map.adj()
-        += 2 * adj_ * (v1_map.val() - Eigen::Map<vector_d>(v2_, length_));
+        += 2 * adj_ * (v1_map.val() - Eigen::Map<vector_d, StackAlignment>(v2_, length_));
   }
 };
 }  // namespace internal

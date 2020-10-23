@@ -96,9 +96,9 @@ class kinsol_system_data {
         = static_cast<const system_data*>(user_data);
 
     Eigen::VectorXd x_eigen(
-        Eigen::Map<Eigen::VectorXd>(NV_DATA_S(x), explicit_system->N_));
+        Eigen::Map<Eigen::VectorXd, StackAlignment>(NV_DATA_S(x), explicit_system->N_));
 
-    Eigen::Map<Eigen::VectorXd>(N_VGetArrayPointer(f), explicit_system->N_)
+    Eigen::Map<Eigen::VectorXd, StackAlignment>(N_VGetArrayPointer(f), explicit_system->N_)
         = explicit_system->f_(x_eigen, explicit_system->y_,
                               explicit_system->dat_, explicit_system->dat_int_,
                               explicit_system->msgs_);

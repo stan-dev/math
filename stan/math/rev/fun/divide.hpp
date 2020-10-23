@@ -30,12 +30,12 @@ class matrix_scalar_divide_dv_vari : public vari {
         adjResultRef_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             m.rows() * m.cols())),
         invc_(1.0 / c.val()) {
-    Eigen::Map<matrix_vi>(adjResultRef_, rows_, cols_)
+    Eigen::Map<matrix_vi, StackAlignment>(adjResultRef_, rows_, cols_)
         = (invc_ * m).unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
-    Eigen::Map<matrix_vi> adjResult(adjResultRef_, rows_, cols_);
+    Eigen::Map<matrix_vi, StackAlignment> adjResult(adjResultRef_, rows_, cols_);
     adjCRef_->adj_
         -= invc_ * (adjResult.adj().array() * adjResult.val().array()).sum();
   }
@@ -60,16 +60,16 @@ class matrix_scalar_divide_vd_vari : public vari {
         adjResultRef_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             m.rows() * m.cols())),
         invc_(1.0 / c) {
-    Eigen::Map<matrix_vi>(adjMRef_, rows_, cols_) = m.vi();
-    Eigen::Map<matrix_vi>(adjResultRef_, rows_, cols_)
+    Eigen::Map<matrix_vi, StackAlignment>(adjMRef_, rows_, cols_) = m.vi();
+    Eigen::Map<matrix_vi, StackAlignment>(adjResultRef_, rows_, cols_)
         = (invc_ * m.val()).unaryExpr([](double x) {
             return new vari(x, false);
           });
   }
 
   virtual void chain() {
-    Eigen::Map<matrix_vi> adjM(adjMRef_, rows_, cols_);
-    Eigen::Map<matrix_vi> adjResult(adjResultRef_, rows_, cols_);
+    Eigen::Map<matrix_vi, StackAlignment> adjM(adjMRef_, rows_, cols_);
+    Eigen::Map<matrix_vi, StackAlignment> adjResult(adjResultRef_, rows_, cols_);
     adjM.adj() += invc_ * adjResult.adj();
   }
 };
@@ -95,16 +95,16 @@ class matrix_scalar_divide_vv_vari : public vari {
         adjResultRef_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             m.rows() * m.cols())),
         invc_(1.0 / c.val()) {
-    Eigen::Map<matrix_vi>(adjMRef_, rows_, cols_) = m.vi();
-    Eigen::Map<matrix_vi>(adjResultRef_, rows_, cols_)
+    Eigen::Map<matrix_vi, StackAlignment>(adjMRef_, rows_, cols_) = m.vi();
+    Eigen::Map<matrix_vi, StackAlignment>(adjResultRef_, rows_, cols_)
         = (invc_ * m.val()).unaryExpr([](double x) {
             return new vari(x, false);
           });
   }
 
   virtual void chain() {
-    Eigen::Map<matrix_vi> adjM(adjMRef_, rows_, cols_);
-    Eigen::Map<matrix_vi> adjResult(adjResultRef_, rows_, cols_);
+    Eigen::Map<matrix_vi, StackAlignment> adjM(adjMRef_, rows_, cols_);
+    Eigen::Map<matrix_vi, StackAlignment> adjResult(adjResultRef_, rows_, cols_);
     adjC_->adj_
         -= invc_ * (adjResult.adj().array() * adjResult.val().array()).sum();
     adjM.adj() += invc_ * adjResult.adj();
@@ -130,7 +130,7 @@ inline auto divide(const Mat& m, const var& c) {
   Eigen::Matrix<var, Mat::RowsAtCompileTime, Mat::ColsAtCompileTime> result(
       m.rows(), m.cols());
   result.vi()
-      = Eigen::Map<matrix_vi>(baseVari->adjResultRef_, m.rows(), m.cols());
+      = Eigen::Map<matrix_vi, StackAlignment>(baseVari->adjResultRef_, m.rows(), m.cols());
   return result;
 }
 
@@ -151,7 +151,7 @@ inline auto divide(const Mat& m, const double& c) {
   Eigen::Matrix<var, Mat::RowsAtCompileTime, Mat::ColsAtCompileTime> result(
       m.rows(), m.cols());
   result.vi()
-      = Eigen::Map<matrix_vi>(baseVari->adjResultRef_, m.rows(), m.cols());
+      = Eigen::Map<matrix_vi, StackAlignment>(baseVari->adjResultRef_, m.rows(), m.cols());
   return result;
 }
 
@@ -173,7 +173,7 @@ inline auto divide(const Mat& m, const var& c) {
   Eigen::Matrix<var, Mat::RowsAtCompileTime, Mat::ColsAtCompileTime> result(
       m.rows(), m.cols());
   result.vi()
-      = Eigen::Map<matrix_vi>(baseVari->adjResultRef_, m.rows(), m.cols());
+      = Eigen::Map<matrix_vi, StackAlignment>(baseVari->adjResultRef_, m.rows(), m.cols());
   return result;
 }
 

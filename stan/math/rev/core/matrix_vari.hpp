@@ -21,7 +21,7 @@ class op_matrix_vari : public vari {
   template <typename T, require_eigen_vt<is_var, T>* = nullptr>
   op_matrix_vari(double f, const T& vs) : vari(f), size_(vs.size()) {
     vis_ = ChainableStack::instance_->memalloc_.alloc_array<vari*>(size_);
-    Eigen::Map<Eigen::Matrix<vari*, -1, -1>>(vis_, vs.rows(), vs.cols())
+    Eigen::Map<Eigen::Matrix<vari*, -1, -1>, StackAlignment>(vis_, vs.rows(), vs.cols())
         = vs.vi();
   }
   vari* operator[](size_t n) const { return vis_[n]; }

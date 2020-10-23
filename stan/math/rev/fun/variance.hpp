@@ -18,13 +18,13 @@ inline var calc_variance(size_t size, const var* dtrs) {
   double* partials
       = ChainableStack::instance_->memalloc_.alloc_array<double>(size);
 
-  Eigen::Map<const vector_v> dtrs_map(dtrs, size);
-  Eigen::Map<vector_vi>(varis, size) = dtrs_map.vi();
+  Eigen::Map<const vector_v, StackAlignment> dtrs_map(dtrs, size);
+  Eigen::Map<vector_vi, StackAlignment>(varis, size) = dtrs_map.vi();
   vector_d dtrs_vals = dtrs_map.val();
 
   vector_d diff = dtrs_vals.array() - dtrs_vals.mean();
   double size_m1 = size - 1;
-  Eigen::Map<vector_d>(partials, size) = 2 * diff.array() / size_m1;
+  Eigen::Map<vector_d, StackAlignment>(partials, size) = 2 * diff.array() / size_m1;
   double variance = diff.squaredNorm() / size_m1;
 
   return {new stored_gradient_vari(variance, size, varis, partials)};

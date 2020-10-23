@@ -64,10 +64,10 @@ auto unit_vector_constrain(const EigMat& y) {
   double* unit_vector_y_d_array = reinterpret_cast<double*>(
       ChainableStack::instance_->memalloc_.alloc(sizeof(double) * y_d.size()));
 
-  Eigen::Map<vector_vi>(y_vi_array, y_mat.size()) = y_mat.vi();
+  Eigen::Map<vector_vi, StackAlignment>(y_vi_array, y_mat.size()) = y_mat.vi();
   const double norm = y_d.norm();
   check_positive_finite("unit_vector", "norm", norm);
-  Eigen::Map<vector_d> unit_vecd(unit_vector_y_d_array, y_mat.size());
+  Eigen::Map<vector_d, StackAlignment> unit_vecd(unit_vector_y_d_array, y_mat.size());
   unit_vecd = y_d / norm;
 
   plain_type_t<EigMat> unit_vector_y(y_mat.size());

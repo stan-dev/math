@@ -121,8 +121,8 @@ struct KinsolFixedPointEnv {
   /** Implements the user-defined function passed to KINSOL. */
   static int kinsol_f_system(N_Vector x, N_Vector f, void* user_data) {
     auto g = static_cast<const KinsolFixedPointEnv<F>*>(user_data);
-    Eigen::VectorXd x_eigen(Eigen::Map<Eigen::VectorXd>(NV_DATA_S(x), g->N_));
-    Eigen::Map<Eigen::VectorXd>(N_VGetArrayPointer(f), g->N_)
+    Eigen::VectorXd x_eigen(Eigen::Map<Eigen::VectorXd, StackAlignment>(NV_DATA_S(x), g->N_));
+    Eigen::Map<Eigen::VectorXd, StackAlignment>(N_VGetArrayPointer(f), g->N_)
         = g->f_(x_eigen, g->y_, g->x_r_, g->x_i_, g->msgs_);
     return 0;
   }

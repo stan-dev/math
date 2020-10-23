@@ -86,7 +86,7 @@ inline vector_v eigenvalues_sym(const matrix_v &m) {
   vector_v res(m.rows());
   internal::eigenvalues_vari *baseVari = new internal::eigenvalues_vari(m);
   res.vi()
-      = Eigen::Map<vector_vi>(baseVari->vari_ref_w_, res.rows(), res.cols());
+      = Eigen::Map<vector_vi, StackAlignment>(baseVari->vari_ref_w_, res.rows(), res.cols());
   return res;
 }
 

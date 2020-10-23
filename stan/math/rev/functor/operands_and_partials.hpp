@@ -222,12 +222,12 @@ class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
   const Op& operands_;
 
   void dump_operands(vari** varis) {
-    Eigen::Map<promote_scalar_t<vari*, Op>>(varis, this->operands_.rows(),
+    Eigen::Map<promote_scalar_t<vari*, Op>, StackAlignment>(varis, this->operands_.rows(),
                                             this->operands_.cols())
         = this->operands_.vi();
   }
   void dump_partials(double* partials) {
-    Eigen::Map<partials_t>(partials, this->partials_.rows(),
+    Eigen::Map<partials_t, StackAlignment>(partials, this->partials_.rows(),
                            this->partials_.cols())
         = this->partials_;
   }

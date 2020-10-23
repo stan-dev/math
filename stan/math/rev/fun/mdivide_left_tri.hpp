@@ -332,7 +332,7 @@ mdivide_left_tri(const T1 &A, const T2 &b) {
   Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime> res(
       b.rows(), b.cols());
   res.vi()
-      = Eigen::Map<matrix_vi>(&(baseVari->variRefC_[0]), b.rows(), b.cols());
+      = Eigen::Map<matrix_vi, StackAlignment>(&(baseVari->variRefC_[0]), b.rows(), b.cols());
 
   return res;
 }
@@ -358,7 +358,7 @@ mdivide_left_tri(const T1 &A, const T2 &b) {
   Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime> res(
       b.rows(), b.cols());
   res.vi()
-      = Eigen::Map<matrix_vi>(&(baseVari->variRefC_[0]), b.rows(), b.cols());
+      = Eigen::Map<matrix_vi, StackAlignment>(&(baseVari->variRefC_[0]), b.rows(), b.cols());
 
   return res;
 }
@@ -384,7 +384,7 @@ mdivide_left_tri(const T1 &A, const T2 &b) {
   Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime> res(
       b.rows(), b.cols());
   res.vi()
-      = Eigen::Map<matrix_vi>(&(baseVari->variRefC_[0]), b.rows(), b.cols());
+      = Eigen::Map<matrix_vi, StackAlignment>(&(baseVari->variRefC_[0]), b.rows(), b.cols());
 
   return res;
 }

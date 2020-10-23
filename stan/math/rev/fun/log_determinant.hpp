@@ -22,11 +22,11 @@ inline var log_determinant(const EigMat& m) {
 
   vari** varis
       = ChainableStack::instance_->memalloc_.alloc_array<vari*>(m.size());
-  Eigen::Map<matrix_vi>(varis, m.rows(), m.cols()) = m.vi();
+  Eigen::Map<matrix_vi, StackAlignment>(varis, m.rows(), m.cols()) = m.vi();
 
   double* gradients
       = ChainableStack::instance_->memalloc_.alloc_array<double>(m.size());
-  Eigen::Map<matrix_d>(gradients, m.rows(), m.cols())
+  Eigen::Map<matrix_d, StackAlignment>(gradients, m.rows(), m.cols())
       = hh.inverse().transpose();
 
   return var(new precomputed_gradients_vari(hh.logAbsDeterminant(), m.size(),

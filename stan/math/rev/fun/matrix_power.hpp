@@ -24,7 +24,7 @@ class matrix_product_vari_n0 : public vari {
         adjMnRef_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             M.rows() * M.cols())) {
     matrix_d Mnd = Eigen::Matrix<double, R, C>::Identity(M.rows(), M.cols());
-    Eigen::Map<matrix_vi>(adjMnRef_, M.rows(), M.cols())
+    Eigen::Map<matrix_vi, StackAlignment>(adjMnRef_, M.rows(), M.cols())
         = Mnd.unaryExpr([](double x) { return new vari(x, false); });
   }
 
@@ -47,14 +47,14 @@ class matrix_product_vari_n1 : public vari {
             M.rows() * M.cols())),
         adjMnRef_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             M.rows() * M.cols())) {
-    Eigen::Map<matrix_vi>(adjMRef_, rows_, cols_) = M.vi();
-    Eigen::Map<matrix_vi>(adjMnRef_, M.rows(), M.cols())
+    Eigen::Map<matrix_vi, StackAlignment>(adjMRef_, rows_, cols_) = M.vi();
+    Eigen::Map<matrix_vi, StackAlignment>(adjMnRef_, M.rows(), M.cols())
         = M.val().unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
-    Eigen::Map<matrix_vi>(adjMRef_, rows_, cols_).adj()
-        = Eigen::Map<matrix_vi>(adjMnRef_, rows_, cols_).adj();
+    Eigen::Map<matrix_vi, StackAlignment>(adjMRef_, rows_, cols_).adj()
+        = Eigen::Map<matrix_vi, StackAlignment>(adjMnRef_, rows_, cols_).adj();
   }
 };
 
@@ -79,12 +79,12 @@ class matrix_product_vari : public vari, public chainable_alloc {
         n(n) {
     Mds.resize(n - 1);
     Mds[0] = M.val();
-    Eigen::Map<matrix_vi>(adjMRef_, rows_, cols_) = M.vi();
+    Eigen::Map<matrix_vi, StackAlignment>(adjMRef_, rows_, cols_) = M.vi();
     for (int i = 1; i < n - 1; i++) {
       Mds[i] = Mds[i - 1] * Mds[0];
     }
     Eigen::Matrix<double, R, C> Mnd = Mds[n - 2] * Mds[0];
-    Eigen::Map<matrix_vi>(adjMnRef_, rows_, cols_)
+    Eigen::Map<matrix_vi, StackAlignment>(adjMnRef_, rows_, cols_)
         = Mnd.unaryExpr([](double x) { return new vari(x, false); });
   }
 
@@ -107,9 +107,9 @@ class matrix_product_vari : public vari, public chainable_alloc {
         for (int k = 0; k < rows_; k++) {
           S(k, j) += Mds[n - 2](k, i);
         }
-        Eigen::Map<matrix_vi>(adjMRef_, rows_, cols_).adj()(i, j)
+        Eigen::Map<matrix_vi, StackAlignment>(adjMRef_, rows_, cols_).adj()(i, j)
             += (S.array()
-                * Eigen::Map<matrix_vi>(adjMnRef_, rows_, cols_).adj().array())
+                * Eigen::Map<matrix_vi, StackAlignment>(adjMnRef_, rows_, cols_).adj().array())
                    .sum();
       }
     }
@@ -149,17 +149,17 @@ matrix_power(const EigMat& M, const int n) {
   if (n == 0) {
     auto* baseVari = new internal::matrix_product_vari_n0<R, C>(M_ref);
     Eigen::Matrix<var, R, C> Mn(M.rows(), M.cols());
-    Mn.vi() = Eigen::Map<matrix_vi>(baseVari->adjMnRef_, M.rows(), M.cols());
+    Mn.vi() = Eigen::Map<matrix_vi, StackAlignment>(baseVari->adjMnRef_, M.rows(), M.cols());
     return Mn;
   } else if (n == 1) {
     auto* baseVari = new internal::matrix_product_vari_n1<R, C>(M_ref);
     Eigen::Matrix<var, R, C> Mn(M.rows(), M.cols());
-    Mn.vi() = Eigen::Map<matrix_vi>(baseVari->adjMnRef_, M.rows(), M.cols());
+    Mn.vi() = Eigen::Map<matrix_vi, StackAlignment>(baseVari->adjMnRef_, M.rows(), M.cols());
     return Mn;
   } else {
     auto* baseVari = new internal::matrix_product_vari<R, C>(M_ref, n);
     Eigen::Matrix<var, R, C> Mn(M.rows(), M.cols());
-    Mn.vi() = Eigen::Map<matrix_vi>(baseVari->adjMnRef_, M.rows(), M.cols());
+    Mn.vi() = Eigen::Map<matrix_vi, StackAlignment>(baseVari->adjMnRef_, M.rows(), M.cols());
     return Mn;
   }
 }

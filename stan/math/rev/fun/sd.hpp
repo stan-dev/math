@@ -39,8 +39,8 @@ var sd(const T& m) {
         dtrs_map.size());
     double* partials = ChainableStack::instance_->memalloc_.alloc_array<double>(
         dtrs_map.size());
-    Eigen::Map<T_vi> varis_map(varis, dtrs_map.rows(), dtrs_map.cols());
-    Eigen::Map<T_d> partials_map(partials, dtrs_map.rows(), dtrs_map.cols());
+    Eigen::Map<T_vi, StackAlignment> varis_map(varis, dtrs_map.rows(), dtrs_map.cols());
+    Eigen::Map<T_d, StackAlignment> partials_map(partials, dtrs_map.rows(), dtrs_map.cols());
 
     varis_map = dtrs_map.vi();
     T_d dtrs_val = dtrs_map.val();

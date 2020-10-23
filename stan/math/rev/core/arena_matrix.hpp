@@ -16,10 +16,10 @@ namespace math {
  * ...)
  */
 template <typename MatrixType>
-class arena_matrix : public Eigen::Map<MatrixType> {
+class arena_matrix : public Eigen::Map<MatrixType, StackAlignment> {
  public:
   using Scalar = value_type_t<MatrixType>;
-  using Base = Eigen::Map<MatrixType>;
+  using Base = Eigen::Map<MatrixType, StackAlignment>;
   using PlainObject = std::decay_t<MatrixType>;
   static constexpr int RowsAtCompileTime = MatrixType::RowsAtCompileTime;
   static constexpr int ColsAtCompileTime = MatrixType::ColsAtCompileTime;

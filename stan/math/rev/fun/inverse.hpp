@@ -83,7 +83,7 @@ inline matrix_v inverse(const matrix_v &m) {
 
   matrix_v res(m.rows(), m.cols());
   internal::inverse_vari *baseVari = new internal::inverse_vari(m);
-  res.vi() = Eigen::Map<matrix_vi>(baseVari->vari_ref_A_inv_, res.rows(),
+  res.vi() = Eigen::Map<matrix_vi, StackAlignment>(baseVari->vari_ref_A_inv_, res.rows(),
                                    res.cols());
   return res;
 }

@@ -66,7 +66,7 @@ inline auto log_softmax(const T& x) {
 
         vari** alpha_vi_array
             = ChainableStack::instance_->memalloc_.alloc_array<vari*>(a_size);
-        Eigen::Map<vector_vi>(alpha_vi_array, a_size) = alpha.vi();
+        Eigen::Map<vector_vi, StackAlignment>(alpha_vi_array, a_size) = alpha.vi();
 
         vector_d alpha_d = alpha.val();
 
@@ -81,7 +81,7 @@ inline auto log_softmax(const T& x) {
         // end fold
         double* softmax_alpha_d_array
             = ChainableStack::instance_->memalloc_.alloc_array<double>(a_size);
-        Eigen::Map<vector_d>(softmax_alpha_d_array, a_size)
+        Eigen::Map<vector_d, StackAlignment>(softmax_alpha_d_array, a_size)
             = softmax_alpha_d.array() / sum;
 
         vector_v log_softmax_alpha(a_size);

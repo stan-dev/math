@@ -48,23 +48,23 @@ class mdivide_left_spd_vv_vari : public vari {
             ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))),
         alloc_(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
-    Eigen::Map<matrix_vi>(variRefA_, M_, M_) = A.vi();
-    Eigen::Map<matrix_vi>(variRefB_, M_, N_) = B.vi();
+    Eigen::Map<matrix_vi, StackAlignment>(variRefA_, M_, M_) = A.vi();
+    Eigen::Map<matrix_vi, StackAlignment>(variRefB_, M_, N_) = B.vi();
     alloc_->C_ = B.val();
     alloc_->llt_ = A.val().llt();
     check_pos_definite("mdivide_left_spd", "A", alloc_->llt_);
     alloc_->llt_.solveInPlace(alloc_->C_);
 
-    Eigen::Map<matrix_vi>(variRefC_, M_, N_)
+    Eigen::Map<matrix_vi, StackAlignment>(variRefC_, M_, N_)
         = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
-    matrix_d adjB = Eigen::Map<matrix_vi>(variRefC_, M_, N_).adj();
+    matrix_d adjB = Eigen::Map<matrix_vi, StackAlignment>(variRefC_, M_, N_).adj();
     alloc_->llt_.solveInPlace(adjB);
-    Eigen::Map<matrix_vi>(variRefA_, M_, M_).adj()
+    Eigen::Map<matrix_vi, StackAlignment>(variRefA_, M_, M_).adj()
         -= adjB * alloc_->C_.transpose();
-    Eigen::Map<matrix_vi>(variRefB_, M_, N_).adj() += adjB;
+    Eigen::Map<matrix_vi, StackAlignment>(variRefB_, M_, N_).adj() += adjB;
   }
 };
 
@@ -90,19 +90,19 @@ class mdivide_left_spd_dv_vari : public vari {
                                                        * B.cols()))),
         alloc_(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
     alloc_->C_ = B.val();
-    Eigen::Map<matrix_vi>(variRefB_, M_, N_) = B.vi();
+    Eigen::Map<matrix_vi, StackAlignment>(variRefB_, M_, N_) = B.vi();
     alloc_->llt_ = A.llt();
     check_pos_definite("mdivide_left_spd", "A", alloc_->llt_);
     alloc_->llt_.solveInPlace(alloc_->C_);
 
-    Eigen::Map<matrix_vi>(variRefC_, M_, N_)
+    Eigen::Map<matrix_vi, StackAlignment>(variRefC_, M_, N_)
         = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
-    matrix_d adjB = Eigen::Map<matrix_vi>(variRefC_, M_, N_).adj();
+    matrix_d adjB = Eigen::Map<matrix_vi, StackAlignment>(variRefC_, M_, N_).adj();
     alloc_->llt_.solveInPlace(adjB);
-    Eigen::Map<matrix_vi>(variRefB_, M_, N_).adj() += adjB;
+    Eigen::Map<matrix_vi, StackAlignment>(variRefB_, M_, N_).adj() += adjB;
   }
 };
 
@@ -127,18 +127,18 @@ class mdivide_left_spd_vd_vari : public vari {
             ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))),
         alloc_(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
-    Eigen::Map<matrix_vi>(variRefA_, M_, M_) = A.vi();
+    Eigen::Map<matrix_vi, StackAlignment>(variRefA_, M_, M_) = A.vi();
     alloc_->llt_ = A.val().llt();
     check_pos_definite("mdivide_left_spd", "A", alloc_->llt_);
     alloc_->C_ = alloc_->llt_.solve(B);
 
-    Eigen::Map<matrix_vi>(variRefC_, M_, N_)
+    Eigen::Map<matrix_vi, StackAlignment>(variRefC_, M_, N_)
         = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
-    matrix_d adjC = Eigen::Map<matrix_vi>(variRefC_, M_, N_).adj();
-    Eigen::Map<matrix_vi>(variRefA_, M_, M_).adj()
+    matrix_d adjC = Eigen::Map<matrix_vi, StackAlignment>(variRefC_, M_, N_).adj();
+    Eigen::Map<matrix_vi, StackAlignment>(variRefA_, M_, M_).adj()
         -= alloc_->llt_.solve(adjC * alloc_->C_.transpose());
   }
 };
@@ -171,7 +171,7 @@ mdivide_left_spd(const EigMat1 &A, const EigMat2 &b) {
       = new internal::mdivide_left_spd_vv_vari<R1, C1, R2, C2>(A_ref, b);
 
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
-  res.vi() = Eigen::Map<matrix_vi>(&baseVari->variRefC_[0], b.rows(), b.cols());
+  res.vi() = Eigen::Map<matrix_vi, StackAlignment>(&baseVari->variRefC_[0], b.rows(), b.cols());
   return res;
 }
 
@@ -202,7 +202,7 @@ mdivide_left_spd(const EigMat1 &A, const EigMat2 &b) {
       = new internal::mdivide_left_spd_vd_vari<R1, C1, R2, C2>(A_ref, b);
 
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
-  res.vi() = Eigen::Map<matrix_vi>(&baseVari->variRefC_[0], b.rows(), b.cols());
+  res.vi() = Eigen::Map<matrix_vi, StackAlignment>(&baseVari->variRefC_[0], b.rows(), b.cols());
   return res;
 }
 
@@ -233,7 +233,7 @@ mdivide_left_spd(const EigMat1 &A, const EigMat2 &b) {
       = new internal::mdivide_left_spd_dv_vari<R1, C1, R2, C2>(A_ref, b);
 
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
-  res.vi() = Eigen::Map<matrix_vi>(&baseVari->variRefC_[0], b.rows(), b.cols());
+  res.vi() = Eigen::Map<matrix_vi, StackAlignment>(&baseVari->variRefC_[0], b.rows(), b.cols());
 
   return res;
 }

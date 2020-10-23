@@ -53,11 +53,11 @@ inline var log_determinant_spd(const EigMat& m) {
 
   vari** operands
       = ChainableStack::instance_->memalloc_.alloc_array<vari*>(m.size());
-  Eigen::Map<matrix_vi>(operands, m.rows(), m.cols()) = m.vi();
+  Eigen::Map<matrix_vi, StackAlignment>(operands, m.rows(), m.cols()) = m.vi();
 
   double* gradients
       = ChainableStack::instance_->memalloc_.alloc_array<double>(m.size());
-  Eigen::Map<matrix_d>(gradients, m.rows(), m.cols()) = m_d;
+  Eigen::Map<matrix_d, StackAlignment>(gradients, m.rows(), m.cols()) = m_d;
 
   return var(
       new precomputed_gradients_vari(val, m.size(), operands, gradients));
