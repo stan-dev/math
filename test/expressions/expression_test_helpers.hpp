@@ -45,7 +45,7 @@ T make_arg(T value = 0.4) {
   return value;
 }
 template <typename T, require_fvar_t<T>* = nullptr>
-T make_arg(T value = 0.4) {
+T make_arg(T value) {
   return value;
 }
 template <typename T, require_fvar_t<T>* = nullptr>
