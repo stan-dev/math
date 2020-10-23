@@ -31,20 +31,23 @@ template <typename ReduceFunction, typename ReturnType, typename Vec,
           typename... Args>
 struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                        Vec, Args...> {
-  struct scoped_args_tuple {
+  struct partial_scope {
     ScopedChainableStack stack_;
+    // std::decay_t<Vec> vmapped_;
     using args_tuple_t
         = std::tuple<decltype(deep_copy_vars(std::declval<Args>()))...>;
     std::unique_ptr<args_tuple_t> args_tuple_holder_;
 
     template <typename... ArgsT>
-    explicit scoped_args_tuple(ArgsT&&... args_tuple)
-        : stack_(), args_tuple_holder_(stack_.execute([&]() -> args_tuple_t* {
+    explicit partial_scope(ArgsT&&... args_tuple)
+        : stack_(),
+          // vmapped_(),
+          args_tuple_holder_(stack_.execute([&]() -> args_tuple_t* {
             return new args_tuple_t(deep_copy_vars(args_tuple)...);
           })) {}
   };
 
-  using local_args_tuple_t = tbb::enumerable_thread_specific<scoped_args_tuple>;
+  using local_partial_scopes_t = tbb::enumerable_thread_specific<partial_scope>;
 
   /**
    * This struct is used by the TBB to accumulate partial
@@ -60,7 +63,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     const size_t num_vars_shared_terms_;  // Number of vars in shared arguments
     double* sliced_partials_;  // Points to adjoints of the partial calculations
     Vec vmapped_;
-    local_args_tuple_t& local_args_tuple_;
+    local_partial_scopes_t& partial_scopes_;
     std::ostream* msgs_;
     std::tuple<Args...> args_tuple_;
     double sum_{0.0};
@@ -69,13 +72,13 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     template <typename VecT, typename... ArgsT>
     recursive_reducer(size_t num_vars_per_term, size_t num_vars_shared_terms,
                       double* sliced_partials, VecT&& vmapped,
-                      local_args_tuple_t& local_args_tuple, std::ostream* msgs,
-                      ArgsT&&... args)
+                      local_partial_scopes_t& partial_scopes,
+                      std::ostream* msgs, ArgsT&&... args)
         : num_vars_per_term_(num_vars_per_term),
           num_vars_shared_terms_(num_vars_shared_terms),
           sliced_partials_(sliced_partials),
           vmapped_(std::forward<VecT>(vmapped)),
-          local_args_tuple_(local_args_tuple),
+          partial_scopes_(partial_scopes),
           msgs_(msgs),
           args_tuple_(std::forward<ArgsT>(args)...) {}
 
@@ -90,7 +93,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           num_vars_shared_terms_(other.num_vars_shared_terms_),
           sliced_partials_(other.sliced_partials_),
           vmapped_(other.vmapped_),
-          local_args_tuple_(other.local_args_tuple_),
+          partial_scopes_(other.partial_scopes_),
           msgs_(other.msgs_),
           args_tuple_(other.args_tuple_) {}
 
@@ -116,51 +119,56 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         args_adjoints_ = Eigen::VectorXd::Zero(num_vars_shared_terms_);
       }
 
-      // Initialize nested autodiff stack
-      const nested_rev_autodiff begin_nest;
-
-      // Create nested autodiff copies of sliced argument that do not point
-      //   back to main autodiff stack
-      std::decay_t<Vec> local_sub_slice;
-      local_sub_slice.reserve(r.size());
-      for (size_t i = r.begin(); i < r.end(); ++i) {
-        local_sub_slice.emplace_back(deep_copy_vars(vmapped_[i]));
-      }
-
       // Obtain reference to thread local copy of all shared arguments that do
       // not point
       //   back to main autodiff stack
-      scoped_args_tuple& args_tuple_scope = local_args_tuple_.local();
-      auto& args_tuple_local = *(args_tuple_scope.args_tuple_holder_);
+      partial_scope& local_partial_scope = partial_scopes_.local();
+      auto& args_tuple_local = *(local_partial_scope.args_tuple_holder_);
 
-      // Perform calculation
-      var sub_sum_v = apply(
-          [&](auto&&... args) {
-            return ReduceFunction()(local_sub_slice, r.begin(), r.end() - 1,
-                                    msgs_, args...);
-          },
-          args_tuple_local);
+      local_partial_scope.stack_.execute([&] {
+        {
+          // Initialize nested autodiff stack
+          const nested_rev_autodiff begin_nest;
 
-      // Compute Jacobian
-      sub_sum_v.grad();
+          // Create nested autodiff copies of sliced argument that do not point
+          //   back to main autodiff stack
+          std::decay_t<Vec> local_sub_slice;
+          local_sub_slice.reserve(r.size());
+          for (size_t i = r.begin(); i < r.end(); ++i) {
+            local_sub_slice.emplace_back(deep_copy_vars(vmapped_[i]));
+          }
 
-      // Accumulate value of reduce_sum
-      sum_ += sub_sum_v.val();
+          // Perform calculation
+          var sub_sum_v = apply(
+              [&](auto&&... args) {
+                return ReduceFunction()(local_sub_slice, r.begin(), r.end() - 1,
+                                        msgs_, args...);
+              },
+              args_tuple_local);
 
-      // Accumulate adjoints of sliced_arguments
-      accumulate_adjoints(sliced_partials_ + r.begin() * num_vars_per_term_,
-                          std::move(local_sub_slice));
+          // Compute Jacobian
+          sub_sum_v.grad();
 
-      // Accumulate adjoints of shared_arguments
-      apply(
-          [&](auto&&... args) {
-            accumulate_adjoints(args_adjoints_.data(),
-                                std::forward<decltype(args)>(args)...);
-          },
-          args_tuple_local);
+          // Accumulate value of reduce_sum
+          sum_ += sub_sum_v.val();
 
-      // set adjoints of shared arguments back to zero
-      args_tuple_scope.stack_.execute([] { set_zero_all_adjoints(); });
+          // Accumulate adjoints of sliced_arguments
+          accumulate_adjoints(sliced_partials_ + r.begin() * num_vars_per_term_,
+                              std::move(local_sub_slice));
+
+          // Accumulate adjoints of shared_arguments
+          apply(
+              [&](auto&&... args) {
+                accumulate_adjoints(args_adjoints_.data(),
+                                    std::forward<decltype(args)>(args)...);
+              },
+              args_tuple_local);
+        }
+
+        // set adjoints of shared arguments back to zero
+        set_zero_all_adjoints();
+
+      });
     }
 
     /**
@@ -243,13 +251,14 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       partials[i] = 0.0;
     }
 
-    local_args_tuple_t local_args([&] { return scoped_args_tuple(args...); });
+    local_partial_scopes_t local_partial_scopes(
+        [&] { return partial_scope(args...); });
     // @Steve: This should work, but fails to compile???
     // local_args_tuple_t local_args(args...);
 
     recursive_reducer worker(num_vars_per_term, num_vars_shared_terms, partials,
-                             std::forward<Vec>(vmapped), local_args, msgs,
-                             std::forward<Args>(args)...);
+                             std::forward<Vec>(vmapped), local_partial_scopes,
+                             msgs, std::forward<Args>(args)...);
 
     if (auto_partitioning) {
       tbb::parallel_reduce(
