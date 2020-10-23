@@ -21,6 +21,7 @@ auto f(int dof) {
   };
 }
 
+
 auto f_matvar = [](const auto& x) { return stan::math::cholesky_decompose(x); };
 
 void expect_cholesky(const Eigen::MatrixXd& Sigma) {
@@ -28,6 +29,32 @@ void expect_cholesky(const Eigen::MatrixXd& Sigma) {
   // lazy, solving for x in x = (N * (N + 1)) / 2
   int dof = .5 * (std::sqrt(8 * yy.size() + 1) - 1);
   stan::test::expect_ad(f(dof), yy);
+}
+template <typename F, typename T>
+void expect_cholesky_var(stan::test::ad_tolerances& tols, const F& f, const T& x) {
+  auto g = [&](const auto& v) {
+    auto ds = stan::test::to_deserializer(v);
+    auto xds = ds.read(x);
+    return stan::test::serialize_return(stan::test::internal::eval(f(xds)));
+  };
+  auto x_serial = stan::test::serialize_args(x);
+  auto h
+      = [&](const int i) { return [&g, i](const auto& v) { return g(v)[i]; }; };
+  size_t result_size = 0;
+  try {
+    auto y1 = stan::test::internal::eval(f(x));  // original types, including int
+    auto y2 = stan::test::internal::eval(g(x_serial));      // all int cast to double
+    auto y1_serial = stan::test::serialize<double>(y1);
+    stan::test::expect_near_rel("expect_ad_helper", y1_serial, y2, 1e-10);
+    result_size = y1_serial.size();
+  } catch (...) {
+    stan::test::internal::expect_all_throw(h(0), x_serial);
+    return;
+  }
+  for (size_t i = 0; i < result_size; ++i) {
+    double gx = h(i)(x_serial);
+    stan::test::internal::test_gradient(tols, h(i), x_serial, gx);
+  }
 }
 }  // namespace cholesky_decompose_test
 
@@ -76,23 +103,52 @@ TEST(MathMixMatFun, choleskyDecomposeSpecific) {
 
 TEST(MathMixMatFun, choleskyDecomposeGeneral) {
   // general sizes
-  for (int n = 0; n < 9; ++n) {
+  for (int n = 0; n < 8; ++n) {
     int dof = (n * (n + 1)) / 2;
     Eigen::VectorXd y(dof);
     for (int i = 0; i < dof; ++i)
-      y(i) = (i * 10) / 100.0;
+      y(i) = (i * 10) / 10000.0;
     stan::test::ad_tolerances tol;
     using stan::test::relative_tolerance;
-    if (n == 9) {
-      tol.hessian_hessian_ = relative_tolerance(2e-4, 2e-3);
-      tol.hessian_fvar_hessian_ = relative_tolerance(2e-4, 2e-3);
-    }
     stan::test::expect_ad(tol, cholesky_decompose_test::f(n), y);
+
     Eigen::MatrixXd y_mat = stan::math::cov_matrix_constrain(y, n);
     stan::test::expect_ad_matvar(cholesky_decompose_test::f_matvar, y_mat);
     stan::math::recover_memory();
   }
 }
+
+TEST(MathMixMatFun, choleskyDecomposeGeneralBig) {
+  // general sizes
+  for (double rho : std::vector<double>{0.0, 0.9}) {
+    for (size_t m = 6; m < 8; ++m) {
+      int n = std::pow(2, m) + 32;
+      Eigen::MatrixXd Sigma(n, n);
+      for (int i = 0; i < n; ++i) {
+        Sigma(i, i) = 1;
+        for (int j = 0; j < i; ++j) {
+          Sigma(i, j) = std::pow(rho, fabs(i - j));
+          Sigma(j, i) = Sigma(i, j);
+        }
+      }
+    stan::test::ad_tolerances tol;
+    using stan::test::relative_tolerance;
+    tol.gradient_val_ = relative_tolerance(2e-2, 2e-1);
+    tol.gradient_grad_ = relative_tolerance(2e-2, 2e-1);
+    tol.hessian_hessian_ = relative_tolerance(2e-4, 2e-3);
+    tol.hessian_fvar_hessian_ = relative_tolerance(2e-4, 2e-3);
+    Eigen::VectorXd yy = stan::math::cov_matrix_free(Sigma);
+    // lazy, solving for x in x = (N * (N + 1)) / 2
+    int dof = .5 * (std::sqrt(8 * yy.size() + 1) - 1);
+    cholesky_decompose_test::expect_cholesky_var(tol, cholesky_decompose_test::f(dof), yy);
+    puts("\nSizes: ");
+    std::cout << "y rows" << Sigma.rows() << "y cols" << Sigma.cols() << "\n";
+    stan::test::expect_ad_matvar(cholesky_decompose_test::f_matvar, y_mat);
+    stan::math::recover_memory();
+    }
+  }
+}
+
 // GP covar
 TEST(MathMixMatFun, choleskyDecomposeGP) {
   for (size_t n = 1; n < 5; ++n) {
