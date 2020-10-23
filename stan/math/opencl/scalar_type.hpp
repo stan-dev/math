@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <type_traits>
 
 namespace stan {
