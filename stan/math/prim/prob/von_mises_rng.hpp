@@ -46,16 +46,21 @@ inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
     const T_loc& mu, const T_conc& kappa, RNG& rng) {
   using boost::variate_generator;
   using boost::random::uniform_real_distribution;
+  using T_mu_ref = ref_type_t<T_loc>;
+  using T_kappa_ref = ref_type_t<T_conc>;
   static const char* function = "von_mises_rng";
-  check_finite(function, "Location parameter", mu);
-  check_nonnegative(function, "Scale parameter", kappa);
-  check_finite(function, "Scale parameter", kappa);
   check_consistent_sizes(function, "Location parameter", mu, "Scale parameter",
                          kappa);
+  T_mu_ref mu_ref = mu;
+  T_kappa_ref kappa_ref = kappa;
 
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_conc> kappa_vec(kappa);
-  size_t N = max_size(mu, kappa);
+  check_finite(function, "Location parameter", mu_ref);
+  check_nonnegative(function, "Scale parameter", kappa_ref);
+  check_finite(function, "Scale parameter", kappa_ref);
+
+  scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
+  scalar_seq_view<T_kappa_ref> kappa_vec(kappa_ref);
+  size_t N = max_size(mu, kappa_ref);
   VectorBuilder<true, double, T_loc, T_conc> output(N);
 
   variate_generator<RNG&, uniform_real_distribution<> > uniform_rng(

@@ -283,11 +283,10 @@ TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesC0) {
                std::invalid_argument);
   EXPECT_THROW(gaussian_dlm_obs_rng(FF, GG, V_vec, W, m0, C0_notsq, T, rng),
                std::invalid_argument);
-  // not positive definite.
+  // positive semi-definite okay.
   MatrixXd C0_psd = MatrixXd::Zero(2, 2);
   C0_psd(0, 0) = 1.0;
-  EXPECT_THROW(gaussian_dlm_obs_rng(FF, GG, V, W, m0, C0_psd, T, rng),
-               std::domain_error);
+  EXPECT_NO_THROW(gaussian_dlm_obs_rng(FF, GG, V, W, m0, C0_psd, T, rng));
 }
 
 TEST_F(ProbDistributionsGaussianDLMInputsRng, PoliciesT) {

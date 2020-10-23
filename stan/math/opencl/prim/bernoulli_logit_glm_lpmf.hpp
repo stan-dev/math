@@ -78,7 +78,7 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
   if (N == 0) {
     return 0;
   }
-  if (!include_summand<propto, T_alpha_cl, T_beta_cl>::value) {
+  if (!include_summand<propto, T_x_cl, T_alpha_cl, T_beta_cl>::value) {
     return 0;
   }
 

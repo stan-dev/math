@@ -51,40 +51,6 @@ inline Eigen::VectorXd multi_normal_semidefinite_rng(
   return Y;
 }
 
-/** \ingroup multivar_dists
- * Return a multivariate normal random variate with the given location
- * and covariance using the specified random number generator.
- *
- * No error checking or templating, takes the LLT directly to avoid
- * recomputation.
- *
- * @tparam RNG Type of pseudo-random number generator
- * @param mu location parameter
- * @param S_llt Eigen::LLT of positive definite covariance matrix.
- * @param rng random number generator
- *
- */
-template <class RNG>
-inline Eigen::VectorXd multi_normal_definite_rng(
-    const Eigen::VectorXd &mu, const Eigen::LLT<Eigen::MatrixXd> &S_llt,
-    RNG &rng) {
-  using boost::normal_distribution;
-  using boost::variate_generator;
-
-  variate_generator<RNG &, normal_distribution<>> std_normal_rng(
-      rng, normal_distribution<>(0, 1));
-
-  size_t M = S_llt.matrixL().rows();
-  Eigen::VectorXd z(M);
-  for (int i = 0; i < M; i++) {
-    z(i) = std_normal_rng();
-  }
-
-  Eigen::VectorXd Y = mu + S_llt.matrixL() * z;
-
-  return Y;
-}
-
 }  // namespace internal
 
 /** \ingroup multivar_dists
@@ -156,13 +122,12 @@ inline Eigen::MatrixXd gaussian_dlm_obs_rng(const Eigen::MatrixXd &F,
   check_pos_semidefinite(function, "V", V_ldlt);
   Eigen::LDLT<Eigen::MatrixXd> W_ldlt = W.ldlt();
   check_pos_semidefinite(function, "W", W_ldlt);
-  // Require strictly positive definite C0 for consistency with lpdf.
-  Eigen::LLT<Eigen::MatrixXd> C0_llt = C0.llt();
-  check_pos_definite(function, "C0", C0_llt);
+  Eigen::LDLT<Eigen::MatrixXd> C0_ldlt = C0.ldlt();
+  check_pos_semidefinite(function, "C0", C0_ldlt);
 
   Eigen::MatrixXd y(r, T);
   Eigen::VectorXd theta_t
-      = internal::multi_normal_definite_rng(m0, C0_llt, rng);
+      = internal::multi_normal_semidefinite_rng(m0, C0_ldlt, rng);
   for (int t = 0; t < T; ++t) {
     theta_t = internal::multi_normal_semidefinite_rng(
         Eigen::VectorXd(G * theta_t), W_ldlt, rng);

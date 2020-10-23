@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 
 namespace stan {
 namespace math {
@@ -23,8 +24,9 @@ namespace math {
 template <typename T_y, typename T_high>
 inline bool is_less_or_equal(const T_y& y, const T_high& high) {
   scalar_seq_view<T_high> high_vec(high);
+  const auto& y_ref = to_ref(y);
   for (size_t n = 0; n < stan::math::size(high); n++) {
-    if (!(stan::get(y, n) <= high_vec[n])) {
+    if (!(stan::get(y_ref, n) <= high_vec[n])) {
       return false;
     }
   }
