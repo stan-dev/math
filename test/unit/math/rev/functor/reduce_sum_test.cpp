@@ -8,9 +8,9 @@
 #include <set>
 
 TEST(StanMathRev_reduce_sum, no_args) {
-  using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::sum_lpdf;
+  using stan::math::var;
   std::vector<var> data(0);
   EXPECT_EQ(0.0, stan::math::reduce_sum_static<sum_lpdf>(
                      data, 1, stan::math::test::get_new_msg())
@@ -52,9 +52,9 @@ TEST(StanMathRev_reduce_sum, value) {
 }
 
 TEST(StanMathRev_reduce_sum, gradient) {
-  using stan::math::var;
   using stan::math::test::count_lpdf;
   using stan::math::test::get_new_msg;
+  using stan::math::var;
 
   double lambda_d = 10.0;
   const std::size_t elems = 10000;
@@ -100,9 +100,9 @@ TEST(StanMathRev_reduce_sum, gradient) {
 }
 
 TEST(StanMathRev_reduce_sum, grainsize) {
-  using stan::math::var;
   using stan::math::test::count_lpdf;
   using stan::math::test::get_new_msg;
+  using stan::math::var;
 
   double lambda_d = 10.0;
   const std::size_t elems = 10000;
@@ -148,9 +148,9 @@ TEST(StanMathRev_reduce_sum, grainsize) {
 }
 
 TEST(StanMathRev_reduce_sum, nesting_gradient) {
-  using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::nesting_count_lpdf;
+  using stan::math::var;
 
   double lambda_d = 10.0;
   const std::size_t elems = 10000;
@@ -198,9 +198,9 @@ TEST(StanMathRev_reduce_sum, nesting_gradient) {
 }
 
 TEST(StanMathRev_reduce_sum, grouped_gradient) {
-  using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::grouped_count_lpdf;
+  using stan::math::var;
 
   double lambda_d = 10.0;
   const std::size_t groups = 10;
@@ -259,9 +259,9 @@ TEST(StanMathRev_reduce_sum, grouped_gradient) {
 }
 
 TEST(StanMathRev_reduce_sum, grouped_gradient_eigen) {
-  using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::grouped_count_lpdf;
+  using stan::math::var;
 
   double lambda_d = 10.0;
   const std::size_t groups = 10;
@@ -322,9 +322,9 @@ TEST(StanMathRev_reduce_sum, grouped_gradient_eigen) {
 }
 
 TEST(StanMathRev_reduce_sum, slice_group_gradient) {
-  using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::slice_group_count_lpdf;
+  using stan::math::var;
 
   double lambda_d = 10.0;
   const std::size_t groups = 10;
