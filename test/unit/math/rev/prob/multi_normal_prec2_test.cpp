@@ -25,37 +25,51 @@ TEST_F(agrad_distributions_multi_normal, Propto_prec2) {
   expect_propto_multi_normal_prec_log(to_var(y), to_var(mu), to_var(Sigma),
                                       to_var(y2), to_var(mu2), to_var(Sigma2),
                                       "All vars: y, mu, sigma");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal, ProptoY_prec2) {
   using stan::math::to_var;
   expect_propto_multi_normal_prec_log(to_var(y), mu, Sigma, to_var(y2), mu,
                                       Sigma, "var: y");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal, ProptoYMu_prec2) {
   using stan::math::to_var;
   expect_propto_multi_normal_prec_log(to_var(y), to_var(mu), Sigma, to_var(y2),
                                       to_var(mu2), Sigma, "var: y and mu");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal, ProptoYSigma_prec2) {
   using stan::math::to_var;
   expect_propto_multi_normal_prec_log(to_var(y), mu, to_var(Sigma), to_var(y2),
                                       mu, to_var(Sigma2), "var: y and sigma");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal, ProptoMu_prec2) {
   using stan::math::to_var;
   expect_propto_multi_normal_prec_log(y, to_var(mu), Sigma, y, to_var(mu2),
                                       Sigma, "var: mu");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal, ProptoMuSigma_prec2) {
   using stan::math::to_var;
   expect_propto_multi_normal_prec_log(y, to_var(mu), to_var(Sigma), y,
                                       to_var(mu2), to_var(Sigma2),
                                       "var: mu and sigma");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal, ProptoSigma_prec2) {
   using stan::math::to_var;
   expect_propto_multi_normal_prec_log(y, mu, to_var(Sigma), y, mu,
                                       to_var(Sigma2), "var: sigma");
+
+  stan::math::recover_memory();
 }
 
 TEST_F(agrad_distributions_multi_normal_multi_row, Propto_prec2) {
@@ -63,37 +77,51 @@ TEST_F(agrad_distributions_multi_normal_multi_row, Propto_prec2) {
   expect_propto_multi_normal_prec_log(to_var(y), to_var(mu), to_var(Sigma),
                                       to_var(y2), to_var(mu2), to_var(Sigma2),
                                       "All vars: y, mu, sigma");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoY_prec2) {
   using stan::math::to_var;
   expect_propto_multi_normal_prec_log(to_var(y), mu, Sigma, to_var(y2), mu,
                                       Sigma, "var: y");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoYMu_prec2) {
   using stan::math::to_var;
   expect_propto_multi_normal_prec_log(to_var(y), to_var(mu), Sigma, to_var(y2),
                                       to_var(mu2), Sigma, "var: y and mu");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoYSigma_prec2) {
   using stan::math::to_var;
   expect_propto_multi_normal_prec_log(to_var(y), mu, to_var(Sigma), to_var(y2),
                                       mu, to_var(Sigma2), "var: y and sigma");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoMu_prec2) {
   using stan::math::to_var;
   expect_propto_multi_normal_prec_log(y, to_var(mu), Sigma, y, to_var(mu2),
                                       Sigma, "var: mu");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoMuSigma_prec2) {
   using stan::math::to_var;
   expect_propto_multi_normal_prec_log(y, to_var(mu), to_var(Sigma), y,
                                       to_var(mu2), to_var(Sigma2),
                                       "var: mu and sigma");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoSigma_prec2) {
   using stan::math::to_var;
   expect_propto_multi_normal_prec_log(y, mu, to_var(Sigma), y, mu,
                                       to_var(Sigma2), "var: sigma");
+
+  stan::math::recover_memory();
 }
 
 struct multi_normal_prec_fun {
@@ -150,6 +178,8 @@ TEST(ProbDistributionsMultiNormalPrec2, TestGradFunctional) {
   u[2] = 0.48;
 
   test_grad(multi_normal_prec_fun(1), u);
+
+  stan::math::recover_memory();
 }
 
 template <int is_row_vec_y, int is_row_vec_mu>
@@ -364,4 +394,6 @@ TEST(ProbDistributionsMultiNormalPrec2, TestGradFunctionalVectorized) {
   test_all_multi_normal_prec2<1, -1>();
   test_all_multi_normal_prec2<-1, 1>();
   test_all_multi_normal_prec2<-1, -1>();
+
+  stan::math::recover_memory();
 }

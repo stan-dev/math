@@ -41,6 +41,7 @@
 #include <stan/math/rev/fun/dot_self.hpp>
 #include <stan/math/rev/fun/eigenvalues_sym.hpp>
 #include <stan/math/rev/fun/eigenvectors_sym.hpp>
+#include <stan/math/rev/fun/elt_multiply.hpp>
 #include <stan/math/rev/fun/erf.hpp>
 #include <stan/math/rev/fun/erfc.hpp>
 #include <stan/math/rev/fun/exp.hpp>
@@ -149,6 +150,7 @@
 #include <stan/math/rev/fun/trigamma.hpp>
 #include <stan/math/rev/fun/trunc.hpp>
 #include <stan/math/rev/fun/typedefs.hpp>
+#include <stan/math/rev/fun/unit_vector_constrain.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/rev/fun/variance.hpp>
