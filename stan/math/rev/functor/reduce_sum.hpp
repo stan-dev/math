@@ -31,19 +31,29 @@ template <typename ReduceFunction, typename ReturnType, typename Vec,
           typename... Args>
 struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                        Vec, Args...> {
-  struct partial_scope {
-    ScopedChainableStack stack_;
-    // std::decay_t<Vec> vmapped_;
+  struct partial_context {
+    var partial_sum_;
+    std::vector<std::decay_t<Vec>> chunked_vmapped_;
     using args_tuple_t
         = std::tuple<decltype(deep_copy_vars(std::declval<Args>()))...>;
-    std::unique_ptr<args_tuple_t> args_tuple_holder_;
+    args_tuple_t args_tuple_;
+
+    template <typename... ArgsT>
+    explicit partial_context(ArgsT&&... args_tuple)
+        : partial_sum_(0.0),
+          chunked_vmapped_(),
+          args_tuple_(deep_copy_vars(args_tuple)...) {}
+  };
+
+  struct partial_scope {
+    ScopedChainableStack stack_;
+
+    std::unique_ptr<partial_context> context_holder_;
 
     template <typename... ArgsT>
     explicit partial_scope(ArgsT&&... args_tuple)
-        : stack_(),
-          // vmapped_(),
-          args_tuple_holder_(stack_.execute([&]() -> args_tuple_t* {
-            return new args_tuple_t(deep_copy_vars(args_tuple)...);
+        : stack_(), context_holder_(stack_.execute([&]() -> partial_context* {
+            return new partial_context(args_tuple...);
           })) {}
   };
 
@@ -123,7 +133,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       // not point
       //   back to main autodiff stack
       partial_scope& local_partial_scope = partial_scopes_.local();
-      auto& args_tuple_local = *(local_partial_scope.args_tuple_holder_);
+      partial_context& context = *(local_partial_scope.context_holder_);
 
       local_partial_scope.stack_.execute([&] {
         {
@@ -144,7 +154,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                 return ReduceFunction()(local_sub_slice, r.begin(), r.end() - 1,
                                         msgs_, args...);
               },
-              args_tuple_local);
+              context.args_tuple_);
 
           // Compute Jacobian
           sub_sum_v.grad();
@@ -162,7 +172,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                 accumulate_adjoints(args_adjoints_.data(),
                                     std::forward<decltype(args)>(args)...);
               },
-              args_tuple_local);
+              context.args_tuple_);
         }
 
         // set adjoints of shared arguments back to zero
