@@ -5,10 +5,10 @@
 #include <stan/math/prim/functor.hpp>
 #include <stan/math/rev/fun/sum.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/functor/reverse_pass_callback.hpp>
 
 #include <tbb/task_arena.h>
 #include <tbb/parallel_reduce.h>
+#include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 
 #include <tuple>
@@ -37,19 +37,11 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
   struct partial_context {
     std::vector<var> partial_sum_terms_;
     std::vector<std::decay_t<Vec>> chunked_vmapped_;
-    // std::vector<Vec> chunked_vmapped_;
-    // using args_tuple_t
-    //    = std::tuple<decltype(deep_copy_vars(std::declval<Args>()))...>;
-    // args_tuple_t args_tuple_;
     using args_tuple_t = std::tuple<Args...>;
     args_tuple_t args_tuple_;
 
-    template <typename... ArgsT>
-    explicit partial_context(ArgsT&&... args_tuple)
-        : partial_sum_terms_(),
-          chunked_vmapped_(),
-          // args_tuple_(deep_copy_vars(args_tuple)...) {}
-          args_tuple_(args_tuple...) {}
+    explicit partial_context(const args_tuple_t& args_tuple)
+        : partial_sum_terms_(), chunked_vmapped_(), args_tuple_(args_tuple) {}
   };
 
   struct partial_scope {
@@ -58,34 +50,39 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
     std::unique_ptr<partial_context> context_holder_;
 
-    template <typename... ArgsT>
-    explicit partial_scope(ArgsT&&... args_tuple)
-        : shared_operands_stack_(),
-          stack_(),
-          context_holder_(
-              shared_operands_stack_.execute([&]() -> partial_context* {
-                return new partial_context(std::forward<ArgsT>(args_tuple)...);
-              })) {}
+    explicit partial_scope()
+        : shared_operands_stack_(), stack_(), context_holder_(nullptr) {}
   };
 
   using local_partial_scopes_t = tbb::enumerable_thread_specific<partial_scope>;
 
   struct child_scopes_vari : public vari_base {
+    std::shared_ptr<local_partial_scopes_t> local_scopes_;
     std::vector<ScopedChainableStack*> child_shared_operands_scopes_;
     std::vector<ScopedChainableStack*> child_scopes_;
 
     explicit child_scopes_vari(
-        std::vector<ScopedChainableStack*> child_shared_operands_scopes,
-        std::vector<ScopedChainableStack*> child_scopes)
-        : child_shared_operands_scopes_(child_shared_operands_scopes),
+        std::shared_ptr<local_partial_scopes_t> local_scopes,
+        std::vector<ScopedChainableStack*>& child_shared_operands_scopes,
+        std::vector<ScopedChainableStack*>& child_scopes)
+        : local_scopes_(local_scopes),
+          child_shared_operands_scopes_(child_shared_operands_scopes),
           child_scopes_(child_scopes) {
       ChainableStack::instance_->var_stack_.push_back(this);
     }
 
     inline void chain() final {
+      /**/
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, child_scopes_.size()),
+                        [&](const tbb::blocked_range<size_t>& r) {
+                          for (size_t i = r.begin(); i != r.end(); ++i)
+                            child_scopes_[i]->execute([]() { grad(); });
+                        });
+      /*
       for (auto child : child_scopes_) {
         child->execute([]() { grad(); });
       }
+      */
       for (auto child_shared_operand : child_shared_operands_scopes_) {
         child_shared_operand->execute([]() { grad(); });
       }
@@ -114,11 +111,15 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     local_partial_scopes_t& partial_scopes_;
     Vec vmapped_;
     std::ostream* msgs_;
+    std::tuple<Args...> args_tuple_;
 
-    template <typename VecT>
+    template <typename VecT, typename... ArgsT>
     recursive_reducer(local_partial_scopes_t& partial_scopes, VecT&& vmapped,
-                      std::ostream* msgs)
-        : partial_scopes_(partial_scopes), vmapped_(vmapped), msgs_(msgs) {}
+                      std::ostream* msgs, ArgsT&&... args)
+        : partial_scopes_(partial_scopes),
+          vmapped_(std::forward<VecT>(vmapped)),
+          msgs_(msgs),
+          args_tuple_(std::forward<ArgsT>(args)...) {}
 
     /*
      * This is the copy operator as required for tbb::parallel_reduce
@@ -129,7 +130,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     recursive_reducer(recursive_reducer& other, tbb::split)
         : partial_scopes_(other.partial_scopes_),
           vmapped_(other.vmapped_),
-          msgs_(other.msgs_) {}
+          msgs_(other.msgs_),
+          args_tuple_(other.args_tuple_) {}
 
     /**
      * Compute, using nested autodiff, the value and Jacobian of
@@ -149,23 +151,30 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         return;
       }
 
-      // Obtain reference to thread local copy of all shared arguments that do
-      // not point
-      //   back to main autodiff stack
+      // Obtain reference to thread local copy of all shared arguments
       partial_scope& local_partial_scope = partial_scopes_.local();
+
+      if (local_partial_scope.context_holder_ == nullptr) {
+        local_partial_scope.shared_operands_stack_.execute([&] {
+          local_partial_scope.context_holder_
+              = std::unique_ptr<partial_context>(
+                  new partial_context(args_tuple_));
+        });
+      }
+
       partial_context& context = *(local_partial_scope.context_holder_);
 
-      local_partial_scope.stack_.execute([&] {
+      local_partial_scope.shared_operands_stack_.execute([&] {
         // Put autodiff copies of sliced argument to local stack
         context.chunked_vmapped_.emplace_back();
         std::decay_t<Vec>& local_sub_slice = context.chunked_vmapped_.back();
-        // Vec& local_sub_slice = context.chunked_vmapped_.back();
         local_sub_slice.reserve(r.size());
         for (size_t i = r.begin(); i < r.end(); ++i) {
-          // local_sub_slice.emplace_back(deep_copy_vars(vmapped_[i]));
           local_sub_slice.emplace_back(vmapped_[i]);
         }
-
+      });
+      local_partial_scope.stack_.execute([&] {
+        std::decay_t<Vec>& local_sub_slice = context.chunked_vmapped_.back();
         // Perform calculation
         context.partial_sum_terms_.emplace_back(apply(
             [&](auto&&... args) {
@@ -184,14 +193,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
      * @param rhs Another partial sum
      */
     inline void join(const recursive_reducer& rhs) {
-      /*
-    sum_ += rhs.sum_;
-    if (args_adjoints_.size() != 0 && rhs.args_adjoints_.size() != 0) {
-      args_adjoints_ += rhs.args_adjoints_;
-    } else if (args_adjoints_.size() == 0 && rhs.args_adjoints_.size() != 0) {
-      args_adjoints_ = rhs.args_adjoints_;
-    }
-      */
+      // nothing to be done
     }
   };
 
@@ -243,31 +245,11 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       return var(0.0);
     }
 
-    const std::size_t num_vars_per_term = count_vars(vmapped[0]);
-    const std::size_t num_vars_sliced_terms = num_terms * num_vars_per_term;
-    const std::size_t num_vars_shared_terms = count_vars(args...);
-
-    /*
-    vari** varis = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-        num_vars_sliced_terms + num_vars_shared_terms);
-    double* partials = ChainableStack::instance_->memalloc_.alloc_array<double>(
-        num_vars_sliced_terms + num_vars_shared_terms);
-
-    save_varis(varis, vmapped);
-    save_varis(varis + num_vars_sliced_terms, args...);
-
-    for (size_t i = 0; i < num_vars_sliced_terms; ++i) {
-      partials[i] = 0.0;
-    }
-    */
-
     std::shared_ptr<local_partial_scopes_t> local_partial_scopes(
-        new local_partial_scopes_t([&] { return partial_scope(args...); }));
-    // @Steve: This should work, but fails to compile???
-    // local_args_tuple_t local_args(args...);
+        new local_partial_scopes_t());
 
     recursive_reducer worker(*local_partial_scopes, std::forward<Vec>(vmapped),
-                             msgs);
+                             msgs, std::forward<Args>(args)...);
 
     if (auto_partitioning) {
       tbb::parallel_reduce(
@@ -279,10 +261,6 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           partitioner);
     }
 
-    // reverse pass trick... abused to keep a copy of the shared
-    // pointer here
-    reverse_pass_callback([local_partial_scopes]() mutable {});
-
     std::vector<ScopedChainableStack*> child_shared_operands_scope_ref;
     std::vector<ScopedChainableStack*> child_scope_ref;
 
@@ -292,7 +270,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       child_scope_ref.emplace_back(&scope.stack_);
     });
 
-    new child_scopes_vari(child_shared_operands_scope_ref, child_scope_ref);
+    new child_scopes_vari(local_partial_scopes, child_shared_operands_scope_ref,
+                          child_scope_ref);
 
     std::vector<var> partials;
 
@@ -301,9 +280,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           stan::math::sum(scope.context_holder_->partial_sum_terms_));
     });
 
-    var sum = stan::math::sum(partials);
-
-    return sum;
+    return stan::math::sum(partials);
   }
 };
 }  // namespace internal
