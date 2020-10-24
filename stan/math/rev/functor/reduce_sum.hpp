@@ -53,24 +53,32 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
   };
 
   struct partial_scope {
+    ScopedChainableStack shared_operands_stack_;
     ScopedChainableStack stack_;
 
     std::unique_ptr<partial_context> context_holder_;
 
     template <typename... ArgsT>
     explicit partial_scope(ArgsT&&... args_tuple)
-        : stack_(), context_holder_(stack_.execute([&]() -> partial_context* {
-            return new partial_context(std::forward<ArgsT>(args_tuple)...);
-          })) {}
+        : shared_operands_stack_(),
+          stack_(),
+          context_holder_(
+              shared_operands_stack_.execute([&]() -> partial_context* {
+                return new partial_context(std::forward<ArgsT>(args_tuple)...);
+              })) {}
   };
 
   using local_partial_scopes_t = tbb::enumerable_thread_specific<partial_scope>;
 
   struct child_scopes_vari : public vari_base {
+    std::vector<ScopedChainableStack*> child_shared_operands_scopes_;
     std::vector<ScopedChainableStack*> child_scopes_;
 
-    explicit child_scopes_vari(std::vector<ScopedChainableStack*> child_scopes)
-        : child_scopes_(child_scopes) {
+    explicit child_scopes_vari(
+        std::vector<ScopedChainableStack*> child_shared_operands_scopes,
+        std::vector<ScopedChainableStack*> child_scopes)
+        : child_shared_operands_scopes_(child_shared_operands_scopes),
+          child_scopes_(child_scopes) {
       ChainableStack::instance_->var_stack_.push_back(this);
     }
 
@@ -78,10 +86,16 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       for (auto child : child_scopes_) {
         child->execute([]() { grad(); });
       }
+      for (auto child_shared_operand : child_shared_operands_scopes_) {
+        child_shared_operand->execute([]() { grad(); });
+      }
     }
     inline void set_zero_adjoint() final {
       for (auto child : child_scopes_) {
         child->execute([]() { set_zero_all_adjoints(); });
+      }
+      for (auto child_shared_operand : child_shared_operands_scopes_) {
+        child_shared_operand->execute([]() { set_zero_all_adjoints(); });
       }
     }
     inline void init_dependent() {}
@@ -269,13 +283,16 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     // pointer here
     reverse_pass_callback([local_partial_scopes]() mutable {});
 
+    std::vector<ScopedChainableStack*> child_shared_operands_scope_ref;
     std::vector<ScopedChainableStack*> child_scope_ref;
 
     local_partial_scopes->combine_each([&](partial_scope& scope) {
+      child_shared_operands_scope_ref.emplace_back(
+          &scope.shared_operands_stack_);
       child_scope_ref.emplace_back(&scope.stack_);
     });
 
-    new child_scopes_vari(child_scope_ref);
+    new child_scopes_vari(child_shared_operands_scope_ref, child_scope_ref);
 
     std::vector<var> partials;
 
