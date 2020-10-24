@@ -182,7 +182,6 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                                       msgs_, args...);
             },
             context.args_tuple_));
-
       });
     }
 
