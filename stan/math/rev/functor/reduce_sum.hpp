@@ -36,7 +36,6 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                        Vec, Args...> {
   struct partial_context {
     std::vector<var> partial_sum_terms_;
-    std::vector<std::decay_t<Vec>> chunked_vmapped_;
     using args_tuple_t
         = std::tuple<decltype(copy_vars(std::declval<Args>()))...>;
     // using args_tuple_t = std::tuple<Args...>;
@@ -44,9 +43,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
     template <typename... ArgsT>
     explicit partial_context(ArgsT&&... args_tuple)
-        : partial_sum_terms_(),
-          chunked_vmapped_(),
-          args_tuple_(copy_vars(args_tuple)...) {}
+        : partial_sum_terms_(), args_tuple_(copy_vars(args_tuple)...) {}
   };
 
   struct partial_scope {
@@ -61,7 +58,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           stack_(),
           context_holder_(
               shared_operands_stack_.execute([&]() -> partial_context* {
-                return new partial_context(args_tuple...);
+                return new partial_context(std::forward<ArgsT>(args_tuple)...);
               })) {}
   };
 
@@ -84,11 +81,12 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
     inline void chain() final {
       /**/
-      tbb::parallel_for(tbb::blocked_range<size_t>(0, child_scopes_.size()),
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, child_scopes_.size(), 1),
                         [&](const tbb::blocked_range<size_t>& r) {
                           for (size_t i = r.begin(); i != r.end(); ++i)
                             child_scopes_[i]->execute([]() { grad(); });
-                        });
+                        },
+                        tbb::simple_partitioner());
       /*
       for (auto child : child_scopes_) {
         child->execute([]() { grad(); });
@@ -122,16 +120,13 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     local_partial_scopes_t& partial_scopes_;
     Vec vmapped_;
     std::ostream* msgs_;
-    // std::tuple<Args...> args_tuple_;
 
     template <typename VecT, typename... ArgsT>
     recursive_reducer(local_partial_scopes_t& partial_scopes, VecT&& vmapped,
-                      std::ostream* msgs)  //, ArgsT&&... args)
+                      std::ostream* msgs)
         : partial_scopes_(partial_scopes),
           vmapped_(std::forward<VecT>(vmapped)),
-          msgs_(msgs)  //,
-                       // args_tuple_(std::forward<ArgsT>(args)...)
-    {}
+          msgs_(msgs) {}
 
     /*
      * This is the copy operator as required for tbb::parallel_reduce
@@ -142,8 +137,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     recursive_reducer(recursive_reducer& other, tbb::split)
         : partial_scopes_(other.partial_scopes_),
           vmapped_(other.vmapped_),
-          msgs_(other.msgs_) {}  //,
-    // args_tuple_(other.args_tuple_) {}
+          msgs_(other.msgs_) {}
 
     /**
      * Compute, using nested autodiff, the value and Jacobian of
@@ -165,30 +159,16 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
       // Obtain reference to thread local copy of all shared arguments
       partial_scope& local_partial_scope = partial_scopes_.local();
-
-      /*
-      if (local_partial_scope.context_holder_ == nullptr) {
-        local_partial_scope.shared_operands_stack_.execute([&] {
-          local_partial_scope.context_holder_
-              = std::unique_ptr<partial_context>(
-                  new partial_context(args_tuple_));
-        });
-      }
-      */
-
       partial_context& context = *(local_partial_scope.context_holder_);
 
-      local_partial_scope.shared_operands_stack_.execute([&] {
+      local_partial_scope.stack_.execute([&] {
         // Put autodiff copies of sliced argument to local stack
-        context.chunked_vmapped_.emplace_back();
-        std::decay_t<Vec>& local_sub_slice = context.chunked_vmapped_.back();
+        std::decay_t<Vec> local_sub_slice;
         local_sub_slice.reserve(r.size());
         for (size_t i = r.begin(); i < r.end(); ++i) {
           local_sub_slice.emplace_back(vmapped_[i]);
         }
-      });
-      local_partial_scope.stack_.execute([&] {
-        std::decay_t<Vec>& local_sub_slice = context.chunked_vmapped_.back();
+
         // Perform calculation
         context.partial_sum_terms_.emplace_back(apply(
             [&](auto&&... args) {
@@ -259,10 +239,13 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     }
 
     std::shared_ptr<local_partial_scopes_t> local_partial_scopes(
-        new local_partial_scopes_t([&]() { return partial_scope(args...); }));
+        new local_partial_scopes_t(
+            [&]() { return partial_scope(std::forward<Args>(args)...); }));
+    // std::shared_ptr<local_partial_scopes_t> local_partial_scopes(
+    //    new local_partial_scopes_t(std::forward<Args>(args)...));
 
     recursive_reducer worker(*local_partial_scopes, std::forward<Vec>(vmapped),
-                             msgs);  //, std::forward<Args>(args)...);
+                             msgs);
 
     if (auto_partitioning) {
       tbb::parallel_reduce(
