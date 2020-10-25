@@ -37,11 +37,16 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
   struct partial_context {
     std::vector<var> partial_sum_terms_;
     std::vector<std::decay_t<Vec>> chunked_vmapped_;
-    using args_tuple_t = std::tuple<Args...>;
+    using args_tuple_t
+        = std::tuple<decltype(copy_vars(std::declval<Args>()))...>;
+    // using args_tuple_t = std::tuple<Args...>;
     args_tuple_t args_tuple_;
 
-    explicit partial_context(const args_tuple_t& args_tuple)
-        : partial_sum_terms_(), chunked_vmapped_(), args_tuple_(args_tuple) {}
+    template <typename... ArgsT>
+    explicit partial_context(ArgsT&&... args_tuple)
+        : partial_sum_terms_(),
+          chunked_vmapped_(),
+          args_tuple_(copy_vars(args_tuple)...) {}
   };
 
   struct partial_scope {
@@ -50,8 +55,14 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
     std::unique_ptr<partial_context> context_holder_;
 
-    explicit partial_scope()
-        : shared_operands_stack_(), stack_(), context_holder_(nullptr) {}
+    template <typename... ArgsT>
+    explicit partial_scope(ArgsT&&... args_tuple)
+        : shared_operands_stack_(),
+          stack_(),
+          context_holder_(
+              shared_operands_stack_.execute([&]() -> partial_context* {
+                return new partial_context(args_tuple...);
+              })) {}
   };
 
   using local_partial_scopes_t = tbb::enumerable_thread_specific<partial_scope>;
@@ -111,15 +122,16 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     local_partial_scopes_t& partial_scopes_;
     Vec vmapped_;
     std::ostream* msgs_;
-    std::tuple<Args...> args_tuple_;
+    // std::tuple<Args...> args_tuple_;
 
     template <typename VecT, typename... ArgsT>
     recursive_reducer(local_partial_scopes_t& partial_scopes, VecT&& vmapped,
-                      std::ostream* msgs, ArgsT&&... args)
+                      std::ostream* msgs)  //, ArgsT&&... args)
         : partial_scopes_(partial_scopes),
           vmapped_(std::forward<VecT>(vmapped)),
-          msgs_(msgs),
-          args_tuple_(std::forward<ArgsT>(args)...) {}
+          msgs_(msgs)  //,
+                       // args_tuple_(std::forward<ArgsT>(args)...)
+    {}
 
     /*
      * This is the copy operator as required for tbb::parallel_reduce
@@ -130,8 +142,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     recursive_reducer(recursive_reducer& other, tbb::split)
         : partial_scopes_(other.partial_scopes_),
           vmapped_(other.vmapped_),
-          msgs_(other.msgs_),
-          args_tuple_(other.args_tuple_) {}
+          msgs_(other.msgs_) {}  //,
+    // args_tuple_(other.args_tuple_) {}
 
     /**
      * Compute, using nested autodiff, the value and Jacobian of
@@ -154,6 +166,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       // Obtain reference to thread local copy of all shared arguments
       partial_scope& local_partial_scope = partial_scopes_.local();
 
+      /*
       if (local_partial_scope.context_holder_ == nullptr) {
         local_partial_scope.shared_operands_stack_.execute([&] {
           local_partial_scope.context_holder_
@@ -161,6 +174,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                   new partial_context(args_tuple_));
         });
       }
+      */
 
       partial_context& context = *(local_partial_scope.context_holder_);
 
@@ -245,10 +259,10 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     }
 
     std::shared_ptr<local_partial_scopes_t> local_partial_scopes(
-        new local_partial_scopes_t());
+        new local_partial_scopes_t([&]() { return partial_scope(args...); }));
 
     recursive_reducer worker(*local_partial_scopes, std::forward<Vec>(vmapped),
-                             msgs, std::forward<Args>(args)...);
+                             msgs);  //, std::forward<Args>(args)...);
 
     if (auto_partitioning) {
       tbb::parallel_reduce(
