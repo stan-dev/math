@@ -74,7 +74,8 @@ class trace_quad_form_vari : public vari {
 }  // namespace internal
 
 template <typename EigMat1, typename EigMat2,
-          typename = require_any_vt_var<EigMat1, EigMat2>>
+	  require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
+          require_any_st_var<EigMat1, EigMat2>* = nullptr>
 inline return_type_t<EigMat1, EigMat2> trace_quad_form(const EigMat1& A,
                                                        const EigMat2& B) {
   using Ta = value_type_t<EigMat1>;
@@ -91,6 +92,33 @@ inline return_type_t<EigMat1, EigMat2> trace_quad_form(const EigMat1& A,
 
   return var(
       new internal::trace_quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>(baseVari));
+}
+
+template <typename Mat1, typename Mat2,
+          require_all_matrix_t<Mat1, Mat2>* = nullptr,
+          require_any_var_matrix_t<Mat1, Mat2>* = nullptr>
+inline var trace_quad_form(const Mat1& A, const Mat2& B) {
+  check_square("trace_quad_form", "A", A);
+  check_multiplicable("trace_quad_form", "A", A, "B", B);
+
+  arena_t<Mat1> arena_A = A;
+  arena_t<Mat2> arena_B = B;
+
+  var res = (value_of(arena_B).transpose() *
+	     value_of(arena_A) *
+	     value_of(arena_B)).trace();
+
+  reverse_pass_callback([arena_A, arena_B, res]() mutable {
+    if (!is_constant<Mat1>::value)
+      forward_as<promote_scalar_t<var, Mat1>>(arena_A).adj() +=
+	res.adj() * value_of(arena_B) * value_of(arena_B).transpose();
+
+    if (!is_constant<Mat2>::value)
+      forward_as<promote_scalar_t<var, Mat2>>(arena_B).adj()
+	+= res.adj() * (value_of(arena_A) + value_of(arena_A).transpose()) * value_of(arena_B);
+  });
+
+  return res;
 }
 
 }  // namespace math
