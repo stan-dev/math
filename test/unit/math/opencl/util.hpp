@@ -189,6 +189,7 @@ template <typename Functor, typename... Args>
 void compare_cpu_opencl_prim_rev(const Functor& functor, const Args&... args) {
   internal::compare_cpu_opencl_prim_rev_impl(
       functor, std::make_index_sequence<sizeof...(args)>{}, args...);
+  recover_memory();
 }
 
 }  // namespace test
