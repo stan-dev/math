@@ -52,14 +52,14 @@ template <typename T, require_fvar_t<T>* = nullptr>
 T make_arg(double value = 0.4) {
   return {value, 0.5};
 }
-template <typename T, require_eigen_t<T>* = nullptr>
-T make_arg(scalar_type_t<T> value = 0.4) {
+template <typename T, typename T_scalar = double, require_eigen_t<T>* = nullptr>
+T make_arg(T_scalar value = 0.4) {
   T res(1, 1);
   res << make_arg<value_type_t<T>>(value);
   return res;
 }
-template <typename T, require_std_vector_t<T>* = nullptr>
-T make_arg(scalar_type_t<T> value = 0.4) {
+template <typename T, typename T_scalar = double, require_std_vector_t<T>* = nullptr>
+T make_arg(T_scalar value = 0.4) {
   using V = value_type_t<T>;
   V tmp = make_arg<V>(value);
   T res;
