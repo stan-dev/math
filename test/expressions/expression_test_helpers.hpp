@@ -58,7 +58,8 @@ T make_arg(T_scalar value = 0.4) {
   res << make_arg<value_type_t<T>>(value);
   return res;
 }
-template <typename T, typename T_scalar = double, require_std_vector_t<T>* = nullptr>
+template <typename T, typename T_scalar = double,
+          require_std_vector_t<T>* = nullptr>
 T make_arg(T_scalar value = 0.4) {
   using V = value_type_t<T>;
   V tmp = make_arg<V>(value);
