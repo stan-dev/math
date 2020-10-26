@@ -286,12 +286,12 @@ class vari_view_eigen {
   inline auto transpose() const {
     using inner_type = decltype(derived().val_.transpose());
     return vari_view<inner_type>(derived().val_.transpose(),
-				 derived().adj_.transpose());
+                                 derived().adj_.transpose());
   }
   inline auto transpose() {
     using inner_type = decltype(derived().val_.transpose());
     return vari_view<inner_type>(derived().val_.transpose(),
-				 derived().adj_.transpose());
+                                 derived().adj_.transpose());
   }
 
   /**

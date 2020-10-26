@@ -505,11 +505,11 @@ TEST_F(AgradRev, var_matrix_view_assignment) {
   A_v.block(0, 0, 3, 3) = A_v.block(1, 1, 3, 3);
   // Checks adjoints from all assigned slices are propogated upwards
   var b_v = stan::math::sum(A_v_block) + stan::math::sum(A_v_transpose)
-    + stan::math::sum(A_v_row)
-    + stan::math::sum(A_v_col) + stan::math::sum(A_v_block_row)
-    + stan::math::sum(A_v_rowwise_reverse)
-    + stan::math::sum(A_v_colwise_reverse)
-    + stan::math::sum(A_v_rowwise_colwise_reverse);
+            + stan::math::sum(A_v_row) + stan::math::sum(A_v_col)
+            + stan::math::sum(A_v_block_row)
+            + stan::math::sum(A_v_rowwise_reverse)
+            + stan::math::sum(A_v_colwise_reverse)
+            + stan::math::sum(A_v_rowwise_colwise_reverse);
   b_v.grad();
   Eigen::MatrixXd deriv(4, 4);
   deriv << 4, 4, 4, 5, 4, 5, 5, 6, 4, 6, 6, 7, 5, 6, 6, 7;
@@ -538,11 +538,11 @@ TEST_F(AgradRev, var_matrix_view_assignment_const) {
   A_v.block(0, 0, 3, 3) = A_v.block(1, 1, 3, 3);
   // Checks adjoints from all assigned slices are propogated upwards
   var b_v = stan::math::sum(A_v_block) + stan::math::sum(A_v_transpose)
-    + stan::math::sum(A_v_row)
-    + stan::math::sum(A_v_col) + stan::math::sum(A_v_block_row)
-    + stan::math::sum(A_v_rowwise_reverse)
-    + stan::math::sum(A_v_colwise_reverse)
-    + stan::math::sum(A_v_rowwise_colwise_reverse);
+            + stan::math::sum(A_v_row) + stan::math::sum(A_v_col)
+            + stan::math::sum(A_v_block_row)
+            + stan::math::sum(A_v_rowwise_reverse)
+            + stan::math::sum(A_v_colwise_reverse)
+            + stan::math::sum(A_v_rowwise_colwise_reverse);
   b_v.grad();
   Eigen::MatrixXd deriv(4, 4);
   deriv << 4, 4, 4, 5, 4, 5, 5, 6, 4, 6, 6, 7, 5, 6, 6, 7;
@@ -571,11 +571,11 @@ TEST_F(AgradRev, var_matrix_view_eval) {
   A_v.block(0, 0, 3, 3) = A_v.block(1, 1, 3, 3);
   // Checks adjoints from all assigned slices are propogated upwards
   var b_v = stan::math::sum(A_v_block) + stan::math::sum(A_v_transpose)
-    + stan::math::sum(A_v_row)
-    + stan::math::sum(A_v_col) + stan::math::sum(A_v_block_row)
-    + stan::math::sum(A_v_rowwise_reverse)
-    + stan::math::sum(A_v_colwise_reverse)
-    + stan::math::sum(A_v_rowwise_colwise_reverse);
+            + stan::math::sum(A_v_row) + stan::math::sum(A_v_col)
+            + stan::math::sum(A_v_block_row)
+            + stan::math::sum(A_v_rowwise_reverse)
+            + stan::math::sum(A_v_colwise_reverse)
+            + stan::math::sum(A_v_rowwise_colwise_reverse);
   b_v.grad();
   Eigen::MatrixXd deriv(4, 4);
   deriv << 4, 4, 4, 5, 4, 5, 5, 6, 4, 6, 6, 7, 5, 6, 6, 7;
