@@ -100,12 +100,13 @@ class quad_form_vari : public vari {
  * Symmetry of the resulting matrix is not guaranteed due to numerical
  * precision.
  *
- * @tparam T1 type of the first (square) matrix
- * @tparam T2 type of the second matrix
+ * @tparam Mat1 type of the first (square) matrix
+ * @tparam Mat2 type of the second matrix
  *
  * @param A square matrix
  * @param B second matrix
- * @return The quadratic form, which is a symmetric matrix.
+ * @param symmetric indicates whether the output should be made symmetric
+ * @return The quadratic form
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
  */
@@ -222,11 +223,12 @@ inline var quad_form(const EigMat& A, const ColVec& B, bool symmetric = false) {
  * Symmetry of the resulting matrix is not guaranteed due to numerical
  * precision.
  *
- * @tparam EigMat1 type of the first (square) matrix
- * @tparam EigMat2 type of the second matrix
+ * @tparam Mat1 type of the first (square) matrix
+ * @tparam Mat2 type of the second matrix
  *
  * @param A square matrix
  * @param B second matrix
+ * @param symmetric indicates whether the output should be made symmetric
  * @return The quadratic form, which is a symmetric matrix.
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
@@ -242,11 +244,12 @@ inline auto quad_form(const Mat1& A, const Mat2& B, bool symmetric = false) {
 /**
  * Return the quadratic form \f$ B^T A B \f$.
  *
- * @tparam EigMat type of the matrix
- * @tparam ColVec type of the vector
+ * @tparam Mat type of the matrix
+ * @tparam Vec type of the vector
  *
  * @param A square matrix
  * @param B vector
+ * @param symmetric indicates whether the output should be made symmetric
  * @return The quadratic form (a scalar).
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
