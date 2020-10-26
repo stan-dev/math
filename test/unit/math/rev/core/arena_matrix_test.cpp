@@ -26,6 +26,7 @@ TEST(AgradRev, arena_matrix_matrix_test) {
   a = MatrixXd::Ones(3, 2);
 
   EXPECT_MATRIX_EQ(a + a2 + a3 + b + b2 + e, MatrixXd::Ones(3, 2) * 9);
+  stan::math::recover_memory();
 }
 
 TEST(AgradRev, arena_matrix_vector_test) {
@@ -52,6 +53,7 @@ TEST(AgradRev, arena_matrix_vector_test) {
   a = VectorXd::Ones(3);
 
   EXPECT_MATRIX_EQ(a + a2 + a3 + b + b2 + e, VectorXd::Ones(3) * 9);
+  stan::math::recover_memory();
 }
 
 TEST(AgradRev, arena_matrix_row_vector_test) {
@@ -78,4 +80,5 @@ TEST(AgradRev, arena_matrix_row_vector_test) {
   a = RowVectorXd::Ones(3);
 
   EXPECT_MATRIX_EQ(a + a2 + a3 + b + b2 + e, RowVectorXd::Ones(3) * 9);
+  stan::math::recover_memory();
 }
