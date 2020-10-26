@@ -117,9 +117,9 @@ inline auto quad_form_impl(const Mat1& A, const Mat2& B, bool symmetric) {
   check_multiplicable("quad_form", "A", A, "B", B);
 
   using return_t
-    = promote_var_matrix_t<decltype(value_of(B).transpose().eval() *
-				    value_of(A) *
-				    value_of(B).eval()), Mat1, Mat2>;
+      = promote_var_matrix_t<decltype(value_of(B).transpose().eval()
+                                      * value_of(A) * value_of(B).eval()),
+                             Mat1, Mat2>;
 
   auto arena_A = to_arena(A);
   auto arena_B = to_arena(B);
@@ -127,27 +127,26 @@ inline auto quad_form_impl(const Mat1& A, const Mat2& B, bool symmetric) {
   check_not_nan("multiply", "A", value_of(arena_A));
   check_not_nan("multiply", "B", value_of(arena_B));
 
-  auto arena_res = to_arena(value_of(arena_B).transpose() *
-			    value_of(arena_A) *
-			    value_of(arena_B));
+  auto arena_res = to_arena(value_of(arena_B).transpose() * value_of(arena_A)
+                            * value_of(arena_B));
 
-  if(symmetric) {
+  if (symmetric) {
     arena_res = (arena_res + arena_res.transpose()).eval();
   }
-  
+
   return_t res = arena_res;
 
   reverse_pass_callback([arena_A, arena_B, res]() mutable {
     auto C_adj_B_t = (res.adj() * value_of(arena_B).transpose()).eval();
 
     if (!is_constant<Mat1>::value)
-      forward_as<promote_scalar_t<var, Mat1>>(arena_A).adj() +=
-	value_of(arena_B) * C_adj_B_t;
+      forward_as<promote_scalar_t<var, Mat1>>(arena_A).adj()
+          += value_of(arena_B) * C_adj_B_t;
 
     if (!is_constant<Mat2>::value)
-      forward_as<promote_scalar_t<var, Mat2>>(arena_B).adj() +=
-	value_of(arena_A) * C_adj_B_t.transpose()
-	+ value_of(arena_A).transpose() * value_of(arena_B) * res.adj();
+      forward_as<promote_scalar_t<var, Mat2>>(arena_B).adj()
+          += value_of(arena_A) * C_adj_B_t.transpose()
+             + value_of(arena_A).transpose() * value_of(arena_B) * res.adj();
   });
 
   return res;
@@ -251,14 +250,13 @@ inline auto quad_form(const Mat1& A, const Mat2& B, bool symmetric = false) {
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
  */
-template <typename Mat, typename Vec,
-	  require_matrix_t<Mat>* = nullptr,
+template <typename Mat, typename Vec, require_matrix_t<Mat>* = nullptr,
           require_col_vector_t<Vec>* = nullptr,
           require_any_var_matrix_t<Mat, Vec>* = nullptr>
 inline var quad_form(const Mat& A, const Vec& B, bool symmetric = false) {
   return internal::quad_form_impl(A, B, symmetric)(0, 0);
 }
-  
+
 }  // namespace math
 }  // namespace stan
 #endif
