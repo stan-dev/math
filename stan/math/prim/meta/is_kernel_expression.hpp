@@ -37,6 +37,9 @@ struct is_kernel_expression_and_not_scalar
 template <typename T>
 struct is_kernel_expression_and_not_scalar<T, require_matrix_cl_t<T>>
     : std::true_type {};
+template <typename T>
+struct is_kernel_expression_and_not_scalar<T, require_arena_matrix_cl_t<T>>
+    : std::true_type {};
 
 /**
  * Determines whether a type is is a valid kernel generator expression. Valid
