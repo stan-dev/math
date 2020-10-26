@@ -1,6 +1,70 @@
 Stan Math Library Release Notes
 
 ======================================================================
+v3.4.0 (26 October 2020)
+======================================================================
+
+- Generalize signatures to accept general Eigen expressions (#1844, #1931, #1944, #1945, #1944, #2022, #2023, #2028, #2029, #2056, #2058, #2061, #2062, #2066, #2068, #2069, #2070, #2072, #2073, #2074, #2075, #2081, #2082, #2087, #2088, #2089, #2104, #2109, #2110, #2118, #2119, #2134, #2137, #2140)
+ - Add templates to `var` and `vari` so that autodiff can use multiple floating point types.(#1915)
+ - Made binomial_lpmf work more reliably when the probability parameter is 0.0 or 1.0(#1988)
+ - Fixed requires docs(#1990)
+ - fixed doxygen documentation of `hmm_marginal`(#1994)
+ - Vectorised binary scalar functions (#1987, #2002, #2005) 
+ - Added `reverse_pass_callback`, a simpler and faster alternative to `adj_jac_apply`. `dot_product` implementation that accepts pointers has been removed.(#2011)
+ - Added missing implementations for the unary plus.(#2032)
+ - Reduced some duplicate ODE test code(#2039)
+ - Fix problems with higher order gradients in probability test framework(#2042)
+ - forward_as requires types match exactly -- not just be convertible(#2054)
+ - C0 in gaussian_dlm_obs_lpdf and gaussian_dlp_obs_rng can now be positive semidefinite(#2143)
+ - Made behaviour of ```fmin``` and ```fmax``` with equal inputs equivalent across reverse- and forward-mode(#2063)
+ - Cleaned up the use of `<Eigen/*>` outside the main Eigen header file.(#2080)
+ - fixed numerical issue with `quad_form_sym`.(#2096)
+ - Added function for creating an ordered integer sequence(#2108)
+ - The states returned by hmm_hidden_state_rng now live on {1, 2, ..., K}, rather than {0, 1, ..., K - 1}.(#2113)
+ - Removed a duplicated check function.(#2126)
+
+var_value: 
+ - Allowed `vari` to hold an Eigen type(#1952)
+ - `operands_and_partials` now supports `var_value` operands.(#1970)
+ - Added views for var_value<Eigen::Matrix> class(#2024)
+ - Added functions for conversion between `var_value` and Eigen matrix of vars and a metaprogram that determines return type of a function that accepts a mixture of `var_value`s and Eigen matrices and propagates `var_value` if present.(#2047)
+ - Adds softmax function for ˙var_value` matrices and testing scheme for checking array of structs vs struct of arrays matrix var implimentation.(#2050) 
+ - Adds views to `vari_value<Matrix>` types that allow for compound slicing expressions.(#2064)
+ - Enabled assigning to blocks and other views into `var_value`.(#2065)
+ - Adds multiplication function for var matrices and a test suite for checking the correctness of binary functions that accept var matrices as an input.(#2091)
+ - Add var and var matrix specializtion elementwise product.(#2121)
+ 
+Testing: 
+  - Updated test values for pow() to fixed false positives in the testing framework(#2123)
+  - Upgraded Google Test to v1.10.x.(#1995)
+  - Added Google Benchmark as a test dependency.(#1995)
+  - Added testing framework for checking that functions exposed to stan language accept Eigen Expressions.(#1980, #2027)
+  - Removed unit tests for reduce_sum threading that caused false positives.(#2033)
+  - Added more tests for vectorized probability functions(#2085)
+  - Added makefile variables that will be used for optimizations in the upstream interfaces (#2020)
+  - Jumbo tests are used for all test/unit/math unit tests.(#2057)
+  - Added address sanitizer to continuous integration.(#2146)
+
+Building:
+ - Removed the use of the GNU cut utility.(#2126)
+ - Improved error messaging on Windows if the C++ toolchain was installed in a folder with spaces.(#2009)
+ - Added flags to suppress warnings when building TBB.(#1993)
+ - Switched `/bin/bash` with `/usr/bin/env bash` in the makefiles.(#1998)
+ 
+OpenCL backend: 
+  - Added support for elementwise checks to kernel generator(#1977)
+  - Removed `matrix_cl<var>` specialization.(#2021)
+  - OpenCL implementation `normal_id_glm_lpdf` can also be used when derivatives of `x` or `y` are needed.(#2034)
+  - OpenCL implementations of `bernoulli_logit_glm_lpmf` and `poisson_log_glm_lpmf` can also be used when derivatives of `x` are needed.(#2035)
+  - Added index operations to kernel generator.(#2051)
+  - Implemented indexing for kernel generator expressions.(#2052)
+  - OpenCL implementations of `neg_binomial_2_log_glm_lpmf`, `ordered_logistic_glm_lpmf` and `categorical_logit_glm_lpmf` can also be used when derivatives of `x` are needed.(#2055)
+  - Added an option to select the OpenCL device to use at runtime.(#2067)
+  - Simplified tests of GPU GLMs by moving repeated code into a common utility header.(#2097)
+  - Added OpenCL reverse mode implementations of matrix multiply and sum.(#2099)
+  - vari_base can now be constructed with matrix_cl value and adjoint. Copying between host and device is possible for vars containing Eigen::Matrix/matrix_cl. Adjoints are propagated over these copies.(#1967)
+  
+======================================================================
 v3.3.0 (28 July 2020)
 ======================================================================
 
