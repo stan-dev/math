@@ -176,7 +176,7 @@ special_arg_values = {
     "lkj_corr_lpdf": [1, None],
     "lkj_corr_log": [1, None],
     "log_diff_exp": [3, None],
-    "log_inv_logit_diff": [1.2, 0.4],  
+    "log_inv_logit_diff": [1.2, 0.4],
     "multinomial_log" : [None, 1],
     "multinomial_lpmf" : [None, 1],
     "multinomial_rng" : [1, None, None],
@@ -247,12 +247,12 @@ def save_tests_in_files(N_files, tests):
 
 def handle_function_list(functions_input, signatures):
     """
-    Handles list of functions, splitting elements between functions and signatures.  
+    Handles list of functions, splitting elements between functions and signatures.
     :param functions_input: This can contain names of functions
     already supported by stanc3, full function signatures or file names of files containing
     any of the previous two.
-    :param signatures: 
-    :return: 
+    :param signatures:
+    :return:
     """
     function_names = []
     function_signatures = []
