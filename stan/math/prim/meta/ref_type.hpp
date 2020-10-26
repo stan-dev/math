@@ -28,9 +28,12 @@ struct ref_type_if {
   using T_optionally_ref
       = std::conditional_t<std::is_rvalue_reference<T>::value,
                            std::remove_reference_t<T>, const T&>;
+  using T_dec
+      = std::decay_t<decltype(std::declval<T>().derived())>;
+
   using type = std::conditional_t<
       Eigen::internal::traits<Eigen::Ref<std::decay_t<T_plain>>>::
-              template match<std::decay_t<T>>::MatchAtCompileTime
+              template match<T_dec>::MatchAtCompileTime
           || !Condition,
       T_optionally_ref, T_plain>;
 };
@@ -78,14 +81,17 @@ struct ref_type_for_opencl {
                    T_val::ColsAtCompileTime>>;
   using T_optionally_ref
       = std::conditional_t<std::is_rvalue_reference<T>::value, T_val, const T&>;
+  using T_val_derived
+      = std::decay_t<decltype(std::declval<T_val>().derived())>;
   // Setting Outer stride of Ref to 0 (default) won't actually check that
   // expression has contiguous outer stride. Instead we need to check that
   // evaluator flags contain LinearAccessBit and PacketAccessBit.
   using type = std::conditional_t<
       Eigen::internal::traits<Eigen::Ref<std::decay_t<T_plain_col_major>>>::
-              template match<T_val>::MatchAtCompileTime
-          && (Eigen::internal::evaluator<T_val>::Flags & Eigen::LinearAccessBit)
-          && (Eigen::internal::evaluator<T_val>::Flags
+              template match<T_val_derived>::MatchAtCompileTime
+          && (Eigen::internal::evaluator<T_val_derived>::Flags
+              & Eigen::LinearAccessBit)
+          && (Eigen::internal::evaluator<T_val_derived>::Flags
               & Eigen::PacketAccessBit),
       T_optionally_ref, T_plain_col_major>;
 };
