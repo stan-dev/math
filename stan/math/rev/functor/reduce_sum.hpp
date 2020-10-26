@@ -4,10 +4,12 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/functor.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/core/zero_adjoints.hpp>
 #include <tbb/task_arena.h>
 #include <tbb/parallel_reduce.h>
 #include <tbb/blocked_range.h>
 
+#include <thread>
 #include <tuple>
 #include <vector>
 
@@ -42,6 +44,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     double* sliced_partials_;  // Points to adjoints of the partial calculations
     Vec vmapped_;
     std::ostream* msgs_;
+    std::thread::id main_thread_;
     std::tuple<Args...> args_tuple_;
     double sum_{0.0};
     Eigen::VectorXd args_adjoints_{0};
@@ -49,12 +52,14 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     template <typename VecT, typename... ArgsT>
     recursive_reducer(size_t num_vars_per_term, size_t num_vars_shared_terms,
                       double* sliced_partials, VecT&& vmapped,
-                      std::ostream* msgs, ArgsT&&... args)
+                      std::ostream* msgs, std::thread::id main_thread,
+                      ArgsT&&... args)
         : num_vars_per_term_(num_vars_per_term),
           num_vars_shared_terms_(num_vars_shared_terms),
           sliced_partials_(sliced_partials),
           vmapped_(std::forward<VecT>(vmapped)),
           msgs_(msgs),
+          main_thread_(main_thread),
           args_tuple_(std::forward<ArgsT>(args)...) {}
 
     /*
@@ -69,6 +74,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           sliced_partials_(other.sliced_partials_),
           vmapped_(other.vmapped_),
           msgs_(other.msgs_),
+          main_thread_(other.main_thread_),
           args_tuple_(other.args_tuple_) {}
 
     /**
@@ -104,40 +110,74 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         local_sub_slice.emplace_back(deep_copy_vars(vmapped_[i]));
       }
 
-      // Create nested autodiff copies of all shared arguments that do not point
-      //   back to main autodiff stack
-      auto args_tuple_local_copy = apply(
-          [&](auto&&... args) {
-            return std::tuple<decltype(deep_copy_vars(args))...>(
-                deep_copy_vars(args)...);
-          },
-          args_tuple_);
+      if (std::this_thread::get_id() == main_thread_) {
+        // on the main thread we can use the input operands given as
+        // input to reduce_sum (but need to set their adjoints to
+        // zero)
 
-      // Perform calculation
-      var sub_sum_v = apply(
-          [&](auto&&... args) {
-            return ReduceFunction()(local_sub_slice, r.begin(), r.end() - 1,
-                                    msgs_, args...);
-          },
-          args_tuple_local_copy);
+        // Perform calculation
+        var sub_sum_v = apply(
+            [&](auto&&... args) {
+              return ReduceFunction()(local_sub_slice, r.begin(), r.end() - 1,
+                                      msgs_, args...);
+            },
+            args_tuple_);
 
-      // Compute Jacobian
-      sub_sum_v.grad();
+        // Compute Jacobian
+        sub_sum_v.grad();
 
-      // Accumulate value of reduce_sum
-      sum_ += sub_sum_v.val();
+        // Accumulate value of reduce_sum
+        sum_ += sub_sum_v.val();
 
-      // Accumulate adjoints of sliced_arguments
-      accumulate_adjoints(sliced_partials_ + r.begin() * num_vars_per_term_,
-                          std::move(local_sub_slice));
+        // Accumulate adjoints of sliced_arguments
+        accumulate_adjoints(sliced_partials_ + r.begin() * num_vars_per_term_,
+                            std::move(local_sub_slice));
 
-      // Accumulate adjoints of shared_arguments
-      apply(
-          [&](auto&&... args) {
-            accumulate_adjoints(args_adjoints_.data(),
-                                std::forward<decltype(args)>(args)...);
-          },
-          std::move(args_tuple_local_copy));
+        // Accumulate adjoints of shared_arguments and set adjoints to zero
+        apply(
+            [&](auto&&... args) {
+              accumulate_adjoints(args_adjoints_.data(), args...);
+              zero_adjoints(args...);
+            },
+            args_tuple_);
+
+      } else {
+        // Create nested autodiff copies of all shared arguments that do not
+        // point
+        //   back to main autodiff stack
+        auto args_tuple_local_copy = apply(
+            [&](auto&&... args) {
+              return std::tuple<decltype(deep_copy_vars(args))...>(
+                  deep_copy_vars(args)...);
+            },
+            args_tuple_);
+
+        // Perform calculation
+        var sub_sum_v = apply(
+            [&](auto&&... args) {
+              return ReduceFunction()(local_sub_slice, r.begin(), r.end() - 1,
+                                      msgs_, args...);
+            },
+            args_tuple_local_copy);
+
+        // Compute Jacobian
+        sub_sum_v.grad();
+
+        // Accumulate value of reduce_sum
+        sum_ += sub_sum_v.val();
+
+        // Accumulate adjoints of sliced_arguments
+        accumulate_adjoints(sliced_partials_ + r.begin() * num_vars_per_term_,
+                            std::move(local_sub_slice));
+
+        // Accumulate adjoints of shared_arguments
+        apply(
+            [&](auto&&... args) {
+              accumulate_adjoints(args_adjoints_.data(),
+                                  std::forward<decltype(args)>(args)...);
+            },
+            std::move(args_tuple_local_copy));
+      }
     }
 
     /**
@@ -222,6 +262,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
     recursive_reducer worker(num_vars_per_term, num_vars_shared_terms, partials,
                              std::forward<Vec>(vmapped), msgs,
+                             std::this_thread::get_id(),
                              std::forward<Args>(args)...);
 
     if (auto_partitioning) {
