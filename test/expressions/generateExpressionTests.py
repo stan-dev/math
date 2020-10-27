@@ -180,9 +180,13 @@ special_arg_values = {
     "multinomial_log" : [None, 1],
     "multinomial_lpmf" : [None, 1],
     "multinomial_rng" : [1, None, None],
-    "unit_vector_free" : [1.0],
-
-}
+    "pareto_cdf": [1.5, 0.7, None],
+    "pareto_cdf_log": [1.5, 0.7, None],
+    "pareto_lcdf": [1.5, 0.7, None],
+    "pareto_type_2_cdf": [1.5, 0.7, None, None],
+    "pareto_type_2_cdf_log": [1.5, 0.7, None, None],
+    "pareto_type_2_lcdf": [1.5, 0.7, None, None],
+    "unit_vector_free" : [1.0],}
 
 
 def make_arg_code(arg, scalar, var_name, var_number, function_name):
@@ -237,12 +241,12 @@ def save_tests_in_files(N_files, tests):
 
 def handle_function_list(functions_input, signatures):
     """
-    Handles list of functions, splitting elements between functions and signatures.
+    Handles list of functions, splitting elements between functions and signatures.  
     :param functions_input: This can contain names of functions
     already supported by stanc3, full function signatures or file names of files containing
     any of the previous two.
-    :param signatures:
-    :return:
+    :param signatures: 
+    :return: 
     """
     function_names = []
     function_signatures = []
@@ -275,7 +279,7 @@ def main(functions=(), j=1):
      - functions evaluate expressions at most once
 
     :param functions: functions to generate tests for. This can contain names of functions
-    already supported by stanc3, full function signatures or file names of files containing
+    already supported by stanc3, full function signatures or file names of files containing 
     any of the previous two. Default: all signatures supported by stanc3
     :param j: number of files to split tests in
     """
