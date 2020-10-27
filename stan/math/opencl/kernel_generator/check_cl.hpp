@@ -122,9 +122,9 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
    */
   inline void check_assign_dimensions(int rows, int cols) const {
     check_size_match("check_cl_.check_assign_dimensions", "Rows of ",
-                     "argument", arg_.rows(), "rows of ", "expression", rows);
+                     err_variable_, arg_.rows(), "rows of ", "assigned expression", rows);
     check_size_match("check_cl_.check_assign_dimensions", "Columns of ",
-                     "argument", arg_.cols(), "columns of ", "expression",
+                     err_variable_, arg_.cols(), "columns of ", "assigned expression",
                      cols);
   }
 

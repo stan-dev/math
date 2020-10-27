@@ -49,7 +49,7 @@ return_type_t<T_prob_cl> bernoulli_logit_lpmf(const T_n_cl& n,
   auto check_n_bounded = check_cl(function, "n", n, "in the interval [0, 1]");
   auto n_bounded_expr = 0 <= n && n <= 1;
   auto check_theta_not_nan = check_cl(
-      function, "Logit transformed probability parameter", n, "not NaN");
+      function, "Logit transformed probability parameter", theta_val, "not NaN");
   auto theta_not_nan_expr = !isnan(theta_val);
 
   auto signs_expr = 2 * n - 1.0;  // subtracting 1.0 converts int to double

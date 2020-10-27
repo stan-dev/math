@@ -16,7 +16,7 @@ TEST(ProbDistributionsBernoulliLogit, error_checking) {
   Eigen::VectorXd theta_size(N - 1);
   theta_size << 0.3, 0.8;
   Eigen::VectorXd theta_value(N);
-  theta_value << 0.3, -INFINITY, 0.5;
+  theta_value << 0.3, NAN, 0.5;
 
   stan::math::matrix_cl<int> n_cl(n);
   stan::math::matrix_cl<int> n_size_cl(n_size);
