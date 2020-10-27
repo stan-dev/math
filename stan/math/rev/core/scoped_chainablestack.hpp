@@ -29,20 +29,18 @@ namespace math {
 class ScopedChainableStack {
   ChainableStack::AutodiffStackStorage local_stack_;
 
-  std::vector<ChainableStack::AutodiffStackStorage*> stack_queue_;
-
   struct activate_scope {
-    ScopedChainableStack& scoped_stack_;
+    ChainableStack::AutodiffStackStorage& local_stack_;
+    ChainableStack::AutodiffStackStorage* parent_stack_;
 
-    explicit activate_scope(ScopedChainableStack& scoped_stack)
-        : scoped_stack_(scoped_stack) {
-      scoped_stack_.stack_queue_.push_back(ChainableStack::instance_);
-      ChainableStack::instance_ = &scoped_stack_.local_stack_;
+    explicit activate_scope(ChainableStack::AutodiffStackStorage& local_stack)
+        : local_stack_(local_stack) {
+      parent_stack_ = ChainableStack::instance_;
+      ChainableStack::instance_ = &local_stack_;
     }
 
     ~activate_scope() {
-      ChainableStack::instance_ = scoped_stack_.stack_queue_.back();
-      scoped_stack_.stack_queue_.pop_back();
+      ChainableStack::instance_ = parent_stack_;
     }
   };
 
@@ -60,7 +58,7 @@ class ScopedChainableStack {
    */
   template <typename F>
   auto execute(F&& f) {
-    activate_scope active_scope(*this);
+    activate_scope active_scope(local_stack_);
     return std::forward<F>(f)();
   }
 };
