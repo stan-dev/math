@@ -56,7 +56,7 @@ return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n,
 
   if (is_theta_vector) {
     auto logp_expr
-        = rowwise_sum(select(n == 1, log(theta_val), log1p(-theta_val)));
+        = colwise_sum(select(n == 1, log(theta_val), log1p(-theta_val)));
     auto deriv_expr = inv(theta_val + select(n == 1, 0, -1));
 
     auto check_theta_bounded = check_cl(function, "Probability parameter",
