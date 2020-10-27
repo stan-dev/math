@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <cmath>
 
 namespace stan {
@@ -29,7 +30,7 @@ auto positive_ordered_free(const EigVec& y) {
   const auto& y_ref = to_ref(y);
   check_positive_ordered("stan::math::positive_ordered_free",
                          "Positive ordered variable", y_ref);
-  size_type k = y_ref.size();
+  Eigen::Index k = y_ref.size();
   plain_type_t<EigVec> x(k);
   if (k == 0) {
     return x;
