@@ -67,6 +67,32 @@ var variance(const EigMat& m) {
   return {internal::calc_variance(mat.size(), mat.data())};
 }
 
+/**
+ * Return the sample variance of the var_value matrix
+ * Raise domain error if size is not greater than zero.
+ *
+ * @param[in] x a input
+ * @return sample variance of input
+ */
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline var variance(const T& x) {
+  check_nonzero_size("variance", "x", x);
+
+  if (x.size() == 1) {
+    return 0.0;
+  }
+
+  auto arena_diff = to_arena((x.val().array() - x.val().mean()).matrix());
+
+  var res = arena_diff.squaredNorm() / (x.size() - 1);
+
+  reverse_pass_callback([x, res, arena_diff]() mutable {
+    x.adj() += (2.0 * res.adj() / (x.size() - 1)) * arena_diff;
+  });
+
+  return res;
+}
+
 }  // namespace math
 }  // namespace stan
 #endif
