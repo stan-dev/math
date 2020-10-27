@@ -337,7 +337,8 @@ class results_cl {
           "const int j = j0 + lid_j;\n"
           + parts.initialization +
           "if(i < rows){\n"
-          + parts.body +
+          + parts.body
+          + parts.body_suffix +
           "}\n"
           + parts.reduction +
           "}\n"
@@ -353,6 +354,7 @@ class results_cl {
           + parts.declarations
           + parts.initialization
           + parts.body
+          + parts.body_suffix
           + parts.reduction +
           "}\n";
     }
