@@ -24,15 +24,15 @@ namespace internal {
  * @throw domain error  size is not greater than zero.
  */
 template <typename T_map, require_st_var<T_map>* = nullptr,
-	  require_not_var_matrix_t<T_map>* = nullptr>
+          require_not_var_matrix_t<T_map>* = nullptr>
 var sd_impl(const T_map& x) {
   using std::sqrt;
   using T_vi = promote_scalar_t<vari*, T_map>;
   using T_d = promote_scalar_t<double, T_map>;
-  vari** varis = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-      x.size());
-  double* partials = ChainableStack::instance_->memalloc_.alloc_array<double>(
-      x.size());
+  vari** varis
+      = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
+  double* partials
+      = ChainableStack::instance_->memalloc_.alloc_array<double>(x.size());
   Eigen::Map<T_vi> varis_map(varis, x.rows(), x.cols());
   Eigen::Map<T_d> partials_map(partials, x.rows(), x.cols());
 
@@ -74,7 +74,7 @@ var sd_impl(const T& x) {
 
   return res;
 }
-}
+}  // namespace internal
 
 /**
  * Return the sample standard deviation of the specified std vector, column
@@ -85,8 +85,7 @@ var sd_impl(const T& x) {
  * @return sample standard deviation
  * @throw domain error  size is not greater than zero.
  */
-template <typename T,
-	  require_container_st<is_var, T>* = nullptr>
+template <typename T, require_container_st<is_var, T>* = nullptr>
 var sd(const T& m) {
   check_nonzero_size("sd", "m", m);
 
@@ -94,9 +93,8 @@ var sd(const T& m) {
     return 0;
   }
 
-  return apply_vector_unary<T>::reduce(m, [](const auto& dtrs_map) {
-    return internal::sd_impl(dtrs_map);
-  });
+  return apply_vector_unary<T>::reduce(
+      m, [](const auto& dtrs_map) { return internal::sd_impl(dtrs_map); });
 }
 
 }  // namespace math
