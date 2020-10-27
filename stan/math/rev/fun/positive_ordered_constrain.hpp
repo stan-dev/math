@@ -27,7 +27,7 @@ inline auto positive_ordered_constrain(const T& x) {
 
   size_t N = x.size();
 
-  if (N == 0) {
+  if (unlikely(N == 0)) {
     return ret_type(x);
   }
 

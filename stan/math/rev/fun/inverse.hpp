@@ -30,9 +30,9 @@ inline plain_type_t<T> inverse(const T& m) {
     return m;
   }
 
-  arena_t<plain_type_t<T>> arena_m = m;
-  arena_t<Eigen::MatrixXd> res_val = value_of(arena_m).inverse();
-  arena_t<plain_type_t<T>> res = res_val;
+  arena_t<T> arena_m = m;
+  arena_t<promote_scalar_t<double, T>> res_val = arena_m.val().inverse();
+  arena_t<T> res = res_val;
 
   reverse_pass_callback([res, res_val, arena_m]() mutable {
     arena_m.adj() -= res_val.transpose() * res.adj_op() * res_val.transpose();

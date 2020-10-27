@@ -39,6 +39,13 @@ inline var dot_self(const T& v) {
   return res;
 }
 
+/**
+ * Returns the dot product of a `var_value<Vector>` with itself.
+ *
+ * @tparam A `var_value<>` whose inner type has one compile time row or column.
+ * @param[in] v Vector.
+ * @return Dot product of the vector with itself.
+ */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline var dot_self(const T& v) {
   var res = v.val().dot(v.val());

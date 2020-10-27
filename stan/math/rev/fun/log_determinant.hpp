@@ -22,7 +22,7 @@ inline var log_determinant(const T& m) {
   }
 
   arena_t<T> arena_m = m;
-  auto m_hh = value_of(arena_m).colPivHouseholderQr();
+  auto m_hh = arena_m.val().colPivHouseholderQr();
   auto arena_m_inv_transpose = to_arena(m_hh.inverse().transpose());
   var log_det = m_hh.logAbsDeterminant();
 

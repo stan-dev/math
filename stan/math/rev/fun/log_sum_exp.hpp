@@ -65,7 +65,8 @@ inline var log_sum_exp(double a, const var& b) {
  * @tparam T Type of input vector or matrix.
  * @param x matrix
  */
-template <typename T, require_container_st<is_var, T>* = nullptr>
+template <typename T, require_container_st<is_var, T>* = nullptr,
+ require_not_var_matrix_t<T>* = nullptr>
 inline auto log_sum_exp(const T& x) {
   return apply_vector_unary<T>::reduce(x, [](const auto& v) {
     arena_t<decltype(v)> arena_v = v;
@@ -79,6 +80,21 @@ inline auto log_sum_exp(const T& x) {
 
     return res;
   });
+}
+
+/**
+ * Returns the log sum of exponentials.
+ *
+ * @tparam T A `var_value` with an input vector or matrix
+ * @param x matrix
+ */
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline var log_sum_exp(const T& v) {
+    var res = log_sum_exp(v.val());
+    reverse_pass_callback([v, res]() mutable {
+      v.adj() += res.adj() * (v.val().array().val() - res.val()).exp().matrix();
+    });
+    return res;
 }
 
 }  // namespace math

@@ -20,8 +20,8 @@ inline var determinant(const T& m) {
     return var(1.0);
   }
 
-  auto arena_m = to_arena(m);
-  auto m_lu = value_of(arena_m).partialPivLu();
+  arena_t<T> arena_m = m;
+  auto m_lu = arena_m.val().partialPivLu();
   auto arena_m_inv_transpose = to_arena(m_lu.inverse().transpose());
   var det = m_lu.determinant();
 
