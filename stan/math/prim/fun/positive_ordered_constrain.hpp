@@ -19,23 +19,18 @@ namespace math {
  * @param x Free vector of scalars.
  * @return Positive, increasing ordered vector.
  */
-template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr,
+template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr,
           require_not_st_var<EigVec>* = nullptr>
-Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, 1>
-positive_ordered_constrain(const EigVec& x) {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
+auto positive_ordered_constrain(const EigVec& x) {
   using std::exp;
-  using size_type = Eigen::Index;
-
-  size_type k = x.size();
-  Matrix<value_type_t<EigVec>, Dynamic, 1> y(k);
+  Eigen::Index k = x.size();
+  plain_type_t<EigVec> y(k);
   if (k == 0) {
     return y;
   }
   const auto& x_ref = to_ref(x);
   y.coeffRef(0) = exp(x_ref.coeff(0));
-  for (size_type i = 1; i < k; ++i) {
+  for (Eigen::Index i = 1; i < k; ++i) {
     y.coeffRef(i) = y.coeff(i - 1) + exp(x_ref.coeff(i));
   }
   return y;

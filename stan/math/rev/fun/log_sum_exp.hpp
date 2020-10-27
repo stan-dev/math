@@ -89,10 +89,10 @@ inline auto log_sum_exp(const T& x) {
  * @param x matrix
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
-inline var log_sum_exp(const T& v) {
-  var res = log_sum_exp(v.val());
-  reverse_pass_callback([v, res]() mutable {
-    v.adj() += res.adj() * (v.val().array().val() - res.val()).exp().matrix();
+inline var log_sum_exp(const T& x) {
+  var res = log_sum_exp(x.val());
+  reverse_pass_callback([x, res]() mutable {
+    x.adj() += res.adj() * (x.val().array().val() - res.val()).exp().matrix();
   });
   return res;
 }

@@ -34,13 +34,13 @@ namespace math {
  * has zero dimensionality, or has a non-positive diagonal element.
  */
 template <typename T, require_eigen_t<T>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cov_matrix_free(const T& y) {
+auto cov_matrix_free(const T& y) {
   check_square("cov_matrix_free", "y", y);
   check_nonzero_size("cov_matrix_free", "y", y);
 
   using std::log;
-  int K = y.rows();
-  const Eigen::Ref<const plain_type_t<T>>& y_ref = y;
+  Eigen::Index K = y.rows();
+  const auto& y_ref = to_ref(y);
   check_positive("cov_matrix_free", "y", y_ref.diagonal());
   Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> x((K * (K + 1)) / 2);
   // FIXME: see Eigen LDLT for rank-revealing version -- use that

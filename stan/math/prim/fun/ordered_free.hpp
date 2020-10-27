@@ -23,21 +23,17 @@ namespace math {
  * @throw std::domain_error if y is not a vector of positive,
  *   ordered scalars.
  */
-template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
+template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
 plain_type_t<EigVec> ordered_free(const EigVec& y) {
   check_ordered("stan::math::ordered_free", "Ordered variable", y);
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
   using std::log;
-  using size_type = Eigen::Index;
-
-  size_type k = y.size();
+  Eigen::Index k = y.size();
   plain_type_t<EigVec> x(k);
   if (k == 0) {
     return x;
   }
   x[0] = y[0];
-  for (size_type i = 1; i < k; ++i) {
+  for (Eigen::Index i = 1; i < k; ++i) {
     x.coeffRef(i) = log(y.coeff(i) - y.coeff(i - 1));
   }
   return x;

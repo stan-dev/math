@@ -90,6 +90,24 @@ def add_extra_signatures(res):
         "vector unit_vector_constrain(row_vector, real)",
         "vector unit_vector_free(vector)",
         "vector unit_vector_free(row_vector)",
+        "vector positive_ordered_constrain(vector)",
+        "vector positive_ordered_constrain(row_vector)",
+        "vector positive_ordered_constrain(vector, real)",
+        "vector positive_ordered_constrain(row_vector, real)",
+        "vector positive_ordered_free(vector)",
+        "vector positive_ordered_free(row_vector)",
+        "vector ordered_constrain(vector)",
+        "vector ordered_constrain(row_vector)",
+        "vector ordered_constrain(vector, real)",
+        "vector ordered_constrain(row_vector, real)",
+        "vector ordered_free(vector)",
+        "vector ordered_free(row_vector)",
+        "vector simplex_constrain(vector)",
+        "vector simplex_constrain(row_vector)",
+        "vector simplex_constrain(vector, real)",
+        "vector simplex_constrain(row_vector, real)",
+        "vector simplex_free(vector)",
+        "vector simplex_free(row_vector)",
         "int is_cholesky_factor(matrix)",
         "int is_cholesky_factor_corr(matrix)",
         "int is_column_index(matrix, int)",
@@ -186,7 +204,10 @@ special_arg_values = {
     "pareto_type_2_cdf": [1.5, 0.7, None, None],
     "pareto_type_2_cdf_log": [1.5, 0.7, None, None],
     "pareto_type_2_lcdf": [1.5, 0.7, None, None],
-    "unit_vector_free" : [1.0],}
+    "unit_vector_free" : [1.0],
+    "positive_ordered_free" : [1.0],
+    "ordered_free" : [1.0],
+    "simplex_free" : [1.0],}
 
 
 def make_arg_code(arg, scalar, var_name, var_number, function_name):
@@ -241,12 +262,12 @@ def save_tests_in_files(N_files, tests):
 
 def handle_function_list(functions_input, signatures):
     """
-    Handles list of functions, splitting elements between functions and signatures.  
+    Handles list of functions, splitting elements between functions and signatures.
     :param functions_input: This can contain names of functions
     already supported by stanc3, full function signatures or file names of files containing
     any of the previous two.
-    :param signatures: 
-    :return: 
+    :param signatures:
+    :return:
     """
     function_names = []
     function_signatures = []
@@ -279,7 +300,7 @@ def main(functions=(), j=1):
      - functions evaluate expressions at most once
 
     :param functions: functions to generate tests for. This can contain names of functions
-    already supported by stanc3, full function signatures or file names of files containing 
+    already supported by stanc3, full function signatures or file names of files containing
     any of the previous two. Default: all signatures supported by stanc3
     :param j: number of files to split tests in
     """
