@@ -116,41 +116,80 @@ template <typename Mat1, typename Mat2,
 inline auto quad_form_impl(const Mat1& A, const Mat2& B, bool symmetric) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
-
+  using value_return_t = decltype(value_of(B).transpose().eval()
+                                  * value_of(A) * value_of(B).eval());
   using return_t
-      = promote_var_matrix_t<decltype(value_of(B).transpose().eval()
-                                      * value_of(A) * value_of(B).eval()),
+      = promote_var_matrix_t<value_return_t,
                              Mat1, Mat2>;
+  if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
+    arena_t<promote_scalar_t<var, Mat1>> arena_A = A;
+    arena_t<promote_scalar_t<var, Mat2>> arena_B = B;
+    check_not_nan("multiply", "A", arena_A.val());
+    check_not_nan("multiply", "B", arena_B.val());
 
-  auto arena_A = to_arena(A);
-  auto arena_B = to_arena(B);
+    arena_t<value_return_t> arena_res = arena_B.val_op().transpose() * arena_A.val_op()
+                              * arena_B.val_op();
 
-  check_not_nan("multiply", "A", value_of(arena_A));
-  check_not_nan("multiply", "B", value_of(arena_B));
+    if (symmetric) {
+      arena_res = (arena_res + arena_res.transpose()).eval();
+    }
 
-  auto arena_res = to_arena(value_of(arena_B).transpose() * value_of(arena_A)
-                            * value_of(arena_B));
+    arena_t<return_t> res = arena_res;
 
-  if (symmetric) {
-    arena_res = (arena_res + arena_res.transpose()).eval();
+    reverse_pass_callback([arena_A, arena_B, res]() mutable {
+      auto C_adj_B_t = (res.adj() * arena_B.val_op().transpose()).eval();
+
+      arena_A.adj() += arena_B.val_op() * C_adj_B_t;
+
+      arena_B.adj()
+            += arena_A.val_op() * C_adj_B_t.transpose()
+               + arena_A.val_op().transpose() * arena_B.val_op() * res.adj();
+    });
+
+    return return_t(res);
+  } else if (!is_constant<Mat2>::value) {
+    arena_t<promote_scalar_t<double, Mat1>> arena_A = value_of(A);
+    arena_t<promote_scalar_t<var, Mat2>> arena_B = B;
+    check_not_nan("multiply", "A", arena_A);
+    check_not_nan("multiply", "B", arena_B.val());
+
+    arena_t<value_return_t> arena_res = arena_B.val_op().transpose() * arena_A
+                              * arena_B.val_op();
+
+    if (symmetric) {
+      arena_res = (arena_res + arena_res.transpose()).eval();
+    }
+
+    arena_t<return_t> res = arena_res;
+
+    reverse_pass_callback([arena_A, arena_B, res]() mutable {
+      arena_B.adj()
+            += arena_A * (res.adj() * arena_B.val_op().transpose()).transpose()
+               + arena_A.transpose() * arena_B.val_op() * res.adj();
+    });
+
+    return return_t(res);
+  } else if (!is_constant<Mat1>::value) {
+    arena_t<promote_scalar_t<var, Mat1>> arena_A = A;
+    arena_t<promote_scalar_t<double, Mat2>> arena_B = value_of(B);
+    check_not_nan("multiply", "A", arena_A.val());
+    check_not_nan("multiply", "B", arena_B);
+
+    arena_t<value_return_t> arena_res = arena_B.transpose() * arena_A.val_op()
+                              * arena_B;
+
+    if (symmetric) {
+      arena_res = (arena_res + arena_res.transpose()).eval();
+    }
+
+    arena_t<return_t> res = arena_res;
+
+    reverse_pass_callback([arena_A, arena_B, res]() mutable {
+      arena_A.adj() += arena_B * res.adj() * arena_B.transpose();
+    });
+
+    return return_t(res);
   }
-
-  return_t res = arena_res;
-
-  reverse_pass_callback([arena_A, arena_B, res]() mutable {
-    auto C_adj_B_t = (res.adj() * value_of(arena_B).transpose()).eval();
-
-    if (!is_constant<Mat1>::value)
-      forward_as<promote_scalar_t<var, Mat1>>(arena_A).adj()
-          += value_of(arena_B) * C_adj_B_t;
-
-    if (!is_constant<Mat2>::value)
-      forward_as<promote_scalar_t<var, Mat2>>(arena_B).adj()
-          += value_of(arena_A) * C_adj_B_t.transpose()
-             + value_of(arena_A).transpose() * value_of(arena_B) * res.adj();
-  });
-
-  return res;
 }
 }  // namespace internal
 
