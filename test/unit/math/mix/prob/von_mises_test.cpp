@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-std::vector<double> test_fun(double y, double mu, double kappa) {
+std::vector<double> test_von_mises_lpdf(double y, double mu, double kappa) {
   using stan::math::var;
   using stan::math::von_mises_lpdf;
 
@@ -26,7 +26,7 @@ TEST(ProbAgradDistributionsVonMises, derivatives) {
   using stan::math::fvar;
   using stan::math::von_mises_lpdf;
 
-  std::vector<double> grad = test_fun(0, 1, 0);
+  std::vector<double> grad = test_von_mises_lpdf(0, 1, 0);
 
   fvar<double> lp = von_mises_lpdf<false>(0, 1, fvar<double>(0, 1));
   EXPECT_FLOAT_EQ(grad[2], lp.tangent());

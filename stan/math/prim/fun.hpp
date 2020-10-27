@@ -75,6 +75,7 @@
 #include <stan/math/prim/fun/dot.hpp>
 #include <stan/math/prim/fun/dot_product.hpp>
 #include <stan/math/prim/fun/dot_self.hpp>
+#include <stan/math/prim/fun/eigen_comparisons.hpp>
 #include <stan/math/prim/fun/eigenvalues.hpp>
 #include <stan/math/prim/fun/eigenvalues_sym.hpp>
 #include <stan/math/prim/fun/eigenvectors.hpp>
@@ -329,10 +330,12 @@
 #include <stan/math/prim/fun/ub_constrain.hpp>
 #include <stan/math/prim/fun/ub_free.hpp>
 #include <stan/math/prim/fun/uniform_simplex.hpp>
+#include <stan/math/prim/fun/unitspaced_array.hpp>
 #include <stan/math/prim/fun/unit_vector_constrain.hpp>
 #include <stan/math/prim/fun/unit_vector_free.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/fun/vec_concat.hpp>
 #include <stan/math/prim/fun/variance.hpp>
 #include <stan/math/prim/fun/welford_covar_estimator.hpp>
 #include <stan/math/prim/fun/welford_var_estimator.hpp>

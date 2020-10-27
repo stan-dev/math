@@ -1,0 +1,21 @@
+name: Release scripts
+on:
+  workflow_dispatch
+
+jobs:
+  release_notes:
+    name: Generate release notes
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Get release notes
+      run: |
+        pip3 install urllib3
+        python3 scripts/release_notes.py > release_notes.txt
+
+    - name: Upload release notes
+      uses: actions/upload-artifact@v2
+      with:
+        name: release_notes.txt
+        path: './release_notes.txt'
+      

@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_META_IS_EIGEN_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/meta/is_eigen_matrix.hpp>
+#include <stan/math/prim/meta/is_eigen_matrix_base.hpp>
 #include <stan/math/prim/meta/disjunction.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <stan/math/prim/meta/value_type.hpp>
@@ -66,7 +66,7 @@ STAN_ADD_REQUIRE_CONTAINER(eigen_array, is_eigen_array, require_eigens_types);
  */
 template <typename T>
 using is_eigen_matrix_or_array
-    = math::disjunction<is_eigen_matrix<T>, is_eigen_array<T>>;
+    = math::disjunction<is_eigen_matrix_base<T>, is_eigen_array<T>>;
 
 STAN_ADD_REQUIRE_UNARY(eigen_matrix_or_array, is_eigen_matrix_or_array,
                        require_eigens_types);

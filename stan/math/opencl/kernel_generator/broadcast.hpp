@@ -124,10 +124,10 @@ class broadcast_
  */
 template <bool Colwise, bool Rowwise, typename T,
           typename = require_all_kernel_expressions_and_none_scalar_t<T>>
-inline broadcast_<as_operation_cl_t<T>, Colwise, Rowwise> broadcast(T&& a) {
+inline auto broadcast(T&& a) {
   auto&& a_operation = as_operation_cl(std::forward<T>(a)).deep_copy();
-  return broadcast_<as_operation_cl_t<T>, Colwise, Rowwise>(
-      std::move(a_operation));
+  return broadcast_<std::remove_reference_t<decltype(a_operation)>, Colwise,
+                    Rowwise>(std::move(a_operation));
 }
 
 /**

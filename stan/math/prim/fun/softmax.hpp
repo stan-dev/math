@@ -46,7 +46,9 @@ template <typename ColVec,
           require_eigen_col_vector_vt<std::is_arithmetic, ColVec>* = nullptr>
 inline plain_type_t<ColVec> softmax(const ColVec& v) {
   using std::exp;
-  check_nonzero_size("softmax", "v", v);
+  if (v.size() == 0) {
+    return v;
+  }
   const auto& v_ref = to_ref(v);
   plain_type_t<ColVec> theta = (v_ref.array() - v_ref.maxCoeff()).exp();
   return theta.array() / theta.sum();

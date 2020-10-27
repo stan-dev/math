@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_REV_FUNCTOR_REVERSE_PASS_CALLBACK_HPP
 #define STAN_MATH_REV_FUNCTOR_REVERSE_PASS_CALLBACK_HPP
 
-#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/core/vari.hpp>
 
 namespace stan {
 namespace math {
