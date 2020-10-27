@@ -34,13 +34,11 @@ inline double der_conv_gaus_line(double t0, double t1, double a, double b,
   const double sig = sqrt(sig2);
   const double alpha = sqrt(2 * pi() * sig2);
 
-  double y = (a * x0 + b) / alpha
-             * (-exp(-pow(t1 - x0, 2) / (2 * sig2))
-                + exp(-pow(t0 - x0, 2) / (2 * sig2)));
+  double term1 = exp(-pow(t1 - x0, 2) / (2 * sig2));
+  double term2 = exp(-pow(t0 - x0, 2) / (2 * sig2));
+  double y = (a * x0 + b) / alpha * (-term1 + term2);
   y += a * (normal_cdf(t1, x0, sig) - normal_cdf(t0, x0, sig));
-  y -= a / alpha
-       * ((t1 - x0) * exp(-pow(t1 - x0, 2) / (2 * sig2))
-          - (t0 - x0) * exp(-pow(t0 - x0, 2) / (2 * sig2)));
+  y -= a / alpha * ((t1 - x0) * term1 - (t0 - x0) * term2);
   return y;
 }
 

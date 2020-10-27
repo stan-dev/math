@@ -14,6 +14,7 @@ namespace math {
  *
  * \f$\int_{t_0}^{t_1} (at + b) e^{\frac{-(t-x)^2}{2\sigma^2}} dt \f$
  *
+ * @tparam Tx type of x
  * @param t0 lower integration bound
  * @param t1 upper integration bound
  * @param a coefficient of t in line
@@ -30,12 +31,11 @@ inline return_type_t<Tx> conv_gaus_line(double t0, double t1, double a, double b
   using std::pow;
   using std::sqrt;
   const double sig = sqrt(sig2);
-  const double pi = stan::math::pi();
 
   return_type_t<Tx> y
       = (a * x + b)
         * (normal_cdf(t1, x, sig) - normal_cdf(t0, x, sig));
-  y += -a * sig2 / sqrt(2 * pi * sig2)
+  y += -a * sig2 / sqrt(2 * stan::math::pi() * sig2)
        * (exp(-pow(t1 - x, 2) / (2 * sig2))
           - exp(-pow(t0 - x, 2) / (2 * sig2)));
 
