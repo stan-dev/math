@@ -30,6 +30,52 @@ struct apply_vector_unary {};
  * This base template class takes (and returns) Eigen expression templates.
  */
 template <typename T>
+struct apply_vector_unary<T, require_var_matrix_t<T>> {
+  /**
+   * Member function for applying a functor to a vector and subsequently
+   * returning a vector.
+   *
+   * @tparam T Type of argument to which functor is applied.
+   * @tparam F Type of functor to apply.
+   * @param x Eigen input to which operation is applied.
+   * @param f functor to apply to Eigen input.
+   * @return Eigen object with result of applying functor to input
+   */
+  template <typename F>
+  static inline T apply(const T& x, const F& f) {
+    return f(x);
+  }
+
+  /**
+   * Member function for applying a functor to a vector and subsequently
+   * returning a scalar. The reduction to a scalar needs to be implemented
+   * in the definition of the functor.
+   *
+   * @tparam T Type of argument to which functor is applied.
+   * @tparam F Type of functor to apply.
+   * @param x Eigen input to which operation is applied.
+   * @param f functor to apply to Eigen input.
+   * @return scalar result of applying functor to input.
+   */
+  template <typename F>
+  static inline auto reduce(const T& x, const F& f) {
+    return f(x);
+  }
+};
+
+/**
+ * Base template class for vectorization of unary vector functions
+ * defined by applying a functor to a standard library vector, Eigen dense
+ * matrix expression template, or container of these. For each specialisation,
+ * the same vector type as the input is returned.
+ *
+ * Two taxonomies of unary vector functions are implemented:
+ * - f(vector) -> vector
+ * - f(vector) -> scalar
+ *
+ * This base template class takes (and returns) Eigen expression templates.
+ */
+template <typename T>
 struct apply_vector_unary<T, require_eigen_t<T>> {
   /**
    * Member function for applying a functor to a vector and subsequently

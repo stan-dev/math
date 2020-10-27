@@ -22,7 +22,7 @@ namespace math {
  * @return Sample variance.
  */
 template <typename T, require_container_t<T>* = nullptr,
-          require_not_vt_var<T>* = nullptr>
+          require_not_st_var<T>* = nullptr>
 inline return_type_t<T> sd(const T& m) {
   using std::sqrt;
   check_nonzero_size("sd", "m", m);
