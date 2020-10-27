@@ -31,8 +31,8 @@ namespace math {
  * correlations and deviations.
  */
 template <typename T, require_eigen_vector_t<T>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain_lkj(
-    const T& x, size_t k) {
+Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
+cov_matrix_constrain_lkj(const T& x, size_t k) {
   size_t k_choose_2 = (k * (k - 1)) / 2;
   const auto& x_ref = to_ref(x);
   return read_cov_matrix(corr_constrain(x_ref.head(k_choose_2)),
