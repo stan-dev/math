@@ -96,8 +96,13 @@ inline return_type_t<Tx> gaus_interp(const std::vector<double>& xs,
   // sum convolutions over intervals
   return_type_t<Tx> y = 0;
   for (int i = ind_start; i < ind_end; i++) {
+<<<<<<< HEAD
     y += conv_gaus_line(xs2[i], xs2[i + 1], params[i], params[(N-1) + i], x,
                         params[2*N-2]);
+=======
+    y += conv_gaus_line(xs2[i], xs2[i + 1], params[i], params[(n - 1) + i], x,
+                        params[2 * n - 2]);
+>>>>>>> 57c7b0da1d7bcdd4fe387d2f5d71a68994750fec
   }
   return y;
 }
@@ -128,7 +133,7 @@ inline std::vector<double> gaus_interp_precomp(const std::vector<double>& xs,
 
   using internal::min_diff;
   static const double max_diff = 1e-8;
-  // set Gaussian kernel to sig2_scale times smallest difference between 
+  // set Gaussian kernel to sig2_scale times smallest difference between
   // successive points
   static const double sig2_scale = 0.1;
   int N = xs.size();

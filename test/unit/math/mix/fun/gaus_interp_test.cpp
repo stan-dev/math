@@ -1,8 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
 
 TEST(mathMixGausInterp, derivs) {
-  using stan::math::var;
   using stan::math::gaus_interp;
+  using stan::math::var;
   std::vector<double> xs, ys, ts;
   double xmin, xmax, x, y, t, t0, t1, dder, dder2, x0, x1;
   int n;
