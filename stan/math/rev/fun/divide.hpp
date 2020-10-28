@@ -177,6 +177,33 @@ inline auto divide(const Mat& m, const var& c) {
   return result;
 }
 
+/**
+ * Return matrix divided by scalar.
+ *
+ * @tparam Mat type of the matrix
+ * @tparam Scal type of the scalar
+ * @param[in] m input matrix
+ * @param[in] c input scalar
+ * @return matrix divided by the scalar
+ */
+template <typename Mat, typename Scal,
+	  require_var_matrix_t<Mat>* = nullptr,
+          require_stan_scalar_t<Scal>* = nullptr>
+inline auto divide(const Mat& m, const Scal& c) {
+  double invc = 1.0 / value_of(c);
+
+  Mat res = invc * m.val();
+
+  reverse_pass_callback([m, c, res, invc]() mutable {
+    m.adj() += invc * res.adj();
+    if (!is_constant<Scal>::value)
+      forward_as<var>(c).adj()
+	-= invc * (res.adj().array() * res.val().array()).sum();
+  });
+
+  return res;
+}
+
 }  // namespace math
 }  // namespace stan
 #endif
