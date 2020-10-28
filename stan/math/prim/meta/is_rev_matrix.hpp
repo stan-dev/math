@@ -28,9 +28,10 @@ template <typename T, typename = void>
 struct is_rev_col_vector : std::false_type {};
 
 STAN_ADD_REQUIRE_UNARY(rev_col_vector, is_rev_col_vector, require_eigens_types);
-STAN_ADD_REQUIRE_CONTAINER(rev_col_vector, is_rev_col_vector, require_eigens_types);
-STAN_ADD_REQUIRE_UNARY_INNER(rev_col_vector, is_rev_col_vector, require_eigens_types);
-
+STAN_ADD_REQUIRE_CONTAINER(rev_col_vector, is_rev_col_vector,
+                           require_eigens_types);
+STAN_ADD_REQUIRE_UNARY_INNER(rev_col_vector, is_rev_col_vector,
+                             require_eigens_types);
 
 /** \ingroup type_trait
  * Defines a static member named value which is defined to be true
@@ -42,8 +43,10 @@ template <typename T, typename = void>
 struct is_rev_row_vector : std::false_type {};
 
 STAN_ADD_REQUIRE_UNARY(rev_row_vector, is_rev_row_vector, require_eigens_types);
-STAN_ADD_REQUIRE_CONTAINER(rev_row_vector, is_rev_row_vector, require_eigens_types);
-STAN_ADD_REQUIRE_UNARY_INNER(rev_row_vector, is_rev_row_vector, require_eigens_types);
+STAN_ADD_REQUIRE_CONTAINER(rev_row_vector, is_rev_row_vector,
+                           require_eigens_types);
+STAN_ADD_REQUIRE_UNARY_INNER(rev_row_vector, is_rev_row_vector,
+                             require_eigens_types);
 
 /** \ingroup type_trait
  * Defines a static member named value which is defined to be true

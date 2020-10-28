@@ -22,19 +22,18 @@ struct is_rev_matrix<
                      math::disjunction<is_eigen<T>, is_eigen<value_type_t<T>>>>>
     : std::true_type {};
 
-
 /** \ingroup type_trait
-* Defines a static member named value which is defined to be true
-* if the type is either a type derived from `Eigen::EigenBase` with a `Scalar`
-*  type of `var_value<double>` or a `var_value<T>` where T is derived from
-* `Eigen::EigenBase`
-*/
+ * Defines a static member named value which is defined to be true
+ * if the type is either a type derived from `Eigen::EigenBase` with a `Scalar`
+ *  type of `var_value<double>` or a `var_value<T>` where T is derived from
+ * `Eigen::EigenBase`
+ */
 template <typename T>
 struct is_rev_col_vector<
-T, require_all_t<is_var<scalar_type_t<T>>,
-                 math::disjunction<is_eigen_col_vector<T>, is_eigen_col_vector<value_type_t<T>>>>>
-: std::true_type {};
-
+    T, require_all_t<is_var<scalar_type_t<T>>,
+                     math::disjunction<is_eigen_col_vector<T>,
+                                       is_eigen_col_vector<value_type_t<T>>>>>
+    : std::true_type {};
 
 /** \ingroup type_trait
  * Defines a static member named value which is defined to be true
@@ -45,7 +44,8 @@ T, require_all_t<is_var<scalar_type_t<T>>,
 template <typename T>
 struct is_rev_row_vector<
     T, require_all_t<is_var<scalar_type_t<T>>,
-                     math::disjunction<is_eigen_row_vector<T>, is_eigen_row_vector<value_type_t<T>>>>>
+                     math::disjunction<is_eigen_row_vector<T>,
+                                       is_eigen_row_vector<value_type_t<T>>>>>
     : std::true_type {};
 
 /** \ingroup type_trait
@@ -55,7 +55,8 @@ struct is_rev_row_vector<
  * `Eigen::EigenBase`
  */
 template <typename T>
-struct is_rev_vector<T, require_any_t<is_rev_col_vector<T>, is_rev_row_vector<T>>>
+struct is_rev_vector<T,
+                     require_any_t<is_rev_col_vector<T>, is_rev_row_vector<T>>>
     : std::true_type {};
 
 }  // namespace stan
