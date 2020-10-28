@@ -862,7 +862,8 @@ class var_value<
    * @param other the value to assign
    * @return this
    */
-  template <typename S, typename T_ = T, require_assignable_t<value_type, S>* = nullptr,
+  template <typename S, typename T_ = T,
+            require_assignable_t<value_type, S>* = nullptr,
             require_any_not_plain_type_t<T_, S>* = nullptr>
   inline var_value<T>& operator=(const var_value<S>& other) {
     arena_t<plain_type_t<T>> prev_val = vi_->val_;

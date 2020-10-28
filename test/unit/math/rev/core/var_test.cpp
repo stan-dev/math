@@ -375,7 +375,6 @@ TEST_F(AgradRev, var_matrix_view_block_from_plain) {
   EXPECT_FLOAT_EQ(B_v.adj()(3), 5);
 }
 
-
 /**
  * Tests that views of a var<Matrix> receive the adjoints of the original
  * matrix.
