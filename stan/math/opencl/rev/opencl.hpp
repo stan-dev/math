@@ -6,6 +6,7 @@
 #include <stan/math/opencl/opencl.hpp>
 #include <stan/math/opencl/rev/arena_matrix_cl.hpp>
 #include <stan/math/opencl/rev/arena_type.hpp>
+#include <stan/math/opencl/rev/cholesky_decompose.hpp>
 #include <stan/math/opencl/rev/copy.hpp>
 #include <stan/math/opencl/rev/multiply.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
