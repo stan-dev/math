@@ -11,7 +11,7 @@ auto f(int dof) {
     stan::math::promote_scalar_t<stan::value_type_t<decltype(x)>,
                                  Eigen::Matrix<double, -1, -1>>
         y;
-   try {
+    try {
       y = stan::math::cov_matrix_constrain(x, dof);
     } catch (...) {
       ADD_FAILURE() << "FAILED AT COV_MATRIX_CONSTRAIN";
@@ -21,9 +21,7 @@ auto f(int dof) {
   };
 }
 
-auto f_matvar = [](const auto& x) {
-    return stan::math::cholesky_decompose(x);
-};
+auto f_matvar = [](const auto& x) { return stan::math::cholesky_decompose(x); };
 
 void expect_cholesky(const Eigen::MatrixXd& Sigma) {
   Eigen::VectorXd yy = stan::math::cov_matrix_free(Sigma);
