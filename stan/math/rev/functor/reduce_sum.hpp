@@ -102,13 +102,10 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       // Initialize nested autodiff stack
       const nested_rev_autodiff begin_nest;
 
-      // Create nested autodiff copies of sliced argument that do not point
-      //   back to main autodiff stack
-      std::decay_t<Vec> local_sub_slice;
-      local_sub_slice.reserve(r.size());
-      for (size_t i = r.begin(); i < r.end(); ++i) {
-        local_sub_slice.emplace_back(deep_copy_vars(vmapped_[i]));
-      }
+      // Create copies of sliced argument which refer to the main
+      // thread and thus need to be zeroed after their use
+      std::decay_t<Vec> local_sub_slice(vmapped_.begin() + r.begin(),
+                                        vmapped_.begin() + r.end());
 
       if (std::this_thread::get_id() == main_thread_) {
         // on the main thread we can use the input operands given as
@@ -178,6 +175,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
             },
             std::move(args_tuple_local_copy));
       }
+
+      // zero the adjoints of the sliced argument
+      zero_adjoints(local_sub_slice);
     }
 
     /**
