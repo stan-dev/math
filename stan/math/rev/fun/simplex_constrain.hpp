@@ -39,7 +39,7 @@ inline auto simplex_constrain(const T& y) {
   Eigen::VectorXd x_val(N + 1);
 
   double stick_len(1.0);
-  for (int k = 0; k < N; ++k) {
+  for (Eigen::Index k = 0; k < N; ++k) {
     double log_N_minus_k = std::log(N - k);
     arena_z.coeffRef(k) = inv_logit(arena_y.val().coeff(k) - log_N_minus_k);
     arena_diag.coeffRef(k)
@@ -56,12 +56,12 @@ inline auto simplex_constrain(const T& y) {
   }
 
   reverse_pass_callback([arena_y, arena_x, arena_diag, arena_z]() mutable {
-    size_t N = arena_y.size();
+    auto N = arena_y.size();
     double acc = arena_x.adj().coeff(N);
 
     arena_y.adj().coeffRef(N - 1)
         += arena_diag.coeff(N - 1) * (arena_x.adj().coeff(N - 1) - acc);
-    for (int n = N - 1; --n >= 0;) {
+    for (Eigen::Index n = N - 1; --n >= 0;) {
       acc = arena_x.adj().coeff(n + 1) * arena_z.coeff(n + 1)
             + (1 - arena_z.coeff(n + 1)) * acc;
       arena_y.adj().coeffRef(n)

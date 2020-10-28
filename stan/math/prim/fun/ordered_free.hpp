@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <cmath>
 
 namespace stan {
@@ -32,9 +33,10 @@ plain_type_t<EigVec> ordered_free(const EigVec& y) {
   if (k == 0) {
     return x;
   }
-  x[0] = y[0];
+  const auto& y_ref = to_ref(y);
+  x[0] = y_ref[0];
   for (Eigen::Index i = 1; i < k; ++i) {
-    x.coeffRef(i) = log(y.coeff(i) - y.coeff(i - 1));
+    x.coeffRef(i) = log(y_ref.coeff(i) - y_ref.coeff(i - 1));
   }
   return x;
 }
