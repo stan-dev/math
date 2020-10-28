@@ -17,9 +17,10 @@ const stan::math::opencl_kernels::kernel_cl<
     stan::math::opencl_kernels::out_buffer,
     stan::math::opencl_kernels::in_buffer>
     lgamma_stirling_diff(
-        "test", {stan::math::opencl_kernels::lgamma_stirling_device_function,
-                 stan::math::opencl_kernels::lgamma_stirling_diff_device_function,
-                 test_kernel_code});
+        "test",
+        {stan::math::opencl_kernels::lgamma_stirling_device_function,
+         stan::math::opencl_kernels::lgamma_stirling_diff_device_function,
+         test_kernel_code});
 
 TEST(MathMatrixCL, lgamma_stirling_diff) {
   Eigen::VectorXd a = Eigen::VectorXd::Random(1000).array() * 15 + 30;

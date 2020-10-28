@@ -42,7 +42,7 @@ TEST(MathMatrixCL, lbeta_edge_cases) {
   a << NAN, INFINITY, 1.0E50;
 
   Eigen::VectorXd b(3);
-  a << 1,1,1;
+  a << 1, 1, 1;
 
   stan::math::matrix_cl<double> a_cl(a);
   stan::math::matrix_cl<double> b_cl(b);
