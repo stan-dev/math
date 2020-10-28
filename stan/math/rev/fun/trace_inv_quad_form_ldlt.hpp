@@ -154,7 +154,7 @@ class trace_inv_quad_form_ldlt_vari : public vari {
  * @return The trace of the inverse quadratic form.
  */
 template <typename T, int R, int C, typename EigMat,
-          typename = require_any_vt_var<T, EigMat>>
+          typename = require_any_st_var<T, EigMat>>
 inline return_type_t<T, EigMat> trace_inv_quad_form_ldlt(
     const LDLT_factor<T, R, C> &A, const EigMat &B) {
   using T2 = value_type_t<EigMat>;

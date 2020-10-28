@@ -16,4 +16,7 @@ TEST(mathMixScalFun, neg_binomial_lpmf_derivatives) {
   stan::test::expect_ad(f(6), 1.5, 4.1);
   stan::test::expect_ad(f(6), std::vector<double>({1.7, 2.0}),
                         std::vector<double>({1.1, 2.3}));
+  stan::test::expect_ad(f(13), 1e11, 1e10);
+  stan::test::expect_ad(f(13), std::vector<double>({1e11, 1e10}),
+                        std::vector<double>({1e10, 1e9}));
 }

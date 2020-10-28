@@ -49,7 +49,7 @@ void check_simplex(const char* function, const char* name, const T& theta) {
     std::string msg_str(msg.str());
     throw_domain_error(function, name, 1.0, msg_str.c_str());
   }
-  for (Eigen::Index n = 0; n < theta.size(); n++) {
+  for (Eigen::Index n = 0; n < theta_ref.size(); n++) {
     if (!(theta_ref.coeff(n) >= 0)) {
       std::ostringstream msg;
       msg << "is not a valid simplex. " << name << "["

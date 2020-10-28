@@ -11,9 +11,7 @@ else:
 
 src_folder = "./test/expressions/"
 build_folder = "./test/expressions/"
-exceptions_list_location = (
-    "./test/expressions/stan_math_sigs_exceptions.expected"
-)
+exceptions_list_location = "./test/expressions/stan_math_sigs_exceptions.expected"
 
 eigen_types = ["matrix", "vector", "row_vector"]
 arg_types = {
@@ -81,6 +79,44 @@ def parse_signature_file(sig_file):
         res.append(signature)
     return res
 
+def add_extra_signatures(res):
+    """
+    Adds signatures not defined in the stan language that can still accept
+     expression types.
+    """
+    res.extend(["vector unit_vector_constrain(vector)",
+        "vector unit_vector_constrain(row_vector)",
+        "vector unit_vector_constrain(vector, real)",
+        "vector unit_vector_constrain(row_vector, real)",
+        "vector unit_vector_free(vector)",
+        "vector unit_vector_free(row_vector)",
+        "int is_cholesky_factor(matrix)",
+        "int is_cholesky_factor_corr(matrix)",
+        "int is_column_index(matrix, int)",
+        "int is_column_index(vector, int)",
+        "int is_corr_matrix(matrix)",
+        "int is_cholesky_factor(matrix)",
+        "int is_lower_triangular(matrix)",
+        "int is_mat_finite(matrix)",
+        "int is_mat_finite(vector)",
+        "int is_matching_dims(matrix, matrix)",
+        "int is_matching_dims(vector, matrix)",
+        "int is_matching_dims(matrix, vector)",
+        "int is_matching_dims(row_vector, matrix)",
+        "int is_matching_dims(matrix, row_vector)",
+        "int is_matching_dims(matrix, matrix)",
+        "int is_matching_dims(row_vector, row_vector)",
+        "int is_matching_dims(vector, row_vector)",
+        "int is_matching_dims(row_vector, vector)",
+        "int is_matching_dims(vector, vector)",
+        "int is_pos_definite(matrix)",
+        "int is_square(matrix)",
+        "int is_square(vector)",
+        "int is_square(row_vector)",
+        "int is_symmetric(matrix)",
+        "int is_unit_vector(vector)",
+        "int is_unit_vector(row_matrix)"])
+    return res
 
 def get_signatures():
     """
@@ -102,14 +138,13 @@ def get_signatures():
         universal_newlines=True,
         shell=True,
     )
-
     res = parse_signature_file(p.stdout)
-
     if p.wait() != 0:
         sys.stderr.write("Error in getting signatures from stanc3!\n")
         sys.exit(-1)
 
-    return res
+    res_full = add_extra_signatures(res)
+    return res_full
 
 
 def parse_signature(signature):
@@ -125,15 +160,36 @@ def parse_signature(signature):
     return return_type, function_name, args
 
 
+# list of function arguments that need special scalar values.
+# None means to use the default argument value.
 special_arg_values = {
-	"acosh" : 1.4,
-	"log1m_exp" : -0.6,
-	"categorical_log" : 1,
-	"categorical_rng" : 1,
-	"categorical_lpmf" : 1,
-}
+    "acosh": [1.4],
+    "log1m_exp": [-0.6],
+    "categorical_log": [None, 1],
+    "categorical_rng": [1, None],
+    "categorical_lpmf": [None, 1],
+    "dirichlet_log" : [1, None],
+    "dirichlet_lpdf" : [1, None],
+    "hmm_hidden_state_prob": [None, 1, 1],
+    "hmm_latent_rng": [None, 1, 1, None],
+    "hmm_marginal": [None, 1, 1],
+    "lkj_corr_lpdf": [1, None],
+    "lkj_corr_log": [1, None],
+    "log_diff_exp": [3, None],
+    "log_inv_logit_diff": [1.2, 0.4],
+    "multinomial_log" : [None, 1],
+    "multinomial_lpmf" : [None, 1],
+    "multinomial_rng" : [1, None, None],
+    "pareto_cdf": [1.5, 0.7, None],
+    "pareto_cdf_log": [1.5, 0.7, None],
+    "pareto_lcdf": [1.5, 0.7, None],
+    "pareto_type_2_cdf": [1.5, 0.7, None, None],
+    "pareto_type_2_cdf_log": [1.5, 0.7, None, None],
+    "pareto_type_2_lcdf": [1.5, 0.7, None, None],
+    "unit_vector_free" : [1.0],}
 
-def make_arg_code(arg, scalar, var_name, function_name):
+
+def make_arg_code(arg, scalar, var_name, var_number, function_name):
     """
     Makes code for declaration and initialization of an argument to function.
 
@@ -144,6 +200,7 @@ def make_arg_code(arg, scalar, var_name, function_name):
     :param arg: stan lang type of the argument
     :param scalar: scalar type used in argument
     :param var_name: name of the variable to create
+    :param var_number: number of variable in the function call
     :param function_name: name of the function that will be tested using this argument
     :return: code for declaration and initialization of an argument
     """
@@ -153,17 +210,18 @@ def make_arg_code(arg, scalar, var_name, function_name):
             "  %s %s = [](const auto& a, const auto&, const auto&, const auto&){return a;}"
             % (arg_type, var_name)
         )
-    elif function_name in special_arg_values:
-        return (
-            "  %s %s = stan::test::make_arg<%s>(%f)"
-            % (arg_type, var_name, arg_type, special_arg_values[function_name])
-        )
-    else:
-        return "  %s %s = stan::test::make_arg<%s>()" % (
+    elif (
+        function_name in special_arg_values
+        and special_arg_values[function_name][var_number] is not None
+    ):
+        return "  %s %s = stan::test::make_arg<%s>(%f)" % (
             arg_type,
             var_name,
             arg_type,
+            special_arg_values[function_name][var_number],
         )
+    else:
+        return "  %s %s = stan::test::make_arg<%s>()" % (arg_type, var_name, arg_type,)
 
 
 def save_tests_in_files(N_files, tests):
@@ -203,6 +261,11 @@ def handle_function_list(functions_input, signatures):
     return function_names, function_signatures
 
 
+# lists of functions that do not support fwd or rev autodiff
+no_rev_overload = ["hmm_hidden_state_prob"]
+no_fwd_overload = ["hmm_hidden_state_prob"]
+
+
 def main(functions=(), j=1):
     """
     Generates expression tests. Functions that do not support expressions yet are listed
@@ -233,9 +296,11 @@ def main(functions=(), j=1):
         if signature in ignored and not functions and signature not in extra_signatures:
             continue
         # skip default if we have list of function names/signatures to test
-        if ((functions or extra_signatures) and
-                function_name not in functions and
-                signature not in extra_signatures):
+        if (
+            (functions or extra_signatures)
+            and function_name not in functions
+            and signature not in extra_signatures
+        ):
             continue
         # skip signatures without eigen inputs
         for arg2test in eigen_types:
@@ -259,16 +324,26 @@ def main(functions=(), j=1):
         ):
             if function_name.endswith("_rng") and overload != "Prim":
                 continue
+            if function_name in no_fwd_overload and overload == "Fwd":
+                continue
+            if function_name in no_rev_overload and overload == "Rev":
+                continue
 
             mat_declarations = ""
             for n, arg in enumerate(function_args):
-                mat_declarations += make_arg_code(arg, scalar, "arg_mat%d" % n, function_name) + ";\n"
+                mat_declarations += (
+                    make_arg_code(arg, scalar, "arg_mat%d" % n, n, function_name)
+                    + ";\n"
+                )
 
             mat_arg_list = ", ".join("arg_mat%d" % n for n in range(len(function_args)))
 
             expression_declarations = ""
             for n, arg in enumerate(function_args):
-                expression_declarations += make_arg_code(arg, scalar, "arg_expr%d" % n, function_name) + ";\n"
+                expression_declarations += (
+                    make_arg_code(arg, scalar, "arg_expr%d" % n, n, function_name)
+                    + ";\n"
+                )
                 if arg in eigen_types:
                     expression_declarations += "  int counter%d = 0;\n" % n
                     expression_declarations += (
@@ -279,7 +354,10 @@ def main(functions=(), j=1):
             expression_arg_list = ""
             for n, arg in enumerate(function_args[:-1]):
                 if arg in eigen_types:
-                    expression_arg_list += "arg_expr%d.unaryExpr(counter_op%d), " % (n, n)
+                    expression_arg_list += "arg_expr%d.unaryExpr(counter_op%d), " % (
+                        n,
+                        n,
+                    )
                 else:
                     expression_arg_list += "arg_expr%d, " % n
             if function_args[-1] in eigen_types:
@@ -310,19 +388,19 @@ def main(functions=(), j=1):
                     # functors don't have adjoints to check
                     if arg == "(vector, vector, data real[], data int[]) => vector":
                         continue
-                    checks += "  EXPECT_STAN_ADJ_EQ(arg_expr%d,arg_mat%d);\n" % (
-                        n,
-                        n,
-                    )
-            tests.append(test_code_template.format(overload=overload,
-                                                   function_name=function_name,
-                                                   signature_number=func_test_n,
-                                                   matrix_argument_declarations=mat_declarations,
-                                                   matrix_argument_list=mat_arg_list,
-                                                   expression_argument_declarations=expression_declarations,
-                                                   expression_argument_list=expression_arg_list,
-                                                   checks=checks,
-                                                   ))
+                    checks += "  EXPECT_STAN_ADJ_EQ(arg_expr%d,arg_mat%d);\n" % (n, n,)
+            tests.append(
+                test_code_template.format(
+                    overload=overload,
+                    function_name=function_name,
+                    signature_number=func_test_n,
+                    matrix_argument_declarations=mat_declarations,
+                    matrix_argument_list=mat_arg_list,
+                    expression_argument_declarations=expression_declarations,
+                    expression_argument_list=expression_arg_list,
+                    checks=checks,
+                )
+            )
     if remaining_functions:
         raise NameError("Functions not found: " + ", ".join(remaining_functions))
     save_tests_in_files(j, tests)

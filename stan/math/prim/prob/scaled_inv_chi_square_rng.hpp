@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <boost/random/chi_squared_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -35,13 +36,15 @@ scaled_inv_chi_square_rng(const T_deg& nu, const T_scale& s, RNG& rng) {
   using boost::variate_generator;
   using boost::random::chi_squared_distribution;
   static const char* function = "scaled_inv_chi_square_rng";
-  check_positive_finite(function, "Degrees of freedom parameter", nu);
-  check_positive_finite(function, "Scale parameter", s);
   check_consistent_sizes(function, "Location parameter", nu, "Scale Parameter",
                          s);
+  const auto& nu_ref = to_ref(nu);
+  const auto& s_ref = to_ref(s);
+  check_positive_finite(function, "Degrees of freedom parameter", nu_ref);
+  check_positive_finite(function, "Scale parameter", s_ref);
 
-  scalar_seq_view<T_deg> nu_vec(nu);
-  scalar_seq_view<T_scale> s_vec(s);
+  scalar_seq_view<T_deg> nu_vec(nu_ref);
+  scalar_seq_view<T_scale> s_vec(s_ref);
   size_t N = max_size(nu, s);
   VectorBuilder<true, double, T_deg, T_scale> output(N);
 

@@ -23,7 +23,7 @@ def runTestsWin(String testPath, boolean buildLibs = true, boolean jumbo = false
            if (jumbo) {
                bat "runTests.py -j${env.PARALLEL} ${testPath} --jumbo" 
             } else {
-                bat "runTests.py -j${env.PARALLEL} ${testPath}" 
+               bat "runTests.py -j${env.PARALLEL} ${testPath}" 
             }
        }
        finally { junit 'test/**/*.xml' }
@@ -200,18 +200,13 @@ pipeline {
                 }
             }
             steps {
+                deleteDir()
+                unstash 'MathSetup'
+	            sh "echo CXXFLAGS += -fsanitize=address > make/local"
                 script {
                     if (isUnix()) {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        runTests("test/unit/math/prim", true)
-                        runTests("test/unit/math/rev", true)
                         runTests("test/unit", true)
                     } else {
-                        deleteDirWin()
-                        unstash 'MathSetup'
-                        runTestsWin("test/unit/math/prim", true)
-                        runTestsWin("test/unit/math/rev", true)
                         runTestsWin("test/unit", true)
                     }
                 }
@@ -249,6 +244,7 @@ pipeline {
                         sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
                         sh "make -j${env.PARALLEL} test-headers"
                         runTests("test/unit/math/opencl")
+						runTests("test/unit/multiple_translation_units_test.cpp")
                         runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test")
                         runTests("test/unit/math/prim/fun/mdivide_left_tri_test")
                         runTests("test/unit/math/prim/fun/mdivide_right_tri_test")

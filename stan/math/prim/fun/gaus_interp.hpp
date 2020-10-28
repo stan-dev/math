@@ -32,8 +32,8 @@ inline double min_diff(const std::vector<Tx>& xs) {
 /**
  * Given a set of reference points \f$(xs_i, ys_i)\f$, create a mollifier
  * that intersects the reference points. This function requires as input
- * a vector, params, created by the function gaus_interp_precomp. The 
- * algorithm used to create the mollifier is an iterative algorithm that 
+ * a vector, params, created by the function gaus_interp_precomp. The
+ * algorithm used to create the mollifier is an iterative algorithm that
  * works as follows. First a linear
  * interpolation is created through the reference points. Then, the
  * linear interpolation is convolved with a Gaussian whose width is
@@ -91,13 +91,13 @@ inline return_type_t<Tx> gaus_interp(const std::vector<double>& xs,
 
   auto ub = std::upper_bound(xs.begin(), xs.end(), x + NSTDS * sig);
   int ind_end = std::distance(xs.begin(), ub);
-  ind_end = std::min(N-1, ind_end);
+  ind_end = std::min(N - 1, ind_end);
 
   // sum convolutions over intervals
   return_type_t<Tx> y = 0;
   for (int i = ind_start; i < ind_end; i++) {
-    y += conv_gaus_line(xs2[i], xs2[i + 1], params[i], params[(N-1) + i], x,
-                        params[2*N-2]);
+    y += conv_gaus_line(xs2[i], xs2[i + 1], params[i], params[(N - 1) + i], x,
+                        params[2 * N - 2]);
   }
   return y;
 }
