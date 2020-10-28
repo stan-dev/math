@@ -22,7 +22,7 @@ const stan::math::opencl_kernels::kernel_cl<
                  test_kernel_code});
 
 TEST(MathMatrixCL, lgamma_stirling_diff) {
-  Eigen::VectorXd a = Eigen::VectorXd::Random(1000).array() * 30;
+  Eigen::VectorXd a = Eigen::VectorXd::Random(1000).array() * 15 + 30;
 
   stan::math::matrix_cl<double> a_cl(a);
   stan::math::matrix_cl<double> res_cl(1000, 1);
@@ -35,12 +35,12 @@ TEST(MathMatrixCL, lgamma_stirling_diff) {
 }
 
 TEST(MathMatrixCL, lgamma_stirling_diff_edge_cases) {
-  Eigen::VectorXd a(3);
-  a << NAN, -1, 1.0E50;
+  Eigen::VectorXd a(4);
+  a << NAN, 0, 1.0E50, INFINITY;
 
   stan::math::matrix_cl<double> a_cl(a);
-  stan::math::matrix_cl<double> res_cl(3, 1);
-  lgamma_stirling_diff(cl::NDRange(3), res_cl, a_cl);
+  stan::math::matrix_cl<double> res_cl(4, 1);
+  lgamma_stirling_diff(cl::NDRange(4), res_cl, a_cl);
   Eigen::VectorXd res = stan::math::from_matrix_cl<-1, 1>(res_cl);
 
   EXPECT_NEAR_REL(res, a.unaryExpr([](double x) {
