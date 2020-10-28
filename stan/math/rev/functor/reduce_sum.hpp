@@ -106,8 +106,6 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       std::decay_t<Vec> local_sub_slice(vmapped_.begin() + r.begin(),
                                         vmapped_.begin() + r.end());
 
-      zero_adjoints(local_sub_slice);
-
       if (root_instance_) {
         // the root reducer instance can use the input operands given
         // as input to reduce_sum which are stored in the main
@@ -131,7 +129,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
         // Accumulate adjoints of sliced_arguments
         accumulate_adjoints(sliced_partials_ + r.begin() * num_vars_per_term_,
-                            local_sub_slice);
+                            std::move(local_sub_slice));
 
         // Accumulate adjoints of shared_arguments and set adjoints to zero
         apply(

@@ -377,11 +377,11 @@ TEST(StanMathRev_reduce_sum, slice_group_gradient) {
       << "value of poisson lpdf : " << poisson_lpdf.val() << std::endl
       << "gradient wrt to lambda: " << lambda_adj << std::endl;
 
+  stan::math::set_zero_all_adjoints();
   var poisson_lpdf_static
       = stan::math::reduce_sum_static<slice_group_count_lpdf<var>>(
           vlambda_v, 5, get_new_msg(), data, gsidx);
 
-  stan::math::set_zero_all_adjoints();
   stan::math::grad(poisson_lpdf_static.vi_);
   const double lambda_adj_static = lambda_v.adj();
 
