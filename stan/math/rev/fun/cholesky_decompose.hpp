@@ -192,8 +192,9 @@ inline auto opencl_cholesky_lambda(AMat& arena_A, LVari& vari_L) {
     }
   };
 }
-}
+
 #endif
+}
 
 /**
  * Reverse mode specialization of cholesky decomposition
