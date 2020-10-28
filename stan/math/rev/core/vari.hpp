@@ -281,6 +281,20 @@ class vari_view_eigen {
   }
 
   /**
+   * View transpose of eigen matrix.
+   */
+  inline auto transpose() const {
+    using inner_type = decltype(derived().val_.transpose());
+    return vari_view<inner_type>(derived().val_.transpose(),
+                                 derived().adj_.transpose());
+  }
+  inline auto transpose() {
+    using inner_type = decltype(derived().val_.transpose());
+    return vari_view<inner_type>(derived().val_.transpose(),
+                                 derived().adj_.transpose());
+  }
+
+  /**
    * View row of eigen matrices.
    * @param i Row index to slice.
    */
