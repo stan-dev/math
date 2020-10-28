@@ -48,6 +48,16 @@ class ScopedChainableStack {
   ScopedChainableStack() = default;
 
   /**
+   * ScopedChainableStack must call the destructor on all the
+   * chainable_stack objects allocated on it
+   */
+  ~ScopedChainableStack() {
+    for (size_t i = 0; i < local_stack_.var_alloc_stack_.size(); ++i) {
+      delete local_stack_.var_alloc_stack_[i];
+    }
+  }
+
+  /**
    * Execute in the current thread a nullary function and write the AD
    * tape to local_stack_ of this instance. The function may return
    * any type.

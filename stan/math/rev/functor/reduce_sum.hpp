@@ -35,12 +35,38 @@ template <typename ReduceFunction, typename ReturnType, typename Vec,
 struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                        Vec, Args...> {
 
-  using args_tuple_t = std::tuple<decltype(copy_vars(std::declval<Args>()))...>;
+  using args_tuple_t = std::tuple<decltype(deep_copy_vars(std::declval<Args>()))...>;
 
-  struct local_stuff {
+  /**
+   * This is a data structure that we use for the forward computation only!
+   *
+   * Each thread will get one copy of this data structure (it is stored in
+   *   a threadlocal thing)
+   *
+   * Pieces of this data structure are passed in to the revese mode vari, but
+   *   the data structure itself is not used there
+   *
+   * It holds:
+   *  1. A pointer to the Stack on which we do our calculations
+   *  2. A pointer to a local copy of the input arguments (copied to our Stack)
+   *  3. A list of the last var computed in every work chunk, this is the
+   *     result of one partial sum. Since each thread may do many partial
+   *     sums, this needs to be dynamically sized
+   */
+  struct stuff {
     ScopedChainableStack* stack_;
-    args_tuple_t args_tuple_;
+    args_tuple_t* args_tuple_;
+    std::vector<var> tails_;
+
+    stuff(ScopedChainableStack* stack, Args&&... args) :
+      stack_(stack) {
+      stack_->execute([&]() {
+	args_tuple_ = new args_tuple_t(deep_copy_vars(args)...);
+      });
+    }
   };
+
+  using local_stuff = tbb::enumerable_thread_specific<stuff>;
 
   /**
    * This struct is used by the TBB to accumulate partial
@@ -95,11 +121,15 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         return;
       }
 
-      // Obtain reference to thread local copy of all shared arguments
+      /**
+       * Obtain reference to thread local copy of all shared arguments
+       * 
+       * This object is a `stuff` object from above
+       */
       auto& tl = tlstuff_.local();
 
-      tl.stack_.execute([&] {
-	// Put autodiff copies of sliced argument to local stack
+      // Do the forward pass calculation
+      tl.stack_->execute([&] {
 	std::decay_t<Vec> local_sub_slice;
         local_sub_slice.reserve(r.size());
         for (size_t i = r.begin(); i < r.end(); ++i) {
@@ -110,8 +140,10 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         var sub_sum_v = apply([&](auto&&... args) {
 	    return ReduceFunction()(local_sub_slice, r.begin(), r.end() - 1,
 				    msgs_, args...);
-	  }, tlstuff_.args_tuple_);
+	  }, *tl.args_tuple_);
 
+	// Save the `var` from the output of each partial_sum
+	tl.tails_.push_back(sub_sum_v);
 	sum_ += sub_sum_v.val();
       });
     }
@@ -174,12 +206,30 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       return var(0.0);
     }
 
-    tbb::enumerable_thread_specific<local_stuff> tlstuff;
+    // This code doesn't work with sliced arguments yet!
+    const std::size_t num_vars_per_term = count_vars(vmapped[0]);
+    const std::size_t num_vars_sliced_terms = num_terms * num_vars_per_term;
+    const std::size_t num_vars_shared_terms = count_vars(args...);
 
-    for (auto it = tlstuff.begin(); it != tlstuff.end(); ++it) {
-      it->stack_ = new ScopedChainableStack();
-      it->args_tuple_ = args_tuple_t(copy_vars(args)...);
-    }
+    vari** varis = ChainableStack::instance_->memalloc_.alloc_array<vari*>(num_vars_sliced_terms + num_vars_shared_terms);
+    double* partials = ChainableStack::instance_->memalloc_.alloc_array<double>(num_vars_sliced_terms + num_vars_shared_terms);
+
+    save_varis(varis, vmapped);
+    save_varis(varis + num_vars_sliced_terms, args...);
+
+    /**
+     * `local_stuff` is `tbb::enumerable_thread_specific<stuff>`
+     *
+     * On construction for each thread, build a ScopedChainableStack
+     *  and make a copy of the args from the main stack
+     *
+     * Construction doesn't happen here, but inside `recursive_reducer`
+     *  when the `.local` is accessed (I think that's when. At least
+     *  it is not immediate).
+     */
+    local_stuff tlstuff([&]() {
+      return stuff(new ScopedChainableStack(), args...);
+    });
 
     recursive_reducer worker(tlstuff, std::forward<Vec>(vmapped), msgs);
 
@@ -193,43 +243,135 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           partitioner);
     }
 
+    /**
+     * Count how many partial_sums there were. We will need to
+     * save the vars for all these partial sums for the reverse
+     * mode pass.
+     */
+    size_t M = 0;
+    for (auto it = tlstuff.begin(); it != tlstuff.end(); ++it) {
+      M += it->tails_.size();
+    }
+
     ScopedChainableStack** stacks =
       ChainableStack::instance_->memalloc_.alloc_array<ScopedChainableStack*>(tlstuff.size());
+    args_tuple_t** args_tuples =
+      ChainableStack::instance_->memalloc_.alloc_array<args_tuple_t*>(tlstuff.size());
+    var* tails = ChainableStack::instance_->memalloc_.alloc_array<var>(M);
 
+    /**
+     * Here we are copying all the information out of the
+     * `stuff` data structures that we used in the forward pass
+     * and are packing it up to be put in another data structure
+     * for reverse pass.
+     */
     size_t j = 0;
+    size_t k = 0;
     for (auto it = tlstuff.begin(); it != tlstuff.end(); ++it) {
-      stacks[j] = it->stack_;
+      stacks[j] = it->stack_; // per-thread ScopedChainableStack pointer
+      args_tuples[j] = it->args_tuple_; // per-thread arg_tuple_ pointer
+      for (size_t l = 0; l < it->tails_.size(); ++l) {
+	tails[k] = it->tails_[l]; // per-partial-sum output adjoint
+	k++;
+      }
       j++;
     }
 
-    struct reduce_sum_vari : public vari_base {
+    /**
+     * This is the vari attached to the `reduce_sum` operation that will live
+     * on the main autodiff stack.
+     *
+     * It is responsible only for forwarding its adjoint along to another
+     * data structure that actually does most of the work
+     *
+     * The reason this is broken into two pieces is because we need to have something
+     * that has both a custom chain and a custom set_zero_all_adjoints function
+     *
+     * Because var must be constructed from a vari, we need a vari, and because
+     * a vari cannot have a custom set_zero_all_adjoints, we need a second thing
+     */
+    struct reduce_sum_vari : public vari {
+      reduce_sum_vari_impl* vb_;
+      reduce_sum_vari(double val,
+		      reduce_sum_vari_base* vb) : vari(val), vb_(vb) {}
+
+      inline void chain() final {
+	vb_->chain_(adj_);
+      }
+    };
+
+    /**
+     * This is the data structure that holds all the data to do the reverse
+     * mode pass. It contains a lot of stuff that was used in the
+     * `stuff` structure in the forward pass.
+     *
+     * The args_tuples_ argument needs a destructor called, which
+     * is why this inherits from chainablle_alloc
+     */
+    struct reduce_sum_vari_base : public vari_base, public chainable_alloc {
       size_t N_;
+      size_t M_;
       ScopedChainableStack** stacks_;
+      args_tuple_t** args_tuples_;
+      var* tails_;
+      vari** varis_;
+      size_t num_vars_shared_terms_;
 
-      const double val_;
-      double adj_{0.0};
-
-      explicit reduce_sum_vari(double sum, size_t N, ScopedChainableStack** stacks)
-	: val_(sum), N_(N), stacks_(stacks) {
+      explicit reduce_sum_vari_base(size_t N, ScopedChainableStack** stacks, args_tuple_t** args_tuples, size_t M, var* tails, size_t num_vars_shared_terms, vari** varis)
+	: N_(N), stacks_(stacks), args_tuples_(args_tuples),
+	  M_(M), tails_(tails), num_vars_shared_terms_(num_vars_shared_terms),
+	  varis_(varis) {
 	ChainableStack::instance_->var_stack_.push_back(this);
       }
 
-      inline void chain() final {
+      ~reduce_sum_vari_base() {
 	for(size_t i = 0; i < N_; ++i) {
-	  //stacks_[i]->execute([]() { grad(); });
+	  delete stacks_[i];
+	  delete args_tuples_[i];
 	}
       }
 
+      inline void chain() {}
+      
+      inline void chain_(double adj) {
+	Eigen::VectorXd partials(num_vars_shared_terms_);
+	partials.setZero();
+	// Increment the tail of every term of the partial sum
+	// with its adjoint
+	for(size_t i = 0; i < M_; ++i) {
+	  tails_[i].vi_->adj_ += adj;
+	}
+	for(size_t i = 0; i < N_; ++i) {
+	  // Chain on every threaded stack -- doing this serially for laziness
+	  stacks_[i]->execute([]() { grad(); });
+	  // Pull the adjoints out and accumulate them in a temporary
+	  apply([&](auto&&... args) {
+	    accumulate_adjoints(partials.data(),
+                                std::forward<decltype(args)>(args)...);
+          }, *args_tuples_[i]);
+	}
+	// Accumulate the adjoints back on the main stack
+	for(size_t j = 0; j < num_vars_shared_terms_; ++j) {
+	  varis_[j]->adj_ += partials[j];
+	}
+      }
+
+      // Setting all adjoints zero means on the threaded stacks too
       inline void set_zero_adjoint() final {
 	for(size_t i = 0; i < N_; ++i) {
 	  stacks_[i]->execute([]() { set_zero_all_adjoints(); });
 	}
       }
 
-      inline void init_dependent() noexcept { adj_ = 1.0; }
+      inline void init_dependent() {
+      }
     };
     
-    var res = new reduce_sum_vari(worker.sum_, stacks);
+    reduce_sum_vari_base* vb =
+      new reduce_sum_vari_base(tlstuff.size(), stacks, args_tuples, M, tails, num_vars_shared_terms, varis);
+
+    // This is the var that is the final result of our calculation!
+    var res(new reduce_sum_vari(worker.sum_, vb));
 
     return res;
   }
