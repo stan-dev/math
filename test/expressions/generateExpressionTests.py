@@ -200,8 +200,13 @@ special_arg_values = {
     "ode_bdf_tol": [None, None, 0.2, 0.4, None, None, 10, None, None, None],
     "ode_bdf": [None, None, 0.2, 0.4, None, None, None],
     "ode_rk45_tol": [None, None, 0.2, 0.4, None, None, 10, None, None, None],
-    "ode_rk45": [None, None, 0.2, 0.4, None, None, None],
-    "unit_vector_free" : [1.0],
+    "ode_rk45": [None, None, 0.2, 0.4, None, None, None],    "pareto_cdf": [1.5, 0.7, None],
+    "pareto_cdf_log": [1.5, 0.7, None],
+    "pareto_lcdf": [1.5, 0.7, None],
+    "pareto_type_2_cdf": [1.5, 0.7, None, None],
+    "pareto_type_2_cdf_log": [1.5, 0.7, None, None],
+    "pareto_type_2_lcdf": [1.5, 0.7, None, None],
+    "unit_vector_free" : [1.0],}
 }
 
 # list of function argument indices, for which real valued arguments are not differentiable 
@@ -213,7 +218,6 @@ non_differentiable_args = {
     "ode_bdf_tol": [4, 5, 6],
     "ode_rk45_tol": [4, 5, 6],
 }
-
 
 def make_arg_code(arg, scalar, var_name, var_number, function_name):
     """
