@@ -26,7 +26,7 @@ namespace math {
  * @param y vector of K unrestricted variables
  * @return Unit length vector of dimension K
  **/
-template <typename T, require_rev_matrix_t<T>* = nullptr>
+template <typename T, require_rev_col_vector_t<T>* = nullptr>
 inline auto unit_vector_constrain(const T& y) {
   using ret_type = plain_type_t<T>;
 
@@ -59,7 +59,7 @@ inline auto unit_vector_constrain(const T& y) {
  * @return Unit length vector of dimension K
  * @param lp Log probability reference to increment.
  **/
-template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+template <typename T, require_eigen_col_vector_vt<is_var, T>* = nullptr>
 inline auto unit_vector_constrain(const T& y, var& lp) {
   const auto& y_ref = to_ref(y);
   auto x = unit_vector_constrain(y_ref);
@@ -77,7 +77,7 @@ inline auto unit_vector_constrain(const T& y, var& lp) {
  * @return Unit length vector of dimension K
  * @param lp Log probability reference to increment.
  **/
-template <typename T, require_var_matrix_t<T>* = nullptr>
+template <typename T, require_var_col_vector_t<T>* = nullptr>
 inline auto unit_vector_constrain(const T& y, var& lp) {
   auto x = unit_vector_constrain(y);
   lp -= 0.5 * dot_self(y);

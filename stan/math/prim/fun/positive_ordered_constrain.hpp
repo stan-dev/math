@@ -19,7 +19,7 @@ namespace math {
  * @param x Free vector of scalars.
  * @return Positive, increasing ordered vector.
  */
-template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr,
+template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr,
           require_not_st_var<EigVec>* = nullptr>
 auto positive_ordered_constrain(const EigVec& x) {
   using std::exp;
@@ -48,7 +48,7 @@ auto positive_ordered_constrain(const EigVec& x) {
  * @param lp Log probability reference.
  * @return Positive, increasing ordered vector.
  */
-template <typename Vec, require_matrix_t<Vec>* = nullptr>
+template <typename Vec, require_col_vector_t<Vec>* = nullptr>
 inline auto positive_ordered_constrain(const Vec& x, scalar_type_t<Vec>& lp) {
   const auto& x_ref = to_ref(x);
   lp += sum(x_ref);

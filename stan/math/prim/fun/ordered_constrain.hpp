@@ -20,7 +20,7 @@ namespace math {
  * @return Positive, increasing ordered vector.
  * @tparam T Type of scalar.
  */
-template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr,
+template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr,
           require_not_st_var<EigVec>* = nullptr>
 plain_type_t<EigVec> ordered_constrain(const EigVec& x) {
   using std::exp;
@@ -49,7 +49,7 @@ plain_type_t<EigVec> ordered_constrain(const EigVec& x) {
  * @param lp Log probability reference.
  * @return Positive, increasing ordered vector.
  */
-template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
 auto ordered_constrain(const EigVec& x, value_type_t<EigVec>& lp) {
   const auto& x_ref = to_ref(x);
   if (likely(x.size() > 1)) {

@@ -21,7 +21,7 @@ namespace math {
  * @param x Free vector of scalars
  * @return Positive, increasing ordered vector
  */
-template <typename T, require_rev_matrix_t<T>* = nullptr>
+template <typename T, require_rev_col_vector_t<T>* = nullptr>
 inline auto positive_ordered_constrain(const T& x) {
   using ret_type = plain_type_t<T>;
 

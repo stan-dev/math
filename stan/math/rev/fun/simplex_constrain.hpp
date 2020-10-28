@@ -25,7 +25,7 @@ namespace math {
  * @param y Free vector input of dimensionality K - 1
  * @return Simplex of dimensionality K
  */
-template <typename T, require_rev_matrix_t<T>* = nullptr>
+template <typename T, require_rev_col_vector_t<T>* = nullptr>
 inline auto simplex_constrain(const T& y) {
   using ret_type = plain_type_t<T>;
 

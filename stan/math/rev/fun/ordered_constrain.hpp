@@ -21,7 +21,7 @@ namespace math {
  * @param x Free vector of scalars
  * @return Increasing ordered vector
  */
-template <typename T, require_rev_matrix_t<T>* = nullptr>
+template <typename T, require_rev_col_vector_t<T>* = nullptr>
 inline auto ordered_constrain(const T& x) {
   using ret_type = plain_type_t<T>;
 
@@ -69,7 +69,7 @@ inline auto ordered_constrain(const T& x) {
  * @param lp Log probability reference.
  * @return Positive, increasing ordered vector.
  */
-template <typename VarVec, require_var_matrix_t<VarVec>* = nullptr>
+template <typename VarVec, require_var_col_vector_t<VarVec>* = nullptr>
 auto ordered_constrain(const VarVec& x, scalar_type_t<VarVec>& lp) {
   if (x.size() > 1) {
     lp += sum(x.tail(x.size() - 1));

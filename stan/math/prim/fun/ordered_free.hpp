@@ -24,7 +24,7 @@ namespace math {
  * @throw std::domain_error if y is not a vector of positive,
  *   ordered scalars.
  */
-template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
 plain_type_t<EigVec> ordered_free(const EigVec& y) {
   check_ordered("stan::math::ordered_free", "Ordered variable", y);
   using std::log;

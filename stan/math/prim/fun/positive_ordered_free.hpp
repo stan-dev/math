@@ -24,7 +24,7 @@ namespace math {
  * @throw std::domain_error if y is not a vector of positive,
  *   ordered scalars.
  */
-template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
 auto positive_ordered_free(const EigVec& y) {
   using std::log;
   const auto& y_ref = to_ref(y);

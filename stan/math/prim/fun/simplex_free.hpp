@@ -25,7 +25,7 @@ namespace math {
  * the simplex.
  * @throw std::domain_error if x is not a valid simplex
  */
-template <typename Vec, require_eigen_vector_t<Vec>* = nullptr>
+template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr>
 auto simplex_free(const Vec& x) {
   using std::log;
   using T = value_type_t<Vec>;

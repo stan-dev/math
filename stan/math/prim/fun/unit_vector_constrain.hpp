@@ -22,7 +22,7 @@ namespace math {
  * @param y vector of K unrestricted variables
  * @return Unit length vector of dimension K
  */
-template <typename T, require_eigen_t<T>* = nullptr,
+template <typename T, require_eigen_col_vector_t<T>* = nullptr,
           require_not_vt_autodiff<T>* = nullptr>
 inline plain_type_t<T> unit_vector_constrain(const T& y) {
   using std::sqrt;
@@ -45,7 +45,7 @@ inline plain_type_t<T> unit_vector_constrain(const T& y) {
  * @return Unit length vector of dimension K
  * @param lp Log probability reference to increment.
  */
-template <typename T1, typename T2, require_eigen_t<T1>* = nullptr,
+template <typename T1, typename T2, require_eigen_col_vector_t<T1>* = nullptr,
           require_all_not_vt_autodiff<T1, T2>* = nullptr>
 inline plain_type_t<T1> unit_vector_constrain(const T1& y, T2& lp) {
   using std::sqrt;

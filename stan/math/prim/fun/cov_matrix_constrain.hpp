@@ -27,7 +27,7 @@ namespace math {
  * covariance matrix.
  * @throws std::invalid_argument if (x.size() != K + (K choose 2)).
  */
-template <typename T, require_eigen_vector_t<T>* = nullptr>
+template <typename T, require_eigen_col_vector_t<T>* = nullptr>
 Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
 cov_matrix_constrain(const T& x, Eigen::Index K) {
   using Eigen::Dynamic;
@@ -62,7 +62,7 @@ cov_matrix_constrain(const T& x, Eigen::Index K) {
  * @param lp Reference
  * @throws std::domain_error if (x.size() != K + (K choose 2)).
  */
-template <typename T, require_eigen_vector_t<T>* = nullptr>
+template <typename T, require_eigen_col_vector_t<T>* = nullptr>
 Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
 cov_matrix_constrain(const T& x, Eigen::Index K, value_type_t<T>& lp) {
   using Eigen::Dynamic;
