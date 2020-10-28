@@ -85,16 +85,3 @@ TEST(ErrorHandlingScalar, CheckNotNan) {
   EXPECT_THROW(check_not_nan(function, "x", x), std::domain_error)
       << "check_not_nan should throw exception on NaN: " << x;
 }
-
-TEST(ErrorHandlingScalar, CheckNotNaNVectorization) {
-  using stan::math::check_not_nan;
-  const char* function = "check_not_nan";
-  Eigen::MatrixXd m = Eigen::MatrixXd::Constant(3, 2, 0);
-  EXPECT_NO_THROW(
-      check_not_nan(function, "m", std::vector<Eigen::MatrixXd>{m, m, m}));
-  Eigen::MatrixXd m2 = m;
-  m2(1, 1) = stan::math::NOT_A_NUMBER;
-  EXPECT_THROW(
-      check_not_nan(function, "m", std::vector<Eigen::MatrixXd>{m, m2, m}),
-      std::domain_error);
-}

@@ -150,7 +150,9 @@ class append_row_ : public operation_cl<append_row_<T_a, T_b>,
         = this->template get_arg<0>().extreme_diagonals();
     std::pair<int, int> b_diags
         = this->template get_arg<1>().extreme_diagonals();
-    return {b_diags.first - this->template get_arg<0>().rows(), a_diags.second};
+    int my_rows = this->template get_arg<0>().rows();
+    return {std::min(a_diags.first, b_diags.first - my_rows),
+            std::max(a_diags.second, b_diags.second - my_rows)};
   }
 };
 
@@ -297,7 +299,9 @@ class append_col_ : public operation_cl<append_col_<T_a, T_b>,
         = this->template get_arg<0>().extreme_diagonals();
     std::pair<int, int> b_diags
         = this->template get_arg<1>().extreme_diagonals();
-    return {a_diags.first, b_diags.second - this->template get_arg<0>().cols()};
+    int my_cols = this->template get_arg<0>().cols();
+    return {std::min(a_diags.first, b_diags.first + my_cols),
+            std::max(a_diags.second, b_diags.second + my_cols)};
   }
 };
 

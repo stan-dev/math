@@ -14,6 +14,8 @@ TEST(AgradRevMatrix, LDLT_factor_default_constructor) {
   EXPECT_EQ(0U, ldlt_A.rows());
   EXPECT_EQ(0U, ldlt_A.cols());
   EXPECT_NO_THROW(ldlt_A.compute(A));
+
+  stan::math::recover_memory();
 }
 
 TEST(AgradRevMatrix, LDLT_factor_constructor_matrix) {
@@ -33,6 +35,8 @@ TEST(AgradRevMatrix, LDLT_factor_constructor_matrix) {
   EXPECT_EQ(2U, ldlt_A.rows());
   EXPECT_EQ(2U, ldlt_A.cols());
   EXPECT_NO_THROW(ldlt_A.compute(A));
+
+  stan::math::recover_memory();
 }
 
 TEST(AgradRevMatrix, success) {
@@ -48,6 +52,8 @@ TEST(AgradRevMatrix, success) {
   A << 2, 1, 1, 2;
   LDLT_factor<var, -1, -1> ldlt_A2(A);
   EXPECT_TRUE(ldlt_A2.success());
+
+  stan::math::recover_memory();
 }
 
 TEST(AgradRevMatrix, solve) {
@@ -76,6 +82,8 @@ TEST(AgradRevMatrix, solve) {
   for (int i = 0; i < 2; i++)
     for (int j = 0; j < 2; j++)
       EXPECT_FLOAT_EQ(expected_solve(i, j), solve(i, j));
+
+  stan::math::recover_memory();
 }
 
 TEST(AgradRevMatrix, vectorD) {
@@ -97,6 +105,8 @@ TEST(AgradRevMatrix, vectorD) {
   EXPECT_NO_THROW(vectorD = ldlt_A.vectorD());
   for (int i = 0; i < 2; i++)
     EXPECT_FLOAT_EQ(expected_vectorD(i), vectorD(i));
+
+  stan::math::recover_memory();
 }
 
 TEST(AgradRevMatrix, rows) {
@@ -109,6 +119,8 @@ TEST(AgradRevMatrix, rows) {
   LDLT_factor<var, -1, -1> ldlt_A(A);
   ASSERT_TRUE(ldlt_A.success());
   EXPECT_EQ(2U, ldlt_A.rows());
+
+  stan::math::recover_memory();
 }
 
 TEST(AgradRevMatrix, cols) {
@@ -121,6 +133,8 @@ TEST(AgradRevMatrix, cols) {
   LDLT_factor<var, -1, -1> ldlt_A(A);
   ASSERT_TRUE(ldlt_A.success());
   EXPECT_EQ(2U, ldlt_A.cols());
+
+  stan::math::recover_memory();
 }
 
 TEST(AgradRevMatrix, compute) {
@@ -159,4 +173,6 @@ TEST(AgradRevMatrix, compute) {
   A << 1, 2, 2, 3, 3, 4;
   EXPECT_THROW(ldlt_A.compute(A), std::invalid_argument);
   ASSERT_FALSE(ldlt_A.success());
+
+  stan::math::recover_memory();
 }

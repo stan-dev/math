@@ -27,7 +27,7 @@ inline var calc_variance(size_t size, const var* dtrs) {
   Eigen::Map<vector_d>(partials, size) = 2 * diff.array() / size_m1;
   double variance = diff.squaredNorm() / size_m1;
 
-  return var(new stored_gradient_vari(variance, size, varis, partials));
+  return {new stored_gradient_vari(variance, size, varis, partials)};
 }
 
 }  // namespace internal
@@ -42,9 +42,9 @@ inline var calc_variance(size_t size, const var* dtrs) {
 inline var variance(const std::vector<var>& v) {
   check_nonzero_size("variance", "v", v);
   if (v.size() == 1) {
-    return 0;
+    return var{0.0};
   }
-  return internal::calc_variance(v.size(), &v[0]);
+  return {internal::calc_variance(v.size(), &v[0])};
 }
 
 /**
@@ -52,18 +52,19 @@ inline var variance(const std::vector<var>& v) {
  * or matrix.  Raise domain error if size is not greater than
  * zero.
  *
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam EigMat type inheriting from `EigenBase` that has a `var`
+ *  scalar type.
  * @param[in] m input matrix
  * @return sample variance of specified matrix
  */
-template <int R, int C>
-var variance(const Eigen::Matrix<var, R, C>& m) {
-  check_nonzero_size("variance", "m", m);
-  if (m.size() == 1) {
-    return 0;
+template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
+var variance(const EigMat& m) {
+  const auto& mat = to_ref(m);
+  check_nonzero_size("variance", "m", mat);
+  if (mat.size() == 1) {
+    return var{0.0};
   }
-  return internal::calc_variance(m.size(), &m(0));
+  return {internal::calc_variance(mat.size(), mat.data())};
 }
 
 }  // namespace math

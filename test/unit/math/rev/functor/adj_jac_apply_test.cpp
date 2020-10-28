@@ -1,4 +1,4 @@
-#include <stan/math/rev/core.hpp>
+#include <stan/math/rev.hpp>
 #include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
