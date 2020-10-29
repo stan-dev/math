@@ -35,8 +35,7 @@ class load_
   using Scalar = typename std::remove_reference_t<T>::type;
   using base = operation_cl<load_<T>, Scalar>;
   using base::var_name_;
-  static_assert(std::is_base_of<matrix_cl<Scalar>,
-                                typename std::remove_reference_t<T>>::value,
+  static_assert(disjunction<is_matrix_cl<T>, is_arena_matrix_cl<T>>::value,
                 "load_: argument a must be a matrix_cl<T>!");
   static_assert(
       std::is_arithmetic<Scalar>::value,
