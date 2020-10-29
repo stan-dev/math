@@ -45,7 +45,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     Vec vmapped_;
     std::ostream* msgs_;
     std::tuple<Args...> args_tuple_;
-    const bool root_instance_;
+    const std::thread::id main_thread_;
     double sum_{0.0};
     Eigen::VectorXd args_adjoints_{0};
 
@@ -59,7 +59,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           vmapped_(std::forward<VecT>(vmapped)),
           msgs_(msgs),
           args_tuple_(std::forward<ArgsT>(args)...),
-          root_instance_(true) {}
+          main_thread_(std::this_thread::get_id()) {}
 
     /*
      * This is the copy operator as required for tbb::parallel_reduce
@@ -74,7 +74,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           vmapped_(other.vmapped_),
           msgs_(other.msgs_),
           args_tuple_(other.args_tuple_),
-          root_instance_(false) {}
+          main_thread_(other.main_thread_) {}
 
     /**
      * Compute, using nested autodiff, the value and Jacobian of
@@ -106,7 +106,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       std::decay_t<Vec> local_sub_slice(vmapped_.begin() + r.begin(),
                                         vmapped_.begin() + r.end());
 
-      if (root_instance_) {
+      if (main_thread_ == std::this_thread::get_id()) {
         // the root reducer instance can use the input operands given
         // as input to reduce_sum which are stored in the main
         // thread. These need to be zeroed before use.
