@@ -205,7 +205,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
      */
     inline void join(const recursive_reducer& rhs) {
       sum_ += rhs.sum_;
-      args_adjoints_.noalias() += rhs.args_adjoints_;
+      args_adjoints_ += rhs.args_adjoints_;
     }
   };
 
