@@ -148,9 +148,9 @@ TEST(StanMathRev_reduce_sum, grainsize) {
 }
 
 TEST(StanMathRev_reduce_sum, nesting_gradient) {
+  using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::nesting_count_lpdf;
-  using stan::math::var;
 
   double lambda_d = 10.0;
   const std::size_t elems = 10000;
