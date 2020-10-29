@@ -6,7 +6,6 @@
 #include <stan/math/prim/err/check_nonnegative.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
-#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_cl.hpp>
@@ -36,11 +35,14 @@ struct kernel_parts {
   std::string initialization;  // the code for initializations done by all
                                // threads, even if they have no work
   std::string body_prefix;     // the code that should be placed at the start of
-                               // the kernel body
-  std::string body;       // the body of the kernel - code executing operations
-  std::string reduction;  // the code for reductions within work group by all
-                          // threads, even if they have no work
-  std::string args;       // kernel arguments
+                            // the kernel body (before the code for arguments of
+                            // an operation)
+  std::string body;  // the body of the kernel - code executing operations
+  std::string body_suffix;  // the code that should be placed at the end of
+                            // the kernel body
+  std::string reduction;    // the code for reductions within work group by all
+                            // threads, even if they have no work
+  std::string args;         // kernel arguments
 
   kernel_parts operator+(const kernel_parts& other) {
     return {includes + other.includes,
@@ -48,6 +50,7 @@ struct kernel_parts {
             initialization + other.initialization,
             body_prefix + other.body_prefix,
             body + other.body,
+            body_suffix + other.body_suffix,
             reduction + other.reduction,
             args + other.args};
   }
@@ -58,6 +61,7 @@ struct kernel_parts {
     initialization += other.initialization;
     body_prefix += other.body_prefix;
     body += other.body;
+    body_suffix += other.body_suffix;
     reduction += other.reduction;
     args += other.args;
     return *this;

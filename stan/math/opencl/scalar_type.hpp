@@ -11,7 +11,7 @@ namespace stan {
  * Return the scalar type of an OpenCL matrix.
  */
 template <typename T>
-struct scalar_type<T, require_matrix_cl_t<T>> {
+struct scalar_type<T, require_all_kernel_expressions_and_none_scalar_t<T>> {
   using type = typename scalar_type<typename std::decay_t<T>::Scalar>::type;
 };
 }  // namespace stan
