@@ -18,7 +18,7 @@ TEST(ProbDistributionsNegBinomial2, derivatives_lccdf) {
   std::vector<double> gradients;
   val.grad(x, gradients);
 
-  double epsilon = 1e-6;
+  double epsilon = 1e-5;
 
   double grad_diff1 = (neg_binomial_2_lccdf(N, alpha_dbl + epsilon, beta_dbl)
                        - neg_binomial_2_lccdf(N, alpha_dbl - epsilon, beta_dbl))
