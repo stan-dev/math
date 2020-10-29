@@ -140,6 +140,8 @@ TEST(MathPrimScalFun, grad2F1_11) {
   double grad_b1;
   stan::math::grad_2F1(grad_a1, grad_b1, a1, a2, b1, z);
 
-  EXPECT_NEAR(29369830.002773938200417693317785, grad_a1, 1e1); // reference: discrete diff in mathematica 
-  EXPECT_NEAR(-30843032.10697079073015067426929807, grad_b1, 1e-1); // reference: discrete diff in mathematica
+  EXPECT_NEAR(29369830.002773938200417693317785, grad_a1,
+              1e1);  // reference: discrete diff in mathematica
+  EXPECT_NEAR(-30843032.10697079073015067426929807, grad_b1,
+              1e-1);  // reference: discrete diff in mathematica
 }

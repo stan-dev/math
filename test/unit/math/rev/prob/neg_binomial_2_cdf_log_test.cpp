@@ -29,7 +29,6 @@ TEST(ProbDistributionsNegBinomial2, derivatives_lcdf_1) {
                        - neg_binomial_2_lcdf(N, alpha_dbl, beta_dbl - epsilon))
                       / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff2, gradients[1]);
-
 }
 
 TEST(ProbDistributionsNegBinomial2, derivatives_lcdf_2) {
@@ -59,5 +58,4 @@ TEST(ProbDistributionsNegBinomial2, derivatives_lcdf_2) {
                        - neg_binomial_2_lcdf(N, alpha_dbl, beta_dbl - epsilon))
                       / (2 * epsilon);
   EXPECT_NEAR(grad_diff2, gradients[1], 1e-7);
-
 }
