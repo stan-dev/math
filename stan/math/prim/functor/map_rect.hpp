@@ -136,6 +136,11 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
 
   // check size consistency of inputs per job
   const std::vector<int> job_params_dims = dims(job_params);
+
+  if (job_params_dims[0] == 0) {
+    return return_t();
+  }
+
   const int size_job_params = job_params_dims[1];
   const int size_x_r = dims(x_r)[1];
   const int size_x_i = dims(x_i)[1];
@@ -161,10 +166,6 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
                      "size of another array of the "
                      "job specific int data",
                      size_x_i);
-  }
-
-  if (job_params_dims[0] == 0) {
-    return return_t();
   }
 
 #ifdef STAN_MPI
