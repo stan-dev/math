@@ -355,7 +355,7 @@ TEST_F(AgradRev, var_vector_views_const) {
   var_vector_views_const_test<Eigen::RowVectorXd>();
 }
 
-TEST_F(AgradRev, var_matrix_view_block_from_plain) {
+TEST_F(AgradRev, var_matrix_view_block_from_plain_test) {
   using stan::math::sum;
   using stan::math::var_value;
   Eigen::MatrixXd A(4, 4);
