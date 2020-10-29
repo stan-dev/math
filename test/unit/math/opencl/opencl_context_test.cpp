@@ -109,6 +109,7 @@ TEST(opencl_context, switch_devices) {
       EXPECT_MATRIX_EQ(res, correct);
     }
   }
+  stan::math::opencl_context.select_device(OPENCL_PLATFORM_ID, OPENCL_DEVICE_ID);
 }
 
 #endif
