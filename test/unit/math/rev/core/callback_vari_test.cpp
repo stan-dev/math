@@ -2,11 +2,11 @@
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
-TEST(AgradRev, custom_vari_scalar_test) {
+TEST(AgradRev, callback_vari_scalar_test) {
   stan::math::var a = 1;
   stan::math::var b = 1;
 
-  stan::math::var c = stan::math::make_custom_vari(
+  stan::math::var c = stan::math::make_callback_vari(
       a.val() + b.val() + 3,
       [avi = a.vi_, bvi = b.vi_](const auto& vi) mutable {
         avi->adj_ += vi.adj_;
@@ -20,12 +20,12 @@ TEST(AgradRev, custom_vari_scalar_test) {
   EXPECT_EQ(b.adj(), 2);
 }
 
-TEST(AgradRev, custom_vari_eigen_test) {
+TEST(AgradRev, callback_vari_eigen_test) {
   Eigen::MatrixXd val(2, 3);
   val << 1, 2, 3, 4, 5, 6;
   stan::math::var_value<Eigen::MatrixXd> a = val;
 
-  stan::math::var_value<Eigen::MatrixXd> b = stan::math::make_custom_vari(
+  stan::math::var_value<Eigen::MatrixXd> b = stan::math::make_callback_vari(
       (a.val().array() + 1).matrix(),
       [avi = a.vi_](const auto& vi) mutable { avi->adj_ += vi.adj_ * 2; });
   EXPECT_MATRIX_EQ(b.val(), (val.array() + 1).matrix());

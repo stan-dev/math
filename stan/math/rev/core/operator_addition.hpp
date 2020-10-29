@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
-#include <stan/math/rev/core/custom_vari.hpp>
+#include <stan/math/rev/core/callback_vari.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 
 namespace stan {
@@ -48,7 +48,7 @@ namespace math {
  * @return Variable result of adding two variables.
  */
 inline var operator+(const var& a, const var& b) {
-  return make_custom_vari(a.vi_->val_ + b.vi_->val_,
+  return make_callback_vari(a.vi_->val_ + b.vi_->val_,
                           [avi = a.vi_, bvi = b.vi_](const auto& vi) mutable {
                             if (unlikely(std::isnan(vi.val_))) {
                               avi->adj_ = NOT_A_NUMBER;
@@ -77,7 +77,7 @@ inline var operator+(const var& a, Arith b) {
   if (b == 0.0) {
     return a;
   }
-  return make_custom_vari(a.vi_->val_ + b,
+  return make_callback_vari(a.vi_->val_ + b,
                           [avi = a.vi_, b](const auto& vi) mutable {
                             if (unlikely(std::isnan(vi.val_))) {
                               avi->adj_ = NOT_A_NUMBER;

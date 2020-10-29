@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_CORE_CUSTOM_VARI_HPP
-#define STAN_MATH_REV_CORE_CUSTOM_VARI_HPP
+#ifndef STAN_MATH_REV_CORE_callback_vari_HPP
+#define STAN_MATH_REV_CORE_callback_vari_HPP
 
 #include <stan/math/rev/core/vari.hpp>
 #include <utility>
@@ -9,10 +9,10 @@ namespace math {
 namespace internal {
 
 template <typename T, typename F>
-struct custom_vari : public vari_value<T> {
+struct callback_vari : public vari_value<T> {
   F rev_functor_;
 
-  explicit custom_vari(T&& value, F&& rev_functor)
+  explicit callback_vari(T&& value, F&& rev_functor)
       : vari_value<T>(std::move(value)),
         rev_functor_(std::forward<F>(rev_functor)) {}
 
@@ -28,7 +28,7 @@ struct custom_vari : public vari_value<T> {
  * variables it needs.
  *
  * All captured values must be trivially destructible or they will leak memory!
- * `to_AD_stack()` function can be used to ensure that.
+ * `to_arena()` function can be used to ensure that.
  *
  * @tparam T type of value
  * @tparam F type of callable
@@ -36,8 +36,8 @@ struct custom_vari : public vari_value<T> {
  * @param functor funtor or other callable to call in the reverse pass
  */
 template <typename T, typename F>
-internal::custom_vari<plain_type_t<T>, F>* make_custom_vari(T&& value, F&& functor) {
-  return new internal::custom_vari<plain_type_t<T>, F>(std::move(value),
+internal::callback_vari<plain_type_t<T>, F>* make_callback_vari(T&& value, F&& functor) {
+  return new internal::callback_vari<plain_type_t<T>, F>(std::move(value),
                                          std::forward<F>(functor));
 }
 
