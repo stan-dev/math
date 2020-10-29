@@ -134,8 +134,10 @@ TEST(ProbDistributionsBeta, opencl_broadcast_y) {
   auto beta_var1_cl = stan::math::to_matrix_cl(beta_var1);
   auto beta_var2_cl = stan::math::to_matrix_cl(beta_var2);
 
-  stan::math::var res1 = stan::math::beta_lpdf(y_var1, alpha_var1_cl, beta_var1_cl);
-  stan::math::var res2 = stan::math::beta_lpdf(y_var_vec_cl, alpha_var2_cl, beta_var2_cl);
+  stan::math::var res1
+      = stan::math::beta_lpdf(y_var1, alpha_var1_cl, beta_var1_cl);
+  stan::math::var res2
+      = stan::math::beta_lpdf(y_var_vec_cl, alpha_var2_cl, beta_var2_cl);
 
   (res1 + res2).grad();
 
@@ -180,8 +182,10 @@ TEST(ProbDistributionsBeta, opencl_broadcast_alpha) {
   auto beta_var1_cl = stan::math::to_matrix_cl(beta_var1);
   auto beta_var2_cl = stan::math::to_matrix_cl(beta_var2);
 
-  stan::math::var res1 = stan::math::beta_lpdf(y_var1_cl, alpha_var1, beta_var1_cl);
-  stan::math::var res2 = stan::math::beta_lpdf(y_var2_cl, alpha_var_vec_cl, beta_var2_cl);
+  stan::math::var res1
+      = stan::math::beta_lpdf(y_var1_cl, alpha_var1, beta_var1_cl);
+  stan::math::var res2
+      = stan::math::beta_lpdf(y_var2_cl, alpha_var_vec_cl, beta_var2_cl);
 
   (res1 + res2).grad();
 
@@ -226,8 +230,10 @@ TEST(ProbDistributionsBeta, opencl_broadcast_beta) {
   auto alpha_var2_cl = stan::math::to_matrix_cl(alpha_var2);
   auto beta_var_vec_cl = stan::math::to_matrix_cl(beta_var_vec);
 
-  stan::math::var res1 = stan::math::beta_lpdf(y_var1_cl, alpha_var1_cl, beta_var1);
-  stan::math::var res2 = stan::math::beta_lpdf(y_var2_cl, alpha_var2_cl, beta_var_vec_cl);
+  stan::math::var res1
+      = stan::math::beta_lpdf(y_var1_cl, alpha_var1_cl, beta_var1);
+  stan::math::var res2
+      = stan::math::beta_lpdf(y_var2_cl, alpha_var2_cl, beta_var_vec_cl);
 
   (res1 + res2).grad();
 
@@ -248,8 +254,10 @@ TEST(ProbDistributionsBeta, opencl_matches_cpu_big) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> beta
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
 
-  stan::math::test::compare_cpu_opencl_prim_rev(beta_lpdf_functor, y, alpha, beta);
-  stan::math::test::compare_cpu_opencl_prim_rev(beta_lpdf_functor_propto, y, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(beta_lpdf_functor, y, alpha,
+                                                beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(beta_lpdf_functor_propto, y,
+                                                alpha, beta);
 }
 
 #endif
