@@ -26,7 +26,8 @@ struct is_rev_matrix<
  * Defines a static member named value which is defined to be true
  * if the type is either a type derived from `Eigen::EigenBase` with a `Scalar`
  *  type of `var_value<double>` or a `var_value<T>` where T is derived from
- * `Eigen::EigenBase`
+ * `Eigen::EigenBase`. And the type must have a compile time constant number
+ *  of columns equal to 1.
  */
 template <typename T>
 struct is_rev_col_vector<
@@ -39,7 +40,8 @@ struct is_rev_col_vector<
  * Defines a static member named value which is defined to be true
  * if the type is either a type derived from `Eigen::EigenBase` with a `Scalar`
  *  type of `var_value<double>` or a `var_value<T>` where T is derived from
- * `Eigen::EigenBase`
+ * `Eigen::EigenBase`. And the type must have a compile time constant number
+ *  of rows equal to 1.
  */
 template <typename T>
 struct is_rev_row_vector<
@@ -52,7 +54,8 @@ struct is_rev_row_vector<
  * Defines a static member named value which is defined to be true
  * if the type is either a type derived from `Eigen::EigenBase` with a `Scalar`
  *  type of `var_value<double>` or a `var_value<T>` where T is derived from
- * `Eigen::EigenBase`
+ * `Eigen::EigenBase`. And the type must have a compile time constant number
+ *  of rows equal to 1.
  */
 template <typename T>
 struct is_rev_vector<T,
