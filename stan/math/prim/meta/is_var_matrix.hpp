@@ -5,6 +5,7 @@
 #include <stan/math/prim/meta/disjunction.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_vector.hpp>
 
 namespace stan {
 /**
