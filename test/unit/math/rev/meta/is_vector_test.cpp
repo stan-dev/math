@@ -2,7 +2,6 @@
 #include <stan/math/rev/core.hpp>
 #include <gtest/gtest.h>
 
-
 TEST(MetaTraitsRevScal, is_col_vector_test) {
   using stan::is_col_vector;
   using stan::math::var;
@@ -13,7 +12,8 @@ TEST(MetaTraitsRevScal, is_col_vector_test) {
   EXPECT_TRUE((is_col_vector<Eigen::Matrix<var, -1, 1>>::value));
   EXPECT_TRUE((is_col_vector<Eigen::Matrix<var_value<float>, -1, 1>>::value));
   EXPECT_FALSE((is_col_vector<var_value<Eigen::Matrix<double, 1, -1>>>::value));
-  EXPECT_FALSE((is_col_vector<var_value<Eigen::Matrix<double, -1, -1>>>::value));
+  EXPECT_FALSE(
+      (is_col_vector<var_value<Eigen::Matrix<double, -1, -1>>>::value));
   EXPECT_FALSE((is_col_vector<Eigen::Matrix<var, -1, -1>>::value));
   EXPECT_FALSE((is_col_vector<Eigen::Matrix<var, 1, -1>>::value));
   EXPECT_FALSE((is_col_vector<Eigen::Matrix<var_value<float>, -1, -1>>::value));
@@ -36,7 +36,8 @@ TEST(MetaTraitsRevScal, is_row_vector_test) {
   EXPECT_TRUE((is_row_vector<Eigen::Matrix<var_value<float>, 1, -1>>::value));
   EXPECT_FALSE((is_row_vector<Eigen::Matrix<var_value<float>, -1, 1>>::value));
   EXPECT_FALSE((is_row_vector<var_value<Eigen::Matrix<double, -1, 1>>>::value));
-  EXPECT_FALSE((is_row_vector<var_value<Eigen::Matrix<double, -1, -1>>>::value));
+  EXPECT_FALSE(
+      (is_row_vector<var_value<Eigen::Matrix<double, -1, -1>>>::value));
   EXPECT_FALSE((is_row_vector<Eigen::Matrix<var, -1, 1>>::value));
   EXPECT_FALSE((is_row_vector<Eigen::Matrix<var, -1, -1>>::value));
   EXPECT_FALSE((is_row_vector<Eigen::Matrix<var_value<float>, -1, -1>>::value));
