@@ -118,10 +118,10 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
       // first save current adjoints of sliced argument (which we
       // restore later) and set these to zero
-      Eigen::VectorXd adjoints_sub_slice(r.size() * num_vars_per_term_);
+      Eigen::VectorXd backup_sub_slice_adjoints(r.size() * num_vars_per_term_);
       for (std::size_t i = 0; i < r.size() * num_vars_per_term_; ++i) {
         std::size_t term = r.begin() * num_vars_per_term_ + i;
-        adjoints_sub_slice(i) = varis_[term]->adj_;
+        backup_sub_slice_adjoints.coeffRef(i) = varis_[term]->adj_;
         varis_[term]->adj_ = 0.0;
       }
 
@@ -191,9 +191,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
       // Accumulate adjoints of sliced_arguments and restore adjoint
       for (std::size_t i = 0; i < r.size() * num_vars_per_term_; ++i) {
-        std::size_t term = r.begin() * num_vars_per_term_ + i;
+        const std::size_t term = r.begin() * num_vars_per_term_ + i;
         partials_[term] = varis_[term]->adj_;
-        varis_[term]->adj_ = adjoints_sub_slice(i);
+        varis_[term]->adj_ = backup_sub_slice_adjoints.coeff(i);
       }
     }
 
@@ -269,10 +269,11 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     save_varis(varis, vmapped);
     save_varis(varis + num_vars_sliced_terms, args...);
 
-    Eigen::VectorXd shared_terms_adjoints(num_vars_shared_terms);
+    Eigen::VectorXd backup_shared_terms_adjoints(num_vars_shared_terms);
 
     for (size_t i = 0; i < num_vars_shared_terms; ++i) {
-      shared_terms_adjoints(i) = varis[num_vars_sliced_terms + i]->adj_;
+      backup_shared_terms_adjoints.coeffRef(i)
+          = varis[num_vars_sliced_terms + i]->adj_;
     }
 
     recursive_reducer worker(num_vars_per_term, num_vars_shared_terms, varis,
@@ -290,7 +291,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     }
 
     for (size_t i = 0; i < num_vars_shared_terms; ++i) {
-      varis[num_vars_sliced_terms + i]->adj_ = shared_terms_adjoints(i);
+      varis[num_vars_sliced_terms + i]->adj_
+          = backup_shared_terms_adjoints.coeff(i);
     }
 
     return var(new precomputed_gradients_vari(
