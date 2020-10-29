@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_CORE_callback_vari_HPP
-#define STAN_MATH_REV_CORE_callback_vari_HPP
+#ifndef STAN_MATH_REV_CORE_CALLBACK_VARI_HPP
+#define STAN_MATH_REV_CORE_CALLBACK_VARI_HPP
 
 #include <stan/math/rev/core/vari.hpp>
 #include <utility>
