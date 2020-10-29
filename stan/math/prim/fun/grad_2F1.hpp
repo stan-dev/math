@@ -88,7 +88,8 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
     g_a1 += log_g_old_sign[0] > 0 ? exp(log_g_old[0]) : -exp(log_g_old[0]);
     g_b1 += log_g_old_sign[1] > 0 ? exp(log_g_old[1]) : -exp(log_g_old[1]);
 
-    if (log_t_new <= std::max(value_of(log_t_new) + log_precision, log_precision)) {
+    if (log_t_new
+        <= std::max(value_of(log_t_new) + log_precision, log_precision)) {
       return;
     }
 
