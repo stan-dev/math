@@ -36,7 +36,7 @@ namespace math {
  */
 template <typename T>
 void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
-              const T& z, const T& precision = 1e-10, int max_steps = 1e5) {
+              const T& z, const T& precision = 1e-10, int max_steps = 1e6) {
   check_2F1_converges("grad_2F1", a1, a2, b1, z);
 
   using std::exp;
@@ -56,6 +56,7 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
 
   T log_z = log(z);
 
+  double log_precision = log(precision);
   double log_t_new_sign = 1.0;
   double log_t_old_sign = 1.0;
   double log_g_old_sign[2];
@@ -85,8 +86,8 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
     g_a1 += log_g_old_sign[0] > 0 ? exp(log_g_old[0]) : -exp(log_g_old[0]);
     g_b1 += log_g_old_sign[1] > 0 ? exp(log_g_old[1]) : -exp(log_g_old[1]);
 
-    if (log_t_new <= log(precision)) {
-      return;  // implicit abs
+    if (log_t_new <= std::max(log_t_new + log_precision, log_precision)) {
+      return;
     }
 
     log_t_old = log_t_new;
