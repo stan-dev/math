@@ -146,11 +146,11 @@ TEST(StanMathRev_reduce_sum, grainsize) {
 
   stan::math::recover_memory();
 }
-/*
+
 TEST(StanMathRev_reduce_sum, nesting_gradient) {
-  using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::nesting_count_lpdf;
+  using stan::math::var;
 
   double lambda_d = 10.0;
   const std::size_t elems = 10000;
@@ -196,7 +196,7 @@ TEST(StanMathRev_reduce_sum, nesting_gradient) {
   EXPECT_FLOAT_EQ(lambda_adj_static, lambda_ref_adj);
   stan::math::recover_memory();
 }
-*/
+
 TEST(StanMathRev_reduce_sum, grouped_gradient) {
   using stan::math::test::get_new_msg;
   using stan::math::test::grouped_count_lpdf;

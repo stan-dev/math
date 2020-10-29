@@ -4,8 +4,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/functor.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/core/zero_adjoints.hpp>
-#include <tbb/task_arena.h>
 #include <tbb/parallel_reduce.h>
 #include <tbb/blocked_range.h>
 
@@ -133,7 +131,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         // stored in the main thread. These need to be zeroed before
         // use.
 
-        apply([&](auto&&... args) { zero_adjoints(args...); }, args_tuple_);
+        for (std::size_t i = 0; i < num_vars_shared_terms_; ++i) {
+          varis_[vmapped_.size() * num_vars_per_term_ + i]->adj_ = 0.0;
+        }
 
         // Perform calculation
         var sub_sum_v = apply(
