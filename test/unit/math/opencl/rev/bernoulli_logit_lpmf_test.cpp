@@ -41,9 +41,10 @@ TEST(ProbDistributionsBernoulliLogit, error_checking) {
 auto bernoulli_logit_lpmf_functor = [](const auto& n, const auto& theta) {
   return stan::math::bernoulli_logit_lpmf(n, theta);
 };
-auto bernoulli_logit_lpmf_functor_propto = [](const auto& n, const auto& theta) {
-  return stan::math::bernoulli_logit_lpmf<true>(n, theta);
-};
+auto bernoulli_logit_lpmf_functor_propto
+    = [](const auto& n, const auto& theta) {
+        return stan::math::bernoulli_logit_lpmf<true>(n, theta);
+      };
 
 TEST(ProbDistributionsBernoulliLogit, opencl_matches_cpu_small) {
   int N = 3;
@@ -55,8 +56,8 @@ TEST(ProbDistributionsBernoulliLogit, opencl_matches_cpu_small) {
 
   stan::math::test::compare_cpu_opencl_prim_rev(bernoulli_logit_lpmf_functor, n,
                                                 theta);
-  stan::math::test::compare_cpu_opencl_prim_rev(bernoulli_logit_lpmf_functor_propto,
-                                                n, theta);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      bernoulli_logit_lpmf_functor_propto, n, theta);
 }
 
 TEST(ProbDistributionsBernoulliLogit, opencl_broadcast_n) {
@@ -81,7 +82,8 @@ TEST(ProbDistributionsBernoulliLogit, opencl_broadcast_n) {
   auto theta_var2_cl = stan::math::to_matrix_cl(theta_var2);
 
   stan::math::var res1 = stan::math::bernoulli_logit_lpmf(n, theta_var1_cl);
-  stan::math::var res2 = stan::math::bernoulli_logit_lpmf(n_vec_cl, theta_var2_cl);
+  stan::math::var res2
+      = stan::math::bernoulli_logit_lpmf(n_vec_cl, theta_var2_cl);
 
   (res1 + res2).grad();
 
@@ -134,8 +136,8 @@ TEST(ProbDistributionsBernoulliLogit, opencl_matches_cpu_big) {
 
   stan::math::test::compare_cpu_opencl_prim_rev(bernoulli_logit_lpmf_functor, n,
                                                 theta);
-  stan::math::test::compare_cpu_opencl_prim_rev(bernoulli_logit_lpmf_functor_propto,
-                                                n, theta);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      bernoulli_logit_lpmf_functor_propto, n, theta);
 }
 
 #endif
