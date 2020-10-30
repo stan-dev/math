@@ -97,59 +97,6 @@ inline return_type_t<EigMat1, EigMat2> trace_quad_form(const EigMat1& A,
 /**
  * Compute trace(B^T A B).
  *
- * This overload handles combinations of
- *  `Eigen::Matrix<var_value<double>, R, C>` and
- *  `var_value<Eigen::Matrix<double, R, C>` and
- *  copies the `Eigen::Matrix<var_value<double>, R, C>` argument
- *  to a `var_value<Eigen::Matrix<double, R, C>`.
- *
- * @tparam Mat1 type of the first matrix
- * @tparam Mat2 type of the second matrix
- *
- * @param A matrix
- * @param B matrix
- * @return The trace of B^T A B
- * @throw std::domain_error if A is not square
- * @throw std::domain_error if A cannot be multiplied by B
- */
-template <typename Mat1, typename Mat2,
-          require_var_matrix_t<Mat1>* = nullptr,
-          require_eigen_st<is_var, Mat2>* = nullptr>
-inline var trace_quad_form(const Mat1& A, const Mat2& B) {
-  return trace_quad_form(A, to_var_value(B));
-}
-
-/**
- * Compute trace(B^T A B).
- *
- * This overload handles combinations of
- *  `Eigen::Matrix<var_value<double>, R, C>` and
- *  `var_value<Eigen::Matrix<double, R, C>` and
- *  copies the `Eigen::Matrix<var_value<double>, R, C>` argument
- *  to a `var_value<Eigen::Matrix<double, R, C>`.
- *
- * @tparam Mat1 type of the first matrix
- * @tparam Mat2 type of the second matrix
- *
- * @param A matrix
- * @param B matrix
- * @return The trace of B^T A B
- * @throw std::domain_error if A is not square
- * @throw std::domain_error if A cannot be multiplied by B
- */
-template <typename Mat1, typename Mat2,
-          require_eigen_st<is_var, Mat1>* = nullptr,
-          require_var_matrix_t<Mat2>* = nullptr>
-inline var trace_quad_form(const Mat1& A, const Mat2& B) {
-  return trace_quad_form(to_var_value(A), B);
-}
-
-/**
- * Compute trace(B^T A B).
- *
- * This overload works with `var_value<Eigen::Matrix<double, R, C>>` types and
- *   `Eigen::Matrix<double, R, C>` types
- *
  * @tparam Mat1 type of the first matrix
  * @tparam Mat2 type of the second matrix
  *
@@ -161,14 +108,13 @@ inline var trace_quad_form(const Mat1& A, const Mat2& B) {
  */
 template <typename Mat1, typename Mat2,
           require_all_matrix_t<Mat1, Mat2>* = nullptr,
-          require_any_var_matrix_t<Mat1, Mat2>* = nullptr,
-	  require_all_not_eigen_st<is_var, Mat1, Mat2>* = nullptr>
+          require_any_var_matrix_t<Mat1, Mat2>* = nullptr>
 inline var trace_quad_form(const Mat1& A, const Mat2& B) {
   check_square("trace_quad_form", "A", A);
   check_multiplicable("trace_quad_form", "A", A, "B", B);
 
-  arena_t<Mat1> arena_A = A;
-  arena_t<Mat2> arena_B = B;
+  auto arena_A = to_arena(to_var_value_if<!is_constant<Mat1>::value>(A));
+  auto arena_B = to_arena(to_var_value_if<!is_constant<Mat2>::value>(B));
 
   var res
       = (value_of(arena_B).transpose() * value_of(arena_A) * value_of(arena_B))
@@ -176,11 +122,11 @@ inline var trace_quad_form(const Mat1& A, const Mat2& B) {
 
   reverse_pass_callback([arena_A, arena_B, res]() mutable {
     if (!is_constant<Mat1>::value)
-      forward_as<promote_scalar_t<var, Mat1>>(arena_A).adj()
+      forward_as<promote_var_matrix_t<Mat1, Mat1, Mat2>>(arena_A).adj()
           += res.adj() * value_of(arena_B) * value_of(arena_B).transpose();
 
     if (!is_constant<Mat2>::value)
-      forward_as<promote_scalar_t<var, Mat2>>(arena_B).adj()
+      forward_as<promote_var_matrix_t<Mat2, Mat1, Mat2>>(arena_B).adj()
           += res.adj() * (value_of(arena_A) + value_of(arena_A).transpose())
              * value_of(arena_B);
   });
