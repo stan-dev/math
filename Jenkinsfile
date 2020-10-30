@@ -346,7 +346,7 @@ pipeline {
                 //         runTestsWin("test/unit", false, true)
                 //     }
                 // }
-            }
+            //}
         }
         stage('Additional merge tests') {
             when {
