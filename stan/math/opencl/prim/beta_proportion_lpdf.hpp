@@ -1,0 +1,115 @@
+#ifndef STAN_MATH_OPENCL_PRIM_BETA_PROPORTION_LPDF_HPP
+#define STAN_MATH_OPENCL_PRIM_BETA_PROPORTION_LPDF_HPP
+#ifdef STAN_OPENCL
+
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
+#include <stan/math/prim/fun/log1p.hpp>
+#include <stan/math/opencl/kernel_generator.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
+
+namespace stan {
+namespace math {
+
+/** \ingroup opencl
+ * Returns the log PMF of the Bernoulli distribution. If containers are
+ * supplied, returns the log sum of the probabilities.
+ *
+ * @tparam T_n_cl type of integer parameters
+ * @tparam T_prob_cl type of chance of success parameters
+ * @param n integer parameter
+ * @param theta chance of success parameter
+ * @return log probability or log sum of probabilities
+ * @throw std::domain_error if theta is not a valid probability
+ * @throw std::invalid_argument if container sizes mismatch.
+ */
+template <bool propto, typename T_y_cl, typename T_loc_cl,
+          typename T_prec_cl, require_all_prim_or_rev_kernel_expression_t<
+              T_y_cl, T_loc_cl, T_prec_cl>* = nullptr,
+          require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_prec_cl>* = nullptr>
+return_type_t<T_y_cl, T_loc_cl, T_prec_cl> beta_proportion_lpdf(
+    const T_y_cl& y, const T_loc_cl& mu, const T_prec_cl& kappa) {
+  static const char* function = "beta_proportion_lpdf(OpenCL)";
+  using T_partials_return = partials_return_t<T_y_cl, T_loc_cl, T_prec_cl>;
+  using std::isfinite;
+
+  check_consistent_sizes(function, "Random variable", y, "Location parameter",
+                         mu, "Precision parameter", kappa);
+  const size_t N = max_size(y, mu, kappa);
+  if (N == 0) {
+    return 0.0;
+  }
+  if (!include_summand<propto, T_y_cl, T_loc_cl, T_prec_cl>::value) {
+    return 0.0;
+  }
+
+  const auto& y_val = value_of(y);
+  const auto& mu_val = value_of(mu);
+  const auto& kappa_val = value_of(kappa);
+
+  auto check_y_bounded
+      = check_cl(function, "Random variable", y_val, "in the interval [0, 1]");
+  auto y_bounded_expr = 0 <= y_val && y_val <= 1;
+  auto check_mu_bounded = check_cl(function, "Location parameter", mu_val,
+                                   "in the interval (0, 1)");
+  auto mu_bounded_expr = 0 < mu_val && mu_val < 1;
+  auto check_kappa_positive_finite = check_cl(
+      function, "Precision parameter", kappa_val, "in the interval [0, 1]");
+  auto kappa_positive_finite = 0 < kappa_val && isfinite(kappa_val);
+
+  auto log_y_expr = log(y_val);
+  auto log1m_y_expr = log1p(-y_val);
+  auto mukappa_expr = elt_multiply(mu_val, kappa_val);
+  auto logp_expr = colwise_sum(
+      elt_multiply(mukappa_expr - 1, log_y_expr)
+      + elt_multiply(kappa_val - mukappa_expr - 1, log1m_y_expr)
+      + static_select<include_summand<propto, T_prec_cl>::value>(lgamma(kappa_val),
+                                                              0)
+      - static_select<include_summand<propto, T_loc_cl, T_prec_cl>::value>(
+          lgamma(mukappa_expr) + lgamma(kappa_val - mukappa_expr), 0));
+  auto y_deriv_expr = elt_divide(mukappa_expr - 1, y_val)
+                      + elt_divide(kappa_val - mukappa_expr - 1, y_val - 1);
+  auto digamma_mukappa_expr = digamma(mukappa_expr);
+  auto digamma_kappa_mukappa_expr = digamma(kappa_val - mukappa_expr);
+  auto mu_deriv_expr = elt_multiply(
+      kappa_val, digamma_kappa_mukappa_expr - digamma_mukappa_expr + log_y_expr
+                     - log1m_y_expr);
+  auto kappa_deriv_expr
+      = digamma(kappa_val)
+        + elt_multiply(mu_val, log_y_expr - digamma_mukappa_expr)
+        + elt_multiply(1 - mu_val, log1m_y_expr - digamma_kappa_mukappa_expr);
+
+  matrix_cl<double> logp_cl;
+  matrix_cl<double> y_deriv_cl;
+  matrix_cl<double> mu_deriv_cl;
+  matrix_cl<double> kappa_deriv_cl;
+
+  results(check_y_bounded, check_mu_bounded, check_kappa_positive_finite,
+          logp_cl, y_deriv_cl, mu_deriv_cl, kappa_deriv_cl)
+      = expressions(y_bounded_expr, mu_bounded_expr, kappa_positive_finite,
+                logp_expr, calc_if<!is_constant<T_y_cl>::value>(y_deriv_expr),
+                calc_if<!is_constant<T_loc_cl>::value>(mu_deriv_expr),
+                calc_if<!is_constant<T_prec_cl>::value>(kappa_deriv_expr));
+
+  T_partials_return logp = sum(from_matrix_cl(logp_cl));
+
+  operands_and_partials<T_y_cl, T_loc_cl, T_prec_cl> ops_partials(y, mu, kappa);
+  if (!is_constant<T_y_cl>::value) {
+    ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
+  }
+  if (!is_constant<T_loc_cl>::value) {
+    ops_partials.edge2_.partials_ = std::move(mu_deriv_cl);
+  }
+  if (!is_constant<T_prec_cl>::value) {
+    ops_partials.edge3_.partials_ = std::move(kappa_deriv_cl);
+  }
+
+  return ops_partials.build(logp);
+}
+
+}  // namespace math
+}  // namespace stan
+#endif
+#endif
