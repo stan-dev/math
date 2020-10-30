@@ -36,7 +36,8 @@ auto elt_divide(const Mat1& m1, const Mat2& m2) {
       for (Eigen::Index i = 0; i < arena_m2.size(); ++i) {
         const auto ret_adj = ret.adj().coeffRef(i);
         arena_m1.adj().coeffRef(i) += ret_adj / arena_m2.val().coeff(i);
-        arena_m2.adj().coeffRef(i) -= ret.val().coeff(i) * ret_adj / arena_m2.val().coeff(i);
+        arena_m2.adj().coeffRef(i)
+            -= ret.val().coeff(i) * ret_adj / arena_m2.val().coeff(i);
       }
     });
     return ret_type(ret);
@@ -54,7 +55,8 @@ auto elt_divide(const Mat1& m1, const Mat2& m2) {
     arena_t<promote_scalar_t<var, Mat2>> arena_m2 = m2;
     arena_t<ret_type> ret(arena_m1.array() / arena_m2.val().array());
     reverse_pass_callback([ret, arena_m2, arena_m1]() mutable {
-      arena_m2.adj().array() -= ret.val().array() * ret.adj().array() / arena_m2.val().array();
+      arena_m2.adj().array()
+          -= ret.val().array() * ret.adj().array() / arena_m2.val().array();
     });
     return ret_type(ret);
   }
@@ -71,17 +73,15 @@ auto elt_divide(const Mat1& m1, const Mat2& m2) {
  * @param m matrix or expression
  * @return Elementwise division of a scalar by matrix.
  */
-template <typename Scal, typename Mat,
-	  require_stan_scalar_t<Scal>* = nullptr,
-          require_var_matrix_t<Mat> * = nullptr>
+template <typename Scal, typename Mat, require_stan_scalar_t<Scal>* = nullptr,
+          require_var_matrix_t<Mat>* = nullptr>
 auto elt_divide(Scal s, const Mat& m) {
   Mat res = value_of(s) / m.val().array();
 
   reverse_pass_callback([m, s, res]() mutable {
     m.adj().array() -= res.val().array() * res.adj().array() / m.val().array();
     if (!is_constant<Scal>::value)
-      forward_as<var>(s).adj()
-	+= (res.adj().array() / m.val().array()).sum();
+      forward_as<var>(s).adj() += (res.adj().array() / m.val().array()).sum();
   });
 
   return res;

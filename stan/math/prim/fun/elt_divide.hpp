@@ -20,7 +20,7 @@ namespace math {
  */
 template <typename Mat1, typename Mat2,
           require_all_eigen_t<Mat1, Mat2>* = nullptr,
-	  require_all_not_st_var<Mat1, Mat2>* = nullptr>
+          require_all_not_st_var<Mat1, Mat2>* = nullptr>
 auto elt_divide(const Mat1& m1, const Mat2& m2) {
   check_matching_dims("elt_divide", "m1", m1, "m2", m2);
   return (m1.array() / m2.array()).matrix().eval();
@@ -37,8 +37,7 @@ auto elt_divide(const Mat1& m1, const Mat2& m2) {
  * @param s scalar
  * @return Elementwise division of a scalar by matrix.
  */
-template <typename Mat, typename Scal,
-	  typename = require_matrix_t<Mat>,
+template <typename Mat, typename Scal, typename = require_matrix_t<Mat>,
           typename = require_stan_scalar_t<Scal>>
 auto elt_divide(const Mat& m, Scal s) {
   return divide(m, s);
