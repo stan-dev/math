@@ -199,6 +199,7 @@
 #include <stan/math/prim/meta/is_eigen_matrix_base.hpp>
 #include <stan/math/prim/meta/is_eigen_sparse_base.hpp>
 #include <stan/math/prim/meta/is_fvar.hpp>
+#include <stan/math/prim/meta/is_kernel_expression.hpp>
 #include <stan/math/prim/meta/is_matrix_cl.hpp>
 #include <stan/math/prim/meta/is_matrix.hpp>
 #include <stan/math/prim/meta/is_plain_type.hpp>
