@@ -125,7 +125,7 @@ inline auto quad_form_impl(const Mat1& A, const Mat2& B, bool symmetric) {
 
   auto arena_A = to_arena(to_var_value_if<!is_constant<Mat1>::value>(A));
   auto arena_B = to_arena(to_var_value_if<!is_constant<Mat2>::value>(B));
-  
+
   check_not_nan("multiply", "A", value_of(arena_A));
   check_not_nan("multiply", "B", value_of(arena_B));
 

@@ -6,15 +6,15 @@ TEST(AgradRevMatrix, to_var_value_types) {
   using stan::math::to_var_value;
   using stan::math::var;
   using stan::math::var_value;
-  
+
   using mat_var = Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>;
   using vec_var = Eigen::Matrix<var, Eigen::Dynamic, 1>;
   using row_vec_var = Eigen::Matrix<var, 1, Eigen::Dynamic>;
-  
+
   using var_mat = var_value<Eigen::MatrixXd>;
   using var_vec = var_value<Eigen::VectorXd>;
   using var_row_vec = var_value<Eigen::RowVectorXd>;
-  
+
   var a = 2.0;
   mat_var b = Eigen::MatrixXd(2, 2);
   vec_var c = Eigen::VectorXd(2);
@@ -32,7 +32,7 @@ TEST(AgradRevMatrix, to_var_value_types) {
   auto ev = to_var_value(e);
   auto fv = to_var_value(f);
   auto gv = to_var_value(g);
-  
+
   test::expect_same_type<var, decltype(av)>();
   test::expect_same_type<var_mat, decltype(bv)>();
   test::expect_same_type<var_vec, decltype(cv)>();
@@ -49,11 +49,11 @@ TEST(AgradRevMatrix, to_var_value_if_types) {
   using stan::math::to_var_value_if;
   using stan::math::var;
   using stan::math::var_value;
-  
+
   using mat_var = Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>;
   using vec_var = Eigen::Matrix<var, Eigen::Dynamic, 1>;
   using row_vec_var = Eigen::Matrix<var, 1, Eigen::Dynamic>;
-  
+
   using var_mat = var_value<Eigen::MatrixXd>;
   using var_vec = var_value<Eigen::VectorXd>;
   using var_row_vec = var_value<Eigen::RowVectorXd>;
