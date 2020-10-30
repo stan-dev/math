@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_META_STATIC_SELECT_HPP
 
 #include <type_traits>
+#include <utility>
 
 namespace stan {
 namespace math {
