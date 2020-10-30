@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/to_var_value.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/quad_form.hpp>
@@ -122,9 +123,9 @@ inline auto quad_form_impl(const Mat1& A, const Mat2& B, bool symmetric) {
                                       * value_of(A) * value_of(B).eval()),
                              Mat1, Mat2>;
 
-  auto arena_A = to_arena(A);
-  auto arena_B = to_arena(B);
-
+  auto arena_A = to_arena(to_var_value_if<!is_constant<Mat1>::value>(A));
+  auto arena_B = to_arena(to_var_value_if<!is_constant<Mat2>::value>(B));
+  
   check_not_nan("multiply", "A", value_of(arena_A));
   check_not_nan("multiply", "B", value_of(arena_B));
 
@@ -141,11 +142,11 @@ inline auto quad_form_impl(const Mat1& A, const Mat2& B, bool symmetric) {
     auto C_adj_B_t = (res.adj() * value_of(arena_B).transpose()).eval();
 
     if (!is_constant<Mat1>::value)
-      forward_as<promote_scalar_t<var, Mat1>>(arena_A).adj()
+      forward_as<promote_var_matrix_t<Mat1, Mat1, Mat2>>(arena_A).adj()
           += value_of(arena_B) * C_adj_B_t;
 
     if (!is_constant<Mat2>::value)
-      forward_as<promote_scalar_t<var, Mat2>>(arena_B).adj()
+      forward_as<promote_var_matrix_t<Mat2, Mat1, Mat2>>(arena_B).adj()
           += value_of(arena_A) * C_adj_B_t.transpose()
              + value_of(arena_A).transpose() * value_of(arena_B) * res.adj();
   });

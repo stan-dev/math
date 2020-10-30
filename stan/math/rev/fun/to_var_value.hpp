@@ -27,6 +27,35 @@ to_var_value(const T& a) {
   return res;
 }
 
+/**
+ * Forward var_values on.
+ *
+ * @tparam T type of the input
+ * @param a matrix to convert
+ */
+template <typename T, require_var_t<T>* = nullptr>
+auto to_var_value(T&& a) {
+  return std::forward<T>(a);
+}
+
+/**
+ * If the condition is true, calls `to_var_value` on the argument, otherwise
+ * forward the argument through.
+ *
+ * @tparam T type of argument
+ * @param a argument
+ * @return argument copied/evaluated on AD stack
+ */
+template <bool Condition, typename T, std::enable_if_t<!Condition>* = nullptr>
+inline auto to_var_value_if(T&& a) {
+  return std::forward<T>(a);
+}
+
+template <bool Condition, typename T, std::enable_if_t<Condition>* = nullptr>
+inline auto to_var_value_if(const T& a) {
+  return to_var_value(a);
+}
+
 }  // namespace math
 }  // namespace stan
 
