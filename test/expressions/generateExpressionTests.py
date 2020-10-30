@@ -176,7 +176,7 @@ special_arg_values = {
     "lkj_corr_lpdf": [1, None],
     "lkj_corr_log": [1, None],
     "log_diff_exp": [3, None],
-    "log_inv_logit_diff": [1.2, 0.4],  
+    "log_inv_logit_diff": [1.2, 0.4],
     "multinomial_log" : [None, 1],
     "multinomial_lpmf" : [None, 1],
     "multinomial_rng" : [1, None, None],
