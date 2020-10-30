@@ -219,7 +219,7 @@ pipeline {
                     !skipRemainingStages
                 }
             }
-            // parallel {
+            parallel {
             //     stage('MPI tests') {
             //         agent { label 'linux && mpi' }
             //         steps {
@@ -346,7 +346,7 @@ pipeline {
                 //         runTestsWin("test/unit", false, true)
                 //     }
                 // }
-            //}
+            }
         }
         stage('Additional merge tests') {
             when {
