@@ -85,7 +85,7 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
       res.args += "__global int* " + var_name_ + "_buffer, __global "
                   + type_str<value_type_t<T>>() + "* " + var_name_ + "_value, ";
       res.body += "bool " + var_name_;
-      res.reduction += "if(!" + var_name_ +
+      res.body_suffix += "if(!" + var_name_ +
             " && atomic_xchg(" + var_name_ + "_buffer, 1) == 1){\n"
           + var_name_ + "_buffer[1] = " + row_index_name + ";\n"
           + var_name_ + "_buffer[2] = " + col_index_name + ";\n"
