@@ -25,7 +25,7 @@ namespace math {
  * under the same conditions as the 2F1 function itself.
  *
  * @tparam T type of arguments and result
- * @param[out] g_a1 g_a1 reference to gradient of 2F1 w.r.t. a1, result. 
+ * @param[out] g_a1 g_a1 reference to gradient of 2F1 w.r.t. a1, result.
  * @param[out] g_b1 g_b1 reference to gradient of 2F1 w.r.t. b1, result.
  * @param[in] a1 a1 see generalized hypergeometric function definition.
  * @param[in] a2 a2 see generalized hypergeometric function definition.
@@ -89,7 +89,10 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
     g_a1 += log_g_old_sign[0] > 0 ? exp(log_g_old[0]) : -exp(log_g_old[0]);
     g_b1 += log_g_old_sign[1] > 0 ? exp(log_g_old[1]) : -exp(log_g_old[1]);
 
-    if (log_t_new <= std::max(std::min(value_of_rec(log_g_old[0]), value_of_rec(log_g_old[1])) + log_precision, log_precision)) {
+    if (log_t_new <= std::max(std::min(value_of_rec(log_g_old[0]),
+                                       value_of_rec(log_g_old[1]))
+                                  + log_precision,
+                              log_precision)) {
       return;
     }
 
