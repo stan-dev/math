@@ -90,7 +90,6 @@ return_type_t<T_y, T_low, T_high> uniform_lcdf(const T_y& y, const T_low& alpha,
       ops_partials.edge3_.partials_ = inv(-b_minus_a);
     }
   }
-
   return ops_partials.build(cdf_log);
 }
 
