@@ -109,7 +109,7 @@ static const char* lbeta_device_function
                                    + lgamma_stirling_diff(y)
                                    - lgamma_stirling_diff(x + y);
             double stirling = (x - 0.5) * log(x_over_xy) + y * log1p(-x_over_xy)
-                              + 0.5 * log(2 * M_PI) - 0.5 * log(y);
+                              + 0.5 * log(2.0 * M_PI) - 0.5 * log(y);
             return stirling + stirling_diff;
           }
           // \cond
