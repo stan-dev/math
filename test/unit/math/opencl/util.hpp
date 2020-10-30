@@ -258,9 +258,8 @@ void compare_cpu_opencl_prim_rev(const Functor& functor, const Args&... args) {
  * converting scalars to `double` in containers, `var_value<matrix_cl<double>>`
  * is used instead.
  *
- * Warning: Row vector arguments are not fully supported (if there is not at
- * least one std or col vector or matrix, the size to which scalar shoould be
- * broadcast to will not be correctly determined)!
+ * Warning: The scalar is broadcast to size equal to number of rows (or size in
+ * case of `std::vector`) of the argument with the most rows
  *
  * @tparam Functor type of the functor
  * @tparam Args types of the arguments; `I`-th argument must be a scalar
