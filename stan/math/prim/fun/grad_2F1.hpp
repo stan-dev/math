@@ -25,18 +25,19 @@ namespace math {
  * under the same conditions as the 2F1 function itself.
  *
  * @tparam T type of arguments and result
- * @param[out] g_a1 g_a1 pointer to array of six values of type T, result.
- * @param[out] g_b1 g_b1 pointer to array of six values of type T, result.
+ * @param[out] g_a1 g_a1 reference to gradient of 2F1 w.r.t. a1, result. 
+ * @param[out] g_b1 g_b1 reference to gradient of 2F1 w.r.t. b1, result.
  * @param[in] a1 a1 see generalized hypergeometric function definition.
  * @param[in] a2 a2 see generalized hypergeometric function definition.
  * @param[in] b1 b1 see generalized hypergeometric function definition.
  * @param[in] z z see generalized hypergeometric function definition.
- * @param[in] precision precision of the infinite sum.
+ * @param[in] precision magnitude of the increment of the infinite sum
+ *   to truncate the sum at.
  * @param[in] max_steps number of steps to take.
  */
 template <typename T>
 void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
-              const T& z, double precision = 1e-10, int max_steps = 1e6) {
+              const T& z, double precision = 1e-14, int max_steps = 1e6) {
   check_2F1_converges("grad_2F1", a1, a2, b1, z);
 
   using stan::math::value_of;
@@ -88,7 +89,7 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
     g_a1 += log_g_old_sign[0] > 0 ? exp(log_g_old[0]) : -exp(log_g_old[0]);
     g_b1 += log_g_old_sign[1] > 0 ? exp(log_g_old[1]) : -exp(log_g_old[1]);
 
-    if (log_t_new <= std::max(value_of(log_t_new) + log_precision, log_precision)) {
+    if (log_t_new <= std::max(std::min(value_of_rec(log_g_old[0]), value_of_rec(log_g_old[1])) + log_precision, log_precision)) {
       return;
     }
 
