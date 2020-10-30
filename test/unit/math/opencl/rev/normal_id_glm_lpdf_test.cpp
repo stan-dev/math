@@ -146,8 +146,8 @@ TEST(ProbDistributionsNormalIdGLM, opencl_broadcast_y) {
   double alpha = 0.3;
   double sigma = 11;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(normal_id_glm_lpdf_functor,
-                                                         y_scal, x, alpha, beta, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      normal_id_glm_lpdf_functor, y_scal, x, alpha, beta, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       normal_id_glm_lpdf_functor_propto, y_scal, x, alpha, beta, sigma);
 }

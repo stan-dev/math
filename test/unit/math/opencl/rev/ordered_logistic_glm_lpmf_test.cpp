@@ -134,8 +134,8 @@ TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_broadcast_y) {
   Matrix<double, Dynamic, 1> cuts(C - 1, 1);
   cuts << -0.4, 0.1;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(ordered_logistic_glm_lpmf_functor,
-                                                         y_scal, x, beta, cuts);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      ordered_logistic_glm_lpmf_functor, y_scal, x, beta, cuts);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       ordered_logistic_glm_lpmf_functor_propto, y_scal, x, beta, cuts);
 }
