@@ -11,15 +11,15 @@ namespace stan {
 namespace math {
 
 /**
- * Return the elementwise multiplication of the specified
+ * Return the elementwise division of the specified
  * matrices.
  *
- * @tparam Mat1 type of the first matrix or expression
- * @tparam Mat2 type of the second matrix or expression
+ * @tparam Mat1 type of the first matrix
+ * @tparam Mat2 type of the second matrix
  *
- * @param m1 First matrix or expression
- * @param m2 Second matrix or expression
- * @return Elementwise product of matrices.
+ * @param m1 First matrix
+ * @param m2 Second matrix
+ * @return Elementwise division of matrices.
  */
 template <typename Mat1, typename Mat2,
           require_all_matrix_t<Mat1, Mat2>* = nullptr,
@@ -65,7 +65,7 @@ auto elt_divide(const Mat1& m1, const Mat2& m2) {
  * by the specified matrix.
  *
  * @tparam Scal type of the scalar
- * @tparam Mat type of the matrix or expression
+ * @tparam Mat type of the matrix
  *
  * @param s scalar
  * @param m matrix or expression
