@@ -40,7 +40,7 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
               const T& z, double precision = 1e-14, int max_steps = 1e6) {
   check_2F1_converges("grad_2F1", a1, a2, b1, z);
 
-  using stan::math::value_of;
+  using stan::math::value_of_rec;
   using std::exp;
   using std::fabs;
   using std::log;
