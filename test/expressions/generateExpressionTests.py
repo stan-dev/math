@@ -420,7 +420,7 @@ def processCLIArgs():
         metavar="N",
         type=int,
         default=1,
-        help="Number of cores for make to use. Also number of files tests are split in.",
+        help="Number of files tests are split in.",
     )
     parser.add_argument(
         "functions",
