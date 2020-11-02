@@ -257,7 +257,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     }
 
     for (size_t i = 0; i < num_vars_shared_terms; ++i) {
-      partials[num_vars_sliced_terms + i] = worker.args_adjoints_(i);
+      partials[num_vars_sliced_terms + i] = worker.args_adjoints_.coeff(i);
     }
 
     return var(new precomputed_gradients_vari(
