@@ -208,7 +208,6 @@ special_arg_values = {
     "pareto_type_2_cdf_log": [1.5, 0.7, None, None],
     "pareto_type_2_lcdf": [1.5, 0.7, None, None],
     "unit_vector_free" : [1.0],}
-}
 
 # list of function argument indices, for which real valued arguments are not differentiable 
 # - they need to be double even in autodiff overloads
