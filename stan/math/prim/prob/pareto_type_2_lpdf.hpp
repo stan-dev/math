@@ -41,20 +41,10 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
   T_lambda_ref lambda_ref = lambda;
   T_alpha_ref alpha_ref = alpha;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& mu_col = as_column_vector_or_scalar(mu_ref);
-  const auto& lambda_col = as_column_vector_or_scalar(lambda_ref);
-  const auto& alpha_col = as_column_vector_or_scalar(alpha_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& mu_arr = as_array_or_scalar(mu_col);
-  const auto& lambda_arr = as_array_or_scalar(lambda_col);
-  const auto& alpha_arr = as_array_or_scalar(alpha_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
-  ref_type_t<decltype(value_of(lambda_arr))> lambda_val = value_of(lambda_arr);
-  ref_type_t<decltype(value_of(alpha_arr))> alpha_val = value_of(alpha_arr);
+  const auto& y_val = to_value_array_or_scalar(y_ref);
+  const auto& mu_val = to_value_array_or_scalar(mu_ref);
+  const auto& lambda_val = to_value_array_or_scalar(lambda_ref);
+  const auto& alpha_val = to_value_array_or_scalar(alpha_ref);
 
   check_not_nan(function, "Random variable", y_val);
   check_positive_finite(function, "Scale parameter", lambda_val);
