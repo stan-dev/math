@@ -195,8 +195,13 @@ special_arg_values = {
     "unit_vector_free" : [1.0],
     "positive_ordered_free" : [1.0],
     "ordered_free" : [1.0],
-    "simplex_free" : [1.0],}
-
+    "simplex_free" : [1.0],
+    "student_t_cdf" : [0.8, None, 0.4, None],
+    "student_t_cdf_log" : [0.8, None, 0.4, None],
+    "student_t_ccdf_log" : [0.8, None, 0.4, None],
+    "student_t_lccdf" : [0.8, None, 0.4, None],
+    "student_t_lcdf" : [0.8, None, 0.4, None],
+}
 
 def make_arg_code(arg, scalar, var_name, var_number, function_name):
     """
