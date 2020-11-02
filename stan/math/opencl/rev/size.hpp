@@ -14,7 +14,7 @@ namespace math {
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
-int size(const var_value<T>& a) {
+size_t size(const var_value<T>& a) {
   return a.vi_->rows() * a.vi_->cols();
 }
 
