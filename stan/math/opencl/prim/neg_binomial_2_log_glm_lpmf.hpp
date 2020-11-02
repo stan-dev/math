@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/rev/size.hpp>
+#include <stan/math/opencl/rev/operands_and_partials.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/multiply.hpp>
 #include <stan/math/opencl/plain_type.hpp>
