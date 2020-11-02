@@ -186,6 +186,11 @@ special_arg_values = {
     "pareto_type_2_cdf": [1.5, 0.7, None, None],
     "pareto_type_2_cdf_log": [1.5, 0.7, None, None],
     "pareto_type_2_lcdf": [1.5, 0.7, None, None],
+    "uniform_lccdf" : [None, 0.2, 0.9],
+    "uniform_lcdf" : [None, 0.2, 0.9],
+    "uniform_log" : [None, 0.2, 0.9],
+    "uniform_lpdf" : [None, 0.2, 0.9],
+    "uniform_rng" : [None, 0.2, 0.9],
     "unit_vector_free" : [1.0],}
 
 
