@@ -40,7 +40,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     template <typename... ArgsT>
     explicit scoped_args_tuple(ArgsT&&... args_tuple)
         : stack_(), args_tuple_holder_(stack_.execute([&]() -> args_tuple_t* {
-            return new args_tuple_t(deep_copy_vars(args_tuple)...);
+            return new args_tuple_t(
+                deep_copy_vars(std::forward<ArgsT>(args_tuple))...);
           })) {}
   };
 
@@ -62,22 +63,19 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     Vec vmapped_;
     local_args_tuple_t& local_args_tuple_;
     std::ostream* msgs_;
-    std::tuple<Args...> args_tuple_;
     double sum_{0.0};
     Eigen::VectorXd args_adjoints_{0};
 
     template <typename VecT, typename... ArgsT>
     recursive_reducer(size_t num_vars_per_term, size_t num_vars_shared_terms,
                       double* sliced_partials, VecT&& vmapped,
-                      local_args_tuple_t& local_args_tuple, std::ostream* msgs,
-                      ArgsT&&... args)
+                      local_args_tuple_t& local_args_tuple, std::ostream* msgs)
         : num_vars_per_term_(num_vars_per_term),
           num_vars_shared_terms_(num_vars_shared_terms),
           sliced_partials_(sliced_partials),
           vmapped_(std::forward<VecT>(vmapped)),
           local_args_tuple_(local_args_tuple),
-          msgs_(msgs),
-          args_tuple_(std::forward<ArgsT>(args)...) {}
+          msgs_(msgs) {}
 
     /*
      * This is the copy operator as required for tbb::parallel_reduce
@@ -91,8 +89,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           sliced_partials_(other.sliced_partials_),
           vmapped_(other.vmapped_),
           local_args_tuple_(other.local_args_tuple_),
-          msgs_(other.msgs_),
-          args_tuple_(other.args_tuple_) {}
+          msgs_(other.msgs_) {}
 
     /**
      * Compute, using nested autodiff, the value and Jacobian of
@@ -243,13 +240,11 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       partials[i] = 0.0;
     }
 
-    local_args_tuple_t local_args([&] { return scoped_args_tuple(args...); });
-    // @Steve: This should work, but fails to compile???
-    // local_args_tuple_t local_args(args...);
+    local_args_tuple_t local_args(
+        [&] { return scoped_args_tuple(std::forward<Args>(args)...); });
 
     recursive_reducer worker(num_vars_per_term, num_vars_shared_terms, partials,
-                             std::forward<Vec>(vmapped), local_args, msgs,
-                             std::forward<Args>(args)...);
+                             std::forward<Vec>(vmapped), local_args, msgs);
 
     if (auto_partitioning) {
       tbb::parallel_reduce(
