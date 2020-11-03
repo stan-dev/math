@@ -11,16 +11,24 @@ namespace stan {
 namespace math {
 
 /** \ingroup opencl
- * Returns the log PMF of the Bernoulli distribution. If containers are
- * supplied, returns the log sum of the probabilities.
+ * The log of a chi-squared density for y with the specified
+ * degrees of freedom parameter.
+ * The degrees of freedom parameter must be greater than 0.
+ * y must be greater than or equal to 0.
  *
- * @tparam T_n_cl type of integer parameters
- * @tparam T_prob_cl type of chance of success parameters
- * @param n integer parameter
- * @param theta chance of success parameter
- * @return log probability or log sum of probabilities
- * @throw std::domain_error if theta is not a valid probability
- * @throw std::invalid_argument if container sizes mismatch.
+ \f{eqnarray*}{
+ y &\sim& \chi^2_\nu \\
+ \log (p (y \, |\, \nu)) &=& \log \left( \frac{2^{-\nu / 2}}{\Gamma (\nu / 2)}
+ y^{\nu / 2 - 1} \exp^{- y / 2} \right) \\
+ &=& - \frac{\nu}{2} \log(2) - \log (\Gamma (\nu / 2)) + (\frac{\nu}{2} - 1)
+ \log(y) - \frac{y}{2} \\ & & \mathrm{ where } \; y \ge 0 \f}
+ *
+ * @tparam T_y_cl type of dependent variable
+ * @tparam T_dof_cl type of degrees of freedom
+ * @param y A dependent variable.
+ * @param nu Degrees of freedom.
+ * @throw std::domain_error if nu is not greater than or equal to 0
+ * @throw std::domain_error if y is not greater than or equal to 0.
  */
 template <
     bool propto, typename T_y_cl, typename T_dof_cl,
