@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup opencl
  * The log of the Cauchy density for the specified scalar(s) given
  * the specified location parameter(s) and scale parameter(s). y,
  * mu, or sigma can each either be scalar a vector.  Any vector
