@@ -10,8 +10,8 @@ namespace math {
 /**
  * Returns signs of the arguments.
  * @tparam T type of the argument (`matrix_cl` or kernel generator expression)
- * @param the argument
- * @return sign of x
+ * @param x the argument
+ * @return sign of `x`
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
