@@ -89,8 +89,7 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
 
   operands_and_partials<T_y_ref, T_nu_ref> ops_partials(y_ref, nu_ref);
   if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_
-          = (half_nu - 1.0) / y_val - 0.5;
+    ops_partials.edge1_.partials_ = (half_nu - 1.0) / y_val - 0.5;
   }
   if (!is_constant_all<T_dof>::value) {
     if (is_vector<T_dof>::value) {

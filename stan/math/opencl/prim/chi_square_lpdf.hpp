@@ -71,7 +71,8 @@ return_type_t<T_y_cl, T_dof_cl> chi_square_lpdf(const T_y_cl& y,
           logp2_expr - 0.5 * y_val, logp2_expr));
 
   auto y_deriv_expr = elt_divide(half_nu_expr - 1, y_val) - 0.5;
-  auto nu_deriv_expr = (log_y_expr - digamma(half_nu_expr)) * 0.5 - HALF_LOG_TWO;
+  auto nu_deriv_expr
+      = (log_y_expr - digamma(half_nu_expr)) * 0.5 - HALF_LOG_TWO;
 
   matrix_cl<double> logp_cl;
   matrix_cl<double> y_deriv_cl;
