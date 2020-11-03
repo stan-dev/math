@@ -575,6 +575,20 @@ class var_value<
   }
 
   /**
+   * View transpose of eigen matrix.
+   */
+  inline auto transpose() const {
+    using vari_sub = decltype(vi_->transpose());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->transpose()));
+  }
+  inline auto transpose() {
+    using vari_sub = decltype(vi_->transpose());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->transpose()));
+  }
+
+  /**
    * View of the head of Eigen vector types.
    * @param n Number of elements to return from top of vector.
    */

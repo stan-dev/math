@@ -2,7 +2,7 @@
 #define STAN_MATH_OPENCL_REV_MULTIPLY_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
+#include <stan/math/prim/meta/is_kernel_expression.hpp>
 #include <stan/math/opencl/multiply.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/rev/core.hpp>
