@@ -45,7 +45,6 @@ auto elt_multiply(const Mat1& m1, const Mat2& m2) {
     arena_t<promote_scalar_t<double, Mat2>> arena_m2 = value_of(m2);
     arena_t<ret_type> ret(arena_m1.val().cwiseProduct(arena_m2));
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
-      using var_m1 = arena_t<promote_scalar_t<var, Mat1>>;
       arena_m1.adj().array() += arena_m2.array() * ret.adj().array();
     });
     return ret_type(ret);
