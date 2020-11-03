@@ -54,9 +54,10 @@ TEST(ProbDistributionsDoubleExponential, error_checking) {
                std::domain_error);
 }
 
-auto double_exponential_lpdf_functor = [](const auto& n, const auto& mu, const auto& sigma) {
-  return stan::math::double_exponential_lpdf(n, mu, sigma);
-};
+auto double_exponential_lpdf_functor
+    = [](const auto& n, const auto& mu, const auto& sigma) {
+        return stan::math::double_exponential_lpdf(n, mu, sigma);
+      };
 auto double_exponential_lpdf_functor_propto
     = [](const auto& n, const auto& mu, const auto& sigma) {
         return stan::math::double_exponential_lpdf<true>(n, mu, sigma);
