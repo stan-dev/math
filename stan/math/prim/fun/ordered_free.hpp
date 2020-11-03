@@ -26,14 +26,14 @@ namespace math {
  */
 template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
 plain_type_t<EigVec> ordered_free(const EigVec& y) {
-  check_ordered("stan::math::ordered_free", "Ordered variable", y);
+  const auto& y_ref = to_ref(y);
+  check_ordered("stan::math::ordered_free", "Ordered variable", y_ref);
   using std::log;
   Eigen::Index k = y.size();
   plain_type_t<EigVec> x(k);
   if (k == 0) {
     return x;
   }
-  const auto& y_ref = to_ref(y);
   x[0] = y_ref[0];
   for (Eigen::Index i = 1; i < k; ++i) {
     x.coeffRef(i) = log(y_ref.coeff(i) - y_ref.coeff(i - 1));
