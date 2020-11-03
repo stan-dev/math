@@ -211,7 +211,7 @@ template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
 inline auto cholesky_decompose(const EigMat& A) {
   check_square("cholesky_decompose", "A", A);
   arena_t<EigMat> arena_A = A;
-  arena_t<Eigen::Matrix<double, -1, -1>> L_A(value_of(arena_A));
+  arena_t<Eigen::Matrix<double, -1, -1>> L_A(arena_A.val());
 #ifdef STAN_OPENCL
   L_A = cholesky_decompose(L_A);
 #else
@@ -254,7 +254,7 @@ inline auto cholesky_decompose(const EigMat& A) {
     reverse_pass_callback(internal::cholesky_lambda(L_A, L, arena_A));
 #endif
   }
-  return EigMat(L);
+  return plain_type_t<EigMat>(L);
 }
 
 /**
