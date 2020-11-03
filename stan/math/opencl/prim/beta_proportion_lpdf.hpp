@@ -14,16 +14,26 @@ namespace stan {
 namespace math {
 
 /** \ingroup opencl
- * Returns the log PMF of the Bernoulli distribution. If containers are
- * supplied, returns the log sum of the probabilities.
+ * The log of the beta density for specified y, location, and
+ * precision: beta_proportion_lpdf(y | mu, kappa) = beta_lpdf(y | mu *
+ * kappa, (1 - mu) * kappa).  Any arguments other than scalars must be
+ * containers of the same size.  With non-scalar arguments, the return
+ * is the sum of the log pdfs with scalars broadcast as necessary.
  *
- * @tparam T_n_cl type of integer parameters
- * @tparam T_prob_cl type of chance of success parameters
- * @param n integer parameter
- * @param theta chance of success parameter
- * @return log probability or log sum of probabilities
- * @throw std::domain_error if theta is not a valid probability
- * @throw std::invalid_argument if container sizes mismatch.
+ * <p> The result log probability is defined to be the sum of
+ * the log probabilities for each observation/mu/kappa triple.
+ *
+ * Prior location, mu, must be contained in (0, 1).  Prior precision
+ * must be positive.
+ *
+ * @tparam T_y_cl type of outcome
+ * @tparam T_loc_cl type of prior location
+ * @tparam T_prec_cl type of prior precision
+ *
+ * @param y (Sequence of) dependant variable(s)
+ * @param mu (Sequence of) location parameter(s)
+ * @param kappa (Sequence of) precision parameter(s)
+ * @return The log of the product of densities.
  */
 template <bool propto, typename T_y_cl, typename T_loc_cl,
           typename T_prec_cl, require_all_prim_or_rev_kernel_expression_t<
