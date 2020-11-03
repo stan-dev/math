@@ -101,6 +101,7 @@
 
 #include <stan/math/opencl/prim/add.hpp>
 #include <stan/math/opencl/prim/bernoulli_lpmf.hpp>
+#include <stan/math/opencl/prim/bernoulli_logit_lpmf.hpp>
 #include <stan/math/opencl/prim/bernoulli_logit_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/categorical_logit_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/cholesky_decompose.hpp>

@@ -186,13 +186,18 @@ special_arg_values = {
     "pareto_type_2_cdf": [1.5, 0.7, None, None],
     "pareto_type_2_cdf_log": [1.5, 0.7, None, None],
     "pareto_type_2_lcdf": [1.5, 0.7, None, None],
-    "uniform_lccdf" : [None, 0.2, 0.9],
+
+    "student_t_cdf" : [0.8, None, 0.4, None],
+    "student_t_cdf_log" : [0.8, None, 0.4, None],
+    "student_t_ccdf_log" : [0.8, None, 0.4, None],
+    "student_t_lccdf" : [0.8, None, 0.4, None],
+    "student_t_lcdf" : [0.8, None, 0.4, None],
+    "unit_vector_free" : [1.0],    "uniform_lccdf" : [None, 0.2, 0.9],
     "uniform_lcdf" : [None, 0.2, 0.9],
     "uniform_log" : [None, 0.2, 0.9],
     "uniform_lpdf" : [None, 0.2, 0.9],
     "uniform_rng" : [0.2, 1.9, None],
-    "unit_vector_free" : [1.0],}
-
+}
 
 def make_arg_code(arg, scalar, var_name, var_number, function_name):
     """
