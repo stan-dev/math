@@ -84,7 +84,7 @@ static const char* binomial_coefficient_log_device_function
 
             // Choosing the more stable of the symmetric branches
             if (n > -1 && k > n / 2.0 + 1e-8) {
-              return binomial_coefficient_log(n, n - k);
+              k = n - k;
             }
 
             double n_plus_1 = n + 1;
