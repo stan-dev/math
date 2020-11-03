@@ -190,7 +190,7 @@ special_arg_values = {
     "uniform_lcdf" : [None, 0.2, 0.9],
     "uniform_log" : [None, 0.2, 0.9],
     "uniform_lpdf" : [None, 0.2, 0.9],
-    "uniform_rng" : [None, 0.2, 0.9],
+    "uniform_rng" : [0.2, 1.9, None],
     "unit_vector_free" : [1.0],}
 
 
