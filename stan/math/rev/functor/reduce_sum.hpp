@@ -39,10 +39,12 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
     template <typename... ArgsT>
     explicit scoped_args_tuple(ArgsT&&... args_tuple)
-        : stack_(), args_tuple_holder_(stack_.execute([&]() -> args_tuple_t* {
-            return new args_tuple_t(
-                deep_copy_vars(std::forward<ArgsT>(args_tuple))...);
-          })) {}
+        : stack_(),
+          args_tuple_holder_(
+              stack_.execute([&]() -> std::unique_ptr<args_tuple_t> {
+                return std::make_unique<args_tuple_t>(
+                    deep_copy_vars(std::forward<ArgsT>(args_tuple))...);
+              })) {}
   };
 
   using local_args_tuple_t = tbb::enumerable_thread_specific<scoped_args_tuple>;
@@ -66,7 +68,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     double sum_{0.0};
     Eigen::VectorXd args_adjoints_{0};
 
-    template <typename VecT, typename... ArgsT>
+    template <typename VecT>
     recursive_reducer(size_t num_vars_per_term, size_t num_vars_shared_terms,
                       double* sliced_partials, VecT&& vmapped,
                       local_args_tuple_t& local_args_tuple, std::ostream* msgs)
@@ -218,12 +220,11 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    */
   inline var operator()(Vec&& vmapped, bool auto_partitioning, int grainsize,
                         std::ostream* msgs, Args&&... args) const {
-    const std::size_t num_terms = vmapped.size();
-
     if (vmapped.empty()) {
       return var(0.0);
     }
 
+    const std::size_t num_terms = vmapped.size();
     const std::size_t num_vars_per_term = count_vars(vmapped[0]);
     const std::size_t num_vars_sliced_terms = num_terms * num_vars_per_term;
     const std::size_t num_vars_shared_terms = count_vars(args...);
