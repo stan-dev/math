@@ -105,6 +105,7 @@
 #include <stan/math/opencl/prim/beta_lpdf.hpp>
 #include <stan/math/opencl/prim/categorical_logit_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/cauchy_lpdf.hpp>
+#include <stan/math/opencl/prim/chi_square_lpdf.hpp>
 #include <stan/math/opencl/prim/cholesky_decompose.hpp>
 #include <stan/math/opencl/prim/col.hpp>
 #include <stan/math/opencl/prim/cols.hpp>

@@ -38,7 +38,9 @@ namespace math {
  * @throw std::domain_error if nu is not greater than or equal to 0
  * @throw std::domain_error if y is not greater than or equal to 0.
  */
-template <bool propto, typename T_y, typename T_dof>
+template <bool propto, typename T_y, typename T_dof,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_dof>* = nullptr>
 return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
   using T_partials_return = partials_return_t<T_y, T_dof>;
   using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
@@ -61,7 +63,6 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
   ref_type_if_t<include_summand<propto, T_dof>::value,
                 decltype(value_of(nu_arr))>
       nu_val = value_of(nu_arr);
-  check_not_nan(function, "Random variable", y_val);
   check_nonnegative(function, "Random variable", y_val);
   check_positive_finite(function, "Degrees of freedom parameter", nu_val);
 
@@ -88,13 +89,8 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
 
   operands_and_partials<T_y_ref, T_nu_ref> ops_partials(y_ref, nu_ref);
   if (!is_constant_all<T_y>::value) {
-    if (is_vector<T_y>::value) {
       ops_partials.edge1_.partials_
-          = forward_as<T_partials_array>((half_nu - 1.0) * inv(y_val) - 0.5);
-    } else {
-      ops_partials.edge1_.partials_[0]
-          = sum((half_nu - 1.0) * inv(y_val) - 0.5);
-    }
+          = (half_nu - 1.0) / y_val - 0.5;
   }
   if (!is_constant_all<T_dof>::value) {
     if (is_vector<T_dof>::value) {
