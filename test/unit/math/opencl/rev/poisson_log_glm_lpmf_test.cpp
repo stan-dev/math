@@ -128,9 +128,8 @@ TEST(ProbDistributionsPoissonLogGLM, opencl_broadcast_y) {
   beta << 0.3, 2;
   double alpha = 0.3;
 
-
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(poisson_log_glm_lpmf_functor,
-                                                         y_scal, x, alpha, beta);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      poisson_log_glm_lpmf_functor, y_scal, x, alpha, beta);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       poisson_log_glm_lpmf_functor_propto, y_scal, x, alpha, beta);
 }

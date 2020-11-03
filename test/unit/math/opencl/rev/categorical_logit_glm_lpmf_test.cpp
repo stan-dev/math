@@ -135,9 +135,8 @@ TEST(ProbDistributionsCategoricalLogitGLM, opencl_broadcast_y) {
   Matrix<double, Dynamic, 1> alpha(C);
   alpha << 0.3, -2, 0.8;
 
-
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(categorical_logit_glm_lpmf_functor,
-                                                         y_scal, x, alpha, beta);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      categorical_logit_glm_lpmf_functor, y_scal, x, alpha, beta);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       categorical_logit_glm_lpmf_functor_propto, y_scal, x, alpha, beta);
 }

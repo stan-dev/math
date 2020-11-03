@@ -157,8 +157,8 @@ TEST(ProbDistributionsNegBinomial2LogGLM, opencl_broadcast_y) {
   double alpha = 0.3;
   double phi = 13.2;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(neg_binomial_2_log_glm_lpmf_functor,
-                                                         y_scal, x, alpha, beta, phi);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      neg_binomial_2_log_glm_lpmf_functor, y_scal, x, alpha, beta, phi);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       neg_binomial_2_log_glm_lpmf_functor_propto, y_scal, x, alpha, beta, phi);
 }
