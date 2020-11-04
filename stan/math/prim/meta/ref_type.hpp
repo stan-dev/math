@@ -10,6 +10,10 @@
 #include <type_traits>
 
 namespace stan {
+namespace math {
+template <typename MatrixType>
+class pinned_matrix;
+}
 
 /**
  * If the condition is true determines appropriate type for assigning expression
@@ -78,6 +82,7 @@ struct ref_type_for_opencl {
                     T_val::ColsAtCompileTime>,
       Eigen::Array<value_type_t<T>, T_val::RowsAtCompileTime,
                    T_val::ColsAtCompileTime>>;
+  using T_pinned = math::pinned_matrix<T_plain_col_major>;
   using T_optionally_ref
       = std::conditional_t<std::is_rvalue_reference<T>::value, T_val, const T&>;
   using T_val_derived = std::decay_t<decltype(std::declval<T_val>().derived())>;
@@ -91,7 +96,7 @@ struct ref_type_for_opencl {
               & Eigen::LinearAccessBit)
           && (Eigen::internal::evaluator<T_val_derived>::Flags
               & Eigen::PacketAccessBit),
-      T_optionally_ref, T_plain_col_major>;
+      T_optionally_ref, T_pinned>;
 };
 
 template <typename T>

@@ -220,9 +220,13 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
    * Constructor for the matrix_cl that creates a copy of a std::vector of Eigen
    * matrices on the OpenCL device. Each matrix is flattened into one column
    * of the resulting matrix_cl. If a lvalue is passed to this constructor the
-   * caller must make sure that the vector does not go out of scope before as
-   * long as this `matrix_cl` is in use (`std::move`-ing it or using raw
-   * `buffer()` also counts).
+   * caller must make sure that the vector does not go out of scope before
+   * copying is complete.
+   *
+   * That means `.wait()` must be called on the event associated on copying or
+   * any other event that requires completion of this event. This can be done by
+   * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
+   * this matrix or any matrix that is calculated from this one.
    *
    * @param A the vector of Eigen matrices
    *
@@ -477,6 +481,26 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
    */
   template <bool in_order = false, bool force_copy = false>
   cl::Event initialize_buffer(const T* A) {
+    cl::Event transfer_event;
+    if (size() == 0) {
+      return transfer_event;
+    }
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
+    try {
+      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * size());
+      queue.enqueueWriteBuffer(buffer_cl_,
+                               opencl_context.in_order() || in_order, 0,
+                               sizeof(T) * size(), A, nullptr, &transfer_event);
+      this->add_write_event(transfer_event);
+    } catch (const cl::Error& e) {
+      check_opencl_error("initialize_buffer", e);
+    }
+    return transfer_event;
+  }
+
+  template <bool in_order = false, bool force_copy = false>
+  cl::Event initialize_buffer(T* A) {
     cl::Event transfer_event;
     if (size() == 0) {
       return transfer_event;
