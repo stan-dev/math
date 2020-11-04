@@ -43,7 +43,7 @@ var sd(const T& m) {
     Eigen::Map<T_d> partials_map(partials, dtrs_map.rows(), dtrs_map.cols());
 
     varis_map = dtrs_map.vi();
-    T_d dtrs_val = dtrs_map.val();
+    T_d dtrs_val = varis_map.val();
     double mean = dtrs_val.mean();
     T_d diff = dtrs_val.array() - mean;
     double sum_of_squares = diff.squaredNorm();

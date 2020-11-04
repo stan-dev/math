@@ -113,7 +113,7 @@ inline vari** save_varis(vari** dest, VecContainer&& x, Pargs&&... args) {
 template <typename EigT, require_eigen_vt<is_var, EigT>*, typename... Pargs>
 inline vari** save_varis(vari** dest, EigT&& x, Pargs&&... args) {
   for (int i = 0; i < x.size(); ++i) {
-    dest[i] = x.coeffRef(i).vi_;
+    dest[i] = x.coeff(i).vi_;
   }
   return save_varis(dest + x.size(), std::forward<Pargs>(args)...);
 }
