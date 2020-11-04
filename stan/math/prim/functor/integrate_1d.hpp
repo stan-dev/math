@@ -75,8 +75,9 @@ inline double integrate(const F& f, double a, double b,
       boost::math::quadrature::tanh_sinh<double> integrator_right;
       Q = integrator.integrate(f_wrap, a, 0.0, relative_tolerance, &error1, &L1,
                                &levels)
-          + integrator_right.integrate(f_wrap, 0.0, b, 0.5 * b * relative_tolerance,
-                                       &error2, &L2, &levels);
+          + integrator_right.integrate(f_wrap, 0.0, b,
+                                       0.5 * b * relative_tolerance, &error2,
+                                       &L2, &levels);
       used_two_integrals = true;
     }
   } else if (std::isinf(b)) {
@@ -87,23 +88,23 @@ inline double integrate(const F& f, double a, double b,
     } else {
       boost::math::quadrature::tanh_sinh<double> integrator_left;
       Q = integrator_left.integrate(f_wrap, a, 0, -0.5 * a * relative_tolerance,
-				    &error1, &L1, &levels)
-	+ integrator.integrate(f_wrap, relative_tolerance, &error2, &L2,
-                               &levels);
+                                    &error1, &L1, &levels)
+          + integrator.integrate(f_wrap, relative_tolerance, &error2, &L2,
+                                 &levels);
       used_two_integrals = true;
     }
   } else {
     auto f_wrap = [&](double x, double xc) { return f(x, xc); };
     boost::math::quadrature::tanh_sinh<double> integrator;
     if (a < 0.0 && b > 0.0) {
-      Q = integrator.integrate(f_wrap, a, 0.0, -0.5 * a * relative_tolerance, &error1, &L1,
-                               &levels)
-	+ integrator.integrate(f_wrap, 0.0, b, 0.5 * b * relative_tolerance, &error2,
-                                 &L2, &levels);
+      Q = integrator.integrate(f_wrap, a, 0.0, -0.5 * a * relative_tolerance,
+                               &error1, &L1, &levels)
+          + integrator.integrate(f_wrap, 0.0, b, 0.5 * b * relative_tolerance,
+                                 &error2, &L2, &levels);
       used_two_integrals = true;
     } else {
-      Q = integrator.integrate(f_wrap, a, b, 0.5 * (b - a) * relative_tolerance, &error1, &L1,
-                               &levels);
+      Q = integrator.integrate(f_wrap, a, b, 0.5 * (b - a) * relative_tolerance,
+                               &error1, &L1, &levels);
     }
   }
 
