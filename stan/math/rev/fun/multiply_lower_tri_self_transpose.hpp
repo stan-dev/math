@@ -7,11 +7,13 @@
 #include <stan/math/rev/fun/dot_self.hpp>
 #include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 
 namespace stan {
 namespace math {
 
-inline matrix_v multiply_lower_tri_self_transpose(const matrix_v& L) {
+template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
+inline matrix_v multiply_lower_tri_self_transpose(const EigMat& L) {
   // check_square("multiply_lower_tri_self_transpose",
   // L, "L", (double*)0);
   int K = L.rows();
@@ -30,12 +32,14 @@ inline matrix_v multiply_lower_tri_self_transpose(const matrix_v& L) {
   } else {  // if (K < J)
     Knz = (K * (K + 1)) / 2;
   }
+  const auto& L_ref = to_ref(L);
+
   vari** vs = reinterpret_cast<vari**>(
       ChainableStack::instance_->memalloc_.alloc(Knz * sizeof(vari*)));
   int pos = 0;
   for (int m = 0; m < K; ++m) {
     for (int n = 0; n < ((J < (m + 1)) ? J : (m + 1)); ++n) {
-      vs[pos++] = L(m, n).vi_;
+      vs[pos++] = L_ref.coeff(m, n).vi_;
     }
   }
   for (int m = 0, mpos = 0; m < K; ++m, mpos += (J < m) ? J : m) {
@@ -43,8 +47,8 @@ inline matrix_v multiply_lower_tri_self_transpose(const matrix_v& L) {
         new internal::dot_self_vari(vs + mpos, (J < (m + 1)) ? J : (m + 1)));
     for (int n = 0, npos = 0; n < m; ++n, npos += (J < n) ? J : n) {
       LLt.coeffRef(m, n) = LLt.coeffRef(n, m)
-          = dot_product(L.row(m).head((J < (n + 1)) ? J : (n + 1)),
-                        L.row(n).head((J < (n + 1)) ? J : (n + 1)));
+          = dot_product(L_ref.row(m).head((J < (n + 1)) ? J : (n + 1)),
+                        L_ref.row(n).head((J < (n + 1)) ? J : (n + 1)));
     }
   }
   return LLt;
