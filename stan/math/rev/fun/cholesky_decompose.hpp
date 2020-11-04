@@ -51,7 +51,7 @@ inline void initialize_return(LMat& L, const LAMat& L_A, vari*& dummy) {
  */
 template <typename T1, typename T2, typename T3>
 inline auto unblocked_cholesky_lambda(T1& L_A, T2& L, T3& A) {
-  return [=]() mutable {
+  return [L_A, L, A]() mutable {
     const size_t N = A.rows();
     // Algorithm is in rowmajor so we make the adjoint copy rowmajor
     Eigen::Matrix<double, -1, -1, Eigen::RowMajor> adjL(L.rows(), L.cols());
@@ -82,7 +82,7 @@ inline auto unblocked_cholesky_lambda(T1& L_A, T2& L, T3& A) {
  */
 template <typename T1, typename T2, typename T3>
 inline auto cholesky_lambda(T1& L_A, T2& L, T3& A) {
-  return [=]() mutable {
+  return [L_A, L, A]() mutable {
     using Block_ = Eigen::Block<Eigen::MatrixXd>;
     using Eigen::Lower;
     using Eigen::StrictlyUpper;
@@ -133,7 +133,7 @@ inline auto cholesky_lambda(T1& L_A, T2& L, T3& A) {
  */
 template <typename AMat, typename LVari>
 inline auto opencl_cholesky_lambda(AMat& arena_A, LVari& vari_L) {
-  return [=]() mutable {
+  return [arena_A, vari_L]() mutable {
     const int M_ = arena_A.rows();
     const int packed_size = M_ * (M_ + 1) / 2;
     Eigen::Map<Eigen::Matrix<vari*, Eigen::Dynamic, 1>> L_cpu(
