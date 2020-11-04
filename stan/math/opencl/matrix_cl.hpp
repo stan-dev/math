@@ -278,8 +278,7 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
     cl::Context& ctx = opencl_context.context();
     try {
       int flags = CL_MEM_READ_WRITE;
-      if (opencl_context.device()[0]
-              .getInfo<CL_DEVICE_HOST_UNIFIED_MEMORY>()) {
+      if (opencl_context.device()[0].getInfo<CL_DEVICE_HOST_UNIFIED_MEMORY>()) {
         flags |= CL_MEM_ALLOC_HOST_PTR;
       }
       buffer_cl_ = cl::Buffer(ctx, flags, sizeof(T) * rows_ * cols_);
