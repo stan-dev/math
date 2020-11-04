@@ -17,12 +17,13 @@ inline var log_determinant(const EigMat& m) {
 
   math::check_square("log_determinant", "m", m);
 
-  Eigen::FullPivHouseholderQR<promote_scalar_t<double, EigMat>> hh
-      = m.val().fullPivHouseholderQr();
-
   vari** varis
       = ChainableStack::instance_->memalloc_.alloc_array<vari*>(m.size());
-  Eigen::Map<matrix_vi>(varis, m.rows(), m.cols()) = m.vi();
+  Eigen::Map<matrix_vi> m_vi(varis, m.rows(), m.cols());
+  m_vi = m.vi();
+
+  Eigen::FullPivHouseholderQR<promote_scalar_t<double, EigMat>> hh
+      = m_vi.val().fullPivHouseholderQr();
 
   double* gradients
       = ChainableStack::instance_->memalloc_.alloc_array<double>(m.size());
