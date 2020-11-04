@@ -221,6 +221,8 @@ special_arg_values = {
     "uniform_log" : [None, 0.2, 0.9],
     "uniform_lpdf" : [None, 0.2, 0.9],
     "uniform_rng" : [0.2, 1.9, None],
+    "wiener_log" : [0.8, None, 0.4, None, None],
+    "wiener_lpdf" : [0.8, None, 0.4, None, None],
 }
 
 # list of function argument indices, for which real valued arguments are not differentiable 
