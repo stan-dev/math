@@ -807,6 +807,76 @@ class var_value<
   }
 
   /**
+   * Return an expression an expression to reverse the order of the coefficients
+   * inside of a `vari` matrix
+   */
+  inline auto topRows(Eigen::Index n) const {
+    using vari_sub = decltype(vi_->topRows(n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->topRows(n)));
+  }
+  inline auto topRows(Eigen::Index n) {
+    using vari_sub = decltype(vi_->topRows(n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->topRows(n)));
+  }
+
+  inline auto bottomRows(Eigen::Index n) const {
+    using vari_sub = decltype(vi_->bottomRows(n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->bottomRows(n)));
+  }
+  inline auto bottomRows(Eigen::Index n) {
+    using vari_sub = decltype(vi_->bottomRows(n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->bottomRows(n)));
+  }
+
+  inline auto middleRows(Eigen::Index start_row, Eigen::Index n) const {
+    using vari_sub = decltype(vi_->middleRows(start_row, n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->middleRows(start_row, n)));
+  }
+  inline auto middleRows(Eigen::Index start_row, Eigen::Index n) {
+    using vari_sub = decltype(vi_->middleRows(start_row, n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->middleRows(start_row, n)));
+  }
+
+  inline auto leftCols(Eigen::Index n) const {
+    using vari_sub = decltype(vi_->leftCols(n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->leftCols(n)));
+  }
+  inline auto leftCols(Eigen::Index n) {
+    using vari_sub = decltype(vi_->leftCols(n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->leftCols(n)));
+  }
+
+  inline auto rightCols(Eigen::Index n) const {
+    using vari_sub = decltype(vi_->rightCols(n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->rightCols(n)));
+  }
+  inline auto rightCols(Eigen::Index n) {
+    using vari_sub = decltype(vi_->rightCols(n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->rightCols(n)));
+  }
+
+  inline auto middleCols(Eigen::Index start_row, Eigen::Index n) const {
+    using vari_sub = decltype(vi_->middleCols(start_row, n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->middleCols(start_row, n)));
+  }
+  inline auto middleCols(Eigen::Index start_row, Eigen::Index n) {
+    using vari_sub = decltype(vi_->middleCols(start_row, n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->middleCols(start_row, n)));
+  }
+
+  /**
    * Write the value of this autodiff variable and its adjoint to
    * the specified output stream.
    *

@@ -409,6 +409,72 @@ class vari_view_eigen {
                                  derived().adj_.reverse());
   }
 
+  inline auto topRows(Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.topRows(n));
+    return vari_view<inner_type>(derived().val_.topRows(n),
+                                 derived().adj_.topRows(n));
+  }
+  inline auto topRows(Eigen::Index n) {
+    using inner_type = decltype(derived().val_.topRows(n));
+    return vari_view<inner_type>(derived().val_.topRows(n),
+                                 derived().adj_.topRows(n));
+  }
+
+  inline auto bottomRows(Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.bottomRows(n));
+    return vari_view<inner_type>(derived().val_.bottomRows(n),
+                                 derived().adj_.bottomRows(n));
+  }
+  inline auto bottomRows(Eigen::Index n) {
+    using inner_type = decltype(derived().val_.bottomRows(n));
+    return vari_view<inner_type>(derived().val_.bottomRows(n),
+                                 derived().adj_.bottomRows(n));
+  }
+
+  inline auto middleRows(Eigen::Index start_row, Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.middleRows(start_row, n));
+    return vari_view<inner_type>(derived().val_.middleRows(start_row, n),
+                                 derived().adj_.middleRows(start_row, n));
+  }
+  inline auto middleRows(Eigen::Index start_row, Eigen::Index n) {
+    using inner_type = decltype(derived().val_.middleRows(start_row, n));
+    return vari_view<inner_type>(derived().val_.middleRows(start_row, n),
+                                 derived().adj_.middleRows(start_row, n));
+  }
+
+  inline auto leftCols(Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.leftCols(n));
+    return vari_view<inner_type>(derived().val_.leftCols(n),
+                                 derived().adj_.leftCols(n));
+  }
+  inline auto leftCols(Eigen::Index n) {
+    using inner_type = decltype(derived().val_.leftCols(n));
+    return vari_view<inner_type>(derived().val_.leftCols(n),
+                                 derived().adj_.leftCols(n));
+  }
+
+  inline auto rightCols(Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.rightCols(n));
+    return vari_view<inner_type>(derived().val_.rightCols(n),
+                                 derived().adj_.rightCols(n));
+  }
+  inline auto rightCols(Eigen::Index n) {
+    using inner_type = decltype(derived().val_.rightCols(n));
+    return vari_view<inner_type>(derived().val_.rightCols(n),
+                                 derived().adj_.rightCols(n));
+  }
+
+  inline auto middleCols(Eigen::Index start_row, Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.middleCols(start_row, n));
+    return vari_view<inner_type>(derived().val_.middleCols(start_row, n),
+                                 derived().adj_.middleCols(start_row, n));
+  }
+  inline auto middleCols(Eigen::Index start_row, Eigen::Index n) {
+    using inner_type = decltype(derived().val_.middleCols(start_row, n));
+    return vari_view<inner_type>(derived().val_.middleCols(start_row, n),
+                                 derived().adj_.middleCols(start_row, n));
+  }
+
   /**
    * Return the number of rows for this class's `val_` member
    */
