@@ -189,12 +189,14 @@
 #include <stan/math/prim/meta/is_autodiff.hpp>
 #include <stan/math/prim/meta/is_arena_matrix.hpp>
 #include <stan/math/prim/meta/is_base_pointer_convertible.hpp>
+#include <stan/math/prim/meta/is_dense_dynamic.hpp>
 #include <stan/math/prim/meta/is_double_or_int.hpp>
 #include <stan/math/prim/meta/is_complex.hpp>
 #include <stan/math/prim/meta/is_constant.hpp>
 #include <stan/math/prim/meta/is_container.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_eigen_dense_base.hpp>
+#include <stan/math/prim/meta/is_eigen_dense_dynamic.hpp>
 #include <stan/math/prim/meta/is_eigen_matrix.hpp>
 #include <stan/math/prim/meta/is_eigen_matrix_base.hpp>
 #include <stan/math/prim/meta/is_eigen_sparse_base.hpp>

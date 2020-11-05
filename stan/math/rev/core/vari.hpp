@@ -395,7 +395,7 @@ class vari_view_eigen {
   }
 
   /**
-   * Return an expression an expression to reverse the order of the coefficients
+   * Return an expression to reverse the order of the coefficients
    * inside of a `vari` matrix
    */
   inline auto reverse() const {
@@ -409,6 +409,10 @@ class vari_view_eigen {
                                  derived().adj_.reverse());
   }
 
+   /**
+    * Return a block consisting of the top rows
+    * @param n Number of rows
+    */
   inline auto topRows(Eigen::Index n) const {
     using inner_type = decltype(derived().val_.topRows(n));
     return vari_view<inner_type>(derived().val_.topRows(n),
@@ -420,6 +424,10 @@ class vari_view_eigen {
                                  derived().adj_.topRows(n));
   }
 
+  /**
+   * Return a block consisting of the bottom rows
+   * @param n Number of rows
+   */
   inline auto bottomRows(Eigen::Index n) const {
     using inner_type = decltype(derived().val_.bottomRows(n));
     return vari_view<inner_type>(derived().val_.bottomRows(n),
@@ -431,6 +439,11 @@ class vari_view_eigen {
                                  derived().adj_.bottomRows(n));
   }
 
+  /**
+   * Return a block consisting of rows in the middle.
+   * @param start_row Starting row index
+   * @param n Number of rows
+   */
   inline auto middleRows(Eigen::Index start_row, Eigen::Index n) const {
     using inner_type = decltype(derived().val_.middleRows(start_row, n));
     return vari_view<inner_type>(derived().val_.middleRows(start_row, n),
@@ -442,6 +455,10 @@ class vari_view_eigen {
                                  derived().adj_.middleRows(start_row, n));
   }
 
+  /**
+   * Return a block consisting of the left-most columns
+   * @param n Number of columns
+   */
   inline auto leftCols(Eigen::Index n) const {
     using inner_type = decltype(derived().val_.leftCols(n));
     return vari_view<inner_type>(derived().val_.leftCols(n),
@@ -453,6 +470,10 @@ class vari_view_eigen {
                                  derived().adj_.leftCols(n));
   }
 
+  /**
+   * Return a block consisting of the right-most columns
+   * @param n Number of columns
+   */
   inline auto rightCols(Eigen::Index n) const {
     using inner_type = decltype(derived().val_.rightCols(n));
     return vari_view<inner_type>(derived().val_.rightCols(n),
@@ -464,15 +485,20 @@ class vari_view_eigen {
                                  derived().adj_.rightCols(n));
   }
 
-  inline auto middleCols(Eigen::Index start_row, Eigen::Index n) const {
-    using inner_type = decltype(derived().val_.middleCols(start_row, n));
-    return vari_view<inner_type>(derived().val_.middleCols(start_row, n),
-                                 derived().adj_.middleCols(start_row, n));
+  /**
+   * Return a block consisting of columns in the middle.
+   * @param start_col Starting column index
+   * @param n Number of columns
+   */
+  inline auto middleCols(Eigen::Index start_col, Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.middleCols(start_col, n));
+    return vari_view<inner_type>(derived().val_.middleCols(start_col, n),
+                                 derived().adj_.middleCols(start_col, n));
   }
-  inline auto middleCols(Eigen::Index start_row, Eigen::Index n) {
-    using inner_type = decltype(derived().val_.middleCols(start_row, n));
-    return vari_view<inner_type>(derived().val_.middleCols(start_row, n),
-                                 derived().adj_.middleCols(start_row, n));
+  inline auto middleCols(Eigen::Index start_col, Eigen::Index n) {
+    using inner_type = decltype(derived().val_.middleCols(start_col, n));
+    return vari_view<inner_type>(derived().val_.middleCols(start_col, n),
+                                 derived().adj_.middleCols(start_col, n));
   }
 
   /**
