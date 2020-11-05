@@ -559,7 +559,8 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
     try {
       cl::Event e = initialize_buffer(obj_heap->data());
       if (opencl_context.device()[0].getInfo<CL_DEVICE_HOST_UNIFIED_MEMORY>()) {
-        buffer_cl_.setDestructorCallback(&delete_it_destructor<U_val>, obj_heap);
+        buffer_cl_.setDestructorCallback(&delete_it_destructor<U_val>,
+                                         obj_heap);
       } else {
         e.setCallback(CL_COMPLETE, &delete_it_event<U_val>, obj_heap);
       }

@@ -77,9 +77,9 @@ class pinned_matrix : public Eigen::Map<MatrixType> {
    */
   pinned_matrix(Eigen::Index rows, Eigen::Index cols)
       : pinned_matrix(
-          cl::Buffer(opencl_context.context(), CL_MEM_ALLOC_HOST_PTR,
-                     sizeof(Scalar) * rows * cols),
-          rows, cols) {}
+            cl::Buffer(opencl_context.context(), CL_MEM_ALLOC_HOST_PTR,
+                       sizeof(Scalar) * rows * cols),
+            rows, cols) {}
 
   /**
    * Constructs `pinned_matrix` with given size. This only works if
@@ -133,11 +133,11 @@ class pinned_matrix : public Eigen::Map<MatrixType> {
                            sizeof(Scalar) * other.size());
       // placement new changes what data map points to - only allocation happens
       // in `init`
-      new (this) Base(static_cast<Scalar*>(
-          opencl_context.queue().enqueueMapBuffer(
-              buffer_, true, CL_MAP_WRITE_INVALIDATE_REGION, 0,
-              sizeof(Scalar) * other.size())),
-          other.rows(), other.cols());
+      new (this)
+          Base(static_cast<Scalar*>(opencl_context.queue().enqueueMapBuffer(
+                   buffer_, true, CL_MAP_WRITE_INVALIDATE_REGION, 0,
+                   sizeof(Scalar) * other.size())),
+               other.rows(), other.cols());
     }
     Base::operator=(other);
     return *this;
@@ -168,11 +168,11 @@ class pinned_matrix : public Eigen::Map<MatrixType> {
                            sizeof(Scalar) * other.size());
       // placement new changes what data map points to - only allocation happens
       // in `init`
-      new (this) Base(static_cast<Scalar*>(
-          opencl_context.queue().enqueueMapBuffer(
-              buffer_, true, CL_MAP_WRITE_INVALIDATE_REGION, 0,
-              sizeof(Scalar) * other.size())),
-          other.rows(), other.cols());
+      new (this)
+          Base(static_cast<Scalar*>(opencl_context.queue().enqueueMapBuffer(
+                   buffer_, true, CL_MAP_WRITE_INVALIDATE_REGION, 0,
+                   sizeof(Scalar) * other.size())),
+               other.rows(), other.cols());
     }
     Base::operator=(other);
     return *this;

@@ -242,12 +242,15 @@ TEST(MathMetaPrim, ref_type_for_opencl_eigen_expression) {
   EXPECT_MATRIX_EQ(a_ref2, a_eval);
   EXPECT_MATRIX_EQ(a_ref3, a_eval);
 
-  EXPECT_TRUE((std::is_same<stan::math::pinned_matrix<plain_type_t<decltype(a)>>,
-                            ref_type_for_opencl_t<decltype(a)>>::value));
-  EXPECT_TRUE((std::is_same<stan::math::pinned_matrix<plain_type_t<decltype(a)>>,
-                            ref_type_for_opencl_t<decltype(a)&>>::value));
-  EXPECT_TRUE((std::is_same<stan::math::pinned_matrix<plain_type_t<decltype(a)>>,
-                            ref_type_for_opencl_t<decltype(a)&&>>::value));
+  EXPECT_TRUE(
+      (std::is_same<stan::math::pinned_matrix<plain_type_t<decltype(a)>>,
+                    ref_type_for_opencl_t<decltype(a)>>::value));
+  EXPECT_TRUE(
+      (std::is_same<stan::math::pinned_matrix<plain_type_t<decltype(a)>>,
+                    ref_type_for_opencl_t<decltype(a)&>>::value));
+  EXPECT_TRUE(
+      (std::is_same<stan::math::pinned_matrix<plain_type_t<decltype(a)>>,
+                    ref_type_for_opencl_t<decltype(a)&&>>::value));
 }
 
 #endif
