@@ -87,7 +87,7 @@ inline var variance(const Mat& x) {
   arena_t<promote_scalar_t<double, Mat>> arena_diff(x.rows(), x.cols());
 
   double squaredNorm = 0.0;
-  for(Eigen::Index i = 0; i < arena_diff.size(); ++i) {
+  for (Eigen::Index i = 0; i < arena_diff.size(); ++i) {
     double diff = x.val().coeff(i) - mean;
     arena_diff.coeffRef(i) = diff;
     squaredNorm += diff * diff;
