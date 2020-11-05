@@ -44,13 +44,13 @@ inline plain_type_t<T> matrix_power(const T& M, const int n) {
   if (n == 1)
     return M_ref;
 
-  arena_t<std::vector<Eigen::MatrixXd>> arena_powers;
+  arena_t<std::vector<Eigen::MatrixXd>> arena_powers(n + 1);
   arena_t<plain_type_t<T>> arena_M = M_ref;
 
-  arena_powers.emplace_back(Eigen::MatrixXd::Identity(N, N));
-  arena_powers.emplace_back(value_of(M_ref));
+  arena_powers[0] = Eigen::MatrixXd::Identity(N, N);
+  arena_powers[1] = M_ref.val();
   for (size_t i = 2; i <= n; ++i) {
-    arena_powers.emplace_back(arena_powers[1] * arena_powers[i - 1]);
+    arena_powers[i] = arena_powers[1] * arena_powers[i - 1];
   }
 
   arena_t<plain_type_t<T>> res = arena_powers[arena_powers.size() - 1];

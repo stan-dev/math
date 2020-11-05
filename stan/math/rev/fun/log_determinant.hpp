@@ -15,7 +15,7 @@ namespace math {
 
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline var log_determinant(const T& m) {
-  check_square("determinant", "m", m);
+  check_square("log_determinant", "m", m);
 
   if (m.size() == 0) {
     return var(0.0);

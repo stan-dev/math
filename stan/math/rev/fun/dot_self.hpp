@@ -31,9 +31,7 @@ inline var dot_self(const T& v) {
   }
   var res(res_val);
   reverse_pass_callback([res, arena_v]() mutable {
-    for (size_t i = 0; i < arena_v.size(); ++i) {
-      arena_v.coeffRef(i).adj() += 2.0 * res.adj() * arena_v.coeff(i).val();
-    }
+    arena_v.adj() += 2.0 * res.adj() * arena_v.val();
   });
 
   return res;
