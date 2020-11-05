@@ -359,7 +359,7 @@ class var_value<
    * @tparam S A type that is convertible to `value_type`.
    * @param x Value of the variable.
    */
-  template <typename S, require_convertible_t<S&, value_type>* = nullptr>
+  template <typename S, require_assignable_t<value_type, S>* = nullptr>
   var_value(S&& x) : vi_(new vari_type(std::forward<S>(x), false)) {}  // NOLINT
 
   /**
@@ -368,7 +368,7 @@ class var_value<
    * @param other the value to assign
    * @return this
    */
-  template <typename S, require_convertible_t<S&, value_type>* = nullptr,
+  template <typename S, require_assignable_t<value_type, S>* = nullptr,
             require_all_plain_type_t<T, S>* = nullptr>
   var_value(const var_value<S>& other) : vi_(other.vi_) {}
 
@@ -380,7 +380,7 @@ class var_value<
    * @return this
    */
   template <typename S, typename T_ = T,
-            require_convertible_t<S&, value_type>* = nullptr,
+            require_assignable_t<value_type, S>* = nullptr,
             require_not_plain_type_t<S>* = nullptr,
             require_plain_type_t<T_>* = nullptr>
   var_value(const var_value<S>& other) : vi_(new vari_type(other.vi_->val_)) {
@@ -572,6 +572,20 @@ class var_value<
     using var_sub = var_value<value_type_t<vari_sub>>;
     return var_sub(
         new vari_sub(vi_->block(start_row, start_col, num_rows, num_cols)));
+  }
+
+  /**
+   * View transpose of eigen matrix.
+   */
+  inline auto transpose() const {
+    using vari_sub = decltype(vi_->transpose());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->transpose()));
+  }
+  inline auto transpose() {
+    using vari_sub = decltype(vi_->transpose());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->transpose()));
   }
 
   /**
@@ -834,7 +848,7 @@ class var_value<
    * @param other the value to assign
    * @return this
    */
-  template <typename S, require_convertible_t<S&, value_type>* = nullptr,
+  template <typename S, require_assignable_t<value_type, S>* = nullptr,
             require_all_plain_type_t<T, S>* = nullptr>
   inline var_value<T>& operator=(const var_value<S>& other) {
     vi_ = other.vi_;
@@ -848,8 +862,9 @@ class var_value<
    * @param other the value to assign
    * @return this
    */
-  template <typename S, require_convertible_t<S&, value_type>* = nullptr,
-            require_any_not_plain_type_t<T, S>* = nullptr>
+  template <typename S, typename T_ = T,
+            require_assignable_t<value_type, S>* = nullptr,
+            require_any_not_plain_type_t<T_, S>* = nullptr>
   inline var_value<T>& operator=(const var_value<S>& other) {
     arena_t<plain_type_t<T>> prev_val = vi_->val_;
     vi_->val_ = other.val();

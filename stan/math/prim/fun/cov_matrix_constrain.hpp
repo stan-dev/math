@@ -35,9 +35,9 @@ cov_matrix_constrain(const T& x, Eigen::Index K) {
   using std::exp;
 
   Matrix<value_type_t<T>, Dynamic, Dynamic> L(K, K);
-  check_size_match("cov_matrix_constrain", "x.size()", x.size(),
-                   "K + (K choose 2)", (K * (K + 1)) / 2);
   const Eigen::Ref<const plain_type_t<T>>& x_ref = x;
+  check_size_match("cov_matrix_constrain", "x.size()", x_ref.size(),
+                   "K + (K choose 2)", (K * (K + 1)) / 2);
   int i = 0;
   for (Eigen::Index m = 0; m < K; ++m) {
     L.row(m).head(m) = x_ref.segment(i, m);

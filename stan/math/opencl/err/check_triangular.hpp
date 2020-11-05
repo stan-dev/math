@@ -2,7 +2,7 @@
 #define STAN_MATH_OPENCL_ERR_CHECK_TRIANGULAR_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err/invalid_argument.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 namespace stan {
