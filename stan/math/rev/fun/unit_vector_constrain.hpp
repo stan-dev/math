@@ -30,7 +30,6 @@ template <typename T, require_rev_col_vector_t<T>* = nullptr>
 inline auto unit_vector_constrain(const T& y) {
   using ret_type = plain_type_t<T>;
 
-  check_vector("unit_vector", "y", y);
   check_nonzero_size("unit_vector", "y", y);
 
   arena_t<T> arena_y = y;
