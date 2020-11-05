@@ -221,8 +221,18 @@ special_arg_values = {
     "student_t_ccdf_log" : [0.8, None, 0.4, None],
     "student_t_lccdf" : [0.8, None, 0.4, None],
     "student_t_lcdf" : [0.8, None, 0.4, None],
+    "unit_vector_free" : [1.0],
+    "uniform_cdf" : [None, 0.2, 0.9],
+    "uniform_ccdf_log" : [None, 0.2, 0.9],
+    "uniform_cdf_log" : [None, 0.2, 0.9],
+    "uniform_lccdf" : [None, 0.2, 0.9],
+    "uniform_lcdf" : [None, 0.2, 0.9],
+    "uniform_log" : [None, 0.2, 0.9],
+    "uniform_lpdf" : [None, 0.2, 0.9],
+    "uniform_rng" : [0.2, 1.9, None],
     "wiener_log" : [0.8, None, 0.4, None, None],
-    "wiener_lpdf" : [0.8, None, 0.4, None, None],}
+    "wiener_lpdf" : [0.8, None, 0.4, None, None],
+}
 
 # list of function argument indices, for which real valued arguments are not differentiable 
 # - they need to be double even in autodiff overloads
