@@ -23,8 +23,7 @@ namespace math {
  *   vector.
  */
 template <typename Mat, require_matrix_t<Mat>* = nullptr>
-inline void check_vector(const char* function, const char* name,
-                         const Mat& x) {
+inline void check_vector(const char* function, const char* name, const Mat& x) {
   if (x.rows() == 1 || x.cols() == 1) {
     return;
   } else {
