@@ -57,6 +57,7 @@ using ref_type_t = typename ref_type_if<true, T>::type;
 template <bool Condition, typename T>
 using ref_type_if_t = typename ref_type_if<Condition, T>::type;
 
+#ifdef STAN_OPENCL
 /**
  * Determines appropriate type for assigning expression of given type to, so
  * that the resulting type has directly accessible contiguous colum-major data,
@@ -111,6 +112,7 @@ struct ref_type_for_opencl<T, require_arena_matrix_t<T>> {
 
 template <typename T>
 using ref_type_for_opencl_t = typename ref_type_for_opencl<T>::type;
+#endif
 
 }  // namespace stan
 
