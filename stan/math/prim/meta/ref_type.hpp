@@ -6,14 +6,12 @@
 #include <stan/math/prim/meta/is_arena_matrix.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/plain_type.hpp>
-
 #include <type_traits>
+#ifdef STAN_OPENCL
+#include <stan/math/opencl/pinned_matrix.hpp>
+#endif
 
 namespace stan {
-namespace math {
-template <typename MatrixType>
-class pinned_matrix;
-}
 
 /**
  * If the condition is true determines appropriate type for assigning expression
