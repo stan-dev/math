@@ -113,6 +113,7 @@
 #include <stan/math/opencl/prim/divide.hpp>
 #include <stan/math/opencl/prim/divide_columns.hpp>
 #include <stan/math/opencl/prim/exp_mod_normal_lpdf.hpp>
+#include <stan/math/opencl/prim/exponential_lpdf.hpp>
 #include <stan/math/opencl/prim/gp_exp_quad_cov.hpp>
 #include <stan/math/opencl/prim/inv.hpp>
 #include <stan/math/opencl/prim/inv_cloglog.hpp>
