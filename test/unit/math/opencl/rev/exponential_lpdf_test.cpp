@@ -48,14 +48,12 @@ TEST(ProbDistributionsExponential, error_checking) {
                std::domain_error);
 }
 
-auto exponential_lpdf_functor
-    = [](const auto& y, const auto& beta) {
-        return stan::math::exponential_lpdf(y, beta);
-      };
-auto exponential_lpdf_functor_propto
-    = [](const auto& y, const auto& beta) {
-        return stan::math::exponential_lpdf<true>(y, beta);
-      };
+auto exponential_lpdf_functor = [](const auto& y, const auto& beta) {
+  return stan::math::exponential_lpdf(y, beta);
+};
+auto exponential_lpdf_functor_propto = [](const auto& y, const auto& beta) {
+  return stan::math::exponential_lpdf<true>(y, beta);
+};
 
 TEST(ProbDistributionsExponential, opencl_matches_cpu_small) {
   int N = 3;
@@ -66,10 +64,10 @@ TEST(ProbDistributionsExponential, opencl_matches_cpu_small) {
   Eigen::VectorXd beta(N);
   beta << 0.3, 0.8, 21.0;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(exponential_lpdf_functor, y, beta
-                                                );
-  stan::math::test::compare_cpu_opencl_prim_rev(exponential_lpdf_functor_propto, y,
+  stan::math::test::compare_cpu_opencl_prim_rev(exponential_lpdf_functor, y,
                                                 beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(exponential_lpdf_functor_propto,
+                                                y, beta);
 }
 
 TEST(ProbDistributionsExponential, opencl_broadcast_y) {
@@ -106,10 +104,10 @@ TEST(ProbDistributionsExponential, opencl_matches_cpu_big) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> beta
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
 
-  stan::math::test::compare_cpu_opencl_prim_rev(exponential_lpdf_functor, y, beta
-                                                );
-  stan::math::test::compare_cpu_opencl_prim_rev(exponential_lpdf_functor_propto, y,
+  stan::math::test::compare_cpu_opencl_prim_rev(exponential_lpdf_functor, y,
                                                 beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(exponential_lpdf_functor_propto,
+                                                y, beta);
 }
 
 #endif

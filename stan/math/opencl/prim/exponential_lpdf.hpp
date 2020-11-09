@@ -65,8 +65,8 @@ return_type_t<T_y_cl, T_inv_scale_cl> exponential_lpdf(
 
   operands_and_partials<T_y_cl, T_inv_scale_cl> ops_partials(y, beta);
 
-  auto check_y_nonnegative = check_cl(function, "Random variable",
-                                      y_val, "nonnegative");
+  auto check_y_nonnegative
+      = check_cl(function, "Random variable", y_val, "nonnegative");
   auto y_nonnegative_expr = y_val >= 0;
   auto check_beta_pos_finite = check_cl(function, "Inverse scale parameter",
                                         beta_val, "positive finite");

@@ -58,29 +58,40 @@ TEST(ProbDistributionsExpModNormal, error_checking) {
   stan::math::matrix_cl<double> lambda_value1_cl(lambda_value1);
   stan::math::matrix_cl<double> lambda_value2_cl(lambda_value2);
 
-  EXPECT_NO_THROW(stan::math::exp_mod_normal_lpdf(y_cl, mu_cl, sigma_cl, lambda_cl));
+  EXPECT_NO_THROW(
+      stan::math::exp_mod_normal_lpdf(y_cl, mu_cl, sigma_cl, lambda_cl));
 
-  EXPECT_THROW(stan::math::exp_mod_normal_lpdf(y_size_cl, mu_cl, sigma_cl, lambda_cl),
-               std::invalid_argument);
-  EXPECT_THROW(stan::math::exp_mod_normal_lpdf(y_cl, mu_size_cl, sigma_cl, lambda_cl),
-               std::invalid_argument);
-  EXPECT_THROW(stan::math::exp_mod_normal_lpdf(y_cl, mu_cl, sigma_size_cl, lambda_cl),
-               std::invalid_argument);
-  EXPECT_THROW(stan::math::exp_mod_normal_lpdf(y_cl, mu_cl, sigma_cl, lambda_size_cl),
-               std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::exp_mod_normal_lpdf(y_size_cl, mu_cl, sigma_cl, lambda_cl),
+      std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::exp_mod_normal_lpdf(y_cl, mu_size_cl, sigma_cl, lambda_cl),
+      std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::exp_mod_normal_lpdf(y_cl, mu_cl, sigma_size_cl, lambda_cl),
+      std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::exp_mod_normal_lpdf(y_cl, mu_cl, sigma_cl, lambda_size_cl),
+      std::invalid_argument);
 
-  EXPECT_THROW(stan::math::exp_mod_normal_lpdf(y_value_cl, mu_cl, sigma_cl, lambda_cl),
-               std::domain_error);
-  EXPECT_THROW(stan::math::exp_mod_normal_lpdf(y_cl, mu_value_cl, sigma_cl, lambda_cl),
-               std::domain_error);
-  EXPECT_THROW(stan::math::exp_mod_normal_lpdf(y_cl, mu_cl, sigma_value1_cl, lambda_cl),
-               std::domain_error);
-  EXPECT_THROW(stan::math::exp_mod_normal_lpdf(y_cl, mu_cl, sigma_cl, lambda_value1_cl),
-               std::domain_error);
-  EXPECT_THROW(stan::math::exp_mod_normal_lpdf(y_cl, mu_cl, sigma_value2_cl, lambda_cl),
-               std::domain_error);
-  EXPECT_THROW(stan::math::exp_mod_normal_lpdf(y_cl, mu_cl, sigma_cl, lambda_value2_cl),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::exp_mod_normal_lpdf(y_value_cl, mu_cl, sigma_cl, lambda_cl),
+      std::domain_error);
+  EXPECT_THROW(
+      stan::math::exp_mod_normal_lpdf(y_cl, mu_value_cl, sigma_cl, lambda_cl),
+      std::domain_error);
+  EXPECT_THROW(
+      stan::math::exp_mod_normal_lpdf(y_cl, mu_cl, sigma_value1_cl, lambda_cl),
+      std::domain_error);
+  EXPECT_THROW(
+      stan::math::exp_mod_normal_lpdf(y_cl, mu_cl, sigma_cl, lambda_value1_cl),
+      std::domain_error);
+  EXPECT_THROW(
+      stan::math::exp_mod_normal_lpdf(y_cl, mu_cl, sigma_value2_cl, lambda_cl),
+      std::domain_error);
+  EXPECT_THROW(
+      stan::math::exp_mod_normal_lpdf(y_cl, mu_cl, sigma_cl, lambda_value2_cl),
+      std::domain_error);
 }
 
 auto exp_mod_normal_lpdf_functor
@@ -104,8 +115,10 @@ TEST(ProbDistributionsExpModNormal, opencl_matches_cpu_small) {
   Eigen::VectorXd lambda(N);
   lambda << 0.3, 0.8, 13.0;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(exp_mod_normal_lpdf_functor, y, mu, sigma, lambda);
-  stan::math::test::compare_cpu_opencl_prim_rev(exp_mod_normal_lpdf_functor_propto, y, mu, sigma, lambda);
+  stan::math::test::compare_cpu_opencl_prim_rev(exp_mod_normal_lpdf_functor, y,
+                                                mu, sigma, lambda);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      exp_mod_normal_lpdf_functor_propto, y, mu, sigma, lambda);
 }
 
 TEST(ProbDistributionsExpModNormal, opencl_broadcast_y) {
@@ -119,8 +132,8 @@ TEST(ProbDistributionsExpModNormal, opencl_broadcast_y) {
   Eigen::VectorXd lambda(N);
   lambda << 0.3, 0.8, 13.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(exp_mod_normal_lpdf_functor,
-                                                         y, mu, sigma, lambda);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      exp_mod_normal_lpdf_functor, y, mu, sigma, lambda);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       exp_mod_normal_lpdf_functor_propto, y, mu, sigma, lambda);
 }
@@ -136,8 +149,8 @@ TEST(ProbDistributionsExpModNormal, opencl_broadcast_mu) {
   Eigen::VectorXd lambda(N);
   lambda << 0.3, 0.8, 13.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(exp_mod_normal_lpdf_functor,
-                                                         y, mu, sigma, lambda);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
+      exp_mod_normal_lpdf_functor, y, mu, sigma, lambda);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       exp_mod_normal_lpdf_functor_propto, y, mu, sigma, lambda);
 }
@@ -153,8 +166,8 @@ TEST(ProbDistributionsExpModNormal, opencl_broadcast_sigma) {
   Eigen::VectorXd lambda(N);
   lambda << 0.3, 0.8, 13.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(exp_mod_normal_lpdf_functor,
-                                                         y, mu, sigma, lambda);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
+      exp_mod_normal_lpdf_functor, y, mu, sigma, lambda);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       exp_mod_normal_lpdf_functor_propto, y, mu, sigma, lambda);
 }
@@ -170,8 +183,8 @@ TEST(ProbDistributionsExpModNormal, opencl_broadcast_lambda) {
   sigma << 0.3, 0.8, 11.0;
   double lambda = 1.2;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<3>(exp_mod_normal_lpdf_functor,
-                                                         y, mu, sigma, lambda);
+  stan::math::test::test_opencl_broadcasting_prim_rev<3>(
+      exp_mod_normal_lpdf_functor, y, mu, sigma, lambda);
   stan::math::test::test_opencl_broadcasting_prim_rev<3>(
       exp_mod_normal_lpdf_functor_propto, y, mu, sigma, lambda);
 }
@@ -188,8 +201,10 @@ TEST(ProbDistributionsExpModNormal, opencl_matches_cpu_big) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> lambda
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
 
-  stan::math::test::compare_cpu_opencl_prim_rev(exp_mod_normal_lpdf_functor, y, mu, sigma, lambda);
-  stan::math::test::compare_cpu_opencl_prim_rev(exp_mod_normal_lpdf_functor_propto, y, mu, sigma, lambda);
+  stan::math::test::compare_cpu_opencl_prim_rev(exp_mod_normal_lpdf_functor, y,
+                                                mu, sigma, lambda);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      exp_mod_normal_lpdf_functor_propto, y, mu, sigma, lambda);
 }
 
 #endif

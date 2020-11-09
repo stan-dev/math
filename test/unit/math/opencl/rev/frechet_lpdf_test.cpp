@@ -108,8 +108,8 @@ TEST(ProbDistributionsFrechet, opencl_broadcast_y) {
   Eigen::VectorXd sigma(N);
   sigma << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(frechet_lpdf_functor, y,
-                                                         alpha, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(frechet_lpdf_functor,
+                                                         y, alpha, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       frechet_lpdf_functor_propto, y, alpha, sigma);
 }
@@ -123,8 +123,8 @@ TEST(ProbDistributionsFrechet, opencl_broadcast_alpha) {
   Eigen::VectorXd sigma(N);
   sigma << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(frechet_lpdf_functor, y,
-                                                         alpha, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(frechet_lpdf_functor,
+                                                         y, alpha, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       frechet_lpdf_functor_propto, y, alpha, sigma);
 }
@@ -140,8 +140,8 @@ TEST(ProbDistributionsFrechet, opencl_broadcast_sigma) {
   Eigen::VectorXd sigma_vec(N);
   sigma_vec << sigma, sigma, sigma;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(frechet_lpdf_functor, y,
-                                                         alpha, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(frechet_lpdf_functor,
+                                                         y, alpha, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       frechet_lpdf_functor_propto, y, alpha, sigma);
 }

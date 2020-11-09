@@ -76,8 +76,9 @@ return_type_t<T_y_cl, T_shape_cl, T_scale_cl> frechet_lpdf(
   auto logp1_expr = -sigma_div_y_pow_alpha_expr;
   auto logp2_expr = static_select<include_summand<propto, T_shape_cl>::value>(
       logp1_expr + log(alpha_val), logp1_expr);
-  auto logp3_expr = static_select<include_summand<propto, T_y_cl, T_shape_cl>::value>(
-      logp2_expr - elt_multiply(alpha_val + 1.0, log_y_expr), logp2_expr);
+  auto logp3_expr
+      = static_select<include_summand<propto, T_y_cl, T_shape_cl>::value>(
+          logp2_expr - elt_multiply(alpha_val + 1.0, log_y_expr), logp2_expr);
   auto logp_expr = colwise_sum(
       static_select<include_summand<propto, T_shape_cl, T_scale_cl>::value>(
           logp3_expr + elt_multiply(alpha_val, log_sigma_expr), logp3_expr));
