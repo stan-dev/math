@@ -6,6 +6,7 @@
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/err/check_size_match.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
+#include <stan/math/opencl/ref_type_for_opencl.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
@@ -296,10 +297,10 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
    * Eigen expression on the OpenCL device. Regardless of `partial_view`, whole
    * matrix is stored.
    *
-   * If a lvalue matrix or a map is passed to this constructor the caller must
-   * make sure that the matrix (map data) does not go out of scope as long as
-   * this `matrix_cl` is in use (`std::move`-ing it or using raw `buffer()` also
-   * counts as in use).
+   * If a lvalue matrix or a map is passed to this constructor, it might be
+   * directly used by the device. The caller must make sure that the matrix (map
+   * data) does not go out of scope as long as this `matrix_cl` is in use
+   * (`std::move`-ing it or using raw `buffer()` also counts as in use).
    *
    * @tparam Mat type of \c Eigen \c Matrix or expression
    * @param A the \c Eigen \c Matrix or expression
@@ -327,8 +328,9 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
    * Constructor for the matrix_cl that creates a copy of a scalar on the OpenCL
    * device. Regardless of `partial_view`, whole matrix is stored.
    *
-   * If a lvalue is passed to this constructor the caller must make sure that it
-   * does not go out of scope as long as this `matrix_cl` is in use
+   * If a lvalue is passed to this constructor, it might be directly used by the
+   * device. The caller must make sure that it does not go out of scope as long
+   * as this `matrix_cl` is in use
    * (`std::move`-ing it or using raw `buffer()` also counts as in use).
    *
    * @param A the scalar
@@ -348,8 +350,9 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
   /**
    * Construct a matrix_cl of size Nx1 from \c std::vector.
    *
-   * If a lvalue is passed to this constructor the caller must make sure that it
-   * does not go out of scope as long as this `matrix_cl` is in use
+   * If a lvalue is passed to this constructor, it might be directly used by the
+   * device. The caller must make sure that it does not go out of scope as long
+   * as this `matrix_cl` is in use
    * (`std::move`-ing it or using raw `buffer()` also counts as in use).
    *
    * @param A Standard vector
@@ -367,9 +370,10 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
   /**
    * Construct from \c std::vector with given rows and columns.
    *
-   * If a lvalue is passed to this constructor the caller must make sure that it
-   * does not go out of scope as long as this `matrix_cl` is in use
-   * (`std::move`-ing it or using raw `buffer()` also counts as in use).
+   * If a lvalue is passed to this constructor, it might be directly used by the
+   * device. The caller must make sure that it does not go out of scope as long
+   * as this `matrix_cl` is in use `std::move`-ing it or using raw `buffer()`
+   * also counts as in use).
    *
    * @param A Standard vector
    * @param R Number of rows the matrix should have.
@@ -390,9 +394,9 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
   /**
    * Construct from \c array with given rows and columns.
    *
-   * The caller must make sure that it does not go out of scope as long as this
-   * `matrix_cl` is in use (`std::move`-ing it or using raw `buffer()` also
-   * counts as in use).
+   * The memory might be directly used by the device. The caller must make sure
+   * that it does not go out of scope as long as this `matrix_cl` is in use
+   * (`std::move`-ing it or using raw `buffer()` also counts as in use).
    *
    * @param A array of doubles
    * @param R Number of rows the matrix should have.

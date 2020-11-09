@@ -101,11 +101,11 @@ TEST(opencl_context, switch_devices) {
       stan::math::opencl_context.select_device(i, j);
       Eigen::MatrixXd m(2, 2);
       m << 1, 2, 3, 4;
+      Eigen::MatrixXd correct = (2 * m) * (2 * m);
       stan::math::matrix_cl<double> m_cl(m);
       m_cl = 2 * m_cl;
       m_cl = m_cl * m_cl;
       Eigen::MatrixXd res = stan::math::from_matrix_cl(m_cl);
-      Eigen::MatrixXd correct = (2 * m) * (2 * m);
       EXPECT_MATRIX_EQ(res, correct);
     }
   }
