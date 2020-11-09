@@ -40,8 +40,9 @@ inline var dot_product(const T1& v1, const T2& v2) {
     var res(v1_arena.val().dot(v2_arena.val()));
     reverse_pass_callback([v1_arena, v2_arena, res]() mutable {
       for (Eigen::Index i = 0; i < v1_arena.size(); ++i) {
-        v1_arena.coeffRef(i).adj() += res.adj() * v2_arena.coeffRef(i).val();
-        v2_arena.coeffRef(i).adj() += res.adj() * v1_arena.coeffRef(i).val();
+        const auto res_adj = res.adj();
+        v1_arena.coeffRef(i).adj() += res_adj * v2_arena.coeffRef(i).val();
+        v2_arena.coeffRef(i).adj() += res_adj * v1_arena.coeffRef(i).val();
       }
     });
     return res;
