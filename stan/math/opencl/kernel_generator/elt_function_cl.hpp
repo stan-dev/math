@@ -29,7 +29,7 @@ namespace math {
  */
 
 /**
- * Represents a unary function in kernel generator expressions.
+ * Represents an element-wise function in kernel generator expressions.
  * @tparam Derived derived type
  * @tparam T type of argument
  * @tparam Scal type of the scalar of result
@@ -44,9 +44,9 @@ class elt_function_cl : public operation_cl<Derived, Scal, T...> {
   /**
    * Constructor
    * @param fun function
-   * @param a argument expression
+   * @param a argument expression(s)
    */
-  elt_function_cl(const std::string& fun, T&&... args)
+  elt_function_cl(const std::string& fun, T&&... args)  // NOLINT
       : base(std::forward<T>(args)...), fun_(fun) {}
 
   /**
