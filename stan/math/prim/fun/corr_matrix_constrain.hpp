@@ -36,7 +36,7 @@ namespace math {
  * @throw std::invalid_argument if x is not a valid correlation
  * matrix.
  */
-template <typename T, require_eigen_vector_t<T>* = nullptr>
+template <typename T, require_eigen_col_vector_t<T>* = nullptr>
 Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
 corr_matrix_constrain(const T& x, Eigen::Index k) {
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
