@@ -44,6 +44,7 @@ inline ref_type_t<T&&> to_ref_if(T&& a) {
   return std::forward<T>(a);
 }
 
+#ifdef STAN_OPENCL
 /**
  * Converts given Eigen expression into one that can be directly copied to an
  * OpenCL device to create `matrix_cl`. If given expression can be directly
@@ -56,6 +57,7 @@ template <typename T>
 inline ref_type_for_opencl_t<T&&> to_ref_for_opencl(T&& a) {
   return std::forward<T>(a);
 }
+#endif
 
 }  // namespace math
 }  // namespace stan
