@@ -5,7 +5,7 @@ double var2 = 0; if (!((!contains_nonzero(var2_view, LOWER) && j < i) || (!conta
 bool var1 = var2 > var3;
 double var5 = 0; if (!((!contains_nonzero(var5_view, LOWER) && j < i) || (!contains_nonzero(var5_view, UPPER) && j > i))) {var5 = var5_global[i + var5_rows * j];}
 bool var4 = var1;
-if(!var4 && atomic_xchg(var4_buffer, 1) == 1){
+if(!var4 && atomic_xchg(var4_buffer, 1) == 0){
 var4_buffer[1] = i;
 var4_buffer[2] = j;
 var4_value[0] = var5;
