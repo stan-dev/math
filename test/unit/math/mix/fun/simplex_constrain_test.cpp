@@ -23,6 +23,7 @@ void expect_simplex_transform(const T& x) {
   auto f2 = [](const auto& x) { return g2(x); };
   auto f3 = [](const auto& x) { return g3(x); };
   stan::test::expect_ad(f1, x);
+  stan::test::expect_ad_matvar(f1, x);
   stan::test::expect_ad(f2, x);
   stan::test::expect_ad(f3, x);
 }
