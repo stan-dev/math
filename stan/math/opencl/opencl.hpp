@@ -94,8 +94,10 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/pinned_matrix.hpp>
 #include <stan/math/opencl/plain_type.hpp>
+#include <stan/math/opencl/ref_type_for_opencl.hpp>
 #include <stan/math/opencl/scalar_type.hpp>
 #include <stan/math/opencl/sub_block.hpp>
+#include <stan/math/opencl/to_ref_for_opencl.hpp>
 #include <stan/math/opencl/triangular_transpose.hpp>
 #include <stan/math/opencl/value_type.hpp>
 #include <stan/math/opencl/zeros.hpp>
