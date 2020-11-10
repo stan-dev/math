@@ -4,6 +4,7 @@
 #include <stan/math/rev/core/chainablestack.hpp>
 
 #include <mutex>
+#include <stdexcept>
 #include <thread>
 
 namespace stan {
@@ -17,12 +18,12 @@ namespace math {
  *
  * ScopedChainableStack scoped_stack;
  *
- * double cgrad = scoped_stack.execute([] {
- *   var a = 1;
- *   var b = 4;
- *   var c = a + b;
- *   grad();
- *   return c.adj();
+ * double cgrad_a = scoped_stack.execute([] {
+ *   var a = 2.0;
+ *   var b = 4.0;
+ *   var c = a*a + b;
+ *   c.grad();
+ *   return a.adj();
  * });
  *
  * Doing so will not interfere with the process (or thread) AD tape.
@@ -33,13 +34,21 @@ class ScopedChainableStack {
 
   struct activate_scope {
     ChainableStack::AutodiffStackStorage* parent_stack_;
+    ScopedChainableStack& scoped_stack_;
 
     explicit activate_scope(ScopedChainableStack& scoped_stack)
-        : parent_stack_(ChainableStack::instance_) {
+        : parent_stack_(ChainableStack::instance_),
+          scoped_stack_(scoped_stack) {
+      if (!scoped_stack_.local_stack_mutex_.try_lock()) {
+        throw std::logic_error{"Cannot recurse same instance scoped stacks."};
+      }
       ChainableStack::instance_ = &scoped_stack.local_stack_;
     }
 
-    ~activate_scope() { ChainableStack::instance_ = parent_stack_; }
+    ~activate_scope() {
+      scoped_stack_.local_stack_mutex_.unlock();
+      ChainableStack::instance_ = parent_stack_;
+    }
   };
 
  public:
@@ -56,7 +65,6 @@ class ScopedChainableStack {
    */
   template <typename F>
   auto execute(F&& f) {
-    const std::lock_guard<std::mutex> lock(local_stack_mutex_);
     activate_scope active_scope(*this);
     return std::forward<F>(f)();
   }
