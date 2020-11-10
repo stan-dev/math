@@ -8,9 +8,9 @@
 #include <set>
 
 TEST(StanMathRev_reduce_sum, no_args) {
-  using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::sum_lpdf;
+  using stan::math::var;
   std::vector<var> data(0);
   EXPECT_EQ(0.0, stan::math::reduce_sum_static<sum_lpdf>(
                      data, 1, stan::math::test::get_new_msg())
@@ -52,9 +52,9 @@ TEST(StanMathRev_reduce_sum, value) {
 }
 
 TEST(StanMathRev_reduce_sum, gradient) {
-  using stan::math::var;
   using stan::math::test::count_lpdf;
   using stan::math::test::get_new_msg;
+  using stan::math::var;
 
   double lambda_d = 10.0;
   const std::size_t elems = 10000;
@@ -100,9 +100,9 @@ TEST(StanMathRev_reduce_sum, gradient) {
 }
 
 TEST(StanMathRev_reduce_sum, grainsize) {
-  using stan::math::var;
   using stan::math::test::count_lpdf;
   using stan::math::test::get_new_msg;
+  using stan::math::var;
 
   double lambda_d = 10.0;
   const std::size_t elems = 10000;
@@ -148,9 +148,9 @@ TEST(StanMathRev_reduce_sum, grainsize) {
 }
 
 TEST(StanMathRev_reduce_sum, nesting_gradient) {
-  using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::nesting_count_lpdf;
+  using stan::math::var;
 
   double lambda_d = 10.0;
   const std::size_t elems = 10000;
@@ -198,9 +198,9 @@ TEST(StanMathRev_reduce_sum, nesting_gradient) {
 }
 
 TEST(StanMathRev_reduce_sum, grouped_gradient) {
-  using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::grouped_count_lpdf;
+  using stan::math::var;
 
   double lambda_d = 10.0;
   const std::size_t groups = 10;
@@ -259,9 +259,9 @@ TEST(StanMathRev_reduce_sum, grouped_gradient) {
 }
 
 TEST(StanMathRev_reduce_sum, grouped_gradient_eigen) {
-  using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::grouped_count_lpdf;
+  using stan::math::var;
 
   double lambda_d = 10.0;
   const std::size_t groups = 10;
@@ -322,9 +322,9 @@ TEST(StanMathRev_reduce_sum, grouped_gradient_eigen) {
 }
 
 TEST(StanMathRev_reduce_sum, slice_group_gradient) {
-  using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::slice_group_count_lpdf;
+  using stan::math::var;
 
   double lambda_d = 10.0;
   const std::size_t groups = 10;
@@ -386,6 +386,48 @@ TEST(StanMathRev_reduce_sum, slice_group_gradient) {
   const double lambda_adj_static = lambda_v.adj();
 
   EXPECT_FLOAT_EQ(lambda_adj_static, lambda_ref_adj);
+
+  stan::math::recover_memory();
+}
+
+// reduce_sum needs still work fine whenever multiple arguments point
+// to the same vari internally
+TEST(StanMathRev_reduce_sum, linked_args) {
+  using stan::math::test::arg_start_end_lpdf;
+  using stan::math::test::get_new_msg;
+  auto start_end_rs = [](auto&& arg1, auto&& arg2) {
+    return stan::math::reduce_sum_static<arg_start_end_lpdf>(
+        arg1, 1, get_new_msg(), arg2, arg2);
+  };
+
+  auto start_end = [](auto&& arg1, auto&& arg2) {
+    arg_start_end_lpdf worker;
+    return worker(arg1, 0, arg1.size() - 1, get_new_msg(), arg2, arg2);
+  };
+
+  std::vector<double> data(5, 1.0);
+
+  stan::math::set_zero_all_adjoints();
+
+  std::vector<stan::math::var> param2(data.begin(), data.end());
+  std::vector<std::vector<stan::math::var>> param1(5, param2);
+
+  stan::math::var res = start_end(param1, param2);
+
+  stan::math::grad(res.vi_);
+
+  double param2_adj = param2[0].adj();
+
+  stan::math::set_zero_all_adjoints();
+
+  std::vector<stan::math::var> param2_rs(data.begin(), data.end());
+  std::vector<std::vector<stan::math::var>> param1_rs(5, param2_rs);
+
+  stan::math::var res_rs = start_end_rs(param1_rs, param2_rs);
+
+  stan::math::grad(res_rs.vi_);
+
+  EXPECT_FLOAT_EQ(param2_rs[0].adj(), param2_adj);
 
   stan::math::recover_memory();
 }
