@@ -76,8 +76,9 @@ inline double integrate(const F& f, double a, double b,
       Q = integrator.integrate(f_wrap, a, 0.0, relative_tolerance, &error1, &L1,
                                &levels)
           + integrator_right.integrate(f_wrap, 0.0, b,
-                                       0.5 * b * relative_tolerance, &error2,
+                                       relative_tolerance, &error2,
                                        &L2, &levels);
+      error2 *= 0.5 * b;
       used_two_integrals = true;
     }
   } else if (std::isinf(b)) {
@@ -87,24 +88,28 @@ inline double integrate(const F& f, double a, double b,
                                &levels);
     } else {
       boost::math::quadrature::tanh_sinh<double> integrator_left;
-      Q = integrator_left.integrate(f_wrap, a, 0, -0.5 * a * relative_tolerance,
+      Q = integrator_left.integrate(f_wrap, a, 0, relative_tolerance,
                                     &error1, &L1, &levels)
           + integrator.integrate(f_wrap, relative_tolerance, &error2, &L2,
                                  &levels);
+      error1 *= -0.5 * a;
       used_two_integrals = true;
     }
   } else {
     auto f_wrap = [&](double x, double xc) { return f(x, xc); };
     boost::math::quadrature::tanh_sinh<double> integrator;
     if (a < 0.0 && b > 0.0) {
-      Q = integrator.integrate(f_wrap, a, 0.0, -0.5 * a * relative_tolerance,
+      Q = integrator.integrate(f_wrap, a, 0.0, relative_tolerance,
                                &error1, &L1, &levels)
-          + integrator.integrate(f_wrap, 0.0, b, 0.5 * b * relative_tolerance,
+          + integrator.integrate(f_wrap, 0.0, b, relative_tolerance,
                                  &error2, &L2, &levels);
+      error1 *= -0.5 * a;
+      error2 *= 0.5 * b;
       used_two_integrals = true;
     } else {
-      Q = integrator.integrate(f_wrap, a, b, 0.5 * (b - a) * relative_tolerance,
+      Q = integrator.integrate(f_wrap, a, b, relative_tolerance,
                                &error1, &L1, &levels);
+      error1 *= 0.5 * (b - a);
     }
   }
 

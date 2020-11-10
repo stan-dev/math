@@ -201,6 +201,77 @@ struct f16 {
   }
 };
 
+
+double lbaX_pdf(double X, double t, double A, double v,
+		double s, std::ostream* pstream__) {
+  double b_A_tv_ts;
+  double b_tv_ts;
+  double term_1;
+  double term_2;
+  double pdf;
+    
+  b_A_tv_ts = (((X - A) - (t * v)) / (t * s));
+  b_tv_ts = ((X - (t * v)) / (t * s));
+  term_1 = stan::math::Phi(b_A_tv_ts);
+  term_2 = stan::math::Phi(b_tv_ts);
+  pdf = ((1 / A) * (-term_1 + term_2));
+  return pdf;
+  
+}
+
+  double lbaX_cdf(double X, double t, double A, double v,
+		  double s, std::ostream* pstream__) {
+    double b_A_tv;
+    double b_tv;
+    double ts;
+    double term_1;
+    double term_2;
+    double term_3;
+    double term_4;
+    double cdf;
+
+    b_A_tv = ((X - A) - (t * v));
+    b_tv = (X - (t * v));
+    ts = (t * s);
+    term_1 = (b_A_tv * stan::math::Phi((b_A_tv / ts)));
+    term_2 = (b_tv * stan::math::Phi((b_tv / ts)));
+    term_3 = (ts * stan::math::exp(stan::math::normal_lpdf<false>((b_A_tv / ts), 0, 1)));
+    term_4 = (ts * stan::math::exp(stan::math::normal_lpdf<false>((b_tv / ts), 0, 1)));
+    cdf = ((1 / A) * (((-term_1 + term_2) - term_3) + term_4));
+    return cdf;
+  }
+
+  double rank_density(double x, double xc, const std::vector<double>& theta,
+		      const std::vector<double>& x_r, const std::vector<int>& x_i,
+		      std::ostream* pstream__) {
+    double t = theta[0];
+    double A = theta[1];
+    double v1 = theta[2];
+    double v2 = theta[3];
+    double s = theta[4];
+    double v = (lbaX_pdf(x, t, A, v1, s, pstream__) *
+		lbaX_cdf(x, t, A, v2, s, pstream__));
+    return v;
+  }
+
+  struct rank_density_functor__ {
+    double operator()(double x, double xc, const std::vector<double>& theta,
+		      const std::vector<double>& x_r, const std::vector<int>& x_i,
+		      std::ostream* pstream__) const {
+      return rank_density(x, xc, theta, x_r, x_i, pstream__);
+    }
+  };
+
+  double order(double down, double up, const std::vector<double>& theta,
+	       const std::vector<double>& x_r, std::ostream* pstream__) {
+    std::vector<int> x_i;
+    
+    double v;
+    
+    v = stan::math::integrate_1d(rank_density_functor__(), down, up, theta, x_r, x_i,
+				 pstream__, 1e-8);
+    return v;
+  }
 }  // namespace integrate_1d_test
 /*
  * test_integration is a helper function to make it easy to test the
@@ -394,182 +465,7 @@ TEST(StanMath_integrate_1d_prim, test1) {
                    stan::math::square(stan::math::pi()) / 4);
 }
 
-template <typename T0__, typename T1__, typename T2__, typename T3__,
-          typename T4__>
-stan::promote_args_t<T0__, T1__, T2__, T3__, T4__> lbaX_pdf(
-    const T0__ &X, const T1__ &t, const T2__ &A, const T3__ &v, const T4__ &s,
-    std::ostream *pstream__) {
-  using local_scalar_t__ = stan::promote_args_t<T0__, T1__, T2__, T3__, T4__>;
-  const static bool propto__ = true;
-  (void)propto__;
-  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
-  (void)DUMMY_VAR__;  // suppress unused var warning
-
-  local_scalar_t__ b_A_tv_ts;
-  b_A_tv_ts = DUMMY_VAR__;
-
-  local_scalar_t__ b_tv_ts;
-  b_tv_ts = DUMMY_VAR__;
-
-  local_scalar_t__ term_1;
-  term_1 = DUMMY_VAR__;
-
-  local_scalar_t__ term_2;
-  term_2 = DUMMY_VAR__;
-
-  local_scalar_t__ pdf;
-  pdf = DUMMY_VAR__;
-
-  b_A_tv_ts = (((X - A) - (t * v)) / (t * s));
-  b_tv_ts = ((X - (t * v)) / (t * s));
-  term_1 = stan::math::Phi(b_A_tv_ts);
-  term_2 = stan::math::Phi(b_tv_ts);
-  pdf = ((1 / A) * (-term_1 + term_2));
-  return pdf;
-}
-
-struct lbaX_pdf_functor__ {
-  template <typename T0__, typename T1__, typename T2__, typename T3__,
-            typename T4__>
-  stan::promote_args_t<T0__, T1__, T2__, T3__, T4__> operator()(
-      const T0__ &X, const T1__ &t, const T2__ &A, const T3__ &v, const T4__ &s,
-      std::ostream *pstream__) const {
-    return lbaX_pdf(X, t, A, v, s, pstream__);
-  }
-};
-
-template <typename T0__, typename T1__, typename T2__, typename T3__,
-          typename T4__>
-stan::promote_args_t<T0__, T1__, T2__, T3__, T4__> lbaX_cdf(
-    const T0__ &X, const T1__ &t, const T2__ &A, const T3__ &v, const T4__ &s,
-    std::ostream *pstream__) {
-  using local_scalar_t__ = stan::promote_args_t<T0__, T1__, T2__, T3__, T4__>;
-  const static bool propto__ = true;
-  (void)propto__;
-  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
-  (void)DUMMY_VAR__;  // suppress unused var warning
-
-  local_scalar_t__ b_A_tv;
-  b_A_tv = DUMMY_VAR__;
-
-  local_scalar_t__ b_tv;
-  b_tv = DUMMY_VAR__;
-
-  local_scalar_t__ ts;
-  ts = DUMMY_VAR__;
-
-  local_scalar_t__ term_1;
-  term_1 = DUMMY_VAR__;
-
-  local_scalar_t__ term_2;
-  term_2 = DUMMY_VAR__;
-
-  local_scalar_t__ term_3;
-  term_3 = DUMMY_VAR__;
-
-  local_scalar_t__ term_4;
-  term_4 = DUMMY_VAR__;
-
-  local_scalar_t__ cdf;
-  cdf = DUMMY_VAR__;
-
-  b_A_tv = ((X - A) - (t * v));
-  b_tv = (X - (t * v));
-  ts = (t * s);
-  term_1 = (b_A_tv * stan::math::Phi((b_A_tv / ts)));
-  term_2 = (b_tv * stan::math::Phi((b_tv / ts)));
-  term_3 = (ts
-            * stan::math::exp(
-                  stan::math::normal_lpdf<false>((b_A_tv / ts), 0, 1)));
-  term_4
-      = (ts
-         * stan::math::exp(stan::math::normal_lpdf<false>((b_tv / ts), 0, 1)));
-  cdf = ((1 / A) * (((-term_1 + term_2) - term_3) + term_4));
-  return cdf;
-}
-
-struct lbaX_cdf_functor__ {
-  template <typename T0__, typename T1__, typename T2__, typename T3__,
-            typename T4__>
-  stan::promote_args_t<T0__, T1__, T2__, T3__, T4__> operator()(
-      const T0__ &X, const T1__ &t, const T2__ &A, const T3__ &v, const T4__ &s,
-      std::ostream *pstream__) const {
-    return lbaX_cdf(X, t, A, v, s, pstream__);
-  }
-};
-
-template <typename T0__, typename T1__, typename T2__, typename T3__>
-stan::promote_args_t<T0__, T1__, T2__, T3__> rank_density(
-    const T0__ &x, const T1__ &xc, const std::vector<T2__> &theta,
-    const std::vector<T3__> &x_r, const std::vector<int> &x_i,
-    std::ostream *pstream__) {
-  using local_scalar_t__ = stan::promote_args_t<T0__, T1__, T2__, T3__>;
-  const static bool propto__ = true;
-  (void)propto__;
-  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
-  (void)DUMMY_VAR__;  // suppress unused var warning
-
-  local_scalar_t__ t;
-  t = DUMMY_VAR__;
-
-  t = theta[(1 - 1)];
-  local_scalar_t__ A;
-  A = DUMMY_VAR__;
-
-  A = theta[(2 - 1)];
-  local_scalar_t__ v1;
-  v1 = DUMMY_VAR__;
-
-  v1 = theta[(3 - 1)];
-  local_scalar_t__ v2;
-  v2 = DUMMY_VAR__;
-
-  v2 = theta[(4 - 1)];
-  local_scalar_t__ s;
-  s = DUMMY_VAR__;
-
-  s = theta[(5 - 1)];
-  local_scalar_t__ v;
-  v = DUMMY_VAR__;
-
-  v = (lbaX_pdf(x, t, A, v1, s, pstream__)
-       * lbaX_cdf(x, t, A, v2, s, pstream__));
-  return v;
-}
-
-struct rank_density_functor__ {
-  template <typename T0__, typename T1__, typename T2__, typename T3__>
-  stan::promote_args_t<T0__, T1__, T2__, T3__> operator()(
-      const T0__ &x, const T1__ &xc, const std::vector<T2__> &theta,
-      const std::vector<T3__> &x_r, const std::vector<int> &x_i,
-      std::ostream *pstream__) const {
-    return rank_density(x, xc, theta, x_r, x_i, pstream__);
-  }
-};
-
-template <typename T0__, typename T1__, typename T2__>
-stan::promote_args_t<T0__, T1__, T2__> order(const T0__ &down, const T1__ &up,
-                                             const std::vector<T2__> &theta,
-                                             const std::vector<double> &x_r,
-                                             std::ostream *pstream__) {
-  using local_scalar_t__ = stan::promote_args_t<T0__, T1__, T2__>;
-  const static bool propto__ = true;
-  (void)propto__;
-  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
-  (void)DUMMY_VAR__;  // suppress unused var warning
-
-  std::vector<int> x_i;
-  x_i = std::vector<int>(0, std::numeric_limits<int>::min());
-
-  local_scalar_t__ v;
-  v = DUMMY_VAR__;
-
-  v = stan::math::integrate_1d(rank_density_functor__(), down, up, theta, x_r,
-                               x_i, pstream__, 1e-8);
-  return v;
-}
-
-TEST(StanMath_integrate_1d_prim, TestOrder) {
+TEST(StanMath_integrate_1d_prim, TestTolerance) {
   std::ostringstream *msgs = nullptr;
 
   double t = 0.5;
@@ -579,13 +475,9 @@ TEST(StanMath_integrate_1d_prim, TestOrder) {
   double v2 = 1.0;
   double s = 1.0;
 
-  std::vector<double> theta = {t, A, v1, v2, s};
+  std::vector<double> theta = { t, A, v1, v2, s };
   std::vector<double> x_r;
-
-  EXPECT_NO_THROW(order(-10, 0.67, theta, x_r, msgs));
-  // Left limit of integration must be less than or equal to right limit
-  /*EXPECT_THROW(stan::math::integrate_1d(integrate_1d_test::f2{}, 1.0, 0.0,
-                                        std::vector<double>(), {}, {},
-                                        integrate_1d_test::msgs, 1e-6),
-                                        std::domain_error);*/
+  
+  EXPECT_NO_THROW(integrate_1d_test::order(-10, 0.67, theta, x_r, msgs));
 }
+
