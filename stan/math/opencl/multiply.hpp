@@ -7,6 +7,7 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/kernels/matrix_multiply.hpp>
 #include <stan/math/opencl/kernels/add.hpp>
+#include <stan/math/opencl/scalar_type.hpp>
 #include <stan/math/opencl/sub_block.hpp>
 #include <stan/math/opencl/zeros.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
@@ -34,9 +35,9 @@ namespace math {
  *   number of columns in A and rows in B do not match
  */
 
-template <typename T1, typename T2, typename = require_all_arithmetic_t<T1, T2>>
-inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
-                                                 const matrix_cl<T2>& B) {
+template <typename T1, typename T2,
+          typename = require_all_kernel_expressions_and_none_scalar_t<T1, T2>>
+inline matrix_cl<return_type_t<T1, T2>> multiply(const T1& A, const T2& B) {
   check_size_match("multiply ((OpenCL))", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
   matrix_cl<return_type_t<T1, T2>> temp(A.rows(), B.cols(),
@@ -50,8 +51,8 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
         = opencl_kernels::row_vector_matrix_multiply.get_option("LOCAL_SIZE_");
     try {
       opencl_kernels::row_vector_matrix_multiply(
-          cl::NDRange(temp.cols() * local_size), cl::NDRange(local_size), A, B,
-          temp, B.rows(), B.cols(), A.view(), B.view());
+          cl::NDRange(temp.cols() * local_size), cl::NDRange(local_size),
+          A.eval(), B.eval(), temp, B.rows(), B.cols(), A.view(), B.view());
     } catch (cl::Error& e) {
       check_opencl_error("row_vector - matrix multiply", e);
     }
@@ -75,15 +76,16 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
           / wgs);
   try {
     if (split <= 1) {
-      opencl_kernels::matrix_multiply(
-          cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt), A, B,
-          temp, A.rows(), B.cols(), B.rows(), A.view(), B.view());
+      opencl_kernels::matrix_multiply(cl::NDRange(Mpad, Npad / wpt),
+                                      cl::NDRange(local, local / wpt), A.eval(),
+                                      B.eval(), temp, A.rows(), B.cols(),
+                                      B.rows(), A.view(), B.view());
     } else {
       matrix_cl<return_type_t<T1, T2>> tempSplit(A.rows(), B.cols() * split);
       opencl_kernels::matrix_multiply(cl::NDRange(Mpad, Npad / wpt, split),
-                                      cl::NDRange(local, local / wpt, 1), A, B,
-                                      tempSplit, A.rows(), B.cols(), B.rows(),
-                                      A.view(), B.view());
+                                      cl::NDRange(local, local / wpt, 1),
+                                      A.eval(), B.eval(), tempSplit, A.rows(),
+                                      B.cols(), B.rows(), A.view(), B.view());
       opencl_kernels::add_batch(cl::NDRange(A.rows(), B.cols()), temp,
                                 tempSplit, A.rows(), B.cols(), split);
     }

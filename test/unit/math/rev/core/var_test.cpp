@@ -180,6 +180,8 @@ TEST_F(AgradRev, var_matrix_views) {
   stan::math::var_value<dense_mat> A_v(A);
   auto A_block = A_v.block(1, 1, 3, 3);
   EXPECT_MATRIX_FLOAT_EQ(A_block.val(), A.block(1, 1, 3, 3));
+  auto A_transpose = A_v.transpose();
+  EXPECT_MATRIX_FLOAT_EQ(A_transpose.val(), A.transpose());
   auto A_row = A_v.row(3);
   EXPECT_MATRIX_FLOAT_EQ(A_row.val(), A.row(3));
   auto A_col = A_v.col(3);
@@ -202,6 +204,7 @@ TEST_F(AgradRev, var_matrix_views) {
     A_v.vi_->adj_(i) = i;
   }
   EXPECT_MATRIX_FLOAT_EQ(A_block.adj(), A_v.adj().block(1, 1, 3, 3));
+  EXPECT_MATRIX_FLOAT_EQ(A_transpose.adj(), A_v.adj().transpose());
   EXPECT_MATRIX_FLOAT_EQ(A_row.adj(), A_v.adj().row(3));
   EXPECT_MATRIX_FLOAT_EQ(A_col.adj(), A_v.adj().col(3));
   EXPECT_MATRIX_FLOAT_EQ(A_block_row.adj(), A_v.adj().block(1, 1, 3, 3).row(1));
@@ -231,6 +234,8 @@ TEST_F(AgradRev, var_matrix_views_const) {
   const auto& A_v = A_vv;
   auto A_block = A_v.block(1, 1, 3, 3);
   EXPECT_MATRIX_FLOAT_EQ(A_block.val(), A.block(1, 1, 3, 3));
+  auto A_transpose = A_v.transpose();
+  EXPECT_MATRIX_FLOAT_EQ(A_transpose.val(), A.transpose());
   auto A_row = A_v.row(3);
   EXPECT_MATRIX_FLOAT_EQ(A_row.val(), A.row(3));
   auto A_col = A_v.col(3);
@@ -253,6 +258,7 @@ TEST_F(AgradRev, var_matrix_views_const) {
     A_v.vi_->adj_(i) = i;
   }
   EXPECT_MATRIX_FLOAT_EQ(A_block.adj(), A_v.adj().block(1, 1, 3, 3));
+  EXPECT_MATRIX_FLOAT_EQ(A_transpose.adj(), A_v.adj().transpose());
   EXPECT_MATRIX_FLOAT_EQ(A_row.adj(), A_v.adj().row(3));
   EXPECT_MATRIX_FLOAT_EQ(A_col.adj(), A_v.adj().col(3));
   EXPECT_MATRIX_FLOAT_EQ(A_block_row.adj(), A_v.adj().block(1, 1, 3, 3).row(1));
@@ -272,8 +278,8 @@ TEST_F(AgradRev, var_matrix_views_const) {
   EXPECT_FLOAT_EQ(A_v.adj()(3, 3) - prev_adj_val2, A_coeff2.adj());
 }
 
-TEST_F(AgradRev, var_vector_views) {
-  using dense_vec = Eigen::Matrix<double, -1, 1>;
+template <typename dense_vec>
+void var_vector_views_test() {
   using stan::math::var_value;
   dense_vec A(10);
   for (Eigen::Index i = 0; i < A.size(); ++i) {
@@ -282,6 +288,8 @@ TEST_F(AgradRev, var_vector_views) {
   var_value<dense_vec> A_v(A);
   auto A_head = A_v.head(3);
   EXPECT_MATRIX_FLOAT_EQ(A.head(3), A_head.val());
+  auto A_transpose = A_v.transpose();
+  EXPECT_MATRIX_FLOAT_EQ(A.transpose(), A_transpose.val());
   auto A_tail = A_v.tail(3);
   EXPECT_MATRIX_FLOAT_EQ(A.tail(3), A_tail.val());
   auto A_segment = A_v.segment(3, 5);
@@ -293,6 +301,46 @@ TEST_F(AgradRev, var_vector_views) {
     A_v.vi_->adj_(i) = i;
   }
   EXPECT_MATRIX_FLOAT_EQ(A_v.adj().head(3), A_head.adj());
+  EXPECT_MATRIX_FLOAT_EQ(A_v.adj().transpose(), A_transpose.adj());
+  EXPECT_MATRIX_FLOAT_EQ(A_v.adj().tail(3), A_tail.adj());
+  EXPECT_MATRIX_FLOAT_EQ(A_v.adj().segment(3, 5), A_segment.adj());
+  // since new var is made and values propogate back
+  A_coeff1.vi_->adj_ = 1;
+  auto prev_adj_val = A_v.adj()(3);
+  stan::math::grad();
+  EXPECT_FLOAT_EQ(A_v.adj()(3) - prev_adj_val, A_coeff1.adj());
+}
+
+TEST_F(AgradRev, var_vector_views) {
+  var_vector_views_test<Eigen::VectorXd>();
+  var_vector_views_test<Eigen::RowVectorXd>();
+}
+
+template <typename dense_vec>
+void var_vector_views_const_test() {
+  using stan::math::var_value;
+  dense_vec A(10);
+  for (Eigen::Index i = 0; i < A.size(); ++i) {
+    A(i) = i;
+  }
+  var_value<dense_vec> A_vv(A);
+  const auto& A_v = A_vv;
+  auto A_head = A_v.head(3);
+  EXPECT_MATRIX_FLOAT_EQ(A.head(3), A_head.val());
+  auto A_transpose = A_v.transpose();
+  EXPECT_MATRIX_FLOAT_EQ(A.transpose(), A_transpose.val());
+  auto A_tail = A_v.tail(3);
+  EXPECT_MATRIX_FLOAT_EQ(A.tail(3), A_tail.val());
+  auto A_segment = A_v.segment(3, 5);
+  EXPECT_MATRIX_FLOAT_EQ(A.segment(3, 5), A_segment.val());
+  auto A_coeff1 = A_v(3);
+  EXPECT_FLOAT_EQ(A(3), A_coeff1.val());
+  EXPECT_MATRIX_FLOAT_EQ(A, A_v.val());
+  for (Eigen::Index i = 0; i < A.size(); ++i) {
+    A_v.vi_->adj_(i) = i;
+  }
+  EXPECT_MATRIX_FLOAT_EQ(A_v.adj().head(3), A_head.adj());
+  EXPECT_MATRIX_FLOAT_EQ(A_v.adj().transpose(), A_transpose.adj());
   EXPECT_MATRIX_FLOAT_EQ(A_v.adj().tail(3), A_tail.adj());
   EXPECT_MATRIX_FLOAT_EQ(A_v.adj().segment(3, 5), A_segment.adj());
   // since new var is made and values propogate back
@@ -303,34 +351,28 @@ TEST_F(AgradRev, var_vector_views) {
 }
 
 TEST_F(AgradRev, var_vector_views_const) {
-  using dense_vec = Eigen::Matrix<double, -1, 1>;
+  var_vector_views_const_test<Eigen::VectorXd>();
+  var_vector_views_const_test<Eigen::RowVectorXd>();
+}
+
+TEST_F(AgradRev, var_matrix_view_block_from_plain_test) {
+  using stan::math::sum;
   using stan::math::var_value;
-  dense_vec A(10);
-  for (Eigen::Index i = 0; i < A.size(); ++i) {
-    A(i) = i;
+  Eigen::MatrixXd A(4, 4);
+  A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;
+  Eigen::MatrixXd B(2, 2);
+  B << 2, 3, 4, 5;
+  var_value<Eigen::MatrixXd> A_v(A);
+  var_value<Eigen::MatrixXd> B_v(B);
+  A_v.block(0, 0, 2, 2) = B_v;
+  for (Eigen::Index i = 0; i < A_v.size(); ++i) {
+    A_v.adj().coeffRef(i) = i;
   }
-  var_value<dense_vec> A_vv(A);
-  const auto& A_v = A_vv;
-  auto A_head = A_v.head(3);
-  EXPECT_MATRIX_FLOAT_EQ(A.head(3), A_head.val());
-  auto A_tail = A_v.tail(3);
-  EXPECT_MATRIX_FLOAT_EQ(A.tail(3), A_tail.val());
-  auto A_segment = A_v.segment(3, 5);
-  EXPECT_MATRIX_FLOAT_EQ(A.segment(3, 5), A_segment.val());
-  auto A_coeff1 = A_v(3);
-  EXPECT_FLOAT_EQ(A(3), A_coeff1.val());
-  EXPECT_MATRIX_FLOAT_EQ(A, A_v.val());
-  for (Eigen::Index i = 0; i < A.size(); ++i) {
-    A_v.vi_->adj_(i) = i;
-  }
-  EXPECT_MATRIX_FLOAT_EQ(A_v.adj().head(3), A_head.adj());
-  EXPECT_MATRIX_FLOAT_EQ(A_v.adj().tail(3), A_tail.adj());
-  EXPECT_MATRIX_FLOAT_EQ(A_v.adj().segment(3, 5), A_segment.adj());
-  // since new var is made and values propogate back
-  A_coeff1.vi_->adj_ = 1;
-  auto prev_adj_val = A_v.adj()(3);
   stan::math::grad();
-  EXPECT_FLOAT_EQ(A_v.adj()(3) - prev_adj_val, A_coeff1.adj());
+  EXPECT_FLOAT_EQ(B_v.adj()(0), 0);
+  EXPECT_FLOAT_EQ(B_v.adj()(1), 1);
+  EXPECT_FLOAT_EQ(B_v.adj()(2), 4);
+  EXPECT_FLOAT_EQ(B_v.adj()(3), 5);
 }
 
 /**
@@ -344,6 +386,7 @@ TEST_F(AgradRev, var_matrix_view) {
   A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;
   var_value<Eigen::MatrixXd> A_v(A);
   auto A_v_block = A_v.block(1, 1, 3, 3);
+  auto A_v_transpose = A_v.transpose();
   auto A_v_row = A_v.row(3);
   auto A_v_col = A_v.col(3);
   auto A_v_block_row = A_v.block(1, 1, 3, 3).row(1);
@@ -361,6 +404,9 @@ TEST_F(AgradRev, var_matrix_view) {
   EXPECT_MATRIX_FLOAT_EQ(A_v.adj(), deriv);
   EXPECT_MATRIX_FLOAT_EQ(A_v_block.val(), A_v.val().block(1, 1, 3, 3));
   EXPECT_MATRIX_FLOAT_EQ(A_v_block.adj(), A_v.adj().block(1, 1, 3, 3));
+
+  EXPECT_MATRIX_FLOAT_EQ(A_v_transpose.val(), A_v.val().transpose());
+  EXPECT_MATRIX_FLOAT_EQ(A_v_transpose.adj(), A_v.adj().transpose());
 
   EXPECT_MATRIX_FLOAT_EQ(A_v_row.val(), A_v.val().row(3));
   EXPECT_MATRIX_FLOAT_EQ(A_v_row.adj(), A_v.adj().row(3));
@@ -403,6 +449,7 @@ TEST_F(AgradRev, var_matrix_view_const) {
   var_value<Eigen::MatrixXd> A_vv(A);
   const auto& A_v = A_vv;
   auto A_v_block = A_v.block(1, 1, 3, 3);
+  auto A_v_transpose = A_v.transpose();
   auto A_v_row = A_v.row(3);
   auto A_v_col = A_v.col(3);
   auto A_v_block_row = A_v.block(1, 1, 3, 3).row(1);
@@ -420,6 +467,9 @@ TEST_F(AgradRev, var_matrix_view_const) {
   EXPECT_MATRIX_FLOAT_EQ(A_v.adj(), deriv);
   EXPECT_MATRIX_FLOAT_EQ(A_v_block.val(), A_v.val().block(1, 1, 3, 3));
   EXPECT_MATRIX_FLOAT_EQ(A_v_block.adj(), A_v.adj().block(1, 1, 3, 3));
+
+  EXPECT_MATRIX_FLOAT_EQ(A_v_transpose.val(), A_v.val().transpose());
+  EXPECT_MATRIX_FLOAT_EQ(A_v_transpose.adj(), A_v.adj().transpose());
 
   EXPECT_MATRIX_FLOAT_EQ(A_v_row.val(), A_v.val().row(3));
   EXPECT_MATRIX_FLOAT_EQ(A_v_row.adj(), A_v.adj().row(3));
@@ -462,6 +512,7 @@ TEST_F(AgradRev, var_matrix_view_assignment) {
   A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;
   var_value<Eigen::MatrixXd> A_v(A);
   var_value<Eigen::MatrixXd> A_v_block = A_v.block(1, 1, 3, 3);
+  var_value<Eigen::MatrixXd> A_v_transpose = A_v.transpose();
   var_value<Eigen::RowVectorXd> A_v_row = A_v.row(3);
   var_value<Eigen::VectorXd> A_v_col = A_v.col(3);
   var_value<Eigen::RowVectorXd> A_v_block_row = A_v.block(1, 1, 3, 3).row(1);
@@ -473,14 +524,15 @@ TEST_F(AgradRev, var_matrix_view_assignment) {
   var A_v_coeff2 = A_v.coeff(1, 2);
   A_v.block(0, 0, 3, 3) = A_v.block(1, 1, 3, 3);
   // Checks adjoints from all assigned slices are propogated upwards
-  var b_v = stan::math::sum(A_v_block) + stan::math::sum(A_v_row)
-            + stan::math::sum(A_v_col) + stan::math::sum(A_v_block_row)
+  var b_v = stan::math::sum(A_v_block) + stan::math::sum(A_v_transpose)
+            + stan::math::sum(A_v_row) + stan::math::sum(A_v_col)
+            + stan::math::sum(A_v_block_row)
             + stan::math::sum(A_v_rowwise_reverse)
             + stan::math::sum(A_v_colwise_reverse)
             + stan::math::sum(A_v_rowwise_colwise_reverse);
   b_v.grad();
   Eigen::MatrixXd deriv(4, 4);
-  deriv << 3, 3, 3, 4, 3, 4, 4, 5, 3, 5, 5, 6, 4, 5, 5, 6;
+  deriv << 4, 4, 4, 5, 4, 5, 5, 6, 4, 6, 6, 7, 5, 6, 6, 7;
   EXPECT_MATRIX_FLOAT_EQ(A_v.adj(), deriv);
 }
 
@@ -493,6 +545,7 @@ TEST_F(AgradRev, var_matrix_view_assignment_const) {
   var_value<Eigen::MatrixXd> A_vv(A);
   const auto& A_v = A_vv;
   var_value<Eigen::MatrixXd> A_v_block = A_v.block(1, 1, 3, 3);
+  var_value<Eigen::MatrixXd> A_v_transpose = A_v.transpose();
   var_value<Eigen::RowVectorXd> A_v_row = A_v.row(3);
   var_value<Eigen::VectorXd> A_v_col = A_v.col(3);
   var_value<Eigen::RowVectorXd> A_v_block_row = A_v.block(1, 1, 3, 3).row(1);
@@ -504,14 +557,15 @@ TEST_F(AgradRev, var_matrix_view_assignment_const) {
   var A_v_coeff2 = A_v.coeff(1, 2);
   A_v.block(0, 0, 3, 3) = A_v.block(1, 1, 3, 3);
   // Checks adjoints from all assigned slices are propogated upwards
-  var b_v = stan::math::sum(A_v_block) + stan::math::sum(A_v_row)
-            + stan::math::sum(A_v_col) + stan::math::sum(A_v_block_row)
+  var b_v = stan::math::sum(A_v_block) + stan::math::sum(A_v_transpose)
+            + stan::math::sum(A_v_row) + stan::math::sum(A_v_col)
+            + stan::math::sum(A_v_block_row)
             + stan::math::sum(A_v_rowwise_reverse)
             + stan::math::sum(A_v_colwise_reverse)
             + stan::math::sum(A_v_rowwise_colwise_reverse);
   b_v.grad();
   Eigen::MatrixXd deriv(4, 4);
-  deriv << 3, 3, 3, 4, 3, 4, 4, 5, 3, 5, 5, 6, 4, 5, 5, 6;
+  deriv << 4, 4, 4, 5, 4, 5, 5, 6, 4, 6, 6, 7, 5, 6, 6, 7;
   EXPECT_MATRIX_FLOAT_EQ(A_v.adj(), deriv);
 }
 
@@ -523,6 +577,7 @@ TEST_F(AgradRev, var_matrix_view_eval) {
   A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;
   var_value<Eigen::MatrixXd> A_v(A);
   auto A_v_block = A_v.block(1, 1, 3, 3).eval();
+  auto A_v_transpose = A_v.transpose().eval();
   auto A_v_row = A_v.row(3).eval();
   auto A_v_col = A_v.col(3).eval();
   auto A_v_block_row = A_v.block(1, 1, 3, 3).row(1).eval();
@@ -535,14 +590,15 @@ TEST_F(AgradRev, var_matrix_view_eval) {
   auto A_v_coeff2 = A_v.coeff(1, 2);
   A_v.block(0, 0, 3, 3) = A_v.block(1, 1, 3, 3);
   // Checks adjoints from all assigned slices are propogated upwards
-  var b_v = stan::math::sum(A_v_block) + stan::math::sum(A_v_row)
-            + stan::math::sum(A_v_col) + stan::math::sum(A_v_block_row)
+  var b_v = stan::math::sum(A_v_block) + stan::math::sum(A_v_transpose)
+            + stan::math::sum(A_v_row) + stan::math::sum(A_v_col)
+            + stan::math::sum(A_v_block_row)
             + stan::math::sum(A_v_rowwise_reverse)
             + stan::math::sum(A_v_colwise_reverse)
             + stan::math::sum(A_v_rowwise_colwise_reverse);
   b_v.grad();
   Eigen::MatrixXd deriv(4, 4);
-  deriv << 3, 3, 3, 4, 3, 4, 4, 5, 3, 5, 5, 6, 4, 5, 5, 6;
+  deriv << 4, 4, 4, 5, 4, 5, 5, 6, 4, 6, 6, 7, 5, 6, 6, 7;
   EXPECT_MATRIX_FLOAT_EQ(A_v.adj(), deriv);
 }
 
@@ -554,6 +610,17 @@ TEST_F(AgradRev, var_matrix_view_block_plain_assignment) {
   stan::math::sum(B_v).grad();
   Eigen::MatrixXd deriv(4, 4);
   deriv << 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1;
+  EXPECT_MATRIX_FLOAT_EQ(A_v.adj(), deriv);
+}
+
+TEST_F(AgradRev, var_matrix_view_transpose_plain_assignment) {
+  Eigen::MatrixXd A(4, 4);
+  A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;
+  stan::math::var_value<Eigen::MatrixXd> A_v(A);
+  stan::math::var_value<Eigen::MatrixXd> B_v = A_v.transpose();
+  stan::math::sum(B_v).grad();
+  Eigen::MatrixXd deriv(4, 4);
+  deriv << 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1;
   EXPECT_MATRIX_FLOAT_EQ(A_v.adj(), deriv);
 }
 

@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_CSR_EXTRACT_W_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 
 namespace stan {
 namespace math {
@@ -37,10 +38,12 @@ const Eigen::Matrix<T, Eigen::Dynamic, 1> csr_extract_w(
  * @param[in] A dense matrix.
  * @return Vector of non-zero entries of A.
  */
-template <typename T, int R, int C>
-const Eigen::Matrix<T, Eigen::Dynamic, 1> csr_extract_w(
-    const Eigen::Matrix<T, R, C>& A) {
-  Eigen::SparseMatrix<T, Eigen::RowMajor> B = A.sparseView();
+template <typename T, require_eigen_dense_base_t<T>* = nullptr>
+const Eigen::Matrix<scalar_type_t<T>, Eigen::Dynamic, 1> csr_extract_w(
+    const T& A) {
+  // conversion to sparse seems to touch data twice, so we need to call to_ref
+  Eigen::SparseMatrix<scalar_type_t<T>, Eigen::RowMajor> B
+      = to_ref(A).sparseView();
   return csr_extract_w(B);
 }
 

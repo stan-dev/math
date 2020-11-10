@@ -28,7 +28,9 @@ namespace math {
  * @throw std::domain_error if theta is infinite.
  * @throw std::invalid_argument if container sizes mismatch.
  */
-template <bool propto, typename T_n, typename T_prob>
+template <bool propto, typename T_n, typename T_prob,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_n, T_prob>* = nullptr>
 return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_prob>;
   using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
