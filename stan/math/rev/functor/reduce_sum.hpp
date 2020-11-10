@@ -37,7 +37,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         = std::tuple<decltype(deep_copy_vars(std::declval<Args>()))...>;
     std::unique_ptr<args_tuple_t> args_tuple_holder_;
 
-    explicit scoped_args_tuple() : stack_(), args_tuple_holder_(nullptr) {}
+    scoped_args_tuple() : stack_(), args_tuple_holder_(nullptr) {}
   };
 
   using local_args_tuple_t = tbb::enumerable_thread_specific<scoped_args_tuple>;
