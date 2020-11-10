@@ -68,10 +68,9 @@ TEST(ProbDistributionsGumbel, error_checking) {
                std::domain_error);
 }
 
-auto gumbel_lpdf_functor
-    = [](const auto& y, const auto& mu, const auto& beta) {
-        return stan::math::gumbel_lpdf(y, mu, beta);
-      };
+auto gumbel_lpdf_functor = [](const auto& y, const auto& mu, const auto& beta) {
+  return stan::math::gumbel_lpdf(y, mu, beta);
+};
 auto gumbel_lpdf_functor_propto
     = [](const auto& y, const auto& mu, const auto& beta) {
         return stan::math::gumbel_lpdf<true>(y, mu, beta);
@@ -102,8 +101,8 @@ TEST(ProbDistributionsGumbel, opencl_broadcast_y) {
   Eigen::VectorXd beta(N);
   beta << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      gumbel_lpdf_functor, y, mu, beta);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(gumbel_lpdf_functor, y,
+                                                         mu, beta);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       gumbel_lpdf_functor_propto, y, mu, beta);
 }
@@ -117,8 +116,8 @@ TEST(ProbDistributionsGumbel, opencl_broadcast_mu) {
   Eigen::VectorXd beta(N);
   beta << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-      gumbel_lpdf_functor, y, mu, beta);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(gumbel_lpdf_functor, y,
+                                                         mu, beta);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       gumbel_lpdf_functor_propto, y, mu, beta);
 }
@@ -132,8 +131,8 @@ TEST(ProbDistributionsGumbel, opencl_broadcast_beta) {
   mu << 0.3, 0.8, 1.0;
   double beta = 0.3;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
-      gumbel_lpdf_functor, y, mu, beta);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(gumbel_lpdf_functor, y,
+                                                         mu, beta);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       gumbel_lpdf_functor_propto, y, mu, beta);
 }

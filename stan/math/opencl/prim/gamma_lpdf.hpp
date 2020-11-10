@@ -68,8 +68,8 @@ return_type_t<T_y_cl, T_shape_cl, T_inv_scale_cl> gamma_lpdf(
   auto check_y_not_nan
       = check_cl(function, "Random variable", y_val, "not NaN");
   auto y_not_nan_expr = !isnan(y_val);
-  auto check_alpha_pos_finite = check_cl(function, "Shape parameter",
-                                         alpha_val, "positive finite");
+  auto check_alpha_pos_finite
+      = check_cl(function, "Shape parameter", alpha_val, "positive finite");
   auto alpha_pos_finite_expr = alpha_val > 0 && isfinite(alpha_val);
   auto check_beta_pos_finite = check_cl(function, "Inverse scale parameter",
                                         beta_val, "positive finite");

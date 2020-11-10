@@ -76,7 +76,8 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_lpdf(
   auto scaled_diff_expr
       = elt_multiply(inv_beta_expr, exp_y_m_mu_over_beta_expr) - inv_beta_expr;
   auto beta_deriv_expr
-      = elt_multiply(-y_minus_mu_over_beta_expr, scaled_diff_expr) - inv_beta_expr;
+      = elt_multiply(-y_minus_mu_over_beta_expr, scaled_diff_expr)
+        - inv_beta_expr;
 
   matrix_cl<double> logp_cl;
   matrix_cl<double> y_deriv_cl;
