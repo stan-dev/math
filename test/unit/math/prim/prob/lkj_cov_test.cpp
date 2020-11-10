@@ -85,7 +85,7 @@ TEST(ProbDistributionsLkjCov, ErrorChecks) {
 
   EXPECT_THROW(stan::math::lkj_cov_lpdf(Sigma, mu, sd, -1), std::domain_error);
   EXPECT_THROW(
-      stan::math::lkj_cov_lpdf(Sigma, muV, sd, stan::math::NOT_A_NUMBER),
+      stan::math::lkj_cov_lpdf(Sigma, mu, sd, stan::math::NOT_A_NUMBER),
       std::domain_error);
   EXPECT_NO_THROW(stan::math::lkj_cov_lpdf(Sigma, mu, sd, stan::math::INFTY));
   EXPECT_THROW(

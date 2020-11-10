@@ -114,6 +114,9 @@ void idas_forward_sen_test(chemical_kinetics& f, std::vector<int> eq_id,
     EXPECT_EQ(sensitivity_residual(ns, t, yy, yp, res, yys, yps, ress,
                                    user_data, temp1, temp2, temp3),
               0);
+    N_VDestroy_Serial(temp1);
+    N_VDestroy_Serial(temp2);
+    N_VDestroy_Serial(temp3);
   }
 }
 
@@ -130,16 +133,19 @@ TEST(IDAS_DAE_SYSTEM, idas_system_io) {
   {
     N_Vector res = N_VNew_Serial(yy0.size());
     idas_system_test(f, eq_id, yy0, yp0, theta, res);
+    N_VDestroy_Serial(res);
   }
 
   {
     N_Vector res = N_VNew_Serial(yy0.size());
     idas_system_test(f, eq_id, yy0_var, yp0_var, theta_var, res);
+    N_VDestroy_Serial(res);
   }
 
   {
     N_Vector res = N_VNew_Serial(yy0.size());
     idas_system_test(f, eq_id, yy0, yp0_var, theta_var, res);
+    N_VDestroy_Serial(res);
   }
 }
 
@@ -158,6 +164,8 @@ TEST(IDAS_DAE_SYSTEM, idas_forward_system_io) {
     N_Vector res = N_VNew_Serial(n);
     N_Vector* ress = N_VCloneVectorArray(theta.size(), res);
     idas_forward_sen_test(f, eq_id, yy0, yp0, theta, res, ress);
+    N_VDestroy_Serial(res);
+    N_VDestroyVectorArray(ress, theta.size());
   }
 
   {
@@ -167,6 +175,8 @@ TEST(IDAS_DAE_SYSTEM, idas_forward_system_io) {
     EXPECT_EQ(NV_Ith_S(ress[0], 0), yy0[0]);
     EXPECT_EQ(NV_Ith_S(ress[0], 1), -yy0[0]);
     EXPECT_EQ(NV_Ith_S(ress[0], 2), 0);
+    N_VDestroy_Serial(res);
+    N_VDestroyVectorArray(ress, theta.size());
   }
 
   {
@@ -177,6 +187,8 @@ TEST(IDAS_DAE_SYSTEM, idas_forward_system_io) {
     EXPECT_EQ(NV_Ith_S(ress[n + n], 0), yy0[0]);
     EXPECT_EQ(NV_Ith_S(ress[n + n], 1), -yy0[0]);
     EXPECT_EQ(NV_Ith_S(ress[n + n], 2), 0);
+    N_VDestroy_Serial(res);
+    N_VDestroyVectorArray(ress, ns);
   }
 }
 
@@ -252,6 +264,13 @@ TEST(IDAS_DAE_SYSTEM, idas_forward_system_general) {
       EXPECT_EQ(NV_Ith_S(ress[j], i), r(i, j));
     }
   }
+
+  N_VDestroy_Serial(temp1);
+  N_VDestroy_Serial(temp2);
+  N_VDestroy_Serial(temp3);
+
+  N_VDestroy_Serial(res);
+  N_VDestroyVectorArray(ress, ns);
 }
 
 TEST(IDAS_DAE_SYSTEM, constructor_errors) {

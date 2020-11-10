@@ -114,7 +114,8 @@ struct lgamma_fun {
  *         applied to each value in x.
  * @throw std::domain_error if any value is a negative integer or 0.
  */
-template <typename T>
+template <typename T,
+          require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 inline auto lgamma(const T& x) {
   return apply_scalar_unary<lgamma_fun, T>::apply(x);
 }

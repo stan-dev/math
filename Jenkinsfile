@@ -2,20 +2,30 @@
 @Library('StanUtils')
 import org.stan.Utils
 
-def runTests(String testPath) {
-    sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only"
-    try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" }
-    finally { junit 'test/**/*.xml' }
+def runTests(String testPath, boolean jumbo = false) {
+    try {
+        if (jumbo) {
+            sh "./runTests.py -j${env.PARALLEL} ${testPath} --jumbo"
+        } else {
+            sh "./runTests.py -j${env.PARALLEL} ${testPath}"
+        }
+    }
+    finally { junit 'test/**/*.xml' }    
 }
 
-def runTestsWin(String testPath, boolean buildLibs = true) {
+def runTestsWin(String testPath, boolean buildLibs = true, boolean jumbo = false) {
     withEnv(['PATH+TBB=./lib/tbb']) {
        bat "echo $PATH"
        if (buildLibs){
            bat "mingw32-make.exe -f make/standalone math-libs"
        }
-       bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
-       try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
+       try { 
+           if (jumbo) {
+               bat "runTests.py -j${env.PARALLEL} ${testPath} --jumbo" 
+            } else {
+               bat "runTests.py -j${env.PARALLEL} ${testPath}" 
+            }
+       }
        finally { junit 'test/**/*.xml' }
     }
 }
@@ -190,19 +200,14 @@ pipeline {
                 }
             }
             steps {
+                deleteDir()
+                unstash 'MathSetup'
+	            sh "echo CXXFLAGS += -fsanitize=address > make/local"
                 script {
                     if (isUnix()) {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        runTests("test/unit/math/prim")
-                        runTests("test/unit/math/rev")
-                        runTests("test/unit")
+                        runTests("test/unit", true)
                     } else {
-                        deleteDirWin()
-                        unstash 'MathSetup'
-                        runTestsWin("test/unit/math/prim")
-                        runTestsWin("test/unit/math/rev")
-                        runTestsWin("test/unit")
+                        runTestsWin("test/unit", true)
                     }
                 }
             }
@@ -239,6 +244,7 @@ pipeline {
                         sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
                         sh "make -j${env.PARALLEL} test-headers"
                         runTests("test/unit/math/opencl")
+						runTests("test/unit/multiple_translation_units_test.cpp")
                         runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test")
                         runTests("test/unit/math/prim/fun/mdivide_left_tri_test")
                         runTests("test/unit/math/prim/fun/mdivide_right_tri_test")
@@ -335,7 +341,7 @@ pipeline {
                         unstash 'MathSetup'
                         bat "mingw32-make.exe -f make/standalone math-libs"
                         bat "mingw32-make -j${env.PARALLEL} test-headers"
-                        runTestsWin("test/unit", false)
+                        runTestsWin("test/unit", false, true)
                     }
                 }
             }

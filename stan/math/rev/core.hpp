@@ -2,11 +2,14 @@
 #define STAN_MATH_REV_CORE_HPP
 
 #include <stan/math/rev/core/accumulate_adjoints.hpp>
+#include <stan/math/rev/core/arena_allocator.hpp>
+#include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/rev/core/autodiffstackstorage.hpp>
 #include <stan/math/rev/core/build_vari_array.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/count_vars.hpp>
+#include <stan/math/rev/core/callback_vari.hpp>
 #include <stan/math/rev/core/init_chainablestack.hpp>
 #include <stan/math/rev/core/std_iterator_traits.hpp>
 #include <stan/math/rev/core/ddv_vari.hpp>
@@ -67,5 +70,6 @@
 #include <stan/math/rev/core/vvd_vari.hpp>
 #include <stan/math/rev/core/vvv_vari.hpp>
 #include <stan/math/rev/core/save_varis.hpp>
+#include <stan/math/rev/core/zero_adjoints.hpp>
 
 #endif

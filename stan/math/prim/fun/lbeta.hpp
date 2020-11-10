@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/lgamma_stirling_diff.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
+#include <stan/math/prim/functor/apply_scalar_binary.hpp>
 
 namespace stan {
 namespace math {
@@ -60,7 +61,7 @@ namespace math {
  * @param b Second value
  * @return Log of the beta function applied to the two values.
  */
-template <typename T1, typename T2>
+template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
 return_type_t<T1, T2> lbeta(const T1 a, const T2 b) {
   using T_ret = return_type_t<T1, T2>;
 
@@ -113,6 +114,22 @@ return_type_t<T1, T2> lbeta(const T1 a, const T2 b) {
   T_ret stirling = (x - 0.5) * log(x_over_xy) + y * log1m(x_over_xy)
                    + HALF_LOG_TWO_PI - 0.5 * log(y);
   return stirling + stirling_diff;
+}
+
+/**
+ * Enables the vectorised application of the lbeta function,
+ * when the first and/or second arguments are containers.
+ *
+ * @tparam T1 type of first input
+ * @tparam T2 type of second input
+ * @param a First input
+ * @param b Second input
+ * @return lbeta function applied to the two inputs.
+ */
+template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
+inline auto lbeta(const T1& a, const T2& b) {
+  return apply_scalar_binary(
+      a, b, [&](const auto& c, const auto& d) { return lbeta(c, d); });
 }
 
 }  // namespace math

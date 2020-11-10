@@ -14,7 +14,6 @@
 
 namespace stan {
 namespace math {
-
 namespace internal {
 
 class log_sum_exp_vv_vari : public op_vv_vari {
@@ -60,31 +59,42 @@ inline var log_sum_exp(double a, const var& b) {
   return var(new internal::log_sum_exp_vd_vari(b.vi_, a));
 }
 
-namespace internal {
-
-class log_sum_exp_matrix_vari : public op_matrix_vari {
- public:
-  template <typename T>
-  explicit log_sum_exp_matrix_vari(const T& x)
-      : op_matrix_vari(log_sum_exp(x.val()), x) {}
-  void chain() {
-    Eigen::Map<vector_vi> vis_map(vis_, size_);
-    vis_map.adj().array() += adj_ * (vis_map.val().array() - val_).exp();
-  }
-};
-}  // namespace internal
-
 /**
  * Returns the log sum of exponentials.
  *
  * @tparam T Type of input vector or matrix.
  * @param x matrix
  */
-template <typename T, require_container_st<is_var, T>* = nullptr>
+template <typename T, require_container_st<is_var, T>* = nullptr,
+          require_not_var_matrix_t<T>* = nullptr>
 inline auto log_sum_exp(const T& x) {
-  return apply_vector_unary<T>::reduce(x, [&](const auto& v) {
-    return var(new internal::log_sum_exp_matrix_vari(v.eval()));
+  return apply_vector_unary<T>::reduce(x, [](const auto& v) {
+    arena_t<decltype(v)> arena_v = v;
+    arena_t<decltype(v.val())> arena_v_val = arena_v.val();
+    var res = log_sum_exp(arena_v_val);
+
+    reverse_pass_callback([arena_v, arena_v_val, res]() mutable {
+      arena_v.adj()
+          += res.adj() * (arena_v_val.array().val() - res.val()).exp().matrix();
+    });
+
+    return res;
   });
+}
+
+/**
+ * Returns the log sum of exponentials.
+ *
+ * @tparam T A `var_value` with an input vector or matrix
+ * @param x matrix
+ */
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline var log_sum_exp(const T& x) {
+  var res = log_sum_exp(x.val());
+  reverse_pass_callback([x, res]() mutable {
+    x.adj() += res.adj() * (x.val().array().val() - res.val()).exp().matrix();
+  });
+  return res;
 }
 
 }  // namespace math

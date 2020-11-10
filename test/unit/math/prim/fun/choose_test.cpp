@@ -1,4 +1,5 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/math/prim/fun/binary_scalar_tester.hpp>
 #include <boost/math/special_functions/binomial.hpp>
 #include <gtest/gtest.h>
 #include <limits>
@@ -40,4 +41,15 @@ TEST(MathFunctions, choose_nan) {
   EXPECT_THROW(choose(2, nan), std::domain_error);
   EXPECT_THROW(choose(nan, 2), std::domain_error);
   EXPECT_THROW(choose(nan, nan), std::domain_error);
+}
+
+TEST(MathFunctions, choose_vec) {
+  auto f = [](const auto& x1, const auto& x2) {
+    using stan::math::choose;
+    return choose(x1, x2);
+  };
+
+  std::vector<int> std_in1{10, 3, 1};
+  std::vector<int> std_in2{3, 2, 1};
+  stan::test::binary_scalar_tester(f, std_in1, std_in2);
 }

@@ -3,11 +3,9 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/opencl/kernel_generator/wrapper.hpp>
+#include <stan/math/prim/err/check_nonnegative.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
-#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_cl.hpp>
@@ -33,27 +31,37 @@ namespace math {
 struct kernel_parts {
   std::string includes;  // any function definitions - as if they were includet
                          // at the start of kernel source
+  std::string declarations;    // declarations of any local variables
   std::string initialization;  // the code for initializations done by all
                                // threads, even if they have no work
   std::string body_prefix;     // the code that should be placed at the start of
-                               // the kernel body
-  std::string body;       // the body of the kernel - code executing operations
-  std::string reduction;  // the code for reductions within work group by all
-                          // threads, even if they have no work
-  std::string args;       // kernel arguments
+                            // the kernel body (before the code for arguments of
+                            // an operation)
+  std::string body;  // the body of the kernel - code executing operations
+  std::string body_suffix;  // the code that should be placed at the end of
+                            // the kernel body
+  std::string reduction;    // the code for reductions within work group by all
+                            // threads, even if they have no work
+  std::string args;         // kernel arguments
 
   kernel_parts operator+(const kernel_parts& other) {
-    return {
-        includes + other.includes,       initialization + other.initialization,
-        body_prefix + other.body_prefix, body + other.body,
-        reduction + other.reduction,     args + other.args};
+    return {includes + other.includes,
+            declarations += other.declarations,
+            initialization + other.initialization,
+            body_prefix + other.body_prefix,
+            body + other.body,
+            body_suffix + other.body_suffix,
+            reduction + other.reduction,
+            args + other.args};
   }
 
   kernel_parts operator+=(const kernel_parts& other) {
     includes += other.includes;
+    declarations += other.declarations;
     initialization += other.initialization;
     body_prefix += other.body_prefix;
     body += other.body;
+    body_suffix += other.body_suffix;
     reduction += other.reduction;
     args += other.args;
     return *this;
@@ -74,7 +82,7 @@ class operation_cl : public operation_cl_base {
       "operation_cl: all arguments to operation must be operations!");
 
  protected:
-  std::tuple<internal::wrapper<Args>...> arguments_;
+  std::tuple<Args...> arguments_;
   mutable std::string var_name_;  // name of the variable that holds result of
                                   // this operation in the kernel
 
@@ -108,7 +116,7 @@ class operation_cl : public operation_cl_base {
     */
   template <size_t N>
   const auto& get_arg() const {
-    return std::get<N>(arguments_).x;
+    return std::get<N>(arguments_);
   }
 
   /**
@@ -117,7 +125,7 @@ class operation_cl : public operation_cl_base {
    * expressions
    */
   explicit operation_cl(Args&&... arguments)
-      : arguments_(internal::wrapper<Args>(std::forward<Args>(arguments))...) {}
+      : arguments_(std::forward<Args>(arguments)...) {}
 
   /**
    * Evaluates the expression.
@@ -126,8 +134,17 @@ class operation_cl : public operation_cl_base {
   matrix_cl<Scalar> eval() const {
     int rows = derived().rows();
     int cols = derived().cols();
-    check_nonnegative("operation_cl.eval", "this->rows()", rows);
-    check_nonnegative("operation_cl.eval", "this->cols()", cols);
+    const char* function = "operation_cl.eval()";
+    if (rows < 0) {
+      invalid_argument(function, "Number of rows of expression", rows,
+                       " must be nonnegative, but is ",
+                       " (broadcasted expressions can not be evaluated)");
+    }
+    if (cols < 0) {
+      invalid_argument(function, "Number of columns of expression", cols,
+                       " must be nonnegative, but is ",
+                       " (broadcasted expressions can not be evaluated)");
+    }
     matrix_cl<Scalar> res(rows, cols, derived().view());
     if (res.size() > 0) {
       this->evaluate_into(res);
@@ -292,14 +309,13 @@ class operation_cl : public operation_cl_base {
   }
 
   /**
-   * Adds all write events on any matrices used by nested expressions to a list
-   * and clears them from those matrices.
+   * Adds all write events on any matrices used by nested expressions to a list.
    * @param[out] events List of all events.
    */
-  inline void get_clear_write_events(std::vector<cl::Event>& events) const {
+  inline void get_write_events(std::vector<cl::Event>& events) const {
     index_apply<N>([&](auto... Is) {
       static_cast<void>(std::initializer_list<int>{
-          (this->template get_arg<Is>().get_clear_write_events(events), 0)...});
+          (this->template get_arg<Is>().get_write_events(events), 0)...});
     });
   }
 
@@ -309,6 +325,8 @@ class operation_cl : public operation_cl_base {
    * @return number of rows
    */
   inline int rows() const {
+    static_assert(
+        N > 0, "default rows does not work on expressions with no arguments!");
     return index_apply<N>([&](auto... Is) {
       // assuming all non-dynamic sizes match
       return std::max({this->get_arg<Is>().rows()...});
@@ -321,6 +339,8 @@ class operation_cl : public operation_cl_base {
    * @return number of columns
    */
   inline int cols() const {
+    static_assert(
+        N > 0, "default cols does not work on expressions with no arguments!");
     return index_apply<N>([&](auto... Is) {
       // assuming all non-dynamic sizes match
       return std::max({this->get_arg<Is>().cols()...});
@@ -347,6 +367,9 @@ class operation_cl : public operation_cl_base {
    * @return pair of indices - bottom and top diagonal
    */
   inline std::pair<int, int> extreme_diagonals() const {
+    static_assert(N > 0,
+                  "default extreme_diagonals does not work on expressions with "
+                  "no arguments!");
     return index_apply<N>([&](auto... Is) {
       auto arg_diags
           = std::make_tuple(this->get_arg<Is>().extreme_diagonals()...);

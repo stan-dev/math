@@ -2,7 +2,10 @@
 #define TEST_UNIT_UTIL_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/uniform_real_distribution.hpp>
 #include <boost/typeof/typeof.hpp>
+#include <test/unit/pretty_print_types.hpp>
 #include <gtest/gtest.h>
 #include <type_traits>
 #include <string>
@@ -10,8 +13,6 @@
 /**
  * Tests for exact elementwise equality of input matrices of
  * the supplied type with he EXPECT_EQ macro from GTest.
- * This EXPECT test should be used when the elements
- * of the supplied matrices are not doubles.
  *
  * @param A first input matrix to compare
  * @param B second input matrix to compare
@@ -29,19 +30,25 @@
 
 /**
  * Tests for  exact elementwise equality of the input matrices
- * of doubles with he EXPECT_EQ macro from GTest.
+ * with the EXPECT_EQ macro from GTest.
  *
  * @param A first input matrix to compare
  * @param B second input matrix to compare
  */
-#define EXPECT_MATRIX_EQ(A, B)               \
-  {                                          \
-    const Eigen::MatrixXd& A_eval = A;       \
-    const Eigen::MatrixXd& B_eval = B;       \
-    EXPECT_EQ(A_eval.rows(), B_eval.rows()); \
-    EXPECT_EQ(A_eval.cols(), B_eval.cols()); \
-    for (int i = 0; i < A_eval.size(); i++)  \
-      EXPECT_EQ(A_eval(i), B_eval(i));       \
+#define EXPECT_MATRIX_EQ(A, B)                                        \
+  {                                                                   \
+    using T_A = std::decay_t<decltype(A)>;                            \
+    using T_B = std::decay_t<decltype(B)>;                            \
+    const Eigen::Matrix<typename T_A::Scalar, T_A::RowsAtCompileTime, \
+                        T_A::ColsAtCompileTime>                       \
+        A_eval = A;                                                   \
+    const Eigen::Matrix<typename T_B::Scalar, T_B::RowsAtCompileTime, \
+                        T_B::ColsAtCompileTime>                       \
+        B_eval = B;                                                   \
+    EXPECT_EQ(A_eval.rows(), B_eval.rows());                          \
+    EXPECT_EQ(A_eval.cols(), B_eval.cols());                          \
+    for (int i = 0; i < A_eval.size(); i++)                           \
+      EXPECT_EQ(A_eval(i), B_eval(i));                                \
   }
 
 /**
@@ -146,6 +153,17 @@
   EXPECT_THROW_MSG_WITH_COUNT(expr, T_e, msg, 1)
 
 /**
+ * Tests if given types are the same type.
+ *
+ * @param a first type
+ * @param b second type
+ **/
+#define EXPECT_SAME_TYPE(a, b)                                             \
+  EXPECT_TRUE((std::is_same<a, b>::value))                                 \
+      << "Type a is" << stan::math::test::type_name<a>() << ". Type b is " \
+      << stan::math::test::type_name<b>();
+
+/**
  * Count the number of times a substring is found in
  * a supplied string.
  *
@@ -195,6 +213,25 @@ void expect_type_matrix(const Eigen::Matrix<double, R, C>& x) {
   EXPECT_EQ(Eigen::Dynamic, C);
   EXPECT_EQ(Eigen::Dynamic, R);
 }
+
+auto make_sparse_matrix_random(int rows, int cols) {
+  using eigen_triplet = Eigen::Triplet<double>;
+  boost::mt19937 gen;
+  boost::random::uniform_real_distribution<double> dist(0.0, 1.0);
+  std::vector<eigen_triplet> tripletList;
+  for (int i = 0; i < rows; ++i) {
+    for (int j = 0; j < cols; ++j) {
+      auto v_ij = dist(gen);
+      if (v_ij < 0.1) {
+        tripletList.push_back(eigen_triplet(i, j, v_ij));
+      }
+    }
+  }
+  Eigen::SparseMatrix<double> mat(rows, cols);
+  mat.setFromTriplets(tripletList.begin(), tripletList.end());
+  return mat;
+}
+
 }  // namespace test
 }  // namespace stan
 

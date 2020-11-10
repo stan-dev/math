@@ -74,6 +74,7 @@
 #include <stan/math/prim/fun/dot.hpp>
 #include <stan/math/prim/fun/dot_product.hpp>
 #include <stan/math/prim/fun/dot_self.hpp>
+#include <stan/math/prim/fun/eigen_comparisons.hpp>
 #include <stan/math/prim/fun/eigenvalues.hpp>
 #include <stan/math/prim/fun/eigenvalues_sym.hpp>
 #include <stan/math/prim/fun/eigenvectors.hpp>
@@ -82,6 +83,7 @@
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/prim/fun/erf.hpp>
 #include <stan/math/prim/fun/erfc.hpp>
+#include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/exp2.hpp>
 #include <stan/math/prim/fun/expm1.hpp>
@@ -97,6 +99,7 @@
 #include <stan/math/prim/fun/fma.hpp>
 #include <stan/math/prim/fun/fmax.hpp>
 #include <stan/math/prim/fun/fmin.hpp>
+#include <stan/math/prim/fun/fmod.hpp>
 #include <stan/math/prim/fun/gamma_p.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
 #include <stan/math/prim/fun/get.hpp>
@@ -229,6 +232,7 @@
 #include <stan/math/prim/fun/owens_t.hpp>
 #include <stan/math/prim/fun/Phi.hpp>
 #include <stan/math/prim/fun/Phi_approx.hpp>
+#include <stan/math/prim/fun/plus.hpp>
 #include <stan/math/prim/fun/poisson_binomial_log_probs.hpp>
 #include <stan/math/prim/fun/polar.hpp>
 #include <stan/math/prim/fun/positive_constrain.hpp>
@@ -323,10 +327,12 @@
 #include <stan/math/prim/fun/ub_constrain.hpp>
 #include <stan/math/prim/fun/ub_free.hpp>
 #include <stan/math/prim/fun/uniform_simplex.hpp>
+#include <stan/math/prim/fun/unitspaced_array.hpp>
 #include <stan/math/prim/fun/unit_vector_constrain.hpp>
 #include <stan/math/prim/fun/unit_vector_free.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/fun/vec_concat.hpp>
 #include <stan/math/prim/fun/variance.hpp>
 #include <stan/math/prim/fun/welford_covar_estimator.hpp>
 #include <stan/math/prim/fun/welford_var_estimator.hpp>

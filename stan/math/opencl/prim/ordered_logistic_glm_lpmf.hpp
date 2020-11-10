@@ -2,6 +2,14 @@
 #define STAN_MATH_OPENCL_PRIM_ORDERED_LOGISTIC_GLM_LPMF_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/opencl/rev/size.hpp>
+#include <stan/math/opencl/rev/operands_and_partials.hpp>
+#include <stan/math/opencl/copy.hpp>
+#include <stan/math/opencl/kernel_generator.hpp>
+#include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/multiply.hpp>
+#include <stan/math/opencl/kernels/ordered_logistic_glm_lpmf.hpp>
+
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/log1m_exp.hpp>
@@ -10,11 +18,6 @@
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
-#include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/multiply.hpp>
-#include <stan/math/opencl/kernels/ordered_logistic_glm_lpmf.hpp>
 #include <cmath>
 
 namespace stan {
@@ -29,10 +32,10 @@ namespace math {
  *
  * @tparam T_beta type the vector of weights
  * @tparam T_cuts type the vector of cutpoints
- * @param y_cl a scalar or vector of classes on OpenCL device. If it is a scalar
+ * @param y a scalar or vector of classes on OpenCL device. If it is a scalar
  * it will be broadcast - used for all instances. Values should be between 1 and
  * number of classes, including endpoints.
- * @param x_cl design matrix or row vector on OpenCL device. This overload does
+ * @param x design matrix or row vector on OpenCL device. This overload does
  * not support broadcasting of a row vector x!
  * @param beta weight vector
  * @param cuts cutpoints vector
@@ -42,73 +45,75 @@ namespace math {
  * ascending order or any input is not finite
  * @throw std::invalid_argument if container sizes mismatch.
  */
-template <bool propto, typename T_beta, typename T_cuts,
-          require_all_eigen_col_vector_t<T_beta, T_cuts>* = nullptr>
-return_type_t<T_beta, T_cuts> ordered_logistic_glm_lpmf(
-    const matrix_cl<int>& y_cl, const matrix_cl<double>& x_cl,
-    const T_beta& beta, const T_cuts& cuts) {
+template <bool propto, typename T_y, typename T_x, typename T_beta,
+          typename T_cuts,
+          require_all_prim_or_rev_kernel_expression_t<T_y, T_x, T_beta,
+                                                      T_cuts>* = nullptr>
+return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
+    const T_y& y, const T_x& x, const T_beta& beta, const T_cuts& cuts) {
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
   using std::isfinite;
   using T_partials_return = partials_return_t<T_beta, T_cuts>;
-  using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
-  using T_cuts_ref = ref_type_if_t<!is_constant<T_cuts>::value, T_cuts>;
+  constexpr bool is_y_vector = !is_stan_scalar<T_y>::value;
 
   static const char* function = "ordered_logistic_glm_lpmf";
 
-  const size_t N_instances = x_cl.rows();
-  const size_t N_attributes = x_cl.cols();
-  const size_t N_classes = stan::math::size(cuts) + 1;
+  const size_t N_instances = x.rows();
+  const size_t N_attributes = x.cols();
+  const size_t N_classes = size(cuts) + 1;
 
-  if (y_cl.size() != 1) {
-    check_size_match(function, "Rows of ", "x_cl", N_instances, "rows of ",
-                     "y_cl", y_cl.size());
+  if (is_y_vector) {
+    check_size_match(function, "Rows of ", "x", N_instances, "rows of ", "y",
+                     size(y));
   }
-  check_consistent_size(function, "Weight vector", beta, N_attributes);
-  T_cuts_ref cuts_ref = cuts;
-  const auto& cuts_val = to_ref_for_opencl(value_of_rec(cuts_ref));
-  check_ordered(function, "Cut-points", cuts_val);
-  if (N_classes > 1) {
-    if (N_classes > 2) {
-      check_finite(function, "Final cut-point", cuts_val[N_classes - 2]);
-    }
-    check_finite(function, "First cut-point", cuts_val[0]);
+  check_size_match(function, "Columns of ", "x", N_attributes, "Size of",
+                   "beta", size(beta));
+
+  const auto& cuts_val = eval(value_of(cuts));
+  if (N_classes >= 2) {
+    auto cuts_head = block(cuts_val, 0, 0, size(cuts) - 1, 1);
+    auto cuts_tail = block(cuts_val, 1, 0, size(cuts) - 1, 1);
+    check_cl(function, "Cuts", cuts_head, "ordered and finite")
+        = cuts_head < cuts_tail && isfinite(cuts_head) && isfinite(cuts_tail);
+  } else {
+    check_cl(function, "Cuts", cuts_val, "finite") = isfinite(cuts_val);
   }
 
   if (N_instances == 0 || N_classes == 1) {
     return 0;
   }
-  if (!include_summand<propto, T_beta, T_cuts>::value) {
+  if (!include_summand<propto, T_x, T_beta, T_cuts>::value) {
     return 0;
   }
 
-  T_beta_ref beta_ref = beta;
-  const auto& beta_val = value_of_rec(beta_ref);
+  const auto& y_val = eval(value_of(y));
+  const auto& x_val = eval(value_of(x));
+  const auto& beta_val = eval(value_of(beta));
+
+  const auto& y_val_cl = to_matrix_cl(y_val);
 
   const int local_size
       = opencl_kernels::ordered_logistic_glm.get_option("LOCAL_SIZE_");
   const int wgs = (N_instances + local_size - 1) / local_size;
 
-  const matrix_cl<double> beta_cl(beta_val);
-  const matrix_cl<double> cuts_cl(cuts_val);
-
-  bool need_location_derivative = !is_constant_all<T_beta>::value;
+  bool need_location_derivative = !is_constant_all<T_x, T_beta>::value;
   bool need_cuts_derivative = !is_constant_all<T_cuts>::value;
   matrix_cl<double> logp_cl(wgs, 1);
   matrix_cl<double> location_sum_cl(wgs, 1);
   matrix_cl<double> location_derivative_cl(need_location_derivative ? 1 : 0,
                                            N_instances);
-  matrix_cl<double> cuts_derivative_cl(need_cuts_derivative ? wgs : 0,
-                                       N_classes - 1);
+  matrix_cl<double> cuts_derivative_cl(N_classes - 1,
+                                       need_cuts_derivative ? wgs : 0);
 
   try {
     opencl_kernels::ordered_logistic_glm(
         cl::NDRange(local_size * wgs), cl::NDRange(local_size), location_sum_cl,
-        logp_cl, location_derivative_cl, cuts_derivative_cl, y_cl, x_cl,
-        beta_cl, cuts_cl, N_instances, N_attributes, N_classes,
-        y_cl.size() != 1, need_location_derivative, need_cuts_derivative);
+        logp_cl, location_derivative_cl, cuts_derivative_cl, y_val_cl, x_val,
+        beta_val, cuts_val, N_instances, N_attributes, N_classes, is_y_vector,
+        need_location_derivative, need_cuts_derivative);
   } catch (const cl::Error& e) {
     check_opencl_error(function, e);
   }
@@ -116,22 +121,35 @@ return_type_t<T_beta, T_cuts> ordered_logistic_glm_lpmf(
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
   if (!std::isfinite(sum(from_matrix_cl(location_sum_cl)))) {
-    check_finite(function, "Weight vector", beta);
-    check_bounded(function, "Vector of dependent variables",
-                  from_matrix_cl(y_cl), 1, N_classes);
-    check_finite(function, "Matrix of independent variables",
-                 from_matrix_cl(x_cl));
+    check_cl(function, "Vector of dependent variables", y_val,
+             "between 0 and number of classes")
+        = y_val >= 1 && y_val <= static_cast<int>(N_classes);
+    check_cl(function, "Design matrix", x_val, "finite") = isfinite(x_val);
+    check_cl(function, "Weight vector", beta_val, "finite")
+        = isfinite(beta_val);
   }
 
-  operands_and_partials<T_beta_ref, T_cuts_ref> ops_partials(beta_ref,
-                                                             cuts_ref);
-  if (!is_constant_all<T_beta>::value) {
+  operands_and_partials<T_x, T_beta, T_cuts> ops_partials(x, beta, cuts);
+  if (!is_constant_all<T_x>::value) {
     ops_partials.edge1_.partials_
-        = from_matrix_cl<1, Dynamic>(location_derivative_cl * x_cl);
+        = transpose(location_derivative_cl) * transpose(beta_val);
+  }
+  if (!is_constant_all<T_beta>::value) {
+    matrix_cl<double> edge2_partials_transpose = location_derivative_cl * x_val;
+    ops_partials.edge2_.partials_ = matrix_cl<double>(
+        edge2_partials_transpose.buffer(), edge2_partials_transpose.cols(),
+        edge2_partials_transpose.rows());
+    if (beta.rows() != 0) {
+      forward_as<matrix_cl<double>>(ops_partials.edge2_.partials_)
+          .add_write_event(edge2_partials_transpose.write_events().back());
+    }
   }
   if (!is_constant_all<T_cuts>::value) {
-    ops_partials.edge2_.partials_
-        = from_matrix_cl(cuts_derivative_cl).colwise().sum();
+    if (wgs == 1) {
+      ops_partials.edge3_.partials_ = std::move(cuts_derivative_cl);
+    } else {
+      ops_partials.edge3_.partials_ = rowwise_sum(cuts_derivative_cl);
+    }
   }
   return ops_partials.build(logp);
 }

@@ -6,6 +6,8 @@
 #include <stan/math/prim/meta/is_container.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
+#include <stan/math/prim/err/check_matching_dims.hpp>
+#include <stan/math/prim/err/check_matching_sizes.hpp>
 #include <stan/math/prim/fun/num_elements.hpp>
 #include <vector>
 
@@ -113,7 +115,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * @return Eigen object with result of applying functor to inputs.
  */
 template <typename T1, typename T2, typename F,
-          require_eigen_matrix_vt<is_stan_scalar, T1>* = nullptr,
+          require_eigen_matrix_dynamic_vt<is_stan_scalar, T1>* = nullptr,
           require_std_vector_vt<is_std_vector, T2>* = nullptr,
           require_std_vector_st<std::is_integral, T2>* = nullptr>
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
@@ -148,7 +150,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
 template <typename T1, typename T2, typename F,
           require_std_vector_vt<is_std_vector, T1>* = nullptr,
           require_std_vector_st<std::is_integral, T1>* = nullptr,
-          require_eigen_matrix_vt<is_stan_scalar, T2>* = nullptr>
+          require_eigen_matrix_dynamic_vt<is_stan_scalar, T2>* = nullptr>
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
   if (num_elements(x) != num_elements(y)) {
     std::ostringstream msg;
@@ -237,7 +239,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
   check_matching_sizes("Binary function", "x", x, "y", y);
   decltype(auto) x_vec = as_column_vector_or_scalar(x);
   decltype(auto) y_vec = as_column_vector_or_scalar(y);
-  using T_return = value_type_t<decltype(x_vec.binaryExpr(y_vec, f))>;
+  using T_return = std::decay_t<decltype(f(x[0], y[0]))>;
   std::vector<T_return> result(x.size());
   Eigen::Map<Eigen::Matrix<T_return, -1, 1>>(result.data(), result.size())
       = x_vec.binaryExpr(y_vec, f);
@@ -267,7 +269,7 @@ template <typename T1, typename T2, typename F,
           require_stan_scalar_t<T2>* = nullptr>
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
   decltype(auto) x_vec = as_column_vector_or_scalar(x);
-  using T_return = value_type_t<decltype(f(x[0], y))>;
+  using T_return = std::decay_t<decltype(f(x[0], y))>;
   std::vector<T_return> result(x.size());
   Eigen::Map<Eigen::Matrix<T_return, -1, 1>>(result.data(), result.size())
       = x_vec.unaryExpr([&f, &y](const auto& v) { return f(v, y); });
@@ -297,7 +299,7 @@ template <typename T1, typename T2, typename F,
           require_std_vector_vt<is_stan_scalar, T2>* = nullptr>
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
   decltype(auto) y_vec = as_column_vector_or_scalar(y);
-  using T_return = value_type_t<decltype(f(x, y[0]))>;
+  using T_return = std::decay_t<decltype(f(x, y[0]))>;
   std::vector<T_return> result(y.size());
   Eigen::Map<Eigen::Matrix<T_return, -1, 1>>(result.data(), result.size())
       = y_vec.unaryExpr([&f, &x](const auto& v) { return f(x, v); });
