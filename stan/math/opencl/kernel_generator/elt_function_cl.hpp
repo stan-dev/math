@@ -44,7 +44,7 @@ class elt_function_cl : public operation_cl<Derived, Scal, T...> {
   /**
    * Constructor
    * @param fun function
-   * @param a argument expression(s)
+   * @param args argument expression(s)
    */
   elt_function_cl(const std::string& fun, T&&... args)  // NOLINT
       : base(std::forward<T>(args)...), fun_(fun) {}
@@ -54,7 +54,7 @@ class elt_function_cl : public operation_cl<Derived, Scal, T...> {
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
    * @param view_handled whether whether caller already handled matrix view
-   * @param var_name_arg variable names of the nested expression
+   * @param var_names_arg variable names of the nested expressions
    * @return part of kernel with code for this expression
    */
   inline kernel_parts generate(

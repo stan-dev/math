@@ -24,11 +24,11 @@ namespace math {
  * the log probabilities for each observation/alpha/sigma triple.
  *
  * @tparam T_y_cl type of scalar outcome
- * @tparam T_shape_cl type of prior scale for successes
- * @tparam T_scale_cl type of prior scale for failures
+ * @tparam T_shape_cl type of shape
+ * @tparam T_scale_cl type of scale
  * @param y (Sequence of) scalar(s).
- * @param alpha (Sequence of) prior sample stan::math::size(s).
- * @param sigma (Sequence of) prior sample stan::math::size(s).
+ * @param alpha shape
+ * @param sigma scale
  * @return The log of the product of densities.
  */
 template <
