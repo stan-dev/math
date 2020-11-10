@@ -3,7 +3,8 @@
 
 #include <stan/math/rev/core/chainablestack.hpp>
 
-#include <vector>
+#include <mutex>
+#include <thread>
 
 namespace stan {
 namespace math {
@@ -28,22 +29,17 @@ namespace math {
  */
 class ScopedChainableStack {
   ChainableStack::AutodiffStackStorage local_stack_;
-
-  std::vector<ChainableStack::AutodiffStackStorage*> stack_queue_;
+  std::mutex local_stack_mutex_;
 
   struct activate_scope {
-    ScopedChainableStack& scoped_stack_;
+    ChainableStack::AutodiffStackStorage* parent_stack_;
 
     explicit activate_scope(ScopedChainableStack& scoped_stack)
-        : scoped_stack_(scoped_stack) {
-      scoped_stack_.stack_queue_.push_back(ChainableStack::instance_);
-      ChainableStack::instance_ = &scoped_stack_.local_stack_;
+        : parent_stack_(ChainableStack::instance_) {
+      ChainableStack::instance_ = &scoped_stack.local_stack_;
     }
 
-    ~activate_scope() {
-      ChainableStack::instance_ = scoped_stack_.stack_queue_.back();
-      scoped_stack_.stack_queue_.pop_back();
-    }
+    ~activate_scope() { ChainableStack::instance_ = parent_stack_; }
   };
 
  public:
@@ -60,6 +56,7 @@ class ScopedChainableStack {
    */
   template <typename F>
   auto execute(F&& f) {
+    const std::lock_guard<std::mutex> lock(local_stack_mutex_);
     activate_scope active_scope(*this);
     return std::forward<F>(f)();
   }

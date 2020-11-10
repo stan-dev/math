@@ -37,14 +37,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         = std::tuple<decltype(deep_copy_vars(std::declval<Args>()))...>;
     std::unique_ptr<args_tuple_t> args_tuple_holder_;
 
-    template <typename... ArgsT>
-    explicit scoped_args_tuple(ArgsT&&... args_tuple)
-        : stack_(),
-          args_tuple_holder_(
-              stack_.execute([&]() -> std::unique_ptr<args_tuple_t> {
-                return std::make_unique<args_tuple_t>(
-                    deep_copy_vars(std::forward<ArgsT>(args_tuple))...);
-              })) {}
+    explicit scoped_args_tuple() : stack_(), args_tuple_holder_(nullptr) {}
   };
 
   using local_args_tuple_t = tbb::enumerable_thread_specific<scoped_args_tuple>;
@@ -63,21 +56,23 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     const size_t num_vars_shared_terms_;  // Number of vars in shared arguments
     double* sliced_partials_;  // Points to adjoints of the partial calculations
     Vec vmapped_;
-    local_args_tuple_t& local_args_tuple_;
+    std::shared_ptr<local_args_tuple_t> local_args_tuple_;
     std::ostream* msgs_;
+    std::tuple<Args...> args_tuple_;
     double sum_{0.0};
     Eigen::VectorXd args_adjoints_{0};
 
-    template <typename VecT>
+    template <typename VecT, typename... ArgsT>
     recursive_reducer(size_t num_vars_per_term, size_t num_vars_shared_terms,
                       double* sliced_partials, VecT&& vmapped,
-                      local_args_tuple_t& local_args_tuple, std::ostream* msgs)
+                      std::ostream* msgs, ArgsT&&... args)
         : num_vars_per_term_(num_vars_per_term),
           num_vars_shared_terms_(num_vars_shared_terms),
           sliced_partials_(sliced_partials),
           vmapped_(std::forward<VecT>(vmapped)),
-          local_args_tuple_(local_args_tuple),
-          msgs_(msgs) {}
+          local_args_tuple_(std::make_shared<local_args_tuple_t>()),
+          msgs_(msgs),
+          args_tuple_(std::forward<ArgsT>(args)...) {}
 
     /*
      * This is the copy operator as required for tbb::parallel_reduce
@@ -91,7 +86,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           sliced_partials_(other.sliced_partials_),
           vmapped_(other.vmapped_),
           local_args_tuple_(other.local_args_tuple_),
-          msgs_(other.msgs_) {}
+          msgs_(other.msgs_),
+          args_tuple_(other.args_tuple_) {}
 
     /**
      * Compute, using nested autodiff, the value and Jacobian of
@@ -115,6 +111,25 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         args_adjoints_ = Eigen::VectorXd::Zero(num_vars_shared_terms_);
       }
 
+      // Obtain reference to thread local copy of all shared arguments that do
+      // not point
+      //   back to main autodiff stack
+      scoped_args_tuple& args_tuple_scope = local_args_tuple_->local();
+
+      if (!args_tuple_scope.args_tuple_holder_) {
+        args_tuple_scope.stack_.execute([&]() {
+          apply(
+              [&](auto&&... args) {
+                args_tuple_scope.args_tuple_holder_ = std::make_unique<
+                    typename scoped_args_tuple::args_tuple_t>(
+                    deep_copy_vars(args)...);
+              },
+              args_tuple_);
+        });
+      }
+
+      auto& args_tuple_local = *(args_tuple_scope.args_tuple_holder_);
+
       // Initialize nested autodiff stack
       const nested_rev_autodiff begin_nest;
 
@@ -125,12 +140,6 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       for (size_t i = r.begin(); i < r.end(); ++i) {
         local_sub_slice.emplace_back(deep_copy_vars(vmapped_[i]));
       }
-
-      // Obtain reference to thread local copy of all shared arguments that do
-      // not point
-      //   back to main autodiff stack
-      scoped_args_tuple& args_tuple_scope = local_args_tuple_.local();
-      auto& args_tuple_local = *(args_tuple_scope.args_tuple_holder_);
 
       // Perform calculation
       var sub_sum_v = apply(
@@ -241,11 +250,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       partials[i] = 0.0;
     }
 
-    local_args_tuple_t local_args(
-        [&] { return scoped_args_tuple(std::forward<Args>(args)...); });
-
     recursive_reducer worker(num_vars_per_term, num_vars_shared_terms, partials,
-                             std::forward<Vec>(vmapped), local_args, msgs);
+                             std::forward<Vec>(vmapped), msgs,
+                             std::forward<Args>(args)...);
 
     if (auto_partitioning) {
       tbb::parallel_reduce(
