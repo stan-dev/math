@@ -117,8 +117,8 @@ TEST(ProbDistributionsGamma, opencl_broadcast_y) {
   Eigen::VectorXd beta(N);
   beta << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      gamma_lpdf_functor, y, alpha, beta);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(gamma_lpdf_functor, y,
+                                                         alpha, beta);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       gamma_lpdf_functor_propto, y, alpha, beta);
 }
@@ -132,8 +132,8 @@ TEST(ProbDistributionsGamma, opencl_broadcast_alpha) {
   Eigen::VectorXd beta(N);
   beta << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-      gamma_lpdf_functor, y, alpha, beta);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(gamma_lpdf_functor, y,
+                                                         alpha, beta);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       gamma_lpdf_functor_propto, y, alpha, beta);
 }
@@ -147,8 +147,8 @@ TEST(ProbDistributionsGamma, opencl_broadcast_beta) {
   alpha << 0.3, 0.8, 1.0;
   double beta = 0.3;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
-      gamma_lpdf_functor, y, alpha, beta);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(gamma_lpdf_functor, y,
+                                                         alpha, beta);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       gamma_lpdf_functor_propto, y, alpha, beta);
 }
