@@ -40,8 +40,6 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     scoped_args_tuple() : stack_(), args_tuple_holder_(nullptr) {}
   };
 
-  using local_args_tuple_t = tbb::enumerable_thread_specific<scoped_args_tuple>;
-
   /**
    * This struct is used by the TBB to accumulate partial
    *  sums over consecutive ranges of the input. To distribute the workload,
@@ -52,6 +50,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    * @note see link [here](https://tinyurl.com/vp7xw2t) for requirements.
    */
   struct recursive_reducer {
+    using local_args_tuple_t
+        = tbb::enumerable_thread_specific<scoped_args_tuple>;
+
     const size_t num_vars_per_term_;
     const size_t num_vars_shared_terms_;  // Number of vars in shared arguments
     double* sliced_partials_;  // Points to adjoints of the partial calculations

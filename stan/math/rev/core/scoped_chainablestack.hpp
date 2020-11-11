@@ -68,6 +68,10 @@ class ScopedChainableStack {
     activate_scope active_scope(*this);
     return std::forward<F>(f)();
   }
+
+  // Prevent undesirable operations
+  ScopedChainableStack(const ScopedChainableStack&) = delete;
+  ScopedChainableStack& operator=(const ScopedChainableStack&) = delete;
 };
 
 }  // namespace math
