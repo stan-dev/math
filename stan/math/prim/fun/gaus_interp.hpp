@@ -34,7 +34,7 @@ inline double min_diff(const std::vector<Tx>& xs) {
  * that intersects the reference points. This function requires as input
  * a vector, params, created by the function gaus_interp_precomp. The
  * algorithm used to create the mollifier is an iterative algorithm that
- * works as follows. First a linear interpolation is created through the 
+ * works as follows. First a linear interpolation is created through the
  * reference points. Then, the
  * linear interpolation is convolved with a Gaussian whose width is
  * proportional the smallest distance between successive points
