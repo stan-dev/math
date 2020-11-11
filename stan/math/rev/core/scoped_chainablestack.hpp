@@ -55,7 +55,7 @@ class ScopedChainableStack {
   ScopedChainableStack() = default;
 
   /**
-   * Execute in the current thread a nullary function and write the AD
+   * Execute in the current thread a function and write the AD
    * tape to local_stack_ of this instance. The function may return
    * any type.
    *
@@ -63,10 +63,10 @@ class ScopedChainableStack {
    * @param f instance of nullary functor
    * @return Result of evaluated functor
    */
-  template <typename F>
-  auto execute(F&& f) {
+  template <typename F, typename... Args>
+  auto execute(F&& f, Args&&... args) {
     activate_scope active_scope(*this);
-    return std::forward<F>(f)();
+    return std::forward<F>(f)(std::forward<Args>(args)...);
   }
 
   // Prevent undesirable operations
