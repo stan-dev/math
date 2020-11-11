@@ -20,7 +20,7 @@ namespace math {
  * @param x unit vector of dimension K
  * @return Unit vector of dimension K considered "free"
  */
-template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
 inline auto unit_vector_free(EigVec&& x) {
   auto&& x_ref = to_ref(std::forward<EigVec>(x));
   check_unit_vector("stan::math::unit_vector_free", "Unit vector variable",
