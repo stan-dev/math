@@ -92,10 +92,11 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
     g_a1 += log_g_old_sign[0] > 0 ? exp(log_g_old[0]) : -exp(log_g_old[0]);
     g_b1 += log_g_old_sign[1] > 0 ? exp(log_g_old[1]) : -exp(log_g_old[1]);
 
-    if (std::abs(value_of_rec(g_a1) - value_of_rec(g_a1_prev)) <=
-        std::max(std::abs(value_of_rec(g_a1)) * precision, precision) &&
-        std::abs(value_of_rec(g_b1) - value_of_rec(g_b1_prev)) <=
-        std::max(std::abs(value_of_rec(g_b1)) * precision, precision)) {
+    if (std::abs(value_of_rec(g_a1) - value_of_rec(g_a1_prev))
+            <= std::max(std::abs(value_of_rec(g_a1)) * precision, precision)
+        && std::abs(value_of_rec(g_b1) - value_of_rec(g_b1_prev))
+               <= std::max(std::abs(value_of_rec(g_b1)) * precision,
+                           precision)) {
       return;
     }
 
