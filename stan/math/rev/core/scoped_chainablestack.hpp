@@ -46,8 +46,8 @@ class ScopedChainableStack {
     }
 
     ~activate_scope() {
-      scoped_stack_.local_stack_mutex_.unlock();
       ChainableStack::instance_ = parent_stack_;
+      scoped_stack_.local_stack_mutex_.unlock();
     }
   };
 
@@ -59,13 +59,14 @@ class ScopedChainableStack {
    * tape to local_stack_ of this instance. The function may return
    * any type.
    *
-   * @tparam F nullary functor to evaluate
-   * @param f instance of nullary functor
+   * @tparam F functor to evaluate
+   * @param f instance of functor
+   * @param args arguments passed to functor
    * @return Result of evaluated functor
    */
   template <typename F, typename... Args>
   auto execute(F&& f, Args&&... args) {
-    activate_scope active_scope(*this);
+    const activate_scope active_scope(*this);
     return std::forward<F>(f)(std::forward<Args>(args)...);
   }
 
