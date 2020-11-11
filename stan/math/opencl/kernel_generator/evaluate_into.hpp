@@ -2,10 +2,9 @@
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_EVALUATE_INTO_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/meta/is_kernel_expression.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <stan/math/opencl/kernel_generator/multi_result_kernel.hpp>
 #include <CL/cl2.hpp>
 #include <string>

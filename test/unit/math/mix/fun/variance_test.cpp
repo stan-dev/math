@@ -14,6 +14,10 @@ void expect_variance(const Eigen::MatrixXd& m) {
   stan::test::expect_ad(tols, f, v);
   stan::test::expect_ad(tols, f, rv);
   stan::test::expect_ad(tols, f, sv);
+
+  stan::test::expect_ad_matvar(tols, f, m);
+  stan::test::expect_ad_matvar(tols, f, v);
+  stan::test::expect_ad_matvar(tols, f, rv);
 }
 
 TEST(MathMixMatFun, variance) {

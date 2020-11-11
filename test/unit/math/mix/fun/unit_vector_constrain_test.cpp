@@ -3,20 +3,18 @@
 
 namespace unit_vector_constrain_test {
 template <typename T>
-typename Eigen::Matrix<typename stan::scalar_type<T>::type, -1, -1> g1(
-    const T& x) {
+stan::plain_type_t<T> g1(const T& x) {
   return stan::math::unit_vector_constrain(x);
 }
 template <typename T>
-typename Eigen::Matrix<typename stan::scalar_type<T>::type, -1, -1> g2(
-    const T& x) {
-  typename stan::scalar_type<T>::type lp = 0;
+typename stan::plain_type_t<T> g2(const T& x) {
+  stan::scalar_type_t<T> lp = 0;
   auto a = stan::math::unit_vector_constrain(x, lp);
   return a;
 }
 template <typename T>
-typename stan::scalar_type<T>::type g3(const T& x) {
-  typename stan::scalar_type<T>::type lp = 0;
+typename stan::scalar_type_t<T> g3(const T& x) {
+  stan::scalar_type_t<T> lp = 0;
   stan::math::unit_vector_constrain(x, lp);
   return lp;
 }
@@ -36,8 +34,11 @@ void expect_unit_vector_constrain(const T& x) {
   auto f2 = [](const auto& x) { return g2(x); };
   auto f3 = [](const auto& x) { return g3(x); };
   stan::test::expect_ad(tols, f1, x);
+  stan::test::expect_ad_matvar(tols, f1, x);
   stan::test::expect_ad(tols, f2, x);
+  stan::test::expect_ad_matvar(tols, f2, x);
   stan::test::expect_ad(tols, f3, x);
+  stan::test::expect_ad_matvar(tols, f3, x);
 }
 }  // namespace unit_vector_constrain_test
 
