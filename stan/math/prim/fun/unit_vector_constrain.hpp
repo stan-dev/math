@@ -24,13 +24,16 @@ namespace math {
  */
 template <typename T, require_eigen_col_vector_t<T>* = nullptr,
           require_not_vt_autodiff<T>* = nullptr>
-inline plain_type_t<T> unit_vector_constrain(const T& y) {
+inline auto unit_vector_constrain(const T& y) {
   using std::sqrt;
   check_nonzero_size("unit_vector_constrain", "y", y);
-  const auto& y_ref = to_ref(y);
-  value_type_t<T> SN = dot_self(y_ref);
-  check_positive_finite("unit_vector_constrain", "norm", SN);
-  return (y_ref / sqrt(SN)).eval();
+  return make_holder(
+      [](const auto& y_ref) {
+        value_type_t<T> SN = dot_self(y_ref);
+        check_positive_finite("unit_vector_constrain", "norm", SN);
+        return y_ref / sqrt(SN);
+      },
+      to_forwarding_ref(std::forward<T>(y)));
 }
 
 /**
@@ -48,12 +51,15 @@ template <typename T1, typename T2, require_eigen_col_vector_t<T1>* = nullptr,
           require_all_not_vt_autodiff<T1, T2>* = nullptr>
 inline plain_type_t<T1> unit_vector_constrain(const T1& y, T2& lp) {
   using std::sqrt;
-  const auto& y_ref = to_ref(y);
-  check_nonzero_size("unit_vector_constrain", "y", y_ref);
-  value_type_t<T1> SN = dot_self(y_ref);
-  check_positive_finite("unit_vector_constrain", "norm", SN);
-  lp -= 0.5 * SN;
-  return (y_ref / sqrt(SN)).eval();
+  check_nonzero_size("unit_vector_constrain", "y", y);
+  return make_holder(
+      [&lp](const auto& y_ref) {
+        value_type_t<T1> SN = dot_self(y_ref);
+        check_positive_finite("unit_vector_constrain", "norm", SN);
+        lp -= 0.5 * SN;
+        return y_ref / sqrt(SN);
+      },
+      to_forwarding_ref(std::forward<T1>(y)));
 }
 
 }  // namespace math

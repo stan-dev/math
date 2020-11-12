@@ -19,7 +19,7 @@ namespace math {
  * @return difference between first scalar and second scalar
  */
 template <typename ScalarA, typename ScalarB,
-          typename = require_all_stan_scalar_t<ScalarA, ScalarB>>
+          require_all_stan_scalar_t<ScalarA, ScalarB>* = nullptr>
 inline return_type_t<ScalarA, ScalarB> subtract(const ScalarA& a,
                                                 const ScalarB& b) {
   return a - b;
@@ -37,10 +37,10 @@ inline return_type_t<ScalarA, ScalarB> subtract(const ScalarA& a,
  * @return Difference between first matrix and second matrix.
  */
 template <typename Mat1, typename Mat2,
-          typename = require_all_eigen_t<Mat1, Mat2>>
+          require_all_eigen_t<Mat1, Mat2>* = nullptr>
 inline auto subtract(const Mat1& m1, const Mat2& m2) {
   check_matching_dims("subtract", "m1", m1, "m2", m2);
-  return (m1 - m2).eval();
+  return m1 - m2;
 }
 
 /**
@@ -53,10 +53,10 @@ inline auto subtract(const Mat1& m1, const Mat2& m2) {
  * @param m Matrix or expression.
  * @return The scalar minus the matrix.
  */
-template <typename Scal, typename Mat, typename = require_stan_scalar_t<Scal>,
-          typename = require_eigen_t<Mat>>
+template <typename Scal, typename Mat, require_stan_scalar_t<Scal>* = nullptr,
+          require_eigen_t<Mat>* = nullptr>
 inline auto subtract(const Scal c, const Mat& m) {
-  return (c - m.array()).matrix().eval();
+  return (c - m.array()).matrix();
 }
 
 /**
@@ -69,10 +69,10 @@ inline auto subtract(const Scal c, const Mat& m) {
  * @param c Scalar.
  * @return The matrix minus the scalar.
  */
-template <typename Mat, typename Scal, typename = require_eigen_t<Mat>,
-          typename = require_stan_scalar_t<Scal>>
+template <typename Mat, typename Scal, require_eigen_t<Mat>* = nullptr,
+          require_stan_scalar_t<Scal>* = nullptr>
 inline auto subtract(const Mat& m, const Scal c) {
-  return (m.array() - c).matrix().eval();
+  return (m.array() - c).matrix();
 }
 
 }  // namespace math

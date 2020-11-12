@@ -9,12 +9,32 @@ namespace math {
 /**
  * This evaluates expensive Eigen expressions. If given expression involves no
  * calculations this is a no-op that should be optimized away.
+ *
+ * When used to pass the returned value into another function that handles
+ * rvalues and lvalues differently `to_forwarding_ref` should be used instead.
+ *
  * @tparam T argument type
  * @param a argument
  * @return optionally evaluated argument
  */
 template <typename T>
 inline ref_type_t<T&&> to_ref(T&& a) {
+  return std::forward<T>(a);
+}
+
+/**
+ * This evaluates expensive Eigen expressions. If given expression involves no
+ * calculations this is a no-op that should be optimized away.
+ *
+ * When not used to pass the returned value into another function `to_ref`
+ * should be used instead.
+ *
+ * @tparam T argument type
+ * @param a argument
+ * @return optionally evaluated argument
+ */
+template <typename T>
+inline forwarding_ref_type_t<T&&> to_forwarding_ref(T&& a) {
   return std::forward<T>(a);
 }
 

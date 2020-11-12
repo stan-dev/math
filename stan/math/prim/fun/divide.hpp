@@ -19,7 +19,7 @@ namespace math {
  * @return Scalar divided by the scalar.
  */
 template <typename Scal1, typename Scal2,
-          typename = require_all_stan_scalar_t<Scal1, Scal2>>
+          require_all_stan_scalar_t<Scal1, Scal2>* = nullptr>
 inline return_type_t<Scal1, Scal2> divide(const Scal1& x, const Scal2& y) {
   return x / y;
 }
@@ -41,10 +41,10 @@ inline int divide(int x, int y) {
  * @return matrix divided by the scalar
  */
 template <typename Mat, typename Scal, typename = require_eigen_t<Mat>,
-          typename = require_stan_scalar_t<Scal>,
-          typename = require_all_not_var_t<scalar_type_t<Mat>, Scal>>
+          require_stan_scalar_t<Scal>* = nullptr,
+          require_all_not_var_t<scalar_type_t<Mat>, Scal>* = nullptr>
 inline auto divide(const Mat& m, Scal c) {
-  return (m / c).eval();
+  return m / c;
 }
 
 }  // namespace math

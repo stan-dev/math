@@ -40,7 +40,7 @@ template <typename Mat1, typename Mat2,
           typename = require_all_eigen_t<Mat1, Mat2>>
 inline auto add(const Mat1& m1, const Mat2& m2) {
   check_matching_dims("add", "m1", m1, "m2", m2);
-  return (m1 + m2).eval();
+  return m1 + m2;
 }
 
 /**
@@ -55,7 +55,7 @@ inline auto add(const Mat1& m1, const Mat2& m2) {
 template <typename Mat, typename Scal, typename = require_eigen_t<Mat>,
           typename = require_stan_scalar_t<Scal>>
 inline auto add(const Mat& m, const Scal c) {
-  return (m.array() + c).matrix().eval();
+  return (m.array() + c).matrix();
 }
 
 /**
@@ -70,7 +70,7 @@ inline auto add(const Mat& m, const Scal c) {
 template <typename Scal, typename Mat, typename = require_stan_scalar_t<Scal>,
           typename = require_eigen_t<Mat>>
 inline auto add(const Scal c, const Mat& m) {
-  return (c + m.array()).matrix().eval();
+  return (c + m.array()).matrix();
 }
 
 }  // namespace math

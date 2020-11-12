@@ -104,7 +104,7 @@ template <typename Container,
 inline auto logit(const Container& x) {
   return apply_vector_unary<Container>::apply(x, [](const auto& v) {
     const Eigen::Ref<const plain_type_t<decltype(v)>>& v_ref = v;
-    return (v_ref.array() / (1 - v_ref.array())).log().eval();
+    return (v_ref.array() / (1 - v_ref.array())).log();
   });
 }
 

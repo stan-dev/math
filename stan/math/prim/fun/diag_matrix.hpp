@@ -17,8 +17,7 @@ namespace math {
  * @return Diagonal matrix with vector as diagonal values.
  */
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
-diag_matrix(const EigVec& v) {
+inline auto diag_matrix(const EigVec& v) {
   return v.asDiagonal();
 }
 

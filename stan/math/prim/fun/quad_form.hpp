@@ -28,13 +28,12 @@ template <typename EigMat1, typename EigMat2,
           require_not_eigen_col_vector_t<EigMat2>* = nullptr,
           require_vt_same<EigMat1, EigMat2>* = nullptr,
           require_all_vt_arithmetic<EigMat1, EigMat2>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigMat2>, EigMat2::ColsAtCompileTime,
-                     EigMat2::ColsAtCompileTime>
-quad_form(const EigMat1& A, const EigMat2& B) {
+inline auto quad_form(EigMat1&& A, EigMat2&& B) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
-  const auto& B_ref = to_ref(B);
-  return B_ref.transpose() * A * B_ref;
+  return make_holder(
+      [](const auto& a, const auto& b) { return b.transpose() * a * b; },
+      std::forward<EigMat1>(A), to_forwarding_ref(std::forward<EigMat2>(B)));
 }
 
 /**

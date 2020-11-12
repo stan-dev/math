@@ -50,8 +50,9 @@ inline plain_type_t<ColVec> softmax(const ColVec& v) {
     return v;
   }
   const auto& v_ref = to_ref(v);
-  plain_type_t<ColVec> theta = (v_ref.array() - v_ref.maxCoeff()).exp();
-  return theta.array() / theta.sum();
+  return make_holder(
+      [](const auto& theta) { return theta.array() / theta.sum(); },
+      to_forwarding_ref((v_ref.array() - v_ref.maxCoeff()).exp()));
 }
 
 }  // namespace math
