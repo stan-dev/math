@@ -37,6 +37,15 @@ test/unit/multiple_translation_units_test$(EXE): test/unit/libmultiple.so
 
 ############################################################
 #
+# Expression tests
+##
+
+EXPRESSION_TESTS := $(subst .cpp,$(EXE),$(call findfiles,test/expressions,*_test.cpp))
+$(EXPRESSION_TESTS) : $(LIBSUNDIALS)
+
+
+############################################################
+#
 # CVODES tests
 ##
 

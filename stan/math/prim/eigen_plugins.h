@@ -95,6 +95,15 @@ val() const { return CwiseUnaryOp<val_Op, const Derived>(derived());
 
 /**
  * Coefficient-wise function applying val_Op struct to a matrix of var
+ * or vari* and returning a view to the matrix of doubles containing
+ * the values
+ */
+inline CwiseUnaryOp<val_Op, Derived>
+val_op() { return CwiseUnaryOp<val_Op, Derived>(derived());
+}
+
+/**
+ * Coefficient-wise function applying val_Op struct to a matrix of var
  * or vari* and returning a view to the values
  */
 inline CwiseUnaryView<val_Op, Derived>
@@ -149,18 +158,6 @@ struct adj_Op {
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     std::enable_if_t<!std::is_pointer<T>::value, reverse_return_t<T>>
       operator()(T &v) const { return v.vi_->adj_; }
-
-  //Returns adjoint from a vari*
-  template<typename T = Scalar>
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    std::enable_if_t<std::is_pointer<T>::value, reverse_return_t<T>>
-      coeffRef(T &v) { return v->adj_; }
-
-  //Returns adjoint from a var
-  template<typename T = Scalar>
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    std::enable_if_t<!std::is_pointer<T>::value, reverse_return_t<T>>
-      coeffRef(T &v) { return v.vi_->adj_; }
 
 };
 

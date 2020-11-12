@@ -18,7 +18,7 @@ auto cholesky_corr_free(const T& x) {
   check_square("cholesky_corr_free", "x", x);
   // should validate lower-triangular, unit lengths
 
-  const Eigen::Ref<const plain_type_t<T>> x_ref = x;
+  const auto& x_ref = to_ref(x);
   int K = (x.rows() * (x.rows() - 1)) / 2;
   Matrix<value_type_t<T>, Dynamic, 1> z(K);
   int k = 0;

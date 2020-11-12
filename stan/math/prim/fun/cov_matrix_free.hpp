@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <cmath>
 
 namespace stan {
@@ -35,17 +36,17 @@ namespace math {
  */
 template <typename T, require_eigen_t<T>* = nullptr>
 Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cov_matrix_free(const T& y) {
-  check_square("cov_matrix_free", "y", y);
-  check_nonzero_size("cov_matrix_free", "y", y);
+  const auto& y_ref = to_ref(y);
+  check_square("cov_matrix_free", "y", y_ref);
+  check_nonzero_size("cov_matrix_free", "y", y_ref);
 
   using std::log;
-  int K = y.rows();
-  const Eigen::Ref<const plain_type_t<T>>& y_ref = y;
+  int K = y_ref.rows();
   check_positive("cov_matrix_free", "y", y_ref.diagonal());
   Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> x((K * (K + 1)) / 2);
   // FIXME: see Eigen LDLT for rank-revealing version -- use that
   // even if less efficient?
-  Eigen::LLT<plain_type_t<T>> llt(y.rows());
+  Eigen::LLT<plain_type_t<T>> llt(y_ref.rows());
   llt.compute(y_ref);
   plain_type_t<T> L = llt.matrixL();
   int i = 0;
