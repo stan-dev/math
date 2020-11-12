@@ -48,7 +48,7 @@ inline auto log_softmax(Container&& x) {
             a, [](const auto& v) { return v.array() - log_sum_exp(v); });
       },
       to_forwarding_ref(std::forward<Container>(x)));
-};
+}
 
 }  // namespace math
 }  // namespace stan
