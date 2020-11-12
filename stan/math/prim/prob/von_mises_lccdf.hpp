@@ -13,8 +13,8 @@ namespace math {
  * Calculates the log of the complement of the cumulative distribution
  * function of the von Mises distribution:
  *
- * \f$VonMisesLCCDF(x, \mu, \kappa) = \log ( 1.0 - \frac{1}{2\pi I_0(\kappa)} \int_{-\pi}^x\f$
- * \f$e^{\kappa cos(t - \mu)} dt )\f$
+ * \f$VonMisesLCCDF(x, \mu, \kappa) = \log ( 1.0 - \frac{1}{2\pi I_0(\kappa)}
+ * \int_{-\pi}^x\f$ \f$e^{\kappa cos(t - \mu)} dt )\f$
  *
  * where
  *
@@ -30,8 +30,9 @@ namespace math {
  * @tparam T_k Type of inverse scale parameter
  */
 template <typename T_x, typename T_mu, typename T_k>
-inline return_type_t<T_x, T_mu, T_k> von_mises_lccdf(const T_x& x, const T_mu& mu,
-						    const T_k& k) {
+inline return_type_t<T_x, T_mu, T_k> von_mises_lccdf(const T_x& x,
+                                                     const T_mu& mu,
+                                                     const T_k& k) {
   return log1m(von_mises_cdf(x, mu, k));
 }
 

@@ -153,7 +153,7 @@ inline return_type_t<T_x, T_mu, T_k> von_mises_cdf(const T_x& x, const T_mu& mu,
     auto x_n = x_vec[n];
     auto mu_n = mu_vec[n];
     auto k_n = k_vec[n];
-    
+
     // shift x so that mean is 0
     T_return x2 = x_n - mu_n;
 

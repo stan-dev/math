@@ -55,13 +55,11 @@ class AgradCdfVonMises : public AgradCdfTest {
     return stan::math::von_mises_cdf(y, mu, kappa);
   }
 
-  template <typename T_x, typename T_mu, typename T_k, typename T3,
-            typename T4, typename T5>
-  stan::return_type_t<T_x, T_mu, T_k> cdf_function(const T_x& x,
-                                                        const T_mu& mu,
-                                                        const T_k& k,
-                                                        const T3&, const T4&,
-                                                        const T5&) {
+  template <typename T_x, typename T_mu, typename T_k, typename T3, typename T4,
+            typename T5>
+  stan::return_type_t<T_x, T_mu, T_k> cdf_function(const T_x& x, const T_mu& mu,
+                                                   const T_k& k, const T3&,
+                                                   const T4&, const T5&) {
     using return_t = stan::return_type_t<T_x, T_mu, T_k>;
     using stan::math::internal::von_mises_cdf_centered;
     const double pi = stan::math::pi();
