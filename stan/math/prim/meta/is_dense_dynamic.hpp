@@ -14,15 +14,18 @@
 namespace stan {
 
 namespace internal {
-  template <typename T, typename = void>
-  struct is_dense_dynamic_impl : std::false_type {};
+template <typename T, typename = void>
+struct is_dense_dynamic_impl : std::false_type {};
 
-  template <typename T>
-  struct is_dense_dynamic_impl<T, require_t<is_eigen_dense_dynamic<std::decay_t<T>>>> : std::true_type {};
+template <typename T>
+struct is_dense_dynamic_impl<T,
+                             require_t<is_eigen_dense_dynamic<std::decay_t<T>>>>
+    : std::true_type {};
 
-  template <typename T>
-  struct is_dense_dynamic_impl<T, require_t<is_var<T>>> : bool_constant<is_eigen_dense_dynamic<value_type_t<T>>::value> {};
-}
+template <typename T>
+struct is_dense_dynamic_impl<T, require_t<is_var<T>>>
+    : bool_constant<is_eigen_dense_dynamic<value_type_t<T>>::value> {};
+}  // namespace internal
 
 /**
  * Checks whether type T is derived from Eigen::DenseBase and has dynamic rows
@@ -35,8 +38,7 @@ namespace internal {
 template <typename T>
 using is_dense_dynamic = internal::is_dense_dynamic_impl<std::decay_t<T>>;
 
-STAN_ADD_REQUIRE_UNARY(dense_dynamic, is_dense_dynamic,
-                       require_eigens_types);
+STAN_ADD_REQUIRE_UNARY(dense_dynamic, is_dense_dynamic, require_eigens_types);
 STAN_ADD_REQUIRE_CONTAINER(dense_dynamic, is_dense_dynamic,
                            require_eigens_types);
 

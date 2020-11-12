@@ -224,7 +224,6 @@ TEST_F(AgradRev, var_matrix_views) {
   EXPECT_FLOAT_EQ(A_v.adj()(3, 3) - prev_adj_val2, A_coeff2.adj());
 }
 
-
 TEST_F(AgradRev, var_matrix_views_specializations) {
   using dense_mat = Eigen::Matrix<double, -1, -1>;
   dense_mat A(10, 10);
@@ -261,7 +260,6 @@ TEST_F(AgradRev, var_matrix_views_specializations) {
   EXPECT_MATRIX_FLOAT_EQ(A_rightcols.adj(), A_v.adj().rightCols(1));
   EXPECT_MATRIX_FLOAT_EQ(A_middlecols.adj(), A_v.adj().middleCols(3, 2));
 }
-
 
 TEST_F(AgradRev, var_matrix_views_const) {
   using dense_mat = Eigen::Matrix<double, -1, -1>;

@@ -15,12 +15,13 @@ namespace stan {
  */
 template <typename T>
 struct is_var_dense_dynamic
-    : bool_constant<
-          math::conjunction<is_var<T>, is_eigen_dense_dynamic<value_type_t<T>>>::value> {};
+    : bool_constant<math::conjunction<
+          is_var<T>, is_eigen_dense_dynamic<value_type_t<T>>>::value> {};
 
-STAN_ADD_REQUIRE_UNARY(var_dense_dynamic, is_var_dense_dynamic, require_eigens_types);
-STAN_ADD_REQUIRE_UNARY_INNER(var_dense_dynamic, is_var_dense_dynamic, require_eigens_types);
-
+STAN_ADD_REQUIRE_UNARY(var_dense_dynamic, is_var_dense_dynamic,
+                       require_eigens_types);
+STAN_ADD_REQUIRE_UNARY_INNER(var_dense_dynamic, is_var_dense_dynamic,
+                             require_eigens_types);
 
 }  // namespace stan
 

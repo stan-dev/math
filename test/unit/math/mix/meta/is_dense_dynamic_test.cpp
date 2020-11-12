@@ -8,18 +8,18 @@ TEST(MathMetaPrim, is_dense_dynamic_hierarchy_tests) {
   using Eigen::Matrix;
   using stan::is_dense_dynamic;
   using stan::math::test::all_eigen_dense;
-  all_eigen_dense<false, true, true, true, true, is_dense_dynamic, Matrix,
-                  -1, -1>();
-  all_eigen_dense<false, false, false, false, false, is_dense_dynamic,
-                  Matrix, 1, -1>();
-  all_eigen_dense<false, false, false, false, false, is_dense_dynamic,
-                  Matrix, -1, 1>();
-  all_eigen_dense<false, true, true, true, true, is_dense_dynamic, Array,
-                  -1, -1>();
-  all_eigen_dense<false, false, false, false, false, is_dense_dynamic,
-                  Array, 1, -1>();
-  all_eigen_dense<false, false, false, false, false, is_dense_dynamic,
-                  Array, -1, 1>();
+  all_eigen_dense<false, true, true, true, true, is_dense_dynamic, Matrix, -1,
+                  -1>();
+  all_eigen_dense<false, false, false, false, false, is_dense_dynamic, Matrix,
+                  1, -1>();
+  all_eigen_dense<false, false, false, false, false, is_dense_dynamic, Matrix,
+                  -1, 1>();
+  all_eigen_dense<false, true, true, true, true, is_dense_dynamic, Array, -1,
+                  -1>();
+  all_eigen_dense<false, false, false, false, false, is_dense_dynamic, Array, 1,
+                  -1>();
+  all_eigen_dense<false, false, false, false, false, is_dense_dynamic, Array,
+                  -1, 1>();
 }
 
 TEST(MathMetaPrim, is_dense_dynamic_sparse_tests) {
@@ -43,25 +43,25 @@ TEST(MathMetaPrim, is_dense_dynamic_expr_tests) {
   using Eigen::Matrix;
   using stan::is_dense_dynamic;
   using stan::math::test::all_eigen_dense_exprs;
-  all_eigen_dense_exprs<true, true, false, true, is_dense_dynamic, Matrix,
-                        -1, -1>();
-  all_eigen_dense_exprs<false, false, false, true, is_dense_dynamic,
-                        Matrix, 1, -1>();
-  all_eigen_dense_exprs<false, false, false, true, is_dense_dynamic,
-                        Matrix, -1, 1>();
-  all_eigen_dense_exprs<true, true, false, true, is_dense_dynamic, Array,
-                        -1, -1>();
-  all_eigen_dense_exprs<false, false, false, true, is_dense_dynamic,
-                        Array, 1, -1>();
-  all_eigen_dense_exprs<false, false, false, true, is_dense_dynamic,
-                        Array, -1, 1>();
+  all_eigen_dense_exprs<true, true, false, true, is_dense_dynamic, Matrix, -1,
+                        -1>();
+  all_eigen_dense_exprs<false, false, false, true, is_dense_dynamic, Matrix, 1,
+                        -1>();
+  all_eigen_dense_exprs<false, false, false, true, is_dense_dynamic, Matrix, -1,
+                        1>();
+  all_eigen_dense_exprs<true, true, false, true, is_dense_dynamic, Array, -1,
+                        -1>();
+  all_eigen_dense_exprs<false, false, false, true, is_dense_dynamic, Array, 1,
+                        -1>();
+  all_eigen_dense_exprs<false, false, false, true, is_dense_dynamic, Array, -1,
+                        1>();
 }
 
 TEST(MathMetaPrim, is_dense_dynamic_var_test) {
   using stan::is_dense_dynamic;
-  using stan::math::var_value;
   using stan::math::var;
+  using stan::math::var_value;
 
   EXPECT_TRUE((is_dense_dynamic<var_value<Eigen::MatrixXd>>::value));
-  EXPECT_FALSE((is_dense_dynamic<var_value<Eigen::VectorXd>>::value)); 
+  EXPECT_FALSE((is_dense_dynamic<var_value<Eigen::VectorXd>>::value));
 }

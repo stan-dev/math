@@ -20,8 +20,7 @@ namespace stan {
  */
 template <typename T>
 using is_eigen_dense_dynamic = stan::internal::is_eigen_matrix_dynamic_impl<
-    std::decay_t<T>,
-    stan::is_eigen_dense_base<std::decay_t<T>>::value>;
+    std::decay_t<T>, stan::is_eigen_dense_base<std::decay_t<T>>::value>;
 
 STAN_ADD_REQUIRE_UNARY(eigen_dense_dynamic, is_eigen_dense_dynamic,
                        require_eigens_types);

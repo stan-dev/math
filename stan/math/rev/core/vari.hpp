@@ -409,10 +409,10 @@ class vari_view_eigen {
                                  derived().adj_.reverse());
   }
 
-   /**
-    * Return a block consisting of the top rows
-    * @param n Number of rows
-    */
+  /**
+   * Return a block consisting of the top rows
+   * @param n Number of rows
+   */
   inline auto topRows(Eigen::Index n) const {
     using inner_type = decltype(derived().val_.topRows(n));
     return vari_view<inner_type>(derived().val_.topRows(n),

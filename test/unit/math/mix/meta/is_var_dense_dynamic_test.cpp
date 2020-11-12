@@ -7,7 +7,8 @@ TEST(MathMetaMix, is_var_dense_dynamic_test) {
   using stan::math::var;
   using stan::math::var_value;
   EXPECT_TRUE((is_var_dense_dynamic<var_value<Eigen::MatrixXd>>::value));
-  EXPECT_TRUE((is_var_dense_dynamic<var_value<Eigen::Array<double, -1, -1>>>::value));
+  EXPECT_TRUE(
+      (is_var_dense_dynamic<var_value<Eigen::Array<double, -1, -1>>>::value));
   EXPECT_FALSE((is_var_dense_dynamic<var_value<Eigen::VectorXd>>::value));
   EXPECT_FALSE((is_var_dense_dynamic<var_value<Eigen::RowVectorXd>>::value));
 
