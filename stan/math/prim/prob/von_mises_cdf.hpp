@@ -154,9 +154,9 @@ inline return_type_t<T_x, T_mu, T_k> von_mises_cdf(const T_x& x, const T_mu& mu,
     auto mu_n = mu_vec[n];
     auto k_n = k_vec[n];
 
-    if(x_n == -pi) {
+    if (x_n == -pi) {
       res *= 0.0;
-    } else if(x_n == pi) {
+    } else if (x_n == pi) {
       res *= 1.0;
     } else {
       // shift x so that mean is 0
@@ -177,27 +177,27 @@ inline return_type_t<T_x, T_mu, T_k> von_mises_cdf(const T_x& x, const T_mu& mu,
       // find cut
       T_return cut, bound_val;
       if (mu2 < 0) {
-	cut = mu2 + pi;
-	bound_val = -pi - mu2;
+        cut = mu2 + pi;
+        bound_val = -pi - mu2;
       }
       if (mu2 >= 0) {
-	cut = mu2 - pi;
-	bound_val = pi - mu2;
+        cut = mu2 - pi;
+        bound_val = pi - mu2;
       }
 
       T_return f_bound_val = von_mises_cdf_centered(bound_val, k_n);
       T_return res_n;
       if (x_n <= cut) {
-	res_n = von_mises_cdf_centered(x2, k_n) - f_bound_val;
+        res_n = von_mises_cdf_centered(x2, k_n) - f_bound_val;
       } else {
-	res_n = von_mises_cdf_centered(x2, k_n) + 1 - f_bound_val;
+        res_n = von_mises_cdf_centered(x2, k_n) + 1 - f_bound_val;
       }
 
-      if(res_n < 0.0)
-	res_n = 0.0;
+      if (res_n < 0.0)
+        res_n = 0.0;
 
       /*if(res_n > 1.0)
-	res_n = 1.0;*/
+        res_n = 1.0;*/
 
       res *= res_n;
     }

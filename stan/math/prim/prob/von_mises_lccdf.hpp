@@ -31,8 +31,8 @@ namespace math {
  */
 template <typename T_x, typename T_mu, typename T_k>
 inline return_type_t<T_x, T_mu, T_k> von_mises_lccdf(const T_x& x,
-						     const T_mu& mu,
-						     const T_k& k) {
+                                                     const T_mu& mu,
+                                                     const T_k& k) {
   if (size_zero(x, mu, k)) {
     return 0.0;
   }
