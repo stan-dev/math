@@ -12,8 +12,8 @@ struct AgradLocalScoped : public testing::Test {
 };
 
 TEST_F(AgradLocalScoped, scoped_chainablestack_base) {
-  using stan::math::ScopedChainableStack;
   using stan::math::nested_rev_autodiff;
+  using stan::math::ScopedChainableStack;
   using stan::math::var;
 
   ScopedChainableStack scoped_stack;
@@ -42,8 +42,8 @@ TEST_F(AgradLocalScoped, scoped_chainablestack_base) {
 }
 
 TEST_F(AgradLocalScoped, scoped_chainablestack_simple) {
-  using stan::math::ScopedChainableStack;
   using stan::math::nested_rev_autodiff;
+  using stan::math::ScopedChainableStack;
 
   ScopedChainableStack scoped_stack;
 
@@ -58,8 +58,8 @@ TEST_F(AgradLocalScoped, scoped_chainablestack_simple) {
 }
 
 TEST_F(AgradLocalScoped, scoped_chainablestack_variadic) {
-  using stan::math::ScopedChainableStack;
   using stan::math::nested_rev_autodiff;
+  using stan::math::ScopedChainableStack;
 
   ScopedChainableStack scoped_stack;
 
@@ -82,8 +82,8 @@ TEST_F(AgradLocalScoped, scoped_chainablestack_variadic) {
 }
 
 TEST_F(AgradLocalScoped, scoped_chainablestack_holder) {
-  using stan::math::ScopedChainableStack;
   using stan::math::nested_rev_autodiff;
+  using stan::math::ScopedChainableStack;
 
   ScopedChainableStack scoped_stack;
 
@@ -108,8 +108,8 @@ TEST_F(AgradLocalScoped, scoped_chainablestack_holder) {
 }
 
 TEST_F(AgradLocalScoped, scoped_chainablestack_nesting) {
-  using stan::math::ScopedChainableStack;
   using stan::math::nested_rev_autodiff;
+  using stan::math::ScopedChainableStack;
   using stan::math::var;
 
   ScopedChainableStack scoped_stack;
