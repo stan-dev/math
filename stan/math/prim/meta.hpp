@@ -208,6 +208,8 @@
 #include <stan/math/prim/meta/is_string_convertible.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
 #include <stan/math/prim/meta/is_var_matrix.hpp>
+#include <stan/math/prim/meta/is_var_dense_dynamic.hpp>
+#include <stan/math/prim/meta/is_var_eigen.hpp>
 #include <stan/math/prim/meta/is_rev_matrix.hpp>
 #include <stan/math/prim/meta/is_vari.hpp>
 #include <stan/math/prim/meta/is_var_or_arithmetic.hpp>
