@@ -12,8 +12,8 @@ struct AgradLocalScoped : public testing::Test {
 };
 
 TEST_F(AgradLocalScoped, scoped_chainablestack_base) {
-  using stan::math::nested_rev_autodiff;
   using stan::math::ScopedChainableStack;
+  using stan::math::nested_rev_autodiff;
   using stan::math::var;
 
   ScopedChainableStack scoped_stack;
@@ -42,8 +42,8 @@ TEST_F(AgradLocalScoped, scoped_chainablestack_base) {
 }
 
 TEST_F(AgradLocalScoped, scoped_chainablestack_simple) {
-  using stan::math::nested_rev_autodiff;
   using stan::math::ScopedChainableStack;
+  using stan::math::nested_rev_autodiff;
 
   ScopedChainableStack scoped_stack;
 
@@ -57,9 +57,33 @@ TEST_F(AgradLocalScoped, scoped_chainablestack_simple) {
   EXPECT_EQ(stan::math::nested_size(), 0);
 }
 
-TEST_F(AgradLocalScoped, scoped_chainablestack_holder) {
-  using stan::math::nested_rev_autodiff;
+TEST_F(AgradLocalScoped, scoped_chainablestack_variadic) {
   using stan::math::ScopedChainableStack;
+  using stan::math::nested_rev_autodiff;
+
+  ScopedChainableStack scoped_stack;
+
+  nested_rev_autodiff nested;
+
+  scoped_stack.execute(
+      [](double aval, double bval) {
+        AVAR a = aval;
+        AVAR b = bval;
+        AVEC x{a, b};
+        AVAR f = 2 * a * b;
+        Eigen::Matrix<double, Eigen::Dynamic, 1> g_expected(2);
+        g_expected << 2 * bval, 2 * aval;
+        gradable g_out(x, f, g_expected);
+        g_out.test();
+      },
+      5.0, 8.0);
+
+  EXPECT_EQ(stan::math::nested_size(), 0);
+}
+
+TEST_F(AgradLocalScoped, scoped_chainablestack_holder) {
+  using stan::math::ScopedChainableStack;
+  using stan::math::nested_rev_autodiff;
 
   ScopedChainableStack scoped_stack;
 
@@ -84,8 +108,8 @@ TEST_F(AgradLocalScoped, scoped_chainablestack_holder) {
 }
 
 TEST_F(AgradLocalScoped, scoped_chainablestack_nesting) {
-  using stan::math::nested_rev_autodiff;
   using stan::math::ScopedChainableStack;
+  using stan::math::nested_rev_autodiff;
   using stan::math::var;
 
   ScopedChainableStack scoped_stack;
