@@ -32,9 +32,8 @@ inline void fill(VarMat& x, const S& y) {
       x.adj().setZero();
     });
   } else {
-    reverse_pass_callback([x, y, prev_vals]() mutable {
-      x.vi_->val_ = prev_vals;
-    });
+    reverse_pass_callback(
+        [x, y, prev_vals]() mutable { x.vi_->val_ = prev_vals; });
   }
 }
 
@@ -58,7 +57,6 @@ inline void fill(VarMat& x, const S& y) {
     x.vi_->val_ = prev_vals;
     x.adj().setZero();
   });
-
 }
 
 }  // namespace math

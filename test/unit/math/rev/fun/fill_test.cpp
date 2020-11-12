@@ -37,7 +37,7 @@ TEST(AgradRevMatrix, fill) {
   for (int i = 0; i < 4; ++i)
     EXPECT_FLOAT_EQ(22.0, v(i).val());
 
-  vector<vector<AVAR> > d(3, vector<AVAR>(2));
+  vector<vector<AVAR>> d(3, vector<AVAR>(2));
   fill(d, AVAR(54));
   for (size_t i = 0; i < 3; ++i)
     for (size_t j = 0; j < 2; ++j)
@@ -53,13 +53,12 @@ TEST(AgradRevMatrix, fillDouble) {
   EXPECT_FLOAT_EQ(3.0, y[0]);
 }
 
-
 TEST(AgradRevMatrix, fillVarMatDouble) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::math::var_value;
   using stan::math::fill;
   using stan::math::sum;
+  using stan::math::var_value;
   Matrix<double, Dynamic, 1> y_val(3);
   var_value<Matrix<double, Dynamic, 1>> y(y_val);
   fill(y, 3.0);
@@ -70,16 +69,15 @@ TEST(AgradRevMatrix, fillVarMatDouble) {
     EXPECT_FLOAT_EQ(y.val()(i), y_val(i));
     EXPECT_FLOAT_EQ(y.adj()(i), 0);
   }
-
 }
 
 TEST(AgradRevMatrix, fillVarMatVar) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::math::var_value;
-  using stan::math::var;
   using stan::math::fill;
   using stan::math::sum;
+  using stan::math::var;
+  using stan::math::var_value;
   Matrix<double, Dynamic, 1> y_val(3);
   var_value<Matrix<double, Dynamic, 1>> y(y_val);
   var z(3.0);
