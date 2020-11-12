@@ -64,8 +64,7 @@ struct apply_scalar_unary<F, T, require_eigen_t<T>> {
     return x
         .unaryExpr([](scalar_t x) {
           return apply_scalar_unary<F, scalar_t>::apply(x);
-        })
-        .eval();
+        });
   }
 
   /**
@@ -73,7 +72,7 @@ struct apply_scalar_unary<F, T, require_eigen_t<T>> {
    * expression template of type T.
    */
   using return_t = std::decay_t<decltype(
-      apply_scalar_unary<F, T>::apply(std::declval<T>()).eval())>;
+      apply_scalar_unary<F, T>::apply(std::declval<T>()))>;
 };
 
 /**

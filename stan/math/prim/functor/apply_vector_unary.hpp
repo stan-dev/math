@@ -48,13 +48,13 @@ struct apply_vector_unary<T, require_eigen_t<T>> {
   template <typename F, typename T2 = T,
             require_t<is_eigen_matrix_base<plain_type_t<T2>>>* = nullptr>
   static inline auto apply(const T& x, const F& f) {
-    return f(x).matrix().eval();
+    return f(x).matrix();
   }
 
   template <typename F, typename T2 = T,
             require_t<is_eigen_array<plain_type_t<T2>>>* = nullptr>
   static inline auto apply(const T& x, const F& f) {
-    return f(x).array().eval();
+    return f(x).array();
   }
 
   /**
