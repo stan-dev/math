@@ -121,12 +121,12 @@ template <typename Functor, typename Arg0, typename... Args>
 void prim_rev_argument_combinations(const Functor& f, const Arg0& arg0,
                                     const Args&... args) {
   prim_rev_argument_combinations(
-      [&f, &arg0](auto args1, auto args2) {
+      [&f, &arg0](const auto& args1, const auto& args2) {
         constexpr size_t Size
             = std::tuple_size<std::decay_t<decltype(args1)>>::value;
         return index_apply<Size>([&](auto... Is) {
-          return f(std::forward_as_tuple(arg0, std::get<Is>(args1)...),
-                   std::forward_as_tuple(arg0, std::get<Is>(args2)...));
+          return f(std::make_tuple(arg0, std::get<Is>(args1)...),
+                   std::make_tuple(arg0, std::get<Is>(args2)...));
         });
       },
       args...);
@@ -147,7 +147,7 @@ void compare_cpu_opencl_prim_rev_impl(const Functor& functor,
                                       std::index_sequence<Is...>,
                                       const Args&... args) {
   prim_rev_argument_combinations(
-      [&functor](auto args_for_cpu, auto args_for_opencl) {
+      [&functor](const auto& args_for_cpu, const auto& args_for_opencl) {
         auto res_cpu = functor(std::get<Is>(args_for_cpu)...);
         auto res_opencl
             = functor(opencl_argument(std::get<Is>(args_for_opencl))...);
@@ -195,8 +195,8 @@ void test_opencl_broadcasting_prim_rev_impl(const Functor& functor,
                                             std::index_sequence<Is...>,
                                             const Args&... args) {
   prim_rev_argument_combinations(
-      [&functor, N = std::max({rows(args)...})](auto args_broadcast,
-                                                auto args_vector) {
+      [&functor, N = std::max({rows(args)...})](const auto& args_broadcast,
+                                                const auto& args_vector) {
         auto res_scalar
             = functor(opencl_argument(std::get<Is>(args_broadcast))...);
         auto res_vec = functor(opencl_argument(
@@ -268,11 +268,11 @@ void compare_cpu_opencl_prim_rev(const Functor& functor, const Args&... args) {
  * in CPU memory (no vars, no arguments on the OpenCL device).
  */
 template <std::size_t I, typename Functor, typename... Args,
-          std::enable_if_t<I<sizeof...(Args)>* = nullptr,
-                           require_stan_scalar_t<std::tuple_element_t<
-                               I, std::tuple<Args...>>>* = nullptr> void
-              test_opencl_broadcasting_prim_rev(const Functor& functor,
-                                                const Args&... args) {
+          std::enable_if_t<(I < sizeof...(Args))>* = nullptr,
+          require_stan_scalar_t<
+              std::tuple_element_t<I, std::tuple<Args...>>>* = nullptr>
+void test_opencl_broadcasting_prim_rev(const Functor& functor,
+                                       const Args&... args) {
   internal::test_opencl_broadcasting_prim_rev_impl<I>(
       functor, std::make_index_sequence<sizeof...(args)>{}, args...);
   recover_memory();
