@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_FUN_COLUMNS_DOT_SELF_HPP
 #define STAN_MATH_REV_FUN_COLUMNS_DOT_SELF_HPP
 
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/typedefs.hpp>
