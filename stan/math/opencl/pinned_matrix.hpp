@@ -32,20 +32,6 @@ class pinned_matrix : public Eigen::Map<MatrixType> {
  protected:
   cl::Buffer buffer_;
 
-  /**
-   * Allocates memory.
-   * @param size number of scalars to allocate memory for
-   * @return pointer to memory
-   */
-  Scalar* init(Eigen::Index size) {
-    buffer_() = NULL;
-    buffer_ = cl::Buffer(opencl_context.context(), CL_MEM_ALLOC_HOST_PTR,
-                         sizeof(Scalar) * size);
-    return static_cast<Scalar*>(opencl_context.queue().enqueueMapBuffer(
-        buffer_, true, CL_MAP_WRITE_INVALIDATE_REGION, 0,
-        sizeof(Scalar) * size));
-  }
-
   pinned_matrix(cl::Buffer&& b, Eigen::Index rows, Eigen::Index cols)
       : Base::Map(static_cast<Scalar*>(opencl_context.queue().enqueueMapBuffer(
                       b, true, CL_MAP_WRITE_INVALIDATE_REGION, 0,
@@ -132,7 +118,7 @@ class pinned_matrix : public Eigen::Map<MatrixType> {
       buffer_ = cl::Buffer(opencl_context.context(), CL_MEM_ALLOC_HOST_PTR,
                            sizeof(Scalar) * other.size());
       // placement new changes what data map points to - only allocation happens
-      // in `init`
+      // when creating new Buffer
       new (this)
           Base(static_cast<Scalar*>(opencl_context.queue().enqueueMapBuffer(
                    buffer_, true, CL_MAP_WRITE_INVALIDATE_REGION, 0,
@@ -167,7 +153,7 @@ class pinned_matrix : public Eigen::Map<MatrixType> {
       buffer_ = cl::Buffer(opencl_context.context(), CL_MEM_ALLOC_HOST_PTR,
                            sizeof(Scalar) * other.size());
       // placement new changes what data map points to - only allocation happens
-      // in `init`
+      // when creating new Buffer
       new (this)
           Base(static_cast<Scalar*>(opencl_context.queue().enqueueMapBuffer(
                    buffer_, true, CL_MAP_WRITE_INVALIDATE_REGION, 0,
