@@ -1933,8 +1933,6 @@ template <typename F, typename EigMat1, typename EigMat2>
 void expect_ad_matvar(const F& f, const EigMat1& x, const EigMat2& y) {
   ad_tolerances tols;
   expect_ad_matvar(tols, f, x, y);
-
-  stan::math::recover_memory();
 }
 
 /**
