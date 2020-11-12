@@ -55,13 +55,49 @@ class AgradCdfVonMises : public AgradCdfTest {
     return stan::math::von_mises_cdf(y, mu, kappa);
   }
 
-  template <typename T_y, typename T_loc, typename T_scale, typename T3,
+  template <typename T_x, typename T_mu, typename T_k, typename T3,
             typename T4, typename T5>
-  stan::return_type_t<T_y, T_loc, T_scale> cdf_function(const T_y& y,
-                                                        const T_loc& mu,
-                                                        const T_scale& kappa,
+  stan::return_type_t<T_x, T_mu, T_k> cdf_function(const T_x& x,
+                                                        const T_mu& mu,
+                                                        const T_k& k,
                                                         const T3&, const T4&,
                                                         const T5&) {
-    return stan::math::von_mises_cdf(y, mu, kappa);
+    using return_t = stan::return_type_t<T_x, T_mu, T_k>;
+    using stan::math::internal::von_mises_cdf_centered;
+    const double pi = stan::math::pi();
+
+    // shift x so that mean is 0
+    return_t x2 = x - mu;
+
+    // x2 is on an interval (2*n*pi, (2*n + 1)*pi), move it to (-pi, pi)
+    x2 += pi;
+    const auto x_floor = floor(x2 / stan::math::TWO_PI);
+    const auto x_moded = x2 - x_floor * stan::math::TWO_PI;
+    x2 = x_moded - pi;
+
+    // mu is on an interval (2*n*pi, (2*n + 1)*pi), move it to (-pi, pi)
+    T_mu mu2;
+    mu2 = mu + pi;
+    const auto mu_floor = floor(mu2 / stan::math::TWO_PI);
+    const auto mu_moded = mu2 - mu_floor * stan::math::TWO_PI;
+    mu2 = mu_moded - pi;
+
+    // find cut
+    return_t cut, bound_val;
+    if (mu2 < 0) {
+      cut = mu2 + pi;
+      bound_val = -pi - mu2;
+    }
+    if (mu2 >= 0) {
+      cut = mu2 - pi;
+      bound_val = pi - mu2;
+    }
+
+    return_t f_bound_val = von_mises_cdf_centered(bound_val, k);
+    if (x <= cut) {
+      return von_mises_cdf_centered(x2, k) - f_bound_val;
+    } else {
+      return von_mises_cdf_centered(x2, k) + 1 - f_bound_val;
+    }
   }
 };
