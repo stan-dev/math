@@ -106,6 +106,8 @@
 #include <stan/math/opencl/prim/beta_lpdf.hpp>
 #include <stan/math/opencl/prim/beta_proportion_lpdf.hpp>
 #include <stan/math/opencl/prim/categorical_logit_glm_lpmf.hpp>
+#include <stan/math/opencl/prim/cauchy_lpdf.hpp>
+#include <stan/math/opencl/prim/chi_square_lpdf.hpp>
 #include <stan/math/opencl/prim/cholesky_decompose.hpp>
 #include <stan/math/opencl/prim/col.hpp>
 #include <stan/math/opencl/prim/cols.hpp>
@@ -113,6 +115,7 @@
 #include <stan/math/opencl/prim/dims.hpp>
 #include <stan/math/opencl/prim/divide.hpp>
 #include <stan/math/opencl/prim/divide_columns.hpp>
+#include <stan/math/opencl/prim/double_exponential_lpdf.hpp>
 #include <stan/math/opencl/prim/gp_exp_quad_cov.hpp>
 #include <stan/math/opencl/prim/inv.hpp>
 #include <stan/math/opencl/prim/inv_cloglog.hpp>
@@ -128,6 +131,7 @@
 #include <stan/math/opencl/prim/rep_vector.hpp>
 #include <stan/math/opencl/prim/row.hpp>
 #include <stan/math/opencl/prim/rows.hpp>
+#include <stan/math/opencl/prim/sign.hpp>
 #include <stan/math/opencl/prim/size.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/opencl/prim/tcrossprod.hpp>
