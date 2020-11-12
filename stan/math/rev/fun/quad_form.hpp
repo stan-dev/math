@@ -123,35 +123,82 @@ inline auto quad_form_impl(const Mat1& A, const Mat2& B, bool symmetric) {
                                       * value_of(A) * value_of(B).eval()),
                              Mat1, Mat2>;
 
-  auto arena_A = to_arena(to_var_value_if<!is_constant<Mat1>::value>(A));
-  auto arena_B = to_arena(to_var_value_if<!is_constant<Mat2>::value>(B));
+  if(!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
+    auto arena_A = to_arena(to_var_value_if<!is_constant<Mat1>::value>(A));
+    auto arena_B = to_arena(to_var_value_if<!is_constant<Mat2>::value>(B));
 
-  check_not_nan("multiply", "A", value_of(arena_A));
-  check_not_nan("multiply", "B", value_of(arena_B));
+    check_not_nan("multiply", "A", value_of(arena_A));
+    check_not_nan("multiply", "B", value_of(arena_B));
 
-  auto arena_res = to_arena(value_of(arena_B).transpose() * value_of(arena_A)
-                            * value_of(arena_B));
+    auto arena_res = to_arena(value_of(arena_B).transpose() * value_of(arena_A)
+			      * value_of(arena_B));
 
-  if (symmetric) {
-    arena_res = (arena_res + arena_res.transpose()).eval();
+    if (symmetric) {
+      arena_res += arena_res.transpose().eval();
+    }
+
+    return_t res = arena_res;
+
+    reverse_pass_callback([arena_A, arena_B, res]() mutable {
+      auto C_adj_B_t = (res.adj() * value_of(arena_B).transpose()).eval();
+
+      forward_as<promote_var_matrix_t<Mat1, Mat1, Mat2>>(arena_A).adj().noalias() += value_of(arena_B) * C_adj_B_t;
+
+      forward_as<promote_var_matrix_t<Mat2, Mat1, Mat2>>(arena_B).adj().noalias()
+	+= value_of(arena_A) * C_adj_B_t.transpose()
+	+ value_of(arena_A).transpose() * value_of(arena_B) * res.adj();
+    });
+
+    return res;
+  } else if(!is_constant<Mat2>::value) {
+    auto arena_A = to_arena(A);
+    auto arena_B = to_arena(to_var_value_if<!is_constant<Mat2>::value>(B));
+
+    check_not_nan("multiply", "A", value_of(arena_A));
+    check_not_nan("multiply", "B", value_of(arena_B));
+
+    auto arena_res = to_arena(value_of(arena_B).transpose() * value_of(arena_A)
+			      * value_of(arena_B));
+
+    if (symmetric) {
+      arena_res += arena_res.transpose().eval();
+    }
+
+    return_t res = arena_res;
+
+    reverse_pass_callback([arena_A, arena_B, res]() mutable {
+      auto C_adj_B_t = (res.adj() * value_of(arena_B).transpose());
+
+      forward_as<promote_var_matrix_t<Mat2, Mat1, Mat2>>(arena_B).adj().noalias()
+	+= value_of(arena_A) * C_adj_B_t.transpose()
+	+ value_of(arena_A).transpose() * value_of(arena_B) * res.adj();
+    });
+
+    return res;
+  } else {
+    auto arena_A = to_var_value_if<!is_constant<Mat1>::value>(A);
+    auto arena_B = to_arena(B);
+
+    check_not_nan("multiply", "A", value_of(arena_A));
+    check_not_nan("multiply", "B", value_of(arena_B));
+
+    auto arena_res = to_arena(value_of(arena_B).transpose() * value_of(arena_A)
+			      * value_of(arena_B));
+
+    if (symmetric) {
+      arena_res += arena_res.transpose().eval();
+    }
+
+    return_t res = arena_res;
+
+    reverse_pass_callback([arena_A, arena_B, res]() mutable {
+      auto C_adj_B_t = (res.adj() * value_of(arena_B).transpose());
+
+      forward_as<promote_var_matrix_t<Mat1, Mat1, Mat2>>(arena_A).adj().noalias() += value_of(arena_B) * C_adj_B_t;
+    });
+
+    return res;
   }
-
-  return_t res = arena_res;
-
-  reverse_pass_callback([arena_A, arena_B, res]() mutable {
-    auto C_adj_B_t = (res.adj() * value_of(arena_B).transpose()).eval();
-
-    if (!is_constant<Mat1>::value)
-      forward_as<promote_var_matrix_t<Mat1, Mat1, Mat2>>(arena_A).adj()
-          += value_of(arena_B) * C_adj_B_t;
-
-    if (!is_constant<Mat2>::value)
-      forward_as<promote_var_matrix_t<Mat2, Mat1, Mat2>>(arena_B).adj()
-          += value_of(arena_A) * C_adj_B_t.transpose()
-             + value_of(arena_A).transpose() * value_of(arena_B) * res.adj();
-  });
-
-  return res;
 }
 }  // namespace internal
 
