@@ -24,7 +24,6 @@ TEST(ProbDistributionsInvChiSquare, error_checking) {
   Eigen::VectorXd nu_value2(N);
   nu_value2 << 0.3, INFINITY, 0.5;
 
-
   stan::math::matrix_cl<double> y_cl(y);
   stan::math::matrix_cl<double> y_size_cl(y_size);
   stan::math::matrix_cl<double> y_value_cl(y_value);
@@ -32,7 +31,6 @@ TEST(ProbDistributionsInvChiSquare, error_checking) {
   stan::math::matrix_cl<double> nu_size_cl(nu_size);
   stan::math::matrix_cl<double> nu_value1_cl(nu_value1);
   stan::math::matrix_cl<double> nu_value2_cl(nu_value2);
-
 
   EXPECT_NO_THROW(stan::math::inv_chi_square_lpdf(y_cl, nu_cl));
 
@@ -49,14 +47,12 @@ TEST(ProbDistributionsInvChiSquare, error_checking) {
                std::domain_error);
 }
 
-auto inv_chi_square_lpdf_functor
-    = [](const auto& y, const auto& nu) {
-        return stan::math::inv_chi_square_lpdf(y, nu);
-      };
-auto inv_chi_square_lpdf_functor_propto
-    = [](const auto& y, const auto& nu) {
-        return stan::math::inv_chi_square_lpdf<true>(y, nu);
-      };
+auto inv_chi_square_lpdf_functor = [](const auto& y, const auto& nu) {
+  return stan::math::inv_chi_square_lpdf(y, nu);
+};
+auto inv_chi_square_lpdf_functor_propto = [](const auto& y, const auto& nu) {
+  return stan::math::inv_chi_square_lpdf<true>(y, nu);
+};
 
 TEST(ProbDistributionsInvChiSquare, opencl_matches_cpu_small) {
   int N = 3;
@@ -66,10 +62,10 @@ TEST(ProbDistributionsInvChiSquare, opencl_matches_cpu_small) {
   Eigen::VectorXd nu(N);
   nu << 0.3, 0.8, 1.0;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(inv_chi_square_lpdf_functor, y, nu
-                                                );
-  stan::math::test::compare_cpu_opencl_prim_rev(inv_chi_square_lpdf_functor_propto, y,
+  stan::math::test::compare_cpu_opencl_prim_rev(inv_chi_square_lpdf_functor, y,
                                                 nu);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      inv_chi_square_lpdf_functor_propto, y, nu);
 }
 
 TEST(ProbDistributionsInvChiSquare, opencl_matches_cpu_small_y_zero) {
@@ -80,10 +76,10 @@ TEST(ProbDistributionsInvChiSquare, opencl_matches_cpu_small_y_zero) {
   Eigen::VectorXd nu(N);
   nu << 0.3, 0.8, 1.0;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(inv_chi_square_lpdf_functor, y, nu
-                                                );
-  stan::math::test::compare_cpu_opencl_prim_rev(inv_chi_square_lpdf_functor_propto, y,
+  stan::math::test::compare_cpu_opencl_prim_rev(inv_chi_square_lpdf_functor, y,
                                                 nu);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      inv_chi_square_lpdf_functor_propto, y, nu);
 }
 
 TEST(ProbDistributionsInvChiSquare, opencl_broadcast_y) {
@@ -97,8 +93,6 @@ TEST(ProbDistributionsInvChiSquare, opencl_broadcast_y) {
       inv_chi_square_lpdf_functor, y, nu);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       inv_chi_square_lpdf_functor_propto, y, nu);
-
-
 }
 
 TEST(ProbDistributionsInvChiSquare, opencl_broadcast_nu) {
@@ -112,7 +106,6 @@ TEST(ProbDistributionsInvChiSquare, opencl_broadcast_nu) {
       inv_chi_square_lpdf_functor, y, nu);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       inv_chi_square_lpdf_functor_propto, y, nu);
-
 }
 
 TEST(ProbDistributionsInvChiSquare, opencl_matches_cpu_big) {
@@ -123,10 +116,10 @@ TEST(ProbDistributionsInvChiSquare, opencl_matches_cpu_big) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> nu
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
 
-  stan::math::test::compare_cpu_opencl_prim_rev(inv_chi_square_lpdf_functor, y, nu
-                                                );
-  stan::math::test::compare_cpu_opencl_prim_rev(inv_chi_square_lpdf_functor_propto, y,
+  stan::math::test::compare_cpu_opencl_prim_rev(inv_chi_square_lpdf_functor, y,
                                                 nu);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      inv_chi_square_lpdf_functor_propto, y, nu);
 }
 
 #endif

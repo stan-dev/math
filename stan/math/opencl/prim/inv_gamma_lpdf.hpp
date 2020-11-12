@@ -105,7 +105,7 @@ return_type_t<T_y_cl, T_shape_cl, T_scale_cl> inv_gamma_lpdf(
                     calc_if<!is_constant<T_shape_cl>::value>(alpha_deriv),
                     calc_if<!is_constant<T_scale_cl>::value>(beta_deriv));
 
-  if(from_matrix_cl(any_y_nonpositive).any()){
+  if (from_matrix_cl(any_y_nonpositive).any()) {
     return LOG_ZERO;
   }
 
