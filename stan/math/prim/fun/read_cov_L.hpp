@@ -32,10 +32,9 @@ Eigen::Matrix<value_type<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic> read_cov_L(
   size_t K = sds.rows();
   // adjust due to transformation from correlations to covariances
   log_prob += (sum(log(sds)) + LOG_TWO) * K;
-  return make_holder([](const auto& a, const auto& b) {
-    return a.matrix().asDiagonal() * b;
-  }, std::forward<T_sds>(sds), read_corr_L(CPCs, K, log_prob));
-
+  return make_holder(
+      [](const auto& a, const auto& b) { return a.matrix().asDiagonal() * b; },
+      std::forward<T_sds>(sds), read_corr_L(CPCs, K, log_prob));
 }
 
 }  // namespace math

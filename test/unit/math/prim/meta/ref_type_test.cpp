@@ -176,18 +176,18 @@ TEST(MathMetaPrim, forwarding_ref_type_eigen_directly_accessible) {
   EXPECT_MATRIX_EQ(c_ref1, c);
   EXPECT_MATRIX_EQ(c_ref2, c);
   EXPECT_MATRIX_EQ(c_ref3, c);
-  EXPECT_TRUE(
-      (std::is_same<decltype(a)&&, forwarding_ref_type_t<decltype(a)&&>>::value));
-  EXPECT_TRUE(
-      (std::is_same<decltype(b)&&, forwarding_ref_type_t<decltype(b)&&>>::value));
-  EXPECT_TRUE(
-      (std::is_same<decltype(c)&&, forwarding_ref_type_t<decltype(c)&&>>::value));
+  EXPECT_TRUE((std::is_same<decltype(a)&&,
+                            forwarding_ref_type_t<decltype(a)&&>>::value));
+  EXPECT_TRUE((std::is_same<decltype(b)&&,
+                            forwarding_ref_type_t<decltype(b)&&>>::value));
+  EXPECT_TRUE((std::is_same<decltype(c)&&,
+                            forwarding_ref_type_t<decltype(c)&&>>::value));
   EXPECT_TRUE(
       std::is_lvalue_reference<forwarding_ref_type_t<Eigen::MatrixXd>>::value);
   EXPECT_TRUE(
       std::is_lvalue_reference<forwarding_ref_type_t<Eigen::MatrixXd&>>::value);
-  EXPECT_TRUE(
-      std::is_rvalue_reference<forwarding_ref_type_t<Eigen::MatrixXd&&>>::value);
+  EXPECT_TRUE(std::is_rvalue_reference<
+              forwarding_ref_type_t<Eigen::MatrixXd&&>>::value);
 }
 
 TEST(MathMetaPrim, forwarding_ref_type_eigen_expression) {

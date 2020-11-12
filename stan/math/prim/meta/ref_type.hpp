@@ -50,8 +50,8 @@ template <bool Condition, typename T>
 struct ref_type_if<Condition, T, require_not_eigen_t<T>> {
   using type = std::conditional_t<std::is_rvalue_reference<T>::value,
                                   std::remove_reference_t<T>, const T&>;
-  using forwarding_type = std::conditional_t<std::is_rvalue_reference<T>::value,
-                                  T, const T&>;
+  using forwarding_type
+      = std::conditional_t<std::is_rvalue_reference<T>::value, T, const T&>;
 };
 
 template <bool Condition, typename T>
