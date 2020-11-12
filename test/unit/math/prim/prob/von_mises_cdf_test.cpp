@@ -3,6 +3,14 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+TEST(ProbVonMises, boundary) {
+  using stan::math::von_mises_cdf;
+
+  EXPECT_DOUBLE_EQ(0.0, stan::math::von_mises_cdf(-stan::math::pi(), 0.6, 1.0));
+  EXPECT_DOUBLE_EQ(1.0, stan::math::von_mises_cdf(stan::math::pi(), 0.6, 1.0));
+  EXPECT_DOUBLE_EQ(1.0, stan::math::von_mises_cdf(stan::math::pi(), 6.283185307179586, 1.0));
+}
+
 TEST(ProbVonMises, throwing) {
   using stan::math::von_mises_cdf;
   double nan = std::numeric_limits<double>::quiet_NaN();

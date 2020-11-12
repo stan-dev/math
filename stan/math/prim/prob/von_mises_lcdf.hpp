@@ -21,7 +21,7 @@ namespace math {
  * \f$x \in [-\pi, \pi]\f$, \f$\mu \in \mathbb{R}\f$,
  * and \f$\kappa \in \mathbb{R}^+\f$.
  *
- * @param x A scalar variate on the interval \f$[-pi, pi]\f$
+ * @param x Variate on the interval \f$[-pi, pi]\f$
  * @param mu The mean of the distribution
  * @param k The inverse scale of the distriubtion
  * @return The log of the von Mises cdf evaluated at the specified arguments

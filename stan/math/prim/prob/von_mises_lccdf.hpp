@@ -21,7 +21,7 @@ namespace math {
  * \f$x \in [-\pi, \pi]\f$, \f$\mu \in \mathbb{R}\f$,
  * and \f$\kappa \in \mathbb{R}^+\f$.
  *
- * @param x A scalar variate on the interval \f$[-pi, pi]\f$
+ * @param x Variate on the interval \f$[-pi, pi]\f$
  * @param mu The mean of the distribution
  * @param k The inverse scale of the distriubtion
  * @return The log of the von Mises cdf evaluated at the specified arguments
@@ -32,6 +32,10 @@ namespace math {
 template <typename T_x, typename T_mu, typename T_k>
 inline return_type_t<T_x, T_mu, T_k> von_mises_lccdf(const T_x& x, const T_mu& mu,
 						    const T_k& k) {
+  if (size_zero(x, mu, k)) {
+    return 0.0;
+  }
+
   return log1m(von_mises_cdf(x, mu, k));
 }
 

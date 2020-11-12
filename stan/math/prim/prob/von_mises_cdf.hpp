@@ -108,7 +108,7 @@ return_type_t<T_x, T_k> von_mises_cdf_centered(const T_x& x, const T_k& k) {
  * \f$x \in [-\pi, \pi]\f$, \f$\mu \in \mathbb{R}\f$,
  * and \f$\kappa \in \mathbb{R}^+\f$.
  *
- * @param x A scalar variate on the interval \f$[-pi, pi]\f$
+ * @param x Variate on the interval \f$[-pi, pi]\f$
  * @param mu The mean of the distribution
  * @param k The inverse scale of the distriubtion
  * @return The von Mises cdf evaluated at the specified arguments
@@ -153,38 +153,53 @@ inline return_type_t<T_x, T_mu, T_k> von_mises_cdf(const T_x& x, const T_mu& mu,
     auto x_n = x_vec[n];
     auto mu_n = mu_vec[n];
     auto k_n = k_vec[n];
-    
-    // shift x so that mean is 0
-    T_return x2 = x_n - mu_n;
 
-    // x2 is on an interval (2*n*pi, (2*n + 1)*pi), move it to (-pi, pi)
-    x2 += pi;
-    const auto x_floor = floor(x2 / TWO_PI);
-    const auto x_modded = x2 - x_floor * TWO_PI;
-    x2 = x_modded - pi;
-
-    // mu is on an interval (2*n*pi, (2*n + 1)*pi), move it to (-pi, pi)
-    T_return mu2 = mu_n + pi;
-    const auto mu_floor = floor(mu2 / TWO_PI);
-    const auto mu_modded = mu2 - mu_floor * TWO_PI;
-    mu2 = mu_modded - pi;
-
-    // find cut
-    T_return cut, bound_val;
-    if (mu2 < 0) {
-      cut = mu2 + pi;
-      bound_val = -pi - mu2;
-    }
-    if (mu2 >= 0) {
-      cut = mu2 - pi;
-      bound_val = pi - mu2;
-    }
-
-    T_return f_bound_val = von_mises_cdf_centered(bound_val, k_n);
-    if (x_n <= cut) {
-      res *= von_mises_cdf_centered(x2, k_n) - f_bound_val;
+    if(x_n == -pi) {
+      res *= 0.0;
+    } else if(x_n == pi) {
+      res *= 1.0;
     } else {
-      res *= von_mises_cdf_centered(x2, k_n) + 1 - f_bound_val;
+      // shift x so that mean is 0
+      T_return x2 = x_n - mu_n;
+
+      // x2 is on an interval (2*n*pi, (2*n + 1)*pi), move it to (-pi, pi)
+      x2 += pi;
+      const auto x_floor = floor(x2 / TWO_PI);
+      const auto x_modded = x2 - x_floor * TWO_PI;
+      x2 = x_modded - pi;
+
+      // mu is on an interval (2*n*pi, (2*n + 1)*pi), move it to (-pi, pi)
+      T_return mu2 = mu_n + pi;
+      const auto mu_floor = floor(mu2 / TWO_PI);
+      const auto mu_modded = mu2 - mu_floor * TWO_PI;
+      mu2 = mu_modded - pi;
+
+      // find cut
+      T_return cut, bound_val;
+      if (mu2 < 0) {
+	cut = mu2 + pi;
+	bound_val = -pi - mu2;
+      }
+      if (mu2 >= 0) {
+	cut = mu2 - pi;
+	bound_val = pi - mu2;
+      }
+
+      T_return f_bound_val = von_mises_cdf_centered(bound_val, k_n);
+      T_return res_n;
+      if (x_n <= cut) {
+	res_n = von_mises_cdf_centered(x2, k_n) - f_bound_val;
+      } else {
+	res_n = von_mises_cdf_centered(x2, k_n) + 1 - f_bound_val;
+      }
+
+      if(res_n < 0.0)
+	res_n = 0.0;
+
+      /*if(res_n > 1.0)
+	res_n = 1.0;*/
+
+      res *= res_n;
     }
   }
 
