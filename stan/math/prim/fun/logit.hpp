@@ -102,14 +102,14 @@ inline auto logit(const Container& x) {
  */
 template <typename Container,
           require_container_st<std::is_arithmetic, Container>* = nullptr>
-inline auto logit(Container&& x) {
+inline auto logit(const Container& x) {
   return make_holder(
       [](const auto& v_ref) {
         return apply_vector_unary<Container>::apply(v_ref, [](const auto& v) {
           return (v.array() / (1 - v.array())).log();
         });
       },
-      to_forwarding_ref(std::forward<Container>(x)));
+      to_ref(x));
 }
 
 }  // namespace math

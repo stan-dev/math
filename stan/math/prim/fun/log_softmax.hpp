@@ -40,14 +40,14 @@ namespace math {
  * @return log unit simplex result of the softmax transform of the vector.
  */
 template <typename Container, require_st_arithmetic<Container>* = nullptr>
-inline auto log_softmax(Container&& x) {
+inline auto log_softmax(const Container& x) {
   check_nonzero_size("log_softmax", "v", x);
   return make_holder(
       [](const auto& a) {
         return apply_vector_unary<Container>::apply(
             a, [](const auto& v) { return v.array() - log_sum_exp(v); });
       },
-      to_forwarding_ref(std::forward<Container>(x)));
+      to_ref(x));
 }
 
 }  // namespace math

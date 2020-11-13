@@ -12,16 +12,11 @@
 namespace stan {
 
 /**
- * If the condition is true member type `type` determines appropriate type for
- * assigning expression of given type to, to evaluate expensive expressions, but
- * not make a copy if T involves no calculations. This works similarly as
- * `Eigen::Ref`. It also handles rvalue references, so it can be used with
- * perfect forwarding. If the condition is false the expression will never be
- * evaluated.
- *
- * When this is forwarded into some other function `forwarding_type` should be
- * used instead (however creating a local variable of type `forwarding_type` can
- * in some cases lead to dangling references).
+ * If the condition is true determines appropriate type for assigning expression
+ * of given type to, to evaluate expensive expressions, but not make a copy if T
+ * involves no calculations. This works similarly as `Eigen::Ref`. It also
+ * handles rvalue references, so it can be used with perfect forwarding. If the
+ * condition is false the expression will never be evaluated.
  *
  * Warning: if a variable of this type could be assigned a rvalue, make sure
  * template parameter `T` is of correct reference type (rvalue).
@@ -35,23 +30,17 @@ struct ref_type_if {
                            std::remove_reference_t<T>, const T&>;
   using T_dec = std::decay_t<decltype(std::declval<T>().derived())>;
 
-  static constexpr bool is_T_trivial
-      = Eigen::internal::traits<Eigen::Ref<std::decay_t<T_plain>>>::
-            template match<T_dec>::MatchAtCompileTime
-        || !Condition;
-  using type = std::conditional_t<is_T_trivial, T_optionally_ref, T_plain>;
-
-  using T_ref
-      = std::conditional_t<std::is_rvalue_reference<T>::value, T, const T&>;
-  using forwarding_type = std::conditional_t<is_T_trivial, T_ref, T_plain>;
+  using type = std::conditional_t<
+      Eigen::internal::traits<Eigen::Ref<std::decay_t<T_plain>>>::
+              template match<T_dec>::MatchAtCompileTime
+          || !Condition,
+      T_optionally_ref, T_plain>;
 };
 
 template <bool Condition, typename T>
 struct ref_type_if<Condition, T, require_not_eigen_t<T>> {
   using type = std::conditional_t<std::is_rvalue_reference<T>::value,
                                   std::remove_reference_t<T>, const T&>;
-  using forwarding_type
-      = std::conditional_t<std::is_rvalue_reference<T>::value, T, const T&>;
 };
 
 template <bool Condition, typename T>
@@ -65,9 +54,6 @@ using ref_type_t = typename ref_type_if<true, T>::type;
 
 template <bool Condition, typename T>
 using ref_type_if_t = typename ref_type_if<Condition, T>::type;
-
-template <typename T>
-using forwarding_ref_type_t = typename ref_type_if<true, T>::forwarding_type;
 
 /**
  * Determines appropriate type for assigning expression of given type to, so
