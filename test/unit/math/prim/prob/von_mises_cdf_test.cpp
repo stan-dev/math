@@ -8,7 +8,8 @@ TEST(ProbVonMises, boundary) {
 
   EXPECT_DOUBLE_EQ(0.0, stan::math::von_mises_cdf(-stan::math::pi(), 0.6, 1.0));
   EXPECT_DOUBLE_EQ(1.0, stan::math::von_mises_cdf(stan::math::pi(), 0.6, 1.0));
-  EXPECT_DOUBLE_EQ(1.0, stan::math::von_mises_cdf(stan::math::pi(), 6.283185307179586, 1.0));
+  EXPECT_DOUBLE_EQ(
+      1.0, stan::math::von_mises_cdf(stan::math::pi(), 6.283185307179586, 1.0));
 }
 
 TEST(ProbVonMises, throwing) {
