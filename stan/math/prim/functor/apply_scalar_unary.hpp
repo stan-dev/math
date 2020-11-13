@@ -140,8 +140,8 @@ struct apply_scalar_unary<F, std::vector<T>> {
    * Return type, which is calculated recursively as a standard
    * vector of the return type of the contained type T.
    */
-  using return_t =
-      typename std::vector<plain_type_t<typename apply_scalar_unary<F, T>::return_t>>;
+  using return_t = typename std::vector<
+      plain_type_t<typename apply_scalar_unary<F, T>::return_t>>;
 
   /**
    * Apply the function specified by F elementwise to the

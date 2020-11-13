@@ -151,7 +151,8 @@ struct apply_vector_unary<T, require_std_vector_vt<is_container, T>> {
   template <typename F>
   static inline auto apply(const T& x, const F& f) {
     size_t x_size = x.size();
-    using T_return = plain_type_t<decltype(apply_vector_unary<T_vt>::apply(x[0], f))>;
+    using T_return
+        = plain_type_t<decltype(apply_vector_unary<T_vt>::apply(x[0], f))>;
     std::vector<T_return> result(x_size);
     for (size_t i = 0; i < x_size; ++i)
       result[i] = apply_vector_unary<T_vt>::apply(x[i], f);
