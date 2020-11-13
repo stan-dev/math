@@ -88,10 +88,10 @@ TEST(ProbDistributionsInvGamma, opencl_matches_cpu_small) {
   Eigen::VectorXd beta(N);
   beta << 0.3, 0.8, 1.1;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(inv_gamma_lpdf_functor, y, alpha,
-                                                beta);
-  stan::math::test::compare_cpu_opencl_prim_rev(inv_gamma_lpdf_functor_propto, y,
+  stan::math::test::compare_cpu_opencl_prim_rev(inv_gamma_lpdf_functor, y,
                                                 alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(inv_gamma_lpdf_functor_propto,
+                                                y, alpha, beta);
 }
 
 TEST(ProbDistributionsInvGamma, opencl_matches_cpu_small_zero_y) {
@@ -105,10 +105,10 @@ TEST(ProbDistributionsInvGamma, opencl_matches_cpu_small_zero_y) {
   Eigen::VectorXd beta(N);
   beta << 0.3, 0.8, 1.0;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(inv_gamma_lpdf_functor, y, alpha,
-                                                beta);
-  stan::math::test::compare_cpu_opencl_prim_rev(inv_gamma_lpdf_functor_propto, y,
+  stan::math::test::compare_cpu_opencl_prim_rev(inv_gamma_lpdf_functor, y,
                                                 alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(inv_gamma_lpdf_functor_propto,
+                                                y, alpha, beta);
 }
 
 TEST(ProbDistributionsInvGamma, opencl_broadcast_y) {
@@ -120,8 +120,8 @@ TEST(ProbDistributionsInvGamma, opencl_broadcast_y) {
   Eigen::VectorXd beta(N);
   beta << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      inv_gamma_lpdf_functor, y, alpha, beta);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(inv_gamma_lpdf_functor,
+                                                         y, alpha, beta);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       inv_gamma_lpdf_functor_propto, y, alpha, beta);
 }
@@ -135,8 +135,8 @@ TEST(ProbDistributionsInvGamma, opencl_broadcast_alpha) {
   Eigen::VectorXd beta(N);
   beta << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-      inv_gamma_lpdf_functor, y, alpha, beta);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(inv_gamma_lpdf_functor,
+                                                         y, alpha, beta);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       inv_gamma_lpdf_functor_propto, y, alpha, beta);
 }
@@ -150,11 +150,10 @@ TEST(ProbDistributionsInvGamma, opencl_broadcast_beta) {
   alpha << 0.3, 0.8, 1.0;
   double beta = 0.3;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
-      inv_gamma_lpdf_functor, y, alpha, beta);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(inv_gamma_lpdf_functor,
+                                                         y, alpha, beta);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       inv_gamma_lpdf_functor_propto, y, alpha, beta);
-
 }
 
 TEST(ProbDistributionsInvGamma, opencl_matches_cpu_big) {
@@ -167,10 +166,10 @@ TEST(ProbDistributionsInvGamma, opencl_matches_cpu_big) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> beta
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
 
-  stan::math::test::compare_cpu_opencl_prim_rev(inv_gamma_lpdf_functor, y, alpha,
-                                                beta);
-  stan::math::test::compare_cpu_opencl_prim_rev(inv_gamma_lpdf_functor_propto, y,
+  stan::math::test::compare_cpu_opencl_prim_rev(inv_gamma_lpdf_functor, y,
                                                 alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(inv_gamma_lpdf_functor_propto,
+                                                y, alpha, beta);
 }
 
 #endif

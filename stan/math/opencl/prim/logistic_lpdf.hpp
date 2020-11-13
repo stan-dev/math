@@ -76,15 +76,15 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> logistic_lpdf(
       = colwise_sum(static_select<include_summand<propto, T_scale_cl>::value>(
           logp1 - log(sigma_val), logp1));
 
-  auto y_deriv = elt_multiply(elt_divide(2.0, 1.0 + exp(y_minus_mu_div_sigma)) - 1.0,
-                              inv_sigma);
+  auto y_deriv = elt_multiply(
+      elt_divide(2.0, 1.0 + exp(y_minus_mu_div_sigma)) - 1.0, inv_sigma);
   auto exp_mu_div_sigma = exp(elt_multiply(mu_val, inv_sigma));
   auto mu_deriv = elt_multiply(
       1.0
           - 2.0
                 * elt_divide(
-                    exp_mu_div_sigma,
-                    exp_mu_div_sigma + exp(elt_multiply(y_val, inv_sigma))),
+                      exp_mu_div_sigma,
+                      exp_mu_div_sigma + exp(elt_multiply(y_val, inv_sigma))),
       inv_sigma);
   auto sigma_deriv
       = elt_multiply(-elt_multiply(y_deriv, y_minus_mu) - 1.0, inv_sigma);

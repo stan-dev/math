@@ -103,8 +103,8 @@ TEST(ProbDistributionsLogistic, opencl_broadcast_y) {
   Eigen::VectorXd sigma(N);
   sigma << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      logistic_lpdf_functor, y, mu, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(logistic_lpdf_functor,
+                                                         y, mu, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       logistic_lpdf_functor_propto, y, mu, sigma);
 }
@@ -118,8 +118,8 @@ TEST(ProbDistributionsLogistic, opencl_broadcast_mu) {
   Eigen::VectorXd sigma(N);
   sigma << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-      logistic_lpdf_functor, y, mu, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(logistic_lpdf_functor,
+                                                         y, mu, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       logistic_lpdf_functor_propto, y, mu, sigma);
 }
@@ -133,11 +133,10 @@ TEST(ProbDistributionsLogistic, opencl_broadcast_sigma) {
   mu << 0.3, 0.8, 1.0;
   double sigma = 0.3;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
-      logistic_lpdf_functor, y, mu, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(logistic_lpdf_functor,
+                                                         y, mu, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       logistic_lpdf_functor_propto, y, mu, sigma);
-
 }
 
 TEST(ProbDistributionsLogistic, opencl_matches_cpu_big) {
