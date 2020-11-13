@@ -474,6 +474,7 @@ class var_value<
    */
   inline var_value<T>& operator+=(T b);
 
+
   /**
    * The compound subtract/assignment operator for variables (C++).
    *
@@ -485,7 +486,8 @@ class var_value<
    * @return The result of subtracting the specified variable from
    * this variable.
    */
-  inline var_value<T>& operator-=(const var_value<T>& b);
+  template<typename S, require_st_var<S>* = nullptr>
+  inline var_value<T>& operator-=(const S& b);
 
   /**
    * The compound subtract/assignment operator for scalars (C++).
@@ -498,7 +500,8 @@ class var_value<
    * @return The result of subtracting the specified variable from this
    * variable.
    */
-  inline var_value<T>& operator-=(T b);
+  template<typename S, require_st_arithmetic<S>* = nullptr>
+  inline var_value<T>& operator-=(const S& b);
 
   /**
    * The compound multiply/assignment operator for variables (C++).
