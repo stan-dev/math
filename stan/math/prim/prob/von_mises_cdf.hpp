@@ -186,20 +186,17 @@ inline return_type_t<T_x, T_mu, T_k> von_mises_cdf(const T_x& x, const T_mu& mu,
       }
 
       T_return f_bound_val = von_mises_cdf_centered(bound_val, k_n);
-      T_return res_n;
+      T_return cdf_n;
       if (x_n <= cut) {
-	res_n = von_mises_cdf_centered(x2, k_n) - f_bound_val;
+	cdf_n = von_mises_cdf_centered(x2, k_n) - f_bound_val;
       } else {
-	res_n = von_mises_cdf_centered(x2, k_n) + 1 - f_bound_val;
+	cdf_n = von_mises_cdf_centered(x2, k_n) + 1 - f_bound_val;
       }
 
-      if(res_n < 0.0)
-	res_n = 0.0;
+      if(cdf_n < 0.0)
+	cdf_n = 0.0;
 
-      /*if(res_n > 1.0)
-	res_n = 1.0;*/
-
-      res *= res_n;
+      res *= cdf_n;
     }
   }
 
