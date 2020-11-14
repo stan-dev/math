@@ -90,9 +90,11 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
     g_b1 += log_g_old_sign[1] > 0 ? exp(log_g_old[1]) : -exp(log_g_old[1]);
 
     if (log_g_old[0]
-	<= std::max(std::log(std::abs(value_of_rec(g_a1))) + log_precision, log_precision)
-        && log_g_old[1]
-	<= std::max(std::log(std::abs(value_of_rec(g_b1))) + log_precision, log_precision)) {
+            <= std::max(std::log(std::abs(value_of_rec(g_a1))) + log_precision,
+                        log_precision)
+        && log_g_old[1] <= std::max(std::log(std::abs(value_of_rec(g_b1)))
+                                        + log_precision,
+                                    log_precision)) {
       return;
     }
 
