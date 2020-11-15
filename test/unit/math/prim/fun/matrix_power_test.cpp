@@ -60,7 +60,7 @@ TEST(MathMatrixPower, compare_to_simple_impl) {
 TEST(MathMatrixPower, zero_size) {
   using stan::math::matrix_power;
   Eigen::MatrixXd zero_size = Eigen::MatrixXd::Identity(0, 0);
-  EXPECT_THROW(matrix_power(zero_size, 2), std::invalid_argument);
+  EXPECT_NO_THROW(matrix_power(zero_size, 2));
 }
 
 TEST(MathMatrixPower, not_square) {
@@ -73,7 +73,7 @@ TEST(MathMatrixPower, negative_exponent) {
   using stan::math::matrix_power;
   Eigen::MatrixXd good = Eigen::MatrixXd::Identity(2, 2);
   EXPECT_NO_THROW(matrix_power(good, 2));
-  EXPECT_THROW(matrix_power(good, -2), std::invalid_argument);
+  EXPECT_THROW(matrix_power(good, -2), std::domain_error);
 }
 
 TEST(MathMatrixPower, inf_and_nan) {
@@ -102,7 +102,7 @@ TEST(MathMatrixPower, invalid_argument_vs_domain_error) {
   not_square(0, 0) = nan;
   good(0, 0) = nan;
   EXPECT_THROW(matrix_power(not_square, 2), std::invalid_argument);
-  EXPECT_THROW(matrix_power(good, -2), std::invalid_argument);
+  EXPECT_THROW(matrix_power(good, -2), std::domain_error);
 }
 
 TEST(MathMatrixPower, matrix_power_operator) {
