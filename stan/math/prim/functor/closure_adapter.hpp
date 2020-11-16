@@ -96,6 +96,31 @@ struct ode_closure_adapter {
   }
 };
 
+template <typename F>
+struct reduce_sum_closure_adapter {
+  using captured_scalar_t__ = double;
+  using ValueOf__ = reduce_sum_closure_adapter<F>;
+  static const size_t vars_count__ = 0;
+  const F f_;
+
+  explicit reduce_sum_closure_adapter(const F& f) : f_(f) {}
+
+  template <typename T, typename... Args>
+  auto operator()(std::ostream* msgs, const std::vector<T>& sub_slice,
+		  std::size_t start, std::size_t end,
+                  Args... args) const {
+    return f_(sub_slice, start, end, msgs, args...);
+  }
+  auto value_of__() const { return reduce_sum_closure_adapter<F>(f_); }
+  auto deep_copy_vars__() const { return reduce_sum_closure_adapter<F>(f_); }
+  void zero_adjoints__() const {}
+  double* accumulate_adjoints__(double* dest) const { return dest; }
+  template <typename Vari>
+  Vari** save_varis(Vari** dest) const {
+    return dest;
+  }
+};
+
 }  // namespace internal
 
 }  // namespace math

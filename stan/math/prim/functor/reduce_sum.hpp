@@ -226,7 +226,7 @@ template <typename ReduceFunction, typename Vec,
 inline auto reduce_sum(Vec&& vmapped, int grainsize, std::ostream* msgs,
                        Args&&... args) {
   ReduceFunction f;
-  closure_adapter<ReduceFunction> cl(f);
+  internal::reduce_sum_closure_adapter<ReduceFunction> cl(f);
   return reduce_sum(vmapped, grainsize, msgs, cl, args...);
 }
 

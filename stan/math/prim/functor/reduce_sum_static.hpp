@@ -72,7 +72,7 @@ template <typename ReduceFunction, typename Vec,
 auto reduce_sum_static(Vec&& vmapped, int grainsize, std::ostream* msgs,
                        Args&&... args) {
   ReduceFunction f;
-  internal::ode_closure_adapter<ReduceFunction> cl(f);
+  internal::reduce_sum_closure_adapter<ReduceFunction> cl(f);
   return reduce_sum_static(vmapped, grainsize, msgs, cl, args...);
 }
 
