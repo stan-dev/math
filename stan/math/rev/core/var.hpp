@@ -7,7 +7,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/meta/is_vari.hpp>
 #include <stan/math/rev/meta/arena_type.hpp>
-#include <stan/math/rev/functor/reverse_pass_callback.hpp>
+#include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <ostream>
 #include <vector>
 #ifdef STAN_OPENCL
@@ -402,6 +402,7 @@ class var_value<
    * @return The value of this variable.
    */
   inline const auto& val() const { return vi_->val_; }
+  inline auto& val_op() { return vi_->val_; }
 
   /**
    * Return a reference to the derivative of the root expression with

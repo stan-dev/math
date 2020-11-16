@@ -44,24 +44,6 @@ TEST(ExpressionTest{overload}, {function_name}{signature_number}) {{
 }}
 """
 
-
-def get_ignored_signatures():
-    """
-    Loads list of ignored signatures from the file listing the exceptions.
-    :return: set of ignored signatures
-    """
-    part_sig = ""
-    ignored = set()
-    for signature in open(exceptions_list_location):
-        signature = part_sig + signature
-        part_sig = ""
-        if not signature.endswith(")\n"):
-            part_sig = signature
-            continue
-        ignored.add(signature)
-    return ignored
-
-
 def parse_signature_file(sig_file):
     """
     Parses signatures from a file of signatures
@@ -87,11 +69,17 @@ def add_extra_signatures(res):
     res.extend([
         # internal math functions
         "vector unit_vector_constrain(vector)",
-        "vector unit_vector_constrain(row_vector)",
         "vector unit_vector_constrain(vector, real)",
-        "vector unit_vector_constrain(row_vector, real)",
         "vector unit_vector_free(vector)",
-        "vector unit_vector_free(row_vector)",
+        "vector positive_ordered_constrain(vector)",
+        "vector positive_ordered_constrain(vector, real)",
+        "vector positive_ordered_free(vector)",
+        "vector ordered_constrain(vector)",
+        "vector ordered_constrain(vector, real)",
+        "vector ordered_free(vector)",
+        "vector simplex_constrain(vector)",
+        "vector simplex_constrain(vector, real)",
+        "vector simplex_free(vector)",
         "int is_cholesky_factor(matrix)",
         "int is_cholesky_factor_corr(matrix)",
         "int is_column_index(matrix, int)",
@@ -117,7 +105,6 @@ def add_extra_signatures(res):
         "int is_square(row_vector)",
         "int is_symmetric(matrix)",
         "int is_unit_vector(vector)",
-        "int is_unit_vector(row_matrix)",
         #variadic functions: these are tested with one vector for variadic args
         "real[,] ode_adams((real, vector, ostream_ptr, vector) => vector, vector, real, real[], ostream_ptr, vector)",
         "real[,] ode_adams_tol((real, vector, ostream_ptr, vector) => vector, vector, real, real[], real, real, real, ostream_ptr, vector)",
@@ -208,13 +195,26 @@ special_arg_values = {
     "pareto_type_2_cdf_log": [1.5, 0.7, None, None],
     "pareto_type_2_lcdf": [1.5, 0.7, None, None],
     "unit_vector_free" : [1.0],
+    "positive_ordered_free" : [1.0],
+    "ordered_free" : [1.0],
+    "simplex_free" : [1.0],
     "student_t_cdf" : [0.8, None, 0.4, None],
     "student_t_cdf_log" : [0.8, None, 0.4, None],
     "student_t_ccdf_log" : [0.8, None, 0.4, None],
     "student_t_lccdf" : [0.8, None, 0.4, None],
     "student_t_lcdf" : [0.8, None, 0.4, None],
+    "unit_vector_free" : [1.0],
+    "uniform_cdf" : [None, 0.2, 0.9],
+    "uniform_ccdf_log" : [None, 0.2, 0.9],
+    "uniform_cdf_log" : [None, 0.2, 0.9],
+    "uniform_lccdf" : [None, 0.2, 0.9],
+    "uniform_lcdf" : [None, 0.2, 0.9],
+    "uniform_log" : [None, 0.2, 0.9],
+    "uniform_lpdf" : [None, 0.2, 0.9],
+    "uniform_rng" : [0.2, 1.9, None],
     "wiener_log" : [0.8, None, 0.4, None, None],
-    "wiener_lpdf" : [0.8, None, 0.4, None, None],}
+    "wiener_lpdf" : [0.8, None, 0.4, None, None],
+}
 
 # list of function argument indices, for which real valued arguments are not differentiable 
 # - they need to be double even in autodiff overloads
@@ -318,6 +318,18 @@ no_fwd_overload = [
     "ode_rk45_tol"
 ]
 
+# list of functions we do not test. These are mainly functions implemented in compiler
+# (not in Stan Math).
+ignored = [
+    "lmultiply",
+    "assign_add",
+    "assign_divide",
+    "assign_elt_divide",
+    "assign_elt_times",
+    "assign_multiply",
+    "assign_subtract",
+    "if_else",
+]
 
 def main(functions=(), j=1):
     """
@@ -336,7 +348,6 @@ def main(functions=(), j=1):
     any of the previous two. Default: all signatures supported by stanc3
     :param j: number of files to split tests in
     """
-    ignored = get_ignored_signatures()
 
     test_n = {}
     tests = []
@@ -346,7 +357,7 @@ def main(functions=(), j=1):
     for signature in signatures:
         return_type, function_name, function_args = parse_signature(signature)
         # skip ignored signatures
-        if signature in ignored and not functions and signature not in extra_signatures:
+        if function_name in ignored and not functions and signature not in extra_signatures:
             continue
         # skip default if we have list of function names/signatures to test
         if (
