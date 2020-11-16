@@ -5,6 +5,7 @@
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
+#include <stan/math/prim/meta/plain_type.hpp>
 #include <utility>
 #include <vector>
 
