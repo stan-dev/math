@@ -12,7 +12,6 @@
 
 namespace stan {
 namespace math {
-
 // Forward declaration to allow specialisations
 template <typename T, typename Enable = void>
 struct apply_vector_unary {};
