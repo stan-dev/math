@@ -6,7 +6,6 @@
 #include <stan/math/opencl/err/check_nan.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
-#include <stan/math/rev/functor/reverse_pass_callback.hpp>
 #include <stan/math/opencl/diagonal_multiply.hpp>
 #include <stan/math/opencl/triangular_transpose.hpp>
 
