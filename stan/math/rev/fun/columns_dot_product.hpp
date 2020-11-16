@@ -64,27 +64,27 @@ template <typename Mat1, typename Mat2,
 inline auto columns_dot_product(const Mat1& v1, const Mat2& v2) {
   check_matching_sizes("columns_dot_product", "v1", v1, "v2", v2);
 
-  using return_t
-      = promote_var_matrix_t<decltype((v1.val().array() *
-				       v2.val().array()).colwise().sum().matrix()),
-                             Mat1, Mat2>;
+  using return_t = promote_var_matrix_t<
+      decltype((v1.val().array() * v2.val().array()).colwise().sum().matrix()),
+      Mat1, Mat2>;
 
   if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
     arena_t<promote_scalar_t<var, Mat1>> arena_v1 = v1;
     arena_t<promote_scalar_t<var, Mat2>> arena_v2 = v2;
 
-    return_t res = (arena_v1.val().array() * arena_v2.val().array()).colwise().sum();
+    return_t res
+        = (arena_v1.val().array() * arena_v2.val().array()).colwise().sum();
 
     reverse_pass_callback([arena_v1, arena_v2, res]() mutable {
       if (is_var_matrix<Mat1>::value) {
-	arena_v1.adj().noalias() += value_of(arena_v2) * res.adj().asDiagonal();
+        arena_v1.adj().noalias() += value_of(arena_v2) * res.adj().asDiagonal();
       } else {
-	arena_v1.adj() += value_of(arena_v2) * res.adj().asDiagonal();
+        arena_v1.adj() += value_of(arena_v2) * res.adj().asDiagonal();
       }
       if (is_var_matrix<Mat2>::value) {
-	arena_v2.adj().noalias() += value_of(arena_v1) * res.adj().asDiagonal();
+        arena_v2.adj().noalias() += value_of(arena_v1) * res.adj().asDiagonal();
       } else {
-	arena_v2.adj() += value_of(arena_v1) * res.adj().asDiagonal();
+        arena_v2.adj() += value_of(arena_v1) * res.adj().asDiagonal();
       }
     });
 
@@ -97,9 +97,9 @@ inline auto columns_dot_product(const Mat1& v1, const Mat2& v2) {
 
     reverse_pass_callback([arena_v1, arena_v2, res]() mutable {
       if (is_var_matrix<Mat2>::value) {
-	arena_v2.adj().noalias() += arena_v1 * res.adj().asDiagonal();
+        arena_v2.adj().noalias() += arena_v1 * res.adj().asDiagonal();
       } else {
-	arena_v2.adj() += arena_v1 * res.adj().asDiagonal();
+        arena_v2.adj() += arena_v1 * res.adj().asDiagonal();
       }
     });
 
@@ -112,16 +112,16 @@ inline auto columns_dot_product(const Mat1& v1, const Mat2& v2) {
 
     reverse_pass_callback([arena_v1, arena_v2, res]() mutable {
       if (is_var_matrix<Mat2>::value) {
-	arena_v1.adj().noalias() += arena_v2 * res.adj().asDiagonal();
+        arena_v1.adj().noalias() += arena_v2 * res.adj().asDiagonal();
       } else {
-	arena_v1.adj() += arena_v2 * res.adj().asDiagonal();
+        arena_v1.adj() += arena_v2 * res.adj().asDiagonal();
       }
     });
 
     return res;
   }
 }
-  
+
 }  // namespace math
 }  // namespace stan
 #endif
