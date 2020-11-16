@@ -328,7 +328,10 @@ def main():
         jumboFiles = generateJumboTests(tests)
 
     if inputs.e == -1:
-        num_expr_test_files = inputs.j * 4
+        if inputs.j == 1:
+            num_expr_test_files = 1
+        else:
+            num_expr_test_files = inputs.j * 4
     else:
         num_expr_test_files = inputs.e
     handleExpressionTests(tests, inputs.only_functions, num_expr_test_files)
