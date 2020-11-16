@@ -14,6 +14,20 @@
 namespace stan {
 namespace math {
 
+/**
+ * Returns the dot product of columns of the specified matrices.
+ *
+ * @tparam Mat1 type of the first matrix (must be derived from \c
+ * Eigen::MatrixBase)
+ * @tparam Mat2 type of the second matrix (must be derived from \c
+ * Eigen::MatrixBase)
+ *
+ * @param v1 Matrix of first vectors.
+ * @param v2 Matrix of second vectors.
+ * @return Dot product of the vectors.
+ * @throw std::domain_error If the vectors are not the same
+ * size or if they are both not vector dimensioned.
+ */
 template <typename Mat1, typename Mat2,
           require_all_eigen_t<Mat1, Mat2>* = nullptr,
           require_any_eigen_vt<is_var, Mat1, Mat2>* = nullptr>
@@ -27,6 +41,87 @@ columns_dot_product(const Mat1& v1, const Mat2& v2) {
   return ret;
 }
 
+/**
+ * Returns the dot product of columns of the specified matrices.
+ *
+ * This overload is used when at least one of Mat1 and Mat2 is
+ * a `var_value<T>` where `T` inherits from `EigenBase`. The other
+ * argument can be another `var_value` or a type that inherits from
+ * `EigenBase`.
+ *
+ * @tparam Mat1 type of the first matrix
+ * @tparam Mat2 type of the second matrix
+ *
+ * @param v1 Matrix of first vectors.
+ * @param v2 Matrix of second vectors.
+ * @return Dot product of the vectors.
+ * @throw std::domain_error If the vectors are not the same
+ * size or if they are both not vector dimensioned.
+ */
+template <typename Mat1, typename Mat2,
+          require_all_matrix_t<Mat1, Mat2>* = nullptr,
+          require_any_var_matrix_t<Mat1, Mat2>* = nullptr>
+inline auto columns_dot_product(const Mat1& v1, const Mat2& v2) {
+  check_matching_sizes("columns_dot_product", "v1", v1, "v2", v2);
+
+  using return_t
+      = promote_var_matrix_t<decltype((v1.val().array() *
+				       v2.val().array()).colwise().sum().matrix()),
+                             Mat1, Mat2>;
+
+  if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
+    arena_t<promote_scalar_t<var, Mat1>> arena_v1 = v1;
+    arena_t<promote_scalar_t<var, Mat2>> arena_v2 = v2;
+
+    return_t res = (arena_v1.val().array() * arena_v2.val().array()).colwise().sum();
+
+    reverse_pass_callback([arena_v1, arena_v2, res]() mutable {
+      if (is_var_matrix<Mat1>::value) {
+	arena_v1.adj().noalias() += value_of(arena_v2) * res.adj().asDiagonal();
+      } else {
+	arena_v1.adj() += value_of(arena_v2) * res.adj().asDiagonal();
+      }
+      if (is_var_matrix<Mat2>::value) {
+	arena_v2.adj().noalias() += value_of(arena_v1) * res.adj().asDiagonal();
+      } else {
+	arena_v2.adj() += value_of(arena_v1) * res.adj().asDiagonal();
+      }
+    });
+
+    return res;
+  } else if (!is_constant<Mat2>::value) {
+    arena_t<promote_scalar_t<double, Mat1>> arena_v1 = value_of(v1);
+    arena_t<promote_scalar_t<var, Mat2>> arena_v2 = v2;
+
+    return_t res = (arena_v1.array() * arena_v2.val().array()).colwise().sum();
+
+    reverse_pass_callback([arena_v1, arena_v2, res]() mutable {
+      if (is_var_matrix<Mat2>::value) {
+	arena_v2.adj().noalias() += arena_v1 * res.adj().asDiagonal();
+      } else {
+	arena_v2.adj() += arena_v1 * res.adj().asDiagonal();
+      }
+    });
+
+    return res;
+  } else {
+    arena_t<promote_scalar_t<var, Mat1>> arena_v1 = v1;
+    arena_t<promote_scalar_t<double, Mat2>> arena_v2 = value_of(v2);
+
+    return_t res = (arena_v1.val().array() * arena_v2.array()).colwise().sum();
+
+    reverse_pass_callback([arena_v1, arena_v2, res]() mutable {
+      if (is_var_matrix<Mat2>::value) {
+	arena_v1.adj().noalias() += arena_v2 * res.adj().asDiagonal();
+      } else {
+	arena_v1.adj() += arena_v2 * res.adj().asDiagonal();
+      }
+    });
+
+    return res;
+  }
+}
+  
 }  // namespace math
 }  // namespace stan
 #endif
