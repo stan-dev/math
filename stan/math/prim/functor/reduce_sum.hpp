@@ -45,12 +45,14 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
   struct recursive_reducer {
     Vec vmapped_;
     std::ostream* msgs_;
+    const ReduceFunction& f_;
     std::tuple<Args...> args_tuple_;
     return_type_t<Vec, Args...> sum_{0.0};
 
-    recursive_reducer(Vec&& vmapped, std::ostream* msgs, Args&&... args)
+    recursive_reducer(Vec&& vmapped, std::ostream* msgs,
+		      const ReduceFunction& f, Args&&... args)
         : vmapped_(std::forward<Vec>(vmapped)),
-          msgs_(msgs),
+          msgs_(msgs), f_(f),
           args_tuple_(std::forward<Args>(args)...) {}
 
     /**
@@ -61,7 +63,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
      */
     recursive_reducer(recursive_reducer& other, tbb::split)
         : vmapped_(other.vmapped_),
-          msgs_(other.msgs_),
+          msgs_(other.msgs_), f_(other.f_),
           args_tuple_(other.args_tuple_) {}
 
     /**
@@ -85,8 +87,8 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
 
       sum_ += apply(
           [&](auto&&... args) {
-            return ReduceFunction()(sub_slice, r.begin(), r.end() - 1, msgs_,
-                                    args...);
+            return f_(msgs_, sub_slice, r.begin(), r.end() - 1,
+		      args...);
           },
           args_tuple_);
     }
@@ -143,13 +145,14 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
    */
   inline ReturnType operator()(Vec&& vmapped, bool auto_partitioning,
                                int grainsize, std::ostream* msgs,
+			       const ReduceFunction& f,
                                Args&&... args) const {
     const std::size_t num_terms = vmapped.size();
     if (vmapped.empty()) {
       return 0.0;
     }
     recursive_reducer worker(std::forward<Vec>(vmapped), msgs,
-                             std::forward<Args>(args)...);
+                             f, std::forward<Args>(args)...);
 
     if (auto_partitioning) {
       tbb::parallel_reduce(
@@ -192,26 +195,39 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
  * @return Sum of terms
  */
 template <typename ReduceFunction, typename Vec,
-          typename = require_vector_like_t<Vec>, typename... Args>
+          typename = require_vector_like_t<Vec>,
+	  require_stan_closure_t<ReduceFunction>* = nullptr,
+	  typename... Args>
 inline auto reduce_sum(Vec&& vmapped, int grainsize, std::ostream* msgs,
-                       Args&&... args) {
-  using return_type = return_type_t<Vec, Args...>;
+                       const ReduceFunction& f, Args&&... args) {
+  using return_type = return_type_t<ReduceFunction, Vec, Args...>;
 
   check_positive("reduce_sum", "grainsize", grainsize);
 
 #ifdef STAN_THREADS
   return internal::reduce_sum_impl<ReduceFunction, void, return_type, Vec,
                                    Args...>()(std::forward<Vec>(vmapped), true,
-                                              grainsize, msgs,
+                                              grainsize, msgs, f,
                                               std::forward<Args>(args)...);
 #else
   if (vmapped.empty()) {
     return return_type(0.0);
   }
 
-  return ReduceFunction()(std::forward<Vec>(vmapped), 0, vmapped.size() - 1,
-                          msgs, std::forward<Args>(args)...);
+  return f(msgs, std::forward<Vec>(vmapped), 0, vmapped.size() - 1,
+	   std::forward<Args>(args)...);
 #endif
+}
+
+template <typename ReduceFunction, typename Vec,
+          typename = require_vector_like_t<Vec>,
+	  require_not_stan_closure_t<ReduceFunction>* = nullptr,
+	  typename... Args>
+inline auto reduce_sum(Vec&& vmapped, int grainsize, std::ostream* msgs,
+                       Args&&... args) {
+  ReduceFunction f;
+  closure_adapter<ReduceFunction> cl(f);
+  return reduce_sum(vmapped, grainsize, msgs, cl, args...);
 }
 
 }  // namespace math

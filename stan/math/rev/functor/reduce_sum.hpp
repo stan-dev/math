@@ -38,23 +38,28 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    */
   struct recursive_reducer {
     const size_t num_vars_per_term_;
+    const size_t num_vars_closure_; // Number of vars in the closure
     const size_t num_vars_shared_terms_;  // Number of vars in shared arguments
     double* sliced_partials_;  // Points to adjoints of the partial calculations
     Vec vmapped_;
     std::ostream* msgs_;
+    const ReduceFunction& f_;
     std::tuple<Args...> args_tuple_;
     double sum_{0.0};
     Eigen::VectorXd args_adjoints_{0};
 
     template <typename VecT, typename... ArgsT>
-    recursive_reducer(size_t num_vars_per_term, size_t num_vars_shared_terms,
+    recursive_reducer(size_t num_vars_per_term,
+		      size_t num_vars_closure,
+		      size_t num_vars_shared_terms,
                       double* sliced_partials, VecT&& vmapped,
-                      std::ostream* msgs, ArgsT&&... args)
+                      std::ostream* msgs, const ReduceFunction& f, ArgsT&&... args)
         : num_vars_per_term_(num_vars_per_term),
+	  num_vars_closure_(num_vars_closure),
           num_vars_shared_terms_(num_vars_shared_terms),
           sliced_partials_(sliced_partials),
           vmapped_(std::forward<VecT>(vmapped)),
-          msgs_(msgs),
+          msgs_(msgs), f_(f),
           args_tuple_(std::forward<ArgsT>(args)...) {}
 
     /*
@@ -65,10 +70,11 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
      */
     recursive_reducer(recursive_reducer& other, tbb::split)
         : num_vars_per_term_(other.num_vars_per_term_),
+	  num_vars_closure_(other.num_vars_closure_),
           num_vars_shared_terms_(other.num_vars_shared_terms_),
           sliced_partials_(other.sliced_partials_),
           vmapped_(other.vmapped_),
-          msgs_(other.msgs_),
+          msgs_(other.msgs_), f_(other.f_),
           args_tuple_(other.args_tuple_) {}
 
     /**
@@ -90,7 +96,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       }
 
       if (args_adjoints_.size() == 0) {
-        args_adjoints_ = Eigen::VectorXd::Zero(num_vars_shared_terms_);
+        args_adjoints_ = Eigen::VectorXd::Zero(num_vars_closure_ +
+					       num_vars_shared_terms_);
       }
 
       // Initialize nested autodiff stack
@@ -104,6 +111,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         local_sub_slice.emplace_back(deep_copy_vars(vmapped_[i]));
       }
 
+      // Create a copy of the functor
+      auto f_local_copy = deep_copy_vars(f_);
+      
       // Create nested autodiff copies of all shared arguments that do not point
       //   back to main autodiff stack
       auto args_tuple_local_copy = apply(
@@ -116,8 +126,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       // Perform calculation
       var sub_sum_v = apply(
           [&](auto&&... args) {
-            return ReduceFunction()(local_sub_slice, r.begin(), r.end() - 1,
-                                    msgs_, args...);
+            return f_local_copy(msgs_, local_sub_slice, r.begin(), r.end() - 1,
+				args...);
           },
           args_tuple_local_copy);
 
@@ -131,10 +141,13 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       accumulate_adjoints(sliced_partials_ + r.begin() * num_vars_per_term_,
                           std::move(local_sub_slice));
 
+      // Accumulate adjoints of closure arguments
+      accumulate_adjoints(args_adjoints_.data(), f_local_copy);
+
       // Accumulate adjoints of shared_arguments
       apply(
           [&](auto&&... args) {
-            accumulate_adjoints(args_adjoints_.data(),
+            accumulate_adjoints(args_adjoints_.data() + num_vars_closure_,
                                 std::forward<decltype(args)>(args)...);
           },
           std::move(args_tuple_local_copy));
@@ -197,7 +210,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    * @return Summation of all terms
    */
   inline var operator()(Vec&& vmapped, bool auto_partitioning, int grainsize,
-                        std::ostream* msgs, Args&&... args) const {
+                        std::ostream* msgs, const ReduceFunction& f,
+			Args&&... args) const {
     const std::size_t num_terms = vmapped.size();
 
     if (vmapped.empty()) {
@@ -206,22 +220,27 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
     const std::size_t num_vars_per_term = count_vars(vmapped[0]);
     const std::size_t num_vars_sliced_terms = num_terms * num_vars_per_term;
+    const std::size_t num_vars_closure = count_vars(f);
     const std::size_t num_vars_shared_terms = count_vars(args...);
 
     vari** varis = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-        num_vars_sliced_terms + num_vars_shared_terms);
+        num_vars_sliced_terms + num_vars_closure + num_vars_shared_terms);
     double* partials = ChainableStack::instance_->memalloc_.alloc_array<double>(
-        num_vars_sliced_terms + num_vars_shared_terms);
+        num_vars_sliced_terms + num_vars_closure + num_vars_shared_terms);
 
     save_varis(varis, vmapped);
-    save_varis(varis + num_vars_sliced_terms, args...);
+    save_varis(varis + num_vars_sliced_terms, f);
+    save_varis(varis + num_vars_sliced_terms + num_vars_closure, args...);
 
     for (size_t i = 0; i < num_vars_sliced_terms; ++i) {
       partials[i] = 0.0;
     }
 
-    recursive_reducer worker(num_vars_per_term, num_vars_shared_terms, partials,
-                             std::forward<Vec>(vmapped), msgs,
+    recursive_reducer worker(num_vars_per_term,
+			     num_vars_closure,
+			     num_vars_shared_terms,
+			     partials,
+                             std::forward<Vec>(vmapped), msgs, f,
                              std::forward<Args>(args)...);
 
     if (auto_partitioning) {
@@ -234,13 +253,15 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           partitioner);
     }
 
-    for (size_t i = 0; i < num_vars_shared_terms; ++i) {
+    for (size_t i = 0; i < num_vars_closure + num_vars_shared_terms; ++i) {
       partials[num_vars_sliced_terms + i] = worker.args_adjoints_(i);
     }
 
     return var(new precomputed_gradients_vari(
-        worker.sum_, num_vars_sliced_terms + num_vars_shared_terms, varis,
-        partials));
+        worker.sum_, num_vars_sliced_terms +
+	num_vars_closure +
+	num_vars_shared_terms,
+	varis, partials));
   }
 };
 }  // namespace internal

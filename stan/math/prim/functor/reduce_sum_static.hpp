@@ -41,26 +41,39 @@ namespace math {
  * @return Sum of terms
  */
 template <typename ReduceFunction, typename Vec,
-          typename = require_vector_like_t<Vec>, typename... Args>
+          typename = require_vector_like_t<Vec>,
+	  require_stan_closure_t<ReduceFunction>* = nullptr,
+	  typename... Args>
 auto reduce_sum_static(Vec&& vmapped, int grainsize, std::ostream* msgs,
-                       Args&&... args) {
-  using return_type = return_type_t<Vec, Args...>;
+                       const ReduceFunction& f, Args&&... args) {
+  using return_type = return_type_t<ReduceFunction, Vec, Args...>;
 
   check_positive("reduce_sum", "grainsize", grainsize);
 
 #ifdef STAN_THREADS
   return internal::reduce_sum_impl<ReduceFunction, void, return_type, Vec,
                                    Args...>()(std::forward<Vec>(vmapped), false,
-                                              grainsize, msgs,
+                                              grainsize, msgs, f,
                                               std::forward<Args>(args)...);
 #else
   if (vmapped.empty()) {
     return return_type(0);
   }
 
-  return ReduceFunction()(std::forward<Vec>(vmapped), 0, vmapped.size() - 1,
-                          msgs, std::forward<Args>(args)...);
+  return f(std::forward<Vec>(vmapped), 0, vmapped.size() - 1,
+	   msgs, std::forward<Args>(args)...);
 #endif
+}
+
+template <typename ReduceFunction, typename Vec,
+          typename = require_vector_like_t<Vec>,
+	  require_not_stan_closure_t<ReduceFunction>* = nullptr,
+	  typename... Args>
+auto reduce_sum_static(Vec&& vmapped, int grainsize, std::ostream* msgs,
+                       Args&&... args) {
+  ReduceFunction f;
+  internal::ode_closure_adapter<ReduceFunction> cl(f);
+  return reduce_sum_static(vmapped, grainsize, msgs, cl, args...);
 }
 
 }  // namespace math
