@@ -53,15 +53,15 @@ namespace math {
  */
 inline var operator-(const var& a, const var& b) {
   return make_callback_vari(a.vi_->val_ - b.vi_->val_,
-    [avi = a.vi_, bvi = b.vi_](const auto& vi) mutable {
-      if (unlikely(is_any_nan(avi->val_, bvi->val_))) {
-        avi->adj_ = NOT_A_NUMBER;
-        bvi->adj_ = NOT_A_NUMBER;
-      } else {
-        avi->adj_ += vi.adj_;
-        bvi->adj_ -= vi.adj_;
-      }
-    });
+                            [avi = a.vi_, bvi = b.vi_](const auto& vi) mutable {
+                              if (unlikely(is_any_nan(avi->val_, bvi->val_))) {
+                                avi->adj_ = NOT_A_NUMBER;
+                                bvi->adj_ = NOT_A_NUMBER;
+                              } else {
+                                avi->adj_ += vi.adj_;
+                                bvi->adj_ -= vi.adj_;
+                              }
+                            });
 }
 
 /**
@@ -83,13 +83,13 @@ inline var operator-(const var& a, Arith b) {
     return a;
   }
   return make_callback_vari(a.vi_->val_ - b,
-    [avi = a.vi_, b](const auto& vi) mutable {
-        if (unlikely(is_any_nan(avi->val_, b))) {
-          avi->adj_ = NOT_A_NUMBER;
-        } else {
-          avi->adj_ += vi.adj_;
-        }
-    });
+                            [avi = a.vi_, b](const auto& vi) mutable {
+                              if (unlikely(is_any_nan(avi->val_, b))) {
+                                avi->adj_ = NOT_A_NUMBER;
+                              } else {
+                                avi->adj_ += vi.adj_;
+                              }
+                            });
 }
 
 /**
@@ -108,13 +108,13 @@ inline var operator-(const var& a, Arith b) {
 template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline var operator-(Arith a, const var& b) {
   return make_callback_vari(a - b.vi_->val_,
-    [bvi = b.vi_, a](const auto& vi) mutable {
-      if (unlikely(is_any_nan(a, bvi->val_))) {
-        bvi->adj_ = NOT_A_NUMBER;
-      } else {
-        bvi->adj_ -= vi.adj_;
-      }
-    });
+                            [bvi = b.vi_, a](const auto& vi) mutable {
+                              if (unlikely(is_any_nan(a, bvi->val_))) {
+                                bvi->adj_ = NOT_A_NUMBER;
+                              } else {
+                                bvi->adj_ -= vi.adj_;
+                              }
+                            });
 }
 
 /**
@@ -126,7 +126,8 @@ inline var operator-(Arith a, const var& b) {
  * @param b Second variable operand.
  * @return Variable result of subtracting two variables.
  */
-template <typename VarMat1, typename VarMat2, require_all_rev_matrix_t<VarMat1, VarMat2>* = nullptr>
+template <typename VarMat1, typename VarMat2,
+          require_all_rev_matrix_t<VarMat1, VarMat2>* = nullptr>
 inline auto subtract(const VarMat1& a, const VarMat2& b) {
   check_matching_dims("subtract", "a", a, "b", b);
   using op_ret_type = decltype(a.val() - b.val());
@@ -140,7 +141,7 @@ inline auto subtract(const VarMat1& a, const VarMat2& b) {
       arena_a.adj().coeffRef(i) += ret_adj;
       arena_b.adj().coeffRef(i) -= ret_adj;
     }
-    });
+  });
   return ret_type(ret);
 }
 
@@ -153,19 +154,20 @@ inline auto subtract(const VarMat1& a, const VarMat2& b) {
  * @param b Second variable operand.
  * @return Variable result of subtracting two variables.
  */
-template <typename Arith, typename VarMat, require_st_arithmetic<Arith>* = nullptr,
- require_rev_matrix_t<VarMat>* = nullptr>
+template <typename Arith, typename VarMat,
+          require_st_arithmetic<Arith>* = nullptr,
+          require_rev_matrix_t<VarMat>* = nullptr>
 inline auto subtract(const VarMat& a, const Arith& b) {
   if (is_eigen<Arith>::value) {
     check_matching_dims("subtract", "a", a, "b", b);
   }
-  using op_ret_type = plain_type_t<decltype((a.val().array() - as_array_or_scalar(b)).matrix())>;
+  using op_ret_type = plain_type_t<decltype(
+      (a.val().array() - as_array_or_scalar(b)).matrix())>;
   using ret_type = promote_var_matrix_t<op_ret_type, VarMat>;
   arena_t<VarMat> arena_a = a;
   arena_t<ret_type> ret(a.val().array() - as_array_or_scalar(b));
-  reverse_pass_callback([ret, arena_a]() mutable {
-    arena_a.adj() += ret.adj();
-  });
+  reverse_pass_callback(
+      [ret, arena_a]() mutable { arena_a.adj() += ret.adj(); });
   return ret_type(ret);
 }
 
@@ -178,19 +180,20 @@ inline auto subtract(const VarMat& a, const Arith& b) {
  * @param b Second variable operand.
  * @return Variable result of subtracting two variables.
  */
- template <typename Arith, typename VarMat, require_st_arithmetic<Arith>* = nullptr,
-  require_rev_matrix_t<VarMat>* = nullptr>
+template <typename Arith, typename VarMat,
+          require_st_arithmetic<Arith>* = nullptr,
+          require_rev_matrix_t<VarMat>* = nullptr>
 inline auto subtract(const Arith& a, const VarMat& b) {
   if (is_eigen<Arith>::value) {
     check_matching_dims("subtract", "a", a, "b", b);
   }
-  using op_ret_type = plain_type_t<decltype((as_array_or_scalar(a) - b.val().array()).matrix())>;
+  using op_ret_type = plain_type_t<decltype(
+      (as_array_or_scalar(a) - b.val().array()).matrix())>;
   using ret_type = promote_var_matrix_t<op_ret_type, VarMat>;
   arena_t<VarMat> arena_b = b;
   arena_t<ret_type> ret(as_array_or_scalar(a) - b.val().array());
-  reverse_pass_callback([ret, arena_b]() mutable {
-    arena_b.adj() -= ret.adj_op();
-  });
+  reverse_pass_callback(
+      [ret, arena_b]() mutable { arena_b.adj() -= ret.adj_op(); });
   return ret_type(ret);
 }
 
@@ -204,17 +207,14 @@ inline auto subtract(const Arith& a, const VarMat& b) {
  * @return Variable result of subtracting two variables.
  */
 template <typename Var, typename EigMat,
-       require_var_vt<std::is_arithmetic, Var>* = nullptr,
-       require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
+          require_var_vt<std::is_arithmetic, Var>* = nullptr,
+          require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
 inline auto subtract(const Var& a, const EigMat& b) {
   using ret_type = promote_scalar_t<var, EigMat>;
-  arena_t<ret_type>  ret(a.val() - b.array());
-  reverse_pass_callback([ret, a]() mutable {
-    a.adj() += ret.adj().sum();
-  });
+  arena_t<ret_type> ret(a.val() - b.array());
+  reverse_pass_callback([ret, a]() mutable { a.adj() += ret.adj().sum(); });
   return ret_type(ret);
 }
-
 
 /**
  * Subtraction operator for a variable and arithmetic matrix (C++).
@@ -226,29 +226,28 @@ inline auto subtract(const Var& a, const EigMat& b) {
  * @return Variable result of subtracting two variables.
  */
 template <typename EigMat, typename Var,
-     require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr,
-     require_var_vt<std::is_arithmetic, Var>* = nullptr>
+          require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr,
+          require_var_vt<std::is_arithmetic, Var>* = nullptr>
 inline auto subtract(const EigMat& a, const Var& b) {
   using ret_type = promote_scalar_t<var, EigMat>;
-  arena_t<ret_type>  ret(a.array() - b.val());
-  reverse_pass_callback([ret, b]() mutable {
-    b.adj() -= ret.adj().sum();
-  });
+  arena_t<ret_type> ret(a.array() - b.val());
+  reverse_pass_callback([ret, b]() mutable { b.adj() -= ret.adj().sum(); });
   return ret_type(ret);
 }
 
 /**
  * Subtraction operator for a variable and variable matrix (C++).
  *
- * @tparam VarMat An Eigen Matrix type with a variable Scalar type or a `var_value` with an underlying matrix type.
+ * @tparam VarMat An Eigen Matrix type with a variable Scalar type or a
+ * `var_value` with an underlying matrix type.
  * @tparam Var A `var_value` with an underlying arithmetic type.
  * @param a First variable operand.
  * @param b Second variable operand.
  * @return Variable result of subtracting two variables.
  */
 template <typename Var, typename VarMat,
-   require_var_vt<std::is_arithmetic, Var>* = nullptr,
-   require_rev_matrix_t<VarMat>* = nullptr>
+          require_var_vt<std::is_arithmetic, Var>* = nullptr,
+          require_rev_matrix_t<VarMat>* = nullptr>
 inline auto subtract(const Var& a, const VarMat& b) {
   arena_t<VarMat> arena_b(b);
   arena_t<VarMat> ret(a.val() - b.val().array());
@@ -262,59 +261,59 @@ inline auto subtract(const Var& a, const VarMat& b) {
   return plain_type_t<VarMat>(ret);
 }
 
-
 /**
  * Subtraction operator for a variable matrix and variable (C++).
  *
- * @tparam VarMat An Eigen Matrix type with a variable Scalar type or a `var_value` with an underlying matrix type.
+ * @tparam VarMat An Eigen Matrix type with a variable Scalar type or a
+ * `var_value` with an underlying matrix type.
  * @tparam Var A `var_value` with an underlying arithmetic type.
  * @param a First variable operand.
  * @param b Second variable operand.
  * @return Variable result of subtracting two variables.
  */
- template <typename Var, typename VarMat,
-  require_rev_matrix_t<VarMat>* = nullptr,
-  require_var_vt<std::is_arithmetic, Var>* = nullptr>
- inline auto subtract(const VarMat& a, const Var& b) {
-   arena_t<VarMat> arena_a(a);
-   arena_t<VarMat> ret(a.val().array() - b.val());
-   reverse_pass_callback([ret, b, arena_a]() mutable {
-     for (Eigen::Index i = 0; i < ret.size(); ++i) {
-       const auto ret_adj = ret.adj().coeff(i);
-       arena_a.adj().coeffRef(i) += ret_adj;
-       b.adj() -= ret_adj;
-     }
-   });
-   return plain_type_t<VarMat>(ret);
- }
+template <typename Var, typename VarMat,
+          require_rev_matrix_t<VarMat>* = nullptr,
+          require_var_vt<std::is_arithmetic, Var>* = nullptr>
+inline auto subtract(const VarMat& a, const Var& b) {
+  arena_t<VarMat> arena_a(a);
+  arena_t<VarMat> ret(a.val().array() - b.val());
+  reverse_pass_callback([ret, b, arena_a]() mutable {
+    for (Eigen::Index i = 0; i < ret.size(); ++i) {
+      const auto ret_adj = ret.adj().coeff(i);
+      arena_a.adj().coeffRef(i) += ret_adj;
+      b.adj() -= ret_adj;
+    }
+  });
+  return plain_type_t<VarMat>(ret);
+}
 
- template <typename T1, typename T2,
-           require_any_var_vt<std::is_arithmetic, T1, T2>* = nullptr,
-           require_any_arithmetic_t<T1, T2>* = nullptr>
- inline auto subtract(const T1& a, const T2& b) {
-   return a - b;
- }
+template <typename T1, typename T2,
+          require_any_var_vt<std::is_arithmetic, T1, T2>* = nullptr,
+          require_any_arithmetic_t<T1, T2>* = nullptr>
+inline auto subtract(const T1& a, const T2& b) {
+  return a - b;
+}
 
- template <typename T1, typename T2,
-           require_all_var_vt<std::is_arithmetic, T1, T2>* = nullptr>
- inline auto subtract(const T1& a, const T2& b) {
-   return a - b;
- }
+template <typename T1, typename T2,
+          require_all_var_vt<std::is_arithmetic, T1, T2>* = nullptr>
+inline auto subtract(const T1& a, const T2& b) {
+  return a - b;
+}
 
- /**
-  * Addition operator for matrix variables (C++).
-  *
-  * @tparam VarMat1 A matrix of vars or a var with an underlying matrix type.
-  * @tparam VarMat2 A matrix of vars or a var with an underlying matrix type.
-  * @param a First variable operand.
-  * @param b Second variable operand.
-  * @return Variable result of adding two variables.
-  */
- template <typename VarMat1, typename VarMat2,
-           require_any_var_matrix_t<VarMat1, VarMat2>* = nullptr>
- inline auto operator-(const VarMat1& a, const VarMat2& b) {
-   return subtract(a, b);
- }
+/**
+ * Addition operator for matrix variables (C++).
+ *
+ * @tparam VarMat1 A matrix of vars or a var with an underlying matrix type.
+ * @tparam VarMat2 A matrix of vars or a var with an underlying matrix type.
+ * @param a First variable operand.
+ * @param b Second variable operand.
+ * @return Variable result of adding two variables.
+ */
+template <typename VarMat1, typename VarMat2,
+          require_any_var_matrix_t<VarMat1, VarMat2>* = nullptr>
+inline auto operator-(const VarMat1& a, const VarMat2& b) {
+  return subtract(a, b);
+}
 
 }  // namespace math
 }  // namespace stan

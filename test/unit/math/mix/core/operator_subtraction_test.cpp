@@ -7,11 +7,11 @@ TEST(mathMixCore, operatorSubtraction) {
   stan::test::expect_complex_common_binary(f);
 }
 
-
 TEST(mathMixCore, operatorSubtractionMatrixSmall) {
   // This calls operator- under the hood
-  auto f
-      = [](const auto& x1, const auto& x2) { return stan::math::subtract(x1, x2); };
+  auto f = [](const auto& x1, const auto& x2) {
+    return stan::math::subtract(x1, x2);
+  };
   stan::test::ad_tolerances tols;
   tols.hessian_hessian_ = 1e-1;
   tols.hessian_fvar_hessian_ = 1e-1;
@@ -46,8 +46,9 @@ TEST(mathMixCore, operatorSubtractionMatrixSmall) {
 }
 
 TEST(mathMixCore, operatorSubtractionMatrixZeroSize) {
-  auto f
-      = [](const auto& x1, const auto& x2) { return stan::math::subtract(x1, x2); };
+  auto f = [](const auto& x1, const auto& x2) {
+    return stan::math::subtract(x1, x2);
+  };
   stan::test::ad_tolerances tols;
   tols.hessian_hessian_ = 1e-1;
   tols.hessian_fvar_hessian_ = 1e-1;
@@ -77,8 +78,9 @@ TEST(mathMixCore, operatorSubtractionMatrixZeroSize) {
 }
 
 TEST(mathMixCore, operatorSubtractionMatrixNormal) {
-  auto f
-      = [](const auto& x1, const auto& x2) { return stan::math::subtract(x1, x2); };
+  auto f = [](const auto& x1, const auto& x2) {
+    return stan::math::subtract(x1, x2);
+  };
   stan::test::ad_tolerances tols;
   tols.hessian_hessian_ = 1e-1;
   tols.hessian_fvar_hessian_ = 1e-1;
@@ -111,8 +113,9 @@ TEST(mathMixCore, operatorSubtractionMatrixNormal) {
 }
 
 TEST(mathMixCore, operatorSubtractionMatrixFailures) {
-  auto f
-      = [](const auto& x1, const auto& x2) { return stan::math::subtract(x1, x2); };
+  auto f = [](const auto& x1, const auto& x2) {
+    return stan::math::subtract(x1, x2);
+  };
   stan::test::ad_tolerances tols;
   tols.hessian_hessian_ = 1e-1;
   tols.hessian_fvar_hessian_ = 1e-1;

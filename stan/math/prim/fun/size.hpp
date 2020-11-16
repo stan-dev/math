@@ -34,7 +34,6 @@ inline size_t size(const T& m) {
   return m.size();
 }
 
-
 }  // namespace math
 }  // namespace stan
 #endif
