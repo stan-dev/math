@@ -132,9 +132,9 @@ inline auto subtract(const VarMat1& a, const VarMat2& b) {
   check_matching_dims("subtract", "a", a, "b", b);
   using op_ret_type = decltype(a.val() - b.val());
   using ret_type = promote_var_matrix_t<op_ret_type, VarMat1, VarMat2>;
-  arena_t<ret_type> ret((a.val() - b.val()));
   arena_t<VarMat1> arena_a = a;
   arena_t<VarMat2> arena_b = b;
+  arena_t<ret_type> ret((arena_a.val() - arena_b.val()));
   reverse_pass_callback([ret, arena_a, arena_b]() mutable {
     for (Eigen::Index i = 0; i < ret.size(); ++i) {
       const auto ret_adj = ret.adj().coeffRef(i);
@@ -165,7 +165,7 @@ inline auto subtract(const VarMat& a, const Arith& b) {
       (a.val().array() - as_array_or_scalar(b)).matrix())>;
   using ret_type = promote_var_matrix_t<op_ret_type, VarMat>;
   arena_t<VarMat> arena_a = a;
-  arena_t<ret_type> ret(a.val().array() - as_array_or_scalar(b));
+  arena_t<ret_type> ret(arena_a.val().array() - as_array_or_scalar(b));
   reverse_pass_callback(
       [ret, arena_a]() mutable { arena_a.adj() += ret.adj(); });
   return ret_type(ret);
@@ -191,7 +191,7 @@ inline auto subtract(const Arith& a, const VarMat& b) {
       (as_array_or_scalar(a) - b.val().array()).matrix())>;
   using ret_type = promote_var_matrix_t<op_ret_type, VarMat>;
   arena_t<VarMat> arena_b = b;
-  arena_t<ret_type> ret(as_array_or_scalar(a) - b.val().array());
+  arena_t<ret_type> ret(as_array_or_scalar(a) - arena_b.val().array());
   reverse_pass_callback(
       [ret, arena_b]() mutable { arena_b.adj() -= ret.adj_op(); });
   return ret_type(ret);
@@ -250,7 +250,7 @@ template <typename Var, typename VarMat,
           require_rev_matrix_t<VarMat>* = nullptr>
 inline auto subtract(const Var& a, const VarMat& b) {
   arena_t<VarMat> arena_b(b);
-  arena_t<VarMat> ret(a.val() - b.val().array());
+  arena_t<VarMat> ret(a.val() - arena_b.val().array());
   reverse_pass_callback([ret, a, arena_b]() mutable {
     for (Eigen::Index i = 0; i < ret.size(); ++i) {
       auto ret_adj = ret.adj().coeff(i);
@@ -276,7 +276,7 @@ template <typename Var, typename VarMat,
           require_var_vt<std::is_arithmetic, Var>* = nullptr>
 inline auto subtract(const VarMat& a, const Var& b) {
   arena_t<VarMat> arena_a(a);
-  arena_t<VarMat> ret(a.val().array() - b.val());
+  arena_t<VarMat> ret(arena_a.val().array() - b.val());
   reverse_pass_callback([ret, b, arena_a]() mutable {
     for (Eigen::Index i = 0; i < ret.size(); ++i) {
       const auto ret_adj = ret.adj().coeff(i);
