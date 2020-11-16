@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_FUN_READ_VAR_HPP
-#define STAN_MATH_REV_FUN_READ_VAR_HPP
+#ifndef STAN_MATH_REV_CORE_READ_VAR_HPP
+#define STAN_MATH_REV_CORE_READ_VAR_HPP
 
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/rev/core/var.hpp>
