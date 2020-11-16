@@ -289,6 +289,11 @@ inline var quad_form(const EigMat& A, const ColVec& B, bool symmetric = false) {
  * Symmetry of the resulting matrix is not guaranteed due to numerical
  * precision.
  *
+ * This overload handles arguments where one of Mat1 or Mat2 are
+ * `var_value<T>` where `T` is an Eigen type. The other type can
+ * also be a `var_value` or it can be a matrix type that inherits
+ * from EigenBase
+ *
  * @tparam Mat1 type of the first (square) matrix
  * @tparam Mat2 type of the second matrix
  *
@@ -309,6 +314,11 @@ inline auto quad_form(const Mat1& A, const Mat2& B, bool symmetric = false) {
 
 /**
  * Return the quadratic form \f$ B^T A B \f$.
+ *
+ * This overload handles arguments where one of Mat or Vec are
+ * `var_value<T>` where `T` is an Eigen type. The other type can
+ * also be a `var_value`, or it can be a type that inherits from
+ * EigenBase
  *
  * @tparam Mat type of the matrix
  * @tparam Vec type of the vector

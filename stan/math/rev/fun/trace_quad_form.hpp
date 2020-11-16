@@ -98,6 +98,11 @@ inline return_type_t<EigMat1, EigMat2> trace_quad_form(const EigMat1& A,
 /**
  * Compute trace(B^T A B).
  *
+ * This overload handles arguments where one of Mat1 or Mat2 are
+ * `var_value<T>` where `T` is an Eigen type. The other type can
+ * also be a `var_value` or it can be a type that inherits
+ * from EigenBase
+ *
  * @tparam Mat1 type of the first matrix
  * @tparam Mat2 type of the second matrix
  *
