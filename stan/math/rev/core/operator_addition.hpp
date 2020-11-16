@@ -267,7 +267,7 @@ inline auto add(const T1& a, const T2& b) {
 }
 
 /**
- * Addition operator for matrix variables (C++).
+ * Addition operator for matrix variables.
  *
  * @tparam VarMat1 A matrix of vars or a var with an underlying matrix type.
  * @tparam VarMat2 A matrix of vars or a var with an underlying matrix type.
