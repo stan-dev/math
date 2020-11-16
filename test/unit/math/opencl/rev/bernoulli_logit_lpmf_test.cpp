@@ -64,32 +64,13 @@ TEST(ProbDistributionsBernoulliLogit, opencl_broadcast_n) {
   int N = 3;
 
   int n = 1;
-  std::vector<int> n_vec{n, n, n};
   Eigen::VectorXd theta(N);
   theta << 0.3, 0.8, 1.0;
 
-  stan::math::matrix_cl<int> n_vec_cl(n_vec);
-  stan::math::matrix_cl<double> theta_cl(theta);
-
-  EXPECT_NEAR_REL(stan::math::bernoulli_logit_lpmf(n, theta_cl),
-                  stan::math::bernoulli_logit_lpmf(n_vec_cl, theta_cl));
-  EXPECT_NEAR_REL(stan::math::bernoulli_logit_lpmf<true>(n, theta_cl),
-                  stan::math::bernoulli_logit_lpmf<true>(n_vec_cl, theta_cl));
-
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> theta_var1 = theta;
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> theta_var2 = theta;
-  auto theta_var1_cl = stan::math::to_matrix_cl(theta_var1);
-  auto theta_var2_cl = stan::math::to_matrix_cl(theta_var2);
-
-  stan::math::var res1 = stan::math::bernoulli_logit_lpmf(n, theta_var1_cl);
-  stan::math::var res2
-      = stan::math::bernoulli_logit_lpmf(n_vec_cl, theta_var2_cl);
-
-  (res1 + res2).grad();
-
-  EXPECT_NEAR_REL(res1.val(), res2.val());
-
-  EXPECT_NEAR_REL(theta_var1.adj().eval(), theta_var2.adj().eval());
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      bernoulli_logit_lpmf_functor, n, theta);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      bernoulli_logit_lpmf_functor_propto, n, theta);
 }
 
 TEST(ProbDistributionsBernoulliLogit, opencl_broadcast_theta) {
@@ -97,31 +78,11 @@ TEST(ProbDistributionsBernoulliLogit, opencl_broadcast_theta) {
 
   std::vector<int> n{0, 1, 0};
   double theta = 0.4;
-  Eigen::VectorXd theta_vec(N);
-  theta_vec << theta, theta, theta;
 
-  stan::math::matrix_cl<int> n_cl(n);
-  stan::math::matrix_cl<double> theta_vec_cl(theta_vec);
-
-  EXPECT_NEAR_REL(stan::math::bernoulli_logit_lpmf(n_cl, theta),
-                  stan::math::bernoulli_logit_lpmf(n_cl, theta_vec_cl));
-  EXPECT_NEAR_REL(stan::math::bernoulli_logit_lpmf<true>(n_cl, theta),
-                  stan::math::bernoulli_logit_lpmf<true>(n_cl, theta_vec_cl));
-
-  stan::math::var theta_var1 = theta;
-  stan::math::var theta_var2 = theta;
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> theta_var2_vec(N);
-  theta_var2_vec << theta_var2, theta_var2, theta_var2;
-  auto theta_var2_cl = stan::math::to_matrix_cl(theta_var2_vec);
-
-  stan::math::var res1 = stan::math::bernoulli_logit_lpmf(n_cl, theta_var1);
-  stan::math::var res2 = stan::math::bernoulli_logit_lpmf(n_cl, theta_var2_cl);
-
-  (res1 + res2).grad();
-
-  EXPECT_NEAR_REL(res1.val(), res2.val());
-
-  EXPECT_NEAR_REL(theta_var1.adj(), theta_var2.adj());
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
+      bernoulli_logit_lpmf_functor, n, theta);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
+      bernoulli_logit_lpmf_functor_propto, n, theta);
 }
 
 TEST(ProbDistributionsBernoulliLogit, opencl_matches_cpu_big) {
