@@ -82,7 +82,7 @@ pipeline {
                 }
             }
         }
-        /*stage("Clang-format") {
+        stage("Clang-format") {
             agent any
             steps {
                 sh "printenv"
@@ -156,7 +156,7 @@ pipeline {
                     deleteDir()
                 }
             }
-        }*/
+        }
         stage('Verify changes') {
             agent { label 'linux' }
             steps {
