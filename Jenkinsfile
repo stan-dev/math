@@ -222,7 +222,7 @@ pipeline {
                     !skipRemainingStages
                 }
             }
-            failFast true
+            failFast false
             parallel {
                 /*stage('MPI tests') {
                     agent { label 'linux && mpi' }

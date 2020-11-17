@@ -292,7 +292,7 @@ template <std::size_t I, typename Functor, typename... Args,
               std::tuple_element_t<I, std::tuple<Args...>>>* = nullptr>
 void test_opencl_broadcasting_prim_rev(const Functor& functor,
                                        const Args&... args) {
-  for (int i = 0; i < 100; i++) {
+  for (int i = 0; i < 10; i++) {
     internal::test_opencl_broadcasting_prim_rev_impl<I>(
         functor, std::make_index_sequence<sizeof...(args)>{}, args...);
     recover_memory();
