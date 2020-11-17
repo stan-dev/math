@@ -29,11 +29,7 @@ matrix_power(const EigMat& M, const int n) {
   constexpr int C = EigMat::ColsAtCompileTime;
 
   check_square("matrix_power", "M", M);
-  if (n < 0)
-    invalid_argument("matrix_power", "n", n, "is ", ", but must be >= 0!");
-  if (M.rows() == 0)
-    invalid_argument("matrix_power", "M.rows()", M.rows(), "is ",
-                     ", but must be > 0!");
+  check_nonnegative("matrix_power", "n", n);
   Eigen::Matrix<T, R, C> MM = M;
   check_finite("matrix_power", "M", MM);
   if (n == 0)

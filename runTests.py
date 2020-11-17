@@ -72,6 +72,9 @@ def processCLIArgs():
         "-j", metavar="N", type=int, default=1, help="number of cores for make to use"
     )
 
+    parser.add_argument(
+        "-e", metavar="M", type=int, default=-1, help="number of files to split expressions tests in"
+    )
     tests_help_msg = "The path(s) to the test case(s) to run.\n"
     tests_help_msg += "Example: 'test/unit', 'test/prob', and/or\n"
     tests_help_msg += "         'test/unit/math/prim/fun/abs_test.cpp'"
@@ -269,10 +272,7 @@ def batched(tests):
     return [tests[i : i + batchSize] for i in range(0, len(tests), batchSize)]
 
 
-def handleExpressionTests(tests, only_functions, j):
-    # for debugging we want single file, otherwise a large number to
-    # better distribute the compiling workload
-    n_test_files = 1 if j == 1 else 2 * j
+def handleExpressionTests(tests, only_functions, n_test_files):
     expression_tests = False
     for n, i in list(enumerate(tests))[::-1]:
         if "test/expressions" in i or "test\\expressions" in i:
@@ -327,7 +327,14 @@ def main():
     if inputs.do_jumbo:
         jumboFiles = generateJumboTests(tests)
 
-    handleExpressionTests(tests, inputs.only_functions, inputs.j)
+    if inputs.e == -1:
+        if inputs.j == 1:
+            num_expr_test_files = 1
+        else:
+            num_expr_test_files = inputs.j * 4
+    else:
+        num_expr_test_files = inputs.e
+    handleExpressionTests(tests, inputs.only_functions, num_expr_test_files)
 
     tests = findTests(inputs.tests, inputs.f, inputs.do_jumbo)
 
