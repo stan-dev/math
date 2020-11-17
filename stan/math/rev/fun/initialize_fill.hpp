@@ -24,7 +24,6 @@ namespace math {
 template <typename VarMat, typename S, require_var_matrix_t<VarMat>* = nullptr,
           require_stan_scalar_t<S>* = nullptr>
 inline void initialize_fill(VarMat& x, const S& y) {
-  arena_t<plain_type_t<value_type_t<VarMat>>> prev_vals = x.val().eval();
   x.vi_->val_.fill(value_of(y));
 }
 
