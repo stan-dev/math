@@ -168,13 +168,15 @@ pipeline {
                     def paths = ['stan', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format'].join(" ")
                     skipRemainingStages = utils.verifyChanges(paths)
 
-                    if(!utils.verifyChanges(["stan/math/opencl", "test/unit/math/opencl"].join(" ")) || params.gpu_async){
+					runGpuAsync = true
+					openClGpuLabel = "gpu-no-async"
+                    /*if(!utils.verifyChanges(["stan/math/opencl", "test/unit/math/opencl"].join(" ")) || params.gpu_async){
                         runGpuAsync = true
                         openClGpuLabel = "gpu-no-async"
                     }
                     else{
                         runGpuAsync = false
-                    }
+                    }*/
                 }
             }
         }
