@@ -30,10 +30,10 @@ var sd_impl(const T_map& x) {
   using T_vi = promote_scalar_t<vari*, T_map>;
   using T_d = promote_scalar_t<double, T_map>;
 
-  if(x.size() == 1) {
+  if (x.size() == 1) {
     return 0.0;
   }
-  
+
   vari** varis
       = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
   double* partials
@@ -67,7 +67,7 @@ var sd_impl(const T_map& x) {
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 var sd_impl(const T& x) {
-  if(x.size() == 1) {
+  if (x.size() == 1) {
     return 0.0;
   }
 

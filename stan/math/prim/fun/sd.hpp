@@ -29,7 +29,7 @@ inline auto sd(const T& m) {
   return apply_vector_unary<T>::reduce(m, [](const auto& x) {
     check_nonzero_size("sd", "x", x);
 
-    if(x.size() == 1) {
+    if (x.size() == 1) {
       return scalar_type_t<T>(0.0);
     }
 

@@ -14,9 +14,9 @@ void expect_sd(const T& m, const stan::test::ad_tolerances& tols
     s[i] = m(i);
   }
 
-  std::vector<Eigen::VectorXd> sv = { v, v };
-  std::vector<Eigen::VectorXd> srv = { rv, rv };
-  std::vector<Eigen::MatrixXd> sm = { m, m };
+  std::vector<Eigen::VectorXd> sv = {v, v};
+  std::vector<Eigen::VectorXd> srv = {rv, rv};
+  std::vector<Eigen::MatrixXd> sm = {m, m};
 
   stan::test::expect_ad(tols, f, v);
   stan::test::expect_ad(tols, f, rv);

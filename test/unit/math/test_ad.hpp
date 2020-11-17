@@ -1446,12 +1446,13 @@ template <typename T1, typename T2,
           require_all_std_vector_st<is_var, T1, T2>* = nullptr>
 void expect_near_rel_var(const std::string& message, T1&& x, T2&& y,
                          const ad_tolerances& tols) {
-  stan::math::check_size_match("expect_near_rel_var", "x", x.size(), "y", y.size());
-  for(size_t i = 0; i < x.size(); ++i) {
+  stan::math::check_size_match("expect_near_rel_var", "x", x.size(), "y",
+                               y.size());
+  for (size_t i = 0; i < x.size(); ++i) {
     expect_near_rel(message + std::string(" values"), x[i].val(), y[i].val(),
-		    tols.gradient_val_);
+                    tols.gradient_val_);
     expect_near_rel(message + std::string(" adjoints"), x[i].adj(), y[i].adj(),
-		    tols.gradient_grad_varmat_matvar_);
+                    tols.gradient_grad_varmat_matvar_);
   }
 }
 
@@ -1462,9 +1463,8 @@ void expect_near_rel_var(const std::string& message, T1&& x, T2&& y,
  * @param x A `var_value` whose values and adjoints are compared against `y`s
  * @param y A `var_value` whose values and adjoints are compared against `x`s
  */
-template <typename T1, typename T2,
-          require_all_st_var<T1, T2>* = nullptr,
-	  require_all_not_std_vector_t<T1, T2>* = nullptr>
+template <typename T1, typename T2, require_all_st_var<T1, T2>* = nullptr,
+          require_all_not_std_vector_t<T1, T2>* = nullptr>
 void expect_near_rel_var(const std::string& message, T1&& x, T2&& y,
                          const ad_tolerances& tols) {
   expect_near_rel(message + std::string(" values"), x.val(), y.val(),
@@ -1480,9 +1480,8 @@ void expect_near_rel_var(const std::string& message, T1&& x, T2&& y,
  * @param x A `var_value` whose values and adjoints are compared against `y`s
  * @param y A `var_value` whose values and adjoints are compared against `x`s
  */
-template <
-    typename T1, typename T2,
-    require_all_st_arithmetic<T1, T2>* = nullptr>
+template <typename T1, typename T2,
+          require_all_st_arithmetic<T1, T2>* = nullptr>
 void expect_near_rel_var(const std::string& message, T1&& x, T2&& y,
                          const ad_tolerances& tols) {
   expect_near_rel(message + std::string(" doubles"), x, y, tols.gradient_val_);
@@ -1600,9 +1599,8 @@ inline void test_matvar_gradient(const ad_tolerances& tols,
  * @param A_vm_f The result of a function from applying `A_vm`
  */
 template <typename ResultMatVar, typename ResultVarMat, typename MatVar,
-          typename VarMat,
-	  require_std_vector_t<ResultMatVar>* = nullptr,
-	  require_std_vector_t<ResultVarMat>* = nullptr>
+          typename VarMat, require_std_vector_t<ResultMatVar>* = nullptr,
+          require_std_vector_t<ResultVarMat>* = nullptr>
 inline void test_matvar_gradient(const ad_tolerances& tols,
                                  ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
                                  const MatVar& A_mv, const VarMat& A_vm) {
@@ -1743,8 +1741,8 @@ void expect_ad_matvar_v(const ad_tolerances& tols, const F& f,
   var_mat A_vm = x;
   plain_type_t<decltype(f(A_vm))> A_vm_f;
   // Check return type is correct
-  //check_return_type(A_mv_f, A_mv);
-  //check_return_type(A_vm_f, A_vm);
+  // check_return_type(A_mv_f, A_mv);
+  // check_return_type(A_vm_f, A_vm);
   // If one throws, the other should throw as well
   try {
     A_mv_f = f(A_mv);
@@ -1800,12 +1798,12 @@ void expect_ad_matvar_v(const ad_tolerances& tols, const F& f,
   using vec_mat_var = std::vector<promote_scalar_t<var, EigMat>>;
   using vec_var_mat = std::vector<var_value<plain_type_t<EigMat>>>;
   vec_mat_var A_mv;
-  for(auto xi : x) {
+  for (auto xi : x) {
     A_mv.push_back(xi);
   }
   plain_type_t<decltype(f(A_mv))> A_mv_f;
   vec_var_mat A_vm;
-  for(auto xi : x) {
+  for (auto xi : x) {
     A_vm.push_back(xi);
   }
   plain_type_t<decltype(f(A_vm))> A_vm_f;
@@ -1837,7 +1835,7 @@ void expect_ad_matvar_v(const ad_tolerances& tols, const F& f,
       return;
     }
   }
-  for(size_t i = 0; i < x.size(); ++i) {
+  for (size_t i = 0; i < x.size(); ++i) {
     if (!x[i].allFinite()) {
       return;
     }
@@ -2026,7 +2024,8 @@ void expect_ad_matvar(const F& f, const std::vector<EigMat>& x) {
 }
 
 template <typename F, typename EigMat>
-void expect_ad_matvar(const ad_tolerances& tols, const F& f, const std::vector<EigMat>& x) {
+void expect_ad_matvar(const ad_tolerances& tols, const F& f,
+                      const std::vector<EigMat>& x) {
   expect_ad_matvar_v(tols, f, x);
 }
 
