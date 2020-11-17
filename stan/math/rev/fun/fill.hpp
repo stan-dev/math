@@ -25,16 +25,11 @@ template <typename VarMat, typename S, require_var_matrix_t<VarMat>* = nullptr,
 inline void fill(VarMat& x, const S& y) {
   arena_t<plain_type_t<value_type_t<VarMat>>> prev_vals = x.val().eval();
   x.vi_->val_.fill(y.val());
-  if (!is_nan(y)) {
-    reverse_pass_callback([x, y, prev_vals]() mutable {
-      x.vi_->val_ = prev_vals;
-      y.adj() += x.adj().sum();
-      x.adj().setZero();
-    });
-  } else {
-    reverse_pass_callback(
-        [x, y, prev_vals]() mutable { x.vi_->val_ = prev_vals; });
-  }
+  reverse_pass_callback([x, y, prev_vals]() mutable {
+    x.vi_->val_ = prev_vals;
+    y.adj() += x.adj().sum();
+    x.adj().setZero();
+  });
 }
 
 /**
