@@ -1741,8 +1741,8 @@ void expect_ad_matvar_v(const ad_tolerances& tols, const F& f,
   var_mat A_vm = x;
   plain_type_t<decltype(f(A_vm))> A_vm_f;
   // Check return type is correct
-  // check_return_type(A_mv_f, A_mv);
-  // check_return_type(A_vm_f, A_vm);
+  check_return_type(A_mv_f, A_mv);
+  check_return_type(A_vm_f, A_vm);
   // If one throws, the other should throw as well
   try {
     A_mv_f = f(A_mv);
