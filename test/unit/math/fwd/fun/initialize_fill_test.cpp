@@ -5,8 +5,8 @@
 TEST(AgradFwdMatrixinitialize_fill, fd) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::math::initialize_fill;
   using stan::math::fvar;
+  using stan::math::initialize_fill;
   using std::vector;
 
   fvar<double> x;
@@ -46,8 +46,8 @@ TEST(AgradFwdMatrixinitialize_fill, fd) {
 TEST(AgradFwdMatrixinitialize_fill, fd2) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::math::initialize_fill;
   using stan::math::fvar;
+  using stan::math::initialize_fill;
   Matrix<fvar<double>, Dynamic, 1> y(3);
   initialize_fill(y, 3.0);
   EXPECT_EQ(3, y.size());
@@ -57,8 +57,8 @@ TEST(AgradFwdMatrixinitialize_fill, fd2) {
 TEST(AgradFwdMatrixinitialize_fill, ffd) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::math::initialize_fill;
   using stan::math::fvar;
+  using stan::math::initialize_fill;
   using std::vector;
 
   fvar<fvar<double> > x;
@@ -98,8 +98,8 @@ TEST(AgradFwdMatrixinitialize_fill, ffd) {
 TEST(AgradFwdMatrixinitialize_fill, ffd2) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::math::initialize_fill;
   using stan::math::fvar;
+  using stan::math::initialize_fill;
   Matrix<fvar<fvar<double> >, Dynamic, 1> y(3);
   initialize_fill(y, 3.0);
   EXPECT_EQ(3, y.size());
