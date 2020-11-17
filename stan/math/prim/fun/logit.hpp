@@ -105,7 +105,7 @@ template <typename Container,
 inline auto logit(const Container& x) {
   return make_holder(
       [](const auto& v_ref) {
-        return apply_vector_unary<Container>::apply(v_ref, [](const auto& v) {
+        return apply_vector_unary<ref_type_t<Container>>::apply(v_ref, [](const auto& v) {
           return (v.array() / (1 - v.array())).log();
         });
       },

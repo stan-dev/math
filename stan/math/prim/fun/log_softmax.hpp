@@ -44,7 +44,7 @@ inline auto log_softmax(const Container& x) {
   check_nonzero_size("log_softmax", "v", x);
   return make_holder(
       [](const auto& a) {
-        return apply_vector_unary<Container>::apply(
+        return apply_vector_unary<ref_type_t<Container>>::apply(
             a, [](const auto& v) { return v.array() - log_sum_exp(v); });
       },
       to_ref(x));
