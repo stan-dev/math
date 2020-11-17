@@ -207,17 +207,23 @@ void test_opencl_broadcasting_prim_rev_impl(const Functor& functor,
   prim_rev_argument_combinations(
       [&functor, N = std::max({rows(args)...})](const auto& args_broadcast,
                                                 const auto& args_vector) {
+        std::cout << "entering compare_cpu_opencl_prim_rev_impl lambda"
+                  << std::endl;
         auto res_scalar
             = functor(opencl_argument(std::get<Is>(args_broadcast))...);
+        std::cout << "after scalar run" << std::endl;
         auto res_vec = functor(opencl_argument(
             to_vector_if<Is == I>(std::get<Is>(args_vector), N))...);
+        std::cout << "after vector run" << std::endl;
         std::string signature = type_name<decltype(args_broadcast)>().data();
         expect_eq(res_vec, res_scalar,
                   ("return values of broadcast and vector arguments do not "
                    "match for signature "
                    + signature + "!")
                       .c_str());
+        std::cout << "after val check" << std::endl;
         var(recursive_sum(res_scalar) + recursive_sum(res_vec)).grad();
+        std::cout << "after grad" << std::endl;
 
         static_cast<void>(std::initializer_list<int>{
             (expect_adj_near(
@@ -227,8 +233,11 @@ void test_opencl_broadcasting_prim_rev_impl(const Functor& functor,
                   + std::to_string(Is) + " for signature " + signature + "!")
                      .c_str()),
              0)...});
+        std::cout << "after adjoint check" << std::endl;
 
         set_zero_all_adjoints();
+        std::cout << "exiting compare_cpu_opencl_prim_rev_impl lambda"
+                  << std::endl;
       },
       args...);
 }
