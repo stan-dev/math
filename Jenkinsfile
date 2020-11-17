@@ -82,7 +82,7 @@ pipeline {
                 }
             }
         }
-        stage("Clang-format") {
+        /*stage("Clang-format") {
             agent any
             steps {
                 sh "printenv"
@@ -156,7 +156,7 @@ pipeline {
                     deleteDir()
                 }
             }
-        }
+        }*/
         stage('Verify changes') {
             agent { label 'linux' }
             steps {
@@ -178,7 +178,7 @@ pipeline {
                 }
             }
         }
-        stage('Headers check') {
+        /*stage('Headers check') {
             when {
                 expression {
                     !skipRemainingStages
@@ -213,7 +213,7 @@ pipeline {
                 }
             }
             post { always { retry(3) { deleteDir() } } }
-        }
+        }*/
         stage('Always-run tests') {
             when {
                 expression {
@@ -222,7 +222,7 @@ pipeline {
             }
             failFast true
             parallel {
-                stage('MPI tests') {
+                /*stage('MPI tests') {
                     agent { label 'linux && mpi' }
                     steps {
                         deleteDir()
@@ -234,7 +234,7 @@ pipeline {
                         runTests("test/unit/math/rev/functor")
                     }
                     post { always { retry(3) { deleteDir() } } }
-                }
+                }*/
                 stage('OpenCL tests') {
                     agent { label openClGpuLabel }
                     steps {
@@ -279,7 +279,7 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                stage('Distribution tests') {
+                /*stage('Distribution tests') {
                     agent { label "distribution-tests" }
                     steps {
                         deleteDir()
@@ -349,10 +349,10 @@ pipeline {
                         bat "mingw32-make.exe -f make/standalone math-libs"
                         runTestsWin("test/unit", false, true)
                     }
-                }
+                }*/
             }
         }
-        stage('Upstream tests') {
+        /*stage('Upstream tests') {
             when {
                 allOf {
                     expression {
@@ -393,7 +393,7 @@ pipeline {
                 }
             }
             post { always { deleteDir() } }
-        }
+        }*/
     }
     post {
         always {
