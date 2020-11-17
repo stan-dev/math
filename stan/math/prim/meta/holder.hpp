@@ -281,8 +281,9 @@ auto holder_handle_element(T&& a, std::remove_reference_t<T>*& res) {
  * @return tuple of pointers allocated on heap (containing single pointer).
  */
 template <typename T, require_t<std::is_rvalue_reference<T&&>>* = nullptr,
-          std::enable_if_t<Eigen::internal::traits<std::decay_t<T>>::Flags
-                           & Eigen::NestByRefBit>* = nullptr>
+          std::enable_if_t<
+              static_cast<bool>(Eigen::internal::traits<std::decay_t<T>>::Flags&
+                                    Eigen::NestByRefBit)>* = nullptr>
 auto holder_handle_element(T&& a, T*& res) {
   res = new T(std::move(a));
   return std::make_tuple(res);
