@@ -12,7 +12,7 @@ namespace stan {
 namespace math {
 
 /**
- * Subtraction operator for variables (C++).
+ * Subtraction operator for variables.
  *
  * The partial derivatives are defined by
  *
@@ -54,7 +54,7 @@ namespace math {
 inline var operator-(const var& a, const var& b) {
   return make_callback_vari(a.vi_->val_ - b.vi_->val_,
                             [avi = a.vi_, bvi = b.vi_](const auto& vi) mutable {
-                              if (unlikely(is_any_nan(avi->val_, bvi->val_))) {
+                              if (unlikely(is_nan(vi.val_))) {
                                 avi->adj_ = NOT_A_NUMBER;
                                 bvi->adj_ = NOT_A_NUMBER;
                               } else {
@@ -65,7 +65,7 @@ inline var operator-(const var& a, const var& b) {
 }
 
 /**
- * Subtraction operator for variable and scalar (C++).
+ * Subtraction operator for variable and scalar.
  *
  * The derivative for the variable is
  *
@@ -84,7 +84,7 @@ inline var operator-(const var& a, Arith b) {
   }
   return make_callback_vari(a.vi_->val_ - b,
                             [avi = a.vi_, b](const auto& vi) mutable {
-                              if (unlikely(is_any_nan(avi->val_, b))) {
+                              if (unlikely(is_nan(vi.val_))) {
                                 avi->adj_ = NOT_A_NUMBER;
                               } else {
                                 avi->adj_ += vi.adj_;
@@ -93,7 +93,7 @@ inline var operator-(const var& a, Arith b) {
 }
 
 /**
- * Subtraction operator for scalar and variable (C++).
+ * Subtraction operator for scalar and variable.
  *
  * The derivative for the variable is
  *
@@ -109,7 +109,7 @@ template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline var operator-(Arith a, const var& b) {
   return make_callback_vari(a - b.vi_->val_,
                             [bvi = b.vi_, a](const auto& vi) mutable {
-                              if (unlikely(is_any_nan(a, bvi->val_))) {
+                              if (unlikely(is_nan(vi.val_))) {
                                 bvi->adj_ = NOT_A_NUMBER;
                               } else {
                                 bvi->adj_ -= vi.adj_;
@@ -118,7 +118,7 @@ inline var operator-(Arith a, const var& b) {
 }
 
 /**
- * Subtraction operator for matrix variables (C++).
+ * Subtraction operator for matrix variables.
  *
  * @tparam VarMat1 A matrix of vars or a var with an underlying matrix type.
  * @tparam VarMat2 A matrix of vars or a var with an underlying matrix type.
@@ -146,7 +146,7 @@ inline auto subtract(const VarMat1& a, const VarMat2& b) {
 }
 
 /**
- * Subtraction operator for a matrix variable and arithmetic (C++).
+ * Subtraction operator for a matrix variable and arithmetic.
  *
  * @tparam VarMat A matrix of vars or a var with an underlying matrix type.
  * @tparam Arith A type with an arithmetic Scalar type.
@@ -172,7 +172,7 @@ inline auto subtract(const VarMat& a, const Arith& b) {
 }
 
 /**
- * Subtraction operator for an arithmetic type and matrix variable (C++).
+ * Subtraction operator for an arithmetic type and matrix variable.
  *
  * @tparam VarMat A matrix of vars or a var with an underlying matrix type.
  * @tparam Arith A type with an arithmetic Scalar type.
@@ -198,7 +198,7 @@ inline auto subtract(const Arith& a, const VarMat& b) {
 }
 
 /**
- * Subtraction operator for an arithmetic matrix and variable (C++).
+ * Subtraction operator for an arithmetic matrix and variable.
  *
  * @tparam Var A `var_value` with an underlying arithmetic type.
  * @tparam EigMat An Eigen Matrix type with an arithmetic Scalar type.
@@ -217,7 +217,7 @@ inline auto subtract(const Var& a, const EigMat& b) {
 }
 
 /**
- * Subtraction operator for a variable and arithmetic matrix (C++).
+ * Subtraction operator for a variable and arithmetic matrix.
  *
  * @tparam EigMat An Eigen Matrix type with an arithmetic Scalar type.
  * @tparam Var A `var_value` with an underlying arithmetic type.
@@ -236,7 +236,7 @@ inline auto subtract(const EigMat& a, const Var& b) {
 }
 
 /**
- * Subtraction operator for a variable and variable matrix (C++).
+ * Subtraction operator for a variable and variable matrix.
  *
  * @tparam VarMat An Eigen Matrix type with a variable Scalar type or a
  * `var_value` with an underlying matrix type.
@@ -262,7 +262,7 @@ inline auto subtract(const Var& a, const VarMat& b) {
 }
 
 /**
- * Subtraction operator for a variable matrix and variable (C++).
+ * Subtraction operator for a variable matrix and variable.
  *
  * @tparam VarMat An Eigen Matrix type with a variable Scalar type or a
  * `var_value` with an underlying matrix type.
@@ -301,7 +301,7 @@ inline auto subtract(const T1& a, const T2& b) {
 }
 
 /**
- * Addition operator for matrix variables (C++).
+ * Addition operator for matrix variables.
  *
  * @tparam VarMat1 A matrix of vars or a var with an underlying matrix type.
  * @tparam VarMat2 A matrix of vars or a var with an underlying matrix type.
