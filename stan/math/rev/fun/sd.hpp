@@ -29,6 +29,11 @@ var sd_impl(const T_map& x) {
   using std::sqrt;
   using T_vi = promote_scalar_t<vari*, T_map>;
   using T_d = promote_scalar_t<double, T_map>;
+
+  if(x.size() == 1) {
+    return 0.0;
+  }
+  
   vari** varis
       = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
   double* partials
@@ -62,6 +67,10 @@ var sd_impl(const T_map& x) {
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 var sd_impl(const T& x) {
+  if(x.size() == 1) {
+    return 0.0;
+  }
+
   auto arena_diff = to_arena((x.val().array() - x.val().mean()).matrix());
   double sum_of_squares = arena_diff.squaredNorm();
   double sd = std::sqrt(sum_of_squares / (x.size() - 1));
@@ -86,15 +95,12 @@ var sd_impl(const T& x) {
  * @throw domain error  size is not greater than zero.
  */
 template <typename T, require_container_st<is_var, T>* = nullptr>
-var sd(const T& m) {
-  check_nonzero_size("sd", "m", m);
+auto sd(const T& m) {
+  return apply_vector_unary<T>::reduce(m, [](const auto& x) {
+    check_nonzero_size("sd", "x", x);
 
-  if (m.size() == 1) {
-    return 0;
-  }
-
-  return apply_vector_unary<T>::reduce(
-      m, [](const auto& dtrs_map) { return internal::sd_impl(dtrs_map); });
+    return internal::sd_impl(x);
+  });
 }
 
 }  // namespace math

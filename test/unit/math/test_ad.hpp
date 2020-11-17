@@ -1435,6 +1435,27 @@ void expect_ad_vectorized_binary(const F& f, const T1& x, const T2& y) {
 }
 
 /**
+ * Runs `expect_near_rel` over the values and adjoints of
+ *  `std::vector<var_value<T>>` types.
+ * @tparam T1 A `var_value` with any template parameter
+ * @tparam T2 A `var_value` with any template parameter
+ * @param x A `var_value` whose values and adjoints are compared against `y`s
+ * @param y A `var_value` whose values and adjoints are compared against `x`s
+ */
+template <typename T1, typename T2,
+          require_all_std_vector_st<is_var, T1, T2>* = nullptr>
+void expect_near_rel_var(const std::string& message, T1&& x, T2&& y,
+                         const ad_tolerances& tols) {
+  stan::math::check_size_match("expect_near_rel_var", "x", x.size(), "y", y.size());
+  for(size_t i = 0; i < x.size(); ++i) {
+    expect_near_rel(message + std::string(" values"), x[i].val(), y[i].val(),
+		    tols.gradient_val_);
+    expect_near_rel(message + std::string(" adjoints"), x[i].adj(), y[i].adj(),
+		    tols.gradient_grad_varmat_matvar_);
+  }
+}
+
+/**
  * Runs `expect_near_rel` over the values and adjoints of `var_value` types.
  * @tparam T1 A `var_value` with any template parameter
  * @tparam T2 A `var_value` with any template parameter
@@ -1442,7 +1463,8 @@ void expect_ad_vectorized_binary(const F& f, const T1& x, const T2& y) {
  * @param y A `var_value` whose values and adjoints are compared against `x`s
  */
 template <typename T1, typename T2,
-          require_all_var_t<scalar_type_t<T1>, scalar_type_t<T2>>* = nullptr>
+          require_all_st_var<T1, T2>* = nullptr,
+	  require_all_not_std_vector_t<T1, T2>* = nullptr>
 void expect_near_rel_var(const std::string& message, T1&& x, T2&& y,
                          const ad_tolerances& tols) {
   expect_near_rel(message + std::string(" values"), x.val(), y.val(),
@@ -1460,7 +1482,7 @@ void expect_near_rel_var(const std::string& message, T1&& x, T2&& y,
  */
 template <
     typename T1, typename T2,
-    require_all_arithmetic_t<scalar_type_t<T1>, scalar_type_t<T2>>* = nullptr>
+    require_all_st_arithmetic<T1, T2>* = nullptr>
 void expect_near_rel_var(const std::string& message, T1&& x, T2&& y,
                          const ad_tolerances& tols) {
   expect_near_rel(message + std::string(" doubles"), x, y, tols.gradient_val_);
@@ -1557,6 +1579,36 @@ inline void test_matvar_gradient(const ad_tolerances& tols,
   for (Eigen::Index i = 0; i < A_vm_f.size(); ++i) {
     A_vm_f.adj()(i) = 1;
     A_mv_f.adj()(i) = 1;
+    stan::math::grad();
+    expect_near_rel_var("var<Matrix> vs Matrix<var> input", A_vm, A_mv, tols);
+    stan::math::set_zero_all_adjoints();
+  }
+}
+
+/**
+ * Test that the jacobian for matrices of vars is equal for the
+ *  var matrix when the result is a std::vector.
+ * @tparam MatVar An Eigen type inheriting from `EigenBase` that has
+ * Scalar vars.
+ * @param tols The relative tolerances between the two. Uses `gradient_val_`.
+ * @tparam VarMat A `var_value` with an inner type inheriting from `EigenBase`.
+ * @tparam ResultMatVar The resulting type of applying a function to `A_mv`.
+ * @tparam ResultVarMat The result type of applying a function to `A_vm`.
+ * @param A_mv A eigen type of vars.
+ * @param A_vm A eigen type of vars.
+ * @param A_mv_f The result of a function from applying `A_mv`.
+ * @param A_vm_f The result of a function from applying `A_vm`
+ */
+template <typename ResultMatVar, typename ResultVarMat, typename MatVar,
+          typename VarMat,
+	  require_std_vector_t<ResultMatVar>* = nullptr,
+	  require_std_vector_t<ResultVarMat>* = nullptr>
+inline void test_matvar_gradient(const ad_tolerances& tols,
+                                 ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
+                                 const MatVar& A_mv, const VarMat& A_vm) {
+  for (size_t i = 0; i < A_vm_f.size(); ++i) {
+    A_vm_f[i].adj() = 1;
+    A_mv_f[i].adj() = 1;
     stan::math::grad();
     expect_near_rel_var("var<Matrix> vs Matrix<var> input", A_vm, A_mv, tols);
     stan::math::set_zero_all_adjoints();
@@ -1691,8 +1743,8 @@ void expect_ad_matvar_v(const ad_tolerances& tols, const F& f,
   var_mat A_vm = x;
   plain_type_t<decltype(f(A_vm))> A_vm_f;
   // Check return type is correct
-  check_return_type(A_mv_f, A_mv);
-  check_return_type(A_vm_f, A_vm);
+  //check_return_type(A_mv_f, A_mv);
+  //check_return_type(A_vm_f, A_vm);
   // If one throws, the other should throw as well
   try {
     A_mv_f = f(A_mv);
@@ -1720,6 +1772,75 @@ void expect_ad_matvar_v(const ad_tolerances& tols, const F& f,
   }
   if (!x.allFinite()) {
     return;
+  }
+  test_matvar_gradient(tols, A_mv_f, A_vm_f, A_mv, A_vm);
+}
+
+/**
+ * For an unary function check that an Eigen matrix of vars and a var with an
+ * inner eigen type return the same values and adjoints to within
+ * the given tolerances. This is done by calling the function on both types,
+ * summing the results, then taking the gradient of the sum which will
+ * propogate the adjoints upwards.
+ *
+ * @tparam F A lambda or functor type that calls the unary function.
+ * @tparam T An Eigen matrix type
+ * @param tols tolerances for test
+ * @param f a lambda
+ * @param x An Eigen matrix.
+ */
+template <typename F, typename EigMat, require_eigen_t<EigMat>* = nullptr>
+void expect_ad_matvar_v(const ad_tolerances& tols, const F& f,
+                        const std::vector<EigMat>& x) {
+  using stan::plain_type_t;
+  using stan::math::promote_scalar_t;
+  using stan::math::var;
+  using stan::math::var_value;
+  using stan::math::test::type_name;
+  using vec_mat_var = std::vector<promote_scalar_t<var, EigMat>>;
+  using vec_var_mat = std::vector<var_value<plain_type_t<EigMat>>>;
+  vec_mat_var A_mv;
+  for(auto xi : x) {
+    A_mv.push_back(xi);
+  }
+  plain_type_t<decltype(f(A_mv))> A_mv_f;
+  vec_var_mat A_vm;
+  for(auto xi : x) {
+    A_vm.push_back(xi);
+  }
+  plain_type_t<decltype(f(A_vm))> A_vm_f;
+  // Check return type is correct
+  check_return_type(A_mv_f, A_mv);
+  check_return_type(A_vm_f, A_vm);
+  // If one throws, the other should throw as well
+  try {
+    A_mv_f = f(A_mv);
+  } catch (...) {
+    try {
+      f(A_vm);
+      FAIL() << type_name<vec_mat_var>() << " throws, expected "
+             << type_name<vec_var_mat>() << " version to throw";
+    } catch (...) {
+      SUCCEED();
+      return;
+    }
+  }
+  try {
+    A_vm_f = f(A_vm);
+  } catch (...) {
+    try {
+      f(A_mv);
+      FAIL() << type_name<vec_var_mat>() << " throws, expected "
+             << type_name<vec_mat_var>() << " version to throw";
+    } catch (...) {
+      SUCCEED();
+      return;
+    }
+  }
+  for(size_t i = 0; i < x.size(); ++i) {
+    if (!x[i].allFinite()) {
+      return;
+    }
   }
   test_matvar_gradient(tols, A_mv_f, A_vm_f, A_mv, A_vm);
 }
@@ -1885,6 +2006,27 @@ void expect_ad_matvar(const F& f, const EigMat& x) {
 
 template <typename F, typename EigMat>
 void expect_ad_matvar(const ad_tolerances& tols, const F& f, const EigMat& x) {
+  expect_ad_matvar_v(tols, f, x);
+}
+
+/**
+ * For an unary function check that a `std::vector` of Eigen matrix of vars
+ * and a `std::vector` of vars with inner eigen type return the same values
+ * and adjoints.
+ *
+ * @tparam F A lambda or functor type that calls the unary function.
+ * @tparam EigMat An Eigen matrix type
+ * @param f a lambda
+ * @param x An Eigen matrix.
+ */
+template <typename F, typename EigMat>
+void expect_ad_matvar(const F& f, const std::vector<EigMat>& x) {
+  ad_tolerances tols;
+  expect_ad_matvar_v(tols, f, x);
+}
+
+template <typename F, typename EigMat>
+void expect_ad_matvar(const ad_tolerances& tols, const F& f, const std::vector<EigMat>& x) {
   expect_ad_matvar_v(tols, f, x);
 }
 
