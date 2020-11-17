@@ -5,9 +5,6 @@
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/functor/reverse_pass_callback.hpp>
-#include <stan/math/rev/core/arena_matrix.hpp>
-#include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/err.hpp>
 

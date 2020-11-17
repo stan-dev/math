@@ -17,6 +17,7 @@
 #include <stan/math/rev/core/dv_vari.hpp>
 #include <stan/math/rev/core/dvd_vari.hpp>
 #include <stan/math/rev/core/dvv_vari.hpp>
+#include <stan/math/rev/core/Eigen_NumTraits.hpp>
 #include <stan/math/rev/core/empty_nested.hpp>
 #include <stan/math/rev/core/gevv_vvv_vari.hpp>
 #include <stan/math/rev/core/grad.hpp>
@@ -49,6 +50,7 @@
 #include <stan/math/rev/core/precomp_vvv_vari.hpp>
 #include <stan/math/rev/core/precomputed_gradients.hpp>
 #include <stan/math/rev/core/print_stack.hpp>
+#include <stan/math/rev/core/read_var.hpp>
 #include <stan/math/rev/core/recover_memory.hpp>
 #include <stan/math/rev/core/recover_memory_nested.hpp>
 #include <stan/math/rev/core/set_zero_all_adjoints.hpp>
@@ -59,6 +61,7 @@
 #include <stan/math/rev/core/std_isnan.hpp>
 #include <stan/math/rev/core/std_numeric_limits.hpp>
 #include <stan/math/rev/core/stored_gradient_vari.hpp>
+#include <stan/math/rev/core/typedefs.hpp>
 #include <stan/math/rev/core/v_vari.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vari.hpp>

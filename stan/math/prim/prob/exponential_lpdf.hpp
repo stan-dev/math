@@ -43,7 +43,9 @@ namespace math {
  * @throw std::domain_error if beta is not greater than 0.
  * @throw std::domain_error if y is not greater than or equal to 0.
  */
-template <bool propto, typename T_y, typename T_inv_scale>
+template <bool propto, typename T_y, typename T_inv_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_inv_scale>* = nullptr>
 return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
                                                  const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_inv_scale>;
