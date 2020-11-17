@@ -77,14 +77,14 @@ inline auto columns_dot_product(const Mat1& v1, const Mat2& v2) {
 
     reverse_pass_callback([arena_v1, arena_v2, res]() mutable {
       if (is_var_matrix<Mat1>::value) {
-        arena_v1.adj().noalias() += value_of(arena_v2) * res.adj().asDiagonal();
+        arena_v1.adj().noalias() += arena_v2.val() * res.adj().asDiagonal();
       } else {
-        arena_v1.adj() += value_of(arena_v2) * res.adj().asDiagonal();
+        arena_v1.adj() += arena_v2.val() * res.adj().asDiagonal();
       }
       if (is_var_matrix<Mat2>::value) {
-        arena_v2.adj().noalias() += value_of(arena_v1) * res.adj().asDiagonal();
+        arena_v2.adj().noalias() += arena_v1.val() * res.adj().asDiagonal();
       } else {
-        arena_v2.adj() += value_of(arena_v1) * res.adj().asDiagonal();
+        arena_v2.adj() += arena_v1.val() * res.adj().asDiagonal();
       }
     });
 
