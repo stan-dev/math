@@ -150,14 +150,12 @@ void compare_cpu_opencl_prim_rev_impl(const Functor& functor,
                                       const Args&... args) {
   prim_rev_argument_combinations(
       [&functor](const auto& args_for_cpu, const auto& args_for_opencl) {
-        std::cout << "entering compare_cpu_opencl_prim_rev_impl lambda"
-                  << std::endl;
+        std::string signature = type_name<decltype(args_for_cpu)>().data();
         auto res_cpu = functor(std::get<Is>(args_for_cpu)...);
         std::cout << "after cpu run" << std::endl;
         auto res_opencl
             = functor(opencl_argument(std::get<Is>(args_for_opencl))...);
         std::cout << "after gpu run" << std::endl;
-        std::string signature = type_name<decltype(args_for_cpu)>().data();
         expect_eq(res_opencl, res_cpu,
                   ("CPU and OpenCL return values do not match for signature "
                    + signature + "!")
@@ -207,15 +205,34 @@ void test_opencl_broadcasting_prim_rev_impl(const Functor& functor,
   prim_rev_argument_combinations(
       [&functor, N = std::max({rows(args)...})](const auto& args_broadcast,
                                                 const auto& args_vector) {
-        std::cout << "entering compare_cpu_opencl_prim_rev_impl lambda"
+        std::string signature = type_name<decltype(args_broadcast)>().data();
+        std::cout << "entering compare_cpu_opencl_prim_rev_impl lambda sig: "
+                  << signature << std::endl;
+        std::cout << "args_broadcast adresses: " << &args_broadcast
                   << std::endl;
+        std::vector<int>{(std::cout << Is << ": "
+                                    << &std::get<Is>(args_broadcast)
+                                    << std::endl,
+                          0)...};
+        std::cout << "args_vector adresses: " << &args_vector << std::endl;
+        std::vector<int>{
+            (std::cout << Is << ": " << &std::get<Is>(args_vector) << std::endl,
+             0)...};
+        std::cout << "args_broadcast values: " << std::endl;
+        std::vector<int>{(std::cout << Is << ": "
+                                    << std::get<Is>(args_broadcast)
+                                    << std::endl,
+                          0)...};
+        std::cout << "args_vector values: " << std::endl;
+        std::vector<int>{
+            (std::cout << Is << ": " << std::get<Is>(args_vector) << std::endl,
+             0)...};
         auto res_scalar
             = functor(opencl_argument(std::get<Is>(args_broadcast))...);
         std::cout << "after scalar run" << std::endl;
         auto res_vec = functor(opencl_argument(
             to_vector_if<Is == I>(std::get<Is>(args_vector), N))...);
         std::cout << "after vector run" << std::endl;
-        std::string signature = type_name<decltype(args_broadcast)>().data();
         expect_eq(res_vec, res_scalar,
                   ("return values of broadcast and vector arguments do not "
                    "match for signature "
