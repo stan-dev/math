@@ -16,7 +16,7 @@ TEST(ProbDistributionsExpModNormal, error_checking) {
   y_value << NAN, 0.5, 0.99;
 
   Eigen::VectorXd mu(N);
-  mu << -10.3, 0.8, 21.0;
+  mu << -10.3, 0.8, 2.1;
   Eigen::VectorXd mu_size(N - 1);
   mu_size << 0.3, 0.8;
   Eigen::VectorXd mu_value(N);
@@ -32,7 +32,7 @@ TEST(ProbDistributionsExpModNormal, error_checking) {
   sigma_value2 << 0.3, INFINITY, 0.5;
 
   Eigen::VectorXd lambda(N);
-  lambda << 0.3, 0.8, 13.0;
+  lambda << 0.3, 0.8, 1.3;
   Eigen::VectorXd lambda_size(N - 1);
   lambda_size << 0.3, 0.8;
   Eigen::VectorXd lambda_value1(N);
@@ -109,11 +109,11 @@ TEST(ProbDistributionsExpModNormal, opencl_matches_cpu_small) {
   Eigen::VectorXd y(N);
   y << 0, 0.5, 1;
   Eigen::VectorXd mu(N);
-  mu << -10.3, 0.8, 21.0;
+  mu << -10.3, 0.8, 2.1;
   Eigen::VectorXd sigma(N);
   sigma << 0.3, 0.8, 11.0;
   Eigen::VectorXd lambda(N);
-  lambda << 0.3, 0.8, 13.0;
+  lambda << 0.3, 0.8, 1.30;
 
   stan::math::test::compare_cpu_opencl_prim_rev(exp_mod_normal_lpdf_functor, y,
                                                 mu, sigma, lambda);
@@ -126,11 +126,11 @@ TEST(ProbDistributionsExpModNormal, opencl_broadcast_y) {
 
   double y = 0.3;
   Eigen::VectorXd mu(N);
-  mu << -10.3, 0.8, 21.0;
+  mu << -10.3, 0.8, 2.1;
   Eigen::VectorXd sigma(N);
   sigma << 0.3, 0.8, 11.0;
   Eigen::VectorXd lambda(N);
-  lambda << 0.3, 0.8, 13.0;
+  lambda << 0.3, 0.8, 1.3;
 
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       exp_mod_normal_lpdf_functor, y, mu, sigma, lambda);
@@ -147,7 +147,7 @@ TEST(ProbDistributionsExpModNormal, opencl_broadcast_mu) {
   Eigen::VectorXd sigma(N);
   sigma << 0.3, 0.8, 11.0;
   Eigen::VectorXd lambda(N);
-  lambda << 0.3, 0.8, 13.0;
+  lambda << 0.3, 0.8, 1.3;
 
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       exp_mod_normal_lpdf_functor, y, mu, sigma, lambda);
@@ -161,10 +161,10 @@ TEST(ProbDistributionsExpModNormal, opencl_broadcast_sigma) {
   Eigen::VectorXd y(N);
   y << 0, 0.5, 1;
   Eigen::VectorXd mu(N);
-  mu << -10.3, 0.8, 21.0;
+  mu << -10.3, 0.8, 2.1;
   double sigma = 0.8;
   Eigen::VectorXd lambda(N);
-  lambda << 0.3, 0.8, 13.0;
+  lambda << 0.3, 0.8, 1.3;
 
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       exp_mod_normal_lpdf_functor, y, mu, sigma, lambda);
@@ -178,7 +178,7 @@ TEST(ProbDistributionsExpModNormal, opencl_broadcast_lambda) {
   Eigen::VectorXd y(N);
   y << 0, 0.5, 1;
   Eigen::VectorXd mu(N);
-  mu << -10.3, 0.8, 21.0;
+  mu << -10.3, 0.8, 2.1;
   Eigen::VectorXd sigma(N);
   sigma << 0.3, 0.8, 11.0;
   double lambda = 1.2;
@@ -197,11 +197,9 @@ TEST(ProbDistributionsExpModNormal, opencl_matches_cpu_big) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> mu
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
   Eigen::Matrix<double, Eigen::Dynamic, 1> sigma
-      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs().array()
-        + 1e-9;
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs().array() + 0.1;
   Eigen::Matrix<double, Eigen::Dynamic, 1> lambda
-      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs().array()
-        + 1e-9;
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
 
   stan::math::test::compare_cpu_opencl_prim_rev(exp_mod_normal_lpdf_functor, y,
                                                 mu, sigma, lambda);
