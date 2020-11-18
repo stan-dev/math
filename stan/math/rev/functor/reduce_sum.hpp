@@ -173,7 +173,6 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                                 std::forward<decltype(args)>(args)...);
           },
           args_tuple_local);
-
     }
 
     /**
