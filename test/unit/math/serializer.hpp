@@ -233,7 +233,7 @@ struct serializer {
    */
   template <typename U, require_eigen_t<U>* = nullptr>
   void write(const U& x) {
-    for (int i = 0; i < x.size(); ++i){
+    for (int i = 0; i < x.size(); ++i) {
       write(x.coeff(i));
     }
   }
