@@ -76,21 +76,12 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl> exp_mod_normal_lpdf(
   auto lambda_positive_finite_expr = isfinite(lambda_val) && lambda_val > 0;
 
   auto inv_sigma_expr = elt_divide(1.0, sigma_val);
-  std::cout << "inv_sigma_expr" << std::endl
-            << from_matrix_cl(inv_sigma_expr) << std::endl
-            << std::endl;
   auto sigma_sq_expr = elt_multiply(sigma_val, sigma_val);
   auto lambda_sigma_sq_expr = elt_multiply(lambda_val, sigma_sq_expr);
   auto mu_minus_y_expr = mu_val - y_val;
   auto inner_term_expr = elt_multiply(mu_minus_y_expr + lambda_sigma_sq_expr,
                                       INV_SQRT_TWO * inv_sigma_expr);
-  std::cout << "inner_term_expr" << std::endl
-            << from_matrix_cl(inner_term_expr) << std::endl
-            << std::endl;
   auto erfc_calc_expr = erfc(inner_term_expr);
-  std::cout << "erfc_calc_expr" << std::endl
-            << from_matrix_cl(erfc_calc_expr) << std::endl
-            << std::endl;
   auto logp1_expr
       = elt_multiply(lambda_val, mu_minus_y_expr + 0.5 * lambda_sigma_sq_expr)
         + log(erfc_calc_expr);
@@ -104,14 +95,11 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl> exp_mod_normal_lpdf(
                    erfc_calc_expr);
   auto deriv_expr
       = lambda_val + elt_multiply(deriv_logerfc_expr, inv_sigma_expr);
-  std::cout << "deriv_expr" << std::endl
-            << from_matrix_cl(deriv_expr) << std::endl
-            << std::endl;
   auto deriv_sigma_expr
       = elt_multiply(sigma_val, elt_multiply(lambda_val, lambda_val))
         + elt_multiply(
-            deriv_logerfc_expr,
-            (lambda_val - elt_divide(mu_minus_y_expr, sigma_sq_expr)));
+              deriv_logerfc_expr,
+              (lambda_val - elt_divide(mu_minus_y_expr, sigma_sq_expr)));
   auto deriv_lambda_expr = elt_divide(1.0, lambda_val) + lambda_sigma_sq_expr
                            + mu_minus_y_expr
                            + elt_multiply(deriv_logerfc_expr, sigma_val);
