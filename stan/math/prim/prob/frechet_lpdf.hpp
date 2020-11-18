@@ -22,7 +22,9 @@ namespace math {
 
 // Frechet(y|alpha, sigma)     [y > 0;  alpha > 0;  sigma > 0]
 // FIXME: document
-template <bool propto, typename T_y, typename T_shape, typename T_scale>
+template <bool propto, typename T_y, typename T_shape, typename T_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_shape, T_scale>* = nullptr>
 return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
                                                   const T_shape& alpha,
                                                   const T_scale& sigma) {
