@@ -107,8 +107,7 @@ struct reduce_sum_closure_adapter {
 
   template <typename T, typename... Args>
   auto operator()(std::ostream* msgs, const std::vector<T>& sub_slice,
-		  std::size_t start, std::size_t end,
-                  Args... args) const {
+                  std::size_t start, std::size_t end, Args... args) const {
     return f_(sub_slice, start, end, msgs, args...);
   }
   auto value_of__() const { return reduce_sum_closure_adapter<F>(f_); }

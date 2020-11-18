@@ -42,8 +42,7 @@ namespace math {
  */
 template <typename ReduceFunction, typename Vec,
           typename = require_vector_like_t<Vec>,
-	  require_stan_closure_t<ReduceFunction>* = nullptr,
-	  typename... Args>
+          require_stan_closure_t<ReduceFunction>* = nullptr, typename... Args>
 auto reduce_sum_static(Vec&& vmapped, int grainsize, std::ostream* msgs,
                        const ReduceFunction& f, Args&&... args) {
   using return_type = return_type_t<ReduceFunction, Vec, Args...>;
@@ -60,15 +59,15 @@ auto reduce_sum_static(Vec&& vmapped, int grainsize, std::ostream* msgs,
     return return_type(0);
   }
 
-  return f(std::forward<Vec>(vmapped), 0, vmapped.size() - 1,
-	   msgs, std::forward<Args>(args)...);
+  return f(std::forward<Vec>(vmapped), 0, vmapped.size() - 1, msgs,
+           std::forward<Args>(args)...);
 #endif
 }
 
 template <typename ReduceFunction, typename Vec,
           typename = require_vector_like_t<Vec>,
-	  require_not_stan_closure_t<ReduceFunction>* = nullptr,
-	  typename... Args>
+          require_not_stan_closure_t<ReduceFunction>* = nullptr,
+          typename... Args>
 auto reduce_sum_static(Vec&& vmapped, int grainsize, std::ostream* msgs,
                        Args&&... args) {
   ReduceFunction f;

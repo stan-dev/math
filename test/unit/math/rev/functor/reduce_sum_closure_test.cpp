@@ -8,17 +8,16 @@
 #include <set>
 
 struct closure_adapter {
-  template<typename F, typename T_slice, typename... Args>
-  auto operator()(const T_slice& subslice, std::size_t start,
-                  std::size_t end, std::ostream* msgs,
-                  const F& f, Args... args) {
+  template <typename F, typename T_slice, typename... Args>
+  auto operator()(const T_slice& subslice, std::size_t start, std::size_t end,
+                  std::ostream* msgs, const F& f, Args... args) {
     return f(msgs, subslice, start, end, args...);
   }
 };
 
 TEST(StanMathRev_reduce_sum, grouped_gradient_closure) {
-  using stan::math::var;
   using stan::math::from_lambda;
+  using stan::math::var;
   using stan::math::test::get_new_msg;
 
   double lambda_d = 10.0;
@@ -42,16 +41,18 @@ TEST(StanMathRev_reduce_sum, grouped_gradient_closure) {
   var lambda_v = vlambda_v[0];
 
   auto functor = from_lambda(
-    [](auto& lambda, auto& slice, std::size_t start, std::size_t end, auto& gidx, std::ostream * msgs) {
-      const std::size_t num_terms = end - start + 1;
-      std::decay_t<decltype(lambda)> lambda_slice(num_terms);
-      for (std::size_t i = 0; i != num_terms; ++i)
-        lambda_slice[i] = lambda[gidx[start + i]];
-      return stan::math::poisson_lpmf(slice, lambda_slice);
-    }, vlambda_v);
+      [](auto& lambda, auto& slice, std::size_t start, std::size_t end,
+         auto& gidx, std::ostream* msgs) {
+        const std::size_t num_terms = end - start + 1;
+        std::decay_t<decltype(lambda)> lambda_slice(num_terms);
+        for (std::size_t i = 0; i != num_terms; ++i)
+          lambda_slice[i] = lambda[gidx[start + i]];
+        return stan::math::poisson_lpmf(slice, lambda_slice);
+      },
+      vlambda_v);
 
-  var poisson_lpdf = stan::math::reduce_sum(
-      data, 5, get_new_msg(), functor, gidx);
+  var poisson_lpdf
+      = stan::math::reduce_sum(data, 5, get_new_msg(), functor, gidx);
 
   std::vector<var> vref_lambda_v;
   for (std::size_t i = 0; i != elems; ++i) {
