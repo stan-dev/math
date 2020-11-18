@@ -2,8 +2,8 @@
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_MULTI_RESULT_KERNEL_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/prim/err.hpp>
-#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
+#include <stan/math/prim/err/check_size_match.hpp>
+#include <stan/math/prim/meta/is_kernel_expression.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/calc_if.hpp>
@@ -42,14 +42,14 @@ struct multi_result_kernel_internal {
      * Generates list of all events kernel assigning expressions to results must
      * wait on. Also clears those events from matrices.
      * @param[out] events list of events
-     * @param assignment_pairs pairs if result and expression
+     * @param assignment_pairs pairs of result and expression
      */
     static void get_clear_events(
         std::vector<cl::Event>& events,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {
       next::get_clear_events(events, assignment_pairs);
-      std::get<N>(assignment_pairs).second.get_clear_write_events(events);
+      std::get<N>(assignment_pairs).second.get_write_events(events);
       std::get<N>(assignment_pairs).first.get_clear_read_write_events(events);
     }
     /**
@@ -337,7 +337,8 @@ class results_cl {
           "const int j = j0 + lid_j;\n"
           + parts.initialization +
           "if(i < rows){\n"
-          + parts.body +
+          + parts.body
+          + parts.body_suffix +
           "}\n"
           + parts.reduction +
           "}\n"
@@ -353,6 +354,7 @@ class results_cl {
           + parts.declarations
           + parts.initialization
           + parts.body
+          + parts.body_suffix
           + parts.reduction +
           "}\n";
     }
@@ -420,6 +422,7 @@ class results_cl {
         auto opts = opencl_context.base_opts();
         impl::kernel_ = opencl_kernels::compile_kernel(
             "calculate", {view_kernel_helpers, src}, opts);
+        opencl_context.register_kernel_cache(&impl::kernel_);
       }
       cl::Kernel& kernel = impl::kernel_;
       int arg_num = 0;

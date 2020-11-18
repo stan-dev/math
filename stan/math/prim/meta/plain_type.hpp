@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta/plain_type.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_detected.hpp>
 #include <type_traits>
 
 namespace stan {

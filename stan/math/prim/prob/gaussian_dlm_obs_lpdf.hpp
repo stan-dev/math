@@ -64,7 +64,8 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_F, typename T_G, typename T_V,
           typename T_W, typename T_m0, typename T_C0,
-          require_all_eigen_matrix_t<T_y, T_F, T_G, T_V, T_W, T_C0>* = nullptr,
+          require_all_eigen_matrix_dynamic_t<T_y, T_F, T_G, T_V, T_W,
+                                             T_C0>* = nullptr,
           require_eigen_col_vector_t<T_m0>* = nullptr>
 inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0> gaussian_dlm_obs_lpdf(
     const T_y& y, const T_F& F, const T_G& G, const T_V& V, const T_W& W,
@@ -98,7 +99,7 @@ inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0> gaussian_dlm_obs_lpdf(
   check_finite(function, "W", W_ref);
   check_pos_semidefinite(function, "W", W_ref);
   check_finite(function, "m0", m0_ref);
-  check_pos_definite(function, "C0", C0_ref);
+  check_pos_semidefinite(function, "C0", C0_ref);
   check_finite(function, "C0", C0_ref);
 
   if (size_zero(y)) {
@@ -186,10 +187,11 @@ inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0> gaussian_dlm_obs_lpdf(
  * @tparam T_m0 Type of initial state mean vector.
  * @tparam T_C0 Type of initial state covariance matrix.
  */
-template <bool propto, typename T_y, typename T_F, typename T_G, typename T_V,
-          typename T_W, typename T_m0, typename T_C0,
-          require_all_eigen_matrix_t<T_y, T_F, T_G, T_W, T_C0>* = nullptr,
-          require_all_eigen_col_vector_t<T_V, T_m0>* = nullptr>
+template <
+    bool propto, typename T_y, typename T_F, typename T_G, typename T_V,
+    typename T_W, typename T_m0, typename T_C0,
+    require_all_eigen_matrix_dynamic_t<T_y, T_F, T_G, T_W, T_C0>* = nullptr,
+    require_all_eigen_col_vector_t<T_V, T_m0>* = nullptr>
 inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0> gaussian_dlm_obs_lpdf(
     const T_y& y, const T_F& F, const T_G& G, const T_V& V, const T_W& W,
     const T_m0& m0, const T_C0& C0) {
@@ -222,7 +224,7 @@ inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0> gaussian_dlm_obs_lpdf(
   // TODO(anyone): support infinite W
   check_finite(function, "W", W_ref);
   check_finite(function, "m0", m0_ref);
-  check_pos_definite(function, "C0", C0_ref);
+  check_pos_semidefinite(function, "C0", C0_ref);
   check_finite(function, "C0", C0_ref);
 
   if (y.cols() == 0 || y.rows() == 0) {
@@ -259,6 +261,8 @@ inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0> gaussian_dlm_obs_lpdf(
         // f_{t, i} = F_{t, i}' m_{t, i-1}
         f = dot_product(Fj, m);
         Q = trace_quad_form(C, Fj) + V_ref.coeff(j);
+        if (i == 0)
+          check_positive(function, "Q0", Q);
         Q_inv = 1.0 / Q;
         // filtered observation
         // e_{t, i} = y_{t, i} - f_{t, i}

@@ -115,7 +115,7 @@ static const std::string categorical_logit_glm_kernel_code = STRINGIFY(
               barrier(CLK_LOCAL_MEM_FENCE);
             }
             if (lid == 0) {
-              alpha_derivative[i * ngroups + wg_id] = local_storage[0];
+              alpha_derivative[i + wg_id * N_classes] = local_storage[0];
             }
             barrier(CLK_LOCAL_MEM_FENCE);
           }

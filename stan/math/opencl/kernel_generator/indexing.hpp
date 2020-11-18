@@ -7,7 +7,6 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <string>
 #include <utility>
 
@@ -262,8 +261,8 @@ class indexing_
  * @return indexing expression
  */
 template <typename T_mat, typename T_row_index, typename T_col_index,
-          require_all_kernel_expressions_and_none_scalar_t<
-              T_mat, T_row_index, T_col_index>* = nullptr>
+          require_all_kernel_expressions_t<T_mat, T_row_index,
+                                           T_col_index>* = nullptr>
 inline auto indexing(T_mat&& mat, T_row_index&& row_index,
                      T_col_index&& col_index) {
   auto&& mat_operation = as_operation_cl(std::forward<T_mat>(mat)).deep_copy();

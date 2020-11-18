@@ -58,6 +58,21 @@ TEST(AgradRev, sparse_matrix_vari) {
   }
 }
 
+TEST(AgradRev, arena_matrix_matrix_vari) {
+  using stan::math::arena_matrix;
+  using stan::math::vari_value;
+  arena_matrix<Eigen::MatrixXd> x(Eigen::MatrixXd::Random(5, 5));
+  const auto& x_ref = x;
+  auto* A = new vari_value<Eigen::MatrixXd>(x);
+  EXPECT_MATRIX_FLOAT_EQ((*A).val_, x);
+  auto* B = new vari_value<Eigen::MatrixXd>(x_ref);
+  EXPECT_MATRIX_FLOAT_EQ((*B).val_, x);
+  auto* C = new vari_value<Eigen::MatrixXd>(x, true);
+  EXPECT_MATRIX_FLOAT_EQ((*C).val_, x);
+  auto* D = new vari_value<Eigen::MatrixXd>(x_ref, true);
+  EXPECT_MATRIX_FLOAT_EQ((*D).val_, x);
+}
+
 TEST(AgradRev, dense_vari_matrix_views) {
   using stan::math::vari_value;
   using eig_mat = Eigen::MatrixXd;
@@ -69,14 +84,26 @@ TEST(AgradRev, dense_vari_matrix_views) {
   auto A_head = A_v.block(1, 1, 3, 3);
   EXPECT_MATRIX_FLOAT_EQ(A_head.val_, A_v.val_.block(1, 1, 3, 3));
   EXPECT_MATRIX_FLOAT_EQ(A, A_v.val_);
+  A_head.adj_ = eig_mat::Random(3, 3);
+  EXPECT_MATRIX_FLOAT_EQ(A_head.adj_, A_v.adj_.block(1, 1, 3, 3));
+
+  auto A_transpose = A_v.transpose();
+  EXPECT_MATRIX_FLOAT_EQ(A_transpose.val_, A_v.val_.transpose());
+  EXPECT_MATRIX_FLOAT_EQ(A, A_v.val_);
+  A_transpose.adj_ = eig_mat::Random(5, 5);
+  EXPECT_MATRIX_FLOAT_EQ(A_transpose.adj_, A_v.adj_.transpose());
 
   auto A_row = A_v.row(3);
   EXPECT_MATRIX_FLOAT_EQ(A_row.val_, A_v.val_.row(3));
   EXPECT_MATRIX_FLOAT_EQ(A, A_v.val_);
+  A_row.adj_ = Eigen::RowVectorXd::Random(5);
+  EXPECT_MATRIX_FLOAT_EQ(A_row.adj_, A_v.adj_.row(3));
 
   auto A_col = A_v.col(3);
   EXPECT_MATRIX_FLOAT_EQ(A_col.val_, A_v.val_.col(3));
   EXPECT_MATRIX_FLOAT_EQ(A, A_v.val_);
+  A_col.adj_ = Eigen::VectorXd::Random(5);
+  EXPECT_MATRIX_FLOAT_EQ(A_col.adj_, A_v.adj_.col(3));
 
   auto A_op_par = A_v(3);
   EXPECT_FLOAT_EQ(A_op_par.val_, A_v.val_(3));
@@ -87,7 +114,7 @@ TEST(AgradRev, dense_vari_matrix_views) {
   EXPECT_MATRIX_FLOAT_EQ(A, A_v.val_);
 
   auto A_op_coeff = A_v.coeff(3, 3);
-  EXPECT_FLOAT_EQ(A_op_par2.val_, A_v.val_.coeff(3, 3));
+  EXPECT_FLOAT_EQ(A_op_coeff.val_, A_v.val_.coeff(3, 3));
   EXPECT_MATRIX_FLOAT_EQ(A, A_v.val_);
 }
 
@@ -102,12 +129,57 @@ TEST(AgradRev, dense_vari_vector_views) {
   auto A_sub = A_v.head(3);
   EXPECT_MATRIX_FLOAT_EQ(A_sub.val_, A_v.val_.head(3));
   EXPECT_MATRIX_FLOAT_EQ(A, A_v.val_);
+  A_sub.adj_ = Eigen::VectorXd::Random(3);
+  EXPECT_MATRIX_FLOAT_EQ(A_sub.adj_, A_v.adj_.head(3));
+
+  auto A_transpose = A_v.transpose();
+  EXPECT_MATRIX_FLOAT_EQ(A_transpose.val_, A_v.val_.transpose());
+  EXPECT_MATRIX_FLOAT_EQ(A, A_v.val_);
+  A_transpose.adj_ = Eigen::RowVectorXd::Random(10);
+  EXPECT_MATRIX_FLOAT_EQ(A_transpose.adj_, A_v.adj_.transpose());
 
   auto A_sub_tail = A_v.tail(3);
   EXPECT_MATRIX_FLOAT_EQ(A_sub_tail.val_, A_v.val_.tail(3));
   EXPECT_MATRIX_FLOAT_EQ(A, A_v.val_);
+  A_sub_tail.adj_ = Eigen::VectorXd::Random(3);
+  EXPECT_MATRIX_FLOAT_EQ(A_sub_tail.adj_, A_v.adj_.tail(3));
 
   auto A_segment = A_v.segment(3, 5);
   EXPECT_MATRIX_FLOAT_EQ(A_segment.val_, A_v.val_.segment(3, 5));
   EXPECT_MATRIX_FLOAT_EQ(A, A_v.val_);
+  A_segment.adj_ = Eigen::VectorXd::Random(5);
+  EXPECT_MATRIX_FLOAT_EQ(A_segment.adj_, A_v.adj_.segment(3, 5));
+}
+
+TEST(AgradRev, dense_vari_row_vector_views) {
+  using stan::math::vari_value;
+  using eig_vec = Eigen::RowVectorXd;
+  eig_vec A(10);
+  for (int i = 0; i < A.size(); ++i) {
+    A(i) = i;
+  }
+  stan::math::vari_value<eig_vec> A_v(A);
+  auto A_sub = A_v.head(3);
+  EXPECT_MATRIX_FLOAT_EQ(A_sub.val_, A_v.val_.head(3));
+  EXPECT_MATRIX_FLOAT_EQ(A, A_v.val_);
+  A_sub.adj_ = Eigen::RowVectorXd::Random(3);
+  EXPECT_MATRIX_FLOAT_EQ(A_sub.adj_, A_v.adj_.head(3));
+
+  auto A_transpose = A_v.transpose();
+  EXPECT_MATRIX_FLOAT_EQ(A_transpose.val_, A_v.val_.transpose());
+  EXPECT_MATRIX_FLOAT_EQ(A, A_v.val_);
+  A_transpose.adj_ = Eigen::VectorXd::Random(10);
+  EXPECT_MATRIX_FLOAT_EQ(A_transpose.adj_, A_v.adj_.transpose());
+
+  auto A_sub_tail = A_v.tail(3);
+  EXPECT_MATRIX_FLOAT_EQ(A_sub_tail.val_, A_v.val_.tail(3));
+  EXPECT_MATRIX_FLOAT_EQ(A, A_v.val_);
+  A_sub_tail.adj_ = Eigen::RowVectorXd::Random(3);
+  EXPECT_MATRIX_FLOAT_EQ(A_sub_tail.adj_, A_v.adj_.tail(3));
+
+  auto A_segment = A_v.segment(3, 5);
+  EXPECT_MATRIX_FLOAT_EQ(A_segment.val_, A_v.val_.segment(3, 5));
+  EXPECT_MATRIX_FLOAT_EQ(A, A_v.val_);
+  A_segment.adj_ = Eigen::RowVectorXd::Random(5);
+  EXPECT_MATRIX_FLOAT_EQ(A_segment.adj_, A_v.adj_.segment(3, 5));
 }

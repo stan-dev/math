@@ -82,15 +82,17 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
+
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/copy_triangular.hpp>
 #include <stan/math/opencl/cholesky_decompose.hpp>
 #include <stan/math/opencl/diagonal_multiply.hpp>
 #include <stan/math/opencl/identity.hpp>
-#include <stan/math/opencl/is_matrix_cl.hpp>
+#include <stan/math/opencl/is_constant.hpp>
 #include <stan/math/opencl/tri_inverse.hpp>
 #include <stan/math/opencl/multiply_transpose.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
+#include <stan/math/opencl/plain_type.hpp>
 #include <stan/math/opencl/scalar_type.hpp>
 #include <stan/math/opencl/sub_block.hpp>
 #include <stan/math/opencl/triangular_transpose.hpp>
@@ -98,8 +100,14 @@
 #include <stan/math/opencl/zeros.hpp>
 
 #include <stan/math/opencl/prim/add.hpp>
+#include <stan/math/opencl/prim/bernoulli_lpmf.hpp>
+#include <stan/math/opencl/prim/bernoulli_logit_lpmf.hpp>
 #include <stan/math/opencl/prim/bernoulli_logit_glm_lpmf.hpp>
+#include <stan/math/opencl/prim/beta_lpdf.hpp>
+#include <stan/math/opencl/prim/beta_proportion_lpdf.hpp>
 #include <stan/math/opencl/prim/categorical_logit_glm_lpmf.hpp>
+#include <stan/math/opencl/prim/cauchy_lpdf.hpp>
+#include <stan/math/opencl/prim/chi_square_lpdf.hpp>
 #include <stan/math/opencl/prim/cholesky_decompose.hpp>
 #include <stan/math/opencl/prim/col.hpp>
 #include <stan/math/opencl/prim/cols.hpp>
@@ -107,6 +115,7 @@
 #include <stan/math/opencl/prim/dims.hpp>
 #include <stan/math/opencl/prim/divide.hpp>
 #include <stan/math/opencl/prim/divide_columns.hpp>
+#include <stan/math/opencl/prim/double_exponential_lpdf.hpp>
 #include <stan/math/opencl/prim/gp_exp_quad_cov.hpp>
 #include <stan/math/opencl/prim/inv.hpp>
 #include <stan/math/opencl/prim/inv_cloglog.hpp>
@@ -122,6 +131,9 @@
 #include <stan/math/opencl/prim/rep_vector.hpp>
 #include <stan/math/opencl/prim/row.hpp>
 #include <stan/math/opencl/prim/rows.hpp>
+#include <stan/math/opencl/prim/sign.hpp>
+#include <stan/math/opencl/prim/size.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/opencl/prim/tcrossprod.hpp>
 
 #include <stan/math/opencl/err.hpp>

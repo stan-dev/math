@@ -95,6 +95,15 @@ val() const { return CwiseUnaryOp<val_Op, const Derived>(derived());
 
 /**
  * Coefficient-wise function applying val_Op struct to a matrix of var
+ * or vari* and returning a view to the matrix of doubles containing
+ * the values
+ */
+inline CwiseUnaryOp<val_Op, Derived>
+val_op() { return CwiseUnaryOp<val_Op, Derived>(derived());
+}
+
+/**
+ * Coefficient-wise function applying val_Op struct to a matrix of var
  * or vari* and returning a view to the values
  */
 inline CwiseUnaryView<val_Op, Derived>
@@ -157,6 +166,15 @@ struct adj_Op {
  */
 inline const CwiseUnaryOp<adj_Op, const Derived>
 adj() const { return CwiseUnaryOp<adj_Op, const Derived>(derived());
+}
+
+/**
+ * Coefficient-wise function applying adj_Op struct to a matrix of var
+ * and returning a view to a matrix of doubles of the adjoints that can
+ * be modified. This is meant to be used on the rhs of expressions.
+ */
+inline CwiseUnaryOp<adj_Op, Derived> adj_op() {
+  return CwiseUnaryOp<adj_Op, Derived>(derived());
 }
 
 /**

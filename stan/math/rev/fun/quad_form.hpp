@@ -20,13 +20,13 @@ class quad_form_vari_alloc : public chainable_alloc {
   inline void compute(const Eigen::Matrix<double, Ra, Ca>& A,
                       const Eigen::Matrix<double, Rb, Cb>& B) {
     matrix_d Cd = B.transpose() * A * B;
+    if (sym_) {
+      matrix_d M = 0.5 * (Cd + Cd.transpose());
+      Cd = M;
+    }
     for (int j = 0; j < C_.cols(); j++) {
       for (int i = 0; i < C_.rows(); i++) {
-        if (sym_) {
-          C_(i, j) = var(new vari(0.5 * (Cd(i, j) + Cd(j, i)), false));
-        } else {
-          C_(i, j) = var(new vari(Cd(i, j), false));
-        }
+        C_(i, j) = var(new vari(Cd(i, j), false));
       }
     }
   }
@@ -106,6 +106,7 @@ class quad_form_vari : public vari {
  *
  * @param A square matrix
  * @param B second matrix
+ * @param symmetric indicates whether the output should be made symmetric
  * @return The quadratic form, which is a symmetric matrix.
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
@@ -115,14 +116,15 @@ template <typename EigMat1, typename EigMat2,
           require_not_eigen_col_vector_t<EigMat2>* = nullptr,
           require_any_vt_var<EigMat1, EigMat2>* = nullptr>
 inline promote_scalar_t<var, EigMat2> quad_form(const EigMat1& A,
-                                                const EigMat2& B) {
+                                                const EigMat2& B,
+                                                bool symmetric = false) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
 
   auto* baseVari = new internal::quad_form_vari<
       value_type_t<EigMat1>, EigMat1::RowsAtCompileTime,
       EigMat1::ColsAtCompileTime, value_type_t<EigMat2>,
-      EigMat2::RowsAtCompileTime, EigMat2::ColsAtCompileTime>(A, B);
+      EigMat2::RowsAtCompileTime, EigMat2::ColsAtCompileTime>(A, B, symmetric);
 
   return baseVari->impl_->C_;
 }
@@ -135,6 +137,7 @@ inline promote_scalar_t<var, EigMat2> quad_form(const EigMat1& A,
  *
  * @param A square matrix
  * @param B vector
+ * @param symmetric indicates whether the output should be made symmetric
  * @return The quadratic form (a scalar).
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
@@ -142,14 +145,14 @@ inline promote_scalar_t<var, EigMat2> quad_form(const EigMat1& A,
 template <typename EigMat, typename ColVec, require_eigen_t<EigMat>* = nullptr,
           require_eigen_col_vector_t<ColVec>* = nullptr,
           require_any_vt_var<EigMat, ColVec>* = nullptr>
-inline var quad_form(const EigMat& A, const ColVec& B) {
+inline var quad_form(const EigMat& A, const ColVec& B, bool symmetric = false) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
 
   auto* baseVari = new internal::quad_form_vari<
       value_type_t<EigMat>, EigMat::RowsAtCompileTime,
       EigMat::ColsAtCompileTime, value_type_t<ColVec>,
-      ColVec::RowsAtCompileTime, 1>(A, B);
+      ColVec::RowsAtCompileTime, 1>(A, B, symmetric);
 
   return baseVari->impl_->C_(0, 0);
 }

@@ -16,7 +16,7 @@ namespace math {
 // LKJ_cov(y|mu, sigma, eta) [ y covariance matrix (not correlation matrix)
 //                         mu vector, sigma > 0 vector, eta > 0 ]
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
-          typename T_shape, require_eigen_matrix_t<T_y>* = nullptr,
+          typename T_shape, require_eigen_matrix_dynamic_t<T_y>* = nullptr,
           require_all_eigen_col_vector_t<T_loc, T_scale>* = nullptr>
 return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(const T_y& y,
                                                          const T_loc& mu,
@@ -61,7 +61,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(const T_y& y,
 // LKJ_Cov(y|mu, sigma, eta) [ y covariance matrix (not correlation matrix)
 //                         mu scalar, sigma > 0 scalar, eta > 0 ]
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
-          typename T_shape, require_eigen_matrix_t<T_y>* = nullptr,
+          typename T_shape, require_eigen_matrix_dynamic_t<T_y>* = nullptr,
           require_all_stan_scalar_t<T_loc, T_scale>* = nullptr>
 return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(const T_y& y,
                                                          const T_loc& mu,

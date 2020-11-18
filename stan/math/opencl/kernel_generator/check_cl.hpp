@@ -85,7 +85,7 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
       res.args += "__global int* " + var_name_ + "_buffer, __global "
                   + type_str<value_type_t<T>>() + "* " + var_name_ + "_value, ";
       res.body += "bool " + var_name_;
-      res.reduction += "if(!" + var_name_ +
+      res.body_suffix += "if(!" + var_name_ +
             " && atomic_xchg(" + var_name_ + "_buffer, 1) == 1){\n"
           + var_name_ + "_buffer[1] = " + row_index_name + ";\n"
           + var_name_ + "_buffer[2] = " + col_index_name + ";\n"
@@ -122,10 +122,25 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
    */
   inline void check_assign_dimensions(int rows, int cols) const {
     check_size_match("check_cl_.check_assign_dimensions", "Rows of ",
-                     "argument", arg_.rows(), "rows of ", "expression", rows);
+                     err_variable_, arg_.rows(), "rows of ",
+                     "assigned expression", rows);
     check_size_match("check_cl_.check_assign_dimensions", "Columns of ",
-                     "argument", arg_.cols(), "columns of ", "expression",
-                     cols);
+                     err_variable_, arg_.cols(), "columns of ",
+                     "assigned expression", cols);
+  }
+
+  /**
+   * Adds all write events on any matrices used by nested expression to a list.
+   * Ignores read events anc clears no events.
+   * @param[out] events List of all events.
+   */
+  inline void get_clear_read_write_events(
+      std::vector<cl::Event>& events) const {
+    arg_.get_write_events(events);
+    events.insert(events.end(), buffer_.read_events().begin(),
+                  buffer_.read_events().end());
+    events.insert(events.end(), buffer_.write_events().begin(),
+                  buffer_.write_events().end());
   }
 
   /**
