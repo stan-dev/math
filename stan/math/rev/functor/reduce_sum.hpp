@@ -118,6 +118,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       scoped_args_tuple& args_tuple_scope = local_args_tuple_->local();
 
       if (!args_tuple_scope.args_tuple_holder_) {
+        // shared arguments need to be copied to thread-specific
+        // scope. In this case no need for zeroing adjoints, since the
+        // fresh copy has all adjoints set to zero.
         args_tuple_scope.stack_.execute([&]() {
           apply(
               [&](auto&&... args) {
@@ -127,6 +130,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
               },
               args_tuple_);
         });
+      } else {
+        // set adjoints of shared arguments to zero
+        args_tuple_scope.stack_.execute([] { set_zero_all_adjoints(); });
       }
 
       auto& args_tuple_local = *(args_tuple_scope.args_tuple_holder_);
@@ -168,8 +174,6 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           },
           args_tuple_local);
 
-      // set adjoints of shared arguments back to zero
-      args_tuple_scope.stack_.execute([] { set_zero_all_adjoints(); });
     }
 
     /**
