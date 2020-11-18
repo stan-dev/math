@@ -10,6 +10,7 @@
 #include <string>
 #include <tuple>
 
+#include <iterator>
 #include <iostream>
 
 namespace stan {
@@ -196,6 +197,16 @@ int rows(const T&) {
 template <typename T, require_std_vector_t<T>* = nullptr>
 int rows(const T& x) {
   return x.size();
+}
+
+template <typename T>
+std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
+  if ( !v.empty() ) {
+    out << '[';
+    std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
+    out << "\b\b]";
+  }
+  return out;
 }
 
 template <std::size_t I, typename Functor, std::size_t... Is, typename... Args>
