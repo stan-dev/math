@@ -14,6 +14,7 @@ import platform
 import subprocess
 import sys
 import time
+import glob
 import re
 
 winsfx = ".exe"
@@ -236,17 +237,23 @@ def runTest(name, run_all=False, mpi=False, j=1):
         command = "mpirun -np {} {}".format(j, command)
     doCommand(command, not run_all)
 
+def files_in_folder(folder):
+    """Returns a list of files in the folder and all
+    its subfolders recursively. The folder can be
+    written with wildcards as with the Unix find command.
+    """
+    files = []
+    for f in glob.glob(folder):
+        if os.path.isdir(f):
+            files.extend(files_in_folder(f + os.sep + "**"))
+        else:
+            files.append(f)
+    return files
 
 def findTests(base_path, filter_names, do_jumbo=False):
-    folders = filter(os.path.isdir, base_path)
-    nonfolders = list(set(base_path) - set(folders))
-    tests = nonfolders + [
-        os.path.join(root, n)
-        for f in folders
-        for root, _, names in os.walk(f)
-        for n in names
-        if n.endswith(testsfx)
-    ]
+    tests = []
+    for path in base_path:
+        tests.extend(files_in_folder(path))
     tests = map(mungeName, tests)
     tests = [
         test
