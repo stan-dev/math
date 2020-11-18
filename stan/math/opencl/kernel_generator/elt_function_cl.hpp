@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_UNARY_FUNCTION_CL_HPP
-#define STAN_MATH_OPENCL_KERNEL_GENERATOR_UNARY_FUNCTION_CL_HPP
+#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_ELT_FUNCTION_CL_HPP
+#define STAN_MATH_OPENCL_KERNEL_GENERATOR_ELT_FUNCTION_CL_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
@@ -11,10 +11,12 @@
 #include <stan/math/opencl/kernels/device_functions/inv_logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/inv_square.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
+#include <stan/math/opencl/kernel_generator/common_return_scalar.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
+#include <array>
 #include <string>
 #include <type_traits>
 #include <set>
@@ -28,46 +30,46 @@ namespace math {
  */
 
 /**
- * Represents a unary function in kernel generator expressions.
+ * Represents an element-wise function in kernel generator expressions.
  * @tparam Derived derived type
  * @tparam T type of argument
  * @tparam Scal type of the scalar of result
  */
-template <typename Derived, typename Scal, typename T>
-class unary_function_cl : public operation_cl<Derived, Scal, T> {
+template <typename Derived, typename Scal, typename... T>
+class elt_function_cl : public operation_cl<Derived, Scal, T...> {
  public:
   using Scalar = Scal;
-  static_assert(std::is_floating_point<
-                    typename std::remove_reference_t<T>::Scalar>::value,
-                "unary_function_cl: argument must be expression with floating "
-                "point return type!");
-  using base = operation_cl<Derived, Scalar, T>;
+  using base = operation_cl<Derived, Scalar, T...>;
   using base::var_name_;
 
   /**
    * Constructor
-   * @param a argument expression
    * @param fun function
+   * @param args argument expression(s)
    */
-  unary_function_cl(T&& a, const std::string& fun)
-      : base(std::forward<T>(a)), fun_(fun) {}
+  elt_function_cl(const std::string& fun, T&&... args)  // NOLINT
+      : base(std::forward<T>(args)...), fun_(fun) {}
 
   /**
    * Generates kernel code for this expression.
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
    * @param view_handled whether whether caller already handled matrix view
-   * @param var_name_arg variable name of the nested expression
+   * @param var_names_arg variable names of the nested expressions
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& row_index_name,
-                               const std::string& col_index_name,
-                               const bool view_handled,
-                               const std::string& var_name_arg) const {
+  inline kernel_parts generate(
+      const std::string& row_index_name, const std::string& col_index_name,
+      const bool view_handled,
+      std::conditional_t<false, T, const std::string&>... var_names_arg) const {
     kernel_parts res{};
     res.includes = base::derived().include;
+    std::array<std::string, sizeof...(T)> var_names_arg_arr
+        = {(var_names_arg + ", ")...};
+    std::string var_names_list = std::accumulate(
+        var_names_arg_arr.begin(), var_names_arg_arr.end(), std::string());
     res.body = type_str<Scalar>() + " " + var_name_ + " = " + fun_ + "("
-               + var_name_arg + ");\n";
+               + var_names_list.substr(0, var_names_list.size() - 2) + ");\n";
     return res;
   }
 
@@ -76,26 +78,75 @@ class unary_function_cl : public operation_cl<Derived, Scal, T> {
 };
 
 /**
+ * Generates a class and function for a general binary function that is defined
+ * by OpenCL or in the included code.
+ * @param fun function
+ * @param incl function source to include into kernel
+ */
+#define ADD_BINARY_FUNCTION_WITH_INCLUDE(fun, incl)                         \
+  template <typename T1, typename T2>                                       \
+  class fun##_ : public elt_function_cl<fun##_<T1, T2>,                     \
+                                        common_scalar_t<T1, T2>, T1, T2> {  \
+    using base                                                              \
+        = elt_function_cl<fun##_<T1, T2>, common_scalar_t<T1, T2>, T1, T2>; \
+    using base::arguments_;                                                 \
+                                                                            \
+   public:                                                                  \
+    using base::rows;                                                       \
+    using base::cols;                                                       \
+    static const char* include;                                             \
+    explicit fun##_(T1&& a, T2&& b)                                         \
+        : base(#fun, std::forward<T1>(a), std::forward<T2>(b)) {}           \
+    inline auto deep_copy() const {                                         \
+      auto&& arg1_copy = this->template get_arg<0>().deep_copy();           \
+      auto&& arg2_copy = this->template get_arg<1>().deep_copy();           \
+      return fun##_<std::remove_reference_t<decltype(arg1_copy)>,           \
+                    std::remove_reference_t<decltype(arg2_copy)>>{          \
+          std::move(arg1_copy), std::move(arg2_copy)};                      \
+    }                                                                       \
+    inline std::pair<int, int> extreme_diagonals() const {                  \
+      return {-rows() + 1, cols() - 1};                                     \
+    }                                                                       \
+  };                                                                        \
+                                                                            \
+  template <typename T1, typename T2,                                       \
+            require_all_kernel_expressions_t<T1, T2>* = nullptr,            \
+            require_any_not_stan_scalar_t<T1, T2>* = nullptr>               \
+  inline fun##_<as_operation_cl_t<T1>, as_operation_cl_t<T2>> fun(T1&& a,   \
+                                                                  T2&& b) { \
+    return fun##_<as_operation_cl_t<T1>, as_operation_cl_t<T2>>(            \
+        as_operation_cl(std::forward<T1>(a)),                               \
+        as_operation_cl(std::forward<T2>(b)));                              \
+  }                                                                         \
+  template <typename T1, typename T2>                                       \
+  const char* fun##_<T1, T2>::include(incl);
+
+/**
  * Generates a class and function for a general unary function that is defined
- * by OpenCL.
+ * by OpenCL or in the included code.
  * @param fun function
  * @param incl function source to include into kernel
  */
 #define ADD_UNARY_FUNCTION_WITH_INCLUDE(fun, incl)                             \
   template <typename T>                                                        \
   class fun##_                                                                 \
-      : public unary_function_cl<                                              \
+      : public elt_function_cl<                                                \
             fun##_<T>, typename std::remove_reference_t<T>::Scalar, T> {       \
     using base                                                                 \
-        = unary_function_cl<fun##_<T>,                                         \
-                            typename std::remove_reference_t<T>::Scalar, T>;   \
+        = elt_function_cl<fun##_<T>,                                           \
+                          typename std::remove_reference_t<T>::Scalar, T>;     \
     using base::arguments_;                                                    \
+    static_assert(std::is_floating_point<                                      \
+                      typename std::remove_reference_t<T>::Scalar>::value,     \
+                  #fun                                                         \
+                  ": all arguments must be expression with floating point "    \
+                  "return type!");                                             \
                                                                                \
    public:                                                                     \
     using base::rows;                                                          \
     using base::cols;                                                          \
     static const char* include;                                                \
-    explicit fun##_(T&& a) : base(std::forward<T>(a), #fun) {}                 \
+    explicit fun##_(T&& a) : base(#fun, std::forward<T>(a)) {}                 \
     inline auto deep_copy() const {                                            \
       auto&& arg_copy = this->template get_arg<0>().deep_copy();               \
       return fun##_<std::remove_reference_t<decltype(arg_copy)>>{              \
@@ -130,19 +181,24 @@ class unary_function_cl : public operation_cl<Derived, Scal, T> {
 #define ADD_UNARY_FUNCTION_PASS_ZERO(fun)                                      \
   template <typename T>                                                        \
   class fun##_                                                                 \
-      : public unary_function_cl<                                              \
+      : public elt_function_cl<                                                \
             fun##_<T>, typename std::remove_reference_t<T>::Scalar, T> {       \
     using base                                                                 \
-        = unary_function_cl<fun##_<T>,                                         \
-                            typename std::remove_reference_t<T>::Scalar, T>;   \
+        = elt_function_cl<fun##_<T>,                                           \
+                          typename std::remove_reference_t<T>::Scalar, T>;     \
     using base::arguments_;                                                    \
+    static_assert(std::is_floating_point<                                      \
+                      typename std::remove_reference_t<T>::Scalar>::value,     \
+                  #fun                                                         \
+                  ": all arguments must be expression with floating point "    \
+                  "return type!");                                             \
                                                                                \
    public:                                                                     \
     using base::rows;                                                          \
     using base::cols;                                                          \
     static constexpr auto view_transitivness = std::make_tuple(true);          \
     static const char* include;                                                \
-    explicit fun##_(T&& a) : base(std::forward<T>(a), #fun) {}                 \
+    explicit fun##_(T&& a) : base(#fun, std::forward<T>(a)) {}                 \
     inline auto deep_copy() const {                                            \
       auto&& arg_copy = this->template get_arg<0>().deep_copy();               \
       return fun##_<std::remove_reference_t<decltype(arg_copy)>>{              \
@@ -166,16 +222,21 @@ class unary_function_cl : public operation_cl<Derived, Scal, T> {
  */
 #define ADD_CLASSIFICATION_FUNCTION(fun, ...)                                  \
   template <typename T>                                                        \
-  class fun##_ : public unary_function_cl<fun##_<T>, bool, T> {                \
-    using base = unary_function_cl<fun##_<T>, bool, T>;                        \
+  class fun##_ : public elt_function_cl<fun##_<T>, bool, T> {                  \
+    using base = elt_function_cl<fun##_<T>, bool, T>;                          \
     using base::arguments_;                                                    \
+    static_assert(std::is_floating_point<                                      \
+                      typename std::remove_reference_t<T>::Scalar>::value,     \
+                  #fun                                                         \
+                  ": all arguments must be expression with floating point "    \
+                  "return type!");                                             \
                                                                                \
    public:                                                                     \
     using base::rows;                                                          \
     using base::cols;                                                          \
     static constexpr auto view_transitivness = std::make_tuple(true);          \
     static const char* include;                                                \
-    explicit fun##_(T&& a) : base(std::forward<T>(a), #fun) {}                 \
+    explicit fun##_(T&& a) : base(#fun, std::forward<T>(a)) {}                 \
     inline auto deep_copy() const {                                            \
       auto&& arg_copy = this->template get_arg<0>().deep_copy();               \
       return fun##_<std::remove_reference_t<decltype(arg_copy)>>{              \
@@ -251,6 +312,9 @@ ADD_CLASSIFICATION_FUNCTION(isinf,
 ADD_CLASSIFICATION_FUNCTION(isnan,
                             this->template get_arg<0>().extreme_diagonals())
 
+ADD_BINARY_FUNCTION_WITH_INCLUDE(pow, "")
+
+#undef ADD_BINARY_FUNCTION_WITH_INCLUDE
 #undef ADD_UNARY_FUNCTION_WITH_INCLUDE
 #undef ADD_UNARY_FUNCTION
 #undef ADD_UNARY_FUNCTION_PASS_ZERO

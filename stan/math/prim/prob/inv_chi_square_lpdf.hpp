@@ -40,7 +40,9 @@ namespace math {
  * @throw std::domain_error if nu is not greater than or equal to 0
  * @throw std::domain_error if y is not greater than or equal to 0.
  */
-template <bool propto, typename T_y, typename T_dof>
+template <bool propto, typename T_y, typename T_dof,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_dof>* = nullptr>
 return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
   using T_partials_return = partials_return_t<T_y, T_dof>;
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;

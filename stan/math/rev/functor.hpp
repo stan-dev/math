@@ -25,6 +25,5 @@
 #include <stan/math/rev/functor/map_rect_reduce.hpp>
 #include <stan/math/rev/functor/operands_and_partials.hpp>
 #include <stan/math/rev/functor/reduce_sum.hpp>
-#include <stan/math/rev/functor/reverse_pass_callback.hpp>
 
 #endif
