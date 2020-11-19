@@ -452,7 +452,8 @@ class results_cl {
         int wgs_rows = (n_rows + local - 1) / local;
         int wgs_cols = (n_cols + local - 1) / local;
 
-        std::cout << "before enqueueNDRangeKernel require_specific_local_size" << std::endl;
+        std::cout << "before enqueueNDRangeKernel require_specific_local_size"
+                  << std::endl;
         opencl_context.queue().enqueueNDRangeKernel(
             kernel, cl::NullRange, cl::NDRange(local * wgs_rows, wgs_cols),
             cl::NDRange(local, 1), &events, &e);
