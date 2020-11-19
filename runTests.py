@@ -254,7 +254,10 @@ def test_files_in_folder(folder):
 def findTests(base_path, filter_names, do_jumbo=False):
     tests = []
     for path in base_path:
-        tests.extend(test_files_in_folder(path))
+        if (not os.path.isdir(path)) and path.endswith("_test"):
+            tests.append(path+".cpp")
+        else:
+            tests.extend(test_files_in_folder(path))
     tests = map(mungeName, tests)
     tests = [
         test
