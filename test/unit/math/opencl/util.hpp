@@ -153,16 +153,13 @@ void compare_cpu_opencl_prim_rev_impl(const Functor& functor,
       [&functor](const auto& args_for_cpu, const auto& args_for_opencl) {
         std::string signature = type_name<decltype(args_for_cpu)>().data();
         auto res_cpu = functor(std::get<Is>(args_for_cpu)...);
-        std::cout << "after cpu run" << std::endl;
         auto res_opencl
             = functor(opencl_argument(std::get<Is>(args_for_opencl))...);
-        std::cout << "after gpu run" << std::endl;
         expect_eq(res_opencl, res_cpu,
                   ("CPU and OpenCL return values do not match for signature "
                    + signature + "!")
                       .c_str());
         var(recursive_sum(res_cpu) + recursive_sum(res_opencl)).grad();
-        std::cout << "after val check" << std::endl;
 
         static_cast<void>(std::initializer_list<int>{
             (expect_adj_near(
@@ -171,11 +168,8 @@ void compare_cpu_opencl_prim_rev_impl(const Functor& functor,
                   + std::to_string(Is) + " for signature " + signature + "!")
                      .c_str()),
              0)...});
-        std::cout << "after adjoint check" << std::endl;
 
         set_zero_all_adjoints();
-        std::cout << "exiting compare_cpu_opencl_prim_rev_impl lambda"
-                  << std::endl;
       },
       args...);
 }
@@ -219,22 +213,12 @@ void test_opencl_broadcasting_prim_rev_impl(const Functor& functor,
         std::string signature = type_name<decltype(args_broadcast)>().data();
         std::cout << "entering compare_cpu_opencl_prim_rev_impl lambda sig: "
                   << signature << std::endl;
-        std::cout << "args_broadcast adresses: " << &args_broadcast
-                  << std::endl;
-        std::vector<int>{(std::cout << Is << ": "
-                                    << &std::get<Is>(args_broadcast)
-                                    << std::endl,
-                          0)...};
-        std::cout << "args_vector adresses: " << &args_vector << std::endl;
-        std::vector<int>{
-            (std::cout << Is << ": " << &std::get<Is>(args_vector) << std::endl,
-             0)...};
         std::cout << "args_broadcast values: " << std::endl;
         std::vector<int>{(std::cout << Is << ": "
                                     << std::get<Is>(args_broadcast)
                                     << std::endl,
                           0)...};
-        std::cout << "args_vector values: " << std::endl;
+        std::cout << std::endl << "args_vector values: " << std::endl;
         std::vector<int>{
             (std::cout << Is << ": " << std::get<Is>(args_vector) << std::endl,
              0)...};

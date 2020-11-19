@@ -41,6 +41,7 @@ template <bool propto, typename T_y_cl, typename T_loc_cl, typename T_prec_cl,
           require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_prec_cl>* = nullptr>
 return_type_t<T_y_cl, T_loc_cl, T_prec_cl> beta_proportion_lpdf(
     const T_y_cl& y, const T_loc_cl& mu, const T_prec_cl& kappa) {
+  std::cout << "in beta_proportion_lpdf" << std::endl;
   static const char* function = "beta_proportion_lpdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_loc_cl, T_prec_cl>;
   using std::isfinite;
@@ -58,6 +59,7 @@ return_type_t<T_y_cl, T_loc_cl, T_prec_cl> beta_proportion_lpdf(
   const auto& y_val = value_of(y);
   const auto& mu_val = value_of(mu);
   const auto& kappa_val = value_of(kappa);
+  std::cout << "after values" << std::endl;
 
   auto check_y_bounded
       = check_cl(function, "Random variable", y_val, "in the interval [0, 1]");
@@ -69,6 +71,7 @@ return_type_t<T_y_cl, T_loc_cl, T_prec_cl> beta_proportion_lpdf(
       function, "Precision parameter", kappa_val, "in the interval [0, 1]");
   auto kappa_positive_finite = 0 < kappa_val && isfinite(kappa_val);
 
+  std::cout << "after checks" << std::endl;
   auto log_y_expr = log(y_val);
   auto log1m_y_expr = log1p(-y_val);
   auto mukappa_expr = elt_multiply(mu_val, kappa_val);
@@ -91,11 +94,13 @@ return_type_t<T_y_cl, T_loc_cl, T_prec_cl> beta_proportion_lpdf(
         + elt_multiply(mu_val, log_y_expr - digamma_mukappa_expr)
         + elt_multiply(1 - mu_val, log1m_y_expr - digamma_kappa_mukappa_expr);
 
+  std::cout << "after expressions" << std::endl;
   matrix_cl<double> logp_cl;
   matrix_cl<double> y_deriv_cl;
   matrix_cl<double> mu_deriv_cl;
   matrix_cl<double> kappa_deriv_cl;
 
+  std::cout << "after res_matrix_cl" << std::endl;
   results(check_y_bounded, check_mu_bounded, check_kappa_positive_finite,
           logp_cl, y_deriv_cl, mu_deriv_cl, kappa_deriv_cl)
       = expressions(y_bounded_expr, mu_bounded_expr, kappa_positive_finite,
@@ -104,8 +109,10 @@ return_type_t<T_y_cl, T_loc_cl, T_prec_cl> beta_proportion_lpdf(
                     calc_if<!is_constant<T_loc_cl>::value>(mu_deriv_expr),
                     calc_if<!is_constant<T_prec_cl>::value>(kappa_deriv_expr));
 
+  std::cout << "after kernel" << std::endl;
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
+  std::cout << "after from_matrix_cl" << std::endl;
   operands_and_partials<T_y_cl, T_loc_cl, T_prec_cl> ops_partials(y, mu, kappa);
   if (!is_constant<T_y_cl>::value) {
     ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
@@ -116,6 +123,7 @@ return_type_t<T_y_cl, T_loc_cl, T_prec_cl> beta_proportion_lpdf(
   if (!is_constant<T_prec_cl>::value) {
     ops_partials.edge3_.partials_ = std::move(kappa_deriv_cl);
   }
+  std::cout << "exiting beta_proportion_lpdf" << std::endl;
 
   return ops_partials.build(logp);
 }

@@ -54,12 +54,25 @@ TEST(ProbDistributionsBetaProportion, error_checking) {
                std::domain_error);
 }
 
+template <typename T>
+std::ostream& operator<<(std::ostream& out, const stan::math::matrix_cl<T>& v) {
+  out << from_matrix_cl(v);
+  return out;
+}
+
 auto beta_proportion_lpdf_functor
     = [](const auto& y, const auto& mu, const auto& kappa) {
+        std::cout << "y:" << std::endl << y << std::endl << std::endl;
+        std::cout << "mu:" << std::endl << mu << std::endl << std::endl;
+        std::cout << "kappa:" << std::endl << kappa << std::endl << std::endl;
         return stan::math::beta_proportion_lpdf(y, mu, kappa);
       };
 auto beta_proportion_lpdf_functor_propto
     = [](const auto& y, const auto& mu, const auto& kappa) {
+        std::cout << "propto=true" << std::endl;
+        std::cout << "y:" << std::endl << y << std::endl << std::endl;
+        std::cout << "mu:" << std::endl << mu << std::endl << std::endl;
+        std::cout << "kappa:" << std::endl << kappa << std::endl << std::endl;
         return stan::math::beta_proportion_lpdf<true>(y, mu, kappa);
       };
 
