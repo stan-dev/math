@@ -1449,10 +1449,12 @@ void expect_near_rel_var(const std::string& message, T1&& x, T2&& y,
   stan::math::check_size_match("expect_near_rel_var", "x", x.size(), "y",
                                y.size());
   for (size_t i = 0; i < x.size(); ++i) {
-    expect_near_rel(message + std::string(" values at i = ") + std::to_string(i), x[i].val(), y[i].val(),
-                    tols.gradient_val_);
-    expect_near_rel(message + std::string(" adjoints at i = ") + std::to_string(i), x[i].adj(), y[i].adj(),
-                    tols.gradient_grad_varmat_matvar_);
+    expect_near_rel(
+        message + std::string(" values at i = ") + std::to_string(i),
+        x[i].val(), y[i].val(), tols.gradient_val_);
+    expect_near_rel(
+        message + std::string(" adjoints at i = ") + std::to_string(i),
+        x[i].adj(), y[i].adj(), tols.gradient_grad_varmat_matvar_);
   }
 }
 
@@ -1601,7 +1603,7 @@ inline void test_matvar_gradient(const ad_tolerances& tols,
  */
 template <typename ResultMatVar, typename ResultVarMat, typename MatVar,
           typename VarMat,
-	  require_std_vector_vt<is_var, ResultMatVar>* = nullptr,
+          require_std_vector_vt<is_var, ResultMatVar>* = nullptr,
           require_std_vector_vt<is_var, ResultVarMat>* = nullptr>
 inline void test_matvar_gradient(const ad_tolerances& tols,
                                  ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
@@ -1633,7 +1635,7 @@ inline void test_matvar_gradient(const ad_tolerances& tols,
 template <typename ResultMatVar, typename ResultVarMat, typename MatVar,
           typename VarMat,
           require_std_vector_vt<is_eigen, ResultMatVar>* = nullptr,
-	  require_std_vector_vt<is_var_matrix, ResultVarMat>* = nullptr>
+          require_std_vector_vt<is_var_matrix, ResultVarMat>* = nullptr>
 inline void test_matvar_gradient(const ad_tolerances& tols,
                                  ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
                                  const MatVar& A_mv, const VarMat& A_vm) {
@@ -1693,8 +1695,8 @@ inline void test_matvar_gradient(const ad_tolerances& tols,
  * @param x not used, only types are used.
  */
 template <typename ReturnType, typename Type,
-	  require_all_not_std_vector_t<ReturnType, Type>* = nullptr,
-	  require_matrix_t<Type>* = nullptr>
+          require_all_not_std_vector_t<ReturnType, Type>* = nullptr,
+          require_matrix_t<Type>* = nullptr>
 void check_return_type(const ReturnType& ret, const Type& x) {
   using stan::is_eigen;
   using stan::is_var_matrix;
@@ -1725,10 +1727,10 @@ void check_return_type(const ReturnType& ret, const Type& x) {
  * @param x input of function
  */
 template <typename ReturnType, typename Type,
-	  require_std_vector_t<ReturnType>* = nullptr,
-	  require_std_vector_vt<is_matrix, Type>* = nullptr>
+          require_std_vector_t<ReturnType>* = nullptr,
+          require_std_vector_vt<is_matrix, Type>* = nullptr>
 void check_return_type(const ReturnType& ret, const Type& x) {
-  if(ret.size() > 0 && x.size() > 0)
+  if (ret.size() > 0 && x.size() > 0)
     check_return_type(ret[0], x[0]);
 }
 
@@ -1743,8 +1745,8 @@ void check_return_type(const ReturnType& ret, const Type& x) {
  * @param y not used, only types are used.
  */
 template <typename ReturnType, typename Type1, typename Type2,
-	  require_all_not_std_vector_t<ReturnType, Type1, Type2>* = nullptr,
-	  require_all_matrix_t<Type1, Type2>* = nullptr>
+          require_all_not_std_vector_t<ReturnType, Type1, Type2>* = nullptr,
+          require_all_matrix_t<Type1, Type2>* = nullptr>
 void check_return_type(const ReturnType& ret, const Type1& x, const Type2& y) {
   using stan::is_eigen;
   using stan::is_var_matrix;

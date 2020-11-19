@@ -44,8 +44,7 @@ class log_sum_exp_vd_vari : public op_vd_vari {
  * @tparam T A type inheriting from EigenBase with scalar type var
  * @param x matrix
  */
-template <typename T,
-	  require_st_var<T>* = nullptr,
+template <typename T, require_st_var<T>* = nullptr,
           require_not_var_matrix_t<T>* = nullptr>
 inline var log_sum_exp_impl(const T& v) {
   arena_t<decltype(v)> arena_v = v;
@@ -54,7 +53,7 @@ inline var log_sum_exp_impl(const T& v) {
 
   reverse_pass_callback([arena_v, arena_v_val, res]() mutable {
     arena_v.adj()
-      += res.adj() * (arena_v_val.array().val() - res.val()).exp().matrix();
+        += res.adj() * (arena_v_val.array().val() - res.val()).exp().matrix();
   });
 
   return res;
@@ -101,9 +100,8 @@ inline var log_sum_exp(double a, const var& b) {
  */
 template <typename T, require_container_st<is_var, T>* = nullptr>
 inline auto log_sum_exp(const T& x) {
-  return apply_vector_unary<T>::reduce(x, [](const auto& v) {
-    return internal::log_sum_exp_impl(v);
-  });
+  return apply_vector_unary<T>::reduce(
+      x, [](const auto& v) { return internal::log_sum_exp_impl(v); });
 }
 
 }  // namespace math
