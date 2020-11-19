@@ -1449,9 +1449,9 @@ void expect_near_rel_var(const std::string& message, T1&& x, T2&& y,
   stan::math::check_size_match("expect_near_rel_var", "x", x.size(), "y",
                                y.size());
   for (size_t i = 0; i < x.size(); ++i) {
-    expect_near_rel(message + std::string(" values"), x[i].val(), y[i].val(),
+    expect_near_rel(message + std::string(" values at i = ") + std::to_string(i), x[i].val(), y[i].val(),
                     tols.gradient_val_);
-    expect_near_rel(message + std::string(" adjoints"), x[i].adj(), y[i].adj(),
+    expect_near_rel(message + std::string(" adjoints at i = ") + std::to_string(i), x[i].adj(), y[i].adj(),
                     tols.gradient_grad_varmat_matvar_);
   }
 }
@@ -1587,6 +1587,7 @@ inline void test_matvar_gradient(const ad_tolerances& tols,
 /**
  * Test that the jacobian for matrices of vars is equal for the
  *  var matrix when the result is a std::vector.
+ *
  * @tparam MatVar An Eigen type inheriting from `EigenBase` that has
  * Scalar vars.
  * @param tols The relative tolerances between the two. Uses `gradient_val_`.
@@ -1599,8 +1600,9 @@ inline void test_matvar_gradient(const ad_tolerances& tols,
  * @param A_vm_f The result of a function from applying `A_vm`
  */
 template <typename ResultMatVar, typename ResultVarMat, typename MatVar,
-          typename VarMat, require_std_vector_t<ResultMatVar>* = nullptr,
-          require_std_vector_t<ResultVarMat>* = nullptr>
+          typename VarMat,
+	  require_std_vector_vt<is_var, ResultMatVar>* = nullptr,
+          require_std_vector_vt<is_var, ResultVarMat>* = nullptr>
 inline void test_matvar_gradient(const ad_tolerances& tols,
                                  ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
                                  const MatVar& A_mv, const VarMat& A_vm) {
@@ -1610,6 +1612,33 @@ inline void test_matvar_gradient(const ad_tolerances& tols,
     stan::math::grad();
     expect_near_rel_var("var<Matrix> vs Matrix<var> input", A_vm, A_mv, tols);
     stan::math::set_zero_all_adjoints();
+  }
+}
+
+/**
+ * Test that the jacobian for matrices of vars is equal for the
+ *  var matrix when the result is a std::vector.
+ *
+ * @tparam MatVar An Eigen type inheriting from `EigenBase` that has
+ * Scalar vars.
+ * @param tols The relative tolerances between the two. Uses `gradient_val_`.
+ * @tparam VarMat A `var_value` with an inner type inheriting from `EigenBase`.
+ * @tparam ResultMatVar The resulting type of applying a function to `A_mv`.
+ * @tparam ResultVarMat The result type of applying a function to `A_vm`.
+ * @param A_mv A eigen type of vars.
+ * @param A_vm A eigen type of vars.
+ * @param A_mv_f The result of a function from applying `A_mv`.
+ * @param A_vm_f The result of a function from applying `A_vm`
+ */
+template <typename ResultMatVar, typename ResultVarMat, typename MatVar,
+          typename VarMat,
+          require_std_vector_vt<is_eigen, ResultMatVar>* = nullptr,
+	  require_std_vector_vt<is_var_matrix, ResultVarMat>* = nullptr>
+inline void test_matvar_gradient(const ad_tolerances& tols,
+                                 ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
+                                 const MatVar& A_mv, const VarMat& A_vm) {
+  for (size_t i = 0; i < A_vm_f.size(); ++i) {
+    test_matvar_gradient(tols, A_mv_f[i], A_vm_f[i], A_mv, A_vm);
   }
 }
 
@@ -1663,7 +1692,9 @@ inline void test_matvar_gradient(const ad_tolerances& tols,
  * @param ret not used, only types are used.
  * @param x not used, only types are used.
  */
-template <typename ReturnType, typename Type>
+template <typename ReturnType, typename Type,
+	  require_all_not_std_vector_t<ReturnType, Type>* = nullptr,
+	  require_matrix_t<Type>* = nullptr>
 void check_return_type(const ReturnType& ret, const Type& x) {
   using stan::is_eigen;
   using stan::is_var_matrix;
@@ -1683,6 +1714,25 @@ void check_return_type(const ReturnType& ret, const Type& x) {
 }
 
 /**
+ * Given the input and outputs are `std::vector` types, check that if
+ * the input value type is a var<matrix> then the output value_type should be
+ * a `var<matrix>` as well. Similarly if the input value_type is
+ * `matrix<var>`, the output value type should be `matrix<var>`.
+ *
+ * @tparam ReturnType The result of applying `x` to a function `f()`
+ * @tparam Type the type of the input to the function `f()`.
+ * @param ret output of function
+ * @param x input of function
+ */
+template <typename ReturnType, typename Type,
+	  require_std_vector_t<ReturnType>* = nullptr,
+	  require_std_vector_vt<is_matrix, Type>* = nullptr>
+void check_return_type(const ReturnType& ret, const Type& x) {
+  if(ret.size() > 0 && x.size() > 0)
+    check_return_type(ret[0], x[0]);
+}
+
+/**
  * Given at least one var<matrix> input expect a `var<matrix>` output and
  * `matrix<var>` when both inputs to a function are `matrix<var>`.
  * @tparam ReturnType The result of applying a `x` and `y` to a function `f()`
@@ -1692,7 +1742,9 @@ void check_return_type(const ReturnType& ret, const Type& x) {
  * @param x not used, only types are used.
  * @param y not used, only types are used.
  */
-template <typename ReturnType, typename Type1, typename Type2>
+template <typename ReturnType, typename Type1, typename Type2,
+	  require_all_not_std_vector_t<ReturnType, Type1, Type2>* = nullptr,
+	  require_all_matrix_t<Type1, Type2>* = nullptr>
 void check_return_type(const ReturnType& ret, const Type1& x, const Type2& y) {
   using stan::is_eigen;
   using stan::is_var_matrix;

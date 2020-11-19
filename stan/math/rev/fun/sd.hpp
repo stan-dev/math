@@ -75,13 +75,9 @@ var sd_impl(const T& x) {
   double sum_of_squares = arena_diff.squaredNorm();
   double sd = std::sqrt(sum_of_squares / (x.size() - 1));
 
-  var res = sd;
-
-  reverse_pass_callback([x, res, arena_diff]() mutable {
-    x.adj() += (res.adj() / (res.val() * (x.size() - 1))) * arena_diff;
+  return make_callback_vari(sd, [x, arena_diff](const auto& res) mutable {
+    x.adj() += (res.adj_ / (res.val_ * (x.size() - 1))) * arena_diff;
   });
-
-  return res;
 }
 }  // namespace internal
 

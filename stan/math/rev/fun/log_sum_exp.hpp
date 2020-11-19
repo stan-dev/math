@@ -38,6 +38,40 @@ class log_sum_exp_vd_vari : public op_vd_vari {
   }
 };
 
+/**
+ * Returns the log sum of exponentials.
+ *
+ * @tparam T A type inheriting from EigenBase with scalar type var
+ * @param x matrix
+ */
+template <typename T,
+	  require_st_var<T>* = nullptr,
+          require_not_var_matrix_t<T>* = nullptr>
+inline var log_sum_exp_impl(const T& v) {
+  arena_t<decltype(v)> arena_v = v;
+  arena_t<decltype(v.val())> arena_v_val = arena_v.val();
+  var res = log_sum_exp(arena_v_val);
+
+  reverse_pass_callback([arena_v, arena_v_val, res]() mutable {
+    arena_v.adj()
+      += res.adj() * (arena_v_val.array().val() - res.val()).exp().matrix();
+  });
+
+  return res;
+}
+
+/**
+ * Returns the log sum of exponentials.
+ *
+ * @tparam T A `var_value` with an input vector or matrix
+ * @param x matrix
+ */
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline var log_sum_exp_impl(const T& x) {
+  return make_callback_vari(log_sum_exp(x.val()), [x](const auto& res) mutable {
+    x.adj() += res.adj_ * (x.val().array().val() - res.val_).exp().matrix();
+  });
+}
 }  // namespace internal
 
 /**
@@ -65,36 +99,11 @@ inline var log_sum_exp(double a, const var& b) {
  * @tparam T Type of input vector or matrix.
  * @param x matrix
  */
-template <typename T, require_container_st<is_var, T>* = nullptr,
-          require_not_var_matrix_t<T>* = nullptr>
+template <typename T, require_container_st<is_var, T>* = nullptr>
 inline auto log_sum_exp(const T& x) {
   return apply_vector_unary<T>::reduce(x, [](const auto& v) {
-    arena_t<decltype(v)> arena_v = v;
-    arena_t<decltype(v.val())> arena_v_val = arena_v.val();
-    var res = log_sum_exp(arena_v_val);
-
-    reverse_pass_callback([arena_v, arena_v_val, res]() mutable {
-      arena_v.adj()
-          += res.adj() * (arena_v_val.array().val() - res.val()).exp().matrix();
-    });
-
-    return res;
+    return internal::log_sum_exp_impl(v);
   });
-}
-
-/**
- * Returns the log sum of exponentials.
- *
- * @tparam T A `var_value` with an input vector or matrix
- * @param x matrix
- */
-template <typename T, require_var_matrix_t<T>* = nullptr>
-inline var log_sum_exp(const T& x) {
-  var res = log_sum_exp(x.val());
-  reverse_pass_callback([x, res]() mutable {
-    x.adj() += res.adj() * (x.val().array().val() - res.val()).exp().matrix();
-  });
-  return res;
 }
 
 }  // namespace math
