@@ -590,6 +590,12 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
 };
 
 template <typename T>
+std::ostream& operator<<(std::ostream& out, const stan::math::matrix_cl<T>& v) {
+  out << from_matrix_cl(v);
+  return out;
+}
+
+template <typename T>
 using matrix_cl_prim = matrix_cl<T, require_arithmetic_t<T>>;
 
 template <typename T>
