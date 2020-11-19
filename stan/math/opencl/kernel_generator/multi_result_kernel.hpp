@@ -214,7 +214,9 @@ class expressions_cl {
    */
   explicit expressions_cl(T_expressions&&... expressions)
       : expressions_(
-            T_expressions(std::forward<T_expressions>(expressions))...) {}
+            T_expressions(std::forward<T_expressions>(expressions))...) {
+    std::cout << "in expressions_cl constructor" << std::endl;
+  }
 
  private:
   std::tuple<T_expressions...> expressions_;
@@ -247,7 +249,9 @@ class results_cl {
    * @param results results that will be calculated in same kernel
    */
   explicit results_cl(T_results&&... results)
-      : results_(std::forward<T_results>(results)...) {}
+      : results_(std::forward<T_results>(results)...) {
+    std::cout << "in results_cl constructor" << std::endl;
+  }
 
   /**
    * Assigning \c expressions_cl object to \c results_ object generates and
@@ -383,6 +387,7 @@ class results_cl {
   template <typename... T_res, typename... T_expressions>
   static void assignment_impl(
       const std::tuple<std::pair<T_res, T_expressions>...>& assignment_pairs) {
+    std::cout << "in assignment_impl" << std::endl;
     using T_First_Expr = typename std::remove_reference_t<
         std::tuple_element_t<0, std::tuple<T_expressions...>>>;
     using impl = typename internal::multi_result_kernel_internal<
@@ -400,6 +405,7 @@ class results_cl {
 
     int n_rows = std::get<0>(assignment_pairs).second.thread_rows();
     int n_cols = std::get<0>(assignment_pairs).second.thread_cols();
+    std::cout << "before check_assign_dimensions" << std::endl;
     const char* function = "results_cl.assignment";
     impl::check_assign_dimensions(n_rows, n_cols, assignment_pairs);
     if (n_rows * n_cols == 0) {
@@ -418,18 +424,24 @@ class results_cl {
 
     try {
       if (impl::kernel_() == NULL) {
+        std::cout << "before get_kernel_source_impl" << std::endl;
         std::string src = get_kernel_source_impl(assignment_pairs);
+        std::cout << src << std::endl;
         auto opts = opencl_context.base_opts();
+        std::cout << "before compile_kernel" << std::endl;
         impl::kernel_ = opencl_kernels::compile_kernel(
             "calculate", {view_kernel_helpers, src}, opts);
+        std::cout << "before register_kernel_cache" << std::endl;
         opencl_context.register_kernel_cache(&impl::kernel_);
       }
       cl::Kernel& kernel = impl::kernel_;
       int arg_num = 0;
 
+      std::cout << "before set_args" << std::endl;
       std::set<const operation_cl_base*> generated;
       impl::set_args(generated, kernel, arg_num, assignment_pairs);
 
+      std::cout << "before get_clear_events" << std::endl;
       std::vector<cl::Event> events;
       impl::get_clear_events(events, assignment_pairs);
       cl::Event e;
@@ -440,14 +452,17 @@ class results_cl {
         int wgs_rows = (n_rows + local - 1) / local;
         int wgs_cols = (n_cols + local - 1) / local;
 
+        std::cout << "before enqueueNDRangeKernel require_specific_local_size" << std::endl;
         opencl_context.queue().enqueueNDRangeKernel(
             kernel, cl::NullRange, cl::NDRange(local * wgs_rows, wgs_cols),
             cl::NDRange(local, 1), &events, &e);
       } else {
+        std::cout << "before enqueueNDRangeKernel any size" << std::endl;
         opencl_context.queue().enqueueNDRangeKernel(kernel, cl::NullRange,
                                                     cl::NDRange(n_rows, n_cols),
                                                     cl::NullRange, &events, &e);
       }
+      std::cout << "before add_event" << std::endl;
       impl::add_event(e, assignment_pairs);
     } catch (const cl::Error& e) {
       check_opencl_error(function, e);

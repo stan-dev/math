@@ -193,16 +193,6 @@ int rows(const T& x) {
   return x.size();
 }
 
-template <typename T>
-std::ostream& operator<<(std::ostream& out, const std::vector<T>& v) {
-  if (!v.empty()) {
-    out << '[';
-    std::copy(v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
-    out << "\b\b]";
-  }
-  return out;
-}
-
 template <std::size_t I, typename Functor, std::size_t... Is, typename... Args>
 void test_opencl_broadcasting_prim_rev_impl(const Functor& functor,
                                             std::index_sequence<Is...>,
@@ -211,31 +201,20 @@ void test_opencl_broadcasting_prim_rev_impl(const Functor& functor,
       [&functor, N = std::max({rows(args)...})](const auto& args_broadcast,
                                                 const auto& args_vector) {
         std::string signature = type_name<decltype(args_broadcast)>().data();
-        std::cout << "entering compare_cpu_opencl_prim_rev_impl lambda sig: "
-                  << signature << std::endl;
-        std::cout << "args_broadcast values: " << std::endl;
         std::vector<int>{(std::cout << Is << ": "
                                     << std::get<Is>(args_broadcast)
                                     << std::endl,
                           0)...};
-        std::cout << std::endl << "args_vector values: " << std::endl;
-        std::vector<int>{
-            (std::cout << Is << ": " << std::get<Is>(args_vector) << std::endl,
-             0)...};
         auto res_scalar
             = functor(opencl_argument(std::get<Is>(args_broadcast))...);
-        std::cout << "after scalar run" << std::endl;
         auto res_vec = functor(opencl_argument(
             to_vector_if<Is == I>(std::get<Is>(args_vector), N))...);
-        std::cout << "after vector run" << std::endl;
         expect_eq(res_vec, res_scalar,
                   ("return values of broadcast and vector arguments do not "
                    "match for signature "
                    + signature + "!")
                       .c_str());
-        std::cout << "after val check" << std::endl;
         var(recursive_sum(res_scalar) + recursive_sum(res_vec)).grad();
-        std::cout << "after grad" << std::endl;
 
         static_cast<void>(std::initializer_list<int>{
             (expect_adj_near(
@@ -245,12 +224,8 @@ void test_opencl_broadcasting_prim_rev_impl(const Functor& functor,
                   + std::to_string(Is) + " for signature " + signature + "!")
                      .c_str()),
              0)...});
-        std::cout << "after adjoint check" << std::endl;
 
         set_zero_all_adjoints();
-        std::cout << "exiting compare_cpu_opencl_prim_rev_impl lambda"
-                  << std::endl;
-      },
       args...);
 }
 
