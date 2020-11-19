@@ -131,6 +131,7 @@
 #include <stan/math/opencl/prim/neg_binomial_2_log_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/normal_id_glm_lpdf.hpp>
 #include <stan/math/opencl/prim/ordered_logistic_glm_lpmf.hpp>
+#include <stan/math/opencl/prim/pareto_type_2_lpdf.hpp>
 #include <stan/math/opencl/prim/poisson_log_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/rep_matrix.hpp>
 #include <stan/math/opencl/prim/rep_row_vector.hpp>
