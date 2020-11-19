@@ -65,7 +65,7 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
 
   operands_and_partials<T_lambda_ref> ops_partials(lambda_ref);
 
-  T_partials_return logp = sum(multiply_log(n_val, lambda_val));
+  T_partials_return logp = stan::math::sum(multiply_log(n_val, lambda_val));
   if (include_summand<propto, T_rate>::value) {
     logp -= sum(lambda_val) * N / size(lambda);
   }

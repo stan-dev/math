@@ -5,7 +5,10 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/meta.hpp>
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun.hpp>
+#include <stan/math/prim/functor.hpp>
+#include <stan/math/prim/meta.hpp>
 
 #include <stan/math/fwd/fun.hpp>
 #include <stan/math/fwd/functor.hpp>
