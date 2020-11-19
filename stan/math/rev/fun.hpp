@@ -50,6 +50,7 @@
 #include <stan/math/rev/fun/fabs.hpp>
 #include <stan/math/rev/fun/falling_factorial.hpp>
 #include <stan/math/rev/fun/fdim.hpp>
+#include <stan/math/rev/fun/fill.hpp>
 #include <stan/math/rev/fun/floor.hpp>
 #include <stan/math/rev/fun/fma.hpp>
 #include <stan/math/rev/fun/fmax.hpp>
@@ -64,6 +65,7 @@
 #include <stan/math/rev/fun/hypot.hpp>
 #include <stan/math/rev/fun/if_else.hpp>
 #include <stan/math/rev/fun/inc_beta.hpp>
+#include <stan/math/rev/fun/initialize_fill.hpp>
 #include <stan/math/rev/fun/initialize_variable.hpp>
 #include <stan/math/rev/fun/inv.hpp>
 #include <stan/math/rev/fun/inv_Phi.hpp>
