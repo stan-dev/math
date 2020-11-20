@@ -13,13 +13,13 @@ namespace stan {
 namespace math {
 
 /** \ingroup opencl
- * Returns the log PMF of the Poisson distribution. If containers are
+ * Returns the log PMF of the Poisson log distribution. If containers are
  * supplied, returns the log sum of the probabilities.
  *
  * @tparam T_n_cl type of integer parameters
  * @tparam T_log_rate_cl type of chance of success parameters
  * @param n integer parameter
- * @param alpha chance of success parameter
+ * @param alpha log rate parameter
  * @return log probability or log sum of probabilities
  * @throw std::domain_error if alpha is not a valid probability
  * @throw std::invalid_argument if container sizes mismatch.
