@@ -19,7 +19,7 @@ namespace internal {
  * vector, row vector, matrix, or std vector of any of these types.
  *
  * @tparam T Input type
- * @param[in] m input matrix
+ * @param[in] x input
  * @return sample standard deviation
  * @throw domain error  size is not greater than zero.
  */

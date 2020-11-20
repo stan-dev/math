@@ -39,10 +39,10 @@ class log_sum_exp_vd_vari : public op_vd_vari {
 };
 
 /**
- * Returns the log sum of exponentials.
+ * Returns the log sum of exponentials of the input.
  *
  * @tparam T A type inheriting from EigenBase with scalar type var
- * @param x matrix
+ * @param v input
  */
 template <typename T, require_st_var<T>* = nullptr,
           require_not_var_matrix_t<T>* = nullptr>
@@ -60,10 +60,10 @@ inline var log_sum_exp_impl(const T& v) {
 }
 
 /**
- * Returns the log sum of exponentials.
+ * Returns the log sum of exponentials of the input.
  *
  * @tparam T A `var_value` with an input vector or matrix
- * @param x matrix
+ * @param x input
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline var log_sum_exp_impl(const T& x) {

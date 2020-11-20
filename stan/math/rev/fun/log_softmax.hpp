@@ -48,7 +48,7 @@ class log_softmax_elt_vari : public vari {
  * Return the log softmax of the specified vector
  *
  * @tparam T Type of input vector.
- * @param[in] x Unconstrained input vector.
+ * @param[in] alpha Unconstrained input vector.
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
@@ -94,7 +94,7 @@ auto log_softmax_impl(const T& alpha) {
  * Return the log softmax of the specified vector
  *
  * @tparam T Type of input vector.
- * @param[in] x Unconstrained input vector.
+ * @param[in] alpha Unconstrained input vector.
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
