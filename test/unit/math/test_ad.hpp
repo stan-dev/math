@@ -1881,11 +1881,15 @@ template <typename F, typename EigMat>
 void expect_ad_matvar(const F& f, const EigMat& x) {
   ad_tolerances tols;
   expect_ad_matvar_v(tols, f, x);
+
+  stan::math::recover_memory();
 }
 
 template <typename F, typename EigMat>
 void expect_ad_matvar(const ad_tolerances& tols, const F& f, const EigMat& x) {
   expect_ad_matvar_v(tols, f, x);
+
+  stan::math::recover_memory();
 }
 
 /**
@@ -1908,6 +1912,8 @@ void expect_ad_matvar(const ad_tolerances& tols, const F& f, const EigMat1& x,
   expect_ad_matvar_vv<double, var>(tols, f, x, y);
   expect_ad_matvar_vv<var, double>(tols, f, x, y);
   expect_ad_matvar_vv<var, var>(tols, f, x, y);
+
+  stan::math::recover_memory();
 }
 
 /**
