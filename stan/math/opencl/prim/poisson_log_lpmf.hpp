@@ -32,6 +32,8 @@ return_type_t<T_log_rate_cl> poisson_log_lpmf(const T_n_cl& n,
                                               const T_log_rate_cl& alpha) {
   static const char* function = "poisson_log_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_log_rate_cl>;
+  using std::isinf;
+  using std::isnan;
   constexpr bool is_n_vector = !is_stan_scalar<T_n_cl>::value;
   constexpr bool is_alpha_vector = !is_stan_scalar<T_log_rate_cl>::value;
 
