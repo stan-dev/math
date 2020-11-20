@@ -1746,7 +1746,7 @@ void check_return_type(const ReturnType& ret, const Type& x) {
  */
 template <typename ReturnType, typename Type1, typename Type2,
           require_all_not_std_vector_t<ReturnType, Type1, Type2>* = nullptr,
-          require_all_matrix_t<Type1, Type2>* = nullptr>
+          require_any_matrix_t<Type1, Type2>* = nullptr>
 void check_return_type(const ReturnType& ret, const Type1& x, const Type2& y) {
   using stan::is_eigen;
   using stan::is_var_matrix;
