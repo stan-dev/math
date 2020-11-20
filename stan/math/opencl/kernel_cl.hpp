@@ -230,6 +230,11 @@ inline auto compile_kernel(const char* name,
   std::cout << "before cl::Program" << std::endl;
   cl::Program program(opencl_context.context(), sources);
   try {
+    std::cout << "COMPLETE SOURCE:" << std::endl;
+    for(auto i : sources){
+      std::cout << i << std::endl;
+    }
+    std::cout << "kernel_opts:" << kernel_opts << std::endl;
     std::cout << "before program.build" << std::endl;
     program.build({opencl_context.device()}, kernel_opts.c_str());
 
