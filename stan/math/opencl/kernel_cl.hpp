@@ -215,6 +215,7 @@ inline const std::vector<cl::Event> select_events(
 inline auto compile_kernel(const char* name,
                            const std::vector<std::string>& sources,
                            const std::map<std::string, int>& options) {
+  std::cout << "in compile_kernel" << std::endl;
   auto base_opts = opencl_context.base_opts();
   for (auto& it : options) {
     if (base_opts[it.first] > it.second) {
@@ -226,12 +227,16 @@ inline auto compile_kernel(const char* name,
     kernel_opts += std::string(" -D") + comp_opts.first + "="
                    + std::to_string(comp_opts.second);
   }
+  std::cout << "before cl::Program" << std::endl;
   cl::Program program(opencl_context.context(), sources);
   try {
+    std::cout << "before program.build" << std::endl;
     program.build({opencl_context.device()}, kernel_opts.c_str());
 
+    std::cout << "before cl::Kernel" << std::endl;
     return cl::Kernel(program, name);
   } catch (const cl::Error& e) {
+    std::cout << "catch (const cl::Error& e)" << std::endl;
     // in case of CL_BUILD_PROGRAM_FAILURE, print the build error
     if (e.err() == -11) {
       std::string buildlog = program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(
@@ -241,6 +246,7 @@ inline auto compile_kernel(const char* name,
       check_opencl_error(name, e);
     }
   }
+  std::cout << "unreachable" << std::endl;
   return cl::Kernel();  // never reached because check_opencl_error throws
 }
 
