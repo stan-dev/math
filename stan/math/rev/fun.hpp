@@ -128,6 +128,7 @@
 #include <stan/math/rev/fun/sd.hpp>
 #include <stan/math/rev/fun/simplex_constrain.hpp>
 #include <stan/math/rev/fun/sin.hpp>
+#include <stan/math/rev/fun/singular_values.hpp>
 #include <stan/math/rev/fun/sinh.hpp>
 #include <stan/math/rev/fun/softmax.hpp>
 #include <stan/math/rev/fun/sqrt.hpp>
