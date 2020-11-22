@@ -205,6 +205,27 @@ inline double integrate_1d(const F& f, const double a, const double b,
   }
 }
 
+template <typename F, typename... Args>
+inline double integrate_1d_new(const F& f, double a, double b,
+			       double relative_tolerance,
+			       std::ostream* msgs, const Args&... args) {
+  //const double relative_tolerance = std::sqrt(EPSILON);
+  static const char* function = "integrate_1d";
+  check_less_or_equal(function, "lower limit", a, b);
+
+  if (a == b) {
+    if (std::isinf(a)) {
+      throw_domain_error(function, "Integration endpoints are both", a, "", "");
+    }
+    return 0.0;
+  } else {
+    return integrate(
+        std::bind<double>(f, std::placeholders::_1, std::placeholders::_2,
+                          msgs, args...),
+        a, b, relative_tolerance);
+  }
+}
+
 }  // namespace math
 }  // namespace stan
 
