@@ -48,9 +48,9 @@ jobs:
       run: |
         python.exe runTests.py -j2 test/unit/*_test.cpp
         python.exe runTests.py -j2 test/unit/math/*_test.cpp
-        python.exe runTests.py -j2 test/unit/prim
-        python.exe runTests.py -j2 test/unit/rev
-        python.exe runTests.py -j2 test/unit/memory
+        python.exe runTests.py -j2 test/unit/math/prim
+        python.exe runTests.py -j2 test/unit/math/rev
+        python.exe runTests.py -j2 test/unit/math/memory
         
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v2
@@ -88,11 +88,11 @@ jobs:
     - name: Add TBB to PATH
       shell: powershell
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
-    - name: Run prim and rev unit tests
+    - name: Run fwd and mix unit tests
       shell: powershell
       run: |
-        python.exe runTests.py -j2 test/unit/fwd
-        python.exe runTests.py -j2 test/unit/mix
+        python.exe runTests.py -j2 test/unit/math/fwd
+        python.exe runTests.py -j2 test/unit/math/mix
         
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v2
