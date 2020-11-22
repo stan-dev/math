@@ -17,7 +17,9 @@ namespace math {
  * @param m Specified matrix.
  * @return Singular values of the matrix.
  */
-template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr>
+  template <typename EigMat,
+	    require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
+	    require_not_vt_var<EigMat>* = nullptr>
 Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, 1> singular_values(
     const EigMat& m) {
   if (m.size() == 0) {
