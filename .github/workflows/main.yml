@@ -1,6 +1,8 @@
 name: Windows RTools 3.5
 
 on:
+  pull_request:
+    branches: [ develop ]
   push:
     branches: [ develop ]
     paths-ignore:
@@ -43,7 +45,7 @@ jobs:
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
     - name: Run prim and rev unit tests
       shell: powershell
-      run: 
+      run: |
         python.exe runTests.py -j2 test/unit/*_test.cpp
         python.exe runTests.py -j2 test/unit/math/*_test.cpp
         python.exe runTests.py -j2 test/unit/prim
@@ -88,7 +90,7 @@ jobs:
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
     - name: Run prim and rev unit tests
       shell: powershell
-      run: 
+      run: |
         python.exe runTests.py -j2 test/unit/fwd
         python.exe runTests.py -j2 test/unit/mix
         
