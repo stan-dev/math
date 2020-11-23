@@ -5,8 +5,10 @@
 #include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/meta/is_vector.hpp>
+#include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_var_matrix.hpp>
+#include <stan/math/prim/meta/is_vector.hpp>
+#include <stan/math/prim/meta/is_stan_scalar.hpp>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -201,7 +203,7 @@ inline void elementwise_check(const F& is_good, const char* function,
   }
 }
 template <typename F, typename T, typename... Indexings,
-          require_var_matrix<T>* = nullptr>
+          require_var_matrix_t<T>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
                               const char* name, const T& x, const char* must_be,
                               const Indexings... indexings) {
