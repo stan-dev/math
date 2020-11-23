@@ -12,7 +12,7 @@ template <typename T>
 void do_check(const T& x) {
   stan::math::elementwise_check([](const auto& x) { return p(x); },
                                 "elementwise_check_tests", "x", x,
-                                ", but must not be nan!");
+                                "not nan");
 }
 
 template <typename T>
@@ -148,7 +148,7 @@ TEST(elementwise_check, error_messages_look_good) {
   Eigen::MatrixXd bad_m = Eigen::MatrixXd::Zero(3, 3);
   bad_m(1, 2) = bad;
   EXPECT_THROW_MSG(elementwise_check_test::do_check(bad_m), std::domain_error,
-                   "[row=2, col=3]");
+                   "[2, 3]");
   std::vector<std::vector<double> > bad_vv{std::vector<double>{},
                                            std::vector<double>{bad}};
   EXPECT_THROW_MSG(elementwise_check_test::do_check(bad_vv), std::domain_error,
