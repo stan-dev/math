@@ -26,8 +26,8 @@ namespace math {
 template <typename T_y>
 inline void check_positive(const char* function, const char* name,
                            const T_y& y) {
-  elementwise_check([](double x) { return x>0; }, function, name,
-                    y, "positive");
+  elementwise_check([](double x) { return x > 0; }, function, name, y,
+                    "positive");
 }
 
 /**

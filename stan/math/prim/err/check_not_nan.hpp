@@ -25,8 +25,8 @@ namespace math {
 template <typename T_y>
 inline void check_not_nan(const char* function, const char* name,
                           const T_y& y) {
-  elementwise_check([](double x) { return !std::isnan(x); }, function, name,
-                    y, "not nan");
+  elementwise_check([](double x) { return !std::isnan(x); }, function, name, y,
+                    "not nan");
 }
 
 }  // namespace math

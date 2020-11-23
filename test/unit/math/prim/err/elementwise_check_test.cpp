@@ -11,8 +11,7 @@ auto p = [](const auto& x) { return !stan::math::is_nan(x); };
 template <typename T>
 void do_check(const T& x) {
   stan::math::elementwise_check([](const auto& x) { return p(x); },
-                                "elementwise_check_tests", "x", x,
-                                "not nan");
+                                "elementwise_check_tests", "x", x, "not nan");
 }
 
 template <typename T>
