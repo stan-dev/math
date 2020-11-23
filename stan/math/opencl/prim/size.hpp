@@ -9,7 +9,7 @@ namespace math {
 
 /**
  * Returns the size (number of the elements) of a `matrix_cl`.
- * @param m `matric_cl` to determine size of
+ * @param m `matrix_cl` to determine size of
  * @return number of elements in a
  */
 template <typename T,
