@@ -32,8 +32,7 @@ template <typename T>
 struct apply_vector_unary<T, require_eigen_t<T>> {
   /**
    * Member function for applying a functor to a vector and subsequently
-   * returning a vector. The returned objects are evaluated so that
-   * expression templates are not propagated.
+   * returning a vector.
    *
    * TODO(Andrew) Remove .eval() when rest of Stan library can take
    * expressions as inputs.
@@ -55,6 +54,30 @@ struct apply_vector_unary<T, require_eigen_t<T>> {
             require_t<is_eigen_array<plain_type_t<T2>>>* = nullptr>
   static inline auto apply(const T& x, const F& f) {
     return make_holder([](const auto& a) { return a.array().derived(); }, f(x));
+  }
+
+  /**
+   * Member function for applying a functor to a vector and subsequently
+   * returning a vector. This is a variant of `apply` that does not construct
+   * `holder`, so it is up to the caller to ensure the returned expression is
+   * evaluated before `x` is destructed.
+   *
+   * @tparam T Type of argument to which functor is applied.
+   * @tparam F Type of functor to apply.
+   * @param x Eigen input to which operation is applied.
+   * @param f functor to apply to Eigen input.
+   * @return Eigen object with result of applying functor to input
+   */
+  template <typename F, typename T2 = T,
+            require_t<is_eigen_matrix_base<plain_type_t<T2>>>* = nullptr>
+  static inline auto apply_no_holder(const T& x, const F& f) {
+    return f(x).matrix().derived();
+  }
+
+  template <typename F, typename T2 = T,
+            require_t<is_eigen_array<plain_type_t<T2>>>* = nullptr>
+  static inline auto apply_no_holder(const T& x, const F& f) {
+    return f(x).array().derived();
   }
 
   /**
@@ -155,8 +178,24 @@ struct apply_vector_unary<T, require_std_vector_vt<is_container, T>> {
         = plain_type_t<decltype(apply_vector_unary<T_vt>::apply(x[0], f))>;
     std::vector<T_return> result(x_size);
     for (size_t i = 0; i < x_size; ++i)
-      result[i] = apply_vector_unary<T_vt>::apply(x[i], f);
+      result[i] = apply_vector_unary<T_vt>::apply_no_holder(x[i], f);
     return result;
+  }
+
+  /**
+   * Member function for applying a functor to each container in an std::vector
+   * and subsequently returning an std::vector of containers.
+   *
+   * @tparam T Type of argument to which functor is applied.
+   * @tparam F Type of functor to apply.
+   * @param x std::vector of containers to which operation is applied.
+   * @param f functor to apply to vector input.
+   * @return std::vector of containers with result of applying functor to
+   *         input.
+   */
+  template <typename F>
+  static inline auto apply_no_holder(const T& x, const F& f) {
+    return apply(x,f);
   }
 
   /**
