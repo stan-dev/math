@@ -58,6 +58,10 @@ class Iser {
 };
 
 /**
+ * No-op.
+ */
+inline void pipe_in(std::stringstream& ss) {}
+/**
  * Pipes given arguments into a stringstream. Integral arguments (indices) are
  * increased by 1 before.
  *
@@ -67,7 +71,6 @@ class Iser {
  * @param arg0 the first argument
  * @param args remining arguments
  */
-inline void pipe_in(std::stringstream& ss) {}
 template <typename Arg0, typename... Args>
 inline void pipe_in(std::stringstream& ss, Arg0 arg0, const Args... args) {
   if (std::is_integral<Arg0>::value) {
@@ -86,12 +89,15 @@ inline void pipe_in(std::stringstream& ss, Arg0 arg0, const Args... args) {
  * `x` is a container, check each element inside `x`, recursively.
  * @tparam F type of predicate
  * @tparam T type of `x`
+ * @tparam Indexings types of `indexings`
  * @param is_good predicate to check, must accept doubles and produce bools
  * @param function function name (for error messages)
  * @param name variable name (for error messages)
  * @param x variable to check, can be a scalar, a container of scalars, a
  * container of containers of scalars, etc
- * @param suffix message to print at end of error message
+ * @param must_be message describing what the value should be
+ * @param indexings any additional indexing to print. Intended for internal use
+ * in `elementwise_check` only.
  * @throws `std::domain_error` if `is_good` returns `false` for the value
  * of any element in `x`
  */
