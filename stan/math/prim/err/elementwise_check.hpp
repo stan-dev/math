@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
+#include <stan/math/prim/meta/is_var_matrix.hpp>
 #include <string>
 #include <sstream>
 #include <vector>
