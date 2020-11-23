@@ -100,7 +100,7 @@ template <typename F, typename T, typename... Indexings,
 inline void elementwise_check(const F& is_good, const char* function,
                               const char* name, const T& x, const char* must_be,
                               const Indexings... indexings) {
-  if (unlikely(!is_good(x))) {
+  if (unlikely(!is_good(value_of(x)))) {
     std::stringstream ss{};
     ss << function << ": " << name;
     internal::pipe_in(ss, indexings...);
@@ -192,6 +192,14 @@ inline void elementwise_check(const F& is_good, const char* function,
     elementwise_check(is_good, function, name, x[j], must_be, indexings..., "[",
                       j, "]");
   }
+}
+template <typename F, typename T, typename... Indexings,
+          require_var_matrix<T>* = nullptr>
+inline void elementwise_check(const F& is_good, const char* function,
+                              const char* name, const T& x, const char* must_be,
+                              const Indexings... indexings) {
+  elementwise_check(is_good, function, name, x.val(), must_be, indexings...,
+                    "[", j, "]");
 }
 
 /**
