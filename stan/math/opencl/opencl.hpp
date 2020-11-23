@@ -119,7 +119,9 @@
 #include <stan/math/opencl/prim/exp_mod_normal_lpdf.hpp>
 #include <stan/math/opencl/prim/exponential_lpdf.hpp>
 #include <stan/math/opencl/prim/frechet_lpdf.hpp>
+#include <stan/math/opencl/prim/gamma_lpdf.hpp>
 #include <stan/math/opencl/prim/gp_exp_quad_cov.hpp>
+#include <stan/math/opencl/prim/gumbel_lpdf.hpp>
 #include <stan/math/opencl/prim/inv.hpp>
 #include <stan/math/opencl/prim/inv_chi_square_lpdf.hpp>
 #include <stan/math/opencl/prim/inv_cloglog.hpp>
