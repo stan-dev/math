@@ -41,7 +41,7 @@ class Iser {
    */
   template <typename T, typename = require_stan_scalar_t<T>>
   bool is(const T& x) {
-    return is_good(value_of_rec_rec(x));
+    return is_good(value_of_rec(x));
   }
 
   /**
