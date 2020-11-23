@@ -1,9 +1,10 @@
-#ifndef STAN_MATH_PRIM_FUNCTOR_integrate_1d_HPP
-#define STAN_MATH_PRIM_FUNCTOR_integrate_1d_HPP
+#ifndef STAN_MATH_PRIM_FUNCTOR_INTEGRATE_1D_HPP
+#define STAN_MATH_PRIM_FUNCTOR_INTEGRATE_1D_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/functor/integrate_1d_adapter.hpp>
 #include <boost/math/quadrature/exp_sinh.hpp>
 #include <boost/math/quadrature/sinh_sinh.hpp>
 #include <boost/math/quadrature/tanh_sinh.hpp>
@@ -136,6 +137,28 @@ inline double integrate(const F& f, double a, double b,
   return Q;
 }
 
+template <typename F, typename... Args,
+	  require_all_not_st_var<Args...>* = nullptr>
+inline double integrate_1d_new(const F& f, double a, double b,
+			       double relative_tolerance,
+			       std::ostream* msgs, const Args&... args) {
+  //const double relative_tolerance = std::sqrt(EPSILON);
+  static const char* function = "integrate_1d";
+  check_less_or_equal(function, "lower limit", a, b);
+
+  if (a == b) {
+    if (std::isinf(a)) {
+      throw_domain_error(function, "Integration endpoints are both", a, "", "");
+    }
+    return 0.0;
+  } else {
+    return integrate(
+        std::bind<double>(f, std::placeholders::_1, std::placeholders::_2,
+                          msgs, args...),
+        a, b, relative_tolerance);
+  }
+}
+
 /**
  * Compute the integral of the single variable function f from a to b to within
  * a specified relative tolerance. a and b can be finite or infinite.
@@ -183,47 +206,15 @@ inline double integrate(const F& f, double a, double b,
  * @return numeric integral of function f
  */
 template <typename F>
-inline double integrate_1d(const F& f, const double a, const double b,
+inline double integrate_1d(const F& f, double a, double b,
                            const std::vector<double>& theta,
                            const std::vector<double>& x_r,
                            const std::vector<int>& x_i, std::ostream* msgs,
                            const double relative_tolerance
                            = std::sqrt(EPSILON)) {
-  static const char* function = "integrate_1d";
-  check_less_or_equal(function, "lower limit", a, b);
-
-  if (a == b) {
-    if (std::isinf(a)) {
-      throw_domain_error(function, "Integration endpoints are both", a, "", "");
-    }
-    return 0.0;
-  } else {
-    return integrate(
-        std::bind<double>(f, std::placeholders::_1, std::placeholders::_2,
-                          theta, x_r, x_i, msgs),
-        a, b, relative_tolerance);
-  }
-}
-
-template <typename F, typename... Args>
-inline double integrate_1d_new(const F& f, double a, double b,
-			       double relative_tolerance,
-			       std::ostream* msgs, const Args&... args) {
-  //const double relative_tolerance = std::sqrt(EPSILON);
-  static const char* function = "integrate_1d";
-  check_less_or_equal(function, "lower limit", a, b);
-
-  if (a == b) {
-    if (std::isinf(a)) {
-      throw_domain_error(function, "Integration endpoints are both", a, "", "");
-    }
-    return 0.0;
-  } else {
-    return integrate(
-        std::bind<double>(f, std::placeholders::_1, std::placeholders::_2,
-                          msgs, args...),
-        a, b, relative_tolerance);
-  }
+  return integrate_1d_new(integrate_1d_adapter<F>(f), a, b,
+			  relative_tolerance, msgs,
+			  theta, x_r, x_i);
 }
 
 }  // namespace math
