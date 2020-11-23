@@ -207,8 +207,7 @@ template <typename F, typename T, typename... Indexings,
 inline void elementwise_check(const F& is_good, const char* function,
                               const char* name, const T& x, const char* must_be,
                               const Indexings... indexings) {
-  elementwise_check(is_good, function, name, x.val(), must_be, indexings...,
-                    "[", j, "]");
+  elementwise_check(is_good, function, name, x.val(), must_be, indexings...);
 }
 
 /**
