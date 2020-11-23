@@ -418,14 +418,14 @@ def main(functions=(), j=1):
             expression_arg_list = ""
             for n, arg in enumerate(function_args[:-1]):
                 if arg in eigen_types:
-                    expression_arg_list += "arg_expr%d.unaryExpr(counter_op%d), " % (
+                    expression_arg_list += "arg_expr%d.block(0,0,1,1).unaryExpr(counter_op%d), " % (
                         n,
                         n,
                     )
                 else:
                     expression_arg_list += "arg_expr%d, " % n
             if function_args[-1] in eigen_types:
-                expression_arg_list += "arg_expr%d.unaryExpr(counter_op%d)" % (
+                expression_arg_list += "arg_expr%d.block(0,0,1,1).unaryExpr(counter_op%d)" % (
                     len(function_args) - 1,
                     len(function_args) - 1,
                 )
