@@ -4,7 +4,7 @@
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/size.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_var_matrix.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
@@ -41,7 +41,7 @@ class Iser {
    */
   template <typename T, typename = require_stan_scalar_t<T>>
   bool is(const T& x) {
-    return is_good(value_of_rec(x));
+    return is_good(value_of_rec_rec(x));
   }
 
   /**
@@ -109,7 +109,7 @@ template <typename F, typename T, typename... Indexings,
 inline void elementwise_check(const F& is_good, const char* function,
                               const char* name, const T& x, const char* must_be,
                               const Indexings... indexings) {
-  if (unlikely(!is_good(value_of(x)))) {
+  if (unlikely(!is_good(value_of_rec(x)))) {
     std::stringstream ss{};
     ss << function << ": " << name;
     internal::pipe_in(ss, indexings...);
@@ -125,7 +125,7 @@ inline void elementwise_check(const F& is_good, const char* function,
                               const char* name, const T& x, const char* must_be,
                               const Indexings... indexings) {
   for (size_t i = 0; i < x.size(); i++) {
-    auto scal = value_of(x.coeff(i));
+    auto scal = value_of_rec(x.coeff(i));
     if (unlikely(!is_good(scal))) {
       std::stringstream ss{};
       ss << function << ": " << name;
@@ -156,7 +156,7 @@ inline void elementwise_check(const F& is_good, const char* function,
                               const Indexings... indexings) {
   for (size_t i = 0; i < x.rows(); i++) {
     for (size_t j = 0; j < x.cols(); j++) {
-      auto scal = value_of(x.coeff(i, j));
+      auto scal = value_of_rec(x.coeff(i, j));
       if (unlikely(!is_good(scal))) {
         std::stringstream ss{};
         ss << function << ": " << name;
@@ -180,7 +180,7 @@ inline void elementwise_check(const F& is_good, const char* function,
                               const Indexings... indexings) {
   for (size_t j = 0; j < x.cols(); j++) {
     for (size_t i = 0; i < x.rows(); i++) {
-      auto scal = value_of(x.coeff(i, j));
+      auto scal = value_of_rec(x.coeff(i, j));
       if (unlikely(!is_good(scal))) {
         std::stringstream ss{};
         ss << function << ": " << name;
