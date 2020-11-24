@@ -125,7 +125,7 @@ struct traits<stan::math::arena_matrix<T>> {
     InnerStrideAtCompileTime = base::InnerStrideAtCompileTime,
     OuterStrideAtCompileTime = base::OuterStrideAtCompileTime,
     Alignment = base::Alignment,
-    PlainObjectTypeInnerSize = base::Flags
+    Flags = base::Flags
   };
 };
 
