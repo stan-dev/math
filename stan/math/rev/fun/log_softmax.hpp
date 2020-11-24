@@ -48,14 +48,14 @@ class log_softmax_elt_vari : public vari {
 /**
  * Return the log softmax of the specified vector
  *
- * @tparam T Type of input vector.
- * @param[in] alpha Unconstrained input vector.
- * @return Softmax of the input.
- * @throw std::domain_error If the input vector is size 0.
+ * @tparam T type of input
+ * @param x input
+ * @return softmax of the input
+ * @throw std::domain_error if the input size is 0
  */
 template <typename T,
 	  require_eigen_st<is_var, T>* = nullptr>
-auto log_softmax(const T& alpha) {
+inline auto log_softmax(const T& alpha) {
   const int a_size = alpha.size();
 
   check_nonzero_size("log_softmax", "alpha", alpha);
@@ -94,13 +94,13 @@ auto log_softmax(const T& alpha) {
 /**
  * Return the log softmax of the specified vector
  *
- * @tparam T Type of input vector.
- * @param[in] alpha Unconstrained input vector.
- * @return Softmax of the input.
- * @throw std::domain_error If the input vector is size 0.
+ * @tparam T type of input
+ * @param x input
+ * @return softmax of the input
+ * @throw std::domain_error if the input size is 0
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
-auto log_softmax(const T& alpha) {
+inline auto log_softmax(const T& alpha) {
   check_nonzero_size("log_softmax", "alpha", alpha);
 
   const auto& theta = (alpha.val().array() - alpha.val().maxCoeff()).eval();
@@ -114,14 +114,13 @@ auto log_softmax(const T& alpha) {
 }
 
 /**
- * Return the log softmax of the specified vector or container of vectors.
+ * Return the log softmax of the specified `std::vector` or 
+ * `std::vector` of containers.
  *
- * The gradient calculations are unfolded.
- *
- * @tparam T Type of input vector or matrix.
- * @param[in] x Unconstrained input vector.
- * @return Softmax of the input.
- * @throw std::domain_error If the input vector is size 0.
+ * @tparam T type of input
+ * @param x input
+ * @return softmax of the input
+ * @throw std::domain_error if the input size is 0
  */
 template <typename T, require_std_vector_st<is_var, T>* = nullptr>
 inline auto log_softmax(const T& x) {
