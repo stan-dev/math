@@ -2,7 +2,7 @@
 #define STAN_MATH_REV_FUNCTOR_IDAS_FORWARD_SYSTEM_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/fun/typedefs.hpp>
+#include <stan/math/rev/core/typedefs.hpp>
 #include <stan/math/rev/functor/idas_system.hpp>
 #include <stan/math/rev/functor/jacobian.hpp>
 #include <stan/math/prim/err.hpp>

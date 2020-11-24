@@ -224,6 +224,43 @@ TEST_F(AgradRev, var_matrix_views) {
   EXPECT_FLOAT_EQ(A_v.adj()(3, 3) - prev_adj_val2, A_coeff2.adj());
 }
 
+TEST_F(AgradRev, var_matrix_views_specializations) {
+  using dense_mat = Eigen::Matrix<double, -1, -1>;
+  dense_mat A(10, 10);
+  for (Eigen::Index i = 0; i < A.size(); ++i) {
+    A(i) = i;
+  }
+  stan::math::var_value<dense_mat> A_v(A);
+  auto A_toprow = A_v.topRows(1);
+  EXPECT_MATRIX_FLOAT_EQ(A_toprow.val(), A.topRows(1));
+
+  auto A_bottomrow = A_v.bottomRows(1);
+  EXPECT_MATRIX_FLOAT_EQ(A_bottomrow.val(), A.bottomRows(1));
+
+  auto A_middlerows = A_v.middleRows(3, 2);
+  EXPECT_MATRIX_FLOAT_EQ(A_middlerows.val(), A.middleRows(3, 2));
+
+  auto A_leftcols = A_v.leftCols(1);
+  EXPECT_MATRIX_FLOAT_EQ(A_leftcols.val(), A.leftCols(1));
+
+  auto A_rightcols = A_v.rightCols(1);
+  EXPECT_MATRIX_FLOAT_EQ(A_rightcols.val(), A.rightCols(1));
+
+  auto A_middlecols = A_v.middleCols(3, 2);
+  EXPECT_MATRIX_FLOAT_EQ(A_middlecols.val(), A.middleCols(3, 2));
+
+  EXPECT_MATRIX_FLOAT_EQ(A, A_v.val());
+  for (int i = 0; i < A.size(); ++i) {
+    A_v.vi_->adj_(i) = i;
+  }
+  EXPECT_MATRIX_FLOAT_EQ(A_toprow.adj(), A_v.adj().topRows(1));
+  EXPECT_MATRIX_FLOAT_EQ(A_bottomrow.adj(), A_v.adj().bottomRows(1));
+  EXPECT_MATRIX_FLOAT_EQ(A_middlerows.adj(), A_v.adj().middleRows(3, 2));
+  EXPECT_MATRIX_FLOAT_EQ(A_leftcols.adj(), A_v.adj().leftCols(1));
+  EXPECT_MATRIX_FLOAT_EQ(A_rightcols.adj(), A_v.adj().rightCols(1));
+  EXPECT_MATRIX_FLOAT_EQ(A_middlecols.adj(), A_v.adj().middleCols(3, 2));
+}
+
 TEST_F(AgradRev, var_matrix_views_const) {
   using dense_mat = Eigen::Matrix<double, -1, -1>;
   dense_mat A(10, 10);
