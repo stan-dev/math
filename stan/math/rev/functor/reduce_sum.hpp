@@ -13,8 +13,6 @@
 #include <utility>
 #include <vector>
 
-#include <tbb/enumerable_thread_specific.h>
-
 namespace stan {
 namespace math {
 namespace internal {
@@ -50,16 +48,13 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    * @note see link [here](https://tinyurl.com/vp7xw2t) for requirements.
    */
   struct recursive_reducer {
-    using local_args_tuple_t
-        = tbb::enumerable_thread_specific<scoped_args_tuple>;
-
     const size_t num_vars_per_term_;
     const size_t num_vars_shared_terms_;  // Number of vars in shared arguments
     double* sliced_partials_;  // Points to adjoints of the partial calculations
     Vec vmapped_;
-    std::shared_ptr<local_args_tuple_t> local_args_tuple_;
     std::ostream* msgs_;
     std::tuple<Args...> args_tuple_;
+    scoped_args_tuple local_args_tuple_scope_;
     double sum_{0.0};
     Eigen::VectorXd args_adjoints_{0};
 
@@ -71,7 +66,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           num_vars_shared_terms_(num_vars_shared_terms),
           sliced_partials_(sliced_partials),
           vmapped_(std::forward<VecT>(vmapped)),
-          local_args_tuple_(std::make_shared<local_args_tuple_t>()),
+          local_args_tuple_scope_(),
           msgs_(msgs),
           args_tuple_(std::forward<ArgsT>(args)...) {}
 
@@ -86,7 +81,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           num_vars_shared_terms_(other.num_vars_shared_terms_),
           sliced_partials_(other.sliced_partials_),
           vmapped_(other.vmapped_),
-          local_args_tuple_(other.local_args_tuple_),
+          local_args_tuple_scope_(),
           msgs_(other.msgs_),
           args_tuple_(other.args_tuple_) {}
 
@@ -112,19 +107,18 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         args_adjoints_ = Eigen::VectorXd::Zero(num_vars_shared_terms_);
       }
 
-      // Obtain reference to thread local copy of all shared arguments that do
+      // Obtain reference to a local copy of all shared arguments that do
       // not point
       //   back to main autodiff stack
-      scoped_args_tuple& args_tuple_scope = local_args_tuple_->local();
 
-      if (!args_tuple_scope.args_tuple_holder_) {
-        // shared arguments need to be copied to thread-specific
+      if (!local_args_tuple_scope_.args_tuple_holder_) {
+        // shared arguments need to be copied to reducer-specific
         // scope. In this case no need for zeroing adjoints, since the
         // fresh copy has all adjoints set to zero.
-        args_tuple_scope.stack_.execute([&]() {
+        local_args_tuple_scope_.stack_.execute([&]() {
           apply(
               [&](auto&&... args) {
-                args_tuple_scope.args_tuple_holder_ = std::make_unique<
+                local_args_tuple_scope_.args_tuple_holder_ = std::make_unique<
                     typename scoped_args_tuple::args_tuple_t>(
                     deep_copy_vars(args)...);
               },
@@ -132,10 +126,10 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         });
       } else {
         // set adjoints of shared arguments to zero
-        args_tuple_scope.stack_.execute([] { set_zero_all_adjoints(); });
+        local_args_tuple_scope_.stack_.execute([] { set_zero_all_adjoints(); });
       }
 
-      auto& args_tuple_local = *(args_tuple_scope.args_tuple_holder_);
+      auto& args_tuple_local = *(local_args_tuple_scope_.args_tuple_holder_);
 
       // Initialize nested autodiff stack
       const nested_rev_autodiff begin_nest;
@@ -170,7 +164,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       apply(
           [&](auto&&... args) {
             accumulate_adjoints(args_adjoints_.data(),
-                                std::forward<decltype(args)>(args)...);
+                                args...);
           },
           args_tuple_local);
     }
