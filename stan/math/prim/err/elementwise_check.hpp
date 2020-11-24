@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_ERR_ELEMENTWISE_ERROR_CHECKER_HPP
 #define STAN_MATH_PRIM_ERR_ELEMENTWISE_ERROR_CHECKER_HPP
 
-#include <stan/math/prim/err/elementwise_throw_domain_error.hpp>
+#include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
@@ -117,8 +117,9 @@ inline void elementwise_check(const F& is_good, const char* function,
                               const char* name, const T& x, const char* must_be,
                               const Indexings&... indexings) {
   if (unlikely(!is_good(value_of_rec(x)))) {
-    internal::elementwise_throw_domain_error(function, ": ", name, indexings..., "is ", x,
-                                 ", but must be ", must_be, "!");
+    internal::elementwise_throw_domain_error(function, ": ", name, indexings...,
+                                             "is ", x, ", but must be ",
+                                             must_be, "!");
   }
 }
 template <typename F, typename T, typename... Indexings,
@@ -132,17 +133,21 @@ inline void elementwise_check(const F& is_good, const char* function,
     auto scal = value_of_rec(x.coeff(i));
     if (unlikely(!is_good(scal))) {
       if (is_eigen_vector<T>::value) {
-        internal::elementwise_throw_domain_error(function, ": ", name, indexings..., "[",
-                                     i + 1, "] is ", scal, ", but must be ",
-                                     must_be, "!");
+        internal::elementwise_throw_domain_error(
+            function, ": ", name, indexings..., "[", i + error_index::value,
+            "] is ", scal, ", but must be ", must_be, "!");
       } else if (Eigen::internal::traits<T>::Flags & Eigen::RowMajorBit) {
         internal::elementwise_throw_domain_error(
-            function, ": ", name, indexings..., "[", i / x.rows() + 1, ", ",
-            i % x.rows() + 1, "] is ", scal, ", but must be ", must_be, "!");
+            function, ": ", name, indexings..., "[",
+            i / x.rows() + error_index::value, ", ",
+            i % x.rows() + error_index::value, "] is ", scal, ", but must be ",
+            must_be, "!");
       } else {
         internal::elementwise_throw_domain_error(
-            function, ": ", name, indexings..., "[", i % x.cols() + 1, ", ",
-            i / x.cols() + 1, "] is ", scal, ", but must be ", must_be, "!");
+            function, ": ", name, indexings..., "[",
+            i % x.cols() + error_index::value, ", ",
+            i / x.cols() + error_index::value, "] is ", scal, ", but must be ",
+            must_be, "!");
       }
     }
   }
@@ -161,9 +166,10 @@ inline void elementwise_check(const F& is_good, const char* function,
     for (size_t j = 0; j < x.cols(); j++) {
       auto scal = value_of_rec(x.coeff(i, j));
       if (unlikely(!is_good(scal))) {
-        internal::elementwise_throw_domain_error(function, ": ", name, indexings..., "[",
-                                     i + 1, ", ", j + 1, "] is ", scal,
-                                     ", but must be ", must_be, "!");
+        internal::elementwise_throw_domain_error(
+            function, ": ", name, indexings..., "[", i + error_index::value,
+            ", ", j + error_index::value, "] is ", scal, ", but must be ",
+            must_be, "!");
       }
     }
   }
@@ -182,9 +188,10 @@ inline void elementwise_check(const F& is_good, const char* function,
     for (size_t i = 0; i < x.rows(); i++) {
       auto scal = value_of_rec(x.coeff(i, j));
       if (unlikely(!is_good(scal))) {
-        internal::elementwise_throw_domain_error(function, ": ", name, indexings..., "[",
-                                     i + 1, ", ", j + 1, "] is ", scal,
-                                     ", but must be ", must_be, "!");
+        internal::elementwise_throw_domain_error(
+            function, ": ", name, indexings..., "[", i + error_index::value,
+            ", ", j + error_index::value, "] is ", scal, ", but must be ",
+            must_be, "!");
       }
     }
   }
@@ -196,7 +203,7 @@ inline void elementwise_check(const F& is_good, const char* function,
                               const Indexings&... indexings) {
   for (size_t j = 0; j < x.size(); j++) {
     elementwise_check(is_good, function, name, x[j], must_be, indexings..., "[",
-                      j + 1, "]");
+                      j + error_index::value, "]");
   }
 }
 template <typename F, typename T, typename... Indexings,
