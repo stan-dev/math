@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_FUNCTOR_APPLY_VECTOR_UNARY_HPP
 
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
+#include <stan/math/rev/core/var.hpp>
 #include <vector>
 
 namespace stan {
