@@ -41,7 +41,7 @@ class arena_matrix : public Eigen::Map<MatrixType> {
   arena_matrix(Eigen::Index rows, Eigen::Index cols)
       : Base::Map(ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
                       rows * cols),
-          rows, cols) {}
+                  rows, cols) {}
 
   /**
    * Constructs `arena_matrix` with given size. This only works if
@@ -50,8 +50,8 @@ class arena_matrix : public Eigen::Map<MatrixType> {
    */
   explicit arena_matrix(Eigen::Index size)
       : Base::Map(
-          ChainableStack::instance_->memalloc_.alloc_array<Scalar>(size),
-          size) {}
+            ChainableStack::instance_->memalloc_.alloc_array<Scalar>(size),
+            size) {}
 
   /**
    * Constructs `arena_matrix` from an expression.
