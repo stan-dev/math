@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_ERR_ELEMENTWISE_ERROR_CHECKER_HPP
 #define STAN_MATH_PRIM_ERR_ELEMENTWISE_ERROR_CHECKER_HPP
 
-#include <stan/math/prim/err/throw_domain_error.hpp>
+#include <stan/math/prim/err/elementwise_throw_domain_error.hpp>
 #include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
@@ -85,7 +85,7 @@ inline void pipe_in(std::stringstream& ss, Arg0 arg0, const Args... args) {
  * @param args arguments
  */
 template <typename... Args>
-void throw_domain_error(const Args... args) {
+void elementwise_throw_domain_error(const Args... args) {
   std::stringstream ss;
   pipe_in(ss, args...);
   throw std::domain_error(ss.str());
@@ -117,7 +117,7 @@ inline void elementwise_check(const F& is_good, const char* function,
                               const char* name, const T& x, const char* must_be,
                               const Indexings&... indexings) {
   if (unlikely(!is_good(value_of_rec(x)))) {
-    internal::throw_domain_error(function, ": ", name, indexings..., "is ", x,
+    internal::elementwise_throw_domain_error(function, ": ", name, indexings..., "is ", x,
                                  ", but must be ", must_be, "!");
   }
 }
@@ -132,15 +132,15 @@ inline void elementwise_check(const F& is_good, const char* function,
     auto scal = value_of_rec(x.coeff(i));
     if (unlikely(!is_good(scal))) {
       if (is_eigen_vector<T>::value) {
-        internal::throw_domain_error(function, ": ", name, indexings..., "[",
+        internal::elementwise_throw_domain_error(function, ": ", name, indexings..., "[",
                                      i + 1, "] is ", scal, ", but must be ",
                                      must_be, "!");
       } else if (Eigen::internal::traits<T>::Flags & Eigen::RowMajorBit) {
-        internal::throw_domain_error(
+        internal::elementwise_throw_domain_error(
             function, ": ", name, indexings..., "[", i / x.rows() + 1, ", ",
             i % x.rows() + 1, "] is ", scal, ", but must be ", must_be, "!");
       } else {
-        internal::throw_domain_error(
+        internal::elementwise_throw_domain_error(
             function, ": ", name, indexings..., "[", i % x.cols() + 1, ", ",
             i / x.cols() + 1, "] is ", scal, ", but must be ", must_be, "!");
       }
@@ -161,7 +161,7 @@ inline void elementwise_check(const F& is_good, const char* function,
     for (size_t j = 0; j < x.cols(); j++) {
       auto scal = value_of_rec(x.coeff(i, j));
       if (unlikely(!is_good(scal))) {
-        internal::throw_domain_error(function, ": ", name, indexings..., "[",
+        internal::elementwise_throw_domain_error(function, ": ", name, indexings..., "[",
                                      i + 1, ", ", j + 1, "] is ", scal,
                                      ", but must be ", must_be, "!");
       }
@@ -182,7 +182,7 @@ inline void elementwise_check(const F& is_good, const char* function,
     for (size_t i = 0; i < x.rows(); i++) {
       auto scal = value_of_rec(x.coeff(i, j));
       if (unlikely(!is_good(scal))) {
-        internal::throw_domain_error(function, ": ", name, indexings..., "[",
+        internal::elementwise_throw_domain_error(function, ": ", name, indexings..., "[",
                                      i + 1, ", ", j + 1, "] is ", scal,
                                      ", but must be ", must_be, "!");
       }
