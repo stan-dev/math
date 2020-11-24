@@ -65,8 +65,7 @@ class Iser {
  */
 inline void pipe_in(std::stringstream& ss) {}
 /**
- * Pipes given arguments into a stringstream. Integral arguments (indices) are
- * increased by 1 before.
+ * Pipes given arguments into a stringstream.
  *
  * @tparam Arg0 type of the first argument
  * @tparam Args types of remaining arguments
@@ -76,18 +75,12 @@ inline void pipe_in(std::stringstream& ss) {}
  */
 template <typename Arg0, typename... Args>
 inline void pipe_in(std::stringstream& ss, Arg0 arg0, const Args... args) {
-  if (std::is_integral<Arg0>::value) {
-    ss << arg0 + 1;
-  } else {
-    ss << arg0;
-  }
+  ss << arg0;
   pipe_in(ss, args...);
 }
 
 /**
  * Throws domain error with concatenation of arguments for the error message.
- * Integer arguments (indices) are increased by 1 to get 1-based indexing in
- * error message.
  * @tparam Args types of arguments
  * @param args arguments
  */
@@ -139,17 +132,17 @@ inline void elementwise_check(const F& is_good, const char* function,
     auto scal = value_of_rec(x.coeff(i));
     if (unlikely(!is_good(scal))) {
       if (is_eigen_vector<T>::value) {
-        internal::throw_domain_error(function, ": ", name, indexings..., "[", i,
-                                     "] is ", scal, ", but must be ", must_be,
-                                     "!");
+        internal::throw_domain_error(function, ": ", name, indexings..., "[",
+                                     i + 1, "] is ", scal, ", but must be ",
+                                     must_be, "!");
       } else if (Eigen::internal::traits<T>::Flags & Eigen::RowMajorBit) {
-        internal::throw_domain_error(function, ": ", name, indexings..., "[",
-                                     i / x.rows(), ", ", i % x.rows(), "] is ",
-                                     scal, ", but must be ", must_be, "!");
+        internal::throw_domain_error(
+            function, ": ", name, indexings..., "[", i / x.rows() + 1, ", ",
+            i % x.rows() + 1, "] is ", scal, ", but must be ", must_be, "!");
       } else {
-        internal::throw_domain_error(function, ": ", name, indexings..., "[",
-                                     i % x.cols(), ", ", i / x.cols(), "] is ",
-                                     scal, ", but must be ", must_be, "!");
+        internal::throw_domain_error(
+            function, ": ", name, indexings..., "[", i % x.cols() + 1, ", ",
+            i / x.cols() + 1, "] is ", scal, ", but must be ", must_be, "!");
       }
     }
   }
@@ -168,9 +161,9 @@ inline void elementwise_check(const F& is_good, const char* function,
     for (size_t j = 0; j < x.cols(); j++) {
       auto scal = value_of_rec(x.coeff(i, j));
       if (unlikely(!is_good(scal))) {
-        internal::throw_domain_error(function, ": ", name, indexings..., "[", i,
-                                     ", ", j, "] is ", scal, ", but must be ",
-                                     must_be, "!");
+        internal::throw_domain_error(function, ": ", name, indexings..., "[",
+                                     i + 1, ", ", j + 1, "] is ", scal,
+                                     ", but must be ", must_be, "!");
       }
     }
   }
@@ -189,9 +182,9 @@ inline void elementwise_check(const F& is_good, const char* function,
     for (size_t i = 0; i < x.rows(); i++) {
       auto scal = value_of_rec(x.coeff(i, j));
       if (unlikely(!is_good(scal))) {
-        internal::throw_domain_error(function, ": ", name, indexings..., "[", i,
-                                     ", ", j, "] is ", scal, ", but must be ",
-                                     must_be, "!");
+        internal::throw_domain_error(function, ": ", name, indexings..., "[",
+                                     i + 1, ", ", j + 1, "] is ", scal,
+                                     ", but must be ", must_be, "!");
       }
     }
   }
@@ -203,7 +196,7 @@ inline void elementwise_check(const F& is_good, const char* function,
                               const Indexings&... indexings) {
   for (size_t j = 0; j < x.size(); j++) {
     elementwise_check(is_good, function, name, x[j], must_be, indexings..., "[",
-                      j, "]");
+                      j + 1, "]");
   }
 }
 template <typename F, typename T, typename... Indexings,
