@@ -104,7 +104,10 @@
 #include <stan/math/opencl/prim/bernoulli_logit_lpmf.hpp>
 #include <stan/math/opencl/prim/bernoulli_logit_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/beta_lpdf.hpp>
+#include <stan/math/opencl/prim/beta_proportion_lpdf.hpp>
 #include <stan/math/opencl/prim/categorical_logit_glm_lpmf.hpp>
+#include <stan/math/opencl/prim/cauchy_lpdf.hpp>
+#include <stan/math/opencl/prim/chi_square_lpdf.hpp>
 #include <stan/math/opencl/prim/cholesky_decompose.hpp>
 #include <stan/math/opencl/prim/col.hpp>
 #include <stan/math/opencl/prim/cols.hpp>
@@ -112,10 +115,17 @@
 #include <stan/math/opencl/prim/dims.hpp>
 #include <stan/math/opencl/prim/divide.hpp>
 #include <stan/math/opencl/prim/divide_columns.hpp>
+#include <stan/math/opencl/prim/double_exponential_lpdf.hpp>
+#include <stan/math/opencl/prim/exp_mod_normal_lpdf.hpp>
+#include <stan/math/opencl/prim/exponential_lpdf.hpp>
+#include <stan/math/opencl/prim/frechet_lpdf.hpp>
 #include <stan/math/opencl/prim/gp_exp_quad_cov.hpp>
 #include <stan/math/opencl/prim/inv.hpp>
+#include <stan/math/opencl/prim/inv_chi_square_lpdf.hpp>
 #include <stan/math/opencl/prim/inv_cloglog.hpp>
+#include <stan/math/opencl/prim/inv_gamma_lpdf.hpp>
 #include <stan/math/opencl/prim/inv_sqrt.hpp>
+#include <stan/math/opencl/prim/logistic_lpdf.hpp>
 #include <stan/math/opencl/prim/mdivide_left_tri_low.hpp>
 #include <stan/math/opencl/prim/mdivide_right_tri_low.hpp>
 #include <stan/math/opencl/prim/neg_binomial_2_log_glm_lpmf.hpp>
@@ -127,6 +137,7 @@
 #include <stan/math/opencl/prim/rep_vector.hpp>
 #include <stan/math/opencl/prim/row.hpp>
 #include <stan/math/opencl/prim/rows.hpp>
+#include <stan/math/opencl/prim/sign.hpp>
 #include <stan/math/opencl/prim/size.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/opencl/prim/tcrossprod.hpp>

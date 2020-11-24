@@ -27,6 +27,23 @@ auto elt_multiply(const Mat1& m1, const Mat2& m2) {
   return m1.cwiseProduct(m2).eval();
 }
 
+/**
+ * Return the elementwise multiplication of the specified
+ * scalars.
+ *
+ * @tparam Mat1 type of the first scalar
+ * @tparam Mat2 type of the second scalar
+ *
+ * @param a First scalar
+ * @param b Second scalar
+ * @return Product of scalars
+ */
+template <typename Scalar1, typename Scalar2,
+          require_all_stan_scalar_t<Scalar1, Scalar2>* = nullptr>
+auto elt_multiply(const Scalar1& a, const Scalar2& b) {
+  return a * b;
+}
+
 }  // namespace math
 }  // namespace stan
 

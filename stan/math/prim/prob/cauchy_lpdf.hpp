@@ -34,7 +34,9 @@ namespace math {
  * @param sigma (Sequence of) scale(s).
  * @return The log of the product of densities.
  */
-template <bool propto, typename T_y, typename T_loc, typename T_scale>
+template <bool propto, typename T_y, typename T_loc, typename T_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_scale>* = nullptr>
 return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
                                                const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
@@ -97,37 +99,24 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
     const auto& y_minus_mu_squared
         = to_ref_if<!is_constant_all<T_scale>::value>(square(y_minus_mu));
     if (!is_constant_all<T_y, T_loc>::value) {
-      const auto& mu_deriv
-          = to_ref_if < !is_constant_all<T_y>::value
-            && !is_constant_all<T_loc>::value
-                   > (2 * y_minus_mu / (sigma_squared + y_minus_mu_squared));
+      const auto& mu_deriv = to_ref_if<(!is_constant_all<T_y>::value
+                                        && !is_constant_all<T_loc>::value)>(
+          2 * y_minus_mu / (sigma_squared + y_minus_mu_squared));
       if (!is_constant_all<T_y>::value) {
         if (is_vector<T_y>::value) {
-          ops_partials.edge1_.partials_
-              = forward_as<T_partials_array>(-mu_deriv);
+          ops_partials.edge1_.partials_ = -mu_deriv;
         } else {
           ops_partials.edge1_.partials_[0] = -sum(mu_deriv);
         }
       }
       if (!is_constant_all<T_loc>::value) {
-        if (is_vector<T_loc>::value) {
-          ops_partials.edge2_.partials_
-              = std::move(forward_as<T_partials_array>(mu_deriv));
-        } else {
-          ops_partials.edge2_.partials_[0] = sum(mu_deriv);
-        }
+        ops_partials.edge2_.partials_ = std::move(mu_deriv);
       }
     }
     if (!is_constant_all<T_scale>::value) {
-      if (is_vector<T_scale>::value) {
-        ops_partials.edge3_.partials_ = forward_as<T_partials_array>(
-            (y_minus_mu_squared - sigma_squared) * inv_sigma
-            / (sigma_squared + y_minus_mu_squared));
-      } else {
-        ops_partials.edge3_.partials_[0]
-            = sum((y_minus_mu_squared - sigma_squared) * inv_sigma
-                  / (sigma_squared + y_minus_mu_squared));
-      }
+      ops_partials.edge3_.partials_ = (y_minus_mu_squared - sigma_squared)
+                                      * inv_sigma
+                                      / (sigma_squared + y_minus_mu_squared);
     }
   }
   return ops_partials.build(logp);

@@ -1,12 +1,13 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim.hpp>
-#include <stan/math/opencl/kernel_generator/unary_function_cl.hpp>
+#include <stan/math/opencl/kernel_generator/elt_function_cl.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <test/unit/math/opencl/kernel_generator/reference_kernel.hpp>
 #include <stan/math.hpp>
 #include <test/unit/util.hpp>
+#include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
 #include <string>
 
@@ -35,7 +36,7 @@ MatrixXd rsqrt(const MatrixXd& a) { return stan::math::inv_sqrt(a); }
                                                        \
     MatrixXd res = stan::math::from_matrix_cl(res_cl); \
     MatrixXd correct = fun(m1);                        \
-    EXPECT_MATRIX_NEAR(correct, res, 1e-9);            \
+    EXPECT_NEAR_REL(correct, res);                     \
   }
 
 TEST_FUNCTION(rsqrt)
@@ -80,7 +81,7 @@ TEST(KernelGenerator, acosh_test) {
 
   MatrixXd res = stan::math::from_matrix_cl(res_cl);
   MatrixXd correct = stan::math::acosh(m1);
-  EXPECT_MATRIX_NEAR(correct, res, 1e-9);
+  EXPECT_NEAR_REL(correct, res);
 }
 
 TEST_FUNCTION(atan)
@@ -109,7 +110,7 @@ TEST(KernelGenerator, log1m_exp_test) {
 
   MatrixXd res = stan::math::from_matrix_cl(res_cl);
   MatrixXd correct = stan::math::log1m_exp(m1);
-  EXPECT_MATRIX_NEAR(correct, res, 1e-9);
+  EXPECT_NEAR_REL(correct, res);
 }
 
 #define TEST_CLASSIFICATION_FUNCTION(fun)                                 \
@@ -141,7 +142,7 @@ TEST(KernelGenerator, multiple_operations_test) {
 
   MatrixXd res = stan::math::from_matrix_cl(res_cl);
   MatrixXd correct = stan::math::exp(stan::math::sin(m1));
-  EXPECT_MATRIX_NEAR(correct, res, 1e-9);
+  EXPECT_NEAR_REL(correct, res);
 }
 
 TEST(KernelGenerator, multiple_operations_accepts_lvalue_test) {
@@ -155,7 +156,7 @@ TEST(KernelGenerator, multiple_operations_accepts_lvalue_test) {
 
   MatrixXd res = stan::math::from_matrix_cl(res_cl);
   MatrixXd correct = stan::math::exp(stan::math::sin(m1));
-  EXPECT_MATRIX_NEAR(correct, res, 1e-9);
+  EXPECT_NEAR_REL(correct, res);
 }
 
 TEST(KernelGenerator, multiple_operations_with_includes_test) {
@@ -168,7 +169,32 @@ TEST(KernelGenerator, multiple_operations_with_includes_test) {
 
   MatrixXd res = stan::math::from_matrix_cl(res_cl);
   MatrixXd correct = stan::math::digamma(stan::math::digamma(m1));
-  EXPECT_MATRIX_NEAR(correct, res, 1e-9);
+  EXPECT_NEAR_REL(correct, res);
+}
+
+TEST(KernelGenerator, pow_test) {
+  MatrixXd m1(3, 3);
+  m1 << -0.1, -0.2, -0.3, -0.4, -0.5, -0.6, -0.7, -0.8, -0.9;
+  MatrixXd m2(3, 3);
+  m1 << 1.1, 2.2, 1.3, 3.4, 4.5, 2.6, 117.2, 11.8, 0;
+  MatrixXi m3(3, 3);
+  m3 << -2, -1, 0, 1, 2, 3, 4, 5, 6;
+
+  matrix_cl<double> m1_cl(m1);
+  matrix_cl<double> m2_cl(m2);
+  matrix_cl<int> m3_cl(m3);
+
+  matrix_cl<double> res1_cl = pow(m1_cl, m2_cl);
+
+  MatrixXd res1 = stan::math::from_matrix_cl(res1_cl);
+  MatrixXd correct1 = stan::math::pow(m1, m2);
+  EXPECT_NEAR_REL(correct1, res1);
+
+  matrix_cl<double> res2_cl = pow(m1_cl, m3_cl);
+
+  MatrixXd res2 = stan::math::from_matrix_cl(res2_cl);
+  MatrixXd correct2 = stan::math::pow(m1, m3);
+  EXPECT_NEAR_REL(correct2, res2);
 }
 
 #endif

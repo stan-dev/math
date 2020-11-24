@@ -57,8 +57,8 @@ inline double integrate(const F& f, double a, double b,
   bool used_two_integrals = false;
   size_t levels;
   double Q = 0.0;
+  auto f_wrap = [&](double x) { return f(x, NOT_A_NUMBER); };
   if (std::isinf(a) && std::isinf(b)) {
-    auto f_wrap = [&](double x) { return f(x, NOT_A_NUMBER); };
     boost::math::quadrature::sinh_sinh<double> integrator;
     Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1, &levels);
   } else if (std::isinf(a)) {
@@ -69,31 +69,29 @@ inline double integrate(const F& f, double a, double b,
      * https://www.boost.org/doc/libs/1_66_0/libs/math/doc/html/math_toolkit/double_exponential/de_caveats.html)
      */
     if (b <= 0.0) {
-      auto f_wrap = [&](double x) { return f(-(x + b), NOT_A_NUMBER); };
-      Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1,
+      Q = integrator.integrate(f_wrap, a, b, relative_tolerance, &error1, &L1,
                                &levels);
     } else {
       boost::math::quadrature::tanh_sinh<double> integrator_right;
-      auto f_wrap = [&](double x) { return f(-x, NOT_A_NUMBER); };
-      Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1,
+      Q = integrator.integrate(f_wrap, a, 0.0, relative_tolerance, &error1, &L1,
                                &levels)
-          + integrator_right.integrate(f_wrap, -b, 0, relative_tolerance,
+          + integrator_right.integrate(f_wrap, 0.0, b, relative_tolerance,
                                        &error2, &L2, &levels);
+      error2 *= 0.5 * b;
       used_two_integrals = true;
     }
   } else if (std::isinf(b)) {
     boost::math::quadrature::exp_sinh<double> integrator;
     if (a >= 0.0) {
-      auto f_wrap = [&](double x) { return f(x + a, NOT_A_NUMBER); };
-      Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1,
+      Q = integrator.integrate(f_wrap, a, b, relative_tolerance, &error1, &L1,
                                &levels);
     } else {
-      boost::math::quadrature::tanh_sinh<double> integrator_right;
-      auto f_wrap = [&](double x) { return f(x, NOT_A_NUMBER); };
-      Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1,
-                               &levels)
-          + integrator_right.integrate(f_wrap, a, 0, relative_tolerance,
-                                       &error2, &L2, &levels);
+      boost::math::quadrature::tanh_sinh<double> integrator_left;
+      Q = integrator_left.integrate(f_wrap, a, 0, relative_tolerance, &error1,
+                                    &L1, &levels)
+          + integrator.integrate(f_wrap, relative_tolerance, &error2, &L2,
+                                 &levels);
+      error1 *= -0.5 * a;
       used_two_integrals = true;
     }
   } else {
@@ -104,10 +102,13 @@ inline double integrate(const F& f, double a, double b,
                                &levels)
           + integrator.integrate(f_wrap, 0.0, b, relative_tolerance, &error2,
                                  &L2, &levels);
+      error1 *= -0.5 * a;
+      error2 *= 0.5 * b;
       used_two_integrals = true;
     } else {
       Q = integrator.integrate(f_wrap, a, b, relative_tolerance, &error1, &L1,
                                &levels);
+      error1 *= 0.5 * (b - a);
     }
   }
 

@@ -44,24 +44,6 @@ TEST(ExpressionTest{overload}, {function_name}{signature_number}) {{
 }}
 """
 
-
-def get_ignored_signatures():
-    """
-    Loads list of ignored signatures from the file listing the exceptions.
-    :return: set of ignored signatures
-    """
-    part_sig = ""
-    ignored = set()
-    for signature in open(exceptions_list_location):
-        signature = part_sig + signature
-        part_sig = ""
-        if not signature.endswith(")\n"):
-            part_sig = signature
-            continue
-        ignored.add(signature)
-    return ignored
-
-
 def parse_signature_file(sig_file):
     """
     Parses signatures from a file of signatures
@@ -336,6 +318,18 @@ no_fwd_overload = [
     "ode_rk45_tol"
 ]
 
+# list of functions we do not test. These are mainly functions implemented in compiler
+# (not in Stan Math).
+ignored = [
+    "lmultiply",
+    "assign_add",
+    "assign_divide",
+    "assign_elt_divide",
+    "assign_elt_times",
+    "assign_multiply",
+    "assign_subtract",
+    "if_else",
+]
 
 def main(functions=(), j=1):
     """
@@ -354,7 +348,6 @@ def main(functions=(), j=1):
     any of the previous two. Default: all signatures supported by stanc3
     :param j: number of files to split tests in
     """
-    ignored = get_ignored_signatures()
 
     test_n = {}
     tests = []
@@ -364,7 +357,7 @@ def main(functions=(), j=1):
     for signature in signatures:
         return_type, function_name, function_args = parse_signature(signature)
         # skip ignored signatures
-        if signature in ignored and not functions and signature not in extra_signatures:
+        if function_name in ignored and not functions and signature not in extra_signatures:
             continue
         # skip default if we have list of function names/signatures to test
         if (
@@ -491,7 +484,7 @@ def processCLIArgs():
         metavar="N",
         type=int,
         default=1,
-        help="Number of cores for make to use. Also number of files tests are split in.",
+        help="Number of files tests are split in.",
     )
     parser.add_argument(
         "functions",
