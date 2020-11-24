@@ -84,6 +84,20 @@ inline void pipe_in(std::stringstream& ss, Arg0 arg0, const Args... args) {
   pipe_in(ss, args...);
 }
 
+/**
+ * Throws domain error with concatenation of arguments for the error message.
+ * Integer arguments (indices) are increased by 1 to get 1-based indexing in
+ * error message.
+ * @tparam Args types of arguments
+ * @param args arguments
+ */
+template <typename... Args>
+void throw_domain_error(const Args... args) {
+  std::stringstream ss;
+  pipe_in(ss, args...);
+  throw std::domain_error(ss.str());
+}
+
 }  // namespace internal
 
 /**
@@ -108,13 +122,10 @@ template <typename F, typename T, typename... Indexings,
           require_stan_scalar_t<T>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
                               const char* name, const T& x, const char* must_be,
-                              const Indexings... indexings) {
+                              const Indexings&... indexings) {
   if (unlikely(!is_good(value_of_rec(x)))) {
-    std::stringstream ss{};
-    ss << function << ": " << name;
-    internal::pipe_in(ss, indexings...);
-    ss << "is " << x << ", but must be " << must_be << "!";
-    throw std::domain_error(ss.str());
+    internal::throw_domain_error(function, ": ", name, indexings..., "is ", x,
+                                 ", but must be ", must_be, "!");
   }
 }
 template <typename F, typename T, typename... Indexings,
@@ -123,24 +134,23 @@ template <typename F, typename T, typename... Indexings,
               Eigen::LinearAccessBit | Eigen::DirectAccessBit))>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
                               const char* name, const T& x, const char* must_be,
-                              const Indexings... indexings) {
+                              const Indexings&... indexings) {
   for (size_t i = 0; i < x.size(); i++) {
     auto scal = value_of_rec(x.coeff(i));
     if (unlikely(!is_good(scal))) {
-      std::stringstream ss{};
-      ss << function << ": " << name;
-      internal::pipe_in(ss, indexings...);
       if (is_eigen_vector<T>::value) {
-        ss << "[" << i + 1 << "] is " << scal << ", but must be " << must_be
-           << "!";
+        internal::throw_domain_error(function, ": ", name, indexings..., "[", i,
+                                     "] is ", scal, ", but must be ", must_be,
+                                     "!");
       } else if (Eigen::internal::traits<T>::Flags & Eigen::RowMajorBit) {
-        ss << "[" << i / x.rows() + 1 << ", " << i % x.rows() + 1 << "] is "
-           << scal << ", but must be " << must_be << "!";
+        internal::throw_domain_error(function, ": ", name, indexings..., "[",
+                                     i / x.rows(), ", ", i % x.rows(), "] is ",
+                                     scal, ", but must be ", must_be, "!");
       } else {
-        ss << "[" << i % x.cols() + 1 << ", " << i / x.cols() + 1 << "] is "
-           << scal << ", but must be " << must_be << "!";
+        internal::throw_domain_error(function, ": ", name, indexings..., "[",
+                                     i % x.cols(), ", ", i / x.cols(), "] is ",
+                                     scal, ", but must be ", must_be, "!");
       }
-      throw std::domain_error(ss.str());
     }
   }
 }
@@ -153,17 +163,14 @@ template <
                           & Eigen::RowMajorBit)>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
                               const char* name, const T& x, const char* must_be,
-                              const Indexings... indexings) {
+                              const Indexings&... indexings) {
   for (size_t i = 0; i < x.rows(); i++) {
     for (size_t j = 0; j < x.cols(); j++) {
       auto scal = value_of_rec(x.coeff(i, j));
       if (unlikely(!is_good(scal))) {
-        std::stringstream ss{};
-        ss << function << ": " << name;
-        internal::pipe_in(ss, indexings...);
-        ss << "[" << i + 1 << ", " << j + 1 << "] is " << scal
-           << ", but must be " << must_be << "!";
-        throw std::domain_error(ss.str());
+        internal::throw_domain_error(function, ": ", name, indexings..., "[", i,
+                                     ", ", j, "] is ", scal, ", but must be ",
+                                     must_be, "!");
       }
     }
   }
@@ -177,17 +184,14 @@ template <
                                           & Eigen::RowMajorBit)>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
                               const char* name, const T& x, const char* must_be,
-                              const Indexings... indexings) {
+                              const Indexings&... indexings) {
   for (size_t j = 0; j < x.cols(); j++) {
     for (size_t i = 0; i < x.rows(); i++) {
       auto scal = value_of_rec(x.coeff(i, j));
       if (unlikely(!is_good(scal))) {
-        std::stringstream ss{};
-        ss << function << ": " << name;
-        internal::pipe_in(ss, indexings...);
-        ss << "[" << i + 1 << ", " << j + 1 << "] is " << scal
-           << ", but must be " << must_be << "!";
-        throw std::domain_error(ss.str());
+        internal::throw_domain_error(function, ": ", name, indexings..., "[", i,
+                                     ", ", j, "] is ", scal, ", but must be ",
+                                     must_be, "!");
       }
     }
   }
@@ -196,7 +200,7 @@ template <typename F, typename T, typename... Indexings,
           require_std_vector_t<T>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
                               const char* name, const T& x, const char* must_be,
-                              const Indexings... indexings) {
+                              const Indexings&... indexings) {
   for (size_t j = 0; j < x.size(); j++) {
     elementwise_check(is_good, function, name, x[j], must_be, indexings..., "[",
                       j, "]");
@@ -206,7 +210,7 @@ template <typename F, typename T, typename... Indexings,
           require_var_matrix_t<T>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
                               const char* name, const T& x, const char* must_be,
-                              const Indexings... indexings) {
+                              const Indexings&... indexings) {
   elementwise_check(is_good, function, name, x.val(), must_be, indexings...);
 }
 
