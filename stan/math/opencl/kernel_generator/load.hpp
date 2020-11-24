@@ -233,6 +233,16 @@ class load_
       a_ = matrix_cl<Scalar>(rows, cols);
     }
   }
+
+  /**
+   * Collects data that is needed beside types to uniqly identify a kernel
+   * generator expression. Pushes the handle to underlying `matrix_cl`'s memory
+   * to `mems`.
+   * @param[out] mems data of type `cl_mem`
+   */
+  inline void get_unique_data(std::vector<cl_mem>& mems) const {
+    mems.push_back(a_.buffer()());
+  }
 };
 /** @}*/
 }  // namespace math

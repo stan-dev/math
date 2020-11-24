@@ -173,15 +173,6 @@ class operation_cl : public operation_cl_base {
   inline std::string get_kernel_source_for_evaluating_into(
       const T_lhs& lhs) const;
 
-  template <typename T_lhs>
-  struct cache {
-    static std::string source;  // kernel source - not used anywhere. Only
-                                // intended for debugging.
-    static cl::Kernel kernel;   // cached kernel - different for every
-                                // combination of template instantiation of \c
-                                // operation and every \c T_lhs
-  };
-
   /**
    * Generates kernel code for assigning this expression into result expression.
    * @param[in,out] generated set of (pointer to) already generated operations
@@ -230,7 +221,7 @@ class operation_cl : public operation_cl_base {
             generated, name_gen, row_index_name_arg, col_index_name_arg,
             view_handled
                 && std::tuple_element_t<
-                       Is, typename Deriv::view_transitivity>::value)...};
+                    Is, typename Deriv::view_transitivity>::value)...};
       });
       res = std::accumulate(args_parts.begin(), args_parts.end(),
                             kernel_parts{});
@@ -398,15 +389,19 @@ class operation_cl : public operation_cl_base {
     }
     return view;
   }
+
+  /**
+   * Collects data that is needed beside types to uniqly identify a kernel
+   * generator expression.
+   * @param[out] mems data of type `cl_mem`
+   */
+  inline void get_unique_data(std::vector<cl_mem>& mems) const {
+    index_apply<N>([&](auto... Is) {
+      static_cast<void>(std::initializer_list<int>{
+          (this->get_arg<Is>().get_unique_data(mems), 0)...});
+    });
+  }
 };
-
-template <typename Derived, typename Scalar, typename... Args>
-template <typename T_lhs>
-cl::Kernel operation_cl<Derived, Scalar, Args...>::cache<T_lhs>::kernel;
-
-template <typename Derived, typename Scalar, typename... Args>
-template <typename T_lhs>
-std::string operation_cl<Derived, Scalar, Args...>::cache<T_lhs>::source;
 
 template <typename Derived, typename Scalar, typename... Args>
 const bool operation_cl<Derived, Scalar, Args...>::require_specific_local_size

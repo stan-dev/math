@@ -31,7 +31,8 @@ template <int N, typename... T_results>
 struct multi_result_kernel_internal {
   template <typename... T_expressions>
   struct inner {
-    static cl::Kernel kernel_;
+    static std::map<std::vector<int>, cl::Kernel>
+        kernel_cache_;
     using next = typename multi_result_kernel_internal<
         N - 1, T_results...>::template inner<T_expressions...>;
     using T_current_result = std::remove_reference_t<
@@ -60,7 +61,7 @@ struct multi_result_kernel_internal {
      * expression
      * @param n_cols number of threads in rows dimension of the first
      * expression
-     * @param assignment_pairs pairs if result and expression
+     * @param assignment_pairs pairs of result and expression
      */
     static void check_assign_dimensions(
         int n_rows, int n_cols,
@@ -70,21 +71,23 @@ struct multi_result_kernel_internal {
       const auto& expression = std::get<N>(assignment_pairs).second;
       const auto& result = std::get<N>(assignment_pairs).first;
       const char* function = "results.operator=";
-      if (!is_without_output<T_current_expression>::value) {
-        check_size_match(function, "Rows of ", "expression",
-                         expression.thread_rows(), "rows of ",
-                         "first expression", n_rows);
-        check_size_match(function, "Columns of ", "expression",
-                         expression.thread_cols(), "columns of ",
-                         "first expression", n_cols);
-        result.check_assign_dimensions(expression.rows(), expression.cols());
-        int bottom_written = 1 - expression.rows();
-        int top_written = expression.cols() - 1;
-        std::pair<int, int> extreme_diagonals = expression.extreme_diagonals();
-        result.set_view(std::max(extreme_diagonals.first, bottom_written),
-                        std::min(extreme_diagonals.second, top_written),
-                        bottom_written, top_written);
+
+      if (is_without_output<T_current_expression>::value) {
+        return;
       }
+      check_size_match(function, "Rows of ", "expression",
+                       expression.thread_rows(), "rows of ", "first expression",
+                       n_rows);
+      check_size_match(function, "Columns of ", "expression",
+                       expression.thread_cols(), "columns of ",
+                       "first expression", n_cols);
+      result.check_assign_dimensions(expression.rows(), expression.cols());
+      int bottom_written = 1 - expression.rows();
+      int top_written = expression.cols() - 1;
+      std::pair<int, int> extreme_diagonals = expression.extreme_diagonals();
+      result.set_view(std::max(extreme_diagonals.first, bottom_written),
+                      std::min(extreme_diagonals.second, top_written),
+                      bottom_written, top_written);
     }
 
     /**
@@ -93,7 +96,7 @@ struct multi_result_kernel_internal {
      * @param ng name generator
      * @param row_index_name variable name of the row index
      * @param col_index_name variable name of the column index
-     * @param assignment_pairs pairs if result and expression
+     * @param assignment_pairs pairs of result and expression
      * @return kernel parts for the kernel
      */
     static kernel_parts generate(
@@ -120,7 +123,7 @@ struct multi_result_kernel_internal {
      * @param generated Set of operations that already set their arguments
      * @param kernel kernel to set arguments to
      * @param arg_num number of the next argument to set
-     * @param assignment_pairs pairs if result and expression
+     * @param assignment_pairs pairs of result and expression
      */
     static void set_args(
         std::set<const operation_cl_base*>& generated, cl::Kernel& kernel,
@@ -132,7 +135,6 @@ struct multi_result_kernel_internal {
       if (is_without_output<T_current_expression>::value) {
         return;
       }
-
       std::get<N>(assignment_pairs).second.set_args(generated, kernel, arg_num);
       std::get<N>(assignment_pairs).first.set_args(generated, kernel, arg_num);
     }
@@ -140,15 +142,34 @@ struct multi_result_kernel_internal {
     /**
      * Adds event to matrices used in kernel.
      * @param e event to add
-     * @param assignment_pairs pairs if result and expression
+     * @param assignment_pairs pairs of result and expression
      */
     static void add_event(
         cl::Event e, const std::tuple<std::pair<T_results, T_expressions>...>&
                          assignment_pairs) {
+      if (is_without_output<T_current_expression>::value) {
+        return;
+      }
       next::add_event(e, assignment_pairs);
-
       std::get<N>(assignment_pairs).second.add_read_event(e);
       std::get<N>(assignment_pairs).first.add_write_event(e);
+    }
+
+    /**
+     * Collects data that is needed beside types to uniqly identify a kernel.
+     * @param[out] mems data of type `cl_mem`
+     * @param assignment_pairs pairs of result and expression
+     */
+    static void get_unique_data(
+        std::vector<cl_mem>& mems,
+        const std::tuple<std::pair<T_results, T_expressions>...>&
+            assignment_pairs) {
+      if (is_without_output<T_current_expression>::value) {
+        return;
+      }
+      std::get<N>(assignment_pairs).second.get_unique_data(mems);
+      std::get<N>(assignment_pairs).first.get_unique_data(mems);
+      next::get_unique_data(mems, assignment_pairs);
     }
   };
 };
@@ -166,9 +187,7 @@ struct multi_result_kernel_internal<-1, T_results...> {
     static void check_assign_dimensions(
         int n_rows, int n_cols,
         const std::tuple<std::pair<T_results, T_expressions>...>&
-            assignment_pairs) {
-      return;
-    }
+            assignment_pairs) {}
 
     static kernel_parts generate(
         std::set<const operation_cl_base*>& generated, name_generator& ng,
@@ -182,22 +201,23 @@ struct multi_result_kernel_internal<-1, T_results...> {
         std::set<const operation_cl_base*>& generated, cl::Kernel& kernel,
         int& arg_num,
         const std::tuple<std::pair<T_results, T_expressions>...>&
-            assignment_pairs) {
-      return;
-    }
+            assignment_pairs) {}
 
     static void add_event(
         cl::Event e, const std::tuple<std::pair<T_results, T_expressions>...>&
-                         assignment_pairs) {
-      return;
-    }
+                         assignment_pairs) {}
+    static void get_unique_data(
+        std::vector<cl_mem>& mems,
+        const std::tuple<std::pair<T_results, T_expressions>...>&
+            assignment_pairs) {}
   };
 };
 
 template <int N, typename... T_results>
 template <typename... T_expressions>
-cl::Kernel multi_result_kernel_internal<N, T_results...>::inner<
-    T_expressions...>::kernel_;
+std::map<std::vector<int>, cl::Kernel>
+    multi_result_kernel_internal<N, T_results...>::inner<
+        T_expressions...>::kernel_cache_;
 
 }  // namespace internal
 
@@ -214,7 +234,7 @@ class expressions_cl {
    */
   explicit expressions_cl(T_expressions&&... expressions)
       : expressions_(
-            T_expressions(std::forward<T_expressions>(expressions))...) {}
+          T_expressions(std::forward<T_expressions>(expressions))...) {}
 
  private:
   std::tuple<T_expressions...> expressions_;
@@ -416,15 +436,30 @@ class results_cl {
                        " (broadcasted expressions can not be evaluated)");
     }
 
+    std::vector<cl_mem> mems;
+    impl::get_unique_data(mems, assignment_pairs);
+    std::vector<int> uid;
+    int next_mem_idx = 0;
+    std::map<cl_mem, int> mem_indices;
+    for (cl_mem m : mems) {
+      if (mem_indices.count(m) == 0) {
+        mem_indices[m] = next_mem_idx;
+        uid.push_back(next_mem_idx);
+        next_mem_idx++;
+      } else {
+        uid.push_back(mem_indices[m]);
+      }
+    }
+
     try {
-      if (impl::kernel_() == NULL) {
+      if (impl::kernel_cache_[uid]() == NULL) {
         std::string src = get_kernel_source_impl(assignment_pairs);
         auto opts = opencl_context.base_opts();
-        impl::kernel_ = opencl_kernels::compile_kernel(
+        impl::kernel_cache_[uid] = opencl_kernels::compile_kernel(
             "calculate", {view_kernel_helpers, src}, opts);
-        opencl_context.register_kernel_cache(&impl::kernel_);
+        opencl_context.register_kernel_cache(&impl::kernel_cache_[uid]);
       }
-      cl::Kernel& kernel = impl::kernel_;
+      cl::Kernel& kernel = impl::kernel_cache_[uid];
       int arg_num = 0;
 
       std::set<const operation_cl_base*> generated;
