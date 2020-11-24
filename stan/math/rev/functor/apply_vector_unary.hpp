@@ -6,19 +6,16 @@
 
 namespace stan {
 namespace math {
+
 /**
- * Specialisation for use with var_value<T> types where T inherits from
- * EigenBase. Inputs are mapped to Eigen column vectors.
- *
- * The returned scalar type is deduced to allow for cases where the input and
- * return scalar types differ (e.g., functions implicitly promoting
- * integers).
+ * Specialisation for use with `var_value<T>` types where T inherits from
+ * EigenBase. Inputs are passed through unmodified.
  */
 template <typename T>
 struct apply_vector_unary<T, require_var_matrix_t<T>> {
   /**
-   * Member function for applying a functor to a vector and subsequently
-   * returning a vector.
+   * Member function for applying a functor to a `var_value<T>` and
+   * subsequently returning a `var_value<T>`.
    *
    * @tparam T Type of argument to which functor is applied.
    * @tparam F Type of functor to apply.
@@ -32,9 +29,9 @@ struct apply_vector_unary<T, require_var_matrix_t<T>> {
   }
 
   /**
-   * Member function for applying a functor to a vector and subsequently
-   * returning a scalar. The reduction to a scalar needs to be implemented
-   * in the definition of the functor.
+   * Member function for applying a functor to a `var_value<T>` and
+   * subsequently returning a var. The reduction to a var needs
+   * to be implemented in the definition of the functor.
    *
    * @tparam T Type of argument to which functor is applied.
    * @tparam F Type of functor to apply.
@@ -43,7 +40,7 @@ struct apply_vector_unary<T, require_var_matrix_t<T>> {
    * @return scalar result of applying functor to input.
    */
   template <typename F>
-  static inline auto reduce(const T& x, const F& f) {
+  static inline var reduce(const T& x, const F& f) {
     return f(x);
   }
 };

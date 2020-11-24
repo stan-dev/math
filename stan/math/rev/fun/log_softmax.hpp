@@ -43,6 +43,7 @@ class log_softmax_elt_vari : public vari {
     }
   }
 };
+}  // namespace internal
 
 /**
  * Return the log softmax of the specified vector
@@ -52,9 +53,9 @@ class log_softmax_elt_vari : public vari {
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
-template <typename T, require_st_var<T>* = nullptr,
-          require_not_var_matrix_t<T>* = nullptr>
-auto log_softmax_impl(const T& alpha) {
+template <typename T,
+	  require_eigen_st<is_var, T>* = nullptr>
+auto log_softmax(const T& alpha) {
   const int a_size = alpha.size();
 
   check_nonzero_size("log_softmax", "alpha", alpha);
@@ -99,19 +100,18 @@ auto log_softmax_impl(const T& alpha) {
  * @throw std::domain_error If the input vector is size 0.
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
-T log_softmax_impl(const T& alpha) {
+auto log_softmax(const T& alpha) {
   check_nonzero_size("log_softmax", "alpha", alpha);
 
-  const auto& theta = to_ref(alpha.val().array() - alpha.val().maxCoeff());
+  const auto& theta = (alpha.val().array() - alpha.val().maxCoeff()).eval();
 
-  return make_callback_vari(
+  return make_callback_var(
       (theta.array() - log(theta.exp().sum())).matrix(),
       [alpha](const auto& res) mutable {
         alpha.adj().noalias()
-            += res.adj_ - (res.adj_.sum() * res.val_.array().exp()).matrix();
+	  += res.adj() - (res.adj().sum() * res.val().array().exp()).matrix();
       });
 }
-}  // namespace internal
 
 /**
  * Return the log softmax of the specified vector or container of vectors.
@@ -123,10 +123,10 @@ T log_softmax_impl(const T& alpha) {
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
-template <typename T, require_container_st<is_var, T>* = nullptr>
+template <typename T, require_std_vector_st<is_var, T>* = nullptr>
 inline auto log_softmax(const T& x) {
   return apply_vector_unary<T>::apply(
-      x, [](const auto& alpha) { return internal::log_softmax_impl(alpha); });
+      x, [](const auto& alpha) { return log_softmax(alpha); });
 }
 
 }  // namespace math

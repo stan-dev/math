@@ -13,22 +13,23 @@
 namespace stan {
 namespace math {
 
-namespace internal {
 /**
- * Return the sample standard deviation of the specified std vector, column
- * vector, row vector, matrix, or std vector of any of these types.
+ * Return the sample standard deviation of a variable which
+ * inherits from EigenBase.
  *
  * @tparam T Input type
  * @param[in] x input
  * @return sample standard deviation
  * @throw domain error  size is not greater than zero.
  */
-template <typename T_map, require_st_var<T_map>* = nullptr,
-          require_not_var_matrix_t<T_map>* = nullptr>
-var sd_impl(const T_map& x) {
+template <typename T,
+	  require_eigen_st<is_var, T>* = nullptr>
+var sd(const T& x) {
   using std::sqrt;
-  using T_vi = promote_scalar_t<vari*, T_map>;
-  using T_d = promote_scalar_t<double, T_map>;
+  using T_vi = promote_scalar_t<vari*, T>;
+  using T_d = promote_scalar_t<double, T>;
+
+  check_nonzero_size("sd", "x", x);
 
   if (x.size() == 1) {
     return 0.0;
@@ -66,7 +67,9 @@ var sd_impl(const T_map& x) {
  * @throw domain error  size is not greater than zero.
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
-var sd_impl(const T& x) {
+var sd(const T& x) {
+  check_nonzero_size("sd", "x", x);
+
   if (x.size() == 1) {
     return 0.0;
   }
@@ -76,10 +79,9 @@ var sd_impl(const T& x) {
   double sd = std::sqrt(sum_of_squares / (x.size() - 1));
 
   return make_callback_vari(sd, [x, arena_diff](const auto& res) mutable {
-    x.adj() += (res.adj_ / (res.val_ * (x.size() - 1))) * arena_diff;
+    x.adj() += (res.adj() / (res.val() * (x.size() - 1))) * arena_diff;
   });
 }
-}  // namespace internal
 
 /**
  * Return the sample standard deviation of the specified std vector, column
@@ -90,12 +92,10 @@ var sd_impl(const T& x) {
  * @return sample standard deviation
  * @throw domain error  size is not greater than zero.
  */
-template <typename T, require_container_st<is_var, T>* = nullptr>
+template <typename T, require_std_vector_st<is_var, T>* = nullptr>
 auto sd(const T& m) {
   return apply_vector_unary<T>::reduce(m, [](const auto& x) {
-    check_nonzero_size("sd", "x", x);
-
-    return internal::sd_impl(x);
+    return sd(x);
   });
 }
 
