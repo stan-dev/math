@@ -41,7 +41,7 @@ class arena_matrix : public Eigen::Map<MatrixType> {
   arena_matrix(Eigen::Index rows, Eigen::Index cols)
       : Base::Map(ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
                       rows * cols),
-                  rows, cols) {}
+          rows, cols) {}
 
   /**
    * Constructs `arena_matrix` with given size. This only works if
@@ -50,8 +50,8 @@ class arena_matrix : public Eigen::Map<MatrixType> {
    */
   explicit arena_matrix(Eigen::Index size)
       : Base::Map(
-            ChainableStack::instance_->memalloc_.alloc_array<Scalar>(size),
-            size) {}
+          ChainableStack::instance_->memalloc_.alloc_array<Scalar>(size),
+          size) {}
 
   /**
    * Constructs `arena_matrix` from an expression.
@@ -113,5 +113,23 @@ class arena_matrix : public Eigen::Map<MatrixType> {
 
 }  // namespace math
 }  // namespace stan
+
+namespace Eigen {
+namespace internal {
+
+template <typename T>
+struct traits<stan::math::arena_matrix<T>> {
+  using base = traits<Eigen::Map<T>>;
+  enum {
+    PlainObjectTypeInnerSize = base::PlainObjectTypeInnerSize;
+    InnerStrideAtCompileTime = base::InnerStrideAtCompileTime;
+    OuterStrideAtCompileTime = base::OuterStrideAtCompileTime;
+    Alignment = base::Alignment;
+    PlainObjectTypeInnerSize = base::Flags;
+  }
+}
+
+}  // namespace internal
+}  // namespace Eigen
 
 #endif
