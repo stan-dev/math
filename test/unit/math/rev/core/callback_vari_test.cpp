@@ -63,7 +63,7 @@ TEST(AgradRev, make_callback_var_eigen_test) {
       [avi = a.vi_](const auto& vi) mutable { avi->adj_ += vi.adj_ * 2; });
 
   EXPECT_TRUE((std::is_same<stan::math::var_value<Eigen::MatrixXd>,
-	       decltype(b)>::value));
+                            decltype(b)>::value));
   EXPECT_MATRIX_EQ(b.val(), (val.array() + 1).matrix());
   EXPECT_MATRIX_EQ(a.adj(), Eigen::MatrixXd::Zero(2, 3));
   stan::math::sum(b).grad();

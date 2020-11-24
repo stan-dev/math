@@ -22,8 +22,7 @@ namespace math {
  * @return sample standard deviation
  * @throw domain error  size is not greater than zero.
  */
-template <typename T,
-	  require_eigen_st<is_var, T>* = nullptr>
+template <typename T, require_eigen_st<is_var, T>* = nullptr>
 var sd(const T& x) {
   using std::sqrt;
   using T_vi = promote_scalar_t<vari*, T>;
@@ -94,9 +93,7 @@ var sd(const T& x) {
  */
 template <typename T, require_std_vector_st<is_var, T>* = nullptr>
 auto sd(const T& m) {
-  return apply_vector_unary<T>::reduce(m, [](const auto& x) {
-    return sd(x);
-  });
+  return apply_vector_unary<T>::reduce(m, [](const auto& x) { return sd(x); });
 }
 
 }  // namespace math

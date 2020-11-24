@@ -53,42 +53,41 @@ class log_softmax_elt_vari : public vari {
  * @return softmax of the input
  * @throw std::domain_error if the input size is 0
  */
-template <typename T,
-	  require_eigen_st<is_var, T>* = nullptr>
-inline auto log_softmax(const T& alpha) {
-  const int a_size = alpha.size();
+template <typename T, require_eigen_st<is_var, T>* = nullptr>
+auto log_softmax(const T& x) {
+  const int a_size = x.size();
 
-  check_nonzero_size("log_softmax", "alpha", alpha);
+  check_nonzero_size("log_softmax", "x", x);
 
-  const auto& alpha_ref = to_ref(alpha);
+  const auto& x_ref = to_ref(x);
 
-  vari** alpha_vi_array
+  vari** x_vi_array
       = ChainableStack::instance_->memalloc_.alloc_array<vari*>(a_size);
-  Eigen::Map<vector_vi>(alpha_vi_array, a_size) = alpha_ref.vi();
+  Eigen::Map<vector_vi>(x_vi_array, a_size) = x_ref.vi();
 
-  vector_d alpha_d = alpha_ref.val();
+  vector_d x_d = x_ref.val();
 
   // fold logic of math::softmax() and math::log_softmax()
   // to save computations
 
-  vector_d diff = (alpha_d.array() - alpha_d.maxCoeff());
-  vector_d softmax_alpha_d = diff.array().exp();
-  double sum = softmax_alpha_d.sum();
-  vector_d log_softmax_alpha_d = diff.array() - std::log(sum);
+  vector_d diff = (x_d.array() - x_d.maxCoeff());
+  vector_d softmax_x_d = diff.array().exp();
+  double sum = softmax_x_d.sum();
+  vector_d log_softmax_x_d = diff.array() - std::log(sum);
 
   // end fold
-  double* softmax_alpha_d_array
+  double* softmax_x_d_array
       = ChainableStack::instance_->memalloc_.alloc_array<double>(a_size);
-  Eigen::Map<vector_d>(softmax_alpha_d_array, a_size)
-      = softmax_alpha_d.array() / sum;
+  Eigen::Map<vector_d>(softmax_x_d_array, a_size)
+      = softmax_x_d.array() / sum;
 
-  vector_v log_softmax_alpha(a_size);
+  vector_v log_softmax_x(a_size);
   for (int k = 0; k < a_size; ++k) {
-    log_softmax_alpha(k) = var(new internal::log_softmax_elt_vari(
-        log_softmax_alpha_d[k], alpha_vi_array, softmax_alpha_d_array, a_size,
+    log_softmax_x(k) = var(new internal::log_softmax_elt_vari(
+        log_softmax_x_d[k], x_vi_array, softmax_x_d_array, a_size,
         k));
   }
-  return log_softmax_alpha;
+  return log_softmax_x;
 }
 
 /**
@@ -100,16 +99,16 @@ inline auto log_softmax(const T& alpha) {
  * @throw std::domain_error if the input size is 0
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
-inline auto log_softmax(const T& alpha) {
-  check_nonzero_size("log_softmax", "alpha", alpha);
+inline auto log_softmax(const T& x) {
+  check_nonzero_size("log_softmax", "x", x);
 
-  const auto& theta = (alpha.val().array() - alpha.val().maxCoeff()).eval();
+  const auto& theta = (x.val().array() - x.val().maxCoeff()).eval();
 
   return make_callback_var(
       (theta.array() - log(theta.exp().sum())).matrix(),
-      [alpha](const auto& res) mutable {
-        alpha.adj().noalias()
-	  += res.adj() - (res.adj().sum() * res.val().array().exp()).matrix();
+      [x](const auto& res) mutable {
+        x.adj().noalias()
+            += res.adj() - (res.adj().sum() * res.val().array().exp()).matrix();
       });
 }
 

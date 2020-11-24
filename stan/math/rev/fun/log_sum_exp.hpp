@@ -64,8 +64,7 @@ inline var log_sum_exp(double a, const var& b) {
  * @tparam T A type inheriting from EigenBase with scalar type var
  * @param v input
  */
-template <typename T,
-	  require_eigen_st<is_var, T>* = nullptr,
+template <typename T, require_eigen_st<is_var, T>* = nullptr,
           require_not_var_matrix_t<T>* = nullptr>
 inline var log_sum_exp(const T& v) {
   arena_t<decltype(v)> arena_v = v;
@@ -89,7 +88,7 @@ inline var log_sum_exp(const T& v) {
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline var log_sum_exp(const T& x) {
   return make_callback_vari(log_sum_exp(x.val()), [x](const auto& res) mutable {
-      x.adj() += res.adj() * (x.val().array().val() - res.val()).exp().matrix();
+    x.adj() += res.adj() * (x.val().array().val() - res.val()).exp().matrix();
   });
 }
 
