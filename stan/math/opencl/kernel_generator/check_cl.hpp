@@ -58,6 +58,7 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
         err_variable_(err_variable),
         must_be_(must_be) {
     buffer_.zeros();
+    buffer_.view(matrix_cl_view::Entire);
   }
 
   // this operation can not be used on the right hand side of assignment
@@ -86,7 +87,7 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
                   + type_str<value_type_t<T>>() + "* " + var_name_ + "_value, ";
       res.body += "bool " + var_name_;
       res.body_suffix += "if(!" + var_name_ +
-            " && atomic_xchg(" + var_name_ + "_buffer, 1) == 1){\n"
+            " && atomic_xchg(" + var_name_ + "_buffer, 1) == 0){\n"
           + var_name_ + "_buffer[1] = " + row_index_name + ";\n"
           + var_name_ + "_buffer[2] = " + col_index_name + ";\n"
           + var_name_ + "_value[0] = " + arg_.var_name_ + ";\n"
