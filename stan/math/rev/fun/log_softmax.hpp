@@ -53,8 +53,7 @@ class log_softmax_elt_vari : public vari {
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
-template <typename T,
-	  require_eigen_st<is_var, T>* = nullptr>
+template <typename T, require_eigen_st<is_var, T>* = nullptr>
 auto log_softmax(const T& alpha) {
   const int a_size = alpha.size();
 
@@ -109,7 +108,7 @@ auto log_softmax(const T& alpha) {
       (theta.array() - log(theta.exp().sum())).matrix(),
       [alpha](const auto& res) mutable {
         alpha.adj().noalias()
-	  += res.adj() - (res.adj().sum() * res.val().array().exp()).matrix();
+            += res.adj() - (res.adj().sum() * res.val().array().exp()).matrix();
       });
 }
 
