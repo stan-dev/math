@@ -177,8 +177,8 @@ inline var squared_distance(const T1& A, const T2& B) {
     }
     res = res_val;
 
-    reverse_pass_callback([arena_A, arena_B, res]() mutable {
-      double res_adj = res.adj();
+    res = make_callback_vari(res_val, [arena_A, arena_B](const auto& res) mutable {
+      double res_adj = res.adj_;
       
       for(size_t i = 0; i < arena_A.size(); ++i) {
 	double diff = arena_A.val().coeff(i) - arena_B.val().coeff(i);
@@ -197,8 +197,8 @@ inline var squared_distance(const T1& A, const T2& B) {
     }
     res = res_val;
 
-    reverse_pass_callback([arena_A, arena_B, res]() mutable {
-      double res_adj = res.adj();
+    res = make_callback_vari(res_val, [arena_A, arena_B](const auto& res) mutable {
+      double res_adj = res.adj_;
       
       for(size_t i = 0; i < arena_A.size(); ++i) {
 	double diff = arena_A.val().coeff(i) - arena_B.coeff(i);
@@ -214,10 +214,9 @@ inline var squared_distance(const T1& A, const T2& B) {
       double diff = arena_A.coeff(i) - arena_B.val().coeff(i);
       res_val += diff * diff;
     }
-    res = res_val;
 
-    reverse_pass_callback([arena_A, arena_B, res]() mutable {
-      double res_adj = res.adj();
+    res = make_callback_vari(res_val, [arena_A, arena_B](const auto& res) mutable {
+      double res_adj = res.adj_;
       
       for(size_t i = 0; i < arena_A.size(); ++i) {
 	double diff = arena_A.coeff(i) - arena_B.val().coeff(i);
