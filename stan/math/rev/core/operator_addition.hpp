@@ -124,11 +124,8 @@ inline auto add(const VarMat1& a, const VarMat2& b) {
   arena_t<VarMat2> arena_b(b);
   arena_t<ret_type> ret(arena_a.val() + arena_b.val());
   reverse_pass_callback([ret, arena_a, arena_b]() mutable {
-    for (Eigen::Index i = 0; i < ret.size(); ++i) {
-      const auto ref_adj = ret.adj().coeffRef(i);
-      arena_a.adj().coeffRef(i) += ref_adj;
-      arena_b.adj().coeffRef(i) += ref_adj;
-    }
+    arena_a.adj() += ret.adj();
+    arena_b.adj() += ret.adj();
   });
   return ret_type(ret);
 }
@@ -227,10 +224,10 @@ inline auto add(const Var& a, const VarMat& b) {
   arena_t<VarMat> arena_b(b);
   arena_t<VarMat> ret(a.val() + arena_b.val().array());
   reverse_pass_callback([ret, a, arena_b]() mutable {
+    arena_b.adj() += ret.adj();
     for (Eigen::Index i = 0; i < arena_b.size(); ++i) {
       const auto ret_adj = ret.adj().coeffRef(i);
       a.adj() += ret_adj;
-      arena_b.adj().coeffRef(i) += ret_adj;
     }
   });
   return plain_type_t<VarMat>(ret);

@@ -389,6 +389,70 @@ mdivide_left_tri(const T1 &A, const T2 &b) {
   return res;
 }
 
+template <Eigen::UpLoType TriView, typename T1, typename T2,
+          require_all_matrix_t<T1, T2> * = nullptr,
+          require_any_var_matrix_t<T1, T2> * = nullptr>
+inline auto mdivide_left_tri(const T1 &A, const T2 &B) {
+  using ret_val_type = plain_type_t<decltype(value_of(A) * value_of(B))>;
+  using ret_type = var_value<ret_val_type>;
+
+  if (A.size() == 0) {
+    return ret_type(ret_val_type(0, B.cols()));
+  }
+
+  check_square("mdivide_left_tri", "A", A);
+  check_multiplicable("mdivide_left_tri", "A", A, "B", B);
+
+  if (!is_constant<T1>::value && !is_constant<T2>::value) {
+    auto arena_A = to_var_value(forward_as<promote_scalar_t<var, T1>>(A));
+    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+
+    arena_t<ret_type> res
+      = arena_A.val().template triangularView<TriView>().solve(arena_B.val());
+
+    reverse_pass_callback([arena_A, arena_B, res]() mutable {
+      promote_scalar_t<double, T2> adjB
+	= arena_A.val().template triangularView<TriView>().transpose().solve(res.adj());
+
+      arena_B.adj() += adjB;
+      arena_A.adj() -= (adjB * res.val().transpose().eval())
+	.template triangularView<TriView>();
+    });
+
+    return ret_type(res);
+  } else if (!is_constant<T1>::value) {
+    auto arena_A = to_var_value(forward_as<promote_scalar_t<var, T1>>(A));
+
+    arena_t<ret_type> res
+      = arena_A.val().template triangularView<TriView>().solve(value_of(B));
+
+    reverse_pass_callback([arena_A, res]() mutable {
+      promote_scalar_t<double, T2> adjB
+	= arena_A.val_op().template triangularView<TriView>().transpose().solve(res.adj());
+
+      arena_A.adj() -= (adjB * res.val().transpose().eval())
+	.template triangularView<TriView>();
+    });
+
+    return ret_type(res);
+  } else {
+    arena_t<promote_scalar_t<double, T1>> arena_A = value_of(A);
+    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+
+    arena_t<ret_type> res =
+      arena_A.template triangularView<TriView>().solve(arena_B.val());
+
+    reverse_pass_callback([arena_A, arena_B, res]() mutable {
+      promote_scalar_t<double, T2> adjB
+	= arena_A.template triangularView<TriView>().transpose().solve(res.adj());
+
+      arena_B.adj() += adjB;
+    });
+
+    return ret_type(res);
+  }
+}
+
 }  // namespace math
 }  // namespace stan
 #endif
