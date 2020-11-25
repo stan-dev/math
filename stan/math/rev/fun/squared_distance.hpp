@@ -155,8 +155,7 @@ inline var squared_distance(const EigVecArith& v1, const EigVecVar& v2) {
  * @param B second argument
  * @return sum of squared difference of A and B
  */
-template <typename T1, typename T2,
-	  require_all_matrix_t<T1, T2>* = nullptr,
+template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
           require_any_var_matrix_t<T1, T2>* = nullptr>
 inline var squared_distance(const T1& A, const T2& B) {
   check_matching_sizes("squared_distance", "A", A.val(), "B", B.val());
@@ -171,58 +170,61 @@ inline var squared_distance(const T1& A, const T2& B) {
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
 
     double res_val = 0.0;
-    for(size_t i = 0; i < arena_A.size(); ++i) {
+    for (size_t i = 0; i < arena_A.size(); ++i) {
       double diff = arena_A.val().coeff(i) - arena_B.val().coeff(i);
       res_val += diff * diff;
     }
     res = res_val;
 
-    res = make_callback_vari(res_val, [arena_A, arena_B](const auto& res) mutable {
-      double res_adj = res.adj_;
-      
-      for(size_t i = 0; i < arena_A.size(); ++i) {
-	double diff = arena_A.val().coeff(i) - arena_B.val().coeff(i);
-	arena_A.adj().coeffRef(i) += 2.0 * res_adj * diff;
-	arena_B.adj().coeffRef(i) -= 2.0 * res_adj * diff;
-      }
-    });
+    res = make_callback_vari(
+        res_val, [arena_A, arena_B](const auto& res) mutable {
+          double res_adj = res.adj_;
+
+          for (size_t i = 0; i < arena_A.size(); ++i) {
+            double diff = arena_A.val().coeff(i) - arena_B.val().coeff(i);
+            arena_A.adj().coeffRef(i) += 2.0 * res_adj * diff;
+            arena_B.adj().coeffRef(i) -= 2.0 * res_adj * diff;
+          }
+        });
   } else if (!is_constant<T1>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
     arena_t<promote_scalar_t<double, T2>> arena_B = value_of(B);
 
     double res_val = 0.0;
-    for(size_t i = 0; i < arena_A.size(); ++i) {
+    for (size_t i = 0; i < arena_A.size(); ++i) {
       double diff = arena_A.val().coeff(i) - arena_B.coeff(i);
       res_val += diff * diff;
     }
     res = res_val;
 
-    res = make_callback_vari(res_val, [arena_A, arena_B](const auto& res) mutable {
-      double res_adj = res.adj_;
-      
-      for(size_t i = 0; i < arena_A.size(); ++i) {
-	double diff = arena_A.val().coeff(i) - arena_B.coeff(i);
-	arena_A.adj().coeffRef(i) += 2.0 * res_adj * diff;
-      }
-    });
+    res = make_callback_vari(
+        res_val, [arena_A, arena_B](const auto& res) mutable {
+          double res_adj = res.adj_;
+
+          for (size_t i = 0; i < arena_A.size(); ++i) {
+            double diff = arena_A.val().coeff(i) - arena_B.coeff(i);
+            arena_A.adj().coeffRef(i) += 2.0 * res_adj * diff;
+          }
+        });
   } else {
     arena_t<promote_scalar_t<double, T1>> arena_A = value_of(A);
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
 
     double res_val = 0.0;
-    for(size_t i = 0; i < arena_A.size(); ++i) {
+    for (size_t i = 0; i < arena_A.size(); ++i) {
       double diff = arena_A.coeff(i) - arena_B.val().coeff(i);
       res_val += diff * diff;
     }
 
-    res = make_callback_vari(res_val, [arena_A, arena_B](const auto& res) mutable {
-      double res_adj = res.adj_;
-      
-      for(size_t i = 0; i < arena_A.size(); ++i) {
-	double diff = arena_A.coeff(i) - arena_B.val().coeff(i);
-	arena_B.adj().coeffRef(i) -= 2.0 * res_adj * diff;
-      }
-    });
+    res = make_callback_vari(
+        res_val, [arena_A, arena_B](const auto& res) mutable {
+          double res_adj = res.adj_;
+
+          for (size_t i = 0; i < arena_A.size(); ++i) {
+            double diff = arena_A.coeff(i) - arena_B.val().coeff(i);
+            arena_B.adj().coeffRef(i) -= 2.0 * res_adj * diff;
+          }
+        });
   }
 
   return res;
