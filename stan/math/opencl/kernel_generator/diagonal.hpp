@@ -70,8 +70,9 @@ class diagonal_
     kernel_parts res{};
     if (generated.count(this) == 0) {
       generated[this] = "";
+      std::map<const void*, const char*> generated2;
       res = this->template get_arg<0>().get_kernel_parts(
-          generated, name_gen, row_index_name, row_index_name, true);
+          generated2, name_gen, row_index_name, row_index_name, true);
       var_name_ = this->template get_arg<0>().var_name_;
     }
     return res;

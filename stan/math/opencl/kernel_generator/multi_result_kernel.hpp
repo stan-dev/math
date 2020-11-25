@@ -31,8 +31,7 @@ template <int N, typename... T_results>
 struct multi_result_kernel_internal {
   template <typename... T_expressions>
   struct inner {
-    static std::map<std::vector<int>, cl::Kernel>
-        kernel_cache_;
+    static std::map<std::vector<int>, cl::Kernel> kernel_cache_;
     using next = typename multi_result_kernel_internal<
         N - 1, T_results...>::template inner<T_expressions...>;
     using T_current_result = std::remove_reference_t<
@@ -160,16 +159,18 @@ struct multi_result_kernel_internal {
      * @param[out] mems data of type `cl_mem`
      * @param assignment_pairs pairs of result and expression
      */
-    static void get_unique_data(
-        std::vector<const void*>& mems,
+    static void get_unique_matrix_accesses(
+        std::vector<int>& uids, std::map<const void*, int>& id_map, int& next_id,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {
       if (is_without_output<T_current_expression>::value) {
         return;
       }
-      std::get<N>(assignment_pairs).second.get_unique_data(mems);
-      std::get<N>(assignment_pairs).first.get_unique_data(mems);
-      next::get_unique_data(mems, assignment_pairs);
+      std::get<N>(assignment_pairs)
+          .second.get_unique_matrix_accesses(uids, id_map, next_id);
+      std::get<N>(assignment_pairs)
+          .first.get_unique_matrix_accesses(uids, id_map, next_id);
+      next::get_unique_matrix_accesses(uids, id_map, next_id, assignment_pairs);
     }
   };
 };
@@ -206,8 +207,9 @@ struct multi_result_kernel_internal<-1, T_results...> {
     static void add_event(
         cl::Event e, const std::tuple<std::pair<T_results, T_expressions>...>&
                          assignment_pairs) {}
-    static void get_unique_data(
-        std::vector<const void*>& mems,
+
+    static void get_unique_matrix_accesses(
+        std::vector<int>& uids, std::map<const void*, int>& id_map, int& next_id,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {}
   };
@@ -215,9 +217,8 @@ struct multi_result_kernel_internal<-1, T_results...> {
 
 template <int N, typename... T_results>
 template <typename... T_expressions>
-std::map<std::vector<int>, cl::Kernel>
-    multi_result_kernel_internal<N, T_results...>::inner<
-        T_expressions...>::kernel_cache_;
+std::map<std::vector<int>, cl::Kernel> multi_result_kernel_internal<
+    N, T_results...>::inner<T_expressions...>::kernel_cache_;
 
 }  // namespace internal
 
@@ -436,31 +437,20 @@ class results_cl {
                        " (broadcasted expressions can not be evaluated)");
     }
 
-    std::vector<const void*> data;
-    impl::get_unique_data(data, assignment_pairs);
-    std::vector<int> uid;
-    int next_index = 0;
-    std::map<const void*, int> unique_indices;
-    for (const void* m : data) {
-      if (unique_indices.count(m) == 0) {
-        unique_indices[m] = next_index;
-        uid.push_back(next_index);
-        next_index++;
-      } else {
-        uid.push_back(unique_indices[m]);
-      }
-    }
+    std::vector<int> uids;
+    std::map<const void*, int> id_map;
+    int next_id = 0;
+    impl::get_unique_matrix_accesses(uids, id_map, next_id, assignment_pairs);
 
     try {
-      if (impl::kernel_cache_[uid]() == NULL) {
+      if (impl::kernel_cache_[uids]() == NULL) {
         std::string src = get_kernel_source_impl(assignment_pairs);
-        std::cout << src << std::endl;
         auto opts = opencl_context.base_opts();
-        impl::kernel_cache_[uid] = opencl_kernels::compile_kernel(
+        impl::kernel_cache_[uids] = opencl_kernels::compile_kernel(
             "calculate", {view_kernel_helpers, src}, opts);
-        opencl_context.register_kernel_cache(&impl::kernel_cache_[uid]);
+        opencl_context.register_kernel_cache(&impl::kernel_cache_[uids]);
       }
-      cl::Kernel& kernel = impl::kernel_cache_[uid];
+      cl::Kernel& kernel = impl::kernel_cache_[uids];
       int arg_num = 0;
 
       std::map<const void*, const char*> generated;

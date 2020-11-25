@@ -35,6 +35,7 @@ class indexing_
   static_assert(std::is_integral<value_type_t<T_col_index>>::value,
                 "indexing: Column index scalar type must be an integer!");
 
+  mutable std::map<const void*, const char*> generated_;
  public:
   using Scalar = typename std::remove_reference_t<T_mat>::Scalar;
   using base = operation_cl_lhs<indexing_<T_mat, T_row_index, T_col_index>,
@@ -95,6 +96,7 @@ class indexing_
     kernel_parts res{};
     if (generated.count(this) == 0) {
       generated[this] = "";
+      generated_.clear();
 
       const auto& mat = this->template get_arg<0>();
       const auto& row_index = this->template get_arg<1>();
@@ -105,7 +107,7 @@ class indexing_
       kernel_parts parts_col_idx = col_index.get_kernel_parts(
           generated, name_gen, row_index_name, col_index_name, view_handled);
       kernel_parts parts_mat = mat.get_kernel_parts(
-          generated, name_gen, row_index.var_name_, col_index.var_name_, false);
+          generated_, name_gen, row_index.var_name_, col_index.var_name_, false);
 
       res = parts_row_idx + parts_col_idx + parts_mat;
       var_name_ = mat.var_name_;
@@ -128,6 +130,7 @@ class indexing_
       const std::string& col_index_name) const {
     if (generated.count(this) == 0) {
       generated[this] = "";
+      generated_.clear();
     }
     const auto& mat = this->template get_arg<0>();
     const auto& row_index = this->template get_arg<1>();
@@ -138,7 +141,7 @@ class indexing_
     kernel_parts parts_col_idx = col_index.get_kernel_parts(
         generated, name_gen, row_index_name, col_index_name, false);
     kernel_parts parts_mat = mat.get_kernel_parts_lhs(
-        generated, name_gen, row_index.var_name_, col_index.var_name_);
+        generated_, name_gen, row_index.var_name_, col_index.var_name_);
 
     kernel_parts res = parts_row_idx + parts_col_idx + parts_mat;
     var_name_ = mat.var_name_;
@@ -159,7 +162,8 @@ class indexing_
       generated[this] = "";
       this->template get_arg<1>().set_args(generated, kernel, arg_num);
       this->template get_arg<2>().set_args(generated, kernel, arg_num);
-      this->template get_arg<0>().set_args(generated, kernel, arg_num);
+      std::map<const void*, const char*> generated2;
+      this->template get_arg<0>().set_args(generated2, kernel, arg_num);
     }
   }
 
@@ -234,6 +238,28 @@ class indexing_
     this->template get_arg<1>().add_read_event(e);
     this->template get_arg<2>().add_read_event(e);
     this->template get_arg<0>().add_write_event(e);
+  }
+
+  /**
+   * Collects data that is needed beside types to uniqly identify a kernel
+   * generator expression.
+   * @param[out] uid ids of unique matrix accesses
+   * @param[in,out] id_map map from memory addresses to unique ids
+   * @param[in,out] next_id neqt unique id to use
+   */
+  inline void get_unique_matrix_accesses(std::vector<int>& uids,
+                                         std::map<const void*, int>& id_map,
+                                         int& next_id) const {
+    std::vector<int> uids2;
+    std::map<const void*, int> id_map2;
+    int next_id2 = 0;
+    this->template get_arg<0>().get_unique_matrix_accesses(uids2, id_map2, next_id2);
+    for (int i : uids2) {
+      uids.push_back(i + next_id);
+    }
+    next_id += next_id2;
+    this->template get_arg<1>().get_unique_matrix_accesses(uids, id_map, next_id);
+    this->template get_arg<2>().get_unique_matrix_accesses(uids, id_map, next_id);
   }
 };
 

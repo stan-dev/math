@@ -154,13 +154,14 @@ class rowwise_reduction
       this->var_name_ = name_gen.generate();
       generated[this] = "";
 
+      std::map<const void*, const char*> generated2;
       if (PassZero && internal::matvec_mul_opt<T_no_ref>::is_possible) {
         res = internal::matvec_mul_opt<T_no_ref>::get_kernel_parts(
-            this->template get_arg<0>(), generated, name_gen, row_index_name,
+            this->template get_arg<0>(), generated2, name_gen, row_index_name,
             var_name_ + "_j");
       } else {
         res = this->template get_arg<0>().get_kernel_parts(
-            generated, name_gen, row_index_name, var_name_ + "_j",
+            generated2, name_gen, row_index_name, var_name_ + "_j",
             view_handled || PassZero);
       }
       kernel_parts my_part
@@ -237,7 +238,8 @@ class rowwise_reduction
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
       generated[this] = "";
-      this->template get_arg<0>().set_args(generated, kernel, arg_num);
+      std::map<const void*, const char*> generated2;
+      this->template get_arg<0>().set_args(generated2, kernel, arg_num);
       kernel.setArg(arg_num++, this->template get_arg<0>().view());
       kernel.setArg(arg_num++, this->template get_arg<0>().cols());
       if (PassZero && internal::matvec_mul_opt<T>::is_possible) {
@@ -261,9 +263,9 @@ class rowwise_reduction
   inline std::pair<int, int> extreme_diagonals() const {
     return {-rows() + 1, cols() - 1};
   }
-};  // namespace math
+};
 
-/**
+  /**
  * Operation for sum reduction.
  */
 struct sum_op {

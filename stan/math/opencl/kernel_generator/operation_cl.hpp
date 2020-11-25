@@ -218,8 +218,13 @@ class operation_cl : public operation_cl_base {
       std::string col_index_name_arg = col_index_name;
       derived().modify_argument_indices(row_index_name_arg, col_index_name_arg);
       std::array<kernel_parts, N> args_parts = index_apply<N>([&](auto... Is) {
+        std::map<const void*, const char*> generated2;
         return std::array<kernel_parts, N>{this->get_arg<Is>().get_kernel_parts(
-            generated, name_gen, row_index_name_arg, col_index_name_arg,
+            &Derived::modify_argument_indices
+                    == &operation_cl::modify_argument_indices
+                ? generated
+                : generated2,
+            name_gen, row_index_name_arg, col_index_name_arg,
             view_handled
                 && std::tuple_element_t<
                     Is, typename Deriv::view_transitivity>::value)...};
@@ -283,8 +288,15 @@ class operation_cl : public operation_cl_base {
       // initializer_list from. Cast to voids avoids warnings about unused
       // expression.
       index_apply<N>([&](auto... Is) {
+        std::map<const void*, const char*> generated2;
         static_cast<void>(std::initializer_list<int>{
-            (this->get_arg<Is>().set_args(generated, kernel, arg_num), 0)...});
+            (this->get_arg<Is>().set_args(
+                 &Derived::modify_argument_indices
+                         == &operation_cl::modify_argument_indices
+                     ? generated
+                     : generated2,
+                 kernel, arg_num),
+             0)...});
       });
     }
   }
@@ -394,13 +406,36 @@ class operation_cl : public operation_cl_base {
   /**
    * Collects data that is needed beside types to uniqly identify a kernel
    * generator expression.
-   * @param[out] data collected data
+   * @param[out] uid ids of unique matrix accesses
+   * @param[in,out] id_map map from memory addresses to unique ids
+   * @param[in,out] next_id neqt unique id to use
    */
-  inline void get_unique_data(std::vector<const void*>& data) const {
-    index_apply<N>([&](auto... Is) {
-      static_cast<void>(std::initializer_list<int>{
-          (this->get_arg<Is>().get_unique_data(data), 0)...});
-    });
+  inline void get_unique_matrix_accesses(std::vector<int>& uids,
+                                         std::map<const void*, int>& id_map,
+                                         int& next_id) const {
+    if (&Derived::modify_argument_indices
+        == &operation_cl::modify_argument_indices) {
+      index_apply<N>([&](auto... Is) {
+        static_cast<void>(std::initializer_list<int>{
+            (this->get_arg<Is>().get_unique_matrix_accesses(uids, id_map,
+                                                            next_id),
+             0)...});
+      });
+    } else {
+      std::vector<int> uids2;
+      std::map<const void*, int> id_map2;
+      int next_id2 = 0;
+      index_apply<N>([&](auto... Is) {
+        static_cast<void>(std::initializer_list<int>{
+            (this->get_arg<Is>().get_unique_matrix_accesses(uids2, id_map2,
+                                                            next_id2),
+             0)...});
+      });
+      for (int i : uids2) {
+        uids.push_back(i + next_id);
+      }
+      next_id += next_id2;
+    }
   }
 };
 

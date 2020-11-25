@@ -288,11 +288,21 @@ class load_
 
   /**
    * Collects data that is needed beside types to uniqly identify a kernel
-   * generator expression. Pushes a pointer to underlying `matrix_cl` to data.
-   * @param[out] data collected data
+   * generator expression.
+   * @param[out] uid ids of unique matrix accesses
+   * @param[in,out] id_map map from memory addresses to unique ids
+   * @param[in,out] next_id neqt unique id to use
    */
-  inline void get_unique_data(std::vector<const void*>& data) const {
-    data.push_back(&a_);
+  inline void get_unique_matrix_accesses(std::vector<int>& uids,
+                                         std::map<const void*, int>& id_map,
+                                         int& next_id) const {
+    if (id_map.count(&a_) == 0) {
+      id_map[&a_] = next_id;
+      uids.push_back(next_id);
+      next_id++;
+    } else {
+      uids.push_back(id_map[&a_]);
+    }
   }
 };
 /** @}*/
