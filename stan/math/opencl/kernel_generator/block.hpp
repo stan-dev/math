@@ -9,7 +9,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl_lhs.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <set>
+#include <map>
 #include <string>
 #include <tuple>
 #include <type_traits>
@@ -143,10 +143,10 @@ class block_
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const operation_cl_base*>& generated,
+  inline void set_args(std::map<const void*, const char*>& generated,
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
-      generated.insert(this);
+      generated[this] = "";
       this->template get_arg<0>().set_args(generated, kernel, arg_num);
       kernel.setArg(arg_num++, start_row_);
       kernel.setArg(arg_num++, start_col_);

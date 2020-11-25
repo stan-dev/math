@@ -5,7 +5,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <string>
-#include <set>
+#include <map>
 #include <array>
 #include <numeric>
 #include <vector>
@@ -44,7 +44,7 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...>,
    * @return part of kernel with code for this expressions
    */
   inline kernel_parts get_kernel_parts_lhs(
-      std::set<const operation_cl_base*>& generated, name_generator& name_gen,
+      std::map<const void*, const char*>& generated, name_generator& name_gen,
       const std::string& row_index_name,
       const std::string& col_index_name) const {
     if (generated.count(this) == 0) {
@@ -67,7 +67,7 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...>,
     });
     res += my_part;
     if (generated.count(this) == 0) {
-      generated.insert(this);
+      generated[this] = "";
     } else {
       res.args = "";
     }

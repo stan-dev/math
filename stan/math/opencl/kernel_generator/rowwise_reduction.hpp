@@ -10,7 +10,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
-#include <set>
+#include <map>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -31,7 +31,7 @@ struct matvec_mul_opt {
   static matrix_cl_view view(const Arg&) { return matrix_cl_view::Entire; }
 
   static kernel_parts get_kernel_parts(
-      const Arg& a, std::set<const operation_cl_base*>& generated,
+      const Arg& a, std::map<const void*, const char*>& generated,
       name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name) {
     return {};
@@ -67,13 +67,13 @@ struct matvec_mul_opt<elt_multiply_<Mat, broadcast_<VecT, true, false>>> {
    * @return part of kernel with code for this and nested expressions
    */
   static kernel_parts get_kernel_parts(
-      const Arg& mul, std::set<const operation_cl_base*>& generated,
+      const Arg& mul, std::map<const void*, const char*>& generated,
       name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name) {
     kernel_parts res{};
     if (generated.count(&mul) == 0) {
       mul.var_name_ = name_gen.generate();
-      generated.insert(&mul);
+      generated[&mul]="";
 
       const auto& matrix = mul.template get_arg<0>();
       const auto& broadcast = mul.template get_arg<1>();
@@ -81,7 +81,7 @@ struct matvec_mul_opt<elt_multiply_<Mat, broadcast_<VecT, true, false>>> {
                                     col_index_name, true);
       if (generated.count(&broadcast) == 0) {
         broadcast.var_name_ = name_gen.generate();
-        generated.insert(&broadcast);
+        generated[&broadcast]="";
 
         const auto& vec = broadcast.template get_arg<0>();
         std::string row_index_name_bc = row_index_name;
@@ -146,13 +146,13 @@ class rowwise_reduction
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
-      std::set<const operation_cl_base*>& generated, name_generator& name_gen,
+      std::map<const void*, const char*>& generated, name_generator& name_gen,
       const std::string& row_index_name, const std::string& col_index_name,
       bool view_handled) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
       this->var_name_ = name_gen.generate();
-      generated.insert(this);
+      generated[this] = "";
 
       if (PassZero && internal::matvec_mul_opt<T_no_ref>::is_possible) {
         res = internal::matvec_mul_opt<T_no_ref>::get_kernel_parts(
@@ -233,10 +233,10 @@ class rowwise_reduction
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const operation_cl_base*>& generated,
+  inline void set_args(std::map<const void*, const char*>& generated,
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
-      generated.insert(this);
+      generated[this] = "";
       this->template get_arg<0>().set_args(generated, kernel, arg_num);
       kernel.setArg(arg_num++, this->template get_arg<0>().view());
       kernel.setArg(arg_num++, this->template get_arg<0>().cols());

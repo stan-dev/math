@@ -11,7 +11,7 @@
 #include <type_traits>
 #include <string>
 #include <utility>
-#include <set>
+#include <map>
 #include <vector>
 
 namespace stan {
@@ -57,6 +57,30 @@ class load_
 
   /**
    * Generates kernel code for this expression.
+   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param name_gen name generator for this kernel
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
+   * @param view_handled whether caller already handled matrix view
+   * @return part of kernel with code for this and nested expressions
+   */
+  inline kernel_parts get_kernel_parts(
+      std::map<const void*, const char*>& generated, name_generator& name_gen,
+      const std::string& row_index_name, const std::string& col_index_name,
+      bool view_handled) const {
+    kernel_parts res{};
+    if (generated.count(&a_) == 0) {
+      this->var_name_ = name_gen.generate();
+      generated[&a_] = this->var_name_.c_str();
+      res = generate(row_index_name, col_index_name, view_handled);
+    } else {
+      this->var_name_ = generated[&a_];
+    }
+    return res;
+  }
+
+  /**
+   * Generates kernel code for this expression.
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
    * @param view_handled whether whether caller already handled matrix view
@@ -88,6 +112,34 @@ class load_
   /**
    * Generates kernel code for this expression if it appears on the left hand
    * side of an assignment.
+   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param name_gen name generator for this kernel
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
+   * @return part of kernel with code for this expressions
+   */
+  inline kernel_parts get_kernel_parts_lhs(
+      std::map<const void*, const char*>& generated, name_generator& name_gen,
+      const std::string& row_index_name,
+      const std::string& col_index_name) const {
+    if (generated.count(&a_) == 0) {
+      this->var_name_ = name_gen.generate();
+    } else {
+      this->var_name_ = generated[&a_];
+    }
+    kernel_parts res = generate_lhs(row_index_name, col_index_name);
+
+    if (generated.count(&a_) == 0) {
+      generated[&a_] = this->var_name_.c_str();
+    } else {
+      res.args = "";
+    }
+    return res;
+  }
+
+  /**
+   * Generates kernel code for this expression if it appears on the left hand
+   * side of an assignment.
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
    * @return part of kernel with code for this expressions
@@ -111,10 +163,10 @@ class load_
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const operation_cl_base*>& generated,
+  inline void set_args(std::map<const void*, const char*>& generated,
                        cl::Kernel& kernel, int& arg_num) const {
-    if (generated.count(this) == 0) {
-      generated.insert(this);
+    if (generated.count(&a_) == 0) {
+      generated[&a_] = "";
       kernel.setArg(arg_num++, a_.buffer());
       kernel.setArg(arg_num++, a_.rows());
       kernel.setArg(arg_num++, a_.view());
@@ -236,12 +288,11 @@ class load_
 
   /**
    * Collects data that is needed beside types to uniqly identify a kernel
-   * generator expression. Pushes the handle to underlying `matrix_cl`'s memory
-   * to `mems`.
-   * @param[out] mems data of type `cl_mem`
+   * generator expression. Pushes a pointer to underlying `matrix_cl` to data.
+   * @param[out] data collected data
    */
-  inline void get_unique_data(std::vector<cl_mem>& mems) const {
-    mems.push_back(a_.buffer()());
+  inline void get_unique_data(std::vector<const void*>& data) const {
+    data.push_back(&a_);
   }
 };
 /** @}*/

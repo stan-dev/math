@@ -7,6 +7,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
+#include <map>
 #include <string>
 #include <utility>
 
@@ -88,12 +89,12 @@ class indexing_
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
-      std::set<const operation_cl_base*>& generated, name_generator& name_gen,
+      std::map<const void*, const char*>& generated, name_generator& name_gen,
       const std::string& row_index_name, const std::string& col_index_name,
       bool view_handled) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
-      generated.insert(this);
+      generated[this] = "";
 
       const auto& mat = this->template get_arg<0>();
       const auto& row_index = this->template get_arg<1>();
@@ -122,11 +123,11 @@ class indexing_
    * @return part of kernel with code for this expressions
    */
   inline kernel_parts get_kernel_parts_lhs(
-      std::set<const operation_cl_base*>& generated, name_generator& name_gen,
+      std::map<const void*, const char*>& generated, name_generator& name_gen,
       const std::string& row_index_name,
       const std::string& col_index_name) const {
     if (generated.count(this) == 0) {
-      generated.insert(this);
+      generated[this] = "";
     }
     const auto& mat = this->template get_arg<0>();
     const auto& row_index = this->template get_arg<1>();
@@ -152,10 +153,10 @@ class indexing_
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const operation_cl_base*>& generated,
+  inline void set_args(std::map<const void*, const char*>& generated,
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
-      generated.insert(this);
+      generated[this] = "";
       this->template get_arg<1>().set_args(generated, kernel, arg_num);
       this->template get_arg<2>().set_args(generated, kernel, arg_num);
       this->template get_arg<0>().set_args(generated, kernel, arg_num);

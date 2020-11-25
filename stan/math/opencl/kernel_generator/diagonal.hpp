@@ -9,7 +9,7 @@
 #include <stan/math/opencl/kernel_generator/operation_cl_lhs.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <algorithm>
-#include <set>
+#include <map>
 #include <string>
 #include <tuple>
 #include <type_traits>
@@ -64,12 +64,12 @@ class diagonal_
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
-      std::set<const operation_cl_base*>& generated, name_generator& name_gen,
+      std::map<const void*, const char*>& generated, name_generator& name_gen,
       const std::string& row_index_name, const std::string& col_index_name,
       bool view_handled) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
-      generated.insert(this);
+      generated[this] = "";
       res = this->template get_arg<0>().get_kernel_parts(
           generated, name_gen, row_index_name, row_index_name, true);
       var_name_ = this->template get_arg<0>().var_name_;

@@ -14,7 +14,7 @@
 #include <string>
 #include <utility>
 #include <tuple>
-#include <set>
+#include <map>
 #include <array>
 #include <numeric>
 #include <vector>
@@ -184,7 +184,7 @@ class operation_cl : public operation_cl_base {
    */
   template <typename T_result>
   kernel_parts get_whole_kernel_parts(
-      std::set<const operation_cl_base*>& generated, name_generator& ng,
+      std::map<const void*, const char*>& generated, name_generator& ng,
       const std::string& row_index_name, const std::string& col_index_name,
       const T_result& result) const {
     kernel_parts parts = derived().get_kernel_parts(
@@ -198,7 +198,8 @@ class operation_cl : public operation_cl_base {
 
   /**
    * Generates kernel code for this and nested expressions.
-   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param[in,out] generated map from (pointer to) already generated operations
+   * to variable names
    * @param name_gen name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
@@ -206,13 +207,13 @@ class operation_cl : public operation_cl_base {
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
-      std::set<const operation_cl_base*>& generated, name_generator& name_gen,
+      std::map<const void*, const char*>& generated, name_generator& name_gen,
       const std::string& row_index_name, const std::string& col_index_name,
       bool view_handled) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
       this->var_name_ = name_gen.generate();
-      generated.insert(this);
+      generated[this] = "";
       std::string row_index_name_arg = row_index_name;
       std::string col_index_name_arg = col_index_name;
       derived().modify_argument_indices(row_index_name_arg, col_index_name_arg);
@@ -272,10 +273,10 @@ class operation_cl : public operation_cl_base {
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const operation_cl_base*>& generated,
+  inline void set_args(std::map<const void*, const char*>& generated,
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
-      generated.insert(this);
+      generated[this] = "";
       // parameter pack expansion returns a comma-separated list of values,
       // which can not be used as an expression. We work around that by using
       // comma operator to get a list of ints, which we use to construct an
@@ -393,12 +394,12 @@ class operation_cl : public operation_cl_base {
   /**
    * Collects data that is needed beside types to uniqly identify a kernel
    * generator expression.
-   * @param[out] mems data of type `cl_mem`
+   * @param[out] data collected data
    */
-  inline void get_unique_data(std::vector<cl_mem>& mems) const {
+  inline void get_unique_data(std::vector<const void*>& data) const {
     index_apply<N>([&](auto... Is) {
       static_cast<void>(std::initializer_list<int>{
-          (this->get_arg<Is>().get_unique_data(mems), 0)...});
+          (this->get_arg<Is>().get_unique_data(data), 0)...});
     });
   }
 };

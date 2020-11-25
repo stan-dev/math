@@ -8,6 +8,7 @@
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl_lhs.hpp>
 #include <stan/math/opencl/kernel_generator/scalar.hpp>
+#include <map>
 
 namespace stan {
 namespace math {
@@ -73,13 +74,13 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts_lhs(
-      std::set<const operation_cl_base*>& generated, name_generator& name_gen,
+      std::map<const void*, const char*>& generated, name_generator& name_gen,
       const std::string& row_index_name,
       const std::string& col_index_name) const {
     kernel_parts res;
     if (generated.count(this) == 0) {
       this->var_name_ = name_gen.generate();
-      generated.insert(this);
+      generated[this] = "";
       res = arg_.get_kernel_parts(generated, name_gen, row_index_name,
                                   col_index_name, false);
 
@@ -104,10 +105,10 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const operation_cl_base*>& generated,
+  inline void set_args(std::map<const void*, const char*>& generated,
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
-      generated.insert(this);
+      generated[this] = "";
       arg_.set_args(generated, kernel, arg_num);
       kernel.setArg(arg_num++, buffer_.buffer());
       kernel.setArg(arg_num++, value_.buffer());

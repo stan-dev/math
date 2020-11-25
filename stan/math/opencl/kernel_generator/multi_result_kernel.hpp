@@ -14,7 +14,7 @@
 #include <string>
 #include <tuple>
 #include <utility>
-#include <set>
+#include <map>
 #include <vector>
 
 namespace stan {
@@ -100,7 +100,7 @@ struct multi_result_kernel_internal {
      * @return kernel parts for the kernel
      */
     static kernel_parts generate(
-        std::set<const operation_cl_base*>& generated, name_generator& ng,
+        std::map<const void*, const char*>& generated, name_generator& ng,
         const std::string& row_index_name, const std::string& col_index_name,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {
@@ -126,7 +126,7 @@ struct multi_result_kernel_internal {
      * @param assignment_pairs pairs of result and expression
      */
     static void set_args(
-        std::set<const operation_cl_base*>& generated, cl::Kernel& kernel,
+        std::map<const void*, const char*>& generated, cl::Kernel& kernel,
         int& arg_num,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {
@@ -161,7 +161,7 @@ struct multi_result_kernel_internal {
      * @param assignment_pairs pairs of result and expression
      */
     static void get_unique_data(
-        std::vector<cl_mem>& mems,
+        std::vector<const void*>& mems,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {
       if (is_without_output<T_current_expression>::value) {
@@ -190,7 +190,7 @@ struct multi_result_kernel_internal<-1, T_results...> {
             assignment_pairs) {}
 
     static kernel_parts generate(
-        std::set<const operation_cl_base*>& generated, name_generator& ng,
+        std::map<const void*, const char*>& generated, name_generator& ng,
         const std::string& row_index_name, const std::string& col_index_name,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {
@@ -198,7 +198,7 @@ struct multi_result_kernel_internal<-1, T_results...> {
     }
 
     static void set_args(
-        std::set<const operation_cl_base*>& generated, cl::Kernel& kernel,
+        std::map<const void*, const char*>& generated, cl::Kernel& kernel,
         int& arg_num,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {}
@@ -207,7 +207,7 @@ struct multi_result_kernel_internal<-1, T_results...> {
         cl::Event e, const std::tuple<std::pair<T_results, T_expressions>...>&
                          assignment_pairs) {}
     static void get_unique_data(
-        std::vector<cl_mem>& mems,
+        std::vector<const void*>& mems,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {}
   };
@@ -332,7 +332,7 @@ class results_cl {
         {std::decay_t<T_expressions>::Deriv::require_specific_local_size...});
 
     name_generator ng;
-    std::set<const operation_cl_base*> generated;
+    std::map<const void*, const char*> generated;
     kernel_parts parts
         = impl::generate(generated, ng, "i", "j", assignment_pairs);
     std::string src;
@@ -436,24 +436,25 @@ class results_cl {
                        " (broadcasted expressions can not be evaluated)");
     }
 
-    std::vector<cl_mem> mems;
-    impl::get_unique_data(mems, assignment_pairs);
+    std::vector<const void*> data;
+    impl::get_unique_data(data, assignment_pairs);
     std::vector<int> uid;
-    int next_mem_idx = 0;
-    std::map<cl_mem, int> mem_indices;
-    for (cl_mem m : mems) {
-      if (mem_indices.count(m) == 0) {
-        mem_indices[m] = next_mem_idx;
-        uid.push_back(next_mem_idx);
-        next_mem_idx++;
+    int next_index = 0;
+    std::map<const void*, int> unique_indices;
+    for (const void* m : data) {
+      if (unique_indices.count(m) == 0) {
+        unique_indices[m] = next_index;
+        uid.push_back(next_index);
+        next_index++;
       } else {
-        uid.push_back(mem_indices[m]);
+        uid.push_back(unique_indices[m]);
       }
     }
 
     try {
       if (impl::kernel_cache_[uid]() == NULL) {
         std::string src = get_kernel_source_impl(assignment_pairs);
+        std::cout << src << std::endl;
         auto opts = opencl_context.base_opts();
         impl::kernel_cache_[uid] = opencl_kernels::compile_kernel(
             "calculate", {view_kernel_helpers, src}, opts);
@@ -462,7 +463,7 @@ class results_cl {
       cl::Kernel& kernel = impl::kernel_cache_[uid];
       int arg_num = 0;
 
-      std::set<const operation_cl_base*> generated;
+      std::map<const void*, const char*> generated;
       impl::set_args(generated, kernel, arg_num, assignment_pairs);
 
       std::vector<cl::Event> events;

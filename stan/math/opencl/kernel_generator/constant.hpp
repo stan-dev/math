@@ -8,7 +8,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <limits>
-#include <set>
+#include <map>
 #include <string>
 #include <tuple>
 #include <type_traits>
@@ -78,9 +78,12 @@ class constant_ : public operation_cl<constant_<T>, T> {
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const operation_cl_base*>& generated,
+  inline void set_args(std::map<const void*, const char*>& generated,
                        cl::Kernel& kernel, int& arg_num) const {
-    kernel.setArg(arg_num++, a_);
+    if (generated.count(this) == 0) {
+      generated[this] = "";
+      kernel.setArg(arg_num++, a_);
+    }
   }
 
   /**
