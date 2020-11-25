@@ -285,11 +285,11 @@ class mdivide_left_tri_vd_vari : public vari {
     } else {
 #endif
       adjA.noalias()
-          = -Map<Matrix<double, R1, C1> >(A_, M_, M_)
+          = -Map<Matrix<double, R1, C1>>(A_, M_, M_)
                  .template triangularView<TriView>()
                  .transpose()
                  .solve(adjC
-                        * Map<Matrix<double, R1, C2> >(C_, M_, N_).transpose());
+                        * Map<Matrix<double, R1, C2>>(C_, M_, N_).transpose());
 #ifdef STAN_OPENCL
     }
 #endif
@@ -408,15 +408,16 @@ inline auto mdivide_left_tri(const T1 &A, const T2 &B) {
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
 
     arena_t<ret_type> res
-      = arena_A.val().template triangularView<TriView>().solve(arena_B.val());
+        = arena_A.val().template triangularView<TriView>().solve(arena_B.val());
 
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
       promote_scalar_t<double, T2> adjB
-	= arena_A.val().template triangularView<TriView>().transpose().solve(res.adj());
+          = arena_A.val().template triangularView<TriView>().transpose().solve(
+              res.adj());
 
       arena_B.adj() += adjB;
       arena_A.adj() -= (adjB * res.val().transpose().eval())
-	.template triangularView<TriView>();
+                           .template triangularView<TriView>();
     });
 
     return ret_type(res);
@@ -424,14 +425,17 @@ inline auto mdivide_left_tri(const T1 &A, const T2 &B) {
     auto arena_A = to_var_value(forward_as<promote_scalar_t<var, T1>>(A));
 
     arena_t<ret_type> res
-      = arena_A.val().template triangularView<TriView>().solve(value_of(B));
+        = arena_A.val().template triangularView<TriView>().solve(value_of(B));
 
     reverse_pass_callback([arena_A, res]() mutable {
       promote_scalar_t<double, T2> adjB
-	= arena_A.val_op().template triangularView<TriView>().transpose().solve(res.adj());
+          = arena_A.val_op()
+                .template triangularView<TriView>()
+                .transpose()
+                .solve(res.adj());
 
       arena_A.adj() -= (adjB * res.val().transpose().eval())
-	.template triangularView<TriView>();
+                           .template triangularView<TriView>();
     });
 
     return ret_type(res);
@@ -439,12 +443,13 @@ inline auto mdivide_left_tri(const T1 &A, const T2 &B) {
     arena_t<promote_scalar_t<double, T1>> arena_A = value_of(A);
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
 
-    arena_t<ret_type> res =
-      arena_A.template triangularView<TriView>().solve(arena_B.val());
+    arena_t<ret_type> res
+        = arena_A.template triangularView<TriView>().solve(arena_B.val());
 
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
       promote_scalar_t<double, T2> adjB
-	= arena_A.template triangularView<TriView>().transpose().solve(res.adj());
+          = arena_A.template triangularView<TriView>().transpose().solve(
+              res.adj());
 
       arena_B.adj() += adjB;
     });

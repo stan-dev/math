@@ -19,7 +19,7 @@ class mdivide_left_spd_alloc : public chainable_alloc {
  public:
   virtual ~mdivide_left_spd_alloc() {}
 
-  Eigen::LLT<Eigen::Matrix<double, R1, C1> > llt_;
+  Eigen::LLT<Eigen::Matrix<double, R1, C1>> llt_;
   Eigen::Matrix<double, R2, C2> C_;
 };
 
@@ -238,10 +238,9 @@ mdivide_left_spd(const EigMat1 &A, const EigMat2 &b) {
   return res;
 }
 
-template <typename T1, typename T2,
-	  require_all_matrix_t<T1, T2>* = nullptr,
-          require_any_var_matrix_t<T1, T2>* = nullptr>
-inline auto mdivide_left_spd(const T1& A, const T2& B) {
+template <typename T1, typename T2, require_all_matrix_t<T1, T2> * = nullptr,
+          require_any_var_matrix_t<T1, T2> * = nullptr>
+inline auto mdivide_left_spd(const T1 &A, const T2 &B) {
   using ret_val_type = plain_type_t<decltype(value_of(A) * value_of(B))>;
   using ret_type = var_value<ret_val_type>;
 
@@ -254,7 +253,7 @@ inline auto mdivide_left_spd(const T1& A, const T2& B) {
   if (!is_constant<T1>::value && !is_constant<T2>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
-  
+
     check_symmetric("mdivide_left_spd", "A", arena_A.val());
     check_not_nan("mdivide_left_spd", "A", arena_A.val());
 
@@ -270,8 +269,8 @@ inline auto mdivide_left_spd(const T1& A, const T2& B) {
 
       arena_A_llt.template triangularView<Eigen::Lower>().solveInPlace(adjB);
       arena_A_llt.template triangularView<Eigen::Lower>()
-        .transpose()
-        .solveInPlace(adjB);
+          .transpose()
+          .solveInPlace(adjB);
 
       arena_A.adj() -= adjB * res.val_op().transpose();
       arena_B.adj() += adjB;
@@ -280,7 +279,7 @@ inline auto mdivide_left_spd(const T1& A, const T2& B) {
     return ret_type(res);
   } else if (!is_constant<T1>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
-  
+
     check_symmetric("mdivide_left_spd", "A", arena_A.val());
     check_not_nan("mdivide_left_spd", "A", arena_A.val());
 
@@ -296,17 +295,17 @@ inline auto mdivide_left_spd(const T1& A, const T2& B) {
 
       arena_A_llt.template triangularView<Eigen::Lower>().solveInPlace(adjB);
       arena_A_llt.template triangularView<Eigen::Lower>()
-        .transpose()
-        .solveInPlace(adjB);
+          .transpose()
+          .solveInPlace(adjB);
 
       arena_A.adj() -= adjB * res.val().transpose().eval();
     });
 
     return ret_type(res);
   } else {
-    const auto& A_ref = to_ref(value_of(A));
+    const auto &A_ref = to_ref(value_of(A));
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
-  
+
     check_symmetric("mdivide_left_spd", "A", A_ref);
     check_not_nan("mdivide_left_spd", "A", A_ref);
 
@@ -322,8 +321,8 @@ inline auto mdivide_left_spd(const T1& A, const T2& B) {
 
       arena_A_llt.template triangularView<Eigen::Lower>().solveInPlace(adjB);
       arena_A_llt.template triangularView<Eigen::Lower>()
-        .transpose()
-        .solveInPlace(adjB);
+          .transpose()
+          .solveInPlace(adjB);
 
       arena_B.adj() += adjB;
     });
