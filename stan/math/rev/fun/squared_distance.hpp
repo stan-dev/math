@@ -140,6 +140,95 @@ inline var squared_distance(const EigVecArith& v1, const EigVecVar& v2) {
   return {new internal::squared_distance_vd_vari(to_ref(v2), to_ref(v1))};
 }
 
+/**
+ * Compute the squared distance between the elements in
+ * two inputs.
+ *
+ * This overload handles arguments where one of T1 or T2 are
+ * `var_value<T>` where `T` is an Eigen type. The other type can
+ * also be a `var_value` or it can be a matrix type that inherits
+ * from EigenBase
+ *
+ * @tparam T1 type of first argument
+ * @tparam T2 type of second argument
+ * @param A first argument
+ * @param B second argument
+ * @return sum of squared difference of A and B
+ */
+template <typename T1, typename T2,
+	  require_all_matrix_t<T1, T2>* = nullptr,
+          require_any_var_matrix_t<T1, T2>* = nullptr>
+inline var squared_distance(const T1& A, const T2& B) {
+  check_matching_sizes("squared_distance", "A", A.val(), "B", B.val());
+
+  if (A.size() == 0)
+    return 0.0;
+
+  var res;
+
+  if (!is_constant<T1>::value && !is_constant<T2>::value) {
+    arena_t<promote_scalar_t<var, T1>> arena_A = A;
+    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+
+    double res_val = 0.0;
+    for(size_t i = 0; i < arena_A.size(); ++i) {
+      double diff = arena_A.val().coeff(i) - arena_B.val().coeff(i);
+      res_val += diff * diff;
+    }
+    res = res_val;
+
+    reverse_pass_callback([arena_A, arena_B, res]() mutable {
+      double res_adj = res.adj();
+      
+      for(size_t i = 0; i < arena_A.size(); ++i) {
+	double diff = arena_A.val().coeff(i) - arena_B.val().coeff(i);
+	arena_A.adj().coeffRef(i) += 2.0 * res_adj * diff;
+	arena_B.adj().coeffRef(i) -= 2.0 * res_adj * diff;
+      }
+    });
+  } else if (!is_constant<T1>::value) {
+    arena_t<promote_scalar_t<var, T1>> arena_A = A;
+    arena_t<promote_scalar_t<double, T2>> arena_B = value_of(B);
+
+    double res_val = 0.0;
+    for(size_t i = 0; i < arena_A.size(); ++i) {
+      double diff = arena_A.val().coeff(i) - arena_B.coeff(i);
+      res_val += diff * diff;
+    }
+    res = res_val;
+
+    reverse_pass_callback([arena_A, arena_B, res]() mutable {
+      double res_adj = res.adj();
+      
+      for(size_t i = 0; i < arena_A.size(); ++i) {
+	double diff = arena_A.val().coeff(i) - arena_B.coeff(i);
+	arena_A.adj().coeffRef(i) += 2.0 * res_adj * diff;
+      }
+    });
+  } else {
+    arena_t<promote_scalar_t<double, T1>> arena_A = value_of(A);
+    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+
+    double res_val = 0.0;
+    for(size_t i = 0; i < arena_A.size(); ++i) {
+      double diff = arena_A.coeff(i) - arena_B.val().coeff(i);
+      res_val += diff * diff;
+    }
+    res = res_val;
+
+    reverse_pass_callback([arena_A, arena_B, res]() mutable {
+      double res_adj = res.adj();
+      
+      for(size_t i = 0; i < arena_A.size(); ++i) {
+	double diff = arena_A.coeff(i) - arena_B.val().coeff(i);
+	arena_B.adj().coeffRef(i) -= 2.0 * res_adj * diff;
+      }
+    });
+  }
+
+  return res;
+}
+
 }  // namespace math
 }  // namespace stan
 #endif
