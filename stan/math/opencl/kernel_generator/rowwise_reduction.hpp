@@ -74,7 +74,7 @@ struct matvec_mul_opt<elt_multiply_<Mat, broadcast_<VecT, true, false>>> {
     kernel_parts res{};
     if (generated.count(&mul) == 0) {
       mul.var_name_ = name_gen.generate();
-      generated[&mul]="";
+      generated[&mul] = "";
 
       const auto& matrix = mul.template get_arg<0>();
       const auto& broadcast = mul.template get_arg<1>();
@@ -82,7 +82,7 @@ struct matvec_mul_opt<elt_multiply_<Mat, broadcast_<VecT, true, false>>> {
                                     col_index_name, true);
       if (generated.count(&broadcast) == 0) {
         broadcast.var_name_ = name_gen.generate();
-        generated[&broadcast]="";
+        generated[&broadcast] = "";
 
         const auto& vec = broadcast.template get_arg<0>();
         std::string row_index_name_bc = row_index_name;
@@ -267,7 +267,7 @@ class rowwise_reduction
   }
 };
 
-  /**
+/**
  * Operation for sum reduction.
  */
 struct sum_op {

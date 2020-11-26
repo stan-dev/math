@@ -91,8 +91,8 @@ struct multi_result_kernel_internal {
 
     /**
      * Generates kernel source for assignment of expressions to results.
-     * @param[in,out] generated map from (pointer to) already generated operations
-     * to variable names
+     * @param[in,out] generated map from (pointer to) already generated
+     * operations to variable names
      * @param ng name generator
      * @param row_index_name variable name of the row index
      * @param col_index_name variable name of the column index
@@ -120,8 +120,8 @@ struct multi_result_kernel_internal {
 
     /**
      * Sets kernel arguments.
-     * @param[in,out] generated map from (pointer to) already generated operations
-     * to variable names
+     * @param[in,out] generated map from (pointer to) already generated
+     * operations to variable names
      * @param kernel kernel to set arguments to
      * @param arg_num number of the next argument to set
      * @param assignment_pairs pairs of result and expression
@@ -162,7 +162,8 @@ struct multi_result_kernel_internal {
      * @param assignment_pairs pairs of result and expression
      */
     static void get_unique_matrix_accesses(
-        std::vector<int>& uids, std::map<const void*, int>& id_map, int& next_id,
+        std::vector<int>& uids, std::map<const void*, int>& id_map,
+        int& next_id,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {
       if (is_without_output<T_current_expression>::value) {
@@ -211,7 +212,8 @@ struct multi_result_kernel_internal<-1, T_results...> {
                          assignment_pairs) {}
 
     static void get_unique_matrix_accesses(
-        std::vector<int>& uids, std::map<const void*, int>& id_map, int& next_id,
+        std::vector<int>& uids, std::map<const void*, int>& id_map,
+        int& next_id,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {}
   };
@@ -237,7 +239,7 @@ class expressions_cl {
    */
   explicit expressions_cl(T_expressions&&... expressions)
       : expressions_(
-          T_expressions(std::forward<T_expressions>(expressions))...) {}
+            T_expressions(std::forward<T_expressions>(expressions))...) {}
 
  private:
   std::tuple<T_expressions...> expressions_;

@@ -282,7 +282,7 @@ class block_
   }
 };
 
-  /**
+/**
  * Block of a kernel generator expression.
  *
  * Block operation modifies how its argument is indexed. If a matrix is both an

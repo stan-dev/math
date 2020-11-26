@@ -36,6 +36,7 @@ class indexing_
                 "indexing: Column index scalar type must be an integer!");
 
   mutable std::map<const void*, const char*> generated_;
+
  public:
   using Scalar = typename std::remove_reference_t<T_mat>::Scalar;
   using base = operation_cl_lhs<indexing_<T_mat, T_row_index, T_col_index>,
@@ -107,8 +108,9 @@ class indexing_
           generated, name_gen, row_index_name, col_index_name, view_handled);
       kernel_parts parts_col_idx = col_index.get_kernel_parts(
           generated, name_gen, row_index_name, col_index_name, view_handled);
-      kernel_parts parts_mat = mat.get_kernel_parts(
-          generated_, name_gen, row_index.var_name_, col_index.var_name_, false);
+      kernel_parts parts_mat
+          = mat.get_kernel_parts(generated_, name_gen, row_index.var_name_,
+                                 col_index.var_name_, false);
 
       res = parts_row_idx + parts_col_idx + parts_mat;
       var_name_ = mat.var_name_;
