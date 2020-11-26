@@ -49,11 +49,11 @@ class vector_seq_view<T, require_matrix_t<T>> {
   int size() const { return 1; }
   const ref_type_t<T>& operator[](int /* i */) const { return m_; }
 
-  template <typename T = C, require_st_arithmetic<T>* = nullptr>
-  auto val(int i) const { return m_; }
+  template <typename C = T, require_st_arithmetic<C>* = nullptr>
+  auto val(int /* i */) const { return m_; }
 
-  template <typename T = C, require_st_autodiff<T>* = nullptr>
-  auto val(int i) const { return m_.val(); }
+  template <typename C = T, require_st_autodiff<C>* = nullptr>
+  auto val(int /* i */) const { return m_.val(); }
 
  private:
   const ref_type_t<T> m_;
