@@ -27,6 +27,17 @@ to_var_value(const T& a) {
   return res;
 }
 
+/**
+ * Forward var_values on.
+ *
+ * @tparam T type of the input
+ * @param a matrix to convert
+ */
+template <typename T, require_var_t<T>* = nullptr>
+auto to_var_value(T&& a) {
+  return std::forward<T>(a);
+}
+
 }  // namespace math
 }  // namespace stan
 
