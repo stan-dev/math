@@ -158,7 +158,9 @@ struct multi_result_kernel_internal {
 
     /**
      * Collects data that is needed beside types to uniqly identify a kernel.
-     * @param[out] mems data of type `cl_mem`
+     * @param[out] uids ids of unique matrix accesses
+     * @param[in,out] id_map map from memory addresses to unique ids
+     * @param[in,out] next_id neqt unique id to use
      * @param assignment_pairs pairs of result and expression
      */
     static void get_unique_matrix_accesses(
@@ -239,7 +241,7 @@ class expressions_cl {
    */
   explicit expressions_cl(T_expressions&&... expressions)
       : expressions_(
-            T_expressions(std::forward<T_expressions>(expressions))...) {}
+          T_expressions(std::forward<T_expressions>(expressions))...) {}
 
  private:
   std::tuple<T_expressions...> expressions_;

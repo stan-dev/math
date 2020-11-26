@@ -407,7 +407,7 @@ class operation_cl : public operation_cl_base {
   /**
    * Collects data that is needed beside types to uniqly identify a kernel
    * generator expression.
-   * @param[out] uid ids of unique matrix accesses
+   * @param[out] uids ids of unique matrix accesses
    * @param[in,out] id_map map from memory addresses to unique ids
    * @param[in,out] next_id neqt unique id to use
    */
