@@ -70,11 +70,12 @@ TEST(mathMixCore, operatorSubtractionMatrixZeroSize) {
   stan::test::expect_ad_matvar(f, rowvector_rv0, scalar_a);
   stan::test::expect_ad_matvar(f, scalar_a, matrix_m00);
   stan::test::expect_ad_matvar(f, matrix_m00, scalar_a);
-  stan::test::expect_ad_matvar(f, matrix_m00, vector_v0);
   stan::test::expect_ad_matvar(f, rowvector_rv0, vector_v0);
   stan::test::expect_ad_matvar(f, vector_v0, rowvector_rv0);
-  stan::test::expect_ad_matvar(f, rowvector_rv0, matrix_m00);
   stan::test::expect_ad_matvar(f, matrix_m00, matrix_m00);
+
+  stan::test::expect_ad_matvar(f, rowvector_rv0, matrix_m00);
+  stan::test::expect_ad_matvar(f, matrix_m00, vector_v0);
 }
 
 TEST(mathMixCore, operatorSubtractionMatrixNormal) {
@@ -107,9 +108,10 @@ TEST(mathMixCore, operatorSubtractionMatrixNormal) {
   stan::test::expect_ad_matvar(tols, f, vector_v, rowvector_rv);
   stan::test::expect_ad_matvar(tols, f, scalar_a, matrix_m);
   stan::test::expect_ad_matvar(tols, f, matrix_m, scalar_a);
+  stan::test::expect_ad_matvar(tols, f, matrix_m, matrix_m);
+
   stan::test::expect_ad_matvar(tols, f, matrix_m, vector_v);
   stan::test::expect_ad_matvar(tols, f, rowvector_rv, matrix_m);
-  stan::test::expect_ad_matvar(tols, f, matrix_m, matrix_m);
 }
 
 TEST(mathMixCore, operatorSubtractionMatrixFailures) {
