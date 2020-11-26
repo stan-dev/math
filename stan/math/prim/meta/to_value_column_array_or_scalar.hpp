@@ -81,7 +81,7 @@ inline auto to_value_column_array_or_scalar(T&& a) {
       = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
                            const plain_vector, plain_vector>;
   using T_map = Eigen::Map<optionally_const_vector>;
-  return value_of(T_map(a.data(), a.size())).array();
+  return value_of(T_map(a.data(), a.size())).eval();
 }
 
 }  // namespace math
