@@ -76,8 +76,8 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
   const auto& logy_m_mu = to_ref(log_y - mu_val);
 
   size_t N = max_size(y, mu, sigma);
-  T_partials_return logp = N * NEG_LOG_SQRT_TWO_PI
-                           - 0.5 * sum(square(logy_m_mu) * inv_sigma_sq);
+  T_partials_return logp
+      = N * NEG_LOG_SQRT_TWO_PI - 0.5 * sum(square(logy_m_mu) * inv_sigma_sq);
   if (include_summand<propto, T_scale>::value) {
     logp -= sum(log(sigma_val)) * N / size(sigma);
   }

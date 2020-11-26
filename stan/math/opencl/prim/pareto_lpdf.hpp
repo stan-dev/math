@@ -80,8 +80,7 @@ return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_lpdf(
           logp2 + elt_multiply(alpha_val, log_y_min), logp2));
 
   auto y_deriv = -(elt_multiply(alpha_val, inv_y) + inv_y);
-  auto y_min_deriv
-      = elt_divide(alpha_val, y_min_val);
+  auto y_min_deriv = elt_divide(alpha_val, y_min_val);
   auto alpha_deriv = elt_divide(1.0, alpha_val) + log_y_min - log_y;
 
   matrix_cl<int> y_less_than_y_min_cl;
@@ -90,15 +89,16 @@ return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_lpdf(
   matrix_cl<double> y_deriv_cl;
   matrix_cl<double> alpha_deriv_cl;
 
-  results(check_y_not_nan, check_y_min_positive_finite, check_alpha_positive_finite,
-          y_less_than_y_min_cl, logp_cl, y_deriv_cl, y_min_deriv_cl, alpha_deriv_cl)
-      = expressions(y_not_nan, y_min_positive_finite,
-                    alpha_positive_finite, y_less_than_y_min, logp_expr,
+  results(check_y_not_nan, check_y_min_positive_finite,
+          check_alpha_positive_finite, y_less_than_y_min_cl, logp_cl,
+          y_deriv_cl, y_min_deriv_cl, alpha_deriv_cl)
+      = expressions(y_not_nan, y_min_positive_finite, alpha_positive_finite,
+                    y_less_than_y_min, logp_expr,
                     calc_if<!is_constant<T_y_cl>::value>(y_deriv),
                     calc_if<!is_constant<T_scale_cl>::value>(y_min_deriv),
                     calc_if<!is_constant<T_shape_cl>::value>(alpha_deriv));
 
-  if(from_matrix_cl(y_less_than_y_min_cl).any()){
+  if (from_matrix_cl(y_less_than_y_min_cl).any()) {
     return LOG_ZERO;
   }
 
