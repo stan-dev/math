@@ -109,7 +109,8 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
                      "First cutpoint set", K - 1);
     check_ordered(function, "Cut-points", c_vec[i]);
     if (K > 2) {
-      check_finite(function, "Final cut-point", value_of(c_vec[i]).coeff(K - 2));
+      check_finite(function, "Final cut-point",
+                   value_of(c_vec[i]).coeff(K - 2));
     }
     check_finite(function, "First cut-point", value_of(c_vec[i]).coeff(0));
   }
