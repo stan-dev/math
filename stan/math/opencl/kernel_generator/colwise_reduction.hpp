@@ -185,11 +185,11 @@ class colwise_sum_ : public colwise_reduction<colwise_sum_<T>, T, sum_op> {
  * @param a expression to reduce
  * @return sum
  */
-template <typename T, typename = require_all_kernel_expressions_t<T>>
+template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
 inline auto colwise_sum(T&& a) {
   auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
-  return colwise_sum_<std::remove_reference_t<decltype(arg_copy)>>(
-      std::move(arg_copy));
+  return colwise_sum_<as_operation_cl_t<T>>(
+      as_operation_cl(std::forward<T>(a)));
 }
 
 /**
@@ -232,11 +232,11 @@ class colwise_max_ : public colwise_reduction<
  * @param a expression to reduce
  * @return max
  */
-template <typename T, typename = require_all_kernel_expressions_t<T>>
+template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
 inline auto colwise_max(T&& a) {
   auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
-  return colwise_max_<std::remove_reference_t<decltype(arg_copy)>>(
-      std::move(arg_copy));
+  return colwise_max_<as_operation_cl_t<T>>(
+      as_operation_cl(std::forward<T>(a)));
 }
 
 /**
@@ -279,11 +279,10 @@ class colwise_min_ : public colwise_reduction<
  * @param a expression to reduce
  * @return min
  */
-template <typename T, typename = require_all_kernel_expressions_t<T>>
+template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
 inline auto colwise_min(T&& a) {
-  auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
-  return colwise_min_<std::remove_reference_t<decltype(arg_copy)>>(
-      std::move(arg_copy));
+  return colwise_min_<as_operation_cl_t<T>>(
+      as_operation_cl(std::forward<T>(a)));
 }
 /** @}*/
 }  // namespace math
