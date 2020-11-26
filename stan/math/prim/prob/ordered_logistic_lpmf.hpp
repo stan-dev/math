@@ -109,9 +109,9 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
                      "First cutpoint set", K - 1);
     check_ordered(function, "Cut-points", c_vec[i]);
     if (K > 2) {
-      check_finite(function, "Final cut-point", c_vec[i].coeff(K - 2));
+      check_finite(function, "Final cut-point", value_of(c_vec[i]).coeff(K - 2));
     }
-    check_finite(function, "First cut-point", c_vec[i].coeff(0));
+    check_finite(function, "First cut-point", value_of(c_vec[i]).coeff(0));
   }
 
   scalar_seq_view<decltype(lambda_val)> lam_vec(lambda_val);
@@ -120,12 +120,12 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
   for (int i = 0; i < N; i++) {
     int c = y_seq[i];
     if (c != K) {
-      cuts_y1.coeffRef(i) = value_of(c_vec[i].coeff(c - 1));
+      cuts_y1.coeffRef(i) = value_of(c_vec[i]).coeff(c - 1);
     } else {
       cuts_y1.coeffRef(i) = INFINITY;
     }
     if (c != 1) {
-      cuts_y2.coeffRef(i) = value_of(c_vec[i].coeff(c - 2));
+      cuts_y2.coeffRef(i) = value_of(c_vec[i]).coeff(c - 2);
     } else {
       cuts_y2.coeffRef(i) = -INFINITY;
     }

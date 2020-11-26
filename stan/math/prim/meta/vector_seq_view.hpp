@@ -7,6 +7,16 @@
 
 namespace stan {
 
+template <typename T, require_st_arithmetic<T>* = nullptr>
+inline T value_of(T&& x);
+
+template <typename T, require_not_st_arithmetic<T>* = nullptr>
+inline auto value_of(const std::vector<T>& x);
+
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
+          require_not_st_arithmetic<EigMat>* = nullptr>
+inline auto value_of(EigMat&& M);
+
 /** \ingroup type_trait
  * This class provides a low-cost wrapper for situations where you either need
  * an Eigen Vector or RowVector or a std::vector of them and you want to be
@@ -33,11 +43,17 @@ class vector_seq_view {};
  * @tparam T the type of the underlying Vector
  */
 template <typename T>
-class vector_seq_view<T, require_eigen_t<T>> {
+class vector_seq_view<T, require_matrix_t<T>> {
  public:
   explicit vector_seq_view(const T& m) : m_(m) {}
   int size() const { return 1; }
   const ref_type_t<T>& operator[](int /* i */) const { return m_; }
+
+  template <typename T = C, require_st_arithmetic<T>* = nullptr>
+  auto val(int i) const { return m_; }
+
+  template <typename T = C, require_st_autodiff<T>* = nullptr>
+  auto val(int i) const { return m_.val(); }
 
  private:
   const ref_type_t<T> m_;
@@ -60,6 +76,12 @@ class vector_seq_view<T, require_std_vector_vt<is_container, T>> {
   explicit vector_seq_view(const T& v) : v_(v) {}
   int size() const { return v_.size(); }
   const value_type_t<T>& operator[](int i) const { return v_[i]; }
+
+  template <typename C = T, require_vt_arithmetic<C>* = nullptr>
+  auto val(int i) const { return v_[i]; }
+
+  template <typename C = T, require_vt_autodiff<C>* = nullptr>
+  auto val(int i) const { return value_of(v_[i]); }
 
  private:
   const T& v_;
