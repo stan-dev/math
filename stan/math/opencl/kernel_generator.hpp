@@ -75,17 +75,6 @@
  * operations that are broadcast so their exact size is not known.
  *     - Default: Bottom diagonal equals to min of bottom diagonals of
  * arguments. Top diagonal equals to max of top diagonals of arguments.
- * - `void get_unique_matrix_accesses(std::vector<int>& uids, std::map<const
- * void*, int>& id_map, int& next_id)`:
- *     - Determines unique accesses to `matrix_cl`'s. On return `uids` contain
- * one number per matrix access, different numbers meaning accesses to different
- * matrices. `id_map` is used internally to determine whether a matrix is
- * unique. It maps from pointerers to matrices to their unique ids. `next_id`
- * reference to next unused index that can be used for new unique matrix. Once a
- * new unique access is added `next_id` is inremented.
- *     - Default: calls `get_unique_matrix_accesses` on expression arguments. If
- * this expression overrides the default `modify_argument_indices` new set of
- * ids is used even if accesses are made to same matrices.
  *
  * If an operation should support being assigned to it should also define the
  * following:

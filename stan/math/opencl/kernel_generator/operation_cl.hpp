@@ -414,29 +414,12 @@ class operation_cl : public operation_cl_base {
   inline void get_unique_matrix_accesses(std::vector<int>& uids,
                                          std::map<const void*, int>& id_map,
                                          int& next_id) const {
-    if (&Derived::modify_argument_indices
-        == &operation_cl::modify_argument_indices) {
       index_apply<N>([&](auto... Is) {
         static_cast<void>(std::initializer_list<int>{
             (this->get_arg<Is>().get_unique_matrix_accesses(uids, id_map,
                                                             next_id),
              0)...});
       });
-    } else {
-      std::vector<int> uids2;
-      std::map<const void*, int> id_map2;
-      int next_id2 = 0;
-      index_apply<N>([&](auto... Is) {
-        static_cast<void>(std::initializer_list<int>{
-            (this->get_arg<Is>().get_unique_matrix_accesses(uids2, id_map2,
-                                                            next_id2),
-             0)...});
-      });
-      for (int i : uids2) {
-        uids.push_back(i + next_id);
-      }
-      next_id += next_id2;
-    }
   }
 };
 
