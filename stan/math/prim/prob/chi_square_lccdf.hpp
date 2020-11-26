@@ -64,7 +64,7 @@ return_type_t<T_y, T_dof> chi_square_lccdf(const T_y& y, const T_dof& nu) {
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::math::size(y); i++) {
-    if (value_of(y_vec[i]) == 0) {
+    if (y_vec.val(i) == 0) {
       return ops_partials.build(0.0);
     }
   }
@@ -76,7 +76,7 @@ return_type_t<T_y, T_dof> chi_square_lccdf(const T_y& y, const T_dof& nu) {
 
   if (!is_constant_all<T_dof>::value) {
     for (size_t i = 0; i < stan::math::size(nu); i++) {
-      const T_partials_return alpha_dbl = value_of(nu_vec[i]) * 0.5;
+      const T_partials_return alpha_dbl = nu_vec.val(i) * 0.5;
       gamma_vec[i] = tgamma(alpha_dbl);
       digamma_vec[i] = digamma(alpha_dbl);
     }
@@ -85,12 +85,12 @@ return_type_t<T_y, T_dof> chi_square_lccdf(const T_y& y, const T_dof& nu) {
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
-    if (value_of(y_vec[n]) == INFTY) {
+    if (y_vec.val(n) == INFTY) {
       return ops_partials.build(negative_infinity());
     }
 
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return alpha_dbl = value_of(nu_vec[n]) * 0.5;
+    const T_partials_return y_dbl = y_vec.val(n);
+    const T_partials_return alpha_dbl = nu_vec.val(n) * 0.5;
     const T_partials_return beta_dbl = 0.5;
 
     const T_partials_return Pn = gamma_q(alpha_dbl, beta_dbl * y_dbl);

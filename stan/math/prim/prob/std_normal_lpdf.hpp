@@ -47,7 +47,7 @@ return_type_t<T_y> std_normal_lpdf(const T_y& y) {
   size_t N = stan::math::size(y);
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_val = value_of(y_vec[n]);
+    const T_partials_return y_val = y_vec.val(n);
     logp += y_val * y_val;
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= y_val;

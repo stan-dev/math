@@ -56,7 +56,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(const T_y& y,
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::math::size(y); i++) {
-    if (value_of(y_vec[i]) == NEGATIVE_INFTY) {
+    if (y_vec.val(i) == NEGATIVE_INFTY) {
       return ops_partials.build(0.0);
     }
   }
@@ -74,7 +74,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(const T_y& y,
     digammaHalf = digamma(0.5);
 
     for (size_t i = 0; i < stan::math::size(nu); i++) {
-      const T_partials_return nu_dbl = value_of(nu_vec[i]);
+      const T_partials_return nu_dbl = y_vec.val(i);
 
       digammaNu_vec[i] = digamma(0.5 * nu_dbl);
       digammaNuPlusHalf_vec[i] = digamma(0.5 + 0.5 * nu_dbl);
@@ -84,14 +84,14 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(const T_y& y,
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
-    if (value_of(y_vec[n]) == INFTY) {
+    if (y_vec.val(n) == INFTY) {
       continue;
     }
 
-    const T_partials_return sigma_inv = 1.0 / value_of(sigma_vec[n]);
+    const T_partials_return sigma_inv = 1.0 / y_vec.val(n);
     const T_partials_return t
-        = (value_of(y_vec[n]) - value_of(mu_vec[n])) * sigma_inv;
-    const T_partials_return nu_dbl = value_of(nu_vec[n]);
+        = (y_vec.val(n) - mu_vec.val(n)) * sigma_inv;
+    const T_partials_return nu_dbl = y_vec.val(n);
     const T_partials_return q = nu_dbl / (t * t);
     const T_partials_return r = 1.0 / (1.0 + q);
     const T_partials_return J = 2 * r * r * q / t;

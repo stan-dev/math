@@ -53,7 +53,7 @@ return_type_t<T_prob> bernoulli_lccdf(const T_n& n, const T_prob& theta) {
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::math::size(n); i++) {
-    const double n_dbl = value_of(n_vec[i]);
+    const double n_dbl = n_vec.val(i);
     if (n_dbl < 0) {
       return ops_partials.build(0.0);
     }
@@ -63,7 +63,7 @@ return_type_t<T_prob> bernoulli_lccdf(const T_n& n, const T_prob& theta) {
   }
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    const T_partials_return Pi = value_of(theta_vec[i]);
+    const T_partials_return Pi = theta_vec.val(i);
 
     P += log(Pi);
 
