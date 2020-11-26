@@ -38,10 +38,14 @@ class scalar_seq_view<C, require_eigen_vector_t<C>> {
   int size() const { return c_.size(); }
 
   template <typename T = C, require_st_arithmetic<T>* = nullptr>
-  auto val(int i) const { return c_.coeffRef(i); }
+  auto val(int i) const {
+    return c_.coeffRef(i);
+  }
 
   template <typename T = C, require_st_autodiff<T>* = nullptr>
-  auto val(int i) const { return c_.coeffRef(i).val(); }
+  auto val(int i) const {
+    return c_.coeffRef(i).val();
+  }
 
  private:
   ref_type_t<C> c_;
@@ -65,10 +69,14 @@ class scalar_seq_view<C, require_var_matrix_t<C>> {
   int size() const { return c_.size(); }
 
   template <typename T = C, require_st_arithmetic<T>* = nullptr>
-  auto val(int i) const { return c_.val().coeffRef(i); }
+  auto val(int i) const {
+    return c_.val().coeffRef(i);
+  }
 
   template <typename T = C, require_st_autodiff<T>* = nullptr>
-  auto val(int i) const { return c_.val().coeffRef(i).val(); }
+  auto val(int i) const {
+    return c_.val().coeffRef(i).val();
+  }
 
  private:
   std::decay_t<C> c_;
@@ -91,10 +99,14 @@ class scalar_seq_view<C, require_std_vector_t<C>> {
   int size() const { return c_.size(); }
 
   template <typename T = C, require_st_arithmetic<T>* = nullptr>
-  auto val(int i) const { return c_[i]; }
+  auto val(int i) const {
+    return c_[i];
+  }
 
   template <typename T = C, require_st_autodiff<T>* = nullptr>
-  auto val(int i) const { return c_[i].val(); }
+  auto val(int i) const {
+    return c_[i].val();
+  }
 
  private:
   ref_type_t<C> c_;
@@ -113,10 +125,14 @@ class scalar_seq_view<C, require_stan_scalar_t<C>> {
   auto& operator[](int /* i */) const { return t_; }
   auto& operator[](int /* i */) { return t_; }
   template <typename T = C, require_st_arithmetic<T>* = nullptr>
-  auto val(int /* i */) const { return t_; }
+  auto val(int /* i */) const {
+    return t_;
+  }
 
   template <typename T = C, require_st_autodiff<T>* = nullptr>
-  auto val(int /* i */) const { return t_.val(); }
+  auto val(int /* i */) const {
+    return t_.val();
+  }
 
   int size() const { return 1; }
 

@@ -121,8 +121,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
       digamma_alpha_plus_beta(size_alpha_beta);
   if (!is_constant_all<T_size1, T_size2>::value) {
     for (size_t i = 0; i < size_alpha_beta; i++) {
-      digamma_alpha_plus_beta[i]
-          = digamma(alpha_vec.val(i) + beta_vec.val(i));
+      digamma_alpha_plus_beta[i] = digamma(alpha_vec.val(i) + beta_vec.val(i));
     }
   }
 
@@ -131,9 +130,9 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
       digamma_diff(max_size(N, alpha, beta));
   if (!is_constant_all<T_size1, T_size2>::value) {
     for (size_t i = 0; i < max_size(N, alpha, beta); i++) {
-      digamma_diff[i] = digamma_alpha_plus_beta[i]
-                        - digamma(N_vec[i] + alpha_vec.val(i)
-                                  + beta_vec.val(i));
+      digamma_diff[i]
+          = digamma_alpha_plus_beta[i]
+            - digamma(N_vec[i] + alpha_vec.val(i) + beta_vec.val(i));
     }
   }
 
@@ -159,7 +158,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
           += digamma_n_plus_alpha[i] + digamma_diff[i] - digamma_alpha[i];
     if (!is_constant_all<T_size2>::value)
       ops_partials.edge2_.partials_[i]
-         // is this a typo??
+          // is this a typo??
           += digamma(value_of(N_vec[i] - n_vec[i] + beta_vec[i]))  // ??
              + digamma_diff[i] - digamma_beta[i];
   }
