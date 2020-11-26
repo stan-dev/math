@@ -24,12 +24,12 @@ namespace math {
  * @throw std::domain_error if lambda is not a valid probability
  * @throw std::invalid_argument if container sizes mismatch.
  */
-template <bool propto, typename T_n_cl, typename T_rate_cl,
-          require_all_prim_or_rev_kernel_expression_t<T_n_cl,
-                                                      T_rate_cl>* = nullptr,
-          require_any_not_stan_scalar_t<T_n_cl, T_rate_cl>* = nullptr>
+template <
+    bool propto, typename T_n_cl, typename T_rate_cl,
+    require_all_prim_or_rev_kernel_expression_t<T_n_cl, T_rate_cl>* = nullptr,
+    require_any_not_stan_scalar_t<T_n_cl, T_rate_cl>* = nullptr>
 return_type_t<T_rate_cl> poisson_lpmf(const T_n_cl& n,
-                                              const T_rate_cl& lambda) {
+                                      const T_rate_cl& lambda) {
   static const char* function = "poisson_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_rate_cl>;
   using std::isinf;
@@ -73,11 +73,13 @@ return_type_t<T_rate_cl> poisson_lpmf(const T_n_cl& n,
   matrix_cl<double> logp_cl;
   matrix_cl<double> deriv_cl;
 
-  results(check_n_nonnegative, check_lambda_nonnegative, return_log_zero_cl, logp_cl, deriv_cl)
-      = expressions(n_nonnegative, lambda_nonnegative, return_log_zero, logp_expr,
+  results(check_n_nonnegative, check_lambda_nonnegative, return_log_zero_cl,
+          logp_cl, deriv_cl)
+      = expressions(n_nonnegative, lambda_nonnegative, return_log_zero,
+                    logp_expr,
                     calc_if<!is_constant_all<T_rate_cl>::value>(deriv));
 
-  if(from_matrix_cl(return_log_zero_cl).any()){
+  if (from_matrix_cl(return_log_zero_cl).any()) {
     return LOG_ZERO;
   }
 

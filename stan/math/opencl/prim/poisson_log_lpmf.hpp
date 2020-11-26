@@ -75,11 +75,12 @@ return_type_t<T_log_rate_cl> poisson_log_lpmf(const T_n_cl& n,
   matrix_cl<double> logp_cl;
   matrix_cl<double> deriv_cl;
 
-  results(check_n_nonnegative, check_alpha_not_nan, return_log_zero_cl, logp_cl, deriv_cl)
+  results(check_n_nonnegative, check_alpha_not_nan, return_log_zero_cl, logp_cl,
+          deriv_cl)
       = expressions(n_nonnegativer, alpha_not_nan, return_log_zero, logp_expr,
                     calc_if<!is_constant_all<T_log_rate_cl>::value>(deriv));
 
-  if(from_matrix_cl(return_log_zero_cl).any()){
+  if (from_matrix_cl(return_log_zero_cl).any()) {
     return LOG_ZERO;
   }
 

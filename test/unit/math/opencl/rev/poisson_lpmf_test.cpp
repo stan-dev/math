@@ -53,10 +53,9 @@ TEST(ProbDistributionsPoisson, opencl_matches_cpu_small) {
   Eigen::VectorXd alpha(N);
   alpha << 0.3, 0.8, 2.0;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(poisson_lpmf_functor, n,
+  stan::math::test::compare_cpu_opencl_prim_rev(poisson_lpmf_functor, n, alpha);
+  stan::math::test::compare_cpu_opencl_prim_rev(poisson_lpmf_functor_propto, n,
                                                 alpha);
-  stan::math::test::compare_cpu_opencl_prim_rev(poisson_lpmf_functor_propto,
-                                                n, alpha);
 }
 
 TEST(ProbDistributionsPoisson, opencl_broadcast_n) {
@@ -94,10 +93,9 @@ TEST(ProbDistributionsPoisson, opencl_matches_cpu_big) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> alpha
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
 
-  stan::math::test::compare_cpu_opencl_prim_rev(poisson_lpmf_functor, n,
+  stan::math::test::compare_cpu_opencl_prim_rev(poisson_lpmf_functor, n, alpha);
+  stan::math::test::compare_cpu_opencl_prim_rev(poisson_lpmf_functor_propto, n,
                                                 alpha);
-  stan::math::test::compare_cpu_opencl_prim_rev(poisson_lpmf_functor_propto,
-                                                n, alpha);
 }
 
 #endif

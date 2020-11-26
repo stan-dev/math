@@ -22,8 +22,7 @@ const stan::math::opencl_kernels::kernel_cl<
 
 TEST(MathMatrixCL, multiply_log) {
   Eigen::VectorXd a = Eigen::VectorXd::Random(1000).array() * 5;
-  Eigen::VectorXd b
-      = Eigen::VectorXd::Random(1000).array().abs();
+  Eigen::VectorXd b = Eigen::VectorXd::Random(1000).array().abs();
 
   stan::math::matrix_cl<double> a_cl(a);
   stan::math::matrix_cl<double> b_cl(b);

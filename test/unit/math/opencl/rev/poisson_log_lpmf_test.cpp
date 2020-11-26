@@ -66,8 +66,8 @@ TEST(ProbDistributionsPoissonLog, opencl_broadcast_n) {
   Eigen::VectorXd alpha(N);
   alpha << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(poisson_log_lpmf_functor,
-                                                         n_scal, alpha);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      poisson_log_lpmf_functor, n_scal, alpha);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       poisson_log_lpmf_functor_propto, n_scal, alpha);
 }
@@ -78,8 +78,8 @@ TEST(ProbDistributionsPoissonLog, opencl_broadcast_alpha) {
   std::vector<int> n{0, 1, 5};
   double alpha_scal = 0.4;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(poisson_log_lpmf_functor,
-                                                         n, alpha_scal);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
+      poisson_log_lpmf_functor, n, alpha_scal);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       poisson_log_lpmf_functor_propto, n, alpha_scal);
 }

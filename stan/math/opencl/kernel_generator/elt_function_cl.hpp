@@ -332,8 +332,7 @@ ADD_BINARY_FUNCTION_WITH_INCLUDES(
     stan::math::opencl_kernels::lbeta_device_function,
     stan::math::opencl_kernels::binomial_coefficient_log_device_function)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
-    multiply_log,
-    stan::math::opencl_kernels::multiply_log_device_function)
+    multiply_log, stan::math::opencl_kernels::multiply_log_device_function)
 
 #undef ADD_BINARY_FUNCTION_WITH_INCLUDES
 #undef ADD_UNARY_FUNCTION_WITH_INCLUDES
