@@ -82,7 +82,8 @@ class indexing_
 
   /**
    * Generates kernel code for this and nested expressions.
-   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param[in,out] generated map from (pointer to) already generated operations
+   * to variable names
    * @param name_gen name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
@@ -118,7 +119,8 @@ class indexing_
   /**
    * Generates kernel code for this expression if it appears on the left hand
    * side of an assignment.
-   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param[in,out] generated map from (pointer to) already generated operations
+   * to variable names
    * @param name_gen name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
@@ -150,7 +152,7 @@ class indexing_
 
   /**
    * Sets kernel arguments for this expression.
-   * @param[in,out] generated set of expressions that already set their kernel
+   * @param[in,out] generated map of expressions that already set their kernel
    * arguments
    * @param kernel kernel to set arguments on
    * @param[in,out] arg_num consecutive number of the first argument to set.

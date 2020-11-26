@@ -91,7 +91,8 @@ struct multi_result_kernel_internal {
 
     /**
      * Generates kernel source for assignment of expressions to results.
-     * @param generated set of already generated expressions
+     * @param[in,out] generated map from (pointer to) already generated operations
+     * to variable names
      * @param ng name generator
      * @param row_index_name variable name of the row index
      * @param col_index_name variable name of the column index
@@ -119,7 +120,8 @@ struct multi_result_kernel_internal {
 
     /**
      * Sets kernel arguments.
-     * @param generated Set of operations that already set their arguments
+     * @param[in,out] generated map from (pointer to) already generated operations
+     * to variable names
      * @param kernel kernel to set arguments to
      * @param arg_num number of the next argument to set
      * @param assignment_pairs pairs of result and expression

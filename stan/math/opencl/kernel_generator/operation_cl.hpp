@@ -175,7 +175,8 @@ class operation_cl : public operation_cl_base {
 
   /**
    * Generates kernel code for assigning this expression into result expression.
-   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param[in,out] generated map from (pointer to) already generated operations
+   * to variable names
    * @param ng name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
@@ -272,7 +273,7 @@ class operation_cl : public operation_cl_base {
 
   /**
    * Sets kernel arguments for nested expressions.
-   * @param[in,out] generated set of expressions that already set their kernel
+   * @param[in,out] generated map of expressions that already set their kernel
    * arguments
    * @param kernel kernel to set arguments on
    * @param[in,out] arg_num consecutive number of the first argument to set.

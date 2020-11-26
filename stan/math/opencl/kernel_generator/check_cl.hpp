@@ -67,7 +67,8 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
 
   /**
    * Generates kernel code for this and nested expressions.
-   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param[in,out] generated map from (pointer to) already generated operations
+   * to variable names
    * @param name_gen name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
@@ -99,7 +100,7 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
 
   /**
    * Sets kernel arguments for this expression.
-   * @param[in,out] generated set of expressions that already set their kernel
+   * @param[in,out] generated map of expressions that already set their kernel
    * arguments
    * @param kernel kernel to set arguments on
    * @param[in,out] arg_num consecutive number of the first argument to set.
