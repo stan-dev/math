@@ -74,20 +74,20 @@ struct multi_result_kernel_internal {
       if (is_without_output<T_current_expression>::value) {
         return;
       }
-        check_size_match(function, "Rows of ", "expression",
+      check_size_match(function, "Rows of ", "expression",
                        expression.thread_rows(), "rows of ", "first expression",
                        n_rows);
-        check_size_match(function, "Columns of ", "expression",
-                         expression.thread_cols(), "columns of ",
-                         "first expression", n_cols);
-        result.check_assign_dimensions(expression.rows(), expression.cols());
-        int bottom_written = 1 - expression.rows();
-        int top_written = expression.cols() - 1;
-        std::pair<int, int> extreme_diagonals = expression.extreme_diagonals();
-        result.set_view(std::max(extreme_diagonals.first, bottom_written),
-                        std::min(extreme_diagonals.second, top_written),
-                        bottom_written, top_written);
-      }
+      check_size_match(function, "Columns of ", "expression",
+                       expression.thread_cols(), "columns of ",
+                       "first expression", n_cols);
+      result.check_assign_dimensions(expression.rows(), expression.cols());
+      int bottom_written = 1 - expression.rows();
+      int top_written = expression.cols() - 1;
+      std::pair<int, int> extreme_diagonals = expression.extreme_diagonals();
+      result.set_view(std::max(extreme_diagonals.first, bottom_written),
+                      std::min(extreme_diagonals.second, top_written),
+                      bottom_written, top_written);
+    }
 
     /**
      * Generates kernel source for assignment of expressions to results.

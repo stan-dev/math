@@ -231,7 +231,7 @@ inline auto compile_kernel(const char* name,
   cl::Program program(opencl_context.context(), sources);
   try {
     std::cout << "COMPLETE SOURCE:" << std::endl;
-    for(auto i : sources){
+    for (auto i : sources) {
       std::cout << i << std::endl;
     }
     std::cout << "kernel_opts:" << kernel_opts << std::endl;
