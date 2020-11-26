@@ -69,12 +69,12 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
   T_mu_ref mu_ref = mu;
   T_sigma_ref sigma_ref = sigma;
 
-  auto&& y_val = to_value_column_array_or_scalar(y_ref);
-  auto&& s_squared_val = to_value_column_array_or_scalar(s_squared_ref);
-  auto&& n_obs_val_int = to_value_column_array_or_scalar(n_obs_ref);
-  auto&& n_obs_val = promote_scalar<double>(to_value_column_array_or_scalar(n_obs_ref));
-  auto&& mu_val = to_value_column_array_or_scalar(mu_ref);
-  auto&& sigma_val = to_value_column_array_or_scalar(sigma_ref);
+  auto y_val = to_value_column_array_or_scalar(y_ref);
+  auto s_squared_val = to_value_column_array_or_scalar(s_squared_ref);
+  auto n_obs_val_int = to_value_column_array_or_scalar(n_obs_ref);
+  auto n_obs_val = promote_scalar<double>(to_value_column_array_or_scalar(n_obs_ref));
+  auto mu_val = to_value_column_array_or_scalar(mu_ref);
+  auto sigma_val = to_value_column_array_or_scalar(sigma_ref);
 
   check_finite(function, "Location parameter sufficient statistic", y_val);
   check_finite(function, "Scale parameter sufficient statistic", s_squared_val);

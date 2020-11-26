@@ -40,9 +40,9 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
   T_sigma_ref sigma_ref = sigma;
   using std::pow;
 
-  auto&& y_val = to_value_column_array_or_scalar(y_ref);
-  auto&& sigma_val = to_value_column_array_or_scalar(sigma_ref);
-  auto&& alpha_val = to_value_column_array_or_scalar(alpha_ref);
+  auto y_val = to_value_column_array_or_scalar(y_ref);
+  auto sigma_val = to_value_column_array_or_scalar(sigma_ref);
+  auto alpha_val = to_value_column_array_or_scalar(alpha_ref);
 
   check_positive(function, "Random variable", y_val);
   check_positive_finite(function, "Shape parameter", alpha_val);

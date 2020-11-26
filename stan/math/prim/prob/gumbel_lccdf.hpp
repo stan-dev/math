@@ -42,9 +42,9 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lccdf(const T_y& y, const T_loc& mu,
   T_mu_ref mu_ref = mu;
   T_beta_ref beta_ref = beta;
 
-  auto&& y_val = to_value_column_array_or_scalar(y_ref);
-  auto&& mu_val = to_value_column_array_or_scalar(mu_ref);
-  auto&& beta_val = to_value_column_array_or_scalar(beta_ref);
+  auto y_val = to_value_column_array_or_scalar(y_ref);
+  auto mu_val = to_value_column_array_or_scalar(mu_ref);
+  auto beta_val = to_value_column_array_or_scalar(beta_ref);
 
   check_not_nan(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);

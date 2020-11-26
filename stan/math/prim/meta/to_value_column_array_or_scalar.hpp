@@ -22,7 +22,7 @@ namespace math {
  * @return the scalar.
  */
 template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline auto to_value_column_array_or_scalar(const T& a) {
+inline auto to_value_column_array_or_scalar(T a) {
   return value_of(a);
 }
 
@@ -50,7 +50,7 @@ inline auto to_value_column_array_or_scalar(T&& a) {
 template <typename T, require_eigen_row_vector_t<T>* = nullptr,
           require_not_eigen_col_vector_t<T>* = nullptr>
 inline auto to_value_column_array_or_scalar(T&& a) {
-  return value_of(std::forward<T>(a)).transpose().eval().array();
+  return value_of(std::forward<T>(a)).eval().transpose().array();
 }
 
 /** \ingroup type_trait

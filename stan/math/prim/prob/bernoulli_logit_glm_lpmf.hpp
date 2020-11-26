@@ -92,8 +92,8 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
       = to_ref_if<!is_constant<T_beta>::value>(value_of_rec(x_ref));
   const auto& beta_val = value_of_rec(beta_ref);
 
-  auto&& y_val = to_value_rec_column_array_or_scalar(y_ref);
-  auto&& alpha_val = to_value_rec_column_array_or_scalar(alpha_ref);
+  auto y_val = to_value_rec_column_array_or_scalar(y_ref);
+  auto alpha_val = to_value_rec_column_array_or_scalar(alpha_ref);
   const auto& beta_val_vec = to_ref_if<!is_constant<T_x>::value>(
       as_column_vector_or_scalar(beta_val));
 

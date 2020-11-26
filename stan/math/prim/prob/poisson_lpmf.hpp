@@ -31,8 +31,8 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
   T_n_ref n_ref = n;
   T_lambda_ref lambda_ref = lambda;
 
-  auto&& n_val = to_value_column_array_or_scalar(n_ref);
-  auto&& lambda_val = to_value_column_array_or_scalar(lambda_ref);
+  auto n_val = to_value_column_array_or_scalar(n_ref);
+  auto lambda_val = to_value_column_array_or_scalar(lambda_ref);
 
   check_nonnegative(function, "Random variable", n_val);
   check_nonnegative(function, "Rate parameter", lambda_val);

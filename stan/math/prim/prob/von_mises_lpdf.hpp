@@ -33,9 +33,9 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
   T_mu_ref mu_ref = mu;
   T_kappa_ref kappa_ref = kappa;
 
-  auto&& y_val = to_value_column_array_or_scalar(y_ref);
-  auto&& mu_val = to_value_column_array_or_scalar(mu_ref);
-  auto&& kappa_val = to_value_column_array_or_scalar(kappa_ref);
+  auto y_val = to_value_column_array_or_scalar(y_ref);
+  auto mu_val = to_value_column_array_or_scalar(mu_ref);
+  auto kappa_val = to_value_column_array_or_scalar(kappa_ref);
 
   check_finite(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);

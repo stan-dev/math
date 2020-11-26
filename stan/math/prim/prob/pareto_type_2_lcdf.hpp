@@ -39,10 +39,10 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lcdf(
   T_lambda_ref lambda_ref = lambda;
   T_alpha_ref alpha_ref = alpha;
 
-  auto&& y_val = to_value_column_array_or_scalar(y_ref);
-  auto&& mu_val = to_value_column_array_or_scalar(mu_ref);
-  auto&& lambda_val = to_value_column_array_or_scalar(lambda_ref);
-  auto&& alpha_val = to_value_column_array_or_scalar(alpha_ref);
+  auto y_val = to_value_column_array_or_scalar(y_ref);
+  auto mu_val = to_value_column_array_or_scalar(mu_ref);
+  auto lambda_val = to_value_column_array_or_scalar(lambda_ref);
+  auto alpha_val = to_value_column_array_or_scalar(alpha_ref);
 
   check_nonnegative(function, "Random variable", y_val);
   check_positive_finite(function, "Scale parameter", lambda_val);

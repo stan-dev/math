@@ -38,9 +38,9 @@ return_type_t<T_y, T_scale, T_shape> pareto_lccdf(const T_y& y,
   T_y_min_ref y_min_ref = y_min;
   T_alpha_ref alpha_ref = alpha;
 
-  auto&& y_val = to_value_column_array_or_scalar(y_ref);
-  auto&& y_min_val = to_value_column_array_or_scalar(y_min_ref);
-  auto&& alpha_val = to_value_column_array_or_scalar(alpha_ref);
+  auto y_val = to_value_column_array_or_scalar(y_ref);
+  auto y_min_val = to_value_column_array_or_scalar(y_min_ref);
+  auto alpha_val = to_value_column_array_or_scalar(alpha_ref);
 
 
   check_nonnegative(function, "Random variable", y_val);

@@ -54,8 +54,8 @@ return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
   T_y_ref y_ref = y;
   T_nu_ref nu_ref = nu;
 
-  auto&& y_val = to_value_column_array_or_scalar(y_ref);
-  auto&& nu_val = to_value_column_array_or_scalar(nu_ref);
+  auto y_val = to_value_column_array_or_scalar(y_ref);
+  auto nu_val = to_value_column_array_or_scalar(nu_ref);
 
   check_positive_finite(function, "Degrees of freedom parameter", nu_val);
   check_not_nan(function, "Random variable", y_val);

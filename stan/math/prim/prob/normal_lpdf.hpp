@@ -50,9 +50,9 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
   T_mu_ref mu_ref = mu;
   T_sigma_ref sigma_ref = sigma;
 
-  auto&& y_val = to_value_column_array_or_scalar(y_ref);
-  auto&& mu_val = to_value_column_array_or_scalar(mu_ref);
-  auto&& sigma_val = to_value_column_array_or_scalar(sigma_ref);
+  auto y_val = to_value_column_array_or_scalar(y_ref);
+  auto mu_val = to_value_column_array_or_scalar(mu_ref);
+  auto sigma_val = to_value_column_array_or_scalar(sigma_ref);
 
   check_not_nan(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);

@@ -22,8 +22,8 @@ namespace math {
  * @return Same value.
  */
 template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline auto to_value_rec_array_or_scalar(T&& v) {
-  return value_of_rec(std::forward<T>(v));
+inline auto to_value_rec_array_or_scalar(T v) {
+  return value_of_rec(v);
 }
 
 /** \ingroup type_trait
@@ -36,7 +36,7 @@ inline auto to_value_rec_array_or_scalar(T&& v) {
 template <typename T, require_eigen_t<T>* = nullptr,
  require_not_plain_type_t<T>* = nullptr>
 inline auto to_value_rec_array_or_scalar(T&& v) {
-  return value_of_rec(v.eval()).array().eval();
+  return value_of_rec(v.eval()).eval().array();
 }
 
 /** \ingroup type_trait
@@ -49,7 +49,7 @@ inline auto to_value_rec_array_or_scalar(T&& v) {
 template <typename T, require_eigen_t<T>* = nullptr,
  require_plain_type_t<T>* = nullptr>
 inline auto to_value_rec_array_or_scalar(T&& v) {
-  return value_of_rec(std::forward<T>(v)).array().eval();
+  return value_of_rec(std::forward<T>(v)).eval().array();
 }
 
 /** \ingroup type_trait

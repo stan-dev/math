@@ -51,10 +51,10 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
   T_partials_return cdf(1.0);
   operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
       y_ref, mu_ref, sigma_ref);
-      
-  auto&& y_val = to_value_column_array_or_scalar(y_ref);
-  auto&& mu_val = to_value_column_array_or_scalar(mu_ref);
-  auto&& sigma_val = to_value_column_array_or_scalar(sigma_ref);
+
+  auto y_val = to_value_column_array_or_scalar(y_ref);
+  auto mu_val = to_value_column_array_or_scalar(mu_ref);
+  auto sigma_val = to_value_column_array_or_scalar(sigma_ref);
 
   check_not_nan(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);
