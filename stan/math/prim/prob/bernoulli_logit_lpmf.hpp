@@ -47,10 +47,7 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   T_theta_ref theta_ref = theta;
   check_bounded(function, "n", n_ref, 0, 1);
 
-  const auto& theta_col = as_column_vector_or_scalar(theta_ref);
-  const auto& theta_val = value_of(theta_col);
-  const auto& theta_arr = to_ref(as_array_or_scalar(theta_val));
-
+  auto&& theta_arr = to_value_column_array_or_scalar(theta_ref);
   check_not_nan(function, "Logit transformed probability parameter", theta_arr);
   if (!include_summand<propto, T_prob>::value) {
     return 0.0;

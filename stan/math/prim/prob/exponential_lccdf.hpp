@@ -24,14 +24,8 @@ return_type_t<T_y, T_inv_scale> exponential_lccdf(const T_y& y,
   T_y_ref y_ref = y;
   T_beta_ref beta_ref = beta;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& beta_col = as_column_vector_or_scalar(beta_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& beta_arr = as_array_or_scalar(beta_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(beta_arr))> beta_val = value_of(beta_arr);
+  auto&& y_val = to_value_column_array_or_scalar(y_ref);
+  auto&& beta_val = to_value_column_array_or_scalar(beta_ref);
 
   check_nonnegative(function, "Random variable", y_val);
   check_positive_finite(function, "Inverse scale parameter", beta_val);
