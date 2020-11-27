@@ -148,10 +148,10 @@ struct multi_result_kernel_internal {
     static void add_event(
         cl::Event e, const std::tuple<std::pair<T_results, T_expressions>...>&
                          assignment_pairs) {
+      next::add_event(e, assignment_pairs);
       if (is_without_output<T_current_expression>::value) {
         return;
       }
-      next::add_event(e, assignment_pairs);
       std::get<N>(assignment_pairs).second.add_read_event(e);
       std::get<N>(assignment_pairs).first.add_write_event(e);
     }
