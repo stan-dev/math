@@ -143,6 +143,7 @@
 #include <stan/math/opencl/prim/rep_vector.hpp>
 #include <stan/math/opencl/prim/row.hpp>
 #include <stan/math/opencl/prim/rows.hpp>
+#include <stan/math/opencl/prim/scaled_inv_chi_square_lpdf.hpp>
 #include <stan/math/opencl/prim/sign.hpp>
 #include <stan/math/opencl/prim/size.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
