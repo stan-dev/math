@@ -164,8 +164,6 @@ inline var squared_distance(const T1& A, const T2& B) {
   if (A.size() == 0)
     return 0.0;
 
-  var res;
-
   if (!is_constant<T1>::value && !is_constant<T2>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
@@ -175,9 +173,8 @@ inline var squared_distance(const T1& A, const T2& B) {
       double diff = arena_A.val().coeff(i) - arena_B.val().coeff(i);
       res_val += diff * diff;
     }
-    res = res_val;
 
-    res = make_callback_vari(res_val, [arena_A, arena_B](const auto& res) mutable {
+    var res = make_callback_vari(res_val, [arena_A, arena_B](const auto& res) mutable {
       double res_adj = res.adj_;
       
       for(size_t i = 0; i < arena_A.size(); ++i) {
@@ -186,6 +183,8 @@ inline var squared_distance(const T1& A, const T2& B) {
 	arena_B.adj().coeffRef(i) -= 2.0 * res_adj * diff;
       }
     });
+
+    return res;
   } else if (!is_constant<T1>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
     arena_t<promote_scalar_t<double, T2>> arena_B = value_of(B);
@@ -195,9 +194,8 @@ inline var squared_distance(const T1& A, const T2& B) {
       double diff = arena_A.val().coeff(i) - arena_B.coeff(i);
       res_val += diff * diff;
     }
-    res = res_val;
 
-    res = make_callback_vari(res_val, [arena_A, arena_B](const auto& res) mutable {
+    var res = make_callback_vari(res_val, [arena_A, arena_B](const auto& res) mutable {
       double res_adj = res.adj_;
       
       for(size_t i = 0; i < arena_A.size(); ++i) {
@@ -205,6 +203,8 @@ inline var squared_distance(const T1& A, const T2& B) {
 	arena_A.adj().coeffRef(i) += 2.0 * res_adj * diff;
       }
     });
+
+    return res;
   } else {
     arena_t<promote_scalar_t<double, T1>> arena_A = value_of(A);
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
@@ -215,7 +215,7 @@ inline var squared_distance(const T1& A, const T2& B) {
       res_val += diff * diff;
     }
 
-    res = make_callback_vari(res_val, [arena_A, arena_B](const auto& res) mutable {
+    var res = make_callback_vari(res_val, [arena_A, arena_B](const auto& res) mutable {
       double res_adj = res.adj_;
       
       for(size_t i = 0; i < arena_A.size(); ++i) {
@@ -223,9 +223,9 @@ inline var squared_distance(const T1& A, const T2& B) {
 	arena_B.adj().coeffRef(i) -= 2.0 * res_adj * diff;
       }
     });
-  }
 
-  return res;
+    return res;
+  }
 }
 
 }  // namespace math
