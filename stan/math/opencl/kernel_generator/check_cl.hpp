@@ -79,22 +79,20 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
       const std::string& row_index_name,
       const std::string& col_index_name) const {
     kernel_parts res;
-    if (generated.count(this) == 0) {
-      this->var_name_ = name_gen.generate();
-      generated[this] = "";
-      res = arg_.get_kernel_parts(generated, name_gen, row_index_name,
-                                  col_index_name, false);
+    this->var_name_ = name_gen.generate();
+    generated[this] = "";
+    res = arg_.get_kernel_parts(generated, name_gen, row_index_name,
+                                col_index_name, false);
 
-      res.args += "__global int* " + var_name_ + "_buffer, __global "
-                  + type_str<value_type_t<T>>() + "* " + var_name_ + "_value, ";
-      res.body += "bool " + var_name_;
-      res.body_suffix += "if(!" + var_name_ +
+    res.args += "__global int* " + var_name_ + "_buffer, __global "
+                + type_str<value_type_t<T>>() + "* " + var_name_ + "_value, ";
+    res.body += "bool " + var_name_;
+    res.body_suffix += "if(!" + var_name_ +
             " && atomic_xchg(" + var_name_ + "_buffer, 1) == 0){\n"
           + var_name_ + "_buffer[1] = " + row_index_name + ";\n"
           + var_name_ + "_buffer[2] = " + col_index_name + ";\n"
           + var_name_ + "_value[0] = " + arg_.var_name_ + ";\n"
           "}";
-    }
     return res;
   }
 
@@ -108,12 +106,10 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
    */
   inline void set_args(std::map<const void*, const char*>& generated,
                        cl::Kernel& kernel, int& arg_num) const {
-    if (generated.count(this) == 0) {
-      generated[this] = "";
-      arg_.set_args(generated, kernel, arg_num);
-      kernel.setArg(arg_num++, buffer_.buffer());
-      kernel.setArg(arg_num++, value_.buffer());
-    }
+    generated[this] = "";
+    arg_.set_args(generated, kernel, arg_num);
+    kernel.setArg(arg_num++, buffer_.buffer());
+    kernel.setArg(arg_num++, value_.buffer());
   }
 
   /**
