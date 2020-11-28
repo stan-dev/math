@@ -94,20 +94,135 @@ Once you have done the above step, `runTests.py` should execute with the GPU ena
 
 ## Using the OpenCL backend
 
-We currently have support for the following methods
+The OpenCL backend can be used for reverse mode AD as well as primitive functions on containers of basic C++ scalar types. Below is the list of functions and distributions that are currently supported.
 
-- bernoulli_logit_glm
+### Reverse mode
+
+An example of using OpenCL supported Stan Math functions for reverse mode AD is shown below: 
+
+```cpp
+using stan::math::matrix_cl;
+using stan::math::var_value;
+using stan::math::to_matrix_cl;
+using stan::math::from_matrix_cl;
+
+Eigen::Matrix<double, -1, -1> A(N,M);
+Eigen::Matrix<double, -1, -1> B(M,N);
+// ... fill matrices A and B
+var_value<matrix_cl<double>> A_cl = to_matrix_cl(A);
+var_value<matrix_cl<double>> B_cl = to_matrix_cl(B);
+var_value<matrix_cl<double>> C_cl = A_cl * B_cl;
+var_value<Eigen::Matrix<double, -1, -1>> C = from_matrix_cl(C_cl);
+C(0,0).grad();
+```
+
+#### Supported functions
+
 - cholesky_decompose
-- categorical_logit_glm
 - gp_exp_quad_cov
 - mdivide_right_tri
 - mdivide_left_tri
 - multiplication
+- sum
+
+#### Supported distributions
+
+- bernoulli
+- bernoulli_logit
+- bernoulli_logit_glm
+- beta
+- beta_proportion
+- categorical_logit_glm
+- cauchy
+- chi_square
+- double_exponential
+- exp_mod_normal
+- exponential
+- frechet
+- gamma
+- gumbel
+- inv_chi_square
+- inv_gamma
+- logistic
+- lognormal
 - neg_binomial_2_log_glm
+- normal
 - normal_id_glm
 - ordered_logistic_glm
+- pareto
+- pareto_type_2
+- poisson
+- poisson_log
 - poisson_log_glm
 
-In cmdstan, an example model is provided in `examples/GP/`, which uses OpenCL Cholesky decomposition. You can check if your OpenCL configuration works by trying to build it.
-* Linux and MacOS: `make examples/GP/gp3`
-* Windows: `make examples/GP/gp3.exe`
+### Primitive functions
+
+OpenCL supported primitive functions can be used on `matrix_cl<T>` objects, where T is a primitive built-in C++ type.
+An example:
+
+```cpp
+using stan::math::matrix_cl;
+using stan::math::to_matrix_cl;
+using stan::math::from_matrix_cl;
+using stan::math::exp;
+using stan::math::transpose;
+
+Eigen::Matrix<double, -1, -1> A(N,N);
+Eigen::Matrix<double, -1, -1> B(N,N);
+// ... fill matrices A and B
+matrix_cl<double> A_cl = to_matrix_cl(A);
+matrix_cl<double> B_cl = to_matrix_cl(B);
+matrix_cl<double> C_cl = A_cl * transpose(lgamma(B_cl));
+Eigen::Matrix<double, -1, -1> C = from_matrix_cl(C_cl);
+```
+
+A list of OpenCL supported primitive functions:
+
+- acos, acosh
+- add
+- append_col, append_row
+- asin, asinh
+- atan, atanh
+- block
+- cbrt
+- ceil
+- cholesky_decompose
+- col
+- cols
+- cos, cosh
+- diagonal
+- digamma
+- dims
+- divide
+- elt_divide
+- elt_multiply
+- erf, erfc
+- exp, exp2, expm1
+- fabs
+- floor
+- gp_exp_quad_cov
+- inv, inv_logit, inv_sqrt, inv_square
+- lbeta
+- lgamma
+- log, log10, log1m_exp, log1m_inv_logit
+- log1p, log1p_exp, log2, logit
+- mdivide_left_tri_low
+- mdivide_right_tri_low
+- minus
+- multiply
+- operator-, operator+, operator*
+- plus
+- pow
+- rep_matrix, rep_row_vector, rep_vector
+- rows
+- round
+- row
+- sin, sinh
+- size
+- sqrt
+- sum
+- tan, tanh
+- tcrossprod
+- tgamma
+- transpose
+- trunc
