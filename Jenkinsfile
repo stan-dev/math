@@ -245,6 +245,7 @@ pipeline {
                         runTestsWin("test/unit/math/rev/fun/multiply_test.cpp", false, false)
                     }
                 }
+                
                 stage('OpenCL GPU tests') {
                     agent { label "gg-linux" }
                     steps {
@@ -335,7 +336,7 @@ pipeline {
             //             runTestsWin("test/unit", false, true)
             //         }
             //     }
-            // }
+            }
         }
         stage('Upstream tests') {
             when {
