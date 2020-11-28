@@ -64,8 +64,10 @@ class arena_matrix : public Eigen::Map<MatrixType> {
                   other.rows(), other.cols()) {
     *this = other;
   }
+
   /**
-   * Constructs `arena_matrix` from an expression.
+   * Constructs `arena_matrix` from an expression. This makes an assumption that
+   * any other `Eigen::Map` also contains memory allocated in the arena.
    * @param other expression
    */
   arena_matrix(const Base& other)  // NOLINT
