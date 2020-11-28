@@ -230,10 +230,10 @@ pipeline {
                         deleteDirWin()
                         unstash 'MathSetup'
                         bat "echo CXX=${env.CXX} -Werror > make/local"
-                        bat "echo STAN_OPENCL=true>> make/local"
-                        bat "echo OPENCL_PLATFORM_ID=0>> make/local"
-                        bat "echo OPENCL_DEVICE_ID=0>> make/local"
-                        bat 'echo LDFLAGS_OPENCL= -L"C:\\Program Files (x86)\\IntelSWTools\\system_studio_2020\\OpenCL\\sdk\\lib\\x64" -lOpenCL'
+                        bat "echo STAN_OPENCL=true >> make/local"
+                        bat "echo OPENCL_PLATFORM_ID=0 >> make/local"
+                        bat "echo OPENCL_DEVICE_ID=0 >> make/local"
+                        bat 'echo LDFLAGS_OPENCL= -L"C:\\Program Files (x86)\\IntelSWTools\\system_studio_2020\\OpenCL\\sdk\\lib\\x64" -lOpenCL >> make/local'
                         bat "mingw32-make.exe -f make/standalone math-libs"
                         runTestsWin("test/unit/math/opencl", false, false)
                         runTestsWin("test/unit/multiple_translation_units_test.cpp", false, false)
