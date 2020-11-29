@@ -85,9 +85,11 @@ TEST(MathMixMatFun, logSumExp) {
 
   std::vector<Eigen::VectorXd> stvx{x2, x2b, x2c};
   stan::test::expect_ad(tols, f, stvx);
+  stan::test::expect_ad_matvar(tols, f, stvx);
   std::vector<Eigen::RowVectorXd> strx{x2.transpose(), x2b.transpose(),
                                        x2c.transpose()};
   stan::test::expect_ad(tols, f, strx);
+  stan::test::expect_ad_matvar(tols, f, strx);
   std::vector<std::vector<double>> ststx{
       std::vector<double>(x2.data(), x2.data() + x2.size()),
       std::vector<double>(x2b.data(), x2b.data() + x2b.size()),
