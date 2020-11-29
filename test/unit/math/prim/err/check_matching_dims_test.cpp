@@ -156,14 +156,17 @@ TEST(ErrorHandlingMatrix, checkMatchingDimsScalar) {
   double x;
 
   y1.resize(3, 3);
-  EXPECT_THROW(stan::math::check_matching_dims("checkMatchingDims", "x", x, "y", y1),
-               std::invalid_argument);
- 
-  std::vector<double> y2(5);
-  EXPECT_THROW(stan::math::check_matching_dims("checkMatchingDims", "x", x, "y", y2),
-               std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::check_matching_dims("checkMatchingDims", "x", x, "y", y1),
+      std::invalid_argument);
 
-  EXPECT_NO_THROW(stan::math::check_matching_dims("checkMatchingDims", "x", x, "y", x));
+  std::vector<double> y2(5);
+  EXPECT_THROW(
+      stan::math::check_matching_dims("checkMatchingDims", "x", x, "y", y2),
+      std::invalid_argument);
+
+  EXPECT_NO_THROW(
+      stan::math::check_matching_dims("checkMatchingDims", "x", x, "y", x));
 }
 
 TEST(ErrorHandlingMatrix, checkMatchingDimsArrayMatrices) {
@@ -171,11 +174,14 @@ TEST(ErrorHandlingMatrix, checkMatchingDimsArrayMatrices) {
 
   std::vector<Eigen::Matrix<double, -1, 1>> x;
   std::vector<Eigen::Matrix<double, -1, 1>> y1;
-  x = std::vector<Eigen::Matrix<double, -1, 1>>(4, Eigen::Matrix<double, -1, 1>(5));
-  y1 = std::vector<Eigen::Matrix<double, -1, 1>>(4, Eigen::Matrix<double, -1, 1>(5));
+  x = std::vector<Eigen::Matrix<double, -1, 1>>(
+      4, Eigen::Matrix<double, -1, 1>(5));
+  y1 = std::vector<Eigen::Matrix<double, -1, 1>>(
+      4, Eigen::Matrix<double, -1, 1>(5));
 
   EXPECT_NO_THROW(check_matching_dims("checkMatchingDims", "x", x, "y", y1));
 
   std::vector<Eigen::Matrix<double, -1, 1>> y2;
-  EXPECT_THROW(check_matching_dims("checkMatchingDims", "x", x, "y", y2), std::invalid_argument);
+  EXPECT_THROW(check_matching_dims("checkMatchingDims", "x", x, "y", y2),
+               std::invalid_argument);
 }
