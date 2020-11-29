@@ -11,6 +11,8 @@
 namespace stan {
 namespace math {
 
+
+
 /**
  * Check if the two containers have the same dimensions.
  * @tparam T1 type of the first container
@@ -23,7 +25,7 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the dimensions of the
  *    containers do not match
  */
-template <typename T1, typename T2, require_all_not_matrix_t<T1, T2>* = nullptr>
+template <typename T1, typename T2, require_all_std_vector_t<T1, T2>* = nullptr>
 inline void check_matching_dims(const char* function, const char* name1,
                                 const T1& y1, const char* name2, const T2& y2) {
   std::vector<int> y1_d = dims(y1);
@@ -73,7 +75,7 @@ inline void check_matching_dims(const char* function, const char* name1,
  * @throw <code>std::invalid_argument</code> if the dimensions of the
  *    containers do not match
  */
-template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr>
+template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr>
 inline void check_matching_dims(const char* function, const char* name1,
                                 const T1& y1, const char* name2, const T2& y2) {
   if (y1.rows() != y2.rows() || y1.cols() != y2.cols()) {
@@ -87,11 +89,13 @@ inline void check_matching_dims(const char* function, const char* name1,
 }
 
 /**
- * Check if two matrices have the same row and column dimensions.
- * @tparam T1 Either an Eigen type, a `var_value` with underlying Eigen type, or
- * scalar.
- * @tparam T2 Either an Eigen type, a `var_value` with underlying Eigen type, or
- * scalar.
+ * Check if a scalar and a container have matching dims. Will alway throw
+ * as a scalar has no dimensions.
+ * 
+ * @tparam T1 Either an Eigen type, a `var_value` with underlying Eigen type, 
+ * a std::vector or scalar.
+ * @tparam T2 Either an Eigen type, a `var_value` with underlying Eigen type, 
+ * a std::vector or scalar.
  * @param function name of function (for error messages)
  * @param name1 variable name for the first container (for error messages)
  * @param y1 first argument to test
@@ -100,13 +104,32 @@ inline void check_matching_dims(const char* function, const char* name1,
  * @throw <code>std::invalid_argument</code> if the dimensions of the
  *    containers do not match
  */
-template <typename T1, typename T2, require_any_matrix_t<T1, T2>* = nullptr,
+template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
           require_any_stan_scalar_t<T1, T2>* = nullptr>
 inline void check_matching_dims(const char* function, const char* name1,
                                 const T1& y1, const char* name2, const T2& y2) {
   std::string y1_err("");
-  std::string msg_str("Tried Checking the dimensions of a matrix vs a scalar");
+  std::string msg_str("Tried Checking the dimensions of a container vs a scalar");
   invalid_argument(function, name1, y1_err, "", msg_str.c_str());
+}
+
+/**
+ * Check matching dims for two scalars. This is a no-op.
+ * 
+ * @tparam T1 Scalar type of y1.
+ * @tparam T2 Scalar type of y2.
+ * @param function name of function (for error messages)
+ * @param name1 variable name for the first container (for error messages)
+ * @param y1 first argument to test
+ * @param name2 variable name for the second container (for error messages)
+ * @param y2 second argument to test
+ * @throw <code>std::invalid_argument</code> if the dimensions of the
+ *    containers do not match
+ */
+template <typename T1, typename T2, require_all_stan_scalar_t<T1, T2>* = nullptr,
+          require_any_stan_scalar_t<T1, T2>* = nullptr>
+inline void check_matching_dims(const char* function, const char* name1,
+                                const T1& y1, const char* name2, const T2& y2) {
 }
 
 /**
