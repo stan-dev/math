@@ -18,58 +18,56 @@ namespace stan {
 namespace math {
 
 /**
- * Return the singular values of the specified symmetric matrix.
+ * Return the singular values of the specified matrix.
  *
- * For MxN input matrix, M must be <= N
+ * Equation (4) from Differentiable Programming Tensor Networks
+ * is used for MxN input matrix's adjoint calculation.
  *
  * @tparam EigMat type of input matrix
- * @param m MxN input matrix, M <= N
+ * @param m MxN input matrix
  * @return Singular values of matrix
  */
 template <typename EigMat,
-	  require_eigen_vt<EigMat>* = nullptr,
-	  require_not_vt_var<EigMat>* = nullptr>
+    require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
+	  require_vt_var<EigMat>* = nullptr>
 inline auto singular_values(const EigMat& m) {
   using ret_type = promote_scalar_t<var, Eigen::VectorXd>;
   check_nonzero_size("singular_values", "m", m);
 
-  const int M = m.rows();
+  const int M = to_arena(m.rows());
   auto arena_m = to_arena(m);
   
   Eigen::MatrixXd m_val = value_of(arena_m);
-  Eigen::JacobiSVD<EigMat> svd(m_val, Eigen::ComputeFullU | Eigen::ComputeFullV);
+  Eigen::JacobiSVD<Eigen::MatrixXd> svd(m_val, Eigen::ComputeFullU | Eigen::ComputeFullV);
 
-  Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> D = Eigen::MatrixXd::Zero(M,M);
-  D.diagonal() = svd.singularValues();
-  arena_t<ret_type> sigular_values = svd.singularValues();
-
-  auto U = svd.matrixU();
-  auto V = svd.matrixU();
-
-  // equation (4) from "Differentiable Programming Tensor Networks"
+  auto singular_values = to_arena(svd.singularValues());
+  auto U = to_arena(svd.matrixU());
+  auto V = to_arena(svd.matrixV());
   Eigen::MatrixXd Fp(M,M);
   Eigen::MatrixXd Fm(M,M);
-
   for(int i = 0; i < M; i++) {
-    for(int j = 0; i < M; j++) {
+    for(int j = 0; j < M; j++) {
       if(j == i) {
-	Fp[i, j] = 0.0;
-	Fm[i, j] = 0.0;
+        Fp(i, j) = 0.0;
+        Fm(i, j) = 0.0;
       } else {
-	Fp[i, j] = 1.0 / (D[j,j] - D[i,i]) + 1.0 / (D[i,i] + D[j,j]);
-	Fm[i, j] = 1.0 / (D[j,j] - D[i,i]) - 1.0 / (D[i,i] + D[j,j]);
+        Fp(i, j)  = 1.0 / (singular_values[j] - singular_values[i]) + 1.0 / (singular_values[i] + singular_values[j]);
+        Fm(i, j) = 1.0 / (singular_values[j] - singular_values[i]) - 1.0 / (singular_values[j] + singular_values[i]);
       }
     }
   }
+  auto arena_Fp = to_arena(Fp);
+  auto arena_Fm = to_arena(Fm);
 
-  reverse_pass_callback([arena_m, U, V]() mutable {
-    arena_m.adj() += 0.5 * U * (Fp * (U.transpose() * U.adj() - t(U.adj()) * U)) * V.transpose() // adjU contributions
-      +(Eigen::MatrixXd::Identity(M, M) - U * U.transpose()) * U.adj() * D.inverse() * V.transpose()
-      + U * D.adj() * V.transpose() // adjD contributions
-      + 0.5 * U * (Fm * (V.transpose() * V.adj() - V.adj().transpose() * V)) * V.transpose() // adjV contributions
-      + U * D.inverse() * V.adj().transpose() * (Eigen::MatrixXd::Identity(M, M) - V * V.transpose());
-  });
-  return ret_type(sigularvalues);
+  reverse_pass_callback(
+      [arena_m, M, arena_Fp, arena_Fm, U, singular_values, V]() mutable {
+          arena_m.adj() += 0.5 * U * (arena_Fp * (U.transpose() * U.adj() - U.adj().transpose() * U)) * V.transpose() // adjU contributions
+                   +(Eigen::MatrixXd::Identity(M, M) - U * U.transpose()) * U.adj() * singular_values.asDiagonal().inverse() * V.transpose()
+                   + U * singular_values.adj().asDiagonal() * V.transpose() // adjD contributions
+                   + 0.5 * U * (arena_Fm * (V.transpose() * V.adj() - V.adj().transpose() * V)) * V.transpose() // adjV contributions
+                   + U * singular_values.asDiagonal().inverse() * V.adj().transpose() * (Eigen::MatrixXd::Identity(M, M) - V * V.transpose());
+      });
+  return ret_type(singular_values);
 }
 }  // namespace math
 }  // namespace stan
