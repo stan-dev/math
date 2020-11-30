@@ -124,35 +124,33 @@ C(0,0).grad();
 
 #### Supported distributions
 
-Only distribution functions with the _lpdf/_lpmf suffix are currently supported. 
-
-- bernoulli
-- bernoulli_logit
-- bernoulli_logit_glm
-- beta
-- beta_proportion
-- categorical_logit_glm
-- cauchy
-- chi_square
-- double_exponential
-- exp_mod_normal
-- exponential
-- frechet
-- gamma
-- gumbel
-- inv_chi_square
-- inv_gamma
-- logistic
-- lognormal
-- neg_binomial_2_log_glm
-- normal
-- normal_id_glm
-- ordered_logistic_glm
-- pareto
-- pareto_type_2
-- poisson
-- poisson_log
-- poisson_log_glm
+- bernoulli_lpmf
+- bernoulli_logit_lpmf
+- bernoulli_logit_glm_lpmf
+- beta_lpdf_lpdf
+- beta_proportion_lpdf
+- categorical_logit_glm_lpmf
+- cauchy_lpdf
+- chi_square_lpdf
+- double_exponential_lpdf
+- exp_mod_normal_lpdf
+- exponential_lpdf
+- frechet_lpdf
+- gamma_lpdf
+- gumbel_lpdf
+- inv_chi_square_lpdf
+- inv_gamma_lpdf
+- logistic_lpdf
+- lognormal_lpdf
+- neg_binomial_2_log_glm_lpmf
+- normal_lpdf
+- normal_id_glm_lpdf
+- ordered_logistic_glm_lpmf
+- pareto_lpdf
+- pareto_type_2_lpdf
+- poisson_lpmf
+- poisson_log_lpmf
+- poisson_log_glm_lpmf
 
 ### Primitive functions
 
