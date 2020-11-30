@@ -81,12 +81,12 @@ class vector_seq_view<T, require_std_vector_vt<is_container, T>> {
   int size() const { return v_.size(); }
   const value_type_t<T>& operator[](int i) const { return v_[i]; }
 
-  template <typename C = T, require_vt_arithmetic<C>* = nullptr>
+  template <typename C = T, require_st_arithmetic<C>* = nullptr>
   auto val(int i) const {
     return v_[i];
   }
 
-  template <typename C = T, require_vt_autodiff<C>* = nullptr>
+  template <typename C = T, require_st_autodiff<C>* = nullptr>
   auto val(int i) const {
     return value_of(v_[i]);
   }
