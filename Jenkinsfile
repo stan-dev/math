@@ -229,6 +229,7 @@ pipeline {
                     steps {
                         deleteDirWin()
                         unstash 'MathSetup'
+                        bat "C:/clinfo.exe"
                         bat "echo CXX=${env.CXX} -Werror > make/local"
                         bat "echo STAN_OPENCL=true >> make/local"
                         bat "echo OPENCL_PLATFORM_ID=0 >> make/local"
