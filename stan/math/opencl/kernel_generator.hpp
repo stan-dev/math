@@ -24,8 +24,8 @@
  *
  * ## Defining a new kernel generator operation
  *
- * Unary functions can be added using one of the macros in
- * `unary_functions.hpp`.
+ * Element-wise functions can be added using one of the macros in
+ * `elt_functions.hpp`.
  *
  * New kernel generator classes must satsify the conditions below:
  *
