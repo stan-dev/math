@@ -144,9 +144,15 @@ TEST(elementwise_check, error_messages_look_good) {
   bad_eigen_v[1] = bad;
   EXPECT_THROW_MSG(elementwise_check_test::do_check(bad_eigen_v),
                    std::domain_error, "[2]");
-  Eigen::MatrixXd bad_m = Eigen::MatrixXd::Zero(3, 3);
+  Eigen::MatrixXd bad_m = Eigen::MatrixXd::Zero(3, 4);
   bad_m(1, 2) = bad;
   EXPECT_THROW_MSG(elementwise_check_test::do_check(bad_m), std::domain_error,
+                   "[2, 3]");
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajorBit>
+      bad_mr = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic,
+                             Eigen::RowMajorBit>::Zero(3, 4);
+  bad_mr(1, 2) = bad;
+  EXPECT_THROW_MSG(elementwise_check_test::do_check(bad_mr), std::domain_error,
                    "[2, 3]");
   std::vector<std::vector<double> > bad_vv{std::vector<double>{},
                                            std::vector<double>{bad}};

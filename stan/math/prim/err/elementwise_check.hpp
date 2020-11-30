@@ -96,7 +96,8 @@ void elementwise_throw_domain_error(const Args... args) {
 /**
  * Check that the predicate holds for the value of `x`, working elementwise on
  * containers. If `x` is a scalar, check the double underlying the scalar. If
- * `x` is a container, check each element inside `x`, recursively.
+ * `x` is a container, check each element inside `x`, recursively. This overload
+ * works on scalars.
  * @tparam F type of predicate
  * @tparam T type of `x`
  * @tparam Indexings types of `indexings`
@@ -122,6 +123,25 @@ inline void elementwise_check(const F& is_good, const char* function,
                                              must_be, "!");
   }
 }
+/**
+ * Check that the predicate holds for the value of `x`, working elementwise on
+ * containers. If `x` is a scalar, check the double underlying the scalar. If
+ * `x` is a container, check each element inside `x`, recursively. This overload
+ * works on Eigen types that support linear indexing.
+ * @tparam F type of predicate
+ * @tparam T type of `x`
+ * @tparam Indexings types of `indexings`
+ * @param is_good predicate to check, must accept doubles and produce bools
+ * @param function function name (for error messages)
+ * @param name variable name (for error messages)
+ * @param x variable to check, can be a scalar, a container of scalars, a
+ * container of containers of scalars, etc
+ * @param must_be message describing what the value should be
+ * @param indexings any additional indexing to print. Intended for internal use
+ * in `elementwise_check` only.
+ * @throws `std::domain_error` if `is_good` returns `false` for the value
+ * of any element in `x`
+ */
 template <typename F, typename T, typename... Indexings,
           require_eigen_t<T>* = nullptr,
           std::enable_if_t<static_cast<bool>(Eigen::internal::traits<T>::Flags&(
@@ -139,19 +159,38 @@ inline void elementwise_check(const F& is_good, const char* function,
       } else if (Eigen::internal::traits<T>::Flags & Eigen::RowMajorBit) {
         internal::elementwise_throw_domain_error(
             function, ": ", name, indexings..., "[",
-            i / x.rows() + error_index::value, ", ",
-            i % x.rows() + error_index::value, "] is ", scal, ", but must be ",
+            i / x.cols() + error_index::value, ", ",
+            i % x.cols() + error_index::value, "] is ", scal, ", but must be ",
             must_be, "!");
       } else {
         internal::elementwise_throw_domain_error(
             function, ": ", name, indexings..., "[",
-            i % x.cols() + error_index::value, ", ",
-            i / x.cols() + error_index::value, "] is ", scal, ", but must be ",
+            i % x.rows() + error_index::value, ", ",
+            i / x.rows() + error_index::value, "] is ", scal, ", but must be ",
             must_be, "!");
       }
     }
   }
 }
+/**
+ * Check that the predicate holds for the value of `x`, working elementwise on
+ * containers. If `x` is a scalar, check the double underlying the scalar. If
+ * `x` is a container, check each element inside `x`, recursively. This overload
+ * works on col-major Eigen types that do not support linear indexing.
+ * @tparam F type of predicate
+ * @tparam T type of `x`
+ * @tparam Indexings types of `indexings`
+ * @param is_good predicate to check, must accept doubles and produce bools
+ * @param function function name (for error messages)
+ * @param name variable name (for error messages)
+ * @param x variable to check, can be a scalar, a container of scalars, a
+ * container of containers of scalars, etc
+ * @param must_be message describing what the value should be
+ * @param indexings any additional indexing to print. Intended for internal use
+ * in `elementwise_check` only.
+ * @throws `std::domain_error` if `is_good` returns `false` for the value
+ * of any element in `x`
+ */
 template <
     typename F, typename T, typename... Indexings,
     require_eigen_t<T>* = nullptr,
@@ -174,6 +213,25 @@ inline void elementwise_check(const F& is_good, const char* function,
     }
   }
 }
+/**
+ * Check that the predicate holds for the value of `x`, working elementwise on
+ * containers. If `x` is a scalar, check the double underlying the scalar. If
+ * `x` is a container, check each element inside `x`, recursively. This overload
+ * works on row-major Eigen types that do not support linear indexing.
+ * @tparam F type of predicate
+ * @tparam T type of `x`
+ * @tparam Indexings types of `indexings`
+ * @param is_good predicate to check, must accept doubles and produce bools
+ * @param function function name (for error messages)
+ * @param name variable name (for error messages)
+ * @param x variable to check, can be a scalar, a container of scalars, a
+ * container of containers of scalars, etc
+ * @param must_be message describing what the value should be
+ * @param indexings any additional indexing to print. Intended for internal use
+ * in `elementwise_check` only.
+ * @throws `std::domain_error` if `is_good` returns `false` for the value
+ * of any element in `x`
+ */
 template <
     typename F, typename T, typename... Indexings,
     require_eigen_t<T>* = nullptr,
@@ -196,6 +254,25 @@ inline void elementwise_check(const F& is_good, const char* function,
     }
   }
 }
+/**
+ * Check that the predicate holds for the value of `x`, working elementwise on
+ * containers. If `x` is a scalar, check the double underlying the scalar. If
+ * `x` is a container, check each element inside `x`, recursively. This overload
+ * works on `std::vector`s.
+ * @tparam F type of predicate
+ * @tparam T type of `x`
+ * @tparam Indexings types of `indexings`
+ * @param is_good predicate to check, must accept doubles and produce bools
+ * @param function function name (for error messages)
+ * @param name variable name (for error messages)
+ * @param x variable to check, can be a scalar, a container of scalars, a
+ * container of containers of scalars, etc
+ * @param must_be message describing what the value should be
+ * @param indexings any additional indexing to print. Intended for internal use
+ * in `elementwise_check` only.
+ * @throws `std::domain_error` if `is_good` returns `false` for the value
+ * of any element in `x`
+ */
 template <typename F, typename T, typename... Indexings,
           require_std_vector_t<T>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
@@ -206,6 +283,25 @@ inline void elementwise_check(const F& is_good, const char* function,
                       j + error_index::value, "]");
   }
 }
+/**
+ * Check that the predicate holds for the value of `x`, working elementwise on
+ * containers. If `x` is a scalar, check the double underlying the scalar. If
+ * `x` is a container, check each element inside `x`, recursively. This overload
+ * works on `var`s containing Eigen types.
+ * @tparam F type of predicate
+ * @tparam T type of `x`
+ * @tparam Indexings types of `indexings`
+ * @param is_good predicate to check, must accept doubles and produce bools
+ * @param function function name (for error messages)
+ * @param name variable name (for error messages)
+ * @param x variable to check, can be a scalar, a container of scalars, a
+ * container of containers of scalars, etc
+ * @param must_be message describing what the value should be
+ * @param indexings any additional indexing to print. Intended for internal use
+ * in `elementwise_check` only.
+ * @throws `std::domain_error` if `is_good` returns `false` for the value
+ * of any element in `x`
+ */
 template <typename F, typename T, typename... Indexings,
           require_var_matrix_t<T>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
