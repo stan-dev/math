@@ -101,10 +101,7 @@ The OpenCL backend can be used for reverse mode AD as well as primitive function
 An example of using OpenCL supported Stan Math functions for reverse mode AD is shown below: 
 
 ```cpp
-using stan::math::matrix_cl;
-using stan::math::var_value;
-using stan::math::to_matrix_cl;
-using stan::math::from_matrix_cl;
+using stan::math;
 
 Eigen::Matrix<double, -1, -1> A(N,M);
 Eigen::Matrix<double, -1, -1> B(M,N);
@@ -126,6 +123,8 @@ C(0,0).grad();
 - sum
 
 #### Supported distributions
+
+Only distribution functions with the _lpdf/_lpmf suffix are currently supported. 
 
 - bernoulli
 - bernoulli_logit
@@ -161,11 +160,7 @@ OpenCL supported primitive functions can be used on `matrix_cl<T>` objects, wher
 An example:
 
 ```cpp
-using stan::math::matrix_cl;
-using stan::math::to_matrix_cl;
-using stan::math::from_matrix_cl;
-using stan::math::exp;
-using stan::math::transpose;
+using stan::math;
 
 Eigen::Matrix<double, -1, -1> A(N,N);
 Eigen::Matrix<double, -1, -1> B(N,N);
