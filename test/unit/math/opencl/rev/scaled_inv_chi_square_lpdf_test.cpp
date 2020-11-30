@@ -86,10 +86,10 @@ TEST(ProbDistributionsScaledInvChiSquare, opencl_matches_cpu_small) {
   Eigen::VectorXd s(N);
   s << 0.3, 0.8, 1.0;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(scaled_inv_chi_square_lpdf_functor_propto, y,
-                                                nu, s);
-  stan::math::test::compare_cpu_opencl_prim_rev(scaled_inv_chi_square_lpdf_functor, y, nu,
-                                                s);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      scaled_inv_chi_square_lpdf_functor_propto, y, nu, s);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      scaled_inv_chi_square_lpdf_functor, y, nu, s);
 }
 
 TEST(ProbDistributionsScaledInvChiSquare, opencl_matches_cpu_small_y_negative) {
@@ -103,10 +103,10 @@ TEST(ProbDistributionsScaledInvChiSquare, opencl_matches_cpu_small_y_negative) {
   Eigen::VectorXd s(N);
   s << 0.3, 0.8, 1.0;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(scaled_inv_chi_square_lpdf_functor, y, nu,
-                                                s);
-  stan::math::test::compare_cpu_opencl_prim_rev(scaled_inv_chi_square_lpdf_functor_propto, y,
-                                                nu, s);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      scaled_inv_chi_square_lpdf_functor, y, nu, s);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      scaled_inv_chi_square_lpdf_functor_propto, y, nu, s);
 }
 
 TEST(ProbDistributionsScaledInvChiSquare, opencl_broadcast_y) {
@@ -118,8 +118,8 @@ TEST(ProbDistributionsScaledInvChiSquare, opencl_broadcast_y) {
   Eigen::VectorXd s(N);
   s << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(scaled_inv_chi_square_lpdf_functor,
-                                                         y_scal, nu, s);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      scaled_inv_chi_square_lpdf_functor, y_scal, nu, s);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       scaled_inv_chi_square_lpdf_functor_propto, y_scal, nu, s);
 }
@@ -133,8 +133,8 @@ TEST(ProbDistributionsScaledInvChiSquare, opencl_broadcast_nu) {
   Eigen::VectorXd s(N);
   s << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(scaled_inv_chi_square_lpdf_functor, y,
-                                                         nu_scal, s);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
+      scaled_inv_chi_square_lpdf_functor, y, nu_scal, s);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       scaled_inv_chi_square_lpdf_functor_propto, y, nu_scal, s);
 }
@@ -148,8 +148,8 @@ TEST(ProbDistributionsScaledInvChiSquare, opencl_broadcast_s) {
   nu << 0.3, 0.8, 1.0;
   double s_scal = 12.3;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(scaled_inv_chi_square_lpdf_functor, y,
-                                                         nu, s_scal);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
+      scaled_inv_chi_square_lpdf_functor, y, nu, s_scal);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       scaled_inv_chi_square_lpdf_functor_propto, y, nu, s_scal);
 }
@@ -164,10 +164,10 @@ TEST(ProbDistributionsScaledInvChiSquare, opencl_matches_cpu_big) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> s
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
 
-  stan::math::test::compare_cpu_opencl_prim_rev(scaled_inv_chi_square_lpdf_functor, y, nu,
-                                                s);
-  stan::math::test::compare_cpu_opencl_prim_rev(scaled_inv_chi_square_lpdf_functor_propto, y,
-                                                nu, s);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      scaled_inv_chi_square_lpdf_functor, y, nu, s);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      scaled_inv_chi_square_lpdf_functor_propto, y, nu, s);
 }
 
 #endif

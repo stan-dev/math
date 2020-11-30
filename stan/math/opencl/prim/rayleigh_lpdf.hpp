@@ -67,7 +67,8 @@ return_type_t<T_y_cl, T_scale_cl> rayleigh_lpdf(const T_y_cl& y,
 
   auto scaled_diff = elt_multiply(inv_sigma, y_over_sigma);
   auto y_deriv_expr = elt_divide(1.0, y_val) - scaled_diff;
-  auto sigma_deriv_expr = elt_multiply(y_over_sigma, scaled_diff) - 2.0 * inv_sigma;
+  auto sigma_deriv_expr
+      = elt_multiply(y_over_sigma, scaled_diff) - 2.0 * inv_sigma;
 
   matrix_cl<double> logp_cl;
   matrix_cl<double> y_deriv_cl;

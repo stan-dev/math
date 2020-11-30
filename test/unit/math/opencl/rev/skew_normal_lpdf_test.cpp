@@ -49,25 +49,34 @@ TEST(ProbDistributionsSkewNormal, error_checking) {
   stan::math::matrix_cl<double> alpha_size_cl(alpha_size);
   stan::math::matrix_cl<double> alpha_value_cl(alpha_value);
 
-  EXPECT_NO_THROW(stan::math::skew_normal_lpdf(y_cl, mu_cl, sigma_cl, alpha_cl));
+  EXPECT_NO_THROW(
+      stan::math::skew_normal_lpdf(y_cl, mu_cl, sigma_cl, alpha_cl));
 
-  EXPECT_THROW(stan::math::skew_normal_lpdf(y_size_cl, mu_cl, sigma_cl, alpha_cl),
-               std::invalid_argument);
-  EXPECT_THROW(stan::math::skew_normal_lpdf(y_cl, mu_size_cl, sigma_cl, alpha_cl),
-               std::invalid_argument);
-  EXPECT_THROW(stan::math::skew_normal_lpdf(y_cl, mu_cl, sigma_size_cl, alpha_cl),
-               std::invalid_argument);
-  EXPECT_THROW(stan::math::skew_normal_lpdf(y_cl, mu_cl, sigma_cl, alpha_size_cl),
-               std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::skew_normal_lpdf(y_size_cl, mu_cl, sigma_cl, alpha_cl),
+      std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::skew_normal_lpdf(y_cl, mu_size_cl, sigma_cl, alpha_cl),
+      std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::skew_normal_lpdf(y_cl, mu_cl, sigma_size_cl, alpha_cl),
+      std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::skew_normal_lpdf(y_cl, mu_cl, sigma_cl, alpha_size_cl),
+      std::invalid_argument);
 
-  EXPECT_THROW(stan::math::skew_normal_lpdf(y_value_cl, mu_cl, sigma_cl, alpha_cl),
-               std::domain_error);
-  EXPECT_THROW(stan::math::skew_normal_lpdf(y_cl, mu_value_cl, sigma_cl, alpha_cl),
-               std::domain_error);
-  EXPECT_THROW(stan::math::skew_normal_lpdf(y_cl, mu_cl, sigma_value_cl, alpha_cl),
-               std::domain_error);
-  EXPECT_THROW(stan::math::skew_normal_lpdf(y_cl, mu_cl, sigma_cl, alpha_value_cl),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::skew_normal_lpdf(y_value_cl, mu_cl, sigma_cl, alpha_cl),
+      std::domain_error);
+  EXPECT_THROW(
+      stan::math::skew_normal_lpdf(y_cl, mu_value_cl, sigma_cl, alpha_cl),
+      std::domain_error);
+  EXPECT_THROW(
+      stan::math::skew_normal_lpdf(y_cl, mu_cl, sigma_value_cl, alpha_cl),
+      std::domain_error);
+  EXPECT_THROW(
+      stan::math::skew_normal_lpdf(y_cl, mu_cl, sigma_cl, alpha_value_cl),
+      std::domain_error);
 }
 
 auto skew_normal_lpdf_functor
@@ -94,8 +103,8 @@ TEST(ProbDistributionsSkewNormal, opencl_matches_cpu_small) {
 
   stan::math::test::compare_cpu_opencl_prim_rev(skew_normal_lpdf_functor, y, mu,
                                                 sigma, alpha);
-  stan::math::test::compare_cpu_opencl_prim_rev(skew_normal_lpdf_functor_propto, y,
-                                                mu, sigma, alpha);
+  stan::math::test::compare_cpu_opencl_prim_rev(skew_normal_lpdf_functor_propto,
+                                                y, mu, sigma, alpha);
 }
 
 TEST(ProbDistributionsSkewNormal, opencl_broadcast_y) {
@@ -109,8 +118,8 @@ TEST(ProbDistributionsSkewNormal, opencl_broadcast_y) {
   Eigen::VectorXd alpha(N);
   alpha << 0.3, -0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(skew_normal_lpdf_functor,
-                                                         y_scal, mu, sigma, alpha);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      skew_normal_lpdf_functor, y_scal, mu, sigma, alpha);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       skew_normal_lpdf_functor_propto, y_scal, mu, sigma, alpha);
 }
@@ -126,8 +135,8 @@ TEST(ProbDistributionsSkewNormal, opencl_broadcast_mu) {
   Eigen::VectorXd alpha(N);
   alpha << 0.3, -0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(skew_normal_lpdf_functor, y,
-                                                         mu_scal, sigma, alpha);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
+      skew_normal_lpdf_functor, y, mu_scal, sigma, alpha);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       skew_normal_lpdf_functor_propto, y, mu_scal, sigma, alpha);
 }
@@ -143,8 +152,8 @@ TEST(ProbDistributionsSkewNormal, opencl_broadcast_sigma) {
   Eigen::VectorXd alpha(N);
   alpha << 0.3, -0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(skew_normal_lpdf_functor, y,
-                                                         mu, sigma_scal, alpha);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
+      skew_normal_lpdf_functor, y, mu, sigma_scal, alpha);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       skew_normal_lpdf_functor_propto, y, mu, sigma_scal, alpha);
 }
@@ -160,8 +169,8 @@ TEST(ProbDistributionsSkewNormal, opencl_broadcast_alpha) {
   sigma << 0.3, 0.8, 1.0;
   double alpha_scal = 12.3;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<3>(skew_normal_lpdf_functor, y,
-                                                         mu, sigma, alpha_scal);
+  stan::math::test::test_opencl_broadcasting_prim_rev<3>(
+      skew_normal_lpdf_functor, y, mu, sigma, alpha_scal);
   stan::math::test::test_opencl_broadcasting_prim_rev<3>(
       skew_normal_lpdf_functor_propto, y, mu, sigma, alpha_scal);
 }
@@ -180,8 +189,8 @@ TEST(ProbDistributionsSkewNormal, opencl_matches_cpu_big) {
 
   stan::math::test::compare_cpu_opencl_prim_rev(skew_normal_lpdf_functor, y, mu,
                                                 sigma, alpha);
-  stan::math::test::compare_cpu_opencl_prim_rev(skew_normal_lpdf_functor_propto, y,
-                                                mu, sigma, alpha);
+  stan::math::test::compare_cpu_opencl_prim_rev(skew_normal_lpdf_functor_propto,
+                                                y, mu, sigma, alpha);
 }
 
 #endif

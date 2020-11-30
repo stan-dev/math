@@ -61,8 +61,8 @@ TEST(ProbDistributionsRayleigh, opencl_matches_cpu_small) {
 
   stan::math::test::compare_cpu_opencl_prim_rev(rayleigh_lpdf_functor, y,
                                                 sigma);
-  stan::math::test::compare_cpu_opencl_prim_rev(rayleigh_lpdf_functor_propto,
-                                                y, sigma);
+  stan::math::test::compare_cpu_opencl_prim_rev(rayleigh_lpdf_functor_propto, y,
+                                                sigma);
 }
 
 TEST(ProbDistributionsRayleigh, opencl_broadcast_y) {
@@ -72,8 +72,8 @@ TEST(ProbDistributionsRayleigh, opencl_broadcast_y) {
   Eigen::VectorXd sigma(N);
   sigma << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      rayleigh_lpdf_functor, y, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(rayleigh_lpdf_functor,
+                                                         y, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       rayleigh_lpdf_functor_propto, y, sigma);
 }
@@ -85,8 +85,8 @@ TEST(ProbDistributionsRayleigh, opencl_broadcast_sigma) {
   y << 0.3, 0.8, 1.0;
   double sigma = 9.3;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-      rayleigh_lpdf_functor, y, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(rayleigh_lpdf_functor,
+                                                         y, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       rayleigh_lpdf_functor_propto, y, sigma);
 }
@@ -101,8 +101,8 @@ TEST(ProbDistributionsRayleigh, opencl_matches_cpu_big) {
 
   stan::math::test::compare_cpu_opencl_prim_rev(rayleigh_lpdf_functor, y,
                                                 sigma);
-  stan::math::test::compare_cpu_opencl_prim_rev(rayleigh_lpdf_functor_propto,
-                                                y, sigma);
+  stan::math::test::compare_cpu_opencl_prim_rev(rayleigh_lpdf_functor_propto, y,
+                                                sigma);
 }
 
 #endif
