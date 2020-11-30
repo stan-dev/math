@@ -84,7 +84,7 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
   }
   T_partials_array alpha_dbl(t_size, t_length);
   for (size_t t = 0; t < t_length; t++) {
-    alpha_dbl.col(t) = alpha_vec.val(t));
+    alpha_dbl.col(t) = alpha_vec.val(t);
   }
 
   T_partials_return lp(0.0);

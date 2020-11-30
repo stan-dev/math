@@ -5,6 +5,9 @@
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <stan/math/prim/meta/ref_type.hpp>
+#include <stan/math/prim/meta/is_autodiff.hpp>
+#include <stan/math/prim/meta/is_stan_scalar.hpp>
+#include <stan/math/prim/meta/is_var_matrix.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
 #include <type_traits>
 #include <utility>
@@ -75,7 +78,7 @@ class scalar_seq_view<C, require_var_matrix_t<C>> {
 
   template <typename T = C, require_st_autodiff<T>* = nullptr>
   auto val(int i) const {
-    return c_.val().coeffRef(i).val();
+    return c_.val().coeffRef(i);
   }
 
  private:
