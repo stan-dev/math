@@ -25,10 +25,11 @@ namespace math {
  * @tparam T_y_cl type of scalar
  * @tparam T_loc_cl type of location parameter
  * @tparam T_scale_cl type of scale parameter
+ * @tparam T_shape_cl type of shape parameter
  * @param y (Sequence of) scalar(s).
  * @param mu (Sequence of) location parameter(s)
- * for the normal distribution.
- * @param sigma (Sequence of) scale parameters for the normal distribution.
+ * @param sigma (Sequence of) scale parameter(s)
+ * @param alpha (Sequence of) shape parameter(s)
  * @return The log of the product of the densities.
  * @throw std::domain_error if the scale is not positive.
  */
