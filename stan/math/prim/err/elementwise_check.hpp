@@ -94,10 +94,9 @@ void elementwise_throw_domain_error(const Args... args) {
 }  // namespace internal
 
 /**
- * Check that the predicate holds for the value of `x`, working elementwise on
- * containers. If `x` is a scalar, check the double underlying the scalar. If
- * `x` is a container, check each element inside `x`, recursively. This overload
+ * Check that the predicate holds for the value of `x`. This overload
  * works on scalars.
+ *
  * @tparam F type of predicate
  * @tparam T type of `x`
  * @tparam Indexings types of `indexings`
@@ -124,10 +123,9 @@ inline void elementwise_check(const F& is_good, const char* function,
   }
 }
 /**
- * Check that the predicate holds for the value of `x`, working elementwise on
- * containers. If `x` is a scalar, check the double underlying the scalar. If
- * `x` is a container, check each element inside `x`, recursively. This overload
+ * Check that the predicate holds for all elements of the value of `x`. This overload
  * works on Eigen types that support linear indexing.
+ *
  * @tparam F type of predicate
  * @tparam T type of `x`
  * @tparam Indexings types of `indexings`
@@ -172,11 +170,11 @@ inline void elementwise_check(const F& is_good, const char* function,
     }
   }
 }
+
 /**
- * Check that the predicate holds for the value of `x`, working elementwise on
- * containers. If `x` is a scalar, check the double underlying the scalar. If
- * `x` is a container, check each element inside `x`, recursively. This overload
+ * Check that the predicate holds for all elements of the value of `x`. This overload
  * works on col-major Eigen types that do not support linear indexing.
+ *
  * @tparam F type of predicate
  * @tparam T type of `x`
  * @tparam Indexings types of `indexings`
@@ -213,11 +211,11 @@ inline void elementwise_check(const F& is_good, const char* function,
     }
   }
 }
+
 /**
- * Check that the predicate holds for the value of `x`, working elementwise on
- * containers. If `x` is a scalar, check the double underlying the scalar. If
- * `x` is a container, check each element inside `x`, recursively. This overload
+ * Check that the predicate holds for all the elements of the value of `x`. This overload
  * works on row-major Eigen types that do not support linear indexing.
+ *
  * @tparam F type of predicate
  * @tparam T type of `x`
  * @tparam Indexings types of `indexings`
@@ -254,11 +252,11 @@ inline void elementwise_check(const F& is_good, const char* function,
     }
   }
 }
+
 /**
- * Check that the predicate holds for the value of `x`, working elementwise on
- * containers. If `x` is a scalar, check the double underlying the scalar. If
- * `x` is a container, check each element inside `x`, recursively. This overload
- * works on `std::vector`s.
+ * Check that the predicate holds for all elements of the value of `x`. This overload
+ * works on `std::vector` types.
+ *
  * @tparam F type of predicate
  * @tparam T type of `x`
  * @tparam Indexings types of `indexings`
@@ -283,11 +281,11 @@ inline void elementwise_check(const F& is_good, const char* function,
                       j + error_index::value, "]");
   }
 }
+
 /**
- * Check that the predicate holds for the value of `x`, working elementwise on
- * containers. If `x` is a scalar, check the double underlying the scalar. If
- * `x` is a container, check each element inside `x`, recursively. This overload
+ * Check that the predicate holds for all elements of the value of `x`. This overload
  * works on `var`s containing Eigen types.
+ *
  * @tparam F type of predicate
  * @tparam T type of `x`
  * @tparam Indexings types of `indexings`
@@ -314,6 +312,7 @@ inline void elementwise_check(const F& is_good, const char* function,
  * Check that the predicate holds for the value of `x`, working elementwise on
  * containers. If `x` is a scalar, check the double underlying the scalar. If
  * `x` is a container, check each element inside `x`, recursively.
+ *
  * @tparam F type of predicate
  * @tparam T type of `x`
  * @param is_good predicate to check, must accept doubles and produce bools
