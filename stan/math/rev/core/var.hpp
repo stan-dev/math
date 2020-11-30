@@ -91,7 +91,7 @@ class var_value<T, require_floating_point_t<T>> {
    *
    * @return The value of this variable.
    */
-  inline const auto& val() const { return vi_->val_; }
+  inline const auto& val() const { return vi_->val(); }
 
   /**
    * Return a reference of the derivative of the root expression with
@@ -101,7 +101,7 @@ class var_value<T, require_floating_point_t<T>> {
    *
    * @return Adjoint for this variable.
    */
-  inline auto& adj() const { return vi_->adj_; }
+  inline auto& adj() const { return vi_->adj(); }
 
   /**
    * Return a reference to the derivative of the root expression with
@@ -112,6 +112,7 @@ class var_value<T, require_floating_point_t<T>> {
    * @return Adjoint for this variable.
    */
   inline auto& adj() { return vi_->adj_; }
+
   /**
    * Compute the gradient of this (dependent) variable with respect to
    * the specified vector of (independent) variables, assigning the
@@ -401,8 +402,8 @@ class var_value<
    *
    * @return The value of this variable.
    */
-  inline const auto& val() const { return vi_->val_; }
-  inline auto& val_op() { return vi_->val_; }
+  inline const auto& val() const { return vi_->val(); }
+  inline auto& val_op() { return vi_->val(); }
 
   /**
    * Return a reference to the derivative of the root expression with
@@ -412,9 +413,9 @@ class var_value<
    *
    * @return Adjoint for this variable.
    */
-  inline auto& adj() { return vi_->adj_; }
-  inline auto& adj() const { return vi_->adj_; }
-  inline auto& adj_op() { return vi_->adj_; }
+  inline auto& adj() { return vi_->adj(); }
+  inline auto& adj() const { return vi_->adj(); }
+  inline auto& adj_op() { return vi_->adj(); }
 
   inline Eigen::Index rows() const { return vi_->val_.rows(); }
   inline Eigen::Index cols() const { return vi_->val_.cols(); }
@@ -485,7 +486,8 @@ class var_value<
    * @return The result of subtracting the specified variable from
    * this variable.
    */
-  inline var_value<T>& operator-=(const var_value<T>& b);
+  template <typename S, require_st_var<S>* = nullptr>
+  inline var_value<T>& operator-=(const S& b);
 
   /**
    * The compound subtract/assignment operator for scalars (C++).
@@ -498,7 +500,8 @@ class var_value<
    * @return The result of subtracting the specified variable from this
    * variable.
    */
-  inline var_value<T>& operator-=(T b);
+  template <typename S, require_st_arithmetic<S>* = nullptr>
+  inline var_value<T>& operator-=(const S& b);
 
   /**
    * The compound multiply/assignment operator for variables (C++).
