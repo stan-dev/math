@@ -15,7 +15,6 @@
 #include <string>
 #include <tuple>
 #include <type_traits>
-#include <set>
 #include <utility>
 
 namespace stan {
