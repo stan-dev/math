@@ -123,8 +123,8 @@ inline void elementwise_check(const F& is_good, const char* function,
   }
 }
 /**
- * Check that the predicate holds for all elements of the value of `x`. This overload
- * works on Eigen types that support linear indexing.
+ * Check that the predicate holds for all elements of the value of `x`. This
+ * overload works on Eigen types that support linear indexing.
  *
  * @tparam F type of predicate
  * @tparam T type of `x`
@@ -172,8 +172,8 @@ inline void elementwise_check(const F& is_good, const char* function,
 }
 
 /**
- * Check that the predicate holds for all elements of the value of `x`. This overload
- * works on col-major Eigen types that do not support linear indexing.
+ * Check that the predicate holds for all elements of the value of `x`. This
+ * overload works on col-major Eigen types that do not support linear indexing.
  *
  * @tparam F type of predicate
  * @tparam T type of `x`
@@ -213,8 +213,8 @@ inline void elementwise_check(const F& is_good, const char* function,
 }
 
 /**
- * Check that the predicate holds for all the elements of the value of `x`. This overload
- * works on row-major Eigen types that do not support linear indexing.
+ * Check that the predicate holds for all the elements of the value of `x`. This
+ * overload works on row-major Eigen types that do not support linear indexing.
  *
  * @tparam F type of predicate
  * @tparam T type of `x`
@@ -254,8 +254,8 @@ inline void elementwise_check(const F& is_good, const char* function,
 }
 
 /**
- * Check that the predicate holds for all elements of the value of `x`. This overload
- * works on `std::vector` types.
+ * Check that the predicate holds for all elements of the value of `x`. This
+ * overload works on `std::vector` types.
  *
  * @tparam F type of predicate
  * @tparam T type of `x`
@@ -283,8 +283,8 @@ inline void elementwise_check(const F& is_good, const char* function,
 }
 
 /**
- * Check that the predicate holds for all elements of the value of `x`. This overload
- * works on `var`s containing Eigen types.
+ * Check that the predicate holds for all elements of the value of `x`. This
+ * overload works on `var`s containing Eigen types.
  *
  * @tparam F type of predicate
  * @tparam T type of `x`
