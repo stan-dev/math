@@ -147,6 +147,7 @@
 #include <stan/math/opencl/prim/rows.hpp>
 #include <stan/math/opencl/prim/sign.hpp>
 #include <stan/math/opencl/prim/size.hpp>
+#include <stan/math/opencl/prim/std_normal_lpdf.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/opencl/prim/tcrossprod.hpp>
 
