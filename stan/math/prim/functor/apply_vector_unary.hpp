@@ -131,6 +131,22 @@ struct apply_vector_unary<T, require_std_vector_vt<is_stan_scalar, T>> {
   }
 
   /**
+   * Member function for applying a functor to each container in an std::vector
+   * and subsequently returning an std::vector of containers.
+   *
+   * @tparam T Type of argument to which functor is applied.
+   * @tparam F Type of functor to apply.
+   * @param x std::vector of containers to which operation is applied.
+   * @param f functor to apply to vector input.
+   * @return std::vector of containers with result of applying functor to
+   *         input.
+   */
+  template <typename F>
+  static inline auto apply_no_holder(const T& x, const F& f) {
+    return apply(x,f);
+  }
+
+  /**
    * Member function for applying a functor to a vector and subsequently
    * returning a scalar.
    *
