@@ -136,10 +136,12 @@ inline auto subtract(const VarMat1& a, const VarMat2& b) {
   arena_t<VarMat2> arena_b = b;
   arena_t<ret_type> ret((arena_a.val() - arena_b.val()));
   reverse_pass_callback([ret, arena_a, arena_b]() mutable {
-    for (Eigen::Index i = 0; i < ret.size(); ++i) {
-      const auto ret_adj = ret.adj().coeffRef(i);
-      arena_a.adj().coeffRef(i) += ret_adj;
-      arena_b.adj().coeffRef(i) -= ret_adj;
+    for (Eigen::Index j = 0; j < ret.cols(); ++j) {
+      for (Eigen::Index i = 0; i < ret.rows(); ++i) {
+        const auto ref_adj = ret.adj().coeffRef(i, j);
+        arena_a.adj().coeffRef(i, j) += ref_adj;
+        arena_b.adj().coeffRef(i, j) -= ref_adj;
+      }
     }
   });
   return ret_type(ret);
