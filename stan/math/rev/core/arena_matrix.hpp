@@ -114,4 +114,22 @@ class arena_matrix : public Eigen::Map<MatrixType> {
 }  // namespace math
 }  // namespace stan
 
+namespace Eigen {
+namespace internal {
+
+template <typename T>
+struct traits<stan::math::arena_matrix<T>> {
+  using base = traits<Eigen::Map<T>>;
+  enum {
+    PlainObjectTypeInnerSize = base::PlainObjectTypeInnerSize,
+    InnerStrideAtCompileTime = base::InnerStrideAtCompileTime,
+    OuterStrideAtCompileTime = base::OuterStrideAtCompileTime,
+    Alignment = base::Alignment,
+    Flags = base::Flags
+  };
+};
+
+}  // namespace internal
+}  // namespace Eigen
+
 #endif

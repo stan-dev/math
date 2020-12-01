@@ -35,7 +35,7 @@ inline EigMat to_matrix(EigMat&& x) {
  */
 template <typename T>
 inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
-    const std::vector<Eigen::Matrix<T, 1, Eigen::Dynamic> >& x) {
+    const std::vector<Eigen::Matrix<T, 1, Eigen::Dynamic>>& x) {
   int rows = x.size();
   if (rows == 0) {
     return {};
@@ -60,7 +60,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
  */
 template <typename T>
 inline Eigen::Matrix<return_type_t<T, double>, Eigen::Dynamic, Eigen::Dynamic>
-to_matrix(const std::vector<std::vector<T> >& x) {
+to_matrix(const std::vector<std::vector<T>>& x) {
   size_t rows = x.size();
   if (rows == 0) {
     return {};
@@ -116,7 +116,7 @@ template <typename T>
 inline auto to_matrix(const std::vector<T>& x, int m, int n) {
   static const char* function = "to_matrix(array)";
   check_size_match(function, "rows * columns", m * n, "vector size", x.size());
-  return Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >(
+  return Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>(
       &x[0], m, n);
 }
 

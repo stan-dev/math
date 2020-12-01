@@ -25,7 +25,7 @@ inline matrix_d multiply_lower_tri_self_transpose(const EigMat& L) {
   }
   if (K == 1) {
     matrix_d result(1, 1);
-    result(0) = square(L(0));  // first elt, so don't need double idx
+    result.coeffRef(0) = square(L.coeff(0, 0));
     return result;
   }
   int J = L.cols();

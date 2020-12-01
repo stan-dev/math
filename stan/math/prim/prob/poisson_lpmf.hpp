@@ -19,7 +19,9 @@ namespace stan {
 namespace math {
 
 // Poisson(n|lambda)  [lambda > 0;  n >= 0]
-template <bool propto, typename T_n, typename T_rate>
+template <bool propto, typename T_n, typename T_rate,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_n, T_rate>* = nullptr>
 return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
   using T_partials_return = partials_return_t<T_n, T_rate>;
   using T_n_ref = ref_type_if_t<!is_constant<T_n>::value, T_n>;
