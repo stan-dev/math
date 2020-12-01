@@ -103,9 +103,8 @@ An example of using OpenCL supported Stan Math functions for reverse mode AD is 
 ```cpp
 using stan::math;
 
-Eigen::Matrix<double, -1, -1> A(N,M);
-Eigen::Matrix<double, -1, -1> B(M,N);
-// ... fill matrices A and B
+Eigen::Matrix<double, -1, -1> A = Eigen::Matrix<double, -1, -1>::Random(N, M);
+Eigen::Matrix<double, -1, -1> B = Eigen::Matrix<double, -1, -1>::Random(M, N);
 var_value<matrix_cl<double>> A_cl = to_matrix_cl(A);
 var_value<matrix_cl<double>> B_cl = to_matrix_cl(B);
 var_value<matrix_cl<double>> C_cl = A_cl * B_cl;
