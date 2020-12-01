@@ -33,17 +33,9 @@ return_type_t<T_y, T_low, T_high> uniform_lccdf(const T_y& y,
   T_alpha_ref alpha_ref = alpha;
   T_beta_ref beta_ref = beta;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& alpha_col = as_column_vector_or_scalar(alpha_ref);
-  const auto& beta_col = as_column_vector_or_scalar(beta_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& alpha_arr = as_array_or_scalar(alpha_col);
-  const auto& beta_arr = as_array_or_scalar(beta_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(alpha_arr))> alpha_val = value_of(alpha_arr);
-  ref_type_t<decltype(value_of(beta_arr))> beta_val = value_of(beta_arr);
+  auto y_val = to_value_column_array_or_scalar(y_ref);
+  auto alpha_val = to_value_column_array_or_scalar(alpha_ref);
+  auto beta_val = to_value_column_array_or_scalar(beta_ref);
 
   check_not_nan(function, "Random variable", y_val);
   check_finite(function, "Lower bound parameter", alpha_val);

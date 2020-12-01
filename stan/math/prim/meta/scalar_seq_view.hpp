@@ -140,7 +140,7 @@ class scalar_seq_view<C, require_stan_scalar_t<C>> {
   int size() const { return 1; }
 
  private:
-  C t_;
+  std::decay_t<C> t_;
 };
 }  // namespace stan
 #endif

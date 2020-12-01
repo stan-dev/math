@@ -230,6 +230,10 @@
 #include <stan/math/prim/meta/scalar_type_pre.hpp>
 #include <stan/math/prim/meta/seq_view.hpp>
 #include <stan/math/prim/meta/static_select.hpp>
+#include <stan/math/prim/meta/to_value_array_or_scalar.hpp>
+#include <stan/math/prim/meta/to_value_rec_array_or_scalar.hpp>
+#include <stan/math/prim/meta/to_value_rec_column_array_or_scalar.hpp>
+#include <stan/math/prim/meta/to_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/meta/value_type.hpp>
 #include <stan/math/prim/meta/vector_seq_view.hpp>
 #include <stan/math/prim/meta/void_t.hpp>

@@ -36,14 +36,8 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
   T_n_ref n_ref = n;
   T_alpha_ref alpha_ref = alpha;
 
-  const auto& n_col = as_column_vector_or_scalar(n_ref);
-  const auto& alpha_col = as_column_vector_or_scalar(alpha_ref);
-
-  const auto& n_arr = as_array_or_scalar(n_col);
-  const auto& alpha_arr = as_array_or_scalar(alpha_col);
-
-  ref_type_t<decltype(value_of(n_arr))> n_val = value_of(n_arr);
-  ref_type_t<decltype(value_of(alpha_arr))> alpha_val = value_of(alpha_arr);
+  auto n_val = to_value_column_array_or_scalar(n_ref);
+  auto alpha_val = to_value_column_array_or_scalar(alpha_ref);
 
   check_nonnegative(function, "Random variable", n_val);
   check_not_nan(function, "Log rate parameter", alpha_val);

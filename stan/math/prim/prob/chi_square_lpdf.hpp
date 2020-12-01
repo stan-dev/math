@@ -52,17 +52,10 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
                          "Degrees of freedom parameter", nu);
   T_y_ref y_ref = y;
   T_nu_ref nu_ref = nu;
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& nu_col = as_column_vector_or_scalar(nu_ref);
 
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& nu_arr = as_array_or_scalar(nu_col);
+  auto y_val = to_value_column_array_or_scalar(y_ref);
+  auto nu_val = to_value_column_array_or_scalar(nu_ref);
 
-  ref_type_if_t<include_summand<propto, T_y>::value, decltype(value_of(y_arr))>
-      y_val = value_of(y_arr);
-  ref_type_if_t<include_summand<propto, T_dof>::value,
-                decltype(value_of(nu_arr))>
-      nu_val = value_of(nu_arr);
   check_nonnegative(function, "Random variable", y_val);
   check_positive_finite(function, "Degrees of freedom parameter", nu_val);
 

@@ -39,17 +39,9 @@ return_type_t<T_y, T_scale, T_shape> pareto_lcdf(const T_y& y,
   T_y_min_ref y_min_ref = y_min;
   T_alpha_ref alpha_ref = alpha;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& y_min_col = as_column_vector_or_scalar(y_min_ref);
-  const auto& alpha_col = as_column_vector_or_scalar(alpha_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& y_min_arr = as_array_or_scalar(y_min_col);
-  const auto& alpha_arr = as_array_or_scalar(alpha_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(y_min_arr))> y_min_val = value_of(y_min_arr);
-  ref_type_t<decltype(value_of(alpha_arr))> alpha_val = value_of(alpha_arr);
+  auto y_val = to_value_column_array_or_scalar(y_ref);
+  auto y_min_val = to_value_column_array_or_scalar(y_min_ref);
+  auto alpha_val = to_value_column_array_or_scalar(alpha_ref);
 
   check_nonnegative(function, "Random variable", y_val);
   check_positive_finite(function, "Scale parameter", y_min_val);

@@ -33,17 +33,10 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
   T_mu_ref mu_ref = mu;
   T_kappa_ref kappa_ref = kappa;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& mu_col = as_column_vector_or_scalar(mu_ref);
-  const auto& kappa_col = as_column_vector_or_scalar(kappa_ref);
+  auto y_val = to_value_column_array_or_scalar(y_ref);
+  auto mu_val = to_value_column_array_or_scalar(mu_ref);
+  auto kappa_val = to_value_column_array_or_scalar(kappa_ref);
 
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& mu_arr = as_array_or_scalar(mu_col);
-  const auto& kappa_arr = as_array_or_scalar(kappa_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
-  ref_type_t<decltype(value_of(kappa_arr))> kappa_val = value_of(kappa_arr);
   check_finite(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);
   check_nonnegative(function, "Scale parameter", kappa_val);

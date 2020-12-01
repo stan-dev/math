@@ -88,28 +88,26 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   T_alpha_ref alpha_ref = alpha;
   T_beta_ref beta_ref = beta;
 
-  const auto& y_val = value_of_rec(y_ref);
   const auto& x_val
       = to_ref_if<!is_constant<T_beta>::value>(value_of_rec(x_ref));
-  const auto& alpha_val = value_of_rec(alpha_ref);
   const auto& beta_val = value_of_rec(beta_ref);
 
-  const auto& y_val_vec = as_column_vector_or_scalar(y_val);
-  const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
+  auto y_val = to_value_rec_column_array_or_scalar(y_ref);
+  auto alpha_val = to_value_rec_column_array_or_scalar(alpha_ref);
   const auto& beta_val_vec = to_ref_if<!is_constant<T_x>::value>(
       as_column_vector_or_scalar(beta_val));
 
   auto signs = to_ref_if<!is_constant_all<T_beta, T_x, T_alpha>::value>(
-      2 * as_array_or_scalar(y_val_vec) - 1);
+      2 * y_val - 1);
 
   Array<T_partials_return, Dynamic, 1> ytheta(N_instances);
   if (T_x_rows == 1) {
     T_ytheta_tmp ytheta_tmp
         = forward_as<T_ytheta_tmp>((x_val * beta_val_vec)(0, 0));
-    ytheta = signs * (ytheta_tmp + as_array_or_scalar(alpha_val_vec));
+    ytheta = signs * (ytheta_tmp + alpha_val);
   } else {
     ytheta = (x_val * beta_val_vec).array();
-    ytheta = signs * (ytheta + as_array_or_scalar(alpha_val_vec));
+    ytheta = signs * (ytheta + alpha_val);
   }
 
   // Compute the log-density and handle extreme values gracefully

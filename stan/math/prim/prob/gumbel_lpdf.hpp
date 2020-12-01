@@ -47,17 +47,9 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
   T_mu_ref mu_ref = mu;
   T_beta_ref beta_ref = beta;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& mu_col = as_column_vector_or_scalar(mu_ref);
-  const auto& beta_col = as_column_vector_or_scalar(beta_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& mu_arr = as_array_or_scalar(mu_col);
-  const auto& beta_arr = as_array_or_scalar(beta_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
-  ref_type_t<decltype(value_of(beta_arr))> beta_val = value_of(beta_arr);
+  auto y_val = to_value_column_array_or_scalar(y_ref);
+  auto mu_val = to_value_column_array_or_scalar(mu_ref);
+  auto beta_val = to_value_column_array_or_scalar(beta_ref);
 
   check_not_nan(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);
@@ -75,7 +67,7 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
 
   const auto& inv_beta
       = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(inv(beta_val));
-  const auto& y_minus_mu_over_beta = to_ref((y_val - mu_val) * inv_beta);
+  const auto& y_minus_mu_over_beta = to_ref((std::move(y_val) - std::move(mu_val)) * inv_beta);
   const auto& exp_y_m_mu_over_beta
       = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(
           exp(-y_minus_mu_over_beta));
@@ -91,7 +83,7 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
         = to_ref_if<!is_constant_all<T_loc>::value
                         + !is_constant_all<T_scale>::value
                         + !is_constant_all<T_y>::value
-                    >= 2>(inv_beta * exp_y_m_mu_over_beta - inv_beta);
+                    >= 2>(inv_beta * std::move(exp_y_m_mu_over_beta) - inv_beta);
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_ = scaled_diff;
     }
@@ -100,7 +92,7 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
     }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_
-          = -y_minus_mu_over_beta * scaled_diff - inv_beta;
+          = -std::move(y_minus_mu_over_beta) * std::move(scaled_diff) - std::move(inv_beta);
     }
   }
   return ops_partials.build(logp);
