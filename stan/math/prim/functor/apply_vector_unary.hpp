@@ -211,7 +211,7 @@ struct apply_vector_unary<T, require_std_vector_vt<is_container, T>> {
    */
   template <typename F>
   static inline auto apply_no_holder(const T& x, const F& f) {
-    return apply(x,f);
+    return apply(x, f);
   }
 
   /**
