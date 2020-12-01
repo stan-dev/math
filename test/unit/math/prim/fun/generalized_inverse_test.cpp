@@ -1,14 +1,14 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrixPrim, generalized_inverse) {
+TEST(MathMatrixPrim, Zero) {
   stan::math::matrix_d m0(0, 0);
   stan::math::matrix_d ginv = stan::math::generalized_inverse(m0);
   EXPECT_EQ(0, ginv.rows());
   EXPECT_EQ(0, ginv.cols());
 }
 
-TEST(MathMatrixPrim, inverse_correct) {
+TEST(MathMatrixPrim, Equal) {
   using stan::math::generalized_inverse;
 
   stan::math::matrix_d m1(3, 2);
