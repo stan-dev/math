@@ -9,4 +9,9 @@ TEST(mathMixScalFun, normal_lpdf) {
   stan::test::expect_ad(f(0, 1), -2.3);
   stan::test::expect_ad(f(0, 1), 0.0);
   stan::test::expect_ad(f(0, 1), 1.7);
+
+  Eigen::VectorXd y(1);
+  y << 1.7;
+  stan::test::expect_ad(f(0, 1), y);
+  stan::test::expect_ad_matvar(f(0, 1), y);
 }
