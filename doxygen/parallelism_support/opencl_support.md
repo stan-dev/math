@@ -152,7 +152,9 @@ var C_sum = sum(C_cl);
 - rayleigh_lpdf
 - scaled_inv_chi_square_lpdf
 - skew_normal_lpdf
-
+- std_normal_lpdf
+- student_t_lpdf
+- uniform_lpdf
 
 ### Primitive functions
 
