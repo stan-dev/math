@@ -144,14 +144,14 @@ TEST(mathMixCore, operatorSubtractionMatrixFailures) {
   stan::test::expect_ad_matvar(tols, f, rvv, u);
 }
 
-
 TEST(mathMixCore, operatorSubtractionMatrixLinearAccess) {
   Eigen::MatrixXd matrix_m11(3, 3);
   for (Eigen::Index i = 0; i < matrix_m11.size(); ++i) {
     matrix_m11(i) = i;
   }
   stan::math::var_value<Eigen::MatrixXd> A(matrix_m11);
-  stan::math::var_value<Eigen::MatrixXd> B = stan::math::subtract(A, A.transpose());
+  stan::math::var_value<Eigen::MatrixXd> B
+      = stan::math::subtract(A, A.transpose());
   B.adj()(2, 0) = 1;
   stan::math::grad();
   Eigen::MatrixXd expected_adj = Eigen::MatrixXd::Zero(3, 3);
