@@ -30,39 +30,28 @@ template <typename EigMat, require_eigen_vt<std::is_arithmetic, EigMat>* = nullp
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
                      EigMat::ColsAtCompileTime>
 generalized_inverse(const EigMat& M) {
+  using value_t = value_type_t<EigMat>;
   if (M.size() == 0) {
     return {};
   }
-
-  constexpr int n = EigMat::RowsAtCompileTime;
-  constexpr int m = EigMat::ColsAtCompileTime;
+  const auto n = M.rows();
+  const auto m = M.cols();
 
   if (n == m) {
       return M.inverse();
-  }
-
-  bool transp(false);
-  constexpr int mn;
-
-  if (n < m) {
-    transp = true;
-    mn = n;
-    Eigen::Matrix<T, mn, mn> A = tcrossprod(G);
+  } else if (n < m) {
+    Eigen::Matrix<value_t, -1, -1> A = tcrossprod(M);
+    A.diagonal().array() += Eigen::Array<double, -1, 1>::Constant(n, 1e-10);
+    Eigen::Matrix<value_t, -1, -1> L = cholesky_decompose(A);
+    Eigen::Matrix<value_t, -1, -1> M = chol2inv(L);
+    return transpose(M) * tcrossprod(L * M);
   } else {
-     mn = m;
-    Eigen::Matrix<T, mn, mn> A = = crossprod(G);
+    Eigen::Matrix<value_t, -1, -1> A = crossprod(M);
+    A.diagonal().array() += Eigen::Array<double, -1, 1>::Constant(m, 1e-10);
+    Eigen::Matrix<value_t, -1, -1> L = cholesky_decompose(A);
+    Eigen::Matrix<value_t, -1, -1> M = chol2inv(L);
+    return tcrossprod(L * M) * transpose(M);
   }
-  
-   A = add_diag(A, rep_vector(1e-10, mn));
-
-   Eigen::Matrix<T, mn, mn> L = cholesky_decompose(A);
-   Eigen::Matrix<T, mn, mn> M = chol2inv(L);
-
-   if (transp){
-      return transpose(G) * tcrossprod(L * M);
-   } else {
-      return tcrossprod(L * M) * transpose(G);
-   }
 }
 
 }  // namespace math
