@@ -22,12 +22,11 @@ namespace math {
  * @tparam n number of rows, can be Eigen::Dynamic
  * @tparam m number of columns, can be Eigen::Dynamic
  *
- * @param m specified matrix
+ * @param M specified matrix
  * @return Generalized inverse of the matrix (an empty matrix if the specified matrix has
  * size zero).
  */
-template <typename EigMat,
-          require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
+template <typename EigMat, require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
                      EigMat::ColsAtCompileTime>
 generalized_inverse(const EigMat& M) {
