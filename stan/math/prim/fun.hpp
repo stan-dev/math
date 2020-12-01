@@ -305,7 +305,7 @@
 #include <stan/math/prim/fun/sub_row.hpp>
 #include <stan/math/prim/fun/subtract.hpp>
 #include <stan/math/prim/fun/sum.hpp>
-#include <stan/math/prim/fun/symmetrize.hpp>
+#include <stan/math/prim/fun/symmetrize_from_lower_tri.hpp>
 #include <stan/math/prim/fun/tail.hpp>
 #include <stan/math/prim/fun/tan.hpp>
 #include <stan/math/prim/fun/tanh.hpp>
