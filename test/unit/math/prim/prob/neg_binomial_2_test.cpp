@@ -63,7 +63,7 @@ TEST(ProbDistributionsNegBinomial2, error_check) {
   error_msg
       = "neg_binomial_2_rng: Location parameter "
         "divided by the precision parameter is "
-        "inf, but must be finite!";
+        "inf";
   try {
     stan::math::neg_binomial_2_rng(1e300, 1e-300, rng);
     FAIL() << "neg_binomial_2_rng should have thrown" << std::endl;

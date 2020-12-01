@@ -418,17 +418,29 @@ def main(functions=(), j=1):
             expression_arg_list = ""
             for n, arg in enumerate(function_args[:-1]):
                 if arg in eigen_types:
-                    expression_arg_list += "arg_expr%d.unaryExpr(counter_op%d), " % (
-                        n,
-                        n,
-                    )
+                    if arg == "matrix":
+                        expression_arg_list += "arg_expr%d.block(0,0,1,1).unaryExpr(counter_op%d), " % (
+                            n,
+                            n,
+                        )
+                    else:
+                      expression_arg_list += "arg_expr%d.segment(0,1).unaryExpr(counter_op%d), " % (
+                          n,
+                          n,
+                      )
                 else:
                     expression_arg_list += "arg_expr%d, " % n
             if function_args[-1] in eigen_types:
-                expression_arg_list += "arg_expr%d.unaryExpr(counter_op%d)" % (
-                    len(function_args) - 1,
-                    len(function_args) - 1,
-                )
+                if function_args[-1] == "matrix":
+                    expression_arg_list += "arg_expr%d.block(0,0,1,1).unaryExpr(counter_op%d)" % (
+                        len(function_args) - 1,
+                        len(function_args) - 1,
+                    )
+                else:
+                  expression_arg_list += "arg_expr%d.segment(0,1).unaryExpr(counter_op%d)" % (
+                      len(function_args) - 1,
+                      len(function_args) - 1,
+                    )
             else:
                 expression_arg_list += "arg_expr%d" % (len(function_args) - 1)
 
