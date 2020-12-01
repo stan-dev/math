@@ -55,40 +55,29 @@ TEST(ProbDistributionsStudentT, error_checking) {
   stan::math::matrix_cl<double> sigma_value1_cl(sigma_value1);
   stan::math::matrix_cl<double> sigma_value2_cl(sigma_value2);
 
-  EXPECT_NO_THROW(
-      stan::math::student_t_lpdf(y_cl, nu_cl, mu_cl, sigma_cl));
+  EXPECT_NO_THROW(stan::math::student_t_lpdf(y_cl, nu_cl, mu_cl, sigma_cl));
 
-  EXPECT_THROW(
-      stan::math::student_t_lpdf(y_size_cl, nu_cl, mu_cl, sigma_cl),
-      std::invalid_argument);
-  EXPECT_THROW(
-      stan::math::student_t_lpdf(y_cl, nu_size_cl, mu_cl, sigma_cl),
-      std::invalid_argument);
-  EXPECT_THROW(
-      stan::math::student_t_lpdf(y_cl, nu_cl, mu_size_cl, sigma_cl),
-      std::invalid_argument);
-  EXPECT_THROW(
-      stan::math::student_t_lpdf(y_cl, nu_cl, mu_cl, sigma_size_cl),
-      std::invalid_argument);
+  EXPECT_THROW(stan::math::student_t_lpdf(y_size_cl, nu_cl, mu_cl, sigma_cl),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::student_t_lpdf(y_cl, nu_size_cl, mu_cl, sigma_cl),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::student_t_lpdf(y_cl, nu_cl, mu_size_cl, sigma_cl),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::student_t_lpdf(y_cl, nu_cl, mu_cl, sigma_size_cl),
+               std::invalid_argument);
 
-  EXPECT_THROW(
-      stan::math::student_t_lpdf(y_value_cl, nu_cl, mu_cl, sigma_cl),
-      std::domain_error);
-  EXPECT_THROW(
-      stan::math::student_t_lpdf(y_cl, nu_value1_cl, mu_cl, sigma_cl),
-      std::domain_error);
-  EXPECT_THROW(
-      stan::math::student_t_lpdf(y_cl, nu_value2_cl, mu_cl, sigma_cl),
-      std::domain_error);
-  EXPECT_THROW(
-      stan::math::student_t_lpdf(y_cl, nu_cl, mu_value_cl, sigma_cl),
-      std::domain_error);
-  EXPECT_THROW(
-      stan::math::student_t_lpdf(y_cl, nu_cl, mu_cl, sigma_value1_cl),
-      std::domain_error);
-  EXPECT_THROW(
-      stan::math::student_t_lpdf(y_cl, nu_cl, mu_cl, sigma_value2_cl),
-      std::domain_error);
+  EXPECT_THROW(stan::math::student_t_lpdf(y_value_cl, nu_cl, mu_cl, sigma_cl),
+               std::domain_error);
+  EXPECT_THROW(stan::math::student_t_lpdf(y_cl, nu_value1_cl, mu_cl, sigma_cl),
+               std::domain_error);
+  EXPECT_THROW(stan::math::student_t_lpdf(y_cl, nu_value2_cl, mu_cl, sigma_cl),
+               std::domain_error);
+  EXPECT_THROW(stan::math::student_t_lpdf(y_cl, nu_cl, mu_value_cl, sigma_cl),
+               std::domain_error);
+  EXPECT_THROW(stan::math::student_t_lpdf(y_cl, nu_cl, mu_cl, sigma_value1_cl),
+               std::domain_error);
+  EXPECT_THROW(stan::math::student_t_lpdf(y_cl, nu_cl, mu_cl, sigma_value2_cl),
+               std::domain_error);
 }
 
 auto student_t_lpdf_functor
@@ -130,8 +119,8 @@ TEST(ProbDistributionsStudentT, opencl_broadcast_y) {
   Eigen::VectorXd sigma(N);
   sigma << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      student_t_lpdf_functor, y_scal, nu, mu, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(student_t_lpdf_functor,
+                                                         y_scal, nu, mu, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       student_t_lpdf_functor_propto, y_scal, nu, mu, sigma);
 }
@@ -147,8 +136,8 @@ TEST(ProbDistributionsStudentT, opencl_broadcast_nu) {
   Eigen::VectorXd sigma(N);
   sigma << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-      student_t_lpdf_functor, y, nu_scal, mu, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(student_t_lpdf_functor,
+                                                         y, nu_scal, mu, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       student_t_lpdf_functor_propto, y, nu_scal, mu, sigma);
 }
@@ -164,8 +153,8 @@ TEST(ProbDistributionsStudentT, opencl_broadcast_mu) {
   Eigen::VectorXd sigma(N);
   sigma << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
-      student_t_lpdf_functor, y, nu, mu_scal, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(student_t_lpdf_functor,
+                                                         y, nu, mu_scal, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       student_t_lpdf_functor_propto, y, nu, mu_scal, sigma);
 }
@@ -181,8 +170,8 @@ TEST(ProbDistributionsStudentT, opencl_broadcast_sigma) {
   mu << 0.3, 0.8, -1.0;
   double sigma_scal = 12.3;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<3>(
-      student_t_lpdf_functor, y, nu, mu, sigma_scal);
+  stan::math::test::test_opencl_broadcasting_prim_rev<3>(student_t_lpdf_functor,
+                                                         y, nu, mu, sigma_scal);
   stan::math::test::test_opencl_broadcasting_prim_rev<3>(
       student_t_lpdf_functor_propto, y, nu, mu, sigma_scal);
 }

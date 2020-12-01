@@ -26,12 +26,10 @@ namespace math {
  * @return The log of the product of the densities.
  * @throw std::domain_error if any scalar is nan.
  */
-template <
-    bool propto, typename T_y_cl,
-    require_all_prim_or_rev_kernel_expression_t<T_y_cl>* = nullptr,
-    require_any_not_stan_scalar_t<T_y_cl>* = nullptr>
-inline return_type_t<T_y_cl> std_normal_lpdf(
-    const T_y_cl& y) {
+template <bool propto, typename T_y_cl,
+          require_all_prim_or_rev_kernel_expression_t<T_y_cl>* = nullptr,
+          require_any_not_stan_scalar_t<T_y_cl>* = nullptr>
+inline return_type_t<T_y_cl> std_normal_lpdf(const T_y_cl& y) {
   static const char* function = "std_normal_lpdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl>;
   using std::isfinite;
@@ -51,18 +49,15 @@ inline return_type_t<T_y_cl> std_normal_lpdf(
       = check_cl(function, "Random variable", y_val, "not NaN");
   auto y_not_nan = !isnan(y_val);
 
-  auto logp_expr
-      = colwise_sum(elt_multiply(y_val, y_val));
+  auto logp_expr = colwise_sum(elt_multiply(y_val, y_val));
 
   auto y_deriv = -y_val;
 
   matrix_cl<double> logp_cl;
   matrix_cl<double> y_deriv_cl;
 
-  results(check_y_not_nan, logp_cl,
-          y_deriv_cl)
-      = expressions(y_not_nan, logp_expr,
-                    calc_if<!is_constant<T_y_cl>::value>(y_deriv));
+  results(check_y_not_nan, logp_cl, y_deriv_cl) = expressions(
+      y_not_nan, logp_expr, calc_if<!is_constant<T_y_cl>::value>(y_deriv));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl)) * -0.5;
 

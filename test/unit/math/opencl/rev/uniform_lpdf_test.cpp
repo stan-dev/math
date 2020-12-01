@@ -16,7 +16,7 @@ TEST(ProbDistributionsUniform, error_checking) {
   y_value << 0.3, NAN, 0.5;
 
   Eigen::VectorXd alpha(N);
-  alpha << 0.2, - 0.8, -2.0;
+  alpha << 0.2, -0.8, -2.0;
   Eigen::VectorXd alpha_size(N - 1);
   alpha_size << 0.3, 0.8;
   Eigen::VectorXd alpha_value(N);
