@@ -42,7 +42,6 @@ return_type_t<T_y, T_scale, T_shape> pareto_lccdf(const T_y& y,
   auto y_min_val = to_value_column_array_or_scalar(y_min_ref);
   auto alpha_val = to_value_column_array_or_scalar(alpha_ref);
 
-
   check_nonnegative(function, "Random variable", y_val);
   check_positive_finite(function, "Scale parameter", y_min_val);
   check_positive_finite(function, "Shape parameter", alpha_val);

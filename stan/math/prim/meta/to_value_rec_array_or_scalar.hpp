@@ -34,7 +34,7 @@ inline auto to_value_rec_array_or_scalar(T v) {
  * @return Matrix converted to an array.
  */
 template <typename T, require_eigen_t<T>* = nullptr,
- require_not_plain_type_t<T>* = nullptr>
+          require_not_plain_type_t<T>* = nullptr>
 inline auto to_value_rec_array_or_scalar(T&& v) {
   return value_of_rec(v.eval()).eval().array();
 }
@@ -47,7 +47,7 @@ inline auto to_value_rec_array_or_scalar(T&& v) {
  * @return Matrix converted to an array.
  */
 template <typename T, require_eigen_t<T>* = nullptr,
- require_plain_type_t<T>* = nullptr>
+          require_plain_type_t<T>* = nullptr>
 inline auto to_value_rec_array_or_scalar(T&& v) {
   return value_of_rec(std::forward<T>(v)).eval().array();
 }
