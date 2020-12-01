@@ -116,7 +116,7 @@ using row_vector_return_t = Eigen::Matrix<real_return_t<Ts...>, 1, -1>;
  */
 template <typename T1, typename T2>
 struct scalar_lub {
-  using type = promote_args_t<T1, T2>;
+  using type = promote_args_t<std::decay_t<T1>, std::decay_t<T2>>;
 };
 
 template <typename T1, typename T2>
