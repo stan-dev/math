@@ -151,6 +151,7 @@
 #include <stan/math/opencl/prim/student_t_lpdf.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/opencl/prim/tcrossprod.hpp>
+#include <stan/math/opencl/prim/uniform_lpdf.hpp>
 
 #include <stan/math/opencl/err.hpp>
 
