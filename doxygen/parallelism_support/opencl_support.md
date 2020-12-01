@@ -108,16 +108,15 @@ Eigen::Matrix<double, -1, -1> B = Eigen::Matrix<double, -1, -1>::Random(M, N);
 var_value<matrix_cl<double>> A_cl = to_matrix_cl(A);
 var_value<matrix_cl<double>> B_cl = to_matrix_cl(B);
 var_value<matrix_cl<double>> C_cl = A_cl * B_cl;
-var_value<Eigen::Matrix<double, -1, -1>> C = from_matrix_cl(C_cl);
-C(0,0).grad();
+var C_sum = sum(C_cl);
 ```
 
 #### Supported functions
 
 - cholesky_decompose
 - gp_exp_quad_cov
-- mdivide_right_tri
-- mdivide_left_tri
+- mdivide_right_tri, mdivide_right_tri_low
+- mdivide_left_tri, mdivide_left_tri_low
 - multiplication
 - sum
 
@@ -150,6 +149,10 @@ C(0,0).grad();
 - poisson_lpmf
 - poisson_log_lpmf
 - poisson_log_glm_lpmf
+- rayleigh_lpdf
+- scaled_inv_chi_square_lpdf
+- skew_normal_lpdf
+
 
 ### Primitive functions
 
@@ -159,9 +162,8 @@ An example:
 ```cpp
 using stan::math;
 
-Eigen::Matrix<double, -1, -1> A(N,N);
-Eigen::Matrix<double, -1, -1> B(N,N);
-// ... fill matrices A and B
+Eigen::Matrix<double, -1, -1> A = Eigen::Matrix<double, -1, -1>::Random(N, M);
+Eigen::Matrix<double, -1, -1> B = Eigen::Matrix<double, -1, -1>::Random(M, N);
 matrix_cl<double> A_cl = to_matrix_cl(A);
 matrix_cl<double> B_cl = to_matrix_cl(B);
 matrix_cl<double> C_cl = A_cl * transpose(lgamma(B_cl));
