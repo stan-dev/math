@@ -65,11 +65,11 @@ class ScopedChainableStack {
    * @return Result of evaluated functor
    */
   template <typename F, typename... Args>
-  auto execute(F&& f, Args&&... args) {
+  decltype(auto) execute(F&& f, Args&&... args) {
     const activate_scope active_scope(*this);
     return std::forward<F>(f)(std::forward<Args>(args)...);
   }
-
+ 
   // Prevent undesirable operations
   ScopedChainableStack(const ScopedChainableStack&) = delete;
   ScopedChainableStack& operator=(const ScopedChainableStack&) = delete;

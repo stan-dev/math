@@ -41,6 +41,45 @@ TEST_F(AgradLocalScoped, scoped_chainablestack_base) {
   scoped_stack.execute([] { EXPECT_GT(stan::math::nested_size(), 0); });
 }
 
+TEST_F(AgradLocalScoped, scoped_chainablestack_functor) {
+  using stan::math::nested_rev_autodiff;
+  using stan::math::ScopedChainableStack;
+  using stan::math::var;
+
+  ScopedChainableStack scoped_stack;
+
+  struct scoped_functor {
+    double a_val_;
+    double cgrad_a_;
+    
+    scoped_functor(double a_val) : a_val_(a_val), cgrad_a_(0.0) {}
+    void operator()() {
+      stan::math::start_nested();
+      var a = a_val_;
+      var b = 4.0;
+      var c = a * a + b;
+      c.grad();
+      EXPECT_GT(stan::math::nested_size(), 0);
+      cgrad_a_ = a.adj();
+    }
+  } worker(2.0);
+
+  {
+    nested_rev_autodiff nested;
+
+    scoped_stack.execute(worker);
+    EXPECT_FLOAT_EQ(worker.cgrad_a_, 4.0);
+
+    EXPECT_EQ(stan::math::nested_size(), 0);
+  }
+
+  // the nested autodiff stack went out of scope, but that did not
+  // touch the scoped stack
+
+  scoped_stack.execute([] { EXPECT_GT(stan::math::nested_size(), 0); });
+}
+
+
 TEST_F(AgradLocalScoped, scoped_chainablestack_simple) {
   using stan::math::nested_rev_autodiff;
   using stan::math::ScopedChainableStack;
