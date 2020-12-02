@@ -11,4 +11,6 @@
 #include <stan/math/prim/functor.hpp>
 #include <stan/math/prim/prob.hpp>
 
+#include <stan/math/opencl/prim.hpp>
+
 #endif
