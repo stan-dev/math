@@ -97,8 +97,8 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   const auto& beta_val_vec = to_ref_if<!is_constant<T_x>::value>(
       as_column_vector_or_scalar(beta_val));
 
-  auto signs = to_ref_if<!is_constant_all<T_beta, T_x, T_alpha>::value>(
-      2 * y_val - 1);
+  auto signs
+      = to_ref_if<!is_constant_all<T_beta, T_x, T_alpha>::value>(2 * y_val - 1);
 
   Array<T_partials_return, Dynamic, 1> ytheta(N_instances);
   if (T_x_rows == 1) {
