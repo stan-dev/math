@@ -113,8 +113,7 @@ fvar<fvar<var>> get_param<fvar<fvar<var>>>(const vector<double>& params,
 // ------------------------------------------------------------
 
 // default template handles Eigen::Matrix
-template <typename T,
-	  stan::require_not_var_matrix_t<T>* = nullptr>
+template <typename T, stan::require_not_var_matrix_t<T>* = nullptr>
 T get_params(const vector<vector<double>>& parameters, const size_t p) {
   T param(parameters.size());
   for (size_t n = 0; n < parameters.size(); n++)
@@ -124,8 +123,7 @@ T get_params(const vector<vector<double>>& parameters, const size_t p) {
 }
 
 // handle `var_value<T>` where T is an Eigen type
-template <typename T,
-	  stan::require_var_matrix_t<T>* = nullptr>
+template <typename T, stan::require_var_matrix_t<T>* = nullptr>
 T get_params(const vector<vector<double>>& parameters, const size_t p) {
   typename T::value_type param(parameters.size());
   for (size_t n = 0; n < parameters.size(); n++)
@@ -283,8 +281,7 @@ vector<fvar<fvar<var>>> get_params<vector<fvar<fvar<var>>>>(
 // ------------------------------------------------------------
 
 // default template handles Eigen::Matrix
-template <typename T,
-	  stan::require_not_var_matrix_t<T>* = nullptr>
+template <typename T, stan::require_not_var_matrix_t<T>* = nullptr>
 T get_params(const vector<vector<double>>& parameters, const size_t /*n*/,
              const size_t p) {
   T param(parameters.size());
@@ -295,10 +292,9 @@ T get_params(const vector<vector<double>>& parameters, const size_t /*n*/,
 }
 
 // handle `var_value<T>` where T is an Eigen type
-template <typename T,
-	  stan::require_var_matrix_t<T>* = nullptr>
+template <typename T, stan::require_var_matrix_t<T>* = nullptr>
 T get_params(const vector<vector<double>>& parameters, const size_t /*n*/,
-	     const size_t p) {
+             const size_t p) {
   typename T::value_type param(parameters.size());
   for (size_t i = 0; i < parameters.size(); i++)
     if (p < parameters[0].size())
@@ -480,8 +476,7 @@ T get_repeated_params(const vector<double>& parameters, const size_t p,
 }
 
 // handle `var_value<T>` where T is an Eigen type
-template <typename T,
-	  stan::require_var_matrix_t<T>* = nullptr>
+template <typename T, stan::require_var_matrix_t<T>* = nullptr>
 T get_repeated_params(const vector<double>& parameters, const size_t p,
                       const size_t N_REPEAT) {
   typename T::value_type params(N_REPEAT);
@@ -606,10 +601,8 @@ struct any_vector {
   };
 };
 
-
 // ------------------------------------------------------------
-template <typename T,
-	  stan::require_not_var_matrix_t<T>* = nullptr>
+template <typename T, stan::require_not_var_matrix_t<T>* = nullptr>
 void add_adjoints(vector<double>& /*x*/, T& /*p*/) {}
 
 template <>
@@ -617,8 +610,7 @@ void add_adjoints<var>(vector<double>& x, var& p) {
   x.push_back(p.adj());
 }
 
-template <typename T,
-	  stan::require_var_matrix_t<T>* = nullptr>
+template <typename T, stan::require_var_matrix_t<T>* = nullptr>
 void add_adjoints(vector<double>& x, T& p) {
   for (size_type n = 0; n < p.size(); n++) {
     x.push_back(p.adj().coeff(n));
@@ -677,7 +669,7 @@ void add_adjoints<fvar<fvar<var>>>(vector<double>& x, fvar<fvar<var>>& p) {
 
 template <>
 void add_adjoints<vector<fvar<fvar<var>>>>(vector<double>& x,
-                                      vector<fvar<fvar<var>>>& p) {
+                                           vector<fvar<fvar<var>>>& p) {
   for (size_t n = 0; n < p.size(); n++)
     x.push_back(p[n].val_.val_.adj());
 }
@@ -698,7 +690,8 @@ void add_adjoints<Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, 1>>(
 
 template <typename T0, typename T1, typename T2, typename T3, typename T4,
           typename T5>
-void add_adjoints(vector<double>& x, T0& p0, T1& p1, T2& p2, T3& p3, T4& p4, T5& p5) {
+void add_adjoints(vector<double>& x, T0& p0, T1& p1, T2& p2, T3& p3, T4& p4,
+                  T5& p5) {
   if (!is_constant_all<T0>::value)
     add_adjoints(x, p0);
   if (!is_constant_all<T1>::value)

@@ -23,12 +23,14 @@ int ROW_VECTORS = 0;
 #endif
 
 void push_args(vector<string>& args, const string& type) {
-  if(type.compare("varmat") == 0) {
+  if (type.compare("varmat") == 0) {
     args.push_back("var");
     args.push_back("std::vector<var>");
-    args.push_back("stan::math::var_value<Eigen::Matrix<double, Eigen::Dynamic, 1>>");
+    args.push_back(
+        "stan::math::var_value<Eigen::Matrix<double, Eigen::Dynamic, 1>>");
     if (ROW_VECTORS == 1)
-      args.push_back("stan::math::var_value<Eigen::Matrix<double, 1, Eigen::Dynamic>>");
+      args.push_back(
+          "stan::math::var_value<Eigen::Matrix<double, 1, Eigen::Dynamic>>");
   } else {
     args.push_back(type);
     args.push_back("std::vector<" + type + ">");
@@ -263,7 +265,7 @@ void write_types_typedef(vector<std::ostream*>& outs, string base, size_t& N,
         *out << "typedef boost::mpl::vector<" << base << args[n] << extra_args;
         if (extra_args.size() == 0)
           *out << " ";
-	*out << "> type_v_" << N << ";" << endl;
+        *out << "> type_v_" << N << ";" << endl;
         N++;
       } else {
         if (check_all_double(base, args[n]) == false) {

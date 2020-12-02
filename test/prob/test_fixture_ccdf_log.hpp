@@ -260,9 +260,8 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
 
   // works for <var>
   template <typename... Args>
-  double calculate_gradients_1storder(vector<double>& grad,
-                                      var& logprob,
-				      Args&... args) {
+  double calculate_gradients_1storder(vector<double>& grad, var& logprob,
+                                      Args&... args) {
     stan::math::set_zero_all_adjoints();
     logprob.grad();
     add_adjoints(grad, args...);
@@ -282,21 +281,18 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
   // works for fvar<double>
   template <typename... Args>
   double calculate_gradients_1storder(vector<double>& grad,
-                                      fvar<double>& logprob,
-				      Args&... args) {
+                                      fvar<double>& logprob, Args&... args) {
     grad.push_back(logprob.d_);
     return logprob.val();
   }
   template <typename... Args>
   double calculate_gradients_2ndorder(vector<double>& grad,
-                                      fvar<double>& logprob,
-				      Args&... args) {
+                                      fvar<double>& logprob, Args&... args) {
     return logprob.val();
   }
   template <typename... Args>
   double calculate_gradients_3rdorder(vector<double>& grad,
-                                      fvar<double>& logprob,
-				      Args&... args) {
+                                      fvar<double>& logprob, Args&... args) {
     return logprob.val();
   }
 
@@ -307,7 +303,11 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
                                       Args&... args) {
     grad.push_back(logprob.d_.val_);
 
-    stan::test::expect_near_rel("The order of gradients shouldn't matter when computing 2nd derivatives because of the way the `fvar<fvar<double>>` s are initialized", logprob.d_.val_, logprob.val_.d_);
+    stan::test::expect_near_rel(
+        "The order of gradients shouldn't matter when computing 2nd "
+        "derivatives because of the way the `fvar<fvar<double>>` s are "
+        "initialized",
+        logprob.d_.val_, logprob.val_.d_);
 
     return logprob.val().val();
   }
@@ -351,8 +351,7 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
   // works for fvar<fvar<var> >
   template <typename... Args>
   double calculate_gradients_1storder(vector<double>& grad,
-                                      fvar<fvar<var>>& logprob,
-                                      Args&... args) {
+                                      fvar<fvar<var>>& logprob, Args&... args) {
     stan::math::set_zero_all_adjoints();
     logprob.val_.val_.grad();
     add_adjoints(grad, args...);
@@ -360,8 +359,7 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
   }
   template <typename... Args>
   double calculate_gradients_2ndorder(vector<double>& grad,
-                                      fvar<fvar<var>>& logprob,
-                                      Args&... args) {
+                                      fvar<fvar<var>>& logprob, Args&... args) {
     stan::math::set_zero_all_adjoints();
     logprob.d_.val_.grad();
     add_adjoints(grad, args...);
@@ -371,14 +369,17 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
     logprob.val_.d_.grad();
     add_adjoints(grad_alt, args...);
 
-    stan::test::expect_near_rel("The order of derivatives shouldn't matter when computing 2nd derivatives because of the way the `fvar<fvar<var>>` s are initialized", grad, grad_alt);
+    stan::test::expect_near_rel(
+        "The order of derivatives shouldn't matter when computing 2nd "
+        "derivatives because of the way the `fvar<fvar<var>>` s are "
+        "initialized",
+        grad, grad_alt);
 
     return logprob.val_.val_.val();
   }
   template <typename... Args>
   double calculate_gradients_3rdorder(vector<double>& grad,
-                                      fvar<fvar<var>>& logprob,
-                                      Args&... args) {
+                                      fvar<fvar<var>>& logprob, Args&... args) {
     stan::math::set_zero_all_adjoints();
     logprob.d_.d_.grad();
     add_adjoints(grad, args...);
@@ -443,7 +444,8 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
                                           Scalar4, Scalar5>(p0, p1, p2, p3, p4,
                                                             p5);
 
-        calculate_gradients_1storder(gradients, ccdf_log, p0, p1, p2, p3, p4, p5);
+        calculate_gradients_1storder(gradients, ccdf_log, p0, p1, p2, p3, p4,
+                                     p5);
 
         test_finite_diffs_equal(parameters[n], finite_diffs, gradients);
 
@@ -501,12 +503,18 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
                                                  Scalar3, Scalar4, Scalar5>(
               p0, p1, p2, p3, p4, p5);
 
-      calculate_gradients_1storder(expected_gradients1, ccdf_log_funct, p0, p1, p2, p3, p4, p5);
-      calculate_gradients_1storder(gradients1, ccdf_log, p0, p1, p2, p3, p4, p5);
-      calculate_gradients_2ndorder(expected_gradients2, ccdf_log_funct, p0, p1, p2, p3, p4, p5);
-      calculate_gradients_2ndorder(gradients2, ccdf_log, p0, p1, p2, p3, p4, p5);
-      calculate_gradients_3rdorder(expected_gradients3, ccdf_log_funct, p0, p1, p2, p3, p4, p5);
-      calculate_gradients_3rdorder(gradients3, ccdf_log, p0, p1, p2, p3, p4, p5);
+      calculate_gradients_1storder(expected_gradients1, ccdf_log_funct, p0, p1,
+                                   p2, p3, p4, p5);
+      calculate_gradients_1storder(gradients1, ccdf_log, p0, p1, p2, p3, p4,
+                                   p5);
+      calculate_gradients_2ndorder(expected_gradients2, ccdf_log_funct, p0, p1,
+                                   p2, p3, p4, p5);
+      calculate_gradients_2ndorder(gradients2, ccdf_log, p0, p1, p2, p3, p4,
+                                   p5);
+      calculate_gradients_3rdorder(expected_gradients3, ccdf_log_funct, p0, p1,
+                                   p2, p3, p4, p5);
+      calculate_gradients_3rdorder(gradients3, ccdf_log, p0, p1, p2, p3, p4,
+                                   p5);
 
       test_gradients_equal(expected_gradients1, gradients1);
       test_gradients_equal(expected_gradients2, gradients2);
@@ -564,10 +572,12 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
       T_return_type ccdf_log
           = N_REPEAT * TestClass.ccdf_log(p0_, p1_, p2_, p3_, p4_, p5_);
 
-      double single_ccdf_log
-          = calculate_gradients_1storder(single_gradients1, ccdf_log, p0s_, p1s_, p2s_, p3s_, p4s_, p5s_);
-      calculate_gradients_2ndorder(single_gradients2, ccdf_log, p0s_, p1s_, p2s_, p3s_, p4s_, p5s_);
-      calculate_gradients_3rdorder(single_gradients3, ccdf_log, p0s_, p1s_, p2s_, p3s_, p4s_, p5s_);
+      double single_ccdf_log = calculate_gradients_1storder(
+          single_gradients1, ccdf_log, p0s_, p1s_, p2s_, p3s_, p4s_, p5s_);
+      calculate_gradients_2ndorder(single_gradients2, ccdf_log, p0s_, p1s_,
+                                   p2s_, p3s_, p4s_, p5s_);
+      calculate_gradients_3rdorder(single_gradients3, ccdf_log, p0s_, p1s_,
+                                   p2s_, p3s_, p4s_, p5s_);
 
       T0 p0 = get_repeated_params<T0>(parameters[n], 0, N_REPEAT);
       T1 p1 = get_repeated_params<T1>(parameters[n], 1, N_REPEAT);
@@ -582,9 +592,12 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
       vector<double> multiple_gradients2;
       vector<double> multiple_gradients3;
 
-      calculate_gradients_1storder(multiple_gradients1, multiple_ccdf_log, p0, p1, p2, p3, p4, p5);
-      calculate_gradients_2ndorder(multiple_gradients2, multiple_ccdf_log, p0, p1, p2, p3, p4, p5);
-      calculate_gradients_3rdorder(multiple_gradients3, multiple_ccdf_log, p0, p1, p2, p3, p4, p5);
+      calculate_gradients_1storder(multiple_gradients1, multiple_ccdf_log, p0,
+                                   p1, p2, p3, p4, p5);
+      calculate_gradients_2ndorder(multiple_gradients2, multiple_ccdf_log, p0,
+                                   p1, p2, p3, p4, p5);
+      calculate_gradients_3rdorder(multiple_gradients3, multiple_ccdf_log, p0,
+                                   p1, p2, p3, p4, p5);
 
       stan::math::recover_memory();
 
@@ -672,22 +685,22 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
                                             p3s.back(), p4s.back(), p5s.back());
     }
 
-    calculate_gradients_1storder(single_gradients1, single_ccdf_log,
-                                 p0s, p1s, p2s, p3s, p4s, p5s);
-    calculate_gradients_2ndorder(single_gradients2, single_ccdf_log,
-                                 p0s, p1s, p2s, p3s, p4s, p5s);
-    calculate_gradients_3rdorder(single_gradients3, single_ccdf_log,
-                                 p0s, p1s, p2s, p3s, p4s, p5s);
+    calculate_gradients_1storder(single_gradients1, single_ccdf_log, p0s, p1s,
+                                 p2s, p3s, p4s, p5s);
+    calculate_gradients_2ndorder(single_gradients2, single_ccdf_log, p0s, p1s,
+                                 p2s, p3s, p4s, p5s);
+    calculate_gradients_3rdorder(single_gradients3, single_ccdf_log, p0s, p1s,
+                                 p2s, p3s, p4s, p5s);
 
     T_return_type multiple_ccdf_log
         = TestClass.ccdf_log(p0, p1, p2, p3, p4, p5);
 
-    calculate_gradients_1storder(multiple_gradients1, multiple_ccdf_log,
-                                 p0, p1, p2, p3, p4, p5);
-    calculate_gradients_2ndorder(multiple_gradients2, multiple_ccdf_log,
-                                 p0, p1, p2, p3, p4, p5);
-    calculate_gradients_3rdorder(multiple_gradients3, multiple_ccdf_log,
-                                 p0, p1, p2, p3, p4, p5);
+    calculate_gradients_1storder(multiple_gradients1, multiple_ccdf_log, p0, p1,
+                                 p2, p3, p4, p5);
+    calculate_gradients_2ndorder(multiple_gradients2, multiple_ccdf_log, p0, p1,
+                                 p2, p3, p4, p5);
+    calculate_gradients_3rdorder(multiple_gradients3, multiple_ccdf_log, p0, p1,
+                                 p2, p3, p4, p5);
 
     stan::math::recover_memory();
 
