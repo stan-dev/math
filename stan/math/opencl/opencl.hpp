@@ -155,6 +155,7 @@
 #include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/opencl/prim/tcrossprod.hpp>
 #include <stan/math/opencl/prim/uniform_lpdf.hpp>
+#include <stan/math/opencl/prim/weibull_lpdf.hpp>
 
 #include <stan/math/opencl/err.hpp>
 
