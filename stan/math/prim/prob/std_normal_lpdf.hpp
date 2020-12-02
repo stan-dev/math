@@ -25,7 +25,9 @@ namespace math {
  * @return The log of the product of the densities.
  * @throw std::domain_error if any scalar is nan.
  */
-template <bool propto, typename T_y>
+template <
+    bool propto, typename T_y,
+    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T_y>* = nullptr>
 return_type_t<T_y> std_normal_lpdf(const T_y& y) {
   using T_partials_return = partials_return_t<T_y>;
   using T_y_ref = ref_type_t<T_y>;

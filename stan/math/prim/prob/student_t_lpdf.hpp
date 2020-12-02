@@ -50,7 +50,9 @@ namespace math {
  * @throw std::domain_error if nu is not greater than 0.
  */
 template <bool propto, typename T_y, typename T_dof, typename T_loc,
-          typename T_scale>
+          typename T_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_dof, T_loc, T_scale>* = nullptr>
 return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
                                                          const T_dof& nu,
                                                          const T_loc& mu,
