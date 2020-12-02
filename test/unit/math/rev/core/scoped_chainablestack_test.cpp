@@ -51,7 +51,7 @@ TEST_F(AgradLocalScoped, scoped_chainablestack_functor) {
   struct scoped_functor {
     double a_val_;
     double cgrad_a_;
-    
+
     explicit scoped_functor(double a_val) : a_val_(a_val), cgrad_a_(0.0) {}
 
     void operator()() {
