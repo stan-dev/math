@@ -9,11 +9,23 @@ class AgradCdfVonMises : public AgradCdfTest {
  public:
   void valid_values(vector<vector<double> >& parameters, vector<double>& cdf) {
     vector<double> param(3);
-    param[0] = -1.5707463267948965;  // y
-    param[1] = 6.283185307179586;    // mu
-    param[2] = 1.0;                  // kappa
+    param[0] = -1.5707463267948965;     // y
+    param[1] = 6.283185307179586;       // mu
+    param[2] = 1.0;                     // kappa
     parameters.push_back(param);
     cdf.push_back(0.1097601896880533);  // expected CDF
+
+    param[0] = -1.5707463267948965;     // y
+    param[1] = 0;                       // mu
+    param[2] = 0.01;                    // kappa
+    parameters.push_back(param);
+    cdf.push_back(0.2484164302237636);  // expected CDF
+
+    param[0] = 0.0;                     // y
+    param[1] = 6.283185307179586;       // mu
+    param[2] = 0.1;                     // kappa
+    parameters.push_back(param);
+    cdf.push_back(0.5);                 // expected CDF
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {

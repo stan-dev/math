@@ -16,6 +16,18 @@ class AgradCdfLogVonMises : public AgradCdfLogTest {
     param[2] = 1.0;                  // kappa
     parameters.push_back(param);
     log_cdf.push_back(std::log(0.1097601896880533));  // expected Log_CDF
+
+    param[0] = -1.5707463267948965;     // y
+    param[1] = 0;                       // mu
+    param[2] = 0.01;                    // kappa
+    parameters.push_back(param);
+    log_cdf.push_back(std::log(0.2484164302237636));  // expected Log_CDF
+
+    param[0] = 0.0;                     // y
+    param[1] = 6.283185307179586;       // mu
+    param[2] = 0.1;                     // kappa
+    parameters.push_back(param);
+    log_cdf.push_back(std::log(0.5));                 // expected Log_CDF
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {
