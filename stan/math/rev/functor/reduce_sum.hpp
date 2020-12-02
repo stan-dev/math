@@ -163,8 +163,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       // Accumulate adjoints of shared_arguments
       apply(
           [&](auto&&... args) {
-            accumulate_adjoints(args_adjoints_.data(),
-                                args...);
+            accumulate_adjoints(args_adjoints_.data(), args...);
           },
           args_tuple_local);
     }
