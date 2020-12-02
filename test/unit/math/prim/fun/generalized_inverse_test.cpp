@@ -17,7 +17,7 @@ TEST(MathMatrixPrim, Equal) {
 
   stan::math::matrix_d m2(2, 3);
   m2 << 1 / 30.0, 1 / 15.0, 1 / 30.0, 1 / 15.0, 2 / 15.0, 1 / 15.0;
-  stan::math::matrix_d m3 = generalized_inverse(m1); 
+  stan::math::matrix_d m3 = generalized_inverse(m1);
   for (int j = 0; j < m3.cols(); j++)
     for (int i = 0; i < m3.rows(); i++)
       EXPECT_NEAR(m2(i, j), m3(i, j), 1e-5);
