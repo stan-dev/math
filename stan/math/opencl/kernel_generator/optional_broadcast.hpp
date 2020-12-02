@@ -11,7 +11,7 @@
 #include <limits>
 #include <string>
 #include <type_traits>
-#include <set>
+#include <map>
 #include <utility>
 
 namespace stan {
@@ -92,17 +92,18 @@ class optional_broadcast_
 
   /**
    * Sets kernel arguments for this and nested expressions.
-   * @param[in,out] generated set of expressions that already set their kernel
-   * arguments
+   * @param[in,out] generated map from (pointer to) already generated operations
+   * to variable names
    * @param kernel kernel to set arguments on
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const operation_cl_base*>& generated,
+  inline void set_args(std::map<const void*, const char*>& generated,
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
-      generated.insert(this);
-      this->template get_arg<0>().set_args(generated, kernel, arg_num);
+      generated[this] = "";
+      std::map<const void*, const char*> generated2;
+      this->template get_arg<0>().set_args(generated2, kernel, arg_num);
       if (Colwise) {
         kernel.setArg(arg_num++, static_cast<int>(
                                      this->template get_arg<0>().rows() != 1));

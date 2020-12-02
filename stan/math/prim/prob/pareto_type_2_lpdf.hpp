@@ -18,7 +18,9 @@ namespace math {
 
 // pareto_type_2(y|lambda, alpha)  [y >= 0;  lambda > 0;  alpha > 0]
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
-          typename T_shape>
+          typename T_shape,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_scale, T_shape>* = nullptr>
 return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& lambda,
     const T_shape& alpha) {
@@ -56,10 +58,9 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
   ref_type_t<decltype(value_of(lambda_arr))> lambda_val = value_of(lambda_arr);
   ref_type_t<decltype(value_of(alpha_arr))> alpha_val = value_of(alpha_arr);
 
-  check_not_nan(function, "Random variable", y_val);
+  check_greater_or_equal(function, "Random variable", y_val, mu_val);
   check_positive_finite(function, "Scale parameter", lambda_val);
   check_positive_finite(function, "Shape parameter", alpha_val);
-  check_greater_or_equal(function, "Random variable", y_val, mu_val);
 
   if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
     return 0.0;

@@ -8,7 +8,6 @@ TEST(MathMixMatFun, divide) {
   double x1 = 10;
   double x2 = -2;
   stan::test::expect_ad(f, x1, x2);
-  stan::test::expect_ad_matvar(f, x1, x2);
 
   Eigen::VectorXd v(1);
   v << 10;

@@ -7,7 +7,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/meta/is_vari.hpp>
 #include <stan/math/rev/meta/arena_type.hpp>
-#include <stan/math/rev/functor/reverse_pass_callback.hpp>
+#include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <ostream>
 #include <vector>
 #ifdef STAN_OPENCL
@@ -91,7 +91,7 @@ class var_value<T, require_floating_point_t<T>> {
    *
    * @return The value of this variable.
    */
-  inline const auto& val() const { return vi_->val_; }
+  inline const auto& val() const { return vi_->val(); }
 
   /**
    * Return a reference of the derivative of the root expression with
@@ -101,7 +101,7 @@ class var_value<T, require_floating_point_t<T>> {
    *
    * @return Adjoint for this variable.
    */
-  inline auto& adj() const { return vi_->adj_; }
+  inline auto& adj() const { return vi_->adj(); }
 
   /**
    * Return a reference to the derivative of the root expression with
@@ -112,6 +112,7 @@ class var_value<T, require_floating_point_t<T>> {
    * @return Adjoint for this variable.
    */
   inline auto& adj() { return vi_->adj_; }
+
   /**
    * Compute the gradient of this (dependent) variable with respect to
    * the specified vector of (independent) variables, assigning the
@@ -401,8 +402,8 @@ class var_value<
    *
    * @return The value of this variable.
    */
-  inline const auto& val() const { return vi_->val_; }
-  inline auto& val_op() { return vi_->val_; }
+  inline const auto& val() const { return vi_->val(); }
+  inline auto& val_op() { return vi_->val(); }
 
   /**
    * Return a reference to the derivative of the root expression with
@@ -412,9 +413,9 @@ class var_value<
    *
    * @return Adjoint for this variable.
    */
-  inline auto& adj() { return vi_->adj_; }
-  inline auto& adj() const { return vi_->adj_; }
-  inline auto& adj_op() { return vi_->adj_; }
+  inline auto& adj() { return vi_->adj(); }
+  inline auto& adj() const { return vi_->adj(); }
+  inline auto& adj_op() { return vi_->adj(); }
 
   inline Eigen::Index rows() const { return vi_->val_.rows(); }
   inline Eigen::Index cols() const { return vi_->val_.cols(); }
@@ -485,7 +486,8 @@ class var_value<
    * @return The result of subtracting the specified variable from
    * this variable.
    */
-  inline var_value<T>& operator-=(const var_value<T>& b);
+  template <typename S, require_st_var<S>* = nullptr>
+  inline var_value<T>& operator-=(const S& b);
 
   /**
    * The compound subtract/assignment operator for scalars (C++).
@@ -498,7 +500,8 @@ class var_value<
    * @return The result of subtracting the specified variable from this
    * variable.
    */
-  inline var_value<T>& operator-=(T b);
+  template <typename S, require_st_arithmetic<S>* = nullptr>
+  inline var_value<T>& operator-=(const S& b);
 
   /**
    * The compound multiply/assignment operator for variables (C++).
@@ -805,6 +808,98 @@ class var_value<
     using vari_sub = decltype(vi_->reverse());
     using var_sub = var_value<value_type_t<vari_sub>>;
     return var_sub(new vari_sub(vi_->reverse()));
+  }
+
+  /**
+   * Return a block consisting of the top rows
+   * @param n Number of rows
+   */
+  inline auto topRows(Eigen::Index n) const {
+    using vari_sub = decltype(vi_->topRows(n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->topRows(n)));
+  }
+  inline auto topRows(Eigen::Index n) {
+    using vari_sub = decltype(vi_->topRows(n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->topRows(n)));
+  }
+
+  /**
+   * Return a block consisting of the bottom rows
+   * @param n Number of rows
+   */
+  inline auto bottomRows(Eigen::Index n) const {
+    using vari_sub = decltype(vi_->bottomRows(n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->bottomRows(n)));
+  }
+  inline auto bottomRows(Eigen::Index n) {
+    using vari_sub = decltype(vi_->bottomRows(n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->bottomRows(n)));
+  }
+
+  /**
+   * Return a block consisting of rows in the middle.
+   * @param start_row Starting row index
+   * @param n Number of rows
+   */
+  inline auto middleRows(Eigen::Index start_row, Eigen::Index n) const {
+    using vari_sub = decltype(vi_->middleRows(start_row, n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->middleRows(start_row, n)));
+  }
+  inline auto middleRows(Eigen::Index start_row, Eigen::Index n) {
+    using vari_sub = decltype(vi_->middleRows(start_row, n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->middleRows(start_row, n)));
+  }
+
+  /**
+   * Return a block consisting of the left-most columns
+   * @param n Number of columns
+   */
+  inline auto leftCols(Eigen::Index n) const {
+    using vari_sub = decltype(vi_->leftCols(n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->leftCols(n)));
+  }
+  inline auto leftCols(Eigen::Index n) {
+    using vari_sub = decltype(vi_->leftCols(n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->leftCols(n)));
+  }
+
+  /**
+   * Return a block consisting of the right-most columns
+   * @param n Number of columns
+   */
+  inline auto rightCols(Eigen::Index n) const {
+    using vari_sub = decltype(vi_->rightCols(n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->rightCols(n)));
+  }
+  inline auto rightCols(Eigen::Index n) {
+    using vari_sub = decltype(vi_->rightCols(n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->rightCols(n)));
+  }
+
+  /**
+   * Return a block consisting of columns in the middle.
+   * @param start_col Starting column index
+   * @param n Number of columns
+   */
+  inline auto middleCols(Eigen::Index start_col, Eigen::Index n) const {
+    using vari_sub = decltype(vi_->middleCols(start_col, n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->middleCols(start_col, n)));
+  }
+  inline auto middleCols(Eigen::Index start_col, Eigen::Index n) {
+    using vari_sub = decltype(vi_->middleCols(start_col, n));
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->middleCols(start_col, n)));
   }
 
   /**

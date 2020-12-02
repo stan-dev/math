@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_REV_CORE_MATRIX_VARI_HPP
 #define STAN_MATH_REV_CORE_MATRIX_VARI_HPP
 
-#include <stan/math/rev/fun/Eigen_NumTraits.hpp>
-#include <stan/math/rev/fun/typedefs.hpp>
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/rev/core/Eigen_NumTraits.hpp>
+#include <stan/math/rev/core/typedefs.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vari.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {

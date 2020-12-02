@@ -134,6 +134,33 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
     }
   }
 
+  /**
+   * Return a constant reference to the value of this vari.
+   *
+   * @return The value of this vari.
+   */
+  inline const auto& val() const { return val_; }
+
+  /**
+   * Return a reference of the derivative of the root expression with
+   * respect to this expression.  This method only works
+   * after one of the `grad()` methods has been
+   * called.
+   *
+   * @return Adjoint for this vari.
+   */
+  inline auto& adj() const { return adj_; }
+
+  /**
+   * Return a reference to the derivative of the root expression with
+   * respect to this expression.  This method only works
+   * after one of the `grad()` methods has been
+   * called.
+   *
+   * @return Adjoint for this vari.
+   */
+  inline auto& adj() { return adj_; }
+
   inline void chain() {}
 
   /**
@@ -395,7 +422,7 @@ class vari_view_eigen {
   }
 
   /**
-   * Return an expression an expression to reverse the order of the coefficients
+   * Return an expression to reverse the order of the coefficients
    * inside of a `vari` matrix
    */
   inline auto reverse() const {
@@ -407,6 +434,98 @@ class vari_view_eigen {
     using inner_type = decltype(derived().val_.reverse());
     return vari_view<inner_type>(derived().val_.reverse(),
                                  derived().adj_.reverse());
+  }
+
+  /**
+   * Return a block consisting of the top rows
+   * @param n Number of rows
+   */
+  inline auto topRows(Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.topRows(n));
+    return vari_view<inner_type>(derived().val_.topRows(n),
+                                 derived().adj_.topRows(n));
+  }
+  inline auto topRows(Eigen::Index n) {
+    using inner_type = decltype(derived().val_.topRows(n));
+    return vari_view<inner_type>(derived().val_.topRows(n),
+                                 derived().adj_.topRows(n));
+  }
+
+  /**
+   * Return a block consisting of the bottom rows
+   * @param n Number of rows
+   */
+  inline auto bottomRows(Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.bottomRows(n));
+    return vari_view<inner_type>(derived().val_.bottomRows(n),
+                                 derived().adj_.bottomRows(n));
+  }
+  inline auto bottomRows(Eigen::Index n) {
+    using inner_type = decltype(derived().val_.bottomRows(n));
+    return vari_view<inner_type>(derived().val_.bottomRows(n),
+                                 derived().adj_.bottomRows(n));
+  }
+
+  /**
+   * Return a block consisting of rows in the middle.
+   * @param start_row Starting row index
+   * @param n Number of rows
+   */
+  inline auto middleRows(Eigen::Index start_row, Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.middleRows(start_row, n));
+    return vari_view<inner_type>(derived().val_.middleRows(start_row, n),
+                                 derived().adj_.middleRows(start_row, n));
+  }
+  inline auto middleRows(Eigen::Index start_row, Eigen::Index n) {
+    using inner_type = decltype(derived().val_.middleRows(start_row, n));
+    return vari_view<inner_type>(derived().val_.middleRows(start_row, n),
+                                 derived().adj_.middleRows(start_row, n));
+  }
+
+  /**
+   * Return a block consisting of the left-most columns
+   * @param n Number of columns
+   */
+  inline auto leftCols(Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.leftCols(n));
+    return vari_view<inner_type>(derived().val_.leftCols(n),
+                                 derived().adj_.leftCols(n));
+  }
+  inline auto leftCols(Eigen::Index n) {
+    using inner_type = decltype(derived().val_.leftCols(n));
+    return vari_view<inner_type>(derived().val_.leftCols(n),
+                                 derived().adj_.leftCols(n));
+  }
+
+  /**
+   * Return a block consisting of the right-most columns
+   * @param n Number of columns
+   */
+  inline auto rightCols(Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.rightCols(n));
+    return vari_view<inner_type>(derived().val_.rightCols(n),
+                                 derived().adj_.rightCols(n));
+  }
+  inline auto rightCols(Eigen::Index n) {
+    using inner_type = decltype(derived().val_.rightCols(n));
+    return vari_view<inner_type>(derived().val_.rightCols(n),
+                                 derived().adj_.rightCols(n));
+  }
+
+  /**
+   * Return a block consisting of columns in the middle.
+   * @param start_col Starting column index
+   * @param n Number of columns
+   */
+  inline auto middleCols(Eigen::Index start_col, Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.middleCols(start_col, n));
+    return vari_view<inner_type>(derived().val_.middleCols(start_col, n),
+                                 derived().adj_.middleCols(start_col, n));
+  }
+  inline auto middleCols(Eigen::Index start_col, Eigen::Index n) {
+    using inner_type = decltype(derived().val_.middleCols(start_col, n));
+    return vari_view<inner_type>(derived().val_.middleCols(start_col, n),
+                                 derived().adj_.middleCols(start_col, n));
   }
 
   /**
@@ -445,6 +564,26 @@ class vari_view<T, require_not_plain_type_t<T>> final
             require_assignable_t<value_type, S>* = nullptr,
             require_assignable_t<value_type, K>* = nullptr>
   vari_view(const S& val, const K& adj) noexcept : val_(val), adj_(adj) {}
+
+  /**
+   * Return a constant reference to the value of this vari.
+   *
+   * @return The value of this vari.
+   */
+  inline const auto& val() const { return val_; }
+  inline auto& val_op() { return val_; }
+
+  /**
+   * Return a reference to the derivative of the root expression with
+   * respect to this expression.  This method only works
+   * after one of the `grad()` methods has been
+   * called.
+   *
+   * @return Adjoint for this vari.
+   */
+  inline auto& adj() { return adj_; }
+  inline auto& adj() const { return adj_; }
+  inline auto& adj_op() { return adj_; }
 
   void set_zero_adjoint() {}
   void chain() {}
@@ -537,6 +676,26 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
       ChainableStack::instance_->var_nochain_stack_.push_back(this);
     }
   }
+
+  /**
+   * Return a constant reference to the value of this vari.
+   *
+   * @return The value of this vari.
+   */
+  inline const auto& val() const { return val_; }
+  inline auto& val_op() { return val_; }
+
+  /**
+   * Return a reference to the derivative of the root expression with
+   * respect to this expression.  This method only works
+   * after one of the `grad()` methods has been
+   * called.
+   *
+   * @return Adjoint for this vari.
+   */
+  inline auto& adj() { return adj_; }
+  inline auto& adj() const { return adj_; }
+  inline auto& adj_op() { return adj_; }
 
   virtual void chain() {}
   /**
@@ -669,6 +828,26 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
    * Return the size of this class's `val_` member
    */
   Eigen::Index size() const { return val_.size(); }
+
+  /**
+   * Return a constant reference to the value of this vari.
+   *
+   * @return The value of this vari.
+   */
+  inline const auto& val() const { return val_; }
+  inline auto& val_op() { return val_; }
+
+  /**
+   * Return a reference to the derivative of the root expression with
+   * respect to this expression.  This method only works
+   * after one of the `grad()` methods has been
+   * called.
+   *
+   * @return Adjoint for this vari.
+   */
+  inline auto& adj() { return adj_; }
+  inline auto& adj() const { return adj_; }
+  inline auto& adj_op() { return adj_; }
 
   void chain() {}
   /**
