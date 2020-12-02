@@ -149,9 +149,12 @@
 #include <stan/math/opencl/prim/scaled_inv_chi_square_lpdf.hpp>
 #include <stan/math/opencl/prim/sign.hpp>
 #include <stan/math/opencl/prim/size.hpp>
+#include <stan/math/opencl/prim/std_normal_lpdf.hpp>
+#include <stan/math/opencl/prim/student_t_lpdf.hpp>
 #include <stan/math/opencl/prim/skew_normal_lpdf.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/opencl/prim/tcrossprod.hpp>
+#include <stan/math/opencl/prim/uniform_lpdf.hpp>
 
 #include <stan/math/opencl/err.hpp>
 
