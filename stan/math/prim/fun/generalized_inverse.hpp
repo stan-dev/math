@@ -11,6 +11,8 @@
 #include <stan/math/prim/fun/transpose.hpp>
 #include <stan/math/prim/fun/tcrossprod.hpp>
 #include <stan/math/prim/fun/crossprod.hpp>
+#include <stan/math/prim/fun/multiply_lower_tri_self_transpose.hpp>
+#include <stan/math/prim/fun/mdivide_left_tri_low.hpp>
 
 namespace stan {
 namespace math {
@@ -29,40 +31,34 @@ namespace math {
 template <typename EigMat, require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
                      EigMat::ColsAtCompileTime>
-generalized_inverse(const EigMat& M) {
-  if (M.size() == 0) {
+generalized_inverse(const EigMat& G) {
+  using value_t = value_type_t<EigMat>;
+  if (G.size() == 0) {
     return {};
   }
 
-  constexpr int n = EigMat::RowsAtCompileTime;
-  constexpr int m = EigMat::ColsAtCompileTime;
+  const auto n = G.rows();
+  const auto m = G.cols();
 
-  if (n == m) {
-      return M.inverse();
-  }
-
-  bool transp(false);
-  constexpr int mn;
+  if (G.rows() == G.cols()) {
+      return G.inverse();
+  }  
 
   if (n < m) {
-    transp = true;
-    mn = n;
-    Eigen::Matrix<T, mn, mn> A = tcrossprod(G);
+    Eigen::Matrix<value_t, -1, -1> A = tcrossprod(G);
+    A.diagonal().array() += Eigen::Array<double, -1, 1>::Constant(n, 1e-10);
+    Eigen::Matrix<value_t, -1, -1> L = cholesky_decompose(A);
+    Eigen::Matrix<value_t, -1, -1> L_inv = mdivide_left_tri_low(L);
+    Eigen::Matrix<value_t, -1, -1> M = multiply_lower_tri_self_transpose(L_inv);
+    return transpose(G) * tcrossprod(L * M);
   } else {
-     mn = m;
-    Eigen::Matrix<T, mn, mn> A = = crossprod(G);
+    Eigen::Matrix<value_t, -1, -1> A = crossprod(G);
+    A.diagonal().array() += Eigen::Array<double, -1, 1>::Constant(m, 1e-10);
+    Eigen::Matrix<value_t, -1, -1> L = cholesky_decompose(A);
+    Eigen::Matrix<value_t, -1, -1> L_inv = mdivide_left_tri_low(L);
+    Eigen::Matrix<value_t, -1, -1> M = multiply_lower_tri_self_transpose(L_inv);
+    return tcrossprod(L * M) * transpose(G);
   }
-  
-   A = add_diag(A, rep_vector(1e-10, mn));
-
-   Eigen::Matrix<T, mn, mn> L = cholesky_decompose(A);
-   Eigen::Matrix<T, mn, mn> M = chol2inv(L);
-
-   if (transp){
-      return transpose(G) * tcrossprod(L * M);
-   } else {
-      return tcrossprod(L * M) * transpose(G);
-   }
 }
 
 }  // namespace math
