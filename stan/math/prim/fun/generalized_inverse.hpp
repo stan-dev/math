@@ -50,8 +50,10 @@ generalized_inverse(const EigMat& G) {
     return transpose(G) * quad_form(A, M);
   } else {
     Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> A = crossprod(G);
-    A.diagonal().array() += Eigen::Array<double, Eigen::Dynamic, 1>::Constant(m,  3.712035e-7);
-    Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> L = cholesky_decompose(A);
+    A.diagonal().array()
+        += Eigen::Array<double, Eigen::Dynamic, 1>::Constant(m, 3.712035e-7);
+    Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> L
+        = cholesky_decompose(A);
     Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> M = chol2inv(L);
     return quad_form(A, M) * transpose(G);
   }
