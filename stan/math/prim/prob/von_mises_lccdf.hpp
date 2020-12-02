@@ -2,8 +2,7 @@
 #define STAN_MATH_PRIM_PROB_VON_MISES_LCCDF_HPP
 
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/prob.hpp>
-#include <stan/math/prim/fun/modified_bessel_first_kind.hpp>
+#include <stan/math/prim/prob/von_mises_cdf.hpp>
 #include <cmath>
 
 namespace stan {
