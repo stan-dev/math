@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_PRIM_COLS_HPP
-#define STAN_MATH_OPENCL_PRIM_COLS_HPP
+#ifndef STAN_MATH_OPENCL_PRIM_ROWS_HPP
+#define STAN_MATH_OPENCL_PRIM_ROWS_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/matrix_cl.hpp>
