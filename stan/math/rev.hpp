@@ -13,6 +13,4 @@
 #include <stan/math/rev/fun.hpp>
 #include <stan/math/rev/functor.hpp>
 
-
-
 #endif
