@@ -66,7 +66,7 @@ generalized_inverse(const EigMat& G) {
  * matrix has size zero).
  */
 template <typename EigMat,
-require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
+          require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
                      EigMat::ColsAtCompileTime>
 generalized_inverse(const EigMat& G, double a) {
