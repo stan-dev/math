@@ -46,18 +46,18 @@ generalized_inverse(const EigMat& G) {
   }
 
   if (n < m) {
-    Eigen::Matrix<value_t, -1, -1> A = tcrossprod(G);
-    A.diagonal().array() += Eigen::Array<double, -1, 1>::Constant(n, 1e-10);
-    Eigen::Matrix<value_t, -1, -1> L = cholesky_decompose(A);
-    Eigen::Matrix<value_t, -1, -1> L_inv = mdivide_left_tri_low(L);
-    Eigen::Matrix<value_t, -1, -1> M = multiply_lower_tri_self_transpose(L_inv);
+    Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> A = tcrossprod(G);
+    A.diagonal().array() += Eigen::Array<double, Eigen::Dynamic, 1>::Constant(n, 1e-10);
+    Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> L = cholesky_decompose(A);
+    Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> L_inv = mdivide_left_tri_low(L);
+    Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> M = multiply_lower_tri_self_transpose(L_inv);
     return transpose(G) * tcrossprod(L * M);
   } else {
-    Eigen::Matrix<value_t, -1, -1> A = crossprod(G);
-    A.diagonal().array() += Eigen::Array<double, -1, 1>::Constant(m, 1e-10);
-    Eigen::Matrix<value_t, -1, -1> L = cholesky_decompose(A);
-    Eigen::Matrix<value_t, -1, -1> L_inv = mdivide_left_tri_low(L);
-    Eigen::Matrix<value_t, -1, -1> M = multiply_lower_tri_self_transpose(L_inv);
+    Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> A = crossprod(G);
+    A.diagonal().array() += Eigen::Array<double, Eigen::Dynamic, 1>::Constant(m, 1e-10);
+    Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> L = cholesky_decompose(A);
+    Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> L_inv = mdivide_left_tri_low(L);
+    Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> M = multiply_lower_tri_self_transpose(L_inv);
     return tcrossprod(L * M) * transpose(G);
   }
 }
