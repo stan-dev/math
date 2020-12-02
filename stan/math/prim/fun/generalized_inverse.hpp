@@ -54,7 +54,7 @@ generalized_inverse(const EigMat& G) {
     Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> A = crossprod(G);
     A.diagonal().array()
         += Eigen::Array<double, Eigen::Dynamic, 1>::Constant(m, 1e-8);
-   return transpose(mdivide_right_spd(G, A));
+    return transpose(mdivide_right_spd(G, A));
   }
 }
 
