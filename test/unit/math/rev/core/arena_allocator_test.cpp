@@ -1,6 +1,7 @@
 #include <stan/math/rev/core.hpp>
 #include <gtest/gtest.h>
 #include <vector>
+#include <unordered_set>
 
 void arena_allocator_test() {
   std::vector<int, stan::math::arena_allocator<int>> v;
@@ -34,4 +35,26 @@ void arena_allocator_test() {
 
 TEST(AgradRev, arena_allocator_test) {
   EXPECT_NO_THROW(arena_allocator_test());
+}
+
+TEST(AgradRev, arena_allocator_unorderedset_test) {
+  std::unordered_set<int, std::hash<int>, std::equal_to<int>, stan::math::arena_allocator<int>> x_test;
+  x_test.reserve(10);
+  for (int i = 0; i < 5; i++) {
+    x_test.insert(i);
+    x_test.insert(i);
+  }
+  auto x_iter = x_test.begin();
+  while (x_iter != x_test.end()) {
+    EXPECT_TRUE(stan::math::ChainableStack::instance_->memalloc_.in_stack(
+        &(*x_iter)));
+    x_iter++;
+  }
+  auto x_test2 = x_test;
+  auto x_iter2 = x_test2.begin();
+  while (x_iter2 != x_test2.end()) {
+    EXPECT_TRUE(stan::math::ChainableStack::instance_->memalloc_.in_stack(
+        &(*x_iter2)));
+    x_iter2++;
+  }
 }
