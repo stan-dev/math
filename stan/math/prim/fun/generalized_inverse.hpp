@@ -10,6 +10,9 @@
 #include <stan/math/prim/fun/tcrossprod.hpp>
 #include <stan/math/prim/fun/crossprod.hpp>
 #include <stan/math/prim/fun/quad_form.hpp>
+#include <stan/math/prim/fun/inverse_spd.hpp>
+#include <stan/math/prim/fun/mdivide_left_spd.hpp>
+#include <stan/math/prim/fun/mdivide_right_spd.hpp>
 
 namespace stan {
 namespace math {
@@ -45,19 +48,13 @@ generalized_inverse(const EigMat& G) {
   if (n < m) {
     Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> A = tcrossprod(G);
     A.diagonal().array()
-        += Eigen::Array<double, Eigen::Dynamic, 1>::Constant(n, 3.712035e-7);
-    Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> L
-        = cholesky_decompose(A);
-    Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> M = chol2inv(L);
-    return transpose(G) * quad_form(A, M);
+        += Eigen::Array<double, Eigen::Dynamic, 1>::Constant(n, 1e-8);
+    return transpose(mdivide_left_spd(A, G));
   } else {
     Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> A = crossprod(G);
     A.diagonal().array()
-        += Eigen::Array<double, Eigen::Dynamic, 1>::Constant(m, 3.712035e-7);
-    Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> L
-        = cholesky_decompose(A);
-    Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> M = chol2inv(L);
-    return quad_form(A, M) * transpose(G);
+        += Eigen::Array<double, Eigen::Dynamic, 1>::Constant(m, 1e-8);
+   return transpose(mdivide_right_spd(G, A));
   }
 }
 
