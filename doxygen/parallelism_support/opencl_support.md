@@ -125,7 +125,7 @@ var C_sum = sum(C_cl);
 - bernoulli_lpmf
 - bernoulli_logit_lpmf
 - bernoulli_logit_glm_lpmf
-- beta_lpdf_lpdf
+- beta_lpdf
 - beta_proportion_lpdf
 - categorical_logit_glm_lpmf
 - cauchy_lpdf
@@ -210,9 +210,9 @@ A list of OpenCL supported primitive functions:
 - plus
 - pow
 - rep_matrix, rep_row_vector, rep_vector
-- rows
 - round
 - row
+- rows
 - sin, sinh
 - size
 - sqrt
