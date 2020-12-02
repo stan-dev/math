@@ -47,9 +47,9 @@ generalized_inverse(const EigMat& G) {
   }
 
   if (n < m) {
-    return transpose(mdivide_left_spd(A, tcrossprod(G)));
+    return transpose(mdivide_left_spd(tcrossprod(G), G));
   } else {
-    return transpose(mdivide_right_spd(G, crossprod(A)));
+    return transpose(mdivide_right_spd(G, crossprod(G)));
   }
 }
 
