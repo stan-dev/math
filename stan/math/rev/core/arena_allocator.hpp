@@ -27,7 +27,9 @@ struct arena_allocator {
   constexpr arena_allocator(const arena_allocator<U>&) noexcept {}
 
   template <class U>
-  constexpr arena_allocator<T>& operator=(const arena_allocator<U>&) noexcept { return *this; }
+  constexpr arena_allocator<T>& operator=(const arena_allocator<U>&) noexcept {
+    return *this;
+  }
 
   static constexpr size_type max_size() noexcept {
     return std::numeric_limits<size_type>::max() / sizeof(T);
@@ -48,33 +50,31 @@ struct arena_allocator {
    */
   inline void deallocate(T* /*p*/, std::size_t /*n*/) const noexcept {}
 
-  static inline void construct(pointer p, const_reference val ) {
-    new(static_cast<void*>(p)) T(val);
+  static inline void construct(pointer p, const_reference val) {
+    new (static_cast<void*>(p)) T(val);
   }
 
-  static inline void destroy(pointer p ) {
-    (static_cast<T*>(p))->~T();
-  }
+  static inline void destroy(pointer p) { (static_cast<T*>(p))->~T(); }
 
-  inline pointer address(reference x) const noexcept {
-    return &x;
-  }
+  inline pointer address(reference x) const noexcept { return &x; }
 
-  inline const_pointer address(const_reference x) const noexcept {
-    return &x;
-  }
+  inline const_pointer address(const_reference x) const noexcept { return &x; }
 
   /**
    * Equality comparison operator.
    * @return true
    */
-  constexpr bool operator==(const arena_allocator&) const noexcept { return true; }
+  constexpr bool operator==(const arena_allocator&) const noexcept {
+    return true;
+  }
 
   /**
    * Inequality comparison operator.
    * @return false
    */
-  constexpr bool operator!=(const arena_allocator&) const noexcept { return false; }
+  constexpr bool operator!=(const arena_allocator&) const noexcept {
+    return false;
+  }
 };
 
 }  // namespace math
