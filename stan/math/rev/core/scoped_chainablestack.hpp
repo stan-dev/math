@@ -69,7 +69,7 @@ class ScopedChainableStack {
     const activate_scope active_scope(*this);
     return std::forward<F>(f)(std::forward<Args>(args)...);
   }
- 
+
   // Prevent undesirable operations
   ScopedChainableStack(const ScopedChainableStack&) = delete;
   ScopedChainableStack& operator=(const ScopedChainableStack&) = delete;

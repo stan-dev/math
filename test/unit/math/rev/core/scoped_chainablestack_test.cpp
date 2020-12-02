@@ -51,7 +51,7 @@ TEST_F(AgradLocalScoped, scoped_chainablestack_functor) {
   struct scoped_functor {
     double a_val_;
     double cgrad_a_;
-    
+
     scoped_functor(double a_val) : a_val_(a_val), cgrad_a_(0.0) {}
     void operator()() {
       stan::math::start_nested();
@@ -78,7 +78,6 @@ TEST_F(AgradLocalScoped, scoped_chainablestack_functor) {
 
   scoped_stack.execute([] { EXPECT_GT(stan::math::nested_size(), 0); });
 }
-
 
 TEST_F(AgradLocalScoped, scoped_chainablestack_simple) {
   using stan::math::nested_rev_autodiff;
