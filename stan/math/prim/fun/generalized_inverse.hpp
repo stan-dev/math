@@ -24,7 +24,7 @@ namespace math {
  * @tparam n number of rows, can be Eigen::Dynamic
  * @tparam m number of columns, can be Eigen::Dynamic
  *
- * @param M specified matrix
+ * @param G specified matrix
  * @return Generalized inverse of the matrix (an empty matrix if the specified
  * matrix has size zero).
  */
