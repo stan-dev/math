@@ -25,7 +25,7 @@ TEST(MathMatrixPrim, Equal) {
   using stan::math::generalized_inverse;
 
   stan::math::matrix_d m1(2, 3);
-  m1 << 1, 2, 3, 4, 5, 6;
+  m1 << 1, 3, 5, 2, 4, 6;
 
   stan::math::matrix_d m2(3, 2);
   m2 << -4.0 / 3.0, 13.0 / 12.0, -1.0 / 3.0, 1.0 / 3.0, 2.0 / 3.0, -5.0 / 12.0;
