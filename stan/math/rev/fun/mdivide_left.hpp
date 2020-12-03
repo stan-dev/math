@@ -1,10 +1,10 @@
-
 #ifndef STAN_MATH_REV_FUN_MDIVIDE_LEFT_HPP
 #define STAN_MATH_REV_FUN_MDIVIDE_LEFT_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/core/typedefs.hpp>
+#include <stan/math/rev/core/chainable_object.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
@@ -12,24 +12,6 @@
 
 namespace stan {
 namespace math {
-
-template <typename T>
-class chainable_object : public chainable_alloc {
-private:
-  T obj_;
-
-public:
-  template <typename S>
-  chainable_object(S&& obj) : obj_(std::forward<S>(obj)) {}
-
-  T& get() { return obj_; }
-};
-
-template <typename T>
-auto make_chainable_ptr(T&& obj) {
-  auto ptr = new chainable_object<plain_type_t<T>>(std::forward<T>(obj));
-  return ptr;
-}
 
 template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
           require_any_st_var<T1, T2>* = nullptr>
