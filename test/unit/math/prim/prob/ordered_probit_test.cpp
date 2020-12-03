@@ -17,6 +17,46 @@ stan::math::vector_d get_simplex_Phi(double lambda,
   return theta;
 }
 
+double old_ordered_probit(int y, double lambda, stan::math::vector_d c) {
+  using stan::math::Phi;
+  using stan::math::log1m;
+  using stan::math::log;
+
+  int K = c.size() + 1;
+
+  if (y == 1) {
+    return log1m(Phi(lambda - c(0)));
+  } else if (y == K) {
+    return log(Phi(lambda - c(K - 2)));
+  } else {
+    return log(Phi(lambda - c(y - 2)) - Phi(lambda - c(y - 1)));
+  }
+}
+
+TEST(ProbDistributions, ordered_probit_stability) {
+  using stan::math::is_inf;
+  using stan::math::ordered_probit_log;
+
+  Eigen::VectorXd c(3);
+  c << -0.3, 0.1, 1.2;
+
+  EXPECT_TRUE(is_inf(old_ordered_probit(1, 10, c)));
+  EXPECT_TRUE(is_inf(old_ordered_probit(2, 10, c)));
+  EXPECT_EQ(old_ordered_probit(4, 10, c), 0);
+
+  EXPECT_EQ(old_ordered_probit(1, -38, c), 0);
+  EXPECT_TRUE(is_inf(old_ordered_probit(2, -38, c)));
+  EXPECT_TRUE(is_inf(old_ordered_probit(4, -38, c)));
+
+  EXPECT_FALSE(is_inf(ordered_probit_log(1, 9, c)));
+  EXPECT_FALSE(is_inf(ordered_probit_log(2, 9, c)));
+  EXPECT_NE(ordered_probit_log(4, 10, c), 0);
+
+  EXPECT_NE(ordered_probit_log(1, -38, c), 0);
+  EXPECT_FALSE(is_inf(ordered_probit_log(2, -38, c)));
+  EXPECT_FALSE(is_inf(ordered_probit_log(4, -38, c)));
+}
+
 TEST(ProbDistributions, ordered_probit_vals) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
