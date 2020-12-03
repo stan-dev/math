@@ -92,8 +92,7 @@ return_type_t<T_loc, T_cut> ordered_probit_lpmf(const T_y& y,
     } else {
       logp_n += log_diff_exp(
                   std_normal_lcdf(lambda_vec[i] - c_vec[i].coeff(y_vec[i] - 2)),
-                  std_normal_lcdf(lambda_vec[i] - c_vec[i].coeff(y_vec[i] - 1))
-                );
+                  std_normal_lcdf(lambda_vec[i] - c_vec[i].coeff(y_vec[i] - 1)));
     }
   }
   return logp_n;
