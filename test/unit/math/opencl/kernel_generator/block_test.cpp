@@ -131,6 +131,9 @@ TEST(KernelGenerator, block_repeat_lhs_rhs_test) {
   MatrixXd m1(2, 3);
   m1 << 1, 2, 3, 4, 5, 6;
 
+  MatrixXd correct = m1;
+  correct.block(0, 1, 2, 2).array() += 1;
+
   matrix_cl<double> m1_cl(m1);
 
   auto b = block(m1_cl, 0, 1, 2, 2);
@@ -139,8 +142,6 @@ TEST(KernelGenerator, block_repeat_lhs_rhs_test) {
 
   MatrixXd res = stan::math::from_matrix_cl(m1_cl);
 
-  MatrixXd correct = m1;
-  correct.block(0, 1, 2, 2).array() += 1;
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
