@@ -4,12 +4,10 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/chol2inv.hpp>
 #include <stan/math/prim/fun/cholesky_decompose.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
 #include <stan/math/prim/fun/tcrossprod.hpp>
 #include <stan/math/prim/fun/crossprod.hpp>
-#include <stan/math/prim/fun/quad_form.hpp>
 #include <stan/math/prim/fun/inverse_spd.hpp>
 #include <stan/math/prim/fun/mdivide_left_spd.hpp>
 #include <stan/math/prim/fun/mdivide_right_spd.hpp>
@@ -21,13 +19,21 @@ namespace math {
 /**
  * Returns the Moore-Penrose generalized inverse of the specified matrix.
  *
- * @tparam T type of elements in the matrix
- * @tparam n number of rows, can be Eigen::Dynamic
- * @tparam m number of columns, can be Eigen::Dynamic
+ * The method is based on the Cholesky computation of the transform as specified in
+ *
+ * <ul><li> Courrieu, Pierre. 2008.  Fast Computation of Moore-Penrose Inverse Matrices. 
+ * <i>arXiv</i> <b>0804.4809</b> </li></ul>
+ *
+ * @tparam EigMat type of the matrix (must be derived from \c Eigen::MatrixBase)
  *
  * @param G specified matrix
  * @return Generalized inverse of the matrix (an empty matrix if the specified
  * matrix has size zero).
+ * @note Because the method inverts a SPD matrix internally that interal matrix may result
+ in small numerical issues that result in a non-SPD error. There are two
+ * <code>generalized_inverse</code> functions, one that uses one input matrix (this one)
+ * and another that works with an input matrix and a small jitter to the diagonal of the internal SPD
+ * matrix.
  */
 template <typename EigMat,
           require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
@@ -56,14 +62,22 @@ generalized_inverse(const EigMat& G) {
 /**
  * Returns the Moore-Penrose generalized inverse of the specified matrix.
  *
- * @tparam T type of elements in the matrix
- * @tparam n number of rows, can be Eigen::Dynamic
- * @tparam m number of columns, can be Eigen::Dynamic
+ * The method is based on the Cholesky computation of the transform as specified in
+ *
+ * <ul><li> Courrieu, Pierre. 2008.  Fast Computation of Moore-Penrose Inverse Matrices. 
+ * <i>arXiv</i> <b>0804.4809</b> </li></ul>
+ *
+ * @tparam EigMat type of the matrix (must be derived from \c Eigen::MatrixBase)
  *
  * @param G specified matrix
- * @param a diagonal jitter
+ * @param a real constant
  * @return Generalized inverse of the matrix (an empty matrix if the specified
  * matrix has size zero).
+ * @note Because the method inverts a SPD matrix internally that interal matrix may result
+ in small numerical issues that result in a non-SPD error. There are two
+ * <code>generalized_inverse</code> functions, one that uses one input matrix 
+ * and another (this one) that works with an input matrix and a small jitter to the diagonal of the internal SPD
+ * matrix.
  */
 template <typename EigMat,
           require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
