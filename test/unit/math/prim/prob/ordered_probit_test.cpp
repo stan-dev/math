@@ -48,8 +48,8 @@ TEST(ProbDistributions, ordered_probit_stability) {
   EXPECT_TRUE(is_inf(old_ordered_probit(2, -38, c)));
   EXPECT_TRUE(is_inf(old_ordered_probit(4, -38, c)));
 
-  EXPECT_FALSE(is_inf(ordered_probit_log(1, 9, c)));
-  EXPECT_FALSE(is_inf(ordered_probit_log(2, 9, c)));
+  EXPECT_FALSE(is_inf(ordered_probit_log(1, 10, c)));
+  EXPECT_FALSE(is_inf(ordered_probit_log(2, 10, c)));
   EXPECT_NE(ordered_probit_log(4, 10, c), 0);
 
   EXPECT_NE(ordered_probit_log(1, -38, c), 0);
