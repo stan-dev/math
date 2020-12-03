@@ -13,10 +13,10 @@ namespace math {
 
 template <typename T>
 class chainable_object : public chainable_alloc {
-private:
+ private:
   T obj_;
 
-public:
+ public:
   template <typename S>
   chainable_object(S&& obj) : obj_(std::forward<S>(obj)) {}
 
@@ -32,4 +32,3 @@ auto make_chainable_ptr(T&& obj) {
 }  // namespace math
 }  // namespace stan
 #endif
-
