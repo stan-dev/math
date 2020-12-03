@@ -147,7 +147,6 @@ TEST(KernelGenerator, indexing_repeat_lhs_rhs_test) {
   b = b + 1;
   MatrixXd res = stan::math::from_matrix_cl(m_cl);
 
-
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 2; j++) {
       correct(row_idx(i, j), col_idx(i, j)) += 1;
