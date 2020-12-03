@@ -56,6 +56,6 @@ TEST(mathMixMatFun, generalized_inverse) {
   // singular matrix, should use the
   // alias to input small amount of jitter on the diagonal
   Eigen::MatrixXd m(3, 2);
-  m <<  1, 2, 2, 4, 1, 2;
+  m << 1, 2, 2, 4, 1, 2;
   EXPECT_THROW(stan::math::generalized_inverse(m), std::domain_error);
 }
