@@ -105,6 +105,7 @@
 #include <stan/math/opencl/prim/bernoulli_logit_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/beta_lpdf.hpp>
 #include <stan/math/opencl/prim/beta_proportion_lpdf.hpp>
+#include <stan/math/opencl/prim/binomial_lpmf.hpp>
 #include <stan/math/opencl/prim/categorical_logit_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/cauchy_lpdf.hpp>
 #include <stan/math/opencl/prim/chi_square_lpdf.hpp>
