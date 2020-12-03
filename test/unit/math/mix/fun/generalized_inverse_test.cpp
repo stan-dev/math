@@ -22,13 +22,13 @@ TEST(mathMixMatFun, generalized_inverse) {
   //  stan::test::expect_ad_matvar(f, v);
 
   // issues around zero require looser tolerances for hessians
-  //  stan::test::ad_tolerances tols;
-  //  tols.hessian_hessian_ = 0.01;
-  //  tols.hessian_fvar_hessian_ = 0.01;
+  stan::test::ad_tolerances tols;
+  tols.hessian_hessian_ = 0.1;
+  tols.hessian_fvar_hessian_ = 0.1;
 
-  //  Eigen::MatrixXd w(3, 4);
-  //  w << 2, 3, 5, 7, 11, 13, 17, 19, 23, 25, 27, 29;
-  //  stan::test::expect_ad(tols, f, w);
+  Eigen::MatrixXd w(3, 4);
+  w << 2, 3, 5, 7, 11, 13, 17, 19, 23, 25, 27, 29;
+  stan::test::expect_ad(tols, f, w);
   //  stan::test::expect_ad_matvar(tols, f, w);
 
   // even lower tolerance, again for cases around zero
@@ -59,3 +59,4 @@ TEST(mathMixMatFun, generalized_inverse) {
   m << 1, 2, 2, 4, 1, 2;
   EXPECT_THROW(stan::math::generalized_inverse(m), std::domain_error);
 }
+
