@@ -9,6 +9,8 @@
 #include <tbb/blocked_range.h>
 
 #include <tuple>
+#include <memory>
+#include <utility>
 #include <vector>
 
 namespace stan {
@@ -27,6 +29,15 @@ template <typename ReduceFunction, typename ReturnType, typename Vec,
           typename... Args>
 struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                        Vec, Args...> {
+  struct scoped_args_tuple {
+    ScopedChainableStack stack_;
+    using args_tuple_t
+        = std::tuple<decltype(deep_copy_vars(std::declval<Args>()))...>;
+    std::unique_ptr<args_tuple_t> args_tuple_holder_;
+
+    scoped_args_tuple() : stack_(), args_tuple_holder_(nullptr) {}
+  };
+
   /**
    * This struct is used by the TBB to accumulate partial
    *  sums over consecutive ranges of the input. To distribute the workload,
@@ -43,6 +54,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     Vec vmapped_;
     std::ostream* msgs_;
     std::tuple<Args...> args_tuple_;
+    scoped_args_tuple local_args_tuple_scope_;
     double sum_{0.0};
     Eigen::VectorXd args_adjoints_{0};
 
@@ -54,6 +66,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           num_vars_shared_terms_(num_vars_shared_terms),
           sliced_partials_(sliced_partials),
           vmapped_(std::forward<VecT>(vmapped)),
+          local_args_tuple_scope_(),
           msgs_(msgs),
           args_tuple_(std::forward<ArgsT>(args)...) {}
 
@@ -68,6 +81,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           num_vars_shared_terms_(other.num_vars_shared_terms_),
           sliced_partials_(other.sliced_partials_),
           vmapped_(other.vmapped_),
+          local_args_tuple_scope_(),
           msgs_(other.msgs_),
           args_tuple_(other.args_tuple_) {}
 
@@ -93,6 +107,30 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         args_adjoints_ = Eigen::VectorXd::Zero(num_vars_shared_terms_);
       }
 
+      // Obtain reference to a local copy of all shared arguments that do
+      // not point
+      //   back to main autodiff stack
+
+      if (!local_args_tuple_scope_.args_tuple_holder_) {
+        // shared arguments need to be copied to reducer-specific
+        // scope. In this case no need for zeroing adjoints, since the
+        // fresh copy has all adjoints set to zero.
+        local_args_tuple_scope_.stack_.execute([&]() {
+          apply(
+              [&](auto&&... args) {
+                local_args_tuple_scope_.args_tuple_holder_ = std::make_unique<
+                    typename scoped_args_tuple::args_tuple_t>(
+                    deep_copy_vars(args)...);
+              },
+              args_tuple_);
+        });
+      } else {
+        // set adjoints of shared arguments to zero
+        local_args_tuple_scope_.stack_.execute([] { set_zero_all_adjoints(); });
+      }
+
+      auto& args_tuple_local = *(local_args_tuple_scope_.args_tuple_holder_);
+
       // Initialize nested autodiff stack
       const nested_rev_autodiff begin_nest;
 
@@ -104,22 +142,13 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         local_sub_slice.emplace_back(deep_copy_vars(vmapped_[i]));
       }
 
-      // Create nested autodiff copies of all shared arguments that do not point
-      //   back to main autodiff stack
-      auto args_tuple_local_copy = apply(
-          [&](auto&&... args) {
-            return std::tuple<decltype(deep_copy_vars(args))...>(
-                deep_copy_vars(args)...);
-          },
-          args_tuple_);
-
       // Perform calculation
       var sub_sum_v = apply(
           [&](auto&&... args) {
             return ReduceFunction()(local_sub_slice, r.begin(), r.end() - 1,
                                     msgs_, args...);
           },
-          args_tuple_local_copy);
+          args_tuple_local);
 
       // Compute Jacobian
       sub_sum_v.grad();
@@ -134,10 +163,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       // Accumulate adjoints of shared_arguments
       apply(
           [&](auto&&... args) {
-            accumulate_adjoints(args_adjoints_.data(),
-                                std::forward<decltype(args)>(args)...);
+            accumulate_adjoints(args_adjoints_.data(), args...);
           },
-          std::move(args_tuple_local_copy));
+          args_tuple_local);
     }
 
     /**
@@ -198,12 +226,11 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
    */
   inline var operator()(Vec&& vmapped, bool auto_partitioning, int grainsize,
                         std::ostream* msgs, Args&&... args) const {
-    const std::size_t num_terms = vmapped.size();
-
     if (vmapped.empty()) {
       return var(0.0);
     }
 
+    const std::size_t num_terms = vmapped.size();
     const std::size_t num_vars_per_term = count_vars(vmapped[0]);
     const std::size_t num_vars_sliced_terms = num_terms * num_vars_per_term;
     const std::size_t num_vars_shared_terms = count_vars(args...);
@@ -235,7 +262,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     }
 
     for (size_t i = 0; i < num_vars_shared_terms; ++i) {
-      partials[num_vars_sliced_terms + i] = worker.args_adjoints_(i);
+      partials[num_vars_sliced_terms + i] = worker.args_adjoints_.coeff(i);
     }
 
     return var(new precomputed_gradients_vari(
