@@ -142,8 +142,9 @@ inline void elementwise_check(const F& is_good, const char* function,
  */
 template <typename F, typename T, typename... Indexings,
           require_eigen_t<T>* = nullptr,
-          std::enable_if_t<static_cast<bool>(Eigen::internal::traits<T>::Flags&(
-              Eigen::LinearAccessBit | Eigen::DirectAccessBit))>* = nullptr>
+          std::enable_if_t<(Eigen::internal::traits<T>::Flags
+                            & Eigen::LinearAccessBit)
+                           || T::IsVectorAtCompileTime>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
                               const char* name, const T& x, const char* must_be,
                               const Indexings&... indexings) {
@@ -193,7 +194,8 @@ template <
     typename F, typename T, typename... Indexings,
     require_eigen_t<T>* = nullptr,
     std::enable_if_t<!(Eigen::internal::traits<T>::Flags
-                       & (Eigen::LinearAccessBit | Eigen::DirectAccessBit))
+                       & Eigen::LinearAccessBit)
+                      && !T::IsVectorAtCompileTime
                      && !(Eigen::internal::traits<T>::Flags
                           & Eigen::RowMajorBit)>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
@@ -234,7 +236,8 @@ template <
     typename F, typename T, typename... Indexings,
     require_eigen_t<T>* = nullptr,
     std::enable_if_t<!(Eigen::internal::traits<T>::Flags
-                       & (Eigen::LinearAccessBit | Eigen::DirectAccessBit))
+                     & Eigen::LinearAccessBit)
+                    && !T::IsVectorAtCompileTime
                      && static_cast<bool>(Eigen::internal::traits<T>::Flags
                                           & Eigen::RowMajorBit)>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
