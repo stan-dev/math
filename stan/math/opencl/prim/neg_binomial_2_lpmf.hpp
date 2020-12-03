@@ -87,15 +87,16 @@ inline return_type_t<T_n_cl, T_location_cl, T_precision_cl> neg_binomial_2_lpmf(
       = select(mu_val < phi_val, log1p(-elt_divide(mu_val, mu_plus_phi)),
                log_phi - log_mu_plus_phi);
   auto phi_deriv = elt_divide(mu_val - n, mu_plus_phi) + log_term
-      - digamma(phi_val) + digamma(n_plus_phi);
+                   - digamma(phi_val) + digamma(n_plus_phi);
 
   matrix_cl<double> logp_cl;
   matrix_cl<double> mu_deriv_cl;
   matrix_cl<double> phi_deriv_cl;
 
-  results(check_n_nonnegative, check_mu_positive_finite, check_phi_positive_finite,
-          logp_cl, mu_deriv_cl, phi_deriv_cl)
-      = expressions(n_nonnegative, mu_positive_finite, phi_positive_finite, logp_expr,
+  results(check_n_nonnegative, check_mu_positive_finite,
+          check_phi_positive_finite, logp_cl, mu_deriv_cl, phi_deriv_cl)
+      = expressions(n_nonnegative, mu_positive_finite, phi_positive_finite,
+                    logp_expr,
                     calc_if<!is_constant<T_location_cl>::value>(mu_deriv),
                     calc_if<!is_constant<T_precision_cl>::value>(phi_deriv));
 

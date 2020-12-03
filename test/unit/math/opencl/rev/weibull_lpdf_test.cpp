@@ -116,8 +116,8 @@ TEST(ProbDistributionsWeibull, opencl_broadcast_alpha) {
   Eigen::VectorXd sigma(N);
   sigma << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(weibull_lpdf_functor, y,
-                                                         alpha_scal, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(weibull_lpdf_functor,
+                                                         y, alpha_scal, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       weibull_lpdf_functor_propto, y, alpha_scal, sigma);
 }
@@ -131,8 +131,8 @@ TEST(ProbDistributionsWeibull, opencl_broadcast_sigma) {
   alpha << 0.3, 0.8, 1.0;
   double sigma_scal = 12.3;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(weibull_lpdf_functor, y,
-                                                         alpha, sigma_scal);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(weibull_lpdf_functor,
+                                                         y, alpha, sigma_scal);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       weibull_lpdf_functor_propto, y, alpha, sigma_scal);
 }
