@@ -19,9 +19,11 @@ namespace math {
 /**
  * Returns the Moore-Penrose generalized inverse of the specified matrix.
  *
- * The method is based on the Cholesky computation of the transform as specified in
+ * The method is based on the Cholesky computation of the transform as specified
+ in
  *
- * <ul><li> Courrieu, Pierre. 2008.  Fast Computation of Moore-Penrose Inverse Matrices. 
+ * <ul><li> Courrieu, Pierre. 2008.  Fast Computation of Moore-Penrose Inverse
+ Matrices.
  * <i>arXiv</i> <b>0804.4809</b> </li></ul>
  *
  * @tparam EigMat type of the matrix (must be derived from \c Eigen::MatrixBase)
@@ -29,10 +31,13 @@ namespace math {
  * @param G specified matrix
  * @return Generalized inverse of the matrix (an empty matrix if the specified
  * matrix has size zero).
- * @note Because the method inverts a SPD matrix internally that interal matrix may result
- in small numerical issues that result in a non-SPD error. There are two
- * <code>generalized_inverse</code> functions, one that uses one input matrix (this one)
- * and another that works with an input matrix and a small jitter to the diagonal of the internal SPD
+ * @note Because the method inverts a SPD matrix internally that interal matrix
+ may result in small numerical issues that result in a non-SPD error. There are
+ two
+ * <code>generalized_inverse</code> functions, one that uses one input matrix
+ (this one)
+ * and another that works with an input matrix and a small jitter to the
+ diagonal of the internal SPD
  * matrix.
  */
 template <typename EigMat,
@@ -62,9 +67,11 @@ generalized_inverse(const EigMat& G) {
 /**
  * Returns the Moore-Penrose generalized inverse of the specified matrix.
  *
- * The method is based on the Cholesky computation of the transform as specified in
+ * The method is based on the Cholesky computation of the transform as specified
+ in
  *
- * <ul><li> Courrieu, Pierre. 2008.  Fast Computation of Moore-Penrose Inverse Matrices. 
+ * <ul><li> Courrieu, Pierre. 2008.  Fast Computation of Moore-Penrose Inverse
+ Matrices.
  * <i>arXiv</i> <b>0804.4809</b> </li></ul>
  *
  * @tparam EigMat type of the matrix (must be derived from \c Eigen::MatrixBase)
@@ -73,10 +80,12 @@ generalized_inverse(const EigMat& G) {
  * @param a real constant
  * @return Generalized inverse of the matrix (an empty matrix if the specified
  * matrix has size zero).
- * @note Because the method inverts a SPD matrix internally that interal matrix may result
- in small numerical issues that result in a non-SPD error. There are two
- * <code>generalized_inverse</code> functions, one that uses one input matrix 
- * and another (this one) that works with an input matrix and a small jitter to the diagonal of the internal SPD
+ * @note Because the method inverts a SPD matrix internally that interal matrix
+ may result in small numerical issues that result in a non-SPD error. There are
+ two
+ * <code>generalized_inverse</code> functions, one that uses one input matrix
+ * and another (this one) that works with an input matrix and a small jitter to
+ the diagonal of the internal SPD
  * matrix.
  */
 template <typename EigMat,
