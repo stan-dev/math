@@ -3,19 +3,18 @@
 #include <test/unit/util.hpp>
 
 class ChainableObjectTest {
-public:
+ public:
   static int counter;
 
-  ~ChainableObjectTest() {
-    counter++;
-  }
+  ~ChainableObjectTest() { counter++; }
 };
 
 int ChainableObjectTest::counter = 0;
 
 TEST(AgradRev, chainable_object_test) {
   {
-    auto ptr = new stan::math::chainable_object<ChainableObjectTest>(ChainableObjectTest());
+    auto ptr = new stan::math::chainable_object<ChainableObjectTest>(
+        ChainableObjectTest());
     ChainableObjectTest::counter = 0;
   }
 
@@ -28,7 +27,8 @@ TEST(AgradRev, chainable_object_nested_test) {
   stan::math::start_nested();
 
   {
-    auto ptr = new stan::math::chainable_object<ChainableObjectTest>(ChainableObjectTest());
+    auto ptr = new stan::math::chainable_object<ChainableObjectTest>(
+        ChainableObjectTest());
     ChainableObjectTest::counter = 0;
   }
 
