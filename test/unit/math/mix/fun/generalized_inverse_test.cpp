@@ -53,7 +53,7 @@ TEST(mathMixMatFun, generalized_inverse) {
   stan::test::expect_ad(f, a);
   stan::test::expect_ad_matvar(f, a);
 
-  // singular matrix, should use the 
+  // singular matrix, should use the
   // alias to input small amount of jitter on the diagonal
   Eigen::MatrixXd m(3, 2);
   m <<  1, 2, 2, 4, 1, 2;
