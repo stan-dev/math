@@ -16,6 +16,7 @@ TEST(MetaTraitsRevScal, is_rev_matrix_test) {
   EXPECT_FALSE((is_rev_matrix<double>::value));
   EXPECT_FALSE((is_rev_matrix<vari_value<double>>::value));
   EXPECT_FALSE((is_rev_matrix<Eigen::MatrixXd>::value));
+  EXPECT_FALSE((is_rev_matrix<std::vector<Eigen::Matrix<var, -1, -1>>>::value));
 }
 
 TEST(MetaTraitsRevScal, is_rev_col_vector_test) {
@@ -33,6 +34,7 @@ TEST(MetaTraitsRevScal, is_rev_col_vector_test) {
   EXPECT_TRUE((is_rev_col_vector<Eigen::Matrix<var, -1, 1>>::value));
   EXPECT_FALSE((is_rev_col_vector<Eigen::Matrix<var, -1, -1>>::value));
   EXPECT_FALSE((is_rev_col_vector<Eigen::Matrix<var, 1, -1>>::value));
+  EXPECT_FALSE((is_rev_col_vector<std::vector<Eigen::Matrix<var, 1, -1>>>::value));
   EXPECT_TRUE(
       (is_rev_col_vector<Eigen::Matrix<var_value<float>, -1, 1>>::value));
   EXPECT_FALSE(
@@ -62,6 +64,7 @@ TEST(MetaTraitsRevScal, is_rev_row_vector_test) {
   EXPECT_TRUE((is_rev_row_vector<Eigen::Matrix<var, 1, -1>>::value));
   EXPECT_FALSE((is_rev_row_vector<Eigen::Matrix<var, -1, 1>>::value));
   EXPECT_FALSE((is_rev_row_vector<Eigen::Matrix<var, -1, -1>>::value));
+  EXPECT_FALSE((is_rev_row_vector<std::vector<Eigen::Matrix<var, -1, 1>>>::value));
   EXPECT_TRUE(
       (is_rev_row_vector<Eigen::Matrix<var_value<float>, 1, -1>>::value));
   EXPECT_FALSE(
