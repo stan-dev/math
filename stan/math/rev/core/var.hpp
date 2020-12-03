@@ -913,7 +913,6 @@ class var_value<
     return var_sub(new vari_sub(vi_->array()));
   }
 
-
   /**
    * Write the value of this autodiff variable and its adjoint to
    * the specified output stream.

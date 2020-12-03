@@ -59,13 +59,13 @@ inline auto as_array_or_scalar(T&& v) {
  * @return Matrix converted to an array.
  */
 template <typename T, require_var_matrix_t<T>* = nullptr,
-  require_not_eigen_array_t<T>* = nullptr>
+          require_not_eigen_array_t<T>* = nullptr>
 inline auto as_array_or_scalar(T&& v) {
   return v.array();
 }
 
 template <typename T, require_var_matrix_t<T>* = nullptr,
-  require_eigen_array_t<T>* = nullptr>
+          require_eigen_array_t<T>* = nullptr>
 inline auto as_array_or_scalar(T&& v) {
   return v;
 }

@@ -115,9 +115,9 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars) {
 TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_matvars) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::to_var_value;
   using stan::math::var;
   using stan::math::var_value;
-  using stan::math::to_var_value;
   using std::vector;
   vector<int> y{1, 0, 1};
   Matrix<var, Dynamic, Dynamic> x(3, 2);
@@ -165,7 +165,6 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_matvars) {
     }
   }
 }
-
 
 TEST(ProbDistributionsBernoulliLogitGLM, broadcast_x) {
   using Eigen::Dynamic;
