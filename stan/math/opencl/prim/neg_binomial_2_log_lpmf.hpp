@@ -15,10 +15,10 @@ namespace stan {
 namespace math {
 
 /** \ingroup opencl
- * The log of the negative binomial density for the specified scalars given
- * the specified mean(s) and deviation(s). n, eta, or phi can
- * each be either a scalar or a vector matrix_cl. Any vector inputs
- * must be the same length.
+ * The log of the log transformed negative binomial density for the specified
+ * scalars given the specified mean(s) and deviation(s). n, eta, or phi can each
+ * be either a scalar or a vector matrix_cl. Any vector inputs must be the same
+ * length.
  *
  * <p>The result log probability is defined to be the sum of the
  * log probabilities for each observation/mean/deviation triple.
@@ -34,8 +34,8 @@ namespace math {
  */
 template <bool propto, typename T_n_cl, typename T_log_location_cl,
           typename T_precision_cl,
-          require_all_prim_or_rev_kernel_expression_t<T_n_cl, T_log_location_cl,
-                                                      T_precision_cl>* = nullptr,
+          require_all_prim_or_rev_kernel_expression_t<
+              T_n_cl, T_log_location_cl, T_precision_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_n_cl, T_log_location_cl,
                                         T_precision_cl>* = nullptr>
 inline return_type_t<T_n_cl, T_log_location_cl, T_precision_cl>
@@ -54,7 +54,8 @@ neg_binomial_2_log_lpmf(const T_n_cl& n, const T_log_location_cl& eta,
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_n_cl, T_log_location_cl, T_precision_cl>::value) {
+  if (!include_summand<propto, T_n_cl, T_log_location_cl,
+                       T_precision_cl>::value) {
     return 0.0;
   }
 
@@ -69,7 +70,7 @@ neg_binomial_2_log_lpmf(const T_n_cl& n, const T_log_location_cl& eta,
   auto eta_finite = isfinite(eta_val);
   auto check_phi_positive_finite
       = check_cl(function, "Precision parameter", phi_val, "positive finite");
-  auto phi_positive = 0 < phi_val && isfinite(phi_val);
+  auto phi_positive_finite = 0 < phi_val && isfinite(phi_val);
 
   auto log_phi = log(phi_val);
   auto exp_eta = exp(eta_val);
@@ -97,14 +98,14 @@ neg_binomial_2_log_lpmf(const T_n_cl& n, const T_log_location_cl& eta,
 
   results(check_n_nonnegative, check_eta_finite, check_phi_positive_finite,
           logp_cl, eta_deriv_cl, phi_deriv_cl)
-      = expressions(
-          n_nonnegative, eta_finite, phi_positive, logp_expr,
-          calc_if<!is_constant<T_log_location_cl>::value>(eta_deriv),
-          calc_if<!is_constant<T_precision_cl>::value>(phi_deriv));
+      = expressions(n_nonnegative, eta_finite, phi_positive_finite, logp_expr,
+                    calc_if<!is_constant<T_log_location_cl>::value>(eta_deriv),
+                    calc_if<!is_constant<T_precision_cl>::value>(phi_deriv));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  operands_and_partials<T_log_location_cl, T_precision_cl> ops_partials(eta, phi);
+  operands_and_partials<T_log_location_cl, T_precision_cl> ops_partials(eta,
+                                                                        phi);
 
   if (!is_constant<T_log_location_cl>::value) {
     ops_partials.edge1_.partials_ = std::move(eta_deriv_cl);
