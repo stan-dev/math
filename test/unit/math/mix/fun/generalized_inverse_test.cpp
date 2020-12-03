@@ -59,4 +59,3 @@ TEST(mathMixMatFun, generalized_inverse) {
   m << 1, 2, 2, 4, 1, 2;
   EXPECT_THROW(stan::math::generalized_inverse(m), std::domain_error);
 }
-
