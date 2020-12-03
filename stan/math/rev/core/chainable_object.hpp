@@ -32,11 +32,11 @@ class chainable_object : public chainable_alloc {
   /**
    * Construct chainable object from another object
    *
-   * @tparam S type of object to hold (must be the same as `T` excluding `cost` and `reference` qualitifers)
+   * @tparam S type of object to hold (must be the same as `T` excluding `cost`
+   * and `reference` qualitifers)
    */
   template <typename S,
-	    require_same_t<plain_type_t<T>,
-			   plain_type_t<S>>* = nullptr>
+            require_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
   chainable_object(S&& obj) : obj_(std::forward<S>(obj)) {}
 
   /**
