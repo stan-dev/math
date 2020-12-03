@@ -18,9 +18,9 @@ stan::math::vector_d get_simplex_Phi(double lambda,
 }
 
 double old_ordered_probit(int y, double lambda, stan::math::vector_d c) {
-  using stan::math::Phi;
-  using stan::math::log1m;
   using stan::math::log;
+  using stan::math::log1m;
+  using stan::math::Phi;
 
   int K = c.size() + 1;
 
