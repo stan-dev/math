@@ -6,6 +6,7 @@
 #include <stan/math/prim/meta/is_stan_scalar.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
+#include <stan/math/prim/meta/is_var_matrix.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <vector>
 
@@ -54,6 +55,25 @@ inline auto to_value_rec_column_array_or_scalar(T&& a) {
         return value_of_rec(std::forward<decltype(x)>(x)).transpose().array();
       },
       std::forward<T>(a));
+}
+
+template <typename T, require_var_col_vector_t<T>* = nullptr>
+inline auto to_value_rec_column_array_or_scalar(T&& a) {
+  return a.val().array();
+}
+
+/** \ingroup type_trait
+ * Converts input argument to a column vector or a scalar. For a row vector
+ * input this is transpose.
+ *
+ * @tparam T Type of scalar element.
+ * @param a Specified vector.
+ * @return Transposed vector.
+ */
+template <typename T, require_var_row_vector_t<T>* = nullptr,
+          require_not_var_col_vector_t<T>* = nullptr>
+inline auto to_value_rec_column_array_or_scalar(T&& a) {
+  return a.val().transpose().array();
 }
 
 /** \ingroup type_trait

@@ -902,6 +902,18 @@ class var_value<
     return var_sub(new vari_sub(vi_->middleCols(start_col, n)));
   }
 
+  inline auto array() const {
+    using vari_sub = decltype(vi_->array());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->array()));
+  }
+  inline auto array() noexcept {
+    using vari_sub = decltype(vi_->array());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->array()));
+  }
+
+
   /**
    * Write the value of this autodiff variable and its adjoint to
    * the specified output stream.

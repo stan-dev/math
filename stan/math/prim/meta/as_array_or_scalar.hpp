@@ -6,6 +6,7 @@
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_stan_scalar.hpp>
+#include <stan/math/prim/meta/is_var_matrix.hpp>
 #include <vector>
 
 namespace stan {
@@ -18,7 +19,7 @@ namespace math {
  * @param v Specified value.
  * @return Same value.
  */
-template <typename T, typename = require_stan_scalar_t<T>>
+template <typename T, require_stan_scalar_t<T>* = nullptr>
 inline T as_array_or_scalar(T&& v) {
   return std::forward<T>(v);
 }
@@ -30,7 +31,7 @@ inline T as_array_or_scalar(T&& v) {
  * @param v Specified \c Eigen \c Matrix or expression.
  * @return Matrix converted to an array.
  */
-template <typename T, typename = require_eigen_t<T>>
+template <typename T, require_eigen_t<T>* = nullptr>
 inline auto as_array_or_scalar(T&& v) {
   return make_holder([](auto& x) { return x.array(); }, std::forward<T>(v));
 }
@@ -48,6 +49,25 @@ inline auto as_array_or_scalar(T&& v) {
       = Eigen::Map<const Eigen::Array<value_type_t<T>, Eigen::Dynamic, 1>>;
   return make_holder([](auto& x) { return T_map(x.data(), x.size()); },
                      std::forward<T>(v));
+}
+
+/** \ingroup type_trait
+ * Converts a matrix type to an array.
+ *
+ * @tparam T Type of \c Eigen \c Matrix or expression
+ * @param v Specified \c Eigen \c Matrix or expression.
+ * @return Matrix converted to an array.
+ */
+template <typename T, require_var_matrix_t<T>* = nullptr,
+  require_not_eigen_array_t<T>* = nullptr>
+inline auto as_array_or_scalar(T&& v) {
+  return v.array();
+}
+
+template <typename T, require_var_matrix_t<T>* = nullptr,
+  require_eigen_array_t<T>* = nullptr>
+inline auto as_array_or_scalar(T&& v) {
+  return v;
 }
 
 }  // namespace math

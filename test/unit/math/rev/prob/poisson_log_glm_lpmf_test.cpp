@@ -103,6 +103,57 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_vars) {
   }
 }
 
+TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_matvars) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using stan::math::var_value;
+  using std::vector;
+  vector<int> y{14, 2, 5};
+  Matrix<var, Dynamic, Dynamic> x(3, 2);
+  x << -12, 46, -42, 24, 25, 27;
+  Matrix<var, Dynamic, 1> beta(2, 1);
+  beta << 0.3, 2;
+  var alpha = 0.3;
+  Matrix<var, Dynamic, 1> alphavec = alpha * Matrix<double, 3, 1>::Ones();
+  Matrix<var, Dynamic, 1> theta(3, 1);
+  theta = x * beta + alphavec;
+  var lp = stan::math::poisson_log_lpmf(y, theta);
+  lp.grad();
+
+  double lp_val = lp.val();
+  double alpha_adj = alpha.adj();
+  Matrix<double, Dynamic, Dynamic> x_adj(3, 2);
+  Matrix<double, Dynamic, 1> beta_adj(2, 1);
+  for (size_t i = 0; i < 2; i++) {
+    beta_adj[i] = beta[i].adj();
+    for (size_t j = 0; j < 3; j++) {
+      x_adj(j, i) = x(j, i).adj();
+    }
+  }
+
+  stan::math::recover_memory();
+
+  vector<int> y2{14, 2, 5};
+  Matrix<double, Dynamic, Dynamic> x2_val(3, 2);
+  x2_val << -12, 46, -42, 24, 25, 27;
+  Matrix<double, Dynamic, 1> beta2_val(2, 1);
+  beta2_val << 0.3, 2;
+  var alpha2 = 0.3;
+  var_value<Matrix<double, Dynamic, Dynamic>> x2(x2_val);
+  var_value<Matrix<double, Dynamic, 1>> beta2(beta2_val);
+  var lp2 = stan::math::poisson_log_glm_lpmf(y2, x2, alpha2, beta2);
+  lp2.grad();
+  EXPECT_FLOAT_EQ(lp_val, lp2.val());
+  EXPECT_FLOAT_EQ(alpha_adj, alpha2.adj());
+  for (size_t i = 0; i < 2; i++) {
+    EXPECT_FLOAT_EQ(beta_adj[i], beta2.adj()[i]);
+    for (size_t j = 0; j < 3; j++) {
+      EXPECT_FLOAT_EQ(x_adj(j, i), x2.adj()(j, i));
+    }
+  }
+}
+
 TEST(ProbDistributionsPoissonLogGLM, broadcast_x) {
   using Eigen::Dynamic;
   using Eigen::Matrix;

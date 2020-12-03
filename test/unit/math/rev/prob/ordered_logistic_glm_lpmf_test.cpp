@@ -11,7 +11,7 @@ stan::return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_simple_lpmf(
   using T_x_beta = stan::return_type_t<T_x, T_beta>;
   using stan::math::as_column_vector_or_scalar;
 
-  auto& beta_col = as_column_vector_or_scalar(beta);
+  auto&& beta_col = as_column_vector_or_scalar(beta);
 
   Eigen::Matrix<T_x_beta, Eigen::Dynamic, 1> location
       = x.template cast<T_x_beta>() * beta_col.template cast<T_x_beta>();
@@ -99,6 +99,53 @@ TEST(ProbDistributionsOrderedLogisticGLM, glm_matches_ordered_logistic_vars) {
   }
   for (int i = 0; i < C; i++) {
     EXPECT_NEAR(cuts1[i].adj(), cuts2[i].adj(), eps);
+  }
+}
+
+TEST(ProbDistributionsOrderedLogisticGLM, glm_matches_ordered_logistic_matvar) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
+  using stan::math::var;
+  using stan::math::var_value;
+  using std::vector;
+  double eps = 1e-13;
+  int N = 5;
+  int M = 2;
+  int C = 3;
+  vector<int> y{1, 1, 2, 4, 4};
+  Matrix<double, Dynamic, 1> cuts1_val(C);
+  cuts1_val << 0.9, 1.1, 7;
+  var_value<Matrix<double, Dynamic, 1>> cuts1(cuts1_val);
+  Matrix<var, Dynamic, 1> cuts2(C);
+  cuts2 << 0.9, 1.1, 7;
+  Matrix<double, Dynamic, 1> beta1_val(M);
+  beta1_val << 1.1, 0.4;
+  var_value<Matrix<double, Dynamic, 1>> beta1(beta1_val);
+  Matrix<var, Dynamic, 1> beta2(M);
+  beta2 << 1.1, 0.4;
+  Matrix<double, Dynamic, Dynamic> x1_val(N, M);
+  x1_val << 1, 2, 3, 4, 5, 6, 7, 8, 9, 0;
+  var_value<Matrix<double, Dynamic, Dynamic>> x1(x1_val);
+  Matrix<var, Dynamic, Dynamic> x2(N, M);
+  x2 << 1, 2, 3, 4, 5, 6, 7, 8, 9, 0;
+  var res1 = stan::math::ordered_logistic_glm_lpmf(y, x1, beta1, cuts1);
+  var res2 = ordered_logistic_glm_simple_lpmf<false>(y, x2, beta2, cuts2);
+  (res1 + res2).grad();
+
+  EXPECT_NEAR(res1.val(), res2.val(), eps);
+  for (int i = 0; i < M; i++) {
+    for (int j = 0; j < N; j++) {
+      EXPECT_NEAR(x1.adj()(j, i), x2(j, i).adj(), eps);
+    }
+  }
+  for (int i = 0; i < M; i++) {
+    EXPECT_NEAR(beta1.adj()[i], beta2[i].adj(), eps);
+  }
+  for (int i = 0; i < C; i++) {
+    EXPECT_NEAR(cuts1.adj()[i], cuts2[i].adj(), eps);
   }
 }
 

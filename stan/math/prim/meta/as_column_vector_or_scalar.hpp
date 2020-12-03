@@ -70,6 +70,32 @@ inline auto as_column_vector_or_scalar(T&& a) {
                      std::forward<T>(a));
 }
 
+/** \ingroup type_trait
+ * Converts input argument to a column vector or a scalar. For column vector
+ * inputs this is an identity function.
+ *
+ * @tparam T Type of scalar element.
+ * @param a Specified vector.
+ * @return Same vector.
+ */
+template <typename T, require_var_vector_t<T>* = nullptr>
+inline auto as_column_vector_or_scalar(T&& a) {
+  return a;
+}
+
+/** \ingroup type_trait
+ * Converts input argument to a column vector or a scalar. For a row vector
+ * input this is transpose.
+ *
+ * @tparam T Type of scalar element.
+ * @param a Specified vector.
+ * @return Transposed vector.
+ */
+ template <typename T, require_var_row_vector_t<T>* = nullptr>
+inline auto as_column_vector_or_scalar(T&& a) {
+  return a.transpose();
+}
+
 }  // namespace math
 }  // namespace stan
 

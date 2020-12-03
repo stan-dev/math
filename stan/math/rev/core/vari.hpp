@@ -529,6 +529,22 @@ class vari_view_eigen {
   }
 
   /**
+   * Return a block consisting of columns in the middle.
+   * @param start_col Starting column index
+   * @param n Number of columns
+   */
+  inline auto array() const {
+    using inner_type = decltype(derived().val_.array());
+    return vari_view<inner_type>(derived().val_.array(),
+                                 derived().adj_.array());
+  }
+  inline auto array() {
+    using inner_type = decltype(derived().val_.array());
+    return vari_view<inner_type>(derived().val_.array(),
+                                 derived().adj_.array());
+  }
+
+  /**
    * Return the number of rows for this class's `val_` member
    */
   inline Eigen::Index rows() const { return derived().val_.rows(); }
