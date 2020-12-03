@@ -6,10 +6,10 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log_diff_exp.hpp>
+#include <stan/math/prim/fun/log1m_exp.hpp>
 #include <stan/math/prim/fun/size_mvt.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/prob/std_normal_lcdf.hpp>
-#include <stan/math/prim/prob/std_normal_lccdf.hpp>
 #include <vector>
 #include <cmath>
 
@@ -86,7 +86,7 @@ return_type_t<T_loc, T_cut> ordered_probit_lpmf(const T_y& y,
     int K = c_vec[i].size() + 1;
 
     if (y_vec[i] == 1) {
-      logp_n += std_normal_lccdf(lambda_vec[i] - c_vec[i].coeff(0));
+      logp_n += log1m_exp(std_normal_lcdf(lambda_vec[i] - c_vec[i].coeff(0)));
     } else if (y_vec[i] == K) {
       logp_n += std_normal_lcdf(lambda_vec[i] - c_vec[i].coeff(K - 2));
     } else {
