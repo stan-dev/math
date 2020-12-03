@@ -63,6 +63,47 @@ inline var log_determinant_spd(const EigMat& m) {
       new precomputed_gradients_vari(val, m.size(), operands, gradients));
 }
 
+/**
+ * Returns the log det of a symmetric, positive-definite matrix
+ *
+ * @tparam EigMat Type of the matrix
+ * @param m a symmetric, positive-definite matrix
+ * @return The log determinant of the specified matrix
+ */
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline var log_determinant_spd(const T& m) {
+  check_square("log_determinant_spd", "m", m);
+
+  if (m.size() == 0) {
+    return var(0.0);
+  }
+
+  check_symmetric("log_determinant_spd", "m", m.val());
+
+  auto ldlt = m.val().ldlt();
+  if (ldlt.info() != Eigen::Success) {
+    double y = 0;
+    throw_domain_error("log_determinant_spd", "matrix argument", y,
+                       "failed LDLT factorization");
+  }
+
+  if (ldlt.isNegative() || (ldlt.vectorD().array() <= 1e-16).any()) {
+    double y = 0;
+    throw_domain_error("log_determinant_spd", "matrix argument", y,
+                       "matrix is negative definite");
+  }
+
+  arena_t<Eigen::MatrixXd> arena_m_inv_transpose = Eigen::MatrixXd::Identity(m.rows(), m.cols());
+  ldlt.solveInPlace(arena_m_inv_transpose);
+
+  var log_det = sum(log(ldlt.vectorD()));
+
+  reverse_pass_callback([m, log_det, arena_m_inv_transpose]() mutable {
+    m.adj() += log_det.adj() * arena_m_inv_transpose;
+  });
+  return log_det;
+}
+
 }  // namespace math
 }  // namespace stan
 #endif
