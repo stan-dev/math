@@ -13,6 +13,18 @@
 namespace stan {
 namespace math {
 
+/**
+ * Return the solution `X` of `AX = B`.
+ *
+ * A must be a square matrix, but B can be a matrix or a vector
+ *
+ * @tparam T1 type of first matrix
+ * @tparam T2 type of second matrix
+ *
+ * @param[in] A square matrix
+ * @param[in] B right hand side
+ * @return solution of AX = B
+ */
 template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
           require_any_st_var<T1, T2>* = nullptr>
 inline auto mdivide_left(const T1& A, const T2& B) {
