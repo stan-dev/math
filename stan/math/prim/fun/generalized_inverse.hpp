@@ -40,8 +40,7 @@ namespace math {
  diagonal of the internal SPD
  * matrix.
  */
-template <typename EigMat,
-          require_eigen_t<EigMat>* = nullptr>
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
                      EigMat::ColsAtCompileTime>
 generalized_inverse(const EigMat& G) {
@@ -88,9 +87,8 @@ generalized_inverse(const EigMat& G) {
  the diagonal of the internal SPD
  * matrix.
  */
-template <typename EigMat, typename Scal,
-          require_eigen_t<EigMat>* = nullptr,
-	  require_stan_scalar_t<Scal>* = nullptr>
+template <typename EigMat, typename Scal, require_eigen_t<EigMat>* = nullptr,
+          require_stan_scalar_t<Scal>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
                      EigMat::ColsAtCompileTime>
 generalized_inverse(const EigMat& G, const Scal& a) {
