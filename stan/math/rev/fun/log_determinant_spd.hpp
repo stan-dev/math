@@ -93,7 +93,8 @@ inline var log_determinant_spd(const T& m) {
                        "matrix is negative definite");
   }
 
-  arena_t<Eigen::MatrixXd> arena_m_inv_transpose = Eigen::MatrixXd::Identity(m.rows(), m.cols());
+  arena_t<Eigen::MatrixXd> arena_m_inv_transpose
+      = Eigen::MatrixXd::Identity(m.rows(), m.cols());
   ldlt.solveInPlace(arena_m_inv_transpose);
 
   var log_det = sum(log(ldlt.vectorD()));
