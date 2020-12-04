@@ -45,98 +45,48 @@ namespace math {
  * @tparam R number of rows, can be Eigen::Dynamic
  * @tparam C number of columns, can be Eigen::Dynamic
  */
-template <int R, int C>
-class LDLT_factor<var, R, C> {
- public:
-  /**
-   * Default constructor.  The caller *MUST* call compute() after this.  Any
-   * calls which use the LDLT_factor without calling compute() run the risk
-   * of crashing Stan from within Eigen.
-   */
-  LDLT_factor() : alloc_(new LDLT_alloc<R, C>()) {}
-
-  explicit LDLT_factor(const Eigen::Matrix<var, R, C> &A)
-      : alloc_(new LDLT_alloc<R, C>()) {
-    compute(A);
+template <typename T>
+class LDLT_factor<T, require_rev_matrix_t<T>> {
+  arena_t<T> A_;
+  decltype(make_chainable_ptr(std::declval<T>().val().ldlt())) ldlt_ptr_;
+public:
+  explicit LDLT_factor(const T &A)
+    : A_(A), ldlt_ptr_(make_chainable_ptr(A.val().ldlt())) {
   }
 
-  /**
-   * Use the LDLT_factor object to factorize a new matrix.  After calling
-   * this function, the user should call success() to check that the
-   * factorization was successful. If the factorization is not successful,
-   * the LDLT_factor is not valid and other functions should not be used.
-   *
-   * @param A A symmetric positive definite matrix to factorize
-   */
-  inline void compute(const Eigen::Matrix<var, R, C> &A) {
-    check_square("comute", "A", A);
-    alloc_->compute(A);
+  template <typename S>
+  inline auto solve(const S& b) {
+    return ldlt_ptr_->get().solve(b).eval();
   }
 
-/**
- * Compute the actual numerical result of inv(A)*b.  Note that this isn't
- * meant to handle any of the autodiff.  This is a convenience function
- * for the actual implementations in mdivide_left_ldlt.
- *
- * Precondition: success() must return true. If success() returns false,
- *    this function runs the risk of crashing Stan from within Eigen.
- *
- * @param b The right handside.  Note that this is templated such that
- * Eigen's expression-templating magic can work properly here.
- */
-#if EIGEN_VERSION_AT_LEAST(3, 3, 0)
-  template <typename Rhs>
-  inline const Eigen::Solve<Eigen::LDLT<Eigen::Matrix<double, R, C> >, Rhs>
-  solve(const Eigen::MatrixBase<Rhs> &b) const {
-    return alloc_->ldlt_.solve(b);
+  template <typename S>
+  inline void solveInPlace(S& b) {
+    return ldlt_ptr_->get().solveInPlace(b);
   }
-#else
-  template <typename Rhs>
-  inline const Eigen::internal::solve_retval<
-      Eigen::LDLT<Eigen::Matrix<double, R, C> >, Rhs>
-  solve(const Eigen::MatrixBase<Rhs> &b) const {
-    return alloc_->ldlt_.solve(b);
-  }
-#endif
 
-  /**
-   * Determine whether the most recent factorization succeeded.  This should
-   * always be called after the object is constructed (with a matrix) or
-   * after compute() is called.
-   */
   inline bool success() const {
-    bool ret;
-    ret = alloc_->N_ != 0;
-    ret = ret && alloc_->ldlt_.info() == Eigen::Success;
-    ret = ret && alloc_->ldlt_.isPositive();
-    ret = ret && (alloc_->ldlt_.vectorD().array() > 0).all();
-    return ret;
+    return A_.rows() != 0 &&
+      ldlt_ptr_->get().info() == Eigen::Success &&
+      ldlt_ptr_->get().isPositive() &&
+      (ldlt_ptr_->get().vectorD().array() > 0).all();
   }
 
-  /**
-   * The entries of the diagonal matrix D.  They should be strictly positive
-   * for a positive definite matrix.
-   *
-   * Precondition: success() must return true. If success() returns false,
-   *    this function runs the risk of crashing Stan from within Eigen.
-   */
-  inline Eigen::VectorXd vectorD() const { return alloc_->ldlt_.vectorD(); }
+  inline double log_abs_det() const { return sum(log(vectorD())); }
 
-  inline size_t rows() const { return alloc_->N_; }
-  inline size_t cols() const { return alloc_->N_; }
+  inline Eigen::VectorXd vectorD() {
+    return ldlt_ptr_->get().vectorD();
+  }
+
+  inline size_t rows() const {
+    return A_.rows();
+  }
+
+  inline size_t cols() const {
+    return A_.cols();
+  }
 
   using size_type = size_t;
   using value_type = var;
-
-  /**
-   * The LDLT_alloc object actually contains the factorization but is
-   * derived from the chainable_alloc class so that it is allocated on the
-   * vari stack.  This ensures that its lifespan is longer than the
-   * LDLT_factor object which created it.  This is needed because the
-   * factorization is required during the chain() calls which happen
-   * after an LDLT_factor object will most likely have been destroyed.
-   */
-  LDLT_alloc<R, C> *alloc_;
 };
 
 }  // namespace math

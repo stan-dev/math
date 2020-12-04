@@ -56,7 +56,7 @@ class mdivide_left_ldlt_vv_vari : public vari {
   mdivide_left_ldlt_alloc<R1, C1, R2, C2> *alloc_;
   const LDLT_alloc<R1, C1> *alloc_ldlt_;
 
-  mdivide_left_ldlt_vv_vari(const LDLT_factor<var, R1, C1> &A,
+  mdivide_left_ldlt_vv_vari(const LDLT_factor<Eigen::Matrix<var, R1, C1>> &A,
                             const Eigen::Matrix<var, R2, C2> &B)
       : vari(0.0),
         M_(A.rows()),
@@ -113,7 +113,7 @@ class mdivide_left_ldlt_dv_vari : public vari {
   vari **variRefC_;
   mdivide_left_ldlt_alloc<R1, C1, R2, C2> *alloc_;
 
-  mdivide_left_ldlt_dv_vari(const LDLT_factor<double, R1, C1> &A,
+  mdivide_left_ldlt_dv_vari(const LDLT_factor<Eigen::Matrix<double, R1, C1>> &A,
                             const Eigen::Matrix<var, R2, C2> &B)
       : vari(0.0),
         M_(A.rows()),
@@ -166,7 +166,7 @@ class mdivide_left_ldlt_vd_vari : public vari {
   mdivide_left_ldlt_alloc<R1, C1, R2, C2> *alloc_;
   const LDLT_alloc<R1, C1> *alloc_ldlt_;
 
-  mdivide_left_ldlt_vd_vari(const LDLT_factor<var, R1, C1> &A,
+  mdivide_left_ldlt_vd_vari(const LDLT_factor<Eigen::Matrix<var, R1, C1>> &A,
                             const Eigen::Matrix<double, R2, C2> &B)
       : vari(0.0),
         M_(A.rows()),
@@ -205,7 +205,7 @@ class mdivide_left_ldlt_vd_vari : public vari {
 template <int R1, int C1, typename EigMat,
           require_eigen_vt<is_var, EigMat> * = nullptr>
 inline Eigen::Matrix<var, R1, EigMat::ColsAtCompileTime> mdivide_left_ldlt(
-    const LDLT_factor<var, R1, C1> &A, const EigMat &b) {
+									   const LDLT_factor<Eigen::Matrix<var, R1, C1>> &A, const EigMat &b) {
   constexpr int R2 = EigMat::RowsAtCompileTime;
   constexpr int C2 = EigMat::ColsAtCompileTime;
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
@@ -236,7 +236,7 @@ inline Eigen::Matrix<var, R1, EigMat::ColsAtCompileTime> mdivide_left_ldlt(
 template <int R1, int C1, typename EigMat,
           require_eigen_vt<std::is_arithmetic, EigMat> * = nullptr>
 inline Eigen::Matrix<var, R1, EigMat::ColsAtCompileTime> mdivide_left_ldlt(
-    const LDLT_factor<var, R1, C1> &A, const EigMat &b) {
+									   const LDLT_factor<Eigen::Matrix<var, R1, C1>> &A, const EigMat &b) {
   constexpr int R2 = EigMat::RowsAtCompileTime;
   constexpr int C2 = EigMat::ColsAtCompileTime;
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
@@ -267,7 +267,7 @@ inline Eigen::Matrix<var, R1, EigMat::ColsAtCompileTime> mdivide_left_ldlt(
 template <int R1, int C1, typename EigMat,
           require_eigen_vt<is_var, EigMat> * = nullptr>
 inline Eigen::Matrix<var, R1, EigMat::ColsAtCompileTime> mdivide_left_ldlt(
-    const LDLT_factor<double, R1, C1> &A, const EigMat &b) {
+									   const LDLT_factor<Eigen::Matrix<double, R1, C1>> &A, const EigMat &b) {
   constexpr int R2 = EigMat::RowsAtCompileTime;
   constexpr int C2 = EigMat::ColsAtCompileTime;
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);

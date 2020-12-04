@@ -51,7 +51,7 @@ class trace_inv_quad_form_ldlt_impl : public chainable_alloc {
  public:
   template <typename T1, int R1, int C1>
   trace_inv_quad_form_ldlt_impl(const Eigen::Matrix<T1, R1, C1> &D,
-                                const LDLT_factor<T2, R2, C2> &A,
+                                const LDLT_factor<Eigen::Matrix<T2, R2, C2>> &A,
                                 const Eigen::Matrix<T3, R3, C3> &B)
       : Dtype_(stan::is_var<T1>::value), ldlt_(A) {
     initializeB(B, true);
@@ -60,14 +60,14 @@ class trace_inv_quad_form_ldlt_impl : public chainable_alloc {
     value_ = (D_ * C_).trace();
   }
 
-  trace_inv_quad_form_ldlt_impl(const LDLT_factor<T2, R2, C2> &A,
+  trace_inv_quad_form_ldlt_impl(const LDLT_factor<Eigen::Matrix<T2, R2, C2>> &A,
                                 const Eigen::Matrix<T3, R3, C3> &B)
       : Dtype_(2), ldlt_(A) {
     initializeB(B, false);
   }
 
   const int Dtype_;  // 0 = double, 1 = var, 2 = missing
-  LDLT_factor<T2, R2, C2> ldlt_;
+  LDLT_factor<Eigen::Matrix<T2, R2, C2>> ldlt_;
   matrix_d D_;
   matrix_vi variD_;
   matrix_vi variB_;
@@ -156,7 +156,7 @@ class trace_inv_quad_form_ldlt_vari : public vari {
 template <typename T, int R, int C, typename EigMat,
           typename = require_any_st_var<T, EigMat>>
 inline return_type_t<T, EigMat> trace_inv_quad_form_ldlt(
-    const LDLT_factor<T, R, C> &A, const EigMat &B) {
+							 const LDLT_factor<Eigen::Matrix<T, R, C>> &A, const EigMat &B) {
   using T2 = value_type_t<EigMat>;
   constexpr int R2 = EigMat::RowsAtCompileTime;
   constexpr int C2 = EigMat::ColsAtCompileTime;

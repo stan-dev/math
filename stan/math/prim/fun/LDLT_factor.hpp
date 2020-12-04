@@ -61,44 +61,35 @@ namespace math {
  * @tparam R number of rows, can be Eigen::Dynamic
  * @tparam C number of columns, can be Eigen::Dynamic
  */
-template <typename T, int R, int C>
-class LDLT_factor {
- public:
-  using vector_t = Eigen::Matrix<T, Eigen::Dynamic, 1>;
-  using matrix_t = Eigen::Matrix<T, R, C>;
+template <typename T,
+	  class Enable = void>
+class LDLT_factor {};
+
+template <typename T>
+class LDLT_factor<T, require_not_rev_matrix_t<T>> {
+  using vector_t = Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1>;
+  using matrix_t = plain_type_t<T>;
   using ldlt_t = Eigen::LDLT<matrix_t>;
+
+  size_t N_;
+  std::shared_ptr<ldlt_t> ldltP_;
+ public:
   using size_type = size_t;
   using value_type = double;
 
   LDLT_factor() : N_(0), ldltP_(new ldlt_t()) {}
 
-  explicit LDLT_factor(const matrix_t& A) : N_(0), ldltP_(new ldlt_t()) {
-    compute(A);
-  }
-
-  inline void compute(const matrix_t& A) {
-    check_square("LDLT_factor", "A", A);
-    N_ = A.rows();
-    ldltP_->compute(A);
+  explicit LDLT_factor(const matrix_t& A) : N_(A.rows()), ldltP_(new ldlt_t(A)) {
   }
 
   inline bool success() const {
-    if (ldltP_->info() != Eigen::Success) {
-      return false;
-    }
-    if (!(ldltP_->isPositive())) {
-      return false;
-    }
-    vector_t ldltP_diag(ldltP_->vectorD());
-    for (int i = 0; i < ldltP_diag.size(); ++i) {
-      if (ldltP_diag(i) <= 0 || is_nan(ldltP_diag(i))) {
-        return false;
-      }
-    }
-    return true;
+    return N_ != 0 &&
+      ldltP_->info() == Eigen::Success &&
+      ldltP_->isPositive() &&
+      (ldltP_->vectorD().array() > 0).all();
   }
 
-  inline T log_abs_det() const { return sum(log(ldltP_->vectorD())); }
+  inline scalar_type_t<T> log_abs_det() const { return sum(log(ldltP_->vectorD())); }
 
   inline void inverse(matrix_t& invA) const {
     invA.setIdentity(N_);
@@ -121,9 +112,6 @@ class LDLT_factor {
 
   inline size_t rows() const { return N_; }
   inline size_t cols() const { return N_; }
-
-  size_t N_;
-  std::shared_ptr<ldlt_t> ldltP_;
 };
 
 }  // namespace math

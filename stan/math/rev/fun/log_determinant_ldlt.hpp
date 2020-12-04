@@ -25,16 +25,17 @@ namespace internal {
  */
 template <int R, int C>
 class log_det_ldlt_vari : public vari {
- public:
-  explicit log_det_ldlt_vari(const LDLT_factor<var, R, C> &A)
-      : vari(A.alloc_->log_abs_det()), alloc_ldlt_(A.alloc_) {}
+  LDLT_factor<Eigen::Matrix<var, R, C>> A_;
+public:
+  explicit log_det_ldlt_vari(const LDLT_factor<Eigen::Matrix<var, R, C>> &A)
+      : vari(A.log_abs_det()), A_(A) {}
 
   virtual void chain() {
     Eigen::Matrix<double, R, C> invA;
 
     // If we start computing Jacobians, this may be a bit inefficient
     invA.setIdentity(alloc_ldlt_->N_, alloc_ldlt_->N_);
-    alloc_ldlt_->ldlt_.solveInPlace(invA);
+    A_.solveInPlace(invA);
     const_cast<matrix_vi &>(alloc_ldlt_->variA_).adj() += adj_ * invA;
   }
   const LDLT_alloc<R, C> *alloc_ldlt_;
@@ -42,7 +43,7 @@ class log_det_ldlt_vari : public vari {
 }  // namespace internal
 
 template <int R, int C>
-var log_determinant_ldlt(LDLT_factor<var, R, C> &A) {
+var log_determinant_ldlt(LDLT_factor<Eigen::Matrix<var, R, C>> &A) {
   if (A.rows() == 0) {
     return 0;
   }

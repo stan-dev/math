@@ -60,10 +60,9 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(const T_y& W,
   T_S_ref S_ref = S;
   check_greater(function, "Degrees of freedom parameter", nu_ref, k - 1);
 
-  LDLT_factor<value_type_t<T_y>, Eigen::Dynamic, Eigen::Dynamic> ldlt_W(W);
+  LDLT_factor<T_y> ldlt_W(W);
   check_ldlt_factor(function, "LDLT_Factor of random variable", ldlt_W);
-  LDLT_factor<value_type_t<T_scale>, Eigen::Dynamic, Eigen::Dynamic> ldlt_S(
-      S_ref);
+  LDLT_factor<T_scale> ldlt_S(S_ref);
   check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_S);
 
   return_type_t<T_y, T_dof, T_scale> lp(0.0);

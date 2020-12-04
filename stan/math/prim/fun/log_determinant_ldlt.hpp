@@ -17,7 +17,7 @@ namespace math {
  * @return the log(abs(det(A))
  */
 template <int R, int C, typename T>
-inline T log_determinant_ldlt(LDLT_factor<T, R, C> &A) {
+inline T log_determinant_ldlt(LDLT_factor<Eigen::Matrix<T, R, C>> &A) {
   if (A.rows() == 0) {
     return 0;
   }

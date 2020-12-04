@@ -42,13 +42,13 @@ return_type_t<T_y, T_Mu, T_Sigma, T_D> matrix_normal_prec_lpdf(
   check_finite(function, "Sigma", Sigma);
   check_symmetric(function, "Sigma", Sigma);
 
-  LDLT_factor<T_Sigma, Eigen::Dynamic, Eigen::Dynamic> ldlt_Sigma(Sigma);
+  LDLT_factor<Eigen::Matrix<T_Sigma, Eigen::Dynamic, Eigen::Dynamic>> ldlt_Sigma(Sigma);
   check_ldlt_factor(function, "LDLT_Factor of Sigma", ldlt_Sigma);
   check_positive(function, "D rows", D.rows());
   check_finite(function, "D", D);
   check_symmetric(function, "D", D);
 
-  LDLT_factor<T_D, Eigen::Dynamic, Eigen::Dynamic> ldlt_D(D);
+  LDLT_factor<Eigen::Matrix<T_D, Eigen::Dynamic, Eigen::Dynamic>> ldlt_D(D);
   check_ldlt_factor(function, "LDLT_Factor of D", ldlt_D);
   check_size_match(function, "Rows of random variable", y.rows(),
                    "Rows of location parameter", Mu.rows());
