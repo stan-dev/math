@@ -61,21 +61,21 @@ TEST(MathMatrixOpenCLPrim, non_matching_dim_excpetion) {
 
 TEST(MathMatrixOpenCLPrim, multiply_scalar) {
   auto v = stan::math::vector_d::Random(25).eval();
-  stan::math::vector_d v_cl_res(25);
+  stan::math::vector_d v_cl_res(v);
   auto rv = stan::math::row_vector_d::Random(25).eval();
-  stan::math::row_vector_d rv_cl_res(25);
+  stan::math::row_vector_d rv_cl_res(rv);
   auto m = stan::math::matrix_d::Random(5, 5).eval();
-  stan::math::matrix_d m_cl_res(5, 5);
+  stan::math::matrix_d m_cl_res(m);
 
-  stan::math::matrix_cl<double> v_cl(v);
+  stan::math::matrix_cl<double> v_cl(v_cl_res);
   v_cl = v_cl * 2.0;
   v_cl_res = stan::math::from_matrix_cl(v_cl);
 
-  stan::math::matrix_cl<double> rv_cl(rv);
+  stan::math::matrix_cl<double> rv_cl(rv_cl_res);
   rv_cl = rv_cl * 2.0;
   rv_cl_res = stan::math::from_matrix_cl(rv_cl);
 
-  stan::math::matrix_cl<double> m_cl(m);
+  stan::math::matrix_cl<double> m_cl(m_cl_res);
   m_cl = m_cl * 2.0;
   m_cl_res = stan::math::from_matrix_cl(m_cl);
 
