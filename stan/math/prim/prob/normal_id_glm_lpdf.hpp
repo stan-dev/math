@@ -49,7 +49,7 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
-          typename T_beta, typename T_scale, require_eigen_t<T_x>* = nullptr>
+          typename T_beta, typename T_scale, require_matrix_t<T_x>* = nullptr>
 return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta,
     const T_scale& sigma) {
@@ -84,8 +84,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
                         N_instances);
   check_consistent_size(function, "Vector of intercepts", alpha, N_instances);
   T_sigma_ref sigma_ref = sigma;
-  const auto& sigma_val = value_of_rec(sigma_ref);
-  const auto& sigma_val_vec = to_ref(as_column_vector_or_scalar(sigma_val));
+  auto&& sigma_val_vec = to_ref(as_column_vector_or_scalar(value_of_rec(sigma_ref)));
   check_positive_finite(function, "Scale vector", sigma_val_vec);
 
   if (size_zero(y, sigma)) {
@@ -100,16 +99,12 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   T_alpha_ref alpha_ref = alpha;
   T_beta_ref beta_ref = beta;
 
-  const auto& y_val = value_of_rec(y_ref);
-  const auto& x_val
+  auto&& x_val
       = to_ref_if<!is_constant<T_beta>::value>(value_of_rec(x_ref));
-  const auto& alpha_val = value_of_rec(alpha_ref);
-  const auto& beta_val = value_of_rec(beta_ref);
-
-  const auto& y_val_vec = as_column_vector_or_scalar(y_val);
-  const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
-  const auto& beta_val_vec = to_ref_if<!is_constant<T_x>::value>(
-      as_column_vector_or_scalar(beta_val));
+  auto&& y_val_vec = as_column_vector_or_scalar(value_of_rec(y_ref));
+  auto&& alpha_val_vec = as_column_vector_or_scalar(value_of_rec(alpha_ref));
+  auto&& beta_val_vec = to_ref_if<!is_constant<T_x>::value>(
+      as_column_vector_or_scalar(value_of_rec(beta_ref)));
 
   T_scale_val inv_sigma = 1 / as_array_or_scalar(sigma_val_vec);
 
@@ -124,8 +119,8 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
                 - as_array_or_scalar(alpha_val_vec))
                * inv_sigma;
   } else {
-    y_scaled = x_val * beta_val_vec;
-    y_scaled = (as_array_or_scalar(y_val_vec) - y_scaled
+    T_y_scaled_tmp y_scaled_tmp = x_val * beta_val_vec;
+    y_scaled = (as_array_or_scalar(y_val_vec) - y_scaled_tmp
                 - as_array_or_scalar(alpha_val_vec))
                * inv_sigma;
   }
@@ -158,7 +153,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
             = forward_as<Matrix<T_partials_return, 1, Dynamic>>(
                 mu_derivative.sum() * x_val);
       } else {
-        ops_partials.edge4_.partials_ = mu_derivative.transpose() * x_val;
+        ops_partials.edge4_.partials_ = (mu_derivative.transpose() * x_val).transpose();
       }
     }
     if (!is_constant_all<T_alpha>::value) {
