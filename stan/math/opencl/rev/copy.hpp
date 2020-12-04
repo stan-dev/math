@@ -64,18 +64,8 @@ inline var_value<matrix_cl<value_type_t<T>>> to_matrix_cl(
 template <typename T, require_stan_scalar_t<T>* = nullptr>
 inline var_value<matrix_cl<value_type_t<T>>> to_matrix_cl(
     std::vector<var_value<T>>& a) {
-  return new internal::op_copy_to_cl_vari<decltype(
-      Eigen::Map<Eigen::Matrix<var_value<T>, Eigen::Dynamic, 1>>(a.data(),
-                                                                 a.size())
-          .vi()
-          .adj())>(
-      Eigen::Map<Eigen::Matrix<var_value<T>, Eigen::Dynamic, 1>>(a.data(),
-                                                                 a.size())
-          .val(),
-      Eigen::Map<Eigen::Matrix<var_value<T>, Eigen::Dynamic, 1>>(a.data(),
-                                                                 a.size())
-          .vi()
-          .adj());
+  return to_matrix_cl(Eigen::Map<Eigen::Matrix<var_value<T>, Eigen::Dynamic, 1>>(a.data(),
+                                                                 a.size()));
 }
 
 namespace internal {
@@ -88,7 +78,7 @@ class op_copy_from_cl_vari final
  public:
   explicit op_copy_from_cl_vari(vari_value<T>& a)
       : vari_value<Eigen::Matrix<value_type_t<T>, Rows, Cols>>(
-            from_matrix_cl<Rows, Cols>(a.val_)),
+          from_matrix_cl<Rows, Cols>(a.val_)),
         a_(a) {}
 
   virtual void chain() { a_.adj_ = a_.adj_ + to_matrix_cl(this->adj_); }
