@@ -86,7 +86,7 @@ return_type_t<T_loc, T_cut> ordered_probit_lpmf(const T_y& y,
     int K = c_vec[i].size() + 1;
 
     if (y_vec[i] == 1) {
-      logp_n += log1m_exp(std_normal_lcdf(lambda_vec[i] - c_vec[i].coeff(0)));
+      logp_n += std_normal_lcdf(c_vec[i].coeff(0) - lambda_vec[i]);
     } else if (y_vec[i] == K) {
       logp_n += std_normal_lcdf(lambda_vec[i] - c_vec[i].coeff(K - 2));
     } else {
