@@ -37,7 +37,7 @@ class chainable_object : public chainable_alloc {
    */
   template <typename S,
             require_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
-  chainable_object(S&& obj) : obj_(std::forward<S>(obj)) {}
+  explicit chainable_object(S&& obj) : obj_(std::forward<S>(obj)) {}
 
   /**
    * Return a reference to the underlying object
