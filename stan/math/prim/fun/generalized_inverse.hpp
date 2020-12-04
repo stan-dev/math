@@ -106,13 +106,11 @@ generalized_inverse(const EigMat& G, const Scal& a) {
 
   if (n < m) {
     Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> A = tcrossprod(G);
-    A.diagonal().array()
-        += Eigen::Array<double, Eigen::Dynamic, 1>::Constant(n, a);
+    A.diagonal().array() += a;
     return transpose(mdivide_left_spd(A, G));
   } else {
     Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> A = crossprod(G);
-    A.diagonal().array()
-        += Eigen::Array<double, Eigen::Dynamic, 1>::Constant(m, a);
+    A.diagonal().array() += a;
     return transpose(mdivide_right_spd(G, A));
   }
 }
