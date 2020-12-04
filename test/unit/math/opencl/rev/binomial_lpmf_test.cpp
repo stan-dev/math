@@ -55,12 +55,14 @@ TEST(ProbDistributionsBinomial, error_checking) {
                std::domain_error);
 }
 
-auto binomial_lpmf_functor = [](const auto& n, const auto N, const auto& theta) {
-  return stan::math::binomial_lpmf(n, N, theta);
-};
-auto binomial_lpmf_functor_propto = [](const auto& n, const auto N, const auto& theta) {
-  return stan::math::binomial_lpmf<true>(n, N, theta);
-};
+auto binomial_lpmf_functor
+    = [](const auto& n, const auto N, const auto& theta) {
+        return stan::math::binomial_lpmf(n, N, theta);
+      };
+auto binomial_lpmf_functor_propto
+    = [](const auto& n, const auto N, const auto& theta) {
+        return stan::math::binomial_lpmf<true>(n, N, theta);
+      };
 
 TEST(ProbDistributionsBinomial, opencl_matches_cpu_small) {
   int N = 3;
@@ -132,8 +134,8 @@ TEST(ProbDistributionsBinomial, opencl_matches_cpu_big) {
 
   stan::math::test::compare_cpu_opencl_prim_rev(binomial_lpmf_functor, n, m,
                                                 theta);
-  stan::math::test::compare_cpu_opencl_prim_rev(binomial_lpmf_functor_propto, n, m,
-                                                theta);
+  stan::math::test::compare_cpu_opencl_prim_rev(binomial_lpmf_functor_propto, n,
+                                                m, theta);
 }
 
 #endif

@@ -82,8 +82,8 @@ TEST(muProbDistributionsNegBinomial, opencl_matches_cpu_small) {
   Eigen::VectorXd beta(N);
   beta << 0.3, 0.8, 1.3;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(neg_binomial_lpmf_functor,
-                                                n, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(neg_binomial_lpmf_functor, n,
+                                                alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       neg_binomial_lpmf_functor_propto, n, alpha, beta);
 }
@@ -143,8 +143,8 @@ TEST(muProbDistributionsNegBinomial, opencl_matches_cpu_big) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> beta
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
 
-  stan::math::test::compare_cpu_opencl_prim_rev(neg_binomial_lpmf_functor,
-                                                n, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(neg_binomial_lpmf_functor, n,
+                                                alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       neg_binomial_lpmf_functor_propto, n, alpha, beta);
 }
