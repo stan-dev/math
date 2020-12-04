@@ -94,20 +94,131 @@ Once you have done the above step, `runTests.py` should execute with the GPU ena
 
 ## Using the OpenCL backend
 
-We currently have support for the following methods
+The OpenCL backend can be used for reverse mode AD as well as primitive functions on containers of basic C++ scalar types. Below is the list of functions and distributions that are currently supported.
 
-- bernoulli_logit_glm
+### Reverse mode
+
+An example of using OpenCL supported Stan Math functions for reverse mode AD is shown below: 
+
+```cpp
+using stan::math;
+
+Eigen::Matrix<double, -1, -1> A = Eigen::Matrix<double, -1, -1>::Random(N, M);
+Eigen::Matrix<double, -1, -1> B = Eigen::Matrix<double, -1, -1>::Random(M, N);
+var_value<matrix_cl<double>> A_cl = to_matrix_cl(A);
+var_value<matrix_cl<double>> B_cl = to_matrix_cl(B);
+var_value<matrix_cl<double>> C_cl = A_cl * B_cl;
+var C_sum = sum(C_cl);
+```
+
+#### Supported functions
+
 - cholesky_decompose
-- categorical_logit_glm
 - gp_exp_quad_cov
-- mdivide_right_tri
-- mdivide_left_tri
+- mdivide_right_tri, mdivide_right_tri_low
+- mdivide_left_tri, mdivide_left_tri_low
 - multiplication
-- neg_binomial_2_log_glm
-- normal_id_glm
-- ordered_logistic_glm
-- poisson_log_glm
+- sum
 
-In cmdstan, an example model is provided in `examples/GP/`, which uses OpenCL Cholesky decomposition. You can check if your OpenCL configuration works by trying to build it.
-* Linux and MacOS: `make examples/GP/gp3`
-* Windows: `make examples/GP/gp3.exe`
+#### Supported distributions
+
+- bernoulli_lpmf
+- bernoulli_logit_lpmf
+- bernoulli_logit_glm_lpmf
+- beta_lpdf
+- beta_proportion_lpdf
+- categorical_logit_glm_lpmf
+- cauchy_lpdf
+- chi_square_lpdf
+- double_exponential_lpdf
+- exp_mod_normal_lpdf
+- exponential_lpdf
+- frechet_lpdf
+- gamma_lpdf
+- gumbel_lpdf
+- inv_chi_square_lpdf
+- inv_gamma_lpdf
+- logistic_lpdf
+- lognormal_lpdf
+- neg_binomial_2_log_glm_lpmf
+- normal_lpdf
+- normal_id_glm_lpdf
+- ordered_logistic_glm_lpmf
+- pareto_lpdf
+- pareto_type_2_lpdf
+- poisson_lpmf
+- poisson_log_lpmf
+- poisson_log_glm_lpmf
+- rayleigh_lpdf
+- scaled_inv_chi_square_lpdf
+- skew_normal_lpdf
+- std_normal_lpdf
+- student_t_lpdf
+- uniform_lpdf
+
+### Primitive functions
+
+OpenCL supported primitive functions can be used on `matrix_cl<T>` objects, where T is a primitive built-in C++ type.
+An example:
+
+```cpp
+using stan::math;
+
+Eigen::Matrix<double, -1, -1> A = Eigen::Matrix<double, -1, -1>::Random(N, M);
+Eigen::Matrix<double, -1, -1> B = Eigen::Matrix<double, -1, -1>::Random(M, N);
+matrix_cl<double> A_cl = to_matrix_cl(A);
+matrix_cl<double> B_cl = to_matrix_cl(B);
+matrix_cl<double> C_cl = A_cl * transpose(lgamma(B_cl));
+Eigen::Matrix<double, -1, -1> C = from_matrix_cl(C_cl);
+```
+
+A list of OpenCL supported primitive functions:
+
+- acos, acosh
+- add
+- append_col, append_row
+- asin, asinh
+- atan, atanh
+- block
+- cbrt
+- ceil
+- cholesky_decompose
+- col
+- cols
+- cos, cosh
+- diagonal
+- digamma
+- dims
+- divide
+- elt_divide
+- elt_multiply
+- erf, erfc
+- exp, exp2, expm1
+- fabs
+- floor
+- gp_exp_quad_cov
+- inv, inv_logit, inv_sqrt, inv_square
+- lbeta
+- lgamma
+- log, log10, log1m_exp, log1m_inv_logit
+- log1p, log1p_exp, log2, logit
+- mdivide_left_tri_low
+- mdivide_right_tri_low
+- minus
+- multiply
+- operator-, operator+, operator*
+- plus
+- pow
+- rep_matrix, rep_row_vector, rep_vector
+- round
+- row
+- rows
+- sin, sinh
+- size
+- sqrt
+- sum
+- tan, tanh
+- tcrossprod
+- tgamma
+- transpose
+- trunc
