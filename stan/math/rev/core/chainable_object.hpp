@@ -57,7 +57,7 @@ class chainable_object : public chainable_alloc {
  */
 template <typename T>
 auto make_chainable_ptr(T&& obj) {
-  auto ptr = new chainable_object<plain_type_t<T>>(std::forward<T>(obj));
+  auto ptr = new chainable_object<std::decay_t<T>>(std::forward<T>(obj));
   return ptr;
 }
 
