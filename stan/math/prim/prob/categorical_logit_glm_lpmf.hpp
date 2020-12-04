@@ -85,7 +85,8 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   const auto& beta_val
       = to_ref_if<!is_constant<T_x>::value>(value_of_rec(beta_ref));
 
-  const auto alpha_val_vec = as_column_vector_or_scalar(alpha_val).transpose().eval();
+  const auto alpha_val_vec
+      = as_column_vector_or_scalar(alpha_val).transpose().eval();
 
   Array<T_partials_return, T_x_rows, Dynamic> lin
       = (x_val * beta_val).rowwise() + alpha_val_vec;
@@ -156,7 +157,8 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
         ops_partials.edge2_.partials_
             = neg_softmax_lin.colwise().sum() * N_instances;
       } else {
-        ops_partials.edge2_.partials_ = neg_softmax_lin.colwise().sum().transpose();
+        ops_partials.edge2_.partials_
+            = neg_softmax_lin.colwise().sum().transpose();
       }
       for (int i = 0; i < N_instances; i++) {
         ops_partials.edge2_.partials_[y_seq[i] - 1] += 1;

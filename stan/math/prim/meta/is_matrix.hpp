@@ -29,9 +29,11 @@ STAN_ADD_REQUIRE_UNARY_INNER(matrix, is_matrix, require_eigens_types);
  */
 template <typename T>
 struct is_matrix_dynamic
-    : bool_constant<math::disjunction<is_var_dense_dynamic<T>, is_eigen_dense_dynamic<T>>::value> {};
+    : bool_constant<math::disjunction<is_var_dense_dynamic<T>,
+                                      is_eigen_dense_dynamic<T>>::value> {};
 STAN_ADD_REQUIRE_UNARY(matrix_dynamic, is_matrix_dynamic, require_eigens_types);
-STAN_ADD_REQUIRE_UNARY_INNER(matrix_dynamic, is_matrix_dynamic, require_eigens_types);
+STAN_ADD_REQUIRE_UNARY_INNER(matrix_dynamic, is_matrix_dynamic,
+                             require_eigens_types);
 
 }  // namespace stan
 

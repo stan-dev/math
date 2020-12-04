@@ -122,7 +122,8 @@ TEST(ProbDistributionsCategoricalLogitGLM, glm_matches_categorical_logit_vars) {
   }
 }
 
-TEST(ProbDistributionsCategoricalLogitGLM, glm_matches_categorical_logit_matvars) {
+TEST(ProbDistributionsCategoricalLogitGLM,
+     glm_matches_categorical_logit_matvars) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;

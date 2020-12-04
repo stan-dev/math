@@ -84,7 +84,8 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
                         N_instances);
   check_consistent_size(function, "Vector of intercepts", alpha, N_instances);
   T_sigma_ref sigma_ref = sigma;
-  auto&& sigma_val_vec = to_ref(as_column_vector_or_scalar(value_of_rec(sigma_ref)));
+  auto&& sigma_val_vec
+      = to_ref(as_column_vector_or_scalar(value_of_rec(sigma_ref)));
   check_positive_finite(function, "Scale vector", sigma_val_vec);
 
   if (size_zero(y, sigma)) {
@@ -99,8 +100,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   T_alpha_ref alpha_ref = alpha;
   T_beta_ref beta_ref = beta;
 
-  auto&& x_val
-      = to_ref_if<!is_constant<T_beta>::value>(value_of_rec(x_ref));
+  auto&& x_val = to_ref_if<!is_constant<T_beta>::value>(value_of_rec(x_ref));
   auto&& y_val_vec = as_column_vector_or_scalar(value_of_rec(y_ref));
   auto&& alpha_val_vec = as_column_vector_or_scalar(value_of_rec(alpha_ref));
   auto&& beta_val_vec = to_ref_if<!is_constant<T_x>::value>(
@@ -153,7 +153,8 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
             = forward_as<Matrix<T_partials_return, 1, Dynamic>>(
                 mu_derivative.sum() * x_val);
       } else {
-        ops_partials.edge4_.partials_ = (mu_derivative.transpose() * x_val).transpose();
+        ops_partials.edge4_.partials_
+            = (mu_derivative.transpose() * x_val).transpose();
       }
     }
     if (!is_constant_all<T_alpha>::value) {
