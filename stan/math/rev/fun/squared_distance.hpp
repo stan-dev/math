@@ -13,42 +13,37 @@
 namespace stan {
 namespace math {
 
-class scal_squared_distance_vv_vari : public op_vv_vari {
- public:
-  scal_squared_distance_vv_vari(vari* avi, vari* bvi)
-      : op_vv_vari(squared_distance(avi->val_, bvi->val_), avi, bvi) {}
-  void chain() {
-    double diff = avi_->val_ - bvi_->val_;
-    avi_->adj_ += adj_ * 2.0 * diff;
-    bvi_->adj_ -= adj_ * 2.0 * diff;
-  }
-};
-class scal_squared_distance_vd_vari : public op_vd_vari {
- public:
-  scal_squared_distance_vd_vari(vari* avi, double b)
-      : op_vd_vari(squared_distance(avi->val_, b), avi, b) {}
-  void chain() { avi_->adj_ += adj_ * 2 * (avi_->val_ - bd_); }
-};
-
 /**
  * Returns the squared distance.
  */
 inline var squared_distance(const var& a, const var& b) {
-  return {new scal_squared_distance_vv_vari(a.vi_, b.vi_)};
+  check_finite("squared_distance", "a", a);
+  check_finite("squared_distance", "b", b);
+  return make_callback_vari(std::pow(a.val() - b.val(), 2),
+                            [a, b](const auto& vi) mutable {
+                              const double diff = 2.0 * (a.val() - b.val());
+                              a.adj() += vi.adj_ * diff;
+                              b.adj() -= vi.adj_ * diff;
+                            });
 }
 
 /**
  * Returns the squared distance.
  */
 inline var squared_distance(const var& a, double b) {
-  return {new scal_squared_distance_vd_vari(a.vi_, b)};
+  check_finite("squared_distance", "a", a);
+  check_finite("squared_distance", "b", b);
+  return make_callback_vari(std::pow(a.val() - b, 2),
+                            [a, b](const auto& vi) mutable {
+                              a.adj() += vi.adj_ * 2.0 * (a.val() - b);
+                            });
 }
 
 /**
  * Returns the squared distance.
  */
 inline var squared_distance(double a, const var& b) {
-  return {new scal_squared_distance_vd_vari(b.vi_, a)};
+  return squared_distance(b, a);
 }
 
 namespace internal {
@@ -155,78 +150,59 @@ inline var squared_distance(const EigVecArith& v1, const EigVecVar& v2) {
  * @param B second argument
  * @return sum of squared difference of A and B
  */
-template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
-          require_any_var_matrix_t<T1, T2>* = nullptr>
+template <typename T1, typename T2, require_all_vector_t<T1, T2>* = nullptr,
+          require_any_var_vector_t<T1, T2>* = nullptr>
 inline var squared_distance(const T1& A, const T2& B) {
   check_matching_sizes("squared_distance", "A", A.val(), "B", B.val());
-
-  if (A.size() == 0)
-    return 0.0;
-
-  if (!is_constant<T1>::value && !is_constant<T2>::value) {
+  if (unlikely(A.size() == 0)) {
+    return var(0.0);
+  } else if (!is_constant<T1>::value && !is_constant<T2>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
-
+    arena_t<Eigen::VectorXd> res_diff(arena_A.size());
     double res_val = 0.0;
     for (size_t i = 0; i < arena_A.size(); ++i) {
-      double diff = arena_A.val().coeff(i) - arena_B.val().coeff(i);
+      const double diff = arena_A.val().coeff(i) - arena_B.val().coeff(i);
+      res_diff.coeffRef(i) = diff;
       res_val += diff * diff;
     }
-
-    var res = make_callback_vari(
-        res_val, [arena_A, arena_B](const auto& res) mutable {
-          double res_adj = res.adj_;
-
+    return var(make_callback_vari(
+        res_val, [arena_A, arena_B, res_diff](const auto& res) mutable {
+          const double res_adj = 2.0 * res.adj_;
           for (size_t i = 0; i < arena_A.size(); ++i) {
-            double diff = arena_A.val().coeff(i) - arena_B.val().coeff(i);
-            arena_A.adj().coeffRef(i) += 2.0 * res_adj * diff;
-            arena_B.adj().coeffRef(i) -= 2.0 * res_adj * diff;
+            const double diff = res_adj * res_diff.coeff(i);
+            arena_A.adj().coeffRef(i) += diff;
+            arena_B.adj().coeffRef(i) -= diff;
           }
-        });
-
-    return res;
+        }));
   } else if (!is_constant<T1>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
     arena_t<promote_scalar_t<double, T2>> arena_B = value_of(B);
-
+    arena_t<Eigen::VectorXd> res_diff(arena_A.size());
     double res_val = 0.0;
     for (size_t i = 0; i < arena_A.size(); ++i) {
-      double diff = arena_A.val().coeff(i) - arena_B.coeff(i);
+      const double diff = arena_A.val().coeff(i) - arena_B.coeff(i);
+      res_diff.coeffRef(i) = diff;
       res_val += diff * diff;
     }
-
-    var res = make_callback_vari(
-        res_val, [arena_A, arena_B](const auto& res) mutable {
-          double res_adj = res.adj_;
-
-          for (size_t i = 0; i < arena_A.size(); ++i) {
-            double diff = arena_A.val().coeff(i) - arena_B.coeff(i);
-            arena_A.adj().coeffRef(i) += 2.0 * res_adj * diff;
-          }
-        });
-
-    return res;
+    return var(make_callback_vari(
+        res_val, [arena_A, arena_B, res_diff](const auto& res) mutable {
+          arena_A.adj() += 2.0 * res.adj_ * res_diff;
+        }));
   } else {
     arena_t<promote_scalar_t<double, T1>> arena_A = value_of(A);
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
-
+    arena_t<Eigen::VectorXd> res_diff(arena_A.size());
     double res_val = 0.0;
     for (size_t i = 0; i < arena_A.size(); ++i) {
-      double diff = arena_A.coeff(i) - arena_B.val().coeff(i);
+      const double diff = arena_A.coeff(i) - arena_B.val().coeff(i);
+      res_diff.coeffRef(i) = diff;
       res_val += diff * diff;
     }
-
-    var res = make_callback_vari(
-        res_val, [arena_A, arena_B](const auto& res) mutable {
-          double res_adj = res.adj_;
-
-          for (size_t i = 0; i < arena_A.size(); ++i) {
-            double diff = arena_A.coeff(i) - arena_B.val().coeff(i);
-            arena_B.adj().coeffRef(i) -= 2.0 * res_adj * diff;
-          }
-        });
-
-    return res;
+    return var(make_callback_vari(
+        res_val, [arena_A, arena_B, res_diff](const auto& res) mutable {
+          arena_B.adj() -= 2.0 * res.adj_ * res_diff;
+        }));
   }
 }
 
