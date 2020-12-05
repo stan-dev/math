@@ -132,6 +132,8 @@
 #include <stan/math/opencl/prim/mdivide_left_tri_low.hpp>
 #include <stan/math/opencl/prim/mdivide_right_tri_low.hpp>
 #include <stan/math/opencl/prim/neg_binomial_2_log_glm_lpmf.hpp>
+#include <stan/math/opencl/prim/neg_binomial_2_log_lpmf.hpp>
+#include <stan/math/opencl/prim/neg_binomial_2_lpmf.hpp>
 #include <stan/math/opencl/prim/normal_id_glm_lpdf.hpp>
 #include <stan/math/opencl/prim/normal_lpdf.hpp>
 #include <stan/math/opencl/prim/ordered_logistic_glm_lpmf.hpp>
@@ -155,6 +157,7 @@
 #include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/opencl/prim/tcrossprod.hpp>
 #include <stan/math/opencl/prim/uniform_lpdf.hpp>
+#include <stan/math/opencl/prim/weibull_lpdf.hpp>
 
 #include <stan/math/opencl/err.hpp>
 
