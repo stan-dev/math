@@ -109,7 +109,8 @@ generalized_inverse(const EigMat& G, const Scal& a) {
   const auto& G_ref = to_ref(G);
 
   if (n < m) {
-    Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> A = tcrossprod(G_ref);
+    Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> A
+        = tcrossprod(G_ref);
     A.diagonal().array() += a;
     return transpose(mdivide_left_spd(A, G_ref));
   } else {
