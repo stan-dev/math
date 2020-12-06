@@ -42,23 +42,25 @@ inline auto generalized_inverse(const EigMat& A) {
     arena_t<plain_type_t<EigMat>> A_arena(A);
     arena_t<EigMat> inv_A(
         transpose(mdivide_left_spd(tcrossprod(A_arena.val()), A_arena.val())));
+    arena_t<EigMat> aP = (1 - A * inv_A.transpose());
+    arena_t<EigMat> Pa = (1 - inv_A * A);
     reverse_pass_callback([A_arena, inv_A]() mutable {
       A_arena.adj() += -inv_A * A.adj() * inv_A;
       A_arena.adj() += tcrossprod(inv_A) * A.adj().transpose()
-                       * (1 - A * inv_A.transpose());
-      A_arena.adj()
-          += (1 - inv_A * A) * A.adj().transpose() * crossprod(inv_A());
+                   * aP;
+      A_arena.adj() += Pa * A.adj().transpose() * crossprod(inv_A());
     });
     return ret;
   } else {
     arena_t<plain_type_t<EigMat>> A_arena(A);
     arena_t<EigMat> inv_A(transpose(mdivide_right_spd(A_arena.val(), crossprod(A_arena.val())));
+     arena_t<EigMat> aP = (1 - A * inv_A.transpose());
+    arena_t<EigMat> Pa = (1 - inv_A * A);
     reverse_pass_callback([A_arena, inv_A]() mutable {
       A_arena.adj() += -inv_A * A.adj() * inv_A;
       A_arena.adj() += tcrossprod(inv_A) * A.adj().transpose()
-                       * (1 - A * inv_A.transpose());
-      A_arena.adj()
-          += (1 - inv_A * A) * A.adj().transpose() * crossprod(inv_A());
+                   * aP;
+      A_arena.adj() += Pa * A.adj().transpose() * crossprod(inv_A());
     });
     return ret;
   }
@@ -96,12 +98,13 @@ generalized_inverse(const EigMat& A, const Scal& a) {
     A_spd.diagonal().array() += a;
 
     arena_t<EigMat> inv_A(transpose(mdivide_left_spd(A_spd, A_arena.val())));
+    arena_t<EigMat> aP = (1 - A * inv_A.transpose());
+    arena_t<EigMat> Pa = (1 - inv_A * A);
     reverse_pass_callback([A_arena, inv_A]() mutable {
       A_arena.adj() += -inv_A * A.adj() * inv_A;
       A_arena.adj() += tcrossprod(inv_A) * A.adj().transpose()
-                       * (1 - A * inv_A.transpose());
-      A_arena.adj()
-          += (1 - inv_A * A) * A.adj().transpose() * crossprod(inv_A());
+                   * aP;
+      A_arena.adj() += Pa * A.adj().transpose() * crossprod(inv_A());
     });
     return ret;
   } else {
@@ -111,12 +114,13 @@ generalized_inverse(const EigMat& A, const Scal& a) {
 
     arena_t<plain_type_t<EigMat>> A_arena(A);
     arena_t<EigMat> inv_A(transpose(mdivide_right_spd(A_arena.val(), A_spd));
+    arena_t<EigMat> aP = (1 - A * inv_A.transpose());
+    arena_t<EigMat> Pa = (1 - inv_A * A);
     reverse_pass_callback([A_arena, inv_A]() mutable {
       A_arena.adj() += -inv_A * A.adj() * inv_A;
       A_arena.adj() += tcrossprod(inv_A) * A.adj().transpose()
-                       * (1 - A * inv_A.transpose());
-      A_arena.adj()
-          += (1 - inv_A * A) * A.adj().transpose() * crossprod(inv_A());
+                   * aP;
+      A_arena.adj() += Pa * A.adj().transpose() * crossprod(inv_A());
     });
     return ret;
   }
