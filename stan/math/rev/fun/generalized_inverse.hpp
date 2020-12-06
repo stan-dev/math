@@ -96,11 +96,11 @@ generalized_inverse(const EigMat& G, const Scal& a) {
     arena_t<EigMat> A_spd = tcrossprod(G_arena.val());
     A_spd.diagonal().array() += a;
 <<<<<<< HEAD
-    
+
     arena_t<EigMat> inv_G(transpose(mdivide_left_spd(A_spd, G_arena.val())));
     arena_t<EigMat> aP = (1 - G * inv_G.transpose());
     arena_t<EigMat> Pa = (1 - inv_G * G);
-     reverse_pass_callback([G_arena, inv_G]() mutable {
+    reverse_pass_callback([G_arena, inv_G]() mutable {
       G_arena.adj() += -inv_G * G.adj() * inv_G;
       G_arena.adj() += tcrossprod(inv_G) * G.adj().transpose() * aP;
       G_arena.adj() += Pa * G.adj().transpose() * crossprod(inv_G());
