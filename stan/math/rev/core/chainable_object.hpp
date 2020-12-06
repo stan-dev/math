@@ -37,7 +37,7 @@ class chainable_object : public chainable_alloc {
    */
   template <typename S,
             require_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
-  chainable_object(S&& obj) : obj_(std::forward<S>(obj)) {}
+  explicit chainable_object(S&& obj) : obj_(std::forward<S>(obj)) {}
 
   /**
    * Return a reference to the underlying object
@@ -52,12 +52,12 @@ class chainable_object : public chainable_alloc {
  * only when the chainable stack memory is recovered
  *
  * @tparam T type of object to hold
- * @param object to hold
+ * @param obj object to hold
  * @return pointer to `chainable_object` holding input
  */
 template <typename T>
 auto make_chainable_ptr(T&& obj) {
-  auto ptr = new chainable_object<plain_type_t<T>>(std::forward<T>(obj));
+  auto ptr = new chainable_object<std::decay_t<T>>(std::forward<T>(obj));
   return ptr;
 }
 
