@@ -7,7 +7,7 @@
 #include <stan/math/rev/fun/cholesky_decompose.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
 #include <stan/math/rev/fun/tcrossprod.hpp>
-#include <stan/math/rev/fun/crossprod.hpp>
+#include <stan/math/prim/fun/crossprod.hpp>
 #include <stan/math/prim/fun/inverse_spd.hpp>
 #include <stan/math/rev/fun/mdivide_left_spd.hpp>
 #include <stan/math/rev/fun/mdivide_right_spd.hpp>
