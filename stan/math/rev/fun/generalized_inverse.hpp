@@ -95,7 +95,6 @@ generalized_inverse(const EigMat& G, const Scal& a) {
     arena_t<plain_type_t<EigMat>> G_arena(G);
     arena_t<EigMat> A_spd = tcrossprod(G_arena.val());
     A_spd.diagonal().array() += a;
-<<<<<<< HEAD
 
     arena_t<EigMat> inv_G(transpose(mdivide_left_spd(A_spd, G_arena.val())));
     arena_t<EigMat> aP = (1 - G * inv_G.transpose());
@@ -104,16 +103,6 @@ generalized_inverse(const EigMat& G, const Scal& a) {
       G_arena.adj() += -inv_G * G.adj() * inv_G;
       G_arena.adj() += tcrossprod(inv_G) * G.adj().transpose() * aP;
       G_arena.adj() += Pa * G.adj().transpose() * crossprod(inv_G());
-=======
-
-    arena_t<EigMat> inv_A(transpose(mdivide_left_spd(A_spd, A_arena.val())));
-    arena_t<EigMat> aP = (1 - A * inv_A.transpose());
-    arena_t<EigMat> Pa = (1 - inv_A * A);
-    reverse_pass_callback([A_arena, inv_A]() mutable {
-      A_arena.adj() += -inv_A * A.adj() * inv_A;
-      A_arena.adj() += tcrossprod(inv_A) * A.adj().transpose() * aP;
-      A_arena.adj() += Pa * A.adj().transpose() * crossprod(inv_A());
->>>>>>> 9e6e692cb1f69058e1bf293800d9fa7660f3bc7f
     });
     return ret;
   } else {
