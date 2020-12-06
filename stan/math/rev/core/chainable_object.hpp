@@ -52,7 +52,7 @@ class chainable_object : public chainable_alloc {
  * only when the chainable stack memory is recovered
  *
  * @tparam T type of object to hold
- * @param object to hold
+ * @param obj object to hold
  * @return pointer to `chainable_object` holding input
  */
 template <typename T>
