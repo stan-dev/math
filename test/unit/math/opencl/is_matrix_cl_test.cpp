@@ -1,5 +1,5 @@
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/opencl.hpp>
+#include <stan/math/opencl/prim.hpp>
 #include <gtest/gtest.h>
 #include <type_traits>
 
