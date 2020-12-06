@@ -79,7 +79,11 @@ class LDLT_factor<T, require_not_rev_matrix_t<T>> {
 
   LDLT_factor() : N_(0), ldltP_(new ldlt_t()) {}
 
-  explicit LDLT_factor(const matrix_t& A) : N_(A.rows()), ldltP_(new ldlt_t(A)) {
+  explicit LDLT_factor(const matrix_t& A) : N_(A.rows()) {
+    check_square("LDLT_factor", "A", A);
+    if(A.size() > 0) {
+      ldltP_ = std::make_shared<ldlt_t>(A);
+    }
   }
 
   inline bool success() const {

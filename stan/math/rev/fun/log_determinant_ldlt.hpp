@@ -34,11 +34,10 @@ public:
     Eigen::Matrix<double, R, C> invA;
 
     // If we start computing Jacobians, this may be a bit inefficient
-    invA.setIdentity(alloc_ldlt_->N_, alloc_ldlt_->N_);
+    invA.setIdentity(A_.rows(), A_.cols());
     A_.solveInPlace(invA);
-    const_cast<matrix_vi &>(alloc_ldlt_->variA_).adj() += adj_ * invA;
+    A_.adj() += adj_ * invA;
   }
-  const LDLT_alloc<R, C> *alloc_ldlt_;
 };
 }  // namespace internal
 

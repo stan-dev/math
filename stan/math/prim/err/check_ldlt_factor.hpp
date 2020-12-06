@@ -28,7 +28,7 @@ inline void check_ldlt_factor(const char* function, const char* name,
     std::ostringstream msg;
     msg << "is not positive definite.  last conditional variance is ";
     std::string msg_str(msg.str());
-    T too_small = A.vectorD().tail(1)(0);
+    value_type_t<T> too_small = A.vectorD().tail(1)(0);
     throw_domain_error(function, name, too_small, msg_str.c_str(), ".");
   }
 }

@@ -6,6 +6,7 @@
 #include <stan/math/rev/fun/LDLT_alloc.hpp>
 #include <stan/math/rev/fun/LDLT_factor.hpp>
 #include <stan/math/rev/core/typedefs.hpp>
+#include <stan/math/rev/core/chainable_object.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
@@ -53,8 +54,8 @@ class mdivide_left_ldlt_vv_vari : public vari {
   int N_;  // B.cols()
   vari **variRefB_;
   vari **variRefC_;
-  mdivide_left_ldlt_alloc<R1, C1, R2, C2> *alloc_;
-  const LDLT_alloc<R1, C1> *alloc_ldlt_;
+  LDLT_factor<Eigen::Matrix<var, R1, C1>> A_;
+  arena_t<Eigen::Matrix<double, R2, C2>> C_;
 
   mdivide_left_ldlt_vv_vari(const LDLT_factor<Eigen::Matrix<var, R1, C1>> &A,
                             const Eigen::Matrix<var, R2, C2> &B)
@@ -67,22 +68,20 @@ class mdivide_left_ldlt_vv_vari : public vari {
         variRefC_(reinterpret_cast<vari **>(
             ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))),
-        alloc_(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()),
-        alloc_ldlt_(A.alloc_) {
+        A_(A),
+	C_(B.val()) {
     Eigen::Map<matrix_vi>(variRefB_, M_, N_) = B.vi();
-    alloc_->C_ = B.val();
-    alloc_ldlt_->ldlt_.solveInPlace(alloc_->C_);
+    A_.solveInPlace(C_);
     Eigen::Map<matrix_vi>(variRefC_, M_, N_)
-        = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
+        = C_.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
     matrix_d adjB = Eigen::Map<matrix_vi>(variRefC_, M_, N_).adj();
 
-    alloc_ldlt_->ldlt_.solveInPlace(adjB);
+    A_.solveInPlace(adjB);
 
-    const_cast<matrix_vi &>(alloc_ldlt_->variA_).adj()
-        -= adjB * alloc_->C_.transpose();
+    A_.adj() -= adjB * C_.transpose();
     Eigen::Map<matrix_vi>(variRefB_, M_, N_).adj() += adjB;
   }
 };
@@ -111,7 +110,8 @@ class mdivide_left_ldlt_dv_vari : public vari {
   int N_;  // B.cols()
   vari **variRefB_;
   vari **variRefC_;
-  mdivide_left_ldlt_alloc<R1, C1, R2, C2> *alloc_;
+  chainable_object<LDLT_factor<Eigen::Matrix<double, R1, C1>>>* A_ptr_;
+  arena_t<Eigen::Matrix<double, R2, C2>> C_;
 
   mdivide_left_ldlt_dv_vari(const LDLT_factor<Eigen::Matrix<double, R1, C1>> &A,
                             const Eigen::Matrix<var, R2, C2> &B)
@@ -124,18 +124,15 @@ class mdivide_left_ldlt_dv_vari : public vari {
         variRefC_(reinterpret_cast<vari **>(
             ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))),
-        alloc_(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()) {
+        A_ptr_(make_chainable_ptr(A)),
+	C_(A_ptr_->get().solve(B.val())) {
     Eigen::Map<matrix_vi>(variRefB_, M_, N_) = B.vi();
-    alloc_->C_ = B.val();
-    alloc_->ldltP_ = A.ldltP_;
-    alloc_->ldltP_->solveInPlace(alloc_->C_);
     Eigen::Map<matrix_vi>(variRefC_, M_, N_)
-        = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
+        = C_.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
-    matrix_d adjB = Eigen::Map<matrix_vi>(variRefC_, M_, N_).adj();
-    alloc_->ldltP_->solveInPlace(adjB);
+    matrix_d adjB = A_ptr_->get().solve(Eigen::Map<matrix_vi>(variRefC_, M_, N_).adj());
     Eigen::Map<matrix_vi>(variRefB_, M_, N_).adj() += adjB;
   }
 };
@@ -163,6 +160,9 @@ class mdivide_left_ldlt_vd_vari : public vari {
   int M_;  // A.rows() = A.cols() = B.rows()
   int N_;  // B.cols()
   vari **variRefC_;
+  LDLT_factor<Eigen::Matrix<var, R1, C1>> A_;
+  arena_t<Eigen::Matrix<double, R2, C2>> C_;
+
   mdivide_left_ldlt_alloc<R1, C1, R2, C2> *alloc_;
   const LDLT_alloc<R1, C1> *alloc_ldlt_;
 
@@ -174,19 +174,17 @@ class mdivide_left_ldlt_vd_vari : public vari {
         variRefC_(reinterpret_cast<vari **>(
             ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))),
-        alloc_(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()),
-        alloc_ldlt_(A.alloc_) {
-    alloc_->C_ = B;
-    alloc_ldlt_->ldlt_.solveInPlace(alloc_->C_);
+	A_(A),
+	C_(B) {
+    A_.solveInPlace(C_);
     Eigen::Map<matrix_vi>(variRefC_, M_, N_)
-        = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
+        = C_.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
     matrix_d adjC = Eigen::Map<matrix_vi>(variRefC_, M_, N_).adj();
 
-    const_cast<matrix_vi &>(alloc_ldlt_->variA_).adj()
-        -= alloc_ldlt_->ldlt_.solve(adjC * alloc_->C_.transpose());
+    A_.adj() -= A_.solve(adjC * C_.transpose());
   }
 };
 }  // namespace internal

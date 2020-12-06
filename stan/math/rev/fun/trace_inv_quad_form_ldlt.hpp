@@ -22,7 +22,7 @@ class trace_inv_quad_form_ldlt_impl : public chainable_alloc {
   inline void initializeB(const Eigen::Matrix<var, R3, C3> &B, bool haveD) {
     matrix_d Bd = B.val();
     variB_ = B.vi();
-    AinvB_ = ldlt_.solve(Bd);
+    AinvB_ = A_.solve(Bd);
     if (haveD) {
       C_.noalias() = Bd.transpose() * AinvB_;
     } else {
@@ -30,7 +30,7 @@ class trace_inv_quad_form_ldlt_impl : public chainable_alloc {
     }
   }
   inline void initializeB(const Eigen::Matrix<double, R3, C3> &B, bool haveD) {
-    AinvB_ = ldlt_.solve(B);
+    AinvB_ = A_.solve(B);
     if (haveD) {
       C_.noalias() = B.transpose() * AinvB_;
     } else {
@@ -53,7 +53,7 @@ class trace_inv_quad_form_ldlt_impl : public chainable_alloc {
   trace_inv_quad_form_ldlt_impl(const Eigen::Matrix<T1, R1, C1> &D,
                                 const LDLT_factor<Eigen::Matrix<T2, R2, C2>> &A,
                                 const Eigen::Matrix<T3, R3, C3> &B)
-      : Dtype_(stan::is_var<T1>::value), ldlt_(A) {
+      : Dtype_(stan::is_var<T1>::value), A_(A) {
     initializeB(B, true);
     initializeD(D);
 
@@ -62,12 +62,12 @@ class trace_inv_quad_form_ldlt_impl : public chainable_alloc {
 
   trace_inv_quad_form_ldlt_impl(const LDLT_factor<Eigen::Matrix<T2, R2, C2>> &A,
                                 const Eigen::Matrix<T3, R3, C3> &B)
-      : Dtype_(2), ldlt_(A) {
+      : Dtype_(2), A_(A) {
     initializeB(B, false);
   }
 
   const int Dtype_;  // 0 = double, 1 = var, 2 = missing
-  LDLT_factor<Eigen::Matrix<T2, R2, C2>> ldlt_;
+  LDLT_factor<Eigen::Matrix<T2, R2, C2>> A_;
   matrix_d D_;
   matrix_vi variD_;
   matrix_vi variB_;
@@ -99,7 +99,7 @@ class trace_inv_quad_form_ldlt_vari : public vari {
       aA.noalias() = -adj * (impl->AinvB_ * impl->AinvB_.transpose());
     }
 
-    impl->ldlt_.alloc_->variA_.adj() += aA;
+    impl->A_.adj() += aA;
   }
   static inline void chainB(
       double adj,

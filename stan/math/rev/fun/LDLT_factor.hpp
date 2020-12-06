@@ -51,7 +51,18 @@ class LDLT_factor<T, require_rev_matrix_t<T>> {
   decltype(make_chainable_ptr(std::declval<T>().val().ldlt())) ldlt_ptr_;
 public:
   explicit LDLT_factor(const T &A)
-    : A_(A), ldlt_ptr_(make_chainable_ptr(A.val().ldlt())) {
+    : A_(A), ldlt_ptr_(nullptr) {
+    check_square("LDLT_factor", "A", A);
+    if(A.size() > 0)
+      ldlt_ptr_ = make_chainable_ptr(A.val().ldlt());
+  }
+
+  decltype(auto) val() {
+    return A_.adj();
+  }
+
+  decltype(auto) adj() {
+    return A_.adj();
   }
 
   template <typename S>
@@ -61,7 +72,7 @@ public:
 
   template <typename S>
   inline void solveInPlace(S& b) {
-    return ldlt_ptr_->get().solveInPlace(b);
+    ldlt_ptr_->get().solveInPlace(b);
   }
 
   inline bool success() const {
@@ -73,7 +84,7 @@ public:
 
   inline double log_abs_det() const { return sum(log(vectorD())); }
 
-  inline Eigen::VectorXd vectorD() {
+  inline Eigen::VectorXd vectorD() const {
     return ldlt_ptr_->get().vectorD();
   }
 
