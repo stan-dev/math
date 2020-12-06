@@ -56,10 +56,12 @@ generalized_inverse(const EigMat& G) {
     return inverse(G);
   }
 
+  const auto& G_ref = to_ref(G);
+
   if (n < m) {
-    return transpose(mdivide_left_spd(tcrossprod(G), G));
+    return transpose(mdivide_left_spd(tcrossprod(G_ref), G_ref));
   } else {
-    return transpose(mdivide_right_spd(G, crossprod(G)));
+    return transpose(mdivide_right_spd(G_ref, crossprod(G_ref)));
   }
 }
 
@@ -104,14 +106,16 @@ generalized_inverse(const EigMat& G, const Scal& a) {
     return inverse(G);
   }
 
+  const auto& G_ref = to_ref(G);
+
   if (n < m) {
-    Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> A = tcrossprod(G);
+    Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> A = tcrossprod(G_ref);
     A.diagonal().array() += a;
-    return transpose(mdivide_left_spd(A, G));
+    return transpose(mdivide_left_spd(A, G_ref));
   } else {
-    Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> A = crossprod(G);
+    Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> A = crossprod(G_ref);
     A.diagonal().array() += a;
-    return transpose(mdivide_right_spd(G, A));
+    return transpose(mdivide_right_spd(G_ref, A));
   }
 }
 
