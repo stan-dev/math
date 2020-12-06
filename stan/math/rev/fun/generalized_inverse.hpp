@@ -40,28 +40,28 @@ inline auto generalized_inverse(const EigMat& G) {
   }
   if (n < m) {
     arena_t<plain_type_t<EigMat>> G_arena(G);
-    arena_t<EigMat> A_spd = tcrossprod(G_arena.val());
+    auto A_spd = tcrossprod(G_arena.val());
     arena_t<EigMat> inv_G(transpose(mdivide_left_spd(A_spd, G_arena.val())));
-    arena_t<EigMat> aP = (1 - G * inv_G.transpose());
-    arena_t<EigMat> Pa = (1 - inv_G * G);
+    auto aP = (1 - G_arena.val() * inv_G.transpose());
+    auto Pa = (1 - inv_G * G_arena.val());
     reverse_pass_callback([G_arena, inv_G]() mutable {
-      G_arena.adj() += -inv_G * G.adj() * inv_G;
-      G_arena.adj() += tcrossprod(inv_G) * G.adj().transpose() * aP;
-      G_arena.adj() += Pa * G.adj().transpose() * crossprod(inv_G());
+      G_arena.adj() += -inv_G * G_arena.adj() * inv_G;
+      G_arena.adj() += tcrossprod(inv_G) * G_arena.adj().transpose() * aP;
+      G_arena.adj() += Pa * G_arena.adj().transpose() * crossprod(inv_G());
     });
-    return ret;
+    return inv_G;
   } else {
     arena_t<plain_type_t<EigMat>> G_arena(G);
-    arena_t<EigMat> A_spd = crossprod(G_arena.val());
+    auto A_spd = crossprod(G_arena.val());
     arena_t<EigMat> inv_G(transpose(mdivide_right_spd(G_arena.val(), A_spd)));
-    arena_t<EigMat> aP = (1 - G * inv_G.transpose());
-    arena_t<EigMat> Pa = (1 - inv_G * G);
+    auto aP = (1 - G_arena.val() * inv_G.transpose());
+    auto Pa = (1 - inv_G * G_arena.val());
     reverse_pass_callback([G_arena, inv_G]() mutable {
-      G_arena.adj() += -inv_G * G.adj() * inv_G;
-      G_arena.adj() += tcrossprod(inv_G) * G.adj().transpose() * aP;
-      G_arena.adj() += Pa * G.adj().transpose() * crossprod(inv_G());
+      G_arena.adj() += -inv_G * G_arena.adj() * inv_G;
+      G_arena.adj() += tcrossprod(inv_G) * G_arena.adj().transpose() * aP;
+      G_arena.adj() += Pa * G_arena.adj().transpose() * crossprod(inv_G());
     });
-    return ret;
+    return inv_G;
   }
 }
 
@@ -93,32 +93,32 @@ generalized_inverse(const EigMat& G, const Scal& a) {
 
   if (n < m) {
     arena_t<plain_type_t<EigMat>> G_arena(G);
-    arena_t<EigMat> A_spd = tcrossprod(G_arena.val());
+    auto A_spd = tcrossprod(G_arena.val());
     A_spd.diagonal().array() += a;
 
     arena_t<EigMat> inv_G(transpose(mdivide_left_spd(A_spd, G_arena.val())));
-    arena_t<EigMat> aP = (1 - G * inv_G.transpose());
-    arena_t<EigMat> Pa = (1 - inv_G * G);
+    auto aP = (1 - G_arena.val() * inv_G.transpose());
+    auto Pa = (1 - inv_G * G_arena.val());
     reverse_pass_callback([G_arena, inv_G]() mutable {
-      G_arena.adj() += -inv_G * G.adj() * inv_G;
-      G_arena.adj() += tcrossprod(inv_G) * G.adj().transpose() * aP;
-      G_arena.adj() += Pa * G.adj().transpose() * crossprod(inv_G());
+      G_arena.adj() += -inv_G * G_arena.adj() * inv_G;
+      G_arena.adj() += tcrossprod(inv_G) * G_arena.adj().transpose() * aP;
+      G_arena.adj() += Pa * G_arena.adj().transpose() * crossprod(inv_G);
     });
-    return ret;
+    return inv_G;
   } else {
     arena_t<plain_type_t<EigMat>> G_arena(G);
-    arena_t<EigMat> A_spd = crossprod(G_arena.val());
+    auto A_spd = crossprod(G_arena.val());
     A_spd.diagonal().array() += a;
 
     arena_t<EigMat> inv_G(transpose(mdivide_right_spd(G_arena.val(), A_spd));
-    arena_t<EigMat> aP = (1 - G * inv_G.transpose());
-    arena_t<EigMat> Pa = (1 - inv_G * G);
+    auto aP = (1 - G * inv_G.transpose());
+    auto Pa = (1 - inv_G * G_arena.val());
    reverse_pass_callback([G_arena, inv_G]() mutable {
-      G_arena.adj() += -inv_G * G.adj() * inv_G;
-      G_arena.adj() += tcrossprod(inv_G) * G.adj().transpose() * aP;
-      G_arena.adj() += Pa * G.adj().transpose() * crossprod(inv_G());
+      G_arena.adj() += -inv_G * G_arena.adj() * inv_G;
+      G_arena.adj() += tcrossprod(inv_G) * G_arena.adj().transpose() * aP;
+      G_arena.adj() += Pa * G_arena.adj().transpose() * crossprod(inv_G());
     });
-    return ret;
+    return inv_G;
   }
 }
 
