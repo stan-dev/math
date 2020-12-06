@@ -10,7 +10,7 @@
 #include <stan/math/prim/fun/crossprod.hpp>
 #include <stan/math/prim/fun/inverse_spd.hpp>
 #include <stan/math/rev/fun/mdivide_left_spd.hpp>
-#include <stan/math/rev/fun/mdivide_right_spd.hpp>
+#include <stan/math/prim/fun/mdivide_right_spd.hpp>
 #include <stan/math/rev/fun/inverse.hpp>
 
 namespace stan {
