@@ -45,8 +45,9 @@ inline auto generalized_inverse(const EigMat& A) {
     reverse_pass_callback([A_arena, inv_A]() mutable {
       A_arena.adj() += -inv_A * A.adj() * inv_A;
       A_arena.adj() += tcrossprod(inv_A) * A.adj().transpose()
-                   * (1 - A * inv_A.transpose());
-      A_arena.adj() += (1 - inv_A * A) * A.adj().transpose() * crossprod(inv_A());
+                       * (1 - A * inv_A.transpose());
+      A_arena.adj()
+          += (1 - inv_A * A) * A.adj().transpose() * crossprod(inv_A());
     });
     return ret;
   } else {
@@ -55,8 +56,9 @@ inline auto generalized_inverse(const EigMat& A) {
     reverse_pass_callback([A_arena, inv_A]() mutable {
       A_arena.adj() += -inv_A * A.adj() * inv_A;
       A_arena.adj() += tcrossprod(inv_A) * A.adj().transpose()
-                   * (1 - A * inv_A.transpose());
-      A_arena.adj() += (1 - inv_A * A) * A.adj().transpose() * crossprod(inv_A());
+                       * (1 - A * inv_A.transpose());
+      A_arena.adj()
+          += (1 - inv_A * A) * A.adj().transpose() * crossprod(inv_A());
     });
     return ret;
   }
@@ -97,8 +99,9 @@ generalized_inverse(const EigMat& A, const Scal& a) {
     reverse_pass_callback([A_arena, inv_A]() mutable {
       A_arena.adj() += -inv_A * A.adj() * inv_A;
       A_arena.adj() += tcrossprod(inv_A) * A.adj().transpose()
-                   * (1 - A * inv_A.transpose());
-      A_arena.adj() += (1 - inv_A * A) * A.adj().transpose() * crossprod(inv_A());
+                       * (1 - A * inv_A.transpose());
+      A_arena.adj()
+          += (1 - inv_A * A) * A.adj().transpose() * crossprod(inv_A());
     });
     return ret;
   } else {
@@ -111,8 +114,9 @@ generalized_inverse(const EigMat& A, const Scal& a) {
     reverse_pass_callback([A_arena, inv_A]() mutable {
       A_arena.adj() += -inv_A * A.adj() * inv_A;
       A_arena.adj() += tcrossprod(inv_A) * A.adj().transpose()
-                   * (1 - A * inv_A.transpose());
-      A_arena.adj() += (1 - inv_A * A) * A.adj().transpose() * crossprod(inv_A());
+                       * (1 - A * inv_A.transpose());
+      A_arena.adj()
+          += (1 - inv_A * A) * A.adj().transpose() * crossprod(inv_A());
     });
     return ret;
   }
