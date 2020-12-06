@@ -29,13 +29,13 @@ template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
 inline auto generalized_inverse(const EigMat& G) {
   using value_t = value_type_t<EigMat>;
   if (G.size() == 0) {
-    return {};
+    return G;
   }
 
   const auto n = G.rows();
   const auto m = G.cols();
 
-  if (A.rows() == G.cols()) {
+  if (G.rows() == G.cols()) {
     return inverse(G);
   }
   if (n < m) {
@@ -81,7 +81,7 @@ inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
 generalized_inverse(const EigMat& G, const Scal& a) {
   using value_t = value_type_t<EigMat>;
   if (G.size() == 0) {
-    return {};
+    return G;
   }
 
   const auto n = G.rows();
@@ -110,7 +110,7 @@ generalized_inverse(const EigMat& G, const Scal& a) {
     auto A_spd = crossprod(G_arena.val());
     A_spd.diagonal().array() += a;
 
-    arena_t<EigMat> inv_G(transpose(mdivide_right_spd(G_arena.val(), A_spd));
+    arena_t<EigMat> inv_G(transpose(mdivide_right_spd(G_arena.val(), A_spd)));
     auto aP = (1 - G * inv_G.transpose());
     auto Pa = (1 - inv_G * G_arena.val());
    reverse_pass_callback([G_arena, inv_G]() mutable {
