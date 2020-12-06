@@ -95,7 +95,7 @@ generalized_inverse(const EigMat& A, const Scal& a) {
     arena_t<plain_type_t<EigMat>> A_arena(A);
     arena_t<EigMat> A_spd = tcrossprod(A_arena.val());
     A_spd.diagonal().array() += a;
-    
+
     arena_t<EigMat> inv_A(transpose(mdivide_left_spd(A_spd, A_arena.val())));
     arena_t<EigMat> aP = (1 - A * inv_A.transpose());
     arena_t<EigMat> Pa = (1 - inv_A * A);
