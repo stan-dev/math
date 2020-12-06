@@ -25,7 +25,8 @@ namespace math {
 template <int R1, int C1, typename EigMat,
           require_eigen_vt<is_fvar, EigMat>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat>, R1, EigMat::ColsAtCompileTime>
-mdivide_left_ldlt(const LDLT_factor<Eigen::Matrix<double, R1, C1>>& A, const EigMat& b) {
+mdivide_left_ldlt(const LDLT_factor<Eigen::Matrix<double, R1, C1>>& A,
+                  const EigMat& b) {
   using T = typename value_type_t<EigMat>::Scalar;
   constexpr int R2 = EigMat::RowsAtCompileTime;
   constexpr int C2 = EigMat::ColsAtCompileTime;

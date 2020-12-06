@@ -31,9 +31,9 @@ namespace math {
 template <typename EigMat1, typename T2, int R2, int C2, typename EigMat3,
           require_all_eigen_t<EigMat1, EigMat3>* = nullptr,
           require_any_st_var<EigMat1, T2, EigMat3>* = nullptr>
-inline var trace_gen_inv_quad_form_ldlt(const EigMat1& D,
-                                        const LDLT_factor<Eigen::Matrix<T2, R2, C2>>& A,
-                                        const EigMat3& B) {
+inline var trace_gen_inv_quad_form_ldlt(
+    const EigMat1& D, const LDLT_factor<Eigen::Matrix<T2, R2, C2>>& A,
+    const EigMat3& B) {
   using T3 = value_type_t<EigMat3>;
   constexpr int R3 = EigMat3::RowsAtCompileTime;
   constexpr int C3 = EigMat3::ColsAtCompileTime;

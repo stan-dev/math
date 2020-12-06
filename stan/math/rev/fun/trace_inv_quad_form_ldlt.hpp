@@ -156,7 +156,7 @@ class trace_inv_quad_form_ldlt_vari : public vari {
 template <typename T, int R, int C, typename EigMat,
           typename = require_any_st_var<T, EigMat>>
 inline return_type_t<T, EigMat> trace_inv_quad_form_ldlt(
-							 const LDLT_factor<Eigen::Matrix<T, R, C>> &A, const EigMat &B) {
+    const LDLT_factor<Eigen::Matrix<T, R, C>> &A, const EigMat &B) {
   using T2 = value_type_t<EigMat>;
   constexpr int R2 = EigMat::RowsAtCompileTime;
   constexpr int C2 = EigMat::ColsAtCompileTime;

@@ -27,7 +27,8 @@ template <typename EigMat, typename T, int R, int C,
           require_eigen_t<EigMat>* = nullptr,
           require_any_not_arithmetic_t<value_type_t<EigMat>, T>* = nullptr>
 inline Eigen::Matrix<return_type_t<EigMat, T>, EigMat::RowsAtCompileTime, C>
-mdivide_right_ldlt(const EigMat& b, const LDLT_factor<Eigen::Matrix<T, R, C>>& A) {
+mdivide_right_ldlt(const EigMat& b,
+                   const LDLT_factor<Eigen::Matrix<T, R, C>>& A) {
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A);
   if (A.rows() == 0) {
     return {b.rows(), 0};
@@ -40,7 +41,7 @@ template <typename EigMat, typename T, int R, int C,
           require_eigen_t<EigMat>* = nullptr,
           require_all_arithmetic_t<value_type_t<EigMat>, T>* = nullptr>
 inline Eigen::Matrix<T, EigMat::RowsAtCompileTime, C> mdivide_right_ldlt(
-									 const EigMat& b, const LDLT_factor<Eigen::Matrix<T, R, C>>& A) {
+    const EigMat& b, const LDLT_factor<Eigen::Matrix<T, R, C>>& A) {
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A);
   if (A.rows() == 0) {
     return {b.rows(), 0};

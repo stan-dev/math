@@ -135,4 +135,3 @@ TEST(AgradRevMatrix, cols) {
 
   stan::math::recover_memory();
 }
-

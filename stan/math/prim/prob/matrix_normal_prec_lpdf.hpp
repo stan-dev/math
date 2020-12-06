@@ -42,7 +42,8 @@ return_type_t<T_y, T_Mu, T_Sigma, T_D> matrix_normal_prec_lpdf(
   check_finite(function, "Sigma", Sigma);
   check_symmetric(function, "Sigma", Sigma);
 
-  LDLT_factor<Eigen::Matrix<T_Sigma, Eigen::Dynamic, Eigen::Dynamic>> ldlt_Sigma(Sigma);
+  LDLT_factor<Eigen::Matrix<T_Sigma, Eigen::Dynamic, Eigen::Dynamic>>
+      ldlt_Sigma(Sigma);
   check_ldlt_factor(function, "LDLT_Factor of Sigma", ldlt_Sigma);
   check_positive(function, "D rows", D.rows());
   check_finite(function, "D", D);

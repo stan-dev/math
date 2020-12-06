@@ -26,7 +26,7 @@ class mdivide_left_ldlt_alloc : public chainable_alloc {
    * for mdivide_left_ldlt(ldltA, b) when ldltA is a LDLT_factor<double>.
    * The pointer is shared with the LDLT_factor<double> class.
    **/
-  std::shared_ptr<Eigen::LDLT<Eigen::Matrix<double, R1, C1> > > ldltP_;
+  std::shared_ptr<Eigen::LDLT<Eigen::Matrix<double, R1, C1>>> ldltP_;
   Eigen::Matrix<double, R2, C2> C_;
 };
 
@@ -69,7 +69,7 @@ class mdivide_left_ldlt_vv_vari : public vari {
             ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))),
         A_(A),
-	C_(B.val()) {
+        C_(B.val()) {
     Eigen::Map<matrix_vi>(variRefB_, M_, N_) = B.vi();
     A_.solveInPlace(C_);
     Eigen::Map<matrix_vi>(variRefC_, M_, N_)
@@ -110,7 +110,7 @@ class mdivide_left_ldlt_dv_vari : public vari {
   int N_;  // B.cols()
   vari **variRefB_;
   vari **variRefC_;
-  chainable_object<LDLT_factor<Eigen::Matrix<double, R1, C1>>>* A_ptr_;
+  chainable_object<LDLT_factor<Eigen::Matrix<double, R1, C1>>> *A_ptr_;
   arena_t<Eigen::Matrix<double, R2, C2>> C_;
 
   mdivide_left_ldlt_dv_vari(const LDLT_factor<Eigen::Matrix<double, R1, C1>> &A,
@@ -125,14 +125,15 @@ class mdivide_left_ldlt_dv_vari : public vari {
             ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))),
         A_ptr_(make_chainable_ptr(A)),
-	C_(A_ptr_->get().solve(B.val())) {
+        C_(A_ptr_->get().solve(B.val())) {
     Eigen::Map<matrix_vi>(variRefB_, M_, N_) = B.vi();
     Eigen::Map<matrix_vi>(variRefC_, M_, N_)
         = C_.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
-    matrix_d adjB = A_ptr_->get().solve(Eigen::Map<matrix_vi>(variRefC_, M_, N_).adj());
+    matrix_d adjB
+        = A_ptr_->get().solve(Eigen::Map<matrix_vi>(variRefC_, M_, N_).adj());
     Eigen::Map<matrix_vi>(variRefB_, M_, N_).adj() += adjB;
   }
 };
@@ -174,8 +175,8 @@ class mdivide_left_ldlt_vd_vari : public vari {
         variRefC_(reinterpret_cast<vari **>(
             ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))),
-	A_(A),
-	C_(B) {
+        A_(A),
+        C_(B) {
     A_.solveInPlace(C_);
     Eigen::Map<matrix_vi>(variRefC_, M_, N_)
         = C_.unaryExpr([](double x) { return new vari(x, false); });
@@ -203,7 +204,7 @@ class mdivide_left_ldlt_vd_vari : public vari {
 template <int R1, int C1, typename EigMat,
           require_eigen_vt<is_var, EigMat> * = nullptr>
 inline Eigen::Matrix<var, R1, EigMat::ColsAtCompileTime> mdivide_left_ldlt(
-									   const LDLT_factor<Eigen::Matrix<var, R1, C1>> &A, const EigMat &b) {
+    const LDLT_factor<Eigen::Matrix<var, R1, C1>> &A, const EigMat &b) {
   constexpr int R2 = EigMat::RowsAtCompileTime;
   constexpr int C2 = EigMat::ColsAtCompileTime;
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
@@ -234,7 +235,7 @@ inline Eigen::Matrix<var, R1, EigMat::ColsAtCompileTime> mdivide_left_ldlt(
 template <int R1, int C1, typename EigMat,
           require_eigen_vt<std::is_arithmetic, EigMat> * = nullptr>
 inline Eigen::Matrix<var, R1, EigMat::ColsAtCompileTime> mdivide_left_ldlt(
-									   const LDLT_factor<Eigen::Matrix<var, R1, C1>> &A, const EigMat &b) {
+    const LDLT_factor<Eigen::Matrix<var, R1, C1>> &A, const EigMat &b) {
   constexpr int R2 = EigMat::RowsAtCompileTime;
   constexpr int C2 = EigMat::ColsAtCompileTime;
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
@@ -265,7 +266,7 @@ inline Eigen::Matrix<var, R1, EigMat::ColsAtCompileTime> mdivide_left_ldlt(
 template <int R1, int C1, typename EigMat,
           require_eigen_vt<is_var, EigMat> * = nullptr>
 inline Eigen::Matrix<var, R1, EigMat::ColsAtCompileTime> mdivide_left_ldlt(
-									   const LDLT_factor<Eigen::Matrix<double, R1, C1>> &A, const EigMat &b) {
+    const LDLT_factor<Eigen::Matrix<double, R1, C1>> &A, const EigMat &b) {
   constexpr int R2 = EigMat::RowsAtCompileTime;
   constexpr int C2 = EigMat::ColsAtCompileTime;
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);

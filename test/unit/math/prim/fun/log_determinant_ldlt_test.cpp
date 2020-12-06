@@ -13,7 +13,7 @@ TEST(MathMatrixPrimMat, log_determinant_ldlt) {
     stan::math::LDLT_factor<Eigen::Matrix<double, -1, -1>> ldlt_x(x);
     ASSERT_TRUE(ldlt_x.success());
     EXPECT_FLOAT_EQ(log(fabs(determinant(x))),
-		    stan::math::log_determinant_ldlt(ldlt_x));
+                    stan::math::log_determinant_ldlt(ldlt_x));
   }
 
   x << 1, 0, 0, 3;

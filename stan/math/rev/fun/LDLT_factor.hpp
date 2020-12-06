@@ -49,21 +49,17 @@ template <typename T>
 class LDLT_factor<T, require_rev_matrix_t<T>> {
   arena_t<T> A_;
   decltype(make_chainable_ptr(std::declval<T>().val().ldlt())) ldlt_ptr_;
-public:
-  explicit LDLT_factor(const T &A)
-    : A_(A), ldlt_ptr_(nullptr) {
+
+ public:
+  explicit LDLT_factor(const T& A) : A_(A), ldlt_ptr_(nullptr) {
     check_square("LDLT_factor", "A", A);
-    if(A.size() > 0)
+    if (A.size() > 0)
       ldlt_ptr_ = make_chainable_ptr(A.val().ldlt());
   }
 
-  decltype(auto) val() {
-    return A_.adj();
-  }
+  decltype(auto) val() { return A_.adj(); }
 
-  decltype(auto) adj() {
-    return A_.adj();
-  }
+  decltype(auto) adj() { return A_.adj(); }
 
   template <typename S>
   inline auto solve(const S& b) {
@@ -76,25 +72,18 @@ public:
   }
 
   inline bool success() const {
-    return A_.rows() != 0 &&
-      ldlt_ptr_->get().info() == Eigen::Success &&
-      ldlt_ptr_->get().isPositive() &&
-      (ldlt_ptr_->get().vectorD().array() > 0).all();
+    return A_.rows() != 0 && ldlt_ptr_->get().info() == Eigen::Success
+           && ldlt_ptr_->get().isPositive()
+           && (ldlt_ptr_->get().vectorD().array() > 0).all();
   }
 
   inline double log_abs_det() const { return sum(log(vectorD())); }
 
-  inline Eigen::VectorXd vectorD() const {
-    return ldlt_ptr_->get().vectorD();
-  }
+  inline Eigen::VectorXd vectorD() const { return ldlt_ptr_->get().vectorD(); }
 
-  inline size_t rows() const {
-    return A_.rows();
-  }
+  inline size_t rows() const { return A_.rows(); }
 
-  inline size_t cols() const {
-    return A_.cols();
-  }
+  inline size_t cols() const { return A_.cols(); }
 
   using size_type = size_t;
   using value_type = var;

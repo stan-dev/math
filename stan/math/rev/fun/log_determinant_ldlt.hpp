@@ -26,7 +26,8 @@ namespace internal {
 template <int R, int C>
 class log_det_ldlt_vari : public vari {
   LDLT_factor<Eigen::Matrix<var, R, C>> A_;
-public:
+
+ public:
   explicit log_det_ldlt_vari(const LDLT_factor<Eigen::Matrix<var, R, C>> &A)
       : vari(A.log_abs_det()), A_(A) {}
 

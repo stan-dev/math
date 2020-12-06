@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
 
 template <typename T>
-stan::math::LDLT_factor<Eigen::Matrix<T, -1, -1>> to_ldlt(const Eigen::Matrix<T, -1, -1>& a) {
+stan::math::LDLT_factor<Eigen::Matrix<T, -1, -1>> to_ldlt(
+    const Eigen::Matrix<T, -1, -1>& a) {
   stan::math::LDLT_factor<Eigen::Matrix<T, -1, -1>> ldlt_a(a);
   return ldlt_a;
 }

@@ -61,8 +61,7 @@ namespace math {
  * @tparam R number of rows, can be Eigen::Dynamic
  * @tparam C number of columns, can be Eigen::Dynamic
  */
-template <typename T,
-	  class Enable = void>
+template <typename T, class Enable = void>
 class LDLT_factor {};
 
 template <typename T>
@@ -73,6 +72,7 @@ class LDLT_factor<T, require_not_rev_matrix_t<T>> {
 
   size_t N_;
   std::shared_ptr<ldlt_t> ldltP_;
+
  public:
   using size_type = size_t;
   using value_type = double;
@@ -81,19 +81,19 @@ class LDLT_factor<T, require_not_rev_matrix_t<T>> {
 
   explicit LDLT_factor(const matrix_t& A) : N_(A.rows()) {
     check_square("LDLT_factor", "A", A);
-    if(A.size() > 0) {
+    if (A.size() > 0) {
       ldltP_ = std::make_shared<ldlt_t>(A);
     }
   }
 
   inline bool success() const {
-    return N_ != 0 &&
-      ldltP_->info() == Eigen::Success &&
-      ldltP_->isPositive() &&
-      (ldltP_->vectorD().array() > 0).all();
+    return N_ != 0 && ldltP_->info() == Eigen::Success && ldltP_->isPositive()
+           && (ldltP_->vectorD().array() > 0).all();
   }
 
-  inline scalar_type_t<T> log_abs_det() const { return sum(log(ldltP_->vectorD())); }
+  inline scalar_type_t<T> log_abs_det() const {
+    return sum(log(ldltP_->vectorD()));
+  }
 
   inline void inverse(matrix_t& invA) const {
     invA.setIdentity(N_);
