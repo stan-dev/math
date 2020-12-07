@@ -136,13 +136,13 @@ SUNMatrix SUNMatrix_SLUNRloc(SuperMatrix *A_super, gridinfo_t *grid)
 
 void SUNMatrix_SLUNRloc_Print(SUNMatrix A, FILE *fp)
 {
-  fprintf(fp, "====== START SUNMatrix_SLUNRloc_Print %p  ======\n", (void*) A);
-  fprintf(fp, "A->content->A_super = %p\n", (void*) SM_SUPERMATRIX_SLUNRLOC(A));
+  STAN_SUNDIALS_FPRINTF(fp, "====== START SUNMatrix_SLUNRloc_Print %p  ======\n", (void*) A);
+  STAN_SUNDIALS_FPRINTF(fp, "A->content->A_super = %p\n", (void*) SM_SUPERMATRIX_SLUNRLOC(A));
 
   /* Call SuperLU_DIST print routine */
   file_dPrint_CompRowLoc_Matrix_dist(fp, SM_SUPERMATRIX_SLUNRLOC(A));
 
-  fprintf(fp, "======= END SUNMatrix_SLUNRloc_Print %p  =======\n", (void*) A);
+  STAN_SUNDIALS_FPRINTF(fp, "======= END SUNMatrix_SLUNRloc_Print %p  =======\n", (void*) A);
 }
 
 

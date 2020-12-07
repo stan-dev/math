@@ -812,11 +812,11 @@ void N_VSetVecAtIndexVectorArray(N_Vector* vs, int index, N_Vector w)
 void N_VPrint(N_Vector v)
 {
   if (v == NULL) {
-    printf("NULL Vector\n");
+   STAN_SUNDIALS_PRINTF("NULL Vector\n");
     return;
   }
   if (v->ops->nvprint == NULL) {
-    printf("NULL Print Op\n");
+   STAN_SUNDIALS_PRINTF("NULL Print Op\n");
     return;
   }
   v->ops->nvprint(v);
@@ -827,11 +827,11 @@ void N_VPrint(N_Vector v)
 void N_VPrintFile(N_Vector v, FILE* outfile)
 {
   if (v == NULL) {
-    fprintf(outfile, "NULL Vector\n");
+    STAN_SUNDIALS_FPRINTF(outfile, "NULL Vector\n");
     return;
   }
   if (v->ops->nvprintfile == NULL) {
-    fprintf(outfile, "NULL PrintFile Op\n");
+    STAN_SUNDIALS_FPRINTF(outfile, "NULL PrintFile Op\n");
     return;
   }
   v->ops->nvprintfile(v, outfile);
