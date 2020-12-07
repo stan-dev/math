@@ -97,9 +97,11 @@ inline var log_determinant_spd(const T& m) {
       = Eigen::MatrixXd::Identity(m.rows(), m.cols());
   ldlt.solveInPlace(arena_m_inv_transpose);
 
-  return var(make_callback_vari(sum(log(ldlt.vectorD())), [m, arena_m_inv_transpose](const auto& res) mutable {
-    m.adj() += res.adj() * arena_m_inv_transpose;
-  }));
+  return var(
+      make_callback_vari(sum(log(ldlt.vectorD())),
+                         [m, arena_m_inv_transpose](const auto& res) mutable {
+                           m.adj() += res.adj() * arena_m_inv_transpose;
+                         }));
 }
 
 }  // namespace math
