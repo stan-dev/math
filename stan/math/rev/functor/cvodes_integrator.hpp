@@ -45,7 +45,7 @@ class cvodes_integrator {
   const size_t N_;
   std::ostream* msgs_;
   double relative_tolerance_;
-  double absolute_tolerance_;
+  Eigen::VectorXd absolute_tolerance_;
   long int max_num_steps_;  // NOLINT(runtime/int)
 
   const size_t num_y0_vars_;
@@ -54,6 +54,7 @@ class cvodes_integrator {
   coupled_ode_system<F, T_y0_t0, T_Args...> coupled_ode_;
 
   std::vector<double> coupled_state_;
+  N_Vector nv_absolute_tolerance_;
   N_Vector nv_state_;
   N_Vector* nv_state_sens_;
   SUNMatrix A_;
@@ -186,7 +187,7 @@ class cvodes_integrator {
   template <require_eigen_col_vector_t<T_y0>* = nullptr>
   cvodes_integrator(const char* function_name, const F& f, const T_y0& y0,
                     const T_t0& t0, const std::vector<T_ts>& ts,
-                    double relative_tolerance, double absolute_tolerance,
+                    double relative_tolerance, Eigen::VectorXd absolute_tolerance,
                     long int max_num_steps,  // NOLINT(runtime/int)
                     std::ostream* msgs, const T_Args&... args)
       : function_name_(function_name),
@@ -223,12 +224,16 @@ class cvodes_integrator {
     check_nonzero_size(function_name, "initial state", y0_);
     check_sorted(function_name, "times", ts_);
     check_less(function_name, "initial time", t0_, ts_[0]);
+    check_size_match(function_name, "absolute_tolerance", // TODO:
+                                                          // testme
+                     absolute_tolerance_.size(), "states", N_);
     check_positive_finite(function_name, "relative_tolerance",
                           relative_tolerance_);
     check_positive_finite(function_name, "absolute_tolerance",
                           absolute_tolerance_);
     check_positive(function_name, "max_num_steps", max_num_steps_);
 
+    nv_absolute_tolerance_ = N_VMake_Serial(N_, &absolute_tolerance_(0));
     nv_state_ = N_VMake_Serial(N_, &coupled_state_[0]);
     nv_state_sens_ = nullptr;
     A_ = SUNDenseMatrix(N_, N_);
@@ -246,6 +251,7 @@ class cvodes_integrator {
   ~cvodes_integrator() {
     SUNLinSolFree(LS_);
     SUNMatDestroy(A_);
+    N_VDestroy_Serial(nv_absolute_tolerance_);
     N_VDestroy_Serial(nv_state_);
     if (num_y0_vars_ + num_args_vars_ > 0) {
       N_VDestroyVectorArray_Serial(nv_state_sens_,
@@ -279,7 +285,7 @@ class cvodes_integrator {
           CVodeSetUserData(cvodes_mem, reinterpret_cast<void*>(this)),
           "CVodeSetUserData");
 
-      cvodes_set_options(cvodes_mem, relative_tolerance_, absolute_tolerance_,
+      cvodes_set_options(cvodes_mem, relative_tolerance_, nv_absolute_tolerance_,
                          max_num_steps_);
 
       check_flag_sundials(CVodeSetLinearSolver(cvodes_mem, LS_, A_),
