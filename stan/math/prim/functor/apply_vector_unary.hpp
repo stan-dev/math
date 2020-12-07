@@ -34,9 +34,6 @@ struct apply_vector_unary<T, require_eigen_t<T>> {
    * Member function for applying a functor to a vector and subsequently
    * returning a vector.
    *
-   * TODO(Andrew) Remove .eval() when rest of Stan library can take
-   * expressions as inputs.
-   *
    * @tparam T Type of argument to which functor is applied.
    * @tparam F Type of functor to apply.
    * @param x Eigen input to which operation is applied.
