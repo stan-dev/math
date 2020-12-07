@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/squared_distance.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
@@ -168,7 +169,7 @@ inline var squared_distance(const T1& A, const T2& B) {
     }
     return var(make_callback_vari(
         res_val, [arena_A, arena_B, res_diff](const auto& res) mutable {
-          const double res_adj = 2.0 * res.adj_;
+          const double res_adj = 2.0 * res.adj();
           for (size_t i = 0; i < arena_A.size(); ++i) {
             const double diff = res_adj * res_diff.coeff(i);
             arena_A.adj().coeffRef(i) += diff;
@@ -187,7 +188,7 @@ inline var squared_distance(const T1& A, const T2& B) {
     }
     return var(make_callback_vari(
         res_val, [arena_A, arena_B, res_diff](const auto& res) mutable {
-          arena_A.adj() += 2.0 * res.adj_ * res_diff;
+          arena_A.adj() += 2.0 * res.adj() * res_diff;
         }));
   } else {
     arena_t<promote_scalar_t<double, T1>> arena_A = value_of(A);
@@ -201,7 +202,7 @@ inline var squared_distance(const T1& A, const T2& B) {
     }
     return var(make_callback_vari(
         res_val, [arena_A, arena_B, res_diff](const auto& res) mutable {
-          arena_B.adj() -= 2.0 * res.adj_ * res_diff;
+          arena_B.adj() -= 2.0 * res.adj() * res_diff;
         }));
   }
 }
