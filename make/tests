@@ -3,6 +3,13 @@ N_TESTS ?= 100
 # to group the probability tests into
 
 ##
+# Any targets in test/benchmark (.d, .o, executable) needs the Google benchmark flags
+##
+test/benchmark/% : CXXFLAGS += -I $(BENCHMARK)/include
+test/benchmark/% : LDFLAGS += -L $(BENCHMARK)/src
+test/benchmark/% : LDLIBS += -lbenchmark
+
+##
 # Any targets in test/ (.d, .o, executable) needs the GTEST flags
 ##
 test/% : CXXFLAGS += $(CXXFLAGS_GTEST)

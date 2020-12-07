@@ -33,46 +33,51 @@ auto recursive_sum(const std::vector<T>& a) {
 }
 
 template <typename T, require_integral_t<T>* = nullptr>
-T make_arg(double value = 0.4) {
+T make_arg(double value = 0.4, int size = 1) {
   return 1;
 }
 template <typename T, require_floating_point_t<T>* = nullptr>
-T make_arg(double value = 0.4) {
+T make_arg(double value = 0.4, int size = 1) {
   return value;
 }
 template <typename T, require_var_t<T>* = nullptr>
-T make_arg(T value = 0.4) {
+T make_arg(T value = 0.4, int size = 1) {
   return value;
 }
 template <typename T, require_fvar_t<T>* = nullptr>
-T make_arg(T value) {
+T make_arg(T value, int size = 1) {
   return value;
 }
 template <typename T, require_fvar_t<T>* = nullptr>
-T make_arg(double value = 0.4) {
+T make_arg(double value = 0.4, int size = 1) {
   return {value, 0.5};
 }
-template <typename T, typename T_scalar = double, require_eigen_t<T>* = nullptr>
-T make_arg(T_scalar value = 0.4) {
-  T res(1, 1);
-  res << make_arg<value_type_t<T>>(value);
+template <typename T, typename T_scalar = double, require_eigen_matrix_dynamic_t<T>* = nullptr>
+T make_arg(T_scalar value = 0.4, int size = 1) {
+  T res = T::Constant(size, size, make_arg<value_type_t<T>>(value));
+  return res;
+}
+template <typename T, typename T_scalar = double, require_eigen_vector_t<T>* = nullptr>
+T make_arg(T_scalar value = 0.4, int size = 1) {
+  T res = T::Constant(size, make_arg<value_type_t<T>>(value));
   return res;
 }
 template <typename T, typename T_scalar = double,
           require_std_vector_t<T>* = nullptr>
-T make_arg(T_scalar value = 0.4) {
+T make_arg(T_scalar value = 0.4, int size = 1) {
   using V = value_type_t<T>;
-  V tmp = make_arg<V>(value);
   T res;
-  res.push_back(tmp);
+  for(int i=0;i<size;i++){
+    res.push_back(make_arg<V>(value, size));
+  }
   return res;
 }
 template <typename T, require_same_t<T, std::minstd_rand>* = nullptr>
-T make_arg(double value = 0.4) {
+T make_arg(double value = 0.4, int size = 1) {
   return std::minstd_rand(0);
 }
 template <typename T, require_same_t<T, std::ostream*>* = nullptr>
-T make_arg(double value = 0.4) {
+T make_arg(double value = 0.4, int size = 1) {
   return nullptr;
 }
 

@@ -290,6 +290,7 @@ def handleExpressionTests(tests, only_functions, n_test_files):
             del tests[n]
             expression_tests = True
     if expression_tests:
+        sys.path.append("test")
         sys.path.append("test/expressions")
         import generateExpressionTests
 
