@@ -198,7 +198,6 @@ TEST(StanMathOde_ode_bdf_tol, state_abs_tol) {
   EXPECT_FLOAT_EQ(omega.adj(), -1.096552);
 }
 
-
 TEST(StanMathOde_ode_bdf_tol, std_vector_arg) {
   using stan::math::var;
 

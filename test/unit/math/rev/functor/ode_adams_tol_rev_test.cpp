@@ -177,6 +177,27 @@ TEST(StanMathOde_ode_adams_tol, scalar_arg_multi_time) {
   EXPECT_FLOAT_EQ(a.adj(), -0.50107310888);
 }
 
+TEST(StanMathOde_ode_adams_tol, state_abs_tol) {
+  using stan::math::var;
+
+  Eigen::VectorXd y0(2);
+  y0 << 1.0, 0.0;
+  double t0 = 0.0;
+  std::vector<double> ts = {1.1};
+  Eigen::VectorXd abs_tol(2);
+  abs_tol << 1E-10, 1E-8;
+
+  var omega = 1.5;
+
+  var output = stan::math::ode_adams_tol(stan::test::sho(), y0, t0, ts, 1e-8,
+                                         abs_tol, 1e6, nullptr, omega)[0][0];
+
+  output.grad();
+
+  EXPECT_FLOAT_EQ(output.val(), -0.07912089);
+  EXPECT_FLOAT_EQ(omega.adj(), -1.096552);
+}
+
 TEST(StanMathOde_ode_adams_tol, std_vector_arg) {
   using stan::math::var;
 

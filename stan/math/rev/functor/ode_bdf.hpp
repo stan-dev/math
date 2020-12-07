@@ -51,7 +51,7 @@ std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
                           Eigen::Dynamic, 1>>
 ode_bdf_tol_impl(const char* function_name, const F& f, const T_y0& y0,
                  const T_t0& t0, const std::vector<T_ts>& ts,
-                 double relative_tolerance, Eigen::VectorXd absolute_tolerance,
+                 double relative_tolerance, const Eigen::VectorXd& absolute_tolerance,
                  long int max_num_steps,  // NOLINT(runtime/int)
                  std::ostream* msgs, const T_Args&... args) {
   const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);

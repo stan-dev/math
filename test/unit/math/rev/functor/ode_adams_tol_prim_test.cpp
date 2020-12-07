@@ -311,6 +311,8 @@ TEST(ode_adams_tol_prim, atol_errors) {
   std::vector<double> ts = {0.45, 1.1};
 
   double atol = 1e-6;
+  Eigen::VectorXd atol_state_wrong(2);
+  atol_state_wrong << 1e-6, 1e-6;
   double atol_negative = -1e-6;
   double atolinf = stan::math::INFTY;
   double atolNaN = stan::math::NOT_A_NUMBER;
@@ -331,6 +333,10 @@ TEST(ode_adams_tol_prim, atol_errors) {
   EXPECT_THROW(stan::math::ode_adams_tol(stan::test::CosArg1(), y0, t0, ts,
                                          1e-6, atolNaN, 1e6, nullptr, a),
                std::domain_error);
+  
+  EXPECT_THROW(stan::math::ode_adams_tol(stan::test::CosArg1(), y0, t0, ts, 1e-6,
+                                         atol_state_wrong, 1e6, nullptr, a),
+               std::invalid_argument);
 }
 
 TEST(ode_adams_tol_prim, max_num_steps_errors) {
