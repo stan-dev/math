@@ -120,12 +120,16 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
    * of the argument.
    */
   inline void check_assign_dimensions(int rows, int cols) const {
-    check_size_match("check_cl_.check_assign_dimensions", "Rows of ",
-                     err_variable_, arg_.rows(), "rows of ",
-                     "assigned expression", rows);
-    check_size_match("check_cl_.check_assign_dimensions", "Columns of ",
-                     err_variable_, arg_.cols(), "columns of ",
-                     "assigned expression", cols);
+    if (arg_.rows() != base::dynamic) {
+      check_size_match("check_cl_.check_assign_dimensions", "Rows of ",
+                       err_variable_, arg_.rows(), "rows of ",
+                       "assigned expression", rows);
+    }
+    if (arg_.cols() != base::dynamic) {
+      check_size_match("check_cl_.check_assign_dimensions", "Columns of ",
+                       err_variable_, arg_.cols(), "columns of ",
+                       "assigned expression", cols);
+    }
   }
 
   /**

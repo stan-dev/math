@@ -26,7 +26,9 @@ constexpr double neg_binomial_alpha_cutoff = 1e10;
 }  // namespace internal
 
 // NegBinomial(n|alpha, beta)  [alpha > 0;  beta > 0;  n >= 0]
-template <bool propto, typename T_n, typename T_shape, typename T_inv_scale>
+template <bool propto, typename T_n, typename T_shape, typename T_inv_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_n, T_shape, T_inv_scale>* = nullptr>
 return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
                                                       const T_shape& alpha,
                                                       const T_inv_scale& beta) {
