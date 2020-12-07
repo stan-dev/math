@@ -187,7 +187,8 @@ class cvodes_integrator {
   template <require_eigen_col_vector_t<T_y0>* = nullptr>
   cvodes_integrator(const char* function_name, const F& f, const T_y0& y0,
                     const T_t0& t0, const std::vector<T_ts>& ts,
-                    double relative_tolerance, Eigen::VectorXd absolute_tolerance,
+                    double relative_tolerance,
+                    Eigen::VectorXd absolute_tolerance,
                     long int max_num_steps,  // NOLINT(runtime/int)
                     std::ostream* msgs, const T_Args&... args)
       : function_name_(function_name),
@@ -224,8 +225,8 @@ class cvodes_integrator {
     check_nonzero_size(function_name, "initial state", y0_);
     check_sorted(function_name, "times", ts_);
     check_less(function_name, "initial time", t0_, ts_[0]);
-    check_size_match(function_name, "absolute_tolerance", // TODO:
-                                                          // testme
+    check_size_match(function_name, "absolute_tolerance",  // TODO:
+                                                           // testme
                      absolute_tolerance_.size(), "states", N_);
     check_positive_finite(function_name, "relative_tolerance",
                           relative_tolerance_);
@@ -285,8 +286,8 @@ class cvodes_integrator {
           CVodeSetUserData(cvodes_mem, reinterpret_cast<void*>(this)),
           "CVodeSetUserData");
 
-      cvodes_set_options(cvodes_mem, relative_tolerance_, nv_absolute_tolerance_,
-                         max_num_steps_);
+      cvodes_set_options(cvodes_mem, relative_tolerance_,
+                         nv_absolute_tolerance_, max_num_steps_);
 
       check_flag_sundials(CVodeSetLinearSolver(cvodes_mem, LS_, A_),
                           "CVodeSetLinearSolver");
