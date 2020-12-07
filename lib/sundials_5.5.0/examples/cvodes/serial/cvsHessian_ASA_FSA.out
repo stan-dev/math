@@ -1,0 +1,98 @@
+-------------------
+Forward integration
+-------------------
+
+ncheck = 1
+
+     y:      2.2732e-01   1.3534e-01   3.1472e-02     G:      5.3088e-01
+
+     yS1:   -1.6714e-01   0.0000e+00   0.0000e+00
+     yS2:    2.1339e-01   0.0000e+00  -1.0885e-01
+
+   dG/dp:   -1.2838e-01   1.8037e-02
+
+Final Statistics for forward pb.
+--------------------------------
+ Number steps:   143
+
+ Function evaluations:
+  f:          166
+  fQ:         148
+  fS:         166
+  fQS:        148
+ Error test failures:
+  netf:         1
+  netfQ:        0
+  netfS:        0
+  netfQS:       2
+ Linear solver setups:
+  nsetups:     27
+  nsetupsS:     0
+ Nonlinear iterations:
+  nni:        163
+ Convergence failures:
+  ncfn:         0
+
+---------------------------------------------
+Backward integration ... (2 adjoint problems)
+---------------------------------------------
+
+   dG/dp:   -1.2838e-01   1.8036e-02   (from backward pb. 1)
+            -1.2838e-01   1.8036e-02   (from backward pb. 2)
+
+   H = d2G/dp2:
+        (1)            (2)
+    1.5628e-01    -7.8678e-02
+   -7.8678e-02     8.9814e-02
+
+Final Statistics for backward pb. 1
+-----------------------------------
+ Number steps:   102
+
+ Function evaluations:
+  f:          131
+  fQ:         111
+ Error test failures:
+  netf:         1
+  netfQ:        6
+ Linear solver setups:
+  nsetups:     25
+ Nonlinear iterations:
+  nni:        128
+ Convergence failures:
+  ncfn:         0
+
+Final Statistics for backward pb. 2
+-----------------------------------
+ Number steps:   115
+
+ Function evaluations:
+  f:          153
+  fQ:         121
+ Error test failures:
+  netf:         3
+  netfQ:        3
+ Linear solver setups:
+  nsetups:     23
+ Nonlinear iterations:
+  nni:        150
+ Convergence failures:
+  ncfn:         0
+
+-----------------------
+Finite Difference tests
+-----------------------
+
+del_p = 0.01
+
+p1+  y:     2.2566e-01   1.3534e-01   3.1472e-02     G:     5.2960e-01
+p1-  y:     2.2900e-01   1.3534e-01   3.1472e-02     G:     5.3217e-01
+p2+  y:     2.2943e-01   1.3534e-01   3.0399e-02     G:     5.3106e-01
+p2-  y:     2.2516e-01   1.3534e-01   3.2577e-02     G:     5.3070e-01
+
+   dG/dp:   -1.2760e-01   1.8476e-02   (fwd FD)
+            -1.2916e-01   1.7581e-02   (bck FD)
+            -1.2838e-01   1.8028e-02   (cntr FD)
+
+  H(1,1):    1.5594e-01
+  H(2,2):    8.9483e-02

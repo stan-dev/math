@@ -1,0 +1,61 @@
+
+2D Heat PDE test problem:
+ ---------------------------------
+  nprocs         = 8
+  npx            = 2
+  npy            = 2
+  npt            = 2
+ ---------------------------------
+  kx             = 1
+  ky             = 1
+  tf             = 1
+  xu             = 1
+  yu             = 1
+  nx             = 32
+  ny             = 32
+  nxl (proc 0)   = 16
+  nyl (proc 0)   = 16
+  dx             = 0.0322581
+  dy             = 0.0322581
+ ---------------------------------
+  rtol           = 1e-05
+  atol           = 1e-10
+  order          = 4
+  linear         = 0
+ ---------------------------------
+  lin iters      = 100
+  eps lins       = -1
+  prectype       = 1
+  msbp           = 0
+ ---------------------------------
+  nt             = 300
+  xtol           = 1e-06
+  refine         = 0
+  rfactor limit  = 10
+  rfactor fail   = 4
+  init seq       = 0
+  print level    = 0
+  access level   = 1
+ ---------------------------------
+  output         = 1
+ ---------------------------------
+
+  Max error = 3.297245285410866e-03
+
+Final max integrator statistics:
+  Steps            = 1780
+  Step attempts    = 1780
+  Error test fails = 1204
+  RHS evals        = 28478
+  NLS iters        = 17798
+  NLS fails        = 0
+  LS iters         = 268066
+  LS fails         = 0
+  LS setups        = 1780
+  Jv products      = 268066
+
+  Avg NLS iters per step attempt = 9.998876
+  Avg LS iters per NLS iter      = 15.061580
+
+  Preconditioner setups = 1780
+  Preconditioner solves = 268066
