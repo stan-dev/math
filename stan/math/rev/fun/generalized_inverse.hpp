@@ -29,15 +29,15 @@ template <typename EigMat, require_rev_matrix_t<EigMat>* = nullptr>
 inline auto generalized_inverse(const EigMat& G) {
   using value_t = value_type_t<EigMat>;
 
-  if (G.size() == 0) 
+  if (G.size() == 0)
     return G;
-  
+
   const auto n = G.rows();
   const auto m = G.cols();
 
-  if (G.rows() == G.cols()) 
+  if (G.rows() == G.cols())
     return inverse(G);
-  
+
   if (n < m) {
     arena_t<plain_type_t<EigMat>> G_arena(G);
     auto A_spd = tcrossprod(G_arena.val());
@@ -77,14 +77,14 @@ inline auto generalized_inverse(const EigMat& G) {
 template <typename EigMat, require_rev_matrix_t<EigMat>* = nullptr>
 inline auto generalized_inverse(const EigMat& G, const double a) {
   using value_t = value_type_t<EigMat>;
-  
-  if (G.size() == 0) 
+
+  if (G.size() == 0)
     return G;
 
   const auto n = G.rows();
   const auto m = G.cols();
 
-  if (G.rows() == G.cols()) 
+  if (G.rows() == G.cols())
     return inverse(G);
 
   if (n < m) {
