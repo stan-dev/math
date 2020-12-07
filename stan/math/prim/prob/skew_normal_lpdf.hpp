@@ -20,7 +20,9 @@ namespace stan {
 namespace math {
 
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
-          typename T_shape>
+          typename T_shape,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_scale, T_shape>* = nullptr>
 return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;

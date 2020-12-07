@@ -11,7 +11,7 @@
 #include <type_traits>
 #include <string>
 #include <utility>
-#include <set>
+#include <map>
 #include <vector>
 
 namespace stan {
@@ -57,6 +57,31 @@ class load_
 
   /**
    * Generates kernel code for this expression.
+   * @param[in,out] generated map from (pointer to) already generated operations
+   * to variable names
+   * @param name_gen name generator for this kernel
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
+   * @param view_handled whether caller already handled matrix view
+   * @return part of kernel with code for this and nested expressions
+   */
+  inline kernel_parts get_kernel_parts(
+      std::map<const void*, const char*>& generated, name_generator& name_gen,
+      const std::string& row_index_name, const std::string& col_index_name,
+      bool view_handled) const {
+    kernel_parts res{};
+    if (generated.count(&a_) == 0) {
+      this->var_name_ = name_gen.generate();
+      generated[&a_] = this->var_name_.c_str();
+      res = generate(row_index_name, col_index_name, view_handled);
+    } else {
+      this->var_name_ = generated[&a_];
+    }
+    return res;
+  }
+
+  /**
+   * Generates kernel code for this expression.
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
    * @param view_handled whether whether caller already handled matrix view
@@ -88,6 +113,35 @@ class load_
   /**
    * Generates kernel code for this expression if it appears on the left hand
    * side of an assignment.
+   * @param[in,out] generated map from (pointer to) already generated operations
+   * to variable names
+   * @param name_gen name generator for this kernel
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
+   * @return part of kernel with code for this expressions
+   */
+  inline kernel_parts get_kernel_parts_lhs(
+      std::map<const void*, const char*>& generated, name_generator& name_gen,
+      const std::string& row_index_name,
+      const std::string& col_index_name) const {
+    if (generated.count(&a_) == 0) {
+      this->var_name_ = name_gen.generate();
+    } else {
+      this->var_name_ = generated[&a_];
+    }
+    kernel_parts res = generate_lhs(row_index_name, col_index_name);
+
+    if (generated.count(&a_) == 0) {
+      generated[&a_] = this->var_name_.c_str();
+    } else {
+      res.args = "";
+    }
+    return res;
+  }
+
+  /**
+   * Generates kernel code for this expression if it appears on the left hand
+   * side of an assignment.
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
    * @return part of kernel with code for this expressions
@@ -105,16 +159,16 @@ class load_
 
   /**
    * Sets kernel arguments for this expression.
-   * @param[in,out] generated set of expressions that already set their kernel
+   * @param[in,out] generated map of expressions that already set their kernel
    * arguments
    * @param kernel kernel to set arguments on
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const operation_cl_base*>& generated,
+  inline void set_args(std::map<const void*, const char*>& generated,
                        cl::Kernel& kernel, int& arg_num) const {
-    if (generated.count(this) == 0) {
-      generated.insert(this);
+    if (generated.count(&a_) == 0) {
+      generated[&a_] = "";
       kernel.setArg(arg_num++, a_.buffer());
       kernel.setArg(arg_num++, a_.rows());
       kernel.setArg(arg_num++, a_.view());
@@ -231,6 +285,25 @@ class load_
   inline void check_assign_dimensions(int rows, int cols) const {
     if (a_.rows() != rows || a_.cols() != cols) {
       a_ = matrix_cl<Scalar>(rows, cols);
+    }
+  }
+
+  /**
+   * Collects data that is needed beside types to uniqly identify a kernel
+   * generator expression.
+   * @param[out] uids ids of unique matrix accesses
+   * @param[in,out] id_map map from memory addresses to unique ids
+   * @param[in,out] next_id neqt unique id to use
+   */
+  inline void get_unique_matrix_accesses(std::vector<int>& uids,
+                                         std::map<const void*, int>& id_map,
+                                         int& next_id) const {
+    if (id_map.count(&a_) == 0) {
+      id_map[&a_] = next_id;
+      uids.push_back(next_id);
+      next_id++;
+    } else {
+      uids.push_back(id_map[&a_]);
     }
   }
 };
