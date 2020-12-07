@@ -224,8 +224,7 @@ class cvodes_integrator {
     check_nonzero_size(function_name, "initial state", y0_);
     check_sorted(function_name, "times", ts_);
     check_less(function_name, "initial time", t0_, ts_[0]);
-    check_size_match(function_name, "absolute_tolerance", // TODO:
-                                                          // testme
+    check_size_match(function_name, "absolute_tolerance",
                      absolute_tolerance_.size(), "states", N_);
     check_positive_finite(function_name, "relative_tolerance",
                           relative_tolerance_);
