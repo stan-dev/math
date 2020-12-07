@@ -30,6 +30,8 @@ class AgradDistributionsInvWishart : public ::testing::Test {
     S2 << 3.0, 1.4, 1.4, 7.0;
   }
 
+  virtual void TearDown() { stan::math::recover_memory(); }
+
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Y1;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Y2;
   double nu1;
@@ -114,4 +116,6 @@ TEST(InvWishart, check_varis_on_stack) {
       stan::math::inv_wishart_log<true>(W, to_var(nu), S));
   test::check_varis_on_stack(
       stan::math::inv_wishart_log<true>(W, nu, to_var(S)));
+
+  stan::math::recover_memory();
 }

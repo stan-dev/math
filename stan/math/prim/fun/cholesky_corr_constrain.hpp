@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
 Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
 cholesky_corr_constrain(const EigVec& y, int K) {
   using Eigen::Dynamic;

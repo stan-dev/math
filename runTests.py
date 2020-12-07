@@ -14,6 +14,7 @@ import platform
 import subprocess
 import sys
 import time
+import glob
 import re
 
 winsfx = ".exe"
@@ -72,6 +73,9 @@ def processCLIArgs():
         "-j", metavar="N", type=int, default=1, help="number of cores for make to use"
     )
 
+    parser.add_argument(
+        "-e", metavar="M", type=int, default=-1, help="number of files to split expressions tests in"
+    )
     tests_help_msg = "The path(s) to the test case(s) to run.\n"
     tests_help_msg += "Example: 'test/unit', 'test/prob', and/or\n"
     tests_help_msg += "         'test/unit/math/prim/fun/abs_test.cpp'"
@@ -233,17 +237,27 @@ def runTest(name, run_all=False, mpi=False, j=1):
         command = "mpirun -np {} {}".format(j, command)
     doCommand(command, not run_all)
 
+def test_files_in_folder(folder):
+    """Returns a list of test files (*_test.cpp) in the folder and all
+    its subfolders recursively. The folder can be written with
+    wildcards as with the Unix find command.
+    """
+    files = []
+    for f in glob.glob(folder):
+        if os.path.isdir(f):
+            files.extend(test_files_in_folder(f + os.sep + "**"))
+        else:
+            if f.endswith(testsfx):
+                files.append(f)
+    return files
 
 def findTests(base_path, filter_names, do_jumbo=False):
-    folders = filter(os.path.isdir, base_path)
-    nonfolders = list(set(base_path) - set(folders))
-    tests = nonfolders + [
-        os.path.join(root, n)
-        for f in folders
-        for root, _, names in os.walk(f)
-        for n in names
-        if n.endswith(testsfx)
-    ]
+    tests = []
+    for path in base_path:
+        if (not os.path.isdir(path)) and path.endswith("_test"):
+            tests.append(path+".cpp")
+        else:
+            tests.extend(test_files_in_folder(path))
     tests = map(mungeName, tests)
     tests = [
         test
@@ -269,10 +283,7 @@ def batched(tests):
     return [tests[i : i + batchSize] for i in range(0, len(tests), batchSize)]
 
 
-def handleExpressionTests(tests, only_functions, j):
-    # for debugging we want single file, otherwise a large number to
-    # better distribute the compiling workload
-    n_test_files = 1 if j == 1 else 2 * j
+def handleExpressionTests(tests, only_functions, n_test_files):
     expression_tests = False
     for n, i in list(enumerate(tests))[::-1]:
         if "test/expressions" in i or "test\\expressions" in i:
@@ -327,7 +338,14 @@ def main():
     if inputs.do_jumbo:
         jumboFiles = generateJumboTests(tests)
 
-    handleExpressionTests(tests, inputs.only_functions, inputs.j)
+    if inputs.e == -1:
+        if inputs.j == 1:
+            num_expr_test_files = 1
+        else:
+            num_expr_test_files = inputs.j * 4
+    else:
+        num_expr_test_files = inputs.e
+    handleExpressionTests(tests, inputs.only_functions, num_expr_test_files)
 
     tests = findTests(inputs.tests, inputs.f, inputs.do_jumbo)
 

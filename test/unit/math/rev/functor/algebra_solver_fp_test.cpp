@@ -556,7 +556,7 @@ TEST_F(FP_2d_func_test, exception_handling) {
 
   {
     std::stringstream err_msg;
-    err_msg << "algebra_solver: u_scale[1] is -1, but must be >= 0";
+    err_msg << "algebra_solver: u_scale[1] is -1";
     std::string msg = err_msg.str();
     u_scale[0] = -1.0;
     EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0,
@@ -567,7 +567,7 @@ TEST_F(FP_2d_func_test, exception_handling) {
 
   {
     std::stringstream err_msg;
-    err_msg << "algebra_solver: f_scale[1] is -1, but must be >= 0";
+    err_msg << "algebra_solver: f_scale[1] is -1";
     std::string msg = err_msg.str();
     f_scale[0] = -1.0;
     EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0,
@@ -578,7 +578,7 @@ TEST_F(FP_2d_func_test, exception_handling) {
 
   {
     std::stringstream err_msg;
-    err_msg << "algebra_solver: function_tolerance is -0.1, but must be >= 0";
+    err_msg << "algebra_solver: function_tolerance is -0.1";
     std::string msg = err_msg.str();
     f_tol = -0.1;
     EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0,
