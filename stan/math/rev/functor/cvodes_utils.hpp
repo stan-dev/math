@@ -21,7 +21,8 @@ extern "C" inline void cvodes_err_handler(int error_code, const char* module,
   }
 }
 
-inline void cvodes_set_options(void* cvodes_mem, double rel_tol, N_Vector& abs_tol,
+inline void cvodes_set_options(void* cvodes_mem, double rel_tol,
+                               N_Vector& abs_tol,
                                // NOLINTNEXTLINE(runtime/int)
                                long int max_num_steps) {
   // forward CVode errors to noop error handler

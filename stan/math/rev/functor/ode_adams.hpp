@@ -50,7 +50,8 @@ std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
                           Eigen::Dynamic, 1>>
 ode_adams_tol_impl(const char* function_name, const F& f, const T_y0& y0,
                    const T_t0& t0, const std::vector<T_ts>& ts,
-                   double relative_tolerance, const Eigen::VectorXd& absolute_tolerance,
+                   double relative_tolerance,
+                   const Eigen::VectorXd& absolute_tolerance,
                    long int max_num_steps,  // NOLINT(runtime/int)
                    std::ostream* msgs, const T_Args&... args) {
   const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
@@ -107,10 +108,10 @@ ode_adams_tol(const F& f, const T_y0& y0, const T_t0& t0,
               double absolute_tolerance,
               long int max_num_steps,  // NOLINT(runtime/int)
               std::ostream* msgs, const T_Args&... args) {
-  return ode_adams_tol_impl("ode_adams_tol", f, y0, t0, ts, relative_tolerance,
-                            Eigen::VectorXd::Constant(y0.size(),
-                                                      absolute_tolerance),
-                            max_num_steps, msgs, args...);
+  return ode_adams_tol_impl(
+      "ode_adams_tol", f, y0, t0, ts, relative_tolerance,
+      Eigen::VectorXd::Constant(y0.size(), absolute_tolerance), max_num_steps,
+      msgs, args...);
 }
 
 /**
@@ -197,7 +198,8 @@ ode_adams(const F& f, const T_y0& y0, const T_t0& t0,
           const std::vector<T_ts>& ts, std::ostream* msgs,
           const T_Args&... args) {
   double relative_tolerance = 1e-10;
-  Eigen::VectorXd absolute_tolerance = Eigen::VectorXd::Constant(y0.size(), 1E-10);
+  Eigen::VectorXd absolute_tolerance
+      = Eigen::VectorXd::Constant(y0.size(), 1E-10);
   long int max_num_steps = 1e8;  // NOLINT(runtime/int)
 
   return ode_adams_tol_impl("ode_adams", f, y0, t0, ts, relative_tolerance,

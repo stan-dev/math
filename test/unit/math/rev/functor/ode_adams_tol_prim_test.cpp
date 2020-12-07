@@ -333,10 +333,11 @@ TEST(ode_adams_tol_prim, atol_errors) {
   EXPECT_THROW(stan::math::ode_adams_tol(stan::test::CosArg1(), y0, t0, ts,
                                          1e-6, atolNaN, 1e6, nullptr, a),
                std::domain_error);
-  
-  EXPECT_THROW(stan::math::ode_adams_tol(stan::test::CosArg1(), y0, t0, ts, 1e-6,
-                                         atol_state_wrong, 1e6, nullptr, a),
-               std::invalid_argument);
+
+  EXPECT_THROW(
+      stan::math::ode_adams_tol(stan::test::CosArg1(), y0, t0, ts, 1e-6,
+                                atol_state_wrong, 1e6, nullptr, a),
+      std::invalid_argument);
 }
 
 TEST(ode_adams_tol_prim, max_num_steps_errors) {

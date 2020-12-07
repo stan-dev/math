@@ -73,7 +73,8 @@ struct ayt {
 struct sho {
   template <typename T0, typename T_y, typename T2>
   inline Eigen::Matrix<stan::return_type_t<T_y, T2>, Eigen::Dynamic, 1>
-  operator()(const T0&t, const T_y& y, std::ostream* msgs, const T2& omega) const {
+  operator()(const T0& t, const T_y& y, std::ostream* msgs,
+             const T2& omega) const {
     Eigen::Matrix<stan::return_type_t<T_y, T2>, Eigen::Dynamic, 1> dydt(2);
     dydt << y(1), -1 * omega * omega * y(0);
     return dydt;
