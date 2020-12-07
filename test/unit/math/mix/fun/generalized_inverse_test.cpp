@@ -1,61 +1,63 @@
 #include <test/unit/math/test_ad.hpp>
 #include <vector>
+#include <gtest/gtest.h>
 
-TEST(mathMixMatFun, generalized_inverse) {
-  auto f = [](const auto& x) { return stan::math::generalized_inverse(x); };
-
+TEST(mathMixMatFun, ad_tests) {
+  using stan::test::expect_ad;
+  
+  auto f = [](const auto& G) { return stan::math::generalized_inverse(G); };
+  auto fjit = [](const auto& G) { return stan::math::generalized_inverse(G, 0.0); };
+  auto fjit2 = [](const auto& G) { return stan::math::generalized_inverse(G, 1e-4); };
+	
   Eigen::MatrixXd t(0, 0);
-  stan::test::expect_ad(f, t);
-  //  stan::test::expect_ad_matvar(f, t);
+  expect_ad(f, t);
+  expect_ad(fjit, t);
 
   Eigen::MatrixXd u(1, 1);
   u << 2;
-  stan::test::expect_ad(f, u);
-  //  stan::test::expect_ad_matvar(f, u);
-  //
+  expect_ad(f, u);
+  expect_ad(fjit, u);
+ 
   Eigen::MatrixXd v(2, 3);
   v << 1, 3, 5, 2, 4, 6;
-  stan::test::expect_ad(f, v);
-  //  stan::test::expect_ad_matvar(f, v);
+  expect_ad(f, v);
+  expect_ad(fjit, v);
+  
   v << 1.9, 1.3, 2.5, 0.4, 1.7, 0.1;
-  stan::test::expect_ad(f, v);
-  //  stan::test::expect_ad_matvar(f, v);
+  expect_ad(f, v);
+  expect_ad(fjit, v);
 
-  // issues around zero require looser tolerances for hessians
+ // issues around zero require looser tolerances for hessians
   stan::test::ad_tolerances tols;
-  tols.hessian_hessian_ = 0.1;
-  tols.hessian_fvar_hessian_ = 0.1;
+  tols.hessian_hessian_ = 2.0;
+  tols.hessian_fvar_hessian_ = 2.0;
 
   Eigen::MatrixXd w(3, 4);
   w << 2, 3, 5, 7, 11, 13, 17, 19, 23, 25, 27, 29;
-  stan::test::expect_ad(tols, f, w);
-  //  stan::test::expect_ad_matvar(tols, f, w);
-
-  // even lower tolerance, again for cases around zero
-  stan::test::ad_tolerances tols2;
-  tols2.hessian_hessian_ = 3.0;
-  tols2.hessian_fvar_hessian_ = 3.0;
-
-  Eigen::MatrixXd x(4, 4);
-  x << 2, 3, 4, 5, 9, -1, 2, 2, 4, 3, 7, -1, 0, 1, 19, 112;
-  stan::test::expect_ad(tols2, f, x);
-  //  stan::test::expect_ad_matvar(tols2, f, x);
+  expect_ad(tols, f, w);
+  expect_ad(tols, fjit, w);
 
   Eigen::MatrixXd z(2, 2);
   z << 1, 2, 5, std::numeric_limits<double>::quiet_NaN();
   EXPECT_NO_THROW(stan::math::generalized_inverse(z));
-
+  EXPECT_NO_THROW(stan::math::generalized_inverse(z, 0.0));
+ 
   // autodiff throws, so following fails (throw behavior must match to pass)
-  // stan::test::expect_ad(f, z);
 
   Eigen::MatrixXd a(2, 2);
   a << 1.9, 0.3, 0.3, std::numeric_limits<double>::infinity();
-  stan::test::expect_ad(f, a);
-  //  stan::test::expect_ad_matvar(f, a);
-
+  expect_ad(f, a);
+  expect_ad(fjit, a);
+  
   // singular matrix, should use the
   // alias to input small amount of jitter on the diagonal
   Eigen::MatrixXd m(3, 2);
   m << 1, 2, 2, 4, 1, 2;
   EXPECT_THROW(stan::math::generalized_inverse(m), std::domain_error);
+
+  // should work with jittered version
+  stan::test::ad_tolerances tols3;
+  tols3.hessian_hessian_ = 0.01;
+  tols3.hessian_fvar_hessian_ = 0.01;
+  expect_ad(tols3, fjit2, m);
 }

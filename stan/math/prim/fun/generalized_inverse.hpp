@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/cholesky_decompose.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
 #include <stan/math/prim/fun/tcrossprod.hpp>
@@ -40,21 +41,21 @@ namespace math {
  diagonal of the internal SPD
  * matrix.
  */
-template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+template <typename EigMat,
+	  require_eigen_t<EigMat>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
                      EigMat::ColsAtCompileTime>
 generalized_inverse(const EigMat& G) {
   using value_t = value_type_t<EigMat>;
-  if (G.size() == 0) {
+
+  if (G.size() == 0) 
     return {};
-  }
 
   const auto n = G.rows();
   const auto m = G.cols();
 
-  if (G.rows() == G.cols()) {
+  if (G.rows() == G.cols())
     return inverse(G);
-  }
 
   const auto& G_ref = to_ref(G);
 
@@ -89,22 +90,21 @@ generalized_inverse(const EigMat& G) {
  the diagonal of the internal SPD
  * matrix.
  */
-template <typename EigMat, typename Scal, require_eigen_t<EigMat>* = nullptr,
-          require_stan_scalar_t<Scal>* = nullptr>
+template <typename EigMat,
+	  require_eigen_t<EigMat>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
                      EigMat::ColsAtCompileTime>
-generalized_inverse(const EigMat& G, const Scal& a) {
+generalized_inverse(const EigMat& G, const double a) {
   using value_t = value_type_t<EigMat>;
-  if (G.size() == 0) {
+
+  if (G.size() == 0) 
     return {};
-  }
 
   const auto n = G.rows();
   const auto m = G.cols();
 
-  if (G.rows() == G.cols()) {
+  if (G.rows() == G.cols())
     return inverse(G);
-  }
 
   const auto& G_ref = to_ref(G);
 
