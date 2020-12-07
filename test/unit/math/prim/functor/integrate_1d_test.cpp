@@ -203,13 +203,14 @@ struct f16 {
 
 struct f17 {
   inline double operator()(const double &x, const double &xc,
-			   const std::vector<double> &theta,
-			   const std::vector<double> &x_r,
-			   const std::vector<int> &x_i,
-			   std::ostream *msgs) const {
+                           const std::vector<double> &theta,
+                           const std::vector<double> &x_r,
+                           const std::vector<int> &x_i,
+                           std::ostream *msgs) const {
     double mu = theta[0];
     double sigma = theta[1];
-    return 1.0 / (sqrt(2.0 * stan::math::pi()) * sigma) * std::exp(-0.5 * ((x - mu) / sigma) * ((x - mu) / sigma));
+    return 1.0 / (sqrt(2.0 * stan::math::pi()) * sigma)
+           * std::exp(-0.5 * ((x - mu) / sigma) * ((x - mu) / sigma));
   }
 };
 
@@ -479,7 +480,9 @@ TEST(StanMath_integrate_1d_prim, test1) {
                    stan::math::square(stan::math::pi()) / 4);
 
   // Make sure bounds working right
-  test_integration(integrate_1d_test::f17{}, -std::numeric_limits<double>::infinity(), -1.5, { 0.0, 1.0 }, {}, {}, 0.066807201268858071);
+  test_integration(integrate_1d_test::f17{},
+                   -std::numeric_limits<double>::infinity(), -1.5, {0.0, 1.0},
+                   {}, {}, 0.066807201268858071);
 }
 
 TEST(StanMath_integrate_1d_prim, TestTolerance) {
