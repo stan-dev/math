@@ -31,9 +31,9 @@ inline int ordered_logistic_rng(
   return categorical_rng(cut, rng);
 }
 
-template <typename T_eta, typename T_c, class RNG,
-           require_t<disjunction<is_vector<T_eta>, is_std_vector<T_c>>
-           >* = nullptr>
+template <
+    typename T_eta, typename T_c, class RNG,
+    require_t<disjunction<is_vector<T_eta>, is_std_vector<T_c>>>* = nullptr>
 inline std::vector<int> ordered_logistic_rng(const T_eta& eta, const T_c& c,
                                              RNG& rng) {
   static const char* function = "ordered_logistic";
