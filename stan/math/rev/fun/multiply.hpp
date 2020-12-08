@@ -49,7 +49,7 @@ inline auto multiply(const T1& A, const T2& B) {
     arena_t<promote_scalar_t<var, T2>> arena_B = to_ref(B);
     using return_t
         = return_var_matrix_t<decltype(arena_A_val * value_of(B).eval()), T1,
-                               T2>;
+                              T2>;
     arena_t<return_t> res = arena_A_val * value_of(arena_B);
     reverse_pass_callback([arena_B, arena_A_val, res]() mutable {
       arena_B.adj() += arena_A_val.transpose() * res.adj_op();
@@ -60,7 +60,7 @@ inline auto multiply(const T1& A, const T2& B) {
     arena_t<promote_scalar_t<double, T2>> arena_B_val = value_of(to_ref(B));
     using return_t
         = return_var_matrix_t<decltype(value_of(arena_A).eval() * arena_B_val),
-                               T1, T2>;
+                              T1, T2>;
     arena_t<return_t> res = value_of(arena_A) * arena_B_val;
     reverse_pass_callback([arena_A, arena_B_val, res]() mutable {
       arena_A.adj() += res.adj_op() * arena_B_val.transpose();

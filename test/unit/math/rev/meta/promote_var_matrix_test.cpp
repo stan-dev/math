@@ -36,15 +36,17 @@ TEST(MathFunctionsPromoteVarMatrix, VarMatrix) {
                        promote_var_matrix_t<Eigen::VectorXd, var_vector,
                                             vector_var, double>>::value));
 
-  EXPECT_TRUE((is_same<stan::math::var_value<
-      stan::math::promote_scalar_t<double, decltype(A_vm.val().block(0, 0, 2, 2))>>,
-                       promote_var_matrix_t<decltype(A_vm.block(0, 0, 2, 2))>>::value));
+  EXPECT_TRUE(
+      (is_same<stan::math::var_value<stan::math::promote_scalar_t<
+                   double, decltype(A_vm.val().block(0, 0, 2, 2))>>,
+               promote_var_matrix_t<decltype(A_vm.block(0, 0, 2, 2))>>::value));
 
-  EXPECT_TRUE((is_same<matrix_var,
-                      promote_var_matrix_t<decltype(A_mv.block(0, 0, 2, 2))>>::value));
+  EXPECT_TRUE(
+      (is_same<matrix_var,
+               promote_var_matrix_t<decltype(A_mv.block(0, 0, 2, 2))>>::value));
 
-  EXPECT_TRUE((is_same<matrix_var,
-                      promote_var_matrix_t<decltype(A_mv * A_mv)>>::value));
+  EXPECT_TRUE((
+      is_same<matrix_var, promote_var_matrix_t<decltype(A_mv * A_mv)>>::value));
 
   EXPECT_TRUE((is_same<var_value<Eigen::RowVectorXd>,
                        promote_var_matrix_t<Eigen::RowVectorXd, var_matrix,

@@ -7,7 +7,6 @@
 
 namespace stan {
 
-
 /**
  * Determines plain (non expression) type associated with \c T. For `var_value`
  * with an underlying eigen type this is a `var_value<plain_type_t<T>>`
@@ -15,7 +14,9 @@ namespace stan {
  * @tparam T type to determine plain type of
  */
 template <typename T>
-struct plain_type<T, require_t<stan::math::conjunction<is_var<T>, is_eigen<value_type_t<T>>>>> {
+struct plain_type<
+    T,
+    require_t<stan::math::conjunction<is_var<T>, is_eigen<value_type_t<T>>>>> {
   using type = typename stan::math::var_value<plain_type_t<value_type_t<T>>>;
 };
 

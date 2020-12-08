@@ -18,48 +18,50 @@ TEST(MathFunctionsPromoteVarMatrix, VarMatrix) {
 
   EXPECT_TRUE((is_same<var_value<Eigen::MatrixXd>,
                        return_var_matrix_t<Eigen::MatrixXd, var_matrix,
-                                            matrix_var>>::value));
+                                           matrix_var>>::value));
   EXPECT_TRUE((is_same<var_value<Eigen::MatrixXd>,
                        return_var_matrix_t<Eigen::MatrixXd, var_matrix,
-                                            vector_var, var>>::value));
+                                           vector_var, var>>::value));
 
-  EXPECT_TRUE((is_same<var_value<Eigen::MatrixXd>,
-                       return_var_matrix_t<decltype(A_vm.block(0, 0, 2, 2))>>::value));
+  EXPECT_TRUE(
+      (is_same<var_value<Eigen::MatrixXd>,
+               return_var_matrix_t<decltype(A_vm.block(0, 0, 2, 2))>>::value));
 
-  EXPECT_TRUE((is_same<matrix_var,
-                      return_var_matrix_t<decltype(A_mv.block(0, 0, 2, 2))>>::value));
+  EXPECT_TRUE(
+      (is_same<matrix_var,
+               return_var_matrix_t<decltype(A_mv.block(0, 0, 2, 2))>>::value));
 
-  EXPECT_TRUE((is_same<matrix_var,
-                      return_var_matrix_t<decltype(A_mv * A_mv)>>::value));
+  EXPECT_TRUE(
+      (is_same<matrix_var, return_var_matrix_t<decltype(A_mv * A_mv)>>::value));
 
   EXPECT_TRUE((is_same<var_value<Eigen::MatrixXd>,
                        return_var_matrix_t<Eigen::MatrixXd, var_vector,
-                                            vector_var, double>>::value));
+                                           vector_var, double>>::value));
 
   EXPECT_TRUE((is_same<var_value<Eigen::VectorXd>,
                        return_var_matrix_t<Eigen::VectorXd, var_matrix,
-                                            matrix_var>>::value));
+                                           matrix_var>>::value));
   EXPECT_TRUE((is_same<var_value<Eigen::VectorXd>,
                        return_var_matrix_t<Eigen::VectorXd, var_matrix,
-                                            vector_var, var>>::value));
+                                           vector_var, var>>::value));
   EXPECT_TRUE((is_same<var_value<Eigen::VectorXd>,
                        return_var_matrix_t<Eigen::VectorXd, var_vector,
-                                            vector_var, double>>::value));
+                                           vector_var, double>>::value));
 
   EXPECT_TRUE((is_same<var_value<Eigen::RowVectorXd>,
                        return_var_matrix_t<Eigen::RowVectorXd, var_matrix,
-                                            matrix_var>>::value));
+                                           matrix_var>>::value));
   EXPECT_TRUE((is_same<var_value<Eigen::RowVectorXd>,
                        return_var_matrix_t<Eigen::RowVectorXd, var_matrix,
-                                            vector_var, var>>::value));
+                                           vector_var, var>>::value));
   EXPECT_TRUE((is_same<var_value<Eigen::RowVectorXd>,
                        return_var_matrix_t<Eigen::RowVectorXd, var_vector,
-                                            row_vector_var, double>>::value));
+                                           row_vector_var, double>>::value));
 
   EXPECT_TRUE((is_same<Eigen::Matrix<var, -1, -1>,
                        return_var_matrix_t<Eigen::MatrixXd, vector_var,
-                                            vector_var, double>>::value));
+                                           vector_var, double>>::value));
   EXPECT_TRUE((is_same<Eigen::Matrix<var, 1, -1>,
                        return_var_matrix_t<Eigen::RowVectorXd, vector_var,
-                                            row_vector_var, double>>::value));
+                                           row_vector_var, double>>::value));
 }

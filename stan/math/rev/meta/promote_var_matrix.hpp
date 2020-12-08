@@ -18,10 +18,8 @@ namespace stan {
 template <typename ReturnType, typename... Types>
 using promote_var_matrix_t = std::conditional_t<
     is_any_var_matrix<ReturnType, Types...>::value,
-    stan::math::var_value<
-        stan::math::promote_scalar_t<double, ReturnType>>,
-    stan::math::promote_scalar_t<stan::math::var_value<double>,
-                                 ReturnType>>;
+    stan::math::var_value<stan::math::promote_scalar_t<double, ReturnType>>,
+    stan::math::promote_scalar_t<stan::math::var_value<double>, ReturnType>>;
 }  // namespace stan
 
 #endif
