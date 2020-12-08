@@ -1,12 +1,10 @@
 #include <test/unit/math/test_ad.hpp>
 
 TEST(MathMixMatFun, subtract_transpose_test) {
-  auto f = [](const auto& x) {
-    return x - x.transpose();
-  };
+  auto f = [](const auto& x) { return x - x.transpose(); };
 
   Eigen::MatrixXd x(2, 2);
-  
+
   stan::test::expect_ad_matvar(f, x);
 }
 
@@ -16,7 +14,7 @@ TEST(MathMixMatFun, subtract_block_test) {
   };
 
   Eigen::MatrixXd x(3, 3);
-  
+
   stan::test::expect_ad_matvar(f, 1.0, x);
 }
 

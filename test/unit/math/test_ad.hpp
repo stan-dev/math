@@ -1680,11 +1680,11 @@ inline void test_matvar_gradient(const ad_tolerances& tols,
       A_mv_f.adj()(i, j) = 1;
       stan::math::grad();
       expect_near_rel_var("first argument var<Matrix> vs Matrix<var> result",
-			  A_vm1, A_mv1, tols);
+                          A_vm1, A_mv1, tols);
       expect_near_rel_var("second argument var<Matrix> vs Matrix<var> result",
-			  A_vm2, A_mv2, tols);
+                          A_vm2, A_mv2, tols);
       expect_near_rel("var<Matrix> vs Matrix<var> result value", A_vm_f.val(),
-		      A_mv_f.val(), tols.gradient_val_);
+                      A_mv_f.val(), tols.gradient_val_);
       stan::math::set_zero_all_adjoints();
     }
   }

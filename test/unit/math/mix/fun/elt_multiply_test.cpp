@@ -6,7 +6,7 @@ TEST(MathMixMatFun, elt_multiply_transpose_test) {
   };
 
   Eigen::MatrixXd x(2, 2);
-  
+
   stan::test::expect_ad_matvar(f, x);
 }
 
@@ -16,7 +16,7 @@ TEST(MathMixMatFun, elt_multiply_block_test) {
   };
 
   Eigen::MatrixXd x(3, 3);
-  
+
   stan::test::expect_ad_matvar(f, 1.0, x);
 }
 
