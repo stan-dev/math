@@ -1,5 +1,5 @@
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/rev/opencl.hpp>
+#include <stan/math/opencl/rev.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 

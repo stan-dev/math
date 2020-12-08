@@ -2,7 +2,7 @@
 #define STAN_TEST_OPENCL_UTIL_HPP
 
 #include <stan/math.hpp>
-#include <stan/math/opencl/rev/opencl.hpp>
+#include <stan/math/opencl/rev.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <test/unit/pretty_print_types.hpp>
 #include <gtest/gtest.h>
