@@ -2,13 +2,24 @@
 #define STAN_MATH_PRIM_FUNCTOR_MULTI_EXPRESSION_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/err.hpp>
 #include <tuple>
 
 namespace stan {
 namespace math {
 
+namespace internal {
+constexpr int static_sum() { return 0; }
+
+template <typename Arg0, typename... Args>
+constexpr int static_sum(Arg0 arg0, Args... args) {
+  return arg0 + static_sum(args...);
+}
+
+}  // namespace internal
+
 /**
- * Represents multiple exprs that will be calculated in same kernel.
+ * Represents multiple exprs that will be calculated in same loop.
  * @tparam T_expressions types of exprs
  */
 template <typename... T_expressions>
@@ -16,10 +27,30 @@ class eigen_expressions_ {
  public:
   /**
    * Constructor.
-   * @param exprs exprs that will be calculated in same kernel.
+   * @param exprs expresions that will be calculated in same loop.
+   * @throw invalid_argument expressions have different sizes (for row major
+   * expressions rows and columns are swapped for the check)
    */
   explicit eigen_expressions_(T_expressions&&... exprs)
-      : exprs_(std::forward<T_expressions>(exprs)...) {}
+      : exprs_(std::forward<T_expressions>(exprs)...) {
+    index_apply<sizeof...(T_expressions) - 1>([&](auto... Is) {
+      constexpr auto first_flags = Eigen::internal::traits<std::decay_t<
+          std::tuple_element_t<0, std::tuple<T_expressions...>>>>::Flags;
+      static_cast<void>(std::initializer_list<int>{
+          ((((Eigen::internal::traits<std::decay_t<std::tuple_element_t<
+                  Is + 1, std::tuple<T_expressions...>>>>::Flags
+              ^ first_flags)
+             & Eigen::RowMajorBit)
+                ? check_matching_dims("eigen_expressions_.eigen_expressions_",
+                                      "first expression", std::get<0>(exprs_),
+                                      "transposed expression",
+                                      std::get<Is + 1>(exprs_).transpose())
+                : check_matching_dims("eigen_expressions_.eigen_expressions_",
+                                      "first expression", std::get<0>(exprs_),
+                                      "expression", std::get<Is + 1>(exprs_))),
+           0)...});
+    });
+  }
 
  private:
   std::tuple<T_expressions...> exprs_;
@@ -49,39 +80,58 @@ class eigen_results_ {
   std::tuple<T_results...> results_;
 
   /**
-   *
-   * This functor is called using Eigen's NullaryExpr.
+   * Assign expressions to results using linear indexing.
+   * @tparam Linear whether to use linear indexing
+   * @tparam T_expressions types of expressions
+   * @param expressions expressions to assign
    */
-  template <typename... T_expressions>
-  class assignment_functor {
-    std::tuple<T_results...>& results_;
-    const std::tuple<T_expressions...>& exprs_;
-
-   public:
-    assignment_functor(std::tuple<T_results...>& results,
-                       const std::tuple<T_expressions...>& expressions)
-        : results_(results), exprs_(expressions) {}
-
-    inline decltype(auto) operator()(Eigen::Index row, Eigen::Index col) const {
-      index_apply<sizeof...(T_results) - 1>([&](auto... Is) {
+  template <bool Linear, typename... T_expressions,
+            std::enable_if_t<Linear>* = nullptr>
+  void assign(const eigen_expressions_<T_expressions...>& expressions) {
+    for (size_t i = 0; i < std::get<0>(expressions.exprs_).size(); i++) {
+      index_apply<sizeof...(T_results)>([&](auto... Is) {
         static_cast<void>(std::initializer_list<int>{
-            (std::get<Is + 1>(results_).coeffRef(row, col)
-             = std::get<Is + 1>(exprs_).coeff(row, col),
+            (std::get<Is>(results_).coeffRef(i)
+             = std::get<Is>(expressions.exprs_).coeff(i),
              0)...});
       });
-      return std::get<0>(exprs_).coeff(row, col);
     }
-
-    inline decltype(auto) operator()(Eigen::Index index) const {
-      index_apply<sizeof...(T_results) - 1>([&](auto... Is) {
-        static_cast<void>(std::initializer_list<int>{
-            (std::get<Is + 1>(results_).coeffRef(index)
-             = std::get<Is + 1>(exprs_).coeff(index),
-             0)...});
-      });
-      return std::get<0>(exprs_).coeff(index);
+  }
+  /**
+   * Assign expressions to results using 2d indexing.
+   * @tparam Linear whether to use linear indexing
+   * @tparam T_expressions types of expressions
+   * @param expressions expressions to assign
+   */
+  template <bool Linear, typename... T_expressions,
+            std::enable_if_t<!Linear>* = nullptr>
+  void assign(const eigen_expressions_<T_expressions...>& expressions) {
+    constexpr bool is_first_row_major
+        = Eigen::internal::traits<std::decay_t<
+              std::tuple_element_t<0, std::tuple<T_expressions...>>>>::Flags
+          & Eigen::RowMajorBit;
+    size_t outer_dimension = is_first_row_major
+                                 ? std::get<0>(expressions.exprs_).rows()
+                                 : std::get<0>(expressions.exprs_).cols();
+    size_t inner_dimension = is_first_row_major
+                                 ? std::get<0>(expressions.exprs_).cols()
+                                 : std::get<0>(expressions.exprs_).rows();
+    for (size_t i = 0; i < outer_dimension; i++) {
+      for (size_t j = 0; j < inner_dimension; j++) {
+        index_apply<sizeof...(T_results)>([&](auto... Is) {
+          static_cast<void>(std::initializer_list<int>{
+              ((Eigen::internal::traits<std::decay_t<std::tuple_element_t<
+                            Is, std::tuple<T_expressions...>>>>::Flags
+                        & Eigen::RowMajorBit
+                    ? std::get<Is>(results_).coeffRef(j, i)
+                      = std::get<Is>(expressions.exprs_).coeff(j, i)
+                    : std::get<Is>(results_).coeffRef(i, j)
+                      = std::get<Is>(expressions.exprs_).coeff(i, j)),
+               0)...});
+        });
+      }
     }
-  };
+  }
 
  public:
   /**
@@ -92,29 +142,42 @@ class eigen_results_ {
       : results_(std::forward<T_results>(results)...) {}
 
   /**
-   * Assigning \c expressions_cl object to \c eigen_results_ object generates
-   * and executes the kernel that evaluates expressions and stores them into
-   * result expressions this object contains.
+   * Assigning \c expressions_cl object to \c eigen_results_ object evals the
+   * expressions into results.
    * @tparam T_expressions types of expressions
    * @param expressions expressions
    */
   template <typename... T_expressions,
-            typename = std::enable_if_t<sizeof...(T_results)
-                                        == sizeof...(T_expressions)>>
+            std::enable_if_t<sizeof...(T_results)
+                             == sizeof...(T_expressions)>* = nullptr>
   void operator=(const eigen_expressions_<T_expressions...>& expressions) {
-    using T_first_expr = std::tuple_element_t<0, std::tuple<T_expressions...>>;
-    const auto& first_expr = std::get<0>(expressions.exprs_);
-    index_apply<sizeof...(T_results) - 1>([&](auto... Is) {
+    constexpr bool all_linear = std::min(
+        {static_cast<bool>(
+             Eigen::internal::traits<std::decay_t<T_expressions>>::Flags
+             & (Eigen::LinearAccessBit | Eigen::DirectAccessBit))...,
+         static_cast<bool>(
+             Eigen::internal::traits<std::decay_t<T_results>>::Flags
+             & (Eigen::LinearAccessBit | Eigen::DirectAccessBit))...});
+    constexpr int N_row_major = internal::static_sum(
+        static_cast<bool>(
+            Eigen::internal::traits<std::decay_t<T_expressions>>::Flags
+            & Eigen::RowMajorBit)...,
+        static_cast<bool>(
+            Eigen::internal::traits<std::decay_t<T_results>>::Flags
+            & Eigen::RowMajorBit)...);
+    constexpr int N_col_major
+        = sizeof...(T_results) + sizeof...(T_expressions) - N_row_major;
+
+    index_apply<sizeof...(T_results)>([&](auto... Is) {
       static_cast<void>(std::initializer_list<int>{
           (Eigen::internal::resize_if_allowed(
-               std::get<Is + 1>(results_), std::get<Is + 1>(expressions.exprs_),
+               std::get<Is>(results_), std::get<Is>(expressions.exprs_),
                Eigen::internal::assign_op<int, int>()),
            // types in the assign_op don't matter for the resizing
            0)...});
     });
-    std::get<0>(results_) = T_first_expr::NullaryExpr(
-        first_expr.rows(), first_expr.cols(),
-        assignment_functor<T_expressions...>(results_, expressions.exprs_));
+
+    assign<all_linear && (N_col_major == 0 || N_row_major == 0)>(expressions);
   }
 };
 
