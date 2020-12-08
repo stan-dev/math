@@ -27,7 +27,7 @@ template <typename Mat1, typename Mat2,
 auto elt_multiply(const Mat1& m1, const Mat2& m2) {
   check_matching_dims("elt_multiply", "m1", m1, "m2", m2);
   using inner_ret_type = decltype(value_of(m1).cwiseProduct(value_of(m2)));
-  using ret_type = promote_var_matrix_t<inner_ret_type, Mat1, Mat2>;
+  using ret_type = return_var_matrix_t<inner_ret_type, Mat1, Mat2>;
   if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
     arena_t<promote_scalar_t<var, Mat1>> arena_m1 = m1;
     arena_t<promote_scalar_t<var, Mat2>> arena_m2 = m2;

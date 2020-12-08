@@ -14,8 +14,9 @@ namespace math {
 
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto multiply_lower_tri_self_transpose(const T& L) {
+  using ret_type = return_var_matrix_t<T>;
   if (L.size() == 0) {
-    return plain_type_t<T>(
+    return ret_type(
         decltype(multiply_lower_tri_self_transpose(value_of(L)))());
   }
 
@@ -23,7 +24,7 @@ inline auto multiply_lower_tri_self_transpose(const T& L) {
   arena_t<promote_scalar_t<double, T>> arena_L_val
       = arena_L.val().template triangularView<Eigen::Lower>();
 
-  arena_t<T> res = arena_L_val.template triangularView<Eigen::Lower>()
+  arena_t<ret_type> res = arena_L_val.template triangularView<Eigen::Lower>()
                    * arena_L_val.transpose();
 
   reverse_pass_callback([res, arena_L, arena_L_val]() mutable {
@@ -32,7 +33,7 @@ inline auto multiply_lower_tri_self_transpose(const T& L) {
                          .template triangularView<Eigen::Lower>();
   });
 
-  return plain_type_t<T>(res);
+  return ret_type(res);
 }
 
 }  // namespace math

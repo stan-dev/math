@@ -1711,11 +1711,16 @@ void check_return_type(const ReturnType& ret, const Type& x) {
            || std::is_same<ReturnType, var_value<double>>::value)) {
     FAIL() << type_name<Type>() << " returns a " << type_name<ReturnType>()
            << " but should return either an Matrix<var> or a var_value<double>";
-  } else if (is_var_matrix<Type>::value
-             && !(is_var_matrix<ReturnType>::value
-                  || std::is_same<ReturnType, var_value<double>>::value)) {
-    FAIL() << type_name<Type>() << " returns a " << type_name<ReturnType>()
-           << " but should return either an var<Matrix> or a var_value<double>";
+  } else if (is_var_matrix<Type>::value) {
+    if (!(is_var_matrix<ReturnType>::value || std::is_same<ReturnType, var_value<double>>::value)) {
+      FAIL() << type_name<Type>() << " returns a " << type_name<ReturnType>()
+             << " but should return either an var<Matrix> or a var_value<double>";
+    }
+    if (!std::is_same<ReturnType, return_var_matrix_t<ReturnType>>::value) {
+      FAIL() << type_name<Type>() << " returns a " << type_name<ReturnType>()
+             << " but should return " <<
+             type_name<return_var_matrix_t<ReturnType>>();
+    }
   }
 }
 

@@ -20,7 +20,7 @@ namespace math {
  * @throw std::invalid_argument if the matrix is not square.
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
-inline plain_type_t<T> inverse(const T& m) {
+inline auto inverse(const T& m) {
   check_square("inverse", "m", m);
 
   if (m.size() == 0) {
@@ -29,13 +29,14 @@ inline plain_type_t<T> inverse(const T& m) {
 
   arena_t<T> arena_m = m;
   arena_t<promote_scalar_t<double, T>> res_val = arena_m.val().inverse();
-  arena_t<T> res = res_val;
+  using ret_type = return_var_matrix_t<T>;
+  arena_t<ret_type> res = res_val;
 
   reverse_pass_callback([res, res_val, arena_m]() mutable {
     arena_m.adj() -= res_val.transpose() * res.adj_op() * res_val.transpose();
   });
 
-  return res;
+  return ret_type(res);
 }
 
 }  // namespace math

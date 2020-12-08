@@ -28,7 +28,7 @@ auto elt_divide(const Mat1& m1, const Mat2& m2) {
   check_matching_dims("elt_divide", "m1", m1, "m2", m2);
   using inner_ret_type
       = decltype((value_of(m1).array() / value_of(m2).array()).matrix());
-  using ret_type = promote_var_matrix_t<inner_ret_type, Mat1, Mat2>;
+  using ret_type = return_var_matrix_t<inner_ret_type, Mat1, Mat2>;
   if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
     arena_t<promote_scalar_t<var, Mat1>> arena_m1 = m1;
     arena_t<promote_scalar_t<var, Mat2>> arena_m2 = m2;
@@ -78,7 +78,7 @@ auto elt_divide(const Mat1& m1, const Mat2& m2) {
 template <typename Scal, typename Mat, require_stan_scalar_t<Scal>* = nullptr,
           require_var_matrix_t<Mat>* = nullptr>
 auto elt_divide(Scal s, const Mat& m) {
-  Mat res = value_of(s) / m.val().array();
+  plain_type_t<Mat> res = value_of(s) / m.val().array();
 
   reverse_pass_callback([m, s, res]() mutable {
     m.adj().array() -= res.val().array() * res.adj().array() / m.val().array();

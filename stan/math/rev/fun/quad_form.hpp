@@ -119,7 +119,7 @@ inline auto quad_form_impl(const Mat1& A, const Mat2& B, bool symmetric) {
   check_multiplicable("quad_form", "A", A, "B", B);
 
   using return_t
-      = promote_var_matrix_t<decltype(value_of(B).transpose().eval()
+      = return_var_matrix_t<decltype(value_of(B).transpose().eval()
                                       * value_of(A) * value_of(B).eval()),
                              Mat1, Mat2>;
 

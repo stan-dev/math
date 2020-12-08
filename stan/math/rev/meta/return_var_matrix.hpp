@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_META_PROMOTE_VAR_MATRIX
-#define STAN_MATH_REV_META_PROMOTE_VAR_MATRIX
+#ifndef STAN_MATH_REV_META_RETURN_VAR_MATRIX
+#define STAN_MATH_REV_META_RETURN_VAR_MATRIX
 
 #include <stan/math/rev/meta/is_var.hpp>
 #include <stan/math/prim/meta.hpp>
@@ -16,12 +16,12 @@ namespace stan {
  *  Else the type will be `Matrix<var>`
  */
 template <typename ReturnType, typename... Types>
-using promote_var_matrix_t = std::conditional_t<
+using return_var_matrix_t = std::conditional_t<
     is_any_var_matrix<ReturnType, Types...>::value,
     stan::math::var_value<
-        stan::math::promote_scalar_t<double, ReturnType>>,
+        stan::math::promote_scalar_t<double, plain_type_t<ReturnType>>>,
     stan::math::promote_scalar_t<stan::math::var_value<double>,
-                                 ReturnType>>;
+                                 plain_type_t<ReturnType>>>;
 }  // namespace stan
 
 #endif

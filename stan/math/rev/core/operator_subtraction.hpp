@@ -131,7 +131,7 @@ template <typename VarMat1, typename VarMat2,
 inline auto subtract(const VarMat1& a, const VarMat2& b) {
   check_matching_dims("subtract", "a", a, "b", b);
   using op_ret_type = decltype(a.val() - b.val());
-  using ret_type = promote_var_matrix_t<op_ret_type, VarMat1, VarMat2>;
+  using ret_type = return_var_matrix_t<op_ret_type, VarMat1, VarMat2>;
   arena_t<VarMat1> arena_a = a;
   arena_t<VarMat2> arena_b = b;
   arena_t<ret_type> ret((arena_a.val() - arena_b.val()));
@@ -165,7 +165,7 @@ inline auto subtract(const VarMat& a, const Arith& b) {
   }
   using op_ret_type = plain_type_t<decltype(
       (a.val().array() - as_array_or_scalar(b)).matrix())>;
-  using ret_type = promote_var_matrix_t<op_ret_type, VarMat>;
+  using ret_type = return_var_matrix_t<op_ret_type, VarMat>;
   arena_t<VarMat> arena_a = a;
   arena_t<ret_type> ret(arena_a.val().array() - as_array_or_scalar(b));
   reverse_pass_callback(
@@ -191,7 +191,7 @@ inline auto subtract(const Arith& a, const VarMat& b) {
   }
   using op_ret_type = plain_type_t<decltype(
       (as_array_or_scalar(a) - b.val().array()).matrix())>;
-  using ret_type = promote_var_matrix_t<op_ret_type, VarMat>;
+  using ret_type = return_var_matrix_t<op_ret_type, VarMat>;
   arena_t<VarMat> arena_b = b;
   arena_t<ret_type> ret(as_array_or_scalar(a) - arena_b.val().array());
   reverse_pass_callback(
@@ -212,7 +212,7 @@ template <typename Var, typename EigMat,
           require_var_vt<std::is_arithmetic, Var>* = nullptr,
           require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
 inline auto subtract(const Var& a, const EigMat& b) {
-  using ret_type = promote_scalar_t<var, EigMat>;
+  using ret_type = return_var_matrix_t<EigMat>;
   arena_t<ret_type> ret(a.val() - b.array());
   reverse_pass_callback([ret, a]() mutable { a.adj() += ret.adj().sum(); });
   return ret_type(ret);
@@ -231,10 +231,10 @@ template <typename EigMat, typename Var,
           require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr,
           require_var_vt<std::is_arithmetic, Var>* = nullptr>
 inline auto subtract(const EigMat& a, const Var& b) {
-  using ret_type = promote_scalar_t<var, EigMat>;
-  arena_t<ret_type> ret(a.array() - b.val());
+  using ret_type = return_var_matrix_t<EigMat>;
+  arena_t<plain_type_t<ret_type>> ret(a.array() - b.val());
   reverse_pass_callback([ret, b]() mutable { b.adj() -= ret.adj().sum(); });
-  return ret_type(ret);
+  return plain_type_t<ret_type>(ret);
 }
 
 /**
@@ -251,16 +251,19 @@ template <typename Var, typename VarMat,
           require_var_vt<std::is_arithmetic, Var>* = nullptr,
           require_rev_matrix_t<VarMat>* = nullptr>
 inline auto subtract(const Var& a, const VarMat& b) {
+  using ret_type = return_var_matrix_t<VarMat>;
   arena_t<VarMat> arena_b(b);
-  arena_t<VarMat> ret(a.val() - arena_b.val().array());
+  arena_t<ret_type> ret(a.val() - arena_b.val().array());
   reverse_pass_callback([ret, a, arena_b]() mutable {
-    for (Eigen::Index i = 0; i < ret.size(); ++i) {
-      auto ret_adj = ret.adj().coeff(i);
-      a.adj() += ret_adj;
-      arena_b.adj().coeffRef(i) -= ret_adj;
+    for (Eigen::Index j = 0; j < ret.cols(); ++j) {
+      for (Eigen::Index i = 0; i < ret.rows(); ++i) {
+        auto ret_adj = ret.adj().coeff(i, j);
+        a.adj() += ret_adj;
+        arena_b.adj().coeffRef(i, j) -= ret_adj;
+      }
     }
   });
-  return plain_type_t<VarMat>(ret);
+  return ret_type(ret);
 }
 
 /**
@@ -277,16 +280,19 @@ template <typename Var, typename VarMat,
           require_rev_matrix_t<VarMat>* = nullptr,
           require_var_vt<std::is_arithmetic, Var>* = nullptr>
 inline auto subtract(const VarMat& a, const Var& b) {
+  using ret_type = return_var_matrix_t<VarMat>;
   arena_t<VarMat> arena_a(a);
-  arena_t<VarMat> ret(arena_a.val().array() - b.val());
+  arena_t<ret_type> ret(arena_a.val().array() - b.val());
   reverse_pass_callback([ret, b, arena_a]() mutable {
-    for (Eigen::Index i = 0; i < ret.size(); ++i) {
-      const auto ret_adj = ret.adj().coeff(i);
-      arena_a.adj().coeffRef(i) += ret_adj;
-      b.adj() -= ret_adj;
+    for (Eigen::Index j = 0; j < ret.cols(); ++j) {
+      for (Eigen::Index i = 0; i < ret.rows(); ++i) {
+        const auto ret_adj = ret.adj().coeff(i, j);
+        arena_a.adj().coeffRef(i, j) += ret_adj;
+        b.adj() -= ret_adj;
+      }
     }
   });
-  return plain_type_t<VarMat>(ret);
+  return ret_type(ret);
 }
 
 template <typename T1, typename T2,

@@ -64,7 +64,7 @@ template <typename Mat1, typename Mat2,
 inline auto columns_dot_product(const Mat1& v1, const Mat2& v2) {
   check_matching_sizes("columns_dot_product", "v1", v1, "v2", v2);
 
-  using return_t = promote_var_matrix_t<
+  using return_t = return_var_matrix_t<
       decltype((v1.val().array() * v2.val().array()).colwise().sum().matrix()),
       Mat1, Mat2>;
 
