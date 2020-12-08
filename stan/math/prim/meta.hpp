@@ -165,6 +165,12 @@
  * These macros are used on type traits to define the set of `requires`
  */
 
+/**
+ * \ingroup require_meta
+ * \defgroup require_opencl_types OpenCL
+ * `require` type traits to detect types used with OpenCL.
+ */
+
 #include <stan/math/prim/meta/ad_promotable.hpp>
 #include <stan/math/prim/meta/append_return_type.hpp>
 #include <stan/math/prim/meta/as_array_or_scalar.hpp>
@@ -181,20 +187,30 @@
 #include <stan/math/prim/meta/index_type.hpp>
 #include <stan/math/prim/meta/index_apply.hpp>
 #include <stan/math/prim/meta/is_autodiff.hpp>
+#include <stan/math/prim/meta/is_arena_matrix.hpp>
 #include <stan/math/prim/meta/is_base_pointer_convertible.hpp>
+#include <stan/math/prim/meta/is_dense_dynamic.hpp>
 #include <stan/math/prim/meta/is_double_or_int.hpp>
 #include <stan/math/prim/meta/is_complex.hpp>
 #include <stan/math/prim/meta/is_constant.hpp>
 #include <stan/math/prim/meta/is_container.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_eigen_dense_base.hpp>
+#include <stan/math/prim/meta/is_eigen_dense_dynamic.hpp>
 #include <stan/math/prim/meta/is_eigen_matrix.hpp>
 #include <stan/math/prim/meta/is_eigen_matrix_base.hpp>
 #include <stan/math/prim/meta/is_eigen_sparse_base.hpp>
 #include <stan/math/prim/meta/is_fvar.hpp>
+#include <stan/math/prim/meta/is_kernel_expression.hpp>
+#include <stan/math/prim/meta/is_matrix_cl.hpp>
+#include <stan/math/prim/meta/is_matrix.hpp>
 #include <stan/math/prim/meta/is_plain_type.hpp>
 #include <stan/math/prim/meta/is_string_convertible.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
+#include <stan/math/prim/meta/is_var_matrix.hpp>
+#include <stan/math/prim/meta/is_var_dense_dynamic.hpp>
+#include <stan/math/prim/meta/is_var_eigen.hpp>
+#include <stan/math/prim/meta/is_rev_matrix.hpp>
 #include <stan/math/prim/meta/is_vari.hpp>
 #include <stan/math/prim/meta/is_var_or_arithmetic.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
@@ -213,6 +229,7 @@
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <stan/math/prim/meta/scalar_type_pre.hpp>
 #include <stan/math/prim/meta/seq_view.hpp>
+#include <stan/math/prim/meta/static_select.hpp>
 #include <stan/math/prim/meta/value_type.hpp>
 #include <stan/math/prim/meta/vector_seq_view.hpp>
 #include <stan/math/prim/meta/void_t.hpp>

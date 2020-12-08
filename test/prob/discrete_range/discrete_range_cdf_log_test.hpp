@@ -54,8 +54,12 @@ class AgradCdfLogDiscreteRange : public AgradCdfLogTest {
   double cdf_log_function(const T_y& y, const T_lower& lower,
                           const T_upper& upper, const T3&, const T4&,
                           const T5&) {
-    if (y < lower || y > upper) {
+    if (y < lower) {
       return stan::math::LOG_ZERO;
+    }
+
+    if (y > upper) {
+      return 0.0;
     }
 
     return log((y - lower + 1.0) / (upper - lower + 1.0));

@@ -156,9 +156,9 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   T_partials_return logp(0);
   if (include_summand<propto>::value) {
     if (is_vector<T_y>::value) {
-      logp -= sum(lgamma(y_arr + 1));
+      logp -= sum(lgamma(y_arr + 1.0));
     } else {
-      logp -= sum(lgamma(y_arr + 1)) * N_instances;
+      logp -= sum(lgamma(y_arr + 1.0)) * N_instances;
     }
   }
   if (include_summand<propto, T_precision>::value) {

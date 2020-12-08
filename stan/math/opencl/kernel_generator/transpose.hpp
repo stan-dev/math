@@ -8,7 +8,6 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <algorithm>
 #include <string>
 #include <set>
@@ -49,9 +48,10 @@ class transpose_
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline transpose_<std::remove_reference_t<Arg>> deep_copy() const {
-    return transpose_<std::remove_reference_t<Arg>>{
-        this->template get_arg<0>().deep_copy()};
+  inline auto deep_copy() const {
+    auto&& arg_copy = this->template get_arg<0>().deep_copy();
+    return transpose_<std::remove_reference_t<decltype(arg_copy)>>{
+        std::move(arg_copy)};
   }
 
   /**

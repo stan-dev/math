@@ -1,6 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim.hpp>
-#include <stan/math/opencl/opencl.hpp>
+#include <stan/math/opencl/prim.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
@@ -748,7 +748,7 @@ TEST(MathMatrixOpenCLPrim, multiply_big_split_4) {
 
   auto m3 = (m1 * m2).eval();
 
-  auto m33 = stan::math::opencl::multiply(m11, m22);
+  auto m33 = stan::math::multiply(m11, m22);
 
   m3_cl_res = stan::math::from_matrix_cl(m33);
 
@@ -767,7 +767,7 @@ TEST(MathMatrixOpenCLPrim, multiply_big_split_11) {
 
   auto m3 = (m1 * m2).eval();
 
-  auto m33 = stan::math::opencl::multiply(m11, m22);
+  auto m33 = stan::math::multiply(m11, m22);
 
   m3_cl_res = stan::math::from_matrix_cl(m33);
 
@@ -786,7 +786,7 @@ TEST(MathMatrixOpenCLPrim, multiply_small_split_big) {
 
   auto m3 = (m1 * m2).eval();
 
-  auto m33 = stan::math::opencl::multiply(m11, m22);
+  auto m33 = stan::math::multiply(m11, m22);
 
   m3_cl_res = stan::math::from_matrix_cl(m33);
 

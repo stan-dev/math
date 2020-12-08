@@ -5,13 +5,11 @@
 #include <boost/math/distributions.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-
-using stan::math::inv_wishart_log;
-
 TEST(ProbDistributionsInvWishart, fvar_double) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::inv_wishart_log;
 
   Matrix<fvar<double>, Dynamic, Dynamic> Y(3, 3);
   Y << 12.147233, -11.9036079, 1.0910458, -11.903608, 16.7585782, 0.8530256,
@@ -36,7 +34,10 @@ TEST(ProbDistributionsInvWishart, fvar_double) {
 }
 
 TEST(ProbDistributionsInvWishart, fvar_fvar_double) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::fvar;
+  using stan::math::inv_wishart_log;
 
   Matrix<fvar<fvar<double> >, Dynamic, Dynamic> Y(3, 3);
   Y << 12.147233, -11.9036079, 1.0910458, -11.903608, 16.7585782, 0.8530256,

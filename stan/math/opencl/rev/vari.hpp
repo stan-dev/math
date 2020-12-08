@@ -3,7 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/rev/core/vari.hpp>
-#include <stan/math/opencl/is_matrix_cl.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 
 namespace stan {
@@ -23,6 +23,7 @@ template <typename T>
 class vari_value<T, require_kernel_expression_lhs_t<T>>
     : public vari_base, public chainable_alloc {
  public:
+  using value_type = T;
   /**
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
@@ -33,6 +34,15 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
    * The value of this variable.
    */
   T val_;
+
+  /**
+   * Rows at compile time
+   */
+  static constexpr int RowsAtCompileTime{-1};
+  /**
+   * Columns at compile time
+   */
+  static constexpr int ColsAtCompileTime{-1};
 
   /**
    * Construct a matrix_cl variable implementation from a value. The
@@ -107,6 +117,26 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
   }
 
   /**
+   * Return a constant reference to the value of this vari.
+   *
+   * @return The value of this vari.
+   */
+  inline const auto& val() const { return val_; }
+  inline auto& val_op() { return val_; }
+
+  /**
+   * Return a reference to the derivative of the root expression with
+   * respect to this expression.  This method only works
+   * after one of the `grad()` methods has been
+   * called.
+   *
+   * @return Adjoint for this vari.
+   */
+  inline auto& adj() { return adj_; }
+  inline auto& adj() const { return adj_; }
+  inline auto& adj_op() { return adj_; }
+
+  /**
    * Returns a view into a block of matrix.
    * @param row starting row of the block
    * @param col starting column of the block
@@ -143,34 +173,6 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
    */
   inline void set_zero_adjoint() final { adj_ = constant(0, rows(), cols()); }
 
-  /**
-   * Allocate memory from the underlying memory pool.  This memory is
-   * is managed as a whole externally.
-   *
-   * Warning: Classes should not be allocated with this operator
-   * if they have non-trivial destructors.
-   *
-   * @param nbytes Number of bytes to allocate.
-   * @return Pointer to allocated bytes.
-   */
-  static inline void* operator new(size_t nbytes) {
-    return ChainableStack::instance_->memalloc_.alloc(nbytes);
-  }
-
-  /**
-   * Delete a pointer from the underlying memory pool.
-   *
-   * This no-op implementation enables a subclass to throw
-   * exceptions in its constructor.  An exception thrown in the
-   * constructor of a subclass will result in an error being
-   * raised, which is in turn caught and calls delete().
-   *
-   * See the discussion of "plugging the memory leak" in:
-   *   http://www.parashift.com/c++-faq/memory-pools.html
-   */
-  static inline void operator delete(void* /* ignore arg */) { /* no op */
-  }
-
  protected:
   // to allow access to this constructor from instantinations with different
   // template parameters
@@ -193,7 +195,7 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
         val_(std::forward<T>(val)) {}
 
  private:
-  template <typename>
+  template <typename, typename>
   friend class var_value;
 };
 

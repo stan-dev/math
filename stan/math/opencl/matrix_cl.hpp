@@ -2,15 +2,14 @@
 #define STAN_MATH_OPENCL_MATRIX_CL_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/vec_concat.hpp>
+#include <stan/math/opencl/prim/size.hpp>
+#include <stan/math/opencl/err/check_opencl.hpp>
+#include <stan/math/prim/err/check_size_match.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
-#include <stan/math/opencl/is_matrix_cl.hpp>
-#include <stan/math/opencl/err/check_opencl.hpp>
-#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/vec_concat.hpp>
 #include <CL/cl2.hpp>
 #include <algorithm>
 #include <iostream>
@@ -31,12 +30,15 @@ namespace math {
  *  @{
  */
 
+template <typename, typename = void>
+class matrix_cl;
+
 /**
  * Represents an arithmetic matrix on the OpenCL device.
  * @tparam T an arithmetic type for the type stored in the OpenCL buffer.
  */
 template <typename T>
-class matrix_cl<T, require_arithmetic_t<T>> {
+class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
  private:
   cl::Buffer buffer_cl_;  // Holds the allocated memory on the device
   int rows_{0};           // Number of rows.
@@ -186,7 +188,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @param C number of columns
    * @param partial_view view of the matrix
    */
-  matrix_cl(cl::Buffer& A, const int R, const int C,
+  matrix_cl(const cl::Buffer& A, const int R, const int C,
             matrix_cl_view partial_view = matrix_cl_view::Entire)
       : buffer_cl_(A), rows_(R), cols_(C), view_(partial_view) {}
 
@@ -465,6 +467,13 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   template <typename Expr,
             require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr>
   matrix_cl<T>& operator=(const Expr& expression);
+
+  /**
+    Evaluates `this`. This is a no-op.
+    @return `*this`
+    */
+  const matrix_cl<T>& eval() const& { return *this; }
+  matrix_cl<T> eval() && { return std::move(*this); }
 
  private:
   /**

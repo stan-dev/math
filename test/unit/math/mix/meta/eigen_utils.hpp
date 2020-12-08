@@ -2,7 +2,7 @@
 #define TEST_UNIT_MATH_MIX_EIGEN_UTILS_HPP
 #include <stan/math/mix.hpp>
 #include <test/unit/pretty_print_types.hpp>
-#include <Eigen/Sparse>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 

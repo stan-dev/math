@@ -33,44 +33,47 @@ auto recursive_sum(const std::vector<T>& a) {
 }
 
 template <typename T, require_integral_t<T>* = nullptr>
-T make_arg() {
+T make_arg(double value = 0.4) {
   return 1;
 }
 template <typename T, require_floating_point_t<T>* = nullptr>
-T make_arg() {
-  return 0.4;
+T make_arg(double value = 0.4) {
+  return value;
 }
 template <typename T, require_var_t<T>* = nullptr>
-T make_arg() {
-  return 0.4;
+T make_arg(T value = 0.4) {
+  return value;
 }
 template <typename T, require_fvar_t<T>* = nullptr>
-T make_arg() {
-  return {0.4, 0.5};
+T make_arg(T value) {
+  return value;
 }
-template <typename T, require_eigen_vector_t<T>* = nullptr>
-T make_arg() {
-  T res(1);
-  res << make_arg<value_type_t<T>>();
-  return res;
+template <typename T, require_fvar_t<T>* = nullptr>
+T make_arg(double value = 0.4) {
+  return {value, 0.5};
 }
-template <typename T, require_eigen_matrix_t<T>* = nullptr>
-T make_arg() {
+template <typename T, typename T_scalar = double, require_eigen_t<T>* = nullptr>
+T make_arg(T_scalar value = 0.4) {
   T res(1, 1);
-  res << make_arg<value_type_t<T>>();
+  res << make_arg<value_type_t<T>>(value);
   return res;
 }
-template <typename T, require_std_vector_t<T>* = nullptr>
-T make_arg() {
+template <typename T, typename T_scalar = double,
+          require_std_vector_t<T>* = nullptr>
+T make_arg(T_scalar value = 0.4) {
   using V = value_type_t<T>;
-  V tmp = make_arg<V>();
+  V tmp = make_arg<V>(value);
   T res;
   res.push_back(tmp);
   return res;
 }
 template <typename T, require_same_t<T, std::minstd_rand>* = nullptr>
-T make_arg() {
+T make_arg(double value = 0.4) {
   return std::minstd_rand(0);
+}
+template <typename T, require_same_t<T, std::ostream*>* = nullptr>
+T make_arg(double value = 0.4) {
+  return nullptr;
 }
 
 template <typename T, require_arithmetic_t<T>* = nullptr>
@@ -150,10 +153,90 @@ void expect_adj_eq(const std::vector<T>& a, const std::vector<T>& b,
   stan::test::expect_adj_eq(     \
       a, b, "Error in file: " __FILE__ ", on line: " TO_STRING(__LINE__))
 
+template <typename T, require_st_stan_scalar<T>* = nullptr>
+scalar_type_t<T> sum_if_number(const T& a) {
+  return recursive_sum(a);
+}
+template <typename T, require_not_st_stan_scalar<T>* = nullptr>
+double sum_if_number(const T& a) {
+  return 0;
+}
+
+struct test_functor {
+  template <typename... T>
+  auto operator()(T... args) const {
+    using Ret_scal = return_type_t<T...>;
+    return stan::test::make_arg<Eigen::Matrix<Ret_scal, Eigen::Dynamic, 1>>(
+        math::sum(std::vector<Ret_scal>{sum_if_number(args)...}));
+  }
+};
+
+struct simple_eq_functor {
+  template <typename T0, typename T1>
+  inline Eigen::Matrix<stan::return_type_t<T0, T1>, Eigen::Dynamic, 1>
+  operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
+             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+             const std::vector<double>& dat, const std::vector<int>& dat_int,
+             std::ostream* pstream__) const {
+    Eigen::Matrix<stan::return_type_t<T0, T1>, Eigen::Dynamic, 1> z(1);
+    z(0) = x(0) - y(0);
+    return z;
+  }
+};
+
+struct reduce_sum_test_functor {
+  template <typename T0, typename T1>
+  auto operator()(const T0& a, int, int, std::ostream*, const T1& b) {
+    return math::sum(a) + math::sum(b);
+  }
+};
+
 }  // namespace test
 
 namespace math {
 
+// for some functions signatures reported by stanc do not match ones in math. We
+// use wrappers for such functions.
+template <typename F, typename T_shared_param, typename T_job_param,
+          typename T_x_r>
+auto map_rect(const F& functor, const T_shared_param& shared_params,
+              const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>&
+                  job_params,
+              const std::vector<std::vector<T_x_r>>& x_r,
+              const std::vector<std::vector<int>>& x_i) {
+  return map_rect<0, F>(shared_params, job_params, value_of(x_r), x_i);
+}
+
+template <typename F, typename T1, typename T2, typename T3, typename T4,
+          typename T5>
+auto algebra_solver_newton(const F& f, const T1& x, const T2& y,
+                           const std::vector<double>& dat,
+                           const std::vector<int>& dat_int,
+                           T3 scaling_step_size, T4 function_tolerance,
+                           T5 max_num_steps) {
+  return algebra_solver_newton(
+      f, x, y, dat, dat_int, nullptr, value_of(scaling_step_size),
+      value_of(function_tolerance), value_of(max_num_steps));
+}
+
+template <typename F, typename T1, typename T2, typename T3, typename T4,
+          typename T5>
+auto algebra_solver(const F& f, const T1& x, const T2& y,
+                    const std::vector<double>& dat,
+                    const std::vector<int>& dat_int, T3 scaling_step_size,
+                    T4 function_tolerance, T5 max_num_steps) {
+  return algebra_solver(f, x, y, dat, dat_int, nullptr,
+                        value_of(scaling_step_size),
+                        value_of(function_tolerance), value_of(max_num_steps));
+}
+
+template <typename T1, typename T2>
+auto reduce_sum(const T1& sliced, int grainsize, const T2& shared) {
+  return reduce_sum<stan::test::reduce_sum_test_functor>(sliced, grainsize,
+                                                         nullptr, shared);
+}
+
+// functions for testing the expression testing framework
 template <typename T>
 auto bad_no_expressions(const Eigen::Matrix<T, -1, -1>& a) {
   return a;
