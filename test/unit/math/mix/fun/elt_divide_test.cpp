@@ -11,12 +11,12 @@ TEST(MathMixMatFun, elt_divide_transpose_test) {
 
 TEST(MathMixMatFun, elt_divide_block_test) {
   auto f = [](const auto& y, const auto& x) {
-    return stan::math::elt_divide(y, x.block(0, 0, 2, 2));
+    return stan::math::elt_divide(y.block(1, 1, 2, 2), x.block(0, 0, 2, 2));
   };
 
   Eigen::MatrixXd x(3, 3);
 
-  stan::test::expect_ad_matvar(f, 1.0, x);
+  stan::test::expect_ad_matvar(f, x, x);
 }
 
 TEST(MathMixMatFun, eltDivide) {
