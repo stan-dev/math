@@ -15,7 +15,7 @@ namespace math {
  * @tparam T type of the vector
  */
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
-inline plain_type_t<EigVec> segment(const EigVec& v, size_t i, size_t n) {
+inline auto segment(const EigVec& v, size_t i, size_t n) {
   check_greater("segment", "n", i, 0.0);
   check_less_or_equal("segment", "n", i, static_cast<size_t>(v.size()));
   if (n != 0) {
