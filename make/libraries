@@ -9,7 +9,7 @@ endef
 
 MATH ?=
 BOOST ?= $(MATH)lib/boost_1.72.0
-EIGEN ?= $(MATH)lib/eigen_3.3.7
+EIGEN ?= $(MATH)lib/eigen_3.3.9
 OPENCL ?= $(MATH)lib/opencl_2.2.0
 TBB ?= $(MATH)lib/tbb_2019_U8
 SUNDIALS ?= $(MATH)lib/sundials_5.5.0
