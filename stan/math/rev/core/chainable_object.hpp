@@ -49,16 +49,17 @@ class chainable_object : public chainable_alloc {
 
 /**
  * Store the given object in a `chainable_object` so it is destructed
- * only when the chainable stack memory is recovered
+ * only when the chainable stack memory is recovered and return
+ * a pointer to the underlying object
  *
  * @tparam T type of object to hold
  * @param obj object to hold
- * @return pointer to `chainable_object` holding input
+ * @return pointer to object held in `chainable_object`
  */
 template <typename T>
 auto make_chainable_ptr(T&& obj) {
   auto ptr = new chainable_object<std::decay_t<T>>(std::forward<T>(obj));
-  return ptr;
+  return &ptr->get();
 }
 
 }  // namespace math

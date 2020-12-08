@@ -41,7 +41,7 @@ TEST(AgradRev, chainable_object_nested_test) {
 
 TEST(AgradRev, make_chainable_ptr_test) {
   {
-    auto ptr = stan::math::make_chainable_ptr(ChainableObjectTest());
+    ChainableObjectTest* ptr = stan::math::make_chainable_ptr(ChainableObjectTest());
     ChainableObjectTest::counter = 0;
   }
 
@@ -54,7 +54,7 @@ TEST(AgradRev, make_chainable_ptr_nested_test) {
   stan::math::start_nested();
 
   {
-    auto ptr = stan::math::make_chainable_ptr(ChainableObjectTest());
+    ChainableObjectTest* ptr = stan::math::make_chainable_ptr(ChainableObjectTest());
     ChainableObjectTest::counter = 0;
   }
 
