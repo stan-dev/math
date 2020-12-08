@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_HOLDER_HPP
 
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_plain_type.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <memory>
 #include <type_traits>
@@ -248,9 +249,9 @@ T holder(T&& arg) {
 namespace internal {
 // the function holder_handle_element is also used in holder_cl
 /**
- * Handles single element (moving rvalues to heap) for construction of
- * `holder` or `holder_cl` from a functor. For lvalues just sets the `res`
- * pointer.
+ * Handles single element (moving rvalue non-expressions to heap) for
+ * construction of `holder` or `holder_cl` from a functor. For lvalues or
+ * expressions just sets the `res` pointer.
  * @tparam T type of the element
  * @param a element to handle
  * @param res resulting pointer to element
@@ -261,17 +262,34 @@ auto holder_handle_element(T& a, T*& res) {
   res = &a;
   return std::make_tuple();
 }
+template <typename T,
+          std::enable_if_t<!(Eigen::internal::traits<std::decay_t<T>>::Flags
+                             & Eigen::NestByRefBit)>* = nullptr>
+auto holder_handle_element(T&& a, std::remove_reference_t<T>*& res) {
+  res = &a;
+  return std::make_tuple();
+}
 
 /**
- * Handles single element (moving rvalues to heap) for construction of
- * `holder` or `holder_cl` from a functor. Rvalue is moved to heap and the
- * pointer to heap memory is assigned to res and returned in a tuple.
+ * Handles single element (moving rvalue non-expressions to heap) for
+ * construction of `holder` or `holder_cl` from a functor. Rvalue non-expression
+ * is moved to heap and the pointer to heap memory is assigned to res and
+ * returned in a tuple.
  * @tparam T type of the element
  * @param a element to handle
  * @param res resulting pointer to element
  * @return tuple of pointers allocated on heap (containing single pointer).
  */
-template <typename T, require_t<std::is_rvalue_reference<T&&>>* = nullptr>
+template <typename T, require_t<std::is_rvalue_reference<T&&>>* = nullptr,
+          std::enable_if_t<
+              static_cast<bool>(Eigen::internal::traits<std::decay_t<T>>::Flags&
+                                    Eigen::NestByRefBit)>* = nullptr>
+auto holder_handle_element(T&& a, T*& res) {
+  res = new T(std::move(a));
+  return std::make_tuple(res);
+}
+template <typename T, require_t<std::is_rvalue_reference<T&&>>* = nullptr,
+          require_not_eigen_t<T>* = nullptr>
 auto holder_handle_element(T&& a, T*& res) {
   res = new T(std::move(a));
   return std::make_tuple(res);
@@ -321,6 +339,7 @@ auto make_holder_impl(const F& func, std::index_sequence<Is...>,
  * This is similar to calling the functor with given arguments. Except that any
  * rvalue argument will be moved to heap first. The arguments moved to heap are
  * deleted once the expression is destructed.
+ *
  * @tparam F type of the functor
  * @tparam Args types of the arguments
  * @param func the functor
@@ -328,12 +347,29 @@ auto make_holder_impl(const F& func, std::index_sequence<Is...>,
  * @return `holder` referencing expression constructed by given functor
  */
 template <typename F, typename... Args,
-          require_eigen_t<
+          require_not_plain_type_t<
               decltype(std::declval<F>()(std::declval<Args&>()...))>* = nullptr>
 auto make_holder(const F& func, Args&&... args) {
   return internal::make_holder_impl(func,
                                     std::make_index_sequence<sizeof...(Args)>(),
                                     std::forward<Args>(args)...);
+}
+
+/**
+ * Calls given function with given arguments. No `holder` is necessary if the
+ * function is not returning Eigen expression.
+ *
+ * @tparam F type of the functor
+ * @tparam Args types of the arguments
+ * @param func the functor
+ * @param args arguments for the functor
+ * @return `holder` referencing expression constructed by given functor
+ */
+template <typename F, typename... Args,
+          require_plain_type_t<
+              decltype(std::declval<F>()(std::declval<Args&>()...))>* = nullptr>
+auto make_holder(const F& func, Args&&... args) {
+  return func(std::forward<Args>(args)...);
 }
 
 }  // namespace math

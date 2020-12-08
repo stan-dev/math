@@ -22,7 +22,7 @@ namespace math {
  * @throw std::domain_error if K is negative, if low is nan or infinite,
  * if high is nan or infinite, or if high is less than low.
  */
-inline Eigen::RowVectorXd linspaced_row_vector(int K, double low, double high) {
+inline auto linspaced_row_vector(int K, double low, double high) {
   static const char* function = "linspaced_row_vector";
   check_nonnegative(function, "size", K);
   check_finite(function, "low", low);

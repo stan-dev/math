@@ -21,8 +21,7 @@ namespace math {
  * @return the matrix representation of the input
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>
-to_matrix(EigMat&& x) {
+inline EigMat to_matrix(EigMat&& x) {
   return std::forward<EigMat>(x);
 }
 
@@ -114,8 +113,7 @@ to_matrix(EigMat&& x, int m, int n) {
  * if the sizes do not match
  */
 template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
-    const std::vector<T>& x, int m, int n) {
+inline auto to_matrix(const std::vector<T>& x, int m, int n) {
   static const char* function = "to_matrix(array)";
   check_size_match(function, "rows * columns", m * n, "vector size", x.size());
   return Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>(
