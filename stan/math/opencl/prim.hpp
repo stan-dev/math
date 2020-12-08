@@ -99,7 +99,6 @@
 #include <stan/math/opencl/value_type.hpp>
 #include <stan/math/opencl/zeros.hpp>
 
-#include <stan/math/opencl/prim/add.hpp>
 #include <stan/math/opencl/prim/bernoulli_lpmf.hpp>
 #include <stan/math/opencl/prim/bernoulli_logit_lpmf.hpp>
 #include <stan/math/opencl/prim/bernoulli_logit_glm_lpmf.hpp>

@@ -13,6 +13,7 @@ TEST(MathMatrixCL, subtract_v_exception_pass) {
   stan::math::matrix_cl<double> d22(d2);
   stan::math::matrix_cl<double> d33(3, 1);
   EXPECT_NO_THROW(d33 = d11 - d22);
+  EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
 }
 
 // TODO(Steve): This should probably throw exception?
@@ -25,6 +26,7 @@ TEST(MathMatrixCL, subtract_v_exception_pass_zero) {
   stan::math::matrix_cl<double> d22(d2);
   stan::math::matrix_cl<double> d33(0, 1);
   EXPECT_NO_THROW(d33 = d11 - d22);
+  EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
 }
 
 TEST(MathMatrixCL, subtract_v_exception_fail_zero) {
@@ -35,6 +37,7 @@ TEST(MathMatrixCL, subtract_v_exception_fail_zero) {
   stan::math::matrix_cl<double> d22(d2);
   stan::math::matrix_cl<double> d33(3, 3);
   EXPECT_THROW(d33 = d11 - d22, std::invalid_argument);
+  EXPECT_THROW(d33 = stan::math::subtract(d11, d22), std::invalid_argument);
 }
 
 TEST(MathMatrixCL, subtract_rv_exception_pass) {
@@ -46,6 +49,7 @@ TEST(MathMatrixCL, subtract_rv_exception_pass) {
   stan::math::matrix_cl<double> d22(d2);
   stan::math::matrix_cl<double> d33(1, 3);
   EXPECT_NO_THROW(d33 = d11 - d22);
+  EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
 }
 
 TEST(MathMatrixCL, subtract_rv_exception_pass_zero) {
@@ -56,6 +60,7 @@ TEST(MathMatrixCL, subtract_rv_exception_pass_zero) {
   stan::math::matrix_cl<double> d22(d2);
   stan::math::matrix_cl<double> d33(1, 0);
   EXPECT_NO_THROW(d33 = d11 - d22);
+  EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
 }
 
 TEST(MathMatrixCL, subtract_rv_exception_fail_zero) {
@@ -66,6 +71,7 @@ TEST(MathMatrixCL, subtract_rv_exception_fail_zero) {
   stan::math::matrix_cl<double> d22(d2);
   stan::math::matrix_cl<double> d33(3, 1);
   EXPECT_THROW(d33 = d11 - d22, std::invalid_argument);
+  EXPECT_THROW(d33 = stan::math::subtract(d11, d22), std::invalid_argument);
 }
 
 TEST(MathMatrixCL, subtract_m_exception) {
@@ -76,6 +82,7 @@ TEST(MathMatrixCL, subtract_m_exception) {
   stan::math::matrix_cl<double> d22(d2);
   stan::math::matrix_cl<double> d33(2, 3);
   EXPECT_NO_THROW(d33 = d11 - d22);
+  EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
 }
 
 TEST(MathMatrixCL, subtract_m_exception_pass_zero) {
@@ -86,6 +93,7 @@ TEST(MathMatrixCL, subtract_m_exception_pass_zero) {
   stan::math::matrix_cl<double> d22(d2);
   stan::math::matrix_cl<double> d33(0, 0);
   EXPECT_NO_THROW(d33 = d11 - d22);
+  EXPECT_NO_THROW(d33 = stan::math::subtract(d11, d22));
 }
 
 TEST(MathMatrixCL, subtract_m_exception_fail) {
@@ -96,6 +104,7 @@ TEST(MathMatrixCL, subtract_m_exception_fail) {
   stan::math::matrix_cl<double> d22(d2);
   stan::math::matrix_cl<double> d33(3, 2);
   EXPECT_THROW(d33 = d11 - d22, std::invalid_argument);
+  EXPECT_THROW(d33 = stan::math::subtract(d11, d22), std::invalid_argument);
 }
 
 TEST(MathMatrixCL, subtract_exception) {
@@ -128,6 +137,9 @@ TEST(MathMatrixCL, subtract_exception) {
   EXPECT_THROW(v33 = v11 - v22, std::invalid_argument);
   EXPECT_THROW(rv33 = rv11 - rv22, std::invalid_argument);
   EXPECT_THROW(m33 = m11 - m22, std::invalid_argument);
+  EXPECT_THROW(v33 = stan::math::subtract(v11, v22), std::invalid_argument);
+  EXPECT_THROW(rv33 = stan::math::subtract(rv11, rv22), std::invalid_argument);
+  EXPECT_THROW(m33 = stan::math::subtract(m11, m22), std::invalid_argument);
 }
 
 TEST(MathMatrixCL, subtract_value_check) {
@@ -185,6 +197,31 @@ TEST(MathMatrixCL, subtract_value_check) {
   EXPECT_EQ(5, m3(2, 0));
   EXPECT_EQ(4, m3(2, 1));
   EXPECT_EQ(1, m3(2, 2));
+
+  EXPECT_NO_THROW(v33 = stan::math::subtract(v11, v22));
+  EXPECT_NO_THROW(rv33 = stan::math::subtract(rv11, rv22));
+  EXPECT_NO_THROW(m33 = stan::math::subtract(m11, m22));
+
+  v3 = stan::math::from_matrix_cl(v33);
+  EXPECT_EQ(-9, v3(0));
+  EXPECT_EQ(-98, v3(1));
+  EXPECT_EQ(-997, v3(2));
+
+  rv3 = stan::math::from_matrix_cl(rv33);
+  EXPECT_EQ(-9, rv3(0));
+  EXPECT_EQ(-98, rv3(1));
+  EXPECT_EQ(-997, rv3(2));
+
+  m3 = stan::math::from_matrix_cl(m33);
+  EXPECT_EQ(-9, m3(0, 0));
+  EXPECT_EQ(-98, m3(0, 1));
+  EXPECT_EQ(-997, m3(0, 2));
+  EXPECT_EQ(4, m3(1, 0));
+  EXPECT_EQ(15, m3(1, 1));
+  EXPECT_EQ(18, m3(1, 2));
+  EXPECT_EQ(5, m3(2, 0));
+  EXPECT_EQ(4, m3(2, 1));
+  EXPECT_EQ(1, m3(2, 2));
 }
 TEST(MathMatrixCL, subtract_tri_value_check) {
   Eigen::MatrixXd a(3, 3);
@@ -207,9 +244,32 @@ TEST(MathMatrixCL, subtract_tri_value_check) {
   EXPECT_EQ(5, c(2, 1));
   EXPECT_EQ(6, c(2, 2));
 
+  c_cl = stan::math::subtract(a_cl, b_cl);
+  EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Lower);
+  c = stan::math::from_matrix_cl(c_cl);
+  EXPECT_EQ(-2, c(0, 0));
+  EXPECT_EQ(1, c(1, 0));
+  EXPECT_EQ(2, c(1, 1));
+  EXPECT_EQ(4, c(2, 0));
+  EXPECT_EQ(5, c(2, 1));
+  EXPECT_EQ(6, c(2, 2));
+
   a_cl.view(stan::math::matrix_cl_view::Lower);
   b_cl.view(stan::math::matrix_cl_view::Upper);
   c_cl = a_cl - b_cl;
+  EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
+  c = stan::math::from_matrix_cl(c_cl);
+  EXPECT_EQ(-2, c(0, 0));
+  EXPECT_EQ(-3, c(0, 1));
+  EXPECT_EQ(-3, c(0, 2));
+  EXPECT_EQ(4, c(1, 0));
+  EXPECT_EQ(2, c(1, 1));
+  EXPECT_EQ(-3, c(1, 2));
+  EXPECT_EQ(7, c(2, 0));
+  EXPECT_EQ(8, c(2, 1));
+  EXPECT_EQ(6, c(2, 2));
+
+  c_cl = stan::math::subtract(a_cl, b_cl);
   EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
   c = stan::math::from_matrix_cl(c_cl);
   EXPECT_EQ(-2, c(0, 0));
@@ -237,9 +297,39 @@ TEST(MathMatrixCL, subtract_tri_value_check) {
   EXPECT_EQ(-3, c(2, 1));
   EXPECT_EQ(6, c(2, 2));
 
+  a_cl.view(stan::math::matrix_cl_view::Upper);
+  b_cl.view(stan::math::matrix_cl_view::Lower);
+  c_cl = stan::math::subtract(a_cl, b_cl);
+  EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
+  c = stan::math::from_matrix_cl(c_cl);
+  EXPECT_EQ(-2, c(0, 0));
+  EXPECT_EQ(2, c(0, 1));
+  EXPECT_EQ(3, c(0, 2));
+  EXPECT_EQ(-3, c(1, 0));
+  EXPECT_EQ(2, c(1, 1));
+  EXPECT_EQ(6, c(1, 2));
+  EXPECT_EQ(-3, c(2, 0));
+  EXPECT_EQ(-3, c(2, 1));
+  EXPECT_EQ(6, c(2, 2));
+
   a_cl.view(stan::math::matrix_cl_view::Entire);
   b_cl.view(stan::math::matrix_cl_view::Lower);
   c_cl = a_cl - b_cl;
+  EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
+  c = stan::math::from_matrix_cl(c_cl);
+  EXPECT_EQ(-2, c(0, 0));
+  EXPECT_EQ(2, c(0, 1));
+  EXPECT_EQ(3, c(0, 2));
+  EXPECT_EQ(1, c(1, 0));
+  EXPECT_EQ(2, c(1, 1));
+  EXPECT_EQ(6, c(1, 2));
+  EXPECT_EQ(4, c(2, 0));
+  EXPECT_EQ(5, c(2, 1));
+  EXPECT_EQ(6, c(2, 2));
+
+  a_cl.view(stan::math::matrix_cl_view::Entire);
+  b_cl.view(stan::math::matrix_cl_view::Lower);
+  c_cl = stan::math::subtract(a_cl, b_cl);
   EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
   c = stan::math::from_matrix_cl(c_cl);
   EXPECT_EQ(-2, c(0, 0));
