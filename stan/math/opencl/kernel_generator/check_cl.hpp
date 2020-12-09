@@ -53,13 +53,12 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
    */
   check_cl_(const char* function, const char* err_variable, T&& y,
             const char* must_be)
-      : buffer_(3, 1),
+      : buffer_(constant(0, 3, 1)),
         value_(1, 1),
         arg_(std::forward<T>(y)),
         function_(function),
         err_variable_(err_variable),
         must_be_(must_be) {
-    buffer_ = constant(0, buffer_.rows(), buffer_.cols());
     buffer_.view(matrix_cl_view::Entire);
   }
 

@@ -142,26 +142,6 @@ void prim_rev_argument_combinations(const Functor& f, const Arg0& arg0,
       args...);
 }
 
-template <typename Functor>
-void prim_argument_combinations(Functor f) {
-  f(std::make_tuple(), std::make_tuple());
-}
-
-template <typename Functor, typename Arg0, typename... Args>
-void prim_argument_combinations(const Functor& f, const Arg0& arg0,
-                                const Args&... args) {
-  prim_argument_combinations(
-      [&f, &arg0](const auto& args1, const auto& args2) {
-        constexpr size_t Size
-            = std::tuple_size<std::decay_t<decltype(args1)>>::value;
-        return index_apply<Size>([&](auto... Is) {
-          return f(std::make_tuple(arg0, std::get<Is>(args1)...),
-                   std::make_tuple(arg0, std::get<Is>(args2)...));
-        });
-      },
-      args...);
-}
-
 template <typename Functor, std::size_t... Is, typename... Args>
 void compare_cpu_opencl_prim_rev_impl(const Functor& functor,
                                       std::index_sequence<Is...>,

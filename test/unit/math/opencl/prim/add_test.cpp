@@ -7,18 +7,15 @@
 
 auto add_functor
     = [](const auto& a, const auto& b) { return stan::math::add(a, b); };
-auto plusop_functor = [](const auto& a, const auto& b) { return a + b; };
 
 TEST(OpenCLPrim, add_v_small_zero) {
   stan::math::vector_d d1(3), d2(3);
   d1 << 1, 2, 3;
   d2 << 3, 2, 1;
   stan::math::test::compare_cpu_opencl_prim(add_functor, d1, d2);
-  stan::math::test::compare_cpu_opencl_prim(plusop_functor, d1, d2);
 
   stan::math::vector_d d0(0);
   stan::math::test::compare_cpu_opencl_prim(add_functor, d1, d2);
-  stan::math::test::compare_cpu_opencl_prim(plusop_functor, d1, d2);
 }
 
 TEST(OpenCLPrim, add_rv_small_zero) {
@@ -26,11 +23,9 @@ TEST(OpenCLPrim, add_rv_small_zero) {
   d1 << 1, 2, 3;
   d2 << 3, 2, 1;
   stan::math::test::compare_cpu_opencl_prim(add_functor, d1, d2);
-  stan::math::test::compare_cpu_opencl_prim(plusop_functor, d1, d2);
 
   stan::math::vector_d d0(0);
   stan::math::test::compare_cpu_opencl_prim(add_functor, d1, d2);
-  stan::math::test::compare_cpu_opencl_prim(plusop_functor, d1, d2);
 }
 
 TEST(OpenCLPrim, add_m_small_zero) {
@@ -38,11 +33,9 @@ TEST(OpenCLPrim, add_m_small_zero) {
   d1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   d2 << 10, 100, 1000, 0, -10, -12, 2, 4, 8;
   stan::math::test::compare_cpu_opencl_prim(add_functor, d1, d2);
-  stan::math::test::compare_cpu_opencl_prim(plusop_functor, d1, d2);
 
   stan::math::matrix_d d0(0, 0);
   stan::math::test::compare_cpu_opencl_prim(add_functor, d1, d2);
-  stan::math::test::compare_cpu_opencl_prim(plusop_functor, d1, d2);
 }
 
 TEST(OpenCLPrim, add_exceptions) {
@@ -50,19 +43,16 @@ TEST(OpenCLPrim, add_exceptions) {
   stan::math::matrix_cl<double> vd11(vd1);
   stan::math::matrix_cl<double> vd22(vd2);
   EXPECT_THROW(stan::math::add(vd11, vd22), std::invalid_argument);
-  EXPECT_THROW((vd11 + vd22), std::invalid_argument);
 
   stan::math::row_vector_d rvd1(2), rvd2(3);
   stan::math::matrix_cl<double> rvd11(rvd1);
   stan::math::matrix_cl<double> rvd22(rvd2);
   EXPECT_THROW(stan::math::add(rvd11, rvd22), std::invalid_argument);
-  EXPECT_THROW((rvd11 + rvd22), std::invalid_argument);
 
   stan::math::matrix_d md1(2, 2), md2(3, 3);
   stan::math::matrix_cl<double> md11(md1);
   stan::math::matrix_cl<double> md22(md2);
   EXPECT_THROW(stan::math::add(md11, md22), std::invalid_argument);
-  EXPECT_THROW((md11 + md22), std::invalid_argument);
 }
 
 TEST(OpenCLPrim, add_tri_value_check) {

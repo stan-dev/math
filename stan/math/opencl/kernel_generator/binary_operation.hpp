@@ -184,9 +184,9 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
             as_operation_cl(std::forward<T_b>(b))};                           \
   }
 
-ADD_BINARY_OPERATION(addition_, operator+, common_scalar_t<T_a COMMA T_b>, "+");
-ADD_BINARY_OPERATION(addition_operator_, add, common_scalar_t<T_a COMMA T_b>,
-                     "+");
+ADD_BINARY_OPERATION(addition_operator_, operator+,
+                     common_scalar_t<T_a COMMA T_b>, "+");
+ADD_BINARY_OPERATION(addition_, add, common_scalar_t<T_a COMMA T_b>, "+");
 ADD_BINARY_OPERATION(subtraction_operator_, operator-,
                      common_scalar_t<T_a COMMA T_b>, "-");
 ADD_BINARY_OPERATION(subtraction_, subtract, common_scalar_t<T_a COMMA T_b>,
