@@ -142,6 +142,27 @@ void prim_rev_argument_combinations(const Functor& f, const Arg0& arg0,
       args...);
 }
 
+template <typename Functor>
+void prim_argument_combinations(Functor f) {
+  f(std::make_tuple(), std::make_tuple());
+}
+
+template <typename Functor, typename Arg0, typename... Args>
+void prim_argument_combinations(const Functor& f, const Arg0& arg0,
+                                    const Args&... args) {
+  prim_argument_combinations(
+      [&f, &arg0](const auto& args1, const auto& args2) {
+        constexpr size_t Size
+            = std::tuple_size<std::decay_t<decltype(args1)>>::value;
+        return index_apply<Size>([&](auto... Is) {
+          return f(std::make_tuple(arg0, std::get<Is>(args1)...),
+                   std::make_tuple(arg0, std::get<Is>(args2)...));
+        });
+      },
+      args...);
+}
+
+
 template <typename Functor, std::size_t... Is, typename... Args>
 void compare_cpu_opencl_prim_rev_impl(const Functor& functor,
                                       std::index_sequence<Is...>,
@@ -224,6 +245,31 @@ void test_opencl_broadcasting_prim_rev_impl(const Functor& functor,
 }
 
 }  // namespace internal
+
+/**
+ * Tests that given functor calculates same values and adjoints when given
+ * arguments on CPU and OpenCL device.
+ *
+ * The functor must accept all possible combinations of converted `args`.
+ * All std/row/col vectors and matrices are converted to `matrix_cl`. `double`
+ * scalars can be converted to `var`s or left as `double`s. When converting
+ * scalars to `double` in containers, `var_value<matrix_cl<double>>` is used
+ * instead.
+ *
+ * @tparam Functor type of the functor
+ * @tparam Args types of the arguments
+ * @param fucntor functor to test
+ * @param args arguments to test the functor with. These should be just values
+ * in CPU memory (no vars, no arguments on the OpenCL device).
+ */
+template <typename Functor, typename... Args>
+void compare_cpu_opencl_prim(const Functor& functor, const Args&... args) {
+  auto res_cpu = functor(args...);
+  auto res_opencl
+      = from_matrix_cl(functor(internal::opencl_argument(args)...));
+  stan::test::expect_near_rel("CPU and OpenCL return values do not match!", res_cpu, res_opencl);
+}
+
 
 /**
  * Tests that given functor calculates same values and adjoints when given
