@@ -9,7 +9,7 @@ auto add_functor
     = [](const auto& a, const auto& b) { return stan::math::add(a, b); };
 auto plusop_functor = [](const auto& a, const auto& b) { return a + b; };
 
-TEST(OpenCLAdd, add_v_small_zero) {
+TEST(OpenCLPrim, add_v_small_zero) {
   stan::math::vector_d d1(3), d2(3);
   d1 << 1, 2, 3;
   d2 << 3, 2, 1;
@@ -21,7 +21,7 @@ TEST(OpenCLAdd, add_v_small_zero) {
   stan::math::test::compare_cpu_opencl_prim(plusop_functor, d1, d2);
 }
 
-TEST(OpenCLAdd, add_rv_small_zero) {
+TEST(OpenCLPrim, add_rv_small_zero) {
   stan::math::row_vector_d d1(3), d2(3);
   d1 << 1, 2, 3;
   d2 << 3, 2, 1;
@@ -33,7 +33,7 @@ TEST(OpenCLAdd, add_rv_small_zero) {
   stan::math::test::compare_cpu_opencl_prim(plusop_functor, d1, d2);
 }
 
-TEST(OpenCLAdd, add_m_small_zero) {
+TEST(OpenCLPrim, add_m_small_zero) {
   stan::math::matrix_d d1(3, 3), d2(3, 3);
   d1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   d2 << 10, 100, 1000, 0, -10, -12, 2, 4, 8;
@@ -45,7 +45,7 @@ TEST(OpenCLAdd, add_m_small_zero) {
   stan::math::test::compare_cpu_opencl_prim(plusop_functor, d1, d2);
 }
 
-TEST(OpenCLAdd, add_exceptions) {
+TEST(OpenCLPrim, add_exceptions) {
   stan::math::vector_d vd1(2), vd2(3);
   stan::math::matrix_cl<double> vd11(vd1);
   stan::math::matrix_cl<double> vd22(vd2);
@@ -65,7 +65,7 @@ TEST(OpenCLAdd, add_exceptions) {
   EXPECT_THROW((md11 + md22), std::invalid_argument);
 }
 
-TEST(OpenCLAdd, add_tri_value_check) {
+TEST(OpenCLPrim, add_tri_value_check) {
   Eigen::MatrixXd a(3, 3);
   a << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   Eigen::MatrixXd b = Eigen::MatrixXd::Ones(3, 3) * -3;
@@ -139,7 +139,7 @@ TEST(OpenCLAdd, add_tri_value_check) {
                      1E-8);
 }
 
-TEST(OpenCLAdd, add_tri_scalar_value_check) {
+TEST(OpenCLPrim, add_tri_scalar_value_check) {
   Eigen::MatrixXd a(3, 3);
   a << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   stan::math::matrix_cl<double> a_cl(a);
@@ -188,7 +188,7 @@ TEST(OpenCLAdd, add_tri_scalar_value_check) {
   EXPECT_MATRIX_NEAR(add(1.5, a), c, 1E-8);
 }
 
-TEST(OpenCLAdd, add_batch) {
+TEST(OpenCLPrim, add_batch) {
   // used to represent 5 matrices of size 10x10
   const int batch_size = 11;
   const int size = 13;
