@@ -118,8 +118,8 @@ TEST(AgradRevMatrixAddons, var_row_vector) {
   EXPECT_EQ(row_vec_in.adj().rows(), derivs.rows());
   EXPECT_EQ(row_vec_in.adj().cols(), derivs.cols());
 
-  RowVectorXd out_row_vec = row_vec_in.val_op()
-                                      .cwiseProduct(row_vec_in.adj_op());
+  RowVectorXd out_row_vec
+      = row_vec_in.val_op().cwiseProduct(row_vec_in.adj_op());
 
   row_vector_vi row_vec_vi = row_vec_in.vi();
 
