@@ -89,6 +89,9 @@ clean-sundials:
 	$(RM) $(wildcard $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS)))
 
 
+# Remove when the internal TBB source code is updated.
+ifndef TBB_INTERFACE_NEW
+
 ############################################################
 # TBB build rules
 #
@@ -185,6 +188,8 @@ $(TBB_BIN)/tbbmalloc_proxy.dll: $(TBB_BIN)/tbbmalloc.def
 clean-tbb:
 	@echo '  cleaning Intel TBB targets'
 	$(RM) -rf $(TBB_BIN)
+
+endif
 
 ############################################################
 # MPI build rules
