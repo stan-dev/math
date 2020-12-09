@@ -58,7 +58,7 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
         function_(function),
         err_variable_(err_variable),
         must_be_(must_be) {
-    buffer_.zeros();
+    buffer_ = constant(0, buffer_.rows(), buffer_.cols());
     buffer_.view(matrix_cl_view::Entire);
   }
 

@@ -97,7 +97,7 @@
 #include <stan/math/opencl/sub_block.hpp>
 #include <stan/math/opencl/triangular_transpose.hpp>
 #include <stan/math/opencl/value_type.hpp>
-#include <stan/math/opencl/zeros.hpp>
+#include <stan/math/opencl/zeros_strict_tri.hpp>
 
 #include <stan/math/opencl/prim/add_diag.hpp>
 #include <stan/math/opencl/prim/bernoulli_lpmf.hpp>
@@ -113,6 +113,7 @@
 #include <stan/math/opencl/prim/col.hpp>
 #include <stan/math/opencl/prim/cols.hpp>
 #include <stan/math/opencl/prim/crossprod.hpp>
+#include <stan/math/opencl/prim/diag_matrix.hpp>
 #include <stan/math/opencl/prim/dims.hpp>
 #include <stan/math/opencl/prim/divide.hpp>
 #include <stan/math/opencl/prim/divide_columns.hpp>

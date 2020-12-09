@@ -9,7 +9,7 @@
 #include <stan/math/opencl/kernels/add.hpp>
 #include <stan/math/opencl/scalar_type.hpp>
 #include <stan/math/opencl/sub_block.hpp>
-#include <stan/math/opencl/zeros.hpp>
+#include <stan/math/opencl/zeros_strict_tri.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <algorithm>
@@ -43,7 +43,6 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const T1& A, const T2& B) {
   matrix_cl<return_type_t<T1, T2>> temp(A.rows(), B.cols(),
                                         either(A.view(), B.view()));
   if (A.size() == 0 || B.size() == 0) {
-    temp.zeros();
     return temp;
   }
   if (A.rows() == 1) {

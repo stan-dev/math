@@ -13,10 +13,10 @@ namespace math {
  * Returns a Matrix with values added along the main diagonal
  *
  * @tparam T_m type of input kernel generator expression for the input matrix
- * @tparam T_a Type of input kernel generator expression to add along the diagonal
+ * @tparam T_a type of input kernel generator expression to add along the diagonal
  *
- * @param mat a matrix
- * @param to_add scalar value or column vector or row vector to add along the
+ * @param mat input kernel generator expression
+ * @param to_add scalar value or input kernel generator expression to add along the
  * diagonal
  * @return a kernel generator expressio with to_add added along main diagonal
  */
