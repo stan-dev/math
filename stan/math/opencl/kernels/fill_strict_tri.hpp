@@ -46,8 +46,8 @@ static const std::string fill_strict_tri_kernel_code = STRINGIFY(
 // \endcond
 
 /** \ingroup opencl_kernels
- * See the docs for \link kernels/fill_strict_tri.hpp fill_strict_tri_kernel_code()
- * \endlink
+ * See the docs for \link kernels/fill_strict_tri.hpp
+ * fill_strict_tri_kernel_code() \endlink
  */
 const kernel_cl<out_buffer, double, int, int, matrix_cl_view> fill_strict_tri(
     "fill_strict_tri",

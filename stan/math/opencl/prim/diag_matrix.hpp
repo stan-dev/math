@@ -16,13 +16,13 @@ namespace math {
  * diagonal
  *
  * @param x input kernel generator expression for the diagonal
- * 
+ *
  * @return a kernel generator expression
  */
 template <typename T_x,
           require_all_kernel_expressions_and_none_scalar_t<T_x>* = nullptr>
 inline auto diag_matrix(T_x&& x) {  // NOLINT
-  return add_diag(constant(0,x.size(), x.size()).eval(), x);
+  return add_diag(constant(0, x.size(), x.size()).eval(), x);
 }
 }  // namespace math
 }  // namespace stan

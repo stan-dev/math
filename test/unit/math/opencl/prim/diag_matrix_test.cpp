@@ -10,7 +10,7 @@ auto diag_matrix_functor
 
 TEST(OpenCLPrim, diag_matrix_small) {
   stan::math::vector_d d3(3);
-  d3 << 1, 2,3;
+  d3 << 1, 2, 3;
   stan::math::test::compare_cpu_opencl_prim(diag_matrix_functor, d3);
 
   stan::math::vector_d d0(0);

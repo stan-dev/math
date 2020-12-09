@@ -149,7 +149,7 @@ void prim_argument_combinations(Functor f) {
 
 template <typename Functor, typename Arg0, typename... Args>
 void prim_argument_combinations(const Functor& f, const Arg0& arg0,
-                                    const Args&... args) {
+                                const Args&... args) {
   prim_argument_combinations(
       [&f, &arg0](const auto& args1, const auto& args2) {
         constexpr size_t Size
@@ -161,7 +161,6 @@ void prim_argument_combinations(const Functor& f, const Arg0& arg0,
       },
       args...);
 }
-
 
 template <typename Functor, std::size_t... Is, typename... Args>
 void compare_cpu_opencl_prim_rev_impl(const Functor& functor,
@@ -265,11 +264,10 @@ void test_opencl_broadcasting_prim_rev_impl(const Functor& functor,
 template <typename Functor, typename... Args>
 void compare_cpu_opencl_prim(const Functor& functor, const Args&... args) {
   auto res_cpu = functor(args...);
-  auto res_opencl
-      = from_matrix_cl(functor(internal::opencl_argument(args)...));
-  stan::test::expect_near_rel("CPU and OpenCL return values do not match!", res_cpu, res_opencl);
+  auto res_opencl = from_matrix_cl(functor(internal::opencl_argument(args)...));
+  stan::test::expect_near_rel("CPU and OpenCL return values do not match!",
+                              res_cpu, res_opencl);
 }
-
 
 /**
  * Tests that given functor calculates same values and adjoints when given
