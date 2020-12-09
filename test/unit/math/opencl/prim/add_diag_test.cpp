@@ -30,8 +30,11 @@ TEST(OpenCLPrim, add_diag_zero) {
 
 TEST(OpenCLPrim, add_diag_exception) {
   stan::math::matrix_d d1(3,3);
-  stan::math::vector_d d2(5);
-  EXPECT_THROW(stan::math::add_diag(stan::math::to_matrix_cl(d1), stan::math::to_matrix_cl(d2)), std::invalid_argument);
+  stan::math::matrix_d d2(2,3);
+  stan::math::vector_d d3(5);
+  stan::math::vector_d d4(3);
+  EXPECT_THROW(stan::math::add_diag(stan::math::to_matrix_cl(d1), stan::math::to_matrix_cl(d3)), std::invalid_argument);
+  EXPECT_THROW(stan::math::add_diag(stan::math::to_matrix_cl(d2), stan::math::to_matrix_cl(d4)), std::invalid_argument);
 }
 
 #endif
